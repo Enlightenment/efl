@@ -66,7 +66,7 @@ test_index(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info 
 
    itci.item_style     = "default";
    itci.func.label_get = gli_label_get;
-   itci.func.icon_get  = NULL;
+   itci.func.content_get  = NULL;
    itci.func.state_get = NULL;
    itci.func.del       = NULL;
 

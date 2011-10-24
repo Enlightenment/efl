@@ -863,9 +863,9 @@ elm_fileselector_add(Evas_Object *parent)
    elm_widget_sub_object_add(obj, bt);
    wd->home_button = bt;
 
-   list_itc[ELM_DIRECTORY].func.icon_get = grid_itc[ELM_DIRECTORY].func.icon_get = _itc_icon_folder_get;
-   list_itc[ELM_FILE_IMAGE].func.icon_get = grid_itc[ELM_FILE_IMAGE].func.icon_get = _itc_icon_image_get;
-   list_itc[ELM_FILE_UNKNOW].func.icon_get = grid_itc[ELM_FILE_UNKNOW].func.icon_get = _itc_icon_file_get;
+   list_itc[ELM_DIRECTORY].func.content_get = grid_itc[ELM_DIRECTORY].func.content_get = _itc_icon_folder_get;
+   list_itc[ELM_FILE_IMAGE].func.content_get = grid_itc[ELM_FILE_IMAGE].func.content_get = _itc_icon_image_get;
+   list_itc[ELM_FILE_UNKNOW].func.content_get = grid_itc[ELM_FILE_UNKNOW].func.content_get = _itc_icon_file_get;
 
    for (i = 0; i < ELM_FILE_LAST; ++i)
      {

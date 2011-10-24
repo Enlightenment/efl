@@ -25,7 +25,7 @@ grd_lbl_get(void *data, Evas_Object *obj __UNUSED__, const char *part __UNUSED__
 }
 
 Evas_Object *
-grd_icon_get(void *data, Evas_Object *obj, const char *part)
+grd_content_get(void *data, Evas_Object *obj, const char *part)
 {
    const Testitem *ti = data;
    if (!strcmp(part, "elm.swallow.icon"))
@@ -260,7 +260,7 @@ test_cursor2(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_inf
 
    gic.item_style = "default";
    gic.func.label_get = grd_lbl_get;
-   gic.func.icon_get = grd_icon_get;
+   gic.func.content_get = grd_content_get;
 
    n = 0;
    for (i = 0; i < 3 * 3; i++)

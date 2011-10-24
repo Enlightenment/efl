@@ -17,7 +17,7 @@ desk_gl_label_get(void *data, Evas_Object *obj __UNUSED__, const char *part __UN
 #endif
 }
 static Evas_Object *
-desk_gl_icon_get(void *data, Evas_Object *obj, const char *part)
+desk_gl_content_get(void *data, Evas_Object *obj, const char *part)
 {
 #ifdef ELM_EFREET
    Efreet_Desktop *d = (Efreet_Desktop *)data;
@@ -75,7 +75,7 @@ test_icon_desktops(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *eve
 
    it_desk.item_style     = "default";
    it_desk.func.label_get = desk_gl_label_get;
-   it_desk.func.icon_get  = desk_gl_icon_get;
+   it_desk.func.content_get  = desk_gl_content_get;
    it_desk.func.state_get = NULL;
    it_desk.func.del       = desk_gl_del;
 

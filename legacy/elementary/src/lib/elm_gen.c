@@ -353,7 +353,7 @@ void
 elm_gen_item_unrealize(Elm_Gen_Item *it,
                        Eina_Bool     calc)
 {
-   Evas_Object *icon;
+   Evas_Object *content;
 
    if (!it->realized) return;
    if (it->wd->reorder_it == it) return;
@@ -368,13 +368,13 @@ elm_gen_item_unrealize(Elm_Gen_Item *it,
 
    elm_widget_stringlist_free(it->labels);
    it->labels = NULL;
-   elm_widget_stringlist_free(it->icons);
-   it->icons = NULL;
+   elm_widget_stringlist_free(it->contents);
+   it->contents = NULL;
    elm_widget_stringlist_free(it->states);
    it->states = NULL;
 
-   EINA_LIST_FREE(it->icon_objs, icon)
-     evas_object_del(icon);
+   EINA_LIST_FREE(it->content_objs, content)
+     evas_object_del(content);
 
    it->unrealize_cb(it);
 

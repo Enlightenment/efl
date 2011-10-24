@@ -7899,7 +7899,7 @@ extern "C" {
    typedef struct _Elm_Gen_Item_Class Elm_Gen_Item_Class;
    typedef struct _Elm_Gen_Item_Class_Func Elm_Gen_Item_Class_Func; /**< Class functions for gen item classes. */
    typedef char        *(*Elm_Gen_Item_Label_Get_Cb) (void *data, Evas_Object *obj, const char *part); /**< Label fetching class function for gen item classes. */
-   typedef Evas_Object *(*Elm_Gen_Item_Icon_Get_Cb)  (void *data, Evas_Object *obj, const char *part); /**< Icon fetching class function for gen item classes. */
+   typedef Evas_Object *(*Elm_Gen_Item_Content_Get_Cb)  (void *data, Evas_Object *obj, const char *part); /**< Content(swallowed object) fetching class function for gen item classes. */
    typedef Eina_Bool    (*Elm_Gen_Item_State_Get_Cb) (void *data, Evas_Object *obj, const char *part); /**< State fetching class function for gen item classes. */
    typedef void         (*Elm_Gen_Item_Del_Cb)      (void *data, Evas_Object *obj); /**< Deletion class function for gen item classes. */
    struct _Elm_Gen_Item_Class
@@ -7908,7 +7908,7 @@ extern "C" {
         struct _Elm_Gen_Item_Class_Func
           {
              Elm_Gen_Item_Label_Get_Cb label_get;
-             Elm_Gen_Item_Icon_Get_Cb  icon_get;
+             Elm_Gen_Item_Content_Get_Cb  content_get;
              Elm_Gen_Item_State_Get_Cb state_get;
              Elm_Gen_Item_Del_Cb       del;
           } func;
@@ -8010,16 +8010,16 @@ extern "C" {
     * item's theme. This function @b must return a strdup'()ed string,
     * as the caller will free() it when done. See
     * #Elm_Gengrid_Item_Label_Get_Cb.
-    * - @c func.icon_get - This function is called when an item object
+    * - @c func.content_get - This function is called when an item object
     * is actually created. The @c data parameter will point to the
     * same data passed to elm_gengrid_item_append() and related item
     * creation functions. The @c obj parameter is the gengrid object
     * itself, while the @c part one is the name string of one of the
-    * existing (icon) swallow parts in the Edje group implementing the
-    * item's theme. It must return @c NULL, when no icon is desired,
+    * existing (content) swallow parts in the Edje group implementing the
+    * item's theme. It must return @c NULL, when no content is desired,
     * or a valid object handle, otherwise. The object will be deleted
     * by the gengrid on its deletion or when the item is "unrealized".
-    * See #Elm_Gengrid_Item_Icon_Get_Cb.
+    * See #Elm_Gengrid_Item_Content_Get_Cb.
     * - @c func.state_get - This function is called when an item
     * object is actually created. The @c data parameter will point to
     * the same data passed to elm_gengrid_item_append() and related
@@ -8050,7 +8050,7 @@ extern "C" {
     * modified (added, deleted, selected or unselected) of child items
     * on a gengrid.
     *
-    * If an item changes (internal (boolean) state, label or icon
+    * If an item changes (internal (boolean) state, label or content 
     * changes), then use elm_gengrid_item_update() to have gengrid
     * update the item with the new state. A gengrid will re-"realize"
     * the item, thus calling the functions in the
@@ -8151,7 +8151,7 @@ extern "C" {
    #define Elm_Gengrid_Item Elm_Gen_Item /**< Item of Elm_Genlist. Sub-type of Elm_Widget_Item */
    typedef struct _Elm_Gengrid_Item_Class_Func Elm_Gengrid_Item_Class_Func; /**< Class functions for gengrid item classes. */
    typedef char        *(*Elm_Gengrid_Item_Label_Get_Cb) (void *data, Evas_Object *obj, const char *part); /**< Label fetching class function for gengrid item classes. */
-   typedef Evas_Object *(*Elm_Gengrid_Item_Icon_Get_Cb)  (void *data, Evas_Object *obj, const char *part); /**< Icon fetching class function for gengrid item classes. */
+   typedef Evas_Object *(*Elm_Gengrid_Item_Content_Get_Cb)  (void *data, Evas_Object *obj, const char *part); /**< Content (swallowed object) fetching class function for gengrid item classes. */
    typedef Eina_Bool    (*Elm_Gengrid_Item_State_Get_Cb) (void *data, Evas_Object *obj, const char *part); /**< State fetching class function for gengrid item classes. */
    typedef void         (*Elm_Gengrid_Item_Del_Cb)      (void *data, Evas_Object *obj); /**< Deletion class function for gengrid item classes. */
 
@@ -8167,7 +8167,7 @@ extern "C" {
         struct _Elm_Gengrid_Item_Class_Func
           {
              Elm_Gengrid_Item_Label_Get_Cb label_get;
-             Elm_Gengrid_Item_Icon_Get_Cb  icon_get;
+             Elm_Gengrid_Item_Content_Get_Cb content_get;
              Elm_Gengrid_Item_State_Get_Cb state_get;
              Elm_Gengrid_Item_Del_Cb       del;
           } func;
@@ -8873,7 +8873,7 @@ extern "C" {
     * @param item The gengrid item
     *
     * This updates an item by calling all the item class functions
-    * again to get the icons, labels and states. Use this when the
+    * again to get the contents, labels and states. Use this when the
     * original item data has changed and you want thta changes to be
     * reflected.
     *
@@ -17859,9 +17859,9 @@ extern "C" {
     *   existing text parts in the Edje group implementing the item's theme.
     *   This function @b must return a strdup'()ed string, as the caller will
     *   free() it when done. See #Elm_Genlist_Item_Label_Get_Cb.
-    * - @c icon_get - The @c part parameter is the name string of one of the
-    *   existing (icon) swallow parts in the Edje group implementing the item's
-    *   theme. It must return @c NULL, when no icon is desired, or a valid
+    * - @c content_get - The @c part parameter is the name string of one of the
+    *   existing (content) swallow parts in the Edje group implementing the item's
+    *   theme. It must return @c NULL, when no content is desired, or a valid
     *   object handle, otherwise.  The object will be deleted by the genlist on
     *   its deletion or when the item is "unrealized".  See
     *   #Elm_Genlist_Item_Icon_Get_Cb.
@@ -17902,15 +17902,15 @@ extern "C" {
     *
     * An item in a genlist can have 0 or more text labels (they can be regular
     * text or textblock Evas objects - that's up to the style to determine), 0
-    * or more icons (which are simply objects swallowed into the genlist item's
+    * or more contents (which are simply objects swallowed into the genlist item's
     * theming Edje object) and 0 or more <b>boolean states</b>, which have the
     * behavior left to the user to define. The Edje part names for each of
     * these properties will be looked up, in the theme file for the genlist,
-    * under the Edje (string) data items named @c "labels", @c "icons" and @c
+    * under the Edje (string) data items named @c "labels", @c "contents" and @c
     * "states", respectively. For each of those properties, if more than one
     * part is provided, they must have names listed separated by spaces in the
     * data fields. For the default genlist item theme, we have @b one label
-    * part (@c "elm.text"), @b two icon parts (@c "elm.swalllow.icon" and @c
+    * part (@c "elm.text"), @b two content parts (@c "elm.swalllow.icon" and @c
     * "elm.swallow.end") and @b no state parts.
     *
     * A genlist item may be at one of several styles. Elementary provides one
@@ -17976,7 +17976,7 @@ extern "C" {
     * elm_genlist_item_data_get() returns the data pointer set by the item
     * creation functions.
     *
-    * If an item changes (state of boolean changes, label or icons change),
+    * If an item changes (state of boolean changes, label or contents change),
     * then use elm_genlist_item_update() to have genlist update the item with
     * the new state. Genlist will re-realize the item thus call the functions
     * in the _Elm_Genlist_Item_Class for that item.
@@ -18079,7 +18079,7 @@ extern "C" {
     *   caller to not use the object pointer from elm_genlist_item_object_get()
     *   in a way where it may point to freed objects.
     * - @c "unrealized" - This is called just before an item is unrealized.
-    *   After this call icon objects provided will be deleted and the item
+    *   After this call content objects provided will be deleted and the item
     *   object itself delete or be put into a floating cache.
     * - @c "drag,start,up" - This is called when the item in the list has been
     *   dragged (not scrolled) up.
@@ -18163,7 +18163,7 @@ extern "C" {
    #define Elm_Genlist_Item Elm_Gen_Item /**< Item of Elm_Genlist. Sub-type of Elm_Widget_Item */
    typedef struct _Elm_Genlist_Item_Class_Func Elm_Genlist_Item_Class_Func; /**< Class functions for genlist item class */
    typedef char        *(*Elm_Genlist_Item_Label_Get_Cb) (void *data, Evas_Object *obj, const char *part); /**< Label fetching class function for genlist item classes. */
-   typedef Evas_Object *(*Elm_Genlist_Item_Icon_Get_Cb)  (void *data, Evas_Object *obj, const char *part); /**< Icon fetching class function for genlist item classes. */
+   typedef Evas_Object *(*Elm_Genlist_Item_Content_Get_Cb)  (void *data, Evas_Object *obj, const char *part); /**< Content (swallowed object) fetching class function for genlist item classes. */
    typedef Eina_Bool    (*Elm_Genlist_Item_State_Get_Cb) (void *data, Evas_Object *obj, const char *part); /**< State fetching class function for genlist item classes. */
    typedef void         (*Elm_Genlist_Item_Del_Cb)      (void *data, Evas_Object *obj); /**< Deletion class function for genlist item classes. */
 
@@ -18183,7 +18183,7 @@ extern "C" {
         struct Elm_Genlist_Item_Class_Func
           {
              Elm_Genlist_Item_Label_Get_Cb  label_get; /**< Label fetching class function for genlist item classes.*/
-             Elm_Genlist_Item_Icon_Get_Cb   icon_get; /**< Icon fetching class function for genlist item classes. */
+             Elm_Genlist_Item_Content_Get_Cb   content_get; /**< Content fetching class function for genlist item classes. */
              Elm_Genlist_Item_State_Get_Cb  state_get; /**< State fetching class function for genlist item classes. */
              Elm_Genlist_Item_Del_Cb        del; /**< Deletion class function for genlist item classes. */
           } func;
@@ -19150,7 +19150,8 @@ extern "C" {
     *
     * @ingroup Genlist
     */
-   EAPI void               elm_genlist_item_icons_orphan(Elm_Genlist_Item *it) EINA_ARG_NONNULL(1);
+   EAPI void               elm_genlist_item_contents_orphan(Elm_Genlist_Item *it) EINA_ARG_NONNULL(1);
+   EINA_DEPRECATED EAPI void               elm_genlist_item_icons_orphan(Elm_Genlist_Item *it) EINA_ARG_NONNULL(1);
    /**
     * Get the real Evas object created to implement the view of a
     * given genlist item

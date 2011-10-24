@@ -957,21 +957,23 @@ _item_realize(Elm_Gen_Item *it)
           }
      }
 
-   if (it->itc->func.icon_get)
+   if (it->itc->func.content_get)
      {
         const Eina_List *l;
         const char *key;
+        Evas_Object *ic = NULL;
 
-        it->icons =
+        it->contents =
            elm_widget_stringlist_get(edje_object_data_get(VIEW(it),
                                                           "icons"));
-        EINA_LIST_FOREACH(it->icons, l, key)
+        EINA_LIST_FOREACH(it->contents, l, key)
           {
-             Evas_Object *ic = it->itc->func.icon_get
-                ((void *)it->base.data, WIDGET(it), l->data);
+             if (it->itc->func.content_get)
+               ic = it->itc->func.content_get
+                  ((void *)it->base.data, WIDGET(it), key);
              if (ic)
                {
-                  it->icon_objs = eina_list_append(it->icon_objs, ic);
+                  it->content_objs = eina_list_append(it->content_objs, ic);
                   edje_object_part_swallow(VIEW(it), key, ic);
                   evas_object_show(ic);
                   elm_widget_sub_object_add(WIDGET(it), ic);

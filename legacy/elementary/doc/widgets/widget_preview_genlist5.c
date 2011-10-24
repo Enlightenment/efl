@@ -14,7 +14,7 @@ _label_get(void        *data __UNUSED__,
 }
 
 static Evas_Object *
-_icon_get(void        *data __UNUSED__,
+_content_get(void        *data __UNUSED__,
           Evas_Object *obj,
           const char  *part __UNUSED__)
 {
@@ -36,7 +36,7 @@ evas_object_show(genlist);
 Elm_Genlist_Item_Class gic;
 gic.item_style = "default";
 gic.func.label_get = _label_get;
-gic.func.icon_get = _icon_get;
+gic.func.content_get = _content_get;
 gic.func.state_get = NULL;
 gic.func.del = NULL;
 

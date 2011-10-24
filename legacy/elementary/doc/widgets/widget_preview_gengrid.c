@@ -14,7 +14,7 @@ _grid_label_get(void        *data __UNUSED__,
 }
 
 static Evas_Object *
-_grid_icon_get(void        *data __UNUSED__,
+_grid_content_get(void        *data __UNUSED__,
                Evas_Object *obj,
                const char  *part)
 {
@@ -41,7 +41,7 @@ evas_object_show(gengrid);
 Elm_Gengrid_Item_Class gic;
 gic.item_style = "default";
 gic.func.label_get = _grid_label_get;
-gic.func.icon_get = _grid_icon_get;
+gic.func.content_get = _grid_content_get;
 gic.func.state_get = NULL;
 gic.func.del = NULL;
 

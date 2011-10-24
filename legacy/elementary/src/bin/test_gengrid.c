@@ -105,7 +105,7 @@ grid_label_get(void *data, Evas_Object *obj __UNUSED__, const char *part __UNUSE
 }
 
 Evas_Object *
-grid_icon_get(void *data, Evas_Object *obj, const char *part)
+grid_content_get(void *data, Evas_Object *obj, const char *part)
 {
    const Testitem *ti = data;
    if (!strcmp(part, "elm.swallow.icon"))
@@ -182,7 +182,7 @@ test_gengrid(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_inf
 
    gic.item_style = "default";
    gic.func.label_get = grid_label_get;
-   gic.func.icon_get = grid_icon_get;
+   gic.func.content_get = grid_content_get;
    gic.func.state_get = grid_state_get;
    gic.func.del = grid_del;
 
@@ -374,7 +374,7 @@ test_gengrid2(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_in
 
    gic.item_style = "default";
    gic.func.label_get = grid_label_get;
-   gic.func.icon_get = grid_icon_get;
+   gic.func.content_get = grid_content_get;
    gic.func.state_get = grid_state_get;
    gic.func.del = grid_del;
 
@@ -419,13 +419,13 @@ test_gengrid3(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_in
 
    gic.item_style = "default";
    gic.func.label_get = grid_label_get;
-   gic.func.icon_get = grid_icon_get;
+   gic.func.content_get = grid_content_get;
    gic.func.state_get = grid_state_get;
    gic.func.del = grid_del;
 
    ggic.item_style = "group_index";
    ggic.func.label_get = grid_label_get;
-   ggic.func.icon_get = NULL;
+   ggic.func.content_get = NULL;
    ggic.func.state_get = NULL;
    ggic.func.del = NULL;
 

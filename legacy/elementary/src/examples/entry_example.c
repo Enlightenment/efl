@@ -55,7 +55,7 @@ _emo_label_get(void *data, Evas_Object *obj __UNUSED__, const char *part __UNUSE
 }
 
 static Evas_Object *
-_emo_icon_get(void *data, Evas_Object *obj, const char *part)
+_emo_content_get(void *data, Evas_Object *obj, const char *part)
 {
    Evas_Object *o;
 
@@ -82,7 +82,7 @@ _page_grid_add(Evas_Object *parent, App_Inwin_Data *aid)
         "default",
         {
            _emo_label_get,
-           _emo_icon_get,
+           _emo_content_get,
            NULL,
            _emo_del
         }

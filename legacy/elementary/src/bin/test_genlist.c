@@ -28,7 +28,7 @@ char *gl_label_get(void *data, Evas_Object *obj __UNUSED__, const char *part __U
    return strdup(buf);
 }
 
-Evas_Object *gl_icon_get(void *data __UNUSED__, Evas_Object *obj, const char *part)
+Evas_Object *gl_content_get(void *data __UNUSED__, Evas_Object *obj, const char *part)
 {
    char buf[PATH_MAX];
    Evas_Object *ic = elm_icon_add(obj);
@@ -142,7 +142,7 @@ test_genlist(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_inf
 
    itc1.item_style     = "default";
    itc1.func.label_get = gl_label_get;
-   itc1.func.icon_get  = gl_icon_get;
+   itc1.func.content_get  = gl_content_get;
    itc1.func.state_get = gl_state_get;
    itc1.func.del       = gl_del;
 
@@ -190,7 +190,7 @@ my_gl_add(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 
    itc1.item_style     = "default";
    itc1.func.label_get = gl_label_get;
-   itc1.func.icon_get  = gl_icon_get;
+   itc1.func.content_get  = gl_content_get;
    itc1.func.state_get = gl_state_get;
    itc1.func.del       = gl_del;
 
@@ -212,7 +212,7 @@ my_gl_insert_before(void *data, Evas_Object *obj __UNUSED__, void *event_info __
 
    itc1.item_style     = "default";
    itc1.func.label_get = gl_label_get;
-   itc1.func.icon_get  = gl_icon_get;
+   itc1.func.content_get  = gl_content_get;
    itc1.func.state_get = gl_state_get;
    itc1.func.del       = gl_del;
 
@@ -242,7 +242,7 @@ my_gl_insert_after(void *data, Evas_Object *obj __UNUSED__, void *event_info __U
 
    itc1.item_style     = "default";
    itc1.func.label_get = gl_label_get;
-   itc1.func.icon_get  = gl_icon_get;
+   itc1.func.content_get  = gl_content_get;
    itc1.func.state_get = gl_state_get;
    itc1.func.del       = gl_del;
 
@@ -369,7 +369,7 @@ test_genlist2(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_in
 
    itc1.item_style     = "default";
    itc1.func.label_get = gl_label_get;
-   itc1.func.icon_get  = gl_icon_get;
+   itc1.func.content_get  = gl_content_get;
    itc1.func.state_get = gl_state_get;
    itc1.func.del       = gl_del;
 
@@ -519,7 +519,7 @@ char *gl2_label_get(void *data, Evas_Object *obj __UNUSED__, const char *part __
    snprintf(buf, sizeof(buf), "Item mode %i", tit->mode);
    return strdup(buf);
 }
-Evas_Object *gl2_icon_get(void *data, Evas_Object *obj, const char *part)
+Evas_Object *gl2_content_get(void *data, Evas_Object *obj, const char *part)
 {
    const Testitem *tit = data;
    char buf[PATH_MAX];
@@ -594,7 +594,7 @@ test_genlist3(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_in
 
    itc2.item_style     = "default";
    itc2.func.label_get = gl2_label_get;
-   itc2.func.icon_get  = gl2_icon_get;
+   itc2.func.content_get  = gl2_content_get;
    itc2.func.state_get = gl2_state_get;
    itc2.func.del       = gl2_del;
 
@@ -669,7 +669,7 @@ char *gl3_label_get(void *data, Evas_Object *obj __UNUSED__, const char *part __
    snprintf(buf, sizeof(buf), "Item mode %i", tit->mode);
    return strdup(buf);
 }
-Evas_Object *gl3_icon_get(void *data, Evas_Object *obj, const char *part)
+Evas_Object *gl3_content_get(void *data, Evas_Object *obj, const char *part)
 {
    const Testitem *tit = data;
    if (!strcmp(part, "elm.swallow.icon"))
@@ -730,7 +730,7 @@ test_genlist4(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_in
 
    itc3.item_style     = "default";
    itc3.func.label_get = gl3_label_get;
-   itc3.func.icon_get  = gl3_icon_get;
+   itc3.func.content_get  = gl3_content_get;
    itc3.func.state_get = gl3_state_get;
    itc3.func.del       = gl3_del;
 
@@ -812,7 +812,7 @@ char *gl5_label_get(void *data, Evas_Object *obj __UNUSED__, const char *part)
      }
    return strdup(buf);
 }
-Evas_Object *gl5_icon_get(void *data, Evas_Object *obj, const char *part)
+Evas_Object *gl5_content_get(void *data, Evas_Object *obj, const char *part)
 {
    const Testitem *tit = data;
    char buf[PATH_MAX];
@@ -949,7 +949,7 @@ test_genlist5(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_in
    evas_object_show(gl);
    itc5.item_style     = "double_label";
    itc5.func.label_get = gl5_label_get;
-   itc5.func.icon_get  = gl5_icon_get;
+   itc5.func.content_get  = gl5_content_get;
    itc5.func.state_get = gl5_state_get;
    itc5.func.del       = gl5_del;
 
@@ -1078,7 +1078,7 @@ char *gl4_label_get(void *data, Evas_Object *obj __UNUSED__, const char *part __
    snprintf(buf, sizeof(buf), "Item mode %i", (int)(long)data);
    return strdup(buf);
 }
-Evas_Object *gl4_icon_get(void *data __UNUSED__, Evas_Object *obj, const char *part)
+Evas_Object *gl4_content_get(void *data __UNUSED__, Evas_Object *obj, const char *part)
 {
    char buf[PATH_MAX];
    if (!strcmp(part, "elm.swallow.icon"))
@@ -1134,7 +1134,7 @@ test_genlist6(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_in
 
    itc4.item_style     = "default";
    itc4.func.label_get = gl4_label_get;
-   itc4.func.icon_get  = gl4_icon_get;
+   itc4.func.content_get  = gl4_content_get;
    itc4.func.state_get = gl4_state_get;
    itc4.func.del       = gl4_del;
 
@@ -1288,13 +1288,13 @@ test_genlist7(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_in
 
    itc2.item_style     = "default";
    itc2.func.label_get = gl2_label_get;
-   itc2.func.icon_get  = gl2_icon_get;
+   itc2.func.content_get  = gl2_content_get;
    itc2.func.state_get = gl2_state_get;
    itc2.func.del       = gl2_del;
 
    itc7.item_style     = "double_label";
    itc7.func.label_get = gl5_label_get;
-   itc7.func.icon_get  = gl5_icon_get;
+   itc7.func.content_get  = gl5_content_get;
    itc7.func.state_get = gl5_state_get;
    itc7.func.del       = gl5_del;
 
@@ -1375,13 +1375,13 @@ test_genlist8(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_in
 
    itc1.item_style     = "default";
    itc1.func.label_get = gl_label_get;
-   itc1.func.icon_get  = gl_icon_get;
+   itc1.func.content_get  = gl_content_get;
    itc1.func.state_get = gl_state_get;
    itc1.func.del       = gl_del;
 
    itc_group.item_style     = "group_index";
    itc_group.func.label_get = gl8_label_get;
-   itc_group.func.icon_get  = NULL;
+   itc_group.func.content_get  = NULL;
    itc_group.func.state_get = NULL;
    itc_group.func.del       = gl_del;
 
@@ -1586,13 +1586,13 @@ test_genlist9(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_in
 
    itc1.item_style     = "default";
    itc1.func.label_get = gl_label_get;
-   itc1.func.icon_get  = gl_icon_get;
+   itc1.func.content_get  = gl_content_get;
    itc1.func.state_get = gl_state_get;
    itc1.func.del       = gl_del;
 
    itc_group.item_style     = "group_index";
    itc_group.func.label_get = gl8_label_get;
-   itc_group.func.icon_get  = NULL;
+   itc_group.func.content_get  = NULL;
    itc_group.func.state_get = NULL;
    itc_group.func.del       = gl_del;
 
@@ -1646,7 +1646,7 @@ char *gl10_label_get(void *data, Evas_Object *obj __UNUSED__, const char *part)
    return strdup(buf);
 }
 
-Evas_Object *gl10_icon_get(void *data __UNUSED__, Evas_Object *obj, const char *part)
+Evas_Object *gl10_content_get(void *data __UNUSED__, Evas_Object *obj, const char *part)
 {
    char buf[PATH_MAX];
    Evas_Object *ic = elm_icon_add(obj);
@@ -1764,7 +1764,7 @@ test_genlist10(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_i
 
    itc10.item_style     = "default";
    itc10.func.label_get = gl10_label_get;
-   itc10.func.icon_get  = gl10_icon_get;
+   itc10.func.content_get  = gl10_content_get;
    itc10.func.state_get = gl_state_get;
    itc10.func.del       = gl_del;
    elm_genlist_mode_item_style_set(gl, "mode");
@@ -1859,7 +1859,7 @@ test_genlist11(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_i
 
    itc1.item_style     = "default";
    itc1.func.label_get = gl_label_get;
-   itc1.func.icon_get  = gl_icon_get;
+   itc1.func.content_get  = gl_content_get;
    itc1.func.state_get = gl_state_get;
    itc1.func.del       = gl_del;
    evas_object_smart_callback_add(gl, "moved", (Evas_Smart_Cb)gl_moved, gl);
@@ -1914,7 +1914,7 @@ test_genlist12(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_i
 
    itc1.item_style     = "message";
    itc1.func.label_get = gl12_label_get;
-   itc1.func.icon_get  = gl_icon_get;
+   itc1.func.content_get  = gl_content_get;
    itc1.func.state_get = gl_state_get;
    itc1.func.del       = gl_del;
 

@@ -21,7 +21,7 @@ static void _ls_done_cb(void *data, Eio_File *handler);
 static void _ls_error_cb(void *data, Eio_File *handler, int error);
 static void _file_chosen(void *data, Evas_Object *obj, void *event_info);
 static char *_gl_label_get(void *data, Evas_Object *obj, const char *part);
-static Evas_Object *_gl_icon_get(void *data, Evas_Object *obj, const char *part);
+static Evas_Object *_gl_content_get(void *data, Evas_Object *obj, const char *part);
 static Eina_Bool _gl_state_get(void *data, Evas_Object *obj, const char *part);
 static void _gl_del(void *data, Evas_Object *obj);
 static void _test_eio_clear(void *data, Evas_Object *obj, void *event);
@@ -92,7 +92,7 @@ _gl_label_get(void *data, Evas_Object *obj __UNUSED__, const char *part __UNUSED
 }
 
 static Evas_Object *
-_gl_icon_get(void *data __UNUSED__, Evas_Object *obj __UNUSED__, const char *part __UNUSED__)
+_gl_content_get(void *data __UNUSED__, Evas_Object *obj __UNUSED__, const char *part __UNUSED__)
 {
    return NULL;
 }
@@ -121,7 +121,7 @@ test_eio(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __
 
    it_eio.item_style     = "default";
    it_eio.func.label_get = _gl_label_get;
-   it_eio.func.icon_get  = _gl_icon_get;
+   it_eio.func.content_get  = _gl_content_get;
    it_eio.func.state_get = _gl_state_get;
    it_eio.func.del       = _gl_del;
 

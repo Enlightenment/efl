@@ -35,7 +35,7 @@ _item_label_get(void *data, Evas_Object *obj __UNUSED__, const char *part)
 }
 
 static Evas_Object *
-_item_icon_get(void *data __UNUSED__, Evas_Object *obj, const char *part)
+_item_content_get(void *data __UNUSED__, Evas_Object *obj, const char *part)
 {
    Evas_Object *ic = elm_icon_add(obj);
 
@@ -66,7 +66,7 @@ _parent_label_get(void *data, Evas_Object *obj __UNUSED__, const char *part __UN
 }
 
 static Evas_Object *
-_parent_icon_get(void *data __UNUSED__, Evas_Object *obj, const char *part __UNUSED__)
+_parent_content_get(void *data __UNUSED__, Evas_Object *obj, const char *part __UNUSED__)
 {
    Evas_Object *ic = elm_icon_add(obj);
 
@@ -90,7 +90,7 @@ _favorite_label_get(void *data, Evas_Object *obj __UNUSED__, const char *part)
 }
 
 static Evas_Object *
-_favorite_icon_get(void *data __UNUSED__, Evas_Object *obj, const char *part)
+_favorite_content_get(void *data __UNUSED__, Evas_Object *obj, const char *part)
 {
    Evas_Object *ic = elm_icon_add(obj);
 
@@ -337,19 +337,19 @@ elm_main(int argc __UNUSED__, char **argv __UNUSED__)
 
    _itc.item_style = "default";
    _itc.func.label_get = _item_label_get;
-   _itc.func.icon_get = _item_icon_get;
+   _itc.func.content_get = _item_icon_get;
    _itc.func.state_get = NULL;
    _itc.func.del = NULL;
 
    _itp.item_style = "default";
    _itp.func.label_get = _parent_label_get;
-   _itp.func.icon_get = _parent_icon_get;
+   _itp.func.content_get = _parent_icon_get;
    _itp.func.state_get = NULL;
    _itp.func.del = NULL;
 
    _itfav.item_style = "default";
    _itfav.func.label_get = _favorite_label_get;
-   _itfav.func.icon_get = _favorite_icon_get;
+   _itfav.func.content_get = _favorite_icon_get;
    _itfav.func.state_get = NULL;
    _itfav.func.del = NULL;
 

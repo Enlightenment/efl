@@ -57,7 +57,7 @@ _marker_get(Evas_Object *obj, Elm_Map_Marker *marker __UNUSED__, void *data)
 }
 
 static Evas_Object *
-_marker_city_icon_get(Evas_Object *obj, Elm_Map_Marker *marker __UNUSED__, void *data __UNUSED__)
+_marker_city_content_get(Evas_Object *obj, Elm_Map_Marker *marker __UNUSED__, void *data __UNUSED__)
 {
    Evas_Object *icon = elm_icon_add(obj);
    elm_icon_file_set(icon, PACKAGE_DATA_DIR"/images/icon_07.png", NULL);
@@ -67,7 +67,7 @@ _marker_city_icon_get(Evas_Object *obj, Elm_Map_Marker *marker __UNUSED__, void 
 }
 
 static Evas_Object *
-_group_city_icon_get(Evas_Object *obj, void *data __UNUSED__)
+_group_city_content_get(Evas_Object *obj, void *data __UNUSED__)
 {
    Evas_Object *icon = elm_icon_add(obj);
    elm_icon_file_set(icon, PACKAGE_DATA_DIR"/images/icon_05.png", NULL);
@@ -76,7 +76,7 @@ _group_city_icon_get(Evas_Object *obj, void *data __UNUSED__)
 }
 
 static Evas_Object *
-_marker_country_icon_get(Evas_Object *obj, Elm_Map_Marker *marker __UNUSED__, void *data __UNUSED__)
+_marker_country_content_get(Evas_Object *obj, Elm_Map_Marker *marker __UNUSED__, void *data __UNUSED__)
 {
    Evas_Object *icon = elm_icon_add(obj);
    elm_icon_file_set(icon, PACKAGE_DATA_DIR"/images/icon_06.png", NULL);
@@ -85,7 +85,7 @@ _marker_country_icon_get(Evas_Object *obj, Elm_Map_Marker *marker __UNUSED__, vo
 }
 
 static Evas_Object *
-_group_country_icon_get(Evas_Object *obj, void *data __UNUSED__)
+_group_country_content_get(Evas_Object *obj, void *data __UNUSED__)
 {
    Evas_Object *icon = elm_icon_add(obj);
    elm_icon_file_set(icon, PACKAGE_DATA_DIR"/images/icon_04.png", NULL);
@@ -207,22 +207,22 @@ elm_main(int argc __UNUSED__, char **argv __UNUSED__)
 
    mc_city = elm_map_marker_class_new(map);
    elm_map_marker_class_get_cb_set(mc_city, _marker_get);
-   elm_map_marker_class_icon_cb_set(mc_city, _marker_city_icon_get);
+   elm_map_marker_class_icon_cb_set(mc_city, _marker_city_content_get);
    elm_map_marker_class_style_set(mc_city, "radio");
 
    gc_city = elm_map_group_class_new(map);
    elm_map_group_class_style_set(gc_city, "radio2");
-   elm_map_group_class_icon_cb_set(gc_city, _group_city_icon_get);
+   elm_map_group_class_icon_cb_set(gc_city, _group_city_content_get);
    elm_map_group_class_zoom_displayed_set(gc_city, 3);
 
    mc_country = elm_map_marker_class_new(map);
    elm_map_marker_class_get_cb_set(mc_country, _marker_get);
-   elm_map_marker_class_icon_cb_set(mc_country, _marker_country_icon_get);
+   elm_map_marker_class_icon_cb_set(mc_country, _marker_country_content_get);
    elm_map_marker_class_style_set(mc_country, "empty");
 
    gc_country = elm_map_group_class_new(map);
    elm_map_group_class_style_set(gc_country, "empty");
-   elm_map_group_class_icon_cb_set(gc_country, _group_country_icon_get);
+   elm_map_group_class_icon_cb_set(gc_country, _group_country_content_get);
    elm_map_group_class_zoom_displayed_set(gc_country, 1);
 
    m = elm_map_marker_add(map, -43.2, -22.9, mc_city, gc_city, &data_rio);

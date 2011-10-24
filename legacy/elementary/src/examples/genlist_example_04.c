@@ -35,7 +35,7 @@ _item_label_get(void *data, Evas_Object *obj __UNUSED__, const char *part)
 }
 
 static Evas_Object *
-_item_icon_get(void *data __UNUSED__, Evas_Object *obj, const char *part)
+_item_content_get(void *data __UNUSED__, Evas_Object *obj, const char *part)
 {
    Evas_Object *ic = elm_icon_add(obj);
 
@@ -65,7 +65,7 @@ _group_label_get(void *data, Evas_Object *obj __UNUSED__, const char *part __UNU
 }
 
 static Evas_Object *
-_group_icon_get(void *data __UNUSED__, Evas_Object *obj, const char *part __UNUSED__)
+_group_content_get(void *data __UNUSED__, Evas_Object *obj, const char *part __UNUSED__)
 {
    Evas_Object *ic = elm_icon_add(obj);
 
@@ -289,13 +289,13 @@ elm_main(int argc __UNUSED__, char **argv __UNUSED__)
 
    _itc.item_style = "double_label";
    _itc.func.label_get = _item_label_get;
-   _itc.func.icon_get = _item_icon_get;
+   _itc.func.content_get = _item_icon_get;
    _itc.func.state_get = NULL;
    _itc.func.del = NULL;
 
    _itc_group.item_style = "group_index";
    _itc_group.func.label_get = _group_label_get;
-   _itc_group.func.icon_get = _group_icon_get;
+   _itc_group.func.content_get = _group_icon_get;
    _itc_group.func.state_get = NULL;
    _itc_group.func.del = NULL;
 

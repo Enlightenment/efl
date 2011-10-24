@@ -34,7 +34,7 @@ struct Elm_Gen_Item_Type
    Evas_Coord                    w, h, minw, minh;
    Elm_Gen_Item                 *group_item;
    Elm_Genlist_Item_Flags        flags;
-   Eina_List                    *mode_labels, *mode_icons, *mode_states, *mode_icon_objs;
+   Eina_List                    *mode_labels, *mode_contents, *mode_states, *mode_content_objs;
    Ecore_Timer                  *swipe_timer;
    Evas_Coord                    scrl_x, scrl_y, old_scrl_y;
 
@@ -1690,23 +1690,24 @@ _item_label_realize(Elm_Gen_Item *it,
 }
 
 static Eina_List *
-_item_icon_realize(Elm_Gen_Item *it,
+_item_content_realize(Elm_Gen_Item *it,
                    Evas_Object *target,
                    Eina_List **source)
 {
    Eina_List *res = NULL;
 
-   if (it->itc->func.icon_get)
+   if (it->itc->func.content_get)
      {
         const Eina_List *l;
         const char *key;
+        Evas_Object *ic = NULL;
 
         *source = elm_widget_stringlist_get(edje_object_data_get(target, "icons"));
         EINA_LIST_FOREACH(*source, l, key)
           {
-             Evas_Object *ic = it->itc->func.icon_get
-                ((void *)it->base.data, WIDGET(it), key);
-
+             if (it->itc->func.content_get)
+               ic = it->itc->func.content_get
+                  ((void *)it->base.data, WIDGET(it), key);
              if (ic)
                {
                   res = eina_list_append(res, ic);
@@ -1892,10 +1893,10 @@ _item_realize(Elm_Gen_Item *it,
      {
         /* FIXME: If you see that assert, please notify us and we
            will clean our mess */
-        assert(eina_list_count(it->icon_objs) == 0);
+        assert(eina_list_count(it->content_objs) == 0);
 
         _item_label_realize(it, VIEW(it), &it->labels);
-        it->icon_objs = _item_icon_realize(it, VIEW(it), &it->icons);
+        it->content_objs = _item_content_realize(it, VIEW(it), &it->contents);
         _item_state_realize(it, VIEW(it), &it->states);
 
         if (!it->item->mincalcd)
@@ -2864,15 +2865,15 @@ _mode_item_realize(Elm_Gen_Item *it)
    evas_object_event_callback_add(it->item->mode_view, EVAS_CALLBACK_MOUSE_MOVE,
                                   _mouse_move, it);
 
-   /* label_get, icon_get, state_get */
+   /* label_get, content_get, state_get */
    /* FIXME: If you see that assert, please notify us and we
       will clean our mess */
-   assert(eina_list_count(it->item->mode_icon_objs) == 0);
+   assert(eina_list_count(it->item->mode_content_objs) == 0);
 
    _item_label_realize(it, it->item->mode_view, &it->item->mode_labels);
-   it->item->mode_icon_objs = _item_icon_realize(it,
+   it->item->mode_content_objs = _item_content_realize(it,
 					   it->item->mode_view,
-					   &it->item->mode_icons);
+					   &it->item->mode_contents);
    _item_state_realize(it, it->item->mode_view, &it->item->mode_states);
 
    edje_object_part_swallow(it->item->mode_view,
@@ -2888,18 +2889,18 @@ static void
 _mode_item_unrealize(Elm_Gen_Item *it)
 {
    Widget_Data *wd = it->wd;
-   Evas_Object *icon;
+   Evas_Object *content;
    if (!it->item->mode_view) return;
 
    evas_event_freeze(evas_object_evas_get(it->wd->obj));
    elm_widget_stringlist_free(it->item->mode_labels);
    it->item->mode_labels = NULL;
-   elm_widget_stringlist_free(it->item->mode_icons);
-   it->item->mode_icons = NULL;
+   elm_widget_stringlist_free(it->item->mode_contents);
+   it->item->mode_contents = NULL;
    elm_widget_stringlist_free(it->item->mode_states);
 
-   EINA_LIST_FREE(it->item->mode_icon_objs, icon)
-     evas_object_del(icon);
+   EINA_LIST_FREE(it->item->mode_content_objs, content)
+     evas_object_del(content);
 
    edje_object_part_unswallow(it->item->mode_view, VIEW(it));
    evas_object_smart_member_add(VIEW(it), wd->pan_smart);
@@ -3909,7 +3910,7 @@ elm_genlist_item_disabled_set(Elm_Gen_Item *it,
           edje_object_signal_emit(VIEW(it), "elm,state,disabled", "elm");
         else
           edje_object_signal_emit(VIEW(it), "elm,state,enabled", "elm");
-        EINA_LIST_FOREACH(it->icon_objs, l, obj)
+        EINA_LIST_FOREACH(it->content_objs, l, obj)
           elm_widget_disabled_set(obj, disabled);
      }
 }
@@ -4144,13 +4145,19 @@ elm_genlist_item_data_get(const Elm_Gen_Item *it)
 EAPI void
 elm_genlist_item_icons_orphan(Elm_Gen_Item *it)
 {
-   Evas_Object *icon;
+   elm_genlist_item_contents_orphan(it);
+}
+
+EAPI void
+elm_genlist_item_contents_orphan(Elm_Gen_Item *it)
+{
+   Evas_Object *content;
    ELM_WIDGET_ITEM_WIDTYPE_CHECK_OR_RETURN(it);
-   EINA_LIST_FREE(it->icon_objs, icon)
+   EINA_LIST_FREE(it->content_objs, content)
      {
-        elm_widget_sub_object_del(WIDGET(it), icon);
-        evas_object_smart_member_del(icon);
-        evas_object_hide(icon);
+        elm_widget_sub_object_del(WIDGET(it), content);
+        evas_object_smart_member_del(content);
+        evas_object_hide(content);
      }
 }
 

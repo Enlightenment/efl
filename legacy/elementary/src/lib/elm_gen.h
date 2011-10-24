@@ -36,7 +36,7 @@ struct Elm_Gen_Item
    Evas_Coord                    x, y, dx, dy;
    Evas_Object                  *spacer;
    Elm_Gen_Item                 *parent;
-   Eina_List                    *labels, *icons, *states, *icon_objs;
+   Eina_List                    *labels, *contents, *states, *content_objs;
    Ecore_Timer                  *long_timer;
    int                           relcount;
    int                           walking;

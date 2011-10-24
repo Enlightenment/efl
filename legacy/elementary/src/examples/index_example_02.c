@@ -55,7 +55,7 @@ _grid_label_get(void        *data,
 }
 
 Evas_Object *
-_grid_icon_get(void        *data __UNUSED__,
+_grid_content_get(void        *data __UNUSED__,
                Evas_Object *obj,
                const char  *part)
 {
@@ -116,7 +116,7 @@ elm_main(int    argc __UNUSED__,
 
    gic.item_style = "default";
    gic.func.label_get = _grid_label_get;
-   gic.func.icon_get = _grid_icon_get;
+   gic.func.content_get = _grid_icon_get;
    gic.func.state_get = NULL;
    gic.func.del = NULL;
 

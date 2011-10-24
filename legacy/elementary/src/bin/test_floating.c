@@ -19,7 +19,7 @@ static char *glf_label_get(void *data, Evas_Object *obj __UNUSED__, const char *
    return strdup(buf);
 }
 
-static Evas_Object *glf_icon_get(void *data __UNUSED__, Evas_Object *obj, const char *part __UNUSED__)
+static Evas_Object *glf_content_get(void *data __UNUSED__, Evas_Object *obj, const char *part __UNUSED__)
 {
    char buf[PATH_MAX];
    Evas_Object *ic = elm_icon_add(obj);
@@ -87,7 +87,7 @@ test_floating(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_in
 
    itc1.item_style     = "default";
    itc1.func.label_get = glf_label_get;
-   itc1.func.icon_get  = glf_icon_get;
+   itc1.func.content_get  = glf_content_get;
    itc1.func.state_get = glf_state_get;
    itc1.func.del       = glf_del;
 
