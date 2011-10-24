@@ -8,7 +8,7 @@ void
 test_segment_control(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    Evas_Object *win, *bg, *ic, *ic1, *ic2, *ic3, *ic4, *ic5;
-   Elm_Segment_Item *it1, *it2, *it3, *it4, *it5;
+   Elm_Segment_Item *it;
 
    Evas_Object * in_layout;
    Evas_Object *segment1, *segment2, *segment3, *segment4;
@@ -46,19 +46,19 @@ test_segment_control(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *e
    evas_object_size_hint_aspect_set(ic1, EVAS_ASPECT_CONTROL_BOTH, 1, 1);
 
    segment1 = elm_segment_control_add(win);
-   it1 = elm_segment_control_item_add(segment1, NULL, "Only Text");
-   it2 = elm_segment_control_item_add(segment1, ic, NULL);
-   elm_segment_control_item_selected_set(it2, EINA_TRUE);
-   it3 = elm_segment_control_item_add(segment1, ic1, "Text_Icon_test");
-   it4 = elm_segment_control_item_add(segment1, NULL, "Seg4");
-   it5 = elm_segment_control_item_add(segment1, NULL, "Seg5");
+   elm_segment_control_item_add(segment1, NULL, "Only Text");
+   it = elm_segment_control_item_add(segment1, ic, NULL);
+   elm_segment_control_item_selected_set(it, EINA_TRUE);
+   elm_segment_control_item_add(segment1, ic1, "Text_Icon_test");
+   elm_segment_control_item_add(segment1, NULL, "Seg4");
+   elm_segment_control_item_add(segment1, NULL, "Seg5");
 
    segment2 = elm_segment_control_add(win);
-   it1 = elm_segment_control_item_add(segment2, NULL, "SegmentItem");
-   it2 = elm_segment_control_item_add(segment2, NULL, "SegmentItem");
-   elm_segment_control_item_selected_set(it2, EINA_TRUE);
-   it3 = elm_segment_control_item_add(segment2, NULL, "SegmentControlItem");
-   it4 = elm_segment_control_item_add(segment2, NULL, "SegmentItem");
+   elm_segment_control_item_add(segment2, NULL, "SegmentItem");
+   it = elm_segment_control_item_add(segment2, NULL, "SegmentItem");
+   elm_segment_control_item_selected_set(it, EINA_TRUE);
+   elm_segment_control_item_add(segment2, NULL, "SegmentControlItem");
+   elm_segment_control_item_add(segment2, NULL, "SegmentItem");
 
    ic2 = elm_icon_add(in_layout);
    snprintf(buf3, sizeof(buf3), "%s/images/logo.png", elm_app_data_dir_get());
@@ -76,10 +76,10 @@ test_segment_control(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *e
    evas_object_size_hint_aspect_set(ic4, EVAS_ASPECT_CONTROL_BOTH, 1, 1);
 
    segment3 = elm_segment_control_add(win);
-   it1 = elm_segment_control_item_add(segment3, ic2, NULL);
-   it2 = elm_segment_control_item_add(segment3, ic3, NULL);
-   elm_segment_control_item_selected_set(it2, EINA_TRUE);
-   it3 = elm_segment_control_item_add(segment3, ic4, NULL);
+   elm_segment_control_item_add(segment3, ic2, NULL);
+   it = elm_segment_control_item_add(segment3, ic3, NULL);
+   elm_segment_control_item_selected_set(it, EINA_TRUE);
+   elm_segment_control_item_add(segment3, ic4, NULL);
 
    ic5 = elm_icon_add(in_layout);
    snprintf(buf6, sizeof(buf6), "%s/images/logo.png", elm_app_data_dir_get());
@@ -87,10 +87,10 @@ test_segment_control(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *e
    evas_object_size_hint_aspect_set(ic5, EVAS_ASPECT_CONTROL_BOTH, 1, 1);
 
    segment4 = elm_segment_control_add(win);
-   it1 = elm_segment_control_item_add(segment4, NULL, "Disabled");
-   it2 = elm_segment_control_item_add(segment4, ic5, "Disabled");
-   elm_segment_control_item_selected_set(it2, EINA_TRUE);
-   it3 = elm_segment_control_item_add(segment4, NULL, "Disabled");
+   elm_segment_control_item_add(segment4, NULL, "Disabled");
+   it = elm_segment_control_item_add(segment4, ic5, "Disabled");
+   elm_segment_control_item_selected_set(it, EINA_TRUE);
+   elm_segment_control_item_add(segment4, NULL, "Disabled");
    elm_object_disabled_set(segment4, EINA_TRUE);
 
    elm_layout_content_set(in_layout, "segment1", segment1);

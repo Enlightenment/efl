@@ -72,7 +72,7 @@ _populate_2(Elm_Menu_Item *item)
 static void
 _populate_1(Evas_Object *win, Elm_Menu_Item *item)
 {
-   Elm_Menu_Item *item2, *item3;
+   Elm_Menu_Item *item2;
    Evas_Object *radio;
 
    radio = elm_radio_add(win);
@@ -80,7 +80,7 @@ _populate_1(Evas_Object *win, Elm_Menu_Item *item)
    elm_radio_value_set(radio, 0);
    elm_object_text_set(radio, "radio in menu");
    item2 = elm_menu_item_add(menu, item, "object-rotate-left", "menu 1", NULL, NULL);
-   item3 = elm_menu_item_add_object(menu, item, radio, NULL, NULL);
+   elm_menu_item_add_object(menu, item, radio, NULL, NULL);
 
    _populate_2(item2);
 }

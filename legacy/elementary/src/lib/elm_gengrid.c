@@ -948,10 +948,10 @@ _item_realize(Elm_Gen_Item *it)
         EINA_LIST_FOREACH(it->labels, l, key)
           {
              char *s = it->itc->func.label_get
-                ((void *)it->base.data, WIDGET(it), l->data);
+                ((void *)it->base.data, WIDGET(it), key);
              if (s)
                {
-                  edje_object_part_text_set(VIEW(it), l->data, s);
+                  edje_object_part_text_set(VIEW(it), key, s);
                   free(s);
                }
           }

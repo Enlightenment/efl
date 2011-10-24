@@ -318,7 +318,6 @@ _state_update(State *st)
    double b, minv = 0.0, minva, mgrad;
    int gx, gy, gszw, gszh, gw, gh, col, row, nw, nh;
    double rho, A, theta, perc, percm, n, rhol, Al, thetal;
-   Vertex2 *tvi;
    Vertex3 *tvo, *tvol;
 
    st->backflip = 0;
@@ -474,7 +473,6 @@ _state_update(State *st)
 
    num = (st->slices_w + 1) * (st->slices_h + 1);
 
-   tvi = alloca(sizeof(Vertex2) * num);
    tvo = alloca(sizeof(Vertex3) * num);
    tvol = alloca(sizeof(Vertex3) * (st->slices_w + 1));
 

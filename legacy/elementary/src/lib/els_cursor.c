@@ -300,9 +300,8 @@ _elm_cursor_cur_set(Elm_Cursor *cur)
    if (cur->use_engine)
      {
 #ifdef HAVE_ELEMENTARY_X
-        struct _Cursor_Id cur_search, *cur_id;
+        struct _Cursor_Id *cur_id;
 
-        cur_search.name = cur->cursor_name;
         cur_id = bsearch(&(cur->cursor_name), _cursors, _cursors_count,
                          sizeof(struct _Cursor_Id), _elm_cursor_strcmp);
 

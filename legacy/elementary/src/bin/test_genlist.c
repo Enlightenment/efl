@@ -1348,7 +1348,7 @@ test_genlist8(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_in
 {
    Evas_Object *win, *bg, *gl, *bt[8], *bx, *bx2, *bx3;
    Elm_Genlist_Item *gli = NULL, *git = NULL;
-   int i, bt_count, bt_num;
+   int i, bt_num;
 
    win = elm_win_add(NULL, "genlist-group", ELM_WIN_BASIC);
    elm_win_title_set(win, "Genlist Group");
@@ -1460,7 +1460,6 @@ test_genlist8(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_in
    elm_box_pack_end(bx, bx3);
    evas_object_show(bx3);
 
-   bt_count = 0;
    for (i = 0; i < 500; i++)
      {
         if (!(i % 10))
@@ -1889,7 +1888,6 @@ test_genlist12(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_i
 {
    Evas_Object *win, *bg, *bx, *gl;
    int i;
-   Elm_Genlist_Item *gli;
 
    win = elm_win_add(NULL, "genlist-textblock", ELM_WIN_BASIC);
    elm_win_title_set(win, "Genlist Textblock");
@@ -1920,12 +1918,12 @@ test_genlist12(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_i
 
    for (i = 0; i < 1000; i++)
      {
-        gli = elm_genlist_item_append(gl, &itc1,
-                                      (void *)(long)i/* item data */,
-                                      NULL/* parent */,
-                                      ELM_GENLIST_ITEM_NONE,
-                                      gl_sel/* func */,
-                                      (void *)(long)(i * 10)/* func data */);
+        elm_genlist_item_append(gl, &itc1,
+                                (void *)(long)i/* item data */,
+                                NULL/* parent */,
+                                ELM_GENLIST_ITEM_NONE,
+                                gl_sel/* func */,
+                                (void *)(long)(i * 10)/* func data */);
      }
 
    evas_object_resize(win, 400, 500);
