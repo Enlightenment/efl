@@ -7582,7 +7582,8 @@ extern "C" {
     * @code
     * obj = elm_check_add(parent);
     * elm_object_style_set(obj, "toggle");
-    * elm_check_states_labels_set(obj, "ON", "OFF");
+    * elm_object_text_part_set(obj, "on", "ON");
+    * elm_object_text_part_set(obj, "off", "OFF");
     * @endcode
     * 
     * Signals that you can add callbacks for are:
@@ -7628,6 +7629,8 @@ extern "C" {
     * Once the icon object is set, a previously set one will be deleted
     * If you want to keep that old content object, use the
     * elm_toggle_icon_unset() function.
+    *
+    * @deprecated use elm_check_icon_set() instead.
     */
    EINA_DEPRECATED EAPI void         elm_toggle_icon_set(Evas_Object *obj, Evas_Object *icon) EINA_ARG_NONNULL(1);
    /**
@@ -7639,6 +7642,8 @@ extern "C" {
     * Return the icon object which is set for this widget.
     *
     * @see elm_toggle_icon_set()
+    *
+    * @deprecated use elm_check_icon_get() instead.
     */
    EINA_DEPRECATED EAPI Evas_Object *elm_toggle_icon_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
    /**
@@ -7650,6 +7655,8 @@ extern "C" {
     * Unparent and return the icon object which was set for this widget.
     *
     * @see elm_toggle_icon_set()
+    *
+    * @deprecated use elm_check_icon_unset() instead.
     */
    EINA_DEPRECATED EAPI Evas_Object *elm_toggle_icon_unset(Evas_Object *obj) EINA_ARG_NONNULL(1);
    /**
@@ -7658,14 +7665,21 @@ extern "C" {
     * @param obj The toggle object
     * @param onlabel The label displayed when the toggle is in the "on" state
     * @param offlabel The label displayed when the toggle is in the "off" state
+    *
+    * @deprecated use elm_object_text_part_set() for "on" and "off" parts
+    * instead.
     */
    EINA_DEPRECATED EAPI void         elm_toggle_states_labels_set(Evas_Object *obj, const char *onlabel, const char *offlabel) EINA_ARG_NONNULL(1);
    /**
-    * @brief Gets the labels associated with the on and off states of the toggle.
+    * @brief Gets the labels associated with the on and off states of the
+    * toggle.
     *
     * @param obj The toggle object
     * @param onlabel A char** to place the onlabel of @p obj into
     * @param offlabel A char** to place the offlabel of @p obj into
+    *
+    * @deprecated use elm_object_text_part_get() for "on" and "off" parts
+    * instead.
     */
    EINA_DEPRECATED EAPI void         elm_toggle_states_labels_get(const Evas_Object *obj, const char **onlabel, const char **offlabel) EINA_ARG_NONNULL(1);
    /**
@@ -7673,6 +7687,8 @@ extern "C" {
     *
     * @param obj The toggle object
     * @param state The state of @p obj
+    *
+    * @deprecated use elm_check_state_set() instead.
     */
    EINA_DEPRECATED EAPI void         elm_toggle_state_set(Evas_Object *obj, Eina_Bool state) EINA_ARG_NONNULL(1);
    /**
@@ -7680,6 +7696,8 @@ extern "C" {
     *
     * @param obj The toggle object
     * @return The state of @p obj
+    *
+    * @deprecated use elm_check_state_get() instead.
     */
    EINA_DEPRECATED EAPI Eina_Bool    elm_toggle_state_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
    /**
@@ -7687,6 +7705,8 @@ extern "C" {
     *
     * @param obj The toggle object
     * @param statep The state pointer of @p obj
+    *
+    * @deprecated use elm_check_state_pointer_set() instead.
     */
    EINA_DEPRECATED EAPI void         elm_toggle_state_pointer_set(Evas_Object *obj, Eina_Bool *statep) EINA_ARG_NONNULL(1);
    /**
