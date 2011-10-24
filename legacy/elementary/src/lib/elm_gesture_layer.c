@@ -3337,7 +3337,7 @@ elm_gesture_layer_add(Evas_Object *parent)
    wd->flick_time_limit_ms = _elm_config->glayer_flick_time_limit_ms;
    wd->long_tap_start_timeout = _elm_config->glayer_long_tap_start_timeout;
    wd->repeat_events = EINA_TRUE;
-   wd->glayer_continues_enable = EINA_FALSE;//_elm_config->glayer_continues_enable;
+   wd->glayer_continues_enable = _elm_config->glayer_continues_enable;
 
 #if defined(DEBUG_GESTURE_LAYER)
    printf("size of Gestures = <%d>\n", sizeof(wd->gesture));
