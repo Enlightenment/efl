@@ -8,7 +8,8 @@ elm_toggle_add(Evas_Object *parent)
 
    obj = elm_check_add(parent);
    elm_object_style_set(obj, "toggle");
-   elm_check_states_labels_set(obj, E_("ON"), E_("OFF"));
+   elm_object_text_part_set(obj, "on", E_("ON"));
+   elm_object_text_part_set(obj, "off", E_("OFF"));
    return obj;
 }
 
@@ -45,13 +46,15 @@ elm_toggle_icon_unset(Evas_Object *obj)
 EAPI void
 elm_toggle_states_labels_set(Evas_Object *obj, const char *onlabel, const char *offlabel)
 {
-   elm_check_states_labels_set(obj, onlabel, offlabel);
+   elm_object_text_part_set(obj, "on", onlabel);
+   elm_object_text_part_set(obj, "off", offlabel);
 }
 
 EAPI void
 elm_toggle_states_labels_get(const Evas_Object *obj, const char **onlabel, const char **offlabel)
 {
-   elm_check_states_labels_get(obj, onlabel, offlabel);
+   if (onlabel) *onlabel = elm_object_text_part_get(obj, "on");
+   if (offlabel) *offlabel = elm_object_text_part_get(obj, "off");
 }
 
 EAPI void

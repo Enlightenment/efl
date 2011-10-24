@@ -26,17 +26,10 @@ external_toggle_state_set(void *data __UNUSED__, Evas_Object *obj, const void *f
    if (p->icon)
      elm_check_icon_set(obj, p->icon);
 
-   if ((p->on) && (p->off))
-     elm_check_states_labels_set(obj, p->on, p->off);
-   else if ((p->on) || (p->off))
-     {
-	const char *on, *off;
-	elm_check_states_labels_get(obj, &on, &off);
-	if (p->on)
-	  elm_check_states_labels_set(obj, p->on, off);
-	else
-	  elm_check_states_labels_set(obj, on, p->off);
-     }
+   if (p->on)
+     elm_object_text_part_set(obj, "on", p->on);
+   if (p->off)
+     elm_object_text_part_set(obj, "off", p->off);
 
    if (p->state_exists)
      elm_check_state_set(obj, p->state);
@@ -67,9 +60,7 @@ external_toggle_param_set(void *data __UNUSED__, Evas_Object *obj, const Edje_Ex
      {
 	if (param->type == EDJE_EXTERNAL_PARAM_TYPE_STRING)
 	  {
-	     const char *on, *off;
-	     elm_check_states_labels_get(obj, &on, &off);
-	     elm_check_states_labels_set(obj, param->s, off);
+	     elm_object_text_part_set(obj, "on", param->s);
 	     return EINA_TRUE;
 	  }
      }
@@ -77,9 +68,7 @@ external_toggle_param_set(void *data __UNUSED__, Evas_Object *obj, const Edje_Ex
      {
 	if (param->type == EDJE_EXTERNAL_PARAM_TYPE_STRING)
 	  {
-	     const char *on, *off;
-	     elm_check_states_labels_get(obj, &on, &off);
-	     elm_check_states_labels_set(obj, on, param->s);
+	     elm_object_text_part_set(obj, "off", param->s);
 	     return EINA_TRUE;
 	  }
      }
@@ -118,9 +107,7 @@ external_toggle_param_get(void *data __UNUSED__, const Evas_Object *obj, Edje_Ex
      {
 	if (param->type == EDJE_EXTERNAL_PARAM_TYPE_STRING)
 	  {
-	     const char *on, *off;
-	     elm_check_states_labels_get(obj, &on, &off);
-	     param->s = on;
+	     param->s = elm_object_text_part_get(obj, "on");
 	     return EINA_TRUE;
 	  }
      }
@@ -128,9 +115,7 @@ external_toggle_param_get(void *data __UNUSED__, const Evas_Object *obj, Edje_Ex
      {
 	if (param->type == EDJE_EXTERNAL_PARAM_TYPE_STRING)
 	  {
-	     const char *on, *off;
-	     elm_check_states_labels_get(obj, &on, &off);
-	     param->s = off;
+	     param->s = elm_object_text_part_get(obj, "off");
 	     return EINA_TRUE;
 	  }
      }

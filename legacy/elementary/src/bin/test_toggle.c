@@ -35,7 +35,8 @@ test_toggle(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info
    elm_object_text_set(tg, "Icon sized to toggle");
    elm_check_icon_set(tg, ic);
    elm_check_state_set(tg, 1);
-   elm_check_states_labels_set(tg, "Yes", "No");
+   elm_object_text_part_set(tg, "on", "Yes");
+   elm_object_text_part_set(tg, "off", "No");
    elm_box_pack_end(bx, tg);
    evas_object_show(tg);
    evas_object_show(ic);
@@ -70,8 +71,8 @@ test_toggle(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info
    tg = elm_check_add(win);
    elm_object_style_set(tg, "toggle");
    elm_object_text_set(tg, "Label Only");
-   elm_check_states_labels_set(tg, "Big long fun times label",
-                                "Small long happy fun label");
+   elm_object_text_part_set(tg, "on", "Big long fun times label");
+   elm_object_text_part_set(tg, "off", "Small long happy fun label");
    elm_box_pack_end(bx, tg);
    evas_object_show(tg);
 
