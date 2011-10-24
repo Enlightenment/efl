@@ -28149,6 +28149,17 @@ extern "C" {
     */
    EAPI void                elm_naviframe_item_pop_to(Elm_Object_Item *it) EINA_ARG_NONNULL(1);
    /**
+   * Promote an item already in the naviframe stack to the top of the stack
+   *
+   * @param it The naviframe item
+   *
+   * This will take the indicated item and promote it to the top of the stack
+   * as if it had been pushed there. The item must already be inside the
+   * naviframe stack to work.
+   *
+   */
+   EAPI void                elm_naviframe_item_promote(Elm_Object_Item *it) EINA_ARG_NONNULL(1);
+   /**
     * @brief Delete the given item instantly.
     *
     * @param it The naviframe item
