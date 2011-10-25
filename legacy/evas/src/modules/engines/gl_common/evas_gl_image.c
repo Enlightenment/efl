@@ -106,8 +106,8 @@ evas_gl_common_image_load(Evas_Engine_GL_Context *gc, const char *file, const ch
    im_im = evas_common_load_image_from_file(file, key, lo, error);
    if (!im_im) return NULL;
    
-   if ((im_im->cache_entry.w > gc->shared->info.max_texture_size) ||
-       (im_im->cache_entry.h > gc->shared->info.max_texture_size))
+   if (((int)im_im->cache_entry.w > gc->shared->info.max_texture_size) ||
+       ((int)im_im->cache_entry.h > gc->shared->info.max_texture_size))
      {
         evas_cache_image_drop(&(im_im->cache_entry));
         *error = EVAS_LOAD_ERROR_RESOURCE_ALLOCATION_FAILED;
@@ -156,8 +156,8 @@ evas_gl_common_image_new_from_data(Evas_Engine_GL_Context *gc, unsigned int w, u
    Evas_GL_Image *im;
    Eina_List *l;
 
-   if ((w > gc->shared->info.max_texture_size) ||
-       (h > gc->shared->info.max_texture_size))
+   if (((int)w > gc->shared->info.max_texture_size) ||
+       ((int)h > gc->shared->info.max_texture_size))
      return NULL;
      
    if (data)
@@ -213,8 +213,8 @@ evas_gl_common_image_new_from_copied_data(Evas_Engine_GL_Context *gc, unsigned i
 {
    Evas_GL_Image *im;
 
-   if ((w > gc->shared->info.max_texture_size) ||
-       (h > gc->shared->info.max_texture_size))
+   if (((int)w > gc->shared->info.max_texture_size) ||
+       ((int)h > gc->shared->info.max_texture_size))
      return NULL;
    
    im = calloc(1, sizeof(Evas_GL_Image));
@@ -258,8 +258,8 @@ evas_gl_common_image_new(Evas_Engine_GL_Context *gc, unsigned int w, unsigned in
 {
    Evas_GL_Image *im;
 
-   if ((w > gc->shared->info.max_texture_size) ||
-       (h > gc->shared->info.max_texture_size))
+   if (((int)w > gc->shared->info.max_texture_size) ||
+       ((int)h > gc->shared->info.max_texture_size))
      return NULL;
    
    im = calloc(1, sizeof(Evas_GL_Image));
@@ -496,8 +496,8 @@ evas_gl_common_image_surface_new(Evas_Engine_GL_Context *gc, unsigned int w, uns
 {
    Evas_GL_Image *im;
 
-   if ((w > gc->shared->info.max_texture_size) ||
-       (h > gc->shared->info.max_texture_size))
+   if (((int)w > gc->shared->info.max_texture_size) ||
+       ((int)h > gc->shared->info.max_texture_size))
      return NULL;
    
    im = calloc(1, sizeof(Evas_GL_Image));
