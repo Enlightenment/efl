@@ -32,12 +32,12 @@ struct _Render_Engine
    Evas                    *evas;
    Tilebuf                 *tb;
    int                      end;
-
+/*
    XrmDatabase   xrdb; // xres - dpi
    struct { // xres - dpi
       int        dpi; // xres - dpi
    } xr; // xres - dpi
-
+ */
    int w, h;
    int vsync;
 
@@ -611,7 +611,7 @@ static Evas_Func func, pfunc;
 
 /* Function table for GL APIs */
 static Evas_GL_API gl_funcs;
-
+/*
 struct xrdb_user
 {
    time_t last_stat;
@@ -626,7 +626,7 @@ xrdb_user_query(const char *name, const char *cls, char **type, XrmValue *val)
    time_t last = xrdb_user.last_stat, now = time(NULL);
 
    xrdb_user.last_stat = now;
-   if (last != now) /* don't stat() more than once every second */
+   if (last != now) // don't stat() more than once every second
      {
 	struct stat st;
 	const char *home = getenv("HOME");
@@ -656,7 +656,8 @@ xrdb_user_query(const char *name, const char *cls, char **type, XrmValue *val)
    xrdb_user.last_mtime = 0;
    return EINA_FALSE;
 }
-
+*/
+     
 static void *
 eng_info(Evas *e)
 {
@@ -874,7 +875,7 @@ eng_setup(Evas *e, void *in)
           }
 
         gl_wins++;
-
+/*
           {
              int status;
              char *type = NULL;
@@ -928,7 +929,7 @@ eng_setup(Evas *e, void *in)
                     }
                }
           }
-
+ */
         if (!initted)
           {
              evas_common_cpu_init();
@@ -3952,6 +3953,7 @@ static void
 module_close(Evas_Module *em __UNUSED__)
 {
     eina_log_domain_unregister(_evas_engine_GL_X11_log_dom);
+/*   
     if (xrdb_user.db)
       {
 	 XrmDestroyDatabase(xrdb_user.db);
@@ -3959,6 +3961,7 @@ module_close(Evas_Module *em __UNUSED__)
 	 xrdb_user.last_mtime = 0;
 	 xrdb_user.db = NULL;
       }
+ */
     evas_gl_common_module_close();
 }
 

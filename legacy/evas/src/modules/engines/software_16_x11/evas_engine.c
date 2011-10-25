@@ -7,7 +7,7 @@
 int _evas_engine_soft16_x11_log_dom = -1;
 /* function tables - filled in later (func and parent func) */
 static Evas_Func func, pfunc;
-
+/*
 struct xrdb_user
 {
    time_t last_stat;
@@ -22,7 +22,7 @@ xrdb_user_query(const char *name, const char *cls, char **type, XrmValue *val)
    time_t last = xrdb_user.last_stat, now = time(NULL);
 
    xrdb_user.last_stat = now;
-   if (last != now) /* don't stat() more than once every second */
+   if (last != now) // don't stat() more than once every second
      {
 	struct stat st;
 	const char *home = getenv("HOME");
@@ -52,6 +52,7 @@ xrdb_user_query(const char *name, const char *cls, char **type, XrmValue *val)
    xrdb_user.last_mtime = 0;
    return EINA_FALSE;
 }
+*/
 
 /* engine struct data */
 typedef struct _Render_Engine Render_Engine;
@@ -65,12 +66,12 @@ struct _Render_Engine
    Tilebuf          *tb;
    Tilebuf_Rect     *rects;
    Tilebuf_Rect     *cur_rect;
-   
+/*   
    XrmDatabase   xrdb; // xres - dpi
    struct { // xres - dpi
       int        dpi; // xres - dpi
    } xr; // xres - dpi
-   
+ */
    X_Output_Buffer  *shbuf;
    Soft16_Image     *tmp_out; /* used by indirect render, like rotation */
    Region            clip_rects;
@@ -227,7 +228,7 @@ eng_setup(Evas *e, void *in)
      }
    if (!e->engine.data.output) return 0;
    
-   
+/*   
      {   
         int status;
         char *type = NULL;
@@ -281,6 +282,7 @@ eng_setup(Evas *e, void *in)
           }
         evas_common_font_dpi_set(re->xr.dpi / 1000);
      }
+ */
    
    /* add a draw context if we dont have one */
    if (!e->engine.data.context)
@@ -709,6 +711,7 @@ static void
 module_close(Evas_Module *em __UNUSED__)
 {
   eina_log_domain_unregister(_evas_engine_soft16_x11_log_dom);
+/*   
   if (xrdb_user.db)
     {
        XrmDestroyDatabase(xrdb_user.db);
@@ -716,6 +719,7 @@ module_close(Evas_Module *em __UNUSED__)
        xrdb_user.last_mtime = 0;
        xrdb_user.db = NULL;
     }
+ */
 }
 
 static Evas_Module_Api evas_modapi =
