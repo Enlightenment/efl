@@ -763,7 +763,7 @@ evas_object_smart_member_cache_invalidate(Evas_Object *obj)
    return;
    MAGIC_CHECK_END();
 
-   obj->parent_cache_valid = 0;
+   obj->parent_cache.pass_events_valid = 0;
 
    o = (Evas_Object_Smart *)(obj->object_data);
    if (o->magic != MAGIC_OBJ_SMART) return;

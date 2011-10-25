@@ -570,8 +570,10 @@ struct _Evas_Object
 
    Eina_Bool                   store : 1;
    Eina_Bool                   pass_events : 1;
-   Eina_Bool                   parent_pass_events : 1;
-   Eina_Bool                   parent_cache_valid : 1;
+   struct  {
+      Eina_Bool                pass_events : 1;
+      Eina_Bool                pass_events_valid : 1;
+   } parent_cache;
    Eina_Bool                   repeat_events : 1;
    Eina_Bool                   restack : 1;
    Eina_Bool                   is_active : 1;
