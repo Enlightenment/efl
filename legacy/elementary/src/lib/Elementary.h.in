@@ -12187,7 +12187,7 @@ extern "C" {
    /**
     * Get the style that the hover should use
     *
-    * Get the style the hover created by anchorblock will use.
+    * Get the style, the hover created by anchorblock will use.
     *
     * @param obj The anchorblock object
     * @return The style to use by the hover. NULL means the default is used.
@@ -12265,11 +12265,11 @@ extern "C" {
     * @image html img/widget/bubble/preview-02.png
     * @image latex img/widget/bubble/preview-02.eps
     *
-    * @brief The Bubble is a widget to show text similarly to how speech is
+    * @brief The Bubble is a widget to show text similar to how speech is
     * represented in comics.
     *
     * The bubble widget contains 5 important visual elements:
-    * @li The frame is a rectangle with rounded rectangles and an "arrow".
+    * @li The frame is a rectangle with rounded edjes and an "arrow".
     * @li The @p icon is an image to which the frame's arrow points to.
     * @li The @p label is a text which appears to the right of the icon if the
     * corner is "top_left" or "bottom_left" and is right aligned to the frame
@@ -12437,7 +12437,7 @@ extern "C" {
    /**
     * @defgroup Photo Photo
     *
-    * For displaying the photo of a person (contact). Simple yet
+    * For displaying the photo of a person (contact). Simple, yet
     * with a very specific purpose.
     *
     * Signals that you can add callbacks for are:
