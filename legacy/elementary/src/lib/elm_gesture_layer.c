@@ -7,6 +7,7 @@
 /* ELM_GESTURE_NEGATIVE_ANGLE - magic number says we didn't compute this yet */
 #define ELM_GESTURE_NEGATIVE_ANGLE (-1.0) /* Magic number */
 #define ELM_GESTURE_MOMENTUM_TIMEOUT 50
+#define ELM_GESTURE_MULTI_TIMEOUT 50
 
 /* Some Trigo values */
 #define RAD_90DEG  M_PI_2
@@ -172,6 +173,8 @@ struct _Momentum_Type
    unsigned int t_st_x;  /* Time start on X */
    unsigned int t_st_y;  /* Time start on Y */
    unsigned int t_end;   /* Time end        */
+   unsigned int t_up; /* Recent up event time */
+   int n_fingers;
    int xdir, ydir;
 };
 typedef struct _Momentum_Type Momentum_Type;
@@ -1733,7 +1736,7 @@ _momentum_test(Evas_Object *obj, Pointer_Event *pe,
    if (!gesture ) return;
 
    Momentum_Type *st = gesture->data;
-   Elm_Gesture_State state_to_report;
+   Elm_Gesture_State state_to_report = ELM_GESTURE_STATE_MOVE;
    if (!st)
      {  /* Allocated once on first time */
         st = calloc(1, sizeof(Momentum_Type));
@@ -1744,38 +1747,69 @@ _momentum_test(Evas_Object *obj, Pointer_Event *pe,
    if (!pe)
      return;
 
+   /* First make avarage of all touched devices to determine center point */
+   Eina_List *l;
+   Pointer_Event *p;
+   Pointer_Event pe_local = *pe;  /* Copy pe event info to local */
+   int cnt = 1;    /* We start counter counting current pe event */
+   EINA_LIST_FOREACH(wd->touched, l, p)
+      if (p->device != pe_local.device)
+        {
+           pe_local.x += p->x;
+           pe_local.y += p->y;
+           cnt++;
+        }
+
+
+   /* Compute avarage to get center point */
+   pe_local.x /= cnt;
+   pe_local.y /= cnt;
+
+   /* If user added finger - reset gesture */
+   if ((st->n_fingers) && (st->n_fingers < cnt))
+     state_to_report = ELM_GESTURE_STATE_ABORT;
+
+   st->n_fingers = cnt;
+
    Evas_Event_Flags ev_flag = EVAS_EVENT_FLAG_NONE;
    switch (event_type)
      {
       case EVAS_CALLBACK_MOUSE_DOWN:
+      case EVAS_CALLBACK_MULTI_DOWN:
       case EVAS_CALLBACK_MOUSE_MOVE:
+      case EVAS_CALLBACK_MULTI_MOVE:
          if (!st->t_st_x)
            {
               if ((event_type == EVAS_CALLBACK_MOUSE_DOWN) ||
+                    (event_type == EVAS_CALLBACK_MULTI_DOWN) ||
                     (wd->glayer_continues_enable)) /* start also on MOVE */
                 {  /* We start on MOVE when cont-enabled only */
-                   st->line_st.x = st->line_end.x = pe->x;
-                   st->line_st.y = st->line_end.y = pe->y;
-                   st->t_st_x = st->t_st_y = st->t_end = pe->timestamp;
+                   st->line_st.x = st->line_end.x = pe_local.x;
+                   st->line_st.y = st->line_end.y = pe_local.y;
+                   st->t_st_x = st->t_st_y = st->t_end = pe_local.timestamp;
                    st->xdir = st->ydir = 0;
-                   st->info.x2 = st->info.x1 = pe->x;
-                   st->info.y2 = st->info.y1 = pe->y;
-                   st->info.tx = st->info.ty = pe->timestamp;
+                   st->info.x2 = st->info.x1 = pe_local.x;
+                   st->info.y2 = st->info.y1 = pe_local.y;
+                   st->info.tx = st->info.ty = pe_local.timestamp;
                    ev_flag = _set_state(gesture, ELM_GESTURE_STATE_START,
                          &st->info, EINA_FALSE);
                    consume_event(wd, event_info, event_type, ev_flag);
-
                 }
 
               return;
            }
 
-         state_to_report = ELM_GESTURE_STATE_MOVE;
-         if ((pe->timestamp - ELM_GESTURE_MOMENTUM_TIMEOUT) > st->t_end)
+
+         /* ABORT gesture if got DOWN or MOVE event after UP+timeout */
+         if ((st->t_up) &&
+         ((st->t_up + ELM_GESTURE_MULTI_TIMEOUT) < pe_local.timestamp))
+           state_to_report = ELM_GESTURE_STATE_ABORT;
+
+         if ((pe_local.timestamp - ELM_GESTURE_MOMENTUM_TIMEOUT) > st->t_end)
            {  /*  Too long of a wait, reset all values */
-              st->line_st.x = pe->x;
-              st->line_st.y = pe->y;
-              st->t_st_y = st->t_st_x = pe->timestamp;
+              st->line_st.x = pe_local.x;
+              st->line_st.y = pe_local.y;
+              st->t_st_y = st->t_st_x = pe_local.timestamp;
               st->info.tx = st->t_st_x;
               st->info.ty = st->t_st_y;
               st->xdir = st->ydir = 0;
@@ -1783,8 +1817,8 @@ _momentum_test(Evas_Object *obj, Pointer_Event *pe,
          else
            {
               int xdir, ydir;
-              xdir = _get_direction(st->line_st.x, pe->x);
-              ydir = _get_direction(st->line_st.y, pe->y);
+              xdir = _get_direction(st->line_st.x, pe_local.x);
+              ydir = _get_direction(st->line_st.y, pe_local.y);
               if (!xdir || (xdir == (-st->xdir)))
                 {
                    st->line_st.x = st->line_end.x;
@@ -1800,11 +1834,11 @@ _momentum_test(Evas_Object *obj, Pointer_Event *pe,
                 }
            }
 
-         st->info.x2 = st->line_end.x = pe->x;
-         st->info.y2 = st->line_end.y = pe->y;
-         st->t_end = pe->timestamp;
-         _set_momentum(&st->info, st->line_st.x, st->line_st.y, pe->x, pe->y,
-               st->t_st_x, st->t_st_y, pe->timestamp);
+         st->info.x2 = st->line_end.x = pe_local.x;
+         st->info.y2 = st->line_end.y = pe_local.y;
+         st->t_end = pe_local.timestamp;
+         _set_momentum(&st->info, st->line_st.x, st->line_st.y, pe_local.x, pe_local.y,
+               st->t_st_x, st->t_st_y, pe_local.timestamp);
          ev_flag = _set_state(gesture, state_to_report, &st->info,
                EINA_TRUE);
          consume_event(wd, event_info, event_type, ev_flag);
@@ -1812,36 +1846,30 @@ _momentum_test(Evas_Object *obj, Pointer_Event *pe,
 
 
       case EVAS_CALLBACK_MOUSE_UP:
-         /* IGNORE if line info was cleared, like long press, move */
-         if (!st->t_st_x)
+      case EVAS_CALLBACK_MULTI_UP:
+         st->t_up = pe_local.timestamp;       /* Record recent up event time */
+         if ((cnt > 1) ||     /* Ignore if more fingers touch surface        */
+               (!st->t_st_x)) /* IGNORE if info was cleared, long press,move */
            return;
-         state_to_report = ELM_GESTURE_STATE_END;
 
-         if ((pe->timestamp - ELM_GESTURE_MOMENTUM_TIMEOUT) > st->t_end)
+         if ((pe_local.timestamp - ELM_GESTURE_MOMENTUM_TIMEOUT) > st->t_end)
            {  /* Too long of a wait, reset all values */
-              st->line_st.x = pe->x;
-              st->line_st.y = pe->y;
-              st->t_st_y = st->t_st_x = pe->timestamp;
+              st->line_st.x = pe_local.x;
+              st->line_st.y = pe_local.y;
+              st->t_st_y = st->t_st_x = pe_local.timestamp;
               st->xdir = st->ydir = 0;
            }
 
-         st->info.x2 = pe->x;
-         st->info.y2 = pe->y;
-         st->line_end.x = pe->x;
-         st->line_end.y = pe->y;
-         st->t_end = pe->timestamp;
+         st->info.x2 = pe_local.x;
+         st->info.y2 = pe_local.y;
+         st->line_end.x = pe_local.x;
+         st->line_end.y = pe_local.y;
+         st->t_end = pe_local.timestamp;
 
-         _set_momentum(&st->info, st->line_st.x, st->line_st.y, pe->x, pe->y,
-               st->t_st_x, st->t_st_y, pe->timestamp);
+         _set_momentum(&st->info, st->line_st.x, st->line_st.y, pe_local.x, pe_local.y,
+               st->t_st_x, st->t_st_y, pe_local.timestamp);
 
-         ev_flag = _set_state(gesture, state_to_report, &st->info,
-               EINA_FALSE);
-         consume_event(wd, event_info, event_type, ev_flag);
-
-         return;
-
-      case EVAS_CALLBACK_MULTI_UP:
-         ev_flag = _set_state(gesture, ELM_GESTURE_STATE_ABORT, &st->info,
+         ev_flag = _set_state(gesture, ELM_GESTURE_STATE_END, &st->info,
                EINA_FALSE);
          consume_event(wd, event_info, event_type, ev_flag);
          return;
