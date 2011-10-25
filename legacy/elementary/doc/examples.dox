@@ -842,7 +842,7 @@
   * callback, where we move the button doing some size hint magic. To
   * understand how that works better, refer to the @ref Box documentation.
   * Also, the first time the function is called, we change the icon in the
-  * middle button, using elm_button_icon_unset() first to keep the reference
+  * middle button, using elm_object_content_unset() first to keep the reference
   * to the previous one, so we don't need to recreate it when we are done
   * moving it.
   * @skip static void

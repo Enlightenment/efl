@@ -497,7 +497,7 @@ elm_fileselector_button_icon_set(Evas_Object *obj,
         evas_object_del(icon);
         return;
      }
-   elm_button_icon_set(wd->btn, icon);
+   elm_object_content_set(wd->btn, icon);
 }
 
 EAPI Evas_Object *
@@ -506,7 +506,7 @@ elm_fileselector_button_icon_get(const Evas_Object *obj)
    ELM_CHECK_WIDTYPE(obj, widtype) NULL;
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return NULL;
-   return elm_button_icon_get(wd->btn);
+   return elm_object_content_get(wd->btn);
 }
 
 EAPI Evas_Object *
@@ -515,6 +515,6 @@ elm_fileselector_button_icon_unset(Evas_Object *obj)
    ELM_CHECK_WIDTYPE(obj, widtype) NULL;
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return NULL;
-   return elm_button_icon_unset(wd->btn);
+   return elm_object_content_unset(wd->btn);
 }
 

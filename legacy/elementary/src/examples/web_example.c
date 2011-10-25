@@ -405,7 +405,7 @@ _win_search_trigger_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED
 
    ic = elm_icon_add(ad->win);
    elm_icon_standard_set(ic, "arrow_up");
-   elm_button_icon_set(btn, ic);
+   elm_object_content_set(btn, ic);
 
    evas_object_smart_callback_add(btn, "clicked", _search_prev_cb, ad);
 
@@ -415,7 +415,7 @@ _win_search_trigger_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED
 
    ic = elm_icon_add(ad->win);
    elm_icon_standard_set(ic, "arrow_down");
-   elm_button_icon_set(btn, ic);
+   elm_object_content_set(btn, ic);
 
    evas_object_smart_callback_add(btn, "clicked", _search_next_cb, ad);
 
@@ -425,7 +425,7 @@ _win_search_trigger_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED
 
    ic = elm_icon_add(ad->win);
    elm_icon_standard_set(ic, "close");
-   elm_button_icon_set(btn, ic);
+   elm_object_content_set(btn, ic);
 
    evas_object_smart_callback_add(btn, "clicked", _search_close_cb, ad);
 
@@ -523,7 +523,7 @@ elm_main(int argc __UNUSED__, char *argv[] __UNUSED__)
 
    ic = elm_icon_add(win);
    elm_icon_standard_set(ic, "arrow_left");
-   elm_button_icon_set(btn, ic);
+   elm_object_content_set(btn, ic);
 
    evas_object_smart_callback_add(btn, "clicked", _nav_back_cb, ad);
 
@@ -535,7 +535,7 @@ elm_main(int argc __UNUSED__, char *argv[] __UNUSED__)
 
    ic = elm_icon_add(win);
    elm_icon_standard_set(ic, "refresh");
-   elm_button_icon_set(btn, ic);
+   elm_object_content_set(btn, ic);
 
    evas_object_smart_callback_add(btn, "clicked", _nav_refresh_cb, ad);
 
@@ -547,7 +547,7 @@ elm_main(int argc __UNUSED__, char *argv[] __UNUSED__)
 
    ic = elm_icon_add(win);
    elm_icon_standard_set(ic, "arrow_right");
-   elm_button_icon_set(btn, ic);
+   elm_object_content_set(btn, ic);
 
    evas_object_smart_callback_add(btn, "clicked", _nav_fwd_cb, ad);
 
@@ -564,7 +564,7 @@ elm_main(int argc __UNUSED__, char *argv[] __UNUSED__)
 
    ic = elm_icon_add(win);
    elm_icon_standard_set(ic, "file");
-   elm_button_icon_set(btn, ic);
+   elm_object_content_set(btn, ic);
 
    evas_object_smart_callback_add(btn, "clicked", _add_tab_cb, ad);
 
@@ -586,7 +586,7 @@ elm_main(int argc __UNUSED__, char *argv[] __UNUSED__)
 
    ic = elm_icon_add(win);
    elm_icon_standard_set(ic, "close");
-   elm_button_icon_set(btn, ic);
+   elm_object_content_set(btn, ic);
 
    pager = elm_pager_add(win);
    evas_object_size_hint_weight_set(pager, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);

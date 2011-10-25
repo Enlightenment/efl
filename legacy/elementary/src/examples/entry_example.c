@@ -553,7 +553,7 @@ elm_main(int argc __UNUSED__, char *argv[] __UNUSED__)
 
    icon = elm_layout_add(win);
    elm_layout_theme_set(icon, "entry", "emoticon/haha", "default");
-   elm_button_icon_set(o, icon);
+   elm_object_content_set(o, icon);
 
    evas_object_smart_callback_add(o, "clicked", _image_insert_cb, &app);
 

@@ -132,7 +132,7 @@ elm_main(int argc __UNUSED__, char **argv __UNUSED__)
    icon = elm_icon_add(win);
    snprintf(buf, sizeof(buf), "%s/images/icon_07.png", PACKAGE_DATA_DIR);
    elm_icon_file_set(icon, buf, NULL);
-   elm_button_icon_set(obj, icon);
+   elm_object_content_set(obj, icon);
    evas_object_move(obj, 160, 60);
    evas_object_resize(obj, 250, 100);
    evas_object_show(obj);
@@ -145,7 +145,7 @@ elm_main(int argc __UNUSED__, char **argv __UNUSED__)
    icon = elm_icon_add(win);
    snprintf(buf, sizeof(buf), "%s/images/icon_08.png", PACKAGE_DATA_DIR);
    elm_icon_file_set(icon, buf, NULL);
-   elm_button_icon_set(obj, icon);
+   elm_object_content_set(obj, icon);
    evas_object_move(obj, 160, 60);
    evas_object_resize(obj, 250, 100);
 

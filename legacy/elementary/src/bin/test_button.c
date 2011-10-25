@@ -64,7 +64,7 @@ test_button(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info
    evas_object_size_hint_aspect_set(ic, EVAS_ASPECT_CONTROL_VERTICAL, 1, 1);
    bt = elm_button_add(win);
    elm_object_text_set(bt, "Icon sized to button");
-   elm_button_icon_set(bt, ic);
+   elm_object_content_set(bt, ic);
    evas_object_smart_callback_add(bt, "clicked", _bt_clicked, (void *)1);
    evas_object_smart_callback_add(bt, "unpressed", _bt_unpressed, (void *)1);
    elm_box_pack_end(bx, bt);
@@ -77,7 +77,7 @@ test_button(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info
    elm_icon_scale_set(ic, 0, 0);
    bt = elm_button_add(win);
    elm_object_text_set(bt, "Icon no scale");
-   elm_button_icon_set(bt, ic);
+   elm_object_content_set(bt, ic);
    evas_object_smart_callback_add(bt, "clicked", _bt_clicked, (void *)2);
    evas_object_smart_callback_add(bt, "unpressed", _bt_unpressed, (void *)2);
    elm_box_pack_end(bx, bt);
@@ -90,7 +90,7 @@ test_button(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info
    evas_object_size_hint_aspect_set(ic, EVAS_ASPECT_CONTROL_VERTICAL, 1, 1);
    bt = elm_button_add(win);
    elm_object_text_set(bt, "Disabled Button");
-   elm_button_icon_set(bt, ic);
+   elm_object_content_set(bt, ic);
    elm_object_disabled_set(bt, 1);
    evas_object_smart_callback_add(bt, "clicked", _bt_clicked, (void *)3);
    evas_object_smart_callback_add(bt, "unpressed", _bt_unpressed, (void *)3);
@@ -103,7 +103,7 @@ test_button(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info
    elm_icon_file_set(ic, buf, NULL);
    evas_object_size_hint_aspect_set(ic, EVAS_ASPECT_CONTROL_VERTICAL, 1, 1);
    bt = elm_button_add(win);
-   elm_button_icon_set(bt, ic);
+   elm_object_content_set(bt, ic);
    elm_object_disabled_set(bt, 1);
    evas_object_smart_callback_add(bt, "clicked", _bt_clicked, (void *)4);
    evas_object_smart_callback_add(bt, "unpressed", _bt_unpressed, (void *)4);
@@ -127,7 +127,7 @@ test_button(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info
    elm_icon_file_set(ic, buf, NULL);
    elm_icon_scale_set(ic, 0, 0);
    bt = elm_button_add(win);
-   elm_button_icon_set(bt, ic);
+   elm_object_content_set(bt, ic);
    evas_object_smart_callback_add(bt, "clicked", _bt_clicked, (void *)6);
    evas_object_smart_callback_add(bt, "unpressed", _bt_unpressed, (void *)6);
    elm_box_pack_end(bx, bt);
@@ -148,7 +148,7 @@ test_button(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info
    evas_object_size_hint_aspect_set(ic, EVAS_ASPECT_CONTROL_VERTICAL, 1, 1);
    bt = elm_button_add(win);
    elm_object_style_set(bt, "anchor");
-   elm_button_icon_set(bt, ic);
+   elm_object_content_set(bt, ic);
    evas_object_smart_callback_add(bt, "clicked", _bt_clicked, (void *)8);
    evas_object_smart_callback_add(bt, "unpressed", _bt_unpressed, (void *)8);
    elm_box_pack_end(bx, bt);
@@ -162,7 +162,7 @@ test_button(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info
    bt = elm_button_add(win);
    elm_object_access_info_set(bt, "This is some custom text describing this widget");
    elm_object_style_set(bt, "anchor");
-   elm_button_icon_set(bt, ic);
+   elm_object_content_set(bt, ic);
    elm_object_disabled_set(bt, 1);
    evas_object_smart_callback_add(bt, "clicked", _bt_clicked, (void *)9);
    evas_object_smart_callback_add(bt, "unpressed", _bt_unpressed, (void *)9);

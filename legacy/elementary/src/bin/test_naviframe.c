@@ -37,7 +37,7 @@ _page4(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
    snprintf(buf, sizeof(buf), "%s/images/icon_right_arrow.png", elm_app_data_dir_get());
    elm_icon_file_set(ic, buf, NULL);
    evas_object_size_hint_aspect_set(ic, EVAS_ASPECT_CONTROL_VERTICAL, 1, 1);
-   elm_button_icon_set(bt, ic);
+   elm_object_content_set(bt, ic);
 
    bt2 = elm_button_add(nf);
    evas_object_size_hint_align_set(bt2, EVAS_HINT_FILL, EVAS_HINT_FILL);
@@ -115,7 +115,7 @@ _page2(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
    snprintf(buf, sizeof(buf), "%s/images/icon_right_arrow.png", elm_app_data_dir_get());
    elm_icon_file_set(ic, buf, NULL);
    evas_object_size_hint_aspect_set(ic, EVAS_ASPECT_CONTROL_VERTICAL, 1, 1);
-   elm_button_icon_set(bt, ic);
+   elm_object_content_set(bt, ic);
 
    it = elm_naviframe_item_push(nf,
                                 "Page 2",

@@ -839,7 +839,7 @@ elm_fileselector_add(Evas_Object *parent)
    evas_object_size_hint_aspect_set(ic, EVAS_ASPECT_CONTROL_VERTICAL, 1, 1);
    bt = elm_button_add(parent);
    elm_widget_mirrored_automatic_set(bt, EINA_FALSE);
-   elm_button_icon_set(bt, ic);
+   elm_object_content_set(bt, ic);
    elm_object_domain_translatable_text_set(bt, PACKAGE, N_("Up"));
    evas_object_size_hint_align_set(bt, 0.0, 0.0);
 
@@ -854,7 +854,7 @@ elm_fileselector_add(Evas_Object *parent)
    evas_object_size_hint_aspect_set(ic, EVAS_ASPECT_CONTROL_VERTICAL, 1, 1);
    bt = elm_button_add(parent);
    elm_widget_mirrored_automatic_set(bt, EINA_FALSE);
-   elm_button_icon_set(bt, ic);
+   elm_object_content_set(bt, ic);
    elm_object_domain_translatable_text_set(bt, PACKAGE, N_("Home"));
    evas_object_size_hint_align_set(bt, 0.0, 0.0);
 

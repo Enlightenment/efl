@@ -6189,7 +6189,7 @@ extern "C" {
     * @param obj The button object
     * @param icon The icon object for the button
     */
-   EAPI void         elm_button_icon_set(Evas_Object *obj, Evas_Object *icon) EINA_ARG_NONNULL(1);
+   EINA_DEPRECATED EAPI void         elm_button_icon_set(Evas_Object *obj, Evas_Object *icon) EINA_ARG_NONNULL(1);
    /**
     * Get the icon used for the button
     *
@@ -6202,7 +6202,7 @@ extern "C" {
     *
     * @see elm_button_icon_unset()
     */
-   EAPI Evas_Object *elm_button_icon_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
+   EINA_DEPRECATED EAPI Evas_Object *elm_button_icon_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
    /**
     * Remove the icon set without deleting it and return the object
     *
@@ -6214,7 +6214,7 @@ extern "C" {
     * @param obj The button object
     * @return The icon object that was being used
     */
-   EAPI Evas_Object *elm_button_icon_unset(Evas_Object *obj) EINA_ARG_NONNULL(1);
+   EINA_DEPRECATED EAPI Evas_Object *elm_button_icon_unset(Evas_Object *obj) EINA_ARG_NONNULL(1);
    /**
     * Turn on/off the autorepeat event generated when the button is kept pressed
     *
@@ -14036,7 +14036,7 @@ extern "C" {
     * deleted, if you want to keep that old content object, use the
     * elm_hoversel_icon_unset() function.
     *
-    * @see elm_button_icon_set()
+    * @see elm_object_content_set() for the button widget
     */
    EAPI void               elm_hoversel_icon_set(Evas_Object *obj, Evas_Object *icon) EINA_ARG_NONNULL(1);
    /**
@@ -14046,7 +14046,7 @@ extern "C" {
     * @return The icon object
     *
     * Get the icon of the button that is always visible (before it is clicked
-    * and expanded). Also see elm_button_icon_get().
+    * and expanded). Also see elm_object_content_get() for the button widget.
     *
     * @see elm_hoversel_icon_set()
     */
@@ -14061,7 +14061,7 @@ extern "C" {
     * (before it is clicked and expanded).
     *
     * @see elm_hoversel_icon_set()
-    * @see elm_button_icon_unset()
+    * @see elm_object_content_unset() for the button widget
     */
    EAPI Evas_Object       *elm_hoversel_icon_unset(Evas_Object *obj) EINA_ARG_NONNULL(1);
    /**

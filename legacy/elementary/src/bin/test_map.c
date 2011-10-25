@@ -546,7 +546,7 @@ _marker_get(Evas_Object *obj, Elm_Map_Marker *marker __UNUSED__, void *data)
         evas_object_show(icon);
 
         Evas_Object *o = elm_button_add(obj);
-        elm_button_icon_set(o, icon);
+        elm_object_content_set(o, icon);
         evas_object_show(o);
         elm_box_pack_end(bx, o);
      }

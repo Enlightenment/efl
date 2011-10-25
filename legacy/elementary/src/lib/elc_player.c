@@ -418,7 +418,7 @@ _player_button_add(Evas_Object *parent, Evas_Object *obj, Evas_Object *layout, c
    evas_object_size_hint_aspect_set(ic, EVAS_ASPECT_CONTROL_VERTICAL, 1, 1);
    bt = elm_button_add(parent);
    elm_widget_mirrored_automatic_set(bt, EINA_FALSE);
-   elm_button_icon_set(bt, ic);
+   elm_object_content_set(bt, ic);
    evas_object_size_hint_align_set(bt, 0.0, 0.0);
    elm_object_style_set(bt, "anchor");
    evas_object_smart_callback_add(bt, "clicked", func, obj);

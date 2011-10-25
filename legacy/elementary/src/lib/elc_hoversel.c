@@ -204,7 +204,7 @@ _activate(Evas_Object *obj)
                elm_icon_file_set(ic, item->icon_file, item->icon_group);
              else if (item->icon_type == ELM_ICON_STANDARD)
                elm_icon_standard_set(ic, item->icon_file);
-             elm_button_icon_set(bt, ic);
+             elm_object_content_set(bt, ic);
              evas_object_show(ic);
           }
         evas_object_size_hint_weight_set(bt, EVAS_HINT_EXPAND, 0.0);
@@ -372,7 +372,7 @@ elm_hoversel_icon_set(Evas_Object *obj, Evas_Object *icon)
    ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return;
-   elm_button_icon_set(wd->btn, icon);
+   elm_object_content_set(wd->btn, icon);
 }
 
 EAPI Evas_Object *
@@ -381,7 +381,7 @@ elm_hoversel_icon_get(const Evas_Object *obj)
    ELM_CHECK_WIDTYPE(obj, widtype) NULL;
    Widget_Data *wd = elm_widget_data_get(obj);
    if ((!wd) || (!wd->btn)) return NULL;
-   return elm_button_icon_get(wd->btn);
+   return elm_object_content_get(wd->btn);
 }
 
 EAPI Evas_Object *
@@ -390,7 +390,7 @@ elm_hoversel_icon_unset(Evas_Object *obj)
    ELM_CHECK_WIDTYPE(obj, widtype) NULL;
    Widget_Data *wd = elm_widget_data_get(obj);
    if ((!wd) || (!wd->btn)) return NULL;
-   return elm_button_icon_unset(wd->btn);
+   return elm_object_content_unset(wd->btn);
 }
 
 EAPI void
