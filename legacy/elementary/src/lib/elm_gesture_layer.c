@@ -3011,8 +3011,18 @@ void continues_gestures_restart(void *data, Eina_Bool states_reset)
 
    /* Run through events to restart gestures */
    Gesture_Info *g;
-   Eina_Bool n_lines, n_flicks, zoom, rotate;
+   Eina_Bool n_momentum, n_lines, n_flicks, zoom, rotate;
    /* We turn-on flag for finished, aborted, not-started gestures */
+   g = wd->gesture[ELM_GESTURE_MOMENTUM];
+   n_momentum = (g) ? ((states_reset) | ((g->state != ELM_GESTURE_STATE_START)
+         && (g->state != ELM_GESTURE_STATE_MOVE))) : EINA_FALSE;
+   if (n_momentum)
+     {
+        _momentum_test_reset(wd->gesture[ELM_GESTURE_MOMENTUM]);
+        _set_state(g, ELM_GESTURE_STATE_UNDEFINED, NULL, EINA_FALSE);
+        SET_TEST_BIT(g);
+     }
+
    g = wd->gesture[ELM_GESTURE_N_LINES];
    n_lines = (g) ? ((states_reset) | ((g->state != ELM_GESTURE_STATE_START)
          && (g->state != ELM_GESTURE_STATE_MOVE))) : EINA_FALSE;
