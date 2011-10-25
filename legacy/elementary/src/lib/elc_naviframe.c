@@ -147,10 +147,12 @@ _del_hook(Evas_Object *obj)
    wd = elm_widget_data_get(obj);
    if (!wd) return;
 
-   EINA_INLIST_REVERSE_FOREACH(wd->stack, it)
+   while (wd->stack->last)
      {
-        wd->stack = eina_inlist_remove(wd->stack, EINA_INLIST_GET(it));
+        it = EINA_INLIST_CONTAINER_GET(wd->stack->last, Elm_Naviframe_Item);
+        wd->stack = eina_inlist_remove(wd->stack, wd->stack->last);
         _item_del(it);
+        if (!wd->stack) break;
      }
    free(wd);
 }
@@ -180,7 +182,6 @@ _theme_hook(Evas_Object *obj)
    _mirrored_set(obj, elm_widget_mirrored_get(obj));
 
    evas_object_hide(wd->rect);
-
 }
 
 static void _emit_hook(Evas_Object *obj,
@@ -695,25 +696,28 @@ _item_del(Elm_Naviframe_Item *it)
    if ((it->content) && (!wd->preserve))
      evas_object_del(it->content);
 
-   EINA_INLIST_REVERSE_FOREACH(it->content_list, content_pair)
+   while (it->content_list)
      {
+        content_pair = EINA_INLIST_CONTAINER_GET(it->content_list,
+                                                 Elm_Naviframe_Content_Item_Pair);
         evas_object_event_callback_del(content_pair->content,
                                        EVAS_CALLBACK_DEL,
                                        _title_content_del);
         evas_object_del(content_pair->content);
         eina_stringshare_del(content_pair->part);
-        it->content_list =
-           eina_inlist_remove(it->content_list,
-                              EINA_INLIST_GET(content_pair));
+        it->content_list = eina_inlist_remove(it->content_list,
+                                              it->content_list);
         free(content_pair);
      }
 
-   EINA_INLIST_REVERSE_FOREACH(it->text_list, text_pair)
+   while (it->text_list)
      {
+        text_pair = EINA_INLIST_CONTAINER_GET(it->text_list,
+                                              Elm_Naviframe_Text_Item_Pair);
         eina_stringshare_del(text_pair->part);
         eina_stringshare_del(text_pair->text);
         it->text_list = eina_inlist_remove(it->text_list,
-                                           EINA_INLIST_GET(text_pair));
+                                           it->text_list);
         free(text_pair);
      }
 
