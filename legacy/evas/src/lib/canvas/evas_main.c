@@ -144,6 +144,7 @@ EAPI void
 evas_free(Evas *e)
 {
    Eina_Rectangle *r;
+   Evas_Coord_Touch_Point *touch_point;
    Evas_Layer *lay;
    int i;
    int del;
@@ -249,6 +250,9 @@ evas_free(Evas *e)
    eina_array_flush(&e->temporary_objects);
    eina_array_flush(&e->calculate_objects);
    eina_array_flush(&e->clip_changes);
+
+   EINA_LIST_FREE(e->touch_points, touch_point)
+     free(touch_point);
 
    e->magic = 0;
    free(e);

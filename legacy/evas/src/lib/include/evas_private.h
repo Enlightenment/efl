@@ -46,6 +46,7 @@ typedef struct _Evas_Format                 Evas_Format;
 typedef struct _Evas_Map_Point              Evas_Map_Point;
 typedef struct _Evas_Smart_Cb_Description_Array Evas_Smart_Cb_Description_Array;
 typedef struct _Evas_Post_Callback          Evas_Post_Callback;
+typedef struct _Evas_Coord_Touch_Point      Evas_Coord_Touch_Point;
 
 enum _Evas_Font_Style
 {
@@ -166,6 +167,13 @@ MAGIC_CHECK_FAILED(o, t, m)
         eina_stringshare_del((o)->prev.key);                                \
         (o)->prev.key = NULL;                                               \
      }
+
+struct _Evas_Coord_Touch_Point
+{
+   Evas_Coord x, y; // point's x, y position
+   int id; // id in order to distinguish each point
+   Evas_Touch_Point_State state;
+};
 
 struct _Evas_Key_Grab
 {
@@ -377,6 +385,8 @@ struct _Evas
    unsigned char  invalidate : 1;
    unsigned char  cleanup : 1;
    unsigned char  focus : 1;
+
+   Eina_List     *touch_points;
 };
 
 struct _Evas_Layer
@@ -1016,6 +1026,11 @@ Eina_Bool evas_map_inside_get(const Evas_Map *m, Evas_Coord x, Evas_Coord y);
 Eina_Bool evas_map_coords_get(const Evas_Map *m, Evas_Coord x, Evas_Coord y, Evas_Coord *mx, Evas_Coord *my, int grab);
 
 Eina_List *evas_module_engine_list(void);
+
+/* for updating touch point list */
+void _evas_touch_point_append(Evas *e, int id, Evas_Coord x, Evas_Coord y);
+void _evas_touch_point_update(Evas *e, int id, Evas_Coord x, Evas_Coord y, Evas_Touch_Point_State state);
+void _evas_touch_point_remove(Evas *e, int id);
 
 /****************************************************************************/
 /*****************************************/

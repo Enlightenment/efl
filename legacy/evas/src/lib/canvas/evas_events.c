@@ -223,6 +223,8 @@ evas_event_feed_mouse_down(Evas *e, int b, Evas_Button_Flags flags, unsigned int
    ev.event_flags = EVAS_EVENT_FLAG_NONE;
 
    _evas_walk(e);
+   /* append new touch point to the touch point list */
+   _evas_touch_point_append(e, 0, e->pointer.x, e->pointer.y);
    /* If this is the first finger down, i.e no other fingers pressed,
     * get a new event list, otherwise, keep the current grabbed list. */
    if (e->pointer.mouse_grabbed == 0)
@@ -258,6 +260,8 @@ evas_event_feed_mouse_down(Evas *e, int b, Evas_Button_Flags flags, unsigned int
    if (copy) eina_list_free(copy);
    e->last_mouse_down_counter++;
    _evas_post_event_callback_call(e);
+   /* update touch point's state to EVAS_TOUCH_POINT_STILL */
+   _evas_touch_point_update(e, 0, e->pointer.x, e->pointer.y, EVAS_TOUCH_POINT_STILL);
    _evas_unwalk(e);
 }
 
@@ -400,6 +404,8 @@ evas_event_feed_mouse_up(Evas *e, int b, Evas_Button_Flags flags, unsigned int t
         ev.event_flags = EVAS_EVENT_FLAG_NONE;
 
         _evas_walk(e);
+        /* update released touch point */
+        _evas_touch_point_update(e, 0, e->pointer.x, e->pointer.y, EVAS_TOUCH_POINT_UP);
         copy = evas_event_list_copy(e->pointer.object.in);
         EINA_LIST_FOREACH(copy, l, obj)
           {
@@ -455,6 +461,8 @@ evas_event_feed_mouse_cancel(Evas *e, unsigned int timestamp, const void *data)
         if ((e->pointer.button & (1 << i)))
           evas_event_feed_mouse_up(e, i + 1, 0, timestamp, data);
      }
+   /* remove released touch point from the touch point list */
+   _evas_touch_point_remove(e, 0);
    _evas_unwalk(e);
 }
 
@@ -530,6 +538,9 @@ evas_event_feed_mouse_move(Evas *e, int x, int y, unsigned int timestamp, const 
 ////   e->pointer.canvas_y = evas_coord_screen_y_to_world(e, y);
    if ((!e->pointer.inside) && (e->pointer.mouse_grabbed == 0)) return;
    _evas_walk(e);
+   /* update moved touch point */
+   if ((px != x) || (py != y))
+     _evas_touch_point_update(e, 0, e->pointer.x, e->pointer.y, EVAS_TOUCH_POINT_MOVE);
    /* if our mouse button is grabbed to any objects */
    if (e->pointer.mouse_grabbed > 0)
      {
@@ -914,6 +925,8 @@ evas_event_feed_multi_down(Evas *e,
    ev.event_flags = EVAS_EVENT_FLAG_NONE;
 
    _evas_walk(e);
+   /* append new touch point to the touch point list */
+   _evas_touch_point_append(e, d, x, y);
    copy = evas_event_list_copy(e->pointer.object.in);
    EINA_LIST_FOREACH(copy, l, obj)
      {
@@ -940,6 +953,8 @@ evas_event_feed_multi_down(Evas *e,
      }
    if (copy) eina_list_free(copy);
    _evas_post_event_callback_call(e);
+   /* update touch point's state to EVAS_TOUCH_POINT_STILL */
+   _evas_touch_point_update(e, d, x, y, EVAS_TOUCH_POINT_STILL);
    _evas_unwalk(e);
 }
 
@@ -985,6 +1000,8 @@ evas_event_feed_multi_up(Evas *e,
    ev.event_flags = EVAS_EVENT_FLAG_NONE;
 
    _evas_walk(e);
+   /* update released touch point */
+   _evas_touch_point_update(e, d, x, y, EVAS_TOUCH_POINT_UP);
    copy = evas_event_list_copy(e->pointer.object.in);
    EINA_LIST_FOREACH(copy, l, obj)
      {
@@ -1010,6 +1027,8 @@ evas_event_feed_multi_up(Evas *e,
    if (copy) copy = eina_list_free(copy);
    if ((e->pointer.mouse_grabbed == 0) && !_post_up_handle(e, timestamp, data))
       _evas_post_event_callback_call(e);
+   /* remove released touch point from the touch point list */
+   _evas_touch_point_remove(e, d);
    _evas_unwalk(e);
 }
 
@@ -1031,6 +1050,8 @@ evas_event_feed_multi_move(Evas *e,
    if (!e->pointer.inside) return;
 
    _evas_walk(e);
+   /* update moved touch point */
+   _evas_touch_point_update(e, d, x, y, EVAS_TOUCH_POINT_MOVE);
    /* if our mouse button is grabbed to any objects */
    if (e->pointer.mouse_grabbed > 0)
      {
