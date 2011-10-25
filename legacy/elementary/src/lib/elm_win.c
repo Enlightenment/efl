@@ -1613,6 +1613,26 @@ elm_win_add(Evas_Object *parent, const char *name, Elm_Win_Type type)
    return win->win_obj;
 }
 
+EAPI Evas_Object *
+elm_win_util_standard_add(const char *name, const char *title)
+{
+   Evas_Object *win, *bg;
+   
+   win = elm_win_add(NULL, name, ELM_WIN_BASIC);
+   if (!win) return;
+   elm_win_title_set(win, title);
+   bg = elm_bg_add(win);
+   if (!bg)
+     {
+        evas_object_del(win);
+        return NULL;
+     }
+   evas_object_size_hint_weight_set(bg, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   elm_win_resize_object_add(win, bg);
+   evas_object_show(bg);
+   return win;
+}
+
 EAPI void
 elm_win_resize_object_add(Evas_Object *obj, Evas_Object *subobj)
 {

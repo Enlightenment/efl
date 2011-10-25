@@ -3800,6 +3800,20 @@ extern "C" {
     */
    EAPI Evas_Object *elm_win_add(Evas_Object *parent, const char *name, Elm_Win_Type type);
    /**
+    * Adds a window object with standard setup
+    *
+    * @param name The name of the window
+    * @param title The title for the window
+    *
+    * This creates a window like elm_win_add() but also puts in a standard
+    * background with elm_bg_add(), as well as setting the window title to
+    * @p title. The window type created is of type ELM_WIN_BASIC, with NULL
+    * as the parent widget.
+    *
+    * @return The created object, or NULL on failure
+    */
+   EAPI Evas_Object *elm_win_util_standard_add(const char *name, const char *title);
+   /**
     * Add @p subobj as a resize object of window @p obj.
     *
     *
