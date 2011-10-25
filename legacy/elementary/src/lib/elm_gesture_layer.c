@@ -251,7 +251,6 @@ struct _Widget_Data
    Ecore_Timer *dbl_timeout; /* When this expires, dbl click/taps ABORTed  */
    Eina_List *pending; /* List of devices need to refeed *UP event */
    Eina_List *touched;  /* Information  of touched devices   */
-   Eina_List *recent_device_event;  /* Information  of recent pe event of each device */
 
    Eina_Bool repeat_events : 1;
 };
@@ -335,64 +334,6 @@ _add_touched_device(Eina_List *list, Pointer_Event *pe)
    return eina_list_append(list, p);
 }
 /* END   - Functions to manage touched-device list */
-
-/* START - Functions to manage recent device event list */
-/* This list holds the recent-event for each device     */
-/* it will hold a single recent-event for each device   */
-/* We are using those PE events of this list to         */
-/* send them later to test funcs to restart gestures    */
-/* We only keep DOWN, MOVE events in this list.         */
-/* So when no touch this list is empty.                 */
-/**
- * @internal
- *
- * Recoed Pointer Event in touched device list
- * Note: This fuction allocates memory for PE event
- * This memory is released here when device untouched
- * or in cleanup.
- * @param list Pointer to touched device list.
- * @param Pointer_Event Pointer to PE.
- *
- * @ingroup Elm_Gesture_Layer
- */
-static Eina_List *
-_add_recent_device_event(Eina_List *list, Pointer_Event *pe)
-{
-   void *data = eina_list_search_sorted(list, compare_device, pe);
-   Eina_List *l = list;
-   Pointer_Event *p = NULL;
-   if(data)   /* First remove recent event for this device */
-     l = eina_list_remove(list, data);
-
-
-   switch(pe->event_type)
-     {
-      case EVAS_CALLBACK_MOUSE_DOWN:
-      case EVAS_CALLBACK_MOUSE_MOVE:
-      case EVAS_CALLBACK_MULTI_DOWN:
-      case EVAS_CALLBACK_MULTI_MOVE:
-         p = malloc(sizeof(Pointer_Event));
-         memcpy(p, pe, sizeof(Pointer_Event)); /* Freed in here or on cleanup */
-         l =  eina_list_sorted_insert(l, compare_device, p);
-         break;
-
-      /* Kept those cases for referance */
-      case EVAS_CALLBACK_MOUSE_IN:
-      case EVAS_CALLBACK_MOUSE_OUT:
-      case EVAS_CALLBACK_MOUSE_WHEEL:
-      case EVAS_CALLBACK_MOUSE_UP:
-      case EVAS_CALLBACK_MULTI_UP:
-      case EVAS_CALLBACK_KEY_DOWN:
-      case EVAS_CALLBACK_KEY_UP:
-         break;
-
-      default:
-         return l;
-     }
-
-   return l;
-}
-/* END   - Functions to manage recent device event list */
 
 /**
  * @internal
@@ -1115,9 +1056,6 @@ _del_hook(Evas_Object *obj)
 
    Pointer_Event *data;
    EINA_LIST_FREE(wd->touched, data)
-      free(data);
-
-   EINA_LIST_FREE(wd->recent_device_event, data)
       free(data);
 
    if (!elm_widget_disabled_get(obj))
@@ -3150,9 +3088,6 @@ _event_process(void *data, Evas_Object *obj __UNUSED__,
              _event_history_add(data, event_info, event_type);
           }
      }
-
-   /* Log event to restart gestures */
-   wd->recent_device_event = _add_recent_device_event(wd->recent_device_event, &_pe);
 
    /* we maintain list of touched devices              */
    /* We also use move to track current device x.y pos */
