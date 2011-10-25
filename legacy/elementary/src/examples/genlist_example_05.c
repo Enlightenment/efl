@@ -337,19 +337,19 @@ elm_main(int argc __UNUSED__, char **argv __UNUSED__)
 
    _itc.item_style = "default";
    _itc.func.label_get = _item_label_get;
-   _itc.func.content_get = _item_icon_get;
+   _itc.func.content_get = _item_content_get;
    _itc.func.state_get = NULL;
    _itc.func.del = NULL;
 
    _itp.item_style = "default";
    _itp.func.label_get = _parent_label_get;
-   _itp.func.content_get = _parent_icon_get;
+   _itp.func.content_get = _parent_content_get;
    _itp.func.state_get = NULL;
    _itp.func.del = NULL;
 
    _itfav.item_style = "default";
    _itfav.func.label_get = _favorite_label_get;
-   _itfav.func.content_get = _favorite_icon_get;
+   _itfav.func.content_get = _favorite_content_get;
    _itfav.func.state_get = NULL;
    _itfav.func.del = NULL;
 

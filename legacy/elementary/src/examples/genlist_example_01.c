@@ -59,7 +59,7 @@ elm_main(int argc __UNUSED__, char **argv __UNUSED__)
 
    _itc.item_style = "default";
    _itc.func.label_get = _item_label_get;
-   _itc.func.content_get = _item_icon_get;
+   _itc.func.content_get = _item_content_get;
    _itc.func.state_get = NULL;
    _itc.func.del = NULL;
 

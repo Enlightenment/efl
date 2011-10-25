@@ -30,6 +30,7 @@ _generation_error_cb(void *data __UNUSED__, Evas_Object *o __UNUSED__, void *eve
 int
 elm_main(int argc __UNUSED__, char **argv __UNUSED__)
 {
+#if 0
    Evas_Object *win, *bg;
    Evas_Object *thumb;
    Ethumb_Client *client;
@@ -78,7 +79,7 @@ elm_main(int argc __UNUSED__, char **argv __UNUSED__)
    elm_run(); /* and run the program now, starting to handle all
                * events, etc. */
    elm_shutdown(); /* clean up and shut down */
-
+#endif
    /* exit code */
    return 0;
 }

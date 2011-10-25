@@ -606,7 +606,7 @@ elm_main(int    argc __UNUSED__,
 
    gic.item_style = "default";
    gic.func.label_get = _grid_label_get;
-   gic.func.content_get = _grid_icon_get;
+   gic.func.content_get = _grid_content_get;
    gic.func.state_get = _grid_state_get;
    gic.func.del = _grid_del;
 
