@@ -157,9 +157,9 @@ typedef struct _Taps_Type Taps_Type;
 struct _Long_Tap_Type
 {
    Elm_Gesture_Taps_Info info;
-   unsigned int center_x;
-   unsigned int center_y;
-   unsigned int n_taps;
+   Evas_Coord center_x;
+   Evas_Coord center_y;
+   unsigned int max_touched;
    Ecore_Timer *timeout; /* When this expires, long tap STARTed */
    Eina_List *touched;
 };
@@ -1430,7 +1430,8 @@ _tap_gestures_test(Evas_Object *obj, Pointer_Event *pe,
  * @ingroup Elm_Gesture_Layer
  */
 static void
-_compute_taps_center(Long_Tap_Type *st, Pointer_Event *pe)
+_compute_taps_center(Long_Tap_Type *st,
+      Evas_Coord *x_out, Evas_Coord *y_out, Pointer_Event *pe)
 {
    if(!eina_list_count(st->touched))
      return;
@@ -1452,8 +1453,8 @@ _compute_taps_center(Long_Tap_Type *st, Pointer_Event *pe)
           }
      }
 
-   st->info.x = x / eina_list_count(st->touched);
-   st->info.y = y / eina_list_count(st->touched);
+   *x_out = x / eina_list_count(st->touched);
+   *y_out = y / eina_list_count(st->touched);
 }
 
 /**
@@ -1479,10 +1480,9 @@ _n_long_tap_test(Evas_Object *obj, Pointer_Event *pe,
    if (!wd) return;
 
    if (!pe)   /* this happens when unhandled event arrived */
-     return; /* see _make_pointer_event function */
-
+     return;  /* see _make_pointer_event function */
    Gesture_Info *gesture = wd->gesture[g_type];
-   if (!gesture ) return;
+   if (!gesture) return;
 
    Long_Tap_Type *st = gesture->data;
    if (!st)
@@ -1499,6 +1499,19 @@ _n_long_tap_test(Evas_Object *obj, Pointer_Event *pe,
       case EVAS_CALLBACK_MOUSE_DOWN:
          st->touched = _add_touched_device(st->touched, pe);
          st->info.n = eina_list_count(st->touched);
+         if (st->info.n > st->max_touched)
+           st->max_touched = st->info.n;
+         else
+           {  /* User removed finger from touch, then put back - ABORT */
+              if ((gesture->state == ELM_GESTURE_STATE_START) ||
+                    (gesture->state == ELM_GESTURE_STATE_MOVE))
+                {
+                   ev_flag =_set_state(gesture, ELM_GESTURE_STATE_ABORT,
+                         &st->info, EINA_FALSE);
+                   consume_event(wd, event_info, event_type, ev_flag);
+                }
+           }
+
          if ((pe->device == 0) && (eina_list_count(st->touched) == 1))
            {  /* This is the first mouse down we got */
               st->info.timestamp = pe->timestamp;
@@ -1511,12 +1524,15 @@ _n_long_tap_test(Evas_Object *obj, Pointer_Event *pe,
            }
 
          consume_event(wd, event_info, event_type, ev_flag);
-         _compute_taps_center(st, pe);
+         _compute_taps_center(st, &st->info.x, &st->info.y, pe);
+         st->center_x = st->info.x;
+         st->center_y = st->info.y;
          break;
 
       case EVAS_CALLBACK_MULTI_UP:
       case EVAS_CALLBACK_MOUSE_UP:
          st->touched = _remove_touched_device(st->touched, pe);
+         _compute_taps_center(st, &st->center_x, &st->center_y, pe);
          if (st->info.n &&
                ((gesture->state == ELM_GESTURE_STATE_START) ||
                 (gesture->state == ELM_GESTURE_STATE_MOVE)))
@@ -1545,9 +1561,20 @@ _n_long_tap_test(Evas_Object *obj, Pointer_Event *pe,
                ((gesture->state == ELM_GESTURE_STATE_START) ||
                 (gesture->state == ELM_GESTURE_STATE_MOVE)))
            {  /* Report MOVE only if STARTED */
-              _compute_taps_center(st, pe);
+              Evas_Coord x;
+              Evas_Coord y;
+              Elm_Gesture_State state_to_report = ELM_GESTURE_STATE_MOVE;
+
+              _compute_taps_center(st, &x, &y, pe);
+              /* ABORT if user moved fingers out of tap area */
+#if defined(DEBUG_GESTURE_LAYER)
+              printf("%s x,y=(%d,%d) st->info.x,st->info.y=(%d,%d)\n",__func__,x,y,st->info.x,st->info.y);
+#endif
+              if (!_inside(x, y, st->center_x, st->center_y))
+                state_to_report = ELM_GESTURE_STATE_ABORT;
+
               /* Report MOVE if gesture started */
-              ev_flag = _set_state(gesture, ELM_GESTURE_STATE_MOVE,
+              ev_flag = _set_state(gesture, state_to_report,
                     &st->info, EINA_TRUE);
               consume_event(wd, event_info, event_type, ev_flag);
            }
