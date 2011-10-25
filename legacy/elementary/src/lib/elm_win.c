@@ -2638,8 +2638,7 @@ elm_win_xwindow_get(const Evas_Object *obj)
 
    if (!obj) return 0;
    type = elm_widget_type_get(obj);
-   if (!type) return 0;
-   if (type != widtype) return _elm_ee_win_get(obj);
+   if ((!type) || (type != widtype)) return _elm_ee_win_get(obj);
 #ifdef HAVE_ELEMENTARY_X
    win = elm_widget_data_get(obj);
    if (!win) return 0;
