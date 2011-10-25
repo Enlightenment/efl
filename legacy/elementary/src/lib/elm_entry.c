@@ -1414,8 +1414,8 @@ _entry_changed_common_handling(void *data, const char *event)
      }
    evas_event_thaw(evas_object_evas_get(data));
    evas_event_thaw_eval(evas_object_evas_get(data));
-   if ((!wd->autosave) || (!wd->file)) return;
-   wd->delay_write = ecore_timer_add(2.0, _delay_write, data);
+   if ((wd->autosave) && (wd->file))
+     wd->delay_write = ecore_timer_add(2.0, _delay_write, data);
    /* callback - this could call callbacks that delete the entry... thus...
     * any access to wd after this could be invalid */
    evas_object_smart_callback_call(data, event, NULL);
