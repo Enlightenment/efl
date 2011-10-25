@@ -497,6 +497,7 @@ _update_arrow(Evas_Object *obj, Elm_Ctxpopup_Direction dir)
    Evas_Coord_Rectangle arrow_size;
    Evas_Coord_Rectangle base_size;
    Widget_Data *wd;
+   double drag;
 
    wd = elm_widget_data_get(obj);
    if (!wd) return;
@@ -513,7 +514,9 @@ _update_arrow(Evas_Object *obj, Elm_Ctxpopup_Direction dir)
      {
       case ELM_CTXPOPUP_DIRECTION_RIGHT:
          edje_object_signal_emit(wd->arrow, "elm,state,left", "elm");
-         edje_object_part_swallow(wd->base, "elm.swallow.arrow_left", wd->arrow);
+         edje_object_part_swallow(wd->base,
+                                  "elm.swallow.arrow_left",
+                                  wd->arrow);
          if (base_size.h > 0)
            {
               if (y < ((arrow_size.h * 0.5) + base_size.y))
@@ -522,51 +525,68 @@ _update_arrow(Evas_Object *obj, Elm_Ctxpopup_Direction dir)
                 y = base_size.h - arrow_size.h;
               else
                 y = y - base_size.y - (arrow_size.h * 0.5);
-              edje_object_part_drag_value_set(wd->base, "elm.swallow.arrow_left", 1,
-                                              (double) (y) / (double) (base_size.h - arrow_size.h));
+              drag = (double) (y) / (double) (base_size.h - arrow_size.h);
+              edje_object_part_drag_value_set(wd->base,
+                                              "elm.swallow.arrow_left",
+                                              1,
+                                              drag);
            }
          break;
       case ELM_CTXPOPUP_DIRECTION_LEFT:
          edje_object_signal_emit(wd->arrow, "elm,state,right", "elm");
-         edje_object_part_swallow(wd->base, "elm.swallow.arrow_right", wd->arrow);
+         edje_object_part_swallow(wd->base,
+                                  "elm.swallow.arrow_right",
+                                  wd->arrow);
          if (base_size.h > 0)
-            {
-              if (y < (arrow_size.h * 0.5) + base_size.y)
+           {
+              if (y < ((arrow_size.h * 0.5) + base_size.y))
                 y = 0;
               else if (y > (base_size.y + base_size.h - (arrow_size.h * 0.5)))
                 y = base_size.h - arrow_size.h;
-              else y = y - base_size.y - (arrow_size.h * 0.5);
-              edje_object_part_drag_value_set(wd->base, "elm.swallow.arrow_right", 0,
-                                              (double) (y) / (double) (base_size.h - arrow_size.h));
-            }
+              else
+                y = y - base_size.y - (arrow_size.h * 0.5);
+              drag = (double) (y) / (double) (base_size.h - arrow_size.h);
+              edje_object_part_drag_value_set(wd->base,
+                                              "elm.swallow.arrow_right",
+                                              0,
+                                              drag);
+           }
          break;
       case ELM_CTXPOPUP_DIRECTION_DOWN:
          edje_object_signal_emit(wd->arrow, "elm,state,top", "elm");
          edje_object_part_swallow(wd->base, "elm.swallow.arrow_up", wd->arrow);
          if (base_size.w > 0)
            {
-              if (x < (arrow_size.w * 0.5) + base_size.x)
+              if (x < ((arrow_size.w * 0.5) + base_size.x))
                 x = 0;
               else if (x > (base_size.x + base_size.w - (arrow_size.w * 0.5)))
                 x = base_size.w - arrow_size.w;
               else
                 x = x - base_size.x - (arrow_size.w * 0.5);
-              edje_object_part_drag_value_set(wd->base, "elm.swallow.arrow_up",
-                                              (double) (x) / (double) (base_size.w - arrow_size.w), 1);
+              drag = (double) (x) / (double) (base_size.w - arrow_size.w);
+              edje_object_part_drag_value_set(wd->base,
+                                              "elm.swallow.arrow_up",
+                                              drag,
+                                              1);
            }
          break;
       case ELM_CTXPOPUP_DIRECTION_UP:
          edje_object_signal_emit(wd->arrow, "elm,state,bottom", "elm");
-         edje_object_part_swallow(wd->base, "elm.swallow.arrow_down", wd->arrow);
+         edje_object_part_swallow(wd->base,
+                                  "elm.swallow.arrow_down",
+                                  wd->arrow);
          if (base_size.w > 0)
            {
-              if (x < (arrow_size.w * 0.5) + base_size.x)
+              if (x < ((arrow_size.w * 0.5) + base_size.x))
                 x = 0;
               else if (x > (base_size.x + base_size.w - (arrow_size.w * 0.5)))
                 x = base_size.w - arrow_size.w;
               else x = x - base_size.x - (arrow_size.w * 0.5);
-              edje_object_part_drag_value_set(wd->base, "elm.swallow.arrow_down",
-                                              (double) (x) / (double) (base_size.w - arrow_size.w), 0);
+              drag = (double) (x) / (double) (base_size.w - arrow_size.w);
+              edje_object_part_drag_value_set(wd->base,
+                                              "elm.swallow.arrow_down",
+                                              drag,
+                                              0);
            }
          break;
       default:
@@ -721,6 +741,13 @@ _theme_hook(Evas_Object *obj)
    _elm_widget_mirrored_reload(obj);
    rtl = elm_widget_mirrored_get(obj);
 
+   _elm_theme_object_set(obj, wd->bg, "ctxpopup", "bg",
+                         elm_widget_style_get(obj));
+   _elm_theme_object_set(obj, wd->base, "ctxpopup", "base",
+                         elm_widget_style_get(obj));
+   _elm_theme_object_set(obj, wd->arrow, "ctxpopup", "arrow",
+                         elm_widget_style_get(obj));
+
    //Items
    EINA_LIST_FOREACH(wd->items, elist, item)
      {
@@ -745,17 +772,9 @@ _theme_hook(Evas_Object *obj)
         edje_object_message_signal_process(VIEW(item));
      }
 
-   _elm_theme_object_set(obj, wd->bg, "ctxpopup", "bg",
-                         elm_widget_style_get(obj));
-   _elm_theme_object_set(obj, wd->base, "ctxpopup", "base",
-                         elm_widget_style_get(obj));
-   _elm_theme_object_set(obj, wd->arrow, "ctxpopup", "arrow",
-                         elm_widget_style_get(obj));
-
    if (wd->scr)
      {
-        if (!strncmp(elm_object_style_get(obj), "default",
-                     strlen("default")))
+        if (!strncmp(elm_object_style_get(obj), "default", strlen("default")))
            elm_object_style_set(wd->scr, "ctxpopup");
         else
            elm_object_style_set(wd->scr, elm_object_style_get(obj));
