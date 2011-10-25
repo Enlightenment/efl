@@ -3192,12 +3192,11 @@ eng_gl_context_destroy(void *data, void *context)
 }
 
 static int
-eng_gl_make_current(void *data, void *surface, void *context)
+eng_gl_make_current(void *data __UNUSED__, void *surface, void *context)
 {
    Render_Engine *re;
    Render_Engine_GL_Surface *sfc;
    Render_Engine_GL_Context *ctx;
-   Render_Engine_GL_Resource *rsc;
    int ret = 0;
 
    re  = (Render_Engine *)data;
@@ -3297,7 +3296,7 @@ eng_gl_make_current(void *data, void *surface, void *context)
 }
 
 static void *
-eng_gl_string_query(void *data, int name)
+eng_gl_string_query(void *data __UNUSED__, int name)
 {
    switch(name)
      {
