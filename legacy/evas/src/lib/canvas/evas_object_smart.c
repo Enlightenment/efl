@@ -668,7 +668,6 @@ evas_call_smarts_calculate(Evas *e)
    if (e->in_smart_calc == 0) e->smart_calc_count++;
    evas_event_thaw(e);
    evas_event_thaw_eval(e);
-//   printf("-CAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAALC-----------^\n");
 }
 
 EAPI void
@@ -737,9 +736,7 @@ evas_object_smart_cleanup(Evas_Object *obj)
 
         while (o->callbacks)
           {
-             Evas_Smart_Callback *cb;
-             
-             cb = o->callbacks->data;
+             Evas_Smart_Callback *cb = o->callbacks->data;
              o->callbacks = eina_list_remove(o->callbacks, cb);
              if (cb->event) eina_stringshare_del(cb->event);
              EVAS_MEMPOOL_FREE(_mp_cb, cb);
@@ -757,19 +754,19 @@ void
 evas_object_smart_member_cache_invalidate(Evas_Object *obj)
 {
    Evas_Object_Smart *o;
-   Eina_Inlist *l;
+   Evas_Object *member;
 
    MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
    return;
    MAGIC_CHECK_END();
 
-   obj->parent_cache.pass_events_valid = 0;
+   obj->parent_cache.pass_events_valid = EINA_FALSE;
 
-   o = (Evas_Object_Smart *)(obj->object_data);
+   o = obj->object_data;
    if (o->magic != MAGIC_OBJ_SMART) return;
 
-   for (l = o->contained; l; l = l->next)
-     evas_object_smart_member_cache_invalidate((Evas_Object *) l);
+   EINA_INLIST_FOREACH(o->contained, member);
+     evas_object_smart_member_cache_invalidate(member);
 }
 
 void
