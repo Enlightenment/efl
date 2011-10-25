@@ -3404,6 +3404,7 @@ _smart_del(Evas_Object *obj)
         evas_object_event_callback_del_full(sobj, EVAS_CALLBACK_DEL, _sub_obj_del, sd);
         evas_object_smart_callback_call(sd->obj, "sub-object-del", sobj);
         evas_object_del(sobj);
+        sd->resize_obj = NULL;
      }
    if (sd->hover_obj)
      {
@@ -3412,6 +3413,7 @@ _smart_del(Evas_Object *obj)
         evas_object_event_callback_del_full(sobj, EVAS_CALLBACK_DEL, _sub_obj_del, sd);
         evas_object_smart_callback_call(sd->obj, "sub-object-del", sobj);
         evas_object_del(sobj);
+        sd->hover_obj = NULL;
      }
    EINA_LIST_FREE(sd->subobjs, sobj)
      {
@@ -3419,8 +3421,8 @@ _smart_del(Evas_Object *obj)
         evas_object_smart_callback_call(sd->obj, "sub-object-del", sobj);
         evas_object_del(sobj);
      }
-   eina_list_free(sd->tooltips); /* should be empty anyway */
-   eina_list_free(sd->cursors); /* should be empty anyway */
+   sd->tooltips = eina_list_free(sd->tooltips); /* should be empty anyway */
+   sd->cursors = eina_list_free(sd->cursors); /* should be empty anyway */
    EINA_LIST_FREE(sd->edje_signals, esd)
      {
         eina_stringshare_del(esd->emission);
@@ -3434,14 +3436,16 @@ _smart_del(Evas_Object *obj)
         eina_stringshare_del(ts->string);
         free(ts);
      }
-   eina_list_free(sd->event_cb); /* should be empty anyway */
+   sd->event_cb = eina_list_free(sd->event_cb); /* should be empty anyway */
    if (sd->del_func) sd->del_func(obj);
    if (sd->style) eina_stringshare_del(sd->style);
    if (sd->type) eina_stringshare_del(sd->type);
    if (sd->theme) elm_theme_free(sd->theme);
+   sd->data = NULL;
    _if_focused_revert(obj, EINA_TRUE);
    if (sd->access_info) eina_stringshare_del(sd->access_info);
    free(sd);
+   evas_object_smart_data_set(obj, NULL);
 }
 
 static void
