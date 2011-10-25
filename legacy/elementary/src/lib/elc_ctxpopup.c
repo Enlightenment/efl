@@ -727,6 +727,7 @@ _del_hook(Evas_Object *obj)
    free(wd);
 }
 
+//FIXME: lost the content size when theme hook is called. 
 static void
 _theme_hook(Evas_Object *obj)
 {
