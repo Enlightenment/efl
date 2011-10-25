@@ -503,10 +503,9 @@ evas_image_load_file_data_jpeg_internal(Image_Entry *ie,
    struct jpeg_decompress_struct cinfo;
    struct _JPEG_error_mgr jerr;
    DATA8 *ptr, *line[16], *data;
-   DATA32 *ptr2, *ptr_rotate;
+   DATA32 *ptr2, *ptr_rotate = NULL;
    unsigned int x, y, l, i, scans;
    int region = 0;
-
    /* rotation setting */
    unsigned int tmp;
    unsigned int load_region_x = 0, load_region_y = 0;
@@ -686,7 +685,7 @@ evas_image_load_file_data_jpeg_internal(Image_Entry *ie,
         ptr_rotate = ptr2;
      }
    else
-   ptr2 = evas_cache_image_pixels(ie);
+     ptr2 = evas_cache_image_pixels(ie);
 
    if (!ptr2)
      {
@@ -1000,16 +999,17 @@ done:
                   data2--;
                }
           }
-        else
+        else 
           {
-             data2 = ptr_rotate;
+             data2 = NULL;
+             to = NULL;
+             if (ptr_rotate) data2 = ptr_rotate;
 
              if (degree == 90)
                {
                   to = data1 + w - 1;
                   hw = -hw - 1;
                }
-
              else if (degree == 270)
                {
                   to = data1 + hw - w;
@@ -1017,25 +1017,27 @@ done:
                   hw = hw + 1;
                }
 
-             from = data2;
-             for (x = ie->w; --x >= 0;)
+             if (to)
                {
-                  for (y =ie->h; --y >= 0;)
+                  from = data2;
+                  for (x = ie->w; --x >= 0;)
                     {
-                       *to = *from;
-                       from++;
-                       to += w;
+                       for (y =ie->h; --y >= 0;)
+                         {
+                            *to = *from;
+                            from++;
+                            to += w;
+                         }
+                       to += hw;
                     }
-                  to += hw;
                }
              if (ptr_rotate)
                {
                   free(ptr_rotate);
                   ptr_rotate = NULL;
                }
-
           }
-        if (region )
+        if (region)
           {
              ie->load_opts.region.x = load_region_x;
              ie->load_opts.region.y = load_region_y;
