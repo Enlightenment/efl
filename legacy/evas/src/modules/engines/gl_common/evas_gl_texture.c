@@ -865,20 +865,6 @@ evas_gl_common_texture_update(Evas_GL_Texture *tex, RGBA_Image *im)
                im->cache_entry.w, im->cache_entry.h,
                fmt, tex->pt->dataformat,
                im->image.data);
-   // |xxx
-   // |xxx
-   //
-   _tex_sub_2d(tex->x - 1, tex->y,
-               1, im->cache_entry.h,
-               fmt, tex->pt->dataformat,
-               im->image.data);
-   //  xxx|
-   //  xxx|
-   //
-   _tex_sub_2d(tex->x + im->cache_entry.w, tex->y,
-               1, im->cache_entry.h,
-               fmt, tex->pt->dataformat,
-               im->image.data + (im->cache_entry.w - 1));
    //  xxx
    //  xxx
    //  ---
@@ -900,6 +886,61 @@ evas_gl_common_texture_update(Evas_GL_Texture *tex, RGBA_Image *im)
                1, 1,
                fmt, tex->pt->dataformat,
                im->image.data + ((im->cache_entry.h - 1) * im->cache_entry.w) + (im->cache_entry.w - 1));
+#ifdef GL_UNPACK_ROW_LENGTH
+   glPixelStorei(GL_UNPACK_ROW_LENGTH, im->cache_entry.w);
+   GLERR(__FUNCTION__, __FILE__, __LINE__, "");
+   // |xxx
+   // |xxx
+   //
+   _tex_sub_2d(tex->x - 1, tex->y,
+               1, im->cache_entry.h,
+               fmt, tex->pt->dataformat,
+               im->image.data);
+   //  xxx|
+   //  xxx|
+   //
+   _tex_sub_2d(tex->x + im->cache_entry.w, tex->y,
+               1, im->cache_entry.h,
+               fmt, tex->pt->dataformat,
+               im->image.data + (im->cache_entry.w - 1));
+#else
+     {
+        DATA32 *tpix, *ps, *pd;
+        int i;
+        
+        tpix = alloca(im->cache_entry.h * sizeof(DATA32));
+        pd = tpix;
+        ps = im->image.data;
+        for (i = 0; i < im->cache_entry.h; i++)
+          {
+             *pd = *ps;
+             pd++;
+             ps += im->cache_entry.w;
+          }
+        // |xxx
+        // |xxx
+        //
+        _tex_sub_2d(tex->x - 1, tex->y,
+                    1, im->cache_entry.h,
+                    fmt, tex->pt->dataformat,
+                    tpix);
+        pd = tpix;
+        ps = im->image.data + (im->cache_entry.w - 1);
+        for (i = 0; i < im->cache_entry.h; i++)
+          {
+             *pd = *ps;
+             pd++;
+             ps += im->cache_entry.w;
+          }
+        //  xxx|
+        //  xxx|
+        //
+        _tex_sub_2d(tex->x + im->cache_entry.w, tex->y,
+                    1, im->cache_entry.h,
+                    fmt, tex->pt->dataformat,
+                    tpix);
+     }
+#endif
    if (tex->pt->texture != tex->gc->pipe[0].shader.cur_tex)
      {
         glBindTexture(GL_TEXTURE_2D, tex->gc->pipe[0].shader.cur_tex);
