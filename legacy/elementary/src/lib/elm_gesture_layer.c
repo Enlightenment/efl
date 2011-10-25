@@ -957,16 +957,14 @@ _event_history_clear(Evas_Object *obj)
 
              if (pending)
                {
-               wd->pending = eina_list_remove_list(wd->pending, pending);
-               int device = ELM_MOUSE_DEVICE;
-               if (wd->event_history_list->event_type == EVAS_CALLBACK_MULTI_UP)
-                 device = ((Evas_Event_Multi_Up *)
-                       (wd->event_history_list->event))->device;
+                  wd->pending = eina_list_remove_list(wd->pending, pending);
                }
              else
-               wd->pending = _add_device_pending(wd->pending,
-                     wd->event_history_list->event,
-                     wd->event_history_list->event_type);
+               {
+                  wd->pending = _add_device_pending(wd->pending,
+                        wd->event_history_list->event,
+                        wd->event_history_list->event_type);
+               }
           }
 
         free(wd->event_history_list->event);
