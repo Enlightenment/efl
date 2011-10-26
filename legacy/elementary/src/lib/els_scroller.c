@@ -678,8 +678,8 @@ static Eina_Bool
 _smart_bounce_x_animator(void *data)
 {
    Smart_Data *sd;
-   Evas_Coord x, y, dx;
-   double t, p, dt;
+   Evas_Coord x, y, dx, w, odx;
+   double t, p, dt, pd;
 
    sd = data;
    t = ecore_loop_time_get();
@@ -687,11 +687,19 @@ _smart_bounce_x_animator(void *data)
    if (dt >= 0.0)
      {
         dt = dt / _elm_config->thumbscroll_bounce_friction;
+        odx = sd->down.b2x - sd->down.bx;
+        elm_smart_scroller_child_viewport_size_get(sd->smart_obj, &w, NULL);
+        if (!sd->down.momentum_animator && (w > abs(odx)))
+          {
+             pd = (double)odx / (double)w;
+             pd = (pd > 0) ? pd : -pd;
+             pd = 1.0 - ((1.0 - pd) * (1.0 - pd));
+             dt = dt / pd;
+          }
         if (dt > 1.0) dt = 1.0;
         p = 1.0 - ((1.0 - dt) * (1.0 - dt));
         elm_smart_scroller_child_pos_get(sd->smart_obj, &x, &y);
-        dx = sd->down.b2x - sd->down.bx;
-        dx = (dx * p);
+        dx = (odx * p);
         x = sd->down.bx + dx;
         if (!sd->down.cancelled)
           elm_smart_scroller_child_pos_set(sd->smart_obj, x, y);
@@ -718,8 +726,8 @@ static Eina_Bool
 _smart_bounce_y_animator(void *data)
 {
    Smart_Data *sd;
-   Evas_Coord x, y, dy;
-   double t, p, dt;
+   Evas_Coord x, y, dy, h, ody;
+   double t, p, dt, pd;
 
    sd = data;
    t = ecore_loop_time_get();
@@ -727,11 +735,19 @@ _smart_bounce_y_animator(void *data)
    if (dt >= 0.0)
      {
         dt = dt / _elm_config->thumbscroll_bounce_friction;
+        ody = sd->down.b2y - sd->down.by;
+        elm_smart_scroller_child_viewport_size_get(sd->smart_obj, NULL, &h);
+        if (!sd->down.momentum_animator && (h > abs(ody)))
+          {
+             pd = (double)ody / (double)h;
+             pd = (pd > 0) ? pd : -pd;
+             pd = 1.0 - ((1.0 - pd) * (1.0 - pd));
+             dt = dt / pd;
+          }
         if (dt > 1.0) dt = 1.0;
         p = 1.0 - ((1.0 - dt) * (1.0 - dt));
         elm_smart_scroller_child_pos_get(sd->smart_obj, &x, &y);
-        dy = sd->down.b2y - sd->down.by;
-        dy = (dy * p);
+        dy = (ody * p);
         y = sd->down.by + dy;
         if (!sd->down.cancelled)
           elm_smart_scroller_child_pos_set(sd->smart_obj, x, y);
