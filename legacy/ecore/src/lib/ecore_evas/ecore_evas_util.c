@@ -122,7 +122,7 @@ _ecore_evas_obj_callback_resize(void *data, Evas *e __UNUSED__, Evas_Object *obj
 
    evas_object_geometry_get(obj, NULL, NULL, &ow, &oh);
    ecore_evas_geometry_get(ee, NULL, NULL, &w, &h);
-   if ((w != ow) || (h != oh)) /* avoid recursion on ecore_evas_resize side */
+   /*if ((w != ow) || (h != oh))*/ /* avoid recursion on ecore_evas_resize side */
      ecore_evas_resize(ee, ow, oh);
 }
 

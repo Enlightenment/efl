@@ -208,6 +208,7 @@ struct _Ecore_Evas_Engine
       unsigned char  sync_began : 1;
       unsigned char  sync_cancel : 1;
       unsigned char  netwm_sync_set : 1;
+      unsigned char  configure_coming : 1;
       struct {
 	   unsigned char modal : 1;
 	   unsigned char sticky : 1;

@@ -917,6 +917,7 @@ _ecore_evas_x_event_window_configure(void *data __UNUSED__, int type __UNUSED__,
    if (e->win != ee->prop.window) return ECORE_CALLBACK_PASS_ON;
    if (ee->engine.x.direct_resize) return ECORE_CALLBACK_PASS_ON;
 
+   ee->engine.x.configure_coming = 0;
    if ((e->from_wm) || (ee->prop.override))
      {
         if ((ee->x != e->x) || (ee->y != e->y))
@@ -1291,8 +1292,10 @@ _ecore_evas_x_move(Ecore_Evas *ee, int x, int y)
      }
    else
      {
-        if ((ee->x != x) || (ee->y != y))
+        if (((ee->x != x) || (ee->y != y)) ||
+            (ee->engine.x.configure_coming))
           {
+             ee->engine.x.configure_coming = 1;
              if (!ee->engine.x.managed)
                {
                   ee->x = x;
@@ -1361,8 +1364,12 @@ _ecore_evas_x_resize(Ecore_Evas *ee, int w, int h)
              if (ee->func.fn_resize) ee->func.fn_resize(ee);
           }
      }
-   else if ((ee->w != w) || (ee->h != h))
-     ecore_x_window_resize(ee->prop.window, w, h);
+   else if (((ee->w != w) || (ee->h != h)) || 
+            (ee->engine.x.configure_coming))
+     {
+        ee->engine.x.configure_coming = 1;
+        ecore_x_window_resize(ee->prop.window, w, h);
+     }
 }
 
 static void
@@ -1421,8 +1428,10 @@ _ecore_evas_x_move_resize(Ecore_Evas *ee, int x, int y, int w, int h)
                }
           }
      }
-   else
+   else if (((ee->w != w) || (ee->h != h) || (ee->x != x) || (ee->y != y)) || 
+            (ee->engine.x.configure_coming))
      {
+        ee->engine.x.configure_coming = 1;
         ecore_x_window_move_resize(ee->prop.window, x, y, w, h);
         if (!ee->engine.x.managed)
           {
@@ -1452,6 +1461,7 @@ _ecore_evas_x_rotation_set_internal(Ecore_Evas *ee, int rotation, int resize,
 
         if (!resize)
           {
+             ee->engine.x.configure_coming = 1;
              if (!ee->prop.fullscreen)
                {
                   ecore_x_window_resize(ee->prop.window, ee->req.h, ee->req.w);
