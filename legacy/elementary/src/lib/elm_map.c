@@ -2429,7 +2429,7 @@ _group_object_create(Marker_Group *group)
         group->obj = elm_layout_add(group->wd->obj);
         elm_layout_theme_set(group->obj, "map/marker", style, elm_widget_style_get(group->wd->obj));
 
-        if (icon) elm_layout_content_set(group->obj, "elm.icon", icon);
+        if (icon) elm_object_content_part_set(group->obj, "elm.icon", icon);
 
         evas_object_smart_member_add(group->obj, group->wd->pan_smart);
         elm_widget_sub_object_add(group->wd->obj, group->obj);

@@ -358,6 +358,79 @@ _elm_layout_label_get(const Evas_Object *obj, const char *part)
    return edje_object_part_text_get(wd->lay, part);
 }
 
+static void
+_content_set_hook(Evas_Object *obj, const char *part, Evas_Object *content)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype);
+   Widget_Data *wd = elm_widget_data_get(obj);
+   Subinfo *si;
+   const Eina_List *l;
+   if (!wd) return;
+   EINA_LIST_FOREACH(wd->subs, l, si)
+     {
+        if ((si->type == SWALLOW) && (!strcmp(part, si->part)))
+          {
+             if (content == si->obj) return;
+             evas_object_del(si->obj);
+             break;
+          }
+     }
+   if (content)
+     {
+        elm_widget_sub_object_add(obj, content);
+        evas_object_event_callback_add(content,
+                                       EVAS_CALLBACK_CHANGED_SIZE_HINTS,
+                                       _changed_size_hints, wd);
+        if (!edje_object_part_swallow(wd->lay, part, content))
+          WRN("could not swallow %p into part '%s'", content, part);
+        si = ELM_NEW(Subinfo);
+        si->type = SWALLOW;
+        si->part = eina_stringshare_add(part);
+        si->obj = content;
+        wd->subs = eina_list_append(wd->subs, si);
+     }
+   _request_sizing_eval(wd);
+}
+
+static Evas_Object *
+_content_get_hook(const Evas_Object *obj, const char *part)
+{
+   Widget_Data *wd = elm_widget_data_get(obj);
+   const Eina_List *l;
+   Subinfo *si;
+   ELM_CHECK_WIDTYPE(obj, widtype) NULL;
+
+   EINA_LIST_FOREACH(wd->subs, l, si)
+     {
+        if ((si->type == SWALLOW) && !strcmp(part, si->part))
+          return si->obj;
+     }
+   return NULL;
+}
+
+static Evas_Object *
+_content_unset_hook(Evas_Object *obj, const char *part)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype) NULL;
+   Widget_Data *wd = elm_widget_data_get(obj);
+   Subinfo *si;
+   const Eina_List *l;
+   if (!wd) return NULL;
+   EINA_LIST_FOREACH(wd->subs, l, si)
+     {
+        if ((si->type == SWALLOW) && (!strcmp(part, si->part)))
+          {
+             Evas_Object *content;
+             if (!si->obj) return NULL;
+             content = si->obj; /* si will die in _sub_del due elm_widget_sub_object_del() */
+             elm_widget_sub_object_del(obj, content);
+             edje_object_part_unswallow(wd->lay, content);
+             return content;
+          }
+     }
+   return NULL;
+}
+
 EAPI Evas_Object *
 elm_layout_add(Evas_Object *parent)
 {
@@ -381,6 +454,9 @@ elm_layout_add(Evas_Object *parent)
    elm_widget_signal_callback_del_hook_set(obj, _signal_callback_del_hook);
    elm_widget_text_set_hook_set(obj, _elm_layout_label_set);
    elm_widget_text_get_hook_set(obj, _elm_layout_label_get);
+   elm_widget_content_set_hook_set(obj, _content_set_hook);
+   elm_widget_content_get_hook_set(obj, _content_get_hook);
+   elm_widget_content_unset_hook_set(obj, _content_unset_hook);
 
    wd->obj = obj;
    wd->lay = edje_object_add(e);
@@ -437,74 +513,20 @@ elm_layout_theme_set(Evas_Object *obj, const char *clas, const char *group, cons
 EAPI void
 elm_layout_content_set(Evas_Object *obj, const char *swallow, Evas_Object *content)
 {
-   ELM_CHECK_WIDTYPE(obj, widtype);
-   Widget_Data *wd = elm_widget_data_get(obj);
-   Subinfo *si;
-   const Eina_List *l;
-   if (!wd) return;
-   EINA_LIST_FOREACH(wd->subs, l, si)
-     {
-        if ((si->type == SWALLOW) && (!strcmp(swallow, si->part)))
-          {
-             if (content == si->obj) return;
-             evas_object_del(si->obj);
-             break;
-          }
-     }
-   if (content)
-     {
-        elm_widget_sub_object_add(obj, content);
-        evas_object_event_callback_add(content,
-                                       EVAS_CALLBACK_CHANGED_SIZE_HINTS,
-                                       _changed_size_hints, wd);
-        if (!edje_object_part_swallow(wd->lay, swallow, content))
-          WRN("could not swallow %p into part '%s'", content, swallow);
-        si = ELM_NEW(Subinfo);
-        si->type = SWALLOW;
-        si->part = eina_stringshare_add(swallow);
-        si->obj = content;
-        wd->subs = eina_list_append(wd->subs, si);
-     }
-   _request_sizing_eval(wd);
+   _content_set_hook(obj, swallow, content);
 }
+
 
 EAPI Evas_Object *
 elm_layout_content_get(const Evas_Object *obj, const char *swallow)
 {
-   Widget_Data *wd = elm_widget_data_get(obj);
-   const Eina_List *l;
-   Subinfo *si;
-   ELM_CHECK_WIDTYPE(obj, widtype) NULL;
-
-   EINA_LIST_FOREACH(wd->subs, l, si)
-     {
-        if ((si->type == SWALLOW) && !strcmp(swallow, si->part))
-          return si->obj;
-     }
-   return NULL;
+   return _content_get_hook(obj, swallow);
 }
 
 EAPI Evas_Object *
 elm_layout_content_unset(Evas_Object *obj, const char *swallow)
 {
-   ELM_CHECK_WIDTYPE(obj, widtype) NULL;
-   Widget_Data *wd = elm_widget_data_get(obj);
-   Subinfo *si;
-   const Eina_List *l;
-   if (!wd) return NULL;
-   EINA_LIST_FOREACH(wd->subs, l, si)
-     {
-        if ((si->type == SWALLOW) && (!strcmp(swallow, si->part)))
-          {
-             Evas_Object *content;
-             if (!si->obj) return NULL;
-             content = si->obj; /* si will die in _sub_del due elm_widget_sub_object_del() */
-             elm_widget_sub_object_del(obj, content);
-             edje_object_part_unswallow(wd->lay, content);
-             return content;
-          }
-     }
-   return NULL;
+   return _content_unset_hook(obj, swallow);
 }
 
 EAPI void

@@ -262,7 +262,7 @@ test_focus(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info 
              evas_object_size_hint_align_set(bx2, EVAS_HINT_FILL,
                                              EVAS_HINT_FILL);
              evas_object_size_hint_weight_set(bx2, 0.0, 0.0);
-             elm_layout_content_set(ly, "element1", bx2);
+             elm_object_content_part_set(ly, "element1", bx2);
              my_show(bx2);
 
              for (i = 3; i; i--)
@@ -284,7 +284,7 @@ test_focus(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info 
              evas_object_size_hint_align_set(bx2, EVAS_HINT_FILL,
                                              EVAS_HINT_FILL);
              evas_object_size_hint_weight_set(bx2, 0.0, 0.0);
-             elm_layout_content_set(ly, "element2", bx2);
+             elm_object_content_part_set(ly, "element2", bx2);
              my_show(bx2);
 
                {

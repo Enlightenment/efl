@@ -52,7 +52,7 @@ _swallow_btn_cb(void *data, Evas_Object *btn __UNUSED__, void *event_info __UNUS
 
    elm_layout_table_clear(layout, TABLE, EINA_TRUE);
    elm_layout_box_remove_all(layout, BOX, EINA_TRUE);
-   item = elm_layout_content_unset(layout, SWALLOW);
+   item = elm_object_content_part_unset(layout, SWALLOW);
    evas_object_del(item);
 }
 
@@ -139,7 +139,7 @@ elm_main(int argc __UNUSED__, char **argv __UNUSED__)
 
    bt2 = elm_button_add(win);
    elm_object_text_set(bt2, "Delete All");
-   elm_layout_content_set(layout, SWALLOW, bt2);
+   elm_object_content_part_set(layout, SWALLOW, bt2);
    evas_object_smart_callback_add(bt2, "clicked", _swallow_btn_cb, layout);
 
    evas_object_size_hint_min_set(bg, 160, 160);

@@ -60,7 +60,7 @@ test_colorselector(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *eve
 
    re = evas_object_rectangle_add(evas_object_evas_get(win));
    evas_object_show(re);
-   elm_layout_content_set(ly, "ColorPreview", re);
+   elm_object_content_part_set(ly, "ColorPreview", re);
 
    fr = elm_frame_add(win);
    evas_object_size_hint_weight_set(fr, 1.0, 0);

@@ -1305,7 +1305,7 @@ test_entry4(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info
    elm_entry_scrollbar_policy_set(en, ELM_SCROLLER_POLICY_OFF, ELM_SCROLLER_POLICY_OFF);
    elm_entry_entry_set(en, "This is a single line");
    elm_entry_single_line_set(en, 1);
-   elm_layout_content_set(ly, "element1", en);
+   elm_object_content_part_set(ly, "element1", en);
    evas_object_show(en);
 
    en = elm_entry_add(win);
@@ -1318,7 +1318,7 @@ test_entry4(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info
 		       "use it more flexibly.");
    evas_object_size_hint_weight_set(en, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(en, EVAS_HINT_FILL, EVAS_HINT_FILL);
-   elm_layout_content_set(ly, "element2", en);
+   elm_object_content_part_set(ly, "element2", en);
    evas_object_show(en);
 
    en = elm_entry_add(win);
@@ -1339,7 +1339,7 @@ test_entry4(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info
 				"good testing to see if entry widgets work as advertised."
                                 );
    evas_object_smart_callback_add(en, "anchor,clicked", scrolled_anchor_test, en);
-   elm_layout_content_set(ly, "element3", en);
+   elm_object_content_part_set(ly, "element3", en);
    evas_object_show(en);
 
    evas_object_show(win);

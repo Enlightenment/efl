@@ -221,16 +221,16 @@ test_pager(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info 
    bt = elm_button_add(win);
    elm_object_text_set(bt, "Flip to 1");
    evas_object_smart_callback_add(bt, "clicked", my_pager_4, &info);
-   elm_layout_content_set(ly2, "element1", bt);
+   elm_object_content_part_set(ly2, "element1", bt);
    evas_object_show(bt);
 
    bt = elm_button_add(win);
    elm_object_text_set(bt, "Popme");
    evas_object_smart_callback_add(bt, "clicked", my_pager_pop, &info);
    evas_object_show(bt);
-   elm_layout_content_set(ly2, "element2", bt);
+   elm_object_content_part_set(ly2, "element2", bt);
 
-   elm_layout_content_set(ly, "swallow", ly2);
+   elm_object_content_part_set(ly, "swallow", ly2);
    evas_object_show(ly);
 
    elm_pager_content_push(pg, ly);

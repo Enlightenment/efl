@@ -102,7 +102,7 @@ test_focus2(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info
 
    bt1 = bt = elm_button_add(ly);
    elm_object_text_set(bt, "Button 1");
-   elm_layout_content_set(ly, "element1", bt);
+   elm_object_content_part_set(ly, "element1", bt);
 
    en = elm_entry_add(ly);
    elm_entry_scrollable_set(en, EINA_TRUE);
@@ -111,11 +111,11 @@ test_focus2(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info
    elm_entry_scrollbar_policy_set(en, ELM_SCROLLER_POLICY_OFF, ELM_SCROLLER_POLICY_OFF);
    elm_entry_entry_set(en, "Scrolled Entry that should get focus");
    elm_entry_single_line_set(en, 1);
-   elm_layout_content_set(ly, "element2", en);
+   elm_object_content_part_set(ly, "element2", en);
 
    bt = elm_button_add(ly);
    elm_object_text_set(bt, "Button 2");
-   elm_layout_content_set(ly, "element3", bt);
+   elm_object_content_part_set(ly, "element3", bt);
 
    bt = elm_button_add(PARENT);
    elm_object_text_set(bt, "Give focus to layout");

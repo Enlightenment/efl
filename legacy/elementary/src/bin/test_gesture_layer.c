@@ -353,7 +353,7 @@ test_gesture_layer(void *data __UNUSED__, Evas_Object *obj __UNUSED__,
    Evas_Object *postit = elm_layout_add(win);
    snprintf(buf, sizeof(buf), "%s/objects/postit_ent.edj", elm_app_data_dir_get());
    elm_layout_file_set(postit, buf, "main");
-   elm_layout_content_set(postit, "ent", en);
+   elm_object_content_part_set(postit, "ent", en);
 
    photo_array[ind++] = photo_object_add(win, postit, NULL, 50, 50, 382, 400, 355);
 

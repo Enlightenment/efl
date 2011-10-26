@@ -93,10 +93,10 @@ test_segment_control(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *e
    elm_segment_control_item_add(segment4, NULL, "Disabled");
    elm_object_disabled_set(segment4, EINA_TRUE);
 
-   elm_layout_content_set(in_layout, "segment1", segment1);
-   elm_layout_content_set(in_layout, "segment2", segment2);
-   elm_layout_content_set(in_layout, "segment3", segment3);
-   elm_layout_content_set(in_layout, "segment4", segment4);
+   elm_object_content_part_set(in_layout, "segment1", segment1);
+   elm_object_content_part_set(in_layout, "segment2", segment2);
+   elm_object_content_part_set(in_layout, "segment3", segment3);
+   elm_object_content_part_set(in_layout, "segment4", segment4);
 
    evas_object_show(in_layout);
 

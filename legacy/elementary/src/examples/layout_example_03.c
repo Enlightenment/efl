@@ -83,7 +83,7 @@ elm_main(int argc __UNUSED__, char **argv __UNUSED__)
    elm_object_text_set(btn, "Enlarge me!");
    evas_object_size_hint_weight_set(btn, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(btn, EVAS_HINT_FILL, EVAS_HINT_FILL);
-   elm_layout_content_set(layout, SWALLOW, btn);
+   elm_object_content_part_set(layout, SWALLOW, btn);
    evas_object_smart_callback_add(btn, "clicked", _swallow_btn_cb, layout);
 
    evas_object_size_hint_min_set(bg, 160, 160);

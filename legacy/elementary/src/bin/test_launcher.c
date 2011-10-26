@@ -408,17 +408,17 @@ test_launcher2(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_i
 
         bt = elm_button_add(win);
         elm_object_text_set(bt, "Button 1");
-        elm_layout_content_set(ly, "element1", bt);
+        elm_object_content_part_set(ly, "element1", bt);
         evas_object_show(bt);
 
         bt = elm_button_add(win);
         elm_object_text_set(bt, "Button 2");
-        elm_layout_content_set(ly, "element2", bt);
+        elm_object_content_part_set(ly, "element2", bt);
         evas_object_show(bt);
 
         bt = elm_button_add(win);
         elm_object_text_set(bt, "Button 3");
-        elm_layout_content_set(ly, "element3", bt);
+        elm_object_content_part_set(ly, "element3", bt);
         evas_object_show(bt);
 
         mb = elm_mapbuf_add(win);
@@ -595,7 +595,7 @@ l3_tim_cb(void *data)
    slx = (int)(long)evas_object_data_get(data, "slx");
    sly = (int)(long)evas_object_data_get(data, "sly");
    snprintf(buf, sizeof(buf), "slot.%i.%i", slx, sly);
-   elm_layout_content_unset(ly, buf);
+   elm_object_content_part_unset(ly, buf);
    edje_object_signal_emit(elm_layout_edje_get(ly2), "drag", "app");
    return EINA_FALSE;
 }
@@ -671,7 +671,7 @@ l3_ic_up_cb(void *data __UNUSED__, Evas *e __UNUSED__, Evas_Object *obj, void *e
         slx = (int)(long)evas_object_data_get(obj, "slx");
         sly = (int)(long)evas_object_data_get(obj, "sly");
         snprintf(buf, sizeof(buf), "slot.%i.%i", slx, sly);
-        elm_layout_content_set(ly, buf, ly2);
+        elm_object_content_part_set(ly, buf, ly2);
         list = (Eina_List *)evas_object_data_get
            (elm_object_top_widget_get(obj), "mbs");
         EINA_LIST_FOREACH(list, l, mb)
@@ -812,7 +812,7 @@ test_launcher3(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_i
                   elm_icon_scale_set(ic, 0, 0);
                   evas_object_size_hint_weight_set(ic, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
                   evas_object_size_hint_align_set(ic, 0.5, 0.5);
-                  elm_layout_content_set(ly2, "slot", ic);
+                  elm_object_content_part_set(ly2, "slot", ic);
                   evas_object_show(ic);
 
                   evas_object_event_callback_add(ic, EVAS_CALLBACK_DEL, l3_ic_del_cb, ic);
@@ -830,7 +830,7 @@ test_launcher3(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_i
                   evas_object_data_set(ic, "sly", (void *)(long)(j));
 
                   snprintf(buf, sizeof(buf), "slot.%i.%i", i, j);
-                  elm_layout_content_set(ly, buf, ly2);
+                  elm_object_content_part_set(ly, buf, ly2);
                   evas_object_show(ly2);
 
                   n++; if (n > 23) n = 0;

@@ -3133,8 +3133,8 @@
  * Finally, we have an area in this layout theme, in the bottom part of it,
  * reserved for adding an specific widget. Differently from the 2 parts
  * described until now, this one can only receive one widget with the call
- * elm_layout_content_set(). If there was already an item on this specific part,
- * it will be deleted (one can use elm_layout_content_unset() in order to remove
+ * elm_object_content_part_set() for the layout. If there was already an item on this specific part,
+ * it will be deleted (one can use elm_object_content_part_unset() in order to remove
  * it without deleting). An example of removing it without deleting, but
  * manually deleting this widget just after that, can be seen on the callback
  * for this button. Actually, the callback defined for this button will clean
@@ -3146,7 +3146,7 @@
  * Also notice that, for this last added button, we don't have to call
  * evas_object_show() on it. This is a particularity of the theme for layouts,
  * that will have total control over the properties like size, position,
- * visibility and clipping of a widget added with elm_layout_content_set().
+ * visibility and clipping of a widget added with elm_object_content_part_set().
  * Again, read the Edje documentation to understand this better.
  *
  * Now we just put the code for the different callbacks specified for each kind

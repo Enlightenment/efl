@@ -9783,7 +9783,7 @@ extern "C" {
     * column or row span if necessary.
     *
     * Again, we could have this design by adding a @ref Table widget to the @c
-    * SWALLOW part using elm_layout_content_set(). The same difference happens
+    * SWALLOW part using elm_object_content_part_set(). The same difference happens
     * here when choosing to use the Layout Table (a @c TABLE part) instead of
     * the @ref Table plus @c SWALLOW part. It's just a matter of convenience.
     *
@@ -9879,7 +9879,7 @@ extern "C" {
     *
     * Once the content object is set, a previously set one will be deleted.
     * If you want to keep that old content object, use the
-    * elm_layout_content_unset() function.
+    * elm_object_content_part_unset() function.
     *
     * @note In an Edje theme, the part used as a content container is called @c
     * SWALLOW. This is why the parameter name is called @p swallow, but it is
@@ -9887,13 +9887,13 @@ extern "C" {
     * elm_layout_box_append().
     *
     * @see elm_layout_box_append()
-    * @see elm_layout_content_get()
-    * @see elm_layout_content_unset()
+    * @see elm_object_content_part_get()
+    * @see elm_object_content_part_unset()
     * @see @ref secBox
     *
     * @ingroup Layout
     */
-   EAPI void               elm_layout_content_set(Evas_Object *obj, const char *swallow, Evas_Object *content) EINA_ARG_NONNULL(1);
+   EINA_DEPRECATED EAPI void               elm_layout_content_set(Evas_Object *obj, const char *swallow, Evas_Object *content) EINA_ARG_NONNULL(1);
    /**
     * Get the child object in the given content part.
     *
@@ -9902,11 +9902,11 @@ extern "C" {
     *
     * @return The swallowed object or NULL if none or an error occurred
     *
-    * @see elm_layout_content_set()
+    * @see elm_object_content_part_set()
     *
     * @ingroup Layout
     */
-   EAPI Evas_Object       *elm_layout_content_get(const Evas_Object *obj, const char *swallow) EINA_ARG_NONNULL(1);
+   EINA_DEPRECATED EAPI Evas_Object       *elm_layout_content_get(const Evas_Object *obj, const char *swallow) EINA_ARG_NONNULL(1);
    /**
     * Unset the layout content.
     *
@@ -9916,11 +9916,11 @@ extern "C" {
     *
     * Unparent and return the content object which was set for this part.
     *
-    * @see elm_layout_content_set()
+    * @see elm_object_content_part_set()
     *
     * @ingroup Layout
     */
-    EAPI Evas_Object       *elm_layout_content_unset(Evas_Object *obj, const char *swallow) EINA_ARG_NONNULL(1);
+   EINA_DEPRECATED EAPI Evas_Object       *elm_layout_content_unset(Evas_Object *obj, const char *swallow) EINA_ARG_NONNULL(1);
    /**
     * Set the text of the given part
     *
@@ -10036,7 +10036,7 @@ extern "C" {
     *
     * The object will be removed from the box part and its lifetime will
     * not be handled by the layout anymore. This is equivalent to
-    * elm_layout_content_unset() for box.
+    * elm_object_content_part_unset() for box.
     *
     * @see elm_layout_box_append()
     * @see elm_layout_box_remove_all()
@@ -10107,7 +10107,7 @@ extern "C" {
     *
     * The object will be unpacked from the table part and its lifetime
     * will not be handled by the layout anymore. This is equivalent to
-    * elm_layout_content_unset() for table.
+    * elm_object_content_part_unset() for table.
     *
     * @see elm_layout_table_pack()
     * @see elm_layout_table_clear()
@@ -10144,7 +10144,7 @@ extern "C" {
     *
     * This returns the edje object. It is not expected to be used to then
     * swallow objects via edje_object_part_swallow() for example. Use
-    * elm_layout_content_set() instead so child object handling and sizing is
+    * elm_object_content_part_set() instead so child object handling and sizing is
     * done properly.
     *
     * @note This function should only be used if you really need to call some
@@ -10155,7 +10155,7 @@ extern "C" {
     * @see elm_object_signal_callback_add()
     * @see elm_object_signal_emit()
     * @see elm_object_text_part_set()
-    * @see elm_layout_content_set()
+    * @see elm_object_content_part_set()
     * @see elm_layout_box_append()
     * @see elm_layout_table_pack()
     * @see elm_layout_data_get()
@@ -10320,7 +10320,7 @@ extern "C" {
 #define elm_layout_icon_set(_ly, _obj) \
   do { \
     const char *sig; \
-    elm_layout_content_set((_ly), "elm.swallow.icon", (_obj)); \
+    elm_object_content_part_set((_ly), "elm.swallow.icon", (_obj)); \
     if ((_obj)) sig = "elm,state,icon,visible"; \
     else sig = "elm,state,icon,hidden"; \
     elm_object_signal_emit((_ly), sig, "elm"); \
@@ -10334,7 +10334,7 @@ extern "C" {
  * @ingroup Layout
  */
 #define elm_layout_icon_get(_ly) \
-  elm_layout_content_get((_ly), "elm.swallow.icon")
+  elm_object_content_part_get((_ly), "elm.swallow.icon")
 
 /**
  * @def elm_layout_end_set
@@ -10346,7 +10346,7 @@ extern "C" {
 #define elm_layout_end_set(_ly, _obj) \
   do { \
     const char *sig; \
-    elm_layout_content_set((_ly), "elm.swallow.end", (_obj)); \
+    elm_object_content_part_set((_ly), "elm.swallow.end", (_obj)); \
     if ((_obj)) sig = "elm,state,end,visible"; \
     else sig = "elm,state,end,hidden"; \
     elm_object_signal_emit((_ly), sig, "elm"); \
@@ -10360,7 +10360,7 @@ extern "C" {
  * @ingroup Layout
  */
 #define elm_layout_end_get(_ly) \
-  elm_layout_content_get((_ly), "elm.swallow.end")
+  elm_object_content_part_get((_ly), "elm.swallow.end")
 
 /**
  * @def elm_layout_label_set

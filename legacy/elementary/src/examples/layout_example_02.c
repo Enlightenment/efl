@@ -23,7 +23,7 @@ static void
 _signal_cb(void *data, Evas_Object *o, const char *emission, const char *source __UNUSED__)
 {
    struct _App *app = data;
-   Evas_Object *icon = elm_layout_content_get(o, "elm.swallow.content");
+   Evas_Object *icon = elm_object_content_part_get(o, "elm.swallow.content");
 
    printf("signal received\n");
 
@@ -70,7 +70,7 @@ elm_main(int argc __UNUSED__, char **argv __UNUSED__)
    icon = elm_icon_add(win);
    elm_icon_standard_set(icon, images[app.current]);
    evas_object_size_hint_weight_set(layout, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-   elm_layout_content_set(layout, "elm.swallow.content", icon);
+   elm_object_content_part_set(layout, "elm.swallow.content", icon);
 
    elm_object_signal_callback_add(layout, "elm,action,back", "", _signal_cb, &app);
    elm_object_signal_callback_add(layout, "elm,action,next", "", _signal_cb, &app);
