@@ -286,7 +286,6 @@ test_transit2(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_in
    win = elm_win_add(NULL, "transit2", ELM_WIN_BASIC);
    elm_win_title_set(win, "Transit 2");
    elm_win_autodel_set(win, EINA_TRUE);
-   evas_object_resize(win, 400, 400);
 
    bg = elm_bg_add(win);
    elm_win_resize_object_add(win, bg);
@@ -300,6 +299,7 @@ test_transit2(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_in
    evas_object_resize(bt, 100, 50);
    evas_object_smart_callback_add(bt, "clicked", _transit_resizing, NULL);
 
+   evas_object_resize(win, 400, 400);
    evas_object_show(win);
 }
 
@@ -312,7 +312,6 @@ test_transit3(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_in
    win = elm_win_add(NULL, "transit3", ELM_WIN_BASIC);
    elm_win_title_set(win, "Transit 3");
    elm_win_autodel_set(win, EINA_TRUE);
-   evas_object_resize(win, 300, 300);
 
    bg = elm_bg_add(win);
    elm_win_resize_object_add(win, bg);
@@ -330,6 +329,7 @@ test_transit3(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_in
    evas_object_move(bt2, 50, 50);
    evas_object_resize(bt2, 200, 200);
 
+   evas_object_resize(win, 300, 300);
    evas_object_show(win);
 
    evas_object_smart_callback_add(bt, "clicked", _transit_flip, bt2);
@@ -345,7 +345,6 @@ test_transit4(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_in
    win = elm_win_add(NULL, "transit4", ELM_WIN_BASIC);
    elm_win_title_set(win, "Transit 4");
    elm_win_autodel_set(win, EINA_TRUE);
-   evas_object_resize(win, 300, 300);
 
    bg = elm_bg_add(win);
    elm_win_resize_object_add(win, bg);
@@ -360,6 +359,7 @@ test_transit4(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_in
 
    evas_object_smart_callback_add(bt, "clicked", _transit_zoom, NULL);
 
+   evas_object_resize(win, 300, 300);
    evas_object_show(win);
 }
 
@@ -373,7 +373,6 @@ test_transit5(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_in
    win = elm_win_add(NULL, "transit5", ELM_WIN_BASIC);
    elm_win_title_set(win, "Transit 5");
    elm_win_autodel_set(win, EINA_TRUE);
-   evas_object_resize(win, 300, 300);
 
    bg = elm_bg_add(win);
    elm_win_resize_object_add(win, bg);
@@ -403,6 +402,7 @@ test_transit5(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_in
    evas_object_move(bt2, 25, 125);
    evas_object_resize(bt2, 250, 50);
 
+   evas_object_resize(win, 300, 300);
    evas_object_show(win);
 
    evas_object_smart_callback_add(bt, "clicked", _transit_blend, bt2);
@@ -419,7 +419,6 @@ test_transit6(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_in
    win = elm_win_add(NULL, "transit6", ELM_WIN_BASIC);
    elm_win_title_set(win, "Transit 6");
    elm_win_autodel_set(win, EINA_TRUE);
-   evas_object_resize(win, 300, 300);
 
    bg = elm_bg_add(win);
    elm_win_resize_object_add(win, bg);
@@ -449,6 +448,7 @@ test_transit6(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_in
    evas_object_move(bt2, 25, 125);
    evas_object_resize(bt2, 250, 50);
 
+   evas_object_resize(win, 300, 300);
    evas_object_show(win);
 
    evas_object_smart_callback_add(bt, "clicked", _transit_fade, bt2);
@@ -499,8 +499,6 @@ test_transit8(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_in
    win = elm_win_add(NULL, "transit8", ELM_WIN_BASIC);
    elm_win_title_set(win, "Transit 8");
    elm_win_autodel_set(win, EINA_TRUE);
-   evas_object_resize(win, 400, 400);
-   evas_object_show(win);
 
    bg = elm_bg_add(win);
    elm_win_resize_object_add(win, bg);
@@ -525,6 +523,9 @@ test_transit8(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_in
    elm_transit_duration_set(trans, 5.0);
    elm_transit_repeat_times_set(trans, -1);
    elm_transit_go(trans);
+
+   evas_object_resize(win, 400, 400);
+   evas_object_show(win);
 }
 
 /* Chain Transit Effect */
@@ -537,8 +538,6 @@ test_transit9(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_in
    win = elm_win_add(NULL, "transit9", ELM_WIN_BASIC);
    elm_win_title_set(win, "Transit 9");
    elm_win_autodel_set(win, EINA_TRUE);
-   evas_object_resize(win, 400, 400);
-   evas_object_show(win);
 
    bg = elm_bg_add(win);
    elm_win_resize_object_add(win, bg);
@@ -600,6 +599,9 @@ test_transit9(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_in
    elm_transit_duration_set(trans4, 1);
    elm_transit_objects_final_state_keep_set(trans4, EINA_TRUE);
    elm_transit_chain_transit_add(trans3, trans4);
+
+   evas_object_resize(win, 400, 400);
+   evas_object_show(win);
 }
 
 
