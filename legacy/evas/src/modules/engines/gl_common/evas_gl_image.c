@@ -105,7 +105,10 @@ evas_gl_common_image_load(Evas_Engine_GL_Context *gc, const char *file, const ch
 
    im_im = evas_common_load_image_from_file(file, key, lo, error);
    if (!im_im) return NULL;
-   
+
+   /* i'd LOVe to do this, but we can't because we load to load header
+    * to get image size to know if its too big or not! so this disallows
+    * us to know that - photocam thus suffers
    if (((int)im_im->cache_entry.w > gc->shared->info.max_texture_size) ||
        ((int)im_im->cache_entry.h > gc->shared->info.max_texture_size))
      {
@@ -113,7 +116,8 @@ evas_gl_common_image_load(Evas_Engine_GL_Context *gc, const char *file, const ch
         *error = EVAS_LOAD_ERROR_RESOURCE_ALLOCATION_FAILED;
         return NULL;
      }
-
+    */
+   
    // FIXME: keep unreffed shared images around
    EINA_LIST_FOREACH(gc->shared->images, l, im)
      {
