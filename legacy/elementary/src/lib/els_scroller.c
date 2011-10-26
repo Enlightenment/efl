@@ -458,12 +458,14 @@ _smart_scrollto_x_animator(void *data)
      {
         px = sd->scrollto.x.end;
         elm_smart_scroller_child_pos_set(sd->smart_obj, px, py);
+        _update_wanted_coordinates(sd, px, py);
         sd->scrollto.x.animator = NULL;
         if ((!sd->scrollto.y.animator) && (!sd->down.bounce_y_animator))
           _smart_anim_stop(sd->smart_obj);
         return ECORE_CALLBACK_CANCEL;
      }
    elm_smart_scroller_child_pos_set(sd->smart_obj, px, py);
+   _update_wanted_coordinates(sd, px, py);
    return ECORE_CALLBACK_RENEW;
 }
 
@@ -548,12 +550,14 @@ _smart_scrollto_y_animator(void *data)
      {
         py = sd->scrollto.y.end;
         elm_smart_scroller_child_pos_set(sd->smart_obj, px, py);
+        _update_wanted_coordinates(sd, px, py);
         sd->scrollto.y.animator = NULL;
         if ((!sd->scrollto.x.animator) && (!sd->down.bounce_x_animator))
           _smart_anim_stop(sd->smart_obj);
         return ECORE_CALLBACK_CANCEL;
      }
    elm_smart_scroller_child_pos_set(sd->smart_obj, px, py);
+   _update_wanted_coordinates(sd, px, py);
 
    return ECORE_CALLBACK_RENEW;
 }
