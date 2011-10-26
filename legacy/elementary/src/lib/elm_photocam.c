@@ -1487,7 +1487,7 @@ elm_photocam_image_region_show(Evas_Object *obj, int x, int y, int w, int h __UN
    rx = (x * wd->size.w) / wd->size.imw;
    ry = (y * wd->size.h) / wd->size.imh;
    rw = (w * wd->size.w) / wd->size.imw;
-   rh = (w * wd->size.h) / wd->size.imh;
+   rh = (h * wd->size.h) / wd->size.imh;
    if (rw < 1) rw = 1;
    if (rh < 1) rh = 1;
    if ((rx + rw) > wd->size.w) rx = wd->size.w - rw;
@@ -1514,7 +1514,7 @@ elm_photocam_image_region_bring_in(Evas_Object *obj, int x, int y, int w, int h 
    rx = (x * wd->size.w) / wd->size.imw;
    ry = (y * wd->size.h) / wd->size.imh;
    rw = (w * wd->size.w) / wd->size.imw;
-   rh = (w * wd->size.h) / wd->size.imh;
+   rh = (h * wd->size.h) / wd->size.imh;
    if (rw < 1) rw = 1;
    if (rh < 1) rh = 1;
    if ((rx + rw) > wd->size.w) rx = wd->size.w - rw;
