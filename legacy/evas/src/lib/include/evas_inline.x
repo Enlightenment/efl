@@ -207,13 +207,14 @@ evas_object_clip_recalc(Evas_Object *obj)
    cb = obj->cur.color.b; ca = obj->cur.color.a;
    if (obj->cur.clipper)
      {
-// this causes problems... hmmm
+// this causes problems... hmmm ?????
         if (obj->cur.clipper->cur.cache.clip.dirty)
           evas_object_clip_recalc(obj->cur.clipper);
 
         // I don't know why this test was here in the first place. As I have
         // no issue showing up due to this, I keep it and move color out of it.
-        if (obj->cur.clipper->cur.map_parent == obj->cur.map_parent)
+// breaks cliping of mapped images!!!
+//        if (obj->cur.clipper->cur.map_parent == obj->cur.map_parent)
           {
              nx = obj->cur.clipper->cur.cache.clip.x;
              ny = obj->cur.clipper->cur.cache.clip.y;

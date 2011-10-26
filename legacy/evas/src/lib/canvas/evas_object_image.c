@@ -3498,7 +3498,13 @@ evas_object_image_is_opaque(Evas_Object *obj)
                      (m->points[0].y == m->points[3].y) &&
                      (m->points[1].y == m->points[2].y))
                 )
-               return o->cur.opaque;
+               {
+                  if ((m->points[0].x == obj->cur.geometry.x) &&
+                      (m->points[0].y == obj->cur.geometry.y) &&
+                      (m->points[2].x == (obj->cur.geometry.x + obj->cur.geometry.w)) &&
+                      (m->points[2].y == (obj->cur.geometry.y + obj->cur.geometry.h)))
+                    return o->cur.opaque;
+               }
           }
         o->cur.opaque = 0;
         return o->cur.opaque;
