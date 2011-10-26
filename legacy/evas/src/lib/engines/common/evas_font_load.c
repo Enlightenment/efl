@@ -37,7 +37,7 @@ _evas_font_cache_int_cmp(const RGBA_Font_Int *k1, int k1_length __UNUSED__,
         else
            return k1->size - k2->size;
      }
-   return strcmp(k1->src->name, k2->src->name);;
+   return strcmp(k1->src->name, k2->src->name);
 }
 
 static int
