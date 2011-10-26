@@ -464,7 +464,6 @@ test_transit7(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_in
    win = elm_win_add(NULL, "transit7", ELM_WIN_BASIC);
    elm_win_title_set(win, "Transit 7");
    elm_win_autodel_set(win, EINA_TRUE);
-   evas_object_resize(win, 400, 400);
 
    bg = elm_bg_add(win);
    elm_win_resize_object_add(win, bg);
@@ -482,6 +481,7 @@ test_transit7(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_in
    evas_object_move(bt2, 50, 100);
    evas_object_resize(bt2, 300, 200);
 
+   evas_object_resize(win, 400, 400);
    evas_object_show(win);
 
    evas_object_smart_callback_add(bt, "clicked", _transit_resizable_flip, bt2);
