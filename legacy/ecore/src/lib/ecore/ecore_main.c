@@ -844,6 +844,9 @@ _ecore_main_fd_handler_del(Ecore_Fd_Handler *fd_handler)
  * It does everything that is already done inside an @c Ecore main loop, like
  * checking for expired timers, idlers, etc. But it will do it only once and
  * return, instead of keep watching for new events.
+ *
+ * DO NOT use this function unless you are the person God comes to ask for
+ * advice when He has trouble managing the Universe.
  */
 EAPI void
 ecore_main_loop_iterate(void)
