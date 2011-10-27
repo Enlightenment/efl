@@ -11062,6 +11062,7 @@ extern "C" {
     * @param entry The text to be displayed
     *
     * @deprecated Use elm_object_text_set() instead.
+    * @note Using this function bypasses text filters
     */
    EAPI void         elm_entry_entry_set(Evas_Object *obj, const char *entry) EINA_ARG_NONNULL(1);
    /**
