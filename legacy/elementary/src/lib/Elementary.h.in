@@ -571,6 +571,14 @@ extern "C" {
         ELM_INPUT_PANEL_LAYOUT_INVALID
      } Elm_Input_Panel_Layout;
 
+   typedef enum
+     {
+        ELM_AUTOCAPITAL_TYPE_NONE,
+        ELM_AUTOCAPITAL_TYPE_WORD,
+        ELM_AUTOCAPITAL_TYPE_SENTENCE,
+        ELM_AUTOCAPITAL_TYPE_ALLCHARACTER,
+     } Elm_Autocapital_Type;
+
    /**
     * @typedef Elm_Object_Item
     * An Elementary Object item handle.
@@ -11784,6 +11792,35 @@ extern "C" {
     * @see elm_entry_input_panel_layout_set
     */
    EAPI Elm_Input_Panel_Layout elm_entry_input_panel_layout_get(Evas_Object *obj) EINA_ARG_NONNULL(1);
+   /**
+    * Set the autocapitalization type on the immodule.
+    *
+    * @param obj The entry object
+    * @param autocapital_type The type of autocapitalization
+    */
+   EAPI void         elm_entry_autocapital_type_set(Evas_Object *obj, Elm_Autocapital_Type autocapital_type) EINA_ARG_NONNULL(1);
+   /**
+    * Retrieve the autocapitalization type on the immodule.
+    *
+    * @param obj The entry object
+    * @return autocapitalization type
+    */
+   EAPI Elm_Autocapital_Type elm_entry_autocapital_type_get(Evas_Object *obj) EINA_ARG_NONNULL(1);
+   /**
+    * Sets the attribute to show the input panel automatically.
+    *
+    * @param obj The entry object
+    * @param enabled If true, the input panel is appeared when entry is clicked or has a focus
+    */
+   EAPI void elm_entry_input_panel_enabled_set(Evas_Object *obj, Eina_Bool enabled) EINA_ARG_NONNULL(1);
+   /**
+    * Retrieve the attribute to show the input panel automatically.
+    *
+    * @param obj The entry object
+    * @return EINA_TRUE if input panel will be appeared when the entry is clicked or has a focus, EINA_FALSE otherwise
+    */
+   EAPI Eina_Bool elm_entry_input_panel_enabled_get(Evas_Object *obj) EINA_ARG_NONNULL(1);
+
    /**
     * @}
     */
