@@ -3,6 +3,7 @@
 
 #include "Ecore.h"
 #include "ecore_private.h"
+#include "Ecore_Input.h"
 
 #include <stdio.h>
 #include <string.h>
@@ -49,10 +50,14 @@ struct _Ecore_Fb_Input_Device
                 double last;
                 double prev;
                 double threshold;
+                Eina_Bool did_double;
+                Eina_Bool did_triple;
                 /* absolute axis */
                 int min_w, min_h;
                 double rel_w, rel_h;
                 int event;
+                int prev_button;
+                int last_button;
         } mouse;
         struct
         {
@@ -61,6 +66,7 @@ struct _Ecore_Fb_Input_Device
                 int alt;
                 int lock;
         } keyboard;
+        void *window;
 };
 
 /* ecore_fb_ts.c */

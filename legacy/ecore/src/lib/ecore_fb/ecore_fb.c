@@ -7,13 +7,6 @@
 
 static void _ecore_fb_size_get(int *w, int *h);
 
-EAPI int ECORE_FB_EVENT_KEY_DOWN = 0;
-EAPI int ECORE_FB_EVENT_KEY_UP = 0;
-EAPI int ECORE_FB_EVENT_MOUSE_BUTTON_DOWN = 0;
-EAPI int ECORE_FB_EVENT_MOUSE_BUTTON_UP = 0;
-EAPI int ECORE_FB_EVENT_MOUSE_MOVE = 0;
-EAPI int ECORE_FB_EVENT_MOUSE_WHEEL = 0;
-
 static int _ecore_fb_init_count = 0;
 static int _ecore_fb_console_w = 0;
 static int _ecore_fb_console_h = 0;
@@ -46,12 +39,6 @@ ecore_fb_init(const char *name __UNUSED__)
    if (!ecore_fb_vt_init())
       return --_ecore_fb_init_count;
 
-   ECORE_FB_EVENT_KEY_DOWN          = ecore_event_type_new();
-   ECORE_FB_EVENT_KEY_UP            = ecore_event_type_new();
-   ECORE_FB_EVENT_MOUSE_BUTTON_DOWN = ecore_event_type_new();
-   ECORE_FB_EVENT_MOUSE_BUTTON_UP   = ecore_event_type_new();
-   ECORE_FB_EVENT_MOUSE_MOVE        = ecore_event_type_new();
-   ECORE_FB_EVENT_MOUSE_WHEEL       = ecore_event_type_new();
    _ecore_fb_size_get(&_ecore_fb_console_w, &_ecore_fb_console_h);
 
    return _ecore_fb_init_count;

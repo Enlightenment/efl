@@ -251,24 +251,26 @@ _ecore_fb_ts_fd_handler(void *data __UNUSED__, Ecore_Fd_Handler *fd_handler __UN
         if ((pressure) || (prev_pressure))
           {
              /* MOVE: mouse is down and was */
-             Ecore_Fb_Event_Mouse_Move *e;
+             Ecore_Event_Mouse_Move *e;
 
-             e = calloc(1, sizeof(Ecore_Fb_Event_Mouse_Move));
+             e = calloc(1, sizeof(Ecore_Event_Mouse_Move));
              if (!e) goto retry;
              e->x = x;
              e->y = y;
-             ecore_event_add(ECORE_FB_EVENT_MOUSE_MOVE, e, NULL, NULL);
+             e->root.x = x;
+             e->root.y = y;
+             ecore_event_add(ECORE_EVENT_MOUSE_MOVE, e, NULL, NULL);
           }
         if ((pressure) && (!prev_pressure))
           {
              /* DOWN: mouse is down, but was not now */
-             Ecore_Fb_Event_Mouse_Button_Down *e;
+             Ecore_Event_Mouse_Button *e;
 
-             e = calloc(1, sizeof(Ecore_Fb_Event_Mouse_Button_Down));
+             e = calloc(1, sizeof(Ecore_Event_Mouse_Button));
              if (!e) goto retry;
              e->x = x;
              e->y = y;
-             e->button = 1;
+             e->buttons = 1;
              if ((t - last_time) <= _ecore_fb_double_click_time)
                {
                   e->double_click = 1;
@@ -288,23 +290,23 @@ _ecore_fb_ts_fd_handler(void *data __UNUSED__, Ecore_Fd_Handler *fd_handler __UN
                {
                   did_triple = 0;
                }
-             ecore_event_add(ECORE_FB_EVENT_MOUSE_BUTTON_DOWN, e, NULL, NULL);
+             ecore_event_add(ECORE_EVENT_MOUSE_BUTTON_DOWN, e, NULL, NULL);
           }
         else if ((!pressure) && (prev_pressure))
           {
              /* UP: mouse was down, but is not now */
-             Ecore_Fb_Event_Mouse_Button_Up *e;
+             Ecore_Event_Mouse_Button *e;
 
-             e = calloc(1, sizeof(Ecore_Fb_Event_Mouse_Button_Up));
+             e = calloc(1, sizeof(Ecore_Event_Mouse_Button));
              if (!e) goto retry;
              e->x = prev_x;
              e->y = prev_y;
-             e->button = 1;
+             e->buttons = 1;
              if (did_double)
                 e->double_click = 1;
              if (did_triple)
                 e->triple_click = 1;
-             ecore_event_add(ECORE_FB_EVENT_MOUSE_BUTTON_UP, e, NULL, NULL);
+             ecore_event_add(ECORE_EVENT_MOUSE_BUTTON_UP, e, NULL, NULL);
           }
         if (did_triple)
           {

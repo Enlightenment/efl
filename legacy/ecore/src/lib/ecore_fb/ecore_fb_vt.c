@@ -300,9 +300,9 @@ _ecore_fb_event_filter_filter(void *data __UNUSED__, void *loop_data,int type, v
 
    filter_data = loop_data;
    if (!filter_data) return EINA_TRUE;
-   if (type == ECORE_FB_EVENT_MOUSE_MOVE)
+   if (type == ECORE_EVENT_MOUSE_MOVE)
      {
-        if ((filter_data->last_event_type) == ECORE_FB_EVENT_MOUSE_MOVE)
+        if ((filter_data->last_event_type) == ECORE_EVENT_MOUSE_MOVE)
           {
              filter_data->last_event_type = type;
              return EINA_FALSE;

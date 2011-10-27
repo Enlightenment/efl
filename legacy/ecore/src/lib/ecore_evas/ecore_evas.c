@@ -2519,3 +2519,19 @@ ecore_evas_ecore_evas_list_get(void)
 
    return l;
 }
+
+EAPI void
+ecore_evas_input_event_register(Ecore_Evas *ee)
+{
+   ecore_event_window_register((Ecore_Window)ee, ee, ee->evas,
+                               (Ecore_Event_Mouse_Move_Cb)_ecore_evas_mouse_move_process,
+                               (Ecore_Event_Multi_Move_Cb)_ecore_evas_mouse_multi_move_process,
+                               (Ecore_Event_Multi_Down_Cb)_ecore_evas_mouse_multi_down_process,
+                               (Ecore_Event_Multi_Up_Cb)_ecore_evas_mouse_multi_up_process);
+}
+
+EAPI void
+ecore_evas_input_event_unregister(Ecore_Evas *ee)
+{
+   ecore_event_window_unregister((Ecore_Window)ee);
+}

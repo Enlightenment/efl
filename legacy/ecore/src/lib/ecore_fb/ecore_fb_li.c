@@ -36,30 +36,6 @@ test_bit(int bit, unsigned long *array)
 }
 
 static void
-_ecore_fb_li_event_free_key_down(void *data __UNUSED__, void *ev)
-{
-   Ecore_Fb_Event_Key_Up *e;
-
-   e = ev;
-   free(e->keyname);
-   if (e->keysymbol) free(e->keysymbol);
-   if (e->key_compose) free(e->key_compose);
-   free(e);
-}
-
-static void
-_ecore_fb_li_event_free_key_up(void *data __UNUSED__, void *ev)
-{
-   Ecore_Fb_Event_Key_Up *e;
-
-   e = ev;
-   free(e->keyname);
-   if (e->keysymbol) free(e->keysymbol);
-   if (e->key_compose) free(e->key_compose);
-   free(e);
-}
-
-static void
 _ecore_fb_li_device_event_key(Ecore_Fb_Input_Device *dev, struct input_event *iev)
 {
    if (!dev->listen) return;
@@ -67,38 +43,28 @@ _ecore_fb_li_device_event_key(Ecore_Fb_Input_Device *dev, struct input_event *ie
    /* check for basic keyboard keys */
    if ((iev->code >= KEY_ESC) && (iev->code <= KEY_COMPOSE))
      {
+        int offset = 0;
+        char *keyname = strdup(_ecore_fb_li_kbd_syms[iev->code * 6]);
         /* check the key table */
         if (iev->value)
           {
-             int offset = 0;
-             Ecore_Fb_Event_Key_Down *ev;
-
-             ev = calloc(1, sizeof(Ecore_Fb_Event_Key_Down));
-             if (dev->keyboard.shift) offset = 1;
-             else if (dev->keyboard.lock) offset = 2;
-             ev->keyname = strdup(_ecore_fb_li_kbd_syms[iev->code * 6]);
-
-             ev->keysymbol = strdup(_ecore_fb_li_kbd_syms[(iev->code * 6) + offset]);
-             ev->key_compose = strdup(_ecore_fb_li_kbd_syms[(iev->code * 6) + 3 + offset]);
-             ev->dev = dev;
-             ecore_event_add(ECORE_FB_EVENT_KEY_DOWN, ev, _ecore_fb_li_event_free_key_down, NULL);
              /* its a repeated key, dont increment */
              if (iev->value == 2)
                 return;
-             if (!strcmp(ev->keyname, "Control_L"))
+             if (!strcmp(keyname, "Control_L"))
                 dev->keyboard.ctrl++;
-             else if (!strcmp(ev->keyname, "Control_R"))
+             else if (!strcmp(keyname, "Control_R"))
                 dev->keyboard.ctrl++;
-             else if (!strcmp(ev->keyname, "Alt_L"))
+             else if (!strcmp(keyname, "Alt_L"))
                 dev->keyboard.alt++;
-             else if (!strcmp(ev->keyname, "Alt_R"))
+             else if (!strcmp(keyname, "Alt_R"))
                 dev->keyboard.alt++;
-             else if (!strcmp(ev->keyname, "Shift_L"))
+             else if (!strcmp(keyname, "Shift_L"))
                 dev->keyboard.shift++;
-             else if (!strcmp(ev->keyname, "Shift_R"))
+             else if (!strcmp(keyname, "Shift_R"))
                 dev->keyboard.shift++;
-             else if (!strcmp(ev->keyname, "Caps_Lock"))
-                dev->keyboard.lock++;
+             else if (!strcmp(keyname, "Caps_Lock"))
+               dev->keyboard.lock = !dev->keyboard.lock;
              if (dev->keyboard.ctrl > 2) dev->keyboard.ctrl = 2;
              if (dev->keyboard.alt > 2) dev->keyboard.alt = 2;
              if (dev->keyboard.shift > 2) dev->keyboard.shift = 2;
@@ -106,85 +72,128 @@ _ecore_fb_li_device_event_key(Ecore_Fb_Input_Device *dev, struct input_event *ie
           }
         else
           {
-             int offset = 0;
-             Ecore_Fb_Event_Key_Up *ev;
-
-             ev = calloc(1, sizeof(Ecore_Fb_Event_Key_Up));
-             if (dev->keyboard.shift) offset = 1;
-             else if (dev->keyboard.lock) offset = 2;
-             ev->keyname = strdup(_ecore_fb_li_kbd_syms[iev->code * 6]);
-
-             ev->keysymbol = strdup(_ecore_fb_li_kbd_syms[(iev->code * 6) + offset]);
-             ev->key_compose = strdup(_ecore_fb_li_kbd_syms[(iev->code * 6) + 3 + offset]);
-             ev->dev = dev;
-             ecore_event_add(ECORE_FB_EVENT_KEY_UP, ev, _ecore_fb_li_event_free_key_up, NULL);
-             if (!strcmp(ev->keyname, "Control_L"))
+             if (!strcmp(keyname, "Control_L"))
                 dev->keyboard.ctrl--;
-             else if (!strcmp(ev->keyname, "Control_R"))
+             else if (!strcmp(keyname, "Control_R"))
                 dev->keyboard.ctrl--;
-             else if (!strcmp(ev->keyname, "Alt_L"))
+             else if (!strcmp(keyname, "Alt_L"))
                 dev->keyboard.alt--;
-             else if (!strcmp(ev->keyname, "Alt_R"))
+             else if (!strcmp(keyname, "Alt_R"))
                 dev->keyboard.alt--;
-             else if (!strcmp(ev->keyname, "Shift_L"))
+             else if (!strcmp(keyname, "Shift_L"))
                 dev->keyboard.shift--;
-             else if (!strcmp(ev->keyname, "Shift_R"))
+             else if (!strcmp(keyname, "Shift_R"))
                 dev->keyboard.shift--;
-             else if (!strcmp(ev->keyname, "Caps_Lock"))
-                dev->keyboard.lock--;
              if (dev->keyboard.ctrl < 0) dev->keyboard.ctrl = 0;
              if (dev->keyboard.alt < 0) dev->keyboard.alt = 0;
              if (dev->keyboard.shift < 0) dev->keyboard.shift = 0;
              if (dev->keyboard.lock < 0) dev->keyboard.lock = 0;
           }
+
+        /* sending ecore_input_evas events */
+        Ecore_Event_Key *e;
+
+        if (dev->keyboard.shift) offset = 1;
+        else if (dev->keyboard.lock) offset = 2;
+
+        char *key = strdup(_ecore_fb_li_kbd_syms[(iev->code * 6) + offset]);
+        char *compose = strdup(_ecore_fb_li_kbd_syms[(iev->code * 6) + 3 + offset]);
+
+        e = calloc(1, sizeof(Ecore_Event_Key) + strlen(key) +
+                   strlen(keyname) + (compose ? strlen(compose) : 0) + 3);
+        e->keyname = (char *)(e + 1);
+        e->key = e->keyname + strlen(keyname) + 1;
+        e->compose = (compose) ? e->key + strlen(key) + 1 : NULL;
+        e->string = e->compose;
+
+        strcpy((char *)e->keyname, keyname);
+        strcpy((char *)e->key, key);
+        if (compose)
+          strcpy((char *)e->compose, compose);
+
+        e->modifiers = 0;
+        if (dev->keyboard.shift)
+          e->modifiers |= ECORE_EVENT_MODIFIER_SHIFT;
+        if (dev->keyboard.ctrl) e->modifiers |= ECORE_EVENT_MODIFIER_CTRL;
+        if (dev->keyboard.alt) e->modifiers |= ECORE_EVENT_MODIFIER_SHIFT;
+        if (dev->keyboard.lock) e->modifiers |= ECORE_EVENT_LOCK_CAPS;
+
+        e->timestamp = ecore_time_get();
+        e->window = (Ecore_Window)dev->window;
+        e->event_window = (Ecore_Window)dev->window;
+        e->root_window = (Ecore_Window)dev->window;
+        e->same_screen = 0;
+
+        if (iev->value)
+          ecore_event_add(ECORE_EVENT_KEY_DOWN, e, NULL, NULL);
+        else
+          ecore_event_add(ECORE_EVENT_KEY_UP, e, NULL, NULL);
      }
    /* check for mouse button events */
    else if ((iev->code >= BTN_MOUSE) && (iev->code < BTN_JOYSTICK))
      {
         int button;
+        Ecore_Event_Mouse_Button *e;
+        double current = ecore_time_get();
 
         button = ((iev->code & 0x00F) + 1);
         if (iev->value)
           {
-             Ecore_Fb_Event_Mouse_Button_Down *ev;
-             double current;
+             dev->mouse.did_double = EINA_FALSE;
+             dev->mouse.did_triple = EINA_FALSE;
 
-             ev = calloc(1, sizeof(Ecore_Fb_Event_Mouse_Button_Down));
-             ev->dev = dev;
-             ev->button = button;
-             ev->x = dev->mouse.x;
-             ev->y = dev->mouse.y;
-
-             current = ecore_time_get();
-             if ((current - dev->mouse.prev) <= dev->mouse.threshold)
-                ev->double_click = 1;
-             if ((current - dev->mouse.last) <= (2 * dev->mouse.threshold))
+             if (((current - dev->mouse.prev) <= dev->mouse.threshold) &&
+                 (button == dev->mouse.prev_button))
                {
-                  ev->triple_click = 1;
-                  /* reset */
-                  dev->mouse.prev = 0;
-                  dev->mouse.last = 0;
-                  current = 0;
+                  dev->mouse.did_double = EINA_TRUE;
+                  if (((current - dev->mouse.last) <= (2 * dev->mouse.threshold)) &&
+                      (button == dev->mouse.last_button))
+                    {
+                       dev->mouse.did_triple = EINA_TRUE;
+                       /* reset */
+                       dev->mouse.prev = 0;
+                       dev->mouse.last = 0;
+                       current = 0;
+                    }
                }
-             else
-               {
-                  /* update values */
-                  dev->mouse.last = dev->mouse.prev;
-                  dev->mouse.prev = current;
-               }
-             ecore_event_add(ECORE_FB_EVENT_MOUSE_BUTTON_DOWN, ev, NULL ,NULL);
+             dev->mouse.last = dev->mouse.prev;
+             dev->mouse.prev = current;
+             dev->mouse.last_button = dev->mouse.prev_button;
+             dev->mouse.prev_button = button;
           }
+
+        e = calloc(1, sizeof(Ecore_Event_Mouse_Button));
+        if (!e)
+          return;
+
+        e->timestamp = current;
+        e->window = (Ecore_Window)dev->window;
+        e->event_window = (Ecore_Window)dev->window;
+        e->root_window = (Ecore_Window)dev->window;
+        e->same_screen = 0;
+
+        e->modifiers = 0;
+        if (dev->keyboard.shift)
+          e->modifiers |= ECORE_EVENT_MODIFIER_SHIFT;
+        if (dev->keyboard.ctrl) e->modifiers |= ECORE_EVENT_MODIFIER_CTRL;
+        if (dev->keyboard.alt) e->modifiers |= ECORE_EVENT_MODIFIER_SHIFT;
+        if (dev->keyboard.lock) e->modifiers |= ECORE_EVENT_LOCK_CAPS;
+
+        e->x = dev->mouse.x;
+        e->y = dev->mouse.y;
+        e->root.x = e->x;
+        e->root.y = e->y;
+        e->buttons = button;
+
+        if (dev->mouse.did_double)
+          e->double_click = 1;
+        if (dev->mouse.did_triple)
+          e->triple_click = 1;
+
+        if (iev->value)
+          ecore_event_add(ECORE_EVENT_MOUSE_BUTTON_DOWN, e, NULL, NULL);
         else
-          {
-             Ecore_Fb_Event_Mouse_Button_Up *ev;
-
-             ev = calloc(1,sizeof(Ecore_Fb_Event_Mouse_Button_Up));
-             ev->dev = dev;
-             ev->button = button;
-             ev->x = dev->mouse.x;
-             ev->y = dev->mouse.y;
-             ecore_event_add(ECORE_FB_EVENT_MOUSE_BUTTON_UP, ev, NULL ,NULL);
-          }
+          ecore_event_add(ECORE_EVENT_MOUSE_BUTTON_UP, e, NULL, NULL);
      }
 }
 
@@ -198,7 +207,7 @@ _ecore_fb_li_device_event_rel(Ecore_Fb_Input_Device *dev, struct input_event *ie
      case REL_X:
      case REL_Y:
           {
-             Ecore_Fb_Event_Mouse_Move *ev;
+             Ecore_Event_Mouse_Move *e;
              if(iev->code == REL_X)
                {
                   dev->mouse.x += iev->value;
@@ -215,26 +224,64 @@ _ecore_fb_li_device_event_rel(Ecore_Fb_Input_Device *dev, struct input_event *ie
                   else if(dev->mouse.y < 0)
                      dev->mouse.y = 0;
                }
-             ev = calloc(1,sizeof(Ecore_Fb_Event_Mouse_Move));
-             ev->x = dev->mouse.x;
-             ev->y = dev->mouse.y;
-             ev->dev = dev;
 
-             ecore_event_add(ECORE_FB_EVENT_MOUSE_MOVE,ev,NULL,NULL);
+             e = calloc(1, sizeof(Ecore_Event_Mouse_Move));
+             if (!e)
+               return;
+
+             e->window = (Ecore_Window)dev->window;
+             e->event_window = (Ecore_Window)dev->window;
+             e->root_window = (Ecore_Window)dev->window;
+             e->same_screen = 0;
+
+             e->modifiers = 0;
+             if (dev->keyboard.shift) e->modifiers |= ECORE_EVENT_MODIFIER_SHIFT;
+             if (dev->keyboard.ctrl) e->modifiers |= ECORE_EVENT_MODIFIER_CTRL;
+             if (dev->keyboard.alt) e->modifiers |= ECORE_EVENT_MODIFIER_SHIFT;
+             if (dev->keyboard.lock) e->modifiers |= ECORE_EVENT_LOCK_CAPS;
+
+             e->x = dev->mouse.x;
+             e->y = dev->mouse.y;
+             e->root.x = e->x;
+             e->root.y = e->y;
+
+             e->timestamp = ecore_time_get();
+
+             ecore_event_add(ECORE_EVENT_MOUSE_MOVE, e, NULL, NULL);
+
              break;
           }
      case REL_WHEEL:
      case REL_HWHEEL:
           {
-             Ecore_Fb_Event_Mouse_Wheel *ev;
-             ev = calloc(1, sizeof(Ecore_Fb_Event_Mouse_Wheel));
+             Ecore_Event_Mouse_Wheel *e;
 
-             ev->x = dev->mouse.x;
-             ev->y = dev->mouse.y;
-             if (iev->code == REL_HWHEEL) ev->direction = 1;
-             ev->wheel = iev->value;
-             ev->dev = dev;
-             ecore_event_add(ECORE_FB_EVENT_MOUSE_WHEEL, ev, NULL, NULL);
+             e = calloc(1, sizeof(Ecore_Event_Mouse_Wheel));
+             if (!e)
+               return;
+
+             e->x = dev->mouse.x;
+             e->y = dev->mouse.y;
+             if (iev->code == REL_HWHEEL) e->direction = 1;
+             e->z = iev->value;
+             e->root.x = dev->mouse.x;
+             e->root.y = dev->mouse.y;
+
+             e->window = (Ecore_Window)dev->window;
+             e->event_window = (Ecore_Window)dev->window;
+             e->root_window = (Ecore_Window)dev->window;
+             e->same_screen = 0;
+
+             e->modifiers = 0;
+             if (dev->keyboard.shift) e->modifiers |= ECORE_EVENT_MODIFIER_SHIFT;
+             if (dev->keyboard.ctrl) e->modifiers |= ECORE_EVENT_MODIFIER_CTRL;
+             if (dev->keyboard.alt) e->modifiers |= ECORE_EVENT_MODIFIER_SHIFT;
+             if (dev->keyboard.lock) e->modifiers |= ECORE_EVENT_LOCK_CAPS;
+
+             e->timestamp = ecore_time_get();
+
+             ecore_event_add(ECORE_EVENT_MOUSE_WHEEL, e, NULL, NULL);
+
              break;
           }
      default:
@@ -260,7 +307,7 @@ _ecore_fb_li_device_event_abs(Ecore_Fb_Input_Device *dev, struct input_event *ie
              if (tmp < 0) dev->mouse.x = 0;
              else if (tmp > dev->mouse.w) dev->mouse.x = dev->mouse.w;
              else dev->mouse.x = tmp;
-             dev->mouse.event = ECORE_FB_EVENT_MOUSE_MOVE;
+             dev->mouse.event = ECORE_EVENT_MOUSE_MOVE;
           }
         break;
 
@@ -273,7 +320,7 @@ _ecore_fb_li_device_event_abs(Ecore_Fb_Input_Device *dev, struct input_event *ie
              if (tmp < 0) dev->mouse.y = 0;
              else if (tmp > dev->mouse.h) dev->mouse.y = dev->mouse.h;
              else dev->mouse.y = tmp;
-             dev->mouse.event = ECORE_FB_EVENT_MOUSE_MOVE;
+             dev->mouse.event = ECORE_EVENT_MOUSE_MOVE;
           }
         break;
 
@@ -281,13 +328,13 @@ _ecore_fb_li_device_event_abs(Ecore_Fb_Input_Device *dev, struct input_event *ie
         pressure = iev->value;
         if ((pressure) && (!prev_pressure))
           {
-             /* DOWN: mouse is down, but was not now */
-             dev->mouse.event = ECORE_FB_EVENT_MOUSE_BUTTON_DOWN;
+             /* DOWN: mouse is down, but was not before */
+             dev->mouse.event = ECORE_EVENT_MOUSE_BUTTON_DOWN;
           }
         else if ((!pressure) && (prev_pressure))
           {
              /* UP: mouse was down, but is not now */
-             dev->mouse.event = ECORE_FB_EVENT_MOUSE_BUTTON_UP;
+             dev->mouse.event = ECORE_EVENT_MOUSE_BUTTON_UP;
           }
         prev_pressure = pressure;
         break;
@@ -299,32 +346,39 @@ _ecore_fb_li_device_event_syn(Ecore_Fb_Input_Device *dev, struct input_event *ie
 {
    if (!dev->listen) return;
 
-   if (dev->mouse.event == ECORE_FB_EVENT_MOUSE_MOVE)
+   if (dev->mouse.event == ECORE_EVENT_MOUSE_MOVE)
      {
-        Ecore_Fb_Event_Mouse_Move *ev;
-        ev = calloc(1,sizeof(Ecore_Fb_Event_Mouse_Move));
+        Ecore_Event_Mouse_Move *ev;
+        ev = calloc(1,sizeof(Ecore_Event_Mouse_Move));
         ev->x = dev->mouse.x;
         ev->y = dev->mouse.y;
-        ev->dev = dev;
-        ecore_event_add(ECORE_FB_EVENT_MOUSE_MOVE, ev, NULL, NULL);
+        ev->root.x = ev->x;
+        ev->root.y = ev->y;
+        ev->timestamp = ecore_time_get();
      }
-   else if (dev->mouse.event == ECORE_FB_EVENT_MOUSE_BUTTON_DOWN)
+   else if (dev->mouse.event == ECORE_EVENT_MOUSE_BUTTON_DOWN)
      {
-        Ecore_Fb_Event_Mouse_Button_Down *ev;
-        ev = calloc(1, sizeof(Ecore_Fb_Event_Mouse_Button_Down));
+        Ecore_Event_Mouse_Button *ev;
+        ev = calloc(1, sizeof(Ecore_Event_Mouse_Button));
         ev->x = dev->mouse.x;
         ev->y = dev->mouse.y;
-        ev->button = 1;
-        ecore_event_add(ECORE_FB_EVENT_MOUSE_BUTTON_DOWN, ev, NULL, NULL);
+        ev->root.x = ev->x;
+        ev->root.y = ev->y;
+        ev->buttons = 1;
+        ev->timestamp = ecore_time_get();
+        ecore_event_add(ECORE_EVENT_MOUSE_BUTTON_DOWN, ev, NULL, NULL);
      }
-   else if (dev->mouse.event == ECORE_FB_EVENT_MOUSE_BUTTON_UP)
+   else if (dev->mouse.event == ECORE_EVENT_MOUSE_BUTTON_UP)
      {
-        Ecore_Fb_Event_Mouse_Button_Up *ev;
-        ev = calloc(1, sizeof(Ecore_Fb_Event_Mouse_Button_Up));
+        Ecore_Event_Mouse_Button *ev;
+        ev = calloc(1, sizeof(Ecore_Event_Mouse_Button));
         ev->x = dev->mouse.x;
         ev->y = dev->mouse.y;
-        ev->button = 1;
-        ecore_event_add(ECORE_FB_EVENT_MOUSE_BUTTON_UP, ev, NULL, NULL);
+        ev->root.x = ev->x;
+        ev->root.y = ev->y;
+        ev->buttons = 1;
+        ev->timestamp = ecore_time_get();
+        ecore_event_add(ECORE_EVENT_MOUSE_BUTTON_UP, ev, NULL, NULL);
      }
 }
 
@@ -339,7 +393,6 @@ _ecore_fb_li_device_fd_callback(void *data, Ecore_Fd_Handler *fdh __UNUSED__)
    dev = (Ecore_Fb_Input_Device*)data;
    /* read up to 64 events at once */
    len = read(dev->fd, &ev, sizeof(ev));
-   // printf("[ecore_fb_li_device:fd_callback] received %d data\n", len);
    for(i = 0; i < (int)(len / sizeof(ev[0])); i++)
      {
         switch(ev[i].type)
@@ -408,7 +461,7 @@ ecore_fb_input_device_listen(Ecore_Fb_Input_Device *dev, Eina_Bool listen)
  * object for it, or returns @c NULL on failure.
  */
 EAPI Ecore_Fb_Input_Device *
-ecore_fb_input_device_open(const char *dev)
+ecore_fb_input_device_open(void *ee, const char *dev)
 {
    Ecore_Fb_Input_Device *device;
    unsigned long event_type_bitmask[EV_CNT / 32 + 1];
@@ -471,6 +524,8 @@ ecore_fb_input_device_open(const char *dev)
                 break;
           }
      }
+
+   device->window = ee;
    _ecore_fb_li_devices = eina_list_append(_ecore_fb_li_devices, device);
    return device;
 
