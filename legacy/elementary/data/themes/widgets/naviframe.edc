@@ -149,10 +149,8 @@ group { name:"elm/naviframe/item/basic/default";
             align: 1 0.5;
             rel1.to: "elm.text.title";
             rel1.relative: 0 0;
-            rel1.to: "title_base";
             rel2.to: "elm.text.title";
             rel2.relative: 0 1;
-            rel2.to: "title_base";
          }
       }
       part { name: "elm.text.title";
