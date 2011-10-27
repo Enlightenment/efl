@@ -786,7 +786,10 @@ _content_set_hook(Evas_Object *obj, const char *part, Evas_Object *content)
    Evas_Object *edje;
    if ((!wd) || (!content)) return;
 
-   edje = elm_smart_scroller_edje_object_get(wd->scroller);
+   if (wd->scroll)
+      edje = elm_smart_scroller_edje_object_get(wd->scroller);
+   else
+      edje = wd->ent;
 
    /* Delete the currently swallowed object */
      {
@@ -818,7 +821,11 @@ _content_unset_hook(Evas_Object *obj, const char *part)
    Evas_Object *content, *edje;
    if (!wd) return NULL;
 
-   edje = elm_smart_scroller_edje_object_get(wd->scroller);
+   if (wd->scroll)
+      edje = elm_smart_scroller_edje_object_get(wd->scroller);
+   else
+      edje = wd->ent;
+
    if (!strcmp(part, "elm.swallow.icon"))
      {
         edje_object_signal_emit(edje, "elm,action,hide,icon", "elm");
@@ -848,7 +855,11 @@ _content_get_hook(const Evas_Object *obj, const char *part)
    Evas_Object *content = NULL, *edje;
    if (!wd) return NULL;
 
-   edje = elm_smart_scroller_edje_object_get(wd->scroller);
+   if (wd->scroll)
+      edje = elm_smart_scroller_edje_object_get(wd->scroller);
+   else
+      edje = wd->ent;
+
    if (edje)
      content = edje_object_part_swallow_get(edje, part);
    return content;
@@ -926,7 +937,11 @@ _sub_del(void *data, Evas_Object *obj, void *event_info)
    Evas_Object *sub = event_info;
    Evas_Object *edje;
 
-   edje = elm_smart_scroller_edje_object_get(wd->scroller);
+   if (wd->scroll)
+      edje = elm_smart_scroller_edje_object_get(wd->scroller);
+   else
+      edje = wd->ent;
+
    if (sub == edje_object_part_swallow_get(edje, "elm.swallow.icon"))
      {
         edje_object_part_unswallow(edje, sub);
@@ -2054,11 +2069,16 @@ _elm_entry_text_set(Evas_Object *obj, const char *item, const char *entry)
 {
    int len = 0;
    ELM_CHECK_WIDTYPE(obj, widtype);
-   if (item && strcmp(item, "default")) return;
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return;
    evas_event_freeze(evas_object_evas_get(obj));
    if (!entry) entry = "";
+   if (item && strcmp(item, "default"))
+     {
+        edje_object_part_text_set(wd->ent, item, entry);
+        return;
+     }
+
    if (wd->text) eina_stringshare_del(wd->text);
    wd->text = NULL;
    wd->changed = EINA_TRUE;
@@ -3154,9 +3174,12 @@ elm_entry_icon_visible_set(Evas_Object *obj, Eina_Bool setting)
    Widget_Data *wd = elm_widget_data_get(obj);
    Evas_Object *edje;
    if (!wd) return;
-   edje = elm_smart_scroller_edje_object_get(wd->scroller);
-   if (!edje_object_part_swallow_get(edje, "elm.swallow.icon")) return;
-   if (!edje) return;
+   if (wd->scroll)
+      edje = elm_smart_scroller_edje_object_get(wd->scroller);
+   else
+      edje = wd->ent;
+
+   if ((!edje) || (!edje_object_part_swallow_get(edje, "elm.swallow.icon"))) return;
    if (setting)
      edje_object_signal_emit(edje, "elm,action,show,icon", "elm");
    else
@@ -3193,10 +3216,12 @@ elm_entry_end_visible_set(Evas_Object *obj, Eina_Bool setting)
    Widget_Data *wd = elm_widget_data_get(obj);
    Evas_Object *edje;
    if (!wd) return;
-   edje = elm_smart_scroller_edje_object_get(wd->scroller);
-   if (!edje_object_part_swallow_get(edje, "elm.swallow.end")) return;
+   if (wd->scroll)
+      edje = elm_smart_scroller_edje_object_get(wd->scroller);
+   else
+      edje = wd->ent;
 
-   if (!edje) return;
+   if ((!edje) || (!edje_object_part_swallow_get(edje, "elm.swallow.icon"))) return;
    if (setting)
      edje_object_signal_emit(edje, "elm,action,show,end", "elm");
    else
