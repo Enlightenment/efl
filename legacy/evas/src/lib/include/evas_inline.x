@@ -70,6 +70,22 @@ evas_object_is_opaque(Evas_Object *obj)
    return 0;
 }
 
+static inline Eina_Bool
+evas_event_freezes_through(Evas_Object *obj)
+{
+   if (obj->freeze_events) return EINA_TRUE;
+   if (obj->parent_cache.freeze_events_valid)
+     return obj->parent_cache.freeze_events;
+   if (obj->smart.parent)
+     {
+        Eina_Bool freeze = evas_event_freezes_through(obj->smart.parent);
+        obj->parent_cache.freeze_events_valid = EINA_TRUE;
+        obj->parent_cache.freeze_events = freeze;
+        return freeze;
+     }
+   return EINA_FALSE;
+}
+
 static inline int
 evas_event_passes_through(Evas_Object *obj)
 {

@@ -3922,6 +3922,7 @@ EAPI void             *evas_object_event_callback_del_full(Evas_Object *obj, Eva
  * @see evas_object_pass_events_get() for an example
  * @see evas_object_repeat_events_set()
  * @see evas_object_propagate_events_set()
+ * @see evas_object_freeze_events_set()
  */
 EAPI void              evas_object_pass_events_set        (Evas_Object *obj, Eina_Bool pass) EINA_ARG_NONNULL(1);
 
@@ -3942,6 +3943,7 @@ EAPI void              evas_object_pass_events_set        (Evas_Object *obj, Ein
  * @see evas_object_pass_events_set()
  * @see evas_object_repeat_events_get()
  * @see evas_object_propagate_events_get()
+ * @see evas_object_freeze_events_get()
  */
 EAPI Eina_Bool         evas_object_pass_events_get        (const Evas_Object *obj) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1) EINA_PURE;
 
@@ -3967,8 +3969,9 @@ EAPI Eina_Bool         evas_object_pass_events_get        (const Evas_Object *ob
  * See the full @ref Example_Evas_Stacking "example".
  *
  * @see evas_object_repeat_events_get()
- * @see evas_object_pass_events_get()
- * @see evas_object_propagate_events_get()
+ * @see evas_object_pass_events_set()
+ * @see evas_object_propagate_events_set()
+ * @see evas_object_freeze_events_set()
  */
 EAPI void              evas_object_repeat_events_set      (Evas_Object *obj, Eina_Bool repeat) EINA_ARG_NONNULL(1);
 
@@ -3980,8 +3983,9 @@ EAPI void              evas_object_repeat_events_set      (Evas_Object *obj, Ein
  * or not (@c EINA_FALSE)
  *
  * @see evas_object_repeat_events_set() for an example
- * @see evas_object_pass_events_set()
- * @see evas_object_propagate_events_set()
+ * @see evas_object_pass_events_get()
+ * @see evas_object_propagate_events_get()
+ * @see evas_object_freeze_events_get()
  */
 EAPI Eina_Bool         evas_object_repeat_events_get      (const Evas_Object *obj) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1) EINA_PURE;
 
@@ -4002,10 +4006,10 @@ EAPI Eina_Bool         evas_object_repeat_events_get      (const Evas_Object *ob
  * not be propagated on to the smart object of which @p obj is a
  * member.  The default value is @c EINA_TRUE.
  *
- * @see evas_object_event_callback_add()
  * @see evas_object_propagate_events_get()
- * @see evas_object_repeat_events_get()
- * @see evas_object_pass_events_get()
+ * @see evas_object_repeat_events_set()
+ * @see evas_object_pass_events_set()
+ * @see evas_object_freeze_events_set()
  */
 EAPI void              evas_object_propagate_events_set   (Evas_Object *obj, Eina_Bool prop) EINA_ARG_NONNULL(1);
 
@@ -4016,12 +4020,48 @@ EAPI void              evas_object_propagate_events_set   (Evas_Object *obj, Ein
  * @return whether @p obj is set to propagate events (@c EINA_TRUE)
  * or not (@c EINA_FALSE)
  *
- * @see evas_object_event_callback_add()
  * @see evas_object_propagate_events_set()
- * @see evas_object_repeat_events_set()
- * @see evas_object_pass_events_set()
+ * @see evas_object_repeat_events_get()
+ * @see evas_object_pass_events_get()
+ * @see evas_object_freeze_events_get()
  */
 EAPI Eina_Bool         evas_object_propagate_events_get   (const Evas_Object *obj) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1) EINA_PURE;
+
+/**
+ * Set whether an Evas object is to freeze (discard) events.
+ *
+ * @param obj the Evas object to operate on
+ * @param pass whether @p obj is to freeze events (@c EINA_TRUE) or not
+ * (@c EINA_FALSE)
+ *
+ * If @p freeze is @c EINA_TRUE, it will make events on @p obj to be @b
+ * discarded. Unlike evas_object_pass_events_set(), events will not be
+ * passed to @b next lower object. This API can be used for blocking 
+ * events while @p obj is on transiting. 
+ *
+ * If @p freeze is @c EINA_FALSE, events will be processed on that
+ * object as normal.
+ *
+ * @see evas_object_freeze_events_get()
+ * @see evas_object_pass_events_set()
+ * @see evas_object_repeat_events_set()
+ * @see evas_object_propagate_events_set()
+ */
+EAPI void              evas_object_freeze_events_set(Evas_Object *obj, Eina_Bool freeze) EINA_ARG_NONNULL(1);
+
+/**
+ * Determine whether an object is set to freeze (discard) events.
+ *
+ * @param obj the Evas object to get information from.
+ * @return freeze whether @p obj is set to freeze events (@c EINA_TRUE) or
+ * not (@c EINA_FALSE)
+ *
+ * @see evas_object_freeze_events_set()
+ * @see evas_object_pass_events_get()
+ * @see evas_object_repeat_events_get()
+ * @see evas_object_propagate_events_get()
+ */
+EAPI Eina_Bool         evas_object_freeze_events_get(const Evas_Object *obj) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1) EINA_PURE;
 
 /**
  * @}

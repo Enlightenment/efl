@@ -580,11 +580,14 @@ struct _Evas_Object
 
    Eina_Bool                   store : 1;
    Eina_Bool                   pass_events : 1;
+   Eina_Bool                   freeze_events : 1;
+   Eina_Bool                   repeat_events : 1;
    struct  {
       Eina_Bool                pass_events : 1;
       Eina_Bool                pass_events_valid : 1;
+      Eina_Bool                freeze_events : 1;
+      Eina_Bool                freeze_events_valid : 1;
    } parent_cache;
-   Eina_Bool                   repeat_events : 1;
    Eina_Bool                   restack : 1;
    Eina_Bool                   is_active : 1;
    Eina_Bool                   precise_is_inside : 1;
@@ -978,7 +981,7 @@ int evas_font_desc_cmp(const Evas_Font_Description *a, const Evas_Font_Descripti
 Evas_Font_Description *evas_font_desc_ref(Evas_Font_Description *fdesc);
 void * evas_font_load(Evas *evas, Evas_Font_Description *fdesc, const char *source, Evas_Font_Size size);
 void evas_font_load_hinting_set(Evas *evas, void *font, int hinting);
-void evas_object_smart_member_cache_invalidate(Evas_Object *obj);
+void evas_object_smart_member_cache_invalidate(Evas_Object *obj, Eina_Bool pass_events, Eina_Bool freeze_events);
 void evas_text_style_pad_get(Evas_Text_Style_Type style, int *l, int *r, int *t, int *b);
 void _evas_object_text_rehint(Evas_Object *obj);
 void _evas_object_textblock_rehint(Evas_Object *obj);

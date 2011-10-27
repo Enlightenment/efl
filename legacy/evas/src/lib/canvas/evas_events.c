@@ -90,7 +90,8 @@ _evas_event_object_list_in_get(Evas *e, Eina_List *in,
                   if (inside && ((!obj->precise_is_inside) ||
                                  (evas_object_is_inside(obj, x, y))))
                     {
-                       in = eina_list_append(in, obj);
+                       if (!evas_event_freezes_through(obj))
+                         in = eina_list_append(in, obj);
                        if (!obj->repeat_events)
                          {
                             *no_rep = 1;
@@ -229,8 +230,10 @@ evas_event_feed_mouse_down(Evas *e, int b, Evas_Button_Flags flags, unsigned int
     * get a new event list, otherwise, keep the current grabbed list. */
    if (e->pointer.mouse_grabbed == 0)
      {
-        Eina_List *ins;
-        ins = evas_event_objects_event_list(e, NULL, e->pointer.x, e->pointer.y);
+        Eina_List *ins = evas_event_objects_event_list(e,
+                                                       NULL,
+                                                       e->pointer.x,
+                                                       e->pointer.y);
         /* free our old list of ins */
         e->pointer.object.in = eina_list_free(e->pointer.object.in);
         /* and set up the new one */
@@ -248,7 +251,6 @@ evas_event_feed_mouse_down(Evas *e, int b, Evas_Button_Flags flags, unsigned int
    EINA_LIST_FOREACH(copy, l, obj)
      {
         if (obj->delete_me) continue;
-
         ev.canvas.x = e->pointer.x;
         ev.canvas.y = e->pointer.y;
         _evas_event_havemap_adjust(obj, &ev.canvas.x, &ev.canvas.y, obj->mouse_grabbed);
@@ -1376,6 +1378,40 @@ evas_event_feed_hold(Evas *e, int hold, unsigned int timestamp, const void *data
 }
 
 EAPI void
+evas_object_freeze_events_set(Evas_Object *obj, Eina_Bool freeze)
+{
+   MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
+   return;
+   MAGIC_CHECK_END();
+
+   freeze = !!freeze;
+   if (obj->freeze_events == freeze) return;
+   obj->freeze_events = freeze;
+   evas_object_smart_member_cache_invalidate(obj, EINA_FALSE, EINA_TRUE);
+   if (evas_object_is_in_output_rect(obj,
+                                     obj->layer->evas->pointer.x,
+                                     obj->layer->evas->pointer.y, 1, 1) &&
+       ((!obj->precise_is_inside) ||
+        (evas_object_is_inside(obj,
+                               obj->layer->evas->pointer.x,
+                               obj->layer->evas->pointer.y))))
+     evas_event_feed_mouse_move(obj->layer->evas,
+                                obj->layer->evas->pointer.x,
+                                obj->layer->evas->pointer.y,
+                                obj->layer->evas->last_timestamp,
+                                NULL);
+}
+
+EAPI Eina_Bool
+evas_object_freeze_events_get(const Evas_Object *obj)
+{
+   MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
+   return 0;
+   MAGIC_CHECK_END();
+   return obj->freeze_events;
+}
+
+EAPI void
 evas_object_pass_events_set(Evas_Object *obj, Eina_Bool pass)
 {
    MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
@@ -1384,7 +1420,7 @@ evas_object_pass_events_set(Evas_Object *obj, Eina_Bool pass)
    pass = !!pass;
    if (obj->pass_events == pass) return;
    obj->pass_events = pass;
-   evas_object_smart_member_cache_invalidate(obj);
+   evas_object_smart_member_cache_invalidate(obj, EINA_TRUE, EINA_FALSE);
    if (evas_object_is_in_output_rect(obj,
                                      obj->layer->evas->pointer.x,
                                      obj->layer->evas->pointer.y, 1, 1) &&
