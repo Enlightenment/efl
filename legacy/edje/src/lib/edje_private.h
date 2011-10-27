@@ -1847,6 +1847,10 @@ void _edje_entry_cursor_pos_set(Edje_Real_Part *rp, Edje_Cursor cur, int pos);
 int _edje_entry_cursor_pos_get(Edje_Real_Part *rp, Edje_Cursor cur);
 void _edje_entry_input_panel_layout_set(Edje_Real_Part *rp, Edje_Input_Panel_Layout layout);
 Edje_Input_Panel_Layout _edje_entry_input_panel_layout_get(Edje_Real_Part *rp);
+void _edje_entry_autocapital_type_set(Edje_Real_Part *rp, Edje_Text_Autocapital_Type autocapital_type);
+Edje_Text_Autocapital_Type _edje_entry_autocapital_type_get(Edje_Real_Part *rp);
+void _edje_entry_input_panel_enabled_set(Edje_Real_Part *rp, Eina_Bool enabled);
+Eina_Bool _edje_entry_input_panel_enabled_get(Edje_Real_Part *rp);
 
 void _edje_external_init();
 void _edje_external_shutdown();

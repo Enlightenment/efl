@@ -2470,6 +2470,59 @@ _edje_entry_select_abort(Edje_Real_Part *rp)
      }
 }
 
+void
+_edje_entry_autocapital_type_set(Edje_Real_Part *rp, Edje_Text_Autocapital_Type autocapital_type)
+{
+   Entry *en = rp->entry_data;
+   if (!en) return;
+
+   if (rp->part->entry_mode == EDJE_ENTRY_EDIT_MODE_PASSWORD)
+     autocapital_type = EDJE_TEXT_AUTOCAPITAL_TYPE_NONE;
+
+#ifdef HAVE_ECORE_IMF
+   if (en->imf_context)
+     ecore_imf_context_autocapital_type_set(en->imf_context, autocapital_type);
+#endif
+}
+
+Edje_Text_Autocapital_Type
+_edje_entry_autocapital_type_get(Edje_Real_Part *rp)
+{
+   Entry *en = rp->entry_data;
+   if (!en) return EDJE_TEXT_AUTOCAPITAL_TYPE_NONE;
+
+#ifdef HAVE_ECORE_IMF
+   if (en->imf_context)
+     return ecore_imf_context_autocapital_type_get(en->imf_context);
+#endif
+
+   return EDJE_TEXT_AUTOCAPITAL_TYPE_NONE;
+}
+
+void
+_edje_entry_input_panel_enabled_set(Edje_Real_Part *rp, Eina_Bool enabled)
+{
+   Entry *en = rp->entry_data;
+   if (!en) return;
+#ifdef HAVE_ECORE_IMF
+   if (en->imf_context)
+     ecore_imf_context_input_panel_enabled_set(en->imf_context, enabled);
+#endif
+}
+
+Eina_Bool
+_edje_entry_input_panel_enabled_get(Edje_Real_Part *rp)
+{
+   Entry *en = rp->entry_data;
+   if (!en) return EINA_FALSE;
+#ifdef HAVE_ECORE_IMF
+   if (en->imf_context)
+     return ecore_imf_context_input_panel_enabled_get(en->imf_context);
+#endif
+
+   return EINA_FALSE;
+}
+
 static Evas_Textblock_Cursor *
 _cursor_get(Edje_Real_Part *rp, Edje_Cursor cur)
 {
