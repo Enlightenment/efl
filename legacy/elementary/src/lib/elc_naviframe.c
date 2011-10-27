@@ -497,9 +497,13 @@ _title_clicked(void *data,
 
 static void
 _back_btn_clicked(void *data,
-                  Evas_Object *obj __UNUSED__,
+                  Evas_Object *obj,
                   void *event_info __UNUSED__)
 {
+/* Since edje has the event queue, clicked event could be happend multiple times
+   on some heavy environment. This callback del will prevent those  scenario and
+   guarantee only one clicked for it's own page. */
+   evas_object_smart_callback_del(obj, "clicked", _back_btn_clicked);
    elm_naviframe_item_pop(data);
 }
 
@@ -880,11 +884,7 @@ _item_style_set(Elm_Naviframe_Item *navi_it, const char *item_style)
 
    wd = elm_widget_data_get(WIDGET(navi_it));
    if (wd && wd->freeze_events)
-     {
-        evas_object_hide(wd->rect);
-        //FIXME:
-        evas_object_pass_events_set(wd->base, EINA_FALSE);
-     }
+     evas_object_hide(wd->rect);
 }
 
 EAPI Evas_Object *
@@ -1040,12 +1040,12 @@ elm_naviframe_item_pop(Evas_Object *obj)
      {
         if (wd->freeze_events)
           evas_object_show(wd->rect);
-        edje_object_signal_emit(VIEW(it), "elm,state,cur,popped", "elm");
         evas_object_show(VIEW(prev_it));
         evas_object_raise(VIEW(prev_it));
         edje_object_signal_emit(VIEW(prev_it),
                                 "elm,state,prev,popped",
                                 "elm");
+        edje_object_signal_emit(it->base.view, "elm,state,cur,popped", "elm");
      }
    else
      _item_del(it);
@@ -1089,11 +1089,7 @@ elm_naviframe_item_promote(Elm_Object_Item *it)
    prev_it = EINA_INLIST_CONTAINER_GET(wd->stack->last->prev,
                                          Elm_Naviframe_Item);
    if (wd->freeze_events)
-     {
-        evas_object_show(wd->rect);
-        //FIXME:
-        evas_object_pass_events_set(wd->base, EINA_TRUE);
-     }
+     evas_object_show(wd->rect);
    edje_object_signal_emit(prev_it->base.view,
                            "elm,state,cur,pushed",
                            "elm");
