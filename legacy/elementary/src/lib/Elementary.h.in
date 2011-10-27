@@ -3801,8 +3801,10 @@ extern "C" {
     * background with elm_bg_add(), as well as setting the window title to
     * @p title. The window type created is of type ELM_WIN_BASIC, with NULL
     * as the parent widget.
-    *
+    * 
     * @return The created object, or NULL on failure
+    *
+    * @see elm_win_add()
     */
    EAPI Evas_Object *elm_win_util_standard_add(const char *name, const char *title);
    /**
