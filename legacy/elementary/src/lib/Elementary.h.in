@@ -195,18 +195,10 @@ elm_main(int argc, char **argv)
 {
    Evas_Object *win, *bg, *box, *lab, *btn;
 
-   // new window - do the usual and give it a name, title and delete handler
-   win = elm_win_add(NULL, "hello", ELM_WIN_BASIC);
-   elm_win_title_set(win, "Hello");
+   // new window - do the usual and give it a name (hello) and title (Hello)
+   win = elm_win_util_standard_add("hello", "Hello");
    // when the user clicks "close" on a window there is a request to delete
    evas_object_smart_callback_add(win, "delete,request", on_done, NULL);
-
-   // add a standard bg
-   bg = elm_bg_add(win);
-   // add object as a resize object for the window (controls window minimum
-   // size as well as gets resized if window is resized)
-   elm_win_resize_object_add(win, bg);
-   evas_object_show(bg);
 
    // add a box object - default is vertical. a box holds children in a row,
    // either horizontally or vertically. nothing more.
