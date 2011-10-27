@@ -491,3 +491,8 @@
 	* Add function to request what the largest possible image (or texture)
         size is from evas.
 
+2011-10-27  ChunEon Park (Hermet)
+
+	* Add evas_object_freeze_events_set/get to discard the object events.
+	they will be useful some cases such as transition.
+

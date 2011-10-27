@@ -4046,6 +4046,7 @@ EAPI Eina_Bool         evas_object_propagate_events_get   (const Evas_Object *ob
  * @see evas_object_pass_events_set()
  * @see evas_object_repeat_events_set()
  * @see evas_object_propagate_events_set()
+ * @since 1.1.0
  */
 EAPI void              evas_object_freeze_events_set(Evas_Object *obj, Eina_Bool freeze) EINA_ARG_NONNULL(1);
 
@@ -4060,6 +4061,7 @@ EAPI void              evas_object_freeze_events_set(Evas_Object *obj, Eina_Bool
  * @see evas_object_pass_events_get()
  * @see evas_object_repeat_events_get()
  * @see evas_object_propagate_events_get()
+ * @since 1.1.0
  */
 EAPI Eina_Bool         evas_object_freeze_events_get(const Evas_Object *obj) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1) EINA_PURE;
 
