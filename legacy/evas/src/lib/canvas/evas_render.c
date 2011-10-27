@@ -1264,6 +1264,64 @@ evas_render_mapped(Evas *e, Evas_Object *obj, void *context, void *surface,
    return clean_them;
 }
 
+static void
+_evas_render_cutout_add(Evas *e, Evas_Object *obj, int off_x, int off_y)
+{
+   if (evas_object_is_opaque(obj))
+     {
+        Evas_Coord cox, coy, cow, coh;
+        
+        cox = obj->cur.cache.clip.x;
+        coy = obj->cur.cache.clip.y;
+        cow = obj->cur.cache.clip.w;
+        coh = obj->cur.cache.clip.h;
+        if ((obj->cur.map) && (obj->cur.usemap))
+          {
+             Evas_Object *oo;
+             
+             oo = obj;
+             while (oo->cur.clipper)
+               {
+                  if ((oo->cur.clipper->cur.map_parent 
+                       != oo->cur.map_parent) &&
+                      (!((oo->cur.map) && (oo->cur.usemap))))
+                    break;
+                  RECTS_CLIP_TO_RECT(cox, coy, cow, coh,
+                                     oo->cur.geometry.x,
+                                     oo->cur.geometry.y,
+                                     oo->cur.geometry.w,
+                                     oo->cur.geometry.h);
+                  oo = oo->cur.clipper;
+               }
+          }
+        e->engine.func->context_cutout_add
+          (e->engine.data.output, e->engine.data.context,
+              cox + off_x, coy + off_y, cow, coh);
+     }
+   else
+     {
+        if (obj->func->get_opaque_rect)
+          {
+             Evas_Coord obx, oby, obw, obh;
+             
+             obj->func->get_opaque_rect(obj, &obx, &oby, &obw, &obh);
+             if ((obw > 0) && (obh > 0))
+               {
+                  obx += off_x;
+                  oby += off_y;
+                  RECTS_CLIP_TO_RECT(obx, oby, obw, obh,
+                                     obj->cur.cache.clip.x + off_x,
+                                     obj->cur.cache.clip.y + off_y,
+                                     obj->cur.cache.clip.w,
+                                     obj->cur.cache.clip.h);
+                  e->engine.func->context_cutout_add
+                    (e->engine.data.output, e->engine.data.context,
+                        obx, oby, obw, obh);
+               }
+          }
+     }
+}
+
 static Eina_List *
 evas_render_updates_internal(Evas *e,
                              unsigned char make_updates,
@@ -1424,42 +1482,7 @@ evas_render_updates_internal(Evas *e,
 
                        /* reset the background of the area if needed (using cutout and engine alpha flag to help) */
                        if (alpha)
-                         {
-                            if (evas_object_is_opaque(obj))
-                              e->engine.func->context_cutout_add
-                                 (e->engine.data.output,
-                                  e->engine.data.context,
-                                  obj->cur.cache.clip.x + off_x,
-                                  obj->cur.cache.clip.y + off_y,
-                                  obj->cur.cache.clip.w,
-                                  obj->cur.cache.clip.h);
-                            else
-                              {
-                                 if (obj->func->get_opaque_rect)
-                                   {
-                                      Evas_Coord obx, oby, obw, obh;
-
-                                      obj->func->get_opaque_rect
-                                         (obj, &obx, &oby, &obw, &obh);
-                                      if ((obw > 0) && (obh > 0))
-                                        {
-                                           obx += off_x;
-                                           oby += off_y;
-                                           RECTS_CLIP_TO_RECT
-                                              (obx, oby, obw, obh,
-                                               obj->cur.cache.clip.x + off_x,
-                                               obj->cur.cache.clip.y + off_y,
-                                               obj->cur.cache.clip.w,
-                                               obj->cur.cache.clip.h);
-                                           e->engine.func->context_cutout_add
-                                              (e->engine.data.output,
-                                               e->engine.data.context,
-                                               obx, oby,
-                                               obw, obh);
-                                        }
-                                   }
-                              }
-                         }
+                         _evas_render_cutout_add(e, obj, off_x, off_y);
                     }
                }
              if (alpha)
@@ -1540,38 +1563,9 @@ evas_render_updates_internal(Evas *e,
                               {
                                  Evas_Object *obj2;
 
-                                 obj2 = (Evas_Object *) eina_array_data_get(&e->temporary_objects, j);
-                                 if (evas_object_is_opaque(obj2))
-                                   e->engine.func->context_cutout_add(e->engine.data.output,
-                                                                      e->engine.data.context,
-                                                                      obj2->cur.cache.clip.x + off_x,
-                                                                      obj2->cur.cache.clip.y + off_y,
-                                                                      obj2->cur.cache.clip.w,
-                                                                      obj2->cur.cache.clip.h);
-                                 else
-                                   {
-                                      if (obj2->func->get_opaque_rect)
-                                        {
-                                           Evas_Coord obx, oby, obw, obh;
-
-                                           obj2->func->get_opaque_rect
-                                              (obj2, &obx, &oby, &obw, &obh);
-                                           if ((obw > 0) && (obh > 0))
-                                             {
-                                                obx += off_x;
-                                                oby += off_y;
-                                                RECTS_CLIP_TO_RECT(obx, oby, obw, obh,
-                                                                   obj2->cur.cache.clip.x + off_x,
-                                                                   obj2->cur.cache.clip.y + off_y,
-                                                                   obj2->cur.cache.clip.w,
-                                                                   obj2->cur.cache.clip.h);
-                                                e->engine.func->context_cutout_add(e->engine.data.output,
-                                                                                   e->engine.data.context,
-                                                                                   obx, oby,
-                                                                                   obw, obh);
-                                             }
-                                        }
-                                   }
+                                 obj2 = (Evas_Object *)eina_array_data_get
+                                   (&e->temporary_objects, j);
+                                 _evas_render_cutout_add(e, obj2, off_x, off_y);
                               }
 #endif
                             e->engine.func->context_clip_set(e->engine.data.output,
