@@ -6,7 +6,7 @@ MAINTAINERCLEANFILES = \
 ABOUT-NLS \
 Makefile.in \
 aclocal.m4 \
-autom4te.cache \
+config.cache-env \
 config.guess \
 config.h.in \
 config.h.in~ \
