@@ -307,3 +307,9 @@
         * Port ecore-con to work on systems without IPv6 support
         * Use inet_ntop instead of getnameinfo for ecore_con_client_get_ip
         * Added ecore-con unit test
+
+2011-10-28  Jiyoun Park
+
+        * Fix bug in Ecore_X using geometry value instead of recently
+	requested value
+          sizes when freeing (and allocating) the data.

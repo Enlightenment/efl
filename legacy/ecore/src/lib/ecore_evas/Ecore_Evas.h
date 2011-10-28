@@ -299,6 +299,7 @@ EAPI void        ecore_evas_geometry_get(const Ecore_Evas *ee, int *x, int *y, i
  * ecore_evas_request_geometry_get(ee, &x, &y, &w, &h);
  * @endcode
  *
+ * @since 1.1
  */
 EAPI void        ecore_evas_request_geometry_get(const Ecore_Evas *ee, int *x, int *y, int *w, int *h);
 /**
