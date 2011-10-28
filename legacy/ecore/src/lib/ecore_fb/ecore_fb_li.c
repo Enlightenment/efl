@@ -44,7 +44,7 @@ _ecore_fb_li_device_event_key(Ecore_Fb_Input_Device *dev, struct input_event *ie
    if ((iev->code >= KEY_ESC) && (iev->code <= KEY_COMPOSE))
      {
         int offset = 0;
-        char *keyname = strdup(_ecore_fb_li_kbd_syms[iev->code * 6]);
+        const char *keyname = _ecore_fb_li_kbd_syms[iev->code * 6];
         /* check the key table */
         if (iev->value)
           {
@@ -96,8 +96,8 @@ _ecore_fb_li_device_event_key(Ecore_Fb_Input_Device *dev, struct input_event *ie
         if (dev->keyboard.shift) offset = 1;
         else if (dev->keyboard.lock) offset = 2;
 
-        char *key = strdup(_ecore_fb_li_kbd_syms[(iev->code * 6) + offset]);
-        char *compose = strdup(_ecore_fb_li_kbd_syms[(iev->code * 6) + 3 + offset]);
+        const char *key = _ecore_fb_li_kbd_syms[(iev->code * 6) + offset];
+        const char *compose = _ecore_fb_li_kbd_syms[(iev->code * 6) + 3 + offset];
 
         e = calloc(1, sizeof(Ecore_Event_Key) + strlen(key) +
                    strlen(keyname) + (compose ? strlen(compose) : 0) + 3);
