@@ -535,3 +535,8 @@
 
 	* Fix issue where an empty eet file (no keys) is not openable
         for read/write anymore. Allow it.
+
+2011-10-28  David Seikel (onefang)
+
+	* Added a new macro for adding arrays of basic types.
+	   EET_DATA_DESCRIPTOR_ADD_BASIC_ARRAY
