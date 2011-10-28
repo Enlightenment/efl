@@ -310,6 +310,5 @@
 
 2011-10-28  Jiyoun Park
 
-        * Fix bug in Ecore_X using geometry value instead of recently
-	requested value
-          sizes when freeing (and allocating) the data.
+        * Fix bug in Ecore_X using geometry value instead of
+          recently requested geometry value
