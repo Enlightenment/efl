@@ -1970,8 +1970,12 @@ _edje_data_item_list_foreach(const Eina_Hash *hash __UNUSED__, const void *key, 
     @parameters
         [parent group name]
     @effect
-        Parent group name for inheritance. The parent group have to defined
-        in advance.
+        Parent group name for inheritance.
+        Group "inherit" is used to inherit any predefined group and change
+        some property which belongs to "part", "description", "items" or "program".
+        The child group has the same property as parent group. If you specify the
+        type again in an inherited part, it will cause an error (unless you plan
+        to fix that).
     @endproperty
     @since 1.1.0
 */
@@ -4562,7 +4566,8 @@ st_collections_group_parts_part_description_rel1_offset(void)
         [another part's name]
     @effect
         Causes a corner to be positioned relatively to another part's
-        container.
+        container. Setting to "" will un-set this value for inherited
+        parts.
     @endproperty
 */
 static void
@@ -4593,6 +4598,7 @@ st_collections_group_parts_part_description_rel1_to(void)
     @effect
         Causes a corner to be positioned relatively to the X axis of another
         part's container. Simply put affects the first parameter of "relative".
+        Setting to "" will un-set this value for inherited parts.
     @endproperty
 */
 static void
@@ -4622,7 +4628,7 @@ st_collections_group_parts_part_description_rel1_to_x(void)
     @effect
         Causes a corner to be positioned relatively to the Y axis of another
         part's container. Simply put, affects the second parameter of
-        "relative".
+        "relative". Setting to "" will un-set this value for inherited parts.
     @endproperty
 */
 static void
