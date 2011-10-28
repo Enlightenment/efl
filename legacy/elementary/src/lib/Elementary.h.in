@@ -6160,7 +6160,15 @@ extern "C" {
     * continuous look across its options.
     * @li hoversel_vertical_entry: Another internal for @ref Hoversel.
     *
-    * Follow through a complete example @ref button_example_01 "here".
+    * Default contents parts of the button widget that you can use for are:
+    *
+    * @li "elm.swallow.content" - The icon of the button
+    *
+    * Default text parts of the button widget that you can use for are:
+    *
+    * @li "elm.text" - The title label of the button
+    *
+	 * Follow through a complete example @ref button_example_01 "here".
     * @{
     */
    /**
@@ -9726,11 +9734,11 @@ extern "C" {
     *
     * Only one object can be added to the @c SWALLOW part (but you still can
     * have many @c SWALLOW parts and one object on each of them). Use the @c
-    * elm_layout_content_* set of functions to set, retrieve and unset objects
-    * as content of the @c SWALLOW. After being set to this part, the object
-    * size, position, visibility, clipping and other description properties
-    * will be totally controled by the description of the given part (inside
-    * the Edje theme file).
+    * elm_object_content_set/get/unset functions to set, retrieve and unset 
+	 * objects as content of the @c SWALLOW. After being set to this part, the 
+	 * object size, position, visibility, clipping and other description 
+	 * properties will be totally controled by the description of the given part 
+	 * (inside the Edje theme file).
     *
     * One can use @c evas_object_size_hint_* functions on the child to have some
     * kind of control over its behavior, but the resulting behavior will still
@@ -28135,13 +28143,13 @@ extern "C" {
     *     the item
     * @li "title,clicked" - User clicked title area
     *
-    * Default contents parts for the naviframe items that you can use for are:
+    * Default contents parts of the naviframe items that you can use for are:
     *
     * @li "elm.swallow.content" - The main content of the page
     * @li "elm.swallow.prev_btn" - The button to go to the previous page
     * @li "elm.swallow.next_btn" - The button to go to the next page
     *
-    * Default text parts of naviframe items that you can be used are:
+    * Default text parts of the naviframe items that you can use for are:
     *
     * @li "elm.text.title" - The title label in the title area
     *
