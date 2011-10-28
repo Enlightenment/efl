@@ -73,7 +73,7 @@ elm_main(int argc __UNUSED__, char **argv __UNUSED__)
    elm_box_pack_end(bx, btn);
    evas_object_show(btn);
 
-   elm_conformant_content_set(conform, bx);
+   elm_object_content_set(conform, bx);
    evas_object_show(bx);
 
    evas_object_resize(win, 240, 480);

@@ -47,6 +47,12 @@ static void _del_pre_hook(Evas_Object *obj);
 static void _del_hook(Evas_Object *obj);
 static void _mirrored_set(Evas_Object *obj, Eina_Bool rtl);
 static void _theme_hook(Evas_Object *obj);
+static void _content_set_hook(Evas_Object *obj,
+                              const char *part,
+                              Evas_Object *content);
+static Evas_Object *_content_get_hook(const Evas_Object *obj,
+                                      const char *part);
+static Evas_Object *_content_unset_hook(Evas_Object *obj, const char *part);
 static void _swallow_conformant_parts(Evas_Object *obj);
 static void _conformant_part_size_set(Evas_Object *obj,
                                       Evas_Object *sobj,
@@ -56,11 +62,15 @@ static void _conformant_part_size_set(Evas_Object *obj,
                                       Evas_Coord sh);
 static void _conformant_part_sizing_eval(Evas_Object *obj,
                                          Conformant_Part_Type part_type);
-static void
-_conformant_move_resize_event_cb(void *data, Evas *e, Evas_Object *obj,
-                                 void *event_info);
+static void _conformant_move_resize_event_cb(void *data,
+                                             Evas *e,
+                                             Evas_Object *obj,
+                                             void *event_info);
 static void _sizing_eval(Evas_Object *obj);
 static Eina_Bool _prop_change(void *data, int type, void *event);
+static void _changed_size_hints(void *data, Evas *e,
+                                Evas_Object *obj,
+                                void *event_info);
 
 /* local functions */
 static void
@@ -108,6 +118,51 @@ _theme_hook(Evas_Object *obj)
    edje_object_scale_set(wd->base, elm_widget_scale_get(obj)
                          * _elm_config->scale);
    _sizing_eval(obj);
+}
+
+static void
+_content_set_hook(Evas_Object *obj, const char *part __UNUSED__, Evas_Object *content)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype);
+   Widget_Data *wd = elm_widget_data_get(obj);
+
+   if (!wd) return;
+   if (wd->content == content) return;
+   if (wd->content) evas_object_del(wd->content);
+   wd->content = content;
+   if (content)
+     {
+        elm_widget_sub_object_add(obj, content);
+        evas_object_event_callback_add(content,
+                                       EVAS_CALLBACK_CHANGED_SIZE_HINTS,
+                                       _changed_size_hints, obj);
+        edje_object_part_swallow(wd->base, "elm.swallow.content", content);
+     }
+   _sizing_eval(obj);
+}
+
+static Evas_Object *
+_content_get_hook(const Evas_Object *obj, const char *part __UNUSED__)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype) NULL;
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return NULL;
+   return wd->content;
+}
+
+static Evas_Object *
+_content_unset_hook(Evas_Object *obj, const char *part __UNUSED__)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype) NULL;
+   Widget_Data *wd = elm_widget_data_get(obj);
+   Evas_Object *content;
+
+   if ((!wd) || (!wd->content)) return NULL;
+   content = wd->content;
+   elm_widget_sub_object_del(obj, wd->content);
+   edje_object_part_unswallow(wd->base, wd->content);
+   wd->content = NULL;
+   return content;
 }
 
 static void
@@ -543,48 +598,19 @@ elm_conformant_add(Evas_Object *parent)
 EAPI void
 elm_conformant_content_set(Evas_Object *obj, Evas_Object *content)
 {
-   ELM_CHECK_WIDTYPE(obj, widtype);
-   Widget_Data *wd = elm_widget_data_get(obj);
-
-   if (!wd) return;
-   if (wd->content == content) return;
-   if (wd->content) evas_object_del(wd->content);
-   wd->content = content;
-   if (content)
-     {
-        elm_widget_sub_object_add(obj, content);
-        evas_object_event_callback_add(content,
-                                       EVAS_CALLBACK_CHANGED_SIZE_HINTS,
-                                       _changed_size_hints, obj);
-        edje_object_part_swallow(wd->base, "elm.swallow.content", content);
-     }
-   _sizing_eval(obj);
+   _content_set_hook(obj, NULL, content);
 }
 
 EAPI Evas_Object *
 elm_conformant_content_get(const Evas_Object *obj)
 {
-   ELM_CHECK_WIDTYPE(obj, widtype) NULL;
-   Widget_Data *wd = elm_widget_data_get(obj);
-
-   if (!wd) return NULL;
-   return wd->content;
+   return _content_get_hook(obj, NULL);
 }
 
 EAPI Evas_Object *
 elm_conformant_content_unset(Evas_Object *obj)
 {
-   ELM_CHECK_WIDTYPE(obj, widtype) NULL;
-   Widget_Data *wd = elm_widget_data_get(obj);
-   Evas_Object *content;
-
-   if (!wd) return NULL;
-   if (!wd->content) return NULL;
-   content = wd->content;
-   elm_widget_sub_object_del(obj, wd->content);
-   edje_object_part_unswallow(wd->base, wd->content);
-   wd->content = NULL;
-   return content;
+   return _content_unset_hook(obj, NULL);
 }
 
 EAPI Evas_Object *

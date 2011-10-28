@@ -3690,7 +3690,7 @@
  * @until evas_object_show
  *
  * Finally, we'll set the box as conformant's content, just like this:
- * @skipline elm_conformant_content_set
+ * @skipline elm_object_content_set
  *
  * Compare both examples code:
  * @ref conformant_example_01.c "conformant_example_01.c"

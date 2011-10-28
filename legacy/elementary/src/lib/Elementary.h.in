@@ -24349,6 +24349,10 @@ extern "C" {
     * Available styles for it:
     * - @c "default"
     *
+    * Default contents parts of the conformant widget that you can use for are:
+    *
+    * @li "elm.swallow.content" - A content of the conformant
+    *
     * See how to use this widget in this example:
     * @ref conformant_example
     */
@@ -24384,14 +24388,14 @@ extern "C" {
     *
     * Once the content object is set, a previously set one will be deleted.
     * If you want to keep that old content object, use the
-    * elm_conformat_content_unset() function.
+    * elm_object_content_unset() function.
     *
-    * @see elm_conformant_content_unset()
-    * @see elm_conformant_content_get()
+    * @see elm_object_content_unset()
+    * @see elm_object_content_get()
     *
     * @ingroup Conformant
     */
-   EAPI void         elm_conformant_content_set(Evas_Object *obj, Evas_Object *content) EINA_ARG_NONNULL(1);
+   EINA_DEPRECATED EAPI void         elm_conformant_content_set(Evas_Object *obj, Evas_Object *content) EINA_ARG_NONNULL(1);
 
    /**
     * Get the content of the conformant widget.
@@ -24401,14 +24405,14 @@ extern "C" {
     *
     * Return the content object which is set for this widget.
     * It won't be unparent from conformant. For that, use
-    * elm_conformant_content_unset().
+    * elm_object_content_unset().
     *
-    * @see elm_conformant_content_set() for more details.
-    * @see elm_conformant_content_unset()
+    * @see elm_object_content_set().
+    * @see elm_object_content_unset()
     *
     * @ingroup Conformant
     */
-   EAPI Evas_Object *elm_conformant_content_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
+   EINA_DEPRECATED EAPI Evas_Object *elm_conformant_content_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
 
    /**
     * Unset the content of the conformant widget.
@@ -24418,11 +24422,11 @@ extern "C" {
     *
     * Unparent and return the content object which was set for this widget.
     *
-    * @see elm_conformant_content_set() for more details.
+    * @see elm_object_content_set().
     *
     * @ingroup Conformant
     */
-   EAPI Evas_Object *elm_conformant_content_unset(Evas_Object *obj) EINA_ARG_NONNULL(1);
+   EINA_DEPRECATED EAPI Evas_Object *elm_conformant_content_unset(Evas_Object *obj) EINA_ARG_NONNULL(1);
 
    /**
     * Returns the Evas_Object that represents the content area.

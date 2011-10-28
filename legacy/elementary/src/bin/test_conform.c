@@ -80,7 +80,7 @@ test_conformant(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event 
    evas_object_show(en);
    elm_box_pack_end(bx, en);
 
-   elm_conformant_content_set(conform, bx);
+   elm_object_content_set(conform, bx);
    evas_object_show(bx);
 
    evas_object_resize(win, 240, 240);
@@ -169,7 +169,7 @@ test_conformant2(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event
 
    evas_object_smart_callback_add(btn, "clicked", popobj, pg);
 
-   elm_conformant_content_set(conform, bx);
+   elm_object_content_set(conform, bx);
    evas_object_show(bx);
 
    conform = elm_conformant_add(win);
@@ -201,7 +201,7 @@ test_conformant2(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event
 
    evas_object_smart_callback_add(btn, "clicked", popobj, pg);
 
-   elm_conformant_content_set(conform, bx);
+   elm_object_content_set(conform, bx);
    evas_object_show(bx);
 
    evas_object_resize(win, 240, 480);

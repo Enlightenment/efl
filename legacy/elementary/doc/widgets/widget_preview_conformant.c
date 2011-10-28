@@ -37,6 +37,6 @@ evas_object_size_hint_align_set(en, EVAS_HINT_FILL, EVAS_HINT_FILL);
 evas_object_show(en);
 elm_box_pack_end(bx, en);
 
-elm_conformant_content_set(conform, bx);
+elm_object_content_set(conform, bx);
 
 #include "widget_preview_tmpl_foot.c"
