@@ -3104,6 +3104,35 @@ eet_data_descriptor_encode(Eet_Data_Descriptor *edd,
     } while (0)
 
 /**
+ * Add an array of basic data elements to a data descriptor.
+ * @param edd The data descriptor to add the type to.
+ * @param struct_type The type of the struct.
+ * @param name The string name to use to encode/decode this member
+ *        (must be a constant global and never change).
+ * @param member The struct member itself to be encoded.
+ * @param type The type of the member to encode.
+ *
+ * This macro lets you easily add a fixed size array of basic data
+ * types. All the parameters are the same as for
+ * EET_DATA_DESCRIPTOR_ADD_BASIC().
+ * The array must be defined with a fixed size in the declaration of the
+ * struct containing it.
+ *
+ * @since 1.5.0
+ * @ingroup Eet_Data_Group
+ */
+#define EET_DATA_DESCRIPTOR_ADD_BASIC_ARRAY(edd, struct_type, name, member, type) \
+  do {                                                                            \
+       struct_type ___ett;                                                        \
+       eet_data_descriptor_element_add(edd, name, type, EET_G_ARRAY,              \
+                                       (char *)(& (___ett.member)) -              \
+                                       (char *)(& (___ett)),                      \
+                                       sizeof(___ett.member) /                    \
+                                       sizeof(___ett.member[0]),                  \
+                                       NULL, NULL);                               \
+    } while(0)
+
+/**
  * Add a fixed size array type to a data descriptor
  * @param edd The data descriptor to add the type to.
  * @param struct_type The type of the struct.
