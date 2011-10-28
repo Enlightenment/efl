@@ -219,7 +219,7 @@ elm_glview_add(Evas_Object *parent)
    Evas_Object *obj;
    Evas *e;
    Widget_Data *wd;
-   Evas_GL_Config cfg = { EVAS_GL_RGB_8,
+   Evas_GL_Config cfg = { EVAS_GL_RGB_888,
                           EVAS_GL_DEPTH_NONE,
                           EVAS_GL_STENCIL_NONE };
 
@@ -295,14 +295,14 @@ elm_glview_mode_set(Evas_Object *obj, Elm_GLView_Mode mode)
 {
    ELM_CHECK_WIDTYPE(obj, widtype) EINA_FALSE;
    Widget_Data *wd = elm_widget_data_get(obj);
-   Evas_GL_Config cfg = { EVAS_GL_RGBA_8,
+   Evas_GL_Config cfg = { EVAS_GL_RGBA_8888,
                           EVAS_GL_DEPTH_NONE,
                           EVAS_GL_STENCIL_NONE };
    if (!wd) return EINA_FALSE;
 
    // Set the configs
    if (mode & ELM_GLVIEW_ALPHA)
-     cfg.color_format = EVAS_GL_RGBA_8;
+     cfg.color_format = EVAS_GL_RGBA_8888;
 
    if (mode & ELM_GLVIEW_DEPTH)
      cfg.depth_bits = EVAS_GL_DEPTH_BIT_24;
