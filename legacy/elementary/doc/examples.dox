@@ -235,7 +235,7 @@
  * @until }
  *
  * The next callback will be used when setting the overlay (using
- * elm_bg_overlay_set()):
+ * elm_object_content_set()):
  *
  * @skip _cb_overlay_changed
  * @until }
@@ -318,14 +318,14 @@
  *
  * @skipline elm_radio_value_set
  *
- * Then we add a checkbox for the elm_bg_overlay_set() function:
+ * Then we add a checkbox for the elm_object_content_set() function for the bg:
  *
  * @skip check_add
  * @until evas_object_show
  *
  * Now look at the code of the @c _cb_overlay_changed again. If the checkbox
  * state is checked, an overlay will be added to the background. It's done by
- * creating an Edje object, and setting it with elm_bg_overlay_set() to the
+ * creating an Edje object, and setting it with elm_object_content_set() to the
  * background object. For information about what are and how to set Edje
  * object, look at the Edje documentation.
  *

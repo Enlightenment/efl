@@ -18,6 +18,9 @@ static const char *widtype = NULL;
 static void _del_hook(Evas_Object *obj);
 static void _theme_hook(Evas_Object *obj);
 static void _custom_resize(void *data, Evas *a, Evas_Object *obj, void *event_info);
+static void _content_set_hook(Evas_Object *obj, const char *part, Evas_Object *content);
+static Evas_Object *_content_get_hook(const Evas_Object *obj, const char *part);
+static Evas_Object *_content_unset_hook(Evas_Object *obj, const char *part);
 
 static void
 _del_hook(Evas_Object *obj)
@@ -113,6 +116,52 @@ _custom_resize(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void
    evas_object_size_hint_max_set(wd->img, mw, mh);
 }
 
+static void
+_content_set_hook(Evas_Object *obj, const char *part __UNUSED__, Evas_Object *content)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype);
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return;
+   if (wd->overlay)
+     {
+        evas_object_del(wd->overlay);
+        wd->overlay = NULL;
+     }
+   if (content)
+     {
+        wd->overlay = content;
+        edje_object_part_swallow(wd->base, "elm.swallow.content", content);
+        elm_widget_sub_object_add(obj, content);
+     }
+
+   _custom_resize(wd, NULL, NULL, NULL);
+}
+
+static Evas_Object *
+_content_get_hook(const Evas_Object *obj, const char *part __UNUSED__)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype) NULL;
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return NULL;
+   return wd->overlay;
+}
+
+static Evas_Object *
+_content_unset_hook(Evas_Object *obj, const char *part __UNUSED__)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype) NULL;
+   Widget_Data *wd = elm_widget_data_get(obj);
+   Evas_Object *overlay;
+   if (!wd) return NULL;
+   if (!wd->overlay) return NULL;
+   overlay = wd->overlay;
+   elm_widget_sub_object_del(obj, wd->overlay);
+   edje_object_part_unswallow(wd->base, wd->overlay);
+   wd->overlay = NULL;
+   _custom_resize(wd, NULL, NULL, NULL);
+   return overlay;
+}
+
 EAPI Evas_Object *
 elm_bg_add(Evas_Object *parent)
 {
@@ -128,6 +177,10 @@ elm_bg_add(Evas_Object *parent)
    elm_widget_data_set(obj, wd);
    elm_widget_del_hook_set(obj, _del_hook);
    elm_widget_theme_hook_set(obj, _theme_hook);
+   elm_widget_content_set_hook_set(obj, _content_set_hook);
+   elm_widget_content_get_hook_set(obj, _content_get_hook);
+   elm_widget_content_unset_hook_set(obj, _content_unset_hook);
+
    elm_widget_can_focus_set(obj, EINA_FALSE);
 
    wd->base = edje_object_add(e);
@@ -241,47 +294,19 @@ elm_bg_color_get(const Evas_Object *obj, int *r, int *g, int *b)
 EAPI void
 elm_bg_overlay_set(Evas_Object *obj, Evas_Object *overlay)
 {
-   ELM_CHECK_WIDTYPE(obj, widtype);
-   Widget_Data *wd = elm_widget_data_get(obj);
-   if (!wd) return;
-   if (wd->overlay)
-     {
-        evas_object_del(wd->overlay);
-        wd->overlay = NULL;
-     }
-   if (overlay)
-     {
-        wd->overlay = overlay;
-        edje_object_part_swallow(wd->base, "elm.swallow.content", wd->overlay);
-        elm_widget_sub_object_add(obj, wd->overlay);
-     }
-
-   _custom_resize(wd, NULL, NULL, NULL);
+   _content_set_hook(obj, NULL, overlay);
 }
 
 EAPI Evas_Object *
 elm_bg_overlay_get(const Evas_Object *obj)
 {
-   ELM_CHECK_WIDTYPE(obj, widtype) NULL;
-   Widget_Data *wd = elm_widget_data_get(obj);
-   if (!wd) return NULL;
-   return wd->overlay;
+   return _content_get_hook(obj, NULL);
 }
 
 EAPI Evas_Object *
 elm_bg_overlay_unset(Evas_Object *obj)
 {
-   ELM_CHECK_WIDTYPE(obj, widtype) NULL;
-   Widget_Data *wd = elm_widget_data_get(obj);
-   Evas_Object *overlay;
-   if (!wd) return NULL;
-   if (!wd->overlay) return NULL;
-   overlay = wd->overlay;
-   elm_widget_sub_object_del(obj, wd->overlay);
-   edje_object_part_unswallow(wd->base, wd->overlay);
-   wd->overlay = NULL;
-   _custom_resize(wd, NULL, NULL, NULL);
-   return overlay;
+   return _content_unset_hook(obj, NULL);
 }
 
 EAPI void
