@@ -18,29 +18,27 @@ typedef void                         *EvasGLImage;
 
 typedef enum _Evas_GL_Color_Format
 {
-    EVAS_GL_RGB_8,      // 8 bits per channel
-    EVAS_GL_RGBA_8,
-    EVAS_GL_RGB_32,     // 32-bits per channel
-    EVAS_GL_RGBA_32,
+    EVAS_GL_RGB_888   = 0,
+    EVAS_GL_RGBA_8888 = 1
 } Evas_GL_Color_Format;
 
 typedef enum _Evas_GL_Depth_Bits
 {
-    EVAS_GL_DEPTH_BIT_8,
-    EVAS_GL_DEPTH_BIT_16,
-    EVAS_GL_DEPTH_BIT_24,
-    EVAS_GL_DEPTH_BIT_32,
-    EVAS_GL_DEPTH_NONE
+    EVAS_GL_DEPTH_NONE   = 0,
+    EVAS_GL_DEPTH_BIT_8  = 1,
+    EVAS_GL_DEPTH_BIT_16 = 2,
+    EVAS_GL_DEPTH_BIT_24 = 3,
+    EVAS_GL_DEPTH_BIT_32 = 4,
 } Evas_GL_Depth_Bits;
 
 typedef enum _Evas_GL_Stencil_Bits
 {
-    EVAS_GL_STENCIL_BIT_1,
-    EVAS_GL_STENCIL_BIT_2,
-    EVAS_GL_STENCIL_BIT_4,
-    EVAS_GL_STENCIL_BIT_8,
-    EVAS_GL_STENCIL_BIT_16,
-    EVAS_GL_STENCIL_NONE
+    EVAS_GL_STENCIL_NONE   = 0,
+    EVAS_GL_STENCIL_BIT_1  = 1,
+    EVAS_GL_STENCIL_BIT_2  = 2,
+    EVAS_GL_STENCIL_BIT_4  = 3,
+    EVAS_GL_STENCIL_BIT_8  = 4,
+    EVAS_GL_STENCIL_BIT_16 = 5,
 } Evas_GL_Stencil_Bits;
 
 struct _Evas_GL_Config
@@ -98,7 +96,7 @@ main(int argc, char **argv)
    // config for the surface for evas_gl
    Evas_GL_Config config =
      {
-        EVAS_GL_RGBA_8,
+        EVAS_GL_RGBA_8888,
         EVAS_GL_DEPTH_NONE,
         EVAS_GL_STENCIL_NONE
      };

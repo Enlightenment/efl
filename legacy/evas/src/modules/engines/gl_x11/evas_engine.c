@@ -2778,20 +2778,14 @@ _set_internal_config(Render_Engine_GL_Surface *sfc, Evas_GL_Config *cfg)
    // Also initialize pixel format here as well...
    switch(cfg->color_format)
      {
-      case EVAS_GL_RGB_8:
+      case EVAS_GL_RGB_888:
          sfc->rt_fmt          = GL_RGB;
          sfc->rt_internal_fmt = GL_RGB;
          break;
-      case EVAS_GL_RGBA_8:
+      case EVAS_GL_RGBA_8888:
          sfc->rt_fmt          = GL_RGBA;
          sfc->rt_internal_fmt = GL_RGBA;
          break;
-      case EVAS_GL_RGB_32:
-         // Only supported on some hw
-         // Fill it in later...
-      case EVAS_GL_RGBA_32:
-         // Only supported on some hw
-         // Fill it in later...
       default:
          ERR("Invalid Color Format!");
          return 0;
