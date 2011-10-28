@@ -24,6 +24,7 @@ ecore_fb_ts.c
 libecore_fb_la_LIBADD = \
 @TSLIB_LIBS@ \
 $(top_builddir)/src/lib/ecore/libecore.la \
+$(top_builddir)/src/lib/ecore_input/libecore_input.la \
 @EINA_LIBS@
 
 libecore_fb_la_LDFLAGS = -version-info @version_info@ @release_info@
