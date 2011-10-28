@@ -24,7 +24,7 @@ external_toggle_state_set(void *data __UNUSED__, Evas_Object *obj, const void *f
    if (p->label)
      elm_object_text_set(obj, p->label);
    if (p->icon)
-     elm_check_icon_set(obj, p->icon);
+     elm_object_content_set(obj, p->icon);
 
    if (p->on)
      elm_object_text_part_set(obj, "on", p->on);
@@ -52,7 +52,7 @@ external_toggle_param_set(void *data __UNUSED__, Evas_Object *obj, const Edje_Ex
 	  {
 	     Evas_Object *icon = external_common_param_icon_get(obj, param);
 	     if ((strcmp(param->s, "")) && (!icon)) return EINA_FALSE;
-	     elm_check_icon_set(obj, icon);
+	     elm_object_content_set(obj, icon);
 	     return EINA_TRUE;
 	  }
      }

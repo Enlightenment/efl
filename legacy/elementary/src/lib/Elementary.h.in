@@ -6170,7 +6170,7 @@ extern "C" {
     *
     * Default text parts of the button widget that you can use for are:
     *
-    * @li "elm.text" - Title label of the button
+    * @li "elm.text" - Label of the button
     *
     * Follow through a complete example @ref button_example_01 "here".
     * @{
@@ -7658,7 +7658,7 @@ extern "C" {
     * If you want to keep that old content object, use the
     * elm_toggle_icon_unset() function.
     *
-    * @deprecated use elm_check_icon_set() instead.
+    * @deprecated use elm_object_content_set() instead.
     */
    EINA_DEPRECATED EAPI void         elm_toggle_icon_set(Evas_Object *obj, Evas_Object *icon) EINA_ARG_NONNULL(1);
    /**
@@ -7671,7 +7671,7 @@ extern "C" {
     *
     * @see elm_toggle_icon_set()
     *
-    * @deprecated use elm_check_icon_get() instead.
+    * @deprecated use elm_object_content_get() instead.
     */
    EINA_DEPRECATED EAPI Evas_Object *elm_toggle_icon_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
    /**
@@ -7684,7 +7684,7 @@ extern "C" {
     *
     * @see elm_toggle_icon_set()
     *
-    * @deprecated use elm_check_icon_unset() instead.
+    * @deprecated use elm_object_content_unset() instead.
     */
    EINA_DEPRECATED EAPI Evas_Object *elm_toggle_icon_unset(Evas_Object *obj) EINA_ARG_NONNULL(1);
    /**
@@ -19668,7 +19668,16 @@ extern "C" {
     * "changed" - This is called whenever the user changes the state of one of
     *             the check object(event_info is NULL).
     *
-    * @ref tutorial_check should give you a firm grasp of how to use this widget.
+    * Default contents parts of the check widget that you can use for are:
+    *
+    * @li "elm.swallow.content" - A icon of the check
+    *
+    * Default text parts of the check widget that you can use for are:
+    *
+    * @li "elm.text" - Label of the check
+    *
+    * @ref tutorial_check should give you a firm grasp of how to use this widget
+    * .
     * @{
     */
    /**
@@ -19704,16 +19713,16 @@ extern "C" {
     *
     * Once the icon object is set, a previously set one will be deleted.
     * If you want to keep that old content object, use the
-    * elm_check_icon_unset() function.
+    * elm_object_content_unset() function.
     */
-   EAPI void         elm_check_icon_set(Evas_Object *obj, Evas_Object *icon) EINA_ARG_NONNULL(1);
+   EINA_DEPRECATED EAPI void         elm_check_icon_set(Evas_Object *obj, Evas_Object *icon) EINA_ARG_NONNULL(1);
    /**
     * @brief Get the icon object of the check object
     *
     * @param obj The check object
     * @return The icon object
     */
-   EAPI Evas_Object *elm_check_icon_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
+   EINA_DEPRECATED EAPI Evas_Object *elm_check_icon_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
    /**
     * @brief Unset the icon used for the check object
     *
@@ -19722,7 +19731,7 @@ extern "C" {
     *
     * Unparent and return the icon object which was set for this widget.
     */
-   EAPI Evas_Object *elm_check_icon_unset(Evas_Object *obj) EINA_ARG_NONNULL(1);
+   EINA_DEPRECATED EAPI Evas_Object *elm_check_icon_unset(Evas_Object *obj) EINA_ARG_NONNULL(1);
    /**
     * @brief Set the on/off state of the check object
     *

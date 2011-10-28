@@ -28,19 +28,19 @@ elm_toggle_label_get(const Evas_Object *obj)
 EAPI void
 elm_toggle_icon_set(Evas_Object *obj, Evas_Object *icon)
 {
-   elm_check_icon_set(obj, icon);
+   elm_object_content_set(obj, icon);
 }
 
 EAPI Evas_Object *
 elm_toggle_icon_get(const Evas_Object *obj)
 {
-   return elm_check_icon_get(obj);
+   return elm_object_content_get(obj);
 }
 
 EAPI Evas_Object *
 elm_toggle_icon_unset(Evas_Object *obj)
 {
-   return elm_check_icon_unset(obj);
+   return elm_object_content_unset(obj);
 }
 
 EAPI void
