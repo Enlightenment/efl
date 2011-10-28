@@ -279,6 +279,29 @@ EAPI Eina_Bool   ecore_evas_transparent_get(const Ecore_Evas *ee);
  */
 EAPI void        ecore_evas_geometry_get(const Ecore_Evas *ee, int *x, int *y, int *w, int *h);
 /**
+ * @brief  Get the geometry which an Ecore_Evas was latest recently requested.
+ *
+ * @param ee The Ecore_Evas whose geometry y
+ * @param x A pointer to an int to place the x coordinate in
+ * @param y A pointer to an int to place the y coordinate in
+ * @param w A pointer to an int to place the w size in
+ * @param h A pointer to an int to place the h size in
+ *
+ * This function takes four pointers to (already allocated) ints, and places
+ * the geometry which @p ee was latest recently requested . If any of the parameters is not desired you
+ * may pass NULL on them. 
+ * This function can represent recently requested geomety. 
+ * ecore_evas_geometry_get function returns the value is updated after engine finished request.
+ * By comparison, ecore_evas_request_geometry_get returns recently requested value.
+ *
+ * @code
+ * int x, y, w, h;
+ * ecore_evas_request_geometry_get(ee, &x, &y, &w, &h);
+ * @endcode
+ *
+ */
+EAPI void        ecore_evas_request_geometry_get(const Ecore_Evas *ee, int *x, int *y, int *w, int *h);
+/**
  * @brief Set the focus of an Ecore_Evas' window.
  *
  * @param ee The Ecore_Evas

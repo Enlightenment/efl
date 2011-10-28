@@ -1186,6 +1186,31 @@ ecore_evas_geometry_get(const Ecore_Evas *ee, int *x, int *y, int *w, int *h)
 }
 
 EAPI void
+ecore_evas_request_geometry_get(const Ecore_Evas *ee, int *x, int *y, int *w, int *h)
+{
+   if (!ECORE_MAGIC_CHECK(ee, ECORE_MAGIC_EVAS))
+     {
+        ECORE_MAGIC_FAIL(ee, ECORE_MAGIC_EVAS,
+                         "ecore_evas_request_geometry_get");
+        return;
+     }
+   if ((ee->rotation == 90) || (ee->rotation == 270))
+     {
+        if (x) *x = ee->req.x;
+        if (y) *y = ee->req.y;
+        if (w) *w = ee->req.h;
+        if (h) *h = ee->req.w;
+     }
+   else
+     {
+        if (x) *x = ee->req.x;
+        if (y) *y = ee->req.y;
+        if (w) *w = ee->req.w;
+        if (h) *h = ee->req.h;
+     }
+}
+
+EAPI void
 ecore_evas_rotation_set(Ecore_Evas *ee, int rot)
 {
    if (!ECORE_MAGIC_CHECK(ee, ECORE_MAGIC_EVAS))
