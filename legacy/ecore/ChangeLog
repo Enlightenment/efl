@@ -1,8 +1,3 @@
-2011-10-28 Rafael Antognolli
-
-        * Make the framebuffer engine input use ecore_input_evas instead
-        of feeding evas input events directly.
-
 2011-01-29  Carsten Haitzler (The Rasterman)
 
         1.0.0 release
@@ -317,3 +312,8 @@
 
         * Fix bug in Ecore_X using geometry value instead of
           recently requested geometry value
+
+2011-10-28 Rafael Antognolli
+
+        * Make the framebuffer engine input use ecore_input_evas instead
+        of feeding evas input events directly.
