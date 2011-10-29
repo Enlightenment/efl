@@ -289,7 +289,7 @@ ecore_con_info_get(Ecore_Con_Server *svr,
 
         err = write(fd[1], "", 1);
         close(fd[1]);
-#ifdef __USE_ISOC99
+#if defined(__USE_ISOC99) && !defined(__UCLIBC__)
         _Exit(0);
 #else
         _exit(0);
