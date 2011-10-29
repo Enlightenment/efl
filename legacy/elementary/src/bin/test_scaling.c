@@ -89,7 +89,7 @@ test_scaling2(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_in
 		       "Parent frame scale<br>"
 		       "is 0.5. Child should<br>"
 		       "inherit it.");
-   elm_frame_content_set(fr, lb);
+   elm_object_content_set(fr, lb);
    evas_object_show(lb);
    elm_box_pack_end(bx, fr);
    evas_object_show(fr);
@@ -101,7 +101,7 @@ test_scaling2(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_in
 		       "Parent frame scale<br>"
 		       "is 1.0. Child should<br>"
 		       "inherit it.");
-   elm_frame_content_set(fr, lb);
+   elm_object_content_set(fr, lb);
    evas_object_show(lb);
    elm_object_scale_set(fr, 1.0);
    elm_box_pack_end(bx, fr);
@@ -114,7 +114,7 @@ test_scaling2(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_in
 		       "Parent frame scale<br>"
 		       "is 2.0. Child should<br>"
 		       "inherit it.");
-   elm_frame_content_set(fr, lb);
+   elm_object_content_set(fr, lb);
    evas_object_show(lb);
    elm_object_scale_set(fr, 2.0);
    elm_box_pack_end(bx, fr);

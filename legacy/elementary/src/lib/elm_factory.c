@@ -26,6 +26,8 @@ static void _move(void *data __UNUSED__, Evas *e __UNUSED__, Evas_Object *obj, v
 static void _resize(void *data __UNUSED__, Evas *e __UNUSED__, Evas_Object *obj, void *event_info __UNUSED__);
 static void _child_change(void *data __UNUSED__, Evas *e __UNUSED__, Evas_Object *obj, void *event_info __UNUSED__);
 static void _child_del(void *data, Evas *e __UNUSED__, Evas_Object *obj, void *event_info __UNUSED__);
+static void _content_set_hook(Evas_Object *obj, const char *part __UNUSED__, Evas_Object *content);
+static Evas_Object *_content_get_hook(const Evas_Object *obj, const char *part __UNUSED__);
 
 static const char SIG_REALIZE[] = "realize";
 static const char SIG_UNREALIZE[] = "unrealize";
@@ -209,36 +211,8 @@ _child_del(void *data, Evas *e __UNUSED__, Evas_Object *obj, void *event_info __
 //   printf("FAC-- = %i\n", fac);
 }
 
-EAPI Evas_Object *
-elm_factory_add(Evas_Object *parent)
-{
-   Evas_Object *obj;
-   Evas *e;
-   Widget_Data *wd;
-
-   ELM_WIDGET_STANDARD_SETUP(wd, Widget_Data, parent, e, obj, NULL);
-
-   ELM_SET_WIDTYPE(widtype, "factory");
-   elm_widget_type_set(obj, "factory");
-   elm_widget_sub_object_add(parent, obj);
-   elm_widget_data_set(obj, wd);
-   elm_widget_del_hook_set(obj, _del_hook);
-   elm_widget_focus_next_hook_set(obj, _focus_next_hook);
-   elm_widget_can_focus_set(obj, EINA_FALSE);
-   elm_widget_changed_hook_set(obj, _changed);
-
-   evas_object_event_callback_add(obj, EVAS_CALLBACK_MOVE, _move, NULL);
-   evas_object_event_callback_add(obj, EVAS_CALLBACK_RESIZE, _resize, NULL);
-
-   evas_object_smart_callbacks_descriptions_set(obj, _signals);
-
-   wd->obj = obj;
-   wd->last_calc_count = -1;
-   return obj;
-}
-
-EAPI void
-elm_factory_content_set(Evas_Object *obj, Evas_Object *content)
+static void
+_content_set_hook(Evas_Object *obj, const char *part __UNUSED__, Evas_Object *content)
 {
    ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
@@ -275,13 +249,55 @@ elm_factory_content_set(Evas_Object *obj, Evas_Object *content)
      }
 }
 
-EAPI Evas_Object *
-elm_factory_content_get(const Evas_Object *obj)
+static Evas_Object *
+_content_get_hook(const Evas_Object *obj, const char *part __UNUSED__)
 {
    ELM_CHECK_WIDTYPE(obj, widtype) NULL;
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return NULL;
    return wd->content;
+}
+
+EAPI Evas_Object *
+elm_factory_add(Evas_Object *parent)
+{
+   Evas_Object *obj;
+   Evas *e;
+   Widget_Data *wd;
+
+   ELM_WIDGET_STANDARD_SETUP(wd, Widget_Data, parent, e, obj, NULL);
+
+   ELM_SET_WIDTYPE(widtype, "factory");
+   elm_widget_type_set(obj, "factory");
+   elm_widget_sub_object_add(parent, obj);
+   elm_widget_data_set(obj, wd);
+   elm_widget_del_hook_set(obj, _del_hook);
+   elm_widget_focus_next_hook_set(obj, _focus_next_hook);
+   elm_widget_content_set_hook_set(obj, _content_set_hook);
+   elm_widget_content_get_hook_set(obj, _content_get_hook);
+   elm_widget_can_focus_set(obj, EINA_FALSE);
+   elm_widget_changed_hook_set(obj, _changed);
+
+   evas_object_event_callback_add(obj, EVAS_CALLBACK_MOVE, _move, NULL);
+   evas_object_event_callback_add(obj, EVAS_CALLBACK_RESIZE, _resize, NULL);
+
+   evas_object_smart_callbacks_descriptions_set(obj, _signals);
+
+   wd->obj = obj;
+   wd->last_calc_count = -1;
+   return obj;
+}
+
+EAPI void
+elm_factory_content_set(Evas_Object *obj, Evas_Object *content)
+{
+   _content_set_hook(obj, NULL, content);
+}
+
+EAPI Evas_Object *
+elm_factory_content_get(const Evas_Object *obj)
+{
+   return _content_get_hook(obj, NULL);
 }
 
 EAPI void

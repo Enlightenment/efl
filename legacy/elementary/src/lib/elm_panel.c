@@ -225,6 +225,47 @@ _event_hook(Evas_Object *obj, Evas_Object *src __UNUSED__, Evas_Callback_Type ty
    return EINA_TRUE;
 }
 
+static void
+_content_set_hook(Evas_Object *obj, const char *part __UNUSED__, Evas_Object *content)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype);
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return;
+   if (wd->content == content) return;
+   if (wd->content)
+     evas_object_box_remove_all(wd->bx, EINA_TRUE);
+   wd->content = content;
+   if (content)
+     {
+        evas_object_box_append(wd->bx, wd->content);
+        evas_object_show(wd->content);
+     }
+   _sizing_eval(obj);
+}
+
+static Evas_Object *
+_content_get_hook(const Evas_Object *obj, const char *part __UNUSED__)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype) NULL;
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return NULL;
+   return wd->content;
+}
+
+static Evas_Object *
+_content_unset_hook(Evas_Object *obj, const char *part __UNUSED__)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype) NULL;
+   Widget_Data *wd = elm_widget_data_get(obj);
+   Evas_Object *content;
+   if (!wd) return NULL;
+   if (!wd->content) return NULL;
+   content = wd->content;
+   evas_object_box_remove_all(wd->bx, EINA_FALSE);
+   wd->content = NULL;
+   return content;
+}
+
 EAPI Evas_Object *
 elm_panel_add(Evas_Object *parent)
 {
@@ -247,6 +288,9 @@ elm_panel_add(Evas_Object *parent)
    elm_widget_focus_next_hook_set(obj, _elm_panel_focus_next_hook);
    elm_widget_can_focus_set(obj, EINA_TRUE);
    elm_widget_event_hook_set(obj, _event_hook);
+   elm_widget_content_set_hook_set(obj, _content_set_hook);
+   elm_widget_content_get_hook_set(obj, _content_get_hook);
+   elm_widget_content_unset_hook_set(obj, _content_unset_hook);
 
    wd->scr = elm_smart_scroller_add(e);
    elm_smart_scroller_widget_set(wd->scr, obj);
@@ -321,42 +365,19 @@ elm_panel_orient_get(const Evas_Object *obj)
 EAPI void
 elm_panel_content_set(Evas_Object *obj, Evas_Object *content)
 {
-   ELM_CHECK_WIDTYPE(obj, widtype);
-   Widget_Data *wd = elm_widget_data_get(obj);
-   if (!wd) return;
-   if (wd->content == content) return;
-   if (wd->content)
-     evas_object_box_remove_all(wd->bx, EINA_TRUE);
-   wd->content = content;
-   if (content)
-     {
-        evas_object_box_append(wd->bx, wd->content);
-        evas_object_show(wd->content);
-     }
-   _sizing_eval(obj);
+   _content_set_hook(obj, NULL, content);
 }
 
 EAPI Evas_Object *
 elm_panel_content_get(const Evas_Object *obj)
 {
-   ELM_CHECK_WIDTYPE(obj, widtype) NULL;
-   Widget_Data *wd = elm_widget_data_get(obj);
-   if (!wd) return NULL;
-   return wd->content;
+   return _content_get_hook(obj, NULL);
 }
 
 EAPI Evas_Object *
 elm_panel_content_unset(Evas_Object *obj)
 {
-   ELM_CHECK_WIDTYPE(obj, widtype) NULL;
-   Widget_Data *wd = elm_widget_data_get(obj);
-   Evas_Object *content;
-   if (!wd) return NULL;
-   if (!wd->content) return NULL;
-   content = wd->content;
-   evas_object_box_remove_all(wd->bx, EINA_FALSE);
-   wd->content = NULL;
-   return content;
+   return _content_unset_hook(obj, NULL);
 }
 
 EAPI void

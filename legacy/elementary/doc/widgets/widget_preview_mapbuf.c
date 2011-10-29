@@ -23,7 +23,7 @@ for (i = 0; i < 8; i++)
        }
   }
 
-elm_mapbuf_content_set(o, tb);
+elm_object_content_set(o, tb);
 elm_mapbuf_enabled_set(o, EINA_TRUE);
 
 #include "widget_preview_tmpl_foot.c"

@@ -254,7 +254,7 @@ test_launcher(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_in
         elm_table_pack(tb, pad, 6, 1, 1, 10);
 
         mb = elm_mapbuf_add(win);
-        elm_mapbuf_content_set(mb, tb);
+        elm_object_content_set(mb, tb);
         evas_object_show(tb);
 
         for (j = 0; j < 5; j++)
@@ -422,7 +422,7 @@ test_launcher2(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_i
         evas_object_show(bt);
 
         mb = elm_mapbuf_add(win);
-        elm_mapbuf_content_set(mb, ly);
+        elm_object_content_set(mb, ly);
         evas_object_show(ly);
 
         elm_box_pack_end(bx, mb);
@@ -781,7 +781,7 @@ test_launcher3(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_i
         mb = elm_mapbuf_add(win);
         mbs = eina_list_append(mbs, mb);
 
-        elm_mapbuf_content_set(mb, tb);
+        elm_object_content_set(mb, tb);
         evas_object_show(tb);
         elm_box_pack_end(bx, mb);
         evas_object_show(mb);

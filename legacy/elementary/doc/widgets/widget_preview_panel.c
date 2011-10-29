@@ -9,7 +9,7 @@ Evas_Object *o2 = elm_label_add(win);
 elm_object_text_set(o2, "content");
 evas_object_show(o2);
 
-elm_panel_content_set(o, o2);
+elm_object_content_set(o, o2);
 
 
 #include "widget_preview_tmpl_foot.c"

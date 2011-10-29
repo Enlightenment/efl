@@ -188,7 +188,7 @@ test_panel(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info 
 
    elm_toolbar_item_append(toolbar, "home", "Hello", _tstatus, panel);
 
-   elm_panel_content_set(panel, toolbar);
+   elm_object_content_set(panel, toolbar);
    elm_box_pack_end(vbx, panel);
    evas_object_show(panel);
 
@@ -209,7 +209,7 @@ test_panel(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info 
    evas_object_size_hint_align_set(list, EVAS_HINT_FILL, EVAS_HINT_FILL);
    evas_object_show(list);
 
-   elm_panel_content_set(panel, list);
+   elm_object_content_set(panel, list);
 
    elm_box_pack_end(bx, panel);
    evas_object_show(panel);
@@ -228,7 +228,7 @@ test_panel(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info 
    evas_object_size_hint_align_set(list, EVAS_HINT_FILL, EVAS_HINT_FILL);
    evas_object_show(list);
 
-   elm_panel_content_set(panel, list);
+   elm_object_content_set(panel, list);
 
    elm_box_pack_end(bx, panel);
    evas_object_show(panel);
@@ -252,7 +252,7 @@ test_panel(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info 
 
    elm_toolbar_item_append(toolbar, "home", "Hello", _bstatus, panel);
 
-   elm_panel_content_set(panel, toolbar);
+   elm_object_content_set(panel, toolbar);
    elm_box_pack_end(vbx, panel);
    evas_object_show(panel);
 

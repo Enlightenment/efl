@@ -118,7 +118,7 @@ _main_win_del_cb(void *data __UNUSED__, Evas_Object *obj, void *event __UNUSED__
    box = elm_box_add(obj);
    evas_object_size_hint_weight_set(box, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(box, EVAS_HINT_FILL, EVAS_HINT_FILL);
-   elm_notify_content_set(msg, box);
+   elm_object_content_set(msg, box);
    evas_object_show(box);
 
    lbl = elm_label_add(obj);

@@ -16,8 +16,8 @@ static void
 fac_unrealize(void *data __UNUSED__, Evas_Object *obj, void *event_info __UNUSED__)
 {
    // setting factory content to null deletes it
-   printf("--------DELETE for factory %p [f: %p]\n", elm_factory_content_get(obj), obj);
-   elm_factory_content_set(obj, NULL);
+   printf("--------DELETE for factory %p [f: %p]\n", elm_object_content_get(obj), obj);
+   elm_object_content_set(obj, NULL);
 }
 
 static void
@@ -51,7 +51,7 @@ fac_realize_end(void *data, Evas_Object *obj, void *event_info __UNUSED__)
         evas_object_show(bt);
      }
 
-   elm_factory_content_set(obj, bx);
+   elm_object_content_set(obj, bx);
    evas_object_show(bx);
 }
 
@@ -89,7 +89,7 @@ fac_realize2(void *data, Evas_Object *obj, void *event_info __UNUSED__)
         evas_object_show(fc);
      }
 
-   elm_factory_content_set(obj, bx);
+   elm_object_content_set(obj, bx);
    evas_object_show(bx);
 }
 
@@ -127,7 +127,7 @@ fac_realize1(void *data, Evas_Object *obj, void *event_info __UNUSED__)
         evas_object_show(fc);
      }
 
-   elm_factory_content_set(obj, bx);
+   elm_object_content_set(obj, bx);
    evas_object_show(bx);
 }
 

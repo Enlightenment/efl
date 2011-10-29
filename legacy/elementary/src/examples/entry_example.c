@@ -183,7 +183,7 @@ _page_settings_add(Evas_Object *parent, App_Inwin_Data *aid)
    box2 = elm_box_add(parent);
    evas_object_size_hint_weight_set(box2, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(box2, EVAS_HINT_FILL, EVAS_HINT_FILL);
-   elm_frame_content_set(sizeopts, box2);
+   elm_object_content_set(sizeopts, box2);
    evas_object_show(box2);
 
    sizebox = elm_box_add(parent);
@@ -257,7 +257,7 @@ _page_settings_add(Evas_Object *parent, App_Inwin_Data *aid)
    elm_object_text_set(ewidth, buf);
    evas_object_size_hint_weight_set(ewidth, EVAS_HINT_EXPAND, 0.0);
    evas_object_size_hint_align_set(ewidth, EVAS_HINT_FILL, EVAS_HINT_FILL);
-   elm_frame_content_set(fwidth, ewidth);
+   elm_object_content_set(fwidth, ewidth);
    evas_object_show(ewidth);
 
    evas_object_smart_callback_add(ewidth, "changed", _width_changed_cb, aid);
@@ -279,7 +279,7 @@ _page_settings_add(Evas_Object *parent, App_Inwin_Data *aid)
    elm_object_text_set(eheight, buf);
    evas_object_size_hint_weight_set(eheight, EVAS_HINT_EXPAND, 0.0);
    evas_object_size_hint_align_set(eheight, EVAS_HINT_FILL, EVAS_HINT_FILL);
-   elm_frame_content_set(fheight, eheight);
+   elm_object_content_set(fheight, eheight);
    evas_object_show(eheight);
 
    evas_object_smart_callback_add(eheight, "changed", _height_changed_cb, aid);

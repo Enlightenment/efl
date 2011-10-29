@@ -909,7 +909,7 @@ _ewk_view_popup_create_cb(void *data, Evas_Object *obj, void *event_info)
    elm_list_mode_set(list, ELM_LIST_EXPAND);
    evas_object_size_hint_weight_set(list, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(list, EVAS_HINT_FILL, EVAS_HINT_FILL);
-   elm_notify_content_set(notify, list);
+   elm_object_content_set(notify, list);
    evas_object_show(list);
 
    EINA_LIST_FOREACH(m->items, itr, it)

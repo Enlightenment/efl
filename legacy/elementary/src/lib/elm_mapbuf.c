@@ -146,44 +146,8 @@ _resize(void *data __UNUSED__, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, 
    _configure(data);
 }
 
-EAPI Evas_Object *
-elm_mapbuf_add(Evas_Object *parent)
-{
-   Evas_Object *obj;
-   Evas *e;
-   Widget_Data *wd;
-
-   ELM_WIDGET_STANDARD_SETUP(wd, Widget_Data, parent, e, obj, NULL);
-
-   ELM_SET_WIDTYPE(widtype, "mapbuf");
-   elm_widget_type_set(obj, "mapbuf");
-   elm_widget_sub_object_add(parent, obj);
-   elm_widget_data_set(obj, wd);
-   elm_widget_del_hook_set(obj, _del_hook);
-   elm_widget_theme_hook_set(obj, _theme_hook);
-   elm_widget_can_focus_set(obj, EINA_FALSE);
-
-   wd->clip = evas_object_rectangle_add(e);
-   evas_object_static_clip_set(wd->clip, EINA_TRUE);
-   evas_object_pass_events_set(wd->clip, EINA_TRUE);
-   evas_object_color_set(wd->clip, 0, 0, 0, 0);
-
-   evas_object_event_callback_add(wd->clip, EVAS_CALLBACK_MOVE, _move, obj);
-   evas_object_event_callback_add(wd->clip, EVAS_CALLBACK_RESIZE, _resize, obj);
-   evas_object_smart_callback_add(obj, "sub-object-del", _sub_del, obj);
-
-   elm_widget_resize_object_set(obj, wd->clip);
-
-   wd->enabled = 0;
-   wd->alpha = 1;
-   wd->smooth = 1;
-
-   _sizing_eval(obj);
-   return obj;
-}
-
-EAPI void
-elm_mapbuf_content_set(Evas_Object *obj, Evas_Object *content)
+static void
+_content_set_hook(Evas_Object *obj, const char *part __UNUSED__, Evas_Object *content)
 {
    ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
@@ -208,8 +172,8 @@ elm_mapbuf_content_set(Evas_Object *obj, Evas_Object *content)
    _configure(obj);
 }
 
-EAPI Evas_Object *
-elm_mapbuf_content_get(const Evas_Object *obj)
+static Evas_Object *
+_content_get_hook(const Evas_Object *obj, const char *part __UNUSED__)
 {
    ELM_CHECK_WIDTYPE(obj, widtype) NULL;
    Widget_Data *wd = elm_widget_data_get(obj);
@@ -217,8 +181,8 @@ elm_mapbuf_content_get(const Evas_Object *obj)
    return wd->content;
 }
 
-EAPI Evas_Object *
-elm_mapbuf_content_unset(Evas_Object *obj)
+static Evas_Object *
+_content_unset_hook(Evas_Object *obj, const char *part __UNUSED__)
 {
    ELM_CHECK_WIDTYPE(obj, widtype) NULL;
    Widget_Data *wd = elm_widget_data_get(obj);
@@ -233,6 +197,63 @@ elm_mapbuf_content_unset(Evas_Object *obj)
    evas_object_data_del(content, "_elm_leaveme");
    wd->content = NULL;
    return content;
+}
+
+EAPI Evas_Object *
+elm_mapbuf_add(Evas_Object *parent)
+{
+   Evas_Object *obj;
+   Evas *e;
+   Widget_Data *wd;
+
+   ELM_WIDGET_STANDARD_SETUP(wd, Widget_Data, parent, e, obj, NULL);
+
+   ELM_SET_WIDTYPE(widtype, "mapbuf");
+   elm_widget_type_set(obj, "mapbuf");
+   elm_widget_sub_object_add(parent, obj);
+   elm_widget_data_set(obj, wd);
+   elm_widget_del_hook_set(obj, _del_hook);
+   elm_widget_theme_hook_set(obj, _theme_hook);
+   elm_widget_content_set_hook_set(obj, _content_set_hook);
+   elm_widget_content_get_hook_set(obj, _content_get_hook);
+   elm_widget_content_unset_hook_set(obj, _content_unset_hook);
+   elm_widget_can_focus_set(obj, EINA_FALSE);
+
+   wd->clip = evas_object_rectangle_add(e);
+   evas_object_static_clip_set(wd->clip, EINA_TRUE);
+   evas_object_pass_events_set(wd->clip, EINA_TRUE);
+   evas_object_color_set(wd->clip, 0, 0, 0, 0);
+
+   evas_object_event_callback_add(wd->clip, EVAS_CALLBACK_MOVE, _move, obj);
+   evas_object_event_callback_add(wd->clip, EVAS_CALLBACK_RESIZE, _resize, obj);
+   evas_object_smart_callback_add(obj, "sub-object-del", _sub_del, obj);
+
+   elm_widget_resize_object_set(obj, wd->clip);
+
+   wd->enabled = 0;
+   wd->alpha = 1;
+   wd->smooth = 1;
+
+   _sizing_eval(obj);
+   return obj;
+}
+
+EAPI void
+elm_mapbuf_content_set(Evas_Object *obj, Evas_Object *content)
+{
+   _content_set_hook(obj, NULL, content);
+}
+
+EAPI Evas_Object *
+elm_mapbuf_content_get(const Evas_Object *obj)
+{
+   return _content_get_hook(obj, NULL);
+}
+
+EAPI Evas_Object *
+elm_mapbuf_content_unset(Evas_Object *obj)
+{
+   return _content_unset_hook(obj, NULL);
 }
 
 EAPI void

@@ -36,7 +36,7 @@ elm_main(int argc, char **argv)
    notify = elm_notify_add(win);
    elm_notify_repeat_events_set(notify, EINA_FALSE);
    elm_notify_timeout_set(notify, 5);
-   elm_notify_content_set(notify, content);
+   elm_object_content_set(notify, content);
    evas_object_size_hint_weight_set(notify, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_show(notify);
    elm_box_pack_end(bx, notify);
@@ -48,7 +48,7 @@ elm_main(int argc, char **argv)
 
    notify = elm_notify_add(win);
    elm_notify_orient_set(notify, ELM_NOTIFY_ORIENT_BOTTOM);
-   elm_notify_content_set(notify, content);
+   elm_object_content_set(notify, content);
    evas_object_size_hint_weight_set(notify, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_show(notify);
    elm_box_pack_end(bx, notify);
@@ -59,7 +59,7 @@ elm_main(int argc, char **argv)
 
    notify = elm_notify_add(win);
    elm_notify_orient_set(notify, ELM_NOTIFY_ORIENT_CENTER);
-   elm_notify_content_set(notify, content);
+   elm_object_content_set(notify, content);
    evas_object_size_hint_weight_set(notify, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_show(notify);
    elm_box_pack_end(bx, notify);

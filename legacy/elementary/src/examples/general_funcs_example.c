@@ -117,7 +117,7 @@ elm_main(int    argc __UNUSED__,
 
    d.btn = elm_button_add(win);
    elm_object_text_set(d.btn, "Click me");
-   elm_frame_content_set(frame, d.btn);
+   elm_object_content_set(frame, d.btn);
 
    fprintf(stdout, "Elementary's finger size is set to %d pixels\n.",
            elm_finger_size_get());

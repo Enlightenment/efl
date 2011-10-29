@@ -60,7 +60,7 @@ test_notify(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info
    evas_object_size_hint_weight_set(notify, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
 
    bx = elm_box_add(win);
-   elm_notify_content_set(notify, bx);
+   elm_object_content_set(notify, bx);
    elm_box_horizontal_set(bx, EINA_TRUE);
    evas_object_show(bx);
 
@@ -90,7 +90,7 @@ test_notify(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info
    evas_object_smart_callback_add(notify, "block,clicked", _notify_block, NULL);
 
    bx = elm_box_add(win);
-   elm_notify_content_set(notify, bx);
+   elm_object_content_set(notify, bx);
    elm_box_horizontal_set(bx, EINA_TRUE);
    evas_object_show(bx);
 
@@ -119,7 +119,7 @@ test_notify(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info
    evas_object_smart_callback_add(notify, "timeout", _notify_timeout, NULL);
 
    bx = elm_box_add(win);
-   elm_notify_content_set(notify, bx);
+   elm_object_content_set(notify, bx);
    elm_box_horizontal_set(bx, EINA_TRUE);
    evas_object_show(bx);
 
@@ -147,7 +147,7 @@ test_notify(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info
    evas_object_smart_callback_add(notify, "timeout", _notify_timeout, NULL);
 
    bx = elm_box_add(win);
-   elm_notify_content_set(notify, bx);
+   elm_object_content_set(notify, bx);
    elm_box_horizontal_set(bx, EINA_TRUE);
    evas_object_show(bx);
 
@@ -173,7 +173,7 @@ test_notify(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info
    elm_notify_orient_set(notify, ELM_NOTIFY_ORIENT_RIGHT);
 
    bx = elm_box_add(win);
-   elm_notify_content_set(notify, bx);
+   elm_object_content_set(notify, bx);
    elm_box_horizontal_set(bx, EINA_TRUE);
    evas_object_show(bx);
 
@@ -199,7 +199,7 @@ test_notify(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info
    elm_notify_orient_set(notify, ELM_NOTIFY_ORIENT_TOP_LEFT);
 
    bx = elm_box_add(win);
-   elm_notify_content_set(notify, bx);
+   elm_object_content_set(notify, bx);
    elm_box_horizontal_set(bx, EINA_TRUE);
    evas_object_show(bx);
 
@@ -225,7 +225,7 @@ test_notify(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info
    elm_notify_orient_set(notify, ELM_NOTIFY_ORIENT_TOP_RIGHT);
 
    bx = elm_box_add(win);
-   elm_notify_content_set(notify, bx);
+   elm_object_content_set(notify, bx);
    elm_box_horizontal_set(bx, EINA_TRUE);
    evas_object_show(bx);
 
@@ -251,7 +251,7 @@ test_notify(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info
    elm_notify_orient_set(notify, ELM_NOTIFY_ORIENT_BOTTOM_LEFT);
 
    bx = elm_box_add(win);
-   elm_notify_content_set(notify, bx);
+   elm_object_content_set(notify, bx);
    elm_box_horizontal_set(bx, EINA_TRUE);
    evas_object_show(bx);
 
@@ -277,7 +277,7 @@ test_notify(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info
    elm_notify_orient_set(notify, ELM_NOTIFY_ORIENT_BOTTOM_RIGHT);
 
    bx = elm_box_add(win);
-   elm_notify_content_set(notify, bx);
+   elm_object_content_set(notify, bx);
    elm_box_horizontal_set(bx, EINA_TRUE);
    evas_object_show(bx);
 

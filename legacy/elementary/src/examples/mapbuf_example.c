@@ -87,7 +87,7 @@ elm_main(int argc __UNUSED__, char **argv __UNUSED__)
           }
      }
 
-   elm_mapbuf_content_set(mb, tb);
+   elm_object_content_set(mb, tb);
    evas_object_show(mb);
 
    hbx = elm_box_add(win);

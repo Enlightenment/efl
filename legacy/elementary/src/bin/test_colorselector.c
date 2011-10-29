@@ -55,7 +55,7 @@ test_colorselector(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *eve
    elm_layout_file_set(ly, buf, "main");
    evas_object_size_hint_align_set(ly, EVAS_HINT_FILL, EVAS_HINT_FILL);
    evas_object_size_hint_weight_set(ly, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-   elm_frame_content_set(fr, ly);
+   elm_object_content_set(fr, ly);
    evas_object_show(ly);
 
    re = evas_object_rectangle_add(evas_object_evas_get(win));
@@ -79,7 +79,7 @@ test_colorselector(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *eve
    elm_colorselector_color_set(cp, r, g, b, a);
    evas_object_size_hint_weight_set(cp, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(cp, EVAS_HINT_FILL, EVAS_HINT_FILL);
-   elm_frame_content_set(fr, cp);
+   elm_object_content_set(fr, cp);
    evas_object_show(cp);
    evas_object_smart_callback_add(cp, "changed", _colorselector_clicked_cb, re);
 

@@ -61,7 +61,7 @@ elm_main(int argc __UNUSED__, char *argv[] __UNUSED__)
    evas_object_smart_callback_add(o, "anchor,clicked", _anchorblock_clicked_cb,
                                   NULL);
    evas_object_show(o);
-   elm_frame_content_set(frame, o);
+   elm_object_content_set(frame, o);
 
    frame = elm_frame_add(win);
    elm_object_text_set(frame, "Anchorview");
@@ -77,7 +77,7 @@ elm_main(int argc __UNUSED__, char *argv[] __UNUSED__)
    evas_object_smart_callback_add(o, "anchor,clicked", _anchorview_clicked_cb,
                                   NULL);
    evas_object_show(o);
-   elm_frame_content_set(frame, o);
+   elm_object_content_set(frame, o);
 
    elm_run();
 

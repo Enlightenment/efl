@@ -1721,7 +1721,7 @@ test_genlist10(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_i
    evas_object_show(fr);
 
    bx2 = elm_box_add(win);
-   elm_frame_content_set(fr, bx2);
+   elm_object_content_set(fr, bx2);
    evas_object_show(bx2);
 
    lb = elm_label_add(win);
@@ -1840,7 +1840,7 @@ test_genlist11(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_i
    elm_object_text_set(lb,
                        "Enable reorder mode if you want to move item.<br>"
                        "Then long press and drag item.");
-   elm_frame_content_set(fr, lb);
+   elm_object_content_set(fr, lb);
    evas_object_show(lb);
 
    gl = elm_genlist_add(win);

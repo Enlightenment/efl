@@ -4516,7 +4516,6 @@ extern "C" {
     * centered, scaled or stretched.
     * 
     * Default contents parts of the bg widget that you can use for are:
-    *
     * @li "elm.swallow.content" - overlay of the bg
     *
     * Here is some sample code using it:
@@ -6165,11 +6164,9 @@ extern "C" {
     * @li hoversel_vertical_entry: Another internal for @ref Hoversel.
     *
     * Default contents parts of the button widget that you can use for are:
-    *
     * @li "elm.swallow.content" - A icon of the button
     *
     * Default text parts of the button widget that you can use for are:
-    *
     * @li "elm.text" - Label of the button
     *
     * Follow through a complete example @ref button_example_01 "here".
@@ -7761,6 +7758,12 @@ extern "C" {
     *
     * Of all this styles only default shows the title. Frame emits no signals.
     *
+    * Default contents parts of the frame widget that you can use for are:
+    * @li "elm.swallow.content" - A content of the frame
+    *
+    * Default text parts of the frame widget that you can use for are:
+    * @li "elm.text" - Label of the frame
+    *
     * For a detailed example see the @ref tutorial_frame.
     *
     * @{
@@ -7801,7 +7804,7 @@ extern "C" {
     * @param obj The frame object
     * @param content The content will be filled in this frame object
     */
-   EAPI void         elm_frame_content_set(Evas_Object *obj, Evas_Object *content) EINA_ARG_NONNULL(1);
+   EINA_DEPRECATED EAPI void         elm_frame_content_set(Evas_Object *obj, Evas_Object *content) EINA_ARG_NONNULL(1);
    /**
     * @brief Get the content of the frame widget
     *
@@ -7810,7 +7813,7 @@ extern "C" {
     * @param obj The frame object
     * @return The content that is being used
     */
-   EAPI Evas_Object *elm_frame_content_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
+   EINA_DEPRECATED EAPI Evas_Object *elm_frame_content_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
    /**
     * @brief Unset the content of the frame widget
     *
@@ -7819,7 +7822,7 @@ extern "C" {
     * @param obj The frame object
     * @return The content that was being used
     */
-   EAPI Evas_Object *elm_frame_content_unset(Evas_Object *obj) EINA_ARG_NONNULL(1);
+   EINA_DEPRECATED EAPI Evas_Object *elm_frame_content_unset(Evas_Object *obj) EINA_ARG_NONNULL(1);
    /**
     * @}
     */
@@ -10417,6 +10420,9 @@ extern "C" {
     * @li "timeout" - when timeout happens on notify and it's hidden
     * @li "block,clicked" - when a click outside of the notify happens
     *
+    * Default contents parts of the notify widget that you can use for are:
+    * @li "elm.swallow.content" - A content of the notify
+    *
     * @ref tutorial_notify show usage of the API.
     *
     * @{
@@ -10459,7 +10465,7 @@ extern "C" {
     * you want to keep that old content object, use the
     * elm_notify_content_unset() function.
     */
-   EAPI void              elm_notify_content_set(Evas_Object *obj, Evas_Object *content) EINA_ARG_NONNULL(1);
+   EINA_DEPRECATED EAPI void              elm_notify_content_set(Evas_Object *obj, Evas_Object *content) EINA_ARG_NONNULL(1);
    /**
     * @brief Unset the content of the notify widget
     *
@@ -10470,7 +10476,7 @@ extern "C" {
     *
     * @see elm_notify_content_set()
     */
-   EAPI Evas_Object      *elm_notify_content_unset(Evas_Object *obj) EINA_ARG_NONNULL(1);
+   EINA_DEPRECATED EAPI Evas_Object      *elm_notify_content_unset(Evas_Object *obj) EINA_ARG_NONNULL(1);
    /**
     * @brief Return the content of the notify widget
     *
@@ -10479,7 +10485,7 @@ extern "C" {
     *
     * @see elm_notify_content_set()
     */
-   EAPI Evas_Object      *elm_notify_content_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
+   EINA_DEPRECATED EAPI Evas_Object      *elm_notify_content_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
    /**
     * @brief Set the notify parent
     *
@@ -19669,11 +19675,9 @@ extern "C" {
     *             the check object(event_info is NULL).
     *
     * Default contents parts of the check widget that you can use for are:
-    *
     * @li "elm.swallow.content" - A icon of the check
     *
     * Default text parts of the check widget that you can use for are:
-    *
     * @li "elm.text" - Label of the check
     *
     * @ref tutorial_check should give you a firm grasp of how to use this widget
@@ -23676,6 +23680,12 @@ extern "C" {
     * @li ELM_PANEL_ORIENT_LEFT
     * @li ELM_PANEL_ORIENT_RIGHT
     *
+    * To set/get/unset the contetn of the panel, you can use
+    * elm_object_content_set/get/unset APIs.
+    * Once the content object is set, a previously set one will be deleted.
+    * If you want to keep that old content object, use the
+    * elm_object_content_unset() function
+    *
     * @ref tutorial_panel shows one way to use this widget.
     * @{
     */
@@ -23723,7 +23733,7 @@ extern "C" {
     * If you want to keep that old content object, use the
     * elm_panel_content_unset() function.
     */
-   EAPI void                  elm_panel_content_set(Evas_Object *obj, Evas_Object *content) EINA_ARG_NONNULL(1);
+   EINA_DEPRECATED EAPI void                  elm_panel_content_set(Evas_Object *obj, Evas_Object *content) EINA_ARG_NONNULL(1);
    /**
     * @brief Get the content of the panel.
     *
@@ -23734,7 +23744,7 @@ extern "C" {
     *
     * @see elm_panel_content_set()
     */
-   EAPI Evas_Object          *elm_panel_content_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
+   EINA_DEPRECATED EAPI Evas_Object          *elm_panel_content_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
    /**
     * @brief Unset the content of the panel.
     *
@@ -23745,7 +23755,7 @@ extern "C" {
     *
     * @see elm_panel_content_set()
     */
-   EAPI Evas_Object          *elm_panel_content_unset(Evas_Object *obj) EINA_ARG_NONNULL(1);
+   EINA_DEPRECATED EAPI Evas_Object          *elm_panel_content_unset(Evas_Object *obj) EINA_ARG_NONNULL(1);
    /**
     * @brief Set the state of the panel.
     *
@@ -24456,6 +24466,14 @@ extern "C" {
     * need to resize or move it frequently (the content object and its
     * children).
     *
+    * To set/get/unset the content of the mapbuf, you can use 
+    * elm_object_content_set/get/unset APIs. 
+    * Once the content object is set, a previously set one will be deleted.
+    * If you want to keep that old content object, use the
+    * elm_object_content_unset() function.
+    *
+    * To enable map, elm_mapbuf_enabled_set() should be used.
+    * 
     * See how to use this widget in this example:
     * @ref mapbuf_example
     */
@@ -24492,7 +24510,7 @@ extern "C" {
     *
     * @ingroup Mapbuf
     */
-   EAPI void         elm_mapbuf_content_set(Evas_Object *obj, Evas_Object *content) EINA_ARG_NONNULL(1);
+   EINA_DEPRECATED EAPI void         elm_mapbuf_content_set(Evas_Object *obj, Evas_Object *content) EINA_ARG_NONNULL(1);
 
    /**
     * Get the content of the mapbuf.
@@ -24506,7 +24524,7 @@ extern "C" {
     *
     * @ingroup Mapbuf
     */
-   EAPI Evas_Object *elm_mapbuf_content_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
+   EINA_DEPRECATED EAPI Evas_Object *elm_mapbuf_content_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
 
    /**
     * Unset the content of the mapbuf.
@@ -24520,7 +24538,7 @@ extern "C" {
     *
     * @ingroup Mapbuf
     */
-   EAPI Evas_Object *elm_mapbuf_content_unset(Evas_Object *obj) EINA_ARG_NONNULL(1);
+   EINA_DEPRECATED EAPI Evas_Object *elm_mapbuf_content_unset(Evas_Object *obj) EINA_ARG_NONNULL(1);
 
    /**
     * Enable or disable the map.
@@ -26297,6 +26315,9 @@ extern "C" {
     * Signals that you can add callbacks for are:
     * "dismissed" - the ctxpopup was dismissed
     *
+    * Default contents parts of the ctxpopup widget that you can use for are:
+    * @li "elm.swallow.content" - A content of the ctxpopup
+    *
     * @ref tutorial_ctxpopup shows the usage of a good deal of the API.
     * @{
     */
@@ -27903,8 +27924,8 @@ extern "C" {
     */
 
    EAPI Evas_Object *elm_factory_add(Evas_Object *parent);
-   EAPI void         elm_factory_content_set(Evas_Object *obj, Evas_Object *content);
-   EAPI Evas_Object *elm_factory_content_get(const Evas_Object *obj);
+   EINA_DEPRECATED EAPI void         elm_factory_content_set(Evas_Object *obj, Evas_Object *content);
+   EINA_DEPRECATED EAPI Evas_Object *elm_factory_content_get(const Evas_Object *obj);
    EAPI void         elm_factory_maxmin_mode_set(Evas_Object *obj, Eina_Bool enabled);
    EAPI Eina_Bool    elm_factory_maxmin_mode_get(const Evas_Object *obj);
    EAPI void         elm_factory_maxmin_reset_set(Evas_Object *obj);
@@ -28155,19 +28176,16 @@ extern "C" {
     * application.
     *
     * Signals that you can add callback for are:
-    *
     * @li "transition,finished" - When the transition is finished in changing
     *     the item
     * @li "title,clicked" - User clicked title area
     *
     * Default contents parts of the naviframe items that you can use for are:
-    *
     * @li "elm.swallow.content" - A main content of the page
     * @li "elm.swallow.prev_btn" - A button to go to the previous page
     * @li "elm.swallow.next_btn" - A button to go to the next page
     *
     * Default text parts of the naviframe items that you can use for are:
-    *
     * @li "elm.text.title" - Title label in the title area
     *
     * @ref tutorial_naviframe gives a good overview of the usage of the API.

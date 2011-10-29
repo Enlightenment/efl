@@ -53,7 +53,7 @@ static void external_notify_state_set(void *data __UNUSED__,
 	else return;
 
 	if (p->content) {
-		elm_notify_content_set(obj, p->content);
+		elm_object_content_set(obj, p->content);
 	}
 	if (p->repeat_events_exists)
 		elm_notify_repeat_events_set(obj, p->repeat_events);
@@ -76,7 +76,7 @@ static Eina_Bool external_notify_param_set(void *data __UNUSED__,
 		Evas_Object *content = external_common_param_edje_object_get(obj, param);
 		if ((strcmp(param->s, "")) && (!content))
 			return EINA_FALSE;
-		elm_notify_content_set(obj, content);
+		elm_object_content_set(obj, content);
 		return EINA_TRUE;
 	}
 	else if ((!strcmp(param->name, "repeat_events"))

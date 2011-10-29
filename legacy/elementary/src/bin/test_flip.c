@@ -409,7 +409,7 @@ test_flip3(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info 
    fl_f = elm_flip_add(win);
    evas_object_size_hint_align_set(fl_f, EVAS_HINT_FILL, EVAS_HINT_FILL);
    evas_object_size_hint_weight_set(fl_f, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-   elm_frame_content_set(fr, fl_f);
+   elm_object_content_set(fr, fl_f);
    evas_object_show(fl_f);
 
    o = elm_bg_add(win);
@@ -438,7 +438,7 @@ test_flip3(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info 
    fl_b = elm_flip_add(win);
    evas_object_size_hint_align_set(fl_b, EVAS_HINT_FILL, EVAS_HINT_FILL);
    evas_object_size_hint_weight_set(fl_b, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-   elm_frame_content_set(fr, fl_b);
+   elm_object_content_set(fr, fl_b);
    evas_object_show(fl_b);
 
    o = elm_bg_add(win);

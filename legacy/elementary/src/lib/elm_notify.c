@@ -413,6 +413,54 @@ _elm_notify_focus_next_hook(const Evas_Object *obj, Elm_Focus_Direction dir, Eva
    return elm_widget_focus_next_get(cur, dir, next);
 }
 
+static void
+_content_set_hook(Evas_Object *obj, const char *part __UNUSED__, Evas_Object *content)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype);
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return;
+   if (wd->content == content) return;
+   if (wd->content) evas_object_del(wd->content);
+   wd->content = content;
+
+   if (content)
+     {
+        elm_widget_sub_object_add(obj, content);
+        evas_object_event_callback_add(content, EVAS_CALLBACK_CHANGED_SIZE_HINTS,
+                                       _changed_size_hints, obj);
+        evas_object_event_callback_add(content, EVAS_CALLBACK_RESIZE,
+                                       _content_resize, obj);
+        edje_object_part_swallow(wd->notify, "elm.swallow.content", content);
+     }
+   _sizing_eval(obj);
+   _calc(obj);
+}
+
+static Evas_Object *
+_content_get_hook(const Evas_Object *obj, const char *part __UNUSED__)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype) NULL;
+   Widget_Data *wd = elm_widget_data_get(obj);
+
+   if (!wd) return NULL;
+   return wd->content;
+}
+
+static Evas_Object *
+_content_unset_hook(Evas_Object *obj, const char *part __UNUSED__)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype) NULL;
+   Widget_Data *wd = elm_widget_data_get(obj);
+   Evas_Object *content;
+   if (!wd) return NULL;
+   if (!wd->content) return NULL;
+   content = wd->content;
+   elm_widget_sub_object_del(obj, wd->content);
+   edje_object_part_unswallow(wd->notify, wd->content);
+   wd->content = NULL;
+   return content;
+}
+
 EAPI Evas_Object *
 elm_notify_add(Evas_Object *parent)
 {
@@ -431,6 +479,9 @@ elm_notify_add(Evas_Object *parent)
    elm_widget_theme_hook_set(obj, _theme_hook);
    elm_widget_can_focus_set(obj, EINA_FALSE);
    elm_widget_focus_next_hook_set(obj, _elm_notify_focus_next_hook);
+   elm_widget_content_set_hook_set(obj, _content_set_hook);
+   elm_widget_content_get_hook_set(obj, _content_get_hook);
+   elm_widget_content_unset_hook_set(obj, _content_unset_hook);
 
    wd->repeat_events = EINA_TRUE;
 
@@ -456,49 +507,19 @@ elm_notify_add(Evas_Object *parent)
 EAPI void
 elm_notify_content_set(Evas_Object *obj, Evas_Object *content)
 {
-   ELM_CHECK_WIDTYPE(obj, widtype);
-   Widget_Data *wd = elm_widget_data_get(obj);
-   if (!wd) return;
-   if (wd->content == content) return;
-   if (wd->content) evas_object_del(wd->content);
-   wd->content = content;
-
-   if (content)
-     {
-        elm_widget_sub_object_add(obj, content);
-        evas_object_event_callback_add(content, EVAS_CALLBACK_CHANGED_SIZE_HINTS,
-                                       _changed_size_hints, obj);
-        evas_object_event_callback_add(content, EVAS_CALLBACK_RESIZE,
-                                       _content_resize, obj);
-        edje_object_part_swallow(wd->notify, "elm.swallow.content", content);
-     }
-   _sizing_eval(obj);
-   _calc(obj);
+   _content_set_hook(obj, NULL, content);
 }
 
 EAPI Evas_Object *
 elm_notify_content_unset(Evas_Object *obj)
 {
-   ELM_CHECK_WIDTYPE(obj, widtype) NULL;
-   Widget_Data *wd = elm_widget_data_get(obj);
-   Evas_Object *content;
-   if (!wd) return NULL;
-   if (!wd->content) return NULL;
-   content = wd->content;
-   elm_widget_sub_object_del(obj, wd->content);
-   edje_object_part_unswallow(wd->notify, wd->content);
-   wd->content = NULL;
-   return content;
+   return _content_unset_hook(obj, NULL);
 }
 
 EAPI Evas_Object *
 elm_notify_content_get(const Evas_Object *obj)
 {
-   ELM_CHECK_WIDTYPE(obj, widtype) NULL;
-   Widget_Data *wd = elm_widget_data_get(obj);
-
-   if (!wd) return NULL;
-   return wd->content;
+   return _content_get_hook(obj, NULL);
 }
 
 EAPI void

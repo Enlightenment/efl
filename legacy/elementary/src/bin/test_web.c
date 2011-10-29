@@ -138,7 +138,7 @@ _alert_hook(void *data __UNUSED__, Evas_Object *obj, const char *message)
 
    label = elm_label_add(obj);
    elm_object_text_set(label, message);
-   elm_notify_content_set(popup, label);
+   elm_object_content_set(popup, label);
    evas_object_show(label);
 
    return popup;
@@ -175,7 +175,7 @@ _confirm_hook(void *data __UNUSED__, Evas_Object *obj, const char *message, Eina
    evas_object_show(popup);
 
    box = elm_box_add(obj);
-   elm_notify_content_set(popup, box);
+   elm_object_content_set(popup, box);
    evas_object_show(box);
 
    label = elm_label_add(obj);

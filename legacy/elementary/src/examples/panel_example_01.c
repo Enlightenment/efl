@@ -39,7 +39,7 @@ elm_main(int argc, char **argv)
    elm_object_text_set(content, "content");
    evas_object_show(content);
    evas_object_size_hint_min_set(content, 100, 30);
-   elm_panel_content_set(panel, content);
+   elm_object_content_set(panel, content);
 
    panel = elm_panel_add(win);
    elm_panel_orient_set(panel, ELM_PANEL_ORIENT_RIGHT);
@@ -53,7 +53,7 @@ elm_main(int argc, char **argv)
    elm_object_text_set(content, "content2");
    evas_object_show(content);
    evas_object_size_hint_min_set(content, 100, 30);
-   elm_panel_content_set(panel, content);
+   elm_object_content_set(panel, content);
 
    panel = elm_panel_add(win);
    evas_object_size_hint_weight_set(panel, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
@@ -65,7 +65,7 @@ elm_main(int argc, char **argv)
    elm_object_text_set(content, "content2");
    evas_object_show(content);
    evas_object_size_hint_min_set(content, 100, 30);
-   elm_panel_content_set(panel, content);
+   elm_object_content_set(panel, content);
 
 
    evas_object_show(win);
