@@ -3192,6 +3192,9 @@ eng_gl_make_current(void *data __UNUSED__, void *surface, void *context)
    Render_Engine_GL_Surface *sfc;
    Render_Engine_GL_Context *ctx;
    int ret = 0;
+#if defined (GLES_VARIETY_S3C6410) || defined (GLES_VARIETY_SGX)
+   Render_Engine_GL_Resource *rsc;
+#endif
 
    re  = (Render_Engine *)data;
    sfc = (Render_Engine_GL_Surface*)surface;
@@ -3220,7 +3223,6 @@ eng_gl_make_current(void *data __UNUSED__, void *surface, void *context)
 
    // Do a make current only if it's not already current
 #if defined (GLES_VARIETY_S3C6410) || defined (GLES_VARIETY_SGX)
-   Render_Engine_GL_Resource *rsc;
    if ((rsc = eina_tls_get(resource_key)) == EINA_FALSE) return 0;
 
    if ((eglGetCurrentContext() != ctx->context) || 
