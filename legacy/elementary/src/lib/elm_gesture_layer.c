@@ -1712,8 +1712,8 @@ _momentum_test(Evas_Object *obj, Pointer_Event *pe,
    /* First make avarage of all touched devices to determine center point */
    Eina_List *l;
    Pointer_Event *p;
-   Pointer_Event pe_local = *pe;  /* Copy pe event info to local */
-   int cnt = 1;    /* We start counter counting current pe event */
+   Pointer_Event pe_local = *pe;           /* Copy pe event info to local */
+   unsigned int cnt = 1;    /* We start counter counting current pe event */
    EINA_LIST_FOREACH(wd->touched, l, p)
       if (p->device != pe_local.device)
         {
@@ -2089,7 +2089,7 @@ _n_line_test(Evas_Object *obj, Pointer_Event *pe, void *event_info,
           }
      }
 
-   st->info.n = started;
+   st->info.momentum.n = started;
 
 
    if (ended &&

@@ -12738,7 +12738,6 @@ extern "C" {
    struct _Elm_Gesture_Line_Info
      {  /* Report line ends, timestamps, and momentum computed      */
         Elm_Gesture_Momentum_Info momentum; /**< Line momentum info */
-        unsigned int n;            /**< Number of fingers (lines)   */
         /* FIXME should be radians, bot degrees */
         double angle;              /**< Angle (direction) of lines  */
      };
