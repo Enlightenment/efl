@@ -12719,6 +12719,8 @@ extern "C" {
 
         Evas_Coord mx; /**< Momentum on X */
         Evas_Coord my; /**< Momentum on Y */
+
+        unsigned int n;  /**< Number of fingers */
      };
 
    /**

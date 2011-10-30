@@ -174,7 +174,6 @@ struct _Momentum_Type
    unsigned int t_st_y;  /* Time start on Y */
    unsigned int t_end;   /* Time end        */
    unsigned int t_up; /* Recent up event time */
-   int n_fingers;
    int xdir, ydir;
 };
 typedef struct _Momentum_Type Momentum_Type;
@@ -1729,10 +1728,11 @@ _momentum_test(Evas_Object *obj, Pointer_Event *pe,
    pe_local.y /= cnt;
 
    /* If user added finger - reset gesture */
-   if ((st->n_fingers) && (st->n_fingers < cnt))
+   if ((st->info.n) && (st->info.n < cnt))
      state_to_report = ELM_GESTURE_STATE_ABORT;
 
-   st->n_fingers = cnt;
+   if (st->info.n < cnt)
+     st->info.n = cnt;
 
    Evas_Event_Flags ev_flag = EVAS_EVENT_FLAG_NONE;
    switch (event_type)
