@@ -6,7 +6,7 @@ AM_CPPFLAGS = \
 	-I$(top_srcdir) \
 	-I$(top_builddir) \
 	-DPLUGINSDIR=\"$(libdir)/ethumb/plugins\" \
-	@EINA_CFLAGS@ @EVAS_CFLAGS@ @ECORE_EVAS_CFLAGS@ @ECORE_FILE_CFLAGS@ @EDJE_CFLAGS@ \
+	@EINA_CFLAGS@ @EVAS_CFLAGS@ @ECORE_CFLAGS@ @ECORE_EVAS_CFLAGS@ @ECORE_FILE_CFLAGS@ @EDJE_CFLAGS@ \
 	@EFL_ETHUMB_BUILD@
 
 if HAVE_LIBEXIF
@@ -25,7 +25,7 @@ libethumb_la_SOURCES = \
 	Ethumb.c \
 	md5.c
 libethumb_la_LIBADD = \
-	@EDJE_LIBS@ @ECORE_FILE_LIBS@ @ECORE_EVAS_LIBS@ @EVAS_LIBS@
+	@EDJE_LIBS@ @ECORE_FILE_LIBS@ @ECORE_EVAS_LIBS@ @ECORE_LIBS@ @EVAS_LIBS@ @EINA_LIBS@
 libethumb_la_LDFLAGS = -no-undefined @lt_enable_auto_import@ -version-info @version_info@ @release_info@
 
 if HAVE_LIBEXIF
