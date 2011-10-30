@@ -23681,7 +23681,7 @@ extern "C" {
     * @li ELM_PANEL_ORIENT_LEFT
     * @li ELM_PANEL_ORIENT_RIGHT
     *
-    * To set/get/unset the contetn of the panel, you can use
+    * To set/get/unset the content of the panel, you can use
     * elm_object_content_set/get/unset APIs.
     * Once the content object is set, a previously set one will be deleted.
     * If you want to keep that old content object, use the
@@ -23806,9 +23806,19 @@ extern "C" {
     * Available styles for it:
     * - @c "default"
     *
+    * Default contents parts of the panes widget that you can use for are:
+    * @li "elm.swallow.left" - A leftside content of the panes
+    * @li "elm.swallow.right" - A rightside content of the panes
+    *
+    * If panes is displayed vertically, left content will be displayed at
+    * top.
+    * 
     * Here is an example on its usage:
     * @li @ref panes_example
     */
+
+#define ELM_PANES_CONTENT_LEFT "elm.swallow.left"
+#define ELM_PANES_CONTENT_RIGHT "elm.swallow.right"
 
    /**
     * @addtogroup Panes
@@ -23846,7 +23856,7 @@ extern "C" {
     *
     * @ingroup Panes
     */
-   EAPI void                  elm_panes_content_left_set(Evas_Object *obj, Evas_Object *content) EINA_ARG_NONNULL(1);
+   EINA_DEPRECATED EAPI void                  elm_panes_content_left_set(Evas_Object *obj, Evas_Object *content) EINA_ARG_NONNULL(1);
 
    /**
     * Set the right content of the panes widget.
@@ -23866,7 +23876,7 @@ extern "C" {
     *
     * @ingroup Panes
     */
-   EAPI void                  elm_panes_content_right_set(Evas_Object *obj, Evas_Object *content) EINA_ARG_NONNULL(1);
+   EINA_DEPRECATED EAPI void                  elm_panes_content_right_set(Evas_Object *obj, Evas_Object *content) EINA_ARG_NONNULL(1);
 
    /**
     * Get the left content of the panes.
@@ -23880,7 +23890,7 @@ extern "C" {
     *
     * @ingroup Panes
     */
-   EAPI Evas_Object          *elm_panes_content_left_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
+   EINA_DEPRECATED EAPI Evas_Object          *elm_panes_content_left_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
 
    /**
     * Get the right content of the panes.
@@ -23894,7 +23904,7 @@ extern "C" {
     *
     * @ingroup Panes
     */
-   EAPI Evas_Object          *elm_panes_content_right_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
+   EINA_DEPRECATED EAPI Evas_Object          *elm_panes_content_right_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
 
    /**
     * Unset the left content used for the panes.
@@ -23909,7 +23919,7 @@ extern "C" {
     *
     * @ingroup Panes
     */
-   EAPI Evas_Object          *elm_panes_content_left_unset(Evas_Object *obj) EINA_ARG_NONNULL(1);
+   EINA_DEPRECATED EAPI Evas_Object          *elm_panes_content_left_unset(Evas_Object *obj) EINA_ARG_NONNULL(1);
 
    /**
     * Unset the right content used for the panes.
@@ -24361,7 +24371,6 @@ extern "C" {
     * - @c "default"
     *
     * Default contents parts of the conformant widget that you can use for are:
-    *
     * @li "elm.swallow.content" - A content of the conformant
     *
     * See how to use this widget in this example:
@@ -28191,6 +28200,9 @@ extern "C" {
     *
     * @ref tutorial_naviframe gives a good overview of the usage of the API.
     */
+
+#define ELM_NAVIFRAME_ITEM_PREV_BTN "elm.swallow.prev_btn"
+#define ELM_NAVIFRAME_ITEM_NEXT_BTN "elm.swallow.next_btn"
 
    /**
     * @addtogroup Naviframe

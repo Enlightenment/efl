@@ -10,13 +10,13 @@ elm_object_text_set(bt, "Left");
 evas_object_size_hint_weight_set(bt, 1.0, 1.0);
 evas_object_size_hint_align_set(bt, -1.0, -1.0);
 evas_object_show(bt);
-elm_panes_content_left_set(panes, bt);
+elm_object_content_part_set(panes, ELM_PANES_CONTENT_LEFT, bt);
 
 bt = elm_button_add(win);
 elm_object_text_set(bt, "Right");
 evas_object_size_hint_weight_set(bt, 1.0, 1.0);
 evas_object_size_hint_align_set(bt, -1.0, -1.0);
 evas_object_show(bt);
-elm_panes_content_right_set(panes, bt);
+elm_object_content_part_set(panes, ELM_PANES_CONTENT_RIGHT, bt);
 
 #include "widget_preview_tmpl_foot.c"

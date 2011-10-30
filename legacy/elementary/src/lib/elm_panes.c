@@ -212,6 +212,105 @@ _unpress(void *data, Evas_Object *obj __UNUSED__ , const char *emission __UNUSED
      }
 }
 
+static void
+_content_left_set(Evas_Object *obj, Evas_Object *content)
+{
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (wd->contents.left)
+     {
+        evas_object_del(wd->contents.left);
+        wd->contents.left = NULL;
+     }
+   if (content)
+     {
+        wd->contents.left = content;
+        elm_widget_sub_object_add(obj, content);
+        edje_object_part_swallow(wd->panes, "elm.swallow.left", content);
+     }
+}
+
+static void
+_content_right_set(Evas_Object *obj, Evas_Object *content)
+{
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (wd->contents.right)
+     {
+        evas_object_del(wd->contents.right);
+        wd->contents.right = NULL;
+     }
+   if (content)
+     {
+        wd->contents.right = content;
+        elm_widget_sub_object_add(obj, content);
+        edje_object_part_swallow(wd->panes, "elm.swallow.right", content);
+     }
+}
+
+static Evas_Object *
+_content_left_unset(Evas_Object *obj)
+{
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd->contents.left) return NULL;
+   Evas_Object *content = wd->contents.left;
+   elm_widget_sub_object_del(obj, content);
+   edje_object_part_unswallow(wd->panes, content);
+   wd->contents.left = NULL;
+   return content;
+}
+
+static Evas_Object *
+_content_right_unset(Evas_Object *obj)
+{
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd->contents.right) return NULL;
+   Evas_Object *content = wd->contents.right;
+   elm_widget_sub_object_del(obj, content);
+   edje_object_part_unswallow(wd->panes, content);
+   wd->contents.right = NULL;
+   return content;
+}
+
+static void
+_content_set_hook(Evas_Object *obj, const char *part, Evas_Object *content)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype);
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return;
+
+   if ((!part) || (!strcmp(part, "elm.swallow.right")))
+     _content_right_set(obj, content);
+   else if(!strcmp(part, "elm.swallow.left"))
+     _content_left_set(obj, content);
+}
+
+static Evas_Object *
+_content_get_hook(const Evas_Object *obj, const char *part)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype) NULL;
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return NULL;
+   if ((!part) || (!strcmp(part, "elm.swallow.right")))
+     return wd->contents.left;
+   else if (!strcmp(part, "elm.swallow.left"))
+     return wd->contents.right;
+   return NULL;
+}
+
+static Evas_Object *
+_content_unset_hook(Evas_Object *obj, const char *part)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype) NULL;
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return NULL;
+
+   if ((!part) || (!strcmp(part, "elm.swallow.right")))
+     _content_right_unset(obj);
+   else if (!strcmp(part, "elm.swallow.left"))
+     _content_left_unset(obj);
+
+   return NULL;
+}
+
 EAPI Evas_Object *
 elm_panes_add(Evas_Object *parent)
 {
@@ -228,6 +327,9 @@ elm_panes_add(Evas_Object *parent)
    elm_widget_del_hook_set(obj, _del_hook);
    elm_widget_theme_hook_set(obj, _theme_hook);
    elm_widget_focus_next_hook_set(obj, _elm_panes_focus_next_hook);
+   elm_widget_content_set_hook_set(obj, _content_set_hook);
+   elm_widget_content_get_hook_set(obj, _content_get_hook);
+   elm_widget_content_unset_hook_set(obj, _content_unset_hook);
    elm_widget_can_focus_set(obj, EINA_FALSE);
 
    wd->panes = edje_object_add(e);
@@ -257,88 +359,40 @@ elm_panes_add(Evas_Object *parent)
    return obj;
 }
 
-
 EAPI void
 elm_panes_content_left_set(Evas_Object *obj, Evas_Object *content)
 {
-   ELM_CHECK_WIDTYPE(obj, widtype);
-   Widget_Data *wd = elm_widget_data_get(obj);
-   if (!wd) return;
-   if (wd->contents.left)
-     {
-        evas_object_del(wd->contents.left);
-        wd->contents.left = NULL;
-     }
-   if (content)
-     {
-        wd->contents.left = content;
-        elm_widget_sub_object_add(obj, content);
-        edje_object_part_swallow(wd->panes, "elm.swallow.left", content);
-     }
+   _content_set_hook(obj, "elm.swallow.left", content);
 }
 
 EAPI void
 elm_panes_content_right_set(Evas_Object *obj, Evas_Object *content)
 {
-   ELM_CHECK_WIDTYPE(obj, widtype);
-   Widget_Data *wd = elm_widget_data_get(obj);
-   if (!wd) return;
-   if (wd->contents.right)
-     {
-        evas_object_del(wd->contents.right);
-        wd->contents.right = NULL;
-     }
-   if (content)
-     {
-        wd->contents.right = content;
-        elm_widget_sub_object_add(obj, content);
-        edje_object_part_swallow(wd->panes, "elm.swallow.right", content);
-     }
+   _content_set_hook(obj, NULL, content);
 }
 
 EAPI Evas_Object *
 elm_panes_content_left_get(const Evas_Object *obj)
 {
-   ELM_CHECK_WIDTYPE(obj, widtype) NULL;
-   Widget_Data *wd = elm_widget_data_get(obj);
-   if (!wd) return NULL;
-   return wd->contents.left;
+   return _content_get_hook(obj, "elm.swallow.left");
 }
 
 EAPI Evas_Object *
 elm_panes_content_right_get(const Evas_Object *obj)
 {
-   ELM_CHECK_WIDTYPE(obj, widtype) NULL;
-   Widget_Data *wd = elm_widget_data_get(obj);
-   return wd->contents.right;
+   return _content_get_hook(obj, NULL);
 }
 
 EAPI Evas_Object *
 elm_panes_content_left_unset(Evas_Object *obj)
 {
-   ELM_CHECK_WIDTYPE(obj, widtype) NULL;
-   Widget_Data *wd = elm_widget_data_get(obj);
-   if (!wd) return NULL;
-   if (!wd->contents.left) return NULL;
-   Evas_Object *content = wd->contents.left;
-   elm_widget_sub_object_del(obj, content);
-   edje_object_part_unswallow(wd->panes, content);
-   wd->contents.left = NULL;
-   return content;
+   return _content_unset_hook(obj, "elm.swallow.left");
 }
 
 EAPI Evas_Object *
 elm_panes_content_right_unset(Evas_Object *obj)
 {
-   ELM_CHECK_WIDTYPE(obj, widtype) NULL;
-   Widget_Data *wd = elm_widget_data_get(obj);
-   if (!wd) return NULL;
-   if (!wd->contents.right) return NULL;
-   Evas_Object *content = wd->contents.right;
-   elm_widget_sub_object_del(obj, content);
-   edje_object_part_unswallow(wd->panes, content);
-   wd->contents.right = NULL;
-   return content;
+   return _content_unset_hook(obj, "elm.swallow.right");
 }
 
 EAPI double
