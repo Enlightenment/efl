@@ -28192,17 +28192,21 @@ extern "C" {
     *
     * Default contents parts of the naviframe items that you can use for are:
     * @li "elm.swallow.content" - A main content of the page
+    * @li "elm.swallow.icon" - A icon in the title area
     * @li "elm.swallow.prev_btn" - A button to go to the previous page
     * @li "elm.swallow.next_btn" - A button to go to the next page
     *
     * Default text parts of the naviframe items that you can use for are:
     * @li "elm.text.title" - Title label in the title area
+    * @li "elm.text.subtitle" - Sub-title label in the title area
     *
     * @ref tutorial_naviframe gives a good overview of the usage of the API.
     */
 
-#define ELM_NAVIFRAME_ITEM_PREV_BTN "elm.swallow.prev_btn"
-#define ELM_NAVIFRAME_ITEM_NEXT_BTN "elm.swallow.next_btn"
+#define ELM_NAVIFRAME_ITEM_CONTENT_ICON "elm.swallow.icon"
+#define ELM_NAVIFRAME_ITEM_CONTENT_PREV_BTN "elm.swallow.prev_btn"
+#define ELM_NAVIFRAME_ITEM_CONTNET_NEXT_BTN "elm.swallow.next_btn"
+#define ELM_NAVIFRAME_ITEM_TEXT_SUBTITLE "elm.text.subtitle"
 
    /**
     * @addtogroup Naviframe

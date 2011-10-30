@@ -54,8 +54,8 @@ _page4(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
                                 bt,
                                 bt2,
                                 NULL);
-   elm_object_item_text_part_set(it, "elm.text.subtitle", "Here is sub-title part!");
-   elm_object_item_content_part_set(it, "elm.swallow.icon", ic);
+   elm_object_item_text_part_set(it, ELM_NAVIFRAME_ITEM_TEXT_SUBTITLE, "Here is sub-title part!");
+   elm_object_item_content_part_set(it, ELM_NAVIFRAME_ITEM_CONTENT_ICON, ic);
    elm_naviframe_item_title_visible_set(it, EINA_FALSE);
    evas_object_smart_callback_add(bt2, "clicked", _title_visible, it);
 }
@@ -93,7 +93,7 @@ _page3(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
                                 bt3,
                                 NULL);
    elm_object_item_text_part_set(it, "elm.text.subtitle", "Here is sub-title part!");
-   elm_object_item_content_part_set(it, "elm.swallow.icon", ic);
+   elm_object_item_content_part_set(it, ELM_NAVIFRAME_ITEM_CONTENT_ICON, ic);
 }
 
 void
@@ -123,7 +123,7 @@ _page2(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
                                 bt,
                                 bt2,
                                 NULL);
-   elm_object_item_text_part_set(it, "elm.text.subtitle", "Here is sub-title part!");
+   elm_object_item_text_part_set(it, ELM_NAVIFRAME_ITEM_TEXT_SUBTITLE, "Here is sub-title part!");
 }
 
 void
@@ -143,6 +143,7 @@ test_naviframe(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_i
 
    nf = elm_naviframe_add(win);
    elm_win_resize_object_add(win, nf);
+   evas_object_size_hint_weight_set(nf, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_show(nf);
    evas_object_smart_callback_add(nf, "title,clicked", _title_clicked, 0);
 
