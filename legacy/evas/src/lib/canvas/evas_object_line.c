@@ -12,10 +12,10 @@ struct _Evas_Object_Line
    DATA32            magic;
    struct {
       struct {
-	 int         x1, y1, x2, y2;
-	 struct {
-	    Evas_Coord w, h;
-	 } object;
+         int         x1, y1, x2, y2;
+         struct {
+            Evas_Coord w, h;
+         } object;
       } cache;
       Evas_Coord         x1, y1, x2, y2;
    } cur, prev;
@@ -106,30 +106,32 @@ evas_object_line_xy_set(Evas_Object *obj, Evas_Coord x1, Evas_Coord y1, Evas_Coo
        (x2 == o->cur.x2) && (y2 == o->cur.y2)) return;
    if (obj->layer->evas->events_frozen <= 0)
      {
-	if (!evas_event_passes_through(obj))
-	  was = evas_object_is_in_output_rect(obj,
-					      obj->layer->evas->pointer.x,
-					      obj->layer->evas->pointer.y, 1, 1);
+        if (!evas_event_passes_through(obj) &&
+            !evas_event_freezes_through(obj))
+          was = evas_object_is_in_output_rect(obj,
+                                              obj->layer->evas->pointer.x,
+                                              obj->layer->evas->pointer.y,
+                                              1, 1);
      }
    if (x1 < x2)
      {
-	min_x = x1;
-	max_x = x2;
+        min_x = x1;
+        max_x = x2;
      }
    else
      {
-	min_x = x2;
-	max_x = x1;
+        min_x = x2;
+        max_x = x1;
      }
    if (y1 < y2)
      {
-	min_y = y1;
-	max_y = y2;
+        min_y = y1;
+        max_y = y2;
      }
    else
      {
-	min_y = y2;
-	max_y = y1;
+        min_y = y2;
+        max_y = y1;
      }
    obj->cur.geometry.x = min_x;
    obj->cur.geometry.y = min_y;
@@ -146,18 +148,19 @@ evas_object_line_xy_set(Evas_Object *obj, Evas_Coord x1, Evas_Coord y1, Evas_Coo
    evas_object_clip_dirty(obj);
    if (obj->layer->evas->events_frozen <= 0)
      {
-	is = evas_object_is_in_output_rect(obj,
-					   obj->layer->evas->pointer.x,
-					   obj->layer->evas->pointer.y, 1, 1);
-	if (!evas_event_passes_through(obj))
-	  {
-	     if ((is ^ was) && obj->cur.visible)
-	       evas_event_feed_mouse_move(obj->layer->evas,
-					  obj->layer->evas->pointer.x,
-					  obj->layer->evas->pointer.y,
-					  obj->layer->evas->last_timestamp,
-					  NULL);
-	  }
+        is = evas_object_is_in_output_rect(obj,
+                                           obj->layer->evas->pointer.x,
+                                           obj->layer->evas->pointer.y, 1, 1);
+        if (!evas_event_passes_through(obj) &&
+            !evas_event_freezes_through(obj))
+          {
+             if ((is ^ was) && obj->cur.visible)
+               evas_event_feed_mouse_move(obj->layer->evas,
+                                          obj->layer->evas->pointer.x,
+                                          obj->layer->evas->pointer.y,
+                                          obj->layer->evas->last_timestamp,
+                                          NULL);
+          }
      }
    evas_object_inform_call_move(obj);
    evas_object_inform_call_resize(obj);

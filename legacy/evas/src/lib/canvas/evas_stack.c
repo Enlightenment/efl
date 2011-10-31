@@ -68,7 +68,8 @@ evas_object_raise(Evas_Object *obj)
    evas_object_inform_call_restack(obj);
    if (obj->layer->evas->events_frozen <= 0)
      {
-        if (!evas_event_passes_through(obj))
+        if ((!evas_event_passes_through(obj)) &&
+            (!evas_event_freezes_through(obj)))
           {
              if (!obj->smart.smart)
                {
@@ -117,7 +118,8 @@ evas_object_lower(Evas_Object *obj)
    evas_object_inform_call_restack(obj);
    if (obj->layer->evas->events_frozen <= 0)
      {
-        if (!evas_event_passes_through(obj))
+        if ((!evas_event_passes_through(obj)) &&
+            (!evas_event_freezes_through(obj)))
           {
              if (!obj->smart.smart)
                {
@@ -197,7 +199,8 @@ evas_object_stack_above(Evas_Object *obj, Evas_Object *above)
    evas_object_inform_call_restack(obj);
    if (obj->layer->evas->events_frozen <= 0)
      {
-        if (!evas_event_passes_through(obj))
+        if ((!evas_event_passes_through(obj)) &&
+            (!evas_event_freezes_through(obj)))
           {
              if (!obj->smart.smart)
                {
@@ -277,7 +280,8 @@ evas_object_stack_below(Evas_Object *obj, Evas_Object *below)
    evas_object_inform_call_restack(obj);
    if (obj->layer->evas->events_frozen <= 0)
      {
-        if (!evas_event_passes_through(obj))
+        if ((!evas_event_passes_through(obj)) &&
+            (!evas_event_freezes_through(obj)))
           {
              if (!obj->smart.smart)
                {

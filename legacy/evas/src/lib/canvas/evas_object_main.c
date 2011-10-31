@@ -448,7 +448,7 @@ evas_object_del(Evas_Object *obj)
 EAPI void
 evas_object_move(Evas_Object *obj, Evas_Coord x, Evas_Coord y)
 {
-   int is, was = 0, pass = 0;
+   int is, was = 0, pass = 0, freeze = 0;
 
    MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
    return;
@@ -464,7 +464,8 @@ evas_object_move(Evas_Object *obj, Evas_Coord x, Evas_Coord y)
    if (obj->layer->evas->events_frozen <= 0)
      {
         pass = evas_event_passes_through(obj);
-        if (!pass)
+        freeze = evas_event_freezes_through(obj);
+        if ((!pass) && (!freeze))
           was = evas_object_is_in_output_rect(obj,
                                               obj->layer->evas->pointer.x,
                                               obj->layer->evas->pointer.y, 1, 1);
@@ -507,7 +508,7 @@ evas_object_move(Evas_Object *obj, Evas_Coord x, Evas_Coord y)
 EAPI void
 evas_object_resize(Evas_Object *obj, Evas_Coord w, Evas_Coord h)
 {
-   int is, was = 0, pass = 0;
+   int is, was = 0, pass = 0, freeze =0;
 
    MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
    return;
@@ -524,7 +525,8 @@ evas_object_resize(Evas_Object *obj, Evas_Coord w, Evas_Coord h)
    if (obj->layer->evas->events_frozen <= 0)
      {
         pass = evas_event_passes_through(obj);
-        if (!pass)
+        freeze = evas_event_freezes_through(obj);
+        if ((!pass) && (!freeze))
           was = evas_object_is_in_output_rect(obj,
                                               obj->layer->evas->pointer.x,
                                               obj->layer->evas->pointer.y, 1, 1);
@@ -858,7 +860,8 @@ evas_object_show(Evas_Object *obj)
      {
         evas_object_clip_across_clippees_check(obj);
         evas_object_recalc_clippees(obj);
-        if (!evas_event_passes_through(obj))
+        if ((!evas_event_passes_through(obj)) &&
+            (!evas_event_freezes_through(obj)))
           {
              if (!obj->smart.smart)
                {
@@ -900,7 +903,8 @@ evas_object_hide(Evas_Object *obj)
      {
         evas_object_clip_across_clippees_check(obj);
         evas_object_recalc_clippees(obj);
-        if (!evas_event_passes_through(obj))
+        if ((!evas_event_passes_through(obj)) &&
+            (!evas_event_freezes_through(obj)))
           {
              if ((!obj->smart.smart) ||
                  ((obj->cur.map) && (obj->cur.map->count == 4) && (obj->cur.usemap)))

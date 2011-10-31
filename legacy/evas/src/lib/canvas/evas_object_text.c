@@ -314,7 +314,7 @@ EAPI void
 evas_object_text_font_set(Evas_Object *obj, const char *font, Evas_Font_Size size)
 {
    Evas_Object_Text *o;
-   int is, was = 0, pass = 0;
+   int is, was = 0, pass = 0, freeze = 0;
    Evas_Font_Description *fdesc;
 
    if ((!font) || (size <= 0)) return;
@@ -344,11 +344,12 @@ evas_object_text_font_set(Evas_Object *obj, const char *font, Evas_Font_Size siz
 
    if (obj->layer->evas->events_frozen <= 0)
      {
-	pass = evas_event_passes_through(obj);
-	if (!pass)
-	  was = evas_object_is_in_output_rect(obj,
-					      obj->layer->evas->pointer.x,
-					      obj->layer->evas->pointer.y, 1, 1);
+        pass = evas_event_passes_through(obj);
+        freeze = evas_event_freezes_through(obj);
+        if ((!pass) && (!freeze))
+          was = evas_object_is_in_output_rect(obj,
+                                              obj->layer->evas->pointer.x,
+                                              obj->layer->evas->pointer.y, 1, 1);
      }
 
 #ifdef EVAS_FRAME_QUEUING
@@ -359,8 +360,8 @@ evas_object_text_font_set(Evas_Object *obj, const char *font, Evas_Font_Size siz
    /* DO IT */
    if (o->font)
      {
-	evas_font_free(obj->layer->evas, o->font);
-	o->font = NULL;
+        evas_font_free(obj->layer->evas, o->font);
+        o->font = NULL;
      }
 
    o->font = evas_font_load(obj->layer->evas, o->cur.fdesc, o->cur.source,
@@ -386,18 +387,19 @@ evas_object_text_font_set(Evas_Object *obj, const char *font, Evas_Font_Size siz
    evas_object_coords_recalc(obj);
    if (obj->layer->evas->events_frozen <= 0)
      {
-	if (!pass)
-	  {
-	     is = evas_object_is_in_output_rect(obj,
-						obj->layer->evas->pointer.x,
-						obj->layer->evas->pointer.y, 1, 1);
-	     if ((is ^ was) && obj->cur.visible)
-	       evas_event_feed_mouse_move(obj->layer->evas,
-					  obj->layer->evas->pointer.x,
-					  obj->layer->evas->pointer.y,
-					  obj->layer->evas->last_timestamp,
-					  NULL);
-	  }
+        if ((!pass) && (!freeze))
+          {
+             is = evas_object_is_in_output_rect(obj,
+                                                obj->layer->evas->pointer.x,
+                                                obj->layer->evas->pointer.y,
+                                                1, 1);
+             if ((is ^ was) && obj->cur.visible)
+               evas_event_feed_mouse_move(obj->layer->evas,
+                                          obj->layer->evas->pointer.x,
+                                          obj->layer->evas->pointer.y,
+                                          obj->layer->evas->last_timestamp,
+                                          NULL);
+          }
      }
    evas_object_inform_call_resize(obj);
 }

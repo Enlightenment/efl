@@ -579,6 +579,7 @@ evas_event_feed_mouse_move(Evas *e, int x, int y, unsigned int timestamp, const 
                   if (((evas_object_clippers_is_visible(obj)) ||
                        (obj->mouse_grabbed)) &&
                       (!evas_event_passes_through(obj)) &&
+                      (!evas_event_freezes_through(obj)) &&
                       (!obj->clip.clipees))
                     {
                        if ((px != x) || (py != y))
@@ -699,6 +700,7 @@ evas_event_feed_mouse_move(Evas *e, int x, int y, unsigned int timestamp, const 
                      (obj->mouse_grabbed)) &&
                  (eina_list_data_find(ins, obj)) &&
                  (!evas_event_passes_through(obj)) &&
+                 (!evas_event_freezes_through(obj)) &&
                  (!obj->clip.clipees) &&
                  ((!obj->precise_is_inside) ||
                   (evas_object_is_inside(obj, x, y))))
@@ -1088,6 +1090,7 @@ evas_event_feed_multi_move(Evas *e,
              if (((evas_object_clippers_is_visible(obj)) ||
                   (obj->mouse_grabbed)) &&
                  (!evas_event_passes_through(obj)) &&
+                 (!evas_event_freezes_through(obj)) &&
                  (!obj->clip.clipees))
                {
                   ev.cur.canvas.x = x;
@@ -1148,6 +1151,7 @@ evas_event_feed_multi_move(Evas *e,
                      (obj->mouse_grabbed)) &&
                  (eina_list_data_find(ins, obj)) &&
                  (!evas_event_passes_through(obj)) &&
+                 (!evas_event_freezes_through(obj)) &&
                  (!obj->clip.clipees) &&
                  ((!obj->precise_is_inside) ||
                   (evas_object_is_inside(obj, x, y))))
