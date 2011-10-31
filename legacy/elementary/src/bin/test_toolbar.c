@@ -637,13 +637,13 @@ test_toolbar6(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_in
 
    bx = elm_box_add(win);
    elm_win_resize_object_add(win, bx);
-   elm_box_horizontal_set(bx, EINA_TRUE);
+   elm_box_horizontal_set(bx, EINA_FALSE);
    evas_object_size_hint_weight_set(bx, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(bx, EVAS_HINT_FILL, EVAS_HINT_FILL);
    evas_object_show(bx);
 
    tb = elm_toolbar_add(win);
-   elm_toolbar_orientation_set(tb, EINA_TRUE);
+   elm_toolbar_horizontal_set(tb, EINA_TRUE);
    elm_toolbar_mode_shrink_set(tb, ELM_TOOLBAR_SHRINK_MENU);
    evas_object_size_hint_weight_set(tb, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(tb, EVAS_HINT_FILL, EVAS_HINT_FILL);
