@@ -21,7 +21,7 @@ external_bubble_state_set(void *data __UNUSED__, Evas_Object *obj, const void *f
    if (p->label) elm_object_text_set(obj, p->label);
    if (p->icon) elm_bubble_icon_set(obj, p->icon);
    if (p->info) elm_object_text_part_set(obj, "info", p->info);
-   if (p->content) elm_bubble_content_set(obj, p->content);
+   if (p->content) elm_object_content_set(obj, p->content);
 }
 
 static Eina_Bool
@@ -60,7 +60,7 @@ external_bubble_param_set(void *data __UNUSED__, Evas_Object *obj, const Edje_Ex
 	     Evas_Object *content = \
 		    external_common_param_edje_object_get(obj, param);
 	     if ((strcmp(param->s, "")) && (!content)) return EINA_FALSE;
-	     elm_bubble_content_set(obj, content);
+	     elm_object_content_set(obj, content);
 	     return EINA_TRUE;
 	  }
      }
@@ -136,8 +136,10 @@ external_bubble_params_parse(void *data __UNUSED__, Evas_Object *obj, const Eina
 static Evas_Object *external_bubble_content_get(void *data __UNUSED__,
 		const Evas_Object *obj __UNUSED__, const char *content __UNUSED__)
 {
-	ERR("No content.");
-	return NULL;
+   if (!strcmp(content, "content"))
+     return elm_object_content_get(obj);
+   ERR("unknown content '%s'", content);
+   return NULL;
 }
 
 static void
