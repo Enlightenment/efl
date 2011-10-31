@@ -318,7 +318,6 @@ int
 evil_pipe(int *fds)
 {
    struct sockaddr_in saddr;
-   struct timeval     tv;
    SOCKET             temp;
    SOCKET             socket1 = INVALID_SOCKET;
    SOCKET             socket2 = INVALID_SOCKET;
@@ -367,9 +366,6 @@ evil_pipe(int *fds)
    FD_ZERO (&read_set);
    FD_SET (temp, &read_set);
 
-   tv.tv_sec = 0;
-   tv.tv_usec = 0;
-
    if (select (0, &read_set, NULL, NULL, NULL) == SOCKET_ERROR)
      goto out1;
 
@@ -382,9 +378,6 @@ evil_pipe(int *fds)
 
    FD_ZERO (&write_set);
    FD_SET (socket1, &write_set);
-
-   tv.tv_sec = 0;
-   tv.tv_usec = 0;
 
    if (select (0, NULL, &write_set, NULL, NULL) == SOCKET_ERROR)
      goto out2;
