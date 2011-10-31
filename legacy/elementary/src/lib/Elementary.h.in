@@ -7334,6 +7334,7 @@ extern "C" {
     * @see elm_scroller_propagate_events_set()
     */
    EAPI Eina_Bool    elm_scroller_propagate_events_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
+
    /**
     * @brief Set scrolling gravity on a scroller
     *
@@ -7555,10 +7556,10 @@ extern "C" {
     * @param obj The label object
     * @param slide To start slide or stop
     *
-    * If set to true the text of the label will slide throught the length of
+    * If set to true, the text of the label will slide/scroll through the length of
     * label.
     *
-    * @warning This only work with the themes "slide_short", "slide_long" and
+    * @warning This only works with the themes "slide_short", "slide_long" and
     * "slide_bounce".
     */
    EAPI void         elm_label_slide_set(Evas_Object *obj, Eina_Bool slide) EINA_ARG_NONNULL(1);
