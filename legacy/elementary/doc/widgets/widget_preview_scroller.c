@@ -9,6 +9,6 @@ evas_object_show(o);
 Evas_Object *o2 = elm_label_add(win);
 elm_object_text_set(o2, "This is the content of the scroller");
 evas_object_show(o2);
-elm_scroller_content_set(o, o2);
+elm_object_content_set(o, o2);
 
 #include "widget_preview_tmpl_foot.c"

@@ -115,7 +115,7 @@ test_progressbar(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event
 
    pb = elm_progressbar_add(win);
    elm_object_text_set(pb, "Label");
-   elm_progressbar_icon_set(pb, ic1);
+   elm_object_content_set(pb, ic1);
    elm_progressbar_inverted_set(pb, 1);
    elm_progressbar_unit_format_set(pb, "%1.1f units");
    elm_progressbar_span_size_set(pb, 200);
@@ -162,7 +162,7 @@ test_progressbar(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event
    pb = elm_progressbar_add(win);
    elm_progressbar_horizontal_set(pb, EINA_FALSE);
    elm_object_text_set(pb, "Label");
-   elm_progressbar_icon_set(pb, ic2);
+   elm_object_content_set(pb, ic2);
    elm_progressbar_inverted_set(pb, 1);
    elm_progressbar_unit_format_set(pb, "%1.2f%%");
    elm_progressbar_span_size_set(pb, 200);

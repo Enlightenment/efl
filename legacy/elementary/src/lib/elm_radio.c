@@ -298,6 +298,53 @@ _access_state_cb(void *data __UNUSED__, Evas_Object *obj, Elm_Widget_Item *item 
    return strdup(E_("State: Off"));
 }
 
+static void
+_content_set_hook(Evas_Object *obj, const char *part __UNUSED__, Evas_Object *content)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype);
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return;
+   if (wd->icon == content) return;
+   if (wd->icon) evas_object_del(wd->icon);
+   wd->icon = content;
+   if (content)
+     {
+        elm_widget_sub_object_add(obj, content);
+        evas_object_event_callback_add(content,
+                                       EVAS_CALLBACK_CHANGED_SIZE_HINTS,
+                                       _changed_size_hints, obj);
+        edje_object_part_swallow(wd->radio, "elm.swallow.content", content);
+        edje_object_signal_emit(wd->radio, "elm,state,icon,visible", "elm");
+        edje_object_message_signal_process(wd->radio);
+     }
+   _sizing_eval(obj);
+}
+
+static Evas_Object *
+_content_get_hook(const Evas_Object *obj, const char *part __UNUSED__)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype) NULL;
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return NULL;
+   return wd->icon;
+}
+
+static Evas_Object *
+_content_unset_hook(Evas_Object *obj, const char *part __UNUSED__)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype) NULL;
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return NULL;
+   if (!wd->icon) return NULL;
+   Evas_Object *icon = wd->icon;
+   elm_widget_sub_object_del(obj, wd->icon);
+   evas_object_event_callback_del_full(wd->icon, EVAS_CALLBACK_CHANGED_SIZE_HINTS,
+                                       _changed_size_hints, obj);
+   edje_object_part_unswallow(wd->radio, wd->icon);
+   wd->icon = NULL;
+   return icon;
+}
+
 EAPI Evas_Object *
 elm_radio_add(Evas_Object *parent)
 {
@@ -320,6 +367,9 @@ elm_radio_add(Evas_Object *parent)
    elm_widget_event_hook_set(obj, _event_hook);
    elm_widget_text_set_hook_set(obj, _elm_radio_label_set);
    elm_widget_text_get_hook_set(obj, _elm_radio_label_get);
+   elm_widget_content_set_hook_set(obj, _content_set_hook);
+   elm_widget_content_get_hook_set(obj, _content_get_hook);
+   elm_widget_content_unset_hook_set(obj, _content_unset_hook);
 
    wd->radio = edje_object_add(e);
    _elm_theme_object_set(obj, wd->radio, "radio", "base", "default");
@@ -366,47 +416,19 @@ elm_radio_label_get(const Evas_Object *obj)
 EAPI void
 elm_radio_icon_set(Evas_Object *obj, Evas_Object *icon)
 {
-   ELM_CHECK_WIDTYPE(obj, widtype);
-   Widget_Data *wd = elm_widget_data_get(obj);
-   if (!wd) return;
-   if (wd->icon == icon) return;
-   if (wd->icon) evas_object_del(wd->icon);
-   wd->icon = icon;
-   if (icon)
-     {
-        elm_widget_sub_object_add(obj, icon);
-        evas_object_event_callback_add(icon, EVAS_CALLBACK_CHANGED_SIZE_HINTS,
-                                       _changed_size_hints, obj);
-        edje_object_part_swallow(wd->radio, "elm.swallow.content", icon);
-        edje_object_signal_emit(wd->radio, "elm,state,icon,visible", "elm");
-        edje_object_message_signal_process(wd->radio);
-     }
-   _sizing_eval(obj);
+   _content_set_hook(obj, NULL, icon);
 }
 
 EAPI Evas_Object *
 elm_radio_icon_get(const Evas_Object *obj)
 {
-   ELM_CHECK_WIDTYPE(obj, widtype) NULL;
-   Widget_Data *wd = elm_widget_data_get(obj);
-   if (!wd) return NULL;
-   return wd->icon;
+   return _content_get_hook(obj, NULL);
 }
 
 EAPI Evas_Object *
 elm_radio_icon_unset(Evas_Object *obj)
 {
-   ELM_CHECK_WIDTYPE(obj, widtype) NULL;
-   Widget_Data *wd = elm_widget_data_get(obj);
-   if (!wd) return NULL;
-   if (!wd->icon) return NULL;
-   Evas_Object *icon = wd->icon;
-   elm_widget_sub_object_del(obj, wd->icon);
-   evas_object_event_callback_del_full(wd->icon, EVAS_CALLBACK_CHANGED_SIZE_HINTS,
-                                       _changed_size_hints, obj);
-   edje_object_part_unswallow(wd->radio, wd->icon);
-   wd->icon = NULL;
-   return icon;
+   return _content_unset_hook(obj, NULL);
 }
 
 EAPI void

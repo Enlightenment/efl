@@ -22,7 +22,7 @@ static void external_scroller_state_set(void *data __UNUSED__,
 	else return;
 
 	if (p->content) {
-		elm_scroller_content_set(obj, p->content);
+		elm_object_content_set(obj, p->content);
 	}
 }
 
@@ -35,7 +35,7 @@ static Eina_Bool external_scroller_param_set(void *data __UNUSED__,
 		Evas_Object *content = external_common_param_edje_object_get(obj, param);
 		if ((strcmp(param->s, "")) && (!content))
 			return EINA_FALSE;
-		elm_scroller_content_set(obj, content);
+		elm_object_content_set(obj, content);
 		return EINA_TRUE;
 	}
 
@@ -83,7 +83,7 @@ static Evas_Object *external_scroller_content_get(void *data __UNUSED__,
 		const Evas_Object *obj, const char *content)
 {
 	if (!strcmp(content, "content"))
-		return elm_scroller_content_get(obj);
+		return elm_object_content_get(obj);
 
 	ERR("unknown content '%s'", content);
 	return NULL;

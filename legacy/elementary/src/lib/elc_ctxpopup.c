@@ -1051,7 +1051,7 @@ _list_new(Evas_Object *obj)
    evas_object_size_hint_weight_set(wd->box, EVAS_HINT_EXPAND,
                                     EVAS_HINT_EXPAND);
 
-   elm_scroller_content_set(wd->scr, wd->box);
+   elm_object_content_set(wd->scr, wd->box);
    elm_ctxpopup_horizontal_set(obj, wd->horizontal);
 }
 

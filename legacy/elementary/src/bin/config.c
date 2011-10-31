@@ -1453,7 +1453,7 @@ _status_config_themes(Evas_Object *win,
    evas_object_show(sc);
 
    sample = _sample_theme_new(win);
-   elm_scroller_content_set(sc, sample);
+   elm_object_content_set(sc, sample);
    evas_object_show(sample);
    evas_object_data_set(win, "theme_preview", sample);
 
@@ -2443,7 +2443,7 @@ _status_config_scrolling(Evas_Object *win,
    evas_object_size_hint_align_set(sc, EVAS_HINT_FILL, EVAS_HINT_FILL);
    elm_scroller_bounce_set(sc, EINA_FALSE, EINA_TRUE);
    evas_object_show(sc);
-   elm_scroller_content_set(sc, bx);
+   elm_object_content_set(sc, bx);
 
    ck = elm_check_add(win);
    elm_object_tooltip_text_set(ck, "Set whether scrollers should bounce<br>"

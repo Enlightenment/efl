@@ -7017,6 +7017,9 @@ extern "C" {
     * @note When Elementary is in desktop mode the thumbscroll(a.k.a.
     * fingerscroll) won't work.
     *
+    * Default contents parts of the scroller widget that you can use for are:
+    * @li "elm.swallow.content" - A content of the scroller
+    *
     * In @ref tutorial_scroller you'll find an example of how to use most of
     * this API.
     * @{
@@ -7050,7 +7053,7 @@ extern "C" {
     * If you want to keep that old content object, use the
     * elm_scroller_content_unset() function.
     */
-   EAPI void         elm_scroller_content_set(Evas_Object *obj, Evas_Object *child) EINA_ARG_NONNULL(1);
+   EINA_DEPRECATED EAPI void         elm_scroller_content_set(Evas_Object *obj, Evas_Object *child) EINA_ARG_NONNULL(1);
    /**
     * @brief Get the content of the scroller widget
     *
@@ -7061,7 +7064,7 @@ extern "C" {
     *
     * @see elm_scroller_content_set()
     */
-   EAPI Evas_Object *elm_scroller_content_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
+   EINA_DEPRECATED EAPI Evas_Object *elm_scroller_content_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
    /**
     * @brief Unset the content of the scroller widget
     *
@@ -7072,7 +7075,7 @@ extern "C" {
     *
     * @see elm_scroller_content_set()
     */
-   EAPI Evas_Object *elm_scroller_content_unset(Evas_Object *obj) EINA_ARG_NONNULL(1);
+   EINA_DEPRECATED EAPI Evas_Object *elm_scroller_content_unset(Evas_Object *obj) EINA_ARG_NONNULL(1);
    /**
     * @brief Set custom theme elements for the scroller
     *
@@ -7334,7 +7337,6 @@ extern "C" {
     * @see elm_scroller_propagate_events_set()
     */
    EAPI Eina_Bool    elm_scroller_propagate_events_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
-
    /**
     * @brief Set scrolling gravity on a scroller
     *
@@ -17280,9 +17282,16 @@ extern "C" {
     * Available styles for it:
     * - @c "default"
     *
+    * Default contents parts of the slider widget that you can use for are:
+    * @li "elm.swallow.icon" - A icon of the slider
+    * @li "elm.swallow.end" - A end part content of the slider
+    * 
     * Here is an example on its usage:
     * @li @ref slider_example
     */
+
+#define ELM_SLIDER_CONTENT_ICON "elm.swallow.icon"
+#define ELM_SLIDER_CONTENT_END "elm.swallow.end"
 
    /**
     * @addtogroup Slider
@@ -17342,7 +17351,7 @@ extern "C" {
     *
     * @ingroup Slider
     */
-   EAPI void               elm_slider_icon_set(Evas_Object *obj, Evas_Object *icon) EINA_ARG_NONNULL(1);
+   EINA_DEPRECATED EAPI void               elm_slider_icon_set(Evas_Object *obj, Evas_Object *icon) EINA_ARG_NONNULL(1);
 
    /**
     * Unset an icon set on a given slider widget.
@@ -17362,7 +17371,7 @@ extern "C" {
     *
     * @ingroup Slider
     */
-   EAPI Evas_Object       *elm_slider_icon_unset(Evas_Object *obj) EINA_ARG_NONNULL(1);
+   EINA_DEPRECATED EAPI Evas_Object       *elm_slider_icon_unset(Evas_Object *obj) EINA_ARG_NONNULL(1);
 
    /**
     * Retrieve the icon object set for a given slider widget.
@@ -17379,7 +17388,7 @@ extern "C" {
     *
     * @ingroup Slider
     */
-   EAPI Evas_Object       *elm_slider_icon_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
+   EINA_DEPRECATED EAPI Evas_Object       *elm_slider_icon_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
 
    /**
     * Set the end object of the slider object.
@@ -17399,7 +17408,7 @@ extern "C" {
     *
     * @ingroup Slider
     */
-   EAPI void               elm_slider_end_set(Evas_Object *obj, Evas_Object *end) EINA_ARG_NONNULL(1);
+   EINA_DEPRECATED EAPI void               elm_slider_end_set(Evas_Object *obj, Evas_Object *end) EINA_ARG_NONNULL(1);
 
    /**
     * Unset an end object set on a given slider widget.
@@ -17419,7 +17428,7 @@ extern "C" {
     *
     * @ingroup Slider
     */
-   EAPI Evas_Object       *elm_slider_end_unset(Evas_Object *obj) EINA_ARG_NONNULL(1);
+   EINA_DEPRECATED EAPI Evas_Object       *elm_slider_end_unset(Evas_Object *obj) EINA_ARG_NONNULL(1);
 
    /**
     * Retrieve the end object set for a given slider widget.
@@ -17436,7 +17445,7 @@ extern "C" {
     *
     * @ingroup Slider
     */
-   EAPI Evas_Object       *elm_slider_end_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
+   EINA_DEPRECATED EAPI Evas_Object       *elm_slider_end_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
 
    /**
     * Set the (exact) length of the bar region of a given slider widget.
@@ -19805,6 +19814,9 @@ extern "C" {
     * @li changed - This is called whenever the user changes the state of one of
     * the radio objects within the group of radio objects that work together.
     *
+    * Default contents parts of the radio widget that you can use for are:
+    * @li "elm.swallow.content" - A icon of the radio
+    *
     * @ref tutorial_radio show most of this API in action.
     * @{
     */
@@ -19843,7 +19855,7 @@ extern "C" {
     * want to keep that old content object, use the elm_radio_icon_unset()
     * function.
     */
-   EAPI void         elm_radio_icon_set(Evas_Object *obj, Evas_Object *icon) EINA_ARG_NONNULL(1);
+   EINA_DEPRECATED EAPI void         elm_radio_icon_set(Evas_Object *obj, Evas_Object *icon) EINA_ARG_NONNULL(1);
    /**
     * @brief Get the icon object of the radio object
     *
@@ -19852,7 +19864,7 @@ extern "C" {
     *
     * @see elm_radio_icon_set()
     */
-   EAPI Evas_Object *elm_radio_icon_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
+   EINA_DEPRECATED EAPI Evas_Object *elm_radio_icon_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
    /**
     * @brief Unset the icon used for the radio object
     *
@@ -19863,7 +19875,7 @@ extern "C" {
     *
     * @see elm_radio_icon_set()
     */
-   EAPI Evas_Object *elm_radio_icon_unset(Evas_Object *obj) EINA_ARG_NONNULL(1);
+   EINA_DEPRECATED EAPI Evas_Object *elm_radio_icon_unset(Evas_Object *obj) EINA_ARG_NONNULL(1);
    /**
     * @brief Add this radio to a group of other radio objects
     *
@@ -20944,6 +20956,9 @@ extern "C" {
     * - @c "wheel" (simple style, no text, no progression, only
     *      "pulse" effect is available)
     *
+    * Default contents parts of the progressbar widget that you can use for are:
+    * @li "elm.swallow.content" - A icon of the progressbar
+    * 
     * Here is an example on its usage:
     * @li @ref progressbar_example
     */
@@ -21083,7 +21098,7 @@ extern "C" {
     *
     * @ingroup Progressbar
     */
-   EAPI void         elm_progressbar_icon_set(Evas_Object *obj, Evas_Object *icon) EINA_ARG_NONNULL(1);
+   EINA_DEPRECATED EAPI void         elm_progressbar_icon_set(Evas_Object *obj, Evas_Object *icon) EINA_ARG_NONNULL(1);
 
    /**
     * Retrieve the icon object set for a given progress bar widget
@@ -21096,7 +21111,7 @@ extern "C" {
     *
     * @ingroup Progressbar
     */
-   EAPI Evas_Object *elm_progressbar_icon_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
+   EINA_DEPRECATED EAPI Evas_Object *elm_progressbar_icon_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
 
    /**
     * Unset an icon set on a given progress bar widget
@@ -21112,7 +21127,7 @@ extern "C" {
     *
     * @ingroup Progressbar
     */
-   EAPI Evas_Object *elm_progressbar_icon_unset(Evas_Object *obj) EINA_ARG_NONNULL(1);
+   EINA_DEPRECATED EAPI Evas_Object *elm_progressbar_icon_unset(Evas_Object *obj) EINA_ARG_NONNULL(1);
 
    /**
     * Set the (exact) length of the bar region of a given progress bar

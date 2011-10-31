@@ -39,7 +39,7 @@ test_slider(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info
    sl = elm_slider_add(win);
    sl1 = sl;
    elm_object_text_set(sl, "Horizontal");
-   elm_slider_icon_set(sl, ic);
+   elm_object_content_part_set(sl, ELM_SLIDER_CONTENT_ICON, ic);
    elm_slider_unit_format_set(sl, "%1.1f units");
    elm_slider_span_size_set(sl, 120);
    evas_object_size_hint_align_set(sl, EVAS_HINT_FILL, 0.5);
@@ -56,7 +56,7 @@ test_slider(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info
 
    sl = elm_slider_add(win);
    elm_object_text_set(sl, "Disabled");
-   elm_slider_icon_set(sl, ic);
+   elm_object_content_part_set(sl, ELM_SLIDER_CONTENT_ICON, ic);
    elm_slider_unit_format_set(sl, "%1.1f units");
    elm_slider_span_size_set(sl, 120);
    elm_slider_min_max_set(sl, 50, 150);
@@ -75,7 +75,7 @@ test_slider(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info
 
    sl = elm_slider_add(win);
    elm_object_text_set(sl, "Horizontal inverted");
-   elm_slider_end_set(sl, ic);
+   elm_object_content_part_set(sl, ELM_SLIDER_CONTENT_END, ic);
    elm_slider_span_size_set(sl, 80);
    evas_object_size_hint_align_set(sl, EVAS_HINT_FILL, 0.5);
    evas_object_size_hint_weight_set(sl, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
@@ -97,7 +97,7 @@ test_slider(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info
 
    sl = elm_slider_add(win);
    elm_object_text_set(sl, "Disabled inverted");
-   elm_slider_end_set(sl, ic);
+   elm_object_content_part_set(sl, ELM_SLIDER_CONTENT_END, ic);
    elm_slider_span_size_set(sl, 80);
    evas_object_size_hint_align_set(sl, EVAS_HINT_FILL, 0.5);
    evas_object_size_hint_weight_set(sl, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
@@ -140,7 +140,7 @@ test_slider(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info
    evas_object_size_hint_aspect_set(ic, EVAS_ASPECT_CONTROL_HORIZONTAL, 1, 1);
 
    sl = elm_slider_add(win);
-   elm_slider_icon_set(sl, ic);
+   elm_object_content_part_set(sl, ELM_SLIDER_CONTENT_ICON, ic);
    elm_object_text_set(sl, "Vertical inverted");
    elm_slider_inverted_set(sl, EINA_TRUE);
    elm_slider_unit_format_set(sl, "units");
@@ -178,7 +178,7 @@ test_slider(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info
    evas_object_size_hint_aspect_set(ic, EVAS_ASPECT_CONTROL_HORIZONTAL, 1, 1);
 
    sl = elm_slider_add(win);
-   elm_slider_icon_set(sl, ic);
+   elm_object_content_part_set(sl, ELM_SLIDER_CONTENT_ICON, ic);
    elm_object_text_set(sl, "Disabled vertical");
    elm_slider_inverted_set(sl, EINA_TRUE);
    elm_slider_unit_format_set(sl, "units");

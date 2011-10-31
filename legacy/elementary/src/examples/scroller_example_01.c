@@ -127,7 +127,7 @@ elm_main(int argc, char **argv)
    scroller = elm_scroller_add(win);
    elm_win_resize_object_add(win, scroller);
    evas_object_show(scroller);
-   elm_scroller_content_set(scroller, label);
+   elm_object_content_set(scroller, label);
    elm_scroller_bounce_set(scroller, EINA_TRUE, EINA_FALSE);
    elm_scroller_policy_set(scroller, ELM_SCROLLER_POLICY_ON, ELM_SCROLLER_POLICY_ON);
    elm_scroller_propagate_events_set(scroller, EINA_TRUE);

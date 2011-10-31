@@ -494,6 +494,122 @@ _elm_slider_label_get(const Evas_Object *obj, const char *item)
    return wd->label;
 }
 
+static void
+_icon_set(Evas_Object *obj, Evas_Object *icon)
+{
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return;
+   if (wd->icon == icon) return;
+   if (wd->icon) evas_object_del(wd->icon);
+   wd->icon = icon;
+   if (icon)
+     {
+        elm_widget_sub_object_add(obj, icon);
+        evas_object_event_callback_add(icon, EVAS_CALLBACK_CHANGED_SIZE_HINTS,
+                                       _changed_size_hints, obj);
+        edje_object_part_swallow(wd->slider, "elm.swallow.icon", icon);
+        edje_object_signal_emit(wd->slider, "elm,state,icon,visible", "elm");
+        edje_object_message_signal_process(wd->slider);
+     }
+   _sizing_eval(obj);
+}
+
+static Evas_Object *
+_icon_unset(Evas_Object *obj)
+{
+   Widget_Data *wd = elm_widget_data_get(obj);
+   Evas_Object *ret = NULL;
+   if (!wd) return NULL;
+   if (wd->icon)
+     {
+        elm_widget_sub_object_del(obj, wd->icon);
+        evas_object_event_callback_del_full(wd->icon,
+                                            EVAS_CALLBACK_CHANGED_SIZE_HINTS,
+                                            _changed_size_hints, obj);
+        ret = wd->icon;
+        edje_object_part_unswallow(wd->slider, wd->icon);
+        edje_object_signal_emit(wd->slider, "elm,state,icon,hidden", "elm");
+        wd->icon = NULL;
+        _sizing_eval(obj);
+     }
+   return ret;
+}
+
+static void
+_end_set(Evas_Object *obj, Evas_Object *end)
+{
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return;
+   if (wd->end == end) return;
+   if (wd->end) evas_object_del(wd->end);
+   wd->end = end;
+   if (end)
+     {
+        elm_widget_sub_object_add(obj, end);
+        evas_object_event_callback_add(end, EVAS_CALLBACK_CHANGED_SIZE_HINTS,
+                                       _changed_size_hints, obj);
+        edje_object_part_swallow(wd->slider, "elm.swallow.end", end);
+        edje_object_signal_emit(wd->slider, "elm,state,end,visible", "elm");
+        edje_object_message_signal_process(wd->slider);
+     }
+   _sizing_eval(obj);
+}
+
+static Evas_Object *
+_end_unset(Evas_Object *obj)
+{
+   Widget_Data *wd = elm_widget_data_get(obj);
+   Evas_Object *ret = NULL;
+   if (!wd) return NULL;
+   if (wd->end)
+     {
+        elm_widget_sub_object_del(obj, wd->end);
+        evas_object_event_callback_del_full(wd->end,
+                                            EVAS_CALLBACK_CHANGED_SIZE_HINTS,
+                                            _changed_size_hints, obj);
+        ret = wd->end;
+        edje_object_part_unswallow(wd->slider, wd->end);
+        edje_object_signal_emit(wd->slider, "elm,state,end,hidden", "elm");
+        wd->end = NULL;
+        _sizing_eval(obj);
+     }
+   return ret;
+}
+
+static void
+_content_set_hook(Evas_Object *obj, const char *part, Evas_Object *content)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype);
+   if ((!part) || (!strcmp(part, "elm.swallow.icon")))
+     _icon_set(obj, content);
+   else if (!strcmp(part, "elm.swallow.end"))
+     _end_set(obj, content);
+}
+
+static Evas_Object *
+_content_get_hook(const Evas_Object *obj, const char *part __UNUSED__)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype) NULL;
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return NULL;
+   if ((!part) || (!strcmp(part, "elm.swallow.icon")))
+     return wd->icon;
+   else if (!strcmp(part, "elm.swallow.end"))
+     return wd->end;
+   return NULL;
+}
+
+static Evas_Object *
+_content_unset_hook(Evas_Object *obj, const char *part __UNUSED__)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype) NULL;
+   if ((!part) || (!strcmp(part, "elm.swallow.icon")))
+     return _icon_unset(obj);
+   else if (!strcmp(part, "elm.swallow.end"))
+     return _end_unset(obj);
+   return NULL;
+}
+
 EAPI Evas_Object *
 elm_slider_add(Evas_Object *parent)
 {
@@ -515,6 +631,9 @@ elm_slider_add(Evas_Object *parent)
    elm_widget_event_hook_set(obj, _event_hook);
    elm_widget_text_set_hook_set(obj, _elm_slider_label_set);
    elm_widget_text_get_hook_set(obj, _elm_slider_label_get);
+   elm_widget_content_set_hook_set(obj, _content_set_hook);
+   elm_widget_content_get_hook_set(obj, _content_get_hook);
+   elm_widget_content_unset_hook_set(obj, _content_unset_hook);
 
    wd->horizontal = EINA_TRUE;
    wd->indicator_show = EINA_TRUE;
@@ -565,53 +684,19 @@ elm_slider_label_get(const Evas_Object *obj)
 EAPI void
 elm_slider_icon_set(Evas_Object *obj, Evas_Object *icon)
 {
-   ELM_CHECK_WIDTYPE(obj, widtype);
-   Widget_Data *wd = elm_widget_data_get(obj);
-   if (!wd) return;
-   if (wd->icon == icon) return;
-   if (wd->icon) evas_object_del(wd->icon);
-   wd->icon = icon;
-   if (icon)
-     {
-        elm_widget_sub_object_add(obj, icon);
-        evas_object_event_callback_add(icon, EVAS_CALLBACK_CHANGED_SIZE_HINTS,
-                                       _changed_size_hints, obj);
-        edje_object_part_swallow(wd->slider, "elm.swallow.icon", icon);
-        edje_object_signal_emit(wd->slider, "elm,state,icon,visible", "elm");
-        edje_object_message_signal_process(wd->slider);
-     }
-   _sizing_eval(obj);
+   _content_set_hook(obj, NULL, icon);
 }
 
 EAPI Evas_Object *
 elm_slider_icon_unset(Evas_Object *obj)
 {
-   ELM_CHECK_WIDTYPE(obj, widtype) NULL;
-   Widget_Data *wd = elm_widget_data_get(obj);
-   Evas_Object *ret = NULL;
-   if (!wd) return NULL;
-   if (wd->icon)
-     {
-        elm_widget_sub_object_del(obj, wd->icon);
-        evas_object_event_callback_del_full(wd->icon,
-                                            EVAS_CALLBACK_CHANGED_SIZE_HINTS,
-                                            _changed_size_hints, obj);
-        ret = wd->icon;
-        edje_object_part_unswallow(wd->slider, wd->icon);
-        edje_object_signal_emit(wd->slider, "elm,state,icon,hidden", "elm");
-        wd->icon = NULL;
-        _sizing_eval(obj);
-     }
-   return ret;
+   return _content_unset_hook(obj, NULL);
 }
 
 EAPI Evas_Object *
 elm_slider_icon_get(const Evas_Object *obj)
 {
-   ELM_CHECK_WIDTYPE(obj, widtype) NULL;
-   Widget_Data *wd = elm_widget_data_get(obj);
-   if (!wd) return NULL;
-   return wd->icon;
+   return _content_get_hook(obj, NULL);
 }
 
 EAPI void
@@ -818,53 +903,19 @@ elm_slider_units_format_function_set(Evas_Object *obj, const char *(*func)(doubl
 EAPI void
 elm_slider_end_set(Evas_Object *obj, Evas_Object *end)
 {
-   ELM_CHECK_WIDTYPE(obj, widtype);
-   Widget_Data *wd = elm_widget_data_get(obj);
-   if (!wd) return;
-   if (wd->end == end) return;
-   if (wd->end) evas_object_del(wd->end);
-   wd->end = end;
-   if (end)
-     {
-        elm_widget_sub_object_add(obj, end);
-        evas_object_event_callback_add(end, EVAS_CALLBACK_CHANGED_SIZE_HINTS,
-                                       _changed_size_hints, obj);
-        edje_object_part_swallow(wd->slider, "elm.swallow.end", end);
-        edje_object_signal_emit(wd->slider, "elm,state,end,visible", "elm");
-        edje_object_message_signal_process(wd->slider);
-     }
-   _sizing_eval(obj);
+   _content_set_hook(obj, "elm.swallow.end", end);
 }
 
 EAPI Evas_Object *
 elm_slider_end_unset(Evas_Object *obj)
 {
-   ELM_CHECK_WIDTYPE(obj, widtype) NULL;
-   Widget_Data *wd = elm_widget_data_get(obj);
-   Evas_Object *ret = NULL;
-   if (!wd) return NULL;
-   if (wd->end)
-     {
-        elm_widget_sub_object_del(obj, wd->end);
-        evas_object_event_callback_del_full(wd->end,
-                                            EVAS_CALLBACK_CHANGED_SIZE_HINTS,
-                                            _changed_size_hints, obj);
-        ret = wd->end;
-        edje_object_part_unswallow(wd->slider, wd->end);
-        edje_object_signal_emit(wd->slider, "elm,state,end,hidden", "elm");
-        wd->end = NULL;
-        _sizing_eval(obj);
-     }
-   return ret;
+   return _content_unset_hook(obj, "elm.swallow.end");
 }
 
 EAPI Evas_Object *
 elm_slider_end_get(const Evas_Object *obj)
 {
-   ELM_CHECK_WIDTYPE(obj, widtype) NULL;
-   Widget_Data *wd = elm_widget_data_get(obj);
-   if (!wd) return NULL;
-   return wd->end;
+   return _content_get_hook(obj, "elm.swallow.end");
 }
 
 EAPI void

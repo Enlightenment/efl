@@ -230,7 +230,7 @@ test_anchorblock(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event
    elm_box_pack_end(bx, bb);
    evas_object_show(bb);
 
-   elm_scroller_content_set(sc, bx);
+   elm_object_content_set(sc, bx);
    evas_object_show(bx);
 
    evas_object_show(sc);

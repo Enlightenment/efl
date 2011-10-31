@@ -28,7 +28,7 @@ external_progressbar_state_set(void *data __UNUSED__, Evas_Object *obj, const vo
    if (p->label)
      elm_object_text_set(obj, p->label);
    if (p->icon)
-     elm_progressbar_icon_set(obj, p->icon);
+     elm_object_content_set(obj, p->icon);
    if (p->span_exists)
      elm_progressbar_span_size_set(obj, p->span);
    if (p->value_exists)
@@ -58,7 +58,7 @@ external_progressbar_param_set(void *data __UNUSED__, Evas_Object *obj, const Ed
 	  {
 	     Evas_Object *icon = external_common_param_icon_get(obj, param);
 	     if ((strcmp(param->s, "")) && (!icon)) return EINA_FALSE;
-	     elm_progressbar_icon_set(obj, icon);
+	     elm_object_content_set(obj, icon);
 	     return EINA_TRUE;
 	  }
      }

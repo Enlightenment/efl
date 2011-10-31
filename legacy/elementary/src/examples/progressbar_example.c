@@ -143,7 +143,7 @@ elm_main(int    argc __UNUSED__,
    /* pb with label, icon, custom unit label and span size set */
    pb = elm_progressbar_add(win);
    elm_object_text_set(pb, "Label");
-   elm_progressbar_icon_set(pb, ic1);
+   elm_object_content_set(pb, ic1);
    elm_progressbar_inverted_set(pb, EINA_TRUE);
    elm_progressbar_unit_format_set(pb, "%1.1f units");
    elm_progressbar_span_size_set(pb, 200);
@@ -192,7 +192,7 @@ elm_main(int    argc __UNUSED__,
    pb = elm_progressbar_add(win);
    elm_progressbar_horizontal_set(pb, EINA_FALSE);
    elm_object_text_set(pb, "Label");
-   elm_progressbar_icon_set(pb, ic2);
+   elm_object_content_set(pb, ic2);
    elm_progressbar_inverted_set(pb, EINA_TRUE);
    elm_progressbar_unit_format_set(pb, "%1.2f%%");
    elm_progressbar_span_size_set(pb, 200);

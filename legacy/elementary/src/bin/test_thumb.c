@@ -62,7 +62,7 @@ test_thumb(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info 
    evas_object_size_hint_weight_set(sc, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    elm_win_resize_object_add(win, sc);
 
-   elm_scroller_content_set(sc, tb);
+   elm_object_content_set(sc, tb);
    evas_object_show(tb);
    evas_object_show(sc);
 

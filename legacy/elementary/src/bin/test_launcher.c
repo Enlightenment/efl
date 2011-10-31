@@ -313,7 +313,7 @@ test_launcher(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_in
    elm_win_resize_object_add(win, bx2);
    evas_object_show(bx2);
 
-   elm_scroller_content_set(sc, bx);
+   elm_object_content_set(sc, bx);
    evas_object_show(bx);
 
    elm_scroller_page_relative_set(sc, 1.0, 1.0);
@@ -440,7 +440,7 @@ test_launcher2(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_i
    evas_object_size_hint_weight_set(sc, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    elm_win_resize_object_add(win, sc);
 
-   elm_scroller_content_set(sc, bx);
+   elm_object_content_set(sc, bx);
    evas_object_show(bx);
 
    elm_scroller_page_relative_set(sc, 1.0, 1.0);
@@ -848,7 +848,7 @@ test_launcher3(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_i
    elm_win_resize_object_add(win, bx2);
    evas_object_show(bx2);
 
-   elm_scroller_content_set(sc, bx);
+   elm_object_content_set(sc, bx);
    evas_object_show(bx);
 
    elm_scroller_page_relative_set(sc, 1.0, 1.0);

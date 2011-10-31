@@ -15,7 +15,7 @@ evas_object_show(ic);
 pb = elm_progressbar_add(win);
 elm_object_text_set(pb, "Label");
 elm_progressbar_span_size_set(pb, 100);
-elm_progressbar_icon_set(pb, ic);
+elm_object_content_set(pb, ic);
 elm_progressbar_unit_format_set(pb, "%1.1f units");
 evas_object_size_hint_align_set(pb, EVAS_HINT_FILL, EVAS_HINT_FILL);
 evas_object_size_hint_weight_set(pb, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);

@@ -85,12 +85,12 @@ elm_main(int argc __UNUSED__, char **argv __UNUSED__)
    ic = elm_icon_add(win);
    elm_icon_standard_set(ic, "home");
    elm_icon_scale_set(ic, EINA_FALSE, EINA_FALSE);
-   elm_slider_icon_set(sl, ic);
+   elm_object_content_part_set(sl, ELM_SLIDER_CONTENT_ICON, ic);
 
    ic = elm_icon_add(win);
    elm_icon_standard_set(ic, "folder");
    elm_icon_scale_set(ic, EINA_FALSE, EINA_FALSE);
-   elm_slider_end_set(sl, ic);
+   elm_object_content_part_set(sl, ELM_SLIDER_CONTENT_END, ic);
 
    evas_object_size_hint_align_set(sl, EVAS_HINT_FILL, 0.5);
    evas_object_size_hint_weight_set(sl, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);

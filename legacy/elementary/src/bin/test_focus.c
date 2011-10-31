@@ -162,7 +162,7 @@ test_focus(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info 
                                                        EVAS_HINT_FILL);
                        evas_object_size_hint_weight_set(bt, 0.0, 0.0);
                        elm_object_event_callback_add(bt, _event, NULL);
-                       elm_scroller_content_set(sc, bt);
+                       elm_object_content_set(sc, bt);
                        my_show(bt);
                        elm_object_event_callback_del(bt, _event, NULL);
                     }
@@ -228,7 +228,7 @@ test_focus(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info 
                   evas_object_size_hint_align_set(bx3, EVAS_HINT_FILL,
                                                   EVAS_HINT_FILL);
                   evas_object_size_hint_weight_set(bx3, 0.0, 0.0);
-                  elm_scroller_content_set(sc, bx3);
+                  elm_object_content_set(sc, bx3);
                   my_show(bx3);
 
                   for (i = 5; i; i--)

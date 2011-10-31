@@ -227,7 +227,7 @@ elm_anchorview_add(Evas_Object *parent)
    elm_entry_editable_set(wd->entry, 0);
    evas_object_size_hint_weight_set(wd->entry, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(wd->entry, EVAS_HINT_FILL, EVAS_HINT_FILL);
-   elm_scroller_content_set(wd->scroller, wd->entry);
+   elm_object_content_set(wd->scroller, wd->entry);
    evas_object_show(wd->entry);
 
    evas_object_event_callback_add(wd->entry, EVAS_CALLBACK_CHANGED_SIZE_HINTS,

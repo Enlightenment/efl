@@ -178,7 +178,7 @@ test_factory(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_inf
    evas_object_size_hint_weight_set(sc, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    elm_win_resize_object_add(win, sc);
 
-   elm_scroller_content_set(sc, bx);
+   elm_object_content_set(sc, bx);
    evas_object_show(bx);
 
    evas_object_show(sc);

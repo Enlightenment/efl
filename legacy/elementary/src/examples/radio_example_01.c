@@ -37,7 +37,7 @@ elm_main(int argc, char **argv)
    elm_radio_value_pointer_set(radio, &val);
    ic = elm_icon_add(win);
    elm_icon_standard_set(ic, "home");
-   elm_radio_icon_set(radio, ic);
+   elm_object_content_set(radio, ic);
    elm_box_pack_end(bx, radio);
    evas_object_size_hint_weight_set(radio, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(radio, EVAS_HINT_FILL, EVAS_HINT_FILL);
@@ -51,7 +51,7 @@ elm_main(int argc, char **argv)
    elm_radio_group_add(radio, group);
    ic = elm_icon_add(win);
    elm_icon_standard_set(ic, "file");
-   elm_radio_icon_set(radio, ic);
+   elm_object_content_set(radio, ic);
    elm_box_pack_end(bx, radio);
    evas_object_size_hint_weight_set(radio, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(radio, EVAS_HINT_FILL, EVAS_HINT_FILL);

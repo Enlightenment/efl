@@ -128,7 +128,7 @@ fill(Evas_Object *win, Eina_Bool do_bg)
    elm_box_pack_end(bx, bb);
    evas_object_show(bb);
 
-   elm_scroller_content_set(sc, bx);
+   elm_object_content_set(sc, bx);
    evas_object_show(bx);
 
    evas_object_show(sc);

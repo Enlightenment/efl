@@ -81,11 +81,10 @@ test_scroller(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_in
    evas_object_size_hint_weight_set(sc, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    elm_win_resize_object_add(win, sc);
 
-   elm_scroller_content_set(sc, tb);
+   elm_object_content_set(sc, tb);
    evas_object_show(tb);
 
    elm_scroller_page_relative_set(sc, 1.0, 1.0);
-//   elm_scroller_page_size_set(sc, 200, 200);
    evas_object_show(sc);
 
    tb2 = elm_table_add(win);
@@ -189,7 +188,7 @@ test_scroller2(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_i
         evas_object_show(bt);
      }
 
-   elm_scroller_content_set(sc, bx2);
+   elm_object_content_set(sc, bx2);
    evas_object_show(bx2);
    /* } */
 
@@ -237,7 +236,7 @@ test_scroller2(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_i
           }
      }
 
-   elm_scroller_content_set(sc, tb2);
+   elm_object_content_set(sc, tb2);
    evas_object_show(tb2);
    /* } */
 
@@ -256,7 +255,7 @@ test_scroller2(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_i
    evas_object_size_hint_weight_set(sc, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    elm_scroller_bounce_set(sc, 0, 1);
    elm_win_resize_object_add(win, sc);
-   elm_scroller_content_set(sc, bx);
+   elm_object_content_set(sc, bx);
    evas_object_show(bx);
    evas_object_show(sc);
 

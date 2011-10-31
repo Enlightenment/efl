@@ -55,7 +55,7 @@ test_button(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info
 
    bx = elm_box_add(win);
    evas_object_size_hint_weight_set(bx, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-   elm_scroller_content_set(scr, bx);
+   elm_object_content_set(scr, bx);
    evas_object_show(bx);
 
    ic = elm_icon_add(win);

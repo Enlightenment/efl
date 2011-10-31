@@ -188,7 +188,7 @@ _list_item_cb5(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_i
    elm_object_text_set(btn, "Enlightenment");
    evas_object_size_hint_min_set(btn, 140, 140);
 
-   elm_scroller_content_set(sc, btn);
+   elm_object_content_set(sc, btn);
 
    elm_box_pack_end(bx, sc);
 
