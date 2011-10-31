@@ -163,7 +163,7 @@ test_anchorblock(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event
 			   "(phone number) to click on.");
    evas_object_smart_callback_add(av, "anchor,clicked",
                                   my_anchorblock_anchor, av);
-   elm_bubble_content_set(bb, av);
+   elm_object_content_set(bb, av);
    evas_object_show(av);
    elm_box_pack_end(bx, bb);
    evas_object_show(bb);
@@ -199,7 +199,7 @@ test_anchorblock(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event
 			   "web URL's too that launch the web browser and point it "
 			   "to that URL. <item relsize=16x16 vsize=full href=emoticon/omg></item>");
    evas_object_smart_callback_add(av, "anchor,clicked", my_anchorblock_anchor, av);
-   elm_bubble_content_set(bb, av);
+   elm_object_content_set(bb, av);
    evas_object_show(av);
    elm_box_pack_end(bx, bb);
    evas_object_show(bb);
@@ -225,7 +225,7 @@ test_anchorblock(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event
    elm_object_text_set(av, "This is a short message. <item relsize=16x16 vsize=full href=emoticon/haha></item>");
    evas_object_smart_callback_add(av, "anchor,clicked",
                                   my_anchorblock_anchor, av);
-   elm_bubble_content_set(bb, av);
+   elm_object_content_set(bb, av);
    evas_object_show(av);
    elm_box_pack_end(bx, bb);
    evas_object_show(bb);

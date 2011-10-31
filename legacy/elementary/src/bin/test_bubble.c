@@ -49,7 +49,7 @@ test_bubble(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info
    ct = elm_label_add(win);
    elm_object_text_set(ct,
                        "\"The future of the art: R or G or B?\",  by Rusty");
-   elm_bubble_content_set(bb, ct);
+   elm_object_content_set(bb, ct);
 
    elm_box_pack_end(bx, bb);
    evas_object_show(bb);
@@ -63,7 +63,7 @@ test_bubble(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info
 
    ct = elm_label_add(win);
    elm_object_text_set(ct, "Corner: base (top-left) - no icon");
-   elm_bubble_content_set(bb, ct);
+   elm_object_content_set(bb, ct);
 
    elm_box_pack_end(bx, bb);
    evas_object_show(bb);

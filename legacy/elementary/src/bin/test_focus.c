@@ -359,7 +359,7 @@ test_focus(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info 
                {
                   Evas_Object *tb = elm_table_add(win);
                   evas_object_size_hint_weight_set(tb, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-                  elm_bubble_content_set(fr, tb);
+                  elm_object_content_set(fr, tb);
                   my_show(tb);
                   for (j = 0; j < 2; j++)
                     for (i = 0; i < 1; i++)
