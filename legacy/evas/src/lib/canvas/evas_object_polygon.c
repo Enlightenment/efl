@@ -106,7 +106,7 @@ evas_object_polygon_point_add(Evas_Object *obj, Evas_Coord x, Evas_Coord y)
    MAGIC_CHECK(o, Evas_Object_Polygon, MAGIC_OBJ_POLYGON);
    return;
    MAGIC_CHECK_END();
-   if (obj->layer->evas->events_frozen != 0)
+   if (obj->layer->evas->events_frozen <= 0)
      {
 	if (!evas_event_passes_through(obj))
 	  was = evas_object_is_in_output_rect(obj,
@@ -169,7 +169,7 @@ evas_object_polygon_point_add(Evas_Object *obj, Evas_Coord x, Evas_Coord y)
    evas_object_change(obj);
    evas_object_clip_dirty(obj);
    evas_object_coords_recalc(obj);
-   if (obj->layer->evas->events_frozen != 0)
+   if (obj->layer->evas->events_frozen <= 0)
      {
 	is = evas_object_is_in_output_rect(obj,
 					   obj->layer->evas->pointer.x,
