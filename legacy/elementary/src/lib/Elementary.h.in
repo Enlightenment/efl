@@ -7017,8 +7017,11 @@ extern "C" {
     * @note When Elementary is in desktop mode the thumbscroll(a.k.a.
     * fingerscroll) won't work.
     *
-    * Default contents parts of the scroller widget that you can use for are:
-    * @li "elm.swallow.content" - A content of the scroller
+    * To set/get/unset the content of the panel, you can use
+    * elm_object_content_set/get/unset APIs.
+    * Once the content object is set, a previously set one will be deleted.
+    * If you want to keep that old content object, use the
+    * elm_object_content_unset() function
     *
     * In @ref tutorial_scroller you'll find an example of how to use most of
     * this API.
@@ -27984,6 +27987,9 @@ extern "C" {
     * "prev,clicked" - the user clicked the prev button.
     * "rewind,clicked" - the user clicked the rewind button.
     * "stop,clicked" - the user clicked the stop button.
+    * 
+    * To set the video of the player, you can use elm_object_content_set() API.
+    * 
     */
 
    /**
@@ -27994,7 +28000,7 @@ extern "C" {
     *
     * This function inserts a new player widget on the canvas.
     *
-    * @see elm_player_video_set()
+    * @see elm_object_content_set()
     *
     * @ingroup Video
     */
@@ -28015,7 +28021,7 @@ extern "C" {
     *
     * @ingroup Video
     */
-   EAPI void elm_player_video_set(Evas_Object *player, Evas_Object *video);
+   EINA_DEPRECATED EAPI void elm_player_video_set(Evas_Object *player, Evas_Object *video);
 
    /**
     * @brief Add a new Elm_Video object to the given parent Elementary (container) object.

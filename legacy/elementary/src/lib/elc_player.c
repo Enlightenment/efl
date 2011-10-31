@@ -453,6 +453,74 @@ _double_to_time(double value)
 }
 #endif
 
+static void
+_content_set_hook(Evas_Object *obj, const char *part __UNUSED__, Evas_Object *content)
+{
+#ifdef HAVE_EMOTION
+   ELM_CHECK_WIDTYPE(obj, widtype);
+   Widget_Data *wd = elm_widget_data_get(obj);
+   double pos, length;
+   Eina_Bool seekable;
+
+   if (!_elm_video_check(content)) return ;
+
+   _cleanup_callback(wd);
+
+   wd->video = content;
+
+   if (!wd->video)
+     {
+        wd->emotion = NULL;
+        return ;
+     }
+
+   elm_object_disabled_set(wd->slider, EINA_FALSE);
+   elm_object_disabled_set(wd->forward, EINA_FALSE);
+   elm_object_disabled_set(wd->info, EINA_FALSE);
+   elm_object_disabled_set(wd->next, EINA_FALSE);
+   elm_object_disabled_set(wd->pause, EINA_FALSE);
+   elm_object_disabled_set(wd->play, EINA_FALSE);
+   elm_object_disabled_set(wd->prev, EINA_FALSE);
+   elm_object_disabled_set(wd->rewind, EINA_FALSE);
+   elm_object_disabled_set(wd->next, EINA_FALSE);
+
+   wd->emotion = elm_video_emotion_get(wd->video);
+   emotion_object_priority_set(wd->emotion, EINA_TRUE);
+   evas_object_event_callback_add(wd->video, EVAS_CALLBACK_DEL,
+                                  _track_video, obj);
+
+   seekable = elm_video_is_seekable(wd->video);
+   length = elm_video_play_length_get(wd->video);
+   pos = elm_video_play_position_get(wd->video);
+
+   elm_object_disabled_set(wd->slider, !seekable);
+   elm_slider_min_max_set(wd->slider, 0, length);
+   elm_slider_value_set(wd->slider, pos);
+
+   if (elm_video_is_playing(wd->video)) edje_object_signal_emit(wd->layout, "elm,player,play", "elm");
+   else edje_object_signal_emit(wd->layout, "elm,player,pause", "elm");
+
+   evas_object_smart_callback_add(wd->emotion, "frame_decode",
+                                  _update_slider, player);
+   evas_object_smart_callback_add(wd->emotion, "frame_resize",
+                                  _update_slider, player);
+   evas_object_smart_callback_add(wd->emotion, "length_change",
+                                  _update_slider, player);
+   evas_object_smart_callback_add(wd->emotion, "position_update",
+                                  _update_slider, player);
+   evas_object_smart_callback_add(wd->emotion, "playback_started",
+                                  _play_started, player);
+   evas_object_smart_callback_add(wd->emotion, "playback_finished",
+                                  _play_finished, player);
+
+   /* FIXME: track info from video */
+#else
+   (void) obj;
+   (void) content;
+#endif
+
+}
+
 EAPI Evas_Object *
 elm_player_add(Evas_Object *parent)
 {
@@ -471,6 +539,7 @@ elm_player_add(Evas_Object *parent)
    elm_widget_theme_hook_set(obj, _theme_hook);
    elm_widget_can_focus_set(obj, EINA_TRUE);
    elm_widget_event_hook_set(obj, _event_hook);
+   elm_widget_content_set_hook_set(obj, _content_set_hook);
 
    wd->layout = edje_object_add(e);
    _elm_theme_object_set(obj, wd->layout, "player", "base", "default");
@@ -516,66 +585,5 @@ elm_player_add(Evas_Object *parent)
 EAPI void
 elm_player_video_set(Evas_Object *player, Evas_Object *video)
 {
-#ifdef HAVE_EMOTION
-   ELM_CHECK_WIDTYPE(player, widtype);
-   Widget_Data *wd = elm_widget_data_get(player);
-   double pos, length;
-   Eina_Bool seekable;
-
-   if (!_elm_video_check(video)) return ;
-
-   _cleanup_callback(wd);
-
-   wd->video = video;
-
-   if (!wd->video)
-     {
-        wd->emotion = NULL;
-        return ;
-     }
-
-   elm_object_disabled_set(wd->slider, EINA_FALSE);
-   elm_object_disabled_set(wd->forward, EINA_FALSE);
-   elm_object_disabled_set(wd->info, EINA_FALSE);
-   elm_object_disabled_set(wd->next, EINA_FALSE);
-   elm_object_disabled_set(wd->pause, EINA_FALSE);
-   elm_object_disabled_set(wd->play, EINA_FALSE);
-   elm_object_disabled_set(wd->prev, EINA_FALSE);
-   elm_object_disabled_set(wd->rewind, EINA_FALSE);
-   elm_object_disabled_set(wd->next, EINA_FALSE);
-
-   wd->emotion = elm_video_emotion_get(wd->video);
-   emotion_object_priority_set(wd->emotion, EINA_TRUE);
-   evas_object_event_callback_add(wd->video, EVAS_CALLBACK_DEL,
-                                  _track_video, player);
-
-   seekable = elm_video_is_seekable(wd->video);
-   length = elm_video_play_length_get(wd->video);
-   pos = elm_video_play_position_get(wd->video);
-
-   elm_object_disabled_set(wd->slider, !seekable);
-   elm_slider_min_max_set(wd->slider, 0, length);
-   elm_slider_value_set(wd->slider, pos);
-
-   if (elm_video_is_playing(wd->video)) edje_object_signal_emit(wd->layout, "elm,player,play", "elm");
-   else edje_object_signal_emit(wd->layout, "elm,player,pause", "elm");
-
-   evas_object_smart_callback_add(wd->emotion, "frame_decode",
-                                  _update_slider, player);
-   evas_object_smart_callback_add(wd->emotion, "frame_resize",
-                                  _update_slider, player);
-   evas_object_smart_callback_add(wd->emotion, "length_change",
-                                  _update_slider, player);
-   evas_object_smart_callback_add(wd->emotion, "position_update",
-                                  _update_slider, player);
-   evas_object_smart_callback_add(wd->emotion, "playback_started",
-                                  _play_started, player);
-   evas_object_smart_callback_add(wd->emotion, "playback_finished",
-                                  _play_finished, player);
-
-   /* FIXME: track info from video */
-#else
-   (void) player;
-   (void) video;
-#endif
+   _content_set_hook(player, NULL, video);
 }
