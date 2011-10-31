@@ -672,7 +672,7 @@ _elm_win_resize_job(void *data)
    int w, h;
 
    win->deferred_resize_job = NULL;
-   ecore_evas_geometry_get(win->ee, NULL, NULL, &w, &h);
+   ecore_evas_request_geometry_get(win->ee, NULL, NULL, &w, &h);
    evas_object_resize(win->win_obj, w, h);
    if (win->frame_obj)
      {
