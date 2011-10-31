@@ -46,6 +46,7 @@
 typedef void *Eina_Lock;
 typedef void *Eina_RWLock;
 typedef void *Eina_Condition;
+typedef void *Eina_TLS;
 
 /**
  * @brief Create a new #Eina_Lock.

@@ -56,6 +56,8 @@ struct _Eina_Win32_RWLock
    Eina_Condition cond_write;
 };
 
+typedef DWORD     Eina_TLS;
+
 EAPI extern Eina_Bool _eina_threads_activated;
 
 static inline Eina_Bool
