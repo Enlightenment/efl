@@ -29,6 +29,7 @@ pkg_LTLIBRARIES = module.la
 module_la_SOURCES = private.h \
 modules.inc \
 elm.c \
+elm_actionslider.c \
 elm_anchorblock.c \
 elm_anchorview.c \
 elm_bubble.c \
