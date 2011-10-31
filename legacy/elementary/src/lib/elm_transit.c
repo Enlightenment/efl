@@ -78,7 +78,7 @@ struct _Elm_Transit_Obj_State
 struct _Elm_Transit_Obj_Data
 {
    struct _Elm_Transit_Obj_State *state;
-   Eina_Bool pass_events : 1;
+   Eina_Bool freeze_events : 1;
 };
 
 typedef struct _Elm_Transit_Effect_Module Elm_Transit_Effect_Module;
@@ -106,7 +106,7 @@ _transit_obj_data_update(Elm_Transit *transit, Evas_Object *obj)
    if (!obj_data)
      obj_data = ELM_NEW(Elm_Transit_Obj_Data);
 
-   obj_data->pass_events = evas_object_pass_events_get(obj);
+   obj_data->freeze_events = evas_object_freeze_events_get(obj);
 
    if ((!transit->state_keep) && (obj_data->state))
      {
@@ -179,7 +179,7 @@ _transit_obj_data_recover(Elm_Transit *transit, Evas_Object *obj)
    obj_data = evas_object_data_get(obj, _transit_key);
    if (!obj_data) return;
    evas_object_data_del(obj, _transit_key);
-   evas_object_pass_events_set(obj, obj_data->pass_events);
+   evas_object_freeze_events_set(obj, obj_data->freeze_events);
    state = obj_data->state;
    if (state)
      {
@@ -465,7 +465,7 @@ elm_transit_object_add(Elm_Transit *transit, Evas_Object *obj)
         if (!evas_object_data_get(obj, _transit_key))
           {
              _transit_obj_data_update(transit, obj);
-             evas_object_pass_events_set(obj, EINA_TRUE);
+             evas_object_freeze_events_set(obj, EINA_TRUE);
           }
      }
 
@@ -506,7 +506,7 @@ elm_transit_event_enabled_set(Elm_Transit *transit, Eina_Bool enabled)
    if (!transit->animator) return;
 
    EINA_LIST_FOREACH(transit->objs, list, obj)
-     evas_object_pass_events_set(obj, enabled);
+     evas_object_freeze_events_set(obj, enabled);
 }
 
 EAPI Eina_Bool
@@ -603,7 +603,7 @@ elm_transit_go(Elm_Transit *transit)
    if (!transit->event_enabled)
      {
         EINA_LIST_FOREACH(transit->objs, elist, obj)
-          evas_object_pass_events_set(obj, EINA_TRUE);
+          evas_object_freeze_events_set(obj, EINA_TRUE);
      }
 
    transit->time.paused = 0;
