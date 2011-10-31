@@ -525,6 +525,10 @@ ecore_evas_directfb_new(const char *disp_name, int windowed, int x, int y, int w
    ee->y = y;
    ee->w = w;
    ee->h = h;
+   ee->req.x = ee->x;
+   ee->req.y = ee->y;
+   ee->req.w = ee->w;
+   ee->req.h = ee->h;
    ee->prop.layer = 1;
    ee->prop.fullscreen = 0;
 

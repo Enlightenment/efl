@@ -178,6 +178,9 @@ _ecore_evas_ews_free(Ecore_Evas *ee)
 static void
 _ecore_evas_ews_move(Ecore_Evas *ee, int x, int y)
 {
+   ee->req.x = x;
+   ee->req.y = y;
+
    if ((x == ee->x) && (y == ee->y)) return;
    ee->x = x;
    ee->y = y;
@@ -190,6 +193,9 @@ _ecore_evas_ews_move(Ecore_Evas *ee, int x, int y)
 static void
 _ecore_evas_ews_managed_move(Ecore_Evas *ee, int x, int y)
 {
+   ee->req.x = x;
+   ee->req.y = y;
+
    if ((x == ee->x) && (y == ee->y)) return;
    ee->x = x;
    ee->y = y;
@@ -238,6 +244,10 @@ _ecore_evas_ews_resize(Ecore_Evas *ee, int w, int h)
 {
    if (w < 1) w = 1;
    if (h < 1) h = 1;
+
+   ee->req.w = w;
+   ee->req.h = h;
+
    if ((w == ee->w) && (h == ee->h)) return;
    ee->w = w;
    ee->h = h;
@@ -1105,6 +1115,10 @@ ecore_evas_ews_new(int x, int y, int w, int h)
    ee->y = 0;
    ee->w = w;
    ee->h = h;
+   ee->req.x = ee->x;
+   ee->req.y = ee->y;
+   ee->req.w = ee->w;
+   ee->req.h = ee->h;
 
    /* init evas here */
    ee->evas = evas_new();

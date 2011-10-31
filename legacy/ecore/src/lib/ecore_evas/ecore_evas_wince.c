@@ -314,6 +314,8 @@ static void
 _ecore_evas_wince_move(Ecore_Evas *ee, int x, int y)
 {
   INF("ecore evas move (%dx%d)", x, y);
+   ee->req.x = x;
+   ee->req.y = y;
 
    if ((x != ee->x) || (y != ee->y))
      {
@@ -328,6 +330,8 @@ static void
 _ecore_evas_wince_resize(Ecore_Evas *ee, int width, int height)
 {
    INF("ecore evas resize (%dx%d)", width, height);
+   ee->req.w = width;
+   ee->req.h = height;
 
    if ((ee->w != width) || (ee->h != height))
      {
@@ -354,6 +358,10 @@ static void
 _ecore_evas_wince_move_resize(Ecore_Evas *ee, int x, int y, int width, int height)
 {
    INF("ecore evas resize (%dx%d %dx%d)", x, y, width, height);
+   ee->req.x = x;
+   ee->req.y = y;
+   ee->req.w = width;
+   ee->req.h = height;
 
    if ((ee->w != width) || (ee->h != height) || (x != ee->x) || (y != ee->y))
      {
@@ -773,6 +781,10 @@ ecore_evas_software_wince_new_internal(int                 backend,
    ee->y = y;
    ee->w = width;
    ee->h = height;
+   ee->req.x = ee->x;
+   ee->req.y = ee->y;
+   ee->req.w = ee->w;
+   ee->req.h = ee->h;
 
    ee->prop.max.w = 32767;
    ee->prop.max.h = 32767;

@@ -297,6 +297,9 @@ _ecore_evas_win32_event_window_configure(void *data __UNUSED__, int type __UNUSE
      {
         ee->x = e->x;
         ee->y = e->y;
+        ee->req.x = ee->x;
+        ee->req.y = ee->y;
+
         if (ee->func.fn_move) ee->func.fn_move(ee);
      }
 
@@ -304,6 +307,9 @@ _ecore_evas_win32_event_window_configure(void *data __UNUSED__, int type __UNUSE
      {
         ee->w = e->width;
         ee->h = e->height;
+        ee->req.w = ee->w;
+        ee->req.h = ee->h;
+
         if ((ee->rotation == 90) || (ee->rotation == 270))
           {
              evas_output_size_set(ee->evas, ee->h, ee->w);
@@ -383,6 +389,8 @@ static void
 _ecore_evas_win32_move(Ecore_Evas *ee, int x, int y)
 {
   INF("ecore evas move (%dx%d)", x, y);
+   ee->req.x = x;
+   ee->req.y = y;
 
    if ((x != ee->x) || (y != ee->y))
      {
@@ -398,6 +406,8 @@ static void
 _ecore_evas_win32_resize(Ecore_Evas *ee, int width, int height)
 {
    INF("ecore evas resize (%dx%d)", width, height);
+   ee->req.w = width;
+   ee->req.h = height;
 
    if ((ee->w != width) || (ee->h != height))
      {
@@ -433,6 +443,10 @@ static void
 _ecore_evas_win32_move_resize(Ecore_Evas *ee, int x, int y, int width, int height)
 {
    INF("ecore evas resize (%dx%d %dx%d)", x, y, width, height);
+   ee->req.x = x;
+   ee->req.y = y;
+   ee->req.w = width;
+   ee->req.h = height;
 
    if ((ee->w != width) || (ee->h != height) || (x != ee->x) || (y != ee->y))
      {
@@ -1171,6 +1185,10 @@ _ecore_evas_win32_new_internal(int (*_ecore_evas_engine_init)(Ecore_Evas *ee),
    ee->y = y;
    ee->w = width;
    ee->h = height;
+   ee->req.x = ee->x;
+   ee->req.y = ee->y;
+   ee->req.w = ee->w;
+   ee->req.h = ee->h;
 
    ee->prop.max.w = 32767;
    ee->prop.max.h = 32767;
