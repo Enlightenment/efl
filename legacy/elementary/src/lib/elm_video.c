@@ -346,7 +346,7 @@ elm_video_uri_set(Evas_Object *video, const char *uri)
 }
 
 EAPI Evas_Object *
-elm_video_emotion_get(Evas_Object *video)
+elm_video_emotion_get(const Evas_Object *video)
 {
 #ifdef HAVE_EMOTION
    ELM_CHECK_WIDTYPE(video, widtype) NULL;
@@ -421,7 +421,7 @@ elm_video_stop(Evas_Object *video)
 }
 
 EAPI Eina_Bool
-elm_video_is_playing(Evas_Object *video)
+elm_video_is_playing(const Evas_Object *video)
 {
 #ifdef HAVE_EMOTION
    ELM_CHECK_WIDTYPE(video, widtype) EINA_FALSE;
@@ -435,7 +435,7 @@ elm_video_is_playing(Evas_Object *video)
 }
 
 EAPI Eina_Bool
-elm_video_is_seekable(Evas_Object *video)
+elm_video_is_seekable(const Evas_Object *video)
 {
 #ifdef HAVE_EMOTION
    ELM_CHECK_WIDTYPE(video, widtype) EINA_FALSE;
@@ -449,7 +449,7 @@ elm_video_is_seekable(Evas_Object *video)
 }
 
 EAPI Eina_Bool
-elm_video_audio_mute_get(Evas_Object *video)
+elm_video_audio_mute_get(const Evas_Object *video)
 {
 #ifdef HAVE_EMOTION
    ELM_CHECK_WIDTYPE(video, widtype) EINA_FALSE;
@@ -477,7 +477,7 @@ elm_video_audio_mute_set(Evas_Object *video, Eina_Bool mute)
 }
 
 EAPI double
-elm_video_audio_level_get(Evas_Object *video)
+elm_video_audio_level_get(const Evas_Object *video)
 {
 #ifdef HAVE_EMOTION
    ELM_CHECK_WIDTYPE(video, widtype) 0.0;
@@ -505,7 +505,7 @@ elm_video_audio_level_set(Evas_Object *video, double volume)
 }
 
 EAPI double
-elm_video_play_position_get(Evas_Object *video)
+elm_video_play_position_get(const Evas_Object *video)
 {
 #ifdef HAVE_EMOTION
    ELM_CHECK_WIDTYPE(video, widtype) 0.0;
@@ -533,7 +533,7 @@ elm_video_play_position_set(Evas_Object *video, double position)
 }
 
 EAPI double
-elm_video_play_length_get(Evas_Object *video)
+elm_video_play_length_get(const Evas_Object *video)
 {
 #ifdef HAVE_EMOTION
    ELM_CHECK_WIDTYPE(video, widtype) 0.0;
@@ -547,7 +547,7 @@ elm_video_play_length_get(Evas_Object *video)
 }
 
 EAPI const char *
-elm_video_title_get(Evas_Object *video)
+elm_video_title_get(const Evas_Object *video)
 {
 #ifdef HAVE_EMOTION
    ELM_CHECK_WIDTYPE(video, widtype) NULL;
@@ -575,7 +575,7 @@ elm_video_remember_position_set(Evas_Object *video, Eina_Bool remember)
 }
 
 EAPI Eina_Bool
-elm_video_remember_position_get(Evas_Object *video)
+elm_video_remember_position_get(const Evas_Object *video)
 {
 #ifdef HAVE_EMOTION
    ELM_CHECK_WIDTYPE(video, widtype) EINA_FALSE;

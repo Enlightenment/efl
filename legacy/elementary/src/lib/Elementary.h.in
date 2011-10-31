@@ -28103,7 +28103,7 @@ extern "C" {
     *
     * @ingroup Video
     */
-   EAPI Evas_Object *elm_video_emotion_get(Evas_Object *video);
+   EAPI Evas_Object *elm_video_emotion_get(const Evas_Object *video);
 
    /**
     * @brief Start to play the video
@@ -28149,7 +28149,7 @@ extern "C" {
     *
     * @ingroup Video
     */
-   EAPI Eina_Bool elm_video_is_playing(Evas_Object *video);
+   EAPI Eina_Bool elm_video_is_playing(const Evas_Object *video);
 
    /**
     * @brief Is it possible to seek inside the video.
@@ -28159,7 +28159,7 @@ extern "C" {
     *
     * @ingroup Video
     */
-   EAPI Eina_Bool elm_video_is_seekable(Evas_Object *video);
+   EAPI Eina_Bool elm_video_is_seekable(const Evas_Object *video);
 
    /**
     * @brief Is the audio muted.
@@ -28169,7 +28169,7 @@ extern "C" {
     *
     * @ingroup Video
     */
-   EAPI Eina_Bool elm_video_audio_mute_get(Evas_Object *video);
+   EAPI Eina_Bool elm_video_audio_mute_get(const Evas_Object *video);
 
    /**
     * @brief Change the mute state of the Elm_Video object.
@@ -28189,7 +28189,7 @@ extern "C" {
     *
     * @ingroup Video
     */
-   EAPI double elm_video_audio_level_get(Evas_Object *video);
+   EAPI double elm_video_audio_level_get(const Evas_Object *video);
 
    /**
     * @brief Set the audio level of anElm_Video object.
@@ -28201,12 +28201,12 @@ extern "C" {
     */
    EAPI void elm_video_audio_level_set(Evas_Object *video, double volume);
 
-   EAPI double elm_video_play_position_get(Evas_Object *video);
+   EAPI double elm_video_play_position_get(const Evas_Object *video);
    EAPI void elm_video_play_position_set(Evas_Object *video, double position);
-   EAPI double elm_video_play_length_get(Evas_Object *video);
+   EAPI double elm_video_play_length_get(const Evas_Object *video);
    EAPI void elm_video_remember_position_set(Evas_Object *video, Eina_Bool remember);
-   EAPI Eina_Bool elm_video_remember_position_get(Evas_Object *video);
-   EAPI const char *elm_video_title_get(Evas_Object *video);
+   EAPI Eina_Bool elm_video_remember_position_get(const Evas_Object *video);
+   EAPI const char *elm_video_title_get(const Evas_Object *video);
    /**
     * @}
     */
