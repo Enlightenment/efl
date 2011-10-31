@@ -7840,6 +7840,9 @@ extern "C" {
     * also span multiple columns or rows - even overlap (and then be raised or
     * lowered accordingly to adjust stacking if they do overlap).
     *
+    * For a Table widget the row/column count is not fixed.
+    * The table widget adjusts itself when subobjects are added to it dynamically.
+    *
     * The followin are examples of how to use a table:
     * @li @ref tutorial_table_01
     * @li @ref tutorial_table_02
@@ -8013,7 +8016,7 @@ extern "C" {
     *
     * @section Gengrid_Layouts Gengrid layouts
     *
-    * Gengrids may layout its items in one of two possible layouts:
+    * Gengrid may layout its items in one of two possible layouts:
     * - horizontal or
     * - vertical.
     *
