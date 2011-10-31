@@ -218,7 +218,7 @@ _segment_on(Elm_Segment_Item *it)
    edje_object_signal_emit(VIEW(it), "elm,state,segment,selected", "elm");
 
    wd->selected_item = it;
-   evas_object_smart_callback_call(wd->obj, SIG_CHANGED, (void *)(unsigned long)it->seg_index);
+   evas_object_smart_callback_call(wd->obj, SIG_CHANGED, it);
 }
 
 static void
