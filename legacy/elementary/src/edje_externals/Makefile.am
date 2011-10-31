@@ -64,6 +64,7 @@ elm_spinner.c \
 elm_thumb.c \
 elm_toggle.c \
 elm_toolbar.c \
+elm_video.c \
 elm_web.c
 
 module_la_LIBADD = $(top_builddir)/src/lib/libelementary.la
