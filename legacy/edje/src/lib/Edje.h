@@ -631,7 +631,9 @@ typedef enum _Edje_Tween_Mode
    EDJE_TWEEN_MODE_DIVISOR_INTERP    = 8,
    EDJE_TWEEN_MODE_BOUNCE            = 9,
    EDJE_TWEEN_MODE_SPRING            = 10,
-   EDJE_TWEEN_MODE_LAST              = 11
+   EDJE_TWEEN_MODE_LAST              = 11,
+   EDJE_TWEEN_MODE_MASK              = 0xff,
+   EDJE_TWEEN_MODE_OPT_FROM_CURRENT  = (1 << 31)
 } Edje_Tween_Mode;
 
 typedef enum _Edje_Cursor

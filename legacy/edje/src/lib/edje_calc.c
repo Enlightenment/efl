@@ -56,7 +56,7 @@ _edje_part_pos_set(Edje *ed, Edje_Real_Part *ep, int mode, FLOAT_T pos, FLOAT_T 
          break;
      }
 #else
-   switch (mode)
+   switch (mode & EDJE_TWEEN_MODE_MASK)
      {
       case EDJE_TWEEN_MODE_SINUSOIDAL:
         npos = FROM_DOUBLE(ecore_animator_pos_map(TO_DOUBLE(pos),
@@ -2026,42 +2026,42 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep, int flags)
    /* GRADIENT ARE GONE, WE MUST IGNORE IT FROM OLD FILE. */
    if (ep->part->type == EDJE_PART_TYPE_GRADIENT)
      {
-	ERR("GRADIENT spotted during recalc ! That should never happen ! Send your edje file to devel ml.");
-	return;
+        ERR("GRADIENT spotted during recalc ! That should never happen ! Send your edje file to devel ml.");
+        return;
      }
 
    if ((ep->calculated & FLAG_XY) == FLAG_XY)
      {
-	return;
+        return;
      }
    if (ep->calculating & flags)
      {
 #if 1
-	const char *axes = "NONE", *faxes = "NONE";
+        const char *axes = "NONE", *faxes = "NONE";
 
-	if ((ep->calculating & FLAG_X) &&
-	    (ep->calculating & FLAG_Y))
-	  axes = "XY";
-	else if ((ep->calculating & FLAG_X))
-	  axes = "X";
-	else if ((ep->calculating & FLAG_Y))
-	  axes = "Y";
+        if ((ep->calculating & FLAG_X) &&
+            (ep->calculating & FLAG_Y))
+          axes = "XY";
+        else if ((ep->calculating & FLAG_X))
+          axes = "X";
+        else if ((ep->calculating & FLAG_Y))
+          axes = "Y";
 
-	if ((flags & FLAG_X) &&
-	    (flags & FLAG_Y))
-	  faxes = "XY";
-	else if ((flags & FLAG_X))
-	  faxes = "X";
-	else if ((flags & FLAG_Y))
-	  faxes = "Y";
-	ERR("Circular dependency when calculating part \"%s\". "
-	    "Already calculating %s [%02x] axes. "
-	    "Need to calculate %s [%02x] axes",
-	    ep->part->name,
-	    axes, ep->calculating,
-	    faxes, flags);
+        if ((flags & FLAG_X) &&
+            (flags & FLAG_Y))
+          faxes = "XY";
+        else if ((flags & FLAG_X))
+          faxes = "X";
+        else if ((flags & FLAG_Y))
+          faxes = "Y";
+        ERR("Circular dependency when calculating part \"%s\". "
+            "Already calculating %s [%02x] axes. "
+            "Need to calculate %s [%02x] axes",
+            ep->part->name,
+            axes, ep->calculating,
+            faxes, flags);
 #endif
-	return;
+        return;
      }
 #ifdef EDJE_CALC_CACHE
    if (ep->state == ed->state)
@@ -2070,98 +2070,98 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep, int flags)
 
    if (flags & FLAG_X)
      {
-	ep->calculating |= flags & FLAG_X;
-	if (ep->param1.rel1_to_x)
-	  {
-	     _edje_part_recalc(ed, ep->param1.rel1_to_x, FLAG_X);
+        ep->calculating |= flags & FLAG_X;
+        if (ep->param1.rel1_to_x)
+          {
+             _edje_part_recalc(ed, ep->param1.rel1_to_x, FLAG_X);
 #ifdef EDJE_CALC_CACHE
-	     state1 = ep->param1.rel1_to_x->state;
+             state1 = ep->param1.rel1_to_x->state;
 #endif
-	  }
-	if (ep->param1.rel2_to_x)
-	  {
-	     _edje_part_recalc(ed, ep->param1.rel2_to_x, FLAG_X);
+          }
+        if (ep->param1.rel2_to_x)
+          {
+             _edje_part_recalc(ed, ep->param1.rel2_to_x, FLAG_X);
 #ifdef EDJE_CALC_CACHE
-	     if (state1 < ep->param1.rel2_to_x->state)
-	       state1 = ep->param1.rel2_to_x->state;
+             if (state1 < ep->param1.rel2_to_x->state)
+               state1 = ep->param1.rel2_to_x->state;
 #endif
-	  }
-	if (ep->param2)
-	  {
-	     if (ep->param2->rel1_to_x)
-	       {
-		  _edje_part_recalc(ed, ep->param2->rel1_to_x, FLAG_X);
+          }
+        if (ep->param2)
+          {
+             if (ep->param2->rel1_to_x)
+               {
+                  _edje_part_recalc(ed, ep->param2->rel1_to_x, FLAG_X);
 #ifdef EDJE_CALC_CACHE
-		  state2 = ep->param2->rel1_to_x->state;
+                  state2 = ep->param2->rel1_to_x->state;
 #endif
-	       }
-	     if (ep->param2->rel2_to_x)
-	       {
-		  _edje_part_recalc(ed, ep->param2->rel2_to_x, FLAG_X);
+               }
+             if (ep->param2->rel2_to_x)
+               {
+                  _edje_part_recalc(ed, ep->param2->rel2_to_x, FLAG_X);
 #ifdef EDJE_CALC_CACHE
-		  if (state2 < ep->param2->rel2_to_x->state)
-		    state2 = ep->param2->rel2_to_x->state;
+                  if (state2 < ep->param2->rel2_to_x->state)
+                    state2 = ep->param2->rel2_to_x->state;
 #endif
-	       }
-	  }
+               }
+          }
      }
    if (flags & FLAG_Y)
      {
-	ep->calculating |= flags & FLAG_Y;
-	if (ep->param1.rel1_to_y)
-	  {
-	     _edje_part_recalc(ed, ep->param1.rel1_to_y, FLAG_Y);
+        ep->calculating |= flags & FLAG_Y;
+        if (ep->param1.rel1_to_y)
+          {
+             _edje_part_recalc(ed, ep->param1.rel1_to_y, FLAG_Y);
 #ifdef EDJE_CALC_CACHE
-	     if (state1 < ep->param1.rel1_to_y->state)
-	       state1 = ep->param1.rel1_to_y->state;
+             if (state1 < ep->param1.rel1_to_y->state)
+               state1 = ep->param1.rel1_to_y->state;
 #endif
-	  }
-	if (ep->param1.rel2_to_y)
-	  {
-	     _edje_part_recalc(ed, ep->param1.rel2_to_y, FLAG_Y);
+          }
+        if (ep->param1.rel2_to_y)
+          {
+             _edje_part_recalc(ed, ep->param1.rel2_to_y, FLAG_Y);
 #ifdef EDJE_CALC_CACHE
-	     if (state1 < ep->param1.rel2_to_y->state)
-	       state1 = ep->param1.rel2_to_y->state;
+             if (state1 < ep->param1.rel2_to_y->state)
+               state1 = ep->param1.rel2_to_y->state;
 #endif
-	  }
-	if (ep->param2)
-	  {
-	     if (ep->param2->rel1_to_y)
-	       {
-		  _edje_part_recalc(ed, ep->param2->rel1_to_y, FLAG_Y);
+          }
+        if (ep->param2)
+          {
+             if (ep->param2->rel1_to_y)
+               {
+                  _edje_part_recalc(ed, ep->param2->rel1_to_y, FLAG_Y);
 #ifdef EDJE_CALC_CACHE
-		  if (state2 < ep->param2->rel1_to_y->state)
-		    state2 = ep->param2->rel1_to_y->state;
+                  if (state2 < ep->param2->rel1_to_y->state)
+                    state2 = ep->param2->rel1_to_y->state;
 #endif
-	       }
-	     if (ep->param2->rel2_to_y)
-	       {
-		  _edje_part_recalc(ed, ep->param2->rel2_to_y, FLAG_Y);
+               }
+             if (ep->param2->rel2_to_y)
+               {
+                  _edje_part_recalc(ed, ep->param2->rel2_to_y, FLAG_Y);
 #ifdef EDJE_CALC_CACHE
-		  if (state2 < ep->param2->rel2_to_y->state)
-		    state2 = ep->param2->rel2_to_y->state;
+                  if (state2 < ep->param2->rel2_to_y->state)
+                    state2 = ep->param2->rel2_to_y->state;
 #endif
-	       }
-	  }
+               }
+          }
      }
    if (ep->drag && ep->drag->confine_to)
      {
-	confine_to = ep->drag->confine_to;
-	_edje_part_recalc(ed, confine_to, flags);
+        confine_to = ep->drag->confine_to;
+        _edje_part_recalc(ed, confine_to, flags);
 #ifdef EDJE_CALC_CACHE
-	statec = confine_to->state;
+        statec = confine_to->state;
 #endif
      }
-//   if (ep->text.source)       _edje_part_recalc(ed, ep->text.source, flags);
-//   if (ep->text.text_source)  _edje_part_recalc(ed, ep->text.text_source, flags);
+   //   if (ep->text.source)       _edje_part_recalc(ed, ep->text.source, flags);
+   //   if (ep->text.text_source)  _edje_part_recalc(ed, ep->text.text_source, flags);
 
    /* actually calculate now */
    chosen_desc = ep->chosen_description;
    if (!chosen_desc)
      {
-	ep->calculating = FLAG_NONE;
-	ep->calculated |= flags;
-	return;
+        ep->calculating = FLAG_NONE;
+        ep->calculated |= flags;
+        return;
      }
 
    if (ep->part->type == EDJE_PART_TYPE_PROXY)
@@ -2178,9 +2178,9 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep, int flags)
              pp = ed->table_parts[part_id % ed->table_parts_size];
 #ifdef EDJE_CALC_CACHE
              if (pp->invalidate)
-                proxy_invalidate = EINA_TRUE;
+               proxy_invalidate = EINA_TRUE;
 #endif
-             
+
              if (!pp->calculated) _edje_part_recalc(ed, pp, flags);
           }
      }
@@ -2194,264 +2194,276 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep, int flags)
    if (ep->param1.description)
      {
 #ifdef EDJE_CALC_CACHE
-	if (ed->all_part_change ||
- 	    ep->invalidate ||
- 	    state1 >= ep->param1.state ||
- 	    statec >= ep->param1.state ||
+        if (ed->all_part_change ||
+            ep->invalidate ||
+            state1 >= ep->param1.state ||
+            statec >= ep->param1.state ||
             proxy_invalidate ||
- 	    ((ep->part->type == EDJE_PART_TYPE_TEXT || ep->part->type == EDJE_PART_TYPE_TEXTBLOCK) && ed->text_part_change))
+            ((ep->part->type == EDJE_PART_TYPE_TEXT || ep->part->type == EDJE_PART_TYPE_TEXTBLOCK) && ed->text_part_change))
 #endif
- 	  {
- 	     _edje_part_recalc_single(ed, ep, ep->param1.description, chosen_desc,
- 				      ep->param1.rel1_to_x, ep->param1.rel1_to_y, ep->param1.rel2_to_x, ep->param1.rel2_to_y,
- 				      confine_to,
- 				      p1);
+          {
+             _edje_part_recalc_single(ed, ep, ep->param1.description, chosen_desc,
+                                      ep->param1.rel1_to_x, ep->param1.rel1_to_y, ep->param1.rel2_to_x, ep->param1.rel2_to_y,
+                                      confine_to,
+                                      p1);
 
 #ifdef EDJE_CALC_CACHE
- 	     ep->param1.state = ed->state;
+             ep->param1.state = ed->state;
 #endif
- 	  }
+          }
      }
-   if (ep->param2 && ep->description_pos != ZERO)
+   if (ep->param2)
      {
-	int beginning_pos, part_type;
-	Edje_Calc_Params *p2, *p3;
+        int beginning_pos, part_type;
+        Edje_Calc_Params *p2, *p3;
 
- 	p3 = &lp3;
+        if (ep->current)
+          {
+             p1->x = ep->current->x - ed->x;
+             p1->y = ep->current->y - ed->y;
+             p1->w = ep->current->w;
+             p1->h = ep->current->h;
+             p1->color.r = ep->current->color.r;
+             p1->color.g = ep->current->color.g;
+             p1->color.b = ep->current->color.b;
+             p1->color.a = ep->current->color.a;
+          }
+
+        p3 = &lp3;
 
 #ifndef EDJE_CALC_CACHE
- 	p2 = &lp2;
+        p2 = &lp2;
 #else
- 	p2 = &ep->param2->p;
+        p2 = &ep->param2->p;
 
-	if (ed->all_part_change ||
- 	    ep->invalidate ||
- 	    state2 >= ep->param2->state ||
- 	    statec >= ep->param2->state ||
+        if (ed->all_part_change ||
+            ep->invalidate ||
+            state2 >= ep->param2->state ||
+            statec >= ep->param2->state ||
             proxy_invalidate ||
- 	    ((ep->part->type == EDJE_PART_TYPE_TEXT || ep->part->type == EDJE_PART_TYPE_TEXTBLOCK) && ed->text_part_change))
+            ((ep->part->type == EDJE_PART_TYPE_TEXT || ep->part->type == EDJE_PART_TYPE_TEXTBLOCK) && ed->text_part_change))
 #endif
- 	  {
- 	     _edje_part_recalc_single(ed, ep, ep->param2->description, chosen_desc,
- 				      ep->param2->rel1_to_x, ep->param2->rel1_to_y, ep->param2->rel2_to_x, ep->param2->rel2_to_y,
- 				      confine_to,
-				      p2);
+          {
+             _edje_part_recalc_single(ed, ep, ep->param2->description, chosen_desc,
+                                      ep->param2->rel1_to_x, ep->param2->rel1_to_y, ep->param2->rel2_to_x, ep->param2->rel2_to_y,
+                                      confine_to,
+                                      p2);
 #ifdef EDJE_CALC_CACHE
- 	     ep->param2->state = ed->state;
+             ep->param2->state = ed->state;
 #endif
- 	  }
+          }
 
-  	pos = ep->description_pos;
+        pos = ep->description_pos;
         pos2 = pos;
         if (pos2 < ZERO) pos2 = ZERO;
         else if (pos2 > FROM_INT(1)) pos2 = FROM_INT(1);
-  	beginning_pos = (pos < FROM_DOUBLE(0.5));
-  	part_type = ep->part->type;
+        beginning_pos = (pos < FROM_DOUBLE(0.5));
+        part_type = ep->part->type;
 
-  	/* visible is special */
- 	if ((p1->visible) && (!p2->visible))
- 	  p3->visible = (pos != FROM_INT(1));
- 	else if ((!p1->visible) && (p2->visible))
- 	  p3->visible = (pos != ZERO);
-  	else
- 	  p3->visible = p1->visible;
+        /* visible is special */
+        if ((p1->visible) && (!p2->visible))
+          p3->visible = (pos != FROM_INT(1));
+        else if ((!p1->visible) && (p2->visible))
+          p3->visible = (pos != ZERO);
+        else
+          p3->visible = p1->visible;
 
-	p3->smooth = (beginning_pos) ? p1->smooth : p2->smooth;
+        p3->smooth = (beginning_pos) ? p1->smooth : p2->smooth;
 
-  	/* FIXME: do x and y separately base on flag */
+        /* FIXME: do x and y separately base on flag */
 #define FINTP(_x1, _x2, _p)						\
-	(((_x1) == (_x2))						\
-	 ? FROM_INT((_x1))						\
-	 : ADD(FROM_INT(_x1),						\
-	       SCALE((_p), (_x2) - (_x1))))
+        (((_x1) == (_x2))						\
+         ? FROM_INT((_x1))						\
+         : ADD(FROM_INT(_x1),						\
+               SCALE((_p), (_x2) - (_x1))))
 
 #define FFP(_x1, _x2, _p)			\
-	(((_x1) == (_x2))			\
-	 ? (_x1)				\
-	 : ADD(_x1, MUL(_p, SUB(_x2, _x1))));
+        (((_x1) == (_x2))			\
+         ? (_x1)				\
+         : ADD(_x1, MUL(_p, SUB(_x2, _x1))));
 
 #define INTP(_x1, _x2, _p) TO_INT(FINTP(_x1, _x2, _p))
 
-	p3->x = INTP(p1->x, p2->x, pos);
- 	p3->y = INTP(p1->y, p2->y, pos);
- 	p3->w = INTP(p1->w, p2->w, pos);
- 	p3->h = INTP(p1->h, p2->h, pos);
+        p3->x = INTP(p1->x, p2->x, pos);
+        p3->y = INTP(p1->y, p2->y, pos);
+        p3->w = INTP(p1->w, p2->w, pos);
+        p3->h = INTP(p1->h, p2->h, pos);
 
-	p3->req.x = INTP(p1->req.x, p2->req.x, pos);
- 	p3->req.y = INTP(p1->req.y, p2->req.y, pos);
- 	p3->req.w = INTP(p1->req.w, p2->req.w, pos);
- 	p3->req.h = INTP(p1->req.h, p2->req.h, pos);
+        p3->req.x = INTP(p1->req.x, p2->req.x, pos);
+        p3->req.y = INTP(p1->req.y, p2->req.y, pos);
+        p3->req.w = INTP(p1->req.w, p2->req.w, pos);
+        p3->req.h = INTP(p1->req.h, p2->req.h, pos);
 
- 	if (ep->part->dragable.x)
-	  {
-	     p3->req_drag.x = INTP(p1->req_drag.x, p2->req_drag.x, pos);
- 	     p3->req_drag.w = INTP(p1->req_drag.w, p2->req_drag.w, pos);
-  	  }
-  	if (ep->part->dragable.y)
-  	  {
- 	     p3->req_drag.y = INTP(p1->req_drag.y, p2->req_drag.y, pos);
- 	     p3->req_drag.h = INTP(p1->req_drag.h, p2->req_drag.h, pos);
- 	  }
+        if (ep->part->dragable.x)
+          {
+             p3->req_drag.x = INTP(p1->req_drag.x, p2->req_drag.x, pos);
+             p3->req_drag.w = INTP(p1->req_drag.w, p2->req_drag.w, pos);
+          }
+        if (ep->part->dragable.y)
+          {
+             p3->req_drag.y = INTP(p1->req_drag.y, p2->req_drag.y, pos);
+             p3->req_drag.h = INTP(p1->req_drag.h, p2->req_drag.h, pos);
+          }
 
-	p3->color.r = INTP(p1->color.r, p2->color.r, pos2);
- 	p3->color.g = INTP(p1->color.g, p2->color.g, pos2);
- 	p3->color.b = INTP(p1->color.b, p2->color.b, pos2);
- 	p3->color.a = INTP(p1->color.a, p2->color.a, pos2);
+        p3->color.r = INTP(p1->color.r, p2->color.r, pos2);
+        p3->color.g = INTP(p1->color.g, p2->color.g, pos2);
+        p3->color.b = INTP(p1->color.b, p2->color.b, pos2);
+        p3->color.a = INTP(p1->color.a, p2->color.a, pos2);
 
-  	switch (part_type)
-  	  {
-  	   case EDJE_PART_TYPE_IMAGE:
-	      p3->type.common.spec.image.l = INTP(p1->type.common.spec.image.l, p2->type.common.spec.image.l, pos);
-	      p3->type.common.spec.image.r = INTP(p1->type.common.spec.image.r, p2->type.common.spec.image.r, pos);
-	      p3->type.common.spec.image.t = INTP(p1->type.common.spec.image.t, p2->type.common.spec.image.t, pos);
-	      p3->type.common.spec.image.b = INTP(p1->type.common.spec.image.b, p2->type.common.spec.image.b, pos);
+        switch (part_type)
+          {
+           case EDJE_PART_TYPE_IMAGE:
+              p3->type.common.spec.image.l = INTP(p1->type.common.spec.image.l, p2->type.common.spec.image.l, pos);
+              p3->type.common.spec.image.r = INTP(p1->type.common.spec.image.r, p2->type.common.spec.image.r, pos);
+              p3->type.common.spec.image.t = INTP(p1->type.common.spec.image.t, p2->type.common.spec.image.t, pos);
+              p3->type.common.spec.image.b = INTP(p1->type.common.spec.image.b, p2->type.common.spec.image.b, pos);
            case EDJE_PART_TYPE_PROXY:
- 	      p3->type.common.fill.x = INTP(p1->type.common.fill.x, p2->type.common.fill.x, pos);
- 	      p3->type.common.fill.y = INTP(p1->type.common.fill.y, p2->type.common.fill.y, pos);
- 	      p3->type.common.fill.w = INTP(p1->type.common.fill.w, p2->type.common.fill.w, pos);
- 	      p3->type.common.fill.h = INTP(p1->type.common.fill.h, p2->type.common.fill.h, pos);
-  	      break;
-  	   case EDJE_PART_TYPE_TEXT:
- 	      p3->type.text.size = INTP(p1->type.text.size, p2->type.text.size, pos);
-  	   case EDJE_PART_TYPE_TEXTBLOCK:
- 	      p3->type.text.color2.r = INTP(p1->type.text.color2.r, p2->type.text.color2.r, pos2);
- 	      p3->type.text.color2.g = INTP(p1->type.text.color2.g, p2->type.text.color2.g, pos2);
-	      p3->type.text.color2.b = INTP(p1->type.text.color2.b, p2->type.text.color2.b, pos2);
- 	      p3->type.text.color2.a = INTP(p1->type.text.color2.a, p2->type.text.color2.a, pos2);
+              p3->type.common.fill.x = INTP(p1->type.common.fill.x, p2->type.common.fill.x, pos);
+              p3->type.common.fill.y = INTP(p1->type.common.fill.y, p2->type.common.fill.y, pos);
+              p3->type.common.fill.w = INTP(p1->type.common.fill.w, p2->type.common.fill.w, pos);
+              p3->type.common.fill.h = INTP(p1->type.common.fill.h, p2->type.common.fill.h, pos);
+              break;
+           case EDJE_PART_TYPE_TEXT:
+              p3->type.text.size = INTP(p1->type.text.size, p2->type.text.size, pos);
+           case EDJE_PART_TYPE_TEXTBLOCK:
+              p3->type.text.color2.r = INTP(p1->type.text.color2.r, p2->type.text.color2.r, pos2);
+              p3->type.text.color2.g = INTP(p1->type.text.color2.g, p2->type.text.color2.g, pos2);
+              p3->type.text.color2.b = INTP(p1->type.text.color2.b, p2->type.text.color2.b, pos2);
+              p3->type.text.color2.a = INTP(p1->type.text.color2.a, p2->type.text.color2.a, pos2);
 
- 	      p3->type.text.color3.r = INTP(p1->type.text.color3.r, p2->type.text.color3.r, pos2);
-	      p3->type.text.color3.g = INTP(p1->type.text.color3.g, p2->type.text.color3.g, pos2);
-	      p3->type.text.color3.b = INTP(p1->type.text.color3.b, p2->type.text.color3.b, pos2);
-	      p3->type.text.color3.a = INTP(p1->type.text.color3.a, p2->type.text.color3.a, pos2);
+              p3->type.text.color3.r = INTP(p1->type.text.color3.r, p2->type.text.color3.r, pos2);
+              p3->type.text.color3.g = INTP(p1->type.text.color3.g, p2->type.text.color3.g, pos2);
+              p3->type.text.color3.b = INTP(p1->type.text.color3.b, p2->type.text.color3.b, pos2);
+              p3->type.text.color3.a = INTP(p1->type.text.color3.a, p2->type.text.color3.a, pos2);
 
-	      p3->type.text.align.x = FFP(p1->type.text.align.x, p2->type.text.align.x, pos);
-	      p3->type.text.align.y = FFP(p1->type.text.align.y, p2->type.text.align.y, pos);
-	      p3->type.text.elipsis = TO_DOUBLE(FINTP(p1->type.text.elipsis, p2->type.text.elipsis, pos2));
-  	      break;
-  	  }
+              p3->type.text.align.x = FFP(p1->type.text.align.x, p2->type.text.align.x, pos);
+              p3->type.text.align.y = FFP(p1->type.text.align.y, p2->type.text.align.y, pos);
+              p3->type.text.elipsis = TO_DOUBLE(FINTP(p1->type.text.elipsis, p2->type.text.elipsis, pos2));
+              break;
+          }
 
-	pf = p3;
+        pf = p3;
      }
    else
      {
- 	pf = p1;
+        pf = p1;
      }
 
    ep->req = pf->req;
 
    if (ep->drag && ep->drag->need_reset)
      {
-	FLOAT_T dx, dy;
+        FLOAT_T dx, dy;
 
-	dx = ZERO;
-	dy = ZERO;
-	_edje_part_dragable_calc(ed, ep, &dx, &dy);
+        dx = ZERO;
+        dy = ZERO;
+        _edje_part_dragable_calc(ed, ep, &dx, &dy);
         ep->drag->x = dx;
-	ep->drag->y = dy;
-	ep->drag->tmp.x = 0;
-	ep->drag->tmp.y = 0;
-	ep->drag->need_reset = 0;
+        ep->drag->y = dy;
+        ep->drag->tmp.x = 0;
+        ep->drag->tmp.y = 0;
+        ep->drag->need_reset = 0;
      }
    if (!ed->calc_only)
      {
         Evas_Object *mo;
 
-	/* Common move, resize and color_set for all part. */
-	switch (ep->part->type)
-	  {
-	   case EDJE_PART_TYPE_IMAGE:
-	     {
-		Edje_Part_Description_Image *img_desc = (Edje_Part_Description_Image*) chosen_desc;
+        /* Common move, resize and color_set for all part. */
+        switch (ep->part->type)
+          {
+           case EDJE_PART_TYPE_IMAGE:
+                {
+                   Edje_Part_Description_Image *img_desc = (Edje_Part_Description_Image*) chosen_desc;
 
-		evas_object_image_scale_hint_set(ep->object,
-						 img_desc->image.scale_hint);
-	     }
+                   evas_object_image_scale_hint_set(ep->object,
+                                                    img_desc->image.scale_hint);
+                }
            case EDJE_PART_TYPE_PROXY:
-	   case EDJE_PART_TYPE_RECTANGLE:
-	   case EDJE_PART_TYPE_TEXTBLOCK:
-	   case EDJE_PART_TYPE_BOX:
-	   case EDJE_PART_TYPE_TABLE:
-	      evas_object_color_set(ep->object,
-				    (pf->color.r * pf->color.a) / 255,
-				    (pf->color.g * pf->color.a) / 255,
-				    (pf->color.b * pf->color.a) / 255,
-				    pf->color.a);
-	      if (!pf->visible)
-		{
-		   evas_object_hide(ep->object);
-		   break;
-		}
-	      evas_object_show(ep->object);
-	      /* move and resize are needed for all previous object => no break here. */
-	   case EDJE_PART_TYPE_SWALLOW:
-	   case EDJE_PART_TYPE_GROUP:
-	   case EDJE_PART_TYPE_EXTERNAL:
-	      /* visibility and color have no meaning on SWALLOW and GROUP part. */
-	      evas_object_move(ep->object, ed->x + pf->x, ed->y + pf->y);
-	      evas_object_resize(ep->object, pf->w, pf->h);
-	      if (ep->part->entry_mode > EDJE_ENTRY_EDIT_MODE_NONE)
-	        _edje_entry_real_part_configure(ep);
-	      break;
-	   case EDJE_PART_TYPE_TEXT:
-	      /* This is correctly handle in _edje_text_recalc_apply at the moment. */
-	      break;
-	   case EDJE_PART_TYPE_GRADIENT:
-	      /* FIXME: definitivly remove this code when we switch to new format. */
-	      abort();
-	      break;
-	  }
+           case EDJE_PART_TYPE_RECTANGLE:
+           case EDJE_PART_TYPE_TEXTBLOCK:
+           case EDJE_PART_TYPE_BOX:
+           case EDJE_PART_TYPE_TABLE:
+              evas_object_color_set(ep->object,
+                                    (pf->color.r * pf->color.a) / 255,
+                                    (pf->color.g * pf->color.a) / 255,
+                                    (pf->color.b * pf->color.a) / 255,
+                                    pf->color.a);
+              if (!pf->visible)
+                {
+                   evas_object_hide(ep->object);
+                   break;
+                }
+              evas_object_show(ep->object);
+              /* move and resize are needed for all previous object => no break here. */
+           case EDJE_PART_TYPE_SWALLOW:
+           case EDJE_PART_TYPE_GROUP:
+           case EDJE_PART_TYPE_EXTERNAL:
+              /* visibility and color have no meaning on SWALLOW and GROUP part. */
+              evas_object_move(ep->object, ed->x + pf->x, ed->y + pf->y);
+              evas_object_resize(ep->object, pf->w, pf->h);
+              if (ep->part->entry_mode > EDJE_ENTRY_EDIT_MODE_NONE)
+                _edje_entry_real_part_configure(ep);
+              break;
+           case EDJE_PART_TYPE_TEXT:
+              /* This is correctly handle in _edje_text_recalc_apply at the moment. */
+              break;
+           case EDJE_PART_TYPE_GRADIENT:
+              /* FIXME: definitivly remove this code when we switch to new format. */
+              abort();
+              break;
+          }
 
-	/* Some object need special recalc. */
-	switch (ep->part->type)
-	  {
-	   case EDJE_PART_TYPE_TEXT:
-	      _edje_text_recalc_apply(ed, ep, pf, (Edje_Part_Description_Text*) chosen_desc);
-	      break;
+        /* Some object need special recalc. */
+        switch (ep->part->type)
+          {
+           case EDJE_PART_TYPE_TEXT:
+              _edje_text_recalc_apply(ed, ep, pf, (Edje_Part_Description_Text*) chosen_desc);
+              break;
            case EDJE_PART_TYPE_PROXY:
               _edje_proxy_recalc_apply(ed, ep, pf, (Edje_Part_Description_Proxy*) chosen_desc, pos);
               break;
-	   case EDJE_PART_TYPE_IMAGE:
-	      _edje_image_recalc_apply(ed, ep, pf, (Edje_Part_Description_Image*) chosen_desc, pos);
-	      break;
-	   case EDJE_PART_TYPE_BOX:
-	      _edje_box_recalc_apply(ed, ep, pf, (Edje_Part_Description_Box*) chosen_desc);
-	      break;
-	   case EDJE_PART_TYPE_TABLE:
-	      _edje_table_recalc_apply(ed, ep, pf, (Edje_Part_Description_Table*) chosen_desc);
-	      break;
-	   case EDJE_PART_TYPE_EXTERNAL:
-	   case EDJE_PART_TYPE_RECTANGLE:
-	   case EDJE_PART_TYPE_SWALLOW:
-	   case EDJE_PART_TYPE_GROUP:
-	   case EDJE_PART_TYPE_TEXTBLOCK:
-	      /* Nothing special to do for this type of object. */
-	      break;
-	   case EDJE_PART_TYPE_GRADIENT:
-	      /* FIXME: definitivly remove this code when we switch to new format. */
-	      abort();
-	      break;
-	  }
+           case EDJE_PART_TYPE_IMAGE:
+              _edje_image_recalc_apply(ed, ep, pf, (Edje_Part_Description_Image*) chosen_desc, pos);
+              break;
+           case EDJE_PART_TYPE_BOX:
+              _edje_box_recalc_apply(ed, ep, pf, (Edje_Part_Description_Box*) chosen_desc);
+              break;
+           case EDJE_PART_TYPE_TABLE:
+              _edje_table_recalc_apply(ed, ep, pf, (Edje_Part_Description_Table*) chosen_desc);
+              break;
+           case EDJE_PART_TYPE_EXTERNAL:
+           case EDJE_PART_TYPE_RECTANGLE:
+           case EDJE_PART_TYPE_SWALLOW:
+           case EDJE_PART_TYPE_GROUP:
+           case EDJE_PART_TYPE_TEXTBLOCK:
+              /* Nothing special to do for this type of object. */
+              break;
+           case EDJE_PART_TYPE_GRADIENT:
+              /* FIXME: definitivly remove this code when we switch to new format. */
+              abort();
+              break;
+          }
 
-	if (ep->swallowed_object)
-	  {
-//// the below really is wrong - swallow color shouldn't affect swallowed object
-//// color - the edje color as a WHOLE should though - and that should be
-//// done via the clipper anyway. this created bugs when objects had their
-//// colro set and were swallowed - then had their color changed.
-//	     evas_object_color_set(ep->swallowed_object,
-//				   (pf->color.r * pf->color.a) / 255,
-//				   (pf->color.g * pf->color.a) / 255,
-//				   (pf->color.b * pf->color.a) / 255,
-//				   pf->color.a);
-	     if (pf->visible)
-	       {
-		  evas_object_move(ep->swallowed_object, ed->x + pf->x, ed->y + pf->y);
-		  evas_object_resize(ep->swallowed_object, pf->w, pf->h);
-		  evas_object_show(ep->swallowed_object);
-	       }
-	     else evas_object_hide(ep->swallowed_object);
+        if (ep->swallowed_object)
+          {
+             //// the below really is wrong - swallow color shouldn't affect swallowed object
+             //// color - the edje color as a WHOLE should though - and that should be
+             //// done via the clipper anyway. this created bugs when objects had their
+             //// colro set and were swallowed - then had their color changed.
+             //	     evas_object_color_set(ep->swallowed_object,
+             //				   (pf->color.r * pf->color.a) / 255,
+             //				   (pf->color.g * pf->color.a) / 255,
+             //				   (pf->color.b * pf->color.a) / 255,
+             //				   pf->color.a);
+             if (pf->visible)
+               {
+                  evas_object_move(ep->swallowed_object, ed->x + pf->x, ed->y + pf->y);
+                  evas_object_resize(ep->swallowed_object, pf->w, pf->h);
+                  evas_object_show(ep->swallowed_object);
+               }
+             else evas_object_hide(ep->swallowed_object);
              mo = ep->swallowed_object;
-	  }
+          }
         else mo = ep->object;
         if (chosen_desc->map.on)
           {
@@ -2536,10 +2548,10 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep, int flags)
                                      MUL(pos, SUB(desc2->map.rot.x,
                                                   desc1->map.rot.x))));
                   ry = TO_DOUBLE(ADD(desc1->map.rot.y,
-				     MUL(pos, SUB(desc2->map.rot.y,
+                                     MUL(pos, SUB(desc2->map.rot.y,
                                                   desc1->map.rot.y))));
                   rz = TO_DOUBLE(ADD(desc1->map.rot.z,
-				     MUL(pos, SUB(desc2->map.rot.z,
+                                     MUL(pos, SUB(desc2->map.rot.z,
                                                   desc1->map.rot.z))));
                }
              else
@@ -2894,8 +2906,8 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep, int flags)
 #ifdef EDJE_CALC_CACHE
    if (ep->calculated == FLAG_XY)
      {
-	ep->state = ed->state;
-	ep->invalidate = 0;
+        ep->state = ed->state;
+        ep->invalidate = 0;
      }
 #endif
 
