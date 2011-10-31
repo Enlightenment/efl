@@ -68,11 +68,10 @@ test_label(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info 
    elm_box_pack_end(bx, lb);
    evas_object_show(lb);
 
-   elm_win_resize_object_add(win, bx);
-   evas_object_show(bx);
-
    evas_object_resize(win, 320, 300);
 
+   evas_object_show(bx);
    evas_object_show(win);
+   elm_win_resize_object_add(win, bx);
 }
 #endif
