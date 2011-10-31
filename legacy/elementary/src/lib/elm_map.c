@@ -2556,7 +2556,7 @@ _group_bubble_content_update(Marker_Group *group)
 
         elm_scroller_content_set(group->sc, group->bx);
 
-        evas_object_event_callback_add(group->sc, EVAS_CALLBACK_RESIZE,
+        evas_object_event_callback_add(group->sc, EVAS_CALLBACK_CHANGED_SIZE_HINTS,
                                        _bubble_sc_hits_changed_cb, group);
      }
 

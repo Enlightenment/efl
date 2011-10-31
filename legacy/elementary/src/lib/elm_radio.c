@@ -402,6 +402,8 @@ elm_radio_icon_unset(Evas_Object *obj)
    if (!wd->icon) return NULL;
    Evas_Object *icon = wd->icon;
    elm_widget_sub_object_del(obj, wd->icon);
+   evas_object_event_callback_del_full(wd->icon, EVAS_CALLBACK_CHANGED_SIZE_HINTS,
+                                       _changed_size_hints, obj);
    edje_object_part_unswallow(wd->radio, wd->icon);
    wd->icon = NULL;
    return icon;

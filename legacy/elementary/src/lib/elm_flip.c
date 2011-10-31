@@ -1721,6 +1721,9 @@ elm_flip_content_front_unset(Evas_Object *obj)
    Evas_Object *content = wd->front.content;
    evas_object_clip_unset(content);
    elm_widget_sub_object_del(obj, content);
+   evas_object_event_callback_del_full(content,
+                                       EVAS_CALLBACK_CHANGED_SIZE_HINTS,
+                                       _changed_size_hints, obj);
    evas_object_smart_member_del(content);
    wd->front.content = NULL;
    return content;
@@ -1736,6 +1739,9 @@ elm_flip_content_back_unset(Evas_Object *obj)
    Evas_Object *content = wd->back.content;
    evas_object_clip_unset(content);
    elm_widget_sub_object_del(obj, content);
+   evas_object_event_callback_del_full(content,
+                                       EVAS_CALLBACK_CHANGED_SIZE_HINTS,
+                                       _changed_size_hints, obj);
    evas_object_smart_member_del(content);
    wd->back.content = NULL;
    return content;

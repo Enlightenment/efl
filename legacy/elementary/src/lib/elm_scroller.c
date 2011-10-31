@@ -526,6 +526,9 @@ elm_scroller_content_unset(Evas_Object *obj)
    if (!wd->content) return NULL;
    content = wd->content;
    elm_widget_sub_object_del(obj, wd->content);
+   evas_object_event_callback_del_full(wd->content,
+                                       EVAS_CALLBACK_CHANGED_SIZE_HINTS,
+                                       _changed_size_hints, obj);
    edje_object_part_unswallow(elm_smart_scroller_edje_object_get(wd->scr), wd->content);
    wd->content = NULL;
    return content;

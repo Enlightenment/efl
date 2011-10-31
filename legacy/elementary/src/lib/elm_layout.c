@@ -424,6 +424,9 @@ _content_unset_hook(Evas_Object *obj, const char *part)
              if (!si->obj) return NULL;
              content = si->obj; /* si will die in _sub_del due elm_widget_sub_object_del() */
              elm_widget_sub_object_del(obj, content);
+             evas_object_event_callback_del_full(content,
+                                                 EVAS_CALLBACK_CHANGED_SIZE_HINTS,
+                                                 _changed_size_hints, wd);
              edje_object_part_unswallow(wd->lay, content);
              return content;
           }

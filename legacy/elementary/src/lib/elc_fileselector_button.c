@@ -22,6 +22,7 @@ struct _Widget_Data
 
 static const char *widtype = NULL;
 
+static void _del_pre_hook(Evas_Object *obj);
 static void _del_hook(Evas_Object *obj);
 static void _theme_hook(Evas_Object *obj);
 static void _disable_hook(Evas_Object *obj);
@@ -30,6 +31,9 @@ static void _changed_size_hints(void        *data,
                                 Evas        *e,
                                 Evas_Object *obj,
                                 void        *event_info);
+static void _button_clicked(void        *data,
+                            Evas_Object *obj,
+                            void        *event_info);
 static void _on_focus_hook(void        *data,
                            Evas_Object *obj);
 static void _selection_done(void        *data,
@@ -42,6 +46,16 @@ static const Evas_Smart_Cb_Description _signals[] = {
        {SIG_FILE_CHOSEN, "s"},
        {NULL, NULL}
 };
+
+static void
+_del_pre_hook(Evas_Object *obj)
+{
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return;
+   evas_object_event_callback_del_full(wd->btn, EVAS_CALLBACK_CHANGED_SIZE_HINTS,
+                                       _changed_size_hints, obj);
+   evas_object_smart_callback_del(wd->btn, "clicked", _button_clicked);
+}
 
 static void
 _del_hook(Evas_Object *obj)
@@ -274,6 +288,7 @@ elm_fileselector_button_add(Evas_Object *parent)
    elm_widget_sub_object_add(parent, obj);
    elm_widget_on_focus_hook_set(obj, _on_focus_hook, NULL);
    elm_widget_data_set(obj, wd);
+   elm_widget_del_pre_hook_set(obj, _del_pre_hook);
    elm_widget_del_hook_set(obj, _del_hook);
    elm_widget_theme_hook_set(obj, _theme_hook);
    elm_widget_disable_hook_set(obj, _disable_hook);

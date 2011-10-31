@@ -593,6 +593,9 @@ elm_slider_icon_unset(Evas_Object *obj)
    if (wd->icon)
      {
         elm_widget_sub_object_del(obj, wd->icon);
+        evas_object_event_callback_del_full(wd->icon,
+                                            EVAS_CALLBACK_CHANGED_SIZE_HINTS,
+                                            _changed_size_hints, obj);
         ret = wd->icon;
         edje_object_part_unswallow(wd->slider, wd->icon);
         edje_object_signal_emit(wd->slider, "elm,state,icon,hidden", "elm");
@@ -843,6 +846,9 @@ elm_slider_end_unset(Evas_Object *obj)
    if (wd->end)
      {
         elm_widget_sub_object_del(obj, wd->end);
+        evas_object_event_callback_del_full(wd->end,
+                                            EVAS_CALLBACK_CHANGED_SIZE_HINTS,
+                                            _changed_size_hints, obj);
         ret = wd->end;
         edje_object_part_unswallow(wd->slider, wd->end);
         edje_object_signal_emit(wd->slider, "elm,state,end,hidden", "elm");

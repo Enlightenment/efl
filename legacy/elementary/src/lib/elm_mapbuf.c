@@ -191,6 +191,9 @@ _content_unset_hook(Evas_Object *obj, const char *part __UNUSED__)
    if (!wd->content) return NULL;
    content = wd->content;
    elm_widget_sub_object_del(obj, content);
+   evas_object_event_callback_add(content,
+                                  EVAS_CALLBACK_CHANGED_SIZE_HINTS,
+                                  _changed_size_hints, obj);
    evas_object_smart_member_del(content);
    evas_object_color_set(wd->clip, 0, 0, 0, 0);
    evas_object_clip_unset(content);

@@ -2612,6 +2612,9 @@ elm_win_inwin_content_unset(Evas_Object *obj)
    if (!wd->content) return NULL;
    Evas_Object *content = wd->content;
    elm_widget_sub_object_del(obj, wd->content);
+   evas_object_event_callback_del_full(wd->content,
+                                       EVAS_CALLBACK_CHANGED_SIZE_HINTS,
+                                       _changed_size_hints, obj);
    edje_object_part_unswallow(wd->frm, wd->content);
    wd->content = NULL;
    return content;

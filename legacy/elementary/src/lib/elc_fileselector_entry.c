@@ -62,6 +62,8 @@ SIG_FWD(SELECTION_CUT)
 SIG_FWD(UNPRESSED)
 #undef SIG_FWD
 
+static void _del_pre_hook(Evas_Object *obj);
+static void _changed_size_hints(void *data, Evas *e, Evas_Object *obj, void *event_info);
 static void _mirrored_set(Evas_Object *obj, Eina_Bool rtl);
 
 static void
@@ -80,6 +82,17 @@ _ACTIVATED_fwd(void *data, Evas_Object *obj __UNUSED__, void *event_info)
    const char *file = elm_entry_entry_get(wd->entry);
    elm_fileselector_button_path_set(wd->button, file);
    evas_object_smart_callback_call(data, SIG_ACTIVATED, event_info);
+}
+
+static void
+_del_pre_hook(Evas_Object *obj)
+{
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return;
+   evas_object_event_callback_del_full
+      (wd->button, EVAS_CALLBACK_CHANGED_SIZE_HINTS, _changed_size_hints, obj);
+   evas_object_event_callback_del_full
+      (wd->entry, EVAS_CALLBACK_CHANGED_SIZE_HINTS, _changed_size_hints, obj);
 }
 
 static void
@@ -233,6 +246,7 @@ elm_fileselector_entry_add(Evas_Object *parent)
    elm_widget_type_set(obj, "fileselector_entry");
    elm_widget_sub_object_add(parent, obj);
    elm_widget_data_set(obj, wd);
+   elm_widget_del_pre_hook_set(obj, _del_pre_hook);
    elm_widget_del_hook_set(obj, _del_hook);
    elm_widget_disable_hook_set(obj, _disable_hook);
    elm_widget_focus_next_hook_set(obj, _elm_fileselector_entry_focus_next_hook);

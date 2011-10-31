@@ -281,6 +281,8 @@ elm_bubble_content_unset(Evas_Object *obj)
    if (!wd->content) return NULL;
    content = wd->content;
    elm_widget_sub_object_del(obj, content);
+   evas_object_event_callback_del_full(content, EVAS_CALLBACK_CHANGED_SIZE_HINTS,
+                                       _changed_size_hints, obj);
    edje_object_part_unswallow(wd->bbl, content);
    wd->content = NULL;
    return content;
@@ -326,6 +328,8 @@ elm_bubble_icon_unset(Evas_Object *obj)
    if (!wd->icon) return NULL;
    icon = wd->icon;
    elm_widget_sub_object_del(obj, icon);
+   evas_object_event_callback_del_full(icon, EVAS_CALLBACK_CHANGED_SIZE_HINTS,
+                                       _changed_size_hints, obj);
    edje_object_part_unswallow(wd->bbl, icon);
    wd->icon = NULL;
    return icon;

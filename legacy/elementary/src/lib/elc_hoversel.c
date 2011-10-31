@@ -49,6 +49,8 @@ _del_pre_hook(Evas_Object *obj)
    Elm_Hoversel_Item *item;
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return;
+   evas_object_event_callback_del_full(wd->btn, EVAS_CALLBACK_CHANGED_SIZE_HINTS,
+                                       _changed_size_hints, obj);
    elm_hoversel_hover_end(obj);
    elm_hoversel_hover_parent_set(obj, NULL);
    EINA_LIST_FREE(wd->items, item)
