@@ -12415,7 +12415,7 @@ extern "C" {
     *
     * This function sets the content shown on the middle of the bubble.
     */
-   EAPI void         elm_bubble_content_set(Evas_Object *obj, Evas_Object *content) EINA_ARG_NONNULL(1);
+   EINA_DEPRECATED EAPI void         elm_bubble_content_set(Evas_Object *obj, Evas_Object *content) EINA_ARG_NONNULL(1);
    /**
     * Get the content shown in the bubble
     *
@@ -12424,7 +12424,7 @@ extern "C" {
     * @param obj The bubble object
     * @return The content that is being used
     */
-   EAPI Evas_Object *elm_bubble_content_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
+   EINA_DEPRECATED EAPI Evas_Object *elm_bubble_content_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
    /**
     * Unset the content shown in the bubble
     *
@@ -12433,7 +12433,7 @@ extern "C" {
     * @param obj The bubble object
     * @return The content that was being used
     */
-   EAPI Evas_Object *elm_bubble_content_unset(Evas_Object *obj) EINA_ARG_NONNULL(1);
+   EINA_DEPRECATED EAPI Evas_Object *elm_bubble_content_unset(Evas_Object *obj) EINA_ARG_NONNULL(1);
    /**
     * Set the icon of the bubble
     *
