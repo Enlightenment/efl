@@ -14341,7 +14341,8 @@ extern "C" {
         ELM_TOOLBAR_SHRINK_NONE,   /**< Set toolbar minimun size to fit all the items. */
         ELM_TOOLBAR_SHRINK_HIDE,   /**< Hide exceeding items. */
         ELM_TOOLBAR_SHRINK_SCROLL, /**< Allow accessing exceeding items through a scroller. */
-        ELM_TOOLBAR_SHRINK_MENU    /**< Inserts a button to pop up a menu with exceeding items. */
+        ELM_TOOLBAR_SHRINK_MENU,   /**< Inserts a button to pop up a menu with exceeding items. */
+        ELM_TOOLBAR_SHRINK_LAST    /**< Indicates error if returned by elm_toolbar_shrink_mode_get() */
      } Elm_Toolbar_Shrink_Mode;
 
    typedef struct _Elm_Toolbar_Item Elm_Toolbar_Item; /**< Item of Elm_Toolbar. Sub-type of Elm_Widget_Item. Can be created with elm_toolbar_item_append(), elm_toolbar_item_prepend() and functions to add items in relative positions, like elm_toolbar_item_insert_before(), and deleted with elm_toolbar_item_del(). */
@@ -15547,7 +15548,16 @@ extern "C" {
     * By default, a toolbar will be horizontal. Use this function to create a vertical toolbar.
     * @ingroup Toolbar
     */
-   EAPI void             elm_toolbar_orientation_set(Evas_Object *obj, Eina_Bool vertical) EINA_ARG_NONNULL(1);
+   EINA_DEPRECATED EAPI void             elm_toolbar_orientation_set(Evas_Object *obj, Eina_Bool vertical) EINA_ARG_NONNULL(1);
+
+   /**
+    * Change a toolbar's orientation
+    * @param obj The toolbar object
+    * @param horizontal If @c EINA_TRUE, the toolbar is horizontal
+    * By default, a toolbar will be horizontal. Use this function to create a vertical toolbar.
+    * @ingroup Toolbar
+    */
+   EAPI void             elm_toolbar_horizontal_set(Evas_Object *obj, Eina_Bool horizontal) EINA_ARG_NONNULL(1);
 
    /**
     * Get a toolbar's orientation
@@ -15556,8 +15566,16 @@ extern "C" {
     * By default, a toolbar will be horizontal. Use this function to determine whether a toolbar is vertical.
     * @ingroup Toolbar
     */
-   EAPI Eina_Bool        elm_toolbar_orientation_get(Evas_Object *obj) EINA_ARG_NONNULL(1);
+   EINA_DEPRECATED EAPI Eina_Bool        elm_toolbar_orientation_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
 
+   /**
+    * Get a toolbar's orientation
+    * @param obj The toolbar object
+    * @return If @c EINA_TRUE, the toolbar is horizontal
+    * By default, a toolbar will be horizontal. Use this function to determine whether a toolbar is vertical.
+    * @ingroup Toolbar
+    */
+   EAPI Eina_Bool elm_toolbar_horizontal_get(const Evas_Object *obj);
    /**
     * @}
     */

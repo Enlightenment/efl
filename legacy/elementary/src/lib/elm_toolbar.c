@@ -407,18 +407,15 @@ _sizing_eval(Evas_Object *obj)
    if ((!wd->vertical) && (w > minw)) minw = w;
    evas_object_resize(wd->bx, minw, minh);
    elm_smart_scroller_child_viewport_size_get(wd->scr, &vw, &vh);
-   switch (wd->shrink_mode)
+   if (wd->shrink_mode == ELM_TOOLBAR_SHRINK_NONE)
      {
-      case ELM_TOOLBAR_SHRINK_MENU: /* fallthrough */
-      case ELM_TOOLBAR_SHRINK_HIDE: /* fallthrough */
-      case ELM_TOOLBAR_SHRINK_SCROLL:
-        if (wd->vertical) minh = h - vh;
-        else minw = w - vw;
-        break;
-      case ELM_TOOLBAR_SHRINK_NONE:
         if (wd->vertical) minh = minh_bx + (h - vh);
         else minw = minw_bx + (w - vw);
-        break;
+     }
+   else
+     {
+        if (wd->vertical) minh = h - vh;
+        else minw = w - vw;
      }
    minh = minh + (h - vh);
    evas_object_size_hint_min_set(obj, minw, minh);
@@ -1931,21 +1928,35 @@ elm_toolbar_icon_order_lookup_get(const Evas_Object *obj)
    return wd->lookup_order;
 }
 
-EAPI void
+EINA_DEPRECATED EAPI void
 elm_toolbar_orientation_set(Evas_Object *obj, Eina_Bool vertical)
+{
+   elm_toolbar_horizontal_set(obj, !vertical);
+}
+
+EINA_DEPRECATED EAPI Eina_Bool
+elm_toolbar_orientation_get(const Evas_Object *obj)
+{
+   return !elm_toolbar_horizontal_get(obj);
+}
+
+EAPI void
+elm_toolbar_horizontal_set(Evas_Object *obj, Eina_Bool horizontal)
 {
    ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return;
-   wd->vertical = vertical;
+   wd->vertical = !horizontal;
    _sizing_eval(obj);
 }
 
 EAPI Eina_Bool
-elm_toolbar_orientation_get(Evas_Object *obj)
+elm_toolbar_horizontal_get(const Evas_Object *obj)
 {
    ELM_CHECK_WIDTYPE(obj, widtype) EINA_FALSE;
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return EINA_FALSE;
-   return wd->vertical;
+   return !wd->vertical;
 }
+
+
