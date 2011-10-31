@@ -513,7 +513,7 @@ static void _group_bubble_place(Marker_Group *group);
 static int _group_bubble_content_update(Marker_Group *group);
 static void _group_bubble_content_free(Marker_Group *group);
 static void marker_place(Evas_Object *obj, Grid *g, Evas_Coord px, Evas_Coord py, Evas_Coord ox, Evas_Coord oy, Evas_Coord ow, Evas_Coord oh);
-static void _bubble_sc_hits_changed_cb(void *data, Evas *e, Evas_Object *obj, void *event_info);
+static void _bubble_sc_hints_changed_cb(void *data, Evas *e, Evas_Object *obj, void *event_info);
 
 static void _mouse_down(void *data, Evas *evas, Evas_Object *obj, void *event_info);
 static void _mouse_up(void *data, Evas *evas, Evas_Object *obj, void *event_info);
@@ -2115,7 +2115,7 @@ _del_pre_hook(Evas_Object *obj)
                   EINA_LIST_FREE(group->markers, marker)
                     {
                        evas_object_event_callback_del_full(group->sc, EVAS_CALLBACK_CHANGED_SIZE_HINTS,
-                                                           _bubble_sc_hits_changed_cb, group);
+                                                           _bubble_sc_hints_changed_cb, group);
                        if (free_marker) free(marker);
                     }
                   free(group);
@@ -2521,7 +2521,7 @@ _group_bubble_create(Marker_Group *group)
    _group_bubble_place(group);
 }
 
-static void _bubble_sc_hits_changed_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+static void _bubble_sc_hints_changed_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    _group_bubble_place(data);
 }
@@ -2557,7 +2557,7 @@ _group_bubble_content_update(Marker_Group *group)
         elm_scroller_content_set(group->sc, group->bx);
 
         evas_object_event_callback_add(group->sc, EVAS_CALLBACK_CHANGED_SIZE_HINTS,
-                                       _bubble_sc_hits_changed_cb, group);
+                                       _bubble_sc_hints_changed_cb, group);
      }
 
    EINA_LIST_FOREACH(group->markers, l, marker)
@@ -2601,7 +2601,7 @@ _group_bubble_free(Marker_Group *group)
    if (!group->bubble) return;
    group->wd->opened_bubbles = eina_list_remove(group->wd->opened_bubbles, group);
    evas_object_event_callback_del_full(group->sc, EVAS_CALLBACK_CHANGED_SIZE_HINTS,
-                                       _bubble_sc_hits_changed_cb, group);
+                                       _bubble_sc_hints_changed_cb, group);
    evas_object_del(group->bubble);
    evas_object_del(group->rect);
    group->bubble = NULL;
