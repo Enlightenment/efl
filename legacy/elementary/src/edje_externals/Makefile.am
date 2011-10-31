@@ -41,6 +41,7 @@ elm_entry.c \
 elm_fileselector.c \
 elm_fileselector_button.c \
 elm_fileselector_entry.c \
+elm_frame.c \
 elm_gengrid.c \
 elm_genlist.c \
 elm_hoversel.c \
