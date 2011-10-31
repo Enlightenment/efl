@@ -501,17 +501,17 @@ _content_set_hook(Evas_Object *obj, const char *part __UNUSED__, Evas_Object *co
    else edje_object_signal_emit(wd->layout, "elm,player,pause", "elm");
 
    evas_object_smart_callback_add(wd->emotion, "frame_decode",
-                                  _update_slider, player);
+                                  _update_slider, obj);
    evas_object_smart_callback_add(wd->emotion, "frame_resize",
-                                  _update_slider, player);
+                                  _update_slider, obj);
    evas_object_smart_callback_add(wd->emotion, "length_change",
-                                  _update_slider, player);
+                                  _update_slider, obj);
    evas_object_smart_callback_add(wd->emotion, "position_update",
-                                  _update_slider, player);
+                                  _update_slider, obj);
    evas_object_smart_callback_add(wd->emotion, "playback_started",
-                                  _play_started, player);
+                                  _play_started, obj);
    evas_object_smart_callback_add(wd->emotion, "playback_finished",
-                                  _play_finished, player);
+                                  _play_finished, obj);
 
    /* FIXME: track info from video */
 #else
