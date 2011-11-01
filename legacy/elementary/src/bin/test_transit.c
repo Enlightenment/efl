@@ -106,6 +106,12 @@ _transit_wipe(void *data __UNUSED__, Evas_Object *obj, void *event_info __UNUSED
 }
 
 static void
+_transit_del_cb(void *data, Elm_Transit *transit __UNUSED__)
+{
+   evas_object_freeze_events_set(data, EINA_FALSE);
+}
+
+static void
 _transit_image_animation(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    Eina_List *images = NULL;
@@ -126,12 +132,13 @@ _transit_image_animation(void *data, Evas_Object *obj __UNUSED__, void *event_in
    images = eina_list_append(images, eina_stringshare_add(buf));
 
    trans = elm_transit_add();
+   elm_transit_del_cb_set(trans, _transit_del_cb, obj);
    elm_transit_object_add(trans, ic);
-
    elm_transit_effect_image_animation_add(trans, images);
-
    elm_transit_duration_set(trans, 5.0);
    elm_transit_go(trans);
+
+   evas_object_freeze_events_set(obj, EINA_TRUE);
 }
 
 static void
