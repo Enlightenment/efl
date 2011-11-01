@@ -355,6 +355,7 @@ ecore_con_url_free(Ecore_Con_Url *url_con)
         // FIXME: For an unknown reason, progress continue to arrive after destruction
         // this prevent any further call to the callback.
         curl_easy_setopt(url_con->curl_easy, CURLOPT_PROGRESSFUNCTION, NULL);
+        curl_easy_setopt(url_con->curl_easy, CURLOPT_NOPROGRESS, EINA_TRUE);
 
         if (url_con->active)
           {
