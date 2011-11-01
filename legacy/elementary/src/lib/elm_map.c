@@ -1164,6 +1164,7 @@ grid_clear(Evas_Object *obj, Grid *g)
              DBG("DOWNLOAD abort %s", gi->file);
              ecore_file_download_abort(gi->job);
              ecore_file_remove(gi->file);
+             gi->have = EINA_FALSE;
              gi->job = NULL;
              wd->try_num--;
           }
@@ -1223,6 +1224,7 @@ _tile_downloaded(void *data, const char *file __UNUSED__, int status)
      {
         DBG("Download failed %s (%d) ", gi->file, status);
         ecore_file_remove(gi->file);
+        gi->have = EINA_FALSE;
      }
    else
      gi->wd->finish_num++;
