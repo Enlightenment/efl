@@ -15691,7 +15691,10 @@ extern "C" {
     * cursors, also use ones coming from Edje theming files. Both
     * globally and per widget, Elementary makes it possible for one to
     * make the cursors lookup to be held on engines only or on
-    * Elementary's theme file, too.
+    * Elementary's theme file, too. To set cursor's hot spot,
+    * two data items should be added to cursor's theme: "hot_x" and
+    * "hot_y", that are the offset from upper-left corner of the cursor
+    * (coordinates 0,0).
     *
     * @{
     */
