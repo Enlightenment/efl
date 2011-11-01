@@ -1186,7 +1186,12 @@ _tile_update(Grid_Item *gi)
    gi->download = EINA_FALSE;
    evas_object_image_file_set(gi->img, gi->file, NULL);
    if (evas_object_image_load_error_get(gi->img) != EVAS_LOAD_ERROR_NONE)
-     ecore_file_remove(gi->file);
+     {
+        ERR("Image loading error (%s)", gi->file);
+        ecore_file_remove(gi->file);
+        gi->have = EINA_FALSE;
+        return;
+     }
 
    obj_rotate_zoom(gi->wd->obj, gi->img);
    evas_object_show(gi->img);
