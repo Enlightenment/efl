@@ -86,7 +86,7 @@ test_hover(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info 
 
    evas_object_size_hint_min_set(bg, 160, 160);
    evas_object_size_hint_max_set(bg, 640, 640);
-   evas_object_resize(win, 320, 320);
+   evas_object_resize(win, 440, 440);
    evas_object_show(win);
 }
 
@@ -166,7 +166,7 @@ test_hover2(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info
 
    evas_object_size_hint_min_set(bg, 160, 160);
    evas_object_size_hint_max_set(bg, 640, 640);
-   evas_object_resize(win, 320, 320);
+   evas_object_resize(win, 440, 440);
    evas_object_show(win);
 }
 #endif
