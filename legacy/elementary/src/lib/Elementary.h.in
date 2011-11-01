@@ -9019,7 +9019,7 @@ extern "C" {
     * Return the data associated to a given gengrid item
     *
     * @param item The gengrid item.
-    * @return the data associated to this item.
+    * @return the data associated with this item.
     *
     * This returns the @c data value passed on the
     * elm_gengrid_item_append() and related item addition calls.
@@ -9032,18 +9032,19 @@ extern "C" {
    EAPI void              *elm_gengrid_item_data_get(const Elm_Gengrid_Item *item) EINA_ARG_NONNULL(1);
 
    /**
-    * Set the data associated to a given gengrid item
+    * Set the data associated with a given gengrid item
     *
     * @param item The gengrid item
-    * @param data The new data pointer to set on it
+    * @param data The data pointer to set on it
     *
     * This @b overrides the @c data value passed on the
     * elm_gengrid_item_append() and related item addition calls. This
     * function @b won't call elm_gengrid_item_update() automatically,
-    * so you'd issue it afterwards if you want to hove the item
-    * updated to reflect the that new data.
+    * so you'd issue it afterwards if you want to have the item
+    * updated to reflect the new data.
     *
     * @see elm_gengrid_item_data_get()
+    * @see elm_gengrid_item_update()
     *
     * @ingroup Gengrid
     */
@@ -9054,12 +9055,10 @@ extern "C" {
     * gengrid's grid area.
     *
     * @param item The Gengrid item.
-    * @param x Pointer to variable where to store the item's <b>row
-    * number</b>.
-    * @param y Pointer to variable where to store the item's <b>column
-    * number</b>.
+    * @param x Pointer to variable to store the item's <b>row number</b>.
+    * @param y Pointer to variable to store the item's <b>column number</b>.
     *
-    * This returns the "logical" position of the item whithin the
+    * This returns the "logical" position of the item within the
     * gengrid. For example, @c (0, 1) would stand for first row,
     * second column.
     *
@@ -9074,7 +9073,7 @@ extern "C" {
     * @param selected Use @c EINA_TRUE, to make it selected, @c
     * EINA_FALSE to make it unselected
     *
-    * This sets the selected state of an item. If multi selection is
+    * This sets the selected state of an item. If multi-selection is
     * not enabled on the containing gengrid and @p selected is @c
     * EINA_TRUE, any other previously selected items will get
     * unselected in favor of this new one.
@@ -9090,6 +9089,8 @@ extern "C" {
     *
     * @param item The gengrid item
     * @return @c EINA_TRUE, if it's selected, @c EINA_FALSE otherwise
+    *
+    * This API returns EINA_TRUE for all the items selected in multi-select mode as well.
     *
     * @see elm_gengrid_item_selected_set() for more details
     *
@@ -9136,12 +9137,12 @@ extern "C" {
    EAPI void               elm_gengrid_item_show(Elm_Gengrid_Item *item) EINA_ARG_NONNULL(1);
 
    /**
-    * Animatedly bring in, to the visible are of a gengrid, a given
+    * Animatedly bring in, to the visible area of a gengrid, a given
     * item on it.
     *
     * @param item The gengrid item to display
     *
-    * This causes gengrig to jump to the given @p item item and show
+    * This causes gengrid to jump to the given @p item and show
     * it (by scrolling), if it is not fully visible. This will use
     * animation to do so and take a period of time to complete.
     *
@@ -9197,7 +9198,7 @@ extern "C" {
    EAPI void               elm_gengrid_item_tooltip_text_set(Elm_Gengrid_Item *item, const char *text) EINA_ARG_NONNULL(1);
 
    /**
-    * Set the content to be shown in a given gengrid item's tooltips
+    * Set the content to be shown in a given gengrid item's tooltip
     *
     * @param item The gengrid item.
     * @param func The function returning the tooltip contents.
