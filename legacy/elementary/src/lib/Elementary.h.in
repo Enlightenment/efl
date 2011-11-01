@@ -8497,8 +8497,52 @@ extern "C" {
     */
    EAPI Elm_Gengrid_Item  *elm_gengrid_item_insert_after(Evas_Object *obj, const Elm_Gengrid_Item_Class *gic, const void *data, Elm_Gengrid_Item *relative, Evas_Smart_Cb func, const void *func_data) EINA_ARG_NONNULL(1);
 
+   /**
+    * Insert an item in a gengrid widget using a user-defined sort function.
+    *
+    * @param obj The gengrid object.
+    * @param gic The item class for the item.
+    * @param data The item data.
+    * @param comp User defined comparison function that defines the sort order based on
+    * Elm_Gen_Item and its data param.
+    * @param func Convenience function called when the item is selected.
+    * @param func_data Data to be passed to @p func.
+    * @return A handle to the item added or @c NULL, on errors.
+    *
+    * This inserts an item in the gengrid based on user defined comparison function.
+    *
+    * @see elm_gengrid_item_append()
+    * @see elm_gengrid_item_prepend()
+    * @see elm_gengrid_item_insert_after()
+    * @see elm_gengrid_item_del()
+    * @see elm_gengrid_item_direct_sorted_insert()
+    *
+    * @ingroup Gengrid
+    */
    EAPI Elm_Gengrid_Item  *elm_gengrid_item_sorted_insert(Evas_Object *obj, const Elm_Gengrid_Item_Class *gic, const void *data, Eina_Compare_Cb comp, Evas_Smart_Cb func, const void *func_data) EINA_ARG_NONNULL(1);
 
+   /**
+    * Insert an item in a gengrid widget using a user-defined sort function.
+    *
+    * @param obj The gengrid object.
+    * @param gic The item class for the item.
+    * @param data The item data.
+    * @param comp User defined comparison function that defines the sort order based on
+    * Elm_Gen_Item.
+    * @param func Convenience function called when the item is selected.
+    * @param func_data Data to be passed to @p func.
+    * @return A handle to the item added or @c NULL, on errors.
+    *
+    * This inserts an item in the gengrid based on user defined comparison function.
+    *
+    * @see elm_gengrid_item_append()
+    * @see elm_gengrid_item_prepend()
+    * @see elm_gengrid_item_insert_after()
+    * @see elm_gengrid_item_del()
+    * @see elm_gengrid_item_sorted_insert()
+    *
+    * @ingroup Gengrid
+    */
    EAPI Elm_Gengrid_Item  *elm_gengrid_item_direct_sorted_insert(Evas_Object *obj, const Elm_Gengrid_Item_Class *gic, const void *data, Eina_Compare_Cb comp, Evas_Smart_Cb func, const void *func_data);
 
    /**
