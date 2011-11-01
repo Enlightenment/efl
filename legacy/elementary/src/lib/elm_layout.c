@@ -873,6 +873,7 @@ elm_layout_part_cursor_set(Evas_Object *obj, const char *part_name, const char *
         pc = calloc(1, sizeof(*pc));
         pc->part = eina_stringshare_add(part_name);
         pc->cursor = eina_stringshare_add(cursor);
+        wd->parts_cursors = eina_list_append(wd->parts_cursors, pc);
      }
 
    pc->obj = part_obj;
