@@ -395,4 +395,73 @@ test_cursor3(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_inf
    evas_object_show(win);
 }
 
+void
+test_cursor4(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+{
+   Evas_Object *win, *bg, *bx, *ly, *bt;
+   char buf[PATH_MAX];
+
+   win = elm_win_add(NULL, "cursor layout", ELM_WIN_BASIC);
+   elm_win_title_set(win, "Cursor Layout");
+   elm_win_autodel_set(win, EINA_TRUE);
+
+   snprintf(buf, sizeof(buf), "%s/objects/cursors.edj", elm_app_data_dir_get());
+
+   bg = elm_bg_add(win);
+   elm_win_resize_object_add(win, bg);
+   evas_object_size_hint_weight_set(bg, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_show(bg);
+
+   bx = elm_box_add(win);
+   evas_object_size_hint_weight_set(bx, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   elm_win_resize_object_add(win, bx);
+   evas_object_show(bx);
+
+   ly = elm_layout_add(win);
+   elm_layout_file_set(ly, buf, "test/layout/events");
+   evas_object_size_hint_weight_set(ly, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_size_hint_align_set(ly, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   elm_object_cursor_set(ly, ELM_CURSOR_HAND1);
+   elm_box_pack_end(bx, ly);
+   evas_object_show(ly);
+
+   ly = elm_layout_add(win);
+   elm_layout_file_set(ly, buf, "test/layout/noevents");
+   evas_object_size_hint_weight_set(ly, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_size_hint_align_set(ly, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   elm_object_cursor_set(ly, ELM_CURSOR_XTERM);
+   elm_layout_part_cursor_set(ly, "top-left", ELM_CURSOR_CROSS);
+   elm_layout_part_cursor_set(ly, "bottom-left", ELM_CURSOR_PIRATE);
+   elm_box_pack_end(bx, ly);
+   evas_object_show(ly);
+
+   ly = elm_layout_add(win);
+   elm_layout_file_set(ly, buf, "test/layout/parts2");
+   evas_object_size_hint_weight_set(ly, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_size_hint_align_set(ly, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   elm_layout_part_cursor_set(ly, "top-left", ELM_CURSOR_CROSS);
+   elm_layout_part_cursor_set(ly, "bottom-left", ELM_CURSOR_PIRATE);
+   elm_layout_file_set(ly, buf, "test/layout/parts");
+   elm_box_pack_end(bx, ly);
+   evas_object_show(ly);
+
+   ly = elm_layout_add(win);
+   evas_object_size_hint_weight_set(ly, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_size_hint_align_set(ly, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   elm_layout_file_set(ly, buf, "test/layout/swallow");
+   bt = elm_button_add(win);
+   elm_object_text_set(bt, "Cursor over obj");
+   elm_object_content_part_set(ly, "swallow1", bt);
+   elm_object_cursor_set(bt, ELM_CURSOR_PIRATE);
+   bt = elm_button_add(win);
+   elm_object_text_set(bt, "Cursor over part");
+   elm_object_content_part_set(ly, "swallow2", bt);
+   elm_layout_part_cursor_set(ly, "swallow2", ELM_CURSOR_PIRATE);
+   elm_box_pack_end(bx, ly);
+   evas_object_show(ly);
+
+   evas_object_resize(win, 320, 480);
+   evas_object_show(win);
+}
+
 #endif

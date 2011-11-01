@@ -127,6 +127,7 @@ void test_tooltip2(void *data, Evas_Object *obj, void *event_info);
 void test_cursor(void *data, Evas_Object *obj, void *event_info);
 void test_cursor2(void *data, Evas_Object *obj, void *event_info);
 void test_cursor3(void *data, Evas_Object *obj, void *event_info);
+void test_cursor4(void *data, Evas_Object *obj, void *event_info);
 void test_focus(void *data, Evas_Object *obj, void *event_info);
 void test_focus2(void *data, Evas_Object *obj, void *event_info);
 void test_focus3(void *data, Evas_Object *obj, void *event_info);
@@ -415,6 +416,7 @@ add_tests:
    ADD_TEST("Cursor", test_cursor);
    ADD_TEST("Cursor 2", test_cursor2);
    ADD_TEST("Cursor 3", test_cursor3);
+   ADD_TEST("Cursor Layout", test_cursor4);
    ADD_TEST("Focus", test_focus);
    ADD_TEST("Focus 2", test_focus2);
    ADD_TEST("Focus 3", test_focus3);
