@@ -70,20 +70,17 @@ evas_object_is_opaque(Evas_Object *obj)
    return 0;
 }
 
-static inline Eina_Bool
+static inline int
 evas_event_freezes_through(Evas_Object *obj)
 {
-   if (obj->freeze_events) return EINA_TRUE;
+   if (obj->freeze_events) return 1;
    if (obj->parent_cache.freeze_events_valid)
      return obj->parent_cache.freeze_events;
-   if (obj->smart.parent)
-     {
-        Eina_Bool freeze = evas_event_freezes_through(obj->smart.parent);
-        obj->parent_cache.freeze_events_valid = EINA_TRUE;
-        obj->parent_cache.freeze_events = freeze;
-        return freeze;
-     }
-   return EINA_FALSE;
+   if (!obj->smart.parent) return 0;
+   obj->parent_cache.freeze_events =
+      evas_event_freezes_through(obj->smart.parent);
+   obj->parent_cache.freeze_events_valid = EINA_TRUE;
+   return obj->parent_cache.freeze_events;
 }
 
 static inline int
@@ -93,14 +90,11 @@ evas_event_passes_through(Evas_Object *obj)
    if (obj->pass_events) return 1;
    if (obj->parent_cache.pass_events_valid)
      return obj->parent_cache.pass_events;
-   if (obj->smart.parent)
-     {
-        int par_pass = evas_event_passes_through(obj->smart.parent);
-        obj->parent_cache.pass_events_valid = 1;
-        obj->parent_cache.pass_events = par_pass;
-        return par_pass;
-     }
-   return 0;
+   if (!obj->smart.parent) return 0;
+   obj->parent_cache.pass_events =
+      evas_event_passes_through(obj->smart.parent);
+   obj->parent_cache.pass_events_valid = EINA_TRUE;
+   return obj->parent_cache.pass_events;
 }
 
 static inline int
