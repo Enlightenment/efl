@@ -123,11 +123,6 @@ _ecore_wince_event_keystroke_get(int    key,
        ks = "Delete";
        kc = "Delete";
        break;
-     case VK_SPACE:
-       kn = "space";
-       ks = "space";
-       kc = "space";
-       break;
      case VK_F1:
        kn = "F1";
        ks = "F1";
@@ -337,7 +332,7 @@ _ecore_wince_event_char_get(int    key,
      case VK_SPACE:
        strncpy(kn, "space", 32);
        strncpy(ks, "space", 32);
-       strncpy(kc, "space", 32);
+       strncpy(kc, " ", 32);
        break;
      default:
        /* displayable characters */
