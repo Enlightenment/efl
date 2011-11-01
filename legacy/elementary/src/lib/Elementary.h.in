@@ -8621,11 +8621,11 @@ extern "C" {
     * @param multi @c EINA_TRUE, to enable multi-selection,
     * @c EINA_FALSE to disable it.
     *
-    * Multi-selection is the ability for one to have @b more than one
+    * Multi-selection is the ability to have @b more than one
     * item selected, on a given gengrid, simultaneously. When it is
     * enabled, a sequence of clicks on different items will make them
     * all selected, progressively. A click on an already selected item
-    * will unselect it. If interecting via the keyboard,
+    * will unselect it. If interacting via the keyboard,
     * multi-selection is enabled while holding the "Shift" key.
     *
     * @note By default, multi-selection is @b disabled on gengrids
@@ -8849,7 +8849,7 @@ extern "C" {
     EINA_DEPRECATED EAPI void         elm_gengrid_page_bring_in(const Evas_Object *obj, int h_pagenumber, int v_pagenumber) EINA_ARG_NONNULL(1);
 
    /**
-    * Set for what direction a given gengrid widget will expand while
+    * Set the direction in which a given gengrid widget will expand while
     * placing its items.
     *
     * @param obj The gengrid object.
@@ -8964,7 +8964,7 @@ extern "C" {
    EINA_DEPRECATED EAPI Evas_Object       *elm_gengrid_item_gengrid_get(const Elm_Gengrid_Item *item) EINA_ARG_NONNULL(1);
 
    /**
-    * Remove a gengrid item from the its parent, deleting it.
+    * Remove a gengrid item from its parent, deleting it.
     *
     * @param item The item to be removed.
     * @return @c EINA_TRUE on success or @c EINA_FALSE, otherwise.
@@ -8983,13 +8983,36 @@ extern "C" {
     *
     * This updates an item by calling all the item class functions
     * again to get the contents, labels and states. Use this when the
-    * original item data has changed and you want thta changes to be
+    * original item data has changed and you want the changes to be
     * reflected.
     *
     * @ingroup Gengrid
     */
    EAPI void               elm_gengrid_item_update(Elm_Gengrid_Item *item) EINA_ARG_NONNULL(1);
+
+   /**
+    * Get the Gengrid Item class for the given Gengrid Item.
+    *
+    * @param item The gengrid item
+    *
+    * This returns the Gengrid_Item_Class for the given item. It can be used to examine
+    * the function pointers and item_style.
+    *
+    * @ingroup Gengrid
+    */
    EAPI const Elm_Gengrid_Item_Class *elm_gengrid_item_item_class_get(const Elm_Gengrid_Item *item) EINA_ARG_NONNULL(1);
+
+   /**
+    * Get the Gengrid Item class for the given Gengrid Item.
+    *
+    * This sets the Gengrid_Item_Class for the given item. It can be used to examine
+    * the function pointers and item_style.
+    *
+    * @param item The gengrid item
+    * @param gic The gengrid item class describing the function pointers and the item style.
+    *
+    * @ingroup Gengrid
+    */
    EAPI void               elm_gengrid_item_item_class_set(Elm_Gengrid_Item *item, const Elm_Gengrid_Item_Class *gic) EINA_ARG_NONNULL(1, 2);
 
    /**
