@@ -1333,16 +1333,29 @@ have_cares="no"
 if test "x${have_ecore_con}" = "xyes" ; then
 
    # Verify IPV6 availability in headers
+   want_ipv6="yes"
    have_ipv6="no"
-   AC_CHECK_TYPES([struct ipv6_mreq], [have_ipv6="yes"], [have_ipv6="no"],
-               [[
-#ifdef HAVE_NETINET_IN_H
-# include <netinet/in.h>
-#endif
-#ifdef HAVE_WS2TCPIP_H
-# include <ws2tcpip.h>
-#endif
-        ]])
+   AC_ARG_ENABLE([ipv6],
+      [AC_HELP_STRING([--disable-ipv6],
+          [disable ipv6 functionality @<:@default=detect@:>@])],
+      [
+       if test "x${enableval}" = "xyes" ; then
+          want_ipv6="yes"
+       else
+          want_ipv6="no"
+       fi],
+      [want_ipv6=auto])
+      if test "x${want_ipv6}" != "xno" ; then
+         AC_CHECK_TYPES([struct ipv6_mreq], [have_ipv6="yes"], [have_ipv6="no"],
+                     [[
+                         #ifdef HAVE_NETINET_IN_H
+                         # include <netinet/in.h>
+                         #endif
+                         #ifdef HAVE_WS2TCPIP_H
+                         # include <ws2tcpip.h>
+                         #endif
+                     ]])
+      fi
 
    if test "x${have_ipv6}" = "xyes" ; then
       AC_DEFINE(HAVE_IPV6, 1, [Define if IPV6 is supported])
@@ -1817,6 +1830,7 @@ if test "x$have_gnutls" = "xyes" ; then
 else
   echo
 fi
+  echo "    IPv6.......................: $have_ipv6"
   echo "    GnuTLS.....................: $have_gnutls"
   echo "    CURL.......................: $have_curl"
   echo "    Local Sockets..............: $want_ecore_con_local_sockets"
