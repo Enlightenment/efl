@@ -711,7 +711,7 @@ _map_mouse_up(void *data __UNUSED__, Evas *evas __UNUSED__, Evas_Object *obj __U
 void
 test_map(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
-   Evas_Object *win, *bg, *map, *vbox, *r;
+   Evas_Object *win, *bg, *map;
    int idx = 0;
 
    win = elm_win_add(NULL, "map", ELM_WIN_BASIC);
@@ -723,18 +723,6 @@ test_map(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __
    elm_win_resize_object_add(win, bg);
    evas_object_show(bg);
 
-   vbox = elm_box_add(win);
-   elm_win_resize_object_add(win, vbox);
-   evas_object_size_hint_weight_set(vbox, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-   evas_object_show(vbox);
-
-   r = evas_object_rectangle_add(evas_object_evas_get(win));
-   evas_object_color_set(r, 20, 40, 60, 255);
-   evas_object_size_hint_min_set(r, 200, 200);
-   evas_object_show(r);
-   evas_object_size_hint_fill_set(r, EVAS_HINT_FILL, EVAS_HINT_FILL);
-   elm_box_pack_end(vbox, r);
-   
    map = elm_map_add(win);
    if (map)
      {
@@ -748,9 +736,7 @@ test_map(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __
         printf("]\n");
 
         evas_object_size_hint_weight_set(map, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-        evas_object_size_hint_fill_set(map, EVAS_HINT_FILL, EVAS_HINT_FILL);
-        elm_box_pack_end(vbox, map);
-//        elm_win_resize_object_add(win, map);
+        elm_win_resize_object_add(win, map);
         evas_object_data_set(map, "window", win);
 
         //
