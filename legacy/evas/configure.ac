@@ -236,7 +236,7 @@ esac
 ## strong dependencies
 
 # Eina
-PKG_CHECK_MODULES([EINA], [eina > 1.0.999])
+PKG_CHECK_MODULES([EINA], [eina >= 1.0.999])
 CPPFLAGS_SAVE="$CPPFLAGS"
 CPPFLAGS="$CPPFLAGS $EINA_CFLAGS"
 AC_CHECK_SIZEOF(Eina_Unicode,, [#include <Eina.h>])
