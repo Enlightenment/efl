@@ -1157,16 +1157,36 @@ AC_CHECK_HEADER([linux/fb.h],
 
 # Cocoa header files (ecore_cocoa)
 
-cocoa_ldflags="";
+cocoa_ldflags=""
 have_cocoa="no"
 m4_ifdef([AC_PROG_OBJC], [
     if test "x${have_gnu_objc}" = "xyes" ; then
        AC_LANG_PUSH([Objective C])
-       AC_CHECK_HEADER([Cocoa/Cocoa.h],
+       LIBS_save="$LIBS"
+       LIBS="$LIBS -framework Cocoa"
+       AC_LINK_IFELSE(
+          [AC_LANG_PROGRAM(
+              [[
+#include <Cocoa/Cocoa.h>
+              ]],
+              [[
+NSWindow *window;
+window = [[NSWindow alloc]
+           initWithContentRect:NSMakeRect(0, 0, 1, 1)
+           styleMask:(NSTitledWindowMask)
+           backing:NSBackingStoreBuffered
+           defer:NO
+           screen:nil
+	 ];
+              ]])],
           [
            have_cocoa="yes"
            cocoa_ldflags="-framework Cocoa"
-          ])
+          ],
+          [have_cocoa="no"])
+       LIBS="$LIBS_save"
+       AC_MSG_CHECKING([whether Cocoa framework is supported])
+       AC_MSG_RESULT([${have_cocoa}])
        AC_LANG_POP([Objective C])
     fi
 ])
@@ -1330,32 +1350,36 @@ have_curl="no"
 have_gnutls="no"
 have_openssl="no"
 have_cares="no"
+want_ipv6="yes"
+have_ipv6="no"
+
+AC_ARG_ENABLE([ipv6],
+   [AC_HELP_STRING([--disable-ipv6],
+       [disable ipv6 functionality @<:@default=detect@:>@])],
+   [
+    if test "x${enableval}" = "xyes" ; then
+       want_ipv6="yes"
+    else
+       want_ipv6="no"
+    fi],
+   [want_ipv6="auto"])
+
 if test "x${have_ecore_con}" = "xyes" ; then
 
    # Verify IPV6 availability in headers
-   want_ipv6="yes"
-   have_ipv6="no"
-   AC_ARG_ENABLE([ipv6],
-      [AC_HELP_STRING([--disable-ipv6],
-          [disable ipv6 functionality @<:@default=detect@:>@])],
-      [
-       if test "x${enableval}" = "xyes" ; then
-          want_ipv6="yes"
-       else
-          want_ipv6="no"
-       fi],
-      [want_ipv6=auto])
-      if test "x${want_ipv6}" != "xno" ; then
-         AC_CHECK_TYPES([struct ipv6_mreq], [have_ipv6="yes"], [have_ipv6="no"],
-                     [[
-                         #ifdef HAVE_NETINET_IN_H
-                         # include <netinet/in.h>
-                         #endif
-                         #ifdef HAVE_WS2TCPIP_H
-                         # include <ws2tcpip.h>
-                         #endif
-                     ]])
-      fi
+   if test "x${want_ipv6}" != "xno" ; then
+      AC_CHECK_TYPES([struct ipv6_mreq],
+         [have_ipv6="yes"],
+         [have_ipv6="no"],
+         [[
+#ifdef HAVE_NETINET_IN_H
+# include <netinet/in.h>
+#endif
+#ifdef HAVE_WS2TCPIP_H
+# include <ws2tcpip.h>
+#endif
+         ]])
+   fi
 
    if test "x${have_ipv6}" = "xyes" ; then
       AC_DEFINE(HAVE_IPV6, 1, [Define if IPV6 is supported])
