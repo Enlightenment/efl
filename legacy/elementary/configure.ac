@@ -327,6 +327,29 @@ if test "x$want_elementary_sdl" = "xyes" -a "x$have_elementary_sdl" = "xno"; the
     AC_MSG_ERROR([ecore-sdl support requested, but not found by pkg-config.])
 fi
 
+have_elementary_cocoa="no"
+want_elementary_cocoa="auto"
+AC_ARG_ENABLE([ecore-cocoa],
+   [AC_HELP_STRING([--disable-ecore-cocoa], [disable ecore-cocoa support. @<:@default=detect@:>@])],
+   [want_elementary_cocoa=$enableval], [])
+
+if test "x$want_elementary_cocoa" != "xno"; then
+   PKG_CHECK_MODULES([ELEMENTARY_COCOA],
+      [ecore-cocoa >= 1.0.0],
+      [
+       AC_DEFINE(HAVE_ELEMENTARY_COCOA, 1, [COCOA support for Elementary])
+       have_elementary_cocoa="yes"
+       requirement_elm="ecore-cocoa >= 1.0.0 ${requirement_elm}"
+      ],
+      [have_elementary_cocoa="no"]
+   )
+else
+    have_elementary_cocoa="no"
+fi
+if test "x$want_elementary_cocoa" = "xyes" -a "x$have_elementary_cocoa" = "xno"; then
+    AC_MSG_ERROR([ecore-cocoa support requested, but not found by pkg-config.])
+fi
+
 have_elementary_win32="no"
 want_elementary_win32="auto"
 AC_ARG_ENABLE([ecore-win32],
@@ -666,6 +689,7 @@ echo "  Engines:"
 echo "    X11....................: ${have_elementary_x}"
 echo "    Framebuffer............: ${have_elementary_fb}"
 echo "    SDL....................: ${have_elementary_sdl}"
+echo "    Cocoa..................: ${have_elementary_cocoa}"
 echo "    Windows XP.............: ${have_elementary_win32}"
 echo "    Windows CE.............: ${have_elementary_wince}"
 echo
