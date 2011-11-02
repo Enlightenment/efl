@@ -6213,6 +6213,7 @@ extern "C" {
     *
     * @param obj The button object
     * @param icon The icon object for the button
+    * @deprecated use elm_object_content_set() instead.
     */
    EINA_DEPRECATED EAPI void         elm_button_icon_set(Evas_Object *obj, Evas_Object *icon) EINA_ARG_NONNULL(1);
    /**
@@ -6238,6 +6239,7 @@ extern "C" {
     *
     * @param obj The button object
     * @return The icon object that was being used
+    * @deprecated use elm_object_content_unset() instead.
     */
    EINA_DEPRECATED EAPI Evas_Object *elm_button_icon_unset(Evas_Object *obj) EINA_ARG_NONNULL(1);
    /**
@@ -17445,6 +17447,7 @@ extern "C" {
     * it won't get properly displayed.
     *
     * @ingroup Slider
+    * @deprecated use elm_object_content_set() instead.
     */
    EINA_DEPRECATED EAPI void               elm_slider_icon_set(Evas_Object *obj, Evas_Object *icon) EINA_ARG_NONNULL(1);
 
@@ -17463,6 +17466,7 @@ extern "C" {
     *
     * @see elm_slider_icon_set() for more details
     * @see elm_slider_icon_get()
+    * @deprecated use elm_object_content_unset() instead.
     *
     * @ingroup Slider
     */
@@ -19824,6 +19828,8 @@ extern "C" {
     * Once the icon object is set, a previously set one will be deleted.
     * If you want to keep that old content object, use the
     * elm_object_content_unset() function.
+    *
+    * @deprecated use elm_object_content_set() instead.
     */
    EINA_DEPRECATED EAPI void         elm_check_icon_set(Evas_Object *obj, Evas_Object *icon) EINA_ARG_NONNULL(1);
    /**
@@ -19840,6 +19846,8 @@ extern "C" {
     * @return The icon object that was being used
     *
     * Unparent and return the icon object which was set for this widget.
+    *
+    * @deprecated use elm_object_content_unset() instead.
     */
    EINA_DEPRECATED EAPI Evas_Object *elm_check_icon_unset(Evas_Object *obj) EINA_ARG_NONNULL(1);
    /**
@@ -19949,6 +19957,8 @@ extern "C" {
     * Once the icon object is set, a previously set one will be deleted. If you
     * want to keep that old content object, use the elm_radio_icon_unset()
     * function.
+    &
+    * @deprecated use elm_object_content_set() instead.
     */
    EINA_DEPRECATED EAPI void         elm_radio_icon_set(Evas_Object *obj, Evas_Object *icon) EINA_ARG_NONNULL(1);
    /**
@@ -19969,6 +19979,7 @@ extern "C" {
     * Unparent and return the icon object which was set for this widget.
     *
     * @see elm_radio_icon_set()
+    * @deprecated use elm_object_content_unset() instead.
     */
    EINA_DEPRECATED EAPI Evas_Object *elm_radio_icon_unset(Evas_Object *obj) EINA_ARG_NONNULL(1);
    /**
@@ -21190,6 +21201,7 @@ extern "C" {
     * elm_progressbar_icon_unset() function.
     *
     * @see elm_progressbar_icon_get()
+    * @deprecated use elm_object_content_set() instead.
     *
     * @ingroup Progressbar
     */
@@ -21203,6 +21215,7 @@ extern "C" {
     * otherwise (and on errors)
     *
     * @see elm_progressbar_icon_set() for more details
+    * @deprecated use elm_object_content_set() instead.
     *
     * @ingroup Progressbar
     */
@@ -21219,6 +21232,7 @@ extern "C" {
     * for this widget, previously, on success.
     *
     * @see elm_progressbar_icon_set() for more details
+    * @deprecated use elm_object_content_unset() instead.
     *
     * @ingroup Progressbar
     */
