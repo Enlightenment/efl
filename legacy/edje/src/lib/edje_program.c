@@ -434,30 +434,30 @@ _edje_program_run(Edje *ed, Edje_Program *pr, Eina_Bool force, const char *ssig,
    if (ed->delete_me) return;
    if ((pr->in.from > 0.0) && (pr->in.range >= 0.0) && (!force))
      {
-        Edje_Pending_Program *pp;
-        double r = 0.0;
+	Edje_Pending_Program *pp;
+	double r = 0.0;
 
-        pp = calloc(1, sizeof(Edje_Pending_Program));
-        if (!pp) return;
-        if (pr->in.range > 0.0) r = ((double)rand() / RAND_MAX);
-        pp->timer = ecore_timer_add(pr->in.from + (pr->in.range * r),
-                                    _edje_pending_timer_cb, pp);
-        if (!pp->timer)
-          {
-             free(pp);
-             return;
-          }
-        pp->edje = ed;
-        pp->program = pr;
-        ed->pending_actions = eina_list_append(ed->pending_actions, pp);
-        return;
+	pp = calloc(1, sizeof(Edje_Pending_Program));
+	if (!pp) return;
+	if (pr->in.range > 0.0) r = ((double)rand() / RAND_MAX);
+	pp->timer = ecore_timer_add(pr->in.from + (pr->in.range * r),
+				    _edje_pending_timer_cb, pp);
+	if (!pp->timer)
+	  {
+	     free(pp);
+	     return;
+	  }
+	pp->edje = ed;
+	pp->program = pr;
+	ed->pending_actions = eina_list_append(ed->pending_actions, pp);
+	return;
      }
    if ((recursions >= 64) || (recursion_limit))
      {
-        ERR("Programs recursing up to recursion limit of %i. Disabled.",
-            64);
-        recursion_limit = 1;
-        return;
+	ERR("Programs recursing up to recursion limit of %i. Disabled.",
+	    64);
+	recursion_limit = 1;
+	return;
      }
    recursions++;
    _edje_block(ed);
@@ -465,298 +465,280 @@ _edje_program_run(Edje *ed, Edje_Program *pr, Eina_Bool force, const char *ssig,
    _edje_freeze(ed);
    switch (pr->action)
      {
-      case EDJE_ACTION_TYPE_STATE_SET:
-         if ((pr->tween.time > ZERO) && (!ed->no_anim))
-           {
-              Edje_Running_Program *runp;
+     case EDJE_ACTION_TYPE_STATE_SET:
+	if ((pr->tween.time > ZERO) && (!ed->no_anim))
+	  {
+	     Edje_Running_Program *runp;
 
-              runp = calloc(1, sizeof(Edje_Running_Program));
-              EINA_LIST_FOREACH(pr->targets, l, pt)
-                {
-                   if (pt->id >= 0)
-                     {
-                        rp = ed->table_parts[pt->id % ed->table_parts_size];
-                        if (rp)
-                          {
-                             if ((rp->object) && (pr->tween.mode & EDJE_TWEEN_MODE_OPT_FROM_CURRENT))
-                               {
-                                  rp->current = calloc(1, sizeof(Edje_Calc_Params));
-                                  evas_object_geometry_get(rp->object, &(rp->current->x),
-                                                           &(rp->current->y),
-                                                           &(rp->current->w),
-                                                           &(rp->current->h));
-                                  evas_object_color_get(rp->object, &(rp->current->color.r),
-                                                        &(rp->current->color.g),
-                                                        &(rp->current->color.b),
-                                                        &(rp->current->color.a));
-                               }
-                             else
-                               {
-                                  if (rp->current) free(rp->current);
-                                  rp->current = NULL;
-                               }
+	     runp = calloc(1, sizeof(Edje_Running_Program));
+	     EINA_LIST_FOREACH(pr->targets, l, pt)
+	       {
+		  if (pt->id >= 0)
+		    {
+		       rp = ed->table_parts[pt->id % ed->table_parts_size];
+		       if (rp)
+			 {
+			    if (rp->program)
+			      _edje_program_end(ed, rp->program);
+			    _edje_part_description_apply(ed, rp,
+							 rp->param1.description->state.name,
+							 rp->param1.description->state.value,
+							 pr->state,
+							 pr->value);
+			    _edje_part_pos_set(ed, rp, pr->tween.mode, ZERO,
+                                               pr->tween.v1,
+                                               pr->tween.v2);
+			    rp->program = runp;
+			 }
+		    }
+	       }
+             // _edje_emit(ed, "program,start", pr->name);
+	     if (_edje_block_break(ed))
+	       {
+		  ed->actions = eina_list_append(ed->actions, runp);
+		  goto break_prog;
+	       }
+	     if (!ed->actions)
+	       _edje_animators = eina_list_append(_edje_animators, ed);
+	     ed->actions = eina_list_append(ed->actions, runp);
+	     runp->start_time = ecore_loop_time_get();
+	     runp->edje = ed;
+	     runp->program = pr;
+	     if (!_edje_timer)
+	       _edje_timer = ecore_animator_add(_edje_timer_cb, NULL);
+	     _edje_anim_count++;
+	  }
+	else
+	  {
+	     EINA_LIST_FOREACH(pr->targets, l, pt)
+	       {
+		  if (pt->id >= 0)
+		    {
+		       rp = ed->table_parts[pt->id % ed->table_parts_size];
+		       if (rp)
+			 {
+			    if (rp->program)
+			      _edje_program_end(ed, rp->program);
+			    _edje_part_description_apply(ed, rp,
+							 pr->state,
+							 pr->value,
+							 NULL,
+							 0.0);
+			    _edje_part_pos_set(ed, rp, pr->tween.mode, ZERO,
+                                               pr->tween.v1,
+                                               pr->tween.v2);
+			 }
+		    }
+	       }
+             // _edje_emit(ed, "program,start", pr->name);
+	     if (_edje_block_break(ed)) goto break_prog;
+             // _edje_emit(ed, "program,stop", pr->name);
+	     if (_edje_block_break(ed)) goto break_prog;
 
-                             if (rp->program)
-                               _edje_program_end(ed, rp->program);
-                             _edje_part_description_apply(ed, rp,
-                                                          rp->param1.description->state.name,
-                                                          rp->param1.description->state.value,
-                                                          pr->state,
-                                                          pr->value);
-                             _edje_part_pos_set(ed, rp, pr->tween.mode, ZERO,
-                                                pr->tween.v1,
-                                                pr->tween.v2);
-                             rp->program = runp;
-                          }
-                     }
-                }
-              // _edje_emit(ed, "program,start", pr->name);
-              if (_edje_block_break(ed))
-                {
-                   ed->actions = eina_list_append(ed->actions, runp);
-                   goto break_prog;
-                }
-              if (!ed->actions)
-                _edje_animators = eina_list_append(_edje_animators, ed);
-              ed->actions = eina_list_append(ed->actions, runp);
-              runp->start_time = ecore_loop_time_get();
-              runp->edje = ed;
-              runp->program = pr;
-              if (!_edje_timer)
-                _edje_timer = ecore_animator_add(_edje_timer_cb, NULL);
-              _edje_anim_count++;
-           }
-         else
-           {
-              EINA_LIST_FOREACH(pr->targets, l, pt)
-                {
-                   if (pt->id >= 0)
-                     {
-                        rp = ed->table_parts[pt->id % ed->table_parts_size];
-                        if (rp)
-                          {
-                             if (rp->program)
-                               _edje_program_end(ed, rp->program);
-                             _edje_part_description_apply(ed, rp,
-                                                          pr->state,
-                                                          pr->value,
-                                                          NULL,
-                                                          0.0);
-                             _edje_part_pos_set(ed, rp, pr->tween.mode, ZERO,
-                                                pr->tween.v1,
-                                                pr->tween.v2);
-                          }
-                     }
-                }
-              // _edje_emit(ed, "program,start", pr->name);
-              if (_edje_block_break(ed)) goto break_prog;
-              // _edje_emit(ed, "program,stop", pr->name);
-              if (_edje_block_break(ed)) goto break_prog;
+	     EINA_LIST_FOREACH(pr->after, l, pa)
+	       {
+		  if (pa->id >= 0)
+		    {
+		       pr2 = ed->table_programs[pa->id % ed->table_programs_size];
+		       if (pr2) _edje_program_run(ed, pr2, 0, "", "");
+		       if (_edje_block_break(ed)) goto break_prog;
+		    }
+	       }
+	     _edje_recalc(ed);
+	  }
+        break;
+     case EDJE_ACTION_TYPE_ACTION_STOP:
+        // _edje_emit(ed, "program,start", pr->name);
+        EINA_LIST_FOREACH(pr->targets, l, pt)
+	  {
+	     Eina_List *ll;
+	     Edje_Running_Program *runp;
+	     Edje_Pending_Program *pp;
 
-              EINA_LIST_FOREACH(pr->after, l, pa)
-                {
-                   if (pa->id >= 0)
-                     {
-                        pr2 = ed->table_programs[pa->id % ed->table_programs_size];
-                        if (pr2) _edje_program_run(ed, pr2, 0, "", "");
-                        if (_edje_block_break(ed)) goto break_prog;
-                     }
-                }
-              _edje_recalc(ed);
-           }
-         break;
-      case EDJE_ACTION_TYPE_ACTION_STOP:
-         // _edje_emit(ed, "program,start", pr->name);
-         EINA_LIST_FOREACH(pr->targets, l, pt)
-           {
-              Eina_List *ll;
-              Edje_Running_Program *runp;
-              Edje_Pending_Program *pp;
-
-              for (ll = ed->actions; ll; )
-                {
-                   runp = ll->data;
-                   ll = ll->next;
-                   if (pt->id == runp->program->id)
-                     {
-                        _edje_program_end(ed, runp);
-                        //		       goto done;
-                     }
-                }
-              for (ll = ed->pending_actions; ll; )
-                {
-                   pp = ll->data;
-                   ll = ll->next;
-                   if (pt->id == pp->program->id)
-                     {
-                        ed->pending_actions = eina_list_remove(ed->pending_actions, pp);
-                        ecore_timer_del(pp->timer);
-                        free(pp);
-                        //		       goto done;
-                     }
-                }
-              //	     done:
-              //	        continue;
-           }
-         // _edje_emit(ed, "program,stop", pr->name);
-         if (_edje_block_break(ed)) goto break_prog;
-         break;
-      case EDJE_ACTION_TYPE_SIGNAL_EMIT:
-         // _edje_emit(ed, "program,start", pr->name);
-         if (_edje_block_break(ed)) goto break_prog;
-         _edje_emit(ed, pr->state, pr->state2);
-         if (_edje_block_break(ed)) goto break_prog;
-         // _edje_emit(ed, "program,stop", pr->name);
-         if (_edje_block_break(ed)) goto break_prog;
-         break;
-      case EDJE_ACTION_TYPE_DRAG_VAL_SET:
-         // _edje_emit(ed, "program,start", pr->name);
-         if (_edje_block_break(ed)) goto break_prog;
-         EINA_LIST_FOREACH(pr->targets, l, pt)
-           {
-              if (pt->id >= 0)
-                {
-                   rp = ed->table_parts[pt->id % ed->table_parts_size];
-                   if ((rp) && (rp->drag) && (rp->drag->down.count == 0))
-                     {
-                        rp->drag->val.x = pr->value;
-                        rp->drag->val.y = pr->value2;
-                        if      (rp->drag->val.x < 0.0) rp->drag->val.x = 0.0;
-                        else if (rp->drag->val.x > 1.0) rp->drag->val.x = 1.0;
-                        if      (rp->drag->val.y < 0.0) rp->drag->val.y = 0.0;
-                        else if (rp->drag->val.y > 1.0) rp->drag->val.y = 1.0;
-                        _edje_dragable_pos_set(ed, rp, rp->drag->val.x, rp->drag->val.y);
-                        _edje_emit(ed, "drag,set", rp->part->name);
-                        if (_edje_block_break(ed)) goto break_prog;
-                     }
-                }
-           }
-         // _edje_emit(ed, "program,stop", pr->name);
-         if (_edje_block_break(ed)) goto break_prog;
-         break;
-      case EDJE_ACTION_TYPE_DRAG_VAL_STEP:
-         // _edje_emit(ed, "program,start", pr->name);
-         if (_edje_block_break(ed)) goto break_prog;
-         EINA_LIST_FOREACH(pr->targets, l, pt)
-           {
-              if (pt->id >= 0)
-                {
-                   rp = ed->table_parts[pt->id % ed->table_parts_size];
-                   if ((rp) && (rp->drag) && (rp->drag->down.count == 0))
-                     {
-                        rp->drag->val.x += pr->value * rp->drag->step.x * rp->part->dragable.x;
-                        rp->drag->val.y += pr->value2 * rp->drag->step.y * rp->part->dragable.y;
-                        if      (rp->drag->val.x < 0.0) rp->drag->val.x = 0.0;
-                        else if (rp->drag->val.x > 1.0) rp->drag->val.x = 1.0;
-                        if      (rp->drag->val.y < 0.0) rp->drag->val.y = 0.0;
-                        else if (rp->drag->val.y > 1.0) rp->drag->val.y = 1.0;
-                        _edje_dragable_pos_set(ed, rp, rp->drag->val.x, rp->drag->val.y);
-                        _edje_emit(ed, "drag,step", rp->part->name);
-                        if (_edje_block_break(ed)) goto break_prog;
-                     }
-                }
-           }
-         // _edje_emit(ed, "program,stop", pr->name);
-         if (_edje_block_break(ed)) goto break_prog;
-         break;
-      case EDJE_ACTION_TYPE_DRAG_VAL_PAGE:
-         // _edje_emit(ed, "program,start", pr->name);
-         if (_edje_block_break(ed)) goto break_prog;
-         EINA_LIST_FOREACH(pr->targets, l, pt)
-           {
-              if (pt->id >= 0)
-                {
-                   rp = ed->table_parts[pt->id % ed->table_parts_size];
-                   if ((rp) && (rp->drag) && (rp->drag->down.count == 0))
-                     {
-                        rp->drag->val.x += pr->value * rp->drag->page.x * rp->part->dragable.x;
-                        rp->drag->val.y += pr->value2 * rp->drag->page.y * rp->part->dragable.y;
-                        if      (rp->drag->val.x < 0.0) rp->drag->val.x = 0.0;
-                        else if (rp->drag->val.x > 1.0) rp->drag->val.x = 1.0;
-                        if      (rp->drag->val.y < 0.0) rp->drag->val.y = 0.0;
-                        else if (rp->drag->val.y > 1.0) rp->drag->val.y = 1.0;
-                        _edje_dragable_pos_set(ed, rp, rp->drag->val.x, rp->drag->val.y);
-                        _edje_emit(ed, "drag,page", rp->part->name);
-                        if (_edje_block_break(ed)) goto break_prog;
-                     }
-                }
-           }
-         // _edje_emit(ed, "program,stop", pr->name);
-         if (_edje_block_break(ed)) goto break_prog;
-         break;
-      case EDJE_ACTION_TYPE_SCRIPT:
-           {
-              char fname[128];
-
-              // _edje_emit(ed, "program,start", pr->name);
-              if (_edje_block_break(ed)) goto break_prog;
-              snprintf(fname, sizeof(fname), "_p%i", pr->id);
-              _edje_embryo_test_run(ed, fname, ssig, ssrc);
-              // _edje_emit(ed, "program,stop", pr->name);
-              if (_edje_block_break(ed)) goto break_prog;
-              _edje_recalc_do(ed);
-           }
-         break;
-      case EDJE_ACTION_TYPE_FOCUS_SET:
-         if (!pr->targets)
-           ed->focused_part = NULL;
-         else
-           {
-              EINA_LIST_FOREACH(pr->targets, l, pt)
-                {
-                   if (pt->id >= 0)
-                     {
-                        rp = ed->table_parts[pt->id % ed->table_parts_size];
-                        if (rp)
-                          {
-                             if (ed->focused_part != rp)
-                               {
-                                  if (ed->focused_part)
-                                    _edje_emit(ed, "focus,part,out", 
-                                               ed->focused_part->part->name);
-                                  ed->focused_part = rp;
-                                  _edje_emit(ed, "focus,part,in",
-                                             ed->focused_part->part->name);
-                               }
-                          }
-                     }
-                }
-           }
-         break;
-      case EDJE_ACTION_TYPE_FOCUS_OBJECT:
-         if (!pr->targets)
-           {
-              Evas_Object *focused;
-
-              focused = evas_focus_get(evas_object_evas_get(ed->obj));
-              if (focused)
+             for (ll = ed->actions; ll; )
                {
-                  unsigned int i;
-
-                  /* Check if the current swallowed object is one of my child. */
-                  for (i = 0; i < ed->table_parts_size; ++i)
-                    {
-                       rp = ed->table_parts[i];
-                       if (rp && rp->swallowed_object == focused)
-                         {
-                            evas_object_focus_set(focused, EINA_FALSE);
-                            break;
-                         }
-                    }
-               }
-          }
-        else
+                  runp = ll->data;
+                  ll = ll->next;
+		  if (pt->id == runp->program->id)
+		    {
+		       _edje_program_end(ed, runp);
+//		       goto done;
+		    }
+	       }
+             for (ll = ed->pending_actions; ll; )
+              {
+                  pp = ll->data;
+                  ll = ll->next;
+		  if (pt->id == pp->program->id)
+		    {
+		       ed->pending_actions = eina_list_remove(ed->pending_actions, pp);
+		       ecore_timer_del(pp->timer);
+		       free(pp);
+//		       goto done;
+		    }
+	       }
+//	     done:
+//	        continue;
+	  }
+        // _edje_emit(ed, "program,stop", pr->name);
+	if (_edje_block_break(ed)) goto break_prog;
+        break;
+     case EDJE_ACTION_TYPE_SIGNAL_EMIT:
+        // _edje_emit(ed, "program,start", pr->name);
+	if (_edje_block_break(ed)) goto break_prog;
+	_edje_emit(ed, pr->state, pr->state2);
+	if (_edje_block_break(ed)) goto break_prog;
+        // _edje_emit(ed, "program,stop", pr->name);
+	if (_edje_block_break(ed)) goto break_prog;
+        break;
+     case EDJE_ACTION_TYPE_DRAG_VAL_SET:
+        // _edje_emit(ed, "program,start", pr->name);
+	if (_edje_block_break(ed)) goto break_prog;
+	EINA_LIST_FOREACH(pr->targets, l, pt)
+	  {
+	     if (pt->id >= 0)
+	       {
+		  rp = ed->table_parts[pt->id % ed->table_parts_size];
+		  if ((rp) && (rp->drag) && (rp->drag->down.count == 0))
+		    {
+		       rp->drag->val.x = pr->value;
+		       rp->drag->val.y = pr->value2;
+		       if      (rp->drag->val.x < 0.0) rp->drag->val.x = 0.0;
+		       else if (rp->drag->val.x > 1.0) rp->drag->val.x = 1.0;
+		       if      (rp->drag->val.y < 0.0) rp->drag->val.y = 0.0;
+		       else if (rp->drag->val.y > 1.0) rp->drag->val.y = 1.0;
+		       _edje_dragable_pos_set(ed, rp, rp->drag->val.x, rp->drag->val.y);
+		       _edje_emit(ed, "drag,set", rp->part->name);
+		       if (_edje_block_break(ed)) goto break_prog;
+		    }
+	       }
+	  }
+        // _edje_emit(ed, "program,stop", pr->name);
+	if (_edje_block_break(ed)) goto break_prog;
+        break;
+     case EDJE_ACTION_TYPE_DRAG_VAL_STEP:
+        // _edje_emit(ed, "program,start", pr->name);
+	if (_edje_block_break(ed)) goto break_prog;
+	EINA_LIST_FOREACH(pr->targets, l, pt)
+	  {
+	     if (pt->id >= 0)
+	       {
+		  rp = ed->table_parts[pt->id % ed->table_parts_size];
+		  if ((rp) && (rp->drag) && (rp->drag->down.count == 0))
+		    {
+		       rp->drag->val.x += pr->value * rp->drag->step.x * rp->part->dragable.x;
+		       rp->drag->val.y += pr->value2 * rp->drag->step.y * rp->part->dragable.y;
+		       if      (rp->drag->val.x < 0.0) rp->drag->val.x = 0.0;
+		       else if (rp->drag->val.x > 1.0) rp->drag->val.x = 1.0;
+		       if      (rp->drag->val.y < 0.0) rp->drag->val.y = 0.0;
+		       else if (rp->drag->val.y > 1.0) rp->drag->val.y = 1.0;
+		       _edje_dragable_pos_set(ed, rp, rp->drag->val.x, rp->drag->val.y);
+		       _edje_emit(ed, "drag,step", rp->part->name);
+		       if (_edje_block_break(ed)) goto break_prog;
+		    }
+	       }
+	  }
+        // _edje_emit(ed, "program,stop", pr->name);
+	if (_edje_block_break(ed)) goto break_prog;
+        break;
+     case EDJE_ACTION_TYPE_DRAG_VAL_PAGE:
+        // _edje_emit(ed, "program,start", pr->name);
+	if (_edje_block_break(ed)) goto break_prog;
+	EINA_LIST_FOREACH(pr->targets, l, pt)
+	  {
+	     if (pt->id >= 0)
+	       {
+		  rp = ed->table_parts[pt->id % ed->table_parts_size];
+		  if ((rp) && (rp->drag) && (rp->drag->down.count == 0))
+		    {
+		       rp->drag->val.x += pr->value * rp->drag->page.x * rp->part->dragable.x;
+		       rp->drag->val.y += pr->value2 * rp->drag->page.y * rp->part->dragable.y;
+		       if      (rp->drag->val.x < 0.0) rp->drag->val.x = 0.0;
+		       else if (rp->drag->val.x > 1.0) rp->drag->val.x = 1.0;
+		       if      (rp->drag->val.y < 0.0) rp->drag->val.y = 0.0;
+		       else if (rp->drag->val.y > 1.0) rp->drag->val.y = 1.0;
+		       _edje_dragable_pos_set(ed, rp, rp->drag->val.x, rp->drag->val.y);
+		       _edje_emit(ed, "drag,page", rp->part->name);
+		       if (_edje_block_break(ed)) goto break_prog;
+		    }
+	       }
+	  }
+        // _edje_emit(ed, "program,stop", pr->name);
+	if (_edje_block_break(ed)) goto break_prog;
+        break;
+     case EDJE_ACTION_TYPE_SCRIPT:
           {
-             EINA_LIST_FOREACH(pr->targets, l, pt)
-               {
-                  if (pt->id >= 0)
-                    {
-                       rp = ed->table_parts[pt->id % ed->table_parts_size];
-                       if (rp && rp->swallowed_object)
-                         evas_object_focus_set(rp->swallowed_object, EINA_TRUE);
-                    }
-               }
+             char fname[128];
+
+             // _edje_emit(ed, "program,start", pr->name);
+             if (_edje_block_break(ed)) goto break_prog;
+             snprintf(fname, sizeof(fname), "_p%i", pr->id);
+             _edje_embryo_test_run(ed, fname, ssig, ssrc);
+             // _edje_emit(ed, "program,stop", pr->name);
+             if (_edje_block_break(ed)) goto break_prog;
+             _edje_recalc_do(ed);
           }
+        break;
+     case EDJE_ACTION_TYPE_FOCUS_SET:
+	if (!pr->targets)
+           ed->focused_part = NULL;
+	else
+	  {
+	     EINA_LIST_FOREACH(pr->targets, l, pt)
+	       {
+		  if (pt->id >= 0)
+		    {
+		       rp = ed->table_parts[pt->id % ed->table_parts_size];
+		       if (rp)
+			 {
+			    if (ed->focused_part != rp)
+			      {
+				 if (ed->focused_part)
+				   _edje_emit(ed, "focus,part,out", 
+					      ed->focused_part->part->name);
+				 ed->focused_part = rp;
+				 _edje_emit(ed, "focus,part,in",
+					    ed->focused_part->part->name);
+			      }
+ 			 }
+		    }
+	       }
+	  }
+        break;
+     case EDJE_ACTION_TYPE_FOCUS_OBJECT:
+	if (!pr->targets)
+	  {
+	     Evas_Object *focused;
+
+	     focused = evas_focus_get(evas_object_evas_get(ed->obj));
+	     if (focused)
+	       {
+		  unsigned int i;
+
+		  /* Check if the current swallowed object is one of my child. */
+		  for (i = 0; i < ed->table_parts_size; ++i)
+		    {
+		       rp = ed->table_parts[i];
+		       if (rp && rp->swallowed_object == focused)
+			 {
+			    evas_object_focus_set(focused, EINA_FALSE);
+			    break;
+			 }
+		    }
+	       }
+	  }
+	else
+	  {
+	     EINA_LIST_FOREACH(pr->targets, l, pt)
+	       {
+		  if (pt->id >= 0)
+		    {
+		       rp = ed->table_parts[pt->id % ed->table_parts_size];
+		       if (rp && rp->swallowed_object)
+                          evas_object_focus_set(rp->swallowed_object, EINA_TRUE);
+		    }
+	       }
+	  }
         break;
      case EDJE_ACTION_TYPE_PARAM_COPY:
           {
@@ -795,20 +777,20 @@ _edje_program_run(Edje *ed, Edje_Program *pr, Eina_Bool force, const char *ssig,
         break;
      }
    if (!((pr->action == EDJE_ACTION_TYPE_STATE_SET)
-         /* hmm this fucks somethgin up. must look into it later */
-         /* && (pr->tween.time > ZERO) && (!ed->no_anim))) */
-     ))
-       {
-          EINA_LIST_FOREACH(pr->after, l, pa)
-            {
-               if (pa->id >= 0)
-                 {
-                    pr2 = ed->table_programs[pa->id % ed->table_programs_size];
-                    if (pr2) _edje_program_run(ed, pr2, 0, "", "");
-                    if (_edje_block_break(ed)) goto break_prog;
-                 }
-            }
-       }
+	 /* hmm this fucks somethgin up. must look into it later */
+	 /* && (pr->tween.time > ZERO) && (!ed->no_anim))) */
+	 ))
+     {
+        EINA_LIST_FOREACH(pr->after, l, pa)
+	  {
+	     if (pa->id >= 0)
+	       {
+		  pr2 = ed->table_programs[pa->id % ed->table_programs_size];
+		  if (pr2) _edje_program_run(ed, pr2, 0, "", "");
+		  if (_edje_block_break(ed)) goto break_prog;
+	       }
+	  }
+     }
    break_prog:
    _edje_thaw(ed);
    _edje_unref(ed);

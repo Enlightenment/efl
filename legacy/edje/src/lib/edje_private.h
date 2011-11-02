@@ -1212,7 +1212,6 @@ struct _Edje_Real_Part
    Edje_Real_Part_State      param1; // 20
    // WITH EDJE_CALC_CACHE: 140
    Edje_Real_Part_State     *param2, *custom; // 8
-   Edje_Calc_Params         *current; // 4
 
 #ifdef EDJE_CALC_CACHE
    int                       state; // 4
@@ -1231,8 +1230,8 @@ struct _Edje_Real_Part
 #ifdef EDJE_CALC_CACHE
    unsigned char             invalidate : 1; // 0
 #endif
-}; //  264
-// WITH EDJE_CALC_CACHE: 404
+}; //  260
+// WITH EDJE_CALC_CACHE: 400
 
 struct _Edje_Running_Program
 {
