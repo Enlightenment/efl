@@ -496,3 +496,6 @@
 	* Add evas_object_freeze_events_set/get to discard the object events.
 	they will be useful some cases such as transition.
 
+2011-11-02 Nicolas Aguirre
+	* Add gl_cocoa engine
+
