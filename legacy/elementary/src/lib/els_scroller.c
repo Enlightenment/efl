@@ -678,8 +678,8 @@ static Eina_Bool
 _smart_bounce_x_animator(void *data)
 {
    Smart_Data *sd;
-   Evas_Coord x, y, dx, w, odx;
-   double t, p, dt, pd;
+   Evas_Coord x, y, dx, w, odx, ed, md;
+   double t, p, dt, pd, r;
 
    sd = data;
    t = ecore_loop_time_get();
@@ -700,7 +700,14 @@ _smart_bounce_x_animator(void *data)
         p = 1.0 - ((1.0 - dt) * (1.0 - dt));
         elm_smart_scroller_child_pos_get(sd->smart_obj, &x, &y);
         dx = (odx * p);
-        x = sd->down.bx + dx;
+        r = 1.0;
+        if (sd->down.momentum_animator)
+          {
+             ed = abs(sd->down.dx * (_elm_config->thumbscroll_friction + sd->down.extra_time) - sd->down.b0x);
+             md = abs(_elm_config->thumbscroll_friction * 5 * w);
+             if (ed > md) r = (double)(md)/(double)ed;
+          }
+        x = sd->down.b2x + (int)((double)(dx - odx) * r);
         if (!sd->down.cancelled)
           elm_smart_scroller_child_pos_set(sd->smart_obj, x, y);
         if (dt >= 1.0)
@@ -726,8 +733,8 @@ static Eina_Bool
 _smart_bounce_y_animator(void *data)
 {
    Smart_Data *sd;
-   Evas_Coord x, y, dy, h, ody;
-   double t, p, dt, pd;
+   Evas_Coord x, y, dy, h, ody, ed, md;
+   double t, p, dt, pd, r;
 
    sd = data;
    t = ecore_loop_time_get();
@@ -748,7 +755,14 @@ _smart_bounce_y_animator(void *data)
         p = 1.0 - ((1.0 - dt) * (1.0 - dt));
         elm_smart_scroller_child_pos_get(sd->smart_obj, &x, &y);
         dy = (ody * p);
-        y = sd->down.by + dy;
+        r = 1.0;
+        if (sd->down.momentum_animator)
+          {
+             ed = abs(sd->down.dy * (_elm_config->thumbscroll_friction + sd->down.extra_time) - sd->down.b0y);
+             md = abs(_elm_config->thumbscroll_friction * 5 * h);
+             if (ed > md) r = (double)(md)/(double)ed;
+          }
+        y = sd->down.b2y + (int)((double)(dy - ody) * r);
         if (!sd->down.cancelled)
           elm_smart_scroller_child_pos_set(sd->smart_obj, x, y);
         if (dt >= 1.0)
