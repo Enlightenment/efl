@@ -9,9 +9,8 @@
 
 #ifdef BUILD_ECORE_EVAS_OPENGL_COCOA
 #include <Ecore_Cocoa.h>
-#endif
-
 #include <Evas_Engine_Gl_Cocoa.h>
+#endif
 
 #include "ecore_evas_private.h"
 #include "Ecore_Evas.h"
@@ -562,7 +561,7 @@ ecore_evas_cocoa_new(Ecore_Cocoa_Window *parent, int x, int y, int w, int h)
   
   return NULL;
 #else
-  ERR("OUTCH name='%s' size=%dx%d!", name ? name : "", w, h);
+  ERR("OUTCH size=%dx%d!", w, h);
   return NULL;
 #endif
 }
