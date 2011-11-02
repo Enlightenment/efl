@@ -20,7 +20,7 @@ evas_gl_cocoa_main.m
 GL_COCOA_LIBADD = @evas_engine_gl_cocoa_libs@ $(top_builddir)/src/modules/engines/gl_common/libevas_engine_gl_common.la
 
 
-include_HEADERS = Evas_Engine_GL_Cocoa.h
+includes_HEADERS = Evas_Engine_GL_Cocoa.h
 includesdir = $(includedir)/evas-@VMAJ@
 
 if !EVAS_STATIC_BUILD_GL_COCOA
