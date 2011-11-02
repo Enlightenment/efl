@@ -253,7 +253,7 @@ _sub_obj_mouse_down(void        *data,
    Smart_Data *sd = data;
    Evas_Event_Mouse_Down *ev = event_info;
    if (!(ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD))
-	   sd->still_in = EINA_TRUE;
+     sd->still_in = EINA_TRUE;
 }
 
 static void
