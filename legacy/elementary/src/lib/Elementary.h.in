@@ -9575,7 +9575,7 @@ extern "C" {
     * even if the clock is not in "military" mode.
     *
     * @warning The behavior for values set out of those ranges is @b
-    * indefined.
+    * undefined.
     *
     * @ingroup Clock
     */
@@ -10469,7 +10469,7 @@ extern "C" {
 
 /**
  * @def elm_layout_label_get
- * Convienience macro to get the label in a layout that follows the
+ * Convenience macro to get the label in a layout that follows the
  * Elementary naming convention for its parts.
  *
  * @ingroup Layout
@@ -10489,7 +10489,7 @@ extern "C" {
     * @image latex img/widget/notify/preview-00.eps
     *
     * Display a container in a particular region of the parent(top, bottom,
-    * etc.  A timeout can be set to automatically hide the notify. This is so
+    * etc).  A timeout can be set to automatically hide the notify. This is so
     * that, after an evas_object_show() on a notify object, if a timeout was set
     * on it, it will @b automatically get hidden after that time.
     *
