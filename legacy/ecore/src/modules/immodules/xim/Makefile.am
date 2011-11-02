@@ -13,7 +13,6 @@ AM_CPPFLAGS = \
 -DPACKAGE_LIB_DIR=\"$(libdir)\" \
 -DPACKAGE_DATA_DIR=\"$(datadir)/$(PACKAGE)\" \
 @x_cflags@ \
-@EVAS_CFLAGS@ \
 @EINA_CFLAGS@
 
 pkgdir = $(libdir)/ecore/immodules

@@ -2,7 +2,6 @@
 #include <Ecore.h>
 #include <Ecore_Input.h>
 #include <Ecore_IMF.h>
-#include <Evas.h>
 #include <Ecore_X.h>
 #include <X11/Xlib.h>
 #include <X11/Xlocale.h>
