@@ -648,6 +648,8 @@ _ecore_evas_wince_fullscreen_set(Ecore_Evas *ee, int on)
       ecore_wince_window_fullscreen_set((Ecore_WinCE_Window *)ee->prop.window, on);
       ee->w = GetSystemMetrics(SM_CXSCREEN);
       ee->h = GetSystemMetrics(SM_CYSCREEN);
+      ee->req.w = ee->w;
+      ee->req.h = ee->h;
       evas_output_size_set(ee->evas, ee->w, ee->h);
       evas_output_viewport_set(ee->evas, 0, 0, ee->w, ee->h);
    }
@@ -660,6 +662,8 @@ _ecore_evas_wince_fullscreen_set(Ecore_Evas *ee, int on)
       ecore_wince_window_size_get((Ecore_WinCE_Window *)ee->prop.window, &w, &h);
       ee->w = w;
       ee->h = h;
+      ee->req.w = ee->w;
+      ee->req.h = ee->h;
       evas_output_size_set(ee->evas, ee->w, ee->h);
       evas_output_viewport_set(ee->evas, 0, 0, ee->w, ee->h);
 /*       ecore_win32_window_shape_set(window, */

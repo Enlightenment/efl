@@ -48,6 +48,8 @@ _ecore_evas_resize(Ecore_Evas *ee, int w, int h)
 
    if (w < 1) w = 1;
    if (h < 1) h = 1;
+   ee->req.w = w;
+   ee->req.h = h;
    if ((w == ee->w) && (h == ee->h)) return;
    ee->w = w;
    ee->h = h;
@@ -564,6 +566,8 @@ ecore_evas_buffer_allocfunc_new(int w, int h, void *(*alloc_func) (void *data, i
    ee->visible = 1;
    ee->w = w;
    ee->h = h;
+   ee->req.w = ee->w;
+   ee->req.h = ee->h;
 
    ee->prop.max.w = 0;
    ee->prop.max.h = 0;
@@ -693,6 +697,8 @@ ecore_evas_object_image_new(Ecore_Evas *ee_target)
    ee->visible = 0;
    ee->w = w;
    ee->h = h;
+   ee->req.w = ee->w;
+   ee->req.h = ee->h;
 
    ee->prop.max.w = 0;
    ee->prop.max.h = 0;

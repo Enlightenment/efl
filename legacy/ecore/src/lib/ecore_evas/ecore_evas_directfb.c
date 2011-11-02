@@ -286,6 +286,8 @@ _ecore_evas_directfb_move(Ecore_Evas *ee, int x, int y)
 static void
 _ecore_evas_directfb_resize(Ecore_Evas *ee, int w, int h)
 {
+   ee->req.w = w;
+   ee->req.h = h;
    if ((w == ee->w) && (h == ee->h)) return;
    ecore_directfb_window_resize(ee->engine.directfb.window, w, h);
    ee->w = w;
@@ -402,6 +404,8 @@ _ecore_evas_directfb_fullscreen_set(Ecore_Evas *ee, int on)
         resized = 1;
         ee->w = w;
         ee->h = h;
+        ee->req.w = ee->w;
+        ee->req.h = ee->h;
         if ((ee->rotation == 90) || (ee->rotation == 270))
           {
              evas_output_size_set(ee->evas, ee->h, ee->w);

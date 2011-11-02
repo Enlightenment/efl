@@ -266,6 +266,8 @@ _ecore_evas_fb_free(Ecore_Evas *ee)
 static void
 _ecore_evas_resize(Ecore_Evas *ee, int w, int h)
 {
+   ee->req.w = w;
+   ee->req.h = h;
    if ((w == ee->w) && (h == ee->h)) return;
    ee->w = w;
    ee->h = h;
@@ -287,6 +289,8 @@ _ecore_evas_resize(Ecore_Evas *ee, int w, int h)
 static void
 _ecore_evas_move_resize(Ecore_Evas *ee, int x __UNUSED__, int y __UNUSED__, int w, int h)
 {
+   ee->req.w = w;
+   ee->req.h = h;
    if ((w == ee->w) && (h == ee->h)) return;
    ee->w = w;
    ee->h = h;
@@ -331,6 +335,8 @@ _ecore_evas_rotation_set(Ecore_Evas *ee, int rotation, int resize __UNUSED__)
              tmp = ee->w;
              ee->w = ee->h;
              ee->h = tmp;
+             ee->req.w = ee->w;
+             ee->req.h = ee->h;
           }
         else
           {
@@ -432,6 +438,8 @@ _ecore_evas_fullscreen_set(Ecore_Evas *ee, int on)
         if ((w != ee->w) || (h != ee->h)) resized = 1;
         ee->w = w;
         ee->h = h;
+        ee->req.w = ee->w;
+        ee->req.h = ee->h;
         evas_output_size_set(ee->evas, ee->w, ee->h);
         evas_output_viewport_set(ee->evas, 0, 0, ee->w, ee->h);
         evas_damage_rectangle_add(ee->evas, 0, 0, ee->w, ee->h);
@@ -441,6 +449,8 @@ _ecore_evas_fullscreen_set(Ecore_Evas *ee, int on)
         if ((ee->engine.fb.real_w != ee->w) || (ee->engine.fb.real_h != ee->h)) resized = 1;
         ee->w = ee->engine.fb.real_w;
         ee->h = ee->engine.fb.real_h;
+        ee->req.w = ee->w;
+        ee->req.h = ee->h;
         evas_output_size_set(ee->evas, ee->w, ee->h);
         evas_output_viewport_set(ee->evas, 0, 0, ee->w, ee->h);
         evas_damage_rectangle_add(ee->evas, 0, 0, ee->w, ee->h);
@@ -570,6 +580,8 @@ ecore_evas_fb_new(const char *disp_name, int rotation, int w, int h)
    ee->visible = 1;
    ee->w = w;
    ee->h = h;
+   ee->req.w = ee->w;
+   ee->req.h = ee->h;
 
    ee->prop.max.w = 0;
    ee->prop.max.h = 0;
