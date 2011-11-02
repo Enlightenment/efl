@@ -108,7 +108,7 @@ elm_main(int argc __UNUSED__, char **argv __UNUSED__)
    evas_object_size_hint_weight_set(bt, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(bt, EVAS_HINT_FILL, EVAS_HINT_FILL);
    evas_object_show(bt);
-   elm_object_content_part_set(panes_h, ELM_PANES_CONTENT_RIGHT bt);
+   elm_object_content_part_set(panes_h, ELM_PANES_CONTENT_RIGHT, bt);
 
    evas_object_smart_callback_add(panes, "clicked", _clicked, panes);
    evas_object_smart_callback_add(panes, "clicked,double", _clicked_double,
