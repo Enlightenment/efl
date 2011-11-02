@@ -253,7 +253,7 @@ _sub_obj_mouse_down(void        *data,
    Smart_Data *sd = data;
    Evas_Event_Mouse_Down *ev = event_info;
    if (!(ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD))
-	   sd->still_in = 1;
+	   sd->still_in = EINA_TRUE;
 }
 
 static void
@@ -267,14 +267,14 @@ _sub_obj_mouse_move(void        *data,
    if (sd->still_in)
      {
         if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD)
-          sd->still_in = 0;
+          sd->still_in = EINA_FALSE;
         else
           {
              Evas_Coord x, y, w, h;
              evas_object_geometry_get(obj, &x, &y, &w, &h);
              if ((ev->cur.canvas.x < x) || (ev->cur.canvas.y < y) ||
                  (ev->cur.canvas.x >= (x + w)) || (ev->cur.canvas.y >= (y + h)))
-               sd->still_in = 0;
+               sd->still_in = EINA_FALSE;
           }
      }
 }
@@ -288,7 +288,7 @@ _sub_obj_mouse_up(void        *data,
    Smart_Data *sd = data;
    if (sd->still_in)
      elm_widget_focus_mouse_up_handle(obj);
-   sd->still_in = 0;
+   sd->still_in = EINA_FALSE;
 }
 
 static void
