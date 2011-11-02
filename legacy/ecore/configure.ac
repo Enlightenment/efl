@@ -1180,7 +1180,7 @@ window = [[NSWindow alloc]
            backing:NSBackingStoreBuffered
            defer:NO
            screen:nil
-	 ];
+         ];
               ]])],
           [
            have_cocoa="yes"
