@@ -1,3 +1,11 @@
+2011-11-02  Vincent Torri  <doursse at users dot sf dot net>
+
+	* src/lib/evil_util.c:
+	* src/lib/evil_util.h:
+	Add evil_utf16_to_utf8() function, display error messages
+	and fix a bit the documentation of the other conversion
+	functions.
+
 2011-10-12  Vincent Torri  <doursse at users dot sf dot net>
 
 	* src/lib/evil_util.c:

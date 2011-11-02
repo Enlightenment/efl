@@ -21,15 +21,26 @@ evil_char_to_wchar(const char *text)
    wchar_t *wtext;
    int      wsize;
 
+   if (!text)
+     return NULL;
+
    wsize = MultiByteToWideChar(CP_ACP, 0, text, (int)strlen(text) + 1, NULL, 0);
    if ((wsize == 0) ||
        (wsize > (int)(ULONG_MAX / sizeof(wchar_t))))
-     return NULL;
+     {
+        if (wsize == 0)
+          _evil_last_error_display(__FUNCTION__);
+        return NULL;
+     }
 
    wtext = malloc(wsize * sizeof(wchar_t));
    if (wtext)
      if (!MultiByteToWideChar(CP_ACP, 0, text, (int)strlen(text) + 1, wtext, wsize))
-       return NULL;
+     {
+        if (wsize == 0)
+          _evil_last_error_display(__FUNCTION__);
+        return NULL;
+     }
 
    return wtext;
 }
@@ -40,9 +51,15 @@ evil_wchar_to_char(const wchar_t *text)
    char  *atext;
    int    asize;
 
+   if (!text)
+     return NULL;
+
    asize = WideCharToMultiByte(CP_ACP, 0, text, -1, NULL, 0, NULL, NULL);
    if (asize == 0)
-     return NULL;
+     {
+        _evil_last_error_display(__FUNCTION__);
+        return NULL;
+     }
 
    atext = (char*)malloc(asize * sizeof(char));
    if (!atext)
@@ -50,9 +67,47 @@ evil_wchar_to_char(const wchar_t *text)
 
    asize = WideCharToMultiByte(CP_ACP, 0, text, -1, atext, asize, NULL, NULL);
    if (asize == 0)
-     return NULL;
+     {
+        _evil_last_error_display(__FUNCTION__);
+        return NULL;
+     }
 
    return atext;
+}
+
+char *
+evil_utf16_to_utf8(const wchar_t *text16)
+{
+   char  *text8;
+   DWORD  flag = 0;
+   int    size8;
+
+   if (!text16)
+     return NULL;
+
+#if _WIN32_WINNT >= 0x0600
+   flag = WC_ERR_INVALID_CHARS;;
+#endif
+
+   size8 = WideCharToMultiByte(CP_UTF8, flag, text16, -1, NULL, 0, NULL, NULL);
+   if (size8 == 0)
+     {
+        _evil_last_error_display(__FUNCTION__);
+        return NULL;
+     }
+
+   text8 = (char*)malloc(size8 * sizeof(char));
+   if (!text8)
+     return NULL;
+
+   size8 = WideCharToMultiByte(CP_UTF8, flag, text16, -1, text8, size8, NULL, NULL);
+   if (size8 == 0)
+     {
+        _evil_last_error_display(__FUNCTION__);
+        return NULL;
+     }
+
+   return text8;
 }
 
 char *

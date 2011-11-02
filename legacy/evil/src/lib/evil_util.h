@@ -10,7 +10,7 @@
  *
  * Convert a string from char * to wchar_t * and return it. If the
  * allocation or conversion fails, NULL is returned. On success, the
- * returned value must be freed.
+ * returned value must be freed when it is not used anymore.
  *
  * Conformity: Non applicable.
  *
@@ -29,7 +29,7 @@ EAPI wchar_t *evil_char_to_wchar(const char *text);
  *
  * Convert a string from wchar_t * to char * and return it. If the
  * allocation or conversion fails, NULL is returned. On success, the
- * returned value must be freed.
+ * returned value must be freed when it is not used anymore.
  *
  * Conformity: Non applicable.
  *
@@ -39,6 +39,25 @@ EAPI wchar_t *evil_char_to_wchar(const char *text);
  * @ingroup Evil
  */
 EAPI char *evil_wchar_to_char(const wchar_t *text);
+
+/**
+ * @brief Convert a string from UTF-16 to UTF-8.
+ *
+ * @param text The string to convert in UTF-16.
+ * @return The converted string in UTF-8.
+ *
+ * Convert a string from UTF-16 to UTF-8 and return it. If the
+ * allocation or conversion fails, NULL is returned. On success, the
+ * returned value must be freed when it is not used anymore.
+ *
+ * Conformity: Non applicable.
+ *
+ * Supported OS: Windows 95, Windows 98, Windows Me, Windows NT, Windows 2000,
+ * Windows XP.
+ *
+ * @ingroup Evil
+ */
+EAPI char *evil_utf16_to_utf8(const wchar_t *text);
 
 EAPI char *evil_format_message(long err);
 
