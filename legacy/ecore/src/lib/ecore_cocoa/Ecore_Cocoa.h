@@ -1,5 +1,5 @@
-#ifndef _ECORE_COCOA_H
-#define _ECORE_COCOA_H
+#ifndef __ECORE_COCOA_H__
+#define __ECORE_COCOA_H__
 
 /*
  * DO NOT USE THIS HEADER. IT IS WORK IN PROGRESS. IT IS NOT FINAL AND
@@ -46,7 +46,7 @@ struct _Ecore_Cocoa_Event_Video_Resize
 
 /* Core */
 
-EAPI int  ecore_cocoa_init(const char *name);
+EAPI int  ecore_cocoa_init(void);
 EAPI int  ecore_cocoa_shutdown(void);
 EAPI void ecore_cocoa_feed_events(void);
 
@@ -135,6 +135,10 @@ EAPI void ecore_cocoa_window_iconified_set(Ecore_Cocoa_Window *window,
 
 EAPI void ecore_cocoa_window_borderless_set(Ecore_Cocoa_Window *window,
                                             int                 on);
+
+EAPI void ecore_cocoa_window_view_set(Ecore_Cocoa_Window *window,
+				      void *view);
+
 
 #ifdef __cplusplus
 }

@@ -86,6 +86,11 @@
 # include <Evas_Engine_Software_16_WinCE.h>
 #endif
 
+#ifdef BUILD_ECORE_EVAS_GL_COCOA
+# include "Ecore_Cocoa.h"
+# include <Evas_Engine_Gl_Cocoa.h>
+#endif
+
 /**
    Log domain macros and variable
  **/

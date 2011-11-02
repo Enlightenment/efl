@@ -42,6 +42,14 @@ ECORE_SDL_LIB =
 ECORE_SDL_LIBADD =
 endif
 
+if BUILD_ECORE_COCOA
+ECORE_COCOA_INC = -I$(top_srcdir)/src/lib/ecore_cocoa
+ECORE_COCOA_LIB = $(top_builddir)/src/lib/ecore_cocoa/libecore_cocoa.la
+else
+ECORE_COCOA_INC =
+ECORE_COCOA_LIB =
+endif
+
 if BUILD_ECORE_WINCE
 ECORE_WINCE_INC = -I$(top_srcdir)/src/lib/ecore_wince
 ECORE_WINCE_LIB = $(top_builddir)/src/lib/ecore_wince/libecore_wince.la
@@ -65,6 +73,7 @@ $(ECORE_FB_INC) \
 $(ECORE_DIRECTFB_INC) \
 $(ECORE_WIN32_INC) \
 $(ECORE_SDL_INC) \
+$(ECORE_COCOA_INC) \
 $(ECORE_WINCE_INC) \
 @EVAS_CFLAGS@ \
 @EINA_CFLAGS@ \
@@ -85,6 +94,7 @@ ecore_evas_buffer.c \
 ecore_evas_directfb.c \
 ecore_evas_win32.c \
 ecore_evas_sdl.c \
+ecore_evas_cocoa.c \
 ecore_evas_wince.c \
 ecore_evas_ews.c
 
@@ -95,6 +105,7 @@ $(ECORE_DIRECTFB_LIB) \
 $(ECORE_WIN32_LIB) \
 $(ECORE_SDL_LIB) \
 $(ECORE_SDL_LIBADD) \
+$(ECORE_COCOA_LIB) \
 $(ECORE_WINCE_LIB) \
 $(top_builddir)/src/lib/ecore_input/libecore_input.la \
 $(top_builddir)/src/lib/ecore_input_evas/libecore_input_evas.la \

@@ -165,6 +165,7 @@ want_ecore_evas_opengl_glew="no"
 want_ecore_evas_software_16_ddraw="no"
 want_ecore_evas_software_sdl="no"
 want_ecore_evas_gl_sdl="no"
+want_ecore_evas_gl_cocoa="no"
 want_ecore_evas_directfb="no"
 want_ecore_evas_fb="no"
 want_ecore_evas_software_16_wince="no"
@@ -205,6 +206,7 @@ case "$host_os" in
       want_ecore_cocoa="yes"
       want_ecore_evas_software_sdl="yes"
       want_ecore_evas_gl_sdl="yes"
+      want_ecore_evas_gl_cocoa="yes"
       ;;
    *)
       want_curl="yes"
@@ -226,6 +228,7 @@ case "$host_os" in
       want_ecore_evas_software_xcb="no"
       want_ecore_evas_software_sdl="yes"
       want_ecore_evas_gl_sdl="yes"
+      want_ecore_evas_gl_cocoa="no"
       want_ecore_evas_directfb="yes"
       want_ecore_evas_fb="yes"
       want_ecore_imf_xim="yes"
@@ -1717,6 +1720,14 @@ ECORE_EVAS_CHECK_MODULE([opengl-sdl],
    [${have_ecore_sdl}],
    [requirements_ecore_evas="ecore-sdl >= 1.0.0 ${requirements_ecore_evas}"])
 
+# ecore_evas_cocoa
+
+ECORE_EVAS_CHECK_MODULE([opengl-cocoa],
+   [${want_ecore_evas_gl_cocoa}],
+   [OpenGL Cocoa],
+   [${have_ecore_cocoa}],
+   [requirements_ecore_evas="ecore-cocoa >= 1.0.0 ${requirements_ecore_evas}"])
+
 # ecore_evas_directfb
 
 ECORE_EVAS_CHECK_MODULE([directfb],
@@ -1782,7 +1793,6 @@ ecore-directfb.pc
 ecore-evas.pc
 ecore-fb.pc
 ecore-file.pc
-ecore-cocoa.pc
 ecore-imf.pc
 ecore-imf-evas.pc
 ecore-ipc.pc
@@ -1791,6 +1801,7 @@ ecore-input.pc
 ecore-input-evas.pc
 ecore-win32.pc
 ecore-sdl.pc
+ecore-cocoa.pc
 ecore-wince.pc
 ecore.pc
 doc/ecore.dox
@@ -1959,6 +1970,7 @@ if test "x${have_ecore_evas}" = "xyes" ; then
   echo "    OpenGL Glew................: $have_ecore_evas_opengl_glew"
   echo "    Software SDL...............: $have_ecore_evas_software_sdl"
   echo "    OpenGL SDL.................: $have_ecore_evas_opengl_sdl"
+  echo "    OpenGL Cocoa...............: $have_ecore_evas_opengl_cocoa"
   echo "    DirectFB...................: $have_ecore_evas_directfb"
   echo "    Software Framebuffer.......: $have_ecore_evas_fb"
   echo "    Software 8bit grayscale XCB: $have_ecore_evas_software_8_x11"

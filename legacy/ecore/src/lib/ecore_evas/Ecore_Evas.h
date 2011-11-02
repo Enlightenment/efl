@@ -93,7 +93,7 @@ typedef enum _Ecore_Evas_Engine_Type
    ECORE_EVAS_ENGINE_SOFTWARE_DDRAW,
    ECORE_EVAS_ENGINE_DIRECT3D,
    ECORE_EVAS_ENGINE_OPENGL_GLEW,
-   ECORE_EVAS_ENGINE_COCOA,
+   ECORE_EVAS_ENGINE_OPENGL_COCOA,
    ECORE_EVAS_ENGINE_SOFTWARE_SDL,
    ECORE_EVAS_ENGINE_DIRECTFB,
    ECORE_EVAS_ENGINE_SOFTWARE_FB,
@@ -136,6 +136,10 @@ typedef struct _Ecore_Win32_Window Ecore_Win32_Window;
 
 #ifndef __ECORE_WINCE_H__
 typedef struct _Ecore_WinCE_Window Ecore_WinCE_Window;
+#endif
+
+#ifndef __ECORE_COCOA_H__
+typedef struct _Ecore_Cocoa_Window Ecore_Cocoa_Window;
 #endif
 
 #ifndef _ECORE_EVAS_PRIVATE_H
@@ -943,7 +947,11 @@ EAPI Ecore_Evas     *ecore_evas_software_wince_gdi_new(Ecore_WinCE_Window *paren
 
 EAPI Ecore_WinCE_Window *ecore_evas_software_wince_window_get(const Ecore_Evas *ee);
 
-EAPI Ecore_Evas *ecore_evas_cocoa_new(const char* name, int w, int h);
+EAPI Ecore_Evas *ecore_evas_cocoa_new(Ecore_Cocoa_Window *parent,
+				      int x,
+				      int y,
+				      int w,
+				      int h);
 
 /* generic manipulation calls */
 /**

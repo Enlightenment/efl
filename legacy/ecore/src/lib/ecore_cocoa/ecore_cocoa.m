@@ -13,6 +13,7 @@
 #include "Ecore_Cocoa.h"
 #include "Ecore_Cocoa_Keys.h"
 
+
 EAPI int ECORE_COCOA_EVENT_GOT_FOCUS = 0;
 EAPI int ECORE_COCOA_EVENT_LOST_FOCUS = 0;
 EAPI int ECORE_COCOA_EVENT_RESIZE = 0;
@@ -23,13 +24,15 @@ static int _ecore_cocoa_init_count = 0;
 static int old_flags;
 
 EAPI int
-ecore_cocoa_init(const char *name __UNUSED__)
+ecore_cocoa_init(void)
 {
    if (++_ecore_cocoa_init_count != 1)
      return _ecore_cocoa_init_count;
 
    if (!ecore_event_init())
      return --_ecore_cocoa_init_count;
+
+   NSApplicationLoad();
 
    ECORE_COCOA_EVENT_GOT_FOCUS  = ecore_event_type_new();
    ECORE_COCOA_EVENT_LOST_FOCUS = ecore_event_type_new();
