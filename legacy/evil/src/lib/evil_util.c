@@ -37,8 +37,7 @@ evil_char_to_wchar(const char *text)
    if (wtext)
      if (!MultiByteToWideChar(CP_ACP, 0, text, (int)strlen(text) + 1, wtext, wsize))
      {
-        if (wsize == 0)
-          _evil_last_error_display(__FUNCTION__);
+        _evil_last_error_display(__FUNCTION__);
         return NULL;
      }
 
