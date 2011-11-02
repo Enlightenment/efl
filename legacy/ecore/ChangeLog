@@ -317,3 +317,8 @@
 
         * Make the framebuffer engine input use ecore_input_evas instead
         of feeding evas input events directly.
+
+2011-11-02 Nicolas Aguirre
+
+	* Add support ecore_cocoa_evas engine.
+	* Fix ecore_cocoa code to correctly handle cocoa window.
