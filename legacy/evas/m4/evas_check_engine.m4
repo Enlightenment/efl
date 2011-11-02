@@ -328,8 +328,6 @@ fi
 ])
 
 
-
-
 dnl use: EVAS_CHECK_ENGINE_DEP_SOFTWARE_GDI(engine, simple, want_static[, ACTION-IF-FOUND[, ACTION-IF-NOT-FOUND]])
 
 AC_DEFUN([EVAS_CHECK_ENGINE_DEP_SOFTWARE_GDI],
@@ -410,6 +408,59 @@ else
 fi
 
 ])
+
+
+dnl use: EVAS_CHECK_ENGINE_DEP_GL_COCOA(engine, simple, want_static[, ACTION-IF-FOUND[, ACTION-IF-NOT-FOUND]])
+
+AC_DEFUN([EVAS_CHECK_ENGINE_DEP_GL_COCOA],
+[
+
+evas_engine_[]$1[]_cflags=""
+evas_engine_[]$1[]_libs=""
+
+AC_LANG_PUSH([Objective C])
+
+LIBS_save="$LIBS"
+LIBS="$LIBS -framework Cocoa"
+AC_LINK_IFELSE(
+   [AC_LANG_PROGRAM(
+       [[
+#include <Cocoa/Cocoa.h>
+       ]],
+       [[
+NSWindow *window;
+window = [[NSWindow alloc]
+           initWithContentRect:NSMakeRect(0, 0, 1, 1)
+           styleMask:(NSTitledWindowMask)
+           backing:NSBackingStoreBuffered
+           defer:NO
+           screen:nil
+         ];
+       ]])],
+   [
+    have_dep="yes"
+    evas_engine_[]$1[]_libs="-framework Cocoa"
+   ],
+   [have_dep="no"])
+LIBS="$LIBS_save"
+
+AC_LANG_POP([Objective C])
+
+if test "x${have_dep}" = "xyes" ; then
+   PKG_CHECK_MODULES([GL_EET], [eet >= 1.4.0], [have_dep="yes"], [have_dep="no"])
+fi
+
+AC_SUBST([evas_engine_$1_cflags])
+AC_SUBST([evas_engine_$1_libs])
+
+if test "x${have_dep}" = "xyes" ; then
+  m4_default([$4], [:])
+else
+  m4_default([$5], [:])
+fi
+
+])
+
 
 dnl use: EVAS_CHECK_ENGINE_DEP_SOFTWARE_SDL(engine, simple, want_static[, ACTION-IF-FOUND[, ACTION-IF-NOT-FOUND]])
 

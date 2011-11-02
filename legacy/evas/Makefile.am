@@ -96,6 +96,10 @@ if BUILD_ENGINE_GL_SDL
 pkgconfig_DATA += evas-opengl-sdl.pc
 endif
 
+if BUILD_ENGINE_GL_COCOA
+pkgconfig_DATA += evas-opengl-cocoa.pc
+endif
+
 if BUILD_ENGINE_SOFTWARE_GDI
 pkgconfig_DATA += evas-software-gdi.pc
 endif
