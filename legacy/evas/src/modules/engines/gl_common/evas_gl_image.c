@@ -535,7 +535,9 @@ evas_gl_common_image_dirty(Evas_GL_Image *im, unsigned int x, unsigned int y, un
 void
 evas_gl_common_image_update(Evas_Engine_GL_Context *gc, Evas_GL_Image *im)
 {
+   Image_Entry *ie;
    if (!im->im) return;
+   ie = (Image_Entry *)(im->im);
 /*
    if ((im->cs.space == EVAS_COLORSPACE_YCBCR422P601_PL) ||
        (im->cs.space == EVAS_COLORSPACE_YCBCR422P709_PL))
@@ -560,7 +562,8 @@ evas_gl_common_image_update(Evas_Engine_GL_Context *gc, Evas_GL_Image *im)
    switch (im->cs.space)
      {
       case EVAS_COLORSPACE_ARGB8888:
-	if ((im->tex) && (im->dirty))
+         if ((im->tex) &&
+             ((im->dirty) || (ie->flags.animated)))
           {
              evas_cache_image_load_data(&im->im->cache_entry);
              evas_gl_common_texture_update(im->tex, im->im);
