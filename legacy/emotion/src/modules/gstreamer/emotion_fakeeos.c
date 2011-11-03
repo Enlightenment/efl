@@ -16,7 +16,7 @@ GST_BOILERPLATE(FakeEOSBin, fakeeos_bin, GstBin,
 static void
 fakeeos_bin_handle_message(GstBin * bin, GstMessage * message)
 {
-   FakeEOSBin *fakeeos = (FakeEOSBin *)(bin);
+   /* FakeEOSBin *fakeeos = (FakeEOSBin *)(bin); */
 
    switch (GST_MESSAGE_TYPE(message)) {
     case GST_MESSAGE_EOS:

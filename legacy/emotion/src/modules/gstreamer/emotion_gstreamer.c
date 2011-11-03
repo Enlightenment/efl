@@ -260,15 +260,6 @@ emotion_video_stream_new(Emotion_Gstreamer_Video *ev)
    return vstream;
 }
 
-static void
-emotion_video_stream_free(Emotion_Gstreamer_Video *ev, Emotion_Video_Stream *vstream)
-{
-   if (!ev || !vstream) return;
-
-   ev->video_streams = eina_list_remove(ev->video_streams, vstream);
-        free(vstream);
-}
-
 static const char *
 emotion_visualization_element_name_get(Emotion_Vis visualisation)
 {
@@ -1051,8 +1042,12 @@ static void
 em_audio_channel_mute_set(void *video,
                           int   mute)
 {
+   /* NOTE: at first I wanted to completly shutdown the audio path on mute,
+      but that's not possible as the audio sink could be the clock source
+      for the pipeline (at least that's the case on some of the hardware
+      I have been tested emotion on.
+    */
    Emotion_Gstreamer_Video *ev;
-   int flags;
 
    ev = (Emotion_Gstreamer_Video *)video;
 
@@ -1061,15 +1056,6 @@ em_audio_channel_mute_set(void *video,
    ev->audio_mute = mute;
 
    g_object_set(G_OBJECT(ev->pipeline), "mute", !!mute, NULL);
-   /* This code should stop the decoding of only the audio stream, but everything stop :"( */
-   /* g_object_get(G_OBJECT(ev->pipeline), "flags", &flags, NULL); */
-   /* if (mute) */
-   /*   flags &= ~GST_PLAY_FLAG_AUDIO; */
-   /* else */
-   /*   flags |= GST_PLAY_FLAG_AUDIO; */
-   /* g_object_set(G_OBJECT(ev->pipeline), "flags", flags, NULL); */
-   /* g_object_get(G_OBJECT(ev->pipeline), "flags", &flags, NULL); */
-   /* fprintf(stderr, "flags-n: %x\n", flags); */
 }
 
 static int
@@ -1245,7 +1231,7 @@ em_priority_get(void *video)
 }
 
 static Eina_Bool
-_ecore_event_x_destroy(void *data, int type, void *event)
+_ecore_event_x_destroy(void *data __UNUSED__, int type __UNUSED__, void *event __UNUSED__)
 {
    Ecore_X_Event_Window_Destroy *ev = event;
 

@@ -923,7 +923,7 @@ _player_exec(Emotion_Generic_Video *ev)
 }
 
 static Eina_Bool
-_fork_and_exec(Evas_Object *obj, Emotion_Generic_Video *ev)
+_fork_and_exec(Evas_Object *obj __UNUSED__, Emotion_Generic_Video *ev)
 {
    char shmname[256];
    struct timeval tv;
