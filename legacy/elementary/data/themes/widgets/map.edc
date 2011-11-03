@@ -501,6 +501,7 @@ group { name: "elm/map/marker/radio/default";
    }
    parts {
       part { name: "whole";
+         type: RECT;
          description { state: "default" 0.0;
          }
       }
@@ -611,6 +612,7 @@ group { name: "elm/map/marker/empty/default";
    }
    parts {
       part { name: "whole";
+         type: RECT;
          description { state: "default" 0.0;
          }
       }
