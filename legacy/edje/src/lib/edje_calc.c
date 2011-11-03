@@ -56,7 +56,7 @@ _edje_part_pos_set(Edje *ed, Edje_Real_Part *ep, int mode, FLOAT_T pos, FLOAT_T 
          break;
      }
 #else
-   switch (mode)
+   switch (mode & EDJE_TWEEN_MODE_MASK)
      {
       case EDJE_TWEEN_MODE_SINUSOIDAL:
         npos = FROM_DOUBLE(ecore_animator_pos_map(TO_DOUBLE(pos),
@@ -2212,10 +2212,31 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep, int flags)
 #endif
  	  }
      }
-   if (ep->param2 && ep->description_pos != ZERO)
+   if (ep->param2)
      {
 	int beginning_pos, part_type;
 	Edje_Calc_Params *p2, *p3;
+
+        if (ep->current)
+          {
+             p1->x = ep->current->x - ed->x;
+             p1->y = ep->current->y - ed->y;
+             p1->w = ep->current->w;
+             p1->h = ep->current->h;
+             p1->color.r = ep->current->color.r;
+             p1->color.g = ep->current->color.g;
+             p1->color.b = ep->current->color.b;
+             p1->color.a = ep->current->color.a;
+             p1->type.text.size = ep->current->type.text.size;
+             p1->type.text.color2.r = ep->current->type.text.color2.r;
+             p1->type.text.color2.g = ep->current->type.text.color2.g;
+             p1->type.text.color2.b = ep->current->type.text.color2.b;
+             p1->type.text.color2.a = ep->current->type.text.color2.a;
+             p1->type.text.color3.r = ep->current->type.text.color3.r;
+             p1->type.text.color3.g = ep->current->type.text.color3.g;
+             p1->type.text.color3.b = ep->current->type.text.color3.b;
+             p1->type.text.color3.a = ep->current->type.text.color3.a;
+          }
 
  	p3 = &lp3;
 

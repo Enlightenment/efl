@@ -7121,7 +7121,7 @@ st_collections_group_programs_program_action(void)
     @property
         transition
     @parameters
-        [type] [length] [[interp val 1]] [[interp val 2]]
+        [type] [length] [[interp val 1]] [[interp val 2]] [[option]]
     @effect
         Defines how transitions occur using STATE_SET action.\n
         Where 'type' is the style of the transition and 'length' is a double
@@ -7157,6 +7157,11 @@ st_collections_group_programs_program_action(void)
         spring "swings" and val 1 specifies the decay, but it can exceed 1.0
         on the outer swings.
 
+        Valid option is CURRENT.
+
+        CURRENT is the option which the edje object moves from current position.
+        It can be used as the last parameter of the every type.
+
     @endproperty
 */
 static void
@@ -7190,15 +7195,30 @@ st_collections_group_programs_program_transition(void)
 					    "SPRING", EDJE_TWEEN_MODE_SPRING,
 					    NULL);
    current_program->tween.time = FROM_DOUBLE(parse_float_range(1, 0.0, 999999999.0));
+   if ((current_program->tween.mode >= EDJE_TWEEN_MODE_LINEAR) &&
+       (current_program->tween.mode <= EDJE_TWEEN_MODE_DECELERATE))
+     {
+        if ((get_arg_count() == 3) && (!strcmp(parse_str(2), "CURRENT")))
+          current_program->tween.mode |= EDJE_TWEEN_MODE_OPT_FROM_CURRENT;
+        else if (get_arg_count() != 2)
+          {
+             ERR("%s: Error. parse error %s:%i. "
+                 "Need 2rd parameter to set time",
+                 progname, file_in, line - 1);
+             exit(-1);
+          }
+     }
    // the following need v1
    // EDJE_TWEEN_MODE_ACCELERATE_FACTOR
    // EDJE_TWEEN_MODE_DECELERATE_FACTOR
    // EDJE_TWEEN_MODE_SINUSOIDAL_FACTOR
    // current_program->tween.v1
-   if ((current_program->tween.mode >= EDJE_TWEEN_MODE_ACCELERATE_FACTOR) &&
+   else if ((current_program->tween.mode >= EDJE_TWEEN_MODE_ACCELERATE_FACTOR) &&
        (current_program->tween.mode <= EDJE_TWEEN_MODE_SINUSOIDAL_FACTOR))
      {
-        if (get_arg_count() != 3)
+        if ((get_arg_count() == 4) && (!strcmp(parse_str(3), "CURRENT")))
+          current_program->tween.mode |= EDJE_TWEEN_MODE_OPT_FROM_CURRENT;
+        else if (get_arg_count() != 3)
           {
 	     ERR("%s: Error. parse error %s:%i. "
 		 "Need 3rd parameter to set factor",
@@ -7215,7 +7235,9 @@ st_collections_group_programs_program_transition(void)
    else if ((current_program->tween.mode >= EDJE_TWEEN_MODE_DIVISOR_INTERP) &&
             (current_program->tween.mode <= EDJE_TWEEN_MODE_SPRING))
      {
-        if (get_arg_count() != 4)
+        if ((get_arg_count() == 5) && (!strcmp(parse_str(4), "CURRENT")))
+          current_program->tween.mode |= EDJE_TWEEN_MODE_OPT_FROM_CURRENT;
+        else if (get_arg_count() != 4)
           {
 	     ERR("%s: Error. parse error %s:%i. "
 		 "Need 3rd and 4th parameters to set factor and counts",

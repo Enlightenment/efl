@@ -478,6 +478,35 @@ _edje_program_run(Edje *ed, Edje_Program *pr, Eina_Bool force, const char *ssig,
 		       rp = ed->table_parts[pt->id % ed->table_parts_size];
 		       if (rp)
 			 {
+                            if ((rp->object) && (pr->tween.mode & EDJE_TWEEN_MODE_OPT_FROM_CURRENT))
+                              {
+                                 rp->current = calloc(1, sizeof(Edje_Calc_Params));
+                                 evas_object_geometry_get(rp->object, &(rp->current->x),
+                                                          &(rp->current->y),
+                                                          &(rp->current->w),
+                                                          &(rp->current->h));
+                                 evas_object_color_get(rp->object, (int *)&(rp->current->color.r),
+                                                       (int *)&(rp->current->color.g),
+                                                       (int *)&(rp->current->color.b),
+                                                       (int *)&(rp->current->color.a));
+                                 evas_object_text_font_get(rp->object, NULL, &(rp->current->type.text.size));
+                                 evas_object_text_outline_color_get(rp->object,
+                                                       (int *)&(rp->current->type.text.color2.r),
+                                                       (int *)&(rp->current->type.text.color2.g),
+                                                       (int *)&(rp->current->type.text.color2.b),
+                                                       (int *)&(rp->current->type.text.color2.a));
+                                 evas_object_text_shadow_color_get(rp->object,
+                                                       (int *)&(rp->current->type.text.color3.r),
+                                                       (int *)&(rp->current->type.text.color3.g),
+                                                       (int *)&(rp->current->type.text.color3.b),
+                                                       (int *)&(rp->current->type.text.color3.a));
+                              }
+                            else
+                              {
+                                 if (rp->current) free(rp->current);
+                                 rp->current = NULL;
+                              }
+
 			    if (rp->program)
 			      _edje_program_end(ed, rp->program);
 			    _edje_part_description_apply(ed, rp,
