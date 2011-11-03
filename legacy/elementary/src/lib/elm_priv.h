@@ -28,8 +28,14 @@
 # ifndef setlocale
 #  define setlocale(c, l)
 # endif
+# ifndef libintl_setlocale
+#  define libintl_setlocale(c, l)
+# endif
 # ifndef bindtextdomain
 #  define bindtextdomain(domain,dir)
+# endif
+# ifndef libintl_bindtextdomain
+#  define libintl_bindtextdomain(domain,dir)
 # endif
 # define E_(string) (string)
 #endif
