@@ -45,6 +45,7 @@ typedef struct _Track_Dump Track_Dump;
 
 #define PINCH_ZOOM_MIN 0.25
 #define PINCH_ZOOM_MAX 4.0
+#define MAX_CONCURRENT_DOWNLOAD 10
 
 #define GPX_NAME "name>"
 #define GPX_COORDINATES "trkpt "
@@ -241,9 +242,11 @@ struct _Elm_Map_Name
 struct _Grid_Item
 {
    Widget_Data *wd;
+   Grid *g;
    Evas_Object *img;
    //Evas_Object *txt;
    const char *file;
+   const char *source;
    struct {
         int x, y, w, h;
    } src, out;
@@ -298,7 +301,6 @@ struct _Widget_Data
    } show;
    int tsize;
    int nosmooth;
-   int preload_num;
    Eina_List *grids;
    Eina_Bool resized : 1;
    Eina_Bool on_hold : 1;
@@ -362,6 +364,8 @@ struct _Widget_Data
    Map_Sources_Tab *src;
    const char *gpx_file;
    int zoom_min, zoom_max;
+   Eina_List *download_list;
+   int download_num;
 };
 
 struct _Pan
@@ -501,6 +505,8 @@ static void grid_clear(Evas_Object *obj, Grid *g);
 static Grid *grid_create(Evas_Object *obj);
 static void grid_load(Evas_Object *obj, Grid *g);
 
+static void _process_download_list(Evas_Object *obj);
+static void _add_download_list(Evas_Object *obj, Grid_Item *gi);
 
 static void _group_object_create(Marker_Group *group);
 static void _group_object_free(Marker_Group *group);
@@ -1147,17 +1153,8 @@ grid_clear(Evas_Object *obj, Grid *g)
         evas_object_del(gi->img);
         //evas_object_del(gi->txt);
 
-        if (gi->want)
-          {
-             gi->want = EINA_FALSE;
-             wd->preload_num--;
-             if (!wd->preload_num)
-               {
-                  edje_object_signal_emit(elm_smart_scroller_edje_object_get(wd->scr),
-                                          "elm,state,busy,stop", "elm");
-                  evas_object_smart_callback_call(obj, SIG_LOADED_DETAIL, NULL);
-               }
-          }
+        wd->download_list = eina_list_remove(wd->download_list, gi);
+        gi->want = EINA_FALSE;
 
         if (gi->job)
           {
@@ -1170,6 +1167,8 @@ grid_clear(Evas_Object *obj, Grid *g)
           }
         if (gi->file)
           eina_stringshare_del(gi->file);
+        if (gi->source)
+          eina_stringshare_del(gi->source);
 
         free(gi);
      }
@@ -1201,13 +1200,6 @@ _tile_update(Grid_Item *gi)
    //evas_object_show(gi->txt);
 
    gi->have = EINA_TRUE;
-   gi->wd->preload_num--;
-   if (!gi->wd->preload_num)
-     {
-        edje_object_signal_emit(elm_smart_scroller_edje_object_get(gi->wd->scr),
-                                "elm,state,busy,stop", "elm");
-        evas_object_smart_callback_call(gi->wd->obj, SIG_LOADED_DETAIL, NULL);
-     }
 }
 
 static void
@@ -1215,10 +1207,15 @@ _tile_downloaded(void *data, const char *file __UNUSED__, int status)
 {
    Grid_Item *gi = data;
 
+   gi->wd->download_num--;
    gi->download = EINA_FALSE;
    gi->job = NULL;
 
-   if ((gi->want) && (status == 200)) _tile_update(gi);
+   if ((gi->want) && (status == 200))
+     {
+        _tile_update(gi);
+        DBG("DOWNLOAD done %s", gi->file);
+     }
 
    if (status != 200)
      {
@@ -1230,7 +1227,86 @@ _tile_downloaded(void *data, const char *file __UNUSED__, int status)
      gi->wd->finish_num++;
 
    evas_object_smart_callback_call(gi->wd->obj, SIG_DOWNLOADED, NULL);
-   DBG("DOWNLOAD done %s", gi->file);
+   if (!gi->wd->download_num)
+     {
+        edje_object_signal_emit(elm_smart_scroller_edje_object_get(gi->wd->scr), "elm,state,busy,stop", "elm");
+        evas_object_smart_callback_call(gi->wd->obj, SIG_LOADED_DETAIL, NULL);
+     }
+   _process_download_list(gi->wd->obj);
+}
+
+static void
+_process_download_list(Evas_Object *obj)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype);
+   Widget_Data *wd = elm_widget_data_get(obj);
+   Eina_List *l;
+   Evas_Coord ox, oy, ow, oh, cvx, cvy, cvw, cvh, tx, ty, gw, gh, xx, yy, ww, hh;
+   Grid_Item *gi;
+
+   evas_object_geometry_get(wd->pan_smart, &ox, &oy, &ow, &oh);
+   evas_output_viewport_get(evas_object_evas_get(wd->obj), &cvx, &cvy, &cvw, &cvh);
+
+   gw = wd->size.w;
+   gh = wd->size.h;
+
+   EINA_LIST_FOREACH(wd->download_list, l, gi)
+     {
+        xx = gi->out.x;
+        yy = gi->out.y;
+        ww = gi->out.w;
+        hh = gi->out.h;
+
+        if ((gw != gi->g->w) && (gi->g->w > 0))
+          {
+             tx = xx;
+             xx = ((long long )gw * xx) / gi->g->w;
+             ww = (((long long)gw * (tx + ww)) / gi->g->w) - xx;
+          }
+        if ((gh != gi->g->h) && (gi->g->h > 0))
+          {
+             ty = yy;
+             yy = ((long long)gh * yy) / gi->g->h;
+             hh = (((long long)gh * (ty + hh)) / gi->g->h) - yy;
+          }
+        if (!ELM_RECTS_INTERSECT(xx - wd->pan_x + ox,
+                                 yy  - wd->pan_y + oy,
+                                 ww, hh,
+                                 cvx, cvy, cvw, cvh))
+          {
+             gi->download = EINA_FALSE;
+             wd->download_list = eina_list_remove(wd->download_list, gi);
+          }
+     }
+
+   EINA_LIST_REVERSE_FOREACH(wd->download_list, l, gi)
+     {
+        if (gi->wd->download_num >= MAX_CONCURRENT_DOWNLOAD)
+          break;
+
+        ecore_file_download_full(gi->source, gi->file, _tile_downloaded, NULL, gi, &(gi->job), wd->ua);
+        if (!gi->job)
+          DBG("Can't start to download %s to %s", gi->source, gi->file);
+        else
+          {
+             gi->wd->download_num++;
+             wd->try_num++;
+             wd->download_list = eina_list_remove(wd->download_list, gi);
+             if (wd->download_num == 1)
+               edje_object_signal_emit(elm_smart_scroller_edje_object_get(wd->scr), "elm,state,busy,start", "elm");
+          }
+     }
+}
+
+static void
+_add_download_list(Evas_Object *obj, Grid_Item *gi)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype);
+   Widget_Data *wd = elm_widget_data_get(obj);
+
+   wd->download_list = eina_list_remove(wd->download_list, gi);
+   wd->download_list = eina_list_append(wd->download_list, gi);
+   _process_download_list(obj);
 }
 
 static Grid *
@@ -1334,15 +1410,6 @@ grid_load(Evas_Object *obj, Grid *g)
                        wd->try_num--;
                     }
                   gi->download = EINA_FALSE;
-                  wd->preload_num--;
-                  if (!wd->preload_num)
-                    {
-                       edje_object_signal_emit(elm_smart_scroller_edje_object_get(wd->scr),
-                                               "elm,state,busy,stop", "elm");
-                       evas_object_smart_callback_call(obj, SIG_LOADED_DETAIL,
-                                                       NULL);
-                    }
-
                }
              else if (gi->have)
                {
@@ -1392,6 +1459,7 @@ grid_load(Evas_Object *obj, Grid *g)
                   gi->out.h = gi->src.h;
 
                   gi->wd = wd;
+                  gi->g = g;
 
                   gi->img = evas_object_image_add(evas_object_evas_get(obj));
                   evas_object_image_scale_hint_set
@@ -1431,31 +1499,15 @@ grid_load(Evas_Object *obj, Grid *g)
                   if ((!source) || (strlen(source)==0)) continue;
 
                   eina_stringshare_replace(&gi->file, buf2);
+                  eina_stringshare_replace(&gi->source, source);
 
                   if ((ecore_file_exists(buf2)) || (g == eina_list_data_get(wd->grids)))
                     {
                        gi->download = EINA_TRUE;
-                       wd->preload_num++;
-                       if (wd->preload_num == 1)
-                         {
-                            edje_object_signal_emit(elm_smart_scroller_edje_object_get(wd->scr),
-                                                    "elm,state,busy,start", "elm");
-                            evas_object_smart_callback_call(obj,
-                                                            SIG_LOAD_DETAIL,
-                                                            NULL);
-                         }
-
                        if (ecore_file_exists(buf2))
                          _tile_update(gi);
                        else
-                         {
-                            DBG("DOWNLOAD %s \t in %s", source, buf2);
-                            ecore_file_download_full(source, buf2, _tile_downloaded, NULL, gi, &(gi->job), wd->ua);
-                            if (!gi->job)
-                              DBG("Can't start to download %s", buf);
-                            else
-                              wd->try_num++;
-                         }
+                         _add_download_list(obj, gi);
                     }
                   if (source) free(source);
                }
@@ -1481,6 +1533,7 @@ grid_clearall(Evas_Object *obj)
         grid_clear(obj, g);
         free(g);
      }
+   wd->download_list = eina_list_free(wd->download_list);
 }
 
 static void
