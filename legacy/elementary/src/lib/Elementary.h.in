@@ -7057,6 +7057,7 @@ extern "C" {
     * Once the content object is set, a previously set one will be deleted.
     * If you want to keep that old content object, use the
     * elm_scroller_content_unset() function.
+    * @deprecated See elm_object_content_set()
     */
    EINA_DEPRECATED EAPI void         elm_scroller_content_set(Evas_Object *obj, Evas_Object *child) EINA_ARG_NONNULL(1);
    /**
@@ -7068,6 +7069,7 @@ extern "C" {
     * Return the content object which is set for this widget
     *
     * @see elm_scroller_content_set()
+    * @deprecated use elm_object_content_get() instead.
     */
    EINA_DEPRECATED EAPI Evas_Object *elm_scroller_content_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
    /**
@@ -7079,6 +7081,7 @@ extern "C" {
     * Unparent and return the content object which was set for this widget
     *
     * @see elm_scroller_content_set()
+    * @deprecated use elm_object_content_unset() instead.
     */
    EINA_DEPRECATED EAPI Evas_Object *elm_scroller_content_unset(Evas_Object *obj) EINA_ARG_NONNULL(1);
    /**
