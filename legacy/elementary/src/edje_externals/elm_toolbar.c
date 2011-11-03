@@ -72,7 +72,7 @@ external_toolbar_param_set(void *data __UNUSED__, Evas_Object *obj, const Edje_E
 {
    Elm_Toolbar_Shrink_Mode shrink_mode;
 
-   if (!strcmp(param->name, "icon_size"))
+   if (!strcmp(param->name, "icon size"))
      {
         if (param->type == EDJE_EXTERNAL_PARAM_TYPE_INT)
           {
@@ -139,7 +139,7 @@ external_toolbar_param_set(void *data __UNUSED__, Evas_Object *obj, const Edje_E
 static Eina_Bool
 external_toolbar_param_get(void *data __UNUSED__, const Evas_Object *obj, Edje_External_Param *param)
 {
-   if (!strcmp(param->name, "icon_size"))
+   if (!strcmp(param->name, "icon size"))
      {
         if (param->type == EDJE_EXTERNAL_PARAM_TYPE_INT)
           {
@@ -217,7 +217,7 @@ external_toolbar_params_parse(void *data __UNUSED__, Evas_Object *obj __UNUSED__
 
    EINA_LIST_FOREACH(params, l, param)
      {
-        if (!strcmp(param->name, "icon_size"))
+        if (!strcmp(param->name, "icon size"))
           {
              mem->icon_size = param->i;
              mem->icon_size_exists = EINA_TRUE;
@@ -273,7 +273,7 @@ external_toolbar_params_free(void *params)
 static Edje_External_Param_Info external_toolbar_params[] = {
    DEFINE_EXTERNAL_COMMON_PARAMS,
    EDJE_EXTERNAL_PARAM_INFO_STRING("shrink"),
-   EDJE_EXTERNAL_PARAM_INFO_INT("icon_size"),
+   EDJE_EXTERNAL_PARAM_INFO_INT("icon size"),
    EDJE_EXTERNAL_PARAM_INFO_DOUBLE("align"),
    EDJE_EXTERNAL_PARAM_INFO_BOOL("always select"),
    EDJE_EXTERNAL_PARAM_INFO_BOOL("no select"),
