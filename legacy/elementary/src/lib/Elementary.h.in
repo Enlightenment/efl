@@ -15620,6 +15620,7 @@ extern "C" {
     * @param vertical If @c EINA_TRUE, the toolbar is vertical
     * By default, a toolbar will be horizontal. Use this function to create a vertical toolbar.
     * @ingroup Toolbar
+    * @deprecated use elm_toolbar_horizontal_set() instead.
     */
    EINA_DEPRECATED EAPI void             elm_toolbar_orientation_set(Evas_Object *obj, Eina_Bool vertical) EINA_ARG_NONNULL(1);
 
@@ -15638,6 +15639,7 @@ extern "C" {
     * @return If @c EINA_TRUE, the toolbar is vertical
     * By default, a toolbar will be horizontal. Use this function to determine whether a toolbar is vertical.
     * @ingroup Toolbar
+    * @deprecated use elm_toolbar_horizontal_get() instead.
     */
    EINA_DEPRECATED EAPI Eina_Bool        elm_toolbar_orientation_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
 
