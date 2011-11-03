@@ -14662,7 +14662,7 @@ extern "C" {
     * Insert a new item into the toolbar object after item @p after.
     *
     * @param obj The toolbar object.
-    * @param before The toolbar item to insert before.
+    * @param after The toolbar item to insert after.
     * @param icon A string with icon name or the absolute path of an image file.
     * @param label The label of the item.
     * @param func The function to call when the item is clicked.
@@ -28371,6 +28371,8 @@ extern "C" {
     * deleted when it is popped.
     *
     * @see also elm_naviframe_item_style_set()
+    * @see also elm_naviframe_item_insert_before()
+    * @see also elm_naviframe_item_insert_after()
     *
     * The following styles are available for this item:
     * @li @c "default"
@@ -28378,6 +28380,66 @@ extern "C" {
     * @ingroup Naviframe
     */
    EAPI Elm_Object_Item    *elm_naviframe_item_push(Evas_Object *obj, const char *title_label, Evas_Object *prev_btn, Evas_Object *next_btn, Evas_Object *content, const char *item_style) EINA_ARG_NONNULL(1, 5);
+    /**
+    * @brief Insert a new item into the naviframe before item @p before.
+    *
+    * @param before The naviframe item to insert before.
+    * @param title_label The label in the title area. The name of the title
+    *        label part is "elm.text.title"
+    * @param prev_btn The button to go to the previous item. If it is NULL,
+    *        then naviframe will create a back button automatically. The name of
+    *        the prev_btn part is "elm.swallow.prev_btn"
+    * @param next_btn The button to go to the next item. Or It could be just an
+    *        extra function button. The name of the next_btn part is
+    *        "elm.swallow.next_btn"
+    * @param content The main content object. The name of content part is
+    *        "elm.swallow.content"
+    * @param item_style The current item style name. @c NULL would be default.
+    * @return The created item or @c NULL upon failure.
+    *
+    * The item is inserted into the naviframe straight away without any 
+    * transition operations. This item will be deleted when it is popped. 
+    *
+    * @see also elm_naviframe_item_style_set()
+    * @see also elm_naviframe_item_push()
+    * @see also elm_naviframe_item_insert_after()
+    *
+    * The following styles are available for this item:
+    * @li @c "default"
+    *
+    * @ingroup Naviframe
+    */
+   EAPI Elm_Object_Item    *elm_naviframe_item_insert_before(Elm_Object_Item *before, const char *title_label, Evas_Object *prev_btn, Evas_Object *next_btn, Evas_Object *content, const char *item_style) EINA_ARG_NONNULL(1, 5);
+   /**
+    * @brief Insert a new item into the naviframe after item @p after.
+    *
+    * @param after The naviframe item to insert after.
+    * @param title_label The label in the title area. The name of the title
+    *        label part is "elm.text.title"
+    * @param prev_btn The button to go to the previous item. If it is NULL,
+    *        then naviframe will create a back button automatically. The name of
+    *        the prev_btn part is "elm.swallow.prev_btn"
+    * @param next_btn The button to go to the next item. Or It could be just an
+    *        extra function button. The name of the next_btn part is
+    *        "elm.swallow.next_btn"
+    * @param content The main content object. The name of content part is
+    *        "elm.swallow.content"
+    * @param item_style The current item style name. @c NULL would be default.
+    * @return The created item or @c NULL upon failure.
+    *
+    * The item is inserted into the naviframe straight away without any 
+    * transition operations. This item will be deleted when it is popped. 
+    *
+    * @see also elm_naviframe_item_style_set()
+    * @see also elm_naviframe_item_push()
+    * @see also elm_naviframe_item_insert_before()
+    *
+    * The following styles are available for this item:
+    * @li @c "default"
+    *
+    * @ingroup Naviframe
+    */
+   EAPI Elm_Object_Item    *elm_naviframe_item_insert_after(Elm_Object_Item *after, const char *title_label, Evas_Object *prev_btn, Evas_Object *next_btn, Evas_Object *content, const char *item_style) EINA_ARG_NONNULL(1, 5);
    /**
     * @brief Pop an item that is on top of the stack
     *
@@ -28539,7 +28601,15 @@ extern "C" {
     * @see also elm_naviframe_item_push()
     *           elm_naviframe_prev_btn_auto_pushed_set()
     */
-   EAPI Eina_Bool           elm_naviframe_prev_btn_auto_pushed_get(const Evas_Object *obj); EINA_ARG_NONNULL(1);
+   EAPI Eina_Bool           elm_naviframe_prev_btn_auto_pushed_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
+   /**
+    * @brief Get a list of all the naviframe items.
+    *
+    * @param obj The naviframe object
+    * @return An Eina_Inlist* of naviframe items, #Elm_Object_Item,
+    * or @c NULL on failure.
+    */
+   EAPI Eina_Inlist        *elm_naviframe_items_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
 
    /**
     * @}
