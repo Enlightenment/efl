@@ -22,7 +22,7 @@ typedef struct _Elm_Params_Toolbar
 
 #define SHRINK_GET(CHOICES, STR)         \
    unsigned int i;                       \
-   for (i = 0; i < (sizeof(CHOICES)/sizeof(CHOICES[0])); ++i) \
+   for (i = 0; i < (sizeof(CHOICES) / sizeof(CHOICES[0])); ++i) \
      if (!strcmp(STR, CHOICES[i]))       \
        return i;
 
