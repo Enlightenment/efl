@@ -69,12 +69,10 @@ ecore_x_gesture_events_select(Ecore_X_Window win,
                               Ecore_X_Gesture_Event_Mask mask)
 {
 #ifdef ECORE_XCB_XGESTURE
-   if (!_gesture_available)
-     return EINA_FALSE;
+   if (!_gesture_available) return EINA_FALSE;
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
    CHECK_XCB_CONN
-   fprintf(stderr, "[ECORE_XCB][%s]...\n", __FUNCTION__);
 
    xcb_gesture_select_events(_ecore_xcb_conn, win, mask);
 
@@ -92,17 +90,14 @@ ecore_x_gesture_events_selected_get(Ecore_X_Window win)
    xcb_gesture_get_selected_events_reply_t *ereply;
    Ecore_X_Gesture_Event_Mask mask = ECORE_X_GESTURE_EVENT_MASK_NONE;
 
-   if (!_gesture_available)
-     return mask;
+   if (!_gesture_available) return mask;
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
    CHECK_XCB_CONN
-   fprintf(stderr, "[ECORE_XCB][%s]...\n", __FUNCTION__);
 
    ecookie = xcb_gesture_get_selected_events(_ecore_xcb_conn, win);
-   ereply = xcb_gesture_get_selected_events_reply(_ecore_xcb_conn,
-                                                  ecookie,
-                                                  NULL);
+   ereply = 
+     xcb_gesture_get_selected_events_reply(_ecore_xcb_conn, ecookie, NULL);
    if (ereply)
      {
         mask = ereply->mask;
@@ -125,23 +120,18 @@ ecore_x_gesture_event_grab(Ecore_X_Window win,
    xcb_gesture_grab_event_cookie_t ecookie;
    xcb_gesture_grab_event_reply_t *ereply;
 
-   if (!_gesture_available)
-     return EINA_FALSE;
+   if (!_gesture_available) return EINA_FALSE;
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
    CHECK_XCB_CONN
-   fprintf(stderr, "[ECORE_XCB][%s]...\n", __FUNCTION__);
 
-   ecookie = xcb_gesture_grab_event(_ecore_xcb_conn, win, type, num_fingers, 0L);
+   ecookie = 
+     xcb_gesture_grab_event(_ecore_xcb_conn, win, type, num_fingers, 0L);
    ereply = xcb_gesture_grab_event_reply(_ecore_xcb_conn, ecookie, NULL);
 
    if (ereply)
      {
-        if (ereply->status)
-          {
-             status = EINA_FALSE;
-    	   }
-
+        if (ereply->status) status = EINA_FALSE;
         free(ereply);
      }
    else
@@ -163,23 +153,18 @@ ecore_x_gesture_event_ungrab(Ecore_X_Window win,
    xcb_gesture_ungrab_event_cookie_t ecookie;
    xcb_gesture_ungrab_event_reply_t *ereply;
 
-   if (!_gesture_available)
-     return EINA_FALSE;
+   if (!_gesture_available) return EINA_FALSE;
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
    CHECK_XCB_CONN
-   fprintf(stderr, "[ECORE_XCB][%s]...\n", __FUNCTION__);
 
-  ecookie = xcb_gesture_ungrab_event(_ecore_xcb_conn, win, type, num_fingers, 0L);
+  ecookie = 
+     xcb_gesture_ungrab_event(_ecore_xcb_conn, win, type, num_fingers, 0L);
   ereply = xcb_gesture_ungrab_event_reply(_ecore_xcb_conn, ecookie, NULL);
 
    if (ereply)
      {
-        if (ereply->status)
-          {
-             status = EINA_FALSE;
-    	   }
-
+        if (ereply->status) status = EINA_FALSE;
         free(ereply);
      }
    else
@@ -190,4 +175,3 @@ ecore_x_gesture_event_ungrab(Ecore_X_Window win,
    return EINA_FALSE;
 #endif
 }
-
