@@ -1,59 +1,17 @@
 group { name:"elm/naviframe/base/default";
-   images {
-      image: "frame_1.png" COMP;
-      image: "frame_2.png" COMP;
-      image: "dia_grad.png" COMP;
-   }
    parts {
       part { name: "base0";
-         mouse_events:  0;
          description { state: "default" 0.0;
-            image.normal: "dia_grad.png";
-            fill {
-               smooth: 0;
-               size {
-                  relative: 0.0 1.0;
-                  offset: 64 0;
-               }
-            }
-         }
-      }
-      part { name: "base1";
-         type: IMAGE;
-         description { state: "default" 0.0;
-            image {
-               normal: "frame_2.png";
-               border: 5 5 32 26;
-               middle: 0;
-            }
-            fill.smooth : 0;
-         }
-      }
-      part { name: "over";
-         mouse_events:  0;
-         description { state: "default" 0.0;
-            rel1.offset: 4 4;
-            rel2.offset: 5 5;
-            image {
-               normal: "frame_1.png";
-               border: 2 2 28 22;
-               middle: 0;
-            }
-            fill.smooth : 0;
          }
       }
    }
 }
 group { name:"elm/naviframe/item/basic/default";
-   images {
-      image: "flip_shad.png" COMP;
-   }
    parts {
       part { name: "title_clip";
          type: RECT;
-         mouse_events: 0;
-         description { state: "default" 0.0;
-            min: 1 50;
+        description { state: "default" 0.0;
+            min: 1 55;
             align: 0.0 0.0;
             fixed: 0 1;
             rel1 { relative: 0.0 0.0; }
@@ -98,15 +56,22 @@ group { name:"elm/naviframe/item/basic/default";
       }
       part { name: "title_base";
          type: RECT;
-         scale: 1;
-         repeat_events: 0;
+         description { state: "default" 0.0;
+            rel1 { to: "title_clip"; }
+            rel2 { to: "title_clip"; }
+            color: 225 225 225 255;
+         }
+      }
+      part { name: "title_separator";
+         type: RECT;
          clip_to: "title_clip";
          description { state: "default" 0.0;
-            min: 1 50;
-            align: 0.0 0.0;
+            min: 0 5;
+            align: 0.5 1;
             fixed: 0 1;
-            rel1 { relative: 0.0 0.0; }
-            rel2 { relative: 1.0 0.0; }
+            rel1 { to: "title_clip"; relative: 0 1; }
+            rel2 { to: "title_clip"; }
+            color: 150 150 150 255;
          }
       }
       part { name: "elm.swallow.prev_btn";
@@ -160,7 +125,7 @@ group { name:"elm/naviframe/item/basic/default";
          clip_to: "title_clip";
          description { state: "default" 0.0;
             text { font: "Sans,Edje-Vera";
-               size: 10;
+               size: 12;
                min: 0 0;
                max: 1 0;
                align: 0.5 0.5;
@@ -178,7 +143,7 @@ group { name:"elm/naviframe/item/basic/default";
          clip_to: "title_clip";
          description { state: "default" 0.0;
             text { font: "Sans,Edje-Vera";
-               size: 8;
+               size: 10;
                min: 0 0;
                max: 1 0;
                align: 0.5 1;
@@ -186,27 +151,11 @@ group { name:"elm/naviframe/item/basic/default";
             rel1.to_y: "elm.text.title";
             rel1.relative: 0 1;
             rel1.to: "title_base";
+            rel1.offset: 0 -3;
             rel2.to: "title_base";
+            rel2.offset: -1 -4;
             color: 50 50 50 255;
             align: 0.5 0;
-         }
-      }
-      part { name: "shade";
-         type: IMAGE;
-         mouse_events: 0;
-         description { state: "default" 0.0;
-            align: 0.5 1;
-            rel1.to_y: "elm.text.title";
-            rel1.relative: 0 1;
-            rel1.offset: 0 0;
-            rel1.to: "title_base";
-            rel2.offset: -1 5;
-            rel2.to: "title_base";
-            image.normal: "flip_shad.png";
-         }
-         description { state: "hide" 0.0;
-            inherit: "default" 0.0;
-            visible: 0;
          }
       }
    }
@@ -286,14 +235,12 @@ group { name:"elm/naviframe/item/basic/default";
          source: "elm";
          action: STATE_SET "default" 0.0;
          target: "title_clip";
-         target: "shade";
       }
       program { name: "title_hide";
          signal: "elm,state,title,hide";
          source: "elm";
          action: STATE_SET "hide" 0.0;
          target: "title_clip";
-         target: "shade";
       }
       program {
          name: "title_clicked";
