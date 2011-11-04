@@ -1094,6 +1094,25 @@ _edje_file_free(Edje_File *edf)
 	free(edf->image_dir->sets);
 	free(edf->image_dir);
      }
+   if (edf->sound_dir)
+     {
+        unsigned int i;
+
+        if (edf->free_strings)
+          {
+             for (i = 0; i < edf->sound_dir->samples_count; ++i)
+               {
+                  eina_stringshare_del(edf->sound_dir->samples[i].name);
+                  eina_stringshare_del(edf->sound_dir->samples[i].snd_src);
+               }
+
+             for (i = 0; i < edf->sound_dir->tones_count; ++i)
+               eina_stringshare_del(edf->sound_dir->tones[i].name);
+          }
+        free(edf->sound_dir->samples);
+        free(edf->sound_dir->tones);
+        free(edf->sound_dir);
+     }
 
    if (edf->external_dir)
      {
@@ -1130,6 +1149,8 @@ _edje_program_free(Edje_Program *pr, Eina_Bool free_strings)
 	if (pr->filter.state) eina_stringshare_del(pr->filter.state);
 	if (pr->state) eina_stringshare_del(pr->state);
 	if (pr->state2) eina_stringshare_del(pr->state2);
+   if (pr->sample_name) eina_stringshare_del(pr->sample_name);
+   if (pr->tone_name) eina_stringshare_del(pr->tone_name);
      }
    EINA_LIST_FREE(pr->targets, prt)
      free(prt);

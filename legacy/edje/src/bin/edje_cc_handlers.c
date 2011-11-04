@@ -261,6 +261,9 @@ static void st_collections_group_programs_program_after(void);
 static void st_collections_group_programs_program_api(void);
 
 static void ob_collections_group_programs_program_script(void);
+static void st_collections_group_sound_sample_name(void);
+static void st_collections_group_sound_sample_source(void);
+static void st_collections_group_sound_tone(void);
 
 /*****/
 
@@ -299,6 +302,13 @@ New_Statement_Handler statement_handlers[] =
      {"collections.color_classes.color_class.color", st_color_class_color}, /* dup */
      {"collections.color_classes.color_class.color2", st_color_class_color2}, /* dup */
      {"collections.color_classes.color_class.color3", st_color_class_color3}, /* dup */
+
+     {"collections.sounds.sample.name", st_collections_group_sound_sample_name},
+     {"collections.sounds.sample.source", st_collections_group_sound_sample_source},
+     {"collections.group.sounds.sample.name", st_collections_group_sound_sample_name}, /* dup */
+     {"collections.group.sounds.sample.source", st_collections_group_sound_sample_source}, /* dup */
+     {"collections.sounds.tone", st_collections_group_sound_tone},
+     {"collections.group.sounds.tone", st_collections_group_sound_tone}, /* dup */
      {"collections.group.name", st_collections_group_name},
      {"collections.group.inherit", st_collections_group_inherit},
      {"collections.group.script_only", st_collections_group_script_only},
@@ -663,6 +673,10 @@ New_Object_Handler object_handlers[] =
      {"collections.styles.style", ob_styles_style}, /* dup */
      {"collections.color_classes", NULL}, /* dup */
      {"collections.color_classes.color_class", ob_color_class}, /* dup */
+     {"collections.sounds", NULL},
+     {"collections.group.sounds", NULL}, /* dup */
+     {"collections.sounds.sample", NULL},
+     {"collections.group.sounds.sample", NULL}, /* dup */
      {"collections.group", ob_collections_group},
      {"collections.group.data", NULL},
      {"collections.group.script", ob_collections_group_script},
@@ -1825,12 +1839,13 @@ st_styles_style_tag(void)
             ..
             group { }
             group { }
+            sounds { }
             ..
         }
     @description
         The "collections" block is used to list the groups that compose the
         theme. Additional "collections" blocks do not prevent overriding group
-        names.
+        names. The "sounds" block comprises of all sound definitions.
     @endblock
 */
 static void
@@ -1838,6 +1853,219 @@ ob_collections(void)
 {
    if (!edje_file->collection)
      edje_file->collection = eina_hash_string_small_new(NULL);
+}
+
+/**
+    @page edcref
+    @block
+        sounds
+    @context
+        sounds {
+           sample {
+              name: "sound_file1" COMP;
+              source: "sound_file1.wav";
+           }
+           sample {
+              name: "sound_file2" LOSSY 0.4;
+              source: "sound_file2.wav";
+           }
+           tone: "tone-1"  2300;
+        }
+
+    @description
+        The "sounds" block contains a list of one or more sound sample and tones items.
+    @endblock
+    @block
+        sample
+    @context
+       sample {
+          name: "sound_file1" RAW;
+          source: "sound_file1.wav";
+       }
+       sample {
+          name: "sound_file2" LOSSY 0.5;
+          source: "sound_file2.wav";
+       }
+       sample {
+          name: "sound_file3" COMP;
+          source: "sound_file3.wav";
+       }
+       sample {
+          name: "sound_file4" AS-IS;
+          source: "sound_file1.wav";
+       }
+    @description
+        The sample block defines the sound sample.
+    @endblock
+    @property
+        name
+    @parameters
+        [sample name] [compression type] [if lossy, then quality]
+    @effect
+        Used to include each sound file. The full path to the directory holding
+        the sounds can be defined later with edje_cc's "-sd" option.
+        @li RAW: Uncompressed.
+        @li COMP: Lossless compression.
+        @li LOSSY [-0.1  - 1.0]: Lossy comression with quality from 0 to 1.0.
+        @li AS_IS: Check for re-encoding, no compression/encoding, just write the file information as it is.
+    @endproperty
+    @since 1.1.0
+ */
+static void
+st_collections_group_sound_sample_name(void)
+{
+   Edje_Sound_Sample *sample;
+   const char *tmp;
+   unsigned int i;
+   
+   if (!edje_file->sound_dir)
+     edje_file->sound_dir = mem_alloc(SZ(Edje_Sound_Directory));
+   
+   tmp = parse_str(0);
+   
+   for (i = 0; i < edje_file->sound_dir->samples_count; i++)
+     {
+        if (!strcmp(edje_file->sound_dir->samples[i].name, tmp))
+          {
+             free((char *)tmp);
+             return;
+          }
+     }
+   
+   edje_file->sound_dir->samples_count++;
+   edje_file->sound_dir->samples = 
+     realloc(edje_file->sound_dir->samples,
+             sizeof(Edje_Sound_Sample) * 
+             edje_file->sound_dir->samples_count);
+
+   if (!edje_file->sound_dir->samples)
+     {
+        ERR("%s: Error. No enough memory.", progname);
+        exit(-1);
+     }
+   
+   sample =
+     edje_file->sound_dir->samples +
+     edje_file->sound_dir->samples_count - 1;
+   memset(sample, 0, sizeof (Edje_Sound_Sample));
+   
+   sample->name = tmp;
+   sample->id = edje_file->sound_dir->samples_count - 1;
+   sample->compression = parse_enum(1,
+                                    "RAW", EDJE_SOUND_SOURCE_TYPE_INLINE_RAW,
+                                    "COMP", EDJE_SOUND_SOURCE_TYPE_INLINE_COMP,
+                                    "LOSSY", EDJE_SOUND_SOURCE_TYPE_INLINE_LOSSY,
+                                    "AS_IS", EDJE_SOUND_SOURCE_TYPE_INLINE_AS_IS,
+                                    NULL);
+   
+   if (sample->compression == EDJE_SOUND_SOURCE_TYPE_INLINE_LOSSY)
+     {
+        sample->quality = parse_float_range(2, 45.0, 1000.0);
+        check_arg_count(3);
+     }
+   else
+     check_arg_count(2);
+
+}
+
+/**
+    @page edcref
+    @property
+        source
+    @parameters
+        [sound file name]
+    @effect
+        The Sound source file name (Source can be mono/stereo WAV file.
+        Only files with 44.1 KHz sample rate supported now)
+    @endproperty
+    @since 1.1.0
+ */
+static void
+st_collections_group_sound_sample_source(void)
+{
+   Edje_Sound_Sample *sample;
+
+   if (!edje_file->sound_dir->samples)
+     {
+        ERR("%s: Error. Invalid sound sample source definition.", progname);
+        exit(-1);
+     }
+   
+   sample = 
+     edje_file->sound_dir->samples +
+     edje_file->sound_dir->samples_count - 1;
+   
+   if (!sample)
+     {
+        ERR("%s: Error. Invalid sound sample source definition.", progname);
+        exit(-1);
+     }
+   sample->snd_src = parse_str(0);
+   check_arg_count(1);
+}
+
+/**
+    @page edcref
+    @property
+        tone
+    @parameters
+        [tone name] [frequency]
+    @effect
+        sound of specific frequency
+    @endproperty
+    @since 1.1.0
+ */
+static void
+st_collections_group_sound_tone(void)
+{
+   Edje_Sound_Tone *tone;
+   const char *tmp;
+   unsigned int i;
+   int value;
+
+   check_arg_count(2);
+   
+   if (!edje_file->sound_dir)
+     edje_file->sound_dir = mem_alloc(SZ(Edje_Sound_Directory));
+   
+   tmp = parse_str(0);
+   /* Audible range 20 to 20KHz */
+   value = parse_int_range(1, 20, 20000);
+   
+   /* Check for Tone duplication */
+   for (i = 0; i < edje_file->sound_dir->tones_count; i++)
+     {
+        if (!strcmp(edje_file->sound_dir->tones[i].name, tmp))
+          {
+             ERR("%s: Error. Tone name: %s already exist.", progname, tmp);
+             free((char *)tmp);
+             exit(-1);
+          }
+        if (edje_file->sound_dir->tones[i].value == value)
+          {
+             ERR("%s: Error. Tone name %s with same frequency %d exist.",
+                 progname, edje_file->sound_dir->tones[i].name, value);
+             exit(-1);
+          }
+     }
+   edje_file->sound_dir->tones_count++;
+   edje_file->sound_dir->tones = 
+     realloc(edje_file->sound_dir->tones,
+             sizeof (Edje_Sound_Tone) * 
+             edje_file->sound_dir->tones_count);
+   
+   if (!edje_file->sound_dir->tones)
+     {
+        ERR("%s: Error. No enough memory.", progname);
+        exit(-1);
+     }
+   
+   tone = edje_file->sound_dir->tones + edje_file->sound_dir->tones_count - 1;
+   memset(tone, 0, sizeof (Edje_Sound_Tone));
+   
+   tone->name = tmp;
+   tone->value = value;
+   tone->id = edje_file->sound_dir->tones_count - 1;
 }
 
 /**
@@ -1874,7 +2102,7 @@ ob_collections_group(void)
 {
    Edje_Part_Collection *pc;
    Code *cd;
-
+   
    if (current_de && !current_de->entry)
      {
 	ERR("%p: Error. A collection without a name was detected, that's not allowed.", progname);
@@ -7005,7 +7233,7 @@ st_collections_group_programs_program_in(void)
     @effect
         Action to be performed by the program. Valid actions are: STATE_SET,
         ACTION_STOP, SIGNAL_EMIT, DRAG_VAL_SET, DRAG_VAL_STEP, DRAG_VAL_PAGE,
-        FOCUS_SET, PARAM_COPY, PARAM_SET
+        FOCUS_SET, PARAM_COPY, PARAM_SET, PLAY_SAMPLE, PLAY_TONE
         Only one action can be specified per program. Examples:\n
            action: STATE_SET "statename" 0.5;\n
            action: ACTION_STOP;\n
@@ -7016,7 +7244,9 @@ st_collections_group_programs_program_in(void)
            action: FOCUS_SET;\n
            action: FOCUS_OBJECT;\n
            action: PARAM_COPY "src_part" "src_param" "dst_part" "dst_param";\n
-	   action: PARAM_SET "part" "param" "value";\n
+           action: PARAM_SET "part" "param" "value";\n
+           action: PLAY_SAMPLE "sample name";\n
+           action: PLAY_TONE "tone name" duration in seconds ( Range 0.1 to 10.0 );\n
     @endproperty
 */
 static void
@@ -7024,22 +7254,25 @@ st_collections_group_programs_program_action(void)
 {
    Edje_Part_Collection *pc;
    Edje_Program *ep;
-
+   int i;
+   
    pc = eina_list_data_get(eina_list_last(edje_collections));
    ep = current_program;
    ep->action = parse_enum(0,
-			   "STATE_SET", EDJE_ACTION_TYPE_STATE_SET,
-			   "ACTION_STOP", EDJE_ACTION_TYPE_ACTION_STOP,
-			   "SIGNAL_EMIT", EDJE_ACTION_TYPE_SIGNAL_EMIT,
-			   "DRAG_VAL_SET", EDJE_ACTION_TYPE_DRAG_VAL_SET,
-			   "DRAG_VAL_STEP", EDJE_ACTION_TYPE_DRAG_VAL_STEP,
-			   "DRAG_VAL_PAGE", EDJE_ACTION_TYPE_DRAG_VAL_PAGE,
-			   "SCRIPT", EDJE_ACTION_TYPE_SCRIPT,
-			   "FOCUS_SET", EDJE_ACTION_TYPE_FOCUS_SET,
-			   "FOCUS_OBJECT", EDJE_ACTION_TYPE_FOCUS_OBJECT,
-			   "PARAM_COPY", EDJE_ACTION_TYPE_PARAM_COPY,
-			   "PARAM_SET", EDJE_ACTION_TYPE_PARAM_SET,
-			   NULL);
+                           "STATE_SET", EDJE_ACTION_TYPE_STATE_SET,
+                           "ACTION_STOP", EDJE_ACTION_TYPE_ACTION_STOP,
+                           "SIGNAL_EMIT", EDJE_ACTION_TYPE_SIGNAL_EMIT,
+                           "DRAG_VAL_SET", EDJE_ACTION_TYPE_DRAG_VAL_SET,
+                           "DRAG_VAL_STEP", EDJE_ACTION_TYPE_DRAG_VAL_STEP,
+                           "DRAG_VAL_PAGE", EDJE_ACTION_TYPE_DRAG_VAL_PAGE,
+                           "SCRIPT", EDJE_ACTION_TYPE_SCRIPT,
+                           "FOCUS_SET", EDJE_ACTION_TYPE_FOCUS_SET,
+                           "FOCUS_OBJECT", EDJE_ACTION_TYPE_FOCUS_OBJECT,
+                           "PARAM_COPY", EDJE_ACTION_TYPE_PARAM_COPY,
+                           "PARAM_SET", EDJE_ACTION_TYPE_PARAM_SET,
+                           "PLAY_SAMPLE", EDJE_ACTION_TYPE_SOUND_SAMPLE,
+                           "PLAY_TONE", EDJE_ACTION_TYPE_SOUND_TONE,
+                           NULL);
    if (ep->action == EDJE_ACTION_TYPE_STATE_SET)
      {
 	ep->state = parse_str(1);
@@ -7049,6 +7282,38 @@ st_collections_group_programs_program_action(void)
      {
 	ep->state = parse_str(1);
 	ep->state2 = parse_str(2);
+     }
+   else if (ep->action == EDJE_ACTION_TYPE_SOUND_SAMPLE)
+     {
+        ep->sample_name = parse_str(1);
+        for (i = 0; i < (int)edje_file->sound_dir->samples_count; i++)
+          {
+             if (!strcmp(edje_file->sound_dir->samples[i].name, ep->sample_name))
+               break;
+             if (i == (int)(edje_file->sound_dir->samples_count - 1))
+               {
+                  ERR("%s: Error. No Sample name %s exist.", progname,
+                      ep->sample_name);
+                  exit(-1);
+               }
+          }
+        ep->speed = parse_float_range(2, 0.0, 10.0);
+     }
+   else if (ep->action == EDJE_ACTION_TYPE_SOUND_TONE)
+     {
+        ep->tone_name = parse_str(1);
+        for (i = 0; i < (int)edje_file->sound_dir->tones_count; i++)
+          {
+             if (!strcmp(edje_file->sound_dir->tones[i].name, ep->tone_name))
+               break;
+             if (i == (int)(edje_file->sound_dir->tones_count - 1))
+               {
+                  ERR("%s: Error. No Tone name %s exist.", progname,
+                      ep->tone_name);
+                  exit(-1);
+               }
+          }
+        ep->duration = parse_float_range(2, 0.1, 10.0);
      }
    else if (ep->action == EDJE_ACTION_TYPE_DRAG_VAL_SET)
      {
@@ -7068,30 +7333,30 @@ st_collections_group_programs_program_action(void)
    else if (ep->action == EDJE_ACTION_TYPE_PARAM_COPY)
      {
 	char *src_part, *dst_part;
-
+        
 	src_part = parse_str(1);
 	ep->state = parse_str(2);
 	dst_part = parse_str(3);
 	ep->state2 = parse_str(4);
-
+        
 	data_queue_part_lookup(pc, src_part, &(ep->param.src));
 	data_queue_part_lookup(pc, dst_part, &(ep->param.dst));
-
+        
 	free(src_part);
 	free(dst_part);
      }
    else if (ep->action == EDJE_ACTION_TYPE_PARAM_SET)
      {
 	char *part;
-
+        
 	part = parse_str(1);
 	ep->state = parse_str(2);
 	ep->state2 = parse_str(3);
-
+        
 	data_queue_part_lookup(pc, part, &(ep->param.dst));
 	free(part);
      }
-
+   
    switch (ep->action)
      {
       case EDJE_ACTION_TYPE_ACTION_STOP:
@@ -7106,11 +7371,17 @@ st_collections_group_programs_program_action(void)
 	check_arg_count(1);
 	break;
       case EDJE_ACTION_TYPE_PARAM_COPY:
-	 check_arg_count(5);
-	 break;
+        check_arg_count(5);
+        break;
       case EDJE_ACTION_TYPE_PARAM_SET:
-	 check_arg_count(4);
-	 break;
+        check_arg_count(4);
+        break;
+      case EDJE_ACTION_TYPE_SOUND_SAMPLE:
+        check_arg_count(3);
+        break;
+      case EDJE_ACTION_TYPE_SOUND_TONE:
+        check_arg_count(3);
+        break;
       default:
 	check_arg_count(3);
      }

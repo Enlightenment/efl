@@ -61,6 +61,7 @@ edje_init(void)
    _edje_external_init();
    _edje_module_init();
    _edje_message_init();
+   _edje_multisense_init();
 
    _edje_real_part_mp = eina_mempool_add("chained_mempool",
 					 "Edje_Real_Part", NULL,
@@ -123,6 +124,7 @@ _edje_shutdown_core(void)
    _edje_real_part_state_mp = NULL;
    _edje_real_part_mp = NULL;
 
+   _edje_multisense_shutdown();
    _edje_message_shutdown();
    _edje_module_shutdown();
    _edje_external_shutdown();

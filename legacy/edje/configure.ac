@@ -290,6 +290,157 @@ PKG_CHECK_MODULES([ECORE_IMF],
    ],
    [have_ecore_imf="no"])
 
+# Enable Multisense use
+want_multisense="no"
+AC_ARG_ENABLE([multisense],
+   [AC_HELP_STRING(
+       [--enable-multisense],
+       [multisense provides sound. tone and haptic effects support, [[default=disabled]]]
+    )],
+    [want_multisense=$enableval]
+)
+AM_CONDITIONAL([ENABLE_MULTISENSE], [test "x${want_multisense}" = "xyes"])
+
+if test "x${want_multisense}" = "xyes" ; then
+   AC_DEFINE([ENABLE_MULTISENSE], [1], [Use Multisense])
+fi
+
+##sndfile library
+have_sndfile="no"
+want_sndfile="auto"
+AC_ARG_ENABLE([sndfile],
+   [AC_HELP_STRING([--disable-sndfile], [disable sndfile support. @<:@default=detect@:>@])],
+   [want_sndfile=$enableval], [])
+
+if test "x${want_multisense}" = "xyes" -a  "x$want_sndfile" != "xno"; then
+
+	   PKG_CHECK_MODULES([SNDFILE],
+	      [sndfile >= 1.0.22],
+	      [
+	       AC_DEFINE(HAVE_LIBSNDFILE, 1, [sndfile support for Edje])
+	       have_sndfile="yes"
+	       requirement_edje="sndfile >= 1.0.22 ${requirement_edje}"
+	       ],
+	      [have_sndfile="no"]
+	   )
+	
+	if test "x$want_sndfile" = "xyes" -a "x$have_sndfile" = "xno"; then
+	    AC_MSG_ERROR([sndfile support requested, but not found by pkg-config.])
+	fi
+fi
+AM_CONDITIONAL([HAVE_LIBSNDFILE], [test "x${have_sndfile}" = "xyes"])
+
+##libremix library
+have_libremix="no"
+want_libremix="auto"
+AC_ARG_ENABLE([remix],
+   [AC_HELP_STRING([--disable-remix], [disable remix support. @<:@default=detect@:>@])],
+   [want_libremix=$enableval], [])
+
+if test "x${want_multisense}" = "xyes" -a "x$want_libremix" != "xno"; then
+   PKG_CHECK_MODULES([REMIX],
+      [remix >= 0.2.3],
+      [
+       AC_DEFINE(HAVE_LIBREMIX, 1, [remix support for Edje])
+       have_libremix="yes"
+       requirement_edje="remix >= 0.2.3 ${requirement_edje}"
+       AC_DEFINE(__REMIX_PLUGIN__, 1, "Set to REMIX Plugin type")
+       REMIX_PLUGIN_DIR="${libdir}/remix"
+       AC_SUBST(REMIX_PLUGIN_DIR)
+       if test "x${prefix}" = "xNONE"; then
+         REMIX_PLUGIN_DIR="${ac_default_prefix}/lib/remix"
+       else
+         REMIX_PLUGIN_DIR="${prefix}/lib/remix"
+       fi
+       AC_DEFINE_UNQUOTED(REMIX_PLUGIN_DIR, "$REMIX_PLUGIN_DIR", [Set the remix plugin directory])
+       ],
+      [have_libremix="no"]
+   )
+
+	if test "x$want_libremix" = "xyes" -a "x$have_libremix" = "xno"; then
+	    AC_MSG_ERROR([remix support requested, but not found by pkg-config.])
+	fi
+fi
+AM_CONDITIONAL([HAVE_LIBREMIX], [test "x${have_libremix}" = "xyes"])
+
+##vorbis/ogg library
+have_vorbis="no"
+want_vorbis="auto"
+AC_ARG_ENABLE([vorbisenc],
+   [AC_HELP_STRING([--disable-vorbis], [disable ogg-vorbis support. @<:@default=detect@:>@])],
+   [want_vorbis=$enableval], [])
+
+if test "x${want_multisense}" = "xyes" -a "x$want_vorbis" != "xno"; then
+   PKG_CHECK_MODULES([VORBISENC],
+      [
+       ogg >= 1.1.4
+       vorbis >= 1.2.3
+       vorbisenc >= 1.2.3
+      ],
+      [
+       AC_DEFINE(HAVE_VORBIS, 1, [vorbis support for Edje])
+       have_vorbis="yes"
+       requirement_edje="ogg >= 1.1.4 vorbis >= 1.2.3 vorbisenc >= 1.2.3 ${requirement_edje}"
+      ],
+      [have_vorbis="no"]
+   )
+
+	if test "x$want_vorbis" = "xyes" -a "x$have_vorbis" = "xno"; then
+	    AC_MSG_ERROR([vorbisenc support requested, but not found by pkg-config.])
+	fi
+fi
+
+##alsa library
+have_alsa_lib="no"
+want_alsa_lib="auto"
+AC_ARG_ENABLE([flac],
+   [AC_HELP_STRING([--disable-alsa], [disable alsa support. @<:@default=detect@:>@])],
+   [want_alsa_lib=$enableval], [])
+
+if test "x${want_multisense}" = "xyes" -a "x$want_alsa_lib" != "xno"; then
+   PKG_CHECK_MODULES([ALSA],
+      [
+       alsa >= 1.0.21a
+      ],
+      [
+       AC_DEFINE(HAVE_LIBALSA, 1, [ALSA support for Edje])
+       have_alsa_lib="yes"
+       requirement_edje="alsa >= 1.0.21a ${requirement_edje}"
+      ],
+      [have_alsa_lib="no"]
+   )
+
+	if test "x$want_alsa_lib" = "xyes" -a "x$have_alsa_lib" = "xno"; then
+	    AC_MSG_ERROR([alsa support requested, but not found by pkg-config.])
+	fi
+fi	
+AM_CONDITIONAL([HAVE_LIBALSA], [test "x${have_alsa_lib}" = "xyes"])
+
+
+##flac library
+have_flac_lib="no"
+want_flac_lib="auto"
+AC_ARG_ENABLE([flac],
+   [AC_HELP_STRING([--disable-flac], [disable flac support. @<:@default=detect@:>@])],
+   [want_flac_lib=$enableval], [])
+
+if test "x${want_multisense}" = "xyes" -a "x$want_flac_lib" != "xno"; then
+   PKG_CHECK_MODULES([FLAC],
+      [
+       flac >= 1.2.1
+      ],
+      [
+       AC_DEFINE(HAVE_LIBFLAC, 1, [flac support for Edje])
+       have_flac_lib="yes"
+       requirement_edje="flac >= 1.2.1 ${requirement_edje}"
+      ],
+      [have_flac_lib="no"]
+   )
+	if test "x$want_flac_lib" = "xyes" -a "x$have_flac_lib" = "xno"; then
+	    AC_MSG_ERROR([flac support requested, but not found by pkg-config.])
+	fi
+fi
+
 # Dependencies for the binaries
 
 if test "x$have_edje_cc" = "xyes"; then
@@ -432,6 +583,10 @@ src/Makefile
 src/lib/Makefile
 src/bin/Makefile
 src/bin/epp/Makefile
+src/modules/Makefile
+src/modules/alsa_snd_player/Makefile
+src/modules/eet_snd_reader/Makefile
+src/modules/multisense_factory/Makefile
 src/tests/Makefile
 utils/Makefile
 src/examples/Makefile
@@ -452,6 +607,16 @@ echo "Configuration Options Summary:"
 echo
 echo "  Amalgamation.........: ${do_amalgamation}"
 echo "  Ecore IMF............: $have_ecore_imf"
+echo "  Multisense...........: $want_multisense"
+
+if test "x${want_multisense}" = "xyes" ; then
+echo "  LibRemix.............: $have_libremix"
+echo "  Libsndfile...........: $have_sndfile"
+echo "  Ogg/Vorbis...........: $have_vorbis"
+echo "  LibFLAC..............: $have_flac_lib"
+echo "  LibALSA..............: $have_alsa_lib"
+fi
+
 echo "  EDJE_PROGRAM_CACHE...: $want_edje_program_cache"
 echo "  EDJE_CALC_CACHE......: $want_edje_calc_cache"
 echo "  Fixed point..........: $want_fixed_point"

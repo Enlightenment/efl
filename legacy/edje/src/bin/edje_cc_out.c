@@ -28,6 +28,7 @@ void *alloca (size_t);
 
 #include "edje_cc.h"
 #include "edje_convert.h"
+#include "edje_multisense_convert.h"
 
 #include <lua.h>
 #include <lauxlib.h>
@@ -650,6 +651,114 @@ data_write_images(Eet_File *ef, int *image_num, int *input_bytes, int *input_raw
    return total_bytes;
 }
 
+static int
+data_write_sounds(Eet_File * ef, int *sound_num, int *input_bytes, int *input_raw_bytes)
+{
+   int bytes = 0;
+   int total_bytes = 0;
+   
+   if ((edje_file) && (edje_file->sound_dir))
+     {
+        Eina_List *ll;
+        Edje_Sound_Sample *sample;
+#ifdef HAVE_LIBSNDFILE
+        Edje_Sound_Encode *enc_info;
+#endif
+        char *dir_path = NULL;
+        char snd_path[PATH_MAX];
+        char sndid_str[15];
+        void *fdata;
+        FILE *fp = NULL;
+        struct stat st;
+        int size = 0;
+        int i;
+
+        for (i = 0; i < (int)edje_file->sound_dir->samples_count; i++)
+          {
+             sample = &edje_file->sound_dir->samples[i];
+             memset(&st, 0, sizeof(struct stat));
+             
+             // Search the Sound file in all the -sd ( sound directory )
+             EINA_LIST_FOREACH(snd_dirs, ll, dir_path)
+               {
+                  snprintf((char *)snd_path, sizeof(snd_path), "%s/%s", dir_path,
+                           sample->snd_src);
+                  stat(snd_path, &st);
+                  if (st.st_size) break;
+               }
+             if (!st.st_size)
+               {
+                  snprintf((char *)snd_path, sizeof(snd_path), "%s",
+                           sample->snd_src);
+                  stat(snd_path, &st);
+               }
+             size = st.st_size;
+             if (!size)
+               {
+                  ERR("%s: Error. Unable to load sound source file : %s",
+                      progname, sample->snd_src);
+                  exit(-1);
+               }
+#ifdef HAVE_LIBSNDFILE
+             enc_info = _edje_multisense_encode(snd_path, sample, sample->quality);
+             
+             stat(enc_info->file, &st);
+             size = st.st_size;
+             fp = fopen(enc_info->file, "rb");
+#else
+             fp = fopen(snd_path, "rb");
+#endif
+             if (!fp)
+               {
+                  ERR("%s: Error: Unable to load sound data of: %s",
+                      progname, sample->name);
+                  exit(-1);
+               }
+             
+             snprintf(sndid_str, sizeof(sndid_str), "edje/sounds/%i", sample->id);
+             fdata = malloc(size);
+             if (!fdata)
+               {
+                  ERR("%s: Error. %s:%i while allocating memory to load file \"%s\"",
+                      progname, file_in, line, snd_path);
+                  exit(-1);
+               }
+             if (fread(fdata, size, 1, fp))
+               bytes = eet_write(ef, sndid_str, fdata, size, EINA_FALSE);
+             free(fdata);
+             fclose(fp);
+             
+#ifdef HAVE_LIBSNDFILE
+             //If encoded temporary file, delete it.
+             if (enc_info->encoded) unlink(enc_info->file);
+#endif
+             *sound_num += 1;
+             total_bytes += bytes;
+             *input_bytes += size;
+             *input_raw_bytes += size;
+
+             if (verbose)
+               {
+#ifdef HAVE_LIBSNDFILE
+                  printf ("%s: Wrote %9i bytes (%4iKb) for \"%s\" %s sound entry"
+                          "\"%s\" \n", progname, bytes, (bytes + 512) / 1024,
+                          sndid_str, enc_info->comp_type, sample->name);
+#else
+                  printf ("%s: Wrote %9i bytes (%4iKb) for \"%s\" %s sound entry"
+                          "\"%s\" \n", progname, bytes, (bytes + 512) / 1024,
+                          sndid_str, "RAW PCM", sample->name);
+#endif
+               }
+#ifdef HAVE_LIBSNDFILE
+             if ((enc_info->file) && (!enc_info->encoded)) eina_stringshare_del(enc_info->file);
+             if (enc_info) free(enc_info);
+             enc_info = NULL;
+#endif
+          }
+     }
+   return total_bytes;
+}
+
 static void
 check_groups(Eet_File *ef)
 {
@@ -1058,6 +1167,7 @@ data_write(void)
    int fmap_bytes = 0;
    int input_raw_bytes = 0;
    int image_num = 0;
+   int sound_num = 0;
    int font_num = 0;
    int collection_num = 0;
 
@@ -1083,6 +1193,8 @@ data_write(void)
 				   &input_raw_bytes);
    total_bytes += data_write_images(ef, &image_num, &input_bytes,
 				    &input_raw_bytes);
+   total_bytes += data_write_sounds(ef, &sound_num, &input_bytes,
+                &input_raw_bytes);
 
    total_bytes += data_write_groups(ef, &collection_num);
    data_write_scripts(ef);
@@ -1106,6 +1218,7 @@ data_write(void)
 	printf("Summary:\n"
 	       "  Wrote %i collections\n"
 	       "  Wrote %i images\n"
+          "  Wrote %i sounds\n"
 	       "  Wrote %i fonts\n"
 	       "  Wrote %i bytes (%iKb) of original source data\n"
 	       "  Wrote %i bytes (%iKb) of original source font map\n"
@@ -1120,6 +1233,7 @@ data_write(void)
 	       ,
 	       collection_num,
 	       image_num,
+          sound_num,
 	       font_num,
 	       src_bytes, (src_bytes + 512) / 1024,
 	       fmap_bytes, (fmap_bytes + 512) / 1024,

@@ -1,7 +1,10 @@
 MAINTAINERCLEANFILES = Makefile.in
 
 pkglibdir = $(datadir)/$(PACKAGE)/examples
-
+if ENABLE_MULTISENSE
+MULTISENSE_EDC_FILE = multisense.edc
+SND_DIR = -sd $(srcdir)
+endif
 #put here all EDCs one needs to the examples
 EDCS = basic.edc \
 	swallow.edc \
@@ -12,7 +15,8 @@ EDCS = basic.edc \
 	signals-messages.edc \
 	color-class.edc \
 	perspective.edc \
-	animations.edc
+	animations.edc \
+	$(MULTISENSE_EDC_FILE)
 
 filesdir = $(datadir)/$(PACKAGE)/examples
 files_DATA =
@@ -49,7 +53,7 @@ pkglib_PROGRAMS += \
 LDADD = $(top_builddir)/src/lib/libedje.la @EDJE_LIBS@
 
 .edc.edj:
-	$(edje_cc) -v -id $(srcdir) $< $(builddir)/$(@F)
+	$(edje_cc) -v -id $(srcdir) $(SND_DIR) $< $(builddir)/$(@F)
 
 EDJS = $(EDCS:%.edc=%.edj)
 

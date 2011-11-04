@@ -370,6 +370,51 @@ output(void)
 	chmod(out, S_IRUSR | S_IWUSR | S_IXUSR | S_IRGRP | S_IWGRP | S_IXGRP);
 
      }
+
+   if (edje_file->sound_dir)
+     {
+        Edje_Sound_Sample *sample;
+        void *sound_data;
+        char out[PATH_MAX];
+        char out1[PATH_MAX];
+        char *pp;
+        int sound_data_size;
+        FILE *f;
+        int i;
+
+        for (i = 0; i < (int)edje_file->sound_dir->samples_count; i++)
+          {
+             sample = &edje_file->sound_dir->samples[i];
+             if ((!sample) || (!sample->name)) continue;
+             snprintf(out, sizeof(out), "edje/sounds/%i", sample->id);
+             sound_data = (void *)eet_read_direct(tef, out, &sound_data_size);
+             if (sound_data)
+               {
+                  snprintf(out1, sizeof(out1), "%s/%s", outdir, sample->name);
+                  pp = strdup(out1);
+                  p = strrchr(pp, '/');
+                  *p = 0;
+                  if (strstr(pp, "../"))
+                    {
+                       ERR("Potential security violation. attempt to write in parent dir.");
+                       exit(-1);
+                    }
+                  ecore_file_mkpath(pp);
+                  free(pp);
+                  if (strstr(out, "../"))
+                    {
+                       ERR("Potential security violation. attempt to write in parent dir.");
+                       exit(-1);
+                    }
+                  f = fopen(out1, "wb");
+                  if (fwrite(sound_data, sound_data_size, 1, f) != 1)
+                    ERR("Could not write sound: %s", strerror(errno));
+                  fclose(f);
+                  free(sound_data);
+              }
+          }
+
+     }
    eet_close(tef);
 }
 

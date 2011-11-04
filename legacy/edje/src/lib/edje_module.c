@@ -14,41 +14,40 @@ Eina_List *_modules_found = NULL;
 # define EDJE_MODULE_NAME "module.so"
 #endif
 
-EAPI Eina_Bool
+EAPI Eina_Module *
 edje_module_load(const char *module)
 {
    const char *path;
    Eina_List *l;
+   Eina_Module *em = NULL;
 
-   EINA_SAFETY_ON_NULL_RETURN_VAL(module, EINA_FALSE);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(module, NULL);
 
-   if (eina_hash_find(_registered_modules, module))
-     return EINA_TRUE;
+   em =  (Eina_Module *)eina_hash_find(_registered_modules, module);
+   if (em) return em;
 
    EINA_LIST_FOREACH(_modules_paths, l, path)
      {
-	Eina_Module *em;
-	char tmp[PATH_MAX];
+        char tmp[PATH_MAX];
 
-	snprintf(tmp, sizeof (tmp), "%s/%s/%s/" EDJE_MODULE_NAME, path, module, MODULE_ARCH
+        snprintf(tmp, sizeof (tmp), "%s/%s/%s/" EDJE_MODULE_NAME, path, module, MODULE_ARCH
 #ifdef EDJE_EXTRA_MODULE_NAME
                  , module
 #endif
                 );
-	em = eina_module_new(tmp);
-	if (!em) continue ;
+        em = eina_module_new(tmp);
+        if (!em) continue;
 
-	if (!eina_module_load(em))
-	  {
-	     eina_module_free(em);
-	     continue ;
-	  }
-
-	return !!eina_hash_add(_registered_modules, module, em);
+        if (!eina_module_load(em))
+          {
+             eina_module_free(em);
+             continue;
+          }
+        if (eina_hash_add(_registered_modules, module, em))
+          return em;
      }
 
-   ERR("Could not find the module %s", module);
-   return EINA_FALSE;
+   return NULL;
 }
 
 void

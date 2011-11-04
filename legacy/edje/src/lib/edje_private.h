@@ -268,6 +268,9 @@ typedef struct _Edje_Image_Directory_Entry           Edje_Image_Directory_Entry;
 typedef struct _Edje_Image_Directory_Set             Edje_Image_Directory_Set;
 typedef struct _Edje_Image_Directory_Set_Entry       Edje_Image_Directory_Set_Entry;
 typedef struct _Edje_Limit                           Edje_Limit;
+typedef struct _Edje_Sound_Sample                    Edje_Sound_Sample;
+typedef struct _Edje_Sound_Tone                      Edje_Sound_Tone;
+typedef struct _Edje_Sound_Directory                 Edje_Sound_Directory;
 typedef struct _Edje_Program                         Edje_Program;
 typedef struct _Edje_Program_Target                  Edje_Program_Target;
 typedef struct _Edje_Program_After                   Edje_Program_After;
@@ -327,6 +330,12 @@ typedef struct _Edje_Text_Insert_Filter_Callback Edje_Text_Insert_Filter_Callbac
 #define EDJE_IMAGE_SOURCE_TYPE_INLINE_LOSSY   2
 #define EDJE_IMAGE_SOURCE_TYPE_EXTERNAL       3
 #define EDJE_IMAGE_SOURCE_TYPE_LAST           4
+
+#define EDJE_SOUND_SOURCE_TYPE_NONE           0
+#define EDJE_SOUND_SOURCE_TYPE_INLINE_RAW     1
+#define EDJE_SOUND_SOURCE_TYPE_INLINE_COMP    2
+#define EDJE_SOUND_SOURCE_TYPE_INLINE_LOSSY   3
+#define EDJE_SOUND_SOURCE_TYPE_INLINE_AS_IS   4
 
 #define EDJE_VAR_NONE   0
 #define EDJE_VAR_INT    1
@@ -410,6 +419,7 @@ struct _Edje_File
 
    Edje_External_Directory        *external_dir;
    Edje_Image_Directory           *image_dir;
+   Edje_Sound_Directory           *sound_dir;
    Eina_List                      *styles;
    Eina_List                      *color_classes;
 
@@ -517,6 +527,33 @@ struct _Edje_Image_Directory_Set_Entry
    } size;
 };
 
+struct _Edje_Sound_Sample /*Sound Sample*/
+{
+   const char *name; /* the nominal name of the sound */
+   const char *snd_src;  /* Sound source Wav file */
+   int   compression;  /* Compression - RAW, LOSSLESS COMP ,  LOSSY ) */
+   int   mode; /* alternate source mode. 0 = none */
+   double quality;
+   int   id; /* the id no. of the sound */
+};
+
+struct _Edje_Sound_Tone /*Sound Sample*/
+{
+   const char *name; /* the nominal name of the sound - if any */
+   int   value; /* alternate source mode. 0 = none */
+   int   id; /* the id no. of the sound */
+};
+
+struct _Edje_Sound_Directory
+{
+
+   Edje_Sound_Sample *samples;  /* an array of Edje_Sound_Sample entries */
+   unsigned int samples_count;
+
+   Edje_Sound_Tone *tones;  /* an array of Edje_Sound_Tone entries */
+   unsigned int tones_count;
+};
+
 /*----------*/
 
 struct _Edje_Program /* a conditional program to be run */
@@ -526,6 +563,10 @@ struct _Edje_Program /* a conditional program to be run */
 
    const char *signal; /* if signal emission name matches the glob here... */
    const char *source; /* if part that emitted this (name) matches this glob */
+   const char *sample_name;
+   const char *tone_name;
+   double duration;
+   double speed;
 
    struct {
       const char *part;
@@ -1920,5 +1961,29 @@ void _edje_object_orientation_inform(Evas_Object *obj);
 
 void _edje_lib_ref(void);
 void _edje_lib_unref(void);
+
+void _edje_multisense_init(void);
+void _edje_multisense_shutdown(void);
+Eina_Bool _edje_multisense_internal_sound_sample_play(Edje *ed, const char *sample_name, const double speed);
+Eina_Bool _edje_multisense_internal_sound_tone_play(Edje *ed, const char *tone_name, const double duration);
+
+#ifdef HAVE_LIBREMIX
+#include <remix/remix.h>
+#endif
+#include <Eina.h>
+
+typedef struct _Edje_Multisense_Env  Edje_Multisense_Env;
+
+struct _Edje_Multisense_Env
+{
+#ifdef HAVE_LIBREMIX
+   RemixEnv *remixenv;
+#endif
+};
+
+typedef Eina_Bool (*MULTISENSE_FACTORY_INIT_FUNC) (Edje_Multisense_Env *);
+#ifdef HAVE_LIBREMIX
+typedef RemixBase* (*MULTISENSE_SOUND_PLAYER_GET_FUNC) (Edje_Multisense_Env *);
+#endif
 
 #endif

@@ -14,6 +14,7 @@
  * @li @ref tutorial_edje_drag
  * @li @ref tutorial_edje_perspective
  * @li @ref tutorial_edje_animations
+ * @li @ref tutorial_edje_multisense
  */
 
 /**
@@ -826,3 +827,20 @@
  * @include edje-animations.c
  * @include animations.edc
  */
+
+ /**
+ * @page tutorial_edje_multisense Multisense example
+ * @dontinclude edje-multisense.c
+ *
+ * This is a simple example in which a rect is created and sound and tone
+ * are played on mouse down event.
+ *
+ * Focusing on the creation of sample and tone. It should be noted that
+ * creation of sample sound is from any supported (sndfile lib) audio file,
+ * tone from of specific audible frequency range are controlled by the theme:
+ *
+ * The full source code follows:
+ * @include edje-multisense.c
+ * @include sound.edc
+ */
+ 

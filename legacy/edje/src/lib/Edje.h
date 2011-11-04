@@ -602,20 +602,22 @@ typedef enum _Edje_Text_Effect
 
 typedef enum _Edje_Action_Type
 {
-   EDJE_ACTION_TYPE_NONE          = 0,
-   EDJE_ACTION_TYPE_STATE_SET     = 1,
-   EDJE_ACTION_TYPE_ACTION_STOP   = 2,
-   EDJE_ACTION_TYPE_SIGNAL_EMIT   = 3,
-   EDJE_ACTION_TYPE_DRAG_VAL_SET  = 4,
-   EDJE_ACTION_TYPE_DRAG_VAL_STEP = 5,
-   EDJE_ACTION_TYPE_DRAG_VAL_PAGE = 6,
-   EDJE_ACTION_TYPE_SCRIPT        = 7,
-   EDJE_ACTION_TYPE_FOCUS_SET     = 8,
-   EDJE_ACTION_TYPE_RESERVED00    = 9,
-   EDJE_ACTION_TYPE_FOCUS_OBJECT  = 10,
-   EDJE_ACTION_TYPE_PARAM_COPY    = 11,
-   EDJE_ACTION_TYPE_PARAM_SET     = 12,
-   EDJE_ACTION_TYPE_LAST          = 13
+   EDJE_ACTION_TYPE_NONE                = 0,
+   EDJE_ACTION_TYPE_STATE_SET           = 1,
+   EDJE_ACTION_TYPE_ACTION_STOP         = 2,
+   EDJE_ACTION_TYPE_SIGNAL_EMIT         = 3,
+   EDJE_ACTION_TYPE_DRAG_VAL_SET        = 4,
+   EDJE_ACTION_TYPE_DRAG_VAL_STEP       = 5,
+   EDJE_ACTION_TYPE_DRAG_VAL_PAGE       = 6,
+   EDJE_ACTION_TYPE_SCRIPT              = 7,
+   EDJE_ACTION_TYPE_FOCUS_SET           = 8,
+   EDJE_ACTION_TYPE_RESERVED00          = 9,
+   EDJE_ACTION_TYPE_FOCUS_OBJECT        = 10,
+   EDJE_ACTION_TYPE_PARAM_COPY          = 11,
+   EDJE_ACTION_TYPE_PARAM_SET           = 12,
+   EDJE_ACTION_TYPE_SOUND_SAMPLE        = 13,
+   EDJE_ACTION_TYPE_SOUND_TONE          = 14,
+   EDJE_ACTION_TYPE_LAST                = 15
 } Edje_Action_Type;
 
 typedef enum _Edje_Tween_Mode
@@ -3798,7 +3800,7 @@ EAPI const Edje_External_Param_Info *edje_external_param_info_get   (const char 
  */
    EAPI const Edje_External_Type       *edje_external_type_get         (const char *type_name);
 
-   EAPI Eina_Bool               edje_module_load                (const char *module);
+   EAPI Eina_Module            *edje_module_load                (const char *module);
    EAPI const Eina_List        *edje_available_modules_get      (void);
 
    /* perspective info for maps inside edje objects */

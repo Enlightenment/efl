@@ -769,6 +769,16 @@ _edje_program_run(Edje *ed, Edje_Program *pr, Eina_Bool force, const char *ssig,
 	       }
 	  }
         break;
+     case EDJE_ACTION_TYPE_SOUND_SAMPLE:
+        if (_edje_block_break(ed))
+          goto break_prog;
+        _edje_multisense_internal_sound_sample_play(ed, pr->sample_name, pr->speed);
+        break;
+     case EDJE_ACTION_TYPE_SOUND_TONE:
+        if (_edje_block_break(ed))
+          goto break_prog;
+        _edje_multisense_internal_sound_tone_play(ed, pr->tone_name, pr->duration);
+        break;
      case EDJE_ACTION_TYPE_PARAM_COPY:
           {
              Edje_Real_Part *src_part, *dst_part;

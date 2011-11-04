@@ -72,6 +72,8 @@
  * set_state(part_id, state[], Float:state_val)
  * get_state(part_id, dst[], maxlen, &Float:val)
  * set_tween_state(part_id, Float:tween, state1[], Float:state1_val, state2[], Float:state2_val)
+ * play_sample(sample_name, speed)
+ * play_tone(tone_name, duration)
  * run_program(program_id)
  * Direction:get_drag_dir(part_id)
  * get_drag(part_id, &Float:dx, &Float:&dy)
@@ -822,6 +824,38 @@ _edje_embryo_fn_get_part_id(Embryo_Program *ep, Embryo_Cell *params)
         if (!strcmp((*part)->name, p)) return (*part)->id;
      }
    return -1;
+}
+
+static Embryo_Cell
+_edje_embryo_fn_play_sample(Embryo_Program *ep, Embryo_Cell *params)
+{
+   Edje *ed;
+   char *sample_name = NULL;
+   float speed = 1.0;
+
+   CHKPARAM(1);
+   ed = embryo_program_data_get(ep);
+   GETSTR(sample_name, params[1]);
+   if ((!sample_name)) return 0;
+   speed = EMBRYO_CELL_TO_FLOAT(params[2]);
+   _edje_multisense_internal_sound_sample_play(ed, sample_name, (double)speed);
+   return 0;
+}
+
+static Embryo_Cell
+_edje_embryo_fn_play_tone(Embryo_Program *ep, Embryo_Cell *params)
+{
+   Edje *ed;
+   char *tone_name = NULL;
+   float duration = 0.1;
+
+   CHKPARAM(2);
+   ed = embryo_program_data_get(ep);
+   GETSTR(tone_name, params[1]);
+   if ((!tone_name)) return 0;
+   duration = EMBRYO_CELL_TO_FLOAT(params[2]);
+   _edje_multisense_internal_sound_tone_play(ed, tone_name, (double) duration);
+   return 0;
 }
 
 /* set_state(part_id, state[], Float:state_val) */
@@ -3006,7 +3040,8 @@ _edje_embryo_script_init(Edje_Part_Collection *edc)
    embryo_program_native_call_add(ep, "stop_programs_on", _edje_embryo_fn_stop_programs_on);
    embryo_program_native_call_add(ep, "set_min_size", _edje_embryo_fn_set_min_size);
    embryo_program_native_call_add(ep, "set_max_size", _edje_embryo_fn_set_max_size);
-
+   embryo_program_native_call_add(ep, "play_sample", _edje_embryo_fn_play_sample);
+   embryo_program_native_call_add(ep, "play_tone", _edje_embryo_fn_play_tone);
    embryo_program_native_call_add(ep, "send_message", _edje_embryo_fn_send_message);
    embryo_program_native_call_add(ep, "get_geometry", _edje_embryo_fn_get_geometry);
    embryo_program_native_call_add(ep, "custom_state", _edje_embryo_fn_custom_state);
