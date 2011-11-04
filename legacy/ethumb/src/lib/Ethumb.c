@@ -266,6 +266,7 @@ ethumb_new(void)
 
    sub_ee = ecore_evas_object_ecore_evas_get(o);
    sub_e = ecore_evas_object_evas_get(o);
+   ecore_evas_alpha_set(sub_ee, EINA_TRUE);
 
    evas_image_cache_set(sub_e, 0);
    evas_font_cache_set(sub_e, 0);
@@ -1629,6 +1630,7 @@ ethumb_dup(const Ethumb *e)
 
    sub_ee = ecore_evas_object_ecore_evas_get(o);
    sub_ev = ecore_evas_object_evas_get(o);
+   ecore_evas_alpha_set(sub_ee, EINA_TRUE);
 
    evas_image_cache_set(sub_ev, 0);
    evas_font_cache_set(sub_ev, 0);
