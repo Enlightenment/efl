@@ -17490,6 +17490,8 @@ extern "C" {
     * @see elm_slider_icon_set() for more details
     * @see elm_slider_icon_unset()
     *
+    * @deprecated use elm_object_content_set() instead.
+    *
     * @ingroup Slider
     */
    EINA_DEPRECATED EAPI Evas_Object       *elm_slider_icon_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
@@ -17510,6 +17512,8 @@ extern "C" {
     * @warning If the object being set does not have minimum size hints set,
     * it won't get properly displayed.
     *
+    * @deprecated use elm_object_content_part_set(obj, "elm.swallow.end", end) instead.
+    *
     * @ingroup Slider
     */
    EINA_DEPRECATED EAPI void               elm_slider_end_set(Evas_Object *obj, Evas_Object *end) EINA_ARG_NONNULL(1);
@@ -17529,6 +17533,8 @@ extern "C" {
     *
     * @see elm_slider_end_set() for more details.
     * @see elm_slider_end_get()
+    *
+    * @deprecated use elm_object_content_part_unset(obj, "elm.swallow.end") instead.
     *
     * @ingroup Slider
     */
