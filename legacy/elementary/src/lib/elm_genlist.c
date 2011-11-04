@@ -3618,6 +3618,7 @@ elm_genlist_item_direct_sorted_insert(Evas_Object                  *obj,
         if (!wd->state)
           {
              wd->state = eina_inlist_sorted_state_new();
+             eina_inlist_sorted_state_init(wd->state, wd->items);
           }
 
         if (it->group)
