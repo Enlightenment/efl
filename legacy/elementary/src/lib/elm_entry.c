@@ -595,8 +595,9 @@ _elm_deferred_recalc_job(void *data)
 
    evas_object_geometry_get(wd->ent, NULL, NULL, &resw, NULL);
    edje_object_size_min_restricted_calc(wd->ent, &minw, &minh, resw, 0);
-   elm_coords_finger_size_adjust(1, &minw, 1, &minh);
-   wd->entmw = minw;
+   edje_object_size_min_restricted_calc(wd->ent, &fw, &fh, 0, 0);
+   elm_coords_finger_size_adjust(1, &fw, 1, &minh);
+   wd->entmw = fw;
    wd->entmh = minh;
    /* This is a hack to workaround the way min size hints are treated.
     * If the minimum width is smaller than the restricted width, it means
