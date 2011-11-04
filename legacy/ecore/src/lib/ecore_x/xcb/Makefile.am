@@ -17,6 +17,7 @@ AM_CPPFLAGS = \
   @XCB_XPRINT_CFLAGS@ \
   @XCB_XTEST_CFLAGS@ \
   @XCB_XINPUT_CFLAGS@ \
+  @XCB_XGESTURE_CFLAGS@ \
   @XCB_CURSOR_CFLAGS@ \
   @ECORE_XCB_CFLAGS@ \
   @PIXMAN_CFLAGS@ \
@@ -50,6 +51,7 @@ libecore_x_xcb_la_SOURCES = \
   ecore_xcb_gc.c \
   ecore_xcb_image.c \
   ecore_xcb_input.c \
+  ecore_xcb_gesture.c \
   ecore_xcb_mwm.c \
   ecore_xcb_pixmap.c \
   ecore_xcb_region.c \
@@ -83,6 +85,7 @@ libecore_x_xcb_la_LIBADD = \
   @XCB_XPRINT_LIBS@ \
   @XCB_XTEST_LIBS@ \
   @XCB_XINPUT_LIBS@ \
+  @XCB_XGESTURE_LIBS@ \
   @XCB_CURSOR_LIBS@ \
   @ECORE_XCB_LIBS@ \
   @PIXMAN_LIBS@ \

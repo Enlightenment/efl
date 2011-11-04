@@ -8,6 +8,7 @@ AM_CPPFLAGS = \
 @XKB_CFLAGS@ \
 @XDAMAGE_CFLAGS@ \
 @XCOMPOSITE_CFLAGS@ \
+@XGESTURE_CFLAGS@ \
 @XDPMS_CFLAGS@ \
 @XFIXES_CFLAGS@ \
 @XI2_CFLAGS@ \
@@ -64,13 +65,15 @@ ecore_x_region.c \
 ecore_x_image.c \
 ecore_x_xi2.c \
 ecore_x_vsync.c \
-ecore_x_randr.h
+ecore_x_randr.h \
+ecore_x_gesture.c
 
 libecore_x_xlib_la_LIBADD = \
 @Xcursor_libs@ \
 @XKB_LIBS@ \
 @XDAMAGE_LIBS@ \
 @XCOMPOSITE_LIBS@ \
+@XGESTURE_LIBS@ \
 @XDPMS_LIBS@ \
 @XFIXES_LIBS@ \
 @XI2_LIBS@ \

@@ -18,6 +18,9 @@
 # ifdef ECORE_XCB_XFIXES
 #  include <xcb/xfixes.h>
 # endif
+# ifdef ECORE_XCB_XGESTURE
+#  include <xcb/gesture.h>
+# endif
 
 #ifndef CODESET
 # define CODESET "INVALID"
@@ -78,6 +81,15 @@ static void                     _ecore_xcb_event_handle_randr_crtc_change(xcb_ge
 static void                     _ecore_xcb_event_handle_randr_output_change(xcb_generic_event_t *event);
 static void                     _ecore_xcb_event_handle_randr_output_property_change(xcb_generic_event_t *event);
 static void                     _ecore_xcb_event_handle_screensaver_notify(xcb_generic_event_t *event);
+#ifdef ECORE_XCB_XGESTURE
+static void                     _ecore_xcb_event_handle_gesture_notify_flick(xcb_generic_event_t *event);
+static void                     _ecore_xcb_event_handle_gesture_notify_pan(xcb_generic_event_t *event);
+static void                     _ecore_xcb_event_handle_gesture_notify_pinchrotation(xcb_generic_event_t *event);
+static void                     _ecore_xcb_event_handle_gesture_notify_tap(xcb_generic_event_t *event);
+static void                     _ecore_xcb_event_handle_gesture_notify_tapnhold(xcb_generic_event_t *event);
+static void                     _ecore_xcb_event_handle_gesture_notify_hold(xcb_generic_event_t *event);
+static void                     _ecore_xcb_event_handle_gesture_notify_group(xcb_generic_event_t *event);
+#endif
 #ifdef ECORE_XCB_SHAPE
 static void                     _ecore_xcb_event_handle_shape_change(xcb_generic_event_t *event);
 #endif
@@ -145,6 +157,13 @@ EAPI int ECORE_X_EVENT_FIXES_SELECTION_NOTIFY = 0;
 EAPI int ECORE_X_EVENT_CLIENT_MESSAGE = 0;
 EAPI int ECORE_X_EVENT_WINDOW_SHAPE = 0;
 EAPI int ECORE_X_EVENT_SCREENSAVER_NOTIFY = 0;
+EAPI int ECORE_X_EVENT_GESTURE_NOTIFY_FLICK = 0;
+EAPI int ECORE_X_EVENT_GESTURE_NOTIFY_PAN = 0;
+EAPI int ECORE_X_EVENT_GESTURE_NOTIFY_PINCHROTATION = 0;
+EAPI int ECORE_X_EVENT_GESTURE_NOTIFY_TAP = 0;
+EAPI int ECORE_X_EVENT_GESTURE_NOTIFY_TAPNHOLD = 0;
+EAPI int ECORE_X_EVENT_GESTURE_NOTIFY_HOLD = 0;
+EAPI int ECORE_X_EVENT_GESTURE_NOTIFY_GROUP = 0;
 EAPI int ECORE_X_EVENT_SYNC_COUNTER = 0;
 EAPI int ECORE_X_EVENT_SYNC_ALARM = 0;
 EAPI int ECORE_X_EVENT_SCREEN_CHANGE = 0;
@@ -201,6 +220,13 @@ _ecore_xcb_events_init(void)
         ECORE_X_EVENT_CLIENT_MESSAGE = ecore_event_type_new();
         ECORE_X_EVENT_WINDOW_SHAPE = ecore_event_type_new();
         ECORE_X_EVENT_SCREENSAVER_NOTIFY = ecore_event_type_new();
+        ECORE_X_EVENT_GESTURE_NOTIFY_FLICK = ecore_event_type_new();
+        ECORE_X_EVENT_GESTURE_NOTIFY_PAN = ecore_event_type_new();
+        ECORE_X_EVENT_GESTURE_NOTIFY_PINCHROTATION = ecore_event_type_new();
+        ECORE_X_EVENT_GESTURE_NOTIFY_TAP = ecore_event_type_new();
+        ECORE_X_EVENT_GESTURE_NOTIFY_TAPNHOLD = ecore_event_type_new();
+        ECORE_X_EVENT_GESTURE_NOTIFY_HOLD = ecore_event_type_new();
+        ECORE_X_EVENT_GESTURE_NOTIFY_GROUP = ecore_event_type_new();
         ECORE_X_EVENT_SYNC_COUNTER = ecore_event_type_new();
         ECORE_X_EVENT_SYNC_ALARM = ecore_event_type_new();
         ECORE_X_EVENT_SCREEN_CHANGE = ecore_event_type_new();
@@ -400,6 +426,36 @@ _ecore_xcb_events_handle(xcb_generic_event_t *ev)
             (response ==
              _ecore_xcb_event_screensaver + XCB_SCREENSAVER_NOTIFY))
      _ecore_xcb_event_handle_screensaver_notify(ev);
+#endif
+#ifdef ECORE_XCB_XGESTURE
+   else if ((_ecore_xcb_event_gesture >= 0) && 
+            (response == 
+                _ecore_xcb_event_gesture + XCB_GESTURE_NOTIFY_FLICK))
+     _ecore_xcb_event_handle_gesture_notify_flick(ev);
+   else if ((_ecore_xcb_event_gesture >= 0) && 
+            (response == 
+                _ecore_xcb_event_gesture + XCB_GESTURE_NOTIFY_PAN))
+     _ecore_xcb_event_handle_gesture_notify_pan(ev);
+   else if ((_ecore_xcb_event_gesture >= 0) && 
+            (response == 
+                _ecore_xcb_event_gesture + XCB_GESTURE_NOTIFY_PINCH_ROTATION))
+     _ecore_xcb_event_handle_gesture_notify_pinchrotation(ev);
+   else if ((_ecore_xcb_event_gesture >= 0) && 
+            (response == 
+                _ecore_xcb_event_gesture + XCB_GESTURE_NOTIFY_TAP))
+     _ecore_xcb_event_handle_gesture_notify_tap(ev);
+   else if ((_ecore_xcb_event_gesture >= 0) && 
+            (response == 
+                _ecore_xcb_event_gesture + XCB_GESTURE_NOTIFY_TAP_N_HOLD))
+     _ecore_xcb_event_handle_gesture_notify_tapnhold(ev);
+   else if ((_ecore_xcb_event_gesture >= 0) && 
+            (response == 
+                _ecore_xcb_event_gesture + XCB_GESTURE_NOTIFY_HOLD))
+     _ecore_xcb_event_handle_gesture_notify_hold(ev);
+   else if ((_ecore_xcb_event_gesture >= 0) && 
+            (response == 
+                _ecore_xcb_event_gesture + XCB_GESTURE_NOTIFY_GROUP))
+     _ecore_xcb_event_handle_gesture_notify_group(ev);
 #endif
 #ifdef ECORE_XCB_SHAPE
    else if ((_ecore_xcb_event_shape >= 0) &&
@@ -1931,6 +1987,181 @@ _ecore_xcb_event_handle_screensaver_notify(xcb_generic_event_t *event)
    ecore_event_add(ECORE_X_EVENT_SCREENSAVER_NOTIFY, e, NULL, NULL);
 #endif
 }
+
+#ifdef ECORE_XCB_XGESTURE
+static void
+_ecore_xcb_event_handle_gesture_notify_flick(xcb_generic_event_t *event)
+{
+   xcb_gesture_notify_flick_event_t *ev;
+   Ecore_X_Event_Gesture_Notify_Flick *e;
+
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   _ecore_xcb_event_last_mouse_move = EINA_FALSE;
+   fprintf(stderr, "[ECORE_XCB][%s]...\n", __FUNCTION__);
+
+   ev = (xcb_gesture_notify_flick_event_t *)event;
+   if (!(e = calloc(1, sizeof(Ecore_X_Event_Gesture_Notify_Flick)))) return;
+
+   e->win = ev->window;
+   e->time = ev->time;
+   e->subtype = ev->kind;
+   e->num_fingers = ev->num_finger;
+   e->distance = ev->distance;
+   e->duration = ev->duration;
+   e->direction = ev->direction;
+   e->angle = XFixedToDouble(ev->angle);
+
+   ecore_event_add(ECORE_X_EVENT_GESTURE_NOTIFY_FLICK, e, NULL, NULL);
+}
+
+static void
+_ecore_xcb_event_handle_gesture_notify_pan(xcb_generic_event_t *event)
+{
+   xcb_gesture_notify_pan_event_t *ev;
+   Ecore_X_Event_Gesture_Notify_Pan *e;
+
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   _ecore_xcb_event_last_mouse_move = EINA_FALSE;
+   fprintf(stderr, "[ECORE_XCB][%s]...\n", __FUNCTION__);
+
+   ev = (xcb_gesture_notify_pan_event_t *)event;
+   if (!(e = calloc(1, sizeof(Ecore_X_Event_Gesture_Notify_Pan)))) return;
+
+   e->win = ev->window;
+   e->time = ev->time;
+   e->subtype = ev->kind;
+   e->num_fingers = ev->num_finger;
+   e->dx = ev->dx;
+   e->dy = ev->dy;
+   e->distance = ev->distance;
+   e->duration = ev->duration;
+   e->direction = ev->direction;
+
+   ecore_event_add(ECORE_X_EVENT_GESTURE_NOTIFY_PAN, e, NULL, NULL);
+}
+
+static void
+_ecore_xcb_event_handle_gesture_notify_pinchrotation(xcb_generic_event_t *event)
+{
+   xcb_gesture_notify_pinch_rotation_event_t *ev;
+   Ecore_X_Event_Gesture_Notify_PinchRotation *e;
+
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   _ecore_xcb_event_last_mouse_move = EINA_FALSE;
+   fprintf(stderr, "[ECORE_XCB][%s]...\n", __FUNCTION__);
+
+   ev = (xcb_gesture_notify_pinch_rotation_event_t *)event;
+   if (!(e = calloc(1, sizeof(Ecore_X_Event_Gesture_Notify_PinchRotation)))) return;
+
+   e->win = ev->window;
+   e->time = ev->time;
+   e->subtype = ev->kind;
+   e->num_fingers = ev->num_finger;
+   e->distance = ev->distance;
+   e->cx = ev->cx;
+   e->cy = ev->cy;
+   e->zoom = XFixedToDouble(ev->zoom);
+   e->angle = XFixedToDouble(ev->angle);
+
+   ecore_event_add(ECORE_X_EVENT_GESTURE_NOTIFY_PINCHROTATION, e, NULL, NULL);
+}
+
+static void
+_ecore_xcb_event_handle_gesture_notify_tap(xcb_generic_event_t *event)
+{
+   xcb_gesture_notify_tap_event_t *ev;
+   Ecore_X_Event_Gesture_Notify_Tap *e;
+
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   _ecore_xcb_event_last_mouse_move = EINA_FALSE;
+   fprintf(stderr, "[ECORE_XCB][%s]...\n", __FUNCTION__);
+
+   ev = (xcb_gesture_notify_tap_event_t *)event;
+   if (!(e = calloc(1, sizeof(Ecore_X_Event_Gesture_Notify_Tap)))) return;
+
+   e->win = ev->window;
+   e->time = ev->time;
+   e->subtype = ev->kind;
+   e->num_fingers = ev->num_finger;
+   e->cx = ev->cx;
+   e->cy = ev->cy;
+   e->tap_repeat = ev->tap_repeat;
+   e->interval = ev->interval;
+
+   ecore_event_add(ECORE_X_EVENT_GESTURE_NOTIFY_TAP, e, NULL, NULL);
+}
+
+static void
+_ecore_xcb_event_handle_gesture_notify_tapnhold(xcb_generic_event_t *event)
+{
+   xcb_gesture_notify_tap_n_hold_event_t *ev;
+   Ecore_X_Event_Gesture_Notify_TapNHold *e;
+
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   _ecore_xcb_event_last_mouse_move = EINA_FALSE;
+   fprintf(stderr, "[ECORE_XCB][%s]...\n", __FUNCTION__);
+
+   ev = (xcb_gesture_notify_tap_n_hold_event_t *)event;
+   if (!(e = calloc(1, sizeof(Ecore_X_Event_Gesture_Notify_TapNHold)))) return;
+
+   e->win = ev->window;
+   e->time = ev->time;
+   e->subtype = ev->kind;
+   e->num_fingers = ev->num_finger;
+   e->cx = ev->cx;
+   e->cy = ev->cy;
+   e->interval = ev->interval;
+   e->hold_time = ev->holdtime;
+
+   ecore_event_add(ECORE_X_EVENT_GESTURE_NOTIFY_TAPNHOLD, e, NULL, NULL);
+}
+
+static void
+ _ecore_xcb_event_handle_gesture_notify_hold(xcb_generic_event_t *event)
+{
+   xcb_gesture_notify_hold_event_t *ev;
+   Ecore_X_Event_Gesture_Notify_Hold *e;
+
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   _ecore_xcb_event_last_mouse_move = EINA_FALSE;
+   fprintf(stderr, "[ECORE_XCB][%s]...\n", __FUNCTION__);
+
+   ev = (xcb_gesture_notify_hold_event_t *)event;
+   if (!(e = calloc(1, sizeof(Ecore_X_Event_Gesture_Notify_Hold)))) return;
+
+   e->win = ev->window;
+   e->time = ev->time;
+   e->subtype = ev->kind;
+   e->num_fingers = ev->num_finger;
+   e->cx = ev->cx;
+   e->cy = ev->cy;
+   e->hold_time = ev->holdtime;
+
+   ecore_event_add(ECORE_X_EVENT_GESTURE_NOTIFY_HOLD, e, NULL, NULL);
+}
+
+static void
+ _ecore_xcb_event_handle_gesture_notify_group(xcb_generic_event_t *event)
+{
+   xcb_gesture_notify_group_event_t *ev;
+   Ecore_X_Event_Gesture_Notify_Group *e;
+
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   _ecore_xcb_event_last_mouse_move = EINA_FALSE;
+   fprintf(stderr, "[ECORE_XCB][%s]...\n", __FUNCTION__);
+
+   ev = (xcb_gesture_notify_group_event_t *)event;
+   if (!(e = calloc(1, sizeof(Ecore_X_Event_Gesture_Notify_Group)))) return;
+
+   e->win = ev->window;
+   e->time = ev->time;
+   e->subtype = ev->kind;
+   e->num_groups = ev->num_group;
+   e->group_id = ev->groupid;
+
+   ecore_event_add(ECORE_X_EVENT_GESTURE_NOTIFY_GROUP, e, NULL, NULL);
+}
+#endif
 
 #ifdef ECORE_XCB_SHAPE
 static void

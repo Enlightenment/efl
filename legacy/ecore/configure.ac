@@ -141,6 +141,7 @@ want_ecore_x_randr="yes"
 want_ecore_x_render="yes"
 want_ecore_x_screensaver="yes"
 want_ecore_x_shape="yes"
+want_ecore_x_gesture="no"
 want_ecore_x_sync="yes"
 want_ecore_x_xfixes="yes"
 want_ecore_x_xinerama="yes"
@@ -656,6 +657,12 @@ AC_ARG_ENABLE(ecore-x-shape,
         @<:@default=detect@:>@])],
    [want_ecore_x_shape=$enableval])
 
+AC_ARG_ENABLE(ecore-x-gesture,
+   [AC_HELP_STRING([--enable-ecore-x-gesture],
+       [enable the ecore_x support for Xgesture extension.
+        @<:@default=detect@:>@])],
+   [want_ecore_x_gesture=$enableval])
+
 AC_ARG_ENABLE(ecore-x-sync,
    [AC_HELP_STRING([--disable-ecore-x-sync],
        [disable the ecore_x support for Xsync extension.
@@ -923,6 +930,17 @@ if test "x$want_ecore_x_xcb" = "xyes" ; then
       AC_MSG_NOTICE("shape extension explicitly disabled")
     fi
 
+    if test "x$want_ecore_x_gesture" != "xno"; then
+      PKG_CHECK_MODULES(XCB_XGESTURE, xcb-gesture,
+        [ have_ecore_x_xcb_gesture="yes"
+          requirements_ecore_x="xcb-gesture ${requirements_ecore_x}"
+          AC_DEFINE(ECORE_XCB_XGESTURE, 1, [Build support for XCB gesture]) ],
+        [ have_ecore_x_xcb_gesture="no" ])
+    else
+      have_ecore_x_xcb_gesture="no"
+      AC_MSG_NOTICE("gesture extension explicitly disabled")
+    fi
+
     if test "x$want_ecore_x_sync" != "xno"; then
       PKG_CHECK_MODULES(XCB_SYNC, xcb-sync,
         [ have_ecore_x_xcb_sync="yes"
@@ -1093,12 +1111,13 @@ if ! test "x$have_ecore_x_xcb" = "xyes" ; then
     ECORE_CHECK_X_EXTENSION([Xinerama], [Xinerama.h], [Xinerama], [XineramaQueryScreens], [$want_ecore_x_xinerama])
     ECORE_CHECK_X_EXTENSION([Xprint], [Print.h], [Xp], [XpQueryScreens], [$want_ecore_x_xprint])
     ECORE_CHECK_X_EXTENSION([Xrandr], [Xrandr.h], [Xrandr], [XRRGetScreenResourcesCurrent], [$want_ecore_x_randr])
+    ECORE_CHECK_X_EXTENSION([Xgesture], [gesture.h], [Xgesture], [XGestureQueryExtension], [$want_ecore_x_gesture])
     ECORE_CHECK_X_EXTENSION([Xrender], [Xrender.h], [Xrender], [XRenderFindVisualFormat], [$want_ecore_x_render])
     ECORE_CHECK_X_EXTENSION([Xtest], [XTest.h], [Xtst], [XTestFakeKeyEvent], [$want_ecore_x_xtest])
     ECORE_CHECK_X_EXTENSION([Xss], [scrnsaver.h], [Xss], [XScreenSaverSelectInput], [$want_ecore_x_screensaver])
     ECORE_CHECK_X_EXTENSION([Xi2], [XInput2.h], [Xi], [XIQueryDevice], [$want_ecore_x_input])
 
-    ecore_x_libs_private="${Xcursor_libs} ${XKB_LIBS} ${XCOMPOSITE_LIBS} ${XDAMAGE_LIBS} ${XDPMS_LIBS} ${XFIXES_LIBS} ${XINERAMA_LIBS} ${XPRINT_LIBS} ${XRANDR_LIBS} ${XRENDER_LIBS} ${XTEST_LIBS} ${XSS_LIBS} ${XI2_LIBS}"
+    ecore_x_libs_private="${Xcursor_libs} ${XKB_LIBS} ${XCOMPOSITE_LIBS} ${XGESTURE_LIBS} ${XDAMAGE_LIBS} ${XDPMS_LIBS} ${XFIXES_LIBS} ${XINERAMA_LIBS} ${XPRINT_LIBS} ${XRANDR_LIBS} ${XRENDER_LIBS} ${XTEST_LIBS} ${XSS_LIBS} ${XI2_LIBS}"
 
     AC_DEFINE(HAVE_ECORE_X_XLIB, 1, [Defined to 1 if Xlib is enabled.])
     have_x="yes"
@@ -1910,6 +1929,7 @@ if test "x$have_ecore_x" = "xyes" ; then
     echo "    Xrandr.....................: $have_ecore_x_xcb_randr"
     echo "    Xscreensaver...............: $have_ecore_x_xcb_screensaver"
     echo "    Xshape.....................: $have_ecore_x_xcb_shape"
+    echo "    Xgesture...................: $have_ecore_x_xcb_gesture"
     echo "    Xsync......................: $have_ecore_x_xcb_sync"
     echo "    Xrender....................: $have_ecore_x_xcb_render"
     echo "    Xcomposite.................: $have_ecore_x_xcb_composite"
@@ -1924,6 +1944,7 @@ if test "x$have_ecore_x" = "xyes" ; then
     echo "    Xprint.....................: $use_xprint"
     echo "    Xinerama...................: $use_xinerama"
     echo "    Xrandr.....................: $use_xrandr"
+    echo "    Xgesture...................: $use_xgesture"
     echo "    Xscreensaver...............: $use_xss"
     echo "    Xrender....................: $use_xrender"
     echo "    Xcomposite.................: $use_xcomposite"

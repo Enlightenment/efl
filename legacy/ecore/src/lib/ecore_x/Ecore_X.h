@@ -385,6 +385,13 @@ typedef struct _Ecore_X_Event_Xdnd_Finished                Ecore_X_Event_Xdnd_Fi
 typedef struct _Ecore_X_Event_Client_Message               Ecore_X_Event_Client_Message;
 typedef struct _Ecore_X_Event_Window_Shape                 Ecore_X_Event_Window_Shape;
 typedef struct _Ecore_X_Event_Screensaver_Notify           Ecore_X_Event_Screensaver_Notify;
+typedef struct _Ecore_X_Event_Gesture_Notify_Flick         Ecore_X_Event_Gesture_Notify_Flick;
+typedef struct _Ecore_X_Event_Gesture_Notify_Pan           Ecore_X_Event_Gesture_Notify_Pan;
+typedef struct _Ecore_X_Event_Gesture_Notify_PinchRotation Ecore_X_Event_Gesture_Notify_PinchRotation;
+typedef struct _Ecore_X_Event_Gesture_Notify_Tap           Ecore_X_Event_Gesture_Notify_Tap;
+typedef struct _Ecore_X_Event_Gesture_Notify_TapNHold      Ecore_X_Event_Gesture_Notify_TapNHold;
+typedef struct _Ecore_X_Event_Gesture_Notify_Hold          Ecore_X_Event_Gesture_Notify_Hold;
+typedef struct _Ecore_X_Event_Gesture_Notify_Group         Ecore_X_Event_Gesture_Notify_Group;
 typedef struct _Ecore_X_Event_Sync_Counter                 Ecore_X_Event_Sync_Counter;
 typedef struct _Ecore_X_Event_Sync_Alarm                   Ecore_X_Event_Sync_Alarm;
 typedef struct _Ecore_X_Event_Screen_Change                Ecore_X_Event_Screen_Change;
@@ -921,6 +928,13 @@ EAPI extern int ECORE_X_EVENT_FIXES_SELECTION_NOTIFY;
 EAPI extern int ECORE_X_EVENT_CLIENT_MESSAGE;
 EAPI extern int ECORE_X_EVENT_WINDOW_SHAPE;
 EAPI extern int ECORE_X_EVENT_SCREENSAVER_NOTIFY;
+EAPI extern int ECORE_X_EVENT_GESTURE_NOTIFY_FLICK;
+EAPI extern int ECORE_X_EVENT_GESTURE_NOTIFY_PAN;
+EAPI extern int ECORE_X_EVENT_GESTURE_NOTIFY_PINCHROTATION;
+EAPI extern int ECORE_X_EVENT_GESTURE_NOTIFY_TAP;
+EAPI extern int ECORE_X_EVENT_GESTURE_NOTIFY_TAPNHOLD;
+EAPI extern int ECORE_X_EVENT_GESTURE_NOTIFY_HOLD;
+EAPI extern int ECORE_X_EVENT_GESTURE_NOTIFY_GROUP;
 EAPI extern int ECORE_X_EVENT_SYNC_COUNTER;
 EAPI extern int ECORE_X_EVENT_SYNC_ALARM;
 EAPI extern int ECORE_X_EVENT_SCREEN_CHANGE;
@@ -3442,6 +3456,158 @@ ecore_x_input_multi_select(Ecore_X_Window win);
 
 EAPI Eina_Bool
 ecore_x_vsync_animator_tick_source_set(Ecore_X_Window win);
+
+typedef enum _Ecore_X_Gesture_Event_Mask
+{
+   ECORE_X_GESTURE_EVENT_MASK_NONE = 0L,
+   ECORE_X_GESTURE_EVENT_MASK_FLICK = (1L << 0),
+   ECORE_X_GESTURE_EVENT_MASK_PAN = (1L << 1),
+   ECORE_X_GESTURE_EVENT_MASK_PINCHROTATION = (1L << 2),
+   ECORE_X_GESTURE_EVENT_MASK_TAP = (1L << 3),
+   ECORE_X_GESTURE_EVENT_MASK_TAPNHOLD = (1L << 4),
+   ECORE_X_GESTURE_EVENT_MASK_HOLD = (1L << 5),
+   ECORE_X_GESTURE_EVENT_MASK_GROUP = (1L << 6)
+} Ecore_X_Gesture_Event_Mask;
+
+typedef enum _Ecore_X_Gesture_Event_Type
+{
+   ECORE_X_GESTURE_EVENT_FLICK,
+   ECORE_X_GESTURE_EVENT_PAN,
+   ECORE_X_GESTURE_EVENT_PINCHROTATION,
+   ECORE_X_GESTURE_EVENT_TAP,
+   ECORE_X_GESTURE_EVENT_TAPNHOLD,
+   ECORE_X_GESTURE_EVENT_HOLD,
+   ECORE_X_GESTURE_EVENT_GROUP
+} Ecore_X_Gesture_Event_Type;
+
+typedef enum _Ecore_X_Gesture_Event_Subtype
+{
+   ECORE_X_GESTURE_END,
+   ECORE_X_GESTURE_BEGIN,
+   ECORE_X_GESTURE_UPDATE,
+   ECORE_X_GESTURE_DONE
+} Ecore_X_Gesture_Event_Subtype;
+
+typedef enum _Ecore_X_Gesture_Group_Subtype
+{
+   ECORE_X_GESTURE_GROUP_REMOVED,
+   ECORE_X_GESTURE_GROUP_ADDED,
+   ECORE_X_GESTURE_GROUP_CURRENT
+} Ecore_X_Gesture_Group_Subtype;
+
+typedef enum _Ecore_X_Gesture_Direction
+{
+   ECORE_X_GESTURE_NORTHWARD,
+   ECORE_X_GESTURE_NORTHEASTWARD,
+   ECORE_X_GESTURE_EASTWARD,
+   ECORE_X_GESTURE_SOUTHEASTWARD,
+   ECORE_X_GESTURE_SOUTHWARD,
+   ECORE_X_GESTURE_SOUTHWESTWARD,
+   ECORE_X_GESTURE_WESTWARD,
+   ECORE_X_GESTURE_NORTHWESTWARD
+} Ecore_X_Gesture_Direction;
+
+struct _Ecore_X_Event_Gesture_Notify_Flick
+{
+   Ecore_X_Window win;
+   Ecore_X_Time time;
+   Ecore_X_Gesture_Event_Subtype subtype;
+   int num_fingers;
+   int distance;
+   Ecore_X_Time duration;
+   Ecore_X_Gesture_Direction direction;
+   double angle;
+};
+   
+struct _Ecore_X_Event_Gesture_Notify_Pan
+{
+   Ecore_X_Window win;
+   Ecore_X_Time time;
+   Ecore_X_Gesture_Event_Subtype subtype;
+   int num_fingers;
+   int dx;
+   int dy;
+   int distance;
+   Ecore_X_Time duration;
+   Ecore_X_Gesture_Direction direction;
+};
+
+struct _Ecore_X_Event_Gesture_Notify_PinchRotation
+{
+   Ecore_X_Window win;
+   Ecore_X_Time time;
+   Ecore_X_Gesture_Event_Subtype subtype;
+   int num_fingers;
+   int distance;
+   int cx;
+   int cy;
+   double zoom;
+   double angle;
+};
+
+struct _Ecore_X_Event_Gesture_Notify_Tap
+{
+  Ecore_X_Window win;
+  Ecore_X_Time time;
+  Ecore_X_Gesture_Event_Subtype subtype;
+  int num_fingers;
+  int cx;
+  int cy;
+  int tap_repeat;
+  Ecore_X_Time interval;
+};
+
+struct _Ecore_X_Event_Gesture_Notify_TapNHold
+{
+  Ecore_X_Window win;
+  Ecore_X_Time time;
+  Ecore_X_Gesture_Event_Subtype subtype;
+  int num_fingers;
+  int cx;
+  int cy;
+  Ecore_X_Time interval;
+  Ecore_X_Time hold_time;
+};
+
+struct _Ecore_X_Event_Gesture_Notify_Hold
+{
+  Ecore_X_Window win;
+  Ecore_X_Time time;
+  Ecore_X_Gesture_Event_Subtype subtype;
+  int num_fingers;
+  int cx;
+  int cy;
+  Ecore_X_Time hold_time;
+};
+
+struct _Ecore_X_Event_Gesture_Notify_Group
+{
+   Ecore_X_Window win;
+   Ecore_X_Time time;
+   Ecore_X_Gesture_Group_Subtype subtype;
+   int num_groups;
+   int group_id;
+};
+
+EAPI Eina_Bool
+ecore_x_gesture_supported(void);
+
+EAPI Eina_Bool
+ecore_x_gesture_events_select(Ecore_X_Window win,
+                              Ecore_X_Gesture_Event_Mask mask);
+
+EAPI Ecore_X_Gesture_Event_Mask
+ecore_x_gesture_events_selected_get(Ecore_X_Window win);
+
+EAPI Eina_Bool
+ecore_x_gesture_event_grab(Ecore_X_Window win,
+                           Ecore_X_Gesture_Event_Type type,
+                           int num_fingers);
+
+EAPI Eina_Bool
+ecore_x_gesture_event_ungrab(Ecore_X_Window win,
+                             Ecore_X_Gesture_Event_Type type,
+                             int num_fingers);
 
 #ifdef __cplusplus
 }

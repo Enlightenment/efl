@@ -60,6 +60,10 @@ _ecore_xcb_extensions_init(void)
    _ecore_xcb_input_init();
 #endif
 
+#ifdef ECORE_XCB_GESTURE
+   _ecore_xcb_gesture_init();
+#endif
+
 /* #ifdef ECORE_XCB_DRI */
 /*    _ecore_xcb_dri_init(); */
 /* #endif */
@@ -125,6 +129,10 @@ _ecore_xcb_extensions_finalize(void)
 
 #ifdef ECORE_XCB_XINPUT
    _ecore_xcb_input_finalize();
+#endif
+
+#ifdef ECORE_XCB_GESTURE
+   _ecore_xcb_gesture_finalize();
 #endif
 
 /* #ifdef ECORE_XCB_DRI */

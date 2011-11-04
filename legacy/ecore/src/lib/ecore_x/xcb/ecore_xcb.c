@@ -1362,6 +1362,9 @@ _ecore_xcb_shutdown(Eina_Bool close_display)
    /* shutdown input extension */
    _ecore_xcb_input_shutdown();
 
+   /* shutdown gesture extension */
+   _ecore_xcb_gesture_shutdown();
+
    /* shutdown selection */
    _ecore_xcb_selection_shutdown();
 

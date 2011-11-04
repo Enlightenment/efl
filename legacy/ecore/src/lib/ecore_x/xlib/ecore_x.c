@@ -47,6 +47,9 @@ static int _ecore_x_event_fixes_selection_id = 0;
 #ifdef ECORE_XDAMAGE
 static int _ecore_x_event_damage_id = 0;
 #endif /* ifdef ECORE_XDAMAGE */
+#ifdef ECORE_XGESTURE
+static int _ecore_x_event_gesture_id = 0;
+#endif /* ifdef ECORE_XGESTURE */
 static int _ecore_x_event_handlers_num = 0;
 static void (**_ecore_x_event_handlers) (XEvent * event) = NULL;
 
@@ -96,6 +99,13 @@ EAPI int ECORE_X_EVENT_FIXES_SELECTION_NOTIFY = 0;
 EAPI int ECORE_X_EVENT_CLIENT_MESSAGE = 0;
 EAPI int ECORE_X_EVENT_WINDOW_SHAPE = 0;
 EAPI int ECORE_X_EVENT_SCREENSAVER_NOTIFY = 0;
+EAPI int ECORE_X_EVENT_GESTURE_NOTIFY_FLICK;
+EAPI int ECORE_X_EVENT_GESTURE_NOTIFY_PAN;
+EAPI int ECORE_X_EVENT_GESTURE_NOTIFY_PINCHROTATION;
+EAPI int ECORE_X_EVENT_GESTURE_NOTIFY_TAP;
+EAPI int ECORE_X_EVENT_GESTURE_NOTIFY_TAPNHOLD;
+EAPI int ECORE_X_EVENT_GESTURE_NOTIFY_HOLD;
+EAPI int ECORE_X_EVENT_GESTURE_NOTIFY_GROUP;
 EAPI int ECORE_X_EVENT_SYNC_COUNTER = 0;
 EAPI int ECORE_X_EVENT_SYNC_ALARM = 0;
 EAPI int ECORE_X_EVENT_SCREEN_CHANGE = 0;
@@ -274,6 +284,10 @@ ecore_x_init(const char *name)
    int damage_base = 0;
    int damage_err_base = 0;
 #endif /* ifdef ECORE_XDAMAGE */
+#ifdef ECORE_XGESTURE
+   int gesture_base = 0;
+   int gesture_err_base = 0;
+#endif /* ifdef ECORE_XGESTURE */
 
    if (++_ecore_x_init_count != 1)
      return _ecore_x_init_count;
@@ -358,6 +372,13 @@ ecore_x_init(const char *name)
 
    ECORE_X_EVENT_HANDLERS_GROW(damage_base, XDamageNumberEvents);
 #endif /* ifdef ECORE_XDAMAGE */
+
+#ifdef ECORE_XGESTURE
+   if (XGestureQueryExtension(_ecore_x_disp, &gesture_base, &gesture_err_base))
+      _ecore_x_event_gesture_id = gesture_base;
+
+   ECORE_X_EVENT_HANDLERS_GROW(gesture_base, GestureNumberEvents);
+#endif /* ifdef ECORE_XGESTURE */
 
    _ecore_x_event_handlers = calloc(_ecore_x_event_handlers_num, sizeof(void *));
    if (!_ecore_x_event_handlers)
@@ -473,6 +494,27 @@ ecore_x_init(const char *name)
    while (0);
 #endif /* ifdef ECORE_XKB */
 
+#ifdef ECORE_XGESTURE
+   if (_ecore_x_event_gesture_id)
+     {
+      _ecore_x_event_handlers[_ecore_x_event_gesture_id + GestureNotifyFlick] =
+         _ecore_x_event_handle_gesture_notify_flick;
+      _ecore_x_event_handlers[_ecore_x_event_gesture_id + GestureNotifyPan] =
+         _ecore_x_event_handle_gesture_notify_pan;
+      _ecore_x_event_handlers[_ecore_x_event_gesture_id + GestureNotifyPinchRotation] =
+         _ecore_x_event_handle_gesture_notify_pinchrotation;
+      _ecore_x_event_handlers[_ecore_x_event_gesture_id + GestureNotifyTap] =
+         _ecore_x_event_handle_gesture_notify_tap;
+      _ecore_x_event_handlers[_ecore_x_event_gesture_id + GestureNotifyTapNHold] =
+         _ecore_x_event_handle_gesture_notify_tapnhold;
+      _ecore_x_event_handlers[_ecore_x_event_gesture_id + GestureNotifyHold] =
+         _ecore_x_event_handle_gesture_notify_hold;
+      _ecore_x_event_handlers[_ecore_x_event_gesture_id + GestureNotifyGroup] =
+         _ecore_x_event_handle_gesture_notify_group;
+     }
+
+#endif /* ifdef ECORE_XGESTURE */
+
    if (!ECORE_X_EVENT_ANY)
      {
         ECORE_X_EVENT_ANY = ecore_event_type_new();
@@ -505,6 +547,13 @@ ecore_x_init(const char *name)
         ECORE_X_EVENT_CLIENT_MESSAGE = ecore_event_type_new();
         ECORE_X_EVENT_WINDOW_SHAPE = ecore_event_type_new();
         ECORE_X_EVENT_SCREENSAVER_NOTIFY = ecore_event_type_new();
+        ECORE_X_EVENT_GESTURE_NOTIFY_FLICK = ecore_event_type_new();
+        ECORE_X_EVENT_GESTURE_NOTIFY_PAN = ecore_event_type_new();
+        ECORE_X_EVENT_GESTURE_NOTIFY_PINCHROTATION = ecore_event_type_new();
+        ECORE_X_EVENT_GESTURE_NOTIFY_TAP = ecore_event_type_new();
+        ECORE_X_EVENT_GESTURE_NOTIFY_TAPNHOLD = ecore_event_type_new();
+        ECORE_X_EVENT_GESTURE_NOTIFY_HOLD = ecore_event_type_new();
+        ECORE_X_EVENT_GESTURE_NOTIFY_GROUP = ecore_event_type_new();
         ECORE_X_EVENT_SYNC_COUNTER = ecore_event_type_new();
         ECORE_X_EVENT_SYNC_ALARM = ecore_event_type_new();
         ECORE_X_EVENT_SCREEN_CHANGE = ecore_event_type_new();
@@ -567,6 +616,7 @@ ecore_x_init(const char *name)
    _ecore_x_composite_init();
    _ecore_x_dpms_init();
    _ecore_x_randr_init();
+   _ecore_x_gesture_init();
    _ecore_x_input_init();
    _ecore_x_events_init();
 

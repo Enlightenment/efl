@@ -2299,3 +2299,185 @@ _ecore_x_event_handle_generic_event(XEvent *event)
 #endif /* ifdef ECORE_XI2 */
 } /* _ecore_x_event_handle_generic_event */
 
+#ifdef ECORE_XGESTURE
+void
+_ecore_x_event_handle_gesture_notify_flick(XEvent *xevent)
+{
+   XGestureNotifyFlickEvent *xfe;
+   Ecore_X_Event_Gesture_Notify_Flick *e;
+
+   _ecore_x_last_event_mouse_move = 0;
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+
+   xfe = (XGestureNotifyFlickEvent *)xevent;
+   e = calloc(1, sizeof(Ecore_X_Event_Gesture_Notify_Flick));
+   if (!e)
+      return;
+
+   e->win = xfe->window;
+   e->time = xfe->time;
+   e->subtype = xfe->kind;
+   e->num_fingers = xfe->num_finger;
+   e->distance = xfe->distance;
+   e->duration = xfe->duration;
+   e->direction = xfe->direction;
+   e->angle = XFixedToDouble(xfe->angle);
+
+   ecore_event_add(ECORE_X_EVENT_GESTURE_NOTIFY_FLICK, e, NULL, NULL);
+}
+
+void
+_ecore_x_event_handle_gesture_notify_pan(XEvent *xevent)
+{
+   XGestureNotifyPanEvent *xpe;
+   Ecore_X_Event_Gesture_Notify_Pan *e;
+
+   _ecore_x_last_event_mouse_move = 0;
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+
+   xpe = (XGestureNotifyPanEvent *)xevent;
+   e = calloc(1, sizeof(Ecore_X_Event_Gesture_Notify_Pan));
+   if (!e)
+      return;
+
+   e->win = xpe->window;
+   e->time = xpe->time;
+   e->subtype = xpe->kind;
+   e->num_fingers = xpe->num_finger;
+   e->dx = xpe->dx;
+   e->dy = xpe->dy;
+   e->distance = xpe->distance;
+   e->duration = xpe->duration;
+   e->direction = xpe->direction;
+
+   ecore_event_add(ECORE_X_EVENT_GESTURE_NOTIFY_PAN, e, NULL, NULL);
+}
+
+void
+_ecore_x_event_handle_gesture_notify_pinchrotation(XEvent *xevent)
+{
+   XGestureNotifyPinchRotationEvent *xpre;
+   Ecore_X_Event_Gesture_Notify_PinchRotation *e;
+
+   _ecore_x_last_event_mouse_move = 0;
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+
+   xpre = (XGestureNotifyPinchRotationEvent *)xevent;
+   e = calloc(1, sizeof(Ecore_X_Event_Gesture_Notify_PinchRotation));
+   if (!e)
+      return;
+
+   e->win = xpre->window;
+   e->time = xpre->time;
+   e->subtype = xpre->kind;
+   e->num_fingers = xpre->num_finger;
+   e->distance = xpre->distance;
+   e->cx = xpre->cx;
+   e->cy = xpre->cy;
+   e->zoom = XFixedToDouble(xpre->zoom);
+   e->angle = XFixedToDouble(xpre->angle);
+
+   ecore_event_add(ECORE_X_EVENT_GESTURE_NOTIFY_PINCHROTATION, e, NULL, NULL);
+}
+
+void
+_ecore_x_event_handle_gesture_notify_tap(XEvent *xevent)
+{
+   XGestureNotifyTapEvent *xte;
+   Ecore_X_Event_Gesture_Notify_Tap *e;
+
+   _ecore_x_last_event_mouse_move = 0;
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+
+   xte = (XGestureNotifyTapEvent *)xevent;
+   e = calloc(1, sizeof(Ecore_X_Event_Gesture_Notify_Tap));
+   if (!e)
+      return;
+
+   e->win = xte->window;
+   e->time = xte->time;
+   e->subtype = xte->kind;
+   e->num_fingers = xte->num_finger;
+   e->cx = xte->cx;
+   e->cy = xte->cy;
+   e->tap_repeat = xte->tap_repeat;
+   e->interval = xte->interval;
+
+   ecore_event_add(ECORE_X_EVENT_GESTURE_NOTIFY_TAP, e, NULL, NULL);
+}
+
+void
+_ecore_x_event_handle_gesture_notify_tapnhold(XEvent *xevent)
+{
+   XGestureNotifyTapNHoldEvent *xthe;
+   Ecore_X_Event_Gesture_Notify_TapNHold *e;
+
+   _ecore_x_last_event_mouse_move = 0;
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+
+   xthe = (XGestureNotifyTapNHoldEvent *)xevent;
+   e = calloc(1, sizeof(Ecore_X_Event_Gesture_Notify_TapNHold));
+   if (!e)
+      return;
+
+   e->win = xthe->window;
+   e->time = xthe->time;
+   e->subtype = xthe->kind;
+   e->num_fingers = xthe->num_finger;
+   e->cx = xthe->cx;
+   e->cy = xthe->cy;
+   e->interval = xthe->interval;
+   e->hold_time = xthe->holdtime;
+
+   ecore_event_add(ECORE_X_EVENT_GESTURE_NOTIFY_TAPNHOLD, e, NULL, NULL);
+}
+
+void
+ _ecore_x_event_handle_gesture_notify_hold(XEvent *xevent)
+{
+   XGestureNotifyHoldEvent *xhe;
+   Ecore_X_Event_Gesture_Notify_Hold *e;
+
+   _ecore_x_last_event_mouse_move = 0;
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+
+   xhe = (XGestureNotifyHoldEvent *)xevent;
+   e = calloc(1, sizeof(Ecore_X_Event_Gesture_Notify_Hold));
+   if (!e)
+      return;
+
+   e->win = xhe->window;
+   e->time = xhe->time;
+   e->subtype = xhe->kind;
+   e->num_fingers = xhe->num_finger;
+   e->cx = xhe->cx;
+   e->cy = xhe->cy;
+   e->hold_time = xhe->holdtime;
+
+   ecore_event_add(ECORE_X_EVENT_GESTURE_NOTIFY_HOLD, e, NULL, NULL);
+}
+
+void
+ _ecore_x_event_handle_gesture_notify_group(XEvent *xevent)
+{
+   XGestureNotifyGroupEvent *xge;
+   Ecore_X_Event_Gesture_Notify_Group *e;
+
+   _ecore_x_last_event_mouse_move = 0;
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+
+   xge = (XGestureNotifyGroupEvent *)xevent;
+   e = calloc(1, sizeof(Ecore_X_Event_Gesture_Notify_Group));
+   if (!e)
+      return;
+
+   e->win = xge->window;
+   e->time = xge->time;
+   e->subtype = xge->kind;
+   e->num_groups = xge->num_group;
+   e->group_id = xge->groupid;
+
+   ecore_event_add(ECORE_X_EVENT_GESTURE_NOTIFY_GROUP, e, NULL, NULL);
+}
+#endif /* ifdef ECORE_XGESTURE */
+

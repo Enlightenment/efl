@@ -207,6 +207,7 @@ extern int _ecore_xcb_event_shape;
 extern int _ecore_xcb_event_sync;
 extern int _ecore_xcb_event_xfixes;
 extern int _ecore_xcb_event_input;
+extern int _ecore_xcb_event_gesture;
 
 extern int ECORE_X_MODIFIER_SHIFT;
 extern int ECORE_X_MODIFIER_CTRL;
@@ -262,6 +263,10 @@ Ecore_X_Visual     *_ecore_xcb_render_visual_get(int visual_id);
 
 void                _ecore_xcb_randr_init(void);
 void                _ecore_xcb_randr_finalize(void);
+
+void _ecore_xcb_gesture_init(void);
+void _ecore_xcb_gesture_finalize(void);
+void _ecore_xcb_gesture_shutdown(void);
 
 void                _ecore_xcb_xfixes_init(void);
 void                _ecore_xcb_xfixes_finalize(void);
