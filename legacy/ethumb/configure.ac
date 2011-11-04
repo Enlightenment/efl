@@ -61,7 +61,7 @@ dnl we just have set the version info, then:
 AC_SUBST(version_info)
 
 AC_PROG_CC
-AM_PROG_CC_STDC
+AC_PROG_CC_STDC
 AM_PROG_CC_C_O
 AC_HEADER_STDC
 AC_C___ATTRIBUTE__
