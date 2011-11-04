@@ -62,9 +62,9 @@ AC_MSG_CHECKING([for __attribute__ ((always_inline))])
 AC_COMPILE_IFELSE(
    [AC_LANG_PROGRAM(
        [[
+__attribute__((always_inline)) inline void foo(void) {}
        ]],
        [[
-__attribute__((always_inline)) void foo(void) {}
        ]])],
    [have_attribute_always_inline="yes"],
    [have_attribute_always_inline="no"])
