@@ -10,19 +10,19 @@
  *    _soft8_scanline_<description>_<src>_<dst>[_<modifier>]()
  *
  ****************************************************************************/
-static always_inline void
+static EFL_ALWAYS_INLINE void
 _soft8_pt_fill_solid_solid(DATA8 * dst, DATA8 gry8)
 {
    *dst = gry8;
 }
 
-static always_inline void
+static EFL_ALWAYS_INLINE void
 _soft8_scanline_fill_solid_solid(DATA8 * dst, int size, DATA8 gry8)
 {
    memset(dst, gry8, size);
 }
 
-static always_inline void
+static EFL_ALWAYS_INLINE void
 _soft8_pt_fill_transp_solid(DATA8 * dst, DATA8 gry8, DATA8 alpha)
 {
    *dst = GRY_8_BLEND(gry8, *dst, alpha);

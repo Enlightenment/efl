@@ -1,6 +1,6 @@
 #include "evas_common_soft8.h"
 
-static always_inline void
+static EFL_ALWAYS_INLINE void
 _soft8_convert_from_rgba_pt(const DATA32 * src, DATA8 * dst, DATA8 * alpha)
 {
    if (A_VAL(src) == 0)
@@ -56,7 +56,7 @@ evas_common_soft8_image_convert_from_rgba(Soft8_Image * im, const DATA32 * src)
       _soft8_convert_from_rgba_scanline(sp, dp, ap, im->cache_entry.w);
 }
 
-static always_inline void
+static EFL_ALWAYS_INLINE void
 _soft8_convert_from_rgb_pt(const DATA32 * src, DATA8 * dst)
 {
    *dst = GRY_8_FROM_RGB(src);

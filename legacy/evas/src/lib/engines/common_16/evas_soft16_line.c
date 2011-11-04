@@ -281,7 +281,7 @@ _soft16_line_45deg(Soft16_Image *dst, RGBA_Draw_Context *dc, int x0, int y0, int
      }
 }
 
-static always_inline void
+static EFL_ALWAYS_INLINE void
 _soft16_line_aliased_pt(DATA16 *dst_itr, DATA16 rgb565, DATA32 rgb565_unpack, DATA8 alpha)
 {
    if (alpha == 32)

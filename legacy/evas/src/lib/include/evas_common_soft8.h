@@ -8,14 +8,6 @@
 extern "C" {
 #endif
 
-#ifndef always_inline
-#if defined(__GNUC__) && (__GNUC__ > 3 || __GNUC__ == 3 && __GNUC_MINOR__ > 0)
-#    define always_inline __attribute__((always_inline)) inline
-#else
-#    define always_inline inline
-#endif
-#endif
-
 #define GRY_8_BLEND(a, b, alpha)	\
    ((b) + (a) - ((((b) * ((alpha) + 1)) >> 8) & 0xff))
 
