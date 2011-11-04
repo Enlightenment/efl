@@ -1908,8 +1908,9 @@ void _edje_external_recalc_apply(Edje *ed, Edje_Real_Part *ep,
 void *_edje_external_params_parse(Evas_Object *obj, const Eina_List *params);
 void _edje_external_parsed_params_free(Evas_Object *obj, void *params);
 
-EAPI void _edje_module_init();
-EAPI void _edje_module_shutdown();
+Eina_Module *_edje_module_handle_load(const char *module);
+void _edje_module_init();
+void _edje_module_shutdown();
 
 static inline Eina_Bool
 edje_program_is_strncmp(const char *str)
@@ -1936,6 +1937,7 @@ edje_program_is_strrncmp(const char *str)
    return EINA_TRUE;
 }
 
+/* used by edje_cc - private still */
 EAPI void _edje_program_insert(Edje_Part_Collection *ed, Edje_Program *p);
 EAPI void _edje_program_remove(Edje_Part_Collection *ed, Edje_Program *p);
 

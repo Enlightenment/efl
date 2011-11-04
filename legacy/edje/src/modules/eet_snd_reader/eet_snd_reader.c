@@ -133,7 +133,7 @@ remix_init_resampler_data(RemixEnv *env, RemixBase *base)
 static RemixBase *
 remix_eet_sndfile_create(RemixEnv *env, RemixBase *sndfile, const char *path, const char *sound_id, const double speed)
 {
-   SF_VIRTUAL_IO *eet_vio;
+   SF_VIRTUAL_IO *eet_vio = NULL;
    SndInstanceData *si;
    const void *sound_data;
    int sound_size;

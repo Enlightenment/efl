@@ -156,7 +156,7 @@ _edje_multisense_encode_to_flac(char *snd_path, SF_INFO sfinfo)
    if (ok)
      {
         init_status = FLAC__stream_encoder_init_file(encoder, snd_path, NULL,
-                                                     (void *)(total_samples));
+                                                     (void *)(long)(total_samples));
         if (init_status != FLAC__STREAM_ENCODER_INIT_STATUS_OK)
           {
              ERR("ERROR: unable to initialize FLAC encoder: %s\n",

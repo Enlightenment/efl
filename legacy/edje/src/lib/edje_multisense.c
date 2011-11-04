@@ -88,7 +88,7 @@ init_multisense_environment(void)
    else
      strcpy(ms_factory, "multisense_factory");
    
-   m = edje_module_load(ms_factory);
+   m = _edje_module_handle_load(ms_factory);
    if (!m) goto err;
    
 #ifdef HAVE_LIBREMIX
@@ -197,7 +197,7 @@ static RemixBase *
 edje_remix_tone_create(Multisense_Data *msdata, Edje*ed, Edje_Tone_Action *action)
 {
    Edje_Sound_Tone *tone;
-   RemixSquareTone *square;
+   RemixSquareTone *square = NULL;
    unsigned int i;
 
    if ((!ed) || (!ed->file) || (!ed->file->sound_dir))

@@ -14,8 +14,15 @@ Eina_List *_modules_found = NULL;
 # define EDJE_MODULE_NAME "module.so"
 #endif
 
-EAPI Eina_Module *
+EAPI Eina_Bool
 edje_module_load(const char *module)
+{
+   if (_edje_module_handle_load(module)) return EINA_TRUE;
+   return EINA_FALSE;
+}
+
+Eina_Module *
+_edje_module_handle_load(const char *module)
 {
    const char *path;
    Eina_List *l;
