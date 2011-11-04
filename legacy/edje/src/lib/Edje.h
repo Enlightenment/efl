@@ -1333,7 +1333,8 @@ EAPI Eina_Bool    edje_file_group_exists          (const char *file, const char 
  * Get data from the file level data block of an edje file
  * @param file The path to the .edj file
  * @param key The data key
- * @return The string value of the data
+ * @return The string value of the data. Must be freed by the user when no
+ * longer needed.
  *
  * If an edje file is built from the following edc:
  *
@@ -1678,7 +1679,7 @@ EAPI Evas_Object *edje_object_add                 (Evas *evas);
  *
  * @param obj A handle to an Edje object
  * @param key The data field's key string
- * @return The data's value string
+ * @return The data's value string. Must not be freed.
  *
  * This function fetches an EDC data field's value, which is declared
  * on the objects building EDC file, <b>under its group</b>. EDC data
