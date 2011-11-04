@@ -1269,7 +1269,7 @@ AC_CHECK_SIZEOF(long, 4)
 
 
 ### Checks for compiler characteristics
-AM_PROG_CC_STDC
+AC_PROG_CC_STDC
 AC_C_CONST
 AC_C_BIGENDIAN
 AC_HEADER_STDC
