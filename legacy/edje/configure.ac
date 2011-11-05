@@ -291,7 +291,7 @@ PKG_CHECK_MODULES([ECORE_IMF],
    [have_ecore_imf="no"])
 
 # Enable Multisense use
-want_multisense="no"
+want_multisense="yes"
 AC_ARG_ENABLE([multisense],
    [AC_HELP_STRING(
        [--enable-multisense],
@@ -300,10 +300,6 @@ AC_ARG_ENABLE([multisense],
     [want_multisense=$enableval]
 )
 AM_CONDITIONAL([ENABLE_MULTISENSE], [test "x${want_multisense}" = "xyes"])
-
-if test "x${want_multisense}" = "xyes" ; then
-   AC_DEFINE([ENABLE_MULTISENSE], [1], [Use Multisense])
-fi
 
 ##sndfile library
 have_sndfile="no"
@@ -321,7 +317,7 @@ if test "x${want_multisense}" = "xyes" -a  "x$want_sndfile" != "xno"; then
 	       have_sndfile="yes"
 	       requirement_edje="sndfile >= 1.0.22 ${requirement_edje}"
 	       ],
-	      [have_sndfile="no"]
+	      [have_sndfile="no"; want_multisense="no"]
 	   )
 	
 	if test "x$want_sndfile" = "xyes" -a "x$have_sndfile" = "xno"; then
@@ -354,7 +350,7 @@ if test "x${want_multisense}" = "xyes" -a "x$want_libremix" != "xno"; then
        fi
        AC_DEFINE_UNQUOTED(REMIX_PLUGIN_DIR, "$REMIX_PLUGIN_DIR", [Set the remix plugin directory])
        ],
-      [have_libremix="no"]
+      [have_libremix="no"; want_multisense="no"]
    )
 
 	if test "x$want_libremix" = "xyes" -a "x$have_libremix" = "xno"; then
@@ -382,7 +378,7 @@ if test "x${want_multisense}" = "xyes" -a "x$want_vorbis" != "xno"; then
        have_vorbis="yes"
        requirement_edje="ogg >= 1.1.4 vorbis >= 1.2.3 vorbisenc >= 1.2.3 ${requirement_edje}"
       ],
-      [have_vorbis="no"]
+      [have_vorbis="no"; want_multisense="no"]
    )
 
 	if test "x$want_vorbis" = "xyes" -a "x$have_vorbis" = "xno"; then
@@ -407,7 +403,7 @@ if test "x${want_multisense}" = "xyes" -a "x$want_alsa_lib" != "xno"; then
        have_alsa_lib="yes"
        requirement_edje="alsa >= 1.0.21a ${requirement_edje}"
       ],
-      [have_alsa_lib="no"]
+      [have_alsa_lib="no"; want_multisense="no"]
    )
 
 	if test "x$want_alsa_lib" = "xyes" -a "x$have_alsa_lib" = "xno"; then
@@ -432,13 +428,21 @@ if test "x${want_multisense}" = "xyes" -a "x$want_flac_lib" != "xno"; then
       [
        AC_DEFINE(HAVE_LIBFLAC, 1, [flac support for Edje])
        have_flac_lib="yes"
-       requirement_edje="flac >= 1.2.1 ${requirement_edje}"
+       # disabled because this adds flac include dirs to cflags... and
+       # FLAC has an assert.h in its include dirs that ends up
+       # overriding the system assert.h and thus causes all sorts of
+       # mayhem
+       #requirement_edje="flac >= 1.2.1 ${requirement_edje}"
       ],
-      [have_flac_lib="no"]
+      [have_flac_lib="no"; want_multisense="no"]
    )
 	if test "x$want_flac_lib" = "xyes" -a "x$have_flac_lib" = "xno"; then
 	    AC_MSG_ERROR([flac support requested, but not found by pkg-config.])
 	fi
+fi
+
+if test "x${want_multisense}" = "xyes" ; then
+   AC_DEFINE([ENABLE_MULTISENSE], [1], [Use Multisense])
 fi
 
 # Dependencies for the binaries
