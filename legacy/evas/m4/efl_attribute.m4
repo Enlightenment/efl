@@ -100,7 +100,7 @@ if test "x${have_attribute_always_inline}" = "xyes" ; then
       AC_DEFINE([EFL_ALWAYS_INLINE], [__attribute__ ((always_inline)) inline], [Macro declaring a function to always be inlined.])
    fi
 else
-   AC_DEFINE([EFL_ALWAYS_INLINE], [inline], [Macro declaring a function to always be inlined.])
+   AC_DEFINE([EFL_ALWAYS_INLINE], [static inline], [Macro declaring a function to always be inlined.])
 fi
 ])
 
