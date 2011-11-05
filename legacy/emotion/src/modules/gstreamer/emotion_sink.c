@@ -708,6 +708,7 @@ evas_video_sink_samsung_main_render(void *data)
    if (!send->ev->stream && !send->force)
      {
         send->ev->send = send;
+        _emotion_frame_new(send->ev->obj);
         goto exit_stream;
      }
 
@@ -766,7 +767,10 @@ evas_video_sink_samsung_main_render(void *data)
         send->ev->play_started = 0;
      }
 
-   _emotion_frame_new(send->ev->obj);
+   if (!send->force)
+     {
+        _emotion_frame_new(send->ev->obj);
+     }
 
    vstream = eina_list_nth(send->ev->video_streams, send->ev->video_stream_nbr - 1);
 
@@ -824,11 +828,16 @@ evas_video_sink_main_render(void *data)
    if (!priv || !priv->o || priv->unlocked)
      goto exit_point;
 
+   if (ev->send && send != ev->send)
+     {
+        emotion_gstreamer_buffer_free(ev->send);
+        ev->send = NULL;
+     }
+
    if (!ev->stream && !send->force)
      {
-       if (ev->send && send != ev->send)
-          emotion_gstreamer_buffer_free(ev->send);
         ev->send = send;
+        _emotion_frame_new(ev->obj);
         evas_object_image_data_update_add(priv->o, 0, 0, priv->width, priv->height);
         goto exit_stream;
      }
@@ -858,7 +867,10 @@ evas_video_sink_main_render(void *data)
         ev->play_started = 0;
      }
 
-   _emotion_frame_new(ev->obj);
+   if (!send->force)
+     {
+        _emotion_frame_new(ev->obj);
+     }
 
    gst_element_query_position(ev->pipeline, &fmt, &pos);
    ev->position = (double)pos / (double)GST_SECOND;
