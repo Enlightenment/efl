@@ -2710,6 +2710,7 @@ _elm_engine_supported(const char *engine)
       "software_16_sdl",
       "opengl_sdl",
       "ews",
+      "opengl_cocoa",
       NULL
    };
 
