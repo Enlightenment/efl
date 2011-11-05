@@ -25,9 +25,11 @@ typedef struct _Multisense_Data
 #define BUF_LEN 64
 #define SND_PROCESS_LENGTH 2048
 
+#ifdef HAVE_LIBREMIX
 static Ecore_Thread *player_thread = NULL;
-static Eina_Bool pipe_initialized = EINA_FALSE;
 static int command_pipe[2];
+static Eina_Bool pipe_initialized = EINA_FALSE;
+#endif
 
 typedef enum _Edje_Sound_Action_Type
 {
@@ -67,6 +69,7 @@ struct _Edje_Multisense_Sound_Action
    } type;
 };
 
+#ifdef HAVE_LIBREMIX
 static Multisense_Data *
 init_multisense_environment(void)
 {
@@ -91,15 +94,12 @@ init_multisense_environment(void)
    m = _edje_module_handle_load(ms_factory);
    if (!m) goto err;
    
-#ifdef HAVE_LIBREMIX
    msdata->msenv->remixenv = remix_init();
-#endif
 
    multisense_factory_init = 
      eina_module_symbol_get(m, "multisense_factory_init");
    if (multisense_factory_init) multisense_factory_init(msdata->msenv);
 
-#ifdef HAVE_LIBREMIX
    msdata->multisense_sound_player_get = 
      eina_module_symbol_get(m, "multisense_sound_player_get");
    if (!msdata->multisense_sound_player_get) goto err;
@@ -118,21 +118,19 @@ init_multisense_environment(void)
                                         msdata->player, msdata->player_layer,
                                         REMIX_SAMPLES(0),
                                         REMIX_SAMPLES(REMIX_COUNT_INFINITE));
-#endif
    return msdata;
 
 err:
    if (msdata)
      {
-#ifdef HAVE_LIBREMIX
         if (msdata->deck) remix_destroy(msdata->msenv->remixenv, msdata->deck);
         if (msdata->msenv->remixenv) remix_purge(msdata->msenv->remixenv);
-#endif
         if (msdata->msenv) free(msdata->msenv);
         free(msdata);
      }
    return NULL;
 }
+#endif
 
 #ifdef HAVE_LIBREMIX
 static RemixBase *
@@ -252,14 +250,13 @@ sound_command_handler(Multisense_Data *msdata)
 }
 #endif
 
+#ifdef HAVE_LIBREMIX
 static void
 _player_job(void *data __UNUSED__, Ecore_Thread *th)
 {
    fd_set wait_fds;
-#ifdef HAVE_LIBREMIX
    RemixBase *sound;
    RemixCount process_len;
-#endif
    Multisense_Data *msdata = init_multisense_environment();
    if (!msdata) return;
 
@@ -267,7 +264,6 @@ _player_job(void *data __UNUSED__, Ecore_Thread *th)
    FD_ZERO(&wait_fds);
    FD_SET(command_pipe[0], &wait_fds);
 
-#ifdef HAVE_LIBREMIX
    while (!ecore_thread_check(th))
      {
         if (!msdata->remaining)
@@ -299,25 +295,29 @@ _player_job(void *data __UNUSED__, Ecore_Thread *th)
    remix_destroy(msdata->msenv->remixenv, msdata->player);
    remix_destroy(msdata->msenv->remixenv, msdata->deck);
    remix_purge(msdata->msenv->remixenv);
-#endif
 
    free(msdata->msenv);
    free(msdata);
    close(command_pipe[0]);
    close(command_pipe[1]);
 }
+#endif
 
+#ifdef HAVE_LIBREMIX
 static void
 _player_cancel(void *data __UNUSED__, Ecore_Thread *th __UNUSED__)
 {
    player_thread = NULL;
 }
+#endif
 
+#ifdef HAVE_LIBREMIX
 static void
 _player_end(void *data __UNUSED__, Ecore_Thread *th __UNUSED__)
 {
    player_thread = NULL;
 }
+#endif
 
 Eina_Bool
 _edje_multisense_internal_sound_sample_play(Edje *ed, const char *sample_name, const double speed)
@@ -333,6 +333,9 @@ _edje_multisense_internal_sound_sample_play(Edje *ed, const char *sample_name, c
    strncpy(command.type.sample.sample_name, sample_name, BUF_LEN);
    command.type.sample.speed = speed;
    size = write(command_pipe[1], &command, sizeof(command));
+#else
+   ed = NULL; // warning shh
+   if (speed > 0) sample_name = NULL; // warning shh
 #endif
    return (size == sizeof(Edje_Multisense_Sound_Action));
 }
@@ -350,6 +353,9 @@ _edje_multisense_internal_sound_tone_play(Edje *ed, const char *tone_name, const
    strncpy(command.type.tone.tone_name, tone_name, BUF_LEN);
    command.type.tone.duration = duration;
    size = write(command_pipe[1], &command, sizeof(command));
+#else   
+   ed = NULL; // warning shh
+   if (duration > 0) tone_name = NULL; // warning shh
 #endif
    return (size == sizeof(Edje_Multisense_Sound_Action));
 
