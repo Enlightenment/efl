@@ -1973,6 +1973,7 @@ extern "C" {
     * @li "opengl_sdl"
     * @li "buffer"
     * @li "ews"
+    * @li "opengl_cocoa"
     *
     * @{
     */
@@ -3643,6 +3644,7 @@ extern "C" {
     * @li "sdl-16", "software-16-sdl", "software_16_sdl" (Rendering to SDL
     * buffer with 16bit software renderer)
     * @li "ews" (rendering to EWS - Ecore + Evas Single Process Windowing System)
+    * @li "gl-cocoa", "gl_cocoa", "opengl-cocoa", "opengl_cocoa" (OpenGL rendering in Cocoa)
     *
     * All engines use a simple string to select the engine to render, EXCEPT
     * the "shot" engine. This actually encodes the output of the virtual
