@@ -85,7 +85,7 @@ _edje_multisense_encode(const char *filename, Edje_Sound_Sample *sample, double 
 const char*
 _edje_multisense_encode_to_flac(char *snd_path, SF_INFO sfinfo)
 {
-   unsigned total_samples = 0; /* can use a 32-bit number due to WAVE size limitations */
+   unsigned int total_samples = 0; /* can use a 32-bit number due to WAVE size limitations */
    FLAC__bool ok = 1;
    FLAC__StreamEncoder *encoder = 0;
    FLAC__StreamEncoderInitStatus init_status;
