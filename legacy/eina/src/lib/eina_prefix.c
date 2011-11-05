@@ -65,6 +65,10 @@ void *alloca (size_t);
 # include <Evil.h>
 #endif
 
+#ifdef HAVE_ESCAPE
+# include <Escape.h>
+#endif
+
 #include "eina_config.h"
 #include "eina_private.h"
 #include "eina_log.h"

@@ -453,6 +453,16 @@ esac
 AC_SUBST([EINA_LIBS])
 AC_SUBST([lt_enable_auto_import])
 
+case "$host_vendor" in
+  ps3*)
+      PKG_CHECK_MODULES([ESCAPE], [escape])
+      AC_DEFINE(HAVE_ESCAPE, 1, [Set to 1 if evil package is installed])
+      requirement_eina="escape"
+      EINA_LIBS="${ESCAPE_LIBS}"
+      EINA_CFLAGS="${ESCAPE_CFLAGS} ${EINA_CFLAGS}"
+    ;;
+esac
+
 EFL_LINKER_FLAG([-fno-strict-aliasing])
 
 
