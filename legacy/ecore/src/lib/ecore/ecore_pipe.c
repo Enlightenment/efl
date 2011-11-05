@@ -32,6 +32,10 @@
 # include <Evil.h>
 #endif
 
+#ifdef HAVE_ESCAPE
+# include <Escape.h>
+#endif
+
 #include "Ecore.h"
 #include "ecore_private.h"
 

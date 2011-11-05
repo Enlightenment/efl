@@ -468,6 +468,22 @@ case "$host_os" in
       ;;
 esac
 
+have_ps3=""
+case "$host_vendor" in
+  ps3*)
+      have_ps3="yes"
+      PKG_CHECK_MODULES([ESCAPE], [escape])
+      CFLAGS="$CFLAGS $ESCAPE_CFLAGS"
+      AC_DEFINE(HAVE_ESCAPE, 1, [Set to 1 if Escape library is installed])
+      requirements_ecore="escape ${requirements_ecore}"
+      requirements_ecore_evas="escape ${requirements_ecore_evas}"
+      requirements_ecore_file="escape ${requirements_ecore_file}"
+      requirements_ecore_imf="escape ${requirements_ecore_imf}"
+      requirements_ecore_imf_evas="escape ${requirements_ecore_imf_evas}"
+      requirements_ecore_sdl="escape ${requirements_ecore_sdl}"
+      ;;
+esac
+
 AC_SUBST(EFL_ECORE_BUILD)
 AC_SUBST(EFL_ECORE_CON_BUILD)
 AC_SUBST(EFL_ECORE_EVAS_BUILD)
@@ -483,6 +499,7 @@ AC_SUBST(EFL_ECORE_SDL_BUILD)
 
 AM_CONDITIONAL(ECORE_HAVE_WINCE, test "x${have_wince}" = "xyes")
 AM_CONDITIONAL(ECORE_HAVE_WIN32, test "x${have_win32}" = "xyes")
+AM_CONDITIONAL(ECORE_HAVE_PS3, test "x${have_ps3}" = "xyes")
 
 WIN32_LIBS=""
 case "$host_os" in

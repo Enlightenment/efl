@@ -40,7 +40,15 @@ libecore_la_SOURCES += ecore_exe_wince.c
 
 else
 
+if ECORE_HAVE_PS3
+
+libecore_la_SOURCES += ecore_exe_ps3.c
+
+else
+
 libecore_la_SOURCES += ecore_signal.c ecore_exe.c
+
+endif
 
 endif
 
