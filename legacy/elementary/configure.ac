@@ -595,15 +595,6 @@ ELM_LIBINTL_H_DEF="#undef"
 AC_CHECK_HEADER(libintl.h, [ELM_LIBINTL_H_DEF="#define"])
 AC_SUBST(ELM_LIBINTL_H_DEF)
 
-EFL_CHECK_THREADS([
-  TH=1
-] , [
-  AC_MSG_ERROR(no thread support found. required.)
-  exit 1
-])
-AC_SUBST(EFL_PTHREAD_CFLAGS)
-AC_SUBST(EFL_PTHREAD_LIBS)
-
 my_libs="-lm"
 AC_SUBST(my_libs)
 AC_SUBST(requirement_elm)

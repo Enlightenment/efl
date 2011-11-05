@@ -25,8 +25,7 @@ AM_CPPFLAGS = \
 @ELEMENTARY_EMAP_CFLAGS@ \
 @EVIL_CFLAGS@ \
 @EIO_CFLAGS@ \
-@EMOTION_CFLAGS@ \
-@EFL_PTHREAD_CFLAGS@
+@EMOTION_CFLAGS@
 
 if ELEMENTARY_WINDOWS_BUILD
 AM_CPPFLAGS += -DELEMENTARY_BUILD
@@ -147,8 +146,8 @@ libelementary_la_LIBADD = \
 @ELEMENTARY_EMAP_LIBS@ \
 @EVIL_LIBS@ \
 @EIO_LIBS@ \
-@EMOTION_LIBS@ \
-@EFL_PTHREAD_LIBS@
+@EMOTION_LIBS@
+
 libelementary_la_LDFLAGS = \
 -no-undefined @lt_enable_auto_import@ \
 -version-info @version_info@ @release_info@
