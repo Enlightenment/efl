@@ -699,10 +699,14 @@ evas_video_sink_samsung_main_render(void *data)
    if (!priv || !priv->o || priv->unlocked)
      goto exit_point;
 
+   if (send->ev->send)
+     {
+        emotion_gstreamer_buffer_free(send->ev->send);
+        send->ev->send = NULL;
+     }
+
    if (!send->ev->stream && !send->force)
      {
-        if (send->ev->send)
-          emotion_gstreamer_buffer_free(send->ev->send);
         send->ev->send = send;
         goto exit_stream;
      }
@@ -822,7 +826,7 @@ evas_video_sink_main_render(void *data)
 
    if (!ev->stream && !send->force)
      {
-        if (ev->send)
+       if (ev->send && send != ev->send)
           emotion_gstreamer_buffer_free(ev->send);
         ev->send = send;
         evas_object_image_data_update_add(priv->o, 0, 0, priv->width, priv->height);
@@ -1121,12 +1125,14 @@ static void
 _video_update_pixels(void *data, Evas_Object *obj __UNUSED__, const Evas_Video_Surface *surface __UNUSED__)
 {
    Emotion_Gstreamer_Video *ev = data;
+   Emotion_Gstreamer_Buffer *send;
 
    if (!ev->send) return ;
 
-   ev->send->force = EINA_TRUE;
-   evas_video_sink_main_render(ev->send);
+   send = ev->send;
+   send->force = EINA_TRUE;
    ev->send = NULL;
+   evas_video_sink_main_render(send);
 }
 
 GstElement *
