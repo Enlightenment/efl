@@ -18,7 +18,6 @@
 #undef CLOCK_PROCESS_CPUTIME_ID
 #endif
 
-
 /**
  * @mainpage Escape
  * @image html  e_big.png
@@ -44,7 +43,7 @@
 extern "C" {
 #endif
 
-  /* Nothing to see here */
+/* Nothing to see here */
 
 #ifdef __cplusplus
 }

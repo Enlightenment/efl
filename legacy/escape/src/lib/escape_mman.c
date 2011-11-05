@@ -11,7 +11,6 @@
 
 /***** API *****/
 
-
 void *
 mmap(void  *addr __UNUSED__,
      size_t len,
@@ -20,48 +19,49 @@ mmap(void  *addr __UNUSED__,
      int    fd,
      off_t  offset)
 {
-  void  *data;
-  size_t size;
+   void *data;
+   size_t size;
 
-  data = malloc(len);
-  if (!data)
-    {
-      fprintf (stderr, "[Escape] [mmap] malloc failed\n");
-      return MAP_FAILED;
-    }
+   data = malloc(len);
+   if (!data)
+     {
+        fprintf (stderr, "[Escape] [mmap] malloc failed\n");
+        return MAP_FAILED;
+     }
 
-  size = read(fd, data, len);
-  if (size != len)
-    {
-      fprintf (stderr, "[Escape] [mmap] read failed\n");
-      free(data);
-      return MAP_FAILED;
-    }
+   size = read(fd, data, len);
+   if (size != len)
+     {
+        fprintf (stderr, "[Escape] [mmap] read failed\n");
+        free(data);
+        return MAP_FAILED;
+     }
 
-  if (lseek(fd, -len, SEEK_CUR) == -1)
-    {
-      fprintf (stderr, "[Escape] [mmap] lseek failed\n");
-      free(data);
-      return MAP_FAILED;
-    }
+   if (lseek(fd, -len, SEEK_CUR) == -1)
+     {
+        fprintf (stderr, "[Escape] [mmap] lseek failed\n");
+        free(data);
+        return MAP_FAILED;
+     }
 
-  return data;
+   return data;
 }
 
 int
 munmap(void  *addr,
        size_t len __UNUSED__)
 {
-  if (addr && (addr != MAP_FAILED))
-    free(addr);
+   if (addr && (addr != MAP_FAILED))
+     free(addr);
 
-  return 0;
+   return 0;
 }
 
-
-int madvise(void *addr __UNUSED__,
-    size_t length __UNUSED__,
-    int advice __UNUSED__)
+int
+madvise(void  *addr __UNUSED__,
+        size_t length __UNUSED__,
+        int    advice __UNUSED__)
 {
-  return 0;
+   return 0;
 }
+

@@ -36,8 +36,8 @@ escape_basename(char *path)
    p2 = p1 + (length - 1);
    if (*p2 == '/')
      {
-       while (*p2 == '/')
-         p2--;
+        while (*p2 == '/')
+          p2--;
      }
    *(p2 + 1) = '\0';
 
@@ -74,8 +74,8 @@ escape_dirname(char *path)
    p2 = p1 + (length - 1);
    if (*p2 == '/')
      {
-       while (*p2 == '/')
-         p2--;
+        while (*p2 == '/')
+          p2--;
      }
    *(p2 + 1) = '\0';
 
@@ -87,3 +87,4 @@ escape_dirname(char *path)
 
    return _escape_dirname_buf;
 }
+

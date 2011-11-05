@@ -6,7 +6,7 @@
 #include <errno.h>
 #endif /* HAVE_ERRNO_H */
 
-#include <sys/types.h>          /* See NOTES */
+#include <sys/types.h> /* See NOTES */
 #include <sys/socket.h>
 #include <net/socket.h>
 #include <netinet/in.h>
@@ -16,75 +16,79 @@
 #include <libiberty.h>
 #include <sys/stat.h>
 
-
 #include "Escape.h"
 
-char *escape_realpath(const char *path, char *resolved_path)
+char *
+escape_realpath(const char *path, char *resolved_path)
 {
-  char *real = lrealpath (path);
+   char *real = lrealpath (path);
 
-  if (real)
-    {
-      if (resolved_path)
-        {
-          memcpy (resolved_path, real, PATH_MAX);
-          free (real);
-          return resolved_path;
-        }
-      else
-        {
-          return real;
-        }
-    }
+   if (real)
+     {
+        if (resolved_path)
+          {
+             memcpy (resolved_path, real, PATH_MAX);
+             free (real);
+             return resolved_path;
+          }
+        else
+          {
+             return real;
+          }
+     }
 
-  return NULL;
+   return NULL;
 }
 
-
-
-int escape_access(const char *pathname, int mode)
+int
+escape_access(const char *pathname, int mode)
 {
-  struct stat stat_buf;
+   struct stat stat_buf;
 
-  if (stat(pathname, &stat_buf) != 0)
-    return -1;
+   if (stat(pathname, &stat_buf) != 0)
+     return -1;
 
-  if (mode == F_OK)
-    return 0;
-  if (mode == R_OK) {
-    if (stat_buf.st_mode & S_IRUSR)
-      return 0;
-    errno = EACCES;
-    return -1;
-  }
-  if (mode == W_OK) {
-    if (stat_buf.st_mode & S_IWUSR)
-      return 0;
-    errno = EROFS;
-    return -1;
-  }
-  if (mode == X_OK) {
-    if (stat_buf.st_mode & S_IXUSR)
-      return 0;
-    errno = EACCES;
-    return -1;
-  }
+   if (mode == F_OK)
+     return 0;
+   if (mode == R_OK)
+     {
+        if (stat_buf.st_mode & S_IRUSR)
+          return 0;
+        errno = EACCES;
+        return -1;
+     }
+   if (mode == W_OK)
+     {
+        if (stat_buf.st_mode & S_IWUSR)
+          return 0;
+        errno = EROFS;
+        return -1;
+     }
+   if (mode == X_OK)
+     {
+        if (stat_buf.st_mode & S_IXUSR)
+          return 0;
+        errno = EACCES;
+        return -1;
+     }
 
-  return 0;
+   return 0;
 }
 
-EAPI ssize_t escape_readlink(const char *path,
-    char * buf,
-    size_t bufsize)
+EAPI ssize_t
+escape_readlink(const char *path,
+                char       *buf,
+                size_t      bufsize)
 {
-  errno = EINVAL;
-  return -1;
+   errno = EINVAL;
+   return -1;
 }
 
-EAPI int escape_symlink(const char *path1, const char *path2)
+EAPI int
+escape_symlink(const char *path1, const char *path2)
 {
-  errno = EINVAL;
-  return -1;
+   errno = EINVAL;
+   return -1;
 }
 
 /*
@@ -95,12 +99,12 @@ int
 escape_pipe(int *fds)
 {
    struct sockaddr_in saddr;
-   int                temp;
-   int                socket1 = -1;
-   int                socket2 = -1;
-   fd_set             read_set;
-   fd_set             write_set;
-   int                len;
+   int temp;
+   int socket1 = -1;
+   int socket2 = -1;
+   fd_set read_set;
+   fd_set write_set;
+   int len;
 
    temp = socket (AF_INET, SOCK_STREAM, 0);
 
@@ -127,8 +131,7 @@ escape_pipe(int *fds)
    if (socket1 == -1)
      goto out0;
 
-
-   if ((connect (socket1, (struct sockaddr  *)&saddr, len) == -1) &&
+   if ((connect (socket1, (struct sockaddr *)&saddr, len) == -1) &&
        (errno != EAGAIN))
      goto out1;
 
@@ -141,7 +144,7 @@ escape_pipe(int *fds)
    if (!FD_ISSET (temp, &read_set))
      goto out1;
 
-   socket2 = accept (temp, (struct sockaddr *) &saddr, &len);
+   socket2 = accept (temp, (struct sockaddr *)&saddr, &len);
    if (socket2 == -1)
      goto out1;
 
@@ -161,11 +164,11 @@ escape_pipe(int *fds)
 
    return 0;
 
- out2:
+out2:
    closesocket (socket2);
- out1:
+out1:
    closesocket (socket1);
- out0:
+out0:
    closesocket (temp);
 
    fds[0] = -1;
@@ -175,7 +178,9 @@ escape_pipe(int *fds)
 }
 
 #undef access
-int access(const char *pathname, int mode)
+int
+access(const char *pathname, int mode)
 {
-  return escape_access (pathname, mode);
+   return escape_access (pathname, mode);
 }
+

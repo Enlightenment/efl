@@ -3,11 +3,9 @@
 
 #include <Escape.h>
 
-
 #ifdef __cplusplus
 extern "C" {
 #endif
-
 
 /**
  * @def PROT_NONE
@@ -58,8 +56,7 @@ extern "C" {
 #define MAP_PRIVATE 0x0002
 #define MAP_FIXED   0x0010
 
-#define MAP_FAILED	((void *)-1)
-
+#define MAP_FAILED  ((void *)-1)
 
 /**
  * @file mman.h
@@ -106,12 +103,12 @@ extern "C" {
  *
  * @ingroup Mman
  */
-EAPI void *mmap(void   *addr,
+EAPI void *mmap(void *addr,
                 size_t len,
-                int    prot,
-                int    flags,
-                int    fd,
-                off_t  offset);
+                int prot,
+                int flags,
+                int fd,
+                off_t offset);
 
 /**
  * Unmaps a mapped view of a file from the calling process's
@@ -130,9 +127,9 @@ EAPI void *mmap(void   *addr,
  *
  * @ingroup Mman
  */
-EAPI int   munmap(void  *addr,
-                  size_t len);
-
+EAPI int
+munmap(void *addr,
+       size_t len);
 
 # define MADV_NORMAL      0     /* No further special treatment.  */
 # define MADV_RANDOM      1     /* Expect random page references.  */
@@ -169,15 +166,14 @@ EAPI int   munmap(void  *addr,
  *
  * @ingroup Mman
  */
-EAPI int madvise(void *addr,
-    size_t length,
-    int advice);
-
+EAPI int
+madvise(void *addr,
+        size_t length,
+        int advice);
 
 #ifdef __cplusplus
 }
 #endif
-
 
 #endif /* __ESCAPE_SYS_MMAN_H__ */
 

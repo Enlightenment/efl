@@ -1,7 +1,6 @@
 #ifndef __ESCAPE_LIBGEN_H__
 #define __ESCAPE_LIBGEN_H__
 
-
 /**
  * @file escape_libgen.h
  * @brief The file that provides functions ported from Unix in libgen.h.
@@ -26,10 +25,8 @@ EAPI char *escape_dirname(char *path);
 #endif
 #define dirname(p) escape_dirname(p)
 
-
 /**
  * @}
  */
-
 
 #endif /* __ESCAPE_LIBGEN_H__ */

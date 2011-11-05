@@ -1,7 +1,6 @@
 #ifndef __ESCAPE_UNISTD_H__
 #define __ESCAPE_UNISTD_H__
 
-
 /**
  * @file escape_unistd.h
  * @brief The file that provides functions ported from Unix in unistd.h.
@@ -13,7 +12,6 @@
  */
 
 #include <sys/syslimits.h>
-
 
 /* Path function */
 /**
@@ -41,20 +39,21 @@ EAPI char *escape_realpath(const char *path, char *resolved_path);
 #endif
 #define realpath escape_realpath
 
-EAPI ssize_t escape_readlink(const char * path,
-    char * buf,
-    size_t bufsize);
+EAPI ssize_t
+escape_readlink(const char *path,
+                char *buf,
+                size_t bufsize);
 #ifdef readlink
 #undef readlink
 #endif
 #define readlink escape_readlink
 
-EAPI int escape_symlink(const char *path1, const char *path2);
+EAPI int
+escape_symlink(const char *path1, const char *path2);
 #ifdef symlink
 #undef symlink
 #endif
 #define symlink escape_symlink
-
 
 /**
  * @brief check real user's permissions for a file
@@ -71,7 +70,8 @@ EAPI int escape_symlink(const char *path1, const char *path2);
  * and execute permissions, respectively.
  *
  */
-EAPI int escape_access(const char *pathname, int mode);
+EAPI int
+escape_access(const char *pathname, int mode);
 #ifdef access
 #undef access
 #endif
@@ -88,7 +88,8 @@ EAPI int escape_access(const char *pathname, int mode);
  *
  * Conformity: Not applicable.
  */
-EAPI int escape_pipe(int *fds);
+EAPI int
+escape_pipe(int *fds);
 
 /**
  * @def pipe(fds)
@@ -97,13 +98,10 @@ EAPI int escape_pipe(int *fds);
  */
 #define pipe(fds) escape_pipe(fds)
 
-
 //#define sync()
-
 
 /**
  * @}
  */
-
 
 #endif /* __ESCAPE_UNISTD_H__ */
