@@ -111,6 +111,7 @@ want_evas_engine_gl_cocoa="yes"
 want_evas_engine_direct3d="no"
 want_evas_engine_fb="no"
 want_evas_engine_directfb="no"
+want_evas_engine_psl1ght="no"
 
 want_evas_image_loader_edb="yes"
 want_evas_image_loader_eet="yes"
@@ -160,6 +161,12 @@ case "$host_os" in
 ### no - not ready/usable/complete
 #      want_evas_engine_software_8_x11="auto"
 #      want_evas_engine_software_16_x11="auto"
+      ;;
+esac
+
+case "$host_vendor" in
+  ps3*)
+      want_evas_engine_psl1ght="static"
       ;;
 esac
 
@@ -676,6 +683,8 @@ EVAS_CHECK_ENGINE([software-ddraw], [${want_evas_engine_software_ddraw}], [no], 
 EVAS_CHECK_ENGINE([direct3d], [${want_evas_engine_direct3d}], [no], [Direct3D])
 
 EVAS_CHECK_ENGINE([software-sdl], [${want_evas_engine_software_sdl}], [no], [Software SDL])
+
+EVAS_CHECK_ENGINE([psl1ght], [${want_evas_engine_psl1ght}], [no], [PSL1GHT])
 
 EVAS_CHECK_ENGINE([gl-sdl], [${want_evas_engine_gl_sdl}], [no], [OpenGL SDL])
 
@@ -1785,6 +1794,7 @@ evas-software-16-ddraw.pc
 evas-direct3d.pc
 evas-software-16-wince.pc
 evas-software-sdl.pc
+evas-psl1ght.pc
 evas.pc
 doc/evas.dox
 doc/Makefile
@@ -1821,6 +1831,7 @@ src/modules/engines/gl_common/Makefile
 src/modules/engines/gl_x11/Makefile
 src/modules/engines/gl_sdl/Makefile
 src/modules/engines/gl_cocoa/Makefile
+src/modules/engines/psl1ght/Makefile
 src/modules/engines/software_sdl/Makefile
 src/modules/engines/software_8/Makefile
 src/modules/engines/software_8_x11/Makefile
@@ -1917,6 +1928,7 @@ fi
 echo "  OpenGL Cocoa...............: $have_evas_engine_gl_cocoa"
 echo "  Software Framebuffer.......: $have_evas_engine_fb"
 echo "  DirectFB...................: $have_evas_engine_directfb"
+echo "  PSL1GHT....................: $have_evas_engine_psl1ght"
 echo "  Software 8bit grayscale....: $have_evas_engine_software_8"
 # FIXME: kill software 16bit
 echo "  Software 16bit ............: $have_evas_engine_software_16"

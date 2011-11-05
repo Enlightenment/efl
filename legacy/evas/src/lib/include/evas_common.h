@@ -9,6 +9,10 @@
 # include <Evil.h>
 #endif
 
+#ifdef HAVE_ESCAPE
+# include <Escape.h>
+#endif
+
 #include <Eina.h>
 #include "Evas.h"
 //#include "Evas_GL.h"

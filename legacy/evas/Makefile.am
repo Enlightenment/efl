@@ -46,6 +46,7 @@ evas-software-16-ddraw.pc.in \
 evas-direct3d.pc.in \
 evas-software-16-wince.pc.in \
 evas-software-sdl.pc.in \
+evas-psl1ght.pc.in \
 evas.spec.in \
 evas.spec \
 m4/efl_attribute.m4 \
@@ -122,6 +123,10 @@ endif
 
 if BUILD_ENGINE_SOFTWARE_SDL
 pkgconfig_DATA += evas-software-sdl.pc
+endif
+
+if BUILD_ENGINE_PSL1GHT
+pkgconfig_DATA += evas-psl1ght.pc
 endif
 
 .PHONY: doc coverage
