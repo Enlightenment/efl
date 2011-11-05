@@ -1474,6 +1474,11 @@ elm_win_add(Evas_Object *parent, const char *name, Elm_Win_Type type)
              win->ee = ecore_evas_software_wince_gdi_new(NULL, 0, 0, 1, 1);
              FALLBACK_TRY("Sofware-16-WinCE");
           }
+        else if (ENGINE_COMPARE(ELM_SOFTWARE_PSL1GHT))
+          {
+             win->ee = ecore_evas_psl1ght_new(NULL, 1, 1);
+             FALLBACK_TRY("PSL1GHT");
+          }
         else if (ENGINE_COMPARE(ELM_SOFTWARE_SDL))
           {
              win->ee = ecore_evas_sdl_new(NULL, 0, 0, 0, 0, 0, 1);

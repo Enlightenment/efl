@@ -2711,6 +2711,7 @@ _elm_engine_supported(const char *engine)
       "opengl_sdl",
       "ews",
       "opengl_cocoa",
+      "psl1ght",
       NULL
    };
 

@@ -304,6 +304,29 @@ if test "x$want_elementary_fb" = "xyes" -a "x$have_elementary_fb" = "xno"; then
     AC_MSG_ERROR([ecore-fb support requested, but not found by pkg-config.])
 fi
 
+have_elementary_psl1ght="no"
+want_elementary_psl1ght="auto"
+AC_ARG_ENABLE([ecore-psl1ght],
+   [AC_HELP_STRING([--disable-ecore-psl1ght], [disable ecore-psl1ght support. @<:@default=detect@:>@])],
+   [want_elementary_psl1ght=$enableval], [])
+
+if test "x$want_elementary_psl1ght" != "xno"; then
+   PKG_CHECK_MODULES([ELEMENTARY_PSL1GHT],
+      [ecore-psl1ght >= 1.0.0],
+      [
+       AC_DEFINE(HAVE_ELEMENTARY_PSL1GHT, 1, [PSL1GHT support for Elementary])
+       have_elementary_psl1ght="yes"
+       requirement_elm="ecore-psl1ght >= 1.0.0 ${requirement_elm}"
+      ],
+      [have_elementary_psl1ght="no"]
+   )
+else
+    have_elementary_psl1ght="no"
+fi
+if test "x$want_elementary_psl1ght" = "xyes" -a "x$have_elementary_psl1ght" = "xno"; then
+    AC_MSG_ERROR([ecore-psl1ght support requested, but not found by pkg-config.])
+fi
+
 have_elementary_sdl="no"
 want_elementary_sdl="auto"
 AC_ARG_ENABLE([ecore-sdl],
@@ -679,6 +702,7 @@ echo
 echo "  Engines:"
 echo "    X11....................: ${have_elementary_x}"
 echo "    Framebuffer............: ${have_elementary_fb}"
+echo "    PSL1GHT................: ${have_elementary_psl1ght}"
 echo "    SDL....................: ${have_elementary_sdl}"
 echo "    Cocoa..................: ${have_elementary_cocoa}"
 echo "    Windows XP.............: ${have_elementary_win32}"

@@ -1974,6 +1974,7 @@ extern "C" {
     * @li "buffer"
     * @li "ews"
     * @li "opengl_cocoa"
+    * @li "psl1ght"
     *
     * @{
     */
@@ -3645,6 +3646,7 @@ extern "C" {
     * buffer with 16bit software renderer)
     * @li "ews" (rendering to EWS - Ecore + Evas Single Process Windowing System)
     * @li "gl-cocoa", "gl_cocoa", "opengl-cocoa", "opengl_cocoa" (OpenGL rendering in Cocoa)
+    * @li "psl1ght" (PS3 rendering using PSL1GHT)
     *
     * All engines use a simple string to select the engine to render, EXCEPT
     * the "shot" engine. This actually encodes the output of the virtual
