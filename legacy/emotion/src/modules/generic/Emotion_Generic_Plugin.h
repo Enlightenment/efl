@@ -92,7 +92,7 @@ struct _Emotion_Generic_Video_Shared
    int frame_drop;
 };
 
-inline int
+static inline int
 emotion_generic_shm_get(const char *shmname, Emotion_Generic_Video_Shared **vs, Emotion_Generic_Video_Frame *vf)
 {
    int shmfd = -1;
@@ -133,7 +133,7 @@ emotion_generic_shm_get(const char *shmname, Emotion_Generic_Video_Shared **vs, 
    return 1;
 }
 
-inline void
+static inline void
 emotion_generic_shm_free(Emotion_Generic_Video_Shared *vs)
 {
    munmap(vs, vs->size);
