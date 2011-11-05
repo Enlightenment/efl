@@ -168,7 +168,7 @@ struct _Elm_Module
    const char  *so_path;
    const char  *data_dir;
    const char  *bin_dir;
-   void        *handle;
+   Eina_Module *module;
    void        *data;
    void        *api;
    int        (*init_func) (Elm_Module *m);

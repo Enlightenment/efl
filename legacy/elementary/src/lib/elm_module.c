@@ -29,8 +29,6 @@
 # include "elementary_config.h"
 #endif
 
-#include <dlfcn.h>      /* dlopen,dlclose,etc */
-
 static Eina_Hash *modules = NULL;
 static Eina_Hash *modules_as = NULL;
 
@@ -112,19 +110,19 @@ _elm_module_load(Elm_Module *m)
    const char *home;
    char buf[PATH_MAX];
 
-   if (m->handle) return EINA_TRUE;
+   if (m->module) return EINA_TRUE;
 
    home = getenv("HOME");
    if (home)
      {
         snprintf(buf, sizeof(buf), "%s/.elementary/modules/%s/%s/module" EFL_SHARED_EXTENSION, home, m->name, MODULE_ARCH);
-        m->handle = dlopen(buf, RTLD_NOW | RTLD_GLOBAL);
-        if (m->handle)
+        m->module = eina_module_new(buf);
+        if (m->module && eina_module_load (m->module) == EINA_TRUE)
           {
-             m->init_func = dlsym(m->handle, "elm_modapi_init");
+             m->init_func = eina_module_symbol_get(m->module, "elm_modapi_init");
              if (m->init_func)
                {
-                  m->shutdown_func = dlsym(m->handle, "elm_modapi_shutdown");
+                  m->shutdown_func = eina_module_symbol_get(m->module, "elm_modapi_shutdown");
                   m->so_path = eina_stringshare_add(buf);
                   snprintf(buf, sizeof(buf), "%s/.elementary/modules/%s/%s", home, m->name, MODULE_ARCH);
                   m->bin_dir = eina_stringshare_add(buf);
@@ -133,26 +131,32 @@ _elm_module_load(Elm_Module *m)
                }
              else
                {
-                  if (m->handle)
+                  if (m->module)
                     {
-                       dlclose(m->handle);
-                       m->handle = NULL;
+                       eina_module_unload(m->module);
+                       eina_module_free(m->module);
+                       m->module = NULL;
                     }
                   return EINA_FALSE;
                }
           }
+        else if (m->module)
+          {
+            eina_module_free(m->module);
+            m->module = NULL;
+          }
      }
 
-   if (!m->handle)
+   if (!m->module)
      {
         snprintf(buf, sizeof(buf), "%s/elementary/modules/%s/%s/module" EFL_SHARED_EXTENSION, _elm_lib_dir, m->name, MODULE_ARCH);
-        m->handle = dlopen(buf, RTLD_NOW | RTLD_GLOBAL);
-        if (m->handle)
+        m->module = eina_module_new(buf);
+        if (m->module && eina_module_load (m->module) == EINA_TRUE)
           {
-             m->init_func = dlsym(m->handle, "elm_modapi_init");
+             m->init_func = eina_module_symbol_get(m->module, "elm_modapi_init");
              if (m->init_func)
                {
-                  m->shutdown_func = dlsym(m->handle, "elm_modapi_shutdown");
+                  m->shutdown_func = eina_module_symbol_get(m->module, "elm_modapi_shutdown");
                   m->so_path = eina_stringshare_add(buf);
                   snprintf(buf, sizeof(buf), "%s/elementary/modules/%s/%s", _elm_lib_dir, m->name, MODULE_ARCH);
                   m->bin_dir = eina_stringshare_add(buf);
@@ -161,17 +165,23 @@ _elm_module_load(Elm_Module *m)
                }
              else
                {
-                  if (m->handle)
+                  if (m->module)
                     {
-                       dlclose(m->handle);
-                       m->handle = NULL;
+                       eina_module_unload(m->module);
+                       eina_module_free(m->module);
+                       m->module = NULL;
                     }
                   return EINA_FALSE;
                }
           }
      }
+   else if (m->module)
+     {
+       eina_module_free(m->module);
+       m->module = NULL;
+     }
 
-   if (!m->handle) return EINA_FALSE;
+   if (!m->module) return EINA_FALSE;
    return EINA_TRUE;
 }
 
@@ -186,11 +196,12 @@ _elm_module_unload(Elm_Module *m)
         free(m->api);
         m->api = NULL;
      }
-   if (m->handle)
+   if (m->module)
      {
         if (m->shutdown_func) m->shutdown_func(m);
-        dlclose(m->handle);
-        m->handle = NULL;
+        eina_module_unload(m->module);
+        eina_module_free(m->module);
+        m->module = NULL;
      }
    m->shutdown_func = NULL;
    m->init_func = NULL;
@@ -236,5 +247,5 @@ _elm_module_del(Elm_Module *m)
 const void *
 _elm_module_symbol_get(Elm_Module *m, const char *name)
 {
-   return dlsym(m->handle, name);
+   return eina_module_symbol_get(m->module, name);
 }
