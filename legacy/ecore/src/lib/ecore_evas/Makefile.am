@@ -58,6 +58,14 @@ ECORE_WINCE_INC =
 ECORE_WINCE_LIB =
 endif
 
+if BUILD_ECORE_PSL1GHT
+ECORE_PSL1GHT_INC = -I$(top_srcdir)/src/lib/ecore_psl1ght
+ECORE_PSL1GHT_LIB = $(top_builddir)/src/lib/ecore_psl1ght/libecore_psl1ght.la
+else
+ECORE_PSL1GHT_INC =
+ECORE_PSL1GHT_LIB =
+endif
+
 AM_CPPFLAGS = \
 -I$(top_srcdir)/src/lib/ecore \
 -I$(top_srcdir)/src/lib/ecore_evas \
@@ -75,6 +83,7 @@ $(ECORE_WIN32_INC) \
 $(ECORE_SDL_INC) \
 $(ECORE_COCOA_INC) \
 $(ECORE_WINCE_INC) \
+$(ECORE_PSL1GHT_INC) \
 @EVAS_CFLAGS@ \
 @EINA_CFLAGS@ \
 @EVIL_CFLAGS@
@@ -96,7 +105,8 @@ ecore_evas_win32.c \
 ecore_evas_sdl.c \
 ecore_evas_cocoa.c \
 ecore_evas_wince.c \
-ecore_evas_ews.c
+ecore_evas_ews.c \
+ecore_evas_psl1ght.c
 
 libecore_evas_la_LIBADD = \
 $(ECORE_X_LIB) \
@@ -107,6 +117,7 @@ $(ECORE_SDL_LIB) \
 $(ECORE_SDL_LIBADD) \
 $(ECORE_COCOA_LIB) \
 $(ECORE_WINCE_LIB) \
+$(ECORE_PSL1GHT_LIB) \
 $(top_builddir)/src/lib/ecore_input/libecore_input.la \
 $(top_builddir)/src/lib/ecore_input_evas/libecore_input_evas.la \
 $(top_builddir)/src/lib/ecore/libecore.la \

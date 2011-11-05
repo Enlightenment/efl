@@ -182,14 +182,18 @@ ecore_evas_engine_type_supported_get(Ecore_Evas_Engine_Type engine)
 #else
         return EINA_FALSE;
 #endif
-
       case ECORE_EVAS_ENGINE_EWS:
 #ifdef BUILD_ECORE_EVAS_EWS
         return EINA_TRUE;
 #else
         return EINA_FALSE;
 #endif
-
+     case ECORE_EVAS_ENGINE_PSL1GHT:
+#ifdef BUILD_ECORE_EVAS_PSL1GHT
+        return EINA_TRUE;
+#else
+        return EINA_FALSE;
+#endif
       default:
         return EINA_FALSE;
      };
@@ -556,6 +560,23 @@ _ecore_evas_constructor_fb(int x __UNUSED__, int y __UNUSED__, int w, int h, con
 }
 #endif
 
+
+#ifdef BUILD_ECORE_EVAS_PSL1GHT
+static Ecore_Evas *
+_ecore_evas_constructor_psl1ght(int x __UNUSED__, int y __UNUSED__, int w, int h, const char *extra_options)
+{
+   Ecore_Evas *ee;
+   char *name = NULL;
+
+   _ecore_evas_parse_extra_options_str(extra_options, "name=", &name);
+   ee = ecore_evas_psl1ght_new(name, w, h);
+   free(name);
+
+   if (ee) ecore_evas_move(ee, x, y);
+   return ee;
+}
+#endif
+
 #ifdef BUILD_ECORE_EVAS_SOFTWARE_GDI
 static Ecore_Evas *
 _ecore_evas_constructor_software_gdi(int x, int y, int w, int h, const char *extra_options)
@@ -686,6 +707,11 @@ static const struct ecore_evas_engine _engines[] = {
   /* Apple */
 #ifdef BUILD_ECORE_EVAS_OPENGL_COCOA
   {"opengl_cocoa", _ecore_evas_constructor_cocoa},
+#endif
+
+  /* PS3 support */
+#ifdef BUILD_ECORE_EVAS_PSL1GHT
+  {"psl1ght", _ecore_evas_constructor_psl1ght},
 #endif
 
   /* Last chance to have a window */

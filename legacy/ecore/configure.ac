@@ -168,6 +168,7 @@ want_ecore_evas_software_16_ddraw="no"
 want_ecore_evas_software_sdl="no"
 want_ecore_evas_gl_sdl="no"
 want_ecore_evas_gl_cocoa="no"
+want_ecore_evas_psl1ght="no"
 want_ecore_evas_directfb="no"
 want_ecore_evas_fb="no"
 want_ecore_evas_software_16_wince="no"
@@ -485,6 +486,7 @@ case "$host_vendor" in
       requirements_ecore_imf_evas="escape ${requirements_ecore_imf_evas}"
       requirements_ecore_sdl="escape ${requirements_ecore_sdl}"
       want_ecore_psl1ght="yes"
+      want_ecore_evas_psl1ght="yes"
       ;;
 esac
 
@@ -1804,6 +1806,14 @@ ECORE_EVAS_CHECK_MODULE_FULL([ews], [software-buffer],
    [Ecore Evas Single Process Windowing System],
    [yes], [])
 
+# ecore_evas_psl1ght
+
+ECORE_EVAS_CHECK_MODULE([psl1ght],
+   [${want_ecore_evas_psl1ght}],
+   [PSL1GHT],
+   [${have_ecore_psl1ght}],
+   [requirements_ecore_evas="ecore-psl1ght >= 1.0.0 ${requirements_ecore_evas}"])
+
 ### install and build examples
 
 EFL_CHECK_BUILD_EXAMPLES([enable_build_examples="yes"], [enable_build_examples="no"])
@@ -2023,6 +2033,7 @@ if test "x${have_ecore_evas}" = "xyes" ; then
   echo "    OpenGL SDL.................: $have_ecore_evas_opengl_sdl"
   echo "    OpenGL Cocoa...............: $have_ecore_evas_opengl_cocoa"
   echo "    DirectFB...................: $have_ecore_evas_directfb"
+  echo "    PSL1GHT....................: $have_ecore_evas_psl1ght"
   echo "    Software Framebuffer.......: $have_ecore_evas_fb"
   echo "    Software 8bit grayscale XCB: $have_ecore_evas_software_8_x11"
   echo "    Software 16bit X11.........: $have_ecore_evas_software_16_x11"
