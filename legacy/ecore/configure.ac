@@ -129,6 +129,7 @@ want_ecore_x="no"
 want_ecore_win32="no"
 want_ecore_cocoa="no"
 want_ecore_sdl="no"
+want_ecore_psl1ght="no"
 want_ecore_fb="no"
 want_ecore_directfb="no"
 want_ecore_wince="no"
@@ -255,6 +256,7 @@ requirements_ecore_input_evas=""
 requirements_ecore_ipc=""
 requirements_ecore_cocoa=""
 requirements_ecore_sdl=""
+requirements_ecore_psl1ght=""
 requirements_ecore_x=""
 requirements_ecore_win32=""
 requirements_ecore_wince=""
@@ -475,12 +477,14 @@ case "$host_vendor" in
       PKG_CHECK_MODULES([ESCAPE], [escape])
       CFLAGS="$CFLAGS $ESCAPE_CFLAGS"
       AC_DEFINE(HAVE_ESCAPE, 1, [Set to 1 if Escape library is installed])
+      EFL_ECORE_PSL1GHT_BUILD="-DEFL_ECORE_PSL1GHT_BUILD"
       requirements_ecore="escape ${requirements_ecore}"
       requirements_ecore_evas="escape ${requirements_ecore_evas}"
       requirements_ecore_file="escape ${requirements_ecore_file}"
       requirements_ecore_imf="escape ${requirements_ecore_imf}"
       requirements_ecore_imf_evas="escape ${requirements_ecore_imf_evas}"
       requirements_ecore_sdl="escape ${requirements_ecore_sdl}"
+      want_ecore_psl1ght="yes"
       ;;
 esac
 
@@ -496,6 +500,7 @@ AC_SUBST(EFL_ECORE_IPC_BUILD)
 AC_SUBST(EFL_ECORE_WINCE_BUILD)
 AC_SUBST(EFL_ECORE_WIN32_BUILD)
 AC_SUBST(EFL_ECORE_SDL_BUILD)
+AC_SUBST(EFL_ECORE_PSL1GHT_BUILD)
 
 AM_CONDITIONAL(ECORE_HAVE_WINCE, test "x${have_wince}" = "xyes")
 AM_CONDITIONAL(ECORE_HAVE_WIN32, test "x${have_win32}" = "xyes")
@@ -549,6 +554,7 @@ requirements_ecore_input_evas="ecore >= 1.0.0 eina >= 1.0.0 ${requirements_ecore
 requirements_ecore_ipc="ecore >= 1.0.0 eina >= 1.0.0 ${requirements_ecore_ipc}"
 requirements_ecore_cocoa="ecore >= 1.0.0 eina >= 1.0.0 ${requirements_ecore_cocoa}"
 requirements_ecore_sdl="ecore >= 1.0.0 eina >= 1.0.0 ${requirements_ecore_sdl}"
+requirements_ecore_psl1ght="ecore >= 1.0.0 eina >= 1.0.0 ${requirements_ecore_sdl}"
 requirements_ecore_win32="ecore >= 1.0.0 eina >= 1.0.0 ${requirements_ecore_win32}"
 requirements_ecore_wince="ecore >= 1.0.0 eina >= 1.0.0 ${requirements_ecore_wince}"
 requirements_ecore_x="ecore >= 1.0.0 eina >= 1.0.0 ${requirements_ecore_x}"
@@ -1579,6 +1585,9 @@ fi
 ECORE_CHECK_MODULE([sdl], [${want_ecore_sdl}], [Sdl], [${ecore_sdl_deps}],
    [requirements_ecore_sdl="ecore-input >= 1.0.0 ${requirements_ecore_sdl}"])
 
+ECORE_CHECK_MODULE([psl1ght], [${want_ecore_psl1ght}], [psl1ght], [${ecore_psl1ght_deps}],
+   [requirements_ecore_psl1ght="ecore-input >= 1.0.0 ${requirements_ecore_psl1ght}"])
+
 # ecore_fb
 ECORE_CHECK_MODULE([fb], [${want_ecore_fb}], [FB], [$have_fb])
 
@@ -1816,6 +1825,7 @@ AC_SUBST(requirements_ecore_input_evas)
 AC_SUBST(requirements_ecore_ipc)
 AC_SUBST(requirements_ecore_cocoa)
 AC_SUBST(requirements_ecore_sdl)
+AC_SUBST(requirements_ecore_psl1ght)
 AC_SUBST(requirements_ecore_x)
 AC_SUBST(requirements_ecore_win32)
 AC_SUBST(requirements_ecore_wince)
@@ -1838,6 +1848,7 @@ ecore-input-evas.pc
 ecore-win32.pc
 ecore-sdl.pc
 ecore-cocoa.pc
+ecore-psl1ght.pc
 ecore-wince.pc
 ecore.pc
 doc/ecore.dox
@@ -1856,6 +1867,7 @@ src/lib/ecore_fb/Makefile
 src/lib/ecore_file/Makefile
 src/lib/ecore_cocoa/Makefile
 src/lib/ecore_sdl/Makefile
+src/lib/ecore_psl1ght/Makefile
 src/lib/ecore_imf/Makefile
 src/lib/ecore_imf_evas/Makefile
 src/lib/ecore_input/Makefile
@@ -1984,6 +1996,7 @@ if test "x${have_ecore_fb}" = "xyes" ; then
 fi
 echo "  Ecore_DirectFB...............: $have_ecore_directfb"
 echo "  Ecore_WinCE..................: $have_ecore_wince"
+echo "  Ecore_PSL1GHT................: $have_ecore_psl1ght"
 
 echo
 echo " Ecore Evas:"

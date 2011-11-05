@@ -103,6 +103,7 @@ ecore-x.pc.in \
 ecore-win32.pc.in \
 ecore-sdl.pc.in \
 ecore-cocoa.pc.in \
+ecore-psl1ght.pc.in \
 ecore-input.pc.in \
 ecore-wince.pc.in \
 ecore.spec.in \
@@ -183,6 +184,10 @@ endif
 
 if BUILD_ECORE_COCOA
 pkgconfig_DATA += ecore-cocoa.pc
+endif
+
+if BUILD_ECORE_PSL1GHT
+pkgconfig_DATA += ecore-psl1ght.pc
 endif
 
 .PHONY: doc

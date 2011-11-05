@@ -1,0 +1,12 @@
+prefix=@prefix@
+exec_prefix=@exec_prefix@
+libdir=@libdir@
+includedir=@includedir@
+
+Name: ecore-psl1ght
+Description: E core library, PSL1GHT module
+@pkgconfig_requires_private@: @requirements_ecore_psl1ght@
+Version: @VERSION@
+Libs: -L${libdir} -lecore_psl1ght
+Libs.private: -lio -lsysutil -lgem -lcamera -lspurs
+Cflags: -I${includedir}/ecore-@VMAJ@

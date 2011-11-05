@@ -38,6 +38,10 @@ if BUILD_ECORE_SDL
 SUBDIRS += ecore_sdl
 endif
 
+if BUILD_ECORE_PSL1GHT
+SUBDIRS += ecore_psl1ght
+endif
+
 if BUILD_ECORE_COCOA
 SUBDIRS += ecore_cocoa
 endif
