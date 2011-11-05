@@ -11,7 +11,7 @@
  *
  ****************************************************************************/
 
-static EFL_ALWAYS_INLINE void
+EFL_ALWAYS_INLINE void
 _soft8_pt_blend_transp_solid(DATA8 * p_dst, DATA8 src, DATA8 alpha)
 {
    if (alpha == 0xff)
@@ -82,7 +82,7 @@ _soft8_scanline_blend_transp_solid(DATA8 * src, DATA8 * alpha, DATA8 * dst,
       _soft8_pt_blend_transp_solid(start, *src, *alpha);
 }
 
-static EFL_ALWAYS_INLINE void
+EFL_ALWAYS_INLINE void
 _soft8_pt_blend_solid_solid(DATA8 * p_dst, DATA8 src)
 {
    *p_dst = src;
@@ -173,7 +173,7 @@ _soft8_scanline_blend_transp_solid_mul_alpha(DATA8 * src, DATA8 * alpha,
       _soft8_pt_blend_transp_solid_mul_alpha(start, *src, *alpha, rel_alpha);
 }
 
-static EFL_ALWAYS_INLINE void
+EFL_ALWAYS_INLINE void
 _soft8_pt_blend_solid_solid_mul_alpha(DATA8 * p_dst, DATA8 src, DATA8 rel_alpha)
 {
    *p_dst = GRY_8_BLEND_UNMUL(src, *p_dst, rel_alpha);
@@ -209,7 +209,7 @@ _soft8_scanline_blend_solid_solid_mul_alpha(DATA8 * src, DATA8 * dst, int size,
  * Blend operations with extra alpha and multiply color
  */
 
-static EFL_ALWAYS_INLINE void
+EFL_ALWAYS_INLINE void
 _soft8_pt_blend_transp_solid_mul_color_transp(DATA8 * p_dst, DATA8 src,
                                               DATA8 alpha, DATA8 rel_alpha,
                                               DATA8 r, DATA8 g, DATA8 b)
@@ -289,7 +289,7 @@ _soft8_scanline_blend_transp_solid_mul_color_transp(DATA8 * src, DATA8 * alpha,
           (start, *src, *alpha, rel_alpha, r, g, b);
 }
 
-static EFL_ALWAYS_INLINE void
+EFL_ALWAYS_INLINE void
 _soft8_pt_blend_solid_solid_mul_color_transp(DATA8 * p_dst, DATA8 src,
                                              DATA8 rel_alpha, DATA8 r, DATA8 g,
                                              DATA8 b)
@@ -329,7 +329,7 @@ _soft8_scanline_blend_solid_solid_mul_color_transp(DATA8 * src, DATA8 * dst,
 /***********************************************************************
  * Blend operations with extra multiply color
  */
-static EFL_ALWAYS_INLINE void
+EFL_ALWAYS_INLINE void
 _soft8_pt_blend_transp_solid_mul_color_solid(DATA8 * p_dst, DATA8 src,
                                              DATA8 alpha, DATA8 r, DATA8 g,
                                              DATA8 b)
@@ -411,7 +411,7 @@ _soft8_scanline_blend_transp_solid_mul_color_solid(DATA8 * src, DATA8 * alpha,
           (start, *src, *alpha, r, g, b);
 }
 
-static EFL_ALWAYS_INLINE void
+EFL_ALWAYS_INLINE void
 _soft8_pt_blend_solid_solid_mul_color_solid(DATA8 * p_dst, DATA8 src, DATA8 r,
                                             DATA8 g, DATA8 b)
 {

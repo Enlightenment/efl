@@ -265,7 +265,7 @@ _soft8_line_45deg(Soft8_Image * dst, RGBA_Draw_Context * dc, int x0, int y0,
      }
 }
 
-static EFL_ALWAYS_INLINE void
+EFL_ALWAYS_INLINE void
 _soft8_line_aliased_pt(DATA8 * dst_itr, DATA8 gry8, DATA8 alpha)
 {
    if (alpha == 32)

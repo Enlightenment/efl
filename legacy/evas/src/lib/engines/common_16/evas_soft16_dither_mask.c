@@ -138,7 +138,7 @@ static const DATA8 dither_table[S16_DM_SIZE][S16_DM_SIZE] =
      { 51, 14, 61, 29, 59, 20, 55, 31, 0, 49, 11, 60, 3, 26, 22, 56, 0, 40, 12, 43, 41, 8, 36, 0, 17, 57, 24, 2, 46, 26, 61, 18, 0, 38, 12, 59, 6, 49, 3, 57, 19, 63, 5, 33, 18, 54, 28, 56, 0, 43, 26, 46, 63, 27, 56, 22, 27, 54, 38, 28, 63, 24, 10, 45, 0, 31, 42, 21, 12, 25, 44, 49, 59, 6, 26, 50, 3, 34, 27, 59, 0, 35, 62, 16, 4, 58, 47, 0, 43, 24, 37, 2, 54, 20, 46, 31, 0, 56, 34, 5, 55, 45, 60, 37, 0, 40, 10, 38, 63, 46, 15, 20, 0, 53, 21, 62, 30, 11, 24, 27, 40, 0, 57, 26, 3, 45, 27, 35 }
 };
 
-static EFL_ALWAYS_INLINE void
+EFL_ALWAYS_INLINE void
 _soft16_convert_from_rgba_pt(const DATA32 *src, DATA16 *dst, DATA8 *alpha,
 			     const int x, const int y)
 {
@@ -228,7 +228,7 @@ evas_common_soft16_image_convert_from_rgba(Soft16_Image *im, const DATA32 *src)
      _soft16_convert_from_rgba_scanline(sp, dp, ap, y, im->cache_entry.w);
 }
 
-static EFL_ALWAYS_INLINE void
+EFL_ALWAYS_INLINE void
 _soft16_convert_from_rgb_pt(const DATA32 *src, DATA16 *dst,
 			    const int x, const int y)
 {

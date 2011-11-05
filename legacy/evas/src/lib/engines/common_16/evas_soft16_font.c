@@ -1,6 +1,6 @@
 #include "evas_common_soft16.h"
 
-static EFL_ALWAYS_INLINE void
+EFL_ALWAYS_INLINE void
 _glyph_pt_mask_solid_solid(DATA16 *dst,
 			   const DATA16 rgb565,
 			   const DATA32 rgb565_unpack,
@@ -49,7 +49,7 @@ _glyph_scanline_mask_solid_solid(DATA16 *dst,
       _glyph_pt_mask_solid_solid(start, rgb565, rgb565_unpack, mask);
 }
 
-static EFL_ALWAYS_INLINE void
+EFL_ALWAYS_INLINE void
 _glyph_pt_mask_transp_solid(DATA16 *dst,
 			    DATA32 rgb565_unpack,
 			    DATA8 alpha,

@@ -1,7 +1,7 @@
 #include "evas_common_soft8.h"
 #include "evas_soft8_scanline_blend.c"
 
-static EFL_ALWAYS_INLINE void
+EFL_ALWAYS_INLINE void
 _glyph_pt_mask_solid_solid(DATA8 * dst, const DATA8 gry8, const DATA8 * mask)
 {
    DATA8 alpha = *mask;
@@ -41,7 +41,7 @@ _glyph_scanline_mask_solid_solid(DATA8 * dst,
       _glyph_pt_mask_solid_solid(start, gry8, mask);
 }
 
-static EFL_ALWAYS_INLINE void
+EFL_ALWAYS_INLINE void
 _glyph_pt_mask_transp_solid(DATA8 * dst,
                             DATA8 gry8, DATA8 alpha, const DATA8 * mask)
 {

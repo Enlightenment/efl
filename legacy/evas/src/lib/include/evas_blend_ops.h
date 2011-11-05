@@ -200,7 +200,7 @@ static __m128i RGB_MASK_SSE3;
 
 static __m128i ALPHA_SSE3;
 
-static EFL_ALWAYS_INLINE __m128i
+EFL_ALWAYS_INLINE __m128i
 mul_256_sse3(__m128i a, __m128i c) {
 
    /* prepare alpha for word multiplication */
@@ -228,7 +228,7 @@ mul_256_sse3(__m128i a, __m128i c) {
    return _mm_add_epi32(c0, c1);
 }
 
-static EFL_ALWAYS_INLINE __m128i
+EFL_ALWAYS_INLINE __m128i
 sub4_alpha_sse3(__m128i c) {
 
    __m128i c0 = c;
@@ -237,7 +237,7 @@ sub4_alpha_sse3(__m128i c) {
    return _mm_sub_epi32(ALPHA_SSE3, c0);
 }
 
-static EFL_ALWAYS_INLINE __m128i
+EFL_ALWAYS_INLINE __m128i
 interp4_256_sse3(__m128i a, __m128i c0, __m128i c1)
 {
    const __m128i zero = _mm_setzero_si128();
@@ -289,7 +289,7 @@ interp4_256_sse3(__m128i a, __m128i c0, __m128i c1)
    return  (__m128i) _mm_shuffle_ps( (__m128)cl_sub, (__m128)ch_sub, 0x44);
 }
 
-static EFL_ALWAYS_INLINE __m128i
+EFL_ALWAYS_INLINE __m128i
 mul_sym_sse3(__m128i a, __m128i c) {
 
       /* Prepare alpha for word mult */
@@ -318,7 +318,7 @@ mul_sym_sse3(__m128i a, __m128i c) {
       return _mm_add_epi32(c0, c1);
 }
 
-static EFL_ALWAYS_INLINE __m128i
+EFL_ALWAYS_INLINE __m128i
 mul4_sym_sse3(__m128i x, __m128i y) {
 
    const __m128i zero = _mm_setzero_si128();
@@ -341,7 +341,7 @@ mul4_sym_sse3(__m128i x, __m128i y) {
    return  _mm_packus_epi16(r_l, r_h);
 }
 
-static EFL_ALWAYS_INLINE __m128i
+EFL_ALWAYS_INLINE __m128i
 mul3_sym_sse3(__m128i x, __m128i y) {
 
    __m128i res = mul4_sym_sse3(x, y);

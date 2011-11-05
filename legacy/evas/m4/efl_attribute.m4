@@ -58,20 +58,47 @@ dnl call AC_DEFINE for alway_inline if __attribute__((always_inline)) is availab
 
 AC_DEFUN([EFL_ATTRIBUTE_ALWAYS_INLINE],
 [
-AC_MSG_CHECKING([for __attribute__ ((always_inline))])
+
+have_attribute_forceinline="no"
+
+AC_MSG_CHECKING([for __forceinline])
+
 AC_COMPILE_IFELSE(
    [AC_LANG_PROGRAM(
        [[
-__attribute__((always_inline)) inline void foo(void) {}
+#include <windows.h>
+__forceinline void foo(void) {}
        ]],
        [[
        ]])],
-   [have_attribute_always_inline="yes"],
+   [
+    have_attribute_always_inline="yes"
+    have_attribute_forceinline="yes"
+   ],
    [have_attribute_always_inline="no"])
+
 AC_MSG_RESULT([${have_attribute_always_inline}])
 
+if test "x${have_attribute_always_inline}" = "xno" ; then
+   AC_MSG_CHECKING([for __attribute__ ((always_inline))])
+   AC_COMPILE_IFELSE(
+      [AC_LANG_PROGRAM(
+          [[
+__attribute__((always_inline)) inline void foo(void) {}
+          ]],
+          [[
+          ]])],
+      [have_attribute_always_inline="yes"],
+      [have_attribute_always_inline="no"])
+   AC_MSG_RESULT([${have_attribute_always_inline}])
+fi
+
 if test "x${have_attribute_always_inline}" = "xyes" ; then
-   AC_DEFINE([EFL_ALWAYS_INLINE], [__attribute__ ((always_inline)) inline], [Macro declaring a function to always be inlined.])
+   if test "x${have_attribute_forceinline}" = "xyes" ; then
+      AC_DEFINE([EFL_ALWAYS_INLINE], [__forceinline], [Macro declaring a function to always be inlined.])
+   else
+      AC_DEFINE([EFL_ALWAYS_INLINE], [__attribute__ ((always_inline)) inline], [Macro declaring a function to always be inlined.])
+   fi
 else
    AC_DEFINE([EFL_ALWAYS_INLINE], [inline], [Macro declaring a function to always be inlined.])
 fi

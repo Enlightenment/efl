@@ -15,7 +15,7 @@
  * Regular blend operations
  */
 
-static EFL_ALWAYS_INLINE void
+EFL_ALWAYS_INLINE void
 _soft16_pt_blend_transp_solid(DATA16 *p_dst, DATA16 src, DATA8 alpha)
 {
    if (alpha == 31) *p_dst = src;
@@ -30,7 +30,7 @@ _soft16_pt_blend_transp_solid(DATA16 *p_dst, DATA16 src, DATA8 alpha)
      }
 }
 
-static EFL_ALWAYS_INLINE void
+EFL_ALWAYS_INLINE void
 _soft16_pt_blend_solid_solid(DATA16 *p_dst, DATA16 src)
 {
    *p_dst = src;
@@ -40,7 +40,7 @@ _soft16_pt_blend_solid_solid(DATA16 *p_dst, DATA16 src)
  * Blend operations taking an extra alpha (fade in, out)
  */
 
-static EFL_ALWAYS_INLINE void
+EFL_ALWAYS_INLINE void
 _soft16_pt_blend_transp_solid_mul_alpha(DATA16 *p_dst, DATA16 src, DATA8 alpha, DATA8 rel_alpha)
 {
    DATA32 a, b;
@@ -57,7 +57,7 @@ _soft16_pt_blend_transp_solid_mul_alpha(DATA16 *p_dst, DATA16 src, DATA8 alpha, 
    *p_dst = RGB_565_PACK(b);
 }
 
-static EFL_ALWAYS_INLINE void
+EFL_ALWAYS_INLINE void
 _soft16_pt_blend_solid_solid_mul_alpha(DATA16 *p_dst, DATA16 src, DATA8 rel_alpha)
 {
    DATA32 a, b;
@@ -71,7 +71,7 @@ _soft16_pt_blend_solid_solid_mul_alpha(DATA16 *p_dst, DATA16 src, DATA8 rel_alph
  * Blend operations with extra alpha and multiply color
  */
 
-static EFL_ALWAYS_INLINE void
+EFL_ALWAYS_INLINE void
 _soft16_pt_blend_transp_solid_mul_color_transp(DATA16 *p_dst, DATA16 src, DATA8 alpha, DATA8 rel_alpha, DATA16 r, DATA16 g, DATA16 b)
 {
    DATA32 rgb, d;
@@ -93,7 +93,7 @@ _soft16_pt_blend_transp_solid_mul_color_transp(DATA16 *p_dst, DATA16 src, DATA8 
    *p_dst = RGB_565_PACK(d);
 }
 
-static EFL_ALWAYS_INLINE void
+EFL_ALWAYS_INLINE void
 _soft16_pt_blend_solid_solid_mul_color_transp(DATA16 *p_dst, DATA16 src, DATA8 rel_alpha, DATA16 r, DATA16 g, DATA16 b)
 {
    int r1, g1, b1;
@@ -113,7 +113,7 @@ _soft16_pt_blend_solid_solid_mul_color_transp(DATA16 *p_dst, DATA16 src, DATA8 r
  * Blend operations with extra multiply color
  */
 
-static EFL_ALWAYS_INLINE void
+EFL_ALWAYS_INLINE void
 _soft16_pt_blend_transp_solid_mul_color_solid(DATA16 *p_dst, DATA16 src, DATA8 alpha, DATA8 r, DATA8 g, DATA8 b)
 {
    int r1, g1, b1;
@@ -136,7 +136,7 @@ _soft16_pt_blend_transp_solid_mul_color_solid(DATA16 *p_dst, DATA16 src, DATA8 a
      }
 }
 
-static EFL_ALWAYS_INLINE void
+EFL_ALWAYS_INLINE void
 _soft16_pt_blend_solid_solid_mul_color_solid(DATA16 *p_dst, DATA16 src, DATA16 r, DATA16 g, DATA16 b)
 {
    int r1, g1, b1;
