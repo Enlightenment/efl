@@ -845,6 +845,8 @@ evas_object_image_data_convert(Evas_Object *obj, Evas_Colorspace to_cspace)
                                                                  obj);
      }
    if (!o->engine_data) return NULL;
+   if (o->video_surface)
+     o->video.update_pixels(o->video.data, obj, &o->video);
    if (o->cur.cspace == to_cspace) return NULL;
    data = NULL;
    o->engine_data = obj->layer->evas->engine.func->image_data_get(obj->layer->evas->engine.data.output,
@@ -1708,7 +1710,6 @@ evas_object_image_video_surface_set(Evas_Object *obj, Evas_Video_Surface *surf)
 
    if (surf)
      {
-        fprintf(stderr, "video surface ?\n");
         if (surf->version != EVAS_VIDEO_SURFACE_VERSION) return ;
 
 	if (!surf->update_pixels ||
@@ -1722,7 +1723,6 @@ evas_object_image_video_surface_set(Evas_Object *obj, Evas_Video_Surface *surf)
 	o->video_surface = 1;
 	o->video = *surf;
 
-        fprintf(stderr, "yes\n");
 	obj->layer->evas->video_objects = eina_list_append(obj->layer->evas->video_objects, obj);
      }
    else
