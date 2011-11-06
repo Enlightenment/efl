@@ -358,6 +358,25 @@ ecore_x_netwm_desk_workareas_set(Ecore_X_Window root,
                                   4 * n_desks);
 }
 
+EAPI unsigned int *
+ecore_x_netwm_desk_workareas_get(Ecore_X_Window root, unsigned int *n_desks)
+{
+   int ret;
+   unsigned int *areas = NULL;
+   
+   if (!root) root = ((xcb_screen_t *)_ecore_xcb_screen)->root;
+   
+   ret = ecore_x_window_prop_card32_list_get(root, ECORE_X_ATOM_NET_WORKAREA,
+                                             &areas);
+   if (!areas)
+     {
+        if (n_desks) *n_desks = 0;
+        return 0;
+     }
+   if (n_desks) *n_desks = ret / 4;
+   return areas;
+}
+
 EAPI void
 ecore_x_netwm_desk_current_set(Ecore_X_Window root,
                                unsigned int   desk)

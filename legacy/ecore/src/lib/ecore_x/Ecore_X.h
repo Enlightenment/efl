@@ -2045,6 +2045,9 @@ EAPI void
 ecore_x_netwm_desk_workareas_set(Ecore_X_Window root,
                                  unsigned int *areas,
                                  unsigned int n_desks);
+EAPI unsigned int *
+ecore_x_netwm_desk_workareas_get(Ecore_X_Window root,
+                                 unsigned int *n_desks);
 EAPI void
 ecore_x_netwm_desk_current_set(Ecore_X_Window root,
                                unsigned int desk);
