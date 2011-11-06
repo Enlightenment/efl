@@ -322,3 +322,8 @@
 
 	* Add support ecore_cocoa_evas engine.
 	* Fix ecore_cocoa code to correctly handle cocoa window.
+
+2011-11-02 Bluezery
+
+	* Fix return error handling in ecore_file_download when 
+        ecore_con_url_get() fails.
