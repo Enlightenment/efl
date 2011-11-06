@@ -59,7 +59,7 @@ struct _Edje_Lua_Evas_Object
 {
    Edje_Lua_Obj     obj;
    Evas_Object     *evas_obj;
-   int              x, y, w, h;
+   int              x, y;
 };
 
 
@@ -1412,21 +1412,22 @@ _elua_resize(lua_State *L)
 {
    Edje_Lua_Obj *obj = (Edje_Lua_Obj *)lua_touserdata(L, 1);
    Edje_Lua_Evas_Object *elo = (Edje_Lua_Evas_Object *)obj;
+   Evas_Coord ow, oh;
    int w, h;
 
    if (!obj) return 0;
    if (!obj->is_evas_obj) return 0;
+   evas_object_geometry_get(elo->evas_obj, NULL, NULL, &ow, &oh);
    if (_elua_2_int_get(L, 2, EINA_TRUE, "w", &w, "h", &h) > 0)
      {
-        if ((w != elo->w) || (h != elo->h))
+        if ((w != ow) || (h != oh))
           {
-             elo->w = w;
-             elo->h = h;
-             evas_object_resize(elo->evas_obj, elo->w, elo->h);
+             evas_object_resize(elo->evas_obj, w, h);
+             evas_object_geometry_get(elo->evas_obj, NULL, NULL, &ow, &oh);
           }
      }
-   _elua_int_ret(L, "w", elo->w);
-   _elua_int_ret(L, "h", elo->h);
+   _elua_int_ret(L, "w", ow);
+   _elua_int_ret(L, "h", oh);
    return 1;
 }
 
@@ -1447,10 +1448,12 @@ _elua_geom(lua_State *L)
 {
    Edje_Lua_Obj *obj = (Edje_Lua_Obj *)lua_touserdata(L, 1);
    Edje_Lua_Evas_Object *elo = (Edje_Lua_Evas_Object *)obj;
+   Evas_Coord ow, oh;
    int x, y, w, h;
 
    if (!obj) return 0;
    if (!obj->is_evas_obj) return 0;
+   evas_object_geometry_get(elo->evas_obj, NULL, NULL, &ow, &oh);
    if (_elua_4_int_get(L, 2, EINA_TRUE, "x", &x, "y", &y, "w", &w, "h", &h) > 0)
      {
         if ((x != elo->x) || (y != elo->y))
@@ -1461,17 +1464,16 @@ _elua_geom(lua_State *L)
                               obj->ed->x + elo->x, 
                               obj->ed->y + elo->y);
           }
-        if ((w != elo->w) || (h != elo->h))
+        if ((w != ow) || (h != oh))
           {
-             elo->w = w;
-             elo->h = h;
-             evas_object_resize(elo->evas_obj, elo->w, elo->h);
+             evas_object_resize(elo->evas_obj, w, h);
+             evas_object_geometry_get(elo->evas_obj, NULL, NULL, &ow, &oh);
           }
      }
    _elua_int_ret(L, "x", elo->x);
    _elua_int_ret(L, "y", elo->y);
-   _elua_int_ret(L, "w", elo->w);
-   _elua_int_ret(L, "h", elo->h);
+   _elua_int_ret(L, "w", ow);
+   _elua_int_ret(L, "h", oh);
    return 1;
 }
 
