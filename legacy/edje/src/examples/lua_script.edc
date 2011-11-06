@@ -63,7 +63,7 @@ collections {
                D.text:font("Sans:style=Bold", 32);
             end
             edje_geom = edje.geom();
-            text_geom = D.text:real_geom();
+            text_geom = D.text:geom();
             D.text:move((edje_geom.w - text_geom.w) / 2, (edje_geom.h - text_geom.h) / 8);
             return true;  --// repeat the timer
          end
@@ -198,7 +198,7 @@ collections {
 	    for i = 1, bubbleRows do
 		row = { };
 		for j = 1, bubbleCols do
-		    image = edje.image_filled();
+		    image = edje.image();
 		    image:image("bubble.png", "");
 		    image:show();
 		    table.insert(row, image);
