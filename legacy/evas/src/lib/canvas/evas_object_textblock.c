@@ -3447,6 +3447,7 @@ _layout_handle_ellipsis(Ctxt *c, Evas_Object_Textblock_Item *it, Eina_List *i)
    save_cx = c->x;
    c->w -= ellip_ti->parent.w;
 
+   if (it->type == EVAS_TEXTBLOCK_ITEM_TEXT)
      {
         Evas_Object_Textblock_Text_Item *ti = _ITEM_TEXT(it);
 
@@ -3459,6 +3460,11 @@ _layout_handle_ellipsis(Ctxt *c, Evas_Object_Textblock_Item *it, Eina_List *i)
           {
              last_it = _ITEM(EINA_INLIST_GET(c->ln->items)->last);
           }
+     }
+   else if (it->type == EVAS_TEXTBLOCK_ITEM_FORMAT)
+     {
+        /* We don't want to add this format item. */
+        last_it = NULL;
      }
 
    c->x = save_cx;
