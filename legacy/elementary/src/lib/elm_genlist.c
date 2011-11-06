@@ -3263,7 +3263,12 @@ _queue_process(Widget_Data *wd)
         it = wd->queue->data;
         wd->queue = eina_list_remove_list(wd->queue, wd->queue);
         it->item->queued = EINA_FALSE;
-        _item_block_add(wd, it);
+        if (!wd->blocks)
+          {
+             _item_block_add(wd, it);
+             _item_block_realize(it->item->block);
+          }
+        else _item_block_add(wd, it);
         t = ecore_time_get();
         if (it->item->block->changed)
           {

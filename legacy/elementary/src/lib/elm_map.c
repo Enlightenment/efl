@@ -1284,9 +1284,9 @@ _process_download_list(Evas_Object *obj)
         if (gi->wd->download_num >= MAX_CONCURRENT_DOWNLOAD)
           break;
 
-        ecore_file_download_full(gi->source, gi->file, _tile_downloaded, NULL, gi, &(gi->job), wd->ua);
-        if (!gi->job)
-          DBG("Can't start to download %s to %s", gi->source, gi->file);
+        Eina_Bool ret = ecore_file_download_full(gi->source, gi->file, _tile_downloaded, NULL, gi, &(gi->job), wd->ua);
+        if (!ret || !gi->job)
+          WRN("Can't start to download %s to %s", gi->source, gi->file);
         else
           {
              gi->wd->download_num++;

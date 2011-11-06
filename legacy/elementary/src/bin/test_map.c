@@ -711,7 +711,7 @@ _map_mouse_up(void *data __UNUSED__, Evas *evas __UNUSED__, Evas_Object *obj __U
 void
 test_map(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
-   Evas_Object *win, *bg, *map;
+   Evas_Object *win, *bg, *map, *tab, *r, *en;
    int idx = 0;
 
    win = elm_win_add(NULL, "map", ELM_WIN_BASIC);
@@ -723,6 +723,19 @@ test_map(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __
    elm_win_resize_object_add(win, bg);
    evas_object_show(bg);
 
+   tab = elm_table_add(win);
+   evas_object_size_hint_weight_set(tab, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   elm_win_resize_object_add(win, tab);
+   evas_object_show(tab);
+
+   r = evas_object_rectangle_add(evas_object_evas_get(win));
+   evas_object_color_set(r, 20, 40, 60, 255);
+   evas_object_size_hint_min_set(r, 200, 200);
+   evas_object_size_hint_weight_set(r, EVAS_HINT_EXPAND, 0);
+   evas_object_size_hint_fill_set(r, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   elm_table_pack(tab, r, 0, 0, 1, 1);
+   evas_object_show(r);
+   
    map = elm_map_add(win);
    if (map)
      {
@@ -736,7 +749,9 @@ test_map(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __
         printf("]\n");
 
         evas_object_size_hint_weight_set(map, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-        elm_win_resize_object_add(win, map);
+        evas_object_size_hint_fill_set(map, EVAS_HINT_FILL, EVAS_HINT_FILL);
+        elm_table_pack(tab, map, 0, 2, 1, 1);
+//        elm_win_resize_object_add(win, map);
         evas_object_data_set(map, "window", win);
 
         //
@@ -827,6 +842,14 @@ test_map(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __
 
         evas_object_show(map);
      }
+   en = elm_entry_add(win);
+   elm_entry_scrollable_set(en, EINA_TRUE);
+   elm_entry_single_line_set(en, 1);
+   evas_object_size_hint_weight_set(en, EVAS_HINT_EXPAND, 0.0);
+   evas_object_size_hint_align_set(en, EVAS_HINT_FILL, 0.1);
+   elm_table_pack(tab, en, 0, 1, 1, 1);
+   evas_object_show(en);
+   
 
    evas_object_resize(win, 800, 800);
    evas_object_show(win);
