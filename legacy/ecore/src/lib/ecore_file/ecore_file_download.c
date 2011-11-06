@@ -369,7 +369,15 @@ _ecore_file_download_curl(const char *url, const char *dst,
    job->progress_cb = progress_cb;
    _job_list = eina_list_append(_job_list, job);
 
-   ecore_con_url_get(job->url_con);
+   if (!ecore_con_url_get(job->url_con))
+     {
+        ecore_con_url_free(job->url_con);
+        _job_list = eina_list_remove(_job_list, job);
+        fclose(job->file);
+        free(job->dst);
+        free(job);
+        return NULL;
+     }
 
    return job;
 }
