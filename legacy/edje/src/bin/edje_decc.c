@@ -104,6 +104,9 @@ main(int argc, char **argv)
    if (!decomp()) return -1;
    output();
 
+   printf("WARNING! If any Image or audio data was encoded in a LOSSY way, then\n"
+          "re-encoding will drop quality even more. You need access to the original\n"
+          "data to ensure no loss of quality.\n");
    eet_close(ef);
    edje_shutdown();
    eina_log_domain_unregister(_edje_cc_log_dom);
