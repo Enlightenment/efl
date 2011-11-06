@@ -1893,7 +1893,6 @@ src/tests/Makefile
 src/modules/Makefile
 src/modules/immodules/Makefile
 src/modules/immodules/xim/Makefile
-README
 ecore.spec
 $po_makefile_in
 ])

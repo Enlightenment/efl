@@ -29,8 +29,6 @@ EXTRA_DIST = \
 AUTHORS \
 COPYING \
 autogen.sh \
-README.in \
-README \
 evas.pc.in \
 evas-directfb.pc.in \
 evas-fb.pc.in \

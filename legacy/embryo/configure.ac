@@ -185,7 +185,6 @@ include/Makefile
 src/Makefile
 src/lib/Makefile
 src/bin/Makefile
-README
 embryo.spec
 ])
 

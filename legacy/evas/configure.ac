@@ -1866,7 +1866,6 @@ src/static_deps/liblinebreak/Makefile
 src/lib/include/Makefile
 src/examples/Makefile
 src/tests/Makefile
-README
 evas.spec
 ])
 

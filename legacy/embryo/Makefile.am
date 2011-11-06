@@ -30,9 +30,7 @@ COPYING \
 autogen.sh \
 embryo.pc.in \
 embryo.spec.in \
-embryo.spec \
-README.in \
-README
+embryo.spec
 
 pkgconfigdir = $(libdir)/pkgconfig
 pkgconfig_DATA = embryo.pc

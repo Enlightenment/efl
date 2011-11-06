@@ -3,7 +3,6 @@
 rm -rf autom4te.cache
 rm -f aclocal.m4 ltmain.sh
 
-touch README
 touch ABOUT-NLS
 
 echo "Running aclocal..." ; aclocal $ACLOCAL_FLAGS -I m4 || exit 1

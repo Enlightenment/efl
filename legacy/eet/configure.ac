@@ -434,7 +434,6 @@ src/lib/Makefile
 src/bin/Makefile
 src/tests/Makefile
 src/examples/Makefile
-README
 eet.spec
 ])
 
