@@ -49,7 +49,7 @@ _title_visible(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_i
 void
 _page5(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
-   Evas_Object *bt, *en, *content, *nf = data;
+   Evas_Object *bt, *content, *nf = data;
    Elm_Object_Item *it;
 
    bt = elm_button_add(nf);
