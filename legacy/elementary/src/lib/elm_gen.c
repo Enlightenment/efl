@@ -136,7 +136,12 @@ _item_content_set_hook(Elm_Gen_Item *it, const char *part, Evas_Object *content)
 static Evas_Object *
 _item_content_unset_hook(Elm_Gen_Item *it, const char *part)
 {
-   return edje_object_part_unswallow(VIEW(it), part);
+   Evas_Object *obj;
+
+   obj = edje_object_part_swallow_get(VIEW(it), part);
+   if (!obj) return NULL;
+   edje_object_part_unswallow(VIEW(it), obj);
+   return obj;
 }
 
 #if 0
