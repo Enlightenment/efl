@@ -141,6 +141,42 @@ collections {
          print(D.text:text());
          D.text:show();
 
+         D.map = edje.map(4);
+
+         D.map:coord(1, 100, 200, 300);
+         D.coord = D.map:coord(1);
+
+         D.map:populate(100, 200, 23, 45, 0);
+         D.map:populate(D.rect2);
+         D.map:populate(D.rect2, 0);
+
+         D.rect2:map(map);
+         D.rect2:map_enable(true);
+         if (D.rect2:map_enable()) then
+            print("lua::map enabled");
+         end
+
+         D.map:rotate(45.0, 10, 20);
+--//         D.map:zoom(10.0, 20.0, 100, 200);
+
+--//         D.map:rotate3d(90.0, 180.0, 45.0, 100, 200, 300);
+--//         D.map:perspective(100, 200, 300, 400);
+
+--//         D.map:color(1, r, g, b, a);  // set just one point to this colour.
+--//         D.map:color(r, g, b, a); // set all points to this colour.
+
+--//         D.map:lighting(100, 200, 300, r, g, b, r, g, b);
+
+--//         D.map:uv(1, 123.0, 456.0);
+
+--//         D.rect2:map_source(D.rect);
+
+--//         D.map:clockwise();
+--//         D.map:smooth();
+--//         D.map:alpha();
+--//         D.map:dup();
+--//         D.map:size();  --// perhaps overide the # operator?  For now it's only gonna return 4 anyway.
+
          --// example of deleting something
          --// D.tim:del();
 

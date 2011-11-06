@@ -17,6 +17,7 @@ typedef struct _Edje_Lua_Timer       Edje_Lua_Timer;
 typedef struct _Edje_Lua_Animator    Edje_Lua_Animator;
 typedef struct _Edje_Lua_Transition  Edje_Lua_Transition;
 typedef struct _Edje_Lua_Evas_Object Edje_Lua_Evas_Object;
+typedef struct _Edje_Lua_Map         Edje_Lua_Map;
 
 //--------------------------------------------------------------------------//
 struct _Edje_Lua_Alloc
@@ -60,6 +61,12 @@ struct _Edje_Lua_Evas_Object
    Edje_Lua_Obj     obj;
    Evas_Object     *evas_obj;
    int              x, y;
+};
+
+struct _Edje_Lua_Map
+{
+   Edje_Lua_Obj     obj;
+   Evas_Map        *map;
 };
 
 
@@ -117,6 +124,10 @@ static int _elua_text(lua_State *L);
 static int _elua_edje(lua_State *L);
 static int _elua_line(lua_State *L);
 static int _elua_polygon(lua_State *L);
+static int _elua_map(lua_State *L);
+
+static int _elua_obj_map(lua_State *L);
+static int _elua_obj_map_enable(lua_State *L);
 
 static int _elua_text_text(lua_State *L);
 static int _elua_text_font(lua_State *L);
@@ -128,6 +139,10 @@ static int _elua_edje_file(lua_State *L);
 static int _elua_line_xy(lua_State *L);
 static int _elua_polygon_point(lua_State *L);
 static int _elua_polygon_clear(lua_State *L);
+
+static int _elua_map_coord(lua_State *L);
+static int _elua_map_populate(lua_State *L);
+static int _elua_map_rotate(lua_State *L);
 
 
 #define ELO "|-ELO"
@@ -205,6 +220,7 @@ static const struct luaL_reg _elua_edje_api [] =
      {"edje",         _elua_edje},
      {"line",         _elua_line},
      {"polygon",      _elua_polygon},
+     {"map",          _elua_map},
    // FIXME: add the new sound stuff.
 
      {NULL, NULL} // end
@@ -272,7 +288,30 @@ static const struct luaL_reg _elua_edje_evas_obj [] =
    // FIXME: later - set render op, anti-alias, pointer mode (autograb, nograb)
    // FIXME: later -
 
-   // FIXME: map api here
+   // map api here
+     {"map",           _elua_obj_map},
+     {"map_enable",    _elua_obj_map_enable},
+//     {"map_source",    _elua_obj_map_source},
+
+     {NULL, NULL} // end
+};
+
+static const struct luaL_reg _elua_evas_map_obj [] =
+{
+     {"coord",         _elua_map_coord},
+     {"populate",      _elua_map_populate},
+     {"rotate",        _elua_map_rotate},
+//     {"rotate3d",      _elua_map_rotate3d},
+//     {"perspective",   _elua_map_perspective},
+//     {"zoom",          _elua_map_zoom},
+//     {"lighting",      _elua_map_lighting},
+//     {"color",         _elua_map_color},
+//     {"uv",            _elua_map_uv},
+//     {"clockwise",     _elua_map_clockwise},
+//     {"smooth",        _elua_map_smooth},
+//     {"alpha",         _elua_map_alpha},
+//     {"dup",           _elua_map_dup},
+//     {"size",          _elua_map_size},
 
      {NULL, NULL} // end
 };
@@ -476,7 +515,7 @@ _elua_ref_get(lua_State *L, void *key)
 }
 
 static Edje_Lua_Obj *
-_elua_obj_new(lua_State *L, Edje *ed, int size)
+_elua_obj_new_common(lua_State *L, Edje *ed, int size, const char *metatable)
 {
    Edje_Lua_Obj *obj;
 
@@ -484,12 +523,24 @@ _elua_obj_new(lua_State *L, Edje *ed, int size)
    memset(obj, 0, size);
    ed->lua_objs = eina_inlist_append(ed->lua_objs, EINA_INLIST_GET(obj));
 
-   luaL_getmetatable(L, "edje_evas_obj");
+   luaL_getmetatable(L, metatable);
    lua_setmetatable(L, -2);
    obj->ed = ed;
 
    _elua_ref_set(L, obj);
    return obj;
+}
+
+static Edje_Lua_Obj *
+_elua_obj_new(lua_State *L, Edje *ed, int size)
+{
+   _elua_obj_new_common(L, ed, size, "edje_evas_obj");
+}
+
+static Edje_Lua_Obj *
+_elua_map_new(lua_State *L, Edje *ed, int size)
+{
+   _elua_obj_new_common(L, ed, size, "evas_map_obj");
 }
 
 static void
@@ -1973,6 +2024,40 @@ _elua_precise(lua_State *L)
 }
 
 static int
+_elua_obj_map(lua_State *L)
+{
+   Edje_Lua_Obj *obj = (Edje_Lua_Obj *)lua_touserdata(L, 1);
+   Edje_Lua_Evas_Object *elo = (Edje_Lua_Evas_Object *)obj;
+   Edje_Lua_Obj *obj2 = (Edje_Lua_Obj *)lua_touserdata(L, 2);
+   Edje_Lua_Map *elm = (Edje_Lua_Map *)obj;
+   if (!obj) return 0;
+   if (!obj->is_evas_obj) return 0;
+   if (!obj2) return 0;
+
+   evas_object_map_set(elo->evas_obj, elm->map);
+
+   return 1;
+}
+
+static int
+_elua_obj_map_enable(lua_State *L)
+{
+   Edje_Lua_Obj *obj = (Edje_Lua_Obj *)lua_touserdata(L, 1);
+   Edje_Lua_Evas_Object *elo = (Edje_Lua_Evas_Object *)obj;
+   int n;
+   if (!obj) return 0;
+   if (!obj->is_evas_obj) return 0;
+
+   n = lua_gettop(L);
+   if (n == 2)
+     {
+        evas_object_map_enable_set(elo->evas_obj, lua_toboolean(L, 2));
+     }
+   lua_pushboolean(L, evas_object_map_enable_get(elo->evas_obj));
+   return 1;
+}
+
+static int
 _elua_text_font(lua_State *L)
 {
    Edje_Lua_Obj *obj = (Edje_Lua_Obj *)lua_touserdata(L, 1);
@@ -2174,6 +2259,94 @@ static int _elua_polygon_clear(lua_State *L)
    return 1;
 }
 
+static int
+_elua_map_coord(lua_State *L)
+{
+   Edje_Lua_Obj *obj = (Edje_Lua_Obj *)lua_touserdata(L, 1);
+   Edje_Lua_Map *elm = (Edje_Lua_Map *)obj;
+   Evas_Coord x, y, z;
+   int n;
+
+   if (!obj) return 0;
+   n = lua_gettop(L);
+   if (2 > n) return 0;
+
+   if (_elua_4_int_get(L, 2, EINA_TRUE, "n", &n, "x", &x, "y", &y, "z", &z) > 0)
+     {
+        evas_map_point_coord_set(elm->map, n, x, y, z);
+     }
+   else
+     {
+        n = lua_tointeger(L, 2);
+        evas_map_point_coord_get(elm->map, n, &x, &y, &z);
+     }
+   _elua_int_ret(L, "x", x);
+   _elua_int_ret(L, "y", y);
+   _elua_int_ret(L, "z", z);
+   return 1;
+}
+
+static int
+_elua_map_populate(lua_State *L)
+{
+   Edje_Lua_Obj *obj = (Edje_Lua_Obj *)lua_touserdata(L, 1);
+   Edje_Lua_Map *elm = (Edje_Lua_Map *)obj;
+   int n;
+
+   if (!obj) return 0;
+   n = lua_gettop(L);
+
+   switch (n)
+    {
+       case 2 :
+        {
+           Edje_Lua_Obj *obj2 = (Edje_Lua_Obj *)lua_touserdata(L, 2);
+           const Edje_Lua_Evas_Object *source = (Edje_Lua_Evas_Object *)obj2;
+
+           evas_map_util_points_populate_from_object(elm->map, source->evas_obj);
+           break;
+        }
+
+       case 3 :
+        {
+           Edje_Lua_Obj *obj2 = (Edje_Lua_Obj *)lua_touserdata(L, 2);
+           const Edje_Lua_Evas_Object *source = (Edje_Lua_Evas_Object *)obj2;
+           Evas_Coord z = lua_tointeger(L, 3);
+
+           evas_map_util_points_populate_from_object_full(elm->map, source->evas_obj, z);
+           break;
+        }
+
+       default :
+        {
+           // FIXME: unpack 5 integers and pass them to evas_map_util_points_populate_from_geometry()
+           break;
+        }
+    }
+   return 1;
+}
+
+static int
+_elua_map_rotate(lua_State *L)
+{
+   Edje_Lua_Obj *obj = (Edje_Lua_Obj *)lua_touserdata(L, 1);
+   Edje_Lua_Map *elm = (Edje_Lua_Map *)obj;
+   double degrees;
+   Evas_Coord x, y;
+   int n;
+
+   if (!obj) return 0;
+   n = lua_gettop(L);
+   if (4 != n) return 0;
+
+   degrees = lua_tonumber(L, 2);
+   if (_elua_2_int_get(L, 3, EINA_TRUE, "x", &x, "y", &y) > 0)
+     {
+        evas_map_util_rotate(elm->map, degrees, x, y);
+     }
+   return 1;
+}
+
 //-------------
 static void
 _elua_evas_obj_free(void *obj)
@@ -2314,6 +2487,34 @@ _elua_polygon(lua_State *L)
    return 1;
 }
 
+static void
+_elua_map_free(void *obj)
+{
+   Edje_Lua_Map *elm = obj;
+   lua_State *L;
+   if (!elm->obj.ed) return;
+   L = elm->obj.ed->L;
+   evas_map_free(elm->map);
+   elm->map = NULL;
+}
+
+static int
+_elua_map(lua_State *L)
+{
+   Edje *ed = (Edje *)_elua_table_ptr_get(L, _elua_key);
+   Edje_Lua_Map *elm;
+   int count;
+
+   count = luaL_checkinteger(L, 1);
+
+   elm = (Edje_Lua_Map *)_elua_map_new(L, ed, sizeof(Edje_Lua_Map));
+   elm->obj.free_func = _elua_map_free;
+   elm->map = evas_map_new(count);
+   lua_pushvalue(L, 2);
+   _elua_gc(L);
+   return 1;
+}
+
 //-------------
 //---------------
 //-------------------
@@ -2361,6 +2562,14 @@ _edje_lua2_script_init(Edje *ed)
    lua_pushvalue(L, -3);
    lua_rawset(L, -3);
    lua_pop(L, 2);
+
+   luaL_register(L, "evas_map_obj", _elua_evas_map_obj);
+   luaL_newmetatable(L, "evas_map_obj");
+   luaL_register(L, 0, _elua_edje_meta);
+
+   lua_pushliteral(L, "__index");
+   lua_pushvalue(L, -3);
+   lua_rawset(L, -3);
 
    // weak table for our objects
    lua_pushlightuserdata(L, &_elua_objs);

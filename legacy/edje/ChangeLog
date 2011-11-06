@@ -201,3 +201,7 @@
 	  Including some handling of size changes.
 	* White space fixes, one of the editors I use cleans those up automatically.  shrugs
 
+2011-11-06  David Seikel (onefang)
+
+	* Lua: Added half of the evas map API.
+
