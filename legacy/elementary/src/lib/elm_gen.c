@@ -432,6 +432,9 @@ elm_gen_item_new(Widget_Data              *wd,
    it->parent = parent;
    it->func.func = func;
    it->func.data = func_data;
+   elm_widget_item_content_get_hook_set(it, edje_object_part_swallow_get);
+   elm_widget_item_content_set_hook_set(it, edje_object_part_swallow);
+   elm_widget_item_content_unset_hook_set(it, edje_object_part_unswallow);
    /* TEMPORARY */
    it->sel_cb = (Ecore_Cb)_item_select;
 
