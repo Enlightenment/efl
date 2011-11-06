@@ -3437,50 +3437,30 @@ _layout_ellipsis_item_new(Ctxt *c, const Evas_Object_Textblock_Item *cur_it)
 static inline void
 _layout_handle_ellipsis(Ctxt *c, Evas_Object_Textblock_Item *it, Eina_List *i)
 {
-   Evas_Object_Textblock_Text_Item *ellip_ti, *last_ti;
+   Evas_Object_Textblock_Text_Item *ellip_ti;
    Evas_Object_Textblock_Item *last_it;
    Evas_Coord save_cx;
    int wrap;
    ellip_ti = _layout_ellipsis_item_new(c, it);
    last_it = it;
-   last_ti = _ITEM_TEXT(it);
 
    save_cx = c->x;
    c->w -= ellip_ti->parent.w;
-   do
+
      {
-        wrap = _layout_text_cutoff_get(c, last_it->format,
-              last_ti);
-        if ((wrap > 0) && !IS_AT_END(last_ti, (size_t) wrap))
+        Evas_Object_Textblock_Text_Item *ti = _ITEM_TEXT(it);
+
+        wrap = _layout_text_cutoff_get(c, last_it->format, ti);
+        if ((wrap > 0) && !IS_AT_END(ti, (size_t) wrap))
           {
-             _layout_item_text_split_strip_white(c, last_ti, i, wrap);
+             _layout_item_text_split_strip_white(c, ti, i, wrap);
           }
-        else if (wrap == 0)
+        else if ((wrap == 0) && (c->ln->items))
           {
-             if (!c->ln->items)
-                break;
-             /* We haven't added it yet at this point */
-             if (_ITEM(last_ti) != it)
-               {
-                  last_it =
-                     _ITEM(EINA_INLIST_GET(last_it)->prev);
-                  c->ln->items = _ITEM(eina_inlist_remove(
-                           EINA_INLIST_GET(c->ln->items),
-                           EINA_INLIST_GET(_ITEM(last_ti))));
-               }
-             else
-               {
-                  last_it =
-                     _ITEM(EINA_INLIST_GET(c->ln->items)->last);
-               }
-             last_ti = _ITEM_TEXT(last_it);
-             if (last_it)
-               {
-                  c->x -= last_it->adv;
-               }
+             last_it = _ITEM(EINA_INLIST_GET(c->ln->items)->last);
           }
      }
-   while (last_it && (wrap == 0));
+
    c->x = save_cx;
    c->w += ellip_ti->parent.w;
    /* If we should add this item, do it */
