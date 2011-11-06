@@ -1,5 +1,21 @@
+color_classes {
+    color_class { name: "test_colour"; color: 255 255 255 255; }
+}
+
+fonts {
+   font: "Vera.ttf" "default";
+}
+
+images {
+    image: "bubble.png" COMP;
+    image: "test.png" COMP;
+}
+
 collections {
-   group { name: "example";
+   // The group name NEEDS a / in it, 
+   // or the part below that tries to swallow it don't work.
+   // Leaving just the lua part visible.
+   group { name: "example/lua";
       lua_script_only: 1;
       lua_script {
          --// stick object private/local vars here
@@ -38,20 +54,17 @@ collections {
          end
  
          local function mycb2 ()
-            print("lua::callback animator " .. count);
-            print("lua:: seconds: " .. edje.seconds());
-            print("lua:: looptime: " .. edje.looptime());
-            local date = edje.date();
-            print("lua:: date: " ..
-                  date.year .. "|" ..
-                  date.month .. "|" ..
-                  date.day .. "|" ..
-                  date.yearday .. "|" ..
-                  date.weekday .. "|" ..
-                  date.hour .. "|" ..
-                  date.min .. "|" ..
-                  date.sec
-                 );
+            print("lua::callback animator " .. count .. " seconds: " .. edje.seconds() .. " looptime: " .. edje.looptime());
+            edje.color_class("test_colour", 255, (count * 10) % 255, 255, 255);
+            edje.text_class("test_text_class", "Sans:style=Bold", ((count * 3) % 100) + 8);
+            if (5 > (count % 10)) then
+               D.text:font("default", 32);
+            else
+               D.text:font("Sans:style=Bold", 32);
+            end
+            edje_geom = edje.geom();
+            text_geom = D.text:real_geom();
+            D.text:move((edje_geom.w - text_geom.w) / 2, (edje_geom.h - text_geom.h) / 8);
             return true;  --// repeat the timer
          end
  
@@ -60,7 +73,6 @@ collections {
             count = count + 1; --// keep count of calls - object data
             fndata = fndata + 3; --// play with object vars to see if they persist
             D.tim = edje.timer(0.25, mycb); --// inside cb add new timer
-            D.ani = edje.animator(mycb2);
             return false; --// cease repeating the timer
          end
  
@@ -74,8 +86,21 @@ collections {
          --// actually add the timer to call mycb in 1.23 sec
          D.tim = edje.timer(1.23, mycb);
          D.tra = edje.transition(5.0, mycb3);
+         D.ani = edje.animator(mycb2);
  
          if (edje.spanky) then edje.spanky(); end
+
+         local date = edje.date();
+         print("lua:: date: " ..
+            date.year .. "|" ..
+            date.month .. "|" ..
+            date.day .. "|" ..
+            date.yearday .. "|" ..
+            date.weekday .. "|" ..
+            date.hour .. "|" ..
+            date.min .. "|" ..
+            date.sec
+         );
 
          --// send some random edje message
          edje.messagesend(7, "none"      );
@@ -108,10 +133,28 @@ collections {
          D.rect2:clip(D.clip);
          D.rect:clip(D.clip);
 
+         D.text = edje.text();
+         D.text:geom  (50, 5, 150, 50);
+         D.text:color (255, 0, 0, 255);
+         D.text:font("Sans:style=Bold", 32);
+         D.text:text("Lua rocks!");
+         print(D.text:text());
+         D.text:show();
+
          --// example of deleting something
          --// D.tim:del();
+
+         --// test the color_class stuff
+         colour = edje.color_class("test_colour");
+         print("lua::color_class= " .. colour.r .. "," .. colour.g .. "," .. colour.b .. "," .. colour.a);
+         colour = edje.color_class("test_colour", 32, 64, 255, 128);
+         print("lua::color_class= " .. colour.r .. "," .. colour.g .. "," .. colour.b .. "," .. colour.a);
+         colour = edje.color_class("test_colour", { r=255, g=0, b=255, a=255 });
+         print("lua::color_class= " .. colour.r .. "," .. colour.g .. "," .. colour.b .. "," .. colour.a);
+         text = edje.text_class("test_text_class", "Sans:style=Bold", 8);
+         print("lua::text_class= " .. text.font .. " size " .. text.size);
  
-         --// shutdown func - generally empty or not there. everything gcd for you
+         --// shutdown func - generally empty or not there. everything garbage collected for you
          function shutdown ()
             print("lua::shutdown ... " .. D.val);
          end
@@ -132,15 +175,114 @@ collections {
          function message (id, type, v1, v2)
             print("lua::message ... " .. D.val);
             print("  id=" .. id .. " type=" .. type);
-            --// handle youre message type here. chekc id + type then use v1
+            --// handle your message type here. check id + type then use v1
             --// and/or v2 (or neither) appropriately. they are the same as
             --// the 2nd and 3rd param passed to edje.messagesend() (if any
             --// are passed at all)
          end
          function signal (sig, src)
-            print("lua::signal ... " .. D.val);
-            print("  sig=" .. sig .. " src=" .. src);
+            print("lua::signal sig= " .. sig .. " src= " .. src);
          end
       }
    }
+
+    group
+    { name: "bubbles/lua";
+	lua_script_only: 1;
+	lua_script
+	{
+	    local bubbles = { };
+	    local bubbleCols = 8;
+	    local bubbleRows = 6;
+
+	    for i = 1, bubbleRows do
+		row = { };
+		for j = 1, bubbleCols do
+		    image = edje.image_filled();
+		    image:image("bubble.png", "");
+		    image:show();
+		    table.insert(row, image);
+		end
+		table.insert(bubbles, row);
+	    end
+
+	    function resize (w, h)
+		--// Don't ask why.  lol  (This should go away soon.)
+		bubbles[1][1]:move(12345, 12345);
+
+		for i = 1, bubbleRows do
+		    for j = 1, bubbleCols do
+			w1 = w / bubbleCols;
+			h1 = h / bubbleRows;
+			bubbles[i][j]:geom((j - 1) * w1, (i - 1) * h1, w1, h1);
+			if ((1 == i) or (1 == j) or (bubbleRows == i) or (bubbleCols == j)) then
+			    bubbles[i][j]:color(0, 255, 0, 200);
+			else
+			    bubbles[i][j]:color(math.random(200) + 55, 0, math.random(255) + 55, 200);
+			end
+		    end
+		end
+	    end
+	}
+    }
+
+   group {
+      name: "elm/bg/base/default";
+
+      parts {
+         part {
+            name: "background";
+            type: RECT;
+            mouse_events: 0;
+            description {
+               state: "default" 0.0;
+               color: 0 0 0 255;
+            }
+         }
+
+         part {
+            name: "bubbles_lua";
+            type: GROUP;
+            source: "bubbles/lua";
+            mouse_events: 0;
+            description { state: "default" 0.0; }
+         }
+
+         part {
+            name: "background_image";
+            mouse_events: 0;
+            description {
+               state: "default" 0.0;
+               aspect_preference: HORIZONTAL;
+               color_class: "test_colour";
+               image { normal: "test.png"; }
+            }
+         }
+
+         part {
+            name: "some_text";
+            type: TEXT;
+            mouse_events: 0;
+            description {
+               state: "default" 0;
+               text
+               {
+                  text: "This is test text.";
+                  text_class: "test_text_class";
+               }
+            }
+         }
+
+         part {
+            name: "example_lua";
+            type: GROUP;
+            source: "example/lua";
+            mouse_events: 0;
+            description { state: "default" 0.0; }
+         }
+
+      }
+   }
+
 }
+

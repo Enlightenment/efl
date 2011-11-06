@@ -181,3 +181,23 @@
 	* Add Edje multisense that allows playback of samples and
           vibrator control and ultimately beginsd to pave the way for
           more complex audio etc. support.
+
+2011-11-06  David Seikel (onefang)
+
+	* Lua: Added color_class and text_class functions.
+	    Still need to write a function for setting the classes of an object.
+	    This works for things in OTHER groups using those classes though.
+	* Add image, text, textblock (commented out), and edje objects.
+	    Very basic support.
+	* Add functions for set/get text font, size, and text.
+	* Add function for set/get image image.
+	    Still needs to limit to only imagess in the current edje file.
+	* Add functions for set/get image fill and filled.
+	* Add function for set/get edje file.
+	    Still needs to limit to only groups in the current edje file.
+	* Add full support for evas line object.
+	* Add full support for evas polygon object.
+	* Beefed up the example lua script to show most of the above.
+	  Including some handling of size changes.
+	* White space fixes, one of the editors I use cleans those up automatically.  shrugs
+
