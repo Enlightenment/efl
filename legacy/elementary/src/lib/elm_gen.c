@@ -121,6 +121,24 @@ _item_label_hook(Elm_Gen_Item *it, const char *part)
    return edje_object_part_text_get(VIEW(it), part);
 }
 
+static Evas_Object *
+_item_content_get_hook(Elm_Gen_Item *it, const char *part)
+{
+   return edje_object_part_swallow_get(VIEW(it), part);
+}
+
+static void
+_item_content_set_hook(Elm_Gen_Item *it, const char *part, Evas_Object *content)
+{
+   edje_object_part_swallow(VIEW(it), part, content);
+}
+
+static Evas_Object *
+_item_content_unset_hook(Elm_Gen_Item *it, const char *part)
+{
+   return edje_object_part_unswallow(VIEW(it), part);
+}
+
 #if 0
 static Eina_Bool
 _deselect_all_items(Widget_Data *wd)
@@ -432,9 +450,9 @@ elm_gen_item_new(Widget_Data              *wd,
    it->parent = parent;
    it->func.func = func;
    it->func.data = func_data;
-   elm_widget_item_content_get_hook_set(it, edje_object_part_swallow_get);
-   elm_widget_item_content_set_hook_set(it, edje_object_part_swallow);
-   elm_widget_item_content_unset_hook_set(it, edje_object_part_unswallow);
+   elm_widget_item_content_get_hook_set(it, _item_content_get_hook);
+   elm_widget_item_content_set_hook_set(it, _item_content_set_hook);
+   elm_widget_item_content_unset_hook_set(it, _item_content_unset_hook);
    /* TEMPORARY */
    it->sel_cb = (Ecore_Cb)_item_select;
 
