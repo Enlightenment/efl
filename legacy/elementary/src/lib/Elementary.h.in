@@ -5053,6 +5053,15 @@ extern "C" {
     */
    EAPI int                   elm_icon_prescale_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
    /**
+    * Gets the image object of the icon. DO NOT MODIFY THIS.
+    *
+    * @param obj The icon object
+    * @return The internal icon object
+    *
+    * @ingroup Icon
+    */
+   EAPI Evas_Object          *elm_icon_object_get(Evas_Object *obj) EINA_ARG_NONNULL(1);
+   /**
     * Sets the icon lookup order used by elm_icon_standard_set().
     *
     * @param obj The icon object

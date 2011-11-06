@@ -1014,3 +1014,13 @@ elm_icon_prescale_get(const Evas_Object *obj)
    if (!wd) return 0;
    return _els_smart_icon_scale_size_get(wd->img);
 }
+
+EAPI Evas_Object *
+elm_icon_object_get(Evas_Object *obj)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype) 0;
+   Widget_Data *wd = elm_widget_data_get(obj);
+
+   if (!wd) return NULL;
+   return wd->img;
+}
