@@ -998,6 +998,7 @@ ecore_main_fd_handler_add(int                    fd,
         int err = errno;
         ERR("Failed to add poll on fd %d (errno = %d: %s)!", fd, err, strerror(err));
         free(fdh);
+        fdh = NULL;
         goto unlock;
      }
    fdh->read_active = EINA_FALSE;
