@@ -7826,6 +7826,8 @@ extern "C" {
     *
     * @param obj The frame object
     * @param content The content will be filled in this frame object
+    *
+    * @deprecated use elm_object_content_set() instead.
     */
    EINA_DEPRECATED EAPI void         elm_frame_content_set(Evas_Object *obj, Evas_Object *content) EINA_ARG_NONNULL(1);
    /**
@@ -7835,6 +7837,8 @@ extern "C" {
     *
     * @param obj The frame object
     * @return The content that is being used
+    *
+    * @deprecated use elm_object_content_get() instead.
     */
    EINA_DEPRECATED EAPI Evas_Object *elm_frame_content_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
    /**
@@ -7844,6 +7848,8 @@ extern "C" {
     *
     * @param obj The frame object
     * @return The content that was being used
+    *
+    * @deprecated use elm_object_content_unset() instead.
     */
    EINA_DEPRECATED EAPI Evas_Object *elm_frame_content_unset(Evas_Object *obj) EINA_ARG_NONNULL(1);
    /**
