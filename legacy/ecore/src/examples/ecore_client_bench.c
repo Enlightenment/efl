@@ -6,7 +6,7 @@
  * 2010 Mike Blumenkrantz
  */
 
-#define NUM_CLIENTS 10000
+#define NUM_CLIENTS 30000
 
 static Eina_Counter *counter;
 static int add = 0;

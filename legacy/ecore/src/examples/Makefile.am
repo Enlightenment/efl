@@ -39,8 +39,8 @@ SRCS = \
 	ecore_con_server_simple_example.c \
 	ecore_con_server_http_example.c \
 	ecore_con_client_simple_example.c \
-	client_bench.c \
-	server_bench.c \
+	ecore_client_bench.c \
+	ecore_server_bench.c \
 	ecore_con_client_example.c \
 	ecore_con_server_example.c \
 	ecore_fd_handler_gnutls_example.c \
@@ -91,7 +91,9 @@ pkglib_PROGRAMS += \
 	ecore_evas_basics_example \
 	ecore_evas_buffer_example_01 \
 	ecore_evas_buffer_example_02 \
-	ecore_evas_ews_example
+	ecore_evas_ews_example \
+	ecore_client_bench \
+	ecore_server_bench
 
 ecore_con_lookup_example_LDADD = $(ECOREBASELDADD) $(top_builddir)/src/lib/ecore_con/libecore_con.la
 ecore_con_url_headers_example_LDADD = $(ECOREBASELDADD) $(top_builddir)/src/lib/ecore_con/libecore_con.la
@@ -103,5 +105,7 @@ ecore_con_client_simple_example_LDADD = $(ECOREBASELDADD) $(top_builddir)/src/li
 ecore_evas_window_sizes_example_LDADD = $(ECOREBASELDADD) @EVAS_LIBS@ $(top_builddir)/src/lib/ecore_evas/libecore_evas.la
 ecore_evas_buffer_example_01_LDADD = $(ECOREBASELDADD) @EVAS_LIBS@ $(top_builddir)/src/lib/ecore_evas/libecore_evas.la
 ecore_evas_buffer_example_02_LDADD = $(ECOREBASELDADD) @EVAS_LIBS@ $(top_builddir)/src/lib/ecore_evas/libecore_evas.la
+ecore_client_bench_LDADD = $(ECOREBASELDADD) $(top_builddir)/src/lib/ecore_con/libecore_con.la
+ecore_server_bench_LDADD = $(ECOREBASELDADD) $(top_builddir)/src/lib/ecore_con/libecore_con.la
 
 endif

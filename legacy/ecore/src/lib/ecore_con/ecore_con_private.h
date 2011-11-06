@@ -298,5 +298,24 @@ int                 ecore_con_info_get(Ecore_Con_Server *svr,
                                        struct addrinfo *hints);
 
 
+#define GENERIC_ALLOC_FREE_HEADER(TYPE, Type) \
+  TYPE *Type##_alloc(void);		      \
+  void Type##_free(TYPE *e);
+
+GENERIC_ALLOC_FREE_HEADER(Ecore_Con_Event_Client_Add, ecore_con_event_client_add);
+GENERIC_ALLOC_FREE_HEADER(Ecore_Con_Event_Client_Del, ecore_con_event_client_del);
+GENERIC_ALLOC_FREE_HEADER(Ecore_Con_Event_Client_Write, ecore_con_event_client_write);
+GENERIC_ALLOC_FREE_HEADER(Ecore_Con_Event_Client_Data, ecore_con_event_client_data);
+GENERIC_ALLOC_FREE_HEADER(Ecore_Con_Event_Server_Error, ecore_con_event_server_error);
+GENERIC_ALLOC_FREE_HEADER(Ecore_Con_Event_Client_Error, ecore_con_event_client_error);
+GENERIC_ALLOC_FREE_HEADER(Ecore_Con_Event_Server_Add, ecore_con_event_server_add);
+GENERIC_ALLOC_FREE_HEADER(Ecore_Con_Event_Server_Del, ecore_con_event_server_del);
+GENERIC_ALLOC_FREE_HEADER(Ecore_Con_Event_Server_Write, ecore_con_event_server_write);
+GENERIC_ALLOC_FREE_HEADER(Ecore_Con_Event_Server_Data, ecore_con_event_server_data);
+
+void ecore_con_mempool_init(void);
+void ecore_con_mempool_shutdown(void);
+
+#undef GENERIC_ALLOC_FREE_HEADER
 
 #endif

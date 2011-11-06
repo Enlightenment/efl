@@ -20,7 +20,8 @@ includesdir = $(includedir)/ecore-@VMAJ@
 libecore_con_la_SOURCES = \
 ecore_con.c \
 ecore_con_ssl.c \
-ecore_con_url.c
+ecore_con_url.c \
+ecore_con_alloc.c
 
 if ECORE_HAVE_WIN32
 libecore_con_la_SOURCES += ecore_con_local_win32.c
