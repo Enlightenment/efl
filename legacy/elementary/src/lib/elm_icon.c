@@ -1022,5 +1022,5 @@ elm_icon_object_get(Evas_Object *obj)
    Widget_Data *wd = elm_widget_data_get(obj);
 
    if (!wd) return NULL;
-   return wd->img;
+   return _els_smart_icon_edje_get(wd->img);
 }
