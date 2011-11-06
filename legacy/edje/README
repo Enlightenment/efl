@@ -19,6 +19,12 @@ Must:
   ecore-file (at least 1.0.0)
   embryo (at least 1.0.0)
   evas (at least 1.0.0)
+For audio support:
+  remix - https://github.com/kfish/remix
+  libsndfile (at least 1.0.22)
+  libvorbis
+  libogg
+  libasound (alsa)
 
 Edje is a graphical layout and animation library for animated resizable,
 compressed and scalable themes. It is meant to abstract UI from the
