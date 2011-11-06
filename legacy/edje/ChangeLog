@@ -175,3 +175,9 @@
 2011-10-03  Tom Hacohen (TAsn)
 
 	* Entry: Added change information to entry,changed,user
+
+2011-10-04  Govindaraju SM, Prince Kumar Dubey
+
+	* Add Edje multisense that allows playback of samples and
+          vibrator control and ultimately beginsd to pave the way for
+          more complex audio etc. support.
