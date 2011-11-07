@@ -141,42 +141,68 @@ collections {
          print(D.text:text());
          D.text:show();
 
+         --// Fun with maps!
          D.map = edje.map(4);
-
-         D.map:coord(1, 100, 200, 300);
-         D.coord = D.map:coord(1);
-
-         D.map:populate(100, 200, 23, 45, 0);
-         D.map:populate(D.rect2);
+         --// These all do the same thing.
+         --// Note, lua likes to start at 1, C (and thus evas) at 0.  I choose to agree with C.
+         D.map:coord(0, 50, 50, 0);
+         D.map:coord(1, 100, 50, 0);
+         D.map:coord(2, 100, 100, 0);
+         D.map:coord(3, 50, 100, 0);
+         D.map:populate(50, 50, 50, 50, 0);
          D.map:populate(D.rect2, 0);
+         D.map:populate(D.rect2);
 
+         --// print the results
+         D.coord = D.map:coord(0);
+         print("lua::map coords for point 0 x=" .. D.coord.x .. " y=" .. D.coord.y .. " z=" .. D.coord.z);
+         D.coord = D.map:coord(1);
+         print("lua::map coords for point 1 x=" .. D.coord.x .. " y=" .. D.coord.y .. " z=" .. D.coord.z);
+         D.coord = D.map:coord(2);
+         print("lua::map coords for point 2 x=" .. D.coord.x .. " y=" .. D.coord.y .. " z=" .. D.coord.z);
+         D.coord = D.map:coord(3);
+         print("lua::map coords for point 3 x=" .. D.coord.x .. " y=" .. D.coord.y .. " z=" .. D.coord.z);
+
+         D.map:smooth(false);
+         D.map:alpha(true);
+
+         if (D.map:alpha()) then
+            print("lua::map is alpha");
+         end
+
+         if (D.map:smooth()) then
+            print("lua::map is smooooth");
+         end
+
+         if (D.map:clockwise()) then
+            print("lua::map is clockwise");
+         end
+
+         D.map:color(255, 255, 255, 255); // set all points to this colour.
+         D.map:color(1, 255, 0, 255, 255);  // set just one point to this colour.
+
+         D.map:lighting(75, 75, 10, 255, 255, 255, 0, 255, 0);  // Ambient light and a 3D light source.
+
+         --// Toss it around.
+         D.map:rotate(45.0, 75, 75);
+         D.map:zoom(1.5, 1.5, 75, 75);
+         D.map:rotate3d(90.0, 180.0, 45.0, 75, 75, 0);
+         D.map:perspective(200, 200, 0, 20);
+
+         --// For image UV mapping.
+         D.map:uv(0, 0.0, 0.0);
+         D.map:uv(1, 50.0, 0.0);
+         D.map:uv(2, 50.0, 50.0);
+         D.map:uv(3, 0.0, 50.0);
+
+         --// Actually apply the resulting transformations.
          D.rect2:map(map);
          D.rect2:map_enable(true);
          if (D.rect2:map_enable()) then
             print("lua::map enabled");
          end
 
-         D.map:rotate(45.0, 10, 20);
-         D.map:zoom(10.0, 20.0, 100, 200);
-
-         D.map:rotate3d(90.0, 180.0, 45.0, 100, 200, 300);
-         D.map:perspective(100, 200, 300, 400);
-
-         D.map:color(1, r, g, b, a);  // set just one point to this colour.
-         D.map:color(r, g, b, a); // set all points to this colour.
-
-         D.map:lighting(100, 200, 300, r, g, b, r, g, b);
-
-         D.map:uv(1, 123.0, 456.0);
-
-         D.rect2:map_source(D.rect);
-
-         D.map:smooth();
-         D.map:alpha();
-
-         if (D.map:clockwise()) then
-            print("lua::map is clockwise");
-         end
+--//         D.rect2:map_source(D.rect);  --// Don't think this is actually implemented in evas.
 
 --//         D.map:dup();
 --//         D.map:size();  --// perhaps overide the # operator?  For now it's only gonna return 4 anyway.
