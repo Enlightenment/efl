@@ -328,9 +328,16 @@ _add_touched_device(Eina_List *list, Pointer_Event *pe)
         return list;
      }
 
-   p = malloc(sizeof(Pointer_Event));
-   memcpy(p, pe, sizeof(Pointer_Event)); /* Freed in _remove_touched_device() */
-   return eina_list_append(list, p);
+   if ((pe->event_type == EVAS_CALLBACK_MOUSE_DOWN) ||
+         (pe->event_type == EVAS_CALLBACK_MULTI_DOWN))
+     {  /* Add touched device on DOWN event only */
+        p = malloc(sizeof(Pointer_Event));
+        /* Freed in _remove_touched_device()    */
+        memcpy(p, pe, sizeof(Pointer_Event));
+        return eina_list_append(list, p);
+     }
+
+   return list;
 }
 /* END   - Functions to manage touched-device list */
 
@@ -1709,6 +1716,9 @@ _momentum_test(Evas_Object *obj, Pointer_Event *pe,
    Gesture_Info *gesture = wd->gesture[g_type];
    if (!gesture ) return;
 
+   if (!eina_list_count(wd->touched))
+     return; /* Got move on mouse-over move */
+
    Momentum_Type *st = gesture->data;
    Elm_Gesture_State state_to_report = ELM_GESTURE_STATE_MOVE;
    if (!st)
@@ -1956,6 +1966,9 @@ _n_line_test(Evas_Object *obj, Pointer_Event *pe, void *event_info,
    if (!wd) return;
    Gesture_Info *gesture = wd->gesture[g_type];
    if (!gesture ) return;
+
+   if (!eina_list_count(wd->touched))
+     return; /* Got move on mouse-over move */
 
    Line_Type *st = gesture->data;
    if (!st)
