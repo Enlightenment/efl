@@ -1391,7 +1391,7 @@ data_queue_part_lookup(Edje_Part_Collection *pc, const char *name, int *dest)
         if ((pl->pc == pc) && (pl->dest == dest))
           {
              free(pl->name);
-             if (strlen(name) > 0)
+             if (name[0])
                pl->name = mem_strdup(name);
              else
                {
