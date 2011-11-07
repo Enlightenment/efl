@@ -572,32 +572,34 @@ _title_content_set(Elm_Naviframe_Item *it,
                                               EINA_INLIST_GET(pair));
      }
 
-   if ((pair->content) && (pair->content != content))
-     evas_object_del(pair->content);
+   if (pair->content == content) return;
 
-   if (!content)
+   if (pair->content)
      {
-        snprintf(buf, sizeof(buf), "elm,state,%s,hide", part);
-        edje_object_signal_emit(VIEW(it), buf, "elm");
-        pair->content = NULL;
-        return;
+        evas_object_event_callback_del(pair->content,
+                                       EVAS_CALLBACK_DEL,
+                                       _title_content_del);
+        evas_object_del(pair->content);
      }
-
-   if (pair->content != content)
+   if (content)
      {
         elm_widget_sub_object_add(WIDGET(it), content);
         evas_object_event_callback_add(content,
                                        EVAS_CALLBACK_DEL,
                                        _title_content_del,
                                        pair);
+        edje_object_part_swallow(VIEW(it), part, content);
+        snprintf(buf, sizeof(buf), "elm,state,%s,show", part);
+        edje_object_signal_emit(VIEW(it), buf, "elm");
+        pair->content = content;
+        _item_sizing_eval(it);
      }
-
-   pair->content = content;
-
-   edje_object_part_swallow(VIEW(it), part, content);
-   snprintf(buf, sizeof(buf), "elm,state,%s,show", part);
-   edje_object_signal_emit(VIEW(it), buf, "elm");
-   _item_sizing_eval(it);
+   else
+     {
+        snprintf(buf, sizeof(buf), "elm,state,%s,hide", part);
+        edje_object_signal_emit(VIEW(it), buf, "elm");
+        pair->content = NULL;
+     }
 }
 
 static void
