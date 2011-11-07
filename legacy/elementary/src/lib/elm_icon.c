@@ -1024,3 +1024,13 @@ elm_icon_object_get(Evas_Object *obj)
    if (!wd) return NULL;
    return _els_smart_icon_object_get(wd->img);
 }
+
+EAPI void
+elm_icon_preload_set(Evas_Object *obj, Eina_Bool disable)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype);
+   Widget_Data *wd = elm_widget_data_get(obj);
+
+   if (!wd) return;
+   _els_smart_icon_preload_set(wd->img, disable);
+}

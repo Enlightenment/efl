@@ -141,6 +141,17 @@ _els_smart_icon_file_key_set(Evas_Object *obj, const char *file, const char *key
    return EINA_TRUE;
 }
 
+void
+_els_smart_icon_preload_set(Evas_Object *obj, Eina_Bool disable)
+{
+   Smart_Data *sd;
+
+   sd = evas_object_smart_data_get(obj);
+   if ((!sd) || sd->edje) return;
+   evas_object_image_preload(sd->obj, disable);
+   sd->preloading = !disable;
+}
+
 Eina_Bool
 _els_smart_icon_file_edje_set(Evas_Object *obj, const char *file, const char *part)
 {
