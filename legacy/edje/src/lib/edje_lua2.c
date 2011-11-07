@@ -128,6 +128,7 @@ static int _elua_map(lua_State *L);
 
 static int _elua_obj_map(lua_State *L);
 static int _elua_obj_map_enable(lua_State *L);
+static int _elua_obj_map_source(lua_State *L);
 
 static int _elua_text_text(lua_State *L);
 static int _elua_text_font(lua_State *L);
@@ -140,10 +141,18 @@ static int _elua_line_xy(lua_State *L);
 static int _elua_polygon_point(lua_State *L);
 static int _elua_polygon_clear(lua_State *L);
 
+static int _elua_map_alpha(lua_State *L);
+static int _elua_map_clockwise(lua_State *L);
+static int _elua_map_colour(lua_State *L);
 static int _elua_map_coord(lua_State *L);
+static int _elua_map_lighting(lua_State *L);
+static int _elua_map_perspective(lua_State *L);
 static int _elua_map_populate(lua_State *L);
 static int _elua_map_rotate(lua_State *L);
-
+static int _elua_map_rotate3d(lua_State *L);
+static int _elua_map_smooth(lua_State *L);
+static int _elua_map_uv(lua_State *L);
+static int _elua_map_zoom(lua_State *L);
 
 #define ELO "|-ELO"
 
@@ -291,27 +300,27 @@ static const struct luaL_reg _elua_edje_evas_obj [] =
    // map api here
      {"map",           _elua_obj_map},
      {"map_enable",    _elua_obj_map_enable},
-//     {"map_source",    _elua_obj_map_source},
+     {"map_source",    _elua_obj_map_source},
 
      {NULL, NULL} // end
 };
 
 static const struct luaL_reg _elua_evas_map_obj [] =
 {
+     {"alpha",         _elua_map_alpha},
+//     {"dup",           _elua_map_dup},  // not sure of proper api for this.
+     {"clockwise",     _elua_map_clockwise},
+     {"color",         _elua_map_colour},
      {"coord",         _elua_map_coord},
+     {"lighting",      _elua_map_lighting},
+     {"perspective",   _elua_map_perspective},
      {"populate",      _elua_map_populate},
      {"rotate",        _elua_map_rotate},
-//     {"rotate3d",      _elua_map_rotate3d},
-//     {"perspective",   _elua_map_perspective},
-//     {"zoom",          _elua_map_zoom},
-//     {"lighting",      _elua_map_lighting},
-//     {"color",         _elua_map_color},
-//     {"uv",            _elua_map_uv},
-//     {"clockwise",     _elua_map_clockwise},
-//     {"smooth",        _elua_map_smooth},
-//     {"alpha",         _elua_map_alpha},
-//     {"dup",           _elua_map_dup},
-//     {"size",          _elua_map_size},
+     {"rotate3d",      _elua_map_rotate3d},
+//     {"size",          _elua_map_size},  // not sure of proper API for this
+     {"smooth",        _elua_map_smooth},
+     {"uv",            _elua_map_uv},
+     {"zoom",          _elua_map_zoom},
 
      {NULL, NULL} // end
 };
@@ -534,13 +543,13 @@ _elua_obj_new_common(lua_State *L, Edje *ed, int size, const char *metatable)
 static Edje_Lua_Obj *
 _elua_obj_new(lua_State *L, Edje *ed, int size)
 {
-   _elua_obj_new_common(L, ed, size, "edje_evas_obj");
+   return _elua_obj_new_common(L, ed, size, "edje_evas_obj");
 }
 
 static Edje_Lua_Obj *
 _elua_map_new(lua_State *L, Edje *ed, int size)
 {
-   _elua_obj_new_common(L, ed, size, "evas_map_obj");
+   return _elua_obj_new_common(L, ed, size, "evas_map_obj");
 }
 
 static void
@@ -1319,6 +1328,10 @@ _elua_2_int_get(lua_State *L, int i, Eina_Bool tr,
 }
 
 // FIXME: Should have separate functions for each lua type, instead of these multi argument style ones.
+// Better idea - scanf()) style _elua_scan_params("%i#f$str", &i, &f, &str);
+//  int %
+//  num #
+//  str $
 static int
 _elua_str_int_get(lua_State *L, int i, Eina_Bool tr,
                 const char *n1, char **v1,
@@ -1369,6 +1382,46 @@ _elua_str_int_get(lua_State *L, int i, Eina_Bool tr,
                   *v2 = lua_tointeger(L, i + 1);
                   n = 2;
                }
+          }
+        if (tr) lua_newtable(L);
+     }
+   return n;
+}
+
+static int
+_elua_2_num_get(lua_State *L, int i, Eina_Bool tr,
+                const char *n1, double *v1,
+                const char *n2, double *v2
+               )
+{
+   int n = 0;
+
+   if (lua_istable(L, i))
+     {
+        lua_getfield(L, i, n1);
+        if (lua_isnil(L, -1))
+          {
+             lua_pop(L, 1);
+             lua_rawgeti(L, i, 1);
+             lua_rawgeti(L, i, 2);
+          }
+        else
+          lua_getfield(L, i, n2);
+        if ((!lua_isnil(L, -1)) && (!lua_isnil(L, -2)))
+          {
+             *v1 = lua_tonumber(L, -2);
+             *v2 = lua_tonumber(L, -1);
+             n = 1;
+          }
+        if (tr) lua_settop(L, i);
+     }
+   else
+     {
+        if ((lua_isnumber(L, i + 0)) && (lua_isnumber(L, i + 1)))
+          {
+             *v1 = lua_tonumber(L, i + 0);
+             *v2 = lua_tonumber(L, i + 1);
+             n = 2;
           }
         if (tr) lua_newtable(L);
      }
@@ -1443,7 +1496,6 @@ _elua_2_str_get(lua_State *L, int i, Eina_Bool tr,
    return n;
 }
 
-/* XXX: not used
 static int
 _elua_3_int_get(lua_State *L, int i, Eina_Bool tr,
                 const char *n1, int *v1,
@@ -1492,7 +1544,55 @@ _elua_3_int_get(lua_State *L, int i, Eina_Bool tr,
      }
    return n;
 }
-*/
+
+static int
+_elua_3_num_get(lua_State *L, int i, Eina_Bool tr,
+                const char *n1, double *v1,
+                const char *n2, double *v2,
+                const char *n3, double *v3
+               )
+{
+   int n = 0;
+
+   if (lua_istable(L, i))
+     {
+        lua_getfield(L, i, n1);
+        if (lua_isnil(L, -1))
+          {
+             lua_pop(L, 1);
+             lua_rawgeti(L, i, 1);
+             lua_rawgeti(L, i, 2);
+             lua_rawgeti(L, i, 3);
+          }
+        else
+          {
+             lua_getfield(L, i, n2);
+             lua_getfield(L, i, n3);
+          }
+        if ((!lua_isnil(L, -1)) && (!lua_isnil(L, -2)) &&
+            (!lua_isnil(L, -3)))
+          {
+             *v1 = lua_tonumber(L, -3);
+             *v2 = lua_tonumber(L, -2);
+             *v3 = lua_tonumber(L, -1);
+             n = 1;
+          }
+        if (tr) lua_settop(L, i);
+     }
+   else
+     {
+        if ((lua_isnumber(L, i + 0)) && (lua_isnumber(L, i + 1)) &&
+            (lua_isnumber(L, i + 2)))
+          {
+             *v1 = lua_tonumber(L, i + 0);
+             *v2 = lua_tonumber(L, i + 1);
+             *v3 = lua_tonumber(L, i + 2);
+             n = 3;
+          }
+        if (tr) lua_newtable(L);
+     }
+   return n;
+}
 
 static int
 _elua_4_int_get(lua_State *L, int i, Eina_Bool tr,
@@ -1553,6 +1653,14 @@ _elua_int_ret(lua_State *L, const char *n, int v)
 {
    lua_pushstring(L, n);
    lua_pushinteger(L, v);
+   lua_settable(L, -3);
+}
+
+static void
+_elua_num_ret(lua_State *L, const char *n, double v)
+{
+   lua_pushstring(L, n);
+   lua_pushnumber(L, v);
    lua_settable(L, -3);
 }
 
@@ -2058,6 +2166,34 @@ _elua_obj_map_enable(lua_State *L)
 }
 
 static int
+_elua_obj_map_source(lua_State *L)
+{
+   Edje_Lua_Obj *obj = (Edje_Lua_Obj *)lua_touserdata(L, 1);
+   Edje_Lua_Evas_Object *elo = (Edje_Lua_Evas_Object *)obj;
+   int n;
+
+   if (!obj) return 0;
+   if (!obj->is_evas_obj) return 0;
+
+   n = lua_gettop(L);
+   if (n == 2)
+     {
+        Edje_Lua_Obj *obj2 = (Edje_Lua_Obj *)lua_touserdata(L, 2);
+        const Edje_Lua_Evas_Object *source = (Edje_Lua_Evas_Object *)obj2;
+
+        if (!obj2) return 0;
+        if (!obj2->is_evas_obj) return 0;
+
+        evas_object_map_source_set(elo->evas_obj, source->evas_obj);
+     }
+
+// FIXME: return this evas object.
+//   evas_object_map_source_get(elo->evas_obj);
+
+   return 1;
+}
+
+static int
 _elua_text_font(lua_State *L)
 {
    Edje_Lua_Obj *obj = (Edje_Lua_Obj *)lua_touserdata(L, 1);
@@ -2098,7 +2234,7 @@ _elua_text_font(lua_State *L)
        evas_object_text_font_set(elo->evas_obj, font, size);
     }
 
-   evas_object_text_font_get(elo->evas_obj, &font, &size);
+   evas_object_text_font_get(elo->evas_obj, (const char **) &font, &size);
    _elua_str_ret(L, "font", font);
    _elua_int_ret(L, "size", size);
    return 1;
@@ -2142,7 +2278,7 @@ _elua_image_image(lua_State *L)
         // FIXME: ONLY allow access to the images in the current edje file.
         evas_object_image_file_set(elo->evas_obj, file, key);
      }
-   evas_object_image_file_get(elo->evas_obj, &file, &key);
+   evas_object_image_file_get(elo->evas_obj, (const char **) &file, (const char **) &key);
    _elua_str_ret(L, "file", file);
    _elua_str_ret(L, "key", key);
    return 1;
@@ -2204,7 +2340,7 @@ static int _elua_edje_file(lua_State *L)
      {
         edje_object_file_set(elo->evas_obj, file, group);
      }
-   edje_object_file_get(elo->evas_obj, &file, &group);
+   edje_object_file_get(elo->evas_obj, (const char **) &file, (const char **) &group);
    _elua_str_ret(L, "file", file);
    _elua_str_ret(L, "group", group);
    return 1;
@@ -2260,6 +2396,77 @@ static int _elua_polygon_clear(lua_State *L)
 }
 
 static int
+_elua_map_alpha(lua_State *L)
+{
+   Edje_Lua_Obj *obj = (Edje_Lua_Obj *)lua_touserdata(L, 1);
+   Edje_Lua_Map *elm = (Edje_Lua_Map *)obj;
+   int n;
+
+   if (!obj) return 0;
+
+   n = lua_gettop(L);
+   if (n == 2)
+     {
+        evas_map_alpha_set(elm->map, lua_toboolean(L, 2));
+     }
+   lua_pushboolean(L, evas_map_alpha_get(elm->map));
+   return 1;
+}
+
+static int
+_elua_map_clockwise(lua_State *L)
+{
+   Edje_Lua_Obj *obj = (Edje_Lua_Obj *)lua_touserdata(L, 1);
+   Edje_Lua_Map *elm = (Edje_Lua_Map *)obj;
+
+   if (!obj) return 0;
+
+   lua_pushboolean(L, evas_map_util_clockwise_get(elm->map));
+   return 1;
+}
+
+static int
+_elua_map_colour(lua_State *L)
+{
+   Edje_Lua_Obj *obj = (Edje_Lua_Obj *)lua_touserdata(L, 1);
+   Edje_Lua_Map *elm = (Edje_Lua_Map *)obj;
+   int r, g, b, a;
+   int n;
+
+   if (!obj) return 0;
+   n = lua_gettop(L);
+
+   switch (n)
+    {
+       case 5 :
+        {
+           if (_elua_4_int_get(L, 2, EINA_FALSE, "r", &r, "g", &g, "b", &b, "a", &a) > 0)
+             {
+                evas_map_util_points_color_set(elm->map, r, g, b, a);
+             }
+           break;
+        }
+
+       case 1 :
+       case 6 :
+        {
+           if (_elua_4_int_get(L, 3, EINA_TRUE, "r", &r, "g", &g, "b", &b, "a", &a) > 0)
+             {
+                evas_map_point_color_set(elm->map, lua_tointeger(L, 2), r, g, b, a);
+             }
+           evas_map_point_color_get(elm->map, lua_tointeger(L, 2), &r, &g, &b, &a);
+           _elua_int_ret(L, "r", r);
+           _elua_int_ret(L, "g", g);
+           _elua_int_ret(L, "b", b);
+           _elua_int_ret(L, "a", a);
+           break;
+        }
+    }
+
+   return 1;
+}
+
+static int
 _elua_map_coord(lua_State *L)
 {
    Edje_Lua_Obj *obj = (Edje_Lua_Obj *)lua_touserdata(L, 1);
@@ -2284,6 +2491,44 @@ _elua_map_coord(lua_State *L)
    _elua_int_ret(L, "y", y);
    _elua_int_ret(L, "z", z);
    return 1;
+}
+
+static int
+_elua_map_lighting(lua_State *L)
+{
+   Edje_Lua_Obj *obj = (Edje_Lua_Obj *)lua_touserdata(L, 1);
+   Edje_Lua_Map *elm = (Edje_Lua_Map *)obj;
+   Evas_Coord x, y, z;
+   int r, g, b, r1, g1, b1;
+   int n;
+
+   if (!obj) return 0;
+
+   if (n = (_elua_3_int_get(L, 2, EINA_FALSE, "x", &x, "y", &y, "z", &z)) > 0)
+     if (n += _elua_3_int_get(L, 2 + n, EINA_FALSE, "r", &r, "g", &g, "b", &b) > 0)
+        if (_elua_3_int_get(L, 2 + n, EINA_FALSE, "r", &r1, "g", &g1, "b", &b1) > 0)
+           {
+              evas_map_util_3d_lighting(elm->map, x, y, z, r, g, b, r1, g1, b1);
+              return 1;
+           }
+   return 0;
+}
+
+static int
+_elua_map_perspective(lua_State *L)
+{
+   Edje_Lua_Obj *obj = (Edje_Lua_Obj *)lua_touserdata(L, 1);
+   Edje_Lua_Map *elm = (Edje_Lua_Map *)obj;
+   Evas_Coord x, y, z, f;
+
+   if (!obj) return 0;
+
+   if (_elua_4_int_get(L, 2, EINA_FALSE, "x", &x, "y", &y, "z", &z, "f", &f) > 0)
+     {
+        evas_map_util_3d_perspective(elm->map, x, y, z, f);
+        return 1;
+     }
+   return 0;
 }
 
 static int
@@ -2345,6 +2590,87 @@ _elua_map_rotate(lua_State *L)
         evas_map_util_rotate(elm->map, degrees, x, y);
      }
    return 1;
+}
+
+
+static int
+_elua_map_rotate3d(lua_State *L)
+{
+   Edje_Lua_Obj *obj = (Edje_Lua_Obj *)lua_touserdata(L, 1);
+   Edje_Lua_Map *elm = (Edje_Lua_Map *)obj;
+   double zx, zy, zz;
+   Evas_Coord x, y, z;
+   int n;
+
+   if (!obj) return 0;
+
+   if (n = (_elua_3_num_get(L, 2, EINA_FALSE, "x", &zx, "y", &zy, "z", &zz)) > 0)
+      if (_elua_3_int_get(L, 2 + n, EINA_FALSE, "x", &x, "y", &y, "z", &z) > 0)
+        {
+           evas_map_util_3d_rotate(elm->map, zx, zy, zz, x, y, z);
+           return 1;
+        }
+   return 0;
+}
+
+static int
+_elua_map_smooth(lua_State *L)
+{
+   Edje_Lua_Obj *obj = (Edje_Lua_Obj *)lua_touserdata(L, 1);
+   Edje_Lua_Map *elm = (Edje_Lua_Map *)obj;
+   int n;
+
+   if (!obj) return 0;
+
+   n = lua_gettop(L);
+   if (n == 2)
+     {
+        evas_map_smooth_set(elm->map, lua_toboolean(L, 2));
+     }
+   lua_pushboolean(L, evas_map_smooth_get(elm->map));
+   return 1;
+}
+
+static int
+_elua_map_uv(lua_State *L)
+{
+   Edje_Lua_Obj *obj = (Edje_Lua_Obj *)lua_touserdata(L, 1);
+   Edje_Lua_Map *elm = (Edje_Lua_Map *)obj;
+   double u, v;
+   int n;
+
+   if (!obj) return 0;
+   n = lua_gettop(L);
+   if (2 > n) return 0;
+
+   if (_elua_2_num_get(L, 3, EINA_TRUE, "u", &u, "v", &v) > 0)
+     {
+        evas_map_point_image_uv_set(elm->map, lua_tonumber(L, 2), u, v);
+     }
+   evas_map_point_image_uv_get(elm->map, lua_tonumber(L, 2), &u, &v);
+   _elua_num_ret(L, "u", u);
+   _elua_num_ret(L, "v", v);
+   return 1;
+}
+
+static int
+_elua_map_zoom(lua_State *L)
+{
+   Edje_Lua_Obj *obj = (Edje_Lua_Obj *)lua_touserdata(L, 1);
+   Edje_Lua_Map *elm = (Edje_Lua_Map *)obj;
+   double zx, zy;
+   Evas_Coord x, y;
+   int n;
+
+   if (!obj) return 0;
+
+   if (n = (_elua_2_num_get(L, 2, EINA_FALSE, "x", &zx, "y", &zy)) > 0)
+      if (_elua_2_int_get(L, 2 + n, EINA_FALSE, "x", &x, "y", &y) > 0)
+        {
+           evas_map_util_zoom(elm->map, zx, zy, x, y);
+           return 1;
+        }
+   return 0;
 }
 
 //-------------

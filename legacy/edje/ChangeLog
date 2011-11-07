@@ -210,3 +210,6 @@
 
 	* Lua: Added half of the evas map API.
 
+2011-11-07  David Seikel (onefang)
+
+	* Lua: Added the other half of the evas map API.
