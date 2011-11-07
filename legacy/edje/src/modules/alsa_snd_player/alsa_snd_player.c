@@ -41,77 +41,77 @@ alsa_open(int channels, unsigned samplerate)
    alsa_buffer_frames = ALSA_PLAYER_BUFFERLEN;
    alsa_period_size = ALSA_PLAYER_BUFFERLEN / 4;
    
-   if ((err = snd_pcm_open (&alsa_dev, device, SND_PCM_STREAM_PLAYBACK, 0)) < 0)
+   if ((err = snd_pcm_open(&alsa_dev, device, SND_PCM_STREAM_PLAYBACK, 0)) < 0)
      {
         goto catch_error;
      }
    
-   if ((err = snd_pcm_hw_params_malloc (&hw_params)) < 0)
+   if ((err = snd_pcm_hw_params_malloc(&hw_params)) < 0)
      {
         goto catch_error;
      }
    
    if ((err = snd_pcm_hw_params_any(alsa_dev, hw_params)) < 0)
      {
-        printf ("cannot initialize hardware parameter structure (%s)\n", snd_strerror (err));
+        printf("cannot initialize hardware parameter structure (%s)\n", snd_strerror(err));
         goto catch_error;
      }
 
    if ((err = snd_pcm_hw_params_set_access(alsa_dev, hw_params, SND_PCM_ACCESS_RW_INTERLEAVED)) < 0)
      {
-         printf ("cannot set access type (%s)\n", snd_strerror (err));
+         printf("cannot set access type (%s)\n", snd_strerror(err));
          goto catch_error;
      }
 
    if ((err = snd_pcm_hw_params_set_format(alsa_dev, hw_params, SND_PCM_FORMAT_FLOAT)) < 0)
      {
         // FIXME: handle if float format not possible
-        printf ("cannot set sample format (%s)\n", snd_strerror (err));
+        printf("cannot set sample format (%s)\n", snd_strerror(err));
         goto catch_error;
      }
    
    if ((err = snd_pcm_hw_params_set_rate_near(alsa_dev, hw_params, &samplerate, 0)) < 0)
      {
         // FIXME: get actual sample rate and tell remix
-        printf ("cannot set sample rate (%s)\n", snd_strerror (err));
+        printf("cannot set sample rate (%s)\n", snd_strerror(err));
         goto catch_error;
      }
    
    if ((err = snd_pcm_hw_params_set_channels(alsa_dev, hw_params, channels)) < 0)
      {
-        printf ("cannot set channel count (%s)\n", snd_strerror (err));
+        printf("cannot set channel count (%s)\n", snd_strerror(err));
         goto catch_error;
      }
 
    if ((err = snd_pcm_hw_params_set_buffer_size_near(alsa_dev, hw_params, &alsa_buffer_frames)) < 0)
      {
-        fprintf (stderr, "cannot set buffer size (%s)\n", snd_strerror (err));
+        fprintf(stderr, "cannot set buffer size (%s)\n", snd_strerror(err));
         goto catch_error;
      }
 
    if ((err = snd_pcm_hw_params_set_period_size_near(alsa_dev, hw_params, &alsa_period_size, 0)) < 0)
      {
-        fprintf (stderr, "cannot set period size (%s)\n", snd_strerror (err));
+        fprintf(stderr, "cannot set period size (%s)\n", snd_strerror(err));
         goto catch_error;
      }
 
    if ((err = snd_pcm_hw_params(alsa_dev, hw_params)) < 0)
      {
-        printf ("cannot set parameters (%s)\n", snd_strerror (err));
+        printf("cannot set parameters (%s)\n", snd_strerror(err));
         goto catch_error;
      }
 
    snd_pcm_hw_params_free(hw_params);
    if ((err = snd_pcm_prepare(alsa_dev)) < 0)
      {
-        printf ("cannot prepare audio interface for use (%s)\n", snd_strerror(err));
+        printf("cannot prepare audio interface for use (%s)\n", snd_strerror(err));
         goto catch_error;
      }
 
    catch_error:
    if ((err < 0) && (alsa_dev != NULL))
      {
-        snd_pcm_close (alsa_dev);
+        snd_pcm_close(alsa_dev);
         return NULL;
      }
    return alsa_dev;
@@ -166,7 +166,7 @@ alsa_player_init(RemixEnv *env, RemixBase *base, CDSet *parameters __UNUSED__)
 static RemixBase *
 alsa_player_clone(RemixEnv *env, RemixBase *base __UNUSED__)
 {
-   RemixBase *new_player = remix_base_new (env);
+   RemixBase *new_player = remix_base_new(env);
    alsa_player_init(env, new_player, NULL);
    return new_player;
 }
@@ -193,7 +193,7 @@ alsa_player_ready(RemixEnv *env, RemixBase *base)
    CDSet *channels;
    int samplerate;
 
-   channels = remix_get_channels (env);
+   channels = remix_get_channels(env);
    samplerate = (int)remix_get_samplerate(env);
    nr_channels = cd_set_size(env, channels);
    return ((samplerate == (int)player_data->frequency) &&
@@ -229,7 +229,7 @@ alsa_player_chunk(RemixEnv *env, RemixChunk *chunk, RemixCount offset, RemixCoun
         n = alsa_player_playbuffer(env, player, d, playcount);
 
         if (n == -1) return -1;
-        else n /= sizeof (PLAYER_PCM);
+        else n /= sizeof(PLAYER_PCM);
         
         offset += n;
         written += n;
@@ -266,8 +266,8 @@ alsa_player_process(RemixEnv *env, RemixBase *base, RemixCount count, RemixStrea
           }
         return processed;
      }
-   printf ("[alsa_player_process] unsupported stream/output channel\n");
-   printf ("combination %ld / %d\n", nr_channels, player_data->stereo ? 2 : 1);
+   printf("[alsa_player_process] unsupported stream/output channel\n");
+   printf("combination %ld / %d\n", nr_channels, player_data->stereo ? 2 : 1);
    return -1;
 }
 
@@ -284,7 +284,7 @@ alsa_player_seek(RemixEnv *env __UNUSED__, RemixBase *base __UNUSED__, RemixCoun
 }
 
 static int
-alsa_player_flush (RemixEnv *env, RemixBase *base)
+alsa_player_flush(RemixEnv *env, RemixBase *base)
 {
    alsa_player_reset_device(env, base);
    return 0;
