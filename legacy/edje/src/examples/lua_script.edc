@@ -186,7 +186,7 @@ collections {
          --// Toss it around.
          D.map:rotate(45.0, 75, 75);
          D.map:zoom(1.5, 1.5, 75, 75);
-         D.map:rotate3d(90.0, 180.0, 45.0, 75, 75, 0);
+         D.map:rotate3d(10.0, 20.0, 30.0, 75, 75, 0);
          D.map:perspective(200, 200, 0, 20);
 
          --// For image UV mapping.
