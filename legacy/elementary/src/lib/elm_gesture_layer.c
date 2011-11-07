@@ -1093,8 +1093,8 @@ compare_match_fingers(const void *data1, const void *data2)
 
 static int
 compare_pe_device(const void *data1, const void *data2)
-{  /* Compare coords of first item in list to cur coords */
-   const Pointer_Event *pe1 = eina_list_data_get(eina_list_last(data1));
+{  /* Compare device of first item in list to our pe device */
+   const Pointer_Event *pe1 = eina_list_data_get(data1);
    const Pointer_Event *pe2 = data2;
 
    /* Only match if last was a down event */
@@ -1263,7 +1263,19 @@ _tap_gesture_start(Widget_Data *wd, Pointer_Event *pe,
      {
       case EVAS_CALLBACK_MULTI_DOWN:
       case EVAS_CALLBACK_MOUSE_DOWN:
+         /* Check if got tap on same cord was tapped before */
          pe_list = eina_list_search_unsorted(st->l, compare_match_fingers, pe);
+
+         if ((!pe_list) &&
+               eina_list_search_unsorted(st->l, compare_pe_device, pe))
+           {  /* This device was touched in other cord before completion */
+              ev_flag = _set_state(gesture, ELM_GESTURE_STATE_ABORT,
+                    &st->info, EINA_FALSE);
+              consume_event(wd, event_info, event_type, ev_flag);
+
+              return EINA_FALSE;
+           }
+
          pe_list = _record_pointer_event(st, pe_list, pe, wd, event_info, event_type);
          if ((pe->device == 0) && (eina_list_count(pe_list) == 1))
            {  /* This is the first mouse down we got */
@@ -2325,7 +2337,6 @@ get_finger_gap_length(Evas_Coord x1, Evas_Coord y1, Evas_Coord x2,
  *
  * @ingroup Elm_Gesture_Layer
  */
-/* FIXME change float to double */
 static double
 compute_zoom(Zoom_Type *st, Evas_Coord x1, Evas_Coord y1, unsigned int tm1,
       Evas_Coord x2, Evas_Coord y2, unsigned int tm2, double zoom_finger_factor)
