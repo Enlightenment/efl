@@ -2,14 +2,15 @@ collections {
    sounds {
       sample {
          name: "sound_name1" RAW;
+         source: "8806__jovica__basic-sine-wave-g-1.wav";
 //         source: "sample.wav";
 //         source: "sample-flac10k.wav";
-         source: "sample-flac10k-mono.wav";
+//         source: "sample-flac10k-mono.wav";
       }
-      sample {
-         name: "sound_name2" COMP;
-         source: "sample.wav";
-      }
+//      sample {
+//         name: "sound_name2" COMP;
+//         source: "sample.wav";
+//      }
 /*      
       sample {
          name: "sound_name3" LOSSY 0.5;
@@ -25,14 +26,16 @@ collections {
 //         name: "sound_name5" COMP;
          name: "sound_name5" RAW;
 //         source: "sample-ogg.wav";
+         source: "sample-ogg-mono.wav";
 //         source: "sample-ogg10k.wav";
-         source: "sample-flac10k.wav";
+//         source: "sample-flac10k.wav";
 //         source: "sample-flac10k-mono.wav";
       }
       sample {
          name: "sound_name6" AS_IS;
 //         name: "sound_name6" LOSSY 45.0;
          source: "sample-flac44k-mono.wav";
+//         source: "sample-flac.wav";
 //         source: "sample.ogg";
       }
       tone: "tone-name" 2600;
