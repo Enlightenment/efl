@@ -7431,7 +7431,7 @@ st_collections_group_programs_program_action(void)
         Valid option is CURRENT.
 
         CURRENT is the option which causes the edje object to move from its current position.
-        It can be used as the last parameter of any transition type.
+        It can be used as the last parameter of any transition type. (@since 1.1.0)
 
     @endproperty
 */

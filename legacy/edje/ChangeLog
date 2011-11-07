@@ -176,6 +176,11 @@
 
 	* Entry: Added change information to entry,changed,user
 
+2011-11-03  Jaehwan Kim
+
+	* Transition: Add the "CURRENT" option which causes the edje object move
+	      from its current position.
+
 2011-10-04  Govindaraju SM, Prince Kumar Dubey
 
 	* Add Edje multisense that allows playback of samples and
