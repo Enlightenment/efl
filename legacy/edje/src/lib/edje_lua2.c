@@ -2137,7 +2137,7 @@ _elua_obj_map(lua_State *L)
    Edje_Lua_Obj *obj = (Edje_Lua_Obj *)lua_touserdata(L, 1);
    Edje_Lua_Evas_Object *elo = (Edje_Lua_Evas_Object *)obj;
    Edje_Lua_Obj *obj2 = (Edje_Lua_Obj *)lua_touserdata(L, 2);
-   Edje_Lua_Map *elm = (Edje_Lua_Map *)obj;
+   Edje_Lua_Map *elm = (Edje_Lua_Map *)obj2;
    if (!obj) return 0;
    if (!obj->is_evas_obj) return 0;
    if (!obj2) return 0;

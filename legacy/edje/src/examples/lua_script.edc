@@ -196,7 +196,7 @@ collections {
          D.map:uv(3, 0.0, 50.0);
 
          --// Actually apply the resulting transformations.
-         D.rect2:map(map);
+         D.rect2:map(D.map);
          D.rect2:map_enable(true);
          if (D.rect2:map_enable()) then
             print("lua::map enabled");
