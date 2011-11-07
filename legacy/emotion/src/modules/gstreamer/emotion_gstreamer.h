@@ -260,6 +260,29 @@ Eina_Bool _emotion_gstreamer_video_pipeline_parse(Emotion_Gstreamer_Video *ev,
 
 int em_shutdown(void *video);
 
+typedef struct _ColorSpace_FourCC_Convertion ColorSpace_FourCC_Convertion;
+typedef struct _ColorSpace_Format_Convertion ColorSpace_Format_Convertion;
+
+struct _ColorSpace_FourCC_Convertion
+{
+   const char *name;
+   guint32 fourcc;
+   Evas_Colorspace eformat;
+   Evas_Video_Convert_Cb func;
+   Eina_Bool force_height;
+};
+
+struct _ColorSpace_Format_Convertion
+{
+   const char *name;
+   GstVideoFormat format;
+   Evas_Colorspace eformat;
+   Evas_Video_Convert_Cb func;
+};
+
+extern const ColorSpace_FourCC_Convertion colorspace_fourcc_convertion[];
+extern const ColorSpace_Format_Convertion colorspace_format_convertion[];
+
 /** Samsung specific infrastructure - do not touch, do not modify */
 #define MPLANE_IMGB_MAX_COUNT 4
 #define SCMN_IMGB_MAX_PLANE 4
@@ -318,5 +341,8 @@ struct _SCMN_IMGB
    /* arbitrary data */
    int      data[16];
 };
+
+void _evas_video_st12_multiplane(unsigned char *evas_data, const unsigned char *gst_data, unsigned int w, unsigned int h, unsigned int output_height __UNUSED__);
+void _evas_video_st12(unsigned char *evas_data, const unsigned char *gst_data, unsigned int w __UNUSED__, unsigned int h, unsigned int output_height __UNUSED__);
 
 #endif /* __EMOTION_GSTREAMER_H__ */
