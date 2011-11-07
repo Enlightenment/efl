@@ -2478,15 +2478,11 @@ _elua_map_coord(lua_State *L)
    n = lua_gettop(L);
    if (2 > n) return 0;
 
-   if (_elua_4_int_get(L, 2, EINA_TRUE, "n", &n, "x", &x, "y", &y, "z", &z) > 0)
+   if (_elua_3_int_get(L, 2, EINA_TRUE, "x", &x, "y", &y, "z", &z) > 0)
      {
-        evas_map_point_coord_set(elm->map, n, x, y, z);
+        evas_map_point_coord_set(elm->map, lua_tointeger(L, 2), x, y, z);
      }
-   else
-     {
-        n = lua_tointeger(L, 2);
-        evas_map_point_coord_get(elm->map, n, &x, &y, &z);
-     }
+   evas_map_point_coord_get(elm->map, lua_tointeger(L, 2), &x, &y, &z);
    _elua_int_ret(L, "x", x);
    _elua_int_ret(L, "y", y);
    _elua_int_ret(L, "z", z);
