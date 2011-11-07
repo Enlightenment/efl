@@ -1907,7 +1907,8 @@ elm_gengrid_add(Evas_Object *parent)
    elm_smart_scroller_widget_set(wd->scr, obj);
    elm_smart_scroller_object_theme_set(obj, wd->scr, "gengrid", "base",
                                        "default");
-   elm_smart_scroller_bounce_allow_set(wd->scr, bounce, bounce);
+   elm_smart_scroller_bounce_allow_set(wd->scr, bounce,
+				       _elm_config->thumbscroll_bounce_enable);
    elm_widget_resize_object_set(obj, wd->scr);
 
    evas_object_smart_callback_add(wd->scr, "animate,start", _scr_anim_start, obj);
