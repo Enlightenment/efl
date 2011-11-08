@@ -2450,8 +2450,7 @@ ecore_x_randr_output_backlight_level_set(Ecore_X_Window       root,
 }
 
 EAPI int
-ecore_x_randr_edid_version_get(unsigned char *edid,
-                               unsigned long  edid_length)
+ecore_x_randr_edid_version_get(unsigned char *edid, unsigned long edid_length)
 {
    if ((edid_length > _ECORE_X_RANDR_EDID_OFFSET_VERSION_MINOR) &&
        (ecore_x_randr_edid_has_valid_header(edid, edid_length)))
@@ -2496,13 +2495,14 @@ ecore_x_randr_edid_display_name_get(unsigned char *edid, unsigned long edid_leng
 }
 
 EAPI Eina_Bool
-ecore_x_randr_edid_has_valid_header(unsigned char *edid,
-                                    unsigned long  edid_length)
+ecore_x_randr_edid_has_valid_header(unsigned char *edid, unsigned long edid_length)
 {
    const unsigned char header[] =
-   { 0x00, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0x00 };
-   if (!edid) return EINA_FALSE;
-   if (edid_length < 8) return EINA_FALSE;
+     { 
+        0x00, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0x00 
+     };
+
+   if ((!edid) || (edid_length < 8)) return EINA_FALSE;
    if (!memcmp(edid, header, 8)) return EINA_TRUE;
    return EINA_FALSE;
 }
