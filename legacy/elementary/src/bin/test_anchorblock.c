@@ -149,7 +149,7 @@ test_anchorblock(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event
    bb = elm_bubble_add(win);
    elm_object_text_set(bb, "Message 3");
    elm_object_text_part_set(bb, "info", "10:32 4/11/2008");
-   elm_bubble_icon_set(bb, ic);
+   elm_object_content_part_set(bb, ELM_BUBBLE_CONTENT_ICON, ic);
    evas_object_smart_callback_add(bb, "clicked", _print_clicked, NULL);
    evas_object_show(ic);
    evas_object_size_hint_weight_set(bb, EVAS_HINT_EXPAND, 0.0);
@@ -176,7 +176,7 @@ test_anchorblock(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event
    bb = elm_bubble_add(win);
    elm_object_text_set(bb, "Message 2");
    elm_object_text_part_set(bb, "info", "7:16 27/10/2008");
-   elm_bubble_icon_set(bb, ic);
+   elm_object_content_part_set(bb, ELM_BUBBLE_CONTENT_ICON, ic);
    evas_object_smart_callback_add(bb, "clicked", _print_clicked, NULL);
    evas_object_show(ic);
    evas_object_size_hint_weight_set(bb, EVAS_HINT_EXPAND, 0.0);
@@ -213,7 +213,7 @@ test_anchorblock(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event
    bb = elm_bubble_add(win);
    elm_object_text_set(bb, "Message 1");
    elm_object_text_part_set(bb, "info", "20:47 18/6/2008");
-   elm_bubble_icon_set(bb, ic);
+   elm_object_content_part_set(bb, ELM_BUBBLE_CONTENT_ICON, ic);
    evas_object_smart_callback_add(bb, "clicked", _print_clicked, NULL);
    evas_object_show(ic);
    evas_object_size_hint_weight_set(bb, EVAS_HINT_EXPAND, 0.0);

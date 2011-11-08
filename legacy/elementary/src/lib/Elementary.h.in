@@ -12464,6 +12464,9 @@ extern "C" {
     *
     * @{
     */
+
+#define ELM_BUBBLE_CONTENT_ICON "elm.swallow.icon"
+
    /**
     * Add a new bubble to the parent
     *
@@ -12565,8 +12568,11 @@ extern "C" {
     *
     * @param obj The bubble object
     * @param icon The given icon for the bubble
+    *
+    * @deprecated use elm_object_content_part_set() instead
+    *
     */
-   EAPI void         elm_bubble_icon_set(Evas_Object *obj, Evas_Object *icon) EINA_ARG_NONNULL(1);
+   EINA_DEPRECATED EAPI void         elm_bubble_icon_set(Evas_Object *obj, Evas_Object *icon) EINA_ARG_NONNULL(1);
    /**
     * Get the icon of the bubble
     *
@@ -12574,8 +12580,11 @@ extern "C" {
     * @return The icon for the bubble
     *
     * This function gets the icon shown on the top left of bubble.
+    *
+    * @deprecated use elm_object_content_part_get() instead
+    *
     */
-   EAPI Evas_Object *elm_bubble_icon_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
+   EINA_DEPRECATED EAPI Evas_Object *elm_bubble_icon_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
    /**
     * Unset the icon of the bubble
     *
@@ -12583,8 +12592,11 @@ extern "C" {
     *
     * @param obj The bubble object
     * @return The icon that was being used
+    *
+    * @deprecated use elm_object_content_part_unset() instead
+    *
     */
-   EAPI Evas_Object *elm_bubble_icon_unset(Evas_Object *obj) EINA_ARG_NONNULL(1);
+   EINA_DEPRECATED EAPI Evas_Object *elm_bubble_icon_unset(Evas_Object *obj) EINA_ARG_NONNULL(1);
    /**
     * Set the corner of the bubble
     *

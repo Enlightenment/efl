@@ -102,20 +102,17 @@ test_flip(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info _
    elm_flip_content_back_set(fl, ly);
    evas_object_show(ly);
 
-   bt = elm_button_add(win);
+   bt = elm_button_add(ly);
    elm_object_text_set(bt, "Button 1");
    elm_object_content_part_set(ly, "element1", bt);
-   evas_object_show(bt);
 
-   bt = elm_button_add(win);
+   bt = elm_button_add(ly);
    elm_object_text_set(bt, "Button 2");
    elm_object_content_part_set(ly, "element2", bt);
-   evas_object_show(bt);
 
-   bt = elm_button_add(win);
+   bt = elm_button_add(ly);
    elm_object_text_set(bt, "Button 3");
    elm_object_content_part_set(ly, "element3", bt);
-   evas_object_show(bt);
 
    evas_object_show(fl);
 

@@ -19,7 +19,8 @@ external_bubble_state_set(void *data __UNUSED__, Evas_Object *obj, const void *f
    else return;
 
    if (p->label) elm_object_text_set(obj, p->label);
-   if (p->icon) elm_bubble_icon_set(obj, p->icon);
+   if (p->icon)
+     elm_object_content_part_set(obj, ELM_BUBBLE_CONTENT_ICON, p->icon);
    if (p->info) elm_object_text_part_set(obj, "info", p->info);
    if (p->content) elm_object_content_set(obj, p->content);
 }
@@ -41,8 +42,9 @@ external_bubble_param_set(void *data __UNUSED__, Evas_Object *obj, const Edje_Ex
 	  {
 	     Evas_Object *icon = external_common_param_icon_get(obj, param);
 	     if ((strcmp(param->s, "")) && (!icon)) return EINA_FALSE;
-	     elm_bubble_icon_set(obj, icon);
-	     return EINA_TRUE;
+	     elm_object_content_part_set(obj, ELM_BUBBLE_CONTENT_ICON,
+                                         icon);
+             return EINA_TRUE;
 	  }
      }
    else if (!strcmp(param->name, "info"))

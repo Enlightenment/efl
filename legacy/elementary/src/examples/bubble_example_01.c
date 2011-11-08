@@ -40,7 +40,7 @@ elm_main(int argc, char **argv)
    evas_object_show(icon);
 
    bubble = elm_bubble_add(win);
-   elm_bubble_icon_set(bubble, icon);
+   elm_object_content_part_set(bubble, ELM_BUBBLE_CONTENT_ICON, icon);
    elm_bubble_info_set(bubble, "INFO");
    elm_object_text_set(bubble, "LABEL");
    elm_bubble_content_set(bubble, label);
