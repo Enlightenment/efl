@@ -270,7 +270,7 @@ remix_pcm_resample(SndInstanceData *si)
              src = srcbase + (pos * chnum);
              if (chnum == 2)
                {
-                  if (i == 0)
+                  if (pos == 0)
                     {
                        psam[0] = si->prevreadbuf[0];
                        psam[1] = si->prevreadbuf[1];
@@ -285,7 +285,7 @@ remix_pcm_resample(SndInstanceData *si)
                }
              else
                {
-                  if (i == 0)
+                  if (pos == 0)
                     psam[0] = si->prevreadbuf[0];
                   else
                     psam[0] = src[0 - 1];
