@@ -7,13 +7,6 @@
 #define LIG_STEP 256.0
 #define ALP_STEP 256.0
 
-typedef enum _Button_State
-{
-   BUTTON_RELEASED,
-   L_BUTTON_PRESSED,
-   R_BUTTON_PRESSED
-} Button_State;
-
 typedef enum _Color_Type
 {
    HUE,
@@ -34,7 +27,6 @@ struct _Colorselector_Data
    Evas_Object *arrow;
    Evas_Object *touch_area;
    Color_Type color_type;
-   Button_State button_state;
 };
 
 typedef struct _Widget_Data Widget_Data;
@@ -48,8 +40,6 @@ struct _Widget_Data
    int sr, sg, sb;
    int lr, lg, lb;
    double h, s, l;
-   Ecore_Timer *lp_timer;
-   Ecore_Timer *mv_timer;
 };
 
 static const char *widtype = NULL;
@@ -64,12 +54,10 @@ static void _color_with_lightness(void *data);
 static void _draw_rects(void *data, double x);
 static void _arrow_cb(void *data, Evas_Object *obj, const char *emission, const char *source);
 static void _colorbar_cb(void *data, Evas *e, Evas_Object *obj, void *event_info);
-static Eina_Bool _mv_timer(void *data);
-static Eina_Bool _long_press_timer(void *data);
-static void _left_button_down_cb(void *data, Evas *e, Evas_Object *obj, void *event_info);
-static void _right_button_down_cb(void *data, Evas *e, Evas_Object *obj, void *event_info);
-static void _left_button_up_cb(void *data, Evas *e, Evas_Object *obj, void *event_info);
-static void _right_button_up_cb(void *data, Evas *e, Evas_Object *obj, void *event_info);
+static void _left_button_clicked_cb(void *data, Evas_Object * obj, void *event_info);
+static void _left_button_repeat_cb(void *data, Evas_Object * obj, void *event_info);
+static void _right_button_clicked_cb(void *data, Evas_Object * obj, void *event_info);
+static void _right_button_repeat_cb(void *data, Evas_Object * obj, void *event_info);
 static void _add_colorbar(Evas_Object *obj);
 static void _set_color(Evas_Object *obj, int r, int g, int b, int a);
 
@@ -88,8 +76,6 @@ _del_hook(Evas_Object *obj)
    int i = 0;
 
    if (!wd) return;
-   if (wd->lp_timer) ecore_timer_del(wd->lp_timer);
-   if (wd->mv_timer) ecore_timer_del(wd->mv_timer);
    for (i = 0; i < 4; i++) free(wd->cp[i]);
    free(wd);
 }
@@ -127,6 +113,7 @@ _theme_hook(Evas_Object *obj)
      }
 
    _add_colorbar(obj);
+   elm_colorselector_color_set(obj, wd->r, wd->g, wd->b, wd->a);
    _sizing_eval(obj);
 }
 
@@ -463,56 +450,10 @@ _colorbar_cb(void *data, Evas *e, Evas_Object *obj __UNUSED__, void *event_info)
    evas_event_feed_mouse_down(e, 1, EVAS_BUTTON_NONE, 0, NULL);
 }
 
-static Eina_Bool
-_mv_timer(void *data)
-{
-   Colorselector_Data *cp = data;
-   Widget_Data *wd = elm_widget_data_get(cp->parent);
-   double x, y;
-
-   if (!wd) return EINA_FALSE;
-
-   edje_object_part_drag_value_get(cp->colorbar, "elm.arrow", &x, &y);
-   if (cp->button_state == L_BUTTON_PRESSED)
-     {
-        x -= 1.0 / BASE_STEP;
-        if (x < 0.0) x = 0.0;
-        edje_object_part_drag_value_set(cp->colorbar, "elm.arrow", x, y);
-        _draw_rects(data, x);
-        evas_object_smart_callback_call(cp->parent, SIG_CHANGED, NULL);
-        return EINA_TRUE;
-     }
-   else if (cp->button_state == R_BUTTON_PRESSED)
-     {
-        x += 1.0 / BASE_STEP;
-        if (x > 1.0) x = 1.0;
-        edje_object_part_drag_value_set(cp->colorbar, "elm.arrow", x, y);
-        _draw_rects(data, x);
-        evas_object_smart_callback_call(cp->parent, SIG_CHANGED, NULL);
-        return EINA_TRUE;
-     }
-   wd->mv_timer = NULL;
-   return EINA_FALSE;
-}
-
-static Eina_Bool
-_long_press_timer(void *data)
-{
-   Colorselector_Data *cp = data;
-   Widget_Data *wd = elm_widget_data_get(cp->parent);
-
-   if (wd->mv_timer) ecore_timer_del(wd->mv_timer);
-   wd->mv_timer = ecore_timer_add(0.01, _mv_timer, cp);
-
-   wd->lp_timer = NULL;
-   return EINA_FALSE;
-}
-
 static void
-_left_button_down_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+_left_button_clicked_cb(void *data, Evas_Object * obj __UNUSED__, void *event_info __UNUSED__)
 {
    Colorselector_Data *cp = data;
-   Widget_Data *wd = elm_widget_data_get(cp->parent);
    double x, y;
 
    edje_object_signal_emit(cp->lbt, "elm,state,left,button,down",
@@ -542,16 +483,27 @@ _left_button_down_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__
    edje_object_part_drag_value_set(cp->colorbar, "elm.arrow", x, y);
    _draw_rects(data, x);
    evas_object_smart_callback_call(cp->parent, SIG_CHANGED, NULL);
-   cp->button_state = L_BUTTON_PRESSED;
-   if (wd->lp_timer) ecore_timer_del(wd->lp_timer);
-   wd->lp_timer = ecore_timer_add(_elm_config->longpress_timeout, _long_press_timer, cp);
 }
 
 static void
-_right_button_down_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+_left_button_repeat_cb(void *data, Evas_Object * obj __UNUSED__, void *event_info __UNUSED__)
 {
    Colorselector_Data *cp = data;
-   Widget_Data *wd = elm_widget_data_get(cp->parent);
+   double x, y;
+
+   edje_object_part_drag_value_get(cp->colorbar, "elm.arrow", &x, &y);
+   x -= 1.0 / BASE_STEP;
+   if (x < 0.0) x = 0.0;
+   edje_object_part_drag_value_set(cp->colorbar, "elm.arrow", x, y);
+   _draw_rects(data, x);
+   evas_object_smart_callback_call(cp->parent, SIG_CHANGED, NULL);
+
+}
+
+static void
+_right_button_clicked_cb(void *data, Evas_Object * obj __UNUSED__, void *event_info __UNUSED__)
+{
+   Colorselector_Data *cp = data;
    double x, y;
 
    edje_object_signal_emit(cp->rbt, "elm,state,right,button,down",
@@ -581,51 +533,20 @@ _right_button_down_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED_
    edje_object_part_drag_value_set(cp->colorbar, "elm.arrow", x, y);
    _draw_rects(data, x);
    evas_object_smart_callback_call(cp->parent, SIG_CHANGED, NULL);
-   cp->button_state = R_BUTTON_PRESSED;
-   wd->lp_timer = ecore_timer_add(_elm_config->longpress_timeout, _long_press_timer, cp);
 }
 
 static void
-_left_button_up_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+_right_button_repeat_cb(void *data, Evas_Object * obj __UNUSED__, void *event_info __UNUSED__)
 {
    Colorselector_Data *cp = data;
-   Widget_Data *wd = elm_widget_data_get(cp->parent);
+   double x, y;
 
-   if (wd->lp_timer)
-     {
-        ecore_timer_del(wd->lp_timer);
-        wd->lp_timer = NULL;
-     }
-   if (wd->mv_timer)
-     {
-        ecore_timer_del(wd->mv_timer);
-        wd->mv_timer = NULL;
-     }
-
-   cp->button_state = BUTTON_RELEASED;
-   edje_object_signal_emit(cp->lbt, "elm,state,left,button,up", "left_button");
-}
-
-static void
-_right_button_up_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
-{
-   Colorselector_Data *cp = data;
-   Widget_Data *wd = elm_widget_data_get(cp->parent);
-
-   if (wd->lp_timer)
-     {
-        ecore_timer_del(wd->lp_timer);
-        wd->lp_timer = NULL;
-     }
-   if (wd->mv_timer)
-     {
-        ecore_timer_del(wd->mv_timer);
-        wd->mv_timer = NULL;
-     }
-
-   cp->button_state = BUTTON_RELEASED;
-   edje_object_signal_emit(cp->rbt, "elm,state,right,button,up",
-                           "right_button");
+   edje_object_part_drag_value_get(cp->colorbar, "elm.arrow", &x, &y);
+   x += 1.0 / BASE_STEP;
+   if (x > 1.0) x = 1.0;
+   edje_object_part_drag_value_set(cp->colorbar, "elm.arrow", x, y);
+   _draw_rects(data, x);
+   evas_object_smart_callback_call(cp->parent, SIG_CHANGED, NULL);
 }
 
 static void
@@ -636,6 +557,7 @@ _add_colorbar(Evas_Object *obj)
    Widget_Data *wd;
    Evas *e;
    int i = 0;
+   char buf[1024];
 
    wd = elm_widget_data_get(obj);
    if (!wd) return;
@@ -666,7 +588,7 @@ _add_colorbar(Evas_Object *obj)
         /* load colorbar area */
         wd->cp[i]->colorbar = edje_object_add(e);
         _elm_theme_object_set(obj, wd->cp[i]->colorbar, "colorselector", "base",
-                              "default");
+                              elm_widget_style_get(obj));
         snprintf(colorbar_name, sizeof(colorbar_name), "colorbar_%d", i);
         snprintf(colorbar_s, sizeof(colorbar_s), "elm.colorbar_%d", i);
         edje_object_signal_callback_add(wd->cp[i]->colorbar, "drag", "*",
@@ -676,8 +598,9 @@ _add_colorbar(Evas_Object *obj)
 
         /* load colorbar image */
         wd->cp[i]->bar = edje_object_add(e);
+        snprintf(buf, sizeof(buf), "%s/%s", colorbar_name, elm_widget_style_get(obj));
         _elm_theme_object_set(obj, wd->cp[i]->bar, "colorselector", "image",
-                              colorbar_name);
+                              buf);
         edje_object_part_swallow(wd->cp[i]->colorbar, "elm.bar",
                                  wd->cp[i]->bar);
         elm_widget_sub_object_add(obj, wd->cp[i]->bar);
@@ -707,8 +630,9 @@ _add_colorbar(Evas_Object *obj)
         if (i == 3)
           {
              wd->cp[i]->bg_rect = edje_object_add(e);
+             snprintf(buf, sizeof(buf), "%s/%s", colorbar_name, elm_widget_style_get(obj));
              _elm_theme_object_set(obj, wd->cp[i]->bg_rect, "colorselector",
-                                   "bg_image", colorbar_name);
+                                   "bg_image", buf);
              edje_object_part_swallow(wd->cp[i]->colorbar, "elm.bar_bg",
                                       wd->cp[i]->bg_rect);
              elm_widget_sub_object_add(obj, wd->cp[i]->bg_rect);
@@ -716,8 +640,8 @@ _add_colorbar(Evas_Object *obj)
           }
         /* load arrow image, pointing the colorbar */
         wd->cp[i]->arrow = edje_object_add(e);
-        _elm_theme_object_set(obj, wd->cp[i]->arrow, "colorselector", "image",
-                              "updown");
+        _elm_theme_object_set(obj, wd->cp[i]->arrow, "colorselector", "arrow",
+                              elm_widget_style_get(obj));
         edje_object_part_swallow(wd->cp[i]->colorbar, "elm.arrow_icon",
                                  wd->cp[i]->arrow);
         elm_widget_sub_object_add(obj, wd->cp[i]->arrow);
@@ -727,28 +651,30 @@ _add_colorbar(Evas_Object *obj)
           evas_object_color_set(wd->cp[i]->arrow, wd->er, wd->eg, wd->eb, 255);
 
         /* load left button */
-        wd->cp[i]->lbt = edje_object_add(e);
-        _elm_theme_object_set(obj, wd->cp[i]->lbt, "colorselector", "button",
-                              "left");
-        evas_object_event_callback_add(wd->cp[i]->lbt, EVAS_CALLBACK_MOUSE_DOWN,
-                                       _left_button_down_cb, wd->cp[i]);
-        evas_object_event_callback_add(wd->cp[i]->lbt, EVAS_CALLBACK_MOUSE_UP,
-                                       _left_button_up_cb, wd->cp[i]);
+        wd->cp[i]->lbt = elm_button_add(obj);
+        snprintf(buf, sizeof(buf), "colorselector/left/%s", elm_widget_style_get(obj));
+        elm_object_style_set(wd->cp[i]->lbt, buf);
+        elm_widget_sub_object_add(obj, wd->cp[i]->lbt);
         edje_object_part_swallow(wd->cp[i]->colorbar, "elm.l_button",
                                  wd->cp[i]->lbt);
-        elm_widget_sub_object_add(obj, wd->cp[i]->lbt);
+        evas_object_smart_callback_add(wd->cp[i]->lbt, "clicked", _left_button_clicked_cb, wd->cp[i]);
+        elm_button_autorepeat_set(wd->cp[i]->lbt, EINA_TRUE);
+        elm_button_autorepeat_initial_timeout_set(wd->cp[i]->lbt, _elm_config->longpress_timeout);
+        elm_button_autorepeat_gap_timeout_set(wd->cp[i]->lbt, (1.0 / _elm_config->fps));
+        evas_object_smart_callback_add(wd->cp[i]->lbt, "repeated",_left_button_repeat_cb, wd->cp[i]);
 
         /* load right button */
-        wd->cp[i]->rbt = edje_object_add(e);
-        _elm_theme_object_set(obj, wd->cp[i]->rbt, "colorselector", "button",
-                              "right");
-        evas_object_event_callback_add(wd->cp[i]->rbt, EVAS_CALLBACK_MOUSE_DOWN,
-                                       _right_button_down_cb, wd->cp[i]);
-        evas_object_event_callback_add(wd->cp[i]->rbt, EVAS_CALLBACK_MOUSE_UP,
-                                       _right_button_up_cb, wd->cp[i]);
+        wd->cp[i]->rbt = elm_button_add(obj);
+        snprintf(buf, sizeof(buf), "colorselector/right/%s", elm_widget_style_get(obj));
+        elm_object_style_set(wd->cp[i]->rbt, buf);
+        elm_widget_sub_object_add(obj, wd->cp[i]->rbt);
         edje_object_part_swallow(wd->cp[i]->colorbar, "elm.r_button",
                                  wd->cp[i]->rbt);
-        elm_widget_sub_object_add(obj, wd->cp[i]->rbt);
+        evas_object_smart_callback_add(wd->cp[i]->rbt, "clicked", _right_button_clicked_cb, wd->cp[i]);
+        elm_button_autorepeat_set(wd->cp[i]->rbt, EINA_TRUE);
+        elm_button_autorepeat_initial_timeout_set(wd->cp[i]->rbt, _elm_config->longpress_timeout);
+        elm_button_autorepeat_gap_timeout_set(wd->cp[i]->rbt, (1.0 / _elm_config->fps));
+        evas_object_smart_callback_add(wd->cp[i]->rbt, "repeated",_right_button_repeat_cb, wd->cp[i]);
      }
 }
 
