@@ -1660,7 +1660,7 @@ elm_win_resize_object_add(Evas_Object *obj, Evas_Object *subobj)
    evas_object_event_callback_add(subobj, EVAS_CALLBACK_CHANGED_SIZE_HINTS,
                                   _elm_win_subobj_callback_changed_size_hints,
                                   obj);
-   ecore_evas_geometry_get(win->ee, NULL, NULL, &w, &h);
+   evas_object_geometry_get(obj, NULL, NULL, &w, &h);
    evas_object_move(subobj, 0, 0);
    evas_object_resize(subobj, w, h);
    _elm_win_eval_subobjs(obj);
