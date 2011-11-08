@@ -572,22 +572,20 @@ _title_content_set(Elm_Naviframe_Item *it,
                                               EINA_INLIST_GET(pair));
      }
 
-   if (pair->content == content) return;
-
-   if (pair->content)
+   if (pair->content != content)
      {
         evas_object_event_callback_del(pair->content,
                                        EVAS_CALLBACK_DEL,
                                        _title_content_del);
         evas_object_del(pair->content);
-     }
-   if (content)
-     {
         elm_widget_sub_object_add(WIDGET(it), content);
         evas_object_event_callback_add(content,
                                        EVAS_CALLBACK_DEL,
                                        _title_content_del,
                                        pair);
+     }
+   if (content)
+     {
         edje_object_part_swallow(VIEW(it), part, content);
         snprintf(buf, sizeof(buf), "elm,state,%s,show", part);
         edje_object_signal_emit(VIEW(it), buf, "elm");
