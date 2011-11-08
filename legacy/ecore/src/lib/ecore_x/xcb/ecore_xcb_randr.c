@@ -3,11 +3,9 @@
  * ecore_x_randr_crtc_clone_set
  * ecore_x_randr_output_size_mm_get
  * ecore_x_randr_output_crtc_set
- * ecore_x_randr_edid_valid_header
  * ecore_x_randr_edid_version_get
  * ecore_x_randr_edid_info_has_valid_checksum
  * ecore_x_randr_edid_manufacturer_name_get
- * ecore_x_randr_edid_display_name_get
  * ecore_x_randr_edid_display_ascii_get
  * ecore_x_randr_edid_display_serial_get
  * ecore_x_randr_edid_model_get
@@ -54,6 +52,21 @@
 #define RANDR_CHECK_1_1_RET(ret) if (_randr_version < RANDR_1_1) return ret
 #define RANDR_CHECK_1_2_RET(ret) if (_randr_version < RANDR_1_2) return ret
 #define RANDR_CHECK_1_3_RET(ret) if (_randr_version < RANDR_1_3) return ret
+
+#define ECORE_X_RANDR_EDID_VERSION_13 ((1 << 8) | 3)
+#define _ECORE_X_RANDR_EDID_OFFSET_VERSION_MAJOR 0x12
+#define _ECORE_X_RANDR_EDID_OFFSET_VERSION_MINOR 0x13
+#define _ECORE_X_RANDR_EDID_OFFSET_DESCRIPTOR_BLOCK 0x36
+#define _ECORE_X_RANDR_EDID_OFFSET_DESCRIPTOR_BLOCK_TYPE 3
+#define _ECORE_X_RANDR_EDID_OFFSET_DESCRIPTOR_BLOCK_CONTENT 5
+#define _ECORE_X_RANDR_EDID_DISPLAY_DESCRIPTOR_BLOCK_CONTENT_LENGTH_MAX 13
+
+#define _ECORE_X_RANDR_EDID_FOR_EACH_DESCRIPTOR_BLOCK(edid, block) \
+  for (block = edid + _ECORE_X_RANDR_EDID_OFFSET_DESCRIPTOR_BLOCK; block <= (edid + _ECORE_X_RANDR_EDID_OFFSET_DESCRIPTOR_BLOCK + (3 * 18)); block += 18)
+
+#define _ECORE_X_RANDR_EDID_FOR_EACH_NON_PIXEL_DESCRIPTOR_BLOCK(edid, block) \
+  _ECORE_X_RANDR_EDID_FOR_EACH_DESCRIPTOR_BLOCK(edid, block)                 \
+  if ((block[0] == 0) && (block[1] == 0))
 
 /* local function prototypes */
 static Eina_Bool                                       _ecore_xcb_randr_output_validate(Ecore_X_Window       root,
@@ -2433,6 +2446,64 @@ ecore_x_randr_output_backlight_level_set(Ecore_X_Window       root,
         return EINA_TRUE;
      }
 #endif
+   return EINA_FALSE;
+}
+
+EAPI int
+ecore_x_randr_edid_version_get(unsigned char *edid,
+                               unsigned long  edid_length)
+{
+   if ((edid_length > _ECORE_X_RANDR_EDID_OFFSET_VERSION_MINOR) &&
+       (ecore_x_randr_edid_has_valid_header(edid, edid_length)))
+     return (edid[_ECORE_X_RANDR_EDID_OFFSET_VERSION_MAJOR] << 8) |
+            edid[_ECORE_X_RANDR_EDID_OFFSET_VERSION_MINOR];
+   return ECORE_X_RANDR_EDID_UNKNOWN_VALUE;
+}
+
+EAPI char *
+ecore_x_randr_edid_display_name_get(unsigned char *edid, unsigned long edid_length) 
+{
+   unsigned char *block = NULL;
+   int version = 0;
+
+   version = ecore_x_randr_edid_version_get(edid, edid_length);
+   if (version < ECORE_X_RANDR_EDID_VERSION_13) return NULL;
+
+   _ECORE_X_RANDR_EDID_FOR_EACH_NON_PIXEL_DESCRIPTOR_BLOCK(edid, block)
+     {
+        if (block[_ECORE_X_RANDR_EDID_OFFSET_DESCRIPTOR_BLOCK_TYPE] == 0xfc)
+          {
+             char *name, *p;
+             const char *edid_name;
+
+             edid_name = (const char *)block + 
+               _ECORE_X_RANDR_EDID_OFFSET_DESCRIPTOR_BLOCK_CONTENT;
+             name = 
+               malloc(sizeof(char) * 
+                      _ECORE_X_RANDR_EDID_DISPLAY_DESCRIPTOR_BLOCK_CONTENT_LENGTH_MAX);
+             if (!name) return NULL;
+
+             strncpy(name, edid_name, 
+                     (_ECORE_X_RANDR_EDID_DISPLAY_DESCRIPTOR_BLOCK_CONTENT_LENGTH_MAX - 1));
+             name[_ECORE_X_RANDR_EDID_DISPLAY_DESCRIPTOR_BLOCK_CONTENT_LENGTH_MAX] = 0;
+             for (p = name; *p; p++)
+               if ((*p < ' ') || (*p > '~')) *p = 0;
+
+             return name;
+          }
+     }
+   return NULL;
+}
+
+EAPI Eina_Bool
+ecore_x_randr_edid_has_valid_header(unsigned char *edid,
+                                    unsigned long  edid_length)
+{
+   const unsigned char header[] =
+   { 0x00, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0x00 };
+   if (!edid) return EINA_FALSE;
+   if (edid_length < 8) return EINA_FALSE;
+   if (!memcmp(edid, header, 8)) return EINA_TRUE;
    return EINA_FALSE;
 }
 
