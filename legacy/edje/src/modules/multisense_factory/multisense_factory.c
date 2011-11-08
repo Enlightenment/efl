@@ -1,5 +1,5 @@
 #include "config.h"
-#include <edje_private.h>
+#include "edje_private.h"
 
 #define DEFAULT_SAMPLERATE 44100
 
@@ -14,10 +14,10 @@ multisense_sound_player_get(Edje_Multisense_Env *msenv)
    player_plugin = remix_find_plugin(env, "alsa_snd_player");
    if (!player_plugin)
      {
-        printf("ALSA player_plugin init fail\n");
+        WRN("ALSA player_plugin init fail\n");
         return remix_monitor_new(env);
      }
-   player =  remix_new(env, player_plugin, NULL);
+   player = remix_new(env, player_plugin, NULL);
    return player;
 }
 #endif
