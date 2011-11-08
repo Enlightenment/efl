@@ -1716,7 +1716,7 @@ _momentum_test(Evas_Object *obj, Pointer_Event *pe,
    Gesture_Info *gesture = wd->gesture[g_type];
    if (!gesture ) return;
 
-   if (!eina_list_count(wd->touched))
+   if ((wd->glayer_continues_enable) && (!eina_list_count(wd->touched)))
      return; /* Got move on mouse-over move */
 
    Momentum_Type *st = gesture->data;
@@ -1967,7 +1967,7 @@ _n_line_test(Evas_Object *obj, Pointer_Event *pe, void *event_info,
    Gesture_Info *gesture = wd->gesture[g_type];
    if (!gesture ) return;
 
-   if (!eina_list_count(wd->touched))
+   if ((wd->glayer_continues_enable) && (!eina_list_count(wd->touched)))
      return; /* Got move on mouse-over move */
 
    Line_Type *st = gesture->data;
