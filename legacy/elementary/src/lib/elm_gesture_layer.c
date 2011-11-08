@@ -1716,6 +1716,12 @@ _momentum_test(Evas_Object *obj, Pointer_Event *pe,
    Gesture_Info *gesture = wd->gesture[g_type];
    if (!gesture ) return;
 
+   /* When continues enable = TRUE a gesture may START on MOVE event */
+   /* We don't allow this to happen with the if-statement below.     */
+   /* When continues enable = FALSE a gesture may START on DOWN only */
+   /* Therefor it would NOT start on MOVE event.                     */
+   /* NOTE that touched list is updated AFTER this function returns  */
+   /* so (count == 0) when we get here on first touch on surface.    */
    if ((wd->glayer_continues_enable) && (!eina_list_count(wd->touched)))
      return; /* Got move on mouse-over move */
 
@@ -1967,6 +1973,12 @@ _n_line_test(Evas_Object *obj, Pointer_Event *pe, void *event_info,
    Gesture_Info *gesture = wd->gesture[g_type];
    if (!gesture ) return;
 
+   /* When continues enable = TRUE a gesture may START on MOVE event */
+   /* We don't allow this to happen with the if-statement below.     */
+   /* When continues enable = FALSE a gesture may START on DOWN only */
+   /* Therefor it would NOT start on MOVE event.                     */
+   /* NOTE that touched list is updated AFTER this function returns  */
+   /* so (count == 0) when we get here on first touch on surface.    */
    if ((wd->glayer_continues_enable) && (!eina_list_count(wd->touched)))
      return; /* Got move on mouse-over move */
 
