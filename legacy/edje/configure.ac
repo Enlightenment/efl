@@ -335,19 +335,14 @@ AC_ARG_ENABLE([remix],
 
 if test "x${want_multisense}" = "xyes" -a "x$want_libremix" != "xno"; then
    PKG_CHECK_MODULES([REMIX],
-      [remix >= 0.2.3],
+      [remix >= 0.2.4],
       [
        AC_DEFINE(HAVE_LIBREMIX, 1, [remix support for Edje])
        have_libremix="yes"
-       requirement_edje="remix >= 0.2.3 ${requirement_edje}"
+       requirement_edje="remix >= 0.2.4 ${requirement_edje}"
        AC_DEFINE(__REMIX_PLUGIN__, 1, "Set to REMIX Plugin type")
-       REMIX_PLUGIN_DIR="${libdir}/remix"
+       REMIX_PLUGIN_DIR=`pkg-config --variable=libdir remix`"/remix"
        AC_SUBST(REMIX_PLUGIN_DIR)
-       if test "x${prefix}" = "xNONE"; then
-         REMIX_PLUGIN_DIR="${ac_default_prefix}/lib/remix"
-       else
-         REMIX_PLUGIN_DIR="${prefix}/lib/remix"
-       fi
        AC_DEFINE_UNQUOTED(REMIX_PLUGIN_DIR, "$REMIX_PLUGIN_DIR", [Set the remix plugin directory])
        ],
       [have_libremix="no"; want_multisense="no"]
