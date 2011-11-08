@@ -28524,8 +28524,8 @@ extern "C" {
     * @param item_style The current item style name. @c NULL would be default.
     * @return The created item or @c NULL upon failure.
     *
-    * The item is inserted into the naviframe straight away without any 
-    * transition operations. This item will be deleted when it is popped. 
+    * The item is inserted into the naviframe straight away without any
+    * transition operations. This item will be deleted when it is popped.
     *
     * @see also elm_naviframe_item_style_set()
     * @see also elm_naviframe_item_push()
@@ -28554,8 +28554,8 @@ extern "C" {
     * @param item_style The current item style name. @c NULL would be default.
     * @return The created item or @c NULL upon failure.
     *
-    * The item is inserted into the naviframe straight away without any 
-    * transition operations. This item will be deleted when it is popped. 
+    * The item is inserted into the naviframe straight away without any
+    * transition operations. This item will be deleted when it is popped.
     *
     * @see also elm_naviframe_item_style_set()
     * @see also elm_naviframe_item_push()
