@@ -64,9 +64,16 @@ ecore_x_gesture_supported(void)
    return _gesture_available;
 }
 
+#ifdef ECORE_XCB_XGESTURE
 EAPI Eina_Bool
 ecore_x_gesture_events_select(Ecore_X_Window win,
                               Ecore_X_Gesture_Event_Mask mask)
+#else
+EAPI Eina_Bool
+ecore_x_gesture_events_select(Ecore_X_Window win __UNUSED__,
+                              Ecore_X_Gesture_Event_Mask mask __UNUSED__)
+#endif
+
 {
 #ifdef ECORE_XCB_XGESTURE
    if (!_gesture_available) return EINA_FALSE;
@@ -82,8 +89,13 @@ ecore_x_gesture_events_select(Ecore_X_Window win,
 #endif
 }
 
+#ifdef ECORE_XCB_XGESTURE
 EAPI Ecore_X_Gesture_Event_Mask
 ecore_x_gesture_events_selected_get(Ecore_X_Window win)
+#else
+EAPI Ecore_X_Gesture_Event_Mask
+ecore_x_gesture_events_selected_get(Ecore_X_Window win __UNUSED__)
+#endif
 {
 #ifdef ECORE_XCB_XGESTURE
    xcb_gesture_get_selected_events_cookie_t ecookie;
@@ -110,10 +122,17 @@ ecore_x_gesture_events_selected_get(Ecore_X_Window win)
 #endif
 }
 
+#ifdef ECORE_XCB_XGESTURE
 EAPI Eina_Bool
 ecore_x_gesture_event_grab(Ecore_X_Window win,
                            Ecore_X_Gesture_Event_Type type,
                            int num_fingers)
+#else
+EAPI Eina_Bool
+ecore_x_gesture_event_grab(Ecore_X_Window win __UNUSED__,
+                           Ecore_X_Gesture_Event_Type type __UNUSED__,
+                           int num_fingers __UNUSED__)
+#endif
 {
 #ifdef ECORE_XCB_XGESTURE
    Eina_Bool status = EINA_TRUE;
@@ -143,10 +162,17 @@ ecore_x_gesture_event_grab(Ecore_X_Window win,
 #endif
 }
 
+#ifdef ECORE_XCB_XGESTURE
 EAPI Eina_Bool
 ecore_x_gesture_event_ungrab(Ecore_X_Window win,
                              Ecore_X_Gesture_Event_Type type,
                              int num_fingers)
+#else
+EAPI Eina_Bool
+ecore_x_gesture_event_ungrab(Ecore_X_Window win __UNUSED__,
+                             Ecore_X_Gesture_Event_Type type __UNUSED__,
+                             int num_fingers __UNUSED__)
+#endif
 {
 #ifdef ECORE_XCB_XGESTURE
    Eina_Bool status = EINA_TRUE;
