@@ -22,6 +22,7 @@ ecore_suite.h
 
 ecore_suite_LDADD = \
 @CHECK_LIBS@ \
+@EINA_LIBS@ \
 $(top_builddir)/src/lib/ecore/libecore.la \
 $(top_builddir)/src/lib/ecore_con/libecore_con.la
 
