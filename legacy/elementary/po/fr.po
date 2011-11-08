@@ -3,13 +3,12 @@
 # batden <batden@orange.fr>, 2011.
 # dazibao <dazibao@sfr.fr>, 2011.
 #
-#: src/lib/elm_config.c:1400
 msgid ""
 msgstr ""
 "Project-Id-Version: Elementary\n"
 "Report-Msgid-Bugs-To: enlightenment-devel@lists.sourceforge.net\n"
 "POT-Creation-Date: 2011-11-03 10:38+0900\n"
-"PO-Revision-Date: 2011-09-29 14:09+0200\n"
+"PO-Revision-Date: 2011-11-08 07:57+0100\n"
 "Last-Translator: dazibao <dazibao@sfr.fr>\n"
 "Language-Team: French <sansgourou@gmail.com>\n"
 "Language: \n"
@@ -29,7 +28,8 @@ msgstr "Monter"
 msgid "Home"
 msgstr "Home"
 
-#: src/lib/elc_fileselector.c:1002 src/lib/elm_entry.c:1214
+#: src/lib/elc_fileselector.c:1002
+#: src/lib/elm_entry.c:1214
 msgid "Cancel"
 msgstr "Annuler"
 
@@ -41,7 +41,9 @@ msgstr "OK"
 msgid "Clicked"
 msgstr "Cliqué"
 
-#: src/lib/elm_button.c:399 src/lib/elm_check.c:357 src/lib/elm_radio.c:295
+#: src/lib/elm_button.c:399
+#: src/lib/elm_check.c:357
+#: src/lib/elm_radio.c:295
 #: src/lib/elm_toolbar.c:731
 msgid "State: Disabled"
 msgstr "État : désactivé"
@@ -54,20 +56,25 @@ msgstr "Bouton"
 msgid "%B %Y"
 msgstr "%B %Y"
 
-#: src/lib/elm_check.c:274 src/lib/elm_check.c:277 src/lib/elm_check.c:368
-#: src/lib/elm_radio.c:231 src/lib/elm_radio.c:297
+#: src/lib/elm_check.c:274
+#: src/lib/elm_check.c:277
+#: src/lib/elm_check.c:368
+#: src/lib/elm_radio.c:231
+#: src/lib/elm_radio.c:297
 msgid "State: On"
 msgstr "État : activé"
 
-#: src/lib/elm_check.c:287 src/lib/elm_check.c:290 src/lib/elm_check.c:377
+#: src/lib/elm_check.c:287
+#: src/lib/elm_check.c:290
+#: src/lib/elm_check.c:377
 #: src/lib/elm_radio.c:298
 msgid "State: Off"
 msgstr "État : désactivé"
 
-#: src/lib/elm_check.c:364 src/lib/elm_check.c:374
-#, fuzzy
+#: src/lib/elm_check.c:364
+#: src/lib/elm_check.c:374
 msgid "State"
-msgstr "État : activé"
+msgstr "État"
 
 #: src/lib/elm_check.c:427
 msgid "Check"
@@ -99,11 +106,11 @@ msgstr "Radio"
 
 #: src/lib/elm_toggle.c:11
 msgid "ON"
-msgstr ""
+msgstr "OUI"
 
 #: src/lib/elm_toggle.c:12
 msgid "OFF"
-msgstr ""
+msgstr "NON"
 
 #: src/lib/elm_toolbar.c:648
 msgid "Selected"
@@ -124,3 +131,4 @@ msgstr "Possède un menu"
 #: src/lib/elm_toolbar.c:765
 msgid "Tool Item"
 msgstr "Élément outil"
+
