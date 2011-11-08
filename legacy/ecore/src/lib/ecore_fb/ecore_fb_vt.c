@@ -29,13 +29,12 @@ static void *_ecore_fb_func_fb_gain_data = NULL;
 /* FIXME what is the filter for? */
 static Ecore_Event_Filter *_ecore_fb_filter_handler = NULL;
 
-static void *_ecore_fb_event_filter_start(void *data);
-static Eina_Bool   _ecore_fb_event_filter_filter(void *data, void *loop_data, int type, void *event);
-static void  _ecore_fb_event_filter_end(void *data, void *loop_data);
-
 /* prototypes */
 /* XXX: unused
 static void _ecore_fb_vt_switch(int vt);
+static void *_ecore_fb_event_filter_start(void *data);
+static Eina_Bool _ecore_fb_event_filter_filter(void *data, void *loop_data, int type, void *event);
+static void _ecore_fb_event_filter_end(void *data, void *loop_data);
 */
 
 static Eina_Bool
