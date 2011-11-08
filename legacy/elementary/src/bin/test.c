@@ -502,7 +502,8 @@ elm_main(int argc, char **argv)
      {
         /* Just a workaround to make the shot module more
          * useful with elementary test. */
-        if (!strcmp(argv[1], "--test-win-only"))
+        if ((!strcmp(argv[1], "--test-win-only")) ||
+            (!strcmp(argv[1], "-to")))
           {
              test_win_only = EINA_TRUE;
              autorun = argv[2];
