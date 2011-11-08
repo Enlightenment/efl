@@ -1022,21 +1022,19 @@ elm_naviframe_item_insert_before(Elm_Object_Item *before,
                                  const char *item_style)
 {
    ELM_OBJ_ITEM_CHECK_OR_RETURN(before, NULL);
-   Elm_Naviframe_Item *before_it;
    Elm_Naviframe_Item *it;
    Widget_Data *wd;
 
-   before_it = (Elm_Naviframe_Item *) before;
-   wd = elm_widget_data_get(WIDGET(before_it));
+   wd = elm_widget_data_get(WIDGET(before));
    if (!wd) return NULL;
 
-   it = _item_new(WIDGET(before_it), title_label, prev_btn, next_btn, content,
+   it = _item_new(WIDGET(before), title_label, prev_btn, next_btn, content,
                   item_style);
    if (!it) return NULL;
 
    wd->stack =
       eina_inlist_prepend_relative(wd->stack, EINA_INLIST_GET(it),
-                                   EINA_INLIST_GET(before_it));
+                                   EINA_INLIST_GET(((Elm_Naviframe_Item *) before)));
    return (Elm_Object_Item *) it;
 }
 
@@ -1050,25 +1048,23 @@ elm_naviframe_item_insert_after(Elm_Object_Item *after,
 {
    ELM_OBJ_ITEM_CHECK_OR_RETURN(after, NULL);
    Elm_Naviframe_Item *it;
-   Elm_Naviframe_Item *after_it;
    Widget_Data *wd;
 
-   after_it = (Elm_Naviframe_Item *) after;
-   wd = elm_widget_data_get(WIDGET(after_it));
+   wd = elm_widget_data_get(WIDGET(after));
    if (!wd) return NULL;
 
-   it = _item_new(WIDGET(after_it), title_label, prev_btn, next_btn, content,
+   it = _item_new(WIDGET(after), title_label, prev_btn, next_btn, content,
                   item_style);
    if (!it) return NULL;
 
-   if (elm_naviframe_top_item_get(WIDGET(after_it)) == after)
+   if (elm_naviframe_top_item_get(WIDGET(after)) == after)
      {
-        evas_object_hide(VIEW(after_it));
+        evas_object_hide(VIEW(after));
         evas_object_show(VIEW(it));
      }
    wd->stack =
       eina_inlist_append_relative(wd->stack, EINA_INLIST_GET(it),
-                                  EINA_INLIST_GET(after_it));
+                                  EINA_INLIST_GET(((Elm_Naviframe_Item *) after)));
    return (Elm_Object_Item *) it;
 }
 
