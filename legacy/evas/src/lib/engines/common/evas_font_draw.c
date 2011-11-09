@@ -97,17 +97,16 @@ evas_common_font_draw_internal(RGBA_Image *dst, RGBA_Draw_Context *dc, RGBA_Font
    EVAS_FONT_WALK_TEXT_INIT();
 
    fi = text_props->font_instance;
-   if (fi)
-     {
-        evas_common_font_int_reload(fi);
+   if (!fi) return;
 
-        if (fi->src->current_size != fi->size)
-          {
-             FTLOCK();
-             FT_Activate_Size(fi->ft.size);
-             FTUNLOCK();
-             fi->src->current_size = fi->size;
-          }
+   evas_common_font_int_reload(fi);
+
+   if (fi->src->current_size != fi->size)
+     {
+        FTLOCK();
+        FT_Activate_Size(fi->ft.size);
+        FTUNLOCK();
+        fi->src->current_size = fi->size;
      }
 
 
