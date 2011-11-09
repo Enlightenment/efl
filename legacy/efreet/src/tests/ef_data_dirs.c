@@ -182,7 +182,6 @@ ef_cb_efreet_data_dirs(void)
     setenv("XDG_DATA_DIRS", dirs, 1);
     efreet_init();
 
-    i = 0;
     ok = 0;
     tmp = efreet_data_dirs_get();
     for (i = 0; vals[i]; i++)
@@ -271,7 +270,6 @@ ef_cb_efreet_config_dirs(void)
     setenv("XDG_CONFIG_DIRS", dirs, 1);
     efreet_init();
 
-    i = 0;
     ok = 0;
     tmp = efreet_config_dirs_get();
     for (i = 0; vals[i]; i++)
