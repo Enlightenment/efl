@@ -723,22 +723,23 @@ evas_common_font_query_last_up_to_pos(RGBA_Font *fn, const Evas_Text_Props *text
 #ifdef BIDI_SUPPORT
    if (text_props->bidi.dir == EVAS_BIDI_DIRECTION_RTL)
      {
-        Evas_Font_Glyph_Info *gli = (text_props->info) ?
-           text_props->info->glyph + text_props->start : NULL;
+        Evas_Font_Glyph_Info *gli = NULL;
         Evas_Coord full_adv = 0, pen_x = 0, start_pen = 0;
         int i;
 
-        if (text_props->len > 0)
+        if ((text_props->info) && (text_props->len > 0))
           {
+             gli = text_props->info->glyph + text_props->start;
              full_adv = gli[text_props->len - 1].pen_after;
              if (text_props->start > 0)
                {
                   start_pen = gli[-1].pen_after;
                   full_adv -= start_pen;
                }
+
+             gli += text_props->len - 1;
           }
 
-        gli += text_props->len - 1;
         for (i = text_props->len - 1 ; i >= 0 ; i--, gli--)
           {
              pen_x = full_adv - (gli->pen_after - start_pen);
