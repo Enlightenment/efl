@@ -14,6 +14,8 @@
 # include <Eeze.h>
 #endif
 
+#include <Eet.h>
+
 EAPI int EMOTION_WEBCAM_UPDATE = 0;
 
 struct ext_match_s
@@ -118,7 +120,13 @@ emotion_object_extension_may_play_get(const char *file)
    return result;
 }
 
-#ifdef EMOTION_HAVE_EEZE
+typedef struct _Emotion_Webcams Emotion_Webcams;
+
+struct _Emotion_Webcams
+{
+   Eina_List *webcams;
+};
+
 struct _Emotion_Webcam
 {
    EINA_REFCOUNT;
@@ -127,19 +135,49 @@ struct _Emotion_Webcam
    const char *device;
    const char *name;
 
+   const char *custom;
+
    const char *filename;
 };
 
 static int _emotion_webcams_count = 0;
-static Eina_List *_emotion_webcams = NULL;
+static Eet_Data_Descriptor *_webcam_edd;
+static Eet_Data_Descriptor *_webcams_edd;
+
+static Emotion_Webcams *_emotion_webcams = NULL;
+static Eet_File *_emotion_webcams_file = NULL;
+
+static Eet_Data_Descriptor *
+_emotion_webcams_data(void)
+{
+   Eet_Data_Descriptor_Class eddc;
+
+   EET_EINA_FILE_DATA_DESCRIPTOR_CLASS_SET(&eddc, Emotion_Webcam);
+   _webcam_edd = eet_data_descriptor_file_new(&eddc);
+   EET_DATA_DESCRIPTOR_ADD_BASIC(_webcam_edd, Emotion_Webcam, "device", device, EET_T_STRING);
+   EET_DATA_DESCRIPTOR_ADD_BASIC(_webcam_edd, Emotion_Webcam, "name", name, EET_T_STRING);
+   EET_DATA_DESCRIPTOR_ADD_BASIC(_webcam_edd, Emotion_Webcam, "custom", custom, EET_T_STRING);
+   EET_DATA_DESCRIPTOR_ADD_BASIC(_webcam_edd, Emotion_Webcam, "filename", filename, EET_T_STRING);
+
+   EET_EINA_FILE_DATA_DESCRIPTOR_CLASS_SET(&eddc, Emotion_Webcams);
+   _webcams_edd = eet_data_descriptor_file_new(&eddc);
+   EET_DATA_DESCRIPTOR_ADD_LIST(_webcams_edd, Emotion_Webcams, "webcams", webcams, _webcam_edd);
+
+   return _webcams_edd;
+}
+
+#ifdef EMOTION_HAVE_EEZE
 static Eeze_Udev_Watch *eeze_watcher = NULL;
 
 static void
 emotion_webcam_destroy(Emotion_Webcam *ew)
 {
-   eina_stringshare_del(ew->syspath);
-   eina_stringshare_del(ew->device);
-   eina_stringshare_del(ew->name);
+   if (!ew->custom)
+     {
+        eina_stringshare_del(ew->syspath);
+        eina_stringshare_del(ew->device);
+        eina_stringshare_del(ew->name);
+     }
    free(ew);
 }
 
@@ -169,11 +207,11 @@ _emotion_check_device(Emotion_Webcam *ew)
        || caps.capabilities & V4L2_CAP_MODULATOR)
      goto on_error;
 
-   EINA_LIST_FOREACH(_emotion_webcams, l, check)
+   EINA_LIST_FOREACH(_emotion_webcams->webcams, l, check)
      if (check->device == ew->device)
        goto on_error;
 
-   _emotion_webcams = eina_list_append(_emotion_webcams, ew);
+   _emotion_webcams->webcams = eina_list_append(_emotion_webcams->webcams, ew);
 
    EINA_REFCOUNT_INIT(ew);
 
@@ -198,6 +236,7 @@ _emotion_webcam_new(const char *syspath)
    test = malloc(sizeof (Emotion_Webcam));
    if (!test) return NULL;
 
+   test->custom = NULL;
    test->syspath = eina_stringshare_ref(syspath);
    test->name = eeze_udev_syspath_get_sysattr(syspath, "name");
 
@@ -241,10 +280,10 @@ _emotion_eeze_events(const char *syspath,
         Emotion_Webcam *check;
 	Eina_List *l;
 
-        EINA_LIST_FOREACH(_emotion_webcams, l, check)
+        EINA_LIST_FOREACH(_emotion_webcams->webcams, l, check)
           if (check->syspath == syspath)
             {
-               _emotion_webcams = eina_list_remove_list(_emotion_webcams, l);
+               _emotion_webcams->webcams = eina_list_remove_list(_emotion_webcams->webcams, l);
                EINA_REFCOUNT_UNREF(check)
                  emotion_webcam_destroy(check);
                break ;
@@ -265,9 +304,31 @@ _emotion_eeze_events(const char *syspath,
 EAPI Eina_Bool
 emotion_init(void)
 {
-#ifdef EMOTION_HAVE_EEZE
+   char buffer[4096];
+
    if (_emotion_webcams_count++) return EINA_TRUE;
 
+   snprintf(buffer, 4096, "%s/emotion.cfg", PACKAGE_DATA_DIR);
+   _emotion_webcams_file = eet_open(buffer, EET_FILE_MODE_READ);
+   if (_emotion_webcams_file)
+     {
+        Eet_Data_Descriptor *edd;
+
+        edd = _emotion_webcams_data();
+
+        _emotion_webcams = eet_data_read(_emotion_webcams_file, edd, "config");
+
+        eet_data_descriptor_free(_webcams_edd); _webcams_edd = NULL;
+        eet_data_descriptor_free(_webcam_edd); _webcam_edd = NULL;
+     }
+
+   if (!_emotion_webcams)
+     {
+        _emotion_webcams = calloc(1, sizeof (Emotion_Webcams));
+        if (!_emotion_webcams) return EINA_FALSE;
+     }
+
+#ifdef EMOTION_HAVE_EEZE
    EMOTION_WEBCAM_UPDATE = ecore_event_type_new();
 
    eeze_init();
@@ -277,38 +338,48 @@ emotion_init(void)
    eeze_watcher = eeze_udev_watch_add(EEZE_UDEV_TYPE_V4L,
                                       (EEZE_UDEV_EVENT_ADD | EEZE_UDEV_EVENT_REMOVE),
                                       _emotion_eeze_events, NULL);
+#endif
 
    return EINA_TRUE;
-#else
-   return EINA_FALSE;
-#endif
 }
 
 EAPI Eina_Bool
 emotion_shutdown(void)
 {
-#ifdef EMOTION_HAVE_EEZE
+   Emotion_Webcam *ew;
+
    if (--_emotion_webcams_count) return EINA_TRUE;
 
+   EINA_LIST_FREE(_emotion_webcams->webcams, ew)
+     {
+        /* There is currently no way to refcount from the outside, this help, but could lead to some issue */
+        EINA_REFCOUNT_UNREF(ew)
+          emotion_webcam_destroy(ew);
+     }
+   free(_emotion_webcams);
+   _emotion_webcams = NULL;
+
+   if (_emotion_webcams_file)
+     {
+        /* As long as there is no one reference any pointer, you are safe */
+        eet_close(_emotion_webcams_file);
+        _emotion_webcams_file = NULL;
+     }
+
+#ifdef EMOTION_HAVE_EEZE
    eeze_udev_watch_del(eeze_watcher);
    eeze_watcher = NULL;
 
    eeze_shutdown();
+#endif
 
    return EINA_TRUE;
-#else
-   return EINA_FALSE;
-#endif
 }
 
 EAPI const Eina_List *
 emotion_webcams_get(void)
 {
-#ifdef EMOTION_HAVE_EEZE
-   return _emotion_webcams;
-#else
-   return NULL;
-#endif
+   return _emotion_webcams->webcams;
 }
 
 EAPI const char *
@@ -316,11 +387,7 @@ emotion_webcam_name_get(const Emotion_Webcam *ew)
 {
    if (!ew) return NULL;
 
-#ifdef EMOTION_HAVE_EEZE
    return ew->name;
-#else
-   return NULL;
-#endif
 }
 
 EAPI const char *
@@ -328,9 +395,18 @@ emotion_webcam_device_get(const Emotion_Webcam *ew)
 {
    if (!ew) return NULL;
 
-#ifdef EMOTION_HAVE_EEZE
    return ew->device;
-#else
+}
+
+EAPI const char *
+emotion_webcam_custom_get(const char *device)
+{
+   const Emotion_Webcam *ew;
+   const Eina_List *l;
+
+   EINA_LIST_FOREACH(_emotion_webcams->webcams, l, ew)
+     if (ew->device && strcmp(device, ew->device) == 0)
+       return ew->custom;
+
    return NULL;
-#endif
 }

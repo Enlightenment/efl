@@ -137,4 +137,6 @@ EAPI void  _emotion_seek_done(Evas_Object *obj);
 EAPI Eina_Bool _emotion_module_register(const char *name, Emotion_Module_Open open, Emotion_Module_Close close);
 EAPI Eina_Bool _emotion_module_unregister(const char *name);
 
+EAPI const char *emotion_webcam_custom_get(const char *device);
+
 #endif

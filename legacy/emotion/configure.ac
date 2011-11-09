@@ -107,7 +107,7 @@ EFL_CHECK_DOXYGEN([build_doc="yes"], [build_doc="no"])
 
 ### Checks for libraries
 
-PKG_CHECK_MODULES(EMOTION, [eina >= 1.0.0 evas >= 1.0.0 ecore >= 1.0.0])
+PKG_CHECK_MODULES(EMOTION, [eina >= 1.0.0 evas >= 1.0.0 ecore >= 1.0.0 eet >= 1.4.0])
 requirement_emotion="ecore >= 1.0.0 evas >= 1.0.0 eina >= 1.0.0"
 
 if test "x${have_emotion_test}" = "xyes" ; then
