@@ -73,6 +73,7 @@ void test_genlist10(void *data, Evas_Object *obj, void *event_info);
 void test_genlist11(void *data, Evas_Object *obj, void *event_info);
 void test_genlist12(void *data, Evas_Object *obj, void *event_info);
 void test_gesture_layer(void *data, Evas_Object *obj, void *event_info);
+void test_gesture_layer2(void *data, Evas_Object *obj, void *event_info);
 void test_table(void *data, Evas_Object *obj, void *event_info);
 void test_table2(void *data, Evas_Object *obj, void *event_info);
 void test_table3(void *data, Evas_Object *obj, void *event_info);
@@ -433,6 +434,7 @@ add_tests:
    ADD_TEST("GLView", test_glview);
    ADD_TEST("3D", test_3d);
    ADD_TEST("Gesture Layer", test_gesture_layer);
+   ADD_TEST("Gesture Layer 2", test_gesture_layer2);
    ADD_TEST("Naviframe", test_naviframe);
    ADD_TEST("Factory", test_factory);
 #ifdef HAVE_ELEMENTARY_WEB

@@ -52,4 +52,45 @@ mystrale_2.jpg \
 twofish.jpg \
 pt.png
 
+files_glayerdir = $(datadir)/elementary/images/g_layer
+files_glayer_DATA = \
+g_layer/double_tap_1.png \
+g_layer/line_1.png \
+g_layer/momentum_1.png \
+g_layer/tap_5.png \
+g_layer/double_tap_2.png \
+g_layer/line_2.png \
+g_layer/momentum_2.png \
+g_layer/triple_tap_1.png \
+g_layer/double_tap_3.png \
+g_layer/line_3.png \
+g_layer/momentum_3.png \
+g_layer/triple_tap_2.png \
+g_layer/double_tap_4.png \
+g_layer/line_4.png \
+g_layer/momentum_4.png \
+g_layer/triple_tap_3.png \
+g_layer/double_tap_5.png \
+g_layer/line_5.png \
+g_layer/momentum_5.png \
+g_layer/triple_tap_4.png \
+g_layer/flick_1.png \
+g_layer/long_tap_1.png \
+g_layer/rotate_1.png \
+g_layer/triple_tap_5.png \
+g_layer/flick_2.png \
+g_layer/long_tap_2.png \
+g_layer/tap_1.png \
+g_layer/zoom_1.png \
+g_layer/flick_3.png \
+g_layer/long_tap_3.png \
+g_layer/tap_2.png \
+g_layer/flick_4.png \
+g_layer/long_tap_4.png \
+g_layer/tap_3.png \
+g_layer/flick_5.png \
+g_layer/long_tap_5.png \
+g_layer/tap_4.png
+
+
 EXTRA_DIST = $(files_DATA)

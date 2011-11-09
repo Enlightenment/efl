@@ -63,6 +63,7 @@ test_focus3.c \
 test_gengrid.c \
 test_genlist.c \
 test_gesture_layer.c \
+test_gesture_layer2.c \
 test_glview_simple.c \
 test_glview.c \
 test_grid.c \
