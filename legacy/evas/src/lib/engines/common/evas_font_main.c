@@ -28,7 +28,7 @@ evas_common_font_init(void)
    if (s)
      {
         int dpi = atoi(s);
-        
+
         if (dpi > 0) evas_common_font_dpi_set(dpi);
      }
    LKI(lock_font_draw);
