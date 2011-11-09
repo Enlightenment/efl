@@ -4965,7 +4965,7 @@ eet_data_xattr_cipher_get(const char          *filename,
 {
    void *blob;
    void *ret;
-   int size;
+   ssize_t size;
 
    blob = eina_xattr_get(filename, attribute, &size);
    if (!blob) return NULL;
