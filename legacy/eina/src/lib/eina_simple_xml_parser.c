@@ -349,7 +349,7 @@ eina_simple_xml_parse(const char *buf, unsigned buflen, Eina_Bool strip, Eina_Si
                               p = _eina_simple_xml_tag_end_find(p + 1, itr_end);
                          }
 
-                       if (*p == '<')
+                       if ((p) && (*p == '<'))
                          {
                             type = EINA_SIMPLE_XML_ERROR;
                             toff = 0;
