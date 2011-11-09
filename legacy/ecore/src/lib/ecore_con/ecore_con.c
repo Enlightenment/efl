@@ -1031,15 +1031,13 @@ ecore_con_event_client_del(Ecore_Con_Client *cl)
 {
     Ecore_Con_Event_Client_Del *e;
 
+    if (!cl) return;
     e = ecore_con_event_client_del_alloc();
     EINA_SAFETY_ON_NULL_RETURN(e);
 
-    if (cl)
-      {
-         cl->event_count++;
-         cl->host_server->event_count++;
-         _ecore_con_cl_timer_update(cl);
-      }
+    cl->event_count++;
+    cl->host_server->event_count++;
+    _ecore_con_cl_timer_update(cl);
     e->client = cl;
     ecore_event_add(ECORE_CON_EVENT_CLIENT_DEL, e,
                     (Ecore_End_Cb)_ecore_con_event_client_del_free, cl->host_server);
