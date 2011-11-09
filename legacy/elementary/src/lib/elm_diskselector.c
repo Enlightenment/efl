@@ -678,14 +678,14 @@ _round_items_del(Widget_Data *wd)
    EINA_LIST_FOREACH(wd->under_items, l, it)
      {
         _round_item_del(wd, it);
-        it = NULL;
      }
+   wd->under_items = eina_list_free(wd->under_items);
 
    EINA_LIST_FOREACH(wd->over_items, l, it)
      {
         _round_item_del(wd, it);
-        it = NULL;
      }
+   wd->over_items = eina_list_free(wd->over_items);
 }
 
 static void
