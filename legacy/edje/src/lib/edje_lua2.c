@@ -2813,9 +2813,7 @@ static void
 _elua_map_free(void *obj)
 {
    Edje_Lua_Map *elm = obj;
-   lua_State *L;
    if (!elm->obj.ed) return;
-   L = elm->obj.ed->L;
    evas_map_free(elm->map);
    elm->map = NULL;
 }
