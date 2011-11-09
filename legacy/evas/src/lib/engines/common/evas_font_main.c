@@ -16,6 +16,7 @@ EAPI void
 evas_common_font_init(void)
 {
    int error;
+   const char *s;
 
    initialised++;
    if (initialised != 1) return;
@@ -23,6 +24,13 @@ evas_common_font_init(void)
    if (error) return;
    evas_common_font_load_init();
    evas_common_font_draw_init();
+   s = getenv("EVAS_FONT_DPI");
+   if (s)
+     {
+        int dpi = atoi(s);
+        
+        if (dpi > 0) evas_common_font_dpi_set(dpi);
+     }
    LKI(lock_font_draw);
    LKI(lock_bidi);
    LKI(lock_ot);
