@@ -390,7 +390,7 @@ eina_array_remove(Eina_Array *array, Eina_Bool (*keep)(void *data,
         return EINA_TRUE;
      }
 
-        eina_error_set(0);
+   eina_error_set(0);
    tmp = malloc(sizeof (void *) * array->total);
    if (!tmp)
      {
