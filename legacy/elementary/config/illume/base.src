@@ -42,4 +42,16 @@ group "Elm_Config" struct {
   value "longpress_timeout" double: 1.0;
   value "effect_enable" uchar: 1;
   value "desktop_entry" uchar: 0;
+  value "password_show_last" uchar: 1;
+  value "password_show_last_timeout" double: 2.0;
+  value "glayer_zoom_finger_factor" double: 1.0;
+  value "glayer_zoom_wheel_factor" double: 0.05;
+  value "glayer_zoom_distance_tolerance" double: 1.0;
+  value "glayer_rotate_angular_tolerance" double: 0.034906585;
+  value "glayer_line_min_length" double: 1.0;
+  value "glayer_line_distance_tolerance" double: 3.0;
+  value "glayer_line_angular_tolerance" double: 0.34906585; /* Represents 20 DEG */
+  value "glayer_flick_time_limit_ms" uint: 100; /* ms to finish flick */
+  value "glayer_long_tap_start_timeout" double: 1.2; /* sec to start long-tap */
+  value "glayer_continues_enable" uchar: 1;          /* Continues gesture enabled */
 }
