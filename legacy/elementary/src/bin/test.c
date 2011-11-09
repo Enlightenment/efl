@@ -155,6 +155,8 @@ void test_web(void *data, Evas_Object *obj, void *event_info);
 
 struct elm_test
 {
+   const char *icon;
+   const char *category;
    const char *name;
    void (*cb)(void *, Evas_Object *, void *);
 };
@@ -163,13 +165,17 @@ static int
 elm_test_sort(const void *pa, const void *pb)
 {
    const struct elm_test *a = pa, *b = pb;
+   int res = strcasecmp(a->category, b->category);
+   if (res) return res;
    return strcasecmp(a->name, b->name);
 }
 
 static void
-elm_test_add(Eina_List **p_list, const char *name, void (*cb)(void *, Evas_Object *, void *))
+elm_test_add(Eina_List **p_list, const char *icon, const char *category, const char *name, void (*cb)(void *, Evas_Object *, void *))
 {
    struct elm_test *t = malloc(sizeof(struct elm_test));
+   t->icon = icon;
+   t->category = category;
    t->name = name;
    t->cb = cb;
    *p_list = eina_list_sorted_insert(*p_list, elm_test_sort, t);
@@ -183,12 +189,6 @@ my_win_del(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info 
 }
 
 static void
-index_changed(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info)
-{
-   elm_list_item_show(event_info);
-}
-
-static void
 _ui_tg_changed(void *data, Evas_Object *obj, void *event_info)
 {
    (void) data; (void) event_info;
@@ -199,8 +199,9 @@ _ui_tg_changed(void *data, Evas_Object *obj, void *event_info)
 static void
 my_win_main(char *autorun, Eina_Bool test_win_only)
 {
-   Evas_Object *win = NULL, *bg = NULL, *bx0 = NULL, *lb = NULL, *li = NULL;
-   Evas_Object *idx = NULL, *fr = NULL, *tg = NULL;
+   Evas_Object *win = NULL, *bg = NULL, *bx0 = NULL, *lb = NULL;
+   Evas_Object *fr = NULL, *tg = NULL, *sc = NULL, *ic = NULL;
+   Evas_Object *tbx = NULL, *cfr = NULL, *tbx2 = NULL, *bt = NULL;
    Eina_List *tests, *l;
    struct elm_test *t;
 
@@ -277,169 +278,228 @@ my_win_main(char *autorun, Eina_Bool test_win_only)
    elm_box_pack_end(bx0, tg);
    evas_object_show(tg);
 
-   li = elm_list_add(win);
-   elm_list_always_select_mode_set(li, 1);
-   evas_object_size_hint_weight_set(li, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-   evas_object_size_hint_fill_set(li, EVAS_HINT_FILL, EVAS_HINT_FILL);
-   elm_box_pack_end(bx0, li);
-   evas_object_show(li);
+   sc = elm_scroller_add(win);
+   evas_object_size_hint_weight_set(sc, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_size_hint_fill_set(sc, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   elm_box_pack_end(bx0, sc);
+   evas_object_show(sc);
 
-   idx = elm_index_add(win);
-   evas_object_smart_callback_add(idx, "delay,changed", index_changed, NULL);
-   evas_object_size_hint_weight_set(idx, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-   elm_win_resize_object_add(win, idx);
-   evas_object_show(idx);
-
+   tbx = elm_box_add(win);
+   evas_object_size_hint_weight_set(tbx, EVAS_HINT_EXPAND, 0.0);
+   evas_object_size_hint_align_set(tbx, EVAS_HINT_FILL, 0.0);
+   elm_object_content_set(sc, tbx);
+   evas_object_show(tbx);
+   
 add_tests:
    tests = NULL;
-#define ADD_TEST(name_, cb_) elm_test_add(&tests, name_, cb_)
-   ADD_TEST("Bg Plain", test_bg_plain);
-   ADD_TEST("Bg Image", test_bg_image);
-   ADD_TEST("Bg Options", test_bg_options);
-   ADD_TEST("Icon Transparent", test_icon);
-   ADD_TEST("Icon Animation", test_icon_animated);
-   ADD_TEST("Box Vert", test_box_vert);
-   ADD_TEST("Box Vert 2", test_box_vert2);
-   ADD_TEST("Box Horiz", test_box_horiz);
-   ADD_TEST("Box Transition", test_box_transition);
-   ADD_TEST("Buttons", test_button);
-   ADD_TEST("Transit", test_transit);
-   ADD_TEST("Transit 2", test_transit2);
-   ADD_TEST("Transit 3", test_transit3);
-   ADD_TEST("Transit 4", test_transit4);
-   ADD_TEST("Transit 5", test_transit5);
-   ADD_TEST("Transit 6", test_transit6);
-   ADD_TEST("Transit 7", test_transit7);
-   ADD_TEST("Transit 8", test_transit8);
-   ADD_TEST("Transit 9", test_transit9);
-   ADD_TEST("File Selector Button", test_fileselector_button);
-   ADD_TEST("File Selector Entry", test_fileselector_entry);
-   ADD_TEST("Toggles", test_toggle);
-   ADD_TEST("Table", test_table);
-   ADD_TEST("Table Homogeneous", test_table2);
-   ADD_TEST("Table 3", test_table3);
-   ADD_TEST("Table 4", test_table4);
-   ADD_TEST("Table 5", test_table5);
-   ADD_TEST("Table 6", test_table6);
-   ADD_TEST("Clock", test_clock);
-   ADD_TEST("Clock 2", test_clock2);
-   ADD_TEST("Layout", test_layout);
-   ADD_TEST("Hover", test_hover);
-   ADD_TEST("Hover 2", test_hover2);
-   ADD_TEST("Entry", test_entry);
-   ADD_TEST("Entry Scrolled", test_entry_scrolled);
-   ADD_TEST("Entry 3", test_entry3);
-   ADD_TEST("Entry 4", test_entry4);
-   ADD_TEST("Entry 5", test_entry5);
-   ADD_TEST("Entry Notepad", test_entry_notepad);
-   ADD_TEST("Anchorview", test_anchorview);
-   ADD_TEST("Anchorblock", test_anchorblock);
-   ADD_TEST("Toolbar", test_toolbar);
-   ADD_TEST("Toolbar 2", test_toolbar2);
-   ADD_TEST("Toolbar 3", test_toolbar3);
-   ADD_TEST("Toolbar 4", test_toolbar4);
-   ADD_TEST("Toolbar 5", test_toolbar5);
-   ADD_TEST("Toolbar 6", test_toolbar6);
-   ADD_TEST("Hoversel", test_hoversel);
-   ADD_TEST("List", test_list);
-   ADD_TEST("List - Horizontal", test_list_horizontal);
-   ADD_TEST("List 2", test_list2);
-   ADD_TEST("List 3", test_list3);
-   ADD_TEST("List 4", test_list4);
-   ADD_TEST("List 5", test_list5);
-   ADD_TEST("Inwin", test_inwin);
-   ADD_TEST("Inwin 2", test_inwin2);
-   ADD_TEST("Scaling", test_scaling);
-   ADD_TEST("Scaling 2", test_scaling2);
-   ADD_TEST("Slider", test_slider);
-   ADD_TEST("Actionslider", test_actionslider);
-   ADD_TEST("Genlist", test_genlist);
-   ADD_TEST("Genlist 2", test_genlist2);
-   ADD_TEST("Genlist 3", test_genlist3);
-   ADD_TEST("Genlist 4", test_genlist4);
-   ADD_TEST("Genlist 5", test_genlist5);
-   ADD_TEST("Genlist 7", test_genlist7);
-   ADD_TEST("Genlist Tree", test_genlist6);
-   ADD_TEST("Genlist Group", test_genlist8);
-   ADD_TEST("Genlist Group Tree", test_genlist9);
-   ADD_TEST("Genlist Mode", test_genlist10);
-   ADD_TEST("Genlist Reorder Mode", test_genlist11);
+#define ADD_TEST(icon_, cat_, name_, cb_) elm_test_add(&tests, icon_, cat_, name_, cb_)
+   
+   //------------------------------//
+   ADD_TEST(NULL, "Window / Background", "Bg Plain", test_bg_plain);
+   ADD_TEST(NULL, "Window / Background", "Bg Image", test_bg_image);
+   ADD_TEST(NULL, "Window / Background", "Bg Options", test_bg_options);
+   ADD_TEST(NULL, "Window / Background", "Window States", test_win_state);
+   ADD_TEST(NULL, "Window / Background", "Window States 2", test_win_state2);
+   ADD_TEST(NULL, "Window / Background", "Inwin", test_inwin);
+   ADD_TEST(NULL, "Window / Background", "Inwin 2", test_inwin2);
+   ADD_TEST(NULL, "Window / Background", "Window Inline", test_win_inline);
+   
+   //------------------------------//
+   ADD_TEST(NULL, "Images", "Icon Transparent", test_icon);
+   ADD_TEST(NULL, "Images", "Icon Animation", test_icon_animated);
+   ADD_TEST(NULL, "Images", "Photocam", test_photocam);
+   ADD_TEST(NULL, "Images", "Photo", test_photo);
+   ADD_TEST(NULL, "Images", "Thumb", test_thumb);
+   ADD_TEST(NULL, "Images", "Slideshow", test_slideshow);
+   
+   //------------------------------//
+   ADD_TEST(NULL, "Containers", "Box Vert", test_box_vert);
+   ADD_TEST(NULL, "Containers", "Box Vert 2", test_box_vert2);
+   ADD_TEST(NULL, "Containers", "Box Horiz", test_box_horiz);
+   ADD_TEST(NULL, "Containers", "Box Transition", test_box_transition);
+   ADD_TEST(NULL, "Containers", "Table", test_table);
+   ADD_TEST(NULL, "Containers", "Table Homogeneous", test_table2);
+   ADD_TEST(NULL, "Containers", "Table 3", test_table3);
+   ADD_TEST(NULL, "Containers", "Table 4", test_table4);
+   ADD_TEST(NULL, "Containers", "Table 5", test_table5);
+   ADD_TEST(NULL, "Containers", "Table 6", test_table6);
+   ADD_TEST(NULL, "Containers", "Layout", test_layout);
+   ADD_TEST(NULL, "Containers", "Grid", test_grid);
+   
+   //------------------------------//
+   ADD_TEST(NULL, "Entries", "Entry", test_entry);
+   ADD_TEST(NULL, "Entries", "Entry Scrolled", test_entry_scrolled);
+   ADD_TEST(NULL, "Entries", "Entry 3", test_entry3);
+   ADD_TEST(NULL, "Entries", "Entry 4", test_entry4);
+   ADD_TEST(NULL, "Entries", "Entry 5", test_entry5);
+   ADD_TEST(NULL, "Entries", "Entry Notepad", test_entry_notepad);
+   
+   //------------------------------//
+   ADD_TEST(NULL, "Buttons", "Buttons", test_button);
+   
+   //------------------------------//
+   ADD_TEST(NULL, "Effects", "Transit", test_transit);
+   ADD_TEST(NULL, "Effects", "Transit 2", test_transit2);
+   ADD_TEST(NULL, "Effects", "Transit 3", test_transit3);
+   ADD_TEST(NULL, "Effects", "Transit 4", test_transit4);
+   ADD_TEST(NULL, "Effects", "Transit 5", test_transit5);
+   ADD_TEST(NULL, "Effects", "Transit 6", test_transit6);
+   ADD_TEST(NULL, "Effects", "Transit 7", test_transit7);
+   ADD_TEST(NULL, "Effects", "Transit 8", test_transit8);
+   ADD_TEST(NULL, "Effects", "Transit 9", test_transit9);
+   ADD_TEST(NULL, "Effects", "File Selector Button", test_fileselector_button);
+   ADD_TEST(NULL, "Effects", "Flip", test_flip);
+   ADD_TEST(NULL, "Effects", "Flip 2", test_flip2);
+   ADD_TEST(NULL, "Effects", "Flip 3", test_flip3);
+   ADD_TEST(NULL, "Effects", "Flip Interactive", test_flip4);
+   ADD_TEST(NULL, "Effects", "Flip Page", test_flip_page);
+   ADD_TEST(NULL, "Effects", "Animation", test_anim);
+   
+   //------------------------------//
+   ADD_TEST(NULL, "Toolbars", "Toolbar", test_toolbar);
+   ADD_TEST(NULL, "Toolbars", "Toolbar 2", test_toolbar2);
+   ADD_TEST(NULL, "Toolbars", "Toolbar 3", test_toolbar3);
+   ADD_TEST(NULL, "Toolbars", "Toolbar 4", test_toolbar4);
+   ADD_TEST(NULL, "Toolbars", "Toolbar 5", test_toolbar5);
+   ADD_TEST(NULL, "Toolbars", "Toolbar 6", test_toolbar6);
+   
+   //------------------------------//
+   ADD_TEST(NULL, "Lists", "List", test_list);
+   ADD_TEST(NULL, "Lists", "List - Horizontal", test_list_horizontal);
+   ADD_TEST(NULL, "Lists", "List 2", test_list2);
+   ADD_TEST(NULL, "Lists", "List 3", test_list3);
+   ADD_TEST(NULL, "Lists", "List 4", test_list4);
+   ADD_TEST(NULL, "Lists", "List 5", test_list5);
+   ADD_TEST(NULL, "Lists", "Genlist", test_genlist);
+   ADD_TEST(NULL, "Lists", "Genlist 2", test_genlist2);
+   ADD_TEST(NULL, "Lists", "Genlist 3", test_genlist3);
+   ADD_TEST(NULL, "Lists", "Genlist 4", test_genlist4);
+   ADD_TEST(NULL, "Lists", "Genlist 5", test_genlist5);
+   ADD_TEST(NULL, "Lists", "Genlist 7", test_genlist7);
+   ADD_TEST(NULL, "Lists", "Genlist Tree", test_genlist6);
+   ADD_TEST(NULL, "Lists", "Genlist Group", test_genlist8);
+   ADD_TEST(NULL, "Lists", "Genlist Group Tree", test_genlist9);
+   ADD_TEST(NULL, "Lists", "Genlist Mode", test_genlist10);
+   ADD_TEST(NULL, "Lists", "Genlist Reorder Mode", test_genlist11);
 #ifdef HAVE_EIO
-   ADD_TEST("Genlist Eio", test_eio);
+   ADD_TEST(NULL, "Lists", "Genlist Eio", test_eio);
 #endif
-   ADD_TEST("Genlist Textblock", test_genlist12);
-   ADD_TEST("GenGrid", test_gengrid);
-   ADD_TEST("GenGrid 2", test_gengrid2);
-   ADD_TEST("GenGrid Group", test_gengrid3);
-   ADD_TEST("Checks", test_check);
-   ADD_TEST("Radios", test_radio);
-   ADD_TEST("Pager", test_pager);
-   ADD_TEST("Pager Slide", test_pager_slide);
-   ADD_TEST("Window States", test_win_state);
-   ADD_TEST("Window States 2", test_win_state2);
-   ADD_TEST("Progressbar", test_progressbar);
-   ADD_TEST("File Selector", test_fileselector);
-   ADD_TEST("Separator", test_separator);
-   ADD_TEST("Scroller", test_scroller);
-   ADD_TEST("Scroller 2", test_scroller2);
-   ADD_TEST("Spinner", test_spinner);
-   ADD_TEST("Index", test_index);
-   ADD_TEST("Index 2", test_index2);
-   ADD_TEST("Photocam", test_photocam);
-   ADD_TEST("Photo", test_photo);
-   ADD_TEST("Thumb", test_thumb);
-   ADD_TEST("Icon Desktops", test_icon_desktops);
-   ADD_TEST("Notify", test_notify);
-   ADD_TEST("Slideshow", test_slideshow);
-   ADD_TEST("Menu", test_menu);
-   ADD_TEST("Panel", test_panel);
-   ADD_TEST("Panes", test_panes);
-   ADD_TEST("Map", test_map);
-   ADD_TEST("Weather", test_weather);
-   ADD_TEST("Flip", test_flip);
-   ADD_TEST("Flip 2", test_flip2);
-   ADD_TEST("Flip 3", test_flip3);
-   ADD_TEST("Flip Interactive", test_flip4);
-   ADD_TEST("Flip Page", test_flip_page);
-   ADD_TEST("Label", test_label);
-   ADD_TEST("Conformant", test_conformant);
-   ADD_TEST("Conformant 2", test_conformant2);
-   ADD_TEST("Multi Touch", test_multi);
-   ADD_TEST("Floating Objects", test_floating);
-   ADD_TEST("Launcher", test_launcher);
-   ADD_TEST("Launcher 2", test_launcher2);
-   ADD_TEST("Launcher 3", test_launcher3);
-   ADD_TEST("Animation", test_anim);
-   ADD_TEST("Calendar", test_calendar);
-   ADD_TEST("Calendar 2", test_calendar2);
-   ADD_TEST("Tooltip", test_tooltip);
-   ADD_TEST("Tooltip2", test_tooltip2);
-   ADD_TEST("Cursor", test_cursor);
-   ADD_TEST("Cursor 2", test_cursor2);
-   ADD_TEST("Cursor 3", test_cursor3);
-   ADD_TEST("Cursor Layout", test_cursor4);
-   ADD_TEST("Focus", test_focus);
-   ADD_TEST("Focus 2", test_focus2);
-   ADD_TEST("Focus 3", test_focus3);
-   ADD_TEST("Flip Selector", test_flipselector);
-   ADD_TEST("Disk Selector", test_diskselector);
-   ADD_TEST("Color Selector", test_colorselector);
-   ADD_TEST("Ctxpopup", test_ctxpopup);
-   ADD_TEST("Bubble", test_bubble);
-   ADD_TEST("Segment Control", test_segment_control);
-   ADD_TEST("Store", test_store);
-   ADD_TEST("Window Inline", test_win_inline);
-   ADD_TEST("Grid", test_grid);
-   ADD_TEST("GLViewSimple", test_glview_simple);
-   ADD_TEST("GLView", test_glview);
-   ADD_TEST("3D", test_3d);
-   ADD_TEST("Gesture Layer", test_gesture_layer);
-   ADD_TEST("Gesture Layer 2", test_gesture_layer2);
-   ADD_TEST("Naviframe", test_naviframe);
-   ADD_TEST("Factory", test_factory);
+   ADD_TEST(NULL, "Lists", "Genlist Textblock", test_genlist12);
+   ADD_TEST(NULL, "Lists", "GenGrid", test_gengrid);
+   ADD_TEST(NULL, "Lists", "GenGrid 2", test_gengrid2);
+   ADD_TEST(NULL, "Lists", "GenGrid Group", test_gengrid3);
+   
+   //------------------------------//
+   ADD_TEST(NULL, "General", "Scaling", test_scaling);
+   ADD_TEST(NULL, "General", "Scaling 2", test_scaling2);
+   
+   //------------------------------//
+   ADD_TEST(NULL, "3D", "GLViewSimple", test_glview_simple);
+   ADD_TEST(NULL, "3D", "GLView", test_glview);
+   ADD_TEST(NULL, "3D", "Evas Map 3D", test_3d);
+   
+   //------------------------------//
 #ifdef HAVE_ELEMENTARY_WEB
-   ADD_TEST("Web", test_web);
+   ADD_TEST(NULL, "Web", "Web", test_web);
 #endif
+   
+   //------------------------------//
+   ADD_TEST(NULL, "Input", "Gesture Layer", test_gesture_layer);
+   ADD_TEST(NULL, "Input", "Gesture Layer 2", test_gesture_layer2);
+   ADD_TEST(NULL, "Input", "Multi Touch", test_multi);
+
+   //------------------------------//
+   ADD_TEST(NULL, "Selectors", "Index", test_index);
+   ADD_TEST(NULL, "Selectors", "Index 2", test_index2);
+   ADD_TEST(NULL, "Selectors", "File Selector", test_fileselector);
+   ADD_TEST(NULL, "Selectors", "File Selector Entry", test_fileselector_entry);
+   ADD_TEST(NULL, "Selectors", "Actionslider", test_actionslider);
+   ADD_TEST(NULL, "Selectors", "Menu", test_menu);
+   ADD_TEST(NULL, "Selectors", "Disk Selector", test_diskselector);
+   ADD_TEST(NULL, "Selectors", "Color Selector", test_colorselector);
+   ADD_TEST(NULL, "Selectors", "Segment Control", test_segment_control);
+   ADD_TEST(NULL, "Selectors", "Hoversel", test_hoversel);
+   ADD_TEST(NULL, "Selectors", "Radios", test_radio);
+   ADD_TEST(NULL, "Selectors", "Flip Selector", test_flipselector);
+
+   //------------------------------//
+   ADD_TEST(NULL, "Cursors", "Cursor", test_cursor);
+   ADD_TEST(NULL, "Cursors", "Cursor 2", test_cursor2);
+   ADD_TEST(NULL, "Cursors", "Cursor 3", test_cursor3);
+   ADD_TEST(NULL, "Cursors", "Cursor Layout", test_cursor4);
+   
+   //------------------------------//
+   ADD_TEST(NULL, "Scroller", "Scroller", test_scroller);
+   ADD_TEST(NULL, "Scroller", "Scroller 2", test_scroller2);
+
+   //------------------------------//
+   // FIXME: add frame test
+   ADD_TEST(NULL, "Boundaries", "Bubble", test_bubble);
+   ADD_TEST(NULL, "Boundaries", "Separator", test_separator);
+
+   //------------------------------//
+   ADD_TEST(NULL, "Range Values", "Spinner", test_spinner);
+   ADD_TEST(NULL, "Range Values", "Slider", test_slider);
+   ADD_TEST(NULL, "Range Values", "Progressbar", test_progressbar);
+
+   //------------------------------//
+   ADD_TEST(NULL, "Booleans", "Checks", test_check);
+   ADD_TEST(NULL, "Booleans", "Toggles", test_toggle);
+
+   //------------------------------//
+   ADD_TEST(NULL, "Popups", "Ctxpopup", test_ctxpopup);
+   ADD_TEST(NULL, "Popups", "Hover", test_hover);
+   ADD_TEST(NULL, "Popups", "Hover 2", test_hover2);
+   ADD_TEST(NULL, "Popups", "Notify", test_notify);
+   ADD_TEST(NULL, "Popups", "Tooltip", test_tooltip);
+   ADD_TEST(NULL, "Popups", "Tooltip2", test_tooltip2);
+
+   //------------------------------//
+   ADD_TEST(NULL, "Times & Dates", "Calendar", test_calendar);
+   ADD_TEST(NULL, "Times & Dates", "Calendar 2", test_calendar2);
+   ADD_TEST(NULL, "Times & Dates", "Clock", test_clock);
+   ADD_TEST(NULL, "Times & Dates", "Clock 2", test_clock2);
+   
+   //------------------------------//
+   ADD_TEST(NULL, "Text", "Anchorview", test_anchorview);
+   ADD_TEST(NULL, "Text", "Anchorblock", test_anchorblock);
+   ADD_TEST(NULL, "Text", "Label", test_label);
+   
+   //------------------------------//
+   ADD_TEST(NULL, "Stored Surface Buffer", "Launcher", test_launcher);
+   ADD_TEST(NULL, "Stored Surface Buffer", "Launcher 2", test_launcher2);
+   ADD_TEST(NULL, "Stored Surface Buffer", "Launcher 3", test_launcher3);
+   
+   //------------------------------//
+   ADD_TEST(NULL, "Focus", "Focus", test_focus);
+   ADD_TEST(NULL, "Focus", "Focus 2", test_focus2);
+   ADD_TEST(NULL, "Focus", "Focus 3", test_focus3);
+
+   //------------------------------//
+   ADD_TEST(NULL, "Storyboard", "Naviframe", test_naviframe);
+   ADD_TEST(NULL, "Storyboard", "Pager", test_pager);
+   ADD_TEST(NULL, "Storyboard", "Pager Slide", test_pager_slide);
+
+   //------------------------------//
+   ADD_TEST(NULL, "Geographic", "Map", test_map);
+
+   //------------------------------//
+   ADD_TEST(NULL, "Dividers", "Panel", test_panel);
+   ADD_TEST(NULL, "Dividers", "Panes", test_panes);
+   
+   //------------------------------//
+   ADD_TEST(NULL, "Standardization", "Conformant", test_conformant);
+   ADD_TEST(NULL, "Standardization", "Conformant 2", test_conformant2);
+   
+   //------------------------------//
+   ADD_TEST(NULL, "Helpers", "Store", test_store);
+   ADD_TEST(NULL, "Helpers", "Factory", test_factory);
+   
+   //------------------------------//
+   ADD_TEST(NULL, "Micellaneous", "Weather", test_weather);
+   ADD_TEST(NULL, "Micellaneous", "Icon Desktops", test_icon_desktops);
+   ADD_TEST(NULL, "Micellaneous", "Floating Objects", test_floating);
+
 #undef ADD_TEST
 
    if (autorun)
@@ -454,26 +514,51 @@ add_tests:
 
    if (tests)
      {
-        char last_letter = 0;
+        const char *pcat = NULL;
+        
         EINA_LIST_FREE(tests, t)
           {
-             Elm_List_Item *it;
-             it = elm_list_item_append(li, t->name, NULL, NULL, t->cb, NULL);
-             if (last_letter != t->name[0])
+             if ((!pcat) || (strcmp(pcat, t->category)))
                {
-                  char letter[2] = {t->name[0], '\0'};
-                  elm_index_item_append(idx, letter, it);
-                  last_letter = t->name[0];
+                  cfr = elm_frame_add(win);
+                  // FIXME: add new style of frame for this
+                  elm_object_text_set(cfr, t->category);
+                  evas_object_size_hint_weight_set(cfr, EVAS_HINT_EXPAND, 0.0);
+                  evas_object_size_hint_fill_set(cfr, EVAS_HINT_FILL, 0.0);
+                  elm_box_pack_end(tbx, cfr);
+                  evas_object_show(cfr);
+                  
+                  tbx2 = elm_box_add(win);
+                  elm_box_layout_set(tbx2, evas_object_box_layout_flow_horizontal, NULL, NULL);
+                  evas_object_size_hint_weight_set(tbx2, EVAS_HINT_EXPAND, 0.0);
+                  evas_object_size_hint_align_set(tbx2, EVAS_HINT_FILL, 0.0);
+                  elm_box_align_set(tbx2, 0.0, 0.5);
+                  elm_object_content_set(cfr, tbx2);
+                  evas_object_show(tbx2);
                }
+             bt = elm_button_add(win);
+             // FIXME: add new style of button for this like efm in e17
+             elm_object_text_set(bt, t->name);
+             if (t->icon)
+               {
+                  char buf[PATH_MAX];
+                  
+                  ic = elm_icon_add(win);
+                  snprintf(buf, sizeof(buf), "%s/images/%s", elm_app_data_dir_get(), t->icon);
+                  elm_icon_file_set(ic, buf, NULL);
+                  elm_object_content_set(bt, ic);
+                  evas_object_show(ic);
+               }
+             elm_box_pack_end(tbx2, bt);
+             evas_object_show(bt);
+             evas_object_smart_callback_add(bt, "clicked", t->cb, NULL);
+             pcat = t->category;
              free(t);
           }
-        elm_index_item_go(idx, 0);
      }
 
-   elm_list_go(li);
-
    /* set an initial window size */
-   evas_object_resize(win, 320, 480);
+   evas_object_resize(win, 480, 480);
    /* show the window */
    if (!test_win_only)
      evas_object_show(win);
