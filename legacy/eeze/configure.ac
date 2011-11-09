@@ -118,17 +118,20 @@ if test "x$eeze_mount" = "xyes";then
   PKG_CHECK_MODULES([ECORE_CON], [ecore-con >= 1.0.0])
 
   if test "x$with_mount" = "xdetect";then
-    AC_PATH_PROG([with_mount], [mount], AC_MSG_ERROR([mount could not be found in PATH]))
+    AC_PATH_PROG([with_mount], [mount], [no])
+    test "x$with_mount" = "xno" && AC_MSG_ERROR([mount binary could not be detected])
   fi
   AC_DEFINE_UNQUOTED([EEZE_MOUNT_BIN], ["$with_mount"], [mount bin to use])
 
   if test "x$with_umount" = "xdetect";then
-    AC_PATH_PROG([with_umount], [umount], AC_MSG_ERROR([umount could not be found in PATH]))
+    AC_PATH_PROG([with_umount], [umount], [no])
+    test "x$with_umount" = "xno" && AC_MSG_ERROR([umount binary could not be detected])
   fi
   AC_DEFINE_UNQUOTED([EEZE_UNMOUNT_BIN], ["$with_umount"], [umount bin to use])
 
   if test "x$with_eject" = "xdetect";then
-    AC_PATH_PROG([with_eject], [eject], AC_MSG_ERROR([eject could not be found in PATH]))
+    AC_PATH_PROG([with_eject], [eject], [no])
+    test "x$with_eject" = "xno" && AC_MSG_ERROR([eject binary could not be detected])
   fi
   AC_DEFINE_UNQUOTED([EEZE_EJECT_BIN], ["$with_eject"], [eject bin to use])
 fi
