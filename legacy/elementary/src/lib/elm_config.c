@@ -894,7 +894,7 @@ _config_load(void)
    _elm_config->glayer_line_min_length = 1.0;         /* 1 times elm_finger_size_get() */
    _elm_config->glayer_line_distance_tolerance = 3.0; /* 3 times elm_finger_size_get() */
    _elm_config->glayer_line_angular_tolerance = 0.34906585;       /* Represents 20 DEG */
-   _elm_config->glayer_flick_time_limit_ms = 60;              /* 60 ms to finish flick */
+   _elm_config->glayer_flick_time_limit_ms = 120;              /* ms to finish flick */
    _elm_config->glayer_long_tap_start_timeout = 1.2;   /* 1.2 second to start long-tap */
    _elm_config->glayer_continues_enable = EINA_TRUE;      /* Continue gestures default */
 }
