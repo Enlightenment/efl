@@ -105,14 +105,14 @@ _ecore_file_download(const char *url,
 
    if (!ecore_file_is_dir(dir))
      {
-        EINA_LOG_ERR("%s is not a directory", dir);
+        ERR("%s is not a directory", dir);
         free(dir);
         return EINA_FALSE;
      }
    free(dir);
    if (ecore_file_exists(dst))
      {
-        EINA_LOG_ERR("%s already exists", dst);
+        WRN("%s already exists", dst);
         return EINA_FALSE;
      }
 
@@ -140,7 +140,7 @@ _ecore_file_download(const char *url,
           return EINA_TRUE;
         else
           {
-             EINA_LOG_ERR("no job returned\n");
+             ERR("no job returned\n");
              return EINA_FALSE;
           }
         return job ? EINA_TRUE : EINA_FALSE;
@@ -374,6 +374,7 @@ _ecore_file_download_curl(const char *url, const char *dst,
         ecore_con_url_free(job->url_con);
         _job_list = eina_list_remove(_job_list, job);
         fclose(job->file);
+        ecore_file_remove(job->dst);
         free(job->dst);
         free(job);
         return NULL;
