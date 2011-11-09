@@ -82,7 +82,7 @@ _eeze_disk_device_from_property(const char *prop, Eina_Bool uuid)
 {
    _udev_enumerate *en;
    _udev_list_entry *devs, *cur;
-   _udev_device *device;
+   _udev_device *device = NULL;
    const char *devname;
 
    en = udev_enumerate_new(udev);
