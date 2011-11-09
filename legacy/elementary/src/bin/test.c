@@ -347,7 +347,6 @@ add_tests:
    ADD_TEST(NULL, "Effects", "Transit 7", test_transit7);
    ADD_TEST(NULL, "Effects", "Transit 8", test_transit8);
    ADD_TEST(NULL, "Effects", "Transit 9", test_transit9);
-   ADD_TEST(NULL, "Effects", "File Selector Button", test_fileselector_button);
    ADD_TEST(NULL, "Effects", "Flip", test_flip);
    ADD_TEST(NULL, "Effects", "Flip 2", test_flip2);
    ADD_TEST(NULL, "Effects", "Flip 3", test_flip3);
@@ -413,6 +412,7 @@ add_tests:
    ADD_TEST(NULL, "Selectors", "Index 2", test_index2);
    ADD_TEST(NULL, "Selectors", "File Selector", test_fileselector);
    ADD_TEST(NULL, "Selectors", "File Selector Entry", test_fileselector_entry);
+   ADD_TEST(NULL, "Selectors", "File Selector Button", test_fileselector_button);
    ADD_TEST(NULL, "Selectors", "Actionslider", test_actionslider);
    ADD_TEST(NULL, "Selectors", "Menu", test_menu);
    ADD_TEST(NULL, "Selectors", "Disk Selector", test_diskselector);
