@@ -700,7 +700,6 @@ _ecore_con_ssl_server_init_gnutls(Ecore_Con_Server *svr)
      return ECORE_CON_SSL_ERROR_NONE;
    if (svr->verify)
      {
-        ret = 0;
         /* use CRL/CA lists to verify */
         SSL_ERROR_CHECK_GOTO_ERROR(ret = gnutls_certificate_verify_peers2(svr->session, &iter));
         if (iter & GNUTLS_CERT_INVALID)
@@ -1001,7 +1000,6 @@ _ecore_con_ssl_client_init_gnutls(Ecore_Con_Client *cl)
    if (!cl->host_server->verify)
      /* not verifying certificates, so we're done! */
      return ECORE_CON_SSL_ERROR_NONE;
-   ret = 0;
    /* use CRL/CA lists to verify */
    SSL_ERROR_CHECK_GOTO_ERROR(ret = gnutls_certificate_verify_peers2(cl->session, &iter));
    if (iter & GNUTLS_CERT_INVALID)
