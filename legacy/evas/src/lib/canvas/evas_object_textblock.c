@@ -8238,6 +8238,8 @@ _evas_textblock_cursor_range_in_line_geometry_get(
 
    cur = (cur1) ? cur1 : cur2;
 
+   if (!cur) return NULL;
+
    /* Find the first and last items */
    it1 = it2 = NULL;
    start = end = 0;
@@ -8452,6 +8454,7 @@ _evas_textblock_cursor_range_in_line_geometry_get(
      }
    return rects;
 }
+
 EAPI Eina_List *
 evas_textblock_cursor_range_geometry_get(const Evas_Textblock_Cursor *cur1, const Evas_Textblock_Cursor *cur2)
 {
