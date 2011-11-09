@@ -6782,7 +6782,7 @@ evas_textblock_cursor_text_append(Evas_Textblock_Cursor *cur, const char *_text)
      }
    else if (o->text_nodes)
      {
-        cur->node = o->text_nodes;
+        n = cur->node = o->text_nodes;
         cur->pos = 0;
      }
    else
