@@ -311,11 +311,11 @@ AC_ARG_ENABLE([sndfile],
 if test "x${want_multisense}" = "xyes" -a  "x$want_sndfile" != "xno"; then
 
 	   PKG_CHECK_MODULES([SNDFILE],
-	      [sndfile >= 1.0.22],
+	      [sndfile >= 1.0.21],
 	      [
 	       AC_DEFINE(HAVE_LIBSNDFILE, 1, [sndfile support for Edje])
 	       have_sndfile="yes"
-	       requirement_edje="sndfile >= 1.0.22 ${requirement_edje}"
+	       requirement_edje="sndfile >= 1.0.21 ${requirement_edje}"
 	       ],
 	      [have_sndfile="no"; want_multisense="no"]
 	   )
