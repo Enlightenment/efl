@@ -57,25 +57,25 @@ alsa_open(int channels, unsigned int samplerate, unsigned int *real_samplerate)
    
    if ((err = snd_pcm_open(&alsa_dev, device, SND_PCM_STREAM_PLAYBACK, 0)) < 0)
      {
-        WRN("cannot open alsa playback stream (%s)\n", snd_strerror(err));
+        WRN("cannot open alsa playback stream (%s)", snd_strerror(err));
         goto catch_error;
      }
    snd_pcm_hw_params_alloca(&hw_params);
    if ((err = snd_pcm_hw_params_any(alsa_dev, hw_params)) < 0)
      {
-        WRN("cannot initialize snd hw params (%s)\n", snd_strerror(err));
+        WRN("cannot initialize snd hw params (%s)", snd_strerror(err));
         goto catch_error;
      }
    if ((err = snd_pcm_hw_params_set_access(alsa_dev, hw_params, 
                                            SND_PCM_ACCESS_RW_INTERLEAVED)) < 0)
      {
-         WRN("cannot set interleaved access (%s)\n", snd_strerror(err));
+         WRN("cannot set interleaved access (%s)", snd_strerror(err));
          goto catch_error;
      }
    if ((err = snd_pcm_hw_params_set_format(alsa_dev, hw_params, 
                                            SND_PCM_FORMAT_FLOAT)) < 0)
      {
-        WRN("cannot set float sample format (%s)\n", snd_strerror(err));
+        WRN("cannot set float sample format (%s)", snd_strerror(err));
         goto catch_error;
      }
 #ifdef MIXDBG // testing/debugging by making output samplerate be 48khz
@@ -83,47 +83,47 @@ alsa_open(int channels, unsigned int samplerate, unsigned int *real_samplerate)
    if ((err = snd_pcm_hw_params_set_rate_near(alsa_dev, hw_params, 
                                               &samplerate_ret, 0)) < 0)
      {
-        WRN("cannot set sample rate (%s)\n", snd_strerror(err));
+        WRN("cannot set sample rate (%s)", snd_strerror(err));
         goto catch_error;
      }
 #else
    if ((err = snd_pcm_hw_params_set_rate_near(alsa_dev, hw_params, 
                                               &samplerate, 0)) < 0)
      {
-        WRN("cannot set sample rate (%s)\n", snd_strerror(err));
+        WRN("cannot set sample rate (%s)", snd_strerror(err));
         goto catch_error;
      }
 #endif
    if ((err = snd_pcm_hw_params_set_channels(alsa_dev, hw_params, channels)) < 0)
      {
-        WRN("cannot set channel count (%s)\n", snd_strerror(err));
+        WRN("cannot set channel count (%s)", snd_strerror(err));
         goto catch_error;
      }
    if ((err = snd_pcm_hw_params_set_buffer_size_near(alsa_dev, hw_params, 
                                                      &alsa_buffer_frames)) < 0)
      {
-        WRN("cannot set buffer size (%s)\n", snd_strerror(err));
+        WRN("cannot set buffer size (%s)", snd_strerror(err));
         goto catch_error;
      }
    if ((err = snd_pcm_hw_params_set_period_size_near(alsa_dev, hw_params, 
                                                      &alsa_period_size, 0)) < 0)
      {
-        WRN("cannot set period size (%s)\n", snd_strerror(err));
+        WRN("cannot set period size (%s)", snd_strerror(err));
         goto catch_error;
      }
    if ((err = snd_pcm_hw_params(alsa_dev, hw_params)) < 0)
      {
-        WRN("cannot set parameters (%s)\n", snd_strerror(err));
+        WRN("cannot set parameters (%s)", snd_strerror(err));
         goto catch_error;
      }
    if ((err = snd_pcm_hw_params_get_rate(hw_params, &samplerate_ret, 0)) < 0)
      {
-        WRN("cannot get samplerate (%s)\n", snd_strerror(err));
+        WRN("cannot get samplerate (%s)", snd_strerror(err));
         goto catch_error;
      }
    if ((err = snd_pcm_prepare(alsa_dev)) < 0)
      {
-        WRN("cannot prepare audio for use (%s)\n", snd_strerror(err));
+        WRN("cannot prepare audio for use (%s)", snd_strerror(err));
         goto catch_error;
      }
    if (real_samplerate) *real_samplerate = samplerate_ret;
@@ -331,8 +331,8 @@ alsa_player_process(RemixEnv *env, RemixBase *base, RemixCount count, RemixStrea
           }
         return processed;
      }
-   WRN("[alsa_player_process] unsupported stream/output channel"
-       "combination %ld / %d\n", nr_channels, player_data->stereo ? 2 : 1);
+   WRN("[alsa_player_process] unsupported stream/output channel "
+       "combination %ld / %d", nr_channels, player_data->stereo ? 2 : 1);
    return -1;
 }
 
