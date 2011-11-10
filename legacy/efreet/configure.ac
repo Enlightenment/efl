@@ -147,10 +147,10 @@ AC_SUBST(EFL_EFREET_BUILD)
 AC_SUBST(EFL_EFREET_MIME_BUILD)
 AC_SUBST(EFL_EFREET_TRASH_BUILD)
 
-PKG_CHECK_MODULES(EFREET, [eina >= 1.0.0 eet >= 1.4.0 ecore >= 1.0.0 ecore-file >= 1.0.0])
+requirement_efreet="ecore-file >= 1.0.0 ecore >= 1.0.0 eet >= 1.4.0 eina >= 1.0.0 ${requirement_efreet}"
+PKG_CHECK_MODULES(EFREET, [${requirement_efreet}])
 PKG_CHECK_MODULES(EINA, [eina >= 1.0.0])
 
-requirement_efreet="ecore-file >= 1.0.0 ecore >= 1.0.0 eet >= 1.4.0 eina >= 1.0.0 ${requirement_efreet}"
 
 ### Checks for header files
 
