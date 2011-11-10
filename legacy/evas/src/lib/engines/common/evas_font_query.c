@@ -738,26 +738,26 @@ evas_common_font_query_last_up_to_pos(RGBA_Font *fn, const Evas_Text_Props *text
                }
 
              gli += text_props->len - 1;
-          }
 
-        for (i = text_props->len - 1 ; i >= 0 ; i--, gli--)
-          {
-             pen_x = full_adv - (gli->pen_after - start_pen);
-             /* If invisible, skip */
-             if (gli->index == 0) continue;
-             if ((x >= pen_x) &&
-                 (((i == 0) && (x <= full_adv)) ||
-                  (x <= (full_adv - (gli[-1].pen_after - start_pen)))) &&
-                 (y >= -asc) && (y <= desc))
+             for (i = text_props->len - 1 ; i >= 0 ; i--, gli--)
                {
+                  pen_x = full_adv - (gli->pen_after - start_pen);
+                  /* If invisible, skip */
+                  if (gli->index == 0) continue;
+                  if ((x >= pen_x) &&
+                        (((i == 0) && (x <= full_adv)) ||
+                         (x <= (full_adv - (gli[-1].pen_after - start_pen)))) &&
+                        (y >= -asc) && (y <= desc))
+                    {
 #ifdef OT_SUPPORT
-                  ret = EVAS_FONT_OT_POS_GET(
-                     text_props->info->ot[text_props->start + i]) -
-                     text_props->text_offset;
+                       ret = EVAS_FONT_OT_POS_GET(
+                             text_props->info->ot[text_props->start + i]) -
+                          text_props->text_offset;
 #else
-                  ret = text_props->text_len - i - 1;
+                       ret = text_props->text_len - i - 1;
 #endif
-                  goto end;
+                       goto end;
+                    }
                }
           }
      }
