@@ -200,7 +200,9 @@ AM_CFLAGS = @WIN32_CFLAGS@
 
 lib_LTLIBRARIES = libevas.la
 
-includes_HEADERS = Evas.h Evas_GL.h
+### Evas_GL disabled for 1.1
+#includes_HEADERS = Evas.h Evas_GL.h
+includes_HEADERS = Evas.h
 includesdir = $(includedir)/evas-@VMAJ@
 
 libevas_la_SOURCES = main.c
