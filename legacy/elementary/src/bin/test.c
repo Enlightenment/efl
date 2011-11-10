@@ -141,8 +141,9 @@ void test_segment_control(void *data, Evas_Object *obj, void *event_info);
 void test_store(void *data, Evas_Object *obj, void *event_info);
 void test_win_inline(void *data, Evas_Object *obj, void *event_info);
 void test_grid(void *data, Evas_Object *obj, void *event_info);
-void test_glview_simple(void *data, Evas_Object *obj, void *event_info);
-void test_glview(void *data, Evas_Object *obj, void *event_info);
+//// disabled for efl 1.1
+//void test_glview_simple(void *data, Evas_Object *obj, void *event_info);
+//void test_glview(void *data, Evas_Object *obj, void *event_info);
 void test_3d(void *data, Evas_Object *obj, void *event_info);
 void test_naviframe(void *data, Evas_Object *obj, void *event_info);
 void test_factory(void *data, Evas_Object *obj, void *event_info);
@@ -393,8 +394,9 @@ add_tests:
    ADD_TEST(NULL, "General", "Scaling 2", test_scaling2);
    
    //------------------------------//
-   ADD_TEST(NULL, "3D", "GLViewSimple", test_glview_simple);
-   ADD_TEST(NULL, "3D", "GLView", test_glview);
+//// disabled for efl 1.1   
+//   ADD_TEST(NULL, "3D", "GLViewSimple", test_glview_simple);
+//   ADD_TEST(NULL, "3D", "GLView", test_glview);
    ADD_TEST(NULL, "3D", "Evas Map 3D", test_3d);
    
    //------------------------------//

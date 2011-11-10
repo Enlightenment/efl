@@ -76,7 +76,6 @@ elm_gen.h \
 elm_gengrid.c \
 elm_genlist.c \
 elm_gesture_layer.c \
-elm_glview.c \
 elm_grid.c \
 elm_hover.c \
 elm_icon.c \
@@ -128,6 +127,9 @@ els_scroller.c \
 els_scroller.h \
 els_tooltip.c \
 elu_ews_wm.c
+
+## disabled for efl 1.1
+#elm_glview.c
 
 libelementary_la_CFLAGS =
 libelementary_la_LIBADD = \
