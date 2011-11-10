@@ -938,6 +938,7 @@ gstreamer_video_sink_new(Emotion_Gstreamer_Video *ev,
    GstPad *pad;
    GstPad *teepad;
    int flags;
+   const char *launch;
 #if defined HAVE_ECORE_X && defined HAVE_XOVERLAY_H
    const char *engine;
    Eina_List *engines;
@@ -953,11 +954,32 @@ gstreamer_video_sink_new(Emotion_Gstreamer_Video *ev,
    if (!uri)
      return NULL;
 
-   playbin = gst_element_factory_make("playbin2", "playbin");
-   if (!playbin)
+   launch = emotion_webcam_custom_get(uri);
+   if (launch)
      {
-        ERR("Unable to create 'playbin' GstElement.");
-        return NULL;
+        GError *error = NULL;
+
+        playbin = gst_parse_bin_from_description(launch, 1, &error);
+        if (!playbin)
+          {
+             ERR("Unable to setup command : '%s' got error '%s'.", launch, error->message);
+             g_error_free(error);
+             return NULL;
+          }
+        if (error)
+          {
+             WRN("got recoverable error '%s' for command : '%s'.", error->message, launch);
+             g_error_free(error);
+          }
+     }
+   else
+     {
+        playbin = gst_element_factory_make("playbin2", "playbin");
+        if (!playbin)
+          {
+             ERR("Unable to create 'playbin' GstElement.");
+             return NULL;
+          }
      }
 
    bin = gst_bin_new(NULL);
@@ -1111,10 +1133,17 @@ gstreamer_video_sink_new(Emotion_Gstreamer_Video *ev,
 #define GST_PLAY_FLAG_AUDIO         (1 << 1)
 #define GST_PLAY_FLAG_NATIVE_AUDIO  (1 << 5)
 
-   g_object_get(G_OBJECT(playbin), "flags", &flags, NULL);
-   g_object_set(G_OBJECT(playbin), "flags", flags | GST_PLAY_FLAG_NATIVE_VIDEO | GST_PLAY_FLAG_DOWNLOAD | GST_PLAY_FLAG_NATIVE_AUDIO, NULL);
-   g_object_set(G_OBJECT(playbin), "video-sink", bin, NULL);
-   g_object_set(G_OBJECT(playbin), "uri", uri, NULL);
+   if (launch)
+     {
+        g_object_set(G_OBJECT(playbin), "sink", bin, NULL);
+     }
+   else
+     {
+        g_object_get(G_OBJECT(playbin), "flags", &flags, NULL);
+        g_object_set(G_OBJECT(playbin), "flags", flags | GST_PLAY_FLAG_NATIVE_VIDEO | GST_PLAY_FLAG_DOWNLOAD | GST_PLAY_FLAG_NATIVE_AUDIO, NULL);
+        g_object_set(G_OBJECT(playbin), "video-sink", bin, NULL);
+        g_object_set(G_OBJECT(playbin), "uri", uri, NULL);
+     }
 
    evas_object_image_pixels_get_callback_set(obj, NULL, NULL);
 
