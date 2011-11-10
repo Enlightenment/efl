@@ -80,11 +80,11 @@ __forceinline void foo(void) {}
 AC_MSG_RESULT([${have_attribute_always_inline}])
 
 if test "x${have_attribute_always_inline}" = "xno" ; then
-   AC_MSG_CHECKING([for __attribute__ ((always_inline))])
+   AC_MSG_CHECKING([for __attribute__ ((__always_inline__))])
    AC_COMPILE_IFELSE(
       [AC_LANG_PROGRAM(
           [[
-__attribute__((always_inline)) inline void foo(void) {}
+__attribute__((__always_inline__)) inline void foo(void) {}
           ]],
           [[
           ]])],
@@ -97,7 +97,7 @@ if test "x${have_attribute_always_inline}" = "xyes" ; then
    if test "x${have_attribute_forceinline}" = "xyes" ; then
       AC_DEFINE([EFL_ALWAYS_INLINE], [__forceinline], [Macro declaring a function to always be inlined.])
    else
-      AC_DEFINE([EFL_ALWAYS_INLINE], [__attribute__ ((always_inline)) inline], [Macro declaring a function to always be inlined.])
+      AC_DEFINE([EFL_ALWAYS_INLINE], [__attribute__ ((__always_inline__)) inline], [Macro declaring a function to always be inlined.])
    fi
 else
    AC_DEFINE([EFL_ALWAYS_INLINE], [static inline], [Macro declaring a function to always be inlined.])
