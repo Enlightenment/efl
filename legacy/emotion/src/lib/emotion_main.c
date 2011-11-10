@@ -352,9 +352,11 @@ emotion_shutdown(void)
 
    EINA_LIST_FREE(_emotion_webcams->webcams, ew)
      {
+#ifdef EMOTION_HAVE_EEZE
         /* There is currently no way to refcount from the outside, this help, but could lead to some issue */
         EINA_REFCOUNT_UNREF(ew)
           emotion_webcam_destroy(ew);
+#endif
      }
    free(_emotion_webcams);
    _emotion_webcams = NULL;
