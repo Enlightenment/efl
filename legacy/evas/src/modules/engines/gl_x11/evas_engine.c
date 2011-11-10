@@ -71,7 +71,7 @@ struct _Render_Engine_GL_Context
 #else
    GLXContext  context;
 #endif
-   GLuint      context_fbo;     
+   GLuint      context_fbo;
    GLuint      current_fbo;
 
    Render_Engine_GL_Surface   *current_sfc;
@@ -90,7 +90,7 @@ struct _Render_Engine_GL_Resource
 };
 
 // Extension Handling
-struct _Extension_Entry 
+struct _Extension_Entry
 {
    const char *name;
    const char *real_name;
@@ -158,7 +158,7 @@ const char *(*glsym_glXQueryExtensionsString) (Display *a, int screen) = NULL;
 
 // GLES2 Extensions
 void 	(*glsym_glGetProgramBinaryOES) (GLuint program, GLsizei bufSize, GLsizei *length, GLenum *binaryFormat, void *binary) = NULL;
-void 	(*glsym_glProgramBinaryOES) (GLuint program, GLenum binaryFormat, const void *binary, GLint length) = NULL;   
+void 	(*glsym_glProgramBinaryOES) (GLuint program, GLenum binaryFormat, const void *binary, GLint length) = NULL;
 void* 	(*glsym_glMapBufferOES) (GLenum target, GLenum access) = NULL;
 unsigned char 	(*glsym_glUnmapBufferOES) (GLenum target) = NULL;
 void 	(*glsym_glGetBufferPointervOES) (GLenum target, GLenum pname, void** params) = NULL;
@@ -227,27 +227,27 @@ static Extension_Entry _gl_ext_entries[] = {
        { "GL_OES_compressed_paletted_texture", "compressed_paletted_texture", 0 },
        { "GL_OES_depth24", "depth24", 0 },
        { "GL_OES_depth32", "depth32", 0 },
-       { "GL_OES_EvasGL_image", "EGL_image", 0 }, 
+       { "GL_OES_EvasGL_image", "EGL_image", 0 },
        { "GL_OES_packed_depth_stencil", "packed_depth_stencil", 0 },
        { "GL_OES_rgb8_rgba8", "rgb8_rgba8", 0 },
-       { "GL_OES_standard_derivatives", "standard_derivatives", 0 }, 
+       { "GL_OES_standard_derivatives", "standard_derivatives", 0 },
        { "GL_OES_stencil1", "stencil1", 0 },
        { "GL_OES_stencil4", "stencil4", 0 },
        { "GL_OES_texture_float", "texture_float", 0 },
        { "GL_OES_texture_half_float", "texture_half_float", 0 },
        { "GL_OES_texture_half_float_linear", "texture_half_float_linear", 0 },
-       { "GL_OES_texture_npot", "texture_npot", 0 },     
-       { "GL_OES_vertex_half_float", "vertex_half_float", 0 }, 
+       { "GL_OES_texture_npot", "texture_npot", 0 },
+       { "GL_OES_vertex_half_float", "vertex_half_float", 0 },
        { "GL_OES_vertex_type_10_10_10_2", "vertex_type_10_10_10_2", 0 },
        { "GL_AMD_compressed_3DC_texture", "compressed_3DC_texture", 0 },
        { "GL_AMD_compressed_ATC_texture", "compressed_ATC_texture", 0 },
        { "GL_AMD_program_binary_Z400", "program_binary_Z400", 0 },
        { "GL_EXT_blend_minmax", "blend_minmax", 0 },
-       { "GL_EXT_read_format_bgra", "read_format_bgra", 0 }, 
+       { "GL_EXT_read_format_bgra", "read_format_bgra", 0 },
        { "GL_EXT_texture_filter_anisotropic", "texture_filter_anisotrophic", 0 },
-       { "GL_EXT_texture_format_BGRA8888", "texture_format_BGRA8888", 0 }, 
-       { "GL_EXT_texture_type_2_10_10_10_REV", "texture_type_2_10_10_10_rev", 0 }, 
-       { "GL_IMG_program_binary", "IMG_program_binary", 0 }, 
+       { "GL_EXT_texture_format_BGRA8888", "texture_format_BGRA8888", 0 },
+       { "GL_EXT_texture_type_2_10_10_10_REV", "texture_type_2_10_10_10_rev", 0 },
+       { "GL_IMG_program_binary", "IMG_program_binary", 0 },
        { "GL_IMG_read_format", "IMG_read_format", 0 },
        { "GL_IMG_shader_binary", "IMG_shader_binary", 0 },
        { "GL_IMG_texture_compression_pvrtc", "IMG_texture_compression_pvrtc", 0 },
@@ -271,10 +271,10 @@ static Extension_Entry _gl_ext_entries[] = {
        { "GL_OES_compressed_paletted_texture", "compressed_paletted_texture", 0 },
        { "GL_OES_depth24", "depth24", 0 },
        { "GL_OES_depth32", "depth32", 0 },
-       { "GL_OES_EvasGL_image", "EGL_image", 0 }, 
+       { "GL_OES_EvasGL_image", "EGL_image", 0 },
        { "GL_OES_packed_depth_stencil", "packed_depth_stencil", 0 },
        { "GL_OES_rgb8_rgba8", "rgb8_rgba8", 0 },
-       { "GL_OES_standard_derivatives", "standard_derivatives", 0 }, 
+       { "GL_OES_standard_derivatives", "standard_derivatives", 0 },
        { "GL_OES_stencil1", "stencil1", 0 },
        { "GL_OES_stencil4", "stencil4", 0 },
        { "GL_OES_texture_float", "texture_float", 0 },
@@ -291,7 +291,7 @@ static Extension_Entry _gl_ext_entries[] = {
        { "GL_EXT_texture_filter_anisotropic", "texture_filter_anisotrophic", 0 },
        { "GL_EXT_texture_format_BGRA8888", "bgra", 0 }, // Desktop differs
        { "GL_EXT_texture_type_2_10_10_10_REV", "vertex_type_2_10_10_10_rev", 0 },  // Desktop differs ???
-       { "GL_IMG_program_binary", "IMG_program_binary", 0 }, 
+       { "GL_IMG_program_binary", "IMG_program_binary", 0 },
        { "GL_IMG_read_format", "IMG_read_format", 0 },
        { "GL_IMG_shader_binary", "IMG_shader_binary", 0 },
        { "GL_IMG_texture_compression_pvrtc", "IMG_texture_compression_pvrtc", 0 },
@@ -314,7 +314,7 @@ static Extension_Entry _evasgl_ext_entries[] = {
 #else
 #endif
        { NULL, NULL, 0 }
-}; 
+};
 
 static void
 _sym_init(void)
@@ -657,7 +657,7 @@ xrdb_user_query(const char *name, const char *cls, char **type, XrmValue *val)
    return EINA_FALSE;
 }
 */
-     
+
 static void *
 eng_info(Evas *e)
 {
@@ -720,7 +720,7 @@ _create_internal_glue_resources(void *data)
    context_attrs[2] = EGL_NONE;
 
    // Create resource surface for EGL
-   rsc->surface = eglCreateWindowSurface(re->win->egl_disp, 
+   rsc->surface = eglCreateWindowSurface(re->win->egl_disp,
                                          re->win->egl_config,
                                          (EGLNativeWindowType)DefaultRootWindow(re->info->info.display),
                                          NULL);
@@ -737,7 +737,7 @@ _create_internal_glue_resources(void *data)
                                    re->win->egl_context[0], // Evas' GL Context
                                    context_attrs);
    if (!rsc->context)
-     {   
+     {
         ERR("Internal Resource Context Creations Failed.");
         free(rsc);
         return NULL;
@@ -763,7 +763,7 @@ _create_internal_glue_resources(void *data)
                                    re->win->context,      // Evas' GL Context
                                    1);
    if (!rsc->context)
-     {   
+     {
         ERR("Internal Resource Context Creations Failed.");
         free(rsc);
         return NULL;
@@ -816,7 +816,7 @@ _destroy_internal_glue_resources(void *data)
    LKL(resource_lock);
    EINA_LIST_FOREACH(resource_list, l, rsc)
      {
-        if (rsc) 
+        if (rsc)
           {
              glXDestroyContext(re->info->info.display, rsc->context);
              free(rsc);
@@ -847,31 +847,31 @@ eng_setup(Evas *e, void *in)
 #else
         int eb, evb;
 
-	if (!glXQueryExtension(info->info.display, &eb, &evb)) return 0;
+        if (!glXQueryExtension(info->info.display, &eb, &evb)) return 0;
 #endif
-	re = calloc(1, sizeof(Render_Engine));
-	if (!re) return 0;
+        re = calloc(1, sizeof(Render_Engine));
+        if (!re) return 0;
         re->info = info;
         re->evas = e;
-	e->engine.data.output = re;
+        e->engine.data.output = re;
         re->w = e->output.w;
         re->h = e->output.h;
-	re->win = eng_window_new(re->info->info.display,
-				 re->info->info.drawable,
+        re->win = eng_window_new(re->info->info.display,
+                                 re->info->info.drawable,
                                  re->info->info.screen,
-				 re->info->info.visual,
-				 re->info->info.colormap,
-				 re->info->info.depth,
+                                 re->info->info.visual,
+                                 re->info->info.colormap,
+                                 re->info->info.depth,
                                  re->w,
                                  re->h,
                                  re->info->indirect,
                                  re->info->info.destination_alpha,
                                  re->info->info.rotation);
-	if (!re->win)
-	  {
-	     free(re);
-	     e->engine.data.output = NULL;
-	     return 0;
+        if (!re->win)
+          {
+             free(re);
+             e->engine.data.output = NULL;
+             return 0;
           }
 
         gl_wins++;
@@ -955,7 +955,7 @@ eng_setup(Evas *e, void *in)
      }
    else
      {
-	re = e->engine.data.output;
+        re = e->engine.data.output;
         if (_re_wincheck(re))
           {
              if ((re->info->info.display != re->win->disp) ||
@@ -1022,7 +1022,7 @@ eng_setup(Evas *e, void *in)
         free(re);
         return 0;
      }
-   re->tb = evas_common_tilebuf_new(re->win->w, re->win->h);   
+   re->tb = evas_common_tilebuf_new(re->win->w, re->win->h);
    if (!re->tb)
      {
         if (re->win)
@@ -1034,7 +1034,7 @@ eng_setup(Evas *e, void *in)
         return 0;
      }
    evas_common_tilebuf_set_tile_size(re->tb, TILESIZE, TILESIZE);
-   
+
    if (!e->engine.data.context)
      e->engine.data.context =
      e->engine.func->context_new(e->engine.data.output);
@@ -1111,7 +1111,7 @@ static void
 eng_output_tile_size_set(void *data, int w, int h)
 {
    Render_Engine *re;
-        
+
    re = (Render_Engine *)data;
    evas_common_tilebuf_set_tile_size(re->tb, w, h);
 }
@@ -1672,34 +1672,34 @@ eng_image_colorspace_set(void *data, void *image, int cspace)
    switch (cspace)
      {
       case EVAS_COLORSPACE_ARGB8888:
-	if (im->cs.data)
-	  {
-	     if (!im->cs.no_free) free(im->cs.data);
-	     im->cs.data = NULL;
-	     im->cs.no_free = 0;
-	  }
-	break;
+         if (im->cs.data)
+           {
+              if (!im->cs.no_free) free(im->cs.data);
+              im->cs.data = NULL;
+              im->cs.no_free = 0;
+           }
+         break;
       case EVAS_COLORSPACE_YCBCR422P601_PL:
       case EVAS_COLORSPACE_YCBCR422P709_PL:
       case EVAS_COLORSPACE_YCBCR422601_PL:
       case EVAS_COLORSPACE_YCBCR420NV12601_PL:
       case EVAS_COLORSPACE_YCBCR420TM12601_PL:
-        if (im->tex) evas_gl_common_texture_free(im->tex);
-        im->tex = NULL;
-	if (im->cs.data)
-	  {
-	     if (!im->cs.no_free) free(im->cs.data);
-	  }
-        if (im->im->cache_entry.h > 0)
-          im->cs.data =
-          calloc(1, im->im->cache_entry.h * sizeof(unsigned char *) * 2);
-        else
-          im->cs.data = NULL;
-	im->cs.no_free = 0;
-	break;
+         if (im->tex) evas_gl_common_texture_free(im->tex);
+         im->tex = NULL;
+         if (im->cs.data)
+           {
+              if (!im->cs.no_free) free(im->cs.data);
+           }
+         if (im->im->cache_entry.h > 0)
+           im->cs.data =
+              calloc(1, im->im->cache_entry.h * sizeof(unsigned char *) * 2);
+         else
+           im->cs.data = NULL;
+         im->cs.no_free = 0;
+         break;
       default:
-	abort();
-	break;
+         abort();
+         break;
      }
    im->cs.space = cspace;
 }
@@ -2293,9 +2293,9 @@ eng_image_size_get(void *data __UNUSED__, void *image, int *w, int *h)
 {
    if (!image)
      {
-	*w = 0;
-	*h = 0;
-	return;
+        *w = 0;
+        *h = 0;
+        return;
      }
    if (w) *w = ((Evas_GL_Image *)image)->w;
    if (h) *h = ((Evas_GL_Image *)image)->h;
@@ -2345,10 +2345,10 @@ eng_image_size_set(void *data, void *image, int w, int h)
      return image;
    if (im_old)
      {
-	im = evas_gl_common_image_new(re->win->gl_context, w, h,
-				      eng_image_alpha_get(data, image),
-				      eng_image_colorspace_get(data, image));
-/*
+        im = evas_gl_common_image_new(re->win->gl_context, w, h,
+                                      eng_image_alpha_get(data, image),
+                                      eng_image_colorspace_get(data, image));
+        /*
 	evas_common_load_image_data_from_file(im_old->im);
 	if (im_old->im->image->data)
 	  {
@@ -2387,9 +2387,9 @@ eng_image_data_get(void *data, void *image, int to_write, DATA32 **image_data, i
    re = (Render_Engine *)data;
    if (!image)
      {
-	*image_data = NULL;
+        *image_data = NULL;
         if (err) *err = EVAS_LOAD_ERROR_GENERIC;
-	return NULL;
+        return NULL;
      }
    im = image;
    if (im->native.data)
@@ -2428,7 +2428,7 @@ eng_image_data_get(void *data, void *image, int to_write, DATA32 **image_data, i
 #endif
 
    /* Engine can be fail to create texture after cache drop like eng_image_content_hint_set function,
-        so it is need to add code which check im->im's NULL value*/ 
+        so it is need to add code which check im->im's NULL value*/
 
    if (!im->im)
     {
@@ -2441,41 +2441,41 @@ eng_image_data_get(void *data, void *image, int to_write, DATA32 **image_data, i
    switch (im->cs.space)
      {
       case EVAS_COLORSPACE_ARGB8888:
-	if (to_write)
-	  {
-	     if (im->references > 1)
-	       {
-		  Evas_GL_Image *im_new;
+         if (to_write)
+           {
+              if (im->references > 1)
+                {
+                   Evas_GL_Image *im_new;
 
-		  im_new = evas_gl_common_image_new_from_copied_data
-                     (im->gc, im->im->cache_entry.w, im->im->cache_entry.h,
-                         im->im->image.data,
-                         eng_image_alpha_get(data, image),
-                         eng_image_colorspace_get(data, image));
-		  if (!im_new)
-		    {
-		       *image_data = NULL;
-                       if (err) *err = EVAS_LOAD_ERROR_RESOURCE_ALLOCATION_FAILED;
-   		       return NULL;
-		    }
-		  evas_gl_common_image_free(im);
-		  im = im_new;
-	       }
-	     else
-	       evas_gl_common_image_dirty(im, 0, 0, 0, 0);
-	  }
-	*image_data = im->im->image.data;
-	break;
+                   im_new = evas_gl_common_image_new_from_copied_data
+                      (im->gc, im->im->cache_entry.w, im->im->cache_entry.h,
+                       im->im->image.data,
+                       eng_image_alpha_get(data, image),
+                       eng_image_colorspace_get(data, image));
+                   if (!im_new)
+                     {
+                        *image_data = NULL;
+                        if (err) *err = EVAS_LOAD_ERROR_RESOURCE_ALLOCATION_FAILED;
+                        return NULL;
+                     }
+                   evas_gl_common_image_free(im);
+                   im = im_new;
+                }
+              else
+                evas_gl_common_image_dirty(im, 0, 0, 0, 0);
+           }
+         *image_data = im->im->image.data;
+         break;
       case EVAS_COLORSPACE_YCBCR422P601_PL:
       case EVAS_COLORSPACE_YCBCR422P709_PL:
       case EVAS_COLORSPACE_YCBCR422601_PL:
       case EVAS_COLORSPACE_YCBCR420NV12601_PL:
       case EVAS_COLORSPACE_YCBCR420TM12601_PL:
-	*image_data = im->cs.data;
-	break;
+         *image_data = im->cs.data;
+         break;
       default:
-	abort();
-	break;
+         abort();
+         break;
      }
    if (err) *err = error;
    return im;
@@ -2502,7 +2502,7 @@ eng_image_data_put(void *data, void *image, DATA32 *image_data)
         glsym_eglUnmapImageSEC(re->win->egl_disp, im->tex->pt->dyn.img);
 #endif
         if (im->tex->pt->dyn.data == image_data)
-	  return image;
+          return image;
 
         w = im->im->cache_entry.w;
         h = im->im->cache_entry.h;
@@ -2518,38 +2518,38 @@ eng_image_data_put(void *data, void *image, DATA32 *image_data)
    switch (im->cs.space)
      {
       case EVAS_COLORSPACE_ARGB8888:
-	if (image_data != im->im->image.data)
-	  {
-	     int w, h;
+         if (image_data != im->im->image.data)
+           {
+              int w, h;
 
-	     w = im->im->cache_entry.w;
-	     h = im->im->cache_entry.h;
-	     im2 = eng_image_new_from_data(data, w, h, image_data,
-					   eng_image_alpha_get(data, image),
-					   eng_image_colorspace_get(data, image));
-	     if (!im2) return im;
-	     evas_gl_common_image_free(im);
-	     im = im2;
-	  }
-        break;
+              w = im->im->cache_entry.w;
+              h = im->im->cache_entry.h;
+              im2 = eng_image_new_from_data(data, w, h, image_data,
+                                            eng_image_alpha_get(data, image),
+                                            eng_image_colorspace_get(data, image));
+              if (!im2) return im;
+              evas_gl_common_image_free(im);
+              im = im2;
+           }
+         break;
       case EVAS_COLORSPACE_YCBCR422P601_PL:
       case EVAS_COLORSPACE_YCBCR422P709_PL:
       case EVAS_COLORSPACE_YCBCR422601_PL:
       case EVAS_COLORSPACE_YCBCR420NV12601_PL:
       case EVAS_COLORSPACE_YCBCR420TM12601_PL:
-        if (image_data != im->cs.data)
-	  {
-	     if (im->cs.data)
-	       {
-		  if (!im->cs.no_free) free(im->cs.data);
-	       }
-	     im->cs.data = image_data;
-	  }
-	evas_gl_common_image_dirty(im, 0, 0, 0, 0);
-	break;
+         if (image_data != im->cs.data)
+           {
+              if (im->cs.data)
+                {
+                   if (!im->cs.no_free) free(im->cs.data);
+                }
+              im->cs.data = image_data;
+           }
+         evas_gl_common_image_dirty(im, 0, 0, 0, 0);
+         break;
       default:
-	abort();
-	break;
+         abort();
+         break;
      }
    return im;
 }
@@ -2744,24 +2744,24 @@ eng_font_draw(void *data, void *context, void *surface, Evas_Font_Set *font, int
    re->win->gl_context->dc = context;
      {
         // FIXME: put im into context so we can free it
-	static RGBA_Image *im = NULL;
+        static RGBA_Image *im = NULL;
 
         if (!im)
           im = (RGBA_Image *)evas_cache_image_empty(evas_common_image_cache_get());
         im->cache_entry.w = re->win->w;
         im->cache_entry.h = re->win->h;
         evas_common_draw_context_font_ext_set(context,
-					      re->win->gl_context,
-					      evas_gl_font_texture_new,
-					      evas_gl_font_texture_free,
-					      evas_gl_font_texture_draw);
-	evas_common_font_draw(im, context, (RGBA_Font *) font, x, y,
+                                              re->win->gl_context,
+                                              evas_gl_font_texture_new,
+                                              evas_gl_font_texture_free,
+                                              evas_gl_font_texture_draw);
+        evas_common_font_draw(im, context, (RGBA_Font *) font, x, y,
                               intl_props);
-	evas_common_draw_context_font_ext_set(context,
-					      NULL,
-					      NULL,
-					      NULL,
-					      NULL);
+        evas_common_draw_context_font_ext_set(context,
+                                              NULL,
+                                              NULL,
+                                              NULL,
+                                              NULL);
      }
 }
 
@@ -2983,7 +2983,7 @@ eng_gl_surface_create(void *data, void *config, int w, int h)
 #if defined (GLES_VARIETY_S3C6410) || defined (GLES_VARIETY_SGX)
    ret = eglMakeCurrent(re->win->egl_disp, EGL_NO_SURFACE, EGL_NO_SURFACE, EGL_NO_CONTEXT);
 #else
-   ret = glXMakeCurrent(re->info->info.display, None, NULL); 
+   ret = glXMakeCurrent(re->info->info.display, None, NULL);
 #endif
    if (!ret)
      {
@@ -3225,9 +3225,9 @@ eng_gl_make_current(void *data __UNUSED__, void *surface, void *context)
 #if defined (GLES_VARIETY_S3C6410) || defined (GLES_VARIETY_SGX)
    if ((rsc = eina_tls_get(resource_key)) == EINA_FALSE) return 0;
 
-   if ((eglGetCurrentContext() != ctx->context) || 
+   if ((eglGetCurrentContext() != ctx->context) ||
        (eglGetCurrentSurface(EGL_READ) != rsc->surface) ||
-       (eglGetCurrentSurface(EGL_DRAW) != rsc->surface) ) 
+       (eglGetCurrentSurface(EGL_DRAW) != rsc->surface) )
      {
         // Flush remainder of what's in Evas' pipeline
         if (re->win) eng_window_use(NULL);
@@ -3250,7 +3250,7 @@ eng_gl_make_current(void *data __UNUSED__, void *surface, void *context)
 
         // Do a make current
         ret = glXMakeCurrent(re->info->info.display, re->win->win, ctx->context);
-        if (!ret) 
+        if (!ret)
           {
              ERR("xxxMakeCurrent() failed!");
              return 0;
@@ -3460,7 +3460,7 @@ evgl_evasglCreateImage(int target, void* buffer, int *attrib_list)
       ERR("Invalid Engine... (Can't acccess EGL Display)\n");
 }
 
-static void 
+static void
 evgl_evasglDestroyImage(EvasGLImage image)
 {
    if (current_engine)
@@ -3641,54 +3641,54 @@ eng_gl_api_get(void *data)
 
 #define ORD(f) EVAS_API_OVERRIDE(f, &gl_funcs, glsym_)
    // Extensions
-   ORD(glGetProgramBinaryOES); 
-   ORD(glProgramBinaryOES); 
-   ORD(glMapBufferOES); 
-   ORD(glUnmapBufferOES); 
-   ORD(glGetBufferPointervOES); 
-   ORD(glTexImage3DOES); 
-   ORD(glTexSubImage3DOES); 
-   ORD(glCopyTexSubImage3DOES); 
-   ORD(glCompressedTexImage3DOES); 
-   ORD(glCompressedTexSubImage3DOES); 
-   ORD(glFramebufferTexture3DOES); 
-   ORD(glGetPerfMonitorGroupsAMD); 
-   ORD(glGetPerfMonitorCountersAMD); 
-   ORD(glGetPerfMonitorGroupStringAMD); 
-   ORD(glGetPerfMonitorCounterStringAMD); 
-   ORD(glGetPerfMonitorCounterInfoAMD); 
-   ORD(glGenPerfMonitorsAMD); 
-   ORD(glDeletePerfMonitorsAMD); 
-   ORD(glSelectPerfMonitorCountersAMD); 
-   ORD(glBeginPerfMonitorAMD); 
-   ORD(glEndPerfMonitorAMD); 
-   ORD(glGetPerfMonitorCounterDataAMD); 
-   ORD(glDiscardFramebufferEXT); 
-   ORD(glMultiDrawArraysEXT); 
-   ORD(glMultiDrawElementsEXT); 
-   ORD(glDeleteFencesNV); 
-   ORD(glGenFencesNV); 
-   ORD(glIsFenceNV); 
-   ORD(glTestFenceNV); 
-   ORD(glGetFenceivNV); 
-   ORD(glFinishFenceNV); 
-   ORD(glSetFenceNV); 
-   ORD(glGetDriverControlsQCOM); 
-   ORD(glGetDriverControlStringQCOM); 
-   ORD(glEnableDriverControlQCOM); 
-   ORD(glDisableDriverControlQCOM); 
-   ORD(glExtGetTexturesQCOM); 
-   ORD(glExtGetBuffersQCOM); 
-   ORD(glExtGetRenderbuffersQCOM); 
-   ORD(glExtGetFramebuffersQCOM); 
-   ORD(glExtGetTexLevelParameterivQCOM); 
-   ORD(glExtTexObjectStateOverrideiQCOM); 
-   ORD(glExtGetTexSubImageQCOM); 
-   ORD(glExtGetBufferPointervQCOM); 
-   ORD(glExtGetShadersQCOM); 
-   ORD(glExtGetProgramsQCOM); 
-   ORD(glExtIsProgramBinaryQCOM); 
-   ORD(glExtGetProgramBinarySourceQCOM); 
+   ORD(glGetProgramBinaryOES);
+   ORD(glProgramBinaryOES);
+   ORD(glMapBufferOES);
+   ORD(glUnmapBufferOES);
+   ORD(glGetBufferPointervOES);
+   ORD(glTexImage3DOES);
+   ORD(glTexSubImage3DOES);
+   ORD(glCopyTexSubImage3DOES);
+   ORD(glCompressedTexImage3DOES);
+   ORD(glCompressedTexSubImage3DOES);
+   ORD(glFramebufferTexture3DOES);
+   ORD(glGetPerfMonitorGroupsAMD);
+   ORD(glGetPerfMonitorCountersAMD);
+   ORD(glGetPerfMonitorGroupStringAMD);
+   ORD(glGetPerfMonitorCounterStringAMD);
+   ORD(glGetPerfMonitorCounterInfoAMD);
+   ORD(glGenPerfMonitorsAMD);
+   ORD(glDeletePerfMonitorsAMD);
+   ORD(glSelectPerfMonitorCountersAMD);
+   ORD(glBeginPerfMonitorAMD);
+   ORD(glEndPerfMonitorAMD);
+   ORD(glGetPerfMonitorCounterDataAMD);
+   ORD(glDiscardFramebufferEXT);
+   ORD(glMultiDrawArraysEXT);
+   ORD(glMultiDrawElementsEXT);
+   ORD(glDeleteFencesNV);
+   ORD(glGenFencesNV);
+   ORD(glIsFenceNV);
+   ORD(glTestFenceNV);
+   ORD(glGetFenceivNV);
+   ORD(glFinishFenceNV);
+   ORD(glSetFenceNV);
+   ORD(glGetDriverControlsQCOM);
+   ORD(glGetDriverControlStringQCOM);
+   ORD(glEnableDriverControlQCOM);
+   ORD(glDisableDriverControlQCOM);
+   ORD(glExtGetTexturesQCOM);
+   ORD(glExtGetBuffersQCOM);
+   ORD(glExtGetRenderbuffersQCOM);
+   ORD(glExtGetFramebuffersQCOM);
+   ORD(glExtGetTexLevelParameterivQCOM);
+   ORD(glExtTexObjectStateOverrideiQCOM);
+   ORD(glExtGetTexSubImageQCOM);
+   ORD(glExtGetBufferPointervQCOM);
+   ORD(glExtGetShadersQCOM);
+   ORD(glExtGetProgramsQCOM);
+   ORD(glExtIsProgramBinaryQCOM);
+   ORD(glExtGetProgramBinarySourceQCOM);
 #undef ORD
 
 // Override functions wrapped by Evas_GL
@@ -3828,8 +3828,8 @@ module_open(Evas_Module *em)
    static Eina_Bool xrm_inited = EINA_FALSE;
    if (!xrm_inited)
      {
-	xrm_inited = EINA_TRUE;
-	XrmInitialize();
+        xrm_inited = EINA_TRUE;
+        XrmInitialize();
      }
 
    if (!em) return 0;
@@ -3939,7 +3939,7 @@ module_open(Evas_Module *em)
    ORD(image_animated_frame_set);
 
    ORD(image_max_size_get);
-   
+
    /* now advertise out own api */
    em->functions = (void *)(&func);
    return 1;
