@@ -1018,20 +1018,30 @@ AC_CHECK_HEADER(pthread.h,
 )
 
 # sched_getaffinity pthread_attr_setaffinity_np
-AC_CHECK_HEADERS(pthread.h sched.h,
-  [
-    AC_CHECK_LIB(pthread, pthread_attr_setaffinity_np,
-      [
-        AC_CHECK_LIB(pthread, pthread_barrier_wait,
-          [ build_pthreads="yes" ],
-          [ build_pthreads="no" ]
-        )
-      ],
-      [ build_pthreads="no" ]
-    )
+AC_CHECK_HEADERS([pthread.h sched.h],
+   [
+    CFLAGS_save="${CFLAGS}"
+    CFLAGS="${CFLAGS} -pthread"
+    LIBS_save="${LIBS}"
+    LIBS="${LIBS} -pthread"
+    AC_LINK_IFELSE(
+      [AC_LANG_PROGRAM([[
+#include <pthread.h>
+#include <sched.h>
+                       ]],
+                       [[
+pthread_attr_setaffinity_np(NULL, 0, NULL);
+pthread_barrier_wait(NULL);
+                       ]])],
+      [build_pthreads="yes"],
+      [build_pthreads="no"])
+   CFLAGS=${CFLAGS_save}
+   LIBS=${LIBS_save}
   ],
-  [ build_pthreads="no" ]
-)
+  [build_pthreads="no"])
+
+AC_MSG_CHECKING([whether pthread_attr_setaffinity_np() and pthread_barrier_wait() are supported])
+AC_MSG_RESULT([${build_pthreads}])
 
 #######################################
 ## Pthread
@@ -1167,8 +1177,8 @@ fi
 AC_MSG_CHECKING(whether we should link with pthread)
 if test "x$need_pthreads" = "xyes"; then
   AC_MSG_RESULT(yes)
-  pthread_cflags=""
-  pthread_libs="-lpthread"
+  pthread_cflags="-pthread"
+  pthread_libs="-pthread"
 else
   AC_MSG_RESULT(no)
 fi
