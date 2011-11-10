@@ -695,10 +695,9 @@ _ecore_con_url_send(Ecore_Con_Url *url_con,
              curl_easy_setopt(url_con->curl_easy, CURLOPT_POSTFIELDS, data);
              curl_easy_setopt(url_con->curl_easy, CURLOPT_POSTFIELDSIZE, length);
           }
-        else if (mode == MODE_POST)
-          {
-             curl_easy_setopt(url_con->curl_easy, CURLOPT_POST, 1);
-          }
+        else curl_easy_setopt(url_con->curl_easy, CURLOPT_POSTFIELDSIZE, 0);
+        if (mode == MODE_POST)
+          curl_easy_setopt(url_con->curl_easy, CURLOPT_POST, 1);
      }
 
    switch (url_con->time_condition)
