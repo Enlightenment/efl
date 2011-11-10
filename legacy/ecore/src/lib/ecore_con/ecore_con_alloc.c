@@ -61,7 +61,7 @@ ecore_con_mempool_init(void)
    unsigned int i;
 
    choice = getenv("EINA_MEMPOOL");
-   if (!choice || choice[0])
+   if (!choice || !choice[0])
      choice = "chained_mempool";
 
    for (i = 0; i < sizeof (mempool_array) / sizeof (mempool_array[0]); ++i)
