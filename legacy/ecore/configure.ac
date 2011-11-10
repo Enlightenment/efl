@@ -385,7 +385,6 @@ m4_ifdef([AC_PROG_OBJC],
    ])
 m4_ifndef([am__fastdepOBJC], [
     AM_CONDITIONAL([am__fastdepOBJC], [false])
-    AC_SUBST([cocoa_ldflags])
 ])
 
 AC_PROG_CXX
@@ -1204,19 +1203,21 @@ AC_CHECK_HEADER([linux/fb.h],
 
 # Cocoa header files (ecore_cocoa)
 
-cocoa_ldflags=""
-have_cocoa="no"
-m4_ifdef([AC_PROG_OBJC], [
-    if test "x${have_gnu_objc}" = "xyes" ; then
-       AC_LANG_PUSH([Objective C])
-       LIBS_save="$LIBS"
-       LIBS="$LIBS -framework Cocoa"
-       AC_LINK_IFELSE(
-          [AC_LANG_PROGRAM(
-              [[
+if test "x${want_ecore_cocoa}" = "xyes" ; then
+   cocoa_ldflags=""
+   have_cocoa="no"
+   m4_ifdef([AC_PROG_OBJC],
+      [
+       if test "x${have_gnu_objc}" = "xyes" ; then
+          AC_LANG_PUSH([Objective C])
+          LIBS_save="$LIBS"
+          LIBS="$LIBS -framework Cocoa"
+          AC_LINK_IFELSE(
+             [AC_LANG_PROGRAM(
+                 [[
 #include <Cocoa/Cocoa.h>
-              ]],
-              [[
+                 ]],
+                 [[
 NSWindow *window;
 window = [[NSWindow alloc]
            initWithContentRect:NSMakeRect(0, 0, 1, 1)
@@ -1225,18 +1226,19 @@ window = [[NSWindow alloc]
            defer:NO
            screen:nil
          ];
-              ]])],
-          [
-           have_cocoa="yes"
-           cocoa_ldflags="-framework Cocoa"
-          ],
-          [have_cocoa="no"])
-       LIBS="$LIBS_save"
-       AC_MSG_CHECKING([whether Cocoa framework is supported])
-       AC_MSG_RESULT([${have_cocoa}])
-       AC_LANG_POP([Objective C])
-    fi
-])
+                 ]])],
+             [
+              have_cocoa="yes"
+              cocoa_ldflags="-framework Cocoa"
+             ],
+             [have_cocoa="no"])
+          LIBS="$LIBS_save"
+          AC_MSG_CHECKING([whether Cocoa framework is supported])
+          AC_MSG_RESULT([${have_cocoa}])
+          AC_LANG_POP([Objective C])
+       fi
+   ])
+fi
 AC_SUBST(cocoa_ldflags)
 
 want_epoll=yes
