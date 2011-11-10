@@ -5,8 +5,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: Ecore\n"
-"Report-Msgid-Bugs-To: http://trac.enlightenment.org/e/\n"
-"POT-Creation-Date: 2011-09-03 06:00-0700\n"
+"Report-Msgid-Bugs-To: enlightenment-devel@lists.sourceforge.net\n"
+"POT-Creation-Date: 2011-11-10 15:37+0900\n"
 "PO-Revision-Date: 2011-09-03 15:48+0100\n"
 "Last-Translator: Heimen Stoffels <vistausss@gmail.com>\n"
 "Language-Team:  <vistausss@gmail.com>\n"
@@ -17,166 +17,159 @@ msgstr ""
 "X-Poedit-Language: NL\n"
 "X-Poedit-Country: Nederland\n"
 
-#: ../src/lib/ecore/ecore_getopt.c:87
+#: src/lib/ecore/ecore_getopt.c:90
 msgid "Version:"
 msgstr "Versie:"
 
-#: ../src/lib/ecore/ecore_getopt.c:95
+#: src/lib/ecore/ecore_getopt.c:99
 msgid "Usage:"
 msgstr "Gebruik:"
 
-#: ../src/lib/ecore/ecore_getopt.c:100
+#: src/lib/ecore/ecore_getopt.c:104
 #, c-format
 msgid "%s [options]\n"
 msgstr "%s [opties]\n"
 
-#: ../src/lib/ecore/ecore_getopt.c:248
+#: src/lib/ecore/ecore_getopt.c:259
 msgid "Copyright:"
 msgstr "Copyright:"
 
-#: ../src/lib/ecore/ecore_getopt.c:259
+#: src/lib/ecore/ecore_getopt.c:271
 msgid "License:"
 msgstr "Licentie:"
 
-#: ../src/lib/ecore/ecore_getopt.c:411
+#: src/lib/ecore/ecore_getopt.c:452
 msgid "Type: "
 msgstr "Type:"
 
-#: ../src/lib/ecore/ecore_getopt.c:478
+#: src/lib/ecore/ecore_getopt.c:528
 msgid "Default: "
 msgstr "Standaard:"
 
-#: ../src/lib/ecore/ecore_getopt.c:501
+#: src/lib/ecore/ecore_getopt.c:555
 msgid "Choices: "
 msgstr "Keuzes:"
 
-#: ../src/lib/ecore/ecore_getopt.c:598
+#: src/lib/ecore/ecore_getopt.c:656
 msgid "Options:\n"
 msgstr "Opties:\n"
 
-#: ../src/lib/ecore/ecore_getopt.c:718
+#: src/lib/ecore/ecore_getopt.c:781
 #, c-format
 msgid "ERROR: unknown option --%s.\n"
 msgstr "FOUT: onbekende optie --%s.\n"
 
-#: ../src/lib/ecore/ecore_getopt.c:720
+#: src/lib/ecore/ecore_getopt.c:783
 #, c-format
 msgid "ERROR: unknown option -%c.\n"
 msgstr "FOUT: onbekende optie -%c.\n"
 
-#: ../src/lib/ecore/ecore_getopt.c:776
+#: src/lib/ecore/ecore_getopt.c:841
 msgid "ERROR: "
 msgstr "FOUT:"
 
-#: ../src/lib/ecore/ecore_getopt.c:853
-#: ../src/lib/ecore/ecore_getopt.c:969
-#: ../src/lib/ecore/ecore_getopt.c:982
-#: ../src/lib/ecore/ecore_getopt.c:994
-#: ../src/lib/ecore/ecore_getopt.c:1008
-#: ../src/lib/ecore/ecore_getopt.c:1052
-#: ../src/lib/ecore/ecore_getopt.c:1160
-#: ../src/lib/ecore/ecore_getopt.c:1196
+#: src/lib/ecore/ecore_getopt.c:924 src/lib/ecore/ecore_getopt.c:1061
+#: src/lib/ecore/ecore_getopt.c:1077 src/lib/ecore/ecore_getopt.c:1092
+#: src/lib/ecore/ecore_getopt.c:1109 src/lib/ecore/ecore_getopt.c:1156
+#: src/lib/ecore/ecore_getopt.c:1276 src/lib/ecore/ecore_getopt.c:1317
 msgid "value has no pointer set.\n"
 msgstr "waarde heeft geen pointer ingsteld.\n"
 
-#: ../src/lib/ecore/ecore_getopt.c:882
-#: ../src/lib/ecore/ecore_getopt.c:1071
+#: src/lib/ecore/ecore_getopt.c:956 src/lib/ecore/ecore_getopt.c:1176
 #, c-format
 msgid "unknown boolean value %s.\n"
 msgstr "onbekende boolean-waarde %s.\n"
 
-#: ../src/lib/ecore/ecore_getopt.c:926
-#: ../src/lib/ecore/ecore_getopt.c:1151
+#: src/lib/ecore/ecore_getopt.c:1007 src/lib/ecore/ecore_getopt.c:1264
 #, c-format
 msgid "invalid number format %s\n"
 msgstr "ongeldig nummerformaat %s\n"
 
-#: ../src/lib/ecore/ecore_getopt.c:1021
+#: src/lib/ecore/ecore_getopt.c:1122
 #, c-format
 msgid "invalid choice \"%s\". Valid values are: "
 msgstr "ongeldige keuze \"%s\". Geldige waardes zijn:"
 
-#: ../src/lib/ecore/ecore_getopt.c:1046
+#: src/lib/ecore/ecore_getopt.c:1150
 msgid "missing parameter to append.\n"
 msgstr "parameter om toe te wijzen ontbreekt.\n"
 
-#: ../src/lib/ecore/ecore_getopt.c:1141
+#: src/lib/ecore/ecore_getopt.c:1254
 msgid "could not parse value.\n"
 msgstr "kon waarde niet doorvoeren.\n"
 
-#: ../src/lib/ecore/ecore_getopt.c:1190
+#: src/lib/ecore/ecore_getopt.c:1311
 msgid "missing parameter.\n"
 msgstr "paramater ontbreekt.\n"
 
-#: ../src/lib/ecore/ecore_getopt.c:1203
+#: src/lib/ecore/ecore_getopt.c:1324
 msgid "missing callback function!\n"
 msgstr "ontbrekende terugroep-functie!\n"
 
-#: ../src/lib/ecore/ecore_getopt.c:1226
+#: src/lib/ecore/ecore_getopt.c:1353
 msgid "no version was defined.\n"
 msgstr "geen versie was gedefinieerd.\n"
 
-#: ../src/lib/ecore/ecore_getopt.c:1240
+#: src/lib/ecore/ecore_getopt.c:1370
 msgid "no copyright was defined.\n"
 msgstr "geen copyright was gedefinieerd.\n"
 
-#: ../src/lib/ecore/ecore_getopt.c:1254
+#: src/lib/ecore/ecore_getopt.c:1387
 msgid "no license was defined.\n"
 msgstr "geen licentie was gedefinieerd.\n"
 
-#: ../src/lib/ecore/ecore_getopt.c:1308
+#: src/lib/ecore/ecore_getopt.c:1462
 #, c-format
 msgid "ERROR: unknown option --%s, ignored.\n"
 msgstr "FOUT: onbekende optie --%s, genegeerd.\n"
 
-#: ../src/lib/ecore/ecore_getopt.c:1341
+#: src/lib/ecore/ecore_getopt.c:1495
 #, c-format
 msgid "ERROR: option --%s requires an argument!\n"
 msgstr "FOUT: optie --%s vereist een argument!\n"
 
-#: ../src/lib/ecore/ecore_getopt.c:1377
+#: src/lib/ecore/ecore_getopt.c:1537
 #, c-format
 msgid "ERROR: unknown option -%c, ignored.\n"
 msgstr "FOUT: onbekende opties -%c, genegeerd.\n"
 
-#: ../src/lib/ecore/ecore_getopt.c:1415
+#: src/lib/ecore/ecore_getopt.c:1575
 #, c-format
 msgid "ERROR: option -%c requires an argument!\n"
 msgstr "FOUT: optie -%c vereist een argument!\n"
 
-#: ../src/lib/ecore/ecore_getopt.c:1614
+#: src/lib/ecore/ecore_getopt.c:1784
 msgid "ERROR: no parser provided.\n"
 msgstr "FOUT: geen doorvoerder beschikbaar gesteld.\n"
 
-#: ../src/lib/ecore/ecore_getopt.c:1619
+#: src/lib/ecore/ecore_getopt.c:1789
 msgid "ERROR: no values provided.\n"
 msgstr "FOUT: geen waarden beschikbaar gesteld.\n"
 
-#: ../src/lib/ecore/ecore_getopt.c:1628
+#: src/lib/ecore/ecore_getopt.c:1798
 msgid "ERROR: no arguments provided.\n"
 msgstr "FOUT: geen argumenten beschibaar gesteld.\n"
 
-#: ../src/lib/ecore/ecore_getopt.c:1654
+#: src/lib/ecore/ecore_getopt.c:1824
 msgid "ERROR: invalid options found."
 msgstr "FOUT: ongeldige opties gevonden."
 
-#: ../src/lib/ecore/ecore_getopt.c:1660
+#: src/lib/ecore/ecore_getopt.c:1830
 #, c-format
 msgid " See --%s.\n"
 msgstr "Zie --%s.\n"
 
-#: ../src/lib/ecore/ecore_getopt.c:1662
+#: src/lib/ecore/ecore_getopt.c:1832
 #, c-format
 msgid " See -%c.\n"
 msgstr "Zie -%c.\n"
 
-#: ../src/lib/ecore/ecore_getopt.c:1699
+#: src/lib/ecore/ecore_getopt.c:1873
 #, c-format
 msgid "ERROR: incorrect geometry value '%s'\n"
 msgstr "Fout: foutieve wiskundige waarde '%s'\n"
 
-#: ../src/lib/ecore/ecore_getopt.c:1722
+#: src/lib/ecore/ecore_getopt.c:1900
 #, c-format
 msgid "ERROR: incorrect size value '%s'\n"
 msgstr "FOUT: foutieve grootte-waarden '%s'\n"
-
