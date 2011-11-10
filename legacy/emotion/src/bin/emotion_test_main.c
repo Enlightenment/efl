@@ -631,24 +631,6 @@ init_video_object(const char *module_filename, const char *filename)
 }
 
 static Eina_Bool
-enter_idle(void *data __UNUSED__)
-{
-   double t;
-   static double pt = 0.0;
-   static int frames = 0;
-
-   t = ecore_time_get();
-   if (frames == 0) pt = t;
-   frames++;
-   if (frames == 100)
-     {
-//	printf("FPS: %3.3f\n", frames / (t - pt));
-	frames = 0;
-     }
-   return EINA_TRUE;
-}
-
-static Eina_Bool
 check_positions(void *data __UNUSED__)
 {
    const Eina_List *lst;
@@ -740,7 +722,6 @@ main(int argc, char **argv)
    for (; args < argc; args++)
      init_video_object(backend, argv[args]);
 
-   ecore_idle_enterer_add(enter_idle, NULL);
    ecore_animator_add(check_positions, NULL);
 
    ecore_main_loop_begin();
