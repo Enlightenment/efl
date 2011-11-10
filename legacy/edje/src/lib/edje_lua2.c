@@ -1332,6 +1332,7 @@ _elua_2_int_get(lua_State *L, int i, Eina_Bool tr,
 //  int %
 //  num #
 //  str $
+// Can also have a matching _elua_ret("%i#f$str", i, f, str));
 static int
 _elua_str_int_get(lua_State *L, int i, Eina_Bool tr,
                 const char *n1, char **v1,
@@ -2558,9 +2559,14 @@ _elua_map_populate(lua_State *L)
            break;
         }
 
-       default :
+       case 6 :
         {
-           // FIXME: unpack 5 integers and pass them to evas_map_util_points_populate_from_geometry()
+           Evas_Coord x, y, w, h;
+
+           if (n = _elua_4_int_get(L, 2, EINA_FALSE, "x", &x, "y", &y, "w", &w, "h", &h) > 0)
+             {
+                evas_map_util_points_populate_from_geometry(elm->map, x, y, w, h, lua_tointeger(L, 2 + n));
+             }
            break;
         }
     }
