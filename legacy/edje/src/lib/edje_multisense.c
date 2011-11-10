@@ -251,13 +251,33 @@ sound_command_handler(Multisense_Data *msdata)
 #endif
 
 #ifdef HAVE_LIBREMIX
+// msdata outside of thread due to thread issues in dlsym etc.
+static Multisense_Data *msdata = NULL;
+
+static void
+_msdata_free(void)
+{
+   // cleanup msdata outside of thread due to thread issues in dlsym etc.
+   if (!msdata) return;
+   //cleanup Remix stuffs
+   remix_destroy(msdata->msenv->remixenv, msdata->player);
+   remix_destroy(msdata->msenv->remixenv, msdata->deck);
+   remix_purge(msdata->msenv->remixenv);
+   
+   free(msdata->msenv);
+   free(msdata);
+   msdata = NULL;
+}
+
 static void
 _player_job(void *data __UNUSED__, Ecore_Thread *th)
 {
    fd_set wait_fds;
    RemixBase *sound;
    RemixCount process_len;
-   Multisense_Data *msdata = init_multisense_environment();
+// disable and move outside of thread due to dlsym etc. thread issues   
+//   Multisense_Data * msdata = init_multisense_environment();
+   
    if (!msdata) return;
 
    fcntl(command_pipe[0], F_SETFL, O_NONBLOCK);
@@ -291,13 +311,6 @@ _player_job(void *data __UNUSED__, Ecore_Thread *th)
         remix_destroy(msdata->msenv->remixenv, sound);
      }
 
-   //cleanup Remix stuffs
-   remix_destroy(msdata->msenv->remixenv, msdata->player);
-   remix_destroy(msdata->msenv->remixenv, msdata->deck);
-   remix_purge(msdata->msenv->remixenv);
-
-   free(msdata->msenv);
-   free(msdata);
    close(command_pipe[0]);
    close(command_pipe[1]);
 }
@@ -307,6 +320,8 @@ _player_job(void *data __UNUSED__, Ecore_Thread *th)
 static void
 _player_cancel(void *data __UNUSED__, Ecore_Thread *th __UNUSED__)
 {
+   // cleanup msdata outside of thread due to thread issues in dlsym etc.
+   _msdata_free();
    player_thread = NULL;
 }
 #endif
@@ -315,6 +330,8 @@ _player_cancel(void *data __UNUSED__, Ecore_Thread *th __UNUSED__)
 static void
 _player_end(void *data __UNUSED__, Ecore_Thread *th __UNUSED__)
 {
+   // cleanup msdata outside of thread due to thread issues in dlsym etc.
+   _msdata_free();
    player_thread = NULL;
 }
 #endif
@@ -368,6 +385,9 @@ _edje_multisense_init(void)
 #ifdef ENABLE_MULTISENSE
    if (!pipe_initialized && (pipe(command_pipe) != -1))
      pipe_initialized = EINA_TRUE;
+
+   // init msdata outside of thread due to thread issues in dlsym etc.
+   if (!msdata) msdata = init_multisense_environment();
    
    if (!player_thread)
      player_thread = ecore_thread_run(_player_job, _player_end, _player_cancel, NULL);
