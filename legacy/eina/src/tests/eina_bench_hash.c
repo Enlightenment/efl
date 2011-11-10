@@ -144,6 +144,49 @@ eina_bench_lookup_rbtree(int request)
    eina_rbtree_delete(root, EINA_RBTREE_FREE_CB(_eina_bench_rbtree_free), NULL);
 }
 
+static void
+eina_bench_lookup_murmur(int request)
+{
+   Eina_Hash *hash = NULL;
+   int *tmp_val;
+   unsigned int i;
+   unsigned int j;
+
+   hash = eina_hash_new(EINA_KEY_LENGTH(_eina_string_key_length),
+                        EINA_KEY_CMP(_eina_string_key_cmp),
+                        EINA_KEY_HASH(eina_hash_murmur3),
+                        free,
+                        8);
+
+   for (i = 0; i < (unsigned int)request; ++i)
+     {
+        char tmp_key[10];
+
+        tmp_val = malloc(sizeof (int));
+
+        if (!tmp_val)
+           continue;
+
+        eina_convert_itoa(i, tmp_key);
+        *tmp_val = i;
+
+        eina_hash_add(hash, tmp_key, tmp_val);
+     }
+
+   srand(time(NULL));
+
+   for (j = 0; j < 200; ++j)
+      for (i = 0; i < (unsigned int)request; ++i)
+        {
+           char tmp_key[10];
+
+           eina_convert_itoa(rand() % request, tmp_key);
+           tmp_val = eina_hash_find(hash, tmp_key);
+        }
+
+   eina_hash_free(hash);
+}
+
 #ifdef CITYHASH_BENCH
 static void
 eina_bench_lookup_cityhash(int request)
@@ -476,10 +519,13 @@ void eina_bench_hash(Eina_Benchmark *bench)
    eina_benchmark_register(bench, "djb2-lookup-inline",
                            EINA_BENCHMARK(
                               eina_bench_lookup_djb2_inline), 10, 10000, 10);
+   eina_benchmark_register(bench, "murmur",
+                           EINA_BENCHMARK(
+                              eina_bench_lookup_murmur),      10, 10000, 10);
 #ifdef CITYHASH_BENCH
    eina_benchmark_register(bench, "cityhash",
                            EINA_BENCHMARK(
-                              eina_bench_lookup_cityhash),      10, 10000, 10);
+                              eina_bench_lookup_cityhash),    10, 10000, 10);
 #endif
    eina_benchmark_register(bench, "rbtree",
                            EINA_BENCHMARK(
@@ -495,4 +541,5 @@ void eina_bench_hash(Eina_Benchmark *bench)
    eina_benchmark_register(bench, "ecore-lookup",
                            EINA_BENCHMARK(
                               eina_bench_lookup_ecore),       10, 10000, 10);
+
 }

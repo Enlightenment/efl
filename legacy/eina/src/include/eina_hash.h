@@ -1020,7 +1020,9 @@ static inline int eina_hash_int32(const unsigned int *pkey,
                                   int                 len) EINA_ARG_NONNULL(1);
 static inline int eina_hash_int64(const unsigned long int *pkey,
                                   int                      len) EINA_ARG_NONNULL(1);
-
+/* http://sites.google.com/site/murmurhash/ */
+static inline int eina_hash_murmur3(const char *key,
+                           int         len) EINA_ARG_NONNULL(1);
 #include "eina_inline_hash.x"
 
 /**
