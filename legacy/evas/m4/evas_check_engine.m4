@@ -91,9 +91,27 @@ AC_CHECK_HEADER([GL/gl.h],
 
 gl_pt_lib="";
 have_gl_pt="no"
-AC_CHECK_LIB([pthread], [pthread_create], [have_gl_pt="yes"], [have_gl_pt="no"])
+
+AC_MSG_CHECKING([whether pthread_create() is supported])
+CFLAGS_save="${CFLAGS}"
+CFLAGS="${CFLAGS} -pthread"
+LIBS_save="${LIBS}"
+LIBS="${LIBS} -pthread"
+AC_LINK_IFELSE(
+  [AC_LANG_PROGRAM([[
+#include <pthread.h>
+                   ]],
+                   [[
+pthread_create(NULL, NULL, NULL, NULL);
+                   ]])],
+   [have_gl_pt="yes"],
+   [have_gl_pt="no"])
+CFLAGS=${CFLAGS_save}
+LIBS=${LIBS_save}
+AC_MSG_RESULT([${have_gl_pt}])
+
 if test "x$have_gl_pt" = "xyes" ; then
-   gl_pt_lib=" -lpthread"
+   gl_pt_lib=" -pthread"
 fi
 
 if test "x${have_dep}" = "xyes" ; then
@@ -236,9 +254,27 @@ AC_CHECK_HEADER([GL/gl.h],
 
 gl_pt_lib="";
 have_gl_pt="no"
-AC_CHECK_LIB([pthread], [pthread_create], [have_gl_pt="yes"], [have_gl_pt="no"])
+
+AC_MSG_CHECKING([whether pthread_create() is supported])
+CFLAGS_save="${CFLAGS}"
+CFLAGS="${CFLAGS} -pthread"
+LIBS_save="${LIBS}"
+LIBS="${LIBS} -pthread"
+AC_LINK_IFELSE(
+  [AC_LANG_PROGRAM([[
+#include <pthread.h>
+                   ]],
+                   [[
+pthread_create(NULL, NULL, NULL, NULL);
+                   ]])],
+   [have_gl_pt="yes"],
+   [have_gl_pt="no"])
+CFLAGS=${CFLAGS_save}
+LIBS=${LIBS_save}
+AC_MSG_RESULT([${have_gl_pt}])
+
 if test "x$have_gl_pt" = "xyes" ; then
-   gl_pt_lib=" -lpthread"
+   gl_pt_lib=" -pthread"
 fi
 
 if test "x${have_dep}" = "xyes" ; then
@@ -555,9 +591,27 @@ PKG_CHECK_MODULES([SDL],
 
 gl_pt_lib="";
 have_gl_pt="no"
-AC_CHECK_LIB([pthread], [pthread_create], [have_gl_pt="yes"], [have_gl_pt="no"])
+
+AC_MSG_CHECKING([whether pthread_create() is supported])
+CFLAGS_save="${CFLAGS}"
+CFLAGS="${CFLAGS} -pthread"
+LIBS_save="${LIBS}"
+LIBS="${LIBS} -pthread"
+AC_LINK_IFELSE(
+  [AC_LANG_PROGRAM([[
+#include <pthread.h>
+                   ]],
+                   [[
+pthread_create(NULL, NULL, NULL, NULL);
+                   ]])],
+   [have_gl_pt="yes"],
+   [have_gl_pt="no"])
+CFLAGS=${CFLAGS_save}
+LIBS=${LIBS_save}
+AC_MSG_RESULT([${have_gl_pt}])
+
 if test "x$have_gl_pt" = "xyes" ; then
-   gl_pt_lib=" -lpthread"
+   gl_pt_lib=" -pthread"
 fi
 
 AC_CHECK_HEADER([GL/gl.h],
