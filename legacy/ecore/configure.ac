@@ -83,7 +83,7 @@ AC_ARG_WITH(internal-maximum-log-level,
                    [limit ecore internal log level to the given number, any call to EINA_LOG() with values greater than this will be compiled out, ignoring runtime settings, but saving function calls.])],
    [
     if test "x${withval}" != "xno"; then
-       if echo "${withval}" | grep '^[[0-9]]\+$' >/dev/null 2>/dev/null; then
+       if echo "${withval}" | grep -E '^[[0-9]]+$' >/dev/null 2>/dev/null; then
           AC_MSG_NOTICE([ignoring any EINA_LOG() with level greater than ${withval}])
           AC_DEFINE_UNQUOTED(EINA_LOG_LEVEL_MAXIMUM, ${withval}, [if set, logging is limited to this amount.])
           with_max_log_level="${withval}"
