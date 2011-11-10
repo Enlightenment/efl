@@ -8,6 +8,7 @@
 #define ELM_GESTURE_NEGATIVE_ANGLE (-1.0) /* Magic number */
 #define ELM_GESTURE_MOMENTUM_TIMEOUT 50
 #define ELM_GESTURE_MULTI_TIMEOUT 50
+#define ELM_GESTURE_MINIMUM_MOMENTUM 0.001
 
 /* Some Trigo values */
 #define RAD_90DEG  M_PI_2
@@ -1860,7 +1861,13 @@ _momentum_test(Evas_Object *obj, Pointer_Event *pe,
          _set_momentum(&st->info, st->line_st.x, st->line_st.y, pe_local.x, pe_local.y,
                st->t_st_x, st->t_st_y, pe_local.timestamp);
 
-         ev_flag = _set_state(gesture, ELM_GESTURE_STATE_END, &st->info,
+         if ((fabs(st->info.mx) > ELM_GESTURE_MINIMUM_MOMENTUM) ||
+               (fabs(st->info.my) > ELM_GESTURE_MINIMUM_MOMENTUM))
+           state_to_report = ELM_GESTURE_STATE_END;
+         else
+           state_to_report = ELM_GESTURE_STATE_ABORT;
+
+         ev_flag = _set_state(gesture, state_to_report, &st->info,
                EINA_FALSE);
          consume_event(wd, event_info, event_type, ev_flag);
          return;
