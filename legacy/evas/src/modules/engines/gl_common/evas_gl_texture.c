@@ -647,8 +647,8 @@ evas_gl_texture_pool_empty(Evas_GL_Texture_Pool *pt)
 #if defined (GLES_VARIETY_S3C6410) || defined (GLES_VARIETY_SGX)
    if (pt->dyn.img)
      {
-        if (im->tex->pt->dyn.checked_out > 0)
-          glsym_eglUnmapImageSEC(pt->gc->egldisp, pt->dyn.img);
+        if (pt->dyn.checked_out > 0)
+          secsym_eglUnmapImageSEC(pt->gc->egldisp, pt->dyn.img);
         secsym_eglDestroyImage(pt->gc->egldisp, pt->dyn.img);
         pt->dyn.img = NULL;
         pt->dyn.data = NULL;
