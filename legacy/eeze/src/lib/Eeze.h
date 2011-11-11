@@ -3,7 +3,7 @@
  *
  @mainpage Eeze
  @image html  eeze.png
- @version 1.0.0
+ @version 1.1.0
  @author Mike Blumenkrantz (zmike/discomfitor) <mike@@zentific.com>
  @date 2010-2011
 
