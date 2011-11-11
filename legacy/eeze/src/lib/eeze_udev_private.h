@@ -2,6 +2,9 @@
 #define EEZE_UDEV_PRIVATE_H
 #include <Eeze.h>
 
+#define LIBUDEV_I_KNOW_THE_API_IS_SUBJECT_TO_CHANGE 1
+#include <libudev.h>
+
 #ifndef EEZE_UDEV_COLOR_DEFAULT
 #define EEZE_UDEV_COLOR_DEFAULT EINA_COLOR_CYAN
 #endif

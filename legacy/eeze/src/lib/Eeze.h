@@ -38,9 +38,6 @@
 
 #include <Eina.h>
 
-#define LIBUDEV_I_KNOW_THE_API_IS_SUBJECT_TO_CHANGE 1
-#include <libudev.h>
-
 #ifdef EAPI
 # undef EAPI
 #endif
