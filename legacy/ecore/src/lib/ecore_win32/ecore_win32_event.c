@@ -798,6 +798,21 @@ _ecore_win32_event_keystroke_get(int    key,
            kc = "KP_Delete";
          }
        break;
+     case VK_SHIFT:
+       kn = "Shift";
+       ks = "Shift";
+       kc = "Shift";
+       break;
+     case VK_CONTROL:
+       kn = "Control";
+       ks = "Control";
+       kc = "Control";
+       break;
+     case VK_MENU:
+       kn = "Menu";
+       ks = "Menu";
+       kc = "Menu";
+       break;
      case VK_F1:
        kn = "F1";
        ks = "F1";

@@ -251,6 +251,16 @@ _ecore_wince_event_keystroke_get(int    key,
        ks = "Application";
        kc = "";
        break;
+     case VK_SHIFT:
+       kn = "Shift";
+       ks = "Shift";
+       kc = "Shift";
+       break;
+     case VK_CONTROL:
+       kn = "Control";
+       ks = "Control";
+       kc = "Control";
+       break;
      case VK_MENU:
        kn = "Menu";
        ks = "Menu";

@@ -83,6 +83,7 @@ _ecore_win32_window_procedure(HWND   window,
      {
        /* Keyboard input notifications */
      case WM_KEYDOWN:
+     case WM_SYSKEYDOWN:
        INF("keydown message");
        _ecore_win32_event_handle_key_press(data, 1);
        return 0;
@@ -91,6 +92,7 @@ _ecore_win32_window_procedure(HWND   window,
        _ecore_win32_event_handle_key_press(data, 0);
        return 0;
      case WM_KEYUP:
+     case WM_SYSKEYUP:
        INF("keyup message");
        _ecore_win32_event_handle_key_release(data, 1);
        return 0;
