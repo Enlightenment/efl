@@ -63,7 +63,7 @@ ecore_x_mwm_hints_get(Ecore_X_Window          win,
    cookie =
      xcb_get_property_unchecked(_ecore_xcb_conn, 0, win,
                                 ECORE_X_ATOM_MOTIF_WM_HINTS,
-                                ECORE_X_ATOM_MOTIF_WM_HINTS, 0, LONG_MAX);
+                                ECORE_X_ATOM_MOTIF_WM_HINTS, 0, UINT_MAX);
    reply = xcb_get_property_reply(_ecore_xcb_conn, cookie, NULL);
    if (!reply) return EINA_FALSE;
    if ((reply->format != 32) || (reply->value_len == 0))

@@ -405,7 +405,7 @@ ecore_x_window_prop_property_get(Ecore_X_Window  win,
 
    cookie =
      xcb_get_property_unchecked(_ecore_xcb_conn, 0, win,
-                                property, type, 0, LONG_MAX);
+                                property, type, 0, UINT_MAX);
    reply = xcb_get_property_reply(_ecore_xcb_conn, cookie, NULL);
    if (!reply) return 0;
    if ((reply->format != size) || (reply->value_len == 0))
