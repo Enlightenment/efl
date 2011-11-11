@@ -117,6 +117,7 @@ EAPI int ECORE_CON_EVENT_SERVER_ERROR = 0;
 
 static Eina_List *servers = NULL;
 static int _ecore_con_init_count = 0;
+static int _ecore_con_event_count = 0;
 int _ecore_con_log_dom = -1;
 
 EAPI int
@@ -178,9 +179,17 @@ ecore_con_shutdown(void)
      return _ecore_con_init_count;
 
    EINA_LIST_FOREACH_SAFE(servers, l, l2, svr)
-     _ecore_con_server_free(svr);
+     {
+        Ecore_Con_Event_Server_Add *ev;
 
-   ecore_con_mempool_shutdown();
+        svr->delete_me = svr->dead = EINA_TRUE;
+        /* some pointer hacks here to prevent double frees if people are being stupid */
+        EINA_LIST_FREE(svr->event_count, ev)
+          ev->server = NULL;
+        _ecore_con_server_free(svr);
+     }
+
+   if (!_ecore_con_event_count) ecore_con_mempool_shutdown();
 
    ecore_con_info_shutdown();
    ecore_con_ssl_shutdown();
@@ -496,7 +505,7 @@ ecore_con_server_del(Ecore_Con_Server *svr)
 
    data = svr->data;
    svr->delete_me = EINA_TRUE;
-   if (svr->event_count > 0)
+   if (svr->event_count)
      {
         if (svr->fd_handler)
           {
@@ -796,7 +805,7 @@ ecore_con_client_del(Ecore_Con_Client *cl)
 
    data = cl->data;
    cl->delete_me = EINA_TRUE;
-   if (cl->event_count > 0)
+   if (cl->event_count)
      {
         if (cl->fd_handler)
           {
@@ -939,12 +948,13 @@ ecore_con_event_server_add(Ecore_Con_Server *svr)
     e = ecore_con_event_server_add_alloc();
     EINA_SAFETY_ON_NULL_RETURN(e);
 
-    svr->event_count++;
+    svr->event_count = eina_list_append(svr->event_count, e);
     _ecore_con_server_timer_update(svr);
     e->server = svr;
     if (svr->upgrade) ev = ECORE_CON_EVENT_SERVER_UPGRADE;
     ecore_event_add(ev, e,
                     _ecore_con_event_server_add_free, NULL);
+   _ecore_con_event_count++;
 }
 
 void
@@ -955,11 +965,12 @@ ecore_con_event_server_del(Ecore_Con_Server *svr)
     e = ecore_con_event_server_del_alloc();
     EINA_SAFETY_ON_NULL_RETURN(e);
 
-    svr->event_count++;
+    svr->event_count = eina_list_append(svr->event_count, e);
     _ecore_con_server_timer_update(svr);
     e->server = svr;
     ecore_event_add(ECORE_CON_EVENT_SERVER_DEL, e,
                     _ecore_con_event_server_del_free, NULL);
+   _ecore_con_event_count++;
 }
 
 void
@@ -970,12 +981,12 @@ ecore_con_event_server_write(Ecore_Con_Server *svr, int num)
    e = ecore_con_event_server_write_alloc();
    EINA_SAFETY_ON_NULL_RETURN(e);
 
-   svr->event_count++;
+   svr->event_count = eina_list_append(svr->event_count, e);
    e->server = svr;
    e->size = num;
    ecore_event_add(ECORE_CON_EVENT_SERVER_WRITE, e,
                    (Ecore_End_Cb)_ecore_con_event_server_write_free, NULL);
-
+   _ecore_con_event_count++;
 }
 
 void
@@ -986,7 +997,7 @@ ecore_con_event_server_data(Ecore_Con_Server *svr, unsigned char *buf, int num, 
    e = ecore_con_event_server_data_alloc();
    EINA_SAFETY_ON_NULL_RETURN(e);
 
-   svr->event_count++;
+   svr->event_count = eina_list_append(svr->event_count, e);
    _ecore_con_server_timer_update(svr);
    e->server = svr;
    if (duplicate)
@@ -1005,6 +1016,7 @@ ecore_con_event_server_data(Ecore_Con_Server *svr, unsigned char *buf, int num, 
    e->size = num;
    ecore_event_add(ECORE_CON_EVENT_SERVER_DATA, e,
                    _ecore_con_event_server_data_free, NULL);
+   _ecore_con_event_count++;
 }
 
 void
@@ -1016,14 +1028,14 @@ ecore_con_event_client_add(Ecore_Con_Client *cl)
    e = ecore_con_event_client_add_alloc();
    EINA_SAFETY_ON_NULL_RETURN(e);
 
-   cl->event_count++;
-   cl->host_server->event_count++;
+   cl->event_count = eina_list_append(cl->event_count, e);
+   cl->host_server->event_count = eina_list_append(cl->host_server->event_count, e);
    _ecore_con_cl_timer_update(cl);
    e->client = cl;
    if (cl->upgrade) ev = ECORE_CON_EVENT_CLIENT_UPGRADE;
    ecore_event_add(ev, e,
                    (Ecore_End_Cb)_ecore_con_event_client_add_free, cl->host_server);
-
+   _ecore_con_event_count++;
 }
 
 void
@@ -1034,13 +1046,14 @@ ecore_con_event_client_del(Ecore_Con_Client *cl)
     if (!cl) return;
     e = ecore_con_event_client_del_alloc();
     EINA_SAFETY_ON_NULL_RETURN(e);
+    cl->event_count = eina_list_append(cl->event_count, e);
 
-    cl->event_count++;
-    cl->host_server->event_count++;
+    cl->host_server->event_count = eina_list_append(cl->host_server->event_count, e);
     _ecore_con_cl_timer_update(cl);
     e->client = cl;
     ecore_event_add(ECORE_CON_EVENT_CLIENT_DEL, e,
                     (Ecore_End_Cb)_ecore_con_event_client_del_free, cl->host_server);
+   _ecore_con_event_count++;
 }
 
 void
@@ -1051,12 +1064,13 @@ ecore_con_event_client_write(Ecore_Con_Client *cl, int num)
    e = ecore_con_event_client_write_alloc();
    EINA_SAFETY_ON_NULL_RETURN(e);
 
-   cl->host_server->event_count++;
-   cl->event_count++;
+   cl->event_count = eina_list_append(cl->event_count, e);
+   cl->host_server->event_count = eina_list_append(cl->host_server->event_count, e);
    e->client = cl;
    e->size = num;
    ecore_event_add(ECORE_CON_EVENT_CLIENT_WRITE, e,
                    (Ecore_End_Cb)_ecore_con_event_client_write_free, cl->host_server);
+   _ecore_con_event_count++;
 }
 
 void
@@ -1067,8 +1081,8 @@ ecore_con_event_client_data(Ecore_Con_Client *cl, unsigned char *buf, int num, E
    e = ecore_con_event_client_data_alloc();
    EINA_SAFETY_ON_NULL_RETURN(e);
 
-   cl->host_server->event_count++;
-   cl->event_count++;
+   cl->event_count = eina_list_append(cl->event_count, e);
+   cl->host_server->event_count = eina_list_append(cl->host_server->event_count, e);
    _ecore_con_cl_timer_update(cl);
    e->client = cl;
    if (duplicate)
@@ -1087,6 +1101,7 @@ ecore_con_event_client_data(Ecore_Con_Client *cl, unsigned char *buf, int num, E
    e->size = num;
    ecore_event_add(ECORE_CON_EVENT_CLIENT_DATA, e,
                    (Ecore_End_Cb)_ecore_con_event_client_data_free, cl->host_server);
+   _ecore_con_event_count++;
 }
 
 
@@ -1107,8 +1122,9 @@ ecore_con_event_server_error(Ecore_Con_Server *svr, const char *error)
    e->server = svr;
    e->error = strdup(error);
    ERR("%s", error);
-   svr->event_count++;
+   svr->event_count = eina_list_append(svr->event_count, e);
    ecore_event_add(ECORE_CON_EVENT_SERVER_ERROR, e, (Ecore_End_Cb)_ecore_con_event_server_error_free, NULL);
+   _ecore_con_event_count++;
 }
 
 void
@@ -1122,9 +1138,10 @@ ecore_con_event_client_error(Ecore_Con_Client *cl, const char *error)
    e->client = cl;
    e->error = strdup(error);
    ERR("%s", error);
-   cl->event_count++;
-   cl->host_server->event_count++;
+   cl->event_count = eina_list_append(cl->event_count, e);
+   cl->host_server->event_count = eina_list_append(cl->host_server->event_count, e);
    ecore_event_add(ECORE_CON_EVENT_CLIENT_ERROR, e, (Ecore_End_Cb)_ecore_con_event_client_error_free, cl->host_server);
+   _ecore_con_event_count++;
 }
 
 static void
@@ -1138,7 +1155,7 @@ _ecore_con_server_free(Ecore_Con_Server *svr)
         ecore_con_info_data_clear(svr->infos->data);
         svr->infos = eina_list_remove_list(svr->infos, svr->infos);
      }
-   if ((!svr->buf) && svr->delete_me && (!svr->dead) && (svr->event_count < 1))
+   if ((!svr->buf) && svr->delete_me && (!svr->dead) && (!svr->event_count))
      {
         /* this is a catch-all for cases when a server is not properly killed. */
         svr->dead = EINA_TRUE;
@@ -1146,8 +1163,7 @@ _ecore_con_server_free(Ecore_Con_Server *svr)
         return;
      }
 
-   if (svr->event_count > 0)
-     return;
+   if (svr->event_count) return;
    ECORE_MAGIC_SET(svr, ECORE_MAGIC_NONE);
    t_start = ecore_time_get();
    while (svr->buf && (!svr->dead))
@@ -1172,19 +1188,24 @@ _ecore_con_server_free(Ecore_Con_Server *svr)
      eina_binbuf_free(svr->buf);
 
    EINA_LIST_FREE(svr->clients, cl)
-     _ecore_con_client_free(cl);
+     {
+        Ecore_Con_Event_Server_Add *ev;
+
+        /* some pointer hacks here to prevent double frees if people are being stupid */
+        EINA_LIST_FREE(cl->event_count, ev)
+          ev->server = NULL;
+        cl->delete_me = cl->dead = EINA_TRUE;
+        _ecore_con_client_free(cl);
+     }
    if ((svr->created) && (svr->path) && (svr->ppid == getpid()))
      unlink(svr->path);
 
    ecore_con_ssl_server_shutdown(svr);
-   if (svr->name)
-     free(svr->name);
+   free(svr->name);
 
-   if (svr->path)
-     free(svr->path);
+   free(svr->path);
 
-   if (svr->ip)
-     eina_stringshare_del(svr->ip);
+   eina_stringshare_del(svr->ip);
 
    if (svr->fd_handler)
      ecore_main_fd_handler_del(svr->fd_handler);
@@ -1205,10 +1226,9 @@ _ecore_con_client_free(Ecore_Con_Client *cl)
 {
    double t_start, t;
 
-   if (cl->event_count > 0)
-     return;
+   if (cl->event_count) return;
 
-   if (cl->delete_me && (!cl->dead) && (cl->event_count < 1))
+   if (cl->delete_me && (!cl->dead) && (!cl->event_count))
      {
         /* this is a catch-all for cases when a client is not properly killed. */
            cl->dead = EINA_TRUE;
@@ -1237,8 +1257,7 @@ _ecore_con_client_free(Ecore_Con_Client *cl)
    ecore_con_local_win32_client_del(cl);
 #endif
 
-   if (cl->buf)
-     free(cl->buf);
+   free(cl->buf);
 
    if (cl->host_server->type & ECORE_CON_SSL)
      ecore_con_ssl_client_shutdown(cl);
@@ -1249,15 +1268,13 @@ _ecore_con_client_free(Ecore_Con_Client *cl)
    if (cl->fd > 0)
      close(cl->fd);
 
-   if (cl->client_addr)
-     free(cl->client_addr);
+   free(cl->client_addr);
    cl->client_addr = NULL;
 
    if (cl->until_deletion)
      ecore_timer_del(cl->until_deletion);
 
-   if (cl->ip)
-     eina_stringshare_del(cl->ip);
+   eina_stringshare_del(cl->ip);
    cl->data = NULL;
    free(cl);
    return;
@@ -2084,10 +2101,7 @@ _ecore_con_svr_udp_handler(void             *data,
      {
         ecore_con_event_server_error(svr, strerror(errno));
         if (!svr->delete_me)
-          {
-             svr->event_count++;
-             ecore_con_event_client_del(NULL);
-          }
+          ecore_con_event_client_del(NULL);
 
         svr->dead = EINA_TRUE;
         svr->fd_handler = NULL;
@@ -2345,14 +2359,23 @@ _ecore_con_event_client_add_free(Ecore_Con_Server *svr,
    Ecore_Con_Event_Client_Add *e;
 
    e = ev;
-   e->client->event_count--;
-   e->client->host_server->event_count--;
-   if ((e->client->event_count <= 0) && (e->client->delete_me))
-     ecore_con_client_del(e->client);
-   if ((svr->event_count <= 0) && (svr->delete_me))
-     _ecore_con_server_free(svr);
+   if (e->client)
+     {
+        e->client->host_server->event_count = eina_list_remove(e->client->host_server->event_count, e);
+        if ((!e->client->event_count) && (e->client->delete_me))
+          ecore_con_client_del(e->client);
+        if (e->client->host_server)
+          {
+             e->client->host_server->event_count = eina_list_remove(e->client->host_server->event_count, ev);
+             if ((!svr->event_count) && (svr->delete_me))
+               _ecore_con_server_free(svr);
+          }
+     }
 
    ecore_con_event_client_add_free(e);
+   _ecore_con_event_count--;
+   if ((!_ecore_con_event_count) && (!_ecore_con_init_count))
+     ecore_con_mempool_shutdown();
 }
 
 static void
@@ -2362,34 +2385,47 @@ _ecore_con_event_client_del_free(Ecore_Con_Server *svr,
    Ecore_Con_Event_Client_Del *e;
 
    e = ev;
-   if (!e->client) return;
-
-   e->client->event_count--;
-   e->client->host_server->event_count--;
-   if ((e->client->event_count <= 0) && (e->client->delete_me))
-     ecore_con_client_del(e->client);
-   if ((svr->event_count <= 0) && (svr->delete_me))
-     _ecore_con_server_free(svr);
-
+   if (e->client)
+     {
+        e->client->host_server->event_count = eina_list_remove(e->client->host_server->event_count, e);
+        if ((!e->client->event_count) && (e->client->delete_me))
+          ecore_con_client_del(e->client);
+        if (e->client->host_server)
+          {
+             e->client->host_server->event_count = eina_list_remove(e->client->host_server->event_count, ev);
+             if ((!svr->event_count) && (svr->delete_me))
+               _ecore_con_server_free(svr);
+          }
+     }
    ecore_con_event_client_del_free(e);
+   _ecore_con_event_count--;
+   if ((!_ecore_con_event_count) && (!_ecore_con_init_count))
+     ecore_con_mempool_shutdown();
 }
 
 static void
 _ecore_con_event_client_write_free(Ecore_Con_Server *svr,
                                    Ecore_Con_Event_Client_Write *e)
 {
-   e->client->event_count--;
-   e->client->host_server->event_count--;
-
-   if (((e->client->event_count <= 0) && (e->client->delete_me)) ||
-       ((e->client->host_server &&
-         ((e->client->host_server->type & ECORE_CON_TYPE) == ECORE_CON_REMOTE_UDP ||
-          (e->client->host_server->type & ECORE_CON_TYPE) == ECORE_CON_REMOTE_MCAST))))
-     ecore_con_client_del(e->client);
-   if ((svr->event_count <= 0) && (svr->delete_me))
-     _ecore_con_server_free(svr);
-
+   if (e->client)
+     {
+        e->client->host_server->event_count = eina_list_remove(e->client->host_server->event_count, e);
+        if (((!e->client->event_count) && (e->client->delete_me)) ||
+            ((e->client->host_server &&
+              ((e->client->host_server->type & ECORE_CON_TYPE) == ECORE_CON_REMOTE_UDP ||
+               (e->client->host_server->type & ECORE_CON_TYPE) == ECORE_CON_REMOTE_MCAST))))
+          ecore_con_client_del(e->client);
+        if (e->client->host_server)
+          {
+             e->client->host_server->event_count = eina_list_remove(e->client->host_server->event_count, e);
+             if ((!svr->event_count) && (svr->delete_me))
+               _ecore_con_server_free(svr);
+          }
+     }
    ecore_con_event_client_write_free(e);
+   _ecore_con_event_count--;
+   if ((!_ecore_con_event_count) && (!_ecore_con_init_count))
+     ecore_con_mempool_shutdown();
 }
 
 static void
@@ -2399,20 +2435,23 @@ _ecore_con_event_client_data_free(Ecore_Con_Server *svr,
    Ecore_Con_Event_Client_Data *e;
 
    e = ev;
-   e->client->event_count--;
-   e->client->host_server->event_count--;
-   if (e->data)
-     free(e->data);
-
-   if (((e->client->event_count <= 0) && (e->client->delete_me)) ||
-       ((e->client->host_server &&
-         ((e->client->host_server->type & ECORE_CON_TYPE) == ECORE_CON_REMOTE_UDP ||
-          (e->client->host_server->type & ECORE_CON_TYPE) == ECORE_CON_REMOTE_MCAST))))
-     ecore_con_client_del(e->client);
-   if ((svr->event_count <= 0) && (svr->delete_me))
-     _ecore_con_server_free(svr);
-
+   if (e->client)
+     {
+        e->client->host_server->event_count = eina_list_remove(e->client->host_server->event_count, e);
+        if (((!e->client->event_count) && (e->client->delete_me)) ||
+            ((e->client->host_server &&
+              ((e->client->host_server->type & ECORE_CON_TYPE) == ECORE_CON_REMOTE_UDP ||
+               (e->client->host_server->type & ECORE_CON_TYPE) == ECORE_CON_REMOTE_MCAST))))
+          ecore_con_client_del(e->client);
+        e->client->host_server->event_count = eina_list_remove(e->client->host_server->event_count, ev);
+        if ((!svr->event_count) && (svr->delete_me))
+          _ecore_con_server_free(svr);
+     }
+   free(e->data);
    ecore_con_event_client_data_free(e);
+   _ecore_con_event_count--;
+   if ((!_ecore_con_event_count) && (!_ecore_con_init_count))
+     ecore_con_mempool_shutdown();
 }
 
 static void
@@ -2422,11 +2461,16 @@ _ecore_con_event_server_add_free(void *data __UNUSED__,
    Ecore_Con_Event_Server_Add *e;
 
    e = ev;
-   e->server->event_count--;
-   if ((e->server->event_count <= 0) && (e->server->delete_me))
-     _ecore_con_server_free(e->server);
-
+   if (e->server)
+     {
+        e->server->event_count = eina_list_remove(e->server->event_count, ev);
+        if ((!e->server->event_count) && (e->server->delete_me))
+          _ecore_con_server_free(e->server);
+     }
    ecore_con_event_server_add_free(e);
+   _ecore_con_event_count--;
+   if ((!_ecore_con_event_count) && (!_ecore_con_init_count))
+     ecore_con_mempool_shutdown();
 }
 
 static void
@@ -2436,23 +2480,33 @@ _ecore_con_event_server_del_free(void *data __UNUSED__,
    Ecore_Con_Event_Server_Del *e;
 
    e = ev;
-   e->server->event_count--;
-   if ((e->server->event_count <= 0) && (e->server->delete_me))
-     _ecore_con_server_free(e->server);
-
+   if (e->server)
+     {
+        e->server->event_count = eina_list_remove(e->server->event_count, ev);
+        if ((!e->server->event_count) && (e->server->delete_me))
+          _ecore_con_server_free(e->server);
+     }
    ecore_con_event_server_del_free(e);
+   _ecore_con_event_count--;
+   if ((!_ecore_con_event_count) && (!_ecore_con_init_count))
+     ecore_con_mempool_shutdown();
 }
 
 static void
 _ecore_con_event_server_write_free(void *data __UNUSED__,
                                    Ecore_Con_Event_Server_Write *e)
 {
-   e->server->event_count--;
-
-   if ((e->server->event_count <= 0) && (e->server->delete_me))
-     _ecore_con_server_free(e->server);
+   if (e->server)
+     {
+        e->server->event_count = eina_list_remove(e->server->event_count, e);
+        if ((!e->server->event_count) && (e->server->delete_me))
+          _ecore_con_server_free(e->server);
+     }
 
    ecore_con_event_server_write_free(e);
+   _ecore_con_event_count--;
+   if ((!_ecore_con_event_count) && (!_ecore_con_init_count))
+     ecore_con_mempool_shutdown();
 }
 
 static void
@@ -2462,40 +2516,57 @@ _ecore_con_event_server_data_free(void *data __UNUSED__,
    Ecore_Con_Event_Server_Data *e;
 
    e = ev;
-   e->server->event_count--;
-   if (e->data)
-     free(e->data);
+   if (e->server)
+     {
+        e->server->event_count = eina_list_remove(e->server->event_count, ev);
+        if ((!e->server->event_count) && (e->server->delete_me))
+          _ecore_con_server_free(e->server);
+     }
 
-   if ((e->server->event_count <= 0) && (e->server->delete_me))
-     _ecore_con_server_free(e->server);
-
+   free(e->data);
    ecore_con_event_server_data_free(e);
+   _ecore_con_event_count--;
+   if ((!_ecore_con_event_count) && (!_ecore_con_init_count))
+     ecore_con_mempool_shutdown();
 }
 
 
 static void
 _ecore_con_event_server_error_free(void *data __UNUSED__, Ecore_Con_Event_Server_Error *e)
 {
-   e->server->event_count--;
-   if ((e->server->event_count <= 0) && (e->server->delete_me))
-     _ecore_con_server_free(e->server);
-   if (e->error) free(e->error);
-
+   if (e->server)
+     {
+        e->server->event_count = eina_list_remove(e->server->event_count, e);
+        if ((!e->server->event_count) && (e->server->delete_me))
+          _ecore_con_server_free(e->server);
+     }
+   free(e->error);
    ecore_con_event_server_error_free(e);
+   _ecore_con_event_count--;
+   if ((!_ecore_con_event_count) && (!_ecore_con_init_count))
+     ecore_con_mempool_shutdown();
 }
 
 static void
 _ecore_con_event_client_error_free(Ecore_Con_Server *svr, Ecore_Con_Event_Client_Error *e)
 {
-   e->client->event_count--;
-   e->client->host_server->event_count--;
-   if ((e->client->event_count <= 0) && (e->client->delete_me))
-     _ecore_con_client_free(e->client);
-   if ((svr->event_count <= 0) && (svr->delete_me))
-     _ecore_con_server_free(svr);
-   if (e->error) free(e->error);
-
+   if (e->client)
+     {
+        e->client->host_server->event_count = eina_list_remove(e->client->host_server->event_count, e);
+        if ((!e->client->event_count) && (e->client->delete_me))
+          _ecore_con_client_free(e->client);
+        if (e->client->host_server)
+          {
+             e->client->host_server->event_count = eina_list_remove(e->client->host_server->event_count, e);
+             if ((!svr->event_count) && (svr->delete_me))
+               _ecore_con_server_free(svr);
+          }
+     }
+   free(e->error);
    ecore_con_event_client_error_free(e);
+   _ecore_con_event_count--;
+   if ((!_ecore_con_event_count) && (!_ecore_con_init_count))
+     ecore_con_mempool_shutdown();
 }
 
 static void

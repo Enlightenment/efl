@@ -92,7 +92,7 @@ struct _Ecore_Con_Client
    unsigned int buf_offset;
    Eina_Binbuf *buf;
    const char *ip;
-   int event_count;
+   Eina_List *event_count;
    struct sockaddr *client_addr;
    int client_addr_len;
    double start_time;
@@ -127,7 +127,7 @@ struct _Ecore_Con_Server
    Eina_Binbuf *buf;
    unsigned int write_buf_offset;
    Eina_List *infos;
-   int event_count;
+   Eina_List *event_count;
    int client_limit;
    pid_t ppid;
 #if USE_GNUTLS
