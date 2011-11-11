@@ -29,11 +29,11 @@ static void _JPEGErrorHandler2(j_common_ptr cinfo, int msg_level);
 static Eina_Bool evas_image_load_file_head_jpeg_internal(Image_Entry *ie,
                                                          void *map,
                                                          size_t len,
-                                                         int *error) EINA_ARG_NONNULL(1, 2, 3);
+                                                         int *error) EINA_ARG_NONNULL(1, 2, 4);
 static Eina_Bool evas_image_load_file_data_jpeg_internal(Image_Entry *ie,
                                                          void *map,
                                                          size_t len,
-                                                         int *error) EINA_ARG_NONNULL(1, 2, 3);
+                                                         int *error) EINA_ARG_NONNULL(1, 2, 4);
 #if 0 /* not used at the moment */
 static int evas_image_load_file_data_jpeg_alpha_internal(Image_Entry *ie, FILE *f) EINA_ARG_NONNULL(1, 2);
 #endif
