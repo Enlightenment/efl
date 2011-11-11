@@ -134,11 +134,22 @@ _evas_render_prev_cur_clip_cache_add(Evas *e, Evas_Object *obj)
 static void
 _evas_render_cur_clip_cache_del(Evas *e, Evas_Object *obj)
 {
+   Evas_Coord x, y, w, h;
+   
+   x = obj->cur.cache.clip.x;
+   y = obj->cur.cache.clip.y;
+   w = obj->cur.cache.clip.w;
+   h = obj->cur.cache.clip.h;
+   if (obj->cur.clipper)
+     {
+        RECTS_CLIP_TO_RECT(x, y, w, h,
+                           obj->cur.clipper->cur.cache.clip.x,
+                           obj->cur.clipper->cur.cache.clip.y,
+                           obj->cur.clipper->cur.cache.clip.w,
+                           obj->cur.clipper->cur.cache.clip.h);
+     }
    e->engine.func->output_redraws_rect_del(e->engine.data.output,
-                                           obj->cur.cache.clip.x,
-                                           obj->cur.cache.clip.y,
-                                           obj->cur.cache.clip.w,
-                                           obj->cur.cache.clip.h);
+                                           x, y, w, h);
 }
 
 static void

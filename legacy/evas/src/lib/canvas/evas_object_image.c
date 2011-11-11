@@ -3379,11 +3379,22 @@ evas_object_image_render_pre(Evas_Object *obj)
    if (evas_object_is_visible(obj) &&
        evas_object_is_opaque(obj))
      {
-         e->engine.func->output_redraws_rect_del(e->engine.data.output,
-                                                 obj->cur.cache.clip.x,
-                                                 obj->cur.cache.clip.y,
-                                                 obj->cur.cache.clip.w,
-                                                 obj->cur.cache.clip.h);
+        Evas_Coord x, y, w, h;
+        
+        x = obj->cur.cache.clip.x;
+        y = obj->cur.cache.clip.y;
+        w = obj->cur.cache.clip.w;
+        h = obj->cur.cache.clip.h;
+        if (obj->cur.clipper)
+          {
+             RECTS_CLIP_TO_RECT(x, y, w, h,
+                                obj->cur.clipper->cur.cache.clip.x,
+                                obj->cur.clipper->cur.cache.clip.y,
+                                obj->cur.clipper->cur.cache.clip.w,
+                                obj->cur.clipper->cur.cache.clip.h);
+          }
+        e->engine.func->output_redraws_rect_del(e->engine.data.output,
+                                                x, y, w, h);
      }
    done:
    evas_object_render_pre_effect_updates(&e->clip_changes, obj, is_v, was_v);
