@@ -2355,6 +2355,7 @@ st_collections_group_inherit(void)
         ed = ep->default_desc;
         parent_desc = ed2 = ep2->default_desc;
         ed->state.name = STRDUP(ed2->state.name);
+        ed->state.value = ed2->state.value;
         st_collections_group_parts_part_description_inherit();
         parent_desc = NULL;
 
@@ -2365,6 +2366,7 @@ st_collections_group_inherit(void)
              ed = ep->other.desc[j];
              parent_desc = ed2 = ep2->other.desc[j];
              ed->state.name = STRDUP(ed2->state.name);
+             ed->state.value = ed2->state.value;
              st_collections_group_parts_part_description_inherit();
              parent_desc = NULL;
           }
@@ -2904,6 +2906,7 @@ st_collections_group_parts_part_name(void)
                        pc->parts = realloc(pc->parts, pc->parts_count * sizeof (Edje_Part *));
                        ep = current_part = pc->parts[i];
                        epp->can_override = EINA_FALSE;
+                       break;
                     }
                }
           }
