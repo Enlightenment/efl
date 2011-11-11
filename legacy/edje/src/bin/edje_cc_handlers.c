@@ -4452,6 +4452,7 @@ st_collections_group_parts_part_description_state(void)
                        ep->other.desc = realloc(ep->other.desc,
                                                 sizeof (Edje_Part_Description_Common*) * ep->other.desc_count);
                        current_desc = ep->other.desc[i];
+                       break;
                     }
                }
           }
