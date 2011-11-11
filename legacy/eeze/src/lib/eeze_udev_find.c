@@ -22,7 +22,7 @@ eeze_udev_find_similar_from_syspath(const char *syspath)
    if (!syspath)
      return NULL;
 
-   en = udev_enumerate_new((udev));
+   en = udev_enumerate_new(udev);
 
    if (!en)
      return NULL;
@@ -86,7 +86,7 @@ eeze_udev_find_unlisted_similar(Eina_List *list)
 
    EINA_LIST_FOREACH(list, l, dev)
      {
-        en = udev_enumerate_new((udev));
+        en = udev_enumerate_new(udev);
 
         if (!en)
           return NULL;
@@ -153,7 +153,7 @@ eeze_udev_find_by_type(Eeze_Udev_Type etype,
    if ((!etype) && (!name))
      return NULL;
 
-   en = udev_enumerate_new((udev));
+   en = udev_enumerate_new(udev);
 
    if (!en)
      return NULL;
@@ -313,7 +313,7 @@ eeze_udev_find_by_filter(const char *subsystem,
    if ((!subsystem) && (!type) && (!name))
      return NULL;
 
-   en = udev_enumerate_new((udev));
+   en = udev_enumerate_new(udev);
 
    if (!en)
      return NULL;
@@ -354,7 +354,7 @@ eeze_udev_find_by_sysattr(const char *sysattr,
    if (!sysattr)
      return NULL;
 
-   en = udev_enumerate_new((udev));
+   en = udev_enumerate_new(udev);
 
    if (!en)
      return NULL;

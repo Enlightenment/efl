@@ -246,7 +246,7 @@ eeze_udev_devpath_get_syspath(const char *devpath)
    if (!devpath)
      return NULL;
 
-   en = udev_enumerate_new((udev));
+   en = udev_enumerate_new(udev);
 
    if (!en)
      return NULL;

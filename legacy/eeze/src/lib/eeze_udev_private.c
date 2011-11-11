@@ -101,7 +101,7 @@ _walk_children_get_attr(const char *syspath,
    _udev_enumerate *en;
    _udev_list_entry *devs, *cur;
 
-   en = udev_enumerate_new((udev));
+   en = udev_enumerate_new(udev);
    EINA_SAFETY_ON_NULL_RETURN_VAL(en, NULL);
    path = strrchr(syspath, '/');
    if (path) path++;
