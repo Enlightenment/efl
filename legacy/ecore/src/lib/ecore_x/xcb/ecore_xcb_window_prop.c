@@ -109,11 +109,11 @@ ecore_x_window_prop_card32_list_get(Ecore_X_Window win,
              if (!val)
                {
                   free(reply);
-                  return num;
+                  return -1;
                }
              data = xcb_get_property_value(reply);
              for (i = 0; i < num; i++)
-               val[i] = ((unsigned long *)data)[i];
+               val[i] = ((unsigned int *)data)[i];
              *list = val;
           }
      }
