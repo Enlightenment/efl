@@ -1,2 +1,16 @@
-2008-04-20
-	1.0.0 Eet Release
+1.5.0 Release Features
+
+* Fixed eet shutdown on windows
+* Fixed test case to init eet
+* Fixed compilation against libjpeg 8 on windows
+* Fixed binary open on windows
+* Fixed unopenable empty eet file for read/write
+* Improved speed and memory footprint of EET_G_UNION and EET_G_ARRAY
+* Added EET_DATA_DESCRIPTOR_ADD_LIST_STRING API for string lists
+* Added eet_node API's to manipulate nodes
+* Added eet_alias_get API
+* Added eet_data_xattr_cipher_get and eet_data_xattr_cipher_set APIs
+* Added EET_DATA_DESCRIPTOR_ADD_BASIC_ARRAY API
+* Changed to use stringshare for mmaped file names
+* Changed to use eina locking wrappers
+* Changed to use eina_file for file IO
