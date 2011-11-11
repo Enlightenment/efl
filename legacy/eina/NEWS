@@ -1,0 +1,29 @@
+1.1 Release Features
+
+* Fixed compilation problems with some configure options
+* Fixed stat issue if file size is in bytes and serial number overran 32bits
+* Fixed uninstall of mempool modules
+* Fixed static build of buddy mempool
+* Fixed stringshare multi-init bug
+* Fixed windows port of eina_sched_prio_drop
+* Fixed eina_hash_set to handle data being NULL like eina_hash_del
+* Fixed static linking to eina (iconv can be avoided)
+* Fixed eina_share_common_del and eina_share_common_ref unlock bug
+* Improved scalability/speed improvements in Chained Mempool
+* Added eina_unicode_strndup API
+* Added EINA_INLIST_FOREACH_SAFE API
+* Added Eina unicode UTF8 convenience calls API
+* Added eina_list_move functions to move list nodes from list to list directly
+* Added simple SAX XML parser API added
+* Added inlist sort and sorted insert API
+* Added mempool repack API
+* Added eina_file API for portable file memory-mapping with IO saffety traps
+* Added thread locks, conditions etc. wrapper API for portability
+* Added prefix API for apps or libs to find their runtime prefix location
+* Added refcount macro API
+* Added binbuf for binary extendable buffers API
+* Added eina_hash_free_cb_set API
+* Added eina_main_loop_is API
+* Added eina_strbuf_manage_new and eina_ustrbuf_manage_new APIs
+* Added eina_xattr API's
+* Changed to stringshare as storage eina error strings now
