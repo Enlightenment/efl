@@ -1240,7 +1240,7 @@ _process_download_list(Evas_Object *obj)
 {
    ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
-   Eina_List *l;
+   Eina_List *l, *ll;
    Evas_Coord ox, oy, ow, oh, cvx, cvy, cvw, cvh, tx, ty, gw, gh, xx, yy, ww, hh;
    Grid_Item *gi;
 
@@ -1250,7 +1250,7 @@ _process_download_list(Evas_Object *obj)
    gw = wd->size.w;
    gh = wd->size.h;
 
-   EINA_LIST_FOREACH(wd->download_list, l, gi)
+   EINA_LIST_FOREACH_SAFE(wd->download_list, l, ll, gi)
      {
         xx = gi->out.x;
         yy = gi->out.y;
@@ -1279,7 +1279,7 @@ _process_download_list(Evas_Object *obj)
           }
      }
 
-   EINA_LIST_REVERSE_FOREACH(wd->download_list, l, gi)
+   EINA_LIST_REVERSE_FOREACH_SAFE(wd->download_list, l, ll, gi)
      {
         if (gi->wd->download_num >= MAX_CONCURRENT_DOWNLOAD)
           break;
