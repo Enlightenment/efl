@@ -27,3 +27,8 @@ config.*
 /m4/lt~obsolete.m4
 /src/bin/eeze_udev_test
 /doc/Doxyfile
+src/bin/eeze_disk_ls
+src/bin/eeze_mount
+src/bin/eeze_scanner
+src/bin/eeze_umount
+
