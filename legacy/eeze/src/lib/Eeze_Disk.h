@@ -75,11 +75,6 @@ struct _Eeze_Event_Disk_Error
 {
    Eeze_Disk *disk;
    const char *message;
-   struct
-   { /* probably switching this to enum */
-      Eina_Bool mount : 1;
-      Eina_Bool unmount :1;
-   } type;
 };
 
 /**

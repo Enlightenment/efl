@@ -50,8 +50,7 @@ _eeze_disk_mount_error_handler(Eeze_Disk *disk, const char *error)
 
    de->disk = disk;
    de->message = eina_stringshare_add(error);
-   /* FIXME: this is a placeholder since currently there are only mount-type errors */
-   de->type.mount = EINA_TRUE;
+   /* FIXME: placeholder since currently there are only mount-type errors */
    ecore_event_add(EEZE_EVENT_DISK_ERROR, de, (Ecore_End_Cb)_eeze_disk_mount_error_free, NULL);
 }
 
