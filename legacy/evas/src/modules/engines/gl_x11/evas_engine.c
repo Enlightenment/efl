@@ -2404,14 +2404,21 @@ eng_image_data_get(void *data, void *image, int to_write, DATA32 **image_data, i
 
    if ((im->tex) && (im->tex->pt) && (im->tex->pt->dyn.img) && (im->cs.space == EVAS_COLORSPACE_ARGB8888))
      {
+        if (im->tex->pt->dyn.checked_out > 0)
+          {
+             im->tex->pt->dyn.checked_out++;
+             *image_data = im->tex->pt->dyn.data;
+             if (err) *err = EVAS_LOAD_ERROR_NONE;
+             return im;
+          }
         *image_data = im->tex->pt->dyn.data = glsym_eglMapImageSEC(re->win->egl_disp, im->tex->pt->dyn.img);
 
         if (!im->tex->pt->dyn.data)
           {
-             glsym_eglDestroyImage(re->win->egl_disp, im->tex->pt->dyn.img);
              im->tex->pt->dyn.img = NULL;
              GLERR(__FUNCTION__, __FILE__, __LINE__, "");
           }
+        im->tex->pt->dyn.checked_out++;
 
         if (err) *err = EVAS_LOAD_ERROR_NONE;
         return im;
@@ -2498,11 +2505,15 @@ eng_image_data_put(void *data, void *image, DATA32 *image_data)
      {
         int w, h;
 
-#if defined (GLES_VARIETY_S3C6410) || defined (GLES_VARIETY_SGX)
-        glsym_eglUnmapImageSEC(re->win->egl_disp, im->tex->pt->dyn.img);
-#endif
         if (im->tex->pt->dyn.data == image_data)
-          return image;
+          {
+             im->tex->pt->dyn.checked_out--;
+#if defined (GLES_VARIETY_S3C6410) || defined (GLES_VARIETY_SGX)
+             if (im->tex->pt->dyn.checked_out == 0)
+               glsym_eglUnmapImageSEC(re->win->egl_disp, im->tex->pt->dyn.img);
+#endif
+             return image;
+          }
 
         w = im->im->cache_entry.w;
         h = im->im->cache_entry.h;
