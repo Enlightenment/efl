@@ -19,7 +19,7 @@
 
 #ifdef BUILD_ECORE_EVAS_SOFTWARE_16_WINCE
 
-#define ECORE_EVAS_EVENT_COUNT 7
+#define ECORE_EVAS_EVENT_COUNT 9
 
 static int _ecore_evas_init_count = 0;
 
@@ -28,6 +28,10 @@ static Ecore_Event_Handler *ecore_evas_event_handlers[ECORE_EVAS_EVENT_COUNT];
 static Eina_Bool _ecore_evas_wince_event_mouse_in(void *data __UNUSED__, int type __UNUSED__, void *event);
 
 static Eina_Bool _ecore_evas_wince_event_mouse_out(void *data __UNUSED__, int type __UNUSED__, void *event);
+
+static Eina_Bool _ecore_evas_wince_event_window_focus_in(void *data __UNUSED__, int type __UNUSED__, void *event);
+
+static Eina_Bool _ecore_evas_wince_event_window_focus_out(void *data __UNUSED__, int type __UNUSED__, void *event);
 
 static Eina_Bool _ecore_evas_wince_event_window_damage(void *data __UNUSED__, int type __UNUSED__, void *event);
 
@@ -94,11 +98,13 @@ _ecore_evas_wince_init(void)
 
    ecore_evas_event_handlers[0]  = ecore_event_handler_add(ECORE_WINCE_EVENT_MOUSE_IN, _ecore_evas_wince_event_mouse_in, NULL);
    ecore_evas_event_handlers[1]  = ecore_event_handler_add(ECORE_WINCE_EVENT_MOUSE_OUT, _ecore_evas_wince_event_mouse_out, NULL);
-   ecore_evas_event_handlers[2]  = ecore_event_handler_add(ECORE_WINCE_EVENT_WINDOW_DAMAGE, _ecore_evas_wince_event_window_damage, NULL);
-   ecore_evas_event_handlers[3]  = ecore_event_handler_add(ECORE_WINCE_EVENT_WINDOW_DESTROY, _ecore_evas_wince_event_window_destroy, NULL);
-   ecore_evas_event_handlers[4]  = ecore_event_handler_add(ECORE_WINCE_EVENT_WINDOW_SHOW, _ecore_evas_wince_event_window_show, NULL);
-   ecore_evas_event_handlers[5]  = ecore_event_handler_add(ECORE_WINCE_EVENT_WINDOW_HIDE, _ecore_evas_wince_event_window_hide, NULL);
-   ecore_evas_event_handlers[6]  = ecore_event_handler_add(ECORE_WINCE_EVENT_WINDOW_DELETE_REQUEST, _ecore_evas_wince_event_window_delete_request, NULL);
+   ecore_evas_event_handlers[2]  = ecore_event_handler_add(ECORE_WINCE_EVENT_WINDOW_FOCUS_IN, _ecore_evas_wince_event_window_focus_in, NULL);
+   ecore_evas_event_handlers[3]  = ecore_event_handler_add(ECORE_WINCE_EVENT_WINDOW_FOCUS_OUT, _ecore_evas_wince_event_window_focus_out, NULL);
+   ecore_evas_event_handlers[4]  = ecore_event_handler_add(ECORE_WINCE_EVENT_WINDOW_DAMAGE, _ecore_evas_wince_event_window_damage, NULL);
+   ecore_evas_event_handlers[5]  = ecore_event_handler_add(ECORE_WINCE_EVENT_WINDOW_DESTROY, _ecore_evas_wince_event_window_destroy, NULL);
+   ecore_evas_event_handlers[6]  = ecore_event_handler_add(ECORE_WINCE_EVENT_WINDOW_SHOW, _ecore_evas_wince_event_window_show, NULL);
+   ecore_evas_event_handlers[7]  = ecore_event_handler_add(ECORE_WINCE_EVENT_WINDOW_HIDE, _ecore_evas_wince_event_window_hide, NULL);
+   ecore_evas_event_handlers[8]  = ecore_event_handler_add(ECORE_WINCE_EVENT_WINDOW_DELETE_REQUEST, _ecore_evas_wince_event_window_delete_request, NULL);
 
    ecore_event_evas_init();
    return _ecore_evas_init_count;
@@ -166,6 +172,40 @@ _ecore_evas_wince_event_mouse_out(void *data __UNUSED__, int type __UNUSED__, vo
    if (ee->prop.cursor.object) evas_object_hide(ee->prop.cursor.object);
 
    return 1;
+}
+
+static Eina_Bool
+_ecore_evas_wince_event_window_focus_in(void *data __UNUSED__, int type __UNUSED__, void *event)
+{
+   Ecore_Evas *ee;
+   Ecore_WinCE_Event_Window_Focus_In *e;
+
+   e = event;
+   ee = ecore_event_window_match(e->window);
+   if ((!ee) || (ee->ignore_events)) return ECORE_CALLBACK_PASS_ON;
+   if (e->window != ee->prop.window) return ECORE_CALLBACK_PASS_ON;
+
+   ee->prop.focused = 1;
+   evas_focus_in(ee->evas);
+   if (ee->func.fn_focus_in) ee->func.fn_focus_in(ee);
+   return ECORE_CALLBACK_PASS_ON;
+}
+
+static Eina_Bool
+_ecore_evas_wince_event_window_focus_out(void *data __UNUSED__, int type __UNUSED__, void *event)
+{
+   Ecore_Evas *ee;
+   Ecore_WinCE_Event_Window_Focus_Out *e;
+
+   e = event;
+   ee = ecore_event_window_match(e->window);
+   if ((!ee) || (ee->ignore_events)) return ECORE_CALLBACK_PASS_ON;
+   if (e->window != ee->prop.window) return ECORE_CALLBACK_PASS_ON;
+
+   evas_focus_out(ee->evas);
+   ee->prop.focused = 0;
+   if (ee->func.fn_focus_out) ee->func.fn_focus_out(ee);
+   return ECORE_CALLBACK_PASS_ON;
 }
 
 static Eina_Bool
