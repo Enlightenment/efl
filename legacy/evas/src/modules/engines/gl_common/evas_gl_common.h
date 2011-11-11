@@ -360,6 +360,7 @@ struct _Evas_GL_Texture_Pool
       unsigned int *data;
       int           w, h;
       int           stride;
+      int           checked_out;
    } dyn;
    Eina_List       *allocations;
    Eina_Bool        whole : 1;
