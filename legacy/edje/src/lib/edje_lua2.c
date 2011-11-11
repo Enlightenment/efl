@@ -2285,14 +2285,25 @@ _elua_image_image(lua_State *L)
 {
    Edje_Lua_Obj *obj = (Edje_Lua_Obj *)lua_touserdata(L, 1);
    Edje_Lua_Evas_Object *elo = (Edje_Lua_Evas_Object *)obj;
-   char *file = NULL, *key = NULL;
+   const char *file = NULL, *key = NULL;
+   int n;
 
    if (!obj) return 0;
    if (obj->meta != _elua_meta_evas) return 0;
 
-   if (_elua_2_str_get(L, 2, EINA_TRUE, "file", &file, "key", &key) > 0)
+   n = lua_gettop(L);
+
+   if (3 == n)
+      n = _elua_2_str_get(L, 2, EINA_TRUE, "file", &file, "key", &key);
+   else if (2 == n)
      {
-        // FIXME: ONLY allow access to the images in the current edje file.
+        file = obj->ed->file->path;
+        key = lua_tostring(L, 2);
+     }
+
+   if (1 < n)
+     {
+        // FIXME: Sandbox lua - Only allow access to images within the same file.
         evas_object_image_file_set(elo->evas_obj, file, key);
      }
    evas_object_image_file_get(elo->evas_obj, (const char **) &file, (const char **) &key);
@@ -2352,10 +2363,11 @@ static int _elua_edje_file(lua_State *L)
    if (!obj) return 0;
    if (obj->meta != _elua_meta_evas) return 0;
 
-   // FIXME: Only allow groups from the same file this edje came from.
    if (_elua_2_str_get(L, 2, EINA_TRUE, "file", &file, "group", &group) > 0)
      {
-        edje_object_file_set(elo->evas_obj, file, group);
+        // Sandbox lua - Only allow access to groups within the same file.
+        // By the simple expedient of completely ignoring what file was requested.
+        edje_object_file_set(elo->evas_obj, obj->ed->file->path, group);
      }
    edje_object_file_get(elo->evas_obj, (const char **) &file, (const char **) &group);
    _elua_str_ret(L, "file", file);
