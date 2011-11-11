@@ -106,8 +106,9 @@ PKG_CHECK_EXISTS([mount >= 2.18.0],
 )
 
 if test "x$eeze_mount" = "xyes";then
-  with_mount="/bin/mount"
-  with_umount="/bin/umount"
+  with_mount="detect"
+  with_umount="detect"
+  with_eject="detect"
   AC_ARG_WITH([mount], AS_HELP_STRING([--with-mount], [specify mount bin @<:@default=detect@:>@]))
   AC_ARG_WITH([umount], AS_HELP_STRING([--with-umount], [specify umount bin @<:@default=detect@:>@]))
   AC_ARG_WITH([eject], AS_HELP_STRING([--with-eject], [specify eject bin @<:@default=detect@:>@]))
