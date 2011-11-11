@@ -306,17 +306,6 @@ eeze_disk_libmount_mp_lookup_by_devpath(const char *devpath)
  * API
  *
  */
-
-/**
- * @brief Begin watching mtab and fstab
- * @return #EINA_TRUE if watching was started, else #EINA_FALSE
- *
- * This function creates inotify watches on /etc/mtab and /etc/fstab and watches
- * them for changes.  This function should be used when expecting a lot of disk
- * mounting/unmounting while you need disk data since it will automatically update
- * certain necessary data instead of waiting.
- * @see eeze_mount_mtab_scan, eeze_mount_fstab_scan
- */
 EAPI Eina_Bool
 eeze_mount_tabs_watch(void)
 {
@@ -358,11 +347,6 @@ error:
    return EINA_FALSE;
 }
 
-/**
- * @brief Stop watching /etc/fstab and /etc/mtab
- *
- * This function stops watching fstab and mtab.  Data obtained previously will be saved.
- */
 EAPI void
 eeze_mount_tabs_unwatch(void)
 {
@@ -373,18 +357,6 @@ eeze_mount_tabs_unwatch(void)
    ecore_file_monitor_del(_fstab_mon);
 }
 
-/**
- * @brief Scan /etc/mtab a single time
- * @return #EINA_TRUE if mtab could be scanned, else #EINA_FALSE
- *
- * This function is used to perform a single scan on /etc/mtab.  It is used to gather
- * information about mounted filesystems which can then be used with your #Eeze_Disk objects
- * where appropriate.  These files will automatically be scanned any time a mount point or mount state
- * is requested unless eeze_mount_tabs_watch has been called previously, in which case data is stored for
- * use.
- * If this function is called after eeze_mount_tabs_watch, #EINA_TRUE will be returned.
- * @see eeze_mount_tabs_watch, eeze_mount_fstab_scan
- */
 EAPI Eina_Bool
 eeze_mount_mtab_scan(void)
 {
@@ -408,18 +380,6 @@ error:
    return EINA_FALSE;
 }
 
-/**
- * @brief Scan /etc/fstab a single time
- * @return #EINA_TRUE if mtab could be scanned, else #EINA_FALSE
- *
- * This function is used to perform a single scan on /etc/fstab.  It is used to gather
- * information about mounted filesystems which can then be used with your #Eeze_Disk objects
- * where appropriate.  These files will automatically be scanned any time a mount point or mount state
- * is requested unless eeze_mount_tabs_watch has been called previously, in which case data is stored for
- * use.
- * If this function is called after eeze_mount_tabs_watch, #EINA_TRUE will be returned.
- * @see eeze_mount_tabs_watch, eeze_mount_mtab_scan
- */
 EAPI Eina_Bool
 eeze_mount_fstab_scan(void)
 {
