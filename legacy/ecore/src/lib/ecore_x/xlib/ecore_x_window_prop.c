@@ -131,7 +131,7 @@ ecore_x_window_prop_card32_list_get(Ecore_X_Window win,
              return -1;
           }
         for (i = 0; i < num_ret; i++)
-          val[i] = ((unsigned long *)prop_ret)[i];
+          val[i] = ((unsigned int *)prop_ret)[i];
         num = num_ret;
         *plst = val;
      }
