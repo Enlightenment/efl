@@ -1,0 +1,7 @@
+1.1 Release Features
+
+* Fixed bugs with device detection related to newer kernel versions
+* Fixed device filtering to be more accurate in some cases
+* Added more disk-related detection/info functions
+* Added disk mounting API
+* Added eeze_scanner utility for applications to hook for drive detection
