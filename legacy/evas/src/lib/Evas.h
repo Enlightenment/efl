@@ -2615,7 +2615,7 @@ EAPI void              evas_event_feed_hold              (Evas *e, int hold, uns
  * This function call evas_event_feed_* functions, so it can
  * cause havoc if not used wisely. Please use it responsibly.
  */
-EAPI void              evas_event_refeed_event           (Evas *e, void *event_copy, Evas_Callback_Type event_type);  EINA_ARG_NONNULL(1);
+EAPI void              evas_event_refeed_event           (Evas *e, void *event_copy, Evas_Callback_Type event_type) EINA_ARG_NONNULL(1);
 
 
 /**
