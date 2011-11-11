@@ -118,13 +118,18 @@ ecore_x_window_prop_card32_list_get(Ecore_X_Window win,
                           &bytes_after, &prop_ret) != Success)
      return -1;
 
-   if (type_ret != XA_CARDINAL || format_ret != 32)
+   if ((type_ret != XA_CARDINAL) || (format_ret != 32))
      num = -1;
-   else if (num_ret == 0 || !prop_ret)
+   else if ((num_ret == 0) || (!prop_ret))
      num = 0;
    else
      {
         val = malloc(num_ret * sizeof(unsigned int));
+        if (!val) 
+          {
+             if (prop_ret) XFree(prop_ret);
+             return -1;
+          }
         for (i = 0; i < num_ret; i++)
           val[i] = ((unsigned long *)prop_ret)[i];
         num = num_ret;
