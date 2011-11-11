@@ -2184,6 +2184,8 @@ _elua_obj_map_source(lua_State *L)
 {
    Edje_Lua_Obj *obj = (Edje_Lua_Obj *)lua_touserdata(L, 1);
    Edje_Lua_Evas_Object *elo = (Edje_Lua_Evas_Object *)obj;
+   Evas_Object *o;
+   Edje_Lua_Evas_Object *elo2;
    int n;
 
    if (!obj) return 0;
@@ -2201,8 +2203,9 @@ _elua_obj_map_source(lua_State *L)
         evas_object_map_source_set(elo->evas_obj, source->evas_obj);
      }
 
-// FIXME: return this evas object.
-//   evas_object_map_source_get(elo->evas_obj);
+   if (!(o = evas_object_map_source_get(elo->evas_obj))) return 0;
+   if (!(elo2 = evas_object_data_get(o, ELO))) return 0;
+    _elua_ref_get(L, elo2);
 
    return 1;
 }

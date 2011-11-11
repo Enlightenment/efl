@@ -142,7 +142,7 @@ collections {
          D.text:show();
 
          --// Fun with maps!
-         D.map = edje.map(4);
+         D.map = edje.map(4);  --// 4 is the only supported map size at the moment.
          --// These all do the same thing.
          --// Note, lua likes to start at 1, C (and thus evas) at 0.  I choose to agree with C.
          D.map:coord(0, 50, 50, 0);
@@ -202,7 +202,7 @@ collections {
             print("lua::map enabled");
          end
 
---//         D.rect2:map_source(D.rect);  --// Don't think this is actually implemented in evas.
+         D.rect2:map_source(D.rect);  --// Don't think this is actually implemented in evas.
 
 --//         D.map:dup();
 --//         D.map:size();  --// perhaps overide the # operator?  For now it's only gonna return 4 anyway.
