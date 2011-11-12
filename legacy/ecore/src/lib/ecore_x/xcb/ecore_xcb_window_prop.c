@@ -35,7 +35,7 @@ ecore_x_window_prop_card32_get(Ecore_X_Window win,
 
              v = xcb_get_property_value(reply);
              for (i = 0; i < len; i++)
-               val[i] = ((unsigned long *)v)[i];
+               val[i] = ((uint32_t *)v)[i];
              num = len;
           }
      }
@@ -113,7 +113,7 @@ ecore_x_window_prop_card32_list_get(Ecore_X_Window win,
                }
              data = xcb_get_property_value(reply);
              for (i = 0; i < num; i++)
-               val[i] = ((unsigned int *)data)[i];
+               val[i] = ((uint32_t *)data)[i];
              *list = val;
           }
      }
@@ -210,7 +210,7 @@ ecore_x_window_prop_xid_get(Ecore_X_Window win,
 
         v = xcb_get_property_value(reply);
         for (i = 0; i < len; i++)
-          xids[i] = ((unsigned long *)v)[i];
+          xids[i] = ((uint32_t *)v)[i];
 
         num = len;
      }
@@ -359,10 +359,10 @@ ecore_x_window_prop_property_set(Ecore_X_Window win,
      }
    else
      {
-        unsigned long *dat;
+        uint32_t *dat;
         int i = 0, *ptr;
 
-        dat = malloc(sizeof(unsigned long) * num);
+        dat = malloc(sizeof(uint32_t) * num);
         if (dat)
           {
              for (ptr = (int *)data, i = 0; i < num; i++)
@@ -435,7 +435,7 @@ ecore_x_window_prop_property_get(Ecore_X_Window  win,
 
       case 32:
         for (i = 0; i < reply->value_len; i++)
-          ((unsigned int *)*data)[i] = ((unsigned long *)value)[i];
+          ((unsigned int *)*data)[i] = ((uint32_t *)value)[i];
         break;
      }
 
@@ -502,7 +502,7 @@ ecore_x_window_prop_xid_list_get(Ecore_X_Window win,
              int i = 0;
 
              for (i = 0; i < num; i++)
-               alst[i] = ((unsigned long *)val)[i];
+               alst[i] = ((uint32_t *)val)[i];
              *xids = alst;
           }
      }
