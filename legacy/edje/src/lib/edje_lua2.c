@@ -25,9 +25,13 @@ language is in order. Lua is that language.
 To get you started, here's an example:
 @ref lua_script.edc
 
-@section args Lua function argument syntax
+@section args Lua function argument and return syntax
 
 Some of the lua functions can accept a table as well as separate arguments.
+Some of them return tables.
+
+@section classes Lua classes
+
  */
 
 //--------------------------------------------------------------------------//
@@ -89,99 +93,8 @@ struct _Edje_Lua_Map
 };
 
 
-//--------------------------------------------------------------------------//
-static int _elua_echo(lua_State *L);
-
-static int _elua_date(lua_State *L);
-static int _elua_looptime(lua_State *L);
-static int _elua_seconds(lua_State *L);
-
-static int _elua_objgeom(lua_State *L);
-static int _elua_objpos(lua_State *L);
-static int _elua_objsize(lua_State *L);
-
-static int _elua_emit(lua_State *L);
-static int _elua_messagesend(lua_State *L);
-
-static int _elua_animator(lua_State *L);
-static int _elua_timer(lua_State *L);
-static int _elua_transition(lua_State *L);
-
-static int _elua_color_class(lua_State *L);
-static int _elua_text_class(lua_State *L);
-
-static int _elua_edje(lua_State *L);
-static int _elua_image(lua_State *L);
-static int _elua_line(lua_State *L);
-static int _elua_map(lua_State *L);
-static int _elua_polygon(lua_State *L);
-static int _elua_rect(lua_State *L);
-static int _elua_text(lua_State *L);
-//static int _elua_textblock(lua_State *L);  /* XXX: disabled until there are enough textblock functions implemented to make it actually useful
-
-static int _elua_obj_del(lua_State *L);
-
-static int _elua_hide(lua_State *L);
-static int _elua_show(lua_State *L);
-static int _elua_visible(lua_State *L);
-
-static int _elua_above(lua_State *L);
-static int _elua_below(lua_State *L);
-static int _elua_bottom(lua_State *L);
-static int _elua_lower(lua_State *L);
-static int _elua_raise(lua_State *L);
-static int _elua_top(lua_State *L);
-
-static int _elua_geom(lua_State *L);
-static int _elua_move(lua_State *L);
-static int _elua_pos(lua_State *L);
-static int _elua_resize(lua_State *L);
-static int _elua_size(lua_State *L);
-
-static int _elua_clip(lua_State *L);
-static int _elua_clipees(lua_State *L);
-static int _elua_unclip(lua_State *L);
-
-static int _elua_type(lua_State *L);
-
-static int _elua_pass(lua_State *L);
-static int _elua_precise(lua_State *L);
-static int _elua_repeat(lua_State *L);
-
-static int _elua_color(lua_State *L);
-
-static int _elua_obj_map(lua_State *L);
-static int _elua_obj_map_enable(lua_State *L);
-static int _elua_obj_map_source(lua_State *L);
-
-static int _elua_edje_file(lua_State *L);
-
-static int _elua_image_fill(lua_State *L);
-static int _elua_image_filled(lua_State *L);
-static int _elua_image_image(lua_State *L);
-
-static int _elua_line_xy(lua_State *L);
-
-static int _elua_map_alpha(lua_State *L);
-static int _elua_map_clockwise(lua_State *L);
-static int _elua_map_colour(lua_State *L);
-static int _elua_map_coord(lua_State *L);
-static int _elua_map_lighting(lua_State *L);
-static int _elua_map_perspective(lua_State *L);
-static int _elua_map_populate(lua_State *L);
-static int _elua_map_rotate(lua_State *L);
-static int _elua_map_rotate3d(lua_State *L);
-static int _elua_map_smooth(lua_State *L);
-static int _elua_map_uv(lua_State *L);
-static int _elua_map_zoom(lua_State *L);
-
-static int _elua_polygon_clear(lua_State *L);
-static int _elua_polygon_point(lua_State *L);
-
-static int _elua_text_font(lua_State *L);
-static int _elua_text_text(lua_State *L);
-
-static int _elua_obj_gc(lua_State *L);
+static void _elua_add_functions(lua_State *L, const char *api, const luaL_Reg *funcs, const char *meta, const char *parent, const char *base);
+static Eina_Bool _elua_isa(Edje_Lua_Obj *obj, const char *type);
 
 //--------------------------------------------------------------------------//
 static lua_State *lstate = NULL;
@@ -222,187 +135,18 @@ static jmp_buf panic_jmp;
 // // LATER: perspective stuff change
 //
 
-static const char *_elua_edje_api = "edje";
+// Grumble, pre-declare these.
 static const char *_elua_edje_meta = "edje_meta";
-static const struct luaL_reg _elua_edje_funcs [] =
-{
-   // add an echo too to make it more shelly
-     {"echo",         _elua_echo}, // test func - echo (i know we have print. test)
-
-   // system information (time, date blah blah)
-     {"date",         _elua_date}, // get date in a table
-     {"looptime",     _elua_looptime}, // get loop time
-     {"seconds",      _elua_seconds}, // get seconds
-
-   // query edje - size, pos
-     {"geom",         _elua_objgeom}, // get while edje object geometry in canvas
-     {"pos",          _elua_objpos}, // get while edje object pos in canvas
-     {"size",         _elua_objsize}, // get while edje object pos in canvas
-
-   // talk to application/caller
-     {"emit",         _elua_emit}, // emit signal + src
-     {"messagesend",  _elua_messagesend}, // send a structured message
-
-   // time based "callback" systems
-     {"animator",     _elua_animator}, // add animator
-     {"timer",        _elua_timer}, // add timer
-     {"transition",   _elua_transition}, // add transition
-   // FIXME: need poller
-
-   // set and query color / text class
-     {"color_class",  _elua_color_class},
-     {"text_class",   _elua_text_class},
-
-   // create new objects
-     {"edje",         _elua_edje},
-     {"image",        _elua_image},  // defaults to a filled image.
-     {"line",         _elua_line},
-     {"map",          _elua_map},
-     {"polygon",      _elua_polygon},
-     {"rect",         _elua_rect},
-     {"text",         _elua_text},
-//     {"textblock",    _elua_textblock},  /* XXX: disabled until there are enough textblock functions implemented to make it actually useful
-
-   // FIXME: add the new sound stuff.
-
-     {NULL, NULL} // end
-};
-
-static const char *_elua_evas_api = "evas";
 static const char *_elua_evas_meta = "evas_meta";
-static const struct luaL_reg _elua_evas_funcs [] =
-{
-   // generic object methods
-     {"del",          _elua_obj_del}, // generic del any object created for edje (evas objects, timers, animators, transitions... everything)
-
-   // now evas stuff (manipulate, delete etc.)
-     {"hide",         _elua_hide}, // hide, return current visibility
-     {"show",         _elua_show}, // show, return current visibility
-     {"visible",      _elua_visible}, // get object visibility
-
-     {"above",        _elua_above}, // get object above or stack obj above given obj
-     {"below",        _elua_below}, // get object below or stack obj below given obj
-     {"bottom",       _elua_bottom}, // get bottom
-     {"lower",        _elua_lower}, // lower to bottom
-     {"raise",        _elua_raise}, // raise to top
-     {"top",          _elua_top}, // get top
-
-     {"geom",         _elua_geom}, // move and resize and return current geometry
-     {"move",         _elua_move}, // move, return current position
-     {"pos",          _elua_pos}, // move, return current position
-     {"resize",       _elua_resize}, // resize, return current size
-     {"size",         _elua_size}, // resize, return current size
-
-     {"clip",         _elua_clip}, // set clip obj, return clip object
-     {"clipees",      _elua_clipees}, // get clip children
-     {"unclip",       _elua_unclip}, // clear clip obj
-
-     {"type",         _elua_type}, // get object type
-
-     {"pass",         _elua_pass}, // set pass events, get pass events
-     {"precise",      _elua_precise}, // set precise inside flag, get precise
-     {"repeat",       _elua_repeat}, // set repeat events, get repeat events
-
-     {"color",        _elua_color}, // set color, return color
-//     {"color_class",  _elua_object_color_class}, // get or set object color class
-
-   // FIXME: set callbacks (mouse down, up, blah blah blah)
-   //
-   // FIXME: set scale (explicit value)
-   // FIXME: need to set auto-scale (same as scale: 1)
-
-   // FIXME: later - set render op, anti-alias, pointer mode (autograb, nograb)
-   // FIXME: later -
-
-   // map api here
-     {"map",           _elua_obj_map},
-     {"map_enable",    _elua_obj_map_enable},
-     {"map_source",    _elua_obj_map_source},
-
-     {NULL, NULL} // end
-};
-
-static const char *_elua_evas_edje_api = "evas_edje";
 static const char *_elua_evas_edje_meta = "evas_edje_meta";
-static const char *_elua_evas_edje_parent = "evas_edje_parent";
-static const struct luaL_reg _elua_evas_edje_funcs [] =
-{
-   // edje object specific
-     {"file",         _elua_edje_file}, // get or set edje file and group
-
-     {NULL, NULL} // end
-};
-
-static const char *_elua_evas_image_api = "evas_image";
 static const char *_elua_evas_image_meta = "evas_image_meta";
-static const char *_elua_evas_image_parent = "evas_image_parent";
-static const struct luaL_reg _elua_evas_image_funcs [] =
-{
-   // image object specific
-     {"fill",         _elua_image_fill},   // get or set the fill parameters
-     {"filled",       _elua_image_filled}, // get or set the filled state (overrides fill())
-     {"image",        _elua_image_image},  // get or set image
-
-     {NULL, NULL} // end
-};
-
-static const char *_elua_evas_line_api = "evas_line";
 static const char *_elua_evas_line_meta = "vas_line_meta";
-static const char *_elua_evas_line_parent = "evas_line_parent";
-static const struct luaL_reg _elua_evas_line_funcs [] =
-{
-   // line object specific
-     {"xy",         _elua_line_xy}, // get or set line coords
-
-     {NULL, NULL} // end
-};
-
-static const char *_elua_evas_map_api = "ewas_map";
 static const char *_elua_evas_map_meta = "evas_map_meta";
-static const struct luaL_reg _elua_evas_map_funcs [] =
-{
-     {"alpha",         _elua_map_alpha},
-//     {"dup",           _elua_map_dup},  // not sure of proper api for this.
-     {"clockwise",     _elua_map_clockwise},
-     {"color",         _elua_map_colour},
-     {"coord",         _elua_map_coord},
-     {"lighting",      _elua_map_lighting},
-     {"perspective",   _elua_map_perspective},
-     {"populate",      _elua_map_populate},
-     {"rotate",        _elua_map_rotate},
-     {"rotate3d",      _elua_map_rotate3d},
-//     {"size",          _elua_map_size},  // not sure of proper API for this
-     {"smooth",        _elua_map_smooth},
-     {"uv",            _elua_map_uv},
-     {"zoom",          _elua_map_zoom},
-
-     {NULL, NULL} // end
-};
-
-static const char *_elua_evas_polygon_api = "evas_polygon";
 static const char *_elua_evas_polygon_meta = "evas_polygon_meta";
-static const char *_elua_evas_polygon_parent = "evas_polygon_parent";
-static const struct luaL_reg _elua_evas_polygon_funcs [] =
-{
-   // polygon object specific
-     {"clear",         _elua_polygon_clear}, // clear all polygon points
-     {"point",         _elua_polygon_point}, // add a polygon point
-
-     {NULL, NULL} // end
-};
-
-static const char *_elua_evas_text_api = "evas_text";
 static const char *_elua_evas_text_meta = "evas_text_meta";
-static const char *_elua_evas_text_parent = "evas_text_parent";
-static const struct luaL_reg _elua_evas_text_funcs [] =
-{
-   // text object specific
-     {"font",         _elua_text_font}, // get or set text font
-     {"text",         _elua_text_text}, // get or set text
-//     {"text_class", _elua_object_text_class}, // get or set object text class
 
-     {NULL, NULL} // end
-};
+
+static int _elua_obj_gc(lua_State *L);
 
 static const struct luaL_reg _elua_edje_gc_funcs [] =
 {
@@ -487,55 +231,6 @@ _elua_table_ptr_del(lua_State *L, const void *key)
    lua_settable(L, LUA_REGISTRYINDEX);
 }
 */
-
-// Brain dead inheritance thingy, built for speed.  Kinda.
-static void
-_elua_add_functions(lua_State *L, const char *api, const luaL_Reg *funcs, const char *meta, const char *parent, const char *base)
-{
-   luaL_register(L, api, funcs);
-   luaL_newmetatable(L, meta);
-   luaL_register(L, 0, _elua_edje_gc_funcs);
-   lua_pushliteral(L, "__index");
-   lua_pushvalue(L, -3);
-   lua_rawset(L, -3);
-
-   if (base && parent)
-     {
-        // Inherit from base
-        lua_getglobal(L, base);
-        luaL_newmetatable(L, parent);
-        lua_pushliteral(L, "__index");
-        lua_pushvalue(L, -3);
-        lua_rawset(L, -3);
-        lua_getglobal(L, api);
-        luaL_getmetatable(L, parent);
-        lua_setmetatable(L, -2);
-     }
-}
-
-static Eina_Bool
-_elua_isa(Edje_Lua_Obj *obj, const char *type)
-{
-   Eina_Bool isa = EINA_FALSE;
-
-   if (!obj) return isa;
-   if (obj->meta == type)
-      isa = EINA_TRUE;
-   if (_elua_evas_meta == type)
-     {
-        if (obj->meta == _elua_evas_image_meta)
-           isa = EINA_TRUE;
-        else if (obj->meta == _elua_evas_text_meta)
-           isa = EINA_TRUE;
-        else if (obj->meta == _elua_evas_edje_meta)
-           isa = EINA_TRUE;
-        else if (obj->meta == _elua_evas_line_meta)
-           isa = EINA_TRUE;
-        else if (obj->meta == _elua_evas_polygon_meta)
-           isa = EINA_TRUE;
-     }
-   return isa;
-}
 
 /*
  * Cori: Assumes object to be saved on top of stack
@@ -853,12 +548,85 @@ _elua_color_fix(int *r, int *g, int *b, int *a)
 
 /**
 @page luaref
-@section classes Lua classes.
-@subsection edje Basic edje class.
+@subsection edje Edje class.
 
 The lua edje class includes functions for dealing with the lua script only group
 as an edje object, basic functions, and functions to create other objects.
 */
+
+static int _elua_echo(lua_State *L);
+
+static int _elua_date(lua_State *L);
+static int _elua_looptime(lua_State *L);
+static int _elua_seconds(lua_State *L);
+
+static int _elua_objgeom(lua_State *L);
+static int _elua_objpos(lua_State *L);
+static int _elua_objsize(lua_State *L);
+
+static int _elua_emit(lua_State *L);
+static int _elua_messagesend(lua_State *L);
+
+static int _elua_animator(lua_State *L);
+static int _elua_timer(lua_State *L);
+static int _elua_transition(lua_State *L);
+
+static int _elua_color_class(lua_State *L);
+static int _elua_text_class(lua_State *L);
+
+static int _elua_edje(lua_State *L);
+static int _elua_image(lua_State *L);
+static int _elua_line(lua_State *L);
+static int _elua_map(lua_State *L);
+static int _elua_polygon(lua_State *L);
+static int _elua_rect(lua_State *L);
+static int _elua_text(lua_State *L);
+//static int _elua_textblock(lua_State *L);  /* XXX: disabled until there are enough textblock functions implemented to make it actually useful
+
+static const char *_elua_edje_api = "edje";
+static const struct luaL_reg _elua_edje_funcs [] =
+{
+   // add an echo too to make it more shelly
+     {"echo",         _elua_echo}, // test func - echo (i know we have print. test)
+
+   // system information (time, date blah blah)
+     {"date",         _elua_date}, // get date in a table
+     {"looptime",     _elua_looptime}, // get loop time
+     {"seconds",      _elua_seconds}, // get seconds
+
+   // query edje - size, pos
+     {"geom",         _elua_objgeom}, // get while edje object geometry in canvas
+     {"pos",          _elua_objpos}, // get while edje object pos in canvas
+     {"size",         _elua_objsize}, // get while edje object pos in canvas
+
+   // talk to application/caller
+     {"emit",         _elua_emit}, // emit signal + src
+     {"messagesend",  _elua_messagesend}, // send a structured message
+
+   // time based "callback" systems
+     {"animator",     _elua_animator}, // add animator
+     {"timer",        _elua_timer}, // add timer
+     {"transition",   _elua_transition}, // add transition
+   // FIXME: need poller
+
+   // set and query color / text class
+     {"color_class",  _elua_color_class},
+     {"text_class",   _elua_text_class},
+
+   // create new objects
+     {"edje",         _elua_edje},
+     {"image",        _elua_image},  // defaults to a filled image.
+     {"line",         _elua_line},
+     {"map",          _elua_map},
+     {"polygon",      _elua_polygon},
+     {"rect",         _elua_rect},
+     {"text",         _elua_text},
+//     {"textblock",    _elua_textblock},  /* XXX: disabled until there are enough textblock functions implemented to make it actually useful
+
+   // FIXME: add the new sound stuff.
+
+     {NULL, NULL} // end
+};
 
 /**
 @page luaref
@@ -892,7 +660,6 @@ weekday - Day of the week as an integer.
 hour -
 min -
 sec - Seconds as a number.
-
 
 */
 static int
@@ -1186,6 +953,7 @@ _elua_animator(lua_State *L)
 
    luaL_checkany(L, 1);
 
+   // FIXME: This, and the other two timer thingies, should be it's own class I think.
    ela = (Edje_Lua_Animator *)_elua_obj_new(L, ed, sizeof(Edje_Lua_Animator), _elua_evas_meta);
    ela->obj.free_func = _elua_animator_free;
    ela->animator = ecore_animator_add(_elua_animator_cb, ela);
@@ -1387,15 +1155,6 @@ _elua_text_class(lua_State *L)
 }
 
 //-------------
-//-------------
-
-/**
-@page luaref
-@subsection evas Basic evas class.
-
-The lua evas class includes functions for dealing with evas objects.
-*/
-
 static void
 _elua_evas_obj_free(void *obj)
 {
@@ -1423,9 +1182,70 @@ _elua_polish_evas_object(Edje *ed, Edje_Lua_Evas_Object *elo)
    evas_object_data_set(elo->evas_obj, ELO, elo);
 }
 
+static int
+_elua_edje(lua_State *L)
+{
+   _ELUA_PLANT_EVAS_OBJECT(Edje_Lua_Evas_Object, _elua_evas_edje_meta, _elua_evas_obj_free)
+   elo->evas_obj = edje_object_add(evas_object_evas_get(ed->obj));
+   _elua_polish_evas_object(ed, elo);
+   return 1;
+}
+
+static int
+_elua_image(lua_State *L)
+{
+   _ELUA_PLANT_EVAS_OBJECT(Edje_Lua_Evas_Object, _elua_evas_image_meta, _elua_evas_obj_free)
+   elo->evas_obj = evas_object_image_filled_add(evas_object_evas_get(ed->obj));
+   _elua_polish_evas_object(ed, elo);
+   return 1;
+}
+
+static int
+_elua_line(lua_State *L)
+{
+   _ELUA_PLANT_EVAS_OBJECT(Edje_Lua_Evas_Object, _elua_evas_line_meta, _elua_evas_obj_free)
+   elo->evas_obj = evas_object_line_add(evas_object_evas_get(ed->obj));
+   _elua_polish_evas_object(ed, elo);
+   return 1;
+}
+
+static void
+_elua_map_free(void *obj)
+{
+   Edje_Lua_Map *elm = obj;
+   if (!elm->obj.ed) return;
+   evas_map_free(elm->map);
+   elm->map = NULL;
+}
+
+static int
+_elua_map(lua_State *L)
+{
+   Edje *ed = (Edje *)_elua_table_ptr_get(L, _elua_key);
+   Edje_Lua_Map *elm;
+   int count;
+
+   count = luaL_checkinteger(L, 1);
+
+   elm = (Edje_Lua_Map *)_elua_obj_new(L, ed, sizeof(Edje_Lua_Map), _elua_evas_map_meta);
+   elm->obj.free_func = _elua_map_free;
+   elm->map = evas_map_new(count);
+   lua_pushvalue(L, 2);
+   _elua_gc(L);
+   return 1;
+}
+
+static int
+_elua_polygon(lua_State *L)
+{
+   _ELUA_PLANT_EVAS_OBJECT(Edje_Lua_Evas_Object, _elua_evas_polygon_meta, _elua_evas_obj_free)
+   elo->evas_obj = evas_object_polygon_add(evas_object_evas_get(ed->obj));
+   _elua_polish_evas_object(ed, elo);
+   return 1;
+}
+
 /**
 @page luaref
-@subsection edje
 @subsubsection rect edje:rect()
 
 Create a rectangle.
@@ -1441,16 +1261,125 @@ _elua_rect(lua_State *L)
    return 1;
 }
 
+static int
+_elua_text(lua_State *L)
+{
+   _ELUA_PLANT_EVAS_OBJECT(Edje_Lua_Evas_Object, _elua_evas_text_meta, _elua_evas_obj_free)
+   elo->evas_obj = evas_object_text_add(evas_object_evas_get(ed->obj));
+   _elua_polish_evas_object(ed, elo);
+   return 1;
+}
+
+/* XXX: disabled until there are enough textblock functions implemented to make it actually useful
+static int
+_elua_textblock(lua_State *L)
+{
+   _ELUA_PLANT_EVAS_OBJECT(Edje_Lua_Evas_Object, _elua_evas_textblock_meta, _elua_evas_obj_free)
+   elo->evas_obj = evas_object_textblock_add(evas_object_evas_get(ed->obj));
+   _elua_polish_evas_object(ed, elo);
+   return 1;
+}
+*/
+
 //-------------
+//-------------
+
 /**
 @page luaref
-@subsection edje
-@subsubsection rect edje:rect()
+@subsection evas Evas class.
 
-Create a rectangle.
-
-Returns an evas rectangle.
+The lua evas class includes functions for dealing with evas objects.
 */
+
+static int _elua_obj_del(lua_State *L);
+
+static int _elua_hide(lua_State *L);
+static int _elua_show(lua_State *L);
+static int _elua_visible(lua_State *L);
+
+static int _elua_above(lua_State *L);
+static int _elua_below(lua_State *L);
+static int _elua_bottom(lua_State *L);
+static int _elua_lower(lua_State *L);
+static int _elua_raise(lua_State *L);
+static int _elua_top(lua_State *L);
+
+static int _elua_geom(lua_State *L);
+static int _elua_move(lua_State *L);
+static int _elua_pos(lua_State *L);
+static int _elua_resize(lua_State *L);
+static int _elua_size(lua_State *L);
+
+static int _elua_clip(lua_State *L);
+static int _elua_clipees(lua_State *L);
+static int _elua_unclip(lua_State *L);
+
+static int _elua_type(lua_State *L);
+
+static int _elua_pass(lua_State *L);
+static int _elua_precise(lua_State *L);
+static int _elua_repeat(lua_State *L);
+
+static int _elua_color(lua_State *L);
+
+static int _elua_obj_map(lua_State *L);
+static int _elua_obj_map_enable(lua_State *L);
+static int _elua_obj_map_source(lua_State *L);
+
+static const char *_elua_evas_api = "evas";
+static const struct luaL_reg _elua_evas_funcs [] =
+{
+   // generic object methods
+     {"del",          _elua_obj_del}, // generic del any object created for edje (evas objects, timers, animators, transitions... everything)
+
+   // now evas stuff (manipulate, delete etc.)
+     {"hide",         _elua_hide}, // hide, return current visibility
+     {"show",         _elua_show}, // show, return current visibility
+     {"visible",      _elua_visible}, // get object visibility
+
+     {"above",        _elua_above}, // get object above or stack obj above given obj
+     {"below",        _elua_below}, // get object below or stack obj below given obj
+     {"bottom",       _elua_bottom}, // get bottom
+     {"lower",        _elua_lower}, // lower to bottom
+     {"raise",        _elua_raise}, // raise to top
+     {"top",          _elua_top}, // get top
+
+     {"geom",         _elua_geom}, // move and resize and return current geometry
+     {"move",         _elua_move}, // move, return current position
+     {"pos",          _elua_pos}, // move, return current position
+     {"resize",       _elua_resize}, // resize, return current size
+     {"size",         _elua_size}, // resize, return current size
+
+     {"clip",         _elua_clip}, // set clip obj, return clip object
+     {"clipees",      _elua_clipees}, // get clip children
+     {"unclip",       _elua_unclip}, // clear clip obj
+
+     {"type",         _elua_type}, // get object type
+
+     {"pass",         _elua_pass}, // set pass events, get pass events
+     {"precise",      _elua_precise}, // set precise inside flag, get precise
+     {"repeat",       _elua_repeat}, // set repeat events, get repeat events
+
+     {"color",        _elua_color}, // set color, return color
+//     {"color_class",  _elua_object_color_class}, // get or set object color class
+
+   // FIXME: set callbacks (mouse down, up, blah blah blah)
+   //
+   // FIXME: set scale (explicit value)
+   // FIXME: need to set auto-scale (same as scale: 1)
+
+   // FIXME: later - set render op, anti-alias, pointer mode (autograb, nograb)
+   // FIXME: later -
+
+   // map api here
+     {"map",           _elua_obj_map},
+     {"map_enable",    _elua_obj_map_enable},
+     {"map_source",    _elua_obj_map_source},
+
+     {NULL, NULL} // end
+};
+
+//-------------
 static int
 _elua_hide(lua_State *L)
 {
@@ -1883,14 +1812,17 @@ _elua_obj_map_source(lua_State *L)
 //-------------
 //-------------
 
-static int
-_elua_edje(lua_State *L)
+static int _elua_edje_file(lua_State *L);
+
+static const char *_elua_evas_edje_api = "evas_edje";
+static const char *_elua_evas_edje_parent = "evas_edje_parent";
+static const struct luaL_reg _elua_evas_edje_funcs [] =
 {
-   _ELUA_PLANT_EVAS_OBJECT(Edje_Lua_Evas_Object, _elua_evas_edje_meta, _elua_evas_obj_free)
-   elo->evas_obj = edje_object_add(evas_object_evas_get(ed->obj));
-   _elua_polish_evas_object(ed, elo);
-   return 1;
-}
+   // edje object specific
+     {"file",         _elua_edje_file}, // get or set edje file and group
+
+     {NULL, NULL} // end
+};
 
 static int
 _elua_edje_file(lua_State *L)
@@ -1915,14 +1847,21 @@ _elua_edje_file(lua_State *L)
 //-------------
 //-------------
 
-static int
-_elua_image(lua_State *L)
+static int _elua_image_fill(lua_State *L);
+static int _elua_image_filled(lua_State *L);
+static int _elua_image_image(lua_State *L);
+
+static const char *_elua_evas_image_api = "evas_image";
+static const char *_elua_evas_image_parent = "evas_image_parent";
+static const struct luaL_reg _elua_evas_image_funcs [] =
 {
-   _ELUA_PLANT_EVAS_OBJECT(Edje_Lua_Evas_Object, _elua_evas_image_meta, _elua_evas_obj_free)
-   elo->evas_obj = evas_object_image_filled_add(evas_object_evas_get(ed->obj));
-   _elua_polish_evas_object(ed, elo);
-   return 1;
-}
+   // image object specific
+     {"fill",         _elua_image_fill},   // get or set the fill parameters
+     {"filled",       _elua_image_filled}, // get or set the filled state (overrides fill())
+     {"image",        _elua_image_image},  // get or set image
+
+     {NULL, NULL} // end
+};
 
 static int
 _elua_image_fill(lua_State *L)
@@ -1994,14 +1933,17 @@ _elua_image_image(lua_State *L)
 //-------------
 //-------------
 
-static int
-_elua_line(lua_State *L)
+static int _elua_line_xy(lua_State *L);
+
+static const char *_elua_evas_line_api = "evas_line";
+static const char *_elua_evas_line_parent = "evas_line_parent";
+static const struct luaL_reg _elua_evas_line_funcs [] =
 {
-   _ELUA_PLANT_EVAS_OBJECT(Edje_Lua_Evas_Object, _elua_evas_line_meta, _elua_evas_obj_free)
-   elo->evas_obj = evas_object_line_add(evas_object_evas_get(ed->obj));
-   _elua_polish_evas_object(ed, elo);
-   return 1;
-}
+   // line object specific
+     {"xy",         _elua_line_xy}, // get or set line coords
+
+     {NULL, NULL} // end
+};
 
 static int _elua_line_xy(lua_State *L)
 {
@@ -2023,31 +1965,39 @@ static int _elua_line_xy(lua_State *L)
 //-------------
 //-------------
 
-static void
-_elua_map_free(void *obj)
+static int _elua_map_alpha(lua_State *L);
+static int _elua_map_clockwise(lua_State *L);
+static int _elua_map_colour(lua_State *L);
+static int _elua_map_coord(lua_State *L);
+static int _elua_map_lighting(lua_State *L);
+static int _elua_map_perspective(lua_State *L);
+static int _elua_map_populate(lua_State *L);
+static int _elua_map_rotate(lua_State *L);
+static int _elua_map_rotate3d(lua_State *L);
+static int _elua_map_smooth(lua_State *L);
+static int _elua_map_uv(lua_State *L);
+static int _elua_map_zoom(lua_State *L);
+
+static const char *_elua_evas_map_api = "ewas_map";
+static const struct luaL_reg _elua_evas_map_funcs [] =
 {
-   Edje_Lua_Map *elm = obj;
-   if (!elm->obj.ed) return;
-   evas_map_free(elm->map);
-   elm->map = NULL;
-}
+     {"alpha",         _elua_map_alpha},
+//     {"dup",           _elua_map_dup},  // not sure of proper api for this.
+     {"clockwise",     _elua_map_clockwise},
+     {"color",         _elua_map_colour},
+     {"coord",         _elua_map_coord},
+     {"lighting",      _elua_map_lighting},
+     {"perspective",   _elua_map_perspective},
+     {"populate",      _elua_map_populate},
+     {"rotate",        _elua_map_rotate},
+     {"rotate3d",      _elua_map_rotate3d},
+//     {"size",          _elua_map_size},  // not sure of proper API for this
+     {"smooth",        _elua_map_smooth},
+     {"uv",            _elua_map_uv},
+     {"zoom",          _elua_map_zoom},
 
-static int
-_elua_map(lua_State *L)
-{
-   Edje *ed = (Edje *)_elua_table_ptr_get(L, _elua_key);
-   Edje_Lua_Map *elm;
-   int count;
-
-   count = luaL_checkinteger(L, 1);
-
-   elm = (Edje_Lua_Map *)_elua_obj_new(L, ed, sizeof(Edje_Lua_Map), _elua_evas_map_meta);
-   elm->obj.free_func = _elua_map_free;
-   elm->map = evas_map_new(count);
-   lua_pushvalue(L, 2);
-   _elua_gc(L);
-   return 1;
-}
+     {NULL, NULL} // end
+};
 
 static int
 _elua_map_alpha(lua_State *L)
@@ -2326,14 +2276,19 @@ _elua_map_zoom(lua_State *L)
 //-------------
 //-------------
 
-static int
-_elua_polygon(lua_State *L)
+static int _elua_polygon_clear(lua_State *L);
+static int _elua_polygon_point(lua_State *L);
+
+static const char *_elua_evas_polygon_api = "evas_polygon";
+static const char *_elua_evas_polygon_parent = "evas_polygon_parent";
+static const struct luaL_reg _elua_evas_polygon_funcs [] =
 {
-   _ELUA_PLANT_EVAS_OBJECT(Edje_Lua_Evas_Object, _elua_evas_polygon_meta, _elua_evas_obj_free)
-   elo->evas_obj = evas_object_polygon_add(evas_object_evas_get(ed->obj));
-   _elua_polish_evas_object(ed, elo);
-   return 1;
-}
+   // polygon object specific
+     {"clear",         _elua_polygon_clear}, // clear all polygon points
+     {"point",         _elua_polygon_point}, // add a polygon point
+
+     {NULL, NULL} // end
+};
 
 static int _elua_polygon_clear(lua_State *L)
 {
@@ -2364,14 +2319,20 @@ static int _elua_polygon_point(lua_State *L)
 //-------------
 //-------------
 
-static int
-_elua_text(lua_State *L)
+static int _elua_text_font(lua_State *L);
+static int _elua_text_text(lua_State *L);
+
+static const char *_elua_evas_text_api = "evas_text";
+static const char *_elua_evas_text_parent = "evas_text_parent";
+static const struct luaL_reg _elua_evas_text_funcs [] =
 {
-   _ELUA_PLANT_EVAS_OBJECT(Edje_Lua_Evas_Object, _elua_evas_text_meta, _elua_evas_obj_free)
-   elo->evas_obj = evas_object_text_add(evas_object_evas_get(ed->obj));
-   _elua_polish_evas_object(ed, elo);
-   return 1;
-}
+   // text object specific
+     {"font",         _elua_text_font}, // get or set text font
+     {"text",         _elua_text_text}, // get or set text
+//     {"text_class", _elua_object_text_class}, // get or set object text class
+
+     {NULL, NULL} // end
+};
 
 static int
 _elua_text_font(lua_State *L)
@@ -2442,21 +2403,58 @@ _elua_text_text(lua_State *L)
    return 1;
 }
 
-//-------------
-//-------------
-
-/* XXX: disabled until there are enough textblock functions implemented to make it actually useful
-static int
-_elua_textblock(lua_State *L)
-{
-   _ELUA_PLANT_EVAS_OBJECT(Edje_Lua_Evas_Object, _elua_evas_textblock_meta, _elua_evas_obj_free)
-   elo->evas_obj = evas_object_textblock_add(evas_object_evas_get(ed->obj));
-   _elua_polish_evas_object(ed, elo);
-   return 1;
-}
-*/
 
 //--------------------------------------------------------------------------//
+// Brain dead inheritance thingy, built for speed.  Kinda.  Part 1.
+static void
+_elua_add_functions(lua_State *L, const char *api, const luaL_Reg *funcs, const char *meta, const char *parent, const char *base)
+{
+   luaL_register(L, api, funcs);
+   luaL_newmetatable(L, meta);
+   luaL_register(L, 0, _elua_edje_gc_funcs);
+   lua_pushliteral(L, "__index");
+   lua_pushvalue(L, -3);
+   lua_rawset(L, -3);
+
+   if (base && parent)
+     {
+        // Inherit from base
+        lua_getglobal(L, base);
+        luaL_newmetatable(L, parent);
+        lua_pushliteral(L, "__index");
+        lua_pushvalue(L, -3);
+        lua_rawset(L, -3);
+        lua_getglobal(L, api);
+        luaL_getmetatable(L, parent);
+        lua_setmetatable(L, -2);
+     }
+}
+
+// Brain dead inheritance thingy, built for speed.  Kinda.  Part 2.
+static Eina_Bool
+_elua_isa(Edje_Lua_Obj *obj, const char *type)
+{
+   Eina_Bool isa = EINA_FALSE;
+
+   if (!obj) return isa;
+   if (obj->meta == type)
+      isa = EINA_TRUE;
+   if (_elua_evas_meta == type)
+     {
+        if (obj->meta == _elua_evas_image_meta)
+           isa = EINA_TRUE;
+        else if (obj->meta == _elua_evas_text_meta)
+           isa = EINA_TRUE;
+        else if (obj->meta == _elua_evas_edje_meta)
+           isa = EINA_TRUE;
+        else if (obj->meta == _elua_evas_line_meta)
+           isa = EINA_TRUE;
+        else if (obj->meta == _elua_evas_polygon_meta)
+           isa = EINA_TRUE;
+     }
+   return isa;
+}
+
 static void
 _elua_init(void)
 {
