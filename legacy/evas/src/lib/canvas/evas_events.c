@@ -1226,7 +1226,7 @@ evas_event_feed_key_down(Evas *e, const char *keyname, const char *key, const ch
           {
              if (g->just_added)
                {
-                  g->just_added = 0;
+                  g->just_added = EINA_FALSE;
                   continue;
                }
              if (g->delete_me) continue;
@@ -1310,7 +1310,7 @@ evas_event_feed_key_up(Evas *e, const char *keyname, const char *key, const char
           {
              if (g->just_added)
                {
-                  g->just_added = 0;
+                  g->just_added = EINA_FALSE;
                   continue;
                }
              if (g->delete_me) continue;

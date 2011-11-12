@@ -181,9 +181,9 @@ struct _Evas_Key_Grab
    Evas_Modifier_Mask  modifiers;
    Evas_Modifier_Mask  not_modifiers;
    Evas_Object        *object;
-   unsigned char       exclusive : 1;
-   unsigned char       just_added : 1;
-   unsigned char       delete_me : 1;
+   Eina_Bool           exclusive : 1;
+   Eina_Bool           just_added : 1;
+   Eina_Bool           delete_me : 1;
 };
 
 struct _Evas_Intercept_Func
