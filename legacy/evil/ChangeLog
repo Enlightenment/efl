@@ -1,3 +1,21 @@
+2011-11-12  Vincent Torri  <doursse at users dot sf dot net>
+
+	* src/lib/evil_stdio.c:
+	Fix returned value of evil_fread_native()
+
+	* doc/Doxyfile:
+	* doc/head.html:
+	* src/lib/Evil.h:
+	* src/lib/dirent.h:
+	* src/lib/dlfcn/dlfcn.h:
+	* src/lib/evil_fcntl.h:
+	* src/lib/evil_inet.h:
+	* src/lib/evil_libgen.h:
+	* src/lib/evil_stdio.h:
+	* src/lib/evil_string.h:
+	* src/lib/pwd.h:
+	Update documentation
+
 2011-11-02  Vincent Torri  <doursse at users dot sf dot net>
 
 	* src/lib/evil_util.c:

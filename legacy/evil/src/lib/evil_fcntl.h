@@ -66,7 +66,7 @@
 
 /**
  * @struct flock
- * @brief A structure that control the lock of a file descriptor.
+ * @brief A structure that controls the lock of a file descriptor.
  */
 struct flock
 {

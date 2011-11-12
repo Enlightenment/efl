@@ -198,7 +198,7 @@ size_t evil_fread_native(void* buffer, size_t size, size_t count, FILE* stream)
         return 0;
      }
 
-   return (bytes_read != size * count) ? 0 : 1;
+   return (bytes_read != size * count) ? 0 : bytes_read;
 }
 
 int evil_fclose_native(FILE *stream)

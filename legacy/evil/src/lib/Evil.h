@@ -22,19 +22,37 @@
  * @mainpage Evil
  * @image html  e_big.png
  * @author Vincent Torri
- * @date 2008
+ * @date 2011
  *
  * @section intro_sec Introduction
  *
  * The Evil library is an evil library that ports some evil Unix
- * functions to the Windows (XP or Mobile) platform. The evilness is
- * so huge that the most of the functions are not POSIX or BSD
- * compliant.
+ * functions to the Windows (XP or above, or Mobile) platform. The
+ * evilness is so huge that the most of the functions are not POSIX or
+ * BSD compliant.
  *
  * These functions are intended to be used in the Enlightenment
- * Fundations Libraries only and can be compiled only on Windows.
+ * Fundations Libraries only and can be compiled only on Windows,
+ * using MSYS/MinGW on Windows, and cross-compilation on Unix. This
+ * library is minimal in the sense that only the functions needed to
+ * compile the EFL are available. The purpose of this library is NOT
+ * to have a full POSIX emulation et it is NOT a replacement of
+ * cygwin. To compare the size of the DLL themselves, Evil is around
+ * 33 KB and cygwin DLL is around 800 KB.
  *
- * @section evil_sec Evil API Documentation
+ * @section acknowledgments_sec Acknowledgments
+ *
+ * This library has receive some from people interested in the EFL or
+ * not. Among them, evil thanks to Lars Munch, Raoul Hecky, Nicolas
+ * Aguirre, Tor Lillqvist, Lance Fetters, Vincent Richomme, Paul
+ * Vixie, Daniel Stenberg, who helped the author of the library in
+ * different fields (code and tests).
+ *
+ * @section license_sec license
+ *
+ * The Evil library is distributes under a modified BSD license. See
+ * the files COPYING and COPYING-PLAIN in the top level directory for
+ * the full license text.
  *
  * Take a look at the satanic documentation of the @ref Evil.
  *
@@ -49,6 +67,10 @@
  * This header provides miscallenaous functions that exist on Unix
  * but not on Windows platform. They try to follow the conformance of
  * the Unix versions.
+ */
+
+/**
+ * @cond LOCAL
  */
 
 #ifdef __cplusplus
@@ -174,5 +196,9 @@ typedef unsigned long  gid_t;
 #ifdef __cplusplus
 }
 #endif
+
+/**
+ * @endcond
+ */
 
 #endif /* __EVIL_H__ */
