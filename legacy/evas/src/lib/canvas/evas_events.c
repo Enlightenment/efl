@@ -1410,7 +1410,7 @@ EAPI Eina_Bool
 evas_object_freeze_events_get(const Evas_Object *obj)
 {
    MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
-   return 0;
+   return EINA_FALSE;
    MAGIC_CHECK_END();
    return obj->freeze_events;
 }
@@ -1443,7 +1443,7 @@ EAPI Eina_Bool
 evas_object_pass_events_get(const Evas_Object *obj)
 {
    MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
-   return 0;
+   return EINA_FALSE;
    MAGIC_CHECK_END();
    return obj->pass_events;
 }
@@ -1475,7 +1475,7 @@ EAPI Eina_Bool
 evas_object_repeat_events_get(const Evas_Object *obj)
 {
    MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
-   return 0;
+   return EINA_FALSE;
    MAGIC_CHECK_END();
    return obj->repeat_events;
 }
@@ -1493,7 +1493,7 @@ EAPI Eina_Bool
 evas_object_propagate_events_get(const Evas_Object *obj)
 {
    MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
-   return 0;
+   return EINA_FALSE;
    MAGIC_CHECK_END();
    return !(obj->no_propagate);
 }
@@ -1511,7 +1511,7 @@ EAPI Evas_Object_Pointer_Mode
 evas_object_pointer_mode_get(const Evas_Object *obj)
 {
    MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
-   return 0;
+   return EVAS_OBJECT_POINTER_MODE_AUTOGRAB;
    MAGIC_CHECK_END();
    return obj->pointer_mode;
 }
