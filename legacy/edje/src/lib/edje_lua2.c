@@ -395,6 +395,32 @@ static const char *_elua_key = "key";
 static const char *_elua_objs = "objs";
 
 //--------------------------------------------------------------------------//
+
+
+static void
+_elua_add_functions(lua_State *L, const char *api, const luaL_Reg *funcs, const char *meta, const char *parent, const char *base)
+{
+   luaL_register(L, api, funcs);
+   luaL_newmetatable(L, meta);
+   luaL_register(L, 0, _elua_edje_gc_funcs);
+   lua_pushliteral(L, "__index");
+   lua_pushvalue(L, -3);
+   lua_rawset(L, -3);
+
+   if (base && parent)
+     {
+        // Inherit from base
+        lua_getglobal(L, base);
+        luaL_newmetatable(L, parent);
+        lua_pushliteral(L, "__index");
+        lua_pushvalue(L, -3);
+        lua_rawset(L, -3);
+        lua_getglobal(L, api);
+        luaL_getmetatable(L, parent);
+        lua_setmetatable(L, -2);
+     }
+}
+
 static void *
 _elua_alloc(void *ud, void *ptr, size_t osize, size_t nsize)
 {
@@ -485,14 +511,7 @@ _elua_init(void)
    luaL_newmetatable(L, _elua_edje_meta);
    luaL_register(L, 0, _elua_edje_gc_funcs);
 
-   luaL_register(L, _elua_evas_api, _elua_evas_funcs);
-   luaL_newmetatable(L, _elua_evas_meta);
-   luaL_register(L, 0, _elua_edje_gc_funcs);
-
-   lua_pushliteral(L, "__index");
-   lua_pushvalue(L, -3);
-   lua_rawset(L, -3);
-   lua_pop(L, 2);
+   _elua_add_functions(L, _elua_evas_api, _elua_evas_funcs, _elua_evas_meta, NULL, NULL);
 
    // weak table for our objects
    lua_pushlightuserdata(L, &_elua_objs);
@@ -2510,54 +2529,46 @@ _elua_evas_obj_free(void *obj)
    elo->evas_obj = NULL;
 }
 
-static int
-_elua_rect(lua_State *L)
-{
-   Edje *ed = (Edje *)_elua_table_ptr_get(L, _elua_key);
-   Edje_Lua_Evas_Object *elo;
+#define _ELUA_PLANT_EVAS_OBJECT(type, meta, free)            \
+   Edje *ed = (Edje *)_elua_table_ptr_get(L, _elua_key);     \
+   type *elo;                                                \
+   elo = (type *)_elua_obj_new(L, ed, sizeof(type), meta);   \
+   elo->obj.free_func = free;
 
-   elo = (Edje_Lua_Evas_Object *)_elua_obj_new(L, ed, sizeof(Edje_Lua_Evas_Object), _elua_evas_meta);
-   elo->obj.free_func = _elua_evas_obj_free;
-   elo->evas_obj = evas_object_rectangle_add(evas_object_evas_get(ed->obj));
+static void
+_elua_polish_evas_object(Edje *ed, Edje_Lua_Evas_Object *elo)
+{
    evas_object_smart_member_add(elo->evas_obj, ed->obj);
    evas_object_clip_set(elo->evas_obj, ed->base.clipper);
    evas_object_move(elo->evas_obj, ed->x, ed->y);
    evas_object_resize(elo->evas_obj, 0, 0);
    evas_object_data_set(elo->evas_obj, ELO, elo);
+}
+
+static int
+_elua_rect(lua_State *L)
+{
+   _ELUA_PLANT_EVAS_OBJECT(Edje_Lua_Evas_Object, _elua_evas_meta, _elua_evas_obj_free)
+   elo->evas_obj = evas_object_rectangle_add(evas_object_evas_get(ed->obj));
+   _elua_polish_evas_object(ed, elo);
    return 1;
 }
 
 static int
 _elua_image(lua_State *L)
 {
-   Edje *ed = (Edje *)_elua_table_ptr_get(L, _elua_key);
-   Edje_Lua_Evas_Object *elo;
-
-   elo = (Edje_Lua_Evas_Object *)_elua_obj_new(L, ed, sizeof(Edje_Lua_Evas_Object), _elua_evas_image_meta);
-   elo->obj.free_func = _elua_evas_obj_free;
+   _ELUA_PLANT_EVAS_OBJECT(Edje_Lua_Evas_Object, _elua_evas_image_meta, _elua_evas_obj_free)
    elo->evas_obj = evas_object_image_filled_add(evas_object_evas_get(ed->obj));
-   evas_object_smart_member_add(elo->evas_obj, ed->obj);
-   evas_object_clip_set(elo->evas_obj, ed->base.clipper);
-   evas_object_move(elo->evas_obj, ed->x, ed->y);
-   evas_object_resize(elo->evas_obj, 0, 0);
-   evas_object_data_set(elo->evas_obj, ELO, elo);
+   _elua_polish_evas_object(ed, elo);
    return 1;
 }
 
 static int
 _elua_text(lua_State *L)
 {
-   Edje *ed = (Edje *)_elua_table_ptr_get(L, _elua_key);
-   Edje_Lua_Evas_Object *elo;
-
-   elo = (Edje_Lua_Evas_Object *)_elua_obj_new(L, ed, sizeof(Edje_Lua_Evas_Object), _elua_evas_text_meta);
-   elo->obj.free_func = _elua_evas_obj_free;
+   _ELUA_PLANT_EVAS_OBJECT(Edje_Lua_Evas_Object, _elua_evas_text_meta, _elua_evas_obj_free)
    elo->evas_obj = evas_object_text_add(evas_object_evas_get(ed->obj));
-   evas_object_smart_member_add(elo->evas_obj, ed->obj);
-   evas_object_clip_set(elo->evas_obj, ed->base.clipper);
-   evas_object_move(elo->evas_obj, ed->x, ed->y);
-   evas_object_resize(elo->evas_obj, 0, 0);
-   evas_object_data_set(elo->evas_obj, ELO, elo);
+   _elua_polish_evas_object(ed, elo);
    return 1;
 }
 
@@ -2565,17 +2576,9 @@ _elua_text(lua_State *L)
 static int
 _elua_textblock(lua_State *L)
 {
-   Edje *ed = (Edje *)_elua_table_ptr_get(L, _elua_key);
-   Edje_Lua_Evas_Object *elo;
-
-   elo = (Edje_Lua_Evas_Object *)_elua_obj_new(L, ed, sizeof(Edje_Lua_Evas_Object), _elua_evas_text_metablock);
-   elo->obj.free_func = _elua_evas_obj_free;
+   _ELUA_PLANT_EVAS_OBJECT(Edje_Lua_Evas_Object, _elua_evas_textblock_meta, _elua_evas_obj_free)
    elo->evas_obj = evas_object_textblock_add(evas_object_evas_get(ed->obj));
-   evas_object_smart_member_add(elo->evas_obj, ed->obj);
-   evas_object_clip_set(elo->evas_obj, ed->base.clipper);
-   evas_object_move(elo->evas_obj, ed->x, ed->y);
-   evas_object_resize(elo->evas_obj, 0, 0);
-   evas_object_data_set(elo->evas_obj, ELO, elo);
+   _elua_polish_evas_object(ed, elo);
    return 1;
 }
 */
@@ -2583,51 +2586,27 @@ _elua_textblock(lua_State *L)
 static int
 _elua_edje(lua_State *L)
 {
-   Edje *ed = (Edje *)_elua_table_ptr_get(L, _elua_key);
-   Edje_Lua_Evas_Object *elo;
-
-   elo = (Edje_Lua_Evas_Object *)_elua_obj_new(L, ed, sizeof(Edje_Lua_Evas_Object), _elua_evas_edje_meta);
-   elo->obj.free_func = _elua_evas_obj_free;
+   _ELUA_PLANT_EVAS_OBJECT(Edje_Lua_Evas_Object, _elua_evas_edje_meta, _elua_evas_obj_free)
    elo->evas_obj = edje_object_add(evas_object_evas_get(ed->obj));
-   evas_object_smart_member_add(elo->evas_obj, ed->obj);
-   evas_object_clip_set(elo->evas_obj, ed->base.clipper);
-   evas_object_move(elo->evas_obj, ed->x, ed->y);
-   evas_object_resize(elo->evas_obj, 0, 0);
-   evas_object_data_set(elo->evas_obj, ELO, elo);
+   _elua_polish_evas_object(ed, elo);
    return 1;
 }
 
 static int
 _elua_line(lua_State *L)
 {
-   Edje *ed = (Edje *)_elua_table_ptr_get(L, _elua_key);
-   Edje_Lua_Evas_Object *elo;
-
-   elo = (Edje_Lua_Evas_Object *)_elua_obj_new(L, ed, sizeof(Edje_Lua_Evas_Object), _elua_evas_line_meta);
-   elo->obj.free_func = _elua_evas_obj_free;
+   _ELUA_PLANT_EVAS_OBJECT(Edje_Lua_Evas_Object, _elua_evas_line_meta, _elua_evas_obj_free)
    elo->evas_obj = evas_object_line_add(evas_object_evas_get(ed->obj));
-   evas_object_smart_member_add(elo->evas_obj, ed->obj);
-   evas_object_clip_set(elo->evas_obj, ed->base.clipper);
-   evas_object_move(elo->evas_obj, ed->x, ed->y);
-   evas_object_resize(elo->evas_obj, 0, 0);
-   evas_object_data_set(elo->evas_obj, ELO, elo);
+   _elua_polish_evas_object(ed, elo);
    return 1;
 }
 
 static int
 _elua_polygon(lua_State *L)
 {
-   Edje *ed = (Edje *)_elua_table_ptr_get(L, _elua_key);
-   Edje_Lua_Evas_Object *elo;
-
-   elo = (Edje_Lua_Evas_Object *)_elua_obj_new(L, ed, sizeof(Edje_Lua_Evas_Object), _elua_evas_polygon_meta);
-   elo->obj.free_func = _elua_evas_obj_free;
+   _ELUA_PLANT_EVAS_OBJECT(Edje_Lua_Evas_Object, _elua_evas_polygon_meta, _elua_evas_obj_free)
    elo->evas_obj = evas_object_polygon_add(evas_object_evas_get(ed->obj));
-   evas_object_smart_member_add(elo->evas_obj, ed->obj);
-   evas_object_clip_set(elo->evas_obj, ed->base.clipper);
-   evas_object_move(elo->evas_obj, ed->x, ed->y);
-   evas_object_resize(elo->evas_obj, 0, 0);
-   evas_object_data_set(elo->evas_obj, ELO, elo);
+   _elua_polish_evas_object(ed, elo);
    return 1;
 }
 
@@ -2691,106 +2670,19 @@ _edje_lua2_script_init(Edje *ed)
         lua_call(L, 1, 0);
      }
 
-
    luaL_register(L, _elua_edje_api, _elua_edje_funcs);
    luaL_newmetatable(L, _elua_edje_meta);
    luaL_register(L, 0, _elua_edje_gc_funcs);
 
-   luaL_register(L, _elua_evas_api, _elua_evas_funcs);
-   luaL_newmetatable(L, _elua_evas_meta);
-   luaL_register(L, 0, _elua_edje_gc_funcs);
-   lua_pushliteral(L, "__index");
-   lua_pushvalue(L, -3);
-   lua_rawset(L, -3);
-
    lua_pop(L, 2);
 
-   luaL_register(L, _elua_evas_edje_api, _elua_evas_edje_funcs);
-   luaL_newmetatable(L, _elua_evas_edje_meta);
-   luaL_register(L, 0, _elua_edje_gc_funcs);
-   lua_pushliteral(L, "__index");
-   lua_pushvalue(L, -3);
-   lua_rawset(L, -3);
-   // Inherit from _elua_evas_api
-   lua_getglobal(L, _elua_evas_api);
-   luaL_newmetatable(L, _elua_evas_edje_parent);
-   lua_pushliteral(L, "__index");
-   lua_pushvalue(L, -3);
-   lua_rawset(L, -3);
-   lua_getglobal(L, _elua_evas_edje_api);
-   luaL_getmetatable(L, _elua_evas_edje_parent);
-   lua_setmetatable(L, -2);
-
-   luaL_register(L, _elua_evas_image_api, _elua_evas_image_funcs);
-   luaL_newmetatable(L, _elua_evas_image_meta);
-   luaL_register(L, 0, _elua_edje_gc_funcs);
-   lua_pushliteral(L, "__index");
-   lua_pushvalue(L, -3);
-   lua_rawset(L, -3);
-   // Inherit from _elua_evas_api
-   lua_getglobal(L, _elua_evas_api);
-   luaL_newmetatable(L, _elua_evas_image_parent);
-   lua_pushliteral(L, "__index");
-   lua_pushvalue(L, -3);
-   lua_rawset(L, -3);
-   lua_getglobal(L, _elua_evas_image_api);
-   luaL_getmetatable(L, _elua_evas_image_parent);
-   lua_setmetatable(L, -2);
-
-   luaL_register(L, _elua_evas_line_api, _elua_evas_line_funcs);
-   luaL_newmetatable(L, _elua_evas_line_meta);
-   luaL_register(L, 0, _elua_edje_gc_funcs);
-   lua_pushliteral(L, "__index");
-   lua_pushvalue(L, -3);
-   lua_rawset(L, -3);
-   // Inherit from _elua_evas_api
-   lua_getglobal(L, _elua_evas_api);
-   luaL_newmetatable(L, _elua_evas_line_parent);
-   lua_pushliteral(L, "__index");
-   lua_pushvalue(L, -3);
-   lua_rawset(L, -3);
-   lua_getglobal(L, _elua_evas_line_api);
-   luaL_getmetatable(L, _elua_evas_line_parent);
-   lua_setmetatable(L, -2);
-
-   luaL_register(L, _elua_evas_map_api, _elua_evas_map_funcs);
-   luaL_newmetatable(L, _elua_evas_map_meta);
-   luaL_register(L, 0, _elua_edje_gc_funcs);
-   lua_pushliteral(L, "__index");
-   lua_pushvalue(L, -3);
-   lua_rawset(L, -3);
-
-   luaL_register(L, _elua_evas_polygon_api, _elua_evas_polygon_funcs);
-   luaL_newmetatable(L, _elua_evas_polygon_meta);
-   luaL_register(L, 0, _elua_edje_gc_funcs);
-   lua_pushliteral(L, "__index");
-   lua_pushvalue(L, -3);
-   lua_rawset(L, -3);
-   // Inherit from _elua_evas_api
-   lua_getglobal(L, _elua_evas_api);
-   luaL_newmetatable(L, _elua_evas_polygon_parent);
-   lua_pushliteral(L, "__index");
-   lua_pushvalue(L, -3);
-   lua_rawset(L, -3);
-   lua_getglobal(L, _elua_evas_polygon_api);
-   luaL_getmetatable(L, _elua_evas_polygon_parent);
-   lua_setmetatable(L, -2);
-
-   luaL_register(L, _elua_evas_text_api, _elua_evas_text_funcs);
-   luaL_newmetatable(L, _elua_evas_text_meta);
-   luaL_register(L, 0, _elua_edje_gc_funcs);
-   lua_pushliteral(L, "__index");
-   lua_pushvalue(L, -3);
-   lua_rawset(L, -3);
-   // Inherit from _elua_evas_api
-   lua_getglobal(L, _elua_evas_api);
-   luaL_newmetatable(L, _elua_evas_text_parent);
-   lua_pushliteral(L, "__index");
-   lua_pushvalue(L, -3);
-   lua_rawset(L, -3);
-   lua_getglobal(L, _elua_evas_text_api);
-   luaL_getmetatable(L, _elua_evas_text_parent);
-   lua_setmetatable(L, -2);
+   _elua_add_functions(L, _elua_evas_api, _elua_evas_funcs, _elua_evas_meta, NULL, NULL);
+   _elua_add_functions(L, _elua_evas_edje_api, _elua_evas_edje_funcs, _elua_evas_edje_meta, _elua_evas_edje_parent, _elua_evas_api);
+   _elua_add_functions(L, _elua_evas_image_api, _elua_evas_image_funcs, _elua_evas_image_meta, _elua_evas_image_parent, _elua_evas_api);
+   _elua_add_functions(L, _elua_evas_line_api, _elua_evas_line_funcs, _elua_evas_line_meta, _elua_evas_line_parent, _elua_evas_api);
+   _elua_add_functions(L, _elua_evas_map_api, _elua_evas_map_funcs, _elua_evas_map_meta, NULL, NULL);
+   _elua_add_functions(L, _elua_evas_polygon_api, _elua_evas_polygon_funcs, _elua_evas_polygon_meta, _elua_evas_polygon_parent, _elua_evas_api);
+   _elua_add_functions(L, _elua_evas_text_api, _elua_evas_text_funcs, _elua_evas_text_meta, _elua_evas_text_parent, _elua_evas_api);
 
    // weak table for our objects
    lua_pushlightuserdata(L, &_elua_objs);
