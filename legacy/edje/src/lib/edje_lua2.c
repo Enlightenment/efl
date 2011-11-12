@@ -11,6 +11,25 @@
 # define FMT_SIZE_T "%zu"
 #endif
 
+/**
+@page luaref Edje Lua scripting
+
+@section intro Introduction
+
+Lua is intended for script-only objects at this point (with embryo left
+for augmenting standard programs). Since script-only objects effectively
+define objects entirely via Lua script (resize handling, event handling
+etc. etc.) this places many more demands on them, and thus a more powerful
+language is in order. Lua is that language.
+
+To get you started, here's an example:
+@ref lua_script.edc
+
+@section args Lua function argument syntax
+
+Some of the lua functions can accept a table as well as separate arguments.
+ */
+
 //--------------------------------------------------------------------------//
 typedef struct _Edje_Lua_Alloc       Edje_Lua_Alloc;
 typedef struct _Edje_Lua_Obj         Edje_Lua_Obj;
@@ -518,7 +537,7 @@ _elua_isa(Edje_Lua_Obj *obj, const char *type)
    return isa;
 }
 
-/**
+/*
  * Cori: Assumes object to be saved on top of stack
  */
 static void
@@ -532,7 +551,7 @@ _elua_ref_set(lua_State *L, void *key)
    lua_pop(L, 1); // pop obj table
 }
 
-/**
+/*
  * Cori: Get an object from the object table
  */
 static void *
@@ -831,6 +850,24 @@ _elua_color_fix(int *r, int *g, int *b, int *a)
 }
 
 //--------------------------------------------------------------------------//
+
+/**
+@page luaref
+@section classes Lua classes.
+@subsection edje Basic edje class.
+
+The lua edje class includes functions for dealing with the lua script only group
+as an edje object, basic functions, and functions to create other objects.
+*/
+
+/**
+@page luaref
+@subsubsection echo edje:echo()
+
+Make lua a bit shelly.
+
+Param - a string to print to the console.
+*/
 static int
 _elua_echo(lua_State *L)
 {
@@ -840,6 +877,24 @@ _elua_echo(lua_State *L)
 }
 
 //-------------
+/**
+@page luaref
+@subsubsection date edje:date()
+
+Gives us the current time and date.
+
+Returns a table with these members -
+year - Year.
+month - Month as an integer.
+day - Day of the month.
+yearday - Day of the year.
+weekday - Day of the week as an integer.
+hour -
+min -
+sec - Seconds as a number.
+
+
+*/
 static int
 _elua_date(lua_State *L)
 {
@@ -1334,6 +1389,13 @@ _elua_text_class(lua_State *L)
 //-------------
 //-------------
 
+/**
+@page luaref
+@subsection evas Basic evas class.
+
+The lua evas class includes functions for dealing with evas objects.
+*/
+
 static void
 _elua_evas_obj_free(void *obj)
 {
@@ -1361,6 +1423,15 @@ _elua_polish_evas_object(Edje *ed, Edje_Lua_Evas_Object *elo)
    evas_object_data_set(elo->evas_obj, ELO, elo);
 }
 
+/**
+@page luaref
+@subsection edje
+@subsubsection rect edje:rect()
+
+Create a rectangle.
+
+Returns an evas rectangle.
+*/
 static int
 _elua_rect(lua_State *L)
 {
@@ -1371,6 +1442,15 @@ _elua_rect(lua_State *L)
 }
 
 //-------------
+/**
+@page luaref
+@subsection edje
+@subsubsection rect edje:rect()
+
+Create a rectangle.
+
+Returns an evas rectangle.
+*/
 static int
 _elua_hide(lua_State *L)
 {
