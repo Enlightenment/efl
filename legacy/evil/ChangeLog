@@ -1,5 +1,10 @@
 2011-11-12  Vincent Torri  <doursse at users dot sf dot net>
 
+	* src/lib/Evil.h:
+	clean main page
+
+2011-11-12  Vincent Torri  <doursse at users dot sf dot net>
+
 	* src/lib/evil_stdio.c:
 	Fix returned value of evil_fread_native()
 

@@ -22,7 +22,7 @@
  * @mainpage Evil
  * @image html  e_big.png
  * @author Vincent Torri
- * @date 2011
+ * @date 2008-2011
  *
  * @section intro_sec Introduction
  *
@@ -54,9 +54,9 @@
  * the files COPYING and COPYING-PLAIN in the top level directory for
  * the full license text.
  *
- * Take a look at the satanic documentation of the @ref Evil.
+ * @section reference_sec Reference API
  *
- * Take a look at the demoniac documentation of the @ref Dlfcn.
+ * Use the horizontal menu above to navigate into the reference API
  */
 
 /**
