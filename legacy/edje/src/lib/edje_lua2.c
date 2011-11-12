@@ -573,23 +573,23 @@ _elua_ref_get(lua_State *L, void *key)
 static Eina_Bool
 _elua_isa(Edje_Lua_Obj *obj, const char *type)
 {
-   Eina_Bool isa = FALSE;
+   Eina_Bool isa = EINA_FALSE;
 
    if (!obj) return isa;
    if (obj->meta == type)
-      isa = TRUE;
+      isa = EINA_TRUE;
    if (_elua_evas_meta == type)
      {
         if (obj->meta == _elua_evas_image_meta)
-           isa = TRUE;
+           isa = EINA_TRUE;
         else if (obj->meta == _elua_evas_text_meta)
-           isa = TRUE;
+           isa = EINA_TRUE;
         else if (obj->meta == _elua_evas_edje_meta)
-           isa = TRUE;
+           isa = EINA_TRUE;
         else if (obj->meta == _elua_evas_line_meta)
-           isa = TRUE;
+           isa = EINA_TRUE;
         else if (obj->meta == _elua_evas_polygon_meta)
-           isa = TRUE;
+           isa = EINA_TRUE;
      }
    return isa;
 }
@@ -679,7 +679,7 @@ _elua_scan_params(lua_State *L, int i, Eina_Bool tr, char *params, ...)
    char *f = strdup(params);
    char *p = f;
    int n = 0, j = i, count = 0;
-   Eina_Bool table = FALSE;
+   Eina_Bool table = EINA_FALSE;
 
    if (!f) return -1;
    va_start(vl, params);
@@ -687,13 +687,13 @@ _elua_scan_params(lua_State *L, int i, Eina_Bool tr, char *params, ...)
    if (lua_istable(L, i))
      {
         j = -1;
-        table = TRUE;
+        table = EINA_TRUE;
      }
 
    while (*p)
      {
         char *q;
-        Eina_Bool get = TRUE;
+        Eina_Bool get = EINA_TRUE;
 
         while (isspace(*p))
            p++;
@@ -766,7 +766,7 @@ _elua_scan_params(lua_State *L, int i, Eina_Bool tr, char *params, ...)
                }
              default:
                {
-                  get = FALSE;
+                  get = EINA_FALSE;
                   break;
                }
           }
@@ -814,7 +814,7 @@ _elua_ret(lua_State *L, char *params, ...)
    while (*p)
      {
         char *q;
-        Eina_Bool set = TRUE;
+        Eina_Bool set = EINA_TRUE;
 
         while (isspace(*p))
            p++;
@@ -847,7 +847,7 @@ _elua_ret(lua_State *L, char *params, ...)
                }
              default:
                {
-                  set = FALSE;
+                  set = EINA_FALSE;
                   break;
                }
           }
