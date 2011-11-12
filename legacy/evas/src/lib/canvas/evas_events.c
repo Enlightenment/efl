@@ -504,7 +504,7 @@ evas_event_feed_mouse_wheel(Evas *e, int direction, int z, unsigned int timestam
         ev.canvas.x = e->pointer.x;
         ev.canvas.y = e->pointer.y;
         _evas_event_havemap_adjust(obj, &ev.canvas.x, &ev.canvas.y, obj->mouse_grabbed);
-        if (e->events_frozen <= 0)
+        if ((e->events_frozen <= 0) && !evas_event_freezes_through(obj))
           evas_object_event_callback_call(obj, EVAS_CALLBACK_MOUSE_WHEEL, &ev);
         if (e->delete_me) break;
      }
@@ -1194,10 +1194,10 @@ evas_event_feed_key_down(Evas *e, const char *keyname, const char *key, const ch
    MAGIC_CHECK(e, Evas, MAGIC_EVAS);
    return;
    MAGIC_CHECK_END();
+
    if (!keyname) return;
    if (e->events_frozen > 0) return;
    e->last_timestamp = timestamp;
-
    _evas_walk(e);
 
    Evas_Event_Key_Down ev;
@@ -1236,7 +1236,8 @@ evas_event_feed_key_down(Evas *e, const char *keyname, const char *key, const ch
                {
                   if (!(e->modifiers.mask & g->not_modifiers))
                     {
-                       if (e->events_frozen <= 0)
+                       if (e->events_frozen <= 0 &&
+                           !evas_event_freezes_through(g->object))
                          evas_object_event_callback_call(g->object,
                                                          EVAS_CALLBACK_KEY_DOWN,
                                                          &ev);
@@ -1264,7 +1265,7 @@ evas_event_feed_key_down(Evas *e, const char *keyname, const char *key, const ch
      }
    if ((e->focused) && (!exclusive))
      {
-        if (e->events_frozen <= 0)
+        if (e->events_frozen <= 0 && !evas_event_freezes_through(e->focused))
           evas_object_event_callback_call(e->focused, EVAS_CALLBACK_KEY_DOWN,
                                           &ev);
      }
@@ -1319,7 +1320,8 @@ evas_event_feed_key_up(Evas *e, const char *keyname, const char *key, const char
                     (g->not_modifiers == ~e->modifiers.mask))) &&
                  (!strcmp(keyname, g->keyname)))
                {
-                  if (e->events_frozen <= 0)
+                  if (e->events_frozen <= 0 &&
+                      !evas_event_freezes_through(g->object))
                     evas_object_event_callback_call(g->object,
                                                     EVAS_CALLBACK_KEY_UP, &ev);
                   if (g->exclusive) exclusive = EINA_TRUE;
@@ -1346,7 +1348,7 @@ evas_event_feed_key_up(Evas *e, const char *keyname, const char *key, const char
      }
    if ((e->focused) && (!exclusive))
      {
-        if (e->events_frozen <= 0)
+        if (e->events_frozen <= 0 && !evas_event_freezes_through(e->focused))
           evas_object_event_callback_call(e->focused, EVAS_CALLBACK_KEY_UP,
                                           &ev);
      }
@@ -1379,7 +1381,7 @@ evas_event_feed_hold(Evas *e, int hold, unsigned int timestamp, const void *data
    copy = evas_event_list_copy(e->pointer.object.in);
    EINA_LIST_FOREACH(copy, l, obj)
      {
-        if (e->events_frozen <= 0)
+        if ((e->events_frozen <= 0) && !evas_event_freezes_through(obj))
           evas_object_event_callback_call(obj, EVAS_CALLBACK_HOLD, &ev);
         if (e->delete_me) break;
      }
