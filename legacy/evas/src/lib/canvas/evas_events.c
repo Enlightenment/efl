@@ -1197,73 +1197,78 @@ evas_event_feed_key_down(Evas *e, const char *keyname, const char *key, const ch
    if (!keyname) return;
    if (e->events_frozen > 0) return;
    e->last_timestamp = timestamp;
+
    _evas_walk(e);
+
+   Evas_Event_Key_Down ev;
+   Eina_Bool exclusive;
+
+   _evas_object_event_new();
+
+   exclusive = EINA_FALSE;
+   ev.keyname = (char *)keyname;
+   ev.data = (void *)data;
+   ev.modifiers = &(e->modifiers);
+   ev.locks = &(e->locks);
+   ev.key = key;
+   ev.string = string;
+   ev.compose = compose;
+   ev.timestamp = timestamp;
+   ev.event_flags = EVAS_EVENT_FLAG_NONE;
+
+   if (e->grabs)
      {
-        Evas_Event_Key_Down ev;
-        int exclusive;
+        Eina_List *l;
+        Evas_Key_Grab *g;
 
-        _evas_object_event_new();
-
-        exclusive = 0;
-        ev.keyname = (char *)keyname;
-        ev.data = (void *)data;
-        ev.modifiers = &(e->modifiers);
-        ev.locks = &(e->locks);
-        ev.key = key;
-        ev.string = string;
-        ev.compose = compose;
-        ev.timestamp = timestamp;
-        ev.event_flags = EVAS_EVENT_FLAG_NONE;
-        if (e->grabs)
+        e->walking_grabs++;
+        EINA_LIST_FOREACH(e->grabs, l, g)
           {
-             Eina_List *l;
-             Evas_Key_Grab *g;
-
-             e->walking_grabs++;
-             EINA_LIST_FOREACH(e->grabs, l, g)
+             if (g->just_added)
                {
-                  if (g->just_added)
-                    {
-                       g->just_added = 0;
-                       continue;
-                    }
-                  if (g->delete_me) continue;
-                  if (((e->modifiers.mask & g->modifiers) ||
-                       (g->modifiers == e->modifiers.mask)) &&
-                      (!strcmp(keyname, g->keyname)))
-                    {
-                       if (!(e->modifiers.mask & g->not_modifiers))
-                         {
-                            if (e->events_frozen <= 0)
-                              evas_object_event_callback_call(g->object, EVAS_CALLBACK_KEY_DOWN, &ev);
-                            if (g->exclusive) exclusive = 1;
-                         }
-                    }
-                  if (e->delete_me) break;
+                  g->just_added = 0;
+                  continue;
                }
-             e->walking_grabs--;
-             if (e->walking_grabs <= 0)
+             if (g->delete_me) continue;
+             if (((e->modifiers.mask & g->modifiers) ||
+                  (g->modifiers == e->modifiers.mask)) &&
+                 (!strcmp(keyname, g->keyname)))
                {
-                  while (e->delete_grabs > 0)
+                  if (!(e->modifiers.mask & g->not_modifiers))
                     {
-                       e->delete_grabs--;
-                       for (l = e->grabs; l;)
-                         {
-                            g = eina_list_data_get(l);
-                            l = eina_list_next(l);
-                            if (g->delete_me)
-                              evas_key_grab_free(g->object, g->keyname, g->modifiers, g->not_modifiers);
-                         }
+                       if (e->events_frozen <= 0)
+                         evas_object_event_callback_call(g->object,
+                                                         EVAS_CALLBACK_KEY_DOWN,
+                                                         &ev);
+                       if (g->exclusive) exclusive = EINA_TRUE;
+                    }
+               }
+             if (e->delete_me) break;
+          }
+        e->walking_grabs--;
+        if (e->walking_grabs <= 0)
+          {
+             while (e->delete_grabs > 0)
+               {
+                  e->delete_grabs--;
+                  for (l = e->grabs; l;)
+                    {
+                       g = eina_list_data_get(l);
+                       l = eina_list_next(l);
+                       if (g->delete_me)
+                         evas_key_grab_free(g->object, g->keyname, g->modifiers,
+                                            g->not_modifiers);
                     }
                }
           }
-        if ((e->focused) && (!exclusive))
-          {
-             if (e->events_frozen <= 0)
-               evas_object_event_callback_call(e->focused, EVAS_CALLBACK_KEY_DOWN, &ev);
-          }
-        _evas_post_event_callback_call(e);
      }
+   if ((e->focused) && (!exclusive))
+     {
+        if (e->events_frozen <= 0)
+          evas_object_event_callback_call(e->focused, EVAS_CALLBACK_KEY_DOWN,
+                                          &ev);
+     }
+   _evas_post_event_callback_call(e);
    _evas_unwalk(e);
 }
 
@@ -1277,72 +1282,75 @@ evas_event_feed_key_up(Evas *e, const char *keyname, const char *key, const char
    if (e->events_frozen > 0) return;
    e->last_timestamp = timestamp;
    _evas_walk(e);
+
+   Evas_Event_Key_Up ev;
+   Eina_Bool exclusive;
+
+   _evas_object_event_new();
+
+   exclusive = EINA_FALSE;
+   ev.keyname = (char *)keyname;
+   ev.data = (void *)data;
+   ev.modifiers = &(e->modifiers);
+   ev.locks = &(e->locks);
+   ev.key = key;
+   ev.string = string;
+   ev.compose = compose;
+   ev.timestamp = timestamp;
+   ev.event_flags = EVAS_EVENT_FLAG_NONE;
+
+   if (e->grabs)
      {
-        Evas_Event_Key_Up ev;
-        int exclusive;
+        Eina_List *l;
+        Evas_Key_Grab *g;
 
-        _evas_object_event_new();
-
-        exclusive = 0;
-        ev.keyname = (char *)keyname;
-        ev.data = (void *)data;
-        ev.modifiers = &(e->modifiers);
-        ev.locks = &(e->locks);
-        ev.key = key;
-        ev.string = string;
-        ev.compose = compose;
-        ev.timestamp = timestamp;
-        ev.event_flags = EVAS_EVENT_FLAG_NONE;
-        if (e->grabs)
+        e->walking_grabs++;
+        EINA_LIST_FOREACH(e->grabs, l, g)
           {
-             Eina_List *l;
-             Evas_Key_Grab *g;
-
-             e->walking_grabs++;
-             EINA_LIST_FOREACH(e->grabs, l, g)
+             if (g->just_added)
                {
-                  if (g->just_added)
-                    {
-                       g->just_added = 0;
-                       continue;
-                    }
-                  if (g->delete_me) continue;
-                  if (((e->modifiers.mask & g->modifiers) ||
-                       (g->modifiers == e->modifiers.mask)) &&
-                      (!((e->modifiers.mask & g->not_modifiers) ||
-                         (g->not_modifiers == ~e->modifiers.mask))) &&
-                      (!strcmp(keyname, g->keyname)))
-                    {
-                       if (e->events_frozen <= 0)
-                         evas_object_event_callback_call(g->object, EVAS_CALLBACK_KEY_UP, &ev);
-                       if (g->exclusive) exclusive = 1;
-                    }
-                  if (e->delete_me) break;
+                  g->just_added = 0;
+                  continue;
                }
-             e->walking_grabs--;
-             if (e->walking_grabs <= 0)
+             if (g->delete_me) continue;
+             if (((e->modifiers.mask & g->modifiers) ||
+                  (g->modifiers == e->modifiers.mask)) &&
+                 (!((e->modifiers.mask & g->not_modifiers) ||
+                    (g->not_modifiers == ~e->modifiers.mask))) &&
+                 (!strcmp(keyname, g->keyname)))
                {
-                  while (e->delete_grabs > 0)
-                    {
-                       Eina_List *ll, *l_next;
-                       Evas_Key_Grab *gr;
+                  if (e->events_frozen <= 0)
+                    evas_object_event_callback_call(g->object,
+                                                    EVAS_CALLBACK_KEY_UP, &ev);
+                  if (g->exclusive) exclusive = EINA_TRUE;
+               }
+             if (e->delete_me) break;
+          }
+        e->walking_grabs--;
+        if (e->walking_grabs <= 0)
+          {
+             while (e->delete_grabs > 0)
+               {
+                  Eina_List *ll, *l_next;
+                  Evas_Key_Grab *gr;
 
-                       e->delete_grabs--;
-                       EINA_LIST_FOREACH_SAFE(e->grabs, ll, l_next, gr)
-                         {
-                            if (gr->delete_me)
-                              evas_key_grab_free(gr->object, gr->keyname, gr->modifiers, gr->not_modifiers);
-                         }
+                  e->delete_grabs--;
+                  EINA_LIST_FOREACH_SAFE(e->grabs, ll, l_next, gr)
+                    {
+                       if (gr->delete_me)
+                         evas_key_grab_free(gr->object, gr->keyname,
+                                            gr->modifiers, gr->not_modifiers);
                     }
                }
           }
-        if ((e->focused) && (!exclusive))
-          {
-             if (e->events_frozen <= 0)
-               evas_object_event_callback_call(e->focused, EVAS_CALLBACK_KEY_UP, &ev);
-          }
-        _evas_post_event_callback_call(e);
      }
+   if ((e->focused) && (!exclusive))
+     {
+        if (e->events_frozen <= 0)
+          evas_object_event_callback_call(e->focused, EVAS_CALLBACK_KEY_UP,
+                                          &ev);
+     }
+   _evas_post_event_callback_call(e);
    _evas_unwalk(e);
 }
 
