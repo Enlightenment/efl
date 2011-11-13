@@ -3,13 +3,7 @@ Ecore 1.1.0
 Changes since Ecore 1.0.0:
 --------------------------
 
-New Features:
-
-    * ecore_x:
-     - XRandR backlight support
-     - XRandR Extended Display Identification Data (EDID) support
-
-API Additions:
+Additions:
 
     * ecore:
      - ecore_thread_reschedule()
@@ -36,3 +30,5 @@ API Additions:
     * ecore_x:
      - ecore_x_randr_edid_*()
      - ecore_x_randr_screen_backlight_*()
+     - XRandR backlight support
+     - XRandR Extended Display Identification Data (EDID) support
