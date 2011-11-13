@@ -1,94 +1,108 @@
-1.1 Release Features
+Evas 1.1.0
 
-* Fixed cursor and selection handling with bidi text
-* Fixed many general bid issues with text
-* Fixed free bug in key grabs
-* Fixed bug when images are scaled to massive sizes (like 1 billion pixels)
-* Fixed BMP decode for have more pixels per line than the image does
-* Fixed font string parsing bug if font element is too long
-* Fixed crash bug in argb8888 to a8 conversion
-* Fixed textblock bug with cursors in empty textblocks
-* Fixed bug in smart calc array where some objects would be skipped
-* Fixed static linking of BMP and TGA loaders
-* Fixed bug when GL viewport was set with a NULL context
-* Fixed bug when looking for vsync API due to SGI vs EXT differences
-* Fixed bug in evas_object_del where DEL callback happened before HIDE
-* Fixed yinversion bug on some GL surfaces
-* Fixed BMP loader to handle alpha BMPS as solid where all alpha values are 0
-* Fixed clipping with evas map issues
-* Fixed bug where wrong call was used for freeing a mempool object
-* Fixed static linking of GL engine
-* Fixed GL engine to handle if someone uses GL contexts outside of evas
-* Fixed bug in evas_object_textblock_text_markup_prepend that broke cursors
-* Fixed lack of calling pre/post swap callbacks when using OpenGL-ES2
-* Fixed some crashes with load options scaling of SVGs in 2nd pass decode
-* Fixed segfault with evas_textblock_cursor_content_get
-* Fixed libjpeg 8 compilation support on windows
-* Fixed evas table to handle weighting correctly and expansion
-* Fixed evas table to allow fractional weights, not just 0/1
-* Fixed glyph search bug causing inconsitent return values in some cases
-* Fixed compile when --disable-async-preload is used
-* Fixed callback counter bug
-* Fixed grab count and hide bug
-* Fixed infintie loop bug when re-inserting objects during pre-render calc
-* Fixed evas_object_image_data_convert
-* Removed quartz, cairo, qtopia and xrender engines. dead.
-* Improved pre-render speed for rectangles if they are invisible
-* Improved code of textblock and font engine
-* Improved textblock layout speed
-* Improved speed and memory usage of textblock
-* Improved cache handler to also use file size, mode and sub-second timestamp
-* Improved textblock to re-layout only paragraphs that have changed
-* Improved homogenous table layout alignment and sizing
-* Improved textblock linebreaking by using liblinebreak
-* Improved image loader to drop out instantly if image file is a directory
-* Added auto-align feature to textblock
-* Added mixedwrap wrap mode to textblock
-* Added harfbuzzsupport for shaping
-* Added WBMP loader
-* Added mirror mode for tables
-* Added proxy abilities to image objects to choose source ro mirror
-* Added speculative texture cache to the OpenGL engine to avoid texture uploads
-* Added newline policy setting API to textblock
-* Added evas_object_ref and evas_object_unref to defer object deletions
-* Added ICO loader
-* Added evas_object_image_memfile_set to load images from memory
-* Added vertical alignment to textblock
-* Added more shadow directions for text rendering
-* Added runtime italicizing and boldening of fonts that don't have their own
-* Added more bidi API support
-* Added PSD loader
-* Added generic external-process loader for thins like xcf, pdf, video, ps
-* Added password mode to textblock
-* Added GL shader disk cache to avoid re-compilng on start
-* Added evas_textblock_node_format_list_get. API
-* Added smart class usage count get API
-* Added grid layout smart object and API
-* Added evas_event_thaw_eval to help evaluate state and events on event thaw
-* Added textblock support for numeric escapes like "&#x3c;" in markup
-* Added evas_object_image_extension_can_load_get API
-* Added evas_object_image_extension_can_load_fast_get API
-* Added evas_object_image_load_orientation_get API
-* Added evas_object_image_load_orientation_set API
-* Added feature to allow tables to repack the same object without error
-* Added API to get child packing from table
-* Added is_inside implementation for polygon objects
-* Added out-of-order open/close tag support in textblock markup
-* Added support for quoted parameters in tags in textblock markup
-* Added font_weight and font_style formats
-* Added font_width font format
-* Added markup tag to specify language
-* Added evas_textblock_cursor_range_formats_get API
-* Added evas_textblock_cursor_visible_range_get API
-* Added callback prioritization support
-* Added YUV 601 input support for evas_object_image_data_convert
-* Added NV12 colorspace for evas image objects
-* Added MT12 colorspace for evas image objects
-* Added underline dashing suport to textblock
-* Added API to get largest image size
-* Added GL Cocoa engine
-* Changed object allocation to use mempools
-* Changed font engine to use string objects not strings for caching purposes
-* Changed text to display missing unicode char instead of missing glyphs
-* Changed internal file code to use eina_file more
-* Changed jpeg loader to use eina_file
+Changes since Evas 1.0.0:
+-------------------------
+
+Additions:
+
+    * auto-align feature to textblock
+    * mixedwrap wrap mode to textblock
+    * harfbuzzsupport for shaping
+    * WBMP loader
+    * mirror mode for tables
+    * proxy abilities to image objects to choose source ro mirror
+    * speculative texture cache to the OpenGL engine to avoid texture uploads
+    * newline policy setting API to textblock
+    * evas_object_ref and evas_object_unref to defer object deletions
+    * ICO loader
+    * evas_object_image_memfile_set to load images from memory
+    * vertical alignment to textblock
+    * more shadow directions for text rendering
+    * runtime italicizing and boldening of fonts that don't have their own
+    * more bidi API support
+    * PSD loader
+    * generic external-process loader for thins like xcf, pdf, video, ps
+    * password mode to textblock
+    * GL shader disk cache to avoid re-compilng on start
+    * evas_textblock_node_format_list_get. API
+    * smart class usage count get API
+    * grid layout smart object and API
+    * evas_event_thaw_eval to help evaluate state and events on event thaw
+    * textblock support for numeric escapes like "&#x3c;" in markup
+    * evas_object_image_extension_can_load_get API
+    * evas_object_image_extension_can_load_fast_get API
+    * evas_object_image_load_orientation_get API
+    * evas_object_image_load_orientation_set API
+    * feature to allow tables to repack the same object without error
+    * API to get child packing from table
+    * is_inside implementation for polygon objects
+    * out-of-order open/close tag support in textblock markup
+    * support for quoted parameters in tags in textblock markup
+    * font_weight and font_style formats
+    * font_width font format
+    * markup tag to specify language
+    * evas_textblock_cursor_range_formats_get API
+    * evas_textblock_cursor_visible_range_get API
+    * callback prioritization support
+    * YUV 601 input support for evas_object_image_data_convert
+    * NV12 colorspace for evas image objects
+    * MT12 colorspace for evas image objects
+    * underline dashing suport to textblock
+    * API to get largest image size
+    * GL Cocoa engine
+
+Fixes:
+
+    * cursor and selection handling with bidi text
+    * many general bid issues with text
+    * free bug in key grabs
+    * bug when images are scaled to massive sizes (like 1 billion pixels)
+    * BMP decode for have more pixels per line than the image does
+    * font string parsing bug if font element is too long
+    * crash bug in argb8888 to a8 conversion
+    * textblock bug with cursors in empty textblocks
+    * bug in smart calc array where some objects would be skipped
+    * static linking of BMP and TGA loaders
+    * bug when GL viewport was set with a NULL context
+    * bug when looking for vsync API due to SGI vs EXT differences
+    * bug in evas_object_del where DEL callback happened before HIDE
+    * yinversion bug on some GL surfaces
+    * BMP loader to handle alpha BMPS as solid where all alpha values are 0
+    * clipping with evas map issues
+    * bug where wrong call was used for freeing a mempool object
+    * static linking of GL engine
+    * GL engine to handle if someone uses GL contexts outside of evas
+    * bug in evas_object_textblock_text_markup_prepend that broke cursors
+    * lack of calling pre/post swap callbacks when using OpenGL-ES2
+    * some crashes with load options scaling of SVGs in 2nd pass decode
+    * segfault with evas_textblock_cursor_content_get
+    * libjpeg 8 compilation support on windows
+    * evas table to handle weighting correctly and expansion
+    * evas table to allow fractional weights, not just 0/1
+    * glyph search bug causing inconsitent return values in some cases
+    * compile when --disable-async-preload is used
+    * callback counter bug
+    * grab count and hide bug
+    * infintie loop bug when re-inserting objects during pre-render calc
+    * evas_object_image_data_convert
+
+Improvements:
+
+    * pre-render speed for rectangles if they are invisible
+    * code of textblock and font engine
+    * textblock layout speed
+    * speed and memory usage of textblock
+    * cache handler to also use file size, mode and sub-second timestamp
+    * textblock to re-layout only paragraphs that have changed
+    * homogenous table layout alignment and sizing
+    * textblock linebreaking by using liblinebreak
+    * image loader to drop out instantly if image file is a directory
+    * object allocation to use mempools
+    * font engine to use string objects not strings for caching purposes
+    * text to display missing unicode char instead of missing glyphs
+    * internal file code to use eina_file more
+    * jpeg loader to use eina_file
+
+Removals:
+
+    * removed quartz, cairo, qtopia and xrender engines. dead.
