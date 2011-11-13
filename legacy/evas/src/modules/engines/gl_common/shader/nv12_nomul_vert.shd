@@ -10,5 +10,5 @@ void main()
 {
    gl_Position = mvp * vertex;
    tex_c = tex_coord;
-   tex_cuv = tex_coord2 * 0.5;
+   tex_cuv = tex_coord2 * 0.25;
 }
