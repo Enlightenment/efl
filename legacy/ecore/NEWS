@@ -9,6 +9,15 @@ Additions:
      - ecore_thread_reschedule()
      - ecore_exe_data_set()
      - ecore_animator_timeline_add()
+     - ecore_timer_dump()
+     - custom ecore animator tick mode and support
+     - ecore_pipe_freeze/thaw()
+     - ecore_pipe_wait()
+     - ecore_throttle()
+     - ecore_main_loop_thread_safe_call_async()
+     - ecore_main_loop_thread_safe_call_sync()
+     - ecore_thread_main_loop_begin()
+     - ecore_thread_main_loop_end()
 
     * ecore_con:
      - ECORE_CON_EVENT_CLIENT_ERROR, ECORE_CON_EVENT_SERVER_ERROR events
@@ -18,6 +27,18 @@ Additions:
      - ecore_con_url_ssl_ca_set()
      - ecore_con_url_pipeline_set()
      - ecore_con_url_pipeline_get()
+     - ecore_con_ssl_client/server_upgrade()
+     - ECORE_CON_CLIENT/SERVER_UPGRADE events
+     - ecore_con_server_timeout_get/set()
+     - ecore_con_ssl_server_verify_basic()
+     - ecore_con_url_url_get()
+     - ecore_con_server_fd_get()
+     - ecore_con_client_fd_get()
+     - ECORE_CON_EVENT_CLIENT_WRITE, ECORE_CON_EVENT_SERVER_WRITE events
+    
+    * ecore_evas:
+     - ecore_evas_screen_geometry_get()
+     - ecore_cocoa_evas support
 
     * ecore_file:
      - ecore_file_download_full()
@@ -26,9 +47,62 @@ Additions:
      - ecore_imf_context_canvas_get()
      - ecore_imf_context_window_get()
      - ecore_imf_context_preedit_string_with_attributes_get()
+     - added controls for auto-capitalization and prediction controls
+     - ecore_imf_context_input_panel_enabled_set/get()
+     - ecore_imf_context_cursor_location_set()
 
     * ecore_x:
      - ecore_x_randr_edid_*()
      - ecore_x_randr_screen_backlight_*()
-     - XRandR backlight support
-     - XRandR Extended Display Identification Data (EDID) support
+     - more ecore_x_sync api controls to support ecore_evas
+     - shape input setting support added
+     - ecore_x_screen_size_get()
+
+Fixes:
+
+    * https failing via curl
+    * removed SIGRT handling as it was broken anyway and unused
+    * space key handling in ecore_wince/ecore_win32 support
+    * wince background erasing
+    * 300 second timeout to handle slow or large downloads in ecore_con
+    * ecore_file intoify fd's to not be inherited by forked children
+    * ecore_file compilation if ecore_con and curl disabled
+    * crash in ecore_con_ssl when attempting connections on dead socket
+    * ecore-evas intereptor not handling override-redirect
+    * ecore_con_url_ftp_upload to complete uploads always
+    * window removal from ignore_list in ecore_x
+    * bug in ecore_evas when setting modifiers for sub buffer canvases
+    * NULL pointer dereference in ecore_x selection notification code
+    * sync GNUTLS thread activation with eina changes
+    * ecore_ipc compilation on windows
+    * ecore_x shadow tree search fixed to respect shape input of windows
+    * fd handlers fixed when idler callbacks add jobs or events
+    * ecore_x_selection_convert takes length into account
+    * security issue in openssl certificate verification
+    * gnutls server client certificate verification
+    * epoll delete of fd handling in forked child
+    * grouping of timers that go off very close to eachother go off together
+    * generic event buffer handling in ecore_x fixed
+    * use current size not requested size when getting geom in ecore-evas
+    * ecore_cocoa now handles windows correctly
+    * ecore_file_download error handling when ecore_con_url_get fails
+
+Improvements:
+
+    * reduced memory needed for list of fd's in ecore by using inlist
+    * ecore_evas now is able to send render-done even if not syncing to comp
+    * more safety checks in ecore_con ares support
+    * ecore timer monotonic clock now supported on OSX
+    * make ecore_con work on windows
+    * refactored _ecore_main_loop_iterate_internal
+    * better safety with ecore_evas_ecore_evas_get
+    * ecore-evas produces more errors on stderr when errors happen now
+    * ecore-con works on IPv6 now
+    * inet_ntop instead of getnameinfo for ecore_con_client_get_ip
+    * ecore-con unit tests added
+    * ecore-evas fb uses ecore_input_evas now instead of going direct
+
+Removals:
+
+    * xrender evas engine support removed from ecore_evas (api still there)
+
