@@ -406,9 +406,12 @@ emotion_webcam_custom_get(const char *device)
    const Emotion_Webcam *ew;
    const Eina_List *l;
 
-   EINA_LIST_FOREACH(_emotion_webcams->webcams, l, ew)
-     if (ew->device && strcmp(device, ew->device) == 0)
-       return ew->custom;
+   if (_emotion_webcams)
+     {
+       EINA_LIST_FOREACH(_emotion_webcams->webcams, l, ew)
+	 if (ew->device && strcmp(device, ew->device) == 0)
+	   return ew->custom;
+     }
 
    return NULL;
 }
