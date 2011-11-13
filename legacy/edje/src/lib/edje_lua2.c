@@ -953,7 +953,7 @@ _elua_animator(lua_State *L)
 
    luaL_checkany(L, 1);
 
-   // FIXME: This, and the other two timer thingies, should be it's own class I think.
+   // FIXME: This, and the other two timer thingies, should be it's own class I think.  But that might be API change, so wait until after the freeze.
    ela = (Edje_Lua_Animator *)_elua_obj_new(L, ed, sizeof(Edje_Lua_Animator), _elua_evas_meta);
    ela->obj.free_func = _elua_animator_free;
    ela->animator = ecore_animator_add(_elua_animator_cb, ela);
@@ -1159,9 +1159,8 @@ static void
 _elua_evas_obj_free(void *obj)
 {
    Edje_Lua_Evas_Object *elo = obj;
-//   lua_State *L;
+
    if (!elo->obj.ed) return;
-//   L = elo->obj.ed->L;
    evas_object_del(elo->evas_obj);
    elo->evas_obj = NULL;
 }
@@ -1522,26 +1521,26 @@ _elua_geom(lua_State *L)
 {
    Edje_Lua_Obj *obj = (Edje_Lua_Obj *)lua_touserdata(L, 1);
    Edje_Lua_Evas_Object *elo = (Edje_Lua_Evas_Object *)obj;
-   Evas_Coord ow, oh;
+   Evas_Coord ox, oy, ow, oh;
    int x, y, w, h;
 
    if (!_elua_isa(obj, _elua_evas_meta)) return 0;
-   evas_object_geometry_get(elo->evas_obj, NULL, NULL, &ow, &oh);
+   evas_object_geometry_get(elo->evas_obj, &ox, &oy, &ow, &oh);
    if (_elua_scan_params(L, 2, EINA_TRUE, "%x %y %w %h", &x, &y, &w, &h) > 0)
      {
-        if ((x != elo->x) || (y != elo->y))
+        if ((x != (ox - obj->ed->x)) || (y != (oy - obj->ed->y)))
           {
-             elo->x = x;
-             elo->y = y;
              evas_object_move(elo->evas_obj,
-                              obj->ed->x + elo->x,
-                              obj->ed->y + elo->y);
+                              obj->ed->x + x,
+                              obj->ed->y + y);
           }
         if ((w != ow) || (h != oh))
           {
              evas_object_resize(elo->evas_obj, w, h);
-             evas_object_geometry_get(elo->evas_obj, NULL, NULL, &ow, &oh);
           }
+        evas_object_geometry_get(elo->evas_obj, &ox, &oy, &ow, &oh);
+        elo->x = ox - obj->ed->x;
+        elo->y = oy - obj->ed->y;
      }
    _elua_ret(L, "%x %y %w %h", elo->x, elo->y, ow, oh);
    return 1;
@@ -1552,19 +1551,22 @@ _elua_move(lua_State *L)
 {
    Edje_Lua_Obj *obj = (Edje_Lua_Obj *)lua_touserdata(L, 1);
    Edje_Lua_Evas_Object *elo = (Edje_Lua_Evas_Object *)obj;
+   Evas_Coord ox, oy;
    int x, y;
 
    if (!_elua_isa(obj, _elua_evas_meta)) return 0;
+   evas_object_geometry_get(elo->evas_obj, &ox, &oy, NULL, NULL);
    if (_elua_scan_params(L, 2, EINA_TRUE, "%x %y", &x, &y) > 0)
      {
-        if ((x != elo->x) || (y != elo->y))
+        if ((x != (ox - obj->ed->x)) || (y != (oy - obj->ed->y)))
           {
-             elo->x = x;
-             elo->y = y;
              evas_object_move(elo->evas_obj,
-                              obj->ed->x + elo->x,
-                              obj->ed->y + elo->y);
+                              obj->ed->x + x,
+                              obj->ed->y + y);
+             evas_object_geometry_get(elo->evas_obj, &ox, &oy, NULL, NULL);
           }
+        elo->x = ox - obj->ed->x;
+        elo->y = oy - obj->ed->y;
      }
    _elua_ret(L, "%x %y", elo->x, elo->y);
    return 1;
@@ -1906,24 +1908,62 @@ _elua_image_image(lua_State *L)
    Edje_Lua_Obj *obj = (Edje_Lua_Obj *)lua_touserdata(L, 1);
    Edje_Lua_Evas_Object *elo = (Edje_Lua_Evas_Object *)obj;
    const char *file = NULL, *key = NULL;
-   int n;
+   int n, id = -1;
 
    if (!_elua_isa(obj, _elua_evas_image_meta)) return 0;
 
    n = lua_gettop(L);
-
-   if (3 == n)
-      n = _elua_scan_params(L, 2, EINA_TRUE, "$file $key", &file, &key);
-   else if (2 == n)
+   n = _elua_scan_params(L, 2, EINA_TRUE, "$file $key", &file, &key);
+   if (0 >= n)
      {
         file = (char *) obj->ed->file->path;
         key = (char *) lua_tostring(L, 2);
+        n = 2;
      }
 
    if (1 < n)
      {
-        // FIXME: Sandbox lua - Only allow access to images within the same file.
-        evas_object_image_file_set(elo->evas_obj, file, key);
+        if (obj->ed->file->image_dir)
+        {
+           Edje_Image_Directory_Entry *de;
+           unsigned int i;
+           char *name;
+
+           /* Image name */
+           if ((name = strrchr(key, '/'))) name++;
+           else name = (char *)key;
+
+           /* Loop through image directory to find if image exists */
+           for (i = 0; i < obj->ed->file->image_dir->entries_count; ++i)
+             {
+                de = obj->ed->file->image_dir->entries + i;
+
+                if (de->entry)
+                  {
+                    if (strcmp(name, de->entry) == 0)
+                      {
+                         char buf[32];
+
+                         id = i;
+                         // This is copied from _edje_image_recalc_apply()), dunno if it provides any benefit over sprintf().
+                         /* Replace snprint("edje/images/%i") == memcpy + itoa */
+#define IMAGES "edje/images/"
+                         memcpy(buf, IMAGES, strlen(IMAGES));
+                         eina_convert_itoa(id, buf + strlen(IMAGES)); /* No need to check length as 2³² need only 10 characters. */
+                         evas_object_image_file_set(elo->evas_obj, obj->ed->file->path, buf);
+                         break;
+                      }
+                  }
+             }
+        }
+
+        /* Sandbox lua - Only allow access to images within the same edje file.  I'm not so sure we need this level of sandboxing though.  So leaving it here, just in case. */
+        if (-1 == id)
+          {
+             printf("Image %s not found in our edje file, trying external image file %s.\n", key, file);
+             evas_object_image_file_set(elo->evas_obj, file, key);
+          }
+        /**/
      }
    evas_object_image_file_get(elo->evas_obj, &file, &key);
    _elua_ret(L, "$file $key", file, key);

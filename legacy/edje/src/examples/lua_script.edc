@@ -22,6 +22,7 @@ collections {
          local D;
          local count = 0;
          local fndata = 99;
+         local text_geom;
  
          local function mycb3 (v)
             print("lua::callback transition " .. D.val .. " v: " .. v);
@@ -138,6 +139,7 @@ collections {
          D.text:color (255, 0, 0, 255);
          D.text:font("Sans:style=Bold", 32);
          D.text:text("Lua rocks!");
+         text_geom = D.text:geom();
          print(D.text:text());
          D.text:show();
 
@@ -224,28 +226,32 @@ collections {
          function shutdown ()
             print("lua::shutdown ... " .. D.val);
          end
+
          function show ()
             print("lua::show ... " .. D.val);
          end
+
          function hide ()
             print("lua::hide ... " .. D.val);
          end
+
          function move (x, y)
-            print("lua::move ... " .. D.val);
-            print("  x=" .. x .. " x=" .. y);
+            print("lua::move x=" .. x .. " x=" .. y);
          end
+
          function resize (w, h)
-            print("lua::resize ... " .. D.val);
-            print("  w=" .. w .. " h=" .. h);
+            print("lua::resize w=" .. w .. " h=" .. h);
+            D.text:move((w - text_geom.w) / 2, (h - text_geom.h) / 8);
          end
+
          function message (id, type, v1, v2)
-            print("lua::message ... " .. D.val);
-            print("  id=" .. id .. " type=" .. type);
+            print("lua::message id=" .. id .. " type=" .. type);
             --// handle your message type here. check id + type then use v1
             --// and/or v2 (or neither) appropriately. they are the same as
             --// the 2nd and 3rd param passed to edje.messagesend() (if any
             --// are passed at all)
          end
+
          function signal (sig, src)
             print("lua::signal sig= " .. sig .. " src= " .. src);
          end
@@ -265,7 +271,7 @@ collections {
 		row = { };
 		for j = 1, bubbleCols do
 		    image = edje.image();
-		    image:image("bubble.png", "");
+		    image:image("bubble.png");
 		    image:show();
 		    table.insert(row, image);
 		end
@@ -273,9 +279,6 @@ collections {
 	    end
 
 	    function resize (w, h)
-		--// Don't ask why.  lol  (This should go away soon.)
-		bubbles[1][1]:move(12345, 12345);
-
 		for i = 1, bubbleRows do
 		    for j = 1, bubbleCols do
 			w1 = w / bubbleCols;
