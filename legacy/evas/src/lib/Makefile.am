@@ -255,4 +255,7 @@ endif
 
 libevas_la_LDFLAGS = -no-undefined @lt_enable_auto_import@ -version-info @version_info@ @release_info@
 
+### Evas_GL we are still using it in our code, so just don't install it.
+EXTRA_DIST=Evas_GL.h
+
 DIST_SUBDIRS = canvas cache cserve file engines include
