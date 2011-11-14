@@ -147,6 +147,8 @@ static const char SIG_ANCHOR_UP[] = "anchor,up";
 static const char SIG_ANCHOR_IN[] = "anchor,in";
 static const char SIG_ANCHOR_OUT[] = "anchor,out";
 static const char SIG_PREEDIT_CHANGED[] = "preedit,changed";
+static const char SIG_UNDO_REQUEST[] = "undo,request";
+static const char SIG_REDO_REQUEST[] = "redo,request";
 static const Evas_Smart_Cb_Description _signals[] = {
        {SIG_CHANGED, ""},
        {SIG_ACTIVATED, ""},
@@ -171,6 +173,8 @@ static const Evas_Smart_Cb_Description _signals[] = {
        {SIG_ANCHOR_OUT, ""},
        {SIG_PREEDIT_CHANGED, ""},
        {SIG_CHANGED_USER, ""},
+       {SIG_UNDO_REQUEST, ""},
+       {SIG_REDO_REQUEST, ""},
        {NULL, NULL}
 };
 
@@ -1457,6 +1461,18 @@ _signal_preedit_changed(void *data, Evas_Object *obj __UNUSED__, const char *emi
 }
 
 static void
+_signal_undo_request(void *data, Evas_Object *obj __UNUSED__, const char *emission __UNUSED__, const char *source __UNUSED__)
+{
+   evas_object_smart_callback_call(data, SIG_UNDO_REQUEST, NULL);
+}
+
+static void
+_signal_redo_request(void *data, Evas_Object *obj __UNUSED__, const char *emission __UNUSED__, const char *source __UNUSED__)
+{
+   evas_object_smart_callback_call(data, SIG_REDO_REQUEST, NULL);
+}
+
+static void
 _signal_selection_start(void *data, Evas_Object *obj __UNUSED__, const char *emission __UNUSED__, const char *source __UNUSED__)
 {
    Widget_Data *wd = elm_widget_data_get(data);
@@ -2273,6 +2289,10 @@ elm_entry_add(Evas_Object *parent)
                                    _signal_mouse_double, obj);
    edje_object_signal_callback_add(wd->ent, "mouse,down,1,triple", "elm.text",
                                    _signal_mouse_triple, obj);
+   edje_object_signal_callback_add(wd->ent, "entry,undo,request", "elm.text",
+                                   _signal_undo_request, obj);
+   edje_object_signal_callback_add(wd->ent, "entry,redo,request", "elm.text",
+                                   _signal_redo_request, obj);
    edje_object_part_text_set(wd->ent, "elm.text", "");
    if (_elm_config->desktop_entry)
      edje_object_part_text_select_allow_set(wd->ent, "elm.text", EINA_TRUE);
