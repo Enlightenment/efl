@@ -1,0 +1,34 @@
+Efreet 1.1.0
+
+Changes since Efreet 1.0.0:
+---------------------------
+
+Fixes:
+
+    * when you have an empty <Name></Name> in a menu
+    * tests don't do clearenv when it is not available
+    * memory leak fixed in cache icon retrieval
+    * check for NULL dirs in caches
+    * check for theme change when rebuilding cache
+    * leak in efreet_mime_type_icon_get
+    * reset log domain to -1 on unregister
+    * clear memory cache when closing eet file
+    * fixed documentation
+    * remove EAPI from efreet_home_dir_get as it wasn't exported in .h's
+    * don't leak hashes on init error
+    * no more memleak in desktop cache creation
+    * fixed uri encoding when opening files
+
+Improvements:
+
+    * added temporary memory cache for eet file data
+    * always use icon cache
+    * faster string comapre with poter equality for strings
+    * local log domains per file
+    * remove exess init functions for xml
+    * stop creating cache dir multiple times
+    * change ownership of cache files to calling user
+    * fast path for "*" pattern match
+    * delay cache creation with a timer to avoid storms
+    * always rebuild cache from 0 when needed and be more correct
+    * store cache change flags in update file and propagate to update event
