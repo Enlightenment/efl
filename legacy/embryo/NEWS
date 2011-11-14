@@ -1,0 +1,13 @@
+Embryo 1.1.0
+
+Changes since Embryo 1.0.0:
+---------------------------
+
+Fixes:
+
+    * on windows use fseek instead of rewind as rewind doesn't exist on wince
+    * delete tmp files on windows
+
+Improvements:
+
+    * make embryo_cc use eina_prefix to determine installation location
