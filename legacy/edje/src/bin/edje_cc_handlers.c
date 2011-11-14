@@ -3655,12 +3655,10 @@ st_collections_group_parts_part_dragable_events(void)
 */
 static void ob_collections_group_parts_part_box_items_item(void)
 {
-   Edje_Part_Collection *pc;
    Edje_Part *ep;
    Edje_Pack_Element *item;
    Edje_Pack_Element_Parser *pitem;
 
-   pc = eina_list_data_get(eina_list_last(edje_collections));
    ep = current_part;
 
    if ((ep->type != EDJE_PART_TYPE_BOX) && (ep->type != EDJE_PART_TYPE_TABLE))
