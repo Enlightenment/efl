@@ -1,15 +1,21 @@
 #include "edje_private.h"
 #include <ctype.h>
 
-//--------------------------------------------------------------------------//
-#define MAX_LUA_MEM (4 * (1024 * 1024))
-#define ELO "|-ELO"
-
 #ifdef _WIN32
 # define FMT_SIZE_T "%Iu"
 #else
 # define FMT_SIZE_T "%zu"
 #endif
+
+//--------------------------------------------------------------------------//
+#define MAX_LUA_MEM (4 * (1024 * 1024))
+#define ELO "|-ELO"
+
+#define LC(...) EINA_LOG_DOM_CRIT(_log_domain, __VA_ARGS__)
+#define LE(...) EINA_LOG_DOM_ERR(_log_domain, __VA_ARGS__)
+#define LW(...) EINA_LOG_DOM_WARN(_log_domain, __VA_ARGS__)
+#define LI(...) EINA_LOG_DOM_INFO(_log_domain, __VA_ARGS__)
+#define LD(...) EINA_LOG_DOM_DBG(_log_domain, __VA_ARGS__)
 
 /**
 @page luaref Edje Lua scripting
@@ -101,6 +107,8 @@ static lua_State *lstate = NULL;
 static const char *_elua_key = "key";
 static const char *_elua_objs = "objs";
 static jmp_buf panic_jmp;
+static int _log_domain = -1;
+static int _log_count = 0;
 
 // FIXME: methods lua script can provide that edje will call (not done yet):
 // // scale set
@@ -179,7 +187,7 @@ _elua_alloc(void *ud, void *ptr, size_t osize, size_t nsize)
    ela->cur += nsize - osize;
    if (ela->cur > ela->max)
      {
-        ERR("Edje Lua memory limit of " FMT_SIZE_T " bytes reached (" FMT_SIZE_T  " allocated)",
+        ERR("Lua memory limit of " FMT_SIZE_T " bytes reached (" FMT_SIZE_T  " allocated)",
             ela->max, ela->cur);
         return NULL;
      }
@@ -191,7 +199,7 @@ _elua_alloc(void *ud, void *ptr, size_t osize, size_t nsize)
 
    ptr2 = realloc(ptr, nsize);
    if (ptr2) return ptr2;
-   ERR("Edje Lua cannot re-allocate " FMT_SIZE_T " bytes", nsize);
+   ERR("Lua cannot re-allocate " FMT_SIZE_T " bytes", nsize);
    return ptr2;
 }
 
@@ -588,6 +596,7 @@ static const struct luaL_reg _elua_edje_funcs [] =
 {
    // add an echo too to make it more shelly
      {"echo",         _elua_echo}, // test func - echo (i know we have print. test)
+   // FIXME: add logging functions here, probably to it's own domain, or even a script defined domain.
 
    // system information (time, date blah blah)
      {"date",         _elua_date}, // get date in a table
@@ -912,7 +921,7 @@ _elua_animator_cb(void *data)
    lua_rawgeti(L, LUA_REGISTRYINDEX, ela->fn_ref);
    if (setjmp(panic_jmp) == 1)
      {
-        ERR("Animator callback panic");
+        LE("Animator callback panic");
         _edje_lua2_error(L, err);
         _elua_obj_free(L, (Edje_Lua_Obj *)ela);
         _elua_gc(L);
@@ -976,7 +985,7 @@ _elua_timer_cb(void *data)
    lua_rawgeti(L, LUA_REGISTRYINDEX, elt->fn_ref);
    if (setjmp(panic_jmp) == 1)
      {
-        ERR("Timer callback panic");
+        LE("Timer callback panic");
         _edje_lua2_error(L, err);
         _elua_obj_free(L, (Edje_Lua_Obj *)elt);
         _elua_gc(L);
@@ -1045,7 +1054,7 @@ _elua_transition_cb(void *data)
    lua_pushnumber(L, t);
    if (setjmp(panic_jmp) == 1)
      {
-        ERR("Transition callback panic");
+        LE("Transition callback panic");
         _edje_lua2_error(L, err);
         _elua_obj_free(L, (Edje_Lua_Obj *)elt);
         _elua_gc(L);
@@ -1832,14 +1841,41 @@ _elua_edje_file(lua_State *L)
    Edje_Lua_Obj *obj = (Edje_Lua_Obj *)lua_touserdata(L, 1);
    Edje_Lua_Evas_Object *elo = (Edje_Lua_Evas_Object *)obj;
    const char *file = NULL, *group = NULL;
+   int n = lua_gettop(L);
 
    if (!_elua_isa(obj, _elua_evas_edje_meta)) return 0;
 
-   if (_elua_scan_params(L, 2, EINA_TRUE, "$file $group", &file, &group) > 0)
+   n = _elua_scan_params(L, 2, EINA_TRUE, "$file $group", &file, &group);
+   if (0 >= n)
+     {
+        file = (char *) obj->ed->file->path;
+        group = (char *) lua_tostring(L, 2);
+        n = 2;
+     }
+
+   if (1 < n)
      {
         // Sandbox lua - Only allow access to groups within the same file.
         // By the simple expedient of completely ignoring what file was requested.
-        edje_object_file_set(elo->evas_obj, obj->ed->file->path, group);
+        file = (char *) obj->ed->file->path;
+        if (!edje_object_file_set(elo->evas_obj, file, group))
+          {
+             Edje_Load_Error err = edje_object_load_error_get(elo->evas_obj);
+
+             switch (err)
+               {
+                  case EDJE_LOAD_ERROR_NONE :                         LE("Edje file loading errer %s %s - no error happened, but you should not see this.\n", obj->ed->file->path, group);  break;
+                  case EDJE_LOAD_ERROR_GENERIC :                      LE("Edje file loading errer %s %s - generic error.\n", obj->ed->file->path, group);  break;
+                  case EDJE_LOAD_ERROR_DOES_NOT_EXIST :               LE("Edje file loading errer %s %s - file does not exist.\n", obj->ed->file->path, group);  break;
+                  case EDJE_LOAD_ERROR_PERMISSION_DENIED :            LE("Edje file loading errer %s %s - permission denied reading the file.\n", obj->ed->file->path, group);  break;
+                  case EDJE_LOAD_ERROR_RESOURCE_ALLOCATION_FAILED :   LE("Edje file loading errer %s %s - resource allocation failed.\n", obj->ed->file->path, group);  break;
+                  case EDJE_LOAD_ERROR_CORRUPT_FILE :                 LE("Edje file loading errer %s %s - corrupt file.\n", obj->ed->file->path, group);  break;
+                  case EDJE_LOAD_ERROR_UNKNOWN_FORMAT :               LE("Edje file loading errer %s %s - unknown file format.\n", obj->ed->file->path, group);  break;
+                  case EDJE_LOAD_ERROR_INCOMPATIBLE_FILE :            LE("Edje file loading errer %s %s - incompatible file.\n", obj->ed->file->path, group);  break;
+                  case EDJE_LOAD_ERROR_UNKNOWN_COLLECTION :           LE("Edje file loading errer %s %s - unknown group.\n", obj->ed->file->path, group);  break;
+                  case EDJE_LOAD_ERROR_RECURSIVE_REFERENCE :          LE("Edje file loading errer %s %s - recursive reference in group.\n", obj->ed->file->path, group);  break;
+               }
+          }
      }
    edje_object_file_get(elo->evas_obj, &file, &group);
    _elua_ret(L, "$file $group", file, group);
@@ -1912,7 +1948,6 @@ _elua_image_image(lua_State *L)
 
    if (!_elua_isa(obj, _elua_evas_image_meta)) return 0;
 
-   n = lua_gettop(L);
    n = _elua_scan_params(L, 2, EINA_TRUE, "$file $key", &file, &key);
    if (0 >= n)
      {
@@ -1957,13 +1992,13 @@ _elua_image_image(lua_State *L)
              }
         }
 
-        /* Sandbox lua - Only allow access to images within the same edje file.  I'm not so sure we need this level of sandboxing though.  So leaving it here, just in case. */
+        /* Sandbox lua - Only allow access to images within the same edje file.  I'm not so sure we need this level of sandboxing though.  So leaving it here, just in case.
         if (-1 == id)
           {
-             printf("Image %s not found in our edje file, trying external image file %s.\n", key, file);
+             LI("Image %s not found in our edje file, trying external image file %s.\n", key, file);
              evas_object_image_file_set(elo->evas_obj, file, key);
           }
-        /**/
+        */
      }
    evas_object_image_file_get(elo->evas_obj, &file, &key);
    _elua_ret(L, "$file $key", file, key);
@@ -2544,6 +2579,15 @@ _edje_lua2_script_init(Edje *ed)
    lua_State *L;
 
    if (ed->L) return;
+   if (0 > _log_domain)
+        _log_domain = eina_log_domain_register("lua", NULL);
+   if (0 <= _log_domain)
+     {
+        _log_count++;
+        // FIXME: Change this to WARN before release.
+        eina_log_domain_level_set("lua", EINA_LOG_LEVEL_INFO);
+     }
+
    _elua_init();
    L = ed->L = lua_newstate(_elua_alloc, &ela);
    lua_atpanic(L, _elua_custom_panic);
@@ -2594,16 +2638,16 @@ _edje_lua2_script_init(Edje *ed)
         if (err)
           {
              if (err == LUA_ERRSYNTAX)
-               ERR("lua load syntax error: %s",
+               ERR("Lua load syntax error: %s",
                    lua_tostring(L, -1));
              else if (err == LUA_ERRMEM)
-               ERR("lua load memory allocation error: %s",
+               ERR("Lua load memory allocation error: %s",
                    lua_tostring(L, -1));
           }
         free(data);
         if (setjmp(panic_jmp) == 1)
           {
-             ERR("Script init panic");
+             ERR("Lua script init panic");
              return;
           }
         if ((err = lua_pcall(L, 0, 0, 0)))
@@ -2629,6 +2673,16 @@ _edje_lua2_script_shutdown(Edje *ed)
           {
              ERR("dangling Lua object %p", obj);
              ed->lua_objs = eina_inlist_remove(ed->lua_objs, ed->lua_objs);
+          }
+     }
+
+   if (0 <= _log_domain)
+     {
+        _log_count--;
+        if (0 >= _log_count)
+          {
+             eina_log_domain_unregister(_log_domain);
+             _log_domain = -1;
           }
      }
 }
