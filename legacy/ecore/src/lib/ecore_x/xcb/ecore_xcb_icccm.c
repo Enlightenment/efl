@@ -1017,9 +1017,9 @@ ecore_x_icccm_protocol_set(Ecore_X_Window      win,
                                        ECORE_X_ATOM_WM_PROTOCOLS,
                                        win, count, atoms);
 #else
-                  xcb_icccm_set_wm_protocols(_ecore_xcb_conn,
+                  xcb_icccm_set_wm_protocols(_ecore_xcb_conn, win, 
                                              ECORE_X_ATOM_WM_PROTOCOLS,
-                                             win, count, atoms);
+                                             count, atoms);
 #endif
                   free(atoms);
                }
@@ -1043,10 +1043,9 @@ ecore_x_icccm_protocol_set(Ecore_X_Window      win,
                                               ECORE_X_ATOM_WM_PROTOCOLS,
                                               win, count - 1, protos.atoms);
 #else
-                         xcb_icccm_set_wm_protocols(_ecore_xcb_conn,
+                         xcb_icccm_set_wm_protocols(_ecore_xcb_conn, win, 
                                                     ECORE_X_ATOM_WM_PROTOCOLS,
-                                                    win, count - 1,
-                                                    protos.atoms);
+                                                    count - 1, protos.atoms);
 #endif
                        else
                          ecore_x_window_prop_property_del(win,
@@ -1135,8 +1134,8 @@ ecore_x_icccm_protocol_atoms_set(Ecore_X_Window win,
      xcb_set_wm_protocols(_ecore_xcb_conn, ECORE_X_ATOM_WM_PROTOCOLS,
                           win, num, protos);
 #else
-     xcb_icccm_set_wm_protocols(_ecore_xcb_conn, ECORE_X_ATOM_WM_PROTOCOLS,
-                                win, num, protos);
+     xcb_icccm_set_wm_protocols(_ecore_xcb_conn, win, 
+                                ECORE_X_ATOM_WM_PROTOCOLS, num, protos);
 #endif
    else
      ecore_x_window_prop_property_del(win, ECORE_X_ATOM_WM_PROTOCOLS);

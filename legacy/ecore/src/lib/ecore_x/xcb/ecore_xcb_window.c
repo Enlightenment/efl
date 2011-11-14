@@ -356,7 +356,7 @@ ecore_x_window_free(Ecore_X_Window win)
      /*                XCB_EVENT_MASK_SUBSTRUCTURE_REDIRECT,  */
                              /*                (const char *)&ev); */
 
-                              xcb_destroy_window(_ecore_xcb_conn, win);
+        xcb_destroy_window(_ecore_xcb_conn, win);
 //        ecore_x_flush();
      }
 }
