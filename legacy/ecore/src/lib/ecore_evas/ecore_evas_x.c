@@ -56,17 +56,17 @@ _ecore_evas_x_group_leader_update(Ecore_Evas *ee)
 static void
 _ecore_evas_x_protocols_set(Ecore_Evas *ee)
 {
-   Ecore_X_Atom protos[10];
+   Ecore_X_Atom protos[3];
    unsigned int num = 0, tmp = 0;
 
    if (ee->func.fn_delete_request)
-      protos[num++] = ECORE_X_ATOM_WM_DELETE_WINDOW;
+     protos[num++] = ECORE_X_ATOM_WM_DELETE_WINDOW;
    protos[num++] = ECORE_X_ATOM_NET_WM_PING;
    protos[num++] = ECORE_X_ATOM_NET_WM_SYNC_REQUEST;
    ecore_x_icccm_protocol_atoms_set(ee->prop.window, protos, num);
 
    if (!ee->engine.x.netwm_sync_counter)
-      ee->engine.x.netwm_sync_counter = ecore_x_sync_counter_new(0);
+     ee->engine.x.netwm_sync_counter = ecore_x_sync_counter_new(0);
 
    tmp = ee->engine.x.netwm_sync_counter;
    ecore_x_window_prop_card32_set(ee->prop.window,
