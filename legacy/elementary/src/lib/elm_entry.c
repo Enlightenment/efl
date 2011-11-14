@@ -1081,8 +1081,18 @@ _select(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 void
 _elm_entry_entry_paste(Evas_Object *obj, const char *entry)
 {
+   Elm_Entry_Change_Info info;
+   info.insert = EINA_TRUE;
+   info.change.insert.pos = elm_entry_cursor_pos_get(obj);
+   info.change.insert.content = eina_stringshare_add(entry);
+   /* FIXME: VERY BAD! Breaks with utf8 and formats! */
+   info.change.insert.plain_length =
+      eina_stringshare_strlen(info.change.insert.content);
+
    elm_entry_entry_insert(obj, entry);
-   evas_object_smart_callback_call(obj, SIG_CHANGED_USER, NULL);
+   evas_object_smart_callback_call(obj, SIG_CHANGED_USER, &info);
+
+   eina_stringshare_del(info.change.insert.content);
 }
 
 static void
@@ -1451,7 +1461,18 @@ _signal_entry_changed(void *data, Evas_Object *obj __UNUSED__, const char *emiss
 static void
 _signal_entry_changed_user(void *data, Evas_Object *obj __UNUSED__, const char *emission __UNUSED__, const char *source __UNUSED__)
 {
-   evas_object_smart_callback_call(data, SIG_CHANGED_USER, NULL);
+   Elm_Entry_Change_Info info;
+   Edje_Entry_Change_Info *edje_info = (Edje_Entry_Change_Info *)
+      edje_object_signal_callback_extra_data_get();
+   if (edje_info)
+     {
+        memcpy(&info, edje_info, sizeof(info));
+        evas_object_smart_callback_call(data, SIG_CHANGED_USER, &info);
+     }
+   else
+     {
+        evas_object_smart_callback_call(data, SIG_CHANGED_USER, NULL);
+     }
 }
 
 static void

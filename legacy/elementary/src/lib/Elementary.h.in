@@ -10952,6 +10952,14 @@ extern "C" {
    typedef void (*Elm_Entry_Filter_Cb)(void *data, Evas_Object *entry, char **text);
 
    /**
+    * @typedef Elm_Entry_Change_Info
+    * This corresponds to Edje_Entry_Change_Info. Includes information about
+    * a change in the entry.
+    */
+   typedef Edje_Entry_Change_Info Elm_Entry_Change_Info;
+
+
+   /**
     * This adds an entry to @p parent object.
     *
     * By default, entries are:
