@@ -2174,7 +2174,7 @@ _elua_map_lighting(lua_State *L)
 
    if (!_elua_isa(obj, _elua_evas_map_meta)) return 0;
 
-   if (n = (_elua_scan_params(L, 2, EINA_FALSE, "%x %y %z", &x, &y, &z)) > 0)
+   if ((n = _elua_scan_params(L, 2, EINA_FALSE, "%x %y %z", &x, &y, &z)) > 0)
      if (n += _elua_scan_params(L, 2 + n, EINA_FALSE, "%r %g %b", &r, &g, &b) > 0)
         if (_elua_scan_params(L, 2 + n, EINA_FALSE, "%r %g %b", &r1, &g1, &b1) > 0)
            {
@@ -2238,7 +2238,7 @@ _elua_map_populate(lua_State *L)
         {
            Evas_Coord x, y, w, h;
 
-           if (n = _elua_scan_params(L, 2, EINA_FALSE, "%x %y %w %h", &x, &y, &w, &h) > 0)
+           if ((n = _elua_scan_params(L, 2, EINA_FALSE, "%x %y %w %h", &x, &y, &w, &h)) > 0)
              {
                 evas_map_util_points_populate_from_geometry(elm->map, x, y, w, h, lua_tointeger(L, 2 + n));
              }
@@ -2280,7 +2280,7 @@ _elua_map_rotate3d(lua_State *L)
 
    if (!_elua_isa(obj, _elua_evas_map_meta)) return 0;
 
-   if (n = (_elua_scan_params(L, 2, EINA_FALSE, "#x #y #z", &zx, &zy, &zz)) > 0)
+   if ((n = _elua_scan_params(L, 2, EINA_FALSE, "#x #y #z", &zx, &zy, &zz)) > 0)
       if (_elua_scan_params(L, 2 + n, EINA_FALSE, "%x %y %z", &x, &y, &z) > 0)
         {
            evas_map_util_3d_rotate(elm->map, zx, zy, zz, x, y, z);
@@ -2339,7 +2339,7 @@ _elua_map_zoom(lua_State *L)
 
    if (!_elua_isa(obj, _elua_evas_map_meta)) return 0;
 
-   if (n = (_elua_scan_params(L, 2, EINA_FALSE, "#x #y", &zx, &zy)) > 0)
+   if ((n = _elua_scan_params(L, 2, EINA_FALSE, "#x #y", &zx, &zy)) > 0)
       if (_elua_scan_params(L, 2 + n, EINA_FALSE, "%x %y", &x, &y) > 0)
         {
            evas_map_util_zoom(elm->map, zx, zy, x, y);
@@ -2470,7 +2470,7 @@ _elua_text_text(lua_State *L)
           {
              const char *str;
 
-             if (str = lua_tostring(L, 2))
+             if ((str = lua_tostring(L, 2)))  // Extra parenthesis, coz Mikes compiler has a lisp.
                 evas_object_text_text_set(elo->evas_obj, str);
           }
      }
