@@ -436,12 +436,12 @@ _eina_file_map_key_hash(const unsigned long int *key, int key_length __UNUSED__)
 }
 
 #ifndef MAP_POPULATE
-static int
+static unsigned int
 _eina_file_map_populate(char *map, unsigned int size, Eina_Bool hugetlb)
 {
-   int r = 0xDEADBEEF;
-   int i;
-   int s;
+   unsigned int r = 0xDEADBEEF;
+   unsigned int i;
+   unsigned int s;
 
    s = hugetlb ? EINA_HUGE_PAGE : EINA_SMALL_PAGE;
 
