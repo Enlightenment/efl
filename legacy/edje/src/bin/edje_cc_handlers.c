@@ -2690,7 +2690,7 @@ st_collections_group_limits_vertical(void)
    pc = eina_list_data_get(eina_list_last(edje_collections));
    pc->limits.vertical_count++;
    pc->limits.vertical = realloc(pc->limits.vertical, pc->limits.vertical_count * sizeof (Edje_Limit *));
-   if (!pc->limits.vertical || el)
+   if (!pc->limits.vertical || !el)
      {
         ERR("%s: Error. Not enough memory.", progname);
         exit(-1);
@@ -2733,7 +2733,7 @@ st_collections_group_limits_horizontal(void)
    pc = eina_list_data_get(eina_list_last(edje_collections));
    pc->limits.horizontal_count++;
    pc->limits.horizontal = realloc(pc->limits.horizontal, pc->limits.horizontal_count * sizeof (Edje_Limit *));
-   if (!pc->limits.horizontal || el)
+   if (!pc->limits.horizontal || !el)
      {
         ERR("%s: Error. Not enough memory.", progname);
         exit(-1);
@@ -4989,12 +4989,9 @@ st_collections_group_parts_part_description_rel2_to_y(void)
 static void
 st_collections_group_parts_part_description_image_normal(void)
 {
-   Edje_Part_Collection *pc;
    Edje_Part_Description_Image *ed;
 
    check_arg_count(1);
-
-   pc = eina_list_data_get(eina_list_last(edje_collections));
 
    if (current_part->type != EDJE_PART_TYPE_IMAGE)
      {
