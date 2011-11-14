@@ -1772,7 +1772,7 @@ _elua_obj_map(lua_State *L)
 
    evas_object_map_set(elo->evas_obj, elm->map);
 
-   return 1;
+   return 0;
 }
 
 static int
@@ -2135,11 +2135,11 @@ _elua_map_colour(lua_State *L)
              }
            evas_map_point_color_get(elm->map, lua_tointeger(L, 2), &r, &g, &b, &a);
            _elua_ret(L, "%r %g %b %a", r, g, b, a);
-           break;
+           return 1;
         }
     }
 
-   return 1;
+   return 0;
 }
 
 static int
@@ -2179,7 +2179,6 @@ _elua_map_lighting(lua_State *L)
         if (_elua_scan_params(L, 2 + n, EINA_FALSE, "%r %g %b", &r1, &g1, &b1) > 0)
            {
               evas_map_util_3d_lighting(elm->map, x, y, z, r, g, b, r1, g1, b1);
-              return 1;
            }
    return 0;
 }
@@ -2196,7 +2195,6 @@ _elua_map_perspective(lua_State *L)
    if (_elua_scan_params(L, 2, EINA_FALSE, "%x %y %z %f", &x, &y, &z, &f) > 0)
      {
         evas_map_util_3d_perspective(elm->map, x, y, z, f);
-        return 1;
      }
    return 0;
 }
@@ -2245,7 +2243,7 @@ _elua_map_populate(lua_State *L)
            break;
         }
     }
-   return 1;
+   return 0;
 }
 
 static int
@@ -2266,7 +2264,7 @@ _elua_map_rotate(lua_State *L)
      {
         evas_map_util_rotate(elm->map, degrees, x, y);
      }
-   return 1;
+   return 0;
 }
 
 static int
@@ -2284,7 +2282,6 @@ _elua_map_rotate3d(lua_State *L)
       if (_elua_scan_params(L, 2 + n, EINA_FALSE, "%x %y %z", &x, &y, &z) > 0)
         {
            evas_map_util_3d_rotate(elm->map, zx, zy, zz, x, y, z);
-           return 1;
         }
    return 0;
 }
@@ -2343,7 +2340,6 @@ _elua_map_zoom(lua_State *L)
       if (_elua_scan_params(L, 2 + n, EINA_FALSE, "%x %y", &x, &y) > 0)
         {
            evas_map_util_zoom(elm->map, zx, zy, x, y);
-           return 1;
         }
    return 0;
 }
@@ -2372,7 +2368,7 @@ static int _elua_polygon_clear(lua_State *L)
 
    if (!_elua_isa(obj, _elua_evas_polygon_meta)) return 0;
    evas_object_polygon_points_clear(elo->evas_obj);
-   return 1;
+   return 0;
 }
 
 static int _elua_polygon_point(lua_State *L)
@@ -2388,7 +2384,7 @@ static int _elua_polygon_point(lua_State *L)
         evas_object_polygon_point_add(elo->evas_obj, x, y);
      }
 
-   return 1;
+   return 0;
 }
 
 //-------------
