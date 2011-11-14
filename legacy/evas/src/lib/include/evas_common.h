@@ -1017,27 +1017,6 @@ struct rect_node
     struct list_node _lst;
     struct rect rect;
 };
-
-void rect_list_node_pool_set_max(int max);
-void rect_list_node_pool_flush(void);
-list_node_t *rect_list_node_pool_get(void);
-void rect_list_node_pool_put(list_node_t *node);
-
-void rect_init(rect_t *r, int x, int y, int w, int h);
-void rect_list_append_node(list_t *rects, list_node_t *node);
-void rect_list_append(list_t *rects, const rect_t r);
-void rect_list_append_xywh(list_t *rects, int x, int y, int w, int h);
-void rect_list_concat(list_t *rects, list_t *other);
-list_node_t *rect_list_unlink_next(list_t *rects, list_node_t *parent_node);
-void rect_list_del_next(list_t *rects, list_node_t *parent_node);
-void rect_list_clear(list_t *rects);
-void rect_list_del_split_strict(list_t *rects, const rect_t del_r);
-void rect_list_add_split_strict(list_t *rects, list_node_t *node);
-list_node_t *rect_list_add_split_fuzzy(list_t *rects, list_node_t *node, int accepted_error);
-void rect_list_merge_rects(list_t *rects, list_t *to_merge, int accepted_error);void rect_list_add_split_fuzzy_and_merge(list_t *rects, list_node_t *node, int split_accepted_error, int merge_accepted_error);
-
-void rect_print(const rect_t r);
-void rect_list_print(const list_t rects);
 #endif /* EVAS_RECT_SPLIT */
 
 struct _Tilebuf
