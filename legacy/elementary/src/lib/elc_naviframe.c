@@ -828,7 +828,6 @@ _item_style_set(Elm_Naviframe_Item *navi_it, const char *item_style)
       _item_content_set_hook((Elm_Object_Item *) navi_it,
                              content_pair->part,
                              content_pair->content);
-
    //content
    if (navi_it->content)
      {
@@ -1006,6 +1005,8 @@ elm_naviframe_item_push(Evas_Object *obj,
         edje_object_signal_emit(VIEW(it),
                                 "elm,state,new,pushed",
                                 "elm");
+        edje_object_message_signal_process(VIEW(prev_it));
+        edje_object_message_signal_process(VIEW(it));
      }
    wd->stack = eina_inlist_append(wd->stack, EINA_INLIST_GET(it));
    return (Elm_Object_Item *) it;
@@ -1094,12 +1095,14 @@ elm_naviframe_item_pop(Evas_Object *obj)
              evas_object_freeze_events_set(VIEW(it), EINA_TRUE);
              evas_object_freeze_events_set(VIEW(prev_it), EINA_TRUE);
           }
-        edje_object_signal_emit(it->base.view, "elm,state,cur,popped", "elm");
+        edje_object_signal_emit(VIEW(it), "elm,state,cur,popped", "elm");
         evas_object_show(VIEW(prev_it));
         evas_object_raise(VIEW(prev_it));
         edje_object_signal_emit(VIEW(prev_it),
                                 "elm,state,prev,popped",
                                 "elm");
+        edje_object_message_signal_process(VIEW(it));
+        edje_object_message_signal_process(VIEW(prev_it));
      }
    else
      _item_del(it);
@@ -1156,15 +1159,16 @@ elm_naviframe_item_promote(Elm_Object_Item *it)
         evas_object_freeze_events_set(VIEW(it), EINA_TRUE);
         evas_object_freeze_events_set(VIEW(prev_it), EINA_TRUE);
      }
-   edje_object_signal_emit(prev_it->base.view,
+   edje_object_signal_emit(VIEW(prev_it),
                            "elm,state,cur,pushed",
                            "elm");
-   evas_object_show(navi_it->base.view);
-   evas_object_raise(navi_it->base.view);
-   edje_object_signal_emit(navi_it->base.view,
+   evas_object_show(VIEW(navi_it));
+   evas_object_raise(VIEW(navi_it));
+   edje_object_signal_emit(VIEW(navi_it),
                            "elm,state,new,pushed",
                            "elm");
-
+   edje_object_message_signal_process(VIEW(prev_it));
+   edje_object_message_signal_process(VIEW(navi_it));
 }
 
 EAPI void
