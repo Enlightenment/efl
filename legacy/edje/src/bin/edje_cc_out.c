@@ -1401,6 +1401,7 @@ data_queue_part_lookup(Edje_Part_Collection *pc, const char *name, int *dest)
              return;
           }
      }
+   if (!name[0]) return;
 
    pl = mem_alloc(SZ(Part_Lookup));
    part_lookups = eina_list_append(part_lookups, pl);
