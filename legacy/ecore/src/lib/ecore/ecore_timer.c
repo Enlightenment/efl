@@ -41,8 +41,10 @@ static void _ecore_timer_set(Ecore_Timer  *timer,
                              double        in,
                              Ecore_Task_Cb func,
                              void         *data);
+#ifdef WANT_ECORE_TIMER_DUMP
 static int _ecore_timer_cmp(const void *d1,
                             const void *d2);
+#endif
 
 static int timers_added = 0;
 static int timers_delete_me = 0;
@@ -785,6 +787,7 @@ _ecore_timer_set(Ecore_Timer  *timer,
    timers = (Ecore_Timer *)eina_inlist_prepend(EINA_INLIST_GET(timers), EINA_INLIST_GET(timer));
 }
 
+#ifdef WANT_ECORE_TIMER_DUMP
 static int
 _ecore_timer_cmp(const void *d1,
                  const void *d2)
@@ -794,4 +797,4 @@ _ecore_timer_cmp(const void *d1,
 
    return (int)((t1->in - t2->in) * 100);
 }
-
+#endif
