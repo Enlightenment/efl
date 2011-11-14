@@ -561,7 +561,9 @@ ecore_evas_cocoa_new(Ecore_Cocoa_Window *parent, int x, int y, int w, int h)
   
   return NULL;
 #else
-  ERR("OUTCH size=%dx%d!", w, h);
+  ERR("Cocoa support in ecore-evas not enabled");
   return NULL;
+  parent = NULL;
+  x = y = w = h = 0;
 #endif
 }
