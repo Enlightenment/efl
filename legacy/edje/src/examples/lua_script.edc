@@ -12,10 +12,8 @@ images {
 }
 
 collections {
-   // The group name NEEDS a / in it, 
-   // or the part below that tries to swallow it don't work.
-   // Leaving just the lua part visible.
-   group { name: "example/lua";
+   group {
+      name: "main";
       lua_script_only: 1;
       lua_script {
          --// stick object private/local vars here
@@ -88,6 +86,7 @@ collections {
          D.tim = edje.timer(1.23, mycb);
          D.tra = edje.transition(5.0, mycb3);
          D.ani = edje.animator(mycb2);
+         edje_geom = edje.geom();
  
          if (edje.spanky) then edje.spanky(); end
 
@@ -115,6 +114,10 @@ collections {
          edje.messagesend(7, "strint",   "hello world", 7);
          edje.messagesend(7, "strfloat", "hello world", 7.654);
          edje.messagesend(7, "strintset","hello world", {1, 2, 3});
+
+         D.edje = edje.edje();
+         D.edje:file("plain/edje/group");
+         D.edje:show();
                   
          D.rect = edje.rect();
          D.rect:geom  (5, 10, 50, 30);
@@ -237,11 +240,13 @@ collections {
 
          function move (x, y)
             print("lua::move x=" .. x .. " x=" .. y);
+            D.edje:move(0, 0);
          end
 
          function resize (w, h)
             print("lua::resize w=" .. w .. " h=" .. h);
             D.text:move((w - text_geom.w) / 2, (h - text_geom.h) / 8);
+            D.edje:resize(w, h);
          end
 
          function message (id, type, v1, v2)
@@ -258,46 +263,47 @@ collections {
       }
    }
 
-    group
-    { name: "bubbles/lua";
-	lua_script_only: 1;
-	lua_script
-	{
-	    local bubbles = { };
-	    local bubbleCols = 8;
-	    local bubbleRows = 6;
+   // The group name NEEDS a / in it, 
+   // or the part below that tries to swallow it won't work.
+   // Leaving just the lua part visible.
+   group {
+      name: "bubbles/lua";
+      lua_script_only: 1;
+      lua_script {
+         local bubbles = { };
+         local bubbleCols = 8;
+         local bubbleRows = 6;
 
-	    for i = 1, bubbleRows do
-		row = { };
-		for j = 1, bubbleCols do
-		    image = edje.image();
-		    image:image("bubble.png");
-		    image:show();
-		    table.insert(row, image);
-		end
-		table.insert(bubbles, row);
-	    end
+         for i = 1, bubbleRows do
+            row = { };
+            for j = 1, bubbleCols do
+               image = edje.image();
+               image:image("bubble.png");
+               image:show();
+               table.insert(row, image);
+            end
+            table.insert(bubbles, row);
+         end
 
-	    function resize (w, h)
-		for i = 1, bubbleRows do
-		    for j = 1, bubbleCols do
-			w1 = w / bubbleCols;
-			h1 = h / bubbleRows;
-			bubbles[i][j]:geom((j - 1) * w1, (i - 1) * h1, w1, h1);
-			if ((1 == i) or (1 == j) or (bubbleRows == i) or (bubbleCols == j)) then
-			    bubbles[i][j]:color(0, 255, 0, 200);
-			else
-			    bubbles[i][j]:color(math.random(200) + 55, 0, math.random(255) + 55, 200);
-			end
-		    end
-		end
-	    end
-	}
-    }
+         function resize (w, h)
+            for i = 1, bubbleRows do
+               for j = 1, bubbleCols do
+                  w1 = w / bubbleCols;
+                  h1 = h / bubbleRows;
+                  bubbles[i][j]:geom((j - 1) * w1, (i - 1) * h1, w1, h1);
+                  if ((1 == i) or (1 == j) or (bubbleRows == i) or (bubbleCols == j)) then
+                     bubbles[i][j]:color(0, 255, 0, 200);
+                  else
+                     bubbles[i][j]:color(math.random(200) + 55, 0, math.random(255) + 55, 200);
+                  end
+               end
+            end
+         end
+      }
+   }
 
    group {
-      name: "elm/bg/base/default";
-
+      name: "plain/edje/group";
       parts {
          part {
             name: "background";
@@ -309,6 +315,7 @@ collections {
             }
          }
 
+         // A lua group embedded in an edje group.
          part {
             name: "bubbles_lua";
             type: GROUP;
@@ -319,6 +326,7 @@ collections {
 
          part {
             name: "background_image";
+            type: IMAGE;
             mouse_events: 0;
             description {
                state: "default" 0.0;
@@ -340,14 +348,6 @@ collections {
                   text_class: "test_text_class";
                }
             }
-         }
-
-         part {
-            name: "example_lua";
-            type: GROUP;
-            source: "example/lua";
-            mouse_events: 0;
-            description { state: "default" 0.0; }
          }
 
       }
