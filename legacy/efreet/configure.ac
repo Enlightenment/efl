@@ -154,7 +154,7 @@ PKG_CHECK_MODULES(EINA, [eina >= 1.0.0])
 
 ### Checks for header files
 
-AC_CHECK_HEADERS([arpa/inet.h])
+AC_CHECK_HEADERS([netinet/in.h arpa/inet.h])
 
 ### Checks for types
 
