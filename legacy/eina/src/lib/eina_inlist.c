@@ -500,7 +500,7 @@ eina_inlist_sorted_state_free(Eina_Inlist_Sorted_State *state)
 
 static void
 _eina_inlist_sorted_state_insert(Eina_Inlist_Sorted_State *state,
-                                 unsigned short index,
+                                 unsigned short idx,
                                  int offset)
 {
    Eina_Inlist *last;
@@ -509,10 +509,10 @@ _eina_inlist_sorted_state_insert(Eina_Inlist_Sorted_State *state,
 
    state->inserted++;
 
-   if (offset != 0) index++;
-   for (; index < state->jump_limit; index++)
+   if (offset != 0) idx++;
+   for (; idx < state->jump_limit; idx++)
      {
-        state->jump_table[index] = state->jump_table[index]->prev;
+        state->jump_table[idx] = state->jump_table[idx]->prev;
      }
 
    start = state->jump_limit - 3;
