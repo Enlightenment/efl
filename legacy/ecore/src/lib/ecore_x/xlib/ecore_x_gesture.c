@@ -56,6 +56,8 @@ ecore_x_gesture_events_select(Ecore_X_Window win,
    return EINA_TRUE;
 #else /* ifdef ECORE_XGESTURE */
    return EINA_FALSE;
+   win = 0;
+   mask = 0;
 #endif /* ifdef ECORE_XGESTURE */
 }
 
@@ -78,6 +80,7 @@ ecore_x_gesture_events_selected_get(Ecore_X_Window win)
    return mask;
 #else /* ifdef ECORE_XGESTURE */
    return ECORE_X_GESTURE_EVENT_MASK_NONE;
+   win = 0;
 #endif /* ifdef ECORE_XGESTURE */
 }
 
@@ -99,6 +102,9 @@ ecore_x_gesture_event_grab(Ecore_X_Window win,
    return EINA_TRUE;
 #else /* ifdef ECORE_XGESTURE */
    return EINA_FALSE;
+   win = 0;
+   type = 0;
+   num_fingers = 0;
 #endif /* ifdef ECORE_XGESTURE */
 }
 
@@ -122,6 +128,9 @@ ecore_x_gesture_event_ungrab(Ecore_X_Window win,
    return EINA_TRUE;
 #else /* ifdef ECORE_XGESTURE */
    return EINA_FALSE;
+   win = 0;
+   type = 0;
+   num_fingers = 0;
 #endif /* ifdef ECORE_XGESTURE */
 }
 
