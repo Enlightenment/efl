@@ -542,7 +542,7 @@ _eina_inlist_sorted_state_insert(Eina_Inlist_Sorted_State *state,
                }
 
              state->jump_table[start++] = last;
-             jump_count = 0;                  
+             jump_count = 0;
           }
      }
 }
