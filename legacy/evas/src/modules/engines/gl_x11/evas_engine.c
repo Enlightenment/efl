@@ -2415,8 +2415,9 @@ eng_image_data_get(void *data, void *image, int to_write, DATA32 **image_data, i
 
         if (!im->tex->pt->dyn.data)
           {
-             im->tex->pt->dyn.img = NULL;
+             if (err) *err = EVAS_LOAD_ERROR_RESOURCE_ALLOCATION_FAILED;
              GLERR(__FUNCTION__, __FILE__, __LINE__, "");
+             return im;
           }
         im->tex->pt->dyn.checked_out++;
 
