@@ -4,6 +4,8 @@
 
 #include <sys/time.h>
 #include <assert.h>
+#include <sys/types.h>
+#include <unistd.h>
 
 #ifdef HAVE_EVIL
 # include <Evil.h>
