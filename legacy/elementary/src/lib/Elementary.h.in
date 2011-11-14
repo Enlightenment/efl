@@ -11079,6 +11079,39 @@ extern "C" {
     */
    EAPI const char  *elm_entry_selection_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
    /**
+    * Returns the actual textblock object of the entry.
+    *
+    * This function exposes the internal textblock object that actually
+    * contains and draws the text. This should be used for low-level
+    * manipulations that are otherwise not possible.
+    *
+    * Changing the textblock directly from here will not notify edje/elm to
+    * recalculate the textblock size automatically, so any modifications
+    * done to the textblock returned by this function should be followed by
+    * a call to elm_entry_calc_force().
+    *
+    * The return value is marked as const as an additional warning.
+    * One should not use the returned object with any of the generic evas
+    * functions (geometry_get/resize/move and etc), but only with the textblock
+    * functions; The former will either not work at all, or break the correct
+    * functionality.
+    *
+    * @param obj The entry object
+    * @return The textblock object.
+    */
+   EAPI const Evas_Object *elm_entry_textblock_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
+   /**
+    * Forces calculation of the entry size and text layouting.
+    *
+    * This should be used after modifying the textblock object directly. See
+    * elm_entry_textblock_get() for more information.
+    *
+    * @param obj The entry object
+    *
+    * @see elm_entry_textblock_get()
+    */
+   EAPI void elm_entry_calc_force(const Evas_Object *obj) EINA_ARG_NONNULL(1);
+   /**
     * Inserts the given text into the entry at the current cursor position.
     *
     * This inserts text at the cursor position as if it was typed

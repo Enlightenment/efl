@@ -2488,6 +2488,27 @@ elm_entry_is_empty(const Evas_Object *obj)
    return !ret;
 }
 
+EAPI const Evas_Object *
+elm_entry_textblock_get(const Evas_Object *obj)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype) NULL;
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return NULL;
+
+   return edje_object_part_object_get(wd->ent, "elm.text");
+}
+
+EAPI void
+elm_entry_calc_force(const Evas_Object *obj)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype);
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return;
+
+   edje_object_calc_force(wd->ent);
+}
+
+
 EAPI const char *
 elm_entry_selection_get(const Evas_Object *obj)
 {
