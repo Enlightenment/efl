@@ -1,7 +1,15 @@
-1.1 Release Features
+Eeze 1.1.0
 
-* Fixed bugs with device detection related to newer kernel versions
-* Fixed device filtering to be more accurate in some cases
-* Added more disk-related detection/info functions
-* Added disk mounting API
-* Added eeze_scanner utility for applications to hook for drive detection
+Changes since Eeze 1.0.0:
+-------------------------
+
+Additions:
+
+    * more disk-related detection/info functions
+    * disk mounting API
+    * eeze_scanner utility for applications to hook for drive detection
+
+Fixes:
+
+    * bugs with device detection related to newer kernel versions
+    * device filtering to be more accurate in some cases
