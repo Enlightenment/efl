@@ -2037,67 +2037,63 @@ _add_chars_till_limit(Evas_Object *obj, char **text, int can_add, Length_Unit un
    current_len = strlen(*text);
    while (*new_text)
      {
+        int idx = 0, unit_size = 0;
+        char *markup, *utfstr;
         if (*new_text == '<')
           {
-             while (*new_text != '>')
+             while (*(new_text + idx) != '>')
                {
-                  new_text++;
-                  if (!*new_text) break;
+                  idx++;
+                  if (!*(new_text + idx)) break;
                }
-             new_text++;
+          }
+        else if (*new_text == '&')
+          {
+             while (*(new_text + idx) != ';')
+               {
+                  idx++;
+                  if (!*(new_text + idx)) break;
+               }
+          }
+        idx = evas_string_char_next_get(new_text, idx, NULL);
+        markup = malloc(idx + 1);
+        if (markup)
+          {
+             strncpy(markup, new_text, idx);
+             markup[idx] = 0;
+             utfstr = elm_entry_markup_to_utf8(markup);
+             if (utfstr)
+               {
+                  if (unit == LENGTH_UNIT_BYTE)
+                    unit_size = strlen(utfstr);
+                  else if (unit == LENGTH_UNIT_CHAR)
+                    unit_size = evas_string_char_len_get(utfstr);
+                  free(utfstr);
+                  utfstr = NULL;
+               }
+             free(markup);
+             markup = NULL;
+          }
+        if (can_add < unit_size)
+          {
+             if (!i)
+               {
+                  evas_object_smart_callback_call(obj, "maxlength,reached", NULL);
+                  free(*text);
+                  *text = NULL;
+                  return;
+               }
+             can_add = 0;
+             strncpy(new_text, new_text + idx, current_len - ((new_text + idx) - *text));
+             current_len -= idx;
+             (*text)[current_len] = 0;
           }
         else
           {
-             int idx = 0, unit_size = 0;
-             char *markup, *utfstr;
-             if (*new_text == '&')
-               {
-                  while (*(new_text + idx) != ';')
-                    {
-                       idx++;
-                       if (!*(new_text + idx)) break;
-                    }
-               }
-             idx = evas_string_char_next_get(new_text, idx, NULL);
-             markup = malloc(idx + 1);
-             if (markup)
-               {
-                  strncpy(markup, new_text, idx);
-                  markup[idx] = 0;
-                  utfstr = elm_entry_markup_to_utf8(markup);
-                  if (utfstr)
-                    {
-                       if (unit == LENGTH_UNIT_BYTE)
-                         unit_size = strlen(utfstr);
-                       else if (unit == LENGTH_UNIT_CHAR)
-                         unit_size = evas_string_char_len_get(utfstr);
-                       free(utfstr);
-                       utfstr = NULL;
-                    }
-                  free(markup);
-                  markup = NULL;
-               }
-             if (can_add < unit_size)
-               {
-                  if (!i)
-                    {
-                       evas_object_smart_callback_call(obj, "maxlength,reached", NULL);
-                       free(*text);
-                       *text = NULL;
-                       return;
-                    }
-                  can_add = 0;
-                  strncpy(new_text, new_text + idx, current_len - ((new_text + idx) - *text));
-                  current_len -= idx;
-                  (*text)[current_len] = 0;
-               }
-             else
-               {
-                  new_text += idx;
-                  can_add -= unit_size;
-               }
-             i++;
+             new_text += idx;
+             can_add -= unit_size;
           }
+        i++;
      }
    evas_object_smart_callback_call(obj, "maxlength,reached", NULL);
 }
