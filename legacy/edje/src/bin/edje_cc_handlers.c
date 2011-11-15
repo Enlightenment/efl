@@ -2248,7 +2248,7 @@ st_collections_group_inherit(void)
      }
    if (!pc2)
      {
-        ERR("%s: Error. parse error %s:%i. There isn't a part of the name %s",
+        ERR("%s: Error. parse error %s:%i. There isn't a group with the name %s",
             progname, file_in, line - 1, parent_name);
         exit(-1);
      }
