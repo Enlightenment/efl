@@ -1,4 +1,4 @@
-Ecore
+Ecore 1.1.0
 
 ******************************************************************************
 
@@ -13,7 +13,7 @@ Requirements:
 Must:
   libc
   libm
-  eina (1.0.0 or better)
+  eina (1.1.0 or better)
   (For windows you also need: evil)
   
 Recommended:
@@ -30,14 +30,16 @@ Recommended:
   libXdamage
   libXdpms
   libXtest
-  OpenSSL
+  GNUTLS or OpenSSL
   CURL
-  evas (1.0.0 or better)
+  evas (1.1.0 or better)
 
 Optional:
-  XCB (highly experimental - don't use it unless you are fixing it)
+  XCB (fully working)
   SDL
   DirectFB
+  glib
+  tslib
 
 Ecore is a clean and tiny event loop library with many modules to do
 lots of convenient things for a programmer, to save time and effort.
