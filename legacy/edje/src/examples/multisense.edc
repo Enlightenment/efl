@@ -36,6 +36,7 @@ collections {
 //         name: "sound_name6" LOSSY 45.0;
          source: "sample-flac44k-mono.wav";
 //         source: "sample-flac.wav";
+//         source: "sample-flac.wav";
 //         source: "sample.ogg";
       }
       tone: "tone-name" 2600;
