@@ -54,8 +54,7 @@ evas_object_raise(Evas_Object *obj)
    else
      {
         if (obj->in_layer)
-          obj->layer->objects = (Evas_Object *)eina_inlist_demote(EINA_INLIST_GET(obj->layer->objects),
-                                                                  EINA_INLIST_GET(obj));
+          obj->layer->objects = (Evas_Object *)eina_inlist_demote(EINA_INLIST_GET(obj->layer->objects), EINA_INLIST_GET(obj));
      }
    if (obj->clip.clipees)
      {
@@ -66,23 +65,20 @@ evas_object_raise(Evas_Object *obj)
    obj->restack = EINA_TRUE;
    evas_object_change(obj);
    evas_object_inform_call_restack(obj);
-   if (obj->layer->evas->events_frozen <= 0)
+   if (obj->layer->evas->events_frozen > 0) return;
+   if ((!evas_event_passes_through(obj)) && (!evas_event_freezes_through(obj)))
      {
-        if ((!evas_event_passes_through(obj)) &&
-            (!evas_event_freezes_through(obj)))
+        if (!obj->smart.smart)
           {
-             if (!obj->smart.smart)
-               {
-                  if (evas_object_is_in_output_rect(obj,
-                                                    obj->layer->evas->pointer.x,
-                                                    obj->layer->evas->pointer.y, 1, 1) &&
-                      obj->cur.visible)
-                    evas_event_feed_mouse_move(obj->layer->evas,
+             if (evas_object_is_in_output_rect(obj,
                                                obj->layer->evas->pointer.x,
                                                obj->layer->evas->pointer.y,
-                                               obj->layer->evas->last_timestamp,
-                                               NULL);
-               }
+                                               1, 1) && obj->cur.visible)
+               evas_event_feed_mouse_move(obj->layer->evas,
+                                          obj->layer->evas->pointer.x,
+                                          obj->layer->evas->pointer.y,
+                                          obj->layer->evas->last_timestamp,
+                                          NULL);
           }
      }
 }
@@ -116,23 +112,20 @@ evas_object_lower(Evas_Object *obj)
    obj->restack = EINA_TRUE;
    evas_object_change(obj);
    evas_object_inform_call_restack(obj);
-   if (obj->layer->evas->events_frozen <= 0)
+   if (obj->layer->evas->events_frozen > 0) return;
+   if ((!evas_event_passes_through(obj)) && (!evas_event_freezes_through(obj)))
      {
-        if ((!evas_event_passes_through(obj)) &&
-            (!evas_event_freezes_through(obj)))
+        if (!obj->smart.smart)
           {
-             if (!obj->smart.smart)
-               {
-                  if (evas_object_is_in_output_rect(obj,
-                                                    obj->layer->evas->pointer.x,
-                                                    obj->layer->evas->pointer.y, 1, 1) &&
-                      obj->cur.visible)
-                    evas_event_feed_mouse_move(obj->layer->evas,
+             if (evas_object_is_in_output_rect(obj,
                                                obj->layer->evas->pointer.x,
                                                obj->layer->evas->pointer.y,
-                                               obj->layer->evas->last_timestamp,
-                                               NULL);
-               }
+                                               1, 1) && obj->cur.visible)
+               evas_event_feed_mouse_move(obj->layer->evas,
+                                          obj->layer->evas->pointer.x,
+                                          obj->layer->evas->pointer.y,
+                                          obj->layer->evas->last_timestamp,
+                                          NULL);
           }
      }
 }
@@ -197,23 +190,20 @@ evas_object_stack_above(Evas_Object *obj, Evas_Object *above)
    obj->restack = EINA_TRUE;
    evas_object_change(obj);
    evas_object_inform_call_restack(obj);
-   if (obj->layer->evas->events_frozen <= 0)
+   if (obj->layer->evas->events_frozen > 0) return;
+   if ((!evas_event_passes_through(obj)) && (!evas_event_freezes_through(obj)))
      {
-        if ((!evas_event_passes_through(obj)) &&
-            (!evas_event_freezes_through(obj)))
+        if (!obj->smart.smart)
           {
-             if (!obj->smart.smart)
-               {
-                  if (evas_object_is_in_output_rect(obj,
-                                                    obj->layer->evas->pointer.x,
-                                                    obj->layer->evas->pointer.y, 1, 1) &&
-                      obj->cur.visible)
-                    evas_event_feed_mouse_move(obj->layer->evas,
+             if (evas_object_is_in_output_rect(obj,
                                                obj->layer->evas->pointer.x,
                                                obj->layer->evas->pointer.y,
-                                               obj->layer->evas->last_timestamp,
-                                               NULL);
-               }
+                                               1, 1) && obj->cur.visible)
+               evas_event_feed_mouse_move(obj->layer->evas,
+                                          obj->layer->evas->pointer.x,
+                                          obj->layer->evas->pointer.y,
+                                          obj->layer->evas->last_timestamp,
+                                          NULL);
           }
      }
 }
@@ -278,23 +268,20 @@ evas_object_stack_below(Evas_Object *obj, Evas_Object *below)
    obj->restack = EINA_TRUE;
    evas_object_change(obj);
    evas_object_inform_call_restack(obj);
-   if (obj->layer->evas->events_frozen <= 0)
+   if (obj->layer->evas->events_frozen > 0) return;
+   if ((!evas_event_passes_through(obj)) && (!evas_event_freezes_through(obj)))
      {
-        if ((!evas_event_passes_through(obj)) &&
-            (!evas_event_freezes_through(obj)))
+        if (!obj->smart.smart)
           {
-             if (!obj->smart.smart)
-               {
-                  if (evas_object_is_in_output_rect(obj,
-                                                    obj->layer->evas->pointer.x,
-                                                    obj->layer->evas->pointer.y, 1, 1) &&
-                      obj->cur.visible)
-                    evas_event_feed_mouse_move(obj->layer->evas,
+             if (evas_object_is_in_output_rect(obj,
                                                obj->layer->evas->pointer.x,
                                                obj->layer->evas->pointer.y,
-                                               obj->layer->evas->last_timestamp,
-                                               NULL);
-               }
+                                               1, 1) && obj->cur.visible)
+               evas_event_feed_mouse_move(obj->layer->evas,
+                                          obj->layer->evas->pointer.x,
+                                          obj->layer->evas->pointer.y,
+                                          obj->layer->evas->last_timestamp,
+                                          NULL);
           }
      }
 }

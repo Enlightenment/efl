@@ -1130,7 +1130,8 @@ evas_object_top_at_xy_get(const Evas *e, Evas_Coord x, Evas_Coord y, Eina_Bool i
         EINA_INLIST_REVERSE_FOREACH(get_layer_objects(lay), obj)
           {
              if (obj->delete_me) continue;
-             if ((!include_pass_events_objects) && (evas_event_passes_through(obj))) continue;
+             if ((!include_pass_events_objects) &&
+                 (evas_event_passes_through(obj))) continue;
              if ((!include_hidden_objects) && (!obj->cur.visible)) continue;
              evas_object_clip_recalc(obj);
              if ((evas_object_is_in_output_rect(obj, xx, yy, 1, 1)) &&
@@ -1144,8 +1145,8 @@ evas_object_top_at_xy_get(const Evas *e, Evas_Coord x, Evas_Coord y, Eina_Bool i
 EAPI Evas_Object *
 evas_object_top_at_pointer_get(const Evas *e)
 {
-////   return evas_object_top_at_xy_get(e, e->pointer.canvas_x, e->pointer.canvas_y, 0, 0);
-   return evas_object_top_at_xy_get(e, e->pointer.x, e->pointer.y, 1, 1);
+   return evas_object_top_at_xy_get(e, e->pointer.x, e->pointer.y, EINA_TRUE,
+                                    EINA_TRUE);
 }
 
 EAPI Evas_Object *
@@ -1174,7 +1175,8 @@ evas_object_top_in_rectangle_get(const Evas *e, Evas_Coord x, Evas_Coord y, Evas
         EINA_INLIST_REVERSE_FOREACH(get_layer_objects(lay), obj)
           {
              if (obj->delete_me) continue;
-             if ((!include_pass_events_objects) && (evas_event_passes_through(obj))) continue;
+             if ((!include_pass_events_objects) &&
+                 (evas_event_passes_through(obj))) continue;
              if ((!include_hidden_objects) && (!obj->cur.visible)) continue;
              evas_object_clip_recalc(obj);
              if ((evas_object_is_in_output_rect(obj, xx, yy, ww, hh)) &&
@@ -1206,7 +1208,8 @@ evas_objects_at_xy_get(const Evas *e, Evas_Coord x, Evas_Coord y, Eina_Bool incl
         EINA_INLIST_REVERSE_FOREACH(get_layer_objects(lay), obj)
           {
              if (obj->delete_me) continue;
-             if ((!include_pass_events_objects) && (evas_event_passes_through(obj))) continue;
+             if ((!include_pass_events_objects) &&
+                 (evas_event_passes_through(obj))) continue;
              if ((!include_hidden_objects) && (!obj->cur.visible)) continue;
              evas_object_clip_recalc(obj);
              if ((evas_object_is_in_output_rect(obj, xx, yy, 1, 1)) &&
@@ -1256,7 +1259,8 @@ evas_objects_in_rectangle_get(const Evas *e, Evas_Coord x, Evas_Coord y, Evas_Co
         EINA_INLIST_REVERSE_FOREACH(get_layer_objects(lay), obj)
           {
              if (obj->delete_me) continue;
-             if ((!include_pass_events_objects) && (evas_event_passes_through(obj))) continue;
+             if ((!include_pass_events_objects) &&
+                 (evas_event_passes_through(obj))) continue;
              if ((!include_hidden_objects) && (!obj->cur.visible)) continue;
              evas_object_clip_recalc(obj);
              if ((evas_object_is_in_output_rect(obj, xx, yy, ww, hh)) &&

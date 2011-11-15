@@ -86,7 +86,6 @@ evas_event_freezes_through(Evas_Object *obj)
 static inline int
 evas_event_passes_through(Evas_Object *obj)
 {
-   if (obj->layer->evas->events_frozen > 0) return 1;
    if (obj->pass_events) return 1;
    if (obj->parent_cache.pass_events_valid)
      return obj->parent_cache.pass_events;

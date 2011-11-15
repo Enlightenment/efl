@@ -111,7 +111,7 @@ evas_event_objects_event_list(Evas *e, Evas_Object *stop, int x, int y)
    Evas_Layer *lay;
    Eina_List *in = NULL;
 
-   if (!e->layers) return NULL;
+   if ((!e->layers) || (e->events_frozen > 0)) return NULL;
    EINA_INLIST_REVERSE_FOREACH((EINA_INLIST_GET(e->layers)), lay)
      {
         int norep = 0;
@@ -575,18 +575,18 @@ evas_event_feed_mouse_move(Evas *e, int x, int y, unsigned int timestamp, const 
                {
                   ev.cur.canvas.x = e->pointer.x;
                   ev.cur.canvas.y = e->pointer.y;
-                  _evas_event_havemap_adjust(obj, &ev.cur.canvas.x, &ev.cur.canvas.y, obj->mouse_grabbed);
-                  if (((evas_object_clippers_is_visible(obj)) ||
-                       (obj->mouse_grabbed)) &&
+                  _evas_event_havemap_adjust(obj, &ev.cur.canvas.x,
+                                             &ev.cur.canvas.y,
+                                             obj->mouse_grabbed);
+                  if ((e->events_frozen <= 0) &&
+                      (evas_object_clippers_is_visible(obj) ||
+                       obj->mouse_grabbed) &&
                       (!evas_event_passes_through(obj)) &&
                       (!evas_event_freezes_through(obj)) &&
                       (!obj->clip.clipees))
                     {
                        if ((px != x) || (py != y))
-                         {
-                            if (e->events_frozen <= 0)
-                              evas_object_event_callback_call(obj, EVAS_CALLBACK_MOUSE_MOVE, &ev);
-                         }
+                         evas_object_event_callback_call(obj, EVAS_CALLBACK_MOUSE_MOVE, &ev);
                     }
                   else
                     outs = eina_list_append(outs, obj);
@@ -695,23 +695,23 @@ evas_event_feed_mouse_move(Evas *e, int x, int y, unsigned int timestamp, const 
              /* in list */
              // FIXME: i don't think we need this
              //	     evas_object_clip_recalc(obj);
-             if (evas_object_is_in_output_rect(obj, x, y, 1, 1) &&
-                 ((evas_object_clippers_is_visible(obj)) ||
-                     (obj->mouse_grabbed)) &&
-                 (eina_list_data_find(ins, obj)) &&
+             if ((e->events_frozen <= 0) &&
+                 evas_object_is_in_output_rect(obj, x, y, 1, 1) &&
+                 (evas_object_clippers_is_visible(obj) ||
+                  obj->mouse_grabbed) &&
+                 eina_list_data_find(ins, obj) &&
                  (!evas_event_passes_through(obj)) &&
                  (!evas_event_freezes_through(obj)) &&
                  (!obj->clip.clipees) &&
-                 ((!obj->precise_is_inside) ||
-                  (evas_object_is_inside(obj, x, y))))
+                 ((!obj->precise_is_inside) || evas_object_is_inside(obj, x, y))
+                )
                {
                   if ((px != x) || (py != y))
                     {
                        ev.cur.canvas.x = e->pointer.x;
                        ev.cur.canvas.y = e->pointer.y;
                        _evas_event_havemap_adjust(obj, &ev.cur.canvas.x, &ev.cur.canvas.y, obj->mouse_grabbed);
-                       if (e->events_frozen <= 0)
-                         evas_object_event_callback_call(obj, EVAS_CALLBACK_MOUSE_MOVE, &ev);
+                       evas_object_event_callback_call(obj, EVAS_CALLBACK_MOUSE_MOVE, &ev);
                     }
                }
              /* otherwise it has left the object */
@@ -1087,8 +1087,8 @@ evas_event_feed_multi_move(Evas *e,
         copy = evas_event_list_copy(e->pointer.object.in);
         EINA_LIST_FOREACH(copy, l, obj)
           {
-             if (((evas_object_clippers_is_visible(obj)) ||
-                  (obj->mouse_grabbed)) &&
+             if ((e->events_frozen <= 0) &&
+                 (evas_object_clippers_is_visible(obj) || obj->mouse_grabbed) &&
                  (!evas_event_passes_through(obj)) &&
                  (!evas_event_freezes_through(obj)) &&
                  (!obj->clip.clipees))
@@ -1102,7 +1102,6 @@ evas_event_feed_multi_move(Evas *e,
                     ev.cur.canvas.xsub = ev.cur.canvas.x; // fixme - lost precision
                   if (y != ev.cur.canvas.y)
                     ev.cur.canvas.ysub = ev.cur.canvas.y; // fixme - lost precision
-                  if (e->events_frozen <= 0)
                     evas_object_event_callback_call(obj, EVAS_CALLBACK_MULTI_MOVE, &ev);
                }
              if (e->delete_me) break;
@@ -1146,15 +1145,16 @@ evas_event_feed_multi_move(Evas *e,
              /* in list */
              // FIXME: i don't think we need this
              //	     evas_object_clip_recalc(obj);
-             if (evas_object_is_in_output_rect(obj, x, y, 1, 1) &&
-                 ((evas_object_clippers_is_visible(obj)) ||
-                     (obj->mouse_grabbed)) &&
-                 (eina_list_data_find(ins, obj)) &&
+             if ((e->events_frozen <= 0) &&
+                 evas_object_is_in_output_rect(obj, x, y, 1, 1) &&
+                 (evas_object_clippers_is_visible(obj) ||
+                  obj->mouse_grabbed) &&
+                 eina_list_data_find(ins, obj) &&
                  (!evas_event_passes_through(obj)) &&
                  (!evas_event_freezes_through(obj)) &&
                  (!obj->clip.clipees) &&
-                 ((!obj->precise_is_inside) ||
-                  (evas_object_is_inside(obj, x, y))))
+                 ((!obj->precise_is_inside) || evas_object_is_inside(obj, x, y))
+                )
                {
                   ev.cur.canvas.x = x;
                   ev.cur.canvas.y = y;
@@ -1165,7 +1165,6 @@ evas_event_feed_multi_move(Evas *e,
                     ev.cur.canvas.xsub = ev.cur.canvas.x; // fixme - lost precision
                   if (y != ev.cur.canvas.y)
                     ev.cur.canvas.ysub = ev.cur.canvas.y; // fixme - lost precision
-                  if (e->events_frozen <= 0)
                     evas_object_event_callback_call(obj, EVAS_CALLBACK_MULTI_MOVE, &ev);
                }
              if (e->delete_me) break;
