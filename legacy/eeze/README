@@ -16,10 +16,13 @@ Must:
   ecore (at least 1.0.0)
   libudev
 
-Eeze is a library for manipulating devices through udev with a simple and fast
-api. It interfaces directly with libudev, avoiding such middleman daemons as
-udisks/upower or hal, to immediately gather device information the instant it
-becomes known to the system.  This can be used to determine such things as:
+Suggested:
+  libmount
+
+Eeze is a library for manipulating devices with an extremely simple api.
+It interfaces directly with device subsystems, avoiding such middleman daemons as
+udisks/upower or hal to immediately gather device information the instant it
+becomes known to the OS.  This can be used to determine such things as:
   * If a cdrom has a disk inserted
   * The temperature of a cpu core
   * The remaining power left in a battery
@@ -30,6 +33,9 @@ Each of the above examples can be performed by using only a single eeze
 function, as one of the primary focuses of the library is to reduce the
 complexity of managing devices.
 
+Eeze 1.1 adds more detailed disk detection as well as filesystem mount point manipulation.
+Using a combination of udev and mount, it is possible to easily write disk-based mount services
+which do not rely on any external processes or libraries aside from Eeze.
 ------------------------------------------------------------------------------
 COMPILING AND INSTALLING:
 
