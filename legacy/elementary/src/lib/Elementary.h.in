@@ -18074,7 +18074,7 @@ extern "C" {
     * item before another item and elm_genlist_item_insert_after() inserts after
     * the indicated item.
     *
-    * The application can clear the list with elm_genlist_clear() which deletes
+    * The application can clear the list with elm_gen_clear() which deletes
     * all the items in the list and elm_genlist_item_del() will delete a specific
     * item. elm_genlist_item_subitems_clear() will clear all items that are
     * children of the indicated parent item.
@@ -18101,7 +18101,7 @@ extern "C" {
     *
     * @section Genlist_Usage_Hints Usage hints
     *
-    * There are also convenience functions. elm_genlist_item_genlist_get() will
+    * There are also convenience functions. elm_gen_item_genlist_get() will
     * return the genlist object the item belongs to. elm_genlist_item_show()
     * will make the scroller scroll to show that specific item so its visible.
     * elm_genlist_item_data_get() returns the data pointer set by the item
@@ -18132,7 +18132,7 @@ extern "C" {
     *
     * Items will only call their selection func and callback when first becoming
     * selected. Any further clicks will do nothing, unless you enable always
-    * select with elm_genlist_always_select_mode_set(). This means even if
+    * select with elm_gen_always_select_mode_set(). This means even if
     * selected, every click will make the selected callbacks be called.
     * elm_genlist_no_select_mode_set() will turn off the ability to select
     * items entirely and they will neither appear selected nor call selected
@@ -18331,7 +18331,7 @@ extern "C" {
     *
     * @see elm_genlist_item_append()
     * @see elm_genlist_item_del()
-    * @see elm_genlist_clear()
+    * @see elm_gen_clear()
     *
     * @ingroup Genlist
     */
@@ -18343,6 +18343,8 @@ extern "C" {
     *
     * This removes (and deletes) all items in @p obj, leaving it empty.
     *
+    * This is deprecated. Please use elm_gen_clear() instead.
+    * 
     * @see elm_genlist_item_del(), to remove just one item.
     *
     * @ingroup Genlist
@@ -18418,9 +18420,11 @@ extern "C" {
     *
     * Items will only call their selection func and callback when first
     * becoming selected. Any further clicks will do nothing, unless you
-    * enable always select with elm_genlist_always_select_mode_set().
+    * enable always select with elm_gen_always_select_mode_set().
     * This means that, even if selected, every click will make the selected
     * callbacks be called.
+    * 
+    * This function is deprecated. please see elm_gen_always_select_mode_set()
     *
     * @see elm_genlist_always_select_mode_get()
     *
@@ -18963,6 +18967,8 @@ extern "C" {
     *
     * This returns the genlist object itself that an item belongs to.
     *
+    * This function is deprecated. Please use elm_gen_item_widget_get()
+    * 
     * @ingroup Genlist
     */
    EINA_DEPRECATED EAPI Evas_Object       *elm_genlist_item_genlist_get(const Elm_Genlist_Item *item) EINA_ARG_NONNULL(1);
