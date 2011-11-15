@@ -93,4 +93,4 @@ g_layer/long_tap_5.png \
 g_layer/tap_4.png
 
 
-EXTRA_DIST = $(files_DATA)
+EXTRA_DIST = $(files_DATA) $(files_glayer_DATA)
