@@ -1,4 +1,4 @@
-Edje 1.0.0 BETA
+Edje 1.1.0
 
 ******************************************************************************
 
@@ -13,17 +13,18 @@ Requirements:
 Must:
   libc
   libm 
-  eet (at least 1.4.0) 
-  ecore (at least 1.0.0)
-  ecore-evas (at least 1.0.0)
-  ecore-file (at least 1.0.0)
-  embryo (at least 1.0.0)
-  evas (at least 1.0.0)
-For audio support:
+  eet (at least 1.5.0) 
+  ecore (at least 1.1.0)
+  ecore-evas (at least 1.1.0)
+  ecore-file (at least 1.1.0)
+  embryo (at least 1.1.0)
+  evas (at least 1.1.0)
+For audio support (disabled - you have to patch to enable):
   remix - https://github.com/kfish/remix
   libsndfile (at least 1.0.22)
   libvorbis
   libogg
+  libflac
   libasound (alsa)
 
 Edje is a graphical layout and animation library for animated resizable,
@@ -40,5 +41,3 @@ COMPILING AND INSTALLING:
   make
 (as root unless you are installing in your users directories):
   make install
-      
-      
