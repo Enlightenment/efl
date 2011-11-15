@@ -270,6 +270,15 @@ my_pager_push(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED
 }
 
 void
+_hide_finished(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+{
+   //To prevent the window size become zero. 
+   Pginfo *info = data;
+   if (elm_pager_content_top_get(info->pager)) return;
+   elm_win_resize_object_del(info->win, info->pager);
+}
+
+void
 test_pager_slide(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    Evas_Object *win, *bg, *pg, *bx, *lb, *bt;
@@ -288,7 +297,8 @@ test_pager_slide(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event
 
    pg = elm_pager_add(win);
    elm_win_resize_object_add(win, pg);
-   evas_object_smart_callback_add(pg, "hide,finished", _hide_finished, info);
+   evas_object_smart_callback_add(pg, "hide,finished",
+                                  _hide_finished, &info);
    elm_object_style_set(pg, "slide");
    evas_object_show(pg);
    info.pager = pg;
