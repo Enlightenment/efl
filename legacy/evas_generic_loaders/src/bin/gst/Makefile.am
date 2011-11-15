@@ -16,7 +16,7 @@ bin_PROGRAMS = evas_image_loader.gst
 bindir = $(libdir)/evas/utils
 
 evas_image_loader_gst_SOURCES = \
-main.cpp \
+main.c \
 $(top_srcdir)/src/bin/common/shmfile.c
 evas_image_loader_gst_CFLAGS =
 evas_image_loader_gst_LDADD = @GSTREAMER_LIBS@ @EINA_LIBS@ @SHM_OPEN_LIBS@
