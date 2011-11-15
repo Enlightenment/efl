@@ -1,5 +1,34 @@
-Additional "generic" loaders for Evas that are stand-alone executables
-evas may run from its generic loader module.
+Evas generic loaders 1.0.0
+
+******************************************************************************
+
+ FOR ANY ISSUES PLEASE EMAIL:
+ enlightenment-devel@lists.sourceforge.net
+  
+******************************************************************************
+  
+Requirements:
+-------------
+
+Must:
+  libc
+  libm
+  zlib
+
+Recommended:
+  gstreamer
+  poppler
+  libraw
+  libspecter
+
+
+These are additional "generic" loaders for Evas that are stand-alone
+executables that evas may run from its generic loader module. This
+means that if they crash, the application loading the image does not
+crash also. In addition the licensing of these binaries will not
+affect the license of any application that uses Evas as this uses a
+completely generic execution system that allows anything to be plugged
+in as a loader.
 
 Generic loaders currently provided:
 
@@ -18,7 +47,7 @@ Generic loaders currently provided:
   MPG/AVI/OGV/MOV/MKV/WMV etc. (using Gstreamer)
     Should we add libxine and vlc ?
 
-Possible fun ones:
+Possible fun ones in future:
 
   DVI (using DVIlib, see edvi)
 
@@ -28,3 +57,15 @@ Possible fun ones:
     (beats me how u can render a page from these without a whole
      office impl - but worth a try? libopenoffice/libllibreoffice if
      it ever happens?)
+
+------------------------------------------------------------------------------
+COMPILING AND INSTALLING:
+
+  ./configure
+  make
+(as root unless you are installing in your users directories):
+  make install
+
+NOTE:
+  you should put generic loaders in the same prefix as Evas or they
+will not be found.
