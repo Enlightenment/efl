@@ -8067,10 +8067,36 @@ extern "C" {
    typedef struct _Elm_Gengrid_Item Elm_Gengrid_Item; /**< Gengrid item handles */
    #define Elm_Gengrid_Item Elm_Gen_Item /**< Item of Elm_Genlist. Sub-type of Elm_Widget_Item */
    typedef struct _Elm_Gengrid_Item_Class_Func Elm_Gengrid_Item_Class_Func; /**< Class functions for gengrid item classes. */
-   typedef char        *(*Elm_Gengrid_Item_Label_Get_Cb) (void *data, Evas_Object *obj, const char *part); /**< Label fetching class function for gengrid item classes. */
-   typedef Evas_Object *(*Elm_Gengrid_Item_Content_Get_Cb)  (void *data, Evas_Object *obj, const char *part); /**< Content (swallowed object) fetching class function for gengrid item classes. */
-   typedef Eina_Bool    (*Elm_Gengrid_Item_State_Get_Cb) (void *data, Evas_Object *obj, const char *part); /**< State fetching class function for gengrid item classes. */
-   typedef void         (*Elm_Gengrid_Item_Del_Cb)      (void *data, Evas_Object *obj); /**< Deletion class function for gengrid item classes. */
+   /**
+    * Label fetching class function for Elm_Gen_Item_Class.
+    * @param data The data passed in the item creation function
+    * @param obj The base widget object
+    * @param part The part name of the swallow
+    * @return The allocated (NOT stringshared) string to set as the label
+    */
+   typedef char        *(*Elm_Gengrid_Item_Label_Get_Cb) (void *data, Evas_Object *obj, const char *part);
+   /**
+    * Content (swallowed object) fetching class function for Elm_Gen_Item_Class.
+    * @param data The data passed in the item creation function
+    * @param obj The base widget object
+    * @param part The part name of the swallow
+    * @return The content object to swallow
+    */
+   typedef Evas_Object *(*Elm_Gengrid_Item_Content_Get_Cb)  (void *data, Evas_Object *obj, const char *part);
+   /**
+    * State fetching class function for Elm_Gen_Item_Class.
+    * @param data The data passed in the item creation function
+    * @param obj The base widget object
+    * @param part The part name of the swallow
+    * @return The hell if I know
+    */
+   typedef Eina_Bool    (*Elm_Gengrid_Item_State_Get_Cb) (void *data, Evas_Object *obj, const char *part);
+   /**
+    * Deletion class function for Elm_Gen_Item_Class.
+    * @param data The data passed in the item creation function
+    * @param obj The base widget object
+    */
+   typedef void         (*Elm_Gengrid_Item_Del_Cb)      (void *data, Evas_Object *obj);
 
    /**
     * @struct _Elm_Gengrid_Item_Class
@@ -18293,10 +18319,36 @@ extern "C" {
    typedef struct _Elm_Genlist_Item       Elm_Genlist_Item; /**< Item of Elm_Genlist. Sub-type of Elm_Widget_Item */
    #define Elm_Genlist_Item Elm_Gen_Item /**< Item of Elm_Genlist. Sub-type of Elm_Widget_Item */
    typedef struct _Elm_Genlist_Item_Class_Func Elm_Genlist_Item_Class_Func; /**< Class functions for genlist item class */
-   typedef char        *(*Elm_Genlist_Item_Label_Get_Cb) (void *data, Evas_Object *obj, const char *part); /**< Label fetching class function for genlist item classes. */
-   typedef Evas_Object *(*Elm_Genlist_Item_Content_Get_Cb)  (void *data, Evas_Object *obj, const char *part); /**< Content (swallowed object) fetching class function for genlist item classes. */
-   typedef Eina_Bool    (*Elm_Genlist_Item_State_Get_Cb) (void *data, Evas_Object *obj, const char *part); /**< State fetching class function for genlist item classes. */
-   typedef void         (*Elm_Genlist_Item_Del_Cb)      (void *data, Evas_Object *obj); /**< Deletion class function for genlist item classes. */
+   /**
+    * Label fetching class function for Elm_Gen_Item_Class.
+    * @param data The data passed in the item creation function
+    * @param obj The base widget object
+    * @param part The part name of the swallow
+    * @return The allocated (NOT stringshared) string to set as the label
+    */
+   typedef char        *(*Elm_Genlist_Item_Label_Get_Cb) (void *data, Evas_Object *obj, const char *part);
+   /**
+    * Content (swallowed object) fetching class function for Elm_Gen_Item_Class.
+    * @param data The data passed in the item creation function
+    * @param obj The base widget object
+    * @param part The part name of the swallow
+    * @return The content object to swallow
+    */
+   typedef Evas_Object *(*Elm_Genlist_Item_Content_Get_Cb)  (void *data, Evas_Object *obj, const char *part);
+   /**
+    * State fetching class function for Elm_Gen_Item_Class.
+    * @param data The data passed in the item creation function
+    * @param obj The base widget object
+    * @param part The part name of the swallow
+    * @return The hell if I know
+    */
+   typedef Eina_Bool    (*Elm_Genlist_Item_State_Get_Cb) (void *data, Evas_Object *obj, const char *part);
+   /**
+    * Deletion class function for Elm_Gen_Item_Class.
+    * @param data The data passed in the item creation function
+    * @param obj The base widget object
+    */
+   typedef void         (*Elm_Genlist_Item_Del_Cb)      (void *data, Evas_Object *obj);
 
    /**
     * @struct _Elm_Genlist_Item_Class
