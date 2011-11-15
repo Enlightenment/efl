@@ -142,3 +142,8 @@
 	* Add eina_xattr_ls, eina_xattr_get, eina_xattr_set, eina_xattr_string_set,
 	eina_xattr_string_get, eina_xattr_double_set, eina_xattr_double_get,
 	eina_xattr_int_set, eina_xattr_int_get.
+
+2011-11-10  Boris Faure (billiob)
+
+	* Add new hash function eina_hash_murmur3 that should be better at
+	hashing strings.
