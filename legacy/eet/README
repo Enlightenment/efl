@@ -1,4 +1,4 @@
-Eet
+Eet 1.1.0
 
 ******************************************************************************
 
@@ -14,7 +14,7 @@ Must have:
   libm
   zlib
   libjpeg
-  eina (1.0.0 or better) 
+  eina (1.1.0 or better) 
   (For windows you also need: evil)
 
 Optional requirements:
