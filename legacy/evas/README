@@ -1,4 +1,4 @@
-Evas
+Evas 1.1.0
 
 ******************************************************************************
 
@@ -13,20 +13,22 @@ Requirements:
 Must:
   libc
   libm
-  eina (1.0.0 or better)
+  eina (1.1.0 or better)
   freetype (2.1.9 or better)
 
 Recommended:
-  libX11
-  libXext
+  libX11 + libXext + libXrender
+  OpenGL2.0 or OpenGL-ES 2.0
   fontconfig
   libpng
-  libjpeg
-  eet (1.4.0 or better)
-  libpthread
+  libjpeg (6.0 or better)
+  eet (1.5.0 or better)
+  firbidi
+  harfbuzz
+  liblinebreak
 
 Optional:
-  XCB SDL OpenGL librsvg libtiff libgif edb DirectFB
+  XCB SDL OpenGL librsvg libtiff libgif edb DirectFB evas_generic_loaders
 
 Evas is a clean display canvas API for several target display systems
 that can draw anti-aliased text, smooth super and sub-sampled scaled
@@ -70,10 +72,10 @@ optimizing as much as possible. At least use -O2 or equivalents.
 Notes:
   the small dither mask is faster on the ipaq, but is not as good looking. on
   desktop machines it makes no speed difference so only use
-  --enable-small-dither-mask if you are compiling for the ipaq
+  --enable-small-dither-mask if you really need the speed for low depth
   you need at least 1 image loader if you want to load images.
   gcc 3.0.x on solaris screws up the jpeg code so erroring out doesn't work.
-    use gcc 3.2 on solaris.
+  use gcc 3.2 on solaris.
 
 notes on features (--enable-FEATURE enables it and --disable-FEATURE
 disables it, some being enabled or disabled by default or if
@@ -827,6 +829,15 @@ this enables support for the fribidi library to have right to left and
 left to right font rendering so languges such as arabic, hebrew and
 other "RTL" langauges display properly.
 
+
+--enable-harfbuzz
+
+this enables support for the harfbuzz shaping library for complex
+shaping support in arabic, hindi and other similar languages.
+
+--enable-liblinebreak
+
+this enables support of complex line breaking rules using liblinebreak.
 
 --enable-evas-magic-debug
 
