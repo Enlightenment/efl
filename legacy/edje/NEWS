@@ -26,7 +26,7 @@ Additions:
     * group inheritance and part re-ordering with inheritance
     * add change information to "entry,changed,user"
     * add "CURRENT" option for transitions to transition from current state
-    * lua color/text class, text, image and edje object API's
+    * lua color/text class, map, text, image, line, polygon and edje object API's
 
 Fixes:
 
