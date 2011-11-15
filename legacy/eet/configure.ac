@@ -410,7 +410,13 @@ case "$host_os" in
 esac
 AC_SUBST(lt_enable_auto_import)
 
-EFL_LINKER_FLAG([-Wl,--as-needed])
+case "${host_os}" in
+   openbsd*)
+      ;;
+   *)
+      EFL_LINKER_FLAG([-Wl,--as-needed])
+      ;;
+esac
 
 ### Checks for library functions
 AC_ISC_POSIX
