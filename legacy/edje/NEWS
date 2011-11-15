@@ -5,16 +5,51 @@ Changes since Edje 1.0.0:
 
 Additions:
 
-    * 
+    * "UNDER" entry cursor mode
+    * auto alignment of TEXT parts with text.alignment set to -1
+    * mirroring support
+    * edje_object_part_text_cursor_pos_set/get()
+    * size_range propert to TEXT parts
+    * proxy parts so part can source other parts including swallows
+    * suport explicit shadow direction with added effect param
+    * edje_object_part_text_append()
+    * new interpolations: ACCEL_FAC, DECEL_FAC, SIN_FAC, DIVIS, BOUNCE, SPRING
+    * "entry,paste,request,1" signal (primary)
+    * "entry,paste,request,3" signal (clipboard)
+    * "entry,selection,all,request" signal
+    * "entry,selection,none,request" signal
+    * "entry,paste,request*" signals afte cursor change
+    * "entry,changed,user" signal
+    * collection.group.limits.horizontal/vertical
+    * input panel layout setting API's
+    * edje_object_signal_callback_extra_data_get()
+    * group inheritance and part re-ordering with inheritance
+    * add change information to "entry,changed,user"
+    * add "CURRENT" option for transitions to transition from current state
+    * lua color/text class, text, image and edje object API's
 
 Fixes:
 
-    * 
+    * invalid memory access in edje alias code
+    * recusive aliases fixed
+    * cursor didn't change on backspace signal
+    * propagation of recursive events on existing part
+    * box/table signal not including name correctly
+    * clicked signal on entry
+    * propagation of recursive events between existing and non-existing parts
+    * textblock handling in size_min_restricted_calc fixed
+    * stop emitting "cursor,changed" on text set
+    * external usage in sub groups now have proper parents
+    * ellipsis fixed with small text parts
+    * edje_shutdown() fixed if called before all edje objects are gone
+    * allow -1 for description.max
 
 Improvements:
 
-    * 
-
-Removals:
-
-    * 
+    * built-in epp (from e16) to replace cpp/gcc pre-processor on all platforms
+    * edje_decc only uses edje_cc as compiler for security paranoia
+    * use smart clipper more from evas
+    * text.align now works for textblock too
+    * creation/deletion of edje objects should be faster with freeze and thaws
+    * don't walk eina_list when deleting member classes - faster
+    * part.description.max now can define just 1 axis
