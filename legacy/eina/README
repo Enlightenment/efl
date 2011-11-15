@@ -1,4 +1,4 @@
-Eina 1.0.0 BETA
+Eina 1.1.0
 
 ******************************************************************************
 
@@ -10,9 +10,8 @@ Eina 1.0.0 BETA
 Requirements:
 -------------
 Must have:
- libc
+ libc (pthread or windows threading support, iconv support)
  libm
- (For windows you also need: evil)
 
 Eina is a library providing data structure utilities for EFL that are meant
 to be lean, efficient and tailored to EFL's needs. This saves each
