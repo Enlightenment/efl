@@ -1,12 +1,12 @@
 ##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##
 ##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##
 m4_define([v_maj], [1])
-m4_define([v_min], [0])
-m4_define([v_mic], [999])
+m4_define([v_min], [1])
+m4_define([v_mic], [0])
 m4_define([v_rev], m4_esyscmd([(svnversion "${SVN_REPO_PATH:-.}" | grep -v export || echo 0) | awk -F : '{printf("%s\n", $1);}' | tr -d ' :MSP\n']))
 m4_if(v_rev, [0], [m4_define([v_rev], m4_esyscmd([git log 2> /dev/null | (grep -m1 git-svn-id || echo 0) | sed -e 's/.*@\([0-9]*\).*/\1/' | tr -d '\n']))])
 ##--   When released, remove the dnl on the below line
-dnl m4_undefine([v_rev])
+m4_undefine([v_rev])
 ##--   When doing snapshots - change soname. remove dnl on below line
 dnl m4_define([relname], [ver-pre-svn-07])
 dnl m4_define([v_rel], [-release relname])
@@ -243,7 +243,7 @@ esac
 ## strong dependencies
 
 # Eina
-PKG_CHECK_MODULES([EINA], [eina >= 1.0.999])
+PKG_CHECK_MODULES([EINA], [eina >= 1.1.0])
 CPPFLAGS_SAVE="$CPPFLAGS"
 CPPFLAGS="$CPPFLAGS $EINA_CFLAGS"
 AC_CHECK_SIZEOF(Eina_Unicode,, [#include <Eina.h>])
@@ -252,7 +252,7 @@ CPPFLAGS="$CPPFLAGS_SAVE"
 # Freetype
 PKG_CHECK_MODULES([FREETYPE], [freetype2 >= 9.3.0])
 
-requirement_evas="freetype2 eina >= 1.0.0 ${requirement_evas}"
+requirement_evas="freetype2 eina >= 1.1.0 ${requirement_evas}"
 
 ## optional dependencies
 

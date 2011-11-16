@@ -1,12 +1,12 @@
 ##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##
 ##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##
 m4_define([v_maj], [1])
-m4_define([v_min], [0])
-m4_define([v_mic], [999])
+m4_define([v_min], [1])
+m4_define([v_mic], [0])
 m4_define([v_rev], m4_esyscmd([(svnversion "${SVN_REPO_PATH:-.}" | grep -v export || echo 0) | awk -F : '{printf("%s\n", $1);}' | tr -d ' :MSP\n']))
 m4_if(v_rev, [0], [m4_define([v_rev], m4_esyscmd([git log 2> /dev/null | (grep -m1 git-svn-id || echo 0) | sed -e 's/.*@\([0-9]*\).*/\1/' | tr -d '\n']))])
 ##--   When released, remove the dnl on the below line
-dnl m4_undefine([v_rev])
+m4_undefine([v_rev])
 ##--   When doing snapshots - change soname. remove dnl on below line
 dnl m4_define([relname], [ver-pre-svn-07])
 dnl m4_define([v_rel], [-release relname])
@@ -256,37 +256,37 @@ fi
 
 PKG_CHECK_MODULES([MINIMAL],
    [
-    eina >= 1.0.0
-    eet >= 1.4.0
+    eina >= 1.1.0
+    eet >= 1.5.0
    ])
 
 PKG_CHECK_MODULES([EDJE],
    [
-    eina >= 1.0.0
-    eet >= 1.4.0
-    evas >= 1.0.999
-    ecore >= 1.0.0
-    ecore-evas >= 1.0.0
-    ecore-file >= 1.0.0
-    embryo >= 1.0.0
+    eina >= 1.1.0
+    eet >= 1.5.0
+    evas >= 1.1.0
+    ecore >= 1.1.0
+    ecore-evas >= 1.1.0
+    ecore-file >= 1.1.0
+    embryo >= 1.1.0
    ])
 
 EDJE_LIBS="${EDJE_LIBS} ${LUA_LIBS} ${lua_libs}"
 EDJE_CFLAGS="${EDJE_CFLAGS} ${LUA_CFLAGS}"
 
-requirement_edje="embryo >= 1.0.0 ecore-evas >= 1.0.0 ecore >= 1.0.0 evas >= 1.0.0 eet >= 1.4.0 eina >= 1.0.0 ${requirement_edje}"
+requirement_edje="embryo >= 1.1.0 ecore-evas >= 1.1.0 ecore >= 1.1.0 evas >= 1.1.0 eet >= 1.5.0 eina >= 1.1.0 ${requirement_edje}"
 requirement_edje="${requirement_lua} ${requirement_edje}"
 
 have_ecore_imf="no"
 PKG_CHECK_MODULES([ECORE_IMF],
    [
-    ecore-imf >= 1.0.0
-    ecore-imf-evas >= 1.0.0
+    ecore-imf >= 1.1.0
+    ecore-imf-evas >= 1.1.0
    ],
    [
     AC_DEFINE([HAVE_ECORE_IMF], [1], [Input Method Support for Edje Entry])
     have_ecore_imf="yes"
-    requirement_edje="ecore-imf-evas >= 1.0.0 ecore-imf >= 1.0.0 ${requirement_edje}"
+    requirement_edje="ecore-imf-evas >= 1.1.0 ecore-imf >= 1.1.0 ${requirement_edje}"
    ],
    [have_ecore_imf="no"])
 
@@ -391,12 +391,12 @@ AC_ARG_ENABLE([flac],
 if test "x${want_multisense}" = "xyes" -a "x$want_alsa_lib" != "xno"; then
    PKG_CHECK_MODULES([ALSA],
       [
-       alsa >= 1.0.21a
+       alsa >= 1.0.21
       ],
       [
        AC_DEFINE(HAVE_LIBALSA, 1, [ALSA support for Edje])
        have_alsa_lib="yes"
-       requirement_edje="alsa >= 1.0.21a ${requirement_edje}"
+       requirement_edje="alsa >= 1.0.21 ${requirement_edje}"
       ],
       [have_alsa_lib="no"; want_multisense="no"]
    )
@@ -443,26 +443,26 @@ fi
 # Dependencies for the binaries
 
 if test "x$have_edje_cc" = "xyes"; then
-   PKG_CHECK_MODULES([EDJE_CC], [ecore-file >= 1.0.0 ecore-evas >= 1.0.0 ecore >= 1.0.0 evas >= 1.0.0 eet >= 1.0.0 eina >= 1.0.0])
+   PKG_CHECK_MODULES([EDJE_CC], [ecore-file >= 1.1.0 ecore-evas >= 1.1.0 ecore >= 1.1.0 evas >= 1.1.0 eet >= 1.5.0 eina >= 1.1.0])
    EDJE_CC_LIBS="${EDJE_CC_LIBS} ${LUA_LIBS} ${lua_libs}"
 fi
 
 AM_CONDITIONAL([BUILD_EPP], [test "x$have_edje_cc" = "xyes"])
 
 if test "x$have_edje_decc" = "xyes"; then
-   PKG_CHECK_MODULES([EDJE_DECC], [ecore-file >= 1.0.0 ecore-evas >= 1.0.0 ecore >= 1.0.0 evas >= 1.0.0 eet >= 1.0.0 eina >= 1.0.0])
+   PKG_CHECK_MODULES([EDJE_DECC], [ecore-file >= 1.1.0 ecore-evas >= 1.1.0 ecore >= 1.1.0 evas >= 1.1.0 eet >= 1.5.0 eina >= 1.1.0])
 fi
 
 if test "x$have_edje_player" = "xyes"; then
-   PKG_CHECK_MODULES([EDJE_PLAYER], [ecore-evas >= 1.0.0 ecore >= 1.0.0 evas >= 1.0.0 eina >= 1.0.0])
+   PKG_CHECK_MODULES([EDJE_PLAYER], [ecore-evas >= 1.1.0 ecore >= 1.1.0 evas >= 1.1.0 eina >= 1.1.0])
 fi
 
 if test "x$have_edje_inspector" = "xyes"; then
-   PKG_CHECK_MODULES([EDJE_INSPECTOR], [ecore-evas >= 1.0.0 ecore >= 1.0.0 evas >= 1.0.0 eina >= 1.0.0])
+   PKG_CHECK_MODULES([EDJE_INSPECTOR], [ecore-evas >= 1.1.0 ecore >= 1.1.0 evas >= 1.1.0 eina >= 1.1.0])
 fi
 
 if test "x$have_edje_external_inspector" = "xyes"; then
-   PKG_CHECK_MODULES([EDJE_EXTERNAL_INSPECTOR], [ecore >= 1.0.0 evas >= 1.0.0 eina >= 1.0.0])
+   PKG_CHECK_MODULES([EDJE_EXTERNAL_INSPECTOR], [ecore >= 1.1.0 evas >= 1.1.0 eina >= 1.1.0])
 fi
 
 

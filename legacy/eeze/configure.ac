@@ -1,12 +1,12 @@
 ##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##
 ##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##
 m4_define([v_maj], [1])
-m4_define([v_min], [0])
-m4_define([v_mic], [999])
+m4_define([v_min], [1])
+m4_define([v_mic], [0])
 m4_define([v_rev], m4_esyscmd([(svnversion "${SVN_REPO_PATH:-.}" | grep -v export || echo 0) | awk -F : '{printf("%s\n", $1);}' | tr -d ' :MSP\n']))
 m4_if(v_rev, [0], [m4_define([v_rev], m4_esyscmd([git log 2> /dev/null | (grep -m1 git-svn-id || echo 0) | sed -e 's/.*@\([0-9]*\).*/\1/' | tr -d '\n']))])
 ##--   When released, remove the dnl on the below line
-dnl m4_undefine([v_rev])
+m4_undefine([v_rev])
 ##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##
 m4_ifdef([v_rev], [m4_define([v_ver], [v_maj.v_min.v_mic.v_rev])], [m4_define([v_ver], [v_maj.v_min.v_mic])])
 m4_define([lt_cur], m4_eval(v_maj + v_min))
@@ -58,7 +58,7 @@ AC_SUBST(VMAJ)
 AC_CANONICAL_BUILD
 AC_CANONICAL_HOST
 
-requirement_eeze="ecore >= 1.0.0 eina >= 1.0.0 libudev"
+requirement_eeze="ecore >= 1.1.0 eina >= 1.1.0 libudev"
 
 
 ### Checks for programs
@@ -114,9 +114,9 @@ if test "x$eeze_mount" = "xyes";then
   AC_ARG_WITH([eject], AS_HELP_STRING([--with-eject], [specify eject bin @<:@default=detect@:>@]))
   PKG_CHECK_MODULES([LIBMOUNT], [mount >= 2.18.0])
   mount_v=$(pkg-config --modversion mount)
-  PKG_CHECK_MODULES([ECORE_FILE], [ecore-file >= 1.0.0])
-  PKG_CHECK_MODULES([EET], [eet >= 1.4.0])
-  PKG_CHECK_MODULES([ECORE_CON], [ecore-con >= 1.0.0])
+  PKG_CHECK_MODULES([ECORE_FILE], [ecore-file >= 1.1.0])
+  PKG_CHECK_MODULES([EET], [eet >= 1.5.0])
+  PKG_CHECK_MODULES([ECORE_CON], [ecore-con >= 1.1.0])
 
   if test "x$with_mount" = "xdetect";then
     AC_PATH_PROG([with_mount], [mount], [no])
