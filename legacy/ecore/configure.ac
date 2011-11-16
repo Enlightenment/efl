@@ -433,8 +433,8 @@ fi
 # Evil library for compilation on Windows
 
 case "$host_os" in
-   mingw* | cegcc*)
-      PKG_CHECK_MODULES([EVIL], [evil])
+   mingw*)
+      PKG_CHECK_MODULES([EVIL], [evil >= 1.0.0])
       AC_DEFINE(HAVE_EVIL, 1, [Set to 1 if Evil library is installed])
       requirements_ecore="evil ${requirements_ecore}"
       requirements_ecore_evas="evil ${requirements_ecore_evas}"
