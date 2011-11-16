@@ -38,7 +38,7 @@ _unsel_cb(void        *data,
           Evas_Object *obj __UNUSED__,
           void        *event_info __UNUSED__)
 {
-   Elm_Flipselector_Item *it;
+   Elm_Object_Item *it;
    Evas_Object *fp = data;
 
    it = elm_flipselector_selected_item_get(fp);
@@ -50,7 +50,7 @@ _del_cb(void        *data,
           Evas_Object *obj __UNUSED__,
           void        *event_info __UNUSED__)
 {
-   Elm_Flipselector_Item *it;
+   Elm_Object_Item *it;
    Evas_Object *fp = data;
 
    it = elm_flipselector_selected_item_get(fp);
@@ -111,36 +111,36 @@ _on_keydown(void              *data,
 
    if (strcmp(ev->keyname, "f") == 0) /* print first item's label */
      {
-         Elm_Flipselector_Item *it;
+         Elm_Object_Item *it;
 
          it = elm_flipselector_first_item_get(fs);
 
          fprintf(stdout, "Flip selector's first item is: %s\n", it ?
-                 elm_flipselector_item_label_get(it) : "none");
+                 elm_object_item_text_get(it) : "none");
 
         return;
      }
 
    if (strcmp(ev->keyname, "l") == 0) /* print last item's label */
      {
-         Elm_Flipselector_Item *it;
+         Elm_Object_Item *it;
 
          it = elm_flipselector_last_item_get(fs);
 
          fprintf(stdout, "Flip selector's last item is: %s\n", it ?
-                 elm_flipselector_item_label_get(it) : "none");
+                 elm_object_item_text_get(it) : "none");
 
         return;
      }
 
    if (strcmp(ev->keyname, "s") == 0) /* print selected item's label */
      {
-         Elm_Flipselector_Item *it;
+         Elm_Object_Item *it;
 
          it = elm_flipselector_selected_item_get(fs);
 
          fprintf(stdout, "Flip selector's selected item is: %s\n", it ?
-                 elm_flipselector_item_label_get(it) : "none");
+                 elm_object_item_text_get(it) : "none");
 
         return;
      }

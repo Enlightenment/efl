@@ -24839,6 +24839,10 @@ extern "C" {
     * Available styles for it:
     * - @c "default"
     *
+	 * To set/get the label of the flipselector item, you can use
+	 * elm_object_item_text_set/get APIs.
+	 * Once the text is set, a previously set one will be deleted.
+	 * 
     * Here is an example on its usage:
     * @li @ref flipselector_example
     */
@@ -24847,8 +24851,6 @@ extern "C" {
     * @addtogroup Flipselector
     * @{
     */
-
-   typedef struct _Elm_Flipselector_Item Elm_Flipselector_Item; /**< Item handle for a flip selector widget. */
 
    /**
     * Add a new flip selector widget to the given parent Elementary
@@ -24914,7 +24916,7 @@ extern "C" {
     *
     * @ingroup Flipselector
     */
-   EAPI Elm_Flipselector_Item     *elm_flipselector_item_append(Evas_Object *obj, const char *label, Evas_Smart_Cb func, void *data) EINA_ARG_NONNULL(1);
+   EAPI Elm_Object_Item     *elm_flipselector_item_append(Evas_Object *obj, const char *label, Evas_Smart_Cb func, void *data) EINA_ARG_NONNULL(1);
 
    /**
     * Prepend a (text) item to a flip selector widget
@@ -24940,19 +24942,19 @@ extern "C" {
     *
     * @ingroup Flipselector
     */
-   EAPI Elm_Flipselector_Item     *elm_flipselector_item_prepend(Evas_Object *obj, const char *label, Evas_Smart_Cb func, void *data) EINA_ARG_NONNULL(1);
+   EAPI Elm_Object_Item     *elm_flipselector_item_prepend(Evas_Object *obj, const char *label, Evas_Smart_Cb func, void *data) EINA_ARG_NONNULL(1);
 
    /**
     * Get the internal list of items in a given flip selector widget.
     *
     * @param obj The flipselector object
-    * @return The list of items (#Elm_Flipselector_Item as data) or
+    * @return The list of items (#Elm_Object_Item as data) or
     * @c NULL on errors.
     *
     * This list is @b not to be modified in any way and must not be
     * freed. Use the list members with functions like
-    * elm_flipselector_item_label_set(),
-    * elm_flipselector_item_label_get(),
+    * elm_object_item_text_set(),
+    * elm_object_item_text_get(),
     * elm_flipselector_item_del(),
     * elm_flipselector_item_selected_get(),
     * elm_flipselector_item_selected_set().
@@ -24978,7 +24980,7 @@ extern "C" {
     *
     * @ingroup Flipselector
     */
-   EAPI Elm_Flipselector_Item     *elm_flipselector_first_item_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
+   EAPI Elm_Object_Item     *elm_flipselector_first_item_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
 
    /**
     * Get the last item in the given flip selector widget's list of
@@ -24993,7 +24995,7 @@ extern "C" {
     *
     * @ingroup Flipselector
     */
-   EAPI Elm_Flipselector_Item     *elm_flipselector_last_item_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
+   EAPI Elm_Object_Item     *elm_flipselector_last_item_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
 
    /**
     * Get the currently selected item in a flip selector widget.
@@ -25004,13 +25006,13 @@ extern "C" {
     *
     * @ingroup Flipselector
     */
-   EAPI Elm_Flipselector_Item     *elm_flipselector_selected_item_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
+   EAPI Elm_Object_Item     *elm_flipselector_selected_item_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
 
    /**
     * Set whether a given flip selector widget's item should be the
     * currently selected one.
     *
-    * @param item The flip selector item
+    * @param it The flip selector item
     * @param selected @c EINA_TRUE to select it, @c EINA_FALSE to unselect.
     *
     * This sets whether @p item is or not the selected (thus, under
@@ -25023,13 +25025,13 @@ extern "C" {
     *
     * @ingroup Flipselector
     */
-   EAPI void                       elm_flipselector_item_selected_set(Elm_Flipselector_Item *item, Eina_Bool selected) EINA_ARG_NONNULL(1);
+   EAPI void                       elm_flipselector_item_selected_set(Elm_Object_Item *it, Eina_Bool selected) EINA_ARG_NONNULL(1);
 
    /**
     * Get whether a given flip selector widget's item is the currently
     * selected one.
     *
-    * @param item The flip selector item
+    * @param it The flip selector item
     * @return @c EINA_TRUE, if it's selected, @c EINA_FALSE otherwise
     * (or on errors).
     *
@@ -25037,46 +25039,48 @@ extern "C" {
     *
     * @ingroup Flipselector
     */
-   EAPI Eina_Bool                  elm_flipselector_item_selected_get(const Elm_Flipselector_Item *item) EINA_ARG_NONNULL(1);
+   EAPI Eina_Bool                  elm_flipselector_item_selected_get(const Elm_Object_Item *it) EINA_ARG_NONNULL(1);
 
    /**
     * Delete a given item from a flip selector widget.
     *
-    * @param item The item to delete
+    * @param it The item to delete
     *
     * @ingroup Flipselector
     */
-   EAPI void                       elm_flipselector_item_del(Elm_Flipselector_Item *item) EINA_ARG_NONNULL(1);
+   EAPI void                       elm_flipselector_item_del(Elm_Object_Item *it) EINA_ARG_NONNULL(1);
 
    /**
     * Get the label of a given flip selector widget's item.
     *
-    * @param item The item to get label from
+    * @param it The item to get label from
     * @return The text label of @p item or @c NULL, on errors
     *
-    * @see elm_flipselector_item_label_set()
+    * @see elm_object_item_text_set()
     *
+    * @deprecated see elm_object_item_text_get() instead
     * @ingroup Flipselector
     */
-   EAPI const char                *elm_flipselector_item_label_get(const Elm_Flipselector_Item *item) EINA_ARG_NONNULL(1);
+   EINA_DEPRECATED EAPI const char                *elm_flipselector_item_label_get(const Elm_Object_Item *it) EINA_ARG_NONNULL(1);
 
    /**
     * Set the label of a given flip selector widget's item.
     *
-    * @param item The item to set label on
+    * @param it The item to set label on
     * @param label The text label string, in UTF-8 encoding
     *
-    * @see elm_flipselector_item_label_get()
+    * @see elm_object_item_text_get()
     *
+	 * @deprecated see elm_object_item_text_set() instead
     * @ingroup Flipselector
     */
-   EAPI void                       elm_flipselector_item_label_set(Elm_Flipselector_Item *item, const char *label) EINA_ARG_NONNULL(1);
+   EINA_DEPRECATED EAPI void                       elm_flipselector_item_label_set(Elm_Object_Item *it, const char *label) EINA_ARG_NONNULL(1);
 
    /**
     * Gets the item before @p item in a flip selector widget's
     * internal list of items.
     *
-    * @param item The item to fetch previous from
+    * @param it The item to fetch previous from
     * @return The item before the @p item, in its parent's list. If
     *         there is no previous item for @p item or there's an
     *         error, @c NULL is returned.
@@ -25085,13 +25089,13 @@ extern "C" {
     *
     * @ingroup Flipselector
     */
-   EAPI Elm_Flipselector_Item     *elm_flipselector_item_prev_get(Elm_Flipselector_Item *item) EINA_ARG_NONNULL(1);
+   EAPI Elm_Object_Item     *elm_flipselector_item_prev_get(Elm_Object_Item *it) EINA_ARG_NONNULL(1);
 
    /**
     * Gets the item after @p item in a flip selector widget's
     * internal list of items.
     *
-    * @param item The item to fetch next from
+    * @param it The item to fetch next from
     * @return The item after the @p item, in its parent's list. If
     *         there is no next item for @p item or there's an
     *         error, @c NULL is returned.
@@ -25100,7 +25104,7 @@ extern "C" {
     *
     * @ingroup Flipselector
     */
-   EAPI Elm_Flipselector_Item     *elm_flipselector_item_next_get(Elm_Flipselector_Item *item) EINA_ARG_NONNULL(1);
+   EAPI Elm_Object_Item     *elm_flipselector_item_next_get(Elm_Object_Item *it) EINA_ARG_NONNULL(1);
 
    /**
     * Set the interval on time updates for an user mouse button hold

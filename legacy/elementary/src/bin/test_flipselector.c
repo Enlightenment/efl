@@ -7,16 +7,16 @@
 void
 _sel_cb(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info)
 {
-   Elm_Flipselector_Item *it;
+   Elm_Object_Item *it;
 
    it = event_info;
-   printf("label of selected item is: %s\n", elm_flipselector_item_label_get(it));
+   printf("label of selected item is: %s\n", elm_object_item_text_get(it));
 }
 
 void
 _unsel_cb(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
-   Elm_Flipselector_Item *it;
+   Elm_Object_Item *it;
    Evas_Object *fp = data;
    it = elm_flipselector_selected_item_get(fp);
    elm_flipselector_item_selected_set(it, EINA_FALSE);
@@ -25,7 +25,7 @@ _unsel_cb(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 void
 _third_cb(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
-   Elm_Flipselector_Item *it;
+   Elm_Object_Item *it;
    Evas_Object *fp = data;
    it = elm_flipselector_first_item_get(fp);
    it = elm_flipselector_item_next_get(it);
