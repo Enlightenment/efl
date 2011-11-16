@@ -243,7 +243,7 @@ EFL_CHECK_DOXYGEN([build_doc="yes"], [build_doc="no"])
 EFL_EET_BUILD=""
 case "$host_os" in
    mingw*)
-      PKG_CHECK_MODULES([EVIL], [evil])
+      PKG_CHECK_MODULES([EVIL], [evil >= 1.0.0])
       AC_DEFINE(HAVE_EVIL, 1, [Set to 1 if Evil library is installed])
       requirement_eet="evil ${requirement_eet}"
       EFL_EET_BUILD="-DEFL_EET_BUILD"
@@ -417,6 +417,7 @@ case "${host_os}" in
       EFL_LINKER_FLAG([-Wl,--as-needed])
       ;;
 esac
+
 
 ### Checks for library functions
 AC_ISC_POSIX
