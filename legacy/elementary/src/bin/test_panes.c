@@ -73,7 +73,7 @@ test_panes(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info 
    evas_object_size_hint_weight_set(bt, 1.0, 1.0);
    evas_object_size_hint_align_set(bt, -1.0, -1.0);
    evas_object_show(bt);
-   elm_object_content_part_set(panes, ELM_PANES_CONTENT_LEFT, bt);
+   elm_object_content_part_set(panes, "left", bt);
    //
 
    //
@@ -88,7 +88,7 @@ test_panes(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info 
 
    evas_object_smart_callback_add(panes_h, "press", _press, panes_h);
    evas_object_smart_callback_add(panes_h, "unpress", _unpress, panes_h);
-   elm_object_content_part_set(panes, ELM_PANES_CONTENT_RIGHT, panes_h);
+   elm_object_content_part_set(panes, "right", panes_h);
    //
 
    //
@@ -97,7 +97,7 @@ test_panes(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info 
    evas_object_size_hint_weight_set(bt, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(bt, EVAS_HINT_FILL, EVAS_HINT_FILL);
    evas_object_show(bt);
-   elm_object_content_part_set(panes_h, ELM_PANES_CONTENT_LEFT, bt);
+   elm_object_content_part_set(panes_h, "left", bt);
    //
 
    //
@@ -106,7 +106,7 @@ test_panes(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info 
    evas_object_size_hint_weight_set(bt, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(bt, EVAS_HINT_FILL, EVAS_HINT_FILL);
    evas_object_show(bt);
-   elm_object_content_part_set(panes_h, ELM_PANES_CONTENT_RIGHT, bt);
+   elm_object_content_part_set(panes_h, "right", bt);
    //
 
 

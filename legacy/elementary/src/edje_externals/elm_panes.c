@@ -27,10 +27,10 @@ static void external_panes_state_set(void *data __UNUSED__,
    else return;
 
    if (p->content_left)
-     elm_object_content_part_set(obj, ELM_PANES_CONTENT_LEFT, p->content_left);
+     elm_object_content_part_set(obj, "left", p->content_left);
 
    if (p->content_right)
-     elm_object_content_part_set(obj, ELM_PANES_CONTENT_RIGHT, p->content_right);
+     elm_object_content_part_set(obj, "right", p->content_right);
 
    if (p->is_left_size)
      elm_panes_content_left_size_set(obj, p->left_size);
@@ -51,7 +51,7 @@ static Eina_Bool external_panes_param_set(void *data __UNUSED__,
       Evas_Object *content = external_common_param_edje_object_get(obj, param);
       if ((strcmp(param->s, "")) && (!content))
          return EINA_FALSE;
-      elm_object_content_part_set(obj, ELM_PANES_CONTENT_LEFT, content);
+      elm_object_content_part_set(obj, "left", content);
       return EINA_TRUE;
    }
    else if ((!strcmp(param->name, "content right"))
@@ -60,7 +60,7 @@ static Eina_Bool external_panes_param_set(void *data __UNUSED__,
       Evas_Object *content = external_common_param_edje_object_get(obj, param);
       if ((strcmp(param->s, "")) && (!content))
         return EINA_FALSE;
-      elm_object_content_part_set(obj, ELM_PANES_CONTENT_RIGHT, content);
+      elm_object_content_part_set(obj, "right", content);
       return EINA_TRUE;
    }
    else if ((!strcmp(param->name, "horizontal"))
@@ -170,9 +170,9 @@ external_panes_content_get(void *data __UNUSED__, const Evas_Object *obj,
                            const char *content)
 {
    if (!strcmp(content, "left"))
-     return elm_object_content_part_get(obj, ELM_PANES_CONTENT_LEFT);
+     return elm_object_content_part_get(obj, "left");
    else if (!strcmp(content, "right"))
-     return elm_object_content_part_get(obj, ELM_PANES_CONTENT_RIGHT);
+     return elm_object_content_part_get(obj, "right");
 
    ERR("unknown content '%s'", content);
 

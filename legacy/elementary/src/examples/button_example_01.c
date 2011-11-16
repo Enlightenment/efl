@@ -24,7 +24,7 @@ static void
 _btn_cursors_release_cb(void *data, Evas_Object *btn __UNUSED__, void *ev __UNUSED__)
 {
    App_Data *app = data;
-   elm_object_content_set(app->mid, app->icon_still);
+   elm_object_content_part_set(app->mid, "icon", app->icon_still);
    app->icon_still = NULL;
 }
 
@@ -40,7 +40,7 @@ _btn_cursors_move_cb(void *data, Evas_Object *btn, void *ev __UNUSED__)
         app->icon_still = elm_object_content_unset(app->mid);
         icon = elm_icon_add(app->mid);
         elm_icon_standard_set(icon, "chat");
-        elm_object_content_set(app->mid, icon);
+        elm_object_content_part_set(app->mid, "icon", icon);
      }
 
    evas_object_size_hint_align_get(app->mid, &ax, &ay);
@@ -185,7 +185,7 @@ elm_main(int argc __UNUSED__, char *argv[] __UNUSED__)
 
    icon = elm_icon_add(win);
    elm_icon_standard_set(icon, "arrow_up");
-   elm_object_content_set(btn, icon);
+   elm_object_content_part_set(btn, "icon", icon);
 
    data.cursors.up = btn;
 
@@ -210,7 +210,7 @@ elm_main(int argc __UNUSED__, char *argv[] __UNUSED__)
 
    icon = elm_icon_add(win);
    elm_icon_standard_set(icon, "arrow_left");
-   elm_object_content_set(btn, icon);
+   elm_object_content_part_set(btn, "icon", icon);
 
    data.cursors.left = btn;
 
@@ -221,7 +221,7 @@ elm_main(int argc __UNUSED__, char *argv[] __UNUSED__)
 
    icon = elm_icon_add(win);
    elm_icon_standard_set(icon, "close");
-   elm_object_content_set(btn, icon);
+   elm_object_content_part_set(btn, "icon", icon);
 
    data.mid = btn;
 
@@ -239,7 +239,7 @@ elm_main(int argc __UNUSED__, char *argv[] __UNUSED__)
 
    icon = elm_icon_add(win);
    elm_icon_standard_set(icon, "arrow_right");
-   elm_object_content_set(btn, icon);
+   elm_object_content_part_set(btn, "icon", icon);
 
    data.cursors.right = btn;
 
@@ -257,7 +257,7 @@ elm_main(int argc __UNUSED__, char *argv[] __UNUSED__)
 
    icon = elm_icon_add(win);
    elm_icon_standard_set(icon, "arrow_down");
-   elm_object_content_set(btn, icon);
+   elm_object_content_part_set(btn, "icon", icon);
 
    data.cursors.down = btn;
 

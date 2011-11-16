@@ -39,6 +39,7 @@ struct _Elm_Naviframe_Item
    Evas_Object       *content;
    Evas_Object       *title_prev_btn;
    Evas_Object       *title_next_btn;
+   Evas_Object       *icon;
    const char        *style;
    Eina_Bool          back_btn: 1;
    Eina_Bool          title_visible: 1;
@@ -110,6 +111,10 @@ static void _title_next_btn_del(void *data,
                                 Evas *e,
                                 Evas_Object *obj,
                                 void *event_info);
+static void _title_icon_del(void *data,
+                            Evas *e,
+                            Evas_Object *obj,
+                            void *event_info);
 static void _title_content_set(Elm_Naviframe_Item *it,
                                Elm_Naviframe_Content_Item_Pair *pair,
                                const char *part,
@@ -118,6 +123,7 @@ static void _title_prev_btn_set(Elm_Naviframe_Item *it,
                                 Evas_Object *btn,
                                 Eina_Bool back_btn);
 static void _title_next_btn_set(Elm_Naviframe_Item *it, Evas_Object *btn);
+static void _title_icon_set(Elm_Naviframe_Item *it, Evas_Object *icon);
 static void _item_del(Elm_Naviframe_Item *it);
 static void _pushed_finished(void *data,
                              Evas_Object *obj,
@@ -233,8 +239,10 @@ _item_text_set_hook(Elm_Object_Item *it,
    Elm_Naviframe_Item *navi_it = (Elm_Naviframe_Item *) it;
    char buf[1024];
 
-   if (!part)
+   if (!part || !strcmp(part, "default"))
      snprintf(buf, sizeof(buf), "elm.text.title");
+   else if(!strcmp("subtitle", part))
+     snprintf(buf, sizeof(buf), "elm.text.subtitle");
    else
      snprintf(buf, sizeof(buf), "%s", part);
 
@@ -280,8 +288,10 @@ _item_text_get_hook(const Elm_Object_Item *it, const char *part)
    Elm_Naviframe_Item *navi_it = (Elm_Naviframe_Item *) it;
    char buf[1024];
 
-   if (!part)
+   if (!part || !strcmp(part, "default"))
      snprintf(buf, sizeof(buf), "elm.text.title");
+   else if(!strcmp("subtitle", part))
+     snprintf(buf, sizeof(buf), "elm.text.subtitle");
    else
      snprintf(buf, sizeof(buf), "%s", part);
 
@@ -304,19 +314,24 @@ _item_content_set_hook(Elm_Object_Item *it,
    Elm_Naviframe_Item *navi_it = (Elm_Naviframe_Item *) it;
 
    //specified parts
-   if ((!part) || (!strcmp(part, "elm.swallow.content")))
+   if (!part || !strcmp("default", part))
      {
         _item_content_set(navi_it, content);
         return;
      }
-   else if (!strcmp(part, "elm.swallow.prev_btn"))
+   else if (!strcmp(part, "prev_btn"))
      {
         _title_prev_btn_set(navi_it, content, EINA_FALSE);
         return;
      }
-   else if(!strcmp(part, "elm.swallow.next_btn"))
+   else if (!strcmp(part, "next_btn"))
      {
         _title_next_btn_set(navi_it, content);
+        return;
+     }
+   else if (!strcmp(part, "icon"))
+     {
+        _title_icon_set(navi_it, content);
         return;
      }
 
@@ -332,12 +347,14 @@ _item_content_get_hook(const Elm_Object_Item *it, const char *part)
    Elm_Naviframe_Item *navi_it = (Elm_Naviframe_Item *) it;
 
    //specified parts
-   if ((!part) || (!strcmp(part, "elm.swallow.content")))
+   if (!part || !strcmp("default", part))
      return navi_it->content;
-   else if (!strcmp(part, "elm.swallow.prev_btn"))
+   else if (!strcmp(part, "prev_btn"))
      return navi_it->title_prev_btn;
-   else if(!strcmp(part, "elm.swallow.next_btn"))
+   else if (!strcmp(part, "next_btn"))
      return navi_it->title_next_btn;
+   else if (!strcmp(part, "icon"))
+     return navi_it->icon;
 
    //common parts
    EINA_INLIST_FOREACH(navi_it->content_list, pair)
@@ -360,9 +377,10 @@ _item_content_unset_hook(Elm_Object_Item *it, const char *part)
    //specified parts
    //FIXME: could be unset the below specified contents also.
    if (!part ||
-       !strcmp(part, "elm.swallow.content") ||
-       !strcmp(part, "elm.swallow.prev_btn") ||
-       !strcmp(part, "elm.swallow.next_btn"))
+       !strcmp(part, "default") ||
+       !strcmp(part, "prev_btn") ||
+       !strcmp(part, "next_btn") ||
+       !strcmp(part, "icon"))
      {
         WRN("You can not unset the content! : naviframe=%p",
             WIDGET(navi_it));
@@ -537,6 +555,17 @@ _title_next_btn_del(void *data,
 }
 
 static void
+_title_icon_del(void *data,
+                Evas *e __UNUSED__,
+                Evas_Object *obj __UNUSED__,
+                void *event_info __UNUSED__)
+{
+   Elm_Naviframe_Item *it = data;
+   it->icon = NULL;
+   edje_object_signal_emit(VIEW(it), "elm,state,icon,hide", "elm");
+}
+
+static void
 _item_content_del(void *data,
                   Evas *e __UNUSED__,
                   Evas_Object *obj __UNUSED__,
@@ -662,6 +691,36 @@ _title_next_btn_set(Elm_Naviframe_Item *it, Evas_Object *btn)
 }
 
 static void
+_title_icon_set(Elm_Naviframe_Item *it, Evas_Object *icon)
+{
+   if (it->icon == icon) return;
+
+   if (it->icon)
+     evas_object_del(it->icon);
+
+   it->icon = icon;
+
+   if (!icon)
+     {
+        edje_object_signal_emit(VIEW(it),
+                                "elm,state,icon,hide",
+                                "elm");
+        return;
+     }
+
+   elm_widget_sub_object_add(WIDGET(it), icon);
+   evas_object_event_callback_add(icon,
+                                  EVAS_CALLBACK_DEL,
+                                  _title_icon_del,
+                                  it);
+   edje_object_part_swallow(VIEW(it), "elm.swallow.icon", icon);
+   edje_object_signal_emit(VIEW(it), "elm,state,icon,show", "elm");
+
+   _item_sizing_eval(it);
+}
+
+
+static void
 _item_del(Elm_Naviframe_Item *it)
 {
    Widget_Data *wd;
@@ -677,6 +736,8 @@ _item_del(Elm_Naviframe_Item *it)
      evas_object_del(it->title_prev_btn);
    if (it->title_next_btn)
      evas_object_del(it->title_next_btn);
+   if (it->icon)
+     evas_object_del(it->icon);
    if ((it->content) && (!wd->preserve))
      evas_object_del(it->content);
 

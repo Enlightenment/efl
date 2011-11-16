@@ -38,10 +38,10 @@ _cb_overlay_changed(void *data, Evas_Object *obj, void *event __UNUSED__)
         parent = elm_object_parent_widget_get(o_bg);
         over = edje_object_add(evas_object_evas_get(parent));
         edje_object_file_set(over, buff, "bg_overlay");
-        elm_object_content_set(o_bg, over);
+        elm_object_content_part_set(o_bg, "overlay", over);
      }
    else
-     elm_object_content_set(o_bg, NULL);
+     elm_object_content_part_set(o_bg, "overlay", NULL);
 }
 
 static void

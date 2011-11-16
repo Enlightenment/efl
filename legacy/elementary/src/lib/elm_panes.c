@@ -274,12 +274,14 @@ static void
 _content_set_hook(Evas_Object *obj, const char *part, Evas_Object *content)
 {
    ELM_CHECK_WIDTYPE(obj, widtype);
-   Widget_Data *wd = elm_widget_data_get(obj);
-   if (!wd) return;
+   Widget_Data *wd;
 
-   if ((!part) || (!strcmp(part, "elm.swallow.right")))
+   if (!part) return;
+   wd = elm_widget_data_get(obj);
+   if (!wd) return;
+   if (!strcmp(part, "right"))
      _content_right_set(obj, content);
-   else if(!strcmp(part, "elm.swallow.left"))
+   else if(!strcmp(part, "left"))
      _content_left_set(obj, content);
 }
 
@@ -287,11 +289,14 @@ static Evas_Object *
 _content_get_hook(const Evas_Object *obj, const char *part)
 {
    ELM_CHECK_WIDTYPE(obj, widtype) NULL;
-   Widget_Data *wd = elm_widget_data_get(obj);
+   Widget_Data *wd;
+
+   if (!part) return NULL;
+   wd = elm_widget_data_get(obj);
    if (!wd) return NULL;
-   if ((!part) || (!strcmp(part, "elm.swallow.right")))
+   if (!strcmp(part, "right"))
      return wd->contents.left;
-   else if (!strcmp(part, "elm.swallow.left"))
+   else if (!strcmp(part, "left"))
      return wd->contents.right;
    return NULL;
 }
@@ -300,14 +305,15 @@ static Evas_Object *
 _content_unset_hook(Evas_Object *obj, const char *part)
 {
    ELM_CHECK_WIDTYPE(obj, widtype) NULL;
-   Widget_Data *wd = elm_widget_data_get(obj);
+   Widget_Data *wd;
+
+   if (!part) return NULL;
+   wd = elm_widget_data_get(obj);
    if (!wd) return NULL;
-
-   if ((!part) || (!strcmp(part, "elm.swallow.right")))
+   if (!strcmp(part, "right"))
      _content_right_unset(obj);
-   else if (!strcmp(part, "elm.swallow.left"))
+   else if (!strcmp(part, "left"))
      _content_left_unset(obj);
-
    return NULL;
 }
 
@@ -362,37 +368,37 @@ elm_panes_add(Evas_Object *parent)
 EAPI void
 elm_panes_content_left_set(Evas_Object *obj, Evas_Object *content)
 {
-   _content_set_hook(obj, "elm.swallow.left", content);
+   _content_set_hook(obj, "left", content);
 }
 
 EAPI void
 elm_panes_content_right_set(Evas_Object *obj, Evas_Object *content)
 {
-   _content_set_hook(obj, NULL, content);
+   _content_set_hook(obj, "right", content);
 }
 
 EAPI Evas_Object *
 elm_panes_content_left_get(const Evas_Object *obj)
 {
-   return _content_get_hook(obj, "elm.swallow.left");
+   return _content_get_hook(obj, "left");
 }
 
 EAPI Evas_Object *
 elm_panes_content_right_get(const Evas_Object *obj)
 {
-   return _content_get_hook(obj, NULL);
+   return _content_get_hook(obj, "right");
 }
 
 EAPI Evas_Object *
 elm_panes_content_left_unset(Evas_Object *obj)
 {
-   return _content_unset_hook(obj, "elm.swallow.left");
+   return _content_unset_hook(obj, "left");
 }
 
 EAPI Evas_Object *
 elm_panes_content_right_unset(Evas_Object *obj)
 {
-   return _content_unset_hook(obj, "elm.swallow.right");
+   return _content_unset_hook(obj, "right");
 }
 
 EAPI double

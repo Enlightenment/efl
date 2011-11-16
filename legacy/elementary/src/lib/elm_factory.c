@@ -26,8 +26,8 @@ static void _move(void *data __UNUSED__, Evas *e __UNUSED__, Evas_Object *obj, v
 static void _resize(void *data __UNUSED__, Evas *e __UNUSED__, Evas_Object *obj, void *event_info __UNUSED__);
 static void _child_change(void *data __UNUSED__, Evas *e __UNUSED__, Evas_Object *obj, void *event_info __UNUSED__);
 static void _child_del(void *data, Evas *e __UNUSED__, Evas_Object *obj, void *event_info __UNUSED__);
-static void _content_set_hook(Evas_Object *obj, const char *part __UNUSED__, Evas_Object *content);
-static Evas_Object *_content_get_hook(const Evas_Object *obj, const char *part __UNUSED__);
+static void _content_set_hook(Evas_Object *obj, const char *part, Evas_Object *content);
+static Evas_Object *_content_get_hook(const Evas_Object *obj, const char *part);
 
 static const char SIG_REALIZE[] = "realize";
 static const char SIG_UNREALIZE[] = "unrealize";
@@ -212,10 +212,13 @@ _child_del(void *data, Evas *e __UNUSED__, Evas_Object *obj, void *event_info __
 }
 
 static void
-_content_set_hook(Evas_Object *obj, const char *part __UNUSED__, Evas_Object *content)
+_content_set_hook(Evas_Object *obj, const char *part, Evas_Object *content)
 {
    ELM_CHECK_WIDTYPE(obj, widtype);
-   Widget_Data *wd = elm_widget_data_get(obj);
+   Widget_Data *wd;
+
+   if (part && strcmp(part, "default")) return;
+   wd = elm_widget_data_get(obj);
    if (!wd) return;
    if (wd->content == content) return;
    if (wd->content)
@@ -250,10 +253,12 @@ _content_set_hook(Evas_Object *obj, const char *part __UNUSED__, Evas_Object *co
 }
 
 static Evas_Object *
-_content_get_hook(const Evas_Object *obj, const char *part __UNUSED__)
+_content_get_hook(const Evas_Object *obj, const char *part)
 {
    ELM_CHECK_WIDTYPE(obj, widtype) NULL;
-   Widget_Data *wd = elm_widget_data_get(obj);
+   Widget_Data *wd;
+   if (part && strcmp(part, "default")) return NULL;
+   wd = elm_widget_data_get(obj);
    if (!wd) return NULL;
    return wd->content;
 }

@@ -791,12 +791,14 @@ _theme_hook(Evas_Object *obj)
 }
 
 static void
-_content_set_hook(Evas_Object *obj, const char *part __UNUSED__,
+_content_set_hook(Evas_Object *obj, const char *part,
                   Evas_Object *content)
 {
    ELM_CHECK_WIDTYPE(obj, widtype);
 
    Widget_Data *wd;
+
+   if (part && strcmp(part, "default")) return;
 
    wd = elm_widget_data_get(obj);
    if ((!wd) || (!content)) return;
@@ -819,13 +821,13 @@ _content_set_hook(Evas_Object *obj, const char *part __UNUSED__,
 }
 
 static Evas_Object *
-_content_unset_hook(Evas_Object *obj, const char *part __UNUSED__)
+_content_unset_hook(Evas_Object *obj, const char *part)
 {
    ELM_CHECK_WIDTYPE(obj, widtype) NULL;
 
    Widget_Data *wd;
    Evas_Object *content;
-
+   if (part && strcmp(part, "default")) return NULL;
    wd = elm_widget_data_get(obj);
    if (!wd) return NULL;
 
@@ -845,11 +847,12 @@ _content_unset_hook(Evas_Object *obj, const char *part __UNUSED__)
 }
 
 static Evas_Object *
-_content_get_hook(const Evas_Object *obj, const char *part __UNUSED__)
+_content_get_hook(const Evas_Object *obj, const char *part)
 {
    ELM_CHECK_WIDTYPE(obj, widtype) NULL;
-
-   Widget_Data *wd = elm_widget_data_get(obj);
+   Widget_Data *wd;
+   if (part && strcmp(part, "default")) return NULL;
+   wd = elm_widget_data_get(obj);
    if (!wd) return NULL;
    return wd->content;
 }

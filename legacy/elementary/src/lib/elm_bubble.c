@@ -157,9 +157,9 @@ _content_set_hook(Evas_Object *obj, const char *part, Evas_Object *content)
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return;
 
-   if ((!part) || !strcmp(part, "elm.swallow.content"))
+   if (!part || !strcmp(part, "default"))
      _content_set(obj, content);
-   else if(!strcmp(part, "elm.swallow.icon"))
+   else if(!strcmp(part, "icon"))
      _icon_set(obj, content);
 }
 
@@ -169,9 +169,9 @@ _content_get_hook(const Evas_Object *obj, const char *part)
    ELM_CHECK_WIDTYPE(obj, widtype) NULL;
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return NULL;
-   if ((!part) || !strcmp(part, "elm.swallow.content"))
+   if (!part || !strcmp(part, "default"))
      return wd->content;
-   else if(!strcmp(part, "elm.swallow.icon"))
+   else if(!strcmp(part, "icon"))
      return wd->icon;
    return NULL;
 }
@@ -182,9 +182,9 @@ _content_unset_hook(Evas_Object *obj, const char *part)
    ELM_CHECK_WIDTYPE(obj, widtype) NULL;
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return NULL;
-   if ((!part) || !strcmp(part, "elm.swallow.content"))
+   if (!part || !strcmp(part, "default"))
      return _content_unset(obj);
-   else if(!strcmp(part, "elm.swallow.icon"))
+   else if(!strcmp(part, "icon"))
      return _icon_unset(obj);
    return NULL;
 }

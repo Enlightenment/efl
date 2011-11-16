@@ -198,10 +198,12 @@ _elm_progressbar_label_get(const Evas_Object *obj, const char *item)
 }
 
 static void
-_content_set_hook(Evas_Object *obj, const char *part __UNUSED__, Evas_Object *content)
+_content_set_hook(Evas_Object *obj, const char *part, Evas_Object *content)
 {
    ELM_CHECK_WIDTYPE(obj, widtype);
-   Widget_Data *wd = elm_widget_data_get(obj);
+   Widget_Data *wd;
+   if (!part || strcmp(part, "icon")) return;
+   wd = elm_widget_data_get(obj);
    if (!wd) return;
    if (wd->icon == content) return;
    if (wd->icon) evas_object_del(wd->icon);
@@ -220,22 +222,27 @@ _content_set_hook(Evas_Object *obj, const char *part __UNUSED__, Evas_Object *co
 }
 
 static Evas_Object *
-_content_get_hook(const Evas_Object *obj, const char *part __UNUSED__)
+_content_get_hook(const Evas_Object *obj, const char *part)
 {
    ELM_CHECK_WIDTYPE(obj, widtype) NULL;
-   Widget_Data *wd = elm_widget_data_get(obj);
+   Widget_Data *wd;
+   if (!part || strcmp(part, "icon")) return NULL;
+   wd = elm_widget_data_get(obj);
    if (!wd) return NULL;
    return wd->icon;
 }
 
 static Evas_Object *
-_content_unset_hook(Evas_Object *obj, const char *part __UNUSED__)
+_content_unset_hook(Evas_Object *obj, const char *part)
 {
    ELM_CHECK_WIDTYPE(obj, widtype) NULL;
-   Widget_Data *wd = elm_widget_data_get(obj);
+   Widget_Data *wd;
+   Evas_Object *icon;
+   if (!part || strcmp(part, "icon")) return NULL;
+   wd = elm_widget_data_get(obj);
    if (!wd) return NULL;
    if (!wd->icon) return NULL;
-   Evas_Object *icon = wd->icon;
+   icon = wd->icon;
    elm_widget_sub_object_del(obj, wd->icon);
    evas_object_event_callback_add(icon, EVAS_CALLBACK_CHANGED_SIZE_HINTS,
                                   _changed_size_hints, obj);
@@ -366,19 +373,19 @@ elm_progressbar_label_get(const Evas_Object *obj)
 EAPI void
 elm_progressbar_icon_set(Evas_Object *obj, Evas_Object *icon)
 {
-   _content_set_hook(obj, NULL, icon);
+   _content_set_hook(obj, "icon", icon);
 }
 
 EAPI Evas_Object *
 elm_progressbar_icon_get(const Evas_Object *obj)
 {
-   return _content_get_hook(obj, NULL);
+   return _content_get_hook(obj, "icon");
 }
 
 EAPI Evas_Object *
 elm_progressbar_icon_unset(Evas_Object *obj)
 {
-   return _content_unset_hook(obj, NULL);
+   return _content_unset_hook(obj, "icon");
 }
 
 EAPI void

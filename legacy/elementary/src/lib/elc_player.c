@@ -418,7 +418,7 @@ _player_button_add(Evas_Object *parent, Evas_Object *obj, Evas_Object *layout, c
    evas_object_size_hint_aspect_set(ic, EVAS_ASPECT_CONTROL_VERTICAL, 1, 1);
    bt = elm_button_add(parent);
    elm_widget_mirrored_automatic_set(bt, EINA_FALSE);
-   elm_object_content_set(bt, ic);
+   elm_object_content_part_set(bt, "icon", ic);
    evas_object_size_hint_align_set(bt, 0.0, 0.0);
    elm_object_style_set(bt, "anchor");
    evas_object_smart_callback_add(bt, "clicked", func, obj);
@@ -454,15 +454,17 @@ _double_to_time(double value)
 #endif
 
 static void
-_content_set_hook(Evas_Object *obj, const char *part __UNUSED__, Evas_Object *content)
+_content_set_hook(Evas_Object *obj, const char *part, Evas_Object *content)
 {
+   if (!part || strcmp(part, "video")) return;
 #ifdef HAVE_EMOTION
    ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
+
    double pos, length;
    Eina_Bool seekable;
 
-   if (!_elm_video_check(content)) return ;
+   if (!_elm_video_check(content)) return;
 
    _cleanup_callback(wd);
 
@@ -585,5 +587,5 @@ elm_player_add(Evas_Object *parent)
 EAPI void
 elm_player_video_set(Evas_Object *player, Evas_Object *video)
 {
-   _content_set_hook(player, NULL, video);
+   _content_set_hook(player, "video", video);
 }

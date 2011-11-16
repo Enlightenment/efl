@@ -47,8 +47,8 @@ _transit_wipe(Elm_Transit *trans)
 {
    /* hide the object clipping it from the left to the right */
    elm_transit_effect_wipe_add(trans,
-			       ELM_TRANSIT_EFFECT_WIPE_TYPE_HIDE,
-			       ELM_TRANSIT_EFFECT_WIPE_DIR_RIGHT);
+                               ELM_TRANSIT_EFFECT_WIPE_TYPE_HIDE,
+                               ELM_TRANSIT_EFFECT_WIPE_DIR_RIGHT);
 }
 
 static void
@@ -110,7 +110,7 @@ _transit_start(void *data, Evas_Object *o, void *event_info __UNUSED__)
    int i;
    struct Context *ctxt = data;
    Evas_Object *obj = ctxt->obj; // the object on which the transition will be
-				 // applied
+                                 // applied
 
    // FIXME: Should check if there's another transit going before starting a new
    // one
@@ -123,8 +123,8 @@ _transit_start(void *data, Evas_Object *o, void *event_info __UNUSED__)
     * checked and use its callback to add this transition to trans */
    for (i = 0; _transitions[i].label; i++)
      {
-	if (_transitions[i].checked)
-	  _transitions[i].transition_add_cb(trans);
+        if (_transitions[i].checked)
+          _transitions[i].transition_add_cb(trans);
      }
 
    /* get the various options for this transition from the context structure */
@@ -227,7 +227,7 @@ elm_main(int argc __UNUSED__, char **argv __UNUSED__)
    icon = elm_icon_add(win);
    snprintf(buf, sizeof(buf), "%s/images/icon_07.png", PACKAGE_DATA_DIR);
    elm_icon_file_set(icon, buf, NULL);
-   elm_object_content_set(obj, icon);
+   elm_object_content_part_set(obj, "icon", icon);
    evas_object_move(obj, 160, 60);
    evas_object_resize(obj, 250, 100);
    evas_object_show(obj);
@@ -261,7 +261,7 @@ elm_main(int argc __UNUSED__, char **argv __UNUSED__)
     * array */
    for (i = 0; _transitions[i].label; i++)
      _checkbox_transition_add(vbox, _transitions[i].label,
-			      &_transitions[i].checked);
+                              &_transitions[i].checked);
 
    elm_box_pack_end(hbox, vbox);
    evas_object_show(vbox);

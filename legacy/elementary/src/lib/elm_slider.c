@@ -580,32 +580,36 @@ static void
 _content_set_hook(Evas_Object *obj, const char *part, Evas_Object *content)
 {
    ELM_CHECK_WIDTYPE(obj, widtype);
-   if ((!part) || (!strcmp(part, "elm.swallow.icon")))
+   if (!part) return;
+   if (!strcmp(part, "icon"))
      _icon_set(obj, content);
-   else if (!strcmp(part, "elm.swallow.end"))
+   else if (!strcmp(part, "end"))
      _end_set(obj, content);
 }
 
 static Evas_Object *
-_content_get_hook(const Evas_Object *obj, const char *part __UNUSED__)
+_content_get_hook(const Evas_Object *obj, const char *part)
 {
    ELM_CHECK_WIDTYPE(obj, widtype) NULL;
-   Widget_Data *wd = elm_widget_data_get(obj);
+   Widget_Data *wd;
+   if (!part) return NULL;
+   wd = elm_widget_data_get(obj);
    if (!wd) return NULL;
-   if ((!part) || (!strcmp(part, "elm.swallow.icon")))
+   if (!strcmp(part, "icon"))
      return wd->icon;
-   else if (!strcmp(part, "elm.swallow.end"))
+   else if (!strcmp(part, "end"))
      return wd->end;
    return NULL;
 }
 
 static Evas_Object *
-_content_unset_hook(Evas_Object *obj, const char *part __UNUSED__)
+_content_unset_hook(Evas_Object *obj, const char *part)
 {
    ELM_CHECK_WIDTYPE(obj, widtype) NULL;
-   if ((!part) || (!strcmp(part, "elm.swallow.icon")))
+   if (!part) return NULL;
+   if (!strcmp(part, "icon"))
      return _icon_unset(obj);
-   else if (!strcmp(part, "elm.swallow.end"))
+   else if (!strcmp(part, "end"))
      return _end_unset(obj);
    return NULL;
 }
@@ -684,19 +688,19 @@ elm_slider_label_get(const Evas_Object *obj)
 EAPI void
 elm_slider_icon_set(Evas_Object *obj, Evas_Object *icon)
 {
-   _content_set_hook(obj, NULL, icon);
+   _content_set_hook(obj, "icon", icon);
 }
 
 EAPI Evas_Object *
 elm_slider_icon_unset(Evas_Object *obj)
 {
-   return _content_unset_hook(obj, NULL);
+   return _content_unset_hook(obj, "icon");
 }
 
 EAPI Evas_Object *
 elm_slider_icon_get(const Evas_Object *obj)
 {
-   return _content_get_hook(obj, NULL);
+   return _content_get_hook(obj, "icon");
 }
 
 EAPI void
@@ -903,19 +907,19 @@ elm_slider_units_format_function_set(Evas_Object *obj, const char *(*func)(doubl
 EAPI void
 elm_slider_end_set(Evas_Object *obj, Evas_Object *end)
 {
-   _content_set_hook(obj, "elm.swallow.end", end);
+   _content_set_hook(obj, "end", end);
 }
 
 EAPI Evas_Object *
 elm_slider_end_unset(Evas_Object *obj)
 {
-   return _content_unset_hook(obj, "elm.swallow.end");
+   return _content_unset_hook(obj, "end");
 }
 
 EAPI Evas_Object *
 elm_slider_end_get(const Evas_Object *obj)
 {
-   return _content_get_hook(obj, "elm.swallow.end");
+   return _content_get_hook(obj, "end");
 }
 
 EAPI void

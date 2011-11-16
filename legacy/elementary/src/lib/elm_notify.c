@@ -414,10 +414,12 @@ _elm_notify_focus_next_hook(const Evas_Object *obj, Elm_Focus_Direction dir, Eva
 }
 
 static void
-_content_set_hook(Evas_Object *obj, const char *part __UNUSED__, Evas_Object *content)
+_content_set_hook(Evas_Object *obj, const char *part, Evas_Object *content)
 {
    ELM_CHECK_WIDTYPE(obj, widtype);
-   Widget_Data *wd = elm_widget_data_get(obj);
+   Widget_Data *wd;
+   if (part && strcmp(part ,"default")) return;
+   wd = elm_widget_data_get(obj);
    if (!wd) return;
    if (wd->content == content) return;
    if (wd->content) evas_object_del(wd->content);
@@ -437,21 +439,24 @@ _content_set_hook(Evas_Object *obj, const char *part __UNUSED__, Evas_Object *co
 }
 
 static Evas_Object *
-_content_get_hook(const Evas_Object *obj, const char *part __UNUSED__)
+_content_get_hook(const Evas_Object *obj, const char *part)
 {
    ELM_CHECK_WIDTYPE(obj, widtype) NULL;
-   Widget_Data *wd = elm_widget_data_get(obj);
-
+   Widget_Data *wd;
+   if (part && strcmp(part ,"default")) return NULL;
+   wd = elm_widget_data_get(obj);
    if (!wd) return NULL;
    return wd->content;
 }
 
 static Evas_Object *
-_content_unset_hook(Evas_Object *obj, const char *part __UNUSED__)
+_content_unset_hook(Evas_Object *obj, const char *part)
 {
    ELM_CHECK_WIDTYPE(obj, widtype) NULL;
-   Widget_Data *wd = elm_widget_data_get(obj);
+   Widget_Data *wd;
    Evas_Object *content;
+   if (part && strcmp(part ,"default")) return NULL;
+   wd = elm_widget_data_get(obj);
    if (!wd) return NULL;
    if (!wd->content) return NULL;
    content = wd->content;
