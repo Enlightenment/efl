@@ -20,6 +20,8 @@ extern "C"
 void *alloca (size_t);
 #endif
 
+#include <dirent.h>
+
 #ifdef HAVE_EVIL
 # include <Evil.h>
 #endif

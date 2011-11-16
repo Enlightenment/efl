@@ -23,6 +23,7 @@ void *alloca (size_t);
 #endif
 
 #include <fnmatch.h>
+#include <dirent.h>
 
 #include <Ecore_File.h>
 
