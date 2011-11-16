@@ -760,12 +760,12 @@ _item_new(Evas_Object *obj, const char *icon, const char *label, Evas_Smart_Cb f
    it->separator = EINA_FALSE;
    it->base.data = data;
    VIEW(it) = edje_object_add(evas_object_evas_get(obj));
-   _elm_access_item_register((Elm_Widget_Item *)it, VIEW(it));
-   _elm_access_text_set(_elm_access_item_get((Elm_Widget_Item *)it),
+   _elm_access_item_register(&it->base, VIEW(it));
+   _elm_access_text_set(_elm_access_item_get(&it->base),
                         ELM_ACCESS_TYPE, E_("Tool Item"));
-   _elm_access_callback_set(_elm_access_item_get((Elm_Widget_Item *)it),
+   _elm_access_callback_set(_elm_access_item_get(&it->base),
                             ELM_ACCESS_INFO, _access_info_cb, it);
-   _elm_access_callback_set(_elm_access_item_get((Elm_Widget_Item *)it),
+   _elm_access_callback_set(_elm_access_item_get(&it->base),
                             ELM_ACCESS_STATE, _access_state_cb, it);
 
    if (_item_icon_set(icon_obj, "toolbar/", icon))
