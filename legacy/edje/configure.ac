@@ -217,8 +217,8 @@ AC_SUBST(pkgconfig_requires_private)
 
 EFL_EDJE_BUILD=""
 case "$host_os" in
-   mingw* | cegcc*)
-      PKG_CHECK_MODULES([EVIL], [evil])
+   mingw*)
+      PKG_CHECK_MODULES([EVIL], [evil >= 1.0.0])
       AC_DEFINE([HAVE_EVIL], [1], [Set to 1 if Evil library is installed])
       requirement_edje="evil ${requirement_edje}"
       EFL_EDJE_BUILD="-DEFL_EDJE_BUILD"
