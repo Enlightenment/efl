@@ -131,10 +131,8 @@
  *
  * Please contact <enlightenment-devel@lists.sourceforge.net> to get in
  * contact with the developers and maintainers.
- * 
+ *
  */
-
-#include <dirent.h>
 
 #ifdef _WIN32
 # include <Evil.h>
