@@ -161,12 +161,12 @@ struct _Eet_Data_Descriptor
       void      * (*list_append)(void *l, void *d);
       void      * (*list_data)(void *l);
       void      * (*list_free)(void *l);
-      void        (*hash_foreach)(void                                       *h,
-                                  int                                         (*func)(void *h,
-                                                                  const char *k,
-                                                                  void       *dt,
-                                                                  void       *fdt),
-                                  void                                       *fdt);
+      void        (*hash_foreach)(void *h,
+                                  int (*func)(void *h,
+					      const char *k,
+					      void       *dt,
+					      void       *fdt),
+                                  void *fdt);
       void      * (*hash_add)(void *h, const char *k, void *d);
       void        (*hash_free)(void *h);
       const char *(*type_get)(const void *data, Eina_Bool *unknow);
