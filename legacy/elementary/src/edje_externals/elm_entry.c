@@ -25,8 +25,8 @@ typedef struct _Elm_Params_Entry
 
 #define CHOICE_GET(CHOICES, STR)                \
   unsigned int i;                               \
-  for (i = 0; i < sizeof(CHOICES); i++)         \
-    if (strcmp(STR, CHOICES[i]) == 0)           \
+  for (i = 0; i < sizeof(CHOICES)/sizeof (CHOICES)[0]; i++)         \
+    if (strcmp((STR), (CHOICES)[i]) == 0)           \
       return i
 
 
