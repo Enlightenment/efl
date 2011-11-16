@@ -25,3 +25,4 @@ Improvements:
     * use stringshare for mmaped file names
     * use eina locking wrappers
     * use eina_file for file IO
+    * jpeg encode and decode quality improved at expense of speed

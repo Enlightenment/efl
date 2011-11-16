@@ -447,7 +447,7 @@ eet_data_image_jpeg_rgb_decode(const void   *data,
      }
 
    jpeg_read_header(&cinfo, TRUE);
-   cinfo.dct_method = JDCT_FASTEST;
+   cinfo.dct_method = JDCT_ISLOW; // JDCT_FLOAT JDCT_IFAST(quality loss)
    cinfo.do_fancy_upsampling = FALSE;
    cinfo.do_block_smoothing = FALSE;
    jpeg_start_decompress(&cinfo);
@@ -595,7 +595,7 @@ eet_data_image_jpeg_alpha_decode(const void   *data,
      }
 
    jpeg_read_header(&cinfo, TRUE);
-   cinfo.dct_method = JDCT_FASTEST;
+   cinfo.dct_method = JDCT_ISLOW; // JDCT_FLOAT JDCT_IFAST(quality loss)
    cinfo.do_fancy_upsampling = FALSE;
    cinfo.do_block_smoothing = FALSE;
    jpeg_start_decompress(&cinfo);
@@ -832,8 +832,12 @@ eet_data_image_jpeg_convert(int         *size,
    cinfo.image_height = h;
    cinfo.input_components = 3;
    cinfo.in_color_space = JCS_RGB;
+   cinfo.optimize_coding = FALSE;
+   cinfo.dct_method = JDCT_ISLOW; // JDCT_FLOAT JDCT_IFAST(quality loss)
+   if (quality < 60) cinfo.dct_method = JDCT_IFAST;
    jpeg_set_defaults(&cinfo);
    jpeg_set_quality(&cinfo, quality, TRUE);
+
    if (quality >= 90)
      {
         cinfo.comp_info[0].h_samp_factor = 1;
@@ -925,6 +929,9 @@ eet_data_image_jpeg_alpha_convert(int         *size,
       cinfo.image_height = h;
       cinfo.input_components = 3;
       cinfo.in_color_space = JCS_RGB;
+      cinfo.optimize_coding = FALSE;
+      cinfo.dct_method = JDCT_ISLOW; // JDCT_FLOAT JDCT_IFAST(quality loss)
+      if (quality < 60) cinfo.dct_method = JDCT_IFAST;
       jpeg_set_defaults(&cinfo);
       jpeg_set_quality(&cinfo, quality, TRUE);
       if (quality >= 90)

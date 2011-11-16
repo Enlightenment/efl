@@ -540,3 +540,9 @@
 
 	* Added a new macro for adding arrays of basic types.
 	   EET_DATA_DESCRIPTOR_ADD_BASIC_ARRAY
+
+2011-11-16  Carsten Haitzler (The Rasterman)
+
+	* JPEG encode and decode in eet now uses ISLOW (not IFAST) due to
+        noticable quality losses in the chase for speed. It will use
+        IFAST for quality less than 60 when encoding
