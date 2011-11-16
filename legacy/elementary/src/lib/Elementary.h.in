@@ -11122,6 +11122,12 @@ extern "C" {
     * functions; The former will either not work at all, or break the correct
     * functionality.
     *
+    * IMPORTANT: Many functions may change (i.e delete and create a new one)
+    * the internal textblock object. Do NOT cache the returned object, and try
+    * not to mix calls on this object with regular elm_entry calls (which may
+    * change the internal textblock object). This applies to all cursors
+    * returned from textblock calls, and all the other derivative values.
+    *
     * @param obj The entry object
     * @return The textblock object.
     */
