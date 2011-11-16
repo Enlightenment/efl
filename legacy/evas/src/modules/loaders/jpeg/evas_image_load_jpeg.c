@@ -284,7 +284,7 @@ evas_image_load_file_head_jpeg_internal(Image_Entry *ie,
    jpeg_read_header(&cinfo, TRUE);
    cinfo.do_fancy_upsampling = FALSE;
    cinfo.do_block_smoothing = FALSE;
-   cinfo.dct_method = JDCT_IFAST;
+   cinfo.dct_method = JDCT_ISLOW; // JDCT_FLOAT JDCT_IFAST(quality loss)
    cinfo.dither_mode = JDITHER_ORDERED;
    jpeg_start_decompress(&cinfo);
 
@@ -545,7 +545,7 @@ evas_image_load_file_data_jpeg_internal(Image_Entry *ie,
    jpeg_read_header(&cinfo, TRUE);
    cinfo.do_fancy_upsampling = FALSE;
    cinfo.do_block_smoothing = FALSE;
-   cinfo.dct_method = JDCT_IFAST;
+   cinfo.dct_method = JDCT_ISLOW; // JDCT_FLOAT JDCT_IFAST(quality loss)
    cinfo.dither_mode = JDITHER_ORDERED;
 
    if (ie->scale > 1)

@@ -84,8 +84,20 @@ save_image_jpeg(RGBA_Image *im, const char *file, int quality)
    cinfo.image_height = im->cache_entry.h;
    cinfo.input_components = 3;
    cinfo.in_color_space = JCS_RGB;
+   cinfo.optimize_coding = FALSE;
+   cinfo.dct_method = JDCT_ISLOW; // JDCT_FLOAT JDCT_IFAST(quality loss)
+   if (quality < 60) cinfo.dct_method = JDCT_IFAST;
    jpeg_set_defaults(&cinfo);
    jpeg_set_quality(&cinfo, quality, TRUE);
+   if (quality >= 90)
+     {
+        cinfo.comp_info[0].h_samp_factor = 1;
+        cinfo.comp_info[0].v_samp_factor = 1;
+        cinfo.comp_info[1].h_samp_factor = 1;
+        cinfo.comp_info[1].v_samp_factor = 1;
+        cinfo.comp_info[2].h_samp_factor = 1;
+        cinfo.comp_info[2].v_samp_factor = 1;
+     }
    jpeg_start_compress(&cinfo, TRUE);
    ptr = im->image.data;
    while (cinfo.next_scanline < cinfo.image_height)

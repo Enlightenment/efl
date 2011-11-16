@@ -102,6 +102,7 @@ Improvements:
     * text to display missing unicode char instead of missing glyphs
     * internal file code to use eina_file more
     * jpeg loader to use eina_file
+    * jpeg encode and decode quality improved at expense of speed
 
 Removals:
 
