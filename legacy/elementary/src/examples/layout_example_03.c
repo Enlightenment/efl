@@ -76,7 +76,7 @@ elm_main(int argc __UNUSED__, char **argv __UNUSED__)
    if (title)
      {
 	elm_win_title_set(win, title);
-	elm_object_text_part_set(layout, TITLE, title);
+	elm_object_part_text_set(layout, TITLE, title);
      }
 
    btn = elm_button_add(win);

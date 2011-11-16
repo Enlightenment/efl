@@ -14,6 +14,6 @@ evas_object_size_hint_min_set(icon, 200, 140);
 evas_object_show(icon);
 
 elm_object_content_part_set(layout, "elm.swallow.content", icon);
-elm_object_text_part_set(layout, "elm.text.title", "Layout");
+elm_object_part_text_set(layout, "elm.text.title", "Layout");
 
 #include "widget_preview_tmpl_foot.c"

@@ -3073,7 +3073,7 @@
  * @until }
  *
  * This call elm_layout_data_get() is used to fetch the string based on the key,
- * and elm_object_text_part_set() will set the part defined in the theme as
+ * and elm_object_part_text_set() will set the part defined in the theme as
  * "example/title" to contain this string. This key "example/title" has nothing
  * special. It's just an arbitrary convention that we are using in this example.
  * Every string in this example referencing a part of this theme will be of the

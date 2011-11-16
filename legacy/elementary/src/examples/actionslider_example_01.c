@@ -62,8 +62,8 @@ elm_main(int argc __UNUSED__, char **argv __UNUSED__)
    evas_object_size_hint_align_set(as, EVAS_HINT_FILL, 0);
    elm_actionslider_indicator_pos_set(as, ELM_ACTIONSLIDER_RIGHT);
    elm_actionslider_magnet_pos_set(as, ELM_ACTIONSLIDER_RIGHT);
-   elm_object_text_part_set(as, "left", "Snooze");
-   elm_object_text_part_set(as, "right", "Stop");
+   elm_object_part_text_set(as, "left", "Snooze");
+   elm_object_part_text_set(as, "right", "Stop");
    elm_actionslider_enabled_pos_set(as, ELM_ACTIONSLIDER_LEFT |
                                     ELM_ACTIONSLIDER_RIGHT);
    evas_object_smart_callback_add(as, "pos_changed",
@@ -77,8 +77,8 @@ elm_main(int argc __UNUSED__, char **argv __UNUSED__)
    evas_object_size_hint_align_set(as, EVAS_HINT_FILL, 0);
    elm_actionslider_indicator_pos_set(as, ELM_ACTIONSLIDER_CENTER);
    elm_actionslider_magnet_pos_set(as, ELM_ACTIONSLIDER_CENTER);
-   elm_object_text_part_set(as, "left", "Snooze");
-   elm_object_text_part_set(as, "right", "Stop");
+   elm_object_part_text_set(as, "left", "Snooze");
+   elm_object_part_text_set(as, "right", "Stop");
    elm_actionslider_enabled_pos_set(as, ELM_ACTIONSLIDER_LEFT |
                                     ELM_ACTIONSLIDER_RIGHT);
    evas_object_smart_callback_add(as, "selected", _pos_selected_cb, NULL);
@@ -94,8 +94,8 @@ elm_main(int argc __UNUSED__, char **argv __UNUSED__)
                                    ELM_ACTIONSLIDER_RIGHT);
    elm_actionslider_enabled_pos_set(as, ELM_ACTIONSLIDER_CENTER |
                                     ELM_ACTIONSLIDER_RIGHT);
-   elm_object_text_part_set(as, "center", "Accept");
-   elm_object_text_part_set(as, "right", "Reject");
+   elm_object_part_text_set(as, "center", "Accept");
+   elm_object_part_text_set(as, "right", "Reject");
    evas_object_smart_callback_add(as, "selected", _pos_selected_cb, NULL);
    evas_object_show(as);
    elm_box_pack_end(bx, as);
@@ -106,8 +106,8 @@ elm_main(int argc __UNUSED__, char **argv __UNUSED__)
    evas_object_size_hint_align_set(as, EVAS_HINT_FILL, 0);
    elm_actionslider_indicator_pos_set(as, ELM_ACTIONSLIDER_LEFT);
    elm_actionslider_magnet_pos_set(as, ELM_ACTIONSLIDER_LEFT);
-   elm_object_text_part_set(as, "center", "Accept");
-   elm_object_text_part_set(as, "right", "Reject");
+   elm_object_part_text_set(as, "center", "Accept");
+   elm_object_part_text_set(as, "right", "Reject");
    elm_object_text_set(as, "Go");
    evas_object_smart_callback_add(as, "pos_changed",
                                   _position_change_magnetic_cb, NULL);
@@ -121,9 +121,9 @@ elm_main(int argc __UNUSED__, char **argv __UNUSED__)
    evas_object_size_hint_align_set(as, EVAS_HINT_FILL, 0);
    elm_actionslider_indicator_pos_set(as, ELM_ACTIONSLIDER_LEFT);
    elm_actionslider_magnet_pos_set(as, ELM_ACTIONSLIDER_ALL);
-   elm_object_text_part_set(as, "left", "Left");
-   elm_object_text_part_set(as, "center", "Center");
-   elm_object_text_part_set(as, "right", "Right");
+   elm_object_part_text_set(as, "left", "Left");
+   elm_object_part_text_set(as, "center", "Center");
+   elm_object_part_text_set(as, "right", "Right");
    elm_object_text_set(as, "Go");
    evas_object_smart_callback_add(as, "selected", _pos_selected_cb, NULL);
    evas_object_show(as);
@@ -134,9 +134,9 @@ elm_main(int argc __UNUSED__, char **argv __UNUSED__)
    evas_object_size_hint_align_set(as, EVAS_HINT_FILL, 0);
    elm_actionslider_indicator_pos_set(as, ELM_ACTIONSLIDER_CENTER);
    elm_actionslider_magnet_pos_set(as, ELM_ACTIONSLIDER_CENTER);
-   elm_object_text_part_set(as, "left", "Enable");
-   elm_object_text_part_set(as, "center", "Magnet");
-   elm_object_text_part_set(as, "right", "Disable");
+   elm_object_part_text_set(as, "left", "Enable");
+   elm_object_part_text_set(as, "center", "Magnet");
+   elm_object_part_text_set(as, "right", "Disable");
    evas_object_smart_callback_add(as, "pos_changed",
                                   _magnet_enable_disable_cb, NULL);
    evas_object_smart_callback_add(as, "selected", _pos_selected_cb, NULL);

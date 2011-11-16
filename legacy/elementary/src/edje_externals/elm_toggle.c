@@ -27,9 +27,9 @@ external_toggle_state_set(void *data __UNUSED__, Evas_Object *obj, const void *f
      elm_object_content_part_set(obj, "icon", p->icon);
 
    if (p->on)
-     elm_object_text_part_set(obj, "on", p->on);
+     elm_object_part_text_set(obj, "on", p->on);
    if (p->off)
-     elm_object_text_part_set(obj, "off", p->off);
+     elm_object_part_text_set(obj, "off", p->off);
 
    if (p->state_exists)
      elm_check_state_set(obj, p->state);
@@ -60,7 +60,7 @@ external_toggle_param_set(void *data __UNUSED__, Evas_Object *obj, const Edje_Ex
      {
 	if (param->type == EDJE_EXTERNAL_PARAM_TYPE_STRING)
 	  {
-	     elm_object_text_part_set(obj, "on", param->s);
+	     elm_object_part_text_set(obj, "on", param->s);
 	     return EINA_TRUE;
 	  }
      }
@@ -68,7 +68,7 @@ external_toggle_param_set(void *data __UNUSED__, Evas_Object *obj, const Edje_Ex
      {
 	if (param->type == EDJE_EXTERNAL_PARAM_TYPE_STRING)
 	  {
-	     elm_object_text_part_set(obj, "off", param->s);
+	     elm_object_part_text_set(obj, "off", param->s);
 	     return EINA_TRUE;
 	  }
      }
@@ -107,7 +107,7 @@ external_toggle_param_get(void *data __UNUSED__, const Evas_Object *obj, Edje_Ex
      {
 	if (param->type == EDJE_EXTERNAL_PARAM_TYPE_STRING)
 	  {
-	     param->s = elm_object_text_part_get(obj, "on");
+	     param->s = elm_object_part_text_get(obj, "on");
 	     return EINA_TRUE;
 	  }
      }
@@ -115,7 +115,7 @@ external_toggle_param_get(void *data __UNUSED__, const Evas_Object *obj, Edje_Ex
      {
 	if (param->type == EDJE_EXTERNAL_PARAM_TYPE_STRING)
 	  {
-	     param->s = elm_object_text_part_get(obj, "off");
+	     param->s = elm_object_part_text_get(obj, "off");
 	     return EINA_TRUE;
 	  }
      }

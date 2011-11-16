@@ -981,12 +981,38 @@ extern "C" {
     * @param label The new text of the label
     *
     * @note Elementary objects may have many labels (e.g. Action Slider)
+    * @deprecated Use elm_object_part_text_set() instead.
+    * @ingroup General
+    */
+   EINA_DEPRECATED EAPI void elm_object_text_part_set(Evas_Object *obj, const char *part, const char *label);
+
+   /**
+    * Set a label of an object
+    *
+    * @param obj The Elementary object
+    * @param part The text part name to set (NULL for the default label)
+    * @param label The new text of the label
+    *
+    * @note Elementary objects may have many labels (e.g. Action Slider)
     *
     * @ingroup General
     */
-   EAPI void         elm_object_text_part_set(Evas_Object *obj, const char *part, const char *label);
+   EAPI void elm_object_part_text_set(Evas_Object *obj, const char *part, const char *label);
 
-#define elm_object_text_set(obj, label) elm_object_text_part_set((obj), NULL, (label))
+#define elm_object_text_set(obj, label) elm_object_part_text_set((obj), NULL, (label))
+
+   /**
+    * Get a label of an object
+    *
+    * @param obj The Elementary object
+    * @param part The text part name to get (NULL for the default label)
+    * @return text of the label or NULL for any error
+    *
+    * @note Elementary objects may have many labels (e.g. Action Slider)
+    * @deprecated Use elm_object_part_text_get() instead.
+    * @ingroup General
+    */
+   EINA_DEPRECATED EAPI const char  *elm_object_text_part_get(const Evas_Object *obj, const char *part);
 
    /**
     * Get a label of an object
@@ -999,16 +1025,16 @@ extern "C" {
     *
     * @ingroup General
     */
-   EAPI const char  *elm_object_text_part_get(const Evas_Object *obj, const char *part);
+   EAPI const char  *elm_object_part_text_get(const Evas_Object *obj, const char *part);
 
-#define elm_object_text_get(obj) elm_object_text_part_get((obj), NULL)
+#define elm_object_text_get(obj) elm_object_part_text_get((obj), NULL)
 
    /**
     * Set the text for an objects' part, marking it as translatable.
     *
     * The string to set as @p text must be the original one. Do not pass the
     * return of @c gettext() here. Elementary will translate the string
-    * internally and set it on the object using elm_object_text_part_set(),
+    * internally and set it on the object using elm_object_part_text_set(),
     * also storing the original string so that it can be automatically
     * translated when the language is changed with elm_language_set().
     *
@@ -1035,7 +1061,7 @@ extern "C" {
    /**
     * Gets the original string set as translatable for an object
     *
-    * When setting translated strings, the function elm_object_text_part_get()
+    * When setting translated strings, the function elm_object_part_text_get()
     * will return the translation returned by @c gettext(). To get the
     * original string use this function.
     *
@@ -1845,7 +1871,7 @@ extern "C" {
     *
     * Useful when you want to force reloading of configuration values for
     * a profile. If one removes user custom configuration directories,
-    * for example, it will force a reload with system values insted.
+    * for example, it will force a reload with system values instead.
     *
     */
    EAPI void         elm_config_reload(void);
@@ -7456,8 +7482,8 @@ extern "C" {
     * @code
     * obj = elm_check_add(parent);
     * elm_object_style_set(obj, "toggle");
-    * elm_object_text_part_set(obj, "on", "ON");
-    * elm_object_text_part_set(obj, "off", "OFF");
+    * elm_object_part_text_set(obj, "on", "ON");
+    * elm_object_part_text_set(obj, "off", "OFF");
     * @endcode
     * 
     * Signals that you can add callbacks for are:
@@ -7540,7 +7566,7 @@ extern "C" {
     * @param onlabel The label displayed when the toggle is in the "on" state
     * @param offlabel The label displayed when the toggle is in the "off" state
     *
-    * @deprecated use elm_object_text_part_set() for "on" and "off" parts
+    * @deprecated use elm_object_part_text_set() for "on" and "off" parts
     * instead.
     */
    EINA_DEPRECATED EAPI void         elm_toggle_states_labels_set(Evas_Object *obj, const char *onlabel, const char *offlabel) EINA_ARG_NONNULL(1);
@@ -7552,7 +7578,7 @@ extern "C" {
     * @param onlabel A char** to place the onlabel of @p obj into
     * @param offlabel A char** to place the offlabel of @p obj into
     *
-    * @deprecated use elm_object_text_part_get() for "on" and "off" parts
+    * @deprecated use elm_object_part_text_get() for "on" and "off" parts
     * instead.
     */
    EINA_DEPRECATED EAPI void         elm_toggle_states_labels_get(const Evas_Object *obj, const char **onlabel, const char **offlabel) EINA_ARG_NONNULL(1);
@@ -9899,7 +9925,7 @@ extern "C" {
     * @param text The text to set
     *
     * @ingroup Layout
-    * @deprecated use elm_object_text_part_set() instead.
+    * @deprecated use elm_object_part_text_set() instead.
     */
    EINA_DEPRECATED EAPI void               elm_layout_text_set(Evas_Object *obj, const char *part, const char *text) EINA_ARG_NONNULL(1);
    /**
@@ -9911,7 +9937,7 @@ extern "C" {
     * @return The text set in @p part
     *
     * @ingroup Layout
-    * @deprecated use elm_object_text_part_get() instead.
+    * @deprecated use elm_object_part_text_get() instead.
     */
    EINA_DEPRECATED EAPI const char        *elm_layout_text_get(const Evas_Object *obj, const char *part) EINA_ARG_NONNULL(1);
    /**
@@ -10124,7 +10150,7 @@ extern "C" {
     *
     * @see elm_object_signal_callback_add()
     * @see elm_object_signal_emit()
-    * @see elm_object_text_part_set()
+    * @see elm_object_part_text_set()
     * @see elm_object_content_part_set()
     * @see elm_layout_box_append()
     * @see elm_layout_table_pack()
@@ -12395,7 +12421,7 @@ extern "C" {
     *
     * This function sets the info of the bubble. Where this appears depends on
     * the selected corner.
-    * @deprecated use elm_object_text_part_set() instead. (with "info" as the parameter).
+    * @deprecated use elm_object_part_text_set() instead. (with "info" as the parameter).
     */
    EINA_DEPRECATED EAPI void         elm_bubble_info_set(Evas_Object *obj, const char *info) EINA_ARG_NONNULL(1);
    /**
@@ -12406,7 +12432,7 @@ extern "C" {
     * @return The "info" string of the bubble
     *
     * This function gets the info text.
-    * @deprecated use elm_object_text_part_get() instead. (with "info" as the parameter).
+    * @deprecated use elm_object_part_text_get() instead. (with "info" as the parameter).
     */
    EINA_DEPRECATED EAPI const char  *elm_bubble_info_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
    /**
