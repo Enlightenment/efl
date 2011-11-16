@@ -22,6 +22,7 @@
  * @mainpage Evil
  * @image html  e_big.png
  * @author Vincent Torri
+ * @version 1.0.0
  * @date 2008-2011
  *
  * @section intro_sec Introduction

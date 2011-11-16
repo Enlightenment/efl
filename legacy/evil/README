@@ -1,16 +1,22 @@
 
 The Evil library tried to port some convenient Unix functions
-to the Windows (XP, maybe below, or Mobile) platform. They
-are planned to be used in the Enlightenment Fundations Libaries.
+to the Windows (XP or CE) platform. They are planned to be used
+in the Enlightenment Fundations Libaries (EFL).
 
-To get informations on how to install that library, see the
-INSTALL file. For mingw32ce or cegcc users, look at the end
-of that INSTALL file to have precise informations on how to
-configure the library.
+To get informations on how to build that library and the EFL on
+Windows XP, see
 
-To get the description of the API, behavior, etc.. run
-doxygen.exe in the top level directory, then open in your
-favorite browser named Firefox the file index.html located in
-the subdirectory doc/html/.
+http://trac.enlightenment.org/e/wiki/EFLWindowsXP
+
+To get informations on how to build that library and the EFL on
+on Windows CE, see
+
+
+http://trac.enlightenment.org/e/wiki/EFLWindowsCE
+
+To get the description of the API, behavior, etc.. run 'make doc'
+in the top level directory, then open in your favorite browser
+named Firefox the file index.html located in the subdirectory
+doc/html/.
 
 Enjoy !
