@@ -83,7 +83,7 @@ _page4(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
    bt = elm_button_add(nf);
    evas_object_smart_callback_add(bt, "clicked", _page5, nf);
    evas_object_size_hint_align_set(bt, EVAS_HINT_FILL, EVAS_HINT_FILL);
-   elm_object_content_part_set(bt, "icon", ic);
+   elm_object_part_content_set(bt, "icon", ic);
 
    content = _content_new(nf, img4);
 
@@ -152,7 +152,7 @@ _page2(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
             elm_app_data_dir_get());
    elm_icon_file_set(ic, buf, NULL);
    evas_object_size_hint_aspect_set(ic, EVAS_ASPECT_CONTROL_VERTICAL, 1, 1);
-   elm_object_content_part_set(bt, "icon", ic);
+   elm_object_part_content_set(bt, "icon", ic);
 
    content = _content_new(nf, img2);
 

@@ -7,7 +7,7 @@ evas_object_show(o);
 
 Evas_Object *o2 = elm_icon_add(win);
 elm_icon_standard_set(o2, "home");
-elm_object_content_part_set(o, "icon", o2);
+elm_object_part_content_set(o, "icon", o2);
 evas_object_show(o2);
 
 #include "widget_preview_tmpl_foot.c"

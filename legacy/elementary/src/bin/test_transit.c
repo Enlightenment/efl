@@ -262,7 +262,7 @@ test_transit(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_inf
 
    bt = elm_button_add(win);
    elm_object_text_set(bt, "ImageAnimation Effect");
-   elm_object_content_part_set(bt, "icon", ic);
+   elm_object_part_content_set(bt, "icon", ic);
    elm_box_pack_end(bx, bt);
    evas_object_show(bt);
    evas_object_show(ic);
@@ -392,7 +392,7 @@ test_transit5(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_in
    evas_object_size_hint_max_set(ic, 50, 50);
 
    bt = elm_button_add(win);
-   elm_object_content_part_set(bt, "icon", ic);
+   elm_object_part_content_set(bt, "icon", ic);
    elm_object_text_set(bt, "Before Button - Blend Effect");
    evas_object_move(bt, 25, 125);
    evas_object_resize(bt, 250, 50);
@@ -404,7 +404,7 @@ test_transit5(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_in
    evas_object_size_hint_max_set(ic, 50, 50);
 
    bt2 = elm_button_add(win);
-   elm_object_content_part_set(bt2, "icon", ic);
+   elm_object_part_content_set(bt2, "icon", ic);
    elm_object_text_set(bt2, "After Button - Blend Effect");
    evas_object_move(bt2, 25, 125);
    evas_object_resize(bt2, 250, 50);
@@ -438,7 +438,7 @@ test_transit6(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_in
    evas_object_size_hint_max_set(ic, 50, 50);
 
    bt = elm_button_add(win);
-   elm_object_content_part_set(bt, "icon", ic);
+   elm_object_part_content_set(bt, "icon", ic);
    elm_object_text_set(bt, "Before Button - Fade Effect");
    evas_object_move(bt, 25, 125);
    evas_object_resize(bt, 250, 50);
@@ -450,7 +450,7 @@ test_transit6(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_in
    evas_object_size_hint_max_set(ic, 50, 50);
 
    bt2 = elm_button_add(win);
-   elm_object_content_part_set(bt2, "icon", ic);
+   elm_object_part_content_set(bt2, "icon", ic);
    elm_object_text_set(bt2, "After Button - Fade Effect");
    evas_object_move(bt2, 25, 125);
    evas_object_resize(bt2, 250, 50);

@@ -965,10 +965,25 @@ elm_object_translatable_text_part_get(const Evas_Object *obj, const char *part)
 }
 
 EAPI void
+elm_object_part_content_set(Evas_Object *obj, const char *part, Evas_Object *content)
+{
+   EINA_SAFETY_ON_NULL_RETURN(obj);
+   elm_widget_content_part_set(obj, part, content);
+}
+
+EAPI void
 elm_object_content_part_set(Evas_Object *obj, const char *part, Evas_Object *content)
 {
    EINA_SAFETY_ON_NULL_RETURN(obj);
    elm_widget_content_part_set(obj, part, content);
+}
+
+
+EAPI Evas_Object *
+elm_object_part_content_get(const Evas_Object *obj, const char *part)
+{
+   EINA_SAFETY_ON_NULL_RETURN_VAL(obj, NULL);
+   return elm_widget_content_part_get(obj, part);
 }
 
 EAPI Evas_Object *
@@ -977,6 +992,14 @@ elm_object_content_part_get(const Evas_Object *obj, const char *part)
    EINA_SAFETY_ON_NULL_RETURN_VAL(obj, NULL);
    return elm_widget_content_part_get(obj, part);
 }
+
+EAPI Evas_Object *
+elm_object_part_content_unset(Evas_Object *obj, const char *part)
+{
+   EINA_SAFETY_ON_NULL_RETURN_VAL(obj, NULL);
+   return elm_widget_content_part_unset(obj, part);
+}
+
 
 EAPI Evas_Object *
 elm_object_content_part_unset(Evas_Object *obj, const char *part)

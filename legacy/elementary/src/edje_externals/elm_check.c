@@ -21,7 +21,7 @@ external_check_state_set(void *data __UNUSED__, Evas_Object *obj, const void *fr
    if (p->label)
      elm_object_text_set(obj, p->label);
    if (p->icon)
-     elm_object_content_part_set(obj, "icon", p->icon);
+     elm_object_part_content_set(obj, "icon", p->icon);
    if (p->state_exists)
      elm_check_state_set(obj, p->state);
 }
@@ -43,7 +43,7 @@ external_check_param_set(void *data __UNUSED__, Evas_Object *obj, const Edje_Ext
 	  {
 	     Evas_Object *icon = external_common_param_icon_get(obj, param);
 	     if ((strcmp(param->s, "")) && (!icon)) return EINA_FALSE;
-	     elm_object_content_part_set(obj, "icon", icon);
+	     elm_object_part_content_set(obj, "icon", icon);
 	     return EINA_TRUE;
 	  }
      }

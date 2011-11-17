@@ -39,7 +39,7 @@ test_bubble(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info
    bb = elm_bubble_add(win);
    elm_object_text_set(bb, "Message 1");
    elm_object_part_text_set(bb, "info", "Corner: bottom_right");
-   elm_object_content_part_set(bb, "icon", ic);
+   elm_object_part_content_set(bb, "icon", ic);
    elm_bubble_corner_set(bb, "bottom_right");
    evas_object_smart_callback_add(bb, "clicked", _print_clicked, NULL);
    evas_object_show(ic);

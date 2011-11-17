@@ -451,11 +451,11 @@ test_cursor4(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_inf
    elm_layout_file_set(ly, buf, "test/layout/swallow");
    bt = elm_button_add(win);
    elm_object_text_set(bt, "Cursor over obj");
-   elm_object_content_part_set(ly, "swallow1", bt);
+   elm_object_part_content_set(ly, "swallow1", bt);
    elm_object_cursor_set(bt, ELM_CURSOR_PIRATE);
    bt = elm_button_add(win);
    elm_object_text_set(bt, "Cursor over part");
-   elm_object_content_part_set(ly, "swallow2", bt);
+   elm_object_part_content_set(ly, "swallow2", bt);
    elm_layout_part_cursor_set(ly, "swallow2", ELM_CURSOR_PIRATE);
    elm_box_pack_end(bx, ly);
    evas_object_show(ly);
