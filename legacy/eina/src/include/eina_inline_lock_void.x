@@ -216,25 +216,25 @@ eina_rwlock_take_write(Eina_RWLock *mutex EINA_UNUSED)
    return EINA_LOCK_FAIL;
 }
 
-static inline Eina_Bool 
-eina_tls_new(Eina_TLS *key)
+static inline Eina_Bool
+eina_tls_new(Eina_TLS *key EINA_UNUSED)
 {
    return EINA_FALSE;
 }
 
-static inline void 
-eina_tls_free(Eina_TLS key)
+static inline void
+eina_tls_free(Eina_TLS key EINA_UNUSED)
 {
 }
 
 static inline void *
-eina_tls_get(Eina_TLS key)
+eina_tls_get(Eina_TLS key EINA_UNUSED)
 {
    return NULL;
 }
 
-static inline Eina_Bool 
-eina_tls_set(Eina_TLS key, const void *data)
+static inline Eina_Bool
+eina_tls_set(Eina_TLS key EINA_UNUSED, const void *data EINA_UNUSED)
 {
    return EINA_FALSE;
 }
