@@ -28,7 +28,7 @@ define objects entirely via Lua script (resize handling, event handling
 etc. etc.) this places many more demands on them, and thus a more powerful
 language is in order. Lua is that language.
 
-To get you started, here's an example:
+To get you started, here's an example that uses most of this lua API:
 @ref lua_script.edc
 
 Most of these lua functions are wrappers around various evas, ecore, and edje C
@@ -896,6 +896,8 @@ The type can be one of:
    - strfloat: The message is a C string and a C float.
    - strintset: The message is a C string and an array of C integers.
    - strfloatset: The message is a G string and an array of C floats.
+
+For the array types, the lua caller passes a table.
 */
 static int
 _elua_messagesend(lua_State *L)  // Stack usage [-?, +?, ?]
@@ -3369,8 +3371,10 @@ called.
 
 /**
 @page luaref
-@subsection edje_shutdown Edje shutdown callback.
+@subsection edje_shutdown Edje shutdown() callback.
 
+If a function called "shutdown" exists in a lua edje group, then it is called when
+that edje gets deleted.
 */
 void
 _edje_lua2_script_func_shutdown(Edje *ed)  // Stack usage [-?, +?, ?]
@@ -3390,8 +3394,10 @@ _edje_lua2_script_func_shutdown(Edje *ed)  // Stack usage [-?, +?, ?]
 
 /**
 @page luaref
-@subsection edje_show Edje show callback.
+@subsection edje_show Edje show() callback.
 
+If a function called "show" exists in a lua edje group, then it is called when
+that edje gets shown.
 */
 void
 _edje_lua2_script_func_show(Edje *ed)  // Stack usage [-?, +?, ?]
@@ -3410,8 +3416,10 @@ _edje_lua2_script_func_show(Edje *ed)  // Stack usage [-?, +?, ?]
 
 /**
 @page luaref
-@subsection edje_hide Edje hide callback.
+@subsection edje_hide Edje hide() callback.
 
+If a function called "hide" exists in a lua edje group, then it is called when
+that edje gets hidden.
 */
 void
 _edje_lua2_script_func_hide(Edje *ed)  // Stack usage [-?, +?, ?]
@@ -3430,8 +3438,10 @@ _edje_lua2_script_func_hide(Edje *ed)  // Stack usage [-?, +?, ?]
 
 /**
 @page luaref
-@subsection edje_move Edje move callback.
+@subsection edje_move Edje move(x, y) callback.
 
+If a function called "move" exists in a lua edje group, then it is called when
+that edje gets moved, with the new position passed to it.
 */
 void
 _edje_lua2_script_func_move(Edje *ed)  // Stack usage [-?, +?, ?]
@@ -3453,8 +3463,10 @@ _edje_lua2_script_func_move(Edje *ed)  // Stack usage [-?, +?, ?]
 
 /**
 @page luaref
-@subsection edje_resize Edje resize callback.
+@subsection edje_resize Edje resize(w, h) callback.
 
+If a function called "resize" exists in a lua edje group, then it is called when
+that edje gets resized, with the new size passed to it.
 */
 void
 _edje_lua2_script_func_resize(Edje *ed)  // Stack usage [-?, +?, ?]
@@ -3475,8 +3487,12 @@ _edje_lua2_script_func_resize(Edje *ed)  // Stack usage [-?, +?, ?]
 
 /**
 @page luaref
-@subsection edje_message Edje message callback.
+@subsection edje_message Edje message(id, type, ...) callback.
 
+If a function called "message" exists in a lua edje group, then it is called when
+that edje gets gets a message sent to it, with the message details passed to it.
+See edje:messagesend() for details of what each type means.  The arrays are
+passed as a table.
 */
 void
 _edje_lua2_script_func_message(Edje *ed, Edje_Message *em)  // Stack usage [-?, +?, ?]
@@ -3591,7 +3607,10 @@ _edje_lua2_script_func_message(Edje *ed, Edje_Message *em)  // Stack usage [-?, 
 
 /**
 @page luaref
-@subsection edje_signal Edje signal callback.
+@subsection edje_signal Edje signal(signal, source) callback.
+
+If a function called "signal" exists in a lua edje group, then it is called when
+ever a signal arrives, with the signal details passed to it.
 
 */
 void

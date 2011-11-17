@@ -249,12 +249,12 @@ collections {
             D.edje:resize(w, h);
          end
 
-         function message (id, type, v1, v2)
+         function message (id, type, ...)
             print("lua::message id=" .. id .. " type=" .. type);
-            --// handle your message type here. check id + type then use v1
-            --// and/or v2 (or neither) appropriately. they are the same as
-            --// the 2nd and 3rd param passed to edje.messagesend() (if any
-            --// are passed at all)
+            --// handle your message type here. check id + type then use the
+            --// vararg appropriately. they are the same as the params passed 
+            --// to edje:messagesend() (if any are passed at all).  Any array
+            --// arguments are passed as a single table.
          end
 
          function signal (sig, src)
