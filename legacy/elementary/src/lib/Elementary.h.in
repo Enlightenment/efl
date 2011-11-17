@@ -6923,7 +6923,7 @@ extern "C" {
     * elm_scroller_content_unset() function.
     * @deprecated use elm_object_content_set() instead
     */
-   EINA_DEPRECATED EAPI void         elm_scroller_content_set(Evas_Object *obj, Evas_Object *child) EINA_ARG_NONNULL(1);
+   EINA_DEPRECATED EAPI void elm_scroller_content_set(Evas_Object *obj, Evas_Object *child) EINA_ARG_NONNULL(1);
    /**
     * @brief Get the content of the scroller widget
     *
@@ -7491,6 +7491,12 @@ extern "C" {
     *                 until the toggle is released by the cursor (assuming it
     *                 has been triggered by the cursor in the first place).
     *
+    * Default contents parts of the toggle widget that you can use for are:
+    * @li "icon" - A icon of the toggle
+    *
+    * Default text parts of the toggle widget that you can use for are:
+    * @li "elm.text" - Label of the toggle
+    * 
     * @ref tutorial_toggle show how to use a toggle.
     * @{
     */
@@ -7530,7 +7536,7 @@ extern "C" {
     * If you want to keep that old content object, use the
     * elm_toggle_icon_unset() function.
     *
-    * @deprecated use elm_object_content_set() instead.
+    * @deprecated use elm_object_content_part_set() instead.
     */
    EINA_DEPRECATED EAPI void         elm_toggle_icon_set(Evas_Object *obj, Evas_Object *icon) EINA_ARG_NONNULL(1);
    /**
@@ -7543,7 +7549,7 @@ extern "C" {
     *
     * @see elm_toggle_icon_set()
     *
-    * @deprecated use elm_object_content_get() instead.
+    * @deprecated use elm_object_content_part_get() instead.
     */
    EINA_DEPRECATED EAPI Evas_Object *elm_toggle_icon_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
    /**
@@ -7556,7 +7562,7 @@ extern "C" {
     *
     * @see elm_toggle_icon_set()
     *
-    * @deprecated use elm_object_content_unset() instead.
+    * @deprecated use elm_object_content_part_unset() instead.
     */
    EINA_DEPRECATED EAPI Evas_Object *elm_toggle_icon_unset(Evas_Object *obj) EINA_ARG_NONNULL(1);
    /**
@@ -26676,12 +26682,9 @@ extern "C" {
     * you want to keep that old content object, use the
     * elm_ctxpopup_content_unset() function.
     *
-    * @deprecated use elm_object_content_set()
-    *
     * @warning Ctxpopup can't hold both a item list and a content at the same
     * time. When a content is set, any previous items will be removed.
     * 
-    *
     * @deprecated use elm_object_content_set() instead
     *
     */

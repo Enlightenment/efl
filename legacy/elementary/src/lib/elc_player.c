@@ -456,7 +456,7 @@ _double_to_time(double value)
 static void
 _content_set_hook(Evas_Object *obj, const char *part, Evas_Object *content)
 {
-   if (!part || strcmp(part, "video")) return;
+   if (part && strcmp(part, "video")) return;
 #ifdef HAVE_EMOTION
    ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);

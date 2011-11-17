@@ -304,7 +304,7 @@ _content_set_hook(Evas_Object *obj, const char *part, Evas_Object *content)
    ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd;
 
-   if (!part || strcmp(part, "icon")) return;
+   if (part && strcmp(part, "icon")) return;
    wd = elm_widget_data_get(obj);
    if (!wd) return;
    if (wd->icon == content) return;
@@ -329,7 +329,7 @@ _content_get_hook(const Evas_Object *obj, const char *part)
    ELM_CHECK_WIDTYPE(obj, widtype) NULL;
    Widget_Data *wd;
 
-   if (!part || strcmp(part, "icon")) return NULL;
+   if (part && strcmp(part, "icon")) return NULL;
    wd = elm_widget_data_get(obj);
    if (!wd) return NULL;
    return wd->icon;
@@ -341,7 +341,7 @@ _content_unset_hook(Evas_Object *obj, const char *part)
    ELM_CHECK_WIDTYPE(obj, widtype) NULL;
    Widget_Data *wd;
    Evas_Object *icon;
-   if (!part || strcmp(part, "icon")) return NULL;
+   if (part && strcmp(part, "icon")) return NULL;
    wd = elm_widget_data_get(obj);
    if (!wd) return NULL;
    if (!wd->icon) return NULL;

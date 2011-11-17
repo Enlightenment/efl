@@ -122,7 +122,7 @@ _content_set_hook(Evas_Object *obj, const char *part, Evas_Object *content)
    ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd;
 
-   if (!part || strcmp(part, "overlay")) return;
+   if (part && strcmp(part, "overlay")) return;
 
    wd = elm_widget_data_get(obj);
    if (!wd) return;
@@ -146,7 +146,7 @@ _content_get_hook(const Evas_Object *obj, const char *part)
 {
    ELM_CHECK_WIDTYPE(obj, widtype) NULL;
    Widget_Data *wd;
-   if (!part || strcmp(part, "overlay")) return NULL;
+   if (part && strcmp(part, "overlay")) return NULL;
    wd = elm_widget_data_get(obj);
    if (!wd) return NULL;
    return wd->overlay;
@@ -158,7 +158,7 @@ _content_unset_hook(Evas_Object *obj, const char *part)
    ELM_CHECK_WIDTYPE(obj, widtype) NULL;
    Widget_Data *wd;
    Evas_Object *overlay;
-   if (!part || strcmp(part, "overlay")) return NULL;
+   if (part && strcmp(part, "overlay")) return NULL;
    wd = elm_widget_data_get(obj);
    if (!wd || !wd->overlay) return NULL;
    overlay = wd->overlay;
