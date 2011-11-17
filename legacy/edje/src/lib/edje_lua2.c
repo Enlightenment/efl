@@ -38,7 +38,15 @@ Some of them return tables.
 
 @section classes Lua classes
 
- */
+*/
+
+/*
+Lua functions stack usage.
+
+In the definition of the lua functions provided, always mention the stack usage,
+using the same notation that is used in the Lua 5.1 Reference Manual.
+http://www.lua.org/manual/5.1/manual.html#3.7 describes that notation.
+*/
 
 //--------------------------------------------------------------------------//
 typedef struct _Edje_Lua_Alloc       Edje_Lua_Alloc;
@@ -560,6 +568,8 @@ _elua_color_fix(int *r, int *g, int *b, int *a)
 
 The lua edje class includes functions for dealing with the lua script only group
 as an edje object, basic functions, and functions to create other objects.
+
+In the following, "edje" is the actual global table used to access these edje functions.
 */
 
 static int _elua_echo(lua_State *L);
@@ -639,14 +649,14 @@ static const struct luaL_reg _elua_edje_funcs [] =
 
 /**
 @page luaref
-@subsubsection echo edje:echo()
+@subsubsection edje_echo edje:echo()
 
 Make lua a bit shelly.
 
 Param - a string to print to the console.
 */
 static int
-_elua_echo(lua_State *L)
+_elua_echo(lua_State *L)  // Stack usage [-?, +?, ?]
 {
    const char *string = luaL_checkstring(L, 1);
    printf("%s\n", string);
@@ -656,7 +666,7 @@ _elua_echo(lua_State *L)
 //-------------
 /**
 @page luaref
-@subsubsection date edje:date()
+@subsubsection edje_date edje:date()
 
 Gives us the current time and date.
 
@@ -672,7 +682,7 @@ sec - Seconds as a number.
 
 */
 static int
-_elua_date(lua_State *L)
+_elua_date(lua_State *L)  // Stack usage [-?, +?, ?]
 {
    static time_t       last_tzset = 0;
    struct timeval      timev;
@@ -706,16 +716,28 @@ _elua_date(lua_State *L)
    return 1;
 }
 
+/**
+@page luaref
+@subsubsection edje_looptime edje:looptime()
+
+
+*/
 static int
-_elua_looptime(lua_State *L)
+_elua_looptime(lua_State *L)  // Stack usage [-?, +?, ?]
 {
    double t = ecore_loop_time_get();
    lua_pushnumber(L, t);
    return 1;
 }
 
+/**
+@page luaref
+@subsubsection edje_seconds edje:seconds()
+
+
+*/
 static int
-_elua_seconds(lua_State *L)
+_elua_seconds(lua_State *L)  // Stack usage [-?, +?, ?]
 {
    double t = ecore_time_get();
    lua_pushnumber(L, t);
@@ -723,17 +745,29 @@ _elua_seconds(lua_State *L)
 }
 
 //-------------
+/**
+@page luaref
+@subsubsection edje_geom edje:geom()
+
+
+*/
 static int
-_elua_objgeom(lua_State *L)
+_elua_objgeom(lua_State *L)  // Stack usage [-?, +?, ?]
 {
    Edje *ed = (Edje *)_elua_table_ptr_get(L, _elua_key);
    if (!lua_istable(L, 1)) lua_newtable(L);
    _elua_ret(L, "%x %y %w %h", ed->x, ed->y, ed->w, ed->h);
    return 1;
 }
-static int
 
-_elua_objpos(lua_State *L)
+/**
+@page luaref
+@subsubsection edje_pos edje:pos()
+
+
+*/
+static int
+_elua_objpos(lua_State *L)  // Stack usage [-?, +?, ?]
 {
    Edje *ed = (Edje *)_elua_table_ptr_get(L, _elua_key);
    if (!lua_istable(L, 1)) lua_newtable(L);
@@ -741,8 +775,14 @@ _elua_objpos(lua_State *L)
    return 1;
 }
 
+/**
+@page luaref
+@subsubsection edje_size edje:size()
+
+
+*/
 static int
-_elua_objsize(lua_State *L)
+_elua_objsize(lua_State *L)  // Stack usage [-?, +?, ?]
 {
    Edje *ed = (Edje *)_elua_table_ptr_get(L, _elua_key);
    if (!lua_istable(L, 1)) lua_newtable(L);
@@ -751,8 +791,14 @@ _elua_objsize(lua_State *L)
 }
 
 //-------------
+/**
+@page luaref
+@subsubsection edje_emit edje:emit()
+
+
+*/
 static int
-_elua_emit(lua_State *L)
+_elua_emit(lua_State *L)  // Stack usage [-?, +?, ?]
 {
    Edje *ed = (Edje *)_elua_table_ptr_get(L, _elua_key);
    const char *sig = luaL_checkstring(L, 1);
@@ -762,8 +808,14 @@ _elua_emit(lua_State *L)
    return 0;
 }
 
+/**
+@page luaref
+@subsubsection edje_message_send edje:messagesend()
+
+
+*/
 static int
-_elua_messagesend(lua_State *L)
+_elua_messagesend(lua_State *L)  // Stack usage [-?, +?, ?]
 {
    Edje *ed = (Edje *)_elua_table_ptr_get(L, _elua_key);
    int id = luaL_checkinteger(L, 1);
@@ -954,8 +1006,14 @@ _elua_animator_free(void *obj)
    ela->animator = NULL;
 }
 
+/**
+@page luaref
+@subsubsection edje_animator edje:animator()
+
+
+*/
 static int
-_elua_animator(lua_State *L)
+_elua_animator(lua_State *L)  // Stack usage [-?, +?, ?]
 {
    Edje *ed = (Edje *)_elua_table_ptr_get(L, _elua_key);
    Edje_Lua_Animator *ela;
@@ -1018,8 +1076,14 @@ _elua_timer_free(void *obj)
    elt->timer = NULL;
 }
 
+/**
+@page luaref
+@subsubsection edje_timer edje:timer()
+
+
+*/
 static int
-_elua_timer(lua_State *L)
+_elua_timer(lua_State *L)  // Stack usage [-?, +?, ?]
 {
    Edje *ed = (Edje *)_elua_table_ptr_get(L, _elua_key);
    Edje_Lua_Timer *elt;
@@ -1088,8 +1152,14 @@ _elua_transition_free(void *obj)
    elt->animator = NULL;
 }
 
+/**
+@page luaref
+@subsubsection edje_transition edje:transition()
+
+
+*/
 static int
-_elua_transition(lua_State *L)
+_elua_transition(lua_State *L)  // Stack usage [-?, +?, ?]
 {
    Edje *ed = (Edje *)_elua_table_ptr_get(L, _elua_key);
    Edje_Lua_Transition *elt;
@@ -1111,8 +1181,14 @@ _elua_transition(lua_State *L)
 }
 
 //-------------
+/**
+@page luaref
+@subsubsection edje_colour_class edje:color_class()
+
+
+*/
 static int
-_elua_color_class(lua_State *L)
+_elua_color_class(lua_State *L)  // Stack usage [-?, +?, ?]
 {
    Edje *ed = (Edje *)_elua_table_ptr_get(L, _elua_key);
    Edje_Color_Class *c_class;
@@ -1140,8 +1216,14 @@ _elua_color_class(lua_State *L)
    return 1;
 }
 
+/**
+@page luaref
+@subsubsection edje_text_class edje:text_class()
+
+
+*/
 static int
-_elua_text_class(lua_State *L)
+_elua_text_class(lua_State *L)  // Stack usage [-?, +?, ?]
 {
    Edje *ed = (Edje *)_elua_table_ptr_get(L, _elua_key);
    Edje_Text_Class *t_class;
@@ -1190,8 +1272,14 @@ _elua_polish_evas_object(Edje *ed, Edje_Lua_Evas_Object *elo)
    evas_object_data_set(elo->evas_obj, ELO, elo);
 }
 
+/**
+@page luaref
+@subsubsection edje_edje edje:edje()
+
+
+*/
 static int
-_elua_edje(lua_State *L)
+_elua_edje(lua_State *L)  // Stack usage [-?, +?, ?]
 {
    _ELUA_PLANT_EVAS_OBJECT(Edje_Lua_Evas_Object, _elua_evas_edje_meta, _elua_evas_obj_free)
    elo->evas_obj = edje_object_add(evas_object_evas_get(ed->obj));
@@ -1199,8 +1287,14 @@ _elua_edje(lua_State *L)
    return 1;
 }
 
+/**
+@page luaref
+@subsubsection edje_image edje:image()
+
+
+*/
 static int
-_elua_image(lua_State *L)
+_elua_image(lua_State *L)  // Stack usage [-?, +?, ?]
 {
    _ELUA_PLANT_EVAS_OBJECT(Edje_Lua_Evas_Object, _elua_evas_image_meta, _elua_evas_obj_free)
    elo->evas_obj = evas_object_image_filled_add(evas_object_evas_get(ed->obj));
@@ -1208,8 +1302,14 @@ _elua_image(lua_State *L)
    return 1;
 }
 
+/**
+@page luaref
+@subsubsection edje_line edje:line()
+
+
+*/
 static int
-_elua_line(lua_State *L)
+_elua_line(lua_State *L)  // Stack usage [-?, +?, ?]
 {
    _ELUA_PLANT_EVAS_OBJECT(Edje_Lua_Evas_Object, _elua_evas_line_meta, _elua_evas_obj_free)
    elo->evas_obj = evas_object_line_add(evas_object_evas_get(ed->obj));
@@ -1226,8 +1326,14 @@ _elua_map_free(void *obj)
    elm->map = NULL;
 }
 
+/**
+@page luaref
+@subsubsection edje_map edje:map()
+
+
+*/
 static int
-_elua_map(lua_State *L)
+_elua_map(lua_State *L)  // Stack usage [-?, +?, ?]
 {
    Edje *ed = (Edje *)_elua_table_ptr_get(L, _elua_key);
    Edje_Lua_Map *elm;
@@ -1243,8 +1349,14 @@ _elua_map(lua_State *L)
    return 1;
 }
 
+/**
+@page luaref
+@subsubsection edje_polygon edje:polygon()
+
+
+*/
 static int
-_elua_polygon(lua_State *L)
+_elua_polygon(lua_State *L)  // Stack usage [-?, +?, ?]
 {
    _ELUA_PLANT_EVAS_OBJECT(Edje_Lua_Evas_Object, _elua_evas_polygon_meta, _elua_evas_obj_free)
    elo->evas_obj = evas_object_polygon_add(evas_object_evas_get(ed->obj));
@@ -1254,14 +1366,14 @@ _elua_polygon(lua_State *L)
 
 /**
 @page luaref
-@subsubsection rect edje:rect()
+@subsubsection edje_rect edje:rect()
 
 Create a rectangle.
 
 Returns an evas rectangle.
 */
 static int
-_elua_rect(lua_State *L)
+_elua_rect(lua_State *L)  // Stack usage [-?, +?, ?]
 {
    _ELUA_PLANT_EVAS_OBJECT(Edje_Lua_Evas_Object, _elua_evas_meta, _elua_evas_obj_free)
    elo->evas_obj = evas_object_rectangle_add(evas_object_evas_get(ed->obj));
@@ -1269,8 +1381,14 @@ _elua_rect(lua_State *L)
    return 1;
 }
 
+/**
+@page luaref
+@subsubsection edje_text edje:text()
+
+
+*/
 static int
-_elua_text(lua_State *L)
+_elua_text(lua_State *L)  // Stack usage [-?, +?, ?]
 {
    _ELUA_PLANT_EVAS_OBJECT(Edje_Lua_Evas_Object, _elua_evas_text_meta, _elua_evas_obj_free)
    elo->evas_obj = evas_object_text_add(evas_object_evas_get(ed->obj));
@@ -1279,8 +1397,15 @@ _elua_text(lua_State *L)
 }
 
 /* XXX: disabled until there are enough textblock functions implemented to make it actually useful
+/**
+@page luaref
+@subsubsection edje_textblock edje:textblock()
+
+
+*/
+/*
 static int
-_elua_textblock(lua_State *L)
+_elua_textblock(lua_State *L)  // Stack usage [-?, +?, ?]
 {
    _ELUA_PLANT_EVAS_OBJECT(Edje_Lua_Evas_Object, _elua_evas_textblock_meta, _elua_evas_obj_free)
    elo->evas_obj = evas_object_textblock_add(evas_object_evas_get(ed->obj));
@@ -1296,7 +1421,12 @@ _elua_textblock(lua_State *L)
 @page luaref
 @subsection evas Evas class.
 
-The lua evas class includes functions for dealing with evas objects.
+The lua evas class includes functions for dealing with evas objects.  The evas
+objects must have been previously created by lua using one of the lua ezas
+object creation functions from the lua edje class.
+
+In the following, "evas_object" is a place holder for any lua variable that
+holds a reference to an evas object.
 */
 
 static int _elua_obj_del(lua_State *L);
@@ -1388,8 +1518,14 @@ static const struct luaL_reg _elua_evas_funcs [] =
 };
 
 //-------------
+/**
+@page luaref
+@subsubsection evas_hide evas_object:hide()
+
+
+*/
 static int
-_elua_hide(lua_State *L)
+_elua_hide(lua_State *L)  // Stack usage [-?, +?, ?]
 {
    Edje_Lua_Obj *obj = (Edje_Lua_Obj *)lua_touserdata(L, 1);
    Edje_Lua_Evas_Object *elo = (Edje_Lua_Evas_Object *)obj;
@@ -1399,8 +1535,14 @@ _elua_hide(lua_State *L)
    return 1;
 }
 
+/**
+@page luaref
+@subsubsection evas_show evas_object:show()
+
+
+*/
 static int
-_elua_show(lua_State *L)
+_elua_show(lua_State *L)  // Stack usage [-?, +?, ?]
 {
    Edje_Lua_Obj *obj = (Edje_Lua_Obj *)lua_touserdata(L, 1);
    Edje_Lua_Evas_Object *elo = (Edje_Lua_Evas_Object *)obj;
@@ -1410,8 +1552,14 @@ _elua_show(lua_State *L)
    return 1;
 }
 
+/**
+@page luaref
+@subsubsection evas_visible evas_object:visible()
+
+
+*/
 static int
-_elua_visible(lua_State *L)
+_elua_visible(lua_State *L)  // Stack usage [-?, +?, ?]
 {
    Edje_Lua_Obj *obj = (Edje_Lua_Obj *)lua_touserdata(L, 1);
    Edje_Lua_Evas_Object *elo = (Edje_Lua_Evas_Object *)obj;
@@ -1431,8 +1579,14 @@ _elua_visible(lua_State *L)
 }
 
 //-------------
+/**
+@page luaref
+@subsubsection evas_above evas_object:above()
+
+
+*/
 static int
-_elua_above(lua_State *L)
+_elua_above(lua_State *L)  // Stack usage [-?, +?, ?]
 {
    Edje_Lua_Obj *obj = (Edje_Lua_Obj *)lua_touserdata(L, 1);
    Edje_Lua_Evas_Object *elo = (Edje_Lua_Evas_Object *)obj;
@@ -1445,8 +1599,14 @@ _elua_above(lua_State *L)
    return 1;
 }
 
+/**
+@page luaref
+@subsubsection evas_below evas_object:below()
+
+
+*/
 static int
-_elua_below(lua_State *L)
+_elua_below(lua_State *L)  // Stack usage [-?, +?, ?]
 {
    Edje_Lua_Obj *obj = (Edje_Lua_Obj *)lua_touserdata(L, 1);
    Edje_Lua_Evas_Object *elo = (Edje_Lua_Evas_Object *)obj;
@@ -1459,8 +1619,14 @@ _elua_below(lua_State *L)
    return 1;
 }
 
+/**
+@page luaref
+@subsubsection evas_bottom evas_object:bottom()
+
+
+*/
 static int
-_elua_bottom(lua_State *L)
+_elua_bottom(lua_State *L)  // Stack usage [-?, +?, ?]
 {
    Edje_Lua_Obj *obj = (Edje_Lua_Obj *)lua_touserdata(L, 1);
 //   Edje_Lua_Evas_Object *elo = (Edje_Lua_Evas_Object *)obj;
@@ -1481,8 +1647,14 @@ _elua_bottom(lua_State *L)
    return 0;
 }
 
+/**
+@page luaref
+@subsubsection evas_lower evas_object:lower()
+
+
+*/
 static int
-_elua_lower(lua_State *L)
+_elua_lower(lua_State *L)  // Stack usage [-?, +?, ?]
 {
    Edje_Lua_Obj *obj = (Edje_Lua_Obj *)lua_touserdata(L, 1);
    Edje_Lua_Evas_Object *elo = (Edje_Lua_Evas_Object *)obj;
@@ -1491,8 +1663,14 @@ _elua_lower(lua_State *L)
    return 0;
 }
 
+/**
+@page luaref
+@subsubsection evas_raise evas_object:raise()
+
+
+*/
 static int
-_elua_raise(lua_State *L)
+_elua_raise(lua_State *L)  // Stack usage [-?, +?, ?]
 {
    Edje_Lua_Obj *obj = (Edje_Lua_Obj *)lua_touserdata(L, 1);
    Edje_Lua_Evas_Object *elo = (Edje_Lua_Evas_Object *)obj;
@@ -1501,8 +1679,14 @@ _elua_raise(lua_State *L)
    return 0;
 }
 
+/**
+@page luaref
+@subsubsection evas_top evas_object:top()
+
+
+*/
 static int
-_elua_top(lua_State *L)
+_elua_top(lua_State *L)  // Stack usage [-?, +?, ?]
 {
    Edje_Lua_Obj *obj = (Edje_Lua_Obj *)lua_touserdata(L, 1);
  //  Edje_Lua_Evas_Object *elo = (Edje_Lua_Evas_Object *)obj;
@@ -1525,8 +1709,14 @@ _elua_top(lua_State *L)
 }
 
 //-------------
+/**
+@page luaref
+@subsubsection evas_geom evas_object:geom()
+
+
+*/
 static int
-_elua_geom(lua_State *L)
+_elua_geom(lua_State *L)  // Stack usage [-?, +?, ?]
 {
    Edje_Lua_Obj *obj = (Edje_Lua_Obj *)lua_touserdata(L, 1);
    Edje_Lua_Evas_Object *elo = (Edje_Lua_Evas_Object *)obj;
@@ -1555,8 +1745,14 @@ _elua_geom(lua_State *L)
    return 1;
 }
 
+/**
+@page luaref
+@subsubsection evas_move evas_object:move()
+
+
+*/
 static int
-_elua_move(lua_State *L)
+_elua_move(lua_State *L)  // Stack usage [-?, +?, ?]
 {
    Edje_Lua_Obj *obj = (Edje_Lua_Obj *)lua_touserdata(L, 1);
    Edje_Lua_Evas_Object *elo = (Edje_Lua_Evas_Object *)obj;
@@ -1581,14 +1777,26 @@ _elua_move(lua_State *L)
    return 1;
 }
 
+/**
+@page luaref
+@subsubsection evas_pos evas_object:pos()
+
+
+*/
 static int
-_elua_pos(lua_State *L)
+_elua_pos(lua_State *L)  // Stack usage [-?, +?, ?]
 {
    return _elua_move(L);
 }
 
+/**
+@page luaref
+@subsubsection evas_resize evas_object:resize()
+
+
+*/
 static int
-_elua_resize(lua_State *L)
+_elua_resize(lua_State *L)  // Stack usage [-?, +?, ?]
 {
    Edje_Lua_Obj *obj = (Edje_Lua_Obj *)lua_touserdata(L, 1);
    Edje_Lua_Evas_Object *elo = (Edje_Lua_Evas_Object *)obj;
@@ -1609,15 +1817,27 @@ _elua_resize(lua_State *L)
    return 1;
 }
 
+/**
+@page luaref
+@subsubsection evas_size evas_object:size()
+
+
+*/
 static int
-_elua_size(lua_State *L)
+_elua_size(lua_State *L)  // Stack usage [-?, +?, ?]
 {
    return _elua_resize(L);
 }
 
 //-------------
+/**
+@page luaref
+@subsubsection evas_clip evas_object:clip()
+
+
+*/
 static int
-_elua_clip(lua_State *L)
+_elua_clip(lua_State *L)  // Stack usage [-?, +?, ?]
 {
    Edje_Lua_Obj *obj = (Edje_Lua_Obj *)lua_touserdata(L, 1);
    Edje_Lua_Evas_Object *elo2, *elo = (Edje_Lua_Evas_Object *)obj;
@@ -1639,8 +1859,14 @@ _elua_clip(lua_State *L)
    return 1;
 }
 
+/**
+@page luaref
+@subsubsection evas_clipees evas_object:clipees()
+
+
+*/
 static int
-_elua_clipees(lua_State *L)
+_elua_clipees(lua_State *L)  // Stack usage [-?, +?, ?]
 {
    Edje_Lua_Obj *obj = (Edje_Lua_Obj *)lua_touserdata(L, 1);
    Edje_Lua_Evas_Object *elo2, *elo = (Edje_Lua_Evas_Object *)obj;
@@ -1661,8 +1887,14 @@ _elua_clipees(lua_State *L)
    return 1;
 }
 
+/**
+@page luaref
+@subsubsection evas_unclip evas_object:unclip()
+
+
+*/
 static int
-_elua_unclip(lua_State *L)
+_elua_unclip(lua_State *L)  // Stack usage [-?, +?, ?]
 {
    Edje_Lua_Obj *obj = (Edje_Lua_Obj *)lua_touserdata(L, 1);
    Edje_Lua_Evas_Object *elo = (Edje_Lua_Evas_Object *)obj;
@@ -1672,8 +1904,14 @@ _elua_unclip(lua_State *L)
 }
 
 //-------------
+/**
+@page luaref
+@subsubsection evas_type evas_object:type()
+
+
+*/
 static int
-_elua_type(lua_State *L)
+_elua_type(lua_State *L)  // Stack usage [-?, +?, ?]
 {
    Edje_Lua_Obj *obj = (Edje_Lua_Obj *)lua_touserdata(L, 1);
    Edje_Lua_Evas_Object *elo = (Edje_Lua_Evas_Object *)obj;
@@ -1686,8 +1924,14 @@ _elua_type(lua_State *L)
 }
 
 //-------------
+/**
+@page luaref
+@subsubsection evas_pass evas_object:pass()
+
+
+*/
 static int
-_elua_pass(lua_State *L)
+_elua_pass(lua_State *L)  // Stack usage [-?, +?, ?]
 {
    Edje_Lua_Obj *obj = (Edje_Lua_Obj *)lua_touserdata(L, 1);
    Edje_Lua_Evas_Object *elo = (Edje_Lua_Evas_Object *)obj;
@@ -1705,8 +1949,14 @@ _elua_pass(lua_State *L)
    return 1;
 }
 
+/**
+@page luaref
+@subsubsection evas_precise evas_object:precise()
+
+
+*/
 static int
-_elua_precise(lua_State *L)
+_elua_precise(lua_State *L)  // Stack usage [-?, +?, ?]
 {
    Edje_Lua_Obj *obj = (Edje_Lua_Obj *)lua_touserdata(L, 1);
    Edje_Lua_Evas_Object *elo = (Edje_Lua_Evas_Object *)obj;
@@ -1721,8 +1971,14 @@ _elua_precise(lua_State *L)
    return 1;
 }
 
+/**
+@page luaref
+@subsubsection evas_repeat evas_object:repeat()
+
+
+*/
 static int
-_elua_repeat(lua_State *L)
+_elua_repeat(lua_State *L)  // Stack usage [-?, +?, ?]
 {
    Edje_Lua_Obj *obj = (Edje_Lua_Obj *)lua_touserdata(L, 1);
    Edje_Lua_Evas_Object *elo = (Edje_Lua_Evas_Object *)obj;
@@ -1741,8 +1997,14 @@ _elua_repeat(lua_State *L)
 }
 
 //-------------
+/**
+@page luaref
+@subsubsection evas_colour evas_object:color()
+
+
+*/
 static int
-_elua_color(lua_State *L)
+_elua_color(lua_State *L)  // Stack usage [-?, +?, ?]
 {
    Edje_Lua_Obj *obj = (Edje_Lua_Obj *)lua_touserdata(L, 1);
    Edje_Lua_Evas_Object *elo = (Edje_Lua_Evas_Object *)obj;
@@ -1760,8 +2022,14 @@ _elua_color(lua_State *L)
 }
 
 //-------------
+/**
+@page luaref
+@subsubsection evas_map evas_object:map()
+
+
+*/
 static int
-_elua_obj_map(lua_State *L)
+_elua_obj_map(lua_State *L)  // Stack usage [-?, +?, ?]
 {
    Edje_Lua_Obj *obj = (Edje_Lua_Obj *)lua_touserdata(L, 1);
    Edje_Lua_Evas_Object *elo = (Edje_Lua_Evas_Object *)obj;
@@ -1775,8 +2043,14 @@ _elua_obj_map(lua_State *L)
    return 0;
 }
 
+/**
+@page luaref
+@subsubsection evas_map_enable evas_object:map_enable()
+
+
+*/
 static int
-_elua_obj_map_enable(lua_State *L)
+_elua_obj_map_enable(lua_State *L)  // Stack usage [-?, +?, ?]
 {
    Edje_Lua_Obj *obj = (Edje_Lua_Obj *)lua_touserdata(L, 1);
    Edje_Lua_Evas_Object *elo = (Edje_Lua_Evas_Object *)obj;
@@ -1792,8 +2066,14 @@ _elua_obj_map_enable(lua_State *L)
    return 1;
 }
 
+/**
+@page luaref
+@subsubsection evas_map_source evas_object:map_source()
+
+
+*/
 static int
-_elua_obj_map_source(lua_State *L)
+_elua_obj_map_source(lua_State *L)  // Stack usage [-?, +?, ?]
 {
    Edje_Lua_Obj *obj = (Edje_Lua_Obj *)lua_touserdata(L, 1);
    Edje_Lua_Evas_Object *elo = (Edje_Lua_Evas_Object *)obj;
@@ -1822,6 +2102,18 @@ _elua_obj_map_source(lua_State *L)
 
 //-------------
 //-------------
+/**
+@page luaref
+@subsection evas_edje Evas edje class.
+
+The lua evas odje class includes functions for dealing with evas edje objects.
+The evas edje objects must have been previously created by lua using the lua
+edje object creation function edje:edje().
+
+In the following, "edje_object" is a place holder for any lua variable that
+holds a reference to an evas edje object.  NOT the edje class specified earlier
+though.
+*/
 
 static int _elua_edje_file(lua_State *L);
 
@@ -1835,8 +2127,14 @@ static const struct luaL_reg _elua_evas_edje_funcs [] =
      {NULL, NULL} // end
 };
 
+/**
+@page luaref
+@subsubsection edje_file edje_object:file()
+
+
+*/
 static int
-_elua_edje_file(lua_State *L)
+_elua_edje_file(lua_State *L)  // Stack usage [-?, +?, ?]
 {
    Edje_Lua_Obj *obj = (Edje_Lua_Obj *)lua_touserdata(L, 1);
    Edje_Lua_Evas_Object *elo = (Edje_Lua_Evas_Object *)obj;
@@ -1884,6 +2182,17 @@ _elua_edje_file(lua_State *L)
 
 //-------------
 //-------------
+/**
+@page luaref
+@subsection evas_image Evas image class.
+
+The lua evas image class includes functions for dealing with evas image objects.
+The evas image objects must have been previously created by lua using the lua
+image object creation function edje:image().
+
+In the following, "image_object" is a place holder for any lua variable that
+holds a reference to an evas image object.
+*/
 
 static int _elua_image_fill(lua_State *L);
 static int _elua_image_filled(lua_State *L);
@@ -1901,8 +2210,14 @@ static const struct luaL_reg _elua_evas_image_funcs [] =
      {NULL, NULL} // end
 };
 
+/**
+@page luaref
+@subsubsection image_fill image_object:fill()
+
+
+*/
 static int
-_elua_image_fill(lua_State *L)
+_elua_image_fill(lua_State *L)  // Stack usage [-?, +?, ?]
 {
    Edje_Lua_Obj *obj = (Edje_Lua_Obj *)lua_touserdata(L, 1);
    Edje_Lua_Evas_Object *elo = (Edje_Lua_Evas_Object *)obj;
@@ -1920,8 +2235,14 @@ _elua_image_fill(lua_State *L)
    return 1;
 }
 
+/**
+@page luaref
+@subsubsection image_filled image_object:filled()
+
+
+*/
 static int
-_elua_image_filled(lua_State *L)
+_elua_image_filled(lua_State *L)  // Stack usage [-?, +?, ?]
 {
    Edje_Lua_Obj *obj = (Edje_Lua_Obj *)lua_touserdata(L, 1);
    Edje_Lua_Evas_Object *elo = (Edje_Lua_Evas_Object *)obj;
@@ -1938,8 +2259,14 @@ _elua_image_filled(lua_State *L)
    return 1;
 }
 
+/**
+@page luaref
+@subsubsection image_image image_object:image()
+
+
+*/
 static int
-_elua_image_image(lua_State *L)
+_elua_image_image(lua_State *L)  // Stack usage [-?, +?, ?]
 {
    Edje_Lua_Obj *obj = (Edje_Lua_Obj *)lua_touserdata(L, 1);
    Edje_Lua_Evas_Object *elo = (Edje_Lua_Evas_Object *)obj;
@@ -2007,6 +2334,17 @@ _elua_image_image(lua_State *L)
 
 //-------------
 //-------------
+/**
+@page luaref
+@subsection evas_line Evas line class.
+
+The lua evas line class includes functions for dealing with evas line objects.
+The evas line objects must have been previously created by lua using the lua
+line object creation function edje:line().
+
+In the following, "line_object" is a place holder for any lua variable that
+holds a reference to an evas line object.
+*/
 
 static int _elua_line_xy(lua_State *L);
 
@@ -2020,7 +2358,13 @@ static const struct luaL_reg _elua_evas_line_funcs [] =
      {NULL, NULL} // end
 };
 
-static int _elua_line_xy(lua_State *L)
+/**
+@page luaref
+@subsubsection line_xy line_object:xy()
+
+
+*/
+static int _elua_line_xy(lua_State *L)  // Stack usage [-?, +?, ?]
 {
    Edje_Lua_Obj *obj = (Edje_Lua_Obj *)lua_touserdata(L, 1);
    Edje_Lua_Evas_Object *elo = (Edje_Lua_Evas_Object *)obj;
@@ -2039,6 +2383,17 @@ static int _elua_line_xy(lua_State *L)
 
 //-------------
 //-------------
+/**
+@page luaref
+@subsection evas_object_map Evas map class.
+
+The lua evas map class includes functions for dealing with evas map objects.
+The evas map objects must have been previously created by lua using the lua
+map object creation function edje:map().
+
+In the following, "map_object" is a place holder for any lua variable that
+holds a reference to an evas map object.
+*/
 
 static int _elua_map_alpha(lua_State *L);
 static int _elua_map_clockwise(lua_State *L);
@@ -2074,8 +2429,14 @@ static const struct luaL_reg _elua_evas_map_funcs [] =
      {NULL, NULL} // end
 };
 
+/**
+@page luaref
+@subsubsection map_alpha map_object:alpha()
+
+
+*/
 static int
-_elua_map_alpha(lua_State *L)
+_elua_map_alpha(lua_State *L)  // Stack usage [-?, +?, ?]
 {
    Edje_Lua_Obj *obj = (Edje_Lua_Obj *)lua_touserdata(L, 1);
    Edje_Lua_Map *elm = (Edje_Lua_Map *)obj;
@@ -2092,8 +2453,14 @@ _elua_map_alpha(lua_State *L)
    return 1;
 }
 
+/**
+@page luaref
+@subsubsection map_clockwise map_object:clockwise()
+
+
+*/
 static int
-_elua_map_clockwise(lua_State *L)
+_elua_map_clockwise(lua_State *L)  // Stack usage [-?, +?, ?]
 {
    Edje_Lua_Obj *obj = (Edje_Lua_Obj *)lua_touserdata(L, 1);
    Edje_Lua_Map *elm = (Edje_Lua_Map *)obj;
@@ -2104,8 +2471,14 @@ _elua_map_clockwise(lua_State *L)
    return 1;
 }
 
+/**
+@page luaref
+@subsubsection map_colour map_object:colour()
+
+
+*/
 static int
-_elua_map_colour(lua_State *L)
+_elua_map_colour(lua_State *L)  // Stack usage [-?, +?, ?]
 {
    Edje_Lua_Obj *obj = (Edje_Lua_Obj *)lua_touserdata(L, 1);
    Edje_Lua_Map *elm = (Edje_Lua_Map *)obj;
@@ -2142,8 +2515,14 @@ _elua_map_colour(lua_State *L)
    return 0;
 }
 
+/**
+@page luaref
+@subsubsection map_coord map_object:coord()
+
+
+*/
 static int
-_elua_map_coord(lua_State *L)
+_elua_map_coord(lua_State *L)  // Stack usage [-?, +?, ?]
 {
    Edje_Lua_Obj *obj = (Edje_Lua_Obj *)lua_touserdata(L, 1);
    Edje_Lua_Map *elm = (Edje_Lua_Map *)obj;
@@ -2163,8 +2542,14 @@ _elua_map_coord(lua_State *L)
    return 1;
 }
 
+/**
+@page luaref
+@subsubsection map_lighting map_object:lighting()
+
+
+*/
 static int
-_elua_map_lighting(lua_State *L)
+_elua_map_lighting(lua_State *L)  // Stack usage [-?, +?, ?]
 {
    Edje_Lua_Obj *obj = (Edje_Lua_Obj *)lua_touserdata(L, 1);
    Edje_Lua_Map *elm = (Edje_Lua_Map *)obj;
@@ -2183,8 +2568,14 @@ _elua_map_lighting(lua_State *L)
    return 0;
 }
 
+/**
+@page luaref
+@subsubsection map_perspective map_object:perspective()
+
+
+*/
 static int
-_elua_map_perspective(lua_State *L)
+_elua_map_perspective(lua_State *L)  // Stack usage [-?, +?, ?]
 {
    Edje_Lua_Obj *obj = (Edje_Lua_Obj *)lua_touserdata(L, 1);
    Edje_Lua_Map *elm = (Edje_Lua_Map *)obj;
@@ -2199,8 +2590,14 @@ _elua_map_perspective(lua_State *L)
    return 0;
 }
 
+/**
+@page luaref
+@subsubsection map_populate map_object:populate()
+
+
+*/
 static int
-_elua_map_populate(lua_State *L)
+_elua_map_populate(lua_State *L)  // Stack usage [-?, +?, ?]
 {
    Edje_Lua_Obj *obj = (Edje_Lua_Obj *)lua_touserdata(L, 1);
    Edje_Lua_Map *elm = (Edje_Lua_Map *)obj;
@@ -2246,8 +2643,14 @@ _elua_map_populate(lua_State *L)
    return 0;
 }
 
+/**
+@page luaref
+@subsubsection map_rotate map_object:rotate()
+
+
+*/
 static int
-_elua_map_rotate(lua_State *L)
+_elua_map_rotate(lua_State *L)  // Stack usage [-?, +?, ?]
 {
    Edje_Lua_Obj *obj = (Edje_Lua_Obj *)lua_touserdata(L, 1);
    Edje_Lua_Map *elm = (Edje_Lua_Map *)obj;
@@ -2267,8 +2670,14 @@ _elua_map_rotate(lua_State *L)
    return 0;
 }
 
+/**
+@page luaref
+@subsubsection map_rotate3d map_object:rotate3d()
+
+
+*/
 static int
-_elua_map_rotate3d(lua_State *L)
+_elua_map_rotate3d(lua_State *L)  // Stack usage [-?, +?, ?]
 {
    Edje_Lua_Obj *obj = (Edje_Lua_Obj *)lua_touserdata(L, 1);
    Edje_Lua_Map *elm = (Edje_Lua_Map *)obj;
@@ -2286,8 +2695,14 @@ _elua_map_rotate3d(lua_State *L)
    return 0;
 }
 
+/**
+@page luaref
+@subsubsection map_smooth map_object:smooth()
+
+
+*/
 static int
-_elua_map_smooth(lua_State *L)
+_elua_map_smooth(lua_State *L)  // Stack usage [-?, +?, ?]
 {
    Edje_Lua_Obj *obj = (Edje_Lua_Obj *)lua_touserdata(L, 1);
    Edje_Lua_Map *elm = (Edje_Lua_Map *)obj;
@@ -2304,8 +2719,14 @@ _elua_map_smooth(lua_State *L)
    return 1;
 }
 
+/**
+@page luaref
+@subsubsection map_uv map_object:uv()
+
+
+*/
 static int
-_elua_map_uv(lua_State *L)
+_elua_map_uv(lua_State *L)  // Stack usage [-?, +?, ?]
 {
    Edje_Lua_Obj *obj = (Edje_Lua_Obj *)lua_touserdata(L, 1);
    Edje_Lua_Map *elm = (Edje_Lua_Map *)obj;
@@ -2325,8 +2746,14 @@ _elua_map_uv(lua_State *L)
    return 1;
 }
 
+/**
+@page luaref
+@subsubsection map_zoom map_object:zoom()
+
+
+*/
 static int
-_elua_map_zoom(lua_State *L)
+_elua_map_zoom(lua_State *L)  // Stack usage [-?, +?, ?]
 {
    Edje_Lua_Obj *obj = (Edje_Lua_Obj *)lua_touserdata(L, 1);
    Edje_Lua_Map *elm = (Edje_Lua_Map *)obj;
@@ -2346,6 +2773,17 @@ _elua_map_zoom(lua_State *L)
 
 //-------------
 //-------------
+/**
+@page luaref
+@subsection evas_polygon Evas polygon class.
+
+The lua evas polygon class includes functions for dealing with evas polygon objects.
+The evas polygon objects must have been previously created by lua using the lua
+polygon object creation function edje:polygon().
+
+In the following, "polygon_object" is a place holder for any lua variable that
+holds a reference to an evas polygon object.
+*/
 
 static int _elua_polygon_clear(lua_State *L);
 static int _elua_polygon_point(lua_State *L);
@@ -2361,7 +2799,14 @@ static const struct luaL_reg _elua_evas_polygon_funcs [] =
      {NULL, NULL} // end
 };
 
-static int _elua_polygon_clear(lua_State *L)
+/**
+@page luaref
+@subsubsection polygon_clear polygon_object:clear()
+
+
+*/
+static int
+_elua_polygon_clear(lua_State *L)  // Stack usage [-?, +?, ?]
 {
    Edje_Lua_Obj *obj = (Edje_Lua_Obj *)lua_touserdata(L, 1);
    Edje_Lua_Evas_Object *elo = (Edje_Lua_Evas_Object *)obj;
@@ -2371,7 +2816,14 @@ static int _elua_polygon_clear(lua_State *L)
    return 0;
 }
 
-static int _elua_polygon_point(lua_State *L)
+/**
+@page luaref
+@subsubsection polygon_point polygon_object:point()
+
+
+*/
+static int
+_elua_polygon_point(lua_State *L)  // Stack usage [-?, +?, ?]
 {
    Edje_Lua_Obj *obj = (Edje_Lua_Obj *)lua_touserdata(L, 1);
    Edje_Lua_Evas_Object *elo = (Edje_Lua_Evas_Object *)obj;
@@ -2389,6 +2841,17 @@ static int _elua_polygon_point(lua_State *L)
 
 //-------------
 //-------------
+/**
+@page luaref
+@subsection evas_text Evas text class.
+
+The lua evas text class includes functions for dealing with evas text objects.
+The evas text objects must have been previously created by lua using the lua
+text object creation function edje:text().
+
+In the following, "text_object" is a place holder for any lua variable that
+holds a reference to an evas text object.
+*/
 
 static int _elua_text_font(lua_State *L);
 static int _elua_text_text(lua_State *L);
@@ -2405,8 +2868,14 @@ static const struct luaL_reg _elua_evas_text_funcs [] =
      {NULL, NULL} // end
 };
 
+/**
+@page luaref
+@subsubsection text_font text_object:font()
+
+
+*/
 static int
-_elua_text_font(lua_State *L)
+_elua_text_font(lua_State *L)  // Stack usage [-?, +?, ?]
 {
    Edje_Lua_Obj *obj = (Edje_Lua_Obj *)lua_touserdata(L, 1);
    Edje_Lua_Evas_Object *elo = (Edje_Lua_Evas_Object *)obj;
@@ -2451,8 +2920,14 @@ _elua_text_font(lua_State *L)
    return 1;
 }
 
+/**
+@page luaref
+@subsubsection text_text text_object:text()
+
+
+*/
 static int
-_elua_text_text(lua_State *L)
+_elua_text_text(lua_State *L)  // Stack usage [-?, +?, ?]
 {
    Edje_Lua_Obj *obj = (Edje_Lua_Obj *)lua_touserdata(L, 1);
    Edje_Lua_Evas_Object *elo = (Edje_Lua_Evas_Object *)obj;
@@ -2728,8 +3203,23 @@ _edje_lua2_error_full(const char *file, const char *fnc, int line,
       "Lua %s error: %s", err_type, lua_tostring(L, -1));
 }
 
+/**
+@page luaref
+@section callbacks Lua callbacks
+
+These are lua functions that are called by the lua edje system when certain
+events occur.  If the functions don't exist in the lua group, they don't get
+called.
+
+ */
+
+/**
+@page luaref
+@subsection edje_shutdown Edje shutdown callback.
+
+*/
 void
-_edje_lua2_script_func_shutdown(Edje *ed)
+_edje_lua2_script_func_shutdown(Edje *ed)  // Stack usage [-?, +?, ?]
 {
    int err;
 
@@ -2744,8 +3234,13 @@ _edje_lua2_script_func_shutdown(Edje *ed)
    _edje_lua2_script_shutdown(ed);
 }
 
+/**
+@page luaref
+@subsection edje_show Edje show callback.
+
+*/
 void
-_edje_lua2_script_func_show(Edje *ed)
+_edje_lua2_script_func_show(Edje *ed)  // Stack usage [-?, +?, ?]
 {
    int err;
 
@@ -2759,8 +3254,13 @@ _edje_lua2_script_func_show(Edje *ed)
      lua_pop(ed->L, 1);
 }
 
+/**
+@page luaref
+@subsection edje_hide Edje hide callback.
+
+*/
 void
-_edje_lua2_script_func_hide(Edje *ed)
+_edje_lua2_script_func_hide(Edje *ed)  // Stack usage [-?, +?, ?]
 {
    int err;
 
@@ -2774,8 +3274,13 @@ _edje_lua2_script_func_hide(Edje *ed)
      lua_pop(ed->L, 1);
 }
 
+/**
+@page luaref
+@subsection edje_move Edje move callback.
+
+*/
 void
-_edje_lua2_script_func_move(Edje *ed)
+_edje_lua2_script_func_move(Edje *ed)  // Stack usage [-?, +?, ?]
 {
    int err;
 
@@ -2792,8 +3297,13 @@ _edje_lua2_script_func_move(Edje *ed)
      lua_pop(ed->L, 1);
 }
 
+/**
+@page luaref
+@subsection edje_resize Edje resize callback.
+
+*/
 void
-_edje_lua2_script_func_resize(Edje *ed)
+_edje_lua2_script_func_resize(Edje *ed)  // Stack usage [-?, +?, ?]
 {
    int err;
 
@@ -2809,8 +3319,13 @@ _edje_lua2_script_func_resize(Edje *ed)
      lua_pop(ed->L, 1);
 }
 
+/**
+@page luaref
+@subsection edje_message Edje message callback.
+
+*/
 void
-_edje_lua2_script_func_message(Edje *ed, Edje_Message *em)
+_edje_lua2_script_func_message(Edje *ed, Edje_Message *em)  // Stack usage [-?, +?, ?]
 {
    int err, n, c, i;
 
@@ -2920,8 +3435,13 @@ _edje_lua2_script_func_message(Edje *ed, Edje_Message *em)
      lua_pop(ed->L, 1);
 }
 
+/**
+@page luaref
+@subsection edje_signal Edje signal callback.
+
+*/
 void
-_edje_lua2_script_func_signal(Edje *ed, const char *sig, const char *src)
+_edje_lua2_script_func_signal(Edje *ed, const char *sig, const char *src)  // Stack usage [-?, +?, ?]
 {
    int err;
 
