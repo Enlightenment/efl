@@ -26553,6 +26553,12 @@ extern "C" {
     * Default contents parts of the ctxpopup widget that you can use for are:
     * @li "default" - A content of the ctxpopup
     *
+    * Default contents parts of the naviframe items that you can use for are:
+    * @li "icon" - A icon in the title area
+    * 
+    * Default text parts of the naviframe items that you can use for are:
+    * @li "default" - Title label in the title area
+    *
     * @ref tutorial_ctxpopup shows the usage of a good deal of the API.
     * @{
     */
@@ -26652,8 +26658,9 @@ extern "C" {
     * @param disabled @c EINA_TRUE to disable it, @c EINA_FALSE to enable it
     *
     * When disabled the item is greyed out to indicate it's state.
+    * @deprecated use elm_object_item_disabled_set() instead
     */
-   EAPI void          elm_ctxpopup_item_disabled_set(Elm_Object_Item *it, Eina_Bool disabled) EINA_ARG_NONNULL(1);
+   EINA_DEPRECATED EAPI void          elm_ctxpopup_item_disabled_set(Elm_Object_Item *it, Eina_Bool disabled) EINA_ARG_NONNULL(1);
    /**
     * @brief Get the ctxpopup item's disabled/enabled state.
     *
@@ -26661,6 +26668,7 @@ extern "C" {
     * @return disabled @c EINA_TRUE, if disabled, @c EINA_FALSE otherwise
     *
     * @see elm_ctxpopup_item_disabled_set()
+    * @deprecated use elm_object_item_disabled_get() instead
     */
    EAPI Eina_Bool     elm_ctxpopup_item_disabled_get(const Elm_Object_Item *it) EINA_ARG_NONNULL(1);
    /**
@@ -26672,8 +26680,10 @@ extern "C" {
     *
     * @see elm_ctxpopup_item_append()
     * @see elm_ctxpopup_item_icon_set()
+    *
+    * @deprecated use elm_object_item_content_part_get() instead
     */
-   EAPI Evas_Object  *elm_ctxpopup_item_icon_get(const Elm_Object_Item *it) EINA_ARG_NONNULL(1);
+   EINA_DEPRECATED EAPI Evas_Object  *elm_ctxpopup_item_icon_get(const Elm_Object_Item *it) EINA_ARG_NONNULL(1);
    /**
     * @brief Sets the side icon associated with the ctxpopup item
     *
@@ -26685,8 +26695,11 @@ extern "C" {
     * dissapear from the first item.
     *
     * @see elm_ctxpopup_item_append()
+    *  
+    * @deprecated use elm_object_item_content_part_set() instead
+    *
     */
-   EAPI void          elm_ctxpopup_item_icon_set(Elm_Object_Item *it, Evas_Object *icon) EINA_ARG_NONNULL(1);
+   EINA_DEPRECATED EAPI void          elm_ctxpopup_item_icon_set(Elm_Object_Item *it, Evas_Object *icon) EINA_ARG_NONNULL(1);
    /**
     * @brief Get the label for the given ctxpopup item.
     *
@@ -26696,15 +26709,19 @@ extern "C" {
     *
     * @see elm_ctxpopup_item_append()
     * @see elm_ctxpopup_item_label_set()
+    *
+    * @deprecated use elm_object_item_text_get() instead
     */
-   EAPI const char   *elm_ctxpopup_item_label_get(const Elm_Object_Item *it) EINA_ARG_NONNULL(1);
+   EINA_DEPRECATED EAPI const char   *elm_ctxpopup_item_label_get(const Elm_Object_Item *it) EINA_ARG_NONNULL(1);
    /**
     * @brief (Re)set the label on the given ctxpopup item.
     *
     * @param it Ctxpopup item
     * @param label String to set as label
+    *
+    * @deprecated use elm_object_item_text_set() instead
     */
-   EAPI void          elm_ctxpopup_item_label_set(Elm_Object_Item *it, const char *label) EINA_ARG_NONNULL(1);
+   EINA_DEPRECATED EAPI void          elm_ctxpopup_item_label_set(Elm_Object_Item *it, const char *label) EINA_ARG_NONNULL(1);
    /**
     * @brief Set an elm widget as the content of the ctxpopup.
     *

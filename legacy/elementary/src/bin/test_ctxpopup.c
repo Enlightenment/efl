@@ -41,7 +41,7 @@ static void
 _ctxpopup_item_cb(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info)
 {
    printf("ctxpopup item selected: %s\n",
-   elm_ctxpopup_item_label_get(event_info));
+   elm_object_item_text_get(event_info));
 }
 
 #define ITEM_NEW(_hov, _label, _icon)                                           \
@@ -72,10 +72,10 @@ _list_item_cb(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_in
    ITEM_NEW(ctxpopup, "Save file", "file");
    ITEM_NEW(ctxpopup, "Delete file", "delete");
    ITEM_NEW(ctxpopup, "Navigate to folder", "folder");
-   elm_ctxpopup_item_disabled_set(it, EINA_TRUE);
+   elm_object_item_disabled_set(it, EINA_TRUE);
    ITEM_NEW(ctxpopup, "Edit entry", "edit");
    ITEM_NEW(ctxpopup, "Set date and time", "clock");
-   elm_ctxpopup_item_disabled_set(it, EINA_TRUE);
+   elm_object_item_disabled_set(it, EINA_TRUE);
 
    evas_pointer_canvas_xy_get(evas_object_evas_get(obj), &x, &y);
    evas_object_size_hint_max_set(ctxpopup, 240, 240);
@@ -102,7 +102,7 @@ _list_item_cb2(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_i
    ITEM_NEW(ctxpopup, NULL, "delete");
    ITEM_NEW(ctxpopup, NULL, "folder");
    ITEM_NEW(ctxpopup, NULL, "edit");
-   elm_ctxpopup_item_disabled_set(it, EINA_TRUE);
+   elm_object_item_disabled_set(it, EINA_TRUE);
    ITEM_NEW(ctxpopup, NULL, "clock");
 
    evas_pointer_canvas_xy_get(evas_object_evas_get(obj), &x, &y);
@@ -129,7 +129,7 @@ _list_item_cb3(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_i
    ITEM_NEW(ctxpopup, "Eet", NULL);
    ITEM_NEW(ctxpopup, "Evas", NULL);
    ITEM_NEW(ctxpopup, "Ecore", NULL);
-   elm_ctxpopup_item_disabled_set(it, EINA_TRUE);
+   elm_object_item_disabled_set(it, EINA_TRUE);
    ITEM_NEW(ctxpopup, "Embryo", NULL);
    ITEM_NEW(ctxpopup, "Edje", NULL);
 

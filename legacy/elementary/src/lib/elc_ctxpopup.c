@@ -10,7 +10,6 @@ struct _Elm_Ctxpopup_Item
    const char *label;
    Evas_Object *icon;
    Evas_Smart_Cb func;
-   Eina_Bool disabled:1;
 };
 
 struct _Widget_Data
@@ -80,6 +79,20 @@ static Evas_Object * _content_unset_hook(Evas_Object *obj,
                                          const char *part__);
 static Evas_Object * _content_get_hook(const Evas_Object *obj,
                                        const char *part);
+static void _item_text_set_hook(Elm_Object_Item *it,
+                               const char *part,
+                               const char *label);
+static const char * _item_text_get_hook(const Elm_Object_Item *it,
+                                        const char *part);
+static void _item_content_set_hook(Elm_Object_Item *it,
+                                   const char *part,
+                                   Evas_Object *content);
+static Evas_Object * _item_content_get_hook(const Elm_Object_Item *it,
+                                            const char *part);
+static void _item_disable_set_hook(Elm_Object_Item *it);
+static void _item_signal_emit_hook(Elm_Object_Item *it,
+                                   const char *emission,
+                                   const char *source);
 static void _bg_clicked_cb(void *data, Evas_Object *obj,
                            const char *emission,
                            const char *source);
@@ -767,7 +780,7 @@ _theme_hook(Evas_Object *obj)
         if (item->label)
           edje_object_part_text_set(VIEW(item), "elm.text", item->label);
 
-        if (item->disabled)
+        if (elm_widget_item_disabled_get(item))
           edje_object_signal_emit(VIEW(item), "elm,state,disabled", "elm");
 
         edje_object_message_signal_process(VIEW(item));
@@ -855,6 +868,106 @@ _content_get_hook(const Evas_Object *obj, const char *part)
    wd = elm_widget_data_get(obj);
    if (!wd) return NULL;
    return wd->content;
+}
+
+static void
+_item_text_set_hook(Elm_Object_Item *it,
+                    const char *part,
+                    const char *label)
+{
+   ELM_OBJ_ITEM_CHECK_OR_RETURN(it);
+
+   Widget_Data *wd;
+   Elm_Ctxpopup_Item *ctxpopup_it;
+
+   if (part && strcmp(part, "default")) return;
+
+   ctxpopup_it = (Elm_Ctxpopup_Item *) it;
+
+   wd = elm_widget_data_get(WIDGET(ctxpopup_it));
+   if (!wd) return;
+
+   _item_label_set(ctxpopup_it, label);
+   wd->dir = ELM_CTXPOPUP_DIRECTION_UNKNOWN;
+
+   if (wd->visible)
+     {
+        _scroller_size_reset(wd);
+        _sizing_eval(WIDGET(ctxpopup_it));
+     }
+}
+
+static const char *
+_item_text_get_hook(const Elm_Object_Item *it, const char *part)
+{
+   ELM_OBJ_ITEM_CHECK_OR_RETURN(it, NULL);
+   Elm_Ctxpopup_Item *ctxpopup_it;
+   if (part && strcmp(part, "default")) return NULL;
+   ctxpopup_it = (Elm_Ctxpopup_Item *) it;
+   return ctxpopup_it->label;
+}
+
+static void
+_item_content_set_hook(Elm_Object_Item *it,
+                       const char *part,
+                       Evas_Object *content)
+{
+   ELM_OBJ_ITEM_CHECK_OR_RETURN(it);
+   Widget_Data *wd;
+   Elm_Ctxpopup_Item *ctxpopup_it;
+
+   if (part && strcmp(part, "icon")) return;
+
+   ctxpopup_it = (Elm_Ctxpopup_Item *) it;
+
+   wd = elm_widget_data_get(WIDGET(ctxpopup_it));
+   if (!wd) return;
+
+   _item_icon_set(ctxpopup_it, content);
+   wd->dir = ELM_CTXPOPUP_DIRECTION_UNKNOWN;
+
+   if (wd->visible)
+     {
+        _scroller_size_reset(wd);
+        _sizing_eval(WIDGET(ctxpopup_it));
+     }
+}
+
+static Evas_Object *
+_item_content_get_hook(const Elm_Object_Item *it, const char *part)
+{
+   ELM_OBJ_ITEM_CHECK_OR_RETURN(it, NULL);
+   Elm_Ctxpopup_Item *ctxpopup_it;
+   if (part && strcmp(part, "icon")) return NULL;
+   ctxpopup_it  = (Elm_Ctxpopup_Item *) it;
+   return ctxpopup_it->icon;
+}
+
+static void
+_item_disable_set_hook(Elm_Object_Item *it)
+{
+   ELM_OBJ_ITEM_CHECK_OR_RETURN(it);
+
+   Widget_Data *wd;
+   Elm_Ctxpopup_Item *ctxpopup_it = (Elm_Ctxpopup_Item *) it;
+
+   wd = elm_widget_data_get(WIDGET(ctxpopup_it));
+   if (!wd) return;
+
+   if (elm_widget_item_disabled_get(it))
+     edje_object_signal_emit(VIEW(ctxpopup_it), "elm,state,disabled", "elm");
+   else
+     edje_object_signal_emit(VIEW(ctxpopup_it), "elm,state,enabled", "elm");
+}
+
+static void
+_item_signal_emit_hook(Elm_Object_Item *it,
+                       const char *emission,
+                       const char *source)
+{
+   ELM_OBJ_ITEM_CHECK_OR_RETURN(it);
+   Elm_Ctxpopup_Item *ctxpopup_it = (Elm_Ctxpopup_Item *) it;
+   edje_object_signal_emit(VIEW(ctxpopup_it), emission, source);
 }
 
 static void
@@ -969,7 +1082,7 @@ _item_select_cb(void *data, Evas_Object *obj __UNUSED__,
    Elm_Ctxpopup_Item *item = data;
 
    if (!item) return;
-   if (item->disabled) return;
+   if (elm_widget_item_disabled_get(item)) return;
 
    if (item->func)
      item->func((void*) item->base.data, WIDGET(item), data);
@@ -1148,59 +1261,25 @@ elm_ctxpopup_add(Evas_Object *parent)
 EAPI Evas_Object *
 elm_ctxpopup_item_icon_get(const Elm_Object_Item *it)
 {
-   ELM_OBJ_ITEM_CHECK_OR_RETURN(it, NULL);
-   Elm_Ctxpopup_Item *ctxpopup_it = (Elm_Ctxpopup_Item *) it;
-   return ctxpopup_it->icon;
+   return _item_content_get_hook(it, "icon");
 }
 
 EAPI void
 elm_ctxpopup_item_icon_set(Elm_Object_Item *it, Evas_Object *icon)
 {
-   ELM_OBJ_ITEM_CHECK_OR_RETURN(it);
-
-   Widget_Data *wd;
-   Elm_Ctxpopup_Item *ctxpopup_it  = (Elm_Ctxpopup_Item *) it;
-
-   wd = elm_widget_data_get(WIDGET(ctxpopup_it));
-   if (!wd) return;
-
-   _item_icon_set(ctxpopup_it, icon);
-   wd->dir = ELM_CTXPOPUP_DIRECTION_UNKNOWN;
-
-   if (wd->visible)
-     {
-        _scroller_size_reset(wd);
-        _sizing_eval(WIDGET(ctxpopup_it));
-     }
+   _item_content_set_hook(it, "icon", icon);
 }
 
 EAPI const char *
 elm_ctxpopup_item_label_get(const Elm_Object_Item *it)
 {
-   ELM_OBJ_ITEM_CHECK_OR_RETURN(it, NULL);
-   Elm_Ctxpopup_Item *ctxpopup_it = (Elm_Ctxpopup_Item *) it;
-   return ctxpopup_it->label;
+   return _item_text_get_hook(it, NULL);
 }
 
 EAPI void
 elm_ctxpopup_item_label_set(Elm_Object_Item *it, const char *label)
 {
-   ELM_OBJ_ITEM_CHECK_OR_RETURN(it);
-
-   Widget_Data *wd;
-   Elm_Ctxpopup_Item *ctxpopup_it = (Elm_Ctxpopup_Item *) it;
-
-   wd = elm_widget_data_get(WIDGET(ctxpopup_it));
-   if (!wd) return;
-
-   _item_label_set(ctxpopup_it, label);
-   wd->dir = ELM_CTXPOPUP_DIRECTION_UNKNOWN;
-
-   if (wd->visible)
-     {
-        _scroller_size_reset(wd);
-        _sizing_eval(WIDGET(ctxpopup_it));
-     }
+   _item_text_set_hook(it, NULL, label);
 }
 
 EAPI void
@@ -1331,6 +1410,13 @@ elm_ctxpopup_item_append(Evas_Object *obj, const char *label,
    item = elm_widget_item_new(obj, Elm_Ctxpopup_Item);
    if (!item) return NULL;
 
+   elm_widget_item_disable_set_hook_set(item, _item_disable_set_hook);
+   elm_widget_item_text_set_hook_set(item, _item_text_set_hook);
+   elm_widget_item_text_get_hook_set(item, _item_text_get_hook);
+   elm_widget_item_content_set_hook_set(item, _item_content_set_hook);
+   elm_widget_item_content_get_hook_set(item, _item_content_get_hook);
+   elm_widget_item_signal_emit_hook_set(item, _item_signal_emit_hook);
+
    //The first item is appended.
    content = elm_object_content_unset(obj);
    if (content) evas_object_del(content);
@@ -1401,31 +1487,13 @@ elm_ctxpopup_item_del(Elm_Object_Item *it)
 EAPI void
 elm_ctxpopup_item_disabled_set(Elm_Object_Item *it, Eina_Bool disabled)
 {
-   ELM_OBJ_ITEM_CHECK_OR_RETURN(it);
-
-   Widget_Data *wd;
-   Elm_Ctxpopup_Item *ctxpopup_it = (Elm_Ctxpopup_Item *) it;
-
-   wd = elm_widget_data_get(WIDGET(ctxpopup_it));
-   if (!wd) return;
-
-   if (disabled == ctxpopup_it->disabled)
-     return;
-
-   if (disabled)
-     edje_object_signal_emit(VIEW(ctxpopup_it), "elm,state,disabled", "elm");
-   else
-     edje_object_signal_emit(VIEW(ctxpopup_it), "elm,state,enabled", "elm");
-
-   ctxpopup_it->disabled = !!disabled;
+   elm_object_item_disabled_set(it, disabled);
 }
 
 EAPI Eina_Bool
 elm_ctxpopup_item_disabled_get(const Elm_Object_Item *it)
 {
-   ELM_OBJ_ITEM_CHECK_OR_RETURN(it, EINA_FALSE);
-   Elm_Ctxpopup_Item *ctxpopup_it = (Elm_Ctxpopup_Item *) it;
-   return ctxpopup_it->disabled;
+   return elm_object_item_disabled_get(it);
 }
 
 EAPI void

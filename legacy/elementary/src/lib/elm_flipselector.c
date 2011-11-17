@@ -70,7 +70,7 @@ static const Evas_Smart_Cb_Description _signals[] = {
 
 static void
 _item_text_set_hook(Elm_Object_Item *it,
-                    const char *part __UNUSED__,
+                    const char *part,
                     const char *label)
 {
    ELM_OBJ_ITEM_CHECK_OR_RETURN(it);
@@ -80,6 +80,8 @@ _item_text_set_hook(Elm_Object_Item *it,
    Elm_Flipselector_Item *item;
 
    if (!label) return;
+
+   if (part && strcmp(part ,"default")) return;
 
    item = (Elm_Flipselector_Item *) it;
    wd = elm_widget_data_get(WIDGET(item));
@@ -102,13 +104,15 @@ _item_text_set_hook(Elm_Object_Item *it,
 }
 
 static const char *
-_item_text_get_hook(const Elm_Object_Item *it, const char *part __UNUSED__)
+_item_text_get_hook(const Elm_Object_Item *it, const char *part)
 {
    ELM_OBJ_ITEM_CHECK_OR_RETURN(it, NULL);
 
    Elm_Flipselector_Item *item, *_item;
    Widget_Data *wd;
    Eina_List *l;
+
+   if (part && strcmp(part ,"default")) return NULL;
 
    item = (Elm_Flipselector_Item *) it;
    wd = elm_widget_data_get(WIDGET(item));
