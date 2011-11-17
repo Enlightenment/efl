@@ -39,7 +39,6 @@ void *alloca (size_t);
 
 #include <stdio.h>
 #include <sys/types.h>
-#include <dirent.h>
 #include <string.h>
 
 #ifdef HAVE_LIBGEN_H
@@ -360,6 +359,7 @@ loaded:
    eina_error_set(0);
    return EINA_TRUE;
 #else
+   (void) m;
    return EINA_FALSE;
 #endif
 }
@@ -387,6 +387,7 @@ EAPI Eina_Bool eina_module_unload(Eina_Module *m)
 
    return EINA_FALSE;
 #else
+   (void) m;
    return EINA_FALSE;
 #endif
 }
@@ -398,6 +399,8 @@ EAPI void *eina_module_symbol_get(const Eina_Module *m, const char *symbol)
    EINA_SAFETY_ON_NULL_RETURN_VAL(m->handle, NULL);
    return dlsym(m->handle, symbol);
 #else
+   (void) m;
+   (void) symbol;
    return NULL;
 #endif
 }
@@ -442,7 +445,9 @@ EAPI char *eina_module_symbol_path_get(const void *symbol, const char *sub_dir)
                }
           }
      }
-
+#else
+   (void) symbol;
+   (void) sub_dir;
 #endif /* ! HAVE_DLADDR */
 
    return NULL;
