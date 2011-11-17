@@ -2830,7 +2830,7 @@ Edje_Input_Panel_Layout
 _edje_entry_input_panel_layout_get(Edje_Real_Part *rp)
 {
    Entry *en = rp->entry_data;
-   if ((!en) || (!en->imf_context)) return EDJE_INPUT_PANEL_LAYOUT_INVALID;
+   if (!en) return EDJE_INPUT_PANEL_LAYOUT_INVALID;
 #ifdef HAVE_ECORE_IMF
    if (en->imf_context)
      return ecore_imf_context_input_panel_layout_get(en->imf_context);
@@ -2851,12 +2851,12 @@ _edje_entry_imf_context_reset(Entry *en)
 static void
 _edje_entry_imf_cursor_info_set(Entry *en)
 {
+#ifdef HAVE_ECORE_IMF
    Evas_Coord cx, cy, cw, ch;
    if (!en || !en->rp || !en->imf_context) return;
 
    _edje_entry_cursor_geometry_get(en->rp, &cx, &cy, &cw, &ch);
 
-#ifdef HAVE_ECORE_IMF
    ecore_imf_context_cursor_position_set(en->imf_context,
                                          evas_textblock_cursor_pos_get(en->cursor));
    ecore_imf_context_cursor_location_set(en->imf_context, cx, cy, cw, ch);
