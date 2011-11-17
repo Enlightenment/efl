@@ -157,7 +157,7 @@ _page2(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
    content = _content_new(nf, img2);
 
    it = elm_naviframe_item_push(nf, "Page 2", NULL, bt, content,  NULL);
-   elm_object_item_text_part_set(it, "subtitle", "Here is sub-title part!");
+   elm_object_item_part_text_set(it, "subtitle", "Here is sub-title part!");
 }
 
 void

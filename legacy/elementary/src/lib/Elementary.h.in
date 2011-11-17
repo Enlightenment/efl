@@ -1232,13 +1232,38 @@ extern "C" {
     * @param label The new text of the label
     *
     * @note Elementary object items may have many labels
+    * @deprecated Use elm_object_item_part_text_set instead.
+    * @ingroup General
+    */
+   EINA_DEPRECATED EAPI void elm_object_item_text_part_set(Elm_Object_Item *it, const char *part, const char *label);
+
+   /**
+    * Set a label of an object item
+    *
+    * @param it The Elementary object item
+    * @param part The text part name to set (NULL for the default label)
+    * @param label The new text of the label
+    *
+    * @note Elementary object items may have many labels
     *
     * @ingroup General
     */
-   EAPI void elm_object_item_text_part_set(Elm_Object_Item *it, const char *part, const char *label);
+   EAPI void elm_object_item_part_text_set(Elm_Object_Item *it, const char *part, const char *label);
 
-#define elm_object_item_text_set(it, label) elm_object_item_text_part_set((it), NULL, (label))
+#define elm_object_item_text_set(it, label) elm_object_item_part_text_set((it), NULL, (label))
 
+   /**
+    * Get a label of an object item
+    *
+    * @param it The Elementary object item
+    * @param part The text part name to get (NULL for the default label)
+    * @return text of the label or NULL for any error
+    *
+    * @note Elementary object items may have many labels
+    * @deprecated Use elm_object_item_part_text_get instead.
+    * @ingroup General
+    */
+   EINA_DEPRECATED EAPI const char *elm_object_item_text_part_get(const Elm_Object_Item *it, const char *part);
    /**
     * Get a label of an object item
     *
@@ -1250,9 +1275,9 @@ extern "C" {
     *
     * @ingroup General
     */
-   EAPI const char *elm_object_item_text_part_get(const Elm_Object_Item *it, const char *part);
+   EAPI const char *elm_object_item_part_text_get(const Elm_Object_Item *it, const char *part);
 
-#define elm_object_item_text_get(it) elm_object_item_text_part_get((it), NULL)
+#define elm_object_item_text_get(it) elm_object_item_part_text_get((it), NULL)
 
    /**
     * Set the text to read out when in accessibility mode

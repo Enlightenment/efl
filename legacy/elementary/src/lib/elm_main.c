@@ -2034,8 +2034,22 @@ elm_object_item_text_part_set(Elm_Object_Item *it,
    _elm_widget_item_text_part_set((Elm_Widget_Item *) it, part, label);
 }
 
+EAPI void
+elm_object_item_part_text_set(Elm_Object_Item *it,
+                              const char *part,
+                              const char *label)
+{
+   _elm_widget_item_text_part_set((Elm_Widget_Item *) it, part, label);
+}
+
 EAPI const char *
 elm_object_item_text_part_get(const Elm_Object_Item *it, const char *part)
+{
+   return _elm_widget_item_text_part_get((Elm_Widget_Item *) it, part);
+}
+
+EAPI const char *
+elm_object_item_part_text_get(const Elm_Object_Item *it, const char *part)
 {
    return _elm_widget_item_text_part_get((Elm_Widget_Item *) it, part);
 }
