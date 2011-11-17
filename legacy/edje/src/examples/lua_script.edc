@@ -21,7 +21,29 @@ collections {
          local count = 0;
          local fndata = 99;
          local text_geom;
- 
+
+         --// Functions to print tables.
+         local print_table, print_table_start;
+
+         function print_table_start(table, space, name)
+            print(space .. name .. ": ");
+            print(space .. "{");
+            print_table(table, space .. "  ");
+            print(space .. "}");
+         end
+
+         function print_table(table, space)
+            for k, v in pairs(table) do 
+               if type(v) == "table" then
+                  print_table_start(v, space, k);
+               elseif type(v) == "string" then
+                  print(space .. k .. ': "' .. v .. '";')
+               else
+                  print(space .. k .. ": " .. v .. ";")
+               end
+            end
+         end
+
          local function mycb3 (v)
             print("lua::callback transition " .. D.val .. " v: " .. v);
             d = {};
@@ -255,6 +277,29 @@ collections {
             --// vararg appropriately. they are the same as the params passed 
             --// to edje:messagesend() (if any are passed at all).  Any array
             --// arguments are passed as a single table.
+
+            if ("none" == type) then
+               print("lua::message no args");
+            elseif ("strset" == type) then
+               strs = ... ;
+               print_table_start(strs, "", "lua::message strings");
+            elseif ("intset" == type) then
+               ints = ... ;
+               print_table_start(ints, "", "lua::message ints");
+            elseif ("floatset" == type) then
+               floats = ... ;
+               print_table_start(floats, "", "lua::message floats");
+            elseif ("strintset" == type) then
+               str, ints = ... ;
+               print("lua::message " .. str);
+               print_table_start(ints, "", "lua::message ints");
+            elseif ("strfloatset" == type) then
+               str, floats = ... ;
+               print("lua::message " .. str);
+               print_table_start(floats, "", "lua::message floats");
+            else
+               print("lua::message " .. ... );
+            end
          end
 
          function signal (sig, src)
