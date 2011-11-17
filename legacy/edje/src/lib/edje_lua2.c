@@ -31,6 +31,11 @@ language is in order. Lua is that language.
 To get you started, here's an example:
 @ref lua_script.edc
 
+Most of these lua functions are wrappers around various evas, ecore, and edje C
+functions.  Refer to their documentation for more in depth details and up to
+date documentation.  A lot of this documentation is simple copied from the C
+functions it wraps.
+
 @section args Lua function argument and return syntax
 
 Some of the lua functions can accept a table as well as separate arguments.
@@ -46,6 +51,11 @@ Lua functions stack usage.
 In the definition of the lua functions provided, always mention the stack usage,
 using the same notation that is used in the Lua 5.1 Reference Manual.
 http://www.lua.org/manual/5.1/manual.html#3.7 describes that notation.
+
+On the other hand, lua discards excess stack entries when control passes back to
+it, but it's good to maintain proper discipline.
+
+Should do the same for the support functions.  These ARE more important to check.
 */
 
 //--------------------------------------------------------------------------//
@@ -220,7 +230,7 @@ _elua_custom_panic(lua_State *L __UNUSED__)
 
 // Really only used to manage the pointer to our edje.
 static void
-_elua_table_ptr_set(lua_State *L, const void *key, const void *val)
+_elua_table_ptr_set(lua_State *L, const void *key, const void *val)  // Stack usage [-?, +?, ?]
 {
    lua_pushlightuserdata(L, (void *)key);
    lua_pushlightuserdata(L, (void *)val);
@@ -228,7 +238,7 @@ _elua_table_ptr_set(lua_State *L, const void *key, const void *val)
 }
 
 static const void *
-_elua_table_ptr_get(lua_State *L, const void *key)
+_elua_table_ptr_get(lua_State *L, const void *key)  // Stack usage [-?, +?, ?]
 {
    const void *ptr;
    lua_pushlightuserdata(L, (void *)key);
@@ -240,7 +250,7 @@ _elua_table_ptr_get(lua_State *L, const void *key)
 
 /* XXX: not used
 static void
-_elua_table_ptr_del(lua_State *L, const void *key)
+_elua_table_ptr_del(lua_State *L, const void *key)  // Stack usage [-?, +?, ?]
 {
    lua_pushlightuserdata(L, (void *)key);
    lua_pushnil(L);
@@ -252,7 +262,7 @@ _elua_table_ptr_del(lua_State *L, const void *key)
  * Cori: Assumes object to be saved on top of stack
  */
 static void
-_elua_ref_set(lua_State *L, void *key)
+_elua_ref_set(lua_State *L, void *key)  // Stack usage [-?, +?, ?]
 {
    lua_pushlightuserdata(L, &_elua_objs);
    lua_rawget(L, LUA_REGISTRYINDEX);
@@ -266,7 +276,7 @@ _elua_ref_set(lua_State *L, void *key)
  * Cori: Get an object from the object table
  */
 static void *
-_elua_ref_get(lua_State *L, void *key)
+_elua_ref_get(lua_State *L, void *key)  // Stack usage [-?, +?, ?]
 {
    lua_pushlightuserdata(L, &_elua_objs);
    lua_rawget(L, LUA_REGISTRYINDEX);
@@ -277,7 +287,7 @@ _elua_ref_get(lua_State *L, void *key)
 }
 
 static Edje_Lua_Obj *
-_elua_obj_new(lua_State *L, Edje *ed, int size, const char *metatable)
+_elua_obj_new(lua_State *L, Edje *ed, int size, const char *metatable)  // Stack usage [-?, +?, ?]
 {
    Edje_Lua_Obj *obj;
 
@@ -305,7 +315,7 @@ _elua_obj_free(lua_State *L __UNUSED__, Edje_Lua_Obj *obj)
 }
 
 static int
-_elua_obj_gc(lua_State *L)
+_elua_obj_gc(lua_State *L)  // Stack usage [-?, +?, ?]
 {
    Edje_Lua_Obj *obj = (Edje_Lua_Obj *)lua_touserdata(L, 1);
    if (!obj) return 0;
@@ -320,7 +330,7 @@ _elua_obj_del(lua_State *L)
 }
 
 static void
-_elua_gc(lua_State *L)
+_elua_gc(lua_State *L)  // Stack usage [-?, +?, ?]
 {
    lua_gc(L, LUA_GCCOLLECT, 0);
 }
@@ -339,7 +349,7 @@ _elua_gc(lua_State *L)
 //  nil      ~
 
 static char *
-_elua_push_name(lua_State *L, char *q, int index)
+_elua_push_name(lua_State *L, char *q, int index)  // Stack usage [-?, +?, ?]
 {
    char *p = q;
    char temp = '\0';
@@ -360,7 +370,7 @@ _elua_push_name(lua_State *L, char *q, int index)
 }
 
 static int
-_elua_scan_params(lua_State *L, int i, Eina_Bool tr, char *params, ...)
+_elua_scan_params(lua_State *L, int i, Eina_Bool tr, char *params, ...)  // Stack usage [-?, +?, ?]
 {
    va_list vl;
    char *f = strdup(params);
@@ -488,7 +498,7 @@ _elua_scan_params(lua_State *L, int i, Eina_Bool tr, char *params, ...)
 }
 
 static int
-_elua_ret(lua_State *L, char *params, ...)
+_elua_ret(lua_State *L, char *params, ...)  // Stack usage [-?, +?, ?]
 {
    va_list vl;
    char *f = strdup(params);
@@ -649,14 +659,14 @@ static const struct luaL_reg _elua_edje_funcs [] =
 
 /**
 @page luaref
-@subsubsection edje_echo edje:echo()
+@subsubsection edje_echo edje:echo(text)
 
-Make lua a bit shelly.
+Make lua a bit shelly.  Prints a string to the console
 
-Param - a string to print to the console.
+@param text The string to print.
 */
 static int
-_elua_echo(lua_State *L)  // Stack usage [-?, +?, ?]
+_elua_echo(lua_State *L)  // Stack usage [-0, +0, vm]
 {
    const char *string = luaL_checkstring(L, 1);
    printf("%s\n", string);
@@ -668,17 +678,19 @@ _elua_echo(lua_State *L)  // Stack usage [-?, +?, ?]
 @page luaref
 @subsubsection edje_date edje:date()
 
-Gives us the current time and date.
+Retrieves the current time and date.
 
-Returns a table with these members -
-year - Year.
-month - Month as an integer.
-day - Day of the month.
-yearday - Day of the year.
-weekday - Day of the week as an integer.
-hour -
-min -
-sec - Seconds as a number.
+Wraps gettimeofday(), as passed through localtime().
+
+@return A table with these fields:
+   - integer year: Year.
+   - integer month: Month of the year.
+   - integer day: Day of the month.
+   - integer yearday: Day of the year.
+   - integer weekday: Day of the week.
+   - integer hour: Hour of the day (24 hour format).
+   - integer min: Minute of the hour.
+   - number sec: Seconds as a number.
 
 */
 static int
@@ -720,7 +732,18 @@ _elua_date(lua_State *L)  // Stack usage [-?, +?, ?]
 @page luaref
 @subsubsection edje_looptime edje:looptime()
 
+Retrieves the time at which the last loop stopped waiting for timeouts or events.
 
+This gets the time that the main loop ceased waiting for timouts and/or events
+to come in or for signals or any other interrupt source. This should be
+considered a reference point for all time based activity that should calculate
+its timepoint from the return of edje:looptime(). Use this UNLESS you absolutely
+must get the current actual timepoint - then use edje:seconds(). Note that this
+time is meant to be used as relative to other times obtained on this run.
+
+Wraps ecore_loop_time_get().
+
+@returns A number of seconds.
 */
 static int
 _elua_looptime(lua_State *L)  // Stack usage [-?, +?, ?]
@@ -734,7 +757,15 @@ _elua_looptime(lua_State *L)  // Stack usage [-?, +?, ?]
 @page luaref
 @subsubsection edje_seconds edje:seconds()
 
+Retrieves the current system time as a floating point value in seconds.
 
+This uses a monotonic clock and thus never goes back in time while machine is
+live (even if user changes time or timezone changes, however it may be reset
+whenever the machine is restarted).
+
+Wraps ecore_time_get().
+
+@returns A number of seconds.
 */
 static int
 _elua_seconds(lua_State *L)  // Stack usage [-?, +?, ?]
@@ -749,7 +780,13 @@ _elua_seconds(lua_State *L)  // Stack usage [-?, +?, ?]
 @page luaref
 @subsubsection edje_geom edje:geom()
 
+Retrieves the position and size of the edje object that this lua group is in.
 
+@returns A table with these fields:
+   - integer x: The edjes X position.
+   - integer y: The edjes Y position.
+   - integer w: The edjes width.
+   - integer h: The edjes height.
 */
 static int
 _elua_objgeom(lua_State *L)  // Stack usage [-?, +?, ?]
@@ -765,6 +802,11 @@ _elua_objgeom(lua_State *L)  // Stack usage [-?, +?, ?]
 @subsubsection edje_pos edje:pos()
 
 
+Retrieves the position of the edje object that this lua group is in.
+
+@returns A table with these fields:
+   - integer x: The edjes X position.
+   - integer y: The edjes Y position.
 */
 static int
 _elua_objpos(lua_State *L)  // Stack usage [-?, +?, ?]
@@ -780,6 +822,11 @@ _elua_objpos(lua_State *L)  // Stack usage [-?, +?, ?]
 @subsubsection edje_size edje:size()
 
 
+Retrieves the size of the edje object that this lua group is in.
+
+@returns A table with these fields:
+   - integer w: The edjes width.
+   - integer h: The edjes height.
 */
 static int
 _elua_objsize(lua_State *L)  // Stack usage [-?, +?, ?]
@@ -793,9 +840,25 @@ _elua_objsize(lua_State *L)  // Stack usage [-?, +?, ?]
 //-------------
 /**
 @page luaref
-@subsubsection edje_emit edje:emit()
+@subsubsection edje_emit edje:emit(signal, source)
 
+Emit a signal.
 
+Wraps edje_object_signal_emit().
+
+@param signal The signal string to send.
+@param source The source string of the signal.
+
+NOTE: The source string will have a name and a colon prepended to in when it is
+delivered to things that are not this edje, like C and other edje groups.
+If this edje is a top level edje, then it will be the name of the group (I think).
+If this edje is swallowed into some other part, then it will be the name of the
+part:
+
+   group_name:source
+
+FIXME: I actually have no idea what happens if it's swallowed into another lua
+edje group.
 */
 static int
 _elua_emit(lua_State *L)  // Stack usage [-?, +?, ?]
@@ -810,9 +873,29 @@ _elua_emit(lua_State *L)  // Stack usage [-?, +?, ?]
 
 /**
 @page luaref
-@subsubsection edje_message_send edje:messagesend()
+@subsubsection edje_message_send edje:messagesend(id, type, ...)
 
+Send a message to this edje, and all it's child objects.
 
+Wraps edje_object_message_send().
+
+@param id   An identification integer for the message.
+@param type The type of message to send.
+@param ...  Zero or more things to send as part of the message, depending on the type.
+
+The type can be one of:
+   - none: No msg.
+   - sig: The msg is two strings (signal, source), sent as a signal.
+   - str: The msg is a C string.
+   - int: The message is a C integer.
+   - float: The message is a C float.
+   - strset: The message is an array of C strings.
+   - intset: The message is an array of C integers.
+   - floatset: The message is an array of C floats.
+   - strint: The message is a C stnring and a C integer.
+   - strfloat: The message is a C string and a C float.
+   - strintset: The message is a C string and an array of C integers.
+   - strfloatset: The message is a G string and an array of C floats.
 */
 static int
 _elua_messagesend(lua_State *L)  // Stack usage [-?, +?, ?]
@@ -1008,9 +1091,23 @@ _elua_animator_free(void *obj)
 
 /**
 @page luaref
-@subsubsection edje_animator edje:animator()
+@subsubsection edje_animator edje:animator(func)
 
+This function adds an animator and returns its handle on success and NULL on
+failure. The function func will be called every frame tick.  Note that setting
+the frame tick is not available as a lua function, so has to be done from C.
+The default tick is 1/30 second.
 
+When the animator func is called, it must return a value of either true or false.
+If it returns true it will be called again at the next tick, or if it returns
+false it will be deleted automatically making any references/handles for it
+invalid.
+
+Wraps ecore_animator_add().
+
+@param func The function to call when the animator triggers.
+
+@returns A userdata that is an ecore animator.
 */
 static int
 _elua_animator(lua_State *L)  // Stack usage [-?, +?, ?]
@@ -1020,7 +1117,8 @@ _elua_animator(lua_State *L)  // Stack usage [-?, +?, ?]
 
    luaL_checkany(L, 1);
 
-   // FIXME: This, and the other two timer thingies, should be it's own class I think.  But that might be API change, so wait until after the freeze.
+   // FIXME: This, and the other two timer thingies, should be it's own class, coz they are NOT evas objects.  But that might be API change, so wait until after the freeze.
+   // FIXME: Allow lua to set a data to be sent back with the callback.
    ela = (Edje_Lua_Animator *)_elua_obj_new(L, ed, sizeof(Edje_Lua_Animator), _elua_evas_meta);
    ela->obj.free_func = _elua_animator_free;
    ela->animator = ecore_animator_add(_elua_animator_cb, ela);
@@ -1078,9 +1176,22 @@ _elua_timer_free(void *obj)
 
 /**
 @page luaref
-@subsubsection edje_timer edje:timer()
+@subsubsection edje_timer edje:timer(tick, func)
 
+This function adds a timer and returns its handle on success and NULL on failure.
+The function func will be called every tick seconds.
 
+When the timer func is called, it must return a value of either true or false.
+If it returns true, it will be called again at the next tick, or if it returns
+false it will be deleted automatically making any references/handles for it
+invalid.
+
+Wraps ecore_timer_add().
+
+@param tick How often, in seconds, to call the function.
+@param func The function to call when the timer triggers.
+
+@returns A userdata that is an ecore timer.
 */
 static int
 _elua_timer(lua_State *L)  // Stack usage [-?, +?, ?]
@@ -1154,9 +1265,16 @@ _elua_transition_free(void *obj)
 
 /**
 @page luaref
-@subsubsection edje_transition edje:transition()
+@subsubsection edje_transition edje:transition(div, func)
 
+Just like edje:animator(), except that the callback function gets called with an
+argument.  The argument is the amount of time since the transition was created,
+divided by the div parameter.
 
+@param div A number to divide the time since creation by.
+@param func The function to call when the transition triggers.
+
+@returns A userdata that is a transition (ecore animator, plus other info).
 */
 static int
 _elua_transition(lua_State *L)  // Stack usage [-?, +?, ?]
@@ -1186,6 +1304,7 @@ _elua_transition(lua_State *L)  // Stack usage [-?, +?, ?]
 @subsubsection edje_colour_class edje:color_class()
 
 
+@since 1.1.0
 */
 static int
 _elua_color_class(lua_State *L)  // Stack usage [-?, +?, ?]
@@ -1221,6 +1340,7 @@ _elua_color_class(lua_State *L)  // Stack usage [-?, +?, ?]
 @subsubsection edje_text_class edje:text_class()
 
 
+@since 1.1.0
 */
 static int
 _elua_text_class(lua_State *L)  // Stack usage [-?, +?, ?]
@@ -1277,6 +1397,7 @@ _elua_polish_evas_object(Edje *ed, Edje_Lua_Evas_Object *elo)
 @subsubsection edje_edje edje:edje()
 
 
+@since 1.1.0
 */
 static int
 _elua_edje(lua_State *L)  // Stack usage [-?, +?, ?]
@@ -1292,6 +1413,7 @@ _elua_edje(lua_State *L)  // Stack usage [-?, +?, ?]
 @subsubsection edje_image edje:image()
 
 
+@since 1.1.0
 */
 static int
 _elua_image(lua_State *L)  // Stack usage [-?, +?, ?]
@@ -1307,6 +1429,7 @@ _elua_image(lua_State *L)  // Stack usage [-?, +?, ?]
 @subsubsection edje_line edje:line()
 
 
+@since 1.1.0
 */
 static int
 _elua_line(lua_State *L)  // Stack usage [-?, +?, ?]
@@ -1331,6 +1454,7 @@ _elua_map_free(void *obj)
 @subsubsection edje_map edje:map()
 
 
+@since 1.1.0
 */
 static int
 _elua_map(lua_State *L)  // Stack usage [-?, +?, ?]
@@ -1354,6 +1478,7 @@ _elua_map(lua_State *L)  // Stack usage [-?, +?, ?]
 @subsubsection edje_polygon edje:polygon()
 
 
+@since 1.1.0
 */
 static int
 _elua_polygon(lua_State *L)  // Stack usage [-?, +?, ?]
@@ -1368,9 +1493,9 @@ _elua_polygon(lua_State *L)  // Stack usage [-?, +?, ?]
 @page luaref
 @subsubsection edje_rect edje:rect()
 
-Create a rectangle.
+Create an evas rectangle, and add it to the edje.
 
-Returns an evas rectangle.
+@returns A userdata that is an evas rectangle.
 */
 static int
 _elua_rect(lua_State *L)  // Stack usage [-?, +?, ?]
@@ -1386,6 +1511,7 @@ _elua_rect(lua_State *L)  // Stack usage [-?, +?, ?]
 @subsubsection edje_text edje:text()
 
 
+@since 1.1.0
 */
 static int
 _elua_text(lua_State *L)  // Stack usage [-?, +?, ?]
@@ -1397,14 +1523,6 @@ _elua_text(lua_State *L)  // Stack usage [-?, +?, ?]
 }
 
 /* XXX: disabled until there are enough textblock functions implemented to make it actually useful
-/**
-@page luaref
-@subsubsection edje_textblock edje:textblock()
-
-
-*/
-/*
-static int
 _elua_textblock(lua_State *L)  // Stack usage [-?, +?, ?]
 {
    _ELUA_PLANT_EVAS_OBJECT(Edje_Lua_Evas_Object, _elua_evas_textblock_meta, _elua_evas_obj_free)
@@ -2027,6 +2145,7 @@ _elua_color(lua_State *L)  // Stack usage [-?, +?, ?]
 @subsubsection evas_map evas_object:map()
 
 
+@since 1.1.0
 */
 static int
 _elua_obj_map(lua_State *L)  // Stack usage [-?, +?, ?]
@@ -2048,6 +2167,7 @@ _elua_obj_map(lua_State *L)  // Stack usage [-?, +?, ?]
 @subsubsection evas_map_enable evas_object:map_enable()
 
 
+@since 1.1.0
 */
 static int
 _elua_obj_map_enable(lua_State *L)  // Stack usage [-?, +?, ?]
@@ -2071,6 +2191,7 @@ _elua_obj_map_enable(lua_State *L)  // Stack usage [-?, +?, ?]
 @subsubsection evas_map_source evas_object:map_source()
 
 
+@since 1.1.0
 */
 static int
 _elua_obj_map_source(lua_State *L)  // Stack usage [-?, +?, ?]
@@ -2113,6 +2234,8 @@ edje object creation function edje:edje().
 In the following, "edje_object" is a place holder for any lua variable that
 holds a reference to an evas edje object.  NOT the edje class specified earlier
 though.
+
+@since 1.1.0
 */
 
 static int _elua_edje_file(lua_State *L);
@@ -2132,6 +2255,7 @@ static const struct luaL_reg _elua_evas_edje_funcs [] =
 @subsubsection edje_file edje_object:file()
 
 
+@since 1.1.0
 */
 static int
 _elua_edje_file(lua_State *L)  // Stack usage [-?, +?, ?]
@@ -2192,6 +2316,8 @@ image object creation function edje:image().
 
 In the following, "image_object" is a place holder for any lua variable that
 holds a reference to an evas image object.
+
+@since 1.1.0
 */
 
 static int _elua_image_fill(lua_State *L);
@@ -2215,6 +2341,7 @@ static const struct luaL_reg _elua_evas_image_funcs [] =
 @subsubsection image_fill image_object:fill()
 
 
+@since 1.1.0
 */
 static int
 _elua_image_fill(lua_State *L)  // Stack usage [-?, +?, ?]
@@ -2240,6 +2367,7 @@ _elua_image_fill(lua_State *L)  // Stack usage [-?, +?, ?]
 @subsubsection image_filled image_object:filled()
 
 
+@since 1.1.0
 */
 static int
 _elua_image_filled(lua_State *L)  // Stack usage [-?, +?, ?]
@@ -2264,6 +2392,7 @@ _elua_image_filled(lua_State *L)  // Stack usage [-?, +?, ?]
 @subsubsection image_image image_object:image()
 
 
+@since 1.1.0
 */
 static int
 _elua_image_image(lua_State *L)  // Stack usage [-?, +?, ?]
@@ -2344,6 +2473,8 @@ line object creation function edje:line().
 
 In the following, "line_object" is a place holder for any lua variable that
 holds a reference to an evas line object.
+
+@since 1.1.0
 */
 
 static int _elua_line_xy(lua_State *L);
@@ -2363,6 +2494,7 @@ static const struct luaL_reg _elua_evas_line_funcs [] =
 @subsubsection line_xy line_object:xy()
 
 
+@since 1.1.0
 */
 static int _elua_line_xy(lua_State *L)  // Stack usage [-?, +?, ?]
 {
@@ -2393,6 +2525,8 @@ map object creation function edje:map().
 
 In the following, "map_object" is a place holder for any lua variable that
 holds a reference to an evas map object.
+
+@since 1.1.0
 */
 
 static int _elua_map_alpha(lua_State *L);
@@ -2434,6 +2568,7 @@ static const struct luaL_reg _elua_evas_map_funcs [] =
 @subsubsection map_alpha map_object:alpha()
 
 
+@since 1.1.0
 */
 static int
 _elua_map_alpha(lua_State *L)  // Stack usage [-?, +?, ?]
@@ -2458,6 +2593,7 @@ _elua_map_alpha(lua_State *L)  // Stack usage [-?, +?, ?]
 @subsubsection map_clockwise map_object:clockwise()
 
 
+@since 1.1.0
 */
 static int
 _elua_map_clockwise(lua_State *L)  // Stack usage [-?, +?, ?]
@@ -2476,6 +2612,7 @@ _elua_map_clockwise(lua_State *L)  // Stack usage [-?, +?, ?]
 @subsubsection map_colour map_object:colour()
 
 
+@since 1.1.0
 */
 static int
 _elua_map_colour(lua_State *L)  // Stack usage [-?, +?, ?]
@@ -2520,6 +2657,7 @@ _elua_map_colour(lua_State *L)  // Stack usage [-?, +?, ?]
 @subsubsection map_coord map_object:coord()
 
 
+@since 1.1.0
 */
 static int
 _elua_map_coord(lua_State *L)  // Stack usage [-?, +?, ?]
@@ -2547,6 +2685,7 @@ _elua_map_coord(lua_State *L)  // Stack usage [-?, +?, ?]
 @subsubsection map_lighting map_object:lighting()
 
 
+@since 1.1.0
 */
 static int
 _elua_map_lighting(lua_State *L)  // Stack usage [-?, +?, ?]
@@ -2573,6 +2712,7 @@ _elua_map_lighting(lua_State *L)  // Stack usage [-?, +?, ?]
 @subsubsection map_perspective map_object:perspective()
 
 
+@since 1.1.0
 */
 static int
 _elua_map_perspective(lua_State *L)  // Stack usage [-?, +?, ?]
@@ -2595,6 +2735,7 @@ _elua_map_perspective(lua_State *L)  // Stack usage [-?, +?, ?]
 @subsubsection map_populate map_object:populate()
 
 
+@since 1.1.0
 */
 static int
 _elua_map_populate(lua_State *L)  // Stack usage [-?, +?, ?]
@@ -2648,6 +2789,7 @@ _elua_map_populate(lua_State *L)  // Stack usage [-?, +?, ?]
 @subsubsection map_rotate map_object:rotate()
 
 
+@since 1.1.0
 */
 static int
 _elua_map_rotate(lua_State *L)  // Stack usage [-?, +?, ?]
@@ -2675,6 +2817,7 @@ _elua_map_rotate(lua_State *L)  // Stack usage [-?, +?, ?]
 @subsubsection map_rotate3d map_object:rotate3d()
 
 
+@since 1.1.0
 */
 static int
 _elua_map_rotate3d(lua_State *L)  // Stack usage [-?, +?, ?]
@@ -2700,6 +2843,7 @@ _elua_map_rotate3d(lua_State *L)  // Stack usage [-?, +?, ?]
 @subsubsection map_smooth map_object:smooth()
 
 
+@since 1.1.0
 */
 static int
 _elua_map_smooth(lua_State *L)  // Stack usage [-?, +?, ?]
@@ -2724,6 +2868,7 @@ _elua_map_smooth(lua_State *L)  // Stack usage [-?, +?, ?]
 @subsubsection map_uv map_object:uv()
 
 
+@since 1.1.0
 */
 static int
 _elua_map_uv(lua_State *L)  // Stack usage [-?, +?, ?]
@@ -2751,6 +2896,7 @@ _elua_map_uv(lua_State *L)  // Stack usage [-?, +?, ?]
 @subsubsection map_zoom map_object:zoom()
 
 
+@since 1.1.0
 */
 static int
 _elua_map_zoom(lua_State *L)  // Stack usage [-?, +?, ?]
@@ -2783,6 +2929,8 @@ polygon object creation function edje:polygon().
 
 In the following, "polygon_object" is a place holder for any lua variable that
 holds a reference to an evas polygon object.
+
+@since 1.1.0
 */
 
 static int _elua_polygon_clear(lua_State *L);
@@ -2804,6 +2952,7 @@ static const struct luaL_reg _elua_evas_polygon_funcs [] =
 @subsubsection polygon_clear polygon_object:clear()
 
 
+@since 1.1.0
 */
 static int
 _elua_polygon_clear(lua_State *L)  // Stack usage [-?, +?, ?]
@@ -2821,6 +2970,7 @@ _elua_polygon_clear(lua_State *L)  // Stack usage [-?, +?, ?]
 @subsubsection polygon_point polygon_object:point()
 
 
+@since 1.1.0
 */
 static int
 _elua_polygon_point(lua_State *L)  // Stack usage [-?, +?, ?]
@@ -2851,6 +3001,8 @@ text object creation function edje:text().
 
 In the following, "text_object" is a place holder for any lua variable that
 holds a reference to an evas text object.
+
+@since 1.1.0
 */
 
 static int _elua_text_font(lua_State *L);
@@ -2873,6 +3025,7 @@ static const struct luaL_reg _elua_evas_text_funcs [] =
 @subsubsection text_font text_object:font()
 
 
+@since 1.1.0
 */
 static int
 _elua_text_font(lua_State *L)  // Stack usage [-?, +?, ?]
@@ -2925,6 +3078,7 @@ _elua_text_font(lua_State *L)  // Stack usage [-?, +?, ?]
 @subsubsection text_text text_object:text()
 
 
+@since 1.1.0
 */
 static int
 _elua_text_text(lua_State *L)  // Stack usage [-?, +?, ?]
@@ -2953,7 +3107,7 @@ _elua_text_text(lua_State *L)  // Stack usage [-?, +?, ?]
 //--------------------------------------------------------------------------//
 // Brain dead inheritance thingy, built for speed.  Kinda.  Part 1.
 static void
-_elua_add_functions(lua_State *L, const char *api, const luaL_Reg *funcs, const char *meta, const char *parent, const char *base)
+_elua_add_functions(lua_State *L, const char *api, const luaL_Reg *funcs, const char *meta, const char *parent, const char *base)  // Stack usage [-?, +?, ?]
 {
    luaL_register(L, api, funcs);
    luaL_newmetatable(L, meta);
@@ -3002,7 +3156,7 @@ _elua_isa(Edje_Lua_Obj *obj, const char *type)
 }
 
 static void
-_elua_init(void)
+_elua_init(void)  // Stack usage [-?, +?, ?]
 {
    static Edje_Lua_Alloc ela = { MAX_LUA_MEM, 0 };
    const luaL_Reg *l;
@@ -3040,7 +3194,7 @@ _elua_init(void)
 }
 
 void
-_edje_lua2_script_init(Edje *ed)
+_edje_lua2_script_init(Edje *ed)  // Stack usage [-?, +?, ?]
 {
    static Edje_Lua_Alloc ela = { MAX_LUA_MEM, 0 };
    const luaL_Reg *l;
@@ -3165,7 +3319,7 @@ _edje_lua2_script_load(Edje_Part_Collection *edc __UNUSED__, void *data __UNUSED
 }
 
 void
-_edje_lua2_script_unload(Edje_Part_Collection *edc __UNUSED__)
+_edje_lua2_script_unload(Edje_Part_Collection *edc __UNUSED__)  // Stack usage [-?, +?, ?]
 {
    lua_State *L;
 
