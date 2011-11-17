@@ -121,6 +121,7 @@ evas_new(void)
    e->hinting = EVAS_FONT_HINTING_BYTECODE;
    e->name_hash = eina_hash_string_superfast_new(NULL);
    eina_clist_init(&e->calc_list);
+   eina_clist_init(&e->calc_done);
 
 #define EVAS_ARRAY_SET(E, Array)		\
    eina_array_step_set(&E->Array, sizeof (E->Array), 4096);

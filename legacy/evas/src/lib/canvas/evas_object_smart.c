@@ -558,6 +558,8 @@ evas_object_smart_need_recalculate_set(Evas_Object *obj, Eina_Bool value)
    value = !!value;
    if (value)
      eina_clist_add_tail(&obj->layer->evas->calc_list, &obj->calc_entry);
+   else
+     eina_clist_add_tail(&obj->layer->evas->calc_done, &obj->calc_entry);
 
    if (o->need_recalculate == value) return;
 
@@ -630,7 +632,6 @@ evas_smart_objects_calculate_count_get(const Evas *e)
 void
 evas_call_smarts_calculate(Evas *e)
 {
-   Eina_Clist processed = EINA_CLIST_INIT(processed);
    Eina_Clist *elem;
    Evas_Object *obj;
 
@@ -646,7 +647,7 @@ evas_call_smarts_calculate(Evas *e)
         obj = EINA_CLIST_ENTRY(elem, Evas_Object, calc_entry);
         eina_clist_remove(&obj->calc_entry);
         if (obj->delete_me) continue;
-        eina_clist_add_tail(&processed, &obj->calc_entry);
+        eina_clist_add_tail(&e->calc_done, &obj->calc_entry);
 
         o = obj->object_data;
 
@@ -657,7 +658,7 @@ evas_call_smarts_calculate(Evas *e)
           }
      }
 
-   while (NULL != (elem = eina_clist_head(&processed)))
+   while (NULL != (elem = eina_clist_head(&e->calc_done)))
      {
         obj = EINA_CLIST_ENTRY(elem, Evas_Object, calc_entry);
         obj->recalculate_cycle = 0;

@@ -356,6 +356,7 @@ struct _Evas
    Eina_Array     clip_changes;
 
    Eina_Clist     calc_list;
+   Eina_Clist     calc_done;
    Eina_List     *video_objects;
 
    Eina_List     *post_events; // free me on evas_free
