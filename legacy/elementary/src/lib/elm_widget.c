@@ -2889,6 +2889,31 @@ _elm_widget_item_data_get(const Elm_Widget_Item *item)
    return (void *)item->data;
 }
 
+EAPI void
+_elm_widget_item_disabled_set(Elm_Widget_Item *item, Eina_Bool disabled)
+{
+   ELM_WIDGET_ITEM_CHECK_OR_RETURN(item);
+
+   if (item->disabled == disabled) return;
+   item->disabled = !!disabled;
+   if (item->disable_func) item->disable_func(item);
+}
+
+EAPI Eina_Bool
+_elm_widget_item_disabled_get(const Elm_Widget_Item *item)
+{
+   ELM_WIDGET_ITEM_CHECK_OR_RETURN(item, EINA_FALSE);
+   return item->disabled;
+}
+
+EAPI void
+_elm_widget_item_disable_set_hook_set(Elm_Widget_Item *item,
+                                      Elm_Widget_On_Disable_Set_Cb func)
+{
+   ELM_WIDGET_ITEM_CHECK_OR_RETURN(item);
+   item->disable_func = func;
+}
+
 typedef struct _Elm_Widget_Item_Tooltip Elm_Widget_Item_Tooltip;
 
 struct _Elm_Widget_Item_Tooltip

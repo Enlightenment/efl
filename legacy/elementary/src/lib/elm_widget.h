@@ -201,6 +201,8 @@ typedef const char *(*Elm_Widget_On_Text_Get_Cb)(const void *data, const char *p
 typedef Evas_Object *(*Elm_Widget_On_Content_Get_Cb)(const void *data, const char *part);
 typedef Evas_Object *(*Elm_Widget_On_Content_Unset_Cb)(const void *data, const char *part);
 typedef void (*Elm_Widget_On_Signal_Emit_Cb)(void *data, const char *emission, const char *source);
+typedef void (*Elm_Widget_On_Disable_Set_Cb)(void *data);
+
 
 #define ELM_ACCESS_TYPE     0 // when reading out widget or item this is read first
 #define ELM_ACCESS_INFO     1 // next read is info - this is normally label
@@ -260,8 +262,10 @@ struct _Elm_Widget_Item
    Elm_Widget_On_Text_Set_Cb on_text_set_func;
    Elm_Widget_On_Text_Get_Cb on_text_get_func;
    Elm_Widget_On_Signal_Emit_Cb on_signal_emit_func;
+   Elm_Widget_On_Disable_Set_Cb disable_func;
    Elm_Access_Info *access;
    const char *access_info;
+   Eina_Bool disabled: 1;
    /* widget variations should have data from here and on */
    /* @todo: TODO check if this is enough for 1.0 release, maybe add padding! */
 };
@@ -457,6 +461,9 @@ EAPI void             _elm_widget_item_text_set_hook_set(Elm_Widget_Item *item, 
 EAPI void             _elm_widget_item_text_get_hook_set(Elm_Widget_Item *item, Elm_Widget_On_Text_Get_Cb func);
 EAPI void             _elm_widget_item_signal_emit_hook_set(Elm_Widget_Item *it, Elm_Widget_On_Signal_Emit_Cb func);
 EAPI void             _elm_widget_item_access_info_set(Elm_Widget_Item *item, const char *txt);
+EAPI void             _elm_widget_item_disabled_set(Elm_Widget_Item *item, Eina_Bool disabled);
+EAPI Eina_Bool        _elm_widget_item_disabled_get(const Elm_Widget_Item *item);
+EAPI void             _elm_widget_item_disable_set_hook_set(Elm_Widget_Item *item, Elm_Widget_On_Disable_Set_Cb func);
 
 /* debug function. don't use it unless you are tracking parenting issues */
 EAPI void             elm_widget_tree_dump(const Evas_Object *top);
@@ -624,7 +631,21 @@ EAPI void             elm_widget_tree_dot_dump(const Evas_Object *top, FILE *out
  */
 #define elm_widget_item_signal_emit_hook_set(item, func) \
   _elm_widget_item_signal_emit_hook_set((Elm_Widget_Item *)item, (Elm_Widget_On_Signal_Emit_Cb)func)
+/**
+ * Convenience function to query disable get hook.
+ * @see _elm_widget_item_disabled_get()
+ */
+#define elm_widget_item_disabled_get(item) \
+  _elm_widget_item_disabled_get((Elm_Widget_Item *)item)
 
+EAPI Eina_Bool        _elm_widget_item_disabled_get(const Elm_Widget_Item *item);
+
+/**
+ * Convenience function to query disable set hook.
+ * @see _elm_widget_item_disable_set_hook_set()
+ */
+#define elm_widget_item_disable_set_hook_set(item, func) \
+  _elm_widget_item_disable_set_hook_set((Elm_Widget_Item *) item, (Elm_Widget_On_Disable_Set_Cb)func)
 
 #define ELM_WIDGET_ITEM_CHECK_OR_RETURN(item, ...) \
    do { \

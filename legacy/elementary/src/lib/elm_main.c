@@ -2046,3 +2046,14 @@ elm_object_item_signal_emit(Elm_Object_Item *it, const char *emission, const cha
 {
    _elm_widget_item_signal_emit((Elm_Widget_Item *) it, emission, source);
 }
+
+EAPI void elm_object_item_disabled_set(Elm_Object_Item *it, Eina_Bool disabled)
+{
+   _elm_widget_item_disabled_set((Elm_Widget_Item *) it, disabled);
+}
+
+EAPI Eina_Bool elm_object_item_disabled_get(const Elm_Object_Item *it)
+{
+   return _elm_widget_item_disabled_get((Elm_Widget_Item *) it);
+}
+

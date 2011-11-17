@@ -1121,6 +1121,16 @@ extern "C" {
 #define elm_object_content_unset(obj) elm_object_content_part_unset((obj), NULL)
 
    /**
+    * Set the text to read out when in accessibility mode
+    *
+    * @param obj The object which is to be described
+    * @param txt The text that describes the widget to people with poor or no vision
+    *
+    * @ingroup General
+    */
+   EAPI void elm_object_access_info_set(Evas_Object *obj, const char *txt);
+
+   /**
     * Get the widget object's handle which contains a given item
     *
     * @param item The Elementary object item
@@ -1209,16 +1219,6 @@ extern "C" {
    /**
     * Set the text to read out when in accessibility mode
     *
-    * @param obj The object which is to be described
-    * @param txt The text that describes the widget to people with poor or no vision
-    *
-    * @ingroup General
-    */
-   EAPI void elm_object_access_info_set(Evas_Object *obj, const char *txt);
-
-   /**
-    * Set the text to read out when in accessibility mode
-    *
     * @param it The object item which is to be described
     * @param txt The text that describes the widget to people with poor or no vision
     *
@@ -1228,7 +1228,7 @@ extern "C" {
 
    /**
     * Get the data associated with an object item
-    * @param it The object item
+    * @param it The Elementary object item
     * @return The data associated with @p it
     *
     * @ingroup General
@@ -1237,7 +1237,7 @@ extern "C" {
 
    /**
     * Set the data associated with an object item
-    * @param it The object item
+    * @param it The Elementary object item
     * @param data The data to be associated with @p it
     *
     * @ingroup General
@@ -1256,7 +1256,40 @@ extern "C" {
     * @param source The signal's source.
     * @ingroup General
     */
-   EAPI void             elm_object_item_signal_emit(Elm_Object_Item *it, const char *emission, const char *source) EINA_ARG_NONNULL(1);
+   EAPI void elm_object_item_signal_emit(Elm_Object_Item *it, const char *emission, const char *source) EINA_ARG_NONNULL(1);
+
+   /**
+    * Set the disabled state of an widget item.
+    *
+    * @param obj The Elementary object item
+    * @param disabled The state to put in in: @c EINA_TRUE for
+    *        disabled, @c EINA_FALSE for enabled
+    *
+    * Elementary object item can be @b disabled, in which state they won't
+    * receive input and, in general, will be themed differently from
+    * their normal state, usually greyed out. Useful for contexts
+    * where you don't want your users to interact with some of the
+    * parts of you interface.
+    *
+    * This sets the state for the widget item, either disabling it or
+    * enabling it back.
+    *
+    * @ingroup Styles
+    */
+   EAPI void elm_object_item_disabled_set(Elm_Object_Item *it, Eina_Bool disabled) EINA_ARG_NONNULL(1);
+
+   /**
+    * Get the disabled state of an widget item.
+    *
+    * @param obj The Elementary object
+    * @return @c EINA_TRUE, if the widget item is disabled, @c EINA_FALSE
+    *            if it's enabled (or on errors)
+    *
+    * This gets the state of the widget, which might be enabled or disabled.
+    *
+    * @ingroup Styles
+    */
+   EAPI Eina_Bool    elm_object_item_disabled_get(const Elm_Object_Item *it) EINA_ARG_NONNULL(1);
 
    /**
     * @}
