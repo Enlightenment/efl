@@ -1,13 +1,12 @@
 # Portuguese translation for Elementary.
 # This file is put in the public domain.
 # Sérgio Marques <smarquespt@gmail.com>, 2011.
-#: src/lib/elm_config.c:1400
 msgid ""
 msgstr ""
 "Project-Id-Version: Elementary\n"
 "Report-Msgid-Bugs-To: enlightenment-devel@lists.sourceforge.net\n"
 "POT-Creation-Date: 2011-11-03 10:38+0900\n"
-"PO-Revision-Date: 2011-10-01 15:24-0000\n"
+"PO-Revision-Date: 2011-11-17 12:25-0000\n"
 "Last-Translator: Sérgio Marques <smarquespt@gmail.com>\n"
 "Language-Team: \n"
 "Language: \n"
@@ -25,7 +24,8 @@ msgstr "Para cima"
 msgid "Home"
 msgstr "Pasta pessoal"
 
-#: src/lib/elc_fileselector.c:1002 src/lib/elm_entry.c:1214
+#: src/lib/elc_fileselector.c:1002
+#: src/lib/elm_entry.c:1214
 msgid "Cancel"
 msgstr "Cancelar"
 
@@ -37,7 +37,9 @@ msgstr "OK"
 msgid "Clicked"
 msgstr "Clicado"
 
-#: src/lib/elm_button.c:399 src/lib/elm_check.c:357 src/lib/elm_radio.c:295
+#: src/lib/elm_button.c:399
+#: src/lib/elm_check.c:357
+#: src/lib/elm_radio.c:295
 #: src/lib/elm_toolbar.c:731
 msgid "State: Disabled"
 msgstr "Estado: inativo"
@@ -50,20 +52,25 @@ msgstr "Botão"
 msgid "%B %Y"
 msgstr "%B %Y"
 
-#: src/lib/elm_check.c:274 src/lib/elm_check.c:277 src/lib/elm_check.c:368
-#: src/lib/elm_radio.c:231 src/lib/elm_radio.c:297
+#: src/lib/elm_check.c:274
+#: src/lib/elm_check.c:277
+#: src/lib/elm_check.c:368
+#: src/lib/elm_radio.c:231
+#: src/lib/elm_radio.c:297
 msgid "State: On"
 msgstr "Estado: ligado"
 
-#: src/lib/elm_check.c:287 src/lib/elm_check.c:290 src/lib/elm_check.c:377
+#: src/lib/elm_check.c:287
+#: src/lib/elm_check.c:290
+#: src/lib/elm_check.c:377
 #: src/lib/elm_radio.c:298
 msgid "State: Off"
 msgstr "Estado: desligado"
 
-#: src/lib/elm_check.c:364 src/lib/elm_check.c:374
-#, fuzzy
+#: src/lib/elm_check.c:364
+#: src/lib/elm_check.c:374
 msgid "State"
-msgstr "Estado: ligado"
+msgstr "Estado"
 
 #: src/lib/elm_check.c:427
 msgid "Check"
@@ -91,15 +98,15 @@ msgstr "Colar"
 
 #: src/lib/elm_radio.c:395
 msgid "Radio"
-msgstr ""
+msgstr "Opção"
 
 #: src/lib/elm_toggle.c:11
 msgid "ON"
-msgstr ""
+msgstr "Ligar"
 
 #: src/lib/elm_toggle.c:12
 msgid "OFF"
-msgstr ""
+msgstr "Desligar"
 
 #: src/lib/elm_toolbar.c:648
 msgid "Selected"
@@ -120,3 +127,4 @@ msgstr "Tem menu"
 #: src/lib/elm_toolbar.c:765
 msgid "Tool Item"
 msgstr "Ferramenta"
+
