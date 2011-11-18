@@ -177,6 +177,10 @@ EFL_COMPILER_FLAG([-Wshadow])
 ### Binary
 
 EFL_ENABLE_BIN([eeze-udev-test], ["yes"])
+EFL_ENABLE_BIN([eeze-mount], ["yes"])
+EFL_ENABLE_BIN([eeze-disk-ls], ["yes"])
+EFL_ENABLE_BIN([eeze-umount], ["yes"])
+EFL_ENABLE_BIN([eeze-scanner], ["yes"])
 
 AC_SUBST(requirement_eeze)
 
@@ -212,7 +216,15 @@ if test "x$eeze_mount" = "xyes";then
   echo "Eject..................: ${with_eject}"
   echo
 fi
-echo "Test...................: ${have_eeze_udev_test}"
+echo "Tests..................: ${have_eeze_udev_test}"
+echo
+echo "Demos..................:"
+echo "  eeze_mount...........: ${have_eeze_mount}"
+echo "  eeze_umount..........: ${have_eeze_umount}"
+echo "  eeze_disk_ls.........: ${have_eeze_disk_ls}"
+echo
+echo "Utilities..............:"
+echo "  eeze_scanner.........: ${have_eeze_scanner}"
 echo
 echo "Documentation..........: ${build_doc}"
 echo

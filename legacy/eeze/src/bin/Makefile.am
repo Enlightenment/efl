@@ -8,8 +8,8 @@ noinst_PROGRAMS = @EEZE_UDEV_TEST_PRG@
 EXTRA_PROGRAMS = eeze_udev_test eeze_mount eeze_umount eeze_disk_ls eeze_scanner
 
 if HAVE_EEZE_MOUNT
-  DISK_PROGS = eeze_mount eeze_umount eeze_disk_ls
-  SCAN_PROGS = eeze_scanner
+  DISK_PROGS = @EEZE_MOUNT_PRG@ @EEZE_UMOUNT_PRG@ @EEZE_DISK_LS_PRG@
+  SCAN_PROGS = @EEZE_SCANNER_PRG@
 else
   DISK_PROGS = 
   SCAN_PROGS =
