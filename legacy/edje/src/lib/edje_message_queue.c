@@ -88,24 +88,6 @@ edje_object_message_signal_process(Evas_Object *obj)
 	tmpq = NULL;
      }
 
-#if 0   
-   while (tmp_msgq)
-     {
-	Edje_Message *em;
-
-	em = tmp_msgq->data;
-	tmp_msgq = eina_list_remove_list(tmp_msgq, tmp_msgq);
-        if (!ed->delete_me)
-          {
-             ed->processing_messages++;
-             _edje_message_process(em);
-             _edje_message_free(em);
-             ed->processing_messages--;
-          }
-        else
-           _edje_message_free(em);
-     }
-#else
    tmp_msgq_processing++;
 again:
    EINA_LIST_FOREACH_SAFE(tmp_msgq, l, ln, em)
@@ -151,7 +133,6 @@ end:
       tmp_msgq_restart = 0;
    else
       tmp_msgq_restart = 1;
-#endif
 }
 
 
