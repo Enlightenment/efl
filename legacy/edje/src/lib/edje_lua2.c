@@ -1,6 +1,8 @@
 #include "edje_private.h"
 #include <ctype.h>
 
+#define RASTER_FORGOT_WHY "this is here."
+
 #ifdef _WIN32
 # define FMT_SIZE_T "%Iu"
 #else
@@ -121,7 +123,9 @@ static void _elua_add_functions(lua_State *L, const char *api, const luaL_Reg *f
 static Eina_Bool _elua_isa(Edje_Lua_Obj *obj, const char *type);
 
 //--------------------------------------------------------------------------//
+#ifndef RASTER_FORGOT_WHY
 static lua_State *lstate = NULL;
+#endif
 static const char *_elua_key = "key";
 static const char *_elua_objs = "objs";
 static jmp_buf panic_jmp;
@@ -3196,6 +3200,7 @@ _elua_isa(Edje_Lua_Obj *obj, const char *type)
    return isa;
 }
 
+#ifndef RASTER_FORGOT_WHY
 static void
 _elua_init(void)  // Stack usage [-?, +?, ?]
 {
@@ -3233,6 +3238,7 @@ _elua_init(void)  // Stack usage [-?, +?, ?]
    lua_rawset(L, -3);
    lua_rawset(L, LUA_REGISTRYINDEX);
 }
+#endif
 
 void
 _edje_lua2_script_init(Edje *ed)  // Stack usage [-?, +?, ?]
@@ -3254,7 +3260,9 @@ _edje_lua2_script_init(Edje *ed)  // Stack usage [-?, +?, ?]
         eina_log_domain_level_set("lua", EINA_LOG_LEVEL_INFO);
      }
 
+#ifndef RASTER_FORGOT_WHY
    _elua_init();
+#endif
    L = ed->L = lua_newstate(_elua_alloc, &ela);
    lua_atpanic(L, _elua_custom_panic);
 
@@ -3358,17 +3366,21 @@ _edje_lua2_script_shutdown(Edje *ed)
 void
 _edje_lua2_script_load(Edje_Part_Collection *edc __UNUSED__, void *data __UNUSED__, int size __UNUSED__)
 {
+#ifndef RASTER_FORGOT_WHY
    _elua_init();
+#endif
 }
 
 void
 _edje_lua2_script_unload(Edje_Part_Collection *edc __UNUSED__)  // Stack usage [-?, +?, ?]
 {
+#ifndef RASTER_FORGOT_WHY
    lua_State *L;
 
    if (!lstate) return;
    L = lstate;
    lua_gc(L, LUA_GCCOLLECT, 0);
+#endif
 }
 
 void
