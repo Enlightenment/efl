@@ -1899,7 +1899,6 @@ ecore_x_randr_screen_reset(Ecore_X_Window root)
 
         XRRFreeCrtcInfo(crtc_info);
      }
-   fprintf(stderr, "E_RANDR: babam, resize! Trying to move all CRTCs with dx %d and dy %d", dx_min, dy_min);
    if ((dx_min > 0) || (dy_min > 0))
      {
         if (ecore_x_randr_move_crtcs(root, enabled_crtcs, nenabled_crtcs, -dx_min, -dy_min))
