@@ -585,25 +585,28 @@ _ecore_con_ssl_server_prepare_gnutls(Ecore_Con_Server *svr,
 
    SSL_ERROR_CHECK_GOTO_ERROR(ret = gnutls_certificate_allocate_credentials(&svr->cert));
 
-   if ((!svr->use_cert) && svr->created)
+   if (svr->use_cert)
      {
-        SSL_ERROR_CHECK_GOTO_ERROR(ret = gnutls_dh_params_init(&svr->dh_params));
-        INF("Generating DH params");
-        SSL_ERROR_CHECK_GOTO_ERROR(ret = gnutls_dh_params_generate2(svr->dh_params, 1024));
+        if  (svr->created)
+          {
+             SSL_ERROR_CHECK_GOTO_ERROR(ret = gnutls_dh_params_init(&svr->dh_params));
+             INF("Generating DH params");
+             SSL_ERROR_CHECK_GOTO_ERROR(ret = gnutls_dh_params_generate2(svr->dh_params, 1024));
 
-        SSL_ERROR_CHECK_GOTO_ERROR(ret = gnutls_anon_allocate_server_credentials(&svr->anoncred_s));
-        /* TODO: implement PSK */
-        //  SSL_ERROR_CHECK_GOTO_ERROR(ret = gnutls_psk_allocate_server_credentials(&svr->pskcred_s));
+             SSL_ERROR_CHECK_GOTO_ERROR(ret = gnutls_anon_allocate_server_credentials(&svr->anoncred_s));
+             /* TODO: implement PSK */
+             //  SSL_ERROR_CHECK_GOTO_ERROR(ret = gnutls_psk_allocate_server_credentials(&svr->pskcred_s));
 
-        gnutls_anon_set_server_dh_params(svr->anoncred_s, svr->dh_params);
-        gnutls_certificate_set_dh_params(svr->cert, svr->dh_params);
-        //gnutls_psk_set_server_dh_params(svr->pskcred_s, svr->dh_params);
-        INF("DH params successfully generated and applied!");
-     }
-   else if (!svr->use_cert)
-     {
-        //SSL_ERROR_CHECK_GOTO_ERROR(ret = gnutls_psk_allocate_client_credentials(&svr->pskcred_c));
-          SSL_ERROR_CHECK_GOTO_ERROR(ret = gnutls_anon_allocate_client_credentials(&svr->anoncred_c));
+             gnutls_anon_set_server_dh_params(svr->anoncred_s, svr->dh_params);
+             gnutls_certificate_set_dh_params(svr->cert, svr->dh_params);
+             //gnutls_psk_set_server_dh_params(svr->pskcred_s, svr->dh_params);
+             INF("DH params successfully generated and applied!");
+          }
+      else
+        {
+           //SSL_ERROR_CHECK_GOTO_ERROR(ret = gnutls_psk_allocate_client_credentials(&svr->pskcred_c));
+             SSL_ERROR_CHECK_GOTO_ERROR(ret = gnutls_anon_allocate_client_credentials(&svr->anoncred_c));
+        }
      }
 
    svr->ssl_prepared = EINA_TRUE;
@@ -806,8 +809,7 @@ _ecore_con_ssl_server_shutdown_gnutls(Ecore_Con_Server *svr)
         gnutls_deinit(svr->session);
      }
 
-   if (svr->cert_file)
-     free(svr->cert_file);
+   free(svr->cert_file);
    svr->cert_file = NULL;
    if (svr->cert)
      gnutls_certificate_free_credentials(svr->cert);
