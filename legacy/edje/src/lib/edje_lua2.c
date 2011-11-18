@@ -170,7 +170,8 @@ static const char *_elua_evas_line_meta = "evas_line_meta";
 static const char *_elua_evas_map_meta = "evas_map_meta";
 static const char *_elua_evas_polygon_meta = "evas_polygon_meta";
 static const char *_elua_evas_text_meta = "evas_text_meta";
-
+static const char *_elua_ecore_animator_meta = "ecore_animator_meta";
+static const char *_elua_ecore_timer_meta = "ecore_timer_meta";
 
 static int _elua_obj_gc(lua_State *L);
 
@@ -1119,9 +1120,8 @@ _elua_animator(lua_State *L)  // Stack usage [-?, +?, ?]
 
    luaL_checkany(L, 1);
 
-   // FIXME: This, and the other two timer thingies, should be it's own class, coz they are NOT evas objects.  But that might be API change, so wait until after the freeze.
    // FIXME: Allow lua to set a data to be sent back with the callback.
-   ela = (Edje_Lua_Animator *)_elua_obj_new(L, ed, sizeof(Edje_Lua_Animator), _elua_evas_meta);
+   ela = (Edje_Lua_Animator *)_elua_obj_new(L, ed, sizeof(Edje_Lua_Animator), _elua_ecore_animator_meta);
    ela->obj.free_func = _elua_animator_free;
    ela->animator = ecore_animator_add(_elua_animator_cb, ela);
    lua_pushvalue(L, 1);
@@ -1205,7 +1205,7 @@ _elua_timer(lua_State *L)  // Stack usage [-?, +?, ?]
    val = luaL_checknumber(L, 1);
    luaL_checkany(L, 2);
 
-   elt = (Edje_Lua_Timer *)_elua_obj_new(L, ed, sizeof(Edje_Lua_Timer), _elua_evas_meta);
+   elt = (Edje_Lua_Timer *)_elua_obj_new(L, ed, sizeof(Edje_Lua_Timer), _elua_ecore_timer_meta);
    elt->obj.free_func = _elua_timer_free;
    elt->timer = ecore_timer_add(val, _elua_timer_cb, elt);
    lua_pushvalue(L, 2);
@@ -1288,7 +1288,7 @@ _elua_transition(lua_State *L)  // Stack usage [-?, +?, ?]
    val = luaL_checknumber(L, 1);
    luaL_checkany(L, 2);
 
-   elt = (Edje_Lua_Transition *)_elua_obj_new(L, ed, sizeof(Edje_Lua_Transition), _elua_evas_meta);
+   elt = (Edje_Lua_Transition *)_elua_obj_new(L, ed, sizeof(Edje_Lua_Transition), _elua_ecore_animator_meta);
    elt->obj.free_func = _elua_transition_free;
    elt->animator = ecore_animator_add(_elua_transition_cb, elt);
    if (val < 0.0000001) val = 0.0000001;
@@ -2227,9 +2227,48 @@ _elua_obj_map_source(lua_State *L)  // Stack usage [-?, +?, ?]
 //-------------
 /**
 @page luaref
+@subsection ecore_animator Ecore animator class.
+
+The lua ecore animator class includes functions for dealing with ecore animator objects.
+The ecore animator objects must have been previously created by lua using the lua
+edje object creation function edje:animator() or edje:transition().
+
+In the following, "animator_object" is a place holder for any lua variable that
+holds a reference to an ecore animator object.
+*/
+static const char *_elua_ecore_animator_api = "ecore_animator";
+static const struct luaL_reg _elua_ecore_animator_funcs [] =
+{
+     {NULL, NULL} // end
+};
+
+//-------------
+//-------------
+/**
+@page luaref
+@subsection ecore_timer Ecore timer class.
+
+The lua ecore timer class includes functions for dealing with ecore timer objects.
+The ecore timer objects must have been previously created by lua using the lua
+edje object creation function edje:timer().
+
+In the following, "timer_object" is a place holder for any lua variable that
+holds a reference to an ecore timer object.
+*/
+
+static const char *_elua_ecore_timer_api = "ecore_timer";
+static const struct luaL_reg _elua_ecore_timer_funcs [] =
+{
+     {NULL, NULL} // end
+};
+
+//-------------
+//-------------
+/**
+@page luaref
 @subsection evas_edje Evas edje class.
 
-The lua evas odje class includes functions for dealing with evas edje objects.
+The lua evas edje class includes functions for dealing with evas edje objects.
 The evas edje objects must have been previously created by lua using the lua
 edje object creation function edje:edje().
 
@@ -3237,6 +3276,8 @@ _edje_lua2_script_init(Edje *ed)  // Stack usage [-?, +?, ?]
    lua_pop(L, 2);
 
    _elua_add_functions(L, _elua_evas_api, _elua_evas_funcs, _elua_evas_meta, NULL, NULL);
+   _elua_add_functions(L, _elua_ecore_timer_api, _elua_ecore_timer_funcs, _elua_ecore_timer_meta, NULL, NULL);
+   _elua_add_functions(L, _elua_ecore_animator_api, _elua_ecore_animator_funcs, _elua_ecore_animator_meta, NULL, NULL);
    _elua_add_functions(L, _elua_evas_edje_api, _elua_evas_edje_funcs, _elua_evas_edje_meta, _elua_evas_edje_parent, _elua_evas_api);
    _elua_add_functions(L, _elua_evas_image_api, _elua_evas_image_funcs, _elua_evas_image_meta, _elua_evas_image_parent, _elua_evas_api);
    _elua_add_functions(L, _elua_evas_line_api, _elua_evas_line_funcs, _elua_evas_line_meta, _elua_evas_line_parent, _elua_evas_api);

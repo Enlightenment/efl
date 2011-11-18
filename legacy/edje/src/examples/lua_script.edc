@@ -90,7 +90,7 @@ collections {
          end
  
          local function mycb ()
-            print("lua::callback " .. count .. " fndata = " .. fndata);
+            print("lua::callback timer " .. count .. " fndata = " .. fndata);
             count = count + 1; --// keep count of calls - object data
             fndata = fndata + 3; --// play with object vars to see if they persist
             D.tim = edje.timer(0.25, mycb); --// inside cb add new timer
