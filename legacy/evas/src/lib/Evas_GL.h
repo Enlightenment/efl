@@ -386,7 +386,7 @@ EAPI Evas_GL                 *evas_gl_new                (Evas *e) EINA_WARN_UNU
  *
  * @param evas_gl The given Evas_GL object.
  */
-EAPI void                     evas_gl_free               (Evas_GL *evas_gl) EINA_ARG_NONNULL(1, 2);;
+EAPI void                     evas_gl_free               (Evas_GL *evas_gl) EINA_ARG_NONNULL(1);
 
 /**
  * Creates and returns new Evas_GL_Surface object for GL Rendering.
