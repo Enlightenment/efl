@@ -750,7 +750,7 @@ _edje_object_file_set_internal(Evas_Object *obj, const char *file, const char *g
 				 _edje_real_part_box_append(rp, child_obj);
 				 evas_object_data_set(child_obj, "\377 edje.box_item", pack_it);
 			      }
-			    else if(rp->part->type == EDJE_PART_TYPE_TABLE)
+			    else if (rp->part->type == EDJE_PART_TYPE_TABLE)
 			      {
 				 _edje_real_part_table_pack(rp, child_obj, pack_it->col, pack_it->row, pack_it->colspan, pack_it->rowspan);
 				 evas_object_data_set(child_obj, "\377 edje.table_item", pack_it);
@@ -1041,8 +1041,8 @@ _edje_file_del(Edje *ed)
 	     free(pp);
 	  }
      }
-   if (ed->L)
-      _edje_lua2_script_shutdown(ed);
+   if (ed->L) _edje_lua2_script_shutdown(ed);
+   while (ed->subobjs) evas_object_del(ed->subobjs->data);
    if (ed->table_parts) free(ed->table_parts);
    ed->table_parts = NULL;
    ed->table_parts_size = 0;
