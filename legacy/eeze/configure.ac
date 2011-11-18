@@ -108,7 +108,7 @@ PKG_CHECK_EXISTS([mount >= 2.18.0],
 if test "x$eeze_mount" = "xyes";then
   AC_ARG_WITH([mount], [AS_HELP_STRING([--with-mount], [specify mount bin @<:@default=detect@:>@])], [with_mount=$withval], [with_mount="detect"])
   AC_ARG_WITH([umount], [AS_HELP_STRING([--with-umount], [specify umount bin @<:@default=detect@:>@])], [with_umount=$withval], [with_umount="detect"])
-  AC_ARG_WITH([eject], [AS_HELP_STRING([--with-eject], [specify eject bin @<:@default=detect@:>@])], [with_eject=$withval], [with_mount="detect"])
+  AC_ARG_WITH([eject], [AS_HELP_STRING([--with-eject], [specify eject bin @<:@default=detect@:>@])], [with_eject=$withval], [with_eject="detect"])
   PKG_CHECK_MODULES([LIBMOUNT], [mount >= 2.18.0])
   mount_v=$(pkg-config --modversion mount)
   PKG_CHECK_MODULES([ECORE_FILE], [ecore-file >= 1.1.0])
