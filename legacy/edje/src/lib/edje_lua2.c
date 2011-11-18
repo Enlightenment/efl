@@ -670,7 +670,7 @@ static int
 _elua_echo(lua_State *L)  // Stack usage [-0, +0, vm]
 {
    const char *string = luaL_checkstring(L, 1);
-   printf("%s\n", string);
+   LD("%s\n", string);
    return 0;
 }
 
