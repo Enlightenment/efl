@@ -846,12 +846,9 @@ _edje_emit(Edje *ed, const char *sig, const char *src)
 
 /* data should either be NULL or a malloc allocated data */
 void
-_edje_emit_full(Edje *ed, const char *sig, const char *src, void *data,
-      void (*free_func)(void *))
+_edje_emit_full(Edje *ed, const char *sig, const char *src, void *data, void (*free_func)(void *))
 {
    Edje_Message_Signal emsg;
-   Eina_List *l;
-   Evas_Object *obj;
    const char *sep;
 
    if (ed->delete_me) return;
@@ -991,6 +988,9 @@ _edje_emit_full(Edje *ed, const char *sig, const char *src, void *data,
      {
         emsg.data = NULL;
      }
+/* new sends code */
+   edje_object_message_send(ed->obj, EDJE_MESSAGE_SIGNAL, 0, &emsg);
+/* old send code - use api now
    _edje_message_send(ed, EDJE_QUEUE_SCRIPT, EDJE_MESSAGE_SIGNAL, 0, &emsg);
    EINA_LIST_FOREACH(ed->subobjs, l, obj)
      {
@@ -1001,7 +1001,7 @@ _edje_emit_full(Edje *ed, const char *sig, const char *src, void *data,
         if (ed2->delete_me) continue;
         _edje_message_send(ed2, EDJE_QUEUE_SCRIPT, EDJE_MESSAGE_SIGNAL, 0, &emsg);
      }
-
+ */
    if (emsg.data && (--(emsg.data->ref) == 0))
      {
         if (emsg.data->free_func)

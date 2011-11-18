@@ -1964,6 +1964,8 @@ void _edje_object_orientation_inform(Evas_Object *obj);
 void _edje_lib_ref(void);
 void _edje_lib_unref(void);
 
+void _edje_subobj_register(Edje *ed, Evas_Object *ob);
+
 void _edje_multisense_init(void);
 void _edje_multisense_shutdown(void);
 Eina_Bool _edje_multisense_internal_sound_sample_play(Edje *ed, const char *sample_name, const double speed);

@@ -2609,6 +2609,7 @@ _edje_embryo_fn_part_swallow(Embryo_Program *ep, Embryo_Cell *params)
         return 0;
      }
    edje_object_part_swallow(ed->obj, rp->part->name, new_obj);
+   _edje_subobj_register(ed, new_obj);
 
    return 0;
 }

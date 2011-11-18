@@ -1410,6 +1410,7 @@ _elua_edje(lua_State *L)  // Stack usage [-?, +?, ?]
 {
    _ELUA_PLANT_EVAS_OBJECT(Edje_Lua_Evas_Object, _elua_evas_edje_meta, _elua_evas_obj_free)
    elo->evas_obj = edje_object_add(evas_object_evas_get(ed->obj));
+   _edje_subobj_register(ed, elo->evas_obj);
    _elua_polish_evas_object(ed, elo);
    return 1;
 }

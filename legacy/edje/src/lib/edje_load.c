@@ -771,6 +771,8 @@ _edje_object_file_set_internal(Evas_Object *obj, const char *file, const char *g
 				 pack_it = NULL;
 			      }
 			 }
+                       if (source)
+                         _edje_subobj_register(ed, child_obj);
 		    }
 	       }
 

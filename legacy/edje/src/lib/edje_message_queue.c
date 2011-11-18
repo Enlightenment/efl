@@ -17,12 +17,19 @@ EAPI void
 edje_object_message_send(Evas_Object *obj, Edje_Message_Type type, int id, void *msg)
 {
    Edje *ed;
-   unsigned int i;
+   Eina_List *l;
+   Evas_Object *o;
 
    ed = _edje_fetch(obj);
    if (!ed) return;
-   
    _edje_message_send(ed, EDJE_QUEUE_SCRIPT, type, id, msg);
+   EINA_LIST_FOREACH(ed->subobjs, l, o)
+     {
+        edje_object_message_send(o, type, id, msg);
+     }
+/* old manual part walking code to send messages to children - should all
+ * be in subobjs if we care
+   unsigned int i;
 
    for (i = 0; i < ed->table_parts_size; i++)
      {
@@ -47,6 +54,7 @@ edje_object_message_send(Evas_Object *obj, Edje_Message_Type type, int id, void 
                }
           }
      }
+ */
 }
 
 
@@ -208,10 +216,21 @@ _edje_message_shutdown(void)
 void
 _edje_message_cb_set(Edje *ed, void (*func) (void *data, Evas_Object *obj, Edje_Message_Type type, int id, void *msg), void *data)
 {
-   unsigned int i;
+   Eina_List *l;
+   Evas_Object *o;
 
    ed->message.func = func;
    ed->message.data = data;
+   EINA_LIST_FOREACH(ed->subobjs, l, o)
+     {
+        Edje *edj2 = _edje_fetch(o);
+        if (!edj2) continue;
+        _edje_message_cb_set(edj2, func, data);
+     }
+/* old manual part walking code to send messages to children - should all
+ * be in subobjs if we care
+   unsigned int i;
+   
    for (i = 0; i < ed->table_parts_size; i++)
      {
         Edje_Real_Part *rp = ed->table_parts[i];
@@ -234,6 +253,7 @@ _edje_message_cb_set(Edje *ed, void (*func) (void *data, Evas_Object *obj, Edje_
                }
           }
      }
+ */
 }
 
 Edje_Message *
