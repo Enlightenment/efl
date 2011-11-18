@@ -26,6 +26,7 @@ edje_object_message_send(Evas_Object *obj, Edje_Message_Type type, int id, void 
    for (i = 0; i < ed->table_parts_size; i++)
      {
 	Edje_Real_Part *rp = ed->table_parts[i];
+        
 	if ((rp->part->type == EDJE_PART_TYPE_GROUP) && (rp->swallowed_object))
 	  edje_object_message_send(rp->swallowed_object, type, id, msg);
         else if (((rp->part->type == EDJE_PART_TYPE_BOX) ||
@@ -34,7 +35,7 @@ edje_object_message_send(Evas_Object *obj, Edje_Message_Type type, int id, void 
              Eina_List *itr;
              Evas_Object *o;
              EINA_LIST_FOREACH(rp->items, itr, o)
-                edje_object_message_send(o, type, id, msg);
+               edje_object_message_send(o, type, id, msg);
           }
      }
 }
@@ -202,28 +203,29 @@ _edje_message_cb_set(Edje *ed, void (*func) (void *data, Evas_Object *obj, Edje_
 
    ed->message.func = func;
    ed->message.data = data;
-   for (i = 0 ; i < ed->table_parts_size ; i++) {
-      Edje_Real_Part *rp;
-      rp = ed->table_parts[i];
-      if (rp->part->type == EDJE_PART_TYPE_GROUP && rp->swallowed_object) {
-         Edje *edj2 = _edje_fetch(rp->swallowed_object);
-         if (!edj2) continue;
-	 _edje_message_cb_set(edj2, func, data);
-      }
-      else if (((rp->part->type == EDJE_PART_TYPE_BOX) ||
-                (rp->part->type == EDJE_PART_TYPE_TABLE)) && rp->items)
-        {
-           Eina_List *itr;
-           Evas_Object *obj;
-           EINA_LIST_FOREACH(rp->items, itr, obj)
-             {
-                Edje *edj2;
-                edj2 = _edje_fetch(obj);
-                if (!edj2) continue;
-                _edje_message_cb_set(edj2, func, data);
-             }
-        }
-   }
+   for (i = 0 ; i < ed->table_parts_size; i++)
+     {
+        Edje_Real_Part *rp = ed->table_parts[i];
+        if (rp->part->type == EDJE_PART_TYPE_GROUP && rp->swallowed_object)
+          {
+             Edje *edj2 = _edje_fetch(rp->swallowed_object);
+             if (!edj2) continue;
+             _edje_message_cb_set(edj2, func, data);
+          }
+        else if (((rp->part->type == EDJE_PART_TYPE_BOX) ||
+                  (rp->part->type == EDJE_PART_TYPE_TABLE)) && rp->items)
+          {
+             Eina_List *itr;
+             Evas_Object *obj;
+             EINA_LIST_FOREACH(rp->items, itr, obj)
+               {
+                  Edje *edj2;
+                  edj2 = _edje_fetch(obj);
+                  if (!edj2) continue;
+                  _edje_message_cb_set(edj2, func, data);
+               }
+          }
+     }
 }
 
 Edje_Message *
