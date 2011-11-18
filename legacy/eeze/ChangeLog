@@ -53,3 +53,7 @@
 
 2011-08-01  Mike Blumenkrantz (discomfitor/zmike)
         * added fix for battery/ac detection with very recent versions of udev
+
+2011-11-17  Mike Blumenkrantz (discomfitor/zmike)
+        * added eeze_disk_can_{mount,unmount,eject} to determine at runtime whether eeze
+          is capable of performing disk operations

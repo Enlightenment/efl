@@ -456,3 +456,21 @@ eeze_disk_removable_get(Eeze_Disk *disk)
      }
    return disk->cache.removable;
 }
+
+EAPI Eina_Bool
+eeze_disk_can_mount(void)
+{
+   return MOUNTABLE;
+}
+
+EAPI Eina_Bool
+eeze_disk_can_unmount(void)
+{
+   return UNMOUNTABLE;
+}
+
+EAPI Eina_Bool
+eeze_disk_can_eject(void)
+{
+   return EJECTABLE;
+}

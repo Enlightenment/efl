@@ -88,6 +88,33 @@ struct _Eeze_Event_Disk_Error
 EAPI void           eeze_disk_function(void);
 
 /**
+ * @brief Return whether mount support is available in eeze
+ *
+ * Use this function to determine whether your Eeze library was compiled with a mount
+ * binary available.
+ * @since 1.1
+ */
+EAPI Eina_Bool      eeze_disk_can_mount(void);
+
+/**
+ * @brief Return whether unmount support is available in eeze
+ *
+ * Use this function to determine whether your Eeze library was compiled with an unmount
+ * binary available.
+ * @since 1.1
+ */
+EAPI Eina_Bool      eeze_disk_can_unmount(void);
+
+/**
+ * @brief Return whether eject support is available in eeze
+ *
+ * Use this function to determine whether your Eeze library was compiled with an eject
+ * binary available.
+ * @since 1.1
+ */
+EAPI Eina_Bool      eeze_disk_can_eject(void);
+
+/**
  * @brief Create a new disk object from a /sys/ path or /dev/ path
  * @param path The /sys/ or /dev path of the disk; CANNOT be #NULL
  * @return The new disk object
