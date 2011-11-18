@@ -49,7 +49,7 @@
  * @typedef DIR
  * @brief A structure that describes a directory stream.
  */
-typedef struct dirent DIR;
+typedef struct DIR DIR;
 
 /**
  * @struct dirent
