@@ -3,6 +3,11 @@
 
 #include <Eeze.h>
 
+#define EEZE_SCANNER_EDD_SETUP(edd) \
+  EET_DATA_DESCRIPTOR_ADD_BASIC((edd), Eeze_Scanner_Event, "device", device, EET_T_INLINED_STRING); \
+  EET_DATA_DESCRIPTOR_ADD_BASIC((edd), Eeze_Scanner_Event, "type", type, EET_T_UINT); \
+  EET_DATA_DESCRIPTOR_ADD_BASIC((edd), Eeze_Scanner_Event, "volume", volume, EET_T_UCHAR)
+
 typedef enum
 {
    EEZE_SCANNER_EVENT_TYPE_NONE,
