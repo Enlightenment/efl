@@ -377,7 +377,7 @@ _elua_push_name(lua_State *L, char *q, int index)  // Stack usage [-0, +1, e or 
 static int
 _elua_scan_params(lua_State *L, int i, Eina_Bool tr, char *params, ...)  // Stack usage -
                                                                          // if i is a table  
-                                                                         //   [-0, +n, e]
+                                                                         //   [-n, +n, e]
                                                                          // else
                                                                          //   [-0, +0, -]
                                                                          // if tr
@@ -423,7 +423,6 @@ _elua_scan_params(lua_State *L, int i, Eina_Bool tr, char *params, ...)  // Stac
                        *v = lua_tointeger(L, j);                         // Stack usage [-0, +0, -]
                        n++;
                     }
-// FIXME: Should probably pop that name off the stack if it's a table.  Same for the following.
                   break;
                }
              case '#':
@@ -487,6 +486,9 @@ _elua_scan_params(lua_State *L, int i, Eina_Bool tr, char *params, ...)  // Stac
           {
              if (table)
                {
+                  // If this is a table, then we pushed a value on the stack, pop it off.  But only if not tr, coz otherwise the stack gets reset anyway.
+                  if (!tr)
+                     lua_pop(L, 1);                                      // Stack usage [-n, +0, -]
                }
             else
                 j++;
