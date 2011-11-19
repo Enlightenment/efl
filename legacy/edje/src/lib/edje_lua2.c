@@ -376,12 +376,12 @@ _elua_push_name(lua_State *L, char *q, int index)  // Stack usage [-0, +1, e or 
 
 static int
 _elua_scan_params(lua_State *L, int i, Eina_Bool tr, char *params, ...)  // Stack usage -
-                                                                         // if i is a table  
+                                                                         // if i is a table
                                                                          //   [-n, +n, e]
                                                                          // else
                                                                          //   [-0, +0, -]
                                                                          // if tr
-                                                                         //   if i is a table  
+                                                                         //   if i is a table
                                                                          //     stack reset to i
                                                                          //   else
                                                                          //     [-0, +1, m]
@@ -683,9 +683,9 @@ Make lua a bit shelly.  Prints a string to the console
 @param text The string to print.
 */
 static int
-_elua_echo(lua_State *L)  // Stack usage [-0, +0, vm]
+_elua_echo(lua_State *L)                         // Stack usage [-0, +0, v]
 {
-   const char *string = luaL_checkstring(L, 1);
+   const char *string = luaL_checkstring(L, 1);  // Stack usage [-0, +0, v]
    LD("%s\n", string);
    return 0;
 }
@@ -711,14 +711,14 @@ Wraps gettimeofday(), as passed through localtime().
 
 */
 static int
-_elua_date(lua_State *L)  // Stack usage [-?, +?, ?]
+_elua_date(lua_State *L)  // Stack usage [-16, +17, em]
 {
    static time_t       last_tzset = 0;
    struct timeval      timev;
    struct tm          *tm;
    time_t              tt;
 
-   lua_newtable(L);
+   lua_newtable(L);       // Stack usage [-0, +1, m]
    gettimeofday(&timev, NULL);
    tt = (time_t)(timev.tv_sec);
    if ((tt > (last_tzset + 1)) || (tt < (last_tzset - 1)))
@@ -728,7 +728,7 @@ _elua_date(lua_State *L)  // Stack usage [-?, +?, ?]
      }
    tm = localtime(&tt);
    if (tm)
-     {
+     {                    // Stack usage [-16, +16, em]
         _elua_ret(L, "%year %month %day %yearday %weekday %hour %min #sec",
               (int)(tm->tm_year + 1900),
               (int)(tm->tm_mon + 1),
@@ -763,10 +763,10 @@ Wraps ecore_loop_time_get().
 @returns A number of seconds.
 */
 static int
-_elua_looptime(lua_State *L)  // Stack usage [-?, +?, ?]
+_elua_looptime(lua_State *L)  // Stack usage [-0, +1, -]
 {
    double t = ecore_loop_time_get();
-   lua_pushnumber(L, t);
+   lua_pushnumber(L, t);      // Stack usage [-0, +1, -]
    return 1;
 }
 
@@ -785,10 +785,10 @@ Wraps ecore_time_get().
 @returns A number of seconds.
 */
 static int
-_elua_seconds(lua_State *L)  // Stack usage [-?, +?, ?]
+_elua_seconds(lua_State *L)  // Stack usage [-0, +1, -]
 {
    double t = ecore_time_get();
-   lua_pushnumber(L, t);
+   lua_pushnumber(L, t);     // Stack usage [-0, +1, -]
    return 1;
 }
 
@@ -806,11 +806,12 @@ Retrieves the position and size of the edje object that this lua group is in.
    - integer h: The edjes height.
 */
 static int
-_elua_objgeom(lua_State *L)  // Stack usage [-?, +?, ?]
+_elua_objgeom(lua_State *L)                                  // Stack usage [-10, +11, em]
 {
-   Edje *ed = (Edje *)_elua_table_ptr_get(L, _elua_key);
-   if (!lua_istable(L, 1)) lua_newtable(L);
-   _elua_ret(L, "%x %y %w %h", ed->x, ed->y, ed->w, ed->h);
+   Edje *ed = (Edje *)_elua_table_ptr_get(L, _elua_key);     // Stack usage [-2, +2, e]
+// FIXME: This function has no arguments, so why the table check?
+   if (!lua_istable(L, 1)) lua_newtable(L);                  // Stack usage [-0, +0, -]  [-0, +1, m]
+   _elua_ret(L, "%x %y %w %h", ed->x, ed->y, ed->w, ed->h);  // Stack usage [-8, +8, em]
    return 1;
 }
 
@@ -826,11 +827,12 @@ Retrieves the position of the edje object that this lua group is in.
    - integer y: The edjes Y position.
 */
 static int
-_elua_objpos(lua_State *L)  // Stack usage [-?, +?, ?]
+_elua_objpos(lua_State *L)                                   // Stack usage [-6, +7, em]
 {
-   Edje *ed = (Edje *)_elua_table_ptr_get(L, _elua_key);
-   if (!lua_istable(L, 1)) lua_newtable(L);
-   _elua_ret(L, "%x %y", ed->x, ed->y);
+   Edje *ed = (Edje *)_elua_table_ptr_get(L, _elua_key);     // Stack usage [-2, +2, e]
+// FIXME: This function has no arguments, so why the table check?
+   if (!lua_istable(L, 1)) lua_newtable(L);                  // Stack usage [-0, +0, -]  [-0, +1, m]
+   _elua_ret(L, "%x %y", ed->x, ed->y);                      // Stack usage [-4, +4, em]
    return 1;
 }
 
@@ -846,11 +848,12 @@ Retrieves the size of the edje object that this lua group is in.
    - integer h: The edjes height.
 */
 static int
-_elua_objsize(lua_State *L)  // Stack usage [-?, +?, ?]
+_elua_objsize(lua_State *L)                                  // Stack usage [-6, +7, em]
 {
-   Edje *ed = (Edje *)_elua_table_ptr_get(L, _elua_key);
-   if (!lua_istable(L, 1)) lua_newtable(L);
-   _elua_ret(L, "%w %h", ed->w, ed->h);
+   Edje *ed = (Edje *)_elua_table_ptr_get(L, _elua_key);     // Stack usage [-2, +2, e]
+// FIXME: This function has no arguments, so why the table check?
+   if (!lua_istable(L, 1)) lua_newtable(L);                  // Stack usage [-0, +0, -]  [-0, +1, m]
+   _elua_ret(L, "%w %h", ed->w, ed->h);                      // Stack usage [-4, +4, em]
    return 1;
 }
 
@@ -878,11 +881,11 @@ FIXME: I actually have no idea what happens if it's swallowed into another lua
 edje group.
 */
 static int
-_elua_emit(lua_State *L)  // Stack usage [-?, +?, ?]
+_elua_emit(lua_State *L)                                     // Stack usage [-2, +2, ev]
 {
-   Edje *ed = (Edje *)_elua_table_ptr_get(L, _elua_key);
-   const char *sig = luaL_checkstring(L, 1);
-   const char *src = luaL_checkstring(L, 2);
+   Edje *ed = (Edje *)_elua_table_ptr_get(L, _elua_key);     // Stack usage [-2, +2, e]
+   const char *sig = luaL_checkstring(L, 1);                 // Stack usage [-0, +0, v]
+   const char *src = luaL_checkstring(L, 2);                 // Stack usage [-0, +0, v]
    if ((!sig) || (!src)) return 0;
    _edje_emit(ed, sig, src);
    return 0;
@@ -919,7 +922,7 @@ For the array types, the lua caller passes a table.
 static int
 _elua_messagesend(lua_State *L)  // Stack usage [-?, +?, ?]
 {
-   Edje *ed = (Edje *)_elua_table_ptr_get(L, _elua_key);
+   Edje *ed = (Edje *)_elua_table_ptr_get(L, _elua_key);     // Stack usage [-2, +2, e]
    int id = luaL_checkinteger(L, 1);
    const char *type = luaL_checkstring(L, 2);
    if (!type) return 0;
@@ -1063,7 +1066,7 @@ _elua_messagesend(lua_State *L)  // Stack usage [-?, +?, ?]
 
 //-------------
 static Eina_Bool
-_elua_animator_cb(void *data)
+_elua_animator_cb(void *data)  // Stack usage [-?, +?, ?]
 {
    Edje_Lua_Animator *ela = data;
    lua_State *L;
@@ -1096,7 +1099,7 @@ _elua_animator_cb(void *data)
 }
 
 static void
-_elua_animator_free(void *obj)
+_elua_animator_free(void *obj)  // Stack usage [-?, +?, ?]
 {
    Edje_Lua_Animator *ela = obj;
    lua_State *L;
@@ -1131,7 +1134,7 @@ Wraps ecore_animator_add().
 static int
 _elua_animator(lua_State *L)  // Stack usage [-?, +?, ?]
 {
-   Edje *ed = (Edje *)_elua_table_ptr_get(L, _elua_key);
+   Edje *ed = (Edje *)_elua_table_ptr_get(L, _elua_key);     // Stack usage [-2, +2, e]
    Edje_Lua_Animator *ela;
 
    luaL_checkany(L, 1);
@@ -1147,7 +1150,7 @@ _elua_animator(lua_State *L)  // Stack usage [-?, +?, ?]
 }
 
 static Eina_Bool
-_elua_timer_cb(void *data)
+_elua_timer_cb(void *data)  // Stack usage [-?, +?, ?]
 {
    Edje_Lua_Timer *elt = data;
    lua_State *L;
@@ -1180,7 +1183,7 @@ _elua_timer_cb(void *data)
 }
 
 static void
-_elua_timer_free(void *obj)
+_elua_timer_free(void *obj)  // Stack usage [-?, +?, ?]
 {
    Edje_Lua_Timer *elt = obj;
    lua_State *L;
@@ -1214,7 +1217,7 @@ Wraps ecore_timer_add().
 static int
 _elua_timer(lua_State *L)  // Stack usage [-?, +?, ?]
 {
-   Edje *ed = (Edje *)_elua_table_ptr_get(L, _elua_key);
+   Edje *ed = (Edje *)_elua_table_ptr_get(L, _elua_key);     // Stack usage [-2, +2, e]
    Edje_Lua_Timer *elt;
    double val;
 
@@ -1231,7 +1234,7 @@ _elua_timer(lua_State *L)  // Stack usage [-?, +?, ?]
 }
 
 static Eina_Bool
-_elua_transition_cb(void *data)
+_elua_transition_cb(void *data)  // Stack usage [-?, +?, ?]
 {
    Edje_Lua_Transition *elt = data;
    lua_State *L;
@@ -1269,7 +1272,7 @@ _elua_transition_cb(void *data)
 }
 
 static void
-_elua_transition_free(void *obj)
+_elua_transition_free(void *obj)  // Stack usage [-?, +?, ?]
 {
    Edje_Lua_Transition *elt = obj;
    lua_State *L;
@@ -1297,7 +1300,7 @@ divided by the div parameter.
 static int
 _elua_transition(lua_State *L)  // Stack usage [-?, +?, ?]
 {
-   Edje *ed = (Edje *)_elua_table_ptr_get(L, _elua_key);
+   Edje *ed = (Edje *)_elua_table_ptr_get(L, _elua_key);     // Stack usage [-2, +2, e]
    Edje_Lua_Transition *elt;
    double val;
 
@@ -1327,7 +1330,7 @@ _elua_transition(lua_State *L)  // Stack usage [-?, +?, ?]
 static int
 _elua_color_class(lua_State *L)  // Stack usage [-?, +?, ?]
 {
-   Edje *ed = (Edje *)_elua_table_ptr_get(L, _elua_key);
+   Edje *ed = (Edje *)_elua_table_ptr_get(L, _elua_key);     // Stack usage [-2, +2, e]
    Edje_Color_Class *c_class;
    const char *class = luaL_checkstring(L, 1);
    int r, g, b, a;
@@ -1363,7 +1366,7 @@ _elua_color_class(lua_State *L)  // Stack usage [-?, +?, ?]
 static int
 _elua_text_class(lua_State *L)  // Stack usage [-?, +?, ?]
 {
-   Edje *ed = (Edje *)_elua_table_ptr_get(L, _elua_key);
+   Edje *ed = (Edje *)_elua_table_ptr_get(L, _elua_key);     // Stack usage [-2, +2, e]
    Edje_Text_Class *t_class;
    const char *class = luaL_checkstring(L, 1);
    char *font = NULL;
@@ -1478,7 +1481,7 @@ _elua_map_free(void *obj)
 static int
 _elua_map(lua_State *L)  // Stack usage [-?, +?, ?]
 {
-   Edje *ed = (Edje *)_elua_table_ptr_get(L, _elua_key);
+   Edje *ed = (Edje *)_elua_table_ptr_get(L, _elua_key);     // Stack usage [-2, +2, e]
    Edje_Lua_Map *elm;
    int count;
 
