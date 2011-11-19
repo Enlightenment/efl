@@ -983,17 +983,6 @@ elm_widget_sub_object_del(Evas_Object *obj,
      }
    if (_elm_widget_is(sobj))
      {
-        Smart_Data *sd2 = evas_object_smart_data_get(sobj);
-        if (sd2)
-          {
-             sd2->parent_obj = NULL;
-             if (sd2->resize_obj == sobj)
-               sd2->resize_obj = NULL;
-             else
-               sd->subobjs = eina_list_remove(sd->subobjs, sobj);
-          }
-        else
-          sd->subobjs = eina_list_remove(sd->subobjs, sobj);
         if (elm_widget_focus_get(sobj))
           {
              elm_widget_tree_unfocusable_set(sobj, EINA_TRUE);
@@ -1013,6 +1002,17 @@ elm_widget_sub_object_del(Evas_Object *obj,
                     }
                }
           }
+        Smart_Data *sd2 = evas_object_smart_data_get(sobj);
+        if (sd2)
+          {
+             sd2->parent_obj = NULL;
+             if (sd2->resize_obj == sobj)
+               sd2->resize_obj = NULL;
+             else
+               sd->subobjs = eina_list_remove(sd->subobjs, sobj);
+          }
+        else
+          sd->subobjs = eina_list_remove(sd->subobjs, sobj);
      }
    else
      sd->subobjs = eina_list_remove(sd->subobjs, sobj);
