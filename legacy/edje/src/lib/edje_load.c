@@ -730,7 +730,8 @@ _edje_object_file_set_internal(Evas_Object *obj, const char *file, const char *g
 		       group_path = eina_list_remove(group_path, group_path_entry);
 		       eina_stringshare_del(group_path_entry);
 
-		       edje_object_signal_callback_add(child_obj, "*", "*", _cb_signal_repeat, obj);
+		       edje_object_signal_callback_add(child_obj, "*", "*", 
+                                                       _cb_signal_repeat, obj);
 		       if (rp->part->type == EDJE_PART_TYPE_GROUP)
 			 {
                             _edje_real_part_swallow(rp, child_obj, EINA_TRUE);
@@ -1418,6 +1419,7 @@ _cb_signal_repeat(void *data, Evas_Object *obj, const char *sig, const char *sou
    size_t	 length_source;
    int           i = 0;
    const char   *alias = NULL;
+   Edje_Message_Signal emsg;
 
    parent = data;
    ed = _edje_fetch(obj);
@@ -1512,6 +1514,10 @@ _cb_signal_repeat(void *data, Evas_Object *obj, const char *sig, const char *sou
                }
           }
      }
-
-   edje_object_signal_emit(parent, sig, alias ? alias : new_src);
+   
+   emsg.sig = sig;
+   emsg.src = alias ? alias : new_src;
+   emsg.data = NULL;
+   _edje_message_send(ed_parent, EDJE_QUEUE_SCRIPT, EDJE_MESSAGE_SIGNAL, 
+                      0, &emsg);
 }
