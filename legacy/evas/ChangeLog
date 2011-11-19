@@ -504,3 +504,9 @@
         * JPEG encode and decode in eet now uses ISLOW (not IFAST) due to
         noticable quality losses in the chase for speed. It will use
         IFAST for quality less than 60 when encoding    
+
+2011-11-20  Carsten Haitzler (The Rasterman)
+
+        * TGA loader gets fixed alpha decode - real life tga's have
+        proper alpha values. also reduce false positive tga file
+        detection

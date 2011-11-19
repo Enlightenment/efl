@@ -74,6 +74,7 @@ evas_image_load_file_head_tga(Image_Entry *ie, const char *file, const char *key
    tga_footer *footer, tfooter;
    char hasa = 0, footer_present = 0, vinverted = 0;
    int w = 0, h = 0, bpp;
+   int x, y;
 
    f = eina_file_open(file, EINA_FALSE);
    *error = EVAS_LOAD_ERROR_DOES_NOT_EXIST;
@@ -116,8 +117,29 @@ evas_image_load_file_head_tga(Image_Entry *ie, const char *file, const char *key
    if (!((bpp == 32) || (bpp == 24) || (bpp == 16) || (bpp == 8)))
      goto close_file;
    if ((bpp == 32) && (header->descriptor & TGA_DESC_ABITS)) hasa = 1;
+   // don't handle colormapped images
+   if ((header->colorMapType) != 0)
+     goto close_file;
+   // if colormap size is anything other than legal sizes or 0 - not real tga
+   if (!((header->colorMapSize == 0) ||
+         (header->colorMapSize == 15) ||
+         (header->colorMapSize == 16) ||
+         (header->colorMapSize == 24) ||
+         (header->colorMapSize == 32)))
+     goto close_file;
+   x = (header->xOriginHi << 8) | (header->xOriginLo);
+   y = (header->yOriginHi << 8) | (header->yOriginLo);
    w = (header->widthHi << 8) | header->widthLo;
    h = (header->heightHi << 8) | header->heightLo;
+   // x origin gerater that width, y origin greater than height - wrong file
+   if ((x >= w) || (y >= h))
+     goto close_file;
+   // if descriptor has either of the top 2 bits set... not tga
+   if (header->descriptor & 0xc0)
+     goto close_file;
+   // if its not 32bit then it cant have alpha bits set - so invalid
+   if (!((bpp == 32) && (header->descriptor & TGA_DESC_ABITS)))
+     goto close_file;
    
    if ((w < 1) || (h < 1) || (w > IMG_MAX_SIZE) || (h > IMG_MAX_SIZE) ||
        IMG_TOO_BIG(w, h))
@@ -194,8 +216,29 @@ evas_image_load_file_data_tga(Image_Entry *ie, const char *file, const char *key
    if (!((bpp == 32) || (bpp == 24) || (bpp == 16) || (bpp == 8)))
      goto close_file;
    if ((bpp == 32) && (header->descriptor & TGA_DESC_ABITS)) hasa = 1;
+   // don't handle colormapped images
+   if ((header->colorMapType) != 0)
+     goto close_file;
+   // if colormap size is anything other than legal sizes or 0 - not real tga
+   if (!((header->colorMapSize == 0) ||
+         (header->colorMapSize == 15) ||
+         (header->colorMapSize == 16) ||
+         (header->colorMapSize == 24) ||
+         (header->colorMapSize == 32)))
+     goto close_file;
+   x = (header->xOriginHi << 8) | (header->xOriginLo);
+   y = (header->yOriginHi << 8) | (header->yOriginLo);
    w = (header->widthHi << 8) | header->widthLo;
    h = (header->heightHi << 8) | header->heightLo;
+   // x origin gerater that width, y origin greater than height - wrong file
+   if ((x >= w) || (y >= h))
+     goto close_file;
+   // if descriptor has either of the top 2 bits set... not tga
+   if (header->descriptor & 0xc0)
+     goto close_file;
+   // if its not 32bit then it cant have alpha bits set - so invalid
+   if (!((bpp == 32) && (header->descriptor & TGA_DESC_ABITS)))
+     goto close_file;
    
    if ((w < 1) || (h < 1) || (w > IMG_MAX_SIZE) || (h > IMG_MAX_SIZE) ||
        IMG_TOO_BIG(w, h))
@@ -237,7 +280,8 @@ evas_image_load_file_data_tga(Image_Entry *ie, const char *file, const char *key
                   for (x = 0; (x < w) && ((bufptr + 4) <= bufend); x++)
                     {
                        if (hasa)
-                         *dataptr = ARGB_JOIN(255 - bufptr[3], bufptr[2], bufptr[1], bufptr[0]);
+//                         *dataptr = ARGB_JOIN(255 - bufptr[3], bufptr[2], bufptr[1], bufptr[0]);
+                         *dataptr = ARGB_JOIN(bufptr[3], bufptr[2], bufptr[1], bufptr[0]);
                        else
                          *dataptr = ARGB_JOIN(0xff, bufptr[2], bufptr[1], bufptr[0]);
                        dataptr++;
@@ -306,7 +350,8 @@ evas_image_load_file_data_tga(Image_Entry *ie, const char *file, const char *key
                          {
                             unsigned char r, g, b, a;
                             
-                            a = 255 - bufptr[3];
+//                            a = 255 - bufptr[3];
+                            a = bufptr[3];
                             r = bufptr[2];
                             g = bufptr[1];
                             b = bufptr[0];
@@ -383,7 +428,8 @@ evas_image_load_file_data_tga(Image_Entry *ie, const char *file, const char *key
                        for (i = 0; (i < count) && (bufptr < (bufend - 4)) && (dataptr < dataend); i++)
                          {
                             if (hasa)
-                              *dataptr = ARGB_JOIN(255 - bufptr[3], bufptr[2], bufptr[1], bufptr[0]);
+//                              *dataptr = ARGB_JOIN(255 - bufptr[3], bufptr[2], bufptr[1], bufptr[0]);
+                              *dataptr = ARGB_JOIN(bufptr[3], bufptr[2], bufptr[1], bufptr[0]);
                             else
                               *dataptr = ARGB_JOIN(0xff, bufptr[2], bufptr[1], bufptr[0]);
                             dataptr++;

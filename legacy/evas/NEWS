@@ -85,6 +85,7 @@ Fixes:
     * grab count and hide bug
     * infintie loop bug when re-inserting objects during pre-render calc
     * evas_object_image_data_convert
+    * TGA loader detects false positives less and handles alpha TGAs better
 
 Improvements:
 
