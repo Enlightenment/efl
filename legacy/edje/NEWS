@@ -53,3 +53,4 @@ Improvements:
     * creation/deletion of edje objects should be faster with freeze and thaws
     * don't walk eina_list when deleting member classes - faster
     * part.description.max now can define just 1 axis
+    * signal and message propagation is more consistent and simpler now

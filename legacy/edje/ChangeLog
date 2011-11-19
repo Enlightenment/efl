@@ -213,3 +213,9 @@
 2011-11-07  David Seikel (onefang)
 
 	* Lua: Added the other half of the evas map API.
+
+2011-11-19  Carsten Haitzler (The Rasterman)
+
+	* Fix message and signal propagation to be consistent in all situations
+        as well as simpler.
+
