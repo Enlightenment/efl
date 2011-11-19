@@ -722,6 +722,7 @@ _edje_object_file_set_internal(Evas_Object *obj, const char *file, const char *g
 				   }
 			      }
 			    ed->load_error = edje_object_load_error_get(child_obj);
+                            evas_object_del(child_obj);
                             evas_event_thaw(tev);
                             evas_event_thaw_eval(tev);
 			    return 0;
