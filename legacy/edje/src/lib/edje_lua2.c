@@ -235,31 +235,31 @@ _elua_custom_panic(lua_State *L __UNUSED__)
 
 // Really only used to manage the pointer to our edje.
 static void
-_elua_table_ptr_set(lua_State *L, const void *key, const void *val)  // Stack usage [-?, +?, ?]
+_elua_table_ptr_set(lua_State *L, const void *key, const void *val)  // Stack usage [-2, +2, e]
 {
-   lua_pushlightuserdata(L, (void *)key);
-   lua_pushlightuserdata(L, (void *)val);
-   lua_settable(L, LUA_REGISTRYINDEX);
+   lua_pushlightuserdata(L, (void *)key);  // Stack usage [-0, +1, -]
+   lua_pushlightuserdata(L, (void *)val);  // Stack usage [-0, +1, -]
+   lua_settable(L, LUA_REGISTRYINDEX);     // Stack usage [-2, +0, e]
 }
 
 static const void *
-_elua_table_ptr_get(lua_State *L, const void *key)  // Stack usage [-?, +?, ?]
+_elua_table_ptr_get(lua_State *L, const void *key)  // Stack usage [-2, +2, e]
 {
    const void *ptr;
-   lua_pushlightuserdata(L, (void *)key);
-   lua_gettable(L, LUA_REGISTRYINDEX);
-   ptr = lua_topointer(L, -1);
-   lua_pop(L, 1);
+   lua_pushlightuserdata(L, (void *)key);  // Stack usage [-0, +1, -]
+   lua_gettable(L, LUA_REGISTRYINDEX);     // Stack usage [-1, +1, e]
+   ptr = lua_topointer(L, -1);             // Stack usage [-0, +0, -]
+   lua_pop(L, 1);                          // Stack usage [-n, +0, -]
    return ptr;
 }
 
 /* XXX: not used
 static void
-_elua_table_ptr_del(lua_State *L, const void *key)  // Stack usage [-?, +?, ?]
+_elua_table_ptr_del(lua_State *L, const void *key)  // Stack usage [-2, +2, e]
 {
-   lua_pushlightuserdata(L, (void *)key);
-   lua_pushnil(L);
-   lua_settable(L, LUA_REGISTRYINDEX);
+   lua_pushlightuserdata(L, (void *)key);  // Stack usage [-0, +1, -]
+   lua_pushnil(L);                         // Stack usage [-0, +1, -]
+   lua_settable(L, LUA_REGISTRYINDEX);     // Stack usage [-2, +0, e]
 }
 */
 
@@ -267,45 +267,45 @@ _elua_table_ptr_del(lua_State *L, const void *key)  // Stack usage [-?, +?, ?]
  * Cori: Assumes object to be saved on top of stack
  */
 static void
-_elua_ref_set(lua_State *L, void *key)  // Stack usage [-?, +?, ?]
+_elua_ref_set(lua_State *L, void *key)     // Stack usage [-4, +4, m]
 {
-   lua_pushlightuserdata(L, &_elua_objs);
-   lua_rawget(L, LUA_REGISTRYINDEX);
-   lua_pushlightuserdata(L, key);
-   lua_pushvalue(L,-3); // key & obj table & obj
-   lua_rawset(L, -3);
-   lua_pop(L, 1); // pop obj table
+   lua_pushlightuserdata(L, &_elua_objs);  // Stack usage [-0, +1, -]
+   lua_rawget(L, LUA_REGISTRYINDEX);       // Stack usage [-1, +1, -]
+   lua_pushlightuserdata(L, key);          // Stack usage [-0, +1, -]
+   lua_pushvalue(L,-3);                    // Stack usage [-0, +1, -]
+   lua_rawset(L, -3);                      // Stack usage [-2, +0, m]
+   lua_pop(L, 1);                          // Stack usage [-n, +0, -]
 }
 
 /*
  * Cori: Get an object from the object table
  */
 static void *
-_elua_ref_get(lua_State *L, void *key)  // Stack usage [-?, +?, ?]
+_elua_ref_get(lua_State *L, void *key)     // Stack usage [-3, +4, -]
 {
-   lua_pushlightuserdata(L, &_elua_objs);
-   lua_rawget(L, LUA_REGISTRYINDEX);
-   lua_pushlightuserdata(L, key);
-   lua_rawget(L, -2);
-   lua_remove(L, -2); // kill obj table
-   return lua_touserdata(L, -2);
+   lua_pushlightuserdata(L, &_elua_objs);  // Stack usage [-0, +1, -]
+   lua_rawget(L, LUA_REGISTRYINDEX);       // Stack usage [-1, +1, -]
+   lua_pushlightuserdata(L, key);          // Stack usage [-0, +1, -]
+   lua_rawget(L, -2);                      // Stack usage [-1, +1, -]
+   lua_remove(L, -2);                      // Stack usage [-1, +0, -]
+   return lua_touserdata(L, -2);           // Stack usage [-0, +0, -]
 }
 
 static Edje_Lua_Obj *
-_elua_obj_new(lua_State *L, Edje *ed, int size, const char *metatable)  // Stack usage [-?, +?, ?]
+_elua_obj_new(lua_State *L, Edje *ed, int size, const char *metatable)  // Stack usage [-5, +6, m]
 {
    Edje_Lua_Obj *obj;
 
-   obj = (Edje_Lua_Obj *)lua_newuserdata(L, size);
+   obj = (Edje_Lua_Obj *)lua_newuserdata(L, size);  // Stack usage [-0, +1, m]
    memset(obj, 0, size);
    ed->lua_objs = eina_inlist_append(ed->lua_objs, EINA_INLIST_GET(obj));
 
-   luaL_getmetatable(L, metatable);
-   lua_setmetatable(L, -2);
+   luaL_getmetatable(L, metatable);                 // Stack usage [-0, +1, -]
+   lua_setmetatable(L, -2);                         // Stack usage [-1, +0, -]
    obj->ed = ed;
    obj->meta = metatable;
 
-   _elua_ref_set(L, obj);
+   _elua_ref_set(L, obj);                           // Stack usage [-4, +4, m]
    return obj;
 }
 
@@ -320,24 +320,24 @@ _elua_obj_free(lua_State *L __UNUSED__, Edje_Lua_Obj *obj)
 }
 
 static int
-_elua_obj_gc(lua_State *L)  // Stack usage [-?, +?, ?]
+_elua_obj_gc(lua_State *L)  // Stack usage [-0, +0, -]
 {
-   Edje_Lua_Obj *obj = (Edje_Lua_Obj *)lua_touserdata(L, 1);
+   Edje_Lua_Obj *obj = (Edje_Lua_Obj *)lua_touserdata(L, 1);  // Stack usage [-0, +0, -]
    if (!obj) return 0;
    _elua_obj_free(L, obj);
    return 0;
 }
 
 static int
-_elua_obj_del(lua_State *L)
+_elua_obj_del(lua_State *L)  // Stack usage [-0, +0, -]
 {
-   return _elua_obj_gc(L);
+   return _elua_obj_gc(L);   // Stack usage [-0, +0, -]
 }
 
 static void
-_elua_gc(lua_State *L)  // Stack usage [-?, +?, ?]
+_elua_gc(lua_State *L)  // Stack usage [-0, +0, e]
 {
-   lua_gc(L, LUA_GCCOLLECT, 0);
+   lua_gc(L, LUA_GCCOLLECT, 0);  // Stack usage [-0, +0, e]
 }
 
 // These are what the various symbols are for each type -
@@ -354,7 +354,7 @@ _elua_gc(lua_State *L)  // Stack usage [-?, +?, ?]
 //  nil      ~
 
 static char *
-_elua_push_name(lua_State *L, char *q, int index)  // Stack usage [-?, +?, ?]
+_elua_push_name(lua_State *L, char *q, int index)  // Stack usage [-0, +1, e or m]
 {
    char *p = q;
    char temp = '\0';
@@ -366,16 +366,25 @@ _elua_push_name(lua_State *L, char *q, int index)  // Stack usage [-?, +?, ?]
    temp = *q;
    *q = '\0';
    if (index > 0)
-      lua_getfield(L, index, p);
+      lua_getfield(L, index, p);  // Stack usage [-0, +1, e]
    else
-      lua_pushstring(L, p);
+      lua_pushstring(L, p);       // Stack usage [-0, +1, m]
    *q = temp;
 
    return q;
 }
 
 static int
-_elua_scan_params(lua_State *L, int i, Eina_Bool tr, char *params, ...)  // Stack usage [-?, +?, ?]
+_elua_scan_params(lua_State *L, int i, Eina_Bool tr, char *params, ...)  // Stack usage -
+                                                                         // if i is a table  
+                                                                         //   [-0, +n, e]
+                                                                         // else
+                                                                         //   [-0, +0, -]
+                                                                         // if tr
+                                                                         //   if i is a table  
+                                                                         //     stack reset to i
+                                                                         //   else
+                                                                         //     [-0, +1, m]
 {
    va_list vl;
    char *f = strdup(params);
@@ -386,7 +395,7 @@ _elua_scan_params(lua_State *L, int i, Eina_Bool tr, char *params, ...)  // Stac
    if (!f) return -1;
    va_start(vl, params);
 
-   if (lua_istable(L, i))
+   if (lua_istable(L, i))                                                // Stack usage [-0, +0, -]
      {
         j = -1;
         table = EINA_TRUE;
@@ -406,26 +415,27 @@ _elua_scan_params(lua_State *L, int i, Eina_Bool tr, char *params, ...)  // Stac
                {
                   if (table)
                     {
-                       q = _elua_push_name(L, q, i);
+                       q = _elua_push_name(L, q, i);                     // Stack usage [-0, +1, e]
                     }
-                  if (lua_isnumber(L, j))
+                  if (lua_isnumber(L, j))                                // Stack usage [-0, +0, -]
                     {
                        int *v = va_arg(vl, int *);
-                       *v = lua_tointeger(L, j);
+                       *v = lua_tointeger(L, j);                         // Stack usage [-0, +0, -]
                        n++;
                     }
+// FIXME: Should probably pop that name off the stack if it's a table.  Same for the following.
                   break;
                }
              case '#':
                {
                   if (table)
                     {
-                       q = _elua_push_name(L, q, i);
+                       q = _elua_push_name(L, q, i);                     // Stack usage [-0, +1, e]
                     }
-                  if (lua_isnumber(L, j))
+                  if (lua_isnumber(L, j))                                // Stack usage [-0, +0, -]
                     {
                        double *v = va_arg(vl, double *);
-                       *v = lua_tonumber(L, j);
+                       *v = lua_tonumber(L, j);                          // Stack usage [-0, +0, -]
                        n++;
                     }
                   break;
@@ -434,13 +444,13 @@ _elua_scan_params(lua_State *L, int i, Eina_Bool tr, char *params, ...)  // Stac
                {
                   if (table)
                     {
-                       q = _elua_push_name(L, q, i);
+                       q = _elua_push_name(L, q, i);                     // Stack usage [-0, +1, e]
                     }
-                  if (lua_isstring(L, j))
+                  if (lua_isstring(L, j))                                // Stack usage [-0, +0, -]
                     {
                        char **v = va_arg(vl, char **);
                        size_t len;
-                       char *temp = (char *) lua_tolstring(L, j, &len);
+                       char *temp = (char *) lua_tolstring(L, j, &len);  // Stack usage [-0, +0, m]
 
                        len++;  // Cater for the null at the end.
                        *v = malloc(len);
@@ -456,12 +466,12 @@ _elua_scan_params(lua_State *L, int i, Eina_Bool tr, char *params, ...)  // Stac
                {
                   if (table)
                     {
-                       q = _elua_push_name(L, q, i);
+                       q = _elua_push_name(L, q, i);                     // Stack usage [-0, +1, e]
                     }
-                  if (lua_isboolean(L, j))
+                  if (lua_isboolean(L, j))                               // Stack usage [-0, +0, -]
                     {
                        int *v = va_arg(vl, int *);
-                       *v = lua_toboolean(L, j);
+                       *v = lua_toboolean(L, j);                         // Stack usage [-0, +0, -]
                        n++;
                     }
                   break;
@@ -488,9 +498,9 @@ _elua_scan_params(lua_State *L, int i, Eina_Bool tr, char *params, ...)  // Stac
    if (tr)
      {
         if (table)
-           lua_settop(L, i);
+           lua_settop(L, i);                                             // Stack usage [-?, +?, -]
         else
-           lua_newtable(L);
+           lua_newtable(L);                                              // Stack usage [-0, +1, m]
      }
 
    free(f);
@@ -503,7 +513,7 @@ _elua_scan_params(lua_State *L, int i, Eina_Bool tr, char *params, ...)  // Stac
 }
 
 static int
-_elua_ret(lua_State *L, char *params, ...)  // Stack usage [-?, +?, ?]
+_elua_ret(lua_State *L, char *params, ...)                // Stack usage [-2*n, +2*n, em]
 {
    va_list vl;
    char *f = strdup(params);
@@ -525,26 +535,26 @@ _elua_ret(lua_State *L, char *params, ...)  // Stack usage [-?, +?, ?]
           {
              case '%':
                {
-                  q = _elua_push_name(L, q, -1);
-                  lua_pushinteger(L, va_arg(vl, int));
+                  q = _elua_push_name(L, q, -1);          // Stack usage [-0, +1, m]
+                  lua_pushinteger(L, va_arg(vl, int));    // Stack usage [-0, +1, -]
                   break;
                }
              case '#':
                {
-                  q = _elua_push_name(L, q, -1);
-                  lua_pushnumber(L, va_arg(vl, double));
+                  q = _elua_push_name(L, q, -1);          // Stack usage [-0, +1, m]
+                  lua_pushnumber(L, va_arg(vl, double));  // Stack usage [-0, +1, -]
                   break;
                }
              case '$':
                {
-                  q = _elua_push_name(L, q, -1);
-                  lua_pushstring(L, va_arg(vl, char *));
+                  q = _elua_push_name(L, q, -1);          // Stack usage [-0, +1, m]
+                  lua_pushstring(L, va_arg(vl, char *));  // Stack usage [-0, +1, m]
                   break;
                }
              case '!':
                {
-                  q = _elua_push_name(L, q, -1);
-                  lua_pushboolean(L, va_arg(vl, int));
+                  q = _elua_push_name(L, q, -1);          // Stack usage [-0, +1, m]
+                  lua_pushboolean(L, va_arg(vl, int));    // Stack usage [-0, +1, -]
                   break;
                }
              default:
@@ -556,7 +566,7 @@ _elua_ret(lua_State *L, char *params, ...)  // Stack usage [-?, +?, ?]
 
         if (set)
           {
-             lua_settable(L, -3);
+             lua_settable(L, -3);                         // Stack usage [-2, +0, e]
              n++;
           }
         p = q;
@@ -3153,26 +3163,26 @@ _elua_text_text(lua_State *L)  // Stack usage [-?, +?, ?]
 //--------------------------------------------------------------------------//
 // Brain dead inheritance thingy, built for speed.  Kinda.  Part 1.
 static void
-_elua_add_functions(lua_State *L, const char *api, const luaL_Reg *funcs, const char *meta, const char *parent, const char *base)  // Stack usage [-?, +?, ?]
+_elua_add_functions(lua_State *L, const char *api, const luaL_Reg *funcs, const char *meta, const char *parent, const char *base)  // Stack usage [-3, +5, m]  if inheriting [-6, +11, em]
 {
-   luaL_register(L, api, funcs);
-   luaL_newmetatable(L, meta);
-   luaL_register(L, 0, _elua_edje_gc_funcs);
-   lua_pushliteral(L, "__index");
-   lua_pushvalue(L, -3);
-   lua_rawset(L, -3);
+   luaL_register(L, api, funcs);              // Stack usage [-0, +1, m]
+   luaL_newmetatable(L, meta);                // Stack usage [-0, +1, m]
+   luaL_register(L, 0, _elua_edje_gc_funcs);  // Stack usage [-1, +1, m]
+   lua_pushliteral(L, "__index");             // Stack usage [-0, +1, m]
+   lua_pushvalue(L, -3);                      // Stack usage [-0, +1, -]
+   lua_rawset(L, -3);                         // Stack usage [-2, +0, m]
 
    if (base && parent)
      {
         // Inherit from base
-        lua_getglobal(L, base);
-        luaL_newmetatable(L, parent);
-        lua_pushliteral(L, "__index");
-        lua_pushvalue(L, -3);
-        lua_rawset(L, -3);
-        lua_getglobal(L, api);
-        luaL_getmetatable(L, parent);
-        lua_setmetatable(L, -2);
+        lua_getglobal(L, base);               // Stack usage [-0, +1, e]
+        luaL_newmetatable(L, parent);         // Stack usage [-0, +1, m]
+        lua_pushliteral(L, "__index");        // Stack usage [-0, +1, m]
+        lua_pushvalue(L, -3);                 // Stack usage [-0, +1, -]
+        lua_rawset(L, -3);                    // Stack usage [-2, +0, m]
+        lua_getglobal(L, api);                // Stack usage [-0, +1, e]
+        luaL_getmetatable(L, parent);         // Stack usage [-0, +1, -]
+        lua_setmetatable(L, -2);              // Stack usage [-1, +0, -]
      }
 }
 
@@ -3203,7 +3213,7 @@ _elua_isa(Edje_Lua_Obj *obj, const char *type)
 
 #ifndef RASTER_FORGOT_WHY
 static void
-_elua_init(void)  // Stack usage [-?, +?, ?]
+_elua_init(void)                                                                           // Stack usage [-16, +20, em]
 {
    static Edje_Lua_Alloc ela = { MAX_LUA_MEM, 0 };
    const luaL_Reg *l;
@@ -3211,38 +3221,38 @@ _elua_init(void)  // Stack usage [-?, +?, ?]
 
    if (lstate) return;
 
-   lstate = L = lua_newstate(_elua_alloc, &ela);
-   lua_atpanic(L, _elua_custom_panic);
+   lstate = L = lua_newstate(_elua_alloc, &ela);                                           // Stack usage [-0, +0, -]
+   lua_atpanic(L, _elua_custom_panic);                                                     // Stack usage [-0, +0, -]
 
 // FIXME: figure out optimal gc settings later
-//   lua_gc(L, LUA_GCSETPAUSE, 200);
-//   lua_gc(L, LUA_GCSETSTEPMUL, 200);
+//   lua_gc(L, LUA_GCSETPAUSE, 200);                                                       // Stack usage [-0, +0, e]
+//   lua_gc(L, LUA_GCSETSTEPMUL, 200);                                                     // Stack usage [-0, +0, e]
 
-   for (l = _elua_libs; l->func; l++)
+   for (l = _elua_libs; l->func; l++)                                                      // Currently * 4
      {
-        lua_pushcfunction(L, l->func);
-        lua_pushstring(L, l->name);
-        lua_call(L, 1, 0);
+        lua_pushcfunction(L, l->func);                                                     // Stack usage [-0, +1, m]
+        lua_pushstring(L, l->name);                                                        // Stack usage [-0, +1, m]
+        lua_call(L, 1, 0);                                                                 // Stack usage [-2, +0, e]
      }
 
-   luaL_register(L, _elua_edje_api, _elua_edje_funcs);
-   luaL_newmetatable(L, _elua_edje_meta);
-   luaL_register(L, 0, _elua_edje_gc_funcs);
+   luaL_register(L, _elua_edje_api, _elua_edje_funcs);                                     // Stack usage [-0, +1, m]
+   luaL_newmetatable(L, _elua_edje_meta);                                                  // Stack usage [-0, +1, m]
+   luaL_register(L, 0, _elua_edje_gc_funcs);                                               // Stack usage [-1, +1, m]
 
-   _elua_add_functions(L, _elua_evas_api, _elua_evas_funcs, _elua_evas_meta, NULL, NULL);
+   _elua_add_functions(L, _elua_evas_api, _elua_evas_funcs, _elua_evas_meta, NULL, NULL);  // Stack usage [-3, +5, m]
 
    // weak table for our objects
-   lua_pushlightuserdata(L, &_elua_objs);
-   lua_newtable(L);
-   lua_pushstring(L, "__mode");
-   lua_pushstring(L, "v");
-   lua_rawset(L, -3);
-   lua_rawset(L, LUA_REGISTRYINDEX);
+   lua_pushlightuserdata(L, &_elua_objs);                                                  // Stack usage [-0, +1, -]
+   lua_newtable(L);                                                                        // Stack usage [-0, +1, m]
+   lua_pushstring(L, "__mode");                                                            // Stack usage [-0, +1, m]
+   lua_pushstring(L, "v");                                                                 // Stack usage [-0, +1, m]
+   lua_rawset(L, -3);                                                                      // Stack usage [-2, +0, m]
+   lua_rawset(L, LUA_REGISTRYINDEX);                                                       // Stack usage [-2, +0, m]
 }
 #endif
 
 void
-_edje_lua2_script_init(Edje *ed)  // Stack usage [-?, +?, ?]
+_edje_lua2_script_init(Edje *ed)                                  // Stack usage [-63, +99, em]
 {
    static Edje_Lua_Alloc ela = { MAX_LUA_MEM, 0 };
    const luaL_Reg *l;
@@ -3262,47 +3272,56 @@ _edje_lua2_script_init(Edje *ed)  // Stack usage [-?, +?, ?]
      }
 
 #ifndef RASTER_FORGOT_WHY
-   _elua_init();
+   _elua_init();                                                  // This is actually truly pointless, even if raster remembers.
 #endif
-   L = ed->L = lua_newstate(_elua_alloc, &ela);
-   lua_atpanic(L, _elua_custom_panic);
+   L = ed->L = lua_newstate(_elua_alloc, &ela);                   // Stack usage [-0, +0, -]
+   lua_atpanic(L, _elua_custom_panic);                            // Stack usage [-0, +0, -]
 
 // FIXME: figure out optimal gc settings later
-//   lua_gc(L, LUA_GCSETPAUSE, 200);
-//   lua_gc(L, LUA_GCSETSTEPMUL, 200);
+//   lua_gc(L, LUA_GCSETPAUSE, 200);                              // Stack usage [-0, +0, e]
+//   lua_gc(L, LUA_GCSETSTEPMUL, 200);                            // Stack usage [-0, +0, e]
 
-   for (l = _elua_libs; l->func; l++)
+   for (l = _elua_libs; l->func; l++)                             // Currently * 4
      {
-        lua_pushcfunction(L, l->func);
-        lua_pushstring(L, l->name);
-        lua_call(L, 1, 0);
+        lua_pushcfunction(L, l->func);                            // Stack usage [-0, +1, m]
+        lua_pushstring(L, l->name);                               // Stack usage [-0, +1, m]
+        lua_call(L, 1, 0);                                        // Stack usage [-2, +0, m]
      }
 
-   luaL_register(L, _elua_edje_api, _elua_edje_funcs);
-   luaL_newmetatable(L, _elua_edje_meta);
-   luaL_register(L, 0, _elua_edje_gc_funcs);
+   luaL_register(L, _elua_edje_api, _elua_edje_funcs);            // Stack usage [-0, +1, m]
+   luaL_newmetatable(L, _elua_edje_meta);                         // Stack usage [-0, +1, m]
+   luaL_register(L, 0, _elua_edje_gc_funcs);                      // Stack usage [-1, +1, m]
 
-   lua_pop(L, 2);
+   lua_pop(L, 2);                                                 // Stack usage [-n, +0, -]
 
    _elua_add_functions(L, _elua_evas_api, _elua_evas_funcs, _elua_evas_meta, NULL, NULL);
+                                                                  // Stack usage [-3, +5, m]
    _elua_add_functions(L, _elua_ecore_timer_api, _elua_ecore_timer_funcs, _elua_ecore_timer_meta, NULL, NULL);
+                                                                  // Stack usage [-3, +5, m]
    _elua_add_functions(L, _elua_ecore_animator_api, _elua_ecore_animator_funcs, _elua_ecore_animator_meta, NULL, NULL);
+                                                                  // Stack usage [-6, +11, m]
    _elua_add_functions(L, _elua_evas_edje_api, _elua_evas_edje_funcs, _elua_evas_edje_meta, _elua_evas_edje_parent, _elua_evas_api);
+                                                                  // Stack usage [-6, +11, em]
    _elua_add_functions(L, _elua_evas_image_api, _elua_evas_image_funcs, _elua_evas_image_meta, _elua_evas_image_parent, _elua_evas_api);
+                                                                  // Stack usage [-6, +11, em]
    _elua_add_functions(L, _elua_evas_line_api, _elua_evas_line_funcs, _elua_evas_line_meta, _elua_evas_line_parent, _elua_evas_api);
+                                                                  // Stack usage [-6, +11, em]
    _elua_add_functions(L, _elua_evas_map_api, _elua_evas_map_funcs, _elua_evas_map_meta, NULL, NULL);
+                                                                  // Stack usage [-3, +5, m]
    _elua_add_functions(L, _elua_evas_polygon_api, _elua_evas_polygon_funcs, _elua_evas_polygon_meta, _elua_evas_polygon_parent, _elua_evas_api);
+                                                                  // Stack usage [-6, +11, em]
    _elua_add_functions(L, _elua_evas_text_api, _elua_evas_text_funcs, _elua_evas_text_meta, _elua_evas_text_parent, _elua_evas_api);
+                                                                  // Stack usage [-6, +11, em]
 
    // weak table for our objects
-   lua_pushlightuserdata(L, &_elua_objs);
-   lua_newtable(L);
-   lua_pushstring(L, "__mode");
-   lua_pushstring(L, "v");
-   lua_rawset(L, -3);
-   lua_rawset(L, LUA_REGISTRYINDEX);
+   lua_pushlightuserdata(L, &_elua_objs);                         // Stack usage [-0, +1, -]
+   lua_newtable(L);                                               // Stack usage [-0, +1, m]
+   lua_pushstring(L, "__mode");                                   // Stack usage [-0, +1, m]
+   lua_pushstring(L, "v");                                        // Stack usage [-0, +1, m]
+   lua_rawset(L, -3);                                             // Stack usage [-2, +0, m]
+   lua_rawset(L, LUA_REGISTRYINDEX);                              // Stack usage [-2, +0, m]
 
-   _elua_table_ptr_set(L, _elua_key, ed);
+   _elua_table_ptr_set(L, _elua_key, ed);                         // Stack usage [-2, +2, e]
 
    snprintf(buf, sizeof(buf), "edje/scripts/lua/%i", ed->collection->id);
    data = eet_read(ed->file->ef, buf, &size);
@@ -3311,15 +3330,15 @@ _edje_lua2_script_init(Edje *ed)  // Stack usage [-?, +?, ?]
      {
         int err;
 
-        err = luaL_loadbuffer(L, data, size, "edje_lua_script");
+        err = luaL_loadbuffer(L, data, size, "edje_lua_script");  // Stack usage [-0, +1, m]
         if (err)
           {
              if (err == LUA_ERRSYNTAX)
                ERR("Lua load syntax error: %s",
-                   lua_tostring(L, -1));
+                   lua_tostring(L, -1));                          // Stack usage [-0, +0, m]
              else if (err == LUA_ERRMEM)
                ERR("Lua load memory allocation error: %s",
-                   lua_tostring(L, -1));
+                   lua_tostring(L, -1));                          // Stack usage [-0, +0, m]
           }
         free(data);
         if (setjmp(panic_jmp) == 1)
@@ -3327,7 +3346,7 @@ _edje_lua2_script_init(Edje *ed)  // Stack usage [-?, +?, ?]
              ERR("Lua script init panic");
              return;
           }
-        if ((err = lua_pcall(L, 0, 0, 0)))
+        if ((err = lua_pcall(L, 0, 0, 0)))                        // Stack usage [-1, +0, -]
           _edje_lua2_error(L, err);
      }
 }
@@ -3336,7 +3355,7 @@ void
 _edje_lua2_script_shutdown(Edje *ed)
 {
    if (!ed->L) return;
-   lua_close(ed->L);
+   lua_close(ed->L);  // Stack usage irrelevant, as it's all gone now.
    ed->L = NULL;
    while (ed->lua_objs)
      {
@@ -3365,22 +3384,22 @@ _edje_lua2_script_shutdown(Edje *ed)
 }
 
 void
-_edje_lua2_script_load(Edje_Part_Collection *edc __UNUSED__, void *data __UNUSED__, int size __UNUSED__)
+_edje_lua2_script_load(Edje_Part_Collection *edc __UNUSED__, void *data __UNUSED__, int size __UNUSED__)  // Stack usage [-16, +20, em]
 {
 #ifndef RASTER_FORGOT_WHY
-   _elua_init();
+   _elua_init();  // Stack usage [-16, +20, em]
 #endif
 }
 
 void
-_edje_lua2_script_unload(Edje_Part_Collection *edc __UNUSED__)  // Stack usage [-?, +?, ?]
+_edje_lua2_script_unload(Edje_Part_Collection *edc __UNUSED__)  // Stack usage [-0, +0, e]
 {
 #ifndef RASTER_FORGOT_WHY
    lua_State *L;
 
    if (!lstate) return;
    L = lstate;
-   lua_gc(L, LUA_GCCOLLECT, 0);
+   lua_gc(L, LUA_GCCOLLECT, 0);  // Stack usage [-0, +0, e]
 #endif
 }
 
@@ -3431,18 +3450,18 @@ If a function called "shutdown" exists in a lua edje group, then it is called wh
 that edje gets deleted.
 */
 void
-_edje_lua2_script_func_shutdown(Edje *ed)  // Stack usage [-?, +?, ?]
+_edje_lua2_script_func_shutdown(Edje *ed)       // Stack usage [-1, +1, e]
 {
    int err;
 
-   lua_getglobal(ed->L, "shutdown");
-   if (!lua_isnil(ed->L, -1))
+   lua_getglobal(ed->L, "shutdown");            // Stack usage [-0, +1, e]
+   if (!lua_isnil(ed->L, -1))                   // Stack usage [-0, +0, -]
      {
-        if ((err = lua_pcall(ed->L, 0, 0, 0)))
+        if ((err = lua_pcall(ed->L, 0, 0, 0)))  // Stack usage [-1, +0, -]
           _edje_lua2_error(ed->L, err);
      }
    else
-     lua_pop(ed->L, 1);
+     lua_pop(ed->L, 1);                         // Stack usage [-n, +0, -]
    _edje_lua2_script_shutdown(ed);
 }
 
@@ -3454,7 +3473,7 @@ If a function called "show" exists in a lua edje group, then it is called when
 that edje gets shown.
 */
 void
-_edje_lua2_script_func_show(Edje *ed)  // Stack usage [-?, +?, ?]
+_edje_lua2_script_func_show(Edje *ed)  // Stack usage [-1, +1, e]
 {
    int err;
 
@@ -3476,7 +3495,7 @@ If a function called "hide" exists in a lua edje group, then it is called when
 that edje gets hidden.
 */
 void
-_edje_lua2_script_func_hide(Edje *ed)  // Stack usage [-?, +?, ?]
+_edje_lua2_script_func_hide(Edje *ed)  // Stack usage [-1, +1, e]
 {
    int err;
 
@@ -3498,21 +3517,21 @@ If a function called "move" exists in a lua edje group, then it is called when
 that edje gets moved, with the new position passed to it.
 */
 void
-_edje_lua2_script_func_move(Edje *ed)  // Stack usage [-?, +?, ?]
+_edje_lua2_script_func_move(Edje *ed)  // Stack usage [-3, +3, e] or [-1, +1, e] if no matching function.
 {
    int err;
 
    // FIXME: move all objects created by script
-   lua_getglobal(ed->L, "move");
-   if (!lua_isnil(ed->L, -1))
+   lua_getglobal(ed->L, "move");                // Stack usage [-0, +1, e]
+   if (!lua_isnil(ed->L, -1))                   // Stack usage [-0, +0, -]
      {
-        lua_pushinteger(ed->L, ed->x);
-        lua_pushinteger(ed->L, ed->y);
-        if ((err = lua_pcall(ed->L, 2, 0, 0)))
+        lua_pushinteger(ed->L, ed->x);          // Stack usage [-0, +1, -]
+        lua_pushinteger(ed->L, ed->y);          // Stack usage [-0, +1, -]
+        if ((err = lua_pcall(ed->L, 2, 0, 0)))  // Stack usage [-3, +0, -]
           _edje_lua2_error(ed->L, err);
      }
    else
-     lua_pop(ed->L, 1);
+     lua_pop(ed->L, 1);                         // Stack usage [-n, +0, -]
 }
 
 /**
@@ -3523,7 +3542,7 @@ If a function called "resize" exists in a lua edje group, then it is called when
 that edje gets resized, with the new size passed to it.
 */
 void
-_edje_lua2_script_func_resize(Edje *ed)  // Stack usage [-?, +?, ?]
+_edje_lua2_script_func_resize(Edje *ed)  // Stack usage [-3, +3, e] or [-1, +1, e] if no matching function.
 {
    int err;
 
@@ -3549,114 +3568,128 @@ See edje:messagesend() for details of what each type means.  The arrays are
 passed as a table.
 */
 void
-_edje_lua2_script_func_message(Edje *ed, Edje_Message *em)  // Stack usage [-?, +?, ?]
+_edje_lua2_script_func_message(Edje *ed, Edje_Message *em)  // Stack usage [-?, +?, em]  It's complicated, but it's even at least.
 {
    int err, n, c, i;
 
-   lua_getglobal(ed->L, "message");
-   if (!lua_isnil(ed->L, -1))
+   lua_getglobal(ed->L, "message");                         // Stack usage [-0, +1, e]
+   if (!lua_isnil(ed->L, -1))                               // Stack usage [-0, +0, -]
      {
         n = 2;
-        lua_pushinteger(ed->L, em->id);
+        lua_pushinteger(ed->L, em->id);                     // Stack usage [-0, +1, -]
         switch (em->type)
           {
           case EDJE_MESSAGE_NONE:
-             lua_pushstring(ed->L, "none");
+             lua_pushstring(ed->L, "none");                 // Stack usage [-0, +1, m]
              break;
           case EDJE_MESSAGE_SIGNAL:
              break;
           case EDJE_MESSAGE_STRING:
-             lua_pushstring(ed->L, "str");
+             lua_pushstring(ed->L, "str");                  // Stack usage [-0, +1, m]
              lua_pushstring(ed->L, ((Edje_Message_String *)em->msg)->str);
+                                                            // Stack usage [-0, +1, m]
              n += 1;
             break;
           case EDJE_MESSAGE_INT:
-             lua_pushstring(ed->L, "int");
+             lua_pushstring(ed->L, "int");                  // Stack usage [-0, +1, m]
              lua_pushinteger(ed->L, ((Edje_Message_Int *)em->msg)->val);
+                                                            // Stack usage [-0, +1, -]
              n += 1;
              break;
           case EDJE_MESSAGE_FLOAT:
-             lua_pushstring(ed->L, "float");
+             lua_pushstring(ed->L, "float");                // Stack usage [-0, +1, m]
              lua_pushnumber(ed->L, ((Edje_Message_Float *)em->msg)->val);
+                                                            // Stack usage [-0, +1, -]
              n += 1;
              break;
           case EDJE_MESSAGE_STRING_SET:
-             lua_pushstring(ed->L, "strset");
+             lua_pushstring(ed->L, "strset");               // Stack usage [-0, +1, m]
              c = ((Edje_Message_String_Set *)em->msg)->count;
-             lua_createtable(ed->L, c, 0);
+             lua_createtable(ed->L, c, 0);                  // Stack usage [-0, +1, m]
              for (i = 0; i < c; i++)
                {
                   lua_pushstring(ed->L, ((Edje_Message_String_Set *)em->msg)->str[i]);
-                  lua_rawseti(ed->L, -2, i + 1);
+                                                            // Stack usage [-0, +1, m]
+                  lua_rawseti(ed->L, -2, i + 1);            // Stack usage [-1, +0, m]
                }
              n += 1;
              break;
           case EDJE_MESSAGE_INT_SET:
-             lua_pushstring(ed->L, "intset");
+             lua_pushstring(ed->L, "intset");               // Stack usage [-0, +1, m]
              c = ((Edje_Message_Int_Set *)em->msg)->count;
-             lua_createtable(ed->L, c, 0);
+             lua_createtable(ed->L, c, 0);                  // Stack usage [-0, +1, m]
              for (i = 0; i < c; i++)
                {
                   lua_pushinteger(ed->L, ((Edje_Message_Int_Set *)em->msg)->val[i]);
-                  lua_rawseti(ed->L, -2, i + 1);
+                                                            // Stack usage [-0, +1, -]
+                  lua_rawseti(ed->L, -2, i + 1);            // Stack usage [-1, +0, m]
                }
              n += 1;
              break;
           case EDJE_MESSAGE_FLOAT_SET:
-             lua_pushstring(ed->L, "floatset");
+             lua_pushstring(ed->L, "floatset");             // Stack usage [-0, +1, m]
              c = ((Edje_Message_Float_Set *)em->msg)->count;
-             lua_createtable(ed->L, c, 0);
+             lua_createtable(ed->L, c, 0);                  // Stack usage [-0, +1, m]
              for (i = 0; i < c; i++)
                {
                   lua_pushnumber(ed->L, ((Edje_Message_Float_Set *)em->msg)->val[i]);
-                  lua_rawseti(ed->L, -2, i + 1);
+                                                            // Stack usage [-0, +1, -]
+                  lua_rawseti(ed->L, -2, i + 1);            // Stack usage [-1, +0, m]
                }
              n += 1;
              break;
           case EDJE_MESSAGE_STRING_INT:
-             lua_pushstring(ed->L, "strint");
+             lua_pushstring(ed->L, "strint");               // Stack usage [-0, +1, m]
              lua_pushstring(ed->L, ((Edje_Message_String_Int *)em->msg)->str);
+                                                            // Stack usage [-0, +1, m]
              lua_pushinteger(ed->L, ((Edje_Message_String_Int *)em->msg)->val);
+                                                            // Stack usage [-0, +1, -]
              n += 2;
              break;
           case EDJE_MESSAGE_STRING_FLOAT:
-             lua_pushstring(ed->L, "strfloat");
+             lua_pushstring(ed->L, "strfloat");             // Stack usage [-0, +1, m]
              lua_pushstring(ed->L, ((Edje_Message_String_Float *)em->msg)->str);
+                                                            // Stack usage [-0, +1, m]
              lua_pushnumber(ed->L, ((Edje_Message_String_Float *)em->msg)->val);
+                                                            // Stack usage [-0, +1, -]
              n += 2;
              break;
           case EDJE_MESSAGE_STRING_INT_SET:
-             lua_pushstring(ed->L, "strintset");
+             lua_pushstring(ed->L, "strintset");            // Stack usage [-0, +1, m]
              lua_pushstring(ed->L, ((Edje_Message_String_Int_Set *)em->msg)->str);
+                                                            // Stack usage [-0, +1, m]
              c = ((Edje_Message_String_Int_Set *)em->msg)->count;
-             lua_createtable(ed->L, c, 0);
+             lua_createtable(ed->L, c, 0);                  // Stack usage [-0, +1, m]
              for (i = 0; i < c; i++)
                {
                   lua_pushinteger(ed->L, ((Edje_Message_String_Int_Set *)em->msg)->val[i]);
-                  lua_rawseti(ed->L, -2, i + 1);
+                                                            // Stack usage [-0, +1, -]
+                  lua_rawseti(ed->L, -2, i + 1);            // Stack usage [-1, +0, m]
                }
              n += 2;
              break;
           case EDJE_MESSAGE_STRING_FLOAT_SET:
-             lua_pushstring(ed->L, "strfloatset");
+             lua_pushstring(ed->L, "strfloatset");          // Stack usage [-0, +1, m]
              lua_pushstring(ed->L, ((Edje_Message_String_Float_Set *)em->msg)->str);
+                                                            // Stack usage [-0, +1, m]
              c = ((Edje_Message_String_Float_Set *)em->msg)->count;
-             lua_createtable(ed->L, c, 0);
+             lua_createtable(ed->L, c, 0);                  // Stack usage [-0, +1, m]
              for (i = 0; i < c; i++)
                {
                   lua_pushnumber(ed->L, ((Edje_Message_String_Float_Set *)em->msg)->val[i]);
-                  lua_rawseti(ed->L, -2, i + 1);
+                                                            // Stack usage [-0, +1, -]
+                  lua_rawseti(ed->L, -2, i + 1);            // Stack usage [-1, +0, m]
                }
              n += 2;
              break;
           default:
              break;
           }
-        if ((err = lua_pcall(ed->L, n, 0, 0)))
+        if ((err = lua_pcall(ed->L, n, 0, 0)))              // Stack usage [-n+1, +0, -]
           _edje_lua2_error(ed->L, err);
      }
    else
-     lua_pop(ed->L, 1);
+     lua_pop(ed->L, 1);                                     // Stack usage [-n, +0, -]
 }
 
 /**
@@ -3668,7 +3701,7 @@ ever a signal arrives, with the signal details passed to it.
 
 */
 void
-_edje_lua2_script_func_signal(Edje *ed, const char *sig, const char *src)  // Stack usage [-?, +?, ?]
+_edje_lua2_script_func_signal(Edje *ed, const char *sig, const char *src)  // Stack usage [-3, +3, em] or [-1, +1, e] if no matching function.
 {
    int err;
 
