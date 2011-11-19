@@ -671,7 +671,7 @@ typedef struct _Edje_Message_String_Float_Set Edje_Message_String_Float_Set;
 struct _Edje_Message_String
 {
    char *str; /**< The message's string pointer */
-}; /**< Structure passed as value on #EDJE_MESSAGE_STRING messages. The string in it is automatically freed be Edje */
+}; /**< Structure passed as value on #EDJE_MESSAGE_STRING messages. The string in it is automatically freed be Edje if passed to you by Edje */
 
 struct _Edje_Message_Int
 {
@@ -687,45 +687,45 @@ struct _Edje_Message_String_Set
 {
    int count; /**< The size of the message's array (may be greater than 1) */
    char *str[1]; /**< The message's @b array of string pointers */
-}; /**< Structure passed as value on #EDJE_MESSAGE_STRING_SET messages. The array in it is automatically freed be Edje */
+}; /**< Structure passed as value on #EDJE_MESSAGE_STRING_SET messages. The array in it is automatically freed be Edje if passed to you by Edje */
 
 struct _Edje_Message_Int_Set
 {
    int count; /**< The size of the message's array (may be greater than 1) */
    int val[1]; /**< The message's @b array of integers */
-}; /**< Structure passed as value on #EDJE_MESSAGE_INT_SET messages. The array in it is automatically freed be Edje */
+}; /**< Structure passed as value on #EDJE_MESSAGE_INT_SET messages. The array in it is automatically freed be Edje if passed to you by Edje */
 
 struct _Edje_Message_Float_Set
 {
    int count; /**< The size of the message's array (may be greater than 1) */
    double val[1]; /**< The message's @b array of floats */
-}; /**< Structure passed as value on #EDJE_MESSAGE_FLOAT_SET messages. The array in it is automatically freed be Edje */
+}; /**< Structure passed as value on #EDJE_MESSAGE_FLOAT_SET messages. The array in it is automatically freed be Edje if passed to you by Edje */
 
 struct _Edje_Message_String_Int
 {
    char *str; /**< The message's string value */
    int val; /**< The message's integer value */
-}; /**< Structure passed as value on #EDJE_MESSAGE_STRING_INT messages */
+}; /**< Structure passed as value on #EDJE_MESSAGE_STRING_INT messages. The string in it is automatically freed be Edje if passed to you by Edje */
 
 struct _Edje_Message_String_Float
 {
    char *str; /**< The message's string value */
    double val; /**< The message's float value */
-}; /**< Structure passed as value on #EDJE_MESSAGE_STRING_FLOAT messages */
+}; /**< Structure passed as value on #EDJE_MESSAGE_STRING_FLOAT messages. The string in it is automatically freed be Edje if passed to you by Edje */
 
 struct _Edje_Message_String_Int_Set
 {
    char *str; /**< The message's string value */
    int count; /**< The size of the message's array (may be greater than 1) */
    int val[1]; /**< The message's @b array of integers */
-}; /**< Structure passed as value on #EDJE_MESSAGE_STRING_INT_SET messages */
+}; /**< Structure passed as value on #EDJE_MESSAGE_STRING_INT_SET messages. The array and string in it are automatically freed be Edje if passed to you by Edje */
 
 struct _Edje_Message_String_Float_Set
 {
    char *str; /**< The message's string value */
    int count; /**< The size of the message's array (may be greater than 1) */
    double val[1]; /**< The message's @b array of floats */
-}; /**< Structure passed as value on #EDJE_MESSAGE_STRING_FLOAT_SET messages */
+}; /**< Structure passed as value on #EDJE_MESSAGE_STRING_FLOAT_SET messages. The array and string in it are automatically freed be Edje if passed to you by Edje */
 
 typedef enum _Edje_Drag_Dir
 {
