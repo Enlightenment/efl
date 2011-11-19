@@ -994,7 +994,11 @@ elm_widget_sub_object_del(Evas_Object *obj,
           }
         else
           sd->subobjs = eina_list_remove(sd->subobjs, sobj);
-        if (elm_widget_focus_get(sobj)) _unfocus_parents(obj);
+        if (elm_widget_focus_get(sobj))
+          {
+             elm_widget_tree_unfocusable_set(sobj, EINA_TRUE);
+             elm_widget_tree_unfocusable_set(sobj, EINA_FALSE);
+          }
         if ((sd->child_can_focus) && (_is_focusable(sobj)))
           {
              Evas_Object *subobj;
