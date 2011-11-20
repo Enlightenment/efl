@@ -2389,7 +2389,9 @@ elm_widget_translate(Evas_Object *obj)
 {
    const Eina_List *l;
    Evas_Object *child;
+#ifdef HAVE_GETTEXT
    Elm_Translate_String_Data *ts;
+#endif
 
    API_ENTRY return;
    EINA_LIST_FOREACH(sd->subobjs, l, child) elm_widget_translate(child);

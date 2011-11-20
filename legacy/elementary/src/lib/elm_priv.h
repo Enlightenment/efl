@@ -266,6 +266,7 @@ extern int          _elm_log_dom;
 extern Eina_List   *_elm_win_list;
 extern int          _elm_win_deferred_free;
 
+#ifdef ENABLE_NLS
 /* Our gettext wrapper, used to disable translation of elm if the app
  * is not translated. */
 static inline const char *
@@ -278,7 +279,7 @@ _elm_dgettext(const char *string)
 
    return dgettext(PACKAGE, string);
 }
-
+#endif
 
 /* Used by the paste handler */
 void _elm_entry_entry_paste(Evas_Object *obj, const char *entry);
