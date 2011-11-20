@@ -37,6 +37,7 @@ evas_cserve_stats_get(Evas_Cserve_Stats *stats)
    // may expand this in future
    return 1;
 #else
+   (void) stats;
    return 0;
 #endif
 }
@@ -118,6 +119,7 @@ evas_cserve_image_cache_contents_get(Evas_Cserve_Image_Cache *cache)
    free(info);
    return 1;
 #else
+   (void) cache;
    return 0;
 #endif
 }
@@ -134,6 +136,8 @@ evas_cserve_image_cache_contents_clean(Evas_Cserve_Image_Cache *cache)
         if (im->key) eina_stringshare_del(im->key);
         free(im);
      }
+#else
+   (void) cache;
 #endif
 }
 
@@ -150,6 +154,7 @@ evas_cserve_config_get(Evas_Cserve_Config *config)
    config->cache_item_timeout_check = conf.cache_item_timeout_check;
    return 1;
 #else
+   (void) config;
    return 0;
 #endif
 }
@@ -166,6 +171,7 @@ evas_cserve_config_set(const Evas_Cserve_Config *config)
    conf.cache_item_timeout_check = config->cache_item_timeout_check;
    return evas_cserve_raw_config_set(&conf);
 #else
+   (void) config;
    return 0;
 #endif
 }
