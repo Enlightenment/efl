@@ -317,6 +317,7 @@ contact with the developers and maintainers.
 @ELM_DEBUG_DEF@ ELM_DEBUG
 @ELM_ALLOCA_H_DEF@ ELM_ALLOCA_H
 @ELM_LIBINTL_H_DEF@ ELM_LIBINTL_H
+@ELM_DIRENT_H_DEF@ ELM_DIRENT_H
 
 /* Standard headers for standard system calls etc. */
 #include <stdio.h>
@@ -332,7 +333,9 @@ contact with the developers and maintainers.
 #include <limits.h>
 #include <ctype.h>
 #include <time.h>
-#include <dirent.h>
+#ifdef ELM_DIRENT_H
+# include <dirent.h>
+#endif
 #include <pwd.h>
 #include <errno.h>
 

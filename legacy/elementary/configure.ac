@@ -618,6 +618,15 @@ ELM_LIBINTL_H_DEF="#undef"
 AC_CHECK_HEADER(libintl.h, [ELM_LIBINTL_H_DEF="#define"])
 AC_SUBST(ELM_LIBINTL_H_DEF)
 
+ELM_DIRENT_H_DEF="#undef"
+AC_CHECK_HEADER(dirent.h, [ELM_DIRENT_H_DEF="#define"])
+AC_SUBST(ELM_DIRENT_H_DEF)
+
+AC_CHECK_HEADER(sys/mman.h, [have_mman="yes"], [have_mman="no"])
+if test "x${have_mman}" = "xyes"; then
+   AC_DEFINE(HAVE_MMAN_H, 1, [Have sys/mman.h header file])
+fi
+
 my_libs="-lm"
 AC_SUBST(my_libs)
 AC_SUBST(requirement_elm)

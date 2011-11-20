@@ -4,7 +4,9 @@
 #include <Elementary.h>
 #include "elm_priv.h"
 
-#include <sys/mman.h>
+#ifdef HAVE_MMAN_H
+# include <sys/mman.h>
+#endif
 
 #ifdef HAVE_ELEMENTARY_X
 
@@ -1619,6 +1621,7 @@ elm_drag_start(Evas_Object *obj, Elm_Sel_Format format, const char *data, void (
 static Tmp_Info *
 elm_cnp_tempfile_create(int size)
 {
+#ifdef HAVE_MMAN_H
    Tmp_Info *info;
    const char *tmppath;
    int len;
@@ -1696,6 +1699,10 @@ elm_cnp_tempfile_create(int size)
      }
 
    return info;
+#else
+   (void) size;
+   return NULL;
+#endif
 }
 
 
