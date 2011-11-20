@@ -1503,20 +1503,11 @@ _elua_map_free(void *obj)
 @since 1.1.0
 */
 static int
-_elua_map(lua_State *L)                                      // Stack usage [-7, +9, emv]
+_elua_map(lua_State *L)                                      // Stack usage [-7, +8, emv]
 {
-   Edje *ed = (Edje *)_elua_table_ptr_get(L, _elua_key);     // Stack usage [-2, +2, e]
-   Edje_Lua_Map *elm;
-   int count;
-
-   count = luaL_checkinteger(L, 1);                          // Stack usage [-0, +0, v]
-
-   elm = (Edje_Lua_Map *)_elua_obj_new(L, ed, sizeof(Edje_Lua_Map), _elua_evas_map_meta);
-                                                             // Stack usage [-5, +6, m]
-   elm->obj.free_func = _elua_map_free;
-   elm->map = evas_map_new(count);
-   lua_pushvalue(L, 2);                                       // Stack usage [-0, +1, -]
-   _elua_gc(L);                                               // Stack usage [-0, +0, e]
+   _ELUA_PLANT_EVAS_OBJECT(Edje_Lua_Map, _elua_evas_map_meta, _elua_map_free)
+                                                             // Stack usage [-7, +8, em]
+   elo->map = evas_map_new(luaL_checkinteger(L, 1));         // Stack usage [-0, +0, v]
    return 1;
 }
 
