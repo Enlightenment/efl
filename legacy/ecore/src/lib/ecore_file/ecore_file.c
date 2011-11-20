@@ -390,9 +390,8 @@ ecore_file_remove(const char *file)
 EAPI Eina_Bool
 ecore_file_recursive_rm(const char *dir)
 {
-   DIR *dirp;
-   struct dirent *dp;
-   char path[PATH_MAX], buf[PATH_MAX];
+   Eina_Iterator *it;
+   char buf[PATH_MAX];
    struct stat st;
    int ret;
 
@@ -402,22 +401,19 @@ ecore_file_recursive_rm(const char *dir)
    ret = stat(dir, &st);
    if ((ret == 0) && (S_ISDIR(st.st_mode)))
      {
+        Eina_File_Direct_Info *info;
+
         ret = 1;
-        if (stat(dir, &st) == -1) return EINA_FALSE;
-        dirp = opendir(dir);
-        if (dirp)
+        if (stat(dir, &st) == -1) return EINA_FALSE; /* WOOT: WHY ARE WE CALLING STAT TWO TIMES ??? */
+
+        it = eina_file_direct_ls(dir);
+        EINA_ITERATOR_FOREACH(it, info)
           {
-             while ((dp = readdir(dirp)))
-               {
-                  if ((strcmp(dp->d_name, ".")) && (strcmp(dp->d_name, "..")))
-                    {
-                       snprintf(path, PATH_MAX, "%s/%s", dir, dp->d_name);
-                       if (!ecore_file_recursive_rm(path))
-                         ret = 0;
-                    }
-               }
-             closedir(dirp);
+             if (!ecore_file_recursive_rm(info->path))
+               ret = 0;
           }
+        eina_iterator_free(it);
+
         if (!ecore_file_rmdir(dir)) ret = 0;
         if (ret)
             return EINA_TRUE;
@@ -815,23 +811,19 @@ ecore_file_readlink(const char *lnk)
 EAPI Eina_List *
 ecore_file_ls(const char *dir)
 {
-   char *f;
-   DIR *dirp;
-   struct dirent *dp;
+   Eina_File_Direct_Info *info;
+   Eina_Iterator *ls;
    Eina_List *list = NULL;
 
-   dirp = opendir(dir);
-   if (!dirp) return NULL;
-
-   while ((dp = readdir(dirp)))
+   ls = eina_file_direct_ls(dir);
+   EINA_ITERATOR_FOREACH(ls, info)
      {
-        if ((strcmp(dp->d_name, ".")) && (strcmp(dp->d_name, "..")))
-          {
-               f = strdup(dp->d_name);
-               list = eina_list_append(list, f);
-          }
+        char *f;
+
+        f = strdup(info->path + info->name_start);
+        list = eina_list_append(list, f);
      }
-   closedir(dirp);
+   eina_iterator_free(ls);
 
    list = eina_list_sort(list, eina_list_count(list), EINA_COMPARE_CB(strcoll));
 
@@ -1089,22 +1081,19 @@ ecore_file_strip_ext(const char *path)
 EAPI int
 ecore_file_dir_is_empty(const char *dir)
 {
-   DIR *dirp;
-   struct dirent *dp;
+   Eina_File_Direct_Info *info;
+   Eina_Iterator *it;
 
-   dirp = opendir(dir);
-   if (!dirp) return -1;
+   it = eina_file_direct_ls(dir);
+   if (!it) return -1;
 
-   while ((dp = readdir(dirp)))
+   EINA_ITERATOR_FOREACH(it, info)
      {
-        if ((strcmp(dp->d_name, ".")) && (strcmp(dp->d_name, "..")))
-          {
-             closedir(dirp);
-             return 0;
-          }
+        eina_iterator_free(it);
+        return 0;
      }
 
-   closedir(dirp);
+   eina_iterator_free(it);
    return 1;
 }
 
