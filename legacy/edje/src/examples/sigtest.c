@@ -96,7 +96,114 @@ _on_keydown(void        *data __UNUSED__,
 static void
 _on_message(void *data, Evas_Object *obj, Edje_Message_Type type, int id, void *msg)
 {
-   fprintf(stdout, "C::message type=%d id=%d\n", type, id);
+   int i;
+
+   fprintf(stdout, "C::message id=%d type=%d ", id, type);
+   switch (type)
+     {
+        case EDJE_MESSAGE_NONE :
+          {
+             fprintf(stdout, " NONE");
+             break;
+          }
+
+        case EDJE_MESSAGE_SIGNAL :
+          {
+             fprintf(stdout, " SIGNAL ");
+             break;
+          }
+
+        case EDJE_MESSAGE_STRING :
+          {
+             Edje_Message_String *mmsg = msg;
+
+             fprintf(stdout, " STRING %s", mmsg->str);
+             break;
+          }
+
+        case EDJE_MESSAGE_INT :
+          {
+             Edje_Message_Int *mmsg = msg;
+
+             fprintf(stdout, " INT %d", mmsg->val);
+             break;
+          }
+
+        case EDJE_MESSAGE_FLOAT :
+          {
+             Edje_Message_Float *mmsg = msg;
+
+             fprintf(stdout, " FLOAT %f", mmsg->val);
+             break;
+          }
+
+        case EDJE_MESSAGE_STRING_SET :
+          {
+             Edje_Message_String_Set *mmsg = msg;
+
+             fprintf(stdout, " STRING_SET -\n");
+             for (i = 0; i < mmsg->count; i++)
+                fprintf(stdout, "  %s\n", mmsg->str[i]);
+             break;
+          }
+
+        case EDJE_MESSAGE_INT_SET :
+          {
+             Edje_Message_Int_Set *mmsg = msg;
+
+             fprintf(stdout, " INT_SET -\n");
+             for (i = 0; i < mmsg->count; i++)
+                fprintf(stdout, "  %d\n", mmsg->val[i]);
+             break;
+          }
+
+        case EDJE_MESSAGE_FLOAT_SET :
+          {
+             Edje_Message_Float_Set *mmsg = msg;
+
+             fprintf(stdout, " FLOAT_SET -\n");
+             for (i = 0; i < mmsg->count; i++)
+                fprintf(stdout, "  %f\n", mmsg->val[i]);
+             break;
+          }
+
+        case EDJE_MESSAGE_STRING_INT :
+          {
+             Edje_Message_String_Int *mmsg = msg;
+
+             fprintf(stdout, " STRING_INT %s %d", mmsg->str, mmsg->val);
+             break;
+          }
+
+        case EDJE_MESSAGE_STRING_FLOAT :
+          {
+             Edje_Message_String_Float *mmsg = msg;
+
+             fprintf(stdout, " STRING_FLOAT %s %f", mmsg->str, mmsg->val);
+             break;
+          }
+
+        case EDJE_MESSAGE_STRING_INT_SET :
+          {
+             Edje_Message_String_Int_Set *mmsg = msg;
+
+             fprintf(stdout, " STRING_INT_SET %s -\n", mmsg->str);
+             for (i = 0; i < mmsg->count; i++)
+                fprintf(stdout, "  %d\n", mmsg->val[i]);
+             break;
+          }
+
+        case EDJE_MESSAGE_STRING_FLOAT_SET :
+          {
+             Edje_Message_String_Float_Set *mmsg = msg;
+
+             fprintf(stdout, " STRING_FLOAT_SET %s -\n", mmsg->str);
+             for (i = 0; i < mmsg->count; i++)
+                fprintf(stdout, "  %f\n", mmsg->val[i]);
+             break;
+          }
+     }
+   fprintf(stdout, "\n");
 }
 
 static void
