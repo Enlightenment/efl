@@ -47,14 +47,14 @@ collections {
          local function mycb3 (v)
             print("lua::callback transition " .. D.val .. " v: " .. v);
             d = {};
-            edje.size(d);
+            d = edje.size(d);
             print("lua::objsize= " .. d.w .. " , " .. d.h);
             sz = {w=v * 80, h=v * 40};
             D.rect:geom(((d.w / 2) * math.sin(v * 2 * math.pi)) + ((d.w - sz.w) / 2),
                         ((d.h / 2) * math.cos(v * 2 * math.pi)) + ((d.h - sz.h) / 2),
                         sz.w, sz.h);
             D.rect:color(255, 128, v * 255, 255);
-            D.rect:move(d);
+            d = D.rect:move(d);
             print("lua::pos= " .. d.x .. " , " .. d.y);
  
             r = D.rect:above();
