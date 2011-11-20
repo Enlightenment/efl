@@ -425,9 +425,13 @@ elm_quicklaunch_sub_init(int    argc,
         _elm_module_init();
         _elm_config_sub_init();
         ecore_evas_init(); // FIXME: check errors
+#ifdef HAVE_ELEMENTARY_ECORE_IMF
         ecore_imf_init();
+#endif
+#ifdef HAVE_ELEMENTARY_ECORE_CON
         ecore_con_init();
         ecore_con_url_init();
+#endif
         _elm_ews_wm_init();
      }
    return _elm_sub_init_count;
@@ -449,9 +453,13 @@ elm_quicklaunch_sub_shutdown(void)
         _elm_win_shutdown();
         _elm_module_shutdown();
         _elm_ews_wm_shutdown();
+#ifdef HAVE_ELEMENTARY_ECORE_CON
         ecore_con_url_shutdown();
         ecore_con_shutdown();
+#endif
+#ifdef HAVE_ELEMENTARY_ECORE_IMF
         ecore_imf_shutdown();
+#endif
         ecore_evas_shutdown();
         _elm_config_sub_shutdown();
 #define ENGINE_COMPARE(name) (!strcmp(_elm_config->engine, name))

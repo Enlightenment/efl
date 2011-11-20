@@ -370,8 +370,8 @@ contact with the developers and maintainers.
 #include <Ecore.h>
 #include <Ecore_Evas.h>
 #include <Ecore_File.h>
-#include <Ecore_IMF.h>
-#include <Ecore_Con.h>
+@ELEMENTARY_ECORE_IMF_INC@
+@ELEMENTARY_ECORE_CON_INC@
 #include <Edje.h>
 
 #ifdef ELM_EDBUS

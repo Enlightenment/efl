@@ -1,4 +1,4 @@
-=-------##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##
+##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##
 ##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##
 m4_define([v_maj], [0])
 m4_define([v_min], [8])
@@ -219,11 +219,37 @@ PKG_CHECK_MODULES([ELEMENTARY],
     ecore >= 1.0.999
     ecore-evas >= 1.0.999
     ecore-file >= 1.0.999
-    ecore-imf >= 1.0.999
-    ecore-con >= 1.0.999
     edje >= 1.0.999
    ]
 )
+
+requirement_elm="edje >= 1.0.0 ecore-file >= 1.0.0 ecore-evas >= 1.0.0 ecore >= 1.0.0 evas >= 1.0.0 eet >= 1.4.0 eina >= 1.0.0 ${requirement_elm}"
+
+PKG_CHECK_MODULES([ELEMENTARY_ECORE_IMF],
+   [ecore-imf >= 1.0.999],
+   [
+    ELEMENTARY_ECORE_IMF_INC="#include <Ecore_IMF.h>"
+    AC_DEFINE(HAVE_ELEMENTARY_ECORE_IMF, 1, [Have Ecore_IMF support])
+    have_ecore_imf="yes"
+    requirement_elm="ecore-imf >= 1.0.999 ${requirement_elm}"
+   ],
+   [have_ecore_imf="no"])
+AC_SUBST(ELEMENTARY_ECORE_IMF_INC)
+
+AM_CONDITIONAL([HAVE_ECORE_IMF], [test "x${have_ecore_imf}" = "xyes"])
+
+PKG_CHECK_MODULES([ELEMENTARY_ECORE_CON],
+   [ecore-con >= 1.0.999],
+   [
+    ELEMENTARY_ECORE_CON_INC="#include <Ecore_Con.h>"
+    AC_DEFINE(HAVE_ELEMENTARY_ECORE_CON, 1, [Have Ecore_Con support])
+    have_ecore_con="yes"
+    requirement_elm="ecore-con >= 1.0.999 ${requirement_elm}"
+   ],
+   [have_ecore_con="no"])
+AC_SUBST(ELEMENTARY_ECORE_CON_INC)
+
+AM_CONDITIONAL([HAVE_ECORE_CON], [test "x${have_ecore_con}" = "xyes"])
 
 PKG_CHECK_MODULES([EIO],
         [eio],
@@ -254,8 +280,6 @@ if test "x$want_elementary_emotion" != "xno"; then
 fi
 
 AM_CONDITIONAL([HAVE_EMOTION], [test "x${have_emotion}" = "xyes"])
-
-requirement_elm="edje >= 1.0.0 ecore-file >= 1.0.0 ecore-evas >= 1.0.0 ecore >= 1.0.0 evas >= 1.0.0 eet >= 1.4.0 eina >= 1.0.0 ${requirement_elm}"
 
 have_elementary_x="no"
 want_elementary_x="auto"
@@ -718,6 +742,8 @@ echo "    Windows XP.............: ${have_elementary_win32}"
 echo "    Windows CE.............: ${have_elementary_wince}"
 echo
 echo "  Features:"
+echo "    Ecore_IMF..............: ${have_ecore_imf}"
+echo "    Ecore_Con..............: ${have_ecore_con}"
 echo "    EDBus..................: ${have_elementary_edbus}"
 echo "    EFreet.................: ${have_elementary_efreet}"
 echo "    EWeather...............: ${have_elementary_eweather}"

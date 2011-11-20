@@ -6,6 +6,8 @@
 #include "elm_priv.h"
 #include "els_scroller.h"
 
+#ifdef HAVE_ELEMENTARY_ECORE_CON
+
 typedef struct _Widget_Data Widget_Data;
 typedef struct _Pan Pan;
 typedef struct _Grid Grid;
@@ -3147,9 +3149,12 @@ _utils_convert_name(const Evas_Object *obj, int method, char *address, double lo
 
 static int idnum = 1;
 
+#endif
+
 EAPI Evas_Object *
 elm_map_add(Evas_Object *parent)
 {
+#ifdef HAVE_ELEMENTARY_ECORE_CON
    Evas *e;
    Widget_Data *wd;
    Evas_Coord minw, minh;
@@ -3280,11 +3285,16 @@ elm_map_add(Evas_Object *parent)
      }
 
    return obj;
+#else
+   (void) parent;
+   return NULL;
+#endif
 }
 
 EAPI void
 elm_map_zoom_set(Evas_Object *obj, int zoom)
 {
+#ifdef HAVE_ELEMENTARY_ECORE_CON
    ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
    Eina_List *l;
@@ -3426,21 +3436,31 @@ elm_map_zoom_set(Evas_Object *obj, int zoom)
      }
 
    if (zoom_changed) evas_object_smart_callback_call(obj, SIG_ZOOM_CHANGE, NULL);
+#else
+   (void) obj;
+   (void) zoom;
+#endif
 }
 
 EAPI int
 elm_map_zoom_get(const Evas_Object *obj)
 {
+#ifdef HAVE_ELEMENTARY_ECORE_CON
    ELM_CHECK_WIDTYPE(obj, widtype) 0;
    Widget_Data *wd = elm_widget_data_get(obj);
 
    if (!wd) return 0;
    return wd->zoom;
+#else
+   (void) obj;
+   return 0;
+#endif
 }
 
 EAPI void
 elm_map_zoom_mode_set(Evas_Object *obj, Elm_Map_Zoom_Mode mode)
 {
+#ifdef HAVE_ELEMENTARY_ECORE_CON
    ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
 
@@ -3454,21 +3474,31 @@ elm_map_zoom_mode_set(Evas_Object *obj, Elm_Map_Zoom_Mode mode)
         wd->zoom = 0;
         elm_map_zoom_set(wd->obj, tz);
      }
+#else
+   (void) obj;
+   (void) mode;
+#endif
 }
 
 EAPI Elm_Map_Zoom_Mode
 elm_map_zoom_mode_get(const Evas_Object *obj)
 {
+#ifdef HAVE_ELEMENTARY_ECORE_CON
    ELM_CHECK_WIDTYPE(obj, widtype) ELM_MAP_ZOOM_MODE_MANUAL;
    Widget_Data *wd = elm_widget_data_get(obj);
 
    if (!wd) return ELM_MAP_ZOOM_MODE_MANUAL;
    return wd->mode;
+#else
+   (void) obj;
+   return ELM_MAP_ZOOM_MODE_MANUAL;
+#endif
 }
 
 EAPI void
 elm_map_geo_region_bring_in(Evas_Object *obj, double lon, double lat)
 {
+#ifdef HAVE_ELEMENTARY_ECORE_CON
    ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
    int rx, ry, rw, rh;
@@ -3494,11 +3524,17 @@ elm_map_geo_region_bring_in(Evas_Object *obj, double lon, double lat)
    wd->center_on.enabled = EINA_TRUE;
    wd->center_on.lon = lon;
    wd->center_on.lat = lat;
+#else
+   (void) obj;
+   (void) lon;
+   (void) lat;
+#endif
 }
 
 EAPI void
 elm_map_geo_region_show(Evas_Object *obj, double lon, double lat)
 {
+#ifdef HAVE_ELEMENTARY_ECORE_CON
    ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
    int rx, ry, rw, rh;
@@ -3523,11 +3559,17 @@ elm_map_geo_region_show(Evas_Object *obj, double lon, double lat)
    wd->center_on.enabled = EINA_TRUE;
    wd->center_on.lon = lon;
    wd->center_on.lat = lat;
+#else
+   (void) obj;
+   (void) lon;
+   (void) lat;
+#endif
 }
 
 EAPI void
 elm_map_geo_region_get(const Evas_Object *obj, double *lon, double *lat)
 {
+#ifdef HAVE_ELEMENTARY_ECORE_CON
    ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
    Evas_Coord sx, sy, sw, sh;
@@ -3539,11 +3581,17 @@ elm_map_geo_region_get(const Evas_Object *obj, double *lon, double *lat)
    sy += sh / 2;
 
    elm_map_utils_convert_coord_into_geo(obj, sx, sy, wd->size.w, lon, lat);
+#else
+   (void) obj;
+   (void) lon;
+   (void) lat;
+#endif
 }
 
 EAPI void
 elm_map_paused_set(Evas_Object *obj, Eina_Bool paused)
 {
+#ifdef HAVE_ELEMENTARY_ECORE_CON
    ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
 
@@ -3560,42 +3608,62 @@ elm_map_paused_set(Evas_Object *obj, Eina_Bool paused)
              evas_object_smart_callback_call(obj, SIG_ZOOM_STOP, NULL);
           }
      }
+#else
+   (void) obj;
+   (void) paused;
+#endif
 }
 
 EAPI void
 elm_map_paused_markers_set(Evas_Object *obj, Eina_Bool paused)
 {
+#ifdef HAVE_ELEMENTARY_ECORE_CON
    ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
 
    if (!wd) return;
    if (wd->paused_markers == !!paused) return;
    wd->paused_markers = paused;
+#else
+   (void) obj;
+   (void) paused;
+#endif
 }
 
 EAPI Eina_Bool
 elm_map_paused_get(const Evas_Object *obj)
 {
+#ifdef HAVE_ELEMENTARY_ECORE_CON
    ELM_CHECK_WIDTYPE(obj, widtype) EINA_FALSE;
    Widget_Data *wd = elm_widget_data_get(obj);
 
    if (!wd) return EINA_FALSE;
    return wd->paused;
+#else
+   (void) obj;
+   return EINA_FALSE;
+#endif
 }
 
 EAPI Eina_Bool
 elm_map_paused_markers_get(const Evas_Object *obj)
 {
+#ifdef HAVE_ELEMENTARY_ECORE_CON
    ELM_CHECK_WIDTYPE(obj, widtype) EINA_FALSE;
    Widget_Data *wd = elm_widget_data_get(obj);
 
    if (!wd) return EINA_FALSE;
    return wd->paused_markers;
+#else
+   (void) obj;
+   return EINA_FALSE;
+#endif
 }
 
 EAPI void
 elm_map_utils_downloading_status_get(const Evas_Object *obj, int *try_num, int *finish_num)
 {
+#ifdef HAVE_ELEMENTARY_ECORE_CON
    ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
 
@@ -3609,11 +3677,17 @@ elm_map_utils_downloading_status_get(const Evas_Object *obj, int *try_num, int *
      {
         *finish_num = wd->finish_num;
      }
+#else
+   (void) obj;
+   (void) try_num;
+   (void) finish_num;
+#endif
 }
 
 EAPI void
 elm_map_utils_convert_coord_into_geo(const Evas_Object *obj, int x, int y, int size, double *lon, double *lat)
 {
+#ifdef HAVE_ELEMENTARY_ECORE_CON
    ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
 
@@ -3633,11 +3707,20 @@ elm_map_utils_convert_coord_into_geo(const Evas_Object *obj, int x, int y, int s
         double n = ELM_PI - 2.0 * ELM_PI * y / size;
         *lat = 180.0 / ELM_PI * atan(0.5 * (exp(n) - exp(-n)));
      }
+#else
+   (void) obj;
+   (void) x;
+   (void) y;
+   (void) size;
+   (void) lon;
+   (void) lat;
+#endif
 }
 
 EAPI void
 elm_map_utils_convert_geo_into_coord(const Evas_Object *obj, double lon, double lat, int size, int *x, int *y)
 {
+#ifdef HAVE_ELEMENTARY_ECORE_CON
    ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
 
@@ -3652,26 +3735,48 @@ elm_map_utils_convert_geo_into_coord(const Evas_Object *obj, double lon, double 
      *x = floor((lon + 180.0) / 360.0 * size);
    if (y)
      *y = floor((1.0 - log( tan(lat * ELM_PI / 180.0) + 1.0 / cos(lat * ELM_PI / 180.0)) / ELM_PI) / 2.0 * size);
+#else
+   (void) obj;
+   (void) lon;
+   (void) lat;
+   (void) size;
+   (void) x;
+   (void) y;
+#endif
 }
 
 EAPI Elm_Map_Name *
 elm_map_utils_convert_coord_into_name(const Evas_Object *obj, double lon, double lat)
 {
+#ifdef HAVE_ELEMENTARY_ECORE_CON
    ELM_CHECK_WIDTYPE(obj, widtype) NULL;
    return _utils_convert_name(obj, ELM_MAP_NAME_METHOD_REVERSE, NULL, lon, lat);
+#else
+   (void) obj;
+   (void) lon;
+   (void) lat;
+   return NULL;
+#endif
 }
 
 EAPI Elm_Map_Name *
 elm_map_utils_convert_name_into_coord(const Evas_Object *obj, char *address)
 {
+#ifdef HAVE_ELEMENTARY_ECORE_CON
    ELM_CHECK_WIDTYPE(obj, widtype) NULL;
    if (!address) return NULL;
    return _utils_convert_name(obj, ELM_MAP_NAME_METHOD_SEARCH, address, 0.0, 0.0);
+#else
+   (void) obj;
+   (void) address;
+   return NULL;
+#endif
 }
 
 EAPI void
 elm_map_utils_rotate_coord(const Evas_Object *obj __UNUSED__, const Evas_Coord x, const Evas_Coord y, const Evas_Coord cx, const Evas_Coord cy, const double degree, Evas_Coord *xx, Evas_Coord *yy)
 {
+#ifdef HAVE_ELEMENTARY_ECORE_CON
    if ((!xx) || (!yy)) return;
 
    double r = (degree * M_PI) / 180.0;
@@ -3687,11 +3792,21 @@ elm_map_utils_rotate_coord(const Evas_Object *obj __UNUSED__, const Evas_Coord x
 
    *xx = tx + cx;
    *yy = ty + cy;
+#else
+   (void) x;
+   (void) y;
+   (void) cx;
+   (void) cy;
+   (void) degree;
+   (void) xx;
+   (void) yy;
+#endif
 }
 
 EAPI Elm_Map_Marker *
 elm_map_marker_add(Evas_Object *obj, double lon, double lat, Elm_Map_Marker_Class *clas, Elm_Map_Group_Class *clas_group, void *data)
 {
+#ifdef HAVE_ELEMENTARY_ECORE_CON
    ELM_CHECK_WIDTYPE(obj, widtype) NULL;
    Widget_Data *wd = elm_widget_data_get(obj);
    int i, j;
@@ -3871,11 +3986,21 @@ elm_map_marker_add(Evas_Object *obj, double lon, double lat, Elm_Map_Marker_Clas
      }
 
    return marker;
+#else
+   (void) obj;
+   (void) lon;
+   (void) lat;
+   (void) clas;
+   (void) clas_group;
+   (void) data;
+   return NULL;
+#endif
 }
 
 EAPI void
 elm_map_marker_remove(Elm_Map_Marker *marker)
 {
+#ifdef HAVE_ELEMENTARY_ECORE_CON
    int i;
    Eina_List *groups;
    Widget_Data *wd;
@@ -3938,33 +4063,51 @@ elm_map_marker_remove(Elm_Map_Marker *marker)
         evas_object_geometry_get(wd->obj, &ox, &oy, &ow, &oh);
         marker_place(wd->obj, eina_list_data_get(wd->grids), wd->pan_x, wd->pan_y, ox, oy, ow, oh);
      }
+#else
+   (void) marker;
+#endif
 }
 
 EAPI void
 elm_map_marker_region_get(const Elm_Map_Marker *marker, double *lon, double *lat)
 {
+#ifdef HAVE_ELEMENTARY_ECORE_CON
    EINA_SAFETY_ON_NULL_RETURN(marker);
    if (lon) *lon = marker->longitude;
    if (lat) *lat = marker->latitude;
+#else
+   (void) marker;
+   (void) lon;
+   (void) lat;
+#endif
 }
 
 EAPI void
 elm_map_marker_bring_in(Elm_Map_Marker *marker)
 {
+#ifdef HAVE_ELEMENTARY_ECORE_CON
    EINA_SAFETY_ON_NULL_RETURN(marker);
    elm_map_geo_region_bring_in(marker->wd->obj, marker->longitude, marker->latitude);
+#else
+   (void) marker;
+#endif
 }
 
 EAPI void
 elm_map_marker_show(Elm_Map_Marker *marker)
 {
+#ifdef HAVE_ELEMENTARY_ECORE_CON
    EINA_SAFETY_ON_NULL_RETURN(marker);
    elm_map_geo_region_show(marker->wd->obj, marker->longitude, marker->latitude);
+#else
+   (void) marker;
+#endif
 }
 
 EAPI void
 elm_map_markers_list_show(Eina_List *markers)
 {
+#ifdef HAVE_ELEMENTARY_ECORE_CON
    int zoom;
    double lon, lat;
    Eina_List *l;
@@ -4008,28 +4151,42 @@ elm_map_markers_list_show(Eina_List *markers)
 
    elm_map_geo_region_show(wd->obj, lon, lat);
    elm_map_zoom_set(wd->obj, zoom);
+#else
+   (void) markers;
+#endif
 }
 
 EAPI void
 elm_map_max_marker_per_group_set(Evas_Object *obj, int max)
 {
+#ifdef HAVE_ELEMENTARY_ECORE_CON
    ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
 
    if (!wd) return;
    wd->markers_max_num = max;
+#else
+   (void) obj;
+   (void) max;
+#endif
 }
 
 EAPI Evas_Object *
 elm_map_marker_object_get(const Elm_Map_Marker *marker)
 {
+#ifdef HAVE_ELEMENTARY_ECORE_CON
    EINA_SAFETY_ON_NULL_RETURN_VAL(marker, NULL);
    return marker->content;
+#else
+   (void) marker;
+   return NULL;
+#endif
 }
 
 EAPI void
 elm_map_marker_update(Elm_Map_Marker *marker)
 {
+#ifdef HAVE_ELEMENTARY_ECORE_CON
    EINA_SAFETY_ON_NULL_RETURN(marker);
    if (marker->content)
      {
@@ -4040,11 +4197,15 @@ elm_map_marker_update(Elm_Map_Marker *marker)
         marker->content = NULL;
         _group_bubble_content_update(marker->groups[marker->wd->zoom]);
      }
+#else
+   (void) marker;
+#endif
 }
 
 EAPI void
 elm_map_bubbles_close(Evas_Object *obj)
 {
+#ifdef HAVE_ELEMENTARY_ECORE_CON
    ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
    Marker_Group *group;
@@ -4053,11 +4214,15 @@ elm_map_bubbles_close(Evas_Object *obj)
    if (!wd) return;
    EINA_LIST_FOREACH_SAFE(wd->opened_bubbles, l, l_next, group)
       _group_bubble_free(group);
+#else
+   (void) obj;
+#endif
 }
 
 EAPI Elm_Map_Group_Class *
 elm_map_group_class_new(Evas_Object *obj)
 {
+#ifdef HAVE_ELEMENTARY_ECORE_CON
    ELM_CHECK_WIDTYPE(obj, widtype) NULL;
    Widget_Data *wd = elm_widget_data_get(obj);
 
@@ -4066,46 +4231,76 @@ elm_map_group_class_new(Evas_Object *obj)
    clas->zoom_grouped = wd->zoom_max;
    wd->groups_clas = eina_list_append(wd->groups_clas, clas);
    return clas;
+#else
+   (void) obj;
+   return NULL;
+#endif
 }
 
 EAPI void
 elm_map_group_class_style_set(Elm_Map_Group_Class *clas, const char *style)
 {
+#ifdef HAVE_ELEMENTARY_ECORE_CON
    EINA_SAFETY_ON_NULL_RETURN(clas);
    eina_stringshare_replace(&clas->style, style);
+#else
+   (void) clas;
+   (void) style;
+#endif
 }
 
 EAPI void
 elm_map_group_class_icon_cb_set(Elm_Map_Group_Class *clas, ElmMapGroupIconGetFunc icon_get)
 {
+#ifdef HAVE_ELEMENTARY_ECORE_CON
    EINA_SAFETY_ON_NULL_RETURN(clas);
    clas->func.icon_get = icon_get;
+#else
+   (void) clas;
+   (void) icon_get;
+#endif
 }
 
 EAPI void
 elm_map_group_class_data_set(Elm_Map_Group_Class *clas, void *data)
 {
+#ifdef HAVE_ELEMENTARY_ECORE_CON
    EINA_SAFETY_ON_NULL_RETURN(clas);
    clas->data = data;
+#else
+   (void) clas;
+   (void) data;
+#endif
 }
 
 EAPI void
 elm_map_group_class_zoom_displayed_set(Elm_Map_Group_Class *clas, int zoom)
 {
+#ifdef HAVE_ELEMENTARY_ECORE_CON
    EINA_SAFETY_ON_NULL_RETURN(clas);
    clas->zoom_displayed = zoom;
+#else
+   (void) clas;
+   (void) zoom;
+#endif
 }
 
 EAPI void
 elm_map_group_class_zoom_grouped_set(Elm_Map_Group_Class *clas, int zoom)
 {
+#ifdef HAVE_ELEMENTARY_ECORE_CON
    EINA_SAFETY_ON_NULL_RETURN(clas);
    clas->zoom_grouped = zoom;
+#else
+   (void) clas;
+   (void) zoom;
+#endif
 }
 
 EAPI void
 elm_map_group_class_hide_set(Evas_Object *obj, Elm_Map_Group_Class *clas, Eina_Bool hide)
 {
+#ifdef HAVE_ELEMENTARY_ECORE_CON
    ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
 
@@ -4119,11 +4314,17 @@ elm_map_group_class_hide_set(Evas_Object *obj, Elm_Map_Group_Class *clas, Eina_B
         evas_object_geometry_get(obj, &ox, &oy, &ow, &oh);
         marker_place(obj, eina_list_data_get(wd->grids), wd->pan_x, wd->pan_y, ox, oy, ow, oh);
      }
+#else
+   (void) obj;
+   (void) clas;
+   (void) hide;
+#endif
 }
 
 EAPI Elm_Map_Marker_Class *
 elm_map_marker_class_new(Evas_Object *obj)
 {
+#ifdef HAVE_ELEMENTARY_ECORE_CON
    ELM_CHECK_WIDTYPE(obj, widtype) NULL;
    Widget_Data *wd = elm_widget_data_get(obj);
 
@@ -4131,49 +4332,79 @@ elm_map_marker_class_new(Evas_Object *obj)
    Elm_Map_Marker_Class *clas = calloc(1, sizeof(Elm_Map_Marker_Class));
    wd->markers_clas = eina_list_append(wd->markers_clas, clas);
    return clas;
+#else
+   (void) obj;
+   return NULL;
+#endif
 }
 
 EAPI void
 elm_map_marker_class_style_set(Elm_Map_Marker_Class *clas, const char *style)
 {
+#ifdef HAVE_ELEMENTARY_ECORE_CON
    EINA_SAFETY_ON_NULL_RETURN(clas);
    eina_stringshare_replace(&clas->style, style);
+#else
+   (void) clas;
+   (void) style;
+#endif
 }
 
 EAPI void
 elm_map_marker_class_icon_cb_set(Elm_Map_Marker_Class *clas, ElmMapMarkerIconGetFunc icon_get)
 {
+#ifdef HAVE_ELEMENTARY_ECORE_CON
    EINA_SAFETY_ON_NULL_RETURN(clas);
    clas->func.icon_get = icon_get;
+#else
+   (void) clas;
+   (void) icon_get;
+#endif
 }
 
 EAPI void
 elm_map_marker_class_get_cb_set(Elm_Map_Marker_Class *clas, ElmMapMarkerGetFunc get)
 {
+#ifdef HAVE_ELEMENTARY_ECORE_CON
    EINA_SAFETY_ON_NULL_RETURN(clas);
    clas->func.get = get;
+#else
+   (void) clas;
+   (void) get;
+#endif
 }
 
 EAPI void
 elm_map_marker_class_del_cb_set(Elm_Map_Marker_Class *clas, ElmMapMarkerDelFunc del)
 {
+#ifdef HAVE_ELEMENTARY_ECORE_CON
    EINA_SAFETY_ON_NULL_RETURN(clas);
    clas->func.del = del;
+#else
+   (void) clas;
+   (void) del;
+#endif
 }
 
 EAPI const char **
 elm_map_source_names_get(const Evas_Object *obj)
 {
+#ifdef HAVE_ELEMENTARY_ECORE_CON
    ELM_CHECK_WIDTYPE(obj, widtype) NULL;
    Widget_Data *wd = elm_widget_data_get(obj);
 
    if (!wd) return NULL;
    return wd->source_names;
+#else
+   (void) obj;
+   return NULL;
+#endif
 }
 
 EAPI void
 elm_map_source_name_set(Evas_Object *obj, const char *source_name)
 {
+#ifdef HAVE_ELEMENTARY_ECORE_CON
    ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
    Map_Sources_Tab *s;
@@ -4208,83 +4439,123 @@ elm_map_source_name_set(Evas_Object *obj, const char *source_name)
           zoom = wd->src->zoom_min;
      }
    elm_map_zoom_set(obj, zoom);
+#else
+   (void) obj;
+   (void) source_name;
+#endif
 }
 
 EAPI const char *
 elm_map_source_name_get(const Evas_Object *obj)
 {
+#ifdef HAVE_ELEMENTARY_ECORE_CON
    ELM_CHECK_WIDTYPE(obj, widtype) NULL;
    Widget_Data *wd = elm_widget_data_get(obj);
 
    if ((!wd) || (!wd->src)) return NULL;
    return wd->src->name;
+#else
+   (void) obj;
+   return NULL;
+#endif
 }
 
 EAPI void
 elm_map_route_source_set(Evas_Object *obj, Elm_Map_Route_Sources source)
 {
+#ifdef HAVE_ELEMENTARY_ECORE_CON
    ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
 
    if (!wd) return;
    wd->route_source = source;
+#else
+   (void) obj;
+   (void) source;
+#endif
 }
 
 EAPI Elm_Map_Route_Sources
 elm_map_route_source_get(const Evas_Object *obj)
 {
+#ifdef HAVE_ELEMENTARY_ECORE_CON
    ELM_CHECK_WIDTYPE(obj, widtype) ELM_MAP_ROUTE_SOURCE_YOURS;
    Widget_Data *wd = elm_widget_data_get(obj);
 
    if (!wd) return ELM_MAP_ROUTE_SOURCE_YOURS;
    return wd->route_source;
+#else
+   (void) obj;
+   return ELM_MAP_ROUTE_SOURCE_YOURS;
+#endif
 }
 
 EAPI void
 elm_map_source_zoom_max_set(Evas_Object *obj, int zoom)
 {
+#ifdef HAVE_ELEMENTARY_ECORE_CON
    ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
 
    if ((!wd) || (!wd->src)) return;
    if ((zoom > wd->zoom_max) || (zoom < wd->zoom_min)) return;
    wd->src->zoom_max = zoom;
+#else
+   (void) obj;
+   (void) zoom;
+#endif
 }
 
 EAPI int
 elm_map_source_zoom_max_get(const Evas_Object *obj)
 {
+#ifdef HAVE_ELEMENTARY_ECORE_CON
    ELM_CHECK_WIDTYPE(obj, widtype) 18;
    Widget_Data *wd = elm_widget_data_get(obj);
 
    if ((!wd) || (!wd->src)) return 18;
    return wd->src->zoom_max;
+#else
+   (void) obj;
+   return 18;
+#endif
 }
 
 EAPI void
 elm_map_source_zoom_min_set(Evas_Object *obj, int zoom)
 {
+#ifdef HAVE_ELEMENTARY_ECORE_CON
    ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
 
    if ((!wd) || (!wd->src)) return;
    if ((zoom > wd->zoom_max) || (zoom < wd->zoom_min)) return;
    wd->src->zoom_min = zoom;
+#else
+   (void) obj;
+   (void) zoom;
+#endif
 }
 
 EAPI int
 elm_map_source_zoom_min_get(const Evas_Object *obj)
 {
+#ifdef HAVE_ELEMENTARY_ECORE_CON
    ELM_CHECK_WIDTYPE(obj, widtype) 0;
    Widget_Data *wd = elm_widget_data_get(obj);
 
    if ((!wd) || (!wd->src)) return 0;
    return wd->src->zoom_min;
+#else
+   (void) obj;
+   return 0;
+#endif
 }
 
 EAPI void
 elm_map_user_agent_set(Evas_Object *obj, const char *user_agent)
 {
+#ifdef HAVE_ELEMENTARY_ECORE_CON
    ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
 
@@ -4294,16 +4565,25 @@ elm_map_user_agent_set(Evas_Object *obj, const char *user_agent)
 
    if (!wd->ua) wd->ua = eina_hash_string_small_new(NULL);
    eina_hash_set(wd->ua, "User-Agent", wd->user_agent);
+#else
+   (void) obj;
+   (void) user_agent;
+#endif
 }
 
 EAPI const char *
 elm_map_user_agent_get(const Evas_Object *obj)
 {
+#ifdef HAVE_ELEMENTARY_ECORE_CON
    ELM_CHECK_WIDTYPE(obj, widtype) NULL;
    Widget_Data *wd = elm_widget_data_get(obj);
 
    if (!wd) return NULL;
    return wd->user_agent;
+#else
+   (void) obj;
+   return NULL;
+#endif
 }
 
 EAPI Elm_Map_Route *
@@ -4315,6 +4595,7 @@ elm_map_route_add(Evas_Object *obj,
                   double tlon,
                   double tlat)
 {
+#ifdef HAVE_ELEMENTARY_ECORE_CON
    ELM_CHECK_WIDTYPE(obj, widtype) NULL;
    Widget_Data *wd = elm_widget_data_get(obj);
    char buf[PATH_MAX];
@@ -4395,11 +4676,22 @@ elm_map_route_add(Evas_Object *obj,
                            "elm,state,busy,start", "elm");
    evas_object_smart_callback_call(wd->obj, SIG_ROUTE_LOAD, NULL);
    return route;
+#else
+   (void) obj;
+   (void) type;
+   (void) method;
+   (void) flon;
+   (void) flat;
+   (void) tlon;
+   (void) tlat;
+   return NULL;
+#endif
 }
 
 EAPI void
 elm_map_route_remove(Elm_Map_Route *route)
 {
+#ifdef HAVE_ELEMENTARY_ECORE_CON
    EINA_SAFETY_ON_NULL_RETURN(route);
 
    Path_Waypoint *w;
@@ -4435,67 +4727,113 @@ elm_map_route_remove(Elm_Map_Route *route)
         free(route->ud.fname);
         route->ud.fname = NULL;
      }
+#else
+   (void) route;
+#endif
 }
 
 EAPI void
 elm_map_route_color_set(Elm_Map_Route *route, int r, int g , int b, int a)
 {
+#ifdef HAVE_ELEMENTARY_ECORE_CON
    EINA_SAFETY_ON_NULL_RETURN(route);
    route->color.r = r;
    route->color.g = g;
    route->color.b = b;
    route->color.a = a;
+#else
+   (void) route;
+   (void) r;
+   (void) g;
+   (void) b;
+   (void) a;
+#endif
 }
 
 EAPI void
 elm_map_route_color_get(const Elm_Map_Route *route, int *r, int *g , int *b, int *a)
 {
+#ifdef HAVE_ELEMENTARY_ECORE_CON
    EINA_SAFETY_ON_NULL_RETURN(route);
    if (r) *r = route->color.r;
    if (g) *g = route->color.g;
    if (b) *b = route->color.b;
    if (a) *a = route->color.a;
+#else
+   (void) route;
+   (void) r;
+   (void) g;
+   (void) b;
+   (void) a;
+#endif
 }
 
 EAPI double
 elm_map_route_distance_get(const Elm_Map_Route *route)
 {
+#ifdef HAVE_ELEMENTARY_ECORE_CON
    EINA_SAFETY_ON_NULL_RETURN_VAL(route, 0.0);
    return route->info.distance;
+#else
+   (void) route;
+   return 0.0;
+#endif
 }
 
 EAPI const char*
 elm_map_route_node_get(const Elm_Map_Route *route)
 {
+#ifdef HAVE_ELEMENTARY_ECORE_CON
    EINA_SAFETY_ON_NULL_RETURN_VAL(route, NULL);
    return route->info.nodes;
+#else
+   (void) route;
+   return NULL;
+#endif
 }
 
 EAPI const char*
 elm_map_route_waypoint_get(const Elm_Map_Route *route)
 {
+#ifdef HAVE_ELEMENTARY_ECORE_CON
    EINA_SAFETY_ON_NULL_RETURN_VAL(route, NULL);
    return route->info.waypoints;
+#else
+   (void) route;
+   return NULL;
+#endif
 }
 
 EAPI const char *
 elm_map_name_address_get(const Elm_Map_Name *name)
 {
+#ifdef HAVE_ELEMENTARY_ECORE_CON
    EINA_SAFETY_ON_NULL_RETURN_VAL(name, NULL);
    return name->address;
+#else
+   (void) name;
+   return NULL;
+#endif
 }
 
 EAPI void
 elm_map_name_region_get(const Elm_Map_Name *name, double *lon, double *lat)
 {
+#ifdef HAVE_ELEMENTARY_ECORE_CON
    EINA_SAFETY_ON_NULL_RETURN(name);
    if (lon) *lon = name->lon;
    if (lat) *lat = name->lat;
+#else
+   (void) name;
+   (void) lon;
+   (void) lat;
+#endif
 }
 
 EAPI void
 elm_map_name_remove(Elm_Map_Name *name)
 {
+#ifdef HAVE_ELEMENTARY_ECORE_CON
    EINA_SAFETY_ON_NULL_RETURN(name);
    if (name->address)
      {
@@ -4513,11 +4851,15 @@ elm_map_name_remove(Elm_Map_Name *name)
         free(name->ud.fname);
         name->ud.fname = NULL;
      }
+#else
+   (void) name;
+#endif
 }
 
 EAPI void
 elm_map_rotate_set(Evas_Object *obj, double degree, Evas_Coord cx, Evas_Coord cy)
 {
+#ifdef HAVE_ELEMENTARY_ECORE_CON
    ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
 
@@ -4526,11 +4868,18 @@ elm_map_rotate_set(Evas_Object *obj, double degree, Evas_Coord cx, Evas_Coord cy
    wd->rotate.cx = cx;
    wd->rotate.cy = cy;
    wd->calc_job = ecore_job_add(_calc_job, wd);
+#else
+   (void) obj;
+   (void) degree;
+   (void) cx;
+   (void) cy;
+#endif
 }
 
 EAPI void
 elm_map_rotate_get(const Evas_Object *obj, double *degree, Evas_Coord *cx, Evas_Coord *cy)
 {
+#ifdef HAVE_ELEMENTARY_ECORE_CON
    ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
 
@@ -4538,11 +4887,18 @@ elm_map_rotate_get(const Evas_Object *obj, double *degree, Evas_Coord *cx, Evas_
    if (degree) *degree = wd->rotate.d;
    if (cx) *cx = wd->rotate.cx;
    if (cy) *cy = wd->rotate.cy;
+#else
+   (void) obj;
+   (void) degree;
+   (void) cx;
+   (void) cy;
+#endif
 }
 
 EAPI void
 elm_map_wheel_disabled_set(Evas_Object *obj, Eina_Bool disabled)
 {
+#ifdef HAVE_ELEMENTARY_ECORE_CON
    ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
 
@@ -4552,22 +4908,32 @@ elm_map_wheel_disabled_set(Evas_Object *obj, Eina_Bool disabled)
    else if ((wd->wheel_disabled) && (!disabled))
      evas_object_event_callback_add(wd->rect, EVAS_CALLBACK_MOUSE_WHEEL, _mouse_wheel_cb, obj);
    wd->wheel_disabled = !!disabled;
+#else
+   (void) obj;
+   (void) disabled;
+#endif
 }
 
 EAPI Eina_Bool
 elm_map_wheel_disabled_get(const Evas_Object *obj)
 {
+#ifdef HAVE_ELEMENTARY_ECORE_CON
    ELM_CHECK_WIDTYPE(obj, widtype) EINA_FALSE;
    Widget_Data *wd = elm_widget_data_get(obj);
 
    if (!wd) return EINA_FALSE;
    return wd->wheel_disabled;
+#else
+   (void) obj;
+   return EINA_FALSE;
+#endif
 }
 
 #ifdef ELM_EMAP
 EAPI Evas_Object *
 elm_map_track_add(Evas_Object *obj, EMap_Route *emap)
 {
+#ifdef HAVE_ELEMENTARY_ECORE_CON
    ELM_CHECK_WIDTYPE(obj, widtype) NULL;
    Widget_Data *wd = elm_widget_data_get(obj);
 
@@ -4578,12 +4944,18 @@ elm_map_track_add(Evas_Object *obj, EMap_Route *emap)
    wd->track = eina_list_append(wd->track, route);
 
    return route;
+#else
+   (void) obj;
+   (void) emap;
+   return NULL;
+#endif
 }
 #endif
 
 EAPI void
 elm_map_track_remove(Evas_Object *obj, Evas_Object *route)
 {
+#ifdef HAVE_ELEMENTARY_ECORE_CON
    ELM_CHECK_WIDTYPE(obj, widtype) ;
    Widget_Data *wd = elm_widget_data_get(obj);
 
@@ -4591,7 +4963,13 @@ elm_map_track_remove(Evas_Object *obj, Evas_Object *route)
 
    wd->track = eina_list_remove(wd->track, route);
    evas_object_del(route);
+#else
+   (void) obj;
+   (void) route;
+#endif
 }
+
+#ifdef HAVE_ELEMENTARY_ECORE_CON
 
 static char *
 _mapnik_url_cb(Evas_Object *obj __UNUSED__, int x, int y, int zoom)
@@ -4695,3 +5073,5 @@ _nominatim_url_cb(Evas_Object *obj, int method, char *name, double lon, double l
 
    return strdup(buf);
 }
+
+#endif
