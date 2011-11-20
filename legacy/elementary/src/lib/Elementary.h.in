@@ -2700,7 +2700,7 @@ extern "C" {
     *
     * @ingroup Focus
     */
-   EAPI void             elm_object_tree_unfocusable_set(Evas_Object *obj, Eina_Bool tree_unfocusable); EINA_ARG_NONNULL(1);
+   EAPI void             elm_object_tree_unfocusable_set(Evas_Object *obj, Eina_Bool tree_unfocusable) EINA_ARG_NONNULL(1);
 
    /**
     * Get whether an Elementary object and its children are unfocusable or not.
@@ -2713,7 +2713,7 @@ extern "C" {
     *
     * @ingroup Focus
     */
-   EAPI Eina_Bool        elm_object_tree_unfocusable_get(const Evas_Object *obj); EINA_ARG_NONNULL(1);
+   EAPI Eina_Bool        elm_object_tree_unfocusable_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
 
    /**
     * @defgroup Scrolling Scrolling
@@ -4997,7 +4997,7 @@ extern "C" {
     *
     * @ingroup Icon
     */
-   EAPI Eina_Bool             elm_icon_memfile_set(Evas_Object *obj, const void *img, size_t size, const char *format, const char *key);  EINA_ARG_NONNULL(1, 2);
+   EAPI Eina_Bool             elm_icon_memfile_set(Evas_Object *obj, const void *img, size_t size, const char *format, const char *key) EINA_ARG_NONNULL(1, 2);
    /**
     * Get the file that will be used as icon.
     *
@@ -15795,8 +15795,8 @@ extern "C" {
    EAPI void         elm_object_tooltip_unset(Evas_Object *obj) EINA_ARG_NONNULL(1);
    EAPI void         elm_object_tooltip_style_set(Evas_Object *obj, const char *style) EINA_ARG_NONNULL(1);
    EAPI const char  *elm_object_tooltip_style_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
-   EAPI Eina_Bool    elm_tooltip_size_restrict_disable(Evas_Object *obj, Eina_Bool disable); EINA_ARG_NONNULL(1);
-   EAPI Eina_Bool    elm_tooltip_size_restrict_disabled_get(const Evas_Object *obj); EINA_ARG_NONNULL(1);
+   EAPI Eina_Bool    elm_tooltip_size_restrict_disable(Evas_Object *obj, Eina_Bool disable) EINA_ARG_NONNULL(1);
+   EAPI Eina_Bool    elm_tooltip_size_restrict_disabled_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
 
    /**
     * @}
