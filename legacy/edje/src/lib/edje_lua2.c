@@ -2332,7 +2332,7 @@ static const struct luaL_reg _elua_evas_edje_funcs [] =
 @since 1.1.0
 */
 static int
-_elua_edje_file(lua_State *L)                                   // Stack usage [-?, +?, ?]
+_elua_edje_file(lua_State *L)                                   // Stack usage [-(4|6), +(5|7), em]
 {
    Edje_Lua_Obj *obj = (Edje_Lua_Obj *)lua_touserdata(L, 1);    // Stack usage [-0, +0, -]
    Edje_Lua_Evas_Object *elo = (Edje_Lua_Evas_Object *)obj;
@@ -2342,10 +2342,11 @@ _elua_edje_file(lua_State *L)                                   // Stack usage [
    if (!_elua_isa(obj, _elua_evas_edje_meta)) return 0;
 
    n = _elua_scan_params(L, 2, "$file $group", &file, &group);
+                                                                // Stack usage [-0, +0, m] unless it's in a table [-2, +2, e]
    if (0 >= n)
-     {                                                          // Stack usage [-0, +0, m] unless it's in a table [-2, +2, e]
+     {
         file = (char *) obj->ed->file->path;
-        group = (char *) lua_tostring(L, 2);                    // Stack usage [-?, +?, ?]
+        group = (char *) lua_tostring(L, 2);                    // Stack usage [-0, +0, m]
         n = 2;
      }
 
@@ -2419,7 +2420,7 @@ static const struct luaL_reg _elua_evas_image_funcs [] =
 @since 1.1.0
 */
 static int
-_elua_image_fill(lua_State *L)  // Stack usage [-?, +?, ?]
+_elua_image_fill(lua_State *L)                                  // Stack usage [-(8|12), +(9|13), em]
 {
    Edje_Lua_Obj *obj = (Edje_Lua_Obj *)lua_touserdata(L, 1);    // Stack usage [-0, +0, -]
    Edje_Lua_Evas_Object *elo = (Edje_Lua_Evas_Object *)obj;
@@ -2445,7 +2446,7 @@ _elua_image_fill(lua_State *L)  // Stack usage [-?, +?, ?]
 @since 1.1.0
 */
 static int
-_elua_image_filled(lua_State *L)  // Stack usage [-?, +?, ?]
+_elua_image_filled(lua_State *L)                                // Stack usage [-0, +0, -]
 {
    Edje_Lua_Obj *obj = (Edje_Lua_Obj *)lua_touserdata(L, 1);    // Stack usage [-0, +0, -]
    Edje_Lua_Evas_Object *elo = (Edje_Lua_Evas_Object *)obj;
@@ -2472,7 +2473,7 @@ _elua_image_filled(lua_State *L)  // Stack usage [-?, +?, ?]
 @since 1.1.0
 */
 static int
-_elua_image_image(lua_State *L)  // Stack usage [-?, +?, ?]
+_elua_image_image(lua_State *L)                                 // Stack usage [-(4|6), +(5|7), em]
 {
    Edje_Lua_Obj *obj = (Edje_Lua_Obj *)lua_touserdata(L, 1);    // Stack usage [-0, +0, -]
    Edje_Lua_Evas_Object *elo = (Edje_Lua_Evas_Object *)obj;
@@ -2486,7 +2487,7 @@ _elua_image_image(lua_State *L)  // Stack usage [-?, +?, ?]
    if (0 >= n)
      {
         file = (char *) obj->ed->file->path;
-        key = (char *) lua_tostring(L, 2);
+        key = (char *) lua_tostring(L, 2);                      // Stack usage [-0, +0, m]
         n = 2;
      }
 
@@ -2575,7 +2576,7 @@ static const struct luaL_reg _elua_evas_line_funcs [] =
 
 @since 1.1.0
 */
-static int _elua_line_xy(lua_State *L)  // Stack usage [-?, +?, ?]
+static int _elua_line_xy(lua_State *L)                          // Stack usage [-(8|12), +(9|13), em]
 {
    Edje_Lua_Obj *obj = (Edje_Lua_Obj *)lua_touserdata(L, 1);    // Stack usage [-0, +0, -]
    Edje_Lua_Evas_Object *elo = (Edje_Lua_Evas_Object *)obj;
@@ -2651,7 +2652,7 @@ static const struct luaL_reg _elua_evas_map_funcs [] =
 @since 1.1.0
 */
 static int
-_elua_map_alpha(lua_State *L)  // Stack usage [-?, +?, ?]
+_elua_map_alpha(lua_State *L)                                   // Stack usage [-0, +1, -]
 {
    Edje_Lua_Obj *obj = (Edje_Lua_Obj *)lua_touserdata(L, 1);    // Stack usage [-0, +0, -]
    Edje_Lua_Map *elm = (Edje_Lua_Map *)obj;
@@ -2663,8 +2664,9 @@ _elua_map_alpha(lua_State *L)  // Stack usage [-?, +?, ?]
    if (n == 2)
      {
         evas_map_alpha_set(elm->map, lua_toboolean(L, 2));
+                                                                // Stack usage [-0, +0, -]
      }
-   lua_pushboolean(L, evas_map_alpha_get(elm->map));
+   lua_pushboolean(L, evas_map_alpha_get(elm->map));            // Stack usage [-0, +1, -]
    return 1;
 }
 
@@ -2676,14 +2678,14 @@ _elua_map_alpha(lua_State *L)  // Stack usage [-?, +?, ?]
 @since 1.1.0
 */
 static int
-_elua_map_clockwise(lua_State *L)  // Stack usage [-?, +?, ?]
+_elua_map_clockwise(lua_State *L)                               // Stack usage [-0, +1, -]
 {
    Edje_Lua_Obj *obj = (Edje_Lua_Obj *)lua_touserdata(L, 1);    // Stack usage [-0, +0, -]
    Edje_Lua_Map *elm = (Edje_Lua_Map *)obj;
 
    if (!_elua_isa(obj, _elua_evas_map_meta)) return 0;
 
-   lua_pushboolean(L, evas_map_util_clockwise_get(elm->map));
+   lua_pushboolean(L, evas_map_util_clockwise_get(elm->map));   // Stack usage [-0, +1, -]
    return 1;
 }
 
@@ -2695,7 +2697,7 @@ _elua_map_clockwise(lua_State *L)  // Stack usage [-?, +?, ?]
 @since 1.1.0
 */
 static int
-_elua_map_colour(lua_State *L)  // Stack usage [-?, +?, ?]
+_elua_map_colour(lua_State *L)                                  // Stack usage [-(8|12), +(9|13), em]
 {
    Edje_Lua_Obj *obj = (Edje_Lua_Obj *)lua_touserdata(L, 1);    // Stack usage [-0, +0, -]
    Edje_Lua_Map *elm = (Edje_Lua_Map *)obj;
@@ -2710,7 +2712,7 @@ _elua_map_colour(lua_State *L)  // Stack usage [-?, +?, ?]
        case 5 :
         {
            if (_elua_scan_params(L, 2, "%r %g %b %a", &r, &g, &b, &a) > 0)
-             {                                                          // Stack usage [-0, +0, m] unless it's in a table [-4, +4, e]
+             {                                                  // Stack usage [-0, +0, m] unless it's in a table [-4, +4, e]
                 evas_map_util_points_color_set(elm->map, r, g, b, a);
              }
            break;
@@ -2722,8 +2724,10 @@ _elua_map_colour(lua_State *L)  // Stack usage [-?, +?, ?]
            if (_elua_scan_params(L, 3, "%r %g %b %a", &r, &g, &b, &a) > 0)
              {                                                          // Stack usage [-0, +0, m] unless it's in a table [-4, +4, e]
                 evas_map_point_color_set(elm->map, lua_tointeger(L, 2), r, g, b, a);
+                                                                // Stack usage [-0, +0, -]
              }
            evas_map_point_color_get(elm->map, lua_tointeger(L, 2), &r, &g, &b, &a);
+                                                                // Stack usage [-0, +0, -]
            _elua_ret(L, "%r %g %b %a", r, g, b, a);
                                                                 // Stack usage [-8, +9, em]
            return 1;
@@ -2741,7 +2745,7 @@ _elua_map_colour(lua_State *L)  // Stack usage [-?, +?, ?]
 @since 1.1.0
 */
 static int
-_elua_map_coord(lua_State *L)  // Stack usage [-?, +?, ?]
+_elua_map_coord(lua_State *L)                                   // Stack usage [-(6|9), +(7|10), em]
 {
    Edje_Lua_Obj *obj = (Edje_Lua_Obj *)lua_touserdata(L, 1);    // Stack usage [-0, +0, -]
    Edje_Lua_Map *elm = (Edje_Lua_Map *)obj;
@@ -2755,8 +2759,10 @@ _elua_map_coord(lua_State *L)  // Stack usage [-?, +?, ?]
    if (_elua_scan_params(L, 2, "%x %y %z", &x, &y, &z) > 0)
      {                                                          // Stack usage [-0, +0, m] unless it's in a table [-3, +3, e]
         evas_map_point_coord_set(elm->map, lua_tointeger(L, 2), x, y, z);
+                                                                // Stack usage [-0, +0, -]
      }
    evas_map_point_coord_get(elm->map, lua_tointeger(L, 2), &x, &y, &z);
+                                                                // Stack usage [-0, +0, -]
    _elua_ret(L, "%x %y %z", x, y, z);
                                                                 // Stack usage [-6, +7, em]
    return 1;
@@ -2770,7 +2776,7 @@ _elua_map_coord(lua_State *L)  // Stack usage [-?, +?, ?]
 @since 1.1.0
 */
 static int
-_elua_map_lighting(lua_State *L)  // Stack usage [-?, +?, ?]
+_elua_map_lighting(lua_State *L)                                // Stack usage [-(0|9), +(0|9), e]
 {
    Edje_Lua_Obj *obj = (Edje_Lua_Obj *)lua_touserdata(L, 1);    // Stack usage [-0, +0, -]
    Edje_Lua_Map *elm = (Edje_Lua_Map *)obj;
@@ -2799,7 +2805,7 @@ _elua_map_lighting(lua_State *L)  // Stack usage [-?, +?, ?]
 @since 1.1.0
 */
 static int
-_elua_map_perspective(lua_State *L)  // Stack usage [-?, +?, ?]
+_elua_map_perspective(lua_State *L)                             // Stack usage [-(0|4), +(0|4), e]
 {
    Edje_Lua_Obj *obj = (Edje_Lua_Obj *)lua_touserdata(L, 1);    // Stack usage [-0, +0, -]
    Edje_Lua_Map *elm = (Edje_Lua_Map *)obj;
@@ -2822,7 +2828,7 @@ _elua_map_perspective(lua_State *L)  // Stack usage [-?, +?, ?]
 @since 1.1.0
 */
 static int
-_elua_map_populate(lua_State *L)  // Stack usage [-?, +?, ?]
+_elua_map_populate(lua_State *L)                                // Stack usage [-(0|4), +(0|4), e]
 {
    Edje_Lua_Obj *obj = (Edje_Lua_Obj *)lua_touserdata(L, 1);    // Stack usage [-0, +0, -]
    Edje_Lua_Map *elm = (Edje_Lua_Map *)obj;
@@ -2876,7 +2882,7 @@ _elua_map_populate(lua_State *L)  // Stack usage [-?, +?, ?]
 @since 1.1.0
 */
 static int
-_elua_map_rotate(lua_State *L)  // Stack usage [-?, +?, ?]
+_elua_map_rotate(lua_State *L)                                  // Stack usage [-(0|2), +(0|2), e]
 {
    Edje_Lua_Obj *obj = (Edje_Lua_Obj *)lua_touserdata(L, 1);    // Stack usage [-0, +0, -]
    Edje_Lua_Map *elm = (Edje_Lua_Map *)obj;
@@ -2904,7 +2910,7 @@ _elua_map_rotate(lua_State *L)  // Stack usage [-?, +?, ?]
 @since 1.1.0
 */
 static int
-_elua_map_rotate3d(lua_State *L)  // Stack usage [-?, +?, ?]
+_elua_map_rotate3d(lua_State *L)                                // Stack usage [-(0|6), +(0|6), e]
 {
    Edje_Lua_Obj *obj = (Edje_Lua_Obj *)lua_touserdata(L, 1);    // Stack usage [-0, +0, -]
    Edje_Lua_Map *elm = (Edje_Lua_Map *)obj;
@@ -2931,7 +2937,7 @@ _elua_map_rotate3d(lua_State *L)  // Stack usage [-?, +?, ?]
 @since 1.1.0
 */
 static int
-_elua_map_smooth(lua_State *L)  // Stack usage [-?, +?, ?]
+_elua_map_smooth(lua_State *L)                                  // Stack usage [-0, +1, -]
 {
    Edje_Lua_Obj *obj = (Edje_Lua_Obj *)lua_touserdata(L, 1);    // Stack usage [-0, +0, -]
    Edje_Lua_Map *elm = (Edje_Lua_Map *)obj;
@@ -2943,8 +2949,9 @@ _elua_map_smooth(lua_State *L)  // Stack usage [-?, +?, ?]
    if (n == 2)
      {
         evas_map_smooth_set(elm->map, lua_toboolean(L, 2));
+                                                                // Stack usage [-0, +0, -]
      }
-   lua_pushboolean(L, evas_map_smooth_get(elm->map));
+   lua_pushboolean(L, evas_map_smooth_get(elm->map));           // Stack usage [-0, +1, -]
    return 1;
 }
 
@@ -2956,7 +2963,7 @@ _elua_map_smooth(lua_State *L)  // Stack usage [-?, +?, ?]
 @since 1.1.0
 */
 static int
-_elua_map_uv(lua_State *L)  // Stack usage [-?, +?, ?]
+_elua_map_uv(lua_State *L)                                      // Stack usage [-(4|6), +(5|7), em]
 {
    Edje_Lua_Obj *obj = (Edje_Lua_Obj *)lua_touserdata(L, 1);    // Stack usage [-0, +0, -]
    Edje_Lua_Map *elm = (Edje_Lua_Map *)obj;
@@ -2970,8 +2977,10 @@ _elua_map_uv(lua_State *L)  // Stack usage [-?, +?, ?]
    if (_elua_scan_params(L, 3, "#u #v", &u, &v) > 0)
      {                                                          // Stack usage [-0, +0, m] unless it's in a table [-2, +2, e]
         evas_map_point_image_uv_set(elm->map, lua_tonumber(L, 2), u, v);
+                                                                // Stack usage [-0, +0, -]
      }
    evas_map_point_image_uv_get(elm->map, lua_tonumber(L, 2), &u, &v);
+                                                                // Stack usage [-0, +0, -]
    _elua_ret(L, "#u #v", u, v);
                                                                 // Stack usage [-4, +5, em]
    return 1;
@@ -2985,7 +2994,7 @@ _elua_map_uv(lua_State *L)  // Stack usage [-?, +?, ?]
 @since 1.1.0
 */
 static int
-_elua_map_zoom(lua_State *L)  // Stack usage [-?, +?, ?]
+_elua_map_zoom(lua_State *L)                                    // Stack usage [-(0|4), +(0|4), e]
 {
    Edje_Lua_Obj *obj = (Edje_Lua_Obj *)lua_touserdata(L, 1);    // Stack usage [-0, +0, -]
    Edje_Lua_Map *elm = (Edje_Lua_Map *)obj;
@@ -3042,7 +3051,7 @@ static const struct luaL_reg _elua_evas_polygon_funcs [] =
 @since 1.1.0
 */
 static int
-_elua_polygon_clear(lua_State *L)  // Stack usage [-?, +?, ?]
+_elua_polygon_clear(lua_State *L)                               // Stack usage [-0, +0, -]
 {
    Edje_Lua_Obj *obj = (Edje_Lua_Obj *)lua_touserdata(L, 1);    // Stack usage [-0, +0, -]
    Edje_Lua_Evas_Object *elo = (Edje_Lua_Evas_Object *)obj;
@@ -3060,7 +3069,7 @@ _elua_polygon_clear(lua_State *L)  // Stack usage [-?, +?, ?]
 @since 1.1.0
 */
 static int
-_elua_polygon_point(lua_State *L)  // Stack usage [-?, +?, ?]
+_elua_polygon_point(lua_State *L)                               // Stack usage [-(0|2), +(0|2), e]
 {
    Edje_Lua_Obj *obj = (Edje_Lua_Obj *)lua_touserdata(L, 1);    // Stack usage [-0, +0, -]
    Edje_Lua_Evas_Object *elo = (Edje_Lua_Evas_Object *)obj;
@@ -3115,7 +3124,7 @@ static const struct luaL_reg _elua_evas_text_funcs [] =
 @since 1.1.0
 */
 static int
-_elua_text_font(lua_State *L)  // Stack usage [-?, +?, ?]
+_elua_text_font(lua_State *L)                                   // Stack usage [-(4|6), +(5|7), em]
 {
    Edje_Lua_Obj *obj = (Edje_Lua_Obj *)lua_touserdata(L, 1);    // Stack usage [-0, +0, -]
    Edje_Lua_Evas_Object *elo = (Edje_Lua_Evas_Object *)obj;
@@ -3169,7 +3178,7 @@ _elua_text_font(lua_State *L)  // Stack usage [-?, +?, ?]
 @since 1.1.0
 */
 static int
-_elua_text_text(lua_State *L)  // Stack usage [-?, +?, ?]
+_elua_text_text(lua_State *L)                                   // Stack usage [-0, +1, m]
 {
    Edje_Lua_Obj *obj = (Edje_Lua_Obj *)lua_touserdata(L, 1);    // Stack usage [-0, +0, -]
    Edje_Lua_Evas_Object *elo = (Edje_Lua_Evas_Object *)obj;
@@ -3184,10 +3193,11 @@ _elua_text_text(lua_State *L)  // Stack usage [-?, +?, ?]
              const char *str;
 
              if ((str = lua_tostring(L, 2)))  // Extra parenthesis, coz Mikes compiler has a lisp.
+                                                                // Stack usage [-0, +0, m]
                 evas_object_text_text_set(elo->evas_obj, str);
           }
      }
-   lua_pushstring(L, evas_object_text_text_get(elo->evas_obj));
+   lua_pushstring(L, evas_object_text_text_get(elo->evas_obj)); // Stack usage [-0, +1, m]
    return 1;
 }
 
