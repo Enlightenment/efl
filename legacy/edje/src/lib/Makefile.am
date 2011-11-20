@@ -87,6 +87,7 @@ edje_amalgamation.c: $(base_sources) Makefile
 	@echo "#include <limits.h>" >> edje_amalgamation.c
 	@echo "#include <errno.h>" >> edje_amalgamation.c
 	@echo "#include <sys/stat.h>" >> edje_amalgamation.c
+	@echo "#include <fcntl.h>" >> edje_amalgamation.c
 
 	@echo "#ifndef _MSC_VER" >> edje_amalgamation.c
 	@echo "# include <unistd.h>" >> edje_amalgamation.c
