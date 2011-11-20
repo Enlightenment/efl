@@ -1508,9 +1508,9 @@ static void
 _edje_key_up_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info)
 {
    Edje *ed = data;
-   Evas_Event_Key_Up *ev = event_info;
    Edje_Real_Part *rp = ed->focused_part;
    Entry *en;
+
    if (!rp) return;
    en = rp->entry_data;
    if ((!en) || (rp->part->type != EDJE_PART_TYPE_TEXTBLOCK) ||
@@ -1520,13 +1520,17 @@ _edje_key_up_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, voi
 #ifdef HAVE_ECORE_IMF
    if (en->imf_context)
      {
+        Evas_Event_Key_Up *ev = event_info;
         Ecore_IMF_Event_Key_Up ecore_ev;
+
         ecore_imf_evas_event_key_up_wrap(ev, &ecore_ev);
         if (ecore_imf_context_filter_event(en->imf_context,
                                            ECORE_IMF_EVENT_KEY_UP,
                                            (Ecore_IMF_Event *)&ecore_ev))
           return;
      }
+#else
+   (void) event_info;
 #endif
 }
 
@@ -2057,9 +2061,9 @@ _edje_entry_real_part_init(Edje_Real_Part *rp)
         ecore_imf_context_input_mode_set(en->imf_context,
                                          rp->part->entry_mode == EDJE_ENTRY_EDIT_MODE_PASSWORD ?
                                          ECORE_IMF_INPUT_MODE_INVISIBLE : ECORE_IMF_INPUT_MODE_FULL);
+done:
 #endif
      }
-done:
    en->cursor = (Evas_Textblock_Cursor *)evas_object_textblock_cursor_get(rp->object);
 }
 
@@ -2489,10 +2493,13 @@ void
 _edje_entry_input_panel_enabled_set(Edje_Real_Part *rp, Eina_Bool enabled)
 {
    Entry *en = rp->entry_data;
+
    if (!en) return;
 #ifdef HAVE_ECORE_IMF
    if (en->imf_context)
      ecore_imf_context_input_panel_enabled_set(en->imf_context, enabled);
+#else
+   (void) enabled;
 #endif
 }
 
@@ -2809,6 +2816,8 @@ _edje_entry_input_panel_layout_set(Edje_Real_Part *rp, Edje_Input_Panel_Layout l
 #ifdef HAVE_ECORE_IMF
    if (en->imf_context)
      ecore_imf_context_input_panel_layout_set(en->imf_context, layout);
+#else
+   (void) layout;
 #endif
 }
 
@@ -2831,6 +2840,8 @@ _edje_entry_imf_context_reset(Entry *en)
 #ifdef HAVE_ECORE_IMF
    if (en->imf_context)
      ecore_imf_context_reset(en->imf_context);
+#else
+   (void) en;
 #endif
 }
 
@@ -2846,6 +2857,8 @@ _edje_entry_imf_cursor_info_set(Entry *en)
    ecore_imf_context_cursor_position_set(en->imf_context,
                                          evas_textblock_cursor_pos_get(en->cursor));
    ecore_imf_context_cursor_location_set(en->imf_context, cx, cy, cw, ch);
+#else
+   (void) en;
 #endif
 }
 
