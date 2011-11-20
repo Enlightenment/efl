@@ -2144,6 +2144,8 @@ elm_win_keyboard_win_set(Evas_Object *obj, Eina_Bool is_keyboard)
    _elm_win_xwindow_get(win);
    if (win->xwin)
      ecore_x_e_virtual_keyboard_set(win->xwin, is_keyboard);
+#else
+   (void) is_keyboard;
 #endif
 }
 
@@ -2184,6 +2186,8 @@ elm_win_conformant_set(Evas_Object *obj, Eina_Bool conformant)
    _elm_win_xwindow_get(win);
    if (win->xwin)
      ecore_x_e_illume_conformant_set(win->xwin, conformant);
+#else
+   (void) conformant;
 #endif
 }
 
@@ -2224,6 +2228,8 @@ elm_win_quickpanel_set(Evas_Object *obj, Eina_Bool quickpanel)
              ecore_x_icccm_hints_set(win->xwin, 0, 0, 0, 0, 0, 0, 0);
           }
      }
+#else
+   (void) quickpanel;
 #endif
 }
 
@@ -2253,6 +2259,8 @@ elm_win_quickpanel_priority_major_set(Evas_Object *obj, int priority)
    _elm_win_xwindow_get(win);
    if (win->xwin)
      ecore_x_e_illume_quickpanel_priority_major_set(win->xwin, priority);
+#else
+   (void) priority;
 #endif
 }
 
@@ -2282,6 +2290,8 @@ elm_win_quickpanel_priority_minor_set(Evas_Object *obj, int priority)
    _elm_win_xwindow_get(win);
    if (win->xwin)
      ecore_x_e_illume_quickpanel_priority_minor_set(win->xwin, priority);
+#else
+   (void) priority;
 #endif
 }
 
@@ -2311,6 +2321,8 @@ elm_win_quickpanel_zone_set(Evas_Object *obj, int zone)
    _elm_win_xwindow_get(win);
    if (win->xwin)
      ecore_x_e_illume_quickpanel_zone_set(win->xwin, zone);
+#else
+   (void) zone;
 #endif
 }
 
@@ -2350,6 +2362,8 @@ elm_win_prop_focus_skip_set(Evas_Object *obj, Eina_Bool skip)
              ecore_x_netwm_window_state_set(win->xwin, states, 2);
           }
      }
+#else
+   (void) skip;
 #endif
 }
 
@@ -2382,6 +2396,8 @@ elm_win_illume_command_send(Evas_Object *obj, Elm_Illume_Command command, void *
               break;
           }
      }
+#else
+   (void) command;
 #endif
 }
 
@@ -2653,9 +2669,9 @@ elm_win_xwindow_get(const Evas_Object *obj)
    if (!obj) return 0;
    type = elm_widget_type_get(obj);
    if ((!type) || (type != widtype)) return _elm_ee_win_get(obj);
-#ifdef HAVE_ELEMENTARY_X
    win = elm_widget_data_get(obj);
    if (!win) return 0;
+#ifdef HAVE_ELEMENTARY_X
    if (win->xwin) return win->xwin;
    if (win->parent) return elm_win_xwindow_get(win->parent);
 #endif
