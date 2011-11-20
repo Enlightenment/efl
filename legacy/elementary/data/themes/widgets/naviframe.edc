@@ -111,6 +111,7 @@ group { name:"elm/naviframe/item/basic/default";
          description { state: "default" 0.0;
             min: 40 40;
             max: 40 40;
+	    fixed: 1 1;
             align: 1 0.5;
             rel1.to: "elm.text.title";
             rel1.relative: 0 0;

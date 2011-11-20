@@ -41,6 +41,8 @@ struct _Elm_Naviframe_Item
    Evas_Object       *title_next_btn;
    Evas_Object       *icon;
    const char        *style;
+   Evas_Coord         minw;
+   Evas_Coord         minh;
    Eina_Bool          back_btn: 1;
    Eina_Bool          title_visible: 1;
 };
@@ -439,11 +441,18 @@ _sizing_eval(Evas_Object *obj)
 {
    Widget_Data *wd;
    Elm_Naviframe_Item *it;
+   Evas_Coord minw = -1, minh = -1;
    wd  = elm_widget_data_get(obj);
    if (!wd) return;
 
    EINA_INLIST_FOREACH(wd->stack, it)
-     _item_sizing_eval(it);
+     {
+        _item_sizing_eval(it);
+        if (it->minw > minw) minw = it->minw;
+        if (it->minh > minh) minh = it->minh;
+     }
+   evas_object_size_hint_min_set(obj, minw, minh);
+   evas_object_size_hint_max_set(obj, -1, -1);
 }
 
 static void
@@ -459,6 +468,7 @@ _item_sizing_eval(Elm_Naviframe_Item *it)
    evas_object_geometry_get(WIDGET(it), &x, &y, &w, &h);
    evas_object_move(VIEW(it), x, y);
    evas_object_resize(VIEW(it), w, h);
+   edje_object_size_min_calc(VIEW(it), &it->minw, &it->minh);
 }
 
 static void
