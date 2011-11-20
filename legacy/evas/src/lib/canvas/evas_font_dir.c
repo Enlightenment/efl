@@ -691,7 +691,6 @@ evas_font_load(Evas *evas, Evas_Font_Description *fdesc, const char *source, Eva
    fonts = eina_list_free(fonts);
 
 #ifdef HAVE_FONTCONFIG
-   
    if (!font) /* Search using fontconfig */
      {
 	FcResult res;
@@ -749,7 +748,9 @@ evas_font_load(Evas *evas, Evas_Font_Description *fdesc, const char *source, Eva
      }
 #endif
 
+#ifdef HAVE_FONTCONFIG
  on_find:
+#endif
    fd = calloc(1, sizeof(Fndat));
    if (fd)
      {
