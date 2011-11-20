@@ -7596,7 +7596,7 @@ EAPI const char       *evas_object_text_font_source_get  (const Evas_Object *obj
  *
  * @see evas_object_text_font_set()
  */
-EAPI void              evas_object_text_font_get         (const Evas_Object *obj, const char **font, Evas_Font_Size *size) EINA_ARG_NONNULL(1, 2);
+EAPI void              evas_object_text_font_get         (const Evas_Object *obj, const char **font, Evas_Font_Size *size) EINA_ARG_NONNULL(1);
 
 /**
  * Sets the text string to be displayed by the given text object.
