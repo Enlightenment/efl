@@ -1,6 +1,3 @@
-#include "evas_common.h"
-#include "evas_private.h"
-
 #ifdef BUILD_ASYNC_EVENTS
 
 # ifndef _MSC_VER
@@ -8,6 +5,13 @@
 # endif
 # include <fcntl.h>
 # include <errno.h>
+
+#endif
+
+#include "evas_common.h"
+#include "evas_private.h"
+
+#ifdef BUILD_ASYNC_EVENTS
 
 static int _fd_write = -1;
 static int _fd_read = -1;
@@ -159,7 +163,7 @@ evas_async_events_put(const void *target, Evas_Callback_Type type, void *event_i
 
    return result;
 #else
-   func(target, type, event_info);
+   func((void*) target, type, event_info);
    return EINA_TRUE;
 #endif
 }
