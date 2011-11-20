@@ -8,6 +8,10 @@ ECORE_CONFIG_PROG =
 ECORE_CONFIG_LIB =
 endif
 
+if EFL_ENABLE_TESTS
+ECORE_TEST_PROG = ecore_test
+endif
+
 AM_CPPFLAGS = \
 -I$(top_srcdir)/src/lib/ecore \
 -I$(top_srcdir)/src/lib/ecore_config \
@@ -18,7 +22,7 @@ AM_CPPFLAGS = \
 -DPACKAGE_DATA_DIR=\"$(datadir)/$(PACKAGE)\" \
 @EINA_CFLAGS@ @EVAS_CFLAGS@
 
-bin_PROGRAMS = $(ECORE_CONFIG_PROG) ecore_test
+bin_PROGRAMS = $(ECORE_CONFIG_PROG) $(ECORE_TEST_PROG)
 
 ecore_config_SOURCES = \
 ecore_config.c
