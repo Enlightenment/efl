@@ -368,7 +368,7 @@ _elua_push_name(lua_State *L, char *q, int index)  // Stack usage [-0, +1, e or 
 
    // A simplistic scan through an identifier, it's wrong, but it's quick,
    // and we don't mind that it's wrong, coz this is only internal.
-   while (isalnum(*q))
+   while (isalnum((int)*q))
       q++;
    temp = *q;
    *q = '\0';
@@ -413,7 +413,7 @@ _elua_scan_params(lua_State *L, int i, Eina_Bool tr, char *params, ...)  // Stac
         char *q;
         Eina_Bool get = EINA_TRUE;
 
-        while (isspace(*p))
+        while (isspace((int)*p))
            p++;
         q = p + 1;
         switch (*p)
@@ -538,7 +538,7 @@ _elua_ret(lua_State *L, char *params, ...)                // Stack usage [-2*n, 
         char *q;
         Eina_Bool set = EINA_TRUE;
 
-        while (isspace(*p))
+        while (isspace((int)*p))
            p++;
         q = p + 1;
         switch (*p)
