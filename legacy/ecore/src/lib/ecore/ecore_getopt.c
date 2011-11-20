@@ -340,7 +340,7 @@ _ecore_getopt_help_desc_setup_metavar(const Ecore_Getopt_Desc *desc,
           *metavarlen = maxsize - 1;
 
         for (i = 0; i < *metavarlen; i++)
-          metavar[i] = toupper(desc->longname[i]);
+          metavar[i] = toupper((int) desc->longname[i]);
         metavar[i] = '\0';
      }
 }
