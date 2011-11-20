@@ -1071,8 +1071,6 @@ _elua_animator_cb(void *data)                                // Stack usage [-2,
    if (!ela->obj.ed) return 0;
    L = ela->obj.ed->L;
    if (!L) return 0;
-   // FIXME: Perhaps move this to after the setjump, to be neater.
-   lua_rawgeti(L, LUA_REGISTRYINDEX, ela->fn_ref);           // Stack usage [-0, +1, -]
    if (setjmp(panic_jmp) == 1)
      {
         LE("Animator callback panic");
@@ -1081,6 +1079,7 @@ _elua_animator_cb(void *data)                                // Stack usage [-2,
         _elua_gc(L);                                         // Stack usage [-0, +0, e]
         return 0;
      }
+   lua_rawgeti(L, LUA_REGISTRYINDEX, ela->fn_ref);           // Stack usage [-0, +1, -]
    if ((err = lua_pcall(L, 0, 1, 0)))                        // Stack usage [-1, +1, -]
      {
         _edje_lua2_error(L, err);
@@ -1612,10 +1611,8 @@ static int _elua_obj_map_source(lua_State *L);
 static const char *_elua_evas_api = "evas";
 static const struct luaL_reg _elua_evas_funcs [] =
 {
-   // generic object methods
      {"del",          _elua_obj_del}, // generic del any object created for edje (evas objects, timers, animators, transitions... everything)
 
-   // now evas stuff (manipulate, delete etc.)
      {"hide",         _elua_hide}, // hide, return current visibility
      {"show",         _elua_show}, // show, return current visibility
      {"visible",      _elua_visible}, // get object visibility
@@ -1652,7 +1649,6 @@ static const struct luaL_reg _elua_evas_funcs [] =
    // FIXME: need to set auto-scale (same as scale: 1)
 
    // FIXME: later - set render op, anti-alias, pointer mode (autograb, nograb)
-   // FIXME: later -
 
    // map api here
      {"map",           _elua_obj_map},
@@ -1775,7 +1771,6 @@ static int
 _elua_bottom(lua_State *L)                                      // Stack usage [-(0|3), +(0|4), -]
 {
    Edje_Lua_Obj *obj = (Edje_Lua_Obj *)lua_touserdata(L, 1);    // Stack usage [-0, +0, -]
-//   Edje_Lua_Evas_Object *elo = (Edje_Lua_Evas_Object *)obj;
    Edje_Lua_Evas_Object *elo2;
    Evas_Object *o;
    Eina_List *list, *l;
@@ -1835,7 +1830,6 @@ static int
 _elua_top(lua_State *L)                                         // Stack usage [-(0|3), +(0|4), -]
 {
    Edje_Lua_Obj *obj = (Edje_Lua_Obj *)lua_touserdata(L, 1);    // Stack usage [-(0, +0, -]
- //  Edje_Lua_Evas_Object *elo = (Edje_Lua_Evas_Object *)obj;
    Edje_Lua_Evas_Object *elo2;
    Evas_Object *o;
    Eina_List *list, *l;
@@ -2116,8 +2110,11 @@ _elua_precise(lua_State *L)                                     // Stack usage [
    n = lua_gettop(L);                                           // Stack usage [-0, +0, -]
    if (n == 2)
      {
-        evas_object_precise_is_inside_set(elo->evas_obj, lua_toboolean(L, 2));
+        if (lua_isboolean(L, 2))                                // Stack usage [-0, +0, -]
+          {
+             evas_object_precise_is_inside_set(elo->evas_obj, lua_toboolean(L, 2));
                                                                 // Stack usage [-0, +0, -]
+          }
      }
    lua_pushboolean(L, evas_object_precise_is_inside_get(elo->evas_obj));
                                                                 // Stack usage [-0, +1, -]
@@ -2323,7 +2320,6 @@ static const char *_elua_evas_edje_api = "evas_edje";
 static const char *_elua_evas_edje_parent = "evas_edje_parent";
 static const struct luaL_reg _elua_evas_edje_funcs [] =
 {
-   // edje object specific
      {"file",         _elua_edje_file}, // get or set edje file and group
 
      {NULL, NULL} // end
@@ -2409,7 +2405,6 @@ static const char *_elua_evas_image_api = "evas_image";
 static const char *_elua_evas_image_parent = "evas_image_parent";
 static const struct luaL_reg _elua_evas_image_funcs [] =
 {
-   // image object specific
      {"fill",         _elua_image_fill},   // get or set the fill parameters
      {"filled",       _elua_image_filled}, // get or set the filled state (overrides fill())
      {"image",        _elua_image_image},  // get or set image
@@ -2568,7 +2563,6 @@ static const char *_elua_evas_line_api = "evas_line";
 static const char *_elua_evas_line_parent = "evas_line_parent";
 static const struct luaL_reg _elua_evas_line_funcs [] =
 {
-   // line object specific
      {"xy",         _elua_line_xy}, // get or set line coords
 
      {NULL, NULL} // end
@@ -3041,7 +3035,6 @@ static const char *_elua_evas_polygon_api = "evas_polygon";
 static const char *_elua_evas_polygon_parent = "evas_polygon_parent";
 static const struct luaL_reg _elua_evas_polygon_funcs [] =
 {
-   // polygon object specific
      {"clear",         _elua_polygon_clear}, // clear all polygon points
      {"point",         _elua_polygon_point}, // add a polygon point
 
@@ -3113,7 +3106,6 @@ static const char *_elua_evas_text_api = "evas_text";
 static const char *_elua_evas_text_parent = "evas_text_parent";
 static const struct luaL_reg _elua_evas_text_funcs [] =
 {
-   // text object specific
      {"font",         _elua_text_font}, // get or set text font
      {"text",         _elua_text_text}, // get or set text
 //     {"text_class", _elua_object_text_class}, // get or set object text class
@@ -3314,8 +3306,7 @@ _edje_lua2_script_init(Edje *ed)                                  // Stack usage
    if (0 <= _log_domain)
      {
         _log_count++;
-        // FIXME: Change this to WARN before release.
-        eina_log_domain_level_set("lua", EINA_LOG_LEVEL_INFO);
+        eina_log_domain_level_set("lua", EINA_LOG_LEVEL_WARN);
      }
 
 #ifndef RASTER_FORGOT_WHY
