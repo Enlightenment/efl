@@ -47,7 +47,7 @@ static void _ecore_win32_event_free_key_up(void *data,
 
 static int  _ecore_win32_event_keystroke_get(int    key,
                                              int    is_extended,
-					     Eina_Bool is_down,
+                                             Eina_Bool is_down,
                                              char **keyname,
                                              char **keysymbol,
                                              char **keycompose);
@@ -75,7 +75,7 @@ _ecore_win32_event_handle_key_press(Ecore_Win32_Callback_Data *msg,
      {
         if (!_ecore_win32_event_keystroke_get(LOWORD(msg->window_param),
                                               msg->data_param & 0x01000000,
-					      EINA_TRUE,
+                                              EINA_TRUE,
                                               (char **)&e->keyname,
                                               (char **)&e->key,
                                               (char **)&e->string))
@@ -125,7 +125,7 @@ _ecore_win32_event_handle_key_release(Ecore_Win32_Callback_Data *msg,
      {
         if (!_ecore_win32_event_keystroke_get(LOWORD(msg->window_param),
                                               msg->data_param & 0x01000000,
-					      EINA_FALSE,
+                                              EINA_FALSE,
                                               (char **)&e->keyname,
                                               (char **)&e->key,
                                               (char **)&e->string))
@@ -653,7 +653,7 @@ _ecore_win32_event_free_key_up(void *data __UNUSED__,
 static int
 _ecore_win32_event_keystroke_get(int    key,
                                  int    is_extended,
-				 Eina_Bool is_down,
+                                 Eina_Bool is_down,
                                  char **keyname,
                                  char **keysymbol,
                                  char **keycompose)
@@ -813,146 +813,146 @@ _ecore_win32_event_keystroke_get(int    key,
        break;
      case VK_SHIFT:
        {
-	 SHORT res;
+         SHORT res;
 
-	 if (is_down)
-	   {
-	     res = GetKeyState(VK_LSHIFT);
-	     if (res & 0x8000)
-	       {
-		 _ecore_win32_key_mask |= ECORE_WIN32_KEY_MASK_LSHIFT;
-		 kn = "Shift_L";
-		 ks = "Shift_L";
-		 kc = "";
-	       }
-	     res = GetKeyState(VK_RSHIFT);
-	     if (res & 0x8000)
-	       {
-		 _ecore_win32_key_mask |= ECORE_WIN32_KEY_MASK_RSHIFT;
-		 kn = "Shift_R";
-		 ks = "Shift_R";
-		 kc = "";
-	       }
-	   }
-	 else /* is_up */
-	   {
-	     res = GetKeyState(VK_LSHIFT);
-	     if (!(res & 0x8000) &&
-		 (_ecore_win32_key_mask & ECORE_WIN32_KEY_MASK_LSHIFT))
-	       {
-		 kn = "Shift_L";
-		 ks = "Shift_L";
-		 kc = "";
-		 _ecore_win32_key_mask &= ~ECORE_WIN32_KEY_MASK_LSHIFT;
-	       }
-	     res = GetKeyState(VK_RSHIFT);
-	     if (!(res & 0x8000) &&
-		 (_ecore_win32_key_mask & ECORE_WIN32_KEY_MASK_RSHIFT))
-	       {
-		 kn = "Shift_R";
-		 ks = "Shift_R";
-		 kc = "";
-		 _ecore_win32_key_mask &= ~ECORE_WIN32_KEY_MASK_RSHIFT;
-	       }
-	   }
-	 break;
+         if (is_down)
+           {
+             res = GetKeyState(VK_LSHIFT);
+             if (res & 0x8000)
+               {
+                 _ecore_win32_key_mask |= ECORE_WIN32_KEY_MASK_LSHIFT;
+                 kn = "Shift_L";
+                 ks = "Shift_L";
+                 kc = "";
+               }
+             res = GetKeyState(VK_RSHIFT);
+             if (res & 0x8000)
+               {
+                 _ecore_win32_key_mask |= ECORE_WIN32_KEY_MASK_RSHIFT;
+                 kn = "Shift_R";
+                 ks = "Shift_R";
+                 kc = "";
+               }
+           }
+         else /* is_up */
+           {
+             res = GetKeyState(VK_LSHIFT);
+             if (!(res & 0x8000) &&
+                 (_ecore_win32_key_mask & ECORE_WIN32_KEY_MASK_LSHIFT))
+               {
+                 kn = "Shift_L";
+                 ks = "Shift_L";
+                 kc = "";
+                 _ecore_win32_key_mask &= ~ECORE_WIN32_KEY_MASK_LSHIFT;
+               }
+             res = GetKeyState(VK_RSHIFT);
+             if (!(res & 0x8000) &&
+                 (_ecore_win32_key_mask & ECORE_WIN32_KEY_MASK_RSHIFT))
+               {
+                 kn = "Shift_R";
+                 ks = "Shift_R";
+                 kc = "";
+                 _ecore_win32_key_mask &= ~ECORE_WIN32_KEY_MASK_RSHIFT;
+               }
+           }
+         break;
        }
      case VK_CONTROL:
        {
-	 SHORT res;
-	 SHORT res2;
+         SHORT res;
+         SHORT res2;
 
-	 if (is_down)
-	   {
-	     res = GetKeyState(VK_LCONTROL);
-	     if (res & 0x8000)
-	       {
-		 _ecore_win32_key_mask |= ECORE_WIN32_KEY_MASK_LCONTROL;
-		 kn = "Control_L";
-		 ks = "Control_L";
-		 kc = "";
-		 break;
-	       }
-	     res = GetKeyState(VK_RCONTROL);
-	     if (res & 0x8000)
-	       {
-		 _ecore_win32_key_mask |= ECORE_WIN32_KEY_MASK_RCONTROL;
-		 kn = "Control_R";
-		 ks = "Control_R";
-		 kc = "";
-		 break;
-	       }
-	   }
-	 else /* is_up */
-	   {
-	     res = GetKeyState(VK_LCONTROL);
-	     if (!(res & 0x8000) &&
-		 (_ecore_win32_key_mask & ECORE_WIN32_KEY_MASK_LCONTROL))
-	       {
-		 kn = "Control_L";
-		 ks = "Control_L";
-		 kc = "";
-		 _ecore_win32_key_mask &= ~ECORE_WIN32_KEY_MASK_LCONTROL;
-		 break;
-	       }
-	     res = GetKeyState(VK_RCONTROL);
-	     if (!(res & 0x8000) &&
-		 (_ecore_win32_key_mask & ECORE_WIN32_KEY_MASK_RCONTROL))
-	       {
-		 kn = "Control_R";
-		 ks = "Control_R";
-		 kc = "";
-		 _ecore_win32_key_mask &= ~ECORE_WIN32_KEY_MASK_RCONTROL;
-		 break;
-	       }
-	   }
-	 break;
+         if (is_down)
+           {
+             res = GetKeyState(VK_LCONTROL);
+             if (res & 0x8000)
+               {
+                 _ecore_win32_key_mask |= ECORE_WIN32_KEY_MASK_LCONTROL;
+                 kn = "Control_L";
+                 ks = "Control_L";
+                 kc = "";
+                 break;
+               }
+             res = GetKeyState(VK_RCONTROL);
+             if (res & 0x8000)
+               {
+                 _ecore_win32_key_mask |= ECORE_WIN32_KEY_MASK_RCONTROL;
+                 kn = "Control_R";
+                 ks = "Control_R";
+                 kc = "";
+                 break;
+               }
+           }
+         else /* is_up */
+           {
+             res = GetKeyState(VK_LCONTROL);
+             if (!(res & 0x8000) &&
+                 (_ecore_win32_key_mask & ECORE_WIN32_KEY_MASK_LCONTROL))
+               {
+                 kn = "Control_L";
+                 ks = "Control_L";
+                 kc = "";
+                 _ecore_win32_key_mask &= ~ECORE_WIN32_KEY_MASK_LCONTROL;
+                 break;
+               }
+             res = GetKeyState(VK_RCONTROL);
+             if (!(res & 0x8000) &&
+                 (_ecore_win32_key_mask & ECORE_WIN32_KEY_MASK_RCONTROL))
+               {
+                 kn = "Control_R";
+                 ks = "Control_R";
+                 kc = "";
+                 _ecore_win32_key_mask &= ~ECORE_WIN32_KEY_MASK_RCONTROL;
+                 break;
+               }
+           }
+         break;
        }
      case VK_MENU:
        {
-	 SHORT res;
+         SHORT res;
 
-	 if (is_down)
-	   {
-	     res = GetKeyState(VK_LMENU);
-	     if (res & 0x8000)
-	       {
-		 _ecore_win32_key_mask |= ECORE_WIN32_KEY_MASK_LMENU;
-		 kn = "Alt_L";
-		 ks = "Alt_L";
-		 kc = "";
-	       }
-	     res = GetKeyState(VK_RMENU);
-	     if (res & 0x8000)
-	       {
-		 _ecore_win32_key_mask |= ECORE_WIN32_KEY_MASK_RMENU;
-		 kn = "Alt_R";
-		 ks = "Alt_R";
-		 kc = "";
-	       }
-	   }
-	 else /* is_up */
-	   {
-	     res = GetKeyState(VK_LMENU);
-	     if (!(res & 0x8000) &&
-		 (_ecore_win32_key_mask & ECORE_WIN32_KEY_MASK_LMENU))
-	       {
-		 kn = "Alt_L";
-		 ks = "Alt_L";
-		 kc = "";
-		 _ecore_win32_key_mask &= ~ECORE_WIN32_KEY_MASK_LMENU;
-	       }
-	     res = GetKeyState(VK_RMENU);
-	     if (!(res & 0x8000) &&
-		 (_ecore_win32_key_mask & ECORE_WIN32_KEY_MASK_RMENU))
-	       {
-		 kn = "Alt_R";
-		 ks = "Alt_R";
-		 kc = "";
-		 _ecore_win32_key_mask &= ~ECORE_WIN32_KEY_MASK_RMENU;
-	       }
-	   }
-	 break;
+         if (is_down)
+           {
+             res = GetKeyState(VK_LMENU);
+             if (res & 0x8000)
+               {
+                 _ecore_win32_key_mask |= ECORE_WIN32_KEY_MASK_LMENU;
+                 kn = "Alt_L";
+                 ks = "Alt_L";
+                 kc = "";
+               }
+             res = GetKeyState(VK_RMENU);
+             if (res & 0x8000)
+               {
+                 _ecore_win32_key_mask |= ECORE_WIN32_KEY_MASK_RMENU;
+                 kn = "Alt_R";
+                 ks = "Alt_R";
+                 kc = "";
+               }
+           }
+         else /* is_up */
+           {
+             res = GetKeyState(VK_LMENU);
+             if (!(res & 0x8000) &&
+                 (_ecore_win32_key_mask & ECORE_WIN32_KEY_MASK_LMENU))
+               {
+                 kn = "Alt_L";
+                 ks = "Alt_L";
+                 kc = "";
+                 _ecore_win32_key_mask &= ~ECORE_WIN32_KEY_MASK_LMENU;
+               }
+             res = GetKeyState(VK_RMENU);
+             if (!(res & 0x8000) &&
+                 (_ecore_win32_key_mask & ECORE_WIN32_KEY_MASK_RMENU))
+               {
+                 kn = "Alt_R";
+                 ks = "Alt_R";
+                 kc = "";
+                 _ecore_win32_key_mask &= ~ECORE_WIN32_KEY_MASK_RMENU;
+               }
+           }
+         break;
        }
      case VK_F1:
        kn = "F1";
