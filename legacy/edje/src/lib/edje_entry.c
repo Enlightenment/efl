@@ -2061,9 +2061,11 @@ _edje_entry_real_part_init(Edje_Real_Part *rp)
         ecore_imf_context_input_mode_set(en->imf_context,
                                          rp->part->entry_mode == EDJE_ENTRY_EDIT_MODE_PASSWORD ?
                                          ECORE_IMF_INPUT_MODE_INVISIBLE : ECORE_IMF_INPUT_MODE_FULL);
-done:
 #endif
      }
+#ifdef HAVE_ECORE_IMF
+done:
+#endif
    en->cursor = (Evas_Textblock_Cursor *)evas_object_textblock_cursor_get(rp->object);
 }
 
