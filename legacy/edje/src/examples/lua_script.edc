@@ -247,6 +247,9 @@ collections {
          text = edje.text_class("test_text_class", "Sans:style=Bold", 8);
          print("lua::text_class= " .. text.font .. " size " .. text.size);
  
+         --// Do something bad, just to see what happens.
+--//         edje.color_class(nil);
+ 
          --// shutdown func - generally empty or not there. everything garbage collected for you
          function shutdown ()
             print("lua::shutdown ... " .. D.val);

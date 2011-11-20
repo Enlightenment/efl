@@ -1,5 +1,3 @@
-// FIXME: Review error behaviour when lua throws errors.
-
 // FIXME: Some error checking would be nice.
 
 
@@ -133,7 +131,10 @@ static lua_State *lstate = NULL;
 #endif
 static const char *_elua_key = "key";
 static const char *_elua_objs = "objs";
+/* This is not needed, pcalls don't longjmp(), that's why they are protected.
 static jmp_buf panic_jmp;
+*/
+static int panics = 0;
 static int _log_domain = -1;
 static int _log_count = 0;
 
@@ -232,10 +233,26 @@ _elua_alloc(void *ud, void *ptr, size_t osize, size_t nsize)
 }
 
 static int
-_elua_custom_panic(lua_State *L __UNUSED__)
+_elua_custom_panic(lua_State *L)                   // Stack usage [-0, +0, m]
 {
-   ERR("Lua Panic!!!!");
-   return 1;
+   // If we somehow manage to have multiple panics, it's likely due to being out
+   // of memory in the following lua_tostring() call.
+   panics++;
+   if (panics)
+     {
+        EINA_LOG_DOM_CRIT(_edje_default_log_dom, "Lua PANICS!!!!!");
+     }
+   else
+     {
+        EINA_LOG_DOM_CRIT(_edje_default_log_dom,
+           "Lua PANIC!!!!!: %s", lua_tostring(L, -1));  // Stack usage [-0, +0, m]
+     }
+   // The docs say that this will cause an exit(EXIT_FAILURE) if we return,
+   // and that we we should long jump some where to avoid that.  This is only
+   // called for things not called from a protected environment.  We always
+   // use pcalls though, except for the library load calls.  If we can't load
+   // the standard libraries, then perhaps a crash is the right thing.
+   return 0;
 }
 
 // Really only used to manage the pointer to our edje.
@@ -1062,7 +1079,7 @@ _elua_messagesend(lua_State *L)  // Stack usage [-2, +2, ev] plus [-2, +2] for e
 
 //-------------
 static Eina_Bool
-_elua_animator_cb(void *data)                                // Stack usage [-2, +2, e]
+_elua_animator_cb(void *data)                                // Stack usage [-2, +2, em]
 {
    Edje_Lua_Animator *ela = data;
    lua_State *L;
@@ -1071,18 +1088,20 @@ _elua_animator_cb(void *data)                                // Stack usage [-2,
    if (!ela->obj.ed) return 0;
    L = ela->obj.ed->L;
    if (!L) return 0;
+   /* This is not needed, pcalls don't longjmp(), that's why they are protected.
    if (setjmp(panic_jmp) == 1)
      {
         LE("Animator callback panic");
-        _edje_lua2_error(L, err);
+        _edje_lua2_error(L, err);                            // Stack usage [-0, +0, m]
         _elua_obj_free(L, (Edje_Lua_Obj *)ela);
         _elua_gc(L);                                         // Stack usage [-0, +0, e]
         return 0;
      }
+    */
    lua_rawgeti(L, LUA_REGISTRYINDEX, ela->fn_ref);           // Stack usage [-0, +1, -]
    if ((err = lua_pcall(L, 0, 1, 0)))                        // Stack usage [-1, +1, -]
      {
-        _edje_lua2_error(L, err);
+        _edje_lua2_error(L, err);                            // Stack usage [-0, +0, m]
         _elua_obj_free(L, (Edje_Lua_Obj *)ela);
         _elua_gc(L);                                         // Stack usage [-0, +0, e]
         return 0;
@@ -1147,7 +1166,7 @@ _elua_animator(lua_State *L)                                 // Stack usage [-8,
 }
 
 static Eina_Bool
-_elua_timer_cb(void *data)                                   // Stack usage [-2, +2, e]
+_elua_timer_cb(void *data)                                   // Stack usage [-2, +2, em]
 {
    Edje_Lua_Timer *elt = data;
    lua_State *L;
@@ -1156,19 +1175,21 @@ _elua_timer_cb(void *data)                                   // Stack usage [-2,
    if (!elt->obj.ed) return 0;
    L = elt->obj.ed->L;
    if (!L) return 0;
-   lua_rawgeti(L, LUA_REGISTRYINDEX, elt->fn_ref);           // Stack usage [-0, +1, -]
+   /* This is not needed, pcalls don't longjmp(), that's why they are protected.
    if (setjmp(panic_jmp) == 1)
      {
         LE("Timer callback panic");
-        _edje_lua2_error(L, err);
+        _edje_lua2_error(L, err);                            // Stack usage [-0, +0, m]
         _elua_obj_free(L, (Edje_Lua_Obj *)elt);
         _elua_gc(L);                                         // Stack usage [-0, +0, e]
         return 0;
      }
+  */
+   lua_rawgeti(L, LUA_REGISTRYINDEX, elt->fn_ref);           // Stack usage [-0, +1, -]
    if ((err = lua_pcall(L, 0, 1, 0)))                        // Stack usage [-1, +1, -]
      {
         _edje_lua2_error(L, err);
-        _elua_obj_free(L, (Edje_Lua_Obj *)elt);
+        _elua_obj_free(L, (Edje_Lua_Obj *)elt);              // Stack usage [-0, +0, m]
         _elua_gc(L);                                         // Stack usage [-0, +0, e]
         return 0;
      }
@@ -1232,7 +1253,7 @@ _elua_timer(lua_State *L)                                    // Stack usage [-8,
 }
 
 static Eina_Bool
-_elua_transition_cb(void *data)                              // Stack usage [-3, +3, e]
+_elua_transition_cb(void *data)                              // Stack usage [-3, +3, em]
 {
    Edje_Lua_Transition *elt = data;
    lua_State *L;
@@ -1244,20 +1265,22 @@ _elua_transition_cb(void *data)                              // Stack usage [-3,
    if (!L) return 0;
    t = (ecore_loop_time_get() - elt->start) / elt->transition;
    if (t > 1.0) t = 1.0;
-   lua_rawgeti(L, LUA_REGISTRYINDEX, elt->fn_ref);           // Stack usage [-0, +1, -]
-   lua_pushnumber(L, t);                                     // Stack usage [-0, +1, -]
+   /* This is not needed, pcalls don't longjmp(), that's why they are protected.
    if (setjmp(panic_jmp) == 1)
      {
         LE("Transition callback panic");
-        _edje_lua2_error(L, err);
+        _edje_lua2_error(L, err);                            // Stack usage [-0, +0, m]
         _elua_obj_free(L, (Edje_Lua_Obj *)elt);
         _elua_gc(L);                                         // Stack usage [-0, +0, e]
         return 0;
      }
+  */
+   lua_rawgeti(L, LUA_REGISTRYINDEX, elt->fn_ref);           // Stack usage [-0, +1, -]
+   lua_pushnumber(L, t);                                     // Stack usage [-0, +1, -]
    if ((err = lua_pcall(L, 1, 1, 0)))                        // Stack usage [-2, +1, -]
      {
         _edje_lua2_error(L, err);
-        _elua_obj_free(L, (Edje_Lua_Obj *)elt);
+        _elua_obj_free(L, (Edje_Lua_Obj *)elt);              // Stack usage [-0, +0, m]
         _elua_gc(L);                                         // Stack usage [-0, +0, e]
         return 0;
      }
@@ -3379,13 +3402,15 @@ _edje_lua2_script_init(Edje *ed)                                  // Stack usage
                    lua_tostring(L, -1));                          // Stack usage [-0, +0, m]
           }
         free(data);
+        /* This is not needed, pcalls don't longjmp(), that's why they are protected.
         if (setjmp(panic_jmp) == 1)
           {
              ERR("Lua script init panic");
              return;
           }
+        */
         if ((err = lua_pcall(L, 0, 0, 0)))                        // Stack usage [-1, +0, -]
-          _edje_lua2_error(L, err);
+          _edje_lua2_error(L, err);                               // Stack usage [-0, +0, m]
      }
 }
 
@@ -3443,7 +3468,7 @@ _edje_lua2_script_unload(Edje_Part_Collection *edc __UNUSED__)  // Stack usage [
 
 void
 _edje_lua2_error_full(const char *file, const char *fnc, int line,
-                      lua_State *L, int err_code)
+                      lua_State *L, int err_code)            // Stack usage [-0, +0, m]
 {
    const char *err_type;
 
@@ -3467,7 +3492,7 @@ _edje_lua2_error_full(const char *file, const char *fnc, int line,
      }
    eina_log_print
      (_edje_default_log_dom, EINA_LOG_LEVEL_ERR,  file, fnc, line,
-      "Lua %s error: %s", err_type, lua_tostring(L, -1));
+      "Lua %s error: %s", err_type, lua_tostring(L, -1));  // Stack usage [-0, +0, m]
 }
 
 /**
@@ -3488,7 +3513,7 @@ If a function called "shutdown" exists in a lua edje group, then it is called wh
 that edje gets deleted.
 */
 void
-_edje_lua2_script_func_shutdown(Edje *ed)       // Stack usage [-1, +1, e]
+_edje_lua2_script_func_shutdown(Edje *ed)       // Stack usage [-1, +1, em]
 {
    int err;
 
@@ -3496,7 +3521,7 @@ _edje_lua2_script_func_shutdown(Edje *ed)       // Stack usage [-1, +1, e]
    if (!lua_isnil(ed->L, -1))                   // Stack usage [-0, +0, -]
      {
         if ((err = lua_pcall(ed->L, 0, 0, 0)))  // Stack usage [-1, +0, -]
-          _edje_lua2_error(ed->L, err);
+          _edje_lua2_error(ed->L, err);         // Stack usage [-0, +0, m]
      }
    else
      lua_pop(ed->L, 1);                         // Stack usage [-n, +0, -]
