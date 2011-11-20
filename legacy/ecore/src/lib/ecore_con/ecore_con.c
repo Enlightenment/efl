@@ -1165,7 +1165,6 @@ _ecore_con_server_free(Ecore_Con_Server *svr)
         return;
      }
 
-   ECORE_MAGIC_SET(svr, ECORE_MAGIC_NONE);
    t_start = ecore_time_get();
    while (svr->buf && (!svr->dead))
      {
@@ -1185,6 +1184,7 @@ _ecore_con_server_free(Ecore_Con_Server *svr)
    ecore_con_local_win32_server_del(svr);
 #endif
    if (svr->event_count) return;
+   ECORE_MAGIC_SET(svr, ECORE_MAGIC_NONE);
 
    if (svr->buf)
      eina_binbuf_free(svr->buf);
@@ -1239,7 +1239,6 @@ _ecore_con_client_free(Ecore_Con_Client *cl)
      }
 
 
-   ECORE_MAGIC_SET(cl, ECORE_MAGIC_NONE);
    t_start = ecore_time_get();
    while ((cl->buf) && (!cl->dead))
      {
@@ -1260,6 +1259,7 @@ _ecore_con_client_free(Ecore_Con_Client *cl)
 #endif
 
    if (cl->event_count) return;
+   ECORE_MAGIC_SET(cl, ECORE_MAGIC_NONE);
 
    free(cl->buf);
 
