@@ -1,3 +1,7 @@
+#ifdef HAVE_CONFIG_H
+# include <config.h>
+#endif
+
 #ifdef BUILD_ASYNC_EVENTS
 
 # ifndef _MSC_VER
