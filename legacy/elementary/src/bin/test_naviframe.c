@@ -32,7 +32,6 @@ _navi_it_del(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED_
    elm_naviframe_item_del(data);
 }
 
-
 void
 _title_clicked(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
@@ -47,20 +46,32 @@ _title_visible(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_i
 }
 
 void
+_promote(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+{
+   elm_naviframe_item_promote(data);
+}
+
+void
 _page5(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
-   Evas_Object *bt, *content, *nf = data;
+   Evas_Object *bt, *bt2, *content, *nf = data;
    Elm_Object_Item *it;
 
    bt = elm_button_add(nf);
    evas_object_size_hint_align_set(bt, EVAS_HINT_FILL, EVAS_HINT_FILL);
    elm_object_text_set(bt, "Prev");
 
+   bt2 = elm_button_add(nf);
+   evas_object_size_hint_align_set(bt2, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   elm_object_text_set(bt2, "Page 1");
+   evas_object_smart_callback_add(bt2, "clicked", _promote,
+                                  evas_object_data_get(nf, "page1"));
+
    content = _content_new(nf, img5);
    it = elm_naviframe_item_insert_after(elm_naviframe_top_item_get(nf),
                                         "Page 5",
                                         bt,
-                                        NULL,
+                                        bt2,
                                         content,
                                         NULL);
 
@@ -93,6 +104,7 @@ _page4(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
                                 bt,
                                 content,
                                 NULL);
+
    ic = elm_icon_add(nf);
    snprintf(buf, sizeof(buf), "%s/images/logo_small.png",
             elm_app_data_dir_get());
@@ -164,6 +176,7 @@ void
 test_naviframe(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    Evas_Object *win, *bg, *nf, *btn, *content;
+   Elm_Object_Item *it;
 
    win = elm_win_add(NULL, "naviframe", ELM_WIN_BASIC);
    elm_win_title_set(win, "Naviframe");
@@ -188,7 +201,8 @@ test_naviframe(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_i
    evas_object_show(btn);
 
    content = _content_new(nf, img1);
-   elm_naviframe_item_push(nf, "Page 1", NULL, btn, content, NULL);
+   it = elm_naviframe_item_push(nf, "Page 1", NULL, btn, content, NULL);
+   evas_object_data_set(nf, "page1", it);
 
    evas_object_resize(win, 400, 600);
    evas_object_show(win);
