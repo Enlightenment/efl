@@ -1029,16 +1029,16 @@ static Eina_Bool _edje_glob_callback(Edje_Program *pr, void *dt)
    Edje_Real_Part *rp = NULL;
    Eina_Bool exec = EINA_TRUE;
 
-#ifdef EDJE_PROGRAM_CACHE
-   data->matched++;
-#endif
-
    if (pr->filter.state)
      {
 	rp = _edje_real_part_get(data->ed, pr->filter.part ? pr->filter.part : data->source);
 	if (rp)
 	  exec = (rp->chosen_description->state.name == pr->filter.state);
      }
+
+#ifdef EDJE_PROGRAM_CACHE
+   data->matched++;
+#endif
 
    if (exec)
      _edje_program_run(data->ed, pr, 0, data->signal, data->source);
@@ -1139,11 +1139,25 @@ _edje_emit_handle(Edje *ed, const char *sig, const char *src,
 	       {
 		 EINA_LIST_FOREACH(matches, l, pr)
 		    {
-		       _edje_program_run(ed, pr, 0, sig, src);
-		       if (_edje_block_break(ed))
-			 {
-			    goto break_prog;
-			 }
+                       Eina_Bool exec = EINA_TRUE;
+
+                       if (pr->filter.state)
+                         {
+                            Edje_Real_Part *rp;
+
+                            rp = _edje_real_part_get(ed, pr->filter.part ? pr->filter.part : src);
+                            if (rp)
+                              exec = (rp->chosen_description->state.name == pr->filter.state);
+                         }
+
+                       if (exec)
+                         {
+                            _edje_program_run(ed, pr, 0, sig, src);
+                            if (_edje_block_break(ed))
+                              {
+                                 goto break_prog;
+                              }
+                         }
 		    }
 		  done = 1;
 	       }
