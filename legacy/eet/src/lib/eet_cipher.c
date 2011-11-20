@@ -23,7 +23,6 @@ void *alloca(size_t);
 #include <string.h>
 #include <sys/types.h>
 #include <sys/stat.h>
-#include <sys/mman.h>
 
 #ifdef HAVE_UNISTD_H
 # include <unistd.h>
@@ -34,6 +33,7 @@ void *alloca(size_t);
 #endif /* ifdef HAVE_NETINET_IN_H */
 
 #ifdef HAVE_SIGNATURE
+# include <sys/mman.h>
 # ifdef HAVE_GNUTLS
 #  include <gnutls/gnutls.h>
 #  include <gnutls/x509.h>

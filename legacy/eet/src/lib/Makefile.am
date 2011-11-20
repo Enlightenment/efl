@@ -65,7 +65,9 @@ eet_amalgamation.c: $(base_sources) Makefile
 	@echo "#include <limits.h>" >> eet_amalgamation.c
 	@echo "#include <sys/types.h>" >> eet_amalgamation.c
 	@echo "#include <sys/stat.h>" >> eet_amalgamation.c
-	@echo "#include <sys/mman.h>" >> eet_amalgamation.c
+	@echo "#ifdef HAVE_SIGNATURE" >> eet_amalgamation.c
+	@echo "# include <sys/mman.h>" >> eet_amalgamation.c
+	@echo "#endif" >> eet_amalgamation.c
 	@echo "#include <setjmp.h>" >> eet_amalgamation.c
 	@echo "#include <errno.h>" >> eet_amalgamation.c
 	@echo "#include <time.h>" >> eet_amalgamation.c
