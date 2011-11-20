@@ -123,6 +123,7 @@ EAPI Eina_Bool
 eina_mmap_safety_enabled_set(Eina_Bool enabled)
 {
 #ifndef HAVE_SIGINFO_T
+   (void) enabled;
    return EINA_FALSE;
 #else
    if (_eina_mmap_log_dom < 0)
