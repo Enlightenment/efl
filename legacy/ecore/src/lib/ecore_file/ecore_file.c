@@ -16,6 +16,10 @@
 #include <ctype.h>
 #include <errno.h>
 
+#ifdef HAVE_ATFILE_SOURCE
+# include <dirent.h>
+#endif
+
 #include "ecore_file_private.h"
 
 int _ecore_file_log_dom = -1;
