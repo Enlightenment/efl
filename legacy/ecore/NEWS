@@ -35,7 +35,7 @@ Additions:
      - ecore_con_server_fd_get()
      - ecore_con_client_fd_get()
      - ECORE_CON_EVENT_CLIENT_WRITE, ECORE_CON_EVENT_SERVER_WRITE events
-    
+
     * ecore_evas:
      - ecore_evas_screen_geometry_get()
      - ecore_cocoa_evas support
@@ -74,7 +74,7 @@ Fixes:
     * bug in ecore_evas when setting modifiers for sub buffer canvases
     * NULL pointer dereference in ecore_x selection notification code
     * sync GNUTLS thread activation with eina changes
-    * ecore_ipc compilation on windows
+    * ecore_ipc compilation on Windows
     * ecore_x shadow tree search fixed to respect shape input of windows
     * fd handlers fixed when idler callbacks add jobs or events
     * ecore_x_selection_convert takes length into account
@@ -93,7 +93,9 @@ Improvements:
     * ecore_evas now is able to send render-done even if not syncing to comp
     * more safety checks in ecore_con ares support
     * ecore timer monotonic clock now supported on OSX
-    * make ecore_con work on windows
+    * make ecore_con work on Windows
+    * improve resize/move on Windows
+    * fix Shift, Control and Alt keys detection on Windows
     * refactored _ecore_main_loop_iterate_internal
     * better safety with ecore_evas_ecore_evas_get
     * ecore-evas produces more errors on stderr when errors happen now
