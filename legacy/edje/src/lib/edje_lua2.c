@@ -1,5 +1,3 @@
-// FIXME: Review of raw accesses, make sure we are not bypassing the metatable when we should not.
-
 // FIXME: Review error behaviour when lua throws errors.
 
 // FIXME: Some error checking would be nice.
@@ -908,7 +906,7 @@ The type can be one of:
 For the array types, the lua caller passes a table.
 */
 static int
-_elua_messagesend(lua_State *L)  // Stack usage [-2, +2, ev] plus [+1] for every element if it's an array message.
+_elua_messagesend(lua_State *L)  // Stack usage [-2, +2, ev] plus [-2, +2] for every element if it's an array message.
 {
    Edje *ed = (Edje *)_elua_table_ptr_get(L, _elua_key);     // Stack usage [-2, +2, e]
    int id = luaL_checkinteger(L, 1);                         // Stack usage [-0, +0, v]
@@ -959,11 +957,10 @@ _elua_messagesend(lua_State *L)  // Stack usage [-2, +2, ev] plus [+1] for every
         emsg->count = n;
         for (i = 1; i <= n; i ++)
           {
-             // FIXME: The problem with this is that it bypasses metatables, which we don't really want.
-             //          Better to use lua_pushinteger(L, i); lua_gettable(L, 3); instead. [-0, +1, -] [-1, +1, e]
-             lua_rawgeti(L, 3, i);                           // Stack usage [-0, +1, -]
-             str = lua_tostring(L, -1);                      // Stack usage [-0, +0, m]
-             // FIXME: Should pop the stack, not leave a mess, or have an ever growing stack.
+             lua_pushinteger(L, i);                            // Stack usage [-0, +1, -]
+             lua_gettable(L, 3);                               // Stack usage [-1, +1, e]
+             str = lua_tostring(L, -1);                        // Stack usage [-0, +0, m]
+             lua_pop(L, 1);                                    // Stack usage [-n, +0, -]
              emsg->str[i - 1] = (char *)str;
           }
         _edje_message_send(ed, EDJE_QUEUE_APP, EDJE_MESSAGE_STRING_SET, id, emsg);
@@ -978,8 +975,10 @@ _elua_messagesend(lua_State *L)  // Stack usage [-2, +2, ev] plus [+1] for every
         emsg->count = n;
         for (i = 1; i <= n; i ++)
           {
-             lua_rawgeti(L, 3, i);                           // Stack usage [-0, +1, -]
+             lua_pushinteger(L, i);                            // Stack usage [-0, +1, -]
+             lua_gettable(L, 3);                               // Stack usage [-1, +1, e]
              emsg->val[i - 1] = lua_tointeger(L, -1);        // Stack usage [-0, +0, -]
+             lua_pop(L, 1);                                    // Stack usage [-n, +0, -]
           }
         _edje_message_send(ed, EDJE_QUEUE_APP, EDJE_MESSAGE_INT_SET, id, emsg);
      }
@@ -993,8 +992,10 @@ _elua_messagesend(lua_State *L)  // Stack usage [-2, +2, ev] plus [+1] for every
         emsg->count = n;
         for (i = 1; i <= n; i ++)
           {
-             lua_rawgeti(L, 3, i);                           // Stack usage [-0, +1, -]
+             lua_pushinteger(L, i);                            // Stack usage [-0, +1, -]
+             lua_gettable(L, 3);                               // Stack usage [-1, +1, e]
              emsg->val[i - 1] = lua_tonumber(L, -1);         // Stack usage [-0, +0, -]
+             lua_pop(L, 1);                                    // Stack usage [-n, +0, -]
           }
         _edje_message_send(ed, EDJE_QUEUE_APP, EDJE_MESSAGE_FLOAT_SET, id, emsg);
      }
@@ -1029,8 +1030,10 @@ _elua_messagesend(lua_State *L)  // Stack usage [-2, +2, ev] plus [+1] for every
         emsg->count = n;
         for (i = 1; i <= n; i ++)
           {
-             lua_rawgeti(L, 4, i);                           // Stack usage [-0, +1, -]
+             lua_pushinteger(L, i);                            // Stack usage [-0, +1, -]
+             lua_gettable(L, 4);                               // Stack usage [-1, +1, e]
              emsg->val[i - 1] = lua_tointeger(L, -1);        // Stack usage [-0, +0, -]
+             lua_pop(L, 1);                                    // Stack usage [-n, +0, -]
           }
         _edje_message_send(ed, EDJE_QUEUE_APP, EDJE_MESSAGE_STRING_INT_SET, id, emsg);
      }
@@ -1047,8 +1050,10 @@ _elua_messagesend(lua_State *L)  // Stack usage [-2, +2, ev] plus [+1] for every
         emsg->count = n;
         for (i = 1; i <= n; i ++)
           {
-             lua_rawgeti(L, 4, i);                           // Stack usage [-0, +1, -]
+             lua_pushinteger(L, i);                            // Stack usage [-0, +1, -]
+             lua_gettable(L, 4);                               // Stack usage [-1, +1, e]
              emsg->val[i - 1] = lua_tonumber(L, -1);         // Stack usage [-0, +0, -]
+             lua_pop(L, 1);                                    // Stack usage [-n, +0, -]
           }
         _edje_message_send(ed, EDJE_QUEUE_APP, EDJE_MESSAGE_STRING_FLOAT_SET, id, emsg);
      }
@@ -3652,6 +3657,8 @@ _edje_lua2_script_func_message(Edje *ed, Edje_Message *em)  // Stack usage [-?, 
                {
                   lua_pushstring(ed->L, ((Edje_Message_String_Set *)em->msg)->str[i]);
                                                             // Stack usage [-0, +1, m]
+                  // It's OK to bypass the metatable in these cases,
+                  // we create the table, and know there is no metatable.  B-)
                   lua_rawseti(ed->L, -2, i + 1);            // Stack usage [-1, +0, m]
                }
              n += 1;
