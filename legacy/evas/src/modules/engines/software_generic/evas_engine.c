@@ -276,7 +276,7 @@ eng_image_mask_create(void *data __UNUSED__, void *image)
    dst = im->mask.mask;
    if (!im->image.data)
       evas_cache_image_load_data(&im->cache_entry);
-   src = im->image.data;
+   src = (void*) im->image.data;
    if (!src) return;
    for (end = dst + sz ; dst < end ; dst ++, src ++)
       *dst = *src >> 24;
