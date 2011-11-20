@@ -13,7 +13,6 @@
 #include <sys/stat.h>
 /* get the casefold feature! */
 #include <fnmatch.h>
-#include <dirent.h>
 #ifndef _MSC_VER
 # include <unistd.h>
 # include <sys/param.h>
@@ -100,36 +99,31 @@ evas_file_path_is_dir(const char *path)
 Eina_List *
 evas_file_path_list(char *path, const char *match, int match_case)
 {
+   Eina_File_Direct_Info *info;
+   Eina_Iterator *it;
    Eina_List *files = NULL;
-   DIR *dir;
+   int flags;
 
-   dir = opendir(path);
-   if (!dir) return NULL;
-     {
-	struct dirent      *dp;
-	int flags;
-
-	flags = FNM_PATHNAME;
+   flags = FNM_PATHNAME;
 #ifdef FNM_CASEFOLD
-	if (!match_case)
-	  flags |= FNM_CASEFOLD;
+   if (!match_case)
+     flags |= FNM_CASEFOLD;
 #else
 /*#warning "Your libc does not provide case-insensitive matching!"*/
 #endif
-	while ((dp = readdir(dir)))
-	  {
-	     if ((!strcmp(dp->d_name, ".")) || (!strcmp(dp->d_name, "..")))
-	       continue;
-	     if (match)
-	       {
-		  if (fnmatch(match, dp->d_name, flags) == 0)
-		    files = eina_list_append(files, strdup(dp->d_name));
-	       }
-	     else
-	       files = eina_list_append(files, strdup(dp->d_name));
-	  }
-	closedir(dir);
+
+   it = eina_file_direct_ls(path);
+   EINA_ITERATOR_FOREACH(it, info)
+     {
+        if (match)
+          {
+             if (fnmatch(match, info->path + info->name_start, flags) == 0)
+               files = eina_list_append(files, strdup(info->path + info->name_start));
+          }
+        else
+          files = eina_list_append(files, strdup(info->path + info->name_start));
      }
+   eina_iterator_free(it);
    return files;
 }
 
