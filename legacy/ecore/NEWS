@@ -75,6 +75,7 @@ Fixes:
     * NULL pointer dereference in ecore_x selection notification code
     * sync GNUTLS thread activation with eina changes
     * ecore_ipc compilation on Windows
+    * "mouse-down inside and mouse-up outside" issue on Windows
     * ecore_x shadow tree search fixed to respect shape input of windows
     * fd handlers fixed when idler callbacks add jobs or events
     * ecore_x_selection_convert takes length into account

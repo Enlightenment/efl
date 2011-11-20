@@ -330,4 +330,6 @@
 
 2011-11-20 Vincent Torri
 
-	* Ecore_Win32, Ecore_WinCE: fix Shift, Control and Alt keys detection
+	* Ecore_Win32, Ecore_WinCE: fix Shift, Control and Alt keys
+	detection
+	* Ecore_Win32: fix "mouse-down inside and mouse-up outside" issue
