@@ -235,7 +235,7 @@ _load(Image_Entry *ie, const char *file, const char *key, int *error, Eina_Bool 
         len = strlen(buf);
         if (len > 0)
           {
-             if ((buf[len - 1] == '\n')) buf[len - 1] = 0;
+             if (buf[len - 1] == '\n') buf[len - 1] = 0;
              if (!strncmp(buf, "size ", 5))
                {
                   int tw = 0, th = 0;
