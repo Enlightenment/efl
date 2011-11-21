@@ -34,9 +34,11 @@ static void _content_del(void *data,
 static Eina_List *_item_get(Evas_Object *obj, Evas_Object *content);
 
 static const char SIG_HIDE_FINISHED[] = "hide,finished";
+static const char SIG_SHOW_FINISHED[] = "show,finished";
 
 static const Evas_Smart_Cb_Description _signals[] = {
    {SIG_HIDE_FINISHED, ""},
+   {SIG_SHOW_FINISHED, ""},
    {NULL, NULL}
 };
 
@@ -238,7 +240,17 @@ _resize(void *data, Evas *e __UNUSED__, Evas_Object *obj, void *event_info __UNU
 }
 
 static void
-_signal_hide_finished(void *data, Evas_Object *obj __UNUSED__, const char *emission __UNUSED__, const char *source __UNUSED__)
+_show_finished_cb(void *data, Evas_Object *o __UNUSED__, const char *emission __UNUSED__, const char *source __UNUSED__)
+{
+   Item *it = data;
+   Evas_Object *obj = it->obj;
+   Evas_Object *content = it->content;
+
+    evas_object_smart_callback_call(obj, SIG_SHOW_FINISHED, content);
+}
+
+static void
+_hide_finished_cb(void *data, Evas_Object *obj __UNUSED__, const char *emission __UNUSED__, const char *source __UNUSED__)
 {
    Item *it = data;
    Evas_Object *obj2 = it->obj;
@@ -333,10 +345,12 @@ elm_pager_content_push(Evas_Object *obj, Evas_Object *content)
                          "pager",
                          "base",
                          elm_widget_style_get(obj));
+   edje_object_signal_callback_add
+       (it->base, "elm,action,show,finished", "", _show_finished_cb, it);
    edje_object_signal_callback_add(it->base,
                                    "elm,action,hide,finished",
                                    "",
-                                   _signal_hide_finished,
+                                   _hide_finished_cb,
                                    it);
    evas_object_event_callback_add(it->content,
                                   EVAS_CALLBACK_CHANGED_SIZE_HINTS,
