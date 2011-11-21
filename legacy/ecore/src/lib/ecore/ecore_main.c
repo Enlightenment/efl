@@ -1932,11 +1932,11 @@ _ecore_main_win32_select(int             nfds __UNUSED__,
    /* The result tells us the type of event we have. */
    if (result == WAIT_FAILED)
      {
-        char *msg;
+        char *m;
 
-        msg = evil_last_error_get();
-        ERR(" * %s\n", msg);
-        free(msg);
+        m = evil_last_error_get();
+        ERR(" * %s\n", m);
+        free(m);
         res = -1;
      }
    else if (result == WAIT_TIMEOUT)

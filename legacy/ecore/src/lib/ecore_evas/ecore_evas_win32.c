@@ -185,9 +185,9 @@ _ecore_evas_win32_event_window_focus_in(void *data __UNUSED__, int type __UNUSED
    Ecore_Win32_Event_Window_Focus_In *e;
 
    e = event;
-   ee = ecore_event_window_match(e->window);
+   ee = ecore_event_window_match((Ecore_Window)e->window);
    if ((!ee) || (ee->ignore_events)) return ECORE_CALLBACK_PASS_ON;
-   if (e->window != ee->prop.window) return ECORE_CALLBACK_PASS_ON;
+   if ((Ecore_Window)e->window != ee->prop.window) return ECORE_CALLBACK_PASS_ON;
 
    ee->prop.focused = 1;
    evas_focus_in(ee->evas);
@@ -202,9 +202,9 @@ _ecore_evas_win32_event_window_focus_out(void *data __UNUSED__, int type __UNUSE
    Ecore_Win32_Event_Window_Focus_Out *e;
 
    e = event;
-   ee = ecore_event_window_match(e->window);
+   ee = ecore_event_window_match((Ecore_Window)e->window);
    if ((!ee) || (ee->ignore_events)) return ECORE_CALLBACK_PASS_ON;
-   if (e->window != ee->prop.window) return ECORE_CALLBACK_PASS_ON;
+   if ((Ecore_Window)e->window != ee->prop.window) return ECORE_CALLBACK_PASS_ON;
 
    evas_focus_out(ee->evas);
    ee->prop.focused = 0;

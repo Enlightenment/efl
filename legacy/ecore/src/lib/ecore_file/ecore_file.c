@@ -10,6 +10,10 @@
 # include <libgen.h>
 #endif
 
+#ifdef _WIN32
+# include <direct.h>
+#endif
+
 #ifdef HAVE_FEATURES_H
 # include <features.h>
 #endif
