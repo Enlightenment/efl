@@ -2186,6 +2186,16 @@ elm_win_focus_get(const Evas_Object *obj)
 }
 
 EAPI void
+elm_win_screen_size_get(const Evas_Object *obj, int *x, int *y, int *w, int *h)
+{
+   Elm_Win *win;
+   ELM_CHECK_WIDTYPE(obj, widtype);
+   win = elm_widget_data_get(obj);
+   if (!win) return;
+   ecore_evas_screen_geometry_get(win->ee, x, y, w, h);
+}
+
+EAPI void
 elm_win_conformant_set(Evas_Object *obj, Eina_Bool conformant)
 {
    Elm_Win *win;

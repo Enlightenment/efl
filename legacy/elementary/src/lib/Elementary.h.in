@@ -4456,7 +4456,16 @@ extern "C" {
     * @param obj The window to query
     * @return EINA_TRUE if the window exists and has focus, else EINA_FALSE
     */
-   EAPI Eina_Bool    elm_win_focus_get(const Evas_Object *obj);
+   EAPI Eina_Bool    elm_win_focus_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
+   /**
+    * Get screen geometry details for the screen that a window is on
+    * @param obj The window to query
+    * @param x where to return the horizontal offset value. May be NULL.
+    * @param y	where to return the vertical offset value. May be NULL.
+    * @param w	where to return the width value. May be NULL.
+    * @param h	where to return the height value. May be NULL.
+    */
+   EAPI void         elm_win_screen_size_get(const Evas_Object *obj, int *x, int *y, int *w, int *h) EINA_ARG_NONNULL(1);
    /**
     * Set the enabled status for the focus highlight in a window
     *
