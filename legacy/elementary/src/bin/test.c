@@ -507,7 +507,7 @@ add_tests:
    if (autorun)
      {
         EINA_LIST_FOREACH(tests, l, t)
-          if ((t->name) && (t->cb) && (!strcmp(t->name, autorun)))
+          if ((t->name) && (t->cb) && (!strcasecmp(t->name, autorun)))
             t->cb(NULL, NULL, NULL);
 
      }
