@@ -16,6 +16,8 @@ EDCS = basic.edc \
 	color-class.edc \
 	perspective.edc \
 	animations.edc \
+	lua_script.edc \
+	sigtest.edc \
 	$(MULTISENSE_EDC_FILE)
 
 filesdir = $(datadir)/$(PACKAGE)/examples
@@ -48,7 +50,8 @@ pkglib_PROGRAMS += \
 	edje-signals-messages \
 	edje-color-class \
 	edje-perspective \
-	edje-animations
+	edje-animations \
+	sigtest
 
 LDADD = $(top_builddir)/src/lib/libedje.la @EDJE_LIBS@
 
@@ -64,7 +67,11 @@ endif # if BUILD_EXAMPLES
 if INSTALL_EXAMPLES
 
 #put here additional data when installing examples
-files_DATA += $(srcdir)/red.png
+files_DATA += \
+	$(srcdir)/bubble.png \
+	$(srcdir)/red.png \
+	$(srcdir)/test.png \
+	$(srcdir)/Vera.ttf
 
 files_DATA += \
 	$(EDCS) \
@@ -78,11 +85,14 @@ files_DATA += \
 	$(srcdir)/edje-signals-messages.c \
 	$(srcdir)/edje-color-class.c \
 	$(srcdir)/edje-perspective.c \
-	$(srcdir)/edje-animations.c
+	$(srcdir)/edje-animations.c \
+	$(srcdir)/sigtest.c
 endif
 
 EXTRA_DIST = $(EDCS) \
+	$(srcdir)/bubble.png \
 	$(srcdir)/red.png \
+	$(srcdir)/test.png \
 	$(srcdir)/edje-basic.c \
 	$(srcdir)/edje-swallow.c \
 	$(srcdir)/edje-text.c \
@@ -93,4 +103,5 @@ EXTRA_DIST = $(EDCS) \
 	$(srcdir)/edje-signals-messages.c \
 	$(srcdir)/edje-color-class.c \
 	$(srcdir)/edje-perspective.c \
-	$(srcdir)/edje-animations.c
+	$(srcdir)/edje-animations.c \
+	$(srcdir)/sigtest.c
