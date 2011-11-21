@@ -349,18 +349,9 @@ _elm_tooltip_reconfigure(Elm_Tooltip *tt)
 
    edje_object_size_min_restricted_calc(tt->tooltip, &tw, &th, ominw, ominh);
 
-#ifdef HAVE_ELEMENTARY_X
    if (tt->tt_win)
-     {
-        xwin = elm_win_xwindow_get(elm_object_top_widget_get(tt->owner));
-        if (xwin)
-          {
-             xwin = ecore_x_window_root_get(xwin);
-             ecore_x_randr_screen_current_size_get(xwin, &cw, &ch, NULL, NULL);
-          }
-     }
+     elm_win_screen_size_get(elm_object_top_widget_get(tt->owner), &cw, &ch, NULL, NULL);
    if (!cw)
-#endif
      evas_output_size_get(tt->tt_evas ?: tt->evas, &cw, &ch);
 
    evas_object_geometry_get(tt->eventarea, &ox, &oy, &ow, &oh);
