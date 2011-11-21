@@ -290,9 +290,9 @@ _content_get_hook(const Evas_Object *obj, const char *part)
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return NULL;
    if (part && (!strncmp(part, "elm.swallow.", 12))) part += 12;
-   if (!part || !strcmp(part, "right"))
+   if (!part || !strcmp(part, "left"))
      return wd->contents.left;
-   else if (!strcmp(part, "left"))
+   else if (!strcmp(part, "right"))
      return wd->contents.right;
    return NULL;
 }
