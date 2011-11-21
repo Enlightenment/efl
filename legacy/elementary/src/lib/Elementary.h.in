@@ -4452,6 +4452,12 @@ extern "C" {
     */
    EAPI Evas_Object *elm_win_inlined_image_object_get(Evas_Object *obj);
    /**
+    * Determine whether a window has focus
+    * @param obj The window to query
+    * @return EINA_TRUE if the window exists and has focus, else EINA_FALSE
+    */
+   EAPI Eina_Bool    elm_win_focus_get(const Evas_Object *obj);
+   /**
     * Set the enabled status for the focus highlight in a window
     *
     * This function will enable or disable the focus highlight only for the
