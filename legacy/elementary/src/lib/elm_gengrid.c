@@ -150,10 +150,6 @@ static const Evas_Smart_Cb_Description _signals[] = {
    {SIG_SCROLL_ANIM_STOP, ""},
    {SIG_SCROLL_DRAG_START, ""},
    {SIG_SCROLL_DRAG_STOP, ""},
-   {SIG_SCROLL_EDGE_TOP, ""},
-   {SIG_SCROLL_EDGE_BOTTOM, ""},
-   {SIG_SCROLL_EDGE_LEFT, ""},
-   {SIG_SCROLL_EDGE_RIGHT, ""},
    {SIG_EDGE_TOP, ""},
    {SIG_EDGE_BOTTOM, ""},
    {SIG_EDGE_LEFT, ""},
@@ -1785,7 +1781,6 @@ _edge_left(void        *data,
            Evas_Object *scr __UNUSED__,
            void        *event_info __UNUSED__)
 {
-   evas_object_smart_callback_call(data, SIG_SCROLL_EDGE_LEFT, NULL);
    evas_object_smart_callback_call(data, SIG_EDGE_LEFT, NULL);
 }
 
@@ -1794,7 +1789,6 @@ _edge_right(void        *data,
             Evas_Object *scr __UNUSED__,
             void        *event_info __UNUSED__)
 {
-   evas_object_smart_callback_call(data, SIG_SCROLL_EDGE_RIGHT, NULL);
    evas_object_smart_callback_call(data, SIG_EDGE_RIGHT, NULL);
 }
 
@@ -1803,7 +1797,6 @@ _edge_top(void        *data,
           Evas_Object *scr __UNUSED__,
           void        *event_info __UNUSED__)
 {
-   evas_object_smart_callback_call(data, SIG_SCROLL_EDGE_TOP, NULL);
    evas_object_smart_callback_call(data, SIG_EDGE_TOP, NULL);
 }
 
@@ -1812,7 +1805,6 @@ _edge_bottom(void        *data,
              Evas_Object *scr __UNUSED__,
              void        *event_info __UNUSED__)
 {
-   evas_object_smart_callback_call(data, SIG_SCROLL_EDGE_BOTTOM, NULL);
    evas_object_smart_callback_call(data, SIG_EDGE_BOTTOM, NULL);
 }
 

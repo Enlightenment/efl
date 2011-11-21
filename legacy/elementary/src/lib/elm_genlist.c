@@ -234,10 +234,6 @@ static const char SIG_SCROLL_ANIM_START[] = "scroll,anim,start";
 static const char SIG_SCROLL_ANIM_STOP[] = "scroll,anim,stop";
 static const char SIG_SCROLL_DRAG_START[] = "scroll,drag,start";
 static const char SIG_SCROLL_DRAG_STOP[] = "scroll,drag,stop";
-static const char SIG_SCROLL_EDGE_TOP[] = "scroll,edge,top"; // TODO : remove this
-static const char SIG_SCROLL_EDGE_BOTTOM[] = "scroll,edge,bottom"; // TODO : remove this
-static const char SIG_SCROLL_EDGE_LEFT[] = "scroll,edge,left"; // TODO : remove this
-static const char SIG_SCROLL_EDGE_RIGHT[] = "scroll,edge,right"; // TODO : remove this
 static const char SIG_EDGE_TOP[] = "edge,top";
 static const char SIG_EDGE_BOTTOM[] = "edge,bottom";
 static const char SIG_EDGE_LEFT[] = "edge,left";
@@ -273,10 +269,6 @@ static const Evas_Smart_Cb_Description _signals[] = {
    {SIG_SCROLL_ANIM_STOP, ""},
    {SIG_SCROLL_DRAG_START, ""},
    {SIG_SCROLL_DRAG_STOP, ""},
-   {SIG_SCROLL_EDGE_TOP, ""},
-   {SIG_SCROLL_EDGE_BOTTOM, ""},
-   {SIG_SCROLL_EDGE_LEFT, ""},
-   {SIG_SCROLL_EDGE_RIGHT, ""},
    {SIG_EDGE_TOP, ""},
    {SIG_EDGE_BOTTOM, ""},
    {SIG_EDGE_LEFT, ""},
@@ -2795,7 +2787,6 @@ _edge_left(void        *data,
            void        *event_info __UNUSED__)
 {
    Evas_Object *obj = data;
-   evas_object_smart_callback_call(obj, SIG_SCROLL_EDGE_LEFT, NULL);
    evas_object_smart_callback_call(obj, SIG_EDGE_LEFT, NULL);
 }
 
@@ -2805,7 +2796,6 @@ _edge_right(void        *data,
             void        *event_info __UNUSED__)
 {
    Evas_Object *obj = data;
-   evas_object_smart_callback_call(obj, SIG_SCROLL_EDGE_RIGHT, NULL);
    evas_object_smart_callback_call(obj, SIG_EDGE_RIGHT, NULL);
 }
 
@@ -2815,7 +2805,6 @@ _edge_top(void        *data,
           void        *event_info __UNUSED__)
 {
    Evas_Object *obj = data;
-   evas_object_smart_callback_call(obj, SIG_SCROLL_EDGE_TOP, NULL);
    evas_object_smart_callback_call(obj, SIG_EDGE_TOP, NULL);
 }
 
@@ -2825,7 +2814,6 @@ _edge_bottom(void        *data,
              void        *event_info __UNUSED__)
 {
    Evas_Object *obj = data;
-   evas_object_smart_callback_call(obj, SIG_SCROLL_EDGE_BOTTOM, NULL);
    evas_object_smart_callback_call(obj, SIG_EDGE_BOTTOM, NULL);
 }
 
