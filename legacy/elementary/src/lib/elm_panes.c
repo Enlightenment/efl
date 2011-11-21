@@ -305,9 +305,9 @@ _content_unset_hook(Evas_Object *obj, const char *part)
    if (!wd) return NULL;
    if (part && (!strncmp(part, "elm.swallow.", 12))) part += 12;
    if (!part || !strcmp(part, "right"))
-     _content_right_unset(obj);
+     return _content_right_unset(obj);
    else if (!strcmp(part, "left"))
-     _content_left_unset(obj);
+     return _content_left_unset(obj);
    return NULL;
 }
 
