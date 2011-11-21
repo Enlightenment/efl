@@ -18197,7 +18197,7 @@ extern "C" {
     *   theme. It must return @c NULL, when no content is desired, or a valid
     *   object handle, otherwise.  The object will be deleted by the genlist on
     *   its deletion or when the item is "unrealized".  See
-    *   #Elm_Genlist_Item_Icon_Get_Cb.
+    *   #Elm_Genlist_Item_Content_Get_Cb.
     * - @c func.state_get - The @c part parameter is the name string of one of
     *   the state parts in the Edje group implementing the item's theme. Return
     *   @c EINA_FALSE for false/off or @c EINA_TRUE for true/on. Genlists will
