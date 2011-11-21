@@ -18296,7 +18296,7 @@ extern "C" {
     * If the application wants multiple items to be able to be selected,
     * elm_genlist_multi_select_set() can enable this. If the list is
     * single-selection only (the default), then elm_genlist_selected_item_get()
-    * will return the selected item, if any, or NULL I none is selected. If the
+    * will return the selected item, if any, or NULL if none is selected. If the
     * list is multi-select then elm_genlist_selected_items_get() will return a
     * list (that is only valid as long as no items are modified (added, deleted,
     * selected or unselected)).
