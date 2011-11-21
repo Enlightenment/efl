@@ -146,7 +146,8 @@ evas_object_smart_member_add(Evas_Object *obj, Evas_Object *smart_obj)
         abort();
         return;
      }
-   if (obj->layer->evas != smart_obj->layer->evas)
+   if ((obj->layer && smart_obj->layer) &&
+       (obj->layer->evas != smart_obj->layer->evas))
      {
         CRIT("Adding object %p from Evas (%p) from another Evas (%p)", obj, obj->layer->evas, smart_obj->layer->evas);
         abort();
