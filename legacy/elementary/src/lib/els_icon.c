@@ -2,6 +2,12 @@
 #include "elm_priv.h"
 #include "els_icon.h"
 
+#ifdef _WIN32
+# define FMT_SIZE_T "%Iu"
+#else
+# define FMT_SIZE_T "%zu"
+#endif
+
 typedef struct _Smart_Data Smart_Data;
 
 struct _Smart_Data
@@ -108,7 +114,7 @@ _els_smart_icon_memfile_set(Evas_Object *obj, const void *img, size_t size, cons
    evas_object_image_preload(sd->obj, EINA_FALSE);
    if (evas_object_image_load_error_get(sd->obj) != EVAS_LOAD_ERROR_NONE)
      {
-        ERR("Things are going bad for some random %zu byte chunk of memory (%p)", size, sd->obj);
+        ERR("Things are going bad for some random " FMT_SIZE_T " byte chunk of memory (%p)", size, sd->obj);
         return EINA_FALSE;
      }
    _smart_reconfigure(sd);
