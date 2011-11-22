@@ -7408,7 +7408,7 @@ extern "C" {
     *
     * The Label widget @b doesn't allow text to overflow its boundaries, if the
     * text doesn't fit the geometry of the label it will be ellipsized or be
-    * cut. Elementary provides several themes for this widget:
+    * cut. Elementary provides several styles for this widget:
     * @li default - No animation
     * @li marker - Centers the text in the label and make it bold by default
     * @li slide_long - The entire text appears from the right of the screen and
@@ -7520,8 +7520,7 @@ extern "C" {
     * @param size font size
     *
     * @warning NEVER use this. It is for hyper-special cases only. use styles
-    * instead. e.g. "big", "medium", "small" - or better name them by use:
-    * "title", "footnote", "quote" etc.
+    * instead. e.g. "default", "marker", "slide_long" etc.
     */
    EAPI void         elm_label_fontsize_set(Evas_Object *obj, int fontsize) EINA_ARG_NONNULL(1);
    /**
@@ -7534,8 +7533,7 @@ extern "C" {
     * @param a Alpha property background color of The label object
     *
     * @warning NEVER use this. It is for hyper-special cases only. use styles
-    * instead. e.g. "big", "medium", "small" - or better name them by use:
-    * "title", "footnote", "quote" etc.
+    * instead. e.g. "default", "marker", "slide_long" etc.
     */
    EAPI void         elm_label_text_color_set(Evas_Object *obj, unsigned int r, unsigned int g, unsigned int b, unsigned int a) EINA_ARG_NONNULL(1);
    /**
@@ -7545,8 +7543,7 @@ extern "C" {
     * @param align align mode ("left", "center", "right")
     *
     * @warning NEVER use this. It is for hyper-special cases only. use styles
-    * instead. e.g. "big", "medium", "small" - or better name them by use:
-    * "title", "footnote", "quote" etc.
+    * instead. e.g. "default", "marker", "slide_long" etc.
     */
    EAPI void         elm_label_text_align_set(Evas_Object *obj, const char *alignmode) EINA_ARG_NONNULL(1);
    /**
@@ -7559,8 +7556,7 @@ extern "C" {
     * @param a Alpha property background alpha of The label object
     *
     * @warning NEVER use this. It is for hyper-special cases only. use styles
-    * instead. e.g. "big", "medium", "small" - or better name them by use:
-    * "title", "footnote", "quote" etc.
+    * instead. e.g. "default", "marker", "slide_long" etc.
     */
    EAPI void         elm_label_background_color_set(Evas_Object *obj, unsigned int r, unsigned int g, unsigned int b, unsigned int a) EINA_ARG_NONNULL(1);
    /**
