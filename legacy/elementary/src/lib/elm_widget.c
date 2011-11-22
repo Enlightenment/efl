@@ -2098,6 +2098,8 @@ elm_widget_show_region_set(Evas_Object *obj,
    Evas_Object *parent_obj, *child_obj;
    Evas_Coord px, py, cx, cy;
 
+   evas_smart_objects_calculate(evas_object_evas_get(obj));
+
    API_ENTRY return;
    if (!forceshow && (x == sd->rx) && (y == sd->ry)
             && (w == sd->rw) && (h == sd->rh)) return;
