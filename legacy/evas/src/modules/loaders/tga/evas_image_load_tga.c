@@ -28,7 +28,10 @@
 
 #define TGA_SIGNATURE "TRUEVISION-XFILE"
 
-typedef struct
+typedef struct _tga_header tga_header;
+typedef struct _tga_footer tga_footer;
+
+struct _tga_header
 {
    unsigned char       idLength;
    unsigned char       colorMapType;
@@ -42,16 +45,16 @@ typedef struct
    unsigned char       heightLo, heightHi;
    unsigned char       bpp;
    unsigned char       descriptor;
-} tga_header;
-                  
-typedef struct
+} __attribute__((packed));
+
+struct _tga_footer
 {
    unsigned int        extensionAreaOffset;
    unsigned int        developerDirectoryOffset;
    char                signature[16];
    char                dot;
    char                null;
-} tga_footer;
+} __attribute__((packed));
 
 
 static Eina_Bool evas_image_load_file_head_tga(Image_Entry *ie, const char *file, const char *key, int *error) EINA_ARG_NONNULL(1, 2, 4);
@@ -75,6 +78,7 @@ evas_image_load_file_head_tga(Image_Entry *ie, const char *file, const char *key
    char hasa = 0, footer_present = 0, vinverted = 0;
    int w = 0, h = 0, bpp;
    int x, y;
+   int abits;
 
    f = eina_file_open(file, EINA_FALSE);
    *error = EVAS_LOAD_ERROR_DOES_NOT_EXIST;
@@ -90,14 +94,23 @@ evas_image_load_file_head_tga(Image_Entry *ie, const char *file, const char *key
    header = (tga_header *)filedata;
    // no unaligned data accessed, so ok
    footer = (tga_footer *)(filedata + (eina_file_size_get(f) - sizeof(tga_footer)));
-   memcpy(&tfooter, footer, sizeof(tga_footer));
+   memcpy((unsigned char *)(&tfooter),
+          (unsigned char *)footer,
+          sizeof(tga_footer));
+   printf("0\n");
    if (!memcmp(tfooter.signature, TGA_SIGNATURE, sizeof(tfooter.signature)))
      {
-        // footer is there and matches. this is a tga file - any problems now
-        // are a corrupt file
-        *error = EVAS_LOAD_ERROR_CORRUPT_FILE;
-        footer_present = 1;
+        if ((tfooter.dot == '.') && (tfooter.null == 0))
+          {
+             // footer is there and matches. this is a tga file - any problems now
+             // are a corrupt file
+             *error = EVAS_LOAD_ERROR_CORRUPT_FILE;
+             footer_present = 1;
+          }
      }
+//   else goto close_file;
+   printf("1\n");
+   
    filedata = (unsigned char *)filedata + sizeof(tga_header);
    vinverted = !(header->descriptor & TGA_DESC_VERTICAL);
    switch (header->imageType)
@@ -117,6 +130,7 @@ evas_image_load_file_head_tga(Image_Entry *ie, const char *file, const char *key
    if (!((bpp == 32) || (bpp == 24) || (bpp == 16) || (bpp == 8)))
      goto close_file;
    if ((bpp == 32) && (header->descriptor & TGA_DESC_ABITS)) hasa = 1;
+   abits = header->descriptor & TGA_DESC_ABITS;
    // don't handle colormapped images
    if ((header->colorMapType) != 0)
      goto close_file;
@@ -136,9 +150,6 @@ evas_image_load_file_head_tga(Image_Entry *ie, const char *file, const char *key
      goto close_file;
    // if descriptor has either of the top 2 bits set... not tga
    if (header->descriptor & 0xc0)
-     goto close_file;
-   // if its not 32bit then it cant have alpha bits set - so invalid
-   if (!((bpp == 32) && (header->descriptor & TGA_DESC_ABITS)))
      goto close_file;
    
    if ((w < 1) || (h < 1) || (w > IMG_MAX_SIZE) || (h > IMG_MAX_SIZE) ||
@@ -173,6 +184,7 @@ evas_image_load_file_data_tga(Image_Entry *ie, const char *file, const char *key
    unsigned int *surface, *dataptr;
    unsigned int  datasize;
    unsigned char *bufptr, *bufend;
+   int abits;
 
    f = eina_file_open(file, EINA_FALSE);
    *error = EVAS_LOAD_ERROR_DOES_NOT_EXIST;
@@ -189,14 +201,20 @@ evas_image_load_file_data_tga(Image_Entry *ie, const char *file, const char *key
    header = (tga_header *)filedata;
    // no unaligned data accessed, so ok
    footer = (tga_footer *)(filedata + (size - sizeof(tga_footer)));
-   memcpy(&tfooter, footer, sizeof(tga_footer));
+   memcpy((unsigned char *)&tfooter,
+          (unsigned char *)footer,
+          sizeof(tga_footer));
    if (!memcmp(tfooter.signature, TGA_SIGNATURE, sizeof(tfooter.signature)))
      {
-        // footer is there and matches. this is a tga file - any problems now
-        // are a corrupt file
-        *error = EVAS_LOAD_ERROR_CORRUPT_FILE;
-        footer_present = 1;
+        if ((tfooter.dot == '.') && (tfooter.null == 0))
+          {
+             // footer is there and matches. this is a tga file - any problems now
+             // are a corrupt file
+             *error = EVAS_LOAD_ERROR_CORRUPT_FILE;
+             footer_present = 1;
+          }
      }
+   
    filedata = (unsigned char *)filedata + sizeof(tga_header);
    vinverted = !(header->descriptor & TGA_DESC_VERTICAL);
    switch (header->imageType)
@@ -216,6 +234,7 @@ evas_image_load_file_data_tga(Image_Entry *ie, const char *file, const char *key
    if (!((bpp == 32) || (bpp == 24) || (bpp == 16) || (bpp == 8)))
      goto close_file;
    if ((bpp == 32) && (header->descriptor & TGA_DESC_ABITS)) hasa = 1;
+   abits = header->descriptor & TGA_DESC_ABITS;
    // don't handle colormapped images
    if ((header->colorMapType) != 0)
      goto close_file;
@@ -235,9 +254,6 @@ evas_image_load_file_data_tga(Image_Entry *ie, const char *file, const char *key
      goto close_file;
    // if descriptor has either of the top 2 bits set... not tga
    if (header->descriptor & 0xc0)
-     goto close_file;
-   // if its not 32bit then it cant have alpha bits set - so invalid
-   if (!((bpp == 32) && (header->descriptor & TGA_DESC_ABITS)))
      goto close_file;
    
    if ((w < 1) || (h < 1) || (w > IMG_MAX_SIZE) || (h > IMG_MAX_SIZE) ||
@@ -280,8 +296,30 @@ evas_image_load_file_data_tga(Image_Entry *ie, const char *file, const char *key
                   for (x = 0; (x < w) && ((bufptr + 4) <= bufend); x++)
                     {
                        if (hasa)
-//                         *dataptr = ARGB_JOIN(255 - bufptr[3], bufptr[2], bufptr[1], bufptr[0]);
-                         *dataptr = ARGB_JOIN(bufptr[3], bufptr[2], bufptr[1], bufptr[0]);
+                         {
+                            int a = bufptr[3];
+                            
+                            switch (abits)
+                              {
+                               case 1:
+                                 a = (a << 7) | (a << 6) | (a << 5) | (a << 4) | (a << 3) | (a << 2) | (a << 1) | (a);
+                               case 2:
+                                 a = (a << 6) | (a << 4) | (a << 2) | (a);
+                               case 3:
+                                 a = (a << 5) | (a << 2) | (a >> 1);
+                               case 4:
+                                 a = (a << 4) | (a);
+                               case 5:
+                                 a = (a << 3) | (a >> 2);
+                               case 6:
+                                 a = (a << 2) | (a >> 4);
+                               case 7:
+                                 a = (a << 1) | (a >> 6);
+                               default:
+                                 break;
+                              }
+                            *dataptr = ARGB_JOIN(a, bufptr[2], bufptr[1], bufptr[0]);
+                         }
                        else
                          *dataptr = ARGB_JOIN(0xff, bufptr[2], bufptr[1], bufptr[0]);
                        dataptr++;
@@ -348,10 +386,28 @@ evas_image_load_file_data_tga(Image_Entry *ie, const char *file, const char *key
                     case 32:
                        if (bufptr < (bufend - 4))
                          {
-                            unsigned char r, g, b, a;
+                            unsigned char r, g, b;
+                            int a = bufptr[3];
                             
-//                            a = 255 - bufptr[3];
-                            a = bufptr[3];
+                            switch (abits)
+                              {
+                               case 1:
+                                 a = (a << 7) | (a << 6) | (a << 5) | (a << 4) | (a << 3) | (a << 2) | (a << 1) | (a);
+                               case 2:
+                                 a = (a << 6) | (a << 4) | (a << 2) | (a);
+                               case 3:
+                                 a = (a << 5) | (a << 2) | (a >> 1);
+                               case 4:
+                                 a = (a << 4) | (a);
+                               case 5:
+                                 a = (a << 3) | (a >> 2);
+                               case 6:
+                                 a = (a << 2) | (a >> 4);
+                               case 7:
+                                 a = (a << 1) | (a >> 6);
+                               default:
+                                 break;
+                              }
                             r = bufptr[2];
                             g = bufptr[1];
                             b = bufptr[0];
