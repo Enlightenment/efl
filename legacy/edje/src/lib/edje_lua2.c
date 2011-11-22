@@ -1686,7 +1686,11 @@ static const struct luaL_reg _elua_evas_funcs [] =
 @page luaref
 @subsubsection evas_hide evas_object:hide()
 
+Hides the object.
 
+Wraps evas_object_hide().
+
+@returns A boolean representing the current visibility.
 */
 static int
 _elua_hide(lua_State *L)                                        // Stack usage [-0, +1, -]
@@ -1703,7 +1707,11 @@ _elua_hide(lua_State *L)                                        // Stack usage [
 @page luaref
 @subsubsection evas_show evas_object:show()
 
+Shows the object.
 
+Wraps evas_object_show().
+
+@returns A boolean representing the current visibility.
 */
 static int
 _elua_show(lua_State *L)                                        // Stack usage [-0, +1, -]
@@ -1718,9 +1726,18 @@ _elua_show(lua_State *L)                                        // Stack usage [
 
 /**
 @page luaref
-@subsubsection evas_visible evas_object:visible()
+@subsubsection evas_visible evas_object:visible(visibility)
 
+Gets (and optionally sets) this objects visibility.
 
+Wraps evas_object_hide() or evas_object_show().
+
+@param visibility The new visibility you want to change it to.
+
+Note that the argument is optional, without it this function just queries the
+current value.
+
+@returns A boolean representing the current visibility.
 */
 static int
 _elua_visible(lua_State *L)                                     // Stack usage [-0, +1, -]
@@ -1748,7 +1765,13 @@ _elua_visible(lua_State *L)                                     // Stack usage [
 @page luaref
 @subsubsection evas_above evas_object:above()
 
+Figure out what, if anything, is above us.
 
+Wraps evas_object_above_get().
+
+Note that it may not return any value.
+
+@returns A reference to the object above this one.
 */
 static int
 _elua_above(lua_State *L)                                       // Stack usage [-3, +4, -]
@@ -1768,7 +1791,13 @@ _elua_above(lua_State *L)                                       // Stack usage [
 @page luaref
 @subsubsection evas_below evas_object:below()
 
+Figure out what, if anything, is below us.
 
+Wraps evas_object_below_get().
+
+Note that it may not return any value.
+
+@returns A reference to the object below this one.
 */
 static int
 _elua_below(lua_State *L)                                       // Stack usage [-3, +4, -]
@@ -1788,7 +1817,11 @@ _elua_below(lua_State *L)                                       // Stack usage [
 @page luaref
 @subsubsection evas_bottom evas_object:bottom()
 
+Figure out what, if anything, is waaaay below us.
 
+Note that it may not return any value.
+
+@returns A reference to the object at the bottom.
 */
 static int
 _elua_bottom(lua_State *L)                                      // Stack usage [-(0|3), +(0|4), -]
@@ -1815,7 +1848,9 @@ _elua_bottom(lua_State *L)                                      // Stack usage [
 @page luaref
 @subsubsection evas_lower evas_object:lower()
 
+Lower this object to the bottom.
 
+Wraps evas_object_lower().
 */
 static int
 _elua_lower(lua_State *L)                                       // Stack usage [-0, +0, -]
@@ -1831,7 +1866,9 @@ _elua_lower(lua_State *L)                                       // Stack usage [
 @page luaref
 @subsubsection evas_raise evas_object:raise()
 
+Raise this object to the top.
 
+Wraps evas_object_raise().
 */
 static int
 _elua_raise(lua_State *L)                                       // Stack usage [-0, +0, -]
@@ -1847,7 +1884,11 @@ _elua_raise(lua_State *L)                                       // Stack usage [
 @page luaref
 @subsubsection evas_top evas_object:top()
 
+Figure out what, if anything, is waaaay above us.
 
+Note that it may not return any value.
+
+@returns A reference to the object at the top.
 */
 static int
 _elua_top(lua_State *L)                                         // Stack usage [-(0|3), +(0|4), -]
@@ -1874,9 +1915,26 @@ _elua_top(lua_State *L)                                         // Stack usage [
 //-------------
 /**
 @page luaref
-@subsubsection evas_geom evas_object:geom()
+@subsubsection evas_geom evas_object:geom(x, y, w, h)
 
+Gets (and optionally sets) this objects geometry.
 
+Wraps evas_object_move() and evas_object_resize.
+
+@param x The new X coordinate.
+@param y The new Y coordinate.
+@param w The new width.
+@param h The new height.
+
+Note that the arguments are optional, without them this function just queries
+the current values.  The arguments can be separate values, or named fields in a
+table.
+
+@return A table with these fields:
+   - integer x: X coordinate.
+   - integer x: Y coordinate.
+   - integer w: Width.
+   - integer w: Height.
 */
 static int
 _elua_geom(lua_State *L)                                        // Stack usage [-(8|12), +(9|13), em]
@@ -1911,9 +1969,22 @@ _elua_geom(lua_State *L)                                        // Stack usage [
 
 /**
 @page luaref
-@subsubsection evas_move evas_object:move()
+@subsubsection evas_move evas_object:move(x, y)
 
+Gets (and optionally sets) this objects position.
 
+Wraps evas_object_move().
+
+@param x The new X coordinate.
+@param y The new Y coordinate.
+
+Note that the arguments are optional, without them this function just queries
+the current values.  The arguments can be separate values, or named fields in a
+table.
+
+@return A table with these fields:
+   - integer x: X coordinate.
+   - integer x: Y coordinate.
 */
 static int
 _elua_move(lua_State *L)                                        // Stack usage [-(4|6), +(5|7), em]
@@ -1944,9 +2015,9 @@ _elua_move(lua_State *L)                                        // Stack usage [
 
 /**
 @page luaref
-@subsubsection evas_pos evas_object:pos()
+@subsubsection evas_pos evas_object:pos(x, y)
 
-
+An alias for evas_object:move().
 */
 static int
 _elua_pos(lua_State *L)                                         // Stack usage [-(4|6), +(5|7), em]
@@ -1956,9 +2027,22 @@ _elua_pos(lua_State *L)                                         // Stack usage [
 
 /**
 @page luaref
-@subsubsection evas_resize evas_object:resize()
+@subsubsection evas_resize evas_object:resize(w, h)
 
+Gets (and optionally sets) this objects size.
 
+Wraps evas_object_resize().
+
+@param w The new width.
+@param h The new height.
+
+Note that the arguments are optional, without them this function just queries
+the current values.  The arguments can be separate values, or named fields in a
+table.
+
+@return A table with these fields:
+   - integer w: Width.
+   - integer w: Height.
 */
 static int
 _elua_resize(lua_State *L)                                      // Stack usage [-(4|6), +(5|7), em]
@@ -1987,7 +2071,7 @@ _elua_resize(lua_State *L)                                      // Stack usage [
 @page luaref
 @subsubsection evas_size evas_object:size()
 
-
+An alias for evas_object:resize().
 */
 static int
 _elua_size(lua_State *L)                                        // Stack usage [-(4|6), +(5|7), em]
@@ -1998,9 +2082,18 @@ _elua_size(lua_State *L)                                        // Stack usage [
 //-------------
 /**
 @page luaref
-@subsubsection evas_clip evas_object:clip()
+@subsubsection evas_clip evas_object:clip(evas_object2)
 
+Get (and optionally set) the object that clips this object.
 
+Note that the argument is optional, without it this function just queries the
+current value.
+
+Wraps evas_object_clip_set().
+
+@param evas_object2 A reference to the object to clip this object with.
+
+@returns A reference to the object clipping this object, if any.
 */
 static int
 _elua_clip(lua_State *L)                                            // Stack usage [-3, +4, -]
@@ -2029,7 +2122,12 @@ _elua_clip(lua_State *L)                                            // Stack usa
 @page luaref
 @subsubsection evas_clipees evas_object:clipees()
 
+Gets the list of objects this objects clips.
 
+Wraps evas_object_clipees_get().
+
+@return A table, that holds all the objects this clips, if any,
+         otherwise an empty table.
 */
 static int
 _elua_clipees(lua_State *L)                                     // Stack usage [-0, +1, me] plus [-5, +5] for each clipee.
@@ -2057,7 +2155,9 @@ _elua_clipees(lua_State *L)                                     // Stack usage [
 @page luaref
 @subsubsection evas_unclip evas_object:unclip()
 
+Remove any clipping on this object.
 
+Wraps evas_object_clip_unset().
 */
 static int
 _elua_unclip(lua_State *L)                                      // Stack usage [-0, +0, -]
@@ -2074,7 +2174,12 @@ _elua_unclip(lua_State *L)                                      // Stack usage [
 @page luaref
 @subsubsection evas_type evas_object:type()
 
+Get the type of this object.  See the documentation of the evas_object_type_get()
+C function for details.
 
+Wraps evas_object_type_get().
+
+@return A string with this objects type in it.
 */
 static int
 _elua_type(lua_State *L)                                        // Stack usage [-0, +1, m]
@@ -2092,9 +2197,19 @@ _elua_type(lua_State *L)                                        // Stack usage [
 //-------------
 /**
 @page luaref
-@subsubsection evas_pass evas_object:pass()
+@subsubsection evas_pass evas_object:pass(pass)
 
+Get (and optionally set) whether this object ignores events, passing them to the
+next object underneath it.
 
+Wraps evas_object_pass_events_set().
+
+@param pass A boolean saying if this object passes events.
+
+Note that the argument is optional, without it this function just queries the
+current value.
+
+@return A boolean saying if this object passes events.
 */
 static int
 _elua_pass(lua_State *L)                                        // Stack usage [-0, +1, -]
@@ -2119,9 +2234,19 @@ _elua_pass(lua_State *L)                                        // Stack usage [
 
 /**
 @page luaref
-@subsubsection evas_precise evas_object:precise()
+@subsubsection evas_precise evas_object:precise(precise)
 
+Get (and optionally set) whether to use precise (usually expensive) point
+collision detection for this object.
 
+Wraps evas_object_precise_is_inside_set().
+
+@param precise A boolean saying if this object is precisely detected.
+
+Note that the argument is optional, without it this function just queries the
+current value.
+
+@return A boolean saying if this object is precisely detected.
 */
 static int
 _elua_precise(lua_State *L)                                     // Stack usage [-0, +1, -]
@@ -2146,9 +2271,18 @@ _elua_precise(lua_State *L)                                     // Stack usage [
 
 /**
 @page luaref
-@subsubsection evas_repeat evas_object:repeat()
+@subsubsection evas_repeat evas_object:repeat(repeat)
 
+Get (and optionally set) whether this object repeats events.
 
+Wraps evas_object_repeat_events_set().
+
+@param repeat A boolean saying if this object repeats events to lower objects.
+
+Note that the argument is optional, without it this function just queries the
+current value.
+
+@return A boolean saying if this object repeats events.
 */
 static int
 _elua_repeat(lua_State *L)                                      // Stack usage [-0, +1, -]
@@ -2174,9 +2308,26 @@ _elua_repeat(lua_State *L)                                      // Stack usage [
 //-------------
 /**
 @page luaref
-@subsubsection evas_colour evas_object:color()
+@subsubsection evas_colour evas_object:color(r, g, b, a)
 
+Gets (and optionally sets) this objects colour.
 
+Wraps evas_object_color_set().
+
+@param r The new red value.
+@param g The new green value.
+@param b The new blue value.
+@param a The new alpha value.
+
+Note that the arguments are optional, without them this function just queries
+the current values.  The arguments can be separate values, or named fields in a
+table.
+
+@return A table with these fields:
+   - integer r: The red value.
+   - integer g: The green value.
+   - integer b: The blue value.
+   - integer a: The alpha value.
 */
 static int
 _elua_color(lua_State *L)                                       // Stack usage [-(8|12), +(9|13), em]
