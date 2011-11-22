@@ -333,3 +333,13 @@
 	* Ecore_Win32, Ecore_WinCE: fix Shift, Control and Alt keys
 	detection
 	* Ecore_Win32: fix "mouse-down inside and mouse-up outside" issue
+
+2011-11-2  Carsten Haitzler (The Rasterman)
+
+        * Fix bug ecore-evas for fb, buffer, sdl back-ends to ensure
+        mouse is in on init (as events wont always give this) and focus
+        is set on show if appropriate if no focus in/out events come
+        from the back-end later
+        * Fix setting override state to only hide if it should be
+        visible at that point in x back end support
+

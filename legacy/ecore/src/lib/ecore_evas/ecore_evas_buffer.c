@@ -101,6 +101,16 @@ _ecore_evas_buffer_shutdown(void)
    return _ecore_evas_init_count;
 }
 
+static void
+_ecore_evas_show(Ecore_Evas *ee)
+{
+   if (ee->engine.buffer.image) return;
+   if (ee->prop.focused) return;
+   ee->prop.focused = 1;
+   evas_focus_in(ee->evas);
+   if (ee->func.fn_focus_in) ee->func.fn_focus_in(ee);
+}
+
 int
 _ecore_evas_buffer_render(Ecore_Evas *ee)
 {
@@ -484,7 +494,7 @@ static Ecore_Evas_Engine_Func _ecore_buffer_engine_func =
      NULL,
      NULL,
      NULL,
-     NULL,
+     _ecore_evas_show,
      NULL,
      NULL,
      NULL,
@@ -629,6 +639,8 @@ ecore_evas_buffer_allocfunc_new(int w, int h, void *(*alloc_func) (void *data, i
    ee->engine.func->fn_render = _ecore_evas_buffer_render;
    _ecore_evas_register(ee);
 
+   evas_event_feed_mouse_in(ee->evas, (unsigned int)((unsigned long long)(ecore_time_get() * 1000.0) & 0xffffffff), NULL);
+   
    return ee;
 #else
    return NULL;

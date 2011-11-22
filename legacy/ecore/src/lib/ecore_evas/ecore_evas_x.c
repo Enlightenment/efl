@@ -1005,7 +1005,8 @@ _ecore_evas_x_event_window_show(void *data __UNUSED__, int type __UNUSED__, void
      }
    if ((first_map_bug) && (!strcmp(ee->driver, "opengl_x11")))
      evas_damage_rectangle_add(ee->evas, 0, 0, ee->w, ee->h);
-   if (ee->visible) return ECORE_CALLBACK_DONE;
+   if (ee->visible) return ECORE_CALLBACK_PASS_ON;
+//   if (ee->visible) return ECORE_CALLBACK_DONE;
 //   printf("SHOW EVENT %p\n", ee);
    ee->visible = 1;
    if (ee->func.fn_show) ee->func.fn_show(ee);
@@ -1022,7 +1023,8 @@ _ecore_evas_x_event_window_hide(void *data __UNUSED__, int type __UNUSED__, void
    ee = ecore_event_window_match(e->win);
    if (!ee) return ECORE_CALLBACK_PASS_ON; /* pass on event */
    if (e->win != ee->prop.window) return ECORE_CALLBACK_PASS_ON;
-   if (!ee->visible) return ECORE_CALLBACK_DONE;
+   if (!ee->visible) return ECORE_CALLBACK_PASS_ON;
+//   if (!ee->visible) return ECORE_CALLBACK_DONE;
 //   printf("HIDE EVENT %p\n", ee);
    ee->visible = 0;
    if (ee->func.fn_hide) ee->func.fn_hide(ee);
@@ -2460,9 +2462,9 @@ static void
 _ecore_evas_x_override_set(Ecore_Evas *ee, int on)
 {
    if (ee->prop.override == on) return;
-   ecore_x_window_hide(ee->prop.window);
+   if (ee->should_be_visible) ecore_x_window_hide(ee->prop.window);
    ecore_x_window_override_set(ee->prop.window, on);
-   if (ee->visible) ecore_x_window_show(ee->prop.window);
+   if (ee->should_be_visible) ecore_x_window_show(ee->prop.window);
    if (ee->prop.focused) ecore_x_window_focus(ee->prop.window);
    ee->prop.override = on;
 }

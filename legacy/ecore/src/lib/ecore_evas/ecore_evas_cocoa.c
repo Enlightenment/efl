@@ -113,10 +113,12 @@ _ecore_evas_cocoa_event_got_focus(void *data __UNUSED__, int type __UNUSED__, vo
 
   ee = _ecore_evas_cocoa_match();
 
-  if (!ee) return 1;
+  if (!ee) return ECORE_CALLBACK_PASS_ON;
   ee->prop.focused = 1;
-
-  return 0;
+  evas_focus_in(ee->evas);
+  if (ee->func.fn_focus_in) ee->func.fn_focus_in(ee);
+   
+  return ECORE_CALLBACK_PASS_ON;
 }
 
 static int
@@ -128,10 +130,12 @@ _ecore_evas_cocoa_event_lost_focus(void *data __UNUSED__, int type __UNUSED__, v
 
   ee = _ecore_evas_cocoa_match();
 
-  if (!ee) return 1;
+  if (!ee) return ECORE_CALLBACK_PASS_ON;
+  evas_focus_out(ee->evas);
   ee->prop.focused = 0;
+  if (ee->func.fn_focus_out) ee->func.fn_focus_out(ee);
 
-  return 0;
+  return ECORE_CALLBACK_PASS_ON;
 }
 
 static int
@@ -149,7 +153,7 @@ _ecore_evas_cocoa_event_video_resize(void *data __UNUSED__, int type __UNUSED__,
    return 0;*/
 
   DBG("Video Resize");
-
+  return ECORE_CALLBACK_PASS_ON;
 }
 
 static int
@@ -163,11 +167,11 @@ _ecore_evas_cocoa_event_video_expose(void *data __UNUSED__, int type __UNUSED__,
 
   ee = _ecore_evas_cocoa_match();
 
-  if (!ee) return 1;
+  if (!ee) return ECORE_CALLBACK_PASS_ON;
   evas_output_size_get(ee->evas, &w, &h);
   evas_damage_rectangle_add(ee->evas, 0, 0, w, h);
 
-  return 0;
+  return ECORE_CALLBACK_PASS_ON;
 }
 
 static int
@@ -187,7 +191,7 @@ _ecore_evas_idle_enter(void *data __UNUSED__)
 	evas_norender(ee->evas);
     }
 
-  return 1;
+  return EINA_TRUE;
 }
 
 static int
@@ -544,6 +548,7 @@ ecore_evas_cocoa_new(Ecore_Cocoa_Window *parent, int x, int y, int w, int h)
   _ecore_evas_register(ee);
   ecore_event_window_register(0, ee, ee->evas, NULL, NULL, NULL, NULL);
   
+  evas_event_feed_mouse_in(ee->evas, (unsigned int)((unsigned long long)(ecore_time_get() * 1000.0) & 0xffffffff), NULL);
   printf("Ecore Evas returned : %p\n", ee);
   return ee;
   

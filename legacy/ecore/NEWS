@@ -88,6 +88,7 @@ Fixes:
     * use current size not requested size when getting geom in ecore-evas
     * ecore_cocoa now handles windows correctly
     * ecore_file_download error handling when ecore_con_url_get fails
+    * focus and mouse-in ininital siate on some ecore-evas back-ends
 
 Improvements:
 
@@ -104,6 +105,7 @@ Improvements:
     * inet_ntop instead of getnameinfo for ecore_con_client_get_ip
     * ecore-con unit tests added
     * ecore-evas fb uses ecore_input_evas now instead of going direct
+    * fix ecore-evas x changing of override support if window not shown yet
 
 Removals:
 

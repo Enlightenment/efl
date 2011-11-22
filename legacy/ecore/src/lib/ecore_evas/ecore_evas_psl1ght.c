@@ -46,8 +46,10 @@ _ecore_evas_psl1ght_event_got_focus(void *data __UNUSED__, int type __UNUSED__, 
    if (!ee) return ECORE_CALLBACK_PASS_ON;
    /* pass on event */
    ee->prop.focused = 1;
-
-   return ECORE_CALLBACK_DONE;
+   evas_focus_in(ee->evas);
+   if (ee->func.fn_focus_in) ee->func.fn_focus_in(ee);
+   
+   return ECORE_CALLBACK_PASS_ON;
 }
 
 static Eina_Bool
@@ -59,9 +61,11 @@ _ecore_evas_psl1ght_event_lost_focus(void *data __UNUSED__, int type __UNUSED__,
 
    if (!ee) return ECORE_CALLBACK_PASS_ON;
    /* pass on event */
+   evas_focus_out(ee->evas);
    ee->prop.focused = 0;
-
-   return ECORE_CALLBACK_DONE;
+   if (ee->func.fn_focus_out) ee->func.fn_focus_out(ee);
+   
+   return ECORE_CALLBACK_PASS_ON;
 }
 
 static Eina_Bool
@@ -77,7 +81,7 @@ _ecore_evas_psl1ght_event_video_expose(void *data __UNUSED__, int type __UNUSED_
    evas_output_size_get(ee->evas, &w, &h);
    evas_damage_rectangle_add(ee->evas, 0, 0, w, h);
 
-   return ECORE_CALLBACK_DONE;
+   return ECORE_CALLBACK_PASS_ON;
 }
 
 static Eina_Bool
@@ -91,7 +95,7 @@ _ecore_evas_psl1ght_event_key_modifiers(void *data __UNUSED__, int type __UNUSED
    if (!ee) return ECORE_CALLBACK_PASS_ON;
    ecore_event_evas_modifier_lock_update(ee->evas, e->modifiers);
 
-   return ECORE_CALLBACK_DONE;
+   return ECORE_CALLBACK_PASS_ON;
 }
 
 static int
@@ -255,6 +259,15 @@ _ecore_evas_move_resize(Ecore_Evas *ee, int x __UNUSED__, int y __UNUSED__, int 
 }
 
 static void
+_ecore_evas_show(Ecore_Evas *ee)
+{
+   if (ee->prop.focused) return;
+   ee->prop.focused = 1;
+   evas_focus_in(ee->evas);
+   if (ee->func.fn_focus_in) ee->func.fn_focus_in(ee);
+}
+
+static void
 _ecore_evas_screen_geometry_get(const Ecore_Evas *ee __UNUSED__, int *x, int *y, int *w, int *h)
 {
    if (x) *x = 0;
@@ -327,7 +340,7 @@ static Ecore_Evas_Engine_Func _ecore_psl1ght_engine_func =
    _ecore_evas_move_resize,
    NULL,
    NULL,
-   NULL,
+   _ecore_evas_show,
    NULL,
    NULL,
    NULL,
@@ -441,13 +454,13 @@ ecore_evas_psl1ght_new(const char *name, int w, int h)
 
    psl1ght_ee = ee;
 
-   evas_event_feed_mouse_in(ee->evas, _ecore_evas_time_get (), NULL);
-   evas_focus_in(ee->evas);
    _ecore_evas_screen_resized (ee);
 
    if (getenv("ECORE_EVAS_PSL1GHT_CURSOR_PATH"))
      ecore_evas_cursor_set(ee, getenv("ECORE_EVAS_PSL1GHT_CURSOR_PATH"), EVAS_LAYER_MAX, 0, 0);
 
+   evas_event_feed_mouse_in(ee->evas, (unsigned int)((unsigned long long)(ecore_time_get() * 1000.0) & 0xffffffff), NULL);
+   
    return ee;
 }
 

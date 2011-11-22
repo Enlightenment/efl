@@ -52,8 +52,9 @@ _ecore_evas_sdl_event_got_focus(void *data __UNUSED__, int type __UNUSED__, void
    if (!ee) return ECORE_CALLBACK_PASS_ON;
    /* pass on event */
    ee->prop.focused = 1;
-
-   return ECORE_CALLBACK_DONE;
+   evas_focus_in(ee->evas);
+   if (ee->func.fn_focus_in) ee->func.fn_focus_in(ee);
+   return ECORE_CALLBACK_PASS_ON;
 }
 
 static Eina_Bool
@@ -66,8 +67,9 @@ _ecore_evas_sdl_event_lost_focus(void *data __UNUSED__, int type __UNUSED__, voi
    if (!ee) return ECORE_CALLBACK_PASS_ON;
    /* pass on event */
    ee->prop.focused = 0;
-
-   return ECORE_CALLBACK_DONE;
+   evas_focus_out(ee->evas);
+   if (ee->func.fn_focus_out) ee->func.fn_focus_out(ee);
+   return ECORE_CALLBACK_PASS_ON;
 }
 
 static Eina_Bool
@@ -82,7 +84,7 @@ _ecore_evas_sdl_event_video_resize(void *data __UNUSED__, int type __UNUSED__, v
    if (!ee) return ECORE_CALLBACK_PASS_ON; /* pass on event */
    evas_output_size_set(ee->evas, e->w, e->h);
 
-   return ECORE_CALLBACK_DONE;
+   return ECORE_CALLBACK_PASS_ON;
 }
 
 static Eina_Bool
@@ -98,7 +100,7 @@ _ecore_evas_sdl_event_video_expose(void *data __UNUSED__, int type __UNUSED__, v
    evas_output_size_get(ee->evas, &w, &h);
    evas_damage_rectangle_add(ee->evas, 0, 0, w, h);
 
-   return ECORE_CALLBACK_DONE;
+   return ECORE_CALLBACK_PASS_ON;
 }
 
 static int
@@ -240,13 +242,20 @@ _ecore_evas_move_resize(Ecore_Evas *ee, int x __UNUSED__, int y __UNUSED__, int 
 }
 
 static void
+_ecore_evas_show(Ecore_Evas *ee)
+{
+   if (ee->prop.focused) return;
+   ee->prop.focused = 1;
+   evas_event_feed_mouse_in(ee->evas, (unsigned int)((unsigned long long)(ecore_time_get() * 1000.0) & 0xffffffff), NULL);
+}
+
+static void
 _ecore_evas_object_cursor_del(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    Ecore_Evas *ee;
 
    ee = data;
-   if (ee)
-     ee->prop.cursor.object = NULL;
+   if (ee) ee->prop.cursor.object = NULL;
 }
 
 static void
@@ -304,7 +313,7 @@ static Ecore_Evas_Engine_Func _ecore_sdl_engine_func =
    _ecore_evas_move_resize,
    NULL,
    NULL,
-   NULL,
+   _ecore_evas_show,
    NULL,
    NULL,
    NULL,
@@ -458,10 +467,6 @@ _ecore_evas_internal_sdl_new(int rmethod, const char* name, int w, int h, int fu
    _ecore_evas_register(ee);
 
    sdl_ee = ee;
-
-   evas_event_feed_mouse_in(ee->evas, (unsigned int)((unsigned long long)(ecore_time_get() * 1000.0) & 0xffffffff), NULL);
-   evas_focus_in(ee->evas);
-
    return ee;
 }
 #endif
