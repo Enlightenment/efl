@@ -122,7 +122,7 @@ _ecore_fb_li_device_event_key(Ecore_Fb_Input_Device *dev, struct input_event *ie
         e->window = (Ecore_Window)dev->window;
         e->event_window = (Ecore_Window)dev->window;
         e->root_window = (Ecore_Window)dev->window;
-        e->same_screen = 0;
+        e->same_screen = 1;
 
         if (iev->value)
           ecore_event_add(ECORE_EVENT_KEY_DOWN, e, NULL, NULL);
@@ -170,7 +170,7 @@ _ecore_fb_li_device_event_key(Ecore_Fb_Input_Device *dev, struct input_event *ie
         e->window = (Ecore_Window)dev->window;
         e->event_window = (Ecore_Window)dev->window;
         e->root_window = (Ecore_Window)dev->window;
-        e->same_screen = 0;
+        e->same_screen = 1;
 
         e->modifiers = 0;
         if (dev->keyboard.shift)
@@ -232,7 +232,7 @@ _ecore_fb_li_device_event_rel(Ecore_Fb_Input_Device *dev, struct input_event *ie
              e->window = (Ecore_Window)dev->window;
              e->event_window = (Ecore_Window)dev->window;
              e->root_window = (Ecore_Window)dev->window;
-             e->same_screen = 0;
+             e->same_screen = 1;
 
              e->modifiers = 0;
              if (dev->keyboard.shift) e->modifiers |= ECORE_EVENT_MODIFIER_SHIFT;
@@ -270,7 +270,7 @@ _ecore_fb_li_device_event_rel(Ecore_Fb_Input_Device *dev, struct input_event *ie
              e->window = (Ecore_Window)dev->window;
              e->event_window = (Ecore_Window)dev->window;
              e->root_window = (Ecore_Window)dev->window;
-             e->same_screen = 0;
+             e->same_screen = 1;
 
              e->modifiers = 0;
              if (dev->keyboard.shift) e->modifiers |= ECORE_EVENT_MODIFIER_SHIFT;
