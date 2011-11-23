@@ -1,10 +1,6 @@
 #ifndef ECORE_FILE_PRIVATE_H_
 #define ECORE_FILE_PRIVATE_H_
 
-#ifndef _FILE_OFFSET_BITS
-# define _FILE_OFFSET_BITS  64
-#endif
-
 #ifdef __linux__
 # include <features.h>
 #endif
