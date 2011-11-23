@@ -506,8 +506,9 @@ add_tests:
 
    if (autorun)
      {
+        size_t alen = strlen(autorun);
         EINA_LIST_FOREACH(tests, l, t)
-          if ((t->name) && (t->cb) && (!strcasecmp(t->name, autorun)))
+          if ((t->name) && (t->cb) && (!strncasecmp(t->name, autorun, alen)))
             t->cb(NULL, NULL, NULL);
 
      }
