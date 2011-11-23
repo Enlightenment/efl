@@ -2965,13 +2965,6 @@ st_collections_group_parts_part_type(void)
                                    "EXTERNAL", EDJE_PART_TYPE_EXTERNAL,
                                    "PROXY", EDJE_PART_TYPE_PROXY,
                                    NULL);
-
-   if (current_part->default_desc || current_part->other.desc_count > 0)
-     {
-        ERR("%s: Error. parse error %s:%i. You can't change the part type in inherited group. (part: %s)",
-            progname, file_in, line - 1, current_part->name);
-        exit(-1);
-     }
 }
 
 /**
