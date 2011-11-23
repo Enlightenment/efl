@@ -7571,6 +7571,15 @@ st_collections_group_programs_program_target(void)
 	char *copy;
 
 	name = parse_str(0);
+        
+	EINA_LIST_FOREACH(ep->targets, l, etw)
+          {
+             if (!strcmp(name, (char*) (etw + 1)))
+               {
+                  free(name);
+                  return;
+               }
+          }
 
 	et = mem_alloc(SZ(Edje_Program_Target) + strlen(name) + 1);
 	ep->targets = eina_list_append(ep->targets, et);
@@ -7599,14 +7608,6 @@ st_collections_group_programs_program_target(void)
 		 progname, file_in, line - 1);
 	     exit(-1);
 	  }
-	EINA_LIST_FOREACH(ep->targets, l, etw)
-	  if (et != etw && strcmp(name, (char*) (etw + 1)) == 0)
-	    {
-	      ERR("%s: Error. parse error %s:%i. "
-		  "target is targetted twice",
-		  progname, file_in, line - 1);
-	      exit(-1);
-	    }
 	free(name);
      }
 }
