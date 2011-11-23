@@ -245,6 +245,7 @@ _ecore_evas_fb_init(Ecore_Evas *ee, int w, int h)
      {
         if (ecore_fb_ts_init())
           {
+             ecore_fb_ts_event_window_set(ee);
              ecore_evas_event_handlers[0]  = ecore_event_handler_add(ECORE_EVENT_MOUSE_BUTTON_DOWN, _ecore_evas_event_mouse_button_down, NULL);
              ecore_evas_event_handlers[1]  = ecore_event_handler_add(ECORE_EVENT_MOUSE_BUTTON_UP, _ecore_evas_event_mouse_button_up, NULL);
              ecore_evas_event_handlers[2]  = ecore_event_handler_add(ECORE_EVENT_MOUSE_MOVE, _ecore_evas_event_mouse_move, NULL);

@@ -74,6 +74,7 @@ struct ts_sample _ecore_fb_tslib_event;
 #endif
 
 static double _ecore_fb_double_click_time = 0.25;
+static void *_ecore_fb_ts_event_window = NULL;
 
 EAPI int
 ecore_fb_ts_init(void)
@@ -131,6 +132,19 @@ ecore_fb_ts_shutdown(void)
    if (_ecore_fb_ts_fd >= 0) close(_ecore_fb_ts_fd);
    _ecore_fb_ts_fd = -1;
    _ecore_fb_ts_fd_handler_handle = NULL;
+   _ecore_fb_ts_event_window = NULL;
+}
+
+EAPI void
+ecore_fb_ts_event_window_set(void *window)
+{
+   _ecore_fb_ts_event_window = window;
+}
+
+EAPI void *
+ecore_fb_ts_event_window_get(void)
+{
+    return _ecore_fb_ts_event_window;
 }
 
 /**
@@ -259,6 +273,10 @@ _ecore_fb_ts_fd_handler(void *data __UNUSED__, Ecore_Fd_Handler *fd_handler __UN
              e->y = y;
              e->root.x = x;
              e->root.y = y;
+             e->window = (Ecore_Window)_ecore_fb_ts_event_window;
+             e->event_window = e->window;
+             e->root_window = e->window;
+             e->same_screen = 1;
              ecore_event_add(ECORE_EVENT_MOUSE_MOVE, e, NULL, NULL);
           }
         if ((pressure) && (!prev_pressure))
@@ -290,6 +308,10 @@ _ecore_fb_ts_fd_handler(void *data __UNUSED__, Ecore_Fd_Handler *fd_handler __UN
                {
                   did_triple = 0;
                }
+             e->window = (Ecore_Window)_ecore_fb_ts_event_window;
+             e->event_window = e->window;
+             e->root_window = e->window;
+             e->same_screen = 1;
              ecore_event_add(ECORE_EVENT_MOUSE_BUTTON_DOWN, e, NULL, NULL);
           }
         else if ((!pressure) && (prev_pressure))
@@ -306,6 +328,10 @@ _ecore_fb_ts_fd_handler(void *data __UNUSED__, Ecore_Fd_Handler *fd_handler __UN
                 e->double_click = 1;
              if (did_triple)
                 e->triple_click = 1;
+             e->window = (Ecore_Window)_ecore_fb_ts_event_window;
+             e->event_window = e->window;
+             e->root_window = e->window;
+             e->same_screen = 1;
              ecore_event_add(ECORE_EVENT_MOUSE_BUTTON_UP, e, NULL, NULL);
           }
         if (did_triple)

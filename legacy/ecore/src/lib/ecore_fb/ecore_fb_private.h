@@ -72,6 +72,8 @@ struct _Ecore_Fb_Input_Device
 /* ecore_fb_ts.c */
 EAPI int    ecore_fb_ts_init(void);
 EAPI void   ecore_fb_ts_shutdown(void);
+EAPI void   ecore_fb_ts_events_window_set(void *window);
+EAPI void  *ecore_fb_ts_events_window_get(void);
 
 /* ecore_fb_vt.c */
 int  ecore_fb_vt_init(void);
