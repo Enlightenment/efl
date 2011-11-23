@@ -2179,7 +2179,7 @@ EAPI Eina_Bool
 elm_win_focus_get(const Evas_Object *obj)
 {
    Elm_Win *win;
-   ELM_CHECK_WIDTYPE(obj, widtype);
+   ELM_CHECK_WIDTYPE(obj, widtype) EINA_FALSE;
    win = elm_widget_data_get(obj);
    if (!win) return EINA_FALSE;
    return ecore_evas_focus_get(win->ee);
