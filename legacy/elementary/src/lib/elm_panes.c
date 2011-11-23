@@ -277,10 +277,10 @@ _content_set_hook(Evas_Object *obj, const char *part, Evas_Object *content)
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return;
    if (part && (!strncmp(part, "elm.swallow.", 12))) part += 12;
-   if (!part || !strcmp(part, "right"))
-     _content_right_set(obj, content);
-   else if(!strcmp(part, "left"))
+   if (!part || !strcmp(part, "left"))
      _content_left_set(obj, content);
+   else if(!strcmp(part, "right"))
+     _content_right_set(obj, content);
 }
 
 static Evas_Object *
@@ -290,10 +290,10 @@ _content_get_hook(const Evas_Object *obj, const char *part)
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return NULL;
    if (part && (!strncmp(part, "elm.swallow.", 12))) part += 12;
-   if (!part || !strcmp(part, "right"))
-     return wd->contents.right;
-   else if (!strcmp(part, "left"))
+   if (!part || !strcmp(part, "left"))
      return wd->contents.left;
+   else if (!strcmp(part, "right"))
+     return wd->contents.right;
    return NULL;
 }
 
@@ -304,10 +304,10 @@ _content_unset_hook(Evas_Object *obj, const char *part)
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return NULL;
    if (part && (!strncmp(part, "elm.swallow.", 12))) part += 12;
-   if (!part || !strcmp(part, "right"))
-     return _content_right_unset(obj);
-   else if (!strcmp(part, "left"))
+   if (!part || !strcmp(part, "left"))
      return _content_left_unset(obj);
+   else if (!strcmp(part, "right"))
+     return _content_right_unset(obj);
    return NULL;
 }
 
