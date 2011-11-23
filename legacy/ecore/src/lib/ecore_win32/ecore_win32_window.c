@@ -107,10 +107,10 @@ ecore_win32_window_internal_new(Ecore_Win32_Window *parent,
    w->min_height  = 0;
    w->max_width   = 32767;
    w->max_height  = 32767;
-   w->base_width  = -1;
-   w->base_height = -1;
-   w->step_width  = -1;
-   w->step_height = -1;
+   w->base_width  = 0;
+   w->base_height = 0;
+   w->step_width  = 1;
+   w->step_height = 1;
 
    w->state.iconified         = 0;
    w->state.modal             = 0;
