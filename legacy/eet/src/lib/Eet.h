@@ -136,7 +136,7 @@
    @author Mathieu Taillefumier <mathieu.taillefumier@@free.fr>
    @author Albin "Lutin" Tonnerre <albin.tonnerre@@gmail.com>
    @author Adam Simpkins <adam@@adamsimpkins.net>
-   @author Mike Blumenkrantz <mike@zentific.com>
+   @author Mike Blumenkrantz <michael.blumenkrantz@gmail.com>
 
    Please contact <enlightenment-devel@lists.sourceforge.net> to get in
    contact with the developers and maintainers.

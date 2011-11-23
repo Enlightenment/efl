@@ -90,7 +90,7 @@
    @author Samsung SAIT
    @author Nicolas Aguirre <aguirre.nicolas@gmail.com>
    @author Brett Nash <nash@nash.id.au>
-   @author Mike Blumenkrantz <mike@zentific.com>
+   @author Mike Blumenkrantz <michael.blumenkrantz@gmail.com>
    @author Leif Middelschulte <leif.middelschulte@gmail.com>
    @author Mike McCormack <mj.mccormack@samsung.com>
    @author Sangho Park <gouache95@gmail.com>
