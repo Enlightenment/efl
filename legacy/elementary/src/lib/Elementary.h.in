@@ -254,7 +254,7 @@ ELM_MAIN()
 @author Michael Bouchaud <michael.bouchaud@@gmail.com>
 @author Jonathan Atton (Watchwolf) <jonathan.atton@@gmail.com>
 @author Brian Wang <brian.wang.0721@@gmail.com>
-@author Mike Blumenkrantz (zmike) <mike@@zentific.com>
+@author Mike Blumenkrantz (discomfitor/zmike) <michael.blumenkrantz@@gmail.com>
 @author Samsung Electronics <tbd>
 @author Samsung SAIT <tbd>
 @author Brett Nash <nash@@nash.id.au>
@@ -284,13 +284,16 @@ ELM_MAIN()
 @author Shinwoo Kim <kimcinoo@@gmail.com>
 @author Govindaraju SM <govi.sm@@samsung.com> <govism@@gmail.com>
 @author Prince Kumar Dubey <prince.dubey@@samsung.com> <prince.dubey@@gmail.com>
-@author Sung W. Park <sungwoo@gmail.com>
-@author Thierry el Borgi <thierry@substantiel.fr>
-@author Shilpa Singh <shilpa.singh@samsung.com> <shilpasingh.o@gmail.com>
-@author Chanwook Jung <joey.jung@samsung.com>
-@author Hyoyoung Chang <hyoyoung.chang@samsung.com>
-@author Guillaume "Kuri" Friloux <guillaume.friloux@asp64.com>
-@author Kim Yunhan <spbear@gmail.com>
+@author Sung W. Park <sungwoo@@gmail.com>
+@author Thierry el Borgi <thierry@@substantiel.fr>
+@author Shilpa Singh <shilpa.singh@@samsung.com> <shilpasingh.o@@gmail.com>
+@author Chanwook Jung <joey.jung@@samsung.com>
+@author Hyoyoung Chang <hyoyoung.chang@@samsung.com>
+@author Guillaume "Kuri" Friloux <guillaume.friloux@@asp64.com>
+@author Kim Yunhan <spbear@@gmail.com>
+@author Bluezery <ohpowel@@gmail.com>
+@author Nicolas Aguirre <aguirre.nicolas@@gmail.com>
+@author Sanjeev BA <iamsanjeev@@gmail.com>
 
 Please contact <enlightenment-devel@lists.sourceforge.net> to get in
 contact with the developers and maintainers.
