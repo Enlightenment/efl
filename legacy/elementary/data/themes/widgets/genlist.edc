@@ -8722,7 +8722,7 @@ group { name: "elm/genlist/item/mode/default";
          source:  "elm";
          action:  STATE_SET "slide" 0.0;
          target:  "elm.swallow.origin";
-         transition: ACCELERATE 0.5;
+         transition: ACCELERATE 0.5 CURRENT;
          after:   "unblock_event";
       }
       program {
@@ -8742,7 +8742,7 @@ group { name: "elm/genlist/item/mode/default";
          name:    "slide_left2";
          action:  STATE_SET "default" 0.0;
          target:  "elm.swallow.origin";
-         transition: DECELERATE 0.5;
+         transition: DECELERATE 0.5 CURRENT;
          after:   "slide_left_finished";
       }
       program {
