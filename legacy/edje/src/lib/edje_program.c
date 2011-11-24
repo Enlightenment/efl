@@ -1,6 +1,6 @@
 #include "edje_private.h"
 
-static void _edje_emit_cb(Edje *ed, const char *sig, const char *src, Edje_Message_Signal_Data *data);
+static void _edje_emit_cb(Edje *ed, const char *sig, const char *src, Edje_Message_Signal_Data *data, Eina_Bool prop);
 static void _edje_param_copy(Edje_Real_Part *src_part, const char *src_param, Edje_Real_Part *dst_part, const char *dst_param);
 static void _edje_param_set(Edje_Real_Part *part, const char *param, const char *value);
 
@@ -23,6 +23,31 @@ EAPI double
 edje_frametime_get(void)
 {
    return ecore_animator_frametime_get();
+}
+
+void
+edje_object_propagate_callback_add(Evas_Object *obj, void (*func) (void *data, Evas_Object *o, const char *emission, const char *source), void *data)
+{
+   Edje *ed;
+   Edje_Signal_Callback *escb;
+
+   ed = _edje_fetch(obj);
+   if (!ed) return;
+   if (ed->delete_me) return;
+   escb = calloc(1, sizeof(Edje_Signal_Callback));
+   escb->propagate = EINA_TRUE;
+   escb->signal = eina_stringshare_add("*");
+   escb->source = eina_stringshare_add("*");
+   escb->func = func;
+   escb->data = data;
+   ed->callbacks = eina_list_append(ed->callbacks, escb);
+   if (ed->walking_callbacks)
+     {
+	escb->just_added = 1;
+	ed->just_added_callbacks = 1;
+     }
+   else
+     _edje_callbacks_patterns_clean(ed);
 }
 
 EAPI void
@@ -1092,7 +1117,7 @@ _edje_callbacks_patterns_init(Edje *ed)
 /* FIXME: what if we delete the evas object??? */
 void
 _edje_emit_handle(Edje *ed, const char *sig, const char *src,
-      Edje_Message_Signal_Data *sdata)
+                  Edje_Message_Signal_Data *sdata, Eina_Bool prop)
 {
    if (ed->delete_me) return;
    if (!sig) sig = "";
@@ -1187,7 +1212,8 @@ _edje_emit_handle(Edje *ed, const char *sig, const char *src,
 						 src,
 						 ed->patterns.programs.u.programs.globing,
 						 _edje_glob_callback,
-						 &data) == 0)
+						 &data,
+                                                 prop) == 0)
 		      goto break_prog;
 
 		  match = edje_match_signal_source_hash_get(sig, src,
@@ -1214,7 +1240,7 @@ _edje_emit_handle(Edje *ed, const char *sig, const char *src,
 	       }
 #endif
 	  }
-	_edje_emit_cb(ed, sig, src, sdata);
+	_edje_emit_cb(ed, sig, src, sdata, prop);
 	if (_edje_block_break(ed))
 	  {
 	     goto break_prog;
@@ -1237,7 +1263,7 @@ edje_object_signal_callback_extra_data_get(void)
 
 /* FIXME: what if we delete the evas object??? */
 static void
-_edje_emit_cb(Edje *ed, const char *sig, const char *src, Edje_Message_Signal_Data *data)
+_edje_emit_cb(Edje *ed, const char *sig, const char *src, Edje_Message_Signal_Data *data, Eina_Bool prop)
 {
    Eina_List            *l;
 
@@ -1266,7 +1292,8 @@ _edje_emit_cb(Edje *ed, const char *sig, const char *src, Edje_Message_Signal_Da
 				       sig,
 				       src,
 				       ed->patterns.callbacks.u.callbacks.globing,
-				       ed);
+				       ed,
+                                       prop);
 
         if (!r)
           goto break_prog;
@@ -1274,12 +1301,15 @@ _edje_emit_cb(Edje *ed, const char *sig, const char *src, Edje_Message_Signal_Da
 	match = edje_match_signal_source_hash_get(sig, src,
 						  ed->patterns.callbacks.exact_match);
 	EINA_LIST_FOREACH(match, l2, escb)
-	  if ((!escb->just_added) && (!escb->delete_me))
-	    {
-	       escb->func(escb->data, ed->obj, sig, src);
-	       if (_edje_block_break(ed))
-		 goto break_prog;
-	    }
+          {
+             if ((prop) && (escb->propagate)) continue;
+             if ((!escb->just_added) && (!escb->delete_me))
+               {
+                  escb->func(escb->data, ed->obj, sig, src);
+                  if (_edje_block_break(ed))
+                    goto break_prog;
+               }
+          }
      }
    break_prog:
 

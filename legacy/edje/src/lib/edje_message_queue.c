@@ -1,5 +1,7 @@
 #include "edje_private.h"
 
+static void _edje_object_message_popornot_send(Evas_Object *obj, Edje_Message_Type type, int id, void *msg, Eina_Bool prop);
+
 static int _injob = 0;
 static Ecore_Job *_job = NULL;
 static Ecore_Timer *_job_loss_timer = NULL;
@@ -13,8 +15,8 @@ static int tmp_msgq_restart = 0;
  *                                   API                                      *
  *============================================================================*/
 
-EAPI void
-edje_object_message_send(Evas_Object *obj, Edje_Message_Type type, int id, void *msg)
+static void
+_edje_object_message_popornot_send(Evas_Object *obj, Edje_Message_Type type, int id, void *msg, Eina_Bool prop)
 {
    Edje *ed;
    Eina_List *l;
@@ -22,11 +24,17 @@ edje_object_message_send(Evas_Object *obj, Edje_Message_Type type, int id, void 
 
    ed = _edje_fetch(obj);
    if (!ed) return;
-   _edje_message_send(ed, EDJE_QUEUE_SCRIPT, type, id, msg);
+   _edje_message_propornot_send(ed, EDJE_QUEUE_SCRIPT, type, id, msg, prop);
    EINA_LIST_FOREACH(ed->subobjs, l, o)
      {
-        edje_object_message_send(o, type, id, msg);
+        _edje_object_message_popornot_send(o, type, id, msg, EINA_TRUE);
      }
+}
+
+EAPI void
+edje_object_message_send(Evas_Object *obj, Edje_Message_Type type, int id, void *msg)
+{
+   _edje_object_message_popornot_send(obj, type, id, msg, EINA_FALSE);
 }
 
 
@@ -339,7 +347,7 @@ _edje_message_free(Edje_Message *em)
 }
 
 void
-_edje_message_send(Edje *ed, Edje_Queue queue, Edje_Message_Type type, int id, void *emsg)
+_edje_message_propornot_send(Edje *ed, Edje_Queue queue, Edje_Message_Type type, int id, void *emsg, Eina_Bool prop)
 {
    /* FIXME: check all malloc & strdup fails and gracefully unroll and exit */
    Edje_Message *em;
@@ -348,6 +356,7 @@ _edje_message_send(Edje *ed, Edje_Queue queue, Edje_Message_Type type, int id, v
 
    em = _edje_message_new(ed, queue, type, id);
    if (!em) return;
+   em->propagated = prop;
    if (_job)
      {
         ecore_job_del(_job);
@@ -355,7 +364,8 @@ _edje_message_send(Edje *ed, Edje_Queue queue, Edje_Message_Type type, int id, v
      }
    if (_injob > 0)
      {
-        _job_loss_timer = ecore_timer_add(0.01, _edje_job_loss_timer, NULL);
+        if (_job_loss_timer) ecore_timer_del(_job_loss_timer);
+        _job_loss_timer = ecore_timer_add(0.001, _edje_job_loss_timer, NULL);
      }
    else
      {
@@ -513,6 +523,12 @@ _edje_message_send(Edje *ed, Edje_Queue queue, Edje_Message_Type type, int id, v
 }
 
 void
+_edje_message_send(Edje *ed, Edje_Queue queue, Edje_Message_Type type, int id, void *emsg)
+{
+   _edje_message_propornot_send(ed, queue, type, id, emsg, EINA_FALSE);
+}
+
+void
 _edje_message_parameters_push(Edje_Message *em)
 {
    int i;
@@ -640,7 +656,8 @@ _edje_message_process(Edje_Message *em)
 	_edje_emit_handle(em->edje,
 			  ((Edje_Message_Signal *)em->msg)->sig,
 			  ((Edje_Message_Signal *)em->msg)->src,
-			  ((Edje_Message_Signal *)em->msg)->data);
+			  ((Edje_Message_Signal *)em->msg)->data,
+			  em->propagated);
 	return;
      }
    /* if this has been queued up for the app then just call the callback */
