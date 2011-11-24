@@ -10465,7 +10465,7 @@ extern "C" {
 
 /**
  * @def elm_layout_icon_set
- * Convienience macro to set the icon object in a layout that follows the
+ * Convenience macro to set the icon object in a layout that follows the
  * Elementary naming convention for its parts.
  *
  * @ingroup Layout
@@ -10782,7 +10782,7 @@ extern "C" {
     * @brief Sets the target object for the hover.
     *
     * @param obj The hover object
-    * @param target The object to center the hover onto. The hover
+    * @param target The object to center the hover onto.
     *
     * This function will cause the hover to be centered on the target object.
     */
@@ -10791,7 +10791,7 @@ extern "C" {
     * @brief Gets the target object for the hover.
     *
     * @param obj The hover object
-    * @param parent The object to locate the hover over.
+    * @return The target object for the hover.
     *
     * @see elm_hover_target_set()
     */
@@ -10835,9 +10835,9 @@ extern "C" {
     * "smart". This is a special placement hint and its use case
     * independs of the calculations coming from
     * elm_hover_best_content_location_get(). Its use is for cases when
-    * one desires only one hover content, but with a dinamic special
+    * one desires only one hover content, but with a dynamic special
     * placement within the hover area. The content's geometry, whenever
-    * it changes, will be used to decide on a best location not
+    * it changes, will be used to decide on a best location, not
     * extrapolating the hover's parent object view to show it in (still
     * being the hover's target determinant of its medium part -- move and
     * resize it to simulate finger sizes, for example). If one of the
@@ -11002,8 +11002,8 @@ extern "C" {
     * @li full: Items will be placed between the descent and ascent, or the
     * lowest point in the line and its highest.
     *
-    * The next image shows different configurations of items and how they
-    * are the previously mentioned options affect their sizes. In all cases,
+    * The next image shows different configurations of items and how
+    * the previously mentioned options affect their sizes. In all cases,
     * the green line indicates the ascent, blue for the baseline and red for
     * the descent.
     *
