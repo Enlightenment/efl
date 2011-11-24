@@ -306,7 +306,6 @@ _set_vis_guidetext(Evas_Object *obj)
      }
    else
      {
-        Evas_Coord en_width = 0;
         evas_object_hide(wd->guidetext);
         elm_box_pack_end(wd->box, wd->entry);
         evas_object_show(wd->entry);
@@ -731,14 +730,12 @@ static void
 _resize_button(Evas_Object *btn, Evas_Coord *realw, Evas_Coord *vieww)
 {
    Evas_Coord rw, vw;
-   Evas_Coord w_text, h_btn, padding_outer, padding_inner;
+   Evas_Coord w_text, h_btn, padding_outer, padding_inner = 0;
    Evas_Coord w_btn = 0, button_max_width = 0;
    const char *size_str;
 
    size_str = edje_object_data_get(btn, "button_max_size");
    if (size_str) button_max_width = (Evas_Coord)atoi(size_str);
-
-   const char *button_text = edje_object_part_text_get(btn, "elm.btn.text");
 
    // decide the size of button
    edje_object_part_geometry_get(btn, "elm.base", NULL, NULL, NULL, &h_btn);
@@ -769,7 +766,7 @@ _add_button_item(Evas_Object *obj, const char *str, Multibuttonentry_Pos pos, co
    Eina_List *l;
 
    Evas_Object *btn;
-   Evas_Coord width = -1, height = -1, h_btn = -1;
+   Evas_Coord width = -1, height = -1;
    char *str_utf8 = NULL;
 
    Widget_Data *wd = elm_widget_data_get(obj);
@@ -1061,7 +1058,7 @@ _entry_changed_cb(void *data, Evas_Object *obj __UNUSED__, void *event_info __UN
 }
 
 static void
-_entry_resized_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info)
+_entry_resized_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    Evas_Coord en_x, en_y, en_w, en_h;
    Evas_Coord bx_x, bx_y;
@@ -1529,10 +1526,12 @@ elm_multibuttonentry_item_select(Elm_Multibuttonentry_Item *item, Eina_Bool sele
    EINA_LIST_FOREACH(wd->items, l, _item)
      {
         if (_item == item)
-          if(selected)
-            _select_button(item->multibuttonentry, item->button);
-          else
-            _select_button(item->multibuttonentry, NULL);
+          {
+             if (selected)
+               _select_button(item->multibuttonentry, item->button);
+             else
+               _select_button(item->multibuttonentry, NULL);
+          }
      }
 }
 
