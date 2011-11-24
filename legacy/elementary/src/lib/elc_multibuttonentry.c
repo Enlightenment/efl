@@ -97,7 +97,7 @@ static void _del_button_item(Elm_Multibuttonentry_Item *item);
 static void _select_button(Evas_Object *obj, Evas_Object *btn);
 static Elm_Multibuttonentry_Item *_add_button_item(Evas_Object *obj, const char *str, Multibuttonentry_Pos pos,
                                                    const Elm_Multibuttonentry_Item *reference, void *data);
-static void _add_button(Evas_Object *obj, char *str);
+static void _add_button(Evas_Object *obj, const char *str);
 static void _evas_mbe_key_up_cb(void *data, Evas *e, Evas_Object *obj, void *event_info);
 static void _entry_changed_cb(void *data, Evas_Object *obj, void *event_info);
 static void _entry_key_up_cb(void *data, Evas *e, Evas_Object *obj, void *event_info);
@@ -904,12 +904,11 @@ _add_button_item(Evas_Object *obj, const char *str, Multibuttonentry_Pos pos, co
 }
 
 static void
-_add_button(Evas_Object *obj, char *str)
+_add_button(Evas_Object *obj, const char *str)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return;
 
-   // add button
    _add_button_item(obj, str, MULTIBUTTONENTRY_POS_END, NULL, NULL);
 }
 
@@ -984,12 +983,11 @@ _entry_key_up_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, vo
 {
    Widget_Data *wd = elm_widget_data_get(data);
    Evas_Event_Key_Up *ev = (Evas_Event_Key_Up *) event_info;
-   static char str[MAX_STR];
+   const char *str;
 
    if (!wd || !wd->base || !wd->box) return;
 
-   strncpy(str, elm_entry_entry_get(wd->entry), MAX_STR);
-   str[MAX_STR - 1] = 0;
+   str = elm_entry_entry_get(wd->entry);
 
    if ((strcmp(str, "") != 0) && (strcmp(ev->keyname, "KP_Enter") == 0 || strcmp(ev->keyname, "Return") == 0 ))
      {
@@ -1028,13 +1026,11 @@ static void
 _entry_focus_out_cb(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    Widget_Data *wd = elm_widget_data_get(data);
+   const char *str;
+
    if (!wd) return;
 
-   static char str[MAX_STR];
-
-   strncpy(str,elm_entry_entry_get(wd->entry), MAX_STR);
-   str[MAX_STR -1] = 0;
-
+   str = elm_entry_entry_get(wd->entry);
    if (strlen(str))
      _add_button(data, str);
 }
@@ -1043,14 +1039,12 @@ static void
 _entry_changed_cb(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    Widget_Data *wd = elm_widget_data_get(data);
+   const char *str;
+
    if (!wd) return;
 
-   static char str[MAX_STR];
-
-   strncpy(str, elm_entry_entry_get(wd->entry), MAX_STR);
-   str[MAX_STR -1] = 0;
-
-   wd->n_str =  strlen(str);
+   str = elm_entry_entry_get(wd->entry);
+   wd->n_str = strlen(str);
 }
 
 static void
