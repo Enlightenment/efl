@@ -239,9 +239,6 @@ _elm_tooltip_reconfigure(Elm_Tooltip *tt)
    Evas_Coord eminw, eminh, ominw, ominh;
    double rel_x, rel_y;
    Eina_Bool inside_eventarea;
-#ifdef HAVE_ELEMENTARY_X
-   Ecore_X_Window xwin = 0;
-#endif
 
    _elm_tooltip_reconfigure_job_stop(tt);
 
@@ -359,10 +356,12 @@ _elm_tooltip_reconfigure(Elm_Tooltip *tt)
    if (tt->tt_win)
      {
         int x, y;
+        Evas_Object *win = elm_object_top_widget_get(tt->owner);
 #ifdef HAVE_ELEMENTARY_X
+        Ecore_X_Window xwin = elm_win_xwindow_get(win);
         ecore_x_pointer_xy_get(xwin, &px, &py);
 #endif
-        elm_win_screen_position_get(elm_object_top_widget_get(tt->owner), &x, &y);
+        elm_win_screen_position_get(win, &x, &y);
         ox += x;
         oy += y;
      }
