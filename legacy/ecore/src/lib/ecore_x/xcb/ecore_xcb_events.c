@@ -2342,7 +2342,7 @@ _ecore_xcb_event_key_press(xcb_generic_event_t *event)
    xcb_keycode_t keycode = 0;
    xcb_key_press_event_t *xevent;
    char *keyname = NULL, *key = NULL;
-   char *compose = NULL, *tmp = NULL;
+   char *compose = NULL;
    char compose_buffer[256];
    int val = 0;
 
@@ -2372,7 +2372,6 @@ _ecore_xcb_event_key_press(xcb_generic_event_t *event)
         if (!compose)
           ERR("Ecore_X cannot convert input key string '%s' to UTF-8. "
               "Is Eina built with iconv support?", compose_buffer);
-        tmp = compose;
      }
 
    key = _ecore_xcb_keymap_keysym_to_string(sym);
@@ -2404,10 +2403,6 @@ _ecore_xcb_event_key_press(xcb_generic_event_t *event)
         ecore_event_add(ECORE_EVENT_KEY_DOWN, e, NULL, NULL);
      }
    _ecore_xcb_event_last_time = xevent->time;
-   
-on_error:
-   if (tmp)
-     free(tmp);
 }
 
 static void
