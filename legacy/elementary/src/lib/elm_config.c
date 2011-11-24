@@ -1311,8 +1311,6 @@ _env_get(void)
    s = getenv("ELM_SCALE");
    if (s) _elm_config->scale = atof(s);
 
-   _elm_config->finger_size =
-     (double)_elm_config->finger_size * _elm_config->scale;
    s = getenv("ELM_FINGER_SIZE");
    if (s) _elm_config->finger_size = atoi(s);
 
