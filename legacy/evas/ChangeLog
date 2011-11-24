@@ -510,3 +510,8 @@
         * TGA loader gets fixed alpha decode - real life tga's have
         proper alpha values. also reduce false positive tga file
         detection
+
+2011-11-24  Carsten Haitzler (The Rasterman)
+
+        * Fix repeat event inheritance from parent smart just like
+        pass events are inherited. This was inconsistent.
