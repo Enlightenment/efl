@@ -353,11 +353,13 @@ _elm_tooltip_reconfigure(Elm_Tooltip *tt)
    if (ominh < 1) ominh = 10; /* at least it is noticeable */
 
    edje_object_size_min_restricted_calc(tt->tooltip, &tw, &th, ominw, ominh);
+   TTDBG("TTSIZE:  tw=%d,th=%d,ominw=%d,ominh=%d\n", tw, th, ominw, ominh);
 
    if (tt->tt_win)
-     elm_win_screen_size_get(elm_object_top_widget_get(tt->owner), &cw, &ch, NULL, NULL);
+     elm_win_screen_size_get(elm_object_top_widget_get(tt->owner), NULL, NULL, &cw, &ch);
    if (!cw)
      evas_output_size_get(tt->tt_evas ?: tt->evas, &cw, &ch);
+   TTDBG("SCREEN:  cw=%d,ch=%d\n", cw, ch);
 
    evas_object_geometry_get(tt->eventarea, &ox, &oy, &ow, &oh);
    TTDBG("EVENTAREA:  ox=%d,oy=%d,ow=%d,oh=%d\n", ox, oy, ow, oh);
@@ -383,32 +385,38 @@ _elm_tooltip_reconfigure(Elm_Tooltip *tt)
                        (px <= ox + ow) && (py <= oy + oh));
    if (inside_eventarea)
      {
+        /* try to position bottom right corner at pointer */
         tx = px - tw;
         ty = py - th;
+        TTDBG("INIT (EVENTAREA)\n");
      }
    else
      {
+        /* try centered on middle of eventarea */
         tx = ox + (ow / 2) - (tw / 2);
         if (0 > (th - oy - oh)) ty = oy + th;
         else ty = oy - oh;
+        TTDBG("INIT (INTERPRETED)\n");
      }
    TTDBG("ADJUST (POINTER):  tx=%d,ty=%d\n", tx, ty);
    if (tx < 0)
      {
+        /* if we're offscreen, try to flip over the Y axis */
         if (abs((tx + 2 * tw) - cw) < abs(tx))
           tx += tw;
      }
-   else if ((tx > px) && (px > tx))
+   else if ((tx > px) && (px > tw))
      {
         if (tx + tw < cw)
           tx += tw;
      }
    if (ty < 0)
      {
+        /* if we're offscreen, try to flip over the X axis */
         if (abs((ty + 2 * th) - ch) < abs(ty))
           ty += th;
      }
-   else if ((ty > py) && (py > ty))
+   else if ((ty > py) && (py > th))
      {
         if (ty + th < ch)
           ty += th;
@@ -439,6 +447,11 @@ _elm_tooltip_reconfigure(Elm_Tooltip *tt)
    else if (ty < 0) ty -= tt->pad.by;
    else if (ty > ch) ty += tt->pad.by;
    TTDBG("PAD (BORDER):  tx=%d,ty=%d\n", tx, ty);
+   if ((tx < 0) || (ty < 0))
+     {
+        TTDBG("POSITIONING FAILED! THIS IS A BUG SOMEWHERE!\n");
+        return;
+     }
    evas_object_move(tt->tt_win ? : tt->tooltip, tx, ty);
    evas_object_resize(tt->tt_win ? : tt->tooltip, tw, th);
    evas_object_show(tt->tooltip);
