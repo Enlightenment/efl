@@ -1,85 +1,81 @@
 #include <Elementary.h>
 #include "elm_priv.h"
 
-/**
- * @defgroup Multibuttonentry Multibuttonentry
- * @ingroup Elementary
- *
- * This is a Multibuttonentry.
- */
-
 #define MAX_STR 256
 #define MIN_W_ENTRY 10
 
 typedef enum _Multibuttonentry_Pos
-{
-   MULTIBUTTONENTRY_POS_START,
-   MULTIBUTTONENTRY_POS_END,
-   MULTIBUTTONENTRY_POS_BEFORE,
-   MULTIBUTTONENTRY_POS_AFTER,
-   MULTIBUTTONENTRY_POS_NUM
-} Multibuttonentry_Pos;
+  {
+     MULTIBUTTONENTRY_POS_START,
+     MULTIBUTTONENTRY_POS_END,
+     MULTIBUTTONENTRY_POS_BEFORE,
+     MULTIBUTTONENTRY_POS_AFTER,
+     MULTIBUTTONENTRY_POS_NUM
+  } Multibuttonentry_Pos;
 
 typedef enum _Multibuttonentry_Button_State
-{
-   MULTIBUTTONENTRY_BUTTON_STATE_DEFAULT,
-   MULTIBUTTONENTRY_BUTTON_STATE_SELECTED,
-   MULTIBUTTONENTRY_BUTTON_STATE_NUM
-} Multibuttonentry_Button_State;
+  {
+     MULTIBUTTONENTRY_BUTTON_STATE_DEFAULT,
+     MULTIBUTTONENTRY_BUTTON_STATE_SELECTED,
+     MULTIBUTTONENTRY_BUTTON_STATE_NUM
+  } Multibuttonentry_Button_State;
 
-typedef enum _MultiButtonEntry_Closed_Button_Type {
-   MULTIBUTTONENTRY_CLOSED_IMAGE,
-   MULTIBUTTONENTRY_CLOSED_LABEL
-} MultiButtonEntry_Closed_Button_Type;
+typedef enum _MultiButtonEntry_Closed_Button_Type
+  {
+     MULTIBUTTONENTRY_CLOSED_IMAGE,
+     MULTIBUTTONENTRY_CLOSED_LABEL
+  } MultiButtonEntry_Closed_Button_Type;
 
 typedef enum _Multibuttonentry_View_State
-{
-   MULTIBUTTONENTRY_VIEW_NONE,
-   MULTIBUTTONENTRY_VIEW_GUIDETEXT,
-   MULTIBUTTONENTRY_VIEW_ENTRY,
-   MULTIBUTTONENTRY_VIEW_SHRINK
-} Multibuttonentry_View_State;
+  {
+     MULTIBUTTONENTRY_VIEW_NONE,
+     MULTIBUTTONENTRY_VIEW_GUIDETEXT,
+     MULTIBUTTONENTRY_VIEW_ENTRY,
+     MULTIBUTTONENTRY_VIEW_SHRINK
+  } Multibuttonentry_View_State;
 
-struct _Multibuttonentry_Item {
-   Evas_Object *multibuttonentry;
-   Evas_Object *button;
-   void *data;
-   Evas_Coord vw, rw; // vw: visual width, real width
-   Eina_Bool  visible: 1;
-};
+struct _Multibuttonentry_Item
+  {
+     Evas_Object *multibuttonentry;
+     Evas_Object *button;
+     void *data;
+     Evas_Coord vw, rw; // vw: visual width, real width
+     Eina_Bool  visible: 1;
+  };
 
 typedef struct _Elm_Multibuttonentry_Item_Filter
-{
-   Elm_Multibuttonentry_Item_Filter_callback callback_func;
-   void *data;
-}Elm_Multibuttonentry_Item_Filter;
+  {
+     Elm_Multibuttonentry_Item_Filter_callback callback_func;
+     void *data;
+  } Elm_Multibuttonentry_Item_Filter;
 
 typedef struct _Widget_Data Widget_Data;
-struct _Widget_Data {
-   Evas_Object *base;
-   Evas_Object *box;
-   Evas_Object *entry;
-   Evas_Object *label;
-   Evas_Object *guidetext;
-   Evas_Object *end;   // used to represent the total number of invisible buttons
+struct _Widget_Data
+  {
+     Evas_Object *base;
+     Evas_Object *box;
+     Evas_Object *entry;
+     Evas_Object *label;
+     Evas_Object *guidetext;
+     Evas_Object *end;   // used to represent the total number of invisible buttons
 
-   Evas_Object *rect_for_end;
-   MultiButtonEntry_Closed_Button_Type end_type;
+     Evas_Object *rect_for_end;
+     MultiButtonEntry_Closed_Button_Type end_type;
 
-   Eina_List *items;
-   Eina_List *current;
-   Eina_List *filter_list;
+     Eina_List *items;
+     Eina_List *current;
+     Eina_List *filter_list;
 
-   int n_str;
-   Multibuttonentry_View_State view_state;
+     int n_str;
+     Multibuttonentry_View_State view_state;
 
-   Evas_Coord w_box, h_box;
-   int  shrink;
-   Eina_Bool focused: 1;
-   Eina_Bool last_btn_select: 1;
-   Elm_Multibuttonentry_Item_Filter_callback add_callback;
-   void *add_callback_data;
-};
+     Evas_Coord w_box, h_box;
+     int  shrink;
+     Eina_Bool focused: 1;
+     Eina_Bool last_btn_select: 1;
+     Elm_Multibuttonentry_Item_Filter_callback add_callback;
+     void *add_callback_data;
+  };
 
 static const char *widtype = NULL;
 static void _del_hook(Evas_Object *obj);
@@ -92,14 +88,15 @@ static void _resize_cb(void *data, Evas *evas, Evas_Object *obj, void *event);
 static void _event_init(Evas_Object *obj);
 static void _shrink_mode_set(Evas_Object *obj, int shrink);
 static void _view_update(Evas_Object *obj);
-static void _set_label(Evas_Object *obj, const char* str);
+static void _set_label(Evas_Object *obj, const char *str);
 static void _change_current_button_state(Evas_Object *obj, Multibuttonentry_Button_State state);
 static void _change_current_button(Evas_Object *obj, Evas_Object *btn);
 static void _button_clicked(void *data, Evas_Object *obj, const char *emission, const char *source);
 static void _del_button_obj(Evas_Object *obj, Evas_Object *btn);
 static void _del_button_item(Elm_Multibuttonentry_Item *item);
 static void _select_button(Evas_Object *obj, Evas_Object *btn);
-static Elm_Multibuttonentry_Item* _add_button_item(Evas_Object *obj, const char *str, Multibuttonentry_Pos pos, const Elm_Multibuttonentry_Item *reference, void *data);
+static Elm_Multibuttonentry_Item *_add_button_item(Evas_Object *obj, const char *str, Multibuttonentry_Pos pos,
+                                                   const Elm_Multibuttonentry_Item *reference, void *data);
 static void _add_button(Evas_Object *obj, char *str);
 static void _evas_mbe_key_up_cb(void *data, Evas *e, Evas_Object *obj, void *event_info);
 static void _entry_changed_cb(void *data, Evas_Object *obj, void *event_info);
@@ -150,7 +147,7 @@ _theme_hook(Evas_Object *obj)
    if (!wd) return;
 
    _elm_theme_object_set(obj, wd->base, "multibuttonentry", "base", elm_widget_style_get(obj));
-   if (wd->box)   edje_object_part_swallow (wd->base, "box.swallow", wd->box);
+   if (wd->box) edje_object_part_swallow (wd->base, "box.swallow", wd->box);
    edje_object_scale_set(wd->base, elm_widget_scale_get(obj) * _elm_config->scale);
 
    EINA_LIST_FOREACH(wd->items, l, item)
@@ -172,7 +169,7 @@ _on_focus_hook(void *data __UNUSED__, Evas_Object *obj)
 
    if (elm_widget_focus_get(obj))
      {
-        wd->focused = EINA_TRUE;        
+        wd->focused = EINA_TRUE;
         evas_object_smart_callback_call(obj, "focused", NULL);
      }
    else
@@ -180,7 +177,7 @@ _on_focus_hook(void *data __UNUSED__, Evas_Object *obj)
         wd->focused = EINA_FALSE;
         evas_object_smart_callback_call(obj, "unfocused", NULL);
      }
-     
+
    _view_update(obj);
 }
 
@@ -221,7 +218,7 @@ static void
 _signal_mouse_clicked(void *data, Evas_Object *obj __UNUSED__, const char *emission __UNUSED__, const char *source __UNUSED__)
 {
    Widget_Data *wd = elm_widget_data_get(data);
-   if(!wd || !wd->base) return;
+   if (!wd || !wd->base) return;
 
    wd->focused = EINA_TRUE;
    _view_update(data);
@@ -371,10 +368,10 @@ _shrink_mode_set(Evas_Object *obj, int shrink)
           {
              const char *size_str;
              size_str = edje_object_data_get(wd->end, "closed_button_width");
-             if(size_str) button_min_width = (Evas_Coord)atoi(size_str);
+             if (size_str) button_min_width = (Evas_Coord)atoi(size_str);
              /* it use for later
              size_str = edje_object_data_get(wd->end, "closed_button_height");
-             if(size_str) button_min_width = (Evas_Coord)atoi(size_str);
+             if (size_str) button_min_width = (Evas_Coord)atoi(size_str);
               */
           }
 
@@ -428,7 +425,7 @@ _shrink_mode_set(Evas_Object *obj, int shrink)
                             Evas_Coord rectSize;
                             Evas_Coord closed_height = 0;
                             const char *height_str = edje_object_data_get(wd->base, "closed_height");
-                            if(height_str) closed_height = (Evas_Coord)atoi(height_str);
+                            if (height_str) closed_height = (Evas_Coord)atoi(height_str);
                             elm_box_unpack(wd->box, item->button);
                             evas_object_hide(item->button);
                             item->visible = EINA_FALSE;
@@ -551,7 +548,7 @@ _set_label(Evas_Object *obj, const char* str)
         {
            edje_object_signal_emit(wd->label, "elm,mbe,set_text", "");
            edje_object_part_geometry_get(wd->label, "mbe.label", NULL, NULL, &width, &height);
-           
+
            sum_width += width;
 
            edje_object_part_geometry_get(wd->label, "mbe.label.left.padding", NULL, NULL, &width, NULL);
@@ -754,8 +751,8 @@ _resize_button(Evas_Object *btn, Evas_Coord *realw, Evas_Coord *vieww)
    evas_object_resize(btn, vw, h_btn);
    evas_object_size_hint_min_set(btn, vw, h_btn);
 
-   if(realw) *realw = rw;
-   if(vieww) *vieww = vw;
+   if (realw) *realw = rw;
+   if (vieww) *vieww = vw;
 }
 
 static Elm_Multibuttonentry_Item*
@@ -774,26 +771,27 @@ _add_button_item(Evas_Object *obj, const char *str, Multibuttonentry_Pos pos, co
    if (!wd || !wd->box || !wd->entry) return NULL;
 
    EINA_LIST_FOREACH(wd->filter_list, l, item_filter)
-   {
-      if ( !(item_filter->callback_func(obj, str, data, item_filter->data))) return NULL;
-   }
+     {
+        if (!(item_filter->callback_func(obj, str, data, item_filter->data)))
+          return NULL;
+     }
    //entry is cleared when text is made to button
    elm_entry_entry_set(wd->entry, "");
 
    // add button
    btn = edje_object_add(evas_object_evas_get(obj));
    str_utf8 = elm_entry_markup_to_utf8(str);
- 
+
    _elm_theme_object_set(obj, btn, "multibuttonentry", "btn", elm_widget_style_get(obj));
    edje_object_part_text_set(btn, "elm.btn.text", str_utf8);
    edje_object_part_geometry_get(btn, "elm.btn.text", NULL, NULL, &width, &height);
 
-	evas_object_size_hint_min_set(btn, width, height);
+   evas_object_size_hint_min_set(btn, width, height);
 
    edje_object_signal_callback_add(btn, "mouse,clicked,1", "*", _button_clicked, obj);
    evas_object_size_hint_weight_set(btn, 0.0, 0.0);
    evas_object_show(btn);
-   
+
    // append item list
    item = ELM_NEW(Elm_Multibuttonentry_Item);
    if (item)
@@ -950,7 +948,9 @@ _evas_mbe_key_up_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__,
 
    if (wd->last_btn_select)
      {
-        if ((wd->current) &&  ( (strcmp (ev->keyname, "BackSpace") == 0) || (strcmp (ev->keyname, "BackSpace (") == 0)))
+        if (wd->current &&
+            ((strcmp (ev->keyname, "BackSpace") == 0) ||
+             (strcmp (ev->keyname, "BackSpace (") == 0)))
           {
              item = eina_list_data_get(wd->current);
              if (item)
@@ -959,8 +959,9 @@ _evas_mbe_key_up_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__,
                   elm_object_focus_set(wd->entry, EINA_TRUE);
                }
           }
-        else if ((((!wd->current) && (wd->n_str == 0) && (strcmp (ev->keyname, "BackSpace") == 0))
-                  || (strcmp (ev->keyname, "BackSpace (") == 0)))
+        else if (((!wd->current && (wd->n_str == 0) &&
+                   (strcmp (ev->keyname, "BackSpace") == 0)) ||
+                  (strcmp (ev->keyname, "BackSpace (") == 0)))
           {
              item = eina_list_data_get(eina_list_last(wd->items));
              if (item)
@@ -1126,9 +1127,9 @@ _view_init(Evas_Object *obj)
              Evas_Coord button_min_height = 0;
 
              size_str = edje_object_data_get(wd->end, "closed_button_width");
-             if(size_str) button_min_width = (Evas_Coord)atoi(size_str);
+             if (size_str) button_min_width = (Evas_Coord)atoi(size_str);
              size_str = edje_object_data_get(wd->end, "closed_button_height");
-             if(size_str) button_min_height = (Evas_Coord)atoi(size_str);
+             if (size_str) button_min_height = (Evas_Coord)atoi(size_str);
 
              wd->end_type = MULTIBUTTONENTRY_CLOSED_IMAGE;
              evas_object_size_hint_min_set(wd->end, button_min_width * elm_scale_get(), button_min_height * elm_scale_get());
@@ -1160,7 +1161,7 @@ _calculate_box_min_size(Evas_Object *box, Evas_Object_Box_Data *priv)
         evas_object_size_hint_min_get(opt->obj, &mnw, &mnh);
         evas_object_size_hint_weight_get(opt->obj, &wx, NULL);
 
-        if(wx)
+        if (wx)
           {
              if (mnw != -1 && (w - cw) >= mnw)
                 ww = w - cw;
@@ -1201,7 +1202,7 @@ _calculate_item_max_height(Evas_Object *box, Evas_Object_Box_Data *priv, int obj
         evas_object_size_hint_min_get(opt->obj, &mnw, &mnh);
         evas_object_size_hint_weight_get(opt->obj, &wx, NULL);
 
-        if(wx)
+        if (wx)
           {
              if (mnw != -1 && (w - cw) >= mnw)
                 ww = w - cw;
@@ -1282,7 +1283,7 @@ _box_layout_cb(Evas_Object *o, Evas_Object_Box_Data *priv, void *data __UNUSED__
         if (wy > 0.0) xh = 1;
         Evas_Coord ww, hh, ow, oh;
 
-        if(wx)
+        if (wx)
           {
              if (mnw != -1 && (w - cw) >= mnw)
                 ww = w - cw;
