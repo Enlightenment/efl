@@ -4111,7 +4111,7 @@ _edje_real_part_swallow(Edje_Real_Part *rp,
    else evas_object_clip_set(rp->swallowed_object, rp->edje->base.clipper);
    evas_object_stack_above(rp->swallowed_object, rp->object);
    evas_object_event_callback_add(rp->swallowed_object,
-                                  EVAS_CALLBACK_FREE,
+                                  EVAS_CALLBACK_DEL,
 				  _edje_object_part_swallow_free_cb,
 				  rp->edje->obj);
    evas_object_event_callback_add(rp->swallowed_object,
