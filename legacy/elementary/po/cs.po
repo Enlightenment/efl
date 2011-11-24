@@ -1,12 +1,12 @@
 # Header entry was created by Lokalize.
 #
 # Vít Pelčák <vit@pelcak.org>, 2011.
-#: src/lib/elm_config.c:1400
+#: src/lib/elm_config.c:1403
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: enlightenment-devel@lists.sourceforge.net\n"
-"POT-Creation-Date: 2011-11-03 10:38+0900\n"
+"POT-Creation-Date: 2011-11-24 13:00+0900\n"
 "PO-Revision-Date: 2011-10-23 01:31+0100\n"
 "Last-Translator: Daniel Kolesa <quaker66@gmail.com>\n"
 "Language-Team: Czech <kde-i18n-doc@kde.org>\n"
@@ -25,7 +25,7 @@ msgstr "Nahoru"
 msgid "Home"
 msgstr "Domů"
 
-#: src/lib/elc_fileselector.c:1002 src/lib/elm_entry.c:1214
+#: src/lib/elc_fileselector.c:1002 src/lib/elm_entry.c:1229
 msgid "Cancel"
 msgstr "Zrušit"
 
@@ -33,16 +33,16 @@ msgstr "Zrušit"
 msgid "OK"
 msgstr "OK"
 
-#: src/lib/elm_button.c:280
+#: src/lib/elm_button.c:287
 msgid "Clicked"
 msgstr "Kliknuto"
 
-#: src/lib/elm_button.c:399 src/lib/elm_check.c:357 src/lib/elm_radio.c:295
+#: src/lib/elm_button.c:406 src/lib/elm_check.c:366 src/lib/elm_radio.c:295
 #: src/lib/elm_toolbar.c:731
 msgid "State: Disabled"
 msgstr "Stav: Zakázáno"
 
-#: src/lib/elm_button.c:453
+#: src/lib/elm_button.c:460
 msgid "Button"
 msgstr "Tlačítko"
 
@@ -50,45 +50,45 @@ msgstr "Tlačítko"
 msgid "%B %Y"
 msgstr "%B %Y"
 
-#: src/lib/elm_check.c:274 src/lib/elm_check.c:277 src/lib/elm_check.c:368
+#: src/lib/elm_check.c:283 src/lib/elm_check.c:286 src/lib/elm_check.c:377
 #: src/lib/elm_radio.c:231 src/lib/elm_radio.c:297
 msgid "State: On"
 msgstr "Stav: Zapnuto"
 
-#: src/lib/elm_check.c:287 src/lib/elm_check.c:290 src/lib/elm_check.c:377
+#: src/lib/elm_check.c:296 src/lib/elm_check.c:299 src/lib/elm_check.c:386
 #: src/lib/elm_radio.c:298
 msgid "State: Off"
 msgstr "Stav: Vypnuto"
 
-#: src/lib/elm_check.c:364 src/lib/elm_check.c:374
+#: src/lib/elm_check.c:373 src/lib/elm_check.c:383
 msgid "State"
 msgstr "Stav"
 
-#: src/lib/elm_check.c:427
+#: src/lib/elm_check.c:436
 msgid "Check"
 msgstr "Ověřit"
 
-#: src/lib/elm_config.c:1337
+#: src/lib/elm_config.c:1340
 msgid "default:LTR"
 msgstr "výchozí:LTR"
 
-#: src/lib/elm_entry.c:1208
+#: src/lib/elm_entry.c:1223
 msgid "Copy"
 msgstr "Kopírovat"
 
-#: src/lib/elm_entry.c:1211
+#: src/lib/elm_entry.c:1226
 msgid "Cut"
 msgstr "Vyjmout"
 
-#: src/lib/elm_entry.c:1225
+#: src/lib/elm_entry.c:1240
 msgid "Select"
 msgstr "Vybrat"
 
-#: src/lib/elm_entry.c:1231
+#: src/lib/elm_entry.c:1246
 msgid "Paste"
 msgstr "Vložit"
 
-#: src/lib/elm_radio.c:395
+#: src/lib/elm_radio.c:404
 msgid "Radio"
 msgstr "Přepínač"
 

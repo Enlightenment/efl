@@ -2,12 +2,12 @@
 # This file is distributed under the same license as the Elementary package.
 # FIRST AUTHOR <tom.hacohen@partner.samsung.com>, 2010.
 #
-#: src/lib/elm_config.c:1400
+#: src/lib/elm_config.c:1403
 msgid ""
 msgstr ""
 "Project-Id-Version: elementary\n"
 "Report-Msgid-Bugs-To: enlightenment-devel@lists.sourceforge.net\n"
-"POT-Creation-Date: 2011-11-03 10:38+0900\n"
+"POT-Creation-Date: 2011-11-24 13:00+0900\n"
 "PO-Revision-Date: 2010-12-26 10:05+0200\n"
 "Last-Translator: Tom Hacohen <tom.hacohen@partner.samsung.com>\n"
 "Language-Team: General\n"
@@ -25,7 +25,7 @@ msgstr ""
 msgid "Home"
 msgstr ""
 
-#: src/lib/elc_fileselector.c:1002 src/lib/elm_entry.c:1214
+#: src/lib/elc_fileselector.c:1002 src/lib/elm_entry.c:1229
 msgid "Cancel"
 msgstr ""
 
@@ -33,16 +33,16 @@ msgstr ""
 msgid "OK"
 msgstr ""
 
-#: src/lib/elm_button.c:280
+#: src/lib/elm_button.c:287
 msgid "Clicked"
 msgstr ""
 
-#: src/lib/elm_button.c:399 src/lib/elm_check.c:357 src/lib/elm_radio.c:295
+#: src/lib/elm_button.c:406 src/lib/elm_check.c:366 src/lib/elm_radio.c:295
 #: src/lib/elm_toolbar.c:731
 msgid "State: Disabled"
 msgstr ""
 
-#: src/lib/elm_button.c:453
+#: src/lib/elm_button.c:460
 msgid "Button"
 msgstr ""
 
@@ -50,45 +50,45 @@ msgstr ""
 msgid "%B %Y"
 msgstr ""
 
-#: src/lib/elm_check.c:274 src/lib/elm_check.c:277 src/lib/elm_check.c:368
+#: src/lib/elm_check.c:283 src/lib/elm_check.c:286 src/lib/elm_check.c:377
 #: src/lib/elm_radio.c:231 src/lib/elm_radio.c:297
 msgid "State: On"
 msgstr ""
 
-#: src/lib/elm_check.c:287 src/lib/elm_check.c:290 src/lib/elm_check.c:377
+#: src/lib/elm_check.c:296 src/lib/elm_check.c:299 src/lib/elm_check.c:386
 #: src/lib/elm_radio.c:298
 msgid "State: Off"
 msgstr ""
 
-#: src/lib/elm_check.c:364 src/lib/elm_check.c:374
+#: src/lib/elm_check.c:373 src/lib/elm_check.c:383
 msgid "State"
 msgstr ""
 
-#: src/lib/elm_check.c:427
+#: src/lib/elm_check.c:436
 msgid "Check"
 msgstr ""
 
-#: src/lib/elm_config.c:1337
+#: src/lib/elm_config.c:1340
 msgid "default:LTR"
 msgstr "default:RTL"
 
-#: src/lib/elm_entry.c:1208
+#: src/lib/elm_entry.c:1223
 msgid "Copy"
 msgstr ""
 
-#: src/lib/elm_entry.c:1211
+#: src/lib/elm_entry.c:1226
 msgid "Cut"
 msgstr ""
 
-#: src/lib/elm_entry.c:1225
+#: src/lib/elm_entry.c:1240
 msgid "Select"
 msgstr ""
 
-#: src/lib/elm_entry.c:1231
+#: src/lib/elm_entry.c:1246
 msgid "Paste"
 msgstr ""
 
-#: src/lib/elm_radio.c:395
+#: src/lib/elm_radio.c:404
 msgid "Radio"
 msgstr ""
 
