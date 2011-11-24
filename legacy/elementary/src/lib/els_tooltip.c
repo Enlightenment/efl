@@ -1,6 +1,14 @@
 #include <Elementary.h>
 #include "elm_priv.h"
 
+#ifdef ISCOMFITOR
+# define STR(X) #X
+# define STUPID(X) STR(X)
+# define TTDBG(x...) fprintf(stderr, STUPID(__LINE__)": " x)
+#else
+# define TTDBG(X...)
+#endif
+
 static const char _tooltip_key[] = "_elm_tooltip";
 
 #define ELM_TOOLTIP_GET_OR_RETURN(tt, obj, ...)         \
@@ -334,7 +342,7 @@ _elm_tooltip_reconfigure(Elm_Tooltip *tt)
            _elm_tooltip_content_del_cb, tt);
 
      }
-
+   TTDBG("*******RECALC\n");
    evas_object_size_hint_min_get(tt->content, &ominw, &ominh);
    edje_object_size_min_get(tt->tooltip, &eminw, &eminh);
 
@@ -352,6 +360,7 @@ _elm_tooltip_reconfigure(Elm_Tooltip *tt)
      evas_output_size_get(tt->tt_evas ?: tt->evas, &cw, &ch);
 
    evas_object_geometry_get(tt->eventarea, &ox, &oy, &ow, &oh);
+   TTDBG("EVENTAREA:  ox=%d,oy=%d,ow=%d,oh=%d\n", ox, oy, ow, oh);
 
    if (tt->tt_win)
      {
@@ -363,11 +372,13 @@ _elm_tooltip_reconfigure(Elm_Tooltip *tt)
 #endif
         elm_win_screen_position_get(win, &x, &y);
         ox += x;
+        if (px) px += x;
         oy += y;
+        if (py) py += y;
      }
    else
      evas_pointer_canvas_xy_get(tt->evas, &px, &py);
-
+   TTDBG("POINTER:  px=%d,py=%d\n", px, py);
    inside_eventarea = ((px >= ox) && (py >= oy) &&
                        (px <= ox + ow) && (py <= oy + oh));
    if (inside_eventarea)
@@ -381,7 +392,7 @@ _elm_tooltip_reconfigure(Elm_Tooltip *tt)
         if (0 > (th - oy - oh)) ty = oy + th;
         else ty = oy - oh;
      }
-
+   TTDBG("ADJUST (POINTER):  tx=%d,ty=%d\n", tx, ty);
    if (tx < 0)
      {
         if (abs((tx + 2 * tw) - cw) < abs(tx))
@@ -402,6 +413,7 @@ _elm_tooltip_reconfigure(Elm_Tooltip *tt)
         if (ty + th < ch)
           ty += th;
      }
+   TTDBG("ADJUST (FLIP):  tx=%d,ty=%d\n", tx, ty);
    if (inside_eventarea)
      {
         if ((tx == px) && ((tx + tw + tt->pad.x < cw) || (tx + tw > cw))) tx += tt->pad.x;
@@ -409,6 +421,7 @@ _elm_tooltip_reconfigure(Elm_Tooltip *tt)
         if ((ty == py) && ((ty + th + tt->pad.y < ch) || (ty + th > ch))) ty += tt->pad.y;
         else if ((ty - tt->pad.y > 0) || (ty < 0)) ty -= tt->pad.y;
      }
+   TTDBG("PAD:  tx=%d,ty=%d\n", tx, ty);
    if (tt->pad.bx * 2 + tw < cw)
      {
         if (tx < tt->pad.bx) tx = tt->pad.bx;
@@ -417,7 +430,6 @@ _elm_tooltip_reconfigure(Elm_Tooltip *tt)
      }
    else if (tx < 0) tx -= tt->pad.bx;
    else if (tx > cw) tx += tt->pad.bx;
-
    if (tt->pad.by * 2 + th < ch)
      {
         if (ty < tt->pad.by) ty = tt->pad.by;
@@ -426,7 +438,7 @@ _elm_tooltip_reconfigure(Elm_Tooltip *tt)
      }
    else if (ty < 0) ty -= tt->pad.by;
    else if (ty > ch) ty += tt->pad.by;
-
+   TTDBG("PAD (BORDER):  tx=%d,ty=%d\n", tx, ty);
    evas_object_move(tt->tt_win ? : tt->tooltip, tx, ty);
    evas_object_resize(tt->tt_win ? : tt->tooltip, tw, th);
    evas_object_show(tt->tooltip);
