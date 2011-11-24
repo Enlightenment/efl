@@ -10269,7 +10269,7 @@ extern "C" {
     */
    EAPI Evas_Object       *elm_layout_table_unpack(Evas_Object *obj, const char *part, Evas_Object *child_obj) EINA_ARG_NONNULL(1, 2, 3);
    /**
-    * Remove all child of the given part table.
+    * Remove all the child objects of the given part table.
     *
     * @param obj The layout object
     * @param part The table part name to remove child.
@@ -10441,8 +10441,8 @@ extern "C" {
     *
     * @param obj The layout object.
     * @param part_name a part from loaded edje group.
-    * @param engine_only if cursors should be just provided by the engine
-    *        or should also search on widget's theme as well
+    * @param engine_only if cursors should be just provided by the engine (EINA_TRUE)
+    *        or should also search on widget's theme as well (EINA_FALSE)
     *
     * @return EINA_TRUE on success or EINA_FALSE on failure, that may be
     *         part not exists or it did not had a cursor set.
