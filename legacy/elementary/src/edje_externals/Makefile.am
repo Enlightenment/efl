@@ -50,6 +50,7 @@ elm_index.c \
 elm_label.c \
 elm_list.c \
 elm_map.c \
+elm_multibuttonentry.c \
 elm_notify.c \
 elm_pager.c \
 elm_panes.c \
