@@ -292,11 +292,11 @@ _ecore_file_download_url_complete_cb(void *data __UNUSED__, int type __UNUSED__,
    job = eina_list_search_unsorted(_job_list, _ecore_file_download_url_compare_job, ev->url_con);
    if (!ECORE_MAGIC_CHECK(job, ECORE_MAGIC_FILE_DOWNLOAD_JOB)) return ECORE_CALLBACK_PASS_ON;
 
+   fclose(job->file);
    if (job->completion_cb)
      job->completion_cb(ecore_con_url_data_get(job->url_con), job->dst, ev->status);
 
    _job_list = eina_list_remove(_job_list, job);
-   fclose(job->file);
    free(job->dst);
    ecore_con_url_free(job->url_con);
    free(job);
