@@ -959,7 +959,7 @@ eet_write_cipher(Eet_File *ef,
  * will be 1 or 0, denoting if the alpha channel of the image is used or not.
  * If the image was losslessly compressed, the @p compress parameter will hold
  * the compression amount used, ranging from 0 to 9 and @p lossy will be 0.
- * In the case of lossy compression, @p lossy will be 1, and the compreesion
+ * In the case of lossy compression, @p lossy will be 1, and the compression
  * quality will be placed under @p quality, with a value ranging from 0 to 100.
  *
  * @see eet_data_image_header_decode()
