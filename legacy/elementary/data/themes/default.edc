@@ -364,7 +364,7 @@ collections {
 #include "widgets/player.edc"
 #include "widgets/video.edc"
 #include "widgets/naviframe.edc"
-
+#include "widgets/multibuttonentry.edc"
 #include "ews.edc"
 
 }

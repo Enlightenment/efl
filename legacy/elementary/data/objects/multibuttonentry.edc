@@ -1,0 +1,100 @@
+
+collections {
+group {
+   name: "multibuttonentry_test";
+   parts{
+      part {
+         name: "bg";
+         type: RECT;
+         mouse_events: 1;
+         scale:1;
+         description {
+            state: "default" 0.0;
+            color: 0 0 0 0;
+            rel1.relative: 0.0 0.0;
+            rel2.relative: 1.0 1.0;
+         }
+      }
+      part{
+         name: "top.left";
+         type: RECT;
+         scale: 1;
+         description {
+            state: "default" 0.0;
+            min : 0 0;
+            fixed: 1 1;
+            rel1 { relative: 0.0 0.0;to:bg; }
+            rel2 { relative: 0.0 0.0;to:bg; }
+            align: 0.0 0.0;
+            color: 0 0 0 0;
+         }
+      }
+      part{
+         name: "bottom.right";
+         type: RECT;
+         scale: 1;
+         description {
+            state: "default" 0.0;
+            min : 0 0;
+            fixed: 1 1;
+            rel1 { relative: 1.0 1.0;to:bg; }
+            rel2 { relative: 1.0 1.0;to:bg; }
+            align: 1.0 1.0;
+            color: 0 0 0 0;
+         }
+      }
+      part {
+         name: "bg.box";
+         type: RECT;
+         mouse_events: 0;
+         scale:1;
+         description {
+            state: "default" 0.0;
+            rel1.to: box;
+            rel2.to: box;
+            color: 230 220 188 255;
+         }
+      }
+      part {
+         name: "box";
+         type: SWALLOW;
+         mouse_events: 1;
+         scale:1;
+         description {
+            state: "default" 0.0;
+            min : 0 5;
+            fixed: 0 1;
+            rel1 { relative: 1.0  1.0;to: top.left;}
+            rel2 { relative: 0.0  1.0;to_x: bottom.right;to_y: top.left;}
+            align: 0.0 0.0;
+         }
+      }
+      part {
+         name: "bg.multibuttonentry";
+         type: RECT;
+         mouse_events: 0;
+         scale:1;
+         description {
+            state: "default" 0.0;
+            rel1.to: multibuttonentry;
+            rel2.to: multibuttonentry;
+            color: 246 245 237 0;
+         }
+      }
+      part {
+         name: "multibuttonentry";
+         type: SWALLOW;
+         mouse_events: 1;
+         scale:1;
+         description {
+            state: "default" 0.0;
+            min : 0 5;
+            fixed: 0 1;
+            rel1 { relative: 0.0 1.0; to: box; }
+            rel2 { relative: 0.0 0.0; to:bottom.right; }
+            align: 0.0 0.0;
+         }
+      }
+   }
+}
+}

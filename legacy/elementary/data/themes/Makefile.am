@@ -20,6 +20,7 @@ widgets/segment_control.edc \
 widgets/bg.edc \
 widgets/flipselector.edc \
 widgets/naviframe.edc \
+widgets/multibuttonentry.edc \
 widgets/separator.edc \
 widgets/bubble.edc \
 widgets/frame.edc \
