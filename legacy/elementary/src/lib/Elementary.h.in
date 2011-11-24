@@ -9879,7 +9879,7 @@ extern "C" {
     * elm_object_content_set/get/unset functions to set, retrieve and unset 
     * objects as content of the @c SWALLOW. After being set to this part, the 
     * object size, position, visibility, clipping and other description 
-    * properties will be totally controled by the description of the given part 
+    * properties will be totally controlled by the description of the given part
     * (inside the Edje theme file).
     *
     * One can use @c evas_object_size_hint_* functions on the child to have some
@@ -9907,12 +9907,12 @@ extern "C" {
     * itself).
     *
     * A similar effect for having a box with its position, size and other things
-    * controled by the Layout theme would be to create an Elementary @ref Box
+    * controlled by the Layout theme would be to create an Elementary @ref Box
     * widget and add it as a Content in the @c SWALLOW part.
     *
     * The main difference of using the Layout Box is that its behavior, the box
     * properties like layouting format, padding, align, etc. will be all
-    * controled by the theme. This means, for example, that a signal could be
+    * controlled by the theme. This means, for example, that a signal could be
     * sent to the Layout theme (with elm_object_signal_emit()) and the theme
     * handled the signal by changing the box padding, or align, or both. Using
     * the Elementary @ref Box widget is not necessarily harder or easier, it
@@ -13559,7 +13559,7 @@ extern "C" {
     */
    typedef enum _Elm_Web_Zoom_Mode
      {
-        ELM_WEB_ZOOM_MODE_MANUAL = 0, /**< Zoom controled normally by elm_web_zoom_set */
+        ELM_WEB_ZOOM_MODE_MANUAL = 0, /**< Zoom controlled normally by elm_web_zoom_set */
         ELM_WEB_ZOOM_MODE_AUTO_FIT, /**< Zoom until content fits in web object */
         ELM_WEB_ZOOM_MODE_AUTO_FILL, /**< Zoom until content fills web object */
         ELM_WEB_ZOOM_MODE_LAST
@@ -22367,7 +22367,7 @@ extern "C" {
     */
    typedef enum _Elm_Photocam_Zoom_Mode
      {
-        ELM_PHOTOCAM_ZOOM_MODE_MANUAL = 0, /**< Zoom controled normally by elm_photocam_zoom_set */
+        ELM_PHOTOCAM_ZOOM_MODE_MANUAL = 0, /**< Zoom controlled normally by elm_photocam_zoom_set */
         ELM_PHOTOCAM_ZOOM_MODE_AUTO_FIT, /**< Zoom until photo fits in photocam */
         ELM_PHOTOCAM_ZOOM_MODE_AUTO_FILL, /**< Zoom until photo fills photocam */
         ELM_PHOTOCAM_ZOOM_MODE_LAST
@@ -22651,7 +22651,7 @@ extern "C" {
     */
    typedef enum _Elm_Map_Zoom_Mode
      {
-        ELM_MAP_ZOOM_MODE_MANUAL, /**< Zoom controled manually by elm_map_zoom_set(). It's set by default. */
+        ELM_MAP_ZOOM_MODE_MANUAL, /**< Zoom controlled manually by elm_map_zoom_set(). It's set by default. */
         ELM_MAP_ZOOM_MODE_AUTO_FIT, /**< Zoom until map fits inside the scroll frame with no pixels outside this area. */
         ELM_MAP_ZOOM_MODE_AUTO_FILL, /**< Zoom until map fills scroll, ensuring no pixels are left unfilled. */
         ELM_MAP_ZOOM_MODE_LAST
