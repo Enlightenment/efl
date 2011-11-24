@@ -10198,7 +10198,7 @@ extern "C" {
     */
    EAPI Evas_Object       *elm_layout_box_remove(Evas_Object *obj, const char *part, Evas_Object *child) EINA_ARG_NONNULL(1, 2, 3);
    /**
-    * Remove all child of the given part box.
+    * Remove all children of the given part box.
     *
     * @param obj The layout object
     * @param part The box part name to remove child.
