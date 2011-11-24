@@ -631,7 +631,7 @@ _change_current_button(Evas_Object *obj, Evas_Object *btn)
              break;
           }
      }
-   // chagne the state of current button to "focused"
+   // change the state of current button to "focused"
    _change_current_button_state(obj, MULTIBUTTONENTRY_BUTTON_STATE_SELECTED);
 
 }
@@ -658,7 +658,7 @@ static void
 _del_button_obj(Evas_Object *obj, Evas_Object *btn)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
-   if (!wd || !btn)   return;
+   if (!wd || !btn) return;
 
    if (btn)
      // del button
@@ -937,20 +937,15 @@ _evas_mbe_key_up_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__,
    Widget_Data *wd = elm_widget_data_get(data);
    Elm_Multibuttonentry_Item *item = NULL;
 
-   static char str[MAX_STR];
-
    if (!wd || !wd->base || !wd->box) return;
-
-   strncpy(str, elm_entry_entry_get(wd->entry), MAX_STR);
-   str[MAX_STR - 1] = 0;
 
    Evas_Event_Key_Up *ev = (Evas_Event_Key_Up*)event_info;
 
    if (wd->last_btn_select)
      {
         if (wd->current &&
-            ((strcmp (ev->keyname, "BackSpace") == 0) ||
-             (strcmp (ev->keyname, "BackSpace (") == 0)))
+            ((strcmp(ev->keyname, "BackSpace") == 0) ||
+             (strcmp(ev->keyname, "BackSpace (") == 0)))
           {
              item = eina_list_data_get(wd->current);
              if (item)
@@ -960,8 +955,8 @@ _evas_mbe_key_up_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__,
                }
           }
         else if (((!wd->current && (wd->n_str == 0) &&
-                   (strcmp (ev->keyname, "BackSpace") == 0)) ||
-                  (strcmp (ev->keyname, "BackSpace (") == 0)))
+                   (strcmp(ev->keyname, "BackSpace") == 0)) ||
+                  (strcmp(ev->keyname, "BackSpace (") == 0)))
           {
              item = eina_list_data_get(eina_list_last(wd->items));
              if (item)
@@ -980,7 +975,7 @@ _entry_key_down_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, 
 
    if (!wd) return;
 
-   if ( (wd->n_str == 1) && (strcmp (ev->keyname, "BackSpace") == 0 || (strcmp (ev->keyname, "BackSpace (") == 0 )))
+   if ((wd->n_str == 1) && (strcmp(ev->keyname, "BackSpace") == 0 || (strcmp(ev->keyname, "BackSpace (") == 0 )))
      wd->last_btn_select = EINA_FALSE;
 }
 
@@ -996,7 +991,7 @@ _entry_key_up_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, vo
    strncpy(str, elm_entry_entry_get(wd->entry), MAX_STR);
    str[MAX_STR - 1] = 0;
 
-   if ( (strcmp (str, "") != 0) && (strcmp (ev->keyname, "KP_Enter") == 0 || strcmp (ev->keyname, "Return") == 0 ))
+   if ((strcmp(str, "") != 0) && (strcmp(ev->keyname, "KP_Enter") == 0 || strcmp(ev->keyname, "Return") == 0 ))
      {
         _add_button(data, str);
         wd->n_str = 0;
@@ -1081,7 +1076,8 @@ _view_init(Evas_Object *obj)
 
    if (!wd->box)
      {
-        if (! (wd->box = elm_box_add (obj))) return;
+        wd->box = elm_box_add (obj);
+        if (!wd->box) return;
         elm_widget_sub_object_add(obj, wd->box);
         elm_box_layout_set(wd->box, _box_layout_cb, NULL, NULL);
         elm_box_homogeneous_set(wd->box, EINA_FALSE);
@@ -1089,7 +1085,8 @@ _view_init(Evas_Object *obj)
      }
    if (!wd->label)
      {
-        if (!(wd->label = edje_object_add(evas_object_evas_get(obj)))) return;
+        wd->label = edje_object_add(evas_object_evas_get(obj));
+        if (!wd->label) return;
         _elm_theme_object_set(obj, wd->label, "multibuttonentry", "label", elm_widget_style_get(obj));
         _set_label(obj, "");
         elm_widget_sub_object_add(obj, wd->label);
@@ -1097,14 +1094,15 @@ _view_init(Evas_Object *obj)
 
    if (!wd->entry)
      {
-        if (! (wd->entry = elm_entry_add (obj))) return;
+        wd->entry = elm_entry_add (obj);
+        if (!wd->entry) return;
         elm_entry_single_line_set(wd->entry, EINA_TRUE);
         elm_entry_entry_set(wd->entry, "");
         elm_entry_cursor_end_set(wd->entry);
         evas_object_size_hint_min_set(wd->entry, MIN_W_ENTRY, 0);
         evas_object_size_hint_weight_set(wd->entry, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
         evas_object_size_hint_align_set(wd->entry, EVAS_HINT_FILL, EVAS_HINT_FILL);
-        if (wd->box)   elm_box_pack_end (wd->box, wd->entry);
+        if (wd->box) elm_box_pack_end (wd->box, wd->entry);
         evas_object_show(wd->entry);
         wd->view_state = MULTIBUTTONENTRY_VIEW_ENTRY;
      }
@@ -1114,14 +1112,16 @@ _view_init(Evas_Object *obj)
         const char *end_type = edje_object_data_get(wd->base, "closed_button_type");
         if (!end_type || !strcmp(end_type, "label"))
           {
-             if (! (wd->end = elm_label_add (obj))) return;
+             wd->end = elm_label_add (obj);
+             if (!wd->end) return;
              elm_object_style_set(wd->end, "extended/multibuttonentry_default");
              wd->end_type = MULTIBUTTONENTRY_CLOSED_LABEL;
           }
         else
           {
              const char *size_str;
-             if (!(wd->end = edje_object_add(evas_object_evas_get(obj)))) return;
+             wd->end = edje_object_add(evas_object_evas_get(obj));
+             if (!wd->end) return;
              _elm_theme_object_set(obj, wd->end, "multibuttonentry", "closedbutton", elm_widget_style_get(obj));
              Evas_Coord button_min_width = 0;
              Evas_Coord button_min_height = 0;
@@ -1164,9 +1164,9 @@ _calculate_box_min_size(Evas_Object *box, Evas_Object_Box_Data *priv)
         if (wx)
           {
              if (mnw != -1 && (w - cw) >= mnw)
-                ww = w - cw;
+               ww = w - cw;
              else
-                ww = w;
+               ww = w;
           }
         else
            ww = mnw;
@@ -1607,12 +1607,12 @@ elm_multibuttonentry_item_label_set(Elm_Multibuttonentry_Item *item, const char 
    if (!wd || !wd->items) return;
 
    EINA_LIST_FOREACH(wd->items, l, _item)
-      if (_item == item)
-        {
-           edje_object_part_text_set(_item->button, "elm.btn.text", str);
-           _resize_button(_item->button, &_item->rw, &_item->vw);
-           break;
-        }
+     if (_item == item)
+       {
+          edje_object_part_text_set(_item->button, "elm.btn.text", str);
+          _resize_button(_item->button, &_item->rw, &_item->vw);
+          break;
+       }
 }
 
 EAPI Elm_Multibuttonentry_Item *
