@@ -28867,28 +28867,25 @@ extern "C" {
     */
 
    /**
-    * @defgroup Multibuttonenetry Multibuttonenetry
+    * @defgroup Multibuttonentry Multibuttonentry
     *
-    * @image html img/widget/flipselector/preview-00.png
-    * @image latex img/widget/flipselector/preview-00.eps
+    * A Multibuttonentry is a widget to allow a user enter text and manage it as a number of buttons
+    * Each text button is inserted by pressing the "return" key. If there is no space in the current row,
+    * a new button is added to the next row. When a text button is pressed, it will become focused.
+    * Backspace removes the focus.
+    * When the Multibuttonentry loses focus items longer than 1 lines are shrunk to one line.
     *
-    * A Multibuttonentry is a widget to allow a user to insert a text button.
-    * the text button is inserted by pressing the "return" key. If there is no space in the current row,
-    * the new button is entered in the next row. If the button is pressed, it will become focused. 
-    * The focus can be removed by pressing the "backspace" key.
-    * when items are added over 1 lines, if Multibuttonentry lost focus, it becase shrink mode ( made it 1 line)
-    *
-    * Smart callbacks one can register to:
-    * - @c "item,selected" - when item is selected . it can be called by backspace key.                       
-    * - @c "item,added" - when a new multibuttonentry item is added. 
-    * - @c "item,deleted" -when a multibuttonentry item is deleted. 
-    * - @c "item,clicked" - selected item of multibuttonentry is clicked.                  
-    * - @c "clicked" - when multibuttonentry is clicked. 
-    * - @c "focused" - when multibuttonentry is focused. 
-    * - @c "unfocused" - when multibuttonentry is unfocused. 
-    * - @c "expanded" - when multibuttonentry is expanded . 
-    * - @c "shrank" - when multibuttonentry is shrank. 
-    * - @c "shrank,state,changed" - when shrink mode state of multibuttonentry is changed. 
+    * Smart callbacks one can register:
+    * - @c "item,selected" - when item is selected. May be called on backspace key.
+    * - @c "item,added" - when a new multibuttonentry item is added.
+    * - @c "item,deleted" - when a multibuttonentry item is deleted.
+    * - @c "item,clicked" - selected item of multibuttonentry is clicked.
+    * - @c "clicked" - when multibuttonentry is clicked.
+    * - @c "focused" - when multibuttonentry is focused.
+    * - @c "unfocused" - when multibuttonentry is unfocused.
+    * - @c "expanded" - when multibuttonentry is expanded.
+    * - @c "shrank" - when multibuttonentry is shrank.
+    * - @c "shrank,state,changed" - when shrink mode state of multibuttonentry is changed.
     *
     * Here is an example on its usage:
     * @li @ref multibuttonentry_example
@@ -28907,7 +28904,6 @@ extern "C" {
     * @param parent The parent object
     * @return The new object or NULL if it cannot be created
     *
-    * @ingroup Multibuttonentry
     */
    EAPI Evas_Object               *elm_multibuttonentry_add(Evas_Object *parent) EINA_ARG_NONNULL(1);
    /**
@@ -28916,7 +28912,6 @@ extern "C" {
     * @param obj The multibuttonentry object
     * @return The label, or NULL if none
     *
-    * @ingroup Multibuttonentry
     */
    EAPI const char                *elm_multibuttonentry_label_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
    /**
@@ -28925,7 +28920,6 @@ extern "C" {
     * @param obj The multibuttonentry object
     * @param label The text label string
     *
-    * @ingroup Multibuttonentry
     */
    EAPI void                       elm_multibuttonentry_label_set(Evas_Object *obj, const char *label) EINA_ARG_NONNULL(1);
    /**
@@ -28934,7 +28928,6 @@ extern "C" {
     * @param obj The multibuttonentry object
     * @return The entry object, or NULL if none
     *
-    * @ingroup Multibuttonentry
     */
    EAPI Evas_Object               *elm_multibuttonentry_entry_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
    /**
@@ -28943,7 +28936,6 @@ extern "C" {
     * @param obj The multibuttonentry object
     * @return The guide text, or NULL if none
     *
-    * @ingroup Multibuttonentry
     */
    EAPI const char *               elm_multibuttonentry_guide_text_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
    /**
@@ -28952,7 +28944,6 @@ extern "C" {
     * @param obj The multibuttonentry object
     * @param label The guide text string
     *
-    * @ingroup Multibuttonentry
     */
    EAPI void                       elm_multibuttonentry_guide_text_set(Evas_Object *obj, const char *guidetext) EINA_ARG_NONNULL(1);
    /**
@@ -28961,7 +28952,6 @@ extern "C" {
     * @param obj The multibuttonentry object
     * @param the value of shrink mode state.
     *
-    * @ingroup Multibuttonentry
     */
    EAPI int                        elm_multibuttonentry_shrink_mode_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
    /**
@@ -28970,7 +28960,6 @@ extern "C" {
     * @param obj The multibuttonentry object
     * @param the value of shrink_mode state. set this to 1 to set the multibuttonentry to shrink state of single line. set this to 0 to unset the contracted state.
     *
-    * @ingroup Multibuttonentry
     */
    EAPI void                       elm_multibuttonentry_shrink_mode_set(Evas_Object *obj, int shrink) EINA_ARG_NONNULL(1);
    /**
@@ -28981,7 +28970,6 @@ extern "C" {
     * @param data The ponter to the data to be attached
     * @return A handle to the item added or NULL if not possible
     *
-    * @ingroup Multibuttonentry
     */
    EAPI Elm_Multibuttonentry_Item *elm_multibuttonentry_item_prepend(Evas_Object *obj, const char *label, void *data) EINA_ARG_NONNULL(1);
    /**
@@ -28992,7 +28980,6 @@ extern "C" {
     * @param data The ponter to the data to be attached
     * @return A handle to the item added or NULL if not possible
     *
-    * @ingroup Multibuttonentry
     */
    EAPI Elm_Multibuttonentry_Item *elm_multibuttonentry_item_append(Evas_Object *obj, const char *label, void *data) EINA_ARG_NONNULL(1);
    /**
@@ -29005,7 +28992,6 @@ extern "C" {
     * @param data The ponter to the data to be attached
     * @return A handle to the item added or NULL if not possible
     *
-    * @ingroup Multibuttonentry
     */
    EAPI Elm_Multibuttonentry_Item *elm_multibuttonentry_item_insert_before(Evas_Object *obj, Elm_Multibuttonentry_Item *before, const char *label, void *data) EINA_ARG_NONNULL(1);
    /**
@@ -29017,7 +29003,6 @@ extern "C" {
     * @param data The ponter to the data to be attached
     * @return A handle to the item added or NULL if not possible
     *
-    * @ingroup Multibuttonentry
     */
    EAPI Elm_Multibuttonentry_Item *elm_multibuttonentry_item_insert_after(Evas_Object *obj, Elm_Multibuttonentry_Item *after, const char *label, void *data) EINA_ARG_NONNULL(1);
    /**
@@ -29026,7 +29011,6 @@ extern "C" {
     * @param obj The multibuttonentry object
     * @return The list of items, or NULL if none
     *
-    * @ingroup Multibuttonentry
     */
    EAPI const Eina_List           *elm_multibuttonentry_items_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
    /**
@@ -29035,7 +29019,6 @@ extern "C" {
     * @param obj The multibuttonentry object
     * @return The first item, or NULL if none
     *
-    * @ingroup Multibuttonentry
     */
    EAPI Elm_Multibuttonentry_Item *elm_multibuttonentry_first_item_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
    /**
@@ -29044,7 +29027,6 @@ extern "C" {
     * @param obj The multibuttonentry object
     * @return The last item, or NULL if none
     *
-    * @ingroup Multibuttonentry
     */
    EAPI Elm_Multibuttonentry_Item *elm_multibuttonentry_last_item_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
    /**
@@ -29053,7 +29035,6 @@ extern "C" {
     * @param obj The multibuttonentry object
     * @return The selected item, or NULL if none
     *
-    * @ingroup Multibuttonentry
     */
    EAPI Elm_Multibuttonentry_Item *elm_multibuttonentry_selected_item_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
    /**
@@ -29062,15 +29043,13 @@ extern "C" {
     * @param item The item
     * @param selected if it's EINA_TRUE, select the item otherwise, unselect the item
     *
-    * @ingroup Multibuttonentry
     */
    EAPI void                       elm_multibuttonentry_item_select(Elm_Multibuttonentry_Item *item, Eina_Bool selected) EINA_ARG_NONNULL(1);
    /**
-   * unselect all of items.
+   * unselect all items.
    *
    * @param obj The multibuttonentry object
    *
-   * @ingroup Multibuttonentry
    */
    EAPI void                       elm_multibuttonentry_item_unselect_all(Evas_Object *obj) EINA_ARG_NONNULL(1);
   /**
@@ -29078,7 +29057,6 @@ extern "C" {
    *
    * @param item The item
    *
-   * @ingroup Multibuttonentry
    */
    EAPI void                       elm_multibuttonentry_item_del(Elm_Multibuttonentry_Item *item) EINA_ARG_NONNULL(1);
   /**
@@ -29086,7 +29064,6 @@ extern "C" {
    *
    * @param obj The multibuttonentry object
    *
-   * @ingroup Multibuttonentry
    */
    EAPI void                       elm_multibuttonentry_clear(Evas_Object *obj) EINA_ARG_NONNULL(1);
   /**
@@ -29095,7 +29072,6 @@ extern "C" {
    * @param item The item
    * @return The label of a given item, or NULL if none
    *
-   * @ingroup Multibuttonentry
    */
    EAPI const char                *elm_multibuttonentry_item_label_get(const Elm_Multibuttonentry_Item *item) EINA_ARG_NONNULL(1);
   /**
@@ -29104,7 +29080,6 @@ extern "C" {
    * @param item The item
    * @param label The text label string
    *
-   * @ingroup Multibuttonentry
    */
    EAPI void                       elm_multibuttonentry_item_label_set(Elm_Multibuttonentry_Item *item, const char *str) EINA_ARG_NONNULL(1);
   /**
@@ -29113,7 +29088,6 @@ extern "C" {
    * @param item The item
    * @return The item before the item @p item
    *
-   * @ingroup Multibuttonentry
    */
    EAPI Elm_Multibuttonentry_Item *elm_multibuttonentry_item_prev_get(const Elm_Multibuttonentry_Item *item) EINA_ARG_NONNULL(1);
   /**
@@ -29122,9 +29096,8 @@ extern "C" {
    * @param item The item
    * @return The item after the item @p item
    *
-   * @ingroup Multibuttonentry
    */
-   EAPI Elm_Multibuttonentry_Item *elm_multibuttonentry_item_next_get(const Elm_Multibuttonentry_Item *item) EINA_ARG_NONNULL(1);  
+   EAPI Elm_Multibuttonentry_Item *elm_multibuttonentry_item_next_get(const Elm_Multibuttonentry_Item *item) EINA_ARG_NONNULL(1);
   /**
    * Append a item filter function for text inserted in the Multibuttonentry
    *
@@ -29140,7 +29113,6 @@ extern "C" {
    * @param func The function to use as item filter
    * @param data User data to pass to @p func
    *
-   * @ingroup Multibuttonentryentry
    */
    EAPI void elm_multibuttonentry_item_filter_append(Evas_Object *obj, Elm_Multibuttonentry_Item_Filter_callback func, void *data) EINA_ARG_NONNULL(1);
   /**
@@ -29153,7 +29125,6 @@ extern "C" {
    * @param func The function to use as text filter
    * @param data User data to pass to @p func
    *
-   * @ingroup Multibuttonentry
    */
    EAPI void elm_multibuttonentry_item_filter_prepend(Evas_Object *obj, Elm_Multibuttonentry_Item_Filter_callback func, void *data) EINA_ARG_NONNULL(1);
   /**
@@ -29166,7 +29137,6 @@ extern "C" {
    * @param func The filter function to remove
    * @param data The user data passed when adding the function
    *
-   * @ingroup Multibuttonentry
    */
    EAPI void elm_multibuttonentry_item_filter_remove(Evas_Object *obj, Elm_Multibuttonentry_Item_Filter_callback func, void *data) EINA_ARG_NONNULL(1);
 
