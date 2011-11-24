@@ -343,3 +343,6 @@
         * Fix setting override state to only hide if it should be
         visible at that point in x back end support
 
+2011-11-24 Rafael Antognolli
+
+        * Add ecore_fb_input_device_window_set().

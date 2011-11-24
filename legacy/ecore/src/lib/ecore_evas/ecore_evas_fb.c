@@ -208,8 +208,9 @@ _ecore_evas_fb_init(Ecore_Evas *ee, int w, int h)
           continue;
 
         snprintf(device_path, 256, "/dev/input/%s", input_entry->d_name);
-        if (!(device = ecore_fb_input_device_open(ee, device_path)))
+        if (!(device = ecore_fb_input_device_open(device_path)))
           continue;
+        ecore_fb_input_device_window_set(device, ee);
 
         caps = ecore_fb_input_device_cap_get(device);
 

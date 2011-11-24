@@ -70,7 +70,7 @@ EAPI void                      ecore_fb_callback_gain_set(void (*func) (void *da
 EAPI void                      ecore_fb_callback_lose_set(void (*func) (void *data), void *data);
 
 /* ecore_fb_li.c */
-EAPI Ecore_Fb_Input_Device    *ecore_fb_input_device_open(void *window, const char *dev);
+EAPI Ecore_Fb_Input_Device    *ecore_fb_input_device_open(const char *dev);
 EAPI void                      ecore_fb_input_device_close(Ecore_Fb_Input_Device *dev);
 EAPI void                      ecore_fb_input_device_listen(Ecore_Fb_Input_Device *dev, Eina_Bool listen);
 EAPI const char               *ecore_fb_input_device_name_get(Ecore_Fb_Input_Device *dev);
@@ -78,6 +78,7 @@ EAPI Ecore_Fb_Input_Device_Cap ecore_fb_input_device_cap_get(Ecore_Fb_Input_Devi
 EAPI void                      ecore_fb_input_device_axis_size_set(Ecore_Fb_Input_Device *dev, int w, int h);
 EAPI void                      ecore_fb_input_threshold_click_set(Ecore_Fb_Input_Device *dev, double threshold);
 EAPI double                    ecore_fb_input_threshold_click_get(Ecore_Fb_Input_Device *dev);
+EAPI void                      ecore_fb_input_device_window_set(Ecore_Fb_Input_Device *dev, void *window);
 
 /* ecore_fb.c */
 
