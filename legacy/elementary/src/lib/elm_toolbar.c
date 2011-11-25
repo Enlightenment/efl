@@ -537,7 +537,7 @@ _resize_job(void *data)
                             menu_it = elm_menu_item_add(menu, NULL,
                                                 it->icon_str, it->label,
                                                 _elm_toolbar_item_menu_cb, it);
-                            elm_menu_item_disabled_set(menu_it, it->disabled);
+                            elm_object_item_disabled_set(menu_it, it->disabled);
                             if (it->o_menu)
                               elm_menu_clone(it->o_menu, menu, menu_it);
                          }
