@@ -15973,8 +15973,13 @@ extern "C" {
     *
     * Signals that you can add callbacks for are:
     * @li "clicked" - the user clicked the empty space in the menu to dismiss.
-    *             event_info is NULL.
     *
+    * Default contents parts of the menu items that you can use for are:
+    * @li "default" - A main content of the menu item 
+    *
+    * Default text parts of the menu items that you can use for are:
+    * @li "default" - label in the menu item
+    * 
     * @see @ref tutorial_menu
     * @{
     */
@@ -16033,10 +16038,11 @@ extern "C" {
    /**
     * @brief Get the Evas_Object of an Elm_Menu_Item
     *
-    * @param item The menu item object.
+    * @param it The menu item object.
     * @return The edje object containing the swallowed content
     *
     * @warning Don't manipulate this object!
+    *
     */
    EAPI Evas_Object       *elm_menu_item_object_get(const Elm_Object_Item *it) EINA_ARG_NONNULL(1);
    /**
@@ -16073,15 +16079,18 @@ extern "C" {
     *
     * @warning Don't use this funcion on items created with
     * elm_menu_item_add_object() or elm_menu_item_separator_add().
+    *
+    * @deprecated Use elm_object_item_text_set() instead
     */
-   EAPI void               elm_menu_item_label_set(Elm_Object_Item *it, const char *label) EINA_ARG_NONNULL(1);
+   EINA_DEPRECATED EAPI void               elm_menu_item_label_set(Elm_Object_Item *it, const char *label) EINA_ARG_NONNULL(1);
    /**
     * @brief Get the label of a menu item
     *
     * @param it The menu item object.
     * @return The label of @p item
+	 * @deprecated Use elm_object_item_text_get() instead
     */
-   EAPI const char        *elm_menu_item_label_get(const Elm_Object_Item *it) EINA_ARG_NONNULL(1);
+   EINA_DEPRECATED EAPI const char        *elm_menu_item_label_get(const Elm_Object_Item *it) EINA_ARG_NONNULL(1);
    /**
     * @brief Set the icon of a menu item to the standard icon with name @p icon
     *
@@ -16109,8 +16118,10 @@ extern "C" {
     *
     * Use this function to change the object swallowed by a menu item, deleting
     * any previously swallowed object.
+    *
+    * @deprecated Use elm_object_item_content_set() instead
     */
-   EAPI Eina_Bool          elm_menu_item_object_content_set(Elm_Object_Item *it, Evas_Object *obj) EINA_ARG_NONNULL(1);
+   EINA_DEPRECATED EAPI Eina_Bool          elm_menu_item_object_content_set(Elm_Object_Item *it, Evas_Object *obj) EINA_ARG_NONNULL(1);
    /**
     * @brief Get the content object of a menu item
     *
@@ -16121,8 +16132,10 @@ extern "C" {
     * icon object.
     *
     * @see elm_menu_item_object_content_set()
+    *
+    * @deprecated Use elm_object_item_content_get() instead
     */
-   EAPI Evas_Object *elm_menu_item_object_content_get(const Elm_Object_Item *it) EINA_ARG_NONNULL(1);
+   EINA_DEPRECATED EAPI Evas_Object *elm_menu_item_object_content_get(const Elm_Object_Item *it) EINA_ARG_NONNULL(1);
    /**
     * @brief Set the selected state of @p item.
     *
@@ -16144,8 +16157,9 @@ extern "C" {
     *
     * @param it The menu item object.
     * @param disabled The enabled/disabled state of the item
+    * @deprecated Use elm_object_item_disabled_set() instead
     */
-   EAPI void               elm_menu_item_disabled_set(Elm_Object_Item *it, Eina_Bool disabled) EINA_ARG_NONNULL(1);
+   EINA_DEPRECATED EAPI void               elm_menu_item_disabled_set(Elm_Object_Item *it, Eina_Bool disabled) EINA_ARG_NONNULL(1);
    /**
     * @brief Get the disabled state of @p item.
     *
@@ -16153,8 +16167,9 @@ extern "C" {
     * @return The enabled/disabled state of the item
     *
     * @see elm_menu_item_disabled_set()
+    * @deprecated Use elm_object_item_disabled_get() instead 
     */
-   EAPI Eina_Bool          elm_menu_item_disabled_get(const Elm_Object_Item *it) EINA_ARG_NONNULL(1);
+   EINA_DEPRECATED EAPI Eina_Bool          elm_menu_item_disabled_get(const Elm_Object_Item *it) EINA_ARG_NONNULL(1);
    /**
     * @brief Add a separator item to menu @p obj under @p parent.
     *
@@ -16199,15 +16214,19 @@ extern "C" {
     * @return The data associated with @p item or NULL if none was set.
     *
     * This is the data set with elm_menu_add() or elm_menu_item_data_set().
+	 * 
+	 * @deprecated Use elm_object_item_data_get() instead
     */
-   EAPI void              *elm_menu_item_data_get(const Elm_Object_Item *it) EINA_ARG_NONNULL(1);
+   EINA_DEPRECATED EAPI void              *elm_menu_item_data_get(const Elm_Object_Item *it) EINA_ARG_NONNULL(1);
    /**
     * @brief Sets the data to be associated with menu item @p item.
     *
     * @param it The item
     * @param data The data to be associated with @p item
+	 *
+	 * @deprecated Use elm_object_item_data_set() instead
     */
-   EAPI void               elm_menu_item_data_set(Elm_Object_Item *it, const void *data) EINA_ARG_NONNULL(1);
+   EINA_DEPRECATED EAPI void               elm_menu_item_data_set(Elm_Object_Item *it, const void *data) EINA_ARG_NONNULL(1);
 
    /**
     * @brief Returns a list of @p item's subitems.

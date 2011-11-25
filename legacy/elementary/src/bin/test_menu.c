@@ -24,13 +24,13 @@ _populate_4(Elm_Object_Item *menu_it)
    elm_menu_item_separator_add(menu, menu_it);
    menu_it2 = elm_menu_item_add(menu, menu_it, "go-last", "Disabled item", NULL,
                                 NULL);
-   elm_menu_item_disabled_set(menu_it2, EINA_TRUE);
+   elm_object_item_disabled_set(menu_it2, EINA_TRUE);
    menu_it2 = elm_menu_item_add(menu, menu_it, "go-next", "Disabled item", NULL,
                                 NULL);
-   elm_menu_item_disabled_set(menu_it2, EINA_TRUE);
+   elm_object_item_disabled_set(menu_it2, EINA_TRUE);
    menu_it2 = elm_menu_item_add(menu, menu_it, "go-up", "Disabled item", NULL,
                                 NULL);
-   elm_menu_item_disabled_set(menu_it2, EINA_TRUE);
+   elm_object_item_disabled_set(menu_it2, EINA_TRUE);
 }
 
 static void
@@ -44,7 +44,7 @@ _populate_3(Elm_Object_Item *menu_it)
    elm_menu_item_separator_add(menu, menu_it);
    menu_it2 = elm_menu_item_add(menu, menu_it, "media-playback-stop",
                                 "Disabled item", NULL, NULL);
-   elm_menu_item_disabled_set(menu_it2, EINA_TRUE);
+   elm_object_item_disabled_set(menu_it2, EINA_TRUE);
 }
 
 static void
@@ -71,7 +71,7 @@ _populate_2(Elm_Object_Item *menu_it)
 
    menu_it3 = elm_menu_item_add(menu, menu_it, "system-run", "Disabled item",
                                 NULL, NULL);
-   elm_menu_item_disabled_set(menu_it3, EINA_TRUE);
+   elm_object_item_disabled_set(menu_it3, EINA_TRUE);
 
    _populate_4(menu_it2);
 }

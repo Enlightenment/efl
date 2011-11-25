@@ -59,7 +59,7 @@ elm_main(int argc, char **argv)
    elm_menu_item_add(menu, menu_it, "window-new", "sub menu", NULL, NULL);
 
    menu_it = elm_menu_item_add(menu, NULL, NULL, "third item", NULL, NULL);
-   elm_menu_item_disabled_set(menu_it, EINA_TRUE);
+   elm_object_item_disabled_set(menu_it, EINA_TRUE);
 
    evas_object_event_callback_add(rect, EVAS_CALLBACK_MOUSE_DOWN, _show, menu);
    evas_object_show(menu);
