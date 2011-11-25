@@ -1623,6 +1623,8 @@ elm_flip_add(Evas_Object *parent)
    evas_object_smart_callback_add(obj, "sub-object-del", _sub_del, obj);
    evas_object_event_callback_add(obj, EVAS_CALLBACK_MOVE, _move, NULL);
    evas_object_event_callback_add(obj, EVAS_CALLBACK_RESIZE, _resize, NULL);
+   evas_object_event_callback_add(obj, EVAS_CALLBACK_CHANGED_SIZE_HINTS,
+                                       _changed_size_hints, obj);;
 
    evas_object_smart_callbacks_descriptions_set(obj, _signals);
 
