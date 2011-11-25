@@ -19590,6 +19590,22 @@ extern "C" {
     */
    EAPI void               elm_genlist_item_update(Elm_Genlist_Item *item) EINA_ARG_NONNULL(1);
    /**
+    * Promote an item to the top of the list
+    *
+    * @param it The item
+    *
+    * @ingroup Genlist
+    */
+   EAPI void               elm_genlist_item_promote(Elm_Gen_Item *it) EINA_ARG_NONNULL(1);
+   /**
+    * Demote an item to the end of the list
+    *
+    * @param it The item
+    *
+    * @ingroup Genlist
+    */
+   EAPI void               elm_genlist_item_demote(Elm_Gen_Item *it) EINA_ARG_NONNULL(1);
+   /**
     * Update the item class of an item
     *
     * @param it The item

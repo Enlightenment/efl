@@ -3963,6 +3963,22 @@ elm_genlist_item_show(Elm_Gen_Item *it)
 }
 
 EAPI void
+elm_genlist_item_promote(Elm_Gen_Item *it)
+{
+   ELM_WIDGET_ITEM_WIDTYPE_CHECK_OR_RETURN(it);
+   if (it->delete_me) return;
+   _item_move_before(it, elm_gen_first_item_get(WIDGET(it)));
+}
+
+EAPI void
+elm_genlist_item_demote(Elm_Gen_Item *it)
+{
+   ELM_WIDGET_ITEM_WIDTYPE_CHECK_OR_RETURN(it);
+   if (it->delete_me) return;
+   _item_move_after(it, elm_gen_last_item_get(WIDGET(it)));
+}
+
+EAPI void
 elm_genlist_item_bring_in(Elm_Gen_Item *it)
 {
    ELM_WIDGET_ITEM_WIDTYPE_CHECK_OR_RETURN(it);
