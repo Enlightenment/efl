@@ -10,9 +10,9 @@ static void
 _del_it(void *data, Evas_Object *obj, void *event_info)
 {
    Eina_List *l;
-   Elm_Menu_Item *it = elm_menu_first_item_get(data);
-   it = elm_menu_item_next_get(it);
-   l = elm_menu_item_subitems_get(it);
+   Elm_Object_Item *menu_it = elm_menu_first_item_get(data);
+   menu_it = elm_menu_item_next_get(menu_it);
+   l = elm_menu_item_subitems_get(menu_it);
    elm_menu_item_del(eina_list_data_get(l));
 }
 
@@ -28,7 +28,7 @@ EAPI_MAIN int
 elm_main(int argc, char **argv)
 {
    Evas_Object *win, *bg, *menu, *button, *rect;
-   Elm_Menu_Item *item;
+   Elm_Object_Item *meu_it;
 
    win = elm_win_add(NULL, "menu", ELM_WIN_BASIC);
    elm_win_title_set(win, "Menu");
@@ -46,20 +46,20 @@ elm_main(int argc, char **argv)
 
    menu = elm_menu_add(win);
    elm_menu_item_add(menu, NULL, NULL, "first item", NULL, NULL);
-   item = elm_menu_item_add(menu, NULL, "mail-reply-all", "second item", NULL, NULL);
+   menu_it = elm_menu_item_add(menu, NULL, "mail-reply-all", "second item", NULL, NULL);
 
-   elm_menu_item_add(menu, item, "object-rotate-left", "menu 1", NULL, NULL);
+   elm_menu_item_add(menu, menu_it, "object-rotate-left", "menu 1", NULL, NULL);
    button = elm_button_add(win);
    elm_object_text_set(button, "button - delete items");
-   elm_menu_item_add_object(menu, item, button, NULL, NULL);
+   elm_menu_item_add_object(menu, menu_it, button, NULL, NULL);
    evas_object_smart_callback_add(button, "clicked", _del_it, menu);
-   elm_menu_item_separator_add(menu, item);
-   elm_menu_item_add(menu, item, NULL, "third item", NULL, NULL);
-   elm_menu_item_add(menu, item, NULL, "fourth item", NULL, NULL);
-   elm_menu_item_add(menu, item, "window-new", "sub menu", NULL, NULL);
+   elm_menu_item_separator_add(menu, menu_it);
+   elm_menu_item_add(menu, menu_it, NULL, "third item", NULL, NULL);
+   elm_menu_item_add(menu, menu_it, NULL, "fourth item", NULL, NULL);
+   elm_menu_item_add(menu, menu_it, "window-new", "sub menu", NULL, NULL);
 
-   item = elm_menu_item_add(menu, NULL, NULL, "third item", NULL, NULL);
-   elm_menu_item_disabled_set(item, EINA_TRUE);
+   menu_it = elm_menu_item_add(menu, NULL, NULL, "third item", NULL, NULL);
+   elm_menu_item_disabled_set(menu_it, EINA_TRUE);
 
    evas_object_event_callback_add(rect, EVAS_CALLBACK_MOUSE_DOWN, _show, menu);
    evas_object_show(menu);

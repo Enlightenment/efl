@@ -603,17 +603,18 @@ _map_move_resize_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__,
 }
 
 static void
-_populate(void *data, Elm_Menu_Item *item)
+_populate(void *data, Elm_Object_Item *menu_it)
 {
    int idx;
 
-   if ((!data) || (!item) || (!source_names)) return;
+   if ((!data) || (!menu_it) || (!source_names)) return;
    for (idx = 0; source_names[idx]; idx++)
      {
         if (idx >= SOURCE_MAX) break;
         ms[idx].map = data;
         ms[idx].source_name = strdup(source_names[idx]);
-        elm_menu_item_add(menu, item, "", source_names[idx], map_source, &ms[idx]);
+        elm_menu_item_add(menu, menu_it, "", source_names[idx], map_source,
+                          &ms[idx]);
      }
 }
 
@@ -621,7 +622,7 @@ static void
 _map_mouse_down(void *data, Evas *evas __UNUSED__, Evas_Object *obj, void *event_info)
 {
    Evas_Event_Mouse_Down *down = event_info;
-   Elm_Menu_Item *item;
+   Elm_Object_Item *menu_it;
    if (!down) return;
 
    if (down->button == 2)
@@ -633,8 +634,8 @@ _map_mouse_down(void *data, Evas *evas __UNUSED__, Evas_Object *obj, void *event
    else if (down->button == 3)
      {
         menu = elm_menu_add(obj);
-        item = elm_menu_item_add(menu, NULL, NULL, "Source", NULL, NULL);
-        _populate(data, item);
+        menu_it = elm_menu_item_add(menu, NULL, NULL, "Source", NULL, NULL);
+        _populate(data, menu_it);
         elm_menu_item_add(menu, NULL, NULL, "Show Urmatt", map_show_urmatt, data);
         elm_menu_item_add(menu, NULL, NULL, "Bring Seoul", map_bring_seoul, data);
         elm_menu_item_add(menu, NULL, NULL, "Paused Set", map_paused_set, data);

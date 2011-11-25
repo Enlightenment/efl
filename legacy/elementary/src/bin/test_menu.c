@@ -15,80 +15,88 @@ _show(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event_i
 }
 
 static void
-_populate_4(Elm_Menu_Item *item)
+_populate_4(Elm_Object_Item *menu_it)
 {
-   Elm_Menu_Item *item2;
+   Elm_Object_Item *menu_it2;
 
-   elm_menu_item_add(menu, item, "go-bottom", "menu 2", NULL, NULL);
-   elm_menu_item_add(menu, item, "go-first", "menu 3", NULL, NULL);
-   elm_menu_item_separator_add(menu, item);
-   item2 = elm_menu_item_add(menu, item, "go-last", "Disabled item", NULL, NULL);
-   elm_menu_item_disabled_set(item2, 1);
-   item2 = elm_menu_item_add(menu, item, "go-next", "Disabled item", NULL, NULL);
-   elm_menu_item_disabled_set(item2, 1);
-   item2 = elm_menu_item_add(menu, item, "go-up", "Disabled item", NULL, NULL);
-   elm_menu_item_disabled_set(item2, 1);
+   elm_menu_item_add(menu, menu_it, "go-bottom", "menu 2", NULL, NULL);
+   elm_menu_item_add(menu, menu_it, "go-first", "menu 3", NULL, NULL);
+   elm_menu_item_separator_add(menu, menu_it);
+   menu_it2 = elm_menu_item_add(menu, menu_it, "go-last", "Disabled item", NULL,
+                                NULL);
+   elm_menu_item_disabled_set(menu_it2, EINA_TRUE);
+   menu_it2 = elm_menu_item_add(menu, menu_it, "go-next", "Disabled item", NULL,
+                                NULL);
+   elm_menu_item_disabled_set(menu_it2, EINA_TRUE);
+   menu_it2 = elm_menu_item_add(menu, menu_it, "go-up", "Disabled item", NULL,
+                                NULL);
+   elm_menu_item_disabled_set(menu_it2, EINA_TRUE);
 }
 
 static void
-_populate_3(Elm_Menu_Item *item)
+_populate_3(Elm_Object_Item *menu_it)
 {
-   Elm_Menu_Item *item2;
+   Elm_Object_Item *menu_it2;
 
-   elm_menu_item_add(menu, item, "media-eject", "menu 2", NULL, NULL);
-   elm_menu_item_add(menu, item, "media-playback-start", "menu 3", NULL, NULL);
-   elm_menu_item_separator_add(menu,item);
-   item2 = elm_menu_item_add(menu, item, "media-playback-stop", "Disabled item", NULL, NULL);
-   elm_menu_item_disabled_set(item2, 1);
+   elm_menu_item_add(menu, menu_it, "media-eject", "menu 2", NULL, NULL);
+   elm_menu_item_add(menu, menu_it, "media-playback-start", "menu 3", NULL,
+                     NULL);
+   elm_menu_item_separator_add(menu, menu_it);
+   menu_it2 = elm_menu_item_add(menu, menu_it, "media-playback-stop",
+                                "Disabled item", NULL, NULL);
+   elm_menu_item_disabled_set(menu_it2, EINA_TRUE);
 }
 
 static void
-_populate_2(Elm_Menu_Item *item)
+_populate_2(Elm_Object_Item *menu_it)
 {
-   Elm_Menu_Item *item2, *item3;
+   Elm_Object_Item *menu_it2, *menu_it3;
 
-   elm_menu_item_add(menu, item, "system-reboot", "menu 2", NULL, NULL);
-   item2 = elm_menu_item_add(menu, item, "system-shutdown", "menu 3", NULL, NULL);
+   elm_menu_item_add(menu, menu_it, "system-reboot", "menu 2", NULL, NULL);
+   menu_it2 = elm_menu_item_add(menu, menu_it, "system-shutdown", "menu 3",
+                                NULL, NULL);
+   _populate_3(menu_it2);
 
-   _populate_3(item2);
+   elm_menu_item_separator_add(menu, menu_it);
+   elm_menu_item_separator_add(menu, menu_it);
+   elm_menu_item_separator_add(menu, menu_it);
+   elm_menu_item_separator_add(menu, menu_it);
+   elm_menu_item_separator_add(menu, menu_it);
+   elm_menu_item_separator_add(menu, menu_it);
+   elm_menu_item_separator_add(menu, menu_it);
 
-   elm_menu_item_separator_add(menu,item);
-   elm_menu_item_separator_add(menu,item);
-   elm_menu_item_separator_add(menu,item);
-   elm_menu_item_separator_add(menu,item);
-   elm_menu_item_separator_add(menu,item);
-   elm_menu_item_separator_add(menu,item);
-   elm_menu_item_separator_add(menu,item);
+   menu_it2 = elm_menu_item_add(menu, menu_it, "system-lock-screen", "menu 2",
+                                NULL, NULL);
+   elm_menu_item_separator_add(menu, menu_it);
 
-   item2 = elm_menu_item_add(menu, item, "system-lock-screen", "menu 2", NULL, NULL);
-   elm_menu_item_separator_add(menu,item);
+   menu_it3 = elm_menu_item_add(menu, menu_it, "system-run", "Disabled item",
+                                NULL, NULL);
+   elm_menu_item_disabled_set(menu_it3, EINA_TRUE);
 
-   item3 = elm_menu_item_add(menu, item, "system-run", "Disabled item", NULL, NULL);
-   elm_menu_item_disabled_set(item3, 1);
-
-   _populate_4(item2);
+   _populate_4(menu_it2);
 }
 
 static void
-_populate_1(Evas_Object *win, Elm_Menu_Item *item)
+_populate_1(Evas_Object *win, Elm_Object_Item *menu_it)
 {
-   Elm_Menu_Item *item2;
+   Elm_Object_Item *menu_it2;
    Evas_Object *radio;
 
    radio = elm_radio_add(win);
    elm_radio_state_value_set(radio, 0);
    elm_radio_value_set(radio, 0);
    elm_object_text_set(radio, "radio in menu");
-   item2 = elm_menu_item_add(menu, item, "object-rotate-left", "menu 1", NULL, NULL);
-   elm_menu_item_add_object(menu, item, radio, NULL, NULL);
+   menu_it2 = elm_menu_item_add(menu, menu_it, "object-rotate-left", "menu 1",
+                                NULL, NULL);
+   elm_menu_item_add_object(menu, menu_it, radio, NULL, NULL);
 
-   _populate_2(item2);
+   _populate_2(menu_it2);
 }
 
 void
 test_menu(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
-   Elm_Menu_Item *item;
+   Elm_Object_Item *menu_it;
 
    win = elm_win_add(NULL, "menu", ELM_WIN_BASIC);
    elm_win_title_set(win, "Menu");
@@ -107,10 +115,11 @@ test_menu(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info _
    menu = elm_menu_add(win);
    elm_menu_item_add(menu, NULL, NULL, "first item", NULL, NULL);
 
-   item = elm_menu_item_add(menu, NULL, "mail-reply-all", "second item", NULL, NULL);
-   _populate_1(win, item);
+   menu_it = elm_menu_item_add(menu, NULL, "mail-reply-all", "second item",
+                               NULL, NULL);
+   _populate_1(win, menu_it);
 
-   elm_menu_item_add(menu, item, "window-new", "sub menu", NULL, NULL);
+   elm_menu_item_add(menu, menu_it, "window-new", "sub menu", NULL, NULL);
 
    evas_object_event_callback_add(rect, EVAS_CALLBACK_MOUSE_DOWN, _show, menu);
 

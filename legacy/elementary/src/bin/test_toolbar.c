@@ -67,7 +67,7 @@ test_toolbar(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_inf
    Evas_Object *win, *bg, *bx, *tb, *ph, *menu;
    Evas_Object *ph1, *ph2, *ph3, *ph4;
    Elm_Toolbar_Item *item;
-   Elm_Menu_Item *menu_item;
+   Elm_Object_Item *menu_it;
    char buf[PATH_MAX];
 
    win = elm_win_add(NULL, "toolbar", ELM_WIN_BASIC);
@@ -118,8 +118,8 @@ test_toolbar(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_inf
    menu = elm_toolbar_item_menu_get(item);
 
    elm_menu_item_add(menu, NULL, "edit-cut", "Shrink", tb_3, ph4);
-   menu_item = elm_menu_item_add(menu, NULL, "edit-copy", "Mode", tb_4, ph4);
-   elm_menu_item_add(menu, menu_item, "edit-paste", "is set to", tb_4, ph4);
+   menu_it = elm_menu_item_add(menu, NULL, "edit-copy", "Mode", tb_4, ph4);
+   elm_menu_item_add(menu, menu_it, "edit-paste", "is set to", tb_4, ph4);
    elm_menu_item_add(menu, NULL, "edit-delete", "Menu", tb_5, ph4);
 
    elm_box_pack_end(bx, tb);
@@ -177,7 +177,7 @@ test_toolbar2(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_in
    Evas_Object *win, *bg, *bx, *tb, *ph, *menu;
    Evas_Object *ph1, *ph2, *ph3, *ph4;
    Elm_Toolbar_Item *item;
-   Elm_Menu_Item *menu_item;
+   Elm_Object_Item *menu_it;
    char buf[PATH_MAX];
 
    win = elm_win_add(NULL, "toolbar2", ELM_WIN_BASIC);
@@ -228,8 +228,8 @@ test_toolbar2(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_in
    menu = elm_toolbar_item_menu_get(item);
 
    elm_menu_item_add(menu, NULL, "edit-cut", "Shrink", tb_3, ph4);
-   menu_item = elm_menu_item_add(menu, NULL, "edit-copy", "Mode", tb_4, ph4);
-   elm_menu_item_add(menu, menu_item, "edit-paste", "is set to", tb_4, ph4);
+   menu_it = elm_menu_item_add(menu, NULL, "edit-copy", "Mode", tb_4, ph4);
+   elm_menu_item_add(menu, menu_it, "edit-paste", "is set to", tb_4, ph4);
    elm_menu_item_add(menu, NULL, "edit-delete", "Scroll", tb_5, ph4);
 
    elm_box_pack_end(bx, tb);
@@ -287,7 +287,7 @@ test_toolbar3(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_in
    Evas_Object *win, *bg, *bx, *tb, *ph, *menu;
    Evas_Object *ph1, *ph2, *ph3, *ph4;
    Elm_Toolbar_Item *item;
-   Elm_Menu_Item *menu_item;
+   Elm_Object_Item *menu_it;
    char buf[PATH_MAX];
 
    win = elm_win_add(NULL, "toolbar3", ELM_WIN_BASIC);
@@ -338,15 +338,14 @@ test_toolbar3(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_in
    menu = elm_toolbar_item_menu_get(item);
 
    elm_menu_item_add(menu, NULL, "edit-cut", "Shrink", tb_3, ph4);
-   menu_item = elm_menu_item_add(menu, NULL, "edit-copy", "Mode", tb_4, ph4);
-   elm_menu_item_add(menu, menu_item, "edit-paste", "is set to", tb_4, ph4);
+   menu_it = elm_menu_item_add(menu, NULL, "edit-copy", "Mode", tb_4, ph4);
+   elm_menu_item_add(menu, menu_it, "edit-paste", "is set to", tb_4, ph4);
    elm_menu_item_add(menu, NULL, "edit-delete", "None", tb_5, ph4);
 
    elm_box_pack_end(bx, tb);
    evas_object_show(tb);
 
    tb = elm_table_add(win);
-   //elm_table_homogeneous_set(tb, 1);
    evas_object_size_hint_weight_set(tb, 0.0, EVAS_HINT_EXPAND);
    evas_object_size_hint_fill_set(tb, EVAS_HINT_FILL, EVAS_HINT_FILL);
 
@@ -398,7 +397,7 @@ test_toolbar4(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_in
    Evas_Object *win, *bg, *bx, *tb, *ph, *menu;
    Evas_Object *ph1, *ph2, *ph3, *ph4;
    Elm_Toolbar_Item *item;
-   Elm_Menu_Item *menu_item;
+   Elm_Object_Item *menu_it;
    char buf[PATH_MAX];
 
    win = elm_win_add(NULL, "toolbar4", ELM_WIN_BASIC);
@@ -449,8 +448,8 @@ test_toolbar4(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_in
    menu = elm_toolbar_item_menu_get(item);
 
    elm_menu_item_add(menu, NULL, "edit-cut", "Shrink", tb_3, ph4);
-   menu_item = elm_menu_item_add(menu, NULL, "edit-copy", "Mode", tb_4, ph4);
-   elm_menu_item_add(menu, menu_item, "edit-paste", "is set to", tb_4, ph4);
+   menu_it = elm_menu_item_add(menu, NULL, "edit-copy", "Mode", tb_4, ph4);
+   elm_menu_item_add(menu, menu_it, "edit-paste", "is set to", tb_4, ph4);
    elm_menu_item_add(menu, NULL, "edit-delete", "Menu", tb_5, ph4);
 
    elm_box_pack_end(bx, tb);
@@ -508,7 +507,7 @@ test_toolbar5(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_in
    Evas_Object *win, *bg, *bx, *tb, *ph, *menu;
    Evas_Object *ph1, *ph2, *ph3, *ph4;
    Elm_Toolbar_Item *item;
-   Elm_Menu_Item *menu_item;
+   Elm_Object_Item *menu_it;
    char buf[PATH_MAX];
 
    win = elm_win_add(NULL, "toolbar5", ELM_WIN_BASIC);
@@ -564,15 +563,14 @@ test_toolbar5(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_in
    menu = elm_toolbar_item_menu_get(item);
 
    elm_menu_item_add(menu, NULL, "edit-cut", "Shrink", tb_3, ph4);
-   menu_item = elm_menu_item_add(menu, NULL, "edit-copy", "Mode", tb_4, ph4);
-   elm_menu_item_add(menu, menu_item, "edit-paste", "is set to", tb_4, ph4);
+   menu_it = elm_menu_item_add(menu, NULL, "edit-copy", "Mode", tb_4, ph4);
+   elm_menu_item_add(menu, menu_it, "edit-paste", "is set to", tb_4, ph4);
    elm_menu_item_add(menu, NULL, "edit-delete", "Menu", tb_5, ph4);
 
    elm_box_pack_end(bx, tb);
    evas_object_show(tb);
 
    tb = elm_table_add(win);
-   //elm_table_homogeneous_set(tb, 1);
    evas_object_size_hint_weight_set(tb, 0.0, EVAS_HINT_EXPAND);
    evas_object_size_hint_fill_set(tb, EVAS_HINT_FILL, EVAS_HINT_FILL);
 
@@ -623,7 +621,7 @@ test_toolbar6(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_in
    Evas_Object *win, *bg, *bx, *tb, *ph, *menu;
    Evas_Object *ph1, *ph2, *ph3, *ph4;
    Elm_Toolbar_Item *item;
-   Elm_Menu_Item *menu_item;
+   Elm_Object_Item *menu_it;
    char buf[PATH_MAX];
 
    win = elm_win_add(NULL, "toolbar", ELM_WIN_BASIC);
@@ -676,15 +674,14 @@ test_toolbar6(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_in
    menu = elm_toolbar_item_menu_get(item);
 
    elm_menu_item_add(menu, NULL, "edit-cut", "Shrink", tb_3, ph4);
-   menu_item = elm_menu_item_add(menu, NULL, "edit-copy", "Mode", tb_4, ph4);
-   elm_menu_item_add(menu, menu_item, "edit-paste", "is set to", tb_4, ph4);
+   menu_it = elm_menu_item_add(menu, NULL, "edit-copy", "Mode", tb_4, ph4);
+   elm_menu_item_add(menu, menu_it, "edit-paste", "is set to", tb_4, ph4);
    elm_menu_item_add(menu, NULL, "edit-delete", "Menu", tb_5, ph4);
 
    elm_box_pack_end(bx, tb);
    evas_object_show(tb);
 
    tb = elm_table_add(win);
-   //elm_table_homogeneous_set(tb, 1);
    evas_object_size_hint_weight_set(tb, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_fill_set(tb, EVAS_HINT_FILL, EVAS_HINT_FILL);
 

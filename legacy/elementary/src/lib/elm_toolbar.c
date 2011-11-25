@@ -533,11 +533,13 @@ _resize_job(void *data)
                          elm_menu_item_separator_add(menu, NULL);
                        else
                          {
-                            Elm_Menu_Item *item;
-                            item = elm_menu_item_add(menu, NULL, it->icon_str, it->label,
-                                                     _elm_toolbar_item_menu_cb, it);
-                            elm_menu_item_disabled_set(item, it->disabled);
-                            if (it->o_menu) elm_menu_clone(it->o_menu, menu, item);
+                            Elm_Object_Item *menu_it;
+                            menu_it = elm_menu_item_add(menu, NULL,
+                                                it->icon_str, it->label,
+                                                _elm_toolbar_item_menu_cb, it);
+                            elm_menu_item_disabled_set(menu_it, it->disabled);
+                            if (it->o_menu)
+                              elm_menu_clone(it->o_menu, menu, menu_it);
                          }
                        evas_object_hide(VIEW(it));
                     }
