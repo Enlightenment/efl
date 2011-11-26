@@ -2587,8 +2587,22 @@ static const struct luaL_reg _elua_evas_edje_funcs [] =
 
 /**
 @page luaref
-@subsubsection edje_file edje_object:file()
+@subsubsection edje_file edje_object:file(file, group)
 
+Load an edje group into this edje object.
+
+Wraps edje_object_file_set().
+
+@param file An edje file name (ignored, sandboxed to the file this lua script is in).
+@param group The group within the edje file to be loaded.
+
+Note that the arguments are optional, without them this function just queries
+the current values.  The arguments can be separate values, or named fields in a
+table.  The file argument is optional, and ignored anyway.
+
+@return A table with these fields:
+   - string file: The name of the edje file this edje's group is loaded from.
+   - string group: The name of the group this edje is loaded from.
 
 @since 1.1.0
 */
@@ -2674,8 +2688,27 @@ static const struct luaL_reg _elua_evas_image_funcs [] =
 
 /**
 @page luaref
-@subsubsection image_fill image_object:fill()
+@subsubsection image_fill image_object:fill(x, y, w, h)
 
+Gets (and optionally sets) how to fill this image's drawing rectangle given the
+(real) image bound to it.
+
+Wraps evas_object_image_fill_set().
+
+@param x The x coordinate (from the top left corner of the bound image) to start drawing from.
+@param y The y coordinate (from the top left corner of the bound image) to start drawing from.
+@param w The width the bound image will be displayed at.
+@param h The height the bound image will be displayed at.
+
+Note that the arguments are optional, without them this function just queries
+the current values.  The arguments can be separate values, or named fields in a
+table.
+
+@return A table with these fields:
+   - integer x: The x coordinate (from the top left corner of the bound image) to start drawing from.
+   - integer y: The y coordinate (from the top left corner of the bound image) to start drawing from.
+   - integer w: The width the bound image will be displayed at.
+   - integer h: The height the bound image will be displayed at.
 
 @since 1.1.0
 */
@@ -2700,8 +2733,18 @@ _elua_image_fill(lua_State *L)                                  // Stack usage [
 
 /**
 @page luaref
-@subsubsection image_filled image_object:filled()
+@subsubsection image_filled image_object:filled(filled)
 
+Get (and optionally set) whether this image fills the object.
+
+Wraps evas_object_image_filled_set().
+
+@param filled A boolean saying if this image fills the object.
+
+Note that the argument is optional, without it this function just queries the
+current value.
+
+@return A boolean saying if this image fills the object.
 
 @since 1.1.0
 */
@@ -2727,8 +2770,22 @@ _elua_image_filled(lua_State *L)                                // Stack usage [
 
 /**
 @page luaref
-@subsubsection image_image image_object:image()
+@subsubsection image_image image_object:image(file, key)
 
+Load an image into this edje object.
+
+Wraps evas_object_image_file_set().
+
+@param file An edje file name (ignored, sandboxed to the file this lua script is in).
+@param group The name of an image.
+
+Note that the arguments are optional, without them this function just queries
+the current values.  The arguments can be separate values, or named fields in a
+table.  The file argument is optional, and ignored anyway.
+
+@return A table with these fields:
+   - string file: The name of the edje file the image is loaded from.
+   - string key: The name of the image within the edje file.
 
 @since 1.1.0
 */
@@ -2830,8 +2887,26 @@ static const struct luaL_reg _elua_evas_line_funcs [] =
 
 /**
 @page luaref
-@subsubsection line_xy line_object:xy()
+@subsubsection line_xy line_object:xy(x1, y1, x2, y2)
 
+Sets the end points of this line.
+
+Wraps evas_object_line_xy_set().
+
+@param x1 The X coordinate of the first line end.
+@param y1 The Y coordinate of the first line end.
+@param x2 The X coordinate of the other line end.
+@param y2 The Y coordinate of the other line end.
+
+Note that the arguments are optional, without them this function just queries
+the current values.  The arguments can be separate values, or named fields in a
+table.
+
+@return A table with these fields:
+   - integer x1: The X coordinate of the first line end.
+   - integer y1: The Y coordinate of the first line end.
+   - integer x2: The X coordinate of the other line end.
+   - integer y2: The Y coordinate of the other line end.
 
 @since 1.1.0
 */
@@ -3305,6 +3380,9 @@ static const struct luaL_reg _elua_evas_polygon_funcs [] =
 @page luaref
 @subsubsection polygon_clear polygon_object:clear()
 
+Clears all points from the polygon.
+
+Wraps evas_object_polygon_points_clear(),
 
 @since 1.1.0
 */
@@ -3321,8 +3399,14 @@ _elua_polygon_clear(lua_State *L)                               // Stack usage [
 
 /**
 @page luaref
-@subsubsection polygon_point polygon_object:point()
+@subsubsection polygon_point polygon_object:point(x, y)
 
+Adds a point to this polygon.
+
+Wraps evas_object_polygon_point_add().
+
+@param x The X coordinate of the point.
+@param y The Y coordinate of the point.
 
 @since 1.1.0
 */
@@ -3375,8 +3459,23 @@ static const struct luaL_reg _elua_evas_text_funcs [] =
 
 /**
 @page luaref
-@subsubsection text_font text_object:font()
+@subsubsection text_font text_object:font(font, size)
 
+Gets, (and optionally sets) the font for this text object.
+
+Wraps evas_object_text_font_set().
+
+@param font The new font name.
+@param size The new font size.
+
+Note that the font and size arguments are optional, without them this function
+just queries the current values.  The font and size arguments can be separate
+values, or named fields in a table.  The font name can refer to a font in the
+edje file, or an external font.
+
+@return A table with these fields:
+   - string font: The font name.
+   - integer size: The font size.
 
 @since 1.1.0
 */
@@ -3429,8 +3528,18 @@ _elua_text_font(lua_State *L)                                   // Stack usage [
 
 /**
 @page luaref
-@subsubsection text_text text_object:text()
+@subsubsection text_text text_object:text(text)
 
+Get (and optionally set) the actual tetx for this text object.
+
+Wraps evas_object_text_text_set().
+
+@param text The text to set for this text object.
+
+Note that the argument is optional, without it this function just queries the
+current value.
+
+@return A string of the text on this text object.
 
 @since 1.1.0
 */
