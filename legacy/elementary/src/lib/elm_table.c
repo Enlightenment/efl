@@ -157,12 +157,6 @@ elm_table_homogeneous_set(Evas_Object *obj, Eina_Bool homogeneous)
    evas_object_table_homogeneous_set(wd->tbl, homogeneous);
 }
 
-EINA_DEPRECATED EAPI void
-elm_table_homogenous_set(Evas_Object *obj, Eina_Bool homogenous)
-{
-   elm_table_homogeneous_set(obj, homogenous);
-}
-
 EAPI Eina_Bool
 elm_table_homogeneous_get(const Evas_Object *obj)
 {
@@ -170,12 +164,6 @@ elm_table_homogeneous_get(const Evas_Object *obj)
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return EINA_FALSE;
    return evas_object_table_homogeneous_get(wd->tbl);
-}
-
-EINA_DEPRECATED EAPI Eina_Bool
-elm_table_homogenous_get(const Evas_Object *obj)
-{
-   return elm_table_homogeneous_get(obj);
 }
 
 EAPI void

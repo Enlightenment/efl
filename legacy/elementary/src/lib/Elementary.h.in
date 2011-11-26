@@ -5850,8 +5850,6 @@ extern "C" {
     * @return EINA_TRUE if it's homogeneous, EINA_FALSE otherwise
     */
    EAPI Eina_Bool           elm_box_homogeneous_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
-   EINA_DEPRECATED EAPI void elm_box_homogenous_set(Evas_Object *obj, Eina_Bool homogenous) EINA_ARG_NONNULL(1);
-   EINA_DEPRECATED EAPI Eina_Bool elm_box_homogenous_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
    /**
     * Add an object to the beginning of the pack list
     *
@@ -7904,14 +7902,6 @@ extern "C" {
     * (EINA_TRUE = homogeneous,  EINA_FALSE = no homogeneous)
     */
    EAPI Eina_Bool    elm_table_homogeneous_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
-   /**
-    * @warning <b>Use elm_table_homogeneous_set() instead</b>
-    */
-   EINA_DEPRECATED EAPI void elm_table_homogenous_set(Evas_Object *obj, Eina_Bool homogenous) EINA_ARG_NONNULL(1);
-   /**
-    * @warning <b>Use elm_table_homogeneous_get() instead</b>
-    */
-   EINA_DEPRECATED EAPI Eina_Bool elm_table_homogenous_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
    /**
     * @brief Set padding between cells.
     *
@@ -15251,7 +15241,7 @@ extern "C" {
    EAPI Elm_Toolbar_Shrink_Mode elm_toolbar_mode_shrink_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
 
    /**
-    * Enable/disable homogenous mode.
+    * Enable/disable homogeneous mode.
     *
     * @param obj The toolbar object
     * @param homogeneous Assume the items within the toolbar are of the
@@ -15265,7 +15255,7 @@ extern "C" {
    EAPI void                    elm_toolbar_homogeneous_set(Evas_Object *obj, Eina_Bool homogeneous) EINA_ARG_NONNULL(1);
 
    /**
-    * Get whether the homogenous mode is enabled.
+    * Get whether the homogeneous mode is enabled.
     *
     * @param obj The toolbar object.
     * @return Assume the items within the toolbar are of the same height
@@ -15276,37 +15266,6 @@ extern "C" {
     * @ingroup Toolbar
     */
    EAPI Eina_Bool               elm_toolbar_homogeneous_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
-
-   /**
-    * Enable/disable homogenous mode.
-    *
-    * @param obj The toolbar object
-    * @param homogeneous Assume the items within the toolbar are of the
-    * same size (EINA_TRUE = on, EINA_FALSE = off). Default is @c EINA_FALSE.
-    *
-    * This will enable the homogeneous mode where items are of the same size.
-    * @see elm_toolbar_homogeneous_get()
-    *
-    * @deprecated use elm_toolbar_homogeneous_set() instead.
-    *
-    * @ingroup Toolbar
-    */
-   EINA_DEPRECATED EAPI void    elm_toolbar_homogenous_set(Evas_Object *obj, Eina_Bool homogenous) EINA_ARG_NONNULL(1);
-
-   /**
-    * Get whether the homogenous mode is enabled.
-    *
-    * @param obj The toolbar object.
-    * @return Assume the items within the toolbar are of the same height
-    * and width (EINA_TRUE = on, EINA_FALSE = off).
-    *
-    * @see elm_toolbar_homogeneous_set()
-    * @deprecated use elm_toolbar_homogeneous_get() instead.
-    *
-    * @ingroup Toolbar
-    */
-   EINA_DEPRECATED EAPI Eina_Bool elm_toolbar_homogenous_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
-
    /**
     * Set the parent object of the toolbar items' menus.
     *
@@ -18829,7 +18788,7 @@ extern "C" {
     */
    EINA_DEPRECATED EAPI void              elm_genlist_bounce_get(const Evas_Object *obj, Eina_Bool *h_bounce, Eina_Bool *v_bounce) EINA_ARG_NONNULL(1);
    /**
-    * Enable/disable homogenous mode.
+    * Enable/disable homogeneous mode.
     *
     * @param obj The genlist object
     * @param homogeneous Assume the items within the genlist are of the
@@ -18848,7 +18807,7 @@ extern "C" {
     */
    EAPI void              elm_genlist_homogeneous_set(Evas_Object *obj, Eina_Bool homogeneous) EINA_ARG_NONNULL(1);
    /**
-    * Get whether the homogenous mode is enabled.
+    * Get whether the homogeneous mode is enabled.
     *
     * @param obj The genlist object
     * @return Assume the items within the genlist are of the same height

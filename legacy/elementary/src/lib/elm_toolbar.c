@@ -1660,12 +1660,6 @@ elm_toolbar_homogeneous_set(Evas_Object *obj, Eina_Bool homogeneous)
    evas_object_smart_calculate(wd->bx);
 }
 
-EINA_DEPRECATED EAPI void
-elm_toolbar_homogenous_set(Evas_Object *obj, Eina_Bool homogenous)
-{
-   elm_toolbar_homogeneous_set(obj, homogenous);
-}
-
 EAPI Eina_Bool
 elm_toolbar_homogeneous_get(const Evas_Object *obj)
 {
@@ -1674,12 +1668,6 @@ elm_toolbar_homogeneous_get(const Evas_Object *obj)
 
    if (!wd) return EINA_FALSE;
    return wd->homogeneous;
-}
-
-EINA_DEPRECATED EAPI Eina_Bool
-elm_toolbar_homogenous_get(const Evas_Object *obj)
-{
-   return elm_toolbar_homogeneous_get(obj);
 }
 
 EAPI void
