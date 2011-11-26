@@ -1344,8 +1344,27 @@ _elua_transition(lua_State *L)                               // Stack usage [-8,
 //-------------
 /**
 @page luaref
-@subsubsection edje_colour_class edje:color_class()
+@subsubsection edje_colour_class edje:color_class(class, r, g, b, a)
 
+Gets, (and optionally sets) the colours for a color class.
+
+Wraps edje_object_color_class_set().
+
+@param class A color class name.
+@param r The new red value.
+@param g The new green value.
+@param b The new blue value.
+@param a The new alpha value.
+
+Note that the r, g, b, and a arguments are optional, without them this function
+just queries the current values.  The r, g, b, and a arguments can be separate
+values, or named fields in a table.
+
+@return A table with these fields:
+   - integer r: The red value.
+   - integer g: The green value.
+   - integer b: The blue value.
+   - integer a: The alpha value.
 
 @since 1.1.0
 */
@@ -1381,8 +1400,24 @@ _elua_color_class(lua_State *L)                              // Stack usage [-(1
 
 /**
 @page luaref
-@subsubsection edje_text_class edje:text_class()
+@subsubsection edje_text_class edje:text_class(class, font, size)
 
+Gets, (and optionally sets) the details for a text class.
+
+Wraps edje_object_text_class_set().
+
+@param class A text class name.
+@param font The new font name.
+@param size The new font size.
+
+Note that the font and size arguments are optional, without them this function
+just queries the current values.  The font and size arguments can be separate
+values, or named fields in a table.  The font name can refer to a font in the
+edje file, or an external font.
+
+@return A table with these fields:
+   - string font: The font name.
+   - integer size: The font size.
 
 @since 1.1.0
 */
@@ -1445,6 +1480,11 @@ _elua_polish_evas_object(Edje *ed, Edje_Lua_Evas_Object *elo)
 @page luaref
 @subsubsection edje_edje edje:edje()
 
+Create an edje object, and add it to the edje.
+
+Wraps edje_object_add().
+
+@returns A userdata that is an edje object.
 
 @since 1.1.0
 */
@@ -1463,6 +1503,11 @@ _elua_edje(lua_State *L)                                     // Stack usage [-7,
 @page luaref
 @subsubsection edje_image edje:image()
 
+Create an evas image, and add it to the edje.
+
+Wraps evas_object_image_add().
+
+@returns A userdata that is an evas image.
 
 @since 1.1.0
 */
@@ -1480,6 +1525,11 @@ _elua_image(lua_State *L)                                    // Stack usage [-7,
 @page luaref
 @subsubsection edje_line edje:line()
 
+Create an evas line, and add it to the edje.
+
+Wraps evas_object_line_add().
+
+@returns A userdata that is an evas line.
 
 @since 1.1.0
 */
@@ -1506,6 +1556,11 @@ _elua_map_free(void *obj)
 @page luaref
 @subsubsection edje_map edje:map()
 
+Create an evas map.
+
+Wraps evas_map_new().
+
+@returns A userdata that is an evas map.
 
 @since 1.1.0
 */
@@ -1522,6 +1577,11 @@ _elua_map(lua_State *L)                                      // Stack usage [-7,
 @page luaref
 @subsubsection edje_polygon edje:polygon()
 
+Create an evas polygon, and add it to the edje.
+
+Wraps evas_object_polygon_add().
+
+@returns A userdata that is an evas polygon.
 
 @since 1.1.0
 */
@@ -1541,6 +1601,8 @@ _elua_polygon(lua_State *L)                                 // Stack usage [-7, 
 
 Create an evas rectangle, and add it to the edje.
 
+Wraps evas_object_rectangle_add().
+
 @returns A userdata that is an evas rectangle.
 */
 static int
@@ -1557,6 +1619,11 @@ _elua_rect(lua_State *L)                                    // Stack usage [-7, 
 @page luaref
 @subsubsection edje_text edje:text()
 
+Create an evas text object, and add it to the edje.
+
+Wraps evas_object_text_add().
+
+@returns A userdata that is an evas text object.
 
 @since 1.1.0
 */
@@ -2351,8 +2418,13 @@ _elua_color(lua_State *L)                                       // Stack usage [
 //-------------
 /**
 @page luaref
-@subsubsection evas_map evas_object:map()
+@subsubsection evas_map evas_object:map(map)
 
+Attach a map to this object.
+
+Wraps evas_object_map_set().
+
+@param map The map to attach.
 
 @since 1.1.0
 */
@@ -2373,8 +2445,15 @@ _elua_obj_map(lua_State *L)                                     // Stack usage [
 
 /**
 @page luaref
-@subsubsection evas_map_enable evas_object:map_enable()
+@subsubsection evas_map_enable evas_object:map_enable(enable)
 
+Enable or disable the map attached to this object.
+
+Wraps evas_object_map_enable_set().
+
+@param enable A booleon that controls if the attached map is enabled or not.
+
+@return A boolean reflecting the map enabled status of this object.
 
 @since 1.1.0
 */
@@ -2399,8 +2478,15 @@ _elua_obj_map_enable(lua_State *L)                              // Stack usage [
 
 /**
 @page luaref
-@subsubsection evas_map_source evas_object:map_source()
+@subsubsection evas_map_source evas_object:map_source(object)
 
+Sets the object as the map source for this object.
+
+Wraps evas_object_map_source_set().
+
+@param object The map source object.
+
+@return A userdata reference to the current map source object.
 
 @since 1.1.0
 */
