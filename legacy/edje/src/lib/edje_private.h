@@ -1161,6 +1161,26 @@ struct _Edje_Calc_Params
 	 Edje_Color     color2, color3; // 8
       } text; // 36
    } type; // 40
+   struct {
+      struct {
+         int x, y, z;
+      } center; // 12
+      struct {
+         double x, y, z;
+      } rotation; // 24
+      struct {
+         int x, y, z;
+         int r, g, b;
+         int ar, ag, ab;
+      } light; // 36
+      struct {
+         int x, y, z;
+         int focal;
+      } persp;
+   } map;
+   unsigned char    persp_on : 1;
+   unsigned char    lighted : 1;
+   unsigned char    mapped : 1;
    unsigned char    visible : 1;
    unsigned char    smooth : 1; // 1
 }; // 96
