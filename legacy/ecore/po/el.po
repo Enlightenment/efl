@@ -7,8 +7,8 @@ msgstr ""
 "Project-Id-Version: Ecore\n"
 "Report-Msgid-Bugs-To: enlightenment-devel@lists.sourceforge.net\n"
 "POT-Creation-Date: 2011-11-15 18:22+0900\n"
-"PO-Revision-Date: 2009-12-15 00:56+0200\n"
-"Last-Translator: Giorgos Koutsikos <ragecryx@yahoo.gr>\n"
+"PO-Revision-Date: 2011-11-20 22:42+0200\n"
+"Last-Translator: George Rizopoulos <george.rizopoulos.1@gmail.com>\n"
 "Language-Team: Greek\n"
 "Language: \n"
 "MIME-Version: 1.0\n"
@@ -55,30 +55,36 @@ msgstr "Επιλογές:\n"
 #: src/lib/ecore/ecore_getopt.c:781
 #, c-format
 msgid "ERROR: unknown option --%s.\n"
-msgstr "ΣΦΑΛΜΑ: άγνωστη παράμετρος --%s.\n"
+msgstr "ΣΦΑΛΜΑ: άγνωστη επιλογή --%s.\n"
 
 #: src/lib/ecore/ecore_getopt.c:783
 #, c-format
 msgid "ERROR: unknown option -%c.\n"
-msgstr "ΣΦΑΛΜΑ: άγνωστη παράμετρος -%c.\n"
+msgstr "ΣΦΑΛΜΑ: άγνωστη επιλογή -%c.\n"
 
 #: src/lib/ecore/ecore_getopt.c:841
 msgid "ERROR: "
 msgstr "ΣΦΑΛΜΑ:"
 
-#: src/lib/ecore/ecore_getopt.c:924 src/lib/ecore/ecore_getopt.c:1061
-#: src/lib/ecore/ecore_getopt.c:1077 src/lib/ecore/ecore_getopt.c:1092
-#: src/lib/ecore/ecore_getopt.c:1109 src/lib/ecore/ecore_getopt.c:1156
-#: src/lib/ecore/ecore_getopt.c:1276 src/lib/ecore/ecore_getopt.c:1317
+#: src/lib/ecore/ecore_getopt.c:924
+#: src/lib/ecore/ecore_getopt.c:1061
+#: src/lib/ecore/ecore_getopt.c:1077
+#: src/lib/ecore/ecore_getopt.c:1092
+#: src/lib/ecore/ecore_getopt.c:1109
+#: src/lib/ecore/ecore_getopt.c:1156
+#: src/lib/ecore/ecore_getopt.c:1276
+#: src/lib/ecore/ecore_getopt.c:1317
 msgid "value has no pointer set.\n"
 msgstr "η τιμή δεν έχει δείκτη ορισμένο.\n"
 
-#: src/lib/ecore/ecore_getopt.c:956 src/lib/ecore/ecore_getopt.c:1176
+#: src/lib/ecore/ecore_getopt.c:956
+#: src/lib/ecore/ecore_getopt.c:1176
 #, c-format
 msgid "unknown boolean value %s.\n"
 msgstr "άγνωστη τιμή boolean %s.\n"
 
-#: src/lib/ecore/ecore_getopt.c:1007 src/lib/ecore/ecore_getopt.c:1264
+#: src/lib/ecore/ecore_getopt.c:1007
+#: src/lib/ecore/ecore_getopt.c:1264
 #, c-format
 msgid "invalid number format %s\n"
 msgstr "άγνωστη μορφή αριθμού %s\n"
@@ -86,7 +92,7 @@ msgstr "άγνωστη μορφή αριθμού %s\n"
 #: src/lib/ecore/ecore_getopt.c:1122
 #, c-format
 msgid "invalid choice \"%s\". Valid values are: "
-msgstr "μη-έγκυρη επιλογή \"%s\". Οι τιμές είναι: "
+msgstr "μη έγκυρη επιλογή \"%s\". Οι έγκυρες τιμές είναι: "
 
 #: src/lib/ecore/ecore_getopt.c:1150
 msgid "missing parameter to append.\n"
@@ -94,7 +100,7 @@ msgstr "ελλιπής παράμετρος προς επισύναψη.\n"
 
 #: src/lib/ecore/ecore_getopt.c:1254
 msgid "could not parse value.\n"
-msgstr ""
+msgstr "αδυναμία ανάλυσης τιμών.\n"
 
 #: src/lib/ecore/ecore_getopt.c:1311
 msgid "missing parameter.\n"
@@ -102,7 +108,7 @@ msgstr "ελλιπής παράμετρος.\n"
 
 #: src/lib/ecore/ecore_getopt.c:1324
 msgid "missing callback function!\n"
-msgstr ""
+msgstr "λείπει η λειτουργία επανάκλησης!\n"
 
 #: src/lib/ecore/ecore_getopt.c:1353
 msgid "no version was defined.\n"
@@ -119,58 +125,59 @@ msgstr "δεν έχει οριστεί άδεια.\n"
 #: src/lib/ecore/ecore_getopt.c:1462
 #, c-format
 msgid "ERROR: unknown option --%s, ignored.\n"
-msgstr ""
+msgstr "ΣΦΑΛΜΑ:άγνωστη επιλογή --%s, αγνοήθηκε.\n"
 
 #: src/lib/ecore/ecore_getopt.c:1495
 #, c-format
 msgid "ERROR: option --%s requires an argument!\n"
-msgstr ""
+msgstr "ΣΦΑΛΜΑ: η επιλογή --%s απαιτεί παραμέτρους!\n"
 
 #: src/lib/ecore/ecore_getopt.c:1537
 #, c-format
 msgid "ERROR: unknown option -%c, ignored.\n"
-msgstr ""
+msgstr "ΣΦΑΛΜΑ: άγνωστη επιλογή -%c, αγνοήθηκε.\n"
 
 #: src/lib/ecore/ecore_getopt.c:1575
 #, c-format
 msgid "ERROR: option -%c requires an argument!\n"
-msgstr ""
+msgstr "ΣΦAΛΜΑ: η επιλογή -%c απαιτεί μία παράμετρο!\n"
 
 #: src/lib/ecore/ecore_getopt.c:1784
+#, fuzzy
 msgid "ERROR: no parser provided.\n"
-msgstr ""
+msgstr "ΣΦΑΛΜΑ:δεν παρέχεται αναλυτής.\n"
 
 #: src/lib/ecore/ecore_getopt.c:1789
 msgid "ERROR: no values provided.\n"
-msgstr ""
+msgstr "ΣΦΑΛΜΑ:δεν έχουν δοθεί τιμές.\n"
 
 #: src/lib/ecore/ecore_getopt.c:1798
 msgid "ERROR: no arguments provided.\n"
-msgstr ""
+msgstr "ΣΦΑΛΜΑ:δεν έχουν δοθεί παράμετροι.\n"
 
 #: src/lib/ecore/ecore_getopt.c:1824
 msgid "ERROR: invalid options found."
-msgstr ""
+msgstr "ΣΦΑΛΜΑ: βρέθηκαν μη έγκυρες επιλογές."
 
 #: src/lib/ecore/ecore_getopt.c:1830
 #, c-format
 msgid " See --%s.\n"
-msgstr " Δες --%s.\n"
+msgstr " Δείτε --%s.\n"
 
 #: src/lib/ecore/ecore_getopt.c:1832
 #, c-format
 msgid " See -%c.\n"
-msgstr " Δες -%c.\n"
+msgstr " Δείτε -%c.\n"
 
 #: src/lib/ecore/ecore_getopt.c:1873
 #, c-format
 msgid "ERROR: incorrect geometry value '%s'\n"
-msgstr ""
+msgstr "ΣΦΑΛΜΑ: μη έγκυρη γεωμετρική τιμή '%s'\n"
 
 #: src/lib/ecore/ecore_getopt.c:1900
 #, c-format
 msgid "ERROR: incorrect size value '%s'\n"
-msgstr ""
+msgstr "ΣΦΑΛΜΑ: μη έγκυρη τιμή μεγέθους '%s'\n"
 
 #~ msgid ""
 #~ "\n"
