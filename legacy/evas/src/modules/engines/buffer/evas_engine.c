@@ -31,8 +31,8 @@ struct _Render_Engine
 /* prototypes we will use here */
 static void *_output_setup(int w, int h, void *dest_buffer, int dest_buffer_row_bytes, int depth_type, int use_color_key, int alpha_threshold, int color_key_r, int color_key_g, int color_key_b, void *(*new_update_region) (int x, int y, int w, int h, int *row_bytes), void (*free_update_region) (int x, int y, int w, int h, void *data));
 
-static void *eng_info(Evas *e);
-static void eng_info_free(Evas *e, void *info);
+static void *eng_info(Evas *e __UNUSED__);
+static void eng_info_free(Evas *e __UNUSED__, void *info);
 static int eng_setup(Evas *e, void *info);
 static void eng_output_free(void *data);
 static void eng_output_resize(void *data, int w, int h);
@@ -119,7 +119,7 @@ _output_setup(int w,
 
 /* engine api this module provides */
 static void *
-eng_info(Evas *e)
+eng_info(Evas *e __UNUSED__)
 {
    Evas_Engine_Info_Buffer *info;
    info = calloc(1, sizeof(Evas_Engine_Info_Buffer));
@@ -127,7 +127,6 @@ eng_info(Evas *e)
    info->magic.magic = rand();
    info->render_mode = EVAS_RENDER_MODE_BLOCKING;
    return info;
-   e = NULL;
 }
 
 static void
