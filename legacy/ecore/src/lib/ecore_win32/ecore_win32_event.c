@@ -45,12 +45,13 @@ static void _ecore_win32_event_free_key_down(void *data,
 static void _ecore_win32_event_free_key_up(void *data,
                                            void *ev);
 
-static int  _ecore_win32_event_keystroke_get(int       key,
-                                             int       is_extended,
-                                             Eina_Bool is_down,
-                                             char    **keyname,
-                                             char    **keysymbol,
-                                             char    **keycompose);
+static int  _ecore_win32_event_keystroke_get(int           key,
+                                             int           is_extended,
+                                             Eina_Bool     is_down,
+                                             char        **keyname,
+                                             char        **keysymbol,
+                                             char        **keycompose,
+                                             unsigned int *modifiers);
 
 static int  _ecore_win32_event_char_get(int    key,
                                         char **keyname,
@@ -73,12 +74,13 @@ _ecore_win32_event_handle_key_press(Ecore_Win32_Callback_Data *msg,
 
    if (is_keystroke)
      {
-        if (!_ecore_win32_event_keystroke_get(LOWORD(msg->window_param),
+        if (!_ecore_win32_event_keystroke_get(msg->window_param,
                                               msg->data_param & 0x01000000,
                                               EINA_TRUE,
                                               (char **)&e->keyname,
                                               (char **)&e->key,
-                                              (char **)&e->string))
+                                              (char **)&e->string,
+                                              &e->modifiers))
           {
              free(e);
              return;
@@ -111,8 +113,7 @@ _ecore_win32_event_handle_key_press(Ecore_Win32_Callback_Data *msg,
 }
 
 void
-_ecore_win32_event_handle_key_release(Ecore_Win32_Callback_Data *msg,
-                                      int                        is_keystroke)
+_ecore_win32_event_handle_key_release(Ecore_Win32_Callback_Data *msg)
 {
    Ecore_Event_Key *e;
 
@@ -121,20 +122,13 @@ _ecore_win32_event_handle_key_release(Ecore_Win32_Callback_Data *msg,
    e = (Ecore_Event_Key *)calloc(1, sizeof(Ecore_Event_Key));
    if (!e) return;
 
-   if (is_keystroke)
-     {
-        if (!_ecore_win32_event_keystroke_get(LOWORD(msg->window_param),
-                                              msg->data_param & 0x01000000,
-                                              EINA_FALSE,
-                                              (char **)&e->keyname,
-                                              (char **)&e->key,
-                                              (char **)&e->string))
-          {
-             free(e);
-             return;
-          }
-     }
-   else
+   if (!_ecore_win32_event_keystroke_get(LOWORD(msg->window_param),
+                                         msg->data_param & 0x01000000,
+                                         EINA_FALSE,
+                                         (char **)&e->keyname,
+                                         (char **)&e->key,
+                                         (char **)&e->string,
+                                         &e->modifiers))
      {
         if (!_ecore_win32_event_char_get(LOWORD(msg->window_param),
                                          (char **)&e->keyname,
@@ -651,23 +645,24 @@ _ecore_win32_event_free_key_up(void *data __UNUSED__,
 }
 
 static int
-_ecore_win32_event_keystroke_get(int    key,
-                                 int    is_extended,
-                                 Eina_Bool is_down,
-                                 char **keyname,
-                                 char **keysymbol,
-                                 char **keycompose)
+_ecore_win32_event_keystroke_get(int           key,
+                                 int           is_extended,
+                                 Eina_Bool     is_down,
+                                 char        **keyname,
+                                 char        **keysymbol,
+                                 char        **keycompose,
+                                 unsigned int *modifiers)
 {
-  char *kn;
-  char *ks;
-  char *kc;
+  char *kn = NULL;
+  char *ks = NULL;
+  char *kc = NULL;
 
   *keyname = NULL;
   *keysymbol = NULL;
   *keycompose = NULL;
 
 
-  printf("vk key %x\n", key);
+  printf("vk key 0x%x\n", key);
    switch (key)
      {
        /* Keystroke */
@@ -676,7 +671,7 @@ _ecore_win32_event_keystroke_get(int    key,
          {
             kn = "Prior";
             ks = "Prior";
-            kc = "Prior";
+            kc = NULL;
          }
        else
          {
@@ -690,7 +685,7 @@ _ecore_win32_event_keystroke_get(int    key,
          {
             kn = "Next";
             ks = "Next";
-            kc = "Next";
+            kc = NULL;
          }
        else
          {
@@ -704,7 +699,7 @@ _ecore_win32_event_keystroke_get(int    key,
          {
             kn = "End";
             ks = "End";
-            kc = "End";
+            kc = NULL;
          }
        else
          {
@@ -718,7 +713,7 @@ _ecore_win32_event_keystroke_get(int    key,
          {
             kn = "Home";
             ks = "Home";
-            kc = "Home";
+            kc = NULL;
          }
        else
          {
@@ -732,7 +727,7 @@ _ecore_win32_event_keystroke_get(int    key,
          {
             kn = "Left";
             ks = "Left";
-            kc = "Left";
+            kc = NULL;
          }
        else
          {
@@ -746,7 +741,7 @@ _ecore_win32_event_keystroke_get(int    key,
          {
             kn = "Up";
             ks = "Up";
-            kc = "Up";
+            kc = NULL;
          }
        else
          {
@@ -756,11 +751,12 @@ _ecore_win32_event_keystroke_get(int    key,
          }
        break;
      case VK_RIGHT:
+       printf("vk val 0x%x (right)\n", VK_RIGHT);
        if (is_extended)
          {
            kn = "Right";
            ks = "Right";
-           kc = "Right";
+           kc = NULL;
          }
        else
          {
@@ -774,7 +770,7 @@ _ecore_win32_event_keystroke_get(int    key,
          {
            kn = "Down";
            ks = "Down";
-           kc = "Down";
+           kc = NULL;
          }
        else
          {
@@ -788,7 +784,7 @@ _ecore_win32_event_keystroke_get(int    key,
          {
            kn = "Insert";
            ks = "Insert";
-           kc = "Insert";
+           kc = NULL;
          }
        else
          {
@@ -802,6 +798,7 @@ _ecore_win32_event_keystroke_get(int    key,
          {
            kn = "Delete";
            ks = "Delete";
+           /* FIXME: kc is wrong, here */
            kc = "Delete";
          }
        else
@@ -833,6 +830,7 @@ _ecore_win32_event_keystroke_get(int    key,
                     ks = "Shift_R";
                     kc = "";
                  }
+               *modifiers |= ECORE_EVENT_MODIFIER_SHIFT;
             }
           else /* is_up */
             {
@@ -854,6 +852,7 @@ _ecore_win32_event_keystroke_get(int    key,
                     kc = "";
                     _ecore_win32_key_mask &= ~ECORE_WIN32_KEY_MASK_RSHIFT;
                  }
+               *modifiers &= ~ECORE_EVENT_MODIFIER_SHIFT;
             }
           break;
        }
@@ -881,6 +880,7 @@ _ecore_win32_event_keystroke_get(int    key,
                     kc = "";
                     break;
                  }
+               *modifiers |= ECORE_EVENT_MODIFIER_CTRL;
             }
           else /* is_up */
             {
@@ -904,6 +904,7 @@ _ecore_win32_event_keystroke_get(int    key,
                     _ecore_win32_key_mask &= ~ECORE_WIN32_KEY_MASK_RCONTROL;
                     break;
                  }
+               *modifiers &= ~ECORE_EVENT_MODIFIER_CTRL;
             }
           break;
        }
@@ -929,6 +930,7 @@ _ecore_win32_event_keystroke_get(int    key,
                     ks = "Alt_R";
                     kc = "";
                  }
+               *modifiers |= ECORE_EVENT_MODIFIER_ALT;
             }
           else /* is_up */
             {
@@ -950,6 +952,43 @@ _ecore_win32_event_keystroke_get(int    key,
                     kc = "";
                     _ecore_win32_key_mask &= ~ECORE_WIN32_KEY_MASK_RMENU;
                  }
+               *modifiers &= ~ECORE_EVENT_MODIFIER_ALT;
+            }
+          break;
+       }
+     case VK_LWIN:
+       {
+          if (is_down)
+            {
+               kn = "Super_L";
+               ks = "Super_L";
+               kc = "";
+               *modifiers |= ECORE_EVENT_MODIFIER_WIN;
+            }
+          else /* is_up */
+            {
+               kn = "Super_L";
+               ks = "Super_L";
+               kc = "";
+               *modifiers &= ~ECORE_EVENT_MODIFIER_WIN;
+            }
+          break;
+       }
+     case VK_RWIN:
+       {
+          if (is_down)
+            {
+               kn = "Super_R";
+               ks = "Super_R";
+               kc = "";
+               *modifiers |= ECORE_EVENT_MODIFIER_WIN;
+            }
+          else /* is_up */
+            {
+               kn = "Super_R";
+               ks = "Super_R";
+               kc = "";
+               *modifiers &= ~ECORE_EVENT_MODIFIER_WIN;
             }
           break;
        }
@@ -1077,6 +1116,8 @@ _ecore_win32_event_keystroke_get(int    key,
        /* other non keystroke characters */
        return 0;
      }
+
+   printf("sortie...\n");
    *keyname = strdup(kn);
    if (!*keyname) return 0;
    *keysymbol = strdup(ks);
@@ -1086,15 +1127,21 @@ _ecore_win32_event_keystroke_get(int    key,
         *keyname = NULL;
         return 0;
      }
-   *keycompose = strdup(kc);
-   if (!*keycompose)
+   if (!kc)
+     *keycompose = NULL;
+   else
      {
-        free(*keyname);
-        free(*keysymbol);
-        *keyname = NULL;
-        *keysymbol = NULL;
-        return 0;
+        *keycompose = strdup(kc);
+        if (!*keycompose)
+          {
+             free(*keyname);
+             free(*keysymbol);
+             *keyname = NULL;
+             *keysymbol = NULL;
+             return 0;
+          }
      }
+   printf("sortie 2 ...\n");
 
    return 1;
 }
@@ -1105,56 +1152,60 @@ _ecore_win32_event_char_get(int    key,
                             char **keysymbol,
                             char **keycompose)
 {
-  char kn[32];
-  char ks[32];
-  char kc[32];
+  char *kn = NULL;
+  char *ks = NULL;
+  char *kc = NULL;
+  char buf[2];
 
   *keyname = NULL;
   *keysymbol = NULL;
   *keycompose = NULL;
 
+  printf("char key 0x%x\n", key);
+
    switch (key)
      {
+     case VK_PROCESSKEY:
+      break;
      case VK_BACK:
-       strncpy(kn, "BackSpace", 32);
-       strncpy(ks, "BackSpace", 32);
-       strncpy(kc, "BackSpace", 32);
+       kn = "BackSpace";
+       ks = "BackSpace";
+       kc = "\b";
        break;
      case VK_TAB:
-       strncpy(kn, "Tab", 32);
-       strncpy(ks, "ISO_Left_Tab", 32);
-       strncpy(kc, "Tab", 32);
+       kn = "Tab";
+       ks = "Tab";
+       kc = "\t";
        break;
      case 0x0a:
        /* Line feed (Shift + Enter) */
-       strncpy(kn, "LineFeed", 32);
-       strncpy(ks, "LineFeed", 32);
-       strncpy(kc, "LineFeed", 32);
+       kn = "LineFeed";
+       ks = "LineFeed";
+       kc = "LineFeed";
        break;
      case VK_RETURN:
-       strncpy(kn, "Return", 32);
-       strncpy(ks, "Return", 32);
-       strncpy(kc, "Return", 32);
+       kn = "Return";
+       ks = "Return";
+       kc = "\n";
        break;
      case VK_ESCAPE:
-       strncpy(kn, "Escape", 32);
-       strncpy(ks, "Escape", 32);
-       strncpy(kc, "Escape", 32);
+       kn = "Escape";
+       ks = "Escape";
+       kc = "\e";
        break;
      case VK_SPACE:
-       strncpy(kn, "space", 32);
-       strncpy(ks, "space", 32);
-       strncpy(kc, " ", 32);
+       kn = "space";
+       ks = "space";
+       kc = " ";
        break;
      default:
        /* displayable characters */
        printf (" * key : %d\n", key);
-       kn[0] = (TCHAR)key;
-       kn[1] = '\0';
-       ks[0] = (TCHAR)key;
-       ks[1] = '\0';
-       kc[0] = (TCHAR)key;
-       kc[1] = '\0';
+       buf[0] = key;
+       buf[1] = '\0';
+       kn = buf;
+       ks = buf;
+       kc = buf;
        break;
      }
    *keyname = strdup(kn);

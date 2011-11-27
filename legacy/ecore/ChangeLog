@@ -346,3 +346,7 @@
 2011-11-24 Rafael Antognolli
 
         * Add ecore_fb_input_device_window_set().
+
+2011-11-27 Vincent Torri
+
+        * Fix and improve key management on Windows XP

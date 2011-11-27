@@ -98,6 +98,7 @@ Improvements:
     * ecore timer monotonic clock now supported on OSX
     * make ecore_con work on Windows
     * improve resize/move on Windows
+    * improve keyboard management on Windows XP
     * refactored _ecore_main_loop_iterate_internal
     * better safety with ecore_evas_ecore_evas_get
     * ecore-evas produces more errors on stderr when errors happen now
