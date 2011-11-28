@@ -127,6 +127,9 @@ _elm_util_mkup_to_text(const char *mkup)
              if (tag_start)
                {
                   tag_end = p;
+                  /* <br /> */
+                  /*  ^^^   */
+                  if ((p - mkup > 1) && (p[-1] == '/')) p--;
                   s = p + 1;
                }
           }
