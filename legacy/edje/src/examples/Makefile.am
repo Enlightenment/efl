@@ -93,6 +93,7 @@ EXTRA_DIST = $(EDCS) \
 	$(srcdir)/bubble.png \
 	$(srcdir)/red.png \
 	$(srcdir)/test.png \
+	$(srcdir)/Vera.ttf \
 	$(srcdir)/edje-basic.c \
 	$(srcdir)/edje-swallow.c \
 	$(srcdir)/edje-text.c \
@@ -105,3 +106,4 @@ EXTRA_DIST = $(EDCS) \
 	$(srcdir)/edje-perspective.c \
 	$(srcdir)/edje-animations.c \
 	$(srcdir)/sigtest.c
+
