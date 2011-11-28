@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ecore\n"
 "Report-Msgid-Bugs-To: enlightenment-devel@lists.sourceforge.net\n"
-"POT-Creation-Date: 2011-11-15 18:22+0900\n"
+"POT-Creation-Date: 2011-11-16 14:38+0900\n"
 "PO-Revision-Date: 2011-11-20 22:42+0200\n"
 "Last-Translator: George Rizopoulos <george.rizopoulos.1@gmail.com>\n"
 "Language-Team: Greek\n"
@@ -66,25 +66,19 @@ msgstr "ΣΦΑΛΜΑ: άγνωστη επιλογή -%c.\n"
 msgid "ERROR: "
 msgstr "ΣΦΑΛΜΑ:"
 
-#: src/lib/ecore/ecore_getopt.c:924
-#: src/lib/ecore/ecore_getopt.c:1061
-#: src/lib/ecore/ecore_getopt.c:1077
-#: src/lib/ecore/ecore_getopt.c:1092
-#: src/lib/ecore/ecore_getopt.c:1109
-#: src/lib/ecore/ecore_getopt.c:1156
-#: src/lib/ecore/ecore_getopt.c:1276
-#: src/lib/ecore/ecore_getopt.c:1317
+#: src/lib/ecore/ecore_getopt.c:924 src/lib/ecore/ecore_getopt.c:1061
+#: src/lib/ecore/ecore_getopt.c:1077 src/lib/ecore/ecore_getopt.c:1092
+#: src/lib/ecore/ecore_getopt.c:1109 src/lib/ecore/ecore_getopt.c:1156
+#: src/lib/ecore/ecore_getopt.c:1276 src/lib/ecore/ecore_getopt.c:1317
 msgid "value has no pointer set.\n"
 msgstr "η τιμή δεν έχει δείκτη ορισμένο.\n"
 
-#: src/lib/ecore/ecore_getopt.c:956
-#: src/lib/ecore/ecore_getopt.c:1176
+#: src/lib/ecore/ecore_getopt.c:956 src/lib/ecore/ecore_getopt.c:1176
 #, c-format
 msgid "unknown boolean value %s.\n"
 msgstr "άγνωστη τιμή boolean %s.\n"
 
-#: src/lib/ecore/ecore_getopt.c:1007
-#: src/lib/ecore/ecore_getopt.c:1264
+#: src/lib/ecore/ecore_getopt.c:1007 src/lib/ecore/ecore_getopt.c:1264
 #, c-format
 msgid "invalid number format %s\n"
 msgstr "άγνωστη μορφή αριθμού %s\n"
