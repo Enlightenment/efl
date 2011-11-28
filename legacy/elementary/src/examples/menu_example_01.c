@@ -28,7 +28,7 @@ EAPI_MAIN int
 elm_main(int argc, char **argv)
 {
    Evas_Object *win, *bg, *menu, *button, *rect;
-   Elm_Object_Item *meu_it;
+   Elm_Object_Item *menu_it;
 
    win = elm_win_add(NULL, "menu", ELM_WIN_BASIC);
    elm_win_title_set(win, "Menu");
