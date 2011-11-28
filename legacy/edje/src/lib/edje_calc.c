@@ -2722,15 +2722,6 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep, int flags)
         if (chosen_desc->map.on)
           {
              Evas_Map *map;
-             Edje_Part_Description_Common *desc1, *desc2;
-
-             desc1 = ep->param1.description;
-             desc2 = NULL;
-             if (ep->param2) desc2 = ep->param2->description;
-             pos = ep->description_pos;
-             pos2 = pos;
-             if (pos2 < ZERO) pos2 = ZERO;
-             else if (pos2 > FROM_INT(1)) pos2 = FROM_INT(1);
 
              ed->have_mapped_part = 1;
              // create map and populate with part geometry
@@ -2749,7 +2740,7 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep, int flags)
 
              evas_map_util_3d_rotate(map,
                                      pf->map.rotation.x, pf->map.rotation.y, pf->map.rotation.z,
-                                     pf->map.center.x, pf->map.rotation.y, pf->map.rotation.z);
+                                     pf->map.center.x, pf->map.center.y, pf->map.center.z);
 
              // calculate light color & position etc. if there is one
              if (pf->lighted)
