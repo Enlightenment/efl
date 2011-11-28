@@ -659,6 +659,10 @@ _title_prev_btn_set(Elm_Naviframe_Item *it,
                                   EVAS_CALLBACK_DEL,
                                   _title_prev_btn_del,
                                   it);
+   evas_object_event_callback_add(btn,
+                                  EVAS_CALLBACK_CHANGED_SIZE_HINTS,
+                                  _changed_size_hints,
+                                  WIDGET(it));
    edje_object_part_swallow(VIEW(it), "elm.swallow.prev_btn", btn);
    edje_object_signal_emit(VIEW(it), "elm,state,prev_btn,show", "elm");
    it->back_btn = back_btn;
@@ -682,6 +686,10 @@ _title_next_btn_set(Elm_Naviframe_Item *it, Evas_Object *btn)
                                   EVAS_CALLBACK_DEL,
                                   _title_next_btn_del,
                                   it);
+   evas_object_event_callback_add(btn,
+                                  EVAS_CALLBACK_CHANGED_SIZE_HINTS,
+                                  _changed_size_hints,
+                                  WIDGET(it));
    edje_object_part_swallow(VIEW(it), "elm.swallow.next_btn", btn);
    edje_object_signal_emit(VIEW(it), "elm,state,next_btn,show", "elm");
 
@@ -704,6 +712,10 @@ _title_icon_set(Elm_Naviframe_Item *it, Evas_Object *icon)
                                   EVAS_CALLBACK_DEL,
                                   _title_icon_del,
                                   it);
+   evas_object_event_callback_add(icon,
+                                  EVAS_CALLBACK_CHANGED_SIZE_HINTS,
+                                  _changed_size_hints,
+                                  WIDGET(it));
    edje_object_part_swallow(VIEW(it), "elm.swallow.icon", icon);
    edje_object_signal_emit(VIEW(it), "elm,state,icon,show", "elm");
 
