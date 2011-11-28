@@ -2936,7 +2936,9 @@ static int _elua_line_xy(lua_State *L)                          // Stack usage [
 
 The lua evas map class includes functions for dealing with evas map objects.
 The evas map objects must have been previously created by lua using the lua
-map object creation function edje:map().
+map object creation function edje:map().  The evas map system is complex, rather
+than repeat the copious documentation here, please refer to the evas map
+documentation.  It has pictures and everything.  B-)
 
 In the following, "map_object" is a place holder for any lua variable that
 holds a reference to an evas map object.
@@ -2980,7 +2982,7 @@ static const struct luaL_reg _elua_evas_map_funcs [] =
 
 /**
 @page luaref
-@subsubsection map_alpha map_object:alpha()
+@subsubsection map_alpha map_object:alpha(alpha)
 
 
 @since 1.1.0
@@ -3073,7 +3075,7 @@ _elua_map_colour(lua_State *L)                                  // Stack usage [
 
 /**
 @page luaref
-@subsubsection map_coord map_object:coord()
+@subsubsection map_coord map_object:coord(x, y, z)
 
 
 @since 1.1.0
@@ -3133,7 +3135,7 @@ _elua_map_lighting(lua_State *L)                                // Stack usage [
 
 /**
 @page luaref
-@subsubsection map_perspective map_object:perspective()
+@subsubsection map_perspective map_object:perspective(x, y, z, f)
 
 
 @since 1.1.0
@@ -3210,7 +3212,7 @@ _elua_map_populate(lua_State *L)                                // Stack usage [
 
 /**
 @page luaref
-@subsubsection map_rotate map_object:rotate()
+@subsubsection map_rotate map_object:rotate(x, y)
 
 
 @since 1.1.0
@@ -3265,7 +3267,7 @@ _elua_map_rotate3d(lua_State *L)                                // Stack usage [
 
 /**
 @page luaref
-@subsubsection map_smooth map_object:smooth()
+@subsubsection map_smooth map_object:smooth(smooth)
 
 
 @since 1.1.0
@@ -3291,7 +3293,7 @@ _elua_map_smooth(lua_State *L)                                  // Stack usage [
 
 /**
 @page luaref
-@subsubsection map_uv map_object:uv()
+@subsubsection map_uv map_object:uv(u, v)
 
 
 @since 1.1.0
