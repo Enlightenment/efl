@@ -356,10 +356,8 @@ void
 _els_smart_icon_orient_set(Evas_Object *obj, Elm_Image_Orient orient)
 {
    Smart_Data   *sd;
-   Evas_Object  *tmp;
-   unsigned int *data, *data2, *to, *from;
+   unsigned int *data, *data2 = NULL, *to, *from;
    int           x, y, w, hw, iw, ih;
-   const char   *file, *key;
 
    sd = evas_object_smart_data_get(obj);
    if (!sd) return;
@@ -382,10 +380,9 @@ _els_smart_icon_orient_set(Evas_Object *obj, Elm_Image_Orient orient)
      }
 
    evas_object_image_size_get(sd->obj, &iw, &ih);
-   evas_object_image_file_get(sd->obj, &file, &key);
-   tmp = evas_object_image_add(evas_object_evas_get(sd->obj));
-   evas_object_image_file_set(tmp, file, key);
-   data2 = evas_object_image_data_get(tmp, EINA_FALSE);
+   /* we need seperate destination memory if we want rotate 90 or 270 degree */
+   evas_object_image_data_copy_set(sd->obj, data2);
+   if (!data2) return;
 
    w = ih;
    ih = iw;
@@ -394,6 +391,7 @@ _els_smart_icon_orient_set(Evas_Object *obj, Elm_Image_Orient orient)
 
    evas_object_image_size_set(sd->obj, iw, ih);
    data = evas_object_image_data_get(sd->obj, EINA_TRUE);
+
    switch (orient)
      {
       case ELM_IMAGE_FLIP_TRANSPOSE:
@@ -416,8 +414,8 @@ _els_smart_icon_orient_set(Evas_Object *obj, Elm_Image_Orient orient)
          break;
       default:
          ERR("unknown orient %d", orient);
-         evas_object_del(tmp);
          evas_object_image_data_set(sd->obj, data); // give it back
+         if (data2) free(data2);
          return;
      }
    from = data2;
@@ -432,7 +430,7 @@ _els_smart_icon_orient_set(Evas_Object *obj, Elm_Image_Orient orient)
         to += hw;
      }
    sd->orient = orient;
-   evas_object_del(tmp);
+   if (data2) free(data2);
    evas_object_image_data_set(sd->obj, data);
    evas_object_image_data_update_add(sd->obj, 0, 0, iw, ih);
    _smart_reconfigure(sd);
