@@ -787,6 +787,7 @@ ethumb_file_set(Ethumb *e, const char *path, const char *key)
      }
 
    path = _ethumb_build_absolute_path(path, buf);
+   eina_stringshare_replace(&e->src_hash, NULL);
    eina_stringshare_replace(&e->src_path, path);
    eina_stringshare_replace(&e->src_key, key);
 
@@ -949,8 +950,6 @@ static void
 _ethumb_file_generate_path(Ethumb *e)
 {
    char buf[PATH_MAX];
-   char *fullname;
-   const char *hash;
    const char *thumb_dir, *category;
    const char *ext;
    int fdo_format;
@@ -987,10 +986,15 @@ _ethumb_file_generate_path(Ethumb *e)
    else
      ext = "eet";
 
-   fullname = ecore_file_realpath(e->src_path);
-   hash = _ethumb_generate_hash(fullname);
-   snprintf(buf, sizeof(buf), "%s/%s/%s.%s", thumb_dir, category, hash, ext);
-   free(fullname);
+   if (!e->src_hash)
+     {
+       char *fullname;
+
+       fullname = ecore_file_realpath(e->src_path);
+       e->src_hash = _ethumb_generate_hash(fullname);
+       free(fullname);
+     }
+   snprintf(buf, sizeof(buf), "%s/%s/%s.%s", thumb_dir, category, e->src_hash, ext);
    DBG("ethumb=%p, path=%s", e, buf);
    eina_stringshare_replace(&e->thumb_path, buf);
    if (e->format == ETHUMB_THUMB_EET)
@@ -1003,7 +1007,6 @@ _ethumb_file_generate_path(Ethumb *e)
 
    eina_stringshare_del(thumb_dir);
    eina_stringshare_del(category);
-   eina_stringshare_del(hash);
 }
 
 EAPI void
@@ -1012,6 +1015,7 @@ ethumb_file_free(Ethumb *e)
    EINA_SAFETY_ON_NULL_RETURN(e);
    DBG("ethumb=%p", e);
 
+   eina_stringshare_replace(&e->src_hash, NULL);
    eina_stringshare_replace(&e->src_path, NULL);
    eina_stringshare_replace(&e->src_key, NULL);
    eina_stringshare_replace(&e->thumb_path, NULL);
@@ -1048,6 +1052,32 @@ ethumb_thumb_path_get(Ethumb *e, const char **path, const char **key)
 
    if (path) *path = e->thumb_path;
    if (key) *key = e->thumb_key;
+}
+
+EAPI void
+ethumb_thumb_hash(Ethumb *e)
+{
+   EINA_SAFETY_ON_NULL_RETURN(e);
+   if (!e->src_hash)
+     {
+        char *fullname;
+
+        fullname = ecore_file_realpath(e->src_path);
+        e->src_hash = _ethumb_generate_hash(fullname);
+        free(fullname);
+     }
+}
+
+EAPI void
+ethumb_thumb_hash_copy(Ethumb *dst, const Ethumb *src)
+{
+   EINA_SAFETY_ON_NULL_RETURN(dst);
+   EINA_SAFETY_ON_NULL_RETURN(src);
+
+   if (src == dst) return ;
+
+   eina_stringshare_del(dst->src_hash);
+   dst->src_hash = eina_stringshare_ref(src->src_hash);
 }
 
 void
@@ -1602,6 +1632,7 @@ ethumb_dup(const Ethumb *e)
 
    r->thumb_dir = eina_stringshare_ref(e->thumb_dir);
    r->category = eina_stringshare_ref(e->category);
+   r->src_hash = eina_stringshare_ref(e->src_hash);
    r->src_path = eina_stringshare_ref(e->src_path);
    r->src_key = eina_stringshare_ref(e->src_key);
    r->thumb_path = eina_stringshare_ref(e->thumb_path);
@@ -1708,8 +1739,6 @@ ethumb_key_cmp(const void *key1, __UNUSED__ int key1_length,
    const Ethumb *e1 = key1;
    const Ethumb *e2 = key2;
 
-   CMP_PARAM(thumb_dir);
-   CMP_PARAM(category);
    CMP_PARAM(thumb_dir);
    CMP_PARAM(category);
    CMP_PARAM(tw);

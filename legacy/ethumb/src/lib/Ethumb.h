@@ -98,6 +98,8 @@ EAPI const char  *ethumb_thumb_category_get(const Ethumb *e) EINA_WARN_UNUSED_RE
 
 EAPI void         ethumb_thumb_path_set(Ethumb *e, const char *path, const char *key) EINA_ARG_NONNULL(1);
 EAPI void         ethumb_thumb_path_get(Ethumb *e, const char **path, const char **key) EINA_ARG_NONNULL(1);
+EAPI void         ethumb_thumb_hash(Ethumb *e) EINA_ARG_NONNULL(1);
+EAPI void         ethumb_thumb_hash_copy(Ethumb *dst, const Ethumb *src) EINA_ARG_NONNULL(1, 2);
 
 typedef enum _Ethumb_Thumb_FDO_Size
 {

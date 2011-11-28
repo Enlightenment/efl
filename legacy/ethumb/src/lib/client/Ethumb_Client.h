@@ -195,7 +195,7 @@ EAPI void ethumb_client_file_get(Ethumb_Client *client, const char **path, const
 EAPI void ethumb_client_file_free(Ethumb_Client *client);
 
 EAPI Ethumb_Exists *ethumb_client_thumb_exists(Ethumb_Client *client, Ethumb_Client_Thumb_Exists_Cb exists_cb, const void *data);
-EAPI void ethumb_client_thumb_exists_cancel(Ethumb_Exists *exists, Ethumb_Client_Thumb_Exists_Cb exists_cb, const void *data);
+EAPI void ethumb_client_thumb_exists_cancel(Ethumb_Exists *exists);
 EAPI Eina_Bool ethumb_client_thumb_exists_check(Ethumb_Exists *exists);
 EAPI int  ethumb_client_generate(Ethumb_Client *client, Ethumb_Client_Generate_Cb generated_cb, const void *data, Eina_Free_Cb free_data);
 EAPI void ethumb_client_generate_cancel(Ethumb_Client *client, int id, Ethumb_Client_Generate_Cancel_Cb cancel_cb, const void *data, Eina_Free_Cb free_data);

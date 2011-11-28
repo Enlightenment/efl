@@ -24,6 +24,7 @@ struct _Ethumb
    float crop_x, crop_y;
    int quality;
    int compress;
+   const char *src_hash;
    const char *src_path;
    const char *src_key;
    const char *thumb_path;
