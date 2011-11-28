@@ -1,10 +1,5 @@
 #include "edje_private.h"
 
-#define FLAG_NONE 0
-#define FLAG_X    0x01
-#define FLAG_Y    0x02
-#define FLAG_XY   (FLAG_X | FLAG_Y)
-
 static void _edje_part_make_rtl(Edje_Part_Description_Common *desc);
 static Edje_Part_Description_Common *_edje_get_description_by_orientation(Edje *ed, Edje_Part_Description_Common *src, Edje_Part_Description_Common **dst, unsigned char type);
 
@@ -14,7 +9,6 @@ static void _edje_part_recalc_single(Edje *ed, Edje_Real_Part *ep,
 				     Edje_Real_Part *rel1_to_x, Edje_Real_Part *rel1_to_y,
 				     Edje_Real_Part *rel2_to_x, Edje_Real_Part *rel2_to_y,
 				     Edje_Real_Part *confine_to, Edje_Calc_Params *params);
-static void _edje_part_recalc(Edje *ed, Edje_Real_Part *ep, int flags);
 
 void
 _edje_part_pos_set(Edje *ed, Edje_Real_Part *ep, int mode, FLOAT_T pos, FLOAT_T v1, FLOAT_T v2)
@@ -459,7 +453,7 @@ _edje_recalc_do(Edje *ed)
 
 	ep = ed->table_parts[i];
 	if (ep->calculated != FLAG_XY)
-          _edje_part_recalc(ed, ep, (~ep->calculated) & FLAG_XY);
+          _edje_part_recalc(ed, ep, (~ep->calculated) & FLAG_XY, NULL);
      }
    if (!ed->calc_only) ed->recalc = 0;
 #ifdef EDJE_CALC_CACHE
@@ -471,7 +465,7 @@ _edje_recalc_do(Edje *ed)
 void
 _edje_part_recalc_1(Edje *ed, Edje_Real_Part *ep)
 {
-   _edje_part_recalc(ed, ep, FLAG_XY);
+  _edje_part_recalc(ed, ep, FLAG_XY, NULL);
 }
 
 int
@@ -2122,7 +2116,7 @@ _edje_real_part_state_get(Edje *ed, Edje_Real_Part *ep, int flags, int id, int *
         result = ed->table_parts[id % ed->table_parts_size];
         if (result)
           {
-             if (!result->calculated) _edje_part_recalc(ed, result, flags);
+	    if (!result->calculated) _edje_part_recalc(ed, result, flags, NULL);
 #ifdef EDJE_CALC_CACHE
              if (state) *state = result->state;
 #else
@@ -2133,8 +2127,8 @@ _edje_real_part_state_get(Edje *ed, Edje_Real_Part *ep, int flags, int id, int *
    return result;
 }
 
-static void
-_edje_part_recalc(Edje *ed, Edje_Real_Part *ep, int flags)
+void
+_edje_part_recalc(Edje *ed, Edje_Real_Part *ep, int flags, Edje_Calc_Params *state)
 {
 #ifdef EDJE_CALC_CACHE
    Eina_Bool proxy_invalidate = EINA_FALSE;
@@ -2166,7 +2160,7 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep, int flags)
 	return;
      }
 
-   if ((ep->calculated & FLAG_XY) == FLAG_XY)
+   if ((ep->calculated & FLAG_XY) == FLAG_XY && !state)
      {
 	return;
      }
@@ -2200,7 +2194,7 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep, int flags)
 	return;
      }
 #ifdef EDJE_CALC_CACHE
-   if (ep->state == ed->state)
+   if (ep->state == ed->state && !state)
      return ;
 #endif
 
@@ -2209,14 +2203,14 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep, int flags)
 	ep->calculating |= flags & FLAG_X;
 	if (ep->param1.rel1_to_x)
 	  {
-	     _edje_part_recalc(ed, ep->param1.rel1_to_x, FLAG_X);
+	    _edje_part_recalc(ed, ep->param1.rel1_to_x, FLAG_X, NULL);
 #ifdef EDJE_CALC_CACHE
 	     state1 = ep->param1.rel1_to_x->state;
 #endif
 	  }
 	if (ep->param1.rel2_to_x)
 	  {
-	     _edje_part_recalc(ed, ep->param1.rel2_to_x, FLAG_X);
+	    _edje_part_recalc(ed, ep->param1.rel2_to_x, FLAG_X, NULL);
 #ifdef EDJE_CALC_CACHE
 	     if (state1 < ep->param1.rel2_to_x->state)
 	       state1 = ep->param1.rel2_to_x->state;
@@ -2226,14 +2220,14 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep, int flags)
 	  {
 	     if (ep->param2->rel1_to_x)
 	       {
-		  _edje_part_recalc(ed, ep->param2->rel1_to_x, FLAG_X);
+		 _edje_part_recalc(ed, ep->param2->rel1_to_x, FLAG_X, NULL);
 #ifdef EDJE_CALC_CACHE
 		  state2 = ep->param2->rel1_to_x->state;
 #endif
 	       }
 	     if (ep->param2->rel2_to_x)
 	       {
-		  _edje_part_recalc(ed, ep->param2->rel2_to_x, FLAG_X);
+		 _edje_part_recalc(ed, ep->param2->rel2_to_x, FLAG_X, NULL);
 #ifdef EDJE_CALC_CACHE
 		  if (state2 < ep->param2->rel2_to_x->state)
 		    state2 = ep->param2->rel2_to_x->state;
@@ -2246,7 +2240,7 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep, int flags)
 	ep->calculating |= flags & FLAG_Y;
 	if (ep->param1.rel1_to_y)
 	  {
-	     _edje_part_recalc(ed, ep->param1.rel1_to_y, FLAG_Y);
+	    _edje_part_recalc(ed, ep->param1.rel1_to_y, FLAG_Y, NULL);
 #ifdef EDJE_CALC_CACHE
 	     if (state1 < ep->param1.rel1_to_y->state)
 	       state1 = ep->param1.rel1_to_y->state;
@@ -2254,7 +2248,7 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep, int flags)
 	  }
 	if (ep->param1.rel2_to_y)
 	  {
-	     _edje_part_recalc(ed, ep->param1.rel2_to_y, FLAG_Y);
+	    _edje_part_recalc(ed, ep->param1.rel2_to_y, FLAG_Y, NULL);
 #ifdef EDJE_CALC_CACHE
 	     if (state1 < ep->param1.rel2_to_y->state)
 	       state1 = ep->param1.rel2_to_y->state;
@@ -2264,7 +2258,7 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep, int flags)
 	  {
 	     if (ep->param2->rel1_to_y)
 	       {
-		  _edje_part_recalc(ed, ep->param2->rel1_to_y, FLAG_Y);
+		 _edje_part_recalc(ed, ep->param2->rel1_to_y, FLAG_Y, NULL);
 #ifdef EDJE_CALC_CACHE
 		  if (state2 < ep->param2->rel1_to_y->state)
 		    state2 = ep->param2->rel1_to_y->state;
@@ -2272,7 +2266,7 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep, int flags)
 	       }
 	     if (ep->param2->rel2_to_y)
 	       {
-		  _edje_part_recalc(ed, ep->param2->rel2_to_y, FLAG_Y);
+		 _edje_part_recalc(ed, ep->param2->rel2_to_y, FLAG_Y, NULL);
 #ifdef EDJE_CALC_CACHE
 		  if (state2 < ep->param2->rel2_to_y->state)
 		    state2 = ep->param2->rel2_to_y->state;
@@ -2283,7 +2277,7 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep, int flags)
    if (ep->drag && ep->drag->confine_to)
      {
 	confine_to = ep->drag->confine_to;
-	_edje_part_recalc(ed, confine_to, flags);
+	_edje_part_recalc(ed, confine_to, flags, NULL);
 #ifdef EDJE_CALC_CACHE
 	statec = confine_to->state;
 #endif
@@ -2354,6 +2348,7 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep, int flags)
             statel1 >= ep->param1.state ||
             statep1 >= ep->param1.state ||
             proxy_invalidate ||
+            state ||
  	    ((ep->part->type == EDJE_PART_TYPE_TEXT || ep->part->type == EDJE_PART_TYPE_TEXTBLOCK) && ed->text_part_change))
 #endif
  	  {
@@ -2374,23 +2369,16 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep, int flags)
 
         if (ep->current)
           {
-             p1->x = ep->current->x - ed->x;
-             p1->y = ep->current->y - ed->y;
-             p1->w = ep->current->w;
-             p1->h = ep->current->h;
-             p1->color.r = ep->current->color.r;
-             p1->color.g = ep->current->color.g;
-             p1->color.b = ep->current->color.b;
-             p1->color.a = ep->current->color.a;
-             p1->type.text.size = ep->current->type.text.size;
-             p1->type.text.color2.r = ep->current->type.text.color2.r;
-             p1->type.text.color2.g = ep->current->type.text.color2.g;
-             p1->type.text.color2.b = ep->current->type.text.color2.b;
-             p1->type.text.color2.a = ep->current->type.text.color2.a;
-             p1->type.text.color3.r = ep->current->type.text.color3.r;
-             p1->type.text.color3.g = ep->current->type.text.color3.g;
-             p1->type.text.color3.b = ep->current->type.text.color3.b;
-             p1->type.text.color3.a = ep->current->type.text.color3.a;
+             /* FIXME: except for text, we don't need in that case to recalc p1 at all*/
+             memcpy(p1, ep->current, sizeof (Edje_Calc_Params));
+             p1->x += ed->x;
+             p1->y += ed->y;
+             p1->map.center.x += ed->x;
+             p1->map.center.y += ed->y;
+             p1->map.light.x += ed->x;
+             p1->map.light.y += ed->y;
+             p1->map.persp.x += ed->x;
+             p1->map.persp.y += ed->y;
           }
 
  	p3 = &lp3;
@@ -2408,6 +2396,7 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep, int flags)
             statel2 >= ep->param2->state ||
             statep2 >= ep->param2->state ||
             proxy_invalidate ||
+            state ||
  	    ((ep->part->type == EDJE_PART_TYPE_TEXT || ep->part->type == EDJE_PART_TYPE_TEXTBLOCK) && ed->text_part_change))
 #endif
  	  {
@@ -2601,6 +2590,11 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep, int flags)
                   pf->map.persp.focal = 1000;
                }
           }
+     }
+
+   if (state)
+     {
+        memcpy(state, pf, sizeof (Edje_Calc_Params));
      }
 
    ep->req = pf->req;

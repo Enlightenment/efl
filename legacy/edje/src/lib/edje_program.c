@@ -505,29 +505,27 @@ _edje_program_run(Edje *ed, Edje_Program *pr, Eina_Bool force, const char *ssig,
 			 {
                             if ((rp->object) && (pr->tween.mode & EDJE_TWEEN_MODE_OPT_FROM_CURRENT))
                               {
-                                 rp->current = calloc(1, sizeof(Edje_Calc_Params));
-                                 evas_object_geometry_get(rp->object, &(rp->current->x),
-                                                          &(rp->current->y),
-                                                          &(rp->current->w),
-                                                          &(rp->current->h));
-                                 evas_object_color_get(rp->object, (int *)&(rp->current->color.r),
-                                                       (int *)&(rp->current->color.g),
-                                                       (int *)&(rp->current->color.b),
-                                                       (int *)&(rp->current->color.a));
-                                 evas_object_text_font_get(rp->object, NULL, &(rp->current->type.text.size));
-                                 evas_object_text_outline_color_get(rp->object,
-                                                       (int *)&(rp->current->type.text.color2.r),
-                                                       (int *)&(rp->current->type.text.color2.g),
-                                                       (int *)&(rp->current->type.text.color2.b),
-                                                       (int *)&(rp->current->type.text.color2.a));
-                                 evas_object_text_shadow_color_get(rp->object,
-                                                       (int *)&(rp->current->type.text.color3.r),
-                                                       (int *)&(rp->current->type.text.color3.g),
-                                                       (int *)&(rp->current->type.text.color3.b),
-                                                       (int *)&(rp->current->type.text.color3.a));
+                                 Edje_Calc_Params *tmp;
+
+                                 tmp = calloc(1, sizeof(Edje_Calc_Params));
+                                 if (!tmp) goto low_mem_current;
+				 _edje_part_recalc(ed, rp, FLAG_XY, tmp);
+
+                                 if (rp->current) free(rp->current);
+                                 rp->current = tmp;
+
+				 rp->current->x -= ed->x;
+				 rp->current->y -= ed->y;
+				 rp->current->map.center.x -= ed->x;
+				 rp->current->map.center.y -= ed->y;
+				 rp->current->map.light.x -= ed->x;
+				 rp->current->map.light.y -= ed->y;
+				 rp->current->map.persp.x -= ed->x;
+				 rp->current->map.persp.y -= ed->y;
                               }
                             else
                               {
+                              low_mem_current:
                                  if (rp->current) free(rp->current);
                                  rp->current = NULL;
                               }

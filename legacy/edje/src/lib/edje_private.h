@@ -410,6 +410,12 @@ typedef struct _Edje_Text_Insert_Filter_Callback Edje_Text_Insert_Filter_Callbac
 #define EDJE_PART_PATH_SEPARATOR_STRING ":"
 #define EDJE_PART_PATH_SEPARATOR_INDEXL '['
 #define EDJE_PART_PATH_SEPARATOR_INDEXR ']'
+
+#define FLAG_NONE 0
+#define FLAG_X    0x01
+#define FLAG_Y    0x02
+#define FLAG_XY   (FLAG_X | FLAG_Y)
+
 /*----------*/
 
 struct _Edje_File
@@ -1997,6 +2003,8 @@ void _edje_multisense_init(void);
 void _edje_multisense_shutdown(void);
 Eina_Bool _edje_multisense_internal_sound_sample_play(Edje *ed, const char *sample_name, const double speed);
 Eina_Bool _edje_multisense_internal_sound_tone_play(Edje *ed, const char *tone_name, const double duration);
+
+void _edje_part_recalc(Edje *ed, Edje_Real_Part *ep, int flags, Edje_Calc_Params *state);
 
 #ifdef HAVE_LIBREMIX
 #include <remix/remix.h>
