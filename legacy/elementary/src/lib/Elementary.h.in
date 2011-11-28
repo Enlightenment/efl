@@ -15995,7 +15995,7 @@ extern "C" {
     */
    EAPI const Eina_List   *elm_menu_items_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
    /**
-    * @brief Get the Evas_Object of an Elm_Menu_Item
+    * @brief Get the Evas_Object of an Elm_Object_Item
     *
     * @param it The menu item object.
     * @return The edje object containing the swallowed content
