@@ -117,7 +117,7 @@ _icon_thumb_stop(Widget_Data *wd, void *ethumbd)
 
    if (wd->thumb.exists)
      {
-        ethumb_client_thumb_exists_cancel(wd->thumb.exists, _icon_thumb_exists, wd);
+        ethumb_client_thumb_exists_cancel(wd->thumb.exists);
         wd->thumb.exists = NULL;
         _icon_pending_request--;
      }

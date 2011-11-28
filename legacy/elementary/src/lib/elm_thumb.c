@@ -89,7 +89,7 @@ _del_hook(Evas_Object *obj)
      }
    if (wd->thumb.exists)
      {
-        ethumb_client_thumb_exists_cancel(wd->thumb.exists, _thumb_exists, wd);
+        ethumb_client_thumb_exists_cancel(wd->thumb.exists);
         wd->thumb.exists = NULL;
      }
    if (wd->thumb.retry)
@@ -425,7 +425,7 @@ _thumb_apply(Widget_Data *wd)
 
    if (wd->thumb.exists)
      {
-        ethumb_client_thumb_exists_cancel(wd->thumb.exists, _thumb_exists, wd);
+        ethumb_client_thumb_exists_cancel(wd->thumb.exists);
         wd->thumb.exists = NULL;
      }
 
@@ -492,7 +492,7 @@ _thumb_hide_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void
 
    if (wd->thumb.exists)
      {
-        ethumb_client_thumb_exists_cancel(wd->thumb.exists, _thumb_exists, wd);
+        ethumb_client_thumb_exists_cancel(wd->thumb.exists);
         wd->thumb.exists = NULL;
      }
 
