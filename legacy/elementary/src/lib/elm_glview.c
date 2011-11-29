@@ -337,13 +337,13 @@ elm_glview_resize_policy_set(Evas_Object *obj, Elm_GLView_Resize_Policy policy)
       case ELM_GLVIEW_RESIZE_POLICY_RECREATE:
       case ELM_GLVIEW_RESIZE_POLICY_SCALE:
          wd->scale_policy = policy;
+         _glview_update_surface(obj);
+         elm_glview_changed_set(obj);
          return EINA_TRUE;
       default:
          ERR("Invalid Scale Policy.\n");
          return EINA_FALSE;
      }
-   _glview_update_surface(obj);
-   elm_glview_changed_set(obj);
 }
 
 EAPI Eina_Bool
