@@ -18483,6 +18483,13 @@ extern "C" {
         ELM_GENLIST_ITEM_SUBITEMS = (1 << 0), /**< may expand and have child items */
         ELM_GENLIST_ITEM_GROUP = (1 << 1) /**< index of a group of items */
      } Elm_Genlist_Item_Flags;
+   typedef enum _Elm_Genlist_Item_Field_Flags
+     {
+        ELM_GENLIST_ITEM_FIELD_ALL = 0,
+        ELM_GENLIST_ITEM_FIELD_LABEL = (1 << 0),
+        ELM_GENLIST_ITEM_FIELD_CONTENT = (1 << 1),
+        ELM_GENLIST_ITEM_FIELD_STATE = (1 << 2)
+     } Elm_Genlist_Item_Field_Flags;
    typedef struct _Elm_Genlist_Item_Class Elm_Genlist_Item_Class;  /**< Genlist item class definition structs */
    #define Elm_Genlist_Item_Class Elm_Gen_Item_Class
    typedef struct _Elm_Genlist_Item       Elm_Genlist_Item; /**< Item of Elm_Genlist. Sub-type of Elm_Widget_Item */
@@ -19564,6 +19571,27 @@ extern "C" {
     * @ingroup Genlist
     */
    EAPI void               elm_genlist_item_demote(Elm_Gen_Item *it) EINA_ARG_NONNULL(1);
+   /**
+    * Update the part of an item
+    *
+    * @param it The item
+    * @param parts The name of item's part
+    * @param itf The flags of item's part type
+    *
+    * This updates an item's part by calling item's fetching functions again
+    * to get the icons, labels and states. Use this when the original
+    * item data has changed and the changes are desired to be reflected.
+    * Second parts argument is used for globbing to match '*', '?', and '.'
+    * It can be used at updating multi fields.
+    *
+    * Use elm_genlist_realized_items_update() to update an item's all  
+    * property.
+    *
+    * @see elm_genlist_item_update()
+    *
+    * @ingroup Genlist
+    */
+   EAPI void               elm_genlist_item_fields_update(Elm_Genlist_Item *it, const char *parts, Elm_Genlist_Item_Field_Flags itf) EINA_ARG_NONNULL(1);
    /**
     * Update the item class of an item
     *

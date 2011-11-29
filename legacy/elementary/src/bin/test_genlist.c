@@ -567,6 +567,22 @@ my_gl_update(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED_
    elm_genlist_item_update(tit->item);
 }
 
+static void
+my_gl_labels_update(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+{
+   Testitem *tit = data;
+   tit->mode++;
+   elm_genlist_item_fields_update(tit->item, "*", ELM_GENLIST_ITEM_FIELD_LABEL);
+}
+
+static void
+my_gl_contents_update(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+{
+   Testitem *tit = data;
+   tit->mode++;
+   elm_genlist_item_fields_update(tit->item, "*", ELM_GENLIST_ITEM_FIELD_CONTENT);
+}
+
 void
 test_genlist3(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
@@ -629,16 +645,16 @@ test_genlist3(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_in
    evas_object_show(bt);
 
    bt = elm_button_add(win);
-   elm_object_text_set(bt, "[2]");
-   evas_object_smart_callback_add(bt, "clicked", my_gl_update, &(tit[1]));
+   elm_object_text_set(bt, "labels");
+   evas_object_smart_callback_add(bt, "clicked", my_gl_labels_update, &(tit[1]));
    evas_object_size_hint_align_set(bt, EVAS_HINT_FILL, EVAS_HINT_FILL);
    evas_object_size_hint_weight_set(bt, EVAS_HINT_EXPAND, 0.0);
    elm_box_pack_end(bx2, bt);
    evas_object_show(bt);
 
    bt = elm_button_add(win);
-   elm_object_text_set(bt, "[3]");
-   evas_object_smart_callback_add(bt, "clicked", my_gl_update, &(tit[2]));
+   elm_object_text_set(bt, "contents");
+   evas_object_smart_callback_add(bt, "clicked", my_gl_contents_update, &(tit[2]));
    evas_object_size_hint_align_set(bt, EVAS_HINT_FILL, EVAS_HINT_FILL);
    evas_object_size_hint_weight_set(bt, EVAS_HINT_EXPAND, 0.0);
    elm_box_pack_end(bx2, bt);

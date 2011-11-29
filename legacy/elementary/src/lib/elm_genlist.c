@@ -1,5 +1,5 @@
 #include <assert.h>
-
+#include <fnmatch.h>
 #include <Elementary.h>
 #include <Elementary_Cursor.h>
 #include "elm_priv.h"
@@ -1651,7 +1651,8 @@ _item_del_hook(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_i
 static void
 _item_label_realize(Elm_Gen_Item *it,
                     Evas_Object *target,
-                    Eina_List **source)
+                    Eina_List **source,
+                    const char *parts)
 {
    if (it->itc->func.label_get)
      {
@@ -1661,6 +1662,9 @@ _item_label_realize(Elm_Gen_Item *it,
         *source = elm_widget_stringlist_get(edje_object_data_get(target, "labels"));
         EINA_LIST_FOREACH(*source, l, key)
           {
+             if (parts && fnmatch(parts, key, FNM_PERIOD))
+               continue;
+
              char *s = it->itc->func.label_get
                 ((void *)it->base.data, WIDGET(it), key);
 
@@ -1678,9 +1682,42 @@ _item_label_realize(Elm_Gen_Item *it,
 }
 
 static Eina_List *
+_item_content_unrealize(Elm_Gen_Item *it,
+                   Evas_Object *target,
+                   Eina_List **source,
+                   const char *parts)
+{
+   Eina_List *res = it->content_objs;
+
+   if (it->itc->func.content_get)
+     {
+        const Eina_List *l;
+        const char *key;
+        Evas_Object *ic = NULL;
+
+        EINA_LIST_FOREACH(*source, l, key)
+          {
+             if (parts && fnmatch(parts, key, FNM_PERIOD))
+               continue;
+
+             ic = edje_object_part_swallow_get(target, key);
+             if (ic)
+               {
+                  res = eina_list_remove(res, ic);
+                  edje_object_part_unswallow(target, ic);
+                  evas_object_del(ic);
+               }
+          }
+     }
+
+   return res;
+}
+
+static Eina_List *
 _item_content_realize(Elm_Gen_Item *it,
                    Evas_Object *target,
-                   Eina_List **source)
+                   Eina_List **source,
+                   const char *parts)
 {
    Eina_List *res = NULL;
 
@@ -1691,8 +1728,15 @@ _item_content_realize(Elm_Gen_Item *it,
         Evas_Object *ic = NULL;
 
         *source = elm_widget_stringlist_get(edje_object_data_get(target, "contents"));
+
+        if (parts && (eina_list_count(*source) != eina_list_count(it->content_objs)))
+          res = it->content_objs;
+
         EINA_LIST_FOREACH(*source, l, key)
           {
+             if (parts && fnmatch(parts, key, FNM_PERIOD))
+               continue;
+
              if (it->itc->func.content_get)
                ic = it->itc->func.content_get
                   ((void *)it->base.data, WIDGET(it), key);
@@ -1714,7 +1758,8 @@ _item_content_realize(Elm_Gen_Item *it,
 static void
 _item_state_realize(Elm_Gen_Item *it,
                     Evas_Object *target,
-                    Eina_List **source)
+                    Eina_List **source,
+                    const char *parts)
 {
    if (it->itc->func.state_get)
      {
@@ -1725,6 +1770,9 @@ _item_state_realize(Elm_Gen_Item *it,
         *source = elm_widget_stringlist_get(edje_object_data_get(target, "states"));
         EINA_LIST_FOREACH(*source, l, key)
           {
+             if (parts && fnmatch(parts, key, FNM_PERIOD))
+               continue;
+
              Eina_Bool on = it->itc->func.state_get
                 ((void *)it->base.data, WIDGET(it), key);
 
@@ -1883,9 +1931,9 @@ _item_realize(Elm_Gen_Item *it,
            will clean our mess */
         assert(eina_list_count(it->content_objs) == 0);
 
-        _item_label_realize(it, VIEW(it), &it->labels);
-        it->content_objs = _item_content_realize(it, VIEW(it), &it->contents);
-        _item_state_realize(it, VIEW(it), &it->states);
+        _item_label_realize(it, VIEW(it), &it->labels, NULL);
+        it->content_objs = _item_content_realize(it, VIEW(it), &it->contents, NULL);
+        _item_state_realize(it, VIEW(it), &it->states, NULL);
 
         if (!it->item->mincalcd)
           {
@@ -2854,11 +2902,11 @@ _mode_item_realize(Elm_Gen_Item *it)
       will clean our mess */
    assert(eina_list_count(it->item->mode_content_objs) == 0);
 
-   _item_label_realize(it, it->item->mode_view, &it->item->mode_labels);
-   it->item->mode_content_objs = _item_content_realize(it,
-					   it->item->mode_view,
-					   &it->item->mode_contents);
-   _item_state_realize(it, it->item->mode_view, &it->item->mode_states);
+   _item_label_realize(it, it->item->mode_view, &it->item->mode_labels, NULL);
+   it->item->mode_content_objs =
+     _item_content_realize(it, it->item->mode_view,
+                           &it->item->mode_contents, NULL);
+   _item_state_realize(it, it->item->mode_view, &it->item->mode_states, NULL);
 
    edje_object_part_swallow(it->item->mode_view,
                             edje_object_data_get(it->item->mode_view, "mode_part"),
@@ -4181,6 +4229,28 @@ elm_genlist_item_update(Elm_Gen_Item *it)
    it->item->block->updateme = EINA_TRUE;
    if (it->wd->update_job) ecore_job_del(it->wd->update_job);
    it->wd->update_job = ecore_job_add(_update_job, it->wd);
+}
+
+EAPI void
+elm_genlist_item_fields_update(Elm_Genlist_Item *it,
+                               const char *parts,
+                               Elm_Genlist_Item_Field_Flags itf)
+{
+   ELM_WIDGET_ITEM_WIDTYPE_CHECK_OR_RETURN(it);
+   if (!it->item->block) return;
+   if (it->delete_me) return;
+
+   if ((!itf) || (itf & ELM_GENLIST_ITEM_FIELD_LABEL))
+     _item_label_realize(it, it->base.view, &it->labels, parts);
+   if ((!itf) || (itf & ELM_GENLIST_ITEM_FIELD_CONTENT))
+     {
+        it->content_objs = _item_content_unrealize(it, it->base.view,
+                                                   &it->contents, parts);
+        it->content_objs = _item_content_realize(it, it->base.view,
+                                                 &it->contents, parts);
+     }
+   if ((!itf) || (itf & ELM_GENLIST_ITEM_FIELD_STATE))
+     _item_state_realize(it, it->base.view, &it->states, parts);
 }
 
 EAPI void
