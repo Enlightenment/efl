@@ -207,9 +207,7 @@ static void _ecore_main_win32_handlers_cleanup(void);
 #endif
 
 static int in_main_loop = 0;
-#ifndef USE_G_MAIN_LOOP
 static int do_quit = 0;
-#endif
 static Ecore_Fd_Handler *fd_handlers = NULL;
 static Ecore_Fd_Handler *fd_handler_current = NULL;
 static Eina_List *fd_handlers_with_prep = NULL;
@@ -889,8 +887,13 @@ ecore_main_loop_begin(void)
    in_main_loop--;
    _ecore_unlock();
 #else
-   ecore_main_loop = g_main_loop_new(NULL, FALSE);
-   g_main_loop_run(ecore_main_loop);
+   if (!do_quit)
+     {
+        if (!ecore_main_loop)
+          ecore_main_loop = g_main_loop_new(NULL, FALSE);
+        g_main_loop_run(ecore_main_loop);
+     }
+   do_quit = 0;
 #endif
 }
 
@@ -904,10 +907,10 @@ ecore_main_loop_begin(void)
 EAPI void
 ecore_main_loop_quit(void)
 {
-#ifndef USE_G_MAIN_LOOP
    do_quit = 1;
-#else
-   g_main_loop_quit(ecore_main_loop);
+#ifdef USE_G_MAIN_LOOP
+   if (ecore_main_loop)
+     g_main_loop_quit(ecore_main_loop);
 #endif
 }
 
