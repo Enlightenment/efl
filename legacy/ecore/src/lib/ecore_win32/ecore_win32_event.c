@@ -650,6 +650,7 @@ _ecore_win32_event_keystroke_get(Ecore_Win32_Callback_Data *msg,
                                  char        **keycompose,
                                  unsigned int *modifiers)
 {
+  WCHAR buf[3];
   char delete_string[2] = { 0x7f, 0 };
   char *kn = NULL;
   char *ks = NULL;
@@ -1115,8 +1116,32 @@ _ecore_win32_event_keystroke_get(Ecore_Win32_Callback_Data *msg,
        kc = "";
        break;
      default:
-       /* other non keystroke characters */
-       return 0;
+       {
+          /* other non keystroke characters */
+          BYTE kbd_state[256];
+          int res;
+
+          if (is_down)
+            return 0;
+
+          if (!GetKeyboardState(kbd_state))
+            return 0;
+
+           res = ToUnicode(msg->window_param,
+                           MapVirtualKey(msg->window_param, 2),
+                           kbd_state, buf, 3, 0);
+           if (res == 1)
+             {
+               /* FIXME: might be troublesome for non european languages */
+               /* in that case, UNICODE should be used, I guess */
+               buf[1] = '\0';
+               kn = (char *)buf;
+               ks = (char *)buf;
+               kc = (char *)buf;
+               break;
+             }
+           return 0;
+         }
      }
 
    *keyname = strdup(kn);

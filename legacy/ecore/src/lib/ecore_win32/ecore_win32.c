@@ -132,7 +132,7 @@ _ecore_win32_window_procedure(HWND   window,
              * we check if the next message
              * - is a WM_KEYUP or WM_SYSKEYUP
              * - has the same timestamp than the Ctrl one
-             * - is the key press of the right Alt key
+             * - is the key release of the right Alt key
              */
             res = PeekMessage(&next_msg, data->window,
                               WM_KEYUP, WM_SYSKEYUP,
