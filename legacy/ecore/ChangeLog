@@ -350,3 +350,7 @@
 2011-11-27 Vincent Torri
 
         * Fix and improve key management on Windows XP
+
+2011-11-29 Vincent Torri
+
+        * Discard left Ctrl when AltGr is pressed (Windows XP)

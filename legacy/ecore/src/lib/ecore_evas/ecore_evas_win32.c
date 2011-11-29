@@ -147,9 +147,9 @@ _ecore_evas_win32_event_mouse_in(void *data __UNUSED__, int type __UNUSED__, voi
    if (ee->func.fn_mouse_in) ee->func.fn_mouse_in(ee);
    /* FIXME to do */
 /*    _ecore_evas_x_modifier_locks_update(ee, e->modifiers); */
-   evas_event_feed_mouse_in(ee->evas, e->time, NULL);
+   evas_event_feed_mouse_in(ee->evas, e->timestamp, NULL);
    evas_focus_in(ee->evas);
-   _ecore_evas_mouse_move_process(ee, e->x, e->y, e->time);
+   _ecore_evas_mouse_move_process(ee, e->x, e->y, e->timestamp);
 
    return 1;
 }
@@ -169,9 +169,9 @@ _ecore_evas_win32_event_mouse_out(void *data __UNUSED__, int type __UNUSED__, vo
 
    /* FIXME to do */
 /*    _ecore_evas_x_modifier_locks_update(ee, e->modifiers); */
-   _ecore_evas_mouse_move_process(ee, e->x, e->y, e->time);
+   _ecore_evas_mouse_move_process(ee, e->x, e->y, e->timestamp);
 
-   evas_event_feed_mouse_out(ee->evas, e->time, NULL);
+   evas_event_feed_mouse_out(ee->evas, e->timestamp, NULL);
    if (ee->func.fn_mouse_out) ee->func.fn_mouse_out(ee);
    if (ee->prop.cursor.object) evas_object_hide(ee->prop.cursor.object);
 

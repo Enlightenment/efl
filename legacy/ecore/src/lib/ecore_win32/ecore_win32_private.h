@@ -49,14 +49,15 @@ typedef struct _Ecore_Win32_Callback_Data Ecore_Win32_Callback_Data;
 
 struct _Ecore_Win32_Callback_Data
 {
-   RECT         update;
-   HWND         window;
-   unsigned int message;
-   WPARAM       window_param;
-   LPARAM       data_param;
-   long         time;
-   int          x;
-   int          y;
+   RECT          update;
+   HWND          window;
+   unsigned int  message;
+   WPARAM        window_param;
+   LPARAM        data_param;
+   unsigned long timestamp;
+   int           x;
+   int           y;
+   Eina_Bool     discard_ctrl;
 };
 
 struct _Ecore_Win32_Window
@@ -130,7 +131,7 @@ struct _Ecore_Win32_Window
 
 extern HINSTANCE           _ecore_win32_instance;
 extern double              _ecore_win32_double_click_time;
-extern long                _ecore_win32_event_last_time;
+extern unsigned long       _ecore_win32_event_last_time;
 extern Ecore_Win32_Window *_ecore_win32_event_last_window;
 
 

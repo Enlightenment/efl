@@ -221,7 +221,7 @@ struct _Ecore_Win32_Event_Mouse_In
    Ecore_Win32_Window *window; /**< The window that received the event */
    int                 x; /**< The x coordinate where the mouse leaved */
    int                 y; /**< The y coordinate where the mouse entered */
-   long                time; /**< The time the event occurred */
+   unsigned long       timestamp; /**< The time the event occurred */
 };
 
 /**
@@ -233,7 +233,7 @@ struct _Ecore_Win32_Event_Mouse_Out
    Ecore_Win32_Window *window; /**< The window that received the event */
    int                 x; /**< The x coordinate where the mouse leaved */
    int                 y; /**< The y coordinate where the mouse leaved */
-   long                time; /**< The time the event occurred */
+   unsigned long       timestamp; /**< The time the event occurred */
 };
 
 /**
@@ -243,7 +243,7 @@ struct _Ecore_Win32_Event_Mouse_Out
 struct _Ecore_Win32_Event_Window_Focus_In
 {
    Ecore_Win32_Window *window; /**< The window that received the event */
-   long  long          time; /**< The time the event occurred */
+   unsigned long       timestamp; /**< The time the event occurred */
 };
 
 /**
@@ -253,7 +253,7 @@ struct _Ecore_Win32_Event_Window_Focus_In
 struct _Ecore_Win32_Event_Window_Focus_Out
 {
    Ecore_Win32_Window *window; /**< The window that received the event */
-   long                time; /**< The time the event occurred */
+   unsigned long       timestamp; /**< The time the event occurred */
 };
 
 /**
@@ -267,7 +267,7 @@ struct _Ecore_Win32_Event_Window_Damage
    int                 y; /**< The y coordinate of the top left corner of the damaged region */
    int                 width; /**< The width of the damaged region */
    int                 height; /**< The time the event occurred */
-   long                time; /**< The time the event occurred */
+   unsigned long       timestamp; /**< The time the event occurred */
 };
 
 /**
@@ -277,7 +277,7 @@ struct _Ecore_Win32_Event_Window_Damage
 struct _Ecore_Win32_Event_Window_Create
 {
    Ecore_Win32_Window *window; /**< The window that received the event */
-   long                time; /**< The time the event occurred */
+   unsigned long       timestamp; /**< The time the event occurred */
 };
 
 /**
@@ -287,7 +287,7 @@ struct _Ecore_Win32_Event_Window_Create
 struct _Ecore_Win32_Event_Window_Destroy
 {
    Ecore_Win32_Window *window; /**< The window that received the event */
-   long                time; /**< The time the event occurred */
+   unsigned long       timestamp; /**< The time the event occurred */
 };
 
 /**
@@ -297,7 +297,7 @@ struct _Ecore_Win32_Event_Window_Destroy
 struct _Ecore_Win32_Event_Window_Hide
 {
    Ecore_Win32_Window *window; /**< The window that received the event */
-   long                time; /**< The time the event occurred */
+   unsigned long       timestamp; /**< The time the event occurred */
 };
 
 /**
@@ -307,7 +307,7 @@ struct _Ecore_Win32_Event_Window_Hide
 struct _Ecore_Win32_Event_Window_Show
 {
    Ecore_Win32_Window *window; /**< The window that received the event */
-   long                time; /**< The time the event occurred */
+   unsigned long       timestamp; /**< The time the event occurred */
 };
 
 /**
@@ -322,7 +322,7 @@ struct _Ecore_Win32_Event_Window_Configure
    int                 y; /**< The new y coordinate of the top left corner */
    int                 width; /**< The new width */
    int                 height; /**< The new height */
-   long                time; /**< The time the event occurred */
+   unsigned long       timestamp; /**< The time the event occurred */
 };
 
 /**
@@ -334,7 +334,7 @@ struct _Ecore_Win32_Event_Window_Resize
    Ecore_Win32_Window *window; /**< The window that received the event */
    int                 width; /**< The new width */
    int                 height; /**< The new height */
-   long                time; /**< The time the event occurred */
+   unsigned long       timestamp; /**< The time the event occurred */
 };
 
 /**
@@ -344,7 +344,7 @@ struct _Ecore_Win32_Event_Window_Resize
 struct _Ecore_Win32_Event_Window_Delete_Request
 {
    Ecore_Win32_Window *window; /**< The window that received the event */
-   long                time; /**< The time the event occurred */
+   unsigned long       timestamp; /**< The time the event occurred */
 };
 
 /**
@@ -369,12 +369,12 @@ EAPI extern int ECORE_WIN32_EVENT_WINDOW_DELETE_REQUEST; /**< Ecore_Event for th
 
 /* Core */
 
-EAPI int    ecore_win32_init();
-EAPI int    ecore_win32_shutdown();
-EAPI int    ecore_win32_screen_depth_get();
-EAPI void   ecore_win32_double_click_time_set(double t);
-EAPI double ecore_win32_double_click_time_get(void);
-EAPI long   ecore_win32_current_time_get(void);
+EAPI int           ecore_win32_init();
+EAPI int           ecore_win32_shutdown();
+EAPI int           ecore_win32_screen_depth_get();
+EAPI void          ecore_win32_double_click_time_set(double t);
+EAPI double        ecore_win32_double_click_time_get(void);
+EAPI unsigned long ecore_win32_current_time_get(void);
 
 /* Window */
 
