@@ -20,7 +20,7 @@ _item_added_cb(void *data __UNUSED__,
                void *event_info)
 {
    Elm_Multibuttonentry_Item *item = (Elm_Multibuttonentry_Item *)event_info;
-   printf("\n added item = %s\n", elm_multibuttonentry_item_label_get(item));
+   printf("added item = %s\n", elm_multibuttonentry_item_label_get(item));
 }
 
 // "item,deleted" smart callback
