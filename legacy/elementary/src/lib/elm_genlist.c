@@ -2163,7 +2163,7 @@ _item_block_position(Item_Block *itb,
    Elm_Gen_Item *it;
    Elm_Gen_Item *git;
    Evas_Coord y = 0, ox, oy, ow, oh, cvx, cvy, cvw, cvh;
-   int vis;
+   Eina_Bool vis = EINA_FALSE;
 
    evas_event_freeze(evas_object_evas_get(itb->wd->obj));
    evas_object_geometry_get(itb->wd->pan_smart, &ox, &oy, &ow, &oh);
