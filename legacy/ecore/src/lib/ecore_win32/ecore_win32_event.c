@@ -650,6 +650,7 @@ _ecore_win32_event_keystroke_get(Ecore_Win32_Callback_Data *msg,
                                  char        **keycompose,
                                  unsigned int *modifiers)
 {
+  char delete_string[2] = { 0x7f, 0 };
   char *kn = NULL;
   char *ks = NULL;
   char *kc = NULL;
@@ -797,8 +798,7 @@ _ecore_win32_event_keystroke_get(Ecore_Win32_Callback_Data *msg,
          {
            kn = "Delete";
            ks = "Delete";
-           /* FIXME: kc is wrong, here */
-           kc = "Delete";
+           kc = delete_string;
          }
        else
          {
