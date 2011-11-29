@@ -89,8 +89,6 @@ group { name: "elm/button/base/default";
          }
          description { state: "disabled" 0.0;
             inherit: "default" 0.0;
-            color: 0 0 0 128;
-            color3: 0 0 0 0;
          }
          description { state: "disabled_visible" 0.0;
             inherit: "default" 0.0;
@@ -230,8 +228,12 @@ group { name: "elm/button/base/default";
             new Float:vl;
             get_state(PART:"elm.swallow.content", st, 30, vl);
             if (!strcmp(st, "icononly"))
-            set_state(PART:"elm.swallow.content", "visible", 0.0);
-            set_state(PART:"elm.text", "visible", 0.0);
+              set_state(PART:"elm.swallow.content", "visible", 0.0);
+            get_state(PART:"elm.text", st, 30, vl);
+            if (!strcmp(st, "disabled") || (!strcmp(st, "disabled_visible")))
+              set_state(PART:"elm.text", "disabled_visible", 0.0);
+            else
+              set_state(PART:"elm.text", "visible", 0.0);
          }
       }
       program { name: "text_hide";
@@ -244,6 +246,11 @@ group { name: "elm/button/base/default";
             if (!strcmp(st, "visible"))
             set_state(PART:"elm.swallow.content", "icononly", 0.0);
             set_state(PART:"elm.text", "default", 0.0);
+            get_state(PART:"elm.text", st, 30, vl);
+            if (!strcmp(st, "default") || (!strcmp(st, "visible")))
+              set_state(PART:"elm.text", "default", 0.0);
+            else
+              set_state(PART:"elm.text", "disabled", 0.0);
          }
       }
       program { name: "icon_show";
@@ -268,43 +275,35 @@ group { name: "elm/button/base/default";
       program { name: "disable";
          signal: "elm,state,disabled";
          source: "elm";
-         action: STATE_SET "disabled" 0.0;
-         target: "button_image";
-         target: "over1";
-         target: "over2";
-         target: "disabler";
-         after: "disable_text";
-      }
-      program { name: "disable_text";
          script {
             new st[31];
             new Float:vl;
+            set_state(PART:"button_image", "disabled", 0.0);
+            set_state(PART:"over1", "disabled", 0.0);
+            set_state(PART:"over2", "disabled", 0.0);
+            set_state(PART:"disabler", "disabled", 0.0);
             get_state(PART:"elm.text", st, 30, vl);
-            if (!strcmp(st, "visible"))
-            set_state(PART:"elm.text", "disabled_visible", 0.0);
+            if (!strcmp(st, "visible") || !strcmp(st, "disabled_visible"))
+              set_state(PART:"elm.text", "disabled_visible", 0.0);
             else
-            set_state(PART:"elm.text", "disabled", 0.0);
+              set_state(PART:"elm.text", "disabled", 0.0);
          }
       }
       program { name: "enable";
          signal: "elm,state,enabled";
          source: "elm";
-         action: STATE_SET "default" 0.0;
-         target: "button_image";
-         target: "over1";
-         target: "over2";
-         target: "disabler";
-         after: "enable_text";
-      }
-      program { name: "enable_text";
          script {
             new st[31];
             new Float:vl;
+            set_state(PART:"button_image", "visible", 0.0);
+            set_state(PART:"over1", "visible", 0.0);
+            set_state(PART:"over2", "visible", 0.0);
+            set_state(PART:"disabler", "visible", 0.0);
             get_state(PART:"elm.text", st, 30, vl);
-            if (!strcmp(st, "disabled_visible"))
-            set_state(PART:"elm.text", "visible", 0.0);
+            if (!strcmp(st, "visible") || !strcmp(st, "disabled_visible"))
+              set_state(PART:"elm.text", "visible", 0.0);
             else
-            set_state(PART:"elm.text", "default", 0.0);
+              set_state(PART:"elm.text", "default", 0.0);
          }
       }
    }
@@ -891,8 +890,6 @@ group { name: "elm/button/base/anchor";
          }
          description { state: "disabled" 0.0;
             inherit: "default" 0.0;
-            color: 0 0 0 128;
-            color3: 0 0 0 0;
          }
          description { state: "disabled_visible" 0.0;
             inherit: "default" 0.0;
@@ -1024,8 +1021,12 @@ group { name: "elm/button/base/anchor";
             new Float:vl;
             get_state(PART:"elm.swallow.content", st, 30, vl);
             if (!strcmp(st, "icononly"))
-            set_state(PART:"elm.swallow.content", "visible", 0.0);
-            set_state(PART:"elm.text", "visible", 0.0);
+              set_state(PART:"elm.swallow.content", "visible", 0.0);
+            get_state(PART:"elm.text", st, 30, vl);
+            if (!strcmp(st, "disabled") || (!strcmp(st, "disabled_visible")))
+              set_state(PART:"elm.text", "disabled_visible", 0.0);
+            else
+              set_state(PART:"elm.text", "visible", 0.0);
          }
       }
       program { name: "text_hide";
@@ -1038,6 +1039,11 @@ group { name: "elm/button/base/anchor";
             if (!strcmp(st, "visible"))
             set_state(PART:"elm.swallow.content", "icononly", 0.0);
             set_state(PART:"elm.text", "default", 0.0);
+            get_state(PART:"elm.text", st, 30, vl);
+            if (!strcmp(st, "default") || (!strcmp(st, "visible")))
+              set_state(PART:"elm.text", "default", 0.0);
+            else
+              set_state(PART:"elm.text", "disabled", 0.0);
          }
       }
       program { name: "icon_show";
@@ -1062,43 +1068,35 @@ group { name: "elm/button/base/anchor";
       program { name: "disable";
          signal: "elm,state,disabled";
          source: "elm";
-         action: STATE_SET "disabled" 0.0;
-         target: "button_image";
-         target: "over1";
-         target: "over2";
-         target: "disabler";
-         after: "disable_text";
-      }
-      program { name: "disable_text";
          script {
             new st[31];
             new Float:vl;
+            set_state(PART:"button_image", "disabled", 0.0);
+            set_state(PART:"over1", "disabled", 0.0);
+            set_state(PART:"over2", "disabled", 0.0);
+            set_state(PART:"disabler", "disabled", 0.0);
             get_state(PART:"elm.text", st, 30, vl);
-            if (!strcmp(st, "visible"))
-            set_state(PART:"elm.text", "disabled_visible", 0.0);
+            if (!strcmp(st, "visible") || !strcmp(st, "disabled_visible"))
+              set_state(PART:"elm.text", "disabled_visible", 0.0);
             else
-            set_state(PART:"elm.text", "disabled", 0.0);
+              set_state(PART:"elm.text", "disabled", 0.0);
          }
       }
       program { name: "enable";
          signal: "elm,state,enabled";
          source: "elm";
-         action: STATE_SET "default" 0.0;
-         target: "button_image";
-         target: "over1";
-         target: "over2";
-         target: "disabler";
-         after: "enable_text";
-      }
-      program { name: "enable_text";
          script {
             new st[31];
             new Float:vl;
+            set_state(PART:"button_image", "visible", 0.0);
+            set_state(PART:"over1", "visible", 0.0);
+            set_state(PART:"over2", "visible", 0.0);
+            set_state(PART:"disabler", "visible", 0.0);
             get_state(PART:"elm.text", st, 30, vl);
-            if (!strcmp(st, "disabled_visible"))
-            set_state(PART:"elm.text", "visible", 0.0);
+            if (!strcmp(st, "visible") || !strcmp(st, "disabled_visible"))
+              set_state(PART:"elm.text", "visible", 0.0);
             else
-            set_state(PART:"elm.text", "default", 0.0);
+              set_state(PART:"elm.text", "default", 0.0);
          }
       }
    }
