@@ -783,7 +783,7 @@ _title_content_unset(Elm_Naviframe_Item *it, const char *part)
 {
    Elm_Naviframe_Content_Item_Pair *pair = NULL;
    char buf[1028];
-   Evas_Object *content;
+   Evas_Object *content = NULL;
 
    EINA_INLIST_FOREACH(it->content_list, pair)
      {
