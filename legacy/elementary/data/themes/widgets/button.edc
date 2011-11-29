@@ -1038,7 +1038,6 @@ group { name: "elm/button/base/anchor";
             get_state(PART:"elm.swallow.content", st, 30, vl);
             if (!strcmp(st, "visible"))
             set_state(PART:"elm.swallow.content", "icononly", 0.0);
-            set_state(PART:"elm.text", "default", 0.0);
             get_state(PART:"elm.text", st, 30, vl);
             if (!strcmp(st, "default") || (!strcmp(st, "visible")))
               set_state(PART:"elm.text", "default", 0.0);
