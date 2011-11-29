@@ -2,12 +2,12 @@
 # This file is distributed under the same license as the Elementary package.
 # FIRST AUTHOR <a.hillel@partner.samsung.com>, 2010.
 #
-#: src/lib/elm_config.c:1403
+#: src/lib/elm_config.c:1401
 msgid ""
 msgstr ""
 "Project-Id-Version: elementary\n"
 "Report-Msgid-Bugs-To: enlightenment-devel@lists.sourceforge.net\n"
-"POT-Creation-Date: 2011-11-24 13:00+0900\n"
+"POT-Creation-Date: 2011-11-28 22:01+0900\n"
 "PO-Revision-Date: 2010-12-26 10:05+0200\n"
 "Last-Translator: Aharon Hillel <a.hillel@partner.samsung.com>\n"
 "Language-Team: General\n"
@@ -38,7 +38,7 @@ msgid "Clicked"
 msgstr ""
 
 #: src/lib/elm_button.c:406 src/lib/elm_check.c:366 src/lib/elm_radio.c:295
-#: src/lib/elm_toolbar.c:731
+#: src/lib/elm_toolbar.c:733
 msgid "State: Disabled"
 msgstr ""
 
@@ -68,7 +68,7 @@ msgstr ""
 msgid "Check"
 msgstr ""
 
-#: src/lib/elm_config.c:1340
+#: src/lib/elm_config.c:1338
 msgid "default:LTR"
 msgstr "default:RTL"
 
@@ -100,23 +100,23 @@ msgstr ""
 msgid "OFF"
 msgstr ""
 
-#: src/lib/elm_toolbar.c:648
+#: src/lib/elm_toolbar.c:650
 #, fuzzy
 msgid "Selected"
 msgstr "התחל בחירה"
 
-#: src/lib/elm_toolbar.c:729
+#: src/lib/elm_toolbar.c:731
 msgid "Separator"
 msgstr ""
 
-#: src/lib/elm_toolbar.c:733
+#: src/lib/elm_toolbar.c:735
 msgid "State: Selected"
 msgstr ""
 
-#: src/lib/elm_toolbar.c:735
+#: src/lib/elm_toolbar.c:737
 msgid "Has menu"
 msgstr ""
 
-#: src/lib/elm_toolbar.c:765
+#: src/lib/elm_toolbar.c:767
 msgid "Tool Item"
 msgstr ""

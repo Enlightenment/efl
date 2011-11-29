@@ -1,12 +1,12 @@
 # Italian translation for Elementary.
 # This file is put in the public domain.
 # Massimo Maiurana <maiurana@gmail.com>, 2011.
-#: src/lib/elm_config.c:1403
+#: src/lib/elm_config.c:1401
 msgid ""
 msgstr ""
 "Project-Id-Version: Elementary\n"
 "Report-Msgid-Bugs-To: enlightenment-devel@lists.sourceforge.net\n"
-"POT-Creation-Date: 2011-11-24 13:00+0900\n"
+"POT-Creation-Date: 2011-11-28 22:01+0900\n"
 "PO-Revision-Date: 2011-11-08 14:19+0100\n"
 "Last-Translator: Massimo Maiurana <maiurana@gmail.com>\n"
 "Language-Team: none\n"
@@ -36,7 +36,7 @@ msgid "Clicked"
 msgstr "Cliccato"
 
 #: src/lib/elm_button.c:406 src/lib/elm_check.c:366 src/lib/elm_radio.c:295
-#: src/lib/elm_toolbar.c:731
+#: src/lib/elm_toolbar.c:733
 msgid "State: Disabled"
 msgstr "Stato: disabilitato"
 
@@ -66,7 +66,7 @@ msgstr "Stato"
 msgid "Check"
 msgstr "Controllo"
 
-#: src/lib/elm_config.c:1340
+#: src/lib/elm_config.c:1338
 msgid "default:LTR"
 msgstr "predefintito: LTR"
 
@@ -98,22 +98,22 @@ msgstr "Attivo"
 msgid "OFF"
 msgstr "Non attivo"
 
-#: src/lib/elm_toolbar.c:648
+#: src/lib/elm_toolbar.c:650
 msgid "Selected"
 msgstr "Selezionato"
 
-#: src/lib/elm_toolbar.c:729
+#: src/lib/elm_toolbar.c:731
 msgid "Separator"
 msgstr "Separatore"
 
-#: src/lib/elm_toolbar.c:733
+#: src/lib/elm_toolbar.c:735
 msgid "State: Selected"
 msgstr "Stato: selezionato"
 
-#: src/lib/elm_toolbar.c:735
+#: src/lib/elm_toolbar.c:737
 msgid "Has menu"
 msgstr "Include menù"
 
-#: src/lib/elm_toolbar.c:765
+#: src/lib/elm_toolbar.c:767
 msgid "Tool Item"
 msgstr "Oggetto strumento"
