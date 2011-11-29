@@ -642,14 +642,10 @@ _sizing_eval(Evas_Object *obj)
      }
    if (wd->mode == ELM_LIST_LIMIT)
      {
-        Evas_Coord vmw, vmh, vw, vh;
+        Evas_Coord vmw, vmh;
 
         minw = wd->realminw;
         maxw = -1;
-        elm_smart_scroller_child_viewport_size_get(wd->scr, &vw, &vh);
-        if ((minw > 0) && (vw < minw)) vw = minw;
-        else if ((maxw > 0) && (vw > maxw))
-          vw = maxw;
         edje_object_size_min_calc
           (elm_smart_scroller_edje_object_get(wd->scr), &vmw, &vmh);
         minw = vmw + minw;
@@ -3490,12 +3486,12 @@ elm_genlist_item_insert_after(Evas_Object                  *obj,
    EINA_SAFETY_ON_NULL_RETURN_VAL(after, NULL);
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return NULL;
-   Elm_Gen_Item *it = _item_new(wd, itc, data, parent, flags, func,
-                                    func_data);
-   if (!it) return NULL;
    /* It makes no sense to insert after in an empty list with after != NULL, something really bad is happening in your app. */
    EINA_SAFETY_ON_NULL_RETURN_VAL(wd->items, NULL);
 
+   Elm_Gen_Item *it = _item_new(wd, itc, data, parent, flags, func,
+                                    func_data);
+   if (!it) return NULL;
    if (!it->parent)
      {
         if ((it->group) &&
@@ -3531,12 +3527,12 @@ elm_genlist_item_insert_before(Evas_Object                  *obj,
    EINA_SAFETY_ON_NULL_RETURN_VAL(before, NULL);
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return NULL;
-   Elm_Gen_Item *it = _item_new(wd, itc, data, parent, flags, func,
-                                    func_data);
-   if (!it) return NULL;
    /* It makes no sense to insert before in an empty list with before != NULL, something really bad is happening in your app. */
    EINA_SAFETY_ON_NULL_RETURN_VAL(wd->items, NULL);
 
+   Elm_Gen_Item *it = _item_new(wd, itc, data, parent, flags, func,
+                                    func_data);
+   if (!it) return NULL;
    if (!it->parent)
      {
         if (it->group && before->group)
