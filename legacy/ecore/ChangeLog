@@ -354,4 +354,4 @@
 2011-11-29 Vincent Torri
 
         * Discard left Ctrl when AltGr is pressed (Windows XP)
-	* Fix the string value for the Delete key
+	* Fix the string value for the Delete key (Windows XP)
