@@ -446,8 +446,6 @@ _state_update(State *st)
 
    nw = 16;
    nh = 16;
-   if (nw < 1) nw = 1;
-   if (nh < 1) nh = 1;
    gszw = w / nw;
    gszh = h / nh;
    if (gszw < 4) gszw = 4;
