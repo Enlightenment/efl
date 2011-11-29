@@ -298,11 +298,13 @@ compare_device(const void *data1, const void *data2)
 static Eina_List *
 _remove_touched_device(Eina_List *list, Pointer_Event *pe)
 {
+   Eina_List *lst = NULL;
    Pointer_Event *p = eina_list_search_unsorted(list, compare_device, pe);
    if (p)
      {
+        lst = eina_list_remove(list, p);
         free(p);
-        return eina_list_remove(list, p);
+        return lst;
      }
 
    return list;
@@ -2755,7 +2757,7 @@ _rotate_test(Evas_Object *obj, Pointer_Event *pe, void *event_info,
    if (!wd->gesture[g_type]) return;
 
    Gesture_Info *gesture = wd->gesture[g_type];
-   Rotate_Type *st = gesture->data;
+   Rotate_Type *st;
    if (gesture)
    {
       st = gesture->data;
@@ -3091,6 +3093,8 @@ _event_process(void *data, Evas_Object *obj __UNUSED__,
    if (_make_pointer_event(data, event_info, event_type, &_pe))
      pe = &_pe;
 
+   if (!pe) return;
+
    if (IS_TESTED(ELM_GESTURE_N_LONG_TAPS))
      _n_long_tap_test(data, pe, event_info, event_type,
            ELM_GESTURE_N_LONG_TAPS);
@@ -3354,12 +3358,8 @@ elm_gesture_layer_add(Evas_Object *parent)
    Evas *e;
    Widget_Data *wd;
 
-   EINA_SAFETY_ON_NULL_RETURN_VAL(parent, NULL);
+   ELM_WIDGET_STANDARD_SETUP(wd, Widget_Data, parent, e, obj, NULL);
 
-   wd = ELM_NEW(Widget_Data);
-   e = evas_object_evas_get(parent);
-   if (!e) return NULL;
-   obj = elm_widget_add(e);
    ELM_SET_WIDTYPE(widtype, "gesture_layer");
    elm_widget_type_set(obj, "gesture_layer");
    elm_widget_sub_object_add(parent, obj);
