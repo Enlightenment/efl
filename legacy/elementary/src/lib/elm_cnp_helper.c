@@ -1631,7 +1631,6 @@ elm_cnp_tempfile_create(int size)
 
    tmppath = getenv("TMP");
    if (!tmppath) tmppath = P_tmpdir;
-   if (!tmppath) tmppath = "/tmp";
    len = snprintf(NULL, 0, "%s/%sXXXXXX", tmppath, "elmcnpitem-");
    if (len < 0)
      {
