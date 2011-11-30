@@ -27,16 +27,16 @@ _on_done(void *data __UNUSED__,
 static void
 _item_pressed(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
-   Elm_Toolbar_Item *item = event_info;
-   elm_toolbar_item_state_set(item, elm_toolbar_item_state_next(item));
-   elm_toolbar_item_selected_set(item, EINA_FALSE);
+   Elm_Object_Item *tb_it = event_info;
+   elm_toolbar_item_state_set(tb_it, elm_toolbar_item_state_next(item));
+   elm_toolbar_item_selected_set(tb_it, EINA_FALSE);
 }
 
 EAPI_MAIN int
 elm_main(int argc __UNUSED__, char **argv __UNUSED__)
 {
    Evas_Object *win, *bg, *bx, *tb, *bt, *menu;
-   Elm_Toolbar_Item *item;
+   Elm_Object_Item *tb_it;
 
    win = elm_win_add(NULL, "toolbar", ELM_WIN_BASIC);
    elm_win_title_set(win, "Toolbar Example");
@@ -71,14 +71,14 @@ elm_main(int argc __UNUSED__, char **argv __UNUSED__)
 
    elm_toolbar_menu_parent_set(tb, win);
 
-   item = elm_toolbar_item_append(tb, "mail-send", "Send Mail", NULL, NULL);
-   elm_toolbar_item_menu_set(item, EINA_TRUE);
+   tb_it = elm_toolbar_item_append(tb, "mail-send", "Send Mail", NULL, NULL);
+   elm_toolbar_item_menu_set(tb_it, EINA_TRUE);
 
-   menu = elm_toolbar_item_menu_get(item);
+   menu = elm_toolbar_item_menu_get(tb_it);
    elm_menu_item_add(menu, NULL, "emptytrash", "Empty Trash", NULL, NULL);
    elm_menu_item_add(menu, NULL, "trashcan_full", "Full Trash", NULL, NULL);
 
-   elm_toolbar_item_priority_set(item, 10);
+   elm_toolbar_item_priority_set(tb_it, 10);
 
    elm_box_pack_end(bx, tb);
    elm_box_pack_end(bx, bt);

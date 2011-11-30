@@ -18,7 +18,7 @@ static Eina_Bool _dir_has_subs(const char *path);
 static void
 _tstatus(void *data, Evas_Object *obj, void *event_info __UNUSED__)
 {
-   Elm_Toolbar_Item *sel;
+   Elm_Object_Item *tb_it;
    const char *status;
 
    if (elm_panel_hidden_get((Evas_Object*)data))
@@ -26,14 +26,14 @@ _tstatus(void *data, Evas_Object *obj, void *event_info __UNUSED__)
    else
      status = "shown";
    printf("The top panel is currently %s\n", status);
-   sel = elm_toolbar_selected_item_get(obj);
-   elm_toolbar_item_selected_set(sel, EINA_FALSE);
+   tb_it = elm_toolbar_selected_item_get(obj);
+   elm_toolbar_item_selected_set(tb_it, EINA_FALSE);
 }
 
 static void
 _bstatus(void *data, Evas_Object *obj, void *event_info __UNUSED__)
 {
-   Elm_Toolbar_Item *sel;
+   Elm_Object_Item *tb_it;
    const char *status;
 
    if (elm_panel_hidden_get((Evas_Object*)data))
@@ -41,8 +41,8 @@ _bstatus(void *data, Evas_Object *obj, void *event_info __UNUSED__)
    else
      status = "shown";
    printf("The bottom panel is currently %s\n", status);
-   sel = elm_toolbar_selected_item_get(obj);
-   elm_toolbar_item_selected_set(sel, EINA_FALSE);
+   tb_it = elm_toolbar_selected_item_get(obj);
+   elm_toolbar_item_selected_set(tb_it, EINA_FALSE);
 }
 
 static char *

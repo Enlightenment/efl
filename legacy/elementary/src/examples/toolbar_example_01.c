@@ -50,7 +50,7 @@ EAPI_MAIN int
 elm_main(int argc __UNUSED__, char **argv __UNUSED__)
 {
    Evas_Object *win, *bg, *bx, *tb, *bt;
-   Elm_Toolbar_Item *item;
+   Elm_Object_Item *tb_it;
 
    win = elm_win_add(NULL, "toolbar", ELM_WIN_BASIC);
    elm_win_title_set(win, "Toolbar Example");
@@ -82,9 +82,9 @@ elm_main(int argc __UNUSED__, char **argv __UNUSED__)
    elm_toolbar_item_append(tb, "document-print", "Print", _item_1_pressed, bt);
    elm_toolbar_item_append(tb, "folder-new", "New Folder", _item_2_pressed, bt);
 
-   item = elm_toolbar_item_append(tb, "mail-send", "Create and send email",
+   tb_it = elm_toolbar_item_append(tb, "mail-send", "Create and send email",
                                   _item_3_pressed, bt);
-   elm_toolbar_item_disabled_set(item, EINA_TRUE);
+   elm_toolbar_item_disabled_set(tb_it, EINA_TRUE);
 
    elm_toolbar_homogeneous_set(tb, EINA_FALSE);
 

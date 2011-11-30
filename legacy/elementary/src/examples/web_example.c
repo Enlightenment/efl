@@ -40,7 +40,7 @@ struct _Tab_Data
 {
    Evas_Object *web;
    App_Data *app;
-   Elm_Toolbar_Item *tab;
+   Elm_Object_Item *tab;
 };
 
 static Evas_Object * _web_create_window_cb(void *data, Evas_Object *obj, Eina_Bool js, const Elm_Web_Window_Features *wf);

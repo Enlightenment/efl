@@ -14542,8 +14542,6 @@ extern "C" {
         ELM_TOOLBAR_SHRINK_LAST    /**< Indicates error if returned by elm_toolbar_shrink_mode_get() */
      } Elm_Toolbar_Shrink_Mode;
 
-   typedef struct _Elm_Toolbar_Item Elm_Toolbar_Item; /**< Item of Elm_Toolbar. Sub-type of Elm_Widget_Item. Can be created with elm_toolbar_item_append(), elm_toolbar_item_prepend() and functions to add items in relative positions, like elm_toolbar_item_insert_before(), and deleted with elm_toolbar_item_del(). */
-
    typedef struct _Elm_Toolbar_Item_State Elm_Toolbar_Item_State; /**< State of a Elm_Toolbar_Item. Can be created with elm_toolbar_item_state_add() and removed with elm_toolbar_item_state_del(). */
 
    /**
@@ -14558,7 +14556,6 @@ extern "C" {
     * @ingroup Toolbar
     */
    EAPI Evas_Object            *elm_toolbar_add(Evas_Object *parent) EINA_ARG_NONNULL(1);
-
    /**
     * Set the icon size, in pixels, to be used by toolbar items.
     *
@@ -14572,7 +14569,6 @@ extern "C" {
     * @ingroup Toolbar
     */
    EAPI void                    elm_toolbar_icon_size_set(Evas_Object *obj, int icon_size) EINA_ARG_NONNULL(1);
-
    /**
     * Get the icon size, in pixels, to be used by toolbar items.
     *
@@ -14584,7 +14580,6 @@ extern "C" {
     * @ingroup Toolbar
     */
    EAPI int                     elm_toolbar_icon_size_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
-
    /**
     * Sets icon lookup order, for toolbar items' icons.
     *
@@ -14599,7 +14594,6 @@ extern "C" {
     * @ingroup Toolbar
     */
    EAPI void                    elm_toolbar_icon_order_lookup_set(Evas_Object *obj, Elm_Icon_Lookup_Order order) EINA_ARG_NONNULL(1);
-
    /**
     * Gets the icon lookup order.
     *
@@ -14611,7 +14605,6 @@ extern "C" {
     * @ingroup Toolbar
     */
    EAPI Elm_Icon_Lookup_Order   elm_toolbar_icon_order_lookup_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
-
    /**
     * Set whether the toolbar should always have an item selected.
     *
@@ -14630,7 +14623,6 @@ extern "C" {
     * @ingroup Toolbar
     */
    EAPI void                    elm_toolbar_always_select_mode_set(Evas_Object *obj, Eina_Bool always_select) EINA_ARG_NONNULL(1);
-
    /**
     * Get whether the toolbar should always have an item selected.
     *
@@ -14643,7 +14635,6 @@ extern "C" {
     * @ingroup Toolbar
     */
    EAPI Eina_Bool               elm_toolbar_always_select_mode_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
-
    /**
     * Set whether the toolbar items' should be selected by the user or not.
     *
@@ -14675,7 +14666,6 @@ extern "C" {
     * @ingroup Toolbar
     */
    EAPI Eina_Bool               elm_toolbar_no_select_mode_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
-
    /**
     * Append item to the toolbar.
     *
@@ -14710,8 +14700,7 @@ extern "C" {
     *
     * @ingroup Toolbar
     */
-   EAPI Elm_Toolbar_Item       *elm_toolbar_item_append(Evas_Object *obj, const char *icon, const char *label, Evas_Smart_Cb func, const void *data) EINA_ARG_NONNULL(1);
-
+   EAPI Elm_Object_Item       *elm_toolbar_item_append(Evas_Object *obj, const char *icon, const char *label, Evas_Smart_Cb func, const void *data) EINA_ARG_NONNULL(1);
    /**
     * Prepend item to the toolbar.
     *
@@ -14746,8 +14735,7 @@ extern "C" {
     *
     * @ingroup Toolbar
     */
-   EAPI Elm_Toolbar_Item       *elm_toolbar_item_prepend(Evas_Object *obj, const char *icon, const char *label, Evas_Smart_Cb func, const void *data) EINA_ARG_NONNULL(1);
-
+   EAPI Elm_Object_Item       *elm_toolbar_item_prepend(Evas_Object *obj, const char *icon, const char *label, Evas_Smart_Cb func, const void *data) EINA_ARG_NONNULL(1);
    /**
     * Insert a new item into the toolbar object before item @p before.
     *
@@ -14783,7 +14771,7 @@ extern "C" {
     *
     * @ingroup Toolbar
     */
-   EAPI Elm_Toolbar_Item       *elm_toolbar_item_insert_before(Evas_Object *obj, Elm_Toolbar_Item *before, const char *icon, const char *label, Evas_Smart_Cb func, const void *data) EINA_ARG_NONNULL(1);
+   EAPI Elm_Object_Item       *elm_toolbar_item_insert_before(Evas_Object *obj, Elm_Object_Item *before, const char *icon, const char *label, Evas_Smart_Cb func, const void *data) EINA_ARG_NONNULL(1);
 
    /**
     * Insert a new item into the toolbar object after item @p after.
@@ -14820,8 +14808,7 @@ extern "C" {
     *
     * @ingroup Toolbar
     */
-   EAPI Elm_Toolbar_Item       *elm_toolbar_item_insert_after(Evas_Object *obj, Elm_Toolbar_Item *after, const char *icon, const char *label, Evas_Smart_Cb func, const void *data) EINA_ARG_NONNULL(1);
-
+   EAPI Elm_Object_Item       *elm_toolbar_item_insert_after(Evas_Object *obj, Elm_Object_Item *after, const char *icon, const char *label, Evas_Smart_Cb func, const void *data) EINA_ARG_NONNULL(1);
    /**
     * Get the first item in the given toolbar widget's list of
     * items.
@@ -14835,8 +14822,7 @@ extern "C" {
     *
     * @ingroup Toolbar
     */
-   EAPI Elm_Toolbar_Item       *elm_toolbar_first_item_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
-
+   EAPI Elm_Object_Item       *elm_toolbar_first_item_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
    /**
     * Get the last item in the given toolbar widget's list of
     * items.
@@ -14850,12 +14836,11 @@ extern "C" {
     *
     * @ingroup Toolbar
     */
-   EAPI Elm_Toolbar_Item       *elm_toolbar_last_item_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
-
+   EAPI Elm_Object_Item       *elm_toolbar_last_item_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
    /**
     * Get the item after @p item in toolbar.
     *
-    * @param item The toolbar item.
+    * @param it The toolbar item.
     * @return The item after @p item, or @c NULL if none or on failure.
     *
     * @note If it is the last item, @c NULL will be returned.
@@ -14864,8 +14849,7 @@ extern "C" {
     *
     * @ingroup Toolbar
     */
-   EAPI Elm_Toolbar_Item       *elm_toolbar_item_next_get(const Elm_Toolbar_Item *item) EINA_ARG_NONNULL(1);
-
+   EAPI Elm_Object_Item       *elm_toolbar_item_next_get(const Elm_Object_Item *it) EINA_ARG_NONNULL(1);
    /**
     * Get the item before @p item in toolbar.
     *
@@ -14878,24 +14862,22 @@ extern "C" {
     *
     * @ingroup Toolbar
     */
-   EAPI Elm_Toolbar_Item       *elm_toolbar_item_prev_get(const Elm_Toolbar_Item *item) EINA_ARG_NONNULL(1);
-
+   EAPI Elm_Object_Item       *elm_toolbar_item_prev_get(const Elm_Object_Item *it) EINA_ARG_NONNULL(1);
    /**
     * Get the toolbar object from an item.
     *
-    * @param item The item.
+    * @param it The item.
     * @return The toolbar object.
     *
     * This returns the toolbar object itself that an item belongs to.
     *
     * @ingroup Toolbar
     */
-   EAPI Evas_Object            *elm_toolbar_item_toolbar_get(const Elm_Toolbar_Item *item) EINA_ARG_NONNULL(1);
-
+   EAPI Evas_Object            *elm_toolbar_item_toolbar_get(const Elm_Object_Item *it) EINA_ARG_NONNULL(1);
    /**
     * Set the priority of a toolbar item.
     *
-    * @param item The toolbar item.
+    * @param it The toolbar item.
     * @param priority The item priority. The default is zero.
     *
     * This is used only when the toolbar shrink mode is set to
@@ -14909,24 +14891,22 @@ extern "C" {
     *
     * @ingroup Toolbar
     */
-   EAPI void                    elm_toolbar_item_priority_set(Elm_Toolbar_Item *item, int priority) EINA_ARG_NONNULL(1);
-
+   EAPI void                    elm_toolbar_item_priority_set(Elm_Object_Item *it, int priority) EINA_ARG_NONNULL(1);
    /**
     * Get the priority of a toolbar item.
     *
-    * @param item The toolbar item.
+    * @param it The toolbar item.
     * @return The @p item priority, or @c 0 on failure.
     *
     * @see elm_toolbar_item_priority_set() for details.
     *
     * @ingroup Toolbar
     */
-   EAPI int                     elm_toolbar_item_priority_get(const Elm_Toolbar_Item *item) EINA_ARG_NONNULL(1);
-
+   EAPI int                     elm_toolbar_item_priority_get(const Elm_Object_Item *it) EINA_ARG_NONNULL(1);
    /**
     * Get the label of item.
     *
-    * @param item The item of toolbar.
+    * @param it The item of toolbar.
     * @return The label of item.
     *
     * The return value is a pointer to the label associated to @p item when
@@ -14940,12 +14920,11 @@ extern "C" {
     *
     * @ingroup Toolbar
     */
-   EAPI const char             *elm_toolbar_item_label_get(const Elm_Toolbar_Item *item) EINA_ARG_NONNULL(1);
-
+   EAPI const char             *elm_toolbar_item_label_get(const Elm_Object_Item *it) EINA_ARG_NONNULL(1);
    /**
     * Set the label of item.
     *
-    * @param item The item of toolbar.
+    * @param it The item of toolbar.
     * @param text The label of item.
     *
     * The label to be displayed by the item.
@@ -14960,24 +14939,22 @@ extern "C" {
     *
     * @ingroup Toolbar
     */
-   EAPI void                    elm_toolbar_item_label_set(Elm_Toolbar_Item *item, const char *label) EINA_ARG_NONNULL(1);
-
+   EAPI void                    elm_toolbar_item_label_set(Elm_Object_Item *it, const char *label) EINA_ARG_NONNULL(1);
    /**
     * Return the data associated with a given toolbar widget item.
     *
-    * @param item The toolbar widget item handle.
+    * @param it The toolbar widget item handle.
     * @return The data associated with @p item.
     *
     * @see elm_toolbar_item_data_set()
     *
     * @ingroup Toolbar
     */
-   EAPI void                   *elm_toolbar_item_data_get(const Elm_Toolbar_Item *item) EINA_ARG_NONNULL(1);
-
+   EAPI void                   *elm_toolbar_item_data_get(const Elm_Object_Item *it) EINA_ARG_NONNULL(1);
    /**
     * Set the data associated with a given toolbar widget item.
     *
-    * @param item The toolbar widget item handle.
+    * @param it The toolbar widget item handle
     * @param data The new data pointer to set to @p item.
     *
     * This sets new item data on @p item.
@@ -14987,8 +14964,7 @@ extern "C" {
     *
     * @ingroup Toolbar
     */
-   EAPI void                    elm_toolbar_item_data_set(Elm_Toolbar_Item *item, const void *data) EINA_ARG_NONNULL(1);
-
+   EAPI void                    elm_toolbar_item_data_set(Elm_Object_Item *it, const void *data) EINA_ARG_NONNULL(1);
    /**
     * Returns a pointer to a toolbar item by its label.
     *
@@ -15000,12 +14976,11 @@ extern "C" {
     *
     * @ingroup Toolbar
     */
-   EAPI Elm_Toolbar_Item       *elm_toolbar_item_find_by_label(const Evas_Object *obj, const char *label) EINA_ARG_NONNULL(1);
-
+   EAPI Elm_Object_Item       *elm_toolbar_item_find_by_label(const Evas_Object *obj, const char *label) EINA_ARG_NONNULL(1);
    /*
     * Get whether the @p item is selected or not.
     *
-    * @param item The toolbar item.
+    * @param it The toolbar item.
     * @return @c EINA_TRUE means item is selected. @c EINA_FALSE indicates
     * it's not. If @p obj is @c NULL, @c EINA_FALSE is returned.
     *
@@ -15014,12 +14989,11 @@ extern "C" {
     *
     * @ingroup Toolbar
     */
-   EAPI Eina_Bool               elm_toolbar_item_selected_get(const Elm_Toolbar_Item *item) EINA_ARG_NONNULL(1);
-
+   EAPI Eina_Bool               elm_toolbar_item_selected_get(const Elm_Object_Item *it) EINA_ARG_NONNULL(1);
    /**
     * Set the selected state of an item.
     *
-    * @param item The toolbar item
+    * @param it The toolbar item
     * @param selected The selected state
     *
     * This sets the selected state of the given item @p it.
@@ -15036,8 +15010,7 @@ extern "C" {
     *
     * @ingroup Toolbar
     */
-   EAPI void                    elm_toolbar_item_selected_set(Elm_Toolbar_Item *item, Eina_Bool selected) EINA_ARG_NONNULL(1);
-
+   EAPI void                    elm_toolbar_item_selected_set(Elm_Object_Item *it, Eina_Bool selected) EINA_ARG_NONNULL(1);
    /**
     * Get the selected item.
     *
@@ -15053,13 +15026,12 @@ extern "C" {
     *
     * @ingroup Toolbar
     */
-   EAPI Elm_Toolbar_Item       *elm_toolbar_selected_item_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
-
+   EAPI Elm_Object_Item       *elm_toolbar_selected_item_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
    /**
     * Set the icon associated with @p item.
     *
     * @param obj The parent of this item.
-    * @param item The toolbar item.
+    * @param it The toolbar item.
     * @param icon A string with icon name or the absolute path of an image file.
     *
     * Toolbar will load icon image from fdo or current theme.
@@ -15071,46 +15043,42 @@ extern "C" {
     *
     * @ingroup Toolbar
     */
-   EAPI void                    elm_toolbar_item_icon_set(Elm_Toolbar_Item *item, const char *icon) EINA_ARG_NONNULL(1);
-
+   EAPI void                    elm_toolbar_item_icon_set(Elm_Object_Item *it, const char *icon) EINA_ARG_NONNULL(1);
    /**
     * Get the string used to set the icon of @p item.
     *
-    * @param item The toolbar item.
+    * @param it The toolbar item.
     * @return The string associated with the icon object.
     *
     * @see elm_toolbar_item_icon_set() for details.
     *
     * @ingroup Toolbar
     */
-   EAPI const char             *elm_toolbar_item_icon_get(const Elm_Toolbar_Item *item) EINA_ARG_NONNULL(1);
-
+   EAPI const char             *elm_toolbar_item_icon_get(const Elm_Object_Item *it) EINA_ARG_NONNULL(1);
    /**
     * Get the object of @p item.
     *
-    * @param item The toolbar item.
+    * @param it The toolbar item.
     * @return The object
     *
     * @ingroup Toolbar
     */
-   EAPI Evas_Object            *elm_toolbar_item_object_get(const Elm_Toolbar_Item *item) EINA_ARG_NONNULL(1);
-
+   EAPI Evas_Object            *elm_toolbar_item_object_get(const Elm_Object_Item *it) EINA_ARG_NONNULL(1);
    /**
     * Get the icon object of @p item.
     *
-    * @param item The toolbar item.
+    * @param it The toolbar item.
     * @return The icon object
     *
     * @see elm_toolbar_item_icon_set() or elm_toolbar_item_icon_memfile_set() for details.
     *
     * @ingroup Toolbar
     */
-   EAPI Evas_Object            *elm_toolbar_item_icon_object_get(Elm_Toolbar_Item *item) EINA_ARG_NONNULL(1);
-
+   EAPI Evas_Object            *elm_toolbar_item_icon_object_get(Elm_Object_Item *it) EINA_ARG_NONNULL(1);
    /**
     * Set the icon associated with @p item to an image in a binary buffer.
     *
-    * @param item The toolbar item.
+    * @param it The toolbar item.
     * @param img The binary data that will be used as an image
     * @param size The size of binary data @p img
     * @param format Optional format of @p img to pass to the image loader
@@ -15123,24 +15091,23 @@ extern "C" {
     * 
     * @ingroup Toolbar
     */
-   EAPI Eina_Bool elm_toolbar_item_icon_memfile_set(Elm_Toolbar_Item *item, const void *img, size_t size, const char *format, const char *key) EINA_ARG_NONNULL(1);
-
+   EAPI Eina_Bool elm_toolbar_item_icon_memfile_set(Elm_Object_Item *it, const void *img, size_t size, const char *format, const char *key) EINA_ARG_NONNULL(1);
    /**
     * Delete them item from the toolbar.
     *
-    * @param item The item of toolbar to be deleted.
+    * @param it The item of toolbar to be deleted.
     *
     * @see elm_toolbar_item_append()
     * @see elm_toolbar_item_del_cb_set()
     *
     * @ingroup Toolbar
     */
-   EAPI void                    elm_toolbar_item_del(Elm_Toolbar_Item *item) EINA_ARG_NONNULL(1);
+   EAPI void                    elm_toolbar_item_del(Elm_Object_Item *it) EINA_ARG_NONNULL(1);
 
    /**
     * Set the function called when a toolbar item is freed.
     *
-    * @param item The item to set the callback on.
+    * @param it The item to set the callback on.
     * @param func The function called.
     *
     * If there is a @p func, then it will be called prior item's memory release.
@@ -15153,24 +15120,24 @@ extern "C" {
     *
     * @ingroup Toolbar
     */
-   EAPI void                    elm_toolbar_item_del_cb_set(Elm_Toolbar_Item *item, Evas_Smart_Cb func) EINA_ARG_NONNULL(1);
+   EAPI void                    elm_toolbar_item_del_cb_set(Elm_Object_Item *it, Evas_Smart_Cb func) EINA_ARG_NONNULL(1);
 
    /**
     * Get a value whether toolbar item is disabled or not.
     *
-    * @param item The item.
+    * @param it The item.
     * @return The disabled state.
     *
     * @see elm_toolbar_item_disabled_set() for more details.
     *
     * @ingroup Toolbar
     */
-   EAPI Eina_Bool               elm_toolbar_item_disabled_get(const Elm_Toolbar_Item *item) EINA_ARG_NONNULL(1);
+   EAPI Eina_Bool               elm_toolbar_item_disabled_get(const Elm_Object_Item *it) EINA_ARG_NONNULL(1);
 
    /**
     * Sets the disabled/enabled state of a toolbar item.
     *
-    * @param item The item.
+    * @param it The item.
     * @param disabled The disabled state.
     *
     * A disabled item cannot be selected or unselected. It will also
@@ -15180,12 +15147,12 @@ extern "C" {
     *
     * @ingroup Toolbar
     */
-   EAPI void                    elm_toolbar_item_disabled_set(Elm_Toolbar_Item *item, Eina_Bool disabled) EINA_ARG_NONNULL(1);
+   EAPI void                    elm_toolbar_item_disabled_set(Elm_Object_Item *it, Eina_Bool disabled) EINA_ARG_NONNULL(1);
 
    /**
     * Set or unset item as a separator.
     *
-    * @param item The toolbar item.
+    * @param it The toolbar item.
     * @param setting @c EINA_TRUE to set item @p item as separator or
     * @c EINA_FALSE to unset, i.e., item will be used as a regular item.
     *
@@ -15198,12 +15165,12 @@ extern "C" {
     *
     * @ingroup Toolbar
     */
-   EAPI void                    elm_toolbar_item_separator_set(Elm_Toolbar_Item *item, Eina_Bool separator) EINA_ARG_NONNULL(1);
+   EAPI void                    elm_toolbar_item_separator_set(Elm_Object_Item *it, Eina_Bool separator) EINA_ARG_NONNULL(1);
 
    /**
     * Get a value whether item is a separator or not.
     *
-    * @param item The toolbar item.
+    * @param it The toolbar item.
     * @return @c EINA_TRUE means item @p it is a separator. @c EINA_FALSE
     * indicates it's not. If @p it is @c NULL, @c EINA_FALSE is returned.
     *
@@ -15211,7 +15178,7 @@ extern "C" {
     *
     * @ingroup Toolbar
     */
-   EAPI Eina_Bool               elm_toolbar_item_separator_get(const Elm_Toolbar_Item *item) EINA_ARG_NONNULL(1);
+   EAPI Eina_Bool               elm_toolbar_item_separator_get(const Elm_Object_Item *it) EINA_ARG_NONNULL(1);
 
    /**
     * Set the shrink state of toolbar @p obj.
@@ -15284,7 +15251,6 @@ extern "C" {
     * @ingroup Toolbar
     */
    EAPI void                    elm_toolbar_menu_parent_set(Evas_Object *obj, Evas_Object *parent) EINA_ARG_NONNULL(1);
-
    /**
     * Get the parent object of the toolbar items' menus.
     *
@@ -15296,7 +15262,6 @@ extern "C" {
     * @ingroup Toolbar
     */
    EAPI Evas_Object            *elm_toolbar_menu_parent_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
-
    /**
     * Set the alignment of the items.
     *
@@ -15315,7 +15280,6 @@ extern "C" {
     * @ingroup Toolbar
     */
    EAPI void                    elm_toolbar_align_set(Evas_Object *obj, double align) EINA_ARG_NONNULL(1);
-
    /**
     * Get the alignment of the items.
     *
@@ -15328,11 +15292,10 @@ extern "C" {
     * @ingroup Toolbar
     */
    EAPI double                  elm_toolbar_align_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
-
    /**
     * Set whether the toolbar item opens a menu.
     *
-    * @param item The toolbar item.
+    * @param it The toolbar item.
     * @param menu If @c EINA_TRUE, @p item will opens a menu when selected.
     *
     * A toolbar item can be set to be a menu, using this function.
@@ -15361,12 +15324,11 @@ extern "C" {
     *
     * @ingroup Toolbar
     */
-   EAPI void                    elm_toolbar_item_menu_set(Elm_Toolbar_Item *item, Eina_Bool menu) EINA_ARG_NONNULL(1);
-
+   EAPI void                    elm_toolbar_item_menu_set(Elm_Object_Item *it, Eina_Bool menu) EINA_ARG_NONNULL(1);
    /**
     * Get toolbar item's menu.
     *
-    * @param item The toolbar item.
+    * @param it The toolbar item.
     * @return Item's menu object or @c NULL on failure.
     *
     * If @p item wasn't set as menu item with elm_toolbar_item_menu_set(),
@@ -15376,12 +15338,11 @@ extern "C" {
     *
     * @ingroup Toolbar
     */
-   EAPI Evas_Object            *elm_toolbar_item_menu_get(const Elm_Toolbar_Item *item) EINA_ARG_NONNULL(1);
-
+   EAPI Evas_Object            *elm_toolbar_item_menu_get(const Elm_Object_Item *it) EINA_ARG_NONNULL(1);
    /**
     * Add a new state to @p item.
     *
-    * @param item The item.
+    * @param it The toolbar item.
     * @param icon A string with icon name or the absolute path of an image file.
     * @param label The label of the new state.
     * @param func The function to call when the item is clicked when this
@@ -15402,23 +15363,21 @@ extern "C" {
     *
     * @ingroup Toolbar
     */
-   EAPI Elm_Toolbar_Item_State *elm_toolbar_item_state_add(Elm_Toolbar_Item *item, const char *icon, const char *label, Evas_Smart_Cb func, const void *data) EINA_ARG_NONNULL(1);
-
+   EAPI Elm_Toolbar_Item_State *elm_toolbar_item_state_add(Elm_Object_Item *it, const char *icon, const char *label, Evas_Smart_Cb func, const void *data) EINA_ARG_NONNULL(1);
    /**
     * Delete a previoulsy added state to @p item.
     *
-    * @param item The toolbar item.
+    * @param it The toolbar item.
     * @param state The state to be deleted.
     * @return @c EINA_TRUE on success or @c EINA_FALSE on failure.
     *
     * @see elm_toolbar_item_state_add()
     */
-   EAPI Eina_Bool               elm_toolbar_item_state_del(Elm_Toolbar_Item *item, Elm_Toolbar_Item_State *state) EINA_ARG_NONNULL(1);
-
+   EAPI Eina_Bool               elm_toolbar_item_state_del(Elm_Object_Item *it, Elm_Toolbar_Item_State *state) EINA_ARG_NONNULL(1);
    /**
     * Set @p state as the current state of @p it.
     *
-    * @param it The item.
+    * @param it The toolbar item.
     * @param state The state to use.
     * @return @c EINA_TRUE on success or @c EINA_FALSE on failure.
     *
@@ -15430,12 +15389,11 @@ extern "C" {
     *
     * @ingroup Toolbar
     */
-   EAPI Eina_Bool               elm_toolbar_item_state_set(Elm_Toolbar_Item *it, Elm_Toolbar_Item_State *state) EINA_ARG_NONNULL(1);
-
+   EAPI Eina_Bool               elm_toolbar_item_state_set(Elm_Object_Item *it, Elm_Toolbar_Item_State *state) EINA_ARG_NONNULL(1);
    /**
     * Unset the state of @p it.
     *
-    * @param it The item.
+    * @param it The toolbar item.
     *
     * The default icon and label from this item will be displayed.
     *
@@ -15443,12 +15401,11 @@ extern "C" {
     *
     * @ingroup Toolbar
     */
-   EAPI void                    elm_toolbar_item_state_unset(Elm_Toolbar_Item *it) EINA_ARG_NONNULL(1);
-
+   EAPI void                    elm_toolbar_item_state_unset(Elm_Object_Item *it) EINA_ARG_NONNULL(1);
    /**
     * Get the current state of @p it.
     *
-    * @param item The item.
+    * @param it The toolbar item.
     * @return The selected state or @c NULL if none is selected or on failure.
     *
     * @see elm_toolbar_item_state_set() for details.
@@ -15457,8 +15414,7 @@ extern "C" {
     *
     * @ingroup Toolbar
     */
-   EAPI Elm_Toolbar_Item_State *elm_toolbar_item_state_get(const Elm_Toolbar_Item *it) EINA_ARG_NONNULL(1);
-
+   EAPI Elm_Toolbar_Item_State *elm_toolbar_item_state_get(const Elm_Object_Item *it) EINA_ARG_NONNULL(1);
    /**
     * Get the state after selected state in toolbar's @p item.
     *
@@ -15472,8 +15428,7 @@ extern "C" {
     *
     * @ingroup Toolbar
     */
-   EAPI Elm_Toolbar_Item_State *elm_toolbar_item_state_next(Elm_Toolbar_Item *it) EINA_ARG_NONNULL(1);
-
+   EAPI Elm_Toolbar_Item_State *elm_toolbar_item_state_next(Elm_Object_Item *it) EINA_ARG_NONNULL(1);
    /**
     * Get the state before selected state in toolbar's @p item.
     *
@@ -15487,12 +15442,11 @@ extern "C" {
     *
     * @ingroup Toolbar
     */
-   EAPI Elm_Toolbar_Item_State *elm_toolbar_item_state_prev(Elm_Toolbar_Item *it) EINA_ARG_NONNULL(1);
-
+   EAPI Elm_Toolbar_Item_State *elm_toolbar_item_state_prev(Elm_Object_Item *it) EINA_ARG_NONNULL(1);
    /**
     * Set the text to be shown in a given toolbar item's tooltips.
     *
-    * @param item Target item.
+    * @param it toolbar item.
     * @param text The text to set in the content.
     *
     * Setup the text as tooltip to object. The item can have only one tooltip,
@@ -15503,8 +15457,7 @@ extern "C" {
     *
     * @ingroup Toolbar
     */
-   EAPI void             elm_toolbar_item_tooltip_text_set(Elm_Toolbar_Item *item, const char *text) EINA_ARG_NONNULL(1);
-
+   EAPI void             elm_toolbar_item_tooltip_text_set(Elm_Object_Item *it, const char *text) EINA_ARG_NONNULL(1);
    /**
     * Set the content to be shown in the tooltip item.
     *
@@ -15514,7 +15467,7 @@ extern "C" {
     * return a valid Evas_Object. This object is then managed fully by
     * tooltip system and is deleted when the tooltip is gone.
     *
-    * @param item the toolbar item being attached a tooltip.
+    * @param it the toolbar item being attached a tooltip.
     * @param func the function used to create the tooltip contents.
     * @param data what to provide to @a func as callback data/context.
     * @param del_cb called when data is not needed anymore, either when
@@ -15527,12 +15480,11 @@ extern "C" {
     *
     * @ingroup Toolbar
     */
-   EAPI void             elm_toolbar_item_tooltip_content_cb_set(Elm_Toolbar_Item *item, Elm_Tooltip_Item_Content_Cb func, const void *data, Evas_Smart_Cb del_cb) EINA_ARG_NONNULL(1);
-
+   EAPI void             elm_toolbar_item_tooltip_content_cb_set(Elm_Object_Item *it, Elm_Tooltip_Item_Content_Cb func, const void *data, Evas_Smart_Cb del_cb) EINA_ARG_NONNULL(1);
    /**
     * Unset tooltip from item.
     *
-    * @param item toolbar item to remove previously set tooltip.
+    * @param it toolbar item to remove previously set tooltip.
     *
     * Remove tooltip from item. The callback provided as del_cb to
     * elm_toolbar_item_tooltip_content_cb_set() will be called to notify
@@ -15543,8 +15495,7 @@ extern "C" {
     *
     * @ingroup Toolbar
     */
-   EAPI void             elm_toolbar_item_tooltip_unset(Elm_Toolbar_Item *item) EINA_ARG_NONNULL(1);
-
+   EAPI void             elm_toolbar_item_tooltip_unset(Elm_Object_Item *it) EINA_ARG_NONNULL(1);
    /**
     * Sets a different style for this item tooltip.
     *
@@ -15552,19 +15503,18 @@ extern "C" {
     *       elm_toolbar_item_tooltip_content_cb_set() or
     *       elm_toolbar_item_tooltip_text_set()
     *
-    * @param item toolbar item with tooltip already set.
+    * @param it toolbar item with tooltip already set.
     * @param style the theme style to use (default, transparent, ...)
     *
     * @see elm_object_tooltip_style_set() for more details.
     *
     * @ingroup Toolbar
     */
-   EAPI void             elm_toolbar_item_tooltip_style_set(Elm_Toolbar_Item *item, const char *style) EINA_ARG_NONNULL(1);
-
+   EAPI void             elm_toolbar_item_tooltip_style_set(Elm_Object_Item *it, const char *style) EINA_ARG_NONNULL(1);
    /**
     * Get the style for this item tooltip.
     *
-    * @param item toolbar item with tooltip already set.
+    * @param it toolbar item with tooltip already set.
     * @return style the theme style in use, defaults to "default". If the
     *         object does not have a tooltip set, then NULL is returned.
     *
@@ -15573,13 +15523,12 @@ extern "C" {
     *
     * @ingroup Toolbar
     */
-   EAPI const char      *elm_toolbar_item_tooltip_style_get(const Elm_Toolbar_Item *item) EINA_ARG_NONNULL(1);
-
+   EAPI const char      *elm_toolbar_item_tooltip_style_get(const Elm_Object_Item *it) EINA_ARG_NONNULL(1);
    /**
     * Set the type of mouse pointer/cursor decoration to be shown,
     * when the mouse pointer is over the given toolbar widget item
     *
-    * @param item toolbar item to customize cursor on
+    * @param it toolbar item to customize cursor on
     * @param cursor the cursor type's name
     *
     * This function works analogously as elm_object_cursor_set(), but
@@ -15597,13 +15546,13 @@ extern "C" {
     *
     * @ingroup Toolbar
     */
-   EAPI void             elm_toolbar_item_cursor_set(Elm_Toolbar_Item *item, const char *cursor) EINA_ARG_NONNULL(1);
+   EAPI void             elm_toolbar_item_cursor_set(Elm_Object_Item *it, const char *cursor) EINA_ARG_NONNULL(1);
 
    /*
     * Get the type of mouse pointer/cursor decoration set to be shown,
     * when the mouse pointer is over the given toolbar widget item
     *
-    * @param item toolbar item with custom cursor set
+    * @param it toolbar item with custom cursor set
     * @return the cursor type's name or @c NULL, if no custom cursors
     * were set to @p item (and on errors)
     *
@@ -15613,14 +15562,14 @@ extern "C" {
     *
     * @ingroup Toolbar
     */
-   EAPI const char      *elm_toolbar_item_cursor_get(const Elm_Toolbar_Item *item) EINA_ARG_NONNULL(1);
+   EAPI const char      *elm_toolbar_item_cursor_get(const Elm_Object_Item *it) EINA_ARG_NONNULL(1);
 
    /**
     * Unset any custom mouse pointer/cursor decoration set to be
     * shown, when the mouse pointer is over the given toolbar widget
     * item, thus making it show the @b default cursor again.
     *
-    * @param item a toolbar item
+    * @param it a toolbar item
     *
     * Use this call to undo any custom settings on this item's cursor
     * decoration, bringing it back to defaults (no custom style set).
@@ -15630,13 +15579,13 @@ extern "C" {
     *
     * @ingroup Toolbar
     */
-   EAPI void             elm_toolbar_item_cursor_unset(Elm_Toolbar_Item *item) EINA_ARG_NONNULL(1);
+   EAPI void             elm_toolbar_item_cursor_unset(Elm_Object_Item *it) EINA_ARG_NONNULL(1);
 
    /**
     * Set a different @b style for a given custom cursor set for a
     * toolbar item.
     *
-    * @param item toolbar item with custom cursor set
+    * @param it toolbar item with custom cursor set
     * @param style the <b>theme style</b> to use (e.g. @c "default",
     * @c "transparent", etc)
     *
@@ -15655,13 +15604,13 @@ extern "C" {
     *
     * @ingroup Toolbar
     */
-   EAPI void             elm_toolbar_item_cursor_style_set(Elm_Toolbar_Item *item, const char *style) EINA_ARG_NONNULL(1);
+   EAPI void             elm_toolbar_item_cursor_style_set(Elm_Object_Item *it, const char *style) EINA_ARG_NONNULL(1);
 
    /**
     * Get the current @b style set for a given toolbar item's custom
     * cursor
     *
-    * @param item toolbar item with custom cursor set.
+    * @param it toolbar item with custom cursor set.
     * @return style the cursor style in use. If the object does not
     *         have a cursor set, then @c NULL is returned.
     *
@@ -15669,14 +15618,14 @@ extern "C" {
     *
     * @ingroup Toolbar
     */
-   EAPI const char      *elm_toolbar_item_cursor_style_get(const Elm_Toolbar_Item *item) EINA_ARG_NONNULL(1);
+   EAPI const char      *elm_toolbar_item_cursor_style_get(const Elm_Object_Item *it) EINA_ARG_NONNULL(1);
 
    /**
     * Set if the (custom)cursor for a given toolbar item should be
     * searched in its theme, also, or should only rely on the
     * rendering engine.
     *
-    * @param item item with custom (custom) cursor already set on
+    * @param it item with custom (custom) cursor already set on
     * @param engine_only Use @c EINA_TRUE to have cursors looked for
     * only on those provided by the rendering engine, @c EINA_FALSE to
     * have them searched on the widget's theme, as well.
@@ -15689,14 +15638,14 @@ extern "C" {
     *
     * @ingroup Toolbar
     */
-   EAPI void             elm_toolbar_item_cursor_engine_only_set(Elm_Toolbar_Item *item, Eina_Bool engine_only) EINA_ARG_NONNULL(1);
+   EAPI void             elm_toolbar_item_cursor_engine_only_set(Elm_Object_Item *it, Eina_Bool engine_only) EINA_ARG_NONNULL(1);
 
    /**
     * Get if the (custom) cursor for a given toolbar item is being
     * searched in its theme, also, or is only relying on the rendering
     * engine.
     *
-    * @param item a toolbar item
+    * @param it a toolbar item
     * @return @c EINA_TRUE, if cursors are being looked for only on
     * those provided by the rendering engine, @c EINA_FALSE if they
     * are being searched on the widget's theme, as well.
@@ -15705,7 +15654,7 @@ extern "C" {
     *
     * @ingroup Toolbar
     */
-   EAPI Eina_Bool        elm_toolbar_item_cursor_engine_only_get(const Elm_Toolbar_Item *item) EINA_ARG_NONNULL(1);
+   EAPI Eina_Bool        elm_toolbar_item_cursor_engine_only_get(const Elm_Object_Item *it) EINA_ARG_NONNULL(1);
 
    /**
     * Change a toolbar's orientation

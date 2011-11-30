@@ -371,7 +371,7 @@ test_tooltip(void *data       __UNUSED__,
              void *event_info __UNUSED__)
 {
    Evas_Object *win, *bg, *bx, *tb, *bt, *se, *lst;
-   Elm_Toolbar_Item *ti;
+   Elm_Object_Item *tb_it;
    Elm_List_Item *li;
 
    win = elm_win_add(NULL, "tooltip", ELM_WIN_BASIC);
@@ -397,13 +397,13 @@ test_tooltip(void *data       __UNUSED__,
    elm_box_pack_end(bx, tb);
    evas_object_show(tb);
 
-   ti = elm_toolbar_item_append(tb, NULL, "Open", NULL, NULL);
-   elm_toolbar_item_tooltip_text_set(ti, "Opens a file");
+   tb_it = elm_toolbar_item_append(tb, NULL, "Open", NULL, NULL);
+   elm_toolbar_item_tooltip_text_set(tb_it, "Opens a file");
 
-   ti = elm_toolbar_item_append(tb, NULL, "Icon", NULL, NULL);
+   tb_it = elm_toolbar_item_append(tb, NULL, "Icon", NULL, NULL);
    elm_toolbar_item_tooltip_content_cb_set
-     (ti, _tt_item_icon, (void *)456L, _tt_item_icon_del);
-   elm_toolbar_item_tooltip_style_set(ti, "transparent");
+     (tb_it, _tt_item_icon, (void *)456L, _tt_item_icon_del);
+   elm_toolbar_item_tooltip_style_set(tb_it, "transparent");
 
    bt = elm_button_add(win);
    elm_object_text_set(bt, "Simple text tooltip");
