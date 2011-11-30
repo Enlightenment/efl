@@ -5067,6 +5067,12 @@ _nominatim_url_cb(Evas_Object *obj, int method, char *name, double lon, double l
              if (!(idx == (ele-1))) eina_strlcat(search_url, "+", sizeof(search_url));
           }
         snprintf(buf, sizeof(buf), "%s/search?q=%s&format=xml&polygon=0&addressdetails=0", NAME_NOMINATIM_URL, search_url);
+
+        if (str && str[0])
+          {
+             free(str[0]);
+             free(str);
+          }
      }
    else if (method == ELM_MAP_NAME_METHOD_REVERSE) snprintf(buf, sizeof(buf), "%s/reverse?format=xml&lat=%lf&lon=%lf&zoom=%d&addressdetails=0", NAME_NOMINATIM_URL, lat, lon, wd->zoom);
    else strcpy(buf, "");
