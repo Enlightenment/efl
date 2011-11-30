@@ -18246,7 +18246,7 @@ extern "C" {
     *
     * @section Genlist_Usage_Hints Usage hints
     *
-    * There are also convenience functions. elm_gen_item_genlist_get() will
+    * There are also convenience functions. elm_genlist_item_genlist_get() will
     * return the genlist object the item belongs to. elm_genlist_item_show()
     * will make the scroller scroll to show that specific item so its visible.
     * elm_genlist_item_data_get() returns the data pointer set by the item

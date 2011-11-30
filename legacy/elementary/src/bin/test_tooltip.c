@@ -52,7 +52,7 @@ gltt_exp(void *data       __UNUSED__,
          void            *event_info)
 {
    Elm_Genlist_Item *it = event_info;
-   Evas_Object *gl = elm_gen_item_widget_get(it);
+   Evas_Object *gl = elm_genlist_item_genlist_get(it);
    int val = (int)(long)elm_genlist_item_data_get(it);
    Elm_Genlist_Item *it1, *it2, *it3;
 
@@ -577,7 +577,7 @@ test_tooltip2(void *data       __UNUSED__,
         else
           elm_gengrid_item_tooltip_text_set(ti[i].item, "Testing Y");
         if (!(i % 5))
-          elm_gen_item_selected_set(ti[i].item, EINA_TRUE);
+          elm_gengrid_item_selected_set(ti[i].item, EINA_TRUE);
      }
 
    elm_box_pack_end(bx, grid);
