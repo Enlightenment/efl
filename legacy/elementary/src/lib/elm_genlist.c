@@ -818,7 +818,7 @@ _item_del(Elm_Gen_Item *it)
    evas_event_freeze(evas_object_evas_get(obj));
    elm_genlist_item_subitems_clear(it);
    if (it->wd->show_item == it) it->wd->show_item = NULL;
-   if (it->realized) elm_gen_item_unrealize(it, EINA_FALSE);
+   if (it->realized) _elm_genlist_item_unrealize(it, EINA_FALSE);
    if (it->item->block) _item_block_del(it);
    if (it->item->queued)
      it->wd->queue = eina_list_remove(it->wd->queue, it);
@@ -831,7 +831,7 @@ _item_del(Elm_Gen_Item *it)
    if (it->parent)
      it->parent->item->items = eina_list_remove(it->parent->item->items, it);
    if (it->item->swipe_timer) ecore_timer_del(it->item->swipe_timer);
-   elm_gen_item_del_serious(it);
+   _elm_genlist_item_del_serious(it);
    evas_event_thaw(evas_object_evas_get(obj));
    evas_event_thaw_eval(evas_object_evas_get(obj));
 }
@@ -1368,7 +1368,7 @@ _mouse_up(void        *data,
      {
         if (it->want_unrealize)
           {
-             elm_gen_item_unrealize(it, EINA_FALSE);
+             _elm_genlist_item_unrealize(it, EINA_FALSE);
              if (it->item->block->want_unrealize)
                _item_block_unrealize(it->item->block);
           }
@@ -2079,13 +2079,13 @@ _item_block_recalc(Item_Block *itb,
                   if (changed)
                     {
                        _item_realize(it, in, EINA_TRUE);
-                       elm_gen_item_unrealize(it, EINA_TRUE);
+                       _elm_genlist_item_unrealize(it, EINA_TRUE);
                     }
                }
              else
                {
                   _item_realize(it, in, EINA_TRUE);
-                  elm_gen_item_unrealize(it, EINA_TRUE);
+                  _elm_genlist_item_unrealize(it, EINA_TRUE);
                }
           }
         else
@@ -2132,7 +2132,7 @@ _item_block_unrealize(Item_Block *itb)
                   it->want_unrealize = EINA_TRUE;
                }
              else
-               elm_gen_item_unrealize(it, EINA_FALSE);
+               _elm_genlist_item_unrealize(it, EINA_FALSE);
           }
      }
    if (!dragging)
@@ -2314,7 +2314,7 @@ _item_block_position(Item_Block *itb,
                     }
                   else
                     {
-                       if (!it->dragging) elm_gen_item_unrealize(it, EINA_FALSE);
+                       if (!it->dragging) _elm_genlist_item_unrealize(it, EINA_FALSE);
                     }
                }
              in++;
@@ -2351,7 +2351,7 @@ _group_items_recalc(void *data)
         else if (!git->item->want_realize && git->realized)
           {
              if (!git->dragging)
-               elm_gen_item_unrealize(git, EINA_FALSE);
+               _elm_genlist_item_unrealize(git, EINA_FALSE);
           }
      }
    evas_event_thaw(evas_object_evas_get(wd->obj));
@@ -2530,14 +2530,14 @@ _update_job(void *data)
                   it->item->updateme = EINA_FALSE;
                   if (it->realized)
                     {
-                       elm_gen_item_unrealize(it, EINA_FALSE);
+                       _elm_genlist_item_unrealize(it, EINA_FALSE);
                        _item_realize(it, num, EINA_FALSE);
                        position = EINA_TRUE;
                     }
                   else
                     {
                        _item_realize(it, num, EINA_TRUE);
-                       elm_gen_item_unrealize(it, EINA_TRUE);
+                       _elm_genlist_item_unrealize(it, EINA_TRUE);
                     }
                   if ((it->item->minw != itminw) || (it->item->minh != itminh))
                     recalc = EINA_TRUE;
@@ -4390,10 +4390,10 @@ elm_genlist_item_del(Elm_Gen_Item *it)
      {
         elm_genlist_item_subitems_clear(it);
         if (it->wd->show_item == it) it->wd->show_item = NULL;
-        elm_gen_item_del_notserious(it);
+        _elm_genlist_item_del_notserious(it);
         if (it->item->block)
           {
-             if (it->realized) elm_gen_item_unrealize(it, EINA_FALSE);
+             if (it->realized) _elm_genlist_item_unrealize(it, EINA_FALSE);
              it->item->block->changed = EINA_TRUE;
              if (it->wd->calc_job) ecore_job_del(it->wd->calc_job);
              it->wd->calc_job = ecore_job_add(_calc_job, it->wd);
@@ -5126,4 +5126,69 @@ _elm_genlist_item_widget_get(const Elm_Gen_Item *it)
 {
    ELM_WIDGET_ITEM_WIDTYPE_CHECK_OR_RETURN(it, NULL);
    return WIDGET(it);
+}
+
+void
+_elm_genlist_item_unrealize(Elm_Gen_Item *it,
+                            Eina_Bool     calc)
+{
+   Evas_Object *content;
+
+   if (!it->realized) return;
+   if (it->wd->reorder_it == it) return;
+   evas_event_freeze(evas_object_evas_get(WIDGET(it)));
+   if (!calc)
+     evas_object_smart_callback_call(WIDGET(it), SIG_UNREALIZED, it);
+   if (it->long_timer)
+     {
+        ecore_timer_del(it->long_timer);
+        it->long_timer = NULL;
+     }
+
+   elm_widget_stringlist_free(it->labels);
+   it->labels = NULL;
+   elm_widget_stringlist_free(it->contents);
+   it->contents = NULL;
+   elm_widget_stringlist_free(it->states);
+   it->states = NULL;
+
+   EINA_LIST_FREE(it->content_objs, content)
+     evas_object_del(content);
+
+   it->unrealize_cb(it);
+
+   it->realized = EINA_FALSE;
+   it->want_unrealize = EINA_FALSE;
+   evas_event_thaw(evas_object_evas_get(WIDGET(it)));
+   evas_event_thaw_eval(evas_object_evas_get(WIDGET(it)));
+}
+
+void
+_elm_genlist_item_del_notserious(Elm_Gen_Item *it)
+{
+   elm_widget_item_pre_notify_del(it);
+   it->delete_me = EINA_TRUE;
+   if (it->selected) it->wd->selected = eina_list_remove(it->wd->selected, it);
+
+   if (it->itc->func.del)
+     it->itc->func.del((void *)it->base.data, WIDGET(it));
+}
+
+void
+_elm_genlist_item_del_serious(Elm_Gen_Item *it)
+{
+   _elm_genlist_item_del_notserious(it);
+   it->wd->items = eina_inlist_remove(it->wd->items, EINA_INLIST_GET(it));
+   if (it->tooltip.del_cb)
+     it->tooltip.del_cb((void *)it->tooltip.data, WIDGET(it), it);
+   it->wd->walking -= it->walking;
+   if (it->long_timer) ecore_timer_del(it->long_timer);
+   if (it->group)
+     it->wd->group_items = eina_list_remove(it->wd->group_items, it);
+
+   if (it->wd->calc_job) ecore_job_del(it->wd->calc_job);
+   it->wd->calc_job = ecore_job_add(it->wd->calc_cb, it->wd);
+   free(it->item);
+   it->item = NULL;
+   elm_widget_item_del(it);
 }

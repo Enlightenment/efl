@@ -47,3 +47,12 @@ void
 _elm_genlist_page_bring_in(const Evas_Object *obj,
                            int                h_pagenumber,
                            int                v_pagenumber);
+
+void
+_elm_genlist_item_unrealize(Elm_Gen_Item *it,
+                            Eina_Bool     calc);
+void
+_elm_genlist_item_del_serious(Elm_Gen_Item *it);
+
+void
+_elm_genlist_item_del_notserious(Elm_Gen_Item *it);

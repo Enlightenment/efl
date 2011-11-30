@@ -866,7 +866,7 @@ _mouse_up(void            *data,
    if (dragged)
      {
         if (it->want_unrealize)
-          elm_gen_item_unrealize(it, EINA_FALSE);
+          _elm_genlist_item_unrealize(it, EINA_FALSE);
      }
    if ((it->disabled) || (dragged)) return;
    if (it->wd->multi)
@@ -1147,7 +1147,7 @@ _group_item_place(Pan *sd)
              evas_object_raise(VIEW(it));
           }
         else
-          elm_gen_item_unrealize(it, EINA_FALSE);
+          _elm_genlist_item_unrealize(it, EINA_FALSE);
      }
 }
 
@@ -1411,7 +1411,7 @@ _item_place(Elm_Gen_Item *it,
    else
      {
         if (!it->group)
-          elm_gen_item_unrealize(it, EINA_FALSE);
+          _elm_genlist_item_unrealize(it, EINA_FALSE);
         else
           it->item->group_realized = EINA_FALSE;
      }
@@ -1424,9 +1424,9 @@ _item_del(Elm_Gen_Item *it)
 
    evas_event_freeze(evas_object_evas_get(obj));
    it->wd->selected = eina_list_remove(it->wd->selected, it);
-   if (it->realized) elm_gen_item_unrealize(it, EINA_FALSE);
+   if (it->realized) _elm_genlist_item_unrealize(it, EINA_FALSE);
    it->wd->count--;
-   elm_gen_item_del_serious(it);
+   _elm_genlist_item_del_serious(it);
    evas_event_thaw(evas_object_evas_get(obj));
    evas_event_thaw_eval(evas_object_evas_get(obj));
 }
@@ -2178,7 +2178,7 @@ elm_gengrid_item_del(Elm_Gen_Item *it)
    ELM_WIDGET_ITEM_WIDTYPE_CHECK_OR_RETURN(it);
    if ((it->relcount > 0) || (it->walking > 0))
      {
-        elm_gen_item_del_notserious(it);
+        _elm_genlist_item_del_notserious(it);
         return;
      }
 
@@ -2228,7 +2228,7 @@ elm_gengrid_item_update(Elm_Gen_Item *it)
    ELM_WIDGET_ITEM_WIDTYPE_CHECK_OR_RETURN(it);
    if (!it->realized) return;
    if (it->want_unrealize) return;
-   elm_gen_item_unrealize(it, EINA_FALSE);
+   _elm_genlist_item_unrealize(it, EINA_FALSE);
    _item_realize(it);
    _item_place(it, it->x, it->y);
 }

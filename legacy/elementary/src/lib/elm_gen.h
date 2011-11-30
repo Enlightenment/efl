@@ -65,12 +65,3 @@ struct Elm_Gen_Item
    Eina_Bool   reorder : 1;
    Eina_Bool   mode_set : 1; /* item uses style mode for highlight/select */
 };
-
-void
-elm_gen_item_unrealize(Elm_Gen_Item *it,
-                       Eina_Bool     calc);
-void
-elm_gen_item_del_serious(Elm_Gen_Item *it);
-
-void
-elm_gen_item_del_notserious(Elm_Gen_Item *it);
