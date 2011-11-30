@@ -550,22 +550,22 @@ AC_ARG_ENABLE([install-examples],
 AM_CONDITIONAL([INSTALL_EXAMPLES], [test "x${install_examples}" = "xyes"])
 
 build_examples="no"
-dnl AC_ARG_ENABLE([build-examples],
-dnl    AC_HELP_STRING([--enable-build-examples],
-dnl                   [Enable building examples. This requires extra denpendencies. If you don't have them installed yet, don't build with this option or it will fail. Build again when you have it, overriding the previous installation). @<:@default==disabled@:>@]),
-dnl    [
-dnl     if test "x${enableval}" = "xyes" ; then
-dnl        build_examples="yes"
-dnl        edje_cc=$($PKG_CONFIG --variable=prefix edje)/bin/edje_cc
-dnl        # put in here the dependencies for Edje' examples. They are
-dnl        # meant to be 'real world' usage examples, thus one will be
-dnl        # using higher level libraries on these programs
-dnl        AC_SUBST(edje_cc)
-dnl     else
-dnl        build_examples="no"
-dnl     fi
-dnl    ],
-dnl    [build_examples="no"])
+AC_ARG_ENABLE([build-examples],
+   AC_HELP_STRING([--enable-build-examples],
+                  [Enable building examples. This requires extra denpendencies. If you don't have them installed yet, don't build with this option or it will fail. Build again when you have it, overriding the previous installation). @<:@default==disabled@:>@]),
+   [
+    if test "x${enableval}" = "xyes" ; then
+       build_examples="yes"
+       edje_cc=$($PKG_CONFIG --variable=prefix edje)/bin/edje_cc
+      # put in here the dependencies for Edje' examples. They are
+       # meant to be 'real world' usage examples, thus one will be
+       # using higher level libraries on these programs
+       AC_SUBST(edje_cc)
+    else
+       build_examples="no"
+    fi
+   ],
+   [build_examples="no"])
 AM_CONDITIONAL([BUILD_EXAMPLES], [test "x${build_examples}" = "xyes"])
 
 AC_SUBST(requirement_edje)
