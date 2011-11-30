@@ -82,3 +82,6 @@ elm_gen_item_del_serious(Elm_Gen_Item *it);
 
 void
 elm_gen_item_del_notserious(Elm_Gen_Item *it);
+
+void
+_elm_gen_clear(Evas_Object *obj);

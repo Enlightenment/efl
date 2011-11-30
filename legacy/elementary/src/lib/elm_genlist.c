@@ -3703,7 +3703,7 @@ elm_genlist_item_sorted_insert(Evas_Object                  *obj,
 EAPI void
 elm_genlist_clear(Evas_Object *obj)
 {
-   elm_genlist_clear(obj);
+   _elm_gen_clear(obj);
 }
 
 EAPI void

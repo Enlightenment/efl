@@ -498,6 +498,12 @@ elm_gen_item_selected_set(Elm_Gen_Item *it,
 EAPI void
 elm_gen_clear(Evas_Object *obj)
 {
+   _elm_gen_clear(obj);
+}
+
+void
+_elm_gen_clear(Evas_Object *obj)
+{
    ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return;

@@ -2211,7 +2211,7 @@ elm_gengrid_horizontal_get(const Evas_Object *obj)
 EAPI void
 elm_gengrid_clear(Evas_Object *obj)
 {
-   elm_gengrid_clear(obj);
+   _elm_gen_clear(obj);
 }
 
 EAPI const Evas_Object *
