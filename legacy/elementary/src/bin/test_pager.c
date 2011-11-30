@@ -272,7 +272,7 @@ my_pager_push(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED
 void
 _hide_finished(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
-   //To prevent the window size become zero. 
+   //To prevent the window size become zero.
    Pginfo *info = data;
    if (elm_pager_content_top_get(info->pager)) return;
    elm_win_resize_object_del(info->win, info->pager);

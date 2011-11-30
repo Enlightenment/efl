@@ -1628,7 +1628,7 @@ EAPI Evas_Object *
 elm_win_util_standard_add(const char *name, const char *title)
 {
    Evas_Object *win, *bg;
-   
+
    win = elm_win_add(NULL, name, ELM_WIN_BASIC);
    if (!win) return NULL;
    elm_win_title_set(win, title);

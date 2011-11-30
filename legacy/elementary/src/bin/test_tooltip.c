@@ -144,7 +144,7 @@ _tt_item_icon3(void *data   __UNUSED__,
 {
    int w, h, sw, sh;
    Evas_Object *ic = elm_icon_add(tt);
-   
+
    char buf[PATH_MAX];
    snprintf(buf, sizeof(buf), "%s/images/insanely_huge_test_image.jpg", elm_app_data_dir_get());
    elm_icon_file_set(ic, buf, NULL);

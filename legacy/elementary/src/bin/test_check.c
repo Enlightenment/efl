@@ -45,7 +45,7 @@ test_check(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info 
    elm_box_pack_end(bx, ck);
    evas_object_show(ck);
    evas_object_show(ic);
-   
+
    ck0 = ck;
 
    ic = elm_icon_add(win);
@@ -58,9 +58,9 @@ test_check(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info 
    elm_box_pack_end(bx, ck);
    evas_object_show(ck);
    evas_object_show(ic);
-   
+
    evas_object_smart_callback_add(ck, "changed", changed_cb, ck0);
-   
+
    ck = elm_check_add(win);
    elm_object_text_set(ck, "Label Only");
    elm_box_pack_end(bx, ck);

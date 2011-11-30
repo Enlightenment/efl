@@ -291,11 +291,11 @@ my_win_main(char *autorun, Eina_Bool test_win_only)
    evas_object_size_hint_align_set(tbx, EVAS_HINT_FILL, 0.0);
    elm_object_content_set(sc, tbx);
    evas_object_show(tbx);
-   
+
 add_tests:
    tests = NULL;
 #define ADD_TEST(icon_, cat_, name_, cb_) elm_test_add(&tests, icon_, cat_, name_, cb_)
-   
+
    //------------------------------//
    ADD_TEST(NULL, "Window / Background", "Bg Plain", test_bg_plain);
    ADD_TEST(NULL, "Window / Background", "Bg Image", test_bg_image);
@@ -305,7 +305,7 @@ add_tests:
    ADD_TEST(NULL, "Window / Background", "Inwin", test_inwin);
    ADD_TEST(NULL, "Window / Background", "Inwin 2", test_inwin2);
    ADD_TEST(NULL, "Window / Background", "Window Inline", test_win_inline);
-   
+
    //------------------------------//
    ADD_TEST(NULL, "Images", "Icon Transparent", test_icon);
    ADD_TEST(NULL, "Images", "Icon Animation", test_icon_animated);
@@ -313,7 +313,7 @@ add_tests:
    ADD_TEST(NULL, "Images", "Photo", test_photo);
    ADD_TEST(NULL, "Images", "Thumb", test_thumb);
    ADD_TEST(NULL, "Images", "Slideshow", test_slideshow);
-   
+
    //------------------------------//
    ADD_TEST(NULL, "Containers", "Box Vert", test_box_vert);
    ADD_TEST(NULL, "Containers", "Box Vert 2", test_box_vert2);
@@ -327,7 +327,7 @@ add_tests:
    ADD_TEST(NULL, "Containers", "Table 6", test_table6);
    ADD_TEST(NULL, "Containers", "Layout", test_layout);
    ADD_TEST(NULL, "Containers", "Grid", test_grid);
-   
+
    //------------------------------//
    ADD_TEST(NULL, "Entries", "Entry", test_entry);
    ADD_TEST(NULL, "Entries", "Entry Scrolled", test_entry_scrolled);
@@ -336,10 +336,10 @@ add_tests:
    ADD_TEST(NULL, "Entries", "Entry 5", test_entry5);
    ADD_TEST(NULL, "Entries", "Entry Notepad", test_entry_notepad);
    ADD_TEST(NULL, "Entries", "Multibuttonentry", test_multibuttonentry);
-   
+
    //------------------------------//
    ADD_TEST(NULL, "Buttons", "Buttons", test_button);
-   
+
    //------------------------------//
    ADD_TEST(NULL, "Effects", "Transit", test_transit);
    ADD_TEST(NULL, "Effects", "Transit 2", test_transit2);
@@ -356,7 +356,7 @@ add_tests:
    ADD_TEST(NULL, "Effects", "Flip Interactive", test_flip4);
    ADD_TEST(NULL, "Effects", "Flip Page", test_flip_page);
    ADD_TEST(NULL, "Effects", "Animation", test_anim);
-   
+
    //------------------------------//
    ADD_TEST(NULL, "Toolbars", "Toolbar", test_toolbar);
    ADD_TEST(NULL, "Toolbars", "Toolbar 2", test_toolbar2);
@@ -364,7 +364,7 @@ add_tests:
    ADD_TEST(NULL, "Toolbars", "Toolbar 4", test_toolbar4);
    ADD_TEST(NULL, "Toolbars", "Toolbar 5", test_toolbar5);
    ADD_TEST(NULL, "Toolbars", "Toolbar 6", test_toolbar6);
-   
+
    //------------------------------//
    ADD_TEST(NULL, "Lists", "List", test_list);
    ADD_TEST(NULL, "Lists", "List - Horizontal", test_list_horizontal);
@@ -390,22 +390,22 @@ add_tests:
    ADD_TEST(NULL, "Lists", "GenGrid", test_gengrid);
    ADD_TEST(NULL, "Lists", "GenGrid 2", test_gengrid2);
    ADD_TEST(NULL, "Lists", "GenGrid Group", test_gengrid3);
-   
+
    //------------------------------//
    ADD_TEST(NULL, "General", "Scaling", test_scaling);
    ADD_TEST(NULL, "General", "Scaling 2", test_scaling2);
-   
+
    //------------------------------//
-//// disabled for efl 1.1   
+//// disabled for efl 1.1
 //   ADD_TEST(NULL, "3D", "GLViewSimple", test_glview_simple);
 //   ADD_TEST(NULL, "3D", "GLView", test_glview);
    ADD_TEST(NULL, "3D", "Evas Map 3D", test_3d);
-   
+
    //------------------------------//
 #ifdef HAVE_ELEMENTARY_WEB
    ADD_TEST(NULL, "Web", "Web", test_web);
 #endif
-   
+
    //------------------------------//
    ADD_TEST(NULL, "Input", "Gesture Layer", test_gesture_layer);
    ADD_TEST(NULL, "Input", "Gesture Layer 2", test_gesture_layer2);
@@ -431,7 +431,7 @@ add_tests:
    ADD_TEST(NULL, "Cursors", "Cursor 2", test_cursor2);
    ADD_TEST(NULL, "Cursors", "Cursor 3", test_cursor3);
    ADD_TEST(NULL, "Cursors", "Cursor Layout", test_cursor4);
-   
+
    //------------------------------//
    ADD_TEST(NULL, "Scroller", "Scroller", test_scroller);
    ADD_TEST(NULL, "Scroller", "Scroller 2", test_scroller2);
@@ -463,17 +463,17 @@ add_tests:
    ADD_TEST(NULL, "Times & Dates", "Calendar 2", test_calendar2);
    ADD_TEST(NULL, "Times & Dates", "Clock", test_clock);
    ADD_TEST(NULL, "Times & Dates", "Clock 2", test_clock2);
-   
+
    //------------------------------//
    ADD_TEST(NULL, "Text", "Anchorview", test_anchorview);
    ADD_TEST(NULL, "Text", "Anchorblock", test_anchorblock);
    ADD_TEST(NULL, "Text", "Label", test_label);
-   
+
    //------------------------------//
    ADD_TEST(NULL, "Stored Surface Buffer", "Launcher", test_launcher);
    ADD_TEST(NULL, "Stored Surface Buffer", "Launcher 2", test_launcher2);
    ADD_TEST(NULL, "Stored Surface Buffer", "Launcher 3", test_launcher3);
-   
+
    //------------------------------//
    ADD_TEST(NULL, "Focus", "Focus", test_focus);
    ADD_TEST(NULL, "Focus", "Focus 2", test_focus2);
@@ -490,15 +490,15 @@ add_tests:
    //------------------------------//
    ADD_TEST(NULL, "Dividers", "Panel", test_panel);
    ADD_TEST(NULL, "Dividers", "Panes", test_panes);
-   
+
    //------------------------------//
    ADD_TEST(NULL, "Standardization", "Conformant", test_conformant);
    ADD_TEST(NULL, "Standardization", "Conformant 2", test_conformant2);
-   
+
    //------------------------------//
    ADD_TEST(NULL, "Helpers", "Store", test_store);
    ADD_TEST(NULL, "Helpers", "Factory", test_factory);
-   
+
    //------------------------------//
    ADD_TEST(NULL, "Micellaneous", "Weather", test_weather);
    ADD_TEST(NULL, "Micellaneous", "Icon Desktops", test_icon_desktops);
@@ -525,7 +525,7 @@ add_tests:
    if (tests)
      {
         const char *pcat = NULL;
-        
+
         EINA_LIST_FREE(tests, t)
           {
              if ((!pcat) || (strcmp(pcat, t->category)))
@@ -537,7 +537,7 @@ add_tests:
                   evas_object_size_hint_fill_set(cfr, EVAS_HINT_FILL, 0.0);
                   elm_box_pack_end(tbx, cfr);
                   evas_object_show(cfr);
-                  
+
                   tbx2 = elm_box_add(win);
                   elm_box_layout_set(tbx2, evas_object_box_layout_flow_horizontal, NULL, NULL);
                   evas_object_size_hint_weight_set(tbx2, EVAS_HINT_EXPAND, 0.0);
@@ -552,7 +552,7 @@ add_tests:
              if (t->icon)
                {
                   char buf[PATH_MAX];
-                  
+
                   ic = elm_icon_add(win);
                   snprintf(buf, sizeof(buf), "%s/images/%s", elm_app_data_dir_get(), t->icon);
                   elm_icon_file_set(ic, buf, NULL);

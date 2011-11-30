@@ -3979,7 +3979,7 @@ extern "C" {
     * background with elm_bg_add(), as well as setting the window title to
     * @p title. The window type created is of type ELM_WIN_BASIC, with NULL
     * as the parent widget.
-    * 
+    *
     * @return The created object, or NULL on failure
     *
     * @see elm_win_add()
@@ -4706,7 +4706,7 @@ extern "C" {
     * packing into any container object. It works just like an image, but has
     * some properties useful to a background, like setting it to tiled,
     * centered, scaled or stretched.
-    * 
+    *
     * Default contents parts of the bg widget that you can use for are:
     * @li "overlay" - overlay of the bg
     *
@@ -5310,7 +5310,7 @@ extern "C" {
     * @param anim @c EINA_TRUE if the object do animation job,
     * @c EINA_FALSE otherwise. Default is @c EINA_FALSE.
     *
-    * Since the default animation mode is set to EINA_FALSE, 
+    * Since the default animation mode is set to EINA_FALSE,
     * the icon is shown without animation.
     * This might be desirable when the application developer wants to show
     * a snapshot of the animated icon.
@@ -7634,14 +7634,14 @@ extern "C" {
     *
     * This widget is deprecated. Please use elm_check_add() instead using the
     * toggle style like:
-    * 
+    *
     * @code
     * obj = elm_check_add(parent);
     * elm_object_style_set(obj, "toggle");
     * elm_object_part_text_set(obj, "on", "ON");
     * elm_object_part_text_set(obj, "off", "OFF");
     * @endcode
-    * 
+    *
     * Signals that you can add callbacks for are:
     * @li "changed" - Whenever the toggle value has been changed.  Is not called
     *                 until the toggle is released by the cursor (assuming it
@@ -7652,7 +7652,7 @@ extern "C" {
     *
     * Default text parts of the toggle widget that you can use for are:
     * @li "elm.text" - Label of the toggle
-    * 
+    *
     * @ref tutorial_toggle show how to use a toggle.
     * @{
     */
@@ -8145,7 +8145,7 @@ extern "C" {
     * modified (added, deleted, selected or unselected) of child items
     * on a gengrid.
     *
-    * If an item changes (internal (boolean) state, label or content 
+    * If an item changes (internal (boolean) state, label or content
     * changes), then use elm_gengrid_item_update() to have gengrid
     * update the item with the new state. A gengrid will re-"realize"
     * the item, thus calling the functions in the
@@ -9874,9 +9874,9 @@ extern "C" {
     *
     * Only one object can be added to the @c SWALLOW part (but you still can
     * have many @c SWALLOW parts and one object on each of them). Use the @c
-    * elm_object_content_set/get/unset functions to set, retrieve and unset 
-    * objects as content of the @c SWALLOW. After being set to this part, the 
-    * object size, position, visibility, clipping and other description 
+    * elm_object_content_set/get/unset functions to set, retrieve and unset
+    * objects as content of the @c SWALLOW. After being set to this part, the
+    * object size, position, visibility, clipping and other description
     * properties will be totally controlled by the description of the given part
     * (inside the Edje theme file).
     *
@@ -12532,7 +12532,7 @@ extern "C" {
     *
     * Default text parts of the button widget that you can use for are:
     * @li NULL - Label of the bubble
-    * 
+    *
 	 * For an example of using a buble see @ref bubble_01_example_page "this".
     *
     * @{
@@ -12601,7 +12601,7 @@ extern "C" {
     * @param content The given content of the bubble
     *
     * This function sets the content shown on the middle of the bubble.
-    * 
+    *
     * @deprecated use elm_object_content_set() instead
     *
     */
@@ -15095,7 +15095,7 @@ extern "C" {
     *
     * @note The icon image set by this function can be changed by
     * elm_toolbar_item_icon_set().
-    * 
+    *
     * @ingroup Toolbar
     */
    EAPI Eina_Bool elm_toolbar_item_icon_memfile_set(Elm_Object_Item *it, const void *img, size_t size, const char *format, const char *key) EINA_ARG_NONNULL(1);
@@ -15891,11 +15891,11 @@ extern "C" {
     * @li "clicked" - the user clicked the empty space in the menu to dismiss.
     *
     * Default contents parts of the menu items that you can use for are:
-    * @li "default" - A main content of the menu item 
+    * @li "default" - A main content of the menu item
     *
     * Default text parts of the menu items that you can use for are:
     * @li "default" - label in the menu item
-    * 
+    *
     * @see @ref tutorial_menu
     * @{
     */
@@ -16083,7 +16083,7 @@ extern "C" {
     * @return The enabled/disabled state of the item
     *
     * @see elm_menu_item_disabled_set()
-    * @deprecated Use elm_object_item_disabled_get() instead 
+    * @deprecated Use elm_object_item_disabled_get() instead
     */
    EINA_DEPRECATED EAPI Eina_Bool          elm_menu_item_disabled_get(const Elm_Object_Item *it) EINA_ARG_NONNULL(1);
    /**
@@ -16130,7 +16130,7 @@ extern "C" {
     * @return The data associated with @p item or NULL if none was set.
     *
     * This is the data set with elm_menu_add() or elm_menu_item_data_set().
-	 * 
+	 *
 	 * @deprecated Use elm_object_item_data_get() instead
     */
    EINA_DEPRECATED EAPI void              *elm_menu_item_data_get(const Elm_Object_Item *it) EINA_ARG_NONNULL(1);
@@ -17456,7 +17456,7 @@ extern "C" {
     * Default contents parts of the slider widget that you can use for are:
     * @li "icon" - A icon of the slider
     * @li "end" - A end part content of the slider
-    * 
+    *
     * Default text parts of the silder widget that you can use for are:
     * @li "default" - Label of the silder
     * Here is an example on its usage:
@@ -17623,7 +17623,7 @@ extern "C" {
     * @see elm_slider_end_unset()
     *
     *
-    * @deprecated use elm_object_part_content_get() instead 
+    * @deprecated use elm_object_part_content_get() instead
     * instead.
     *
     * @ingroup Slider
@@ -18606,7 +18606,7 @@ extern "C" {
     * enable always select with elm_genlist_always_select_mode_set().
     * This means that, even if selected, every click will make the selected
     * callbacks be called.
-    * 
+    *
     * @see elm_genlist_always_select_mode_get()
     *
     * @ingroup Genlist
@@ -18993,12 +18993,12 @@ extern "C" {
     * Get the mode item style of items in the genlist
     * @param obj The genlist object
     * @return The mode item style string, or NULL if none is specified
-    * 
+    *
     * This is a constant string and simply defines the name of the
     * style that will be used for mode animations. It can be
     * @c NULL if you don't plan to use Genlist mode. See
     * elm_genlist_item_mode_set() for more info.
-    * 
+    *
     * @ingroup Genlist
     */
    EAPI const char       *elm_genlist_mode_item_style_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
@@ -19006,12 +19006,12 @@ extern "C" {
     * Set the mode item style of items in the genlist
     * @param obj The genlist object
     * @param style The mode item style string, or NULL if none is desired
-    * 
+    *
     * This is a constant string and simply defines the name of the
     * style that will be used for mode animations. It can be
     * @c NULL if you don't plan to use Genlist mode. See
     * elm_genlist_item_mode_set() for more info.
-    * 
+    *
     * @ingroup Genlist
     */
    EAPI void              elm_genlist_mode_item_style_set(Evas_Object *obj, const char *style) EINA_ARG_NONNULL(1);
@@ -19535,7 +19535,7 @@ extern "C" {
     * Second parts argument is used for globbing to match '*', '?', and '.'
     * It can be used at updating multi fields.
     *
-    * Use elm_genlist_realized_items_update() to update an item's all  
+    * Use elm_genlist_realized_items_update() to update an item's all
     * property.
     *
     * @see elm_genlist_item_update()
@@ -19994,7 +19994,7 @@ extern "C" {
     * @return The icon object
     *
     * @deprecated use elm_object_part_content_get() instead.
-    *  
+    *
     */
    EINA_DEPRECATED EAPI Evas_Object *elm_check_icon_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
    /**
@@ -21243,7 +21243,7 @@ extern "C" {
     *
     * Default contents parts of the progressbar widget that you can use for are:
     * @li "icon" - A icon of the progressbar
-    * 
+    *
     * Here is an example on its usage:
     * @li @ref progressbar_example
     */
@@ -24048,7 +24048,7 @@ extern "C" {
     * Return the content object which is set for this widget.
     *
     * @see elm_panel_content_set()
-    * 
+    *
     * @deprecated use elm_object_content_get() instead
     *
     */
@@ -24122,7 +24122,7 @@ extern "C" {
     *
     * If panes is displayed vertically, left content will be displayed at
     * top.
-    * 
+    *
     * Here is an example on its usage:
     * @li @ref panes_example
     */
@@ -24805,7 +24805,7 @@ extern "C" {
     * @li "default" - A content of the mapbuf
     *
     * To enable map, elm_mapbuf_enabled_set() should be used.
-    * 
+    *
     * See how to use this widget in this example:
     * @ref mapbuf_example
     */
@@ -25012,7 +25012,7 @@ extern "C" {
 	 * To set/get the label of the flipselector item, you can use
 	 * elm_object_item_text_set/get APIs.
 	 * Once the text is set, a previously set one will be deleted.
-	 * 
+	 *
     * Here is an example on its usage:
     * @li @ref flipselector_example
     */
@@ -26662,7 +26662,7 @@ extern "C" {
     *
     * Default contents parts of the naviframe items that you can use for are:
     * @li "icon" - A icon in the title area
-    * 
+    *
     * Default text parts of the naviframe items that you can use for are:
     * @li "default" - Title label in the title area
     *
@@ -26802,7 +26802,7 @@ extern "C" {
     * dissapear from the first item.
     *
     * @see elm_ctxpopup_item_append()
-    *  
+    *
     * @deprecated use elm_object_item_part_content_set() instead
     *
     */
@@ -26841,7 +26841,7 @@ extern "C" {
     *
     * @warning Ctxpopup can't hold both a item list and a content at the same
     * time. When a content is set, any previous items will be removed.
-    * 
+    *
     * @deprecated use elm_object_content_set() instead
     *
     */
@@ -28321,10 +28321,10 @@ extern "C" {
     * "prev,clicked" - the user clicked the prev button.
     * "rewind,clicked" - the user clicked the rewind button.
     * "stop,clicked" - the user clicked the stop button.
-    * 
+    *
     * Default contents parts of the player widget that you can use for are:
     * @li "video" - A video of the player
-    * 
+    *
     */
 
    /**
