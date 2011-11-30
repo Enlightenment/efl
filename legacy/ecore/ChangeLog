@@ -356,3 +356,7 @@
         * Discard left Ctrl when AltGr is pressed (Windows XP)
 	* Fix the string value for the Delete key (Windows XP)
 	* Fix the key release values for non keystroke keys (Windows XP)
+
+2011-11-29 Mike McCormack
+
+	* Allow quitting before entering the glib version of the main loop
