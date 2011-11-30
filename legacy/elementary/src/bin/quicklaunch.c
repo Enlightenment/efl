@@ -95,10 +95,10 @@ handle_run(int fd, unsigned long bytes)
    int argc;
 
    buf = alloca(bytes);
-   if (read(fd, buf, bytes) < 0)
+   if (read(fd, buf, bytes) <= 0)
      {
-	close(fd);
-	return;
+        close(fd);
+        return;
      }
    close(fd);
    argc = ((unsigned long *)(buf))[0];
