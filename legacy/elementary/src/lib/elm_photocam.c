@@ -289,6 +289,7 @@ grid_create(Evas_Object *obj)
 
    if (!wd) return NULL;
    g = calloc(1, sizeof(Grid));
+   if (!g) return NULL;
 
    g->zoom = grid_zoom_calc(wd->zoom);
    g->tsize = wd->tsize;
@@ -297,7 +298,11 @@ grid_create(Evas_Object *obj)
 
    g->w = g->iw / g->zoom;
    g->h = g->ih / g->zoom;
-   if (g->zoom >= 8) return NULL;
+   if (g->zoom >= 8)
+     {
+        free(g);
+        return NULL;
+     }
    g->gw = (g->w + g->tsize - 1) / g->tsize;
    g->gh = (g->h + g->tsize - 1) / g->tsize;
    g->grid = calloc(1, sizeof(Grid_Item) * g->gw * g->gh);
