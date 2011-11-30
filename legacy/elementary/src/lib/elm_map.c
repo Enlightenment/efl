@@ -1187,21 +1187,21 @@ _tile_update(Grid_Item *gi)
    gi->want = EINA_FALSE;
    gi->download = EINA_FALSE;
    evas_object_image_file_set(gi->img, gi->file, NULL);
-   if (evas_object_image_load_error_get(gi->img) != EVAS_LOAD_ERROR_NONE)
+   Evas_Load_Error err = evas_object_image_load_error_get(gi->img);
+   if (err != EVAS_LOAD_ERROR_NONE)
      {
-        ERR("Image loading error (%s)", gi->file);
+        ERR("Image loading error (%s): %s", gi->file, evas_load_error_str(err));
         ecore_file_remove(gi->file);
         gi->have = EINA_FALSE;
-        return;
      }
-
-   obj_rotate_zoom(gi->wd->obj, gi->img);
-   evas_object_show(gi->img);
-
-   //evas_object_text_text_set(gi->txt, gi->file);
-   //evas_object_show(gi->txt);
-
-   gi->have = EINA_TRUE;
+   else
+     {
+        obj_rotate_zoom(gi->wd->obj, gi->img);
+        evas_object_show(gi->img);
+        gi->have = EINA_TRUE;
+        //evas_object_text_text_set(gi->txt, gi->file);
+        //evas_object_show(gi->txt);
+     }
 }
 
 static void
