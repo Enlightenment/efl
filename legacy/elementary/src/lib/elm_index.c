@@ -681,13 +681,13 @@ elm_index_item_append_relative(Evas_Object *obj, const char *letter, const void 
         elm_index_item_append(obj, letter, item);
         return;
      }
-   it = _item_new(obj, letter, item);
    it_rel = _item_find(obj, relative);
    if (!it_rel)
      {
         elm_index_item_append(obj, letter, item);
         return;
      }
+   it = _item_new(obj, letter, item);
    if (!it) return;
    wd->items = eina_list_append_relative(wd->items, it, it_rel);
    _index_box_clear(obj, wd->bx[wd->level], wd->level);
@@ -705,13 +705,13 @@ elm_index_item_prepend_relative(Evas_Object *obj, const char *letter, const void
         elm_index_item_prepend(obj, letter, item);
         return;
      }
-   it = _item_new(obj, letter, item);
    it_rel = _item_find(obj, relative);
    if (!it_rel)
      {
         elm_index_item_append(obj, letter, item);
         return;
      }
+   it = _item_new(obj, letter, item);
    if (!it) return;
    wd->items = eina_list_prepend_relative(wd->items, it, it_rel);
    _index_box_clear(obj, wd->bx[wd->level], wd->level);
