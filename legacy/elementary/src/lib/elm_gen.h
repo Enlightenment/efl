@@ -8,7 +8,6 @@
 typedef struct Elm_Gen_Item_Type Elm_Gen_Item_Type;
 typedef struct Elm_Gen_Item_Tooltip Elm_Gen_Item_Tooltip;
 typedef struct _Widget_Data Widget_Data;
-typedef struct _Pan Pan;
 
 struct Elm_Gen_Item_Tooltip
 {
@@ -17,13 +16,6 @@ struct Elm_Gen_Item_Tooltip
    Evas_Smart_Cb               del_cb;
    const char                 *style;
    Eina_Bool                   free_size : 1;
-};
-
-struct _Pan
-{
-   Evas_Object_Smart_Clipped_Data __clipped_data;
-   Widget_Data                   *wd;
-   Ecore_Job                     *resize_job;
 };
 
 struct Elm_Gen_Item

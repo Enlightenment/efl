@@ -16,7 +16,6 @@
    (wd)->clear_cb = (Ecore_Cb)_clear_cb; \
    (wd)->sizing_cb = (Ecore_Cb)_sizing_eval
 
-
 #define ELM_GEN_ITEM_SETUP(it) \
    (it)->del_cb = (Ecore_Cb)_item_del; \
    (it)->highlight_cb = (Ecore_Cb)_item_highlight; \

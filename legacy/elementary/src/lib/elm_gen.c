@@ -5,38 +5,6 @@
 #include "elm_gen.h"
 #include "elm_genlist.h"
 
-struct _Widget_Data
-{
-   Eina_Inlist_Sorted_State *state;
-   Evas_Object      *obj;
-   Evas_Object      *scr; /* a smart scroller object which is used internally in genlist */
-   Evas_Object      *pan_smart; /* "elm_genlist_pan" evas smart object. this is an extern pan of smart scroller(scr). */
-   Eina_List        *selected;
-   Eina_List        *group_items;
-   Eina_Inlist      *items; /* inlist of all items */
-   Elm_Gen_Item     *reorder_it; /* item currently being repositioned */
-   Elm_Gen_Item     *last_selected_item;
-   Pan              *pan; /* pan_smart object's smart data */
-   Ecore_Job        *calc_job;
-   int               walking;
-   int               item_width, item_height;
-   int               group_item_width, group_item_height;
-   int               minw, minh;
-   long              count;
-   Evas_Coord        pan_x, pan_y;
-   Eina_Bool         reorder_mode : 1;
-   Eina_Bool         on_hold : 1;
-   Eina_Bool         multi : 1;
-   Eina_Bool         no_select : 1;
-   Eina_Bool         wasselected : 1;
-   Eina_Bool         always_select : 1;
-   Eina_Bool         clear_me : 1;
-   Eina_Bool         h_bounce : 1;
-   Eina_Bool         v_bounce : 1;
-   Ecore_Cb          del_cb, calc_cb, sizing_cb;
-   Ecore_Cb          clear_cb;
-};
-
 EAPI void
 elm_gen_clear(Evas_Object *obj)
 {

@@ -2,6 +2,14 @@
 #include <Elementary_Cursor.h>
 #include "elm_priv.h"
 
+typedef struct _Pan Pan;
+struct _Pan
+{
+   Evas_Object_Smart_Clipped_Data __clipped_data;
+   Widget_Data                   *wd;
+   Ecore_Job                     *resize_job;
+};
+
 Elm_Gen_Item *
 _elm_genlist_item_new(Widget_Data              *wd,
                       const Elm_Gen_Item_Class *itc,
