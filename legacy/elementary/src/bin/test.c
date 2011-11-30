@@ -281,6 +281,7 @@ my_win_main(char *autorun, Eina_Bool test_win_only)
    evas_object_show(tg);
 
    sc = elm_scroller_add(win);
+   elm_scroller_bounce_set(sc, EINA_FALSE, EINA_TRUE);
    evas_object_size_hint_weight_set(sc, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_fill_set(sc, EVAS_HINT_FILL, EVAS_HINT_FILL);
    elm_box_pack_end(bx0, sc);
