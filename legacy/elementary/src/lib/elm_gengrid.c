@@ -1224,13 +1224,13 @@ _item_place(Elm_Gen_Item *it,
         if (it->wd->horizontal)
           {
              x = (((cx - it->item->prev_group) * it->wd->item_width) + (it->item->prev_group * it->wd->group_item_width)) - it->wd->pan_x + ox + alignw;
-             y = 0;
+             y = oy;
              iw = it->wd->group_item_width;
              ih = vh;
           }
         else
           {
-             x = 0;
+             x = ox;
              y = (((cy - it->item->prev_group) * it->wd->item_height) + (it->item->prev_group * it->wd->group_item_height)) - it->wd->pan_y + oy + alignh;
              iw = vw;
              ih = it->wd->group_item_height;
@@ -1269,20 +1269,21 @@ _item_place(Elm_Gen_Item *it,
           {
              if (it->wd->horizontal)
                {
-                  if (it->parent->item->gx < 0)
+                  if (it->parent->item->gx < ox)
                     {
                        it->parent->item->gx = x + it->wd->item_width - it->wd->group_item_width;
-                       if (it->parent->item->gx > 0)
-                         it->parent->item->gx = 0;
+                       if (it->parent->item->gx > ox)
+                         it->parent->item->gx = ox;
                     }
+                  it->parent->item->group_realized = EINA_TRUE;
                }
              else
                {
-                  if (it->parent->item->gy < 0)
+                  if (it->parent->item->gy < oy)
                     {
                        it->parent->item->gy = y + it->wd->item_height - it->wd->group_item_height;
-                       if (it->parent->item->gy > 0)
-                         it->parent->item->gy = 0;
+                       if (it->parent->item->gy > oy)
+                         it->parent->item->gy = oy;
                     }
                   it->parent->item->group_realized = EINA_TRUE;
                }
