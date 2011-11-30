@@ -66,14 +66,6 @@ struct Elm_Gen_Item
    Eina_Bool   mode_set : 1; /* item uses style mode for highlight/select */
 };
 
-Elm_Gen_Item *
-elm_gen_item_new(Widget_Data              *wd,
-                 const Elm_Gen_Item_Class *itc,
-                 const void               *data,
-                 Elm_Gen_Item             *parent,
-                 Evas_Smart_Cb             func,
-                 const void               *func_data);
-
 void
 elm_gen_item_unrealize(Elm_Gen_Item *it,
                        Eina_Bool     calc);

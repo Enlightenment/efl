@@ -1841,7 +1841,7 @@ _item_new(Widget_Data                  *wd,
 {
    Elm_Gen_Item *it;
 
-   it = elm_gen_item_new(wd, itc, data, NULL, func, func_data);
+   it = _elm_genlist_item_new(wd, itc, data, NULL, func, func_data);
    if (!it) return NULL;
    it->item = ELM_NEW(Elm_Gen_Item_Type);
    wd->count++;
@@ -2212,7 +2212,7 @@ elm_gengrid_horizontal_get(const Evas_Object *obj)
 EAPI void
 elm_gengrid_clear(Evas_Object *obj)
 {
-   _elm_genlist_clear(obj);
+   elm_genlist_clear(obj);
 }
 
 EAPI const Evas_Object *
@@ -2319,14 +2319,13 @@ EAPI void
 elm_gengrid_item_selected_set(Elm_Gen_Item *it,
                               Eina_Bool         selected)
 {
-   _elm_genlist_item_selected_set(it, selected);
+   elm_genlist_item_selected_set(it, selected);
 }
 
 EAPI Eina_Bool
 elm_gengrid_item_selected_get(const Elm_Gen_Item *it)
 {
-   ELM_WIDGET_ITEM_WIDTYPE_CHECK_OR_RETURN(it, EINA_FALSE);
-   return it->selected;
+   return elm_genlist_item_selected_get(it);
 }
 
 EAPI void
@@ -2551,26 +2550,26 @@ EAPI void
 elm_gengrid_always_select_mode_set(Evas_Object *obj,
                                    Eina_Bool    always_select)
 {
-   _elm_genlist_always_select_mode_set(obj, always_select);
+   elm_genlist_always_select_mode_set(obj, always_select);
 }
 
 EAPI Eina_Bool
 elm_gengrid_always_select_mode_get(const Evas_Object *obj)
 {
-   return elm_gengrid_always_select_mode_get(obj);
+   return elm_genlist_always_select_mode_get(obj);
 }
 
 EAPI void
 elm_gengrid_no_select_mode_set(Evas_Object *obj,
                                Eina_Bool    no_select)
 {
-   elm_gengrid_no_select_mode_set(obj, no_select);
+   elm_genlist_no_select_mode_set(obj, no_select);
 }
 
 EAPI Eina_Bool
 elm_gengrid_no_select_mode_get(const Evas_Object *obj)
 {
-   return elm_gengrid_no_select_mode_get(obj);
+   return elm_genlist_no_select_mode_get(obj);
 }
 
 EAPI void
@@ -2578,7 +2577,7 @@ elm_gengrid_bounce_set(Evas_Object *obj,
                        Eina_Bool    h_bounce,
                        Eina_Bool    v_bounce)
 {
-   _elm_genlist_bounce_set(obj, h_bounce, v_bounce);
+   elm_genlist_bounce_set(obj, h_bounce, v_bounce);
 }
 
 EAPI void
@@ -2586,7 +2585,7 @@ elm_gengrid_bounce_get(const Evas_Object *obj,
                        Eina_Bool         *h_bounce,
                        Eina_Bool         *v_bounce)
 {
-   _elm_genlist_bounce_get(obj, h_bounce, v_bounce);
+   elm_genlist_bounce_get(obj, h_bounce, v_bounce);
 }
 
 EAPI void
@@ -2594,13 +2593,13 @@ elm_gengrid_page_relative_set(Evas_Object *obj,
                               double       h_pagerel,
                               double       v_pagerel)
 {
-   elm_gengrid_page_relative_set(obj, h_pagerel, v_pagerel);
+   _elm_genlist_page_relative_set(obj, h_pagerel, v_pagerel);
 }
 
 EAPI void
 elm_gengrid_page_relative_get(const Evas_Object *obj, double *h_pagerel, double *v_pagerel)
 {
-   elm_gengrid_page_relative_get(obj, h_pagerel, v_pagerel);
+   _elm_genlist_page_relative_get(obj, h_pagerel, v_pagerel);
 }
 
 EAPI void
@@ -2608,61 +2607,61 @@ elm_gengrid_page_size_set(Evas_Object *obj,
                           Evas_Coord   h_pagesize,
                           Evas_Coord   v_pagesize)
 {
-   elm_gengrid_page_size_set(obj, h_pagesize, v_pagesize);
+   _elm_genlist_page_size_set(obj, h_pagesize, v_pagesize);
 }
 
 EAPI void
 elm_gengrid_current_page_get(const Evas_Object *obj, int *h_pagenumber, int *v_pagenumber)
 {
-   elm_gengrid_current_page_get(obj, h_pagenumber, v_pagenumber);
+   _elm_genlist_current_page_get(obj, h_pagenumber, v_pagenumber);
 }
 
 EAPI void
 elm_gengrid_last_page_get(const Evas_Object *obj, int *h_pagenumber, int *v_pagenumber)
 {
-   elm_gengrid_last_page_get(obj, h_pagenumber, v_pagenumber);
+   _elm_genlist_last_page_get(obj, h_pagenumber, v_pagenumber);
 }
 
 EAPI void
 elm_gengrid_page_show(const Evas_Object *obj, int h_pagenumber, int v_pagenumber)
 {
-   elm_gengrid_page_show(obj, h_pagenumber, v_pagenumber);
+   _elm_genlist_page_show(obj, h_pagenumber, v_pagenumber);
 }
 
 EAPI void
 elm_gengrid_page_bring_in(const Evas_Object *obj, int h_pagenumber, int v_pagenumber)
 {
-   elm_gengrid_page_bring_in(obj, h_pagenumber, v_pagenumber);
+   _elm_genlist_page_bring_in(obj, h_pagenumber, v_pagenumber);
 }
 
 EAPI Elm_Gen_Item *
 elm_gengrid_first_item_get(const Evas_Object *obj)
 {
-   return elm_gengrid_first_item_get(obj);
+   return elm_genlist_first_item_get(obj);
 }
 
 EAPI Elm_Gen_Item *
 elm_gengrid_last_item_get(const Evas_Object *obj)
 {
-   return elm_gengrid_last_item_get(obj);
+   return elm_genlist_last_item_get(obj);
 }
 
 EAPI Elm_Gen_Item *
 elm_gengrid_item_next_get(const Elm_Gen_Item *it)
 {
-   return elm_gengrid_item_next_get(it);
+   return elm_genlist_item_next_get(it);
 }
 
 EAPI Elm_Gen_Item *
 elm_gengrid_item_prev_get(const Elm_Gen_Item *it)
 {
-   return elm_gengrid_item_prev_get(it);
+   return elm_genlist_item_prev_get(it);
 }
 
 EAPI Evas_Object *
 elm_gengrid_item_gengrid_get(const Elm_Gen_Item *it)
 {
-   return elm_gengrid_item_gengrid_get(it);
+   return _elm_genlist_item_widget_get(it);
 }
 
 EAPI void
