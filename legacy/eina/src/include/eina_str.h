@@ -193,7 +193,7 @@ EAPI char          **eina_str_split(const char *string, const char *delimiter, i
  * @return A newly-allocated NULL-terminated array of strings or NULL if it
  * fails to allocate the array.
  *
- * This functin splits @p str into a maximum of @p max_tokens pieces,
+ * This function splits @p str into a maximum of @p max_tokens pieces,
  * using the given delimiter @p delim. @p delim is not included in any
  * of the resulting strings, unless @p max_tokens is reached. If
  * @p max_tokens is less than @c 1, the string is splitted completely. If
