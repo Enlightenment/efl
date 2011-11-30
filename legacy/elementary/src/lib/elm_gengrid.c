@@ -3,6 +3,7 @@
 #include "elm_priv.h"
 #include "els_scroller.h"
 #include "elm_gen.h"
+#include "elm_genlist.h"
 
 /* --
  * TODO:
@@ -2211,7 +2212,7 @@ elm_gengrid_horizontal_get(const Evas_Object *obj)
 EAPI void
 elm_gengrid_clear(Evas_Object *obj)
 {
-   _elm_gen_clear(obj);
+   _elm_genlist_clear(obj);
 }
 
 EAPI const Evas_Object *
@@ -2318,7 +2319,7 @@ EAPI void
 elm_gengrid_item_selected_set(Elm_Gen_Item *it,
                               Eina_Bool         selected)
 {
-   elm_gengrid_item_selected_set(it, selected);
+   _elm_genlist_item_selected_set(it, selected);
 }
 
 EAPI Eina_Bool
@@ -2550,7 +2551,7 @@ EAPI void
 elm_gengrid_always_select_mode_set(Evas_Object *obj,
                                    Eina_Bool    always_select)
 {
-   elm_gengrid_always_select_mode_set(obj, always_select);
+   _elm_genlist_always_select_mode_set(obj, always_select);
 }
 
 EAPI Eina_Bool
@@ -2577,7 +2578,7 @@ elm_gengrid_bounce_set(Evas_Object *obj,
                        Eina_Bool    h_bounce,
                        Eina_Bool    v_bounce)
 {
-   elm_gengrid_bounce_set(obj, h_bounce, v_bounce);
+   _elm_genlist_bounce_set(obj, h_bounce, v_bounce);
 }
 
 EAPI void
@@ -2585,7 +2586,7 @@ elm_gengrid_bounce_get(const Evas_Object *obj,
                        Eina_Bool         *h_bounce,
                        Eina_Bool         *v_bounce)
 {
-   return elm_gengrid_bounce_get(obj, h_bounce, v_bounce);
+   _elm_genlist_bounce_get(obj, h_bounce, v_bounce);
 }
 
 EAPI void

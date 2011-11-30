@@ -5,6 +5,7 @@
 #include "elm_priv.h"
 #include "els_scroller.h"
 #include "elm_gen.h"
+#include "elm_genlist.h"
 
 #define SWIPE_MOVES         12
 #define MAX_ITEMS_PER_BLOCK 32
@@ -3703,7 +3704,7 @@ elm_genlist_item_sorted_insert(Evas_Object                  *obj,
 EAPI void
 elm_genlist_clear(Evas_Object *obj)
 {
-   _elm_gen_clear(obj);
+   _elm_genlist_clear(obj);
 }
 
 EAPI void
@@ -3879,7 +3880,7 @@ EAPI void
 elm_genlist_item_selected_set(Elm_Gen_Item *it,
                               Eina_Bool         selected)
 {
-   elm_genlist_item_selected_set(it, selected);
+   _elm_genlist_item_selected_set(it, selected);
 }
 
 EAPI Eina_Bool
@@ -4488,7 +4489,7 @@ EAPI void
 elm_genlist_always_select_mode_set(Evas_Object *obj,
                                    Eina_Bool    always_select)
 {
-   elm_genlist_always_select_mode_set(obj, always_select);
+   _elm_genlist_always_select_mode_set(obj, always_select);
 }
 
 EAPI Eina_Bool
@@ -4559,7 +4560,7 @@ elm_genlist_bounce_set(Evas_Object *obj,
                        Eina_Bool    h_bounce,
                        Eina_Bool    v_bounce)
 {
-   elm_genlist_bounce_set(obj, h_bounce, v_bounce);
+   _elm_genlist_bounce_set(obj, h_bounce, v_bounce);
 }
 
 EAPI void
@@ -4567,7 +4568,7 @@ elm_genlist_bounce_get(const Evas_Object *obj,
                        Eina_Bool         *h_bounce,
                        Eina_Bool         *v_bounce)
 {
-   elm_genlist_bounce_get(obj, h_bounce, v_bounce);
+   _elm_genlist_bounce_get(obj, h_bounce, v_bounce);
 }
 
 EAPI void
@@ -4773,3 +4774,152 @@ elm_genlist_reorder_mode_get(const Evas_Object *obj)
    if (!wd) return EINA_FALSE;
    return wd->reorder_mode;
 }
+
+void
+_elm_genlist_clear(Evas_Object *obj)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype);
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return;
+
+   if (wd->state)
+     {
+        eina_inlist_sorted_state_free(wd->state);
+        wd->state = NULL;
+     }
+
+   if (wd->walking > 0)
+     {
+        Elm_Gen_Item *it;
+        wd->clear_me = 1;
+        EINA_INLIST_FOREACH(wd->items, it)
+           it->delete_me = 1;
+        return;
+     }
+   evas_event_freeze(evas_object_evas_get(wd->obj));
+   while (wd->items)
+     {
+        Elm_Gen_Item *it = ELM_GEN_ITEM_FROM_INLIST(wd->items);
+        it->del_cb(it);
+     }
+   wd->clear_me = 0;
+   if (wd->calc_job)
+     {
+        ecore_job_del(wd->calc_job);
+        wd->calc_job = NULL;
+     }
+   if (wd->selected) wd->selected = eina_list_free(wd->selected);
+   if (wd->clear_cb) wd->clear_cb(wd);
+   wd->pan_x = 0;
+   wd->pan_y = 0;
+   wd->minw = 0;
+   wd->minh = 0;
+   wd->count = 0;
+   if (wd->pan_smart)
+     {
+        evas_object_size_hint_min_set(wd->pan_smart, wd->minw, wd->minh);
+        evas_object_smart_callback_call(wd->pan_smart, "changed", NULL);
+     }
+   if (wd->sizing_cb) wd->sizing_cb(wd->obj);
+   elm_smart_scroller_child_region_show(wd->scr, 0, 0, 0, 0);
+   evas_event_thaw(evas_object_evas_get(wd->obj));
+   evas_event_thaw_eval(evas_object_evas_get(wd->obj));
+}
+
+void
+_elm_genlist_always_select_mode_set(Evas_Object *obj,
+                                    Eina_Bool    always_select)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype);
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return;
+   wd->always_select = always_select;
+}
+
+void
+_item_select(Elm_Gen_Item *it)
+{
+   if ((it->wd->no_select) || (it->delete_me) || (it->mode_set)) return;
+   if (!it->selected)
+     {
+        it->selected = EINA_TRUE;
+        it->wd->selected = eina_list_append(it->wd->selected, it);
+     }
+   else if (!it->wd->always_select) return;
+
+   evas_object_ref(WIDGET(it));
+   it->walking++;
+   it->wd->walking++;
+   if (it->func.func) it->func.func((void *)it->func.data, WIDGET(it), it);
+   if (!it->delete_me)
+     evas_object_smart_callback_call(WIDGET(it), SIG_SELECTED, it);
+   it->walking--;
+   it->wd->walking--;
+   evas_object_unref(WIDGET(it));
+   if ((it->wd->clear_me) && (!it->wd->walking))
+     _elm_genlist_clear(WIDGET(it));
+   else
+     {
+        if ((!it->walking) && (it->delete_me))
+          {
+             if (!it->relcount) it->del_cb(it);
+          }
+        else
+          it->wd->last_selected_item = it;
+     }
+}
+
+void
+_elm_genlist_item_selected_set(Elm_Gen_Item *it,
+                               Eina_Bool     selected)
+{
+   ELM_WIDGET_ITEM_WIDTYPE_CHECK_OR_RETURN(it);
+   Widget_Data *wd = it->wd;
+   if (!wd) return;
+   if ((it->delete_me) || (it->disabled)) return;
+   selected = !!selected;
+   if (it->selected == selected) return;
+
+   if (selected)
+     {
+        if (!wd->multi)
+          {
+             while (wd->selected)
+               {
+                  if (it->unhighlight_cb) it->unhighlight_cb(wd->selected->data);
+                  it->unsel_cb(wd->selected->data);
+               }
+          }
+        it->highlight_cb(it);
+        _item_select(it);
+        return;
+     }
+   if (it->unhighlight_cb) it->unhighlight_cb(it);
+   it->unsel_cb(it);
+}
+
+void
+_elm_genlist_bounce_set(Evas_Object *obj,
+                        Eina_Bool    h_bounce,
+                        Eina_Bool    v_bounce)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype);
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return;
+   elm_smart_scroller_bounce_allow_set(wd->scr, h_bounce, v_bounce);
+   wd->h_bounce = h_bounce;
+   wd->v_bounce = v_bounce;
+}
+
+void
+_elm_genlist_bounce_get(const Evas_Object *obj,
+                        Eina_Bool         *h_bounce,
+                        Eina_Bool         *v_bounce)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype);
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return;
+   if (h_bounce) *h_bounce = wd->h_bounce;
+   if (v_bounce) *v_bounce = wd->v_bounce;
+}
+
