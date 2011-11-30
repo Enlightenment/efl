@@ -4002,6 +4002,13 @@ extern "C" {
     * mechanism, all of the resize objects in the window should have their
     * evas_object_size_hint_weight_set() set to EVAS_HINT_EXPAND.
     *
+    * Also notice that the window can get resized to the current size of the
+    * object if the EVAS_HINT_EXPAND is set @b after the call to
+    * elm_win_resize_object_add(). So if the object should get resized to the
+    * size of the window, set this hint @b before adding it as a resize object
+    * (this happens because the size of the window and the object are evaluated
+    * as soon as the object is added to the window).
+    *
     * @param obj The window object
     * @param subobj The resize object to add
     */
