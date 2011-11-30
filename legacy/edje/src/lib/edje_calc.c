@@ -2305,7 +2305,9 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep, int flags, Edje_Calc_Params *sta
           part_id = ((Edje_Part_Description_Proxy*) chosen_desc)->proxy.id;
 
         pp = _edje_real_part_state_get(ed, ep, flags, part_id, NULL);
+#ifdef EDJE_CALC_CACHE
         if (pp && pp->invalidate) proxy_invalidate = EINA_TRUE;
+#endif
      }
 
    /* Recalc if needed the map center && light source */
