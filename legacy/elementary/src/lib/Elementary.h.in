@@ -8395,10 +8395,10 @@ extern "C" {
         const char             *item_style;
         struct _Elm_Gengrid_Item_Class_Func
           {
-             Elm_Gengrid_Item_Text_Get_Cb  text_get; /**< Text fetching class function for gengrid item classes.*/
-             Elm_Gengrid_Item_Content_Get_Cb content_get;
-             Elm_Gengrid_Item_State_Get_Cb state_get;
-             Elm_Gengrid_Item_Del_Cb       del;
+             Elm_Gengrid_Item_Text_Get_Cb    text_get; /**< Text fetching class function for gengrid item classes.*/
+             Elm_Gengrid_Item_Content_Get_Cb content_get; /**< Content fetching class function for gengrid item classes. */
+             Elm_Gengrid_Item_State_Get_Cb   state_get; /**< State fetching class function for gengrid item classes. */
+             Elm_Gengrid_Item_Del_Cb         del; /**< Deletion class function for gengrid item classes. */
           } func;
      }; /**< #Elm_Gengrid_Item_Class member definitions */
    #define Elm_Gengrid_Item_Class_Func Elm_Gen_Item_Class_Func
@@ -18606,10 +18606,10 @@ extern "C" {
         const char                *item_style; /**< style of this class. */
         struct Elm_Genlist_Item_Class_Func
           {
-             Elm_Genlist_Item_Text_Get_Cb  text_get; /**< Text fetching class function for genlist item classes.*/
-             Elm_Genlist_Item_Content_Get_Cb   content_get; /**< Content fetching class function for genlist item classes. */
-             Elm_Genlist_Item_State_Get_Cb  state_get; /**< State fetching class function for genlist item classes. */
-             Elm_Genlist_Item_Del_Cb        del; /**< Deletion class function for genlist item classes. */
+             Elm_Genlist_Item_Text_Get_Cb    text_get; /**< Text fetching class function for genlist item classes.*/
+             Elm_Genlist_Item_Content_Get_Cb content_get; /**< Content fetching class function for genlist item classes. */
+             Elm_Genlist_Item_State_Get_Cb   state_get; /**< State fetching class function for genlist item classes. */
+             Elm_Genlist_Item_Del_Cb         del; /**< Deletion class function for genlist item classes. */
           } func;
      };
    #define Elm_Genlist_Item_Class_Func Elm_Gen_Item_Class_Func
