@@ -2984,6 +2984,16 @@ static const struct luaL_reg _elua_evas_map_funcs [] =
 @page luaref
 @subsubsection map_alpha map_object:alpha(alpha)
 
+Get (and optionally set) the maps alpha mode.
+
+Wraps evas_map_alpha_set().
+
+@param alpha The alpha mode.
+
+Note that the argument is optional, without it this function just queries the
+current value.
+
+@return A boolean reflecting the alpha mode.
 
 @since 1.1.0
 */
@@ -3010,6 +3020,11 @@ _elua_map_alpha(lua_State *L)                                   // Stack usage [
 @page luaref
 @subsubsection map_clockwise map_object:clockwise()
 
+Get the maps clockwise state.
+
+Wraps evas_map_util_clockwise_get().
+
+@return A boolean reflecting if the map is clockwise or not.
 
 @since 1.1.0
 */
@@ -3027,8 +3042,30 @@ _elua_map_clockwise(lua_State *L)                               // Stack usage [
 
 /**
 @page luaref
-@subsubsection map_colour map_object:colour()
+@subsubsection map_colour map_object:colour(index, r, g, b, a)
 
+Gets or sets colour information for the map.  There are two variations, with or
+without the index.  With the index parameter it gets (and optionally sets) the
+colour of the point the index refers to, without it sets the colour for the
+entire map.
+
+Wraps evas_map_point_color_set() or evas_map_util_points_color_set()
+
+@param index Which point to change the colour of.
+@param r The new red value.
+@param g The new green value.
+@param b The new blue value.
+@param a The new alpha value.
+
+Note that the arguments are optional, without them this function just queries
+the current values.  The colour arguments can be separate values, or named
+fields in a table.
+
+@return A table with these fields:
+   - integer r: The red value.
+   - integer g: The green value.
+   - integer b: The blue value.
+   - integer a: The alpha value.
 
 @since 1.1.0
 */
@@ -3075,8 +3112,24 @@ _elua_map_colour(lua_State *L)                                  // Stack usage [
 
 /**
 @page luaref
-@subsubsection map_coord map_object:coord(x, y, z)
+@subsubsection map_coord map_object:coord(index, x, y, z)
 
+Gets (and optionally sets) the 3D coordinates of a point on the map.
+
+Wraps evas_map_point_coord_set().
+
+@param x The x coordinate of the point.
+@param y The y coordinate of the point.
+@param z The z coordinate of the point.
+
+Note that the arguments are optional, without them this function just queries
+the current values.  The coordinate arguments can be separate values, or named
+fields in a table.
+
+@return A table with these fields:
+   - integer x: The x coordinate of the point.
+   - integer y: The y coordinate of the point.
+   - integer z: The z coordinate of the point.
 
 @since 1.1.0
 */
@@ -3106,8 +3159,21 @@ _elua_map_coord(lua_State *L)                                   // Stack usage [
 
 /**
 @page luaref
-@subsubsection map_lighting map_object:lighting()
+@subsubsection map_lighting map_object:lighting(x, y, z, r, g, b, ar, ag, ab)
 
+Set the 3D lights for the map.  The three triplets can be tables.
+
+Wraps evas_map_util_3d_lighting().
+
+@param x The x coordinate of the light point.
+@param y The y coordinate of the light point.
+@param z The z coordinate of the light point.
+@param r The new red value of the light point.
+@param g The new green value of the light point.
+@param b The new blue value of the light point.
+@param ar The new red value of the ambient light.
+@param ag The new green value of the ambient light.
+@param ab The new blue value of the ambient light.
 
 @since 1.1.0
 */
@@ -3137,6 +3203,16 @@ _elua_map_lighting(lua_State *L)                                // Stack usage [
 @page luaref
 @subsubsection map_perspective map_object:perspective(x, y, z, f)
 
+Apply a perspective transform to the map.
+
+Wraps evas_map_util_3d_perspective().
+
+The arguments can be separate values, or named fields in a table.
+
+@param x The perspective distance X coordinate
+@param y The perspective distance Y coordinate
+@param z The "0" z plane value
+@param f The focal distance
 
 @since 1.1.0
 */
@@ -3158,8 +3234,28 @@ _elua_map_perspective(lua_State *L)                             // Stack usage [
 
 /**
 @page luaref
-@subsubsection map_populate map_object:populate()
+@subsubsection map_populate map_object:populate(...)
 
+Populate the points in a map, in one of three different methods.
+
+1) Wraps evas_map_util_points_populate_from_object().
+
+@param source An evas object to copy points from.
+
+2) Wraps evas_map_util_paints_populate_from_object_full().
+
+@param source An evas object to copy points from.
+@param z Common Z coordinate hint for all four points.
+
+3) Wraps evas_map_util_points_populate_from_geometry().
+
+The first four arguments can be separate values, or named fields in a table.
+
+@param x Point X coordinate
+@param y Point Y coordinate
+@param w Width to use to calculate second and third points.
+@param h Height to use to calculate third and fourth points.
+@param z Common Z coordinate hint for all four points.
 
 @since 1.1.0
 */
@@ -3212,8 +3308,17 @@ _elua_map_populate(lua_State *L)                                // Stack usage [
 
 /**
 @page luaref
-@subsubsection map_rotate map_object:rotate(x, y)
+@subsubsection map_rotate map_object:rotate(degrees, x, y)
 
+Rotate the maps coordinates in 2D.
+
+Wraps evas_map_util_rotate().
+
+The coordinates can be separate values, or named fields in a table.
+
+@param degrees Amount of degrees from 0.0 to 360.0 to rotate.
+@param x Rotation's centre horizontal position.
+@param y Rotation's centre vertical position.
 
 @since 1.1.0
 */
@@ -3240,8 +3345,21 @@ _elua_map_rotate(lua_State *L)                                  // Stack usage [
 
 /**
 @page luaref
-@subsubsection map_rotate3d map_object:rotate3d()
+@subsubsection map_rotate3d map_object:rotate3d(dx, dy, dz, x, y, z)
 
+Rotate the maps coordinates in 3D.
+
+Wraps evas_map_util_3d_rotate().
+
+The coordinates can be separate values, or named fields in a table.  The same
+with the rotation.
+
+@param dx Amount of degrees from 0.0 to 360.0 to rotate around X axis.
+@param dy Amount of degrees from 0.0 to 360.0 to rotate around Y axis.
+@param dz Amount of degrees from 0.0 to 360.0 to rotate around Z axis.
+@param x Rotation's centre horizontal position.
+@param y Rotation's centre vertical position.
+@param z Rotation's centre vertical position.
 
 @since 1.1.0
 */
@@ -3269,6 +3387,16 @@ _elua_map_rotate3d(lua_State *L)                                // Stack usage [
 @page luaref
 @subsubsection map_smooth map_object:smooth(smooth)
 
+Get (and optionally set) the maps smooth mode.
+
+Wraps evas_map_smooth_set().
+
+@param smooth The smooth mode.
+
+Note that the argument is optional, without it this function just queries the
+current value.
+
+@return A boolean reflecting the smooth mode.
 
 @since 1.1.0
 */
@@ -3293,8 +3421,23 @@ _elua_map_smooth(lua_State *L)                                  // Stack usage [
 
 /**
 @page luaref
-@subsubsection map_uv map_object:uv(u, v)
+@subsubsection map_uv map_object:uv(index, u, v)
 
+Gets (and optionally sets) the texture U and V texture coordinates for this map.
+
+Wraps evas_map_point_image_uv_set().
+
+@param index Index of the point to change. Must be smaller than map size.
+@param u The X coordinate within the image/texture source.
+@param v The Y coordinate within the image/texture source.
+
+Note that the U,V arguments are optional, without them this function just queries
+the current values.  The coordinate arguments can be separate values, or named
+fields in a table.
+
+@return A table with these fields:
+  - number u: The X coordinate within the image/texture source.
+  - number v: The Y coordinate within the image/texture source.
 
 @since 1.1.0
 */
@@ -3324,8 +3467,18 @@ _elua_map_uv(lua_State *L)                                      // Stack usage [
 
 /**
 @page luaref
-@subsubsection map_zoom map_object:zoom()
+@subsubsection map_zoom map_object:zoom(x, y, x, y)
 
+Apply a zoom to the map.
+
+Wraps evas_map_util_zoom().
+
+The arguments can be two separate values, or named fields in a table.
+
+@param x The horizontal zoom amount.
+@param y The vertical zoom amount.
+@param x The X coordinate of the centre of the zoom.
+@param y The Y coordinate of the centre of the zoom.
 
 @since 1.1.0
 */
