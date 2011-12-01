@@ -104,21 +104,21 @@ evas_common_convert_rgba_to_32bpp_rgb_8888_rot_90 (DATA32 *src, DATA8 *dst, int 
 	asm volatile (
 	".fpu neon						\n\t"
 	"	mov		%[s1],	%[src]			\n\t"
-	"	add		%[s1],	%[h],lsl #2		\n\t"
+	"	add		%[s1],	%[s1],	%[h],lsl #2	\n\t"
 	"	sub		%[s1],	#8			\n\t"
 
 	"	mov		%[s2],	%[src]			\n\t"
-	"	add		%[s2],  %[h], lsl #3		\n\t"
-	"	add		%[s2],  %[sjmp], lsr #1		\n\t"
+	"	add		%[s2],	%[s2],	%[h], lsl #3	\n\t"
+	"	add		%[s2],	%[s2],	%[sjmp], lsr #1	\n\t"
 	"	sub		%[s2],  #8			\n\t"
 
 	"	mov		%[d1],	%[dst]			\n\t"
 
 	"	add		%[d2],	%[d1], %[djmp]		\n\t"
-	"	add		%[d2],	%[w], lsl #2		\n\t"
+	"	add		%[d2],	%[d2],	%[w], lsl #2	\n\t"
 
 	"	mov		%[sadv], %[h], lsl #3		\n\t"
-	"	add		%[sadv], %[sjmp], lsl #1	\n\t"
+	"	add		%[sadv], %[sadv], %[sjmp], lsl #1\n\t"
 
 	"	mov		%[y],	#0			\n\t"
 	"	mov		%[x],	#0			\n\t"
@@ -136,17 +136,17 @@ evas_common_convert_rgba_to_32bpp_rgb_8888_rot_90 (DATA32 *src, DATA8 *dst, int 
 
 	"	mov		%[x],	#0			\n\t"
 	"	add		%[d1],  %[djmp]			\n\t"
-	"	add		%[d1],	%[w], lsl #2		\n\t"
+	"	add		%[d1],	%[d1],	%[w], lsl #2	\n\t"
 	"	add		%[d2],  %[djmp]			\n\t"
-	"	add		%[d2],	%[w], lsl #2		\n\t"
+	"	add		%[d2],	%[d2],	%[w], lsl #2	\n\t"
 
 	"	mov		%[s1],	%[src]			\n\t"
-	"	add		%[s1],  %[h], lsl #2		\n\t"
-	"	sub		%[s1],  %[y], lsl #2		\n\t"
+	"	add		%[s1],	%[s1],	%[h], lsl #2	\n\t"
+	"	sub		%[s1],	%[s1],	%[y], lsl #2	\n\t"
 	"	sub		%[s1],  #16			\n\t"
 
 	"	add		%[s2],	%[s1], %[h], lsl #2	\n\t"
-	"	add		%[s2],  %[sjmp], lsl #2		\n\t"
+	"	add		%[s2],	%[s2],	%[sjmp], lsl #2	\n\t"
 
 	"	add		%[y],	#2			\n\t"
 
