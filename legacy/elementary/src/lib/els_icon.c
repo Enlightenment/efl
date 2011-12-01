@@ -380,7 +380,7 @@ _els_smart_icon_orient_set(Evas_Object *obj, Elm_Image_Orient orient)
      }
 
    evas_object_image_size_get(sd->obj, &iw, &ih);
-   /* we need seperate destination memory if we want rotate 90 or 270 degree */
+   /* we need separate destination memory if we want to rotate 90 or 270 degree */
    evas_object_image_data_copy_set(sd->obj, data2);
    if (!data2) return;
 
