@@ -262,7 +262,7 @@ _store_item_mapping_find(Elm_Store_Item *sti, const char *part)
 }
 
 static char *
-_store_item_label_get(void *data, Evas_Object *obj __UNUSED__, const char *part)
+_store_item_text_get(void *data, Evas_Object *obj __UNUSED__, const char *part)
 {
    Elm_Store_Item *sti = data;
    const char *s = "";
@@ -453,7 +453,7 @@ _store_filesystem_list_update(void *data, Ecore_Thread *th __UNUSED__, void *msg
    if (!itc) itc = &_store_item_class;
    else
      {
-        itc->func.label_get = _store_item_label_get;
+        itc->func.text_get = _store_item_text_get;
         itc->func.content_get  = _store_item_content_get;
         itc->func.state_get = NULL; // FIXME: support state gets later
         itc->func.del       = _store_item_del;
@@ -485,7 +485,7 @@ _elm_store_new(size_t size)
    eina_magic_string_set(ELM_STORE_ITEM_MAGIC, "Elm_Store_Item");
    // setup default item class (always the same) if list cb doesnt provide one
    _store_item_class.item_style = "default";
-   _store_item_class.func.label_get = _store_item_label_get;
+   _store_item_class.func.text_get = _store_item_text_get;
    _store_item_class.func.content_get  = _store_item_content_get;
    _store_item_class.func.state_get = NULL; // FIXME: support state gets later
    _store_item_class.func.del       = _store_item_del;

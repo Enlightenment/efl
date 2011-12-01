@@ -244,7 +244,7 @@ _theme_hook(Evas_Object *obj)
 
 /***  GENLIST "MODEL"  ***/
 static char *
-_itc_label_get(void              *data,
+_itc_text_get(void              *data,
                Evas_Object *obj   __UNUSED__,
                const char *source __UNUSED__)
 {
@@ -869,7 +869,7 @@ elm_fileselector_add(Evas_Object *parent)
 
    for (i = 0; i < ELM_FILE_LAST; ++i)
      {
-        list_itc[i].func.label_get = grid_itc[i].func.label_get = _itc_label_get;
+        list_itc[i].func.text_get = grid_itc[i].func.text_get = _itc_text_get;
         list_itc[i].func.state_get = grid_itc[i].func.state_get = _itc_state_get;
         list_itc[i].func.del = grid_itc[i].func.del = _itc_del;
      }

@@ -6,7 +6,7 @@
 #endif
 
 static char *
-_label_get(void        *data __UNUSED__,
+_text_get(void        *data __UNUSED__,
            Evas_Object *obj __UNUSED__,
            const char  *part)
 {
@@ -35,7 +35,7 @@ evas_object_show(genlist);
 
 Elm_Genlist_Item_Class gic;
 gic.item_style = "double_label";
-gic.func.label_get = _label_get;
+gic.func.text_get = _text_get;
 gic.func.content_get = _content_get;
 gic.func.state_get = NULL;
 gic.func.del = NULL;

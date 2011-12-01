@@ -4,7 +4,7 @@
 #endif
 #ifndef ELM_LIB_QUICKLAUNCH
 static Elm_Genlist_Item_Class itci;
-char *gli_label_get(void *data, Evas_Object *obj __UNUSED__, const char *part __UNUSED__)
+char *gli_text_get(void *data, Evas_Object *obj __UNUSED__, const char *part __UNUSED__)
 {
    char buf[256];
    int j = (long)data;
@@ -65,7 +65,7 @@ test_index(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info 
    evas_object_show(id);
 
    itci.item_style     = "default";
-   itci.func.label_get = gli_label_get;
+   itci.func.text_get = gli_text_get;
    itci.func.content_get  = NULL;
    itci.func.state_get = NULL;
    itci.func.del       = NULL;

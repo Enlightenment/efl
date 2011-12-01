@@ -8,7 +8,7 @@ static Elm_Genlist_Item_Class itc;
 
 static void _bstatus(void *data, Evas_Object *obj, void *event_info);
 static void _tstatus(void *data, Evas_Object *obj, void *event_info);
-static char *_label_get(void *data, Evas_Object *obj, const char *source);
+static char *_text_get(void *data, Evas_Object *obj, const char *source);
 static Evas_Object *_content_get(void *data, Evas_Object *obj, const char *source);
 static Eina_Bool _state_get(void *data, Evas_Object *obj, const char *source);
 static void _item_del(void *data, Evas_Object *obj);
@@ -46,7 +46,7 @@ _bstatus(void *data, Evas_Object *obj, void *event_info __UNUSED__)
 }
 
 static char *
-_label_get(void *data, Evas_Object *obj __UNUSED__, const char *source __UNUSED__)
+_text_get(void *data, Evas_Object *obj __UNUSED__, const char *source __UNUSED__)
 {
    return strdup(ecore_file_file_get(data));
 }
@@ -198,7 +198,7 @@ test_panel(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info 
    evas_object_size_hint_align_set(panel, 0, EVAS_HINT_FILL);
 
    itc.item_style = "default";
-   itc.func.label_get = _label_get;
+   itc.func.text_get = _text_get;
    itc.func.content_get = _content_get;
    itc.func.state_get = _state_get;
    itc.func.del = _item_del;

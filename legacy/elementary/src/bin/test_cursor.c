@@ -86,7 +86,7 @@ glt_con_req(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info
 }
 
 char *
-glt_label_get(void *data, Evas_Object *obj __UNUSED__, const char *part __UNUSED__)
+glt_text_get(void *data, Evas_Object *obj __UNUSED__, const char *part __UNUSED__)
 {
    char buf[256];
    snprintf(buf, sizeof(buf), "Item mode %i", (int)(long)data);
@@ -231,7 +231,7 @@ test_cursor2(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_inf
    evas_object_show(gl);
 
    itct.item_style     = "default";
-   itct.func.label_get = glt_label_get;
+   itct.func.text_get = glt_text_get;
 
    it1 = elm_genlist_item_append(gl, &itct, (void *) 1, NULL,
                                  ELM_GENLIST_ITEM_SUBITEMS, NULL, NULL);
@@ -259,7 +259,7 @@ test_cursor2(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_inf
    evas_object_size_hint_fill_set(grid, EVAS_HINT_FILL, EVAS_HINT_FILL);
 
    gic.item_style = "default";
-   gic.func.label_get = grd_lbl_get;
+   gic.func.text_get = grd_lbl_get;
    gic.func.content_get = grd_content_get;
 
    n = 0;

@@ -7992,7 +7992,7 @@ extern "C" {
    typedef struct Elm_Gen_Item Elm_Gen_Item;
    typedef struct _Elm_Gen_Item_Class Elm_Gen_Item_Class;
    typedef struct _Elm_Gen_Item_Class_Func Elm_Gen_Item_Class_Func; /**< Class functions for gen item classes. */
-   typedef char        *(*Elm_Gen_Item_Label_Get_Cb) (void *data, Evas_Object *obj, const char *part); /**< Label fetching class function for gen item classes. */
+   typedef char        *(*Elm_Gen_Item_Text_Get_Cb) (void *data, Evas_Object *obj, const char *part); /**< Label fetching class function for gen item classes. */
    typedef Evas_Object *(*Elm_Gen_Item_Content_Get_Cb)  (void *data, Evas_Object *obj, const char *part); /**< Content(swallowed object) fetching class function for gen item classes. */
    typedef Eina_Bool    (*Elm_Gen_Item_State_Get_Cb) (void *data, Evas_Object *obj, const char *part); /**< State fetching class function for gen item classes. */
    typedef void         (*Elm_Gen_Item_Del_Cb)      (void *data, Evas_Object *obj); /**< Deletion class function for gen item classes. */
@@ -8001,7 +8001,11 @@ extern "C" {
         const char             *item_style;
         struct _Elm_Gen_Item_Class_Func
           {
-             Elm_Gen_Item_Label_Get_Cb label_get;
+             union /* temporary compatibility code */
+               {
+                  Elm_Gen_Item_Text_Get_Cb  label_get EINA_DEPRECATED;
+                  Elm_Gen_Item_Text_Get_Cb  text_get;
+               };
              Elm_Gen_Item_Content_Get_Cb  content_get;
              Elm_Gen_Item_State_Get_Cb state_get;
              Elm_Gen_Item_Del_Cb       del;
@@ -8061,18 +8065,18 @@ extern "C" {
     *
     * @section Gengrid_Items Gengrid items
     *
-    * An item in a gengrid can have 0 or more text labels (they can be
+    * An item in a gengrid can have 0 or more texts (they can be
     * regular text or textblock Evas objects - that's up to the style
     * to determine), 0 or more icons (which are simply objects
     * swallowed into the gengrid item's theming Edje object) and 0 or
     * more <b>boolean states</b>, which have the behavior left to the
     * user to define. The Edje part names for each of these properties
     * will be looked up, in the theme file for the gengrid, under the
-    * Edje (string) data items named @c "labels", @c "icons" and @c
+    * Edje (string) data items named @c "texts", @c "icons" and @c
     * "states", respectively. For each of those properties, if more
     * than one part is provided, they must have names listed separated
     * by spaces in the data fields. For the default gengrid item
-    * theme, we have @b one label part (@c "elm.text"), @b two icon
+    * theme, we have @b one text part (@c "elm.text"), @b two icon
     * parts (@c "elm.swalllow.icon" and @c "elm.swallow.end") and @b
     * no state parts.
     *
@@ -8096,7 +8100,7 @@ extern "C" {
     * - @c item_style - This is a constant string and simply defines
     * the name of the item style. It @b must be specified and the
     * default should be @c "default".
-    * - @c func.label_get - This function is called when an item
+    * - @c func.text_get - This function is called when an item
     * object is actually created. The @c data parameter will point to
     * the same data passed to elm_gengrid_item_append() and related
     * item creation functions. The @c obj parameter is the gengrid
@@ -8104,7 +8108,7 @@ extern "C" {
     * of the existing text parts in the Edje group implementing the
     * item's theme. This function @b must return a strdup'()ed string,
     * as the caller will free() it when done. See
-    * #Elm_Gengrid_Item_Label_Get_Cb.
+    * #Elm_Gengrid_Item_Text_Get_Cb.
     * - @c func.content_get - This function is called when an item object
     * is actually created. The @c data parameter will point to the
     * same data passed to elm_gengrid_item_append() and related item
@@ -8145,7 +8149,7 @@ extern "C" {
     * modified (added, deleted, selected or unselected) of child items
     * on a gengrid.
     *
-    * If an item changes (internal (boolean) state, label or content
+    * If an item changes (internal (boolean) state, text or content
     * changes), then use elm_gengrid_item_update() to have gengrid
     * update the item with the new state. A gengrid will re-"realize"
     * the item, thus calling the functions in the
@@ -8246,13 +8250,13 @@ extern "C" {
    #define Elm_Gengrid_Item Elm_Gen_Item /**< Item of Elm_Genlist. Sub-type of Elm_Widget_Item */
    typedef struct _Elm_Gengrid_Item_Class_Func Elm_Gengrid_Item_Class_Func; /**< Class functions for gengrid item classes. */
    /**
-    * Label fetching class function for Elm_Gen_Item_Class.
+    * Text fetching class function for Elm_Gen_Item_Class.
     * @param data The data passed in the item creation function
     * @param obj The base widget object
     * @param part The part name of the swallow
-    * @return The allocated (NOT stringshared) string to set as the label
+    * @return The allocated (NOT stringshared) string to set as the text 
     */
-   typedef char        *(*Elm_Gengrid_Item_Label_Get_Cb) (void *data, Evas_Object *obj, const char *part);
+   typedef char        *(*Elm_Gengrid_Item_Text_Get_Cb) (void *data, Evas_Object *obj, const char *part);
    /**
     * Content (swallowed object) fetching class function for Elm_Gen_Item_Class.
     * @param data The data passed in the item creation function
@@ -8287,7 +8291,11 @@ extern "C" {
         const char             *item_style;
         struct _Elm_Gengrid_Item_Class_Func
           {
-             Elm_Gengrid_Item_Label_Get_Cb label_get;
+             union /* temporary compatibility code */
+               {
+                  Elm_Gengrid_Item_Text_Get_Cb  label_get EINA_DEPRECATED;
+                  Elm_Gengrid_Item_Text_Get_Cb  text_get; /**< Text fetching class function for gengrid item classes.*/
+               };
              Elm_Gengrid_Item_Content_Get_Cb content_get;
              Elm_Gengrid_Item_State_Get_Cb state_get;
              Elm_Gengrid_Item_Del_Cb       del;
@@ -9038,7 +9046,7 @@ extern "C" {
     * @param item The gengrid item
     *
     * This updates an item by calling all the item class functions
-    * again to get the contents, labels and states. Use this when the
+    * again to get the contents, texts and states. Use this when the
     * original item data has changed and you want the changes to be
     * reflected.
     *
@@ -18134,14 +18142,14 @@ extern "C" {
     *   elm_genlist_item_append() and related item creation functions, and a @c
     *   obj parameter that points to the genlist object itself.
     *
-    * The function pointers inside @c func are @c label_get, @c icon_get, @c
+    * The function pointers inside @c func are @c text_get, @c icon_get, @c
     * state_get and @c del. The 3 first functions also receive a @c part
     * parameter described below. A brief description of these functions follows:
     *
-    * - @c label_get - The @c part parameter is the name string of one of the
+    * - @c text_get - The @c part parameter is the name string of one of the
     *   existing text parts in the Edje group implementing the item's theme.
     *   This function @b must return a strdup'()ed string, as the caller will
-    *   free() it when done. See #Elm_Genlist_Item_Label_Get_Cb.
+    *   free() it when done. See #Elm_Genlist_Item_Text_Get_Cb.
     * - @c content_get - The @c part parameter is the name string of one of the
     *   existing (content) swallow parts in the Edje group implementing the item's
     *   theme. It must return @c NULL, when no content is desired, or a valid
@@ -18453,13 +18461,13 @@ extern "C" {
    #define Elm_Genlist_Item Elm_Gen_Item /**< Item of Elm_Genlist. Sub-type of Elm_Widget_Item */
    typedef struct _Elm_Genlist_Item_Class_Func Elm_Genlist_Item_Class_Func; /**< Class functions for genlist item class */
    /**
-    * Label fetching class function for Elm_Gen_Item_Class.
+    * Text fetching class function for Elm_Gen_Item_Class.
     * @param data The data passed in the item creation function
     * @param obj The base widget object
     * @param part The part name of the swallow
-    * @return The allocated (NOT stringshared) string to set as the label
+    * @return The allocated (NOT stringshared) string to set as the text
     */
-   typedef char        *(*Elm_Genlist_Item_Label_Get_Cb) (void *data, Evas_Object *obj, const char *part);
+   typedef char        *(*Elm_Genlist_Item_Text_Get_Cb) (void *data, Evas_Object *obj, const char *part);
    /**
     * Content (swallowed object) fetching class function for Elm_Gen_Item_Class.
     * @param data The data passed in the item creation function
@@ -18498,7 +18506,11 @@ extern "C" {
         const char                *item_style; /**< style of this class. */
         struct Elm_Genlist_Item_Class_Func
           {
-             Elm_Genlist_Item_Label_Get_Cb  label_get; /**< Label fetching class function for genlist item classes.*/
+             union /* temporary compatibility code */
+               {
+                  Elm_Genlist_Item_Text_Get_Cb  label_get EINA_DEPRECATED;
+                  Elm_Genlist_Item_Text_Get_Cb  text_get; /**< Text fetching class function for genlist item classes.*/
+               };
              Elm_Genlist_Item_Content_Get_Cb   content_get; /**< Content fetching class function for genlist item classes. */
              Elm_Genlist_Item_State_Get_Cb  state_get; /**< State fetching class function for genlist item classes. */
              Elm_Genlist_Item_Del_Cb        del; /**< Deletion class function for genlist item classes. */

@@ -1694,7 +1694,7 @@ _item_label_realize(Elm_Gen_Item *it,
                     Eina_List **source,
                     const char *parts)
 {
-   if (it->itc->func.label_get)
+   if (it->itc->func.text_get)
      {
         const Eina_List *l;
         const char *key;
@@ -1705,7 +1705,7 @@ _item_label_realize(Elm_Gen_Item *it,
              if (parts && fnmatch(parts, key, FNM_PERIOD))
                continue;
 
-             char *s = it->itc->func.label_get
+             char *s = it->itc->func.text_get
                 ((void *)it->base.data, WIDGET(it), key);
 
              if (s)
@@ -2937,7 +2937,7 @@ _mode_item_realize(Elm_Gen_Item *it)
    evas_object_event_callback_add(it->item->mode_view, EVAS_CALLBACK_MOUSE_MOVE,
                                   _mouse_move, it);
 
-   /* label_get, content_get, state_get */
+   /* text_get, content_get, state_get */
    /* FIXME: If you see that assert, please notify us and we
       will clean our mess */
    assert(eina_list_count(it->item->mode_content_objs) == 0);
@@ -3204,7 +3204,7 @@ _item_content_unset_hook(Elm_Gen_Item *it, const char *part)
 static const char *
 _item_label_hook(Elm_Gen_Item *it, const char *part)
 {
-   if (!it->itc->func.label_get) return NULL;
+   if (!it->itc->func.text_get) return NULL;
    return edje_object_part_text_get(VIEW(it), part);
 }
 

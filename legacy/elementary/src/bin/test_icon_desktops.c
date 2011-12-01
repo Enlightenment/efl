@@ -6,7 +6,7 @@
 static Elm_Genlist_Item_Class it_desk;
 
 static char *
-desk_gl_label_get(void *data, Evas_Object *obj __UNUSED__, const char *part __UNUSED__)
+desk_gl_text_get(void *data, Evas_Object *obj __UNUSED__, const char *part __UNUSED__)
 {
 #ifdef ELM_EFREET
    Efreet_Desktop *d = (Efreet_Desktop *)data;
@@ -74,7 +74,7 @@ test_icon_desktops(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *eve
    evas_object_show(bg);
 
    it_desk.item_style     = "default";
-   it_desk.func.label_get = desk_gl_label_get;
+   it_desk.func.text_get = desk_gl_text_get;
    it_desk.func.content_get  = desk_gl_content_get;
    it_desk.func.state_get = NULL;
    it_desk.func.del       = desk_gl_del;

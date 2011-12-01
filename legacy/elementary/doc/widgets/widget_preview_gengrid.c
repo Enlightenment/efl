@@ -6,7 +6,7 @@
 #endif
 
 static char *
-_grid_label_get(void        *data __UNUSED__,
+_grid_text_get(void        *data __UNUSED__,
                 Evas_Object *obj __UNUSED__,
                 const char  *part __UNUSED__)
 {
@@ -40,7 +40,7 @@ evas_object_show(gengrid);
 
 Elm_Gengrid_Item_Class gic;
 gic.item_style = "default";
-gic.func.label_get = _grid_label_get;
+gic.func.text_get = _grid_text_get;
 gic.func.content_get = _grid_content_get;
 gic.func.state_get = NULL;
 gic.func.del = NULL;

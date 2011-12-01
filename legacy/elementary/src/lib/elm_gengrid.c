@@ -930,7 +930,7 @@ _item_realize(Elm_Gen_Item *it)
    evas_object_size_hint_min_set(it->spacer, 2 * _elm_config->scale, 1);
    edje_object_part_swallow(VIEW(it), "elm.swallow.pad", it->spacer);
 
-   if (it->itc->func.label_get)
+   if (it->itc->func.text_get)
      {
         const Eina_List *l;
         const char *key;
@@ -940,7 +940,7 @@ _item_realize(Elm_Gen_Item *it)
                                                           "labels"));
         EINA_LIST_FOREACH(it->labels, l, key)
           {
-             char *s = it->itc->func.label_get
+             char *s = it->itc->func.text_get
                 ((void *)it->base.data, WIDGET(it), key);
              if (s)
                {

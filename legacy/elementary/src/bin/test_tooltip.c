@@ -97,7 +97,7 @@ gltt_con_req(void *data       __UNUSED__,
 }
 
 char *
-gltt_label_get(void            *data,
+gltt_text_get(void            *data,
                Evas_Object *obj __UNUSED__,
                const char *part __UNUSED__)
 {
@@ -559,7 +559,7 @@ test_tooltip2(void *data       __UNUSED__,
                                     EVAS_HINT_EXPAND);
 
    gic.item_style = "default";
-   gic.func.label_get = grdt_lbl_get;
+   gic.func.text_get = grdt_lbl_get;
    gic.func.content_get = grdt_content_get;
 
    n = 0;
@@ -589,7 +589,7 @@ test_tooltip2(void *data       __UNUSED__,
                                     EVAS_HINT_EXPAND);
 
    itct.item_style = "default";
-   itct.func.label_get = gltt_label_get;
+   itct.func.text_get = gltt_text_get;
 
    it1 = elm_genlist_item_append(gl, &itct, (void *)1, NULL,
                                  ELM_GENLIST_ITEM_SUBITEMS, NULL, NULL);

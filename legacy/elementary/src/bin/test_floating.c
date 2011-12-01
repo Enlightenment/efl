@@ -12,7 +12,7 @@ typedef struct _Testitem
 
 
 static Elm_Genlist_Item_Class itc1;
-static char *glf_label_get(void *data, Evas_Object *obj __UNUSED__, const char *part __UNUSED__)
+static char *glf_text_get(void *data, Evas_Object *obj __UNUSED__, const char *part __UNUSED__)
 {
    char buf[256];
    snprintf(buf, sizeof(buf), "Item # %i", (int)(long)data);
@@ -86,7 +86,7 @@ test_floating(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_in
    evas_object_show(gl);
 
    itc1.item_style     = "default";
-   itc1.func.label_get = glf_label_get;
+   itc1.func.text_get = glf_text_get;
    itc1.func.content_get  = glf_content_get;
    itc1.func.state_get = glf_state_get;
    itc1.func.del       = glf_del;
