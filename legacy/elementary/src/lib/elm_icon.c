@@ -17,18 +17,16 @@ struct _Widget_Data
 
 #ifdef HAVE_ELEMENTARY_ETHUMB
    struct {
-      int id;
-
       struct {
          const char *path;
          const char *key;
       } file, thumb;
 
-      Ethumb_Exists *exists;
-
       Ecore_Event_Handler *eeh;
 
       Ethumb_Thumb_Format format;
+
+      Ethumb_Client_Async *request;
 
       Eina_Bool retry : 1;
    } thumb;
@@ -59,8 +57,6 @@ struct _Widget_Data
 #ifdef HAVE_ELEMENTARY_ETHUMB
 static Eina_List *_elm_icon_retry = NULL;
 static int _icon_pending_request = 0;
-
-static void _icon_thumb_exists(Ethumb_Client *client __UNUSED__, Ethumb_Exists *thread, Eina_Bool exists, void *data);
 #endif
 
 static const char *widtype = NULL;
@@ -108,17 +104,10 @@ _icon_size_min_get(Evas_Object *icon)
 static void
 _icon_thumb_stop(Widget_Data *wd, void *ethumbd)
 {
-   if (wd->thumb.id >= 0)
+   if (wd->thumb.request)
      {
-        ethumb_client_generate_cancel(ethumbd, wd->thumb.id, NULL, NULL, NULL);
-        wd->thumb.id = -1;
-        _icon_pending_request--;
-     }
-
-   if (wd->thumb.exists)
-     {
-        ethumb_client_thumb_exists_cancel(wd->thumb.exists);
-        wd->thumb.exists = NULL;
+        ethumb_client_thumb_async_cancel(ethumbd, wd->thumb.request);
+        wd->thumb.request = NULL;
         _icon_pending_request--;
      }
 
@@ -225,68 +214,34 @@ _icon_thumb_finish(Widget_Data *wd, Ethumb_Client *ethumbd)
 }
 
 static void
-_icon_thumb_cb(void *data,
-               Ethumb_Client *ethumbd,
-               int id,
-               const char *file __UNUSED__,
-               const char *key __UNUSED__,
-               const char *thumb_path,
-               const char *thumb_key,
-               Eina_Bool success)
+_icon_thumb_done(Ethumb_Client *client, const char *thumb_path, const char *thumb_key, void *data)
 {
    Widget_Data *wd = data;
 
-   EINA_SAFETY_ON_FALSE_RETURN(wd->thumb.id == id);
-   wd->thumb.id = -1;
+   assert(wd->thumb.request);
 
    _icon_pending_request--;
+   wd->thumb.request = NULL;
 
-   if (success)
-     {
-        eina_stringshare_replace(&wd->thumb.thumb.path, thumb_path);
-        eina_stringshare_replace(&wd->thumb.thumb.key, thumb_key);
-        wd->thumb.format = ethumb_client_format_get(ethumbd);
+   eina_stringshare_replace(&wd->thumb.thumb.path, thumb_path);
+   eina_stringshare_replace(&wd->thumb.thumb.key, thumb_key);
+   wd->thumb.format = ethumb_client_format_get(client);
 
-        _icon_thumb_finish(wd, ethumbd);
-     }
-   else
-     {
-        ERR("could not generate thumbnail for %s (key: %s)", file, key);
-        _icon_thumb_cleanup(ethumbd);
-     }
+   _icon_thumb_finish(wd, client);
 }
 
 static void
-_icon_thumb_exists(Ethumb_Client *client __UNUSED__, Ethumb_Exists *thread, Eina_Bool exists, void *data)
+_icon_thumb_error(Ethumb_Client *client, void *data)
 {
    Widget_Data *wd = data;
-   Ethumb_Client *ethumbd;
 
-   if (ethumb_client_thumb_exists_check(thread))
-     return ;
+   assert(wd->thumb.request);
 
-   wd->thumb.exists = NULL;
+   _icon_pending_request--;
+   wd->thumb.request = NULL;
 
-   ethumbd = elm_thumb_ethumb_client_get();
-
-   if (exists)
-     {
-        const char *thumb_path, *thumb_key;
-
-        _icon_pending_request--;
-        ethumb_client_thumb_path_get(ethumbd, &thumb_path, &thumb_key);
-        eina_stringshare_replace(&wd->thumb.thumb.path, thumb_path);
-        eina_stringshare_replace(&wd->thumb.thumb.key, thumb_key);
-        wd->thumb.format = ethumb_client_format_get(ethumbd);
-
-        _icon_thumb_finish(wd, ethumbd);
-     }
-   else if ((wd->thumb.id = ethumb_client_generate(ethumbd, _icon_thumb_cb, wd, NULL)) == -1)
-     {
-        ERR("Generate was unable to start !");
-        /* Failed to generate thumbnail */
-        _icon_pending_request--;
-     }
+   ERR("could not generate thumbnail for %s (key: %s)", wd->thumb.file.path, wd->thumb.file.key);
+   _icon_thumb_cleanup(client);
 }
 
 static void
@@ -303,7 +258,7 @@ _icon_thumb_apply(Widget_Data *wd)
    _icon_pending_request++;
    if (!ethumb_client_file_set(ethumbd, wd->thumb.file.path, wd->thumb.file.key)) return ;
    ethumb_client_size_set(ethumbd, _icon_size_min_get(wd->img), _icon_size_min_get(wd->img));
-   wd->thumb.exists = ethumb_client_thumb_exists(ethumbd, _icon_thumb_exists, wd);
+   wd->thumb.request = ethumb_client_thumb_async_get(ethumbd, _icon_thumb_done, _icon_thumb_error, wd);
 }
 
 static Eina_Bool
@@ -663,7 +618,7 @@ elm_icon_add(Evas_Object *parent)
    evas_object_smart_callbacks_descriptions_set(obj, _signals);
 
 #ifdef HAVE_ELEMENTARY_ETHUMB
-   wd->thumb.id = -1;
+   wd->thumb.request = NULL;
 #endif
 
    wd->smooth = EINA_TRUE;
