@@ -28,7 +28,7 @@ static void
 _item_pressed(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    Elm_Object_Item *tb_it = event_info;
-   elm_toolbar_item_state_set(tb_it, elm_toolbar_item_state_next(item));
+   elm_toolbar_item_state_set(tb_it, elm_toolbar_item_state_next(tb_it));
    elm_toolbar_item_selected_set(tb_it, EINA_FALSE);
 }
 
