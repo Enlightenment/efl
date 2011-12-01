@@ -2340,3 +2340,228 @@ ethumb_client_generate(Ethumb_Client *client, Ethumb_Client_Generate_Cb generate
 
    return id;
 }
+
+struct _Ethumb_Client_Async
+{
+   Ethumb_Exists *exists;
+   Ethumb_Client *client;
+   Ethumb *dup;
+
+   Ethumb_Client_Async_Done_Cb done;
+   Ethumb_Client_Async_Error_Cb error;
+   const void *data;
+
+   int id;
+};
+
+static Ecore_Idler *idler[2] = { NULL, NULL };
+static Eina_List *pending = NULL;
+static Eina_List *idle_tasks[2] = { NULL, NULL };
+
+static void
+_ethumb_client_async_free(Ethumb_Client_Async *async)
+{
+   EINA_REFCOUNT_UNREF(async->client)
+     _ethumb_client_free(async->client);
+   ethumb_free(async->dup);
+   free(async);
+}
+
+static void
+_ethumb_client_thumb_finish(void *data,
+                            Ethumb_Client *client, int id,
+                            const char *file __UNUSED__, const char *key __UNUSED__,
+                            const char *thumb_path, const char *thumb_key,
+                            Eina_Bool success)
+{
+   Ethumb_Client_Async *async = data;
+
+   assert(async->id == id);
+
+   if (success)
+     {
+        async->done(client, thumb_path, thumb_key, (void*) async->data);
+     }
+   else
+     {
+        async->error(client, (void*) async->data);
+     }
+
+   pending = eina_list_remove(pending, async);
+   _ethumb_client_async_free(async);
+}
+
+static Eina_Bool
+_ethumb_client_thumb_generate_idler(void *data __UNUSED__)
+{
+   Ethumb_Client_Async *async;
+   Eina_List *l1, *l2;
+
+   EINA_LIST_FOREACH_SAFE(idle_tasks[1], l1, l2, async)
+     {
+        Ethumb *tmp;
+
+        idle_tasks[1] = eina_list_remove_list(idle_tasks[1], l1);
+
+        tmp = async->client->ethumb;
+        async->client->ethumb = async->dup;
+
+        async->id = ethumb_client_generate(async->client, _ethumb_client_thumb_finish, async, NULL);
+        if (async->id == -1)
+          {
+             async->error(async->client, (void*) async->data);
+             async->client->ethumb = tmp;
+             _ethumb_client_async_free(async);
+          }
+        else
+          {
+             async->client->ethumb = tmp;
+          }
+
+        pending = eina_list_append(pending, async);
+
+        if (ecore_time_get() - ecore_loop_time_get() > ecore_animator_frametime_get() * 0.5)
+          return EINA_TRUE;
+     }
+
+   idler[1] = NULL;
+   return EINA_FALSE;
+}
+
+static void
+_ethumb_client_thumb_exists(Ethumb_Client *client, Ethumb_Exists *request, Eina_Bool exists, void *data)
+{
+   Ethumb_Client_Async *async = data;
+
+   if (request == NULL)
+     return ;
+
+   assert(async->exists == request);
+
+   async->exists = NULL;
+   pending = eina_list_remove(pending, async);
+
+   if (exists)
+     {
+        const char *thumb_path;
+        const char *thumb_key;
+
+        ethumb_client_thumb_path_get(client, &thumb_path, &thumb_key);
+        async->done(client, thumb_path, thumb_key, (void*) async->data);
+        _ethumb_client_async_free(async);
+     }
+   else
+     {
+        idle_tasks[1] = eina_list_append(idle_tasks[1], async);
+
+        if (!idler[1])
+          idler[1] = ecore_idler_add(_ethumb_client_thumb_generate_idler, NULL);
+     }
+}
+
+static Eina_Bool
+_ethumb_client_thumb_exists_idler(void *data __UNUSED__)
+{
+   Ethumb_Client_Async *async;
+   Eina_List *l1, *l2;
+
+   EINA_LIST_FOREACH_SAFE(idle_tasks[0], l1, l2, async)
+     {
+        Ethumb *tmp;
+
+        idle_tasks[0] = eina_list_remove_list(idle_tasks[0], l1);
+
+        tmp = async->client->ethumb;
+        async->client->ethumb = async->dup;
+
+        async->exists = ethumb_client_thumb_exists(async->client, _ethumb_client_thumb_exists, async);
+        if (!async->exists)
+          {
+             async->error(async->client, (void*) async->data);
+             async->client->ethumb = tmp;
+             _ethumb_client_async_free(async);
+             continue ;
+          }
+
+        async->client->ethumb = tmp;
+
+        pending = eina_list_append(pending, async);
+
+        if (ecore_time_get() - ecore_loop_time_get() > ecore_animator_frametime_get() * 0.5)
+          return EINA_TRUE;
+     }
+
+   idler[0] = NULL;
+   return EINA_FALSE;
+}
+
+EAPI Ethumb_Client_Async *
+ethumb_client_thumb_async_get(Ethumb_Client *client,
+                              Ethumb_Client_Async_Done_Cb done,
+                              Ethumb_Client_Async_Error_Cb error,
+                              const void *data)
+{
+   Ethumb_Client_Async *async;
+
+   EINA_SAFETY_ON_NULL_RETURN_VAL(client, NULL);
+
+   async = malloc(sizeof (Ethumb_Client_Async));
+   if (!async)
+     {
+        error(client, (void*) data);
+        return NULL;
+     }
+
+   EINA_REFCOUNT_REF(client);
+   async->client = client;
+   async->dup = ethumb_dup(client->ethumb);
+   async->done = done;
+   async->error = error;
+   async->data = data;
+   async->exists = NULL;
+   async->id = -1;
+
+   idle_tasks[0] = eina_list_append(idle_tasks[0], async);
+
+   if (!idler[0])
+     idler[0] = ecore_idler_add(_ethumb_client_thumb_exists_idler, NULL);
+
+   return async;
+}
+
+EAPI void
+ethumb_client_thumb_async_cancel(Ethumb_Client *client, Ethumb_Client_Async *request)
+{
+   const char *path;
+
+   EINA_SAFETY_ON_NULL_RETURN(client);
+   EINA_SAFETY_ON_NULL_RETURN(request);
+
+   ethumb_file_get(request->dup, &path, NULL);
+
+   if (request->exists)
+     {
+        ethumb_client_thumb_exists_cancel(request->exists);
+        request->exists = NULL;
+
+        pending = eina_list_remove(pending, request);
+     }
+   else if (request->id != -1)
+     {
+        Ethumb *tmp = request->client->ethumb;
+        request->client->ethumb = request->dup;
+
+        ethumb_client_generate_cancel(request->client, request->id, NULL, NULL, NULL);
+
+        request->client->ethumb = tmp;
+
+        pending = eina_list_remove(pending, request);
+     }
+   else
+     {
+        idle_tasks[0] = eina_list_remove(idle_tasks[0], request);
+        idle_tasks[1] = eina_list_remove(idle_tasks[1], request);
+     }
+
+   _ethumb_client_async_free(request);
+}
