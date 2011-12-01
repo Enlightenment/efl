@@ -893,23 +893,97 @@ extern "C" {
     */
    EAPI const char  *elm_app_locale_dir_get(void);
 
+   /**
+    * Exposed symbol used only by macros and should not be used by apps
+    */
    EAPI void         elm_quicklaunch_mode_set(Eina_Bool ql_on);
+   
+   /**
+    * Exposed symbol used only by macros and should not be used by apps
+    */
    EAPI Eina_Bool    elm_quicklaunch_mode_get(void);
+   
+   /**
+    * Exposed symbol used only by macros and should not be used by apps
+    */
    EAPI int          elm_quicklaunch_init(int argc, char **argv);
+   
+   /**
+    * Exposed symbol used only by macros and should not be used by apps
+    */
    EAPI int          elm_quicklaunch_sub_init(int argc, char **argv);
+   
+   /**
+    * Exposed symbol used only by macros and should not be used by apps
+    */
    EAPI int          elm_quicklaunch_sub_shutdown(void);
+   
+   /**
+    * Exposed symbol used only by macros and should not be used by apps
+    */
    EAPI int          elm_quicklaunch_shutdown(void);
+   
+   /**
+    * Exposed symbol used only by macros and should not be used by apps
+    */
    EAPI void         elm_quicklaunch_seed(void);
+   
+   /**
+    * Exposed symbol used only by macros and should not be used by apps
+    */
    EAPI Eina_Bool    elm_quicklaunch_prepare(int argc, char **argv);
+   
+   /**
+    * Exposed symbol used only by macros and should not be used by apps
+    */
    EAPI Eina_Bool    elm_quicklaunch_fork(int argc, char **argv, char *cwd, void (postfork_func) (void *data), void *postfork_data);
+   
+   /**
+    * Exposed symbol used only by macros and should not be used by apps
+    */
    EAPI void         elm_quicklaunch_cleanup(void);
+   
+   /**
+    * Exposed symbol used only by macros and should not be used by apps
+    */
    EAPI int          elm_quicklaunch_fallback(int argc, char **argv);
+   
+   /**
+    * Exposed symbol used only by macros and should not be used by apps
+    */
    EAPI char        *elm_quicklaunch_exe_path_get(const char *exe);
 
+   /**
+    * Request that your elementary application needs efreet
+    * 
+    * This initializes the Efreet library when called and if support exists
+    * it returns EINA_TRUE, otherwise returns EINA_FALSE. This must be called
+    * before any efreet calls.
+    * 
+    * @return EINA_TRUE if support exists and initialization succeeded.
+    * 
+    * @ingroup Efreet
+    */
    EAPI Eina_Bool    elm_need_efreet(void);
+   
+   /**
+    * Request that your elementary application needs e_dbus
+    * 
+    * This initializes the E_dbus library when called and if support exists
+    * it returns EINA_TRUE, otherwise returns EINA_FALSE. This must be called
+    * before any e_dbus calls.
+    * 
+    * @return EINA_TRUE if support exists and initialization succeeded.
+    * 
+    * @ingroup E_dbus
+    */
    EAPI Eina_Bool    elm_need_e_dbus(void);
 
    /**
+    * Request that your elementary application needs ethumb
+    * 
+    * This initializes the Ethumb library when called and if support exists
+    * it returns EINA_TRUE, otherwise returns EINA_FALSE.
     * This must be called before any other function that deals with
     * elm_thumb objects or ethumb_client instances.
     *
@@ -918,6 +992,10 @@ extern "C" {
    EAPI Eina_Bool    elm_need_ethumb(void);
 
    /**
+    * Request that your elementary application needs web support
+    * 
+    * This initializes the Ewebkit library when called and if support exists
+    * it returns EINA_TRUE, otherwise returns EINA_FALSE.
     * This must be called before any other function that deals with
     * elm_web objects or ewk_view instances.
     *
@@ -5015,6 +5093,11 @@ extern "C" {
     * @param format Optional format of @p img to pass to the image loader
     * @param key Optional key of @p img to pass to the image loader (eg. if @p img is an edje file)
     *
+    * The @p format string should be something like "png", "jpg", "tga",
+    * "tiff", "bmp" etc. if it is provided (NULL if not). This improves
+    * the loader performance as it tries the "correct" loader first before
+    * trying a range of other possible loaders until one succeeds.
+    * 
     * @return (@c EINA_TRUE = success, @c EINA_FALSE = error)
     *
     * @note The icon image set by this function can be changed by
@@ -5035,6 +5118,23 @@ extern "C" {
     * @ingroup Icon
     */
    EAPI void                  elm_icon_file_get(const Evas_Object *obj, const char **file, const char **group) EINA_ARG_NONNULL(1);
+   /**
+    * Set the file that will be used, but use a generated thumbnail.
+    *
+    * @param obj The icon object
+    * @param file The path to file that will be used as icon image
+    * @param group The group that the icon belongs to an edje file
+    *
+    * This functions like elm_icon_file_set() but requires the Ethumb library
+    * support to be enabled successfully with elm_need_ethumb(). When set
+    * the file indicated has a thumbnail generated and cached on disk for
+    * future use or will directly use an existing cached thumbnail if it
+    * is valid.
+    * 
+    * @see elm_icon_file_set()
+    *
+    * @ingroup Icon
+    */
    EAPI void                  elm_icon_thumb_set(Evas_Object *obj, const char *file, const char *group) EINA_ARG_NONNULL(1, 2);
    /**
     * Set the icon by icon standards names.
@@ -5311,9 +5411,9 @@ extern "C" {
     * @c EINA_FALSE otherwise. Default is @c EINA_FALSE.
     *
     * Since the default animation mode is set to EINA_FALSE,
-    * the icon is shown without animation.
-    * This might be desirable when the application developer wants to show
-    * a snapshot of the animated icon.
+    * the icon is shown without animation. Files like animated GIF files
+    * can animate, and this is supported if you enable animated support
+    * on the icon.
     * Set it to EINA_TRUE when the icon needs to be animated.
     * @ingroup Icon
     */
@@ -5336,6 +5436,10 @@ extern "C" {
     *
     * To play elm icon's animation, set play to EINA_TURE.
     * For example, you make gif player using this set/get API and click event.
+    * This literally lets you control current play or paused state. To have
+    * this work with animated GIF files for example, you first, before
+    * setting the file have to use elm_icon_animated_set() to enable animation
+    * at all on the icon.
     *
     * 1. Click event occurs
     * 2. Check play flag using elm_icon_animaged_play_get
@@ -5404,14 +5508,18 @@ extern "C" {
     */
    typedef enum _Elm_Image_Orient
      {
-        ELM_IMAGE_ORIENT_NONE, /**< no orientation change */
-        ELM_IMAGE_ROTATE_90_CW, /**< rotate 90 degrees clockwise */
-        ELM_IMAGE_ROTATE_180_CW, /**< rotate 180 degrees clockwise */
-        ELM_IMAGE_ROTATE_90_CCW, /**< rotate 90 degrees counter-clockwise (i.e. 270 degrees clockwise) */
-        ELM_IMAGE_FLIP_HORIZONTAL, /**< flip image horizontally */
-        ELM_IMAGE_FLIP_VERTICAL, /**< flip image vertically */
-        ELM_IMAGE_FLIP_TRANSPOSE, /**< flip the image along the y = (side - x) line*/
-        ELM_IMAGE_FLIP_TRANSVERSE /**< flip the image along the y = x line */
+        ELM_IMAGE_ORIENT_NONE = 0, /**< no orientation change */
+        ELM_IMAGE_ORIENT_0 = 0, /**< no orientation change */
+        ELM_IMAGE_ROTATE_90 = 1, /**< rotate 90 degrees clockwise */
+        ELM_IMAGE_ROTATE_180 = 2, /**< rotate 180 degrees clockwise */
+        ELM_IMAGE_ROTATE_270 = 3, /**< rotate 90 degrees counter-clockwise (i.e. 270 degrees clockwise) */
+        /*EINA_DEPRECATED*/ELM_IMAGE_ROTATE_90_CW = 1, /**< rotate 90 degrees clockwise */
+        /*EINA_DEPRECATED*/ELM_IMAGE_ROTATE_180_CW = 2, /**< rotate 180 degrees clockwise */
+        /*EINA_DEPRECATED*/ELM_IMAGE_ROTATE_90_CCW = 3, /**< rotate 90 degrees counter-clockwise (i.e. 270 degrees clockwise) */
+        ELM_IMAGE_FLIP_HORIZONTAL = 4, /**< flip image horizontally */
+        ELM_IMAGE_FLIP_VERTICAL = 5, /**< flip image vertically */
+        ELM_IMAGE_FLIP_TRANSPOSE = 6, /**< flip the image along the y = (width - x) line (bottom-left to top-right) */
+        ELM_IMAGE_FLIP_TRANSVERSE = 7 /**< flip the image along the y = x line (top-left to bottom-right) */
      } Elm_Image_Orient;
 
    /**
@@ -5493,7 +5601,7 @@ extern "C" {
     *
     * This is the real size of the image, not the size of the object.
     *
-    * On error, neither w or h will be written.
+    * On error, neither w and h will be fileld with 0.
     *
     * @ingroup Image
     */

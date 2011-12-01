@@ -372,7 +372,7 @@ _els_smart_icon_orient_set(Evas_Object *obj, Elm_Image_Orient orient)
       case ELM_IMAGE_FLIP_VERTICAL:
          _els_smart_icon_flip_vertical(sd);
          return;
-      case ELM_IMAGE_ROTATE_180_CW:
+      case ELM_IMAGE_ROTATE_180:
          _els_smart_icon_rotate_180(sd);
          return;
       default:
@@ -403,11 +403,11 @@ _els_smart_icon_orient_set(Evas_Object *obj, Elm_Image_Orient orient)
          w = -w;
          hw = hw - 1;
          break;
-      case ELM_IMAGE_ROTATE_90_CW:
+      case ELM_IMAGE_ROTATE_90:
          to = data + w - 1;
          hw = -hw - 1;
          break;
-      case ELM_IMAGE_ROTATE_90_CCW:
+      case ELM_IMAGE_ROTATE_270:
          to = data + hw - w;
          w = -w;
          hw = hw + 1;

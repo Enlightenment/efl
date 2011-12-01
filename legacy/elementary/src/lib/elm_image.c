@@ -181,6 +181,8 @@ elm_image_smooth_get(const Evas_Object *obj)
 EAPI void
 elm_image_object_size_get(const Evas_Object *obj, int *w, int *h)
 {
+   if (w) *w = 0;
+   if (h) *h = 0;
    ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
 
