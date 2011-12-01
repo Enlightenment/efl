@@ -117,7 +117,6 @@ static void _title_icon_del(void *data,
                             Evas_Object *obj,
                             void *event_info);
 static void _title_content_set(Elm_Naviframe_Item *it,
-                               Elm_Naviframe_Content_Item_Pair *pair,
                                const char *part,
                                Evas_Object *content);
 static void _title_prev_btn_set(Elm_Naviframe_Item *it,
@@ -321,7 +320,6 @@ _item_content_set_hook(Elm_Object_Item *it,
 {
    ELM_OBJ_ITEM_CHECK_OR_RETURN(it);
 
-   Elm_Naviframe_Content_Item_Pair *pair = NULL;
    Elm_Naviframe_Item *navi_it = (Elm_Naviframe_Item *) it;
 
    //specified parts
@@ -347,7 +345,7 @@ _item_content_set_hook(Elm_Object_Item *it,
      }
 
    //common part
-   _title_content_set(navi_it, pair, part, content);
+   _title_content_set(navi_it, part, content);
 }
 
 static Evas_Object *
@@ -555,16 +553,35 @@ _item_content_del(void *data,
 
 static void
 _title_content_set(Elm_Naviframe_Item *it,
-                   Elm_Naviframe_Content_Item_Pair *pair,
                    const char *part,
                    Evas_Object *content)
 {
    char buf[1024];
+   Elm_Naviframe_Content_Item_Pair *pair = NULL;
 
    EINA_INLIST_FOREACH(it->content_list, pair)
      if (!strcmp(part, pair->part)) break;
 
-   if (!pair)
+   if ((pair) && (pair->content))
+     {
+        if (!content)
+          {
+             evas_object_del(pair->content);
+             pair->content = NULL;
+             return;
+          }
+        if (pair->content == content) return;
+        evas_object_event_callback_del(pair->content,
+                                       EVAS_CALLBACK_DEL,
+                                       _title_content_del);
+        evas_object_event_callback_del(pair->content,
+                                       EVAS_CALLBACK_CHANGED_SIZE_HINTS,
+                                       _changed_size_hints);
+        evas_object_del(pair->content);
+        snprintf(buf, sizeof(buf), "elm,state,%s,hide", part);
+        edje_object_signal_emit(VIEW(it), buf, "elm");
+     }
+   else
      {
         pair = ELM_NEW(Elm_Naviframe_Content_Item_Pair);
         if (!pair)
@@ -578,39 +595,20 @@ _title_content_set(Elm_Naviframe_Item *it,
                                               EINA_INLIST_GET(pair));
      }
 
-   if (pair->content != content)
-     {
-        evas_object_event_callback_del(pair->content,
-                                       EVAS_CALLBACK_DEL,
-                                       _title_content_del);
-        evas_object_event_callback_del(pair->content,
-                                       EVAS_CALLBACK_CHANGED_SIZE_HINTS,
-                                       _changed_size_hints);
-        evas_object_del(pair->content);
-        elm_widget_sub_object_add(WIDGET(it), content);
-        evas_object_event_callback_add(content,
-                                       EVAS_CALLBACK_DEL,
-                                       _title_content_del,
-                                       pair);
-        evas_object_event_callback_add(content,
-                                       EVAS_CALLBACK_CHANGED_SIZE_HINTS,
-                                       _changed_size_hints,
-                                       WIDGET(it));
-     }
-   if (content)
-     {
-        edje_object_part_swallow(VIEW(it), part, content);
-        snprintf(buf, sizeof(buf), "elm,state,%s,show", part);
-        edje_object_signal_emit(VIEW(it), buf, "elm");
-        pair->content = content;
-        _sizing_eval(WIDGET(it));
-     }
-   else
-     {
-        snprintf(buf, sizeof(buf), "elm,state,%s,hide", part);
-        edje_object_signal_emit(VIEW(it), buf, "elm");
-        pair->content = NULL;
-     }
+   elm_widget_sub_object_add(WIDGET(it), content);
+   evas_object_event_callback_add(content,
+                                  EVAS_CALLBACK_DEL,
+                                  _title_content_del,
+                                  pair);
+   evas_object_event_callback_add(content,
+                                  EVAS_CALLBACK_CHANGED_SIZE_HINTS,
+                                  _changed_size_hints,
+                                  WIDGET(it));
+   edje_object_part_swallow(VIEW(it), part, content);
+   snprintf(buf, sizeof(buf), "elm,state,%s,show", part);
+   edje_object_signal_emit(VIEW(it), buf, "elm");
+   pair->content = content;
+   _sizing_eval(WIDGET(it));
 }
 
 static void
