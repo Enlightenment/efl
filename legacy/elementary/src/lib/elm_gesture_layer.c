@@ -3093,8 +3093,6 @@ _event_process(void *data, Evas_Object *obj __UNUSED__,
    if (_make_pointer_event(data, event_info, event_type, &_pe))
      pe = &_pe;
 
-   if (!pe) return;
-
    if (IS_TESTED(ELM_GESTURE_N_LONG_TAPS))
      _n_long_tap_test(data, pe, event_info, event_type,
            ELM_GESTURE_N_LONG_TAPS);
