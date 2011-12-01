@@ -2837,11 +2837,13 @@ _smart_add(Evas_Object *obj)
    sd->edje_obj = o;
    elm_smart_scroller_object_theme_set(NULL, obj, "scroller", "base", "default");
    edje_object_signal_callback_add(o, "drag", "elm.dragable.vbar", _smart_edje_drag_v, sd);
+   edje_object_signal_callback_add(o, "drag,set", "elm.dragable.vbar", _smart_edje_drag_v, sd);
    edje_object_signal_callback_add(o, "drag,start", "elm.dragable.vbar", _smart_edje_drag_v_start, sd);
    edje_object_signal_callback_add(o, "drag,stop", "elm.dragable.vbar", _smart_edje_drag_v_stop, sd);
    edje_object_signal_callback_add(o, "drag,step", "elm.dragable.vbar", _smart_edje_drag_v, sd);
    edje_object_signal_callback_add(o, "drag,page", "elm.dragable.vbar", _smart_edje_drag_v, sd);
    edje_object_signal_callback_add(o, "drag", "elm.dragable.hbar", _smart_edje_drag_h, sd);
+   edje_object_signal_callback_add(o, "drag,set", "elm.dragable.hbar", _smart_edje_drag_h, sd);
    edje_object_signal_callback_add(o, "drag,start", "elm.dragable.hbar", _smart_edje_drag_h_start, sd);
    edje_object_signal_callback_add(o, "drag,stop", "elm.dragable.hbar", _smart_edje_drag_h_stop, sd);
    edje_object_signal_callback_add(o, "drag,step", "elm.dragable.hbar", _smart_edje_drag_h, sd);
