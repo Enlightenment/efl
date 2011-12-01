@@ -15185,7 +15185,8 @@ extern "C" {
     * @param it The toolbar item.
     * @return The icon object
     *
-    * @see elm_toolbar_item_icon_set() or elm_toolbar_item_icon_memfile_set() for details.
+    * @see elm_toolbar_item_icon_set(), elm_toolbar_item_icon_file_set(),
+    * or elm_toolbar_item_icon_memfile_set() for details.
     *
     * @ingroup Toolbar
     */
@@ -15207,6 +15208,23 @@ extern "C" {
     * @ingroup Toolbar
     */
    EAPI Eina_Bool elm_toolbar_item_icon_memfile_set(Elm_Object_Item *it, const void *img, size_t size, const char *format, const char *key) EINA_ARG_NONNULL(1);
+
+   /**
+    * Set the icon associated with @p item to an image in a binary buffer.
+    *
+    * @param it The toolbar item.
+    * @param file The file that contains the image
+    * @param key Optional key of @p img to pass to the image loader (eg. if @p img is an edje file)
+    *
+    * @return (@c EINA_TRUE = success, @c EINA_FALSE = error)
+    *
+    * @note The icon image set by this function can be changed by
+    * elm_toolbar_item_icon_set().
+    *
+    * @ingroup Toolbar
+    */
+   EAPI Eina_Bool elm_toolbar_item_icon_file_set(Elm_Object_Item *it, const char *file, const char *key) EINA_ARG_NONNULL(1);
+
    /**
     * Delete them item from the toolbar.
     *
