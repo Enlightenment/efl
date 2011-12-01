@@ -6191,7 +6191,7 @@ extern "C" {
     * @li hoversel_vertical_entry: Another internal for @ref Hoversel.
     *
     * Default contents parts of the button widget that you can use for are:
-    * @li "icon" - A icon of the button
+    * @li "icon" - An icon of the button
     *
     * Default text parts of the button widget that you can use for are:
     * @li "default" - Label of the button
@@ -7648,7 +7648,7 @@ extern "C" {
     *                 has been triggered by the cursor in the first place).
     *
     * Default contents parts of the toggle widget that you can use for are:
-    * @li "icon" - A icon of the toggle
+    * @li "icon" - An icon of the toggle
     *
     * Default text parts of the toggle widget that you can use for are:
     * @li "elm.text" - Label of the toggle
@@ -15966,7 +15966,7 @@ extern "C" {
     *
     * @param obj The menu object.
     * @param parent The parent menu item (optional)
-    * @param icon A icon display on the item. The icon will be destryed by the menu.
+    * @param icon An icon display on the item. The icon will be destryed by the menu.
     * @param label The label of the item.
     * @param func Function called when the user select the item.
     * @param data Data sent by the callback.
@@ -17454,7 +17454,7 @@ extern "C" {
     * - @c "default"
     *
     * Default contents parts of the slider widget that you can use for are:
-    * @li "icon" - A icon of the slider
+    * @li "icon" - An icon of the slider
     * @li "end" - A end part content of the slider
     *
     * Default text parts of the silder widget that you can use for are:
@@ -19939,7 +19939,7 @@ extern "C" {
     *             the check object(event_info is NULL).
     *
     * Default contents parts of the check widget that you can use for are:
-    * @li "icon" - A icon of the check
+    * @li "icon" - An icon of the check
     *
     * Default text parts of the check widget that you can use for are:
     * @li "elm.text" - Label of the check
@@ -20077,7 +20077,7 @@ extern "C" {
     * the radio objects within the group of radio objects that work together.
     *
     * Default contents parts of the radio widget that you can use for are:
-    * @li "icon" - A icon of the radio
+    * @li "icon" - An icon of the radio
     *
     * @ref tutorial_radio show most of this API in action.
     * @{
@@ -21242,7 +21242,7 @@ extern "C" {
     *      "pulse" effect is available)
     *
     * Default contents parts of the progressbar widget that you can use for are:
-    * @li "icon" - A icon of the progressbar
+    * @li "icon" - An icon of the progressbar
     *
     * Here is an example on its usage:
     * @li @ref progressbar_example
@@ -26661,7 +26661,7 @@ extern "C" {
     * @li "default" - A content of the ctxpopup
     *
     * Default contents parts of the naviframe items that you can use for are:
-    * @li "icon" - A icon in the title area
+    * @li "icon" - An icon in the title area
     *
     * Default text parts of the naviframe items that you can use for are:
     * @li "default" - Title label in the title area
@@ -28550,7 +28550,7 @@ extern "C" {
     *
     * Default contents parts of the naviframe items that you can use for are:
     * @li "default" - A main content of the page
-    * @li "icon" - A icon in the title area
+    * @li "icon" - An icon in the title area
     * @li "prev_btn" - A button to go to the previous page
     * @li "next_btn" - A button to go to the next page
     *
