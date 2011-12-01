@@ -115,7 +115,7 @@ elm_main(int    argc __UNUSED__,
    elm_gengrid_item_size_set(grid, 150, 150);
 
    gic.item_style = "default";
-   gic.func.label_get = _grid_label_get;
+   gic.func.text_get = _grid_label_get;
    gic.func.content_get = _grid_content_get;
    gic.func.state_get = NULL;
    gic.func.del = NULL;

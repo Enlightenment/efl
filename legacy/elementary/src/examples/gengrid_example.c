@@ -605,7 +605,7 @@ elm_main(int    argc __UNUSED__,
    evas_object_smart_callback_add(sl, "changed", _page_change_cb, grid);
 
    gic.item_style = "default";
-   gic.func.label_get = _grid_label_get;
+   gic.func.text_get = _grid_label_get;
    gic.func.content_get = _grid_content_get;
    gic.func.state_get = _grid_state_get;
    gic.func.del = _grid_del;
