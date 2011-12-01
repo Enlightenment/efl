@@ -700,43 +700,11 @@ source_init(void *data)
      {
         wd->source_names[idx] = strdup(s->name);
         INF("source : %s", wd->source_names[idx]);
+        if (s->zoom_min < wd->zoom_min) wd->zoom_min = s->zoom_min;
+        if (s->zoom_max > wd->zoom_max) wd->zoom_max = s->zoom_max;
         idx++;
      }
    wd->source_names[idx] = NULL;
-}
-
-static void
-zoom_min_get(void *data)
-{
-   ELM_CHECK_WIDTYPE(data, widtype);
-   Widget_Data *wd = elm_widget_data_get(data);
-   Map_Sources_Tab *s;
-   Eina_List *l;
-   int tz;
-
-   if (!wd) return;
-   EINA_LIST_FOREACH(wd->map_sources_tab, l, s)
-     {
-        tz = s->zoom_min;
-        if (tz < wd->zoom_min) wd->zoom_min = tz;
-     }
-}
-
-static void
-zoom_max_get(void *data)
-{
-   ELM_CHECK_WIDTYPE(data, widtype);
-   Widget_Data *wd = elm_widget_data_get(data);
-   Map_Sources_Tab *s;
-   Eina_List *l;
-   int tz;
-
-   if (!wd) return;
-   EINA_LIST_FOREACH(wd->map_sources_tab, l, s)
-     {
-        tz = s->zoom_max;
-        if (tz > wd->zoom_max) wd->zoom_max = tz;
-     }
 }
 
 static void
@@ -3190,18 +3158,17 @@ elm_map_add(Evas_Object *parent)
    evas_object_smart_callback_add(wd->scr, "scroll", _scr_scroll, obj);
 
    elm_smart_scroller_bounce_allow_set(wd->scr, bounce, bounce);
+
+   wd->zoom_min = 0xFF;
+   wd->zoom_max = 0X00;
    source_init(obj);
 
    wd->obj = obj;
    wd->map = evas_map_new(4);
    if (!wd->map) return NULL;
 
-   wd->zoom_min = 0xFF;
-   wd->zoom_max = 0X00;
    wd->markers_max_num = 30;
    wd->pinch.level = 1.0;
-   zoom_min_get(obj);
-   zoom_max_get(obj);
    wd->markers = calloc(wd->zoom_max + 1, sizeof(void*));
 
    evas_object_smart_callback_add(obj, "scroll-hold-on", _hold_on, obj);
