@@ -8175,16 +8175,16 @@ extern "C" {
     *
     * An item in a gengrid can have 0 or more texts (they can be
     * regular text or textblock Evas objects - that's up to the style
-    * to determine), 0 or more icons (which are simply objects
+    * to determine), 0 or more contents (which are simply objects
     * swallowed into the gengrid item's theming Edje object) and 0 or
     * more <b>boolean states</b>, which have the behavior left to the
     * user to define. The Edje part names for each of these properties
     * will be looked up, in the theme file for the gengrid, under the
-    * Edje (string) data items named @c "texts", @c "icons" and @c
+    * Edje (string) data items named @c "texts", @c "contents" and @c
     * "states", respectively. For each of those properties, if more
     * than one part is provided, they must have names listed separated
     * by spaces in the data fields. For the default gengrid item
-    * theme, we have @b one text part (@c "elm.text"), @b two icon
+    * theme, we have @b one text part (@c "elm.text"), @b two content 
     * parts (@c "elm.swalllow.icon" and @c "elm.swallow.end") and @b
     * no state parts.
     *
@@ -18223,7 +18223,7 @@ extern "C" {
     * while still being fast and low on memory usage. At the same time it was
     * also made to be able to do tree structures. But the price to pay is more
     * complexity when it comes to usage. If all you want is a simple list with
-    * icons and a single label, use the normal @ref List object.
+    * icons and a single text, use the normal @ref List object.
     *
     * Genlist has a fairly large API, mostly because it's relatively complex,
     * trying to be both expansive, powerful and efficient. First we will begin
@@ -18250,7 +18250,7 @@ extern "C" {
     *   elm_genlist_item_append() and related item creation functions, and a @c
     *   obj parameter that points to the genlist object itself.
     *
-    * The function pointers inside @c func are @c text_get, @c icon_get, @c
+    * The function pointers inside @c func are @c text_get, @c content_get, @c
     * state_get and @c del. The 3 first functions also receive a @c part
     * parameter described below. A brief description of these functions follows:
     *
@@ -18299,7 +18299,7 @@ extern "C" {
     *
     * @section Genlist_Items Structure of items
     *
-    * An item in a genlist can have 0 or more text labels (they can be regular
+    * An item in a genlist can have 0 or more texts (they can be regular
     * text or textblock Evas objects - that's up to the style to determine), 0
     * or more contents (which are simply objects swallowed into the genlist item's
     * theming Edje object) and 0 or more <b>boolean states</b>, which have the
@@ -18308,7 +18308,7 @@ extern "C" {
     * under the Edje (string) data items named @c "labels", @c "contents" and @c
     * "states", respectively. For each of those properties, if more than one
     * part is provided, they must have names listed separated by spaces in the
-    * data fields. For the default genlist item theme, we have @b one label
+    * data fields. For the default genlist item theme, we have @b one text 
     * part (@c "elm.text"), @b two content parts (@c "elm.swalllow.icon" and @c
     * "elm.swallow.end") and @b no state parts.
     *
@@ -18375,7 +18375,7 @@ extern "C" {
     * elm_genlist_item_data_get() returns the data pointer set by the item
     * creation functions.
     *
-    * If an item changes (state of boolean changes, label or contents change),
+    * If an item changes (state of boolean changes, text or contents change),
     * then use elm_genlist_item_update() to have genlist update the item with
     * the new state. Genlist will re-realize the item thus call the functions
     * in the _Elm_Genlist_Item_Class for that item.
@@ -19575,11 +19575,11 @@ extern "C" {
     */
    EAPI void               elm_genlist_item_data_set(Elm_Genlist_Item *it, const void *data) EINA_ARG_NONNULL(1);
    /**
-    * Tells genlist to "orphan" icons fetchs by the item class
+    * Tells genlist to "orphan" contents fetchs by the item class
     *
     * @param it The item
     *
-    * This instructs genlist to release references to icons in the item,
+    * This instructs genlist to release references to contents in the item,
     * meaning that they will no longer be managed by genlist and are
     * floating "orphans" that can be re-used elsewhere if the user wants
     * to.
@@ -19615,7 +19615,7 @@ extern "C" {
     * @param it The item
     *
     * This updates an item by calling all the item class functions again
-    * to get the icons, labels and states. Use this when the original
+    * to get the contents, texts and states. Use this when the original
     * item data has changed and the changes are desired to be reflected.
     *
     * Use elm_genlist_realized_items_update() to update all already realized
@@ -19650,7 +19650,7 @@ extern "C" {
     * @param itf The flags of item's part type
     *
     * This updates an item's part by calling item's fetching functions again
-    * to get the icons, labels and states. Use this when the original
+    * to get the contents, texts and states. Use this when the original
     * item data has changed and the changes are desired to be reflected.
     * Second parts argument is used for globbing to match '*', '?', and '.'
     * It can be used at updating multi fields.
@@ -19689,7 +19689,7 @@ extern "C" {
     * have only one tooltip at a time, so any previous tooltip data
     * will get removed.
     *
-    * In order to set an icon or something else as a tooltip, look at
+    * In order to set a content or something else as a tooltip, look at
     * elm_genlist_item_tooltip_content_cb_set().
     *
     * @ingroup Genlist
@@ -19924,7 +19924,7 @@ extern "C" {
     * @param obj The genlist object.
     *
     * This updates all realized items by calling all the item class functions again
-    * to get the icons, labels and states. Use this when the original
+    * to get the contents, texts and states. Use this when the original
     * item data has changed and the changes are desired to be reflected.
     *
     * To update just one item, use elm_genlist_item_update().
