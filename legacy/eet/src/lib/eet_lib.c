@@ -88,7 +88,7 @@ typedef struct _Eet_File_Directory Eet_File_Directory;
 
 struct _Eet_File
 {
-   char                *path;
+   const char          *path;
    Eina_File           *readfp;
    Eet_File_Header     *header;
    Eet_Dictionary      *ed;
@@ -1434,6 +1434,7 @@ eet_internal_close(Eet_File *ef,
    memset(ef, 0, sizeof(Eet_File));
 
    /* free it */
+   eina_stringshare_del(ef->path);
    free(ef);
    return err;
 
@@ -1593,8 +1594,7 @@ open_error:
    INIT_FILE(ef);
    ef->key = NULL;
    ef->readfp = fp;
-   ef->path = ((char *)ef) + sizeof(Eet_File);
-   memcpy(ef->path, file, file_len);
+   ef->path = eina_stringshare_add_length(file, file_len);
    ef->magic = EET_MAGIC_FILE;
    ef->references = 1;
    ef->mode = mode;
