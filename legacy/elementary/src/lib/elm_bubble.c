@@ -382,19 +382,19 @@ elm_bubble_content_unset(Evas_Object *obj)
 EAPI void
 elm_bubble_icon_set(Evas_Object *obj, Evas_Object *icon)
 {
-   _content_set_hook(obj, "elm.swallow.icon", icon);
+   _content_set_hook(obj, "icon", icon);
 }
 
 EAPI Evas_Object *
 elm_bubble_icon_get(const Evas_Object *obj)
 {
-   return _content_get_hook(obj, "elm.swallow.icon");
+   return _content_get_hook(obj, "icon");
 }
 
 EAPI Evas_Object *
 elm_bubble_icon_unset(Evas_Object *obj)
 {
-   return _content_unset_hook(obj, "elm.swallow.icon");
+   return _content_unset_hook(obj, "icon");
 }
 
 EAPI void
