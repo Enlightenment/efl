@@ -551,3 +551,4 @@
 
         * added eet_file_get to return the filename of an Eet_File
         * Eet_File filenames are now stringshared
+        * added mempool allocators
