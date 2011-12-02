@@ -225,8 +225,8 @@ _forward(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __
    pos += length * 0.3;
    elm_video_play_position_set(wd->video, pos);
 
-   evas_object_smart_callback_call(player, SIG_FORWARD_CLICKED, NULL);
    edje_object_signal_emit(wd->layout, "elm,button,forward", "elm");
+   evas_object_smart_callback_call(player, SIG_FORWARD_CLICKED, NULL);
 }
 
 static void
@@ -237,8 +237,8 @@ _info(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNU
 
    if (!wd) return ;
 
-   evas_object_smart_callback_call(player, SIG_INFO_CLICKED, NULL);
    edje_object_signal_emit(wd->layout, "elm,button,info", "elm");
+   evas_object_smart_callback_call(player, SIG_INFO_CLICKED, NULL);
 }
 
 static void
@@ -256,8 +256,8 @@ _next(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNU
    pos += length * 0.1;
    elm_video_play_position_set(wd->video, pos);
 
-   evas_object_smart_callback_call(player, SIG_NEXT_CLICKED, NULL);
    edje_object_signal_emit(wd->layout, "elm,button,next", "elm");
+   evas_object_smart_callback_call(player, SIG_NEXT_CLICKED, NULL);
 }
 
 static void
@@ -271,8 +271,8 @@ _pause(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UN
    edje_object_signal_emit(wd->layout, "elm,player,pause", "elm");
    elm_video_pause(wd->video);
 
-   evas_object_smart_callback_call(player, SIG_PAUSE_CLICKED, NULL);
    edje_object_signal_emit(wd->layout, "elm,button,pause", "elm");
+   evas_object_smart_callback_call(player, SIG_PAUSE_CLICKED, NULL);
 }
 
 static void
@@ -283,8 +283,8 @@ _play(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNU
 
    if (!wd) return ;
    elm_video_play(wd->video);
-   evas_object_smart_callback_call(player, SIG_PLAY_CLICKED, NULL);
    edje_object_signal_emit(wd->layout, "elm,button,play", "elm");
+   evas_object_smart_callback_call(player, SIG_PLAY_CLICKED, NULL);
 }
 
 static void
@@ -313,8 +313,8 @@ _rewind(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __U
 
    if (!wd) return ;
    elm_video_play_position_set(wd->video, 0);
-   evas_object_smart_callback_call(player, SIG_REWIND_CLICKED, NULL);
    edje_object_signal_emit(wd->layout, "elm,button,rewind", "elm");
+   evas_object_smart_callback_call(player, SIG_REWIND_CLICKED, NULL);
 }
 
 static void
@@ -325,8 +325,8 @@ _stop(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNU
 
    if (!wd) return ;
 
-   evas_object_smart_callback_call(player, SIG_STOP_CLICKED, NULL);
    edje_object_signal_emit(wd->layout, "elm,button,stop", "elm");
+   evas_object_smart_callback_call(player, SIG_STOP_CLICKED, NULL);
 }
 
 static void
