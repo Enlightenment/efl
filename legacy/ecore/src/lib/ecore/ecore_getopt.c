@@ -130,7 +130,7 @@ _ecore_getopt_help_line(FILE       *fp,
                 todo = len;
 
               for (i = 0; i < todo; i++)
-                if (isspace(text[i]))
+                if (isspace((unsigned char)text[i]))
                   {
                      space = text + i;
                      break;

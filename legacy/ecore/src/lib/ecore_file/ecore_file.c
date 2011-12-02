@@ -859,7 +859,7 @@ ecore_file_app_exe_get(const char *app)
 
    p = (char *)app;
 restart:
-   while ((*p) && (isspace(*p))) p++;
+   while ((*p) && (isspace((unsigned char)*p))) p++;
    exe1 = p;
    while (*p)
      {
@@ -879,7 +879,7 @@ restart:
                in_quot_sing = 1;
              else if (*p == '\"')
                in_quot_dbl = 1;
-             if ((isspace(*p)) && (!((p > app) && (p[-1] != '\\'))))
+             if ((isspace((unsigned char)*p)) && ((p <= app) || (p[-1] == '\\')))
                break;
           }
         p++;
@@ -974,7 +974,7 @@ restart:
                in_quot_sing = 1;
              else if (*p == '\"')
                in_quot_dbl = 1;
-             else if (isspace(*p))
+             else if (isspace((unsigned char)*p))
                {
                   if (restart)
                     goto restart;
