@@ -82,6 +82,126 @@ EAPI Eet_Version *eet_version = &_version;
 
 #define EET_MAGIC_FILE2       0x1ee70f42
 
+typedef struct _Eet_File_Header    Eet_File_Header;
+typedef struct _Eet_File_Node      Eet_File_Node;
+typedef struct _Eet_File_Directory Eet_File_Directory;
+
+struct _Eet_File
+{
+   const char          *path;
+   Eina_File           *readfp;
+   Eet_File_Header     *header;
+   Eet_Dictionary      *ed;
+   Eet_Key             *key;
+   const unsigned char *data;
+   const void          *x509_der;
+   const void          *signature;
+   void                *sha1;
+
+   Eet_File_Mode        mode;
+
+   int                  magic;
+   int                  references;
+
+   unsigned long int    data_size;
+   int                  x509_length;
+   unsigned int         signature_length;
+   int                  sha1_length;
+
+   Eina_Lock            file_lock;
+
+   unsigned char        writes_pending : 1;
+   unsigned char        delete_me_now : 1;
+};
+
+struct _Eet_File_Header
+{
+   int                 magic;
+   Eet_File_Directory *directory;
+};
+
+struct _Eet_File_Directory
+{
+   int             size;
+   Eet_File_Node **nodes;
+};
+
+struct _Eet_File_Node
+{
+   char             *name;
+   void             *data;
+   Eet_File_Node    *next; /* FIXME: make buckets linked lists */
+
+   unsigned long int offset;
+   unsigned long int dictionary_offset;
+   unsigned long int name_offset;
+
+   unsigned int      name_size;
+   unsigned int      size;
+   unsigned int      data_size;
+
+   unsigned char     free_name : 1;
+   unsigned char     compression : 1;
+   unsigned char     ciphered : 1;
+   unsigned char     alias : 1;
+};
+
+#if 0
+/* Version 2 */
+/* NB: all int's are stored in network byte order on disk */
+/* file format: */
+int magic; /* magic number ie 0x1ee7ff00 */
+int num_directory_entries; /* number of directory entries to follow */
+int bytes_directory_entries; /* bytes of directory entries to follow */
+struct
+{
+   int  offset; /* bytes offset into file for data chunk */
+   int  flags; /* flags - for now 0 = uncompressed and clear, 1 = compressed and clear, 2 = uncompressed and ciphered, 3 = compressed and ciphered */
+   int  size; /* size of the data chunk */
+   int  data_size; /* size of the (uncompressed) data chunk */
+   int  name_size; /* length in bytes of the name field */
+   char name[name_size]; /* name string (variable length) and \0 terminated */
+} directory[num_directory_entries];
+/* and now startes the data stream... */
+#endif /* if 0 */
+
+#if 0
+/* Version 3 */
+/* NB: all int's are stored in network byte order on disk */
+/* file format: */
+int magic; /* magic number ie 0x1ee70f42 */
+int num_directory_entries; /* number of directory entries to follow */
+int num_dictionary_entries; /* number of dictionary entries to follow */
+struct
+{
+   int data_offset; /* bytes offset into file for data chunk */
+   int size; /* size of the data chunk */
+   int data_size; /* size of the (uncompressed) data chunk */
+   int name_offset; /* bytes offset into file for name string */
+   int name_size; /* length in bytes of the name field */
+   int flags; /* bit flags - for now:
+                 bit 0 => compresion on/off
+                 bit 1 => ciphered on/off
+                 bit 2 => alias
+               */
+} directory[num_directory_entries];
+struct
+{
+   int hash;
+   int offset;
+   int size;
+   int prev;
+   int next;
+} dictionary[num_dictionary_entries];
+/* now start the string stream. */
+/* and right after them the data stream. */
+int magic_sign; /* Optional, only if the eet file is signed. */
+int signature_length; /* Signature length. */
+int x509_length; /* Public certificate that signed the file. */
+char signature[signature_length]; /* The signature. */
+char x509[x509_length]; /* The public certificate. */
+#endif /* if 0 */
+
 #define EET_FILE2_HEADER_COUNT           3
 #define EET_FILE2_DIRECTORY_ENTRY_COUNT  6
 #define EET_FILE2_DICTIONARY_ENTRY_COUNT 5
@@ -574,16 +694,10 @@ eet_init(void)
 
    eina_lock_new(&eet_cache_lock);
 
-   if (!eet_mempool_init())
-     {
-        EINA_LOG_ERR("Eet: Eet_Node mempool creation failed");
-        goto unregister_log_domain;
-     }
-
    if (!eet_node_init())
      {
         EINA_LOG_ERR("Eet: Eet_Node mempool creation failed");
-        goto shutdown_mempool;
+        goto unregister_log_domain;
      }
 
 #ifdef HAVE_GNUTLS
@@ -627,8 +741,6 @@ eet_init(void)
 shutdown_eet:
 #endif
    eet_node_shutdown();
-shutdown_mempool:
-   eet_mempool_shutdown();
 unregister_log_domain:
    eina_log_domain_unregister(_eet_log_dom_global);
    _eet_log_dom_global = -1;
@@ -645,7 +757,6 @@ eet_shutdown(void)
 
    eet_clearcache();
    eet_node_shutdown();
-   eet_mempool_shutdown();
 
    eina_lock_free(&eet_cache_lock);
 
@@ -791,14 +902,14 @@ eet_internal_read2(Eet_File *ef)
      return NULL;
 
    /* allocate header */
-   ef->header = eet_file_header_calloc(1);
+   ef->header = calloc(1, sizeof(Eet_File_Header));
    if (eet_test_close(!ef->header, ef))
      return NULL;
 
    ef->header->magic = EET_MAGIC_FILE_HEADER;
 
    /* allocate directory block in ram */
-   ef->header->directory = eet_file_directory_calloc(1);
+   ef->header->directory = calloc(1, sizeof(Eet_File_Directory));
    if (eet_test_close(!ef->header->directory, ef))
      return NULL;
 
@@ -828,10 +939,10 @@ eet_internal_read2(Eet_File *ef)
 
         /* out directory block is inconsistent - we have overrun our */
         /* dynamic block buffer before we finished scanning dir entries */
-        efn = eet_file_node_malloc(1);
+        efn = malloc(sizeof(Eet_File_Node));
         if (eet_test_close(!efn, ef))
           {
-             if (efn) eet_file_node_mp_free(efn);  /* yes i know - we only get here if
+             if (efn) free(efn);  /* yes i know - we only get here if
                                    * efn is null/0 -> trying to shut up
                                    * warning tools like cppcheck */
              return NULL;
@@ -911,11 +1022,11 @@ eet_internal_read2(Eet_File *ef)
                            ef))
           return NULL;
 
-        ef->ed = eet_dictionary_calloc(1);
+        ef->ed = calloc(1, sizeof (Eet_Dictionary));
         if (eet_test_close(!ef->ed, ef))
           return NULL;
 
-        ef->ed->all = eet_string_calloc(num_dictionary_entries);
+        ef->ed->all = calloc(num_dictionary_entries, sizeof (Eet_String));
         if (eet_test_close(!ef->ed->all, ef))
           return NULL;
 
@@ -1051,14 +1162,14 @@ eet_internal_read1(Eet_File *ef)
      return NULL;
 
    /* allocate header */
-   ef->header = eet_file_header_calloc(1);
+   ef->header = calloc(1, sizeof(Eet_File_Header));
    if (eet_test_close(!ef->header, ef))
      return NULL;
 
    ef->header->magic = EET_MAGIC_FILE_HEADER;
 
    /* allocate directory block in ram */
-   ef->header->directory = eet_file_directory_calloc(1);
+   ef->header->directory = calloc(1, sizeof(Eet_File_Directory));
    if (eet_test_close(!ef->header->directory, ef))
      return NULL;
 
@@ -1096,7 +1207,7 @@ eet_internal_read1(Eet_File *ef)
         efn = malloc (sizeof(Eet_File_Node));
         if (eet_test_close(!efn, ef))
           {
-             if (efn) eet_file_node_mp_free(efn);  /* yes i know - we only get here if
+             if (efn) free(efn);  /* yes i know - we only get here if
                                    * efn is null/0 -> trying to shut up
                                    * warning tools like cppcheck */
              return NULL;
@@ -1116,21 +1227,21 @@ eet_internal_read1(Eet_File *ef)
         /* invalid size */
         if (eet_test_close(efn->size <= 0, ef))
           {
-             eet_file_node_mp_free(efn);
+             free(efn);
              return NULL;
           }
 
         /* invalid name_size */
         if (eet_test_close(name_size <= 0, ef))
           {
-             eet_file_node_mp_free(efn);
+             free(efn);
              return NULL;
           }
 
         /* reading name would mean falling off end of dyn_buf - invalid */
         if (eet_test_close((p + 16 + name_size) > (dyn_buf + byte_entries), ef))
           {
-             eet_file_node_mp_free(efn);
+             free(efn);
              return NULL;
           }
 
@@ -1146,7 +1257,7 @@ eet_internal_read1(Eet_File *ef)
              efn->name = malloc(sizeof(char) * name_size + 1);
              if (eet_test_close(!efn->name, ef))
                {
-                  eet_file_node_mp_free(efn);
+                  free(efn);
                   return NULL;
                }
 
@@ -1294,16 +1405,16 @@ eet_internal_close(Eet_File *ef,
                             if (efn->free_name)
                               free(efn->name);
 
-                            eet_file_node_mp_free(efn);
+                            free(efn);
                          }
                     }
                   free(ef->header->directory->nodes);
                }
 
-             eet_file_directory_mp_free(ef->header->directory);
+             free(ef->header->directory);
           }
 
-        eet_file_header_mp_free(ef->header);
+        free(ef->header);
      }
 
    eet_dictionary_free(ef->ed);
@@ -1324,7 +1435,7 @@ eet_internal_close(Eet_File *ef,
 
    /* free it */
    eina_stringshare_del(ef->path);
-   eet_file_mp_free(ef);
+   free(ef);
    return err;
 
 on_error:
@@ -1475,7 +1586,7 @@ open_error:
    file_len = strlen(file) + 1;
 
    /* Allocate struct for eet file and have it zero'd out */
-   ef = eet_file_malloc(1);
+   ef = malloc(sizeof(Eet_File));
    if (!ef)
      goto on_error;
 
@@ -2007,7 +2118,7 @@ eet_alias(Eet_File   *ef,
          ef->header->directory = calloc(1, sizeof(Eet_File_Directory));
          if (!ef->header->directory)
            {
-              eet_file_header_mp_free(ef->header);
+              free(ef->header);
               ef->header = NULL;
               goto on_error;
            }
@@ -2020,7 +2131,7 @@ eet_alias(Eet_File   *ef,
                   (1 << ef->header->directory->size));
          if (!ef->header->directory->nodes)
            {
-              eet_file_directory_mp_free(ef->header->directory);
+              free(ef->header->directory);
               ef->header = NULL;
               goto on_error;
            }
@@ -2167,7 +2278,7 @@ eet_write_cipher(Eet_File   *ef,
          ef->header->directory = calloc(1, sizeof(Eet_File_Directory));
          if (!ef->header->directory)
            {
-              eet_file_header_mp_free(ef->header);
+              free(ef->header);
               ef->header = NULL;
               goto on_error;
            }
@@ -2180,7 +2291,7 @@ eet_write_cipher(Eet_File   *ef,
                   (1 << ef->header->directory->size));
          if (!ef->header->directory->nodes)
            {
-              eet_file_directory_mp_free(ef->header->directory);
+              free(ef->header->directory);
               ef->header = NULL;
               goto on_error;
            }
@@ -2368,7 +2479,7 @@ eet_delete(Eet_File   *ef,
               if (efn->free_name)
                 free(efn->name);
 
-              eet_file_node_mp_free(efn);
+              free(efn);
               exists_already = 1;
               break;
            }

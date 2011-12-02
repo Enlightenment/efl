@@ -6,9 +6,6 @@ Changes since Eet 1.5.0:
 Additions:
     * eet_file_get to return filenames of Eet_Files
 
-Improvements:
-
-    * most allocations moved to mempools
 
 Eet 1.5.0
 

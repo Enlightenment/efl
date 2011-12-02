@@ -22,7 +22,6 @@ includesdir = $(includedir)/eet-@VMAJ@
 lib_LTLIBRARIES = libeet.la
 
 base_sources = \
-eet_alloc.c \
 eet_lib.c \
 eet_data.c \
 eet_image.c \

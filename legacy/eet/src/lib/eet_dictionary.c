@@ -28,20 +28,21 @@ eet_dictionary_add(void)
 void
 eet_dictionary_free(Eet_Dictionary *ed)
 {
-   int i;
+   if (ed)
+     {
+        int i;
 
-   if (!ed) return;
+        for (i = 0; i < ed->count; ++i)
+          if (ed->all[i].allocated)
+            eina_stringshare_del(ed->all[i].str);
 
-   for (i = 0; i < ed->count; ++i)
-     if (ed->all[i].allocated)
-       eina_stringshare_del(ed->all[i].str);
+        if (ed->all)
+          free(ed->all);
 
-   if (ed->all)
-     eet_string_mp_free(ed->all);
+        if (ed->converts) eina_hash_free(ed->converts);
 
-   if (ed->converts) eina_hash_free(ed->converts);
-
-   eet_dictionary_mp_free(ed);
+        free(ed);
+     }
 }
 
 static int
