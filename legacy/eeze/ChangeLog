@@ -57,3 +57,6 @@
 2011-11-17  Mike Blumenkrantz (discomfitor/zmike)
         * added eeze_disk_can_{mount,unmount,eject} to determine at runtime whether eeze
           is capable of performing disk operations
+
+2011-12-02  Mike Blumenkrantz (discomfitor/zmike)
+        * added network device api (eeze_net_*) and Eeze_Net.h header
