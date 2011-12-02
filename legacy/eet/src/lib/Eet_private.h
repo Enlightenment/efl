@@ -66,6 +66,126 @@ struct _Eet_Node
    Eet_Node_Data data;
 };
 
+typedef struct _Eet_File_Header    Eet_File_Header;
+typedef struct _Eet_File_Node      Eet_File_Node;
+typedef struct _Eet_File_Directory Eet_File_Directory;
+
+struct _Eet_File
+{
+   const char          *path;
+   Eina_File           *readfp;
+   Eet_File_Header     *header;
+   Eet_Dictionary      *ed;
+   Eet_Key             *key;
+   const unsigned char *data;
+   const void          *x509_der;
+   const void          *signature;
+   void                *sha1;
+
+   Eet_File_Mode        mode;
+
+   int                  magic;
+   int                  references;
+
+   unsigned long int    data_size;
+   int                  x509_length;
+   unsigned int         signature_length;
+   int                  sha1_length;
+
+   Eina_Lock            file_lock;
+
+   unsigned char        writes_pending : 1;
+   unsigned char        delete_me_now : 1;
+};
+
+struct _Eet_File_Header
+{
+   int                 magic;
+   Eet_File_Directory *directory;
+};
+
+struct _Eet_File_Directory
+{
+   int             size;
+   Eet_File_Node **nodes;
+};
+
+struct _Eet_File_Node
+{
+   char             *name;
+   void             *data;
+   Eet_File_Node    *next; /* FIXME: make buckets linked lists */
+
+   unsigned long int offset;
+   unsigned long int dictionary_offset;
+   unsigned long int name_offset;
+
+   unsigned int      name_size;
+   unsigned int      size;
+   unsigned int      data_size;
+
+   unsigned char     free_name : 1;
+   unsigned char     compression : 1;
+   unsigned char     ciphered : 1;
+   unsigned char     alias : 1;
+};
+
+#if 0
+/* Version 2 */
+/* NB: all int's are stored in network byte order on disk */
+/* file format: */
+int magic; /* magic number ie 0x1ee7ff00 */
+int num_directory_entries; /* number of directory entries to follow */
+int bytes_directory_entries; /* bytes of directory entries to follow */
+struct
+{
+   int  offset; /* bytes offset into file for data chunk */
+   int  flags; /* flags - for now 0 = uncompressed and clear, 1 = compressed and clear, 2 = uncompressed and ciphered, 3 = compressed and ciphered */
+   int  size; /* size of the data chunk */
+   int  data_size; /* size of the (uncompressed) data chunk */
+   int  name_size; /* length in bytes of the name field */
+   char name[name_size]; /* name string (variable length) and \0 terminated */
+} directory[num_directory_entries];
+/* and now startes the data stream... */
+#endif /* if 0 */
+
+#if 0
+/* Version 3 */
+/* NB: all int's are stored in network byte order on disk */
+/* file format: */
+int magic; /* magic number ie 0x1ee70f42 */
+int num_directory_entries; /* number of directory entries to follow */
+int num_dictionary_entries; /* number of dictionary entries to follow */
+struct
+{
+   int data_offset; /* bytes offset into file for data chunk */
+   int size; /* size of the data chunk */
+   int data_size; /* size of the (uncompressed) data chunk */
+   int name_offset; /* bytes offset into file for name string */
+   int name_size; /* length in bytes of the name field */
+   int flags; /* bit flags - for now:
+                 bit 0 => compresion on/off
+                 bit 1 => ciphered on/off
+                 bit 2 => alias
+               */
+} directory[num_directory_entries];
+struct
+{
+   int hash;
+   int offset;
+   int size;
+   int prev;
+   int next;
+} dictionary[num_dictionary_entries];
+/* now start the string stream. */
+/* and right after them the data stream. */
+int magic_sign; /* Optional, only if the eet file is signed. */
+int signature_length; /* Signature length. */
+int x509_length; /* Public certificate that signed the file. */
+char signature[signature_length]; /* The signature. */
+char x509[x509_length]; /* The public certificate. */
+#endif /* if 0 */
+
 /*
  * variable and macros used for the eina_log module
  */
@@ -177,6 +297,21 @@ Eet_Node *
  eet_node_new(void);
 void
  eet_node_free(Eet_Node *node);
+
+
+#define GENERIC_ALLOC_FREE_HEADER(TYPE, Type) \
+  TYPE *Type##_malloc(unsigned int);		      \
+  TYPE *Type##_calloc(unsigned int);		      \
+  void Type##_mp_free(TYPE *e);
+
+GENERIC_ALLOC_FREE_HEADER(Eet_File_Directory, eet_file_directory);
+GENERIC_ALLOC_FREE_HEADER(Eet_File_Node, eet_file_node);
+GENERIC_ALLOC_FREE_HEADER(Eet_File_Header, eet_file_header);
+GENERIC_ALLOC_FREE_HEADER(Eet_Dictionary, eet_dictionary);
+GENERIC_ALLOC_FREE_HEADER(Eet_File, eet_file);
+
+Eina_Bool eet_mempool_init(void);
+void eet_mempool_shutdown(void);
 
 #ifndef PATH_MAX
 # define PATH_MAX 4096

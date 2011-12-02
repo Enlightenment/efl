@@ -38,7 +38,6 @@ GENERIC_ALLOC_FREE(Eet_File_Node, eet_file_node);
 GENERIC_ALLOC_FREE(Eet_File_Header, eet_file_header);
 GENERIC_ALLOC_FREE(Eet_Dictionary, eet_dictionary);
 GENERIC_ALLOC_FREE(Eet_File, eet_file);
-GENERIC_ALLOC_FREE(Eet_String, eet_string);
 
 static Eet_Mempool *mempool_array[] = {
   &eet_file_directory_mp,
@@ -46,7 +45,6 @@ static Eet_Mempool *mempool_array[] = {
   &eet_file_header_mp,
   &eet_dictionary_mp,
   &eet_file_mp,
-  &eet_string_mp
 };
 
 Eina_Bool

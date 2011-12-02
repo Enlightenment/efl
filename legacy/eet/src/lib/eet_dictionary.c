@@ -16,7 +16,7 @@ eet_dictionary_add(void)
 {
    Eet_Dictionary *new;
 
-   new = calloc(1, sizeof (Eet_Dictionary));
+   new = eet_dictionary_calloc(1);
    if (!new)
      return NULL;
 
@@ -28,21 +28,20 @@ eet_dictionary_add(void)
 void
 eet_dictionary_free(Eet_Dictionary *ed)
 {
-   if (ed)
-     {
-        int i;
+   int i;
 
-        for (i = 0; i < ed->count; ++i)
-          if (ed->all[i].allocated)
-            eina_stringshare_del(ed->all[i].str);
+   if (!ed) return;
 
-        if (ed->all)
-          free(ed->all);
+   for (i = 0; i < ed->count; ++i)
+     if (ed->all[i].allocated)
+       eina_stringshare_del(ed->all[i].str);
 
-        if (ed->converts) eina_hash_free(ed->converts);
+   if (ed->all)
+     free(ed->all);
 
-        free(ed);
-     }
+   if (ed->converts) eina_hash_free(ed->converts);
+
+   eet_dictionary_mp_free(ed);
 }
 
 static int
@@ -110,7 +109,7 @@ eet_dictionary_string_add(Eet_Dictionary *ed,
 
         total = ed->total + 8;
 
-        new = realloc(ed->all, sizeof (Eet_String) * total);
+        new = realloc(ed->all, total * sizeof(Eet_String));
         if (!new)
           return -1;
 
