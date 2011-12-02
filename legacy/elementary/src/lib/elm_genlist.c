@@ -3789,7 +3789,12 @@ _elm_genlist_clear(Evas_Object *obj, Eina_Bool standby)
 
         if (it->generation < wd->generation)
           {
+             Elm_Gen_Item *itn = NULL;
+
+             if (next) itn = ELM_GEN_ITEM_FROM_INLIST(next);
+             if (itn) itn->walking++; /* prevent early death of subitem */
              it->del_cb(it);
+             if (itn) itn->walking--;
           }
      }
    wd->clear_me = 0;
@@ -4336,6 +4341,11 @@ elm_genlist_item_del(Elm_Gen_Item *it)
              it->item->block->changed = EINA_TRUE;
              if (it->wd->calc_job) ecore_job_del(it->wd->calc_job);
              it->wd->calc_job = ecore_job_add(_calc_job, it->wd);
+          }
+        if (it->parent)
+          {
+             it->parent->item->items = eina_list_remove(it->parent->item->items, it);
+             it->parent = NULL;
           }
         return;
      }
