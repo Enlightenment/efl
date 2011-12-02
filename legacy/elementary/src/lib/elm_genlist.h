@@ -37,7 +37,7 @@ struct Elm_Gen_Item
    Ecore_Timer                  *long_timer;
    int                           relcount;
    int                           walking;
-   int                           generation;
+   int                           generation; /* a generation of an item. when the item is created, this value is set to the value of genlist generation. this value will be decreased when the item is going to be deleted */
    const char                   *mouse_cursor;
 
    struct
@@ -96,7 +96,7 @@ struct _Widget_Data
    Eina_Bool         no_select : 1;
    Eina_Bool         wasselected : 1;
    Eina_Bool         always_select : 1;
-   Eina_Bool         clear_me : 1;
+   Eina_Bool         clear_me : 1; /* a flag whether genlist is marked as to be cleared or not. if this flag is true, genlist clear was already deferred.  */
    Eina_Bool         h_bounce : 1;
    Eina_Bool         v_bounce : 1;
    Ecore_Cb          del_cb, calc_cb, sizing_cb;
@@ -143,7 +143,7 @@ struct _Widget_Data
    int               movements;
    int               max_items_per_block; /* maximum number of items per block */
    double            longpress_timeout; /* longpress timeout. this value comes from _elm_config by default. this can be changed by elm_genlist_longpress_timeout_set() */
-   int               generation;
+   int               generation; /* a generation of genlist. when genlist is cleared, this value will be increased and a new generation will start */
 
    /* The stuff below directly come from gengrid without any thinking */
    unsigned int      nmax;
