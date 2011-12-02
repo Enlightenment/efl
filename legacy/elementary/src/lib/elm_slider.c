@@ -12,7 +12,7 @@ struct _Widget_Data
 
    Ecore_Timer *delay;
 
-   const char *label;
+   Eina_Hash  *labels;
    const char *units;
    const char *indicator;
 
@@ -132,7 +132,7 @@ _del_hook(Evas_Object *obj)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return;
-   if (wd->label) eina_stringshare_del(wd->label);
+   if (wd->labels) eina_hash_free(wd->labels);
    if (wd->indicator) eina_stringshare_del(wd->units);
    if (wd->delay) ecore_timer_del(wd->delay);
    free(wd);
@@ -163,6 +163,16 @@ _mirrored_set(Evas_Object *obj, Eina_Bool rtl)
    edje_object_mirrored_set(wd->slider, rtl);
 }
 
+static Eina_Bool
+_labels_foreach_text_set(const Eina_Hash *hash __UNUSED__, const void *key, void *data, void *fdata)
+{
+  Widget_Data *wd = fdata;
+
+  edje_object_part_text_set(wd->slider, key, data);
+
+  return 1;
+}
+
 static void
 _theme_hook(Evas_Object *obj)
 {
@@ -183,10 +193,10 @@ _theme_hook(Evas_Object *obj)
      edje_object_signal_emit(wd->slider, "elm,state,end,visible", "elm");
    else
      edje_object_signal_emit(wd->slider, "elm,state,end,hidden", "elm");
-   if (wd->label)
+   if (wd->labels)
      {
-        edje_object_part_text_set(wd->slider, "elm.text", wd->label);
-        edje_object_signal_emit(wd->slider, "elm,state,text,visible", "elm");
+        eina_hash_foreach(wd->labels, _labels_foreach_text_set, wd);
+	edje_object_signal_emit(wd->slider, "elm,state,text,visible", "elm");
      }
 
    if (wd->units)
@@ -463,13 +473,35 @@ _spacer_cb(void *data, Evas *e, Evas_Object *obj __UNUSED__, void *event_info)
 }
 
 static void
-_elm_slider_label_set(Evas_Object *obj, const char *item, const char *label)
+_elm_slider_label_set(Evas_Object *obj, const char *part, const char *label)
 {
    ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
-   if (item && strcmp(item, "default")) return;
+   const char* default_part = "elm.text";
+   const char* real_part;
+
    if (!wd) return;
-   eina_stringshare_replace(&wd->label, label);
+
+   if (!part)
+     real_part = default_part;
+   else
+     real_part = part;
+
+   if (wd->labels)
+     {
+       const char* old_label;
+
+       old_label = eina_hash_find(wd->labels, real_part);
+       if (!old_label)
+	   eina_hash_add(wd->labels, real_part, eina_stringshare_add(label));
+       else
+	 {
+	   eina_stringshare_ref(old_label);
+	   eina_hash_modify(wd->labels, real_part, eina_stringshare_add(label));
+	   eina_stringshare_del(old_label);
+	 }
+     }
+
    if (label)
      {
         edje_object_signal_emit(wd->slider, "elm,state,text,visible", "elm");
@@ -480,18 +512,22 @@ _elm_slider_label_set(Evas_Object *obj, const char *item, const char *label)
         edje_object_signal_emit(wd->slider, "elm,state,text,hidden", "elm");
         edje_object_message_signal_process(wd->slider);
      }
-   edje_object_part_text_set(wd->slider, "elm.text", label);
+
+   edje_object_part_text_set(wd->slider, real_part, label);
    _sizing_eval(obj);
 }
 
 static const char *
-_elm_slider_label_get(const Evas_Object *obj, const char *item)
+_elm_slider_label_get(const Evas_Object *obj, const char *part)
 {
    ELM_CHECK_WIDTYPE(obj, widtype) NULL;
    Widget_Data *wd = elm_widget_data_get(obj);
-   if (item && strcmp(item, "default")) return NULL;
    if (!wd) return NULL;
-   return wd->label;
+   if (!wd->labels) return NULL;
+
+   if (!part) 
+     return eina_hash_find(wd->labels, "elm.text");
+   return eina_hash_find(wd->labels, part);
 }
 
 static void
@@ -611,6 +647,13 @@ _content_unset_hook(Evas_Object *obj, const char *part)
    return NULL;
 }
 
+static void
+_hash_labels_free_cb(void* label)
+{
+  if (label)
+    eina_stringshare_del(label);
+}
+
 EAPI Evas_Object *
 elm_slider_add(Evas_Object *parent)
 {
@@ -641,6 +684,7 @@ elm_slider_add(Evas_Object *parent)
    wd->val = 0.0;
    wd->val_min = 0.0;
    wd->val_max = 1.0;
+   wd->labels = eina_hash_string_superfast_new(_hash_labels_free_cb);
 
    wd->slider = edje_object_add(e);
    _elm_theme_object_set(obj, wd->slider, "slider", "horizontal", "default");
