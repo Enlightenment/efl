@@ -1845,7 +1845,7 @@ static Eina_Bool
 _smart_hold_animator(void *data)
 {
    Smart_Data *sd = data;
-   Evas_Coord ox = 0, oy = 0, fx, fy;
+   Evas_Coord ox = 0, oy = 0, fx = 0, fy= 0;
 
    fx = sd->down.hold_x;
    fy = sd->down.hold_y;
