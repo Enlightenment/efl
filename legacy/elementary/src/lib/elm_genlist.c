@@ -3411,12 +3411,16 @@ _item_idle_enterer(void *data)
 }
 
 static void
-_item_queue(Widget_Data      *wd,
-            Elm_Gen_Item *it)
+_item_queue(Widget_Data *wd,
+            Elm_Gen_Item *it,
+            Eina_Compare_Cb cb)
 {
    if (it->item->queued) return;
    it->item->queued = EINA_TRUE;
-   wd->queue = eina_list_append(wd->queue, it);
+   if (cb)
+     wd->queue = eina_list_sorted_insert(wd->queue, cb, it);
+   else
+     wd->queue = eina_list_append(wd->queue, it);
 // FIXME: why does a freeze then thaw here cause some genlist
 // elm_genlist_item_append() to be much much slower?
 //   evas_event_freeze(evas_object_evas_get(wd->obj));
@@ -3475,7 +3479,7 @@ _item_move_after(Elm_Gen_Item *it, Elm_Gen_Item *after)
    it->item->rel->relcount++;
    it->item->before = EINA_FALSE;
    if (after->item->group_item) it->item->group_item = after->item->group_item;
-   _item_queue(it->wd, it);
+   _item_queue(it->wd, it, NULL);
 
    evas_object_smart_callback_call(WIDGET(it), SIG_MOVED, it);
 }
@@ -3493,7 +3497,7 @@ _item_move_before(Elm_Gen_Item *it, Elm_Gen_Item *before)
    it->item->rel->relcount++;
    it->item->before = EINA_TRUE;
    if (before->item->group_item) it->item->group_item = before->item->group_item;
-   _item_queue(it->wd, it);
+   _item_queue(it->wd, it, NULL);
 
    evas_object_smart_callback_call(WIDGET(it), SIG_MOVED, it);
 }
@@ -3534,7 +3538,7 @@ elm_genlist_item_append(Evas_Object                  *obj,
         it->item->rel->relcount++;
      }
    it->item->before = EINA_FALSE;
-   _item_queue(wd, it);
+   _item_queue(wd, it, NULL);
    return it;
 }
 
@@ -3574,7 +3578,7 @@ elm_genlist_item_prepend(Evas_Object                  *obj,
         it->item->rel->relcount++;
      }
    it->item->before = EINA_TRUE;
-   _item_queue(wd, it);
+   _item_queue(wd, it, NULL);
    return it;
 }
 
@@ -3615,7 +3619,7 @@ elm_genlist_item_insert_after(Evas_Object                  *obj,
    it->item->rel = after;
    it->item->rel->relcount++;
    it->item->before = EINA_FALSE;
-   _item_queue(wd, it);
+   _item_queue(wd, it, NULL);
    return it;
 }
 
@@ -3655,7 +3659,7 @@ elm_genlist_item_insert_before(Evas_Object                  *obj,
    it->item->rel = before;
    it->item->rel->relcount++;
    it->item->before = EINA_TRUE;
-   _item_queue(wd, it);
+   _item_queue(wd, it, NULL);
    return it;
 }
 
@@ -3737,7 +3741,7 @@ elm_genlist_item_direct_sorted_insert(Evas_Object                  *obj,
         it->item->rel->relcount++;
      }
 
-   _item_queue(wd, it);
+   _item_queue(wd, it, comp);
 
    return it;
 }
