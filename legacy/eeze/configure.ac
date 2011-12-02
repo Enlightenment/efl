@@ -153,6 +153,38 @@ fi
 if test -z "$OLD_LIBMOUNT_TRUE" ; then
   AC_DEFINE_UNQUOTED([OLD_LIBMOUNT], [1], [using first version of libmount])
 fi
+
+AC_CHECK_HEADERS([netinet/in.h])
+want_ipv6="yes"
+have_ipv6="no"
+
+AC_ARG_ENABLE([ipv6],
+   [AC_HELP_STRING([--disable-ipv6],
+       [disable ipv6 functionality @<:@default=detect@:>@])],
+   [
+    if test "x${enableval}" = "xyes" ; then
+       want_ipv6="yes"
+    else
+       want_ipv6="no"
+    fi],
+   [want_ipv6="auto"])
+
+# Verify IPV6 availability in headers
+if test "x${want_ipv6}" != "xno" ; then
+   AC_CHECK_TYPES([struct ipv6_mreq],
+      [have_ipv6="yes"],
+      [have_ipv6="no"],
+      [[
+#ifdef HAVE_NETINET_IN_H
+# include <netinet/in.h>
+#endif
+      ]])
+fi
+
+if test "x${have_ipv6}" = "xyes" ; then
+   AC_DEFINE(HAVE_IPV6, 1, [Define if IPV6 is supported])
+fi
+
 ### Checks for header files
 
 
@@ -225,6 +257,8 @@ echo "  eeze_disk_ls.........: ${have_eeze_disk_ls}"
 echo
 echo "Utilities..............:"
 echo "  eeze_scanner.........: ${have_eeze_scanner}"
+echo
+echo "IPv6...................: ${have_ipv6}"
 echo
 echo "Documentation..........: ${build_doc}"
 echo

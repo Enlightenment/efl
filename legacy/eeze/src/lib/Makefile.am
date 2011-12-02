@@ -23,6 +23,8 @@ includesdir = $(includedir)/eeze-@VMAJ@
 
 libeeze_la_SOURCES = \
 eeze_main.c \
+eeze_net.c \
+eeze_net_private.h \
 eeze_udev_find.c \
 eeze_udev_private.h \
 eeze_udev_private.c \
