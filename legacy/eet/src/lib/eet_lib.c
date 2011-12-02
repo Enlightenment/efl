@@ -1479,6 +1479,13 @@ eet_memopen_read(const void *data,
    return ef;
 } /* eet_memopen_read */
 
+EAPI const char *
+eet_file_get(Eet_File *ef)
+{
+   if (eet_check_pointer(ef)) return NULL;
+   return ef->path;
+}
+
 EAPI Eet_File *
 eet_open(const char   *file,
          Eet_File_Mode mode)

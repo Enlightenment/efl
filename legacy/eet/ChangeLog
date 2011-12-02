@@ -546,3 +546,7 @@
 	* JPEG encode and decode in eet now uses ISLOW (not IFAST) due to
         noticable quality losses in the chase for speed. It will use
         IFAST for quality less than 60 when encoding
+
+2011-12-02  Mike Blumenkrantz
+
+        * added eet_file_get to return the filename of an Eet_File

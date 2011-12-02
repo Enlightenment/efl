@@ -775,6 +775,19 @@ eet_alias(Eet_File *ef,
           int compress);
 
 /**
+ * Retrieve the filename of an Eet_File
+ * @param ef A valid eet file handle opened for writing.
+ * @return The file opened with eet_open(), or NULL on error
+ *
+ * @note This function will return NULL for files opened with eet_memopen_read()
+ *
+ * @since 1.6
+ * @ingroup Eet_File_Group
+ */
+EAPI const char *
+eet_file_get(Eet_File *ef);
+
+/**
  * Retrieve the destination name of an alias
  * @param ef A valid eet file handle opened for writing
  * @param name Name of the entry. eg: "/base/file_i_want"
