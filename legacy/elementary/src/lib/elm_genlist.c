@@ -4,7 +4,7 @@
 #include <Elementary_Cursor.h>
 #include "elm_priv.h"
 #include "els_scroller.h"
-#include "elm_gen.h"
+#include "elm_genlist.h"
 
 #define MAX_ITEMS_PER_BLOCK 32
 #define REORDER_EFFECT_TIME 0.5
