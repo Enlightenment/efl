@@ -19,6 +19,8 @@
 #ifndef EINA_INLINE_MEMPOOL_X_
 #define EINA_INLINE_MEMPOOL_X_
 
+#include <string.h>
+
 /**
  * @addtogroup Eina_Memory_Pool_Group Memory Pool
  *
@@ -101,6 +103,27 @@ static inline void *
 eina_mempool_malloc(Eina_Mempool *mp, unsigned int size)
 {
    return mp->backend.alloc(mp->backend_data, size);
+}
+
+/**
+ * @brief Allocate and zero a amount memory by the given mempool.
+ *
+ * @param mp The mempool.
+ * @param size The size in bytes to allocate.
+ * @return The newly allocated data.
+ *
+ * This function allocates @p size bytes, using the mempool @p mp and
+ * returns the allocated data after zeroing it. If not used anymore,
+ * the data must be freed with eina_mempool_free(). No check is done on @p mp,
+ * so it must be a valid mempool.
+ */
+static inline void *
+eina_mempool_calloc(Eina_Mempool *mp, unsigned int size)
+{
+   void *r = mp->backend.alloc(mp->backend_data, size);
+   if (!r) return NULL;
+   memset(r, 0, size);
+   return r;
 }
 
 /**
