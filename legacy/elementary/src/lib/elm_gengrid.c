@@ -3,7 +3,6 @@
 #include "elm_priv.h"
 #include "els_scroller.h"
 #include "elm_gen.h"
-#include "elm_genlist.h"
 
 /* --
  * TODO:
@@ -34,6 +33,7 @@ struct Elm_Gen_Item_Type
    Eina_Bool   moving : 1;
 };
 
+#if 0
 struct _Widget_Data
 {
    Eina_Inlist_Sorted_State *state;
@@ -72,11 +72,14 @@ struct _Widget_Data
    unsigned int      nmax;
    long              items_lost;
 
+   int               generation;
+
    Eina_Bool         horizontal : 1;
    Eina_Bool         longpressed : 1;
    Eina_Bool         reorder_item_changed : 1;
    Eina_Bool         move_effect_enabled : 1;
 };
+#endif
 
 static const char *widtype = NULL;
 static void      _item_highlight(Elm_Gen_Item *it);
@@ -431,7 +434,7 @@ _item_single_select_up(Widget_Data *wd)
    if (!wd->selected)
      {
         prev = ELM_GEN_ITEM_FROM_INLIST(wd->items->last);
-        while ((prev) && (prev->delete_me))
+        while ((prev) && (prev->generation < wd->generation))
           prev = ELM_GEN_ITEM_FROM_INLIST(EINA_INLIST_GET(prev)->prev);
         elm_gengrid_item_selected_set(prev, EINA_TRUE);
         elm_gengrid_item_show(prev);
@@ -465,7 +468,7 @@ _item_single_select_down(Widget_Data *wd)
    if (!wd->selected)
      {
         next = ELM_GEN_ITEM_FROM_INLIST(wd->items);
-        while ((next) && (next->delete_me))
+        while ((next) && (next->generation < wd->generation))
           next = ELM_GEN_ITEM_FROM_INLIST(EINA_INLIST_GET(next)->next);
         elm_gengrid_item_selected_set(next, EINA_TRUE);
         elm_gengrid_item_show(next);
@@ -496,7 +499,7 @@ _item_single_select_left(Widget_Data *wd)
    if (!wd->selected)
      {
         prev = ELM_GEN_ITEM_FROM_INLIST(wd->items->last);
-        while ((prev) && (prev->delete_me))
+        while ((prev) && (prev->generation < wd->generation))
           prev = ELM_GEN_ITEM_FROM_INLIST(EINA_INLIST_GET(prev)->prev);
      }
    else prev = elm_gengrid_item_prev_get(wd->last_selected_item);
@@ -517,7 +520,7 @@ _item_single_select_right(Widget_Data *wd)
    if (!wd->selected)
      {
         next = ELM_GEN_ITEM_FROM_INLIST(wd->items);
-        while ((next) && (next->delete_me))
+        while ((next) && (next->generation < wd->generation))
           next = ELM_GEN_ITEM_FROM_INLIST(EINA_INLIST_GET(next)->next);
      }
    else next = elm_gengrid_item_next_get(wd->last_selected_item);
@@ -901,7 +904,7 @@ _mouse_up(void            *data,
 static void
 _item_highlight(Elm_Gen_Item *it)
 {
-   if ((it->wd->no_select) || (it->delete_me) || (it->highlighted)) return;
+   if ((it->wd->no_select) || (it->generation < it->wd->generation) || (it->highlighted)) return;
    edje_object_signal_emit(VIEW(it), "elm,state,selected", "elm");
    it->highlighted = EINA_TRUE;
 }
@@ -912,7 +915,7 @@ _item_realize(Elm_Gen_Item *it)
    char buf[1024];
    char style[1024];
 
-   if ((it->realized) || (it->delete_me)) return;
+   if ((it->realized) || (it->generation < it->wd->generation)) return;
    VIEW(it) = edje_object_add(evas_object_evas_get(WIDGET(it)));
    edje_object_scale_set(VIEW(it), elm_widget_scale_get(WIDGET(it)) *
                          _elm_config->scale);
@@ -1434,7 +1437,7 @@ _item_del(Elm_Gen_Item *it)
 static void
 _item_unselect(Elm_Gen_Item *it)
 {
-   if ((it->delete_me) || (!it->highlighted)) return;
+   if ((it->generation < it->wd->generation) || (!it->highlighted)) return;
    edje_object_signal_emit(VIEW(it), "elm,state,unselected", "elm");
    it->highlighted = EINA_FALSE;
    if (it->selected)
@@ -1893,6 +1896,7 @@ elm_gengrid_add(Evas_Object *parent)
    elm_widget_signal_callback_del_hook_set(obj, _signal_callback_del_hook);
    elm_widget_event_hook_set(obj, _event_hook);
 
+   wd->generation = 1;
    wd->scr = elm_smart_scroller_add(e);
    elm_smart_scroller_widget_set(wd->scr, obj);
    elm_smart_scroller_object_theme_set(obj, wd->scr, "gengrid", "base",
@@ -2252,7 +2256,7 @@ EAPI const Elm_Gengrid_Item_Class *
 elm_gengrid_item_item_class_get(const Elm_Gen_Item *it)
 {
    ELM_WIDGET_ITEM_WIDTYPE_CHECK_OR_RETURN(it, NULL);
-   if (it->delete_me) return NULL;
+   if (it->generation < it->wd->generation) return NULL;
    return it->itc;
 }
 
@@ -2262,7 +2266,7 @@ elm_gengrid_item_item_class_set(Elm_Gen_Item *it,
 {
    ELM_WIDGET_ITEM_WIDTYPE_CHECK_OR_RETURN(it);
    EINA_SAFETY_ON_NULL_RETURN(itc);
-   if (it->delete_me) return;
+   if (it->generation < it->wd->generation) return;
    it->itc = itc;
    elm_gengrid_item_update(it);
 }
@@ -2334,7 +2338,7 @@ elm_gengrid_item_disabled_set(Elm_Gen_Item *it,
 {
    ELM_WIDGET_ITEM_WIDTYPE_CHECK_OR_RETURN(it);
    if (it->disabled == disabled) return;
-   if (it->delete_me) return;
+   if (it->generation < it->wd->generation) return;
    it->disabled = !!disabled;
    if (it->realized)
      {
@@ -2349,7 +2353,7 @@ EAPI Eina_Bool
 elm_gengrid_item_disabled_get(const Elm_Gen_Item *it)
 {
    ELM_WIDGET_ITEM_WIDTYPE_CHECK_OR_RETURN(it, EINA_FALSE);
-   if (it->delete_me) return EINA_FALSE;
+   if (it->generation < it->wd->generation) return EINA_FALSE;
    return it->disabled;
 }
 
@@ -2672,7 +2676,7 @@ elm_gengrid_item_show(Elm_Gen_Item *it)
    Evas_Coord minx = 0, miny = 0;
 
    if (!wd) return;
-   if ((!it) || (it->delete_me)) return;
+   if ((!it) || (it->generation < it->wd->generation)) return;
    _pan_min_get(wd->pan_smart, &minx, &miny);
 
    if (wd->horizontal)
@@ -2693,7 +2697,7 @@ EAPI void
 elm_gengrid_item_bring_in(Elm_Gen_Item *it)
 {
    ELM_WIDGET_ITEM_WIDTYPE_CHECK_OR_RETURN(it);
-   if (it->delete_me) return;
+   if (it->generation < it->wd->generation) return;
 
    Evas_Coord minx = 0, miny = 0;
    Widget_Data *wd = it->wd;

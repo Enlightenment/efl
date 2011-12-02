@@ -3,7 +3,6 @@
 #include "elm_priv.h"
 #include "els_scroller.h"
 #include "elm_gen.h"
-#include "elm_genlist.h"
 
 EAPI void
 elm_gen_clear(Evas_Object *obj)
