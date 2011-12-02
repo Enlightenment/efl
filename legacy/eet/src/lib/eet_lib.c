@@ -1586,7 +1586,7 @@ open_error:
    file_len = strlen(file) + 1;
 
    /* Allocate struct for eet file and have it zero'd out */
-   ef = malloc(sizeof(Eet_File) + file_len);
+   ef = malloc(sizeof(Eet_File));
    if (!ef)
      goto on_error;
 
