@@ -577,7 +577,7 @@ add_tests:
 
 /* this is your elementary main function - it MUST be called IMMEDIATELY
  * after elm_init() and MUST be passed argc and argv, and MUST be called
- * elm_main and not be static - must be a visible symbol with EAPI infront */
+ * elm_main and not be static - must be a visible symbol with EAPI_MAIN infront */
 EAPI_MAIN int
 elm_main(int argc, char **argv)
 {
@@ -610,7 +610,7 @@ elm_main(int argc, char **argv)
 
    /* put here any init specific to this app like parsing args etc. */
    my_win_main(autorun, test_win_only); /* create main window */
-   elm_run(); /* and run the program now  and handle all events etc. */
+   elm_run(); /* and run the program now and handle all events etc. */
    /* if the mainloop that elm_run() runs exist - we exit the app */
    elm_shutdown(); /* clean up and shut down */
    /* exit code */
