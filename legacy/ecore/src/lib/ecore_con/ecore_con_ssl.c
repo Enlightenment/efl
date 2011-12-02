@@ -1679,12 +1679,6 @@ _ecore_con_ssl_server_prepare_none(Ecore_Con_Server *svr __UNUSED__,
 }
 
 static Ecore_Con_Ssl_Error
-_ecore_con_ssl_server_upgrade_none(Ecore_Con_Server *svr __UNUSED__)
-{
-   return ECORE_CON_SSL_ERROR_NOT_SUPPORTED;
-}
-
-static Ecore_Con_Ssl_Error
 _ecore_con_ssl_server_init_none(Ecore_Con_Server *svr __UNUSED__)
 {
    return ECORE_CON_SSL_ERROR_NOT_SUPPORTED;
@@ -1738,12 +1732,6 @@ _ecore_con_ssl_server_write_none(Ecore_Con_Server *svr __UNUSED__,
                                  int size              __UNUSED__)
 {
    return -1;
-}
-
-static Ecore_Con_Ssl_Error
-_ecore_con_ssl_client_upgrade_none(Ecore_Con_Client *cl __UNUSED__)
-{
-   return ECORE_CON_SSL_ERROR_NOT_SUPPORTED;
 }
 
 static Ecore_Con_Ssl_Error
