@@ -69,7 +69,7 @@ eet_connection_new(Eet_Read_Cb  *eet_read_cb,
    conn->user_data = (void *)user_data;
 
    return conn;
-} /* eet_connection_new */
+}
 
 EAPI int
 eet_connection_received(Eet_Connection *conn,
@@ -158,7 +158,7 @@ eet_connection_received(Eet_Connection *conn,
      } while (size > 0);
 
    return size;
-} /* eet_connection_received */
+}
 
 static Eina_Bool
 _eet_connection_raw_send(Eet_Connection *conn,
@@ -181,7 +181,7 @@ _eet_connection_raw_send(Eet_Connection *conn,
                       data_size + sizeof (int) * 2,
                       conn->user_data);
    return EINA_TRUE;
-} /* _eet_connection_raw_send */
+}
 
 EAPI Eina_Bool
 eet_connection_send(Eet_Connection      *conn,
@@ -205,7 +205,7 @@ eet_connection_send(Eet_Connection      *conn,
 
    free(flat_data);
    return ret;
-} /* eet_connection_send */
+}
 
 EAPI Eina_Bool
 eet_connection_node_send(Eet_Connection *conn,
@@ -225,7 +225,7 @@ eet_connection_node_send(Eet_Connection *conn,
 
    free(data);
    return ret;
-} /* eet_connection_node_send */
+}
 
 EAPI void *
 eet_connection_close(Eet_Connection *conn,
@@ -245,5 +245,5 @@ eet_connection_close(Eet_Connection *conn,
    free(conn);
 
    return user_data;
-} /* eet_connection_close */
+}
 

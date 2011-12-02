@@ -27,13 +27,13 @@ eet_node_new(void)
 
    memset(result, 0, sizeof (Eet_Node));
    return result;
-} /* eet_node_new */
+}
 
 void
 eet_node_free(Eet_Node *node)
 {
    eina_mempool_free(_eet_node_mp, node);
-} /* eet_node_free */
+}
 
 static Eet_Node *
 _eet_node_new(const char *name,
@@ -49,7 +49,7 @@ _eet_node_new(const char *name,
    n->name = eina_stringshare_add(name);
 
    return n;
-} /* _eet_node_new */
+}
 
 static void
 _eet_node_append(Eet_Node  *n,
@@ -63,7 +63,7 @@ _eet_node_append(Eet_Node  *n,
         value->next = n->values;
         n->values = value;
      }
-} /* _eet_node_append */
+}
 
 #define EET_NODE_NEW(Eet_type, Name, Value, Type)         \
   EAPI Eet_Node *                                         \
@@ -133,7 +133,7 @@ eet_node_list_new(const char *name,
    _eet_node_append(n, nodes);
 
    return n;
-} /* eet_node_list_new */
+}
 
 Eet_Node *
 eet_node_array_new(const char *name,
@@ -151,7 +151,7 @@ eet_node_array_new(const char *name,
    _eet_node_append(n, nodes);
 
    return n;
-} /* eet_node_array_new */
+}
 
 Eet_Node *
 eet_node_var_array_new(const char *name,
@@ -168,7 +168,7 @@ eet_node_var_array_new(const char *name,
    _eet_node_append(n, nodes);
 
    return n;
-} /* eet_node_var_array_new */
+}
 
 Eet_Node *
 eet_node_hash_new(const char *name,
@@ -191,7 +191,7 @@ eet_node_hash_new(const char *name,
    _eet_node_append(n, nodes);
 
    return n;
-} /* eet_node_hash_new */
+}
 
 Eet_Node *
 eet_node_struct_new(const char *name,
@@ -206,7 +206,7 @@ eet_node_struct_new(const char *name,
    _eet_node_append(n, nodes);
 
    return n;
-} /* eet_node_struct_new */
+}
 
 Eet_Node *
 eet_node_struct_child_new(const char *parent,
@@ -226,7 +226,7 @@ eet_node_struct_child_new(const char *parent,
    _eet_node_append(n, eina_list_prepend(NULL, child));
 
    return n;
-} /* eet_node_struct_child_new */
+}
 
 Eet_Node *
 eet_node_children_get(Eet_Node *node)
@@ -289,7 +289,7 @@ eet_node_list_append(Eet_Node   *parent,
    parent->values = nn;
 
    eina_stringshare_del(tmp);
-} /* eet_node_list_append */
+}
 
 void
 eet_node_struct_append(Eet_Node   *parent,
@@ -338,7 +338,7 @@ eet_node_struct_append(Eet_Node   *parent,
      }
 
    eina_stringshare_del(tmp);
-} /* eet_node_struct_append */
+}
 
 void
 eet_node_hash_add(Eet_Node   *parent,
@@ -356,7 +356,7 @@ eet_node_hash_add(Eet_Node   *parent,
    /* And add it to the parent. */
    nn->next = parent->values;
    parent->values = nn;
-} /* eet_node_hash_add */
+}
 
 int
 eet_node_type_get(Eet_Node *node)
@@ -420,11 +420,11 @@ eet_node_del(Eet_Node *n)
       case EET_T_USHORT:
       case EET_T_UINT:
         break;
-     } /* switch */
+     }
 
    eina_stringshare_del(n->name);
    eet_node_free(n);
-} /* eet_node_del */
+}
 
 static const char *eet_node_dump_g_name[6] = {
    "struct",
@@ -458,7 +458,7 @@ eet_node_dump_level(int               level,
    int i;
 
    for (i = 0; i < level; i++) dumpfunc(dumpdata, "  ");
-} /* eet_node_dump_level */
+}
 
 static char *
 eet_node_string_escape(const char *str)
@@ -499,7 +499,7 @@ eet_node_string_escape(const char *str)
      }
    *sp = 0;
    return s;
-} /* eet_node_string_escape */
+}
 
 static void
 eet_node_dump_string_escape(void             *dumpdata,
@@ -514,7 +514,7 @@ eet_node_dump_string_escape(void             *dumpdata,
 
    dumpfunc(dumpdata, s);
    free(s);
-} /* eet_node_dump_string_escape */
+}
 
 static void
 eet_node_dump_simple_type(Eet_Node         *n,
@@ -578,10 +578,10 @@ case Eet_Type:                                            \
       default:
         dumpfunc(dumpdata, "???: ???");
         break;
-     } /* switch */
+     }
 
    dumpfunc(dumpdata, ";\n");
-} /* eet_node_dump_simple_type */
+}
 
 static void
 eet_node_dump_group_start(int               level,
@@ -602,7 +602,7 @@ eet_node_dump_group_start(int               level,
 
    dumpfunc(dumpdata, eet_node_dump_g_name[chnk_type - EET_G_UNKNOWN]);
    dumpfunc(dumpdata, " {\n");
-} /* eet_node_dump_group_start */
+}
 
 static void
 eet_node_dump_group_end(int               level,
@@ -611,7 +611,7 @@ eet_node_dump_group_end(int               level,
 {
    eet_node_dump_level(level, dumpfunc, dumpdata);
    dumpfunc(dumpdata, "}\n");
-} /* eet_node_dump_group_end */
+}
 
 void
 eet_node_dump(Eet_Node         *n,
@@ -676,8 +676,8 @@ eet_node_dump(Eet_Node         *n,
       case EET_T_ULONG_LONG:
         eet_node_dump_simple_type(n, dumplevel, dumpfunc, dumpdata);
         break;
-     } /* switch */
-} /* eet_node_dump */
+     }
+}
 
 void *
 eet_node_walk(void          *parent,
@@ -759,13 +759,13 @@ eet_node_walk(void          *parent,
       case EET_T_ULONG_LONG:
         me = cb->simple(root->type, &root->data, user_data);
         break;
-     } /* switch */
+     }
 
    if (parent)
      cb->struct_add(parent, name, me, user_data);
 
    return me;
-} /* eet_node_walk */
+}
 
 int
 eet_node_init(void)
@@ -786,12 +786,12 @@ eet_node_init(void)
      eina_mempool_add(choice, "eet-node-alloc", NULL, sizeof(Eet_Node), 1024);
 
    return _eet_node_mp ? 1 : 0;
-} /* eet_node_init */
+}
 
 void
 eet_node_shutdown(void)
 {
    eina_mempool_del(_eet_node_mp);
    _eet_node_mp = NULL;
-} /* eet_node_shutdown */
+}
 

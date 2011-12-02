@@ -32,5 +32,5 @@ _eet_hash_gen(const char *key,
    hash_num &= mask;
    /* return it */
    return hash_num;
-} /* _eet_hash_gen */
+}
 

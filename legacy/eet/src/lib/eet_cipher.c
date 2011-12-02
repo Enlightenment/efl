@@ -275,7 +275,7 @@ on_error:
    cb = NULL;
 #endif /* ifdef HAVE_SIGNATURE */
    return NULL;
-} /* eet_identity_open */
+}
 
 EAPI void
 eet_identity_close(Eet_Key *key)
@@ -295,7 +295,7 @@ eet_identity_close(Eet_Key *key)
 #else
    key = NULL;
 #endif /* ifdef HAVE_SIGNATURE */
-} /* eet_identity_close */
+}
 
 EAPI void
 eet_identity_print(Eet_Key *key,
@@ -419,7 +419,7 @@ on_error:
    out = NULL;
    ERR("You need to compile signature support in EET.");
 #endif /* ifdef HAVE_SIGNATURE */
-} /* eet_identity_print */
+}
 
 void
 eet_identity_ref(Eet_Key *key)
@@ -428,7 +428,7 @@ eet_identity_ref(Eet_Key *key)
      return;
 
    key->references++;
-} /* eet_identity_ref */
+}
 
 void
 eet_identity_unref(Eet_Key *key)
@@ -438,7 +438,7 @@ eet_identity_unref(Eet_Key *key)
 
    key->references--;
    eet_identity_close(key);
-} /* eet_identity_unref */
+}
 
 void *
 eet_identity_compute_sha1(const void  *data_base,
@@ -479,7 +479,7 @@ eet_identity_compute_sha1(const void  *data_base,
 #endif /* ifdef HAVE_SIGNATURE */
 
    return result;
-} /* eet_identity_compute_sha1 */
+}
 
 Eet_Error
 eet_identity_sign(FILE    *fp,
@@ -650,7 +650,7 @@ on_error:
    key = NULL;
    return EET_ERROR_NOT_IMPLEMENTED;
 #endif /* ifdef HAVE_SIGNATURE */
-} /* eet_identity_sign */
+}
 
 const void *
 eet_identity_check(const void   *data_base,
@@ -830,7 +830,7 @@ eet_identity_check(const void   *data_base,
    x509_length = NULL;
    return NULL;
 #endif /* ifdef HAVE_SIGNATURE */
-} /* eet_identity_check */
+}
 
 EAPI void
 eet_identity_certificate_print(const unsigned char *certificate,
@@ -896,7 +896,7 @@ on_error:
    out = NULL;
    ERR("You need to compile signature support in EET.");
 #endif /* ifdef HAVE_SIGNATURE */
-} /* eet_identity_certificate_print */
+}
 
 Eet_Error
 eet_cipher(const void   *data,
@@ -1073,7 +1073,7 @@ on_error:
    (void)result_length;
    return EET_ERROR_NOT_IMPLEMENTED;
 #endif /* ifdef HAVE_CIPHER */
-} /* eet_cipher */
+}
 
 Eet_Error
 eet_decipher(const void   *data,
@@ -1224,7 +1224,7 @@ on_error:
    (void)result_length;
    return EET_ERROR_NOT_IMPLEMENTED;
 #endif /* ifdef HAVE_CIPHER */
-} /* eet_decipher */
+}
 
 #ifdef HAVE_CIPHER
 # ifdef HAVE_GNUTLS
@@ -1265,7 +1265,7 @@ eet_hmac_sha1(const void    *key,
    gcry_md_close(mdh);
 
    return 0;
-} /* eet_hmac_sha1 */
+}
 
 # endif /* ifdef HAVE_GNUTLS */
 
@@ -1337,6 +1337,6 @@ eet_pbkdf2_sha1(const char          *key,
    HMAC_cleanup(&hctx);
 # endif /* ifdef HAVE_GNUTLS */
    return 0;
-} /* eet_pbkdf2_sha1 */
+}
 
 #endif /* ifdef HAVE_CIPHER */

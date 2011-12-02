@@ -280,7 +280,7 @@ eet_check_pointer(const Eet_File *ef)
      return 1;
 
    return 0;
-} /* eet_check_pointer */
+}
 
 static inline int
 eet_check_header(const Eet_File *ef)
@@ -292,7 +292,7 @@ eet_check_header(const Eet_File *ef)
      return 1;
 
    return 0;
-} /* eet_check_header */
+}
 
 static inline int
 eet_test_close(int       test,
@@ -305,7 +305,7 @@ eet_test_close(int       test,
      }
 
    return test;
-} /* eet_test_close */
+}
 
 /* find an eet file in the currently in use cache */
 static Eet_File *
@@ -326,7 +326,7 @@ eet_cache_find(const char *path,
 
    /* not found */
    return NULL;
-} /* eet_cache_find */
+}
 
 /* add to end of cache */
 /* this should only be called when the cache lock is already held */
@@ -382,7 +382,7 @@ eet_cache_add(Eet_File   *ef,
    *cache = new_cache;
    *cache_num = new_cache_num;
    *cache_alloc = new_cache_alloc;
-} /* eet_cache_add */
+}
 
 /* delete from cache */
 /* this should only be called when the cache lock is already held */
@@ -437,7 +437,7 @@ eet_cache_del(Eet_File   *ef,
    *cache = new_cache;
    *cache_num = new_cache_num;
    *cache_alloc = new_cache_alloc;
-} /* eet_cache_del */
+}
 
 /* internal string match. null friendly, catches same ptr */
 static int
@@ -452,7 +452,7 @@ eet_string_match(const char *s1,
       return 1;
 
     return !strcmp(s1, s2);
-} /* eet_string_match */
+}
 
 /* flush out writes to a v2 eet file */
 static Eet_Error
@@ -665,13 +665,13 @@ write_error:
            case EPIPE: error = EET_ERROR_WRITE_ERROR_FILE_CLOSED; break;
 
            default: error = EET_ERROR_WRITE_ERROR; break;
-          } /* switch */
+          }
      }
 
 sign_error:
    fclose(fp);
    return error;
-} /* eet_flush2 */
+}
 
 EAPI int
 eet_init(void)
@@ -747,7 +747,7 @@ unregister_log_domain:
 shutdown_eina:
    eina_shutdown();
    return --eet_init_count;
-} /* eet_init */
+}
 
 EAPI int
 eet_shutdown(void)
@@ -772,7 +772,7 @@ eet_shutdown(void)
    eina_shutdown();
 
    return eet_init_count;
-} /* eet_shutdown */
+}
 
 EAPI Eet_Error
 eet_sync(Eet_File *ef)
@@ -795,7 +795,7 @@ eet_sync(Eet_File *ef)
 
    UNLOCK_FILE(ef);
    return ret;
-} /* eet_sync */
+}
 
 EAPI void
 eet_clearcache(void)
@@ -853,7 +853,7 @@ eet_clearcache(void)
      }
 
    UNLOCK_CACHE;
-} /* eet_clearcache */
+}
 
 /* FIXME: MMAP race condition in READ_WRITE_MODE */
 static Eet_File *
@@ -1112,7 +1112,7 @@ eet_internal_read2(Eet_File *ef)
      }
 
    return ef;
-} /* eet_internal_read2 */
+}
 
 #if EET_OLD_EET_FILE_FORMAT
 static Eet_File *
@@ -1294,7 +1294,7 @@ eet_internal_read1(Eet_File *ef)
         p += HEADER_SIZE + name_size;
      }
    return ef;
-} /* eet_internal_read1 */
+}
 
 #endif /* if EET_OLD_EET_FILE_FORMAT */
 
@@ -1329,10 +1329,10 @@ eet_internal_read(Eet_File *ef)
         ef->delete_me_now = 1;
         eet_internal_close(ef, EINA_TRUE);
         break;
-     } /* switch */
+     }
 
    return NULL;
-} /* eet_internal_read */
+}
 
 static Eet_Error
 eet_internal_close(Eet_File *ef,
@@ -1443,7 +1443,7 @@ on_error:
      UNLOCK_CACHE;
 
    return EET_ERROR_NONE;
-} /* eet_internal_close */
+}
 
 EAPI Eet_File *
 eet_memopen_read(const void *data,
@@ -1478,7 +1478,7 @@ eet_memopen_read(const void *data,
    ef = eet_internal_read(ef);
    UNLOCK_CACHE;
    return ef;
-} /* eet_memopen_read */
+}
 
 EAPI const char *
 eet_file_get(Eet_File *ef)
@@ -1648,7 +1648,7 @@ empty_file:
 on_error:
    UNLOCK_CACHE;
    return NULL;
-} /* eet_open */
+}
 
 EAPI Eet_File_Mode
 eet_mode_get(Eet_File *ef)
@@ -1658,7 +1658,7 @@ eet_mode_get(Eet_File *ef)
       return EET_FILE_MODE_INVALID;
     else
       return ef->mode;
-} /* eet_mode_get */
+}
 
 EAPI const void *
 eet_identity_x509(Eet_File *ef,
@@ -1671,7 +1671,7 @@ eet_identity_x509(Eet_File *ef,
      *der_length = ef->x509_length;
 
    return ef->x509_der;
-} /* eet_identity_x509 */
+}
 
 EAPI const void *
 eet_identity_signature(Eet_File *ef,
@@ -1684,7 +1684,7 @@ eet_identity_signature(Eet_File *ef,
      *signature_length = ef->signature_length;
 
    return ef->signature;
-} /* eet_identity_signature */
+}
 
 EAPI const void *
 eet_identity_sha1(Eet_File *ef,
@@ -1699,7 +1699,7 @@ eet_identity_sha1(Eet_File *ef,
      *sha1_length = ef->sha1_length;
 
    return ef->sha1;
-} /* eet_identity_sha1 */
+}
 
 EAPI Eet_Error
 eet_identity_set(Eet_File *ef,
@@ -1719,13 +1719,13 @@ eet_identity_set(Eet_File *ef,
    ef->writes_pending = 1;
 
    return EET_ERROR_NONE;
-} /* eet_identity_set */
+}
 
 EAPI Eet_Error
 eet_close(Eet_File *ef)
 {
    return eet_internal_close(ef, EINA_FALSE);
-} /* eet_close */
+}
 
 EAPI void *
 eet_read_cipher(Eet_File   *ef,
@@ -1896,7 +1896,7 @@ on_error:
    UNLOCK_FILE(ef);
    free(data);
    return NULL;
-} /* eet_read_cipher */
+}
 
 EAPI void *
 eet_read(Eet_File   *ef,
@@ -1904,7 +1904,7 @@ eet_read(Eet_File   *ef,
          int        *size_ret)
 {
    return eet_read_cipher(ef, name, size_ret, NULL);
-} /* eet_read */
+}
 
 EAPI const void *
 eet_read_direct(Eet_File   *ef,
@@ -2002,7 +2002,7 @@ eet_read_direct(Eet_File   *ef,
 on_error:
    UNLOCK_FILE(ef);
    return NULL;
-} /* eet_read_direct */
+}
 
 EAPI const char *
 eet_alias_get(Eet_File   *ef,
@@ -2237,7 +2237,7 @@ eet_alias(Eet_File   *ef,
 on_error:
    UNLOCK_FILE(ef);
    return EINA_FALSE;
-} /* eet_alias */
+}
 
 EAPI int
 eet_write_cipher(Eet_File   *ef,
@@ -2420,7 +2420,7 @@ eet_write_cipher(Eet_File   *ef,
 on_error:
    UNLOCK_FILE(ef);
    return 0;
-} /* eet_write_cipher */
+}
 
 EAPI int
 eet_write(Eet_File   *ef,
@@ -2430,7 +2430,7 @@ eet_write(Eet_File   *ef,
           int         comp)
 {
    return eet_write_cipher(ef, name, data, size, comp, NULL);
-} /* eet_write */
+}
 
 EAPI int
 eet_delete(Eet_File   *ef,
@@ -2492,7 +2492,7 @@ eet_delete(Eet_File   *ef,
 
    /* update access time */
    return exists_already;
-} /* eet_delete */
+}
 
 EAPI Eet_Dictionary *
 eet_dictionary_get(Eet_File *ef)
@@ -2501,7 +2501,7 @@ eet_dictionary_get(Eet_File *ef)
      return NULL;
 
    return ef->ed;
-} /* eet_dictionary_get */
+}
 
 EAPI char **
 eet_list(Eet_File   *ef,
@@ -2585,7 +2585,7 @@ on_error:
      *count_ret = 0;
 
    return NULL;
-} /* eet_list */
+}
 
 EAPI int
 eet_num_entries(Eet_File *ef)
@@ -2612,7 +2612,7 @@ eet_num_entries(Eet_File *ef)
    UNLOCK_FILE(ef);
 
    return ret;
-} /* eet_num_entries */
+}
 
 static Eet_File_Node *
 find_node_by_name(Eet_File   *ef,
@@ -2631,7 +2631,7 @@ find_node_by_name(Eet_File   *ef,
      }
 
    return NULL;
-} /* find_node_by_name */
+}
 
 static int
 read_data_from_disk(Eet_File      *ef,
@@ -2651,5 +2651,5 @@ read_data_from_disk(Eet_File      *ef,
    memcpy(buf, ef->data + efn->offset, len);
 
    return len;
-} /* read_data_from_disk */
+}
 

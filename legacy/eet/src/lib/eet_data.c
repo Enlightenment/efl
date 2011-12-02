@@ -651,7 +651,7 @@ eet_data_get_char(const Eet_Dictionary *ed __UNUSED__,
    *d = *s;
    CONV8(*d);
    return sizeof(char);
-} /* eet_data_get_char */
+}
 
 static void *
 eet_data_put_char(Eet_Dictionary *ed __UNUSED__,
@@ -669,7 +669,7 @@ eet_data_put_char(Eet_Dictionary *ed __UNUSED__,
    CONV8(*d);
    *size_ret = sizeof(char);
    return d;
-} /* eet_data_put_char */
+}
 
 /* SHORT TYPE */
 static int
@@ -687,7 +687,7 @@ eet_data_get_short(const Eet_Dictionary *ed __UNUSED__,
    d = (short *)dst;
    CONV16(*d);
    return sizeof(short);
-} /* eet_data_get_short */
+}
 
 static void *
 eet_data_put_short(Eet_Dictionary *ed __UNUSED__,
@@ -705,7 +705,7 @@ eet_data_put_short(Eet_Dictionary *ed __UNUSED__,
    CONV16(*d);
    *size_ret = sizeof(short);
    return d;
-} /* eet_data_put_short */
+}
 
 /* INT TYPE */
 static inline int
@@ -723,7 +723,7 @@ eet_data_get_int(const Eet_Dictionary *ed __UNUSED__,
    d = (int *)dst;
    CONV32(*d);
    return sizeof(int);
-} /* eet_data_get_int */
+}
 
 static void *
 eet_data_put_int(Eet_Dictionary *ed __UNUSED__,
@@ -741,7 +741,7 @@ eet_data_put_int(Eet_Dictionary *ed __UNUSED__,
    CONV32(*d);
    *size_ret = sizeof(int);
    return d;
-} /* eet_data_put_int */
+}
 
 /* LONG LONG TYPE */
 static int
@@ -759,7 +759,7 @@ eet_data_get_long_long(const Eet_Dictionary *ed __UNUSED__,
    d = (unsigned long long *)dst;
    CONV64(*d);
    return sizeof(unsigned long long);
-} /* eet_data_get_long_long */
+}
 
 static void *
 eet_data_put_long_long(Eet_Dictionary *ed __UNUSED__,
@@ -777,7 +777,7 @@ eet_data_put_long_long(Eet_Dictionary *ed __UNUSED__,
    CONV64(*d);
    *size_ret = sizeof(unsigned long long);
    return d;
-} /* eet_data_put_long_long */
+}
 
 /* STRING TYPE */
 static inline int
@@ -796,7 +796,7 @@ eet_data_get_string_hash(const Eet_Dictionary *ed,
      }
 
    return -1;
-} /* eet_data_get_string_hash */
+}
 
 static inline int
 eet_data_get_string(const Eet_Dictionary *ed,
@@ -833,7 +833,7 @@ eet_data_get_string(const Eet_Dictionary *ed,
 
    *d = s;
    return strlen(s) + 1;
-} /* eet_data_get_string */
+}
 
 static void *
 eet_data_put_string(Eet_Dictionary *ed,
@@ -871,7 +871,7 @@ eet_data_put_string(Eet_Dictionary *ed,
    memcpy(d, s, len + 1);
    *size_ret = len + 1;
    return d;
-} /* eet_data_put_string */
+}
 
 /* ALWAYS INLINED STRING TYPE */
 static int
@@ -881,7 +881,7 @@ eet_data_get_istring(const Eet_Dictionary *ed __UNUSED__,
                      void                 *dst)
 {
    return eet_data_get_string(NULL, src, src_end, dst);
-} /* eet_data_get_istring */
+}
 
 static void *
 eet_data_put_istring(Eet_Dictionary *ed __UNUSED__,
@@ -889,7 +889,7 @@ eet_data_put_istring(Eet_Dictionary *ed __UNUSED__,
                      int            *size_ret)
 {
    return eet_data_put_string(NULL, src, size_ret);
-} /* eet_data_put_istring */
+}
 
 /* ALWAYS NULL TYPE */
 static int
@@ -904,7 +904,7 @@ eet_data_get_null(const Eet_Dictionary *ed __UNUSED__,
 
    *d = NULL;
    return 1;
-} /* eet_data_get_null */
+}
 
 static void *
 eet_data_put_null(Eet_Dictionary *ed __UNUSED__,
@@ -913,7 +913,7 @@ eet_data_put_null(Eet_Dictionary *ed __UNUSED__,
 {
    *size_ret = 0;
    return NULL;
-} /* eet_data_put_null */
+}
 
 /**
  * Fast lookups of simple doubles/floats.
@@ -941,7 +941,7 @@ _eet_data_float_cache_get(const char *s,
       }
 
     return 0;
-} /* _eet_data_float_cache_get */
+}
 
 static inline int
 _eet_data_double_cache_get(const char *s,
@@ -963,7 +963,7 @@ _eet_data_double_cache_get(const char *s,
       }
 
     return 0;
-} /* _eet_data_double_cache_get */
+}
 
 /* FLOAT TYPE */
 static int
@@ -1006,7 +1006,7 @@ eet_data_get_float(const Eet_Dictionary *ed,
      return -1;
 
    return 1;
-} /* eet_data_get_float */
+}
 
 static void *
 eet_data_put_float(Eet_Dictionary *ed,
@@ -1038,7 +1038,7 @@ eet_data_put_float(Eet_Dictionary *ed,
      return NULL;
 
    return eet_data_put_int(ed, &idx, size_ret);
-} /* eet_data_put_float */
+}
 
 /* DOUBLE TYPE */
 static int
@@ -1082,7 +1082,7 @@ eet_data_get_double(const Eet_Dictionary *ed,
      return -1;
 
    return 1;
-} /* eet_data_get_double */
+}
 
 static void *
 eet_data_put_double(Eet_Dictionary *ed,
@@ -1115,7 +1115,7 @@ eet_data_put_double(Eet_Dictionary *ed,
      return NULL;
 
    return eet_data_put_int(ed, &idx, size_ret);
-} /* eet_data_put_double */
+}
 
 static int
 eet_data_get_f32p32(const Eet_Dictionary *ed,
@@ -1151,7 +1151,7 @@ eet_data_get_f32p32(const Eet_Dictionary *ed,
      return -1;
 
    return 1;
-} /* eet_data_get_f32p32 */
+}
 
 static void *
 eet_data_put_f32p32(Eet_Dictionary *ed,
@@ -1184,7 +1184,7 @@ eet_data_put_f32p32(Eet_Dictionary *ed,
      return NULL;
 
    return eet_data_put_int(ed, &idx, size_ret);
-} /* eet_data_put_f32p32 */
+}
 
 static int
 eet_data_get_f16p16(const Eet_Dictionary *ed,
@@ -1202,7 +1202,7 @@ eet_data_get_f16p16(const Eet_Dictionary *ed,
 
    *fp = eina_f32p32_to_f16p16(tmp);
    return 1;
-} /* eet_data_get_f16p16 */
+}
 
 static void *
 eet_data_put_f16p16(Eet_Dictionary *ed,
@@ -1213,7 +1213,7 @@ eet_data_put_f16p16(Eet_Dictionary *ed,
 
    tmp = eina_f16p16_to_f32p32((Eina_F16p16)(*(Eina_F16p16 *)src));
    return eet_data_put_f32p32(ed, &tmp, size_ret);
-} /* eet_data_put_f16p16 */
+}
 
 static int
 eet_data_get_f8p24(const Eet_Dictionary *ed,
@@ -1231,7 +1231,7 @@ eet_data_get_f8p24(const Eet_Dictionary *ed,
 
    *fp = eina_f32p32_to_f8p24(tmp);
    return 1;
-} /* eet_data_get_f8p24 */
+}
 
 static void *
 eet_data_put_f8p24(Eet_Dictionary *ed,
@@ -1242,7 +1242,7 @@ eet_data_put_f8p24(Eet_Dictionary *ed,
 
    tmp = eina_f8p24_to_f32p32((Eina_F8p24)(*(Eina_F8p24 *)src));
    return eet_data_put_f32p32(ed, &tmp, size_ret);
-} /* eet_data_put_f8p24 */
+}
 
 static inline int
 eet_data_get_type(const Eet_Dictionary *ed,
@@ -1255,7 +1255,7 @@ eet_data_get_type(const Eet_Dictionary *ed,
 
    ret = eet_basic_codec[type - 1].get(ed, src, src_end, dest);
    return ret;
-} /* eet_data_get_type */
+}
 
 static inline void *
 eet_data_put_type(Eet_Dictionary *ed,
@@ -1267,7 +1267,7 @@ eet_data_put_type(Eet_Dictionary *ed,
 
    ret = eet_basic_codec[type - 1].put(ed, src, size_ret);
    return ret;
-} /* eet_data_put_type */
+}
 
 static inline Eina_Bool
 eet_data_type_match(int type1,
@@ -1301,10 +1301,10 @@ eet_data_type_match(int type1,
 
       default:
         break;
-     } /* switch */
+     }
 
    return EINA_FALSE;
-} /* eet_data_type_match */
+}
 
 /* chunk format...
  *
@@ -1359,7 +1359,7 @@ case EET_I_ ## Type: chnk->type = EET_T_ ## Type; break;
 
                 default:
                   return;
-               } /* switch */
+               }
           }
         else if (chnk->type > EET_T_LAST)
           {
@@ -1409,7 +1409,7 @@ case EET_I_ ## Type: chnk->type = EET_T_ ## Type; break;
      }
 
    return;
-} /* eet_data_chunk_get */
+}
 
 static inline Eet_Data_Chunk *
 eet_data_chunk_new(void       *data,
@@ -1441,7 +1441,7 @@ eet_data_chunk_new(void       *data,
    chnk->type = type;
    chnk->group_type = group_type;
    return chnk;
-} /* eet_data_chunk_new */
+}
 
 static inline void
 eet_data_chunk_free(Eet_Data_Chunk *chnk)
@@ -1450,7 +1450,7 @@ eet_data_chunk_free(Eet_Data_Chunk *chnk)
      free(chnk->name);
 
    free(chnk);
-} /* eet_data_chunk_free */
+}
 
 static inline Eet_Data_Stream *
 eet_data_stream_new(void)
@@ -1462,7 +1462,7 @@ eet_data_stream_new(void)
      return NULL;
 
    return ds;
-} /* eet_data_stream_new */
+}
 
 static inline void
 eet_data_stream_free(Eet_Data_Stream *ds)
@@ -1471,13 +1471,13 @@ eet_data_stream_free(Eet_Data_Stream *ds)
      free(ds->data);
 
    free(ds);
-} /* eet_data_stream_free */
+}
 
 static inline void
 eet_data_stream_flush(Eet_Data_Stream *ds)
 {
    free(ds);
-} /* eet_data_stream_flush */
+}
 
 static inline void
 eet_data_stream_write(Eet_Data_Stream *ds,
@@ -1502,7 +1502,7 @@ eet_data_stream_write(Eet_Data_Stream *ds,
    p = ds->data;
    memcpy(p + ds->pos, data, size);
    ds->pos += size;
-} /* eet_data_stream_write */
+}
 
 static void
 eet_data_chunk_put(Eet_Dictionary  *ed,
@@ -1541,7 +1541,7 @@ case EET_T_ ## Type: type += EET_I_ ## Type; break;
 
                  default:
                    return;
-               } /* switch */
+               }
 
              buf[3] = type;
           }
@@ -1578,7 +1578,7 @@ case EET_T_ ## Type: type += EET_I_ ## Type; break;
    free(string);
 on_error:
    free(size);
-} /* eet_data_chunk_put */
+}
 
 /*---*/
 
@@ -1611,7 +1611,7 @@ _eet_descriptor_hash_new(Eet_Data_Descriptor *edd)
              edd->elements.hash.buckets[hash].next = bucket;
           }
      }
-} /* _eet_descriptor_hash_new */
+}
 
 static void
 _eet_descriptor_hash_free(Eet_Data_Descriptor *edd)
@@ -1632,7 +1632,7 @@ _eet_descriptor_hash_free(Eet_Data_Descriptor *edd)
      }
    if (edd->elements.hash.buckets)
      free(edd->elements.hash.buckets);
-} /* _eet_descriptor_hash_free */
+}
 
 static Eet_Data_Element *
 _eet_descriptor_hash_find(Eet_Data_Descriptor *edd,
@@ -1677,31 +1677,31 @@ _eet_descriptor_hash_find(Eet_Data_Descriptor *edd,
         bucket = bucket->next;
      }
    return NULL;
-} /* _eet_descriptor_hash_find */
+}
 
 static void *
 _eet_mem_alloc(size_t size)
 {
    return calloc(1, size);
-} /* _eet_mem_alloc */
+}
 
 static void
 _eet_mem_free(void *mem)
 {
    free(mem);
-} /* _eet_mem_free */
+}
 
 static char *
 _eet_str_alloc(const char *str)
 {
    return strdup(str);
-} /* _eet_str_alloc */
+}
 
 static void
 _eet_str_free(const char *str)
 {
    free((char *)str);
-} /* _eet_str_free */
+}
 
 static Eina_Hash *
 _eet_eina_hash_add_alloc(Eina_Hash  *hash,
@@ -1716,7 +1716,7 @@ _eet_eina_hash_add_alloc(Eina_Hash  *hash,
 
    eina_hash_add(hash, key, data);
    return hash;
-} /* _eet_eina_hash_add_alloc */
+}
 
 static Eina_Hash *
 _eet_eina_hash_direct_add_alloc(Eina_Hash  *hash,
@@ -1731,18 +1731,18 @@ _eet_eina_hash_direct_add_alloc(Eina_Hash  *hash,
 
    eina_hash_direct_add(hash, key, data);
    return hash;
-} /* _eet_eina_hash_direct_add_alloc */
+}
 
 static char *
 _eet_str_direct_alloc(const char *str)
 {
    return (char *)str;
-} /* _eet_str_direct_alloc */
+}
 
 static void
 _eet_str_direct_free(const char *str __UNUSED__)
 {
-} /* _eet_str_direct_free */
+}
 
 static void
 _eet_eina_hash_foreach(void             *hash,
@@ -1751,14 +1751,14 @@ _eet_eina_hash_foreach(void             *hash,
 {
    if (hash)
      eina_hash_foreach(hash, cb, fdata);
-} /* _eet_eina_hash_foreach */
+}
 
 static void
 _eet_eina_hash_free(void *hash)
 {
    if (hash)
      eina_hash_free(hash);
-} /* _eet_eina_hash_free */
+}
 
 /*---*/
 EAPI Eina_Bool
@@ -1792,7 +1792,7 @@ eet_eina_stream_data_descriptor_class_set(Eet_Data_Descriptor_Class *eddc,
    eddc->func.array_free = _eet_mem_free;
 
    return EINA_TRUE;
-} /* eet_eina_stream_data_descriptor_class_set */
+}
 
 EAPI Eina_Bool
 eet_eina_file_data_descriptor_class_set(Eet_Data_Descriptor_Class *eddc,
@@ -1811,7 +1811,7 @@ eet_eina_file_data_descriptor_class_set(Eet_Data_Descriptor_Class *eddc,
    eddc->func.str_direct_free = _eet_str_direct_free;
 
    return EINA_TRUE;
-} /* eet_eina_file_data_descriptor_class_set */
+}
 
 static Eet_Data_Descriptor *
 _eet_data_descriptor_new(const Eet_Data_Descriptor_Class *eddc,
@@ -1872,7 +1872,7 @@ _eet_data_descriptor_new(const Eet_Data_Descriptor_Class *eddc,
      }
 
    return edd;
-} /* _eet_data_descriptor_new */
+}
 
 EAPI Eet_Data_Descriptor *
 eet_data_descriptor_new(const char                          *name,
@@ -1905,31 +1905,31 @@ eet_data_descriptor_new(const char                          *name,
    eddc.func.hash_free = func_hash_free;
 
    return _eet_data_descriptor_new(&eddc, 0);
-} /* eet_data_descriptor_new */
+}
 
 EAPI Eet_Data_Descriptor *
 eet_data_descriptor2_new(const Eet_Data_Descriptor_Class *eddc)
 {
    return _eet_data_descriptor_new(eddc, 1);
-} /* eet_data_descriptor2_new */
+}
 
 EAPI Eet_Data_Descriptor *
 eet_data_descriptor3_new(const Eet_Data_Descriptor_Class *eddc)
 {
    return _eet_data_descriptor_new(eddc, 2);
-} /* eet_data_descriptor3_new */
+}
 
 EAPI Eet_Data_Descriptor *
 eet_data_descriptor_stream_new(const Eet_Data_Descriptor_Class *eddc)
 {
    return _eet_data_descriptor_new(eddc, 1);
-} /* eet_data_descriptor_stream_new */
+}
 
 EAPI Eet_Data_Descriptor *
 eet_data_descriptor_file_new(const Eet_Data_Descriptor_Class *eddc)
 {
    return _eet_data_descriptor_new(eddc, 2);
-} /* eet_data_descriptor_file_new */
+}
 
 EAPI void
 eet_data_descriptor_free(Eet_Data_Descriptor *edd)
@@ -1942,7 +1942,7 @@ eet_data_descriptor_free(Eet_Data_Descriptor *edd)
      free(edd->elements.set);
 
    free(edd);
-} /* eet_data_descriptor_free */
+}
 
 EAPI void
 eet_data_descriptor_element_add(Eet_Data_Descriptor *edd,
@@ -2039,7 +2039,7 @@ eet_data_descriptor_element_add(Eet_Data_Descriptor *edd,
    ede->counter_name = counter_name;
 
    ede->subtype = subtype;
-} /* eet_data_descriptor_element_add */
+}
 
 EAPI void *
 eet_data_read_cipher(Eet_File            *ef,
@@ -2075,7 +2075,7 @@ eet_data_read_cipher(Eet_File            *ef,
      free((void *)data);
 
    return data_dec;
-} /* eet_data_read_cipher */
+}
 
 EAPI Eet_Node *
 eet_data_node_read_cipher(Eet_File   *ef,
@@ -2110,7 +2110,7 @@ eet_data_node_read_cipher(Eet_File   *ef,
      free((void *)data);
 
    return result;
-} /* eet_data_node_read_cipher */
+}
 
 EAPI void *
 eet_data_read(Eet_File            *ef,
@@ -2118,7 +2118,7 @@ eet_data_read(Eet_File            *ef,
               const char          *name)
 {
    return eet_data_read_cipher(ef, edd, name, NULL);
-} /* eet_data_read */
+}
 
 EAPI int
 eet_data_write_cipher(Eet_File            *ef,
@@ -2142,7 +2142,7 @@ eet_data_write_cipher(Eet_File            *ef,
    val = eet_write_cipher(ef, name, data_enc, size, compress, cipher_key);
    free(data_enc);
    return val;
-} /* eet_data_write_cipher */
+}
 
 EAPI int
 eet_data_write(Eet_File            *ef,
@@ -2152,7 +2152,7 @@ eet_data_write(Eet_File            *ef,
                int                  compress)
 {
    return eet_data_write_cipher(ef, edd, name, NULL, data, compress);
-} /* eet_data_write */
+}
 
 static void
 eet_free_context_init(Eet_Free_Context *context)
@@ -2222,7 +2222,7 @@ _eet_free_hash(void *data)
 #endif /* if defined (_WIN64) || ((!defined (_WIN32)) && (LONG_BIT != 32)) */
 
    return hash & 0xFF;
-} /* _eet_free_hash */
+}
 
 static void
 _eet_free_add(Eet_Free *ef,
@@ -2240,7 +2240,7 @@ _eet_free_add(Eet_Free *ef,
      return;
 
    eina_array_push(&ef->list[hash], data);
-} /* _eet_free_add */
+}
 
 #if 0
 static void
@@ -2274,19 +2274,19 @@ _eet_free_reset(Eet_Free *ef)
 
    for (i = 0; i < EET_FREE_COUNT; ++i)
      eina_array_clean(&ef->list[i]);
-} /* _eet_free_reset */
+}
 
 static void
 _eet_free_ref(Eet_Free *ef)
 {
    ef->ref++;
-} /* _eet_free_ref */
+}
 
 static void
 _eet_free_unref(Eet_Free *ef)
 {
    ef->ref--;
-} /* _eet_free_unref */
+}
 
 #define _eet_freelist_add(Ctx, Data) _eet_free_add(&Ctx->freelist, Data);
 #define _eet_freelist_del(Ctx, Data) _eet_free_del(&Ctx->freelist, Data);
@@ -2316,7 +2316,7 @@ _eet_freelist_free(Eet_Free_Context    *context,
             free(track);
        }
    _eet_free_reset(&context->freelist);
-} /* _eet_freelist_free */
+}
 
 #define _eet_freelist_array_add(Ctx, Data) _eet_free_add(&Ctx->freelist_array, Data);
 #define _eet_freelist_array_del(Ctx, Data) _eet_free_del(&Ctx->freelist_array, Data);
@@ -2351,7 +2351,7 @@ _eet_freelist_array_free(Eet_Free_Context    *context,
             free(track);
        }
    _eet_free_reset(&context->freelist_array);
-} /* _eet_freelist_array_free */
+}
 
 #define _eet_freelist_list_add(Ctx, Data) _eet_free_add(&Ctx->freelist_list, Data);
 #define _eet_freelist_list_del(Ctx, Data) _eet_free_del(&Ctx->freelist_list, Data);
@@ -2379,7 +2379,7 @@ _eet_freelist_list_free(Eet_Free_Context    *context,
             edd->func.list_free(*((void **)(track)));
        }
    _eet_free_reset(&context->freelist_list);
-} /* _eet_freelist_list_free */
+}
 
 #define _eet_freelist_str_add(Ctx, Data) _eet_free_add(&Ctx->freelist_str, Data);
 #define _eet_freelist_str_del(Ctx, Data) _eet_free_del(&Ctx->freelist_str, Data);
@@ -2409,7 +2409,7 @@ _eet_freelist_str_free(Eet_Free_Context    *context,
             free(track);
        }
    _eet_free_reset(&context->freelist_str);
-} /* _eet_freelist_str_free */
+}
 
 #define _eet_freelist_direct_str_add(Ctx, Data) _eet_free_add(&Ctx->freelist_direct_str, Data);
 #define _eet_freelist_direct_str_del(Ctx, Data) _eet_free_del(&Ctx->freelist_direct_str, Data);
@@ -2439,7 +2439,7 @@ _eet_freelist_direct_str_free(Eet_Free_Context    *context,
             free(track);
        }
    _eet_free_reset(&context->freelist_direct_str);
-} /* _eet_freelist_direct_str_free */
+}
 
 #define _eet_freelist_hash_add(Ctx, Data) _eet_free_add(&Ctx->freelist_hash, Data);
 #define _eet_freelist_hash_del(Ctx, Data) _eet_free_del(&Ctx->freelist_hash, Data);
@@ -2469,7 +2469,7 @@ _eet_freelist_hash_free(Eet_Free_Context    *context,
             free(track);
        }
    _eet_free_reset(&context->freelist_hash);
-} /* _eet_freelist_hash_free */
+}
 
 static void
 _eet_freelist_all_ref(Eet_Free_Context *freelist_context)
@@ -2479,7 +2479,7 @@ _eet_freelist_all_ref(Eet_Free_Context *freelist_context)
    _eet_freelist_list_ref(freelist_context);
    _eet_freelist_hash_ref(freelist_context);
    _eet_freelist_direct_str_ref(freelist_context);
-} /* _eet_freelist_all_ref */
+}
 
 static void
 _eet_freelist_all_unref(Eet_Free_Context *freelist_context)
@@ -2489,7 +2489,7 @@ _eet_freelist_all_unref(Eet_Free_Context *freelist_context)
    _eet_freelist_list_unref(freelist_context);
    _eet_freelist_hash_unref(freelist_context);
    _eet_freelist_direct_str_unref(freelist_context);
-} /* _eet_freelist_all_unref */
+}
 
 static int
 eet_data_descriptor_encode_hash_cb(void       *hash __UNUSED__,
@@ -2556,7 +2556,7 @@ eet_data_descriptor_encode_hash_cb(void       *hash __UNUSED__,
      }
 
    return 1;
-} /* eet_data_descriptor_encode_hash_cb */
+}
 
 static char *
 _eet_data_dump_token_get(const char *src,
@@ -2639,7 +2639,7 @@ _eet_data_dump_token_get(const char *src,
      free(tok);
 
    return NULL;
-} /* _eet_data_dump_token_get */
+}
 
 static void
 eet_data_encode(Eet_Dictionary  *ed,
@@ -2663,7 +2663,7 @@ eet_data_encode(Eet_Dictionary  *ed,
    eet_data_chunk_put(ed, echnk, ds);
    eet_data_chunk_free(echnk);
    free(data);
-} /* eet_data_encode */
+}
 
 static void *
 _eet_data_dump_encode(int             parent_type,
@@ -2976,7 +2976,7 @@ case Eet_Type:                                                               \
    eet_data_chunk_free(chnk);
 
    return cdata;
-} /* _eet_data_dump_encode */
+}
 
 static void *
 _eet_data_dump_parse(Eet_Dictionary *ed,
@@ -3238,7 +3238,7 @@ _eet_data_dump_parse(Eet_Dictionary *ed,
      }
 
    return cdata;
-} /* _eet_data_dump_parse */
+}
 
 #define NEXT_CHUNK(P, Size, Echnk, Ed)                    \
   {                                                       \
@@ -3352,7 +3352,7 @@ _eet_data_descriptor_decode(Eet_Free_Context     *context,
            case EET_G_VARIANT:
            default:
              goto error;
-          } /* switch */
+          }
      }
 
    while (size > 0)
@@ -3477,7 +3477,7 @@ error:
 
    /* FIXME: Warn that something goes wrong here. */
    return NULL;
-} /* _eet_data_descriptor_decode */
+}
 
 static int
 eet_data_get_list(Eet_Free_Context     *context,
@@ -3544,7 +3544,7 @@ eet_data_get_list(Eet_Free_Context     *context,
 
 on_error:
    return 0;
-} /* eet_data_get_list */
+}
 
 static int
 eet_data_get_hash(Eet_Free_Context     *context,
@@ -3629,7 +3629,7 @@ eet_data_get_hash(Eet_Free_Context     *context,
 
 on_error:
    return 0;
-} /* eet_data_get_hash */
+}
 
 /* var arrays and fixed arrays have to
  * get all chunks at once. for fixed arrays
@@ -3793,7 +3793,7 @@ on_error:
      eet_node_del(tmp);
 
    return 0;
-} /* eet_data_get_array */
+}
 
 static void
 eet_data_put_union(Eet_Dictionary      *ed,
@@ -3849,7 +3849,7 @@ eet_data_put_union(Eet_Dictionary      *ed,
 
           break;
        }
-} /* eet_data_put_union */
+}
 
 static int
 eet_data_get_union(Eet_Free_Context     *context,
@@ -3947,7 +3947,7 @@ eet_data_get_union(Eet_Free_Context     *context,
 
 on_error:
    return 0;
-} /* eet_data_get_union */
+}
 
 static void
 eet_data_put_variant(Eet_Dictionary      *ed,
@@ -4058,7 +4058,7 @@ eet_data_put_variant(Eet_Dictionary      *ed,
 
             break;
          }
-} /* eet_data_put_variant */
+}
 
 static int
 eet_data_get_variant(Eet_Free_Context     *context,
@@ -4213,7 +4213,7 @@ eet_data_get_variant(Eet_Free_Context     *context,
 
 on_error:
    return 0;
-} /* eet_data_get_variant */
+}
 
 static Eet_Node *
 eet_data_node_simple_type(int         type,
@@ -4249,8 +4249,8 @@ case Eet_Type:                                                    \
       default:
         ERR("Unknow type passed to eet_data_node_simple_type");
         return NULL;
-     } /* switch */
-} /* eet_data_node_simple_type */
+     }
+}
 
 static int
 eet_data_get_unknown(Eet_Free_Context     *context,
@@ -4366,7 +4366,7 @@ eet_data_get_unknown(Eet_Free_Context     *context,
      }
 
    return 1;
-} /* eet_data_get_unknown */
+}
 
 static void
 eet_data_put_array(Eet_Dictionary      *ed,
@@ -4442,7 +4442,7 @@ eet_data_put_array(Eet_Dictionary      *ed,
 
         offset += subsize;
      }
-} /* eet_data_put_array */
+}
 
 static void
 eet_data_put_unknown(Eet_Dictionary      *ed,
@@ -4471,7 +4471,7 @@ eet_data_put_unknown(Eet_Dictionary      *ed,
                      size,
                      ede->type,
                      ede->group_type);
-} /* eet_data_put_unknown */
+}
 
 static void
 eet_data_put_list(Eet_Dictionary      *ed,
@@ -4512,7 +4512,7 @@ eet_data_put_list(Eet_Dictionary      *ed,
                                ede->group_type);
           }
      }
-} /* eet_data_put_list */
+}
 
 static void
 eet_data_put_hash(Eet_Dictionary      *ed,
@@ -4529,7 +4529,7 @@ eet_data_put_hash(Eet_Dictionary      *ed,
    fdata.ede = ede;
    fdata.ed = ed;
    edd->func.hash_foreach(l, eet_data_descriptor_encode_hash_cb, &fdata);
-} /* eet_data_put_hash */
+}
 
 EAPI int
 eet_data_dump_cipher(Eet_File         *ef,
@@ -4570,7 +4570,7 @@ eet_data_dump_cipher(Eet_File         *ef,
      free((void *)data);
 
    return result ? 1 : 0;
-} /* eet_data_dump_cipher */
+}
 
 EAPI int
 eet_data_dump(Eet_File         *ef,
@@ -4579,7 +4579,7 @@ eet_data_dump(Eet_File         *ef,
               void             *dumpdata)
 {
    return eet_data_dump_cipher(ef, name, NULL, dumpfunc, dumpdata);
-} /* eet_data_dump */
+}
 
 EAPI int
 eet_data_text_dump_cipher(const void       *data_in,
@@ -4624,7 +4624,7 @@ eet_data_text_dump_cipher(const void       *data_in,
      free(ret);
 
    return result ? 1 : 0;
-} /* eet_data_text_dump_cipher */
+}
 
 EAPI int
 eet_data_text_dump(const void       *data_in,
@@ -4633,7 +4633,7 @@ eet_data_text_dump(const void       *data_in,
                    void             *dumpdata)
 {
    return eet_data_text_dump_cipher(data_in, NULL, size_in, dumpfunc, dumpdata);
-} /* eet_data_text_dump */
+}
 
 EAPI void *
 eet_data_text_undump_cipher(const char *text,
@@ -4666,7 +4666,7 @@ eet_data_text_undump_cipher(const char *text,
      }
 
    return ret;
-} /* eet_data_text_undump_cipher */
+}
 
 EAPI void *
 eet_data_text_undump(const char *text,
@@ -4674,7 +4674,7 @@ eet_data_text_undump(const char *text,
                      int        *size_ret)
 {
    return eet_data_text_undump_cipher(text, NULL, textlen, size_ret);
-} /* eet_data_text_undump */
+}
 
 EAPI int
 eet_data_undump_cipher(Eet_File   *ef,
@@ -4698,7 +4698,7 @@ eet_data_undump_cipher(Eet_File   *ef,
    val = eet_write_cipher(ef, name, data_enc, size, compress, cipher_key);
    free(data_enc);
    return val;
-} /* eet_data_undump_cipher */
+}
 
 EAPI int
 eet_data_undump(Eet_File   *ef,
@@ -4708,7 +4708,7 @@ eet_data_undump(Eet_File   *ef,
                 int         compress)
 {
    return eet_data_undump_cipher(ef, name, NULL, text, textlen, compress);
-} /* eet_data_undump */
+}
 
 EAPI void *
 eet_data_descriptor_decode_cipher(Eet_Data_Descriptor *edd,
@@ -4744,7 +4744,7 @@ eet_data_descriptor_decode_cipher(Eet_Data_Descriptor *edd,
      free(deciphered);
 
    return ret;
-} /* eet_data_descriptor_decode_cipher */
+}
 
 EAPI void *
 eet_data_descriptor_decode(Eet_Data_Descriptor *edd,
@@ -4752,7 +4752,7 @@ eet_data_descriptor_decode(Eet_Data_Descriptor *edd,
                            int                  size_in)
 {
    return eet_data_descriptor_decode_cipher(edd, data_in, NULL, size_in);
-} /* eet_data_descriptor_decode */
+}
 
 EAPI Eet_Node *
 eet_data_node_decode_cipher(const void *data_in,
@@ -4787,7 +4787,7 @@ eet_data_node_decode_cipher(const void *data_in,
      free(deciphered);
 
    return ret;
-} /* eet_data_node_decode_cipher */
+}
 
 static void *
 _eet_data_descriptor_encode(Eet_Dictionary      *ed,
@@ -4849,7 +4849,7 @@ _eet_data_descriptor_encode(Eet_Dictionary      *ed,
    eet_data_chunk_free(chnk);
 
    return cdata;
-} /* _eet_data_descriptor_encode */
+}
 
 EAPI int
 eet_data_node_write_cipher(Eet_File   *ef,
@@ -4872,7 +4872,7 @@ eet_data_node_write_cipher(Eet_File   *ef,
    val = eet_write_cipher(ef, name, data_enc, size, compress, cipher_key);
    free(data_enc);
    return val;
-} /* eet_data_node_write_cipher */
+}
 
 EAPI void *
 eet_data_node_encode_cipher(Eet_Node   *node,
@@ -4909,7 +4909,7 @@ eet_data_node_encode_cipher(Eet_Node   *node,
      *size_ret = size;
 
    return ret;
-} /* eet_data_node_encode_cipher */
+}
 
 EAPI void *
 eet_data_descriptor_encode_cipher(Eet_Data_Descriptor *edd,
@@ -4947,7 +4947,7 @@ eet_data_descriptor_encode_cipher(Eet_Data_Descriptor *edd,
      *size_ret = size;
 
    return ret;
-} /* eet_data_descriptor_encode_cipher */
+}
 
 EAPI void *
 eet_data_descriptor_encode(Eet_Data_Descriptor *edd,
@@ -4955,7 +4955,7 @@ eet_data_descriptor_encode(Eet_Data_Descriptor *edd,
                            int                 *size_ret)
 {
    return eet_data_descriptor_encode_cipher(edd, data_in, NULL, size_ret);
-} /* eet_data_descriptor_encode */
+}
 
 EAPI void *
 eet_data_xattr_cipher_get(const char          *filename,
