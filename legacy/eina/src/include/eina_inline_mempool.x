@@ -69,17 +69,16 @@ struct _Eina_Mempool
 };
 
 /**
- * @brief Re-allocate a amount memory by the given mempool.
+ * @brief Re-allocate an amount memory by the given mempool.
  *
  * @param mp The mempool.
  * @param element The element to re-allocate.
  * @param size The size in bytes to re-allocate.
  * @return The newly re-allocated data.
  *
- * This function re-allocates @p element with @p size bytes, using the
- * mempool @p mp and returns the allocated data. If not used anymore,
- * the data must be freed with eina_mempool_free(). No check is done
- * on @p mp, so it must be a valid mempool.
+ * This function re-allocates and returns @p element with @p size bytes using the
+ * mempool @p mp. If not used anymore, the data must be freed with eina_mempool_free().
+ * @warning No checks are done for @p mp.
  */
 static inline void *
 eina_mempool_realloc(Eina_Mempool *mp, void *element, unsigned int size)
@@ -88,16 +87,15 @@ eina_mempool_realloc(Eina_Mempool *mp, void *element, unsigned int size)
 }
 
 /**
- * @brief Allocate a amount memory by the given mempool.
+ * @brief Allocate memory using the given mempool.
  *
  * @param mp The mempool.
  * @param size The size in bytes to allocate.
  * @return The newly allocated data.
  *
- * This function allocates @p size bytes, using the mempool @p mp and
- * returns the allocated data. If not used anymore, the data must be
- * freed with eina_mempool_free(). No check is done on @p mp, so it
- * must be a valid mempool.
+ * This function allocates and returns @p size bytes using the mempool @p mp.
+ * If not used anymore, the data must be freed with eina_mempool_free().
+ * @warning No checks are done for @p mp.
  */
 static inline void *
 eina_mempool_malloc(Eina_Mempool *mp, unsigned int size)
@@ -106,16 +104,16 @@ eina_mempool_malloc(Eina_Mempool *mp, unsigned int size)
 }
 
 /**
- * @brief Allocate and zero a amount memory by the given mempool.
+ * @brief Allocate and zero memory using the given mempool.
  *
  * @param mp The mempool.
  * @param size The size in bytes to allocate.
  * @return The newly allocated data.
  *
- * This function allocates @p size bytes, using the mempool @p mp and
- * returns the allocated data after zeroing it. If not used anymore,
- * the data must be freed with eina_mempool_free(). No check is done on @p mp,
- * so it must be a valid mempool.
+ * This function allocates, zeroes, and returns @p size bytes using the mempool @p mp.
+ * If not used anymore, the data must be freed with eina_mempool_free().
+ * @warning No checks are done for @p mp.
+ * @since 1.2
  */
 static inline void *
 eina_mempool_calloc(Eina_Mempool *mp, unsigned int size)
@@ -127,15 +125,15 @@ eina_mempool_calloc(Eina_Mempool *mp, unsigned int size)
 }
 
 /**
- * @brief Free the allocated ressources by the given mempool.
+ * @brief Free resources previously allocated by the given mempool.
  *
  * @param mp The mempool.
  * @param element The data to free.
  *
  * This function frees @p element allocated by @p mp. @p element must
- * have been obtained by eina_mempool_malloc() or
- * eina_mempool_realloc(). No check is done on @p mp, so it must be a
- * valid mempool.
+ * have been obtained from eina_mempool_malloc(), eina_mempool_calloc(), or
+ * eina_mempool_realloc().
+ * @warning No checks are done for @p mp.
  */
 static inline void
 eina_mempool_free(Eina_Mempool *mp, void *element)
