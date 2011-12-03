@@ -534,21 +534,6 @@ fi
 
 ## Examples
 
-install_examples="yes"
-AC_ARG_ENABLE([install-examples],
-   AC_HELP_STRING([--disable-install-examples],
-                  [disable installing examples (compiled or just source).
-                   @<:@default==enabled@:>@]),
-   [
-    if test "x${enableval}" = "xyes" ; then
-       install_examples="yes"
-    else
-       install_examples="no"
-    fi
-   ],
-   [install_examples="yes"])
-AM_CONDITIONAL([INSTALL_EXAMPLES], [test "x${install_examples}" = "xyes"])
-
 build_examples="no"
 AC_ARG_ENABLE([build-examples],
    AC_HELP_STRING([--enable-build-examples],
