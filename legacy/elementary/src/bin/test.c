@@ -147,6 +147,9 @@ void test_glview(void *data, Evas_Object *obj, void *event_info);
 void test_3d(void *data, Evas_Object *obj, void *event_info);
 void test_naviframe(void *data, Evas_Object *obj, void *event_info);
 void test_factory(void *data, Evas_Object *obj, void *event_info);
+#ifdef HAVE_EMOTION
+void test_video(void *data, Evas_Object *obj, void *event_info);
+#endif
 #ifdef HAVE_EIO
 void test_eio(void *data, Evas_Object *obj, void *event_info);
 #endif
@@ -313,6 +316,9 @@ add_tests:
    ADD_TEST(NULL, "Images", "Photo", test_photo);
    ADD_TEST(NULL, "Images", "Thumb", test_thumb);
    ADD_TEST(NULL, "Images", "Slideshow", test_slideshow);
+#ifdef HAVE_EMOTION
+   ADD_TEST(NULL, "Images", "Video", test_video);
+#endif
 
    //------------------------------//
    ADD_TEST(NULL, "Containers", "Box Vert", test_box_vert);

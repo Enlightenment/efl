@@ -105,6 +105,7 @@ test_toggle.c \
 test_toolbar.c \
 test_tooltip.c \
 test_transit.c \
+test_video.c \
 test_weather.c \
 test_web.c \
 test_win_inline.c \
