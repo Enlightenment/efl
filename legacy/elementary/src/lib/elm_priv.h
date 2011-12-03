@@ -95,6 +95,11 @@ extern const char *_elm_engines[];
 #define ELM_ACCESS_MODE_OFF 0
 #define ELM_ACCESS_MODE_ON 1
 
+#undef MIN
+#define MIN(x, y) (((x) < (y)) ? (x) : (y))
+#undef MAX
+#define MAX(x, y) (((x) > (y)) ? (x) : (y))
+
 struct _Elm_Config
 {
    int            config_version;

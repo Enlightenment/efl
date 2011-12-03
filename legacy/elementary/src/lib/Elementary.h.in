@@ -4546,6 +4546,22 @@ extern "C" {
     */
    EAPI Eina_Bool    elm_win_focus_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
    /**
+    * Constrain the maximum width and height of a window to the width and height of its screen
+    *
+    * When @p constrain is true, @p obj will never resize larger than the screen.
+    * @param obj The window object
+    * @param constrain EINA_TRUE to restrict the window's maximum size, EINA_FALSE to disable restriction
+    */
+   EAPI void         elm_win_screen_constrain_set(Evas_Object *obj, Eina_Bool constrain) EINA_ARG_NONNULL(1);
+   /**
+    * Retrieve the constraints on the maximum width and height of a window relative to the width and height of its screen
+    *
+    * When this function returns true, @p obj will never resize larger than the screen.
+    * @param obj The window object
+    * @return EINA_TRUE to restrict the window's maximum size, EINA_FALSE to disable restriction
+    */
+   EAPI Eina_Bool    elm_win_screen_constrain_get(Evas_Object *obj) EINA_ARG_NONNULL(1);
+   /**
     * Get screen geometry details for the screen that a window is on
     * @param obj The window to query
     * @param x where to return the horizontal offset value. May be NULL.

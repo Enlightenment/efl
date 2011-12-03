@@ -25,6 +25,7 @@ struct _Elm_Win
       int shot_counter;
    } shot;
    Eina_Bool autodel : 1;
+   Eina_Bool constrain : 1;
    int *autodel_clear, rot;
    int show_count;
    struct {
@@ -640,6 +641,13 @@ _elm_win_obj_callback_resize(void *data, Evas *e __UNUSED__, Evas_Object *obj, v
         evas_object_geometry_get(obj, NULL, NULL, &w, &h);
         if (w < 1) w = 1;
         if (h < 1) h = 1;
+        if (win->constrain)
+          {
+             int sw, sh;
+             ecore_evas_screen_geometry_get(win->ee, NULL, NULL, &sw, &sh);
+             w = MIN(w, sw);
+             h = MIN(h, sh);
+          }
         evas_object_image_size_set(win->img_obj, w, h);
      }
 }
@@ -673,6 +681,13 @@ _elm_win_resize_job(void *data)
 
    win->deferred_resize_job = NULL;
    ecore_evas_request_geometry_get(win->ee, NULL, NULL, &w, &h);
+   if (win->constrain)
+     {
+        int sw, sh;
+        ecore_evas_screen_geometry_get(win->ee, NULL, NULL, &sw, &sh);
+        w = MIN(w, sw);
+        h = MIN(h, sh);
+     }
    evas_object_resize(win->win_obj, w, h);
    if (win->frame_obj)
      {
@@ -1755,6 +1770,23 @@ elm_win_raise(Evas_Object *obj)
 }
 
 EAPI void
+elm_win_center(Evas_Object *obj, Eina_Bool h, Eina_Bool v)
+{
+   Elm_Win *win;
+   int win_w, win_h, screen_w, screen_h, nx, ny;
+   ELM_CHECK_WIDTYPE(obj, widtype);
+   win = elm_widget_data_get(obj);
+   if (!win) return;
+   ecore_evas_screen_geometry_get(win->ee, NULL, NULL, &screen_w, &screen_h);
+   evas_object_geometry_get(obj, NULL, NULL, &win_w, &win_h);
+   if (h) nx = win_w >= screen_w ? 0 : (screen_w / 2) - (win_w / 2);
+   else nx = win->screen.x;
+   if (v) ny = win_h >= screen_h ? 0 : (screen_h / 2) - (win_h / 2);
+   else ny = win->screen.y;
+   evas_object_move(obj, nx, ny);
+}
+
+EAPI void
 elm_win_borderless_set(Evas_Object *obj, Eina_Bool borderless)
 {
    Elm_Win *win;
@@ -2183,6 +2215,26 @@ elm_win_focus_get(const Evas_Object *obj)
    win = elm_widget_data_get(obj);
    if (!win) return EINA_FALSE;
    return ecore_evas_focus_get(win->ee);
+}
+
+EAPI void
+elm_win_screen_constrain_set(Evas_Object *obj, Eina_Bool constrain)
+{
+   Elm_Win *win;
+   ELM_CHECK_WIDTYPE(obj, widtype);
+   win = elm_widget_data_get(obj);
+   if (!win) return;
+   win->constrain = !!constrain;
+}
+
+EAPI Eina_Bool
+elm_win_screen_constrain_get(Evas_Object *obj)
+{
+   Elm_Win *win;
+   ELM_CHECK_WIDTYPE(obj, widtype) EINA_FALSE;
+   win = elm_widget_data_get(obj);
+   if (!win) return EINA_FALSE;
+   return win->constrain;
 }
 
 EAPI void
