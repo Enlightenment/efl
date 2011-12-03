@@ -373,4 +373,6 @@ GENERIC_ALLOC_FREE_HEADER(Ecore_Fd_Handler, ecore_fd_handler);
 GENERIC_ALLOC_FREE_HEADER(Ecore_Win32_Handler, ecore_win32_handler);
 #endif
 
+#undef GENERIC_ALLOC_FREE_HEADER
+
 #endif
