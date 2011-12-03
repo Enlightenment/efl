@@ -24,7 +24,7 @@ EDCS = \
 	$(MULTISENSE_EDC_FILE)
 
 .edc.edj:
-	$(edje_cc) -v -id $(srcdir) $(SND_DIR) $< $(builddir)/$(@F)
+	$(edje_cc) -v -fd $(srcdir) -id $(srcdir) $(SND_DIR) $< $(builddir)/$(@F)
 
 EDJS = $(EDCS:%.edc=%.edj)
 
