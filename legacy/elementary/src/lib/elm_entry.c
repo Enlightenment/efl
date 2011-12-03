@@ -2401,8 +2401,52 @@ elm_entry_password_set(Evas_Object *obj, Eina_Bool password)
    if (!wd) return;
    if (wd->password == password) return;
    wd->password = password;
-   wd->single_line = EINA_TRUE;
-   wd->linewrap = ELM_WRAP_NONE;
+   if (password)
+     {
+        wd->single_line = EINA_TRUE;
+        wd->linewrap = ELM_WRAP_NONE;
+#ifdef HAVE_ELEMENTARY_X
+        elm_drop_target_del(obj);
+#endif
+        edje_object_signal_callback_del_full(wd->ent, "selection,start", "elm.text",
+                                        _signal_selection_start, obj);
+        edje_object_signal_callback_del_full(wd->ent, "selection,changed", "elm.text",
+                                        _signal_selection_changed, obj);
+        edje_object_signal_callback_del_full(wd->ent, "entry,selection,all,request", "elm.text",
+                                        _signal_selection_all, obj);
+        edje_object_signal_callback_del_full(wd->ent, "entry,selection,none,request", "elm.text",
+                                        _signal_selection_none, obj);
+        edje_object_signal_callback_del_full(wd->ent, "selection,cleared", "elm.text",
+                                        _signal_selection_cleared, obj);
+        edje_object_signal_callback_del_full(wd->ent, "entry,paste,request,*", "elm.text",
+                                        _signal_entry_paste_request, obj);
+        edje_object_signal_callback_del_full(wd->ent, "entry,copy,notify", "elm.text",
+                                        _signal_entry_copy_notify, obj);
+        edje_object_signal_callback_del_full(wd->ent, "entry,cut,notify", "elm.text",
+                                        _signal_entry_cut_notify, obj);
+     }
+   else
+     {
+#ifdef HAVE_ELEMENTARY_X
+        elm_drop_target_add(obj, ELM_SEL_FORMAT_MARKUP, _drag_drop_cb, NULL);
+#endif
+        edje_object_signal_callback_add(wd->ent, "selection,start", "elm.text",
+                                        _signal_selection_start, obj);
+        edje_object_signal_callback_add(wd->ent, "selection,changed", "elm.text",
+                                        _signal_selection_changed, obj);
+        edje_object_signal_callback_add(wd->ent, "entry,selection,all,request", "elm.text",
+                                        _signal_selection_all, obj);
+        edje_object_signal_callback_add(wd->ent, "entry,selection,none,request", "elm.text",
+                                        _signal_selection_none, obj);
+        edje_object_signal_callback_add(wd->ent, "selection,cleared", "elm.text",
+                                        _signal_selection_cleared, obj);
+        edje_object_signal_callback_add(wd->ent, "entry,paste,request,*", "elm.text",
+                                        _signal_entry_paste_request, obj);
+        edje_object_signal_callback_add(wd->ent, "entry,copy,notify", "elm.text",
+                                        _signal_entry_copy_notify, obj);
+        edje_object_signal_callback_add(wd->ent, "entry,cut,notify", "elm.text",
+                                        _signal_entry_cut_notify, obj);
+     }
    _theme_hook(obj);
 }
 
@@ -2510,7 +2554,7 @@ elm_entry_selection_get(const Evas_Object *obj)
 {
    ELM_CHECK_WIDTYPE(obj, widtype) NULL;
    Widget_Data *wd = elm_widget_data_get(obj);
-   if (!wd) return NULL;
+   if ((!wd) || (wd->password)) return NULL;
    return edje_object_part_text_selection_get(wd->ent, "elm.text");
 }
 
@@ -2578,7 +2622,7 @@ elm_entry_select_none(Evas_Object *obj)
 {
    ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
-   if (!wd) return;
+   if ((!wd) || (wd->password)) return;
    if (wd->selmode)
      {
         wd->selmode = EINA_FALSE;
@@ -2595,7 +2639,7 @@ elm_entry_select_all(Evas_Object *obj)
 {
    ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
-   if (!wd) return;
+   if ((!wd) || (wd->password)) return;
    if (wd->selmode)
      {
         wd->selmode = EINA_FALSE;
@@ -2765,7 +2809,7 @@ elm_entry_selection_cut(Evas_Object *obj)
 {
    ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
-   if (!wd) return;
+   if ((!wd) || (wd->password)) return;
    _cut(obj, NULL, NULL);
 }
 
@@ -2774,7 +2818,7 @@ elm_entry_selection_copy(Evas_Object *obj)
 {
    ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
-   if (!wd) return;
+   if ((!wd) || (wd->password)) return;
    _copy(obj, NULL, NULL);
 }
 
@@ -2783,7 +2827,7 @@ elm_entry_selection_paste(Evas_Object *obj)
 {
    ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
-   if (!wd) return;
+   if ((!wd) || (wd->password)) return;
    _paste(obj, NULL, NULL);
 }
 
