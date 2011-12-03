@@ -11,14 +11,15 @@ doc-clean:
 
 doc: all
 	$(efl_doxygen)
-	cp img/* html/
+	cp $(srcdir)/img/* html/
+	cp $(srcdir)/img/*.eps latex/
 	rm -rf $(PACKAGE_DOCNAME).tar*
 	mkdir -p $(PACKAGE_DOCNAME)/doc
 	cp -R html/ latex/ man/ $(PACKAGE_DOCNAME)/doc
 	tar cf $(PACKAGE_DOCNAME).tar $(PACKAGE_DOCNAME)/
 	bzip2 -9 $(PACKAGE_DOCNAME).tar
 	rm -rf $(PACKAGE_DOCNAME)/
-	mv $(PACKAGE_DOCNAME).tar.bz2 $(top_srcdir)
+	mv $(PACKAGE_DOCNAME).tar.bz2 $(top_builddir)
 
 clean-local: doc-clean
 
@@ -29,4 +30,4 @@ doc:
 
 endif
 
-EXTRA_DIST = Doxyfile $(wildcard img/*.*) e.css head.html foot.html
+EXTRA_DIST = $(srcdir)/Doxyfile $(wildcard $(srcdir)/img/*.*) $(srcdir)/e.css $(srcdir)/head.html $(srcdir)/foot.html
