@@ -10,6 +10,8 @@ Additions:
 Improvements:
     * ecore:
      - most allocations moved to mempools
+    * ecore_win32:
+     - fix modifiers value on Windows XP
 
 
 Ecore 1.1.0

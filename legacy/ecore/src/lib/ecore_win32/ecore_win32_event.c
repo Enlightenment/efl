@@ -46,16 +46,17 @@ static void _ecore_win32_event_free_key_up(void *data,
                                            void *ev);
 
 static int  _ecore_win32_event_keystroke_get(Ecore_Win32_Callback_Data *msg,
-                                             Eina_Bool     is_down,
-                                             char        **keyname,
-                                             char        **keysymbol,
-                                             char        **keycompose,
-                                             unsigned int *modifiers);
+                                             Eina_Bool                  is_down,
+                                             char                     **keyname,
+                                             char                     **keysymbol,
+                                             char                     **keycompose,
+                                             unsigned int              *modifiers);
 
-static int  _ecore_win32_event_char_get(int    key,
-                                        char **keyname,
-                                        char **keysymbol,
-                                        char **keycompose);
+static int  _ecore_win32_event_char_get(int           key,
+                                        char        **keyname,
+                                        char        **keysymbol,
+                                        char        **keycompose,
+                                        unsigned int *modifiers);
 
 
 /***** Global functions definitions *****/
@@ -89,7 +90,8 @@ _ecore_win32_event_handle_key_press(Ecore_Win32_Callback_Data *msg,
         if (!_ecore_win32_event_char_get(LOWORD(msg->window_param),
                                          (char **)&e->keyname,
                                          (char **)&e->key,
-                                         (char **)&e->string))
+                                         (char **)&e->string,
+                                         &e->modifiers))
           {
              free(e);
              return;
@@ -131,7 +133,8 @@ _ecore_win32_event_handle_key_release(Ecore_Win32_Callback_Data *msg)
             !_ecore_win32_event_char_get(LOWORD(msg->window_param),
                                          (char **)&e->keyname,
                                          (char **)&e->key,
-                                         (char **)&e->string))
+                                         (char **)&e->string,
+                                         &e->modifiers))
           {
              free(e);
              return;
@@ -830,7 +833,7 @@ _ecore_win32_event_keystroke_get(Ecore_Win32_Callback_Data *msg,
                     ks = "Shift_R";
                     kc = "";
                  }
-               *modifiers |= ECORE_EVENT_MODIFIER_SHIFT;
+               *modifiers &= ~ECORE_EVENT_MODIFIER_SHIFT;
             }
           else /* is_up */
             {
@@ -852,7 +855,7 @@ _ecore_win32_event_keystroke_get(Ecore_Win32_Callback_Data *msg,
                     kc = "";
                     _ecore_win32_key_mask &= ~ECORE_WIN32_KEY_MASK_RSHIFT;
                  }
-               *modifiers &= ~ECORE_EVENT_MODIFIER_SHIFT;
+               *modifiers |= ECORE_EVENT_MODIFIER_SHIFT;
             }
           break;
        }
@@ -1138,6 +1141,25 @@ _ecore_win32_event_keystroke_get(Ecore_Win32_Callback_Data *msg,
                kn = (char *)buf;
                ks = (char *)buf;
                kc = (char *)buf;
+
+               res = GetAsyncKeyState(VK_SHIFT);
+               if (res & 0x8000)
+                 *modifiers |= ECORE_EVENT_MODIFIER_SHIFT;
+               else
+                 *modifiers &= ~ECORE_EVENT_MODIFIER_SHIFT;
+
+               res = GetKeyState(VK_CONTROL);
+               if (res & 0x8000)
+                 *modifiers |= ECORE_EVENT_MODIFIER_CTRL;
+               else
+                 *modifiers &= ~ECORE_EVENT_MODIFIER_CTRL;
+
+               res = GetKeyState(VK_MENU);
+               if (res & 0x8000)
+                 *modifiers |= ECORE_EVENT_MODIFIER_ALT;
+               else
+                 *modifiers &= ~ECORE_EVENT_MODIFIER_ALT;
+
                break;
              }
            return 0;
@@ -1172,15 +1194,17 @@ _ecore_win32_event_keystroke_get(Ecore_Win32_Callback_Data *msg,
 }
 
 static int
-_ecore_win32_event_char_get(int    key,
-                            char **keyname,
-                            char **keysymbol,
-                            char **keycompose)
+_ecore_win32_event_char_get(int           key,
+                            char        **keyname,
+                            char        **keysymbol,
+                            char        **keycompose,
+                            unsigned int *modifiers)
 {
   char *kn = NULL;
   char *ks = NULL;
   char *kc = NULL;
   char buf[2];
+  SHORT res;
 
   *keyname = NULL;
   *keysymbol = NULL;
@@ -1248,6 +1272,24 @@ _ecore_win32_event_char_get(int    key,
         *keysymbol = NULL;
         return 0;
      }
+
+   res = GetAsyncKeyState(VK_SHIFT);
+   if (res & 0x8000)
+     *modifiers |= ECORE_EVENT_MODIFIER_SHIFT;
+   else
+     *modifiers &= ~ECORE_EVENT_MODIFIER_SHIFT;
+
+   res = GetKeyState(VK_CONTROL);
+   if (res & 0x8000)
+     *modifiers |= ECORE_EVENT_MODIFIER_CTRL;
+   else
+     *modifiers &= ~ECORE_EVENT_MODIFIER_CTRL;
+
+   res = GetKeyState(VK_MENU);
+   if (res & 0x8000)
+     *modifiers |= ECORE_EVENT_MODIFIER_ALT;
+   else
+     *modifiers &= ~ECORE_EVENT_MODIFIER_ALT;
 
    return 1;
 }

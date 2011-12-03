@@ -368,3 +368,7 @@
 2011-12-02 Term <term@twistedpath.org>
 
         * added ecore_x_randr_output_backlight_available()
+
+2011-12-03 Vincent Torri
+
+	* Fix the modifiers value (Windows XP)
