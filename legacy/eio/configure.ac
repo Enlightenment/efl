@@ -194,6 +194,7 @@ eio.spec
 Makefile
 doc/Makefile
 doc/eio.dox
+doc/Doxyfile
 src/Makefile
 src/lib/Makefile
 ])
