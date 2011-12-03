@@ -360,3 +360,7 @@
 2011-11-29 Mike McCormack
 
 	* Allow quitting before entering the glib version of the main loop
+
+2011-12-02 Mike Blumenkrantz
+
+        * Use mempools for allocations

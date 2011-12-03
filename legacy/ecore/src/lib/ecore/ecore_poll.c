@@ -7,16 +7,6 @@
 #include "Ecore.h"
 #include "ecore_private.h"
 
-struct _Ecore_Poller
-{
-   EINA_INLIST;
-                 ECORE_MAGIC;
-   int           ibit;
-   unsigned char delete_me : 1;
-   Ecore_Task_Cb func;
-   void         *data;
-};
-
 static Ecore_Timer *timer = NULL;
 static int min_interval = -1;
 static int interval_incr = 0;
@@ -159,7 +149,7 @@ _ecore_poller_cb_timer(void *data __UNUSED__)
                    if (poller->delete_me)
                      {
                         pollers[i] = (Ecore_Poller *)eina_inlist_remove(EINA_INLIST_GET(pollers[i]), EINA_INLIST_GET(poller));
-                        free(poller);
+                        ecore_poller_mp_free(poller);
                         poller_delete_count--;
                         changes++;
                         if (poller_delete_count <= 0) break;
@@ -281,7 +271,7 @@ ecore_poller_add(Ecore_Poller_Type type __UNUSED__,
    if (!func) return NULL;
    if (interval < 1) interval = 1;
 
-   poller = calloc(1, sizeof(Ecore_Poller));
+   poller = ecore_poller_calloc(1);
    if (!poller) return NULL;
    ECORE_MAGIC_SET(poller, ECORE_MAGIC_POLLER);
    /* interval MUST be a power of 2, so enforce it */
@@ -413,7 +403,7 @@ ecore_poller_del(Ecore_Poller *poller)
    /* not in loop so safe - delete immediately */
    data = poller->data;
    pollers[poller->ibit] = (Ecore_Poller *)eina_inlist_remove(EINA_INLIST_GET(pollers[poller->ibit]), EINA_INLIST_GET(poller));
-   free(poller);
+   ecore_poller_mp_free(poller);
    _ecore_poller_next_tick_eval();
    return data;
 }
@@ -433,7 +423,7 @@ _ecore_poller_shutdown(void)
         while ((poller = pollers[i]))
           {
              pollers[i] = (Ecore_Poller *)eina_inlist_remove(EINA_INLIST_GET(pollers[i]), EINA_INLIST_GET(pollers[i]));
-             free(poller);
+             ecore_poller_mp_free(poller);
           }
      }
 }

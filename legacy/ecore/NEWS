@@ -1,3 +1,13 @@
+Ecore 1.2.0
+
+Changes since Ecore 1.1.0:
+--------------------------
+
+Improvements:
+    * ecore:
+     - most allocations moved to mempools
+
+
 Ecore 1.1.0
 
 Changes since Ecore 1.0.0:

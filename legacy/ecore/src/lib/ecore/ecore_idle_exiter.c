@@ -7,16 +7,6 @@
 #include "Ecore.h"
 #include "ecore_private.h"
 
-struct _Ecore_Idle_Exiter
-{
-   EINA_INLIST;
-                 ECORE_MAGIC;
-   Ecore_Task_Cb func;
-   void         *data;
-   int           references;
-   Eina_Bool     delete_me : 1;
-};
-
 static Ecore_Idle_Exiter *idle_exiters = NULL;
 static Ecore_Idle_Exiter *idle_exiter_current = NULL;
 static int idle_exiters_delete_me = 0;
@@ -47,7 +37,7 @@ ecore_idle_exiter_add(Ecore_Task_Cb func,
 
    _ecore_lock();
    if (!func) goto unlock;
-   ie = calloc(1, sizeof(Ecore_Idle_Exiter));
+   ie = ecore_idle_exiter_calloc(1);
    if (!ie) goto unlock;
    ECORE_MAGIC_SET(ie, ECORE_MAGIC_IDLE_EXITER);
    ie->func = func;
@@ -102,7 +92,7 @@ _ecore_idle_exiter_shutdown(void)
      {
         idle_exiters = (Ecore_Idle_Exiter *)eina_inlist_remove(EINA_INLIST_GET(idle_exiters), EINA_INLIST_GET(idle_exiters));
         ECORE_MAGIC_SET(ie, ECORE_MAGIC_NONE);
-        free(ie);
+        ecore_idle_exiter_mp_free(ie);
      }
    idle_exiters_delete_me = 0;
    idle_exiter_current = NULL;
@@ -159,7 +149,7 @@ _ecore_idle_exiter_call(void)
 
                   idle_exiters = (Ecore_Idle_Exiter *)eina_inlist_remove(EINA_INLIST_GET(idle_exiters), EINA_INLIST_GET(ie));
                   ECORE_MAGIC_SET(ie, ECORE_MAGIC_NONE);
-                  free(ie);
+                  ecore_idle_exiter_mp_free(ie);
                }
           }
         if (!deleted_idler_exiters_in_use)

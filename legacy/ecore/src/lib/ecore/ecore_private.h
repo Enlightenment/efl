@@ -79,11 +79,14 @@ extern int _ecore_log_dom;
 #define ECORE_MAGIC_WIN32_HANDLER 0xf7e8f1a3
 #define ECORE_MAGIC_JOB           0x76543210
 
+typedef unsigned int Ecore_Magic;
 #define ECORE_MAGIC               Ecore_Magic __magic
 
 #define ECORE_MAGIC_SET(d, m)      (d)->__magic = (m)
 #define ECORE_MAGIC_CHECK(d, m)    ((d) && ((d)->__magic == (m)))
 #define ECORE_MAGIC_FAIL(d, m, fn) _ecore_magic_fail((d), (d) ? (d)->__magic : 0, (m), (fn));
+
+#include "ecore_types.h"
 
 /* undef the following, we want our version */
 #undef FREE
@@ -115,8 +118,6 @@ ecore_print_warning(const char *function,
        ecore_print_warning(__FUNCTION__, sparam); \
        return;                                    \
     }
-
-typedef unsigned int Ecore_Magic;
 
 EAPI void _ecore_magic_fail(const void *d,
                             Ecore_Magic m,
@@ -349,5 +350,27 @@ extern int _ecore_fps_debug;
 extern double _ecore_time_loop_time;
 extern Eina_Bool _ecore_glib_always_integrate;
 extern Ecore_Select_Function main_loop_select;
+
+Eina_Bool ecore_mempool_init(void);
+void ecore_mempool_shutdown(void);
+#define GENERIC_ALLOC_FREE_HEADER(TYPE, Type) \
+  TYPE *Type##_calloc(unsigned int);          \
+  void Type##_mp_free(TYPE *e);
+
+GENERIC_ALLOC_FREE_HEADER(Ecore_Animator, ecore_animator);
+GENERIC_ALLOC_FREE_HEADER(Ecore_Event_Handler, ecore_event_handler);
+GENERIC_ALLOC_FREE_HEADER(Ecore_Event_Filter, ecore_event_filter);
+GENERIC_ALLOC_FREE_HEADER(Ecore_Event, ecore_event);
+GENERIC_ALLOC_FREE_HEADER(Ecore_Idle_Exiter, ecore_idle_exiter);
+GENERIC_ALLOC_FREE_HEADER(Ecore_Idle_Enterer, ecore_idle_enterer);
+GENERIC_ALLOC_FREE_HEADER(Ecore_Idler, ecore_idler);
+GENERIC_ALLOC_FREE_HEADER(Ecore_Job, ecore_job);
+GENERIC_ALLOC_FREE_HEADER(Ecore_Timer, ecore_timer);
+GENERIC_ALLOC_FREE_HEADER(Ecore_Poller, ecore_poller);
+GENERIC_ALLOC_FREE_HEADER(Ecore_Pipe, ecore_pipe);
+GENERIC_ALLOC_FREE_HEADER(Ecore_Fd_Handler, ecore_fd_handler);
+#ifdef _WIN32
+GENERIC_ALLOC_FREE_HEADER(Ecore_Win32_Handler, ecore_win32_handler);
+#endif
 
 #endif

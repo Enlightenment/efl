@@ -16,14 +16,6 @@ static void _ecore_job_event_free(void *data,
 static int ecore_event_job_type = 0;
 static Ecore_Event_Handler *_ecore_job_handler = NULL;
 
-struct _Ecore_Job
-{
-                ECORE_MAGIC;
-   Ecore_Event *event;
-   Ecore_Cb     func;
-   void        *data;
-};
-
 void
 _ecore_job_init(void)
 {
@@ -61,13 +53,13 @@ ecore_job_add(Ecore_Cb    func,
 
    if (!func) return NULL;
 
-   job = calloc(1, sizeof(Ecore_Job));
+   job = ecore_job_calloc(1);
    if (!job) return NULL;
    ECORE_MAGIC_SET(job, ECORE_MAGIC_JOB);
    job->event = ecore_event_add(ecore_event_job_type, job, _ecore_job_event_free, NULL);
    if (!job->event)
      {
-        free(job);
+        ecore_job_mp_free(job);
         return NULL;
      }
    job->func = func;
@@ -115,8 +107,8 @@ _ecore_job_event_handler(void *data __UNUSED__,
 
 static void
 _ecore_job_event_free(void *data __UNUSED__,
-                      void *ev)
+                      void *job)
 {
-   free(ev);
+   ecore_job_mp_free(job);
 }
 

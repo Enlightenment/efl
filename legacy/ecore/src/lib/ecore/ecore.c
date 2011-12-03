@@ -159,6 +159,7 @@ ecore_init(void)
      }
    if (getenv("ECORE_FPS_DEBUG")) _ecore_fps_debug = 1;
    if (_ecore_fps_debug) _ecore_fps_debug_init();
+   if (!ecore_mempool_init()) goto shutdown_mempool;
    _ecore_main_loop_init();
    _ecore_signal_init();
    _ecore_thread_init();
@@ -191,6 +192,8 @@ ecore_init(void)
 
    return _ecore_init_count;
 
+shutdown_mempool:
+   ecore_mempool_shutdown();
 shutdown_log_dom:
    eina_shutdown();
 shutdown_evil:
@@ -255,7 +258,7 @@ ecore_shutdown(void)
               _ecore_memory_max_free);
        }
 #endif
-
+     ecore_mempool_shutdown();
      eina_log_domain_unregister(_ecore_log_dom);
      _ecore_log_dom = -1;
      eina_shutdown();

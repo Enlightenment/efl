@@ -80,21 +80,6 @@
 
 #endif /* ! _WIN32 */
 
-struct _Ecore_Pipe
-{
-                     ECORE_MAGIC;
-   int               fd_read;
-   int               fd_write;
-   Ecore_Fd_Handler *fd_handler;
-   const void       *data;
-   Ecore_Pipe_Cb     handler;
-   unsigned int      len;
-   int               handling;
-   size_t            already_read;
-   void             *passed_data;
-   int               message;
-   Eina_Bool         delete_me : 1;
-};
 
 static Eina_Bool _ecore_pipe_read(void             *data,
                                   Ecore_Fd_Handler *fd_handler);
@@ -125,12 +110,12 @@ ecore_pipe_add(Ecore_Pipe_Cb handler,
 
    if (!handler) return NULL;
 
-   p = (Ecore_Pipe *)calloc(1, sizeof(Ecore_Pipe));
+   p = ecore_pipe_calloc(1);
    if (!p) return NULL;
 
    if (pipe(fds))
      {
-        free(p);
+        ecore_pipe_mp_free(p);
         return NULL;
      }
 
@@ -171,7 +156,7 @@ ecore_pipe_del(Ecore_Pipe *p)
    if (p->fd_read != PIPE_FD_INVALID) pipe_close(p->fd_read);
    if (p->fd_write != PIPE_FD_INVALID) pipe_close(p->fd_write);
    data = (void *)p->data;
-   free(p);
+   ecore_pipe_mp_free(p);
    return data;
 }
 

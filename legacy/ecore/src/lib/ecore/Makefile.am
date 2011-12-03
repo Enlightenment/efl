@@ -11,6 +11,7 @@ includesdir = $(includedir)/ecore-@VMAJ@
 
 libecore_la_SOURCES = \
 ecore.c \
+ecore_alloc.c \
 ecore_anim.c \
 ecore_app.c \
 ecore_events.c \
