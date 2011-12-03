@@ -46,7 +46,7 @@ ecore_x_xregion_free(Ecore_X_XRegion *region)
 
 EAPI Eina_Bool
 ecore_x_xregion_set(Ecore_X_XRegion *region,
-                    Ecore_X_GC       gc)
+                    Ecore_X_GC gc)
 {
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
    return XSetRegion(_ecore_x_disp, gc, (Region)region) ? EINA_TRUE : EINA_FALSE;
@@ -54,8 +54,8 @@ ecore_x_xregion_set(Ecore_X_XRegion *region,
 
 EAPI void
 ecore_x_xregion_translate(Ecore_X_XRegion *region,
-                          int              x,
-                          int              y)
+                          int x,
+                          int y)
 {
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
    if (!region)
@@ -84,8 +84,8 @@ ecore_x_xregion_union(Ecore_X_XRegion *dst,
 }
 
 EAPI Eina_Bool
-ecore_x_xregion_union_rect(Ecore_X_XRegion   *dst,
-                           Ecore_X_XRegion   *src,
+ecore_x_xregion_union_rect(Ecore_X_XRegion *dst,
+                           Ecore_X_XRegion *src,
                            Ecore_X_Rectangle *rect)
 {
    XRectangle xr;
@@ -131,8 +131,8 @@ ecore_x_xregion_is_equal(Ecore_X_XRegion *r1,
 
 EAPI Eina_Bool
 ecore_x_xregion_point_contain(Ecore_X_XRegion *region,
-                              int              x,
-                              int              y)
+                              int x,
+                              int y)
 {
    if (!region)
      return EINA_FALSE;
@@ -142,7 +142,7 @@ ecore_x_xregion_point_contain(Ecore_X_XRegion *region,
 }
 
 EAPI Eina_Bool
-ecore_x_xregion_rect_contain(Ecore_X_XRegion   *region,
+ecore_x_xregion_rect_contain(Ecore_X_XRegion *region,
                              Ecore_X_Rectangle *rect)
 {
    if (!region || !rect)

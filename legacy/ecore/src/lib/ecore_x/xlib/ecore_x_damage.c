@@ -35,7 +35,7 @@ ecore_x_damage_query(void)
 }
 
 EAPI Ecore_X_Damage
-ecore_x_damage_new(Ecore_X_Drawable            d,
+ecore_x_damage_new(Ecore_X_Drawable d,
                    Ecore_X_Damage_Report_Level level)
 {
 #ifdef ECORE_XDAMAGE

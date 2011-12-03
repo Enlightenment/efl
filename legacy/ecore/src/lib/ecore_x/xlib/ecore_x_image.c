@@ -15,7 +15,7 @@ static int _ecore_x_image_shm_can = -1;
 static int _ecore_x_image_err = 0;
 
 static int
-_ecore_x_image_error_handler(Display     *d __UNUSED__,
+_ecore_x_image_error_handler(Display *d __UNUSED__,
                              XErrorEvent *ev __UNUSED__)
 {
    _ecore_x_image_err = 1;
@@ -105,10 +105,10 @@ struct _Ecore_X_Image
 };
 
 EAPI Ecore_X_Image *
-ecore_x_image_new(int            w,
-                  int            h,
+ecore_x_image_new(int w,
+                  int h,
                   Ecore_X_Visual vis,
-                  int            depth)
+                  int depth)
 {
    Ecore_X_Image *im;
 
@@ -195,14 +195,14 @@ _ecore_x_image_shm_create(Ecore_X_Image *im)
 }
 
 EAPI Eina_Bool
-ecore_x_image_get(Ecore_X_Image   *im,
+ecore_x_image_get(Ecore_X_Image *im,
                   Ecore_X_Drawable draw,
-                  int              x,
-                  int              y,
-                  int              sx,
-                  int              sy,
-                  int              w,
-                  int              h)
+                  int x,
+                  int y,
+                  int sx,
+                  int sy,
+                  int w,
+                  int h)
 {
    Eina_Bool ret = EINA_TRUE;
    XErrorHandler ph;
@@ -281,15 +281,15 @@ ecore_x_image_get(Ecore_X_Image   *im,
 }
 
 EAPI void
-ecore_x_image_put(Ecore_X_Image   *im,
+ecore_x_image_put(Ecore_X_Image *im,
                   Ecore_X_Drawable draw,
-                  Ecore_X_GC       gc,
-                  int              x,
-                  int              y,
-                  int              sx,
-                  int              sy,
-                  int              w,
-                  int              h)
+                  Ecore_X_GC gc,
+                  int x,
+                  int y,
+                  int sx,
+                  int sy,
+                  int w,
+                  int h)
 {
    Ecore_X_GC tgc = 0;
 
@@ -310,9 +310,9 @@ ecore_x_image_put(Ecore_X_Image   *im,
 
 EAPI void *
 ecore_x_image_data_get(Ecore_X_Image *im,
-                       int           *bpl,
-                       int           *rows,
-                       int           *bpp)
+                       int *bpl,
+                       int *rows,
+                       int *bpp)
 {
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
    if (!im->xim) _ecore_x_image_shm_create(im);
@@ -345,19 +345,19 @@ ecore_x_image_is_argb32_get(Ecore_X_Image *im)
 }
 
 EAPI Eina_Bool
-ecore_x_image_to_argb_convert(void            *src,
-                              int              sbpp,
-                              int              sbpl,
+ecore_x_image_to_argb_convert(void *src,
+                              int sbpp,
+                              int sbpl,
                               Ecore_X_Colormap c,
-                              Ecore_X_Visual   v,
-                              int              x,
-                              int              y,
-                              int              w,
-                              int              h,
-                              unsigned int    *dst,
-                              int              dbpl,
-                              int              dx,
-                              int              dy)
+                              Ecore_X_Visual v,
+                              int x,
+                              int y,
+                              int w,
+                              int h,
+                              unsigned int *dst,
+                              int dbpl,
+                              int dx,
+                              int dy)
 {
    Visual *vis = v;
    XColor *cols = NULL;
@@ -411,9 +411,9 @@ ecore_x_image_to_argb_convert(void            *src,
    else if ((vis->class == TrueColor) ||
             (vis->class == DirectColor))
      {
-        if      ((vis->red_mask == 0x00ff0000) &&
-                 (vis->green_mask == 0x0000ff00) &&
-                 (vis->blue_mask == 0x000000ff))
+        if ((vis->red_mask == 0x00ff0000) &&
+            (vis->green_mask == 0x0000ff00) &&
+            (vis->blue_mask == 0x000000ff))
           mode = argbx888;
         else if ((vis->red_mask == 0x000000ff) &&
                  (vis->green_mask == 0x0000ff00) &&

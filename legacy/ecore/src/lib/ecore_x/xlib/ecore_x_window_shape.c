@@ -88,8 +88,8 @@ ecore_x_window_shape_input_window_set(Ecore_X_Window win,
 EAPI void
 ecore_x_window_shape_window_set_xy(Ecore_X_Window win,
                                    Ecore_X_Window shape_win,
-                                   int            x,
-                                   int            y)
+                                   int x,
+                                   int y)
 {
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
    XShapeCombineShape(_ecore_x_disp,
@@ -105,8 +105,8 @@ ecore_x_window_shape_window_set_xy(Ecore_X_Window win,
 EAPI void
 ecore_x_window_shape_input_window_set_xy(Ecore_X_Window win,
                                          Ecore_X_Window shape_win,
-                                         int            x,
-                                         int            y)
+                                         int x,
+                                         int y)
 {
 #ifdef ShapeInput
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
@@ -126,10 +126,10 @@ ecore_x_window_shape_input_window_set_xy(Ecore_X_Window win,
 
 EAPI void
 ecore_x_window_shape_rectangle_set(Ecore_X_Window win,
-                                   int            x,
-                                   int            y,
-                                   int            w,
-                                   int            h)
+                                   int x,
+                                   int y,
+                                   int w,
+                                   int h)
 {
    XRectangle rect;
 
@@ -151,10 +151,10 @@ ecore_x_window_shape_rectangle_set(Ecore_X_Window win,
 
 EAPI void
 ecore_x_window_shape_input_rectangle_set(Ecore_X_Window win,
-                                         int            x,
-                                         int            y,
-                                         int            w,
-                                         int            h)
+                                         int x,
+                                         int y,
+                                         int w,
+                                         int h)
 {
 #ifdef ShapeInput
    XRectangle rect;
@@ -180,9 +180,9 @@ ecore_x_window_shape_input_rectangle_set(Ecore_X_Window win,
 }
 
 EAPI void
-ecore_x_window_shape_rectangles_set(Ecore_X_Window     win,
+ecore_x_window_shape_rectangles_set(Ecore_X_Window win,
                                     Ecore_X_Rectangle *rects,
-                                    int                num)
+                                    int num)
 {
 #ifdef ShapeInput
    XRectangle *rect = NULL;
@@ -219,9 +219,9 @@ ecore_x_window_shape_rectangles_set(Ecore_X_Window     win,
 }
 
 EAPI void
-ecore_x_window_shape_input_rectangles_set(Ecore_X_Window     win,
+ecore_x_window_shape_input_rectangles_set(Ecore_X_Window win,
                                           Ecore_X_Rectangle *rects,
-                                          int                num)
+                                          int num)
 {
 #ifdef ShapeInput
    XRectangle *rect = NULL;
@@ -259,10 +259,10 @@ ecore_x_window_shape_input_rectangles_set(Ecore_X_Window     win,
 
 EAPI void
 ecore_x_window_shape_rectangle_subtract(Ecore_X_Window win,
-                                        int            x,
-                                        int            y,
-                                        int            w,
-                                        int            h)
+                                        int x,
+                                        int y,
+                                        int w,
+                                        int h)
 {
    XRectangle rect;
 
@@ -284,10 +284,10 @@ ecore_x_window_shape_rectangle_subtract(Ecore_X_Window win,
 
 EAPI void
 ecore_x_window_shape_input_rectangle_subtract(Ecore_X_Window win,
-                                              int            x,
-                                              int            y,
-                                              int            w,
-                                              int            h)
+                                              int x,
+                                              int y,
+                                              int w,
+                                              int h)
 {
 #ifdef ShapeInput
    XRectangle rect;
@@ -330,8 +330,8 @@ ecore_x_window_shape_window_add(Ecore_X_Window win,
 EAPI void
 ecore_x_window_shape_window_add_xy(Ecore_X_Window win,
                                    Ecore_X_Window shape_win,
-                                   int            x,
-                                   int            y)
+                                   int x,
+                                   int y)
 {
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
    XShapeCombineShape(_ecore_x_disp,
@@ -347,8 +347,8 @@ ecore_x_window_shape_window_add_xy(Ecore_X_Window win,
 EAPI void
 ecore_x_window_shape_input_window_add_xy(Ecore_X_Window win,
                                          Ecore_X_Window shape_win,
-                                         int            x,
-                                         int            y)
+                                         int x,
+                                         int y)
 {
 #ifdef ShapeInput
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
@@ -368,10 +368,10 @@ ecore_x_window_shape_input_window_add_xy(Ecore_X_Window win,
 
 EAPI void
 ecore_x_window_shape_rectangle_add(Ecore_X_Window win,
-                                   int            x,
-                                   int            y,
-                                   int            w,
-                                   int            h)
+                                   int x,
+                                   int y,
+                                   int w,
+                                   int h)
 {
    XRectangle rect;
 
@@ -393,10 +393,10 @@ ecore_x_window_shape_rectangle_add(Ecore_X_Window win,
 
 EAPI void
 ecore_x_window_shape_input_rectangle_add(Ecore_X_Window win,
-                                         int            x,
-                                         int            y,
-                                         int            w,
-                                         int            h)
+                                         int x,
+                                         int y,
+                                         int w,
+                                         int h)
 {
 #ifdef ShapeInput
    XRectangle rect;
@@ -423,10 +423,10 @@ ecore_x_window_shape_input_rectangle_add(Ecore_X_Window win,
 
 EAPI void
 ecore_x_window_shape_rectangle_clip(Ecore_X_Window win,
-                                    int            x,
-                                    int            y,
-                                    int            w,
-                                    int            h)
+                                    int x,
+                                    int y,
+                                    int w,
+                                    int h)
 {
    XRectangle rect;
 
@@ -448,10 +448,10 @@ ecore_x_window_shape_rectangle_clip(Ecore_X_Window win,
 
 EAPI void
 ecore_x_window_shape_input_rectangle_clip(Ecore_X_Window win,
-                                          int            x,
-                                          int            y,
-                                          int            w,
-                                          int            h)
+                                          int x,
+                                          int y,
+                                          int w,
+                                          int h)
 {
 #ifdef ShapeInput
    XRectangle rect;
@@ -477,9 +477,9 @@ ecore_x_window_shape_input_rectangle_clip(Ecore_X_Window win,
 }
 
 EAPI void
-ecore_x_window_shape_rectangles_add(Ecore_X_Window     win,
+ecore_x_window_shape_rectangles_add(Ecore_X_Window win,
                                     Ecore_X_Rectangle *rects,
-                                    int                num)
+                                    int num)
 {
    XRectangle *rect = NULL;
    int i;
@@ -511,9 +511,9 @@ ecore_x_window_shape_rectangles_add(Ecore_X_Window     win,
 }
 
 EAPI void
-ecore_x_window_shape_input_rectangles_add(Ecore_X_Window     win,
+ecore_x_window_shape_input_rectangles_add(Ecore_X_Window win,
                                           Ecore_X_Rectangle *rects,
-                                          int                num)
+                                          int num)
 {
 #ifdef ShapeInput
    XRectangle *rect = NULL;
@@ -551,7 +551,7 @@ ecore_x_window_shape_input_rectangles_add(Ecore_X_Window     win,
 
 EAPI Ecore_X_Rectangle *
 ecore_x_window_shape_rectangles_get(Ecore_X_Window win,
-                                    int           *num_ret)
+                                    int *num_ret)
 {
    XRectangle *rect;
    Ecore_X_Rectangle *rects = NULL;
@@ -589,7 +589,7 @@ ecore_x_window_shape_rectangles_get(Ecore_X_Window win,
 
 EAPI Ecore_X_Rectangle *
 ecore_x_window_shape_input_rectangles_get(Ecore_X_Window win,
-                                          int           *num_ret)
+                                          int *num_ret)
 {
    Ecore_X_Rectangle *rects = NULL;
 #ifdef ShapeInput
@@ -647,7 +647,7 @@ ecore_x_window_shape_input_rectangles_get(Ecore_X_Window win,
 
 EAPI void
 ecore_x_window_shape_events_select(Ecore_X_Window win,
-                                   Eina_Bool      on)
+                                   Eina_Bool on)
 {
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
    if (on)

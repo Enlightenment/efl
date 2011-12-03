@@ -19,9 +19,9 @@
  * @return The new default graphics context.
  */
 EAPI Ecore_X_GC
-ecore_x_gc_new(Ecore_X_Drawable      draw,
+ecore_x_gc_new(Ecore_X_Drawable draw,
                Ecore_X_GC_Value_Mask value_mask,
-               const unsigned int   *value_list)
+               const unsigned int *value_list)
 {
    XGCValues gcv;
    int mask;

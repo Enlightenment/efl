@@ -291,9 +291,11 @@ _ecore_x_atoms_init(void)
    num = sizeof(items) / sizeof(Atom_Item);
    atoms = alloca(num * sizeof(Atom));
    names = alloca(num * sizeof(char *));
-   for (i = 0; i < num; i++) names[i] = (char *)items[i].name;
+   for (i = 0; i < num; i++)
+     names[i] = (char *)items[i].name;
    XInternAtoms(_ecore_x_disp, names, num, False, atoms);
-   for (i = 0; i < num; i++) *(items[i].atom) = atoms[i];
+   for (i = 0; i < num; i++)
+     *(items[i].atom) = atoms[i];
 }
 
 /**
@@ -312,8 +314,8 @@ ecore_x_atom_get(const char *name)
 }
 
 EAPI void
-ecore_x_atoms_get(const char  **names,
-                  int           num,
+ecore_x_atoms_get(const char **names,
+                  int num,
                   Ecore_X_Atom *atoms)
 {
    Atom *atoms_int;

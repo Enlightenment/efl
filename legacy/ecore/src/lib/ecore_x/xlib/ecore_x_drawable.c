@@ -21,10 +21,10 @@
  */
 EAPI void
 ecore_x_drawable_geometry_get(Ecore_X_Drawable d,
-                              int             *x,
-                              int             *y,
-                              int             *w,
-                              int             *h)
+                              int *x,
+                              int *y,
+                              int *w,
+                              int *h)
 {
    Window dummy_win;
    int ret_x, ret_y;
@@ -106,11 +106,11 @@ ecore_x_drawable_depth_get(Ecore_X_Drawable d)
  */
 EAPI void
 ecore_x_drawable_rectangle_fill(Ecore_X_Drawable d,
-                                Ecore_X_GC       gc,
-                                int              x,
-                                int              y,
-                                int              width,
-                                int              height)
+                                Ecore_X_GC gc,
+                                int x,
+                                int y,
+                                int width,
+                                int height)
 {
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
    XFillRectangle(_ecore_x_disp, d, gc, x, y, width, height);

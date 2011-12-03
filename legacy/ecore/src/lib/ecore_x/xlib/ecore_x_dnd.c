@@ -88,13 +88,13 @@ _ecore_x_dnd_shutdown(void)
 }
 
 static Eina_Bool
-_ecore_x_dnd_converter_copy(char         *target __UNUSED__,
-                            void         *data,
-                            int           size,
-                            void        **data_ret,
-                            int          *size_ret,
+_ecore_x_dnd_converter_copy(char *target __UNUSED__,
+                            void *data,
+                            int size,
+                            void **data_ret,
+                            int *size_ret,
                             Ecore_X_Atom *tprop __UNUSED__,
-                            int          *count __UNUSED__)
+                            int *count __UNUSED__)
 {
    XTextProperty text_prop;
    char *mystr;
@@ -134,7 +134,7 @@ _ecore_x_dnd_converter_copy(char         *target __UNUSED__,
 
 EAPI void
 ecore_x_dnd_aware_set(Ecore_X_Window win,
-                      Eina_Bool      on)
+                      Eina_Bool on)
 {
    Ecore_X_Atom prop_data = ECORE_X_DND_VERSION;
 
@@ -212,7 +212,7 @@ ecore_x_dnd_version_get(Ecore_X_Window win)
 
 EAPI Eina_Bool
 ecore_x_dnd_type_isset(Ecore_X_Window win,
-                       const char    *type)
+                       const char *type)
 {
    int num, i, ret = EINA_FALSE;
    unsigned char *data;
@@ -241,8 +241,8 @@ ecore_x_dnd_type_isset(Ecore_X_Window win,
 
 EAPI void
 ecore_x_dnd_type_set(Ecore_X_Window win,
-                     const char    *type,
-                     Eina_Bool      on)
+                     const char *type,
+                     Eina_Bool on)
 {
    Ecore_X_Atom atom;
    Ecore_X_Atom *oldset = NULL, *newset = NULL;
@@ -309,8 +309,8 @@ ecore_x_dnd_type_set(Ecore_X_Window win,
 
 EAPI void
 ecore_x_dnd_types_set(Ecore_X_Window win,
-                      const char   **types,
-                      unsigned int   num_types)
+                      const char **types,
+                      unsigned int num_types)
 {
    Ecore_X_Atom *newset = NULL;
    unsigned int i;
@@ -340,8 +340,8 @@ ecore_x_dnd_types_set(Ecore_X_Window win,
 
 EAPI void
 ecore_x_dnd_actions_set(Ecore_X_Window win,
-                        Ecore_X_Atom  *actions,
-                        unsigned int   num_actions)
+                        Ecore_X_Atom *actions,
+                        unsigned int num_actions)
 {
    unsigned int i;
    unsigned char *data = NULL;
@@ -378,9 +378,9 @@ ecore_x_dnd_actions_set(Ecore_X_Window win,
  */
 EAPI void
 ecore_x_dnd_callback_pos_update_set(
-  void                                                           (*cb)(void *,
-                                          Ecore_X_Xdnd_Position *data),
-  const void                                                    *data)
+  void (*cb)(void *,
+             Ecore_X_Xdnd_Position *data),
+  const void *data)
 {
    _posupdatecb = cb;
    _posupdatedata = (void *)data; /* Discard the const early */
@@ -401,7 +401,7 @@ _ecore_x_dnd_target_get(void)
 EAPI Eina_Bool
 ecore_x_dnd_begin(Ecore_X_Window source,
                   unsigned char *data,
-                  int            size)
+                  int size)
 {
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
    if (!ecore_x_dnd_version_get(source))
@@ -471,8 +471,8 @@ ecore_x_dnd_drop(void)
    else
      {
         /* Dropping on nothing */
-         ecore_x_selection_xdnd_clear();
-         _source->state = ECORE_X_DND_SOURCE_IDLE;
+        ecore_x_selection_xdnd_clear();
+        _source->state = ECORE_X_DND_SOURCE_IDLE;
      }
 
    ecore_x_window_ignore_set(_source->win, 0);
@@ -483,10 +483,10 @@ ecore_x_dnd_drop(void)
 }
 
 EAPI void
-ecore_x_dnd_send_status(Eina_Bool         will_accept,
-                        Eina_Bool         suppress,
+ecore_x_dnd_send_status(Eina_Bool will_accept,
+                        Eina_Bool suppress,
                         Ecore_X_Rectangle rectangle,
-                        Ecore_X_Atom      action)
+                        Ecore_X_Atom action)
 {
    XEvent xev;
 
@@ -579,8 +579,8 @@ ecore_x_dnd_source_action_get(void)
 
 void
 _ecore_x_dnd_drag(Ecore_X_Window root,
-                  int            x,
-                  int            y)
+                  int x,
+                  int y)
 {
    XEvent xev;
    Ecore_X_Window win;

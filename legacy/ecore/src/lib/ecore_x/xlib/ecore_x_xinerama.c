@@ -39,7 +39,7 @@ ecore_x_xinerama_screen_count_get(void)
 }
 
 EAPI Eina_Bool
-ecore_x_xinerama_screen_geometry_get(int  screen,
+ecore_x_xinerama_screen_geometry_get(int screen,
                                      int *x,
                                      int *y,
                                      int *w,

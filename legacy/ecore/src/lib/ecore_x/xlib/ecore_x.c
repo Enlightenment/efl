@@ -19,9 +19,9 @@
 #include "Ecore_X_Atoms.h"
 #include "Ecore_Input.h"
 
-static Eina_Bool _ecore_x_fd_handler(void             *data,
+static Eina_Bool _ecore_x_fd_handler(void *data,
                                      Ecore_Fd_Handler *fd_handler);
-static Eina_Bool _ecore_x_fd_handler_buf(void             *data,
+static Eina_Bool _ecore_x_fd_handler_buf(void *data,
                                          Ecore_Fd_Handler *fd_handler);
 static int       _ecore_x_key_mask_get(KeySym sym);
 static int       _ecore_x_event_modifier(unsigned int state);
@@ -139,9 +139,9 @@ EAPI int ECORE_X_LOCK_SHIFT = 0;
 #ifdef LOGRT
 static double t0 = 0.0;
 static Status (*_logrt_real_reply)(Display *disp,
-                                   void    *rep,
-                                   int      extra,
-                                   Bool     discard) = NULL;
+                                   void *rep,
+                                   int extra,
+                                   Bool discard) = NULL;
 static void
 _logrt_init(void)
 {
@@ -163,9 +163,9 @@ _logrt_init(void)
 
 Status
 _XReply(Display *disp,
-        void    *rep,
-        int      extra,
-        Bool     discard)
+        void *rep,
+        int extra,
+        Bool discard)
 {
    void *bt[128];
    int i, n;
@@ -215,35 +215,35 @@ void
 _ecore_x_modifiers_get(void)
 {
    /* everything has these... unless its like a pda... :) */
-    ECORE_X_MODIFIER_SHIFT = _ecore_x_key_mask_get(XK_Shift_L);
-    ECORE_X_MODIFIER_CTRL = _ecore_x_key_mask_get(XK_Control_L);
+   ECORE_X_MODIFIER_SHIFT = _ecore_x_key_mask_get(XK_Shift_L);
+   ECORE_X_MODIFIER_CTRL = _ecore_x_key_mask_get(XK_Control_L);
 
-    /* apple's xdarwin has no alt!!!! */
-    ECORE_X_MODIFIER_ALT = _ecore_x_key_mask_get(XK_Alt_L);
-    if (!ECORE_X_MODIFIER_ALT)
-      ECORE_X_MODIFIER_ALT = _ecore_x_key_mask_get(XK_Meta_L);
+   /* apple's xdarwin has no alt!!!! */
+   ECORE_X_MODIFIER_ALT = _ecore_x_key_mask_get(XK_Alt_L);
+   if (!ECORE_X_MODIFIER_ALT)
+     ECORE_X_MODIFIER_ALT = _ecore_x_key_mask_get(XK_Meta_L);
 
-    if (!ECORE_X_MODIFIER_ALT)
-      ECORE_X_MODIFIER_ALT = _ecore_x_key_mask_get(XK_Super_L);
+   if (!ECORE_X_MODIFIER_ALT)
+     ECORE_X_MODIFIER_ALT = _ecore_x_key_mask_get(XK_Super_L);
 
-    /* the windows key... a valid modifier :) */
-    ECORE_X_MODIFIER_WIN = _ecore_x_key_mask_get(XK_Super_L);
-    if (!ECORE_X_MODIFIER_WIN)
-      ECORE_X_MODIFIER_WIN = _ecore_x_key_mask_get(XK_Mode_switch);
+   /* the windows key... a valid modifier :) */
+   ECORE_X_MODIFIER_WIN = _ecore_x_key_mask_get(XK_Super_L);
+   if (!ECORE_X_MODIFIER_WIN)
+     ECORE_X_MODIFIER_WIN = _ecore_x_key_mask_get(XK_Mode_switch);
 
-    if (!ECORE_X_MODIFIER_WIN)
-      ECORE_X_MODIFIER_WIN = _ecore_x_key_mask_get(XK_Meta_L);
+   if (!ECORE_X_MODIFIER_WIN)
+     ECORE_X_MODIFIER_WIN = _ecore_x_key_mask_get(XK_Meta_L);
 
-    if (ECORE_X_MODIFIER_WIN == ECORE_X_MODIFIER_ALT)
-      ECORE_X_MODIFIER_WIN = 0;
+   if (ECORE_X_MODIFIER_WIN == ECORE_X_MODIFIER_ALT)
+     ECORE_X_MODIFIER_WIN = 0;
 
-    if (ECORE_X_MODIFIER_ALT == ECORE_X_MODIFIER_CTRL)
-      ECORE_X_MODIFIER_ALT = 0;
+   if (ECORE_X_MODIFIER_ALT == ECORE_X_MODIFIER_CTRL)
+     ECORE_X_MODIFIER_ALT = 0;
 
-    ECORE_X_LOCK_SCROLL = _ecore_x_key_mask_get(XK_Scroll_Lock);
-    ECORE_X_LOCK_NUM = _ecore_x_key_mask_get(XK_Num_Lock);
-    ECORE_X_LOCK_CAPS = _ecore_x_key_mask_get(XK_Caps_Lock);
-    ECORE_X_LOCK_SHIFT = _ecore_x_key_mask_get(XK_Shift_Lock);
+   ECORE_X_LOCK_SCROLL = _ecore_x_key_mask_get(XK_Scroll_Lock);
+   ECORE_X_LOCK_NUM = _ecore_x_key_mask_get(XK_Num_Lock);
+   ECORE_X_LOCK_CAPS = _ecore_x_key_mask_get(XK_Caps_Lock);
+   ECORE_X_LOCK_SHIFT = _ecore_x_key_mask_get(XK_Shift_Lock);
 }
 
 /**
@@ -300,7 +300,7 @@ ecore_x_init(const char *name)
    eina_init();
    _ecore_xlib_log_dom = eina_log_domain_register
        ("ecore_x", ECORE_XLIB_DEFAULT_LOG_COLOR);
-   if(_ecore_xlib_log_dom < 0)
+   if (_ecore_xlib_log_dom < 0)
      {
         EINA_LOG_ERR(
           "Impossible to create a log domain for the Ecore Xlib module.");
@@ -375,7 +375,7 @@ ecore_x_init(const char *name)
 
 #ifdef ECORE_XGESTURE
    if (XGestureQueryExtension(_ecore_x_disp, &gesture_base, &gesture_err_base))
-      _ecore_x_event_gesture_id = gesture_base;
+     _ecore_x_event_gesture_id = gesture_base;
 
    ECORE_X_EVENT_HANDLERS_GROW(gesture_base, GestureNumberEvents);
 #endif /* ifdef ECORE_XGESTURE */
@@ -497,20 +497,20 @@ ecore_x_init(const char *name)
 #ifdef ECORE_XGESTURE
    if (_ecore_x_event_gesture_id)
      {
-      _ecore_x_event_handlers[_ecore_x_event_gesture_id + GestureNotifyFlick] =
-         _ecore_x_event_handle_gesture_notify_flick;
-      _ecore_x_event_handlers[_ecore_x_event_gesture_id + GestureNotifyPan] =
-         _ecore_x_event_handle_gesture_notify_pan;
-      _ecore_x_event_handlers[_ecore_x_event_gesture_id + GestureNotifyPinchRotation] =
-         _ecore_x_event_handle_gesture_notify_pinchrotation;
-      _ecore_x_event_handlers[_ecore_x_event_gesture_id + GestureNotifyTap] =
-         _ecore_x_event_handle_gesture_notify_tap;
-      _ecore_x_event_handlers[_ecore_x_event_gesture_id + GestureNotifyTapNHold] =
-         _ecore_x_event_handle_gesture_notify_tapnhold;
-      _ecore_x_event_handlers[_ecore_x_event_gesture_id + GestureNotifyHold] =
-         _ecore_x_event_handle_gesture_notify_hold;
-      _ecore_x_event_handlers[_ecore_x_event_gesture_id + GestureNotifyGroup] =
-         _ecore_x_event_handle_gesture_notify_group;
+        _ecore_x_event_handlers[_ecore_x_event_gesture_id + GestureNotifyFlick] =
+          _ecore_x_event_handle_gesture_notify_flick;
+        _ecore_x_event_handlers[_ecore_x_event_gesture_id + GestureNotifyPan] =
+          _ecore_x_event_handle_gesture_notify_pan;
+        _ecore_x_event_handlers[_ecore_x_event_gesture_id + GestureNotifyPinchRotation] =
+          _ecore_x_event_handle_gesture_notify_pinchrotation;
+        _ecore_x_event_handlers[_ecore_x_event_gesture_id + GestureNotifyTap] =
+          _ecore_x_event_handle_gesture_notify_tap;
+        _ecore_x_event_handlers[_ecore_x_event_gesture_id + GestureNotifyTapNHold] =
+          _ecore_x_event_handle_gesture_notify_tapnhold;
+        _ecore_x_event_handlers[_ecore_x_event_gesture_id + GestureNotifyHold] =
+          _ecore_x_event_handle_gesture_notify_hold;
+        _ecore_x_event_handlers[_ecore_x_event_gesture_id + GestureNotifyGroup] =
+          _ecore_x_event_handle_gesture_notify_group;
      }
 
 #endif /* ifdef ECORE_XGESTURE */
@@ -767,8 +767,8 @@ ecore_x_default_screen_get(void)
  */
 EAPI void
 ecore_x_screen_size_get(const Ecore_X_Screen *screen,
-                        int                  *w,
-                        int                  *h)
+                        int *w,
+                        int *h)
 {
    Screen *s = (Screen *)screen;
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
@@ -992,7 +992,7 @@ ecore_x_bell(int percent)
 }
 
 static Eina_Bool
-_ecore_x_fd_handler(void             *data,
+_ecore_x_fd_handler(void *data,
                     Ecore_Fd_Handler *fd_handler __UNUSED__)
 {
    Display *d;
@@ -1024,7 +1024,7 @@ _ecore_x_fd_handler(void             *data,
 }
 
 static Eina_Bool
-_ecore_x_fd_handler_buf(void             *data,
+_ecore_x_fd_handler_buf(void *data,
                         Ecore_Fd_Handler *fd_handler __UNUSED__)
 {
    Display *d;
@@ -1313,7 +1313,7 @@ ecore_x_window_client_sniff(Ecore_X_Window win)
 }
 
 EAPI Eina_Bool
-ecore_x_window_attributes_get(Ecore_X_Window             win,
+ecore_x_window_attributes_get(Ecore_X_Window win,
                               Ecore_X_Window_Attributes *att_ret)
 {
    XWindowAttributes att;
@@ -1371,7 +1371,7 @@ ecore_x_window_save_set_del(Ecore_X_Window win)
 
 EAPI Ecore_X_Window *
 ecore_x_window_children_get(Ecore_X_Window win,
-                            int           *num)
+                            int *num)
 {
    Ecore_X_Window *windows = NULL;
    Window root_ret = 0, parent_ret = 0, *children_ret = NULL;
@@ -1422,7 +1422,7 @@ ecore_x_pointer_control_get(int *accel_num,
 
 EAPI Eina_Bool
 ecore_x_pointer_mapping_set(unsigned char *map,
-                            int            nmap)
+                            int nmap)
 {
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
    return XSetPointerMapping(_ecore_x_disp, map, nmap) ? EINA_TRUE : EINA_FALSE;
@@ -1430,7 +1430,7 @@ ecore_x_pointer_mapping_set(unsigned char *map,
 
 EAPI Eina_Bool
 ecore_x_pointer_mapping_get(unsigned char *map,
-                            int            nmap)
+                            int nmap)
 {
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
    return XGetPointerMapping(_ecore_x_disp, map, nmap) ? EINA_TRUE : EINA_FALSE;
@@ -1473,8 +1473,8 @@ ecore_x_pointer_ungrab(void)
 
 EAPI Eina_Bool
 ecore_x_pointer_warp(Ecore_X_Window win,
-                     int            x,
-                     int            y)
+                     int x,
+                     int y)
 {
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
    return XWarpPointer(_ecore_x_disp, None, win, 0, 0, 0, 0, x, y) ? EINA_TRUE : EINA_FALSE;
@@ -1523,15 +1523,15 @@ ecore_x_ungrab(void)
 int _ecore_window_grabs_num = 0;
 Window *_ecore_window_grabs = NULL;
 Eina_Bool (*_ecore_window_grab_replay_func)(void *data,
-                                            int   event_type,
+                                            int event_type,
                                             void *event);
 void *_ecore_window_grab_replay_data;
 
 EAPI void
-ecore_x_passive_grab_replay_func_set(Eina_Bool                             (*func)(void *data,
-                                                                     int   event_type,
-                                                                     void *event),
-                                     void                                 *data)
+ecore_x_passive_grab_replay_func_set(Eina_Bool (*func)(void *data,
+                                                       int event_type,
+                                                       void *event),
+                                     void *data)
 {
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
    _ecore_window_grab_replay_func = func;
@@ -1539,11 +1539,11 @@ ecore_x_passive_grab_replay_func_set(Eina_Bool                             (*fun
 }
 
 EAPI void
-ecore_x_window_button_grab(Ecore_X_Window     win,
-                           int                button,
+ecore_x_window_button_grab(Ecore_X_Window win,
+                           int button,
                            Ecore_X_Event_Mask event_mask,
-                           int                mod,
-                           int                any_mod)
+                           int mod,
+                           int any_mod)
 {
    unsigned int b;
    unsigned int m;
@@ -1581,7 +1581,7 @@ ecore_x_window_button_grab(Ecore_X_Window     win,
 }
 
 void
-_ecore_x_sync_magic_send(int            val,
+_ecore_x_sync_magic_send(int val,
                          Ecore_X_Window swin)
 {
    XEvent xev;
@@ -1635,9 +1635,9 @@ _ecore_x_window_grab_remove(Ecore_X_Window win)
 
 EAPI void
 ecore_x_window_button_ungrab(Ecore_X_Window win,
-                             int            button,
-                             int            mod,
-                             int            any_mod)
+                             int button,
+                             int mod,
+                             int any_mod)
 {
    unsigned int b;
    unsigned int m;
@@ -1671,9 +1671,9 @@ Window *_ecore_key_grabs = NULL;
 
 EAPI void
 ecore_x_window_key_grab(Ecore_X_Window win,
-                        const char    *key,
-                        int            mod,
-                        int            any_mod)
+                        const char *key,
+                        int mod,
+                        int any_mod)
 {
    KeyCode keycode = 0;
    KeySym keysym;
@@ -1755,9 +1755,9 @@ _ecore_x_key_grab_remove(Ecore_X_Window win)
 
 EAPI void
 ecore_x_window_key_ungrab(Ecore_X_Window win,
-                          const char    *key,
-                          int            mod,
-                          int            any_mod)
+                          const char *key,
+                          int mod,
+                          int any_mod)
 {
    KeyCode keycode = 0;
    KeySym keysym;
@@ -1811,14 +1811,14 @@ ecore_x_window_key_ungrab(Ecore_X_Window win,
  * @return EINA_TRUE on success EINA_FALSE otherwise.
  */
 EAPI Eina_Bool
-ecore_x_client_message32_send(Ecore_X_Window     win,
-                              Ecore_X_Atom       type,
+ecore_x_client_message32_send(Ecore_X_Window win,
+                              Ecore_X_Atom type,
                               Ecore_X_Event_Mask mask,
-                              long               d0,
-                              long               d1,
-                              long               d2,
-                              long               d3,
-                              long               d4)
+                              long d0,
+                              long d1,
+                              long d2,
+                              long d3,
+                              long d4)
 {
    XEvent xev;
 
@@ -1848,9 +1848,9 @@ ecore_x_client_message32_send(Ecore_X_Window     win,
  */
 EAPI Eina_Bool
 ecore_x_client_message8_send(Ecore_X_Window win,
-                             Ecore_X_Atom   type,
-                             const void    *data,
-                             int            len)
+                             Ecore_X_Atom type,
+                             const void *data,
+                             int len)
 {
    XEvent xev;
 
@@ -1870,8 +1870,8 @@ ecore_x_client_message8_send(Ecore_X_Window win,
 
 EAPI Eina_Bool
 ecore_x_mouse_move_send(Ecore_X_Window win,
-                        int            x,
-                        int            y)
+                        int x,
+                        int y)
 {
    XEvent xev;
    XWindowAttributes att;
@@ -1898,9 +1898,9 @@ ecore_x_mouse_move_send(Ecore_X_Window win,
 
 EAPI Eina_Bool
 ecore_x_mouse_down_send(Ecore_X_Window win,
-                        int            x,
-                        int            y,
-                        int            b)
+                        int x,
+                        int y,
+                        int b)
 {
    XEvent xev;
    XWindowAttributes att;
@@ -1927,9 +1927,9 @@ ecore_x_mouse_down_send(Ecore_X_Window win,
 
 EAPI Eina_Bool
 ecore_x_mouse_up_send(Ecore_X_Window win,
-                      int            x,
-                      int            y,
-                      int            b)
+                      int x,
+                      int y,
+                      int b)
 {
    XEvent xev;
    XWindowAttributes att;
@@ -1981,8 +1981,8 @@ ecore_x_pointer_last_xy_get(int *x,
 
 EAPI void
 ecore_x_pointer_xy_get(Ecore_X_Window win,
-                       int           *x,
-                       int           *y)
+                       int *x,
+                       int *y)
 {
    Window rwin, cwin;
    int rx, ry, wx, wy, ret;
@@ -2023,7 +2023,7 @@ ecore_x_visual_id_get(Ecore_X_Visual visual)
  */
 EAPI Ecore_X_Visual
 ecore_x_default_visual_get(Ecore_X_Display *disp,
-                           Ecore_X_Screen  *screen)
+                           Ecore_X_Screen *screen)
 {
    return DefaultVisual(disp, ecore_x_screen_index_get(screen));
 }
@@ -2039,7 +2039,7 @@ ecore_x_default_visual_get(Ecore_X_Display *disp,
  */
 EAPI Ecore_X_Colormap
 ecore_x_default_colormap_get(Ecore_X_Display *disp,
-                             Ecore_X_Screen  *screen)
+                             Ecore_X_Screen *screen)
 {
    return DefaultColormap(disp, ecore_x_screen_index_get(screen));
 }
@@ -2055,7 +2055,7 @@ ecore_x_default_colormap_get(Ecore_X_Display *disp,
  */
 EAPI int
 ecore_x_default_depth_get(Ecore_X_Display *disp,
-                          Ecore_X_Screen  *screen)
+                          Ecore_X_Screen *screen)
 {
    return DefaultDepth(disp, ecore_x_screen_index_get(screen));
 }

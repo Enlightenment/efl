@@ -18,10 +18,10 @@ ecore_x_e_init(void)
 
 EAPI void
 ecore_x_e_frame_size_set(Ecore_X_Window win,
-                         int            fl,
-                         int            fr,
-                         int            ft,
-                         int            fb)
+                         int fl,
+                         int fr,
+                         int ft,
+                         int fb)
 {
    unsigned int frames[4];
 
@@ -35,7 +35,7 @@ ecore_x_e_frame_size_set(Ecore_X_Window win,
 
 EAPI void
 ecore_x_e_virtual_keyboard_set(Ecore_X_Window win,
-                               unsigned int   is_keyboard)
+                               unsigned int is_keyboard)
 {
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
    ecore_x_window_prop_card32_set(win, ECORE_X_ATOM_E_VIRTUAL_KEYBOARD,
@@ -162,7 +162,7 @@ _ecore_x_e_vkbd_atom_get(Ecore_X_Virtual_Keyboard_State state)
 }
 
 EAPI void
-ecore_x_e_virtual_keyboard_state_set(Ecore_X_Window                 win,
+ecore_x_e_virtual_keyboard_state_set(Ecore_X_Window win,
                                      Ecore_X_Virtual_Keyboard_State state)
 {
    Ecore_X_Atom atom = 0;
@@ -187,7 +187,7 @@ ecore_x_e_virtual_keyboard_state_get(Ecore_X_Window win)
 }
 
 EAPI void
-ecore_x_e_virtual_keyboard_state_send(Ecore_X_Window                 win,
+ecore_x_e_virtual_keyboard_state_send(Ecore_X_Window win,
                                       Ecore_X_Virtual_Keyboard_State state)
 {
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
@@ -255,9 +255,9 @@ ecore_x_e_illume_zone_get(Ecore_X_Window win)
 }
 
 EAPI void
-ecore_x_e_illume_zone_list_set(Ecore_X_Window  win,
+ecore_x_e_illume_zone_list_set(Ecore_X_Window win,
                                Ecore_X_Window *zones,
-                               unsigned int    n_zones)
+                               unsigned int n_zones)
 {
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
    ecore_x_window_prop_window_set(win, ECORE_X_ATOM_E_ILLUME_ZONE_LIST,
@@ -266,7 +266,7 @@ ecore_x_e_illume_zone_list_set(Ecore_X_Window  win,
 
 EAPI void
 ecore_x_e_illume_conformant_set(Ecore_X_Window win,
-                                unsigned int   is_conformant)
+                                unsigned int is_conformant)
 {
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
    ecore_x_window_prop_card32_set(win, ECORE_X_ATOM_E_ILLUME_CONFORMANT,
@@ -287,7 +287,7 @@ ecore_x_e_illume_conformant_get(Ecore_X_Window win)
 }
 
 EAPI void
-ecore_x_e_illume_mode_set(Ecore_X_Window      win,
+ecore_x_e_illume_mode_set(Ecore_X_Window win,
                           Ecore_X_Illume_Mode mode)
 {
    Ecore_X_Atom atom = 0;
@@ -311,7 +311,7 @@ ecore_x_e_illume_mode_get(Ecore_X_Window win)
 }
 
 EAPI void
-ecore_x_e_illume_mode_send(Ecore_X_Window      win,
+ecore_x_e_illume_mode_send(Ecore_X_Window win,
                            Ecore_X_Illume_Mode mode)
 {
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
@@ -377,7 +377,7 @@ ecore_x_e_illume_home_del_send(Ecore_X_Window win)
 
 EAPI void
 ecore_x_e_illume_drag_set(Ecore_X_Window win,
-                          unsigned int   drag)
+                          unsigned int drag)
 {
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
    ecore_x_window_prop_card32_set(win, ECORE_X_ATOM_E_ILLUME_DRAG, &drag, 1);
@@ -397,7 +397,7 @@ ecore_x_e_illume_drag_get(Ecore_X_Window win)
 
 EAPI void
 ecore_x_e_illume_drag_locked_set(Ecore_X_Window win,
-                                 unsigned int   is_locked)
+                                 unsigned int is_locked)
 {
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
    ecore_x_window_prop_card32_set(win, ECORE_X_ATOM_E_ILLUME_DRAG_LOCKED,
@@ -437,10 +437,10 @@ ecore_x_e_illume_drag_end_send(Ecore_X_Window win)
 
 EAPI void
 ecore_x_e_illume_indicator_geometry_set(Ecore_X_Window win,
-                                        int            x,
-                                        int            y,
-                                        int            w,
-                                        int            h)
+                                        int x,
+                                        int y,
+                                        int w,
+                                        int h)
 {
    unsigned int geom[4];
 
@@ -455,10 +455,10 @@ ecore_x_e_illume_indicator_geometry_set(Ecore_X_Window win,
 
 EAPI Eina_Bool
 ecore_x_e_illume_indicator_geometry_get(Ecore_X_Window win,
-                                        int           *x,
-                                        int           *y,
-                                        int           *w,
-                                        int           *h)
+                                        int *x,
+                                        int *y,
+                                        int *w,
+                                        int *h)
 {
    int ret = 0;
    unsigned int geom[4];
@@ -488,10 +488,10 @@ ecore_x_e_illume_indicator_geometry_get(Ecore_X_Window win,
 
 EAPI void
 ecore_x_e_illume_softkey_geometry_set(Ecore_X_Window win,
-                                      int            x,
-                                      int            y,
-                                      int            w,
-                                      int            h)
+                                      int x,
+                                      int y,
+                                      int w,
+                                      int h)
 {
    unsigned int geom[4];
 
@@ -506,10 +506,10 @@ ecore_x_e_illume_softkey_geometry_set(Ecore_X_Window win,
 
 EAPI Eina_Bool
 ecore_x_e_illume_softkey_geometry_get(Ecore_X_Window win,
-                                      int           *x,
-                                      int           *y,
-                                      int           *w,
-                                      int           *h)
+                                      int *x,
+                                      int *y,
+                                      int *w,
+                                      int *h)
 {
    int ret = 0;
    unsigned int geom[4];
@@ -539,10 +539,10 @@ ecore_x_e_illume_softkey_geometry_get(Ecore_X_Window win,
 
 EAPI void
 ecore_x_e_illume_keyboard_geometry_set(Ecore_X_Window win,
-                                       int            x,
-                                       int            y,
-                                       int            w,
-                                       int            h)
+                                       int x,
+                                       int y,
+                                       int w,
+                                       int h)
 {
    unsigned int geom[4];
 
@@ -557,10 +557,10 @@ ecore_x_e_illume_keyboard_geometry_set(Ecore_X_Window win,
 
 EAPI Eina_Bool
 ecore_x_e_illume_keyboard_geometry_get(Ecore_X_Window win,
-                                       int           *x,
-                                       int           *y,
-                                       int           *w,
-                                       int           *h)
+                                       int *x,
+                                       int *y,
+                                       int *w,
+                                       int *h)
 {
    int ret = 0;
    unsigned int geom[4];
@@ -619,7 +619,7 @@ _ecore_x_e_quickpanel_state_get(Ecore_X_Atom atom)
 
 EAPI void
 ecore_x_e_illume_quickpanel_set(Ecore_X_Window win,
-                                unsigned int   is_quickpanel)
+                                unsigned int is_quickpanel)
 {
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
    ecore_x_window_prop_card32_set(win, ECORE_X_ATOM_E_ILLUME_QUICKPANEL,
@@ -640,7 +640,7 @@ ecore_x_e_illume_quickpanel_get(Ecore_X_Window win)
 }
 
 EAPI void
-ecore_x_e_illume_quickpanel_state_set(Ecore_X_Window                  win,
+ecore_x_e_illume_quickpanel_state_set(Ecore_X_Window win,
                                       Ecore_X_Illume_Quickpanel_State state)
 {
    Ecore_X_Atom atom = 0;
@@ -666,7 +666,7 @@ ecore_x_e_illume_quickpanel_state_get(Ecore_X_Window win)
 }
 
 EAPI void
-ecore_x_e_illume_quickpanel_state_send(Ecore_X_Window                  win,
+ecore_x_e_illume_quickpanel_state_send(Ecore_X_Window win,
                                        Ecore_X_Illume_Quickpanel_State state)
 {
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
@@ -688,7 +688,7 @@ ecore_x_e_illume_quickpanel_state_toggle(Ecore_X_Window win)
 
 EAPI void
 ecore_x_e_illume_quickpanel_priority_major_set(Ecore_X_Window win,
-                                               unsigned int   priority)
+                                               unsigned int priority)
 {
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
    ecore_x_window_prop_card32_set(win,
@@ -712,7 +712,7 @@ ecore_x_e_illume_quickpanel_priority_major_get(Ecore_X_Window win)
 
 EAPI void
 ecore_x_e_illume_quickpanel_priority_minor_set(Ecore_X_Window win,
-                                               unsigned int   priority)
+                                               unsigned int priority)
 {
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
    ecore_x_window_prop_card32_set(win,
@@ -736,7 +736,7 @@ ecore_x_e_illume_quickpanel_priority_minor_get(Ecore_X_Window win)
 
 EAPI void
 ecore_x_e_illume_quickpanel_zone_set(Ecore_X_Window win,
-                                     unsigned int   zone)
+                                     unsigned int zone)
 {
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
    ecore_x_window_prop_card32_set(win,
@@ -769,7 +769,7 @@ ecore_x_e_illume_quickpanel_position_update_send(Ecore_X_Window win)
 }
 
 EAPI void
-ecore_x_e_comp_sync_counter_set(Ecore_X_Window       win,
+ecore_x_e_comp_sync_counter_set(Ecore_X_Window win,
                                 Ecore_X_Sync_Counter counter)
 {
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
@@ -827,8 +827,8 @@ ecore_x_e_comp_sync_draw_done_send(Ecore_X_Window root,
 EAPI void
 ecore_x_e_comp_sync_draw_size_done_send(Ecore_X_Window root,
                                         Ecore_X_Window win,
-                                        int            w,
-                                        int            h)
+                                        int w,
+                                        int h)
 {
    XEvent xev;
 
@@ -854,7 +854,7 @@ ecore_x_e_comp_sync_draw_size_done_send(Ecore_X_Window root,
 
 EAPI void
 ecore_x_e_comp_sync_supported_set(Ecore_X_Window root,
-                                  Eina_Bool      enabled)
+                                  Eina_Bool enabled)
 {
    Ecore_X_Window win;
 

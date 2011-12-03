@@ -38,7 +38,7 @@ _ecore_x_fixes_init(void)
 /* I don't know what to call this function. */
 static XRectangle *
 _ecore_x_rectangle_ecore_to_x(Ecore_X_Rectangle *rects,
-                              int                num)
+                              int num)
 {
    XRectangle *xrect;
    int i;
@@ -62,7 +62,7 @@ _ecore_x_rectangle_ecore_to_x(Ecore_X_Rectangle *rects,
 
 static Ecore_X_Rectangle *
 _ecore_x_rectangle_x_to_ecore(XRectangle *xrect,
-                              int         num)
+                              int num)
 {
    Ecore_X_Rectangle *rects;
    int i;
@@ -106,7 +106,7 @@ ecore_x_fixes_selection_notification_request(Ecore_X_Atom selection)
 
 EAPI Ecore_X_Region
 ecore_x_region_new(Ecore_X_Rectangle *rects,
-                   int                num)
+                   int num)
 {
 #ifdef ECORE_XFIXES
    Ecore_X_Region region;
@@ -137,7 +137,7 @@ ecore_x_region_new_from_bitmap(Ecore_X_Pixmap bitmap)
 }
 
 EAPI Ecore_X_Region
-ecore_x_region_new_from_window(Ecore_X_Window      win,
+ecore_x_region_new_from_window(Ecore_X_Window win,
                                Ecore_X_Region_Type type)
 {
 #ifdef ECORE_XFIXES
@@ -189,9 +189,9 @@ ecore_x_region_free(Ecore_X_Region region)
 }
 
 EAPI void
-ecore_x_region_set(Ecore_X_Region     region,
+ecore_x_region_set(Ecore_X_Region region,
                    Ecore_X_Rectangle *rects,
-                   int                num)
+                   int num)
 {
 #ifdef ECORE_XFIXES
    XRectangle *xrect = _ecore_x_rectangle_ecore_to_x(rects, num);
@@ -244,16 +244,17 @@ ecore_x_region_subtract(Ecore_X_Region dest,
 }
 
 EAPI void
-ecore_x_region_invert(Ecore_X_Region     dest,
+ecore_x_region_invert(Ecore_X_Region dest,
                       Ecore_X_Rectangle *bounds,
-                      Ecore_X_Region     source)
+                      Ecore_X_Region source)
 {
 #ifdef ECORE_XFIXES
    XRectangle *xbound;
    int num = 0;
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
-   while (bounds + num) num++;
+   while (bounds + num)
+     num++;
    xbound = _ecore_x_rectangle_ecore_to_x(bounds, num);
 
    XFixesInvertRegion(_ecore_x_disp, dest, xbound, source);
@@ -262,8 +263,8 @@ ecore_x_region_invert(Ecore_X_Region     dest,
 
 EAPI void
 ecore_x_region_translate(Ecore_X_Region region,
-                         int            dx,
-                         int            dy)
+                         int dx,
+                         int dy)
 {
 #ifdef ECORE_XFIXES
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
@@ -282,8 +283,8 @@ ecore_x_region_extents(Ecore_X_Region dest,
 }
 
 EAPI Ecore_X_Rectangle *
-ecore_x_region_fetch(Ecore_X_Region     region,
-                     int               *num,
+ecore_x_region_fetch(Ecore_X_Region region,
+                     int *num,
                      Ecore_X_Rectangle *bounds){
 #ifdef ECORE_XFIXES
    Ecore_X_Rectangle *rects;
@@ -305,10 +306,10 @@ ecore_x_region_fetch(Ecore_X_Region     region,
 EAPI void
 ecore_x_region_expand(Ecore_X_Region dest,
                       Ecore_X_Region source,
-                      unsigned int   left,
-                      unsigned int   right,
-                      unsigned int   top,
-                      unsigned int   bottom)
+                      unsigned int left,
+                      unsigned int right,
+                      unsigned int top,
+                      unsigned int bottom)
 {
 #ifdef ECORE_XFIXES
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
@@ -318,9 +319,9 @@ ecore_x_region_expand(Ecore_X_Region dest,
 
 EAPI void
 ecore_x_region_gc_clip_set(Ecore_X_Region region,
-                           Ecore_X_GC     gc,
-                           int            x_origin,
-                           int            y_origin)
+                           Ecore_X_GC gc,
+                           int x_origin,
+                           int y_origin)
 {
 #ifdef ECORE_XFIXES
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
@@ -329,11 +330,11 @@ ecore_x_region_gc_clip_set(Ecore_X_Region region,
 }
 
 EAPI void
-ecore_x_region_window_shape_set(Ecore_X_Region     region,
-                                Ecore_X_Window     win,
+ecore_x_region_window_shape_set(Ecore_X_Region region,
+                                Ecore_X_Window win,
                                 Ecore_X_Shape_Type type,
-                                int                x_offset,
-                                int                y_offset)
+                                int x_offset,
+                                int y_offset)
 {
 #ifdef ECORE_XFIXES
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
@@ -347,10 +348,10 @@ ecore_x_region_window_shape_set(Ecore_X_Region     region,
 }
 
 EAPI void
-ecore_x_region_picture_clip_set(Ecore_X_Region  region,
+ecore_x_region_picture_clip_set(Ecore_X_Region region,
                                 Ecore_X_Picture picture,
-                                int             x_origin,
-                                int             y_origin)
+                                int x_origin,
+                                int y_origin)
 {
 #ifdef ECORE_XFIXES
    LOGFN(__FILE__, __LINE__, __FUNCTION__);

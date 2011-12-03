@@ -14,11 +14,11 @@ ecore_x_cursor_color_supported_get(void)
 
 EAPI Ecore_X_Cursor
 ecore_x_cursor_new(Ecore_X_Window win,
-                   int           *pixels,
-                   int            w,
-                   int            h,
-                   int            hot_x,
-                   int            hot_y)
+                   int *pixels,
+                   int w,
+                   int h,
+                   int hot_x,
+                   int hot_y)
 {
 #ifdef ECORE_XCURSOR
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
@@ -43,7 +43,7 @@ ecore_x_cursor_new(Ecore_X_Window win,
 //		  r = (((pixels[i] >> 16) & 0xff) * a) / 0xff;
 //		  g = (((pixels[i] >> 8 ) & 0xff) * a) / 0xff;
 //		  b = (((pixels[i]      ) & 0xff) * a) / 0xff;
-                              xci->pixels[i] = pixels[i];
+                  xci->pixels[i] = pixels[i];
 //		    (a << 24) | (r << 16) | (g << 8) | (b);
                }
              c = XcursorImageLoadCursor(_ecore_x_disp, xci);

@@ -15,7 +15,8 @@
 #ifdef ECORE_XRANDR
 
 #define RANDR_1_3           ((1 << 16) | 3)
-#define RANDR_CHECK_1_3_RET(ret) if(_randr_version < RANDR_1_3) return ret
+#define RANDR_CHECK_1_3_RET(ret) if (_randr_version < RANDR_1_3) \
+    return ret
 
 extern XRRScreenResources *(*_ecore_x_randr_get_screen_resources)(Display *
                                                                   dpy,
@@ -47,7 +48,7 @@ ecore_x_randr_primary_output_get(Ecore_X_Window root)
  * @param output that should be set as given root window's screen primary output
  */
 EAPI void
-ecore_x_randr_primary_output_set(Ecore_X_Window       root,
+ecore_x_randr_primary_output_set(Ecore_X_Window root,
                                  Ecore_X_Randr_Output output)
 {
 #ifdef ECORE_XRANDR

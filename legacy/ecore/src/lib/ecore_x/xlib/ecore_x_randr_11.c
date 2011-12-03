@@ -18,7 +18,8 @@
                             root) ((screen =                         \
                                       XRRRootToScreen(_ecore_x_disp, \
                                                       root)) != -1)
-#define RANDR_CHECK_1_1_RET(ret)  if(_randr_version < RANDR_1_1) return ret
+#define RANDR_CHECK_1_1_RET(ret)  if (_randr_version < RANDR_1_1) \
+    return ret
 
 extern XRRScreenResources *(*_ecore_x_randr_get_screen_resources)(Display *
                                                                   dpy,
@@ -105,7 +106,7 @@ ecore_x_randr_screen_primary_output_orientation_set(
  */
 EAPI Ecore_X_Randr_Screen_Size_MM *
 ecore_x_randr_screen_primary_output_sizes_get(Ecore_X_Window root,
-                                              int           *num)
+                                              int *num)
 {
 #ifdef ECORE_XRANDR
    Ecore_X_Randr_Screen_Size_MM *ret = NULL;
@@ -148,11 +149,11 @@ ecore_x_randr_screen_primary_output_sizes_get(Ecore_X_Window root,
  */
 EAPI void
 ecore_x_randr_screen_primary_output_current_size_get(Ecore_X_Window root,
-                                                     int           *w,
-                                                     int           *h,
-                                                     int           *w_mm,
-                                                     int           *h_mm,
-                                                     int           *size_index)
+                                                     int *w,
+                                                     int *h,
+                                                     int *w_mm,
+                                                     int *h_mm,
+                                                     int *size_index)
 {
 #ifdef ECORE_XRANDR
    XRRScreenSize *sizes;
@@ -202,7 +203,7 @@ ecore_x_randr_screen_primary_output_current_size_get(Ecore_X_Window root,
  */
 EAPI Eina_Bool
 ecore_x_randr_screen_primary_output_size_set(Ecore_X_Window root,
-                                             int            size_index)
+                                             int size_index)
 {
 #ifdef ECORE_XRANDR
    XRRScreenConfiguration *sc = NULL;
@@ -270,8 +271,8 @@ ecore_x_randr_screen_primary_output_current_refresh_rate_get(
  */
 EAPI Ecore_X_Randr_Refresh_Rate *
 ecore_x_randr_screen_primary_output_refresh_rates_get(Ecore_X_Window root,
-                                                      int            size_index,
-                                                      int           *num)
+                                                      int size_index,
+                                                      int *num)
 {
 #ifdef ECORE_XRANDR
    Ecore_X_Randr_Refresh_Rate *ret = NULL, *rates = NULL;
@@ -306,7 +307,7 @@ ecore_x_randr_screen_primary_output_refresh_rates_get(Ecore_X_Window root,
 EAPI Eina_Bool
 ecore_x_randr_screen_primary_output_refresh_rate_set(
   Ecore_X_Window root,
-  int            size_index,
+  int size_index,
   Ecore_X_Randr_Refresh_Rate
   rate)
 {

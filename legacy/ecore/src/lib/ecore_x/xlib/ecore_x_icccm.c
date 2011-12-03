@@ -24,7 +24,7 @@ ecore_x_icccm_init(void)
 }
 
 EAPI void
-ecore_x_icccm_state_set(Ecore_X_Window            win,
+ecore_x_icccm_state_set(Ecore_X_Window win,
                         Ecore_X_Window_State_Hint state)
 {
    unsigned long c[2];
@@ -76,7 +76,7 @@ ecore_x_icccm_state_get(Ecore_X_Window win)
 
 EAPI void
 ecore_x_icccm_delete_window_send(Ecore_X_Window win,
-                                 Ecore_X_Time   t)
+                                 Ecore_X_Time t)
 {
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
    ecore_x_client_message32_send(win, ECORE_X_ATOM_WM_PROTOCOLS,
@@ -87,7 +87,7 @@ ecore_x_icccm_delete_window_send(Ecore_X_Window win,
 
 EAPI void
 ecore_x_icccm_take_focus_send(Ecore_X_Window win,
-                              Ecore_X_Time   t)
+                              Ecore_X_Time t)
 {
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
    ecore_x_client_message32_send(win, ECORE_X_ATOM_WM_PROTOCOLS,
@@ -98,7 +98,7 @@ ecore_x_icccm_take_focus_send(Ecore_X_Window win,
 
 EAPI void
 ecore_x_icccm_save_yourself_send(Ecore_X_Window win,
-                                 Ecore_X_Time   t)
+                                 Ecore_X_Time t)
 {
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
    ecore_x_client_message32_send(win, ECORE_X_ATOM_WM_PROTOCOLS,
@@ -109,10 +109,10 @@ ecore_x_icccm_save_yourself_send(Ecore_X_Window win,
 
 EAPI void
 ecore_x_icccm_move_resize_send(Ecore_X_Window win,
-                               int            x,
-                               int            y,
-                               int            w,
-                               int            h)
+                               int x,
+                               int y,
+                               int w,
+                               int h)
 {
    XEvent ev;
 
@@ -132,14 +132,14 @@ ecore_x_icccm_move_resize_send(Ecore_X_Window win,
 }
 
 EAPI void
-ecore_x_icccm_hints_set(Ecore_X_Window            win,
-                        Eina_Bool                 accepts_focus,
+ecore_x_icccm_hints_set(Ecore_X_Window win,
+                        Eina_Bool accepts_focus,
                         Ecore_X_Window_State_Hint initial_state,
-                        Ecore_X_Pixmap            icon_pixmap,
-                        Ecore_X_Pixmap            icon_mask,
-                        Ecore_X_Window            icon_window,
-                        Ecore_X_Window            window_group,
-                        Eina_Bool                 is_urgent)
+                        Ecore_X_Pixmap icon_pixmap,
+                        Ecore_X_Pixmap icon_mask,
+                        Ecore_X_Window icon_window,
+                        Ecore_X_Window window_group,
+                        Eina_Bool is_urgent)
 {
    XWMHints *hints;
 
@@ -189,14 +189,14 @@ ecore_x_icccm_hints_set(Ecore_X_Window            win,
 }
 
 EAPI Eina_Bool
-ecore_x_icccm_hints_get(Ecore_X_Window             win,
-                        Eina_Bool                 *accepts_focus,
+ecore_x_icccm_hints_get(Ecore_X_Window win,
+                        Eina_Bool *accepts_focus,
                         Ecore_X_Window_State_Hint *initial_state,
-                        Ecore_X_Pixmap            *icon_pixmap,
-                        Ecore_X_Pixmap            *icon_mask,
-                        Ecore_X_Window            *icon_window,
-                        Ecore_X_Window            *window_group,
-                        Eina_Bool                 *is_urgent)
+                        Ecore_X_Pixmap *icon_pixmap,
+                        Ecore_X_Pixmap *icon_mask,
+                        Ecore_X_Window *icon_window,
+                        Ecore_X_Window *window_group,
+                        Eina_Bool *is_urgent)
 {
    XWMHints *hints;
 
@@ -266,19 +266,19 @@ ecore_x_icccm_hints_get(Ecore_X_Window             win,
 }
 
 EAPI void
-ecore_x_icccm_size_pos_hints_set(Ecore_X_Window  win,
-                                 Eina_Bool       request_pos,
+ecore_x_icccm_size_pos_hints_set(Ecore_X_Window win,
+                                 Eina_Bool request_pos,
                                  Ecore_X_Gravity gravity,
-                                 int             min_w,
-                                 int             min_h,
-                                 int             max_w,
-                                 int             max_h,
-                                 int             base_w,
-                                 int             base_h,
-                                 int             step_x,
-                                 int             step_y,
-                                 double          min_aspect,
-                                 double          max_aspect)
+                                 int min_w,
+                                 int min_h,
+                                 int max_w,
+                                 int max_h,
+                                 int base_w,
+                                 int base_h,
+                                 int step_x,
+                                 int step_y,
+                                 double min_aspect,
+                                 double max_aspect)
 {
    XSizeHints hint;
    long mask;
@@ -338,19 +338,19 @@ ecore_x_icccm_size_pos_hints_set(Ecore_X_Window  win,
 }
 
 EAPI Eina_Bool
-ecore_x_icccm_size_pos_hints_get(Ecore_X_Window   win,
-                                 Eina_Bool       *request_pos,
+ecore_x_icccm_size_pos_hints_get(Ecore_X_Window win,
+                                 Eina_Bool *request_pos,
                                  Ecore_X_Gravity *gravity,
-                                 int             *min_w,
-                                 int             *min_h,
-                                 int             *max_w,
-                                 int             *max_h,
-                                 int             *base_w,
-                                 int             *base_h,
-                                 int             *step_x,
-                                 int             *step_y,
-                                 double          *min_aspect,
-                                 double          *max_aspect)
+                                 int *min_w,
+                                 int *min_h,
+                                 int *max_w,
+                                 int *max_h,
+                                 int *base_w,
+                                 int *base_h,
+                                 int *step_x,
+                                 int *step_y,
+                                 double *min_aspect,
+                                 double *max_aspect)
 {
    XSizeHints hint;
    long mask;
@@ -464,7 +464,7 @@ ecore_x_icccm_size_pos_hints_get(Ecore_X_Window   win,
 
 EAPI void
 ecore_x_icccm_title_set(Ecore_X_Window win,
-                        const char    *t)
+                        const char *t)
 {
    char *list[1];
    XTextProperty xprop;
@@ -522,23 +522,23 @@ ecore_x_icccm_title_get(Ecore_X_Window win)
                t = strdup((char *)xprop.value);
              else
                {
-     /* convert to utf8 */
+                  /* convert to utf8 */
 #ifdef X_HAVE_UTF8_STRING
-                   ret = Xutf8TextPropertyToTextList(_ecore_x_disp, &xprop,
-                                                     &list, &num);
+                  ret = Xutf8TextPropertyToTextList(_ecore_x_disp, &xprop,
+                                                    &list, &num);
 #else /* ifdef X_HAVE_UTF8_STRING */
-                   ret = XmbTextPropertyToTextList(_ecore_x_disp, &xprop,
-                                                   &list, &num);
+                  ret = XmbTextPropertyToTextList(_ecore_x_disp, &xprop,
+                                                  &list, &num);
 #endif /* ifdef X_HAVE_UTF8_STRING */
 
-                   if ((ret == XLocaleNotSupported) ||
-                       (ret == XNoMemory) || (ret == XConverterNotFound))
-                     t = strdup((char *)xprop.value);
-                   else if ((ret >= Success) && (num > 0))
-                     t = strdup(list[0]);
+                  if ((ret == XLocaleNotSupported) ||
+                      (ret == XNoMemory) || (ret == XConverterNotFound))
+                    t = strdup((char *)xprop.value);
+                  else if ((ret >= Success) && (num > 0))
+                    t = strdup(list[0]);
 
-                   if (list)
-                     XFreeStringList(list);
+                  if (list)
+                    XFreeStringList(list);
                }
 
              if (xprop.value)
@@ -559,8 +559,8 @@ ecore_x_icccm_title_get(Ecore_X_Window win)
  */
 EAPI void
 ecore_x_icccm_protocol_atoms_set(Ecore_X_Window win,
-                                 Ecore_X_Atom  *protos,
-                                 int            num)
+                                 Ecore_X_Atom *protos,
+                                 int num)
 {
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
    if (num > 0)
@@ -576,9 +576,9 @@ ecore_x_icccm_protocol_atoms_set(Ecore_X_Window win,
  * @param on On/Off
  */
 EAPI void
-ecore_x_icccm_protocol_set(Ecore_X_Window      win,
+ecore_x_icccm_protocol_set(Ecore_X_Window win,
                            Ecore_X_WM_Protocol protocol,
-                           Eina_Bool           on)
+                           Eina_Bool on)
 {
    Atom *protos = NULL;
    Atom proto;
@@ -662,7 +662,7 @@ leave:
  * @return 1 if the protocol is set, else 0.
  */
 EAPI Eina_Bool
-ecore_x_icccm_protocol_isset(Ecore_X_Window      win,
+ecore_x_icccm_protocol_isset(Ecore_X_Window win,
                              Ecore_X_WM_Protocol protocol)
 {
    Atom proto, *protos = NULL;
@@ -702,8 +702,8 @@ ecore_x_icccm_protocol_isset(Ecore_X_Window      win,
  */
 EAPI void
 ecore_x_icccm_name_class_set(Ecore_X_Window win,
-                             const char    *n,
-                             const char    *c)
+                             const char *n,
+                             const char *c)
 {
    XClassHint *xch;
 
@@ -728,8 +728,8 @@ ecore_x_icccm_name_class_set(Ecore_X_Window win,
  */
 EAPI void
 ecore_x_icccm_name_class_get(Ecore_X_Window win,
-                             char         **n,
-                             char         **c)
+                             char **n,
+                             char **c)
 {
    XClassHint xch;
 
@@ -783,8 +783,8 @@ ecore_x_icccm_client_machine_get(Ecore_X_Window win)
  */
 EAPI void
 ecore_x_icccm_command_set(Ecore_X_Window win,
-                          int            argc,
-                          char         **argv)
+                          int argc,
+                          char **argv)
 {
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
    XSetCommand(_ecore_x_disp, win, argv, argc);
@@ -801,8 +801,8 @@ ecore_x_icccm_command_set(Ecore_X_Window win,
  */
 EAPI void
 ecore_x_icccm_command_get(Ecore_X_Window win,
-                          int           *argc,
-                          char        ***argv)
+                          int *argc,
+                          char ***argv)
 {
    int i, c;
    char **v;
@@ -861,7 +861,7 @@ ecore_x_icccm_command_get(Ecore_X_Window win,
  */
 EAPI void
 ecore_x_icccm_icon_name_set(Ecore_X_Window win,
-                            const char    *t)
+                            const char *t)
 {
    char *list[1];
    XTextProperty xprop;
@@ -921,26 +921,26 @@ ecore_x_icccm_icon_name_get(Ecore_X_Window win)
                t = strdup((char *)xprop.value);
              else
                {
-     /* convert to utf8 */
+                  /* convert to utf8 */
 #ifdef X_HAVE_UTF8_STRING
-                   ret = Xutf8TextPropertyToTextList(_ecore_x_disp, &xprop,
-                                                     &list, &num);
+                  ret = Xutf8TextPropertyToTextList(_ecore_x_disp, &xprop,
+                                                    &list, &num);
 #else /* ifdef X_HAVE_UTF8_STRING */
-                   ret = XmbTextPropertyToTextList(_ecore_x_disp, &xprop,
-                                                   &list, &num);
+                  ret = XmbTextPropertyToTextList(_ecore_x_disp, &xprop,
+                                                  &list, &num);
 #endif /* ifdef X_HAVE_UTF8_STRING */
 
-                   if ((ret == XLocaleNotSupported) ||
-                       (ret == XNoMemory) || (ret == XConverterNotFound))
-                     t = strdup((char *)xprop.value);
-                   else if (ret >= Success)
-                     {
-                        if ((num >= 1) && (list))
-                          t = strdup(list[0]);
+                  if ((ret == XLocaleNotSupported) ||
+                      (ret == XNoMemory) || (ret == XConverterNotFound))
+                    t = strdup((char *)xprop.value);
+                  else if (ret >= Success)
+                    {
+                       if ((num >= 1) && (list))
+                         t = strdup(list[0]);
 
-                        if (list)
-                          XFreeStringList(list);
-                     }
+                       if (list)
+                         XFreeStringList(list);
+                    }
                }
 
              if (xprop.value)
@@ -1129,7 +1129,7 @@ ecore_x_icccm_transient_for_get(Ecore_X_Window win)
  */
 EAPI void
 ecore_x_icccm_window_role_set(Ecore_X_Window win,
-                              const char    *role)
+                              const char *role)
 {
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
    ecore_x_window_prop_string_set(win, ECORE_X_ATOM_WM_WINDOW_ROLE,

@@ -53,7 +53,7 @@ ecore_x_sync_alarm_free(Ecore_X_Sync_Alarm alarm)
 
 EAPI Eina_Bool
 ecore_x_sync_counter_query(Ecore_X_Sync_Counter counter,
-                           unsigned int        *val)
+                           unsigned int *val)
 {
    XSyncValue value;
 
@@ -88,7 +88,7 @@ ecore_x_sync_counter_free(Ecore_X_Sync_Counter counter)
 
 EAPI void
 ecore_x_sync_counter_inc(Ecore_X_Sync_Counter counter,
-                         int                  by)
+                         int by)
 {
    XSyncValue v;
 
@@ -99,7 +99,7 @@ ecore_x_sync_counter_inc(Ecore_X_Sync_Counter counter,
 
 EAPI void
 ecore_x_sync_counter_val_wait(Ecore_X_Sync_Counter counter,
-                              int                  val)
+                              int val)
 {
    XSyncWaitCondition cond;
    XSyncValue v, v2;
@@ -119,7 +119,7 @@ ecore_x_sync_counter_val_wait(Ecore_X_Sync_Counter counter,
 
 EAPI void
 ecore_x_sync_counter_set(Ecore_X_Sync_Counter counter,
-                         int                  val)
+                         int val)
 {
    XSyncValue v;
 
@@ -130,8 +130,8 @@ ecore_x_sync_counter_set(Ecore_X_Sync_Counter counter,
 
 EAPI void
 ecore_x_sync_counter_2_set(Ecore_X_Sync_Counter counter,
-                           int                  val_hi,
-                           unsigned int         val_lo)
+                           int val_hi,
+                           unsigned int val_lo)
 {
    XSyncValue v;
 
@@ -142,8 +142,8 @@ ecore_x_sync_counter_2_set(Ecore_X_Sync_Counter counter,
 
 EAPI Eina_Bool
 ecore_x_sync_counter_2_query(Ecore_X_Sync_Counter counter,
-                             int                 *val_hi,
-                             unsigned int        *val_lo)
+                             int *val_hi,
+                             unsigned int *val_lo)
 {
    XSyncValue value;
 

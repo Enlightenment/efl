@@ -40,14 +40,14 @@ ecore_x_composite_query(void)
 }
 
 EAPI void
-ecore_x_composite_redirect_window(Ecore_X_Window                win,
+ecore_x_composite_redirect_window(Ecore_X_Window win,
                                   Ecore_X_Composite_Update_Type type)
 {
 #ifdef ECORE_XCOMPOSITE
    int update = CompositeRedirectAutomatic;
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
-   switch(type)
+   switch (type)
      {
       case ECORE_X_COMPOSITE_UPDATE_AUTOMATIC:
         update = CompositeRedirectAutomatic;
@@ -62,14 +62,14 @@ ecore_x_composite_redirect_window(Ecore_X_Window                win,
 }
 
 EAPI void
-ecore_x_composite_redirect_subwindows(Ecore_X_Window                win,
+ecore_x_composite_redirect_subwindows(Ecore_X_Window win,
                                       Ecore_X_Composite_Update_Type type)
 {
 #ifdef ECORE_XCOMPOSITE
    int update = CompositeRedirectAutomatic;
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
-   switch(type)
+   switch (type)
      {
       case ECORE_X_COMPOSITE_UPDATE_AUTOMATIC:
         update = CompositeRedirectAutomatic;
@@ -84,14 +84,14 @@ ecore_x_composite_redirect_subwindows(Ecore_X_Window                win,
 }
 
 EAPI void
-ecore_x_composite_unredirect_window(Ecore_X_Window                win,
+ecore_x_composite_unredirect_window(Ecore_X_Window win,
                                     Ecore_X_Composite_Update_Type type)
 {
 #ifdef ECORE_XCOMPOSITE
    int update = CompositeRedirectAutomatic;
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
-   switch(type)
+   switch (type)
      {
       case ECORE_X_COMPOSITE_UPDATE_AUTOMATIC:
         update = CompositeRedirectAutomatic;
@@ -106,14 +106,14 @@ ecore_x_composite_unredirect_window(Ecore_X_Window                win,
 }
 
 EAPI void
-ecore_x_composite_unredirect_subwindows(Ecore_X_Window                win,
+ecore_x_composite_unredirect_subwindows(Ecore_X_Window win,
                                         Ecore_X_Composite_Update_Type type)
 {
 #ifdef ECORE_XCOMPOSITE
    int update = CompositeRedirectAutomatic;
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
-   switch(type)
+   switch (type)
      {
       case ECORE_X_COMPOSITE_UPDATE_AUTOMATIC:
         update = CompositeRedirectAutomatic;

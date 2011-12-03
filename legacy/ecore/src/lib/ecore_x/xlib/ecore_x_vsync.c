@@ -61,40 +61,40 @@ typedef union _drmVBlank
 typedef struct _drmEventContext
 {
    int version;
-   void (*vblank_handler)(int          fd,
+   void (*vblank_handler)(int fd,
                           unsigned int sequence,
                           unsigned int tv_sec,
                           unsigned int tv_usec,
-                          void        *user_data);
-   void (*page_flip_handler)(int          fd,
+                          void *user_data);
+   void (*page_flip_handler)(int fd,
                              unsigned int sequence,
                              unsigned int tv_sec,
                              unsigned int tv_usec,
-                             void        *user_data);
+                             void *user_data);
 } drmEventContext;
 
 static int (*sym_drmClose)(int fd) = NULL;
-static int (*sym_drmGetMagic)(int          fd,
+static int (*sym_drmGetMagic)(int fd,
                               drm_magic_t *magic) = NULL;
-static int (*sym_drmWaitVBlank)(int        fd,
+static int (*sym_drmWaitVBlank)(int fd,
                                 drmVBlank *vbl) = NULL;
-static int (*sym_drmHandleEvent)(int              fd,
+static int (*sym_drmHandleEvent)(int fd,
                                  drmEventContext *evctx) = NULL;
 
 //// dri
 
 static Bool (*sym_DRI2QueryExtension)(Display *display,
-                                      int     *eventBase,
-                                      int     *errorBase) = NULL;
+                                      int *eventBase,
+                                      int *errorBase) = NULL;
 static Bool (*sym_DRI2QueryVersion)(Display *display,
-                                    int     *major,
-                                    int     *minor) = NULL;
+                                    int *major,
+                                    int *minor) = NULL;
 static Bool (*sym_DRI2Connect)(Display *display,
-                               XID      window,
-                               char   **driverName,
-                               char   **deviceName) = NULL;
-static Bool (*sym_DRI2Authenticate)(Display    *display,
-                                    XID         window,
+                               XID window,
+                               char **driverName,
+                               char **deviceName) = NULL;
+static Bool (*sym_DRI2Authenticate)(Display *display,
+                                    XID window,
                                     drm_magic_t magic) = NULL;
 
 //// dri/drm data needed
@@ -142,18 +142,18 @@ _dri_drm_tick_end(void *data __UNUSED__)
 }
 
 static void
-_dri_drm_vblank_handler(int          fd __UNUSED__,
+_dri_drm_vblank_handler(int fd __UNUSED__,
                         unsigned int frame __UNUSED__,
                         unsigned int sec __UNUSED__,
                         unsigned int usec __UNUSED__,
-                        void        *data __UNUSED__)
+                        void *data __UNUSED__)
 {
    ecore_animator_custom_tick();
    if (drm_event_is_busy) _dri_drm_tick_schedule();
 }
 
 static Eina_Bool
-_dri_drm_cb(void             *data __UNUSED__,
+_dri_drm_cb(void *data __UNUSED__,
             Ecore_Fd_Handler *fd_handler __UNUSED__)
 {
    sym_drmHandleEvent(drm_fd, &drm_evctx);
