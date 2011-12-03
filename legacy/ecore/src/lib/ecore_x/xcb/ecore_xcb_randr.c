@@ -2449,6 +2449,45 @@ ecore_x_randr_output_backlight_level_set(Ecore_X_Window       root,
    return EINA_FALSE;
 }
 
+/*
+ * @brief check if a backlight is available
+ * @return whether a blacklight is available
+ */
+EAPI Eina_Bool 
+ecore_x_randr_output_backlight_available(void) 
+{
+#ifdef ECORE_XCB_RANDR
+   Ecore_X_Atom _backlight;
+   xcb_intern_atom_cookie_t acookie;
+   xcb_intern_atom_reply_t *areply;
+#endif
+
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   CHECK_XCB_CONN;
+
+#ifdef ECORE_XCB_RANDR
+   RANDR_CHECK_1_2_RET(EINA_FALSE);
+
+   acookie =
+     xcb_intern_atom_unchecked(_ecore_xcb_conn, 1,
+                               strlen("Backlight"), "Backlight");
+   areply = xcb_intern_atom_reply(_ecore_xcb_conn, acookie, NULL);
+
+   if (!areply)
+     {
+        ERR("Backlight property is not suppported on this server or driver");
+        return EINA_FALSE;
+     }
+   else
+     {
+        _backlight = areply->atom;
+        free(areply);
+        return EINA_TRUE;
+     }
+#endif
+   return EINA_FALSE;
+}
+
 EAPI int
 ecore_x_randr_edid_version_get(unsigned char *edid, unsigned long edid_length)
 {
