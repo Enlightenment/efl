@@ -1965,6 +1965,26 @@ ecore_x_randr_screen_backlight_level_set(Ecore_X_Window root,
 }
 
 /*
+ * @brief check if a backlight is available
+ * @return whether a blacklight is available
+ */
+
+EAPI Eina_Bool
+ecore_x_randr_output_backlight_available(void)
+{
+#ifdef ECORE_XRANDR
+   RANDR_CHECK_1_2_RET(-1);
+   Atom _backlight;
+
+   _backlight = XInternAtom(_ecore_x_disp, RANDR_PROPERTY_BACKLIGHT, True);
+
+   return (_backlight == None) ? EINA_FALSE : EINA_TRUE;
+
+#endif
+   return EINA_FALSE;
+}
+
+/*
  * @brief get the backlight level of the given output
  * @param root window which's screen should be queried
  * @param output from which the backlight level should be retrieved

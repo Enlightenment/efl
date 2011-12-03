@@ -3,6 +3,10 @@ Ecore 1.2.0
 Changes since Ecore 1.1.0:
 --------------------------
 
+Additions:
+    * ecore_x:
+     - ecore_x_randr_output_backlight_available()
+
 Improvements:
     * ecore:
      - most allocations moved to mempools

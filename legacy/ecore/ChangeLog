@@ -364,3 +364,7 @@
 2011-12-02 Mike Blumenkrantz
 
         * Use mempools for allocations
+
+2011-12-02 Term <term@twistedpath.org>
+
+        * added ecore_x_randr_output_backlight_available()

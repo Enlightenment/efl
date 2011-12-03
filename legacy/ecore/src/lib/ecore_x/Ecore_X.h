@@ -3114,7 +3114,10 @@ EAPI Ecore_X_Randr_Edid_Display_Interface_Type
 ecore_x_randr_edid_display_interface_type_get(unsigned char *edid,
                                               unsigned long edid_length);
 
-/* ecore_x_randr_13.c */
+/* ecore_x_randr_12.c */
+
+EAPI Eina_Bool
+ecore_x_randr_output_backlight_available(void);
 EAPI void
 ecore_x_randr_screen_backlight_level_set(Ecore_X_Window root,
                                          double level);
