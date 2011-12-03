@@ -280,12 +280,6 @@ _eio_file_xattr_setup_set(Eio_File_Xattr *async,
  *                                   API                                      *
  *============================================================================*/
 
-/**
- * @addtogroup Eio_Group Eio Reference API
- *
- * @{
- */
-
 EAPI Eio_File *
 eio_file_xattr(const char *path,
 	       Eio_Filter_Cb filter_cb,
@@ -321,17 +315,6 @@ eio_file_xattr(const char *path,
   return &async->ls.common;
 }
 
-/**
- * @brief Retrieve the extended attribute of a file/directory.
- * @param path The path to retrieve the extended attribute from.
- * @param attribute The name of the attribute to retrieve.
- * @param done_cb Callback called from the main loop when getxattr succeeded.
- * @param error_cb Callback called from the main loop when getxattr failed or has been canceled.
- * @param data Private data given to callback.
- * @return A reference to the IO operation.
- *
- * eio_file_xattr_get call getxattr from another thread. This prevent lock in your apps.
- */
 EAPI Eio_File *
 eio_file_xattr_get(const char *path,
 		   const char *attribute,
@@ -353,17 +336,6 @@ eio_file_xattr_get(const char *path,
    return _eio_file_xattr_setup_get(async, path, attribute, error_cb, data);
 }
 
-/**
- * @brief Retrieve a string extended attribute of a file/directory.
- * @param path The path to retrieve the extended attribute from.
- * @param attribute The name of the attribute to retrieve.
- * @param done_cb Callback called from the main loop when getxattr succeeded.
- * @param error_cb Callback called from the main loop when getxattr failed or has been canceled.
- * @param data Private data given to callback.
- * @return A reference to the IO operation.
- *
- * eio_file_xattr_string_get call eina_xattr_string_get from another thread. This prevent lock in your apps.
- */
 EAPI Eio_File *
 eio_file_xattr_string_get(const char *path,
 			  const char *attribute,
@@ -385,17 +357,6 @@ eio_file_xattr_string_get(const char *path,
    return _eio_file_xattr_setup_get(async, path, attribute, error_cb, data);
 }
 
-/**
- * @brief Retrieve a extended attribute of a file/directory.
- * @param path The path to retrieve the extended attribute from.
- * @param attribute The name of the attribute to retrieve.
- * @param done_cb Callback called from the main loop when getxattr succeeded.
- * @param error_cb Callback called from the main loop when getxattr failed or has been canceled.
- * @param data Private data given to callback.
- * @return A reference to the IO operation.
- *
- * eio_file_xattr_double_get call eina_xattr_double_get from another thread. This prevent lock in your apps.
- */
 EAPI Eio_File *
 eio_file_xattr_double_get(const char *path,
 			  const char *attribute,
@@ -417,17 +378,6 @@ eio_file_xattr_double_get(const char *path,
    return _eio_file_xattr_setup_get(async, path, attribute, error_cb, data);
 }
 
-/**
- * @brief Retrieve a extended attribute of a file/directory.
- * @param path The path to retrieve the extended attribute from.
- * @param attribute The name of the attribute to retrieve.
- * @param done_cb Callback called from the main loop when getxattr succeeded.
- * @param error_cb Callback called from the main loop when getxattr failed or has been canceled.
- * @param data Private data given to callback.
- * @return A reference to the IO operation.
- *
- * eio_file_xattr_int_get call eina_xattr_int_get from another thread. This prevent lock in your apps.
- */
 EAPI Eio_File *
 eio_file_xattr_int_get(const char *path,
 		       const char *attribute,
@@ -449,20 +399,6 @@ eio_file_xattr_int_get(const char *path,
    return _eio_file_xattr_setup_get(async, path, attribute, error_cb, data);
 }
 
-/**
- * @brief Define an extented attribute on a file/directory.
- * @param path The path to set the attribute on.
- * @param attribute The name of the attribute to define.
- * @param xattr_data The data to link the attribute with.
- * @param xattr_size The size of the data to set.
- * @param done_cb The callback called from the main loop when setxattr succeeded.
- * @param error_cb The callback called from the main loop when setxattr failed.
- * @param data Private data given to callback.
- * @return A reference to the IO operation.
- *
- * eio_file_xattr_set call setxattr from another thread. This prevent lock in your apps. If
- * the writing succeeded, the done_cb will be called even if a cancel was requested, but came to late.
- */
 EAPI Eio_File *
 eio_file_xattr_set(const char *path,
                    const char *attribute,
@@ -489,19 +425,6 @@ eio_file_xattr_set(const char *path,
    return _eio_file_xattr_setup_set(async, path, attribute, flags, done_cb, error_cb, data);
 }
 
-/**
- * @brief Define a string extented attribute on a file/directory.
- * @param path The path to set the attribute on.
- * @param attribute The name of the attribute to define.
- * @param xattr_string The string to link the attribute with.
- * @param done_cb The callback called from the main loop when setxattr succeeded.
- * @param error_cb The callback called from the main loop when setxattr failed.
- * @param data Private data given to callback.
- * @return A reference to the IO operation.
- *
- * eio_file_xattr_string_set call eina_xattr_string_set from another thread. This prevent lock in your apps. If
- * the writing succeeded, the done_cb will be called even if a cancel was requested, but came to late.
- */
 EAPI Eio_File *
 eio_file_xattr_string_set(const char *path,
 			  const char *attribute,
@@ -534,19 +457,6 @@ eio_file_xattr_string_set(const char *path,
    return _eio_file_xattr_setup_set(async, path, attribute, flags, done_cb, error_cb, data);
 }
 
-/**
- * @brief Define an extented attribute on a file/directory.
- * @param path The path to set the attribute on.
- * @param attribute The name of the attribute to define.
- * @param xattr_double The value to link the attribute with.
- * @param done_cb The callback called from the main loop when setxattr succeeded.
- * @param error_cb The callback called from the main loop when setxattr failed.
- * @param data Private data given to callback.
- * @return A reference to the IO operation.
- *
- * eio_file_xattr_double_set call eina_xattr_double_set from another thread. This prevent lock in your apps. If
- * the writing succeeded, the done_cb will be called even if a cancel was requested, but came to late.
- */
 EAPI Eio_File *
 eio_file_xattr_double_set(const char *path,
 			  const char *attribute,
@@ -570,19 +480,6 @@ eio_file_xattr_double_set(const char *path,
    return _eio_file_xattr_setup_set(async, path, attribute, flags, done_cb, error_cb, data);
 }
 
-/**
- * @brief Define an extented attribute on a file/directory.
- * @param path The path to set the attribute on.
- * @param attribute The name of the attribute to define.
- * @param xattr_int The value to link the attribute with.
- * @param done_cb The callback called from the main loop when setxattr succeeded.
- * @param error_cb The callback called from the main loop when setxattr failed.
- * @param data Private data given to callback.
- * @return A reference to the IO operation.
- *
- * eio_file_xattr_int_set call eina_xattr_int_set from another thread. This prevent lock in your apps. If
- * the writing succeeded, the done_cb will be called even if a cancel was requested, but came to late.
- */
 EAPI Eio_File *
 eio_file_xattr_int_set(const char *path,
 		       const char *attribute,
@@ -606,6 +503,3 @@ eio_file_xattr_int_set(const char *path,
    return _eio_file_xattr_setup_set(async, path, attribute, flags, done_cb, error_cb, data);
 }
 
-/**
- * @}
- */

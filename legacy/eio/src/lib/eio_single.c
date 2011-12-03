@@ -334,22 +334,6 @@ eio_file_container_set(Eio_File *common, void *container)
  *                                   API                                      *
  *============================================================================*/
 
-/**
- * @addtogroup Eio_Group Eio Reference API
- *
- * @{
- */
-
-/**
- * @brief Stat a file/directory.
- * @param path The path to stat.
- * @param done_cb Callback called from the main loop when stat was successfully called..
- * @param error_cb Callback called from the main loop when stat failed or has been canceled.
- * @param data Private data given to callback.
- * @return A reference to the IO operation.
- *
- * eio_file_direct_stat basically call stat in another thread. This prevent any lock in your apps.
- */
 EAPI Eio_File *
 eio_file_direct_stat(const char *path,
 		     Eio_Stat_Cb done_cb,
@@ -379,16 +363,6 @@ eio_file_direct_stat(const char *path,
    return &s->common;
 }
 
-/**
- * @brief Unlink a file/directory.
- * @param path The path to unlink.
- * @param done_cb Callback called from the main loop when the directory has been created.
- * @param error_cb Callback called from the main loop when the directory failed to be created or has been canceled.
- * @param data Private data given to callback.
- * @return A reference to the IO operation.
- *
- * eio_file_unlink basically call unlink in another thread. This prevent any lock in your apps.
- */
 EAPI Eio_File *
 eio_file_unlink(const char *path,
 		Eio_Done_Cb done_cb,
@@ -417,17 +391,6 @@ eio_file_unlink(const char *path,
    return &l->common;
 }
 
-/**
- * @brief Create a new directory.
- * @param path The directory path to create.
- * @param mode The permission to set, follow (mode & ~umask & 0777).
- * @param done_cb Callback called from the main loop when the directory has been created.
- * @param error_cb Callback called from the main loop when the directory failed to be created or has been canceled.
- * @param data Private data given to callback.
- * @return A reference to the IO operation.
- *
- * eio_file_mkdir basically call mkdir in another thread. This prevent any lock in your apps.
- */
 EAPI Eio_File *
 eio_file_mkdir(const char *path,
 	       mode_t mode,
@@ -458,17 +421,6 @@ eio_file_mkdir(const char *path,
    return &r->common;
 }
 
-/**
- * @brief Change right of a path.
- * @param path The directory path to change access right.
- * @param mode The permission to set, follow (mode & ~umask & 0777).
- * @param done_cb Callback called from the main loop when the directory has been created.
- * @param error_cb Callback called from the main loop when the directory failed to be created or has been canceled.
- * @param data Private data given to callback.
- * @return A reference to the IO operation.
- *
- * eio_file_chmod basically call chmod in another thread. This prevent any lock in your apps.
- */
 EAPI Eio_File *
 eio_file_chmod(const char *path,
 	       mode_t mode,
@@ -499,25 +451,13 @@ eio_file_chmod(const char *path,
    return &r->common;
 }
 
-/**
- * @brief Change owner of a path.
- * @param path The directory path to change owner.
- * @param user The new user to set (could be NULL).
- * @param group The new group to set (could be NULL).
- * @param done_cb Callback called from the main loop when the directory has been created.
- * @param error_cb Callback called from the main loop when the directory failed to be created or has been canceled.
- * @param data Private data given to callback.
- * @return A reference to the IO operation.
- *
- * eio_file_chown determine the uid/gid that correspond to both user and group string and then call chown. This prevent any lock in your apps by calling
- * this function from another thread. The string could be the name of the user or the name of the group or directly their numerical value.
- */
-EAPI Eio_File *eio_file_chown(const char *path,
-                              const char *user,
-                              const char *group,
-                              Eio_Done_Cb done_cb,
-                              Eio_Error_Cb error_cb,
-                              const void *data)
+EAPI Eio_File *
+eio_file_chown(const char *path,
+	       const char *user,
+	       const char *group,
+	       Eio_Done_Cb done_cb,
+	       Eio_Error_Cb error_cb,
+	       const void *data)
 {
    Eio_File_Chown *c = NULL;
 
@@ -542,8 +482,4 @@ EAPI Eio_File *eio_file_chown(const char *path,
 
    return &c->common;
 }
-
-/**
- * @}
- */
 

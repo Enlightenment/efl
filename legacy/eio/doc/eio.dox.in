@@ -39,3 +39,248 @@
  * This library is cross-platform and can be compiled and used on
  * Linux, BSD, Opensolaris and Windows (XP and CE).
  */
+
+/**
+ * @page tutorial_dir_copy eio_dir_copy() tutorial
+ *
+ * To use eio_dir_copy(), you basically need the source and
+ * destination files (or directories), and set three callbacks:
+ *
+ * @li The notification callback, which allows you to know if a file or
+ * a directory is copied, and the progress of the copy.
+ * @li The end callback, which is called when the copy is finished.
+ * @li The error callback, which is called if an error occured. You
+ * can then retrieve the error type as an errno error.
+ *
+ * @warning It is the user's duty to provide the "right target". It
+ * means that copying to '.' will copy the content directly inside '.'
+ * and not in a subdirectory.
+ *
+ * Here is a simple example:
+ *
+ * @code
+ * #include <Ecore.h>
+ * #include <Eio.h>
+ *
+ * static void
+ * _test_notify_cb(void *data, Eio_File *handler, const Eio_Progress *info)
+ * {
+ *    switch (info->op)
+ *       {
+ *       case EIO_FILE_COPY:
+ *          printf("[%s] %f%%\n", info->dest, info->percent);
+ *          break;
+ *       case EIO_DIR_COPY:
+ *          printf("global [%li/%li] %f%%\n", info->current, info->max, info->percent);
+ *          break;
+ *       }
+ * }
+ *
+ * static void
+ * _test_done_cb(void *data, Eio_File *handler)
+ * {
+ *    printf("copy done\n");
+ *    ecore_main_loop_quit();
+ * }
+ *
+ * static void
+ * _test_error_cb(int error, Eio_File *handler, void *data)
+ * {
+ *    fprintf(stderr, "error: [%s]\n", strerror(error));
+ *     ecore_main_loop_quit();
+ * }
+ *
+ * int
+ * main(int argc, char **argv)
+ * {
+ *    Eio_File *cp;
+ *
+ *    if (argc != 3)
+ *      {
+ *         fprintf(stderr, "eio_cp source_file destination_file\n");
+ *         return -1;
+ *      }
+ *
+ *    ecore_init();
+ *    eio_init();
+ *
+ *    cp = eio_dir_copy(argv[1], argv[2],
+ *                      _test_notify_cb,
+ *                      _test_done_cb,
+ *                      _test_error_cb,
+ *                      NULL);
+ *
+ *    ecore_main_loop_begin();
+ *
+ *    eio_shutdown();
+ *    ecore_shutdown();
+ *
+ *    return 0;
+ * }
+ * @endcode
+ */
+
+/**
+ * @page tutorial_dir_stat_ls eio_dir_stat_ls() tutorial
+ *
+ * @li The filter callback, which allow or not a file to be seen
+ * by the main loop handler. This callback run in a separated thread.
+ * @li The main callback, which receive in the main loop all the file
+ * that are allowed by the filter. If you are updating a user interface
+ * it make sense to delay the insertion a little, so you get a chance
+ * to update the canvas for a bunch of file instead of one by one.
+ * @li The end callback, which is called in the main loop when the
+ * content of the directory has been correctly scanned and all the
+ * file notified to the main loop.
+ * @li The error callback, which is called if an error occured or
+ * if the listing was cancelled during it's run. You can then retrieve
+ * the error type as an errno error.
+ *
+ * Here is a simple example that implement a stupidly simple replacement for find:
+ *
+ * @code
+ * #include <Ecore.h>
+ * #include <Eio.h>
+ *
+ * static Eina_Bool
+ * _test_filter_cb(void *data, Eio_File *handler, const Eina_File_Direct_Info *info)
+ * {
+ *    fprintf(stderr, "ACCEPTING: %s\n", info->path);
+ *    return EINA_TRUE;
+ * }
+ *
+ * static void
+ * _test_main_cb(void *data, Eio_File *handler, const Eina_File_Direct_Info *info)
+ * {
+ *    fprintf(stderr, "PROCESS: %s\n", info->path);
+ * }
+ *
+ * static void
+ * _test_done_cb(void *data, Eio_File *handler)
+ * {
+ *    printf("ls done\n");
+ *    ecore_main_loop_quit();
+ * }
+ *
+ * static void
+ * _test_error_cb(void *data, Eio_File *handler, int error)
+ * {
+ *    fprintf(stderr, "error: [%s]\n", strerror(error));
+ *    ecore_main_loop_quit();
+ * }
+ *
+ * int
+ * main(int argc, char **argv)
+ * {
+ *    Eio_File *cp;
+ *
+ *    if (argc != 2)
+ *      {
+ * 	fprintf(stderr, "eio_ls directory\n");
+ * 	return -1;
+ *      }
+ *
+ *    ecore_init();
+ *    eio_init();
+ *
+ *    cp = eio_dir_stat_ls(argv[1],
+ *                         _test_filter_cb,
+ *                         _test_main_cb,
+ *                         _test_done_cb,
+ *                         _test_error_cb,
+ *                         NULL);
+ *
+ *    ecore_main_loop_begin();
+ *
+ *    eio_shutdown();
+ *    ecore_shutdown();
+ *
+ *    return 0;
+ * }
+ *
+ * @endcode
+ */
+
+/**
+ * @page tutorial_file_ls eio_file_ls() tutorial
+ *
+ * To use eio_file_ls(), you just need to define four callbacks:
+ *
+ * @li The filter callback, which allow or not a file to be seen
+ * by the main loop handler. This callback run in a separated thread.
+ * @li The main callback, which receive in the main loop all the file
+ * that are allowed by the filter. If you are updating a user interface
+ * it make sense to delay the insertion a little, so you get a chance
+ * to update the canvas for a bunch of file instead of one by one.
+ * @li The end callback, which is called in the main loop when the
+ * content of the directory has been correctly scanned and all the
+ * file notified to the main loop.
+ * @li The error callback, which is called if an error occured or
+ * if the listing was cancelled during it's run. You can then retrieve
+ * the error type as an errno error.
+ *
+ * Here is a simple example:
+ *
+ * @code
+ * #include <Ecore.h>
+ * #include <Eio.h>
+ *
+ * static Eina_Bool
+ * _test_filter_cb(void *data, Eio_File *handler, const char *file)
+ * {
+ *    fprintf(stderr, "ACCEPTING: %s\n", file);
+ *    return EINA_TRUE;
+ * }
+ *
+ * static void
+ * _test_main_cb(void *data, Eio_File *handler, const char *file)
+ * {
+ *    fprintf(stderr, "PROCESS: %s\n", file);
+ * }
+ *
+ * static void
+ * _test_done_cb(void *data, Eio_File *handler)
+ * {
+ *    printf("ls done\n");
+ *    ecore_main_loop_quit();
+ * }
+ *
+ * static void
+ * _test_error_cb(void *data, Eio_File *handler, int error)
+ * {
+ *    fprintf(stderr, "error: [%s]\n", strerror(error));
+ *    ecore_main_loop_quit();
+ * }
+ *
+ * int
+ * main(int argc, char **argv)
+ * {
+ *    Eio_File *cp;
+ *
+ *    if (argc != 2)
+ *      {
+ * 	fprintf(stderr, "eio_ls directory\n");
+ * 	return -1;
+ *      }
+ *
+ *    ecore_init();
+ *    eio_init();
+ *
+ *    cp = eio_file_ls(argv[1],
+ *                     _test_filter_cb,
+ *                     _test_main_cb,
+ *                     _test_done_cb,
+ *                     _test_error_cb,
+ *                     NULL);
+ *
+ *    ecore_main_loop_begin();
+ *
+ *    eio_shutdown();
+ *    ecore_shutdown();
+ *
+ *    return 0;
+ * }
+ *
+ * @endcode
+ */
+

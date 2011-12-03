@@ -17,167 +17,6 @@
  * if not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
- * @page tutorial_dir_copy eio_dir_copy() tutorial
- *
- * To use eio_dir_copy(), you basically need the source and
- * destination files (or directories), and set three callbacks:
- *
- * @li The notification callback, which allows you to know if a file or
- * a directory is copied, and the progress of the copy.
- * @li The end callback, which is called when the copy is finished.
- * @li The error callback, which is called if an error occured. You
- * can then retrieve the error type as an errno error.
- *
- * @warning It is the user's duty to provide the "right target". It
- * means that copying to '.' will copy the content directly inside '.'
- * and not in a subdirectory.
- *
- * Here is a simple example:
- *
- * @code
- * #include <Ecore.h>
- * #include <Eio.h>
- *
- * static void
- * _test_notify_cb(void *data, Eio_File *handler, const Eio_Progress *info)
- * {
- *    switch (info->op)
- *       {
- *       case EIO_FILE_COPY:
- *          printf("[%s] %f%%\n", info->dest, info->percent);
- *          break;
- *       case EIO_DIR_COPY:
- *          printf("global [%li/%li] %f%%\n", info->current, info->max, info->percent);
- *          break;
- *       }
- * }
- *
- * static void
- * _test_done_cb(void *data, Eio_File *handler)
- * {
- *    printf("copy done\n");
- *    ecore_main_loop_quit();
- * }
- *
- * static void
- * _test_error_cb(int error, Eio_File *handler, void *data)
- * {
- *    fprintf(stderr, "error: [%s]\n", strerror(error));
- *     ecore_main_loop_quit();
- * }
- *
- * int
- * main(int argc, char **argv)
- * {
- *    Eio_File *cp;
- *
- *    if (argc != 3)
- *      {
- *         fprintf(stderr, "eio_cp source_file destination_file\n");
- *         return -1;
- *      }
- *
- *    ecore_init();
- *    eio_init();
- *
- *    cp = eio_dir_copy(argv[1], argv[2],
- *                      _test_notify_cb,
- *                      _test_done_cb,
- *                      _test_error_cb,
- *                      NULL);
- *
- *    ecore_main_loop_begin();
- *
- *    eio_shutdown();
- *    ecore_shutdown();
- *
- *    return 0;
- * }
- * @endcode
- */
-
-/**
- * @page tutorial_dir_stat_ls eio_dir_stat_ls() tutorial
- *
- * @li The filter callback, which allow or not a file to be seen
- * by the main loop handler. This callback run in a separated thread.
- * @li The main callback, which receive in the main loop all the file
- * that are allowed by the filter. If you are updating a user interface
- * it make sense to delay the insertion a little, so you get a chance
- * to update the canvas for a bunch of file instead of one by one.
- * @li The end callback, which is called in the main loop when the
- * content of the directory has been correctly scanned and all the
- * file notified to the main loop.
- * @li The error callback, which is called if an error occured or
- * if the listing was cancelled during it's run. You can then retrieve
- * the error type as an errno error.
- *
- * Here is a simple example that implement a stupidly simple replacement for find:
- *
- * @code
- * #include <Ecore.h>
- * #include <Eio.h>
- *
- * static Eina_Bool
- * _test_filter_cb(void *data, Eio_File *handler, const Eina_File_Direct_Info *info)
- * {
- *    fprintf(stderr, "ACCEPTING: %s\n", info->path);
- *    return EINA_TRUE;
- * }
- *
- * static void
- * _test_main_cb(void *data, Eio_File *handler, const Eina_File_Direct_Info *info)
- * {
- *    fprintf(stderr, "PROCESS: %s\n", info->path);
- * }
- *
- * static void
- * _test_done_cb(void *data, Eio_File *handler)
- * {
- *    printf("ls done\n");
- *    ecore_main_loop_quit();
- * }
- *
- * static void
- * _test_error_cb(void *data, Eio_File *handler, int error)
- * {
- *    fprintf(stderr, "error: [%s]\n", strerror(error));
- *    ecore_main_loop_quit();
- * }
- *
- * int
- * main(int argc, char **argv)
- * {
- *    Eio_File *cp;
- *
- *    if (argc != 2)
- *      {
- * 	fprintf(stderr, "eio_ls directory\n");
- * 	return -1;
- *      }
- *
- *    ecore_init();
- *    eio_init();
- *
- *    cp = eio_dir_stat_ls(argv[1],
- *                         _test_filter_cb,
- *                         _test_main_cb,
- *                         _test_done_cb,
- *                         _test_error_cb,
- *                         NULL);
- *
- *    ecore_main_loop_begin();
- *
- *    eio_shutdown();
- *    ecore_shutdown();
- *
- *    return 0;
- * }
- *
- * @endcode
- */
-
 #include "eio_private.h"
 #include "Eio.h"
 
@@ -941,25 +780,6 @@ _eio_dir_stat_error(void *data, Ecore_Thread *thread __UNUSED__)
  *============================================================================*/
 
 
-/**
- * @addtogroup Eio_Group Eio Reference API
- *
- * @{
- */
-
-/**
- * @brief Copy a directory and it's content asynchronously
- * @param source Should be the name of the directory to copy the data from.
- * @param dest Should be the name of the directory to copy the data to.
- * @param progress_cb Callback called to know the progress of the copy.
- * @param done_cb Callback called when the copy is done.
- * @param error_cb Callback called when something goes wrong.
- * @param data Private data given to callback.
- *
- * This function will copy a directory and all it's content from source to dest.
- * It will try to use splice if possible, if not it will fallback to mmap/write.
- * It will try to preserve access right, but not user/group identity.
- */
 EAPI Eio_File *
 eio_dir_copy(const char *source,
              const char *dest,
@@ -1001,20 +821,6 @@ eio_dir_copy(const char *source,
    return &copy->progress.common;
 }
 
-/**
- * @brief Move a directory and it's content asynchronously
- * @param source Should be the name of the directory to copy the data from.
- * @param dest Should be the name of the directory to copy the data to.
- * @param progress_cb Callback called to know the progress of the copy.
- * @param done_cb Callback called when the copy is done.
- * @param error_cb Callback called when something goes wrong.
- * @param data Private data given to callback.
- *
- * This function will move a directory and all it's content from source to dest.
- * It will try first to rename the directory, if not it will try to use splice
- * if possible, if not it will fallback to mmap/write.
- * It will try to preserve access right, but not user/group identity.
- */
 EAPI Eio_File *
 eio_dir_move(const char *source,
              const char *dest,
@@ -1056,19 +862,6 @@ eio_dir_move(const char *source,
    return &move->progress.common;
 }
 
-/**
- * @brief Remove a directory and it's content asynchronously
- * @param path Should be the name of the directory to destroy.
- * @param progress_cb Callback called to know the progress of the copy.
- * @param done_cb Callback called when the copy is done.
- * @param error_cb Callback called when something goes wrong.
- * @param data Private data given to callback.
- *
- * This function will move a directory and all it's content from source to dest.
- * It will try first to rename the directory, if not it will try to use splice
- * if possible, if not it will fallback to mmap/write.
- * It will try to preserve access right, but not user/group identity.
- */
 EAPI Eio_File *
 eio_dir_unlink(const char *path,
                Eio_Filter_Direct_Cb filter_cb,
@@ -1108,19 +901,6 @@ eio_dir_unlink(const char *path,
    return &rmrf->progress.common;
 }
 
-/**
- * @brief List the content of a directory and all it's sub-content asynchronously
- * @param dir The directory to list.
- * @param filter_cb Callback called from another thread.
- * @param main_cb Callback called from the main loop for each accepted file.
- * @param done_cb Callback called from the main loop when the content of the directory has been listed.
- * @param error_cb Callback called from the main loop when the directory could not be opened or listing content has been canceled.
- * @param data Data passed to callback and not modified at all by eio_dir_stat_find.
- * @return A reference to the IO operation.
- *
- * eio_dir_stat_find() run eina_file_stat_ls() recursivly in a separated thread using
- * ecore_thread_feedback_run. This prevent any lock in your apps.
- */
 EAPI Eio_File *
 eio_dir_stat_ls(const char *dir,
                 Eio_Filter_Direct_Cb filter_cb,
@@ -1156,6 +936,3 @@ eio_dir_stat_ls(const char *dir,
    return &async->ls.common;
 }
 
-/**
- * @}
- */

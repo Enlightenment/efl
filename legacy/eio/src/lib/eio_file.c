@@ -19,89 +19,6 @@
  * if not, see <http://www.gnu.org/licenses/>.
  */
 
-/**
- * @page tutorial_file_ls eio_file_ls() tutorial
- *
- * To use eio_file_ls(), you just need to define four callbacks:
- *
- * @li The filter callback, which allow or not a file to be seen
- * by the main loop handler. This callback run in a separated thread.
- * @li The main callback, which receive in the main loop all the file
- * that are allowed by the filter. If you are updating a user interface
- * it make sense to delay the insertion a little, so you get a chance
- * to update the canvas for a bunch of file instead of one by one.
- * @li The end callback, which is called in the main loop when the
- * content of the directory has been correctly scanned and all the
- * file notified to the main loop.
- * @li The error callback, which is called if an error occured or
- * if the listing was cancelled during it's run. You can then retrieve
- * the error type as an errno error.
- *
- * Here is a simple example:
- *
- * @code
- * #include <Ecore.h>
- * #include <Eio.h>
- *
- * static Eina_Bool
- * _test_filter_cb(void *data, Eio_File *handler, const char *file)
- * {
- *    fprintf(stderr, "ACCEPTING: %s\n", file);
- *    return EINA_TRUE;
- * }
- *
- * static void
- * _test_main_cb(void *data, Eio_File *handler, const char *file)
- * {
- *    fprintf(stderr, "PROCESS: %s\n", file);
- * }
- *
- * static void
- * _test_done_cb(void *data, Eio_File *handler)
- * {
- *    printf("ls done\n");
- *    ecore_main_loop_quit();
- * }
- *
- * static void
- * _test_error_cb(void *data, Eio_File *handler, int error)
- * {
- *    fprintf(stderr, "error: [%s]\n", strerror(error));
- *    ecore_main_loop_quit();
- * }
- *
- * int
- * main(int argc, char **argv)
- * {
- *    Eio_File *cp;
- *
- *    if (argc != 2)
- *      {
- * 	fprintf(stderr, "eio_ls directory\n");
- * 	return -1;
- *      }
- *
- *    ecore_init();
- *    eio_init();
- *
- *    cp = eio_file_ls(argv[1],
- *                     _test_filter_cb,
- *                     _test_main_cb,
- *                     _test_done_cb,
- *                     _test_error_cb,
- *                     NULL);
- *
- *    ecore_main_loop_begin();
- *
- *    eio_shutdown();
- *    ecore_shutdown();
- *
- *    return 0;
- * }
- *
- * @endcode
- */
-
 #include "eio_private.h"
 #include "Eio.h"
 
@@ -757,25 +674,6 @@ eio_async_error(void *data, Ecore_Thread *thread __UNUSED__)
  *                                   API                                      *
  *============================================================================*/
 
-/**
- * @addtogroup Eio_Group Eio Reference API
- *
- * @{
- */
-
-/**
- * @brief List content of a directory without locking your app.
- * @param dir The directory to list.
- * @param filter_cb Callback called from another thread.
- * @param main_cb Callback called from the main loop for each accepted file.
- * @param done_cb Callback called from the main loop when the content of the directory has been listed.
- * @param error_cb Callback called from the main loop when the directory could not be opened or listing content has been canceled.
- * @param data Data passed to callback and not modified at all by eio_file_ls.
- * @return A reference to the IO operation.
- *
- * eio_file_ls run eina_file_ls in a separated thread using ecore_thread_feedback_run. This prevent
- * any lock in your apps.
- */
 EAPI Eio_File *
 eio_file_ls(const char *dir,
 	    Eio_Filter_Cb filter_cb,
@@ -811,19 +709,6 @@ eio_file_ls(const char *dir,
    return &async->ls.common;
 }
 
-/**
- * @brief List content of a directory without locking your app.
- * @param dir The directory to list.
- * @param filter_cb Callback called from another thread.
- * @param main_cb Callback called from the main loop for each accepted file.
- * @param done_cb Callback called from the main loop when the content of the directory has been listed.
- * @param error_cb Callback called from the main loop when the directory could not be opened or listing content has been canceled.
- * @param data Data passed to callback and not modified at all by eio_file_direct_ls.
- * @return A reference to the IO operation.
- *
- * eio_file_direct_ls run eina_file_direct_ls in a separated thread using
- * ecore_thread_feedback_run. This prevent any lock in your apps.
- */
 EAPI Eio_File *
 eio_file_direct_ls(const char *dir,
 		   Eio_Filter_Direct_Cb filter_cb,
@@ -859,19 +744,6 @@ eio_file_direct_ls(const char *dir,
    return &async->ls.common;
 }
 
-/**
- * @brief List content of a directory without locking your app.
- * @param dir The directory to list.
- * @param filter_cb Callback called from another thread.
- * @param main_cb Callback called from the main loop for each accepted file.
- * @param done_cb Callback called from the main loop when the content of the directory has been listed.
- * @param error_cb Callback called from the main loop when the directory could not be opened or listing content has been canceled.
- * @param data Data passed to callback and not modified at all by eio_file_stat_ls.
- * @return A reference to the IO operation.
- *
- * eio_file_stat_ls() run eina_file_stat_ls() in a separated thread using
- * ecore_thread_feedback_run. This prevent any lock in your apps.
- */
 EAPI Eio_File *
 eio_file_stat_ls(const char *dir,
                  Eio_Filter_Direct_Cb filter_cb,
@@ -907,14 +779,6 @@ eio_file_stat_ls(const char *dir,
    return &async->ls.common;
 }
 
-/**
- * @brief Cancel any Eio_File.
- * @param ls The asynchronous IO operation to cancel.
- * @return EINA_FALSE if the destruction is delayed, EINA_TRUE if it's done.
- *
- * This will cancel any kind of IO operation and cleanup the mess. This means
- * that it could take time to cancel an IO.
- */
 EAPI Eina_Bool
 eio_file_cancel(Eio_File *ls)
 {
@@ -922,13 +786,6 @@ eio_file_cancel(Eio_File *ls)
    return ecore_thread_cancel(ls->thread);
 }
 
-/**
- * @brief Check if an Eio_File operation has been cancelled.
- * @param ls The asynchronous IO operation to check.
- * @return EINA_TRUE if it was canceled, EINA_FALSE other wise.
- *
- * In case of an error it also return EINA_TRUE.
- */
 EAPI Eina_Bool
 eio_file_check(Eio_File *ls)
 {
@@ -936,14 +793,6 @@ eio_file_check(Eio_File *ls)
    return ecore_thread_check(ls->thread);
 }
 
-/**
- * @brief Return the container during EIO operation
- * @param ls The asynchronous IO operation to retrieve container from.
- * @return NULL if not available, a DIRP if it is.
- *
- * This is only available and make sense in the thread callback, not in
- * the mainloop.
- */
 EAPI void *
 eio_file_container_get(Eio_File *ls)
 {
@@ -951,17 +800,6 @@ eio_file_container_get(Eio_File *ls)
    return ls->container;
 }
 
-/**
- * @brief Associate data with the current filtered file.
- * @param ls The Eio_File ls request currently calling the filter callback.
- * @param key The key to associate data to.
- * @param data The data to associate the data to.
- * @param free_cb The function to call to free the associated data, @p free will be called if not specified.
- * @return EINA_TRUE if insertion was fine.
- *
- * This function could only be safely called from within the filter callback.
- * If you don't need to copy the key around you can use @ref eio_file_associate_direct_add
- */
 EAPI Eina_Bool
 eio_file_associate_add(Eio_File *ls,
                        const char *key,
@@ -976,18 +814,6 @@ eio_file_associate_add(Eio_File *ls,
                         eio_associate_malloc(data, free_cb));
 }
 
-/**
- * @brief Associate data with the current filtered file.
- * @param ls The Eio_File ls request currently calling the filter callback.
- * @param key The key to associate data to (will not be copied, and the pointer will be used as long as the file is not notified).
- * @param data The data to associate the data to.
- * @param free_cb The function to call to free the associated data, @p free will be called if not specified.
- * @return EINA_TRUE if insertion was fine.
- *
- * This function could only be safely called from within the filter callback.
- * If you need eio to make a proper copy of the @p key to be safe use
- * @ref eio_file_associate_add instead.
- */
 EAPI Eina_Bool
 eio_file_associate_direct_add(Eio_File *ls,
                               const char *key,
@@ -1002,12 +828,6 @@ eio_file_associate_direct_add(Eio_File *ls,
                                eio_associate_malloc(data, free_cb));
 }
 
-/**
- * @brief Get the data associated during the filter callback inside the main loop
- * @param ls The Eio_File ls request currently calling the notify callback.
- * @param key The key pointing to the data to retrieve.
- * @return the data associated with the key or @p NULL if not found.
- */
 EAPI void *
 eio_file_associate_find(Eio_File *ls, const char *key)
 {
@@ -1021,19 +841,6 @@ eio_file_associate_find(Eio_File *ls, const char *key)
    return search->data;
 }
 
-/**
- * @brief Copy a file asynchronously
- * @param source Should be the name of the file to copy the data from.
- * @param dest Should be the name of the file to copy the data to.
- * @param progress_cb Callback called to know the progress of the copy.
- * @param done_cb Callback called when the copy is done.
- * @param error_cb Callback called when something goes wrong.
- * @param data Private data given to callback.
- *
- * This function will copy a file from source to dest. It will try to use splice
- * if possible, if not it will fallback to mmap/write. It will try to preserve
- * access right, but not user/group identification.
- */
 EAPI Eio_File *
 eio_file_copy(const char *source,
 	      const char *dest,
@@ -1070,20 +877,6 @@ eio_file_copy(const char *source,
    return &copy->common;
 }
 
-/**
- * @brief Move a file asynchronously
- * @param source Should be the name of the file to move the data from.
- * @param dest Should be the name of the file to move the data to.
- * @param progress_cb Callback called to know the progress of the move.
- * @param done_cb Callback called when the move is done.
- * @param error_cb Callback called when something goes wrong.
- * @param data Private data given to callback.
- *
- * This function will copy a file from source to dest. It will try to use splice
- * if possible, if not it will fallback to mmap/write. It will try to preserve
- * access right, but not user/group identification.
-
- */
 EAPI Eio_File *
 eio_file_move(const char *source,
 	      const char *dest,
@@ -1120,7 +913,3 @@ eio_file_move(const char *source,
 
    return &move->progress.common;
 }
-
-/**
- * @}
- */
