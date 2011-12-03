@@ -183,6 +183,7 @@ ecore_con_shutdown(void)
         Ecore_Con_Event_Server_Add *ev;
 
         svr->delete_me = svr->dead = EINA_TRUE;
+        INF("svr %p is dead", svr);
         /* some pointer hacks here to prevent double frees if people are being stupid */
         EINA_LIST_FREE(svr->event_count, ev)
           ev->server = NULL;
@@ -1161,6 +1162,7 @@ _ecore_con_server_free(Ecore_Con_Server *svr)
      {
         /* this is a catch-all for cases when a server is not properly killed. */
         svr->dead = EINA_TRUE;
+        INF("svr %p is dead", svr);
         ecore_con_event_server_del(svr);
         return;
      }
@@ -1197,6 +1199,7 @@ _ecore_con_server_free(Ecore_Con_Server *svr)
         EINA_LIST_FREE(cl->event_count, ev)
           ev->server = NULL;
         cl->delete_me = cl->dead = EINA_TRUE;
+        INF("cl %p is dead", cl);
         _ecore_con_client_free(cl);
      }
    if ((svr->created) && (svr->path) && (svr->ppid == getpid()))
@@ -1234,6 +1237,7 @@ _ecore_con_client_free(Ecore_Con_Client *cl)
      {
         /* this is a catch-all for cases when a client is not properly killed. */
            cl->dead = EINA_TRUE;
+           INF("cl %p is dead", cl);
            ecore_con_event_client_del(cl);
            return;
      }
@@ -1291,6 +1295,7 @@ _ecore_con_server_kill(Ecore_Con_Server *svr)
      ecore_con_event_server_del(svr);
 
    svr->dead = EINA_TRUE;
+   INF("svr %p is dead", svr);
    if (svr->fd_handler)
      ecore_main_fd_handler_del(svr->fd_handler);
 
@@ -2108,6 +2113,7 @@ _ecore_con_svr_udp_handler(void             *data,
           ecore_con_event_client_del(NULL);
 
         svr->dead = EINA_TRUE;
+        INF("svr %p is dead", svr);
         svr->fd_handler = NULL;
         return ECORE_CALLBACK_CANCEL;
      }
@@ -2183,6 +2189,7 @@ _ecore_con_svr_cl_read(Ecore_Con_Client *cl)
           ecore_con_event_client_del(cl);
         INF("Lost client %s", (cl->ip) ? cl->ip : "");
         cl->dead = EINA_TRUE;
+        INF("cl %p is dead", cl);
         if (cl->fd_handler)
           ecore_main_fd_handler_del(cl->fd_handler);
 
@@ -2211,6 +2218,7 @@ _ecore_con_svr_cl_handler(void             *data,
              ERR("ssl handshaking failed!");
              cl->handshaking = EINA_FALSE;
              cl->dead = EINA_TRUE;
+             INF("cl %p is dead", cl);
              INF("Lost client %s", (cl->ip) ? cl->ip : "");
              ecore_con_event_client_del(cl);
           }
@@ -2332,6 +2340,7 @@ _ecore_con_client_flush(Ecore_Con_Client *cl)
               ecore_con_event_client_error(cl, strerror(errno));
               ecore_con_event_client_del(cl);
               cl->dead = EINA_TRUE;
+              INF("cl %p is dead", cl);
               INF("Lost client %s", (cl->ip) ? cl->ip : "");
               if (cl->fd_handler)
                 ecore_main_fd_handler_del(cl->fd_handler);
