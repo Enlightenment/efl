@@ -64,6 +64,8 @@ test_gengrid.c \
 test_genlist.c \
 test_gesture_layer.c \
 test_gesture_layer2.c \
+test_glview_simple.c \
+test_glview.c \
 test_grid.c \
 test_hover.c \
 test_hoversel.c \
@@ -107,10 +109,6 @@ test_weather.c \
 test_web.c \
 test_win_inline.c \
 test_win_state.c
-
-## disabled for efl 1.1
-#test_glview_simple.c
-#test_glview.c
 
 if HAVE_EIO
 elementary_test_SOURCES += test_eio.c
