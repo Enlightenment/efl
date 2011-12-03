@@ -294,7 +294,7 @@ _ecore_x_atoms_init(void)
    for (i = 0; i < num; i++) names[i] = (char *)items[i].name;
    XInternAtoms(_ecore_x_disp, names, num, False, atoms);
    for (i = 0; i < num; i++) *(items[i].atom) = atoms[i];
-} /* _ecore_x_atoms_init */
+}
 
 /**
  * Retrieves the atom value associated with the given name.
@@ -309,7 +309,7 @@ ecore_x_atom_get(const char *name)
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
    return XInternAtom(_ecore_x_disp, name, False);
-} /* ecore_x_atom_get */
+}
 
 EAPI void
 ecore_x_atoms_get(const char  **names,
@@ -327,7 +327,7 @@ ecore_x_atoms_get(const char  **names,
    XInternAtoms(_ecore_x_disp, (char **)names, num, False, atoms_int);
    for (i = 0; i < num; i++)
      atoms[i] = atoms_int[i];
-} /* ecore_x_atoms_get */
+}
 
 EAPI char *
 ecore_x_atom_name_get(Ecore_X_Atom atom)
@@ -348,5 +348,5 @@ ecore_x_atom_name_get(Ecore_X_Atom atom)
    XFree(xname);
 
    return name;
-} /* ecore_x_atom_name_get */
+}
 

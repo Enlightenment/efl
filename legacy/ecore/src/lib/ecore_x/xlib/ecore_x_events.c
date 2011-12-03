@@ -100,7 +100,7 @@ _ecore_x_event_free_mouse_move(void *data __UNUSED__,
      }
 
    free(e);
-} /* _ecore_x_event_free_mouse_move */
+}
 
 EAPI void
 ecore_x_event_mask_set(Ecore_X_Window     w,
@@ -117,7 +117,7 @@ ecore_x_event_mask_set(Ecore_X_Window     w,
    XGetWindowAttributes(_ecore_x_disp, w, &attr);
    s_attr.event_mask = mask | attr.your_event_mask;
    XChangeWindowAttributes(_ecore_x_disp, w, CWEventMask, &s_attr);
-} /* ecore_x_event_mask_set */
+}
 
 EAPI void
 ecore_x_event_mask_unset(Ecore_X_Window     w,
@@ -134,7 +134,7 @@ ecore_x_event_mask_unset(Ecore_X_Window     w,
    XGetWindowAttributes(_ecore_x_disp, w, &attr);
    s_attr.event_mask = attr.your_event_mask & ~mask;
    XChangeWindowAttributes(_ecore_x_disp, w, CWEventMask, &s_attr);
-} /* ecore_x_event_mask_unset */
+}
 
 static void
 _ecore_x_event_free_xdnd_enter(void *data __UNUSED__,
@@ -148,7 +148,7 @@ _ecore_x_event_free_xdnd_enter(void *data __UNUSED__,
      XFree(e->types[i]);
    free(e->types);
    free(e);
-} /* _ecore_x_event_free_xdnd_enter */
+}
 
 static void
 _ecore_x_event_free_selection_notify(void *data __UNUSED__,
@@ -164,7 +164,7 @@ _ecore_x_event_free_selection_notify(void *data __UNUSED__,
 
    free(e->target);
    free(e);
-} /* _ecore_x_event_free_selection_notify */
+}
 
 static unsigned int
 _ecore_x_event_modifiers(unsigned int state)
@@ -196,7 +196,7 @@ _ecore_x_event_modifiers(unsigned int state)
      modifiers |= ECORE_EVENT_LOCK_SHIFT;
 
    return modifiers;
-} /* _ecore_x_event_modifiers */
+}
 
 void
 _ecore_mouse_move(unsigned int timestamp,
@@ -260,7 +260,7 @@ _ecore_mouse_move(unsigned int timestamp,
    _ecore_x_event_last_root_y = y_root;
 
    _ecore_x_last_event_mouse_move_event = event;
-} /* _ecore_mouse_move */
+}
 
 static void
 _ecore_key_press(int        event,
@@ -343,7 +343,7 @@ _ecore_key_press(int        event,
 on_error:
    if (tmp)
      free(tmp);
-} /* _ecore_key_press */
+}
 
 Ecore_Event_Mouse_Button *
 _ecore_mouse_button(int          event,
@@ -491,7 +491,7 @@ _ecore_mouse_button(int          event,
      }
 
    return e;
-} /* _ecore_mouse_button */
+}
 
 void
 _ecore_x_event_handle_any_event(XEvent *xevent)
@@ -500,19 +500,19 @@ _ecore_x_event_handle_any_event(XEvent *xevent)
    if (!ev) return;
    memcpy(ev, xevent, sizeof(XEvent));
    ecore_event_add(ECORE_X_EVENT_ANY, ev, NULL, NULL);
-} /* _ecore_x_event_handle_any_event */
+}
 
 void
 _ecore_x_event_handle_key_press(XEvent *xevent)
 {
    _ecore_key_press(ECORE_EVENT_KEY_DOWN, (XKeyEvent *)xevent);
-} /* _ecore_x_event_handle_key_press */
+}
 
 void
 _ecore_x_event_handle_key_release(XEvent *xevent)
 {
    _ecore_key_press(ECORE_EVENT_KEY_UP, (XKeyEvent *)xevent);
-} /* _ecore_x_event_handle_key_release */
+}
 
 void
 _ecore_x_event_handle_button_press(XEvent *xevent)
@@ -541,7 +541,7 @@ _ecore_x_event_handle_button_press(XEvent *xevent)
            case 7: e->direction = 1; e->z = 1; break;
 
            default: e->direction = 0; e->z = 0; break;
-          } /* switch */
+          }
 
         e->x = xevent->xbutton.x;
         e->y = xevent->xbutton.y;
@@ -663,7 +663,7 @@ _ecore_x_event_handle_button_press(XEvent *xevent)
                }
         }
      }
-} /* _ecore_x_event_handle_button_press */
+}
 
 void
 _ecore_x_event_handle_button_release(XEvent *xevent)
@@ -702,7 +702,7 @@ _ecore_x_event_handle_button_release(XEvent *xevent)
                             xevent->xbutton.x, xevent->xbutton.y,
                             xevent->xbutton.x_root, xevent->xbutton.y_root);
      }
-} /* _ecore_x_event_handle_button_release */
+}
 
 void
 _ecore_x_event_handle_motion_notify(XEvent *xevent)
@@ -735,7 +735,7 @@ _ecore_x_event_handle_motion_notify(XEvent *xevent)
      _ecore_x_dnd_drag(xevent->xmotion.root,
                        xevent->xmotion.x_root,
                        xevent->xmotion.y_root);
-} /* _ecore_x_event_handle_motion_notify */
+}
 
 void
 _ecore_x_event_handle_enter_notify(XEvent *xevent)
@@ -799,7 +799,7 @@ _ecore_x_event_handle_enter_notify(XEvent *xevent)
       _ecore_x_event_last_time = e->time;
       ecore_event_add(ECORE_X_EVENT_MOUSE_IN, e, NULL, NULL);
    }
-} /* _ecore_x_event_handle_enter_notify */
+}
 
 void
 _ecore_x_event_handle_leave_notify(XEvent *xevent)
@@ -866,7 +866,7 @@ _ecore_x_event_handle_leave_notify(XEvent *xevent)
       _ecore_x_event_last_root_y = e->root.y;
       ecore_event_add(ECORE_X_EVENT_MOUSE_OUT, e, NULL, NULL);
    }
-} /* _ecore_x_event_handle_leave_notify */
+}
 
 void
 _ecore_x_event_handle_focus_in(XEvent *xevent)
@@ -910,7 +910,7 @@ _ecore_x_event_handle_focus_in(XEvent *xevent)
    e->time = _ecore_x_event_last_time;
    _ecore_x_event_last_time = e->time;
    ecore_event_add(ECORE_X_EVENT_WINDOW_FOCUS_IN, e, NULL, NULL);
-} /* _ecore_x_event_handle_focus_in */
+}
 
 void
 _ecore_x_event_handle_focus_out(XEvent *xevent)
@@ -954,14 +954,14 @@ _ecore_x_event_handle_focus_out(XEvent *xevent)
    e->time = _ecore_x_event_last_time;
    _ecore_x_event_last_time = e->time;
    ecore_event_add(ECORE_X_EVENT_WINDOW_FOCUS_OUT, e, NULL, NULL);
-} /* _ecore_x_event_handle_focus_out */
+}
 
 void
 _ecore_x_event_handle_keymap_notify(XEvent *xevent __UNUSED__)
 {
    _ecore_x_last_event_mouse_move = 0;
    /* FIXME: handle this event type */
-} /* _ecore_x_event_handle_keymap_notify */
+}
 
 void
 _ecore_x_event_handle_expose(XEvent *xevent)
@@ -981,7 +981,7 @@ _ecore_x_event_handle_expose(XEvent *xevent)
    e->h = xevent->xexpose.height;
    e->count = xevent->xexpose.count;
    ecore_event_add(ECORE_X_EVENT_WINDOW_DAMAGE, e, NULL, NULL);
-} /* _ecore_x_event_handle_expose */
+}
 
 void
 _ecore_x_event_handle_graphics_expose(XEvent *xevent)
@@ -1001,7 +1001,7 @@ _ecore_x_event_handle_graphics_expose(XEvent *xevent)
    e->h = xevent->xgraphicsexpose.height;
    e->count = xevent->xgraphicsexpose.count;
    ecore_event_add(ECORE_X_EVENT_WINDOW_DAMAGE, e, NULL, NULL);
-} /* _ecore_x_event_handle_graphics_expose */
+}
 
 void
 _ecore_x_event_handle_visibility_notify(XEvent *xevent)
@@ -1024,7 +1024,7 @@ _ecore_x_event_handle_visibility_notify(XEvent *xevent)
 
       ecore_event_add(ECORE_X_EVENT_WINDOW_VISIBILITY_CHANGE, e, NULL, NULL);
    }
-} /* _ecore_x_event_handle_visibility_notify */
+}
 
 void
 _ecore_x_event_handle_create_notify(XEvent *xevent)
@@ -1050,7 +1050,7 @@ _ecore_x_event_handle_create_notify(XEvent *xevent)
    e->border = xevent->xcreatewindow.border_width;
    e->time = _ecore_x_event_last_time;
    ecore_event_add(ECORE_X_EVENT_WINDOW_CREATE, e, NULL, NULL);
-} /* _ecore_x_event_handle_create_notify */
+}
 
 void
 _ecore_x_event_handle_destroy_notify(XEvent *xevent)
@@ -1069,7 +1069,7 @@ _ecore_x_event_handle_destroy_notify(XEvent *xevent)
      _ecore_x_event_last_win = 0;
 
    ecore_event_add(ECORE_X_EVENT_WINDOW_DESTROY, e, NULL, NULL);
-} /* _ecore_x_event_handle_destroy_notify */
+}
 
 void
 _ecore_x_event_handle_unmap_notify(XEvent *xevent)
@@ -1085,7 +1085,7 @@ _ecore_x_event_handle_unmap_notify(XEvent *xevent)
    e->event_win = xevent->xunmap.event;
    e->time = _ecore_x_event_last_time;
    ecore_event_add(ECORE_X_EVENT_WINDOW_HIDE, e, NULL, NULL);
-} /* _ecore_x_event_handle_unmap_notify */
+}
 
 void
 _ecore_x_event_handle_map_notify(XEvent *xevent)
@@ -1101,7 +1101,7 @@ _ecore_x_event_handle_map_notify(XEvent *xevent)
    e->event_win = xevent->xmap.event;
    e->time = _ecore_x_event_last_time;
    ecore_event_add(ECORE_X_EVENT_WINDOW_SHOW, e, NULL, NULL);
-} /* _ecore_x_event_handle_map_notify */
+}
 
 void
 _ecore_x_event_handle_map_request(XEvent *xevent)
@@ -1117,7 +1117,7 @@ _ecore_x_event_handle_map_request(XEvent *xevent)
    e->time = _ecore_x_event_last_time;
    e->parent = xevent->xmaprequest.parent;
    ecore_event_add(ECORE_X_EVENT_WINDOW_SHOW_REQUEST, e, NULL, NULL);
-} /* _ecore_x_event_handle_map_request */
+}
 
 void
 _ecore_x_event_handle_reparent_notify(XEvent *xevent)
@@ -1134,7 +1134,7 @@ _ecore_x_event_handle_reparent_notify(XEvent *xevent)
    e->parent = xevent->xreparent.parent;
    e->time = _ecore_x_event_last_time;
    ecore_event_add(ECORE_X_EVENT_WINDOW_REPARENT, e, NULL, NULL);
-} /* _ecore_x_event_handle_reparent_notify */
+}
 
 void
 _ecore_x_event_handle_configure_notify(XEvent *xevent)
@@ -1158,7 +1158,7 @@ _ecore_x_event_handle_configure_notify(XEvent *xevent)
    e->from_wm = xevent->xconfigure.send_event;
    e->time = _ecore_x_event_last_time;
    ecore_event_add(ECORE_X_EVENT_WINDOW_CONFIGURE, e, NULL, NULL);
-} /* _ecore_x_event_handle_configure_notify */
+}
 
 void
 _ecore_x_event_handle_configure_request(XEvent *xevent)
@@ -1193,14 +1193,14 @@ _ecore_x_event_handle_configure_request(XEvent *xevent)
      e->detail = ECORE_X_WINDOW_STACK_OPPOSITE;
 
    ecore_event_add(ECORE_X_EVENT_WINDOW_CONFIGURE_REQUEST, e, NULL, NULL);
-} /* _ecore_x_event_handle_configure_request */
+}
 
 void
 _ecore_x_event_handle_gravity_notify(XEvent *xevent __UNUSED__)
 {
    _ecore_x_last_event_mouse_move = 0;
    /* FIXME: handle this event type */
-} /* _ecore_x_event_handle_gravity_notify */
+}
 
 void
 _ecore_x_event_handle_resize_request(XEvent *xevent)
@@ -1217,7 +1217,7 @@ _ecore_x_event_handle_resize_request(XEvent *xevent)
    e->h = xevent->xresizerequest.height;
    e->time = _ecore_x_event_last_time;
    ecore_event_add(ECORE_X_EVENT_WINDOW_RESIZE_REQUEST, e, NULL, NULL);
-} /* _ecore_x_event_handle_resize_request */
+}
 
 void
 _ecore_x_event_handle_circulate_notify(XEvent *xevent)
@@ -1238,7 +1238,7 @@ _ecore_x_event_handle_circulate_notify(XEvent *xevent)
 
    e->time = _ecore_x_event_last_time;
    ecore_event_add(ECORE_X_EVENT_WINDOW_STACK, e, NULL, NULL);
-} /* _ecore_x_event_handle_circulate_notify */
+}
 
 void
 _ecore_x_event_handle_circulate_request(XEvent *xevent)
@@ -1259,7 +1259,7 @@ _ecore_x_event_handle_circulate_request(XEvent *xevent)
 
    e->time = _ecore_x_event_last_time;
    ecore_event_add(ECORE_X_EVENT_WINDOW_STACK_REQUEST, e, NULL, NULL);
-} /* _ecore_x_event_handle_circulate_request */
+}
 
 void
 _ecore_x_event_handle_property_notify(XEvent *xevent)
@@ -1278,7 +1278,7 @@ _ecore_x_event_handle_property_notify(XEvent *xevent)
       _ecore_x_event_last_time = e->time;
       ecore_event_add(ECORE_X_EVENT_WINDOW_PROPERTY, e, NULL, NULL);
    }
-} /* _ecore_x_event_handle_property_notify */
+}
 
 void
 _ecore_x_event_handle_selection_clear(XEvent *xevent)
@@ -1312,7 +1312,7 @@ _ecore_x_event_handle_selection_clear(XEvent *xevent)
        e->selection = ECORE_X_SELECTION_OTHER;
 
      ecore_event_add(ECORE_X_EVENT_SELECTION_CLEAR, e, NULL, NULL);
-} /* _ecore_x_event_handle_selection_clear */
+}
 
 void
 _ecore_x_event_handle_selection_request(XEvent *xevent)
@@ -1380,7 +1380,7 @@ _ecore_x_event_handle_selection_request(XEvent *xevent)
                                            xevent->xselectionrequest.time);
           }
      }
-} /* _ecore_x_event_handle_selection_request */
+}
 
 void
 _ecore_x_event_handle_selection_notify(XEvent *xevent)
@@ -1436,7 +1436,7 @@ _ecore_x_event_handle_selection_notify(XEvent *xevent)
 
    ecore_event_add(ECORE_X_EVENT_SELECTION_NOTIFY, e,
                    _ecore_x_event_free_selection_notify, NULL);
-} /* _ecore_x_event_handle_selection_notify */
+}
 
 void
 _ecore_x_event_handle_colormap_notify(XEvent *xevent)
@@ -1457,7 +1457,7 @@ _ecore_x_event_handle_colormap_notify(XEvent *xevent)
      e->installed = EINA_FALSE;
 
    ecore_event_add(ECORE_X_EVENT_WINDOW_COLORMAP, e, NULL, NULL);
-} /* _ecore_x_event_handle_colormap_notify */
+}
 
 void
 _ecore_x_event_handle_client_message(XEvent *xevent)
@@ -1910,7 +1910,7 @@ _ecore_x_event_handle_client_message(XEvent *xevent)
 
         ecore_event_add(ECORE_X_EVENT_CLIENT_MESSAGE, e, NULL, NULL);
      }
-} /* _ecore_x_event_handle_client_message */
+}
 
 void
 _ecore_x_event_handle_mapping_notify(XEvent *xevent)
@@ -1940,7 +1940,7 @@ _ecore_x_event_handle_mapping_notify(XEvent *xevent)
    e->keycode = xevent->xmapping.first_keycode;
    e->num = xevent->xmapping.count;
    ecore_event_add(ECORE_X_EVENT_MAPPING_CHANGE, e, NULL, NULL);
-} /* _ecore_x_event_handle_mapping_notify */
+}
 
 void
 _ecore_x_event_handle_shape_change(XEvent *xevent)
@@ -1979,7 +1979,7 @@ _ecore_x_event_handle_shape_change(XEvent *xevent)
    e->h = shape_event->height;
    e->shaped = shape_event->shaped;
    ecore_event_add(ECORE_X_EVENT_WINDOW_SHAPE, e, NULL, NULL);
-} /* _ecore_x_event_handle_shape_change */
+}
 
 void
 _ecore_x_event_handle_screensaver_notify(XEvent *xevent)
@@ -2005,7 +2005,7 @@ _ecore_x_event_handle_screensaver_notify(XEvent *xevent)
 #else /* ifdef ECORE_XSS */
    xevent = NULL;
 #endif /* ifdef ECORE_XSS */
-} /* _ecore_x_event_handle_screensaver_notify */
+}
 
 void
 _ecore_x_event_handle_sync_counter(XEvent *xevent)
@@ -2021,7 +2021,7 @@ _ecore_x_event_handle_sync_counter(XEvent *xevent)
 
    e->time = sync_counter_event->time;
    ecore_event_add(ECORE_X_EVENT_SYNC_COUNTER, e, NULL, NULL);
-} /* _ecore_x_event_handle_sync_counter */
+}
 
 void
 _ecore_x_event_handle_sync_alarm(XEvent *xevent)
@@ -2039,7 +2039,7 @@ _ecore_x_event_handle_sync_alarm(XEvent *xevent)
    e->time = sync_alarm_event->time;
    e->alarm = sync_alarm_event->alarm;
    ecore_event_add(ECORE_X_EVENT_SYNC_ALARM, e, NULL, NULL);
-} /* _ecore_x_event_handle_sync_alarm */
+}
 
 #ifdef ECORE_XRANDR
 void
@@ -2068,7 +2068,7 @@ _ecore_x_event_handle_randr_change(XEvent *xevent)
    e->orientation = randr_event->rotation;
    e->subpixel_order = randr_event->subpixel_order;
    ecore_event_add(ECORE_X_EVENT_SCREEN_CHANGE, e, NULL, NULL);
-} /* _ecore_x_event_handle_randr_change */
+}
 
 static void
 _ecore_x_event_handle_randr_notify_crtc_change(const XRRNotifyEvent *xevent)
@@ -2091,7 +2091,7 @@ _ecore_x_event_handle_randr_notify_crtc_change(const XRRNotifyEvent *xevent)
    e->geo.w = randr_event->width;
    e->geo.h = randr_event->height;
    ecore_event_add(ECORE_X_EVENT_RANDR_CRTC_CHANGE, e, NULL, NULL);
-} /* _ecore_x_event_handle_randr_notify_crtc_change */
+}
 
 static void
 _ecore_x_event_handle_randr_notify_output_change(const XRRNotifyEvent *xevent)
@@ -2113,7 +2113,7 @@ _ecore_x_event_handle_randr_notify_output_change(const XRRNotifyEvent *xevent)
    e->connection = randr_event->connection;
    e->subpixel_order = randr_event->subpixel_order;
    ecore_event_add(ECORE_X_EVENT_RANDR_OUTPUT_CHANGE, e, NULL, NULL);
-} /* _ecore_x_event_handle_randr_notify_output_change */
+}
 
 static void
 _ecore_x_event_handle_randr_notify_output_property(const XRRNotifyEvent *xevent)
@@ -2136,7 +2136,7 @@ _ecore_x_event_handle_randr_notify_output_property(const XRRNotifyEvent *xevent)
    else
      e->state = ECORE_X_RANDR_PROPERTY_CHANGE_DEL;
    ecore_event_add(ECORE_X_EVENT_RANDR_OUTPUT_PROPERTY_NOTIFY, e, NULL, NULL);
-} /* _ecore_x_event_handle_randr_notify_output_property */
+}
 
 void
 _ecore_x_event_handle_randr_notify(XEvent *xevent)
@@ -2164,8 +2164,8 @@ _ecore_x_event_handle_randr_notify(XEvent *xevent)
         ERR("Unknown XRandR RRNotify subtype: %d.",
             randr_event->subtype);
         break;
-     } /* switch */
-} /* _ecore_x_event_handle_randr_notify */
+     }
+}
 
 #endif /* ifdef ECORE_XRANDR */
 
@@ -2201,7 +2201,7 @@ _ecore_x_event_handle_fixes_selection_notify(XEvent *event)
    e->reason = notify_event->subtype;
 
    ecore_event_add(ECORE_X_EVENT_FIXES_SELECTION_NOTIFY, e, NULL, NULL);
-} /* _ecore_x_event_handle_fixes_selection_notify */
+}
 
 #endif /* ifdef ECORE_XFIXES */
 
@@ -2234,7 +2234,7 @@ _ecore_x_event_handle_damage_notify(XEvent *event)
    e->geometry.height = damage_event->geometry.height;
 
    ecore_event_add(ECORE_X_EVENT_DAMAGE_NOTIFY, e, NULL, NULL);
-} /* _ecore_x_event_handle_damage_notify */
+}
 
 #endif /* ifdef ECORE_XDAMAGE */
 
@@ -2256,7 +2256,7 @@ _ecore_x_event_free_generic_event(void *data,
    return;
    data = NULL; ev = NULL;
 #endif /* ifdef ECORE_XI2 */
-} /* _ecore_x_event_free_generic_event */
+}
 
 void
 _ecore_x_event_handle_generic_event(XEvent *event)
@@ -2300,7 +2300,7 @@ _ecore_x_event_handle_generic_event(XEvent *event)
    return;
    event = NULL;
 #endif /* ifdef ECORE_XI2 */
-} /* _ecore_x_event_handle_generic_event */
+}
 
 #ifdef ECORE_XGESTURE
 void

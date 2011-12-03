@@ -42,14 +42,14 @@ ecore_x_sync_alarm_new(Ecore_X_Sync_Counter counter)
 
    ecore_x_sync();
    return alarm;
-} /* ecore_x_sync_alarm_new */
+}
 
 EAPI Eina_Bool
 ecore_x_sync_alarm_free(Ecore_X_Sync_Alarm alarm)
 {
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
    return XSyncDestroyAlarm(_ecore_x_disp, alarm);
-} /* ecore_x_sync_alarm_free */
+}
 
 EAPI Eina_Bool
 ecore_x_sync_counter_query(Ecore_X_Sync_Counter counter,
@@ -65,7 +65,7 @@ ecore_x_sync_counter_query(Ecore_X_Sync_Counter counter,
      }
 
    return EINA_FALSE;
-} /* ecore_x_sync_counter_query */
+}
 
 EAPI Ecore_X_Sync_Counter
 ecore_x_sync_counter_new(int val)
@@ -77,14 +77,14 @@ ecore_x_sync_counter_new(int val)
    XSyncIntToValue(&v, val);
    counter = XSyncCreateCounter(_ecore_x_disp, v);
    return counter;
-} /* ecore_x_sync_counter_new */
+}
 
 EAPI void
 ecore_x_sync_counter_free(Ecore_X_Sync_Counter counter)
 {
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
    XSyncDestroyCounter(_ecore_x_disp, counter);
-} /* ecore_x_sync_counter_free */
+}
 
 EAPI void
 ecore_x_sync_counter_inc(Ecore_X_Sync_Counter counter,
@@ -95,7 +95,7 @@ ecore_x_sync_counter_inc(Ecore_X_Sync_Counter counter,
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
    XSyncIntToValue(&v, by);
    XSyncChangeCounter(_ecore_x_disp, counter, v);
-} /* ecore_x_sync_counter_inc */
+}
 
 EAPI void
 ecore_x_sync_counter_val_wait(Ecore_X_Sync_Counter counter,
@@ -115,7 +115,7 @@ ecore_x_sync_counter_val_wait(Ecore_X_Sync_Counter counter,
    cond.event_threshold = v2;
    XSyncAwait(_ecore_x_disp, &cond, 1);
 //   XSync(_ecore_x_disp, False); // dont need this
-} /* ecore_x_sync_counter_val_wait */
+}
 
 EAPI void
 ecore_x_sync_counter_set(Ecore_X_Sync_Counter counter,

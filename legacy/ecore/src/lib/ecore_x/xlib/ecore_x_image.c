@@ -20,7 +20,7 @@ _ecore_x_image_error_handler(Display     *d __UNUSED__,
 {
    _ecore_x_image_err = 1;
    return 0;
-} /* _ecore_x_image_error_handler */
+}
 
 static void
 _ecore_x_image_shm_check(void)
@@ -90,7 +90,7 @@ _ecore_x_image_shm_check(void)
    shmctl(shminfo.shmid, IPC_RMID, 0);
 
    _ecore_x_image_shm_can = 1;
-} /* _ecore_x_image_shm_check */
+}
 
 struct _Ecore_X_Image
 {
@@ -124,7 +124,7 @@ ecore_x_image_new(int            w,
    _ecore_x_image_shm_check();
    im->shm = _ecore_x_image_shm_can;
    return im;
-} /* ecore_x_image_new */
+}
 
 EAPI void
 ecore_x_image_free(Ecore_X_Image *im)
@@ -148,7 +148,7 @@ ecore_x_image_free(Ecore_X_Image *im)
      }
 
    free(im);
-} /* ecore_x_image_free */
+}
 
 static void
 _ecore_x_image_shm_create(Ecore_X_Image *im)
@@ -192,7 +192,7 @@ _ecore_x_image_shm_create(Ecore_X_Image *im)
      im->bpp = 2;
    else
      im->bpp = 4;
-} /* _ecore_x_image_shm_create */
+}
 
 EAPI Eina_Bool
 ecore_x_image_get(Ecore_X_Image   *im,
@@ -278,7 +278,7 @@ ecore_x_image_get(Ecore_X_Image   *im,
      }
 
    return ret;
-} /* ecore_x_image_get */
+}
 
 EAPI void
 ecore_x_image_put(Ecore_X_Image   *im,
@@ -306,7 +306,7 @@ ecore_x_image_put(Ecore_X_Image   *im,
    if (im->xim)
      XShmPutImage(_ecore_x_disp, draw, gc, im->xim, sx, sy, x, y, w, h, False);
    if (tgc) ecore_x_gc_free(tgc);
-} /* ecore_x_image_put */
+}
 
 EAPI void *
 ecore_x_image_data_get(Ecore_X_Image *im,
@@ -321,7 +321,7 @@ ecore_x_image_data_get(Ecore_X_Image *im,
    if (rows) *rows = im->rows;
    if (bpp) *bpp = im->bpp;
    return im->data;
-} /* ecore_x_image_data_get */
+}
 
 EAPI Eina_Bool
 ecore_x_image_is_argb32_get(Ecore_X_Image *im)

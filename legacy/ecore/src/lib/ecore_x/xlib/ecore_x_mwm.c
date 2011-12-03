@@ -86,7 +86,7 @@ ecore_x_mwm_hints_get(Ecore_X_Window          win,
      }
 
    return ret;
-} /* ecore_x_mwm_hints_get */
+}
 
 EAPI void
 ecore_x_mwm_borderless_set(Ecore_X_Window win,
@@ -102,5 +102,5 @@ ecore_x_mwm_borderless_set(Ecore_X_Window win,
                                     ECORE_X_ATOM_MOTIF_WM_HINTS,
                                     ECORE_X_ATOM_MOTIF_WM_HINTS,
                                     32, (void *)data, 5);
-} /* ecore_x_mwm_borderless_set */
+}
 

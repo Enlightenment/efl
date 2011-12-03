@@ -80,7 +80,7 @@ _ecore_directfb_event_free_key_down(void *data __UNUSED__, void *ev)
       free(e->key_compose);
 
    free(e);
-} /* _ecore_directfb_event_free_key_down */
+}
 
 static void
 _ecore_directfb_event_free_key_up(void *data __UNUSED__, void *ev)
@@ -98,7 +98,7 @@ _ecore_directfb_event_free_key_up(void *data __UNUSED__, void *ev)
       free(e->key_compose);
 
    free(e);
-} /* _ecore_directfb_event_free_key_up */
+}
 
 /* directfb window input events handler */
 /****************************************/
@@ -131,7 +131,7 @@ _ecore_directfb_event_handle_motion(DFBEvent *evt)
 
             default:
                return;
-           } /* switch */
+           }
          e->win = _ecore_directfb_fullscreen_window_id;
          e->time = 0;
          break;
@@ -146,9 +146,9 @@ _ecore_directfb_event_handle_motion(DFBEvent *evt)
 
       default:
          break;
-     } /* switch */
+     }
    ecore_event_add(ECORE_DIRECTFB_EVENT_MOTION, e, NULL, NULL);
-} /* _ecore_directfb_event_handle_motion */
+}
 
 static void
 _ecore_directfb_event_handle_key_down(DFBEvent *evt)
@@ -197,10 +197,10 @@ _ecore_directfb_event_handle_key_down(DFBEvent *evt)
 
       default:
          break;
-     } /* switch */
+     }
 
    ecore_event_add(ECORE_DIRECTFB_EVENT_KEY_DOWN, e, _ecore_directfb_event_free_key_down, NULL);
-} /* _ecore_directfb_event_handle_key_down */
+}
 
 static void
 _ecore_directfb_event_handle_key_up(DFBEvent *evt)
@@ -249,9 +249,9 @@ _ecore_directfb_event_handle_key_up(DFBEvent *evt)
 
       default:
          break;
-     } /* switch */
+     }
    ecore_event_add(ECORE_DIRECTFB_EVENT_KEY_UP, e, _ecore_directfb_event_free_key_up, NULL);
-} /* _ecore_directfb_event_handle_key_up */
+}
 
 static void
 _ecore_directfb_event_handle_button_down(DFBEvent *evt)
@@ -283,10 +283,10 @@ _ecore_directfb_event_handle_button_down(DFBEvent *evt)
 
       default:
          break;
-     } /* switch */
+     }
 
    ecore_event_add(ECORE_DIRECTFB_EVENT_BUTTON_DOWN, e, NULL, NULL);
-} /* _ecore_directfb_event_handle_button_down */
+}
 
 static void
 _ecore_directfb_event_handle_button_up(DFBEvent *evt)
@@ -317,9 +317,9 @@ _ecore_directfb_event_handle_button_up(DFBEvent *evt)
 
       default:
          break;
-     } /* switch */
+     }
    ecore_event_add(ECORE_DIRECTFB_EVENT_BUTTON_UP, e, NULL, NULL);
-} /* _ecore_directfb_event_handle_button_up */
+}
 
 static void
 _ecore_directfb_event_handle_enter(DFBWindowEvent *evt)
@@ -334,7 +334,7 @@ _ecore_directfb_event_handle_enter(DFBWindowEvent *evt)
    e->time = 0;
 
    ecore_event_add(ECORE_DIRECTFB_EVENT_ENTER, e, NULL, NULL);
-} /* _ecore_directfb_event_handle_enter */
+}
 
 static void
 _ecore_directfb_event_handle_leave(DFBWindowEvent *evt)
@@ -349,7 +349,7 @@ _ecore_directfb_event_handle_leave(DFBWindowEvent *evt)
    e->time = 0;
 
    ecore_event_add(ECORE_DIRECTFB_EVENT_LEAVE, e, NULL, NULL);
-} /* _ecore_directfb_event_handle_leave */
+}
 
 static void
 _ecore_directfb_event_handle_wheel(DFBWindowEvent *evt)
@@ -365,7 +365,7 @@ _ecore_directfb_event_handle_wheel(DFBWindowEvent *evt)
    e->time = 0;
 
    ecore_event_add(ECORE_DIRECTFB_EVENT_WHEEL, e, NULL, NULL);
-} /* _ecore_directfb_event_handle_wheel */
+}
 
 static void
 _ecore_directfb_event_handle_got_focus(DFBWindowEvent *evt)
@@ -377,7 +377,7 @@ _ecore_directfb_event_handle_got_focus(DFBWindowEvent *evt)
    e->time = 0;
 
    ecore_event_add(ECORE_DIRECTFB_EVENT_GOT_FOCUS, e, NULL, NULL);
-} /* _ecore_directfb_event_handle_got_focus */
+}
 
 static void
 _ecore_directfb_event_handle_lost_focus(DFBWindowEvent *evt)
@@ -389,7 +389,7 @@ _ecore_directfb_event_handle_lost_focus(DFBWindowEvent *evt)
    e->time = 0;
 
    ecore_event_add(ECORE_DIRECTFB_EVENT_LOST_FOCUS, e, NULL, NULL);
-} /* _ecore_directfb_event_handle_lost_focus */
+}
 
 /* inputs and windows fds handlers */
 /***********************************/
@@ -428,7 +428,7 @@ _ecore_directfb_input_event_fd_handler(void *data __UNUSED__,Ecore_Fd_Handler *f
       _ecore_directfb_event_handle_motion(&evt);
 
    return EINA_TRUE;
-} /* _ecore_directfb_input_event_fd_handler */
+}
 
 static Eina_Bool
 _ecore_directfb_window_event_fd_handler(void *data __UNUSED__,Ecore_Fd_Handler *fd_handler __UNUSED__)
@@ -486,7 +486,7 @@ _ecore_directfb_window_event_fd_handler(void *data __UNUSED__,Ecore_Fd_Handler *
       _ecore_directfb_event_handle_wheel(&evt.window);
 
    return EINA_TRUE;
-} /* _ecore_directfb_window_event_fd_handler */
+}
 
 /* api functions */
 /*****************/
@@ -495,7 +495,7 @@ EAPI IDirectFB *
 ecore_directfb_interface_get(void)
 {
    return _dfb;
-} /* ecore_directfb_interface_get */
+}
 
 EAPI Ecore_DirectFB_Window *
 ecore_directfb_window_new(int x, int y, int w, int h)
@@ -530,7 +530,7 @@ ecore_directfb_window_new(int x, int y, int w, int h)
    window->cursor = NULL;
 
    return window;
-} /* ecore_directfb_window_new */
+}
 
 EAPI void
 ecore_directfb_window_free(Ecore_DirectFB_Window *ecore_window)
@@ -538,37 +538,37 @@ ecore_directfb_window_free(Ecore_DirectFB_Window *ecore_window)
    DFBCHECK(ecore_window->surface->Release(ecore_window->surface));
    DFBCHECK(ecore_window->window->Release(ecore_window->window));
    free(ecore_window);
-} /* ecore_directfb_window_free */
+}
 
 EAPI void
 ecore_directfb_window_move(Ecore_DirectFB_Window *ecore_window, int x, int y)
 {
    DFBCHECK(ecore_window->window->MoveTo(ecore_window->window, x, y));
-} /* ecore_directfb_window_move */
+}
 
 EAPI void
 ecore_directfb_window_resize(Ecore_DirectFB_Window *ecore_window, int w, int h)
 {
    DFBCHECK(ecore_window->window->Resize(ecore_window->window, w, h));
-} /* ecore_directfb_window_resize */
+}
 
 EAPI void
 ecore_directfb_window_focus(Ecore_DirectFB_Window *ecore_window)
 {
    DFBCHECK(ecore_window->window->RequestFocus(ecore_window->window));
-} /* ecore_directfb_window_focus */
+}
 
 EAPI void
 ecore_directfb_window_hide(Ecore_DirectFB_Window *ecore_window)
 {
    DFBCHECK(ecore_window->window->SetOpacity(ecore_window->window, 0));
-} /* ecore_directfb_window_hide */
+}
 
 EAPI void
 ecore_directfb_window_show(Ecore_DirectFB_Window *ecore_window)
 {
    DFBCHECK(ecore_window->window->SetOpacity(ecore_window->window, 0xFF));
-} /* ecore_directfb_window_show */
+}
 
 EAPI void
 ecore_directfb_window_shaped_set(Ecore_DirectFB_Window *ecore_window, Eina_Bool set)
@@ -588,7 +588,7 @@ ecore_directfb_window_shaped_set(Ecore_DirectFB_Window *ecore_window, Eina_Bool 
         opts &= ~DWOP_ALPHACHANNEL;
         DFBCHECK(ecore_window->window->SetOptions(ecore_window->window, opts));
      }
-} /* ecore_directfb_window_shaped_set */
+}
 
 EAPI void
 ecore_directfb_window_cursor_show(Ecore_DirectFB_Window *ecore_window, Eina_Bool show)
@@ -622,7 +622,7 @@ ecore_directfb_window_cursor_show(Ecore_DirectFB_Window *ecore_window, Eina_Bool
              DFBCHECK(ecore_window->window->SetCursorShape(ecore_window->window, NULL, 0, 0));
           }
      }
-} /* ecore_directfb_window_cursor_show */
+}
 
 EAPI void
 ecore_directfb_window_cursor_set(Ecore_DirectFB_Window *ecore_window, Ecore_DirectFB_Cursor *cursor)
@@ -639,7 +639,7 @@ ecore_directfb_window_cursor_set(Ecore_DirectFB_Window *ecore_window, Ecore_Dire
         ecore_window->cursor = cursor;
         DFBCHECK(ecore_window->window->SetCursorShape(ecore_window->window, cursor->surface, cursor->hot_x, cursor->hot_y));
      }
-} /* ecore_directfb_window_cursor_set */
+}
 
 EAPI void
 ecore_directfb_window_fullscreen_set(Ecore_DirectFB_Window *ecore_window, Eina_Bool on)
@@ -666,14 +666,14 @@ ecore_directfb_window_fullscreen_set(Ecore_DirectFB_Window *ecore_window, Eina_B
         DFBCHECK(ecore_window->window->GetSurface(ecore_window->window, &ecore_window->surface));
         _ecore_directfb_fullscreen_window_id = 0;
      }
-} /* ecore_directfb_window_fullscreen_set */
+}
 
 EAPI void
 ecore_directfb_window_size_get(Ecore_DirectFB_Window *ecore_window, int *w, int *h)
 {
    DFBCHECK(ecore_window->surface->GetSize(ecore_window->surface,w,h));
    return;
-} /* ecore_directfb_window_size_get */
+}
 
 EAPI int
 ecore_directfb_init(const char *name __UNUSED__)
@@ -730,7 +730,7 @@ ecore_directfb_init(const char *name __UNUSED__)
      }
    /* create the hash for the windows(key = windowid, val = Ecore_DirectFB_Window struct) */
    return _ecore_directfb_init_count;
-} /* ecore_directfb_init */
+}
 
 EAPI int
 ecore_directfb_shutdown(void)
@@ -753,5 +753,5 @@ ecore_directfb_shutdown(void)
    eina_log_domain_unregister(_ecore_directfb_log_dom);
    _ecore_directfb_log_dom = -1;
    return _ecore_directfb_init_count;
-} /* ecore_directfb_shutdown */
+}
 

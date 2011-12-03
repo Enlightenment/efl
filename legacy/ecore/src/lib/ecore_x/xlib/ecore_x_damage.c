@@ -26,13 +26,13 @@ _ecore_x_damage_init(void)
 #else /* ifdef ECORE_XDAMAGE */
    _damage_available = EINA_FALSE;
 #endif /* ifdef ECORE_XDAMAGE */
-} /* _ecore_x_damage_init */
+}
 
 EAPI Eina_Bool
 ecore_x_damage_query(void)
 {
    return _damage_available;
-} /* ecore_x_damage_query */
+}
 
 EAPI Ecore_X_Damage
 ecore_x_damage_new(Ecore_X_Drawable            d,
@@ -47,7 +47,7 @@ ecore_x_damage_new(Ecore_X_Drawable            d,
 #else /* ifdef ECORE_XDAMAGE */
    return 0;
 #endif /* ifdef ECORE_XDAMAGE */
-} /* ecore_x_damage_new */
+}
 
 EAPI void
 ecore_x_damage_free(Ecore_X_Damage damage)
@@ -56,7 +56,7 @@ ecore_x_damage_free(Ecore_X_Damage damage)
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
    XDamageDestroy(_ecore_x_disp, damage);
 #endif /* ifdef ECORE_XDAMAGE */
-} /* ecore_x_damage_free */
+}
 
 EAPI void
 ecore_x_damage_subtract(Ecore_X_Damage damage,
@@ -67,5 +67,5 @@ ecore_x_damage_subtract(Ecore_X_Damage damage,
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
    XDamageSubtract(_ecore_x_disp, damage, repair, parts);
 #endif /* ifdef ECORE_XDAMAGE */
-} /* ecore_x_damage_subtract */
+}
 

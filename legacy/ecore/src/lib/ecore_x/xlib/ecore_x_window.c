@@ -87,7 +87,7 @@ ecore_x_window_new(Ecore_X_Window parent,
      ecore_x_window_defaults_set(win);
 
    return win;
-} /* ecore_x_window_new */
+}
 
 /**
  * Creates a window with the override redirect attribute set to @c True.
@@ -152,7 +152,7 @@ ecore_x_window_override_new(Ecore_X_Window parent,
                        CWWinGravity,
                        &attr);
    return win;
-} /* ecore_x_window_override_new */
+}
 
 /**
  * Creates a new input window.
@@ -209,7 +209,7 @@ ecore_x_window_input_new(Ecore_X_Window parent,
      }
 
    return win;
-} /* ecore_x_window_input_new */
+}
 
 /**
  * @defgroup Ecore_X_Window_Properties_Group X Window Property Functions
@@ -263,7 +263,7 @@ ecore_x_window_defaults_set(Ecore_X_Window win)
 
    ecore_app_args_get(&argc, &argv);
    ecore_x_icccm_command_set(win, argc, argv);
-} /* ecore_x_window_defaults_set */
+}
 
 EAPI void
 ecore_x_window_configure(Ecore_X_Window                win,
@@ -292,7 +292,7 @@ ecore_x_window_configure(Ecore_X_Window                win,
    xwc.stack_mode = stack_mode;
 
    XConfigureWindow(_ecore_x_disp, win, mask, &xwc);
-} /* ecore_x_window_configure */
+}
 
 /**
  * @defgroup Ecore_X_Window_Destroy_Group X Window Destroy Functions
@@ -314,7 +314,7 @@ ecore_x_window_free(Ecore_X_Window win)
      LOGFN(__FILE__, __LINE__, __FUNCTION__);
      if (win)
        XDestroyWindow(_ecore_x_disp, win);
-} /* ecore_x_window_free */
+}
 
 /**
  * Set if a window should be ignored.
@@ -373,7 +373,7 @@ ecore_x_window_ignore_set(Ecore_X_Window win,
         t = realloc(ignore_list, ignore_num * sizeof(Ecore_X_Window));
         if (t) ignore_list = t;
      }
-} /* ecore_x_window_ignore_set */
+}
 
 /**
  * Get the ignore list
@@ -387,7 +387,7 @@ ecore_x_window_ignore_list(int *num)
      *num = ignore_num;
 
    return ignore_list;
-} /* ecore_x_window_ignore_list */
+}
 
 /**
  * Sends a delete request to the given window.
@@ -415,7 +415,7 @@ ecore_x_window_delete_request_send(Ecore_X_Window win)
    xev.xclient.data.l[1] = CurrentTime;
 
    XSendEvent(_ecore_x_disp, win, False, NoEventMask, &xev);
-} /* ecore_x_window_delete_request_send */
+}
 
 /**
  * @defgroup Ecore_X_Window_Visibility_Group X Window Visibility Functions
@@ -436,7 +436,7 @@ ecore_x_window_show(Ecore_X_Window win)
 {
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
    XMapWindow(_ecore_x_disp, win);
-} /* ecore_x_window_show */
+}
 
 /**
  * Hides a window.
@@ -480,7 +480,7 @@ ecore_x_window_hide(Ecore_X_Window win)
    XSendEvent(_ecore_x_disp, xev.xunmap.event, False,
               SubstructureRedirectMask | SubstructureNotifyMask, &xev);
    XUnmapWindow(_ecore_x_disp, win);
-} /* ecore_x_window_hide */
+}
 
 /**
  * @defgroup Ecore_X_Window_Geometry_Group X Window Geometry Functions
@@ -506,7 +506,7 @@ ecore_x_window_move(Ecore_X_Window win,
 {
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
    XMoveWindow(_ecore_x_disp, win, x, y);
-} /* ecore_x_window_move */
+}
 
 /**
  * Resizes a window.
@@ -528,7 +528,7 @@ ecore_x_window_resize(Ecore_X_Window win,
      h = 1;
 
    XResizeWindow(_ecore_x_disp, win, w, h);
-} /* ecore_x_window_resize */
+}
 
 /**
  * Moves and resizes a window.
@@ -554,7 +554,7 @@ ecore_x_window_move_resize(Ecore_X_Window win,
      h = 1;
 
    XMoveResizeWindow(_ecore_x_disp, win, x, y, w, h);
-} /* ecore_x_window_move_resize */
+}
 
 /**
  * @defgroup Ecore_X_Window_Focus_Functions X Window Focus Functions
@@ -576,7 +576,7 @@ ecore_x_window_focus(Ecore_X_Window win)
 
 //   XSetInputFocus(_ecore_x_disp, win, RevertToPointerRoot, CurrentTime);
    XSetInputFocus(_ecore_x_disp, win, RevertToParent, CurrentTime);
-} /* ecore_x_window_focus */
+}
 
 /**
  * Sets the focus to the given window at a specific time.
@@ -594,7 +594,7 @@ ecore_x_window_focus_at_time(Ecore_X_Window win,
 
 //   XSetInputFocus(_ecore_x_disp, win, PointerRoot, t);
    XSetInputFocus(_ecore_x_disp, win, RevertToParent, t);
-} /* ecore_x_window_focus_at_time */
+}
 
 /**
  * gets the focus to the window @p win.
@@ -611,7 +611,7 @@ ecore_x_window_focus_get(void)
    win = 0;
    XGetInputFocus(_ecore_x_disp, &win, &revert_mode);
    return win;
-} /* ecore_x_window_focus_get */
+}
 
 /**
  * @defgroup Ecore_X_Window_Z_Order_Group X Window Z Order Functions
@@ -629,7 +629,7 @@ ecore_x_window_raise(Ecore_X_Window win)
 {
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
    XRaiseWindow(_ecore_x_disp, win);
-} /* ecore_x_window_raise */
+}
 
 /**
  * Lowers the given window.
@@ -641,7 +641,7 @@ ecore_x_window_lower(Ecore_X_Window win)
 {
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
    XLowerWindow(_ecore_x_disp, win);
-} /* ecore_x_window_lower */
+}
 
 /**
  * @defgroup Ecore_X_Window_Parent_Group X Window Parent Functions
@@ -668,7 +668,7 @@ ecore_x_window_reparent(Ecore_X_Window win,
      new_parent = DefaultRootWindow(_ecore_x_disp);
 
    XReparentWindow(_ecore_x_disp, win, new_parent, x, y);
-} /* ecore_x_window_reparent */
+}
 
 /**
  * Retrieves the size of the given window.
@@ -689,7 +689,7 @@ ecore_x_window_size_get(Ecore_X_Window win,
      win = DefaultRootWindow(_ecore_x_disp);
 
    ecore_x_drawable_geometry_get(win, &dummy_x, &dummy_y, w, h);
-} /* ecore_x_window_size_get */
+}
 
 /**
  * Retrieves the geometry of the given window.
@@ -719,7 +719,7 @@ ecore_x_window_geometry_get(Ecore_X_Window win,
      win = DefaultRootWindow(_ecore_x_disp);
 
    ecore_x_drawable_geometry_get(win, x, y, w, h);
-} /* ecore_x_window_geometry_get */
+}
 
 /**
  * Retrieves the width of the border of the given window.
@@ -736,7 +736,7 @@ ecore_x_window_border_width_get(Ecore_X_Window win)
      return 0;
 
    return ecore_x_drawable_border_width_get(win);
-} /* ecore_x_window_border_width_get */
+}
 
 /**
  * Sets the width of the border of the given window.
@@ -754,7 +754,7 @@ ecore_x_window_border_width_set(Ecore_X_Window win,
      return;
 
    XSetWindowBorderWidth (_ecore_x_disp, win, width);
-} /* ecore_x_window_border_width_set */
+}
 
 /**
  * Retrieves the depth of the given window.
@@ -766,7 +766,7 @@ ecore_x_window_depth_get(Ecore_X_Window win)
 {
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
    return ecore_x_drawable_depth_get(win);
-} /* ecore_x_window_depth_get */
+}
 
 /**
  * To be documented.
@@ -803,7 +803,7 @@ ecore_x_window_cursor_show(Ecore_X_Window win,
      }
    else
      XDefineCursor(_ecore_x_disp, win, 0);
-} /* ecore_x_window_cursor_show */
+}
 
 EAPI void
 ecore_x_window_cursor_set(Ecore_X_Window win,
@@ -814,7 +814,7 @@ ecore_x_window_cursor_set(Ecore_X_Window win,
      XUndefineCursor(_ecore_x_disp, win);
    else
      XDefineCursor(_ecore_x_disp, win, c);
-} /* ecore_x_window_cursor_set */
+}
 
 /**
  * Finds out whether the given window is currently visible.
@@ -830,7 +830,7 @@ ecore_x_window_visible_get(Ecore_X_Window win)
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
    return XGetWindowAttributes(_ecore_x_disp, win, &attr) &&
           (attr.map_state == IsViewable);
-} /* ecore_x_window_visible_get */
+}
 
 typedef struct _Shadow Shadow;
 struct _Shadow
@@ -914,7 +914,7 @@ _ecore_x_window_tree_walk(Window win)
      XFree(list);
 
    return s;
-} /* _ecore_x_window_tree_walk */
+}
 
 static void
 _ecore_x_window_tree_shadow_free1(Shadow *s)
@@ -935,7 +935,7 @@ _ecore_x_window_tree_shadow_free1(Shadow *s)
      }
 
    free(s);
-} /* _ecore_x_window_tree_shadow_free1 */
+}
 
 static void
 _ecore_x_window_tree_shadow_free(void)
@@ -955,7 +955,7 @@ _ecore_x_window_tree_shadow_free(void)
    free(shadow_base);
    shadow_base = NULL;
    shadow_num = 0;
-} /* _ecore_x_window_tree_shadow_free */
+}
 
 static void
 _ecore_x_window_tree_shadow_populate(void)
@@ -976,7 +976,7 @@ _ecore_x_window_tree_shadow_populate(void)
 
         free(roots);
      }
-} /* _ecore_x_window_tree_shadow_populate */
+}
 
 /*
    static int shadow_count = 0;
@@ -1020,7 +1020,7 @@ _ecore_x_window_shadow_tree_find_shadow(Shadow *s,
        }
 
    return NULL;
-} /* _ecore_x_window_shadow_tree_find_shadow */
+}
 
 static Shadow *
 _ecore_x_window_shadow_tree_find(Window base)
@@ -1037,7 +1037,7 @@ _ecore_x_window_shadow_tree_find(Window base)
           return s;
      }
    return NULL;
-} /* _ecore_x_window_shadow_tree_find */
+}
 
 static int
 _inside_rects(Shadow            *s,
@@ -1131,7 +1131,7 @@ onward:
      }
 
    return s->win;
-} /* _ecore_x_window_shadow_tree_at_xy_get_shadow */
+}
 
 static Window
 _ecore_x_window_shadow_tree_at_xy_get(Window          base,
@@ -1162,7 +1162,7 @@ _ecore_x_window_shadow_tree_at_xy_get(Window          base,
                                                        y,
                                                        skip,
                                                        skip_num);
-} /* _ecore_x_window_shadow_tree_at_xy_get */
+}
 
 /**
  * Retrieves the top, visible window at the given location,
@@ -1191,7 +1191,7 @@ ecore_x_window_shadow_tree_at_xy_with_skip_get(Ecore_X_Window  base,
                                                 y,
                                                 skip,
                                                 skip_num);
-} /* ecore_x_window_shadow_tree_at_xy_with_skip_get */
+}
 
 /**
  * Retrieves the parent window a given window has. This uses the shadow window
@@ -1231,7 +1231,7 @@ ecore_x_window_shadow_parent_get(Ecore_X_Window root __UNUSED__,
           }
      }
    return 0;
-} /* ecore_x_window_shadow_parent_get */
+}
 
 /**
  * Flushes the window shadow tree so nothing is stored.
@@ -1242,7 +1242,7 @@ ecore_x_window_shadow_tree_flush(void)
 {
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
    _ecore_x_window_tree_shadow_free();
-} /* ecore_x_window_shadow_tree_flush */
+}
 
 /**
  * Retrieves the root window a given window is on.
@@ -1260,7 +1260,7 @@ ecore_x_window_root_get(Ecore_X_Window win)
      return 0;
 
    return att.root;
-} /* ecore_x_window_root_get */
+}
 
 static Window
 _ecore_x_window_at_xy_get(Window          base,
@@ -1324,7 +1324,7 @@ onward:
      }
 
    return base;
-} /* _ecore_x_window_at_xy_get */
+}
 
 /**
  * Retrieves the top, visible window at the given location.
@@ -1349,7 +1349,7 @@ ecore_x_window_at_xy_get(int x,
    ecore_x_ungrab();
 
    return win ? win : root;
-} /* ecore_x_window_at_xy_get */
+}
 
 /**
  * Retrieves the top, visible window at the given location,
@@ -1377,7 +1377,7 @@ ecore_x_window_at_xy_with_skip_get(int             x,
    ecore_x_ungrab();
 
    return win ? win : root;
-} /* ecore_x_window_at_xy_with_skip_get */
+}
 
 EAPI Ecore_X_Window
 ecore_x_window_at_xy_begin_get(Ecore_X_Window begin,
@@ -1392,7 +1392,7 @@ ecore_x_window_at_xy_begin_get(Ecore_X_Window begin,
    ecore_x_ungrab();
 
    return win ? win : begin;
-} /* ecore_x_window_at_xy_begin_get */
+}
 
 /**
  * Retrieves the parent window of the given window.
@@ -1414,7 +1414,7 @@ ecore_x_window_parent_get(Ecore_X_Window win)
      XFree(children);
 
    return parent;
-} /* ecore_x_window_parent_get */
+}
 
 /**
  * Sets the background color of the given window.
@@ -1443,7 +1443,7 @@ ecore_x_window_background_color_set(Ecore_X_Window win,
 
    attr.background_pixel = col.pixel;
    XChangeWindowAttributes(_ecore_x_disp, win, CWBackPixel, &attr);
-} /* ecore_x_window_background_color_set */
+}
 
 EAPI void
 ecore_x_window_gravity_set(Ecore_X_Window  win,
@@ -1454,7 +1454,7 @@ ecore_x_window_gravity_set(Ecore_X_Window  win,
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
    att.win_gravity = grav;
    XChangeWindowAttributes(_ecore_x_disp, win, CWWinGravity, &att);
-} /* ecore_x_window_gravity_set */
+}
 
 EAPI void
 ecore_x_window_pixel_gravity_set(Ecore_X_Window  win,
@@ -1465,7 +1465,7 @@ ecore_x_window_pixel_gravity_set(Ecore_X_Window  win,
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
    att.bit_gravity = grav;
    XChangeWindowAttributes(_ecore_x_disp, win, CWBitGravity, &att);
-} /* ecore_x_window_pixel_gravity_set */
+}
 
 EAPI void
 ecore_x_window_pixmap_set(Ecore_X_Window win,
@@ -1473,7 +1473,7 @@ ecore_x_window_pixmap_set(Ecore_X_Window win,
 {
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
    XSetWindowBackgroundPixmap(_ecore_x_disp, win, pmap);
-} /* ecore_x_window_pixmap_set */
+}
 
 EAPI void
 ecore_x_window_area_clear(Ecore_X_Window win,
@@ -1484,7 +1484,7 @@ ecore_x_window_area_clear(Ecore_X_Window win,
 {
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
    XClearArea(_ecore_x_disp, win, x, y, w, h, False);
-} /* ecore_x_window_area_clear */
+}
 
 EAPI void
 ecore_x_window_area_expose(Ecore_X_Window win,
@@ -1495,7 +1495,7 @@ ecore_x_window_area_expose(Ecore_X_Window win,
 {
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
    XClearArea(_ecore_x_disp, win, x, y, w, h, True);
-} /* ecore_x_window_area_expose */
+}
 
 EAPI void
 ecore_x_window_override_set(Ecore_X_Window win,
@@ -1506,7 +1506,7 @@ ecore_x_window_override_set(Ecore_X_Window win,
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
    att.override_redirect = override;
    XChangeWindowAttributes(_ecore_x_disp, win, CWOverrideRedirect, &att);
-} /* ecore_x_window_override_set */
+}
 
 #ifdef ECORE_XRENDER
 static Ecore_X_Window
@@ -1615,7 +1615,7 @@ _ecore_x_window_argb_internal_new(Ecore_X_Window parent,
      ecore_x_window_defaults_set(win);
 
    return win;
-} /* _ecore_x_window_argb_internal_new */
+}
 
 #endif /* ifdef ECORE_XRENDER */
 
@@ -1641,7 +1641,7 @@ ecore_x_window_argb_get(Ecore_X_Window win)
 #else /* ifdef ECORE_XRENDER */
    return 0;
 #endif /* ifdef ECORE_XRENDER */
-} /* ecore_x_window_argb_get */
+}
 
 /**
  * Creates a new window.
@@ -1667,7 +1667,7 @@ ecore_x_window_manager_argb_new(Ecore_X_Window parent,
 #else /* ifdef ECORE_XRENDER */
    return 0;
 #endif /* ifdef ECORE_XRENDER */
-} /* ecore_x_window_manager_argb_new */
+}
 
 /**
  * Creates a new window.
@@ -1693,7 +1693,7 @@ ecore_x_window_argb_new(Ecore_X_Window parent,
 #else /* ifdef ECORE_XRENDER */
    return 0;
 #endif /* ifdef ECORE_XRENDER */
-} /* ecore_x_window_argb_new */
+}
 
 /**
  * Creates a window with the override redirect attribute set to @c True.
@@ -1719,5 +1719,5 @@ ecore_x_window_override_argb_new(Ecore_X_Window parent,
 #else /* ifdef ECORE_XRENDER */
    return 0;
 #endif /* ifdef ECORE_XRENDER */
-} /* ecore_x_window_override_argb_new */
+}
 

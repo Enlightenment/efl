@@ -33,7 +33,7 @@ ecore_x_error_handler_set(void        (*func)(void *data),
 {
    _error_func = func;
    _error_data = (void *)data;
-} /* ecore_x_error_handler_set */
+}
 
 /**
  * Set the I/O error handler.
@@ -48,7 +48,7 @@ ecore_x_io_error_handler_set(void        (*func)(void *data),
 {
    _io_error_func = func;
    _io_error_data = (void *)data;
-} /* ecore_x_io_error_handler_set */
+}
 
 /**
  * Get the request code that caused the error.
@@ -60,7 +60,7 @@ EAPI int
 ecore_x_error_request_get(void)
 {
    return _error_request_code;
-} /* ecore_x_error_request_get */
+}
 
 /**
  * Get the error code from the error.
@@ -72,14 +72,14 @@ EAPI int
 ecore_x_error_code_get(void)
 {
    return _error_code;
-} /* ecore_x_error_code_get */
+}
 
 void
 _ecore_x_error_handler_init(void)
 {
    XSetErrorHandler((XErrorHandler)_ecore_x_error_handle);
    XSetIOErrorHandler((XIOErrorHandler)_ecore_x_io_error_handle);
-} /* _ecore_x_error_handler_init */
+}
 
 static int
 _ecore_x_error_handle(Display     *d,
@@ -93,7 +93,7 @@ _ecore_x_error_handle(Display     *d,
           _error_func(_error_data);
      }
    return 0;
-} /* _ecore_x_error_handle */
+}
 
 static int
 _ecore_x_io_error_handle(Display *d)
@@ -107,5 +107,5 @@ _ecore_x_io_error_handle(Display *d)
      }
 
    return 0;
-} /* _ecore_x_io_error_handle */
+}
 

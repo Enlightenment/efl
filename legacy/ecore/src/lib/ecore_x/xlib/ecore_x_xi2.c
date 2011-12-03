@@ -46,7 +46,7 @@ _ecore_x_input_init(void)
    _ecore_x_xi2_devs = XIQueryDevice(_ecore_x_disp, XIAllDevices,
                                      &_ecore_x_xi2_num);
 #endif /* ifdef ECORE_XI2 */
-} /* _ecore_x_input_init */
+}
 
 void
 _ecore_x_input_shutdown(void)
@@ -61,7 +61,7 @@ _ecore_x_input_shutdown(void)
    _ecore_x_xi2_num = 0;
    _ecore_x_xi2_opcode = -1;
 #endif /* ifdef ECORE_XI2 */
-} /* _ecore_x_input_shutdown */
+}
 
 void
 _ecore_x_input_handler(XEvent *xevent)
@@ -205,9 +205,9 @@ _ecore_x_input_handler(XEvent *xevent)
 #endif
       default:
         break;
-     } /* switch */
+     }
 #endif /* ifdef ECORE_XI2 */
-} /* _ecore_x_input_handler */
+}
 
 EAPI Eina_Bool
 ecore_x_input_multi_select(Ecore_X_Window win)
@@ -279,5 +279,5 @@ ecore_x_input_multi_select(Ecore_X_Window win)
 #else /* ifdef ECORE_XI2 */
    return EINA_FALSE;
 #endif /* ifdef ECORE_XI2 */
-} /* ecore_x_input_multi_select */
+}
 

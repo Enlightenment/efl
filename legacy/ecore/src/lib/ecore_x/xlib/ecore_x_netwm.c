@@ -76,7 +76,7 @@ ecore_x_netwm_init(void)
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
    startup_info = eina_hash_string_superfast_new(
        _ecore_x_netwm_startup_info_free);
-} /* ecore_x_netwm_init */
+}
 
 EAPI void
 ecore_x_netwm_shutdown(void)
@@ -86,7 +86,7 @@ ecore_x_netwm_shutdown(void)
      eina_hash_free(startup_info);
 
    startup_info = NULL;
-} /* ecore_x_netwm_shutdown */
+}
 
 /*
  * WM identification
@@ -112,7 +112,7 @@ ecore_x_netwm_wm_identify(Ecore_X_Window root,
    _ecore_x_window_prop_string_utf8_set(root,
                                         ECORE_X_ATOM_NET_WM_NAME,
                                         wm_name);
-} /* ecore_x_netwm_wm_identify */
+}
 
 /*
  * Set supported atoms
@@ -127,7 +127,7 @@ ecore_x_netwm_supported_set(Ecore_X_Window root,
                                 ECORE_X_ATOM_NET_SUPPORTED,
                                 supported,
                                 num);
-} /* ecore_x_netwm_supported_set */
+}
 
 EAPI Eina_Bool
 ecore_x_netwm_supported_get(Ecore_X_Window root,
@@ -152,7 +152,7 @@ ecore_x_netwm_supported_get(Ecore_X_Window root,
      *num = num_ret;
 
    return EINA_TRUE;
-} /* ecore_x_netwm_supported_get */
+}
 
 /*
  * Desktop configuration and status
@@ -164,7 +164,7 @@ ecore_x_netwm_desk_count_set(Ecore_X_Window root,
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
    ecore_x_window_prop_card32_set(root, ECORE_X_ATOM_NET_NUMBER_OF_DESKTOPS,
                                   &n_desks, 1);
-} /* ecore_x_netwm_desk_count_set */
+}
 
 EAPI void
 ecore_x_netwm_desk_roots_set(Ecore_X_Window  root,
@@ -176,7 +176,7 @@ ecore_x_netwm_desk_roots_set(Ecore_X_Window  root,
                                   ECORE_X_ATOM_NET_VIRTUAL_ROOTS,
                                   vroots,
                                   n_desks);
-} /* ecore_x_netwm_desk_roots_set */
+}
 
 EAPI void
 ecore_x_netwm_desk_names_set(Ecore_X_Window root,
@@ -215,7 +215,7 @@ ecore_x_netwm_desk_names_set(Ecore_X_Window root,
    _ATOM_SET_UTF8_STRING_LIST(root, ECORE_X_ATOM_NET_DESKTOP_NAMES, buf, len);
 
    free(buf);
-} /* ecore_x_netwm_desk_names_set */
+}
 
 EAPI void
 ecore_x_netwm_desk_size_set(Ecore_X_Window root,
@@ -229,7 +229,7 @@ ecore_x_netwm_desk_size_set(Ecore_X_Window root,
    size[1] = height;
    ecore_x_window_prop_card32_set(root, ECORE_X_ATOM_NET_DESKTOP_GEOMETRY, size,
                                   2);
-} /* ecore_x_netwm_desk_size_set */
+}
 
 EAPI void
 ecore_x_netwm_desk_viewports_set(Ecore_X_Window root,
@@ -239,7 +239,7 @@ ecore_x_netwm_desk_viewports_set(Ecore_X_Window root,
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
    ecore_x_window_prop_card32_set(root, ECORE_X_ATOM_NET_DESKTOP_VIEWPORT,
                                   origins, 2 * n_desks);
-} /* ecore_x_netwm_desk_viewports_set */
+}
 
 EAPI void
 ecore_x_netwm_desk_layout_set(Ecore_X_Window root,
@@ -257,7 +257,7 @@ ecore_x_netwm_desk_layout_set(Ecore_X_Window root,
    layout[3] = starting_corner;
    ecore_x_window_prop_card32_set(root, ECORE_X_ATOM_NET_DESKTOP_LAYOUT,
                                   layout, 4);
-} /* ecore_x_netwm_desk_layout_set */
+}
 
 EAPI void
 ecore_x_netwm_desk_workareas_set(Ecore_X_Window root,
@@ -267,7 +267,7 @@ ecore_x_netwm_desk_workareas_set(Ecore_X_Window root,
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
    ecore_x_window_prop_card32_set(root, ECORE_X_ATOM_NET_WORKAREA, areas,
                                   4 * n_desks);
-} /* ecore_x_netwm_desk_workareas_set */
+}
 
 EAPI unsigned int *
 ecore_x_netwm_desk_workareas_get(Ecore_X_Window root, unsigned int *n_desks)
@@ -295,7 +295,7 @@ ecore_x_netwm_desk_current_set(Ecore_X_Window root,
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
    ecore_x_window_prop_card32_set(root, ECORE_X_ATOM_NET_CURRENT_DESKTOP, &desk,
                                   1);
-} /* ecore_x_netwm_desk_current_set */
+}
 
 EAPI void
 ecore_x_netwm_showing_desktop_set(Ecore_X_Window root,
@@ -307,7 +307,7 @@ ecore_x_netwm_showing_desktop_set(Ecore_X_Window root,
    val = (on) ? 1 : 0;
    ecore_x_window_prop_card32_set(root, ECORE_X_ATOM_NET_SHOWING_DESKTOP, &val,
                                   1);
-} /* ecore_x_netwm_showing_desktop_set */
+}
 
 /*
  * Client status
@@ -322,7 +322,7 @@ ecore_x_netwm_client_list_set(Ecore_X_Window  root,
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
    ecore_x_window_prop_window_set(root, ECORE_X_ATOM_NET_CLIENT_LIST,
                                   p_clients, n_clients);
-} /* ecore_x_netwm_client_list_set */
+}
 
 /* Stacking order */
 EAPI void
@@ -333,7 +333,7 @@ ecore_x_netwm_client_list_stacking_set(Ecore_X_Window  root,
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
    ecore_x_window_prop_window_set(root, ECORE_X_ATOM_NET_CLIENT_LIST_STACKING,
                                   p_clients, n_clients);
-} /* ecore_x_netwm_client_list_stacking_set */
+}
 
 EAPI void
 ecore_x_netwm_client_active_set(Ecore_X_Window root,
@@ -342,7 +342,7 @@ ecore_x_netwm_client_active_set(Ecore_X_Window root,
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
    ecore_x_window_prop_window_set(root, ECORE_X_ATOM_NET_ACTIVE_WINDOW,
                                   &win, 1);
-} /* ecore_x_netwm_client_active_set */
+}
 
 EAPI void
 ecore_x_netwm_client_active_request(Ecore_X_Window root,
@@ -369,7 +369,7 @@ ecore_x_netwm_client_active_request(Ecore_X_Window root,
 
    XSendEvent(_ecore_x_disp, root, False,
               SubstructureRedirectMask | SubstructureNotifyMask, &xev);
-} /* ecore_x_netwm_client_active_request */
+}
 
 EAPI void
 ecore_x_netwm_name_set(Ecore_X_Window win,
@@ -377,7 +377,7 @@ ecore_x_netwm_name_set(Ecore_X_Window win,
 {
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
    _ecore_x_window_prop_string_utf8_set(win, ECORE_X_ATOM_NET_WM_NAME, name);
-} /* ecore_x_netwm_name_set */
+}
 
 EAPI int
 ecore_x_netwm_name_get(Ecore_X_Window win,
@@ -389,7 +389,7 @@ ecore_x_netwm_name_get(Ecore_X_Window win,
                                                   ECORE_X_ATOM_NET_WM_NAME);
 
    return 1;
-} /* ecore_x_netwm_name_get */
+}
 
 EAPI void
 ecore_x_netwm_startup_id_set(Ecore_X_Window win,
@@ -397,7 +397,7 @@ ecore_x_netwm_startup_id_set(Ecore_X_Window win,
 {
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
    _ecore_x_window_prop_string_utf8_set(win, ECORE_X_ATOM_NET_STARTUP_ID, id);
-} /* ecore_x_netwm_startup_id_set */
+}
 
 EAPI int
 ecore_x_netwm_startup_id_get(Ecore_X_Window win,
@@ -409,7 +409,7 @@ ecore_x_netwm_startup_id_get(Ecore_X_Window win,
                                                 ECORE_X_ATOM_NET_STARTUP_ID);
 
    return 1;
-} /* ecore_x_netwm_startup_id_get */
+}
 
 EAPI void
 ecore_x_netwm_visible_name_set(Ecore_X_Window win,
@@ -418,7 +418,7 @@ ecore_x_netwm_visible_name_set(Ecore_X_Window win,
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
    _ecore_x_window_prop_string_utf8_set(win, ECORE_X_ATOM_NET_WM_VISIBLE_NAME,
                                         name);
-} /* ecore_x_netwm_visible_name_set */
+}
 
 EAPI int
 ecore_x_netwm_visible_name_get(Ecore_X_Window win,
@@ -431,7 +431,7 @@ ecore_x_netwm_visible_name_get(Ecore_X_Window win,
          ECORE_X_ATOM_NET_WM_VISIBLE_NAME);
 
    return 1;
-} /* ecore_x_netwm_visible_name_get */
+}
 
 EAPI void
 ecore_x_netwm_icon_name_set(Ecore_X_Window win,
@@ -440,7 +440,7 @@ ecore_x_netwm_icon_name_set(Ecore_X_Window win,
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
    _ecore_x_window_prop_string_utf8_set(win, ECORE_X_ATOM_NET_WM_ICON_NAME,
                                         name);
-} /* ecore_x_netwm_icon_name_set */
+}
 
 EAPI int
 ecore_x_netwm_icon_name_get(Ecore_X_Window win,
@@ -453,7 +453,7 @@ ecore_x_netwm_icon_name_get(Ecore_X_Window win,
          ECORE_X_ATOM_NET_WM_ICON_NAME);
 
    return 1;
-} /* ecore_x_netwm_icon_name_get */
+}
 
 EAPI void
 ecore_x_netwm_visible_icon_name_set(Ecore_X_Window win,
@@ -463,7 +463,7 @@ ecore_x_netwm_visible_icon_name_set(Ecore_X_Window win,
    _ecore_x_window_prop_string_utf8_set(win,
                                         ECORE_X_ATOM_NET_WM_VISIBLE_ICON_NAME,
                                         name);
-} /* ecore_x_netwm_visible_icon_name_set */
+}
 
 EAPI int
 ecore_x_netwm_visible_icon_name_get(Ecore_X_Window win,
@@ -476,7 +476,7 @@ ecore_x_netwm_visible_icon_name_get(Ecore_X_Window win,
          ECORE_X_ATOM_NET_WM_VISIBLE_ICON_NAME);
 
    return 1;
-} /* ecore_x_netwm_visible_icon_name_get */
+}
 
 EAPI void
 ecore_x_netwm_desktop_set(Ecore_X_Window win,
@@ -484,7 +484,7 @@ ecore_x_netwm_desktop_set(Ecore_X_Window win,
 {
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
    ecore_x_window_prop_card32_set(win, ECORE_X_ATOM_NET_WM_DESKTOP, &desk, 1);
-} /* ecore_x_netwm_desktop_set */
+}
 
 EAPI Eina_Bool
 ecore_x_netwm_desktop_get(Ecore_X_Window win,
@@ -501,7 +501,7 @@ ecore_x_netwm_desktop_get(Ecore_X_Window win,
      *desk = tmp;
 
    return ret == 1 ? EINA_TRUE : EINA_FALSE;
-} /* ecore_x_netwm_desktop_get */
+}
 
 /*
  * _NET_WM_STRUT is deprecated
@@ -521,7 +521,7 @@ ecore_x_netwm_strut_set(Ecore_X_Window win,
    strut[2] = top;
    strut[3] = bottom;
    ecore_x_window_prop_card32_set(win, ECORE_X_ATOM_NET_WM_STRUT, strut, 4);
-} /* ecore_x_netwm_strut_set */
+}
 
 /*
  * _NET_WM_STRUT is deprecated
@@ -557,7 +557,7 @@ ecore_x_netwm_strut_get(Ecore_X_Window win,
      *bottom = strut[3];
 
    return EINA_TRUE;
-} /* ecore_x_netwm_strut_get */
+}
 
 EAPI void
 ecore_x_netwm_strut_partial_set(Ecore_X_Window win,
@@ -593,7 +593,7 @@ ecore_x_netwm_strut_partial_set(Ecore_X_Window win,
                                   ECORE_X_ATOM_NET_WM_STRUT_PARTIAL,
                                   strut,
                                   12);
-} /* ecore_x_netwm_strut_partial_set */
+}
 
 EAPI Eina_Bool
 ecore_x_netwm_strut_partial_get(Ecore_X_Window win,
@@ -658,7 +658,7 @@ ecore_x_netwm_strut_partial_get(Ecore_X_Window win,
      *bottom_end_x = strut[11];
 
    return EINA_TRUE;
-} /* ecore_x_netwm_strut_partial_get */
+}
 
 EAPI Eina_Bool
 ecore_x_netwm_icons_get(Ecore_X_Window win,
@@ -767,7 +767,7 @@ ecore_x_netwm_icons_get(Ecore_X_Window win,
    free(data);
 
    return EINA_TRUE;
-} /* ecore_x_netwm_icons_get */
+}
 
 EAPI void
 ecore_x_netwm_icon_geometry_set(Ecore_X_Window win,
@@ -787,7 +787,7 @@ ecore_x_netwm_icon_geometry_set(Ecore_X_Window win,
                                   ECORE_X_ATOM_NET_WM_ICON_GEOMETRY,
                                   geometry,
                                   4);
-} /* ecore_x_netwm_icon_geometry_set */
+}
 
 EAPI Eina_Bool
 ecore_x_netwm_icon_geometry_get(Ecore_X_Window win,
@@ -820,7 +820,7 @@ ecore_x_netwm_icon_geometry_get(Ecore_X_Window win,
      *height = geometry[3];
 
    return EINA_TRUE;
-} /* ecore_x_netwm_icon_geometry_get */
+}
 
 EAPI void
 ecore_x_netwm_pid_set(Ecore_X_Window win,
@@ -832,7 +832,7 @@ ecore_x_netwm_pid_set(Ecore_X_Window win,
    tmp = pid;
    ecore_x_window_prop_card32_set(win, ECORE_X_ATOM_NET_WM_PID,
                                   &tmp, 1);
-} /* ecore_x_netwm_pid_set */
+}
 
 EAPI Eina_Bool
 ecore_x_netwm_pid_get(Ecore_X_Window win,
@@ -848,7 +848,7 @@ ecore_x_netwm_pid_get(Ecore_X_Window win,
      *pid = tmp;
 
    return ret == 1 ? EINA_TRUE : EINA_FALSE;
-} /* ecore_x_netwm_pid_get */
+}
 
 EAPI void
 ecore_x_netwm_handled_icons_set(Ecore_X_Window win)
@@ -856,7 +856,7 @@ ecore_x_netwm_handled_icons_set(Ecore_X_Window win)
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
    ecore_x_window_prop_card32_set(win, ECORE_X_ATOM_NET_WM_HANDLED_ICONS,
                                   NULL, 0);
-} /* ecore_x_netwm_handled_icons_set */
+}
 
 EAPI Eina_Bool
 ecore_x_netwm_handled_icons_get(Ecore_X_Window win)
@@ -866,7 +866,7 @@ ecore_x_netwm_handled_icons_get(Ecore_X_Window win)
    ret = ecore_x_window_prop_card32_get(win, ECORE_X_ATOM_NET_WM_HANDLED_ICONS,
                                         NULL, 0);
    return ret == 0 ? EINA_TRUE : EINA_FALSE;
-} /* ecore_x_netwm_handled_icons_get */
+}
 
 EAPI void
 ecore_x_netwm_user_time_set(Ecore_X_Window win,
@@ -875,7 +875,7 @@ ecore_x_netwm_user_time_set(Ecore_X_Window win,
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
    ecore_x_window_prop_card32_set(win, ECORE_X_ATOM_NET_WM_USER_TIME,
                                   &tim, 1);
-} /* ecore_x_netwm_user_time_set */
+}
 
 EAPI Eina_Bool
 ecore_x_netwm_user_time_get(Ecore_X_Window win,
@@ -891,7 +891,7 @@ ecore_x_netwm_user_time_get(Ecore_X_Window win,
      *tim = tmp;
 
    return ret == 1 ? EINA_TRUE : EINA_FALSE;
-} /* ecore_x_netwm_user_time_get */
+}
 
 Ecore_X_Window_State
 _ecore_x_netwm_state_get(Ecore_X_Atom a)
@@ -922,7 +922,7 @@ _ecore_x_netwm_state_get(Ecore_X_Atom a)
      return ECORE_X_WINDOW_STATE_DEMANDS_ATTENTION;
    else
      return ECORE_X_WINDOW_STATE_UNKNOWN;
-} /* _ecore_x_netwm_state_get */
+}
 
 static Ecore_X_Atom
 _ecore_x_netwm_state_atom_get(Ecore_X_Window_State s)
@@ -967,8 +967,8 @@ _ecore_x_netwm_state_atom_get(Ecore_X_Window_State s)
 
       default:
         return 0;
-     } /* switch */
-} /* _ecore_x_netwm_state_atom_get */
+     }
+}
 
 EAPI void
 ecore_x_netwm_window_state_set(Ecore_X_Window        win,
@@ -995,7 +995,7 @@ ecore_x_netwm_window_state_set(Ecore_X_Window        win,
    ecore_x_window_prop_atom_set(win, ECORE_X_ATOM_NET_WM_STATE, set, num);
 
    free(set);
-} /* ecore_x_netwm_window_state_set */
+}
 
 EAPI Eina_Bool
 ecore_x_netwm_window_state_get(Ecore_X_Window         win,
@@ -1030,7 +1030,7 @@ ecore_x_netwm_window_state_get(Ecore_X_Window         win,
 
    free(atoms);
    return EINA_TRUE;
-} /* ecore_x_netwm_window_state_get */
+}
 
 static Ecore_X_Window_Type
 _ecore_x_netwm_window_type_type_get(Ecore_X_Atom atom)
@@ -1065,7 +1065,7 @@ _ecore_x_netwm_window_type_type_get(Ecore_X_Atom atom)
      return ECORE_X_WINDOW_TYPE_DND;
    else
      return ECORE_X_WINDOW_TYPE_UNKNOWN;
-} /* _ecore_x_netwm_window_type_type_get */
+}
 
 static Ecore_X_Atom
 _ecore_x_netwm_window_type_atom_get(Ecore_X_Window_Type type)
@@ -1116,8 +1116,8 @@ _ecore_x_netwm_window_type_atom_get(Ecore_X_Window_Type type)
 
       default:
         return 0;
-     } /* switch */
-} /* _ecore_x_netwm_window_type_atom_get */
+     }
+}
 
 /*
  * FIXME: We should set WM_TRANSIENT_FOR if type is ECORE_X_WINDOW_TYPE_TOOLBAR
@@ -1133,7 +1133,7 @@ ecore_x_netwm_window_type_set(Ecore_X_Window      win,
    atom = _ecore_x_netwm_window_type_atom_get(type);
    ecore_x_window_prop_atom_set(win, ECORE_X_ATOM_NET_WM_WINDOW_TYPE,
                                 &atom, 1);
-} /* ecore_x_netwm_window_type_set */
+}
 
 /* FIXME: Maybe return 0 on some conditions? */
 EAPI Eina_Bool
@@ -1158,7 +1158,7 @@ ecore_x_netwm_window_type_get(Ecore_X_Window       win,
      return EINA_TRUE;
 
    return EINA_FALSE;
-} /* ecore_x_netwm_window_type_get */
+}
 
 EAPI int
 ecore_x_netwm_window_types_get(Ecore_X_Window        win,
@@ -1196,7 +1196,7 @@ ecore_x_netwm_window_types_get(Ecore_X_Window        win,
      free(atoms2);
 
    return num;
-} /* ecore_x_netwm_window_types_get */
+}
 
 static Ecore_X_Atom
 _ecore_x_netwm_action_atom_get(Ecore_X_Action action)
@@ -1241,8 +1241,8 @@ _ecore_x_netwm_action_atom_get(Ecore_X_Action action)
 
       default:
         return 0;
-     } /* switch */
-} /* _ecore_x_netwm_action_atom_get */
+     }
+}
 
 /* FIXME: Get complete list */
 EAPI Eina_Bool
@@ -1272,7 +1272,7 @@ ecore_x_netwm_allowed_action_isset(Ecore_X_Window win,
 
    free(atoms);
    return ret;
-} /* ecore_x_netwm_allowed_action_isset */
+}
 
 /* FIXME: Set complete list */
 EAPI void
@@ -1304,7 +1304,7 @@ ecore_x_netwm_allowed_action_set(Ecore_X_Window  win,
                                 num);
 
    free(set);
-} /* ecore_x_netwm_allowed_action_set */
+}
 
 EAPI Eina_Bool
 ecore_x_netwm_allowed_action_get(Ecore_X_Window   win,
@@ -1341,7 +1341,7 @@ ecore_x_netwm_allowed_action_get(Ecore_X_Window   win,
 
    free(atoms);
    return EINA_TRUE;
-} /* ecore_x_netwm_allowed_action_get */
+}
 
 EAPI void
 ecore_x_netwm_opacity_set(Ecore_X_Window win,
@@ -1350,7 +1350,7 @@ ecore_x_netwm_opacity_set(Ecore_X_Window win,
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
    ecore_x_window_prop_card32_set(win, ECORE_X_ATOM_NET_WM_WINDOW_OPACITY,
                                   &opacity, 1);
-} /* ecore_x_netwm_opacity_set */
+}
 
 EAPI Eina_Bool
 ecore_x_netwm_opacity_get(Ecore_X_Window win,
@@ -1366,7 +1366,7 @@ ecore_x_netwm_opacity_get(Ecore_X_Window win,
      *opacity = tmp;
 
    return ret == 1 ? EINA_TRUE : EINA_FALSE;
-} /* ecore_x_netwm_opacity_get */
+}
 
 EAPI void
 ecore_x_netwm_frame_size_set(Ecore_X_Window win,
@@ -1386,7 +1386,7 @@ ecore_x_netwm_frame_size_set(Ecore_X_Window win,
                                   ECORE_X_ATOM_NET_FRAME_EXTENTS,
                                   frames,
                                   4);
-} /* ecore_x_netwm_frame_size_set */
+}
 
 EAPI Eina_Bool
 ecore_x_netwm_frame_size_get(Ecore_X_Window win,
@@ -1419,7 +1419,7 @@ ecore_x_netwm_frame_size_get(Ecore_X_Window win,
      *fb = frames[3];
 
    return EINA_TRUE;
-} /* ecore_x_netwm_frame_size_get */
+}
 
 EAPI Eina_Bool
 ecore_x_netwm_sync_counter_get(Ecore_X_Window        win,
@@ -1439,7 +1439,7 @@ ecore_x_netwm_sync_counter_get(Ecore_X_Window        win,
      *counter = tmp;
 
    return ret == 1 ? EINA_TRUE : EINA_FALSE;
-} /* ecore_x_netwm_sync_counter_get */
+}
 
 EAPI void
 ecore_x_netwm_ping_send(Ecore_X_Window win)
@@ -1462,7 +1462,7 @@ ecore_x_netwm_ping_send(Ecore_X_Window win)
    xev.xclient.data.l[4] = 0;
 
    XSendEvent(_ecore_x_disp, win, False, NoEventMask, &xev);
-} /* ecore_x_netwm_ping_send */
+}
 
 EAPI void
 ecore_x_netwm_sync_request_send(Ecore_X_Window win,
@@ -1489,7 +1489,7 @@ ecore_x_netwm_sync_request_send(Ecore_X_Window win,
    xev.xclient.data.l[4] = 0;
 
    XSendEvent(_ecore_x_disp, win, False, NoEventMask, &xev);
-} /* ecore_x_netwm_sync_request_send */
+}
 
 EAPI void
 ecore_x_netwm_state_request_send(Ecore_X_Window       win,
@@ -1524,7 +1524,7 @@ ecore_x_netwm_state_request_send(Ecore_X_Window       win,
 
    XSendEvent(_ecore_x_disp, root, False,
               SubstructureNotifyMask | SubstructureRedirectMask, &xev);
-} /* ecore_x_netwm_state_request_send */
+}
 
 EAPI void
 ecore_x_netwm_desktop_request_send(Ecore_X_Window win,
@@ -1551,7 +1551,7 @@ ecore_x_netwm_desktop_request_send(Ecore_X_Window win,
 
    XSendEvent(_ecore_x_disp, root, False,
               SubstructureNotifyMask | SubstructureRedirectMask, &xev);
-} /* ecore_x_netwm_desktop_request_send */
+}
 
 int
 _ecore_x_netwm_startup_info_begin(Ecore_X_Window win __UNUSED__,
@@ -1600,7 +1600,7 @@ _ecore_x_netwm_startup_info_begin(Ecore_X_Window win __UNUSED__,
 
 #endif /* if 0 */
    return 1;
-} /* _ecore_x_netwm_startup_info_begin */
+}
 
 int
 _ecore_x_netwm_startup_info(Ecore_X_Window win __UNUSED__,
@@ -1639,7 +1639,7 @@ _ecore_x_netwm_startup_info(Ecore_X_Window win __UNUSED__,
 
 #endif /* if 0 */
    return 1;
-} /* _ecore_x_netwm_startup_info */
+}
 
 /*
  * Set UTF-8 string property
@@ -1651,7 +1651,7 @@ _ecore_x_window_prop_string_utf8_set(Ecore_X_Window win,
 {
    XChangeProperty(_ecore_x_disp, win, atom, ECORE_X_ATOM_UTF8_STRING, 8,
                    PropModeReplace, (unsigned char *)str, strlen(str));
-} /* _ecore_x_window_prop_string_utf8_set */
+}
 
 /*
  * Get UTF-8 string property
@@ -1685,7 +1685,7 @@ _ecore_x_window_prop_string_utf8_get(Ecore_X_Window win,
      XFree(prop_ret);
 
    return str;
-} /* _ecore_x_window_prop_string_utf8_get */
+}
 
 #if 0 /* Unused */
 /*
@@ -1763,7 +1763,7 @@ _ecore_x_netwm_startup_info_process(Ecore_X_Startup_Info *info)
      }
 
    return 1;
-} /* _ecore_x_netwm_startup_info_process */
+}
 
 /*
  * Parse startup info
@@ -1920,7 +1920,7 @@ _ecore_x_netwm_startup_info_parse(Ecore_X_Startup_Info *info,
      return 0;
 
    return 1;
-} /* _ecore_x_netwm_startup_info_parse */
+}
 
 #endif /* if 0 */
 
@@ -1958,7 +1958,7 @@ _ecore_x_netwm_startup_info_free(void *data)
      free(info->wmclass);
 
    free(info);
-} /* _ecore_x_netwm_startup_info_free */
+}
 
 /*
  * Is screen composited?
@@ -1981,7 +1981,7 @@ ecore_x_screen_is_composited(int screen)
    win = XGetSelectionOwner(_ecore_x_disp, atom);
 
    return (win != None) ? EINA_TRUE : EINA_FALSE;
-} /* ecore_x_screen_is_composited */
+}
 
 EAPI void
 ecore_x_screen_is_composited_set(int            screen,
@@ -1999,5 +1999,5 @@ ecore_x_screen_is_composited_set(int            screen,
      return;
 
    XSetSelectionOwner(_ecore_x_disp, atom, win, _ecore_x_event_last_time);
-} /* ecore_x_screen_is_composited_set */
+}
 

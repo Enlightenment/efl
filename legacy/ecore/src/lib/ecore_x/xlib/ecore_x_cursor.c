@@ -10,7 +10,7 @@ EAPI Eina_Bool
 ecore_x_cursor_color_supported_get(void)
 {
    return _ecore_x_xcursor;
-} /* ecore_x_cursor_color_supported_get */
+}
 
 EAPI Ecore_X_Cursor
 ecore_x_cursor_new(Ecore_X_Window win,
@@ -200,14 +200,14 @@ ecore_x_cursor_new(Ecore_X_Window win,
    }
 
    return 0;
-} /* ecore_x_cursor_new */
+}
 
 EAPI void
 ecore_x_cursor_free(Ecore_X_Cursor c)
 {
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
    XFreeCursor(_ecore_x_disp, c);
-} /* ecore_x_cursor_free */
+}
 
 /*
  * Returns the cursor for the given shape.
@@ -220,7 +220,7 @@ ecore_x_cursor_shape_get(int shape)
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
    /* Shapes are defined in Ecore_X_Cursor.h */
    return XCreateFontCursor(_ecore_x_disp, shape);
-} /* ecore_x_cursor_shape_get */
+}
 
 EAPI void
 ecore_x_cursor_size_set(int size)
@@ -231,7 +231,7 @@ ecore_x_cursor_size_set(int size)
 #else /* ifdef ECORE_XCURSOR */
    size = 0;
 #endif /* ifdef ECORE_XCURSOR */
-} /* ecore_x_cursor_size_set */
+}
 
 EAPI int
 ecore_x_cursor_size_get(void)
@@ -242,5 +242,5 @@ ecore_x_cursor_size_get(void)
 #else /* ifdef ECORE_XCURSOR */
    return 0;
 #endif /* ifdef ECORE_XCURSOR */
-} /* ecore_x_cursor_size_get */
+}
 

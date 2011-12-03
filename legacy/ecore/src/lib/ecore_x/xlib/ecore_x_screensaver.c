@@ -36,7 +36,7 @@ ecore_x_screensaver_event_available_get(void)
    _screensaver_available = 0;
 #endif /* ifdef ECORE_XSS */
    return _screensaver_available;
-} /* ecore_x_screensaver_event_available_get */
+}
 
 EAPI int
 ecore_x_screensaver_idle_time_get(void)
@@ -57,7 +57,7 @@ ecore_x_screensaver_idle_time_get(void)
 #else
    return 0;
 #endif /* ifdef ECORE_XSS */
-} /* ecore_x_screensaver_idle_time_get */
+}
 
 EAPI void
 ecore_x_screensaver_set(int timeout,
@@ -71,7 +71,7 @@ ecore_x_screensaver_set(int timeout,
                    interval,
                    prefer_blanking,
                    allow_exposures);
-} /* ecore_x_screensaver_set */
+}
 
 EAPI void
 ecore_x_screensaver_timeout_set(int timeout)
@@ -81,7 +81,7 @@ ecore_x_screensaver_timeout_set(int timeout)
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
    XGetScreenSaver(_ecore_x_disp, &pto, &pint, &pblank, &pexpo);
    XSetScreenSaver(_ecore_x_disp, timeout, pint, pblank, pexpo);
-} /* ecore_x_screensaver_timeout_set */
+}
 
 EAPI int
 ecore_x_screensaver_timeout_get(void)
@@ -91,7 +91,7 @@ ecore_x_screensaver_timeout_get(void)
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
    XGetScreenSaver(_ecore_x_disp, &pto, &pint, &pblank, &pexpo);
    return pto;
-} /* ecore_x_screensaver_timeout_get */
+}
 
 EAPI void
 ecore_x_screensaver_blank_set(int blank)
@@ -101,7 +101,7 @@ ecore_x_screensaver_blank_set(int blank)
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
    XGetScreenSaver(_ecore_x_disp, &pto, &pint, &pblank, &pexpo);
    XSetScreenSaver(_ecore_x_disp, pto, pint, blank, pexpo);
-} /* ecore_x_screensaver_blank_set */
+}
 
 EAPI int
 ecore_x_screensaver_blank_get(void)
@@ -111,7 +111,7 @@ ecore_x_screensaver_blank_get(void)
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
    XGetScreenSaver(_ecore_x_disp, &pto, &pint, &pblank, &pexpo);
    return pblank;
-} /* ecore_x_screensaver_blank_get */
+}
 
 EAPI void
 ecore_x_screensaver_expose_set(int expose)
@@ -121,7 +121,7 @@ ecore_x_screensaver_expose_set(int expose)
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
    XGetScreenSaver(_ecore_x_disp, &pto, &pint, &pblank, &pexpo);
    XSetScreenSaver(_ecore_x_disp, pto, pint, pblank, expose);
-} /* ecore_x_screensaver_expose_set */
+}
 
 EAPI int
 ecore_x_screensaver_expose_get(void)
@@ -131,7 +131,7 @@ ecore_x_screensaver_expose_get(void)
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
    XGetScreenSaver(_ecore_x_disp, &pto, &pint, &pblank, &pexpo);
    return pexpo;
-} /* ecore_x_screensaver_expose_get */
+}
 
 EAPI void
 ecore_x_screensaver_interval_set(int interval)
@@ -141,7 +141,7 @@ ecore_x_screensaver_interval_set(int interval)
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
    XGetScreenSaver(_ecore_x_disp, &pto, &pint, &pblank, &pexpo);
    XSetScreenSaver(_ecore_x_disp, pto, interval, pblank, pexpo);
-} /* ecore_x_screensaver_interval_set */
+}
 
 EAPI int
 ecore_x_screensaver_interval_get(void)
@@ -151,7 +151,7 @@ ecore_x_screensaver_interval_get(void)
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
    XGetScreenSaver(_ecore_x_disp, &pto, &pint, &pblank, &pexpo);
    return pint;
-} /* ecore_x_screensaver_interval_get */
+}
 
 EAPI void
 ecore_x_screensaver_event_listen_set(Eina_Bool on)
@@ -169,5 +169,5 @@ ecore_x_screensaver_event_listen_set(Eina_Bool on)
    return;
    on = EINA_FALSE;
 #endif /* ifdef ECORE_XSS */
-} /* ecore_x_screensaver_event_listen_set */
+}
 

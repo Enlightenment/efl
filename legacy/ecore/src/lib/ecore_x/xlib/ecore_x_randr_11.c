@@ -44,7 +44,7 @@ ecore_x_randr_screen_primary_output_orientations_get(Ecore_X_Window root)
 #else /* ifdef ECORE_XRANDR */
    return Ecore_X_Randr_None;
 #endif /* ifdef ECORE_XRANDR */
-} /* ecore_x_randr_screen_primary_output_orientations_get */
+}
 
 /*
  * @param root window which's primary output will be queried
@@ -61,7 +61,7 @@ ecore_x_randr_screen_primary_output_orientation_get(Ecore_X_Window root)
 #else /* ifdef ECORE_XRANDR */
    return Ecore_X_Randr_None;
 #endif /* ifdef ECORE_XRANDR */
-} /* ecore_x_randr_screen_primary_output_orientation_get */
+}
 
 /*
  * @brief sets a given screen's primary output's orientation
@@ -95,7 +95,7 @@ ecore_x_randr_screen_primary_output_orientation_set(
 #else /* ifdef ECORE_XRANDR */
    return EINA_FALSE;
 #endif /* ifdef ECORE_XRANDR */
-} /* ecore_x_randr_screen_primary_output_orientation_set */
+}
 
 /*
  * @brief gets a screen's primary output's possible sizes
@@ -135,7 +135,7 @@ ecore_x_randr_screen_primary_output_sizes_get(Ecore_X_Window root,
 #else /* ifdef ECORE_XRANDR */
    return NULL;
 #endif /* ifdef ECORE_XRANDR */
-} /* ecore_x_randr_screen_primary_output_sizes_get */
+}
 
 /*
  * @brief get the current set size of a given screen's primary output
@@ -192,7 +192,7 @@ ecore_x_randr_screen_primary_output_current_size_get(Ecore_X_Window root,
 
    XRRFreeScreenConfigInfo(sc);
 #endif /* ifdef ECORE_XRANDR */
-} /* ecore_x_randr_screen_primary_output_current_size_get */
+}
 
 /*
  * @brief sets a given screen's primary output size, but disables all other outputs at the same time
@@ -235,7 +235,7 @@ ecore_x_randr_screen_primary_output_size_set(Ecore_X_Window root,
 #else /* ifdef ECORE_XRANDR */
    return EINA_FALSE;
 #endif /* ifdef ECORE_XRANDR */
-} /* ecore_x_randr_screen_primary_output_size_set */
+}
 
 /*
  * @param root window which's primary output will be queried
@@ -261,7 +261,7 @@ ecore_x_randr_screen_primary_output_current_refresh_rate_get(
 #else /* ifdef ECORE_XRANDR */
    return 0.0;
 #endif /* ifdef ECORE_XRANDR */
-} /* ecore_x_randr_screen_primary_output_current_refresh_rate_get */
+}
 
 /*
  * @param root window which's primary output will be queried
@@ -293,7 +293,7 @@ ecore_x_randr_screen_primary_output_refresh_rates_get(Ecore_X_Window root,
 #else /* ifdef ECORE_XRANDR */
    return NULL;
 #endif /* ifdef ECORE_XRANDR */
-} /* ecore_x_randr_screen_primary_output_refresh_rates_get */
+}
 
 //>= 1.1
 /*
@@ -328,5 +328,5 @@ ecore_x_randr_screen_primary_output_refresh_rate_set(
 #else /* ifdef ECORE_XRANDR */
    return EINA_FALSE;
 #endif /* ifdef ECORE_XRANDR */
-} /* ecore_x_randr_screen_primary_output_refresh_rate_set */
+}
 
