@@ -377,3 +377,6 @@
 
 	* Fix the modifiers value (Windows XP)
 
+2011-12-04 Mike Blumenkrantz
+
+        * added ecore_timer_reset()

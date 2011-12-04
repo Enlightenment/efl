@@ -4,6 +4,8 @@ Changes since Ecore 1.1.0:
 --------------------------
 
 Additions:
+    * ecore
+     - ecore_timer_reset()
     * ecore_x:
      - ecore_x_randr_output_backlight_available()
 

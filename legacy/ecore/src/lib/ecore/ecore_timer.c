@@ -259,6 +259,37 @@ ecore_timer_delay(Ecore_Timer *timer,
 }
 
 /**
+ * Reset a timer to its full interval
+ * This doesn't affect the interval of a timer
+ * @param timer The timer
+ * @since 1.2
+ * @note This is equivalent to (but faster than)
+ * @code
+ * ecore_timer_delay(timer, ecore_timer_interval_get(timer) - ecore_timer_pending_get(timer));
+ * @endcode
+ */
+EAPI void
+ecore_timer_reset(Ecore_Timer *timer)
+{
+   double now, add;
+   if (!ECORE_MAGIC_CHECK(timer, ECORE_MAGIC_TIMER))
+     {
+        ECORE_MAGIC_FAIL(timer, ECORE_MAGIC_TIMER,
+                         __func__);
+        return;
+     }
+   _ecore_lock();
+   now = ecore_time_get();
+
+   if (timer->frozen)
+     add = timer->pending;
+   else
+     add = timer->at - now;
+   _ecore_timer_delay(timer, add);
+   _ecore_unlock();
+}
+
+/**
  * Get the pending time regarding a timer.
  *
  * @param        timer The timer to learn from.

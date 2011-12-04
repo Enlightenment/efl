@@ -1226,6 +1226,7 @@ EAPI double ecore_timer_interval_get(Ecore_Timer *timer);
 EAPI void ecore_timer_freeze(Ecore_Timer *timer);
 EAPI void ecore_timer_thaw(Ecore_Timer *timer);
 EAPI void ecore_timer_delay(Ecore_Timer *timer, double add);
+EAPI void ecore_timer_reset(Ecore_Timer *timer);
 EAPI double ecore_timer_pending_get(Ecore_Timer *timer);
 EAPI double ecore_timer_precision_get(void);
 EAPI void ecore_timer_precision_set(double precision);
