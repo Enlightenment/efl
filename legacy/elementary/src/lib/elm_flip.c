@@ -1642,7 +1642,7 @@ elm_flip_content_front_set(Evas_Object *obj, Evas_Object *content)
    int i;
    if (!wd) return;
    if (wd->front.content == content) return;
-   if (wd->front.content) evas_object_del(wd->back.content);
+   if (wd->front.content) evas_object_del(wd->front.content);
    wd->front.content = content;
    if (content)
      {
