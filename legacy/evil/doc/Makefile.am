@@ -31,4 +31,4 @@ doc:
 
 endif
 
-EXTRA_DIST = Doxyfile
+EXTRA_DIST = $(srcdir)/Doxyfile $(srcdir)/e.css $(srcdir)/foot.html $(srcdir)/head.html $(wildcard $(srcdir)/img/*.*)
