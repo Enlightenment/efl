@@ -4188,6 +4188,16 @@ extern "C" {
     */
    EAPI void         elm_win_raise(Evas_Object *obj) EINA_ARG_NONNULL(1);
    /**
+    * Center a window on its screen
+    *
+    * This function centers window @p obj horizontally and/or vertically based on the values
+    * of @p h and @v.
+    * @param obj The window object
+    * @param h If true, center horizontally. If false, do not change horizontal location.
+    * @param v If true, center vertically. If false, do not change vertical location.
+    */
+   EAPI void         elm_win_center(Evas_Object *obj, Eina_Bool h, Eina_Bool v) EINA_ARG_NONNULL(1);
+   /**
     * Set the borderless state of a window.
     *
     * This function requests the Window Manager to not draw any decoration
