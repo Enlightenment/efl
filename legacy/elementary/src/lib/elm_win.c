@@ -639,8 +639,6 @@ _elm_win_obj_callback_resize(void *data, Evas *e __UNUSED__, Evas_Object *obj, v
         Evas_Coord w = 1, h = 1;
 
         evas_object_geometry_get(obj, NULL, NULL, &w, &h);
-        if (w < 1) w = 1;
-        if (h < 1) h = 1;
         if (win->constrain)
           {
              int sw, sh;
@@ -648,6 +646,8 @@ _elm_win_obj_callback_resize(void *data, Evas *e __UNUSED__, Evas_Object *obj, v
              w = MIN(w, sw);
              h = MIN(h, sh);
           }
+        if (w < 1) w = 1;
+        if (h < 1) h = 1;
         evas_object_image_size_set(win->img_obj, w, h);
      }
 }
