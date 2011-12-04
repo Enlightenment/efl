@@ -315,10 +315,8 @@ extern "C" {
  * @{
  */
 
-EAPI int
- ecore_init(void);
-EAPI int
- ecore_shutdown(void);
+EAPI int ecore_init(void);
+EAPI int ecore_shutdown(void);
 
 /**
  * @}
@@ -395,23 +393,16 @@ typedef Eina_Bool (*Ecore_Task_Cb)(void *data);
  */
 typedef int (*Ecore_Select_Function)(int nfds, fd_set *readfds, fd_set *writefds, fd_set *exceptfds, struct timeval *timeout);
 
-EAPI void
-ecore_main_loop_iterate(void);
+EAPI void ecore_main_loop_iterate(void);
 
-EAPI void
- ecore_main_loop_select_func_set(Ecore_Select_Function func);
-EAPI Ecore_Select_Function
- ecore_main_loop_select_func_get(void);
+EAPI void ecore_main_loop_select_func_set(Ecore_Select_Function func);
+EAPI Ecore_Select_Function ecore_main_loop_select_func_get(void);
 
-EAPI Eina_Bool
- ecore_main_loop_glib_integrate(void);
-EAPI void
- ecore_main_loop_glib_always_integrate_disable(void);
+EAPI Eina_Bool ecore_main_loop_glib_integrate(void);
+EAPI void ecore_main_loop_glib_always_integrate_disable(void);
 
-EAPI void
- ecore_main_loop_begin(void);
-EAPI void
- ecore_main_loop_quit(void);
+EAPI void ecore_main_loop_begin(void);
+EAPI void ecore_main_loop_quit(void);
 
 /**
  * @typedef Ecore_Cb Ecore_Cb
@@ -441,9 +432,7 @@ typedef void *(*Ecore_Data_Cb)(void *data);
  * in the thread, it is owned by the main loop and your callback should take
  * care of freeing it if necessary.
  */
-EAPI void
-ecore_main_loop_thread_safe_call_async(Ecore_Cb callback,
-                                       void *data);
+EAPI void ecore_main_loop_thread_safe_call_async(Ecore_Cb callback, void *data);
 
 /**
  * @brief Call callback synchronously in the main loop.
@@ -460,9 +449,7 @@ ecore_main_loop_thread_safe_call_async(Ecore_Cb callback,
  * Remember this function will block until the callback is executed in the
  * main loop. It can take time and you have no guaranty about the timeline.
  */
-EAPI void *
-ecore_main_loop_thread_safe_call_sync(Ecore_Data_Cb callback,
-                                      void *data);
+EAPI void *ecore_main_loop_thread_safe_call_sync(Ecore_Data_Cb callback, void *data);
 
 /**
  * @brief This function suspend the main loop in a know state
@@ -482,8 +469,7 @@ ecore_main_loop_thread_safe_call_sync(Ecore_Data_Cb callback,
  * We still advise you, when possible, to use ecore_main_loop_thread_safe_call_async()
  * as it will not block the thread nor the main loop.
  */
-EAPI int
-ecore_thread_main_loop_begin(void);
+EAPI int ecore_thread_main_loop_begin(void);
 
 /**
  * @brief Unlock the main loop.
@@ -496,8 +482,7 @@ ecore_thread_main_loop_begin(void);
  * After a call to ecore_thread_main_loop_begin(), you need to absolutly
  * call ecore_thread_main_loop_end(), or you application will stay frozen.
  */
-EAPI int
-ecore_thread_main_loop_end(void);
+EAPI int ecore_thread_main_loop_end(void);
 
 /**
  * @}
@@ -631,37 +616,17 @@ struct _Ecore_Event_Signal_Realtime    /** Realtime event */
 #endif
 };
 
-EAPI Ecore_Event_Handler *
-ecore_event_handler_add(int type,
-                        Ecore_Event_Handler_Cb func,
-                        const void *data);
-EAPI void *
- ecore_event_handler_del(Ecore_Event_Handler *event_handler);
-EAPI Ecore_Event *
- ecore_event_add(int type,
-                void *ev,
-                Ecore_End_Cb func_free,
-                void *data);
-EAPI void *
- ecore_event_del(Ecore_Event *event);
-EAPI void *
- ecore_event_handler_data_get(Ecore_Event_Handler *eh);
-EAPI void *
- ecore_event_handler_data_set(Ecore_Event_Handler *eh,
-                             const void *data);
-EAPI int
- ecore_event_type_new(void);
-EAPI Ecore_Event_Filter *
- ecore_event_filter_add(Ecore_Data_Cb func_start,
-                       Ecore_Filter_Cb func_filter,
-                       Ecore_End_Cb func_end,
-                       const void *data);
-EAPI void *
- ecore_event_filter_del(Ecore_Event_Filter *ef);
-EAPI int
- ecore_event_current_type_get(void);
-EAPI void *
- ecore_event_current_event_get(void);
+EAPI Ecore_Event_Handler *ecore_event_handler_add(int type, Ecore_Event_Handler_Cb func, const void *data);
+EAPI void *ecore_event_handler_del(Ecore_Event_Handler *event_handler);
+EAPI Ecore_Event *ecore_event_add(int type, void *ev, Ecore_End_Cb func_free, void *data);
+EAPI void *ecore_event_del(Ecore_Event *event);
+EAPI void *ecore_event_handler_data_get(Ecore_Event_Handler *eh);
+EAPI void *ecore_event_handler_data_set(Ecore_Event_Handler *eh, const void *data);
+EAPI int ecore_event_type_new(void);
+EAPI Ecore_Event_Filter *ecore_event_filter_add(Ecore_Data_Cb func_start, Ecore_Filter_Cb func_filter, Ecore_End_Cb func_end, const void *data);
+EAPI void *ecore_event_filter_del(Ecore_Event_Filter *ef);
+EAPI int ecore_event_current_type_get(void);
+EAPI void *ecore_event_current_event_get(void);
 
 /**
  * @}
@@ -702,11 +667,11 @@ typedef enum _Ecore_Exe_Flags Ecore_Exe_Flags;
 
 enum _Ecore_Exe_Win32_Priority
 {
-   ECORE_EXE_WIN32_PRIORITY_IDLE,     /**< Idle priority, for monitoring the system */
-   ECORE_EXE_WIN32_PRIORITY_BELOW_NORMAL,     /**< Below default priority */
-   ECORE_EXE_WIN32_PRIORITY_NORMAL,     /**< Default priority */
-   ECORE_EXE_WIN32_PRIORITY_ABOVE_NORMAL,     /**< Above default priority */
-   ECORE_EXE_WIN32_PRIORITY_HIGH,     /**< High priority, use with care as other threads in the system will not get processor time */
+   ECORE_EXE_WIN32_PRIORITY_IDLE, /**< Idle priority, for monitoring the system */
+   ECORE_EXE_WIN32_PRIORITY_BELOW_NORMAL, /**< Below default priority */
+   ECORE_EXE_WIN32_PRIORITY_NORMAL, /**< Default priority */
+   ECORE_EXE_WIN32_PRIORITY_ABOVE_NORMAL, /**< Above default priority */
+   ECORE_EXE_WIN32_PRIORITY_HIGH, /**< High priority, use with care as other threads in the system will not get processor time */
    ECORE_EXE_WIN32_PRIORITY_REALTIME     /**< Realtime priority, should be almost never used as it can interrupt system threads that manage mouse input, keyboard input, and background disk flushing */
 };
 typedef enum _Ecore_Exe_Win32_Priority Ecore_Exe_Win32_Priority;
@@ -759,72 +724,32 @@ struct _Ecore_Exe_Event_Data    /** Data from a child process event */
    Ecore_Exe_Event_Data_Line *lines; /**< an array of line data if line buffered, the last one has it's line member set to NULL */
 };
 
-EAPI void
- ecore_exe_run_priority_set(int pri);
-EAPI int
- ecore_exe_run_priority_get(void);
-EAPI Ecore_Exe *
- ecore_exe_run(const char *exe_cmd,
-              const void *data);
-EAPI Ecore_Exe *
-ecore_exe_pipe_run(const char *exe_cmd,
-                   Ecore_Exe_Flags flags,
-                   const void *data);
-EAPI void
-ecore_exe_callback_pre_free_set(Ecore_Exe *exe,
-                                Ecore_Exe_Cb func);
-EAPI Eina_Bool
-ecore_exe_send(Ecore_Exe *exe,
-               const void *data,
-               int size);
-EAPI void
- ecore_exe_close_stdin(Ecore_Exe *exe);
-EAPI void
- ecore_exe_auto_limits_set(Ecore_Exe *exe,
-                          int start_bytes,
-                          int end_bytes,
-                          int start_lines,
-                          int end_lines);
-EAPI Ecore_Exe_Event_Data *
-ecore_exe_event_data_get(Ecore_Exe *exe,
-                         Ecore_Exe_Flags flags);
-EAPI void
- ecore_exe_event_data_free(Ecore_Exe_Event_Data *data);
-EAPI void *
- ecore_exe_free(Ecore_Exe *exe);
-EAPI pid_t
- ecore_exe_pid_get(const Ecore_Exe *exe);
-EAPI void
- ecore_exe_tag_set(Ecore_Exe *exe,
-                  const char *tag);
-EAPI const char *
- ecore_exe_tag_get(const Ecore_Exe *exe);
-EAPI const char *
- ecore_exe_cmd_get(const Ecore_Exe *exe);
-EAPI void *
- ecore_exe_data_get(const Ecore_Exe *exe);
-EAPI void *
- ecore_exe_data_set(Ecore_Exe *exe,
-                   void *data);
-EAPI Ecore_Exe_Flags
- ecore_exe_flags_get(const Ecore_Exe *exe);
-EAPI void
- ecore_exe_pause(Ecore_Exe *exe);
-EAPI void
- ecore_exe_continue(Ecore_Exe *exe);
-EAPI void
- ecore_exe_interrupt(Ecore_Exe *exe);
-EAPI void
- ecore_exe_quit(Ecore_Exe *exe);
-EAPI void
- ecore_exe_terminate(Ecore_Exe *exe);
-EAPI void
- ecore_exe_kill(Ecore_Exe *exe);
-EAPI void
- ecore_exe_signal(Ecore_Exe *exe,
-                 int num);
-EAPI void
-ecore_exe_hup(Ecore_Exe *exe);
+EAPI void ecore_exe_run_priority_set(int pri);
+EAPI int ecore_exe_run_priority_get(void);
+EAPI Ecore_Exe *ecore_exe_run(const char *exe_cmd, const void *data);
+EAPI Ecore_Exe *ecore_exe_pipe_run(const char *exe_cmd, Ecore_Exe_Flags flags, const void *data);
+EAPI void ecore_exe_callback_pre_free_set(Ecore_Exe *exe, Ecore_Exe_Cb func);
+EAPI Eina_Bool ecore_exe_send(Ecore_Exe *exe, const void *data, int size);
+EAPI void ecore_exe_close_stdin(Ecore_Exe *exe);
+EAPI void ecore_exe_auto_limits_set(Ecore_Exe *exe, int start_bytes, int end_bytes, int start_lines, int end_lines);
+EAPI Ecore_Exe_Event_Data *ecore_exe_event_data_get(Ecore_Exe *exe, Ecore_Exe_Flags flags);
+EAPI void ecore_exe_event_data_free(Ecore_Exe_Event_Data *data);
+EAPI void *ecore_exe_free(Ecore_Exe *exe);
+EAPI pid_t ecore_exe_pid_get(const Ecore_Exe *exe);
+EAPI void ecore_exe_tag_set(Ecore_Exe *exe, const char *tag);
+EAPI const char *ecore_exe_tag_get(const Ecore_Exe *exe);
+EAPI const char *ecore_exe_cmd_get(const Ecore_Exe *exe);
+EAPI void *ecore_exe_data_get(const Ecore_Exe *exe);
+EAPI void *ecore_exe_data_set(Ecore_Exe *exe, void *data);
+EAPI Ecore_Exe_Flags ecore_exe_flags_get(const Ecore_Exe *exe);
+EAPI void ecore_exe_pause(Ecore_Exe *exe);
+EAPI void ecore_exe_continue(Ecore_Exe *exe);
+EAPI void ecore_exe_interrupt(Ecore_Exe *exe);
+EAPI void ecore_exe_quit(Ecore_Exe *exe);
+EAPI void ecore_exe_terminate(Ecore_Exe *exe);
+EAPI void ecore_exe_kill(Ecore_Exe *exe);
+EAPI void ecore_exe_signal(Ecore_Exe *exe, int num);
+EAPI void ecore_exe_hup(Ecore_Exe *exe);
 
 /**
  * @}
@@ -839,7 +764,7 @@ ecore_exe_hup(Ecore_Exe *exe);
  * for data available for reading, for the availability to write
  * without blocking, and for errors on the file descriptor.
  *
- * ecore_main_fd_handler_add() is used to setup a handler for a
+ *ecore_main_fd_handler_add() is used to setup a handler for a
  * given file descriptor. This file descriptor can be the standard
  * input, a network socket, a stream received through some driver
  * of a hardware decoder, etc. Thus it can contain errors, like a
@@ -888,34 +813,15 @@ typedef void (*Ecore_Fd_Prep_Cb)(void *data, Ecore_Fd_Handler *fd_handler);
  */
 typedef Eina_Bool (*Ecore_Win32_Handle_Cb)(void *data, Ecore_Win32_Handler *wh);
 
-EAPI Ecore_Fd_Handler *
-ecore_main_fd_handler_add(int fd,
-                          Ecore_Fd_Handler_Flags flags,
-                          Ecore_Fd_Cb func,
-                          const void *data,
-                          Ecore_Fd_Cb buf_func,
-                          const void *buf_data);
-EAPI void
-ecore_main_fd_handler_prepare_callback_set(Ecore_Fd_Handler *fd_handler,
-                                           Ecore_Fd_Prep_Cb func,
-                                           const void *data);
-EAPI void *
- ecore_main_fd_handler_del(Ecore_Fd_Handler *fd_handler);
-EAPI int
- ecore_main_fd_handler_fd_get(Ecore_Fd_Handler *fd_handler);
-EAPI Eina_Bool
- ecore_main_fd_handler_active_get(Ecore_Fd_Handler *fd_handler,
-                                 Ecore_Fd_Handler_Flags flags);
-EAPI void
-ecore_main_fd_handler_active_set(Ecore_Fd_Handler *fd_handler,
-                                 Ecore_Fd_Handler_Flags flags);
+EAPI Ecore_Fd_Handler *ecore_main_fd_handler_add(int fd, Ecore_Fd_Handler_Flags flags, Ecore_Fd_Cb func, const void *data, Ecore_Fd_Cb buf_func, const void *buf_data);
+EAPI void ecore_main_fd_handler_prepare_callback_set(Ecore_Fd_Handler *fd_handler, Ecore_Fd_Prep_Cb func, const void *data);
+EAPI void *ecore_main_fd_handler_del(Ecore_Fd_Handler *fd_handler);
+EAPI int ecore_main_fd_handler_fd_get(Ecore_Fd_Handler *fd_handler);
+EAPI Eina_Bool ecore_main_fd_handler_active_get(Ecore_Fd_Handler *fd_handler, Ecore_Fd_Handler_Flags flags);
+EAPI void ecore_main_fd_handler_active_set(Ecore_Fd_Handler *fd_handler, Ecore_Fd_Handler_Flags flags);
 
-EAPI Ecore_Win32_Handler *
-ecore_main_win32_handler_add(void *h,
-                             Ecore_Win32_Handle_Cb func,
-                             const void *data);
-EAPI void *
-ecore_main_win32_handler_del(Ecore_Win32_Handler *win32_handler);
+EAPI Ecore_Win32_Handler *ecore_main_win32_handler_add(void *h, Ecore_Win32_Handle_Cb func, const void *data);
+EAPI void *ecore_main_win32_handler_del(Ecore_Win32_Handler *win32_handler);
 
 /**
  * @}
@@ -946,21 +852,11 @@ typedef enum _Ecore_Poller_Type Ecore_Poller_Type;
 
 typedef struct _Ecore_Poller    Ecore_Poller; /**< A handle for pollers */
 
-EAPI void
-ecore_poller_poll_interval_set(Ecore_Poller_Type type,
-                               double poll_time);
-EAPI double
- ecore_poller_poll_interval_get(Ecore_Poller_Type type);
-EAPI Eina_Bool
- ecore_poller_poller_interval_set(Ecore_Poller *poller,
-                                 int interval);
-EAPI int
- ecore_poller_poller_interval_get(Ecore_Poller *poller);
-EAPI Ecore_Poller *
- ecore_poller_add(Ecore_Poller_Type type,
-                 int interval,
-                 Ecore_Task_Cb func,
-                 const void *data);
+EAPI void ecore_poller_poll_interval_set(Ecore_Poller_Type type, double poll_time);
+EAPI double ecore_poller_poll_interval_get(Ecore_Poller_Type type);
+EAPI Eina_Bool ecore_poller_poller_interval_set(Ecore_Poller *poller, int interval);
+EAPI int ecore_poller_poller_interval_get(Ecore_Poller *poller);
+EAPI Ecore_Poller *ecore_poller_add(Ecore_Poller_Type type, int interval, Ecore_Task_Cb func, const void *data);
 EAPI void *ecore_poller_del(Ecore_Poller *poller);
 
 /**
@@ -984,14 +880,14 @@ EAPI void *ecore_poller_del(Ecore_Poller *poller);
  *    ... do some more animating ...
  * }
  * ...
- * ecore_animator_timeline_add(2, _do_animation, my_evas_object);
+ *ecore_animator_timeline_add(2, _do_animation, my_evas_object);
  * @endcode
  * In the sample above we create an animation to move
  * @c my_evas_object from position (0,0) to (100,100) in 2 seconds.
  *
  * If your animation will run for an unspecified amount of time you
  * can use ecore_animator_add(), which is like using
- * ecore_timer_add() with the interval being the
+ *ecore_timer_add() with the interval being the
  * @ref ecore_animator_frametime_set "framerate". Note that this has
  * tangible benefits to creating a timer for each animation in terms
  * of performance.
@@ -1057,8 +953,7 @@ typedef Eina_Bool (*Ecore_Timeline_Cb)(void *data, double pos);
  * @see ecore_animator_timeline_add()
  * @see ecore_animator_frametime_set()
  */
-EAPI Ecore_Animator *ecore_animator_add(Ecore_Task_Cb func,
-                                        const void *data);
+EAPI Ecore_Animator *ecore_animator_add(Ecore_Task_Cb func, const void *data);
 /**
  * @brief Add a animator that runs for a limited time
  *
@@ -1086,10 +981,7 @@ EAPI Ecore_Animator *ecore_animator_add(Ecore_Task_Cb func,
  * @see ecore_animator_pos_map()
  * @since 1.1.0
  */
-EAPI Ecore_Animator *
-ecore_animator_timeline_add(double runtime,
-                            Ecore_Timeline_Cb func,
-                            const void *data);
+EAPI Ecore_Animator *ecore_animator_timeline_add(double runtime, Ecore_Timeline_Cb func, const void *data);
 /**
  * @brief Delete the specified animator from the animator list.
  *
@@ -1103,8 +995,7 @@ ecore_animator_timeline_add(double runtime,
  * is invalid and should not be used again. It will not get called again after
  * deletion.
  */
-EAPI void *
-ecore_animator_del(Ecore_Animator *animator);
+EAPI void *ecore_animator_del(Ecore_Animator *animator);
 /**
  * @brief Suspend the specified animator.
  *
@@ -1115,12 +1006,11 @@ ecore_animator_del(Ecore_Animator *animator);
  *
  * @warning Freezing an animator doesn't freeze accounting of how long that
  * animator has been running. Therefore if the animator was created with
- * ecore_animator_timeline_add() the @p pos argument given to the callback
+ *ecore_animator_timeline_add() the @p pos argument given to the callback
  * will increase as if the animator hadn't been frozen and the animator may
  * have it's execution halted if @p runtime elapsed.
  */
-EAPI void
-ecore_animator_freeze(Ecore_Animator *animator);
+EAPI void ecore_animator_freeze(Ecore_Animator *animator);
 /**
  * @brief Restore execution of the specified animator.
  *
@@ -1129,8 +1019,7 @@ ecore_animator_freeze(Ecore_Animator *animator);
  * The specified @p animator will be put back in the set of animators that are
  * executed during main loop.
  */
-EAPI void
-ecore_animator_thaw(Ecore_Animator *animator);
+EAPI void ecore_animator_thaw(Ecore_Animator *animator);
 /**
  * @brief Set the animator call interval in seconds.
  *
@@ -1144,8 +1033,7 @@ ecore_animator_thaw(Ecore_Animator *animator);
  *
  * @note The default @p frametime value is 1/30th of a second.
  */
-EAPI void
-ecore_animator_frametime_set(double frametime);
+EAPI void ecore_animator_frametime_set(double frametime);
 /**
  * @brief Get the animator call interval in seconds.
  *
@@ -1155,8 +1043,7 @@ ecore_animator_frametime_set(double frametime);
  *
  * @see ecore_animator_frametime_set()
  */
-EAPI double
-ecore_animator_frametime_get(void);
+EAPI double ecore_animator_frametime_get(void);
 /**
  * @brief Maps an input position from 0.0 to 1.0 along a timeline to a
  * position in a different curve.
@@ -1217,11 +1104,7 @@ ecore_animator_frametime_get(void);
  *
  * @since 1.1.0
  */
-EAPI double
-ecore_animator_pos_map(double pos,
-                       Ecore_Pos_Map map,
-                       double v1,
-                       double v2);
+EAPI double ecore_animator_pos_map(double pos, Ecore_Pos_Map map, double v1, double v2);
 /**
  * @brief Set the source of animator ticks for the mainloop
  *
@@ -1238,14 +1121,13 @@ ecore_animator_pos_map(double pos,
  * ECORE_ANIMATOR_SOURCE_CUSTOM and then drive it yourself based on some input
  * tick source (like another application via ipc, some vertical blanking
  * interrupt interrupt etc.) using
- * ecore_animator_custom_source_tick_begin_callback_set() and
- * ecore_animator_custom_source_tick_end_callback_set() to set the functions
+ *ecore_animator_custom_source_tick_begin_callback_set() and
+ *ecore_animator_custom_source_tick_end_callback_set() to set the functions
  * that will be called to start and stop the ticking source, which when it
  * gets a "tick" should call ecore_animator_custom_tick() to make the "tick" over 1
  * frame.
  */
-EAPI void
-ecore_animator_source_set(Ecore_Animator_Source source);
+EAPI void ecore_animator_source_set(Ecore_Animator_Source source);
 /**
  * @brief Get the animator source currently set.
  *
@@ -1255,8 +1137,7 @@ ecore_animator_source_set(Ecore_Animator_Source source);
  *
  * @see ecore_animator_source_set()
  */
-EAPI Ecore_Animator_Source
-ecore_animator_source_get(void);
+EAPI Ecore_Animator_Source ecore_animator_source_get(void);
 /**
  * @brief Set the function that begins a custom animator tick source
  *
@@ -1266,7 +1147,7 @@ ecore_animator_source_get(void);
  * The Ecore Animator infrastructure handles tracking if animators are needed
  * or not and which ones need to be called and when, but when the tick source
  * is custom, you have to provide a tick source by calling
- * ecore_animator_custom_tick() to indicate a frame tick happened. In order
+ *ecore_animator_custom_tick() to indicate a frame tick happened. In order
  * to allow the source of ticks to be dynamically enabled or disabled as
  * needed, the @p func when set is called to enable the tick source to
  * produce tick events that call ecore_animator_custom_tick(). If @p func
@@ -1276,9 +1157,7 @@ ecore_animator_source_get(void);
  * @see ecore_animator_custom_source_tick_end_callback_set()
  * @see ecore_animator_custom_tick()
  */
-EAPI void
-ecore_animator_custom_source_tick_begin_callback_set(Ecore_Cb func,
-                                                     const void *data);
+EAPI void ecore_animator_custom_source_tick_begin_callback_set(Ecore_Cb func, const void *data);
 /**
  * @brief Set the function that ends a custom animator tick source
  *
@@ -1286,18 +1165,16 @@ ecore_animator_custom_source_tick_begin_callback_set(Ecore_Cb func,
  * @param data The data passed to the tick end function as its parameter
  *
  * This function is a matching pair to the function set by
- * ecore_animator_custom_source_tick_begin_callback_set() and is called
+ *ecore_animator_custom_source_tick_begin_callback_set() and is called
  * when ticking is to stop. If @p func is NULL then no function will be
  * called to stop ticking. For more information please see
- * ecore_animator_custom_source_tick_begin_callback_set().
+ *ecore_animator_custom_source_tick_begin_callback_set().
  *
  * @see ecore_animator_source_set()
  * @see ecore_animator_custom_source_tick_begin_callback_set()
  * @see ecore_animator_custom_tick()
  */
-EAPI void
-ecore_animator_custom_source_tick_end_callback_set(Ecore_Cb func,
-                                                   const void *data);
+EAPI void ecore_animator_custom_source_tick_end_callback_set(Ecore_Cb func, const void *data);
 /**
  * @brief Trigger a custom animator tick
  *
@@ -1311,8 +1188,7 @@ ecore_animator_custom_source_tick_end_callback_set(Ecore_Cb func,
  * @see ecore_animator_custom_source_tick_begin_callback_set
  * @see ecore_animator_custom_source_tick_end_callback_set()()
  */
-EAPI void
-ecore_animator_custom_tick(void);
+EAPI void ecore_animator_custom_tick(void);
 
 /**
  * @}
@@ -1338,43 +1214,22 @@ ecore_animator_custom_tick(void);
 
 typedef struct _Ecore_Timer Ecore_Timer; /**< A handle for timers */
 
-EAPI double
- ecore_time_get(void);
-EAPI double
- ecore_time_unix_get(void);
-EAPI double
- ecore_loop_time_get(void);
+EAPI double ecore_time_get(void);
+EAPI double ecore_time_unix_get(void);
+EAPI double ecore_loop_time_get(void);
 
-EAPI Ecore_Timer *
-ecore_timer_add(double in,
-                Ecore_Task_Cb func,
-                const void *data);
-EAPI Ecore_Timer *
-ecore_timer_loop_add(double in,
-                     Ecore_Task_Cb func,
-                     const void *data);
-EAPI void *
- ecore_timer_del(Ecore_Timer *timer);
-EAPI void
- ecore_timer_interval_set(Ecore_Timer *timer,
-                         double in);
-EAPI double
- ecore_timer_interval_get(Ecore_Timer *timer);
-EAPI void
- ecore_timer_freeze(Ecore_Timer *timer);
-EAPI void
- ecore_timer_thaw(Ecore_Timer *timer);
-EAPI void
- ecore_timer_delay(Ecore_Timer *timer,
-                  double add);
-EAPI double
- ecore_timer_pending_get(Ecore_Timer *timer);
-EAPI double
- ecore_timer_precision_get(void);
-EAPI void
- ecore_timer_precision_set(double precision);
-EAPI char *
- ecore_timer_dump(void);
+EAPI Ecore_Timer *ecore_timer_add(double in, Ecore_Task_Cb func, const void *data);
+EAPI Ecore_Timer *ecore_timer_loop_add(double in, Ecore_Task_Cb func, const void *data);
+EAPI void *ecore_timer_del(Ecore_Timer *timer);
+EAPI void ecore_timer_interval_set(Ecore_Timer *timer, double in);
+EAPI double ecore_timer_interval_get(Ecore_Timer *timer);
+EAPI void ecore_timer_freeze(Ecore_Timer *timer);
+EAPI void ecore_timer_thaw(Ecore_Timer *timer);
+EAPI void ecore_timer_delay(Ecore_Timer *timer, double add);
+EAPI double ecore_timer_pending_get(Ecore_Timer *timer);
+EAPI double ecore_timer_precision_get(void);
+EAPI void ecore_timer_precision_set(double precision);
+EAPI char *ecore_timer_dump(void);
 
 /**
  * @}
@@ -1443,9 +1298,7 @@ typedef struct _Ecore_Idle_Exiter  Ecore_Idle_Exiter; /**< A handle for idle exi
  *
  * Idlers are useful for progressively prossessing data without blocking.
  */
-EAPI Ecore_Idler *
-ecore_idler_add(Ecore_Task_Cb func,
-                const void *data);
+EAPI Ecore_Idler *ecore_idler_add(Ecore_Task_Cb func, const void *data);
 
 /**
  * Delete an idler callback from the list to be executed.
@@ -1453,23 +1306,14 @@ ecore_idler_add(Ecore_Task_Cb func,
  * @return The data pointer passed to the idler callback on success.  NULL
  *         otherwise.
  */
-EAPI void *
-ecore_idler_del(Ecore_Idler *idler);
+EAPI void *ecore_idler_del(Ecore_Idler *idler);
 
-EAPI Ecore_Idle_Enterer *
-ecore_idle_enterer_add(Ecore_Task_Cb func,
-                       const void *data);
-EAPI Ecore_Idle_Enterer *
-ecore_idle_enterer_before_add(Ecore_Task_Cb func,
-                              const void *data);
-EAPI void *
-ecore_idle_enterer_del(Ecore_Idle_Enterer *idle_enterer);
+EAPI Ecore_Idle_Enterer *ecore_idle_enterer_add(Ecore_Task_Cb func, const void *data);
+EAPI Ecore_Idle_Enterer *ecore_idle_enterer_before_add(Ecore_Task_Cb func, const void *data);
+EAPI void *ecore_idle_enterer_del(Ecore_Idle_Enterer *idle_enterer);
 
-EAPI Ecore_Idle_Exiter *
-ecore_idle_exiter_add(Ecore_Task_Cb func,
-                      const void *data);
-EAPI void *
-ecore_idle_exiter_del(Ecore_Idle_Exiter *idle_exiter);
+EAPI Ecore_Idle_Exiter *ecore_idle_exiter_add(Ecore_Task_Cb func, const void *data);
+EAPI void *ecore_idle_exiter_del(Ecore_Idle_Exiter *idle_exiter);
 
 /**
  * @}
@@ -1525,7 +1369,7 @@ ecore_idle_exiter_del(Ecore_Idle_Exiter *idle_exiter);
  *
  * The worker function, that's the one running in the thread, also receives
  * an ::Ecore_Thread handler that can be used with ecore_thread_cancel() and
- * ecore_thread_check(), sharing the flag with the main loop. But this
+ *ecore_thread_check(), sharing the flag with the main loop. But this
  * handler is also associated with the thread where the function is running.
  * This has strong implications when working with thread local data.
  *
@@ -1611,7 +1455,7 @@ typedef void (*Ecore_Thread_Notify_Cb)(void *data, Ecore_Thread *thread, void *m
  * so here it's safe to use anything from the EFL freely.
  *
  * The thread can also be cancelled before its completion calling
- * ecore_thread_cancel(), either from the main thread or @p func_blocking.
+ *ecore_thread_cancel(), either from the main thread or @p func_blocking.
  * In this case, @p func_cancel will be called, also from the main thread
  * to inform of this happening. If the thread could not be created, this
  * function will be called and it's @c thread parameter will be NULL. It's
@@ -1636,11 +1480,7 @@ typedef void (*Ecore_Thread_Notify_Cb)(void *data, Ecore_Thread *thread, void *m
  * @see ecore_thread_reschedule()
  * @see ecore_thread_max_set()
  */
-EAPI Ecore_Thread *
-ecore_thread_run(Ecore_Thread_Cb func_blocking,
-                 Ecore_Thread_Cb func_end,
-                 Ecore_Thread_Cb func_cancel,
-                 const void *data);
+EAPI Ecore_Thread *ecore_thread_run(Ecore_Thread_Cb func_blocking, Ecore_Thread_Cb func_end, Ecore_Thread_Cb func_cancel, const void *data);
 /**
  * Launch a thread to run a task than can talk back to the main thread
  *
@@ -1681,13 +1521,9 @@ ecore_thread_run(Ecore_Thread_Cb func_blocking,
  * @see ecore_thread_reschedule()
  * @see ecore_thread_max_set()
  */
-EAPI Ecore_Thread *
-ecore_thread_feedback_run(Ecore_Thread_Cb func_heavy,
-                          Ecore_Thread_Notify_Cb func_notify,
-                          Ecore_Thread_Cb func_end,
-                          Ecore_Thread_Cb func_cancel,
-                          const void *data,
-                          Eina_Bool try_no_queue);
+EAPI Ecore_Thread *ecore_thread_feedback_run(Ecore_Thread_Cb func_heavy, Ecore_Thread_Notify_Cb func_notify,
+                                             Ecore_Thread_Cb func_end, Ecore_Thread_Cb func_cancel,
+                                             const void *data, Eina_Bool try_no_queue);
 /**
  * Cancel a running thread.
  *
@@ -1709,9 +1545,9 @@ ecore_thread_feedback_run(Ecore_Thread_Cb func_heavy,
  * @li The function ends and returns normally. If it hadn't been cancelled,
  * @c func_end would be called here, but instead @c func_cancel will happen.
  * @li The function returns after requesting to be rescheduled with
- * ecore_thread_reschedule().
+ *ecore_thread_reschedule().
  * @li The function is prepared to leave early by checking if
- * ecore_thread_check() returns EINA_TRUE.
+ *ecore_thread_check() returns EINA_TRUE.
  *
  * The user function can cancel itself by calling ecore_thread_cancel(), but
  * it should always use the ::Ecore_Thread handle passed to it and never
@@ -1723,8 +1559,7 @@ ecore_thread_feedback_run(Ecore_Thread_Cb func_heavy,
  *
  * @see ecore_thread_check()
  */
-EAPI Eina_Bool
-ecore_thread_cancel(Ecore_Thread *thread);
+EAPI Eina_Bool ecore_thread_cancel(Ecore_Thread *thread);
 /**
  * Checks if a thread is pending cancellation
  *
@@ -1744,8 +1579,7 @@ ecore_thread_cancel(Ecore_Thread *thread);
  *
  * @see ecore_thread_cancel()
  */
-EAPI Eina_Bool
-ecore_thread_check(Ecore_Thread *thread);
+EAPI Eina_Bool ecore_thread_check(Ecore_Thread *thread);
 /**
  * Sends data from the worker thread to the main loop
  *
@@ -1767,9 +1601,7 @@ ecore_thread_check(Ecore_Thread *thread);
  *
  * @see ecore_thread_feedback_run()
  */
-EAPI Eina_Bool
-ecore_thread_feedback(Ecore_Thread *thread,
-                      const void *msg_data);
+EAPI Eina_Bool ecore_thread_feedback(Ecore_Thread *thread, const void *msg_data);
 /**
  * Asks for the function in the thread to be called again at a later time
  *
@@ -1793,8 +1625,7 @@ ecore_thread_feedback(Ecore_Thread *thread,
  * Similarly, if the @p thread is cancelled, the reschedule will not take
  * effect.
  */
-EAPI Eina_Bool
-ecore_thread_reschedule(Ecore_Thread *thread);
+EAPI Eina_Bool ecore_thread_reschedule(Ecore_Thread *thread);
 /**
  * Gets the number of active threads running jobs
  *
@@ -1808,8 +1639,7 @@ ecore_thread_reschedule(Ecore_Thread *thread);
  * in the return of this function unless the thread creation fails and it
  * falls back to using one from the pool.
  */
-EAPI int
-ecore_thread_active_get(void);
+EAPI int ecore_thread_active_get(void);
 /**
  * Gets the number of short jobs waiting for a thread to run
  *
@@ -1818,8 +1648,7 @@ ecore_thread_active_get(void);
  * This returns the number of tasks started with ecore_thread_run() that are
  * pending, waiting for a thread to become available to run them.
  */
-EAPI int
-ecore_thread_pending_get(void);
+EAPI int ecore_thread_pending_get(void);
 /**
  * Gets the number of feedback jobs waiting for a thread to run
  *
@@ -1828,18 +1657,16 @@ ecore_thread_pending_get(void);
  * This returns the number of tasks started with ecore_thread_feedback_run()
  * that are pending, waiting for a thread to become available to run them.
  */
-EAPI int
-ecore_thread_pending_feedback_get(void);
+EAPI int ecore_thread_pending_feedback_get(void);
 /**
  * Gets the total number of pending jobs
  *
  * @return Number of pending threads running jobs
  *
  * Same as the sum of ecore_thread_pending_get() and
- * ecore_thread_pending_feedback_get().
+ *ecore_thread_pending_feedback_get().
  */
-EAPI int
-ecore_thread_pending_total_get(void);
+EAPI int ecore_thread_pending_total_get(void);
 /**
  * Gets the maximum number of threads that can run simultaneously
  *
@@ -1847,7 +1674,7 @@ ecore_thread_pending_total_get(void);
  *
  * This returns the maximum number of Ecore_Thread's that may be running at
  * the same time. If this number is reached, new jobs started by either
- * ecore_thread_run() or ecore_thread_feedback_run() will be added to the
+ *ecore_thread_run() or ecore_thread_feedback_run() will be added to the
  * respective pending queue until one of the running threads finishes its
  * task and becomes available to run a new one.
  *
@@ -1858,8 +1685,7 @@ ecore_thread_pending_total_get(void);
  * @see ecore_thread_max_set()
  * @see ecore_thread_max_reset()
  */
-EAPI int
-ecore_thread_max_get(void);
+EAPI int ecore_thread_max_get(void);
 /**
  * Sets the maximum number of threads allowed to run simultaneously
  *
@@ -1872,8 +1698,7 @@ ecore_thread_max_get(void);
  * @see ecore_thread_max_get()
  * @see ecore_thread_max_reset()
  */
-EAPI void
-ecore_thread_max_set(int num);
+EAPI void ecore_thread_max_set(int num);
 /**
  * Resets the maximum number of concurrently running threads to the default
  *
@@ -1883,8 +1708,7 @@ ecore_thread_max_set(int num);
  * @see ecore_thread_max_get()
  * @see ecore_thread_max_set()
  */
-EAPI void
-ecore_thread_max_reset(void);
+EAPI void ecore_thread_max_reset(void);
 /**
  * Gets the number of threads available for running tasks
  *
@@ -1896,8 +1720,7 @@ ecore_thread_max_reset(void);
  * changed the maximum number of running threads while other tasks are
  * running.
  */
-EAPI int
-ecore_thread_available_get(void);
+EAPI int ecore_thread_available_get(void);
 /**
  * Adds some data to a hash local to the thread
  *
@@ -1970,7 +1793,7 @@ ecore_thread_available_get(void);
  * because @p thread was terminated and the hash destroyed. This parameter
  * may be NULL, in which case @p value needs to be manually freed after
  * removing it from the hash with either ecore_thread_local_data_del() or
- * ecore_thread_local_data_set(), but it's very unlikely that this is what
+ *ecore_thread_local_data_set(), but it's very unlikely that this is what
  * you want.
  *
  * This function, and all of the others in the @c ecore_thread_local_data
@@ -1982,12 +1805,8 @@ ecore_thread_available_get(void);
  * @see ecore_thread_local_data_find()
  * @see ecore_thread_local_data_del()
  */
-EAPI Eina_Bool
-ecore_thread_local_data_add(Ecore_Thread *thread,
-                            const char *key,
-                            void *value,
-                            Eina_Free_Cb cb,
-                            Eina_Bool direct);
+EAPI Eina_Bool ecore_thread_local_data_add(Ecore_Thread *thread, const char *key, void *value,
+                                           Eina_Free_Cb cb, Eina_Bool direct);
 /**
  * Sets some data in the hash local to the given thread
  *
@@ -2015,11 +1834,7 @@ ecore_thread_local_data_add(Ecore_Thread *thread,
  * @see ecore_thread_local_data_del()
  * @see ecore_thread_local_data_find()
  */
-EAPI void *
-ecore_thread_local_data_set(Ecore_Thread *thread,
-                            const char *key,
-                            void *value,
-                            Eina_Free_Cb cb);
+EAPI void *ecore_thread_local_data_set(Ecore_Thread *thread, const char *key, void *value, Eina_Free_Cb cb);
 /**
  * Gets data stored in the hash local to the given thread
  *
@@ -2037,9 +1852,7 @@ ecore_thread_local_data_set(Ecore_Thread *thread,
  * @see ecore_thread_local_data_add()
  * @see ecore_thread_local_data_wait()
  */
-EAPI void *
-ecore_thread_local_data_find(Ecore_Thread *thread,
-                             const char *key);
+EAPI void *ecore_thread_local_data_find(Ecore_Thread *thread, const char *key);
 /**
  * Deletes from the thread's hash the data corresponding to the given key
  *
@@ -2064,9 +1877,7 @@ ecore_thread_local_data_find(Ecore_Thread *thread,
  *
  * @see ecore_thread_local_data_add()
  */
-EAPI Eina_Bool
-ecore_thread_local_data_del(Ecore_Thread *thread,
-                            const char *key);
+EAPI Eina_Bool ecore_thread_local_data_del(Ecore_Thread *thread, const char *key);
 
 /**
  * Adds some data to a hash shared by all threads
@@ -2096,7 +1907,7 @@ ecore_thread_local_data_del(Ecore_Thread *thread,
  * because Ecore Thread was shut down and the hash destroyed. This parameter
  * may be NULL, in which case @p value needs to be manually freed after
  * removing it from the hash with either ecore_thread_global_data_del() or
- * ecore_thread_global_data_set().
+ *ecore_thread_global_data_set().
  *
  * Manually freeing any data that was added to the hash with a @p cb function
  * is likely to produce a segmentation fault, or any other strange
@@ -2106,11 +1917,7 @@ ecore_thread_local_data_del(Ecore_Thread *thread,
  * @see ecore_thread_global_data_set()
  * @see ecore_thread_global_data_find()
  */
-EAPI Eina_Bool
-ecore_thread_global_data_add(const char *key,
-                             void *value,
-                             Eina_Free_Cb cb,
-                             Eina_Bool direct);
+EAPI Eina_Bool ecore_thread_global_data_add(const char *key, void *value, Eina_Free_Cb cb, Eina_Bool direct);
 /**
  * Sets some data in the hash shared by all threads
  *
@@ -2132,10 +1939,7 @@ ecore_thread_global_data_add(const char *key,
  * @see ecore_thread_global_data_del()
  * @see ecore_thread_global_data_find()
  */
-EAPI void *
-ecore_thread_global_data_set(const char *key,
-                             void *value,
-                             Eina_Free_Cb cb);
+EAPI void *ecore_thread_global_data_set(const char *key, void *value, Eina_Free_Cb cb);
 /**
  * Gets data stored in the hash shared by all threads
  *
@@ -2152,8 +1956,7 @@ ecore_thread_global_data_set(const char *key,
  * @see ecore_thread_global_data_add()
  * @see ecore_thread_global_data_wait()
  */
-EAPI void *
-ecore_thread_global_data_find(const char *key);
+EAPI void *ecore_thread_global_data_find(const char *key);
 /**
  * Deletes from the shared hash the data corresponding to the given key
  *
@@ -2176,8 +1979,7 @@ ecore_thread_global_data_find(const char *key);
  *
  * @see ecore_thread_global_data_add()
  */
-EAPI Eina_Bool
-ecore_thread_global_data_del(const char *key);
+EAPI Eina_Bool ecore_thread_global_data_del(const char *key);
 /**
  * Gets data stored in the shared hash, or wait for it if it doesn't exist
  *
@@ -2190,7 +1992,7 @@ ecore_thread_global_data_del(const char *key);
  * If there's nothing in the hash under the given @p key, the function
  * will block and wait up to @p seconds seconds for some other thread to
  * add it with either ecore_thread_global_data_add() or
- * ecore_thread_global_data_set(). If after waiting there's still no data
+ *ecore_thread_global_data_set(). If after waiting there's still no data
  * to get, NULL will be returned.
  *
  * If @p seconds is 0, then no waiting will happen and this function works
@@ -2205,9 +2007,7 @@ ecore_thread_global_data_del(const char *key);
  * @see ecore_thread_global_data_add()
  * @see ecore_thread_global_data_find()
  */
-EAPI void *
-ecore_thread_global_data_wait(const char *key,
-                              double seconds);
+EAPI void *ecore_thread_global_data_wait(const char *key, double seconds);
 
 /**
  * @}
@@ -2242,27 +2042,14 @@ typedef struct _Ecore_Pipe Ecore_Pipe; /**< A handle for pipes */
  */
 typedef void (*Ecore_Pipe_Cb)(void *data, void *buffer, unsigned int nbyte);
 
-EAPI Ecore_Pipe *
-ecore_pipe_add(Ecore_Pipe_Cb handler,
-               const void *data);
-EAPI void *
- ecore_pipe_del(Ecore_Pipe *p);
-EAPI Eina_Bool
- ecore_pipe_write(Ecore_Pipe *p,
-                 const void *buffer,
-                 unsigned int nbytes);
-EAPI void
- ecore_pipe_write_close(Ecore_Pipe *p);
-EAPI void
- ecore_pipe_read_close(Ecore_Pipe *p);
-EAPI void
- ecore_pipe_thaw(Ecore_Pipe *p);
-EAPI void
- ecore_pipe_freeze(Ecore_Pipe *p);
-EAPI int
- ecore_pipe_wait(Ecore_Pipe *p,
-                int message_count,
-                double wait);
+EAPI Ecore_Pipe *ecore_pipe_add(Ecore_Pipe_Cb handler, const void *data);
+EAPI void *ecore_pipe_del(Ecore_Pipe *p);
+EAPI Eina_Bool ecore_pipe_write(Ecore_Pipe *p, const void *buffer, unsigned int nbytes);
+EAPI void ecore_pipe_write_close(Ecore_Pipe *p);
+EAPI void ecore_pipe_read_close(Ecore_Pipe *p);
+EAPI void ecore_pipe_thaw(Ecore_Pipe *p);
+EAPI void ecore_pipe_freeze(Ecore_Pipe *p);
+EAPI int ecore_pipe_wait(Ecore_Pipe *p, int message_count, double wait);
 
 /**
  * @}
@@ -2294,11 +2081,8 @@ EAPI int
 
 typedef struct _Ecore_Job Ecore_Job;    /**< A job handle */
 
-EAPI Ecore_Job *
-ecore_job_add(Ecore_Cb func,
-              const void *data);
-EAPI void *
-ecore_job_del(Ecore_Job *job);
+EAPI Ecore_Job *ecore_job_add(Ecore_Cb func, const void *data);
+EAPI void *ecore_job_del(Ecore_Job *job);
 
 /**
  * @}
@@ -2310,14 +2094,9 @@ ecore_job_del(Ecore_Job *job);
  * @{
  */
 
-EAPI void
-ecore_app_args_set(int argc,
-                   const char **argv);
-EAPI void
-ecore_app_args_get(int *argc,
-                   char ***argv);
-EAPI void
-ecore_app_restart(void);
+EAPI void ecore_app_args_set(int argc, const char **argv);
+EAPI void ecore_app_args_get(int *argc, char ***argv);
+EAPI void ecore_app_restart(void);
 
 /**
  * @}
@@ -2331,10 +2110,8 @@ ecore_app_restart(void);
  * @{
  */
 
-EAPI void
- ecore_throttle_adjust(double amount);
-EAPI double
- ecore_throttle_get(void);
+EAPI void ecore_throttle_adjust(double amount);
+EAPI double ecore_throttle_get(void);
 
 /**
  * @}
