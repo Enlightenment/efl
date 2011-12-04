@@ -58,5 +58,9 @@
         * added eeze_disk_can_{mount,unmount,eject} to determine at runtime whether eeze
           is capable of performing disk operations
 
+2011-12-02 Carsten Haitzler (The Rasterman)
+
+        1.1.0 release
+        
 2011-12-02  Mike Blumenkrantz (discomfitor/zmike)
         * added network device api (eeze_net_*) and Eeze_Net.h header

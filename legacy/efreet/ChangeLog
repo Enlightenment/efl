@@ -98,3 +98,7 @@
 
 	* Save whether cache changed in update file, and propagate to update
 	event.
+
+2011-12-02 Carsten Haitzler (The Rasterman)
+
+        1.1.0 release

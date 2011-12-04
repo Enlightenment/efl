@@ -148,6 +148,10 @@
 	* Add new hash function eina_hash_murmur3 that should be better at
 	hashing strings.
 
+2011-12-02 Carsten Haitzler (The Rasterman)
+
+        1.1.0 release
+        
 2011-12-02  Mike Blumenkrantz (discomfitor/zmike)
 
         * Add eina_mempool_calloc for returning zeroed memory

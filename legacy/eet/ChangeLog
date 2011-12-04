@@ -107,7 +107,7 @@
 
 2008-09-25  Carsten Haitzler (The Rasterman)
 
-	1.1.0 release
+	1.5.0 release
 
 2008-10-20  Cedric BAIL
 
@@ -547,6 +547,10 @@
         noticable quality losses in the chase for speed. It will use
         IFAST for quality less than 60 when encoding
 
+2011-12-02 Carsten Haitzler (The Rasterman)
+
+        1.1.0 release
+        
 2011-12-02  Mike Blumenkrantz
 
         * added eet_file_get to return the filename of an Eet_File
