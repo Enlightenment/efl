@@ -1778,11 +1778,15 @@ elm_win_center(Evas_Object *obj, Eina_Bool h, Eina_Bool v)
    win = elm_widget_data_get(obj);
    if (!win) return;
    ecore_evas_screen_geometry_get(win->ee, NULL, NULL, &screen_w, &screen_h);
+   if ((!screen_w) || (!screen_h)) return;
    evas_object_geometry_get(obj, NULL, NULL, &win_w, &win_h);
+   if ((!win_w) || (!win_h)) return;
    if (h) nx = win_w >= screen_w ? 0 : (screen_w / 2) - (win_w / 2);
    else nx = win->screen.x;
    if (v) ny = win_h >= screen_h ? 0 : (screen_h / 2) - (win_h / 2);
    else ny = win->screen.y;
+   if (nx < 0) nx = 0;
+   if (ny < 0) ny = 0;
    evas_object_move(obj, nx, ny);
 }
 
