@@ -285,7 +285,7 @@ ecore_timer_reset(Ecore_Timer *timer)
      add = timer->pending;
    else
      add = timer->at - now;
-   _ecore_timer_delay(timer, add);
+   _ecore_timer_delay(timer, timer->in - add);
    _ecore_unlock();
 }
 
