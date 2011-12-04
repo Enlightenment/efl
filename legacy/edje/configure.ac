@@ -291,14 +291,14 @@ PKG_CHECK_MODULES([ECORE_IMF],
    [have_ecore_imf="no"])
 
 # Enable Multisense use
-want_multisense="no"
-dnl AC_ARG_ENABLE([multisense],
-dnl    [AC_HELP_STRING(
-dnl        [--enable-multisense],
-dnl        [multisense provides sound. tone and haptic effects support, [[default=disabled]]]
-dnl     )],
-dnl     [want_multisense=$enableval]
-dnl )
+want_multisense="yes"
+AC_ARG_ENABLE([multisense],
+   [AC_HELP_STRING(
+       [--enable-multisense],
+       [multisense provides sound. tone and haptic effects support, [[default=disabled]]]
+    )],
+    [want_multisense=$enableval]
+)
 AM_CONDITIONAL([ENABLE_MULTISENSE], [test "x${want_multisense}" = "xyes"])
 
 ##sndfile library
