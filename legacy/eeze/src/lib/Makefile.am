@@ -18,7 +18,7 @@ else
 endif
 
 lib_LTLIBRARIES = libeeze.la
-includes_HEADERS = Eeze.h $(MOUNT_INCLUDES)
+includes_HEADERS = Eeze.h Eeze_Net.h $(MOUNT_INCLUDES)
 includesdir = $(includedir)/eeze-@VMAJ@
 
 libeeze_la_SOURCES = \
