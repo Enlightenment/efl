@@ -1367,6 +1367,21 @@ _win_inlined_image_set(Elm_Win *win)
                                   _win_img_focus_out, win);
 }
 
+static void
+_subobj_del(Evas_Object *obj, Evas_Object *subobj, void *event_info __UNUSED__)
+{
+   Elm_Win *win = elm_widget_data_get(obj);
+   evas_object_event_callback_del_full(subobj,
+                                       EVAS_CALLBACK_CHANGED_SIZE_HINTS,
+                                       _elm_win_subobj_callback_changed_size_hints,
+                                       obj);
+   evas_object_event_callback_del_full(subobj, EVAS_CALLBACK_DEL,
+                                       _elm_win_subobj_callback_del, obj);
+   win->subobjs = eina_list_remove(win->subobjs, subobj);
+   evas_object_smart_callback_del(subobj, "win-resize-del-private-dont-use-this. seriously", (Evas_Smart_Cb)_subobj_del);
+   _elm_win_eval_subobjs(obj);
+}
+
 EAPI Evas_Object *
 elm_win_add(Evas_Object *parent, const char *name, Elm_Win_Type type)
 {
@@ -1678,6 +1693,7 @@ elm_win_resize_object_add(Evas_Object *obj, Evas_Object *subobj)
    evas_object_geometry_get(obj, NULL, NULL, &w, &h);
    evas_object_move(subobj, 0, 0);
    evas_object_resize(subobj, w, h);
+   evas_object_smart_callback_add(subobj, "win-resize-del-private-dont-use-this. seriously", (Evas_Smart_Cb)_subobj_del, obj);
    _elm_win_eval_subobjs(obj);
 }
 
