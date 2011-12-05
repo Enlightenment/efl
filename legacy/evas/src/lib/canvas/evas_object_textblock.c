@@ -4429,12 +4429,12 @@ evas_textblock_style_set(Evas_Textblock_Style *ts, const char *text)
           {
              if (!key_start)
                {
-                  if (!isspace(*p))
+		 if (!isspace((unsigned char)(*p)))
                     key_start = p;
                }
              else if (!key_stop)
                {
-                  if ((*p == '=') || (isspace(*p)))
+		 if ((*p == '=') || (isspace((unsigned char)(*p))))
                     key_stop = p;
                }
              else if (!val_start)
@@ -4723,7 +4723,7 @@ _escaped_char_get(const char *s, const char *s_end)
         int base = 10;
         s += 2; /* Skip "&#" */
 
-        if (tolower(*s) == 'x')
+        if (tolower((unsigned char)(*s)) == 'x')
           {
              s++;
              base = 16;
