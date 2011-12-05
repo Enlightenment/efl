@@ -583,6 +583,8 @@ _title_content_set(Elm_Naviframe_Item *it,
      }
    else
      {
+        if (!content) return;
+
         pair = ELM_NEW(Elm_Naviframe_Content_Item_Pair);
         if (!pair)
           {
