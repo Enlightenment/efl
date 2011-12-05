@@ -972,9 +972,9 @@ elm_widget_sub_object_del(Evas_Object *obj,
      {
         static int abort_on_warn = -1;
         ERR("removing sub object %p (%s) from parent %p (%s), "
-            "but elm-parent is different %p!",
+            "but elm-parent is different %p (%s)!",
             sobj, elm_widget_type_get(sobj), obj, elm_widget_type_get(obj),
-            sobj_parent);
+            sobj_parent, elm_widget_type_get(sobj_parent));
         if (EINA_UNLIKELY(abort_on_warn == -1))
           {
              if (getenv("ELM_ERROR_ABORT")) abort_on_warn = 1;
