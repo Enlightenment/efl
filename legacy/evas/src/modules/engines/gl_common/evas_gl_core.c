@@ -1659,7 +1659,7 @@ fpgl_glXCreateContext(Display* dpy, XVisualInfo* vis, GLXContext shareList, Bool
      {
         global_dpy = dpy;
         // Create a global context if it hasn't been created yet
-        global_ctx = _sym_glXCreateContext(dpy, vis, NULL, 1);
+        global_ctx = _sym_glXCreateContext(dpy, vis, shareList, direct);
         if (!global_ctx) 
           {
              ERR("Failed creating a glX global context for FastPath.\n");
@@ -4757,7 +4757,10 @@ gl_lib_init(void)
 #if defined (GLES_VARIETY_S3C6410) || defined (GLES_VARIETY_SGX)
    //------------------------------------------------//
    // Open EGL Library as EGL is separate
-   egl_lib_handle = dlopen("libEGL.so.1", RTLD_NOW|RTLD_GLOBAL);
+// FIXME: RTLD_GLOBAL shouldnt really be needed technically.
+   egl_lib_handle = dlopen("libEGL.so.2", RTLD_NOW|RTLD_GLOBAL);
+   if (!egl_lib_handle)
+     egl_lib_handle = dlopen("libEGL.so.1", RTLD_NOW|RTLD_GLOBAL);
    if (!egl_lib_handle)
       egl_lib_handle = dlopen("libEGL.so", RTLD_NOW|RTLD_GLOBAL);
    if (!egl_lib_handle)
@@ -4767,7 +4770,9 @@ gl_lib_init(void)
      }
 
    // use gl_lib handle for GL symbols
-   gl_lib_handle = dlopen("libGLESv2.so.1", RTLD_NOW);
+   gl_lib_handle = dlopen("libGLESv2.so.2", RTLD_NOW);
+   if (!gl_lib_handle)
+     gl_lib_handle = dlopen("libGLESv2.so.1", RTLD_NOW);
    if (!gl_lib_handle)
       gl_lib_handle = dlopen("libGLESv2.so", RTLD_NOW);
    if (!gl_lib_handle)
@@ -4782,9 +4787,15 @@ gl_lib_init(void)
 
    // use gl_lib handle for both GLX and GL symbols
    //gl_lib_handle = dlopen("/usr/lib/libGL.so", RTLD_NOW);
-   gl_lib_handle = dlopen("libGL.so.1", RTLD_NOW);
+   gl_lib_handle = dlopen("libGL.so.4", RTLD_NOW);
    if (!gl_lib_handle)
-      gl_lib_handle = dlopen("libGL.so", RTLD_NOW);
+     gl_lib_handle = dlopen("libGL.so.3", RTLD_NOW);
+   if (!gl_lib_handle)
+     gl_lib_handle = dlopen("libGL.so.2", RTLD_NOW);
+   if (!gl_lib_handle)
+     gl_lib_handle = dlopen("libGL.so.1", RTLD_NOW);
+   if (!gl_lib_handle)
+     gl_lib_handle = dlopen("libGL.so", RTLD_NOW);
    if (!gl_lib_handle)
      {
         ERR("%s\n", dlerror());
