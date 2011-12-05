@@ -285,7 +285,9 @@ _activate(Evas_Object *obj)
      {
         if (_elm_config->access_mode != ELM_ACCESS_MODE_OFF)
            _elm_access_say(E_("Clicked"));
-        evas_object_smart_callback_call(obj, SIG_CLICKED, NULL);
+        if (!elm_widget_disabled_get(obj) &&
+            !evas_object_freeze_events_get(obj))
+          evas_object_smart_callback_call(obj, SIG_CLICKED, NULL);
      }
 }
 
