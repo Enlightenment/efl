@@ -46,7 +46,7 @@ void *alloca (size_t);
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <unistd.h>
-#ifdef HAVE_MMAN_H
+#ifdef HAVE_SYS_MMAN_H
 # include <sys/mman.h>
 #endif
 #include <fcntl.h>

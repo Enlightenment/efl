@@ -371,14 +371,6 @@ if test "x${ac_cv_header_inttypes_h}" = "xyes" ; then
 fi
 AC_SUBST([EINA_CONFIGURE_HAVE_STDINT_H])
 
-if test "x${ac_cv_header_strings_h}" = "xyes" ; then
-    AC_DEFINE([HAVE_STRINGS_H], [1], [Define to 1 if you have the <strings.h> header file.])
-fi
-
-if test "x${ac_cv_header_sys_mman_h}" = "xyes" ; then
-    AC_DEFINE([HAVE_MMAN_H], [1], [Define to 1 if you have the <sys/mman.h> header file.])
-fi
-
 ### Checks for types
 
 AC_CHECK_SIZEOF([wchar_t])
