@@ -1,3 +1,5 @@
+#include "evas_common.h"
+#include "evas_private.h"
 #include <sys/types.h>
 #include <unistd.h>
 #include <stdlib.h>
@@ -6,8 +8,6 @@
 #endif
 #include <math.h>
 
-#include "evas_common.h"
-#include "evas_private.h"
 #include "../engines/common/evas_convert_color.h"
 #include "../engines/common/evas_convert_colorspace.h"
 #include "../engines/common/evas_convert_yuv.h"
