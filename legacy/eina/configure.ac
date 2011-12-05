@@ -389,7 +389,7 @@ AC_CHECK_TYPES([struct dirent], [have_dirent="yes"], [have_dirent="no"],
    [[#include <dirent.h>
    ]])
 
-if test "x${have_dirent_h}" = "xyes" ; then
+if test "x${have_dirent}" = "xyes" ; then
     EINA_CONFIGURE_HAVE_DIRENT_H="#define EINA_HAVE_DIRENT_H"
     AC_DEFINE([HAVE_DIRENT_H], [1], [Define to 1 if you have a valid <dirent.h> header file.])
 fi
