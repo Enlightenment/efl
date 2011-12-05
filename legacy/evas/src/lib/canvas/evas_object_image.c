@@ -1,7 +1,7 @@
 #include <sys/types.h>
 #include <unistd.h>
 #include <stdlib.h>
-#ifdef HAVE_MMAN_H
+#ifdef HAVE_SYS_MMAN_H
 # include <sys/mman.h>
 #endif
 #include <math.h>
@@ -211,7 +211,7 @@ _cleanup_tmpf(Evas_Object *obj)
 static void
 _create_tmpf(Evas_Object *obj, void *data, int size, char *format __UNUSED__)
 {
-#ifdef HAVE_MMAN_H
+#ifdef HAVE_SYS_MMAN_H
    Evas_Object_Image *o;
    char buf[4096];
    void *dst;

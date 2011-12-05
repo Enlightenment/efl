@@ -434,10 +434,6 @@ AC_HEADER_STDC
 AC_CHECK_HEADERS([unistd.h stdint.h sys/param.h netinet/in.h sys/mman.h])
 EFL_CHECK_PATH_MAX
 
-if test "x${ac_cv_header_sys_mman_h}" = "xyes" ; then
-     AC_DEFINE([HAVE_MMAN_H], [1], [Define to 1 if you have the <sys/mman.h> header file.])
-fi
-
 ### Checks for types
 AC_CHECK_TYPES([struct sigaction], [], [],
                [[#include <signal.h>]])
