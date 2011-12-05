@@ -145,6 +145,8 @@ struct _Widget_Data
    double            longpress_timeout; /* longpress timeout. this value comes from _elm_config by default. this can be changed by elm_genlist_longpress_timeout_set() */
    int               generation; /* a generation of genlist. when genlist is cleared, this value will be increased and a new generation will start */
 
+   Eina_Bool         requeue : 1;
+
    /* The stuff below directly come from gengrid without any thinking */
    unsigned int      nmax;
    Evas_Coord        reorder_item_x, reorder_item_y;

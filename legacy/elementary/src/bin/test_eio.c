@@ -45,7 +45,7 @@ _ls_main_cb(void *data, Eio_File *handler __UNUSED__, const char *file)
                                   eina_stringshare_add(file),
                                   NULL,
                                   ELM_GENLIST_ITEM_NONE,
-                                  (Eina_Compare_Cb) strcmp,
+                                  (Eina_Compare_Cb) strcoll,
                                   _sel_file,
                                   NULL);
 }

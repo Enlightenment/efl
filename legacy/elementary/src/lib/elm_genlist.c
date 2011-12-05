@@ -3192,8 +3192,23 @@ _item_new(Widget_Data                  *wd,
    return it;
 }
 
-static void
-_item_block_add(Widget_Data      *wd,
+static Item_Block *
+_item_block_new(Widget_Data *wd, Eina_Bool prepend)
+{
+   Item_Block *itb;
+
+   itb = calloc(1, sizeof(Item_Block));
+   if (!itb) return NULL;
+   itb->wd = wd;
+   if (prepend)
+     wd->blocks = eina_inlist_prepend(wd->blocks, EINA_INLIST_GET(itb));
+   else
+     wd->blocks = eina_inlist_append(wd->blocks, EINA_INLIST_GET(itb));
+   return itb;
+}
+
+static Eina_Bool
+_item_block_add(Widget_Data *wd,
                 Elm_Gen_Item *it)
 {
    Item_Block *itb = NULL;
@@ -3204,7 +3219,7 @@ newblock:
         if (it->item->rel)
           {
              itb = calloc(1, sizeof(Item_Block));
-             if (!itb) return;
+             if (!itb) return EINA_FALSE;
              itb->wd = wd;
              if (!it->item->rel->item->block)
                {
@@ -3241,21 +3256,14 @@ newblock:
                        itb = (Item_Block *)(wd->blocks);
                        if (itb->count >= wd->max_items_per_block)
                          {
-                            itb = calloc(1, sizeof(Item_Block));
-                            if (!itb) return;
-                            itb->wd = wd;
-                            wd->blocks =
-                              eina_inlist_prepend(wd->blocks,
-                                                  EINA_INLIST_GET(itb));
+                            itb = _item_block_new(wd, EINA_TRUE);
+                            if (!itb) return EINA_FALSE;
                          }
                     }
                   else
                     {
-                       itb = calloc(1, sizeof(Item_Block));
-                       if (!itb) return;
-                       itb->wd = wd;
-                       wd->blocks =
-                         eina_inlist_prepend(wd->blocks, EINA_INLIST_GET(itb));
+                       itb = _item_block_new(wd, EINA_TRUE);
+                       if (!itb) return EINA_FALSE;
                     }
                   itb->items = eina_list_prepend(itb->items, it);
                }
@@ -3266,21 +3274,14 @@ newblock:
                        itb = (Item_Block *)(wd->blocks->last);
                        if (itb->count >= wd->max_items_per_block)
                          {
-                            itb = calloc(1, sizeof(Item_Block));
-                            if (!itb) return;
-                            itb->wd = wd;
-                            wd->blocks =
-                              eina_inlist_append(wd->blocks,
-                                                 EINA_INLIST_GET(itb));
+                            itb = _item_block_new(wd, EINA_FALSE);
+                            if (!itb) return EINA_FALSE;
                          }
                     }
                   else
                     {
-                       itb = calloc(1, sizeof(Item_Block));
-                       if (!itb) return;
-                       itb->wd = wd;
-                       wd->blocks =
-                         eina_inlist_append(wd->blocks, EINA_INLIST_GET(itb));
+                       itb = _item_block_new(wd, EINA_FALSE);
+                       if (!itb) return EINA_FALSE;
                     }
                   itb->items = eina_list_append(itb->items, it);
                }
@@ -3288,6 +3289,19 @@ newblock:
      }
    else
      {
+        if (it->item->rel->item->queued)
+          {
+             /* NOTE: for a strange reason eina_list and eina_inlist don't have the same property
+                on sorted insertion order, so the queue is not always ordered like the item list.
+                This lead to issue where we depend on a item that is not yet created. As a quick
+                work around, we reschedule the calc of the item and stop reordering the list to
+                prevent any nasty issue to show up here.
+              */
+             wd->queue = eina_list_append(wd->queue, it);
+             wd->requeue = EINA_TRUE;
+             it->item->queued = EINA_TRUE;
+             return EINA_FALSE;
+          }
         itb = it->item->rel->item->block;
         if (!itb) goto newblock;
         if (it->item->before)
@@ -3309,32 +3323,87 @@ newblock:
      }
    if (itb->count > itb->wd->max_items_per_block)
      {
-        int newc;
         Item_Block *itb2;
         Elm_Gen_Item *it2;
+        int newc;
+        Eina_Bool done = EINA_FALSE;
 
         newc = itb->count / 2;
-        itb2 = calloc(1, sizeof(Item_Block));
-        if (!itb2) return;
-        itb2->wd = wd;
-        wd->blocks =
-          eina_inlist_append_relative(wd->blocks, EINA_INLIST_GET(itb2),
-                                      EINA_INLIST_GET(itb));
-        itb2->changed = EINA_TRUE;
-        while ((itb->count > newc) && (itb->items))
+
+        if (EINA_INLIST_GET(itb)->prev)
           {
-             Eina_List *l;
+             Item_Block *itbp = (Item_Block *)(EINA_INLIST_GET(itb)->prev);
 
-             l = eina_list_last(itb->items);
-             it2 = l->data;
-             itb->items = eina_list_remove_list(itb->items, l);
-             itb->count--;
+             if (itbp->count + newc < wd->max_items_per_block / 2)
+               {
+                  /* moving items to previous block */
+                  while ((itb->count > newc) && (itb->items))
+                    {
+                       it2 = eina_list_data_get(itb->items);
+                       itb->items = eina_list_remove_list(itb->items, itb->items);
+                       itb->count--;
 
-             itb2->items = eina_list_prepend(itb2->items, it2);
-             it2->item->block = itb2;
-             itb2->count++;
+                       itbp->items = eina_list_append(itbp->items, it2);
+                       it2->item->block = itbp;
+                       itbp->count++;
+                    }
+
+                  done = EINA_TRUE;
+               }
+          }
+
+        if (!done && EINA_INLIST_GET(itb)->next)
+          {
+             Item_Block *itbn = (Item_Block *)(EINA_INLIST_GET(itb)->next);
+
+             if (itbn->count + newc < wd->max_items_per_block / 2)
+               {
+                  /* moving items to next block */
+                  while ((itb->count > newc) && (itb->items))
+                    {
+                       Eina_List *l;
+
+                       l = eina_list_last(itb->items);
+                       it2 = eina_list_data_get(l);
+                       itb->items = eina_list_remove_list(itb->items, l);
+                       itb->count--;
+
+                       itbn->items = eina_list_prepend(itbn->items, it2);
+                       it2->item->block = itbn;
+                       itbn->count++;
+                    }
+
+                  done = EINA_TRUE;
+               }
+          }
+
+        if (!done)
+          {
+             /* moving items to new block */
+             itb2 = calloc(1, sizeof(Item_Block));
+             if (!itb2) return EINA_FALSE;
+             itb2->wd = wd;
+             wd->blocks =
+               eina_inlist_append_relative(wd->blocks, EINA_INLIST_GET(itb2),
+                                           EINA_INLIST_GET(itb));
+             itb2->changed = EINA_TRUE;
+             while ((itb->count > newc) && (itb->items))
+               {
+                  Eina_List *l;
+
+                  l = eina_list_last(itb->items);
+                  it2 = l->data;
+                  itb->items = eina_list_remove_list(itb->items, l);
+                  itb->count--;
+
+                  itb2->items = eina_list_prepend(itb2->items, it2);
+                  it2->item->block = itb2;
+                  itb2->count++;
+               }
           }
      }
+
+   return EINA_TRUE;
 }
 
 static int
@@ -3344,16 +3413,16 @@ _queue_process(Widget_Data *wd)
    Eina_Bool showme = EINA_FALSE;
    double t0, t;
 
-   t0 = ecore_time_get();
+   t0 = ecore_loop_time_get();
    //evas_event_freeze(evas_object_evas_get(wd->obj));
    for (n = 0; (wd->queue) && (n < 128); n++)
      {
         Elm_Gen_Item *it;
 
-        it = wd->queue->data;
+        it = eina_list_data_get(wd->queue);
         wd->queue = eina_list_remove_list(wd->queue, wd->queue);
         it->item->queued = EINA_FALSE;
-        _item_block_add(wd, it);
+        if (!_item_block_add(wd, it)) continue;
         if (!wd->blocks)
           _item_block_realize(it->item->block);
         t = ecore_time_get();
@@ -3417,7 +3486,7 @@ _item_queue(Widget_Data *wd,
 {
    if (it->item->queued) return;
    it->item->queued = EINA_TRUE;
-   if (cb)
+   if (cb && !wd->requeue)
      wd->queue = eina_list_sorted_insert(wd->queue, cb, it);
    else
      wd->queue = eina_list_append(wd->queue, it);
@@ -3715,6 +3784,7 @@ elm_genlist_item_direct_sorted_insert(Evas_Object                  *obj,
           {
              wd->state = eina_inlist_sorted_state_new();
              eina_inlist_sorted_state_init(wd->state, wd->items);
+             wd->requeue = EINA_FALSE;
           }
 
         if (it->group)
@@ -3741,7 +3811,7 @@ elm_genlist_item_direct_sorted_insert(Evas_Object                  *obj,
         it->item->rel->relcount++;
      }
 
-   _item_queue(wd, it, comp);
+   _item_queue(wd, it, _elm_genlist_item_list_compare);
 
    return it;
 }
