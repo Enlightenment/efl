@@ -20,6 +20,7 @@ struct _Widget_Data
    Evas_Object *box;
    Eina_Bool horizontal:1;
    Eina_Bool homogeneous:1;
+   Eina_Bool recalc:1;
 };
 
 struct _Elm_Box_Transition
@@ -674,7 +675,9 @@ elm_box_recalculate(Evas_Object *obj)
 {
    ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
-   if (!wd) return;
+   if ((!wd) || (wd->recalc)) return;
    evas_object_smart_need_recalculate_set(wd->box, EINA_TRUE);
+   wd->recalc++;
    evas_object_smart_calculate(wd->box);
+   wd->recalc--;
 }
