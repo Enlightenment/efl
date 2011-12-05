@@ -9660,7 +9660,7 @@ extern "C" {
     * This function allows a tooltip to expand beyond its parant window's canvas.
     * It will instead be limited only by the size of the display.
     */
-   EAPI Eina_Bool          elm_gengrid_item_tooltip_window_mode(Elm_Gengrid_Item *item, Eina_Bool disable);
+   EAPI Eina_Bool          elm_gengrid_item_tooltip_window_mode_set(Elm_Gengrid_Item *item, Eina_Bool disable);
    /**
     * @brief Retrieve size restriction state of an object's tooltip
     * @param item The tooltip's anchor object
@@ -9670,7 +9670,7 @@ extern "C" {
     * its parant window's canvas.
     * It will instead be limited only by the size of the display.
     */
-   EAPI Eina_Bool          elm_gengrid_item_tooltip_window_moded_get(const Elm_Gengrid_Item *item);
+   EAPI Eina_Bool          elm_gengrid_item_tooltip_window_mode_get(const Elm_Gengrid_Item *item);
    /**
     * Set the type of mouse pointer/cursor decoration to be shown,
     * when the mouse pointer is over the given gengrid widget item
@@ -17532,7 +17532,7 @@ extern "C" {
     * This function allows a tooltip to expand beyond its parant window's canvas.
     * It will instead be limited only by the size of the display.
     */
-   EAPI Eina_Bool        elm_list_item_tooltip_window_mode(Elm_List_Item *item, Eina_Bool disable) EINA_ARG_NONNULL(1);
+   EAPI Eina_Bool        elm_list_item_tooltip_window_mode_set(Elm_List_Item *item, Eina_Bool disable) EINA_ARG_NONNULL(1);
    /**
     * @brief Retrieve size restriction state of an object's tooltip
     * @param obj The tooltip's anchor object
@@ -17542,7 +17542,7 @@ extern "C" {
     * its parant window's canvas.
     * It will instead be limited only by the size of the display.
     */
-   EAPI Eina_Bool        elm_list_item_tooltip_window_moded_get(const Elm_List_Item *item) EINA_ARG_NONNULL(1);
+   EAPI Eina_Bool        elm_list_item_tooltip_window_mode_get(const Elm_List_Item *item) EINA_ARG_NONNULL(1);
 
    /**
     * Set the content to be shown in the tooltip item.
@@ -20000,7 +20000,7 @@ extern "C" {
     * This function allows a tooltip to expand beyond its parant window's canvas.
     * It will instead be limited only by the size of the display.
     */
-   EAPI Eina_Bool          elm_genlist_item_tooltip_window_mode(Elm_Genlist_Item *item, Eina_Bool disable);
+   EAPI Eina_Bool          elm_genlist_item_tooltip_window_mode_set(Elm_Genlist_Item *item, Eina_Bool disable);
    /**
     * @brief Retrieve size restriction state of an object's tooltip
     * @param item The tooltip's anchor object
@@ -20010,7 +20010,7 @@ extern "C" {
     * its parant window's canvas.
     * It will instead be limited only by the size of the display.
     */
-   EAPI Eina_Bool          elm_genlist_item_tooltip_window_moded_get(const Elm_Genlist_Item *item);
+   EAPI Eina_Bool          elm_genlist_item_tooltip_window_mode_get(const Elm_Genlist_Item *item);
    /**
     * Set the type of mouse pointer/cursor decoration to be shown,
     * when the mouse pointer is over the given genlist widget item

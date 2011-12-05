@@ -1921,17 +1921,17 @@ elm_list_item_tooltip_unset(Elm_List_Item *item)
 }
 
 EAPI Eina_Bool
-elm_list_item_tooltip_window_mode(Elm_List_Item *item, Eina_Bool disable)
+elm_list_item_tooltip_window_mode_set(Elm_List_Item *item, Eina_Bool disable)
 {
    ELM_LIST_ITEM_CHECK_DELETED_RETURN(item, EINA_FALSE);
-   return elm_widget_item_tooltip_window_mode(item, disable);
+   return elm_widget_item_tooltip_window_mode_set(item, disable);
 }
 
 EAPI Eina_Bool
-elm_list_item_tooltip_window_moded_get(const Elm_List_Item *item)
+elm_list_item_tooltip_window_mode_get(const Elm_List_Item *item)
 {
    ELM_LIST_ITEM_CHECK_DELETED_RETURN(item, EINA_FALSE);
-   return elm_widget_item_tooltip_window_moded_get(item);
+   return elm_widget_item_tooltip_window_mode_get(item);
 }
 
 EAPI void
