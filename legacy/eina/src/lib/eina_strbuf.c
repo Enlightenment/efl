@@ -162,9 +162,9 @@ eina_strbuf_insert_vprintf(Eina_Strbuf *buf,
 EAPI void
 eina_strbuf_trim(Eina_Strbuf *buf)
 {
-   char *c = buf->buf;
+   unsigned char *c = buf->buf;
 
-   while (buf->len > 0 && isspace(((unsigned char*)(buf->buf))[buf->len - 1]))
+   while (buf->len > 0 && isspace(c[buf->len - 1]))
      buf->len--;
    while (buf->len > 0 && isspace(*c))
      {
@@ -178,7 +178,7 @@ eina_strbuf_trim(Eina_Strbuf *buf)
 EAPI void
 eina_strbuf_ltrim(Eina_Strbuf *buf)
 {
-   char *c = buf->buf;
+   unsigned char *c = buf->buf;
 
    while (buf->len > 0 && isspace(*c))
      {

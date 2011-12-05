@@ -469,7 +469,25 @@ EFL_LINKER_FLAG([-fno-strict-aliasing])
 ### Checks for library functions
 AC_ISC_POSIX
 AC_FUNC_ALLOCA
-AC_CHECK_FUNCS([strlcpy dirfd openat fstatat fpathconf execvp])
+AC_CHECK_FUNCS([strlcpy openat fstatat fpathconf execvp])
+
+AC_MSG_CHECKING([dirfd])
+AC_LINK_IFELSE([
+
+#include <dirent.h>
+
+DIR *dirp;
+
+int
+main(void)
+{
+	return dirfd(dirp);
+}
+], [ AC_MSG_RESULT([yes])
+     AC_DEFINE([HAVE_DIRFD], 1, [ Define to 1 if you have the `dirfd' function or macro. ])
+   ],
+   [ AC_MSG_RESULT([no])]
+)
 
 # dlopen and dladdr
 dlopen_libs=""
