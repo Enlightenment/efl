@@ -1,5 +1,7 @@
-#include "evas_common.h"
-#include "evas_private.h"
+#ifdef HAVE_CONFIG_H
+# include "config.h"  /* so that EAPI in Evas.h is correctly defined */
+#endif
+
 #include <sys/types.h>
 #include <unistd.h>
 #include <stdlib.h>
@@ -8,6 +10,8 @@
 #endif
 #include <math.h>
 
+#include "evas_common.h"
+#include "evas_private.h"
 #include "../engines/common/evas_convert_color.h"
 #include "../engines/common/evas_convert_colorspace.h"
 #include "../engines/common/evas_convert_yuv.h"
