@@ -252,9 +252,7 @@ struct _Grid_Item
    struct {
         int x, y, w, h;
    } src, out;
-   Eina_Bool want : 1;
-   Eina_Bool download : 1;
-   Eina_Bool have : 1;
+
    Ecore_File_Download_Job *job;
    int try_num;
 };
@@ -1124,14 +1122,12 @@ grid_clear(Evas_Object *obj, Grid *g)
         //evas_object_del(gi->txt);
 
         wd->download_list = eina_list_remove(wd->download_list, gi);
-        gi->want = EINA_FALSE;
 
         if (gi->job)
           {
              DBG("DOWNLOAD abort %s", gi->file);
              ecore_file_download_abort(gi->job);
              ecore_file_remove(gi->file);
-             gi->have = EINA_FALSE;
              gi->job = NULL;
              wd->try_num--;
           }
@@ -1152,21 +1148,17 @@ grid_clear(Evas_Object *obj, Grid *g)
 static void
 _tile_update(Grid_Item *gi)
 {
-   gi->want = EINA_FALSE;
-   gi->download = EINA_FALSE;
    evas_object_image_file_set(gi->img, gi->file, NULL);
    Evas_Load_Error err = evas_object_image_load_error_get(gi->img);
    if (err != EVAS_LOAD_ERROR_NONE)
      {
         ERR("Image loading error (%s): %s", gi->file, evas_load_error_str(err));
         ecore_file_remove(gi->file);
-        gi->have = EINA_FALSE;
      }
    else
      {
         obj_rotate_zoom(gi->wd->obj, gi->img);
         evas_object_show(gi->img);
-        gi->have = EINA_TRUE;
         //evas_object_text_text_set(gi->txt, gi->file);
         //evas_object_show(gi->txt);
      }
@@ -1177,25 +1169,21 @@ _tile_downloaded(void *data, const char *file __UNUSED__, int status)
 {
    Grid_Item *gi = data;
 
-   gi->wd->download_num--;
-   gi->download = EINA_FALSE;
    gi->job = NULL;
 
-   if ((gi->want) && (status == 200))
+   if (status == 200)
      {
+        DBG("Download success from %s to %s", gi->source, gi->file);
         _tile_update(gi);
-        DBG("DOWNLOAD done %s", gi->file);
-     }
-
-   if (status != 200)
-     {
-        DBG("Download failed %s (%d) ", gi->file, status);
-        ecore_file_remove(gi->file);
-        gi->have = EINA_FALSE;
      }
    else
-     gi->wd->finish_num++;
+     {
+        DBG("Download failed from %s to %s (%d) ", gi->source, gi->file, status);
+        ecore_file_remove(gi->file);
+     }
 
+   gi->wd->finish_num++;
+   gi->wd->download_num--;
    evas_object_smart_callback_call(gi->wd->obj, SIG_DOWNLOADED, NULL);
    if (!gi->wd->download_num)
      {
@@ -1244,19 +1232,16 @@ _process_download_list(Evas_Object *obj)
                                  ww, hh,
                                  cvx, cvy, cvw, cvh))
           {
-             gi->download = EINA_FALSE;
              wd->download_list = eina_list_remove(wd->download_list, gi);
           }
      }
 
    EINA_LIST_REVERSE_FOREACH_SAFE(wd->download_list, l, ll, gi)
      {
-        if (gi->wd->download_num >= MAX_CONCURRENT_DOWNLOAD)
-          break;
+        if (gi->wd->download_num >= MAX_CONCURRENT_DOWNLOAD) break;
 
         Eina_Bool ret = ecore_file_download_full(gi->source, gi->file, _tile_downloaded, NULL, gi, &(gi->job), wd->ua);
-        if (!ret || !gi->job)
-          WRN("Can't start to download %s to %s", gi->source, gi->file);
+        if (!ret || !gi->job) ERR("Can't start to download from %s to %s", gi->source, gi->file);
         else
           {
              gi->wd->download_num++;
@@ -1274,8 +1259,7 @@ _add_download_list(Evas_Object *obj, Grid_Item *gi)
    ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
 
-   wd->download_list = eina_list_remove(wd->download_list, gi);
-   wd->download_list = eina_list_append(wd->download_list, gi);
+   if (!eina_list_data_find(wd->download_list, gi)) wd->download_list = eina_list_append(wd->download_list, gi);
    _process_download_list(obj);
 }
 
@@ -1363,33 +1347,20 @@ grid_load(Evas_Object *obj, Grid *g)
                                  ww, hh,
                                  cvx, cvy, cvw, cvh))
           {
-             if (gi->want)
+             if (ecore_file_exists(gi->file))
                {
                   evas_object_hide(gi->img);
-                  //evas_object_hide(gi->txt);
                   evas_object_image_file_set(gi->img, NULL, NULL);
-                  gi->want = EINA_FALSE;
-                  gi->have = EINA_FALSE;
-
-                  if (gi->job)
-                    {
-                       DBG("DOWNLOAD abort %s", gi->file);
-                       ecore_file_download_abort(gi->job);
-                       ecore_file_remove(gi->file);
-                       gi->job = NULL;
-                       wd->try_num--;
-                    }
-                  gi->download = EINA_FALSE;
                }
-             else if (gi->have)
+             else if (gi->job)
                {
-                  evas_object_hide(gi->img);
-                  //evas_object_hide(gi->txt);
-                  evas_object_image_preload(gi->img, 1);
-                  evas_object_image_file_set(gi->img, NULL, NULL);
-                  gi->have = EINA_FALSE;
-                  gi->want = EINA_FALSE;
+                  DBG("DOWNLOAD abort %s", gi->file);
+                  ecore_file_download_abort(gi->job);
+                  ecore_file_remove(gi->file);
+                  gi->job = NULL;
+                  wd->try_num--;
                }
+             //evas_object_hide(gi->txt);
           }
      }
    eina_iterator_free(it);
@@ -1450,14 +1421,16 @@ grid_load(Evas_Object *obj, Grid *g)
                   evas_object_pass_events_set(gi->txt, EINA_TRUE);
 */
                   eina_matrixsparse_data_idx_set(g->grid, y, x, gi);
+
+                  gi->job = NULL;
+                  gi->file = NULL;
+                  gi->source = NULL;
                }
 
-             if ((!gi->have) && (!gi->download))
+             if (!gi->job)
                {
                   char buf[PATH_MAX], buf2[PATH_MAX];
                   char *source;
-
-                  gi->want = EINA_TRUE;
 
                   snprintf(buf, sizeof(buf), DEST_DIR_PATH, wd->id, g->zoom, x);
                   if (!ecore_file_exists(buf))
@@ -1471,20 +1444,20 @@ grid_load(Evas_Object *obj, Grid *g)
                   eina_stringshare_replace(&gi->file, buf2);
                   eina_stringshare_replace(&gi->source, source);
 
-                  if ((ecore_file_exists(buf2)) || (g == eina_list_data_get(wd->grids)))
+                  if ((ecore_file_exists(gi->file)) || (g == eina_list_data_get(wd->grids)))
                     {
-                       gi->download = EINA_TRUE;
-                       if (ecore_file_exists(buf2))
-                         _tile_update(gi);
+                       if (ecore_file_exists(gi->file))
+                         {
+                           DBG("file exists: %s", gi->file);
+                           _tile_update(gi);
+                         }
                        else
-                         _add_download_list(obj, gi);
+                         {
+                            DBG("added to download list: %s", gi->file);
+                            _add_download_list(obj, gi);
+                         }
                     }
                   if (source) free(source);
-               }
-             else if (gi->have)
-               {
-                  obj_rotate_zoom(obj, gi->img);
-                  evas_object_show(gi->img);
                }
           }
      }
