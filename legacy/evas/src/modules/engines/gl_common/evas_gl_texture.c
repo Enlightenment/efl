@@ -109,7 +109,9 @@ _tex_format_index(GLuint format)
 static void
 _tex_2d(int intfmt, int w, int h, int fmt, int type)
 {
+#ifdef GL_TEXTURE_INTERNAL_FORMAT
    int intfmtret = -1;
+#endif   
    glsym_glTexImage2D(GL_TEXTURE_2D, 0, intfmt, w, h, 0, fmt, type, NULL);
    GLERR(__FUNCTION__, __FILE__, __LINE__, "");
 #ifdef GL_TEXTURE_INTERNAL_FORMAT
@@ -914,7 +916,7 @@ evas_gl_common_texture_update(Evas_GL_Texture *tex, RGBA_Image *im)
         tpix = alloca(im->cache_entry.h * sizeof(DATA32));
         pd = tpix;
         ps = im->image.data;
-        for (i = 0; i < im->cache_entry.h; i++)
+        for (i = 0; i < (int)im->cache_entry.h; i++)
           {
              *pd = *ps;
              pd++;
@@ -929,7 +931,7 @@ evas_gl_common_texture_update(Evas_GL_Texture *tex, RGBA_Image *im)
                     tpix);
         pd = tpix;
         ps = im->image.data + (im->cache_entry.w - 1);
-        for (i = 0; i < im->cache_entry.h; i++)
+        for (i = 0; i < (int)im->cache_entry.h; i++)
           {
              *pd = *ps;
              pd++;

@@ -9,7 +9,6 @@
 #define PRG_INVALID 0xffffffff
 #define GLPIPES 1
 
-static int sym_done = 0;
 int _evas_engine_GL_common_log_dom = -1;
 
 static int dbgflushnum = -1;
