@@ -138,8 +138,6 @@ extern EAPI int _evas_log_dom_global;
 # define BUILD_PTHREAD
 #endif
 
-#ifdef BUILD_PTHREAD
-
 #define LK(x)  Eina_Lock x
 #define LKI(x) eina_lock_new(&(x))
 #define LKD(x) eina_lock_free(&(x))
@@ -148,42 +146,28 @@ extern EAPI int _evas_log_dom_global;
 #define LKU(x) eina_lock_release(&(x))
 #define LKDBG(x) eina_lock_debug(&(x))
 
+/* for rwlocks */
+#define RWLK(x) Eina_RWLock x
+#define RWLKI(x) eina_rwlock_new(&(x))
+#define RWLKD(x) eina_rwlock_free(&(x))
+#define RDLKL(x) eina_rwlock_take_read(&(x))
+#define WRLKL(x) eina_rwlock_take_write(&(x))
+#define RWLKU(x) eina_rwlock_release(&(x))
+
+#ifdef BUILD_PTHREAD
+
 # define TH(x)  pthread_t x
 # define THI(x) int x
 # define TH_MAX 8
-
-/* for rwlocks */
-#define RWLK(x) pthread_rwlock_t x
-#define RWLKI(x) pthread_rwlock_init(&(x), NULL)
-#define RWLKD(x) pthread_rwlock_destroy(&(x))
-#define RDLKL(x) pthread_rwlock_rdlock(&(x))
-#define WRLKL(x) pthread_rwlock_wrlock(&(x))
-#define RWLKU(x) pthread_rwlock_unlock(&(x))
-
 
 // even though in theory having every Nth rendered line done by a different
 // thread might even out load across threads - it actually slows things down.
 //#define EVAS_SLI 1
 
 #else
-# define LK(x)
-# define LKI(x)
-# define LKD(x)
-# define LKL(x)
-# define LKT(x) 1
-# define LKU(x)
 # define TH(x)
 # define THI(x)
 # define TH_MAX 0
-# define LKDBG(x)
-
-/* for rwlocks */
-#define RWLK(x)
-#define RWLKI(x)
-#define RWLKD(x)
-#define RDLKL(x)
-#define WRLKL(x)
-#define RWLKU(x)
 
 #endif
 
