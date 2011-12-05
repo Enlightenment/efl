@@ -195,16 +195,19 @@ _smart_reconfigure(Smart_Data *sd)
 {
    if (sd->gravity_x || sd->gravity_y)
      {
+        if ((!sd->px) && (!sd->py))
+          {
+             sd->px = sd->delta_posx*sd->gravity_x;
+             sd->py = sd->delta_posy*sd->gravity_y;
+          }
         sd->delta_posx += sd->child_w - sd->prev_cw;
         sd->prev_cw = sd->child_w;
         sd->delta_posy += sd->child_h - sd->prev_ch;
         sd->prev_ch = sd->child_h;
 
-        evas_object_move(sd->child_obj,
-                         sd->x - sd->px - (sd->delta_posx*sd->gravity_x),
-                         sd->y - sd->py - (sd->delta_posy*sd->gravity_y));
-        sd->px += sd->delta_posx*sd->gravity_x;
-        sd->py += sd->delta_posy*sd->gravity_y;
+        evas_object_move(sd->child_obj, sd->x - sd->px, sd->y - sd->py);
+        sd->px = sd->delta_posx*sd->gravity_x;
+        sd->py = sd->delta_posy*sd->gravity_y;
 
      }
    else
