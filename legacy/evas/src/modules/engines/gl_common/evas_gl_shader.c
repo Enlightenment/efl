@@ -770,26 +770,26 @@ gl_compile_link_error(GLuint target, const char *action)
    char *logtxt;
 
    /* Shader info log */
-   glGetShaderiv(target, GL_INFO_LOG_LENGTH, &loglen);
+   glsym_glGetShaderiv(target, GL_INFO_LOG_LENGTH, &loglen);
    if (loglen > 0)
      {
         logtxt = calloc(loglen, sizeof(char));
         if (logtxt)
           {
-             glGetShaderInfoLog(target, loglen, &chars, logtxt);
+             glsym_glGetShaderInfoLog(target, loglen, &chars, logtxt);
              ERR("Failed to %s: %s", action, logtxt);
              free(logtxt);
           }
      }
 
    /* Program info log */
-   glGetProgramiv(target, GL_INFO_LOG_LENGTH, &loglen);
+   glsym_glGetProgramiv(target, GL_INFO_LOG_LENGTH, &loglen);
    if (loglen > 0)
      {
         logtxt = calloc(loglen, sizeof(char));
         if (logtxt)
           {
-             glGetProgramInfoLog(target, loglen, &chars, logtxt);
+             glsym_glGetProgramInfoLog(target, loglen, &chars, logtxt);
              ERR("Failed to %s: %s", action, logtxt);
              free(logtxt);
           }
@@ -885,9 +885,9 @@ _evas_gl_shader_file_check(const char *bin_shader_dir, char *bin_shader_file, in
    char *driver = NULL;
    char *version = NULL;
 
-   vendor = (char *)glGetString(GL_VENDOR);
-   driver = (char *)glGetString(GL_RENDERER);
-   version = (char *)glGetString(GL_VERSION);
+   vendor = (char *)glsym_glGetString(GL_VENDOR);
+   driver = (char *)glsym_glGetString(GL_RENDERER);
+   version = (char *)glsym_glGetString(GL_VERSION);
 
    new_path_len = snprintf(before_name, sizeof(before_name), "%s::%s::%s::%s::binary_shader.eet", vendor, version, driver, MODULE_ARCH);
 
@@ -922,27 +922,27 @@ _evas_gl_common_shader_program_binary_init(Evas_GL_Program *p,
    data = eet_read(ef, pname, &length);
    if ((!data) || (length <= 0)) goto finish;
 
-   glGetIntegerv(GL_NUM_PROGRAM_BINARY_FORMATS, &num);
+   glsym_glGetIntegerv(GL_NUM_PROGRAM_BINARY_FORMATS, &num);
    if (num <= 0) goto finish;
 
    formats = calloc(num, sizeof(int));
    if (!formats) goto finish;
 
-   glGetIntegerv(GL_PROGRAM_BINARY_FORMATS, formats);
+   glsym_glGetIntegerv(GL_PROGRAM_BINARY_FORMATS, formats);
    if (!formats[0]) goto finish;
 
-   p->prog = glCreateProgram();
+   p->prog = glsym_glCreateProgram();
 
    glsym_glProgramBinary(p->prog, formats[0], data, length);
 
-   glBindAttribLocation(p->prog, SHAD_VERTEX, "vertex");
-   glBindAttribLocation(p->prog, SHAD_COLOR,  "color");
-   glBindAttribLocation(p->prog, SHAD_TEXUV,  "tex_coord");
-   glBindAttribLocation(p->prog, SHAD_TEXUV2, "tex_coord2");
-   glBindAttribLocation(p->prog, SHAD_TEXUV3, "tex_coord3");
-   glBindAttribLocation(p->prog, SHAD_TEXM,   "tex_coordm");
+   glsym_glBindAttribLocation(p->prog, SHAD_VERTEX, "vertex");
+   glsym_glBindAttribLocation(p->prog, SHAD_COLOR,  "color");
+   glsym_glBindAttribLocation(p->prog, SHAD_TEXUV,  "tex_coord");
+   glsym_glBindAttribLocation(p->prog, SHAD_TEXUV2, "tex_coord2");
+   glsym_glBindAttribLocation(p->prog, SHAD_TEXUV3, "tex_coord3");
+   glsym_glBindAttribLocation(p->prog, SHAD_TEXM,   "tex_coordm");
 
-   glGetProgramiv(p->prog, GL_LINK_STATUS, &ok);
+   glsym_glGetProgramiv(p->prog, GL_LINK_STATUS, &ok);
    GLERR(__FUNCTION__, __FILE__, __LINE__, "");
    if (!ok)
      {
@@ -958,7 +958,7 @@ finish:
    if (data) free(data);
    if ((!res) && (p->prog))
      {
-        glDeleteProgram(p->prog);
+        glsym_glDeleteProgram(p->prog);
         p->prog = 0;
      }
    return res;
@@ -975,7 +975,7 @@ _evas_gl_common_shader_program_binary_save(Evas_GL_Program *p,
 
    if (!glsym_glGetProgramBinary) return 0;
 
-   glGetProgramiv(p->prog, GL_PROGRAM_BINARY_LENGTH, &length);
+   glsym_glGetProgramiv(p->prog, GL_PROGRAM_BINARY_LENGTH, &length);
    GLERR(__FUNCTION__, __FILE__, __LINE__, "");
    if (length <= 0) return 0;
 
@@ -1008,21 +1008,21 @@ _evas_gl_common_shader_program_source_init(Evas_GL_Program *p,
 {
    GLint ok;
 
-   p->vert = glCreateShader(GL_VERTEX_SHADER);
-   p->frag = glCreateShader(GL_FRAGMENT_SHADER);
+   p->vert = glsym_glCreateShader(GL_VERTEX_SHADER);
+   p->frag = glsym_glCreateShader(GL_FRAGMENT_SHADER);
 #if defined (GLES_VARIETY_S3C6410)
-   glShaderBinary(1, &(p->vert), 0, vert->bin, vert->bin_size);
+   glsym_glShaderBinary(1, &(p->vert), 0, vert->bin, vert->bin_size);
    GLERR(__FUNCTION__, __FILE__, __LINE__, "");
-   glShaderBinary(1, &(p->frag), 0, frag->bin, frag->bin_size);
+   glsym_glShaderBinary(1, &(p->frag), 0, frag->bin, frag->bin_size);
    GLERR(__FUNCTION__, __FILE__, __LINE__, "");
 #else
-   glShaderSource(p->vert, 1,
+   glsym_glShaderSource(p->vert, 1,
                   (const char **)&(vert->src), NULL);
    GLERR(__FUNCTION__, __FILE__, __LINE__, "");
-   glCompileShader(p->vert);
+   glsym_glCompileShader(p->vert);
    GLERR(__FUNCTION__, __FILE__, __LINE__, "");
    ok = 0;
-   glGetShaderiv(p->vert, GL_COMPILE_STATUS, &ok);
+   glsym_glGetShaderiv(p->vert, GL_COMPILE_STATUS, &ok);
    GLERR(__FUNCTION__, __FILE__, __LINE__, "");
    if (!ok)
      {
@@ -1030,13 +1030,13 @@ _evas_gl_common_shader_program_source_init(Evas_GL_Program *p,
         ERR("Abort compile of shader vert (%s): %s", name, vert->src);
         return 0;
      }
-   glShaderSource(p->frag, 1,
+   glsym_glShaderSource(p->frag, 1,
                   (const char **)&(frag->src), NULL);
    GLERR(__FUNCTION__, __FILE__, __LINE__, "");
-   glCompileShader(p->frag);
+   glsym_glCompileShader(p->frag);
    GLERR(__FUNCTION__, __FILE__, __LINE__, "");
    ok = 0;
-   glGetShaderiv(p->frag, GL_COMPILE_STATUS, &ok);
+   glsym_glGetShaderiv(p->frag, GL_COMPILE_STATUS, &ok);
    GLERR(__FUNCTION__, __FILE__, __LINE__, "");
    if (!ok)
      {
@@ -1045,35 +1045,35 @@ _evas_gl_common_shader_program_source_init(Evas_GL_Program *p,
         return 0;
      }
 #endif
-   p->prog = glCreateProgram();
+   p->prog = glsym_glCreateProgram();
 #if defined(GLES_VARIETY_S3C6410) || defined(GLES_VARIETY_SGX)
 #else
    if ((glsym_glGetProgramBinary) && (glsym_glProgramParameteri))
       glsym_glProgramParameteri(p->prog, GL_PROGRAM_BINARY_RETRIEVABLE_HINT,
                                 GL_TRUE);
 #endif
-   glAttachShader(p->prog, p->vert);
+   glsym_glAttachShader(p->prog, p->vert);
    GLERR(__FUNCTION__, __FILE__, __LINE__, "");
-   glAttachShader(p->prog, p->frag);
-   GLERR(__FUNCTION__, __FILE__, __LINE__, "");
-
-   glBindAttribLocation(p->prog, SHAD_VERTEX, "vertex");
-   GLERR(__FUNCTION__, __FILE__, __LINE__, "");
-   glBindAttribLocation(p->prog, SHAD_COLOR,  "color");
-   GLERR(__FUNCTION__, __FILE__, __LINE__, "");
-   glBindAttribLocation(p->prog, SHAD_TEXUV,  "tex_coord");
-   GLERR(__FUNCTION__, __FILE__, __LINE__, "");
-   glBindAttribLocation(p->prog, SHAD_TEXUV2, "tex_coord2");
-   GLERR(__FUNCTION__, __FILE__, __LINE__, "");
-   glBindAttribLocation(p->prog, SHAD_TEXUV3, "tex_coord3");
-   GLERR(__FUNCTION__, __FILE__, __LINE__, "");
-   glBindAttribLocation(p->prog, SHAD_TEXM, "tex_coordm");
+   glsym_glAttachShader(p->prog, p->frag);
    GLERR(__FUNCTION__, __FILE__, __LINE__, "");
 
-   glLinkProgram(p->prog);
+   glsym_glBindAttribLocation(p->prog, SHAD_VERTEX, "vertex");
+   GLERR(__FUNCTION__, __FILE__, __LINE__, "");
+   glsym_glBindAttribLocation(p->prog, SHAD_COLOR,  "color");
+   GLERR(__FUNCTION__, __FILE__, __LINE__, "");
+   glsym_glBindAttribLocation(p->prog, SHAD_TEXUV,  "tex_coord");
+   GLERR(__FUNCTION__, __FILE__, __LINE__, "");
+   glsym_glBindAttribLocation(p->prog, SHAD_TEXUV2, "tex_coord2");
+   GLERR(__FUNCTION__, __FILE__, __LINE__, "");
+   glsym_glBindAttribLocation(p->prog, SHAD_TEXUV3, "tex_coord3");
+   GLERR(__FUNCTION__, __FILE__, __LINE__, "");
+   glsym_glBindAttribLocation(p->prog, SHAD_TEXM, "tex_coordm");
+   GLERR(__FUNCTION__, __FILE__, __LINE__, "");
+
+   glsym_glLinkProgram(p->prog);
    GLERR(__FUNCTION__, __FILE__, __LINE__, "");
    ok = 0;
-   glGetProgramiv(p->prog, GL_LINK_STATUS, &ok);
+   glsym_glGetProgramiv(p->prog, GL_LINK_STATUS, &ok);
    GLERR(__FUNCTION__, __FILE__, __LINE__, "");
    if (!ok)
      {
@@ -1249,14 +1249,14 @@ void
 evas_gl_common_shader_program_init_done(void)
 {
 #if defined (GLES_VARIETY_S3C6410) || defined (GLES_VARIETY_SGX)
-   glReleaseShaderCompiler();
+   glsym_glReleaseShaderCompiler();
 #endif
 }
 
 void
 evas_gl_common_shader_program_shutdown(Evas_GL_Program *p)
 {
-   if (p->vert) glDeleteShader(p->vert);
-   if (p->frag) glDeleteShader(p->frag);
-   if (p->prog) glDeleteProgram(p->prog);
+   if (p->vert) glsym_glDeleteShader(p->vert);
+   if (p->frag) glsym_glDeleteShader(p->frag);
+   if (p->prog) glsym_glDeleteProgram(p->prog);
 }

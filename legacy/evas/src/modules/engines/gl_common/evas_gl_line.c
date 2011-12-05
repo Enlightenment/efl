@@ -20,7 +20,7 @@ evas_gl_common_line_draw(Evas_Engine_GL_Context *gc, int x1, int y1, int x2, int
         r = g = b = a = 255;
      }
 
-   glFlush();
+   glsym_glFlush();
 
    c = gc->dc->clip.use;
    cx = gc->dc->clip.x; cy = gc->dc->clip.y;
