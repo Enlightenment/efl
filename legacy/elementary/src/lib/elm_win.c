@@ -1368,9 +1368,8 @@ _win_inlined_image_set(Elm_Win *win)
 }
 
 static void
-_subobj_del(void *data __UNUSED__, Evas_Object *obj, Evas_Object *subobj)
+_subobj_del(Elm_Win *win, Evas_Object *obj, Evas_Object *subobj)
 {
-   Elm_Win *win = elm_widget_data_get(obj);
    evas_object_event_callback_del_full(subobj,
                                        EVAS_CALLBACK_CHANGED_SIZE_HINTS,
                                        _elm_win_subobj_callback_changed_size_hints,
@@ -1606,7 +1605,7 @@ elm_win_add(Evas_Object *parent, const char *name, Elm_Win_Type type)
    evas_object_intercept_show_callback_add(win->win_obj,
                                            _elm_win_obj_intercept_show, win);
 
-   evas_object_smart_callback_add(subobj, "sub-object-del", (Evas_Smart_Cb)_subobj_del, obj);
+   evas_object_smart_callback_add(win->win_obj, "sub-object-del", (Evas_Smart_Cb)_subobj_del, win);
    ecore_evas_name_class_set(win->ee, name, _elm_appname);
    ecore_evas_callback_delete_request_set(win->ee, _elm_win_delete_request);
    ecore_evas_callback_resize_set(win->ee, _elm_win_resize);
