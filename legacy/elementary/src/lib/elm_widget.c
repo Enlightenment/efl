@@ -945,7 +945,6 @@ elm_widget_sub_object_add(Evas_Object *obj,
                                             _sub_obj_del);
           }
      }
-   evas_object_smart_callback_call(sobj, "win-resize-del-private-dont-use-this. seriously", NULL);
    sd->subobjs = eina_list_append(sd->subobjs, sobj);
    evas_object_data_set(sobj, "elm-parent", obj);
    evas_object_event_callback_add(sobj, EVAS_CALLBACK_DEL, _sub_obj_del, sd);

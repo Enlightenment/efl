@@ -1378,7 +1378,6 @@ _subobj_del(Evas_Object *obj, Evas_Object *subobj, void *event_info __UNUSED__)
    evas_object_event_callback_del_full(subobj, EVAS_CALLBACK_DEL,
                                        _elm_win_subobj_callback_del, obj);
    win->subobjs = eina_list_remove(win->subobjs, subobj);
-   evas_object_smart_callback_del(subobj, "win-resize-del-private-dont-use-this. seriously", (Evas_Smart_Cb)_subobj_del);
    _elm_win_eval_subobjs(obj);
 }
 
@@ -1693,7 +1692,7 @@ elm_win_resize_object_add(Evas_Object *obj, Evas_Object *subobj)
    evas_object_geometry_get(obj, NULL, NULL, &w, &h);
    evas_object_move(subobj, 0, 0);
    evas_object_resize(subobj, w, h);
-   evas_object_smart_callback_add(subobj, "win-resize-del-private-dont-use-this. seriously", (Evas_Smart_Cb)_subobj_del, obj);
+   evas_object_smart_callback_add(subobj, "sub-object-del", (Evas_Smart_Cb)_subobj_del, obj);
    _elm_win_eval_subobjs(obj);
 }
 
