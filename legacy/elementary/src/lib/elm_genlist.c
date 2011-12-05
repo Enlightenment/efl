@@ -1935,7 +1935,7 @@ _item_realize(Elm_Gen_Item *it,
                                                it->tooltip.content_cb,
                                                it->tooltip.data, NULL);
         elm_widget_item_tooltip_style_set(it, it->tooltip.style);
-        elm_widget_item_tooltip_size_restrict_disable(it, it->tooltip.free_size);
+        elm_widget_item_tooltip_window_mode(it, it->tooltip.free_size);
      }
 
    if (it->mouse_cursor)
@@ -4511,7 +4511,7 @@ elm_genlist_item_tooltip_content_cb_set(Elm_Gen_Item           *it,
                                                it->tooltip.content_cb,
                                                it->tooltip.data, NULL);
         elm_widget_item_tooltip_style_set(it, it->tooltip.style);
-        elm_widget_item_tooltip_size_restrict_disable(it, it->tooltip.free_size);
+        elm_widget_item_tooltip_window_mode(it, it->tooltip.free_size);
      }
 
    return;
@@ -4554,16 +4554,16 @@ elm_genlist_item_tooltip_style_get(const Elm_Gen_Item *it)
 }
 
 EAPI Eina_Bool
-elm_genlist_item_tooltip_size_restrict_disable(Elm_Gen_Item *it, Eina_Bool disable)
+elm_genlist_item_tooltip_window_mode(Elm_Gen_Item *it, Eina_Bool disable)
 {
    ELM_WIDGET_ITEM_WIDTYPE_CHECK_OR_RETURN(it, EINA_FALSE);
    it->tooltip.free_size = disable;
-   if (VIEW(it)) return elm_widget_item_tooltip_size_restrict_disable(it, disable);
+   if (VIEW(it)) return elm_widget_item_tooltip_window_mode(it, disable);
    return EINA_TRUE;
 }
 
 EAPI Eina_Bool
-elm_genlist_item_tooltip_size_restrict_disabled_get(const Elm_Gen_Item *it)
+elm_genlist_item_tooltip_window_moded_get(const Elm_Gen_Item *it)
 {
    ELM_WIDGET_ITEM_WIDTYPE_CHECK_OR_RETURN(it, EINA_FALSE);
    return it->tooltip.free_size;

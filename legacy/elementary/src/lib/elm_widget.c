@@ -3130,17 +3130,17 @@ _elm_widget_item_tooltip_style_set(Elm_Widget_Item *item,
 }
 
 EAPI Eina_Bool
-_elm_widget_item_tooltip_size_restrict_disable(Elm_Widget_Item *item, Eina_Bool disable)
+_elm_widget_item_tooltip_window_mode(Elm_Widget_Item *item, Eina_Bool disable)
 {
    ELM_WIDGET_ITEM_CHECK_OR_RETURN(item, EINA_FALSE);
-   return elm_tooltip_size_restrict_disable(item->view, disable);
+   return elm_object_tooltip_window_mode_set(item->view, disable);
 }
 
 EAPI Eina_Bool
-_elm_widget_item_tooltip_size_restrict_disabled_get(const Elm_Widget_Item *item)
+_elm_widget_item_tooltip_window_moded_get(const Elm_Widget_Item *item)
 {
    ELM_WIDGET_ITEM_CHECK_OR_RETURN(item, EINA_FALSE);
-   return elm_tooltip_size_restrict_disabled_get(item->view);
+   return elm_object_tooltip_window_mode_get(item->view);
 }
 
 /**

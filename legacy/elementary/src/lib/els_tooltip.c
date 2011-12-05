@@ -936,7 +936,7 @@ elm_tooltip_delay_set(double delay)
  * It will instead be limited only by the size of the display.
  */
 EAPI Eina_Bool
-elm_tooltip_size_restrict_disable(Evas_Object *obj, Eina_Bool disable)
+elm_object_tooltip_window_mode_set(Evas_Object *obj, Eina_Bool disable)
 {
    ELM_TOOLTIP_GET_OR_RETURN(tt, obj, EINA_FALSE);
    return tt->free_size = disable;
@@ -952,7 +952,7 @@ elm_tooltip_size_restrict_disable(Evas_Object *obj, Eina_Bool disable)
  * It will instead be limited only by the size of the display.
  */
 EAPI Eina_Bool
-elm_tooltip_size_restrict_disabled_get(const Evas_Object *obj)
+elm_object_tooltip_window_mode_get(const Evas_Object *obj)
 {
    ELM_TOOLTIP_GET_OR_RETURN(tt, obj, EINA_FALSE);
    return tt->free_size;
