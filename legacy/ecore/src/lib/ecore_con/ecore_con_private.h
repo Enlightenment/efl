@@ -187,14 +187,8 @@ struct _Ecore_Con_Url
    double timestamp;
    void *data;
 
-   Ecore_Fd_Handler *fd_handler;
-   int fd;
-   int flags;
-
    int received;
    int write_fd;
-
-   Eina_Bool active : 1;
 };
 #endif
 
