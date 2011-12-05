@@ -530,7 +530,14 @@ case "$host_os" in
 esac
 AC_SUBST([dlopen_libs])
 
-EFL_CHECK_FNMATCH([], [AC_MSG_ERROR([Cannot find fnmatch()])])
+enable_log="yes"
+EFL_CHECK_FNMATCH([enable_log="yes"], [enable_log="no"])
+
+if test "x${enable_log}" = "xyes"; then
+    EINA_CONFIGURE_ENABLE_LOG="#define EINA_ENABLE_LOG"
+    AC_DEFINE([HAVE_LOG], [1], [Define to 1 if we log support is on])
+fi
+AC_SUBST([EINA_CONFIGURE_ENABLE_LOG])
 
 AC_CHECK_HEADERS([mcheck.h], [AC_DEFINE([HAVE_MCHECK], [1], [Have mcheck.h])])
 AC_CHECK_FUNCS([mtrace], [AC_DEFINE([HAVE_MTRACE], [1], [Have mtrace])])
@@ -782,6 +789,7 @@ echo "  Maximum log level....: ${with_max_log_level}"
 echo "  Report string usage..: ${have_stringshare_usage}"
 echo "  Valgrind support.....: ${have_valgrind}"
 echo "  Default mempool......: ${have_default_mempool}"
+echo "  Log support..........: ${enable_log}"
 echo "  Thread Support.......: ${have_threads}"
 if test "${have_threads}" = "POSIX" ; then
 echo "    spinlock...........: ${have_posix_threads_spinlock}"

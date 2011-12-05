@@ -297,22 +297,27 @@ EAPI extern int EINA_LOG_DOMAIN_GLOBAL;
  *       paths. Never define @c EINA_LOG_LEVEL_MAXIMUM on public
  *       header files.
  */
-#ifdef EINA_LOG_LEVEL_MAXIMUM
-#define EINA_LOG(DOM, LEVEL, fmt, ...)                                   \
-  do {                                                                   \
-       if (LEVEL <= EINA_LOG_LEVEL_MAXIMUM) {                            \
-            eina_log_print(DOM, LEVEL, __FILE__, __FUNCTION__, __LINE__, \
-                           fmt, ## __VA_ARGS__); }                       \
-    } while (0)
-#else
-#define EINA_LOG(DOM, LEVEL, fmt, ...) \
-  eina_log_print(DOM,                  \
-                 LEVEL,                \
-                 __FILE__,             \
-                 __FUNCTION__,         \
-                 __LINE__,             \
-                 fmt,                  \
+#ifdef EINA_ENABLE_LOG
+# ifdef EINA_LOG_LEVEL_MAXIMUM
+# define EINA_LOG(DOM, LEVEL, fmt, ...)					\
+  do {									\
+     if (LEVEL <= EINA_LOG_LEVEL_MAXIMUM) {				\
+        eina_log_print(DOM, LEVEL, __FILE__, __FUNCTION__, __LINE__,	\
+                       fmt, ## __VA_ARGS__); }				\
+  } while (0)
+# else
+# define EINA_LOG(DOM, LEVEL, fmt, ...) \
+  eina_log_print(DOM,                   \
+                 LEVEL,                 \
+                 __FILE__,              \
+                 __FUNCTION__,          \
+                 __LINE__,              \
+                 fmt,                   \
                  ## __VA_ARGS__)
+# endif
+#else
+#define EINA_LOG(DOM, LEVEL, fmt, ...)          \
+  do { (void) DOM; (void) LEVEL; (void) fmt; } while (0)
 #endif
 
 /**
