@@ -3503,7 +3503,7 @@ _layout_paragraph_reorder_lines(Evas_Object_Textblock_Paragraph *par)
 
 static void
 _layout_paragraph_render(Evas_Object_Textblock *o,
-      Evas_Object_Textblock_Paragraph *par)
+			 Evas_Object_Textblock_Paragraph *par)
 {
    if (par->rendered)
       return;
@@ -3521,6 +3521,8 @@ _layout_paragraph_render(Evas_Object_Textblock *o,
              par->bidi_props = NULL;
           }
      }
+#else
+   (void) o;
 #endif
 }
 
