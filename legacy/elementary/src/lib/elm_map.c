@@ -76,7 +76,8 @@ typedef struct _Map_Sources_Tab
 static char *_mapnik_url_cb(Evas_Object *obj __UNUSED__, int x, int y, int zoom);
 static char *_osmarender_url_cb(Evas_Object *obj __UNUSED__, int x, int y, int zoom);
 static char *_cyclemap_url_cb(Evas_Object *obj __UNUSED__, int x, int y, int zoom);
-static char *_maplint_url_cb(Evas_Object *obj __UNUSED__, int x, int y, int zoom);
+static char *_mapquest_url_cb(Evas_Object *obj __UNUSED__, int x, int y, int zoom);
+static char *_mapquest_aerial_url_cb(Evas_Object *obj __UNUSED__, int x, int y, int zoom);
 
 static char *_yours_url_cb(Evas_Object *obj __UNUSED__, char *type_name, int method, double flon, double flat, double tlon, double tlat);
 /*
@@ -89,8 +90,9 @@ static Map_Sources_Tab default_map_sources_tab[] =
 {
      {"Mapnik", 0, 18, _mapnik_url_cb, ELM_MAP_ROUTE_SOURCE_YOURS, _yours_url_cb, _nominatim_url_cb, NULL, NULL},
      {"Osmarender", 0, 17, _osmarender_url_cb, ELM_MAP_ROUTE_SOURCE_YOURS, _yours_url_cb, _nominatim_url_cb, NULL, NULL},
-     {"CycleMap", 0, 17, _cyclemap_url_cb, ELM_MAP_ROUTE_SOURCE_YOURS, _yours_url_cb, _nominatim_url_cb, NULL, NULL},
-     {"Maplint", 12, 16, _maplint_url_cb, ELM_MAP_ROUTE_SOURCE_YOURS, _yours_url_cb, _nominatim_url_cb, NULL, NULL},
+     {"CycleMap", 0, 16, _cyclemap_url_cb, ELM_MAP_ROUTE_SOURCE_YOURS, _yours_url_cb, _nominatim_url_cb, NULL, NULL},
+     {"MapQuest", 0, 18, _mapquest_url_cb, ELM_MAP_ROUTE_SOURCE_YOURS, _yours_url_cb, _nominatim_url_cb, NULL, NULL},
+     {"MapQuest Open Aerial", 0, 11, _mapquest_aerial_url_cb, ELM_MAP_ROUTE_SOURCE_YOURS, _yours_url_cb, _nominatim_url_cb, NULL, NULL},
 };
 
 struct _Url_Data
@@ -665,10 +667,10 @@ source_init(void *data)
    Widget_Data *wd = elm_widget_data_get(data);
    Map_Sources_Tab *s;
    Eina_List *l;
-   int idx;
+   unsigned int idx;
 
    if (!wd) return;
-   for (idx = 0; idx < 4; idx++)
+   for (idx = 0; idx < sizeof(default_map_sources_tab)/sizeof(Map_Sources_Tab); idx++)
      {
         s = calloc(1, sizeof(Map_Sources_Tab));
         EINA_SAFETY_ON_NULL_RETURN(s);
@@ -1931,7 +1933,6 @@ _mouse_wheel_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, voi
         wd->wheel_zoom += 0.1;
         if (wd->wheel_zoom >= 2.0) wd->wheel_zoom = 2.0;
      }
-
    if (!wd->paused)
      {
         wd->pinch.level = pow(2.0, wd->wheel_zoom);
@@ -4915,8 +4916,8 @@ static char *
 _mapnik_url_cb(Evas_Object *obj __UNUSED__, int x, int y, int zoom)
 {
    char buf[PATH_MAX];
-   snprintf(buf, sizeof(buf), "http://tile.openstreetmap.org/%d/%d/%d.png",
-          zoom, x, y);
+   // ((x+y+zoom)%3)+'a' is requesting map images from distributed tile servers (eg., a, b, c)
+   snprintf(buf, sizeof(buf), "http://%c.tile.openstreetmap.org/%d/%d/%d.png", ((x+y+zoom)%3)+'a', zoom, x, y);
    return strdup(buf);
 }
 
@@ -4924,9 +4925,7 @@ static char *
 _osmarender_url_cb(Evas_Object *obj __UNUSED__, int x, int y, int zoom)
 {
    char buf[PATH_MAX];
-   snprintf(buf, sizeof(buf),
-            "http://tah.openstreetmap.org/Tiles/tile/%d/%d/%d.png",
-            zoom, x, y);
+   snprintf(buf, sizeof(buf), "http://%c.tah.openstreetmap.org/Tiles/tile/%d/%d/%d.png", ((x+y+zoom)%3)+'a', zoom, x, y);
    return strdup(buf);
 }
 
@@ -4934,19 +4933,23 @@ static char *
 _cyclemap_url_cb(Evas_Object *obj __UNUSED__, int x, int y, int zoom)
 {
    char buf[PATH_MAX];
-   snprintf(buf, sizeof(buf),
-            "http://andy.sandbox.cloudmade.com/tiles/cycle/%d/%d/%d.png",
-            zoom, x, y);
+   snprintf(buf, sizeof(buf), "http://%c.tile.opencyclemap.org/cycle/%d/%d/%d.png", ((x+y+zoom)%3)+'a', zoom, x, y);
    return strdup(buf);
 }
 
 static char *
-_maplint_url_cb(Evas_Object *obj __UNUSED__, int x, int y, int zoom)
+_mapquest_url_cb(Evas_Object *obj __UNUSED__, int x, int y, int zoom)
 {
    char buf[PATH_MAX];
-   snprintf(buf, sizeof(buf),
-            "http://tah.openstreetmap.org/Tiles/maplint/%d/%d/%d.png",
-            zoom, x, y);
+   snprintf(buf, sizeof(buf), "http://otile%d.mqcdn.com/tiles/1.0.0/osm/%d/%d/%d.png", ((x+y+zoom)%4)+1, zoom, x, y);
+   return strdup(buf);
+}
+
+static char *
+_mapquest_aerial_url_cb(Evas_Object *obj __UNUSED__, int x, int y, int zoom)
+{
+   char buf[PATH_MAX];
+   snprintf(buf, sizeof(buf), "http://oatile%d.mqcdn.com/naip/%d/%d/%d.png", ((x+y+zoom)%4)+1, zoom, x, y);
    return strdup(buf);
 }
 
