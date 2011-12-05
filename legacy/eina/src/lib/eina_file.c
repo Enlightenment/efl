@@ -40,11 +40,15 @@ void *alloca (size_t);
 
 #include <string.h>
 #include <stddef.h>
-#include <dirent.h>
+#ifdef HAVE_DIRENT_H
+# include <dirent.h>
+#endif
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <unistd.h>
-#include <sys/mman.h>
+#ifdef HAVE_MMAN_H
+# include <sys/mman.h>
+#endif
 #include <fcntl.h>
 
 #define PATH_DELIM '/'
@@ -60,6 +64,7 @@ void *alloca (size_t);
 #include "eina_list.h"
 #include "eina_lock.h"
 #include "eina_mmap.h"
+#include "eina_log.h"
 
 #ifdef HAVE_ESCAPE_H
 # include <Escape.h>
@@ -95,9 +100,8 @@ void *alloca (size_t);
 #define EINA_SMALL_PAGE 4096
 # define EINA_HUGE_PAGE 16 * 1024 * 1024
 
+#ifdef HAVE_DIRENT_H
 typedef struct _Eina_File_Iterator Eina_File_Iterator;
-typedef struct _Eina_File_Map Eina_File_Map;
-
 struct _Eina_File_Iterator
 {
    Eina_Iterator iterator;
@@ -107,6 +111,7 @@ struct _Eina_File_Iterator
 
    char dir[1];
 };
+#endif
 
 struct _Eina_File
 {
@@ -134,6 +139,7 @@ struct _Eina_File
    Eina_Bool delete_me : 1;
 };
 
+typedef struct _Eina_File_Map Eina_File_Map;
 struct _Eina_File_Map
 {
    void *map;
@@ -156,6 +162,7 @@ static int _eina_file_log_dom = -1;
  * The code and description of the issue can be found at :
  * http://womble.decadent.org.uk/readdir_r-advisory.html
  */
+#ifdef HAVE_DIRENT_H
 static long
 _eina_name_max(DIR *dirp)
 {
@@ -390,6 +397,7 @@ _eina_file_stat_ls_iterator_next(Eina_File_Direct_Iterator *it, void **data)
 
    return EINA_TRUE;
 }
+#endif
 
 static void
 _eina_file_real_close(Eina_File *file)
@@ -738,6 +746,7 @@ eina_file_split(char *path)
 EAPI Eina_Iterator *
 eina_file_ls(const char *dir)
 {
+#ifdef HAVE_DIRENT_H
    Eina_File_Iterator *it;
    size_t length;
 
@@ -773,11 +782,16 @@ eina_file_ls(const char *dir)
    it->iterator.free = FUNC_ITERATOR_FREE(_eina_file_ls_iterator_free);
 
    return &it->iterator;
+#else
+   (void) dir;
+   return NULL;
+#endif
 }
 
 EAPI Eina_Iterator *
 eina_file_direct_ls(const char *dir)
 {
+#ifdef HAVE_DIRENT_H
    Eina_File_Direct_Iterator *it;
    size_t length;
 
@@ -825,11 +839,16 @@ eina_file_direct_ls(const char *dir)
    it->iterator.free = FUNC_ITERATOR_FREE(_eina_file_direct_ls_iterator_free);
 
    return &it->iterator;
+#else
+   (void) dir;
+   return NULL;
+#endif
 }
 
 EAPI Eina_Iterator *
 eina_file_stat_ls(const char *dir)
 {
+#ifdef HAVE_DIRENT_H
    Eina_File_Direct_Iterator *it;
    size_t length;
 
@@ -877,6 +896,10 @@ eina_file_stat_ls(const char *dir)
    it->iterator.free = FUNC_ITERATOR_FREE(_eina_file_direct_ls_iterator_free);
 
    return &it->iterator;
+#else
+   (void) dir;
+   return NULL;
+#endif
 }
 
 EAPI Eina_File *
@@ -887,7 +910,9 @@ eina_file_open(const char *path, Eina_Bool shared)
    char *filename;
    struct stat file_stat;
    int fd = -1;
+#ifdef HAVE_EXECVP
    int flags;
+#endif
 
    EINA_SAFETY_ON_NULL_RETURN_VAL(path, NULL);
 

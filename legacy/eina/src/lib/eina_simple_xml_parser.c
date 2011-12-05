@@ -38,7 +38,9 @@ extern "C"
 void *alloca (size_t);
 #endif
 
-#include <strings.h>
+#ifdef HAVE_STRINGS_H
+# include <strings.h>
+#endif
 #include <string.h>
 #include <ctype.h>
 

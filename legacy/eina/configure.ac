@@ -355,10 +355,9 @@ AM_CONDITIONAL([BUILD_TILER_EXAMPLE], [test "x${build_tiler_example}" = "xyes"])
 
 ### Checks for header files
 AC_HEADER_ASSERT
-AC_HEADER_DIRENT
 AC_HEADER_TIME
 EFL_CHECK_PATH_MAX
-AC_CHECK_HEADERS([unistd.h libgen.h inttypes.h stdint.h sys/types.h siginfo.h])
+AC_CHECK_HEADERS([unistd.h libgen.h inttypes.h stdint.h sys/types.h siginfo.h strings.h sys/mman.h])
 
 if test "x${ac_cv_header_inttypes_h}" = "xyes" ; then
    EINA_CONFIGURE_HAVE_INTTYPES_H="#define EINA_HAVE_INTTYPES_H"
@@ -372,6 +371,14 @@ if test "x${ac_cv_header_inttypes_h}" = "xyes" ; then
 fi
 AC_SUBST([EINA_CONFIGURE_HAVE_STDINT_H])
 
+if test "x${ac_cv_header_strings_h}" = "xyes" ; then
+    AC_DEFINE([HAVE_STRINGS_H], [1], [Define to 1 if you have the <strings.h> header file.])
+fi
+
+if test "x${ac_cv_header_sys_mman_h}" = "xyes" ; then
+    AC_DEFINE([HAVE_MMAN_H], [1], [Define to 1 if you have the <sys/mman.h> header file.])
+fi
+
 ### Checks for types
 
 AC_CHECK_SIZEOF([wchar_t])
@@ -384,8 +391,17 @@ AC_CHECK_TYPES([siginfo_t], [], [],
      #endif
    ]])
 
-### Checks for structures
+### Check if dirent.h is usable
 
+AC_CHECK_TYPES([struct dirent], [have_dirent="yes"], [have_dirent="no"],
+   [[#include <dirent.h>
+   ]])
+
+if test "x${have_dirent_h}" = "xyes" ; then
+    EINA_CONFIGURE_HAVE_DIRENT_H="#define EINA_HAVE_DIRENT_H"
+    AC_DEFINE([HAVE_DIRENT_H], [1], [Define to 1 if you have a valid <dirent.h> header file.])
+fi
+AC_SUBST([EINA_CONFIGURE_HAVE_DIRENT_H])
 
 ### Checks for compiler characteristics
 AC_C_CONST

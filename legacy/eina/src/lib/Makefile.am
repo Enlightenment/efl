@@ -130,12 +130,17 @@ eina_amalgamation.c: $(base_sources) Makefile
 	@echo "#include <stdio.h>" >> eina_amalgamation.c
 	@echo "#include <stdlib.h>" >> eina_amalgamation.c
 	@echo "#include <string.h>" >> eina_amalgamation.c
-	@echo "#include <dlfcn.h>" >> eina_amalgamation.c
+	@echo "#ifdef HAVE_DLOPEN" >> eina_amalgamation.c
+	@echo "# include <dlfcn.h>" >> eina_amalgamation.c
+	@echo "#endif" >> eina_amalgamation.c
 	@echo "#include <sys/types.h>" >> eina_amalgamation.c
-	@echo "#include <dirent.h>" >> eina_amalgamation.c
+	@echo "#ifdef HAVE_DIRENT_H" >> eina_amalgamation.c
+	@echo "# include <dirent.h>" >> eina_amalgamation.c
+	@echo "#endif" >> eina_amalgamation.c
 	@echo "#include <assert.h>" >> eina_amalgamation.c
 	@echo "#include <errno.h>" >> eina_amalgamation.c
 	@echo "#include <fnmatch.h>" >> eina_amalgamation.c
+	@echo "#include <fcntl.h>" >> eina_amalgamation.c
 
 	@echo "#ifdef HAVE_EVIL" >> eina_amalgamation.c
 	@echo "# include <Evil.h>" >> eina_amalgamation.c
