@@ -1230,10 +1230,10 @@ evgl_eglQueryString(EGLDisplay dpy, EGLint name)
    return _sym_eglQueryString(dpy, name);
 }
 
-static void
-evgl_eglCreateImage (void *a, void *b, GLenum c, void *d, const int *e)
+static void *
+evgl_eglCreateImage(void *a, void *b, GLenum c, void *d, const int *e)
 {
-   _sym_eglCreateImage(a, b, c, d, e);
+   return _sym_eglCreateImage(a, b, c, d, e);
 }
 
 static unsigned int
@@ -4063,7 +4063,7 @@ fpgl_glVertexAttribPointer(GLuint indx, GLint size, GLenum type, GLboolean norma
    current_ctx->vertex_array[indx].type       = type;
    current_ctx->vertex_array[indx].normalized = normalized;
    current_ctx->vertex_array[indx].stride     = stride;
-   current_ctx->vertex_array[indx].pointer    = ptr;
+   current_ctx->vertex_array[indx].pointer    = (void *)ptr;
 }
 
 static void
@@ -5509,7 +5509,7 @@ free_gl()
    if (global_ctx)
      {
         ERR("Destroying global context...\n");
-        _sym_eglMakeCurrent(dpy, EGL_NO_SURFACE, EGL_NO_SURFACE, EGL_NO_CONTEXT);
+        _sym_eglMakeCurrent(global_dpy, EGL_NO_SURFACE, EGL_NO_SURFACE, EGL_NO_CONTEXT);
         _sym_eglDestroyContext(global_dpy, global_ctx); 
      }
    if (egl_lib_handle) dlclose(egl_lib_handle);
