@@ -61,10 +61,9 @@
  * @subsection textblock_layout The layout system
  * @todo write @ref textblock_layout
  */
-#include <stdlib.h>
-
 #include "evas_common.h"
 #include "evas_private.h"
+#include <stdlib.h>
 
 #ifdef HAVE_LINEBREAK
 #include "linebreak.h"
