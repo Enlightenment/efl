@@ -306,6 +306,7 @@ ecore_con_socks4_remote_add(const char *ip, int port, const char *username)
  * @param ecs The proxy object
  * @param enable If true, the proxy will perform the dns lookup
  * @note By default, this setting is DISABLED.
+ * @since 1.2
  */
 EAPI void
 ecore_con_socks4_lookup_set(Ecore_Con_Socks *ecs, Eina_Bool enable)
@@ -323,6 +324,7 @@ ecore_con_socks4_lookup_set(Ecore_Con_Socks *ecs, Eina_Bool enable)
  * @param ecs The proxy object
  * @return If true, the proxy will perform the dns lookup
  * @note By default, this setting is DISABLED.
+ * @since 1.2
  */
 EAPI Eina_Bool
 ecore_con_socks4_lookup_get(Ecore_Con_Socks *ecs)
