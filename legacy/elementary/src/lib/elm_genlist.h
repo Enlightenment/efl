@@ -133,6 +133,7 @@ struct _Widget_Data
    Eina_Bool         reorder_pan_move : 1;
    Eina_Bool         auto_scroll_enabled : 1;
    Eina_Bool         pan_resized : 1;
+   Eina_Bool         requeued : 1; /* this is set to EINA_TRUE when the item is re-queued. this happens when the item is un-queued but the rel item is still in the queue. this item will be processed later. */
    struct
    {
       Evas_Coord x, y;
@@ -147,7 +148,6 @@ struct _Widget_Data
 
    Eina_Compare_Cb   item_compare_cb;
    Eina_Compare_Cb   item_compare_data_cb;
-   Eina_Bool         requeue : 1;
 
    /* The stuff below directly come from gengrid without any thinking */
    unsigned int      nmax;

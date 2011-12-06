@@ -159,10 +159,10 @@ static const Evas_Smart_Cb_Description _signals[] = {
 };
 
 static Eina_Bool
-_event_hook(Evas_Object       *obj,
-            Evas_Object *src   __UNUSED__,
-            Evas_Callback_Type type,
-            void              *event_info)
+_event_hook(Evas_Object        *obj,
+            Evas_Object        *src __UNUSED__,
+            Evas_Callback_Type  type,
+            void               *event_info)
 {
    if (type != EVAS_CALLBACK_KEY_DOWN) return EINA_FALSE;
    Evas_Event_Key_Down *ev = event_info;

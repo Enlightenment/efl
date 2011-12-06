@@ -1329,7 +1329,7 @@ _mouse_up(void        *data,
              Elm_Gen_Item *it2;
 
              EINA_LIST_FOREACH_SAFE(it->wd->selected, l, l_next, it2)
-                if (it2 != it)
+               if (it2 != it)
                   {
                      _item_unhighlight(it2);
                      _item_unselect(it2);
@@ -2972,7 +2972,7 @@ _item_auto_scroll(Widget_Data *wd)
         if (wd->expanded_item->item->scrl_y > (oh + oy) / 2)
           {
              EINA_LIST_FOREACH(wd->expanded_item->item->items, l, it)
-                elm_genlist_item_bring_in(it);
+               elm_genlist_item_bring_in(it);
           }
         wd->auto_scroll_enabled = EINA_FALSE;
      }
@@ -3290,12 +3290,12 @@ newblock:
           {
              /* NOTE: for a strange reason eina_list and eina_inlist don't have the same property
                 on sorted insertion order, so the queue is not always ordered like the item list.
-                This lead to issue where we depend on a item that is not yet created. As a quick
+                This lead to issue where we depend on an item that is not yet created. As a quick
                 work around, we reschedule the calc of the item and stop reordering the list to
                 prevent any nasty issue to show up here.
               */
              wd->queue = eina_list_append(wd->queue, it);
-             wd->requeue = EINA_TRUE;
+             wd->requeued = EINA_TRUE;
              it->item->queued = EINA_TRUE;
              return EINA_FALSE;
           }
@@ -3483,7 +3483,7 @@ _item_queue(Widget_Data *wd,
 {
    if (it->item->queued) return;
    it->item->queued = EINA_TRUE;
-   if (cb && !wd->requeue)
+   if (cb && !wd->requeued)
      wd->queue = eina_list_sorted_insert(wd->queue, cb, it);
    else
      wd->queue = eina_list_append(wd->queue, it);
@@ -3781,7 +3781,7 @@ elm_genlist_item_direct_sorted_insert(Evas_Object                  *obj,
           {
              wd->state = eina_inlist_sorted_state_new();
              eina_inlist_sorted_state_init(wd->state, wd->items);
-             wd->requeue = EINA_FALSE;
+             wd->requeued = EINA_FALSE;
           }
 
         if (it->group)
@@ -3817,7 +3817,7 @@ EAPI Elm_Gen_Item *
 elm_genlist_item_sorted_insert(Evas_Object                  *obj,
                                const Elm_Genlist_Item_Class *itc,
                                const void                   *data,
-                               Elm_Gen_Item             *parent,
+                               Elm_Gen_Item                 *parent,
                                Elm_Genlist_Item_Flags        flags,
                                Eina_Compare_Cb               comp,
                                Evas_Smart_Cb                 func,
