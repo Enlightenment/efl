@@ -23,15 +23,16 @@
 #ifdef HAVE_CONFIG_H
 #include "config.h"
 #endif
+
 #include <stdlib.h>
 #include <unistd.h>
 #include <limits.h>
 #include <string.h>
 #include <errno.h>
 
+#include <Eina.h>
 #include <Ecore.h>
 #include <Ethumb.h>
-#include <Eina.h>
 
 #include "ethumbd_private.h"
 

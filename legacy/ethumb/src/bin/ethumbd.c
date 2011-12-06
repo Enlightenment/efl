@@ -23,6 +23,7 @@
 #ifdef HAVE_CONFIG_H
 #include "config.h"
 #endif
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -30,11 +31,11 @@
 #include <unistd.h>
 #include <errno.h>
 
-#include <Ethumb.h>
 #include <Eina.h>
 #include <Ecore_Getopt.h>
 #include <Ecore.h>
 #include <E_DBus.h>
+#include <Ethumb.h>
 
 #include "ethumbd_private.h"
 

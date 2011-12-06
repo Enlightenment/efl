@@ -22,14 +22,16 @@
 #ifdef HAVE_CONFIG_H
 #include "config.h"
 #endif
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <limits.h>
-#include <Ethumb_Client.h>
+
 #include <Eina.h>
 #include <Ecore_Getopt.h>
 #include <Ecore.h>
+#include <Ethumb_Client.h>
 
 const char *aspect_opt[] = { "keep", "ignore", "crop", NULL };
 const char *format_opt[] = { "png", "jpg", "eet", NULL };
