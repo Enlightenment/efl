@@ -237,6 +237,7 @@ typedef struct _Ecore_Con_Client Ecore_Con_Client;
  * @typedef Ecore_Con_Socks
  * An object representing a SOCKS proxy
  * @ingroup Ecore_Con_Socks_Group
+ * @since 1.2
  */
 typedef struct Ecore_Con_Socks Ecore_Con_Socks;
 

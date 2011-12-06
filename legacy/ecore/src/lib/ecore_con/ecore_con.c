@@ -2079,7 +2079,6 @@ _ecore_con_cl_handler(void             *data,
           {
              ERR("ssl handshaking failed!");
              svr->handshaking = EINA_FALSE;
-
           }
         else if (!svr->ssl_state)
           ecore_con_event_server_add(svr);
