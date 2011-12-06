@@ -31,6 +31,7 @@
 #include <sys/time.h>
 
 #ifdef EINA_HAVE_DEBUG_THREADS
+#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <assert.h>
