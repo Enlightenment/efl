@@ -602,8 +602,6 @@ _elm_deferred_recalc_job(void *data)
    evas_object_geometry_get(wd->ent, NULL, NULL, &resw, NULL);
    edje_object_size_min_restricted_calc(wd->ent, &minw, &minh, resw, 0);
    elm_coords_finger_size_adjust(1, &minw, 1, &minh);
-   wd->entmw = minw;
-   wd->entmh = minh;
    /* This is a hack to workaround the way min size hints are treated.
     * If the minimum width is smaller than the restricted width, it means
     * the mininmum doesn't matter. */
@@ -613,6 +611,9 @@ _elm_deferred_recalc_job(void *data)
         evas_object_size_hint_min_get(data, &ominw, NULL);
         minw = ominw;
      }
+
+   wd->entmw = minw;
+   wd->entmh = minh;
 
    elm_coords_finger_size_adjust(1, &fw, 1, &fh);
    if (wd->scroll)
@@ -685,9 +686,18 @@ _sizing_eval(Evas_Object *obj)
                  &vmw, &vmh);
              elm_smart_scroller_child_viewport_size_get(wd->scroller, &vw, &vh);
              edje_object_size_min_restricted_calc(wd->ent, &minw, &minh, vw, 0);
+             elm_coords_finger_size_adjust(1, &minw, 1, &minh);
+             /* This is a hack to workaround the way min size hints are treated.
+              * If the minimum width is smaller than the restricted width, it means
+              * the mininmum doesn't matter. */
+             if (minw <= vw)
+               {
+                  Evas_Coord ominw = -1;
+                  evas_object_size_hint_min_get(wd->ent, &ominw, NULL);
+                  minw = ominw;
+               }
              wd->entmw = minw;
              wd->entmh = minh;
-             elm_coords_finger_size_adjust(1, &minw, 1, &minh);
 
              if ((minw > 0) && (vw < minw)) vw = minw;
              if (minh > vh) vh = minh;
