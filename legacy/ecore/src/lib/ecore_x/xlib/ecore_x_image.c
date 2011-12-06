@@ -1,15 +1,17 @@
 #ifdef HAVE_CONFIG_H
 # include <config.h>
-#endif /* ifdef HAVE_CONFIG_H */
+#endif
+
+#include <stdlib.h>
+#include <string.h>
+#include <sys/ipc.h>
+#include <sys/shm.h>
 
 #include "ecore_x_private.h"
 #include "Ecore_X.h"
 
 #include <X11/extensions/XShm.h>
 #include <X11/Xutil.h>
-#include <sys/ipc.h>
-#include <sys/shm.h>
-#include <string.h>
 
 static int _ecore_x_image_shm_can = -1;
 static int _ecore_x_image_err = 0;

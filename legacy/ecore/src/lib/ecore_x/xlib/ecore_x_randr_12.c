@@ -6,6 +6,8 @@
 # include <config.h>
 #endif
 
+#include <stdlib.h>
+
 #include "ecore_x_private.h"
 #include "ecore_x_randr.h"
 

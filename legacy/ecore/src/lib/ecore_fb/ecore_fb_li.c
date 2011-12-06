@@ -2,6 +2,8 @@
 # include <config.h>
 #endif
 
+#include <stdlib.h>
+
 #include "Ecore_Fb.h"
 #include "ecore_fb_private.h"
 

@@ -2,6 +2,7 @@
 # include <config.h>
 #endif
 
+#include <stdlib.h>
 #include <stdio.h>
 
 #include "Ecore.h"
