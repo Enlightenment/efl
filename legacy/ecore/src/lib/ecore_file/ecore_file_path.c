@@ -20,6 +20,7 @@ extern "C"
 void *alloca (size_t);
 #endif
 
+#include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
 

@@ -3,6 +3,7 @@
 #endif
 
 #include <string.h>
+#include <stdlib.h>
 
 #include "Ecore.h"
 #include "Ecore_Input.h"

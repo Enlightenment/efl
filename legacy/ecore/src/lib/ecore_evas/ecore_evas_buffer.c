@@ -3,6 +3,7 @@
 #endif
 
 // NOTE: if you fix this, consider fixing ecore_evas_ews.c as it is similar!
+#include <stdlib.h>
 
 #include <Ecore.h>
 #include "ecore_private.h"

@@ -2,6 +2,7 @@
 # include <config.h>
 #endif
 
+#include <stdlib.h>
 #include <string.h>
 #include <sys/types.h>
 #include <errno.h>

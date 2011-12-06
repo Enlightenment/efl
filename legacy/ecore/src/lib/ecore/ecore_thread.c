@@ -2,6 +2,7 @@
 # include <config.h>
 #endif
 
+#include <stdlib.h>
 #include <sys/time.h>
 #include <assert.h>
 #include <sys/types.h>
