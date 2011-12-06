@@ -19,7 +19,6 @@
 #ifndef EINA_LOG_H_
 #define EINA_LOG_H_
 
-#include <stdlib.h>
 #include <stdarg.h>
 
 #include "eina_types.h"

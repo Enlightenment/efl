@@ -19,6 +19,8 @@
 #ifndef EINA_STR_INLINE_H_
 #define EINA_STR_INLINE_H_
 
+#include <string.h>
+
 /**
  * @addtogroup Eina_String_Group String
  *

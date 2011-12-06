@@ -19,8 +19,6 @@
 #ifndef EINA_INLINE_F32P32_X_
 # define EINA_INLINE_F32P32_X_
 
-#include <stdlib.h>
-
 static inline Eina_F32p32
 eina_f32p32_add(Eina_F32p32 a, Eina_F32p32 b)
 {

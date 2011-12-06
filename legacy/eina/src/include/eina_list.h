@@ -19,8 +19,6 @@
 #ifndef EINA_LIST_H_
 #define EINA_LIST_H_
 
-#include <stdlib.h>
-
 #include "eina_config.h"
 
 #include "eina_types.h"
