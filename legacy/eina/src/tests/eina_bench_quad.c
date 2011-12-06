@@ -19,6 +19,8 @@
 #define WIDTH 720
 #define HEIGHT 576
 
+#include <stdlib.h>
+
 #include "eina_main.h"
 #include "eina_mempool.h"
 #include "eina_rectangle.h"

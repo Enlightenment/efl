@@ -37,6 +37,7 @@ extern "C"
 void *alloca (size_t);
 #endif
 
+#include <stdlib.h>
 #include <stdio.h>
 #include <sys/types.h>
 #include <string.h>

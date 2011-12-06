@@ -19,6 +19,8 @@
 #ifndef EINA_INLINE_ARRAY_X_
 #define EINA_INLINE_ARRAY_X_
 
+#include <stddef.h>
+
 /**
  * @cond LOCAL
  */

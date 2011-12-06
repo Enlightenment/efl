@@ -20,6 +20,7 @@
 #define EINA_LOG_H_
 
 #include <stdarg.h>
+#include <sys/types.h>
 
 #include "eina_types.h"
 
