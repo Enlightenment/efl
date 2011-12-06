@@ -38,6 +38,7 @@ extern "C"
 void *alloca (size_t);
 #endif
 
+#include <stdlib.h>
 #include <string.h>
 #include <stddef.h>
 #ifdef HAVE_DIRENT_H

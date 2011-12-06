@@ -29,9 +29,9 @@
 #endif
 
 #include <sys/time.h>
+#include <stdio.h>
 
 #ifdef EINA_HAVE_DEBUG_THREADS
-#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <assert.h>
@@ -78,8 +78,6 @@ struct _Eina_RWLock
 EAPI extern Eina_Bool _eina_threads_activated;
 
 #ifdef EINA_HAVE_DEBUG_THREADS
-# include <sys/time.h>
-
 EAPI extern int _eina_threads_debug;
 EAPI extern pthread_t _eina_main_loop;
 EAPI extern pthread_mutex_t _eina_tracking_lock;
