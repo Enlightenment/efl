@@ -20,7 +20,7 @@ index_changed2(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_i
 {
    // called on a change but delayed in case multiple changes happen in a
    // short timespan
-   elm_genlist_item_top_bring_in(event_info);
+   elm_genlist_item_top_bring_in(elm_index_item_data_get(event_info));
 }
 
 void
@@ -34,7 +34,7 @@ void
 index_selected(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info)
 {
    // called on final select
-   elm_genlist_item_top_bring_in(event_info);
+   elm_genlist_item_top_bring_in(elm_index_item_data_get(event_info));
 }
 
 void
@@ -160,13 +160,15 @@ test_index2_it_del(void *data, Evas_Object *obj, void *event_info __UNUSED__)
    Test_Index2_Elements *gui = data;
    const char *label, *label_next;
    Elm_List_Item *it, *it_next;
+   Elm_Index_Item *iit;
 
    it = elm_list_selected_item_get(obj);
    it_next = elm_list_item_next(it);
 
    if (!it_next)
      {
-	elm_index_item_del(gui->id, it);
+        iit = elm_index_item_find(gui->id, it);
+        if (iit) elm_index_item_del(gui->id, iit);
 	elm_list_item_del(it);
 	return;
      }
@@ -174,14 +176,11 @@ test_index2_it_del(void *data, Evas_Object *obj, void *event_info __UNUSED__)
    label = elm_list_item_label_get(it);
    label_next = elm_list_item_label_get(it_next);
 
+   iit = elm_index_item_find(gui->id, it);
    if (label[0] == label_next[0])
-     {
-	Elm_Index_Item *iit;
-	iit = elm_index_item_find(gui->id, it);
-	elm_index_item_data_set(iit, it_next);
-     }
+     elm_index_item_data_set(iit, it_next);
    else
-     elm_index_item_del(gui->id, it);
+     elm_index_item_del(gui->id, iit);
 
    elm_list_item_del(it);
 }
@@ -189,7 +188,7 @@ test_index2_it_del(void *data, Evas_Object *obj, void *event_info __UNUSED__)
 void
 test_index2_id_changed(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info)
 {
-   elm_list_item_show(event_info);
+   elm_list_item_show(elm_index_item_data_get(event_info));
 }
 
 void

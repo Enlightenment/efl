@@ -22399,19 +22399,14 @@ extern "C" {
    EAPI int             elm_index_item_level_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
 
    /**
-    * Returns the last selected item's data, for a given index widget.
+    * Returns the last selected item, for a given index widget.
     *
     * @param obj The index object.
-    * @return The item @b data associated to the last selected item on
-    * @p obj (or @c NULL, on errors).
-    *
-    * @warning The returned value is @b not an #Elm_Index_Item item
-    * handle, but the data associated to it (see the @c item parameter
-    * in elm_index_item_append(), as an example).
+    * @return The last item @b selected on @p obj (or @c NULL, on errors).
     *
     * @ingroup Index
     */
-   EAPI void           *elm_index_item_selected_get(const Evas_Object *obj, int level) EINA_ARG_NONNULL(1);
+   EAPI Elm_Index_Item *elm_index_item_selected_get(const Evas_Object *obj, int level) EINA_ARG_NONNULL(1);
 
    /**
     * Append a new item on a given index widget.
@@ -22456,8 +22451,7 @@ extern "C" {
     * @param obj The index object.
     * @param letter Letter under which the item should be indexed
     * @param item The item data to set for the index's item
-    * @param relative The item data of the index item to be the
-    * predecessor of this new one
+    * @param relative The index item to be the predecessor of this new one
     *
     * Despite the most common usage of the @p letter argument is for
     * single char strings, one could use arbitrary strings as index
@@ -22466,13 +22460,12 @@ extern "C" {
     * @c item will be the pointer returned back on @c "changed", @c
     * "delay,changed" and @c "selected" smart events.
     *
-    * @note If @p relative is @c NULL or if it's not found to be data
-    * set on any previous item on @p obj, this function will behave as
+    * @note If @p relative is @c NULL this function will behave as
     * elm_index_item_append().
     *
     * @ingroup Index
     */
-   EAPI void            elm_index_item_append_relative(Evas_Object *obj, const char *letter, const void *item, const void *relative) EINA_ARG_NONNULL(1);
+   EAPI void            elm_index_item_append_relative(Evas_Object *obj, const char *letter, const void *item, const Elm_Index_Item *relative) EINA_ARG_NONNULL(1);
 
    /**
     * Prepend a new item, on a given index widget, <b>after the item
@@ -22481,8 +22474,7 @@ extern "C" {
     * @param obj The index object.
     * @param letter Letter under which the item should be indexed
     * @param item The item data to set for the index's item
-    * @param relative The item data of the index item to be the
-    * successor of this new one
+    * @param relative The index item to be the successor of this new one
     *
     * Despite the most common usage of the @p letter argument is for
     * single char strings, one could use arbitrary strings as index
@@ -22491,13 +22483,12 @@ extern "C" {
     * @c item will be the pointer returned back on @c "changed", @c
     * "delay,changed" and @c "selected" smart events.
     *
-    * @note If @p relative is @c NULL or if it's not found to be data
-    * set on any previous item on @p obj, this function will behave as
+    * @note If @p relative is @c NULL this function will behave as
     * elm_index_item_prepend().
     *
     * @ingroup Index
     */
-   EAPI void            elm_index_item_prepend_relative(Evas_Object *obj, const char *letter, const void *item, const void *relative) EINA_ARG_NONNULL(1);
+   EAPI void            elm_index_item_prepend_relative(Evas_Object *obj, const char *letter, const void *item, const Elm_Index_Item *relative) EINA_ARG_NONNULL(1);
 
    /**
     * Insert a new item into the given index widget, using @p cmp_func
@@ -22537,18 +22528,14 @@ extern "C" {
     * it's data value</b>.
     *
     * @param obj The index object
-    * @param item The item's data pointer for the item to be removed
-    * from @p obj
+    * @param item The item to be removed from @p obj
     *
     * If a deletion callback is set, via elm_index_item_del_cb_set(),
     * that callback function will be called by this one.
     *
-    * @warning The item to be removed from @p obj will be found via
-    * its item data pointer, and not by an #Elm_Index_Item handle.
-    *
     * @ingroup Index
     */
-   EAPI void            elm_index_item_del(Evas_Object *obj, const void *item) EINA_ARG_NONNULL(1);
+   EAPI void            elm_index_item_del(Evas_Object *obj, Elm_Index_Item *item) EINA_ARG_NONNULL(1);
 
    /**
     * Find a given index widget's item, <b>using item data</b>.
