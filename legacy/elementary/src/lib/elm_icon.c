@@ -1,6 +1,7 @@
 #include <Elementary.h>
 #include "elm_priv.h"
 #include "els_icon.h"
+#include <assert.h>
 
 #ifdef ELM_EFREET
 #define NON_EXISTING (void *)-1

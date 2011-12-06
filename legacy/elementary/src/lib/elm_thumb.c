@@ -1,5 +1,6 @@
 #include <Elementary.h>
 #include "elm_priv.h"
+#include <assert.h>
 
 typedef struct _Widget_Data Widget_Data;
 
