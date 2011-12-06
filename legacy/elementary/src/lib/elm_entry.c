@@ -65,6 +65,8 @@ struct _Widget_Data
    Eina_Bool textonly : 1;
    Eina_Bool usedown : 1;
    Eina_Bool scroll : 1;
+   Eina_Bool h_bounce : 1;
+   Eina_Bool v_bounce : 1;
    Eina_Bool input_panel_enable : 1;
 };
 
@@ -531,14 +533,14 @@ _theme_hook(Evas_Object *obj)
      edje_object_signal_emit(wd->ent, "elm,action,focus", "elm");
    edje_object_message_signal_process(wd->ent);
    edje_object_scale_set(wd->ent, elm_widget_scale_get(obj) * _elm_config->scale);
-   elm_smart_scroller_mirrored_set(wd->scroller, elm_widget_mirrored_get(obj));
-   elm_smart_scroller_object_theme_set(obj, wd->scroller, "scroller", "entry",
-                                       elm_widget_style_get(obj));
    if (wd->scroll)
      {
         const char *str;
         Evas_Object *edj;
 
+        elm_smart_scroller_mirrored_set(wd->scroller, elm_widget_mirrored_get(obj));
+        elm_smart_scroller_object_theme_set(obj, wd->scroller, "scroller", "entry",
+                                       elm_widget_style_get(obj));
         edj = elm_smart_scroller_edje_object_get(wd->scroller);
         str = edje_object_data_get(edj, "focus_highlight");
         if ((str) && (!strcmp(str, "on")))
@@ -2226,25 +2228,13 @@ elm_entry_add(Evas_Object *parent)
 
    evas_object_smart_callback_add(obj, "sub-object-del", _sub_del, wd);
 
-   wd->scroller = elm_smart_scroller_add(e);
-   elm_widget_sub_object_add(obj, wd->scroller);
-   evas_object_smart_member_add(wd->scroller, obj);
-   elm_smart_scroller_widget_set(wd->scroller, obj);
-   elm_smart_scroller_object_theme_set(obj, wd->scroller, "scroller", "entry",
-                                       elm_widget_style_get(obj));
-   evas_object_size_hint_weight_set(wd->scroller, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-   evas_object_size_hint_align_set(wd->scroller, EVAS_HINT_FILL, EVAS_HINT_FILL);
-   elm_smart_scroller_bounce_allow_set(wd->scroller, EINA_FALSE, EINA_FALSE);
-   evas_object_propagate_events_set(wd->scroller, EINA_TRUE);
-   evas_object_propagate_events_set(elm_smart_scroller_edje_object_get(
-                                    wd->scroller), EINA_TRUE);
-
    wd->linewrap     = ELM_WRAP_WORD;
    wd->editable     = EINA_TRUE;
    wd->disabled     = EINA_FALSE;
    wd->context_menu = EINA_TRUE;
    wd->autosave     = EINA_TRUE;
    wd->textonly     = EINA_FALSE;
+   wd->scroll       = EINA_FALSE;
 
    wd->ent = edje_object_add(e);
    edje_object_item_provider_set(wd->ent, _get_item, obj);
@@ -3211,14 +3201,33 @@ elm_entry_scrollable_set(Evas_Object *obj, Eina_Bool scroll)
 {
    ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
+   const Elm_Scroller_Policy map[3] =
+     {
+        ELM_SMART_SCROLLER_POLICY_AUTO,
+        ELM_SMART_SCROLLER_POLICY_ON,
+        ELM_SMART_SCROLLER_POLICY_OFF
+     };
    if (!wd) return;
    scroll = !!scroll;
    if (wd->scroll == scroll) return;
    wd->scroll = scroll;
    if (wd->scroll)
      {
-        elm_widget_sub_object_del(obj, wd->scroller);
-        elm_widget_resize_object_set(obj, wd->scroller);
+        if (!wd->scroller)
+          {
+             wd->scroller = elm_smart_scroller_add(evas_object_evas_get(obj));
+             elm_widget_resize_object_set(obj, wd->scroller);
+             elm_smart_scroller_widget_set(wd->scroller, obj);
+             elm_smart_scroller_object_theme_set(obj, wd->scroller, "scroller", "entry",
+                                                 elm_widget_style_get(obj));
+             evas_object_size_hint_weight_set(wd->scroller, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+             evas_object_size_hint_align_set(wd->scroller, EVAS_HINT_FILL, EVAS_HINT_FILL);
+             evas_object_propagate_events_set(wd->scroller, EINA_TRUE);
+             evas_object_propagate_events_set(elm_smart_scroller_edje_object_get(wd->scroller),
+                                              EINA_TRUE);
+          }
+        elm_smart_scroller_bounce_allow_set(wd->scroller, wd->h_bounce, wd->v_bounce);
+        elm_smart_scroller_policy_set(wd->scroller, map[wd->policy_h], map[wd->policy_v]);
         elm_widget_sub_object_add(obj, wd->ent);
         elm_smart_scroller_child_set(wd->scroller, wd->ent);
         evas_object_show(wd->scroller);
@@ -3226,12 +3235,15 @@ elm_entry_scrollable_set(Evas_Object *obj, Eina_Bool scroll)
      }
    else
      {
-        elm_smart_scroller_child_set(wd->scroller, NULL);
+        if (wd->scroller)
+          {
+             elm_smart_scroller_child_set(wd->scroller, NULL);
+             evas_object_smart_member_add(wd->scroller, obj);
+             elm_widget_sub_object_add(obj, wd->scroller);
+             evas_object_hide(wd->scroller);
+          }
         elm_widget_sub_object_del(obj, wd->ent);
         elm_widget_resize_object_set(obj, wd->ent);
-        evas_object_smart_member_add(wd->scroller, obj);
-        elm_widget_sub_object_add(obj, wd->scroller);
-        evas_object_hide(wd->scroller);
         elm_widget_on_show_region_hook_set(obj, NULL, NULL);
      }
    wd->lastw = -1;
@@ -3356,6 +3368,8 @@ elm_entry_bounce_set(Evas_Object *obj, Eina_Bool h_bounce, Eina_Bool v_bounce)
    ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return;
+   wd->h_bounce = h_bounce;
+   wd->v_bounce = v_bounce;
    elm_smart_scroller_bounce_allow_set(wd->scroller, h_bounce, v_bounce);
 }
 
