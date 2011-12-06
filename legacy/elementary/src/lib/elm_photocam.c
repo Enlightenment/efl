@@ -1293,6 +1293,40 @@ elm_photocam_zoom_set(Evas_Object *obj, double zoom)
              wd->size.nh = ph;
           }
      }
+   else if (wd->mode == ELM_PHOTOCAM_ZOOM_MODE_AUTO_FIT_IN)
+     {
+        if ((wd->size.imw < 1) || (wd->size.imh < 1))
+          {
+             wd->size.nw = 0;
+             wd->size.nh = 0;
+          }
+        else if ((wd->size.imw < rw) && (wd->size.imh < rh))
+          {
+             if (1 != wd->zoom) zoom_changed = 1;
+             wd->zoom = 1;
+             wd->size.nw = wd->size.imw;
+             wd->size.nh = wd->size.imh;
+          }
+        else
+          {
+             ph = (wd->size.imh * rw) / wd->size.imw;
+             if (ph > rh)
+               {
+                  pw = (wd->size.imw * rh) / wd->size.imh;
+                  ph = rh;
+               }
+             else
+               pw = rw;
+             if (wd->size.imw > wd->size.imh)
+               z = wd->size.imw / pw;
+             else
+               z = wd->size.imh / ph;
+             if (z != wd->zoom) zoom_changed = 1;
+             wd->zoom = z;
+             wd->size.nw = pw;
+             wd->size.nh = ph;
+          }
+     }
    if (wd->main_load_pending)
      {
         wd->size.w = wd->size.nw;
