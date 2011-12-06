@@ -637,6 +637,8 @@ evas_video_sink_main_render(void *data)
    evas_object_image_data_update_add(priv->o, 0, 0, priv->width, priv->height);
    evas_object_image_pixels_dirty_set(priv->o, 0);
 
+   _update_emotion_fps(ev);
+
    if (!preroll && ev->play_started)
      {
         _emotion_playback_started(ev->obj);
