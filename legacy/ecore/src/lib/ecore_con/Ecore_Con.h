@@ -482,6 +482,7 @@ struct _Ecore_Con_Event_Server_Write
  * @struct _Ecore_Con_Event_Proxy_Bind
  * Used as the @p data param for the @ref ECORE_CON_EVENT_PROXY_BIND event
  * @ingroup Ecore_Con_Socks_Group
+ * @since 1.2
  */
 struct _Ecore_Con_Event_Proxy_Bind
 {
