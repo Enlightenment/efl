@@ -13,6 +13,8 @@
  *
  * @{
  */
+#include <stdlib.h>
+
 #include <Eina.h>
 
 #include "evas_language_utils.h"
