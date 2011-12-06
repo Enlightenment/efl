@@ -152,8 +152,9 @@ ecore_con_socks_read(Ecore_Con_Server *svr, unsigned char *buf, int num)
         svr->ecs_recvbuf = NULL;
         svr->ecs_buf_offset = svr->ecs_addrlen = 0;
         memset(svr->ecs_addr, 0, sizeof(svr->ecs_addr));
-        ecore_con_event_server_add(svr);
-        if (svr->buf && eina_binbuf_length_get(svr->buf))
+        if (!svr->ssl_state)
+          ecore_con_event_server_add(svr);
+        if (svr->ssl_state || (svr->buf && eina_binbuf_length_get(svr->buf)))
           ecore_main_fd_handler_active_set(svr->fd_handler, ECORE_FD_READ | ECORE_FD_WRITE);
      }
    return;
