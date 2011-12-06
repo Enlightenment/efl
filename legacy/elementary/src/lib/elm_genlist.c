@@ -1757,10 +1757,9 @@ _item_realize(Elm_Gen_Item *it,
               int               in,
               Eina_Bool         calc)
 {
-   Elm_Gen_Item *it2;
    const char *treesize;
    char buf[1024];
-   int depth, tsize = 20;
+   int tsize = 20;
    Item_Cache *itc = NULL;
 
    if (it->generation < it->wd->generation) return;
@@ -1832,15 +1831,10 @@ _item_realize(Elm_Gen_Item *it,
 
    _elm_genlist_item_odd_even_update(it);
 
-   for (it2 = it, depth = 0; it2->parent; it2 = it2->parent)
-     {
-        if (!it2->parent->group) depth += 1;
-     }
-   it->item->expanded_depth = depth;
    treesize = edje_object_data_get(VIEW(it), "treesize");
    if (treesize) tsize = atoi(treesize);
    evas_object_size_hint_min_set(it->spacer,
-                                 (depth * tsize) * _elm_config->scale, 1);
+                                 (it->item->expanded_depth * tsize) * _elm_config->scale, 1);
    edje_object_part_swallow(VIEW(it), "elm.swallow.pad", it->spacer);
    if (!calc)
      {
@@ -3169,7 +3163,8 @@ _item_new(Widget_Data                  *wd,
           Evas_Smart_Cb                 func,
           const void                   *func_data)
 {
-   Elm_Gen_Item *it;
+   Elm_Gen_Item *it, *it2;
+   int depth = 0;
 
    it = _elm_genlist_item_new(wd, itc, data, parent, func, func_data);
    if (!it) return NULL;
@@ -3186,6 +3181,11 @@ _item_new(Widget_Data                  *wd,
         else if (it->parent->item->group_item)
           it->item->group_item = it->parent->item->group_item;
      }
+   for (it2 = it, depth = 0; it2->parent; it2 = it2->parent)
+     {
+        if (!it2->parent->group) depth += 1;
+     }
+   it->item->expanded_depth = depth;
    return it;
 }
 
