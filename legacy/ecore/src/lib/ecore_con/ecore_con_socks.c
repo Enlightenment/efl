@@ -147,10 +147,14 @@ ecore_con_socks_read(Ecore_Con_Server *svr, unsigned char *buf, int num)
              ecore_con_event_proxy_bind(svr);
           }
         svr->ecs_state = ECORE_CON_SOCKS_STATE_DONE;
-        INF("PROXY STATE++");
+        INF("PROXY CONNECTED");
         if (svr->ecs_recvbuf) eina_binbuf_free(svr->ecs_recvbuf);
         svr->ecs_recvbuf = NULL;
+        svr->ecs_buf_offset = svr->ecs_addrlen = 0;
+        memset(svr->ecs_addr, 0, sizeof(svr->ecs_addr));
         ecore_con_event_server_add(svr);
+        if (svr->buf && eina_binbuf_length_get(svr->buf))
+          ecore_main_fd_handler_active_set(svr->fd_handler, ECORE_FD_READ | ECORE_FD_WRITE);
      }
    return;
 error:
@@ -165,7 +169,6 @@ ecore_con_socks_svr_init(Ecore_Con_Server *svr)
 
    if (!svr->ip) return EINA_FALSE;
    if (svr->ecs_buf) return EINA_FALSE;
-   if (svr->handshaking && svr->ssl_state) return EINA_FALSE;
    if (svr->ecs_state != ECORE_CON_SOCKS_STATE_INIT) return EINA_FALSE;
    ecore_main_fd_handler_active_set(svr->fd_handler, ECORE_FD_WRITE);
    if (v4)

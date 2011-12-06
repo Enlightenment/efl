@@ -1015,6 +1015,12 @@ ecore_con_event_server_del(Ecore_Con_Server *svr)
     svr->event_count = eina_list_append(svr->event_count, e);
     _ecore_con_server_timer_update(svr);
     e->server = svr;
+    if (svr->ecs)
+      {
+         svr->ecs_state = svr->ecs->lookup ? ECORE_CON_SOCKS_STATE_RESOLVED : ECORE_CON_SOCKS_STATE_DONE;
+         eina_stringshare_replace(&svr->proxyip, NULL);
+         svr->proxyport = 0;
+      }
     ecore_event_add(ECORE_CON_EVENT_SERVER_DEL, e,
                     _ecore_con_event_server_del_free, NULL);
    _ecore_con_event_count++;
@@ -1028,6 +1034,7 @@ ecore_con_event_server_write(Ecore_Con_Server *svr, int num)
    e = ecore_con_event_server_write_alloc();
    EINA_SAFETY_ON_NULL_RETURN(e);
 
+   INF("Wrote %d bytes", num);
    svr->event_count = eina_list_append(svr->event_count, e);
    e->server = svr;
    e->size = num;
@@ -1704,8 +1711,8 @@ _ecore_con_cb_tcp_connect(void           *data,
      {
         svr->handshaking = EINA_TRUE;
         svr->ssl_state = ECORE_CON_SSL_STATE_INIT;
-        DBG("beginning ssl handshake");
-        if (ecore_con_ssl_server_init(svr))
+        DBG("%s ssl handshake", svr->ecs_state ? "Queuing" : "Beginning");
+        if ((!svr->ecs_state) && ecore_con_ssl_server_init(svr))
           goto error;
      }
 
@@ -2001,7 +2008,7 @@ _ecore_con_cl_read(Ecore_Con_Server *svr)
    if (svr->connecting && (svr_try_connect_plain(svr) != ECORE_CON_CONNECTED))
       return;
 
-   if (svr->handshaking)
+   if (svr->handshaking && (!svr->ecs_state))
      {
         DBG("Continuing ssl handshake");
         if (!ecore_con_ssl_server_init(svr))
@@ -2009,8 +2016,9 @@ _ecore_con_cl_read(Ecore_Con_Server *svr)
         _ecore_con_server_timer_update(svr);
      }
 
-   if (!(svr->type & ECORE_CON_SSL))
+   if (svr->ecs_state || !(svr->type & ECORE_CON_SSL))
      {
+        errno = 0;
         num = read(svr->fd, buf, sizeof(buf));
         /* 0 is not a valid return value for a tcp socket */
         if ((num > 0) || ((num < 0) && (errno == EAGAIN)))
@@ -2308,6 +2316,7 @@ _ecore_con_server_flush(Ecore_Con_Server *svr)
    size_t buf_len, buf_offset;
    const void *buf;
 
+   DBG("(svr=%p,buf=%p)", svr, svr->buf);
 #ifdef _WIN32
    if (ecore_con_local_win32_server_flush(svr))
      return;
@@ -2333,7 +2342,7 @@ _ecore_con_server_flush(Ecore_Con_Server *svr)
     */
    if (num <= 0) return;
 
-   if (svr->handshaking)
+   if ((!svr->ecs_state) && svr->handshaking)
      {
         DBG("Continuing ssl handshake");
         if (ecore_con_ssl_server_init(svr))
@@ -2342,7 +2351,7 @@ _ecore_con_server_flush(Ecore_Con_Server *svr)
         return;
      }
 
-   if (!(svr->type & ECORE_CON_SSL))
+   if (svr->ecs_state || (!(svr->type & ECORE_CON_SSL)))
      count = write(svr->fd, buf + buf_offset, num);
    else
      count = ecore_con_ssl_server_write(svr, buf + buf_offset, num);
