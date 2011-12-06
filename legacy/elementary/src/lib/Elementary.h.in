@@ -20720,7 +20720,9 @@ extern "C" {
     * Smart events one can add callbacks for are:
     *
     * - @c "changed" - when the slideshow switches its view to a new
-    *   item
+    *   item. event_info parameter in callback contains the current visible item
+    * - @c "transition,end" - when a slide transition ends. event_info parameter
+    *   in callback contains the current visible item
     *
     * List of examples for the slideshow widget:
     * @li @ref slideshow_example

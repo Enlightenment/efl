@@ -51,9 +51,11 @@ static Eina_Bool _event_hook(Evas_Object *obj, Evas_Object *src,
                              Evas_Callback_Type type, void *event_info);
 
 static const char SIG_CHANGED[] = "changed";
+static const char SIG_TRANSITION_END[] = "transition,end";
 
 static const Evas_Smart_Cb_Description _signals[] = {
    {SIG_CHANGED, ""},
+   {SIG_TRANSITION_END, ""},
    {NULL, NULL}
 };
 
@@ -307,7 +309,7 @@ _item_realize(Elm_Slideshow_Item *item)
 }
 
 static void
-_end(void *data, Evas_Object *obj __UNUSED__, const char *emission __UNUSED__, const char *source __UNUSED__)
+_end(void *data, Evas_Object *obj __UNUSED__, const char *emission, const char *source __UNUSED__)
 {
    Elm_Slideshow_Item *item;
    Widget_Data *wd = elm_widget_data_get(data);
@@ -329,6 +331,8 @@ _end(void *data, Evas_Object *obj __UNUSED__, const char *emission __UNUSED__, c
 
    edje_object_part_swallow(wd->slideshow, "elm.swallow.1", VIEW(item));
    edje_object_signal_emit(wd->slideshow, "anim,end", "slideshow");
+   if (emission != NULL)
+     evas_object_smart_callback_call(data, SIG_TRANSITION_END, wd->current);
 }
 
 static Eina_Bool
