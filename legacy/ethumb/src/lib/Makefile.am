@@ -30,7 +30,7 @@ noinst_HEADERS = md5.h ethumb_private.h
 lib_LTLIBRARIES = libethumb.la
 
 
-libethumb_la_SOURCES = Ethumb.c md5.c
+libethumb_la_SOURCES = ethumb.c md5.c
 libethumb_la_LIBADD = \
 @EDJE_LIBS@ \
 @ECORE_FILE_LIBS@ \

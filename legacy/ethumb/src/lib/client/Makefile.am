@@ -13,7 +13,7 @@ includesdir = $(includedir)/ethumb-@VMAJ@
 
 lib_LTLIBRARIES = libethumb_client.la
 
-libethumb_client_la_SOURCES = Ethumb_Client.c
+libethumb_client_la_SOURCES = ethumb_client.c
 libethumb_client_la_LIBADD = \
 $(top_builddir)/src/lib/libethumb.la \
 @EDBUS_LIBS@ \
