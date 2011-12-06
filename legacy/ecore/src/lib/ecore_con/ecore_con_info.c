@@ -246,9 +246,9 @@ ecore_con_info_get(Ecore_Con_Server *svr,
         int canonname_len = 0;
         int err;
 
-        eina_convert_itoa(svr->port, service);
+        eina_convert_itoa(svr->ecs ? svr->ecs->port : svr->port, service);
         /* CHILD */
-        if (!getaddrinfo(svr->name, service, hints, &result) && result)
+        if (!getaddrinfo(svr->ecs ? svr->ecs->ip : svr->name, service, hints, &result) && result)
           {
              if (result->ai_canonname)
                canonname_len = strlen(result->ai_canonname) + 1;

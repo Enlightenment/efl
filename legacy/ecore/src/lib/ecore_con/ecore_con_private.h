@@ -56,7 +56,8 @@ extern int _ecore_con_log_dom;
 
 typedef struct _Ecore_Con_Lookup Ecore_Con_Lookup;
 typedef struct _Ecore_Con_Info Ecore_Con_Info;
-
+typedef struct Ecore_Con_Socks_v4 Ecore_Con_Socks_v4;
+typedef struct Ecore_Con_Socks_v5 Ecore_Con_Socks_v5;
 typedef void (*Ecore_Con_Info_Cb)(void *data, Ecore_Con_Info *infos);
 
 typedef enum _Ecore_Con_State
@@ -81,6 +82,14 @@ typedef enum _Ecore_Con_Ssl_Handshake
    ECORE_CON_SSL_STATE_HANDSHAKING,
    ECORE_CON_SSL_STATE_INIT
 } Ecore_Con_Ssl_State;
+
+typedef enum Ecore_Con_Socks_State
+{
+   ECORE_CON_SOCKS_STATE_DONE = 0,
+   ECORE_CON_SOCKS_STATE_RESOLVED,
+   ECORE_CON_SOCKS_STATE_INIT,
+   ECORE_CON_SOCKS_STATE_READ
+} Ecore_Con_Socks_State;
 
 struct _Ecore_Con_Client
 {
@@ -130,6 +139,17 @@ struct _Ecore_Con_Server
    Eina_List *event_count;
    int client_limit;
    pid_t ppid;
+   /* socks */
+   Ecore_Con_Socks *ecs;
+   Ecore_Con_Socks_State ecs_state;
+   int ecs_addrlen;
+   unsigned char ecs_addr[16];
+   unsigned int ecs_buf_offset;
+   Eina_Binbuf *ecs_buf;
+   Eina_Binbuf *ecs_recvbuf;
+   const char *proxyip;
+   int proxyport;
+   /* endsocks */
 #if USE_GNUTLS
    gnutls_session_t session;
    gnutls_anon_client_credentials_t anoncred_c;
@@ -206,8 +226,58 @@ struct _Ecore_Con_Lookup
    const void *data;
 };
 
+#define ECORE_CON_SOCKS_CAST_ELSE(X) \
+   Ecore_Con_Socks_v4 *v4 = NULL; \
+   Ecore_Con_Socks_v5 *v5 = NULL; \
+   if ((X) && ((X)->version == 4)) \
+     v4 = (Ecore_Con_Socks_v4*)(X); \
+   else if ((X) && ((X)->version == 5)) \
+     v5 = (Ecore_Con_Socks_v5*)(X); \
+   else
+
+struct Ecore_Con_Socks
+{
+   unsigned char version;
+
+   const char *ip;
+   int port;
+   const char *username;
+   Eina_Bool lookup : 1;
+   Eina_Bool bind : 1;
+};
+
+struct Ecore_Con_Socks_v4
+{
+   unsigned char version;
+
+   const char *ip;
+   int port;
+   const char *username;
+   Eina_Bool lookup : 1;
+   Eina_Bool bind : 1;
+};
+
+struct Ecore_Con_Socks_v5
+{
+   unsigned char version;
+
+   const char *ip;
+   int port;
+   const char *username;
+   Eina_Bool lookup : 1;
+   Eina_Bool bind : 1;
+};
+
+extern Ecore_Con_Socks *_ecore_con_proxy_once;
+extern Ecore_Con_Socks *_ecore_con_proxy_global;
+void ecore_con_socks_init(void);
+void ecore_con_socks_shutdown(void);
+Eina_Bool ecore_con_socks_svr_init(Ecore_Con_Server *svr);
+void ecore_con_socks_read(Ecore_Con_Server *svr, unsigned char *buf, int num);
+void ecore_con_socks_dns_cb(const char *canonname, const char *ip, struct sockaddr *addr, int addrlen, Ecore_Con_Server *svr);
 /* from ecore_con.c */
 void ecore_con_server_infos_del(Ecore_Con_Server *svr, void *info);
+void ecore_con_event_proxy_bind(Ecore_Con_Server *svr);
 void ecore_con_event_server_data(Ecore_Con_Server *svr, unsigned char *buf, int num, Eina_Bool duplicate);
 void ecore_con_event_server_del(Ecore_Con_Server *svr);
 void ecore_con_event_server_error(Ecore_Con_Server *svr, const char *error);
@@ -215,7 +285,7 @@ void ecore_con_event_client_add(Ecore_Con_Client *cl);
 void ecore_con_event_client_data(Ecore_Con_Client *cl, unsigned char *buf, int num, Eina_Bool duplicate);
 void ecore_con_event_client_del(Ecore_Con_Client *cl);
 void ecore_con_event_client_error(Ecore_Con_Client *cl, const char *error);
-
+void _ecore_con_server_kill(Ecore_Con_Server *svr);
 /* from ecore_local_win32.c */
 #ifdef _WIN32
 Eina_Bool ecore_con_local_listen(Ecore_Con_Server *svr);
@@ -306,6 +376,7 @@ GENERIC_ALLOC_FREE_HEADER(Ecore_Con_Event_Server_Add, ecore_con_event_server_add
 GENERIC_ALLOC_FREE_HEADER(Ecore_Con_Event_Server_Del, ecore_con_event_server_del);
 GENERIC_ALLOC_FREE_HEADER(Ecore_Con_Event_Server_Write, ecore_con_event_server_write);
 GENERIC_ALLOC_FREE_HEADER(Ecore_Con_Event_Server_Data, ecore_con_event_server_data);
+GENERIC_ALLOC_FREE_HEADER(Ecore_Con_Event_Proxy_Bind, ecore_con_event_proxy_bind);
 
 void ecore_con_mempool_init(void);
 void ecore_con_mempool_shutdown(void);

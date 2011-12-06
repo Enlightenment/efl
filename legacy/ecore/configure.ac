@@ -1190,7 +1190,7 @@ esac
 
 # ecore_con
 
-AC_CHECK_HEADERS([arpa/inet.h arpa/nameser.h netinet/tcp.h netinet/in.h sys/socket.h sys/un.h ws2tcpip.h netdb.h])
+AC_CHECK_HEADERS([arpa/inet.h arpa/nameser.h netinet/tcp.h net/if.h netinet/in.h sys/socket.h sys/un.h ws2tcpip.h netdb.h])
 
 if test "x${ac_cv_header_netdb_h}" = "xyes" ; then
    have_addrinfo="yes"

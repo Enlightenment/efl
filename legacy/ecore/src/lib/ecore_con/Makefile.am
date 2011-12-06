@@ -19,6 +19,7 @@ includesdir = $(includedir)/ecore-@VMAJ@
 
 libecore_con_la_SOURCES = \
 ecore_con.c \
+ecore_con_socks.c \
 ecore_con_ssl.c \
 ecore_con_url.c \
 ecore_con_alloc.c

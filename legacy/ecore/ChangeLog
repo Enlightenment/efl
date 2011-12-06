@@ -380,3 +380,7 @@
 2011-12-04 Mike Blumenkrantz
 
         * added ecore_timer_reset()
+
+2011-12-05 Mike Blumenkrantz
+
+        * added ecore_con_socks api

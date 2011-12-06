@@ -40,6 +40,7 @@ GENERIC_ALLOC_FREE(Ecore_Con_Event_Server_Add, ecore_con_event_server_add);
 GENERIC_ALLOC_FREE(Ecore_Con_Event_Server_Del, ecore_con_event_server_del);
 GENERIC_ALLOC_FREE(Ecore_Con_Event_Server_Write, ecore_con_event_server_write);
 GENERIC_ALLOC_FREE(Ecore_Con_Event_Server_Data, ecore_con_event_server_data);
+GENERIC_ALLOC_FREE(Ecore_Con_Event_Proxy_Bind, ecore_con_event_proxy_bind);
 
 static Ecore_Con_Mempool *mempool_array[] = {
   &ecore_con_event_client_add_mp,
@@ -51,7 +52,8 @@ static Ecore_Con_Mempool *mempool_array[] = {
   &ecore_con_event_server_add_mp,
   &ecore_con_event_server_del_mp,
   &ecore_con_event_server_write_mp,
-  &ecore_con_event_server_data_mp
+  &ecore_con_event_server_data_mp,
+  &ecore_con_event_proxy_bind_mp
 };
 
 void

@@ -309,7 +309,7 @@ ecore_con_info_get(Ecore_Con_Server *svr,
         memcpy(&cares->hints, hints, sizeof(struct addrinfo));
      }
 
-   if (inet_pton(AF_INET, svr->name, &cares->addr.v4) == 1)
+   if (inet_pton(AF_INET, svr->ecs : svr->ecs->ip : svr->name, &cares->addr.v4) == 1)
      {
         cares->byaddr = EINA_TRUE;
         cares->isv6 = EINA_FALSE;
@@ -320,7 +320,7 @@ ecore_con_info_get(Ecore_Con_Server *svr,
                            cares);
      }
 #ifdef HAVE_IPV6
-   else if (inet_pton(AF_INET6, svr->name, &cares->addr.v6) == 1)
+   else if (inet_pton(AF_INET6, svr->ecs : svr->ecs->ip : svr->name, &cares->addr.v6) == 1)
      {
         cares->byaddr = EINA_TRUE;
         cares->isv6 = EINA_TRUE;
@@ -334,7 +334,7 @@ ecore_con_info_get(Ecore_Con_Server *svr,
    else
      {
         cares->byaddr = EINA_FALSE;
-        ares_gethostbyname(info_channel, svr->name, ai_family,
+        ares_gethostbyname(info_channel, svr->ecs : svr->ecs->ip : svr->name, ai_family,
                            (ares_host_callback)_ecore_con_info_ares_host_cb,
                            cares);
      }
@@ -457,7 +457,7 @@ _ecore_con_info_ares_host_cb(Ecore_Con_CAres *arg,
                 goto on_mem_error;
 
               addri->sin_family = AF_INET;
-              addri->sin_port = htons(arg->svr->port);
+              addri->sin_port = htons(arg->svr->ecs : svr->ecs->port : svr->port);
 
               memcpy(&addri->sin_addr.s_addr,
                      hostent->h_addr_list[0], sizeof(struct in_addr));
@@ -477,7 +477,7 @@ _ecore_con_info_ares_host_cb(Ecore_Con_CAres *arg,
                 goto on_mem_error;
 
               addri6->sin6_family = AF_INET6;
-              addri6->sin6_port = htons(arg->svr->port);
+              addri6->sin6_port = htons(arg->svr->ecs : svr->ecs->port : svr->port);
               addri6->sin6_flowinfo = 0;
               addri6->sin6_scope_id = 0;
 
@@ -516,7 +516,7 @@ _ecore_con_info_ares_host_cb(Ecore_Con_CAres *arg,
                      goto on_mem_error;
 
                    addri6->sin6_family = AF_INET6;
-                   addri6->sin6_port = htons(arg->svr->port);
+                   addri6->sin6_port = htons(arg->svr->ecs : svr->ecs->port : svr->port);
                    addri6->sin6_flowinfo = 0;
                    addri6->sin6_scope_id = 0;
 
@@ -537,7 +537,7 @@ _ecore_con_info_ares_host_cb(Ecore_Con_CAres *arg,
                      goto on_mem_error;
 
                    addri->sin_family = AF_INET;
-                   addri->sin_port = htons(arg->svr->port);
+                   addri->sin_port = htons(arg->svr->ecs : svr->ecs->port : svr->port);
 
                    memcpy(&addri->sin_addr.s_addr,
                           &arg->addr.v4, sizeof(struct in_addr));

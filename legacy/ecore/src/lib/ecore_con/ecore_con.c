@@ -114,11 +114,14 @@ EAPI int ECORE_CON_EVENT_CLIENT_WRITE = 0;
 EAPI int ECORE_CON_EVENT_SERVER_WRITE = 0;
 EAPI int ECORE_CON_EVENT_CLIENT_ERROR = 0;
 EAPI int ECORE_CON_EVENT_SERVER_ERROR = 0;
+EAPI int ECORE_CON_EVENT_PROXY_BIND = 0;
 
 static Eina_List *servers = NULL;
 static int _ecore_con_init_count = 0;
 static int _ecore_con_event_count = 0;
 int _ecore_con_log_dom = -1;
+Ecore_Con_Socks *_ecore_con_proxy_once = NULL;
+Ecore_Con_Socks *_ecore_con_proxy_global = NULL;
 
 EAPI int
 ecore_con_init(void)
@@ -156,6 +159,7 @@ ecore_con_init(void)
    ECORE_CON_EVENT_SERVER_WRITE = ecore_event_type_new();
    ECORE_CON_EVENT_CLIENT_ERROR = ecore_event_type_new();
    ECORE_CON_EVENT_SERVER_ERROR = ecore_event_type_new();
+   ECORE_CON_EVENT_PROXY_BIND = ecore_event_type_new();
 
 
    eina_magic_string_set(ECORE_MAGIC_CON_SERVER, "Ecore_Con_Server");
@@ -163,6 +167,7 @@ ecore_con_init(void)
    eina_magic_string_set(ECORE_MAGIC_CON_URL, "Ecore_Con_Url");
 
    /* TODO Remember return value, if it fails, use gethostbyname() */
+   ecore_con_socks_init();
    ecore_con_ssl_init();
    ecore_con_info_init();
 
@@ -190,6 +195,7 @@ ecore_con_shutdown(void)
         _ecore_con_server_free(svr);
      }
 
+   ecore_con_socks_shutdown();
    if (!_ecore_con_event_count) ecore_con_mempool_shutdown();
 
    ecore_con_info_shutdown();
@@ -400,10 +406,29 @@ ecore_con_server_connect(Ecore_Con_Type compl_type,
    svr->reject_excess_clients = EINA_FALSE;
    svr->clients = NULL;
    svr->client_limit = -1;
-   if (ecore_con_ssl_server_prepare(svr, compl_type & ECORE_CON_SSL))
-     goto error;
 
    type = compl_type & ECORE_CON_TYPE;
+
+   if (type > ECORE_CON_LOCAL_ABSTRACT)
+     {
+        /* never use proxies on local connections */
+        if (_ecore_con_proxy_once)
+          svr->ecs = _ecore_con_proxy_once;
+        else if (_ecore_con_proxy_global)
+          svr->ecs = _ecore_con_proxy_global;
+        _ecore_con_proxy_once = NULL;
+        if (svr->ecs)
+          {
+             if ((!svr->ecs->lookup) &&
+                 (!ecore_con_lookup(svr->name, (Ecore_Con_Dns_Cb)ecore_con_socks_dns_cb, svr)))
+               goto error;
+             if (svr->ecs->lookup)
+               svr->ecs_state = ECORE_CON_SOCKS_STATE_RESOLVED;
+          }
+          
+     }
+   if (ecore_con_ssl_server_prepare(svr, compl_type & ECORE_CON_SSL))
+     goto error;
 
    if (((type == ECORE_CON_REMOTE_TCP) ||
         (type == ECORE_CON_REMOTE_NODELAY) ||
@@ -940,6 +965,25 @@ ecore_con_client_fd_get(Ecore_Con_Client *cl)
  */
 
 void
+ecore_con_event_proxy_bind(Ecore_Con_Server *svr)
+{
+    Ecore_Con_Event_Proxy_Bind *e;
+    int ev = ECORE_CON_EVENT_PROXY_BIND;
+
+    e = ecore_con_event_proxy_bind_alloc();
+    EINA_SAFETY_ON_NULL_RETURN(e);
+
+    svr->event_count = eina_list_append(svr->event_count, e);
+    _ecore_con_server_timer_update(svr);
+    e->server = svr;
+    e->ip = svr->proxyip;
+    e->port = svr->proxyport;
+    ecore_event_add(ev, e,
+                    _ecore_con_event_server_add_free, NULL);
+   _ecore_con_event_count++;
+}
+
+void
 ecore_con_event_server_add(Ecore_Con_Server *svr)
 {
     /* we got our server! */
@@ -949,6 +993,8 @@ ecore_con_event_server_add(Ecore_Con_Server *svr)
     e = ecore_con_event_server_add_alloc();
     EINA_SAFETY_ON_NULL_RETURN(e);
 
+    svr->connecting = EINA_FALSE;
+    svr->start_time = ecore_time_get();
     svr->event_count = eina_list_append(svr->event_count, e);
     _ecore_con_server_timer_update(svr);
     e->server = svr;
@@ -1212,6 +1258,9 @@ _ecore_con_server_free(Ecore_Con_Server *svr)
 
    eina_stringshare_del(svr->ip);
 
+   if (svr->ecs_buf) eina_binbuf_free(svr->ecs_buf);
+   if (svr->ecs_recvbuf) eina_binbuf_free(svr->ecs_recvbuf);
+
    if (svr->fd_handler)
      ecore_main_fd_handler_del(svr->fd_handler);
 
@@ -1288,7 +1337,7 @@ _ecore_con_client_free(Ecore_Con_Client *cl)
    return;
 }
 
-static void
+void
 _ecore_con_server_kill(Ecore_Con_Server *svr)
 {
    if (!svr->delete_me)
@@ -1666,7 +1715,8 @@ _ecore_con_cb_tcp_connect(void           *data,
         goto error;
      }
 
-   svr->ip = eina_stringshare_add(net_info->ip);
+   if ((!svr->ecs) || (svr->ecs->lookup))
+     svr->ip = eina_stringshare_add(net_info->ip);
 
    return;
 
@@ -1739,7 +1789,8 @@ _ecore_con_cb_udp_connect(void           *data,
         goto error;
      }
 
-   svr->ip = eina_stringshare_add(net_info->ip);
+   if ((!svr->ecs) || (svr->ecs->lookup))
+     svr->ip = eina_stringshare_add(net_info->ip);
 
    return;
 
@@ -1783,9 +1834,13 @@ svr_try_connect_plain(Ecore_Con_Server *svr)
 
    if ((!svr->delete_me) && (!svr->handshaking) && svr->connecting)
      {
-         svr->connecting = EINA_FALSE;
-         svr->start_time = ecore_time_get();
-         ecore_con_event_server_add(svr);
+         if (svr->ecs)
+           {
+              if (ecore_con_socks_svr_init(svr))
+                return ECORE_CON_INPROGRESS;
+           }
+         else
+           ecore_con_event_server_add(svr);
      }
 
    if (svr->fd_handler && (!svr->buf))
@@ -1936,10 +1991,11 @@ _ecore_con_svr_tcp_handler(void                        *data,
 static void
 _ecore_con_cl_read(Ecore_Con_Server *svr)
 {
-   DBG("svr=%p", svr);
    int num = 0;
    Eina_Bool lost_server = EINA_TRUE;
    unsigned char buf[READBUFSIZ];
+
+   DBG("svr=%p", svr);
 
    /* only possible with non-ssl connections */
    if (svr->connecting && (svr_try_connect_plain(svr) != ECORE_CON_CONNECTED))
@@ -1971,7 +2027,12 @@ _ecore_con_cl_read(Ecore_Con_Server *svr)
      }
 
    if ((!svr->delete_me) && (num > 0))
-     ecore_con_event_server_data(svr, buf, num, EINA_TRUE);
+     {
+        if (svr->ecs_state)
+          ecore_con_socks_read(svr, buf, num);
+        else
+          ecore_con_event_server_data(svr, buf, num, EINA_TRUE);
+     }
 
    if (lost_server)
       _ecore_con_server_kill(svr);
@@ -1994,7 +2055,7 @@ _ecore_con_cl_handler(void             *data,
    want_read = ecore_main_fd_handler_active_get(fd_handler, ECORE_FD_READ);
    want_write = ecore_main_fd_handler_active_get(fd_handler, ECORE_FD_WRITE);
 
-   if (svr->handshaking && (want_read || want_write))
+   if ((!svr->ecs_state) && svr->handshaking && (want_read || want_write))
      {
         DBG("Continuing ssl handshake: preparing to %s...", want_read ? "read" : "write");
 #ifdef ISCOMFITOR
@@ -2013,17 +2074,23 @@ _ecore_con_cl_handler(void             *data,
 
           }
         else if (!svr->ssl_state)
-          {
-              svr->connecting = EINA_FALSE;
-              svr->start_time = ecore_time_get();
-              ecore_con_event_server_add(svr);
-          }
+          ecore_con_event_server_add(svr);
+        return ECORE_CALLBACK_RENEW;
      }
-   else if (want_read)
+   if (svr->ecs && svr->ecs_state && (svr->ecs_state < ECORE_CON_SOCKS_STATE_READ) && (!svr->ecs_buf))
+     {
+        if (svr->ecs_state < ECORE_CON_SOCKS_STATE_INIT)
+          {
+             INF("PROXY STATE++");
+             svr->ecs_state++;
+          }
+        if (ecore_con_socks_svr_init(svr)) return ECORE_CALLBACK_RENEW;
+     }
+   if (want_read)
      _ecore_con_cl_read(svr);
    else if (want_write) /* only possible with non-ssl connections */
      {
-        if (svr->connecting && (!svr_try_connect_plain(svr)))
+        if (svr->connecting && (!svr_try_connect_plain(svr)) && (!svr->ecs_state))
           return ECORE_CALLBACK_RENEW;
 
         _ecore_con_server_flush(svr);
@@ -2238,19 +2305,24 @@ static void
 _ecore_con_server_flush(Ecore_Con_Server *svr)
 {
    int count, num;
+   size_t buf_len, buf_offset;
+   const void *buf;
 
 #ifdef _WIN32
    if (ecore_con_local_win32_server_flush(svr))
      return;
 #endif
 
-   if ((!svr->buf) && svr->fd_handler)
+   if ((!svr->buf) && (!svr->ecs_buf) && svr->fd_handler)
      {
         ecore_main_fd_handler_active_set(svr->fd_handler, ECORE_FD_READ);
         return;
      }
 
-   num = eina_binbuf_length_get(svr->buf) - svr->write_buf_offset;
+   buf = svr->buf ? eina_binbuf_string_get(svr->buf) : eina_binbuf_string_get(svr->ecs_buf);
+   buf_len = svr->buf ? eina_binbuf_length_get(svr->buf) : eina_binbuf_length_get(svr->ecs_buf);
+   buf_offset = svr->buf ? svr->write_buf_offset : svr->ecs_buf_offset;
+   num = buf_len - buf_offset;
 
    /* check whether we need to write anything at all.
     * we must not write zero bytes with SSL_write() since it
@@ -2271,9 +2343,9 @@ _ecore_con_server_flush(Ecore_Con_Server *svr)
      }
 
    if (!(svr->type & ECORE_CON_SSL))
-     count = write(svr->fd, eina_binbuf_string_get(svr->buf) + svr->write_buf_offset, num);
+     count = write(svr->fd, buf + buf_offset, num);
    else
-     count = ecore_con_ssl_server_write(svr, eina_binbuf_string_get(svr->buf) + svr->write_buf_offset, num);
+     count = ecore_con_ssl_server_write(svr, buf + buf_offset, num);
 
    if (count < 0)
      {
@@ -2285,13 +2357,28 @@ _ecore_con_server_flush(Ecore_Con_Server *svr)
          return;
      }
 
-   if (count) ecore_con_event_server_write(svr, count);
-   svr->write_buf_offset += count;
-   if (svr->write_buf_offset >= eina_binbuf_length_get(svr->buf))
+   if (count && (!svr->ecs_state)) ecore_con_event_server_write(svr, count);
+   if (svr->ecs_buf)
+     buf_offset = svr->ecs_buf_offset += count;
+   else
+     buf_offset = svr->write_buf_offset += count;
+   if (buf_offset >= buf_len)
      {
-        svr->write_buf_offset = 0;
-        eina_binbuf_free(svr->buf);
-        svr->buf = NULL;
+        if (svr->ecs_buf)
+          {
+             svr->ecs_buf_offset = 0;
+             eina_binbuf_free(svr->ecs_buf);
+             svr->ecs_buf = NULL;
+             INF("PROXY STATE++");
+             svr->ecs_state++;
+          }
+        else
+          {
+             svr->write_buf_offset = 0;
+             eina_binbuf_free(svr->buf);
+             svr->buf = NULL;
+          }
+        
         if (svr->fd_handler)
           ecore_main_fd_handler_active_set(svr->fd_handler, ECORE_FD_READ);
      }

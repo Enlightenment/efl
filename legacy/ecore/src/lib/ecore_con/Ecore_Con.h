@@ -234,6 +234,13 @@ typedef struct _Ecore_Con_Server Ecore_Con_Server;
 typedef struct _Ecore_Con_Client Ecore_Con_Client;
 
 /**
+ * @typedef Ecore_Con_Socks
+ * An object representing a SOCKS proxy
+ * @ingroup Ecore_Con_Socks_Group
+ */
+typedef struct Ecore_Con_Socks Ecore_Con_Socks;
+
+/**
  * @typedef Ecore_Con_Url
  * A handle to an http upload/download object
  * @ingroup Ecore_Con_Url_Group
@@ -323,6 +330,13 @@ typedef struct _Ecore_Con_Event_Client_Write Ecore_Con_Event_Client_Write;
  * @since 1.1
  */
 typedef struct _Ecore_Con_Event_Server_Write Ecore_Con_Event_Server_Write;
+
+/**
+ * @typedef Ecore_Con_Event_Proxy_Bind
+ * Used as the @p data param for the corresponding event
+ * @since 1.2
+ */
+typedef struct _Ecore_Con_Event_Proxy_Bind Ecore_Con_Event_Proxy_Bind;
 
 /**
  * @typedef Ecore_Con_Event_Url_Data
@@ -464,6 +478,18 @@ struct _Ecore_Con_Event_Server_Write
 };
 
 /**
+ * @struct _Ecore_Con_Event_Proxy_Bind
+ * Used as the @p data param for the @ref ECORE_CON_EVENT_PROXY_BIND event
+ * @ingroup Ecore_Con_Socks_Group
+ */
+struct _Ecore_Con_Event_Proxy_Bind
+{
+   Ecore_Con_Server *server; /**< the server object connected to the proxy */
+   const char *ip;           /**< the proxy-bound ip address */
+   int port;                 /**< the proxy-bound port */ 
+};
+
+/**
  * @struct _Ecore_Con_Event_Url_Data
  * Used as the @p data param for the @ref ECORE_CON_EVENT_URL_DATA event
  * @ingroup Ecore_Con_Url_Group
@@ -542,6 +568,10 @@ EAPI extern int ECORE_CON_EVENT_SERVER_WRITE;
 EAPI extern int ECORE_CON_EVENT_CLIENT_DATA;
 /** A server connection object has data */
 EAPI extern int ECORE_CON_EVENT_SERVER_DATA;
+/** A server connection has successfully negotiated an ip:port binding
+ * @since 1.2
+ */
+EAPI extern int ECORE_CON_EVENT_PROXY_BIND;
 /** A URL object has data */
 EAPI extern int ECORE_CON_EVENT_URL_DATA;
 /** A URL object has completed its transfer to and from the server and can be reused */
@@ -681,6 +711,18 @@ EAPI Eina_Bool         ecore_con_ssl_client_upgrade(Ecore_Con_Client *cl, Ecore_
 /**
  * @}
  */
+
+EAPI Ecore_Con_Socks *ecore_con_socks4_remote_add(const char *ip, int port, const char *username);
+EAPI void             ecore_con_socks4_lookup_set(Ecore_Con_Socks *ecs, Eina_Bool enable);
+EAPI Eina_Bool        ecore_con_socks4_lookup_get(Ecore_Con_Socks *ecs);
+EAPI Eina_Bool        ecore_con_socks4_remote_exists(const char *ip, int port, const char *username);
+EAPI void             ecore_con_socks4_remote_del(const char *ip, int port, const char *username);
+EAPI void             ecore_con_socks_bind_set(Ecore_Con_Socks *ecs, Eina_Bool is_bind);
+EAPI Eina_Bool        ecore_con_socks_bind_get(Ecore_Con_Socks *ecs);
+EAPI unsigned int     ecore_con_socks_version_get(Ecore_Con_Socks *ecs);
+EAPI void             ecore_con_socks_remote_del(Ecore_Con_Socks *ecs);
+EAPI void             ecore_con_socks_apply_once(Ecore_Con_Socks *ecs);
+EAPI void             ecore_con_socks_apply_always(Ecore_Con_Socks *ecs);
 
 /**
  * @defgroup Ecore_Con_Server_Group Ecore Connection Server Functions
@@ -1184,6 +1226,8 @@ EAPI Eina_Bool         ecore_con_client_connected_get(Ecore_Con_Client *cl);
  * Use this function to return the port on which a given client has connected.
  */
 EAPI int               ecore_con_client_port_get(Ecore_Con_Client *cl);
+
+
 
 /**
  * @}
