@@ -778,7 +778,7 @@ eet_node_init(void)
 #else
    choice = "chained_mempool";
 #endif
-   tmp = getenv("EET_MEMPOOL");
+   tmp = getenv("EINA_MEMPOOL");
    if (tmp && tmp[0])
      choice = tmp;
 
