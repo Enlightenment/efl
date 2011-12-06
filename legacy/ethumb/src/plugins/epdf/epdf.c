@@ -1,15 +1,17 @@
-#include "Ethumb.h"
-#include "Ethumb_Plugin.h"
-
 #ifdef HAVE_CONFIG_H
 #include "config.h"
 #endif
 
 #include <stdio.h>
 #include <stdlib.h>
+
 #include <Eina.h>
 #include <Evas.h>
 #include <Epdf.h>
+
+#include "Ethumb.h"
+#include "Ethumb_Plugin.h"
+
 
 static void
 _generate_thumb(Ethumb *e)
