@@ -209,9 +209,6 @@ static const Evas_Smart_Cb_Description _signals[] = {
    {NULL, NULL}
 };
 
-static Eina_Compare_Cb _elm_genlist_item_compare_cb;
-static Eina_Compare_Cb _elm_genlist_item_compare_data_cb;
-
 /* TEMPORARY */
 #undef ELM_CHECK_WIDTYPE
 #define ELM_CHECK_WIDTYPE(obj, widtype) \
@@ -3514,7 +3511,7 @@ _elm_genlist_item_compare_data(const void *data, const void *data1)
    const Elm_Gen_Item *it = data;
    const Elm_Gen_Item *item1 = data1;
 
-   return _elm_genlist_item_compare_data_cb(it->base.data, item1->base.data);
+   return it->wd->item_compare_data_cb(it->base.data, item1->base.data);
 }
 
 static int
@@ -3523,7 +3520,7 @@ _elm_genlist_item_compare(const void *data, const void *data1)
    const Elm_Gen_Item *it, *item1;
    it = ELM_GEN_ITEM_FROM_INLIST(data);
    item1 = ELM_GEN_ITEM_FROM_INLIST(data1);
-   return _elm_genlist_item_compare_cb(it, item1);
+   return it->wd->item_compare_cb(it, item1);
 }
 
 static int
@@ -3531,7 +3528,7 @@ _elm_genlist_item_list_compare(const void *data, const void *data1)
 {
    const Elm_Gen_Item *it = data;
    const Elm_Gen_Item *item1 = data1;
-   return _elm_genlist_item_compare_cb(it, item1);
+   return it->wd->item_compare_cb(it, item1);
 }
 
 static void
@@ -3750,7 +3747,7 @@ elm_genlist_item_direct_sorted_insert(Evas_Object                  *obj,
                                     func_data);
    if (!it) return NULL;
 
-   _elm_genlist_item_compare_cb = comp;
+   wd->item_compare_cb = comp;
 
    if (it->parent)
      {
@@ -3826,7 +3823,8 @@ elm_genlist_item_sorted_insert(Evas_Object                  *obj,
                                Evas_Smart_Cb                 func,
                                const void                   *func_data)
 {
-   _elm_genlist_item_compare_data_cb = comp;
+   Widget_Data *wd = elm_widget_data_get(obj);
+   wd->item_compare_data_cb = comp;
 
    return elm_genlist_item_direct_sorted_insert(obj, itc, data, parent, flags,
                                                 _elm_genlist_item_compare_data, func, func_data);

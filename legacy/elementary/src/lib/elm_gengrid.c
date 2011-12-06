@@ -158,9 +158,6 @@ static const Evas_Smart_Cb_Description _signals[] = {
    {NULL, NULL}
 };
 
-static Eina_Compare_Cb _elm_gengrid_item_compare_cb;
-static Eina_Compare_Cb _elm_gengrid_item_compare_data_cb;
-
 static Eina_Bool
 _event_hook(Evas_Object       *obj,
             Evas_Object *src   __UNUSED__,
@@ -1823,7 +1820,7 @@ _elm_gengrid_item_compare_data(const void *data, const void *data1)
    const Elm_Gen_Item *it = data;
    const Elm_Gen_Item *item1 = data1;
 
-   return _elm_gengrid_item_compare_data_cb(it->base.data, item1->base.data);
+   return it->wd->item_compare_data_cb(it->base.data, item1->base.data);
 }
 
 static int
@@ -1832,7 +1829,7 @@ _elm_gengrid_item_compare(const void *data, const void *data1)
    Elm_Gen_Item *it, *item1;
    it = ELM_GEN_ITEM_FROM_INLIST(data);
    item1 = ELM_GEN_ITEM_FROM_INLIST(data1);
-   return _elm_gengrid_item_compare_cb(it, item1);
+   return it->wd->item_compare_cb(it, item1);
 }
 
 static Elm_Gen_Item *
@@ -2154,7 +2151,7 @@ elm_gengrid_item_direct_sorted_insert(Evas_Object                  *obj,
    if (!wd->state)
      wd->state = eina_inlist_sorted_state_new();
 
-   _elm_gengrid_item_compare_cb = comp;
+   wd->item_compare_cb = comp;
    wd->items = eina_inlist_sorted_state_insert(wd->items, EINA_INLIST_GET(it),
                                          _elm_gengrid_item_compare, wd->state);
    if (wd->calc_job) ecore_job_del(wd->calc_job);
@@ -2171,7 +2168,8 @@ elm_gengrid_item_sorted_insert(Evas_Object                  *obj,
                                Evas_Smart_Cb                 func,
                                const void                   *func_data)
 {
-   _elm_gengrid_item_compare_data_cb = comp;
+   Widget_Data *wd = elm_widget_data_get(obj);
+   wd->item_compare_data_cb = comp;
 
    return elm_gengrid_item_direct_sorted_insert(obj, itc, data, _elm_gengrid_item_compare_data, func, func_data);
 }
