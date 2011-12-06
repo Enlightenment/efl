@@ -1,9 +1,7 @@
 #ifndef __ETHUMB_CLIENT_H__
 #define __ETHUMB_CLIENT_H__ 1
 
-#include <Ecore.h>
 #include <Ethumb.h>
-#include <assert.h>
 
 #ifdef EAPI
 # undef EAPI
