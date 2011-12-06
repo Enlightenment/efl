@@ -225,6 +225,7 @@ evas_preload_thread_run(void (*func_heavy) (void *data),
     If no thread and as we don't want to break app that rely on this
     facility, we will lock the interface until we are done.
     */
+   (void)func_cancel;
    func_heavy((void *)data);
    func_end((void *)data);
    return (void *)1;
@@ -253,12 +254,13 @@ evas_preload_thread_cancel(Evas_Preload_Pthread *thread)
           }
      }
    LKU(_mutex);
-   
+
    /* Delay the destruction */
    work = (Evas_Preload_Pthread_Worker *)thread;
    work->cancel = EINA_TRUE;
    return EINA_FALSE;
 #else
+   (void) thread;
    return EINA_TRUE;
 #endif
 }

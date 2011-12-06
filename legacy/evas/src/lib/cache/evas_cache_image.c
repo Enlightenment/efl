@@ -1296,6 +1296,7 @@ evas_cache_image_preload_cancel(Image_Entry *im, const void *target)
    _evas_cache_image_entry_preload_remove(im, target);
 #else
    (void)im;
+   (void)target;
 #endif
 }
 
