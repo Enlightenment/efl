@@ -94,6 +94,9 @@ typedef struct _Eina_File_Direct_Info Eina_File_Direct_Info;
  * @typedef Eina_File_Dir_List_Cb
  * Type for a callback to be called when iterating over the files of a
  * directory.
+ * @param The file name EXCLUDING the path
+ * @param path The path passed to eina_file_dir_list()
+ * @param data The data passed to eina_file_dir_list()
  */
 typedef void (*Eina_File_Dir_List_Cb)(const char *name, const char *path, void *data);
 
