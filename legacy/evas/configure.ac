@@ -1271,9 +1271,16 @@ AC_ARG_ENABLE(cpu-sse3,
   AS_HELP_STRING([--enable-cpu-sse3], [enable sse3 code]),
   [
       if test "x$enableval" = "xyes" ; then
-        AC_MSG_RESULT(yes)
-        AC_DEFINE(BUILD_SSE3, 1, [Build SSE3 Code])
-        build_cpu_sse3="yes"
+        AC_CHECK_HEADER(immintrin.h,
+          [
+            AC_MSG_RESULT(yes)
+            AC_DEFINE(BUILD_SSE3, 1, [Build SSE3 Code])
+            build_cpu_sse3="yes"
+           ],
+          [
+            AC_MSG_RESULT(no)
+            build_cpu_sse3="no"
+          ])
       else
         AC_MSG_RESULT(no)
         build_cpu_sse3="no"
@@ -1282,7 +1289,16 @@ AC_ARG_ENABLE(cpu-sse3,
   [
     AC_MSG_RESULT($build_cpu_sse3)
     if test "x$build_cpu_sse3" = "xyes" ; then
-      AC_DEFINE(BUILD_SSE3, 1, [Build SSE3 Code])
+      AC_CHECK_HEADER(immintrin.h,
+        [
+          AC_MSG_RESULT(yes)
+          AC_DEFINE(BUILD_SSE3, 1, [Build SSE3 Code])
+          build_cpu_sse3="yes"
+         ],
+        [
+          AC_MSG_RESULT(no)
+          build_cpu_sse3="no"
+        ])
     fi
   ]
 )
