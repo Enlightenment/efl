@@ -4,6 +4,10 @@
 #include "els_box.h"
 #include "els_icon.h"
 
+/* FIXME: I couldn't find a macro for it, this should be fixed.
+ * Just doing this commit to fix the brokeness that was introduced. */
+#define BASE(it) (&(it)->base)
+
 typedef struct _Widget_Data Widget_Data;
 typedef struct _Elm_Toolbar_Item Elm_Toolbar_Item;
 
@@ -40,7 +44,6 @@ struct _Elm_Toolbar_Item
       Eina_Bool visible : 1;
    } prio;
    Eina_Bool selected : 1;
-   Eina_Bool disabled : 1;
    Eina_Bool separator : 1;
    Eina_Bool menu : 1;
    Eina_List *states;
@@ -150,7 +153,7 @@ _item_select(Elm_Toolbar_Item *it)
    Eina_Bool sel;
 
    if (!wd) return;
-   if ((it->disabled) || (it->separator)) return;
+   if ((BASE(it)->disabled) || (it->separator)) return;
    sel = it->selected;
 
    if (!wd->no_select)
@@ -223,9 +226,9 @@ _item_disable(Elm_Toolbar_Item *it, Eina_Bool disabled)
    Widget_Data *wd = elm_widget_data_get(WIDGET(it));
 
    if (!wd) return;
-   if (it->disabled == disabled) return;
-   it->disabled = !!disabled;
-   if (it->disabled)
+   if (BASE(it)->disabled == disabled) return;
+   BASE(it)->disabled = !!disabled;
+   if (BASE(it)->disabled)
      {
         edje_object_signal_emit(VIEW(it), "elm,state,disabled", "elm");
         elm_widget_signal_emit(it->icon, "elm,state,disabled", "elm");
@@ -317,7 +320,7 @@ _theme_hook_item(Evas_Object *obj, Elm_Toolbar_Item *it, double scale, int icon_
              edje_object_signal_emit(view, "elm,state,selected", "elm");
              elm_widget_signal_emit(it->icon, "elm,state,selected", "elm");
           }
-        if (it->disabled)
+        if (BASE(it)->disabled)
           {
              edje_object_signal_emit(view, "elm,state,disabled", "elm");
              elm_widget_signal_emit(it->icon, "elm,state,disabled", "elm");
@@ -540,7 +543,7 @@ _resize_job(void *data)
                             menu_it = elm_menu_item_add(menu, NULL,
                                                 it->icon_str, it->label,
                                                 _elm_toolbar_item_menu_cb, it);
-                            elm_object_item_disabled_set(menu_it, it->disabled);
+                            elm_object_item_disabled_set(menu_it, BASE(it)->disabled);
                             if (it->o_menu)
                               elm_menu_clone(it->o_menu, menu, menu_it);
                          }
@@ -732,7 +735,7 @@ _access_state_cb(void *data __UNUSED__, Evas_Object *obj __UNUSED__, Elm_Widget_
    Elm_Toolbar_Item *it = (Elm_Toolbar_Item *)item;
    if (it->separator)
       return strdup(E_("Separator"));
-   else if (it->disabled)
+   else if (BASE(it)->disabled)
       return strdup(E_("State: Disabled"));
    else if (it->selected)
       return strdup(E_("State: Selected"));
@@ -1763,7 +1766,7 @@ elm_toolbar_item_state_set(Elm_Object_Item *it, Elm_Toolbar_Item_State *state)
                                        wd->icon_size,
                                        "elm,state,icon_set,backward");
      }
-   if (item->disabled)
+   if (BASE(item)->disabled)
      elm_widget_signal_emit(item->icon, "elm,state,disabled", "elm");
    else
      elm_widget_signal_emit(item->icon, "elm,state,enabled", "elm");
