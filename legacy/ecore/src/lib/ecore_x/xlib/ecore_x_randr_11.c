@@ -8,6 +8,10 @@
 
 #include "ecore_x_private.h"
 #include "ecore_x_randr.h"
+#include <stdio.h>
+#include <stdlib.h>
+#include <unistd.h>
+#include <string.h>
 
 #define Ecore_X_Randr_None 0
 #ifdef ECORE_XRANDR

@@ -23,6 +23,10 @@
 /* Heavily modified by: Leif Middelschulte <leif.middelschulte@gmail.com> */
 
 #include "Ecore_X.h"
+#include <stdio.h>
+#include <stdlib.h>
+#include <unistd.h>
+#include <string.h>
 
 /* TODO:
  * - see other TODO's within this file.
