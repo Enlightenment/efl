@@ -1,6 +1,8 @@
 #ifndef EINA_UNICODE_H
 #define EINA_UNICODE_H
 
+#include <stdlib.h>
+
 #include "eina_config.h"
 #include "eina_types.h"
 

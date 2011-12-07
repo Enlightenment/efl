@@ -19,6 +19,7 @@
 #ifndef EINA_STRINGSHARE_INLINE_H_
 #define EINA_STRINGSHARE_INLINE_H_
 
+#include <string.h>
 #include "eina_stringshare.h"
 /**
  * @addtogroup Eina_Stringshare_Group Stringshare

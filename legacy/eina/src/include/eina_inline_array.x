@@ -21,6 +21,8 @@
 
 #include <stddef.h>
 
+#include <stdio.h>
+
 /**
  * @cond LOCAL
  */
