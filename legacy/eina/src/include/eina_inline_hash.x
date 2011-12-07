@@ -101,7 +101,7 @@ static inline unsigned int _fmix32(unsigned int h)
    return h;
 }
 
-int
+static inline int
 eina_hash_murmur3(const char *key, int len)
 {
    const unsigned char * data = (const unsigned char*)key;
