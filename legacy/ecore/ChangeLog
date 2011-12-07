@@ -384,3 +384,7 @@
 2011-12-05 Mike Blumenkrantz
 
         * added ecore_con_socks api
+
+2011-12-07 Mike Blumenkrantz
+
+        * Allow SSL certificates to be loaded for STARTTLS

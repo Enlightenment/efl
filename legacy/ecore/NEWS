@@ -14,6 +14,8 @@ Additions:
 Improvements:
     * ecore:
      - most allocations moved to mempools
+    * ecore_con:
+     - certificates can now be added for STARTTTLS
     * ecore_win32:
      - fix modifiers value on Windows XP
 

@@ -375,6 +375,14 @@ ecore_con_ssl_server_cert_add(Ecore_Con_Server *svr,
         return EINA_FALSE;
      }
 
+   if (!svr->ssl_prepared)
+     {
+        svr->use_cert = EINA_TRUE;
+        svr->type |= ECORE_CON_USE_MIXED | ECORE_CON_LOAD_CERT;
+        if (ecore_con_ssl_server_prepare(svr, svr->type & ECORE_CON_SSL))
+          return EINA_FALSE;
+     }
+
    return SSL_SUFFIX(_ecore_con_ssl_server_cert_add) (svr, cert);
 }
 
@@ -396,6 +404,14 @@ ecore_con_ssl_server_cafile_add(Ecore_Con_Server *svr,
      {
         ECORE_MAGIC_FAIL(svr, ECORE_MAGIC_CON_SERVER, "ecore_con_ssl_server_cafile_add");
         return EINA_FALSE;
+     }
+
+   if (!svr->ssl_prepared)
+     {
+        svr->use_cert = EINA_TRUE;
+        svr->type |= ECORE_CON_USE_MIXED | ECORE_CON_LOAD_CERT;
+        if (ecore_con_ssl_server_prepare(svr, svr->type & ECORE_CON_SSL))
+          return EINA_FALSE;
      }
 
    return SSL_SUFFIX(_ecore_con_ssl_server_cafile_add) (svr, ca_file);
@@ -422,6 +438,14 @@ ecore_con_ssl_server_privkey_add(Ecore_Con_Server *svr,
         return EINA_FALSE;
      }
 
+   if (!svr->ssl_prepared)
+     {
+        svr->use_cert = EINA_TRUE;
+        svr->type |= ECORE_CON_USE_MIXED | ECORE_CON_LOAD_CERT;
+        if (ecore_con_ssl_server_prepare(svr, svr->type & ECORE_CON_SSL))
+          return EINA_FALSE;
+     }
+
    return SSL_SUFFIX(_ecore_con_ssl_server_privkey_add) (svr, key_file);
 }
 
@@ -444,6 +468,14 @@ ecore_con_ssl_server_crl_add(Ecore_Con_Server *svr,
      {
         ECORE_MAGIC_FAIL(svr, ECORE_MAGIC_CON_SERVER, "ecore_con_ssl_server_crl_add");
         return EINA_FALSE;
+     }
+
+   if (!svr->ssl_prepared)
+     {
+        svr->use_cert = EINA_TRUE;
+        svr->type |= ECORE_CON_USE_MIXED | ECORE_CON_LOAD_CERT;
+        if (ecore_con_ssl_server_prepare(svr, svr->type & ECORE_CON_SSL))
+          return EINA_FALSE;
      }
 
    return SSL_SUFFIX(_ecore_con_ssl_server_crl_add) (svr, crl_file);
@@ -480,7 +512,8 @@ ecore_con_ssl_server_upgrade(Ecore_Con_Server *svr, Ecore_Con_Type ssl_type)
         if (ecore_con_ssl_server_prepare(svr, ssl_type))
           return EINA_FALSE;
      }
-   svr->type |= ssl_type;
+   if (!svr->use_cert)
+     svr->type |= ssl_type;
    svr->upgrade = EINA_TRUE;
    svr->handshaking = EINA_TRUE;
    svr->ssl_state = ECORE_CON_SSL_STATE_INIT;
@@ -517,7 +550,8 @@ ecore_con_ssl_client_upgrade(Ecore_Con_Client *cl, Ecore_Con_Type ssl_type)
         if (ecore_con_ssl_server_prepare(cl->host_server, ssl_type))
           return EINA_FALSE;
      }
-   cl->host_server->type |= ssl_type;
+   if (!cl->host_server->use_cert)
+     cl->host_server->type |= ssl_type;
    cl->upgrade = EINA_TRUE;
    cl->host_server->upgrade = EINA_TRUE;
    cl->handshaking = EINA_TRUE;
