@@ -23,7 +23,22 @@
 #define __EINA_CLIST_H__
 
 /**
- * @addtogroup Eina_CList_Group Compact inline list
+ * @addtogroup Eina_Data_Types_Group Data Types
+ *
+ * @{
+ */
+
+/**
+ * @addtogroup Eina_Containers_Group Containers
+ *
+ * @{
+ */
+
+/**
+ * @defgroup Eina_CList_Group Compact List
+ *
+ * @{
+ *
  * @brief Eina_Clist is a compact (inline) list implementation
  *
  * Elements of this list are members of the structs stored in the list
@@ -42,9 +57,8 @@
  * @note There's no NULL at the end of the list, the last item points to the head.
  *
  * @note List heads must be initialized with EINA_CLIST_INIT or by calling eina_clist_element_init
- */
-
-/* Define a list like so:
+ *
+ * Define a list like so:
  *
  * @code
  *   struct gadget
@@ -85,24 +99,6 @@
  *   }
  * @endcode
  *
- */
-
-/**
- * @addtogroup Eina_Data_Types_Group Data Types
- *
- * @{
- */
-
-/**
- * @addtogroup Eina_Containers_Group Containers
- *
- * @{
- */
-
-/**
- * @defgroup Eina_CList_Group Compact list
- *
- * @{
  */
 
 /**
@@ -218,7 +214,7 @@ static inline void eina_clist_remove(Eina_Clist *elem);
  * @param list The list
  * @param elem An element
  * @pre @a elem is in @a list
- * @return The element after @elem in @list  or NULL if @a elem is last in @a list
+ * @return The element after @a elem in @a list  or @c NULL if @a elem is last in @a list
  * @since 1.1.0
  */
 static inline Eina_Clist *eina_clist_next(const Eina_Clist *list, const Eina_Clist *elem);
@@ -247,7 +243,7 @@ static inline Eina_Clist *eina_clist_head(const Eina_Clist *list);
  * Get the last element.
  *
  * @param list The list
- * @returns The last element in @a list or NULL if @list is empty
+ * @returns The last element in @a list or NULL if @a list is empty
  * @since 1.1.0
  */
 static inline Eina_Clist *eina_clist_tail(const Eina_Clist *list);
@@ -367,15 +363,15 @@ static inline void eina_clist_move_head(Eina_Clist *dst, Eina_Clist *src);
 
 #include "eina_inline_clist.x"
 
-/*
+/**
  * @}
  */
 
-/*
+/**
  * @}
  */
 
-/*
+/**
  * @}
  */
 

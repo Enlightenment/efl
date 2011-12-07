@@ -202,7 +202,7 @@
  *
  * If you don't know how to create lists see
  * @ref list_01_example_page. In this example we also use
- * @ref eina_stringshare, however it should be possible to understand the code
+ * @ref Eina_Stringshare_Group, however it should be possible to understand the code
  * regardless of previous knowledge about it.
  *
  * Here we have the usual list creation code with a twist, now we are using as

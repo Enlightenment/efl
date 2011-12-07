@@ -398,9 +398,9 @@ EAPI void            eina_benchmark_free(Eina_Benchmark *bench);
  *
  * This function adds the test named @p name to @p benchmark. @p
  * bench_cb is the function called when the test is executed. That
- * test can be executed a certain amount of time. @p start, @p end and
- * @p step define a loop with a step increment. The integer that is
- * increasing by @p step from @p start to @p end is passed to @p
+ * test can be executed a certain amount of time. @p count_start, @p count_end and
+ * @p count_step define a loop with a step increment. The integer that is
+ * increasing by @p count_step from @p count_start to @p count_end is passed to @p
  * bench_cb when eina_benchmark_run() is called.
  *
  * If @p bench is @c NULL, this function returns imediatly. If the
@@ -413,7 +413,7 @@ EAPI Eina_Bool       eina_benchmark_register(Eina_Benchmark          *bench,
                                              Eina_Benchmark_Specimens bench_cb,
                                              int                      count_start,
                                              int                      count_end,
-                                             int                      count_set);
+                                             int                      count_step);
 
 /**
  * @brief Run the benchmark tests that have been registered.

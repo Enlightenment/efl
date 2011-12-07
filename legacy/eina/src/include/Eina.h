@@ -47,7 +47,7 @@
  *
  * @version 1.1
  * @date 2008-2011
- * 
+ *
  * @section eina_intro_sec Introduction
  *
  * The Eina library is a library that implements an API for data types
@@ -62,7 +62,7 @@
  * @li @ref Eina_Array_Group standard array of @c void* data.
  * @li @ref Eina_Hash_Group standard hash of @c void* data.
  * @li @ref Eina_Inline_List_Group list with nodes inlined into user type.
- * @li @ref Eina_CList_Group compact inlined list.
+ * @li @ref Eina_CList_Group Compact List.
  * @li @ref Eina_List_Group standard list of @c void* data.
  * @li @ref Eina_Iterator_Group Iterator functions.
  * @li @ref Eina_Matrixsparse_Group sparse matrix of @c void* data.
@@ -89,7 +89,7 @@
  * 
  * Please see the @ref authors page for contact details.
  *
- * @defgroup Eina_Data_Types_Group Data types
+ * @defgroup Eina_Data_Types_Group Data Types
  *
  * Eina provide easy to use and optimized data types and structures.
  *

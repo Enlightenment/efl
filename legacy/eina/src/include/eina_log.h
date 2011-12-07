@@ -732,7 +732,7 @@ EAPI void eina_log_domain_unregister(int domain);
  *        specified value (eina_log_level_set() or environment
  *        variables EINA_LOG_LEVEL, EINA_LOG_LEVELS) will be ignored.
  * @param file filename that originated the call, must @b not be @c NULL.
- * @param fnc function that originated the call, must @b not be @c NULL.
+ * @param function function that originated the call, must @b not be @c NULL.
  * @param line originating line in @a file.
  * @param fmt printf-like format to use. Should not provide trailing
  *        '\n' as it is automatically included.
@@ -786,7 +786,7 @@ EAPI void eina_log_vprint(int            domain,
  */
 
 /**
- * Alternative logging method, this will output to standard output stream.
+ * @brief Alternative logging method, this will output to standard output stream.
  *
  * @param d The domain.
  * @param level The level.
@@ -821,7 +821,16 @@ EAPI void eina_log_print_cb_stdout(const Eina_Log_Domain *d,
                                    va_list                args);
 
 /**
- * Default logging method, this will output to standard error stream.
+ * @brief Default logging method, this will output to standard error stream.
+ *
+ * @param d The domain.
+ * @param level The level.
+ * @param file The file which is logged.
+ * @param fnc The function which is logged.
+ * @param line The line which is logged.
+ * @param fmt The ouptut format to use.
+ * @param data Not used.
+ * @param args The arguments needed by the format.
  *
  * This method will colorize output based on domain provided color and
  * message logging level.

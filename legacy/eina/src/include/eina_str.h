@@ -161,14 +161,14 @@ EAPI Eina_Bool       eina_str_has_extension(const char *str, const char *ext) EI
 /**
  * @brief Split a string using a delimiter.
  *
- * @param str The string to split.
- * @param delim The string which specifies the places at which to split the string.
+ * @param string The string to split.
+ * @param delimiter The string which specifies the places at which to split the string.
  * @param max_tokens The maximum number of strings to split string into.
  * @return A newly-allocated NULL-terminated array of strings or NULL if it
  * fails to allocate the array.
  *
- * This functin splits @p str into a maximum of @p max_tokens pieces,
- * using the given delimiter @p delim. @p delim is not included in any
+ * This functin splits @p string into a maximum of @p max_tokens pieces,
+ * using the given delimiter @p delimiter. @p delimiter is not included in any
  * of the resulting strings, unless @p max_tokens is reached. If
  * @p max_tokens is less than @c 1, the string is splitted completely. If
  * @p max_tokens is reached, the last string in the returned string
@@ -185,16 +185,16 @@ EAPI char          **eina_str_split(const char *string, const char *delimiter, i
 /**
  * @brief Split a string using a delimiter and returns number of elements.
  *
- * @param str The string to split.
- * @param delim The string which specifies the places at which to split the string.
+ * @param string The string to split.
+ * @param delimiter The string which specifies the places at which to split the string.
  * @param max_tokens The maximum number of strings to split string into.
  * @param elements Where to return the number of elements in returned
  *        array (not counting the terminating @c NULL). May be @c NULL.
  * @return A newly-allocated NULL-terminated array of strings or NULL if it
  * fails to allocate the array.
  *
- * This function splits @p str into a maximum of @p max_tokens pieces,
- * using the given delimiter @p delim. @p delim is not included in any
+ * This function splits @p string into a maximum of @p max_tokens pieces,
+ * using the given delimiter @p delimiter. @p delimiter is not included in any
  * of the resulting strings, unless @p max_tokens is reached. If
  * @p max_tokens is less than @c 1, the string is splitted completely. If
  * @p max_tokens is reached, the last string in the returned string

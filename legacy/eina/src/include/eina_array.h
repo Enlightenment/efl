@@ -394,7 +394,7 @@ EAPI Eina_Accessor        *eina_array_accessor_new(const Eina_Array *array) EINA
  */
 static inline Eina_Bool    eina_array_foreach(Eina_Array  *array,
                                               Eina_Each_Cb cb,
-                                              void        *data);
+                                              void        *fdata);
 /**
  * @def EINA_ARRAY_ITER_NEXT
  * @brief Macro to iterate over an array easily.

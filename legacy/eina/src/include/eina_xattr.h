@@ -57,7 +57,7 @@ EAPI Eina_Iterator *eina_xattr_ls(const char *file);
  * @brief Retrieve an extended attribute from a file.
  *
  * @param file The file to retrieve the extended attribute from.
- * @param atttribute The extended attribute name to retrieve.
+ * @param attribute The extended attribute name to retrieve.
  * @param size The size of the retrieved extended attribute.
  * @return the allocated data that hold the extended attribute value.
  *
@@ -112,7 +112,7 @@ EAPI char *eina_xattr_string_get(const char *file, const char *attribute);
  *
  * @param file The file to set the double to.
  * @param attribute The attribute to set.
- * @param data The NULL terminated double to set.
+ * @param value The NULL terminated double to set.
  * @param flags Define the set policy.
  * @return EINA_TRUE on success, EINA_FALSE otherwise.
  *
@@ -139,7 +139,7 @@ EAPI Eina_Bool eina_xattr_double_get(const char *file, const char *attribute, do
  *
  * @param file The file to set the int to.
  * @param attribute The attribute to set.
- * @param data The NULL terminated int to set.
+ * @param value The NULL terminated int to set.
  * @param flags Define the set policy.
  * @return EINA_TRUE on success, EINA_FALSE otherwise.
  *

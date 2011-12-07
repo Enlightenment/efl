@@ -1005,7 +1005,7 @@ EAPI Eina_Iterator *eina_hash_iterator_tuple_new(const Eina_Hash *hash) EINA_MAL
  * @endcode
  */
 EAPI void           eina_hash_foreach(const Eina_Hash  *hash,
-                                      Eina_Hash_Foreach cb,
+                                      Eina_Hash_Foreach func,
                                       const void       *fdata) EINA_ARG_NONNULL(1, 2);
 /* Paul Hsieh (http://www.azillionmonkeys.com/qed/hash.html) hash function used by WebCore (http://webkit.org/blog/8/hashtables-part-2/) */
 EAPI int eina_hash_superfast(const char *key,

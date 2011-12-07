@@ -251,6 +251,10 @@ typedef int (*Eina_Compare_Cb)(const void *data1, const void *data2);
  */
 #define EINA_COMPARE_CB(function) ((Eina_Compare_Cb)function)
 
+/**
+ * @typedef Eina_Each_Cb
+ * A callback type used when iterating over a container.
+ */
 typedef Eina_Bool (*Eina_Each_Cb)(const void *container, void *data, void *fdata);
 
 /**

@@ -289,6 +289,7 @@ EAPI void               eina_stringshare_del(const char *str);
  *
  * @param str the shared string to know the length. It is safe to
  *        give NULL, in that case -1 is returned.
+ * @return The length of a shared string.
  *
  * This function is a cheap way to known the length of a shared
  * string. Note that if the given pointer is not shared, bad

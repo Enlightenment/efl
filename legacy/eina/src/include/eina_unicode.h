@@ -68,7 +68,16 @@ EAPI Eina_Unicode *eina_unicode_strdup(const Eina_Unicode *text) EINA_WARN_UNUSE
 
 
 /**
- * @brief Same as strdup but cuts on n. Assumes n < len
+ * @brief Same as strdup but cuts on the given size. Assumes n < len
+ *
+ * @param text The text to duplicate.
+ * @param n The maximum size of the text to duplicate.
+ * @return The duplicated string.
+ *
+ * This function duplicates @p text. The resuting string is cut on @p
+ * n. @p n is assumed to be lesser  (<) than the length of @t
+ * text. When not needed anymore, the returned string must be freed.
+ *
  * @since 1.1.0
  */
 EAPI Eina_Unicode *eina_unicode_strndup(const Eina_Unicode *text, size_t n) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1) EINA_MALLOC;
@@ -107,9 +116,9 @@ EAPI Eina_Unicode *eina_unicode_escape(const Eina_Unicode *str) EINA_ARG_NONNULL
 
 
 /**
- * Reads UTF8 bytes from @buf, starting at *@index and returns
- * the decoded code point at iindex offset, and advances iindex
- * to the next code point after this. iindex is always advanced,
+ * Reads UTF8 bytes from @p buf, starting at @p iindex and returns
+ * the decoded code point at @p iindex offset, and advances @p iindex
+ * to the next code point after this. @p iindex is always advanced,
  * unless if the advancement is after the NULL.
  * On error: return a codepoint between DC80 to DCFF where the low 8 bits
  *   are the byte's value.
@@ -122,9 +131,9 @@ EAPI Eina_Unicode *eina_unicode_escape(const Eina_Unicode *str) EINA_ARG_NONNULL
 EAPI Eina_Unicode eina_unicode_utf8_get_next(const char *buf, int *iindex) EINA_ARG_NONNULL(1, 2);
 
 /**
- * Reads UTF8 bytes from @buf, starting at *@iindex and returns
- * the decoded code point at iindex offset, and moves iindex
- * to the previous code point. iindex is always moved, as long
+ * Reads UTF8 bytes from @p buf, starting at @p iindex and returns
+ * the decoded code point at @p iindex offset, and moves  àp iindex
+ * to the previous code point. @p iindex is always moved, as long
  * as it's not past the start of the string.
  * On error: return a codepoint between DC80 to DCFF where the low 8 bits
  *   are the byte's value.
