@@ -1096,9 +1096,13 @@ _elm_entry_entry_paste(Evas_Object *obj, const char *entry)
    info.insert = EINA_TRUE;
    info.change.insert.pos = elm_entry_cursor_pos_get(obj);
    info.change.insert.content = eina_stringshare_add(entry);
-   /* FIXME: VERY BAD! Breaks with utf8 and formats! */
-   info.change.insert.plain_length =
-      eina_stringshare_strlen(info.change.insert.content);
+     {
+        char *tmp;
+        tmp = evas_textblock_markup_to_plain(elm_entry_textblock_get(obj),
+              info.change.insert.content);
+        info.change.insert.plain_length = eina_unicode_utf8_get_len(tmp);
+        free(tmp);
+     }
 
    elm_entry_entry_insert(obj, entry);
    evas_object_smart_callback_call(obj, SIG_CHANGED_USER, &info);
