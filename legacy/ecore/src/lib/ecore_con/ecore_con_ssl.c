@@ -1458,15 +1458,31 @@ _ecore_con_ssl_server_init_openssl(Ecore_Con_Server *svr)
    {
       /* print session info into DBG */
        SSL_SESSION *s;
+       STACK_OF(X509) *sk;
        BIO *b;
-       char log[4096];
+       char log[4096], *p;
+       int x;
 
        memset(log, 0, sizeof(log));
-       s = SSL_get_session(svr->ssl);
        b = BIO_new(BIO_s_mem());
+       sk = SSL_get_peer_cert_chain(svr->ssl);
+       if (sk)
+         {
+            DBG("CERTIFICATES:");
+            for (x = 0; x < sk_X509_num(sk); x++)
+              {
+                 p = X509_NAME_oneline(X509_get_subject_name(sk_X509_value(sk, x)), log, sizeof(log));
+                 DBG("%2d s:%s", x, p);
+                 p = X509_NAME_oneline(X509_get_issuer_name(sk_X509_value(sk, x)), log, sizeof(log));
+                 DBG(" i:%s", p);
+                 PEM_write_X509(stderr, sk_X509_value(sk, x));
+              }
+         }
+       s = SSL_get_session(svr->ssl);
        SSL_SESSION_print(b, s);
+       fprintf(stderr, "\n");
        while (BIO_read(b, log, sizeof(log)) > 0)
-         DBG("%s", log);
+         fprintf(stderr, "%s", log);
 
        BIO_free(b);
    }
@@ -1731,15 +1747,31 @@ _ecore_con_ssl_client_init_openssl(Ecore_Con_Client *cl)
    {
       /* print session info into DBG */
        SSL_SESSION *s;
+       STACK_OF(X509) *sk;
        BIO *b;
-       char log[4096];
+       char log[4096], *p;
+       int x;
 
        memset(log, 0, sizeof(log));
-       s = SSL_get_session(cl->ssl);
        b = BIO_new(BIO_s_mem());
+       sk = SSL_get_peer_cert_chain(cl->ssl);
+       if (sk)
+         {
+            DBG("CERTIFICATES:");
+            for (x = 0; x < sk_X509_num(sk); x++)
+              {
+                 p = X509_NAME_oneline(X509_get_subject_name(sk_X509_value(sk, x)), log, sizeof(log));
+                 DBG("%2d s:%s", x, p);
+                 p = X509_NAME_oneline(X509_get_issuer_name(sk_X509_value(sk, x)), log, sizeof(log));
+                 DBG(" i:%s", p);
+                 PEM_write_X509(stderr, sk_X509_value(sk, x));
+              }
+         }
+       s = SSL_get_session(cl->ssl);
        SSL_SESSION_print(b, s);
+       fprintf(stderr, "\n");
        while (BIO_read(b, log, sizeof(log)) > 0)
-         DBG("%s", log);
+         fprintf(stderr, "%s", log);
 
        BIO_free(b);
    }
