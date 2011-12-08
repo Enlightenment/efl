@@ -177,9 +177,9 @@ _elm_util_text_to_mkup(const char *text)
         pos2 = evas_string_char_next_get((char *)(text), pos2, &ch);
         if ((ch <= 0) || (pos2 <= 0)) break;
         if (ch == '\n')
-          str = _str_append(str, "<br>", &str_len, &str_alloc);
+          str = _str_append(str, "<br/>", &str_len, &str_alloc);
         else if (ch == '\t')
-          str = _str_append(str, "<\t>", &str_len, &str_alloc);
+          str = _str_append(str, "<\t/>", &str_len, &str_alloc);
         else if (ch == '<')
           str = _str_append(str, "&lt;", &str_len, &str_alloc);
         else if (ch == '>')
@@ -187,7 +187,7 @@ _elm_util_text_to_mkup(const char *text)
         else if (ch == '&')
           str = _str_append(str, "&amp;", &str_len, &str_alloc);
         else if (ch == 0x2029) /* PS */
-          str = _str_append(str, "<ps>", &str_len, &str_alloc);
+          str = _str_append(str, "<ps/>", &str_len, &str_alloc);
         else
           {
              char tstr[16];

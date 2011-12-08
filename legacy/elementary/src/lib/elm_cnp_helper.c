@@ -154,9 +154,9 @@ static Eina_Bool pasteimage_append(char *file, Evas_Object *entry);
 /* Optimisation: Turn this into a 256 byte table:
  *	then can lookup in one index, not N checks */
 static const Escape escapes[] = {
-  { "<ps>",  _PARAGRAPH_SEPARATOR },
-  { "<br>",  "\n" },
-  { "<\t>",  "\t" },
+  { "<ps/>",  _PARAGRAPH_SEPARATOR },
+  { "<br/>",  "\n" },
+  { "<\t/>",  "\t" },
   { "&gt;",   ">" },
   { "&lt;",    "<" },
   { "&amp;",   "&" },
