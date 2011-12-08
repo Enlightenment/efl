@@ -116,6 +116,79 @@ SSL_GNUTLS_PRINT_HANDSHAKE_STATUS(gnutls_handshake_description_t status)
 #elif USE_OPENSSL
 
 static void
+_openssl_print_verify_error(int error)
+{
+   switch (error)
+     {
+#define ERROR(X) \
+  case (X): \
+    ERR("%s", #X); \
+    break
+      ERROR(X509_V_ERR_UNABLE_TO_GET_ISSUER_CERT);
+      ERROR(X509_V_ERR_UNABLE_TO_GET_CRL);
+      ERROR(X509_V_ERR_UNABLE_TO_DECRYPT_CERT_SIGNATURE);
+      ERROR(X509_V_ERR_UNABLE_TO_DECRYPT_CRL_SIGNATURE);
+      ERROR(X509_V_ERR_UNABLE_TO_DECODE_ISSUER_PUBLIC_KEY);
+      ERROR(X509_V_ERR_CERT_SIGNATURE_FAILURE);
+      ERROR(X509_V_ERR_CRL_SIGNATURE_FAILURE);
+      ERROR(X509_V_ERR_CERT_NOT_YET_VALID);
+      ERROR(X509_V_ERR_CERT_HAS_EXPIRED);
+      ERROR(X509_V_ERR_CRL_NOT_YET_VALID);
+      ERROR(X509_V_ERR_CRL_HAS_EXPIRED);
+      ERROR(X509_V_ERR_ERROR_IN_CERT_NOT_BEFORE_FIELD);
+      ERROR(X509_V_ERR_ERROR_IN_CERT_NOT_AFTER_FIELD);
+      ERROR(X509_V_ERR_ERROR_IN_CRL_LAST_UPDATE_FIELD);
+      ERROR(X509_V_ERR_ERROR_IN_CRL_NEXT_UPDATE_FIELD);
+      ERROR(X509_V_ERR_OUT_OF_MEM);
+      ERROR(X509_V_ERR_DEPTH_ZERO_SELF_SIGNED_CERT);
+      ERROR(X509_V_ERR_SELF_SIGNED_CERT_IN_CHAIN);
+      ERROR(X509_V_ERR_UNABLE_TO_GET_ISSUER_CERT_LOCALLY);
+      ERROR(X509_V_ERR_UNABLE_TO_VERIFY_LEAF_SIGNATURE);
+      ERROR(X509_V_ERR_CERT_CHAIN_TOO_LONG);
+      ERROR(X509_V_ERR_CERT_REVOKED);
+      ERROR(X509_V_ERR_INVALID_CA);
+      ERROR(X509_V_ERR_PATH_LENGTH_EXCEEDED);
+      ERROR(X509_V_ERR_INVALID_PURPOSE);
+      ERROR(X509_V_ERR_CERT_UNTRUSTED);
+      ERROR(X509_V_ERR_CERT_REJECTED);
+      /* These are 'informational' when looking for issuer cert */
+      ERROR(X509_V_ERR_SUBJECT_ISSUER_MISMATCH);
+      ERROR(X509_V_ERR_AKID_SKID_MISMATCH);
+      ERROR(X509_V_ERR_AKID_ISSUER_SERIAL_MISMATCH);
+      ERROR(X509_V_ERR_KEYUSAGE_NO_CERTSIGN);
+
+      ERROR(X509_V_ERR_UNABLE_TO_GET_CRL_ISSUER);
+      ERROR(X509_V_ERR_UNHANDLED_CRITICAL_EXTENSION);
+      ERROR(X509_V_ERR_KEYUSAGE_NO_CRL_SIGN);
+      ERROR(X509_V_ERR_UNHANDLED_CRITICAL_CRL_EXTENSION);
+      ERROR(X509_V_ERR_INVALID_NON_CA);
+      ERROR(X509_V_ERR_PROXY_PATH_LENGTH_EXCEEDED);
+      ERROR(X509_V_ERR_KEYUSAGE_NO_DIGITAL_SIGNATURE);
+      ERROR(X509_V_ERR_PROXY_CERTIFICATES_NOT_ALLOWED);
+
+      ERROR(X509_V_ERR_INVALID_EXTENSION);
+      ERROR(X509_V_ERR_INVALID_POLICY_EXTENSION);
+      ERROR(X509_V_ERR_NO_EXPLICIT_POLICY);
+      ERROR(X509_V_ERR_DIFFERENT_CRL_SCOPE);
+      ERROR(X509_V_ERR_UNSUPPORTED_EXTENSION_FEATURE);
+
+      ERROR(X509_V_ERR_UNNESTED_RESOURCE);
+
+      ERROR(X509_V_ERR_PERMITTED_VIOLATION);
+      ERROR(X509_V_ERR_EXCLUDED_VIOLATION);
+      ERROR(X509_V_ERR_SUBTREE_MINMAX);
+      ERROR(X509_V_ERR_UNSUPPORTED_CONSTRAINT_TYPE);
+      ERROR(X509_V_ERR_UNSUPPORTED_CONSTRAINT_SYNTAX);
+      ERROR(X509_V_ERR_UNSUPPORTED_NAME_SYNTAX);
+      ERROR(X509_V_ERR_CRL_PATH_VALIDATION_ERROR);
+
+      /* The application is not happy */
+      ERROR(X509_V_ERR_APPLICATION_VERIFICATION);
+     }
+#undef ERROR
+}
+
+static void
 _openssl_print_errors(void *conn, int type)
 {
    char buf[1024];
@@ -1414,7 +1487,13 @@ _ecore_con_ssl_server_init_openssl(Ecore_Con_Server *svr)
            int name = 0;
 
            if (svr->verify)
-             SSL_ERROR_CHECK_GOTO_ERROR(SSL_get_verify_result(svr->ssl));
+             {
+               int err;
+
+               err = SSL_get_verify_result(svr->ssl);
+               if (err) _openssl_print_verify_error(err);
+               SSL_ERROR_CHECK_GOTO_ERROR(err);
+             }
            clen = X509_NAME_get_text_by_NID(X509_get_subject_name(cert), NID_subject_alt_name, NULL, 0);
            if (clen)
              name = NID_subject_alt_name;
@@ -1672,7 +1751,13 @@ _ecore_con_ssl_client_init_openssl(Ecore_Con_Client *cl)
    SSL_set_verify(cl->ssl, SSL_VERIFY_PEER, NULL);
    /* use CRL/CA lists to verify */
    if (SSL_get_peer_certificate(cl->ssl))
-     SSL_ERROR_CHECK_GOTO_ERROR(SSL_get_verify_result(cl->ssl));
+     {
+        int err;
+
+        err = SSL_get_verify_result(cl->ssl);
+        if (err) _openssl_print_verify_error(err);
+        SSL_ERROR_CHECK_GOTO_ERROR(err);
+     }
 
    return ECORE_CON_SSL_ERROR_NONE;
 
