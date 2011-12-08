@@ -522,8 +522,28 @@ case "$host_os" in
 esac
 AC_SUBST([dlopen_libs])
 
-enable_log="yes"
-EFL_CHECK_FNMATCH([enable_log="yes"], [enable_log="no"])
+have_log="yes"
+EFL_CHECK_FNMATCH([have_log="yes"], [have_log="no"])
+
+want_log="yes"
+AC_ARG_ENABLE([log],
+   [AC_HELP_STRING([--disable-log], [disable Eina_Log infrastructure completly @<:@default=enabled@:>@])],
+   [
+    if test "x${enableval}" = "xyes" ; then
+       want_log="yes"
+    else
+       want_log="no"
+    fi
+   ],
+   [want_log="yes"])
+
+enable_log="no"
+if test "x${have_log}" = xyes -a "x${want_log}" = xyes; then
+   enable_log="yes"
+fi
+
+AC_MSG_CHECKING([wether to build Eina_Log infrastructure])
+AC_MSG_RESULT([${enable_log}])
 
 if test "x${enable_log}" = "xyes"; then
     EINA_CONFIGURE_ENABLE_LOG="#define EINA_ENABLE_LOG"
