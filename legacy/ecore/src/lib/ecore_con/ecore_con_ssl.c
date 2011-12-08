@@ -332,10 +332,18 @@ _openssl_name_verify(const char *name, const char *svrname)
         EINA_SAFETY_ON_TRUE_RETURN_VAL(!s, EINA_FALSE);
         /* same as above for the stored name */
         EINA_SAFETY_ON_TRUE_RETURN_VAL(!strchr(s + 1, '.'), EINA_FALSE);
-        EINA_SAFETY_ON_TRUE_RETURN_VAL(strcasecmp(s, name + 1), EINA_FALSE);
+        if (strcasecmp(s, name + 1))
+          {
+             ERR("%s != %s", s, name + 1);
+             return EINA_FALSE;
+          }
      }
    else
-     EINA_SAFETY_ON_TRUE_RETURN_VAL(strcasecmp(name, svrname), EINA_FALSE);
+     if (strcasecmp(name, svrname))
+       {
+          ERR("%s != %s", name, svrname);
+          return EINA_FALSE;
+       }
    return EINA_TRUE;
 }
 
