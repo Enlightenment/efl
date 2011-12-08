@@ -1426,7 +1426,6 @@ _ecore_con_ssl_server_init_openssl(Ecore_Con_Server *svr)
            X509_NAME_get_text_by_NID(X509_get_subject_name(cert), obj, c, clen);
            INF("CERT NAME: %s\n", c);
            SSL_ERROR_CHECK_GOTO_ERROR(!_openssl_name_verify(buf, svr->verify_name ?: svr->name));
-           SSL_ERROR_CHECK_GOTO_ERROR(!_openssl_name_verify(buf, svr->verify_name ?: svr->name));
         }
    }
 
