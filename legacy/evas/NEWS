@@ -1,3 +1,12 @@
+Evas 1.2.0
+
+Changes since Evas 1.1.0:
+-------------------------
+
+Additions:
+
+   * Textblock now supports self-closing tags, i.e <br/>. Those should be used instead of the old <br> way.
+
 Evas 1.1.0
 
 Changes since Evas 1.0.0:
