@@ -46,9 +46,9 @@ _print_cal_info(Evas_Object *cal, Evas_Object *en)
    wds = elm_calendar_weekdays_names_get(cal);
 
    snprintf(info, sizeof(info),
-	 "  Day: %i, Mon: %i, Year %i, WeekDay: %i<br>"
-	 "  Interval: %0.2f, Year_Min: %i, Year_Max %i, Sel Enabled : %i<br>"
-	 "  Weekdays: %s, %s, %s, %s, %s, %s, %s<br>",
+	 "  Day: %i, Mon: %i, Year %i, WeekDay: %i<br/>"
+	 "  Interval: %0.2f, Year_Min: %i, Year_Max %i, Sel Enabled : %i<br/>"
+	 "  Weekdays: %s, %s, %s, %s, %s, %s, %s<br/>",
 	 stime.tm_mday, stime.tm_mon, stime.tm_year + 1900, stime.tm_wday,
 	 interval, year_min, year_max, sel_enabled,
 	 wds[0], wds[1], wds[2], wds[3], wds[4], wds[5], wds[6]);

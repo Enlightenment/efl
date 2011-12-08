@@ -33,10 +33,10 @@ test_label(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info 
 
    lb = elm_label_add(win);
    elm_object_text_set(lb,
-                       "This is a larger label with newlines<br>"
-                       "to make it bigger, bit it won't expand or wrap<br>"
-                       "just be a block of text that can't change its<br>"
-                       "formatting as it's fixed based on text<br>"
+                       "This is a larger label with newlines<br/>"
+                       "to make it bigger, bit it won't expand or wrap<br/>"
+                       "just be a block of text that can't change its<br/>"
+                       "formatting as it's fixed based on text<br/>"
                        );
    evas_object_size_hint_weight_set(lb, 0.0, 0.0);
    evas_object_size_hint_align_set(lb, EVAS_HINT_FILL, EVAS_HINT_FILL);

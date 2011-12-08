@@ -268,8 +268,8 @@ my_win_main(char *autorun, Eina_Bool test_win_only)
 
    lb = elm_label_add(win);
    elm_object_text_set(lb,
-                       "Please select a test from the list below<br>"
-                       "by clicking the test button to show the<br>"
+                       "Please select a test from the list below<br/>"
+                       "by clicking the test button to show the<br/>"
                        "test window.");
    elm_object_content_set(fr, lb);
    evas_object_show(lb);

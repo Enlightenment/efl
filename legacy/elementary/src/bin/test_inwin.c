@@ -22,10 +22,10 @@ test_inwin(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info 
 
    lb = elm_label_add(win);
    elm_object_text_set(lb,
-		       "This is an \"inwin\" - a window in a<br>"
-		       "window. This is handy for quick popups<br>"
-		       "you want centered, taking over the window<br>"
-		       "until dismissed somehow. Unlike hovers they<br>"
+		       "This is an \"inwin\" - a window in a<br/>"
+		       "window. This is handy for quick popups<br/>"
+		       "you want centered, taking over the window<br/>"
+		       "until dismissed somehow. Unlike hovers they<br/>"
 		       "don't hover over their target.");
    elm_win_inwin_content_set(inwin, lb);
    evas_object_show(lb);
@@ -54,13 +54,13 @@ test_inwin2(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info
 
    lb = elm_label_add(win);
    elm_object_text_set(lb,
-		       "This is an \"inwin\" - a window in a<br>"
-		       "window. This is handy for quick popups<br>"
-		       "you want centered, taking over the window<br>"
-		       "until dismissed somehow. Unlike hovers they<br>"
-		       "don't hover over their target.<br>"
-		       "<br>"
-		       "This inwin style compacts itself vertically<br>"
+		       "This is an \"inwin\" - a window in a<br/>"
+		       "window. This is handy for quick popups<br/>"
+		       "you want centered, taking over the window<br/>"
+		       "until dismissed somehow. Unlike hovers they<br/>"
+		       "don't hover over their target.<br/>"
+		       "<br/>"
+		       "This inwin style compacts itself vertically<br/>"
 		       "to the size of its contents minimum size.");
    elm_win_inwin_content_set(inwin, lb);
    evas_object_show(lb);

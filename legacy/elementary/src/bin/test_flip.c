@@ -271,26 +271,26 @@ test_flip2(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info 
    elm_entry_scrollable_set(en, EINA_TRUE);
    elm_entry_line_wrap_set(en, ELM_WRAP_NONE);
    snprintf(buf, sizeof(buf),
-            "This is an entry widget in this window that<br>"
-            "uses markup <b>like this</> for styling and<br>"
-            "formatting <em>like this</>, as well as<br>"
-            "<a href=X><link>links in the text</></a>, so enter text<br>"
-            "in here to edit it. By the way, links are<br>"
-            "called <a href=anc-02>Anchors</a> so you will need<br>"
-            "to refer to them this way.<br>"
-            "<br>"
+            "This is an entry widget in this window that<br/>"
+            "uses markup <b>like this</> for styling and<br/>"
+            "formatting <em>like this</>, as well as<br/>"
+            "<a href=X><link>links in the text</></a>, so enter text<br/>"
+            "in here to edit it. By the way, links are<br/>"
+            "called <a href=anc-02>Anchors</a> so you will need<br/>"
+            "to refer to them this way.<br/>"
+            "<br/>"
 
             "Also you can stick in items with (relsize + ascent): "
             "<item relsize=16x16 vsize=ascent href=emoticon/evil-laugh></item>"
             " (full) "
             "<item relsize=16x16 vsize=full href=emoticon/guilty-smile></item>"
-            " (to the left)<br>"
+            " (to the left)<br/>"
 
             "Also (size + ascent): "
             "<item size=16x16 vsize=ascent href=emoticon/haha></item>"
             " (full) "
             "<item size=16x16 vsize=full href=emoticon/happy-panting></item>"
-            " (before this)<br>"
+            " (before this)<br/>"
 
             "And as well (absize + ascent): "
             "<item absize=64x64 vsize=ascent href=emoticon/knowing-grin></item>"

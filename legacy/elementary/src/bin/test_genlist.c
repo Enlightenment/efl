@@ -1742,7 +1742,7 @@ test_genlist10(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_i
 
    lb = elm_label_add(win);
    elm_object_text_set(lb,
-                       "Sweep genlist items to the right.<br>"
+                       "Sweep genlist items to the right.<br/>"
                        "Test this by changing Mode Type to Slide or Rotate.");
    elm_box_pack_end(bx2, lb);
    evas_object_show(lb);
@@ -1854,7 +1854,7 @@ test_genlist11(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_i
 
    lb = elm_label_add(win);
    elm_object_text_set(lb,
-                       "Enable reorder mode if you want to move item.<br>"
+                       "Enable reorder mode if you want to move item.<br/>"
                        "Then long press and drag item.");
    elm_object_content_set(fr, lb);
    evas_object_show(lb);

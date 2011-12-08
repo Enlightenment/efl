@@ -66,7 +66,7 @@ test_conformant(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event 
    elm_entry_scrollable_set(en, EINA_TRUE);
    elm_entry_bounce_set(en, 0, 1);
    elm_entry_entry_set(en,
-                       "This is a multi-line entry at the bottom<br>"
+                       "This is a multi-line entry at the bottom<br/>"
                        "This can contain more than 1 line of text and be "
                        "scrolled around to allow for entering of lots of "
                        "content. It is also to test to see that autoscroll "

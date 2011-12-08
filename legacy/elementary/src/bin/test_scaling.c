@@ -86,8 +86,8 @@ test_scaling2(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_in
    elm_object_text_set(fr, "Scale: 0.5");
    lb = elm_label_add(win);
    elm_object_text_set(lb,
-		       "Parent frame scale<br>"
-		       "is 0.5. Child should<br>"
+		       "Parent frame scale<br/>"
+		       "is 0.5. Child should<br/>"
 		       "inherit it.");
    elm_object_content_set(fr, lb);
    evas_object_show(lb);
@@ -98,8 +98,8 @@ test_scaling2(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_in
    elm_object_text_set(fr, "Scale: 1.0");
    lb = elm_label_add(win);
    elm_object_text_set(lb,
-		       "Parent frame scale<br>"
-		       "is 1.0. Child should<br>"
+		       "Parent frame scale<br/>"
+		       "is 1.0. Child should<br/>"
 		       "inherit it.");
    elm_object_content_set(fr, lb);
    evas_object_show(lb);
@@ -111,8 +111,8 @@ test_scaling2(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_in
    elm_object_text_set(fr, "Scale: 2.0");
    lb = elm_label_add(win);
    elm_object_text_set(lb,
-		       "Parent frame scale<br>"
-		       "is 2.0. Child should<br>"
+		       "Parent frame scale<br/>"
+		       "is 2.0. Child should<br/>"
 		       "inherit it.");
    elm_object_content_set(fr, lb);
    evas_object_show(lb);

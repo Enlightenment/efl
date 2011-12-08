@@ -98,17 +98,17 @@ test_pager(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info 
 
    lb = elm_label_add(win);
    elm_object_text_set(lb,
-                       "This is page 1 in a pager stack.<br>"
-                       "<br>"
-                       "So what is a pager stack? It is a stack<br>"
-                       "of pages that hold widgets in it. The<br>"
-                       "pages can be pushed and popped on and<br>"
-                       "off the stack, activated and otherwise<br>"
-                       "activated if already in the stack<br>"
-                       "(activated means promoted to the top of<br>"
-                       "the stack).<br>"
-                       "<br>"
-                       "The theme may define the animation how<br>"
+                       "This is page 1 in a pager stack.<br/>"
+                       "<br/>"
+                       "So what is a pager stack? It is a stack<br/>"
+                       "of pages that hold widgets in it. The<br/>"
+                       "pages can be pushed and popped on and<br/>"
+                       "off the stack, activated and otherwise<br/>"
+                       "activated if already in the stack<br/>"
+                       "(activated means promoted to the top of<br/>"
+                       "the stack).<br/>"
+                       "<br/>"
+                       "The theme may define the animation how<br/>"
                        "show and hide of pages. Select one theme style:");
    elm_box_pack_end(bx, lb);
    evas_object_show(lb);
@@ -150,9 +150,9 @@ test_pager(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info 
 
    lb = elm_label_add(win);
    elm_object_text_set(lb,
-                       "This is page 2 in a pager stack.<br>"
-                       "<br>"
-                       "This is just like the previous page in<br>"
+                       "This is page 2 in a pager stack.<br/>"
+                       "<br/>"
+                       "This is just like the previous page in<br/>"
                        "the pager stack."
                       );
    elm_box_pack_end(bx, lb);
@@ -178,9 +178,9 @@ test_pager(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info 
 
    lb = elm_label_add(win);
    elm_object_text_set(lb,
-                       "This is page 3 in a pager stack.<br>"
-                       "<br>"
-                       "This is just like the previous page in<br>"
+                       "This is page 3 in a pager stack.<br/>"
+                       "<br/>"
+                       "This is just like the previous page in<br/>"
                        "the pager stack.");
    elm_box_pack_end(bx, lb);
    evas_object_show(lb);
@@ -250,7 +250,7 @@ my_pager_push(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED
    evas_object_show(bx);
 
    lb = elm_label_add(info->win);
-   snprintf(buf, sizeof(buf), "This is page %d in the slide pager<br><br>", count++);
+   snprintf(buf, sizeof(buf), "This is page %d in the slide pager<br/><br/>", count++);
    elm_object_text_set(lb, buf);
    elm_box_pack_end(bx, lb);
    evas_object_show(lb);
@@ -308,14 +308,14 @@ test_pager_slide(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event
 
    lb = elm_label_add(win);
    elm_object_text_set(lb,
-                       "This is page 1 in a slide pager.<br>"
-                       "<br>"
-                       "The slide pager style is useful for browsing<br>"
-                       "a hierarchy of objects, as it makes clear<br>"
-                       "the direction of the browse.<br>"
-                       "This is the 'slide' style, also available<br>"
-                       "a fully transparent style named 'slide_invisble'.<br>"
-                       "<br>");
+                       "This is page 1 in a slide pager.<br/>"
+                       "<br/>"
+                       "The slide pager style is useful for browsing<br/>"
+                       "a hierarchy of objects, as it makes clear<br/>"
+                       "the direction of the browse.<br/>"
+                       "This is the 'slide' style, also available<br/>"
+                       "a fully transparent style named 'slide_invisble'.<br/>"
+                       "<br/>");
    elm_box_pack_end(bx, lb);
    evas_object_show(lb);
 

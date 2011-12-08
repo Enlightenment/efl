@@ -95,7 +95,7 @@ test_notify(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info
    evas_object_show(bx);
 
    lb = elm_label_add(win);
-   elm_object_text_set(lb, "Bottom position. This notify use a timeout of 5 sec.<br>"
+   elm_object_text_set(lb, "Bottom position. This notify use a timeout of 5 sec.<br/>"
 	 "<b>The events outside the window are blocked.</b>");
    elm_box_pack_end(bx, lb);
    evas_object_show(lb);

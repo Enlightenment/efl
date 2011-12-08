@@ -88,12 +88,12 @@ test_anchorview(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_
    elm_anchorview_hover_style_set(av, "popout");
    elm_anchorview_hover_parent_set(av, win);
    elm_object_text_set(av,
-		       "This is an entry widget in this window that<br>"
-		       "uses markup <b>like this</> for styling and<br>"
-		       "formatting <em>like this</>, as well as<br>"
-		       "<a href=X><link>links in the text</></a>, so enter text<br>"
-		       "in here to edit it. By the way, links are<br>"
-		       "called <a href=anc-02>Anchors</a> so you will need<br>"
+		       "This is an entry widget in this window that<br/>"
+		       "uses markup <b>like this</> for styling and<br/>"
+		       "formatting <em>like this</>, as well as<br/>"
+		       "<a href=X><link>links in the text</></a>, so enter text<br/>"
+		       "in here to edit it. By the way, links are<br/>"
+		       "called <a href=anc-02>Anchors</a> so you will need<br/>"
 		       "to refer to them this way. <item relsize=16x16 vsize=full href=emoticon/guilty-smile></item>");
    evas_object_size_hint_weight_set(av, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_smart_callback_add(av, "anchor,clicked", my_anchorview_anchor, av);

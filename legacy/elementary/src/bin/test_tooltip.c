@@ -169,9 +169,9 @@ _tt_item_label(void *data   __UNUSED__,
               void *item   __UNUSED__)
 {
    Evas_Object *l = elm_label_add(tt);
-   elm_object_text_set(l, "Something useful here?<ps>"
-                          "No probably not, but this is a super long label<ps>"
-                          "which probably breaks on your system, now doesn't it?<ps>"
+   elm_object_text_set(l, "Something useful here?<ps/>"
+                          "No probably not, but this is a super long label<ps/>"
+                          "which probably breaks on your system, now doesn't it?<ps/>"
                           "Yeah, I thought so.");
    elm_label_line_wrap_set(l, ELM_WRAP_MIXED);
    return l;
@@ -351,7 +351,7 @@ _tt_visible_lock_toggle(void *data       __UNUSED__,
      {
         elm_object_text_set(obj, "Locked tooltip visibility");
         elm_object_tooltip_text_set(obj, "This tooltip is locked"
-                                         " visible,<br> click the button"
+                                         " visible,<br/> click the button"
                                          " to unlock!");
         elm_object_tooltip_show(obj);
      }
@@ -359,7 +359,7 @@ _tt_visible_lock_toggle(void *data       __UNUSED__,
      {
         elm_object_text_set(obj, "Unlocked tooltip visibility");
         elm_object_tooltip_text_set(obj, "This tooltip is unlocked"
-                                         " visible,<br> click the button"
+                                         " visible,<br/> click the button"
                                          " to lock!");
         elm_object_tooltip_hide(obj);
      }
@@ -466,7 +466,7 @@ test_tooltip(void *data       __UNUSED__,
 
    bt = elm_button_add(win);
    elm_object_text_set(bt, "Unlocked tooltip visibility");
-   elm_object_tooltip_text_set(bt, "This tooltip is unlocked visible,<br>"
+   elm_object_tooltip_text_set(bt, "This tooltip is unlocked visible,<br/>"
                                    " click the button to lock!");
    evas_object_smart_callback_add(bt, "clicked", _tt_visible_lock_toggle,
                                   NULL);

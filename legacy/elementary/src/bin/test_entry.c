@@ -97,26 +97,26 @@ test_entry(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info 
    en = elm_entry_add(win);
    elm_entry_line_wrap_set(en, ELM_WRAP_NONE);
    snprintf(buf, sizeof(buf),
-            "This is an entry widget in this window that<br>"
-            "uses markup <b>like this</> for styling and<br>"
-            "formatting <em>like this</>, as well as<br>"
-            "<a href=X><link>links in the text</></a>, so enter text<br>"
-            "in here to edit it. By the way, links are<br>"
-            "called <a href=anc-02>Anchors</a> so you will need<br>"
-            "to refer to them this way.<br>"
-            "<br>"
+            "This is an entry widget in this window that<br/>"
+            "uses markup <b>like this</> for styling and<br/>"
+            "formatting <em>like this</>, as well as<br/>"
+            "<a href=X><link>links in the text</></a>, so enter text<br/>"
+            "in here to edit it. By the way, links are<br/>"
+            "called <a href=anc-02>Anchors</a> so you will need<br/>"
+            "to refer to them this way.<br/>"
+            "<br/>"
 
             "Also you can stick in items with (relsize + ascent): "
             "<item relsize=16x16 vsize=ascent href=emoticon/evil-laugh></item>"
             " (full) "
             "<item relsize=16x16 vsize=full href=emoticon/guilty-smile></item>"
-            " (to the left)<br>"
+            " (to the left)<br/>"
 
             "Also (size + ascent): "
             "<item size=16x16 vsize=ascent href=emoticon/haha></item>"
             " (full) "
             "<item size=16x16 vsize=full href=emoticon/happy-panting></item>"
-            " (before this)<br>"
+            " (before this)<br/>"
 
             "And as well (absize + ascent): "
             "<item absize=64x64 vsize=ascent href=emoticon/knowing-grin></item>"
@@ -328,9 +328,9 @@ test_entry_scrolled(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *ev
    elm_entry_context_menu_item_add(en, "Hello", NULL, ELM_ICON_NONE, NULL, NULL);
    elm_entry_context_menu_item_add(en, "World", NULL, ELM_ICON_NONE, NULL, NULL);
    elm_entry_entry_set(en,
-				"Multi-line disabled entry widget :)<br>"
-				"We can use markup <b>like this</> for styling and<br>"
-				"formatting <em>like this</>, as well as<br>"
+				"Multi-line disabled entry widget :)<br/>"
+				"We can use markup <b>like this</> for styling and<br/>"
+				"formatting <em>like this</>, as well as<br/>"
 				"<a href=X><link>links in the text</></a>,"
 				"but it won't be editable or clickable.");
    evas_object_show(en);
@@ -455,12 +455,12 @@ test_entry_scrolled(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *ev
    evas_object_size_hint_align_set(en, EVAS_HINT_FILL, EVAS_HINT_FILL);
    elm_entry_scrollbar_policy_set(en, ELM_SCROLLER_POLICY_ON, ELM_SCROLLER_POLICY_ON);
    elm_entry_entry_set(en,
-				"This is an entry widget in this window that<br>"
-				"uses markup <b>like this</> for styling and<br>"
-				"formatting <em>like this</>, as well as<br>"
-				"<a href=X><link>links in the text</></a>, so enter text<br>"
-				"in here to edit it. By them way, links are<br>"
-				"called <a href=anc-02>Anchors</a> so you will need<br>"
+				"This is an entry widget in this window that<br/>"
+				"uses markup <b>like this</> for styling and<br/>"
+				"formatting <em>like this</>, as well as<br/>"
+				"<a href=X><link>links in the text</></a>, so enter text<br/>"
+				"in here to edit it. By them way, links are<br/>"
+				"called <a href=anc-02>Anchors</a> so you will need<br/>"
 				"to refer to them this way. At the end here is a really long "
 				"line to test line wrapping to see if it works. But just in "
 				"case this line is not long enough I will add more here to "
@@ -1002,12 +1002,12 @@ test_entry3(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info
    evas_object_size_hint_weight_set(en, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(en, EVAS_HINT_FILL, EVAS_HINT_FILL);
    elm_entry_entry_set(en,
-				"This is an entry widget in this window that<br>"
-				"uses markup <b>like this</> for styling and<br>"
-				"formatting <em>like this</>, as well as<br>"
-				"<a href=X><link>links in the text</></a>, so enter text<br>"
-				"in here to edit it. By them way, links are<br>"
-				"called <a href=anc-02>Anchors</a> so you will need<br>"
+				"This is an entry widget in this window that<br/>"
+				"uses markup <b>like this</> for styling and<br/>"
+				"formatting <em>like this</>, as well as<br/>"
+				"<a href=X><link>links in the text</></a>, so enter text<br/>"
+				"in here to edit it. By them way, links are<br/>"
+				"called <a href=anc-02>Anchors</a> so you will need<br/>"
 				"to refer to them this way. At the end here is a really long "
 				"line to test line wrapping to see if it works. But just in "
 				"case this line is not long enough I will add more here to "
@@ -1311,10 +1311,10 @@ test_entry4(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info
    en = elm_entry_add(win);
    elm_entry_line_wrap_set(en, ELM_WRAP_NONE);
    elm_entry_entry_set(en,
-		       "This is an entry widget<br>"
-		       "that uses markup<br>"
-                       "<b>like this</> and has<br>"
-		       "no scroller, so you can<br>"
+		       "This is an entry widget<br/>"
+		       "that uses markup<br/>"
+                       "<b>like this</> and has<br/>"
+		       "no scroller, so you can<br/>"
 		       "use it more flexibly.");
    evas_object_size_hint_weight_set(en, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(en, EVAS_HINT_FILL, EVAS_HINT_FILL);
@@ -1326,12 +1326,12 @@ test_entry4(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info
    evas_object_size_hint_weight_set(en, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(en, EVAS_HINT_FILL, EVAS_HINT_FILL);
    elm_entry_entry_set(en,
-				"This is an entry widget in this window that<br>"
-				"uses markup <b>like this</> for styling and<br>"
-				"formatting <em>like this</>, as well as<br>"
-				"<a href=X><link>links in the text</></a>, so enter text<br>"
-				"in here to edit it. By them way, links are<br>"
-				"called <a href=anc-02>Anchors</a> so you will need<br>"
+				"This is an entry widget in this window that<br/>"
+				"uses markup <b>like this</> for styling and<br/>"
+				"formatting <em>like this</>, as well as<br/>"
+				"<a href=X><link>links in the text</></a>, so enter text<br/>"
+				"in here to edit it. By them way, links are<br/>"
+				"called <a href=anc-02>Anchors</a> so you will need<br/>"
 				"to refer to them this way. At the end here is a really long "
 				"line to test line wrapping to see if it works. But just in "
 				"case this line is not long enough I will add more here to "

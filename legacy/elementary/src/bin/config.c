@@ -628,7 +628,7 @@ _status_config(Evas_Object *win,
    elm_box_pack_end(bx, sp);
    evas_object_show(sp);
 
-   LABEL_FRAME_ADD("<hilight>Finger Size</><br>");
+   LABEL_FRAME_ADD("<hilight>Finger Size</><br/>");
 
    sl = elm_slider_add(win);
    evas_object_size_hint_weight_set(sl, EVAS_HINT_EXPAND, 0.0);
@@ -1196,7 +1196,7 @@ _status_config_sizing(Evas_Object *win,
    elm_box_pack_end(bx, sp);
    evas_object_show(sp);
 
-   LABEL_FRAME_ADD("<hilight>Finger Size</><br>");
+   LABEL_FRAME_ADD("<hilight>Finger Size</><br/>");
 
    sl = elm_slider_add(win);
    evas_object_data_set(win, "fs_slider", sl);
@@ -2176,7 +2176,7 @@ _profiles_list_selected_cb(void            *data,
         elm_profile_dir_free(pdir);
      }
 
-   snprintf(buf, sizeof(buf), "<hilight>Selected profile: %s</><br>",
+   snprintf(buf, sizeof(buf), "<hilight>Selected profile: %s</><br/>",
             prof_name);
    elm_object_text_set(evas_object_data_get(obj, "prof_name_lbl"), buf);
 
@@ -2446,8 +2446,8 @@ _status_config_scrolling(Evas_Object *win,
    elm_object_content_set(sc, bx);
 
    ck = elm_check_add(win);
-   elm_object_tooltip_text_set(ck, "Set whether scrollers should bounce<br>"
-                                   "when they reach their viewport's edge<br>"
+   elm_object_tooltip_text_set(ck, "Set whether scrollers should bounce<br/>"
+                                   "when they reach their viewport's edge<br/>"
                                    "during a scroll");
    elm_object_text_set(ck, "Enable scroll bounce");
    evas_object_data_set(win, "scroll_bounce_check", ck);
@@ -2462,7 +2462,7 @@ _status_config_scrolling(Evas_Object *win,
    LABEL_FRAME_ADD("<hilight>Scroll bounce friction</>");
 
    sl = elm_slider_add(win);
-   elm_object_tooltip_text_set(sl, "This is the amount of inertia a <br>"
+   elm_object_tooltip_text_set(sl, "This is the amount of inertia a <br/>"
                                    "scroller will impose at bounce animations");
    evas_object_data_set(win, "bounce_friction_slider", sl);
    evas_object_size_hint_weight_set(sl, EVAS_HINT_EXPAND, 0.0);
@@ -2486,7 +2486,7 @@ _status_config_scrolling(Evas_Object *win,
    evas_object_show(sp);
 
    ck = elm_check_add(win);
-   elm_object_tooltip_text_set(ck, "Set whether scrollers should be<br>"
+   elm_object_tooltip_text_set(ck, "Set whether scrollers should be<br/>"
                                    "draggable from any point in their views");
    elm_object_text_set(ck, "Enable thumb scroll");
    evas_object_data_set(win, "thumbscroll_check", ck);
@@ -2501,8 +2501,8 @@ _status_config_scrolling(Evas_Object *win,
    LABEL_FRAME_ADD("<hilight>Thumb scroll threshold</>");
 
    sl = elm_slider_add(win);
-   elm_object_tooltip_text_set(sl, "This is the number of pixels one should<br>"
-                                   "travel while dragging a scroller's view<br>"
+   elm_object_tooltip_text_set(sl, "This is the number of pixels one should<br/>"
+                                   "travel while dragging a scroller's view<br/>"
                                    "to actually trigger scrolling");
    evas_object_data_set(win, "thumbscroll_threshold_slider", sl);
    evas_object_size_hint_weight_set(sl, EVAS_HINT_EXPAND, 0.0);
@@ -2521,9 +2521,9 @@ _status_config_scrolling(Evas_Object *win,
    LABEL_FRAME_ADD("<hilight>Thumb scroll momentum threshold</>");
 
    sl = elm_slider_add(win);
-   elm_object_tooltip_text_set(sl, "This is the minimum speed of mouse <br>"
-                                   "cursor movement which will trigger<br>"
-                                   "list self scrolling animation after a<br>"
+   elm_object_tooltip_text_set(sl, "This is the minimum speed of mouse <br/>"
+                                   "cursor movement which will trigger<br/>"
+                                   "list self scrolling animation after a<br/>"
                                    "mouse up event (pixels/second)");
    evas_object_data_set(win, "ts_momentum_threshold_slider", sl);
    evas_object_size_hint_weight_set(sl, EVAS_HINT_EXPAND, 0.0);
@@ -2543,8 +2543,8 @@ _status_config_scrolling(Evas_Object *win,
    LABEL_FRAME_ADD("<hilight>Thumb scroll friction</>");
 
    sl = elm_slider_add(win);
-   elm_object_tooltip_text_set(sl, "This is the amount of inertia a<br>"
-                                   "scroller will impose at self scrolling<br>"
+   elm_object_tooltip_text_set(sl, "This is the amount of inertia a<br/>"
+                                   "scroller will impose at self scrolling<br/>"
                                    "animations");
    evas_object_data_set(win, "thumbscroll_friction_slider", sl);
    evas_object_size_hint_weight_set(sl, EVAS_HINT_EXPAND, 0.0);
@@ -2563,10 +2563,10 @@ _status_config_scrolling(Evas_Object *win,
    LABEL_FRAME_ADD("<hilight>Thumb scroll border friction</>");
 
    sl = elm_slider_add(win);
-   elm_object_tooltip_text_set(sl, "This is the amount of lag between your<br>"
-                                   "actual mouse cursor dragging movement<br>"
-                                   "and a scroller's view movement itself,<br>"
-                                   "while pushing it into bounce state<br>"
+   elm_object_tooltip_text_set(sl, "This is the amount of lag between your<br/>"
+                                   "actual mouse cursor dragging movement<br/>"
+                                   "and a scroller's view movement itself,<br/>"
+                                   "while pushing it into bounce state<br/>"
                                    "manually");
    evas_object_data_set(win, "ts_border_friction_slider", sl);
    evas_object_size_hint_weight_set(sl, EVAS_HINT_EXPAND, 0.0);
@@ -2585,8 +2585,8 @@ _status_config_scrolling(Evas_Object *win,
    LABEL_FRAME_ADD("<hilight>Thumb scroll sensitivity friction</>");
 
    sl = elm_slider_add(win);
-   elm_object_tooltip_text_set(sl, "This is the sensitivity amount which<br>"
-                                   "is be multiplied by the length of mouse<br>"
+   elm_object_tooltip_text_set(sl, "This is the sensitivity amount which<br/>"
+                                   "is be multiplied by the length of mouse<br/>"
                                    "dragging.");
    evas_object_data_set(win, "ts_sensitivity_friction_slider", sl);
    evas_object_size_hint_weight_set(sl, EVAS_HINT_EXPAND, 0.0);
@@ -2612,8 +2612,8 @@ _status_config_scrolling(Evas_Object *win,
    LABEL_FRAME_ADD("<hilight>Page scroll friction</>");
 
    sl = elm_slider_add(win);
-   elm_object_tooltip_text_set(sl, "This is the amount of inertia a<br>"
-                                   "paged scroller will impose at<br>"
+   elm_object_tooltip_text_set(sl, "This is the amount of inertia a<br/>"
+                                   "paged scroller will impose at<br/>"
                                    "page fitting animations");
    evas_object_data_set(win, "page_scroll_friction_slider", sl);
    evas_object_size_hint_weight_set(sl, EVAS_HINT_EXPAND, 0.0);
@@ -2632,8 +2632,8 @@ _status_config_scrolling(Evas_Object *win,
    LABEL_FRAME_ADD("<hilight>Bring in scroll friction</>");
 
    sl = elm_slider_add(win);
-   elm_object_tooltip_text_set(sl, "This is the amount of inertia a<br>"
-                                   "scroller will impose at region bring<br>"
+   elm_object_tooltip_text_set(sl, "This is the amount of inertia a<br/>"
+                                   "scroller will impose at region bring<br/>"
                                    "animations");
    evas_object_data_set(win, "bring_in_scroll_friction_slider", sl);
    evas_object_size_hint_weight_set(sl, EVAS_HINT_EXPAND, 0.0);
@@ -2652,9 +2652,9 @@ _status_config_scrolling(Evas_Object *win,
    LABEL_FRAME_ADD("<hilight>Zoom scroll friction</>");
 
    sl = elm_slider_add(win);
-   elm_object_tooltip_text_set(sl, "This is the amount of inertia<br>"
-                                   "scrollers will impose at animations<br>"
-                                   "triggered by Elementary widgets'<br>"
+   elm_object_tooltip_text_set(sl, "This is the amount of inertia<br/>"
+                                   "scrollers will impose at animations<br/>"
+                                   "triggered by Elementary widgets'<br/>"
                                    "zooming API");
    evas_object_data_set(win, "zoom_scroll_friction_slider", sl);
    evas_object_size_hint_weight_set(sl, EVAS_HINT_EXPAND, 0.0);
