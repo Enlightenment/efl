@@ -61,12 +61,34 @@ _gnutls_print_errors(void *conn, int type, int ret)
      ecore_con_event_server_error(conn, buf);
 }
 
+static void
+_gnutls_print_session(const gnutls_datum_t *cert_list, unsigned int cert_list_size)
+{
+   char *c = NULL;
+   gnutls_x509_crt_t crt;
+   unsigned int x;
+
+   if (!eina_log_domain_level_check(_ecore_con_log_dom, EINA_LOG_LEVEL_DBG)) return;
+   for (x = 0; x < cert_list_size; x++)
+     {
+        gnutls_x509_crt_init(&crt);
+        gnutls_x509_crt_import(crt, &cert_list[x], GNUTLS_X509_FMT_DER);
+        gnutls_x509_crt_print(crt, GNUTLS_CRT_PRINT_FULL, (gnutls_datum_t*)&c);
+        INF("CERTIFICATE:\n%s", c);
+        gnutls_free(c);
+        gnutls_x509_crt_deinit(crt);
+        crt = NULL;
+     }
+}
+
 #ifdef ISCOMFITOR
 static void
 _gnutls_log_func(int         level,
                  const char *str)
 {
-   DBG("|<%d>| %s", level, str);
+   char buf[128];
+   strncat(buf, str, strlen(str) - 1);
+   DBG("|<%d>| %s", level, buf);
 }
 #endif
 
@@ -850,8 +872,11 @@ _ecore_con_ssl_init_gnutls(void)
      return ECORE_CON_SSL_ERROR_INIT_FAILED;
 
 #ifdef ISCOMFITOR
-   gnutls_global_set_log_level(9);
-   gnutls_global_set_log_function(_gnutls_log_func);
+   if (eina_log_domain_level_check(_ecore_con_log_dom, EINA_LOG_LEVEL_DBG))
+     {
+        gnutls_global_set_log_level(9);
+        gnutls_global_set_log_function(_gnutls_log_func);
+     }
 #endif
    return ECORE_CON_SSL_ERROR_NONE;
 }
@@ -1032,28 +1057,10 @@ _ecore_con_ssl_server_init_gnutls(Ecore_Con_Server *svr)
    SSL_ERROR_CHECK_GOTO_ERROR(!(cert_list = gnutls_certificate_get_peers(svr->session, &cert_list_size)));
    SSL_ERROR_CHECK_GOTO_ERROR(!cert_list_size);
 
+   _gnutls_print_session(cert_list, cert_list_size);
+
    SSL_ERROR_CHECK_GOTO_ERROR(gnutls_x509_crt_init(&cert));
    SSL_ERROR_CHECK_GOTO_ERROR(gnutls_x509_crt_import(cert, &cert_list[0], GNUTLS_X509_FMT_DER));
-#ifdef ISCOMFITOR
-   {
-        size_t clen = 0;
-        char *c;
-        gnutls_x509_crt_get_subject_alt_name(cert, 0, NULL, &clen, NULL);
-        if (clen++)
-          {
-             c = alloca(clen);
-             gnutls_x509_crt_get_subject_alt_name(cert, 0, c, &clen, NULL);
-          }
-        else
-          {
-             gnutls_x509_crt_get_dn_by_oid(cert, GNUTLS_OID_X520_COMMON_NAME, 0, 0, NULL, &clen);
-             SSL_ERROR_CHECK_GOTO_ERROR(!clen);
-             c = alloca(++clen);
-             gnutls_x509_crt_get_dn_by_oid(cert, GNUTLS_OID_X520_COMMON_NAME, 0, 0, c, &clen);
-          }
-        INF("CERT NAME: %s\n", c);
-   }
-#endif
 
    SSL_ERROR_CHECK_GOTO_ERROR(!gnutls_x509_crt_check_hostname(cert, svr->verify_name ?: svr->name));
    gnutls_x509_crt_deinit(cert);
@@ -1372,6 +1379,7 @@ _ecore_con_ssl_client_init_gnutls(Ecore_Con_Client *cl)
    SSL_ERROR_CHECK_GOTO_ERROR(!(cert_list = gnutls_certificate_get_peers(cl->session, &cert_list_size)));
    SSL_ERROR_CHECK_GOTO_ERROR(!cert_list_size);
 
+   _gnutls_print_session(cert_list, cert_list_size);
 /*
    gnutls_x509_crt_t cert = NULL;
    SSL_ERROR_CHECK_GOTO_ERROR(gnutls_x509_crt_init(&cert));
