@@ -576,7 +576,7 @@ _title_content_set(Elm_Naviframe_Item *it,
         it->content_list = eina_inlist_append(it->content_list,
                                               EINA_INLIST_GET(pair));
      }
-   if ((pair->content != content) && pair->content)
+   if (pair->content && (pair->content != content))
      {
         evas_object_event_callback_del(pair->content,
                                        EVAS_CALLBACK_DEL,
