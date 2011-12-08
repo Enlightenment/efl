@@ -2,6 +2,7 @@
 #include "elm_priv.h"
 
 typedef struct _Widget_Data Widget_Data;
+typedef struct _Elm_Slideshow_Item Elm_Slideshow_Item;
 
 struct _Elm_Slideshow_Item
 {
@@ -397,7 +398,7 @@ elm_slideshow_add(Evas_Object *parent)
    return obj;
 }
 
-EAPI Elm_Slideshow_Item*
+EAPI Elm_Object_Item*
 elm_slideshow_item_add(Evas_Object *obj, const Elm_Slideshow_Item_Class *itc, const void *data)
 {
    Elm_Slideshow_Item *item;
@@ -412,12 +413,12 @@ elm_slideshow_item_add(Evas_Object *obj, const Elm_Slideshow_Item_Class *itc, co
 
    wd->items = eina_list_merge(wd->items, item->l);
 
-   if (!wd->current) elm_slideshow_show(item);
+   if (!wd->current) elm_slideshow_show((Elm_Object_Item *) item);
 
-   return item;
+   return (Elm_Object_Item *) item;
 }
 
-EAPI Elm_Slideshow_Item*
+EAPI Elm_Object_Item*
 elm_slideshow_item_sorted_insert(Evas_Object *obj, const Elm_Slideshow_Item_Class *itc, const void *data, Eina_Compare_Cb func)
 {
    Elm_Slideshow_Item *item;
@@ -432,23 +433,23 @@ elm_slideshow_item_sorted_insert(Evas_Object *obj, const Elm_Slideshow_Item_Clas
 
    wd->items = eina_list_sorted_merge(wd->items, item->l, func);
 
-   if (!wd->current) elm_slideshow_show(item);
+   if (!wd->current) elm_slideshow_show((Elm_Object_Item *) item);
 
-   return item;
+   return (Elm_Object_Item *) item;
 }
 
 EAPI void
-elm_slideshow_show(Elm_Slideshow_Item *item)
+elm_slideshow_show(Elm_Object_Item *it)
 {
+   ELM_OBJ_ITEM_CHECK_OR_RETURN(it);
+
    char buf[1024];
-   Elm_Slideshow_Item *next = NULL;
+   Elm_Slideshow_Item *item, *next = NULL;
    Widget_Data *wd;
-   ELM_WIDGET_ITEM_WIDTYPE_CHECK_OR_RETURN(item);
+   item = (Elm_Slideshow_Item *) it;
    wd = elm_widget_data_get(WIDGET(item));
-   if (!wd)
-     return;
-   if (item == wd->current)
-     return;
+   if (!wd)  return;
+   if (item == wd->current) return;
 
    next = item;
    _end(WIDGET(item), WIDGET(item), NULL, NULL);
@@ -653,9 +654,11 @@ elm_slideshow_clear(Evas_Object *obj)
 }
 
 EAPI void
-elm_slideshow_item_del(Elm_Slideshow_Item *item)
+elm_slideshow_item_del(Elm_Object_Item *it)
 {
-   ELM_WIDGET_ITEM_WIDTYPE_CHECK_OR_RETURN(item);
+   ELM_OBJ_ITEM_CHECK_OR_RETURN(it);
+
+   Elm_Slideshow_Item *item = (Elm_Slideshow_Item *) it;
    Widget_Data *wd = elm_widget_data_get(WIDGET(item));
    if (!wd) return;
    if (wd->previous == item) wd->previous = NULL;
@@ -694,27 +697,27 @@ elm_slideshow_items_get(const Evas_Object *obj)
    return wd->items;
 }
 
-EAPI Elm_Slideshow_Item *
+EAPI Elm_Object_Item *
 elm_slideshow_item_current_get(const Evas_Object *obj)
 {
    ELM_CHECK_WIDTYPE(obj, widtype) NULL;
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return NULL;
-   return wd->current;
+   return (Elm_Object_Item *) wd->current;
 }
 
 EAPI Evas_Object *
-elm_slideshow_item_object_get(const Elm_Slideshow_Item * item)
+elm_slideshow_item_object_get(const Elm_Object_Item * it)
 {
-   ELM_WIDGET_ITEM_WIDTYPE_CHECK_OR_RETURN(item, NULL);
-   return VIEW(item);
+   ELM_OBJ_ITEM_CHECK_OR_RETURN(it, NULL);
+   return VIEW(it);
 }
 
 EAPI void *
-elm_slideshow_item_data_get(const Elm_Slideshow_Item * item)
+elm_slideshow_item_data_get(const Elm_Object_Item * it)
 {
-   ELM_WIDGET_ITEM_WIDTYPE_CHECK_OR_RETURN(item, NULL);
-   return elm_widget_item_data_get(item);
+   ELM_OBJ_ITEM_CHECK_OR_RETURN(it, NULL);
+   return elm_widget_item_data_get(it);
 }
 
 EAPI int
@@ -755,7 +758,7 @@ elm_slideshow_cache_after_set(Evas_Object *obj, int count)
    wd->count_item_pre_after = count;
 }
 
-EAPI Elm_Slideshow_Item *
+EAPI Elm_Object_Item *
 elm_slideshow_item_nth_get(const Evas_Object *obj, unsigned int nth)
 {
    ELM_CHECK_WIDTYPE(obj, widtype) NULL;

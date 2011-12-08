@@ -170,11 +170,11 @@ _cmp_func(const void *data1,
 {
    const char *img_path1, *img_path2;
 
-   const Elm_Slideshow_Item *it1 = data1;
-   const Elm_Slideshow_Item *it2 = data2;
+   const Elm_Object_Item *slide_it1 = data1;
+   const Elm_Object_Item *slide_it2 = data2;
 
-   img_path1 = elm_slideshow_item_data_get(it1);
-   img_path2 = elm_slideshow_item_data_get(it2);
+   img_path1 = elm_slideshow_item_data_get(slide_it1);
+   img_path2 = elm_slideshow_item_data_get(slide_it2);
 
    return strcasecmp(img_path1, img_path2);
 }
@@ -184,7 +184,7 @@ elm_main(int    argc __UNUSED__,
          char **argv __UNUSED__)
 {
    Evas_Object *win, *bg, *notify, *bx, *bt, *hv, *spin;
-   Elm_Slideshow_Item *first, *last, *it;
+   Elm_Object_Item *slide_first, *slide_last, *slide_it;
    const char *transition, *layout;
    const Eina_List *l, *list;
 
@@ -207,7 +207,7 @@ elm_main(int    argc __UNUSED__,
    itc.func.get = _get;
    itc.func.del = NULL;
 
-   first = elm_slideshow_item_sorted_insert(slideshow, &itc, img1, _cmp_func);
+   slide_first = elm_slideshow_item_sorted_insert(slideshow, &itc, img1, _cmp_func);
    elm_slideshow_item_sorted_insert(slideshow, &itc, img2, _cmp_func);
    elm_slideshow_item_sorted_insert(slideshow, &itc, img3, _cmp_func);
    elm_slideshow_item_sorted_insert(slideshow, &itc, img4, _cmp_func);
@@ -215,13 +215,13 @@ elm_main(int    argc __UNUSED__,
    elm_slideshow_item_sorted_insert(slideshow, &itc, img6, _cmp_func);
    elm_slideshow_item_sorted_insert(slideshow, &itc, img7, _cmp_func);
    elm_slideshow_item_sorted_insert(slideshow, &itc, img8, _cmp_func);
-   last = elm_slideshow_item_add(slideshow, &itc, img9);
+   slide_last = elm_slideshow_item_add(slideshow, &itc, img9);
 
    list = elm_slideshow_items_get(slideshow);
    fprintf(stdout, "List of items in the slideshow:\n");
    EINA_LIST_FOREACH(list, l, it)
      fprintf(stdout, "\t%s\n",
-             (const char *)elm_slideshow_item_data_get(it));
+             (const char *)elm_slideshow_item_data_get(slide_it));
 
    notify = elm_notify_add(win);
    elm_notify_orient_set(notify, ELM_NOTIFY_ORIENT_BOTTOM);
@@ -252,13 +252,13 @@ elm_main(int    argc __UNUSED__,
 
    bt = elm_button_add(win);
    elm_object_text_set(bt, "First");
-   evas_object_smart_callback_add(bt, "clicked", _first, first);
+   evas_object_smart_callback_add(bt, "clicked", _first, slide_first);
    elm_box_pack_end(bx, bt);
    evas_object_show(bt);
 
    bt = elm_button_add(win);
    elm_object_text_set(bt, "Last");
-   evas_object_smart_callback_add(bt, "clicked", _last, last);
+   evas_object_smart_callback_add(bt, "clicked", _last, slide_last);
    elm_box_pack_end(bx, bt);
    evas_object_show(bt);
 

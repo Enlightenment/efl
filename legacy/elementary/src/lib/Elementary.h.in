@@ -20735,7 +20735,6 @@ extern "C" {
 
    typedef struct _Elm_Slideshow_Item_Class Elm_Slideshow_Item_Class; /**< Slideshow item class definition struct */
    typedef struct _Elm_Slideshow_Item_Class_Func Elm_Slideshow_Item_Class_Func; /**< Class functions for slideshow item classes. */
-   typedef struct _Elm_Slideshow_Item       Elm_Slideshow_Item; /**< Slideshow item handle */
    typedef Evas_Object *(*SlideshowItemGetFunc) (void *data, Evas_Object *obj); /**< Image fetching class function for slideshow item classes. */
    typedef void         (*SlideshowItemDelFunc) (void *data, Evas_Object *obj); /**< Deletion class function for slideshow item classes. */
 
@@ -20787,7 +20786,7 @@ extern "C" {
     *
     * @ingroup Slideshow
     */
-   EAPI Elm_Slideshow_Item *elm_slideshow_item_add(Evas_Object *obj, const Elm_Slideshow_Item_Class *itc, const void *data) EINA_ARG_NONNULL(1);
+   EAPI Elm_Object_Item *elm_slideshow_item_add(Evas_Object *obj, const Elm_Slideshow_Item_Class *itc, const void *data) EINA_ARG_NONNULL(1);
 
    /**
     * Insert a new item into the given slideshow widget, using the @p func
@@ -20813,13 +20812,12 @@ extern "C" {
     *
     * @ingroup Slideshow
     */
-   EAPI Elm_Slideshow_Item *elm_slideshow_item_sorted_insert(Evas_Object *obj, const Elm_Slideshow_Item_Class *itc, const void *data, Eina_Compare_Cb func) EINA_ARG_NONNULL(1);
+   EAPI Elm_Object_Item *elm_slideshow_item_sorted_insert(Evas_Object *obj, const Elm_Slideshow_Item_Class *itc, const void *data, Eina_Compare_Cb func) EINA_ARG_NONNULL(1);
 
    /**
     * Display a given slideshow widget's item, programmatically.
     *
-    * @param obj The slideshow object
-    * @param item The item to display on @p obj's viewport
+    * @param it The item to display on @p obj's viewport
     *
     * The change between the current item and @p item will use the
     * transition @p obj is set to use (@see
@@ -20827,7 +20825,7 @@ extern "C" {
     *
     * @ingroup Slideshow
     */
-   EAPI void                elm_slideshow_show(Elm_Slideshow_Item *item) EINA_ARG_NONNULL(1);
+   EAPI void                elm_slideshow_show(Elm_Object_Item *it) EINA_ARG_NONNULL(1);
 
    /**
     * Slide to the @b next item, in a given slideshow widget
@@ -21035,21 +21033,21 @@ extern "C" {
    /**
     * Delete a given item from a slideshow widget.
     *
-    * @param item The slideshow item
+    * @param it The slideshow item
     *
     * @ingroup Slideshow
     */
-   EAPI void                elm_slideshow_item_del(Elm_Slideshow_Item *item) EINA_ARG_NONNULL(1);
+   EAPI void                elm_slideshow_item_del(Elm_Object_Item *it) EINA_ARG_NONNULL(1);
 
    /**
     * Return the data associated with a given slideshow item
     *
-    * @param item The slideshow item
+    * @param it The slideshow item
     * @return Returns the data associated to this item
     *
     * @ingroup Slideshow
     */
-   EAPI void               *elm_slideshow_item_data_get(const Elm_Slideshow_Item *item) EINA_ARG_NONNULL(1);
+   EAPI void               *elm_slideshow_item_data_get(const Elm_Object_Item *it) EINA_ARG_NONNULL(1);
 
    /**
     * Returns the currently displayed item, in a given slideshow widget
@@ -21060,7 +21058,7 @@ extern "C" {
     *
     * @ingroup Slideshow
     */
-   EAPI Elm_Slideshow_Item *elm_slideshow_item_current_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
+   EAPI Elm_Object_Item *elm_slideshow_item_current_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
 
    /**
     * Get the real Evas object created to implement the view of a
@@ -21082,7 +21080,7 @@ extern "C" {
     *
     * @ingroup Slideshow
     */
-   EAPI Evas_Object*        elm_slideshow_item_object_get(const Elm_Slideshow_Item* item) EINA_ARG_NONNULL(1);
+   EAPI Evas_Object*        elm_slideshow_item_object_get(const Elm_Object_Item* it) EINA_ARG_NONNULL(1);
 
    /**
     * Get the the item, in a given slideshow widget, placed at
@@ -21096,7 +21094,7 @@ extern "C" {
     *
     * @ingroup Slideshow
     */
-   EAPI Elm_Slideshow_Item *elm_slideshow_item_nth_get(const Evas_Object *obj, unsigned int nth) EINA_ARG_NONNULL(1);
+   EAPI Elm_Object_Item *elm_slideshow_item_nth_get(const Evas_Object *obj, unsigned int nth) EINA_ARG_NONNULL(1);
 
    /**
     * Set the current slide layout in use for a given slideshow widget
