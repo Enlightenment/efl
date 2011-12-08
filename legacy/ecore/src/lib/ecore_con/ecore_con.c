@@ -1264,6 +1264,7 @@ _ecore_con_server_free(Ecore_Con_Server *svr)
    free(svr->path);
 
    eina_stringshare_del(svr->ip);
+   eina_stringshare_del(svr->verify_name);
 
    if (svr->ecs_buf) eina_binbuf_free(svr->ecs_buf);
    if (svr->ecs_recvbuf) eina_binbuf_free(svr->ecs_recvbuf);

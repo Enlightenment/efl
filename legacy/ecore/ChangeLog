@@ -388,3 +388,4 @@
 2011-12-07 Mike Blumenkrantz
 
         * Allow SSL certificates to be loaded for STARTTLS
+        * Added functions to set/get the hostname used for SSL certificate verification

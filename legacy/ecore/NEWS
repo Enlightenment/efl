@@ -8,6 +8,7 @@ Additions:
      - ecore_timer_reset()
     * ecore_con
      - ecore_con_socks api
+     - ecore_con_ssl_server_verify_name_set/get
     * ecore_x:
      - ecore_x_randr_output_backlight_available()
 

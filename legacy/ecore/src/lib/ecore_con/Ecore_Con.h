@@ -707,6 +707,8 @@ EAPI Eina_Bool         ecore_con_ssl_server_crl_add(Ecore_Con_Server *svr, const
 EAPI Eina_Bool         ecore_con_ssl_server_cafile_add(Ecore_Con_Server *svr, const char *ca_file);
 EAPI void              ecore_con_ssl_server_verify(Ecore_Con_Server *svr);
 EAPI void              ecore_con_ssl_server_verify_basic(Ecore_Con_Server *svr);
+EAPI void              ecore_con_ssl_server_verify_name_set(Ecore_Con_Server *svr, const char *name);
+EAPI const char       *ecore_con_ssl_server_verify_name_get(Ecore_Con_Server *svr);
 EAPI Eina_Bool         ecore_con_ssl_server_upgrade(Ecore_Con_Server *svr, Ecore_Con_Type compl_type);
 EAPI Eina_Bool         ecore_con_ssl_client_upgrade(Ecore_Con_Client *cl, Ecore_Con_Type compl_type);
 

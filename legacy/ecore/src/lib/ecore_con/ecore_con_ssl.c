@@ -356,6 +356,51 @@ ecore_con_ssl_server_verify_basic(Ecore_Con_Server *svr)
 }
 
 /**
+ * @brief Set the hostname to verify against in certificate verification
+ *
+ * Sometimes the certificate hostname will not match the hostname that you are
+ * connecting to, and will instead match a different name. An example of this is
+ * that if you connect to talk.google.com to use Google Talk, you receive Google's
+ * certificate for gmail.com. This certificate should be trusted, and so you must call
+ * this function with "gmail.com" as @p name.
+ * See RFC2818 for more details.
+ * @param svr The server object
+ * @param name The hostname to verify against
+ * @since 1.2
+ */
+EAPI void
+ecore_con_ssl_server_verify_name_set(Ecore_Con_Server *svr, const char *name)
+{
+   if (!ECORE_MAGIC_CHECK(svr, ECORE_MAGIC_CON_SERVER))
+     {
+        ECORE_MAGIC_FAIL(svr, ECORE_MAGIC_CON_SERVER, __func__);
+        return;
+     }
+   eina_stringshare_replace(&svr->verify_name, name);
+}
+
+/**
+ * @brief Get the hostname to verify against in certificate verification
+ *
+ * This function returns the name which will be used to validate the SSL certificate
+ * common name (CN) or alt name (subjectAltName). It will default to the @p name
+ * param in ecore_con_server_connect(), but can be changed with ecore_con_ssl_server_verify_name_set().
+ * @param svr The server object
+ * @return The hostname which will be used
+ * @since 1.2
+ */
+EAPI const char *
+ecore_con_ssl_server_verify_name_get(Ecore_Con_Server *svr)
+{
+   if (!ECORE_MAGIC_CHECK(svr, ECORE_MAGIC_CON_SERVER))
+     {
+        ECORE_MAGIC_FAIL(svr, ECORE_MAGIC_CON_SERVER, __func__);
+        return NULL;
+     }
+   return svr->verify_name ?: svr->name;
+}
+
+/**
  * @brief Add an ssl certificate for use in ecore_con functions.
  *
  * Use this function to add a SSL PEM certificate.
@@ -764,8 +809,28 @@ _ecore_con_ssl_server_init_gnutls(Ecore_Con_Server *svr)
 
    SSL_ERROR_CHECK_GOTO_ERROR(gnutls_x509_crt_init(&cert));
    SSL_ERROR_CHECK_GOTO_ERROR(gnutls_x509_crt_import(cert, &cert_list[0], GNUTLS_X509_FMT_DER));
+#ifdef ISCOMFITOR
+   {
+        size_t clen = 0;
+        char *c;
+        gnutls_x509_crt_get_subject_alt_name(cert, 0, NULL, &clen, NULL);
+        if (clen++)
+          {
+             c = alloca(clen);
+             gnutls_x509_crt_get_subject_alt_name(cert, 0, c, &clen, NULL);
+          }
+        else
+          {
+             gnutls_x509_crt_get_dn_by_oid(cert, GNUTLS_OID_X520_COMMON_NAME, 0, 0, NULL, &clen);
+             SSL_ERROR_CHECK_GOTO_ERROR(!clen);
+             c = alloca(++clen);
+             gnutls_x509_crt_get_dn_by_oid(cert, GNUTLS_OID_X520_COMMON_NAME, 0, 0, c, &clen);
+          }
+        INF("CERT NAME: %s\n", c);
+   }
+#endif
 
-   SSL_ERROR_CHECK_GOTO_ERROR(!gnutls_x509_crt_check_hostname(cert, svr->name));
+   SSL_ERROR_CHECK_GOTO_ERROR(!gnutls_x509_crt_check_hostname(cert, svr->verify_name ?: svr->name));
    gnutls_x509_crt_deinit(cert);
    DBG("SSL certificate verification succeeded!");
    return ECORE_CON_SSL_ERROR_NONE;
@@ -1344,17 +1409,24 @@ _ecore_con_ssl_server_init_openssl(Ecore_Con_Server *svr)
       cert = SSL_get_peer_certificate(svr->ssl);
       if (cert)
         {
-           char buf[256] = {0};
+           char *c;
+           size_t clen;
+           ASN1_OBJECT *obj = NULL;
+
            if (svr->verify)
              SSL_ERROR_CHECK_GOTO_ERROR(SSL_get_verify_result(svr->ssl));
-           X509_NAME_get_text_by_NID(X509_get_subject_name(cert), NID_subject_alt_name, buf, sizeof(buf));
-           if (buf[0])
-             SSL_ERROR_CHECK_GOTO_ERROR(!_openssl_name_verify(buf, svr->name));
+           clen = X509_NAME_get_text_by_NID(X509_get_subject_name(cert), NID_subject_alt_name, NULL, 0);
+           if (clen)
+             obj = NID_subject_alt_name;
            else
-             {
-                X509_NAME_get_text_by_NID(X509_get_subject_name(cert), NID_commonName, buf, sizeof(buf));
-                SSL_ERROR_CHECK_GOTO_ERROR(!_openssl_name_verify(buf, svr->name));
-             }
+             clen = X509_NAME_get_text_by_NID(X509_get_subject_name(cert), NID_commonName, NULL, 0);
+           SSL_ERROR_CHECK_GOTO_ERROR(!clen);
+           if (!obj) obj = NID_commonName;
+           c = alloca(++clen);
+           X509_NAME_get_text_by_NID(X509_get_subject_name(cert), obj, c, clen);
+           INF("CERT NAME: %s\n", c);
+           SSL_ERROR_CHECK_GOTO_ERROR(!_openssl_name_verify(buf, svr->verify_name ?: svr->name));
+           SSL_ERROR_CHECK_GOTO_ERROR(!_openssl_name_verify(buf, svr->verify_name ?: svr->name));
         }
    }
 

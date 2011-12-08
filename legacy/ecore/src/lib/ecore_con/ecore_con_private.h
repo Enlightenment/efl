@@ -150,6 +150,7 @@ struct _Ecore_Con_Server
    const char *proxyip;
    int proxyport;
    /* endsocks */
+   const char *verify_name;
 #if USE_GNUTLS
    gnutls_session_t session;
    gnutls_anon_client_credentials_t anoncred_c;
