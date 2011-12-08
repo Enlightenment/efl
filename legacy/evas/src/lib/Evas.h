@@ -8101,6 +8101,19 @@ EAPI const char                  *evas_textblock_string_escape_get(const char *s
  */
 EAPI const char                  *evas_textblock_escape_string_range_get(const char *escape_start, const char *escape_end) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1, 2) EINA_PURE;
 
+/**
+ * Return the plain version of the markup.
+ *
+ * Works as if you set the markup to a textblock and then retrieve the plain
+ * version of the text. i.e: <br> and <\n> will be replaced with \n, &...; with
+ * the actual char and etc.
+ *
+ * @param obj the textblock object to work with.
+ * @param text the markup text
+ * @return an allocated plain text version of the markup
+ * @since 1.2.0
+ */
+EAPI char                        *evas_textblock_markup_to_plain(const Evas_Object *obj, const char *text) EINA_WARN_UNUSED_RESULT EINA_MALLOC EINA_ARG_NONNULL(1, 2);
 
 /**
  * Creates a new textblock style.

@@ -5084,6 +5084,36 @@ evas_object_textblock_text_markup_get(const Evas_Object *obj)
    return o->markup_text;
 }
 
+EAPI char *
+evas_textblock_markup_to_plain(const Evas_Object *obj, const char *text)
+{
+   /* FIXME: Can be done better, this is the least redundant way of doing it,
+    * but by far the slowest, when the time comes, this should be
+    * re-implemented. */
+   char *ret;
+   Evas_Object *obj2;
+   Evas_Textblock_Cursor *cur1, *cur2;
+   obj2 = evas_object_textblock_add(evas_object_evas_get(obj));
+   /* Shouldn't have been const, casting is ok, or at least conforms
+    * with the rest of the ugliness in this func*/
+   evas_object_textblock_style_set(obj2,
+         (Evas_Textblock_Style *) evas_object_textblock_style_get(obj));
+   evas_object_textblock_legacy_newline_set(obj2,
+         evas_object_textblock_legacy_newline_get(obj));
+
+   evas_object_textblock_text_markup_set(obj2, text);
+   cur1 = evas_object_textblock_cursor_get(obj2);
+   cur2 = evas_object_textblock_cursor_new(obj2);
+   evas_textblock_cursor_paragraph_first(cur1);
+   evas_textblock_cursor_paragraph_last(cur2);
+   ret = evas_textblock_cursor_range_text_get(cur1, cur2,
+         EVAS_TEXTBLOCK_TEXT_PLAIN);
+   evas_textblock_cursor_free(cur2);
+   evas_object_del(obj2);
+
+   return ret;
+}
+
 /* cursors */
 
 /**

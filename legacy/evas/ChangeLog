@@ -536,3 +536,6 @@
 	* Textblock markup: Support self closing format tags, i.e <br/>.
 	You should use <br/> and not <br>. The latter still works but it's use
 	is discouraged.
+	* Textblock: Added evas_textblock_markup_to_plain.
+	This lets you convert textblock markup to plain text.
+	This converts formats and everything correctly.
