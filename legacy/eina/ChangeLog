@@ -159,3 +159,9 @@
 2011-12-07  Mike Blumenkrantz (discomfitor/zmike)
 
         * eina_log*level_check() functions now return the correct value
+
+2011-12-08  Tom Hacohen
+
+	* Binbuf + Strbuf + Ustrbuf: Added eina_*buf_manage_new_length.
+	Same as eina_(u)strbuf_manage_new except that it accepts a length
+	parameter.

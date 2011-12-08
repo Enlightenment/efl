@@ -98,6 +98,30 @@ START_TEST(binbuf_remove)
 }
 END_TEST
 
+START_TEST(binbuf_manage_simple)
+{
+   Eina_Binbuf *buf;
+   const unsigned char cbuf[] = "12\0 456 78\0 abcthis is some more random junk here!";
+   size_t size = sizeof(cbuf) - 1; /* We don't care about the real NULL */
+
+   eina_init();
+
+   buf = eina_binbuf_manage_new_length(cbuf, size);
+   fail_if(!buf);
+
+   fail_if(memcmp(eina_binbuf_string_get(buf), cbuf, size));
+   fail_if(size != eina_binbuf_length_get(buf));
+   eina_binbuf_append_length(buf, cbuf, size);
+   fail_if(memcmp(eina_binbuf_string_get(buf), cbuf, size));
+   fail_if(memcmp(eina_binbuf_string_get(buf) + size, cbuf, size));
+   fail_if(2 * size != eina_binbuf_length_get(buf));
+
+   eina_binbuf_free(buf);
+
+   eina_shutdown();
+}
+END_TEST
+
 START_TEST(binbuf_insert)
 {
 #if 0
