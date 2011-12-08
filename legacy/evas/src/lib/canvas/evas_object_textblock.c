@@ -194,10 +194,10 @@ typedef struct _Evas_Object_Textblock_Format      Evas_Object_Textblock_Format;
  * Returns true if closer is the closer of base.
  */
 #define _FORMAT_IS_CLOSER_OF(base, closer, closer_len) \
-   (!strncmp(base + 1, closer, closer_len) && \
-    (!base[closer_len + 1] || \
-     (base[closer_len + 1] == '=') || \
-     _is_white(base[closer_len + 1])))
+   (!strncmp(base, closer, closer_len) && \
+    (!base[closer_len] || \
+     (base[closer_len] == '=') || \
+     _is_white(base[closer_len])))
 
 /*FIXME: document the structs and struct items. */
 struct _Evas_Object_Style_Tag
@@ -228,6 +228,8 @@ struct _Evas_Object_Textblock_Node_Format
    Evas_Object_Textblock_Node_Text    *text_node;
    size_t                              offset;
    unsigned char                       anchor : 2;
+   Eina_Bool                           opener : 1;
+   Eina_Bool                           own_closer : 1;
    Eina_Bool                           visible : 1;
    Eina_Bool                           format_change : 1;
    Eina_Bool                           is_new : 1;
@@ -1688,8 +1690,8 @@ _format_fill(Evas_Object *obj, Evas_Object_Textblock_Format *fmt, const char *st
 
    s = str;
 
-   /* get rid of anything +s or -s off the start of the string */
-   while ((*s == ' ') || (*s == '+') || (*s == '-')) s++;
+   /* get rid of any spaces at the start of the string */
+   while (*s == ' ') s++;
 
    while ((item = _format_parse(&s)))
      {
@@ -2130,7 +2132,6 @@ _layout_format_pop(Ctxt *c, const char *format)
    if ((c->format_stack) && (c->format_stack->next))
      {
         Eina_List *redo_nodes = NULL;
-        format++; /* Skip the '-' */
 
         /* Generic pop, should just pop. */
         if (((format[0] == ' ') && !format[1]) ||
@@ -3040,7 +3041,7 @@ _layout_do_format(const Evas_Object *obj __UNUSED__, Ctxt *c,
    int handled = 0;
 
    s = n->format;
-   if (!strncmp(s, "+ item ", 7))
+   if (!strncmp(s, "item ", 5))
      {
         // one of:
         //   item size=20x10 href=name
@@ -3132,16 +3133,14 @@ _layout_do_format(const Evas_Object *obj __UNUSED__, Ctxt *c,
    if (!handled)
      {
         Eina_Bool push_fmt = EINA_FALSE;
-        if (s[0] == '+')
+        if (n->opener && !n->own_closer)
           {
              fmt = _layout_format_push(c, fmt, n);
-             s++;
              push_fmt = EINA_TRUE;
           }
-        else if (s[0] == '-')
+        else if (!n->opener)
           {
              fmt = _layout_format_pop(c, n->orig_format);
-             s++;
           }
         while ((item = _format_parse(&s)))
           {
@@ -3845,18 +3844,16 @@ _format_changes_invalidate_text_nodes(Ctxt *c)
              const char *fstr = fnode->orig_format;
              /* balance < 0 means we gave up and everything should be
               * invalidated */
-             if (*fstr == '+')
+             if (fnode->opener && !fnode->own_closer)
                {
                   balance++;
                   if (!fstack)
                      start_n = fnode->text_node;
                   fstack = eina_list_prepend(fstack, fnode);
                }
-             else if (*fstr == '-')
+             else if (!fnode->opener)
                {
                   size_t fstr_len;
-                  /* Skip the '-' */
-                  fstr++;
                   fstr_len = strlen(fstr);
                   /* Generic popper, just pop */
                   if (((fstr[0] == ' ') && !fstr[1]) || !fstr[0])
@@ -4980,18 +4977,16 @@ evas_object_textblock_text_markup_prepend(Evas_Textblock_Cursor *cur, const char
  * @param fnode the format node to process.
  */
 static void
-_markup_get_format_append(Evas_Object_Textblock *o __UNUSED__, Eina_Strbuf *txt, Evas_Object_Textblock_Node_Format *fnode)
+_markup_get_format_append(Eina_Strbuf *txt, Evas_Object_Textblock_Node_Format *fnode)
 {
    eina_strbuf_append_char(txt, '<');
      {
         const char *s;
-        int pop = 0;
 
         // FIXME: need to escape
         s = fnode->orig_format;
-        if (*s == '-') pop = 1;
-        while ((*s == ' ') || (*s == '+') || (*s == '-')) s++;
-        if (pop) eina_strbuf_append_char(txt, '/');
+        if (!fnode->opener && !fnode->own_closer)
+           eina_strbuf_append_char(txt, '/');
         eina_strbuf_append(txt, s);
      }
    eina_strbuf_append_char(txt, '>');
@@ -5062,7 +5057,7 @@ evas_object_textblock_text_markup_get(const Evas_Object *obj)
              tmp_ch = text[off];
              text[off] = 0; /* Null terminate the part of the string */
              _markup_get_text_append(txt, text);
-             _markup_get_format_append(o, txt, fnode);
+             _markup_get_format_append(txt, fnode);
              text[off] = tmp_ch; /* Restore the char */
              text += off;
              if (fnode->visible)
@@ -5454,15 +5449,13 @@ evas_textblock_node_format_remove_pair(Evas_Object *obj,
      {
         const char *fstr = fmt->orig_format;
 
-        if (fstr && (*fstr == '+'))
+        if (fmt->opener && !fmt->own_closer)
           {
              fstack = eina_list_prepend(fstack, fmt);
           }
-        else if (fstr && (*fstr == '-'))
+        else if (fstr && !fmt->opener)
           {
              size_t fstr_len;
-             /* Skip the '-' */
-             fstr++;
              fstr_len = strlen(fstr);
              /* Generic popper, just pop */
              if (((fstr[0] == ' ') && !fstr[1]) || !fstr[0])
@@ -5888,10 +5881,9 @@ _evas_textblock_format_is_visible(Evas_Object_Textblock_Node_Format *fnode,
    fnode->anchor = ANCHOR_NONE;
    if (!s) return;
 
-   if (s[0] == '+' || s[0] == '-')
+   if (!fnode->own_closer)
      {
-        is_opener = (s[0] == '+');
-        s++;
+        is_opener = fnode->opener;
         fnode->format_change = EINA_TRUE;
      }
 
@@ -5987,16 +5979,14 @@ _evas_textblock_node_format_remove_matching(Evas_Object_Textblock *o,
           }
 
 
-        if (fstr && (*fstr == '+'))
+        if (fmt->opener && !fmt->own_closer)
           {
              formats = eina_list_prepend(formats, fmt);
           }
-        else if (fstr && (*fstr == '-'))
+        else if (fstr && !fmt->opener)
           {
              Evas_Object_Textblock_Node_Format *fnode;
              size_t fstr_len;
-             /* Skip the '-' */
-             fstr++;
              fstr_len = strlen(fstr);
              /* Generic popper, just pop */
              if (((fstr[0] == ' ') && !fstr[1]) || !fstr[0])
@@ -6856,6 +6846,7 @@ _evas_textblock_node_format_new(Evas_Object_Textblock *o, const char *_format)
 {
    Evas_Object_Textblock_Node_Format *n;
    const char *format = _format;
+   const char *pre_stripped_format = NULL;
 
    n = calloc(1, sizeof(Evas_Object_Textblock_Node_Format));
    /* Create orig_format and format */
@@ -6873,56 +6864,66 @@ _evas_textblock_node_format_new(Evas_Object_Textblock *o, const char *_format)
         match = _style_match_tag(o->style, format, format_len, &replace_len);
         if (match)
           {
-             if ((match[0] == '+') || (match[0] == '-'))
+             if (match[0] != '-')
                {
-                  char *norm_format;
-                  norm_format = malloc(format_len + 2 + 1);
-                  memcpy(norm_format, match, 2);
-                  memcpy(norm_format + 2, format, format_len);
-                  norm_format[format_len + 2] = '\0';
-                  n->orig_format =
-                     eina_stringshare_add_length(norm_format, format_len + 2);
-                  free(norm_format);
+                  n->opener = EINA_TRUE;
+                  if (match[0] != '+')
+                    {
+                       n->own_closer = EINA_TRUE;
+                    }
                }
-             else
-               {
-                  n->orig_format =
-                     eina_stringshare_add_length(format, format_len);
-               }
-             n->format = eina_stringshare_add(match);
+
+             pre_stripped_format = match;
           }
         else
           {
-             char *norm_format;
-
-             norm_format = malloc(format_len + 2 + 1);
-             if (norm_format)
+             if (format[0] == '/')
                {
-                  if (format[0] == '/')
-                    {
-                       memcpy(norm_format, "- ", 2);
-                       memcpy(norm_format + 2, format + 1, format_len - 1);
-                       norm_format[format_len + 2 - 1] = '\0';
-                    }
-                  else
-                    {
-                       memcpy(norm_format, "+ ", 2);
-                       memcpy(norm_format + 2, format, format_len);
-                       norm_format[format_len + 2] = '\0';
-                    }
-                  n->orig_format = eina_stringshare_add(norm_format);
-                  free(norm_format);
+                  format++;
+                  format_len--;
                }
-             n->format = eina_stringshare_ref(n->orig_format);
+             else
+               {
+                  n->opener = EINA_TRUE;
+               }
           }
+
+        n->orig_format = eina_stringshare_add_length(format, format_len);
+
+        if (!pre_stripped_format)
+           pre_stripped_format = n->orig_format;
      }
    /* Just use as is, it's a special format. */
    else
      {
-        n->orig_format = eina_stringshare_add(format);
-        n->format = eina_stringshare_ref(n->orig_format);
+        const char *tmp = format;;
+        if (format[0] != '-')
+          {
+             n->opener = EINA_TRUE;
+             if (format[0] != '+')
+               {
+                  n->own_closer = EINA_TRUE;
+               }
+          }
+        if ((*tmp == '+') || (*tmp == '-'))
+          {
+             tmp++;
+             while (*tmp == ' ') tmp++;
+          }
+        n->orig_format = eina_stringshare_add(tmp);
+        pre_stripped_format = n->orig_format;
      }
 
+   /* Strip format */
+     {
+        const char *tmp = pre_stripped_format;
+        if ((*tmp == '+') || (*tmp == '-'))
+          {
+             tmp++;
+             while (*tmp == ' ') tmp++;
+          }
+        n->format = eina_stringshare_add(tmp);
+     }
    format = n->format;
 
    _evas_textblock_format_is_visible(n, format);
@@ -7143,7 +7144,7 @@ evas_textblock_cursor_char_delete(Evas_Textblock_Cursor *cur)
                   should_merge = EINA_TRUE;
                }
              /* If a singnular, mark as invisible, so we'll delete it. */
-             if (!format || ((*format != '+') && (*format != '-')))
+             if (!format || last_fmt->own_closer)
                {
                   last_fmt->visible = EINA_FALSE;
                }
@@ -7272,60 +7273,40 @@ evas_textblock_cursor_range_delete(Evas_Textblock_Cursor *cur1, Evas_Textblock_C
 EAPI char *
 evas_textblock_cursor_content_get(const Evas_Textblock_Cursor *cur)
 {
-   const Eina_Unicode *ustr;
-   Eina_Unicode buf[2];
-   char *s;
    if (!cur || !cur->node) return NULL;
    if (evas_textblock_cursor_format_is_visible_get(cur))
      {
-        size_t len;
-        const char *fstr;
+        Eina_Strbuf *buf;
+        Evas_Object_Textblock_Node_Format *fnode;
         char *ret;
-        int pop = 0;
-        fstr  = evas_textblock_node_format_text_get(
-              _evas_textblock_node_visible_at_pos_get(
-                 evas_textblock_cursor_format_get(cur)));
+        fnode = _evas_textblock_node_visible_at_pos_get(
+                 evas_textblock_cursor_format_get(cur));
 
-        if (!fstr)
-           return NULL;
-
-        if (*fstr == '-') pop = 1;
-        while ((*fstr == ' ') || (*fstr == '+') || (*fstr == '-')) fstr++;
-        len = strlen(fstr);
-
-          {
-             char *tmp;
-             if (pop)
-               {
-                  ret = tmp = malloc(len + 3 + 1); /* </> and the null */
-                  memcpy(tmp, "</", 2);
-                  tmp += 2;
-               }
-             else
-               {
-                  ret = tmp = malloc(len + 2 + 1); /* <> and the null */
-                  *tmp = '<';
-                  tmp++;
-               }
-             memcpy(tmp, fstr, len);
-             memcpy(tmp + len, ">", 2); /* Including the null */
-          }
+        buf = eina_strbuf_new();
+        _markup_get_format_append(buf, fnode);
+        ret = eina_strbuf_string_steal(buf);
+        eina_strbuf_free(buf);
 
         return ret;
      }
+   else
+     {
+        const Eina_Unicode *ustr;
+        Eina_Unicode buf[2];
+        char *s;
 
-   ustr = eina_ustrbuf_string_get(cur->node->unicode);
-   buf[0] = ustr[cur->pos];
-   buf[1] = 0;
-   s = eina_unicode_unicode_to_utf8(buf, NULL);
+        ustr = eina_ustrbuf_string_get(cur->node->unicode);
+        buf[0] = ustr[cur->pos];
+        buf[1] = 0;
+        s = eina_unicode_unicode_to_utf8(buf, NULL);
 
-   return s;
+        return s;
+     }
 }
 
 static char *
 _evas_textblock_cursor_range_text_markup_get(const Evas_Textblock_Cursor *cur1, const Evas_Textblock_Cursor *_cur2)
 {
-   Evas_Object_Textblock *o;
    Evas_Object_Textblock_Node_Text *tnode;
    Eina_Strbuf *buf;
    Evas_Textblock_Cursor *cur2;
@@ -7334,7 +7315,6 @@ _evas_textblock_cursor_range_text_markup_get(const Evas_Textblock_Cursor *cur1, 
    if (!cur1 || !cur1->node) return NULL;
    if (!_cur2 || !_cur2->node) return NULL;
    if (cur1->obj != _cur2->obj) return NULL;
-   o = (Evas_Object_Textblock *)(cur1->obj->object_data);
    if (evas_textblock_cursor_compare(cur1, _cur2) > 0)
      {
 	const Evas_Textblock_Cursor *tc;
@@ -7402,7 +7382,7 @@ _evas_textblock_cursor_range_text_markup_get(const Evas_Textblock_Cursor *cur1, 
              tmp_ch = text[off];
              text[off] = 0; /* Null terminate the part of the string */
              _markup_get_text_append(buf, text);
-             _markup_get_format_append(o, buf, fnode);
+             _markup_get_format_append(buf, fnode);
              text[off] = tmp_ch; /* Restore the char */
              text += off;
              if (fnode->visible)
@@ -7624,8 +7604,27 @@ evas_textblock_cursor_format_get(const Evas_Textblock_Cursor *cur)
 EAPI const char *
 evas_textblock_node_format_text_get(const Evas_Object_Textblock_Node_Format *fmt)
 {
+   static char *ret = NULL;
+   char *tmp;
+
    if (!fmt) return NULL;
-   return fmt->orig_format;
+
+   if (ret) free(ret);
+   ret = malloc(strlen(fmt->orig_format) + 2 + 1);
+   tmp = ret;
+
+   if (fmt->opener && !fmt->own_closer)
+     {
+        *(tmp++) = '+';
+        *(tmp++) = ' ';
+     }
+   else if (!fmt->opener)
+     {
+        *(tmp++) = '-';
+        *(tmp++) = ' ';
+     }
+   strcpy(tmp, fmt->orig_format);
+   return ret;
 }
 
 EAPI void
