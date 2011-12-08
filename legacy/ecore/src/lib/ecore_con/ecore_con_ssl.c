@@ -16,6 +16,7 @@
 # include <ws2tcpip.h>
 #endif
 
+#include <sys/stat.h>
 #include "Ecore.h"
 #include "ecore_con_private.h"
 
@@ -654,6 +655,7 @@ ecore_con_ssl_server_cert_add(Ecore_Con_Server *svr,
  * If there is an error loading the CAs, an error will automatically be logged.
  * @param ca_file The path to the CA file.
  * @return EINA_FALSE if the file cannot be loaded, otherwise EINA_TRUE.
+ * @note since 1.2, this function can load directores
  */
 
 EAPI Eina_Bool
@@ -1069,10 +1071,32 @@ static Eina_Bool
 _ecore_con_ssl_server_cafile_add_gnutls(Ecore_Con_Server *svr,
                                         const char       *ca_file)
 {
-   SSL_ERROR_CHECK_GOTO_ERROR(gnutls_certificate_set_x509_trust_file(svr->cert, ca_file,
-                                                                     GNUTLS_X509_FMT_PEM) < 1);
+   struct stat st;
+   Eina_Iterator *it;
+   const char *file;
+   Eina_Bool error = EINA_FALSE;
 
-   return EINA_TRUE;
+   if (stat(ca_file, &st)) return EINA_FALSE;
+   if (S_ISDIR(st.st_mode))
+     {
+        it = eina_file_ls(ca_file);
+        SSL_ERROR_CHECK_GOTO_ERROR(!it);
+        EINA_ITERATOR_FOREACH(it, file)
+          {
+             if (!error)
+               {
+                  if (gnutls_certificate_set_x509_trust_file(svr->cert, file, GNUTLS_X509_FMT_PEM) < 1)
+                    error++;
+               }
+             eina_stringshare_del(file);
+          }
+        eina_iterator_free(it);
+     }
+   else
+     SSL_ERROR_CHECK_GOTO_ERROR(gnutls_certificate_set_x509_trust_file(svr->cert, ca_file,
+                                                                       GNUTLS_X509_FMT_PEM) < 1);
+
+   return !error;
 error:
    ERR("Could not load CA file!");
    return EINA_FALSE;
@@ -1648,7 +1672,13 @@ static Eina_Bool
 _ecore_con_ssl_server_cafile_add_openssl(Ecore_Con_Server *svr,
                                          const char       *ca_file)
 {
-   SSL_ERROR_CHECK_GOTO_ERROR(!SSL_CTX_load_verify_locations(svr->ssl_ctx, ca_file, NULL));
+   struct stat st;
+
+   if (stat(ca_file, &st)) return EINA_FALSE;
+   if (S_ISDIR(st.st_mode))
+     SSL_ERROR_CHECK_GOTO_ERROR(!SSL_CTX_load_verify_locations(svr->ssl_ctx, NULL, ca_file));
+   else
+     SSL_ERROR_CHECK_GOTO_ERROR(!SSL_CTX_load_verify_locations(svr->ssl_ctx, ca_file, NULL));
    return EINA_TRUE;
 
 error:
