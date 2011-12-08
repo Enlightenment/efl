@@ -1411,21 +1411,21 @@ _ecore_con_ssl_server_init_openssl(Ecore_Con_Server *svr)
         {
            char *c;
            size_t clen;
-           ASN1_OBJECT *obj = NULL;
+           int name = 0;
 
            if (svr->verify)
              SSL_ERROR_CHECK_GOTO_ERROR(SSL_get_verify_result(svr->ssl));
            clen = X509_NAME_get_text_by_NID(X509_get_subject_name(cert), NID_subject_alt_name, NULL, 0);
            if (clen)
-             obj = NID_subject_alt_name;
+             name = NID_subject_alt_name;
            else
              clen = X509_NAME_get_text_by_NID(X509_get_subject_name(cert), NID_commonName, NULL, 0);
            SSL_ERROR_CHECK_GOTO_ERROR(!clen);
-           if (!obj) obj = NID_commonName;
+           if (!name) name = NID_commonName;
            c = alloca(++clen);
-           X509_NAME_get_text_by_NID(X509_get_subject_name(cert), obj, c, clen);
+           X509_NAME_get_text_by_NID(X509_get_subject_name(cert), name, c, clen);
            INF("CERT NAME: %s\n", c);
-           SSL_ERROR_CHECK_GOTO_ERROR(!_openssl_name_verify(buf, svr->verify_name ?: svr->name));
+           SSL_ERROR_CHECK_GOTO_ERROR(!_openssl_name_verify(c, svr->verify_name ?: svr->name));
         }
    }
 
