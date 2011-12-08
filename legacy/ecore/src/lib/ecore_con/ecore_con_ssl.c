@@ -338,6 +338,42 @@ _openssl_name_verify(const char *name, const char *svrname)
    return EINA_TRUE;
 }
 
+static void
+_openssl_print_session(SSL *ssl)
+{
+   /* print session info into DBG */
+   SSL_SESSION *s;
+   STACK_OF(X509) *sk;
+   BIO *b;
+   char log[4096], *p;
+   int x;
+
+   if (!eina_log_domain_level_check(_ecore_con_log_dom, EINA_LOG_LEVEL_DBG)) return;
+
+   memset(log, 0, sizeof(log));
+   b = BIO_new(BIO_s_mem());
+   sk = SSL_get_peer_cert_chain(ssl);
+   if (sk)
+     {
+        DBG("CERTIFICATES:");
+        for (x = 0; x < sk_X509_num(sk); x++)
+          {
+             p = X509_NAME_oneline(X509_get_subject_name(sk_X509_value(sk, x)), log, sizeof(log));
+             DBG("%2d s:%s", x, p);
+             p = X509_NAME_oneline(X509_get_issuer_name(sk_X509_value(sk, x)), log, sizeof(log));
+             DBG(" i:%s", p);
+             PEM_write_X509(stderr, sk_X509_value(sk, x));
+          }
+     }
+   s = SSL_get_session(ssl);
+   SSL_SESSION_print(b, s);
+   fprintf(stderr, "\n");
+   while (BIO_read(b, log, sizeof(log)) > 0)
+     fprintf(stderr, "%s", log);
+
+   BIO_free(b);
+}
+
 #endif
 
 #define SSL_ERROR_CHECK_GOTO_ERROR(X)                                           \
@@ -1560,39 +1596,7 @@ _ecore_con_ssl_server_init_openssl(Ecore_Con_Server *svr)
         break;
      }
 
-#ifdef ISCOMFITOR
-   {
-      /* print session info into DBG */
-       SSL_SESSION *s;
-       STACK_OF(X509) *sk;
-       BIO *b;
-       char log[4096], *p;
-       int x;
-
-       memset(log, 0, sizeof(log));
-       b = BIO_new(BIO_s_mem());
-       sk = SSL_get_peer_cert_chain(svr->ssl);
-       if (sk)
-         {
-            DBG("CERTIFICATES:");
-            for (x = 0; x < sk_X509_num(sk); x++)
-              {
-                 p = X509_NAME_oneline(X509_get_subject_name(sk_X509_value(sk, x)), log, sizeof(log));
-                 DBG("%2d s:%s", x, p);
-                 p = X509_NAME_oneline(X509_get_issuer_name(sk_X509_value(sk, x)), log, sizeof(log));
-                 DBG(" i:%s", p);
-                 PEM_write_X509(stderr, sk_X509_value(sk, x));
-              }
-         }
-       s = SSL_get_session(svr->ssl);
-       SSL_SESSION_print(b, s);
-       fprintf(stderr, "\n");
-       while (BIO_read(b, log, sizeof(log)) > 0)
-         fprintf(stderr, "%s", log);
-
-       BIO_free(b);
-   }
-#endif
+   _openssl_print_session(svr->ssl);
    if ((!svr->verify) && (!svr->verify_basic))
      /* not verifying certificates, so we're done! */
      return ECORE_CON_SSL_ERROR_NONE;
@@ -1849,40 +1853,7 @@ _ecore_con_ssl_client_init_openssl(Ecore_Con_Client *cl)
         break;
      }
 
-#ifdef ISCOMFITOR
-   {
-      /* print session info into DBG */
-       SSL_SESSION *s;
-       STACK_OF(X509) *sk;
-       BIO *b;
-       char log[4096], *p;
-       int x;
-
-       memset(log, 0, sizeof(log));
-       b = BIO_new(BIO_s_mem());
-       sk = SSL_get_peer_cert_chain(cl->ssl);
-       if (sk)
-         {
-            DBG("CERTIFICATES:");
-            for (x = 0; x < sk_X509_num(sk); x++)
-              {
-                 p = X509_NAME_oneline(X509_get_subject_name(sk_X509_value(sk, x)), log, sizeof(log));
-                 DBG("%2d s:%s", x, p);
-                 p = X509_NAME_oneline(X509_get_issuer_name(sk_X509_value(sk, x)), log, sizeof(log));
-                 DBG(" i:%s", p);
-                 PEM_write_X509(stderr, sk_X509_value(sk, x));
-              }
-         }
-       s = SSL_get_session(cl->ssl);
-       SSL_SESSION_print(b, s);
-       fprintf(stderr, "\n");
-       while (BIO_read(b, log, sizeof(log)) > 0)
-         fprintf(stderr, "%s", log);
-
-       BIO_free(b);
-   }
-#endif
-
+   _openssl_print_session(cl->ssl);
    if (!cl->host_server->verify)
      /* not verifying certificates, so we're done! */
      return ECORE_CON_SSL_ERROR_NONE;
