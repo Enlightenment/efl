@@ -4988,6 +4988,8 @@ _markup_get_format_append(Eina_Strbuf *txt, Evas_Object_Textblock_Node_Format *f
         if (!fnode->opener && !fnode->own_closer)
            eina_strbuf_append_char(txt, '/');
         eina_strbuf_append(txt, s);
+        if (fnode->own_closer)
+           eina_strbuf_append_char(txt, '/');
      }
    eina_strbuf_append_char(txt, '>');
 }
@@ -6858,8 +6860,16 @@ _evas_textblock_node_format_new(Evas_Object_Textblock *o, const char *_format)
 
         format++; /* Advance after '<' */
         format_len = strlen(format);
-        if (format[format_len - 1] == '>')
-           format_len--; /* We don't care about '>' */
+        if ((format_len > 0) && format[format_len - 1] == '>')
+          {
+             format_len--; /* We don't care about '>' */
+             /* Check if it closes itself. Skip the </> case. */
+             if ((format_len > 1) && format[format_len - 1] == '/')
+               {
+                  format_len--; /* We don't care about '/' */
+                  n->own_closer = EINA_TRUE;
+               }
+          }
 
         match = _style_match_tag(o->style, format, format_len, &replace_len);
         if (match)
