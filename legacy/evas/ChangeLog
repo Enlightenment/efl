@@ -531,3 +531,8 @@
         * Fix build if gcc too old - if immintrin.h doesn't exist,
         don't enable SSE3.
 
+2011-12-08  Tom Hacohen (TAsn)
+
+	* Textblock markup: Support self closing format tags, i.e <br/>.
+	You should use <br/> and not <br>. The latter still works but it's use
+	is discouraged.
