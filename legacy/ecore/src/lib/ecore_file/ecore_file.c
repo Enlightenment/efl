@@ -598,11 +598,7 @@ ecore_file_mv(const char *src, const char *dst)
                            dir, ecore_file_file_get(dst));
                   free(dir);
                   fd = mkstemp(buf);
-                  if (fd < 0)
-                    {
-                       perror("mkstemp");
-                       goto FAIL;
-                    }
+                  if (fd < 0) goto FAIL;
                   close(fd);
 
                   // Copy to temp file
