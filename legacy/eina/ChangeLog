@@ -155,3 +155,7 @@
 2011-12-02  Mike Blumenkrantz (discomfitor/zmike)
 
         * Add eina_mempool_calloc for returning zeroed memory
+
+2011-12-07  Mike Blumenkrantz (discomfitor/zmike)
+
+        * eina_log*level_check() functions now return the correct value
