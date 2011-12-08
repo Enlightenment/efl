@@ -2110,11 +2110,7 @@ _edje_box_layout_external_new(const char *name, Evas_Object_Box_Layout func, voi
 
    name_len = strlen(name) + 1;
    l = malloc(sizeof(Edje_Box_Layout) + name_len);
-   if (!l)
-     {
-	perror("malloc");
-	return NULL;
-     }
+   if (!l) return NULL;
 
    l->func = func;
    l->layout_data_get = layout_data_get;
