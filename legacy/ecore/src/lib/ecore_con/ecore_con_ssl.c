@@ -370,7 +370,7 @@ _openssl_print_session(SSL *ssl)
              p = X509_NAME_oneline(X509_get_subject_name(sk_X509_value(sk, x)), log, sizeof(log));
              DBG("%2d s:%s", x, p);
              p = X509_NAME_oneline(X509_get_issuer_name(sk_X509_value(sk, x)), log, sizeof(log));
-             DBG(" i:%s", p);
+             DBG("   i:%s", p);
              PEM_write_X509(stderr, sk_X509_value(sk, x));
           }
      }
