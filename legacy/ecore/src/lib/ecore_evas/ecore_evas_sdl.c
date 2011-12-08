@@ -15,6 +15,9 @@
 # endif
 #endif
 
+#include <stdlib.h>
+#include <string.h>
+
 #include "ecore_evas_private.h"
 #include "Ecore_Evas.h"
 

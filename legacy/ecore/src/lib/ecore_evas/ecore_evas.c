@@ -6,9 +6,15 @@
 #include <string.h>
 #include <sys/types.h>
 #include <errno.h>
+#include <sys/stat.h>
+#include <fcntl.h>
 
 #ifndef _MSC_VER
 # include <unistd.h>
+#endif
+
+#ifdef HAVE_SYS_MMAN_H
+# include <sys/mman.h>
 #endif
 
 #ifdef HAVE_EVIL
