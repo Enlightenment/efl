@@ -174,10 +174,17 @@ ecore_con_socks_svr_init(Ecore_Con_Server *svr)
    ecore_main_fd_handler_active_set(svr->fd_handler, ECORE_FD_WRITE);
    if (v4)
      {
-        size_t addrlen, ulen = 1;
+        size_t addrlen, buflen, ulen = 1;
         addrlen = svr->ecs->lookup ? strlen(svr->name) + 1: 0;
         if (svr->ecs->username) ulen += strlen(svr->ecs->username);
-        sbuf = alloca(sizeof(char) * (8  + ulen + addrlen));
+        buflen = sizeof(char) * (8  + ulen + addrlen);
+        sbuf = malloc(buflen);
+        if (!sbuf)
+          {
+             ecore_con_event_server_error(svr, "Memory allocation failure!");
+             _ecore_con_server_kill(svr);
+             return EINA_FALSE;
+          }
         /* http://en.wikipedia.org/wiki/SOCKS */
         sbuf[0] = 4;
         sbuf[1] = v4->bind ? 2 : 1;
@@ -196,8 +203,7 @@ ecore_con_socks_svr_init(Ecore_Con_Server *svr)
           sbuf[8] = 0;
         if (addrlen) memcpy(sbuf + 8 + ulen, svr->name, addrlen);
         
-        svr->ecs_buf = eina_binbuf_new();
-        eina_binbuf_append_length(svr->ecs_buf, sbuf, 8 + ulen + addrlen);
+        svr->ecs_buf = eina_binbuf_manage_new_length(sbuf, buflen);
      }
    return EINA_TRUE;
 }
