@@ -239,7 +239,7 @@ static void _statistics(void *data)
 
         printf("Information:\n");
         printf(
-      "size = %li, min_order = %d, max_order = %d, num_order = %d, num_blocks = %d (%luKB)\n",
+      "size = %zu, min_order = %d, max_order = %d, num_order = %d, num_blocks = %d (%uKB)\n",
       b->size,
       b->min_order,
       b->max_order,
@@ -255,7 +255,7 @@ static void _statistics(void *data)
         printf("\n2^%d:", b->min_order + i);
         EINA_INLIST_FOREACH(b->areas[i], block)
         {
-           printf(" %li", (block - &b->blocks[0]));
+           printf(" %d", (block - &b->blocks[0]));
         }
      }
            printf("\nBlocks dumping:\n");
