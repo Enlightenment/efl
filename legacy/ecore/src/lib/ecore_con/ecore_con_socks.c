@@ -103,9 +103,9 @@ ecore_con_socks_read(Ecore_Con_Server *svr, unsigned char *buf, int num)
         DBG("SOCKS: %d bytes", num);
         if (num < 8)
           {
-             if (!svr->ecs_recvbuf) svr->ecs_recvbuf = eina_binbuf_manage_new_length(buf, num);
-             else eina_binbuf_append_length(svr->ecs_recvbuf, buf, num);
+             if (!svr->ecs_recvbuf) svr->ecs_recvbuf = eina_binbuf_new();
              if (!svr->ecs_recvbuf) goto error;
+             eina_binbuf_append_length(svr->ecs_recvbuf, buf, num);
              /* the slowest connection on earth */
              if (eina_binbuf_length_get(svr->ecs_recvbuf) != 8) return;
              data = eina_binbuf_string_get(svr->ecs_recvbuf);
