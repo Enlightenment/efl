@@ -133,23 +133,23 @@ static void _free(void *data, void *element)
    Buddy *b = data;
    Block *block, *buddy;
    size_t offset;
-   size_t index;
+   size_t idx;
 
    offset = (unsigned char *)element - (unsigned char *)b->heap;
    if (offset > b->size)
       return;
 
-   index = offset >> b->min_order;
-   block = &b->blocks[index];
+   idx = offset >> b->min_order;
+   block = &b->blocks[idx];
 
-   //printf("free %x index = %d order = %d buddy = %d\n", offset, index, block->order, index ^ (1 << block->order));
+   //printf("free %x idx = %d order = %d buddy = %d\n", offset, idx, block->order, idx ^ (1 << block->order));
    /* we should always work with the buddy at right */
-   if (index & (1 << block->order))
+   if (idx & (1 << block->order))
      {
         Block *left;
 
-        index = index ^ (1 << block->order);
-        left = &b->blocks[index];
+        idx = idx ^ (1 << block->order);
+        left = &b->blocks[idx];
         if (!left->available)
            goto end;
         else
@@ -170,7 +170,7 @@ check:
 
      }
 
-   buddy = &b->blocks[index ^ (1 << block->order)];
+   buddy = &b->blocks[idx ^ (1 << block->order)];
    if (!buddy->available)
      {
         goto end; /* merge two blocks */
