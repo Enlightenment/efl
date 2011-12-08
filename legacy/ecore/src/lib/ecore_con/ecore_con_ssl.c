@@ -1633,7 +1633,7 @@ _ecore_con_ssl_server_init_openssl(Ecore_Con_Server *svr)
       if (cert)
         {
            char *c;
-           size_t clen;
+           int clen;
            int name = 0;
 
            if (svr->verify)
@@ -1645,11 +1645,11 @@ _ecore_con_ssl_server_init_openssl(Ecore_Con_Server *svr)
                SSL_ERROR_CHECK_GOTO_ERROR(err);
              }
            clen = X509_NAME_get_text_by_NID(X509_get_subject_name(cert), NID_subject_alt_name, NULL, 0);
-           if (clen)
+           if (clen > 0)
              name = NID_subject_alt_name;
            else
              clen = X509_NAME_get_text_by_NID(X509_get_subject_name(cert), NID_commonName, NULL, 0);
-           SSL_ERROR_CHECK_GOTO_ERROR(!clen);
+           SSL_ERROR_CHECK_GOTO_ERROR(clen < 1);
            if (!name) name = NID_commonName;
            c = alloca(++clen);
            X509_NAME_get_text_by_NID(X509_get_subject_name(cert), name, c, clen);
