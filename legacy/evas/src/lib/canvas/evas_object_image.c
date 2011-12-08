@@ -3783,8 +3783,7 @@ evas_object_image_data_convert_internal(Evas_Object_Image *o, void *data, Evas_C
 						  to_cspace);
 	  break;
         case EVAS_COLORSPACE_YCBCR422601_PL:
-           fprintf(stderr, "EVAS_COLORSPACE_YCBCR422601_PL:\n");
-          out = evas_common_convert_yuv_422_601_to(data,
+           out = evas_common_convert_yuv_422_601_to(data,
                                                    o->cur.image.w,
                                                    o->cur.image.h,
                                                    to_cspace);
@@ -3808,7 +3807,7 @@ evas_object_image_data_convert_internal(Evas_Object_Image *o, void *data, Evas_C
 						    to_cspace);
           break;
 	default:
-           fprintf(stderr, "unknow colorspace: %i\n", o->cur.cspace);
+          WRN("unknow colorspace: %i\n", o->cur.cspace);
 	  break;
      }
 
