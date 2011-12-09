@@ -27005,6 +27005,12 @@ extern "C" {
     * @ref tutorial_ctxpopup shows the usage of a good deal of the API.
     * @{
     */
+
+   /**
+    * @addtogroup Ctxpopup
+    * @{
+    */
+
    typedef enum _Elm_Ctxpopup_Direction
      {
         ELM_CTXPOPUP_DIRECTION_DOWN, /**< ctxpopup show appear below clicked
@@ -27023,6 +27029,8 @@ extern "C" {
     *
     * @param parent Parent object
     * @return New object or @c NULL, if it cannot be created
+    *
+    * @ingroup Ctxpopup
     */
    EAPI Evas_Object  *elm_ctxpopup_add(Evas_Object *parent) EINA_ARG_NONNULL(1);
    /**
@@ -27038,6 +27046,8 @@ extern "C" {
     *
     * @see elm_ctxpopup_add()
     * @see elm_hover_parent_set()
+    *
+    * @ingroup Ctxpopup
     */
    EAPI void          elm_ctxpopup_hover_parent_set(Evas_Object *obj, Evas_Object *parent) EINA_ARG_NONNULL(1, 2);
    /**
@@ -27046,12 +27056,16 @@ extern "C" {
     * @param obj The ctxpopup object
     *
     * @see elm_ctxpopup_hover_parent_set() for more information
+    *
+    * @ingroup Ctxpopup
     */
    EAPI Evas_Object  *elm_ctxpopup_hover_parent_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
    /**
     * @brief Clear all items in the given ctxpopup object.
     *
     * @param obj Ctxpopup object
+    *
+    * @ingroup Ctxpopup
     */
    EAPI void          elm_ctxpopup_clear(Evas_Object *obj) EINA_ARG_NONNULL(1);
    /**
@@ -27059,6 +27073,8 @@ extern "C" {
     *
     * @param obj Ctxpopup object
     * @param horizontal @c EINA_TRUE for horizontal mode, @c EINA_FALSE for vertical
+    *
+    * @ingroup Ctxpopup
     */
    EAPI void          elm_ctxpopup_horizontal_set(Evas_Object *obj, Eina_Bool horizontal) EINA_ARG_NONNULL(1);
    /**
@@ -27068,6 +27084,8 @@ extern "C" {
     * @return @c EINA_TRUE for horizontal mode, @c EINA_FALSE for vertical mode (or errors)
     *
     * @see elm_ctxpopup_horizontal_set()
+    *
+    * @ingroup Ctxpopup
     */
    EAPI Eina_Bool     elm_ctxpopup_horizontal_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
    /**
@@ -27084,6 +27102,8 @@ extern "C" {
     * time. When an item is added, any previous content will be removed.
     *
     * @see elm_ctxpopup_content_set()
+    *
+    * @ingroup Ctxpopup
     */
    Elm_Object_Item *elm_ctxpopup_item_append(Evas_Object *obj, const char *label, Evas_Object *icon, Evas_Smart_Cb func, const void *data) EINA_ARG_NONNULL(1);
    /**
@@ -27092,6 +27112,8 @@ extern "C" {
     * @param it Ctxpopup item to be deleted
     *
     * @see elm_ctxpopup_item_append()
+    *
+    * @ingroup Ctxpopup
     */
    EAPI void          elm_ctxpopup_item_del(Elm_Object_Item *it) EINA_ARG_NONNULL(1);
    /**
@@ -27102,6 +27124,8 @@ extern "C" {
     *
     * When disabled the item is greyed out to indicate it's state.
     * @deprecated use elm_object_item_disabled_set() instead
+    *
+    * @ingroup Ctxpopup
     */
    EINA_DEPRECATED EAPI void          elm_ctxpopup_item_disabled_set(Elm_Object_Item *it, Eina_Bool disabled) EINA_ARG_NONNULL(1);
    /**
@@ -27112,6 +27136,8 @@ extern "C" {
     *
     * @see elm_ctxpopup_item_disabled_set()
     * @deprecated use elm_object_item_disabled_get() instead
+    *
+    * @ingroup Ctxpopup
     */
    EAPI Eina_Bool     elm_ctxpopup_item_disabled_get(const Elm_Object_Item *it) EINA_ARG_NONNULL(1);
    /**
@@ -27125,6 +27151,8 @@ extern "C" {
     * @see elm_ctxpopup_item_icon_set()
     *
     * @deprecated use elm_object_item_part_content_get() instead
+    *
+    * @ingroup Ctxpopup
     */
    EINA_DEPRECATED EAPI Evas_Object  *elm_ctxpopup_item_icon_get(const Elm_Object_Item *it) EINA_ARG_NONNULL(1);
    /**
@@ -27141,6 +27169,7 @@ extern "C" {
     *
     * @deprecated use elm_object_item_part_content_set() instead
     *
+    * @ingroup Ctxpopup
     */
    EINA_DEPRECATED EAPI void          elm_ctxpopup_item_icon_set(Elm_Object_Item *it, Evas_Object *icon) EINA_ARG_NONNULL(1);
    /**
@@ -27154,6 +27183,8 @@ extern "C" {
     * @see elm_ctxpopup_item_label_set()
     *
     * @deprecated use elm_object_item_text_get() instead
+    *
+    * @ingroup Ctxpopup
     */
    EINA_DEPRECATED EAPI const char   *elm_ctxpopup_item_label_get(const Elm_Object_Item *it) EINA_ARG_NONNULL(1);
    /**
@@ -27163,6 +27194,8 @@ extern "C" {
     * @param label String to set as label
     *
     * @deprecated use elm_object_item_text_set() instead
+    *
+    * @ingroup Ctxpopup
     */
    EINA_DEPRECATED EAPI void          elm_ctxpopup_item_label_set(Elm_Object_Item *it, const char *label) EINA_ARG_NONNULL(1);
    /**
@@ -27180,6 +27213,7 @@ extern "C" {
     *
     * @deprecated use elm_object_content_set() instead
     *
+    * @ingroup Ctxpopup
     */
    EINA_DEPRECATED EAPI void          elm_ctxpopup_content_set(Evas_Object *obj, Evas_Object *content) EINA_ARG_NONNULL(1, 2);
    /**
@@ -27196,6 +27230,7 @@ extern "C" {
     *
     * @deprecated use elm_object_content_unset() instead
     *
+    * @ingroup Ctxpopup
     */
    EINA_DEPRECATED EAPI Evas_Object  *elm_ctxpopup_content_unset(Evas_Object *obj) EINA_ARG_NONNULL(1);
    /**
@@ -27212,6 +27247,8 @@ extern "C" {
     * requested direction.
     *
     * @see Elm_Ctxpopup_Direction
+    *
+    * @ingroup Ctxpopup
     */
    EAPI void          elm_ctxpopup_direction_priority_set(Evas_Object *obj, Elm_Ctxpopup_Direction first, Elm_Ctxpopup_Direction second, Elm_Ctxpopup_Direction third, Elm_Ctxpopup_Direction fourth) EINA_ARG_NONNULL(1);
    /**
@@ -27224,6 +27261,8 @@ extern "C" {
     * @param fourth 4th priority of direction to be returned
     *
     * @see elm_ctxpopup_direction_priority_set() for more information.
+    *
+    * @ingroup Ctxpopup
     */
    EAPI void          elm_ctxpopup_direction_priority_get(Evas_Object *obj, Elm_Ctxpopup_Direction *first, Elm_Ctxpopup_Direction *second, Elm_Ctxpopup_Direction *third, Elm_Ctxpopup_Direction *fourth) EINA_ARG_NONNULL(1);
 
@@ -27234,6 +27273,8 @@ extern "C" {
     * @return current direction of a ctxpopup
     *
     * @warning Once the ctxpopup showed up, the direction would be determined
+    *
+    * @ingroup Ctxpopup
     */
    EAPI Elm_Ctxpopup_Direction elm_ctxpopup_direction_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
 
