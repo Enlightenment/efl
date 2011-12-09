@@ -21015,7 +21015,7 @@ extern "C" {
     * Get the internal list of items in a given slideshow widget.
     *
     * @param obj The slideshow object
-    * @return The list of items (#Elm_Slideshow_Item as data) or
+    * @return The list of items (#Elm_Object_Item as data) or
     * @c NULL on errors.
     *
     * This list is @b not to be modified in any way and must not be
