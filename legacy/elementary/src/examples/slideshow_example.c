@@ -173,8 +173,8 @@ _cmp_func(const void *data1,
    const Elm_Object_Item *slide_it1 = data1;
    const Elm_Object_Item *slide_it2 = data2;
 
-   img_path1 = elm_slideshow_item_data_get(slide_it1);
-   img_path2 = elm_slideshow_item_data_get(slide_it2);
+   img_path1 = elm_object_item_data_get(slide_it1);
+   img_path2 = elm_object_item_data_get(slide_it2);
 
    return strcasecmp(img_path1, img_path2);
 }
@@ -221,7 +221,7 @@ elm_main(int    argc __UNUSED__,
    fprintf(stdout, "List of items in the slideshow:\n");
    EINA_LIST_FOREACH(list, l, it)
      fprintf(stdout, "\t%s\n",
-             (const char *)elm_slideshow_item_data_get(slide_it));
+             (const char *)elm_object_item_data_get(slide_it));
 
    notify = elm_notify_add(win);
    elm_notify_orient_set(notify, ELM_NOTIFY_ORIENT_BOTTOM);

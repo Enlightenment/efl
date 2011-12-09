@@ -215,7 +215,8 @@ _item_realize(Elm_Slideshow_Item *item)
    if (!wd) return;
    if ((!VIEW(item)) && (item->itc->func.get))
      {
-        VIEW(item) = item->itc->func.get((void*)item->base.data, obj);
+        VIEW(item) = item->itc->func.get(elm_widget_item_data_get(item),
+                                         obj);
         evas_object_smart_member_add(VIEW(item), obj);
         item->l_built = eina_list_append(NULL, item);
         wd->items_built = eina_list_merge(wd->items_built, item->l_built);
@@ -246,7 +247,7 @@ _item_realize(Elm_Slideshow_Item *item)
                        ic++;
                        VIEW(_item_next) =
                           _item_next->itc->func.get(
-                             (void*)_item_next->base.data, obj);
+                             elm_widget_item_data_get(_item_next), obj);
                        evas_object_smart_member_add(VIEW(_item_next), obj);
                        _item_next->l_built = eina_list_append(NULL, _item_next);
                        wd->items_built = eina_list_merge(wd->items_built,
@@ -277,7 +278,7 @@ _item_realize(Elm_Slideshow_Item *item)
                        ic++;
                        VIEW(_item_prev) =
                           _item_prev->itc->func.get(
-                             (void*)_item_prev->base.data, obj);
+                             elm_widget_item_data_get(_item_prev), obj);
                        evas_object_smart_member_add(VIEW(_item_prev), obj);
                        _item_prev->l_built = eina_list_append(NULL, _item_prev);
                        wd->items_built = eina_list_merge(wd->items_built,
@@ -303,7 +304,7 @@ _item_realize(Elm_Slideshow_Item *item)
         wd->items_built = eina_list_remove_list(wd->items_built,
                                                 wd->items_built);
         if (item->itc->func.del)
-          item->itc->func.del((void*)item->base.data, VIEW(item));
+          item->itc->func.del(elm_widget_item_data_get(item), VIEW(item));
         evas_object_del(VIEW(item));
         VIEW(item) = NULL;
      }
@@ -407,9 +408,11 @@ elm_slideshow_item_add(Evas_Object *obj, const Elm_Slideshow_Item_Class *itc, co
 
    if (!wd) return NULL;
    item = elm_widget_item_new(obj, Elm_Slideshow_Item);
-   item->base.data = data;
+   if (!item) return NULL;
+
    item->itc = itc;
    item->l = eina_list_append(item->l, item);
+   elm_widget_item_data_set(item, data);
 
    wd->items = eina_list_merge(wd->items, item->l);
 
@@ -424,12 +427,14 @@ elm_slideshow_item_sorted_insert(Evas_Object *obj, const Elm_Slideshow_Item_Clas
    Elm_Slideshow_Item *item;
    ELM_CHECK_WIDTYPE(obj, widtype) NULL;
    Widget_Data *wd = elm_widget_data_get(obj);
-
    if (!wd) return NULL;
+
    item = elm_widget_item_new(obj, Elm_Slideshow_Item);
-   item->base.data = data;
+   if (!item) return NULL;
+
    item->itc = itc;
    item->l = eina_list_append(item->l, item);
+   elm_widget_item_data_set(item, data);
 
    wd->items = eina_list_sorted_merge(wd->items, item->l, func);
 
@@ -642,7 +647,7 @@ elm_slideshow_clear(Evas_Object *obj)
    EINA_LIST_FREE(wd->items_built, item)
      {
         if (item->itc->func.del)
-          item->itc->func.del((void*)item->base.data, VIEW(item));
+          item->itc->func.del(elm_widget_item_data_get(item), VIEW(item));
         evas_object_del(VIEW(item));
         VIEW(item) = NULL;
      }
@@ -682,7 +687,7 @@ elm_slideshow_item_del(Elm_Object_Item *it)
    wd->items_built = eina_list_remove_list(wd->items_built, item->l_built);
 
    if ((VIEW(item)) && (item->itc->func.del))
-     item->itc->func.del((void*)item->base.data, VIEW(item));
+     item->itc->func.del(elm_widget_item_data_get(item), VIEW(item));
    if (VIEW(item))
      evas_object_del(VIEW(item));
    free(item);
@@ -716,8 +721,7 @@ elm_slideshow_item_object_get(const Elm_Object_Item * it)
 EAPI void *
 elm_slideshow_item_data_get(const Elm_Object_Item * it)
 {
-   ELM_OBJ_ITEM_CHECK_OR_RETURN(it, NULL);
-   return elm_widget_item_data_get(it);
+   return elm_object_item_data_get(it);
 }
 
 EAPI int

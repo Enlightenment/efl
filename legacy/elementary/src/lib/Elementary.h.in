@@ -21497,6 +21497,7 @@ extern "C" {
     *
     * @see #Elm_Slideshow_Item_Class
     * @see elm_slideshow_item_sorted_insert()
+    * @see elm_object_item_data_set()
     *
     * @ingroup Slideshow
     */
@@ -21759,9 +21760,10 @@ extern "C" {
     * @param it The slideshow item
     * @return Returns the data associated to this item
     *
+    * @deprecated use elm_object_item_data_get() instead
     * @ingroup Slideshow
     */
-   EAPI void               *elm_slideshow_item_data_get(const Elm_Object_Item *it) EINA_ARG_NONNULL(1);
+   EINA_DEPRECATED EAPI void               *elm_slideshow_item_data_get(const Elm_Object_Item *it) EINA_ARG_NONNULL(1);
 
    /**
     * Returns the currently displayed item, in a given slideshow widget
