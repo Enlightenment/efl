@@ -8662,7 +8662,7 @@ EAPI int                          evas_textblock_cursor_paragraph_text_length_ge
  * @return EINA_TRUE on success. EINA_FALSE otherwise.
  * @since 1.1.0
  */
-Eina_Bool                         evas_textblock_cursor_visible_range_get(Evas_Textblock_Cursor *start, Evas_Textblock_Cursor *end) EINA_ARG_NONNULL(1, 2);
+EAPI Eina_Bool                         evas_textblock_cursor_visible_range_get(Evas_Textblock_Cursor *start, Evas_Textblock_Cursor *end) EINA_ARG_NONNULL(1, 2);
 
 /**
  * Return the format nodes in the range between cur1 and cur2.
