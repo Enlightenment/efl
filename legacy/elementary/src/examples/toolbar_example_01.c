@@ -84,7 +84,7 @@ elm_main(int argc __UNUSED__, char **argv __UNUSED__)
 
    tb_it = elm_toolbar_item_append(tb, "mail-send", "Create and send email",
                                   _item_3_pressed, bt);
-   elm_toolbar_item_disabled_set(tb_it, EINA_TRUE);
+   elm_object_item_disabled_set(tb_it, EINA_TRUE);
 
    elm_toolbar_homogeneous_set(tb, EINA_FALSE);
 

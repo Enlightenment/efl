@@ -96,7 +96,7 @@ _title_changed_cb(void *data, Evas_Object *obj __UNUSED__, void *event_info)
 
    if (title)
      strncpy(buf, title, sizeof(buf) - 1);
-   elm_toolbar_item_label_set(td->tab, buf);
+   elm_object_item_text_set(td->tab, buf);
 }
 
 static void

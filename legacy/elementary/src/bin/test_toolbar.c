@@ -96,7 +96,7 @@ test_toolbar(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_inf
    ph4 = elm_photo_add(win);
 
    tb_it = elm_toolbar_item_append(tb, "document-print", "Hello", tb_1, ph1);
-   elm_toolbar_item_disabled_set(tb_it, EINA_TRUE);
+   elm_object_item_disabled_set(tb_it, EINA_TRUE);
    elm_toolbar_item_priority_set(tb_it, 100);
 
    tb_it = elm_toolbar_item_append(tb, "folder-new", "World", tb_2, ph1);
@@ -206,7 +206,7 @@ test_toolbar2(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_in
    ph4 = elm_photo_add(win);
 
    item = elm_toolbar_item_append(tb, "document-print", "Hello", tb_1, ph1);
-   elm_toolbar_item_disabled_set(item, EINA_TRUE);
+   elm_object_item_disabled_set(item, EINA_TRUE);
    elm_toolbar_item_priority_set(item, -100);
 
    item = elm_toolbar_item_append(tb, "folder-new", "World", tb_2, ph1);
@@ -316,7 +316,7 @@ test_toolbar3(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_in
    ph4 = elm_photo_add(win);
 
    tb_it = elm_toolbar_item_append(tb, "document-print", "Hello", tb_1, ph1);
-   elm_toolbar_item_disabled_set(tb_it, EINA_TRUE);
+   elm_object_item_disabled_set(tb_it, EINA_TRUE);
    elm_toolbar_item_priority_set(tb_it, 0);
 
    tb_it = elm_toolbar_item_append(tb, "folder-new", "World", tb_2, ph1);
@@ -426,7 +426,7 @@ test_toolbar4(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_in
    ph4 = elm_photo_add(win);
 
    tb_it = elm_toolbar_item_append(tb, "document-print", "Hello", tb_1, ph1);
-   elm_toolbar_item_disabled_set(tb_it, EINA_TRUE);
+   elm_object_item_disabled_set(tb_it, EINA_TRUE);
    elm_toolbar_item_priority_set(tb_it, 100);
 
    tb_it = elm_toolbar_item_append(tb, "folder-new", "World", tb_2, ph1);
@@ -537,7 +537,7 @@ test_toolbar5(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_in
    ph4 = elm_photo_add(win);
 
    tb_it = elm_toolbar_item_append(tb, "document-print", "Hello", tb_1, ph1);
-   elm_toolbar_item_disabled_set(tb_it, EINA_TRUE);
+   elm_object_item_disabled_set(tb_it, EINA_TRUE);
    elm_toolbar_item_priority_set(tb_it, 100);
 
    snprintf(buf, sizeof(buf), "%s/images/icon_04.pngj", elm_app_data_dir_get());
@@ -652,7 +652,7 @@ test_toolbar6(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_in
    ph4 = elm_photo_add(win);
 
    tb_it = elm_toolbar_item_append(tb, "document-print", "Hello", tb_1, ph1);
-   elm_toolbar_item_disabled_set(tb_it, EINA_TRUE);
+   elm_object_item_disabled_set(tb_it, EINA_TRUE);
    elm_toolbar_item_priority_set(tb_it, 100);
 
    tb_it = elm_toolbar_item_append(tb, "folder-new", "World", tb_2, ph1);

@@ -14832,6 +14832,9 @@ extern "C" {
     * - @c "default"
     * - @c "transparent" - no background or shadow, just show the content
     *
+    * Default text parts of the toolbar items that you can use for are:
+    * @li "default" - label of the toolbar item
+    *  
     * List of examples:
     * @li @ref toolbar_example_01
     * @li @ref toolbar_example_02
@@ -15198,9 +15201,10 @@ extern "C" {
     *
     * This returns the toolbar object itself that an item belongs to.
     *
+	 * @deprecated use elm_object_item_object_get() instead.
     * @ingroup Toolbar
     */
-   EAPI Evas_Object            *elm_toolbar_item_toolbar_get(const Elm_Object_Item *it) EINA_ARG_NONNULL(1);
+   EINA_DEPRECATED EAPI Evas_Object            *elm_toolbar_item_toolbar_get(const Elm_Object_Item *it) EINA_ARG_NONNULL(1);
    /**
     * Set the priority of a toolbar item.
     *
@@ -15245,9 +15249,10 @@ extern "C" {
     * @see elm_toolbar_item_label_set() for more details.
     * @see elm_toolbar_item_append()
     *
+	 * @deprecated use elm_object_item_text_get() instead.
     * @ingroup Toolbar
     */
-   EAPI const char             *elm_toolbar_item_label_get(const Elm_Object_Item *it) EINA_ARG_NONNULL(1);
+   EINA_DEPRECATED EAPI const char             *elm_toolbar_item_label_get(const Elm_Object_Item *it) EINA_ARG_NONNULL(1);
    /**
     * Set the label of item.
     *
@@ -15264,9 +15269,10 @@ extern "C" {
     * @see elm_toolbar_item_label_get()
     * @see elm_toolbar_item_append()
     *
+	 * @deprecated use elm_object_item_text_set() instead
     * @ingroup Toolbar
     */
-   EAPI void                    elm_toolbar_item_label_set(Elm_Object_Item *it, const char *label) EINA_ARG_NONNULL(1);
+   EINA_DEPRECATED EAPI void                    elm_toolbar_item_label_set(Elm_Object_Item *it, const char *label) EINA_ARG_NONNULL(1);
    /**
     * Return the data associated with a given toolbar widget item.
     *
@@ -15275,9 +15281,10 @@ extern "C" {
     *
     * @see elm_toolbar_item_data_set()
     *
+	 * @deprecated use elm_object_item_data_get() instead.
     * @ingroup Toolbar
     */
-   EAPI void                   *elm_toolbar_item_data_get(const Elm_Object_Item *it) EINA_ARG_NONNULL(1);
+   EINA_DEPRECATED EAPI void                   *elm_toolbar_item_data_get(const Elm_Object_Item *it) EINA_ARG_NONNULL(1);
    /**
     * Set the data associated with a given toolbar widget item.
     *
@@ -15289,9 +15296,10 @@ extern "C" {
     * @warning The old data pointer won't be touched by this function, so
     * the user had better to free that old data himself/herself.
     *
+	 * @deprecated use elm_object_item_data_set() instead.
     * @ingroup Toolbar
     */
-   EAPI void                    elm_toolbar_item_data_set(Elm_Object_Item *it, const void *data) EINA_ARG_NONNULL(1);
+   EINA_DEPRECATED EAPI void                    elm_toolbar_item_data_set(Elm_Object_Item *it, const void *data) EINA_ARG_NONNULL(1);
    /**
     * Returns a pointer to a toolbar item by its label.
     *
@@ -15475,9 +15483,10 @@ extern "C" {
     *
     * @see elm_toolbar_item_disabled_set() for more details.
     *
+    * @deprecated use elm_object_item_disabled_get() instead.
     * @ingroup Toolbar
     */
-   EAPI Eina_Bool               elm_toolbar_item_disabled_get(const Elm_Object_Item *it) EINA_ARG_NONNULL(1);
+   EINA_DEPRECATED EAPI Eina_Bool               elm_toolbar_item_disabled_get(const Elm_Object_Item *it) EINA_ARG_NONNULL(1);
 
    /**
     * Sets the disabled/enabled state of a toolbar item.
@@ -15490,9 +15499,10 @@ extern "C" {
     * disabled state (@c EINA_TRUE for disabled, @c EINA_FALSE for
     * enabled).
     *
+    * @deprecated use elm_object_item_disabled_set() instead.
     * @ingroup Toolbar
     */
-   EAPI void                    elm_toolbar_item_disabled_set(Elm_Object_Item *it, Eina_Bool disabled) EINA_ARG_NONNULL(1);
+   EINA_DEPRECATED EAPI void                    elm_toolbar_item_disabled_set(Elm_Object_Item *it, Eina_Bool disabled) EINA_ARG_NONNULL(1);
 
    /**
     * Set or unset item as a separator.

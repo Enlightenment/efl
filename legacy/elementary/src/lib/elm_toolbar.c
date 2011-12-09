@@ -62,7 +62,6 @@ static const char *widtype = NULL;
 static void _item_show(Elm_Toolbar_Item *it);
 static void _item_select(Elm_Toolbar_Item *it);
 static void _item_unselect(Elm_Toolbar_Item *it);
-static void _item_disable(Elm_Toolbar_Item *it, Eina_Bool disabled);
 static void _del_pre_hook(Evas_Object *obj);
 static void _del_hook(Evas_Object *obj);
 static void _mirrored_set(Evas_Object *obj, Eina_Bool mirrored);
@@ -87,6 +86,29 @@ static const Evas_Smart_Cb_Description _signals[] = {
    {NULL, NULL}
 };
 
+static void
+_item_disable_set_hook(Elm_Object_Item *it)
+{
+   ELM_OBJ_ITEM_CHECK_OR_RETURN(it);
+
+   Widget_Data *wd;
+   Elm_Toolbar_Item *toolbar_it = (Elm_Toolbar_Item *) it;
+
+   wd = elm_widget_data_get(WIDGET(toolbar_it));
+   if (!wd) return;
+
+   if (elm_widget_item_disabled_get(toolbar_it))
+     {
+        edje_object_signal_emit(VIEW(toolbar_it), "elm,state,disabled", "elm");
+        elm_widget_signal_emit(toolbar_it->icon, "elm,state,disabled", "elm");
+     }
+   else
+     {
+        edje_object_signal_emit(VIEW(toolbar_it), "elm,state,enabled", "elm");
+        elm_widget_signal_emit(toolbar_it->icon, "elm,state,enabled", "elm");
+     }
+   _resize(WIDGET(toolbar_it), NULL, NULL, NULL);
+}
 
 static Eina_Bool
 _item_icon_set(Evas_Object *icon_obj, const char *type, const char *icon)
@@ -214,26 +236,6 @@ _menu_move_resize(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, v
    if ((!wd) || (!wd->menu_parent)) return;
    evas_object_geometry_get(VIEW(it), &x, &y, &w, &h);
    elm_menu_move(it->o_menu, x, y+h);
-}
-
-static void
-_item_disable(Elm_Toolbar_Item *it, Eina_Bool disabled)
-{
-   Widget_Data *wd = elm_widget_data_get(WIDGET(it));
-
-   if (!wd) return;
-   if (elm_widget_item_disabled_get(it) == disabled) return;
-   elm_object_item_disabled_set((Elm_Object_Item *) it, disabled);
-   if (disabled)
-     {
-        edje_object_signal_emit(VIEW(it), "elm,state,disabled", "elm");
-        elm_widget_signal_emit(it->icon, "elm,state,disabled", "elm");
-     }
-   else
-     {
-        edje_object_signal_emit(VIEW(it), "elm,state,enabled", "elm");
-        elm_widget_signal_emit(it->icon, "elm,state,enabled", "elm");
-     }
 }
 
 static void
@@ -376,6 +378,24 @@ _theme_hook(Evas_Object *obj)
    if (wd->more_item)
      _theme_hook_item(obj, wd->more_item, scale, wd->icon_size);
    _sizing_eval(obj);
+}
+
+static void
+_item_text_set_hook(Elm_Object_Item *it,
+                    const char *part,
+                    const char *label)
+{
+   ELM_OBJ_ITEM_CHECK_OR_RETURN(it);
+   if (part && strcmp(part, "default")) return;
+   _item_label_set(((Elm_Toolbar_Item *) it), label, "elm,state,label_set");
+}
+
+static const char *
+_item_text_get_hook(const Elm_Object_Item *it, const char *part)
+{
+   ELM_OBJ_ITEM_CHECK_OR_RETURN(it, NULL);
+   if (part && strcmp(part, "default")) return NULL;
+   return ((Elm_Toolbar_Item *) it)->label;
 }
 
 static void
@@ -758,6 +778,11 @@ _item_new(Evas_Object *obj, const char *icon, const char *label, Evas_Smart_Cb f
         evas_object_del(icon_obj);
         return NULL;
      }
+
+   elm_widget_item_disable_set_hook_set(it, _item_disable_set_hook);
+   elm_widget_item_text_set_hook_set(it, _item_text_set_hook);
+   elm_widget_item_text_get_hook_set(it, _item_text_get_hook);
+
    it->label = eina_stringshare_add(label);
    it->prio.visible = 1;
    it->prio.priority = 0;
@@ -1230,28 +1255,24 @@ elm_toolbar_item_priority_get(const Elm_Object_Item *it)
 EAPI const char *
 elm_toolbar_item_label_get(const Elm_Object_Item *it)
 {
-   ELM_OBJ_ITEM_CHECK_OR_RETURN(it, NULL);
-   return ((Elm_Toolbar_Item *) it)->label;
+   return _item_text_get_hook(it, NULL);
 }
 
 EAPI void
 elm_toolbar_item_label_set(Elm_Object_Item *it, const char *label)
 {
-   ELM_OBJ_ITEM_CHECK_OR_RETURN(it);
-   _item_label_set(((Elm_Toolbar_Item *) it), label, "elm,state,label_set");
+   _item_text_set_hook(it, NULL, label);
 }
 
 EAPI void *
 elm_toolbar_item_data_get(const Elm_Object_Item *it)
 {
-   ELM_OBJ_ITEM_CHECK_OR_RETURN(it, NULL);
    return elm_object_item_data_get(it);
 }
 
 EAPI void
 elm_toolbar_item_data_set(Elm_Object_Item *it, const void *data)
 {
-   ELM_OBJ_ITEM_CHECK_OR_RETURN(it);
    elm_object_item_data_set(it, (void *) data);
 }
 
@@ -1455,17 +1476,13 @@ elm_toolbar_item_del_cb_set(Elm_Object_Item *it, Evas_Smart_Cb func)
 EAPI Eina_Bool
 elm_toolbar_item_disabled_get(const Elm_Object_Item *it)
 {
-   ELM_OBJ_ITEM_CHECK_OR_RETURN(it, EINA_FALSE);
-   return ((Elm_Widget_Item *) it)->disabled;
+   return elm_object_item_disabled_get(it);
 }
 
 EAPI void
 elm_toolbar_item_disabled_set(Elm_Object_Item *it, Eina_Bool disabled)
 {
-   ELM_OBJ_ITEM_CHECK_OR_RETURN(it);
-   Elm_Toolbar_Item *item = (Elm_Toolbar_Item *) it;
-   _item_disable(item, disabled);
-   _resize(WIDGET(item), NULL, NULL, NULL);
+   elm_object_item_disabled_set(it, disabled);
 }
 
 EAPI void
