@@ -640,6 +640,7 @@ typedef enum _Ecore_Con_Type
    /** Remote connection sending packets immediately */
    ECORE_CON_REMOTE_NODELAY = 7,
    /** Remote connection sending data in large chunks
+    * @note Only available on Linux
     * @since 1.2
     */
    ECORE_CON_REMOTE_CORK = 8,
