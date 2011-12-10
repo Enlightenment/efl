@@ -53,7 +53,7 @@
 
 static Eina_Bool _ecore_con_client_timer(Ecore_Con_Client *cl);
 static void      _ecore_con_cl_timer_update(Ecore_Con_Client *cl);
-
+static void      _ecore_con_client_kill(Ecore_Con_Client *cl);
 static Eina_Bool _ecore_con_server_timer(Ecore_Con_Server *svr);
 static void      _ecore_con_server_timer_update(Ecore_Con_Server *svr);
 
@@ -526,8 +526,6 @@ ecore_con_server_timeout_get(Ecore_Con_Server *svr)
 EAPI void *
 ecore_con_server_del(Ecore_Con_Server *svr)
 {
-   void *data;
-
    if (!ECORE_MAGIC_CHECK(svr, ECORE_MAGIC_CON_SERVER))
      {
         ECORE_MAGIC_FAIL(svr, ECORE_MAGIC_CON_SERVER, "ecore_con_server_del");
@@ -537,20 +535,8 @@ ecore_con_server_del(Ecore_Con_Server *svr)
    if (svr->delete_me)
      return NULL;
 
-   data = svr->data;
-   svr->delete_me = EINA_TRUE;
-   if (svr->event_count)
-     {
-        if (svr->fd_handler)
-          {
-             ecore_main_fd_handler_del(svr->fd_handler);
-             svr->fd_handler = NULL;
-          }
-     }
-   else
-     _ecore_con_server_free(svr);
-
-   return data;
+   _ecore_con_server_kill(svr);
+   return svr->data;
 }
 
 EAPI void *
@@ -829,36 +815,14 @@ ecore_con_client_timeout_get(Ecore_Con_Client *cl)
 EAPI void *
 ecore_con_client_del(Ecore_Con_Client *cl)
 {
-   void *data = NULL;
-
    if (!ECORE_MAGIC_CHECK(cl, ECORE_MAGIC_CON_CLIENT))
      {
         ECORE_MAGIC_FAIL(cl, ECORE_MAGIC_CON_CLIENT, "ecore_con_client_del");
         return NULL;
      }
 
-   data = cl->data;
-   cl->delete_me = EINA_TRUE;
-   if (cl->event_count)
-     {
-        if (cl->fd_handler)
-          {
-             ecore_main_fd_handler_del(cl->fd_handler);
-             cl->fd_handler = NULL;
-          }
-     }
-   else
-     {
-        if (cl->host_server)
-          {
-             cl->host_server->clients = eina_list_remove(cl->host_server->clients, cl);
-             --cl->host_server->client_count;
-          }
-
-        _ecore_con_client_free(cl);
-     }
-
-   return data;
+   _ecore_con_client_kill(cl);
+   return cl->data;
 }
 
 EAPI void
@@ -1226,10 +1190,14 @@ _ecore_con_server_free(Ecore_Con_Server *svr)
    if ((!svr->buf) && svr->delete_me && (!svr->dead) && (!svr->event_count))
      {
         /* this is a catch-all for cases when a server is not properly killed. */
+        CRIT("THIS SHOULD NOT BE REACHED! PLEASE SEND A FULL BT!");
+        abort();
+        /*
         svr->dead = EINA_TRUE;
         INF("svr %p is dead", svr);
         ecore_con_event_server_del(svr);
         return;
+        */
      }
 
    t_start = ecore_time_get();
@@ -1296,6 +1264,20 @@ _ecore_con_server_free(Ecore_Con_Server *svr)
 }
 
 static void
+_ecore_con_client_kill(Ecore_Con_Client *cl)
+{
+   if (!cl->delete_me)
+     ecore_con_event_client_del(cl);
+   INF("Lost client %s", (cl->ip) ? cl->ip : "");
+   cl->dead = EINA_TRUE;
+   INF("cl %p is dead", cl);
+   if (cl->fd_handler)
+     ecore_main_fd_handler_del(cl->fd_handler);
+
+   cl->fd_handler = NULL;
+}
+
+static void
 _ecore_con_client_free(Ecore_Con_Client *cl)
 {
    double t_start, t;
@@ -1305,10 +1287,14 @@ _ecore_con_client_free(Ecore_Con_Client *cl)
    if (cl->delete_me && (!cl->dead) && (!cl->event_count))
      {
         /* this is a catch-all for cases when a client is not properly killed. */
-           cl->dead = EINA_TRUE;
-           INF("cl %p is dead", cl);
-           ecore_con_event_client_del(cl);
-           return;
+        CRIT("THIS SHOULD NOT BE REACHED! PLEASE SEND A FULL BT!");
+        abort();
+        /*
+        cl->dead = EINA_TRUE;
+        INF("cl %p is dead", cl);
+        ecore_con_event_client_del(cl);
+        return;
+        */
      }
 
 
@@ -2149,10 +2135,7 @@ _ecore_con_svr_udp_handler(void             *data,
         ecore_con_event_server_error(svr, strerror(errno));
         if (!svr->delete_me)
           ecore_con_event_client_del(NULL);
-
-        svr->dead = EINA_TRUE;
-        INF("svr %p is dead", svr);
-        svr->fd_handler = NULL;
+        _ecore_con_server_kill(svr);
         return ECORE_CALLBACK_CANCEL;
      }
 
@@ -2221,19 +2204,7 @@ _ecore_con_svr_cl_read(Ecore_Con_Client *cl)
    if ((!cl->delete_me) && (num > 0))
      ecore_con_event_client_data(cl, buf, num, EINA_TRUE);
 
-   if (lost_client)
-     {
-        if (!cl->delete_me)
-          ecore_con_event_client_del(cl);
-        INF("Lost client %s", (cl->ip) ? cl->ip : "");
-        cl->dead = EINA_TRUE;
-        INF("cl %p is dead", cl);
-        if (cl->fd_handler)
-          ecore_main_fd_handler_del(cl->fd_handler);
-
-        cl->fd_handler = NULL;
-        return;
-     }
+   if (lost_client) _ecore_con_client_kill(cl);
 }
 
 static Eina_Bool
@@ -2254,11 +2225,8 @@ _ecore_con_svr_cl_handler(void             *data,
         if (ecore_con_ssl_client_init(cl))
           {
              ERR("ssl handshaking failed!");
-             cl->handshaking = EINA_FALSE;
-             cl->dead = EINA_TRUE;
-             INF("cl %p is dead", cl);
-             INF("Lost client %s", (cl->ip) ? cl->ip : "");
-             ecore_con_event_client_del(cl);
+             _ecore_con_client_kill(cl);
+             return ECORE_CALLBACK_RENEW;
           }
         else if (!cl->ssl_state)
           ecore_con_event_client_add(cl);
@@ -2397,14 +2365,7 @@ _ecore_con_client_flush(Ecore_Con_Client *cl)
         if ((errno != EAGAIN) && (errno != EINTR) && (!cl->delete_me))
           {
               ecore_con_event_client_error(cl, strerror(errno));
-              ecore_con_event_client_del(cl);
-              cl->dead = EINA_TRUE;
-              INF("cl %p is dead", cl);
-              INF("Lost client %s", (cl->ip) ? cl->ip : "");
-              if (cl->fd_handler)
-                ecore_main_fd_handler_del(cl->fd_handler);
-
-              cl->fd_handler = NULL;
+              _ecore_con_client_kill(cl);
           }
 
         return;
