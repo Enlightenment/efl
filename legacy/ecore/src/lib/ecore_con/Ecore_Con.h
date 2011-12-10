@@ -639,6 +639,10 @@ typedef enum _Ecore_Con_Type
    ECORE_CON_REMOTE_BROADCAST = 6,
    /** Remote connection sending packets immediately */
    ECORE_CON_REMOTE_NODELAY = 7,
+   /** Remote connection sending data in large chunks
+    * @since 1.2
+    */
+   ECORE_CON_REMOTE_CORK = 8,
    /** Use SSL2: UNSUPPORTED. **/
    ECORE_CON_USE_SSL2 = (1 << 4),
    /** Use SSL3 */

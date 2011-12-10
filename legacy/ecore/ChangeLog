@@ -394,3 +394,4 @@
 2011-12-10 Mike Blumenkrantz
 
         * Fix case where SSL certificates would not be used
+        * Added ECORE_CON_REMOTE_CORK for applying TCP_CORK to sends

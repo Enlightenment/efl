@@ -331,7 +331,8 @@ ecore_con_server_add(Ecore_Con_Type compl_type,
 #endif
 
    if ((type == ECORE_CON_REMOTE_TCP) ||
-       (type == ECORE_CON_REMOTE_NODELAY))
+       (type == ECORE_CON_REMOTE_NODELAY) ||
+       (type == ECORE_CON_REMOTE_CORK))
      {
         /* TCP */
          if (!ecore_con_info_tcp_listen(svr, _ecore_con_cb_tcp_listen,
@@ -431,6 +432,7 @@ ecore_con_server_connect(Ecore_Con_Type compl_type,
 
    if (((type == ECORE_CON_REMOTE_TCP) ||
         (type == ECORE_CON_REMOTE_NODELAY) ||
+        (type == ECORE_CON_REMOTE_CORK) ||
         (type == ECORE_CON_REMOTE_UDP) ||
         (type == ECORE_CON_REMOTE_BROADCAST)) &&
        (port < 0))
@@ -449,7 +451,8 @@ ecore_con_server_connect(Ecore_Con_Type compl_type,
 #endif
 
    if ((type == ECORE_CON_REMOTE_TCP) ||
-       (type == ECORE_CON_REMOTE_NODELAY))
+       (type == ECORE_CON_REMOTE_NODELAY) ||
+       (type == ECORE_CON_REMOTE_CORK))
      {
         /* TCP */
          if (!ecore_con_info_tcp_connect(svr, _ecore_con_cb_tcp_connect,
@@ -636,6 +639,15 @@ ecore_con_server_send(Ecore_Con_Server *svr,
      {
         svr->buf = eina_binbuf_new();
         EINA_SAFETY_ON_NULL_RETURN_VAL(svr->buf, 0);
+#ifdef TCP_CORK
+        if ((svr->fd >= 0) && ((svr->type & ECORE_CON_TYPE) == ECORE_CON_REMOTE_CORK))
+          {
+             int state = 1;
+             if (setsockopt(svr->fd, IPPROTO_TCP, TCP_CORK, (char *)&state, sizeof(int)) < 0)
+               /* realistically this isn't anything serious so we can just log and continue */
+               ERR("corking failed! %s", strerror(errno));
+          }
+#endif
      }
    eina_binbuf_append_length(svr->buf, data, size);
 
@@ -738,6 +750,15 @@ ecore_con_client_send(Ecore_Con_Client *cl,
      {
         cl->buf = eina_binbuf_new();
         EINA_SAFETY_ON_NULL_RETURN_VAL(cl->buf, 0);
+#ifdef TCP_CORK
+        if ((cl->fd >= 0) && ((cl->host_server->type & ECORE_CON_TYPE) == ECORE_CON_REMOTE_CORK))
+          {
+             int state = 1;
+             if (setsockopt(cl->fd, IPPROTO_TCP, TCP_CORK, (char *)&state, sizeof(int)) < 0)
+               /* realistically this isn't anything serious so we can just log and continue */
+               ERR("corking failed! %s", strerror(errno));
+          }
+#endif
      }
    eina_binbuf_append_length(cl->buf, data, size);
 
@@ -2246,6 +2267,15 @@ _ecore_con_server_flush(Ecore_Con_Server *svr)
              svr->write_buf_offset = 0;
              eina_binbuf_free(svr->buf);
              svr->buf = NULL;
+#ifdef TCP_CORK
+             if ((svr->type & ECORE_CON_TYPE) == ECORE_CON_REMOTE_CORK)
+               {
+                  int state = 0;
+                  if (setsockopt(svr->fd, IPPROTO_TCP, TCP_CORK, (char *)&state, sizeof(int)) < 0)
+                    /* realistically this isn't anything serious so we can just log and continue */
+                    ERR("uncorking failed! %s", strerror(errno));
+               }
+#endif
           }
         
         if (svr->fd_handler)
@@ -2307,6 +2337,15 @@ _ecore_con_client_flush(Ecore_Con_Client *cl)
         cl->buf_offset = 0;
         eina_binbuf_free(cl->buf);
         cl->buf = NULL;
+#ifdef TCP_CORK
+        if ((cl->host_server->type & ECORE_CON_TYPE) == ECORE_CON_REMOTE_CORK)
+          {
+             int state = 0;
+             if (setsockopt(cl->fd, IPPROTO_TCP, TCP_CORK, (char *)&state, sizeof(int)) < 0)
+               /* realistically this isn't anything serious so we can just log and continue */
+               ERR("uncorking failed! %s", strerror(errno));
+          }
+#endif
         if (cl->fd_handler)
           ecore_main_fd_handler_active_set(cl->fd_handler, ECORE_FD_READ);
      }

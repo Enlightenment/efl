@@ -10,6 +10,7 @@ Additions:
      - ecore_con_socks api
      - ecore_con_ssl_server_verify_name_set/get
      - ecore_con_ssl_server_cafile_add() now accepts directories
+     - ECORE_CON_REMOTE_CORK
     * ecore_x:
      - ecore_x_randr_output_backlight_available()
 
