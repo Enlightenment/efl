@@ -38,14 +38,6 @@
 # include <Evil.h>
 #endif
 
-#ifdef HAVE_SYS_IOCTL_H
-# include <sys/ioctl.h>
-#endif
-
-#ifdef HAVE_WINSOCK2_H
-# include <winsock2.h>
-#endif
-
 #include "Ecore.h"
 #include "ecore_private.h"
 #include "Ecore_Con.h"
@@ -1012,11 +1004,7 @@ ecore_con_event_server_data(Ecore_Con_Server *svr, unsigned char *buf, int num, 
    Ecore_Con_Event_Server_Data *e;
 
    e = ecore_con_event_server_data_alloc();
-   if (!e)
-     {
-        if (!duplicate) free(buf);
-        return;
-     }
+   EINA_SAFETY_ON_NULL_RETURN(e);
 
    svr->event_count = eina_list_append(svr->event_count, e);
    _ecore_con_server_timer_update(svr);
@@ -1890,14 +1878,9 @@ error:
 static void
 _ecore_con_cl_read(Ecore_Con_Server *svr)
 {
-   int num2 = 0, num = 0;
-#ifdef FIONREAD
-   double lr;
-   unsigned char *buf = NULL;
-#else
-   unsigned char buf[READBUFSIZ];
-#endif
+   int num = 0;
    Eina_Bool lost_server = EINA_TRUE;
+   unsigned char buf[READBUFSIZ];
 
    DBG("svr=%p", svr);
 
@@ -1912,50 +1895,23 @@ _ecore_con_cl_read(Ecore_Con_Server *svr)
            lost_server = EINA_FALSE;
         _ecore_con_server_timer_update(svr);
      }
-#ifdef FIONREAD
-# ifdef _WIN32
-   if (ioctlsocket(svr->fd, FIONREAD, &num)) goto error;
-# else
-   errno = 0;
-   if (ioctl(svr->fd, FIONREAD, &num)) goto error;
-# endif
-   if (!num)
-     {
-        int flags;
-        /* FIXME: this shouldn't happen */
-        ERR("EEK! read of 0 bytes! your app has broken ecore-con!");
-        flags = ECORE_FD_WRITE * ecore_main_fd_handler_active_get(svr->fd_handler, ECORE_FD_WRITE);
-        ecore_main_fd_handler_active_set(svr->fd_handler, flags);
-        return;
-     }
-   lr = ecore_time_get();
-   if ((num < 100) && (lr - svr->last_read < 0.01)) num2 = READBUFSIZ / 8;
-   else if (num > READBUFSIZ) num2 = READBUFSIZ;
-   if (num2)
-     {
-        DBG("%d bytes available for read from ioctl(), trying size (%d) to avoid congestion", num, num2);
-        num = num2;
-     }
-   else
-     DBG("%d bytes available for read", num);
-   svr->last_read = lr;
-   buf = malloc(num);
-   if (!buf) goto error;
-#else
-   num = sizeof(buf);
-   (void)num2;
-#endif
+
    if (svr->ecs_state || !(svr->type & ECORE_CON_SSL))
      {
-        num = read(svr->fd, buf, num);
+        errno = 0;
+        num = read(svr->fd, buf, sizeof(buf));
         /* 0 is not a valid return value for a tcp socket */
-        if ((num < 0) || (errno && (errno != EAGAIN))) goto error;
+        if ((num > 0) || ((num < 0) && (errno == EAGAIN)))
+           lost_server = EINA_FALSE;
+        else if (num < 0)
+          ecore_con_event_server_error(svr, strerror(errno));
      }
    else
      {
-        num = ecore_con_ssl_server_read(svr, buf, num);
+        num = ecore_con_ssl_server_read(svr, buf, sizeof(buf));
         /* this is not an actual 0 return, 0 here just means non-fatal error such as EAGAIN */
-        if (num < 0) goto error;
+        if (num >= 0)
+           lost_server = EINA_FALSE;
      }
 
    if ((!svr->delete_me) && (num > 0))
@@ -1963,31 +1919,11 @@ _ecore_con_cl_read(Ecore_Con_Server *svr)
         if (svr->ecs_state)
           ecore_con_socks_read(svr, buf, num);
         else
-          ecore_con_event_server_data(svr, buf, num,
-#ifdef FIONREAD
-          EINA_FALSE
-#else
-          EINA_TRUE
-#endif
-          );
+          ecore_con_event_server_data(svr, buf, num, EINA_TRUE);
      }
 
-   return;
-error:
-   {
-      char *err;
-#ifdef _WIN32
-      err = evil_format_message(WSAGetLastError());
-      _ecore_con_event_server_error(svr, err, EINA_FALSE);
-#else
-      err = strerror(errno);
-      ecore_con_event_server_error(svr, err);
-#endif
-   }
-#ifdef FIONREAD
-   free(buf);
-#endif
-   _ecore_con_server_kill(svr);
+   if (lost_server)
+      _ecore_con_server_kill(svr);
 }
 
 static Eina_Bool

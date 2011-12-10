@@ -150,7 +150,6 @@ struct _Ecore_Con_Server
    const char *proxyip;
    int proxyport;
    /* endsocks */
-   /* SSL */
    const char *verify_name;
 #if USE_GNUTLS
    gnutls_session_t session;
@@ -166,9 +165,7 @@ struct _Ecore_Con_Server
    SSL *ssl;
    int ssl_err;
 #endif
-   /* ENDSSL */
    double start_time;
-   double last_read;
    Ecore_Timer *until_deletion;
    double disconnect_time;
    double client_disconnect_time;

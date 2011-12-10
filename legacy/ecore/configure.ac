@@ -1415,7 +1415,6 @@ AC_ARG_ENABLE([ipv6],
 
 if test "x${have_ecore_con}" = "xyes" ; then
 
-   AC_CHECK_HEADERS([sys/ioctl.h winsock2.h])
    # Verify IPV6 availability in headers
    if test "x${want_ipv6}" != "xno" ; then
       AC_CHECK_TYPES([struct ipv6_mreq],
