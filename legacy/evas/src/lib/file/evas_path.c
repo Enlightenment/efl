@@ -123,7 +123,7 @@ evas_file_path_list(char *path, const char *match, int match_case)
         else
           files = eina_list_append(files, strdup(info->path + info->name_start));
      }
-   eina_iterator_free(it);
+   if (it) eina_iterator_free(it);
    return files;
 }
 
