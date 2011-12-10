@@ -390,3 +390,7 @@
         * Allow SSL certificates to be loaded for STARTTLS
         * Added functions to set/get the hostname used for SSL certificate verification
         * ecore_con_ssl_server_cafile_add() now accepts directories
+
+2011-12-10 Mike Blumenkrantz
+
+        * Fix case where SSL certificates would not be used

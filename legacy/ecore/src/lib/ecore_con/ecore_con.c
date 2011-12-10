@@ -308,8 +308,7 @@ ecore_con_server_add(Ecore_Con_Type compl_type,
    svr->port = port;
    svr->data = (void *)data;
    svr->created = EINA_TRUE;
-   if (compl_type & ECORE_CON_LOAD_CERT)
-     svr->use_cert = EINA_TRUE;
+   svr->use_cert = (compl_type & ECORE_CON_SSL & ECORE_CON_LOAD_CERT) == ECORE_CON_LOAD_CERT;
    svr->reject_excess_clients = EINA_FALSE;
    svr->client_limit = -1;
    svr->clients = NULL;
@@ -402,7 +401,7 @@ ecore_con_server_connect(Ecore_Con_Type compl_type,
    svr->port = port;
    svr->data = (void *)data;
    svr->created = EINA_FALSE;
-   svr->use_cert = (compl_type & ECORE_CON_LOAD_CERT);
+   svr->use_cert = (compl_type & ECORE_CON_SSL & ECORE_CON_LOAD_CERT) == ECORE_CON_LOAD_CERT;
    svr->reject_excess_clients = EINA_FALSE;
    svr->clients = NULL;
    svr->client_limit = -1;
