@@ -176,7 +176,6 @@ test "x$RPM_BUILD_ROOT" != "x/" && rm -rf $RPM_BUILD_ROOT
 %files -f %{name}.lang
 %defattr(-, root, root)
 %doc AUTHORS COPYING* README*
-%{_bindir}/ecore_test
 %{_libdir}/libecore*.so.*
 
 %files devel

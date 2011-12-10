@@ -70,6 +70,7 @@ test "x$RPM_BUILD_ROOT" != "x/" && rm -rf $RPM_BUILD_ROOT
 %{_includedir}/*
 %{_libdir}/*.a
 %{_libdir}/*.so
+%{_datadir}/eet
 %{_libdir}/*.la
 
 %changelog
