@@ -544,9 +544,7 @@ ecore_con_server_data_get(Ecore_Con_Server *svr)
 {
    if (!ECORE_MAGIC_CHECK(svr, ECORE_MAGIC_CON_SERVER))
      {
-        ECORE_MAGIC_FAIL(svr,
-                         ECORE_MAGIC_CON_SERVER,
-                         "ecore_con_server_data_get");
+        ECORE_MAGIC_FAIL(svr, ECORE_MAGIC_CON_SERVER, "ecore_con_server_data_get");
         return NULL;
      }
 
@@ -561,9 +559,7 @@ ecore_con_server_data_set(Ecore_Con_Server *svr,
 
    if (!ECORE_MAGIC_CHECK(svr, ECORE_MAGIC_CON_SERVER))
      {
-        ECORE_MAGIC_FAIL(svr,
-                         ECORE_MAGIC_CON_SERVER,
-                         "ecore_con_server_data_get");
+        ECORE_MAGIC_FAIL(svr, ECORE_MAGIC_CON_SERVER, "ecore_con_server_data_get");
         return NULL;
      }
 
@@ -577,8 +573,7 @@ ecore_con_server_connected_get(Ecore_Con_Server *svr)
 {
    if (!ECORE_MAGIC_CHECK(svr, ECORE_MAGIC_CON_SERVER))
      {
-        ECORE_MAGIC_FAIL(svr, ECORE_MAGIC_CON_SERVER,
-                         "ecore_con_server_connected_get");
+        ECORE_MAGIC_FAIL(svr, ECORE_MAGIC_CON_SERVER, "ecore_con_server_connected_get");
         return EINA_FALSE;
      }
 
@@ -831,9 +826,7 @@ ecore_con_client_data_set(Ecore_Con_Client *cl,
 {
    if (!ECORE_MAGIC_CHECK(cl, ECORE_MAGIC_CON_CLIENT))
      {
-        ECORE_MAGIC_FAIL(cl,
-                         ECORE_MAGIC_CON_CLIENT,
-                         "ecore_con_client_data_set");
+        ECORE_MAGIC_FAIL(cl, ECORE_MAGIC_CON_CLIENT, "ecore_con_client_data_set");
         return;
      }
 
@@ -845,9 +838,7 @@ ecore_con_client_data_get(Ecore_Con_Client *cl)
 {
    if (!ECORE_MAGIC_CHECK(cl, ECORE_MAGIC_CON_CLIENT))
      {
-        ECORE_MAGIC_FAIL(cl,
-                         ECORE_MAGIC_CON_CLIENT,
-                         "ecore_con_client_data_get");
+        ECORE_MAGIC_FAIL(cl, ECORE_MAGIC_CON_CLIENT, "ecore_con_client_data_get");
         return NULL;
      }
 
@@ -1930,8 +1921,11 @@ _ecore_con_cl_read(Ecore_Con_Server *svr)
 # endif
    if (!num)
      {
+        int flags;
         /* FIXME: this shouldn't happen */
-        ERR("read of 0 bytes!");
+        ERR("EEK! read of 0 bytes! your app has broken ecore-con!");
+        flags = ECORE_FD_WRITE * ecore_main_fd_handler_active_get(svr->fd_handler, ECORE_FD_WRITE);
+        ecore_main_fd_handler_active_set(svr->fd_handler, flags);
         return;
      }
    lr = ecore_time_get();
