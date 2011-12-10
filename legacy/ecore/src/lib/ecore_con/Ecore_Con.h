@@ -637,6 +637,7 @@ typedef enum _Ecore_Con_Type
    ECORE_CON_REMOTE_UDP = 5,
    /** Remote broadcast using UDP */
    ECORE_CON_REMOTE_BROADCAST = 6,
+   /** Remote connection sending packets immediately */
    ECORE_CON_REMOTE_NODELAY = 7,
    /** Use SSL2: UNSUPPORTED. **/
    ECORE_CON_USE_SSL2 = (1 << 4),
