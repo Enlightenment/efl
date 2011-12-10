@@ -1178,7 +1178,7 @@ ecore_con_server_infos_del(Ecore_Con_Server *svr, void *info)
 }
 
 void
-ecore_con_event_server_error(Ecore_Con_Server *svr, const char *error)
+_ecore_con_event_server_error(Ecore_Con_Server *svr, char *error, Eina_Bool duplicate)
 {
    Ecore_Con_Event_Server_Error *e;
 
@@ -1186,7 +1186,7 @@ ecore_con_event_server_error(Ecore_Con_Server *svr, const char *error)
    EINA_SAFETY_ON_NULL_RETURN(e);
 
    e->server = svr;
-   e->error = strdup(error);
+   e->error = duplicate ? strdup(error) : error;
    ERR("%s", error);
    svr->event_count = eina_list_append(svr->event_count, e);
    ecore_event_add(ECORE_CON_EVENT_SERVER_ERROR, e, (Ecore_End_Cb)_ecore_con_event_server_error_free, NULL);
@@ -1461,37 +1461,21 @@ _ecore_con_cb_tcp_listen(void           *data,
 
    svr = data;
 
+   errno = 0;
    if (!net_info) /* error message has already been handled */
      goto error;
 
    svr->fd = socket(net_info->info.ai_family, net_info->info.ai_socktype,
                     net_info->info.ai_protocol);
-   if (svr->fd < 0)
-     {
-        ecore_con_event_server_error(svr, strerror(errno));
-        goto error;
-     }
-
-   if (fcntl(svr->fd, F_SETFL, O_NONBLOCK) < 0)
-     {
-        ecore_con_event_server_error(svr, strerror(errno));
-        goto error;
-     }
-
-   if (fcntl(svr->fd, F_SETFD, FD_CLOEXEC) < 0)
-     {
-        ecore_con_event_server_error(svr, strerror(errno));
-        goto error;
-     }
+   if (svr->fd < 0) goto error;
+   if (fcntl(svr->fd, F_SETFL, O_NONBLOCK) < 0) goto error;
+   if (fcntl(svr->fd, F_SETFD, FD_CLOEXEC) < 0) goto error;
 
    lin.l_onoff = 1;
    lin.l_linger = 0;
    if (setsockopt(svr->fd, SOL_SOCKET, SO_LINGER, (const void *)&lin,
                   sizeof(struct linger)) < 0)
-     {
-        ecore_con_event_server_error(svr, strerror(errno));
-        goto error;
-     }
+     goto error;
 
    if ((svr->type & ECORE_CON_TYPE) == ECORE_CON_REMOTE_NODELAY)
      {
@@ -1502,34 +1486,29 @@ _ecore_con_cb_tcp_listen(void           *data,
                        sizeof(int)) < 0)
 #endif
           {
-             ecore_con_event_server_error(svr, strerror(errno));
              goto error;
           }
      }
 
-   if (bind(svr->fd, net_info->info.ai_addr,
-            net_info->info.ai_addrlen) < 0)
-     {
-        ecore_con_event_server_error(svr, strerror(errno));
-        goto error;
-     }
-   if (listen(svr->fd, 4096) < 0)
-     {
-        ecore_con_event_server_error(svr, strerror(errno));
-        goto error;
-     }
+   if (bind(svr->fd, net_info->info.ai_addr, net_info->info.ai_addrlen) < 0)
+     goto error;
+
+   if (listen(svr->fd, 4096) < 0) goto error;
 
    svr->fd_handler = ecore_main_fd_handler_add(svr->fd, ECORE_FD_READ,
                                                _ecore_con_svr_tcp_handler, svr, NULL, NULL);
    if (!svr->fd_handler)
      {
         ecore_con_event_server_error(svr, "Memory allocation failure");
-        goto error;
+        ecore_con_ssl_server_shutdown(svr);
+        _ecore_con_server_kill(svr);
      }
 
    return;
 
 error:
+   if (errno)
+     ecore_con_event_server_error(svr, strerror(errno));
    ecore_con_ssl_server_shutdown(svr);
    _ecore_con_server_kill(svr);
 }
@@ -1550,16 +1529,13 @@ _ecore_con_cb_udp_listen(void           *data,
    type = svr->type;
    type &= ECORE_CON_TYPE;
 
+   errno = 0;
    if (!net_info) /* error message has already been handled */
      goto error;
 
    svr->fd = socket(net_info->info.ai_family, net_info->info.ai_socktype,
                     net_info->info.ai_protocol);
-   if (svr->fd < 0)
-     {
-        ecore_con_event_server_error(svr, strerror(errno));
-        goto error;
-     }
+   if (svr->fd < 0) goto error;
 
    if (type == ECORE_CON_REMOTE_MCAST)
      {
@@ -1567,62 +1543,34 @@ _ecore_con_cb_udp_listen(void           *data,
           {
              if (!inet_pton(net_info->info.ai_family, net_info->ip,
                             &mreq.imr_multiaddr))
-               {
-                  ecore_con_event_server_error(svr, strerror(errno));
-                  goto error;
-               }
+               goto error;
 
              mreq.imr_interface.s_addr = htonl(INADDR_ANY);
              if (setsockopt(svr->fd, IPPROTO_IP, IP_ADD_MEMBERSHIP,
                             (const void *)&mreq, sizeof(mreq)) != 0)
-               {
-                  ecore_con_event_server_error(svr, strerror(errno));
-                  goto error;
-               }
+               goto error;
           }
 #ifdef HAVE_IPV6
         else if (net_info->info.ai_family == AF_INET6)
           {
              if (!inet_pton(net_info->info.ai_family, net_info->ip,
                             &mreq6.ipv6mr_multiaddr))
-               {
-                  ecore_con_event_server_error(svr, strerror(errno));
-                  goto error;
-               }
+               goto error;
              mreq6.ipv6mr_interface = htonl(INADDR_ANY);
              if (setsockopt(svr->fd, IPPROTO_IP, IP_ADD_MEMBERSHIP,
                             (const void *)&mreq6, sizeof(mreq6)) != 0)
-               {
-                  ecore_con_event_server_error(svr, strerror(errno));
-                  goto error;
-               }
+               goto error;
           }
 #endif
      }
 
    if (setsockopt(svr->fd, SOL_SOCKET, SO_REUSEADDR, (const void *)&on, sizeof(on)) != 0)
-     {
-        ecore_con_event_server_error(svr, strerror(errno));
-        goto error;
-     }
-
-   if (fcntl(svr->fd, F_SETFL, O_NONBLOCK) < 0)
-     {
-        ecore_con_event_server_error(svr, strerror(errno));
-        goto error;
-     }
-
-   if (fcntl(svr->fd, F_SETFD, FD_CLOEXEC) < 0)
-     {
-        ecore_con_event_server_error(svr, strerror(errno));
-        goto error;
-     }
+     goto error;
+   if (fcntl(svr->fd, F_SETFL, O_NONBLOCK) < 0) goto error;
+   if (fcntl(svr->fd, F_SETFD, FD_CLOEXEC) < 0) goto error;
 
    if (bind(svr->fd, net_info->info.ai_addr, net_info->info.ai_addrlen) < 0)
-     {
-        ecore_con_event_server_error(svr, strerror(errno));
-        goto error;
-     }
+     goto error;
 
    svr->fd_handler =
      ecore_main_fd_handler_add(svr->fd, ECORE_FD_READ,
@@ -1630,7 +1578,9 @@ _ecore_con_cb_udp_listen(void           *data,
    if (!svr->fd_handler)
      {
         ecore_con_event_server_error(svr, "Memory allocation failure");
-        goto error;
+        ecore_con_ssl_server_shutdown(svr);
+        _ecore_con_server_kill(svr);
+        return;
      }
 
    svr->ip = eina_stringshare_add(net_info->ip);
@@ -1638,6 +1588,7 @@ _ecore_con_cb_udp_listen(void           *data,
    return;
 
 error:
+   if (errno) ecore_con_event_server_error(svr, strerror(errno));
    ecore_con_ssl_server_shutdown(svr);
    _ecore_con_server_kill(svr);
 }
@@ -1652,34 +1603,19 @@ _ecore_con_cb_tcp_connect(void           *data,
 
    svr = data;
 
+   errno = 0;
    if (!net_info) /* error message has already been handled */
      goto error;
 
    svr->fd = socket(net_info->info.ai_family, net_info->info.ai_socktype,
                     net_info->info.ai_protocol);
-   if (svr->fd < 0)
-     {
-        ecore_con_event_server_error(svr, strerror(errno));
-        goto error;
-     }
+   if (svr->fd < 0) goto error;
 
-   if (fcntl(svr->fd, F_SETFL, O_NONBLOCK) < 0)
-     {
-        ecore_con_event_server_error(svr, strerror(errno));
-        goto error;
-     }
-
-   if (fcntl(svr->fd, F_SETFD, FD_CLOEXEC) < 0)
-     {
-        ecore_con_event_server_error(svr, strerror(errno));
-        goto error;
-     }
+   if (fcntl(svr->fd, F_SETFL, O_NONBLOCK) < 0) goto error;
+   if (fcntl(svr->fd, F_SETFD, FD_CLOEXEC) < 0) goto error;
 
    if (setsockopt(svr->fd, SOL_SOCKET, SO_REUSEADDR, (const void *)&curstate, sizeof(curstate)) < 0)
-     {
-        ecore_con_event_server_error(svr, strerror(errno));
-        goto error;
-     }
+     goto error;
 
    if ((svr->type & ECORE_CON_TYPE) == ECORE_CON_REMOTE_NODELAY)
      {
@@ -1689,7 +1625,6 @@ _ecore_con_cb_tcp_connect(void           *data,
         if (setsockopt(svr->fd, IPPROTO_TCP, TCP_NODELAY, (char *)&flag, sizeof(int)) < 0)
 #endif
           {
-             ecore_con_event_server_error(svr, strerror(errno));
              goto error;
           }
      }
@@ -1699,17 +1634,19 @@ _ecore_con_cb_tcp_connect(void           *data,
    if (res == SOCKET_ERROR)
      {
         if (WSAGetLastError() != WSAEINPROGRESS)
-          goto error; /* FIXME: strerror on windows? */
+          {
+             char *err;
+             err = evil_format_message(WSAGetLastError());
+             _ecore_con_event_server_error(svr, err, EINA_FALSE);
+             ecore_con_ssl_server_shutdown(svr);
+             _ecore_con_server_kill(svr);
+             return;
+          }
 
 #else
    if (res < 0)
      {
-        if (errno != EINPROGRESS)
-          {
-             ecore_con_event_server_error(svr, strerror(errno));
-             goto error;
-          }
-
+        if (errno != EINPROGRESS) goto error;
 #endif
         svr->connecting = EINA_TRUE;
         svr->fd_handler =
@@ -1732,15 +1669,17 @@ _ecore_con_cb_tcp_connect(void           *data,
    if (!svr->fd_handler)
      {
         ecore_con_event_server_error(svr, "Memory allocation failure");
-        goto error;
+        ecore_con_ssl_server_shutdown(svr);
+        _ecore_con_server_kill(svr);
      }
 
-   if ((!svr->ecs) || (svr->ecs->lookup))
+   if ((!svr->dead) && ((!svr->ecs) || (svr->ecs->lookup)))
      svr->ip = eina_stringshare_add(net_info->ip);
 
    return;
 
 error:
+   if (errno) ecore_con_event_server_error(svr, strerror(errno));
    ecore_con_ssl_server_shutdown(svr);
    _ecore_con_server_kill(svr);
 }
@@ -1754,51 +1693,30 @@ _ecore_con_cb_udp_connect(void           *data,
    int broadcast = 1;
    svr = data;
 
+   errno = 0;
    if (!net_info) /* error message has already been handled */
      goto error;
 
    svr->fd = socket(net_info->info.ai_family, net_info->info.ai_socktype,
                     net_info->info.ai_protocol);
-   if (svr->fd < 0)
-     {
-        ecore_con_event_server_error(svr, strerror(errno));
-        goto error;
-     }
-
-   if (fcntl(svr->fd, F_SETFL, O_NONBLOCK) < 0)
-     {
-        ecore_con_event_server_error(svr, strerror(errno));
-        goto error;
-     }
-
-   if (fcntl(svr->fd, F_SETFD, FD_CLOEXEC) < 0)
-     {
-        ecore_con_event_server_error(svr, strerror(errno));
-        goto error;
-     }
-
+   if (svr->fd < 0) goto error;
+   if (fcntl(svr->fd, F_SETFL, O_NONBLOCK) < 0) goto error;
+   if (fcntl(svr->fd, F_SETFD, FD_CLOEXEC) < 0) goto error;
    if ((svr->type & ECORE_CON_TYPE) == ECORE_CON_REMOTE_BROADCAST)
      {
         if (setsockopt(svr->fd, SOL_SOCKET, SO_BROADCAST,
                        (const void *)&broadcast,
                        sizeof(broadcast)) < 0)
           {
-             ecore_con_event_server_error(svr, strerror(errno));
              goto error;
           }
      }
    else if (setsockopt(svr->fd, SOL_SOCKET, SO_REUSEADDR,
                        (const void *)&curstate, sizeof(curstate)) < 0)
-     {
-        ecore_con_event_server_error(svr, strerror(errno));
-        goto error;
-     }
+     goto error;
 
    if (connect(svr->fd, net_info->info.ai_addr, net_info->info.ai_addrlen) < 0)
-     {
-        ecore_con_event_server_error(svr, strerror(errno));
-        goto error;
-     }
+     goto error;
 
    svr->fd_handler = ecore_main_fd_handler_add(svr->fd, ECORE_FD_READ | ECORE_FD_WRITE,
                                                _ecore_con_cl_udp_handler, svr, NULL, NULL);
@@ -1806,15 +1724,17 @@ _ecore_con_cb_udp_connect(void           *data,
    if (!svr->fd_handler)
      {
         ecore_con_event_server_error(svr, "Memory allocation failure");
-        goto error;
+        ecore_con_ssl_server_shutdown(svr);
+        _ecore_con_server_kill(svr);
      }
 
-   if ((!svr->ecs) || (svr->ecs->lookup))
+   if ((!svr->dead) && ((!svr->ecs) || (svr->ecs->lookup)))
      svr->ip = eina_stringshare_add(net_info->ip);
 
    return;
 
 error:
+   if (errno) ecore_con_event_server_error(svr, strerror(errno));
    ecore_con_ssl_server_shutdown(svr);
    _ecore_con_server_kill(svr);
 }
@@ -2040,7 +1960,12 @@ _ecore_con_cl_read(Ecore_Con_Server *svr)
    errno = 0;
    if (ioctl(svr->fd, FIONREAD, &num)) goto error;
 # endif
-   if (!num) return; /* FIXME: this shouldn't happen */
+   if (!num)
+     {
+        /* FIXME: this shouldn't happen */
+        ERR("read of 0 bytes!");
+        return;
+     }
    lr = ecore_time_get();
    if ((num < 100) && (lr - svr->last_read < 0.01)) num2 = READBUFSIZ / 8;
    else if (num > READBUFSIZ) num2 = READBUFSIZ;
@@ -2087,10 +2012,16 @@ _ecore_con_cl_read(Ecore_Con_Server *svr)
 
    return;
 error:
-#ifndef _WIN32
-   /* FIXME: strerror on windows */
-   ecore_con_event_server_error(svr, strerror(errno));
+   {
+      char *err;
+#ifdef _WIN32
+      err = evil_format_message(WSAGetLastError());
+      _ecore_con_event_server_error(svr, err, EINA_FALSE);
+#else
+      err = strerror(errno);
+      ecore_con_event_server_error(svr, err);
 #endif
+   }
 #ifdef FIONREAD
    free(buf);
 #endif

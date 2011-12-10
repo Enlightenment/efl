@@ -284,7 +284,8 @@ void ecore_con_server_infos_del(Ecore_Con_Server *svr, void *info);
 void ecore_con_event_proxy_bind(Ecore_Con_Server *svr);
 void ecore_con_event_server_data(Ecore_Con_Server *svr, unsigned char *buf, int num, Eina_Bool duplicate);
 void ecore_con_event_server_del(Ecore_Con_Server *svr);
-void ecore_con_event_server_error(Ecore_Con_Server *svr, const char *error);
+#define ecore_con_event_server_error(svr, error) _ecore_con_event_server_error((svr), (char*)(error), EINA_TRUE)
+void _ecore_con_event_server_error(Ecore_Con_Server *svr, char *error, Eina_Bool duplicate);
 void ecore_con_event_client_add(Ecore_Con_Client *cl);
 void ecore_con_event_client_data(Ecore_Con_Client *cl, unsigned char *buf, int num, Eina_Bool duplicate);
 void ecore_con_event_client_del(Ecore_Con_Client *cl);
