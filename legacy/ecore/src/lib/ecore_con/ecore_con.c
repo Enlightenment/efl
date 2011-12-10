@@ -1507,7 +1507,7 @@ _ecore_con_cb_tcp_listen(void           *data,
    return;
 
 error:
-   if (errno || memerr) ecore_con_event_server_error(svr, errno ? strerror(errno) : memerr);
+   if (errno || memerr) ecore_con_event_server_error(svr, memerr ?: strerror(errno));
    ecore_con_ssl_server_shutdown(svr);
    _ecore_con_server_kill(svr);
 }
@@ -1586,7 +1586,7 @@ _ecore_con_cb_udp_listen(void           *data,
    return;
 
 error:
-   if (errno || memerr) ecore_con_event_server_error(svr, errno ? strerror(errno) : memerr);
+   if (errno || memerr) ecore_con_event_server_error(svr, memerr ?: strerror(errno));
    ecore_con_ssl_server_shutdown(svr);
    _ecore_con_server_kill(svr);
 }
@@ -1677,7 +1677,7 @@ _ecore_con_cb_tcp_connect(void           *data,
    return;
 
 error:
-   if (errno || memerr) ecore_con_event_server_error(svr, errno ? strerror(errno) : memerr);
+   if (errno || memerr) ecore_con_event_server_error(svr, memerr ?: strerror(errno));
    ecore_con_ssl_server_shutdown(svr);
    _ecore_con_server_kill(svr);
 }
@@ -1732,7 +1732,7 @@ _ecore_con_cb_udp_connect(void           *data,
    return;
 
 error:
-   if (errno || memerr) ecore_con_event_server_error(svr, errno ? strerror(errno) : memerr);
+   if (errno || memerr) ecore_con_event_server_error(svr, memerr ?: strerror(errno));
    ecore_con_ssl_server_shutdown(svr);
    _ecore_con_server_kill(svr);
 }
@@ -1836,6 +1836,7 @@ _ecore_con_svr_tcp_handler(void                        *data,
    Ecore_Con_Client *cl = NULL;
    unsigned char client_addr[256];
    unsigned int client_addr_len;
+   const char *clerr = NULL;
 
    svr = data;
    if (svr->dead)
@@ -1861,34 +1862,19 @@ _ecore_con_svr_tcp_handler(void                        *data,
    client_addr_len = sizeof(client_addr);
    memset(&client_addr, 0, client_addr_len);
    cl->fd = accept(svr->fd, (struct sockaddr *)&client_addr, (socklen_t *)&client_addr_len);
-   if (cl->fd < 0)
-     {
-        ecore_con_event_server_error(svr, strerror(errno));
-        goto free_cl;
-     }
-
+   if (cl->fd < 0) goto error;
    if ((svr->client_limit >= 0) && (svr->reject_excess_clients) &&
        (svr->client_count >= (unsigned int)svr->client_limit))
      {
-        ecore_con_event_server_error(svr, "Maximum client limit reached");
-        goto close_fd;
+        clerr = "Maximum client limit reached";
+        goto error;
      }
 
-   if (fcntl(cl->fd, F_SETFL, O_NONBLOCK) < 0)
-     {
-        ecore_con_event_server_error(svr, strerror(errno));
-        goto close_fd;
-     }
-   if (fcntl(cl->fd, F_SETFD, FD_CLOEXEC) < 0)
-     {
-        ecore_con_event_server_error(svr, strerror(errno));
-        goto close_fd;
-     }
+   if (fcntl(cl->fd, F_SETFL, O_NONBLOCK) < 0) goto error;
+   if (fcntl(cl->fd, F_SETFD, FD_CLOEXEC) < 0) goto error;
    cl->fd_handler = ecore_main_fd_handler_add(cl->fd, ECORE_FD_READ,
                                               _ecore_con_svr_cl_handler, cl, NULL, NULL);
-   if (!cl->fd_handler)
-     goto close_fd;
-
+   if (!cl->fd_handler) goto error;
    ECORE_MAGIC_SET(cl, ECORE_MAGIC_CON_CLIENT);
 
    if ((!svr->upgrade) && (svr->type & ECORE_CON_SSL))
@@ -1896,14 +1882,14 @@ _ecore_con_svr_tcp_handler(void                        *data,
         cl->handshaking = EINA_TRUE;
         cl->ssl_state = ECORE_CON_SSL_STATE_INIT;
         if (ecore_con_ssl_client_init(cl))
-          goto del_handler;
+          goto error;
      }
 
    cl->client_addr = malloc(client_addr_len);
    if (!cl->client_addr)
      {
-        ecore_con_event_server_error(svr, "Memory allocation failure when attempting to add a new client");
-        goto del_handler;
+        clerr = "Memory allocation failure when attempting to add a new client";
+        goto error;
      }
    cl->client_addr_len = client_addr_len;
    memcpy(cl->client_addr, &client_addr, client_addr_len);
@@ -1916,13 +1902,11 @@ _ecore_con_svr_tcp_handler(void                        *data,
 
    return ECORE_CALLBACK_RENEW;
 
- del_handler:
-   ecore_main_fd_handler_del(cl->fd_handler);
- close_fd:
-   close(cl->fd);
- free_cl:
+error:
+   if (cl->fd_handler) ecore_main_fd_handler_del(cl->fd_handler);
+   if (cl->fd >= 0) close(cl->fd);
    free(cl);
-
+   if (clerr || errno) ecore_con_event_server_error(svr, clerr ?: strerror(errno));
    return ECORE_CALLBACK_RENEW;
 }
 
