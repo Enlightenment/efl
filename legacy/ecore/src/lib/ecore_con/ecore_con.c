@@ -1458,6 +1458,7 @@ _ecore_con_cb_tcp_listen(void           *data,
 {
    Ecore_Con_Server *svr;
    struct linger lin;
+   const char *memerr = NULL;
 
    svr = data;
 
@@ -1499,16 +1500,14 @@ _ecore_con_cb_tcp_listen(void           *data,
                                                _ecore_con_svr_tcp_handler, svr, NULL, NULL);
    if (!svr->fd_handler)
      {
-        ecore_con_event_server_error(svr, "Memory allocation failure");
-        ecore_con_ssl_server_shutdown(svr);
-        _ecore_con_server_kill(svr);
+        memerr = "Memory allocation failure";
+        goto error;
      }
 
    return;
 
 error:
-   if (errno)
-     ecore_con_event_server_error(svr, strerror(errno));
+   if (errno || memerr) ecore_con_event_server_error(svr, errno ? strerror(errno) : memerr);
    ecore_con_ssl_server_shutdown(svr);
    _ecore_con_server_kill(svr);
 }
@@ -1524,6 +1523,7 @@ _ecore_con_cb_udp_listen(void           *data,
    struct ipv6_mreq mreq6;
 #endif
    const int on = 1;
+   const char *memerr = NULL;
 
    svr = data;
    type = svr->type;
@@ -1577,10 +1577,8 @@ _ecore_con_cb_udp_listen(void           *data,
                                _ecore_con_svr_udp_handler, svr, NULL, NULL);
    if (!svr->fd_handler)
      {
-        ecore_con_event_server_error(svr, "Memory allocation failure");
-        ecore_con_ssl_server_shutdown(svr);
-        _ecore_con_server_kill(svr);
-        return;
+        memerr = "Memory allocation failure";
+        goto error;
      }
 
    svr->ip = eina_stringshare_add(net_info->ip);
@@ -1588,7 +1586,7 @@ _ecore_con_cb_udp_listen(void           *data,
    return;
 
 error:
-   if (errno) ecore_con_event_server_error(svr, strerror(errno));
+   if (errno || memerr) ecore_con_event_server_error(svr, errno ? strerror(errno) : memerr);
    ecore_con_ssl_server_shutdown(svr);
    _ecore_con_server_kill(svr);
 }
@@ -1600,6 +1598,7 @@ _ecore_con_cb_tcp_connect(void           *data,
    Ecore_Con_Server *svr;
    int res;
    int curstate = 0;
+   const char *memerr = NULL;
 
    svr = data;
 
@@ -1668,18 +1667,17 @@ _ecore_con_cb_tcp_connect(void           *data,
 
    if (!svr->fd_handler)
      {
-        ecore_con_event_server_error(svr, "Memory allocation failure");
-        ecore_con_ssl_server_shutdown(svr);
-        _ecore_con_server_kill(svr);
+        memerr = "Memory allocation failure";
+        goto error;
      }
 
-   if ((!svr->dead) && ((!svr->ecs) || (svr->ecs->lookup)))
+   if ((!svr->ecs) || (svr->ecs->lookup))
      svr->ip = eina_stringshare_add(net_info->ip);
 
    return;
 
 error:
-   if (errno) ecore_con_event_server_error(svr, strerror(errno));
+   if (errno || memerr) ecore_con_event_server_error(svr, errno ? strerror(errno) : memerr);
    ecore_con_ssl_server_shutdown(svr);
    _ecore_con_server_kill(svr);
 }
@@ -1691,6 +1689,7 @@ _ecore_con_cb_udp_connect(void           *data,
    Ecore_Con_Server *svr;
    int curstate = 0;
    int broadcast = 1;
+   const char *memerr = NULL;
    svr = data;
 
    errno = 0;
@@ -1711,8 +1710,8 @@ _ecore_con_cb_udp_connect(void           *data,
              goto error;
           }
      }
-   else if (setsockopt(svr->fd, SOL_SOCKET, SO_REUSEADDR,
-                       (const void *)&curstate, sizeof(curstate)) < 0)
+   if (setsockopt(svr->fd, SOL_SOCKET, SO_REUSEADDR,
+                  (const void *)&curstate, sizeof(curstate)) < 0)
      goto error;
 
    if (connect(svr->fd, net_info->info.ai_addr, net_info->info.ai_addrlen) < 0)
@@ -1723,18 +1722,17 @@ _ecore_con_cb_udp_connect(void           *data,
 
    if (!svr->fd_handler)
      {
-        ecore_con_event_server_error(svr, "Memory allocation failure");
-        ecore_con_ssl_server_shutdown(svr);
-        _ecore_con_server_kill(svr);
+        memerr = "Memory allocation failure";
+        goto error;
      }
 
-   if ((!svr->dead) && ((!svr->ecs) || (svr->ecs->lookup)))
+   if ((!svr->ecs) || (svr->ecs->lookup))
      svr->ip = eina_stringshare_add(net_info->ip);
 
    return;
 
 error:
-   if (errno) ecore_con_event_server_error(svr, strerror(errno));
+   if (errno || memerr) ecore_con_event_server_error(svr, errno ? strerror(errno) : memerr);
    ecore_con_ssl_server_shutdown(svr);
    _ecore_con_server_kill(svr);
 }
