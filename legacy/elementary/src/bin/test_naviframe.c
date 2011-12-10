@@ -4,11 +4,16 @@
 #endif
 #ifndef ELM_LIB_QUICKLAUNCH
 
-static const char *img1 = PACKAGE_DATA_DIR"/images/logo.png";
-static const char *img2 = PACKAGE_DATA_DIR"/images/plant_01.jpg";
-static const char *img3 = PACKAGE_DATA_DIR"/images/rock_01.jpg";
-static const char *img4 = PACKAGE_DATA_DIR"/images/rock_02.jpg";
-static const char *img5 = PACKAGE_DATA_DIR"/images/sky_01.jpg";
+#define BUTTON_TEXT_SET(BT, TEXT) \
+   elm_object_text_set((BT), (TEXT)); \
+   elm_object_tooltip_text_set((BT), (TEXT)); \
+   elm_object_tooltip_window_mode_set((BT), EINA_TRUE)
+
+static const char *img1 = PACKAGE_DATA_DIR "/images/logo.png";
+static const char *img2 = PACKAGE_DATA_DIR "/images/plant_01.jpg";
+static const char *img3 = PACKAGE_DATA_DIR "/images/rock_01.jpg";
+static const char *img4 = PACKAGE_DATA_DIR "/images/rock_02.jpg";
+static const char *img5 = PACKAGE_DATA_DIR "/images/sky_01.jpg";
 
 Evas_Object *
 _content_new(Evas_Object *parent, const char *img)
@@ -59,11 +64,11 @@ _page5(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 
    bt = elm_button_add(nf);
    evas_object_size_hint_align_set(bt, EVAS_HINT_FILL, EVAS_HINT_FILL);
-   elm_object_text_set(bt, "Prev");
+   BUTTON_TEXT_SET(bt, "Prev");
 
    bt2 = elm_button_add(nf);
    evas_object_size_hint_align_set(bt2, EVAS_HINT_FILL, EVAS_HINT_FILL);
-   elm_object_text_set(bt2, "Page 1");
+   BUTTON_TEXT_SET(bt2, "Page 1");
    evas_object_smart_callback_add(bt2, "clicked", _promote,
                                   evas_object_data_get(nf, "page1"));
 
@@ -124,12 +129,12 @@ _page3(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 
    bt = elm_button_add(nf);
    evas_object_size_hint_align_set(bt, EVAS_HINT_FILL, EVAS_HINT_FILL);
-   elm_object_text_set(bt, "Prev");
+   BUTTON_TEXT_SET(bt, "Prev");
    evas_object_smart_callback_add(bt, "clicked", _navi_pop, nf);
 
    bt2 = elm_button_add(nf);
    evas_object_size_hint_align_set(bt2, EVAS_HINT_FILL, EVAS_HINT_FILL);
-   elm_object_text_set(bt2, "Next");
+   BUTTON_TEXT_SET(bt2, "Next");
    evas_object_smart_callback_add(bt2, "clicked", _page4, nf);
 
    content = _content_new(nf, img3);
@@ -197,7 +202,7 @@ test_naviframe(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_i
    btn = elm_button_add(nf);
    evas_object_size_hint_align_set(btn, EVAS_HINT_FILL, EVAS_HINT_FILL);
    evas_object_smart_callback_add(btn, "clicked", _page2, nf);
-   elm_object_text_set(btn, "Next");
+   BUTTON_TEXT_SET(btn, "Next");
    evas_object_show(btn);
 
    content = _content_new(nf, img1);
