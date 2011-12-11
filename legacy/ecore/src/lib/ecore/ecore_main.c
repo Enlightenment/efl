@@ -145,6 +145,44 @@ timerfd_settime(int                      fd __UNUSED__,
 
 #define NS_PER_SEC (1000.0 * 1000.0 * 1000.0)
 
+struct _Ecore_Fd_Handler
+{
+   EINA_INLIST;
+                          ECORE_MAGIC;
+   Ecore_Fd_Handler      *next_ready;
+   int                    fd;
+   Ecore_Fd_Handler_Flags flags;
+   Ecore_Fd_Cb            func;
+   void                  *data;
+   Ecore_Fd_Cb            buf_func;
+   void                  *buf_data;
+   Ecore_Fd_Prep_Cb       prep_func;
+   void                  *prep_data;
+   int                    references;
+   Eina_Bool              read_active : 1;
+   Eina_Bool              write_active : 1;
+   Eina_Bool              error_active : 1;
+   Eina_Bool              delete_me : 1;
+#if defined(USE_G_MAIN_LOOP)
+   GPollFD                gfd;
+#endif
+};
+GENERIC_ALLOC_SIZE_DECLARE(Ecore_Fd_Handler);
+
+#ifdef _WIN32
+struct _Ecore_Win32_Handler
+{
+   EINA_INLIST;
+                         ECORE_MAGIC;
+   HANDLE                h;
+   Ecore_Win32_Handle_Cb func;
+   void                 *data;
+   int                   references;
+   Eina_Bool             delete_me : 1;
+};
+GENERIC_ALLOC_SIZE_DECLARE(Ecore_Win32_Handler);
+#endif
+
 #ifndef USE_G_MAIN_LOOP
 static int  _ecore_main_select(double timeout);
 #endif

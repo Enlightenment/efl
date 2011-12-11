@@ -7,6 +7,17 @@
 #include "Ecore.h"
 #include "ecore_private.h"
 
+struct _Ecore_Idle_Enterer
+{
+   EINA_INLIST;
+                 ECORE_MAGIC;
+   Ecore_Task_Cb func;
+   void         *data;
+   int           references;
+   Eina_Bool     delete_me : 1;
+};
+GENERIC_ALLOC_SIZE_DECLARE(Ecore_Idle_Enterer);
+
 static Ecore_Idle_Enterer *idle_enterers = NULL;
 static Ecore_Idle_Enterer *idle_enterer_current = NULL;
 static int idle_enterers_delete_me = 0;

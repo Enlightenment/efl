@@ -8,6 +8,35 @@
 #include "Ecore.h"
 #include "ecore_private.h"
 
+#ifdef WANT_ECORE_TIMER_DUMP
+# include <string.h>
+# include <execinfo.h>
+# define ECORE_TIMER_DEBUG_BT_NUM 64
+typedef void (*Ecore_Timer_Bt_Func)();
+#endif
+
+struct _Ecore_Timer
+{
+   EINA_INLIST;
+                       ECORE_MAGIC;
+   double              in;
+   double              at;
+   double              pending;
+   Ecore_Task_Cb       func;
+   void               *data;
+
+#ifdef WANT_ECORE_TIMER_DUMP
+   Ecore_Timer_Bt_Func timer_bt[ECORE_TIMER_DEBUG_BT_NUM];
+   int                 timer_bt_num;
+#endif
+
+   int                 references;
+   unsigned char       delete_me : 1;
+   unsigned char       just_added : 1;
+   unsigned char       frozen : 1;
+};
+GENERIC_ALLOC_SIZE_DECLARE(Ecore_Timer);
+
 static void _ecore_timer_set(Ecore_Timer  *timer,
                              double        at,
                              double        in,

@@ -8,6 +8,24 @@
 #include "Ecore.h"
 #include "ecore_private.h"
 
+struct _Ecore_Animator
+{
+   EINA_INLIST;
+                     ECORE_MAGIC;
+
+   Ecore_Task_Cb     func;
+   void             *data;
+
+   double            start, run;
+   Ecore_Timeline_Cb run_func;
+   void             *run_data;
+
+   Eina_Bool         delete_me : 1;
+   Eina_Bool         suspended : 1;
+};
+
+GENERIC_ALLOC_SIZE_DECLARE(Ecore_Animator);
+
 static Eina_Bool _ecore_animator_run(void *data);
 static Eina_Bool _ecore_animator(void *data);
 

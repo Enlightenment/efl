@@ -86,8 +86,6 @@ typedef unsigned int Ecore_Magic;
 #define ECORE_MAGIC_CHECK(d, m)    ((d) && ((d)->__magic == (m)))
 #define ECORE_MAGIC_FAIL(d, m, fn) _ecore_magic_fail((d), (d) ? (d)->__magic : 0, (m), (fn));
 
-#include "ecore_types.h"
-
 /* undef the following, we want our version */
 #undef FREE
 #define FREE(ptr)                  free(ptr); ptr = NULL;
@@ -356,6 +354,8 @@ void ecore_mempool_shutdown(void);
 #define GENERIC_ALLOC_FREE_HEADER(TYPE, Type) \
   TYPE *Type##_calloc(unsigned int);          \
   void Type##_mp_free(TYPE *e);
+#define GENERIC_ALLOC_SIZE_DECLARE(TYPE)      \
+  size_t _ecore_sizeof_##TYPE = sizeof (TYPE);
 
 GENERIC_ALLOC_FREE_HEADER(Ecore_Animator, ecore_animator);
 GENERIC_ALLOC_FREE_HEADER(Ecore_Event_Handler, ecore_event_handler);

@@ -9,6 +9,45 @@
 
 static int inpurge = 0;
 
+struct _Ecore_Event_Handler
+{
+   EINA_INLIST;
+                          ECORE_MAGIC;
+   int                    type;
+   Ecore_Event_Handler_Cb func;
+   void                  *data;
+   int                    references;
+   Eina_Bool              delete_me : 1;
+};
+GENERIC_ALLOC_SIZE_DECLARE(Ecore_Event_Handler);
+
+struct _Ecore_Event_Filter
+{
+   EINA_INLIST;
+                   ECORE_MAGIC;
+   Ecore_Data_Cb   func_start;
+   Ecore_Filter_Cb func_filter;
+   Ecore_End_Cb    func_end;
+   void           *loop_data;
+   void           *data;
+   int             references;
+   Eina_Bool       delete_me : 1;
+};
+GENERIC_ALLOC_SIZE_DECLARE(Ecore_Event_Filter);
+
+struct _Ecore_Event
+{
+   EINA_INLIST;
+                ECORE_MAGIC;
+   int          type;
+   void        *event;
+   Ecore_End_Cb func_free;
+   void        *data;
+   int          references;
+   Eina_Bool    delete_me : 1;
+};
+GENERIC_ALLOC_SIZE_DECLARE(Ecore_Event);
+
 static int events_num = 0;
 static Ecore_Event *events = NULL;
 static Ecore_Event *event_current = NULL;

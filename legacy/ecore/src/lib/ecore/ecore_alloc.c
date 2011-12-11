@@ -18,11 +18,13 @@ struct _Ecore_Mempool
 };
 
 #define GENERIC_ALLOC_FREE(TYPE, Type)                                  \
-  Ecore_Mempool Type##_mp = { #TYPE,  NULL, sizeof (TYPE) };              \
+  extern size_t _ecore_sizeof_##TYPE;                                   \
+  Ecore_Mempool Type##_mp = { #TYPE,  NULL, 0 };                        \
   TYPE *                                                                \
   Type##_calloc(unsigned int num)                                       \
   {                                                                     \
-     return eina_mempool_calloc(Type##_mp.mp, num * sizeof (TYPE));     \
+     return eina_mempool_calloc(Type##_mp.mp,                           \
+                                num * _ecore_sizeof_##TYPE);            \
   }                                                                     \
   void                                                                  \
   Type##_mp_free(TYPE *e)                                               \
@@ -69,6 +71,26 @@ ecore_mempool_init(void)
 {
    const char *choice;
    unsigned int i;
+
+#define MP_SIZE_INIT(TYPE, Type) \
+   Type##_mp.size = _ecore_sizeof_##TYPE
+
+   MP_SIZE_INIT(Ecore_Animator, ecore_animator);
+   MP_SIZE_INIT(Ecore_Event_Handler, ecore_event_handler);
+   MP_SIZE_INIT(Ecore_Event_Filter, ecore_event_filter);
+   MP_SIZE_INIT(Ecore_Event, ecore_event);
+   MP_SIZE_INIT(Ecore_Idle_Exiter, ecore_idle_exiter);
+   MP_SIZE_INIT(Ecore_Idle_Enterer, ecore_idle_enterer);
+   MP_SIZE_INIT(Ecore_Idler, ecore_idler);
+   MP_SIZE_INIT(Ecore_Job, ecore_job);
+   MP_SIZE_INIT(Ecore_Timer, ecore_timer);
+   MP_SIZE_INIT(Ecore_Poller, ecore_poller);
+   MP_SIZE_INIT(Ecore_Pipe, ecore_pipe);
+   MP_SIZE_INIT(Ecore_Fd_Handler, ecore_fd_handler);
+#ifdef _WIN32
+   MP_SIZE_INIT(Ecore_Win32_Handler, ecore_win32_handler);
+#endif
+#undef MP_SIZE_INIT
 
    choice = getenv("EINA_MEMPOOL");
    if ((!choice) || (!choice[0]))

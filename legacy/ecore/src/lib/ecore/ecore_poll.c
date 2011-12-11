@@ -7,6 +7,17 @@
 #include "Ecore.h"
 #include "ecore_private.h"
 
+struct _Ecore_Poller
+{
+   EINA_INLIST;
+                 ECORE_MAGIC;
+   int           ibit;
+   unsigned char delete_me : 1;
+   Ecore_Task_Cb func;
+   void         *data;
+};
+GENERIC_ALLOC_SIZE_DECLARE(Ecore_Poller);
+
 static Ecore_Timer *timer = NULL;
 static int min_interval = -1;
 static int interval_incr = 0;

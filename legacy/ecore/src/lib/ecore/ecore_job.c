@@ -16,6 +16,15 @@ static void _ecore_job_event_free(void *data,
 static int ecore_event_job_type = 0;
 static Ecore_Event_Handler *_ecore_job_handler = NULL;
 
+struct _Ecore_Job
+{
+                ECORE_MAGIC;
+   Ecore_Event *event;
+   Ecore_Cb     func;
+   void        *data;
+};
+GENERIC_ALLOC_SIZE_DECLARE(Ecore_Job);
+
 void
 _ecore_job_init(void)
 {

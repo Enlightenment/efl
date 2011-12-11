@@ -80,6 +80,22 @@
 
 #endif /* ! _WIN32 */
 
+struct _Ecore_Pipe
+{
+                     ECORE_MAGIC;
+   int               fd_read;
+   int               fd_write;
+   Ecore_Fd_Handler *fd_handler;
+   const void       *data;
+   Ecore_Pipe_Cb     handler;
+   unsigned int      len;
+   int               handling;
+   size_t            already_read;
+   void             *passed_data;
+   int               message;
+   Eina_Bool         delete_me : 1;
+};
+GENERIC_ALLOC_SIZE_DECLARE(Ecore_Pipe);
 
 static Eina_Bool _ecore_pipe_read(void             *data,
                                   Ecore_Fd_Handler *fd_handler);
