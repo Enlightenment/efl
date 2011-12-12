@@ -198,8 +198,9 @@ evas_object_image_filled_add(Evas *e)
 static void
 _cleanup_tmpf(Evas_Object *obj)
 {
+#ifdef HAVE_SYS_MMAN_H
    Evas_Object_Image *o;
-   
+
    o = (Evas_Object_Image *)(obj->object_data);
    if (!o->tmpf) return;
 #ifdef __linux__
@@ -210,6 +211,9 @@ _cleanup_tmpf(Evas_Object *obj)
    eina_stringshare_del(o->tmpf);
    o->tmpf_fd = -1;
    o->tmpf = NULL;
+#else
+   (void) obj;
+#endif
 }
 
 static void
