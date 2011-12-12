@@ -22,29 +22,53 @@ static Evas_Image_Load_Func evas_image_load_ico_func =
   NULL
 };
 
-static int
-read_ushort(FILE *file, unsigned short *ret)
+static Eina_Bool
+read_ushort(unsigned char *map, size_t length, size_t *position, unsigned short *ret)
 {
    unsigned char b[2];
-   if (fread(b, sizeof(unsigned char), 2, file) != 2) return 0;
+
+   if (*position + 2 > length) return EINA_FALSE;
+   b[0] = map[(*position)++];
+   b[1] = map[(*position)++];
    *ret = (b[1] << 8) | b[0];
-   return 1;
+   return EINA_TRUE;
 }
 
-static int
-read_uint(FILE *file, unsigned int *ret)
+static Eina_Bool
+read_uint(unsigned char *map, size_t length, size_t *position, unsigned int *ret)
 {
-   unsigned char       b[4];
-   if (fread(b, sizeof(unsigned char), 4, file) != 4) return 0;
+   unsigned char b[4];
+   unsigned int i;
+
+   if (*position + 4 > length) return EINA_FALSE;
+   for (i = 0; i < 4; i++)
+     b[i] = map[(*position)++];
    *ret = ARGB_JOIN(b[3], b[2], b[1], b[0]);
-   return 1;
+   return EINA_TRUE;
+}
+
+static Eina_Bool
+read_uchar(unsigned char *map, size_t length, size_t *position, unsigned char *ret)
+{
+   if (*position + 1 > length) return EINA_FALSE;
+   *ret = map[(*position)++];
+   return EINA_TRUE;
+}
+
+static Eina_Bool
+read_mem(unsigned char *map, size_t length, size_t *position, void *buffer, int size)
+{
+   if (*position + size > length) return EINA_FALSE;
+   memcpy(buffer, map + *position, size);
+   *position += size;
+   return EINA_TRUE;
 }
 
 enum
 {
-   SMALLEST, 
-   BIGGEST, 
-   SMALLER, 
+   SMALLEST,
+   BIGGEST,
+   SMALLER,
    BIGGER
 };
 
@@ -57,9 +81,11 @@ enum
 static Eina_Bool
 evas_image_load_file_head_ico(Image_Entry *ie, const char *file, const char *key, int *error)
 {
+   Eina_File *f;
+   void *map = NULL;
+   size_t position = 0;
    unsigned short word;
    unsigned char byte;
-   FILE *f;
    int wanted_w = 0, wanted_h = 0, w, h, cols, i, planes = 0,
       hot_x = 0, hot_y = 0, bpp = 0, pdelta, search = -1, have_choice = 0,
       hasa = 1;
@@ -74,7 +100,7 @@ evas_image_load_file_head_ico(Image_Entry *ie, const char *file, const char *key
       unsigned int bmoffset, bmsize;
    } chosen = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
 
-   f = fopen(file, "rb");
+   f = eina_file_open(file, EINA_FILE_SEQUENTIAL);
    if (!f)
      {
 	*error = EVAS_LOAD_ERROR_DOES_NOT_EXIST;
@@ -82,16 +108,14 @@ evas_image_load_file_head_ico(Image_Entry *ie, const char *file, const char *key
      }
 
    *error = EVAS_LOAD_ERROR_UNKNOWN_FORMAT;
-   fseek(f, 0, SEEK_END);
-   fsize = ftell(f);
-   fseek(f, 0, SEEK_SET);
+   fsize = eina_file_size_get(f);
    if (fsize < (6 + 16 + 40)) goto close_file;
 
    // key:
    //   NULL == highest res
    //   biggest == highest res
    //   smallest == lowest res
-   //   
+   //
    //   smaller == next size SMALLER than load opts WxH (if possible)
    //   bigger == next size BIGGER than load opts WxH (if possible)
    //   more ?
@@ -103,10 +127,10 @@ evas_image_load_file_head_ico(Image_Entry *ie, const char *file, const char *key
         wanted_h = ie->load_opts.h;
         search = SMALLER;
      }
-   
-   if (!read_ushort(f, &reserved)) goto close_file;
-   if (!read_ushort(f, &type)) goto close_file;
-   if (!read_ushort(f, &count)) goto close_file;
+
+   if (!read_ushort(map, fsize, &position, &reserved)) goto close_file;
+   if (!read_ushort(map, fsize, &position, &type)) goto close_file;
+   if (!read_ushort(map, fsize, &position, &count)) goto close_file;
    if (!((reserved == 0) && 
          ((type == ICON) || (type == CURSOR)) && (count > 0)))
       goto close_file;
@@ -141,24 +165,21 @@ evas_image_load_file_head_ico(Image_Entry *ie, const char *file, const char *key
      }
    for (i = 0; i < count; i++)
      {
-        if (fread(&byte, 1, 1, f) != 1) goto close_file;
-        w = byte;
+        if (!read_uchar(map, fsize, &position, ((unsigned char *)&w))) goto close_file;
         if (w <= 0) w = 256;
-        if (fread(&byte, 1, 1, f) != 1) goto close_file;
-        h = byte;
+        if (!read_uchar(map, fsize, &position, ((unsigned char *)&h))) goto close_file;
         if (h <= 0) h = 256;
-        if (fread(&byte, 1, 1, f) != 1) goto close_file;
-        cols = byte;
+        if (!read_uchar(map, fsize, &position, ((unsigned char *)&cols))) goto close_file;
         if (cols <= 0) cols = 256;
-        if (fread(&byte, 1, 1, f) != 1) goto close_file;
-        if (!read_ushort(f, &word)) goto close_file;
+        if (!read_uchar(map, fsize, &position, &byte)) goto close_file;
+        if (!read_ushort(map, fsize, &position, &word)) goto close_file;
         if (type == CURSOR) planes = word;
         else hot_x = word;
-        if (!read_ushort(f, &word)) goto close_file;
+        if (!read_ushort(map, fsize, &position, &word)) goto close_file;
         if (type == CURSOR) bpp = word;
         else hot_y = word;
-        if (!read_uint(f, &bmsize)) goto close_file;
-        if (!read_uint(f, &bmoffset)) goto close_file;
+        if (!read_uint(map, fsize, &position, &bmsize)) goto close_file;
+        if (!read_uint(map, fsize, &position, &bmoffset)) goto close_file;
         if ((bmsize <= 0) || (bmoffset <= 0) || (bmoffset >= fsize)) goto close_file;
         if (search == BIGGEST)
           {
@@ -245,7 +266,7 @@ evas_image_load_file_head_ico(Image_Entry *ie, const char *file, const char *key
           }
      }
    if (chosen.bmoffset == 0) goto close_file;
-   if (fseek(f, chosen.bmoffset, SEEK_SET) != 0) goto close_file;
+   position = chosen.bmoffset;
 
    w = chosen.w;
    h = chosen.h;
@@ -263,23 +284,28 @@ evas_image_load_file_head_ico(Image_Entry *ie, const char *file, const char *key
    ie->w = w;
    ie->h = h;
    if (hasa) ie->flags.alpha = 1;
-   
-   fclose(f);
+
+   eina_file_map_free(f, map);
+   eina_file_close(f);
+
    *error = EVAS_LOAD_ERROR_NONE;
    return EINA_TRUE;
 
  close_file:
-   fclose(f);
+   if (map) eina_file_map_free(f, map);
+   eina_file_close(f);
    return EINA_FALSE;
 }
 
 static Eina_Bool
 evas_image_load_file_data_ico(Image_Entry *ie, const char *file, const char *key, int *error)
 {
+   Eina_File *f;
+   void *map = NULL;
+   size_t position = 0;
    unsigned short word;
    unsigned char byte;
    unsigned int dword;
-   FILE *f;
    int wanted_w = 0, wanted_h = 0, w, h, cols, i, planes = 0,
       hot_x = 0, hot_y = 0, bpp = 0, pdelta, search = -1, have_choice = 0,
       stride, pstride, j, right_way_up = 0, diff_size = 0, cols2;
@@ -296,7 +322,7 @@ evas_image_load_file_data_ico(Image_Entry *ie, const char *file, const char *key
       unsigned int bmoffset, bmsize;
    } chosen = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
 
-   f = fopen(file, "rb");
+   f = eina_file_open(file, EINA_FILE_SEQUENTIAL);
    if (!f)
      {
 	*error = EVAS_LOAD_ERROR_DOES_NOT_EXIST;
@@ -304,9 +330,7 @@ evas_image_load_file_data_ico(Image_Entry *ie, const char *file, const char *key
      }
 
    *error = EVAS_LOAD_ERROR_UNKNOWN_FORMAT;
-   fseek(f, 0, SEEK_END);
-   fsize = ftell(f);
-   fseek(f, 0, SEEK_SET);
+   fsize = eina_file_size_get(f);
    if (fsize < (6 + 16 + 40)) goto close_file;
 
    // key:
@@ -325,11 +349,11 @@ evas_image_load_file_data_ico(Image_Entry *ie, const char *file, const char *key
         wanted_h = ie->load_opts.h;
         search = SMALLER;
      }
-   
-   if (!read_ushort(f, &reserved)) goto close_file;
-   if (!read_ushort(f, &type)) goto close_file;
-   if (!read_ushort(f, &count)) goto close_file;
-   if (!((reserved == 0) && 
+
+   if (!read_ushort(map, fsize, &position, &reserved)) goto close_file;
+   if (!read_ushort(map, fsize, &position, &type)) goto close_file;
+   if (!read_ushort(map, fsize, &position, &count)) goto close_file;
+   if (!((reserved == 0) &&
          ((type == ICON) || (type == CURSOR)) && (count > 0)))
       goto close_file;
    *error = EVAS_LOAD_ERROR_CORRUPT_FILE;
@@ -363,24 +387,21 @@ evas_image_load_file_data_ico(Image_Entry *ie, const char *file, const char *key
      }
    for (i = 0; i < count; i++)
      {
-        if (fread(&byte, 1, 1, f) != 1) goto close_file;
-        w = byte;
+        if (!read_uchar(map, fsize, &position, ((unsigned char *)&w))) goto close_file;
         if (w <= 0) w = 256;
-        if (fread(&byte, 1, 1, f) != 1) goto close_file;
-        h = byte;
+        if (!read_uchar(map, fsize, &position, ((unsigned char *)&h))) goto close_file;
         if (h <= 0) h = 256;
-        if (fread(&byte, 1, 1, f) != 1) goto close_file;
-        cols = byte;
+        if (!read_uchar(map, fsize, &position, ((unsigned char *)&cols))) goto close_file;
         if (cols <= 0) cols = 256;
-        if (fread(&byte, 1, 1, f) != 1) goto close_file;
-        if (!read_ushort(f, &word)) goto close_file;
+        if (!read_uchar(map, fsize, &position, &byte)) goto close_file;
+        if (!read_ushort(map, fsize, &position, &word)) goto close_file;
         if (type == 1) planes = word;
         else hot_x = word;
-        if (!read_ushort(f, &word)) goto close_file;
+        if (!read_ushort(map, fsize, &position, &word)) goto close_file;
         if (type == 1) bpp = word;
         else hot_y = word;
-        if (!read_uint(f, &bmsize)) goto close_file;
-        if (!read_uint(f, &bmoffset)) goto close_file;
+        if (!read_uint(map, fsize, &position, &bmsize)) goto close_file;
+        if (!read_uint(map, fsize, &position, &bmoffset)) goto close_file;
         if ((bmsize <= 0) || (bmoffset <= 0) || (bmoffset >= fsize)) goto close_file;
         if (search == BIGGEST)
           {
@@ -467,7 +488,7 @@ evas_image_load_file_data_ico(Image_Entry *ie, const char *file, const char *key
           }
      }
    if (chosen.bmoffset == 0) goto close_file;
-   if (fseek(f, chosen.bmoffset, SEEK_SET) != 0) goto close_file;
+   position = chosen.bmoffset;
 
    w = chosen.w;
    h = chosen.h;
@@ -477,8 +498,8 @@ evas_image_load_file_data_ico(Image_Entry *ie, const char *file, const char *key
    if (((int)ie->w != w) || ((int)ie->h != h)) goto close_file;
    
    // read bmp header time... let's do some checking
-   if (!read_uint(f, &dword)) goto close_file; // headersize - dont care
-   if (!read_uint(f, &dword)) goto close_file; // width
+   if (!read_uint(map, fsize, &position, &dword)) goto close_file; // headersize - dont care
+   if (!read_uint(map, fsize, &position, &dword)) goto close_file; // width
    if (dword > 0)
      {
         if ((int)dword != w)
@@ -487,7 +508,7 @@ evas_image_load_file_data_ico(Image_Entry *ie, const char *file, const char *key
              diff_size = 1;
           }
      }
-   if (!read_uint(f, &dword)) goto close_file; // height
+   if (!read_uint(map, fsize, &position, &dword)) goto close_file; // height
    if (dword > 0)
      {
         if ((int)dword != (h * 2))
@@ -503,19 +524,19 @@ evas_image_load_file_data_ico(Image_Entry *ie, const char *file, const char *key
             "  May be expanded or cropped.",
             file, ie->w, ie->h, w, h);
      }
-   if (!read_ushort(f, &word)) goto close_file; // planes
+   if (!read_ushort(map, fsize, &position, &word)) goto close_file; // planes
    planes2 = word;
-   if (!read_ushort(f, &word)) goto close_file; // bitcount
+   if (!read_ushort(map, fsize, &position, &word)) goto close_file; // bitcount
    bitcount = word;
-   if (!read_uint(f, &dword)) goto close_file; // compression
+   if (!read_uint(map, fsize, &position, &dword)) goto close_file; // compression
    compression = dword;
-   if (!read_uint(f, &dword)) goto close_file; // imagesize
+   if (!read_uint(map, fsize, &position, &dword)) goto close_file; // imagesize
    imagesize = dword;
-   if (!read_uint(f, &dword)) goto close_file; // z pixels per m
-   if (!read_uint(f, &dword)) goto close_file; // y pizels per m
-   if (!read_uint(f, &dword)) goto close_file; // colors used
+   if (!read_uint(map, fsize, &position, &dword)) goto close_file; // z pixels per m
+   if (!read_uint(map, fsize, &position, &dword)) goto close_file; // y pizels per m
+   if (!read_uint(map, fsize, &position, &dword)) goto close_file; // colors used
    colorsused = dword;
-   if (!read_uint(f, &dword)) goto close_file; // colors important
+   if (!read_uint(map, fsize, &position, &dword)) goto close_file; // colors important
    colorsimportant = dword;
 
    evas_cache_image_surface_alloc(ie, ie->w, ie->h);
@@ -545,11 +566,11 @@ evas_image_load_file_data_ico(Image_Entry *ie, const char *file, const char *key
    for (i = 0; i < cols; i++)
      {
         unsigned char a, r, g, b;
-        
-        if (fread(&b, 1, 1, f) != 1) goto close_file;
-        if (fread(&g, 1, 1, f) != 1) goto close_file;
-        if (fread(&r, 1, 1, f) != 1) goto close_file;
-        if (fread(&a, 1, 1, f) != 1) goto close_file;
+
+        if (!read_uchar(map, fsize, &position, &b)) goto close_file;
+        if (!read_uchar(map, fsize, &position, &g)) goto close_file;
+        if (!read_uchar(map, fsize, &position, &r)) goto close_file;
+        if (!read_uchar(map, fsize, &position, &a)) goto close_file;
         a = 0xff;
         pal[i] = ARGB_JOIN(a, r, g, b);
      }
@@ -563,7 +584,7 @@ evas_image_load_file_data_ico(Image_Entry *ie, const char *file, const char *key
           {
              pix = surface + (i * ie->w);
              if (!right_way_up) pix = surface + ((ie->h - 1 - i) * ie->w);
-             if (fread(pixbuf, pstride, 1, f) != 1) goto close_file;
+             if (!read_mem(map, fsize, &position, pixbuf, pstride)) goto close_file;
              p = pixbuf;
              if (i >= (int)ie->h) continue;
              for (j = 0; j < w; j++)
@@ -613,7 +634,7 @@ evas_image_load_file_data_ico(Image_Entry *ie, const char *file, const char *key
           {
              pix = surface + (i * ie->w);
              if (!right_way_up) pix = surface + ((ie->h - 1 - i) * ie->w);
-             if (fread(pixbuf, pstride, 1, f) != 1) goto close_file;
+             if (!read_mem(map, fsize, &position, pixbuf, pstride)) goto close_file;
              p = pixbuf;
              if (i >= (int)ie->h) continue;
              for (j = 0; j < w; j++)
@@ -639,7 +660,7 @@ evas_image_load_file_data_ico(Image_Entry *ie, const char *file, const char *key
           {
              pix = surface + (i * ie->w);
              if (!right_way_up) pix = surface + ((ie->h - 1 - i) * ie->w);
-             if (fread(pixbuf, pstride, 1, f) != 1) goto close_file;
+             if (!read_mem(map, fsize, &position, pixbuf, pstride)) goto close_file;
              p = pixbuf;
              if (i >= (int)ie->h) continue;
              for (j = 0; j < w; j++)
@@ -658,13 +679,13 @@ evas_image_load_file_data_ico(Image_Entry *ie, const char *file, const char *key
           {
              pix = surface + (i * ie->w);
              if (!right_way_up) pix = surface + ((ie->h - 1 - i) * ie->w);
-             if (fread(pixbuf, pstride, 1, f) != 1) goto close_file;
+             if (!read_mem(map, fsize, &position, pixbuf, pstride)) goto close_file;
              p = pixbuf;
              if (i >= (int)ie->h) continue;
              for (j = 0; j < w; j++)
                {
                   unsigned char a, r, g, b;
-                  
+
                   if (j >= (int)ie->w) break;
                   b = p[0];
                   g = p[1];
@@ -683,13 +704,13 @@ evas_image_load_file_data_ico(Image_Entry *ie, const char *file, const char *key
           {
              pix = surface + (i * ie->w);
              if (!right_way_up) pix = surface + ((ie->h - 1 - i) * ie->w);
-             if (fread(pixbuf, pstride, 1, f) != 1) goto close_file;
+             if (!read_mem(map, fsize, &position, pixbuf, pstride)) goto close_file;
              p = pixbuf;
              if (i >= (int)ie->h) continue;
              for (j = 0; j < w; j++)
                {
                   unsigned char a, r, g, b;
-                  
+
                   if (j >= (int)ie->w) break;
                   b = p[0];
                   g = p[1];
@@ -704,13 +725,13 @@ evas_image_load_file_data_ico(Image_Entry *ie, const char *file, const char *key
      }
    if (!none_zero_alpha)
      {
-        if (fread(maskbuf, stride * 4 * h, 1, f) != 1) goto close_file;
+        if (!read_mem(map, fsize, &position, maskbuf, stride * 4 * h)) goto close_file;
         // apply mask
         pix = surface;
         for (i = 0; i < h; i++)
           {
              unsigned char *m;
-             
+
              pix = surface + (i * ie->w);
              if (!right_way_up) pix = surface + ((ie->h - 1 - i) * ie->w);
              m = maskbuf + (stride * i * 4);
@@ -727,15 +748,17 @@ evas_image_load_file_data_ico(Image_Entry *ie, const char *file, const char *key
                }
           }
      }
-   
-   fclose(f);
-   
+
+   eina_file_map_free(map, f);
+   eina_file_close(f);
+
    evas_common_image_premul(ie);
    *error = EVAS_LOAD_ERROR_NONE;
    return EINA_TRUE;
 
  close_file:
-   fclose(f);
+   if (map) eina_file_map_free(map, f);
+   eina_file_close(f);
    return EINA_FALSE;
 }
 
