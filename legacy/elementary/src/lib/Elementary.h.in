@@ -15339,6 +15339,13 @@ extern "C" {
     * Default text parts of the toolbar items that you can use for are:
     * @li "default" - label of the toolbar item
     *  
+    * Supported elm_object_item common APIs.
+    * @li elm_object_item_disabled_set
+    * @li elm_object_item_text_set
+    * @li elm_object_item_part_text_set
+    * @li elm_object_item_text_get
+    * @li elm_object_item_part_text_get
+    *
     * List of examples:
     * @li @ref toolbar_example_01
     * @li @ref toolbar_example_02
@@ -29702,6 +29709,22 @@ extern "C" {
     * Default text parts of the naviframe items that you can use for are:
     * @li "default" - Title label in the title area
     * @li "subtitle" - Sub-title label in the title area
+    *
+    * Supported elm_object common APIs.
+    * @li elm_object_signal_emit
+    *
+    * Supported elm_object_item common APIs.
+    * @li elm_object_item_text_set
+    * @li elm_object_item_part_text_set
+    * @li elm_object_item_text_get
+    * @li elm_object_item_part_text_get
+    * @li elm_object_item_content_set
+    * @li elm_object_item_part_content_set
+    * @li elm_object_item_content_get
+    * @li elm_object_item_part_content_get
+    * @li elm_object_item_content_unset
+    * @li elm_object_item_part_content_unset
+    * @li elm_object_item_signal_emit
     *
     * @ref tutorial_naviframe gives a good overview of the usage of the API.
     */
