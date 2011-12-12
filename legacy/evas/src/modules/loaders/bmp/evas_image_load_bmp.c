@@ -24,47 +24,87 @@ static Evas_Image_Load_Func evas_image_load_bmp_func =
   NULL
 };
 
-static int
-read_short(FILE *file, short *ret)
+static Eina_Bool
+read_short(unsigned char *map, size_t length, size_t *position, short *ret)
 {
    unsigned char b[2];
-   if (fread(b, sizeof(unsigned char), 2, file) != 2) return 0;
+
+   if (*position + 2 > length) return EINA_FALSE;
+   b[0] = map[(*position)++];
+   b[1] = map[(*position)++];
    *ret = (b[1] << 8) | b[0];
-   return 1;
+   return EINA_TRUE;
 }
 
-static int
-read_ushort(FILE *file, unsigned short *ret)
+static Eina_Bool
+read_ushort(unsigned char *map, size_t length, size_t *position, unsigned short *ret)
 {
    unsigned char b[2];
-   if (fread(b, sizeof(unsigned char), 2, file) != 2) return 0;
+
+   if (*position + 2 > length) return EINA_FALSE;
+   b[0] = map[(*position)++];
+   b[1] = map[(*position)++];
    *ret = (b[1] << 8) | b[0];
-   return 1;
+   return EINA_TRUE;
 }
 
-static int
-read_int(FILE *file, int *ret)
+static Eina_Bool
+read_int(unsigned char *map, size_t length, size_t *position, int *ret)
 {
    unsigned char b[4];
-   if (fread(b, sizeof(unsigned char), 4, file) != 4) return 0;
+   int i;
+
+   if (*position + 4 > length) return EINA_FALSE;
+   for (i = 0; i < 4; i++)
+     b[i] = map[(*position)++];
    *ret = ARGB_JOIN(b[3], b[2], b[1], b[0]);
-   return 1;
+   return EINA_TRUE;
 }
 
-static int
-read_uint(FILE *file, unsigned int *ret)
+static Eina_Bool
+read_uint(unsigned char *map, size_t length, size_t *position, unsigned int *ret)
 {
-   unsigned char       b[4];
-   if (fread(b, sizeof(unsigned char), 4, file) != 4) return 0;
+   unsigned char b[4];
+   int i;
+
+   if (*position + 4 > length) return EINA_FALSE;
+   for (i = 0; i < 4; i++)
+     b[i] = map[(*position)++];
    *ret = ARGB_JOIN(b[3], b[2], b[1], b[0]);
-   return 1;
+   return EINA_TRUE;
+}
+
+static Eina_Bool
+read_uchar(unsigned char *map, size_t length, size_t *position, unsigned char *ret)
+{
+   if (*position + 1 > length) return EINA_FALSE;
+   *ret = map[(*position)++];
+   return EINA_TRUE;
+}
+
+static Eina_Bool
+read_skip(size_t length, size_t *position, int skip)
+{
+   if (*position + skip > length) return EINA_FALSE;
+   *position += skip;
+   return EINA_TRUE;
+}
+
+static Eina_Bool
+read_mem(unsigned char *map, size_t length, size_t *position, void *buffer, int size)
+{
+   if (*position + size > length) return EINA_FALSE;
+   memcpy(buffer, map + *position, size);
+   *position += size;
+   return EINA_TRUE;
 }
 
 static Eina_Bool
 evas_image_load_file_head_bmp(Image_Entry *ie, const char *file, const char *key __UNUSED__, int *error)
 {
-   FILE *f;
-   char buf[4096];
+   Eina_File *f;
+   void *map = NULL;
+   size_t position = 0;
    char hasa = 0;
    int w = 0, h = 0, planes = 0, bit_count = 0,
      image_size = 0, comp = 0, hdpi = 0, vdpi = 0,
@@ -76,7 +116,7 @@ evas_image_load_file_head_bmp(Image_Entry *ie, const char *file, const char *key
    unsigned int bmpsize;
    unsigned short res1, res2;
 
-   f = fopen(file, "rb");
+   f = eina_file_open(file, 0);
    if (!f)
      {
 	*error = EVAS_LOAD_ERROR_DOES_NOT_EXIST;
@@ -84,84 +124,85 @@ evas_image_load_file_head_bmp(Image_Entry *ie, const char *file, const char *key
      }
 
    *error = EVAS_LOAD_ERROR_UNKNOWN_FORMAT;
-   fseek(f, 0, SEEK_END);
-   fsize = ftell(f);
-   fseek(f, 0, SEEK_SET);
+   fsize = eina_file_size_get(f);
    if (fsize < 2) goto close_file;
-   
-   if (fread(buf, 2, 1, f) != 1) goto close_file;
-   if (strncmp(buf, "BM", 2)) goto close_file; // magic number
+
+   map = eina_file_map_all(f, EINA_FILE_SEQUENTIAL);
+   if (!map) goto close_file;
+
+   if (strncmp(map, "BM", 2)) goto close_file; // magic number
+   position += 2;
    *error = EVAS_LOAD_ERROR_CORRUPT_FILE;
-   if (!read_uint(f, &bmpsize)) goto close_file;
-   if (!read_ushort(f, &res1)) goto close_file;
-   if (!read_ushort(f, &res2)) goto close_file;
-   if (!read_uint(f, &offset)) goto close_file;
-   if (!read_uint(f, &head_size)) goto close_file;
+   if (!read_uint(map, fsize, &position, &bmpsize)) goto close_file;
+   if (!read_ushort(map, fsize, &position, &res1)) goto close_file;
+   if (!read_ushort(map, fsize, &position, &res2)) goto close_file;
+   if (!read_uint(map, fsize, &position, &offset)) goto close_file;
+   if (!read_uint(map, fsize, &position, &head_size)) goto close_file;
    if (head_size == 12) // OS/2 V1 + Windows 3.0
      {
         short tmp;
-        
-        if (!read_short(f, &tmp)) goto close_file;
+
+        if (!read_short(map, fsize, &position, &tmp)) goto close_file;
         w = tmp; // width
-        if (!read_short(f, &tmp)) goto close_file;
+        if (!read_short(map, fsize, &position, &tmp)) goto close_file;
         h = tmp; // height
-        if (!read_short(f, &tmp)) goto close_file;
+        if (!read_short(map, fsize, &position, &tmp)) goto close_file;
         planes = tmp; // must be 1
-        if (!read_short(f, &tmp)) goto close_file;
+        if (!read_short(map, fsize, &position, &tmp)) goto close_file;
         bit_count = tmp; // bits per pixel: 1, 4, 8 & 24
      }
    else if (head_size == 64) // OS/2 V2
      {
         short tmp;
         int tmp2;
-        
-        if (!read_int(f, &tmp2)) goto close_file;
+
+        if (!read_int(map, fsize, &position, &tmp2)) goto close_file;
         w = tmp2; // width
-        if (!read_int(f, &tmp2)) goto close_file;
+        if (!read_int(map, fsize, &position, &tmp2)) goto close_file;
         h = tmp2; // height
-        if (!read_short(f, &tmp)) goto close_file;
+        if (!read_short(map, fsize, &position, &tmp)) goto close_file;
         planes = tmp; // must be 1
-        if (!read_short(f, &tmp)) goto close_file;
+        if (!read_short(map, fsize, &position, &tmp)) goto close_file;
         bit_count = tmp; // bits per pixel: 1, 4, 8, 16, 24 & 32
-        if (!read_int(f, &tmp2)) goto close_file;
+        if (!read_int(map, fsize, &position, &tmp2)) goto close_file;
         comp = tmp2; // compression method
-        if (!read_int(f, &tmp2)) goto close_file;
+        if (!read_int(map, fsize, &position, &tmp2)) goto close_file;
         image_size = tmp2; // bitmap data size
-        if (!read_int(f, &tmp2)) goto close_file;
+        if (!read_int(map, fsize, &position, &tmp2)) goto close_file;
         hdpi = (tmp2 * 254) / 10000; // horizontal pixels/meter
-        if (!read_int(f, &tmp2)) goto close_file;
+        if (!read_int(map, fsize, &position, &tmp2)) goto close_file;
         vdpi = (tmp2 * 254) / 10000; // vertical pixles/meter
-        if (!read_int(f, &tmp2)) goto close_file;
+        if (!read_int(map, fsize, &position, &tmp2)) goto close_file;
         palette_size = tmp2; // number of palette colors power (2^n - so 0 - 8)
-        if (!read_int(f, &tmp2)) goto close_file;
+        if (!read_int(map, fsize, &position, &tmp2)) goto close_file;
         important_colors = tmp2; // number of important colors - 0 if all
-        if (fread(buf, 24, 1, f) != 1) goto close_file; // skip unused header
+	if (!read_skip(fsize, &position, 24)) goto close_file; // skip unused header
         if (image_size == 0) image_size = fsize - offset;
      }
    else if (head_size == 40) // Windows 3.0 + (v3)
      {
         short tmp;
         int tmp2;
-        
-        if (!read_int(f, &tmp2)) goto close_file;
+
+        if (!read_int(map, fsize, &position, &tmp2)) goto close_file;
         w = tmp2; // width
-        if (!read_int(f, &tmp2)) goto close_file;
+        if (!read_int(map, fsize, &position, &tmp2)) goto close_file;
         h = tmp2; // height
-        if (!read_short(f, &tmp)) goto close_file;
+        if (!read_short(map, fsize, &position, &tmp)) goto close_file;
         planes = tmp; // must be 1
-        if (!read_short(f, &tmp)) goto close_file;
+        if (!read_short(map, fsize, &position, &tmp)) goto close_file;
         bit_count = tmp; // bits per pixel: 1, 4, 8, 16, 24 & 32
-        if (!read_int(f, &tmp2)) goto close_file;
+        if (!read_int(map, fsize, &position, &tmp2)) goto close_file;
         comp = tmp2; // compression method
-        if (!read_int(f, &tmp2)) goto close_file;
+        if (!read_int(map, fsize, &position, &tmp2)) goto close_file;
         image_size = tmp2; // bitmap data size
-        if (!read_int(f, &tmp2)) goto close_file;
+        if (!read_int(map, fsize, &position, &tmp2)) goto close_file;
         hdpi = (tmp2 * 254) / 10000; // horizontal pixels/meter
-        if (!read_int(f, &tmp2)) goto close_file;
+        if (!read_int(map, fsize, &position, &tmp2)) goto close_file;
         vdpi = (tmp2 * 254) / 10000; // vertical pixles/meter
-        if (!read_int(f, &tmp2)) goto close_file;
+        if (!read_int(map, fsize, &position, &tmp2)) goto close_file;
         palette_size = tmp2; // number of palette colors power (2^n - so 0 - 8)
-        if (!read_int(f, &tmp2)) goto close_file;
+        if (!read_int(map, fsize, &position, &tmp2)) goto close_file;
         important_colors = tmp2; // number of important colors - 0 if all
         if (image_size == 0) image_size = fsize - offset;
         if ((comp == 0) && (bit_count == 32)) hasa = 1; // GIMP seems to store it this way
@@ -170,37 +211,37 @@ evas_image_load_file_head_bmp(Image_Entry *ie, const char *file, const char *key
      {
         short tmp;
         int tmp2;
-        
-        if (!read_int(f, &tmp2)) goto close_file;
+
+        if (!read_int(map, fsize, &position, &tmp2)) goto close_file;
         w = tmp2; // width
-        if (!read_int(f, &tmp2)) goto close_file;
+        if (!read_int(map, fsize, &position, &tmp2)) goto close_file;
         h = tmp2; // height
-        if (!read_short(f, &tmp)) goto close_file;
+        if (!read_short(map, fsize, &position, &tmp)) goto close_file;
         planes = tmp; // must be 1
-        if (!read_short(f, &tmp)) goto close_file;
+        if (!read_short(map, fsize, &position, &tmp)) goto close_file;
         bit_count = tmp; // bits per pixel: 1, 4, 8, 16, 24 & 32
-        if (!read_int(f, &tmp2)) goto close_file;
+        if (!read_int(map, fsize, &position, &tmp2)) goto close_file;
         comp = tmp2; // compression method
-        if (!read_int(f, &tmp2)) goto close_file;
+        if (!read_int(map, fsize, &position, &tmp2)) goto close_file;
         image_size = tmp2; // bitmap data size
-        if (!read_int(f, &tmp2)) goto close_file;
+        if (!read_int(map, fsize, &position, &tmp2)) goto close_file;
         hdpi = (tmp2 * 254) / 10000; // horizontal pixels/meter
-        if (!read_int(f, &tmp2)) goto close_file;
+        if (!read_int(map, fsize, &position, &tmp2)) goto close_file;
         vdpi = (tmp2 * 254) / 10000; // vertical pixles/meter
-        if (!read_int(f, &tmp2)) goto close_file;
+        if (!read_int(map, fsize, &position, &tmp2)) goto close_file;
         palette_size = tmp2; // number of palette colors power (2^n - so 0 - 8)
-        if (!read_int(f, &tmp2)) goto close_file;
+        if (!read_int(map, fsize, &position, &tmp2)) goto close_file;
         important_colors = tmp2; // number of important colors - 0 if all
-        if (!read_int(f, &tmp2)) goto close_file;
+        if (!read_int(map, fsize, &position, &tmp2)) goto close_file;
         rmask = tmp2; // red mask
-        if (!read_int(f, &tmp2)) goto close_file;
+        if (!read_int(map, fsize, &position, &tmp2)) goto close_file;
         gmask = tmp2; // green mask
-        if (!read_int(f, &tmp2)) goto close_file;
+        if (!read_int(map, fsize, &position, &tmp2)) goto close_file;
         bmask = tmp2; // blue mask
-        if (!read_int(f, &tmp2)) goto close_file;
+        if (!read_int(map, fsize, &position, &tmp2)) goto close_file;
         amask = tmp2; // alpha mask
-        if (fread(buf, 36, 1, f) != 1) goto close_file; // skip unused cie
-        if (fread(buf, 12, 1, f) != 1) goto close_file; // skip unused gamma
+        if (!read_skip(fsize, &position, 36)) goto close_file; // skip unused cie
+        if (!read_skip(fsize, &position, 12)) goto close_file; // skip unused gamma
         if (image_size == 0) image_size = fsize - offset;
         if ((amask) && (bit_count == 32)) hasa = 1;
      }
@@ -208,38 +249,38 @@ evas_image_load_file_head_bmp(Image_Entry *ie, const char *file, const char *key
      {
         short tmp;
         int tmp2;
-        
-        if (!read_int(f, &tmp2)) goto close_file;
+
+        if (!read_int(map, fsize, &position, &tmp2)) goto close_file;
         w = tmp2; // width
-        if (!read_int(f, &tmp2)) goto close_file;
+        if (!read_int(map, fsize, &position, &tmp2)) goto close_file;
         h = tmp2; // height
-        if (!read_short(f, &tmp)) goto close_file;
+        if (!read_short(map, fsize, &position, &tmp)) goto close_file;
         planes = tmp; // must be 1
-        if (!read_short(f, &tmp)) goto close_file;
+        if (!read_short(map, fsize, &position, &tmp)) goto close_file;
         bit_count = tmp; // bits per pixel: 1, 4, 8, 16, 24 & 32
-        if (!read_int(f, &tmp2)) goto close_file;
+        if (!read_int(map, fsize, &position, &tmp2)) goto close_file;
         comp = tmp2; // compression method
-        if (!read_int(f, &tmp2)) goto close_file;
+        if (!read_int(map, fsize, &position, &tmp2)) goto close_file;
         image_size = tmp2; // bitmap data size
-        if (!read_int(f, &tmp2)) goto close_file;
+        if (!read_int(map, fsize, &position, &tmp2)) goto close_file;
         hdpi = (tmp2 * 254) / 10000; // horizontal pixels/meter
-        if (!read_int(f, &tmp2)) goto close_file;
+        if (!read_int(map, fsize, &position, &tmp2)) goto close_file;
         vdpi = (tmp2 * 254) / 10000; // vertical pixles/meter
-        if (!read_int(f, &tmp2)) goto close_file;
+        if (!read_int(map, fsize, &position, &tmp2)) goto close_file;
         palette_size = tmp2; // number of palette colors power (2^n - so 0 - 8)
-        if (!read_int(f, &tmp2)) goto close_file;
+        if (!read_int(map, fsize, &position, &tmp2)) goto close_file;
         important_colors = tmp2; // number of important colors - 0 if all
-        if (!read_int(f, &tmp2)) goto close_file;
+        if (!read_int(map, fsize, &position, &tmp2)) goto close_file;
         rmask = tmp2; // red mask
-        if (!read_int(f, &tmp2)) goto close_file;
+        if (!read_int(map, fsize, &position, &tmp2)) goto close_file;
         gmask = tmp2; // green mask
-        if (!read_int(f, &tmp2)) goto close_file;
+        if (!read_int(map, fsize, &position, &tmp2)) goto close_file;
         bmask = tmp2; // blue mask
-        if (!read_int(f, &tmp2)) goto close_file;
+        if (!read_int(map, fsize, &position, &tmp2)) goto close_file;
         amask = tmp2; // alpha mask
-        if (fread(buf, 36, 1, f) != 1) goto close_file; // skip unused cie
-        if (fread(buf, 12, 1, f) != 1) goto close_file; // skip unused gamma
-        if (fread(buf, 16, 1, f) != 1) goto close_file; // skip others
+        if (!read_skip(fsize, &position, 36)) goto close_file; // skip unused cie
+        if (!read_skip(fsize, &position, 12)) goto close_file; // skip unused gamma
+        if (!read_skip(fsize, &position, 16)) goto close_file; // skip others
         if (image_size == 0) image_size = fsize - offset;
         if ((amask) && (bit_count == 32)) hasa = 1;
      }
@@ -251,7 +292,7 @@ evas_image_load_file_head_bmp(Image_Entry *ie, const char *file, const char *key
         h = -h;
         right_way_up = 1;
      }
-   
+
    if ((w < 1) || (h < 1) || (w > IMG_MAX_SIZE) || (h > IMG_MAX_SIZE) ||
        IMG_TOO_BIG(w, h))
      {
@@ -327,21 +368,24 @@ evas_image_load_file_head_bmp(Image_Entry *ie, const char *file, const char *key
    ie->w = w;
    ie->h = h;
    if (hasa) ie->flags.alpha = 1;
-   
-   fclose(f);
+
+   eina_file_map_free(f, map);
+   eina_file_close(f);
    *error = EVAS_LOAD_ERROR_NONE;
    return EINA_TRUE;
 
  close_file:
-   fclose(f);
+   if (map) eina_file_map_free(f, map);
+   eina_file_close(f);
    return EINA_FALSE;
 }
 
 static Eina_Bool
 evas_image_load_file_data_bmp(Image_Entry *ie, const char *file, const char *key __UNUSED__, int *error)
 {
-   FILE *f;
-   char buf[4096];
+   Eina_File *f;
+   void *map = NULL;
+   size_t position = 0;
    unsigned char *buffer = NULL, *buffer_end = NULL, *p;
    char hasa = 0;
    int x = 0, y = 0, w = 0, h = 0, planes = 0, bit_count = 0, image_size = 0,
@@ -361,96 +405,93 @@ evas_image_load_file_data_bmp(Image_Entry *ie, const char *file, const char *key
    int row_size = 0; /* Row size is rounded up to a multiple of 4bytes */
    int read_line = 0; /* total read line */
 
-
-   f = fopen(file, "rb");
+   f = eina_file_open(file, 0);
    if (!f)
      {
 	*error = EVAS_LOAD_ERROR_DOES_NOT_EXIST;
 	return EINA_FALSE;
      }
-   
+
    *error = EVAS_LOAD_ERROR_UNKNOWN_FORMAT;
-   fseek(f, 0, SEEK_END);
-   fsize = ftell(f);
-   fseek(f, 0, SEEK_SET);
+   fsize = eina_file_size_get(f);
    if (fsize < 2) goto close_file;
-   
-   if (fread(buf, 2, 1, f) != 1) goto close_file;
-   if (strncmp(buf, "BM", 2)) goto close_file; // magic number
+
+   if (strncmp(map, "BM", 2)) goto close_file; // magic number
+   position += 2;
    *error = EVAS_LOAD_ERROR_CORRUPT_FILE;
-   if (!read_uint(f, &bmpsize)) goto close_file;
-   if (!read_ushort(f, &res1)) goto close_file;
-   if (!read_ushort(f, &res2)) goto close_file;
-   if (!read_uint(f, &offset)) goto close_file;
-   if (!read_uint(f, &head_size)) goto close_file;
+   if (!read_uint(map, fsize, &position, &bmpsize)) goto close_file;
+   if (!read_ushort(map, fsize, &position, &res1)) goto close_file;
+   if (!read_ushort(map, fsize, &position, &res2)) goto close_file;
+   if (!read_uint(map, fsize, &position, &offset)) goto close_file;
+   if (!read_uint(map, fsize, &position, &head_size)) goto close_file;
    image_size = fsize - offset;
    if (image_size < 1) goto close_file;
-   
+
    if (head_size == 12) // OS/2 V1 + Windows 3.0
      {
         short tmp;
-        
-        if (!read_short(f, &tmp)) goto close_file;
+
+        if (!read_short(map, fsize, &position, &tmp)) goto close_file;
         w = tmp; // width
-        if (!read_short(f, &tmp)) goto close_file;
+        if (!read_short(map, fsize, &position, &tmp)) goto close_file;
         h = tmp; // height
-        if (!read_short(f, &tmp)) goto close_file;
+        if (!read_short(map, fsize, &position, &tmp)) goto close_file;
         planes = tmp; // must be 1
-        if (!read_short(f, &tmp)) goto close_file;
+        if (!read_short(map, fsize, &position, &tmp)) goto close_file;
         bit_count = tmp; // bits per pixel: 1, 4, 8 & 24
      }
    else if (head_size == 64) // OS/2 V2
      {
         short tmp;
         int tmp2;
-        
-        if (!read_int(f, &tmp2)) goto close_file;
+
+        if (!read_int(map, fsize, &position, &tmp2)) goto close_file;
         w = tmp2; // width
-        if (!read_int(f, &tmp2)) goto close_file;
+        if (!read_int(map, fsize, &position, &tmp2)) goto close_file;
         h = tmp2; // height
-        if (!read_short(f, &tmp)) goto close_file;
+        if (!read_short(map, fsize, &position, &tmp)) goto close_file;
         planes = tmp; // must be 1
-        if (!read_short(f, &tmp)) goto close_file;
+        if (!read_short(map, fsize, &position, &tmp)) goto close_file;
         bit_count = tmp; // bits per pixel: 1, 4, 8, 16, 24 & 32
-        if (!read_int(f, &tmp2)) goto close_file;
+        if (!read_int(map, fsize, &position, &tmp2)) goto close_file;
         comp = tmp2; // compression method
-        if (!read_int(f, &tmp2)) goto close_file;
+        if (!read_int(map, fsize, &position, &tmp2)) goto close_file;
         image_size = tmp2; // bitmap data size
-        if (!read_int(f, &tmp2)) goto close_file;
+        if (!read_int(map, fsize, &position, &tmp2)) goto close_file;
         hdpi = (tmp2 * 254) / 10000; // horizontal pixels/meter
-        if (!read_int(f, &tmp2)) goto close_file;
+        if (!read_int(map, fsize, &position, &tmp2)) goto close_file;
         vdpi = (tmp2 * 254) / 10000; // vertical pixles/meter
-        if (!read_int(f, &tmp2)) goto close_file;
+        if (!read_int(map, fsize, &position, &tmp2)) goto close_file;
         palette_size = tmp2; // number of palette colors power (2^n - so 0 - 8)
-        if (!read_int(f, &tmp2)) goto close_file;
+        if (!read_int(map, fsize, &position, &tmp2)) goto close_file;
         important_colors = tmp2; // number of important colors - 0 if all
-        if (fread(buf, 24, 1, f) != 1) goto close_file; // skip unused header
+        if (!read_skip(fsize, &position, 24)) goto close_file; // skip unused header
         if (image_size == 0) image_size = fsize - offset;
      }
    else if (head_size == 40) // Windows 3.0 + (v3)
      {
         short tmp;
         int tmp2;
-        
-        if (!read_int(f, &tmp2)) goto close_file;
+
+        if (!read_int(map, fsize, &position, &tmp2)) goto close_file;
         w = tmp2; // width
-        if (!read_int(f, &tmp2)) goto close_file;
+        if (!read_int(map, fsize, &position, &tmp2)) goto close_file;
         h = tmp2; // height
-        if (!read_short(f, &tmp)) goto close_file;
+        if (!read_short(map, fsize, &position, &tmp)) goto close_file;
         planes = tmp; // must be 1
-        if (!read_short(f, &tmp)) goto close_file;
+        if (!read_short(map, fsize, &position, &tmp)) goto close_file;
         bit_count = tmp; // bits per pixel: 1, 4, 8, 16, 24 & 32
-        if (!read_int(f, &tmp2)) goto close_file;
+        if (!read_int(map, fsize, &position, &tmp2)) goto close_file;
         comp = tmp2; // compression method
-        if (!read_int(f, &tmp2)) goto close_file;
+        if (!read_int(map, fsize, &position, &tmp2)) goto close_file;
         image_size = tmp2; // bitmap data size
-        if (!read_int(f, &tmp2)) goto close_file;
+        if (!read_int(map, fsize, &position, &tmp2)) goto close_file;
         hdpi = (tmp2 * 254) / 10000; // horizontal pixels/meter
-        if (!read_int(f, &tmp2)) goto close_file;
+        if (!read_int(map, fsize, &position, &tmp2)) goto close_file;
         vdpi = (tmp2 * 254) / 10000; // vertical pixles/meter
-        if (!read_int(f, &tmp2)) goto close_file;
+        if (!read_int(map, fsize, &position, &tmp2)) goto close_file;
         palette_size = tmp2; // number of palette colors power (2^n - so 0 - 8)
-        if (!read_int(f, &tmp2)) goto close_file;
+        if (!read_int(map, fsize, &position, &tmp2)) goto close_file;
         important_colors = tmp2; // number of important colors - 0 if all
         if (image_size == 0) image_size = fsize - offset;
         if ((comp == 0) && (bit_count == 32)) hasa = 1; // GIMP seems to store it this way
@@ -459,37 +500,37 @@ evas_image_load_file_data_bmp(Image_Entry *ie, const char *file, const char *key
      {
         short tmp;
         int tmp2;
-        
-        if (!read_int(f, &tmp2)) goto close_file;
+
+        if (!read_int(map, fsize, &position, &tmp2)) goto close_file;
         w = tmp2; // width
-        if (!read_int(f, &tmp2)) goto close_file;
+        if (!read_int(map, fsize, &position, &tmp2)) goto close_file;
         h = tmp2; // height
-        if (!read_short(f, &tmp)) goto close_file;
+        if (!read_short(map, fsize, &position, &tmp)) goto close_file;
         planes = tmp; // must be 1
-        if (!read_short(f, &tmp)) goto close_file;
+        if (!read_short(map, fsize, &position, &tmp)) goto close_file;
         bit_count = tmp; // bits per pixel: 1, 4, 8, 16, 24 & 32
-        if (!read_int(f, &tmp2)) goto close_file;
+        if (!read_int(map, fsize, &position, &tmp2)) goto close_file;
         comp = tmp2; // compression method
-        if (!read_int(f, &tmp2)) goto close_file;
+        if (!read_int(map, fsize, &position, &tmp2)) goto close_file;
         image_size = tmp2; // bitmap data size
-        if (!read_int(f, &tmp2)) goto close_file;
+        if (!read_int(map, fsize, &position, &tmp2)) goto close_file;
         hdpi = (tmp2 * 254) / 10000; // horizontal pixels/meter
-        if (!read_int(f, &tmp2)) goto close_file;
+        if (!read_int(map, fsize, &position, &tmp2)) goto close_file;
         vdpi = (tmp2 * 254) / 10000; // vertical pixles/meter
-        if (!read_int(f, &tmp2)) goto close_file;
+        if (!read_int(map, fsize, &position, &tmp2)) goto close_file;
         palette_size = tmp2; // number of palette colors power (2^n - so 0 - 8)
-        if (!read_int(f, &tmp2)) goto close_file;
+        if (!read_int(map, fsize, &position, &tmp2)) goto close_file;
         important_colors = tmp2; // number of important colors - 0 if all
-        if (!read_int(f, &tmp2)) goto close_file;
+        if (!read_int(map, fsize, &position, &tmp2)) goto close_file;
         rmask = tmp2; // red mask
-        if (!read_int(f, &tmp2)) goto close_file;
+        if (!read_int(map, fsize, &position, &tmp2)) goto close_file;
         gmask = tmp2; // green mask
-        if (!read_int(f, &tmp2)) goto close_file;
+        if (!read_int(map, fsize, &position, &tmp2)) goto close_file;
         bmask = tmp2; // blue mask
-        if (!read_int(f, &tmp2)) goto close_file;
+        if (!read_int(map, fsize, &position, &tmp2)) goto close_file;
         amask = tmp2; // alpha mask
-        if (fread(buf, 36, 1, f) != 1) goto close_file; // skip unused cie
-        if (fread(buf, 12, 1, f) != 1) goto close_file; // skip unused gamma
+        if (!read_skip(fsize, &position, 36)) goto close_file; // skip unused cie
+        if (!read_skip(fsize, &position, 12)) goto close_file; // skip unused gamma
         if (image_size == 0) image_size = fsize - offset;
         if ((amask) && (bit_count == 32)) hasa = 1;
      }
@@ -497,38 +538,38 @@ evas_image_load_file_data_bmp(Image_Entry *ie, const char *file, const char *key
      {
         short tmp;
         int tmp2;
-        
-        if (!read_int(f, &tmp2)) goto close_file;
+
+        if (!read_int(map, fsize, &position, &tmp2)) goto close_file;
         w = tmp2; // width
-        if (!read_int(f, &tmp2)) goto close_file;
+        if (!read_int(map, fsize, &position, &tmp2)) goto close_file;
         h = tmp2; // height
-        if (!read_short(f, &tmp)) goto close_file;
+        if (!read_short(map, fsize, &position, &tmp)) goto close_file;
         planes = tmp; // must be 1
-        if (!read_short(f, &tmp)) goto close_file;
+        if (!read_short(map, fsize, &position, &tmp)) goto close_file;
         bit_count = tmp; // bits per pixel: 1, 4, 8, 16, 24 & 32
-        if (!read_int(f, &tmp2)) goto close_file;
+        if (!read_int(map, fsize, &position, &tmp2)) goto close_file;
         comp = tmp2; // compression method
-        if (!read_int(f, &tmp2)) goto close_file;
+        if (!read_int(map, fsize, &position, &tmp2)) goto close_file;
         image_size = tmp2; // bitmap data size
-        if (!read_int(f, &tmp2)) goto close_file;
+        if (!read_int(map, fsize, &position, &tmp2)) goto close_file;
         hdpi = (tmp2 * 254) / 10000; // horizontal pixels/meter
-        if (!read_int(f, &tmp2)) goto close_file;
+        if (!read_int(map, fsize, &position, &tmp2)) goto close_file;
         vdpi = (tmp2 * 254) / 10000; // vertical pixles/meter
-        if (!read_int(f, &tmp2)) goto close_file;
+        if (!read_int(map, fsize, &position, &tmp2)) goto close_file;
         palette_size = tmp2; // number of palette colors power (2^n - so 0 - 8)
-        if (!read_int(f, &tmp2)) goto close_file;
+        if (!read_int(map, fsize, &position, &tmp2)) goto close_file;
         important_colors = tmp2; // number of important colors - 0 if all
-        if (!read_int(f, &tmp2)) goto close_file;
+        if (!read_int(map, fsize, &position, &tmp2)) goto close_file;
         rmask = tmp2; // red mask
-        if (!read_int(f, &tmp2)) goto close_file;
+        if (!read_int(map, fsize, &position, &tmp2)) goto close_file;
         gmask = tmp2; // green mask
-        if (!read_int(f, &tmp2)) goto close_file;
+        if (!read_int(map, fsize, &position, &tmp2)) goto close_file;
         bmask = tmp2; // blue mask
-        if (!read_int(f, &tmp2)) goto close_file;
+        if (!read_int(map, fsize, &position, &tmp2)) goto close_file;
         amask = tmp2; // alpha mask
-        if (fread(buf, 36, 1, f) != 1) goto close_file; // skip unused cie
-        if (fread(buf, 12, 1, f) != 1) goto close_file; // skip unused gamma
-        if (fread(buf, 16, 1, f) != 1) goto close_file; // skip others
+        if (!read_skip(fsize, &position, 36)) goto close_file; // skip unused cie
+        if (!read_skip(fsize, &position, 12)) goto close_file; // skip unused gamma
+        if (!read_skip(fsize, &position, 16)) goto close_file; // skip others
         if (image_size == 0) image_size = fsize - offset;
         if ((amask) && (bit_count == 32)) hasa = 1;
      }
@@ -605,17 +646,17 @@ evas_image_load_file_data_bmp(Image_Entry *ie, const char *file, const char *key
         pal = alloca(256 * 4);
         for (i = 0; i < pal_num; i++)
           {
-             if (fread(&b, 1, 1, f) != 1) goto close_file;
-             if (fread(&g, 1, 1, f) != 1) goto close_file;
-             if (fread(&r, 1, 1, f) != 1) goto close_file;
+             if (!read_uchar(map, fsize, &position, &b)) goto close_file;
+             if (!read_uchar(map, fsize, &position, &g)) goto close_file;
+             if (!read_uchar(map, fsize, &position, &r)) goto close_file;
              if ((head_size != 12) /*&& (palette_size != 0)*/)
                { // OS/2 V1 doesn't do the pad byte
-                  if (fread(&a, 1, 1, f) != 1) goto close_file;
+                  if (!read_uchar(map, fsize, &position, &a)) goto close_file;
                }
              a = 0xff; // fillin a as solid for paletted images
              pal[i] = ARGB_JOIN(a, r, g, b);
           }
-        fseek(f, offset, SEEK_SET);
+        position = offset;
 
         if ((scale_ratio == 1) || (comp !=0))
           buffer = malloc(image_size + 8); // add 8 for padding to avoid checks
@@ -643,11 +684,11 @@ evas_image_load_file_data_bmp(Image_Entry *ie, const char *file, const char *key
 
         if ((scale_ratio == 1) || (comp !=0))
           {
-             if (fread(buffer, image_size, 1, f) != 1) goto close_file;
+             if (!read_mem(map, fsize, &position, buffer, image_size)) goto close_file;
           }
         else
           {
-             if (fread(buffer, row_size, 1, f) != 1) goto close_file;
+             if (!read_mem(map, fsize, &position, buffer, row_size)) goto close_file;
           }
 
         if (bit_count == 1)
@@ -715,8 +756,8 @@ evas_image_load_file_data_bmp(Image_Entry *ie, const char *file, const char *key
                             read_line += scale_ratio;
                             if (read_line >= image_h) break;
 
-                            fseek(f, row_size * (scale_ratio - 1), SEEK_CUR);
-                            if (fread(buffer, row_size, 1, f) != 1) goto close_file;
+                            position += row_size * (scale_ratio - 1);
+                            if (!read_mem(map, fsize, &position, buffer, row_size)) goto close_file;
                             p = buffer;
                             buffer_end = buffer + row_size;
                          }
@@ -770,8 +811,8 @@ evas_image_load_file_data_bmp(Image_Entry *ie, const char *file, const char *key
                             read_line += scale_ratio;
                             if (read_line >= image_h) break;
 
-                            fseek(f, row_size * (scale_ratio - 1), SEEK_CUR);
-                            if (fread(buffer, row_size, 1, f) != 1) goto close_file;
+                            position += row_size * (scale_ratio - 1);
+                            if (!read_mem(map, fsize, &position, buffer, row_size)) goto close_file;
                             p = buffer;
                             buffer_end = buffer + row_size;
                          }
@@ -960,8 +1001,8 @@ evas_image_load_file_data_bmp(Image_Entry *ie, const char *file, const char *key
                             read_line += scale_ratio;
                             if (read_line >= image_h) break;
 
-                            fseek(f, row_size * (scale_ratio - 1), SEEK_CUR);
-                            if (fread(buffer, row_size, 1, f) != 1) goto close_file;
+                            position += row_size * (scale_ratio - 1);
+                            if (!read_mem(map, fsize, &position, buffer, row_size)) goto close_file;
                             p = buffer;
                             buffer_end = buffer + row_size;
                          }
@@ -1088,7 +1129,7 @@ evas_image_load_file_data_bmp(Image_Entry *ie, const char *file, const char *key
      {
         if (comp == 0) // no compression
           {
-             fseek(f, offset, SEEK_SET);
+             position = offset;
              if (scale_ratio == 1)
                buffer = malloc(image_size + 8); // add 8 for padding to avoid checks
              else
@@ -1106,11 +1147,11 @@ evas_image_load_file_data_bmp(Image_Entry *ie, const char *file, const char *key
              p = buffer;
              if (scale_ratio == 1)
                {
-                  if (fread(buffer, image_size, 1, f) != 1) goto close_file;
+                  if (!read_mem(map, fsize, &position, buffer, image_size)) goto close_file;
                }
              else
                {
-                  if (fread(buffer, row_size, 1, f) != 1) goto close_file;
+                  if (!read_mem(map, fsize, &position, buffer, row_size)) goto close_file;
                }
              if (bit_count == 16)
                {
@@ -1139,8 +1180,8 @@ evas_image_load_file_data_bmp(Image_Entry *ie, const char *file, const char *key
                             read_line += scale_ratio;
                             if (read_line >= image_h) break;
 
-                            fseek(f, row_size * (scale_ratio - 1), SEEK_CUR);
-                            if (fread(buffer, row_size, 1, f) != 1) goto close_file;
+                            position += row_size * (scale_ratio - 1);
+                            if (!read_mem(map, fsize, &position, buffer, row_size)) goto close_file;
                             p = buffer;
                             buffer_end = buffer + row_size;
                          }
@@ -1173,8 +1214,8 @@ evas_image_load_file_data_bmp(Image_Entry *ie, const char *file, const char *key
                             read_line += scale_ratio;
                             if (read_line >= image_h) break;
 
-                            fseek(f, row_size * (scale_ratio - 1), SEEK_CUR);
-                            if (fread(buffer, row_size, 1, f) != 1) goto close_file;
+                            position += row_size * (scale_ratio - 1);
+                            if (!read_mem(map, fsize, &position, buffer, row_size)) goto close_file;
                             p = buffer;
                             buffer_end = buffer + row_size;
                          }
@@ -1212,8 +1253,8 @@ evas_image_load_file_data_bmp(Image_Entry *ie, const char *file, const char *key
                             read_line += scale_ratio;
                             if (read_line >= image_h) break;
 
-                            fseek(f, row_size * (scale_ratio - 1), SEEK_CUR);
-                            if (fread(buffer, row_size, 1, f) != 1) goto close_file;
+                            position += row_size * (scale_ratio - 1);
+                            if (!read_mem(map, fsize, &position, buffer, row_size)) goto close_file;
                             p = buffer;
                             buffer_end = buffer + row_size;
                          }
@@ -1230,7 +1271,7 @@ evas_image_load_file_data_bmp(Image_Entry *ie, const char *file, const char *key
                        if (hasa)
                          {
                             unsigned int *pixend = surface + (w * h);
-                            
+
                             for (pix = surface; pix < pixend; pix++)
                                A_VAL(pix) = 0xff;
                          }
@@ -1241,11 +1282,11 @@ evas_image_load_file_data_bmp(Image_Entry *ie, const char *file, const char *key
           }
         else if (comp == 3) // bit field
           {
-             if (!read_uint(f, &rmask)) goto close_file;
-             if (!read_uint(f, &gmask)) goto close_file;
-             if (!read_uint(f, &bmask)) goto close_file;
+             if (!read_uint(map, fsize, &position, &rmask)) goto close_file;
+             if (!read_uint(map, fsize, &position, &gmask)) goto close_file;
+             if (!read_uint(map, fsize, &position, &bmask)) goto close_file;
 
-             fseek(f, offset, SEEK_SET);
+             position = offset;
              if (scale_ratio == 1)
                buffer = malloc(image_size + 8); // add 8 for padding to avoid checks
              else
@@ -1264,14 +1305,14 @@ evas_image_load_file_data_bmp(Image_Entry *ie, const char *file, const char *key
              p = buffer;
              if (scale_ratio == 1)
                {
-                  if (fread(buffer, image_size, 1, f) != 1) goto close_file;
+                  if (!read_mem(map, fsize, &position, buffer, image_size)) goto close_file;
                }
              else
                {
-                  if (fread(buffer, row_size, 1, f) != 1) goto close_file;
+                  if (!read_mem(map, fsize, &position, buffer, row_size)) goto close_file;
                }
 
-             if ((bit_count == 16) && 
+             if ((bit_count == 16) &&
                  (rmask == 0xf800) && (gmask == 0x07e0) && (bmask == 0x001f)
                  )
                {
@@ -1299,8 +1340,9 @@ evas_image_load_file_data_bmp(Image_Entry *ie, const char *file, const char *key
                          {
                             read_line += scale_ratio;
                             if (read_line >= image_h) break;
-                            fseek(f, row_size * (scale_ratio - 1), SEEK_CUR);
-                            if (fread(buffer, row_size, 1, f) != 1) goto close_file;
+
+                            position += row_size * (scale_ratio - 1);
+                            if (!read_mem(map, fsize, &position, buffer, row_size)) goto close_file;
                             p = buffer;
                             buffer_end = buffer + row_size;
                          }
@@ -1338,8 +1380,9 @@ evas_image_load_file_data_bmp(Image_Entry *ie, const char *file, const char *key
                          {
                             read_line += scale_ratio;
                             if (read_line >= image_h) break;
-                            fseek(f, row_size * (scale_ratio - 1), SEEK_CUR);
-                            if (fread(buffer, row_size, 1, f) != 1) goto close_file;
+
+                            position += row_size * (scale_ratio - 1);
+                            if (!read_mem(map, fsize, &position, buffer_end, row_size)) goto close_file;
                             p = buffer;
                             buffer_end = buffer + row_size;
                          }
@@ -1375,8 +1418,9 @@ evas_image_load_file_data_bmp(Image_Entry *ie, const char *file, const char *key
                          {
                             read_line += scale_ratio;
                             if (read_line >= image_h) break;
-                            fseek(f, row_size * (scale_ratio - 1), SEEK_CUR);
-                            if (fread(buffer, row_size, 1, f) != 1) goto close_file;
+
+                            position += row_size * (scale_ratio - 1);
+                            if (!read_mem(map, fsize, &position, buffer, row_size)) goto close_file;
                             p = buffer;
                             buffer_end = buffer + row_size;
                          }
@@ -1404,10 +1448,12 @@ evas_image_load_file_data_bmp(Image_Entry *ie, const char *file, const char *key
      }
    else
      goto close_file;
-   
+
    if (buffer) free(buffer);
    if (scale_surface) free(scale_surface);
-   fclose(f);
+
+   eina_file_map_free(f, map);
+   eina_file_close(f);
 
    evas_common_image_premul(ie);
    *error = EVAS_LOAD_ERROR_NONE;
@@ -1416,7 +1462,8 @@ evas_image_load_file_data_bmp(Image_Entry *ie, const char *file, const char *key
  close_file:
    if (buffer) free(buffer);
    if (scale_surface) free(scale_surface);
-   fclose(f);
+   if (map) eina_file_map_free(f, map);
+   eina_file_close(f);
    return EINA_FALSE;
 }
 
