@@ -544,3 +544,9 @@
 
         * Fix rounding error in map clip bounds calculation
 
+2011-12-12  Tom Hacohen (TAsn)
+
+	* Textblock: Added evas_textblock_cursor_word_start/end.
+	Those functions let you jump to the start/end of the word under the
+	cursor.
+

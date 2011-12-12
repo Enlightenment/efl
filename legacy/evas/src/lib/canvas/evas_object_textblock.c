@@ -67,6 +67,7 @@
 
 #ifdef HAVE_LINEBREAK
 #include "linebreak.h"
+#include "wordbreak.h"
 #endif
 
 /* save typing */
@@ -5734,6 +5735,111 @@ evas_textblock_cursor_format_prev(Evas_Textblock_Cursor *cur)
    return EINA_FALSE;
 }
 
+#ifdef HAVE_LINEBREAK
+
+/* BREAK_AFTER: true if we can break after the current char.
+ * Both macros assume str[i] is not the terminating nul */
+#define BREAK_AFTER(i) \
+   (breaks[i] == WORDBREAK_BREAK)
+
+#else
+
+#define BREAK_AFTER(i) \
+   ((!str[i + 1]) || \
+    (_is_white(str[i]) && !_is_white(str[i + 1])) || \
+    (!_is_white(str[i]) && _is_white(str[i + 1])))
+
+#endif
+
+EAPI Eina_Bool
+evas_textblock_cursor_word_start(Evas_Textblock_Cursor *cur)
+{
+   const Eina_Unicode *text;
+   size_t i;
+#ifdef HAVE_LINEBREAK
+   char *breaks;
+#endif
+
+   if (!cur) return EINA_FALSE;
+   if (!cur->node) return EINA_FALSE;
+
+   text = eina_ustrbuf_string_get(cur->node->unicode);
+
+#ifdef HAVE_LINEBREAK
+     {
+        const char *lang = ""; /* FIXME: get lang */
+        size_t len = eina_ustrbuf_length_get(cur->node->unicode);
+        breaks = malloc(len);
+        set_wordbreaks_utf32((const utf32_t *) text, len, lang, breaks);
+     }
+#endif
+
+   i = cur->pos;
+
+   /* Skip the first one. This ensures we don't point to the nul, and also
+    * we just don't care about it anyway. */
+   if (i > 0) i--;
+
+   for ( ; i > 0 ; i--)
+     {
+        if (BREAK_AFTER(i))
+          {
+             /* Advance to the current char */
+             i++;
+             break;
+          }
+     }
+
+   cur->pos = i;
+
+#ifdef HAVE_LINEBREAK
+   free(breaks);
+#endif
+   return EINA_TRUE;
+}
+
+EAPI Eina_Bool
+evas_textblock_cursor_word_end(Evas_Textblock_Cursor *cur)
+{
+   const Eina_Unicode *text;
+   size_t i;
+#ifdef HAVE_LINEBREAK
+   char *breaks;
+#endif
+
+   if (!cur) return EINA_FALSE;
+   if (!cur->node) return EINA_FALSE;
+
+   text = eina_ustrbuf_string_get(cur->node->unicode);
+
+#ifdef HAVE_LINEBREAK
+     {
+        const char *lang = ""; /* FIXME: get lang */
+        size_t len = eina_ustrbuf_length_get(cur->node->unicode);
+        breaks = malloc(len);
+        set_wordbreaks_utf32((const utf32_t *) text, len, lang, breaks);
+     }
+#endif
+
+   i = cur->pos;
+
+   for ( ; text[i] ; i++)
+     {
+        if (BREAK_AFTER(i))
+          {
+             /* This is the one to break after. */
+             break;
+          }
+     }
+
+   cur->pos = i;
+
+#ifdef HAVE_LINEBREAK
+   free(breaks);
+#endif
+   return EINA_TRUE;;
+}
+
 EAPI Eina_Bool
 evas_textblock_cursor_char_next(Evas_Textblock_Cursor *cur)
 {
@@ -8828,6 +8934,7 @@ evas_object_textblock_init(Evas_Object *obj)
      {
         linebreak_init = EINA_TRUE;
         init_linebreak();
+        init_wordbreak();
      }
 #endif
 

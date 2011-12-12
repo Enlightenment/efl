@@ -568,6 +568,32 @@ START_TEST(evas_textblock_cursor)
         fail_if(evas_textblock_cursor_compare(main_cur, cur));
      }
 
+     {
+        const char *buf_wb = "a This is_a t:e.s't a";
+        evas_object_textblock_text_markup_set(tb, buf_wb);
+
+        /* Word start/end */
+        evas_textblock_cursor_pos_set(cur, 3);
+        evas_textblock_cursor_word_start(cur);
+        fail_if(2 != evas_textblock_cursor_pos_get(cur));
+        evas_textblock_cursor_word_end(cur);
+        fail_if(5 != evas_textblock_cursor_pos_get(cur));
+
+        evas_textblock_cursor_pos_set(cur, 13);
+        evas_textblock_cursor_word_end(cur);
+        fail_if(18 != evas_textblock_cursor_pos_get(cur));
+        evas_textblock_cursor_word_start(cur);
+        fail_if(12 != evas_textblock_cursor_pos_get(cur));
+        evas_textblock_cursor_word_start(cur);
+        fail_if(12 != evas_textblock_cursor_pos_get(cur));
+        evas_textblock_cursor_word_start(cur);
+        fail_if(12 != evas_textblock_cursor_pos_get(cur));
+        evas_textblock_cursor_word_end(cur);
+        fail_if(18 != evas_textblock_cursor_pos_get(cur));
+        evas_textblock_cursor_word_end(cur);
+        fail_if(18 != evas_textblock_cursor_pos_get(cur));
+     }
+
    END_TB_TEST();
 }
 END_TEST

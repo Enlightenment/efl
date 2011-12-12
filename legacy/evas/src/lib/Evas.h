@@ -8478,6 +8478,24 @@ EAPI Eina_Bool                    evas_textblock_cursor_char_next(Evas_Textblock
 EAPI Eina_Bool                    evas_textblock_cursor_char_prev(Evas_Textblock_Cursor *cur) EINA_ARG_NONNULL(1);
 
 /**
+ * Moves the cursor to the start of the word under the cursor.
+ *
+ * @param cur the cursor to move.
+ * @return #EINA_TRUE on success #EINA_FALSE otherwise.
+ * @since 1.2.0
+ */
+EAPI Eina_Bool                    evas_textblock_cursor_word_start(Evas_Textblock_Cursor *cur) EINA_ARG_NONNULL(1);
+
+/**
+ * Moves the cursor to the end of the word under the cursor.
+ *
+ * @param cur the cursor to move.
+ * @return #EINA_TRUE on success #EINA_FALSE otherwise.
+ * @since 1.2.0
+ */
+EAPI Eina_Bool                    evas_textblock_cursor_word_end(Evas_Textblock_Cursor *cur) EINA_ARG_NONNULL(1);
+
+/**
  * Go to the first char in the node the cursor is pointing on.
  *
  * @param cur the cursor to update.
