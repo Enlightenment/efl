@@ -22,6 +22,7 @@ struct _Ecore_Animator
 
    Eina_Bool         delete_me : 1;
    Eina_Bool         suspended : 1;
+   Eina_Bool         just_added : 1;
 };
 
 GENERIC_ALLOC_SIZE_DECLARE(Ecore_Animator);
@@ -101,7 +102,13 @@ _do_tick(void)
 
    EINA_INLIST_FOREACH(animators, animator)
      {
-        if (!animator->delete_me && !animator->suspended)
+        animator->just_added = EINA_FALSE;
+     }
+   EINA_INLIST_FOREACH(animators, animator)
+     {
+        if ((!animator->delete_me) && 
+            (!animator->suspended) && 
+            (!animator->just_added))
           {
              if (!_ecore_call_task_cb(animator->func, animator->data))
                {
@@ -109,6 +116,7 @@ _do_tick(void)
                   animators_delete_me++;
                }
           }
+        else animator->just_added = EINA_FALSE;
      }
    if (animators_delete_me)
      {
@@ -149,6 +157,7 @@ _ecore_animator_add(Ecore_Task_Cb func,
    ECORE_MAGIC_SET(animator, ECORE_MAGIC_ANIMATOR);
    animator->func = func;
    animator->data = (void *)data;
+   animator->just_added = EINA_TRUE;
    animators = (Ecore_Animator *)eina_inlist_append(EINA_INLIST_GET(animators), EINA_INLIST_GET(animator));
    _begin_tick();
    return animator;

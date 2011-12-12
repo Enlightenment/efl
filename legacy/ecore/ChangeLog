@@ -395,3 +395,11 @@
 
         * Fix case where SSL certificates would not be used
         * Added ECORE_CON_REMOTE_CORK for applying TCP_CORK to sends
+
+2011-12-12 Carsten Haitzler (The Rasterman)
+
+        * Fix bug where an animator that just keeps adding another
+        animator keeps the animator handler in an infinite loop. Do
+        the same as timers and mark them as "just added" to skip in
+        this run of animators
+
