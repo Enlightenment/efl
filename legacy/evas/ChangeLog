@@ -539,3 +539,8 @@
 	* Textblock: Added evas_textblock_markup_to_plain.
 	This lets you convert textblock markup to plain text.
 	This converts formats and everything correctly.
+
+2011-12-12 Carsten Haitzler (The Rasterman)
+
+        * Fix rounding error in map clip bounds calculation
+
