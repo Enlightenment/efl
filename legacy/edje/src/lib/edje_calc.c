@@ -2545,11 +2545,11 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep, int flags, Edje_Calc_Params *sta
                }
              else if (p1->persp_on)
                {
-                  memcpy(&p3->map.persp, &p1->map.persp, sizeof (p1->map.light));
+                  memcpy(&p3->map.persp, &p1->map.persp, sizeof (p1->map.persp));
                }
              else if (p2->persp_on)
                {
-                  memcpy(&p3->map.persp, &p2->map.persp, sizeof (p2->map.light));
+                  memcpy(&p3->map.persp, &p2->map.persp, sizeof (p2->map.persp));
                }
           }
 
