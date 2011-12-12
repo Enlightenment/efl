@@ -219,7 +219,7 @@ elm_main(int    argc __UNUSED__,
 
    list = elm_slideshow_items_get(slideshow);
    fprintf(stdout, "List of items in the slideshow:\n");
-   EINA_LIST_FOREACH(list, l, it)
+   EINA_LIST_FOREACH(list, l, slide_it)
      fprintf(stdout, "\t%s\n",
              (const char *)elm_object_item_data_get(slide_it));
 
