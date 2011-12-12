@@ -1488,8 +1488,8 @@ elm_naviframe_event_enabled_set(Evas_Object *obj, Eina_Bool enabled)
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return;
    enabled = !!enabled;
-   if (wd->freeze_events == enabled) return;
-   wd->freeze_events = enabled;
+   if (wd->freeze_events == !enabled) return;
+   wd->freeze_events = !enabled;
 }
 
 EAPI Eina_Bool
@@ -1498,5 +1498,5 @@ elm_naviframe_event_enabled_get(const Evas_Object *obj)
    ELM_CHECK_WIDTYPE(obj, widtype) EINA_FALSE;
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return EINA_FALSE;
-   return wd->freeze_events;
+   return !wd->freeze_events;
 }
