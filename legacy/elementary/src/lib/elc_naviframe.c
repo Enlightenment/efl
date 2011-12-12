@@ -771,8 +771,8 @@ _title_icon_unset(Elm_Naviframe_Item *it)
                                   EVAS_CALLBACK_CHANGED_SIZE_HINTS,
                                   _changed_size_hints);
    _sizing_eval(WIDGET(it));
-
    it->title_icon = NULL;
+
    return content;
 }
 
@@ -1481,3 +1481,22 @@ elm_naviframe_items_get(const Evas_Object *obj)
    return wd->stack;
 }
 
+EAPI void
+elm_naviframe_event_enabled_set(Evas_Object *obj, Eina_Bool enabled)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype);
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return;
+   enabled = !!enabled;
+   if (wd->freeze_events == enabled) return;
+   wd->freeze_events = enabled;
+}
+
+EAPI Eina_Bool
+elm_naviframe_event_enabled_get(const Evas_Object *obj)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype) EINA_FALSE;
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return EINA_FALSE;
+   return wd->freeze_events;
+}

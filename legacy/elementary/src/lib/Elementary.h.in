@@ -29974,6 +29974,8 @@ extern "C" {
     *        parameter in elm_naviframe_item_push
     *
     * @see also elm_naviframe_item_push()
+    *     
+    * @ingroup Naviframe
     */
    EAPI void                elm_naviframe_prev_btn_auto_pushed_set(Evas_Object *obj, Eina_Bool auto_pushed) EINA_ARG_NONNULL(1);
 
@@ -29986,6 +29988,8 @@ extern "C" {
     *
     * @see also elm_naviframe_item_push()
     *           elm_naviframe_prev_btn_auto_pushed_set()
+    *
+    * @ingroup Naviframe
     */
    EAPI Eina_Bool           elm_naviframe_prev_btn_auto_pushed_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
 
@@ -29995,8 +29999,43 @@ extern "C" {
     * @param obj The naviframe object
     * @return An Eina_Inlist* of naviframe items, #Elm_Object_Item,
     * or @c NULL on failure.
+    *
+    * @ingroup Naviframe
     */
    EAPI Eina_Inlist        *elm_naviframe_items_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
+
+   /**
+    * @brief Set the event enabled when pushing/popping items 
+    *
+    * If @c enabled is EINA_TRUE, the contents of the naviframe item will 
+    * receives events from mouse and keyboard during view changing such as
+    * item push/pop.
+    *
+    * @param obj The naviframe object
+    * @param enabled Events are received when enabled is @c EINA_TRUE, and 
+    * ignored otherwise.
+    *
+    * @warning Events will be blocked by calling evas_object_freeze_events_set()
+    * internally. So don't call the API whiling pushing/popping items.
+    *
+    * @see elm_naviframe_event_enabled_get()
+    * @see evas_object_freeze_events_set()
+    *
+    * @ingroup Naviframe
+    */
+   EAPI void                elm_naviframe_event_enabled_set(Evas_Object *obj, Eina_Bool enabled) EINA_ARG_NONNULL(1);
+
+   /**
+    * @brief Get the value of event enabled status.
+    *
+    * @param obj The naviframe object
+    * @return EINA_TRUE, when event is enabled
+    *
+    * @see elm_naviframe_event_enabled_set()
+    *
+    * @ingroup Naviframe
+    */
+   EAPI Eina_Bool           elm_naviframe_event_enabled_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
 
     /**
     * @}
