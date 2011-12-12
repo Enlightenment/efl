@@ -5,7 +5,6 @@
 #include "elm_priv.h"
 #include "els_scroller.h"
 #include "elm_genlist.h"
-#include "els_pan.h"
 
 #define MAX_ITEMS_PER_BLOCK 32
 #define REORDER_EFFECT_TIME 0.5
@@ -138,7 +137,6 @@ static void      _item_auto_scroll(Widget_Data *wd);
 static void      _elm_genlist_clear(Evas_Object *obj, Eina_Bool standby);
 
 static Evas_Smart_Class _pan_sc = EVAS_SMART_CLASS_INIT_VERSION;
-static void _pan_child_size_get(Evas_Object *obj, Evas_Coord  *w, Evas_Coord  *h);
 
 static const char SIG_ACTIVATED[] = "activated";
 static const char SIG_CLICKED_DOUBLE[] = "clicked,double";
@@ -2156,7 +2154,6 @@ _item_position(Elm_Gen_Item *it,
    evas_event_freeze(evas_object_evas_get(it->wd->obj));
    evas_object_resize(view, it->item->w, it->item->h);
    evas_object_move(view, it_x, it_y);
-//fprintf(stderr, "it: %p, x %d y %d\n", view, it_x, it_y);
    evas_object_show(view);
    evas_event_thaw(evas_object_evas_get(it->wd->obj));
    evas_event_thaw_eval(evas_object_evas_get(it->wd->obj));
@@ -2221,7 +2218,6 @@ _item_block_position(Item_Block *itb,
                          }
                        if (!it->item->move_effect_enabled)
                          {
-//fprintf(stderr, "it %p itb->y %d it->y %d pan_y %d oy %d\n", it, itb->y, it->y, it->wd->pan_y, oy);
                             if (it->item->mode_view)
                                _item_position(it, it->item->mode_view, it->item->scrl_x,
                                               it->item->scrl_y);
@@ -2288,29 +2284,6 @@ _must_recalc_idler(void *data)
 }
 
 static void
-_scroll_item(Widget_Data *wd)
-{
-   wd->show_item->item->showme = EINA_FALSE;
-   if (wd->bring_in)
-     elm_smart_scroller_region_bring_in(wd->scr,
-                                        wd->show_item->x +
-                                        wd->show_item->item->block->x,
-                                        wd->show_item->y +
-                                        wd->show_item->item->block->y,
-                                        wd->show_item->item->block->w,
-                                        wd->show_item->item->h);
-   else
-     elm_smart_scroller_child_region_show(wd->scr,
-                                          wd->show_item->x +
-                                          wd->show_item->item->block->x,
-                                          wd->show_item->y +
-                                          wd->show_item->item->block->y,
-                                          wd->show_item->item->block->w,
-                                          wd->show_item->item->h);
-   wd->show_item = NULL;
-}
-
-static void
 _calc_job(void *data)
 {
    Widget_Data *wd = data;
@@ -2319,8 +2292,6 @@ _calc_job(void *data)
    int in = 0;
    Eina_Bool minw_change = EINA_FALSE;
    Eina_Bool did_must_recalc = EINA_FALSE;
-   Evas_Coord pan_w = 0, pan_h = 0;
-   static Eina_Bool check_scroll = EINA_FALSE;
    if (!wd) return;
 
    evas_object_geometry_get(wd->pan_smart, NULL, NULL, &ow, &wd->h);
@@ -2368,25 +2339,27 @@ _calc_job(void *data)
         itb->h = itb->minh;
         y += itb->h;
         in += itb->count;
-
         if ((showme) && (wd->show_item) && (!wd->show_item->item->queued))
-          check_scroll = EINA_TRUE;
-        if (check_scroll)
           {
-             _pan_child_size_get(wd->pan_smart, &pan_w, &pan_h);
-             if (ELM_RECTS_INTERSECT(
-                   0, 0, pan_w, pan_h,
-                   wd->show_item->x + wd->show_item->item->block->x,
-                   wd->show_item->y + wd->show_item->item->block->y,
-                   wd->show_item->item->block->w,
-                   wd->show_item->item->h
-                   ))
-               {
-                  _scroll_item(wd);
-                  check_scroll = EINA_FALSE;
-               }
+             wd->show_item->item->showme = EINA_FALSE;
+             if (wd->bring_in)
+               elm_smart_scroller_region_bring_in(wd->scr,
+                                                  wd->show_item->x +
+                                                  wd->show_item->item->block->x,
+                                                  wd->show_item->y +
+                                                  wd->show_item->item->block->y,
+                                                  wd->show_item->item->block->w,
+                                                  wd->show_item->item->h);
+             else
+               elm_smart_scroller_child_region_show(wd->scr,
+                                                    wd->show_item->x +
+                                                    wd->show_item->item->block->x,
+                                                    wd->show_item->y +
+                                                    wd->show_item->item->block->y,
+                                                    wd->show_item->item->block->w,
+                                                    wd->show_item->item->h);
+             wd->show_item = NULL;
           }
-//fprintf(stderr, "bring in %d %d %d %d : pan child %d %d\n", wd->show_item->x + wd->show_item->item->block->x, wd->show_item->y + wd->show_item->item->block->y, wd->show_item->item->block->w, wd->show_item->item->h, pan_w, pan_h);
      }
    if (minw_change)
      {
@@ -2524,7 +2497,6 @@ _pan_set(Evas_Object *obj,
    //   if (x > ow) x = ow;
    //   if (y > oh) y = oh;
    if ((x == sd->wd->pan_x) && (y == sd->wd->pan_y)) return;
-//fprintf(stderr, "pan_y %d\n", y);
    sd->wd->pan_x = x;
    sd->wd->pan_y = y;
 
