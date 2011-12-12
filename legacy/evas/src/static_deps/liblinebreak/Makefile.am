@@ -7,7 +7,9 @@ noinst_LTLIBRARIES = liblinebreak.la
 liblinebreak_la_SOURCES = \
 	linebreak.c \
 	linebreakdata.c \
-	linebreakdef.c
+	linebreakdef.c \
+	wordbreak.c \
+	wordbreakdata.x
 
 EXTRA_DIST = \
 	LineBreak1.sed \
