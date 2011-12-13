@@ -1166,7 +1166,7 @@ _process_download_list(Evas_Object *obj)
    gw = wd->size.w;
    gh = wd->size.h;
 
-   EINA_LIST_FOREACH_SAFE(wd->download_list, l, ll, gi)
+   EINA_LIST_REVERSE_FOREACH_SAFE(wd->download_list, l, ll, gi)
      {
         xx = gi->out.x;
         yy = gi->out.y;
@@ -1188,14 +1188,13 @@ _process_download_list(Evas_Object *obj)
         if (!ELM_RECTS_INTERSECT(xx - wd->pan_x + ox,
                                  yy  - wd->pan_y + oy,
                                  ww, hh,
-                                 cvx, cvy, cvw, cvh))
+                                 cvx, cvy, cvw, cvh) ||
+           (gi->zoom != wd->zoom))
           {
              wd->download_list = eina_list_remove(wd->download_list, gi);
+             continue;
           }
-     }
 
-   EINA_LIST_REVERSE_FOREACH_SAFE(wd->download_list, l, ll, gi)
-     {
         if (gi->wd->download_num >= MAX_CONCURRENT_DOWNLOAD) break;
 
         Eina_Bool ret = ecore_file_download_full(gi->source, gi->file, _tile_downloaded, NULL, gi, &(gi->job), wd->ua);
@@ -3003,6 +3002,22 @@ _parse_name(void *data)
      }
 }
 
+Grid *_get_current_grid(Widget_Data *wd)
+{
+   EINA_SAFETY_ON_NULL_RETURN_VAL(wd, NULL);
+   Eina_List *l;
+   Grid *g = NULL, *ret = NULL;
+   EINA_LIST_FOREACH(wd->grids, l, g)
+     {
+        if (wd->zoom == g->zoom)
+          {
+             ret = g;
+             break;
+          }
+     }
+   return ret;
+}
+
 static Eina_Bool
 _route_complete_cb(void *data, int ev_type __UNUSED__, void *event)
 {
@@ -3020,14 +3035,10 @@ _route_complete_cb(void *data, int ev_type __UNUSED__, void *event)
 
    if (wd->grids)
      {
-        Eina_List *l;
         Grid *g;
         Evas_Coord ox, oy, ow, oh;
         evas_object_geometry_get(wd->obj, &ox, &oy, &ow, &oh);
-        EINA_LIST_FOREACH(wd->grids, l, g)
-          {
-             if (wd->zoom == g->zoom) break;
-          }
+        g = _get_current_grid(wd);
         route_place(wd->obj, g, wd->pan_x, wd->pan_y, ox, oy, ow, oh);
      }
    edje_object_signal_emit(elm_smart_scroller_edje_object_get(wd->scr),
@@ -3929,14 +3940,10 @@ elm_map_marker_add(Evas_Object *obj, double lon, double lat, Elm_Map_Marker_Clas
 
    if (wd->grids)
      {
-        Eina_List *l;
         Grid *g;
         Evas_Coord ox, oy, ow, oh;
         evas_object_geometry_get(obj, &ox, &oy, &ow, &oh);
-        EINA_LIST_FOREACH(wd->grids, l, g)
-          {
-             if (wd->zoom == g->zoom) break;
-          }
+        g = _get_current_grid(wd);
         marker_place(obj, g, wd->pan_x, wd->pan_y, ox, oy, ow, oh);
      }
 
@@ -4014,14 +4021,10 @@ elm_map_marker_remove(Elm_Map_Marker *marker)
 
    if (wd->grids)
      {
-        Eina_List *l;
         Grid *g;
         Evas_Coord ox, oy, ow, oh;
         evas_object_geometry_get(wd->obj, &ox, &oy, &ow, &oh);
-        EINA_LIST_FOREACH(wd->grids, l, g)
-          {
-             if (wd->zoom == g->zoom) break;
-          }
+        g = _get_current_grid(wd);
         marker_place(wd->obj, g, wd->pan_x, wd->pan_y, ox, oy, ow, oh);
      }
 #else
@@ -4271,14 +4274,10 @@ elm_map_group_class_hide_set(Evas_Object *obj, Elm_Map_Group_Class *clas, Eina_B
    clas->hide = hide;
    if (wd->grids)
      {
-        Eina_List *l;
         Grid *g;
         Evas_Coord ox, oy, ow, oh;
         evas_object_geometry_get(obj, &ox, &oy, &ow, &oh);
-        EINA_LIST_FOREACH(wd->grids, l, g)
-          {
-             if (wd->zoom == g->zoom) break;
-          }
+        g = _get_current_grid(wd);
         marker_place(obj, g, wd->pan_x, wd->pan_y, ox, oy, ow, oh);
      }
 #else
