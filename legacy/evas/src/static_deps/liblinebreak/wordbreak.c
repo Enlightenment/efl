@@ -76,9 +76,9 @@ static enum WordBreakClass get_char_wb_class(
 		struct WordBreakProperties *wbp,
 		size_t len)
 {
-	size_t min = 0;
-	size_t max = len - 1;
-	size_t mid;
+	int min = 0;
+	int max = len - 1;
+	int mid;
 
 	do
 	{
