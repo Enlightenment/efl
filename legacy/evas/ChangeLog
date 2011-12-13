@@ -550,3 +550,8 @@
 	Those functions let you jump to the start/end of the word under the
 	cursor.
 
+2011-12-13 Carsten Haitzler (The Rasterman)
+
+        * Fix grab count negative values if you do weird combinations of
+        press and release with multiple fingers or multiple mouse
+        buttons.

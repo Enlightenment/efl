@@ -197,7 +197,8 @@ evas_event_feed_mouse_down(Evas *e, int b, Evas_Button_Flags flags, unsigned int
    Eina_List *l, *copy;
    Evas_Event_Mouse_Down ev;
    Evas_Object *obj;
-
+   int addgrab = 0;
+   
    MAGIC_CHECK(e, Evas, MAGIC_EVAS);
    return;
    MAGIC_CHECK_END();
@@ -205,6 +206,7 @@ evas_event_feed_mouse_down(Evas *e, int b, Evas_Button_Flags flags, unsigned int
    if ((b < 1) || (b > 32)) return;
 
    e->pointer.button |= (1 << (b - 1));
+   e->pointer.downs++;
 
    if (e->events_frozen > 0) return;
    e->last_timestamp = timestamp;
@@ -238,14 +240,17 @@ evas_event_feed_mouse_down(Evas *e, int b, Evas_Button_Flags flags, unsigned int
         e->pointer.object.in = eina_list_free(e->pointer.object.in);
         /* and set up the new one */
         e->pointer.object.in = ins;
+        /* adjust grabbed count by the nuymber of currently held down
+         * fingers/buttons */
+        if (e->pointer.downs > 1) addgrab = e->pointer.downs - 1;
      }
    copy = evas_event_list_copy(e->pointer.object.in);
    EINA_LIST_FOREACH(copy, l, obj)
      {
         if (obj->pointer_mode != EVAS_OBJECT_POINTER_MODE_NOGRAB)
           {
-             obj->mouse_grabbed++;
-             e->pointer.mouse_grabbed++;
+             obj->mouse_grabbed += addgrab + 1;
+             e->pointer.mouse_grabbed += addgrab + 1;
           }
      }
    EINA_LIST_FOREACH(copy, l, obj)
@@ -383,6 +388,7 @@ evas_event_feed_mouse_up(Evas *e, int b, Evas_Button_Flags flags, unsigned int t
    if ((b < 1) || (b > 32)) return;
 
    e->pointer.button &= ~(1 << (b - 1));
+   e->pointer.downs--;
 
    if (e->events_frozen > 0) return;
    e->last_timestamp = timestamp;
@@ -899,11 +905,13 @@ evas_event_feed_multi_down(Evas *e,
    Eina_List *l, *copy;
    Evas_Event_Multi_Down ev;
    Evas_Object *obj;
+   int addgrab = 0;
 
    MAGIC_CHECK(e, Evas, MAGIC_EVAS);
    return;
    MAGIC_CHECK_END();
 
+   e->pointer.downs++;
    if (e->events_frozen > 0) return;
    e->last_timestamp = timestamp;
 
@@ -931,13 +939,17 @@ evas_event_feed_multi_down(Evas *e,
    _evas_walk(e);
    /* append new touch point to the touch point list */
    _evas_touch_point_append(e, d, x, y);
+   if (e->pointer.mouse_grabbed == 0)
+     {
+        if (e->pointer.downs > 1) addgrab = e->pointer.downs - 1;
+     }
    copy = evas_event_list_copy(e->pointer.object.in);
    EINA_LIST_FOREACH(copy, l, obj)
      {
         if (obj->pointer_mode != EVAS_OBJECT_POINTER_MODE_NOGRAB)
           {
-             obj->mouse_grabbed++;
-             e->pointer.mouse_grabbed++;
+             obj->mouse_grabbed += addgrab + 1;
+             e->pointer.mouse_grabbed += addgrab + 1;
           }
      }
    EINA_LIST_FOREACH(copy, l, obj)
@@ -979,6 +991,7 @@ evas_event_feed_multi_up(Evas *e,
    return;
    MAGIC_CHECK_END();
 
+   e->pointer.downs--;
    if (e->events_frozen > 0) return;
    e->last_timestamp = timestamp;
 
