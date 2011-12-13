@@ -21,9 +21,9 @@ typedef struct _Route_Dump Route_Dump;
 typedef struct _Name_Dump Name_Dump;
 typedef struct _Track_Dump Track_Dump;
 
-#define DEST_DIR_ZOOM_PATH "/tmp/elm_map/%d/%d/"
-#define DEST_DIR_PATH DEST_DIR_ZOOM_PATH"%d/"
-#define DEST_FILE_PATH "%s%d.png"
+#define CACHE_ROOT_PATH   "/tmp/elm_map"
+#define CACHE_PATH        CACHE_ROOT_PATH"/%d/%d/%d"
+#define CACHE_FILE_PATH   "%s/%d.png"
 #define DEST_ROUTE_XML_FILE "/tmp/elm_map-route-XXXXXX"
 #define DEST_NAME_XML_FILE "/tmp/elm_map-name-XXXXXX"
 
@@ -1236,6 +1236,7 @@ grid_create_all(Evas_Object *obj)
    for (zoom = wd->src->zoom_min; zoom <= wd->src->zoom_max; zoom++)
      {
         g = calloc(1, sizeof(Grid));
+        EINA_SAFETY_ON_NULL_RETURN(g);
         g->zoom = zoom;
         g->tsize = wd->tsize;
         g->wd = wd;
@@ -1425,7 +1426,19 @@ grid_load(Evas_Object *obj, Grid *g)
 
              if (!gi)
                {
+                  char buf[PATH_MAX];
+                  char buf2[PATH_MAX];
+                  char *source;
+
                   gi = calloc(1, sizeof(Grid_Item));
+                  EINA_SAFETY_ON_NULL_RETURN(gi);
+
+                  gi->wd = wd;
+                  gi->g = g;
+                  gi->zoom = g->zoom;
+                  gi->file_have = EINA_FALSE;
+                  gi->job = NULL;
+
                   gi->src.x = x * g->tsize;
                   gi->src.y = y * g->tsize;
                   gi->src.w = g->tsize;
@@ -1436,12 +1449,8 @@ grid_load(Evas_Object *obj, Grid *g)
                   gi->out.w = gi->src.w;
                   gi->out.h = gi->src.h;
 
-                  gi->wd = wd;
-                  gi->g = g;
-
                   gi->img = evas_object_image_add(evas_object_evas_get(obj));
-                  evas_object_image_scale_hint_set
-                     (gi->img, EVAS_IMAGE_SCALE_HINT_DYNAMIC);
+                  evas_object_image_scale_hint_set(gi->img, EVAS_IMAGE_SCALE_HINT_DYNAMIC);
                   evas_object_image_filled_set(gi->img, 1);
 
                   evas_object_smart_member_add(gi->img, wd->pan_smart);
@@ -1457,42 +1466,33 @@ grid_load(Evas_Object *obj, Grid *g)
                   elm_widget_sub_object_add(obj, gi->txt);
                   evas_object_pass_events_set(gi->txt, EINA_TRUE);
 */
-                  eina_matrixsparse_data_idx_set(g->grid, y, x, gi);
-
-                  gi->job = NULL;
-                  gi->file = NULL;
-                  gi->source = NULL;
-               }
-
-             if (!gi->job)
-               {
-                  char buf[PATH_MAX], buf2[PATH_MAX];
-                  char *source;
-
-                  snprintf(buf, sizeof(buf), DEST_DIR_PATH, wd->id, g->zoom, x);
-                  if (!ecore_file_exists(buf))
-                    ecore_file_mkpath(buf);
-
-                  snprintf(buf2, sizeof(buf2), DEST_FILE_PATH, buf, y);
-
-                  source = wd->src->url_cb(obj, x, y, g->zoom);
-                  if ((!source) || (strlen(source)==0)) continue;
+                  snprintf(buf, sizeof(buf), CACHE_PATH, wd->id, g->zoom, x);
+                  snprintf(buf2, sizeof(buf2), CACHE_FILE_PATH, buf, y);
+                  if (!ecore_file_exists(buf)) ecore_file_mkpath(buf);
 
                   eina_stringshare_replace(&gi->file, buf2);
-                  eina_stringshare_replace(&gi->source, source);
-
-                  if (gi->file_have)
+                  source = wd->src->url_cb(obj, x, y, g->zoom);
+                  if ((!source) || (strlen(source)==0))
                     {
-                       DBG("File exists: %s", gi->file);
-                       _tile_update(gi);
+                       eina_stringshare_replace(&gi->source, NULL);
+                       WRN("Getting source url failed: %s", gi->file);
                     }
-                  else
-                    {
-                       DBG("Added to download list: %s", gi->file);
-                       _add_download_list(obj, gi);
-                    }
+                  else eina_stringshare_replace(&gi->source, source);
                   if (source) free(source);
+
+                  eina_matrixsparse_data_idx_set(g->grid, y, x, gi);
                }
+
+               if (gi->file_have)
+                 {
+                    DBG("File exists: %s", gi->file);
+                    _tile_update(gi);
+                 }
+               else if (!gi->job)
+                 {
+                    DBG("Added to download list: %s", gi->file);
+                    _add_download_list(obj, gi);
+                 }
           }
      }
 }
