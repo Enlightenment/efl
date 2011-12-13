@@ -2628,7 +2628,7 @@ _pan_resize(Evas_Object *obj,
         if (sd->resize_job) ecore_job_del(sd->resize_job);
         sd->resize_job = ecore_job_add(_pan_resize_job, sd);
      }
-   sd->wd->pan_resized = EINA_TRUE;
+   sd->wd->pan_changed = EINA_TRUE;
    evas_object_smart_changed(obj);
    if (sd->wd->calc_job) ecore_job_del(sd->wd->calc_job);
    sd->wd->calc_job = NULL;
@@ -2651,10 +2651,10 @@ _pan_calculate(Evas_Object *obj)
    if (!sd) return;
    evas_event_freeze(evas_object_evas_get(obj));
 
-   if (sd->wd->pan_resized)
+   if (sd->wd->pan_changed)
      {
         _calc_job(sd->wd);
-        sd->wd->pan_resized = EINA_FALSE;
+        sd->wd->pan_changed = EINA_FALSE;
      }
 
    evas_object_geometry_get(obj, &ox, &oy, &ow, &oh);
@@ -2705,8 +2705,11 @@ _pan_move(Evas_Object *obj,
    Pan *sd = evas_object_smart_data_get(obj);
 
    if (!sd) return;
+
+   sd->wd->pan_changed = EINA_TRUE;
+   evas_object_smart_changed(obj);
    if (sd->wd->calc_job) ecore_job_del(sd->wd->calc_job);
-   sd->wd->calc_job = ecore_job_add(_calc_job, sd->wd);
+   sd->wd->calc_job = NULL;
 }
 
 static void
@@ -3427,6 +3430,13 @@ _queue_process(Widget_Data *wd)
           {
              showme = _item_block_recalc(it->item->block, it->item->block->num, EINA_TRUE);
              it->item->block->changed = 0;
+             if(wd->pan_changed)
+               {
+                  if (wd->calc_job) ecore_job_del(wd->calc_job);
+                  wd->calc_job = NULL;
+                  _calc_job(wd);
+                  wd->pan_changed = EINA_FALSE;
+               }
           }
         if (showme) it->item->block->showme = EINA_TRUE;
         if (eina_inlist_count(wd->blocks) > 1)
@@ -3870,6 +3880,7 @@ _elm_genlist_clear(Evas_Object *obj, Eina_Bool standby)
           }
      }
    wd->clear_me = 0;
+   wd->pan_changed = EINA_TRUE;
    if (wd->calc_job)
      {
         ecore_job_del(wd->calc_job);
