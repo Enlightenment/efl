@@ -1181,6 +1181,8 @@ EAPI int
  ecore_x_error_request_get(void);
 EAPI int
  ecore_x_error_code_get(void);
+EAPI Ecore_X_ID
+ecore_x_error_resource_id_get(void);
 
 EAPI void
 ecore_x_event_mask_set(Ecore_X_Window w,

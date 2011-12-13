@@ -403,3 +403,7 @@
         the same as timers and mark them as "just added" to skip in
         this run of animators
 
+2011-12-13  Doyun Kang
+
+	* Add ability to get resource id of last x error in ecore_x.
+

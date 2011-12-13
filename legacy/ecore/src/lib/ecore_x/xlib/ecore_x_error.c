@@ -19,6 +19,7 @@ static void (*_io_error_func)(void *data) = NULL;
 static void *_io_error_data = NULL;
 static int _error_request_code = 0;
 static int _error_code = 0;
+static Ecore_X_ID _error_resource_id = 0;
 
 /**
  * Set the error handler.
@@ -74,6 +75,18 @@ ecore_x_error_code_get(void)
    return _error_code;
 }
 
+/**
+ * Get the resource id that caused the error.
+ * @return The resource id causing the X error
+ *
+ * Return the X resource id that caused the last X error
+ */
+EAPI Ecore_X_ID
+ecore_x_error_resource_id_get(void)
+{
+   return _error_resource_id;
+}
+
 void
 _ecore_x_error_handler_init(void)
 {
@@ -89,6 +102,7 @@ _ecore_x_error_handle(Display *d,
      {
         _error_request_code = ev->request_code;
         _error_code = ev->error_code;
+        _error_resource_id = ev->resourceid;
         if (_error_func)
           _error_func(_error_data);
      }
