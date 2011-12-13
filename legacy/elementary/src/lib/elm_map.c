@@ -247,6 +247,7 @@ struct _Grid_Item
 {
    Widget_Data *wd;
    Grid *g;
+   int zoom;
    Evas_Object *img;
    //Evas_Object *txt;
    const char *file;
@@ -503,8 +504,6 @@ static void _calc_job(void *data);
 static Eina_Bool _event_hook(Evas_Object *obj, Evas_Object *src,
                              Evas_Callback_Type type, void *event_info);
 static void grid_place(Evas_Object *obj, Grid *g, Evas_Coord px, Evas_Coord py, Evas_Coord ox, Evas_Coord oy, Evas_Coord ow, Evas_Coord oh);
-static void grid_clear(Evas_Object *obj, Grid *g);
-static Grid *grid_create(Evas_Object *obj);
 static void grid_load(Evas_Object *obj, Grid *g);
 
 static void _process_download_list(Evas_Object *obj);
@@ -906,7 +905,6 @@ marker_place(Evas_Object *obj, Grid *g, Evas_Coord px, Evas_Coord py, Evas_Coord
    int g_xx, g_yy, g_hh, g_ww;
 
    if (!wd) return;
-   if (g != eina_list_data_get(wd->grids)) return;
 
    ax = 0;
    ay = 0;
@@ -1102,52 +1100,6 @@ grid_place(Evas_Object *obj, Grid *g, Evas_Coord px, Evas_Coord py, Evas_Coord o
 }
 
 static void
-grid_clear(Evas_Object *obj, Grid *g)
-{
-   ELM_CHECK_WIDTYPE(obj, widtype);
-   Widget_Data *wd = elm_widget_data_get(obj);
-   char buf[PATH_MAX];
-
-   if (!wd) return;
-   if (!g->grid) return;
-
-   Eina_Iterator *it = eina_matrixsparse_iterator_new(g->grid);
-   Eina_Matrixsparse_Cell *cell;
-
-   snprintf(buf, sizeof(buf), DEST_DIR_ZOOM_PATH, wd->id, g->zoom);
-   ecore_file_recursive_rm(buf);
-
-   EINA_ITERATOR_FOREACH(it, cell)
-     {
-        Grid_Item *gi = eina_matrixsparse_cell_data_get(cell);
-        evas_object_del(gi->img);
-        //evas_object_del(gi->txt);
-
-        wd->download_list = eina_list_remove(wd->download_list, gi);
-
-        if (gi->job)
-          {
-             DBG("DOWNLOAD abort %s", gi->file);
-             ecore_file_download_abort(gi->job);
-             ecore_file_remove(gi->file);
-             gi->job = NULL;
-             wd->try_num--;
-          }
-        if (gi->file)
-          eina_stringshare_del(gi->file);
-        if (gi->source)
-          eina_stringshare_del(gi->source);
-
-        free(gi);
-     }
-   eina_matrixsparse_free(g->grid);
-   eina_iterator_free(it);
-   g->grid = NULL;
-   g->gw = 0;
-   g->gh = 0;
-}
-
-static void
 _tile_update(Grid_Item *gi)
 {
    evas_object_image_file_set(gi->img, gi->file, NULL);
@@ -1261,38 +1213,117 @@ _add_download_list(Evas_Object *obj, Grid_Item *gi)
    ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
 
-   if (!eina_list_data_find(wd->download_list, gi)) wd->download_list = eina_list_append(wd->download_list, gi);
+   wd->download_list = eina_list_remove(wd->download_list, gi);
+   wd->download_list = eina_list_append(wd->download_list, gi);
    _process_download_list(obj);
 }
 
-static Grid *
-grid_create(Evas_Object *obj)
+static void
+grid_create_all(Evas_Object *obj)
 {
-   ELM_CHECK_WIDTYPE(obj, widtype) NULL;
+   ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
    Grid *g;
+   int zoom = 0;
 
-   if ((!wd) || (!wd->src)) return NULL;
-   g = calloc(1, sizeof(Grid));
+   EINA_SAFETY_ON_NULL_RETURN(wd);
+   EINA_SAFETY_ON_NULL_RETURN(wd->src);
 
-   g->zoom = wd->zoom;
-   g->tsize = wd->tsize;
-   g->wd = wd;
+   for (zoom = wd->src->zoom_min; zoom <= wd->src->zoom_max; zoom++)
+     {
+        g = calloc(1, sizeof(Grid));
+        g->zoom = zoom;
+        g->tsize = wd->tsize;
+        g->wd = wd;
+        int size =  pow(2.0, g->zoom);
+        g->gw = size;
+        g->gh = size;
+        g->w = g->tsize * g->gw;
+        g->h = g->tsize * g->gh;
 
-   if (g->zoom > wd->src->zoom_max) return NULL;
-   if (g->zoom < wd->src->zoom_min) return NULL;
-
-   int size =  pow(2.0, wd->zoom);
-   g->gw = size;
-   g->gh = size;
-
-   g->w = g->tsize * g->gw;
-   g->h = g->tsize * g->gh;
-
-   g->grid = eina_matrixsparse_new(g->gh, g->gw, NULL, NULL);
-
-   return g;
+        g->grid = eina_matrixsparse_new(g->gh, g->gw, NULL, NULL);
+        wd->grids = eina_list_append(wd->grids, g);
+     }
 }
+
+static void
+grid_clear_all(Evas_Object *obj)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype);
+   Widget_Data *wd = elm_widget_data_get(obj);
+   Grid *g;
+   Grid_Item *gi;
+
+   EINA_SAFETY_ON_NULL_RETURN(wd);
+
+   EINA_LIST_FREE(wd->grids, g)
+     {
+        Eina_Iterator *it = eina_matrixsparse_iterator_new(g->grid);
+        Eina_Matrixsparse_Cell *cell;
+
+        EINA_ITERATOR_FOREACH(it, cell)
+          {
+             gi = eina_matrixsparse_cell_data_get(cell);
+             evas_object_del(gi->img);
+             //evas_object_del(gi->txt);
+
+             if (gi->job)
+               {
+                  DBG("DOWNLOAD abort %s", gi->file);
+                  ecore_file_download_abort(gi->job);
+                  ecore_file_remove(gi->file);
+                  gi->job = NULL;
+                  wd->try_num--;
+               }
+             if (gi->file)   eina_stringshare_del(gi->file);
+             if (gi->source) eina_stringshare_del(gi->source);
+             free(gi);
+          }
+        eina_matrixsparse_free(g->grid);
+        eina_iterator_free(it);
+        free(g);
+     }
+
+   EINA_LIST_FREE(wd->download_list, gi);
+   if (!ecore_file_recursive_rm("/tmp/elm_map/")) WRN("Deletion of /tmp/elm_map/ failed");
+
+}
+
+static void
+grid_unload(Evas_Object *obj, Grid *g)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype);
+   Widget_Data *wd = elm_widget_data_get(obj);
+
+   Eina_Iterator *it;
+   Eina_Matrixsparse_Cell *cell;
+   Grid_Item *gi;
+
+   EINA_SAFETY_ON_NULL_RETURN(wd);
+
+   it = eina_matrixsparse_iterator_new(g->grid);
+   EINA_ITERATOR_FOREACH(it, cell)
+     {
+        gi = eina_matrixsparse_cell_data_get(cell);
+
+        if (ecore_file_exists(gi->file))
+          {
+             evas_object_hide(gi->img);
+             //evas_object_hide(gi->txt);
+             evas_object_image_file_set(gi->img, NULL, NULL);
+          }
+        else if (gi->job)
+          {
+             DBG("DOWNLOAD abort %s", gi->file);
+             ecore_file_download_abort(gi->job);
+             ecore_file_remove(gi->file);
+             gi->job = NULL;
+             wd->try_num--;
+          }
+     }
+   eina_iterator_free(it);
+}
+
 
 static void
 grid_load(Evas_Object *obj, Grid *g)
@@ -1306,7 +1337,9 @@ grid_load(Evas_Object *obj, Grid *g)
    Eina_Matrixsparse_Cell *cell;
    Grid_Item *gi;
 
-   if ((!wd) || (!wd->src)) return;
+   EINA_SAFETY_ON_NULL_RETURN(wd);
+   EINA_SAFETY_ON_NULL_RETURN(wd->src);
+
    evas_object_geometry_get(wd->pan_smart, &ox, &oy, &ow, &oh);
    evas_output_viewport_get(evas_object_evas_get(wd->obj), &cvx, &cvy, &cvw, &cvh);
 
@@ -1385,9 +1418,6 @@ grid_load(Evas_Object *obj, Grid *g)
           {
              gi = eina_matrixsparse_data_idx_get(g->grid, y, x);
 
-             if ((!gi) && (g != eina_list_data_get(wd->grids)))
-               continue;
-
              if (!gi)
                {
                   gi = calloc(1, sizeof(Grid_Item));
@@ -1446,39 +1476,20 @@ grid_load(Evas_Object *obj, Grid *g)
                   eina_stringshare_replace(&gi->file, buf2);
                   eina_stringshare_replace(&gi->source, source);
 
-                  if ((ecore_file_exists(gi->file)) || (g == eina_list_data_get(wd->grids)))
+                  if (ecore_file_exists(gi->file))
                     {
-                       if (ecore_file_exists(gi->file))
-                         {
-                           DBG("file exists: %s", gi->file);
-                           _tile_update(gi);
-                         }
-                       else
-                         {
-                            DBG("added to download list: %s", gi->file);
-                            _add_download_list(obj, gi);
-                         }
+                       DBG("file exists: %s", gi->file);
+                       _tile_update(gi);
                     }
+                  else
+                    {
+                       DBG("added to download list: %s", gi->file);
+                       _add_download_list(obj, gi);
+                    }      
                   if (source) free(source);
                }
           }
      }
-}
-
-static void
-grid_clearall(Evas_Object *obj)
-{
-   ELM_CHECK_WIDTYPE(obj, widtype);
-   Widget_Data *wd = elm_widget_data_get(obj);
-   Grid *g;
-
-   if (!wd) return;
-   EINA_LIST_FREE(wd->grids, g)
-     {
-        grid_clear(obj, g);
-        free(g);
-     }
-   wd->download_list = eina_list_free(wd->download_list);
 }
 
 static void
@@ -1933,6 +1944,7 @@ _mouse_wheel_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, voi
         wd->wheel_zoom += 0.1;
         if (wd->wheel_zoom >= 2.0) wd->wheel_zoom = 2.0;
      }
+
    if (!wd->paused)
      {
         wd->pinch.level = pow(2.0, wd->wheel_zoom);
@@ -2104,7 +2116,7 @@ _del_pre_hook(Evas_Object *obj)
    Eina_List *l;
 
    if (!wd) return;
-   grid_clearall(obj);
+   grid_clear_all(obj);
    for (i = 0; i <= wd->zoom_max; i++)
      {
         if (!wd->markers[i]) continue;
@@ -2303,14 +2315,18 @@ _pan_calculate(Evas_Object *obj)
    Evas_Coord ox, oy, ow, oh;
    Eina_List *l;
    Grid *g;
-   if (!sd) return;
+
+   EINA_SAFETY_ON_NULL_RETURN(sd);
+   EINA_SAFETY_ON_NULL_RETURN(sd->wd);
+
    evas_object_geometry_get(obj, &ox, &oy, &ow, &oh);
    rect_place(sd->wd->obj, sd->wd->pan_x, sd->wd->pan_y, ox, oy, ow, oh);
    EINA_LIST_FOREACH(sd->wd->grids, l, g)
      {
-        if (sd->wd->zoom == g->zoom) grid_load(sd->wd->obj, g);
+        if (sd->wd->zoom == g->zoom)     grid_load(sd->wd->obj, g);
+        else if (sd->wd->zoom-1 != g->zoom && sd->wd->zoom+1 != g->zoom)  grid_unload(sd->wd->obj, g); // remain only adjacent grids
         grid_place(sd->wd->obj, g, sd->wd->pan_x, sd->wd->pan_y, ox, oy, ow, oh);
-        marker_place(sd->wd->obj, g, sd->wd->pan_x, sd->wd->pan_y, ox, oy, ow, oh);
+        if (sd->wd->zoom == g->zoom) marker_place(sd->wd->obj, g, sd->wd->pan_x, sd->wd->pan_y, ox, oy, ow, oh);
         if (!sd->wd->zoom_animator) route_place(sd->wd->obj, g, sd->wd->pan_x, sd->wd->pan_y, ox, oy, ow, oh);
         if (!sd->wd->zoom_animator) track_place(sd->wd->obj, g, sd->wd->pan_x, sd->wd->pan_y, ox, oy, ow, oh);
      }
@@ -2999,9 +3015,15 @@ _route_complete_cb(void *data, int ev_type __UNUSED__, void *event)
 
    if (wd->grids)
      {
+        Eina_List *l;
+        Grid *g;
         Evas_Coord ox, oy, ow, oh;
         evas_object_geometry_get(wd->obj, &ox, &oy, &ow, &oh);
-        route_place(wd->obj, eina_list_data_get(wd->grids), wd->pan_x, wd->pan_y, ox, oy, ow, oh);
+        EINA_LIST_FOREACH(wd->grids, l, g)
+          {
+             if (wd->zoom == g->zoom) break;
+          }
+        route_place(wd->obj, g, wd->pan_x, wd->pan_y, ox, oy, ow, oh);
      }
    edje_object_signal_emit(elm_smart_scroller_edje_object_get(wd->scr),
                            "elm,state,busy,stop", "elm");
@@ -3211,6 +3233,8 @@ elm_map_add(Evas_Object *parent)
    wd->sep_maps_markers = evas_object_rectangle_add(evas_object_evas_get(obj));
    evas_object_smart_member_add(wd->sep_maps_markers, wd->pan_smart);
 
+   grid_create_all(obj);
+
    wd->paused = EINA_TRUE;
    elm_map_zoom_set(obj, 0);
    wd->paused = EINA_FALSE;
@@ -3239,7 +3263,6 @@ elm_map_zoom_set(Evas_Object *obj, int zoom)
    ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
    Eina_List *l;
-   Grid *g, *g_zoom = NULL;
    Evas_Coord rx, ry, rw, rh;
    Evas_Object *p;
    Elm_Map_Route *r;
@@ -3312,31 +3335,11 @@ elm_map_zoom_set(Evas_Object *obj, int zoom)
           }
         wd->zoom = z;
      }
+
    wd->size.nw = pow(2.0, wd->zoom) * wd->tsize;
    wd->size.nh = pow(2.0, wd->zoom) * wd->tsize;
-
-   g = grid_create(obj);
-   if (g)
-     {
-        if (eina_list_count(wd->grids) > 1)
-          {
-             g_zoom = eina_list_last(wd->grids)->data;
-             wd->grids = eina_list_remove(wd->grids, g_zoom);
-             grid_clear(obj, g_zoom);
-             free(g_zoom);
-          }
-        wd->grids = eina_list_prepend(wd->grids, g);
-     }
-   else
-     {
-        EINA_LIST_FREE(wd->grids, g)
-          {
-             grid_clear(obj, g);
-             free(g);
-          }
-     }
-
    wd->t = 1.0;
+
    if ((wd->size.w > 0) && (wd->size.h > 0))
      {
         wd->size.spos.x = (double)(rx + (rw / 2)) / (double)wd->size.ow;
@@ -3921,9 +3924,15 @@ elm_map_marker_add(Evas_Object *obj, double lon, double lat, Elm_Map_Marker_Clas
 
    if (wd->grids)
      {
+        Eina_List *l;
+        Grid *g;
         Evas_Coord ox, oy, ow, oh;
         evas_object_geometry_get(obj, &ox, &oy, &ow, &oh);
-        marker_place(obj, eina_list_data_get(wd->grids), wd->pan_x, wd->pan_y, ox, oy, ow, oh);
+        EINA_LIST_FOREACH(wd->grids, l, g)
+          {
+             if (wd->zoom == g->zoom) break;
+          }
+        marker_place(obj, g, wd->pan_x, wd->pan_y, ox, oy, ow, oh);
      }
 
    return marker;
@@ -4000,9 +4009,15 @@ elm_map_marker_remove(Elm_Map_Marker *marker)
 
    if (wd->grids)
      {
+        Eina_List *l;
+        Grid *g;
         Evas_Coord ox, oy, ow, oh;
         evas_object_geometry_get(wd->obj, &ox, &oy, &ow, &oh);
-        marker_place(wd->obj, eina_list_data_get(wd->grids), wd->pan_x, wd->pan_y, ox, oy, ow, oh);
+        EINA_LIST_FOREACH(wd->grids, l, g)
+          {
+             if (wd->zoom == g->zoom) break;
+          }
+        marker_place(wd->obj, g, wd->pan_x, wd->pan_y, ox, oy, ow, oh);
      }
 #else
    (void) marker;
@@ -4251,9 +4266,15 @@ elm_map_group_class_hide_set(Evas_Object *obj, Elm_Map_Group_Class *clas, Eina_B
    clas->hide = hide;
    if (wd->grids)
      {
+        Eina_List *l;
+        Grid *g;
         Evas_Coord ox, oy, ow, oh;
         evas_object_geometry_get(obj, &ox, &oy, &ow, &oh);
-        marker_place(obj, eina_list_data_get(wd->grids), wd->pan_x, wd->pan_y, ox, oy, ow, oh);
+        EINA_LIST_FOREACH(wd->grids, l, g)
+          {
+             if (wd->zoom == g->zoom) break;
+          }
+        marker_place(obj, g, wd->pan_x, wd->pan_y, ox, oy, ow, oh);
      }
 #else
    (void) obj;
@@ -4350,7 +4371,6 @@ elm_map_source_name_set(Evas_Object *obj, const char *source_name)
    Widget_Data *wd = elm_widget_data_get(obj);
    Map_Sources_Tab *s;
    Eina_List *l;
-   Grid *grid;
    int zoom;
 
    if (!wd) return;
@@ -4360,7 +4380,7 @@ elm_map_source_name_set(Evas_Object *obj, const char *source_name)
         if (!wd->src->url_cb) return;
      }
 
-   EINA_LIST_FREE(wd->grids, grid) grid_clear(obj, grid);
+   grid_clear_all(obj);
    EINA_LIST_FOREACH(wd->map_sources_tab, l, s)
      {
         if (!strcmp(s->name, source_name))
@@ -4379,6 +4399,7 @@ elm_map_source_name_set(Evas_Object *obj, const char *source_name)
         if (wd->src->zoom_min > zoom)
           zoom = wd->src->zoom_min;
      }
+   grid_create_all(obj);
    elm_map_zoom_set(obj, zoom);
 #else
    (void) obj;
