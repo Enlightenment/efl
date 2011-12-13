@@ -50,7 +50,8 @@ static Evas_Image_Load_Func evas_image_load_gif_func =
   EINA_TRUE,
   evas_image_load_file_head_gif,
   evas_image_load_file_data_gif,
-  evas_image_load_frame_duration_gif
+  evas_image_load_frame_duration_gif,
+  EINA_FALSE
 };
 #define byte2_to_int(a,b)         (((b)<<8)|(a))
 

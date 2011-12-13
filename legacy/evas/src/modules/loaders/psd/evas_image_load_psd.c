@@ -941,7 +941,8 @@ static const Evas_Image_Load_Func evas_image_load_psd_func = {
   EINA_TRUE,
   evas_image_load_file_head_psd,
   evas_image_load_file_data_psd,
-  NULL
+  NULL,
+  EINA_FALSE
 };
 
 static int

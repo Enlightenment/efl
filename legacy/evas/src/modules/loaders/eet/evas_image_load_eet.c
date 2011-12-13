@@ -16,7 +16,8 @@ Evas_Image_Load_Func evas_image_load_eet_func =
   EINA_TRUE,
   evas_image_load_file_head_eet,
   evas_image_load_file_data_eet,
-  NULL
+  NULL,
+  EINA_FALSE
 };
 
 

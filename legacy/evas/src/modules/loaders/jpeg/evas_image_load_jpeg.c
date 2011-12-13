@@ -46,7 +46,8 @@ static Evas_Image_Load_Func evas_image_load_jpeg_func =
   EINA_TRUE,
   evas_image_load_file_head_jpeg,
   evas_image_load_file_data_jpeg,
-  NULL
+  NULL,
+  EINA_TRUE
 };
 
 

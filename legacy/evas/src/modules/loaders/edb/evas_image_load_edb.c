@@ -16,7 +16,8 @@ static Evas_Image_Load_Func evas_image_load_edb_func =
   EINA_TRUE,
   evas_image_load_file_head_edb,
   evas_image_load_file_data_edb,
-  NULL
+  NULL,
+  EINA_FALSE
 };
 
 static Eina_Bool

@@ -13,7 +13,8 @@ Evas_Image_Load_Func evas_image_load_svg_func =
   EINA_FALSE,
   evas_image_load_file_head_svg,
   evas_image_load_file_data_svg,
-  NULL
+  NULL,
+  EINA_FALSE
 };
 
 static int  rsvg_initialized = 0;

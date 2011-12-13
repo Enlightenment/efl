@@ -1934,6 +1934,24 @@ evas_object_image_content_hint_get(const Evas_Object *obj)
    return o->content_hint;
 }
 
+EAPI Eina_Bool
+evas_object_image_region_support_get(const Evas_Object *obj)
+{
+   Evas_Object_Image *o;
+
+   MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
+   return EINA_FALSE;
+   MAGIC_CHECK_END();
+   o = (Evas_Object_Image *) (obj->object_data);
+   MAGIC_CHECK(o, Evas_Object_Image, MAGIC_OBJ_IMAGE);
+   return EINA_FALSE;
+   MAGIC_CHECK_END();
+
+   return obj->layer->evas->engine.func->image_can_region_get(
+      obj->layer->evas->engine.data.output,
+      o->engine_data);
+}
+
 /* animated feature */
 EAPI Eina_Bool
 evas_object_image_animated_get(const Evas_Object *obj)

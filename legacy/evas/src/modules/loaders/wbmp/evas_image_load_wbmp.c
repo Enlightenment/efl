@@ -19,7 +19,8 @@ static Evas_Image_Load_Func evas_image_load_wbmp_func =
    EINA_TRUE,
    evas_image_load_file_head_wbmp,
    evas_image_load_file_data_wbmp,
-   NULL
+   NULL,
+   EINA_FALSE
 };
 
 

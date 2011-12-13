@@ -7065,7 +7065,7 @@ EAPI void                     evas_object_image_load_region_set        (Evas_Obj
  *
  * @see evas_object_image_load_region_get()
  */
-EAPI void                     evas_object_image_load_region_get        (const Evas_Object *obj, int *x, int *y, int *w, int *h) EINA_ARG_NONNULL(1);
+eAPI void                     evas_object_image_load_region_get        (const Evas_Object *obj, int *x, int *y, int *w, int *h) EINA_ARG_NONNULL(1);
 
 /**
  * Define if the orientation information in the image file should be honored.
@@ -7105,6 +7105,17 @@ EAPI void                     evas_object_image_colorspace_set         (Evas_Obj
  *
  */
 EAPI Evas_Colorspace          evas_object_image_colorspace_get         (const Evas_Object *obj) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1) EINA_PURE;
+
+/**
+ * Get the support state of a given image
+ *
+ * @param obj The given image object pointer
+ * @return The region support state
+ * @since 1.2.0
+ *
+ * This function returns the state of the region support of given image
+ */
+EAPI Eina_Bool          evas_object_image_region_support_get         (const Evas_Object *obj) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1) EINA_PURE;
 
 /**
  * Set the native surface of a given image of the canvas

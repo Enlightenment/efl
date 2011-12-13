@@ -258,6 +258,15 @@ eng_image_colorspace_get(void *data __UNUSED__, void *image)
    return im->space;
 }
 
+static Eina_Bool
+eng_image_can_region_get(void *data__UNUSED__, void *image)
+{
+   Image_Entry *im;
+   if (!image) return EINA_FALSE;
+   im = image;
+   return ((Evas_Image_Load_Func*) im->info.loader)->do_region;
+}
+
 static void
 eng_image_mask_create(void *data __UNUSED__, void *image)
 {
@@ -1112,6 +1121,7 @@ static Evas_Func func =
      eng_image_format_get,
      eng_image_colorspace_set,
      eng_image_colorspace_get,
+     eng_image_can_region_get,
      eng_image_mask_create,
      eng_image_native_set,
      eng_image_native_get,

@@ -3702,6 +3702,18 @@ eng_image_animated_frame_set(void *data __UNUSED__, void *image, int frame_index
    return EINA_TRUE;
 }
 
+static Eina_Bool
+eng_image_can_region_get(void *data__UNUSED__, void *image)
+{
+   Evas_GL_Image *gim = image;
+   Image_Entry *im;
+   if (!gim) return EINA_FALSE;
+   im = (Image_Entry *)gim->im;
+   if (!im) return EINA_FALSE;
+   return ((Evas_Image_Load_Func*) im->info.loader)->do_region;
+}
+
+
 static void
 eng_image_max_size_get(void *data, int *maxw, int *maxh)
 {

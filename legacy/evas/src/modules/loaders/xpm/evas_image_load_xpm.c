@@ -24,7 +24,8 @@ static Evas_Image_Load_Func evas_image_load_xpm_func =
   EINA_FALSE,
   evas_image_load_file_head_xpm,
   evas_image_load_file_data_xpm,
-  NULL
+  NULL,
+  EINA_FALSE
 };
 
 // TODO: REWRITE THIS WITH THREAD SAFE VERSION NOT USING THIS HANDLE!!!!

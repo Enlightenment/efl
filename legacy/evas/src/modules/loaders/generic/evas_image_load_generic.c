@@ -24,7 +24,8 @@ Evas_Image_Load_Func evas_image_load_generic_func =
   EINA_TRUE,
   evas_image_load_file_head_generic,
   evas_image_load_file_data_generic,
-  NULL
+  NULL,
+  EINA_FALSE
 };
 
 static Eina_Bool
