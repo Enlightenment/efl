@@ -283,7 +283,7 @@ my_map_name_loaded(void *data, Evas_Object *obj __UNUSED__, void *event_info __U
              elm_map_paused_set(data, EINA_TRUE);
              elm_map_zoom_mode_set(data, ELM_MAP_ZOOM_MODE_MANUAL);
              elm_map_geo_region_show(data, lon, lat);
-             elm_map_zoom_set(data, 18);
+             elm_map_zoom_set(data, elm_map_source_zoom_max_get(data));
              elm_map_paused_set(data, b);
           }
      }
@@ -355,6 +355,7 @@ static void
 map_track_add(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    Evas_Object *fs, *bg, *vbox, *hbox, *sep;
+   char *path = NULL;
 
    fs_win = elm_win_add(NULL, "fileselector", ELM_WIN_BASIC);
    elm_win_title_set(fs_win, "File Selector");
@@ -373,7 +374,11 @@ map_track_add(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED
    fs = elm_fileselector_add(fs_win);
    elm_fileselector_is_save_set(fs, EINA_TRUE);
    elm_fileselector_expandable_set(fs, EINA_FALSE);
-   elm_fileselector_path_set(fs, getenv("HOME"));
+   path = getenv("HOME");
+   //if "HOME" is not available, set current dir. path
+   if (!path)
+     path = ".";
+   elm_fileselector_path_set(fs, path);
    evas_object_size_hint_weight_set(fs, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(fs, EVAS_HINT_FILL, EVAS_HINT_FILL);
    elm_box_pack_end(vbox, fs);
