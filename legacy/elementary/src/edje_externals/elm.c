@@ -112,6 +112,14 @@ external_common_param_get(void *data __UNUSED__, const Evas_Object *obj, Edje_Ex
              return EINA_TRUE;
           }
      }
+   else if (!strcmp(param->name, "disabled"))
+     {
+        if (param->type == EDJE_EXTERNAL_PARAM_TYPE_BOOL)
+          {
+             param->i = elm_object_disabled_get(obj);
+             return EINA_TRUE;
+          }
+     }
    return EINA_FALSE;
 }
 
@@ -123,6 +131,14 @@ external_common_param_set(void *data __UNUSED__, Evas_Object *obj, const Edje_Ex
          if (param->type == EDJE_EXTERNAL_PARAM_TYPE_STRING)
            {
               elm_object_style_set(obj, param->s);
+              return EINA_TRUE;
+           }
+     }
+   else if (!strcmp(param->name, "disabled"))
+     {
+         if (param->type == EDJE_EXTERNAL_PARAM_TYPE_BOOL)
+           {
+              elm_object_disabled_set(obj, param->i);
               return EINA_TRUE;
            }
      }
@@ -180,9 +196,11 @@ external_common_params_parse(void *mem, void *data __UNUSED__, Evas_Object *obj 
    EINA_LIST_FOREACH(params, l, param)
      {
         if (!strcmp(param->name, "style"))
+          p->style = eina_stringshare_add(param->s);
+        else if (!strcmp(param->name, "disabled"))
           {
-             p->style = eina_stringshare_add(param->s);
-             break;
+             p->disabled = param->i;
+             p->disabled_exists = EINA_TRUE;
           }
      }
 }
@@ -197,6 +215,8 @@ external_common_state_set(void *data __UNUSED__, Evas_Object *obj, const void *f
 
    if (p->style)
       elm_object_style_set(obj, p->style);
+   if (p->disabled_exists)
+     elm_object_disabled_set(obj, p->disabled);
 }
 
 Evas_Object *

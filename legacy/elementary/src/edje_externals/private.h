@@ -6,6 +6,8 @@
 
 typedef struct {
     const char *style;
+    Eina_Bool disabled:1;
+    Eina_Bool disabled_exists:1;
 } Elm_Params;
 
 void external_elm_init(void);
@@ -115,4 +117,5 @@ external_##type_name##_icon_add(void *data __UNUSED__, Evas *e) {   \
 }
 
 #define DEFINE_EXTERNAL_COMMON_PARAMS           \
-    EDJE_EXTERNAL_PARAM_INFO_STRING_DEFAULT("style", "default")
+    EDJE_EXTERNAL_PARAM_INFO_STRING_DEFAULT("style", "default"), \
+    EDJE_EXTERNAL_PARAM_INFO_BOOL_DEFAULT("disabled", EINA_FALSE)
