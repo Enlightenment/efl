@@ -7065,7 +7065,7 @@ EAPI void                     evas_object_image_load_region_set        (Evas_Obj
  *
  * @see evas_object_image_load_region_get()
  */
-eAPI void                     evas_object_image_load_region_get        (const Evas_Object *obj, int *x, int *y, int *w, int *h) EINA_ARG_NONNULL(1);
+EAPI void                     evas_object_image_load_region_get        (const Evas_Object *obj, int *x, int *y, int *w, int *h) EINA_ARG_NONNULL(1);
 
 /**
  * Define if the orientation information in the image file should be honored.
