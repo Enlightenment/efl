@@ -223,3 +223,7 @@
 
         1.1.0 release
 
+2011-12-12 Mike Blumenkrantz (discomfitor/zmike)
+
+        * Fix potential crash from buffer overflow on copying map data.
+
