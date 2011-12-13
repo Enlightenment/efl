@@ -256,6 +256,7 @@ struct _Grid_Item
         int x, y, w, h;
    } src, out;
 
+   Eina_Bool file_have : 1;
    Ecore_File_Download_Job *job;
    int try_num;
 };
@@ -629,7 +630,7 @@ module_list_cb(Eina_Module *m, void *data)
    coord_into_geo = eina_module_symbol_get(m, "map_module_coord_into_geo");
    if ((!source) || (!zoom_min) || (!zoom_max) || (!url) || (!route_source) || (!route_url) || (!name_url) || (!geo_into_coord) || (!coord_into_geo))
      {
-        ERR("could not find map_module_source_get() in module \"%s\": %s", file, eina_error_msg_get(eina_error_get()));
+        WRN("could not find map_module_source_get() in module \"%s\": %s", file, eina_error_msg_get(eina_error_get()));
         eina_module_unload(m);
         return EINA_FALSE;
      }
@@ -1108,11 +1109,13 @@ _tile_update(Grid_Item *gi)
      {
         ERR("Image loading error (%s): %s", gi->file, evas_load_error_str(err));
         ecore_file_remove(gi->file);
+        gi->file_have = EINA_FALSE;
      }
    else
      {
         obj_rotate_zoom(gi->wd->obj, gi->img);
         evas_object_show(gi->img);
+        gi->file_have = EINA_TRUE;
         //evas_object_text_text_set(gi->txt, gi->file);
         //evas_object_show(gi->txt);
      }
@@ -1129,14 +1132,15 @@ _tile_downloaded(void *data, const char *file __UNUSED__, int status)
      {
         DBG("Download success from %s to %s", gi->source, gi->file);
         _tile_update(gi);
+        gi->wd->finish_num++;
      }
    else
      {
-        DBG("Download failed from %s to %s (%d) ", gi->source, gi->file, status);
+        WRN("Download failed from %s to %s (%d) ", gi->source, gi->file, status);
         ecore_file_remove(gi->file);
+        gi->file_have = EINA_FALSE;
      }
 
-   gi->wd->finish_num++;
    gi->wd->download_num--;
    evas_object_smart_callback_call(gi->wd->obj, SIG_DOWNLOADED, NULL);
    if (!gi->wd->download_num)
@@ -1272,6 +1276,7 @@ grid_clear_all(Evas_Object *obj)
                   DBG("DOWNLOAD abort %s", gi->file);
                   ecore_file_download_abort(gi->job);
                   ecore_file_remove(gi->file);
+                  gi->file_have = EINA_FALSE;
                   gi->job = NULL;
                   wd->try_num--;
                }
@@ -1306,7 +1311,7 @@ grid_unload(Evas_Object *obj, Grid *g)
      {
         gi = eina_matrixsparse_cell_data_get(cell);
 
-        if (ecore_file_exists(gi->file))
+        if (gi->file_have)
           {
              evas_object_hide(gi->img);
              //evas_object_hide(gi->txt);
@@ -1382,20 +1387,20 @@ grid_load(Evas_Object *obj, Grid *g)
                                  ww, hh,
                                  cvx, cvy, cvw, cvh))
           {
-             if (ecore_file_exists(gi->file))
+             if (gi->file_have)
                {
                   evas_object_hide(gi->img);
+                  //evas_object_hide(gi->txt);
                   evas_object_image_file_set(gi->img, NULL, NULL);
                }
              else if (gi->job)
                {
-                  DBG("DOWNLOAD abort %s", gi->file);
+                  DBG("Download abort %s", gi->file);
                   ecore_file_download_abort(gi->job);
                   ecore_file_remove(gi->file);
                   gi->job = NULL;
                   wd->try_num--;
                }
-             //evas_object_hide(gi->txt);
           }
      }
    eina_iterator_free(it);
@@ -1476,16 +1481,16 @@ grid_load(Evas_Object *obj, Grid *g)
                   eina_stringshare_replace(&gi->file, buf2);
                   eina_stringshare_replace(&gi->source, source);
 
-                  if (ecore_file_exists(gi->file))
+                  if (gi->file_have)
                     {
-                       DBG("file exists: %s", gi->file);
+                       DBG("File exists: %s", gi->file);
                        _tile_update(gi);
                     }
                   else
                     {
-                       DBG("added to download list: %s", gi->file);
+                       DBG("Added to download list: %s", gi->file);
                        _add_download_list(obj, gi);
-                    }      
+                    }
                   if (source) free(source);
                }
           }
@@ -2323,8 +2328,8 @@ _pan_calculate(Evas_Object *obj)
    rect_place(sd->wd->obj, sd->wd->pan_x, sd->wd->pan_y, ox, oy, ow, oh);
    EINA_LIST_FOREACH(sd->wd->grids, l, g)
      {
-        if (sd->wd->zoom == g->zoom)     grid_load(sd->wd->obj, g);
-        else if (sd->wd->zoom-1 != g->zoom && sd->wd->zoom+1 != g->zoom)  grid_unload(sd->wd->obj, g); // remain only adjacent grids
+        if (sd->wd->zoom == g->zoom) grid_load(sd->wd->obj, g);
+        else if (sd->wd->zoom-1 != g->zoom && sd->wd->zoom+1 != g->zoom) grid_unload(sd->wd->obj, g); // remain only adjacent grids
         grid_place(sd->wd->obj, g, sd->wd->pan_x, sd->wd->pan_y, ox, oy, ow, oh);
         if (sd->wd->zoom == g->zoom) marker_place(sd->wd->obj, g, sd->wd->pan_x, sd->wd->pan_y, ox, oy, ow, oh);
         if (!sd->wd->zoom_animator) route_place(sd->wd->obj, g, sd->wd->pan_x, sd->wd->pan_y, ox, oy, ow, oh);
