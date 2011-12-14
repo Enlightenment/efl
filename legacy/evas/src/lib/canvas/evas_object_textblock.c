@@ -5086,7 +5086,7 @@ evas_object_textblock_text_markup_get(const Evas_Object *obj)
 }
 
 EAPI char *
-evas_textblock_markup_to_plain(const Evas_Object *obj, const char *text)
+evas_textblock_text_markup_to_utf8(const Evas_Object *obj, const char *text)
 {
    /* FIXME: Can be done better, this is the least redundant way of doing it,
     * but by far the slowest, when the time comes, this should be

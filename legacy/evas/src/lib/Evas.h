@@ -8124,7 +8124,7 @@ EAPI const char                  *evas_textblock_escape_string_range_get(const c
  * @return an allocated plain text version of the markup
  * @since 1.2.0
  */
-EAPI char                        *evas_textblock_markup_to_plain(const Evas_Object *obj, const char *text) EINA_WARN_UNUSED_RESULT EINA_MALLOC EINA_ARG_NONNULL(1, 2);
+EAPI char                        *evas_textblock_text_markup_to_utf8(const Evas_Object *obj, const char *text) EINA_WARN_UNUSED_RESULT EINA_MALLOC EINA_ARG_NONNULL(1, 2);
 
 /**
  * Creates a new textblock style.
