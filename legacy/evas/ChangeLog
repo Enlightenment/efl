@@ -503,7 +503,7 @@
 
         * JPEG encode and decode in eet now uses ISLOW (not IFAST) due to
         noticable quality losses in the chase for speed. It will use
-        IFAST for quality less than 60 when encoding    
+        IFAST for quality less than 60 when encoding
 
 2011-11-20  Carsten Haitzler (The Rasterman)
 
@@ -526,7 +526,7 @@
         and monitor GL state etc. and get it right sharing state with
         evas without having to rely specifically on a new GL context.
 
-2011-12-07 Carsten Haitzler (The Rasterman)
+2011-12-07  Carsten Haitzler (The Rasterman)
 
         * Fix build if gcc too old - if immintrin.h doesn't exist,
         don't enable SSE3.
@@ -540,7 +540,7 @@
 	This lets you convert textblock markup to plain text.
 	This converts formats and everything correctly.
 
-2011-12-12 Carsten Haitzler (The Rasterman)
+2011-12-12  Carsten Haitzler (The Rasterman)
 
         * Fix rounding error in map clip bounds calculation
 
@@ -550,7 +550,7 @@
 	Those functions let you jump to the start/end of the word under the
 	cursor.
 
-2011-12-13 Carsten Haitzler (The Rasterman)
+2011-12-13  Carsten Haitzler (The Rasterman)
 
         * Fix grab count negative values if you do weird combinations of
         press and release with multiple fingers or multiple mouse
