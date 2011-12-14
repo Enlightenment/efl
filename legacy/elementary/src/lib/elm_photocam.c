@@ -81,6 +81,7 @@ struct _Widget_Data
    Eina_Bool longpressed : 1;
    Eina_Bool on_hold : 1;
    Eina_Bool paused : 1;
+   Eina_Bool do_region : 1;
 };
 
 struct _Pan
@@ -303,8 +304,16 @@ grid_create(Evas_Object *obj)
         free(g);
         return NULL;
      }
-   g->gw = (g->w + g->tsize - 1) / g->tsize;
-   g->gh = (g->h + g->tsize - 1) / g->tsize;
+   if (wd->do_region)
+     {
+        g->gw = (g->w + g->tsize - 1) / g->tsize;
+        g->gh = (g->h + g->tsize - 1) / g->tsize;
+     }
+   else
+     {
+        g->gw = 1;
+        g->gh = 1;
+     }
    g->grid = calloc(1, sizeof(Grid_Item) * g->gw * g->gh);
    if (!g->grid)
      {
@@ -737,6 +746,25 @@ _show_region_hook(void *data, Evas_Object *obj)
 }
 */
 
+static Eina_Bool
+_zoom_set(Evas_Object *obj, int w, int h)
+{
+   int z;
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (wd->size.imw > wd->size.imh)
+     z = wd->size.imw / w;
+   else
+     z = wd->size.imh / h;
+   if      (z >= 8) z = 8;
+   else if (z >= 4) z = 4;
+   else if (z >= 2) z = 2;
+   else             z = 1;
+   wd->zoom = z;
+   wd->size.nw = w;
+   wd->size.nh = h;
+   return (z != wd->zoom);
+}
+
 static void
 _sizing_eval(Evas_Object *obj)
 {
@@ -1158,6 +1186,7 @@ elm_photocam_file_set(Evas_Object *obj, const char *file)
    evas_object_image_load_scale_down_set(wd->img, 0);
    evas_object_image_file_set(wd->img, wd->file, NULL);
    evas_object_image_size_get(wd->img, &w, &h);
+   wd->do_region = evas_object_image_region_support_get(wd->img);
    wd->size.imw = w;
    wd->size.imh = h;
    wd->size.w = wd->size.imw / wd->zoom;
@@ -1209,7 +1238,6 @@ elm_photocam_zoom_set(Evas_Object *obj, double zoom)
    Eina_List *l;
    Grid *g, *g_zoom = NULL;
    Evas_Coord pw, ph, rx, ry, rw, rh;
-   int z;
    int zoom_changed = 0, started = 0;
    Ecore_Animator *an;
    if (!wd) return;
@@ -1246,18 +1274,8 @@ elm_photocam_zoom_set(Evas_Object *obj, double zoom)
                {
                   pw = rw;
                }
-             if (wd->size.imw > wd->size.imh)
-               z = wd->size.imw / pw;
-             else
-               z = wd->size.imh / ph;
-             if      (z >= 8) z = 8;
-             else if (z >= 4) z = 4;
-             else if (z >= 2) z = 2;
-             else             z = 1;
-             if (z != wd->zoom) zoom_changed = 1;
-             wd->zoom = z;
-             wd->size.nw = pw;
-             wd->size.nh = ph;
+             if (_zoom_set(obj, pw, ph))
+               zoom_changed = 1;
           }
      }
    else if (wd->mode == ELM_PHOTOCAM_ZOOM_MODE_AUTO_FILL)
@@ -1279,18 +1297,8 @@ elm_photocam_zoom_set(Evas_Object *obj, double zoom)
                {
                   pw = rw;
                }
-             if (wd->size.imw > wd->size.imh)
-               z = wd->size.imw / pw;
-             else
-               z = wd->size.imh / ph;
-             if      (z >= 8) z = 8;
-             else if (z >= 4) z = 4;
-             else if (z >= 2) z = 2;
-             else             z = 1;
-             if (z != wd->zoom) zoom_changed = 1;
-             wd->zoom = z;
-             wd->size.nw = pw;
-             wd->size.nh = ph;
+             if (_zoom_set(obj, pw, ph))
+               zoom_changed = 1;
           }
      }
    else if (wd->mode == ELM_PHOTOCAM_ZOOM_MODE_AUTO_FIT_IN)
@@ -1317,14 +1325,8 @@ elm_photocam_zoom_set(Evas_Object *obj, double zoom)
                }
              else
                pw = rw;
-             if (wd->size.imw > wd->size.imh)
-               z = wd->size.imw / pw;
-             else
-               z = wd->size.imh / ph;
-             if (z != wd->zoom) zoom_changed = 1;
-             wd->zoom = z;
-             wd->size.nw = pw;
-             wd->size.nh = ph;
+             if (_zoom_set(obj, pw, ph))
+               zoom_changed = 1;
           }
      }
    if (wd->main_load_pending)
