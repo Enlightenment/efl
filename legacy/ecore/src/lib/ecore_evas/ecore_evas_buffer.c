@@ -94,6 +94,12 @@ _ecore_evas_resize(Ecore_Evas *ee, int w, int h)
    if (ee->func.fn_resize) ee->func.fn_resize(ee);
 }
 
+static void
+_ecore_evas_move_resize(Ecore_Evas *ee, int x __UNUSED__, int y __UNUSED__, int w, int h)
+{
+   _ecore_evas_resize(ee, w, h);
+}
+
 int
 _ecore_evas_buffer_shutdown(void)
 {
@@ -492,7 +498,7 @@ static Ecore_Evas_Engine_Func _ecore_buffer_engine_func =
      NULL,
      NULL,
      _ecore_evas_resize,
-     NULL,
+     _ecore_evas_move_resize,
      NULL,
      NULL,
      _ecore_evas_show,
