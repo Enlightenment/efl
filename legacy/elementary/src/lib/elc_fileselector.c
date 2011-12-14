@@ -1144,7 +1144,10 @@ elm_fileselector_selected_get(const Evas_Object *obj)
         name = elm_entry_entry_get(wd->filename_entry);
         snprintf(buf, sizeof(buf), "%s/%s",
                  dir, name);
-        eina_stringshare_replace(&wd->selection, buf);
+        if (wd->only_folder && !ecore_file_is_dir(buf))
+          eina_stringshare_replace(&wd->selection, ecore_file_dir_get(buf));
+        else
+          eina_stringshare_replace(&wd->selection, buf);
         if (dir) free(dir);
         return wd->selection;
      }
