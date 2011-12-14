@@ -1361,10 +1361,10 @@ _edje_key_down_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, v
                   _sel_clear(en->cursor, rp->object, en);
                   info->change.insert.pos =
                      evas_textblock_cursor_pos_get(en->cursor);
-                  info->change.insert.content = eina_stringshare_add("<\t/>");
+                  info->change.insert.content = eina_stringshare_add("<tab/>");
                   //yy
-//                  evas_textblock_cursor_format_prepend(en->cursor, "\t");
-                  _text_filter_format_prepend(en, en->cursor, "\t");
+//                  evas_textblock_cursor_format_prepend(en->cursor, "tab");
+                  _text_filter_format_prepend(en, en->cursor, "tab");
                   _anchors_get(en->cursor, rp->object, en);
                   _edje_emit(ed, "entry,changed", rp->part->name);
                   _edje_emit_full(ed, "entry,changed,user", rp->part->name,
@@ -1430,9 +1430,9 @@ _edje_key_down_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, v
              if (shift)
                {
                   //yy
-//                  evas_textblock_cursor_format_prepend(en->cursor, "\n");
-                  _text_filter_format_prepend(en, en->cursor, "\n");
-                  info->change.insert.content = eina_stringshare_add("<\n/>");
+//                  evas_textblock_cursor_format_prepend(en->cursor, "br");
+                  _text_filter_format_prepend(en, en->cursor, "br");
+                  info->change.insert.content = eina_stringshare_add("<br/>");
                }
              else
                {
