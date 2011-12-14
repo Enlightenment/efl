@@ -2664,14 +2664,14 @@ st_collections_group_orientation(void)
     @block
         limits
     @context
-	group {
+        group {
             limits {
-	        vertical: "limit_name" height_barrier;
-	        horizontal: "limit_name" width_barrier;
-		..
-	    }
-	    ..
-	}
+                vertical: "limit_name" height_barrier;
+                horizontal: "limit_name" width_barrier;
+                ..
+            }
+            ..
+        }
         ..
     @description
         This block is used to trigger some signal when the Edje object is resized.
@@ -2683,10 +2683,10 @@ st_collections_group_orientation(void)
     @parameters
         [name] [height barrier]
     @effect
-	It will send a signal: "limit,name,over" when the object is resized and pass
-	the limit by growing over it. And it will send: "limit,name,below" when
-	it pass below that limit.
-	This limit will be applied on the y absis.
+        It will send a signal: "limit,name,over" when the object is resized and pass
+        the limit by growing over it. And it will send: "limit,name,below" when
+        it pass below that limit.
+        This limit will be applied on the y absis and is expressed in pixels.
     @endproperty
 */
 static void
@@ -2721,10 +2721,10 @@ st_collections_group_limits_vertical(void)
     @parameters
         [name] [width barrier]
     @effect
-	It will send a signal: "limit,name,over" when the object is resized and pass
-	the limit by growing over it. And it will send: "limit,name,below" when
-	it pass below that limit.
-	This limit will be applied on the x absis.
+        It will send a signal: "limit,name,over" when the object is resized and pass
+        the limit by growing over it. And it will send: "limit,name,below" when
+        it pass below that limit.
+        This limit will be applied on the x absis and is expressed in pixels.
     @endproperty
 */
 static void
