@@ -566,3 +566,4 @@
 	* Textblock: Made "br" and "tab" default tags for newline and tab.
 	* Textblock: Added "b" and "i" as default tags that can be overridden
 	by style, and added the infra to support this.
+	* Textblock: Added evas_textblock_text_utf8_to_markup

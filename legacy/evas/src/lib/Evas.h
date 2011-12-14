@@ -8120,11 +8120,25 @@ EAPI const char                  *evas_textblock_escape_string_range_get(const c
  * the actual char and etc.
  *
  * @param obj the textblock object to work with.
- * @param text the markup text
+ * @param text the markup text (if NULL, return NULL)
  * @return an allocated plain text version of the markup
  * @since 1.2.0
  */
-EAPI char                        *evas_textblock_text_markup_to_utf8(const Evas_Object *obj, const char *text) EINA_WARN_UNUSED_RESULT EINA_MALLOC EINA_ARG_NONNULL(1, 2);
+EAPI char                        *evas_textblock_text_markup_to_utf8(const Evas_Object *obj, const char *text) EINA_WARN_UNUSED_RESULT EINA_MALLOC EINA_ARG_NONNULL(1);
+
+/**
+ * Return the markup version of the plain text.
+ *
+ * Replaces \n -> <br/> \t -> <tab/> and etc. Generally needed before you pass
+ * plain text to be set in a textblock.
+ *
+ * @param obj the textblock object to work with (if NULL, it just does the
+ * default behaviour, i.e with no extra object information).
+ * @param text the markup text (if NULL, return NULL)
+ * @return an allocated plain text version of the markup
+ * @since 1.2.0
+ */
+EAPI char                        *evas_textblock_text_utf8_to_markup(const Evas_Object *obj, const char *text) EINA_WARN_UNUSED_RESULT EINA_MALLOC;
 
 /**
  * Creates a new textblock style.

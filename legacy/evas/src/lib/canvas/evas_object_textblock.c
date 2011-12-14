@@ -5123,6 +5123,8 @@ evas_object_textblock_text_markup_get(const Evas_Object *obj)
 EAPI char *
 evas_textblock_text_markup_to_utf8(const Evas_Object *obj, const char *text)
 {
+   if (!text) return NULL;
+
    /* FIXME: Can be done better, this is the least redundant way of doing it,
     * but by far the slowest, when the time comes, this should be
     * re-implemented. */
@@ -5148,6 +5150,50 @@ evas_textblock_text_markup_to_utf8(const Evas_Object *obj, const char *text)
    evas_object_del(obj2);
 
    return ret;
+}
+
+EAPI char *
+evas_textblock_text_utf8_to_markup(const Evas_Object *obj, const char *text)
+{
+   Eina_Strbuf *sbuf;
+   char *str = NULL;
+   int ch, pos = 0, pos2 = 0;
+
+   (void) obj;
+
+   if (!text) return NULL;
+
+   sbuf = eina_strbuf_new();
+
+   for (;;)
+     {
+        pos = pos2;
+        pos2 = evas_string_char_next_get(text, pos2, &ch);
+        if ((ch <= 0) || (pos2 <= 0)) break;
+
+        if (ch == '\n')
+           eina_strbuf_append(sbuf, "<br/>");
+        else if (ch == '\t')
+           eina_strbuf_append(sbuf, "<tab/>");
+        else if (ch == '<')
+           eina_strbuf_append(sbuf, "&lt;");
+        else if (ch == '>')
+           eina_strbuf_append(sbuf, "&gt;");
+        else if (ch == '&')
+           eina_strbuf_append(sbuf, "&amp;");
+        else if (ch == 0x2029) /* PS */
+           eina_strbuf_append(sbuf, "<ps/>");
+        else if (ch == 0xFFFC ) /* Object Replacement Char */
+           eina_strbuf_append(sbuf, "&#xfffc;");
+        else
+          {
+             eina_strbuf_append_length(sbuf, text + pos, pos2 - pos);
+          }
+     }
+   str = eina_strbuf_string_steal(sbuf);
+   eina_strbuf_free(sbuf);
+   return str;
+
 }
 
 /* cursors */
