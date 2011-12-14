@@ -259,7 +259,7 @@ eng_image_colorspace_get(void *data __UNUSED__, void *image)
 }
 
 static Eina_Bool
-eng_image_can_region_get(void *data__UNUSED__, void *image)
+eng_image_can_region_get(void *data __UNUSED__, void *image)
 {
    Image_Entry *im;
    if (!image) return EINA_FALSE;
