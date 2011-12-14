@@ -1098,7 +1098,7 @@ _elm_entry_entry_paste(Evas_Object *obj, const char *entry)
    info.change.insert.content = eina_stringshare_add(entry);
      {
         char *tmp;
-        tmp = evas_textblock_markup_to_plain(elm_entry_textblock_get(obj),
+        tmp = evas_textblock_text_markup_to_utf8(elm_entry_textblock_get(obj),
               info.change.insert.content);
         info.change.insert.plain_length = eina_unicode_utf8_get_len(tmp);
         free(tmp);
