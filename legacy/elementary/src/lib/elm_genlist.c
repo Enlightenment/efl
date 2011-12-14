@@ -32,7 +32,7 @@ struct Elm_Gen_Item_Type
    Evas_Coord                    w, h, minw, minh;
    Elm_Gen_Item                 *group_item;
    Elm_Genlist_Item_Flags        flags;
-   Eina_List                    *mode_labels, *mode_contents, *mode_states, *mode_content_objs;
+   Eina_List                    *mode_texts, *mode_contents, *mode_states, *mode_content_objs;
    Ecore_Timer                  *swipe_timer;
    Evas_Coord                    scrl_x, scrl_y, old_scrl_y;
 
@@ -1621,7 +1621,7 @@ _item_label_realize(Elm_Gen_Item *it,
         const Eina_List *l;
         const char *key;
 
-        *source = elm_widget_stringlist_get(edje_object_data_get(target, "labels"));
+        *source = elm_widget_stringlist_get(edje_object_data_get(target, "texts"));
         EINA_LIST_FOREACH(*source, l, key)
           {
              if (parts && fnmatch(parts, key, FNM_PERIOD))
@@ -1887,7 +1887,7 @@ _item_realize(Elm_Gen_Item *it,
            will clean our mess */
         assert(eina_list_count(it->content_objs) == 0);
 
-        _item_label_realize(it, VIEW(it), &it->labels, NULL);
+        _item_label_realize(it, VIEW(it), &it->texts, NULL);
         it->content_objs = _item_content_realize(it, VIEW(it), &it->contents, NULL);
         _item_state_realize(it, VIEW(it), &it->states, NULL);
 
@@ -2861,7 +2861,7 @@ _mode_item_realize(Elm_Gen_Item *it)
       will clean our mess */
    assert(eina_list_count(it->item->mode_content_objs) == 0);
 
-   _item_label_realize(it, it->item->mode_view, &it->item->mode_labels, NULL);
+   _item_label_realize(it, it->item->mode_view, &it->item->mode_texts, NULL);
    it->item->mode_content_objs =
      _item_content_realize(it, it->item->mode_view,
                            &it->item->mode_contents, NULL);
@@ -2884,8 +2884,8 @@ _mode_item_unrealize(Elm_Gen_Item *it)
    if (!it->item->mode_view) return;
 
    evas_event_freeze(evas_object_evas_get(it->wd->obj));
-   elm_widget_stringlist_free(it->item->mode_labels);
-   it->item->mode_labels = NULL;
+   elm_widget_stringlist_free(it->item->mode_texts);
+   it->item->mode_texts = NULL;
    elm_widget_stringlist_free(it->item->mode_contents);
    it->item->mode_contents = NULL;
    elm_widget_stringlist_free(it->item->mode_states);
@@ -4499,7 +4499,7 @@ elm_genlist_item_fields_update(Elm_Genlist_Item *it,
    if (it->generation < it->wd->generation) return;
 
    if ((!itf) || (itf & ELM_GENLIST_ITEM_FIELD_LABEL))
-     _item_label_realize(it, it->base.view, &it->labels, parts);
+     _item_label_realize(it, it->base.view, &it->texts, parts);
    if ((!itf) || (itf & ELM_GENLIST_ITEM_FIELD_CONTENT))
      {
         it->content_objs = _item_content_unrealize(it, it->base.view,
@@ -5177,8 +5177,8 @@ _elm_genlist_item_unrealize(Elm_Gen_Item *it,
         it->long_timer = NULL;
      }
 
-   elm_widget_stringlist_free(it->labels);
-   it->labels = NULL;
+   elm_widget_stringlist_free(it->texts);
+   it->texts = NULL;
    elm_widget_stringlist_free(it->contents);
    it->contents = NULL;
    elm_widget_stringlist_free(it->states);

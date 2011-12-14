@@ -935,10 +935,10 @@ _item_realize(Elm_Gen_Item *it)
         const Eina_List *l;
         const char *key;
 
-        it->labels =
+        it->texts =
            elm_widget_stringlist_get(edje_object_data_get(VIEW(it),
-                                                          "labels"));
-        EINA_LIST_FOREACH(it->labels, l, key)
+                                                          "texts"));
+        EINA_LIST_FOREACH(it->texts, l, key)
           {
              char *s = it->itc->func.text_get
                 ((void *)it->base.data, WIDGET(it), key);
