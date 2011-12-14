@@ -703,21 +703,13 @@ group { name: "elm/entry/base/default";
    {
       style { name: "entry_textblock_style";
          base: "font=Sans font_size=10 color=#000 wrap=word text_class=entry";
-         tag:  "br" "\n";
-         tag:  "ps" "ps";
-         tag:  "tab" "\t";
          tag:  "em" "+ font_style=Oblique";
-         tag:  "b" "+ font_weight=Bold";
          tag:  "link" "+ color=#800 underline=on underline_color=#8008";
          tag:  "hilight" "+ font_weight=Bold";
       }
       style { name: "entry_textblock_disabled_style";
          base: "font=Sans font_size=10 color=#00000080 wrap=word text_class=entry";
-         tag:  "br" "\n";
-         tag:  "ps" "ps";
-         tag:  "tab" "\t";
          tag:  "em" "+ font_style=Oblique";
-         tag:  "b" "+ font_weight=Bold";
          tag:  "link" "+ color=#00000080 underline=on underline_color=#00000080";
          tag:  "hilight" "+ font_weight=Bold";
       }
@@ -785,21 +777,13 @@ group { name: "elm/entry/base-mixedwrap/default";
    {
       style { name: "entry_textblock_style_mixedwrap";
          base: "font=Sans font_size=10 color=#000 wrap=mixed text_class=entry";
-         tag:  "br" "\n";
-         tag:  "ps" "ps";
-         tag:  "tab" "\t";
          tag:  "em" "+ font_style=Oblique";
-         tag:  "b" "+ font_weight=Bold";
          tag:  "link" "+ color=#800 underline=on underline_color=#8008";
          tag:  "hilight" "+ font_weight=Bold";
       }
       style { name: "entry_textblock_disabled_style_mixedwrap";
          base: "font=Sans font_size=10 color=#00000080 wrap=char text_class=entry";
-         tag:  "br" "\n";
-         tag:  "ps" "ps";
-         tag:  "tab" "\t";
          tag:  "em" "+ font_style=Oblique";
-         tag:  "b" "+ font_weight=Bold";
          tag:  "link" "+ color=#00000080 underline=on underline_color=#00000080";
          tag:  "hilight" "+ font_weight=Bold";
       }
@@ -831,21 +815,13 @@ group { name: "elm/entry/base-charwrap/default";
    {
       style { name: "entry_textblock_style_charwrap";
          base: "font=Sans font_size=10 color=#000 wrap=char text_class=entry";
-         tag:  "br" "\n";
-         tag:  "ps" "ps";
-         tag:  "tab" "\t";
          tag:  "em" "+ font_style=Oblique";
-         tag:  "b" "+ font_weight=Bold";
          tag:  "link" "+ color=#800 underline=on underline_color=#8008";
          tag:  "hilight" "+ font_weight=Bold";
       }
       style { name: "entry_textblock_disabled_style_charwrap";
          base: "font=Sans font_size=10 color=#00000080 wrap=char text_class=entry";
-         tag:  "br" "\n";
-         tag:  "ps" "ps";
-         tag:  "tab" "\t";
          tag:  "em" "+ font_style=Oblique";
-         tag:  "b" "+ font_weight=Bold";
          tag:  "link" "+ color=#00000080 underline=on underline_color=#00000080";
          tag:  "hilight" "+ font_weight=Bold";
       }
@@ -899,21 +875,13 @@ group { name: "elm/entry/base-single/default";
    {
       style { name: "entry_single_textblock_style";
          base: "font=Sans font_size=10 color=#000 wrap=none text_class=entry";
-         tag:  "br" "\n";
-         tag:  "ps" "ps";
-         tag:  "tab" "\t";
          tag:  "em" "+ font_style=Oblique";
-         tag:  "b" "+ font_weight=Bold";
          tag:  "link" "+ color=#800 underline=on underline_color=#8008";
          tag:  "hilight" "+ font_weight=Bold";
       }
       style { name: "entry_single_textblock_disabled_style";
          base: "font=Sans font_size=10 color=#00000080 wrap=none text_class=entry";
-         tag:  "br" "\n";
-         tag:  "ps" "ps";
-         tag:  "tab" "\t";
          tag:  "em" "+ font_style=Oblique";
-         tag:  "b" "+ font_weight=Bold";
          tag:  "link" "+ color=#00000080 underline=on underline_color=#00000080";
          tag:  "hilight" "+ font_weight=Bold";
       }
