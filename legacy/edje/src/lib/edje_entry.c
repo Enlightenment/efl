@@ -272,20 +272,6 @@ _curs_update_from_curs(Evas_Textblock_Cursor *c, Evas_Object *o __UNUSED__, Entr
    *cy += (ch / 2);
 }
 
-static void
-_curs_back(Evas_Textblock_Cursor *c, Evas_Object *o __UNUSED__,
-           Entry *en __UNUSED__)
-{
-   evas_textblock_cursor_char_prev(c);
-}
-
-static void
-_curs_next(Evas_Textblock_Cursor *c, Evas_Object *o __UNUSED__,
-           Entry *en __UNUSED__)
-{
-   evas_textblock_cursor_char_next(c);
-}
-
 static int
 _curs_line_last_get(Evas_Textblock_Cursor *c __UNUSED__, Evas_Object *o, Entry *en __UNUSED__)
 {
@@ -1165,7 +1151,9 @@ _edje_key_down_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, v
              if (shift) _sel_start(en->cursor, rp->object, en);
              else _sel_clear(en->cursor, rp->object, en);
           }
-        _curs_back(en->cursor, rp->object, en);
+        evas_textblock_cursor_char_prev(en->cursor);
+        /* If control is pressed, go to the start of the word */
+        if (control) evas_textblock_cursor_word_start(en->cursor);
         if (en->select_allow)
           {
              if (shift) _sel_extend(en->cursor, rp->object, en);
@@ -1181,7 +1169,9 @@ _edje_key_down_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, v
              if (shift) _sel_start(en->cursor, rp->object, en);
              else _sel_clear(en->cursor, rp->object, en);
           }
-        _curs_next(en->cursor, rp->object, en);
+        /* If control is pressed, go to the start of the word */
+        if (control) evas_textblock_cursor_word_end(en->cursor);
+        evas_textblock_cursor_char_next(en->cursor);
         if (en->select_allow)
           {
              if (shift) _sel_extend(en->cursor, rp->object, en);
