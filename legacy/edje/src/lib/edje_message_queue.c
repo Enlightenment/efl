@@ -364,8 +364,8 @@ _edje_message_propornot_send(Edje *ed, Edje_Queue queue, Edje_Message_Type type,
      }
    if (_injob > 0)
      {
-        if (_job_loss_timer) ecore_timer_del(_job_loss_timer);
-        _job_loss_timer = ecore_timer_add(0.001, _edje_job_loss_timer, NULL);
+        if (!_job_loss_timer)
+          _job_loss_timer = ecore_timer_add(0.001, _edje_job_loss_timer, NULL);
      }
    else
      {
