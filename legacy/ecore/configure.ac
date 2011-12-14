@@ -418,7 +418,7 @@ AC_SUBST(pkgconfig_requires_private)
 have_backtrace="no"
 AC_CHECK_FUNCS([backtrace], [have_backtrace="yes"], [])
 
-want_ecore_timer_dump="yes"
+want_ecore_timer_dump="no"
 
 AC_ARG_ENABLE([ecore-timer-dump],
    [AC_HELP_STRING([--disable-ecore-timer-dump], [disable tracking of timer allocation. @<:@default=enable@:>@])],
