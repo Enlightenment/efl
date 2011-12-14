@@ -101,6 +101,12 @@ typedef struct _Evas_Object_Textblock             Evas_Object_Textblock;
 typedef struct _Evas_Object_Style_Tag             Evas_Object_Style_Tag;
 /**
  * @internal
+ * @typedef Evas_Object_Style_Tag
+ * The structure used for finding style tags.
+ */
+typedef struct _Evas_Object_Style_Tag_Base        Evas_Object_Style_Tag_Base;
+/**
+ * @internal
  * @typedef Evas_Object_Textblock_Node_Text
  * A text node.
  */
@@ -201,13 +207,18 @@ typedef struct _Evas_Object_Textblock_Format      Evas_Object_Textblock_Format;
      _is_white(base[closer_len])))
 
 /*FIXME: document the structs and struct items. */
-struct _Evas_Object_Style_Tag
+struct _Evas_Object_Style_Tag_Base
 {
-   EINA_INLIST;
    char *tag;
    char *replace;
    size_t tag_len;
    size_t replace_len;
+};
+
+struct _Evas_Object_Style_Tag
+{
+   EINA_INLIST;
+   Evas_Object_Style_Tag_Base tag;
 };
 
 struct _Evas_Object_Textblock_Node_Text
@@ -235,6 +246,11 @@ struct _Evas_Object_Textblock_Node_Format
    Eina_Bool                           format_change : 1;
    Eina_Bool                           is_new : 1;
 };
+
+/* The default tags to use */
+static const Evas_Object_Style_Tag_Base default_tags[] = {
+          { "b", "+ font_weight=Bold", 1, 18 },
+          { "i", "+ font_style=Italic", 1, 19 }};
 
 #define ANCHOR_NONE 0
 #define ANCHOR_A 1
@@ -540,8 +556,8 @@ _style_replace(Evas_Textblock_Style *ts, const char *style_text)
 
 	tag = (Evas_Object_Style_Tag *)ts->tags;
 	ts->tags = (Evas_Object_Style_Tag *)eina_inlist_remove(EINA_INLIST_GET(ts->tags), EINA_INLIST_GET(tag));
-	free(tag->tag);
-	free(tag->replace);
+	free(tag->tag.tag);
+	free(tag->tag.replace);
 	free(tag);
      }
    ts->default_tag = NULL;
@@ -573,15 +589,34 @@ _style_match_tag(Evas_Textblock_Style *ts, const char *s, size_t tag_len, size_t
 {
    Evas_Object_Style_Tag *tag;
 
+   /* Try the style tags */
    EINA_INLIST_FOREACH(ts->tags, tag)
      {
-	if (tag->tag_len != tag_len) continue;
-	if (!strncmp(tag->tag, s, tag_len))
+	if (tag->tag.tag_len != tag_len) continue;
+	if (!strncmp(tag->tag.tag, s, tag_len))
 	  {
-	     *replace_len = tag->replace_len;
-	     return tag->replace;
+	     *replace_len = tag->tag.replace_len;
+	     return tag->tag.replace;
 	  }
      }
+
+   /* Try the default tags */
+   {
+      size_t i;
+      const Evas_Object_Style_Tag_Base *btag;
+      for (btag = default_tags, i = 0 ;
+            i < (sizeof(default_tags) / sizeof(default_tags[0])) ;
+            btag++, i++)
+        {
+           if (btag->tag_len != tag_len) continue;
+           if (!strncmp(btag->tag, s, tag_len))
+             {
+                *replace_len = btag->replace_len;
+                return btag->replace;
+             }
+        }
+   }
+
    *replace_len = 0;
    return NULL;
 }
@@ -4478,10 +4513,10 @@ evas_textblock_style_set(Evas_Textblock_Style *ts, const char *text)
                             tag = calloc(1, sizeof(Evas_Object_Style_Tag));
                             if (tag)
                               {
-                                 tag->tag = tags;
-                                 tag->replace = replaces;
-                                 tag->tag_len = tag_len;
-                                 tag->replace_len = replace_len;
+                                 tag->tag.tag = tags;
+                                 tag->tag.replace = replaces;
+                                 tag->tag.tag_len = tag_len;
+                                 tag->tag.replace_len = replace_len;
                                  ts->tags = (Evas_Object_Style_Tag *)eina_inlist_append(EINA_INLIST_GET(ts->tags), EINA_INLIST_GET(tag));
                               }
                             else
