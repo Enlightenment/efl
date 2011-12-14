@@ -3030,14 +3030,14 @@ _format_finalize(Evas_Object *obj, Evas_Object_Textblock_Format *fmt)
  * @def _IS_TAB(item)
  */
 #define _IS_TAB(item)                                             \
-   (!strcmp(item, "\t") || !strcmp(item, "\\t"))
+   (!strcmp(item, "tab") || !strcmp(item, "\t") || !strcmp(item, "\\t"))
 /**
  * @internal
  * Returns true if the item is a line spearator, false otherwise
  * @def _IS_LINE_SEPARATOR(item)
  */
 #define _IS_LINE_SEPARATOR(item)                                             \
-   (!strcmp(item, "\n") || !strcmp(item, "\\n"))
+   (!strcmp(item, "br") || !strcmp(item, "\n") || !strcmp(item, "\\n"))
 /**
  * @internal
  * Returns true if the item is a paragraph separator, false otherwise
