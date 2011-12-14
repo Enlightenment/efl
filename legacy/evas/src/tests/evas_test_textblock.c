@@ -1520,15 +1520,15 @@ START_TEST(evas_textblock_text_getters)
 
    /* Markup to plain */
      {
-        char *tmp = evas_textblock_markup_to_plain(tb, "<br/>aa<\n/>bb<\t/>");
+        char *tmp = evas_textblock_text_markup_to_utf8(tb, "<br/>aa<\n/>bb<\t/>");
         fail_if(strcmp(tmp, "\naa\nbb\t"));
         free(tmp);
 
-        tmp = evas_textblock_markup_to_plain(tb, "a<item></item>");
+        tmp = evas_textblock_text_markup_to_utf8(tb, "a<item></item>");
         fail_if(strcmp(tmp, "a\xEF\xBF\xBC"));
         free(tmp);
 
-        tmp = evas_textblock_markup_to_plain(tb, "a&nbsp;");
+        tmp = evas_textblock_text_markup_to_utf8(tb, "a&nbsp;");
         fail_if(strcmp(tmp, "a\xC2\xA0"));
         free(tmp);
      }
