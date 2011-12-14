@@ -7,6 +7,10 @@ Additions:
 
    * Textblock now supports self-closing tags, i.e <br/>. Those should be used instead of the old <br> way.
 
+Improvements:
+
+   * Use Eina_File mmap infrastructure for bmp, ico and pmaps file access.
+
 Evas 1.1.0
 
 Changes since Evas 1.0.0:

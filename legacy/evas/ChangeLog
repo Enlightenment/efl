@@ -555,3 +555,7 @@
         * Fix grab count negative values if you do weird combinations of
         press and release with multiple fingers or multiple mouse
         buttons.
+
+2011-12-14  Cedric BAIL
+
+	* Use Eina_File when loading bmp, ico and pmaps files.
