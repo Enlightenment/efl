@@ -560,3 +560,9 @@
 
 	* Use Eina_File when loading bmp, ico, pmaps and wbmp files.
 	* Fix potential race condition in wbmp loader code.
+
+2011-12-14  Tom Hacohen (TAsn)
+
+	* Textblock: Made "br" and "tab" default tags for newline and tab.
+	* Textblock: Added "b" and "i" as default tags that can be overridden
+	by style, and added the infra to support this.
