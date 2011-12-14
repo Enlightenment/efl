@@ -156,6 +156,12 @@ my_bt_pause(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__
 }
 
 static void
+my_bt_zoom_fit_in(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+{
+   elm_photocam_zoom_mode_set(data, ELM_PHOTOCAM_ZOOM_MODE_AUTO_FIT_IN);
+}
+
+static void
 my_bt_zoom_fit(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    elm_photocam_zoom_mode_set(data, ELM_PHOTOCAM_ZOOM_MODE_AUTO_FIT);
@@ -210,7 +216,7 @@ _photocam_move_resize_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUS
 void
 test_photocam(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
-   Evas_Object *win, *bg, *ph, *tb2, *bt;
+   Evas_Object *win, *bg, *ph, *tb2, *bt, *box;
    // these were just testing - use the "select photo" browser to select one
    const char *img[5] =
      {
@@ -318,22 +324,34 @@ test_photocam(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_in
    elm_table_pack(tb2, bt, 0, 2, 1, 1);
    evas_object_show(bt);
 
+   box = elm_box_add(win);
+   elm_box_horizontal_set(box, EINA_TRUE);
+   evas_object_size_hint_weight_set(box, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_size_hint_align_set(bt, 0.9, 0.9);
+   elm_table_pack(tb2, box, 2, 2, 1, 1);
+
    bt = elm_button_add(win);
    elm_object_text_set(bt, "Fit");
    evas_object_smart_callback_add(bt, "clicked", my_bt_zoom_fit, ph);
    evas_object_size_hint_weight_set(bt, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-   evas_object_size_hint_align_set(bt, 0.5, 0.9);
-   elm_table_pack(tb2, bt, 1, 2, 1, 1);
+   elm_box_pack_end(box, bt);
+   evas_object_show(bt);
+
+   bt = elm_button_add(win);
+   elm_object_text_set(bt, "Fit_In");
+   evas_object_smart_callback_add(bt, "clicked", my_bt_zoom_fit_in, ph);
+   evas_object_size_hint_weight_set(bt, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   elm_box_pack_end(box, bt);
    evas_object_show(bt);
 
    bt = elm_button_add(win);
    elm_object_text_set(bt, "Fill");
    evas_object_smart_callback_add(bt, "clicked", my_bt_zoom_fill, ph);
    evas_object_size_hint_weight_set(bt, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-   evas_object_size_hint_align_set(bt, 0.9, 0.9);
-   elm_table_pack(tb2, bt, 2, 2, 1, 1);
+   elm_box_pack_end(box, bt);
    evas_object_show(bt);
 
+   evas_object_show(box);
    evas_object_show(tb2);
 
    evas_object_resize(win, 800, 800);
