@@ -101,7 +101,7 @@ evas_image_load_file_head_ico(Image_Entry *ie, const char *file, const char *key
       unsigned int bmoffset, bmsize;
    } chosen = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
 
-   f = eina_file_open(file, EINA_FILE_SEQUENTIAL);
+   f = eina_file_open(file, EINA_FALSE);
    if (!f)
      {
 	*error = EVAS_LOAD_ERROR_DOES_NOT_EXIST;
@@ -111,6 +111,9 @@ evas_image_load_file_head_ico(Image_Entry *ie, const char *file, const char *key
    *error = EVAS_LOAD_ERROR_UNKNOWN_FORMAT;
    fsize = eina_file_size_get(f);
    if (fsize < (6 + 16 + 40)) goto close_file;
+
+   map = eina_file_map_all(f, EINA_FILE_SEQUENTIAL);
+   if (!map) goto close_file;
 
    // key:
    //   NULL == highest res
@@ -323,7 +326,7 @@ evas_image_load_file_data_ico(Image_Entry *ie, const char *file, const char *key
       unsigned int bmoffset, bmsize;
    } chosen = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
 
-   f = eina_file_open(file, EINA_FILE_SEQUENTIAL);
+   f = eina_file_open(file, EINA_FALSE);
    if (!f)
      {
 	*error = EVAS_LOAD_ERROR_DOES_NOT_EXIST;
@@ -333,6 +336,9 @@ evas_image_load_file_data_ico(Image_Entry *ie, const char *file, const char *key
    *error = EVAS_LOAD_ERROR_UNKNOWN_FORMAT;
    fsize = eina_file_size_get(f);
    if (fsize < (6 + 16 + 40)) goto close_file;
+
+   map = eina_file_map_all(f, EINA_FILE_SEQUENTIAL);
+   if (!map) goto close_file;
 
    // key:
    //   NULL == highest res
