@@ -60,15 +60,13 @@ _elm_util_mkup_to_text(const char *mkup)
                     {
                        _str_ncpy(ttag, tag_start + 1, tag_end - tag_start - 1);
                        ttag[tag_end - tag_start - 1] = 0;
-                       if (!strcmp(ttag, "br"))
+                       if ((!strcmp(ttag, "br")) ||
+                             (!strcmp(ttag, "\n")) ||
+                             (!strcmp(ttag, "\\n")))
                          str = _str_append(str, "\n", &str_len, &str_alloc);
-                       else if (!strcmp(ttag, "\n"))
-                         str = _str_append(str, "\n", &str_len, &str_alloc);
-                       else if (!strcmp(ttag, "\\n"))
-                         str = _str_append(str, "\n", &str_len, &str_alloc);
-                       else if (!strcmp(ttag, "\t"))
-                         str = _str_append(str, "\t", &str_len, &str_alloc);
-                       else if (!strcmp(ttag, "\\t"))
+                       else if ((!strcmp(ttag, "tab")) ||
+                             (!strcmp(ttag, "\t")) ||
+                             (!strcmp(ttag, "\\t")))
                          str = _str_append(str, "\t", &str_len, &str_alloc);
                        else if (!strcmp(ttag, "ps")) /* Unicode paragraph separator */
                          str = _str_append(str, "\xE2\x80\xA9", &str_len, &str_alloc);
@@ -179,7 +177,7 @@ _elm_util_text_to_mkup(const char *text)
         if (ch == '\n')
           str = _str_append(str, "<br/>", &str_len, &str_alloc);
         else if (ch == '\t')
-          str = _str_append(str, "<\t/>", &str_len, &str_alloc);
+          str = _str_append(str, "<tab/>", &str_len, &str_alloc);
         else if (ch == '<')
           str = _str_append(str, "&lt;", &str_len, &str_alloc);
         else if (ch == '>')
