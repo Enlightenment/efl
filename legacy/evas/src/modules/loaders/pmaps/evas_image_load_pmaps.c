@@ -28,7 +28,9 @@ typedef struct Pmaps_Buffer Pmaps_Buffer;
 
 struct Pmaps_Buffer
 {
-   FILE *file;
+   Eina_File *file;
+   void *map;
+   size_t position;
 
    /* the buffer */
    DATA8 buffer[FILE_BUFFER_SIZE];
@@ -161,13 +163,23 @@ pmaps_buffer_open(Pmaps_Buffer *b, const char *filename, int *error)
 {
    size_t len;
 
-   b->file = fopen(filename, "rb");
+   b->file = eina_file_open(filename, EINA_FALSE);
    if (!b->file)
      {
 	*error = EVAS_LOAD_ERROR_DOES_NOT_EXIST;
 	return EINA_FALSE;
      }
 
+   b->map = eina_file_map_all(b->file, EINA_FILE_SEQUENTIAL);
+   if (!b->map)
+     {
+        *error = EVAS_LOAD_ERROR_DOES_NOT_EXIST;
+        eina_file_close(b->file);
+        b->file = NULL;
+        return EINA_FALSE;
+     }
+
+   b->position = 0;
    *b->buffer = 0;
    *b->unread = 0;
    b->last_buffer = 0;
@@ -178,7 +190,9 @@ pmaps_buffer_open(Pmaps_Buffer *b, const char *filename, int *error)
    if (len < 3)
      {
 	*error = EVAS_LOAD_ERROR_CORRUPT_FILE;
-        fclose(b->file);
+        eina_file_map_free(b->file, b->map);
+        eina_file_close(b->file);
+        b->map = NULL;
         b->file = NULL;
 	return EINA_FALSE;
      }
@@ -198,7 +212,12 @@ static void
 pmaps_buffer_close(Pmaps_Buffer *b)
 {
    if (b->file)
-      fclose(b->file);
+     {
+        if (b->map) eina_file_map_free(b->file, b->map);
+        b->map = NULL;
+        eina_file_close(b->file);
+        b->file = NULL;
+     }
 }
 
 static Eina_Bool
@@ -296,6 +315,7 @@ static size_t
 pmaps_buffer_plain_update(Pmaps_Buffer *b)
 {
    size_t r;
+   size_t max;
 
    /* if we already are in the last buffer we can not update it */
    if (b->last_buffer)
@@ -305,9 +325,14 @@ pmaps_buffer_plain_update(Pmaps_Buffer *b)
     * stuff */
    if (b->unread_len)
       memcpy(b->buffer, b->unread, b->unread_len);
-   
-   r = fread(&b->buffer[b->unread_len], 1,
-	     FILE_BUFFER_SIZE - b->unread_len - 1, b->file) + b->unread_len;
+
+   max = FILE_BUFFER_SIZE - b->unread_len - 1;
+   if (b->position + max > eina_file_size_get(b->file))
+     max = eina_file_size_get(b->file) - b->position;
+
+   memcpy(&b->buffer[b->unread_len], b->map + b->position, max);
+   b->position += max;
+   r = max + b->unread_len;
 
    /* we haven't read anything nor have we bytes in the unread buffer */
    if (r == 0)
@@ -325,7 +350,7 @@ pmaps_buffer_plain_update(Pmaps_Buffer *b)
      }
 
    b->buffer[r] = 0;
-   
+
    b->unread[0] = '\0';
    b->unread_len = 0;
 
@@ -340,6 +365,7 @@ static size_t
 pmaps_buffer_raw_update(Pmaps_Buffer *b)
 {
    size_t r;
+   size_t max;
 
    if (b->last_buffer)
       return 0;
@@ -347,8 +373,13 @@ pmaps_buffer_raw_update(Pmaps_Buffer *b)
    if (b->unread_len)
       memcpy(b->buffer, b->unread, b->unread_len);
 
-   r = fread(&b->buffer[b->unread_len], 1, FILE_BUFFER_SIZE - b->unread_len, 
-             b->file) + b->unread_len;
+   max = FILE_BUFFER_SIZE - b->unread_len;
+   if (b->position + max > eina_file_size_get(b->file))
+     max = eina_file_size_get(b->file) - b->position;
+
+   memcpy(&b->buffer[b->unread_len], b->map + b->position, max);
+   b->position += max;
+   r = max + b->unread_len;
 
    if (r < FILE_BUFFER_SIZE)
      {
