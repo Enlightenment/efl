@@ -521,7 +521,7 @@ static Ecore_Evas_Engine_Func _ecore_buffer_engine_func =
      _ecore_evas_buffer_alpha_set,
      NULL, //transparent
 
-     NULL, // render
+     _ecore_evas_buffer_render,
      NULL  // screen_geometry_get
 };
 #endif
@@ -637,7 +637,6 @@ ecore_evas_buffer_allocfunc_new(int w, int h, void *(*alloc_func) (void *data, i
 
    evas_event_feed_mouse_in(ee->evas, 0, NULL);
 
-   ee->engine.func->fn_render = _ecore_evas_buffer_render;
    _ecore_evas_register(ee);
 
    evas_event_feed_mouse_in(ee->evas, (unsigned int)((unsigned long long)(ecore_time_get() * 1000.0) & 0xffffffff), NULL);
@@ -818,8 +817,6 @@ ecore_evas_object_image_new(Ecore_Evas *ee_target)
    evas_key_lock_add(ee->evas, "Scroll_Lock");
 
    ee_target->sub_ecore_evas = eina_list_append(ee_target->sub_ecore_evas, ee);
-
-   ee->engine.func->fn_render = _ecore_evas_buffer_render;
 
    return o;
 #else
