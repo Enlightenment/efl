@@ -9,7 +9,7 @@ Additions:
 
 Improvements:
 
-   * Use Eina_File mmap infrastructure for bmp, ico and pmaps file access.
+   * Use Eina_File mmap infrastructure for bmp, ico, pmaps and wbmp file access.
 
 Evas 1.1.0
 

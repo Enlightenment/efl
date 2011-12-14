@@ -25,16 +25,16 @@ static Evas_Image_Load_Func evas_image_load_wbmp_func =
 
 
 static int
-read_mb(unsigned int *data, FILE *f)
+read_mb(unsigned int *data, void *map, size_t length, size_t *position)
 {
    int ac = 0, ct;
    unsigned char buf;
-   
+
    for (ct = 0;;)
      {
         if ((ct++) == 5) return -1;
-        if ((fread(&buf, 1, 1, f)) < 1)
-           return -1;
+	if (*position > length) return -1;
+	buf = ((unsigned char *) map)[(*position)++];
         ac = (ac << 7) | (buf & 0x7f);
         if ((buf & 0x80) == 0) break;
      }
@@ -45,70 +45,105 @@ read_mb(unsigned int *data, FILE *f)
 static Eina_Bool
 evas_image_load_file_head_wbmp(Image_Entry *ie, const char *file, const char *key __UNUSED__, int *error)
 {
-   FILE *f;
+   Eina_File *f;
+   void *map = NULL;
+   size_t position = 0;
+   size_t length;
    unsigned int type, w, h;
-   unsigned char fixed_header;
-   struct stat statbuf;
-   
+
    *error = EVAS_LOAD_ERROR_GENERIC;
-   f = fopen(file, "rb");
+   f = eina_file_open(file, 0);
    if (!f)
      {
         *error = EVAS_LOAD_ERROR_DOES_NOT_EXIST;
         return EINA_FALSE;
      }
-   
-   if (stat(file, &statbuf) == -1) goto bail;
-   if (read_mb(&type, f) < 0) goto bail;
-   
+
+   length = eina_file_size_get(f);
+   if (length <= 4) goto bail;
+
+   map = eina_file_map_all(f, EINA_FILE_SEQUENTIAL);
+   if (!map) goto bail;
+
+   if (read_mb(&type, map, length, &position) < 0) goto bail;
+
    if (type != 0)
      {
         *error = EVAS_LOAD_ERROR_UNKNOWN_FORMAT;
         goto bail;
      }
-   
-   if (fread(&fixed_header, 1, 1, f) != 1) goto bail;
-   if (read_mb(&w, f) < 0) goto bail;
-   if (read_mb(&h, f) < 0) goto bail;
+
+   position++; /* skipping one byte */
+   if (read_mb(&w, map, length, &position) < 0) goto bail;
+   if (read_mb(&h, map, length, &position) < 0) goto bail;
    if ((w < 1) || (h < 1) || (w > IMG_MAX_SIZE) || (h > IMG_MAX_SIZE) ||
        IMG_TOO_BIG(w, h))
      {
         *error = EVAS_LOAD_ERROR_RESOURCE_ALLOCATION_FAILED;
         goto bail;
      }
-      
-   fclose(f);
+
+   eina_file_map_free(f, map);
+   eina_file_close(f);
    ie->w = w;
    ie->h = h;
-   
+
    *error = EVAS_LOAD_ERROR_NONE;
    return EINA_TRUE;
 bail:
-   fclose(f);
+   if (map) eina_file_map_free(f, map);
+   eina_file_close(f);
    return EINA_FALSE;
 }
 
 static Eina_Bool
 evas_image_load_file_data_wbmp(Image_Entry *ie, const char *file, const char *key __UNUSED__, int *error)
 {
-   FILE *f;
-   unsigned int dummy, line_length;
+   Eina_File *f;
+   void *map = NULL;
+   size_t position = 0;
+   size_t length;
+   unsigned int type, w, h;
+   unsigned int line_length;
    unsigned char *line = NULL;
    int cur = 0, x, y;
    DATA32 *dst_data;
-   
+
    *error = EVAS_LOAD_ERROR_GENERIC;
-   f = fopen(file, "rb");
+   f = eina_file_open(file, EINA_FALSE);
    if (!f)
      {
         *error = EVAS_LOAD_ERROR_DOES_NOT_EXIST;
         return EINA_FALSE;
      }
-   if (read_mb(&dummy, f) < 0) goto bail;
-   if (fread(&dummy, 1, 1, f) != 1) goto bail;
-   if (read_mb(&dummy, f) < 0) goto bail;
-   if (read_mb(&dummy, f) < 0) goto bail;
-   
+
+   length = eina_file_size_get(f);
+   if (length <= 4) goto bail;
+
+   map = eina_file_map_all(f, EINA_FILE_SEQUENTIAL);
+   if (!map) goto bail;
+
+   if (read_mb(&type, map, length, &position) < 0) goto bail;
+   position++; /* skipping one byte */
+   if (read_mb(&w, map, length, &position) < 0) goto bail;
+   if (read_mb(&h, map, length, &position) < 0) goto bail;
+
+   if (type != 0)
+     {
+        *error = EVAS_LOAD_ERROR_UNKNOWN_FORMAT;
+        goto bail;
+     }
+
+   if ((w < 1) || (h < 1) || (w > IMG_MAX_SIZE) || (h > IMG_MAX_SIZE) ||
+       IMG_TOO_BIG(w, h))
+     {
+        *error = EVAS_LOAD_ERROR_RESOURCE_ALLOCATION_FAILED;
+        goto bail;
+     }
+
+   ie->w = w;
+   ie->h = h;
+
    evas_cache_image_surface_alloc(ie, ie->w, ie->h);
    dst_data = evas_cache_image_pixels(ie);
    if (!dst_data)
@@ -116,13 +151,14 @@ evas_image_load_file_data_wbmp(Image_Entry *ie, const char *file, const char *ke
         *error = EVAS_LOAD_ERROR_RESOURCE_ALLOCATION_FAILED;
         goto bail;
      }
-   
+
    line_length = (ie->w + 7) >> 3;
-   line = alloca(line_length);
-   
+
    for (y = 0; y < (int)ie->h; y++)
      {
-        if (fread(line, 1, line_length, f) != line_length) goto bail;
+        if (position + line_length > length) goto bail;
+        line = ((unsigned char*) map) + position;
+        position += line_length;
         for (x = 0; x < (int)ie->w; x++)
           {
              int idx = x >> 3;
@@ -132,11 +168,13 @@ evas_image_load_file_data_wbmp(Image_Entry *ie, const char *file, const char *ke
              cur++;
           }
      }
-   fclose(f);
+   eina_file_map_free(f, map);
+   eina_file_close(f);
    *error = EVAS_LOAD_ERROR_NONE;
    return EINA_TRUE;
 bail:
-   fclose(f);
+   if (map) eina_file_map_free(f, map);
+   eina_file_close(f);
    return EINA_FALSE;
 }
 

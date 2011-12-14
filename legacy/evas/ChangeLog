@@ -558,4 +558,5 @@
 
 2011-12-14  Cedric BAIL
 
-	* Use Eina_File when loading bmp, ico and pmaps files.
+	* Use Eina_File when loading bmp, ico, pmaps and wbmp files.
+	* Fix potential race condition in wbmp loader code.
