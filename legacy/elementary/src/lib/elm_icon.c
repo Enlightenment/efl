@@ -653,16 +653,9 @@ elm_icon_file_set(Evas_Object *obj, const char *file, const char *group)
    ELM_CHECK_WIDTYPE(obj, widtype) EINA_FALSE;
    Widget_Data *wd = elm_widget_data_get(obj);
    Eina_Bool ret;
-   const char *tmp_file;
-   const char *tmp_group;
 
    if (!wd) return EINA_FALSE;
    EINA_SAFETY_ON_NULL_RETURN_VAL(file, EINA_FALSE);
-
-   _els_smart_icon_file_get(wd->img, &tmp_file, &tmp_group);
-   if ((tmp_file == file || (file && tmp_file && !strcmp(tmp_file, file)))
-       && (group == tmp_group || (group && tmp_group && !strcmp(group, tmp_group))))
-     return EINA_TRUE;
 
 #ifdef ELM_EFREET
    if (!wd->freedesktop.use)
