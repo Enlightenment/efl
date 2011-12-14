@@ -3703,7 +3703,7 @@ eng_image_animated_frame_set(void *data __UNUSED__, void *image, int frame_index
 }
 
 static Eina_Bool
-eng_image_can_region_get(void *data__UNUSED__, void *image)
+eng_image_can_region_get(void *data __UNUSED__, void *image)
 {
    Evas_GL_Image *gim = image;
    Image_Entry *im;
