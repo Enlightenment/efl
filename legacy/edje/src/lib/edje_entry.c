@@ -1192,9 +1192,17 @@ _edje_key_down_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, v
      }
    else if (!strcmp(ev->key, "BackSpace"))
      {
-        if (control)
+        if (control && !en->have_selection)
           {
              // del to start of previous word
+             _sel_start(en->cursor, rp->object, en);
+
+             evas_textblock_cursor_char_prev(en->cursor);
+             evas_textblock_cursor_word_start(en->cursor);
+
+             _sel_extend(en->cursor, rp->object, en);
+
+             _range_del_emit(ed, en->cursor, rp->object, en);
           }
         else if ((alt) && (shift))
           {
