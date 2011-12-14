@@ -29997,7 +29997,7 @@ extern "C" {
     *        parameter in elm_naviframe_item_push
     *
     * @see also elm_naviframe_item_push()
-    *     
+    *
     * @ingroup Naviframe
     */
    EAPI void                elm_naviframe_prev_btn_auto_pushed_set(Evas_Object *obj, Eina_Bool auto_pushed) EINA_ARG_NONNULL(1);
