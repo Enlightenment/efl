@@ -3200,7 +3200,7 @@ _layout_do_format(const Evas_Object *obj __UNUSED__, Ctxt *c,
 
                        fi->parent.w = fi->parent.adv = 0;
                     }
-                  else if ((!strcmp(item, "\t")) || (!strcmp(item, "\\t")))
+                  else if (_IS_TAB(item))
                     {
                        Evas_Object_Textblock_Format_Item *fi;
 
@@ -6068,6 +6068,8 @@ _evas_textblock_format_is_visible(Evas_Object_Textblock_Node_Format *fnode,
          * closing */
         if ((!strncmp(item, "\n", itlen) || !strncmp(item, "\\n", itlen)) ||
               (!strncmp(item, "\t", itlen) || !strncmp(item, "\\t", itlen)) ||
+              (!strncmp(item, "br", itlen) && (itlen >= 2)) ||
+              (!strncmp(item, "tab", itlen) && (itlen >= 3)) ||
               (!strncmp(item, "ps", itlen) && (itlen >= 2)) ||
               (!strncmp(item, "item", itlen) && (itlen >= 4) && is_opener))
           {
