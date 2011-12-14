@@ -408,6 +408,49 @@ evas_output_viewport_get(const Evas *e, Evas_Coord *x, Evas_Coord *y, Evas_Coord
    if (h) *h = e->viewport.h;
 }
 
+EAPI void 
+evas_output_framespace_set(Evas *e, Evas_Coord x, Evas_Coord y, Evas_Coord w, Evas_Coord h) 
+{
+   MAGIC_CHECK(e, Evas, MAGIC_EVAS);
+   return;
+   MAGIC_CHECK_END();
+
+   if ((x == e->framespace.x) && (y == e->framespace.y) &&
+       (w == e->framespace.w) && (h == e->framespace.h)) return;
+   if (w <= 0) return;
+   if (h <= 0) return;
+   /* if ((x != 0) || (y != 0)) */
+   /*   { */
+   /* 	ERR("Compat error. viewport x,y != 0,0 not supported"); */
+   /* 	x = 0; */
+   /* 	y = 0; */
+   /*   } */
+   e->framespace.x = x;
+   e->framespace.y = y;
+   e->framespace.w = w;
+   e->framespace.h = h;
+   e->framespace.changed = 1;
+   /* e->output_validity++; */
+   e->changed = 1;
+}
+
+EAPI void 
+evas_output_framespace_get(const Evas *e, Evas_Coord *x, Evas_Coord *y, Evas_Coord *w, Evas_Coord *h) 
+{
+   MAGIC_CHECK(e, Evas, MAGIC_EVAS);
+   if (x) *x = 0;
+   if (y) *y = 0;
+   if (w) *w = 0;
+   if (h) *h = 0;
+   return;
+   MAGIC_CHECK_END();
+
+   if (x) *x = e->framespace.x;
+   if (y) *y = e->framespace.y;
+   if (w) *w = e->framespace.w;
+   if (h) *h = e->framespace.h;
+}
+
 EAPI Evas_Coord
 evas_coord_screen_x_to_world(const Evas *e, int x)
 {

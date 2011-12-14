@@ -321,6 +321,12 @@ struct _Evas
       unsigned char  changed : 1;
    } output;
 
+   struct 
+     {
+        Evas_Coord x, y, w, h;
+        Eina_Bool changed : 1;
+     } framespace;
+
    Eina_List        *damages;
    Eina_List        *obscures;
 

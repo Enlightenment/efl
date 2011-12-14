@@ -1877,6 +1877,38 @@ EAPI void              evas_output_viewport_set          (Evas *e, Evas_Coord x,
 EAPI void              evas_output_viewport_get          (const Evas *e, Evas_Coord *x, Evas_Coord *y, Evas_Coord *w, Evas_Coord *h) EINA_ARG_NONNULL(1);
 
 /**
+ * Sets the output framespace size of the render engine of the given evas.
+ *
+ * The framespace size is used in the Wayland engines to denote space where 
+ * the output is not drawn. This is mainly used in ecore_evas to draw borders
+ *
+ * The units used for @p w and @p h depend on the engine used by the
+ * evas.
+ *
+ * @param   e The given evas.
+ * @param   x The left coordinate in output units, usually pixels.
+ * @param   y The top coordinate in output units, usually pixels.
+ * @param   w The width in output units, usually pixels.
+ * @param   h The height in output units, usually pixels.
+ * @ingroup Evas_Output_Size
+ * @since 1.1.0
+ */
+EAPI void              evas_output_framespace_set        (Evas *e, Evas_Coord x, Evas_Coord y, Evas_Coord w, Evas_Coord h);
+
+/**
+ * Get the render engine's output framespace co-ordinates in canvas units.
+ * 
+ * @param e The pointer to the Evas Canvas
+ * @param x The pointer to a x variable to be filled in
+ * @param y The pointer to a y variable to be filled in
+ * @param w The pointer to a width variable to be filled in
+ * @param h The pointer to a height variable to be filled in
+ * @ingroup Evas_Output_Size
+ * @since 1.1.0
+ */
+EAPI void              evas_output_framespace_get        (const Evas *e, Evas_Coord *x, Evas_Coord *y, Evas_Coord *w, Evas_Coord *h);
+
+/**
  * @defgroup Evas_Coord_Mapping_Group Coordinate Mapping Functions
  *
  * Functions that are used to map coordinates from the canvas to the

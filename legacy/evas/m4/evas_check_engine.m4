@@ -873,6 +873,80 @@ fi
 
 ])
 
+
+dnl use: EVAS_CHECK_ENGINE_DEP_WAYLAND_SHM(engine, simple, want_static[, ACTION-IF-FOUND[, ACTION-IF-NOT-FOUND]])
+
+AC_DEFUN([EVAS_CHECK_ENGINE_DEP_WAYLAND_SHM],
+[
+
+have_dep="yes"
+evas_engine_[]$1[]_cflags=""
+evas_engine_[]$1[]_libs=""
+
+AC_SUBST([evas_engine_$1_cflags])
+AC_SUBST([evas_engine_$1_libs])
+
+if test "x${have_dep}" = "xyes" ; then
+  m4_default([$4], [:])
+else
+  m4_default([$5], [:])
+fi
+
+])
+
+
+dnl use: EVAS_CHECK_ENGINE_DEP_WAYLAND_EGL(engine, simple, want_static[, ACTION-IF-FOUND[, ACTION-IF-NOT-FOUND]])
+
+AC_DEFUN([EVAS_CHECK_ENGINE_DEP_WAYLAND_EGL],
+[
+
+requirement=""
+have_dep="no"
+evas_engine_[]$1[]_cflags=""
+evas_engine_[]$1[]_libs=""
+
+PKG_CHECK_MODULES([WAYLAND_EGL],
+   [wayland-egl],
+   [
+    have_dep="yes"
+    requirement="wayland-egl"
+    evas_engine_[]$1[]_cflags="${WAYLAND_EGL_CFLAGS}"
+    evas_engine_[]$1[]_libs="${WAYLAND_EGL_LIBS}"
+   ],[
+    have_dep="no"
+   ]
+)
+
+if test "x${have_dep}" = "xyes" ; then
+   AC_CHECK_HEADER([GLES2/gl2.h],
+      [have_egl="yes"],
+      [have_egl="no"],
+      [
+#include <GLES2/gl2.h>
+#include <EGL/egl.h>
+      ])
+   if test "x${have_egl}" = "xyes" ; then
+      evas_engine_[]$1[]_cflags="${WAYLAND_EGL_CFLAGS}"
+      evas_engine_[]$1[]_libs="${WAYLAND_EGL_LIBS} -lGLESv2 -lEGL"
+   fi
+fi
+
+AC_SUBST([evas_engine_$1_cflags])
+AC_SUBST([evas_engine_$1_libs])
+
+if test "x$3" = "xstatic" ; then
+   requirement_evas="${requirement} ${requirement_evas}"
+fi
+
+if test "x${have_dep}" = "xyes" ; then
+  m4_default([$4], [:])
+else
+  m4_default([$5], [:])
+fi
+
+])
+
+
 dnl use: EVAS_CHECK_ENGINE(engine, want_engine, simple, description)
 
 

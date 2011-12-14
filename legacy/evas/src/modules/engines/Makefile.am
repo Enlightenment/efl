@@ -68,4 +68,6 @@ endif
 if !EVAS_STATIC_BUILD_SOFTWARE_X11
 SUBDIRS += software_x11
 endif
-
+if !EVAS_STATIC_BUILD_WAYLAND_SHM
+SUBDIRS += wayland_shm
+endif

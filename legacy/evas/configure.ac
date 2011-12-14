@@ -112,6 +112,7 @@ want_evas_engine_direct3d="no"
 want_evas_engine_fb="no"
 want_evas_engine_directfb="no"
 want_evas_engine_psl1ght="no"
+want_evas_engine_wayland_shm="no"
 
 want_evas_image_loader_edb="yes"
 want_evas_image_loader_eet="yes"
@@ -702,6 +703,8 @@ EVAS_CHECK_ENGINE([software-16-ddraw], [${want_evas_engine_software_16_ddraw}], 
 EVAS_CHECK_ENGINE([software-16-wince], [${want_evas_engine_software_16_wince}], [no], [Software Windows CE 16 bits])
 
 EVAS_CHECK_ENGINE([software-16-sdl], [${want_evas_engine_software_16_sdl}], [no], [Software SDL 16 bits])
+
+EVAS_CHECK_ENGINE([wayland-shm], [${want_evas_engine_wayland_shm}], [no], [Wayland Shm])
 
 # SDL primitive
 sdl_primitive="no"
@@ -1820,6 +1823,7 @@ evas-direct3d.pc
 evas-software-16-wince.pc
 evas-software-sdl.pc
 evas-psl1ght.pc
+evas-wayland-shm.pc
 evas.pc
 doc/evas.dox
 doc/Makefile
@@ -1864,6 +1868,7 @@ src/modules/engines/software_16/Makefile
 src/modules/engines/software_16_x11/Makefile
 src/modules/engines/software_16_ddraw/Makefile
 src/modules/engines/software_16_sdl/Makefile
+src/modules/engines/wayland_shm/Makefile
 src/modules/loaders/Makefile
 src/modules/loaders/edb/Makefile
 src/modules/loaders/eet/Makefile
@@ -1960,6 +1965,7 @@ echo "  Software 16bit X11.........: $have_evas_engine_software_16_x11"
 echo "  Software 16bit Directdraw..: $have_evas_engine_software_16_ddraw"
 echo "  Software 16bit WinCE.......: $have_evas_engine_software_16_wince"
 echo "  Software 16bit SDL.........: $have_evas_engine_software_16_sdl (primitive: $sdl_primitive)"
+echo "  Wayland Shm................: $have_evas_engine_wayland_shm"
 echo
 echo "Image Loaders:"
 echo "  BMP.....................: $have_evas_image_loader_bmp"
