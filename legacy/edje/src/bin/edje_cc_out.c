@@ -1391,7 +1391,7 @@ data_queue_part_lookup(Edje_Part_Collection *pc, const char *name, int *dest)
         if ((pl->pc == pc) && (pl->dest == dest))
           {
              free(pl->name);
-             if (name[0])
+             if (name && name[0])
                pl->name = mem_strdup(name);
              else
                {
@@ -1401,7 +1401,7 @@ data_queue_part_lookup(Edje_Part_Collection *pc, const char *name, int *dest)
              return;
           }
      }
-   if (!name[0]) return;
+   if (!name || !name[0]) return;
 
    pl = mem_alloc(SZ(Part_Lookup));
    part_lookups = eina_list_append(part_lookups, pl);
@@ -1536,7 +1536,24 @@ data_queue_copied_program_lookup(Edje_Part_Collection *pc, int *src, int *dest)
 void
 data_queue_image_lookup(char *name, int *dest, Eina_Bool *set)
 {
+   Eina_List *l;
    Image_Lookup *il;
+
+   EINA_LIST_FOREACH(image_lookups, l, il)
+     {
+        if (il->dest == dest)
+          {
+             free(il->name);
+             if (name && name[0])
+               il->name = mem_strdup(name);
+             else
+               {
+                  image_lookups = eina_list_remove(image_lookups, il);
+                  free(il);
+               }
+          }
+     }
+   if (!name || !name[0]) return;
 
    il = mem_alloc(SZ(Image_Lookup));
    image_lookups = eina_list_append(image_lookups, il);

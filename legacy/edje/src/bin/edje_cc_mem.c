@@ -26,6 +26,22 @@ mem_alloc(size_t size)
    return NULL;
 }
 
+void *
+mem_realloc(void *p, size_t size)
+{
+   void *mem;
+
+   if (!p)
+     mem = calloc(1, size);
+   else
+     mem = realloc(p, size);
+   if (mem) return mem;
+   ERR("%s: Error. %s:%i memory allocation of " FMT_SIZE_T " bytes failed. %s",
+       progname, file_in, line, size, strerror(errno));
+   exit(-1);
+   return NULL;
+}
+
 char *
 mem_strdup(const char *s)
 {
