@@ -143,6 +143,7 @@ static const char SIG_SELECTION_START[] = "selection,start";
 static const char SIG_SELECTION_CHANGED[] = "selection,changed";
 static const char SIG_SELECTION_CLEARED[] = "selection,cleared";
 static const char SIG_CURSOR_CHANGED[] = "cursor,changed";
+static const char SIG_CURSOR_CHANGED_MANUAL[] = "cursor,changed,manual";
 static const char SIG_ANCHOR_CLICKED[] = "anchor,clicked";
 static const char SIG_ANCHOR_DOWN[] = "anchor,down";
 static const char SIG_ANCHOR_UP[] = "anchor,up";
@@ -168,6 +169,7 @@ static const Evas_Smart_Cb_Description _signals[] = {
        {SIG_SELECTION_CHANGED, ""},
        {SIG_SELECTION_CLEARED, ""},
        {SIG_CURSOR_CHANGED, ""},
+       {SIG_CURSOR_CHANGED_MANUAL, ""},
        {SIG_ANCHOR_CLICKED, ""},
        {SIG_ANCHOR_DOWN, ""},
        {SIG_ANCHOR_UP, ""},
@@ -1642,6 +1644,13 @@ _signal_cursor_changed(void *data, Evas_Object *obj __UNUSED__, const char *emis
 }
 
 static void
+_signal_cursor_changed_manual(void *data, Evas_Object *obj __UNUSED__, const char *emission __UNUSED__, const char *source __UNUSED__)
+{
+   evas_object_smart_callback_call(data, SIG_CURSOR_CHANGED_MANUAL, NULL);
+}
+
+
+static void
 _signal_anchor_geoms_do_things_with(Widget_Data *wd, Elm_Entry_Anchor_Info *ei)
 {
    const Eina_List *geoms, *l;
@@ -2286,6 +2295,8 @@ elm_entry_add(Evas_Object *parent)
                                    _signal_entry_cut_notify, obj);
    edje_object_signal_callback_add(wd->ent, "cursor,changed", "elm.text",
                                    _signal_cursor_changed, obj);
+   edje_object_signal_callback_add(wd->ent, "cursor,changed,manual", "elm.text",
+                                   _signal_cursor_changed_manual, obj);
    edje_object_signal_callback_add(wd->ent, "anchor,mouse,down,*", "elm.text",
                                    _signal_anchor_down, obj);
    edje_object_signal_callback_add(wd->ent, "anchor,mouse,up,*", "elm.text",
