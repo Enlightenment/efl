@@ -78,12 +78,19 @@
 static const char o_type[] = "textblock";
 
 /* The char to be inserted instead of visible formats */
-#define EVAS_TEXTBLOCK_REPLACEMENT_CHAR 0xFFFC
+#define _REPLACEMENT_CHAR 0xFFFC
 #define _PARAGRAPH_SEPARATOR 0x2029
+#define _NEWLINE '\n'
+#define _TAB '\t'
+
+#define _REPLACEMENT_CHAR_UTF8 "\xEF\xBF\xBC"
+#define _PARAGRAPH_SEPARATOR_UTF8 "\xE2\x80\xA9"
+#define _NEWLINE_UTF8 "\n"
+#define _TAB_UTF8 "\t"
 #define EVAS_TEXTBLOCK_IS_VISIBLE_FORMAT_CHAR(ch) \
-   (((ch) == EVAS_TEXTBLOCK_REPLACEMENT_CHAR) || \
-    ((ch) == '\n') || \
-    ((ch) == '\t') || \
+   (((ch) == _REPLACEMENT_CHAR) || \
+    ((ch) ==  _NEWLINE) || \
+    ((ch) == _TAB) || \
     ((ch) == _PARAGRAPH_SEPARATOR))
 
 /* private struct for textblock object internal data */
@@ -4995,7 +5002,8 @@ evas_object_textblock_text_markup_prepend(Evas_Textblock_Cursor *cur, const char
                     }
                }
              /* Unicode object replcament char */
-             else if (!strncmp("\xEF\xBF\xBC", p, 3))
+             else if (!strncmp(_REPLACEMENT_CHAR_UTF8, p,
+                      strlen(_REPLACEMENT_CHAR_UTF8)))
                {
                   /*FIXME: currently just remove them, maybe do something
                    * fancier in the future, atm it breaks if this char
@@ -5188,13 +5196,13 @@ evas_textblock_text_markup_to_utf8(const Evas_Object *obj, const char *text)
                        if (!match) match = ttag;
 
                        if (_IS_PARAGRAPH_SEPARATOR_SIMPLE(match))
-                          eina_strbuf_append(sbuf, "\xE2\x80\xA9");
+                          eina_strbuf_append(sbuf, _PARAGRAPH_SEPARATOR_UTF8);
                        else if (_IS_LINE_SEPARATOR(match))
-                          eina_strbuf_append(sbuf, "\n");
+                          eina_strbuf_append(sbuf, _NEWLINE_UTF8);
                        else if (_IS_TAB(match))
-                          eina_strbuf_append(sbuf, "\t");
+                          eina_strbuf_append(sbuf, _TAB_UTF8);
                        else if (!strncmp(match, "item", 4))
-                          eina_strbuf_append(sbuf, "\xEF\xBF\xBC");
+                          eina_strbuf_append(sbuf, _REPLACEMENT_CHAR_UTF8);
 
                        free(ttag);
                     }
@@ -5283,9 +5291,9 @@ evas_textblock_text_utf8_to_markup(const Evas_Object *obj, const char *text)
         pos2 = evas_string_char_next_get(text, pos2, &ch);
         if ((ch <= 0) || (pos2 <= 0)) break;
 
-        if (ch == '\n')
+        if (ch == _NEWLINE)
            eina_strbuf_append(sbuf, "<br/>");
-        else if (ch == '\t')
+        else if (ch == _TAB)
            eina_strbuf_append(sbuf, "<tab/>");
         else if (ch == '<')
            eina_strbuf_append(sbuf, "&lt;");
@@ -5293,9 +5301,9 @@ evas_textblock_text_utf8_to_markup(const Evas_Object *obj, const char *text)
            eina_strbuf_append(sbuf, "&gt;");
         else if (ch == '&')
            eina_strbuf_append(sbuf, "&amp;");
-        else if (ch == 0x2029) /* PS */
+        else if (ch == _PARAGRAPH_SEPARATOR)
            eina_strbuf_append(sbuf, "<ps/>");
-        else if (ch == 0xFFFC ) /* Object Replacement Char */
+        else if (ch == _REPLACEMENT_CHAR)
            eina_strbuf_append(sbuf, "&#xfffc;");
         else
           {
@@ -7394,11 +7402,11 @@ evas_textblock_cursor_format_append(Evas_Textblock_Cursor *cur, const char *form
         if (_IS_PARAGRAPH_SEPARATOR(o, format))
            insert_char = _PARAGRAPH_SEPARATOR;
         else if (_IS_LINE_SEPARATOR(format))
-           insert_char = '\n';
+           insert_char = _NEWLINE;
         else if (_IS_TAB(format))
-           insert_char = '\t';
+           insert_char = _TAB;
         else
-           insert_char = EVAS_TEXTBLOCK_REPLACEMENT_CHAR;
+           insert_char = _REPLACEMENT_CHAR;
 
         eina_ustrbuf_insert_char(cur->node->unicode, insert_char, cur->pos);
 
