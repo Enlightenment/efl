@@ -4137,7 +4137,7 @@ ob_collections_group_parts_part_description(void)
 {
    Edje_Part_Collection *pc;
    Edje_Part *ep;
-   Edje_Part_Description_Common *ed;
+   Edje_Part_Description_Common *ed = NULL;
 
    pc = eina_list_data_get(eina_list_last(edje_collections));
    ep = current_part;
