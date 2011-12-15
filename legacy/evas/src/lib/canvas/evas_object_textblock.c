@@ -585,7 +585,7 @@ _style_clear(Evas_Textblock_Style *ts)
  * @return The replacement string found.
  */
 static inline const char *
-_style_match_tag(Evas_Textblock_Style *ts, const char *s, size_t tag_len, size_t *replace_len)
+_style_match_tag(const Evas_Textblock_Style *ts, const char *s, size_t tag_len, size_t *replace_len)
 {
    Evas_Object_Style_Tag *tag;
 
@@ -3043,8 +3043,16 @@ _format_finalize(Evas_Object *obj, Evas_Object_Textblock_Format *fmt)
  * Returns true if the item is a paragraph separator, false otherwise
  * @def _IS_PARAGRAPH_SEPARATOR(item)
  */
+#define _IS_PARAGRAPH_SEPARATOR_SIMPLE(item)                                 \
+   (!strcmp(item, "ps"))
+/**
+ * @internal
+ * Returns true if the item is a paragraph separator, false otherwise
+ * takes legacy mode into account.
+ * @def _IS_PARAGRAPH_SEPARATOR(item)
+ */
 #define _IS_PARAGRAPH_SEPARATOR(o, item)                                     \
-   (!strcmp(item, "ps") ||                                                   \
+   (_IS_PARAGRAPH_SEPARATOR_SIMPLE(item) ||                                  \
     (o->legacy_newline && _IS_LINE_SEPARATOR(item))) /* Paragraph separator */
 
 /**
@@ -5123,32 +5131,136 @@ evas_object_textblock_text_markup_get(const Evas_Object *obj)
 EAPI char *
 evas_textblock_text_markup_to_utf8(const Evas_Object *obj, const char *text)
 {
+   /* FIXME: Redundant and awful, should be merged with markup_prepend */
+   Eina_Strbuf *sbuf;
+   char *s, *p, *ret;
+   char *tag_start, *tag_end, *esc_start, *esc_end;
+
    if (!text) return NULL;
 
-   /* FIXME: Can be done better, this is the least redundant way of doing it,
-    * but by far the slowest, when the time comes, this should be
-    * re-implemented. */
-   char *ret;
-   Evas_Object *obj2;
-   Evas_Textblock_Cursor *cur1, *cur2;
-   obj2 = evas_object_textblock_add(evas_object_evas_get(obj));
-   /* Shouldn't have been const, casting is ok, or at least conforms
-    * with the rest of the ugliness in this func*/
-   evas_object_textblock_style_set(obj2,
-         (Evas_Textblock_Style *) evas_object_textblock_style_get(obj));
-   evas_object_textblock_legacy_newline_set(obj2,
-         evas_object_textblock_legacy_newline_get(obj));
 
-   evas_object_textblock_text_markup_set(obj2, text);
-   cur1 = evas_object_textblock_cursor_get(obj2);
-   cur2 = evas_object_textblock_cursor_new(obj2);
-   evas_textblock_cursor_paragraph_first(cur1);
-   evas_textblock_cursor_paragraph_last(cur2);
-   ret = evas_textblock_cursor_range_text_get(cur1, cur2,
-         EVAS_TEXTBLOCK_TEXT_PLAIN);
-   evas_textblock_cursor_free(cur2);
-   evas_object_del(obj2);
+   tag_start = tag_end = esc_start = esc_end = NULL;
+   sbuf = eina_strbuf_new();
+   p = (char *)text;
+   s = p;
+   /* This loop goes through all of the mark up text until it finds format
+    * tags, escape sequences or the terminating NULL. When it finds either
+    * of those, it appends the text found up until that point to the textblock
+    * proccesses whatever found. It repeats itself until the termainating
+    * NULL is reached. */
+   for (;;)
+     {
+        /* If we got to the end of string or just finished/started tag
+         * or escape sequence handling. */
+        if ((*p == 0) ||
+              (tag_end) || (esc_end) ||
+              (tag_start) || (esc_start))
+          {
+             if (tag_end)
+               {
+                  /* If we reached to a tag ending, analyze the tag */
+                  char *ttag;
+                  size_t ttag_len;
 
+                  tag_start++; /* Skip the < */
+                  tag_end--; /* Skip the > */
+                  if ((tag_end > tag_start) && (*(tag_end - 1) == '/'))
+                     tag_end --; /* Skip the terminating '/' */
+
+                  ttag_len = tag_end - tag_start;
+
+                  ttag = malloc(ttag_len + 1);
+                  if (ttag)
+                    {
+                       const char *match = NULL;
+                       size_t replace_len;
+                       memcpy(ttag, tag_start, ttag_len);
+                       ttag[ttag_len] = 0;
+
+
+                       if (obj)
+                         {
+                            match = _style_match_tag(
+                                  evas_object_textblock_style_get(obj),
+                                  ttag, ttag_len, &replace_len);
+                         }
+
+                       if (!match) match = ttag;
+
+                       if (_IS_PARAGRAPH_SEPARATOR_SIMPLE(match))
+                          eina_strbuf_append(sbuf, "\xE2\x80\xA9");
+                       else if (_IS_LINE_SEPARATOR(match))
+                          eina_strbuf_append(sbuf, "\n");
+                       else if (_IS_TAB(match))
+                          eina_strbuf_append(sbuf, "\t");
+                       else if (!strncmp(match, "item", 4))
+                          eina_strbuf_append(sbuf, "\xEF\xBF\xBC");
+
+                       free(ttag);
+                    }
+                  tag_start = tag_end = NULL;
+               }
+             else if (esc_end)
+               {
+                  const char *escape;
+
+                  escape = _escaped_char_get(esc_start, esc_end + 1);
+                  eina_strbuf_append(sbuf, escape);
+                  esc_start = esc_end = NULL;
+               }
+             else if (*p == 0)
+               {
+                  eina_strbuf_append_length(sbuf, s, p - s);
+                  s = NULL;
+               }
+             if (*p == 0)
+                break;
+          }
+        if (*p == '<')
+          {
+             if (!esc_start)
+               {
+                  /* Append the text prior to this to the textblock and
+                   * mark the start of the tag */
+                  tag_start = p;
+                  tag_end = NULL;
+                  eina_strbuf_append_length(sbuf, s, p - s);
+                  s = NULL;
+               }
+          }
+        else if (*p == '>')
+          {
+             if (tag_start)
+               {
+                  tag_end = p + 1;
+                  s = p + 1;
+               }
+          }
+        else if (*p == '&')
+          {
+             if (!tag_start)
+               {
+                  /* Append the text prior to this to the textblock and mark
+                   * the start of the escape sequence */
+                  esc_start = p;
+                  esc_end = NULL;
+                  eina_strbuf_append_length(sbuf, s, p - s);
+                  s = NULL;
+               }
+          }
+        else if (*p == ';')
+          {
+             if (esc_start)
+               {
+                  esc_end = p;
+                  s = p + 1;
+               }
+          }
+        p++;
+     }
+
+   ret = eina_strbuf_string_steal(sbuf);
+   eina_strbuf_free(sbuf);
    return ret;
 }
 
@@ -7125,7 +7237,7 @@ _evas_textblock_node_format_new(Evas_Object_Textblock *o, const char *_format)
    /* Just use as is, it's a special format. */
    else
      {
-        const char *tmp = format;;
+        const char *tmp = format;
         if (format[0] != '-')
           {
              n->opener = EINA_TRUE;

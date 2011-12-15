@@ -8151,12 +8151,12 @@ EAPI const char                  *evas_textblock_escape_string_range_get(const c
  * version of the text. i.e: <br> and <\n> will be replaced with \n, &...; with
  * the actual char and etc.
  *
- * @param obj the textblock object to work with.
+ * @param obj the textblock object to work with. (if NULL, tries the default)
  * @param text the markup text (if NULL, return NULL)
  * @return an allocated plain text version of the markup
  * @since 1.2.0
  */
-EAPI char                        *evas_textblock_text_markup_to_utf8(const Evas_Object *obj, const char *text) EINA_WARN_UNUSED_RESULT EINA_MALLOC EINA_ARG_NONNULL(1);
+EAPI char                        *evas_textblock_text_markup_to_utf8(const Evas_Object *obj, const char *text) EINA_WARN_UNUSED_RESULT EINA_MALLOC;
 
 /**
  * Return the markup version of the plain text.

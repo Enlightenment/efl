@@ -21,9 +21,7 @@ _evas_textblock_format_offset_get(const Evas_Object_Textblock_Node_Format *n);
 
 static const char *style_buf =
    "DEFAULT='font=Sans font_size=10 color=#000 text_class=entry'"
-   "br='\n'"
-   "ps='ps'"
-   "tab='\t'"
+   "newline='br'"
    "b='+ font=Sans:style=bold'";
 
 #define START_TB_TEST() \
@@ -1518,18 +1516,94 @@ START_TEST(evas_textblock_text_getters)
    fail_if(strcmp(evas_textblock_cursor_range_text_get(cur, main_cur,
             EVAS_TEXTBLOCK_TEXT_MARKUP), "aaa"));
 
-   /* Markup to plain */
+   /* Markup to plain and vice versa */
      {
-        char *tmp = evas_textblock_text_markup_to_utf8(tb, "<br/>aa<\n/>bb<\t/>");
+        char *tmp, *tmp2;
+
+        /* Real textblock object */
+        tmp = evas_textblock_text_markup_to_utf8(tb, "<br/>aa<\n/>bb<\t/>");
         fail_if(strcmp(tmp, "\naa\nbb\t"));
+        tmp2 = evas_textblock_text_utf8_to_markup(tb, tmp);
+        fail_if(strcmp(tmp2, "<br/>aa<br/>bb<tab/>"));
+        free(tmp2);
         free(tmp);
 
         tmp = evas_textblock_text_markup_to_utf8(tb, "a<item></item>");
         fail_if(strcmp(tmp, "a\xEF\xBF\xBC"));
+        tmp2 = evas_textblock_text_utf8_to_markup(tb, tmp);
+        fail_if(strcmp(tmp2, "a&#xfffc;"));
+        free(tmp2);
         free(tmp);
 
         tmp = evas_textblock_text_markup_to_utf8(tb, "a&nbsp;");
         fail_if(strcmp(tmp, "a\xC2\xA0"));
+        tmp2 = evas_textblock_text_utf8_to_markup(tb, tmp);
+        fail_if(strcmp(tmp2, "a\xC2\xA0"));
+        free(tmp2);
+        free(tmp);
+
+        tmp = evas_textblock_text_markup_to_utf8(tb, "a<b>b</b><more></>a");
+        fail_if(strcmp(tmp, "aba"));
+        tmp2 = evas_textblock_text_utf8_to_markup(tb, tmp);
+        fail_if(strcmp(tmp2, "aba"));
+        free(tmp2);
+        free(tmp);
+
+        tmp = evas_textblock_text_markup_to_utf8(tb, "a&amp;a");
+        fail_if(strcmp(tmp, "a&a"));
+        tmp2 = evas_textblock_text_utf8_to_markup(tb, tmp);
+        fail_if(strcmp(tmp2, "a&amp;a"));
+        free(tmp2);
+        free(tmp);
+
+        tmp = evas_textblock_text_markup_to_utf8(tb, "a<newline/>a");
+        fail_if(strcmp(tmp, "a\na"));
+        tmp2 = evas_textblock_text_utf8_to_markup(tb, tmp);
+        fail_if(strcmp(tmp2, "a<br/>a"));
+        free(tmp2);
+        free(tmp);
+
+        /* NULL textblock object */
+        tmp = evas_textblock_text_markup_to_utf8(NULL, "<br/>aa<\n/>bb<\t/>");
+        fail_if(strcmp(tmp, "\naa\nbb\t"));
+        tmp2 = evas_textblock_text_utf8_to_markup(NULL, tmp);
+        fail_if(strcmp(tmp2, "<br/>aa<br/>bb<tab/>"));
+        free(tmp2);
+        free(tmp);
+
+        tmp = evas_textblock_text_markup_to_utf8(NULL, "a<item></item>");
+        fail_if(strcmp(tmp, "a\xEF\xBF\xBC"));
+        tmp2 = evas_textblock_text_utf8_to_markup(NULL, tmp);
+        fail_if(strcmp(tmp2, "a&#xfffc;"));
+        free(tmp2);
+        free(tmp);
+
+        tmp = evas_textblock_text_markup_to_utf8(NULL, "a&nbsp;");
+        fail_if(strcmp(tmp, "a\xC2\xA0"));
+        tmp2 = evas_textblock_text_utf8_to_markup(NULL, tmp);
+        fail_if(strcmp(tmp2, "a\xC2\xA0"));
+        free(tmp2);
+        free(tmp);
+
+        tmp = evas_textblock_text_markup_to_utf8(NULL, "a<b>b</b><more></>a");
+        fail_if(strcmp(tmp, "aba"));
+        tmp2 = evas_textblock_text_utf8_to_markup(NULL, tmp);
+        fail_if(strcmp(tmp2, "aba"));
+        free(tmp2);
+        free(tmp);
+
+        tmp = evas_textblock_text_markup_to_utf8(tb, "a&amp;a");
+        fail_if(strcmp(tmp, "a&a"));
+        tmp2 = evas_textblock_text_utf8_to_markup(tb, tmp);
+        fail_if(strcmp(tmp2, "a&amp;a"));
+        free(tmp2);
+        free(tmp);
+
+        tmp = evas_textblock_text_markup_to_utf8(NULL, "a<newline/>a");
+        fail_if(strcmp(tmp, "aa"));
+        tmp2 = evas_textblock_text_utf8_to_markup(NULL, tmp);
+        fail_if(strcmp(tmp2, "aa"));
+        free(tmp2);
         free(tmp);
      }
 
