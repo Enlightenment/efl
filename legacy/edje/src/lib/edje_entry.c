@@ -1222,6 +1222,14 @@ _edje_key_down_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, v
         if (control)
           {
              // del to end of next word
+             _sel_start(en->cursor, rp->object, en);
+
+             evas_textblock_cursor_word_end(en->cursor);
+             evas_textblock_cursor_char_next(en->cursor);
+
+             _sel_extend(en->cursor, rp->object, en);
+
+             _range_del_emit(ed, en->cursor, rp->object, en);
           }
         else if (shift)
           {
@@ -1301,13 +1309,11 @@ _edje_key_down_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, v
      }
    else if ((control) && ((!strcmp(ev->key, "c") || (!strcmp(ev->key, "Insert")))))
      {
-        // FIXME: copy - save selection
         _edje_emit(ed, "entry,copy,notify", rp->part->name);
         ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
      }
    else if ((control) && ((!strcmp(ev->key, "x") || (!strcmp(ev->key, "m")))))
      {
-        // FIXME: cut - save selection, delete seletion
         _edje_emit(ed, "entry,cut,notify", rp->part->name);
         ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
      }
@@ -1334,7 +1340,7 @@ _edje_key_down_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, v
    else if ((control) && (!strcmp(ev->key, "w")))
      {
         _sel_clear(en->cursor, rp->object, en);
-        // select current word
+        // select current word?
         ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
      }
    else if (!strcmp(ev->key, "Tab"))
