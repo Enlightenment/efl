@@ -1536,10 +1536,10 @@ data_queue_copied_program_lookup(Edje_Part_Collection *pc, int *src, int *dest)
 void
 data_queue_image_lookup(char *name, int *dest, Eina_Bool *set)
 {
-   Eina_List *l;
+  Eina_List *l, *ln;
    Image_Lookup *il;
 
-   EINA_LIST_FOREACH(image_lookups, l, il)
+   EINA_LIST_FOREACH_SAFE(image_lookups, l, ln, il)
      {
         if (il->dest == dest)
           {
@@ -1548,7 +1548,7 @@ data_queue_image_lookup(char *name, int *dest, Eina_Bool *set)
                il->name = mem_strdup(name);
              else
                {
-                  image_lookups = eina_list_remove(image_lookups, il);
+                  image_lookups = eina_list_remove_list(image_lookups, l);
                   free(il);
                }
           }
