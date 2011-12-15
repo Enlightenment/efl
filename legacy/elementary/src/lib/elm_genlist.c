@@ -1611,7 +1611,7 @@ _item_del_hook(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_i
 }
 
 static void
-_item_label_realize(Elm_Gen_Item *it,
+_item_text_realize(Elm_Gen_Item *it,
                     Evas_Object *target,
                     Eina_List **source,
                     const char *parts)
@@ -1887,7 +1887,7 @@ _item_realize(Elm_Gen_Item *it,
            will clean our mess */
         assert(eina_list_count(it->content_objs) == 0);
 
-        _item_label_realize(it, VIEW(it), &it->texts, NULL);
+        _item_text_realize(it, VIEW(it), &it->texts, NULL);
         it->content_objs = _item_content_realize(it, VIEW(it), &it->contents, NULL);
         _item_state_realize(it, VIEW(it), &it->states, NULL);
 
@@ -2861,7 +2861,7 @@ _mode_item_realize(Elm_Gen_Item *it)
       will clean our mess */
    assert(eina_list_count(it->item->mode_content_objs) == 0);
 
-   _item_label_realize(it, it->item->mode_view, &it->item->mode_texts, NULL);
+   _item_text_realize(it, it->item->mode_view, &it->item->mode_texts, NULL);
    it->item->mode_content_objs =
      _item_content_realize(it, it->item->mode_view,
                            &it->item->mode_contents, NULL);
@@ -3122,7 +3122,7 @@ _item_content_unset_hook(Elm_Gen_Item *it, const char *part)
 }
 
 static const char *
-_item_label_hook(Elm_Gen_Item *it, const char *part)
+_item_text_hook(Elm_Gen_Item *it, const char *part)
 {
    if (!it->itc->func.text_get) return NULL;
    return edje_object_part_text_get(VIEW(it), part);
@@ -3153,7 +3153,7 @@ _elm_genlist_item_new(Widget_Data              *wd,
    /* TEMPORARY */
    it->sel_cb = (Ecore_Cb)_item_select;
 
-   elm_widget_item_text_get_hook_set(it, _item_label_hook);
+   elm_widget_item_text_get_hook_set(it, _item_text_hook);
    return it;
 }
 
@@ -4499,7 +4499,7 @@ elm_genlist_item_fields_update(Elm_Genlist_Item *it,
    if (it->generation < it->wd->generation) return;
 
    if ((!itf) || (itf & ELM_GENLIST_ITEM_FIELD_LABEL))
-     _item_label_realize(it, it->base.view, &it->texts, parts);
+     _item_text_realize(it, it->base.view, &it->texts, parts);
    if ((!itf) || (itf & ELM_GENLIST_ITEM_FIELD_CONTENT))
      {
         it->content_objs = _item_content_unrealize(it, it->base.view,
