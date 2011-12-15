@@ -679,6 +679,7 @@ New_Object_Handler object_handlers[] =
      {"collections.group.sounds.sample", NULL}, /* dup */
      {"collections.group", ob_collections_group},
      {"collections.group.data", NULL},
+     {"collections.group.limits", NULL},
      {"collections.group.script", ob_collections_group_script},
      {"collections.group.lua_script", ob_collections_group_lua_script},
      {"collections.group.externals", NULL}, /* dup */
