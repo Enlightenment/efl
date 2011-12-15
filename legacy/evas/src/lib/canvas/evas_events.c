@@ -198,7 +198,7 @@ evas_event_feed_mouse_down(Evas *e, int b, Evas_Button_Flags flags, unsigned int
    Evas_Event_Mouse_Down ev;
    Evas_Object *obj;
    int addgrab = 0;
-   
+
    MAGIC_CHECK(e, Evas, MAGIC_EVAS);
    return;
    MAGIC_CHECK_END();
@@ -450,7 +450,7 @@ evas_event_feed_mouse_up(Evas *e, int b, Evas_Button_Flags flags, unsigned int t
      }
   /* remove released touch point from the touch point list */
    _evas_touch_point_remove(e, 0);
- 
+
    _evas_unwalk(e);
 }
 
