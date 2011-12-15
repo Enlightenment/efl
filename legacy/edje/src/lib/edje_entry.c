@@ -1124,6 +1124,7 @@ _edje_key_down_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, v
           }
         _sel_clear(en->cursor, rp->object, en);
         _edje_emit(ed, "entry,key,up", rp->part->name);
+        _edje_emit(rp->edje, "cursor,changed,manual", rp->part->name);
      }
    else if (!strcmp(ev->key, "Down") || !strcmp(ev->key, "KP_Down"))
      {
@@ -1143,6 +1144,7 @@ _edje_key_down_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, v
           }
         _sel_clear(en->cursor, rp->object, en);
         _edje_emit(ed, "entry,key,down", rp->part->name);
+        _edje_emit(rp->edje, "cursor,changed,manual", rp->part->name);
      }
    else if (!strcmp(ev->key, "Left") || !strcmp(ev->key, "KP_Left"))
      {
@@ -1160,6 +1162,7 @@ _edje_key_down_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, v
           }
         _sel_clear(en->cursor, rp->object, en);
         _edje_emit(ed, "entry,key,left", rp->part->name);
+        _edje_emit(rp->edje, "cursor,changed,manual", rp->part->name);
         ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
      }
    else if (!strcmp(ev->key, "Right") || !strcmp(ev->key, "KP_Right"))
@@ -1178,6 +1181,7 @@ _edje_key_down_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, v
           }
         _sel_clear(en->cursor, rp->object, en);
         _edje_emit(ed, "entry,key,right", rp->part->name);
+        _edje_emit(rp->edje, "cursor,changed,manual", rp->part->name);
         ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
      }
    else if (!strcmp(ev->key, "BackSpace"))
@@ -1694,7 +1698,10 @@ _edje_part_mouse_down_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUS
           }
      }
    if (evas_textblock_cursor_compare(tc, en->cursor))
-     _edje_emit(rp->edje, "cursor,changed", rp->part->name);
+     {
+        _edje_emit(rp->edje, "cursor,changed", rp->part->name);
+        _edje_emit(rp->edje, "cursor,changed,manual", rp->part->name);
+     }
    evas_textblock_cursor_free(tc);
    
    _edje_entry_imf_context_reset(en);
@@ -1803,7 +1810,10 @@ _edje_part_mouse_up_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED
         en->selecting = EINA_FALSE;
      }
    if (evas_textblock_cursor_compare(tc, en->cursor))
-     _edje_emit(rp->edje, "cursor,changed", rp->part->name);
+     {
+        _edje_emit(rp->edje, "cursor,changed", rp->part->name);
+        _edje_emit(rp->edje, "cursor,changed,manual", rp->part->name);
+     }
    evas_textblock_cursor_free(tc);
 
    _edje_entry_imf_context_reset(en);
@@ -1897,7 +1907,10 @@ _edje_part_mouse_move_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUS
                _sel_update(en->cursor, rp->object, en);
           }
         if (evas_textblock_cursor_compare(tc, en->cursor))
-          _edje_emit(rp->edje, "cursor,changed", rp->part->name);
+          {
+             _edje_emit(rp->edje, "cursor,changed", rp->part->name);
+             _edje_emit(rp->edje, "cursor,changed,manual", rp->part->name);
+          }
         evas_textblock_cursor_free(tc);
 
         _edje_entry_imf_context_reset(en);
