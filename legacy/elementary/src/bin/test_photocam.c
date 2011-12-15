@@ -327,7 +327,7 @@ test_photocam(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_in
    box = elm_box_add(win);
    elm_box_horizontal_set(box, EINA_TRUE);
    evas_object_size_hint_weight_set(box, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-   evas_object_size_hint_align_set(bt, 0.9, 0.9);
+   evas_object_size_hint_align_set(box, 0.9, 0.9);
    elm_table_pack(tb2, box, 2, 2, 1, 1);
 
    bt = elm_button_add(win);
