@@ -227,3 +227,7 @@
 
         * Fix potential crash from buffer overflow on copying map data.
 
+2011-12-15  Tom Hacohen (TAsn)
+
+	* Entry: Added support for various new key bindings:
+	Ctrl+Arrows, Ctrl+Del and Ctrl+Backspace.
