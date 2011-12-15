@@ -23,7 +23,7 @@ _evas_post_event_callback_call(Evas *e)
           {
              if (!pc->func((void*)pc->data, e)) skip = 1;
           }
-       EVAS_MEMPOOL_FREE(_mp_pc, pc);
+        EVAS_MEMPOOL_FREE(_mp_pc, pc);
      }
    _evas_unwalk(e);
 }
@@ -32,10 +32,10 @@ void
 _evas_post_event_callback_free(Evas *e)
 {
    Evas_Post_Callback *pc;
-   
+
    EINA_LIST_FREE(e->post_events, pc)
      {
-       EVAS_MEMPOOL_FREE(_mp_pc, pc);
+        EVAS_MEMPOOL_FREE(_mp_pc, pc);
      }
    _evas_unwalk(e);
 }
@@ -48,15 +48,15 @@ evas_event_callback_list_post_free(Eina_Inlist **list)
    /* MEM OK */
    for (l = *list; l;)
      {
-	Evas_Func_Node *fn;
+        Evas_Func_Node *fn;
 
-	fn = (Evas_Func_Node *)l;
-	l = l->next;
-	if (fn->delete_me)
-	  {
+        fn = (Evas_Func_Node *)l;
+        l = l->next;
+        if (fn->delete_me)
+          {
              *list = eina_inlist_remove(*list, EINA_INLIST_GET(fn));
              EVAS_MEMPOOL_FREE(_mp_fn, fn);
-	  }
+          }
      }
 }
 
@@ -70,7 +70,7 @@ evas_object_event_callback_clear(Evas_Object *obj)
    if (!obj->callbacks->callbacks)
      {
         EVAS_MEMPOOL_FREE(_mp_cb, obj->callbacks);
-	obj->callbacks = NULL;
+        obj->callbacks = NULL;
      }
 }
 
@@ -84,7 +84,7 @@ evas_event_callback_clear(Evas *e)
    if (!e->callbacks->callbacks)
      {
         EVAS_MEMPOOL_FREE(_mp_cb, e->callbacks);
-	e->callbacks = NULL;
+        e->callbacks = NULL;
      }
 }
 
@@ -95,7 +95,7 @@ evas_object_event_callback_all_del(Evas_Object *obj)
 
    if (!obj->callbacks) return;
    EINA_INLIST_FOREACH(obj->callbacks->callbacks, fn)
-     fn->delete_me = 1;
+      fn->delete_me = 1;
 }
 
 void
@@ -115,7 +115,7 @@ evas_event_callback_all_del(Evas *e)
 
    if (!e->callbacks) return;
    EINA_INLIST_FOREACH(e->callbacks->callbacks, fn)
-     fn->delete_me = 1;
+      fn->delete_me = 1;
 }
 
 void
@@ -136,25 +136,25 @@ evas_event_callback_call(Evas *e, Evas_Callback_Type type, void *event_info)
    _evas_walk(e);
    if (e->callbacks)
      {
-	l_mod = &e->callbacks->callbacks;
+        l_mod = &e->callbacks->callbacks;
         e->callbacks->walking_list++;
         for (l = *l_mod; l; l = l->next)
           {
-	     Evas_Func_Node *fn;
+             Evas_Func_Node *fn;
 
-	     fn = (Evas_Func_Node *)l;
-	     if ((fn->type == type) && (!fn->delete_me))
-	       {
-		  Evas_Event_Cb func = fn->func;
-	          if (func)
-	            func(fn->data, e, event_info);
-	       }
-	     if (e->delete_me) break;
+             fn = (Evas_Func_Node *)l;
+             if ((fn->type == type) && (!fn->delete_me))
+               {
+                  Evas_Event_Cb func = fn->func;
+                  if (func)
+                    func(fn->data, e, event_info);
+               }
+             if (e->delete_me) break;
           }
         e->callbacks->walking_list--;
         if (!e->callbacks->walking_list)
           {
-	     evas_event_callback_clear(e);
+             evas_event_callback_clear(e);
              l_mod = NULL;
           }
      }
@@ -179,58 +179,58 @@ evas_object_event_callback_call(Evas_Object *obj, Evas_Callback_Type type, void 
    _evas_walk(e);
    if (obj->callbacks)
      {
-	l_mod = &obj->callbacks->callbacks;
+        l_mod = &obj->callbacks->callbacks;
         switch (type)
           {
-             case EVAS_CALLBACK_MOUSE_DOWN:
-               {
-                  Evas_Event_Mouse_Down *ev = event_info;
+           case EVAS_CALLBACK_MOUSE_DOWN:
+                {
+                   Evas_Event_Mouse_Down *ev = event_info;
 
-                  flags = ev->flags;
-	          if (ev->flags & (EVAS_BUTTON_DOUBLE_CLICK | EVAS_BUTTON_TRIPLE_CLICK))
-	            {
-	               if (obj->last_mouse_down_counter < (e->last_mouse_down_counter - 1))
-	                 ev->flags &= ~(EVAS_BUTTON_DOUBLE_CLICK | EVAS_BUTTON_TRIPLE_CLICK);
-	            }
-                  obj->last_mouse_down_counter = e->last_mouse_down_counter;
-	          break;
-               }
-             case EVAS_CALLBACK_MOUSE_UP:
-               {
-                  Evas_Event_Mouse_Up *ev = event_info;
+                   flags = ev->flags;
+                   if (ev->flags & (EVAS_BUTTON_DOUBLE_CLICK | EVAS_BUTTON_TRIPLE_CLICK))
+                     {
+                        if (obj->last_mouse_down_counter < (e->last_mouse_down_counter - 1))
+                          ev->flags &= ~(EVAS_BUTTON_DOUBLE_CLICK | EVAS_BUTTON_TRIPLE_CLICK);
+                     }
+                   obj->last_mouse_down_counter = e->last_mouse_down_counter;
+                   break;
+                }
+           case EVAS_CALLBACK_MOUSE_UP:
+                {
+                   Evas_Event_Mouse_Up *ev = event_info;
 
-                  flags = ev->flags;
-	          if (ev->flags & (EVAS_BUTTON_DOUBLE_CLICK | EVAS_BUTTON_TRIPLE_CLICK))
-	            {
-	               if (obj->last_mouse_up_counter < (e->last_mouse_up_counter - 1))
-	                 ev->flags &= ~(EVAS_BUTTON_DOUBLE_CLICK | EVAS_BUTTON_TRIPLE_CLICK);
-	            }
-                  obj->last_mouse_up_counter = e->last_mouse_up_counter;
-	          break;
-               }
-             default:
-               break;
+                   flags = ev->flags;
+                   if (ev->flags & (EVAS_BUTTON_DOUBLE_CLICK | EVAS_BUTTON_TRIPLE_CLICK))
+                     {
+                        if (obj->last_mouse_up_counter < (e->last_mouse_up_counter - 1))
+                          ev->flags &= ~(EVAS_BUTTON_DOUBLE_CLICK | EVAS_BUTTON_TRIPLE_CLICK);
+                     }
+                   obj->last_mouse_up_counter = e->last_mouse_up_counter;
+                   break;
+                }
+           default:
+              break;
           }
         obj->callbacks->walking_list++;
         for (l = *l_mod; l; l = l->next)
           {
-	     Evas_Func_Node *fn;
+             Evas_Func_Node *fn;
 
-	     fn = (Evas_Func_Node *)l;
-	     if ((fn->type == type) && (!fn->delete_me))
-	       {
-		  Evas_Object_Event_Cb func = fn->func;
-	          if (func)
-	            func(fn->data, obj->layer->evas, obj, event_info);
-	       }
-	     if (obj->delete_me) break;
+             fn = (Evas_Func_Node *)l;
+             if ((fn->type == type) && (!fn->delete_me))
+               {
+                  Evas_Object_Event_Cb func = fn->func;
+                  if (func)
+                    func(fn->data, obj->layer->evas, obj, event_info);
+               }
+             if (obj->delete_me) break;
           }
         obj->callbacks->walking_list--;
         if (!obj->callbacks->walking_list)
-	  {
-	     evas_object_event_callback_clear(obj);
-	     l_mod = NULL;
-	  }
+          {
+             evas_object_event_callback_clear(obj);
+             l_mod = NULL;
+          }
 
         if (type == EVAS_CALLBACK_MOUSE_DOWN)
           {
@@ -246,12 +246,12 @@ evas_object_event_callback_call(Evas_Object *obj, Evas_Callback_Type type, void 
 
    if (!((obj->no_propagate) && (l_mod) && (*l_mod)))
      {
-	if (!obj->no_propagate)
-	  {
-	     if ((obj->smart.parent) && (type != EVAS_CALLBACK_FREE) &&
-		 (type <= EVAS_CALLBACK_KEY_UP))
-	       evas_object_event_callback_call(obj->smart.parent, type, event_info);
-	  }
+        if (!obj->no_propagate)
+          {
+             if ((obj->smart.parent) && (type != EVAS_CALLBACK_FREE) &&
+                 (type <= EVAS_CALLBACK_KEY_UP))
+               evas_object_event_callback_call(obj->smart.parent, type, event_info);
+          }
      }
    _evas_unwalk(e);
 }
@@ -263,16 +263,16 @@ _callback_priority_cmp(const void *_a, const void *_b)
    a = EINA_INLIST_CONTAINER_GET(_a, Evas_Func_Node);
    b = EINA_INLIST_CONTAINER_GET(_b, Evas_Func_Node);
    if (a->priority < b->priority)
-      return -1;
+     return -1;
    else
-      return 1;
+     return 1;
 }
 
 EAPI void
 evas_object_event_callback_add(Evas_Object *obj, Evas_Callback_Type type, Evas_Object_Event_Cb func, const void *data)
 {
    evas_object_event_callback_priority_add(obj, type,
-         EVAS_CALLBACK_PRIORITY_DEFAULT, func, data);
+                                           EVAS_CALLBACK_PRIORITY_DEFAULT, func, data);
 }
 
 EAPI void
@@ -294,7 +294,7 @@ evas_object_event_callback_priority_add(Evas_Object *obj, Evas_Callback_Type typ
         if (!obj->callbacks) return;
         EVAS_MEMPOOL_PREP(_mp_cb, obj->callbacks, Evas_Callbacks);
      }
-  
+
    EVAS_MEMPOOL_INIT(_mp_fn, "evas_func_node", Evas_Func_Node, 2048, );
    fn = EVAS_MEMPOOL_ALLOC(_mp_fn, Evas_Func_Node);
    if (!fn) return;
@@ -305,8 +305,8 @@ evas_object_event_callback_priority_add(Evas_Object *obj, Evas_Callback_Type typ
    fn->priority = priority;
 
    obj->callbacks->callbacks =
-     eina_inlist_sorted_insert(obj->callbacks->callbacks, EINA_INLIST_GET(fn),
-           _callback_priority_cmp);
+      eina_inlist_sorted_insert(obj->callbacks->callbacks, EINA_INLIST_GET(fn),
+                                _callback_priority_cmp);
 }
 
 EAPI void *
@@ -325,17 +325,17 @@ evas_object_event_callback_del(Evas_Object *obj, Evas_Callback_Type type, Evas_O
 
    EINA_INLIST_FOREACH(obj->callbacks->callbacks, fn)
      {
-	if ((fn->func == func) && (fn->type == type) && (!fn->delete_me))
-	  {
-	     void *tmp;
+        if ((fn->func == func) && (fn->type == type) && (!fn->delete_me))
+          {
+             void *tmp;
 
-	     tmp = fn->data;
-	     fn->delete_me = 1;
-	     obj->callbacks->deletions_waiting = 1;
-	     if (!obj->callbacks->walking_list)
-	       evas_object_event_callback_clear(obj);
-	     return tmp;
-	  }
+             tmp = fn->data;
+             fn->delete_me = 1;
+             obj->callbacks->deletions_waiting = 1;
+             if (!obj->callbacks->walking_list)
+               evas_object_event_callback_clear(obj);
+             return tmp;
+          }
      }
    return NULL;
 }
@@ -356,17 +356,17 @@ evas_object_event_callback_del_full(Evas_Object *obj, Evas_Callback_Type type, E
 
    EINA_INLIST_FOREACH(obj->callbacks->callbacks, fn)
      {
-	if ((fn->func == func) && (fn->type == type) && (fn->data == data) && (!fn->delete_me))
-	  {
-	     void *tmp;
+        if ((fn->func == func) && (fn->type == type) && (fn->data == data) && (!fn->delete_me))
+          {
+             void *tmp;
 
-	     tmp = fn->data;
-	     fn->delete_me = 1;
-	     obj->callbacks->deletions_waiting = 1;
-	     if (!obj->callbacks->walking_list)
-	       evas_object_event_callback_clear(obj);
-	     return tmp;
-	  }
+             tmp = fn->data;
+             fn->delete_me = 1;
+             obj->callbacks->deletions_waiting = 1;
+             if (!obj->callbacks->walking_list)
+               evas_object_event_callback_clear(obj);
+             return tmp;
+          }
      }
    return NULL;
 }
@@ -375,7 +375,7 @@ EAPI void
 evas_event_callback_add(Evas *e, Evas_Callback_Type type, Evas_Event_Cb func, const void *data)
 {
    evas_event_callback_priority_add(e, type, EVAS_CALLBACK_PRIORITY_DEFAULT,
-         func, data);
+                                    func, data);
 }
 
 EAPI void
@@ -397,7 +397,7 @@ evas_event_callback_priority_add(Evas *e, Evas_Callback_Type type, Evas_Callback
         if (!e->callbacks) return;
         EVAS_MEMPOOL_PREP(_mp_cb, e->callbacks, Evas_Callbacks);
      }
-  
+
    EVAS_MEMPOOL_INIT(_mp_fn, "evas_func_node", Evas_Func_Node, 2048, );
    fn = EVAS_MEMPOOL_ALLOC(_mp_fn, Evas_Func_Node);
    if (!fn) return;
@@ -408,7 +408,7 @@ evas_event_callback_priority_add(Evas *e, Evas_Callback_Type type, Evas_Callback
    fn->priority = priority;
 
    e->callbacks->callbacks = eina_inlist_sorted_insert(e->callbacks->callbacks,
-         EINA_INLIST_GET(fn), _callback_priority_cmp);
+                                                       EINA_INLIST_GET(fn), _callback_priority_cmp);
 }
 
 EAPI void *
@@ -427,17 +427,17 @@ evas_event_callback_del(Evas *e, Evas_Callback_Type type, Evas_Event_Cb func)
 
    EINA_INLIST_FOREACH(e->callbacks->callbacks, fn)
      {
-	if ((fn->func == func) && (fn->type == type) && (!fn->delete_me))
-	  {
-	     void *data;
+        if ((fn->func == func) && (fn->type == type) && (!fn->delete_me))
+          {
+             void *data;
 
-	     data = fn->data;
-	     fn->delete_me = 1;
-	     e->callbacks->deletions_waiting = 1;
-	     if (!e->callbacks->walking_list)
-	       evas_event_callback_clear(e);
-	     return data;
-	  }
+             data = fn->data;
+             fn->delete_me = 1;
+             e->callbacks->deletions_waiting = 1;
+             if (!e->callbacks->walking_list)
+               evas_event_callback_clear(e);
+             return data;
+          }
      }
    return NULL;
 }
@@ -458,17 +458,17 @@ evas_event_callback_del_full(Evas *e, Evas_Callback_Type type, Evas_Event_Cb fun
 
    EINA_INLIST_FOREACH(e->callbacks->callbacks, fn)
      {
-	if ((fn->func == func) && (fn->type == type) && (fn->data == data) && (!fn->delete_me))
-	  {
-	     void *tmp;
+        if ((fn->func == func) && (fn->type == type) && (fn->data == data) && (!fn->delete_me))
+          {
+             void *tmp;
 
-	     tmp = fn->data;
-	     fn->delete_me = 1;
-	     e->callbacks->deletions_waiting = 1;
-	     if (!e->callbacks->walking_list)
-	       evas_event_callback_clear(e);
-	     return tmp;
-	  }
+             tmp = fn->data;
+             fn->delete_me = 1;
+             e->callbacks->deletions_waiting = 1;
+             if (!e->callbacks->walking_list)
+               evas_event_callback_clear(e);
+             return tmp;
+          }
      }
    return NULL;
 }
@@ -477,17 +477,17 @@ EAPI void
 evas_post_event_callback_push(Evas *e, Evas_Object_Event_Post_Cb func, const void *data)
 {
    Evas_Post_Callback *pc;
-   
+
    MAGIC_CHECK(e, Evas, MAGIC_EVAS);
    return;
    MAGIC_CHECK_END();
-   
+
    EVAS_MEMPOOL_INIT(_mp_pc, "evas_post_callback", Evas_Post_Callback, 64, );
    pc = EVAS_MEMPOOL_ALLOC(_mp_pc, Evas_Post_Callback);
    if (!pc) return;
    EVAS_MEMPOOL_PREP(_mp_pc, pc, Evas_Post_Callback);
    if (e->delete_me) return;
-   
+
    pc->func = func;
    pc->data = data;
    e->post_events = eina_list_prepend(e->post_events, pc);
@@ -498,11 +498,11 @@ evas_post_event_callback_remove(Evas *e, Evas_Object_Event_Post_Cb func)
 {
    Evas_Post_Callback *pc;
    Eina_List *l;
-   
+
    MAGIC_CHECK(e, Evas, MAGIC_EVAS);
    return;
    MAGIC_CHECK_END();
-   
+
    EINA_LIST_FOREACH(e->post_events, l, pc)
      {
         if (pc->func == func)
@@ -518,11 +518,11 @@ evas_post_event_callback_remove_full(Evas *e, Evas_Object_Event_Post_Cb func, co
 {
    Evas_Post_Callback *pc;
    Eina_List *l;
-   
+
    MAGIC_CHECK(e, Evas, MAGIC_EVAS);
    return;
    MAGIC_CHECK_END();
-   
+
    EINA_LIST_FOREACH(e->post_events, l, pc)
      {
         if ((pc->func == func) && (pc->data == data))
