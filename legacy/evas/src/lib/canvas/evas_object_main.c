@@ -408,11 +408,11 @@ evas_object_del(Evas_Object *obj)
         obj->focused = 0;
         obj->layer->evas->focused = NULL;
         _evas_object_event_new();
-        evas_object_event_callback_call(obj, EVAS_CALLBACK_FOCUS_OUT, NULL);
+        evas_object_event_callback_call(obj, EVAS_CALLBACK_FOCUS_OUT, NULL, _evas_event_counter);
         _evas_post_event_callback_call(obj->layer->evas);
      }
    _evas_object_event_new();
-   evas_object_event_callback_call(obj, EVAS_CALLBACK_DEL, NULL);
+   evas_object_event_callback_call(obj, EVAS_CALLBACK_DEL, NULL, _evas_event_counter);
    _evas_post_event_callback_call(obj->layer->evas);
    if (obj->mouse_grabbed > 0)
       obj->layer->evas->pointer.mouse_grabbed -= obj->mouse_grabbed;
@@ -438,7 +438,7 @@ evas_object_del(Evas_Object *obj)
    if (obj->smart.smart) evas_object_smart_del(obj);
    evas_object_map_set(obj, NULL);
    _evas_object_event_new();
-   evas_object_event_callback_call(obj, EVAS_CALLBACK_FREE, NULL);
+   evas_object_event_callback_call(obj, EVAS_CALLBACK_FREE, NULL, _evas_event_counter);
    _evas_post_event_callback_call(obj->layer->evas);
    evas_object_smart_cleanup(obj);
    obj->delete_me = 1;

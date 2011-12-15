@@ -10,12 +10,14 @@
 EAPI void
 evas_object_focus_set(Evas_Object *obj, Eina_Bool focus)
 {
+   int event_id = 0;
    MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
    return;
    MAGIC_CHECK_END();
 
    _evas_object_event_new();
 
+   event_id = _evas_event_counter;
    if (focus)
      {
         if (obj->focused) goto end;
@@ -23,7 +25,7 @@ evas_object_focus_set(Evas_Object *obj, Eina_Bool focus)
           evas_object_focus_set(obj->layer->evas->focused, 0);
         obj->focused = 1;
         obj->layer->evas->focused = obj;
-        evas_object_event_callback_call(obj, EVAS_CALLBACK_FOCUS_IN, NULL);
+        evas_object_event_callback_call(obj, EVAS_CALLBACK_FOCUS_IN, NULL, event_id);
         evas_event_callback_call(obj->layer->evas,
                                  EVAS_CALLBACK_CANVAS_OBJECT_FOCUS_IN, obj);
      }
@@ -32,7 +34,7 @@ evas_object_focus_set(Evas_Object *obj, Eina_Bool focus)
         if (!obj->focused) goto end;
         obj->focused = 0;
         obj->layer->evas->focused = NULL;
-        evas_object_event_callback_call(obj, EVAS_CALLBACK_FOCUS_OUT, NULL);
+        evas_object_event_callback_call(obj, EVAS_CALLBACK_FOCUS_OUT, NULL, event_id);
         evas_event_callback_call(obj->layer->evas,
                                  EVAS_CALLBACK_CANVAS_OBJECT_FOCUS_OUT, obj);
      }

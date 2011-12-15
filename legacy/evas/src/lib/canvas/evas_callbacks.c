@@ -162,7 +162,7 @@ evas_event_callback_call(Evas *e, Evas_Callback_Type type, void *event_info)
 }
 
 void
-evas_object_event_callback_call(Evas_Object *obj, Evas_Callback_Type type, void *event_info)
+evas_object_event_callback_call(Evas_Object *obj, Evas_Callback_Type type, void *event_info, int event_id)
 {
    /* MEM OK */
    Eina_Inlist **l_mod = NULL, *l;
@@ -170,9 +170,9 @@ evas_object_event_callback_call(Evas_Object *obj, Evas_Callback_Type type, void 
    Evas *e;
 
    if ((obj->delete_me) || (!obj->layer)) return;
-   if ((obj->last_event == _evas_event_counter) &&
+   if ((obj->last_event == event_id) &&
        (obj->last_event_type == type)) return;
-   obj->last_event = _evas_event_counter;
+   obj->last_event = event_id;
    obj->last_event_type = type;
    if (!(e = obj->layer->evas)) return;
 
@@ -250,7 +250,7 @@ evas_object_event_callback_call(Evas_Object *obj, Evas_Callback_Type type, void 
           {
              if ((obj->smart.parent) && (type != EVAS_CALLBACK_FREE) &&
                  (type <= EVAS_CALLBACK_KEY_UP))
-               evas_object_event_callback_call(obj->smart.parent, type, event_info);
+	       evas_object_event_callback_call(obj->smart.parent, type, event_info, event_id);
           }
      }
    _evas_unwalk(e);
