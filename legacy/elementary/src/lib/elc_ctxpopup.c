@@ -105,6 +105,10 @@ static void _ctxpopup_hide(void *data,
                            Evas *e,
                            Evas_Object *obj,
                            void *event_info);
+static void _content_resize(void *data,
+                            Evas *e,
+                            Evas_Object *obj,
+                            void *event_info);
 static void _scroller_resize(void *data,
                              Evas *e,
                              Evas_Object *obj,
@@ -805,6 +809,7 @@ _content_set_hook(Evas_Object *obj, const char *part,
                   Evas_Object *content)
 {
    ELM_CHECK_WIDTYPE(obj, widtype);
+   Evas_Coord min_w = -1, min_h = -1;
 
    Widget_Data *wd;
 
@@ -816,14 +821,28 @@ _content_set_hook(Evas_Object *obj, const char *part,
    if (wd->items) elm_ctxpopup_clear(obj);
    if (wd->content) evas_object_del(wd->content);
 
-   evas_object_event_callback_add(content, EVAS_CALLBACK_DEL, _content_del,
-                                  obj);
+   //Use Box
+   wd->box = elm_box_add(obj);
+   evas_object_size_hint_weight_set(wd->box, EVAS_HINT_EXPAND,
+                                    EVAS_HINT_EXPAND);
+   evas_object_size_hint_weight_set(content, EVAS_HINT_EXPAND,
+                                    EVAS_HINT_EXPAND);
+   evas_object_size_hint_fill_set(content, EVAS_HINT_FILL,
+                                  EVAS_HINT_FILL);
+   evas_object_show(content);
+   evas_object_size_hint_min_get(content, &min_w, &min_h);
+   evas_object_size_hint_min_set(wd->box, min_w, min_h);
+   elm_box_pack_end(wd->box, content);
 
-   elm_widget_sub_object_add(obj, content);
-   edje_object_part_swallow(wd->base, "elm.swallow.content", content);
+   evas_object_event_callback_add(wd->box, EVAS_CALLBACK_RESIZE,
+                                  _content_resize, obj);
+   evas_object_event_callback_add(wd->box, EVAS_CALLBACK_DEL,
+                                  _content_del, obj);
+
+   elm_widget_sub_object_add(obj, wd->box);
+   edje_object_part_swallow(wd->base, "elm.swallow.content", wd->box);
 
    wd->content = content;
-
    wd->dir = ELM_CTXPOPUP_DIRECTION_UNKNOWN;
 
    if (wd->visible)
@@ -842,18 +861,19 @@ _content_unset_hook(Evas_Object *obj, const char *part)
    if (!wd) return NULL;
 
    content = wd->content;
-   if (!content) return NULL;
+   if (!content || !wd->box) return NULL;
 
-   edje_object_part_unswallow(wd->base, content);
-   elm_widget_sub_object_del(obj, content);
-   evas_object_event_callback_del(content, EVAS_CALLBACK_DEL, _content_del);
+   edje_object_part_unswallow(wd->base, wd->box);
+   elm_widget_sub_object_del(obj, wd->box);
+   evas_object_event_callback_del(wd->box, EVAS_CALLBACK_DEL, _content_del);
    edje_object_signal_emit(wd->base, "elm,state,content,disable", "elm");
 
+   evas_object_del(wd->box);
+   wd->box = NULL;
    wd->content = NULL;
    wd->dir = ELM_CTXPOPUP_DIRECTION_UNKNOWN;
 
    return content;
-
 }
 
 static Evas_Object *
@@ -1021,6 +1041,19 @@ _ctxpopup_hide(void *data __UNUSED__, Evas *e __UNUSED__, Evas_Object *obj,
                void *event_info __UNUSED__)
 {
    _hide(obj);
+}
+
+static void
+_content_resize(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__,
+                void *event_info __UNUSED__)
+{
+   Widget_Data *wd;
+
+   wd = elm_widget_data_get(data);
+   if (!wd) return;
+
+   elm_box_recalculate(wd->box);
+   _sizing_eval(data);
 }
 
 static void
