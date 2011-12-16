@@ -136,6 +136,24 @@ evas_event_list_copy(Eina_List *list)
 /* public functions */
 
 EAPI void
+evas_event_default_flags_set(Evas *e, Evas_Event_Flags flags)
+{
+   MAGIC_CHECK(e, Evas, MAGIC_EVAS);
+   return;
+   MAGIC_CHECK_END();
+   e->default_event_flags = flags;
+}
+
+EAPI Evas_Event_Flags
+evas_event_default_flags_get(const Evas *e)
+{
+   MAGIC_CHECK(e, Evas, MAGIC_EVAS);
+   return EVAS_EVENT_FLAG_ON_HOLD;
+   MAGIC_CHECK_END();
+   return e->default_event_flags;
+}
+
+EAPI void
 evas_event_freeze(Evas *e)
 {
    MAGIC_CHECK(e, Evas, MAGIC_EVAS);
@@ -225,7 +243,7 @@ evas_event_feed_mouse_down(Evas *e, int b, Evas_Button_Flags flags, unsigned int
    ev.locks = &(e->locks);
    ev.flags = flags;
    ev.timestamp = timestamp;
-   ev.event_flags = EVAS_EVENT_FLAG_NONE;
+   ev.event_flags = e->default_event_flags;
 
    _evas_walk(e);
    /* append new touch point to the touch point list */
@@ -295,7 +313,7 @@ _post_up_handle(Evas *e, unsigned int timestamp, const void *data)
    ev.modifiers = &(e->modifiers);
    ev.locks = &(e->locks);
    ev.timestamp = timestamp;
-   ev.event_flags = EVAS_EVENT_FLAG_NONE;
+   ev.event_flags = e->default_event_flags;
 
    /* get new list of ins */
    ins = evas_event_objects_event_list(e, NULL, e->pointer.x, e->pointer.y);
@@ -339,7 +357,7 @@ _post_up_handle(Evas *e, unsigned int timestamp, const void *data)
         ev_in.modifiers = &(e->modifiers);
         ev_in.locks = &(e->locks);
         ev_in.timestamp = timestamp;
-        ev_in.event_flags = EVAS_EVENT_FLAG_NONE;
+        ev_in.event_flags = e->default_event_flags;
 
         EINA_LIST_FOREACH(ins, l, obj_itr)
           {
@@ -417,7 +435,7 @@ evas_event_feed_mouse_up(Evas *e, int b, Evas_Button_Flags flags, unsigned int t
         ev.locks = &(e->locks);
         ev.flags = flags;
         ev.timestamp = timestamp;
-        ev.event_flags = EVAS_EVENT_FLAG_NONE;
+        ev.event_flags = e->default_event_flags;
 
         _evas_walk(e);
         /* update released touch point */
@@ -510,7 +528,7 @@ evas_event_feed_mouse_wheel(Evas *e, int direction, int z, unsigned int timestam
    ev.modifiers = &(e->modifiers);
    ev.locks = &(e->locks);
    ev.timestamp = timestamp;
-   ev.event_flags = EVAS_EVENT_FLAG_NONE;
+   ev.event_flags = e->default_event_flags;
 
    _evas_walk(e);
    copy = evas_event_list_copy(e->pointer.object.in);
@@ -587,7 +605,7 @@ evas_event_feed_mouse_move(Evas *e, int x, int y, unsigned int timestamp, const 
              ev.modifiers = &(e->modifiers);
              ev.locks = &(e->locks);
              ev.timestamp = timestamp;
-             ev.event_flags = EVAS_EVENT_FLAG_NONE;
+             ev.event_flags = e->default_event_flags;
              copy = evas_event_list_copy(e->pointer.object.in);
              EINA_LIST_FOREACH(copy, l, obj)
                {
@@ -628,7 +646,7 @@ evas_event_feed_mouse_move(Evas *e, int x, int y, unsigned int timestamp, const 
              ev.modifiers = &(e->modifiers);
              ev.locks = &(e->locks);
              ev.timestamp = timestamp;
-             ev.event_flags = EVAS_EVENT_FLAG_NONE;
+             ev.event_flags = e->default_event_flags;
 
              if (copy) eina_list_free(copy);
              while (outs)
@@ -683,7 +701,7 @@ evas_event_feed_mouse_move(Evas *e, int x, int y, unsigned int timestamp, const 
         ev.modifiers = &(e->modifiers);
         ev.locks = &(e->locks);
         ev.timestamp = timestamp;
-        ev.event_flags = EVAS_EVENT_FLAG_NONE;
+        ev.event_flags = e->default_event_flags;
 
         ev2.buttons = e->pointer.button;
         ev2.output.x = e->pointer.x;
@@ -694,7 +712,7 @@ evas_event_feed_mouse_move(Evas *e, int x, int y, unsigned int timestamp, const 
         ev2.modifiers = &(e->modifiers);
         ev2.locks = &(e->locks);
         ev2.timestamp = timestamp;
-        ev2.event_flags = EVAS_EVENT_FLAG_NONE;
+        ev2.event_flags = e->default_event_flags;
 
         ev3.buttons = e->pointer.button;
         ev3.output.x = e->pointer.x;
@@ -705,7 +723,7 @@ evas_event_feed_mouse_move(Evas *e, int x, int y, unsigned int timestamp, const 
         ev3.modifiers = &(e->modifiers);
         ev3.locks = &(e->locks);
         ev3.timestamp = timestamp;
-        ev3.event_flags = EVAS_EVENT_FLAG_NONE;
+        ev3.event_flags = e->default_event_flags;
 
         /* get all new in objects */
         ins = evas_event_objects_event_list(e, NULL, x, y);
@@ -823,7 +841,7 @@ evas_event_feed_mouse_in(Evas *e, unsigned int timestamp, const void *data)
    ev.modifiers = &(e->modifiers);
    ev.locks = &(e->locks);
    ev.timestamp = timestamp;
-   ev.event_flags = EVAS_EVENT_FLAG_NONE;
+   ev.event_flags = e->default_event_flags;
 
    _evas_walk(e);
    /* get new list of ins */
@@ -879,7 +897,7 @@ evas_event_feed_mouse_out(Evas *e, unsigned int timestamp, const void *data)
    ev.modifiers = &(e->modifiers);
    ev.locks = &(e->locks);
    ev.timestamp = timestamp;
-   ev.event_flags = EVAS_EVENT_FLAG_NONE;
+   ev.event_flags = e->default_event_flags;
 
    _evas_walk(e);
    /* if our mouse button is grabbed to any objects */
@@ -957,7 +975,7 @@ evas_event_feed_multi_down(Evas *e,
    ev.locks = &(e->locks);
    ev.flags = flags;
    ev.timestamp = timestamp;
-   ev.event_flags = EVAS_EVENT_FLAG_NONE;
+   ev.event_flags = e->default_event_flags;
 
    _evas_walk(e);
    /* append new touch point to the touch point list */
@@ -1039,7 +1057,7 @@ evas_event_feed_multi_up(Evas *e,
    ev.locks = &(e->locks);
    ev.flags = flags;
    ev.timestamp = timestamp;
-   ev.event_flags = EVAS_EVENT_FLAG_NONE;
+   ev.event_flags = e->default_event_flags;
 
    _evas_walk(e);
    /* update released touch point */
@@ -1122,7 +1140,7 @@ evas_event_feed_multi_move(Evas *e,
         ev.modifiers = &(e->modifiers);
         ev.locks = &(e->locks);
         ev.timestamp = timestamp;
-        ev.event_flags = EVAS_EVENT_FLAG_NONE;
+        ev.event_flags = e->default_event_flags;
 
         copy = evas_event_list_copy(e->pointer.object.in);
         EINA_LIST_FOREACH(copy, l, obj)
@@ -1175,7 +1193,7 @@ evas_event_feed_multi_move(Evas *e,
         ev.modifiers = &(e->modifiers);
         ev.locks = &(e->locks);
         ev.timestamp = timestamp;
-        ev.event_flags = EVAS_EVENT_FLAG_NONE;
+        ev.event_flags = e->default_event_flags;
 
         /* get all new in objects */
         ins = evas_event_objects_event_list(e, NULL, x, y);
@@ -1257,7 +1275,7 @@ evas_event_feed_key_down(Evas *e, const char *keyname, const char *key, const ch
    ev.string = string;
    ev.compose = compose;
    ev.timestamp = timestamp;
-   ev.event_flags = EVAS_EVENT_FLAG_NONE;
+   ev.event_flags = e->default_event_flags;
 
    if (e->grabs)
      {
@@ -1343,7 +1361,7 @@ evas_event_feed_key_up(Evas *e, const char *keyname, const char *key, const char
    ev.string = string;
    ev.compose = compose;
    ev.timestamp = timestamp;
-   ev.event_flags = EVAS_EVENT_FLAG_NONE;
+   ev.event_flags = e->default_event_flags;
 
    if (e->grabs)
      {
@@ -1422,7 +1440,7 @@ evas_event_feed_hold(Evas *e, int hold, unsigned int timestamp, const void *data
    ev.hold = hold;
    ev.data = (void *)data;
    ev.timestamp = timestamp;
-   ev.event_flags = EVAS_EVENT_FLAG_NONE;
+   ev.event_flags = e->default_event_flags;
 
    _evas_walk(e);
    copy = evas_event_list_copy(e->pointer.object.in);

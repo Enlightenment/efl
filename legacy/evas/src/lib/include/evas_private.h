@@ -338,6 +338,7 @@ struct _Evas
 
    int               walking_list;
    int               events_frozen;
+   Evas_Event_Flags  default_event_flags;
 
    struct {
       Evas_Module *module;

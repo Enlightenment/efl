@@ -2375,6 +2375,33 @@ EAPI void              evas_post_event_callback_remove_full (Evas *e, Evas_Objec
  */
 
 /**
+ * Set the default set of flags an event begins with
+ * 
+ * @param e The canvas to set the default event flags of
+ * @param flags The default flags to use
+ * 
+ * Events in evas can have an event_flags member. This starts out with
+ * and initial value (no flags). this lets you set the default flags that
+ * an event begins with to be @p flags
+ * 
+ * @since 1.2
+ */
+EAPI void              evas_event_default_flags_set      (Evas *e, Evas_Event_Flags flags) EINA_ARG_NONNULL(1);
+
+/**
+ * Get the defaulty set of flags an event begins with
+ * 
+ * @param e The canvas to get the default event flags from
+ * @return The default event flags for that canvas
+ * 
+ * This gets the default event flags events are produced with when fed in.
+ * 
+ * @see evas_event_default_flags_set()
+ * @since 1.2
+ */
+EAPI Evas_Event_Flags  evas_event_default_flags_get      (const Evas *e) EINA_ARG_NONNULL(1);
+
+/**
  * Freeze all input events processing.
  *
  * @param e The canvas to freeze input events processing on.

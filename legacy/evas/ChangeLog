@@ -567,3 +567,8 @@
 	* Textblock: Added "b" and "i" as default tags that can be overridden
 	by style, and added the infra to support this.
 	* Textblock: Added evas_textblock_text_utf8_to_markup
+        
+2011-12-16  Carsten Haitzler (The Rasterman)
+
+        * Add new api to set and get default event flags.
+
