@@ -418,3 +418,6 @@
         plug process to it can see key, mouse, multi etc. events.
 
 
+2011-12-16 Mike Blumenkrantz
+
+        * Fix possible 0 byte allocation in ecore-x

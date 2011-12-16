@@ -1132,7 +1132,7 @@ ecore_x_window_root_list(int *num_ret)
                          overlap++;
                     }
                }
-             roots = malloc((num - overlap) * sizeof(Window));
+             roots = malloc(MAX((num - overlap) * sizeof(Window), 1));
              if (roots)
                {
                   int k;
