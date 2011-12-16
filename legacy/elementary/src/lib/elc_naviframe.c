@@ -562,7 +562,7 @@ _title_content_set(Elm_Naviframe_Item *it,
    EINA_INLIST_FOREACH(it->content_list, pair)
      if (!strcmp(part, pair->part)) break;
 
-   if (part)
+   if (pair)
      {
         if (pair->content && (pair->content != content))
           {
