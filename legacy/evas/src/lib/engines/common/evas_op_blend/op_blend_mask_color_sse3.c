@@ -168,7 +168,8 @@ _op_blend_mas_can_dp_sse3(DATA32 *s __UNUSED__, DATA8 *m, DATA32 c, DATA32 *d, i
 static void
 init_blend_mask_color_span_funcs_sse3(void)
 {
-   op_blend_span_funcs[SP_N][SM_AS][SC][DP][CPU_SSE3] = _op_blend_mas_c_dp_sse3;
+// FIXME: BUGGY BUGGY Core i5 750 (32bit), 4.5.2 (Ubuntu/Linaro 4.5.2-8ubuntu4), ello (text and rectangle)
+//   op_blend_span_funcs[SP_N][SM_AS][SC][DP][CPU_SSE3] = _op_blend_mas_c_dp_sse3;
    op_blend_span_funcs[SP_N][SM_AS][SC_N][DP][CPU_SSE3] = _op_blend_mas_cn_dp_sse3;
    op_blend_span_funcs[SP_N][SM_AS][SC_AN][DP][CPU_SSE3] = _op_blend_mas_can_dp_sse3;
    op_blend_span_funcs[SP_N][SM_AS][SC_AA][DP][CPU_SSE3] = _op_blend_mas_caa_dp_sse3;
