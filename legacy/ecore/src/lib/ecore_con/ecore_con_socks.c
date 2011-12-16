@@ -318,7 +318,7 @@ EAPI void
 ecore_con_socks4_lookup_set(Ecore_Con_Socks *ecs, Eina_Bool enable)
 {
    ECORE_CON_SOCKS_CAST_ELSE(ecs) return;
-   v4->lookup = !!enable;
+   if (v4) v4->lookup = !!enable;
 }
 
 /**
