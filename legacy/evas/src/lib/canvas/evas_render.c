@@ -1139,7 +1139,7 @@ evas_render_mapped(Evas *e, Evas_Object *obj, void *context, void *surface,
                     }
                }
           }
-        if (surface == e->engine.data.output)
+//        if (surface == e->engine.data.output)
           e->engine.func->context_clip_clip(e->engine.data.output,
                                             e->engine.data.context,
                                             ecx, ecy, ecw, ech);
