@@ -832,7 +832,7 @@ _edje_part_description_fill(Edje_Part_Description_Spec_Fill *fill)
 }
 
 static Edje_Part_Description_Common *
-_edje_part_description_alloc(Edje_Part_Description_Common *ced, unsigned char type, const char *collection, const char *part)
+_edje_part_description_alloc(unsigned char type, const char *collection, const char *part)
 {
    Edje_Part_Description_Common *result = NULL;
 
@@ -841,15 +841,14 @@ _edje_part_description_alloc(Edje_Part_Description_Common *ced, unsigned char ty
       case EDJE_PART_TYPE_RECTANGLE:
       case EDJE_PART_TYPE_SWALLOW:
       case EDJE_PART_TYPE_GROUP:
-	 result = mem_realloc(ced, SZ(Edje_Part_Description_Common));
+	 result = mem_alloc(SZ(Edje_Part_Description_Common));
 	 break;
       case EDJE_PART_TYPE_TEXT:
       case EDJE_PART_TYPE_TEXTBLOCK:
 	{
 	   Edje_Part_Description_Text *ed;
 
-           ed = mem_realloc(ced, SZ(Edje_Part_Description_Text));
-           memset(&(ed->text), 0, SZ(Edje_Part_Description_Spec_Text));
+	   ed = mem_alloc(SZ(Edje_Part_Description_Text));
 
 	   ed->text.color3.r = 0;
 	   ed->text.color3.g = 0;
@@ -867,8 +866,7 @@ _edje_part_description_alloc(Edje_Part_Description_Common *ced, unsigned char ty
 	{
 	   Edje_Part_Description_Image *ed;
 
-           ed = mem_realloc(ced, SZ(Edje_Part_Description_Image));
-           memset(&(ed->image), 0, SZ(Edje_Part_Description_Spec_Image));
+	   ed = mem_alloc(SZ(Edje_Part_Description_Image));
 
 	   ed->image.id = -1;
 
@@ -881,8 +879,7 @@ _edje_part_description_alloc(Edje_Part_Description_Common *ced, unsigned char ty
         {
            Edje_Part_Description_Proxy *ed;
 
-           ed = mem_realloc(ced, SZ(Edje_Part_Description_Proxy));
-           memset(&(ed->proxy), 0, SZ(Edje_Part_Description_Spec_Proxy));
+           ed = mem_alloc(SZ(Edje_Part_Description_Proxy));
 
            ed->proxy.id = -1;
 
@@ -895,8 +892,7 @@ _edje_part_description_alloc(Edje_Part_Description_Common *ced, unsigned char ty
 	{
 	   Edje_Part_Description_Box *ed;
 
-           ed = mem_realloc(ced, SZ(Edje_Part_Description_Box));
-           memset(&(ed->box), 0, SZ(Edje_Part_Description_Spec_Box));
+	   ed = mem_alloc(SZ(Edje_Part_Description_Box));
 
 	   ed->box.layout = NULL;
 	   ed->box.alt_layout = NULL;
@@ -912,8 +908,7 @@ _edje_part_description_alloc(Edje_Part_Description_Common *ced, unsigned char ty
 	{
 	   Edje_Part_Description_Table *ed;
 
-           ed = mem_realloc(ced, SZ(Edje_Part_Description_Table));
-           memset(&(ed->table), 0, SZ(Edje_Part_Description_Spec_Table));
+	   ed = mem_alloc(SZ(Edje_Part_Description_Table));
 
 	   ed->table.homogeneous = EDJE_OBJECT_TABLE_HOMOGENEOUS_NONE;
 	   ed->table.align.x = FROM_DOUBLE(0.5);
@@ -928,8 +923,7 @@ _edje_part_description_alloc(Edje_Part_Description_Common *ced, unsigned char ty
 	{
 	   Edje_Part_Description_External *ed;
 
-           ed = mem_realloc(ced, SZ(Edje_Part_Description_External));
-           ed->external_params = NULL;
+	   ed = mem_alloc(SZ(Edje_Part_Description_External));
 
 	   ed->external_params = NULL;
 
@@ -945,53 +939,6 @@ _edje_part_description_alloc(Edje_Part_Description_Common *ced, unsigned char ty
      }
 
    return result;
-}
-
-static void
-_edje_part_description_lookup_del(Edje_Part_Collection *pc, Edje_Part_Description_Common *ced, unsigned char type)
-{
-   switch (type)
-     {
-      case EDJE_PART_TYPE_RECTANGLE:
-      case EDJE_PART_TYPE_SWALLOW:
-      case EDJE_PART_TYPE_GROUP:
-         break;
-      case EDJE_PART_TYPE_TEXT:
-      case EDJE_PART_TYPE_TEXTBLOCK:
-        {
-           Edje_Part_Description_Text *ed = (Edje_Part_Description_Text*)ced;
-
-           data_queue_part_lookup(pc, NULL, &(ed->text.id_source));
-           data_queue_part_lookup(pc, NULL, &(ed->text.id_text_source));
-           break;
-        }
-      case EDJE_PART_TYPE_IMAGE:
-        {
-           int i;
-           Edje_Part_Description_Image *ed = (Edje_Part_Description_Image*)ced;
-           Edje_Part_Image_Id *iid;
-
-           data_queue_image_lookup(NULL, &(ed->image.id), NULL);
-
-           for (i = 0; i < ed->image.tweens_count; i++)
-             {
-                iid = ed->image.tweens[i];
-                data_queue_image_lookup(NULL, &(iid->id), NULL);
-             }
-           break;
-        }
-      case EDJE_PART_TYPE_PROXY:
-        {
-           Edje_Part_Description_Proxy *ed = (Edje_Part_Description_Proxy*)ced;
-
-           data_queue_part_lookup(pc, NULL, &(ed->proxy.id));
-           break;
-        }
-      case EDJE_PART_TYPE_BOX:
-      case EDJE_PART_TYPE_TABLE:
-      case EDJE_PART_TYPE_EXTERNAL:
-         break;
-     }
 }
 
 static void
@@ -2998,22 +2945,9 @@ st_collections_group_parts_part_name(void)
 static void
 st_collections_group_parts_part_type(void)
 {
-   Edje_Part_Collection *pc;
-   Edje_Part *ep;
-   int i;
-
    check_arg_count(1);
 
-   pc = eina_list_data_get(eina_list_last(edje_collections));
-   ep = current_part;
-
-   if (ep->default_desc)
-     _edje_part_description_lookup_del(pc, ep->default_desc, ep->type);
-
-   for (i = 0; i < ep->other.desc_count; i++)
-     _edje_part_description_lookup_del(pc, ep->other.desc[i], ep->type);
-
-   ep->type = parse_enum(0,
+   current_part->type = parse_enum(0,
                                    "NONE", EDJE_PART_TYPE_NONE,
                                    "RECT", EDJE_PART_TYPE_RECTANGLE,
                                    "TEXT", EDJE_PART_TYPE_TEXT,
@@ -3026,11 +2960,6 @@ st_collections_group_parts_part_type(void)
                                    "EXTERNAL", EDJE_PART_TYPE_EXTERNAL,
                                    "PROXY", EDJE_PART_TYPE_PROXY,
                                    NULL);
-   if (ep->default_desc)
-     ep->default_desc = _edje_part_description_alloc(ep->default_desc, ep->type, pc->part, ep->name);
-
-   for (i = 0; i < ep->other.desc_count; i++)
-     ep->other.desc[i] = _edje_part_description_alloc(ep->other.desc[i], ep->type, pc->part, ep->name);
 }
 
 /**
@@ -4137,12 +4066,12 @@ ob_collections_group_parts_part_description(void)
 {
    Edje_Part_Collection *pc;
    Edje_Part *ep;
-   Edje_Part_Description_Common *ed = NULL;
+   Edje_Part_Description_Common *ed;
 
    pc = eina_list_data_get(eina_list_last(edje_collections));
    ep = current_part;
 
-   ed = _edje_part_description_alloc(ed, ep->type, pc->part, ep->name);
+   ed = _edje_part_description_alloc(ep->type, pc->part, ep->name);
 
    if (!ep->default_desc)
      {
