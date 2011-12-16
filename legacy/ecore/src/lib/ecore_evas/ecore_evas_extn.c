@@ -1464,7 +1464,7 @@ _ecore_evas_plug_resize(Ecore_Evas *ee, int w, int h)
                }
           }
         
-        if (extn->ipc.server)
+        if (extn->ipc.server && extn->file.shmfile)
           {
              Ipc_Data_Resize ipc;
              
