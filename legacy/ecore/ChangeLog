@@ -407,3 +407,14 @@
 
 	* Add ability to get resource id of last x error in ecore_x.
 
+2011-12-16 Carsten Haitzler (The Rasterman)
+
+        * Clean up some ecore-evas-buffer code
+        * Add Ecore-evas extn (external) plug and socket canvas wrappers
+        allowing for any ecore-evas to contain an image object that is
+        a "socket" for other processes to plug into with "plugs" and
+        thus provide image content via a canvas remotely (from another
+        process) as well as the socket process passing in events to the
+        plug process to it can see key, mouse, multi etc. events.
+
+

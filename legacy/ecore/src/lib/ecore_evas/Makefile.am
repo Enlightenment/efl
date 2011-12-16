@@ -71,10 +71,12 @@ AM_CPPFLAGS = \
 -I$(top_srcdir)/src/lib/ecore_evas \
 -I$(top_srcdir)/src/lib/ecore_input \
 -I$(top_srcdir)/src/lib/ecore_input_evas \
+-I$(top_srcdir)/src/lib/ecore_ipc \
 -I$(top_builddir)/src/lib/ecore \
 -I$(top_builddir)/src/lib/ecore_evas \
 -I$(top_builddir)/src/lib/ecore_input \
 -I$(top_builddir)/src/lib/ecore_input_evas \
+-I$(top_builddir)/src/lib/ecore_ipc \
 @EFL_ECORE_EVAS_BUILD@ \
 $(ECORE_X_INC) \
 $(ECORE_FB_INC) \
@@ -106,7 +108,8 @@ ecore_evas_sdl.c \
 ecore_evas_cocoa.c \
 ecore_evas_wince.c \
 ecore_evas_ews.c \
-ecore_evas_psl1ght.c
+ecore_evas_psl1ght.c \
+ecore_evas_extn.c
 
 libecore_evas_la_LIBADD = \
 $(ECORE_X_LIB) \
@@ -118,6 +121,7 @@ $(ECORE_SDL_LIBADD) \
 $(ECORE_COCOA_LIB) \
 $(ECORE_WINCE_LIB) \
 $(ECORE_PSL1GHT_LIB) \
+$(top_builddir)/src/lib/ecore_ipc/libecore_ipc.la \
 $(top_builddir)/src/lib/ecore_input/libecore_input.la \
 $(top_builddir)/src/lib/ecore_input_evas/libecore_input_evas.la \
 $(top_builddir)/src/lib/ecore/libecore.la \

@@ -1624,7 +1624,7 @@ if test "x${have_evas}" = "xyes" -a "x${have_ecore_input}" = "xyes" -a "x${have_
 fi
 
 ECORE_CHECK_MODULE([evas], [${want_ecore_evas}], [Evas], [${ecore_evas_deps}],
-  [requirements_ecore_evas="ecore-input >= 1.1.0 ecore-input-evas >= 1.1.0 evas >= 1.1.0 ${requirements_ecore_evas}"])
+  [requirements_ecore_evas="ecore-ipc >= 1.1.0 ecore-input >= 1.1.0 ecore-input-evas >= 1.1.0 evas >= 1.1.0 ${requirements_ecore_evas}"])
 
 # ecore_evas_buffer
 

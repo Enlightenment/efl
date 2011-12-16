@@ -1648,7 +1648,19 @@ EAPI extern int ECORE_EVAS_EWS_EVENT_CONFIG_CHANGE; /**< some other window prope
  * @}
  */
 
-
+/**
+ * Create a new external ecore evas socket
+ *
+ * @since 1.2
+ */
+EAPI Evas_Object *ecore_evas_extn_socket_new(Ecore_Evas *ee_target, const char *svcname, int svcnum, Eina_Bool svcsys);
+/**
+ * Create a new external ecore evas plug
+ *
+ * @since 1.2
+ */
+EAPI Ecore_Evas *ecore_evas_extn_plug_new(const char *svcname, int svcnum, Eina_Bool svcsys);
+        
 /**
  * @}
  */
