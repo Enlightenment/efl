@@ -64,7 +64,9 @@ static void _adjust_pos_y(Evas_Coord_Point *pos,
                           Evas_Coord_Rectangle *hover_area);
 static Elm_Ctxpopup_Direction _calc_base_geometry(Evas_Object *obj,
                                                   Evas_Coord_Rectangle *rect);
-static void _update_arrow(Evas_Object *obj, Elm_Ctxpopup_Direction dir, Evas_Coord_Rectangle rect);
+static void _update_arrow(Evas_Object *obj,
+                          Elm_Ctxpopup_Direction dir,
+                          Evas_Coord_Rectangle rect);
 static void _sizing_eval(Evas_Object *obj);
 static void _shift_base_by_arrow(Evas_Object *arrow,
                                  Elm_Ctxpopup_Direction dir,
@@ -201,7 +203,8 @@ _on_focus_hook(void *data __UNUSED__, Evas_Object *obj)
 }
 
 static Eina_Bool
-_event_hook(Evas_Object *obj, Evas_Object *src __UNUSED__, Evas_Callback_Type type, void *event_info)
+_event_hook(Evas_Object *obj, Evas_Object *src __UNUSED__,
+            Evas_Callback_Type type, void *event_info)
 {
    Evas_Event_Key_Down *ev;
    Widget_Data *wd;
@@ -508,7 +511,8 @@ _calc_base_geometry(Evas_Object *obj, Evas_Coord_Rectangle *rect)
 }
 
 static void
-_update_arrow(Evas_Object *obj, Elm_Ctxpopup_Direction dir, Evas_Coord_Rectangle base_size)
+_update_arrow(Evas_Object *obj, Elm_Ctxpopup_Direction dir,
+              Evas_Coord_Rectangle base_size)
 {
    Evas_Coord x, y;
    Evas_Coord_Rectangle arrow_size;
@@ -805,8 +809,7 @@ _theme_hook(Evas_Object *obj)
 }
 
 static void
-_content_set_hook(Evas_Object *obj, const char *part,
-                  Evas_Object *content)
+_content_set_hook(Evas_Object *obj, const char *part, Evas_Object *content)
 {
    ELM_CHECK_WIDTYPE(obj, widtype);
    Evas_Coord min_w = -1, min_h = -1;
@@ -888,9 +891,7 @@ _content_get_hook(const Evas_Object *obj, const char *part)
 }
 
 static void
-_item_text_set_hook(Elm_Object_Item *it,
-                    const char *part,
-                    const char *label)
+_item_text_set_hook(Elm_Object_Item *it, const char *part, const char *label)
 {
    ELM_OBJ_ITEM_CHECK_OR_RETURN(it);
 
@@ -978,8 +979,7 @@ _item_disable_set_hook(Elm_Object_Item *it)
 }
 
 static void
-_item_signal_emit_hook(Elm_Object_Item *it,
-                       const char *emission,
+_item_signal_emit_hook(Elm_Object_Item *it, const char *emission,
                        const char *source)
 {
    ELM_OBJ_ITEM_CHECK_OR_RETURN(it);
@@ -1047,11 +1047,8 @@ static void
 _content_resize(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__,
                 void *event_info __UNUSED__)
 {
-   Widget_Data *wd;
-
-   wd = elm_widget_data_get(data);
+   Widget_Data *wd = elm_widget_data_get(data);
    if (!wd) return;
-
    elm_box_recalculate(wd->box);
    _sizing_eval(data);
 }
