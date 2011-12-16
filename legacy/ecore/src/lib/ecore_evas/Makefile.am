@@ -66,17 +66,23 @@ ECORE_PSL1GHT_INC =
 ECORE_PSL1GHT_LIB =
 endif
 
+if BUILD_ECORE_IPC
+ECORE_IPC_INC= \
+-I$(top_srcdir)/src/lib/ecore_ipc \
+-I$(top_builddir)/src/lib/ecore_ipc
+
+ECORE_IPC_LIB=$(top_builddir)/src/lib/ecore_ipc/libecore_ipc.la
+endif
+
 AM_CPPFLAGS = \
 -I$(top_srcdir)/src/lib/ecore \
 -I$(top_srcdir)/src/lib/ecore_evas \
 -I$(top_srcdir)/src/lib/ecore_input \
 -I$(top_srcdir)/src/lib/ecore_input_evas \
--I$(top_srcdir)/src/lib/ecore_ipc \
 -I$(top_builddir)/src/lib/ecore \
 -I$(top_builddir)/src/lib/ecore_evas \
 -I$(top_builddir)/src/lib/ecore_input \
 -I$(top_builddir)/src/lib/ecore_input_evas \
--I$(top_builddir)/src/lib/ecore_ipc \
 @EFL_ECORE_EVAS_BUILD@ \
 $(ECORE_X_INC) \
 $(ECORE_FB_INC) \
@@ -86,6 +92,7 @@ $(ECORE_SDL_INC) \
 $(ECORE_COCOA_INC) \
 $(ECORE_WINCE_INC) \
 $(ECORE_PSL1GHT_INC) \
+$(ECORE_IPC_INC) \
 @EVAS_CFLAGS@ \
 @EINA_CFLAGS@ \
 @EVIL_CFLAGS@
@@ -120,8 +127,8 @@ $(ECORE_SDL_LIB) \
 $(ECORE_SDL_LIBADD) \
 $(ECORE_COCOA_LIB) \
 $(ECORE_WINCE_LIB) \
+$(ECORE_IPC_LIB) \
 $(ECORE_PSL1GHT_LIB) \
-$(top_builddir)/src/lib/ecore_ipc/libecore_ipc.la \
 $(top_builddir)/src/lib/ecore_input/libecore_input.la \
 $(top_builddir)/src/lib/ecore_input_evas/libecore_input_evas.la \
 $(top_builddir)/src/lib/ecore/libecore.la \
