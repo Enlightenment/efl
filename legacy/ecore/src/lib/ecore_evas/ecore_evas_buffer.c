@@ -175,6 +175,14 @@ _ecore_evas_buffer_coord_translate(Ecore_Evas *ee, Evas_Coord *x, Evas_Coord *y)
    if (fw < 1) fw = 1;
    if (fh < 1) fh = 1;
 
+   if (evas_object_map_get(ee->engine.buffer.image) &&
+       evas_object_map_enable_get(ee->engine.buffer.image))
+     {
+        fx = 0; fy = 0;
+        fw = ee->w; fh = ee->h;
+        ww = ee->w; hh = ee->h;
+     }
+   
    if ((fx == 0) && (fy == 0) && (fw == ww) && (fh == hh))
      {
         *x = (ee->w * (*x - xx)) / fw;
@@ -195,51 +203,80 @@ _ecore_evas_buffer_coord_translate(Ecore_Evas *ee, Evas_Coord *x, Evas_Coord *y)
 }
 
 static void
-_ecore_evas_buffer_cb_mouse_in(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+_ecore_evas_buffer_transfer_modifiers_locks(Evas *e, Evas *e2)
+{
+   const char *mods[] = 
+     { "Shift", "Control", "Alt", "Meta", "Hyper", "Super", NULL };
+   const char *locks[] = 
+     { "Scroll_Lock", "Num_Lock", "Caps_Lock", NULL };
+   int i;
+   
+   for (i = 0; mods[i]; i++)
+     {
+        if (evas_key_modifier_is_set(evas_key_modifier_get(e), mods[i]))
+          evas_key_modifier_on(e2, mods[i]);
+        else
+          evas_key_modifier_off(e2, mods[i]);
+     }
+   for (i = 0; locks[i]; i++)
+     {
+        if (evas_key_lock_is_set(evas_key_lock_get(e), locks[i]))
+          evas_key_lock_on(e2, locks[i]);
+        else
+          evas_key_lock_off(e2, locks[i]);
+     }
+}
+
+static void
+_ecore_evas_buffer_cb_mouse_in(void *data, Evas *e, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    Ecore_Evas *ee;
    Evas_Event_Mouse_In *ev;
 
    ee = data;
    ev = event_info;
+   _ecore_evas_buffer_transfer_modifiers_locks(e, ee->evas);
    evas_event_feed_mouse_in(ee->evas, ev->timestamp, NULL);
 }
 
 static void
-_ecore_evas_buffer_cb_mouse_out(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+_ecore_evas_buffer_cb_mouse_out(void *data, Evas *e, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    Ecore_Evas *ee;
    Evas_Event_Mouse_Out *ev;
 
    ee = data;
    ev = event_info;
+   _ecore_evas_buffer_transfer_modifiers_locks(e, ee->evas);
    evas_event_feed_mouse_out(ee->evas, ev->timestamp, NULL);
 }
 
 static void
-_ecore_evas_buffer_cb_mouse_down(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info)
+_ecore_evas_buffer_cb_mouse_down(void *data, Evas *e, Evas_Object *obj __UNUSED__, void *event_info)
 {
    Ecore_Evas *ee;
    Evas_Event_Mouse_Down *ev;
 
    ee = data;
    ev = event_info;
+   _ecore_evas_buffer_transfer_modifiers_locks(e, ee->evas);
    evas_event_feed_mouse_down(ee->evas, ev->button, ev->flags, ev->timestamp, NULL);
 }
 
 static void
-_ecore_evas_buffer_cb_mouse_up(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info)
+_ecore_evas_buffer_cb_mouse_up(void *data, Evas *e, Evas_Object *obj __UNUSED__, void *event_info)
 {
    Ecore_Evas *ee;
    Evas_Event_Mouse_Up *ev;
 
    ee = data;
    ev = event_info;
+   _ecore_evas_buffer_transfer_modifiers_locks(e, ee->evas);
    evas_event_feed_mouse_up(ee->evas, ev->button, ev->flags, ev->timestamp, NULL);
 }
 
 static void
-_ecore_evas_buffer_cb_mouse_move(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info)
+_ecore_evas_buffer_cb_mouse_move(void *data, Evas *e, Evas_Object *obj __UNUSED__, void *event_info)
 {
    Ecore_Evas *ee;
    Evas_Event_Mouse_Move *ev;
@@ -250,22 +287,24 @@ _ecore_evas_buffer_cb_mouse_move(void *data, Evas *e __UNUSED__, Evas_Object *ob
    x = ev->cur.canvas.x;
    y = ev->cur.canvas.y;
    _ecore_evas_buffer_coord_translate(ee, &x, &y);
+   _ecore_evas_buffer_transfer_modifiers_locks(e, ee->evas);
    _ecore_evas_mouse_move_process(ee, x, y, ev->timestamp);
 }
 
 static void
-_ecore_evas_buffer_cb_mouse_wheel(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info)
+_ecore_evas_buffer_cb_mouse_wheel(void *data, Evas *e, Evas_Object *obj __UNUSED__, void *event_info)
 {
    Ecore_Evas *ee;
    Evas_Event_Mouse_Wheel *ev;
 
    ee = data;
    ev = event_info;
+   _ecore_evas_buffer_transfer_modifiers_locks(e, ee->evas);
    evas_event_feed_mouse_wheel(ee->evas, ev->direction, ev->z, ev->timestamp, NULL);
 }
 
 static void
-_ecore_evas_buffer_cb_multi_down(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info)
+_ecore_evas_buffer_cb_multi_down(void *data, Evas *e, Evas_Object *obj __UNUSED__, void *event_info)
 {
    Ecore_Evas *ee;
    Evas_Event_Multi_Down *ev;
@@ -281,11 +320,12 @@ _ecore_evas_buffer_cb_multi_down(void *data, Evas *e __UNUSED__, Evas_Object *ob
    _ecore_evas_buffer_coord_translate(ee, &x, &y);
    xf = (ev->canvas.xsub - (double)xx) + (double)x;
    yf = (ev->canvas.ysub - (double)yy) + (double)y;
+   _ecore_evas_buffer_transfer_modifiers_locks(e, ee->evas);
    evas_event_feed_multi_down(ee->evas, ev->device, x, y, ev->radius, ev->radius_x, ev->radius_y, ev->pressure, ev->angle, xf, yf, ev->flags, ev->timestamp, NULL);
 }
 
 static void
-_ecore_evas_buffer_cb_multi_up(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info)
+_ecore_evas_buffer_cb_multi_up(void *data, Evas *e, Evas_Object *obj __UNUSED__, void *event_info)
 {
    Ecore_Evas *ee;
    Evas_Event_Multi_Up *ev;
@@ -301,11 +341,12 @@ _ecore_evas_buffer_cb_multi_up(void *data, Evas *e __UNUSED__, Evas_Object *obj 
    _ecore_evas_buffer_coord_translate(ee, &x, &y);
    xf = (ev->canvas.xsub - (double)xx) + (double)x;
    yf = (ev->canvas.ysub - (double)yy) + (double)y;
+   _ecore_evas_buffer_transfer_modifiers_locks(e, ee->evas);
    evas_event_feed_multi_up(ee->evas, ev->device, x, y, ev->radius, ev->radius_x, ev->radius_y, ev->pressure, ev->angle, xf, yf, ev->flags, ev->timestamp, NULL);
 }
 
 static void
-_ecore_evas_buffer_cb_multi_move(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info)
+_ecore_evas_buffer_cb_multi_move(void *data, Evas *e, Evas_Object *obj __UNUSED__, void *event_info)
 {
    Ecore_Evas *ee;
    Evas_Event_Multi_Move *ev;
@@ -321,6 +362,7 @@ _ecore_evas_buffer_cb_multi_move(void *data, Evas *e __UNUSED__, Evas_Object *ob
    _ecore_evas_buffer_coord_translate(ee, &x, &y);
    xf = (ev->cur.canvas.xsub - (double)xx) + (double)x;
    yf = (ev->cur.canvas.ysub - (double)yy) + (double)y;
+   _ecore_evas_buffer_transfer_modifiers_locks(e, ee->evas);
    evas_event_feed_multi_move(ee->evas, ev->device, x, y, ev->radius, ev->radius_x, ev->radius_y, ev->pressure, ev->angle, xf, yf, ev->timestamp, NULL);
 }
 
@@ -341,42 +383,7 @@ _ecore_evas_buffer_cb_key_down(void *data, Evas *e, Evas_Object *obj __UNUSED__,
 
    ee = data;
    ev = event_info;
-   if (evas_key_modifier_is_set(evas_key_modifier_get(e), "Shift"))
-     evas_key_modifier_on(ee->evas, "Shift");
-   else
-     evas_key_modifier_off(ee->evas, "Shift");
-   if (evas_key_modifier_is_set(evas_key_modifier_get(e), "Control"))
-     evas_key_modifier_on(ee->evas, "Control");
-   else
-     evas_key_modifier_off(ee->evas, "Control");
-   if (evas_key_modifier_is_set(evas_key_modifier_get(e), "Alt"))
-     evas_key_modifier_on(ee->evas, "Alt");
-   else
-     evas_key_modifier_off(ee->evas, "Alt");
-   if (evas_key_modifier_is_set(evas_key_modifier_get(e), "Meta"))
-     evas_key_modifier_on(ee->evas, "Meta");
-   else
-     evas_key_modifier_off(ee->evas, "Meta");
-   if (evas_key_modifier_is_set(evas_key_modifier_get(e), "Hyper"))
-     evas_key_modifier_on(ee->evas, "Hyper");
-   else
-     evas_key_modifier_off(ee->evas, "Hyper");
-   if (evas_key_modifier_is_set(evas_key_modifier_get(e), "Super"))
-     evas_key_modifier_on(ee->evas, "Super");
-   else
-     evas_key_modifier_off(ee->evas, "Super");
-   if (evas_key_lock_is_set(evas_key_lock_get(e), "Scroll_Lock"))
-     evas_key_lock_on(ee->evas, "Scroll_Lock");
-   else
-     evas_key_lock_off(ee->evas, "Scroll_Lock");
-   if (evas_key_lock_is_set(evas_key_lock_get(e), "Num_Lock"))
-     evas_key_lock_on(ee->evas, "Num_Lock");
-   else
-     evas_key_lock_off(ee->evas, "Num_Lock");
-   if (evas_key_lock_is_set(evas_key_lock_get(e), "Caps_Lock"))
-     evas_key_lock_on(ee->evas, "Caps_Lock");
-   else
-     evas_key_lock_off(ee->evas, "Caps_Lock");
+   _ecore_evas_buffer_transfer_modifiers_locks(e, ee->evas);
    evas_event_feed_key_down(ee->evas, ev->keyname, ev->key, ev->string, ev->compose, ev->timestamp, NULL);
 }
 
@@ -388,42 +395,7 @@ _ecore_evas_buffer_cb_key_up(void *data, Evas *e, Evas_Object *obj __UNUSED__, v
 
    ee = data;
    ev = event_info;
-   if (evas_key_modifier_is_set(evas_key_modifier_get(e), "Shift"))
-     evas_key_modifier_on(ee->evas, "Shift");
-   else
-     evas_key_modifier_off(ee->evas, "Shift");
-   if (evas_key_modifier_is_set(evas_key_modifier_get(e), "Control"))
-     evas_key_modifier_on(ee->evas, "Control");
-   else
-     evas_key_modifier_off(ee->evas, "Control");
-   if (evas_key_modifier_is_set(evas_key_modifier_get(e), "Alt"))
-     evas_key_modifier_on(ee->evas, "Alt");
-   else
-     evas_key_modifier_off(ee->evas, "Alt");
-   if (evas_key_modifier_is_set(evas_key_modifier_get(e), "Meta"))
-     evas_key_modifier_on(ee->evas, "Meta");
-   else
-     evas_key_modifier_off(ee->evas, "Meta");
-   if (evas_key_modifier_is_set(evas_key_modifier_get(e), "Hyper"))
-     evas_key_modifier_on(ee->evas, "Hyper");
-   else
-     evas_key_modifier_off(ee->evas, "Hyper");
-   if (evas_key_modifier_is_set(evas_key_modifier_get(e), "Super"))
-     evas_key_modifier_on(ee->evas, "Super");
-   else
-     evas_key_modifier_off(ee->evas, "Super");
-   if (evas_key_lock_is_set(evas_key_lock_get(e), "Scroll_Lock"))
-     evas_key_lock_on(ee->evas, "Scroll_Lock");
-   else
-     evas_key_lock_off(ee->evas, "Scroll_Lock");
-   if (evas_key_lock_is_set(evas_key_lock_get(e), "Num_Lock"))
-     evas_key_lock_on(ee->evas, "Num_Lock");
-   else
-     evas_key_lock_off(ee->evas, "Num_Lock");
-   if (evas_key_lock_is_set(evas_key_lock_get(e), "Caps_Lock"))
-     evas_key_lock_on(ee->evas, "Caps_Lock");
-   else
-     evas_key_lock_off(ee->evas, "Caps_Lock");
+   _ecore_evas_buffer_transfer_modifiers_locks(e, ee->evas);
    evas_event_feed_key_up(ee->evas, ev->keyname, ev->key, ev->string, ev->compose, ev->timestamp, NULL);
 }
 
@@ -476,6 +448,20 @@ _ecore_evas_buffer_alpha_set(Ecore_Evas *ee, int alpha)
    ee->alpha = alpha;
    if (ee->engine.buffer.image)
       evas_object_image_alpha_set(ee->engine.buffer.image, ee->alpha);
+   else
+     {
+        Evas_Engine_Info_Buffer *einfo;
+        
+        einfo = (Evas_Engine_Info_Buffer *)evas_engine_info_get(ee->evas);
+        if (einfo)
+          {
+             if (ee->alpha)
+               einfo->info.depth_type = EVAS_ENGINE_BUFFER_DEPTH_ARGB32;
+             else
+               einfo->info.depth_type = EVAS_ENGINE_BUFFER_DEPTH_RGB32;
+             evas_engine_info_set(ee->evas, (Evas_Engine_Info *)einfo);
+          }
+     }
 }
 
 static Ecore_Evas_Engine_Func _ecore_buffer_engine_func =
@@ -611,7 +597,7 @@ ecore_evas_buffer_allocfunc_new(int w, int h, void *(*alloc_func) (void *data, i
    einfo = (Evas_Engine_Info_Buffer *)evas_engine_info_get(ee->evas);
    if (einfo)
      {
-        einfo->info.depth_type = EVAS_ENGINE_BUFFER_DEPTH_ARGB32;
+        einfo->info.depth_type = EVAS_ENGINE_BUFFER_DEPTH_RGB32;
         einfo->info.dest_buffer = ee->engine.buffer.pixels;
         einfo->info.dest_buffer_row_bytes = ee->w * sizeof(int);
         einfo->info.use_color_key = 0;
