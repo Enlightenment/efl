@@ -373,7 +373,7 @@ _edje_object_file_set_internal(Evas_Object *obj, const char *file, const char *g
 		       if (!rp->drag)
 			 {
 			    ed->load_error = EDJE_LOAD_ERROR_RESOURCE_ALLOCATION_FAILED;
-			    free(rp);
+			    eina_mempool_free(rp);
                             evas_event_thaw(tev);
                             evas_event_thaw_eval(tev);
                             return 0;

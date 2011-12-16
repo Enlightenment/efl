@@ -234,3 +234,7 @@
 	* Entry: Added cursor,changed,manual signal.
 	This signal indicates the cursor has been manually changed, i.e by
 	either mouse click or arrows.
+
+2011-12-16  Cedric Bail
+
+	* Fix wrong call to free() in edje_load.
