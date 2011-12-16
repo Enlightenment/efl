@@ -1562,13 +1562,6 @@ evas_render_updates_internal(Evas *e,
                             else
                               e->engine.func->context_mask_unset(e->engine.data.output,
                                                                  e->engine.data.context);
-                            if (obj->cur.clipper)
-                              e->engine.func->context_clip_set(e->engine.data.output,
-                                                               e->engine.data.context,
-                                                               x, y, w, h);
-                            else
-                              e->engine.func->context_clip_unset(e->engine.data.output,
-                                                                 e->engine.data.context);
 #if 1 /* FIXME: this can slow things down... figure out optimum... coverage */
                             for (j = offset; j < e->temporary_objects.count; ++j)
                               {
