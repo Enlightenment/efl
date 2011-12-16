@@ -1,5 +1,10 @@
 Edje 1.1.0
 
+Changes since Edje 1.1.0:
+
+Improvements:
+    * speedup load time of Edje file.
+
 Changes since Edje 1.0.0:
 -------------------------
 

@@ -242,3 +242,4 @@
 2011-12-16  Cedric Bail
 
 	* Fix wrong call to free() in edje_load.
+	* Reduce parts walk to the strict minimum.
