@@ -1084,8 +1084,7 @@ evas_object_render_op_set(Evas_Object *obj, Evas_Render_Op render_op)
    return;
    MAGIC_CHECK_END();
    if (obj->delete_me) return;
-   if ((Evas_Render_Op)obj->cur.render_op == render_op)
-      return;
+   if (obj->cur.render_op == render_op) return;
    obj->cur.render_op = render_op;
    evas_object_change(obj);
 }
