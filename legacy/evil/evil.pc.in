@@ -3,9 +3,11 @@ exec_prefix=@exec_prefix@
 libdir=@libdir@
 includedir=@includedir@
 
+winver=@_efl_windows_version@
+
 Name: evil
 Description: Library that ports on Windows some specific Unix functions.
 Version: @VERSION@
 Libs: -L${libdir} -levil
 Libs.private:
-Cflags: -I${includedir}/evil-@VMAJ@
+Cflags: -I${includedir}/evil-@VMAJ@ @EFL_WINDOWS_VERSION_CFLAGS@

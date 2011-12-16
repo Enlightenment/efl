@@ -54,6 +54,11 @@ version_info="lt_cur:lt_rev:lt_age"
 AC_SUBST(version_info)
 
 
+### Needed information
+
+EFL_SELECT_WINDOWS_VERSION()
+
+
 ### Checks for programs
 AM_PROG_AS
 AC_PROG_CXX
@@ -83,8 +88,6 @@ esac
 AC_SUBST([win32_libs])
 AC_SUBST([win32_dl_libs])
 
-EFL_CHECK_MPATROL([have_mpatrol="yes"], [have_mpatrol="no"])
-
 
 ### Checks for header files
 AC_CHECK_HEADERS([errno.h])
@@ -98,7 +101,7 @@ AC_CHECK_HEADERS([errno.h])
 
 ### Checks for compiler characteristics
 AC_C_CONST
-AC_C___ATTRIBUTE__
+EFL_ATTRIBUTE_UNUSED
 
 win32_cppflags="-DEFL_EVIL_BUILD"
 win32_cflags="-Wall -Wextra -Wshadow -Wdeclaration-after-statement -Wmissing-prototypes -Wstrict-prototypes -Wredundant-decls"
@@ -107,12 +110,12 @@ have_wince="no"
 case "$host_os" in
   mingw32ce*)
     have_wince="yes"
-    win32_cppflags="${win32_cppflags} -D_WIN32_WCE=0x0420"
+    win32_cppflags="${win32_cppflags}"
     ;;
   *)
     have_wince="no"
     win32_cxxflags="-fno-rtti -fno-exceptions"
-    win32_cppflags="${win32_cppflags} -D_WIN32_WINNT=0x0501 -DSECURITY_WIN32"
+    win32_cppflags="${win32_cppflags} -DSECURITY_WIN32"
     ;;
 esac
 AC_SUBST([win32_cppflags])
@@ -154,6 +157,7 @@ echo
 echo "Configuration Options Summary:"
 echo
 echo "  OS...................: ${host_os}"
+echo "  Windows version......: ${_efl_windows_version}"
 echo
 echo "  Documentation........: ${build_doc}"
 echo "  Mpatrol..............: ${have_mpatrol}"

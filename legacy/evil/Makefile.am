@@ -1,5 +1,5 @@
 
-ACLOCAL_AMFLAGS = -I m4
+ACLOCAL_AMFLAGS = -I m4 -I m4/common -I m4/evil
 
 MAINTAINERCLEANFILES = \
 aclocal.m4 \
