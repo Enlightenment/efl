@@ -1,6 +1,8 @@
 
 ACLOCAL_AMFLAGS = -I m4 -I m4/common -I m4/evil
 
+DISTCHECK_CONFIGURE_FLAGS = --host=$(host_triplet)
+
 MAINTAINERCLEANFILES = \
 aclocal.m4 \
 config.guess \

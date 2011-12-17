@@ -3,7 +3,7 @@
 
 m4_define([v_maj], [1])
 m4_define([v_min], [0])
-m4_define([v_mic], [0])
+m4_define([v_mic], [99])
 
 m4_define([evil_version], [v_maj.v_min.v_mic])
 
@@ -56,7 +56,7 @@ AC_SUBST(version_info)
 
 ### Needed information
 
-EFL_SELECT_WINDOWS_VERSION()
+EFL_SELECT_WINDOWS_VERSION
 
 
 ### Checks for programs
@@ -160,7 +160,6 @@ echo "  OS...................: ${host_os}"
 echo "  Windows version......: ${_efl_windows_version}"
 echo
 echo "  Documentation........: ${build_doc}"
-echo "  Mpatrol..............: ${have_mpatrol}"
 echo
 echo "Compilation............: make (or gmake)"
 echo "  CPPFLAGS.............: $CPPFLAGS"
