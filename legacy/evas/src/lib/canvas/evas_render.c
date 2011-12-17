@@ -1406,7 +1406,13 @@ evas_render_updates_internal(Evas *e,
                                                 r->x, r->y, r->w, r->h);
         eina_rectangle_free(r);
      }
-   /* phase 4. output & viewport changes */
+   /* phase 4. framespace, output & viewport changes */
+   if (e->framespace.changed) 
+     {
+        e->engine.func->output_redraws_rect_add(e->engine.data.output,
+                                                e->framespace.x, e->framespace.y,
+                                                e->framespace.w, e->framespace.h);
+     }
    if (e->viewport.changed)
      {
         e->engine.func->output_redraws_rect_add(e->engine.data.output,
@@ -1664,6 +1670,7 @@ evas_render_updates_internal(Evas *e,
    e->changed = 0;
    e->viewport.changed = 0;
    e->output.changed = 0;
+   e->framespace.changed = 0;
    e->invalidate = 0;
 
    /* If their are some object to restack or some object to delete,
