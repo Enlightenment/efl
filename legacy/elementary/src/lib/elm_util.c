@@ -4,14 +4,14 @@
 #include <Elementary.h>
 #include "elm_priv.h"
 
-static char *
+char *
 _str_ncpy(char *dest, const char *src, size_t count)
 {
    if ((!dest) || (!src)) return NULL;
    return strncpy(dest, src, count);
 }
 
-static char *
+char *
 _str_append(char *str, const char *txt, int *len, int *alloc)
 {
    int txt_len = strlen(txt);
