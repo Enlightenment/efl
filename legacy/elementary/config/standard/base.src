@@ -44,6 +44,7 @@ group "Elm_Config" struct {
   value "desktop_entry" uchar: 1;
   value "password_show_last" uchar: 0;
   value "password_show_last_timeout" double: 2.0;
+  value "glayer_zoom_finger_enable" uchar: 0;
   value "glayer_zoom_finger_factor" double: 1.0;
   value "glayer_zoom_wheel_factor" double: 0.05;
   value "glayer_zoom_distance_tolerance" double: 1.0;

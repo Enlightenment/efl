@@ -3110,7 +3110,7 @@ _event_process(void *data, Evas_Object *obj __UNUSED__,
    if (IS_TESTED(ELM_GESTURE_N_FLICKS))
      _n_line_test(data, pe, event_info, event_type, ELM_GESTURE_N_FLICKS);
 
-   if (IS_TESTED(ELM_GESTURE_ZOOM))
+   if (_elm_config->glayer_zoom_finger_enable && IS_TESTED(ELM_GESTURE_ZOOM))
      _zoom_test(data, pe, event_info, event_type, ELM_GESTURE_ZOOM);
 
    if (IS_TESTED(ELM_GESTURE_ZOOM))

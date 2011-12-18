@@ -318,6 +318,7 @@ _desc_init(void)
    ELM_CONFIG_VAL(D, T, desktop_entry, T_UCHAR);
    ELM_CONFIG_VAL(D, T, password_show_last, T_UCHAR);
    ELM_CONFIG_VAL(D, T, password_show_last_timeout, T_DOUBLE);
+   ELM_CONFIG_VAL(D, T, glayer_zoom_finger_enable, T_UCHAR);
    ELM_CONFIG_VAL(D, T, glayer_zoom_finger_factor, T_DOUBLE);
    ELM_CONFIG_VAL(D, T, glayer_zoom_wheel_factor, T_DOUBLE);
    ELM_CONFIG_VAL(D, T, glayer_zoom_distance_tolerance, T_DOUBLE);
@@ -887,6 +888,7 @@ _config_load(void)
    _elm_config->is_mirrored = EINA_FALSE; /* Read sys value in env_get() */
    _elm_config->password_show_last = EINA_FALSE;
    _elm_config->password_show_last_timeout = 2.0;
+   _elm_config->glayer_zoom_finger_enable = EINA_FALSE;
    _elm_config->glayer_zoom_finger_factor = 1.0;
    _elm_config->glayer_zoom_wheel_factor = 0.05;
    _elm_config->glayer_zoom_distance_tolerance = 1.0; /* 1 times elm_finger_size_get() */
