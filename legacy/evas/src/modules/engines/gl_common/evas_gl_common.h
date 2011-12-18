@@ -12,7 +12,6 @@
 #include <sys/time.h>
 #include <unistd.h>
 #include <Eet.h>
-#include "evas_gl_core.h"
 
 #define GL_GLEXT_PROTOTYPES
 
@@ -29,14 +28,14 @@
 # else
 #  if defined (GLES_VARIETY_S3C6410) || defined (GLES_VARIETY_SGX)
 #   if defined(GLES_VARIETY_S3C6410)
-//#    include <GLES2/gl2.h>
+#    include <GLES2/gl2.h>
 #   elif defined(GLES_VARIETY_SGX)
-//#    include <GLES2/gl2.h>
-//#    include <GLES2/gl2ext.h>
+#    include <GLES2/gl2.h>
+#    include <GLES2/gl2ext.h>
 #   endif
 #  else
-//#   include <GL/gl.h>
-//#   include <GL/glext.h>
+#   include <GL/gl.h>
+#   include <GL/glext.h>
 #  endif
 # endif
 #endif
@@ -625,12 +624,29 @@ Filtered_Image   *evas_gl_common_image_filtered_save(Evas_GL_Image *im, Evas_GL_
 void              evas_gl_common_image_filtered_free(Evas_GL_Image *im, Filtered_Image *);
 #endif
 
+extern void (*glsym_glGenFramebuffers)      (GLsizei a, GLuint *b);
+extern void (*glsym_glBindFramebuffer)      (GLenum a, GLuint b);
+extern void (*glsym_glFramebufferTexture2D) (GLenum a, GLenum b, GLenum c, GLuint d, GLint e);
+extern void (*glsym_glDeleteFramebuffers)   (GLsizei a, const GLuint *b);
+extern void (*glsym_glGetProgramBinary)     (GLuint a, GLsizei b, GLsizei *c, GLenum *d, void *e);
+extern void (*glsym_glProgramBinary)        (GLuint a, GLenum b, const void *c, GLint d);
+extern void (*glsym_glProgramParameteri)    (GLuint a, GLuint b, GLint d);
+
+#if defined (GLES_VARIETY_S3C6410) || defined (GLES_VARIETY_SGX)
+extern void          *(*secsym_eglCreateImage)               (void *a, void *b, GLenum c, void *d, const int *e);
+extern unsigned int   (*secsym_eglDestroyImage)              (void *a, void *b);
+extern void           (*secsym_glEGLImageTargetTexture2DOES) (int a, void *b);
+extern void          *(*secsym_eglMapImageSEC)               (void *a, void *b);
+extern unsigned int   (*secsym_eglUnmapImageSEC)             (void *a, void *b);
+extern unsigned int   (*secsym_eglGetImageAttribSEC)         (void *a, void *b, int c, int *d);
+#endif
+
 //#define GL_ERRORS 1
 
 #ifdef GL_ERRORS
 # define GLERR(fn, fl, ln, op) \
    { \
-      int __gl_err = glsym_glGetError(); \
+      int __gl_err = glGetError(); \
       if (__gl_err != GL_NO_ERROR) glerr(__gl_err, fl, fn, ln, op); \
    }
 #else

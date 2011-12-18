@@ -112,7 +112,7 @@ _tex_2d(int intfmt, int w, int h, int fmt, int type)
 #ifdef GL_TEXTURE_INTERNAL_FORMAT
    int intfmtret = -1;
 #endif   
-   glsym_glTexImage2D(GL_TEXTURE_2D, 0, intfmt, w, h, 0, fmt, type, NULL);
+   glTexImage2D(GL_TEXTURE_2D, 0, intfmt, w, h, 0, fmt, type, NULL);
    GLERR(__FUNCTION__, __FILE__, __LINE__, "");
 #ifdef GL_TEXTURE_INTERNAL_FORMAT
 // this is not in opengles!!! hrrrm   
@@ -129,7 +129,7 @@ _tex_2d(int intfmt, int w, int h, int fmt, int type)
 static void
 _tex_sub_2d(int x, int y, int w, int h, int fmt, int type, const void *pix)
 {
-   glsym_glTexSubImage2D(GL_TEXTURE_2D, 0, x, y, w, h, fmt, type, pix);
+   glTexSubImage2D(GL_TEXTURE_2D, 0, x, y, w, h, fmt, type, pix);
    GLERR(__FUNCTION__, __FILE__, __LINE__, "");
 }
 
@@ -168,20 +168,20 @@ _pool_tex_new(Evas_Engine_GL_Context *gc, int w, int h, int intformat, GLenum fo
 
    _print_tex_count();
 
-   glsym_glGenTextures(1, &(pt->texture));
+   glGenTextures(1, &(pt->texture));
    GLERR(__FUNCTION__, __FILE__, __LINE__, "");
-   glsym_glBindTexture(GL_TEXTURE_2D, pt->texture);
+   glBindTexture(GL_TEXTURE_2D, pt->texture);
    GLERR(__FUNCTION__, __FILE__, __LINE__, "");
-   glsym_glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
    GLERR(__FUNCTION__, __FILE__, __LINE__, "");
-   glsym_glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
    GLERR(__FUNCTION__, __FILE__, __LINE__, "");
-   glsym_glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
    GLERR(__FUNCTION__, __FILE__, __LINE__, "");
-   glsym_glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
    GLERR(__FUNCTION__, __FILE__, __LINE__, "");
    _tex_2d(pt->intformat, w, h, pt->format, pt->dataformat);
-   glsym_glBindTexture(GL_TEXTURE_2D, gc->pipe[0].shader.cur_tex);
+   glBindTexture(GL_TEXTURE_2D, gc->pipe[0].shader.cur_tex);
    GLERR(__FUNCTION__, __FILE__, __LINE__, "");
    return pt;
 }
@@ -384,17 +384,17 @@ _pool_tex_render_new(Evas_Engine_GL_Context *gc, int w, int h, int intformat, in
 
    _print_tex_count();
 
-   glsym_glGenTextures(1, &(pt->texture));
+   glGenTextures(1, &(pt->texture));
    GLERR(__FUNCTION__, __FILE__, __LINE__, "");
-   glsym_glBindTexture(GL_TEXTURE_2D, pt->texture);
+   glBindTexture(GL_TEXTURE_2D, pt->texture);
    GLERR(__FUNCTION__, __FILE__, __LINE__, "");
-   glsym_glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
    GLERR(__FUNCTION__, __FILE__, __LINE__, "");
-   glsym_glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
    GLERR(__FUNCTION__, __FILE__, __LINE__, "");
-   glsym_glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
    GLERR(__FUNCTION__, __FILE__, __LINE__, "");
-   glsym_glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
    GLERR(__FUNCTION__, __FILE__, __LINE__, "");
    _tex_2d(pt->intformat, w, h, pt->format, pt->dataformat);
 
@@ -407,7 +407,7 @@ _pool_tex_render_new(Evas_Engine_GL_Context *gc, int w, int h, int intformat, in
    glsym_glBindFramebuffer(GL_FRAMEBUFFER, 0);
    GLERR(__FUNCTION__, __FILE__, __LINE__, "");
 
-   glsym_glBindTexture(GL_TEXTURE_2D, gc->pipe[0].shader.cur_tex);
+   glBindTexture(GL_TEXTURE_2D, gc->pipe[0].shader.cur_tex);
    GLERR(__FUNCTION__, __FILE__, __LINE__, "");
    return pt;
 }
@@ -444,9 +444,9 @@ _pool_tex_native_new(Evas_Engine_GL_Context *gc, int w, int h, int intformat, in
 
    _print_tex_count();
 
-   glsym_glGenTextures(1, &(pt->texture));
+   glGenTextures(1, &(pt->texture));
    GLERR(__FUNCTION__, __FILE__, __LINE__, "");
-   glsym_glBindTexture(im->native.target, pt->texture);
+   glBindTexture(im->native.target, pt->texture);
    GLERR(__FUNCTION__, __FILE__, __LINE__, "");
 
 #if defined (GLES_VARIETY_S3C6410) || defined (GLES_VARIETY_SGX)
@@ -458,17 +458,17 @@ _pool_tex_native_new(Evas_Engine_GL_Context *gc, int w, int h, int intformat, in
      }
 #endif
 
-   glsym_glTexParameteri(im->native.target, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+   glTexParameteri(im->native.target, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
    GLERR(__FUNCTION__, __FILE__, __LINE__, "");
-   glsym_glTexParameteri(im->native.target, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+   glTexParameteri(im->native.target, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
    GLERR(__FUNCTION__, __FILE__, __LINE__, "");
-   glsym_glTexParameteri(im->native.target, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+   glTexParameteri(im->native.target, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
    GLERR(__FUNCTION__, __FILE__, __LINE__, "");
-   glsym_glTexParameteri(im->native.target, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+   glTexParameteri(im->native.target, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
    GLERR(__FUNCTION__, __FILE__, __LINE__, "");
-   glsym_glBindTexture(im->native.target, 0);
+   glBindTexture(im->native.target, 0);
    GLERR(__FUNCTION__, __FILE__, __LINE__, "");
-   glsym_glBindTexture(im->native.target, gc->pipe[0].shader.cur_tex);
+   glBindTexture(im->native.target, gc->pipe[0].shader.cur_tex);
    GLERR(__FUNCTION__, __FILE__, __LINE__, "");
    return pt;
 }
@@ -524,17 +524,17 @@ _pool_tex_dynamic_new(Evas_Engine_GL_Context *gc, int w, int h, int intformat, i
 
    _print_tex_count();
 
-   glsym_glGenTextures(1, &(pt->texture));
+   glGenTextures(1, &(pt->texture));
    GLERR(__FUNCTION__, __FILE__, __LINE__, "");
-   glsym_glBindTexture(GL_TEXTURE_2D, pt->texture);
+   glBindTexture(GL_TEXTURE_2D, pt->texture);
    GLERR(__FUNCTION__, __FILE__, __LINE__, "");
-   glsym_glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
    GLERR(__FUNCTION__, __FILE__, __LINE__, "");
-   glsym_glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
    GLERR(__FUNCTION__, __FILE__, __LINE__, "");
-   glsym_glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
    GLERR(__FUNCTION__, __FILE__, __LINE__, "");
-   glsym_glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
    GLERR(__FUNCTION__, __FILE__, __LINE__, "");
 
    egldisplay = pt->gc->egldisp;
@@ -544,45 +544,45 @@ _pool_tex_dynamic_new(Evas_Engine_GL_Context *gc, int w, int h, int intformat, i
 
    // FIXME: seems a bit slower than i'd like - maybe too many flushes?
    // FIXME: YCbCr no support as yet
-   pt->dyn.img = glsym_eglCreateImage(egldisplay,
+   pt->dyn.img = secsym_eglCreateImage(egldisplay,
                                        EGL_NO_CONTEXT,
                                        EGL_MAP_GL_TEXTURE_2D_SEC,
                                        0, attr);
    GLERR(__FUNCTION__, __FILE__, __LINE__, "");
    if (!pt->dyn.img)
      {
-        glsym_glBindTexture(GL_TEXTURE_2D, 0);
+        glBindTexture(GL_TEXTURE_2D, 0);
         GLERR(__FUNCTION__, __FILE__, __LINE__, "");
-        glsym_glDeleteTextures(1, &(pt->texture));
+        glDeleteTextures(1, &(pt->texture));
         GLERR(__FUNCTION__, __FILE__, __LINE__, "");
         free(pt);
         return NULL;
      }
-   if (glsym_eglGetImageAttribSEC(egldisplay,
+   if (secsym_eglGetImageAttribSEC(egldisplay,
                                    pt->dyn.img,
                                    EGL_MAP_GL_TEXTURE_WIDTH_SEC,
                                    &(pt->dyn.w)) != EGL_TRUE) goto error;
-   if (glsym_eglGetImageAttribSEC(egldisplay,
+   if (secsym_eglGetImageAttribSEC(egldisplay,
                                    pt->dyn.img,
                                    EGL_MAP_GL_TEXTURE_HEIGHT_SEC,
                                    &(pt->dyn.h)) != EGL_TRUE) goto error;
-   if (glsym_eglGetImageAttribSEC(egldisplay,
+   if (secsym_eglGetImageAttribSEC(egldisplay,
                                    pt->dyn.img,
                                    EGL_MAP_GL_TEXTURE_STRIDE_IN_BYTES_SEC,
                                    &(pt->dyn.stride)) != EGL_TRUE) goto error;
-   if (glsym_eglGetImageAttribSEC(egldisplay,
+   if (secsym_eglGetImageAttribSEC(egldisplay,
                                    pt->dyn.img,
                                    EGL_MAP_GL_TEXTURE_FORMAT_SEC,
                                    &(fmt)) != EGL_TRUE) goto error;
 
-   if (glsym_eglGetImageAttribSEC(egldisplay,
+   if (secsym_eglGetImageAttribSEC(egldisplay,
                                    pt->dyn.img,
                                    EGL_MAP_GL_TEXTURE_PIXEL_TYPE_SEC,
                                    &(pixtype)) != EGL_TRUE) goto error;
 
    if (pixtype != EGL_MAP_GL_TEXTURE_UNSIGNED_BYTE_SEC) goto error;
 
-   glsym_glBindTexture(GL_TEXTURE_2D, gc->pipe[0].shader.cur_tex);
+   glBindTexture(GL_TEXTURE_2D, gc->pipe[0].shader.cur_tex);
    GLERR(__FUNCTION__, __FILE__, __LINE__, "");
 #else
    gc = NULL;
@@ -596,12 +596,12 @@ _pool_tex_dynamic_new(Evas_Engine_GL_Context *gc, int w, int h, int intformat, i
 /* ERROR HANDLING */
 #if defined (GLES_VARIETY_S3C6410) || defined (GLES_VARIETY_SGX)
 error:
-  glsym_eglDestroyImage(egldisplay, pt->dyn.img);
+  secsym_eglDestroyImage(egldisplay, pt->dyn.img);
   GLERR(__FUNCTION__, __FILE__, __LINE__, "");
   pt->dyn.img = NULL;
-  glsym_glBindTexture(GL_TEXTURE_2D, 0);
+  glBindTexture(GL_TEXTURE_2D, 0);
   GLERR(__FUNCTION__, __FILE__, __LINE__, "");
-  glsym_glDeleteTextures(1, &(pt->texture));
+  glDeleteTextures(1, &(pt->texture));
   GLERR(__FUNCTION__, __FILE__, __LINE__, "");
   free(pt);
   return NULL;
@@ -650,8 +650,8 @@ evas_gl_texture_pool_empty(Evas_GL_Texture_Pool *pt)
    if (pt->dyn.img)
      {
         if (pt->dyn.checked_out > 0)
-          glsym_eglUnmapImageSEC(pt->gc->egldisp, pt->dyn.img);
-        glsym_eglDestroyImage(pt->gc->egldisp, pt->dyn.img);
+          secsym_eglUnmapImageSEC(pt->gc->egldisp, pt->dyn.img);
+        secsym_eglDestroyImage(pt->gc->egldisp, pt->dyn.img);
         pt->dyn.img = NULL;
         pt->dyn.data = NULL;
         pt->dyn.w = 0;
@@ -661,7 +661,7 @@ evas_gl_texture_pool_empty(Evas_GL_Texture_Pool *pt)
      }
 #endif
 
-   glsym_glDeleteTextures(1, &(pt->texture));
+   glDeleteTextures(1, &(pt->texture));
    GLERR(__FUNCTION__, __FILE__, __LINE__, "");
    if (pt->fb)
      {
@@ -853,13 +853,13 @@ evas_gl_common_texture_update(Evas_GL_Texture *tex, RGBA_Image *im)
    if (!im->image.data) return;
 
    fmt = tex->pt->format;
-   glsym_glBindTexture(GL_TEXTURE_2D, tex->pt->texture);
+   glBindTexture(GL_TEXTURE_2D, tex->pt->texture);
    GLERR(__FUNCTION__, __FILE__, __LINE__, "");
 #ifdef GL_UNPACK_ROW_LENGTH
-   glsym_glPixelStorei(GL_UNPACK_ROW_LENGTH, 0);
+   glPixelStorei(GL_UNPACK_ROW_LENGTH, 0);
    GLERR(__FUNCTION__, __FILE__, __LINE__, "");
 #endif
-   glsym_glPixelStorei(GL_UNPACK_ALIGNMENT, 4);
+   glPixelStorei(GL_UNPACK_ALIGNMENT, 4);
    GLERR(__FUNCTION__, __FILE__, __LINE__, "");
 
 //   printf("tex upload %ix%i\n", im->cache_entry.w, im->cache_entry.h);
@@ -948,7 +948,7 @@ evas_gl_common_texture_update(Evas_GL_Texture *tex, RGBA_Image *im)
 #endif
    if (tex->pt->texture != tex->gc->pipe[0].shader.cur_tex)
      {
-        glsym_glBindTexture(GL_TEXTURE_2D, tex->gc->pipe[0].shader.cur_tex);
+        glBindTexture(GL_TEXTURE_2D, tex->gc->pipe[0].shader.cur_tex);
         GLERR(__FUNCTION__, __FILE__, __LINE__, "");
      }
 }
@@ -1032,19 +1032,19 @@ evas_gl_common_texture_alpha_update(Evas_GL_Texture *tex, DATA8 *pixels,
                                     unsigned int w, unsigned int h, int fh __UNUSED__)
 {
    if (!tex->pt) return;
-   glsym_glBindTexture(GL_TEXTURE_2D, tex->pt->texture);
+   glBindTexture(GL_TEXTURE_2D, tex->pt->texture);
    GLERR(__FUNCTION__, __FILE__, __LINE__, "");
 #ifdef GL_UNPACK_ROW_LENGTH
-   glsym_glPixelStorei(GL_UNPACK_ROW_LENGTH, 0);
+   glPixelStorei(GL_UNPACK_ROW_LENGTH, 0);
    GLERR(__FUNCTION__, __FILE__, __LINE__, "");
 #endif
-   glsym_glPixelStorei(GL_UNPACK_ALIGNMENT, 4);
+   glPixelStorei(GL_UNPACK_ALIGNMENT, 4);
    GLERR(__FUNCTION__, __FILE__, __LINE__, "");
    _tex_sub_2d(tex->x, tex->y, w, h, tex->pt->format, tex->pt->dataformat,
                pixels);
    if (tex->pt->texture != tex->gc->pipe[0].shader.cur_tex)
      {
-        glsym_glBindTexture(GL_TEXTURE_2D, tex->gc->pipe[0].shader.cur_tex);
+        glBindTexture(GL_TEXTURE_2D, tex->gc->pipe[0].shader.cur_tex);
         GLERR(__FUNCTION__, __FILE__, __LINE__, "");
      }
 }
@@ -1111,32 +1111,32 @@ evas_gl_common_texture_yuv_update(Evas_GL_Texture *tex, DATA8 **rows, unsigned i
    if (!tex->pt) return;
    // FIXME: works on lowest size 4 pixel high buffers. must also be multiple of 2
 #ifdef GL_UNPACK_ROW_LENGTH
-   glsym_glPixelStorei(GL_UNPACK_ROW_LENGTH, rows[1] - rows[0]);
+   glPixelStorei(GL_UNPACK_ROW_LENGTH, rows[1] - rows[0]);
    GLERR(__FUNCTION__, __FILE__, __LINE__, "");
-   glsym_glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+   glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
    GLERR(__FUNCTION__, __FILE__, __LINE__, "");
-   glsym_glBindTexture(GL_TEXTURE_2D, tex->pt->texture);
+   glBindTexture(GL_TEXTURE_2D, tex->pt->texture);
    GLERR(__FUNCTION__, __FILE__, __LINE__, "");
    _tex_2d(tex->pt->intformat, w, h, tex->pt->format, tex->pt->dataformat);
    _tex_sub_2d(0, 0, w, h, tex->pt->format, tex->pt->dataformat, rows[0]);
-   glsym_glBindTexture(GL_TEXTURE_2D, tex->ptu->texture);
+   glBindTexture(GL_TEXTURE_2D, tex->ptu->texture);
    GLERR(__FUNCTION__, __FILE__, __LINE__, "");
-   glsym_glPixelStorei(GL_UNPACK_ROW_LENGTH, rows[h + 1] - rows[h]);
+   glPixelStorei(GL_UNPACK_ROW_LENGTH, rows[h + 1] - rows[h]);
    GLERR(__FUNCTION__, __FILE__, __LINE__, "");
    _tex_2d(tex->ptu->intformat, w / 2, h / 2, tex->ptu->format, tex->ptu->dataformat);
    _tex_sub_2d(0, 0, w / 2, h / 2, tex->ptu->format, tex->ptu->dataformat, rows[h]);
-   glsym_glBindTexture(GL_TEXTURE_2D, tex->ptv->texture);
+   glBindTexture(GL_TEXTURE_2D, tex->ptv->texture);
    GLERR(__FUNCTION__, __FILE__, __LINE__, "");
-   glsym_glPixelStorei(GL_UNPACK_ROW_LENGTH, rows[h + (h / 2) + 1] - rows[h + (h / 2)]);
+   glPixelStorei(GL_UNPACK_ROW_LENGTH, rows[h + (h / 2) + 1] - rows[h + (h / 2)]);
    GLERR(__FUNCTION__, __FILE__, __LINE__, "");
    _tex_2d(tex->ptv->intformat, w / 2, h / 2, tex->ptv->format, tex->ptv->dataformat);
    _tex_sub_2d(0, 0, w / 2, h / 2, tex->ptv->format, tex->ptv->dataformat, rows[h + (h / 2)]);
 #else
    unsigned int y;
 
-   glsym_glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+   glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
    GLERR(__FUNCTION__, __FILE__, __LINE__, "");
-   glsym_glBindTexture(GL_TEXTURE_2D, tex->pt->texture);
+   glBindTexture(GL_TEXTURE_2D, tex->pt->texture);
    GLERR(__FUNCTION__, __FILE__, __LINE__, "");
    _tex_2d(tex->pt->intformat, w, h, tex->pt->format, tex->pt->dataformat);
    if ((rows[1] - rows[0]) == (int)w)
@@ -1147,7 +1147,7 @@ evas_gl_common_texture_yuv_update(Evas_GL_Texture *tex, DATA8 **rows, unsigned i
           _tex_sub_2d(0, y, w, 1, tex->pt->format, tex->pt->dataformat, rows[y]);
      }
 
-   glsym_glBindTexture(GL_TEXTURE_2D, tex->ptu->texture);
+   glBindTexture(GL_TEXTURE_2D, tex->ptu->texture);
    GLERR(__FUNCTION__, __FILE__, __LINE__, "");
    _tex_2d(tex->ptu->intformat, w / 2, h / 2, tex->ptu->format, tex->ptu->dataformat);
    if ((rows[h + 1] - rows[h]) == (int)(w / 2))
@@ -1158,7 +1158,7 @@ evas_gl_common_texture_yuv_update(Evas_GL_Texture *tex, DATA8 **rows, unsigned i
           _tex_sub_2d(0, y, w / 2, 1, tex->ptu->format, tex->ptu->dataformat, rows[h + y]);
      }
 
-   glsym_glBindTexture(GL_TEXTURE_2D, tex->ptv->texture);
+   glBindTexture(GL_TEXTURE_2D, tex->ptv->texture);
    GLERR(__FUNCTION__, __FILE__, __LINE__, "");
    _tex_2d(tex->ptv->intformat, w / 2, h / 2, tex->ptv->format, tex->ptv->dataformat);
    if ((rows[h + (h / 2) + 1] - rows[h + (h / 2)]) == (int)(w / 2))
@@ -1171,7 +1171,7 @@ evas_gl_common_texture_yuv_update(Evas_GL_Texture *tex, DATA8 **rows, unsigned i
 #endif
    if (tex->pt->texture != tex->gc->pipe[0].shader.cur_tex)
      {
-        glsym_glBindTexture(GL_TEXTURE_2D, tex->gc->pipe[0].shader.cur_tex);
+        glBindTexture(GL_TEXTURE_2D, tex->gc->pipe[0].shader.cur_tex);
         GLERR(__FUNCTION__, __FILE__, __LINE__, "");
      }
 }
@@ -1318,9 +1318,9 @@ evas_gl_common_texture_yuy2_update(Evas_GL_Texture *tex, DATA8 **rows, unsigned 
    tex->pt = tex->double_buffer.pt[tex->double_buffer.source];
    tex->ptuv = tex->double_buffer.ptuv[tex->double_buffer.source];
 
-   glsym_glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+   glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
    GLERR(__FUNCTION__, __FILE__, __LINE__, "");
-   glsym_glBindTexture(GL_TEXTURE_2D, tex->pt->texture);
+   glBindTexture(GL_TEXTURE_2D, tex->pt->texture);
    GLERR(__FUNCTION__, __FILE__, __LINE__, "");
    _tex_2d(tex->pt->intformat, w, h, tex->pt->format, tex->pt->dataformat);
    if ((rows[1] - rows[0]) == (int)w * 4)
@@ -1331,7 +1331,7 @@ evas_gl_common_texture_yuy2_update(Evas_GL_Texture *tex, DATA8 **rows, unsigned 
           _tex_sub_2d(0, y, w, 1, tex->pt->format, tex->pt->dataformat, rows[y]);
      }
 
-   glsym_glBindTexture(GL_TEXTURE_2D, tex->ptuv->texture);
+   glBindTexture(GL_TEXTURE_2D, tex->ptuv->texture);
    GLERR(__FUNCTION__, __FILE__, __LINE__, "");
    _tex_2d(tex->ptuv->intformat, w / 2, h, tex->ptuv->format, tex->ptuv->dataformat);
 #if 0
@@ -1350,7 +1350,7 @@ evas_gl_common_texture_yuy2_update(Evas_GL_Texture *tex, DATA8 **rows, unsigned 
 
    if (tex->pt->texture != tex->gc->pipe[0].shader.cur_tex)
      {
-        glsym_glBindTexture(GL_TEXTURE_2D, tex->gc->pipe[0].shader.cur_tex);
+        glBindTexture(GL_TEXTURE_2D, tex->gc->pipe[0].shader.cur_tex);
         GLERR(__FUNCTION__, __FILE__, __LINE__, "");
      }
 }
@@ -1366,26 +1366,26 @@ evas_gl_common_texture_nv12_update(Evas_GL_Texture *tex, DATA8 **rows, unsigned 
 
    // FIXME: works on lowest size 4 pixel high buffers. must also be multiple of 2
 #ifdef GL_UNPACK_ROW_LENGTH
-   glsym_glPixelStorei(GL_UNPACK_ROW_LENGTH, rows[1] - rows[0]);
+   glPixelStorei(GL_UNPACK_ROW_LENGTH, rows[1] - rows[0]);
    GLERR(__FUNCTION__, __FILE__, __LINE__, "");
-   glsym_glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+   glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
    GLERR(__FUNCTION__, __FILE__, __LINE__, "");
-   glsym_glBindTexture(GL_TEXTURE_2D, tex->pt->texture);
+   glBindTexture(GL_TEXTURE_2D, tex->pt->texture);
    GLERR(__FUNCTION__, __FILE__, __LINE__, "");
    _tex_2d(tex->pt->intformat, w, h, tex->pt->format, tex->pt->dataformat);
    _tex_sub_2d(0, 0, w, h, tex->pt->format, tex->pt->dataformat, rows[0]);
-   glsym_glBindTexture(GL_TEXTURE_2D, tex->ptuv->texture);
+   glBindTexture(GL_TEXTURE_2D, tex->ptuv->texture);
    GLERR(__FUNCTION__, __FILE__, __LINE__, "");
-   glsym_glPixelStorei(GL_UNPACK_ROW_LENGTH, rows[h + 1] - rows[h]);
+   glPixelStorei(GL_UNPACK_ROW_LENGTH, rows[h + 1] - rows[h]);
    GLERR(__FUNCTION__, __FILE__, __LINE__, "");
    _tex_2d(tex->ptuv->intformat, w / 2, h / 2, tex->ptuv->format, tex->ptuv->dataformat);
    _tex_sub_2d(0, 0, w / 2, h / 2, tex->ptuv->format, tex->ptuv->dataformat, rows[h]);
 #else
    unsigned int y;
 
-   glsym_glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+   glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
    GLERR(__FUNCTION__, __FILE__, __LINE__, "");
-   glsym_glBindTexture(GL_TEXTURE_2D, tex->pt->texture);
+   glBindTexture(GL_TEXTURE_2D, tex->pt->texture);
    GLERR(__FUNCTION__, __FILE__, __LINE__, "");
    _tex_2d(tex->pt->intformat, w, h, tex->pt->format, tex->pt->dataformat);
    if ((rows[1] - rows[0]) == (int)w)
@@ -1396,7 +1396,7 @@ evas_gl_common_texture_nv12_update(Evas_GL_Texture *tex, DATA8 **rows, unsigned 
           _tex_sub_2d(0, y, w, 1, tex->pt->format, tex->pt->dataformat, rows[y]);
      }
 
-   glsym_glBindTexture(GL_TEXTURE_2D, tex->ptuv->texture);
+   glBindTexture(GL_TEXTURE_2D, tex->ptuv->texture);
    GLERR(__FUNCTION__, __FILE__, __LINE__, "");
    _tex_2d(tex->ptuv->intformat, w / 2, h / 2, tex->ptuv->format, tex->ptuv->dataformat);
    if ((rows[h + 1] - rows[h]) == (int)(w / 2))
@@ -1409,7 +1409,7 @@ evas_gl_common_texture_nv12_update(Evas_GL_Texture *tex, DATA8 **rows, unsigned 
 #endif
    if (tex->pt->texture != tex->gc->pipe[0].shader.cur_tex)
      {
-        glsym_glBindTexture(GL_TEXTURE_2D, tex->gc->pipe[0].shader.cur_tex);
+        glBindTexture(GL_TEXTURE_2D, tex->gc->pipe[0].shader.cur_tex);
         GLERR(__FUNCTION__, __FILE__, __LINE__, "");
      }
 }
@@ -1435,7 +1435,7 @@ evas_gl_common_texture_nv12tiled_update(Evas_GL_Texture *tex, DATA8 **rows, unsi
         char *texture_addr;
 	char *tmp;
 
-	texture_addr = glsym_eglMapImageSEC(tex->gc->egldisp, tex->pt->dyn.img);
+	texture_addr = secsym_eglMapImageSEC(tex->gc->egldisp, tex->pt->dyn.img);
 
 	/* Iterate each Y macroblock like we do in evas_convert_yuv.c */
 	for (mb_y = 0; mb_y < (mb_h >> 1); mb_y++)
@@ -1490,9 +1490,9 @@ evas_gl_common_texture_nv12tiled_update(Evas_GL_Texture *tex, DATA8 **rows, unsi
 	       }
 	  }
 
-	glsym_eglUnmapImageSEC(tex->gc->egldisp, tex->pt->dyn.img);
+	secsym_eglUnmapImageSEC(tex->gc->egldisp, tex->pt->dyn.img);
 
-	texture_addr = glsym_eglMapImageSEC(tex->gc->egldisp, tex->ptuv->dyn.img);
+	texture_addr = secsym_eglMapImageSEC(tex->gc->egldisp, tex->ptuv->dyn.img);
 
 	/* Iterate each UV macroblock like we do in evas_convert_yuv.c */
 	base_h = (mb_h >> 1) + (mb_h & 0x1);
@@ -1557,15 +1557,15 @@ evas_gl_common_texture_nv12tiled_update(Evas_GL_Texture *tex, DATA8 **rows, unsi
 	       }
 	  }
 
-	glsym_eglUnmapImageSEC(tex->gc->egldisp, tex->ptuv->dyn.img);
+	secsym_eglUnmapImageSEC(tex->gc->egldisp, tex->ptuv->dyn.img);
 	return ;
      }
 #endif
 
-   glsym_glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+   glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
    GLERR(__FUNCTION__, __FILE__, __LINE__, "");
 
-   glsym_glBindTexture(GL_TEXTURE_2D, tex->pt->texture);
+   glBindTexture(GL_TEXTURE_2D, tex->pt->texture);
    GLERR(__FUNCTION__, __FILE__, __LINE__, "");
 
    // We are telling the driver to not swizzle back the buffer as we are going to replace all pixel
@@ -1612,7 +1612,7 @@ evas_gl_common_texture_nv12tiled_update(Evas_GL_Texture *tex, DATA8 **rows, unsi
 	  _tex_sub_2d(x, ry, 64, 32, tex->pt->format, tex->pt->dataformat, rows[mb_y] + rmb_x);
      }
 
-   glsym_glBindTexture(GL_TEXTURE_2D, tex->ptuv->texture);
+   glBindTexture(GL_TEXTURE_2D, tex->ptuv->texture);
    GLERR(__FUNCTION__, __FILE__, __LINE__, "");
 
    _tex_2d(tex->ptuv->intformat, w, h, tex->ptuv->format, tex->ptuv->dataformat);
