@@ -520,12 +520,6 @@
 
         1.1.0 release
 
-2011-12-05  Sung W. Park
-
-	* Add base for Evas GL Fastpath so evas can fully wrap OpenGL calls
-        and monitor GL state etc. and get it right sharing state with
-        evas without having to rely specifically on a new GL context.
-
 2011-12-07  Carsten Haitzler (The Rasterman)
 
         * Fix build if gcc too old - if immintrin.h doesn't exist,
