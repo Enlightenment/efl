@@ -244,6 +244,8 @@ ecore_evas_init(void)
    _ecore_evas_ews_events_init();
 #endif
 
+   _ecore_evas_extn_init();
+   
    if (getenv("ECORE_EVAS_COMP_NOSYNC"))
       _ecore_evas_app_comp_sync = 0;
    return _ecore_evas_init_count;
@@ -264,6 +266,8 @@ ecore_evas_shutdown(void)
 
    while (ecore_evases) _ecore_evas_free(ecore_evases);
 
+   _ecore_evas_extn_shutdown();
+   
    if (_ecore_evas_fps_debug) _ecore_evas_fps_debug_shutdown();
    ecore_idle_enterer_del(ecore_evas_idle_enterer);
    ecore_evas_idle_enterer = NULL;

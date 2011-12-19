@@ -1649,18 +1649,154 @@ EAPI extern int ECORE_EVAS_EWS_EVENT_CONFIG_CHANGE; /**< some other window prope
  */
 
 /**
+ * @defgroup Ecore_Evas_Extn External plug/socket infrastructure to remote canvases
+ *
+ * These functions allow 1 process to create a "socket" into which another
+ * process can create a "plug" remotely to plug into and provide content
+ * for that socket. This is best for small sized objects (about the size range
+ * of a small icon up to a few large icons). Sine the socket is actually an
+ * image object, you cvan fetch the pixel data
+ *
+ * @since 1.2
+ * @{
+ */
+
+EAPI extern int ECORE_EVAS_EXTN_CLIENT_ADD; /**< this event is received when a plug has connected to an extn socket */
+EAPI extern int ECORE_EVAS_EXTN_CLIENT_DEL; /**< this event is received when a plug has disconnected from an extn socket */
+   
+/**
  * Create a new external ecore evas socket
  *
+ * @param ee_target The Ecore_Evas containing the canvas in which the new image object will live.
+ * @param svcname The name of the service to be advertised. ensure that it is unique (when combined with @p svcnum) otherwise creation may fail.
+ * @param svcnum A number (any value, 0 beig the common default) to differentiate multiple instances of services with the same name.
+ * @param svcsys A boolean that if true, specifies to create a system-wide service all users can connect to, otherwise the service is private to the user ide that created the service.
+ * @return An evas image object that will contain the image output of a plug when it plugs in
+ * 
+ * This creates an image object that will contain the output of another
+ * processes plug canvas when it connects. All input will be sent back to
+ * this process as well, effectively swallowing or placing the plug process
+ * in the canvas of the socket process in place of the image object. The image
+ * object by default is created to be filled (equivalent of
+ * evas_object_image_filled_add() on creation) so image content will scale
+ * toi fill the image unless otherwise reconfigured. The Ecore_Evas size
+ * of the socket is the master size and determines size in pixels of the
+ * plug canvas. You can change the size with something like:
+ * 
+ * @code
+ * ecore_evas_resize(ecore_evas_object_ecore_evas_get(obj), 240, 400);
+ * @endcode
+ * 
+ * The image object begins as a blank object until a plug client connects.
+ * When a client connects, you will get the ECORE_EVAS_EXTN_CLIENT_ADD event
+ * in the ecore event queue, with event_info being the image object pointer
+ * passed as a void pointer. When a cllient disconnects you will get the
+ * ECORE_EVAS_EXTN_CLIENT_DEL event, and the image object will become blank.
+ * 
+ * You can set up event handles for these events as follows:
+ * 
+ * @code
+ * static void client_add_cb(void *data, int event, void *event_info)
+ * {
+ *   Evas_Object *obj = event_info;
+ *   printf("client added to image object %p\n", obj);
+ *   evas_object_show(obj);
+ * }
+ * 
+ * static void client_del_cb(void *data, int event, void *event_info)
+ * {
+ *   Evas_Object *obj = event_info;
+ *   printf("client deleted from image object %p\n", obj);
+ *   evas_object_hide(obj);
+ * }
+ * 
+ * void setup(void)
+ * {
+ *   ecore_event_handler_add(ECORE_EVAS_EXTN_CLIENT_ADD,
+ *                           client_add_cb, NULL);
+ *   ecore_event_handler_add(ECORE_EVAS_EXTN_CLIENT_DEL,
+ *                           client_del_cb, NULL);
+ * }
+ * @endcode
+ * 
+ * Note that events come in later after the event happened. You may want to be
+ * careful as data structures you had associated with the image object
+ * may have been freed after deleting, but the object may still be around
+ * awating cleanup and thus still be valid.
+ * 
+ * @see ecore_evas_extn_socket_object_data_lock()
+ * @see ecore_evas_extn_socket_object_data_unlock()
+ * @see ecore_evas_extn_plug_new()
+ * 
  * @since 1.2
  */
 EAPI Evas_Object *ecore_evas_extn_socket_new(Ecore_Evas *ee_target, const char *svcname, int svcnum, Eina_Bool svcsys);
+
+/**
+ * Lock the pixel data so the plug cannot change it
+ *
+ * @param obj The image object returned by ecore_evas_extn_socket_new() to lock
+ * 
+ * You may need to get the image pixel data with evas_object_image_data_get()
+ * from the image object, but need to ensure that it does not change while
+ * you are using the data. This function lets you set an advisory lock on the
+ * image data so the external plug process will not render to it or alter it.
+ * 
+ * You should only hold the lock for just as long as you need to read out the
+ * image data or otherwise deal with it, and then unlokc it with
+ * ecore_evas_extn_socket_object_data_unlock(). Keeping a lock over more than
+ * 1 iteration of the main ecore loop will be problematic, so avoid it. Also
+ * forgetting to unlock may cause the plug process to freeze and thus create
+ * odd behavior.
+ * 
+ * @see ecore_evas_extn_socket_new()
+ * @see ecore_evas_extn_socket_object_data_unlock()
+ * 
+ * @since 1.2
+ */
+EAPI void ecore_evas_extn_socket_object_data_lock(Evas_Object *obj);
+
+/**
+ * Unlock the pixel data so the plug can change it again.
+ *
+ * @param obj The image object returned by ecore_evas_extn_socket_new() to unlock
+ * 
+ * This unlocks after an advisor lock has been taken by 
+ * ecore_evas_extn_socket_object_data_lock().
+ * 
+ * @see ecore_evas_extn_socket_new()
+ * @see ecore_evas_extn_socket_object_data_lock()
+ * 
+ * @since 1.2
+ */
+EAPI void ecore_evas_extn_socket_object_data_unlock(Evas_Object *obj); 
+  
 /**
  * Create a new external ecore evas plug
  *
+ * @param svcname The service name to connect to set up by the socket.
+ * @param svcnum The service number to connect to (set up by socket).
+ * @param svcsys Booleain to set if the service is a system one or not (set up by socket).
+ * 
+ * This creates an Ecore_evas canvas wrapper and connects it to the given
+ * socket specified by @p svcname, @p svcnum and @p svcsys. If connection
+ * is successful, an Ecore_Evas handle is returned or NULL if connection
+ * fails. If the socket is deleted or disconnects you for whatever reason
+ * youre Ecore_Evas will get a delete request event (the delete request
+ * callback will be called, if set). Also focus, show, hide etc. callbacks
+ * will also be called if the socket object is shown, or already visible on
+ * connect, or if it is hidden later, focused or unfocused.
+ * 
+ * @see ecore_evas_extn_socket_new()
+ * 
  * @since 1.2
  */
 EAPI Ecore_Evas *ecore_evas_extn_plug_new(const char *svcname, int svcnum, Eina_Bool svcsys);
         
+/**
+ * @}
+ */
+
 /**
  * @}
  */

@@ -418,4 +418,7 @@ void _ecore_evas_mouse_multi_up_process(Ecore_Evas *ee, int device,
 
 extern Eina_Bool _ecore_evas_app_comp_sync;
 
+void _ecore_evas_extn_init(void);
+void _ecore_evas_extn_shutdown(void);
+
 #endif
