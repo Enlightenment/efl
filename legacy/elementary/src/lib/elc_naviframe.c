@@ -564,7 +564,7 @@ _title_content_set(Elm_Naviframe_Item *it,
 
    if (pair)
      {
-        if (pair->content && (pair->content != content))
+        if (pair->content != content)
           {
              if (content)
                {
@@ -594,6 +594,9 @@ _title_content_set(Elm_Naviframe_Item *it,
         eina_stringshare_replace(&pair->part, part);
         it->content_list = eina_inlist_append(it->content_list,
                                               EINA_INLIST_GET(pair));
+     }
+   if (pair->content != content)
+     {
         elm_widget_sub_object_add(WIDGET(it), content);
         evas_object_event_callback_add(content,
                                        EVAS_CALLBACK_DEL,
@@ -604,10 +607,10 @@ _title_content_set(Elm_Naviframe_Item *it,
                                        _changed_size_hints,
                                        WIDGET(it));
      }
-     edje_object_part_swallow(VIEW(it), part, content);
-     snprintf(buf, sizeof(buf), "elm,state,%s,show", part);
-     edje_object_signal_emit(VIEW(it), buf, "elm");
-     pair->content = content;
+   edje_object_part_swallow(VIEW(it), part, content);
+   snprintf(buf, sizeof(buf), "elm,state,%s,show", part);
+   edje_object_signal_emit(VIEW(it), buf, "elm");
+   pair->content = content;
 
    _sizing_eval(WIDGET(it));
 }
