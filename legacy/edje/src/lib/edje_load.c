@@ -685,6 +685,8 @@ _edje_object_file_set_internal(Evas_Object *obj, const char *file, const char *g
 			 {
 			    if (data == group_path_entry)
 			      {
+                                 ERR("recursive loop group '%s' already included inside part '%s' of group '%s' from file '%s'",
+                                     group_path_entry, rp->part->name, group, file);
                                  textblocks = eina_list_free(textblocks);
                                  externals = eina_list_free(externals);
                                  sources = eina_list_free(sources);
@@ -714,6 +716,8 @@ _edje_object_file_set_internal(Evas_Object *obj, const char *file, const char *g
 
 		       if (!_edje_object_file_set_internal(child_obj, file, source, rp->part->name, group_path))
 			 {
+                            ERR("impossible to set part '%s' of group '%s' from file '%s' to '%s'",
+                                rp->part->name, group_path_entry, file, source);
                             textblocks = eina_list_free(textblocks);
                             externals = eina_list_free(externals);
                             sources = eina_list_free(sources);
