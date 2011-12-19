@@ -5,7 +5,7 @@ static const char SMART_NAME[] = "elm_widget";
 
 #define API_ENTRY                                    \
   Smart_Data * sd = evas_object_smart_data_get(obj); \
-  if ((!obj) || (!sd) || (!_elm_widget_is(obj)))
+  if ((!sd) || (!_elm_widget_is(obj)))
 #define INTERNAL_ENTRY                               \
   Smart_Data * sd = evas_object_smart_data_get(obj); \
   if (!sd) return;
