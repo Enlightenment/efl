@@ -3212,6 +3212,7 @@ st_collections_group_parts_part_source(void)
 
    //FIXME: validate this somehow (need to decide on the format also)
    current_part->source = parse_str(0);
+   data_queue_group_lookup(current_part->source, current_part);
 }
 
 /**
@@ -3233,6 +3234,7 @@ st_collections_group_parts_part_source2(void)
 
    //FIXME: validate this somehow (need to decide on the format also)
    current_part->source2 = parse_str(0);
+   data_queue_group_lookup(current_part->source2, current_part);
 }
 
 /**
@@ -3254,6 +3256,7 @@ st_collections_group_parts_part_source3(void)
 
    //FIXME: validate this somehow (need to decide on the format also)
    current_part->source3 = parse_str(0);
+   data_queue_group_lookup(current_part->source3, current_part);
 }
 
 /**
@@ -3275,6 +3278,7 @@ st_collections_group_parts_part_source4(void)
 
    //FIXME: validate this somehow (need to decide on the format also)
    current_part->source4 = parse_str(0);
+   data_queue_group_lookup(current_part->source4, current_part);
 }
 
 /**
@@ -3296,6 +3300,7 @@ st_collections_group_parts_part_source5(void)
 
    //FIXME: validate this somehow (need to decide on the format also)
    current_part->source5 = parse_str(0);
+   data_queue_group_lookup(current_part->source5, current_part);
 }
 
 /**
@@ -3317,6 +3322,7 @@ st_collections_group_parts_part_source6(void)
 
    //FIXME: validate this somehow (need to decide on the format also)
    current_part->source6 = parse_str(0);
+   data_queue_group_lookup(current_part->source6, current_part);
 }
 
 /**
@@ -3804,6 +3810,7 @@ static void st_collections_group_parts_part_box_items_item_source(void)
    check_arg_count(1);
 
    current_item->source = parse_str(0);
+   data_queue_group_lookup(current_item->source, current_part);
 }
 
 /**

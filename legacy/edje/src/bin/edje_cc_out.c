@@ -72,6 +72,7 @@ struct _Program_Lookup
 struct _Group_Lookup
 {
    char *name;
+   Edje_Part *part;
 };
 
 struct _String_Lookup
@@ -1371,13 +1372,16 @@ reorder_parts(void)
 }
 
 void
-data_queue_group_lookup(char *name)
+data_queue_group_lookup(const char *name, Edje_Part *part)
 {
    Group_Lookup *gl;
+
+   if (!name || strlen(name) == 0) return ;
 
    gl = mem_alloc(SZ(Group_Lookup));
    group_lookups = eina_list_append(group_lookups, gl);
    gl->name = mem_strdup(name);
+   gl->part = part;
 }
 
 void
@@ -1698,7 +1702,27 @@ data_process_lookups(void)
      {
 	Edje_Part_Collection_Directory_Entry *de;
 
+        if (!group->part
+            || (group->part->type != EDJE_PART_TYPE_GROUP
+                && group->part->type != EDJE_PART_TYPE_TEXTBLOCK
+                && group->part->type != EDJE_PART_TYPE_BOX
+                && group->part->type != EDJE_PART_TYPE_TABLE))
+          goto free_group;
+
 	de = eina_hash_find(edje_file->collection, group->name);
+
+	if (!de)
+	  {
+             Eina_Bool found = EINA_FALSE;
+
+             EINA_LIST_FOREACH(aliases, l, de)
+               if (strcmp(de->entry, group->name) == 0)
+                 {
+                    found = EINA_TRUE;
+                    break;
+                 }
+             if (!found) de = NULL;
+	  }
 
 	if (!de)
           {
@@ -1707,6 +1731,7 @@ data_process_lookups(void)
              exit(-1);
           }
 
+     free_group:
         free(group->name);
         free(group);
      }
@@ -1914,7 +1939,7 @@ _data_queue_program_lookup(Edje_Part_Collection *pc, char *name, char *ptr, int 
 static void
 _data_queue_group_lookup(Edje_Part_Collection *pc __UNUSED__, char *name, char *ptr __UNUSED__, int len __UNUSED__)
 {
-   data_queue_group_lookup(name);
+   data_queue_group_lookup(name, NULL);
 }
 static void
 _data_queue_image_pc_lookup(Edje_Part_Collection *pc __UNUSED__, char *name, char *ptr, int len)

@@ -138,6 +138,7 @@ struct _Edje_Part_Parser
 /* global fn calls */
 void    data_setup(void);
 void    data_write(void);
+void    data_queue_group_lookup(const char *name, Edje_Part *part);
 void    data_queue_part_lookup(Edje_Part_Collection *pc, const char *name, int *dest);
 void    data_queue_copied_part_lookup(Edje_Part_Collection *pc, int *src, int *dest);
 void    data_queue_program_lookup(Edje_Part_Collection *pc, const char *name, int *dest);

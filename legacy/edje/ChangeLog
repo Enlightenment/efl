@@ -243,3 +243,7 @@
 
 	* Fix wrong call to free() in edje_load.
 	* Reduce parts walk to the strict minimum.
+
+2011-12-19  Cedric Bail
+
+	* Check existence of group at compile time also.

@@ -1,9 +1,11 @@
 Edje 1.1.0
 
 Changes since Edje 1.1.0:
+-------------------------
 
 Improvements:
     * speedup load time of Edje file.
+    * check existence of group at compile time also.
 
 Changes since Edje 1.0.0:
 -------------------------
