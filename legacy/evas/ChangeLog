@@ -566,3 +566,8 @@
 
         * Add new api to set and get default event flags.
 
+2011-12-19  Carsten Haitzler (The Rasterman)
+
+        * Add new canvas events called just before and after evas rendering
+        starts and stops.
+

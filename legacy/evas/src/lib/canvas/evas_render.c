@@ -1360,6 +1360,8 @@ evas_render_updates_internal(Evas *e,
 
    RD("[--- RENDER EVAS (size: %ix%i)\n", e->viewport.w, e->viewport.h);
 
+   evas_event_callback_call(e, EVAS_CALLBACK_RENDER_PRE, NULL);
+   
    /* Check if the modified object mean recalculating every thing */
    if (!e->invalidate)
      _evas_render_check_pending_objects(&e->pending_objects, e);
@@ -1686,6 +1688,8 @@ evas_render_updates_internal(Evas *e,
      }
 
    evas_module_clean();
+   
+   evas_event_callback_call(e, EVAS_CALLBACK_RENDER_POST, NULL);
 
    RD("---]\n");
 

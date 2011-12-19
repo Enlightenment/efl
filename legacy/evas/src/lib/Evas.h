@@ -433,6 +433,9 @@ typedef enum _Evas_Callback_Type
     */
    EVAS_CALLBACK_IMAGE_UNLOADED, /**< Image data has been unloaded (by some mechanims in Evas that throw out original image data) */
 
+   EVAS_CALLBACK_RENDER_PRE, /**< Called just before rendering starts on the canvas target */
+   EVAS_CALLBACK_RENDER_POST, /**< Called just after rendering stops on the canvas target */
+     
    EVAS_CALLBACK_LAST /**< kept as last element/sentinel -- not really an event */
 } Evas_Callback_Type; /**< The types of events triggering a callback */
 
