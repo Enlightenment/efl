@@ -746,25 +746,6 @@ _show_region_hook(void *data, Evas_Object *obj)
 }
 */
 
-static Eina_Bool
-_zoom_set(Evas_Object *obj, int w, int h)
-{
-   int z;
-   Widget_Data *wd = elm_widget_data_get(obj);
-   if (wd->size.imw > wd->size.imh)
-     z = wd->size.imw / w;
-   else
-     z = wd->size.imh / h;
-   if      (z >= 8) z = 8;
-   else if (z >= 4) z = 4;
-   else if (z >= 2) z = 2;
-   else             z = 1;
-   wd->zoom = z;
-   wd->size.nw = w;
-   wd->size.nh = h;
-   return (z != wd->zoom);
-}
-
 static void
 _sizing_eval(Evas_Object *obj)
 {
@@ -1238,6 +1219,7 @@ elm_photocam_zoom_set(Evas_Object *obj, double zoom)
    Eina_List *l;
    Grid *g, *g_zoom = NULL;
    Evas_Coord pw, ph, rx, ry, rw, rh;
+   double z;
    int zoom_changed = 0, started = 0;
    Ecore_Animator *an;
    if (!wd) return;
@@ -1274,8 +1256,15 @@ elm_photocam_zoom_set(Evas_Object *obj, double zoom)
                {
                   pw = rw;
                }
-             if (_zoom_set(obj, pw, ph))
+             if (wd->size.imw > wd->size.imh)
+               z = (double)wd->size.imw / pw;
+             else
+               z = (double)wd->size.imh / ph;
+             if (z != wd->zoom)
                zoom_changed = 1;
+             wd->zoom = z;
+             wd->size.nw = pw;
+             wd->size.nh = ph;
           }
      }
    else if (wd->mode == ELM_PHOTOCAM_ZOOM_MODE_AUTO_FILL)
@@ -1297,8 +1286,15 @@ elm_photocam_zoom_set(Evas_Object *obj, double zoom)
                {
                   pw = rw;
                }
-             if (_zoom_set(obj, pw, ph))
+             if (wd->size.imw > wd->size.imh)
+               z = (double)wd->size.imw / pw;
+             else
+               z = (double)wd->size.imh / ph;
+             if (z != wd->zoom)
                zoom_changed = 1;
+             wd->zoom = z;
+             wd->size.nw = pw;
+             wd->size.nh = ph;
           }
      }
    else if (wd->mode == ELM_PHOTOCAM_ZOOM_MODE_AUTO_FIT_IN)
@@ -1325,8 +1321,15 @@ elm_photocam_zoom_set(Evas_Object *obj, double zoom)
                }
              else
                pw = rw;
-             if (_zoom_set(obj, pw, ph))
+             if (wd->size.imw > wd->size.imh)
+               z = (double)wd->size.imw / pw;
+             else
+               z = (double)wd->size.imh / ph;
+             if (z != wd->zoom)
                zoom_changed = 1;
+             wd->zoom = z;
+             wd->size.nw = pw;
+             wd->size.nh = ph;
           }
      }
    if (wd->main_load_pending)
