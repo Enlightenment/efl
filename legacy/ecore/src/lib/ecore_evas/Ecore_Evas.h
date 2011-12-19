@@ -1625,24 +1625,24 @@ EAPI void        ecore_evas_ews_manager_set(const void *manager);
  */
 EAPI const void *ecore_evas_ews_manager_get(void);
 
-EAPI extern int ECORE_EVAS_EWS_EVENT_MANAGER_CHANGE; /**< manager was changed */
-EAPI extern int ECORE_EVAS_EWS_EVENT_ADD; /**< window was created */
-EAPI extern int ECORE_EVAS_EWS_EVENT_DEL; /**< window was deleted, pointer is already invalid but may be used as reference for further cleanup work. */
-EAPI extern int ECORE_EVAS_EWS_EVENT_RESIZE; /**< window was resized */
-EAPI extern int ECORE_EVAS_EWS_EVENT_MOVE; /**< window was moved */
-EAPI extern int ECORE_EVAS_EWS_EVENT_SHOW; /**< window become visible */
-EAPI extern int ECORE_EVAS_EWS_EVENT_HIDE; /**< window become hidden */
-EAPI extern int ECORE_EVAS_EWS_EVENT_FOCUS; /**< window was focused */
-EAPI extern int ECORE_EVAS_EWS_EVENT_UNFOCUS; /**< window lost focus */
-EAPI extern int ECORE_EVAS_EWS_EVENT_RAISE; /**< window was raised */
-EAPI extern int ECORE_EVAS_EWS_EVENT_LOWER; /**< window was lowered */
-EAPI extern int ECORE_EVAS_EWS_EVENT_ACTIVATE; /**< window was activated */
+EAPI extern int ECORE_EVAS_EWS_EVENT_MANAGER_CHANGE; /**< manager was changed @since 1.1 */
+EAPI extern int ECORE_EVAS_EWS_EVENT_ADD; /**< window was created @since 1.1 */
+EAPI extern int ECORE_EVAS_EWS_EVENT_DEL; /**< window was deleted, pointer is already invalid but may be used as reference for further cleanup work. @since 1.1 */
+EAPI extern int ECORE_EVAS_EWS_EVENT_RESIZE; /**< window was resized @since 1.1 */
+EAPI extern int ECORE_EVAS_EWS_EVENT_MOVE; /**< window was moved @since 1.1 */
+EAPI extern int ECORE_EVAS_EWS_EVENT_SHOW; /**< window become visible @since 1.1 */
+EAPI extern int ECORE_EVAS_EWS_EVENT_HIDE; /**< window become hidden @since 1.1 */
+EAPI extern int ECORE_EVAS_EWS_EVENT_FOCUS; /**< window was focused @since 1.1 */
+EAPI extern int ECORE_EVAS_EWS_EVENT_UNFOCUS; /**< window lost focus @since 1.1 */
+EAPI extern int ECORE_EVAS_EWS_EVENT_RAISE; /**< window was raised @since 1.1 */
+EAPI extern int ECORE_EVAS_EWS_EVENT_LOWER; /**< window was lowered @since 1.1 */
+EAPI extern int ECORE_EVAS_EWS_EVENT_ACTIVATE; /**< window was activated @since 1.1 */
 
-EAPI extern int ECORE_EVAS_EWS_EVENT_ICONIFIED_CHANGE; /**< window minimized/iconified changed */
-EAPI extern int ECORE_EVAS_EWS_EVENT_MAXIMIZED_CHANGE; /**< window maximized changed */
-EAPI extern int ECORE_EVAS_EWS_EVENT_LAYER_CHANGE; /**< window layer changed */
-EAPI extern int ECORE_EVAS_EWS_EVENT_FULLSCREEN_CHANGE; /**< window fullscreen changed */
-EAPI extern int ECORE_EVAS_EWS_EVENT_CONFIG_CHANGE; /**< some other window property changed (title, name, class, alpha, transparent, shaped...) */
+EAPI extern int ECORE_EVAS_EWS_EVENT_ICONIFIED_CHANGE; /**< window minimized/iconified changed @since 1.1 */
+EAPI extern int ECORE_EVAS_EWS_EVENT_MAXIMIZED_CHANGE; /**< window maximized changed @since 1.1 */
+EAPI extern int ECORE_EVAS_EWS_EVENT_LAYER_CHANGE; /**< window layer changed @since 1.1 */
+EAPI extern int ECORE_EVAS_EWS_EVENT_FULLSCREEN_CHANGE; /**< window fullscreen changed @since 1.1 */
+EAPI extern int ECORE_EVAS_EWS_EVENT_CONFIG_CHANGE; /**< some other window property changed (title, name, class, alpha, transparent, shaped...) @since 1.1 */
 
 /**
  * @}
@@ -1661,8 +1661,8 @@ EAPI extern int ECORE_EVAS_EWS_EVENT_CONFIG_CHANGE; /**< some other window prope
  * @{
  */
 
-EAPI extern int ECORE_EVAS_EXTN_CLIENT_ADD; /**< this event is received when a plug has connected to an extn socket */
-EAPI extern int ECORE_EVAS_EXTN_CLIENT_DEL; /**< this event is received when a plug has disconnected from an extn socket */
+EAPI extern int ECORE_EVAS_EXTN_CLIENT_ADD; /**< this event is received when a plug has connected to an extn socket @since 1.2 */
+EAPI extern int ECORE_EVAS_EXTN_CLIENT_DEL; /**< this event is received when a plug has disconnected from an extn socket @since 1.2 */
    
 /**
  * Create a new external ecore evas socket
