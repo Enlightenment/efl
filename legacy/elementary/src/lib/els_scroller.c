@@ -2534,6 +2534,10 @@ _smart_scrollbar_read(Smart_Data *sd)
    Evas_Coord x, y, mx = 0, my = 0, px, py, minx = 0, miny = 0;
    double vx, vy;
 
+   if ((sd->down.dragged) || (sd->down.bounce_x_animator)
+       || (sd->down.bounce_y_animator) || (sd->down.momentum_animator)
+       || (sd->scrollto.x.animator) || (sd->scrollto.y.animator))
+     return;
    edje_object_part_drag_value_get(sd->edje_obj, "elm.dragable.vbar", NULL, &vy);
    edje_object_part_drag_value_get(sd->edje_obj, "elm.dragable.hbar", &vx, NULL);
    sd->pan_func.max_get(sd->pan_obj, &mx, &my);
