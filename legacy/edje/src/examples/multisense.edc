@@ -2,7 +2,7 @@ collections {
    sounds {
       sample {
          name: "sound_name1" RAW;
-         source: "8806__jovica__basic-sine-wave-g-1.wav";
+//         source: "8806__jovica__basic-sine-wave-g-1.wav";
 //         source: "sample.wav";
 //         source: "sample-flac10k.wav";
 //         source: "sample-flac10k-mono.wav";
