@@ -1941,7 +1941,7 @@ elm_widget_focused_object_clear(Evas_Object *obj)
 {
    API_ENTRY return;
    if (!sd->focused) return;
-   if (elm_widget_focus_get(sd->resize_obj))
+   if (sd->resize_obj && elm_widget_focus_get(sd->resize_obj))
      elm_widget_focused_object_clear(sd->resize_obj);
    else
      {
