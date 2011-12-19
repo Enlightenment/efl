@@ -1483,7 +1483,6 @@ elm_photocam_region_get(const Evas_Object *obj, int *x, int *y, int *w, int *h)
           {
              *x = (wd->size.imw * sx) / wd->size.w;
              if (*x > wd->size.imw) *x = wd->size.imw;
-             else if (*x < 0) *x = 0;
           }
         if (w)
           {
@@ -1504,7 +1503,6 @@ elm_photocam_region_get(const Evas_Object *obj, int *x, int *y, int *w, int *h)
           {
              *y = (wd->size.imh * sy) / wd->size.h;
              if (*y > wd->size.imh) *y = wd->size.imh;
-             else if (*y < 0) *y = 0;
           }
         if (h)
           {
