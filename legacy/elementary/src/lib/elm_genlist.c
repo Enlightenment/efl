@@ -4242,7 +4242,7 @@ elm_genlist_item_show(Elm_Gen_Item *it)
    if ((it->item->queued) || (!it->item->mincalcd))
      {
         it->wd->show_item = it;
-        it->wd->bring_in = EINA_TRUE;
+        it->wd->bring_in = EINA_FALSE;
         it->item->showme = EINA_TRUE;
         return;
      }
@@ -4312,7 +4312,7 @@ elm_genlist_item_top_show(Elm_Gen_Item *it)
    if ((it->item->queued) || (!it->item->mincalcd))
      {
         it->wd->show_item = it;
-        it->wd->bring_in = EINA_TRUE;
+        it->wd->bring_in = EINA_FALSE;
         it->item->showme = EINA_TRUE;
         return;
      }
@@ -4367,7 +4367,7 @@ elm_genlist_item_middle_show(Elm_Gen_Item *it)
    if ((it->item->queued) || (!it->item->mincalcd))
      {
         it->wd->show_item = it;
-        it->wd->bring_in = EINA_TRUE;
+        it->wd->bring_in = EINA_FALSE;
         it->item->showme = EINA_TRUE;
         return;
      }
