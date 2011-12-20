@@ -23,6 +23,8 @@
 static Eina_List *open_ims = NULL;
 #endif
 
+#define FEEDBACK_MASK (XIMReverse | XIMUnderline | XIMHighlight)
+
 typedef struct _XIM_Im_Info XIM_Im_Info;
 struct _XIM_Im_Info
 {
@@ -51,6 +53,7 @@ struct _Ecore_IMF_Context_Data
    Eina_Bool      finalizing;
    Eina_Bool      has_focus;
    Eina_Bool      in_toplevel;
+   XIMFeedback   *feedbacks;
 
    XIMCallback    preedit_start_cb;
    XIMCallback    preedit_done_cb;
@@ -63,6 +66,12 @@ Ecore_IMF_Context_Data *imf_context_data_new();
 void                    imf_context_data_destroy(Ecore_IMF_Context_Data *imf_context_data);
 
 #ifdef ENABLE_XIM
+static void add_feedback_attr (Eina_List **attrs,
+                               const char   *str,
+                               XIMFeedback   feedback,
+                               int           start_pos,
+                               int           end_pos);
+
 static void reinitialize_ic(Ecore_IMF_Context *ctx);
 static void reinitialize_all_ics(XIM_Im_Info *info);
 static void set_ic_client_window(Ecore_IMF_Context *ctx,
@@ -98,6 +107,19 @@ static void xim_destroy_callback(XIM      xim,
                                  XPointer client_data,
                                  XPointer call_data);
 #endif
+
+static unsigned int
+utf8_offset_to_index(const char *str, int offset)
+{
+   int index = 0;
+   int i;
+   for (i = 0; i < offset; i++)
+     {
+        eina_unicode_utf8_get_next(str, &index);
+     }
+
+   return index;
+}
 
 static void
 _ecore_imf_context_xim_add(Ecore_IMF_Context *ctx)
@@ -204,6 +226,43 @@ _ecore_imf_context_xim_preedit_string_get(Ecore_IMF_Context *ctx,
 }
 
 static void
+_ecore_imf_context_xim_preedit_string_with_attributes_get(Ecore_IMF_Context *ctx,
+                                          char             **str,
+                                          Eina_List        **attrs,
+                                          int               *cursor_pos)
+{
+   EINA_LOG_DBG("in");
+
+   Ecore_IMF_Context_Data *imf_context_data = ecore_imf_context_data_get(ctx);
+
+   _ecore_imf_context_xim_preedit_string_get(ctx, str, cursor_pos);
+
+   if (!attrs) return;
+   if (!imf_context_data || !imf_context_data->feedbacks) return;
+
+   int i = 0;
+   XIMFeedback last_feedback = 0;
+   int start = -1;
+
+   for (i = 0; i < imf_context_data->preedit_length; i++)
+     {
+        XIMFeedback new_feedback = imf_context_data->feedbacks[i] & FEEDBACK_MASK;
+
+        if (new_feedback != last_feedback)
+          {
+             if (start >= 0)
+               add_feedback_attr (attrs, *str, last_feedback, start, i);
+
+             last_feedback = new_feedback;
+             start = i;
+          }
+     }
+
+   if (start >= 0)
+     add_feedback_attr (attrs, *str, last_feedback, start, i);
+}
+
+static void
 _ecore_imf_context_xim_focus_in(Ecore_IMF_Context *ctx)
 {
    EINA_LOG_DBG("in");
@@ -291,11 +350,18 @@ _ecore_imf_context_xim_reset(Ecore_IMF_Context *ctx)
 
    XFree(preedit_attr);
 
+   if (imf_context_data->feedbacks)
+     {
+        free(imf_context_data->feedbacks);
+        imf_context_data->feedbacks = NULL;
+     }
+
    if(imf_context_data->preedit_length)
      {
         imf_context_data->preedit_length = 0;
         free(imf_context_data->preedit_chars);
         imf_context_data->preedit_chars = NULL;
+
         ecore_imf_context_preedit_changed_event_add(ctx);
      }
 
@@ -330,6 +396,36 @@ _ecore_imf_context_xim_use_preedit_set(Ecore_IMF_Context *ctx,
         reinitialize_ic(ctx);
      }
 #endif
+}
+
+static void
+add_feedback_attr (Eina_List **attrs,
+                   const char   *str,
+                   XIMFeedback   feedback,
+                   int           start_pos,
+                   int           end_pos)
+{
+   Ecore_IMF_Preedit_Attr *attr = NULL;
+
+   unsigned int start_index = utf8_offset_to_index (str, start_pos);
+   unsigned int end_index = utf8_offset_to_index (str, end_pos);
+
+   if (feedback & FEEDBACK_MASK)
+    {
+        attr = (Ecore_IMF_Preedit_Attr *)calloc(1, sizeof(Ecore_IMF_Preedit_Attr));
+        attr->start_index = start_index;
+        attr->end_index = end_index;
+        *attrs = eina_list_append(*attrs, (void *)attr);
+    }
+
+   if (feedback & XIMUnderline)
+     attr->preedit_type = ECORE_IMF_PREEDIT_TYPE_SUB1;
+
+   if (feedback & XIMReverse)
+     attr->preedit_type = ECORE_IMF_PREEDIT_TYPE_SUB2;
+
+   if (feedback & XIMHighlight)
+     attr->preedit_type = ECORE_IMF_PREEDIT_TYPE_SUB3;
 }
 
 static void
@@ -608,7 +704,7 @@ static Ecore_IMF_Context_Class xim_class = {
    .use_preedit_set = _ecore_imf_context_xim_use_preedit_set,
    .input_mode_set = NULL,
    .filter_event = _ecore_imf_context_xim_filter_event,
-   .preedit_string_with_attributes_get = NULL,
+   .preedit_string_with_attributes_get = _ecore_imf_context_xim_preedit_string_with_attributes_get,
    .prediction_allow_set = NULL,
    .autocapital_type_set = NULL,
    .control_panel_show = NULL,
@@ -712,6 +808,13 @@ imf_context_data_destroy(Ecore_IMF_Context_Data *imf_context_data)
      XDestroyIC(imf_context_data->ic);
 
    free(imf_context_data->preedit_chars);
+
+   if (imf_context_data->feedbacks)
+     {
+        free(imf_context_data->feedbacks);
+        imf_context_data->feedbacks = NULL;
+     }
+
    free(imf_context_data->locale);
    free(imf_context_data);
 }
@@ -811,6 +914,7 @@ preedit_draw_callback(XIC                           xic __UNUSED__,
    Eina_Unicode *new_text = NULL;
    Eina_UStrbuf *preedit_bufs = NULL;
    int new_text_length;
+   int i = 0;
 
    preedit_bufs = eina_ustrbuf_new();
    if(imf_context_data->preedit_chars) {
@@ -853,6 +957,20 @@ preedit_draw_callback(XIC                           xic __UNUSED__,
           eina_ustrbuf_string_steal(preedit_bufs);
       imf_context_data->preedit_length =
           eina_unicode_strlen(imf_context_data->preedit_chars);
+
+      if (imf_context_data->feedbacks)
+        {
+           free(imf_context_data->feedbacks);
+           imf_context_data->feedbacks = NULL;
+        }
+
+      if (imf_context_data->preedit_length > 0)
+        {
+           imf_context_data->feedbacks = calloc(imf_context_data->preedit_length, sizeof(XIMFeedback));
+
+           for (i = 0; i < imf_context_data->preedit_length; i++)
+             imf_context_data->feedbacks[i] = t->feedback[i];
+        }
 
       ecore_imf_context_preedit_changed_event_add(ctx);
    }
