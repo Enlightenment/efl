@@ -165,3 +165,7 @@
 	* Binbuf + Strbuf + Ustrbuf: Added eina_*buf_manage_new_length.
 	Same as eina_(u)strbuf_manage_new except that it accepts a length
 	parameter.
+
+2011-12-20  Cedric Bail
+
+	* Fix bug on eina_shutdown when using eina_error.
