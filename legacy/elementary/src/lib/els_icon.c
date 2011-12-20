@@ -536,6 +536,8 @@ _smart_reconfigure(Smart_Data *sd)
    else
      {
         int iw = 0, ih = 0;
+        double alignh = 0.5, alignv = 0.5;
+        Evas_Object *parent;
 
         evas_object_image_size_get(sd->obj, &iw, &ih);
 
@@ -575,8 +577,11 @@ _smart_reconfigure(Smart_Data *sd)
              if (w < iw) w = iw;
              if (h < ih) h = ih;
           }
-        x = sd->x + ((sd->w - w) / 2);
-        y = sd->y + ((sd->h - h) / 2);
+        parent = elm_widget_parent_widget_get(sd->obj);
+        if (parent)
+          evas_object_size_hint_align_get(parent, &alignh, &alignv);
+        x = sd->x + ((sd->w - w) * alignh);
+        y = sd->y + ((sd->h - h) * alignv);
         evas_object_move(sd->obj, x, y);
         evas_object_image_fill_set(sd->obj, 0, 0, w, h);
         evas_object_resize(sd->obj, w, h);
