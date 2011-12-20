@@ -190,7 +190,9 @@ _ecore_glib_select(int             ecore_fds,
    int ret;
 
    if (g_main_context_acquire(ctx))
-     g_mutex_lock(mutex);
+     {
+        if (mutex) g_mutex_lock(mutex);
+     }
    else
      {
         if (!_ecore_glib_cond)
@@ -203,8 +205,9 @@ _ecore_glib_select(int             ecore_fds,
    ret = _ecore_glib_select__locked
        (ctx, ecore_fds, rfds, wfds, efds, ecore_timeout);
 
-   g_mutex_unlock(mutex);
+   if (mutex) g_mutex_unlock(mutex);
    g_main_context_release(ctx);
+   g_static_mutex_free(&lock);
 
    return ret;
 }
