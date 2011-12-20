@@ -161,6 +161,7 @@ struct eina_desc_setup
 static const struct eina_desc_setup _eina_desc_setup[] = {
 #define S(x) {# x, eina_ ## x ## _init, eina_ ## x ## _shutdown}
    /* log is a special case as it needs printf */
+   S(stringshare),
    S(error),
    S(safety_checks),
    S(magic_string),
@@ -171,7 +172,6 @@ static const struct eina_desc_setup _eina_desc_setup[] = {
    S(mempool),
    S(list),
    S(binshare),
-   S(stringshare),
    S(ustringshare),
    S(matrixsparse),
    S(convert),
@@ -236,8 +236,8 @@ eina_init(void)
         _mt_enabled = 1;
         mtrace();
      }
-#endif   
-   
+#endif
+
    if (!eina_log_init())
      {
         fprintf(stderr, "Could not initialize eina logging system.\n");
@@ -304,7 +304,7 @@ eina_shutdown(void)
              muntrace();
              _mt_enabled = 0;
           }
-#endif   
+#endif
      }
 
    return _eina_main_count;
