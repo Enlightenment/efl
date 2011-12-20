@@ -21,6 +21,8 @@ _evas_event_object_list_in_get(Evas *e, Eina_List *in,
                                int x, int y, int *no_rep)
 {
    Evas_Object *obj;
+   int inside;
+
    if (!list) return in;
    EINA_INLIST_REVERSE_FOREACH(list, obj)
      {
@@ -37,9 +39,9 @@ _evas_event_object_list_in_get(Evas *e, Eina_List *in,
              if (obj->smart.smart)
                {
                   int norep = 0;
-                  int inside;
 
-                  if (((obj->cur.usemap) && (obj->cur.map) && (obj->cur.map->count == 4)))
+                  if ((obj->cur.usemap) && (obj->cur.map) &&
+                      (obj->cur.map->count == 4))
                     {
                        inside = evas_object_is_in_output_rect(obj, x, y, 1, 1);
                        if (inside)
@@ -57,7 +59,8 @@ _evas_event_object_list_in_get(Evas *e, Eina_List *in,
                                      evas_object_smart_members_get_direct(obj),
                                      stop,
                                      obj->cur.geometry.x + obj->cur.map->mx,
-                                     obj->cur.geometry.y + obj->cur.map->my, &norep);
+                                     obj->cur.geometry.y + obj->cur.map->my,
+                                     &norep);
                               }
                          }
                     }
@@ -75,13 +78,15 @@ _evas_event_object_list_in_get(Evas *e, Eina_List *in,
                }
              else
                {
-                  int inside = evas_object_is_in_output_rect(obj, x, y, 1, 1);
+                  inside = evas_object_is_in_output_rect(obj, x, y, 1, 1);
 
-                  if (((obj->cur.usemap) && (obj->cur.map) && (obj->cur.map->count == 4)))
+                  if ((obj->cur.usemap) && (obj->cur.map) &&
+                      (obj->cur.map->count == 4))
                     {
-                       if ((inside) && (!evas_map_coords_get(obj->cur.map, x, y,
-                                                             &(obj->cur.map->mx),
-                                                             &(obj->cur.map->my), 0)))
+                       if ((inside) &&
+                           (!evas_map_coords_get(obj->cur.map, x, y,
+                                                 &(obj->cur.map->mx),
+                                                 &(obj->cur.map->my), 0)))
                          {
                             inside = 0;
                          }
