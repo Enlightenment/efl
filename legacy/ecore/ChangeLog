@@ -391,6 +391,10 @@
         * Added functions to set/get the hostname used for SSL certificate verification
         * ecore_con_ssl_server_cafile_add() now accepts directories
 
+2011-12-09 Mike Blumenkrantz
+
+        * Implement file descriptor leak in ecore-con to determine whether users watch /proc/sys/fs/file-nr
+
 2011-12-10 Mike Blumenkrantz
 
         * Fix case where SSL certificates would not be used
@@ -425,3 +429,8 @@
 2011-12-20 Carsten Haitzler (The Rasterman)
 
         * Fix probable leak for g_static_mutex's on some architectures
+
+2011-12-20 Mike Blumenkrantz
+
+        * Remove previously implemented file descriptor leak; results were
+        very troubling.
