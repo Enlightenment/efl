@@ -153,6 +153,7 @@ struct _Elm_Config
    double         glayer_zoom_finger_factor;
    double         glayer_zoom_wheel_factor;
    double         glayer_zoom_distance_tolerance;
+   double         glayer_rotate_finger_enable;
    double         glayer_rotate_angular_tolerance;
    double         glayer_line_min_length;
    double         glayer_line_distance_tolerance;

@@ -3116,7 +3116,7 @@ _event_process(void *data, Evas_Object *obj __UNUSED__,
    if (IS_TESTED(ELM_GESTURE_ZOOM))
      _zoom_with_wheel_test(data, event_info, event_type, ELM_GESTURE_ZOOM);
 
-   if (IS_TESTED(ELM_GESTURE_ROTATE))
+   if (_elm_config->glayer_rotate_finger_enable && IS_TESTED(ELM_GESTURE_ROTATE))
      _rotate_test(data, pe, event_info, event_type, ELM_GESTURE_ROTATE);
 
    if (_get_event_flag(event_info, event_type) & EVAS_EVENT_FLAG_ON_HOLD)

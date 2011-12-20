@@ -44,6 +44,7 @@ group "Elm_Config" struct {
   value "glayer_zoom_finger_factor" double: 1.0;
   value "glayer_zoom_wheel_factor" double: 0.05;
   value "glayer_zoom_distance_tolerance" double: 1.0;
+  value "glayer_rotate_finger_enable" uchar: 0;
   value "glayer_rotate_angular_tolerance" double: 0.034906585;
   value "glayer_line_min_length" double: 1.0;
   value "glayer_line_distance_tolerance" double: 3.0;
