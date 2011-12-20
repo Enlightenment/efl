@@ -416,13 +416,13 @@ elm_hoversel_icon_set(Evas_Object *obj, Evas_Object *icon)
 EAPI Evas_Object *
 elm_hoversel_icon_get(const Evas_Object *obj)
 {
-   _content_get_hook(obj, "icon");
+   return _content_get_hook(obj, "icon");
 }
 
 EAPI Evas_Object *
 elm_hoversel_icon_unset(Evas_Object *obj)
 {
-   _content_unset_hook(obj, "icon");
+   return _content_unset_hook(obj, "icon");
 }
 
 EAPI void
