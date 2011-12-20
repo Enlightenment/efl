@@ -168,15 +168,15 @@ static const Escape escapes[] = {
 static Cnp_Atom atoms[CNP_N_ATOMS] = {
      [CNP_ATOM_TARGETS] = {
           "TARGETS",
-          (Elm_Sel_Format) -1, // everything
+          ELM_SEL_TARGETS,
           targets_converter,
           response_handler_targets,
           notify_handler_targets,
           0
      },
      [CNP_ATOM_ATOM] = {
-          "ATOM",
-          (Elm_Sel_Format) -1, // everything
+          "ATOM", // for opera browser
+          ELM_SEL_TARGETS,
           targets_converter,
           response_handler_targets,
           notify_handler_targets,
@@ -425,7 +425,7 @@ elm_selection_set(Elm_Sel_Type selection, Evas_Object *widget, Elm_Sel_Format fo
 
    sel = selections + selection;
 
-   sel->active = 1;
+   sel->active = EINA_TRUE;
    sel->widget = widget;
 
    sel->set(xwin, &selection, sizeof(Elm_Sel_Type));
@@ -452,7 +452,7 @@ elm_selection_clear(Elm_Sel_Type selection, Evas_Object *widget)
    /* No longer this selection: Consider it gone! */
    if ((!sel->active) || (sel->widget != widget)) return EINA_TRUE;
 
-   sel->active = 0;
+   sel->active = EINA_FALSE;
    sel->widget = NULL;
    sel->clear();
 
@@ -587,7 +587,18 @@ selection_notify(void *udata __UNUSED__, int type __UNUSED__, void *event)
    return ECORE_CALLBACK_PASS_ON;
 }
 
-
+static Elm_Sel_Format
+_get_selection_type(void *data, int size)
+{
+   if (size == sizeof(Elm_Sel_Type))
+     {
+        Cnp_Selection *sel;
+        sel = selections + *((int *)data);
+        if (sel->active)
+          return sel->format;
+     }
+   return ELM_SEL_FORMAT_NONE;
+}
 
 static Eina_Bool
 targets_converter(char *target __UNUSED__, void *data, int size, void **data_ret, int *size_ret, Ecore_X_Atom *ttype, int *typesize)
@@ -598,7 +609,7 @@ targets_converter(char *target __UNUSED__, void *data, int size, void **data_ret
 
    if (!data_ret) return EINA_FALSE;
 
-   if (size != sizeof(int))
+   if (_get_selection_type(data, size) == ELM_SEL_FORMAT_NONE)
      {
         if (data_ret)
           {
@@ -987,7 +998,7 @@ text_converter(char *target __UNUSED__, void *data, int size, void **data_ret, i
    Cnp_Selection *sel;
 
    cnp_debug("text converter\n");
-   if (size != sizeof(int))
+   if (_get_selection_type(data, size) == ELM_SEL_FORMAT_NONE)
      {
         if (data_ret)
           {
@@ -1026,15 +1037,7 @@ text_converter(char *target __UNUSED__, void *data, int size, void **data_ret, i
 static Eina_Bool
 general_converter(char *target __UNUSED__, void *data, int size, void **data_ret, int *size_ret, Ecore_X_Atom *ttype __UNUSED__, int *typesize __UNUSED__)
 {
-   if (size == sizeof(int))
-     {
-        Cnp_Selection *sel;
-
-        sel = selections + *((int *)data);
-        if (data_ret) *data_ret = strdup(sel->selbuf);
-        if (size_ret) *size_ret = strlen(sel->selbuf);
-     }
-   else if (size)
+   if (_get_selection_type(data, size) == ELM_SEL_FORMAT_NONE)
      {
         if (data_ret)
           {
@@ -1043,6 +1046,14 @@ general_converter(char *target __UNUSED__, void *data, int size, void **data_ret
              ((char**)(data_ret))[0][size] = 0;
           }
         if (size_ret) *size_ret = size;
+     }
+   else
+     {
+        Cnp_Selection *sel;
+
+        sel = selections + *((int *)data);
+        if (data_ret) *data_ret = strdup(sel->selbuf);
+        if (size_ret) *size_ret = strlen(sel->selbuf);
      }
    return EINA_TRUE;
 }

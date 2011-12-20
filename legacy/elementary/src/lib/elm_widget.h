@@ -727,16 +727,20 @@ typedef enum _Elm_Sel_Type
 
 typedef enum _Elm_Sel_Format
 {
+   /** Targets: for matching every atom requesting */
+   ELM_SEL_TARGETS       = -1,
+   /** they come from outside of elm */
+   ELM_SEL_FORMAT_NONE   = 0x0,
    /** Plain unformated text: Used for things that don't want rich markup */
    ELM_SEL_FORMAT_TEXT   = 0x01,
    /** Edje textblock markup, including inline images */
    ELM_SEL_FORMAT_MARKUP = 0x02,
    /** Images */
-   ELM_SEL_FORMAT_IMAGE = 0x04,
+   ELM_SEL_FORMAT_IMAGE  = 0x04,
    /** Vcards */
-   ELM_SEL_FORMAT_VCARD =  0x08,
+   ELM_SEL_FORMAT_VCARD  = 0x08,
    /** Raw HTMLish things for widgets that want that stuff (hello webkit!) */
-   ELM_SEL_FORMAT_HTML = 0x10,
+   ELM_SEL_FORMAT_HTML   = 0x10,
 } Elm_Sel_Format;
 
 struct _Elm_Selection_Data
