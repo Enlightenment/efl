@@ -123,6 +123,10 @@ typedef void (*Eio_Main_Direct_Cb)(void *data, Eio_File *handler, const Eina_Fil
 typedef void (*Eio_Stat_Cb)(void *data, Eio_File *handler, const struct stat *stat);
 typedef void (*Eio_Progress_Cb)(void *data, Eio_File *handler, const Eio_Progress *info);
 
+typedef void (*Eio_Open_Cb)(void *data, Eio_File *handler, Eina_File *file);
+typedef Eina_Bool (*Eio_Filter_Map_Cb)(void *data, Eio_File *handler, void *map);
+typedef void (*Eio_Map_Cb)(void *data, Eio_File *handler, void *map);
+
 typedef void (*Eio_Done_Data_Cb)(void *data, Eio_File *handler, const char *xattr_data, unsigned int xattr_size);
 typedef void (*Eio_Done_String_Cb)(void *data, Eio_File *handler, const char *xattr_string);
 typedef void (*Eio_Done_Double_Cb)(void *data, Eio_File *handler, double xattr_double);
@@ -678,6 +682,86 @@ static inline Eina_Bool eio_file_is_lnk(const struct stat *stat);
 /**
  *
  */
+
+/**
+ * @defgroup Eio_Map Manipulate an Eina_File assynchronously
+ *
+ * @brief This function help manipulating file assynchronously.
+ */
+
+/**
+ * @brief Assynchronously open a file.
+ * @param name The file to open.
+ * @param shared If it's an shm file.
+ * @param open_cb Callback called in the main loop when the file has been successfully opened.
+ * @param error_cb Callback called in the main loop when the file couldn't be opened.
+ * @param data Private data given to each callback.
+ * @return NULL in case of a failure.
+ */
+EAPI Eio_File *eio_file_open(const char *name, Eina_Bool shared,
+                             Eio_Open_Cb open_cb,
+                             Eio_Error_Cb error_cb,
+                             const void *data);
+
+/**
+ * @brief Assynchronously close a file.
+ * @param f The file to close.
+ * @param done_cb Callback called in the main loop when the file has been successfully closed.
+ * @param error_cb Callback called in the main loop when the file couldn't be closed.
+ * @param data Private data given to each callback.
+ * @return NULL in case of a failure.
+ */
+EAPI Eio_File *eio_file_close(Eina_File *f,
+                              Eio_Done_Cb done_cb,
+                              Eio_Error_Cb error_cb,
+                              const void *data);
+
+/**
+ * @brief Assynchronously map a file in memory.
+ * @param f The file to map.
+ * @param rule The rule to apply to the map.
+ * @param filter_cb Callback called in the thread to validate the content of the map.
+ * @param map_cb Callback called in the main loop when the file has been successfully mapped.
+ * @param error_cb Callback called in the main loop when the file can't be mapped.
+ * @param data Private data given to each callback.
+ * @return NULL in case of a failure.
+ *
+ * The container of the Eio_File is the Eina_File.
+ */
+EAPI Eio_File *eio_file_map_all(Eina_File *f,
+                                Eina_File_Populate rule,
+                                Eio_Filter_Map_Cb filter_cb,
+                                Eio_Map_Cb map_cb,
+                                Eio_Error_Cb error_cb,
+                                const void *data);
+
+/**
+ * @brief Assynchronously map a part of a file in memory.
+ * @param f The file to map.
+ * @param rule The rule to apply to the map.
+ * @param offset The offset inside the file
+ * @param length The length of the memory to map
+ * @param filter_cb Callback called in the thread to validate the content of the map.
+ * @param map_cb Callback called in the main loop when the file has been successfully mapped.
+ * @param error_cb Callback called in the main loop when the file can't be mapped.
+ * @param data Private data given to each callback.
+ * @return NULL in case of a failure.
+ *
+ * The container of the Eio_File is the Eina_File.
+ */
+EAPI Eio_File *eio_file_map_new(Eina_File *f,
+                                Eina_File_Populate rule,
+                                unsigned long int offset,
+                                unsigned long int length,
+                                Eio_Filter_Map_Cb filter_cb,
+                                Eio_Map_Cb map_cb,
+                                Eio_Error_Cb error_cb,
+                                const void *data);
+
+/**
+ * @}
+ */
+
 /**
  * @defgroup Eio_Monitor Eio file and directory monitoring API
  *

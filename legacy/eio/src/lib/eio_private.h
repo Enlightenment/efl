@@ -51,6 +51,8 @@
 
 #define EIO_PACKED_TIME 0.003
 
+typedef struct _Eio_File_Map Eio_File_Map;
+typedef struct _Eio_File_Map_Rule Eio_File_Map_Rule;
 typedef struct _Eio_File_Ls Eio_File_Ls;
 typedef struct _Eio_File_Direct_Ls Eio_File_Direct_Ls;
 typedef struct _Eio_File_Char_Ls Eio_File_Char_Ls;
@@ -107,6 +109,30 @@ struct _Eio_File
    struct {
       Eina_Hash *associated;
    } worker, main;
+};
+
+struct _Eio_File_Map
+{
+   Eio_File common;
+
+   Eio_Open_Cb open_cb;
+   const char *name;
+   Eina_Bool shared;
+
+   Eina_File *result;
+};
+
+struct _Eio_File_Map_Rule
+{
+   Eio_File common;
+   Eio_Filter_Map_Cb filter_cb;
+   Eio_Map_Cb map_cb;
+   Eina_File_Populate rule;
+
+   unsigned long int offset;
+   unsigned long int length;
+
+   void *result;
 };
 
 struct _Eio_File_Ls
