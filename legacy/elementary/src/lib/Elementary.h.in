@@ -15034,7 +15034,6 @@ extern "C" {
     * See @ref tutorial_hoversel for an example.
     * @{
     */
-   typedef struct _Elm_Hoversel_Item Elm_Hoversel_Item; /**< Item of Elm_Hoversel. Sub-type of Elm_Widget_Item */
 
    /**
     * @brief Add a new Hoversel object
@@ -15196,7 +15195,7 @@ extern "C" {
     * @brief Get the list of items within the given hoversel.
     *
     * @param obj The hoversel object
-    * @return Returns a list of Elm_Hoversel_Item*
+    * @return Returns a list of Elm_Object_Item*
     *
     * @see elm_hoversel_item_add()
     */
@@ -15222,12 +15221,12 @@ extern "C" {
     * For more information on what @p icon_file and @p icon_type are see the
     * @ref Icon "icon documentation".
     */
-   EAPI Elm_Hoversel_Item *elm_hoversel_item_add(Evas_Object *obj, const char *label, const char *icon_file, Elm_Icon_Type icon_type, Evas_Smart_Cb func, const void *data) EINA_ARG_NONNULL(1);
+   EAPI Elm_Object_Item *elm_hoversel_item_add(Evas_Object *obj, const char *label, const char *icon_file, Elm_Icon_Type icon_type, Evas_Smart_Cb func, const void *data) EINA_ARG_NONNULL(1);
 
    /**
     * @brief Delete an item from the hoversel
     *
-    * @param item The item to delete
+    * @param it The item to delete
     *
     * This deletes the item from the hoversel (should not be called while the
     * hoversel is active; use elm_hoversel_expanded_get() to check first).
@@ -15235,7 +15234,7 @@ extern "C" {
     * @see elm_hoversel_item_add()
     * @see elm_hoversel_item_del_cb_set()
     */
-   EAPI void               elm_hoversel_item_del(Elm_Hoversel_Item *item) EINA_ARG_NONNULL(1);
+   EAPI void               elm_hoversel_item_del(Elm_Object_Item *it) EINA_ARG_NONNULL(1);
 
    /**
     * @brief Set the function to be called when an item from the hoversel is
@@ -15245,34 +15244,34 @@ extern "C" {
     * @param func The function called
     *
     * That function will receive these parameters:
-    * @li void *item_data
-    * @li Evas_Object *the_item_object
-    * @li Elm_Hoversel_Item *the_object_struct
+    * @li void * item data
+    * @li Evas_Object * hoversel object
+    * @li Elm_Object_Item * hoversel item
     *
     * @see elm_hoversel_item_add()
     */
-   EAPI void               elm_hoversel_item_del_cb_set(Elm_Hoversel_Item *it, Evas_Smart_Cb func) EINA_ARG_NONNULL(1);
+   EAPI void               elm_hoversel_item_del_cb_set(Elm_Object_Item *it, Evas_Smart_Cb func) EINA_ARG_NONNULL(1);
 
    /**
     * @brief This returns the data pointer supplied with elm_hoversel_item_add()
     * that will be passed to associated function callbacks.
     *
-    * @param item The item to get the data from
+    * @param it The item to get the data from
     * @return The data pointer set with elm_hoversel_item_add()
     *
     * @see elm_hoversel_item_add()
     */
-   EAPI void              *elm_hoversel_item_data_get(const Elm_Hoversel_Item *it) EINA_ARG_NONNULL(1);
+   EAPI void              *elm_hoversel_item_data_get(const Elm_Object_Item *it) EINA_ARG_NONNULL(1);
 
    /**
     * @brief This returns the label text of the given hoversel item.
     *
-    * @param item The item to get the label
+    * @param it The item to get the label
     * @return The label text of the hoversel item
     *
     * @see elm_hoversel_item_add()
     */
-   EAPI const char        *elm_hoversel_item_label_get(const Elm_Hoversel_Item *it) EINA_ARG_NONNULL(1);
+   EAPI const char        *elm_hoversel_item_label_get(const Elm_Object_Item *it) EINA_ARG_NONNULL(1);
 
    /**
     * @brief This sets the icon for the given hoversel item.
@@ -15289,7 +15288,7 @@ extern "C" {
     *
     * @see elm_hoversel_item_add()
     */
-   EAPI void               elm_hoversel_item_icon_set(Elm_Hoversel_Item *it, const char *icon_file, const char *icon_group, Elm_Icon_Type icon_type) EINA_ARG_NONNULL(1);
+   EAPI void               elm_hoversel_item_icon_set(Elm_Object_Item *it, const char *icon_file, const char *icon_group, Elm_Icon_Type icon_type) EINA_ARG_NONNULL(1);
 
    /**
     * @brief Get the icon object of the hoversel item
@@ -15304,7 +15303,7 @@ extern "C" {
     * @see elm_hoversel_item_icon_set()
     * @see elm_hoversel_item_add()
     */
-   EAPI void               elm_hoversel_item_icon_get(const Elm_Hoversel_Item *it, const char **icon_file, const char **icon_group, Elm_Icon_Type *icon_type) EINA_ARG_NONNULL(1);
+   EAPI void               elm_hoversel_item_icon_get(const Elm_Object_Item *it, const char **icon_file, const char **icon_group, Elm_Icon_Type *icon_type) EINA_ARG_NONNULL(1);
 
    /**
     * @}

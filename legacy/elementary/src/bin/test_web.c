@@ -294,8 +294,8 @@ static void
 _zoom_mode_cb(void *data, Evas_Object *obj __UNUSED__, void *event_info)
 {
    Web_Test *wt = data;
-   Elm_Hoversel_Item *it = event_info;
-   const char *lbl = elm_hoversel_item_label_get(it);
+   Elm_Object_Item *hoversel_it = event_info;
+   const char *lbl = elm_hoversel_item_label_get(hoversel_it);
 
    if (!strcmp(lbl, "Manual"))
      elm_web_zoom_mode_set(wt->web, ELM_WEB_ZOOM_MODE_MANUAL);

@@ -16,7 +16,7 @@ EAPI_MAIN int
 elm_main(int argc, char **argv)
 {
    Evas_Object *win, *bg, *rect, *hoversel;
-   Elm_Hoversel_Item *it;
+   Elm_Object_Item *hoversel_it;
 
    win = elm_win_add(NULL, "hoversel", ELM_WIN_BASIC);
    elm_win_title_set(win, "Hoversel");
@@ -40,9 +40,9 @@ elm_main(int argc, char **argv)
                          _print_items, NULL);
    elm_hoversel_item_add(hoversel, "Option 2", "home", ELM_ICON_STANDARD, NULL,
                          NULL);
-   it = elm_hoversel_item_add(hoversel, "Clear all items", "close",
-                         ELM_ICON_STANDARD, _rm_items, NULL);
-   evas_object_smart_callback_add(hoversel, "selected", _sel, it);
+   hoversel_it = elm_hoversel_item_add(hoversel, "Clear all items", "close",
+                                       ELM_ICON_STANDARD, _rm_items, NULL);
+   evas_object_smart_callback_add(hoversel, "selected", _sel, hoversel_it);
    evas_object_smart_callback_add(hoversel, "clicked", _add_item, NULL);
 
    evas_object_resize(hoversel, 180, 30);
@@ -63,10 +63,10 @@ _print_items(void *data, Evas_Object *obj, void *event_info)
 {
    const Eina_List *items = elm_hoversel_items_get(obj);
    const Eina_List *l;
-   Elm_Hoversel_Item *it;
+   Elm_Object_Item *hoversel_it;
 
-   EINA_LIST_FOREACH(items, l, it)
-     printf("%s\n", elm_hoversel_item_label_get(it));
+   EINA_LIST_FOREACH(items, l, hoversel_it)
+     printf("%s\n", elm_hoversel_item_label_get(hoversel_it));
 }
 
 static void
@@ -88,12 +88,13 @@ _add_item(void *data, Evas_Object *obj, void *event_info)
 {
    static int num = 0;
    char *str = malloc(sizeof(char) * 10);
-   Elm_Hoversel_Item *it;
+   Elm_Object_Item *hoversel_it;
 
    snprintf(str, 10, "item %d", ++num);
 
-   it = elm_hoversel_item_add(obj, str, NULL, ELM_ICON_NONE, NULL, str);
-   elm_hoversel_item_del_cb_set(it, _free);
+   hoversel_it = elm_hoversel_item_add(obj, str, NULL, ELM_ICON_NONE, NULL,
+                                       str);
+   elm_hoversel_item_del_cb_set(hoversel_it, _free);
 }
 
 static void

@@ -2,6 +2,7 @@
 #include "elm_priv.h"
 
 typedef struct _Widget_Data Widget_Data;
+typedef struct _Elm_Hoversel_Item Elm_Hoversel_Item;
 
 struct _Widget_Data
 {
@@ -430,12 +431,12 @@ elm_hoversel_expanded_get(const Evas_Object *obj)
 EAPI void
 elm_hoversel_clear(Evas_Object *obj)
 {
-   Elm_Hoversel_Item *item;
+   Elm_Object_Item *it;
    Eina_List *l, *ll;
    ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return;
-   EINA_LIST_FOREACH_SAFE(wd->items, l, ll, item) elm_hoversel_item_del(item);
+   EINA_LIST_FOREACH_SAFE(wd->items, l, ll, it) elm_hoversel_item_del(it);
 }
 
 EAPI const Eina_List *
@@ -447,7 +448,7 @@ elm_hoversel_items_get(const Evas_Object *obj)
    return wd->items;
 }
 
-EAPI Elm_Hoversel_Item *
+EAPI Elm_Object_Item *
 elm_hoversel_item_add(Evas_Object *obj, const char *label, const char *icon_file, Elm_Icon_Type icon_type, Evas_Smart_Cb func, const void *data)
 {
    ELM_CHECK_WIDTYPE(obj, widtype) NULL;
@@ -461,14 +462,16 @@ elm_hoversel_item_add(Evas_Object *obj, const char *label, const char *icon_file
    item->icon_type = icon_type;
    item->func = func;
    item->base.data = data;
-   return item;
+   return (Elm_Object_Item *) item;
 }
 
 EAPI void
-elm_hoversel_item_del(Elm_Hoversel_Item *item)
+elm_hoversel_item_del(Elm_Object_Item *it)
 {
-   ELM_WIDGET_ITEM_WIDTYPE_CHECK_OR_RETURN(item);
-   Widget_Data *wd = elm_widget_data_get(WIDGET(item));
+   ELM_OBJ_ITEM_CHECK_OR_RETURN(it);
+   Widget_Data *wd;
+   Elm_Hoversel_Item *item = (Elm_Hoversel_Item *) it;
+   wd = elm_widget_data_get(WIDGET(item));
    if (!wd) return;
    elm_hoversel_hover_end(WIDGET(item));
    wd->items = eina_list_remove(wd->items, item);
@@ -480,39 +483,41 @@ elm_hoversel_item_del(Elm_Hoversel_Item *item)
 }
 
 EAPI void
-elm_hoversel_item_del_cb_set(Elm_Hoversel_Item *item, Evas_Smart_Cb func)
+elm_hoversel_item_del_cb_set(Elm_Object_Item *it, Evas_Smart_Cb func)
 {
-   ELM_WIDGET_ITEM_WIDTYPE_CHECK_OR_RETURN(item);
-   elm_widget_item_del_cb_set(item, func);
+   ELM_OBJ_ITEM_CHECK_OR_RETURN(it);
+   elm_widget_item_del_cb_set(it, func);
 }
 
 EAPI void *
-elm_hoversel_item_data_get(const Elm_Hoversel_Item *item)
+elm_hoversel_item_data_get(const Elm_Object_Item *it)
 {
-   ELM_WIDGET_ITEM_WIDTYPE_CHECK_OR_RETURN(item, NULL);
-   return elm_widget_item_data_get(item);
+   ELM_OBJ_ITEM_CHECK_OR_RETURN(it, NULL);
+   return elm_widget_item_data_get(it);
 }
 
 EAPI const char *
-elm_hoversel_item_label_get(const Elm_Hoversel_Item *item)
+elm_hoversel_item_label_get(const Elm_Object_Item *it)
 {
-   ELM_WIDGET_ITEM_WIDTYPE_CHECK_OR_RETURN(item, NULL);
-   return item->label;
+   ELM_OBJ_ITEM_CHECK_OR_RETURN(it, NULL);
+   return ((Elm_Hoversel_Item *) it)->label;
 }
 
 EAPI void
-elm_hoversel_item_icon_set(Elm_Hoversel_Item *item, const char *icon_file, const char *icon_group, Elm_Icon_Type icon_type)
+elm_hoversel_item_icon_set(Elm_Object_Item *it, const char *icon_file, const char *icon_group, Elm_Icon_Type icon_type)
 {
-   ELM_WIDGET_ITEM_WIDTYPE_CHECK_OR_RETURN(item);
+   ELM_OBJ_ITEM_CHECK_OR_RETURN(it);
+   Elm_Hoversel_Item *item = (Elm_Hoversel_Item *) it;
    eina_stringshare_replace(&item->icon_file, icon_file);
    eina_stringshare_replace(&item->icon_group, icon_group);
    item->icon_type = icon_type;
 }
 
 EAPI void
-elm_hoversel_item_icon_get(const Elm_Hoversel_Item *item, const char **icon_file, const char **icon_group, Elm_Icon_Type *icon_type)
+elm_hoversel_item_icon_get(const Elm_Object_Item *it, const char **icon_file, const char **icon_group, Elm_Icon_Type *icon_type)
 {
-   ELM_WIDGET_ITEM_WIDTYPE_CHECK_OR_RETURN(item);
+   ELM_OBJ_ITEM_CHECK_OR_RETURN(it);
+   Elm_Hoversel_Item *item = (Elm_Hoversel_Item *) it;
    if (icon_file) *icon_file = item->icon_file;
    if (icon_group) *icon_group = item->icon_group;
    if (icon_type) *icon_type = item->icon_type;
