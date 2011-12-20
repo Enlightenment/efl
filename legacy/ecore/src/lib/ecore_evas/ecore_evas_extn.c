@@ -1272,6 +1272,16 @@ _ipc_client_data(void *data, int type __UNUSED__, void *event)
      }
    return ECORE_CALLBACK_PASS_ON;
 }
+#else
+void
+_ecore_evas_extn_init(void)
+{
+}
+
+void
+_ecore_evas_extn_shutdown(void)
+{
+}
 #endif
 
 EAPI Evas_Object *
