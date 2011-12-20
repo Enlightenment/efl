@@ -35,7 +35,7 @@ elm_main(int argc, char **argv)
    elm_hoversel_hover_parent_set(hoversel, win);
    elm_hoversel_horizontal_set(hoversel, EINA_FALSE);
    elm_object_text_set(hoversel, "Hoversel");
-   elm_hoversel_icon_set(hoversel, rect);
+   elm_object_part_content_set(hoversel, "icon", rect);
    elm_hoversel_item_add(hoversel, "Print items", NULL, ELM_ICON_NONE,
                          _print_items, NULL);
    elm_hoversel_item_add(hoversel, "Option 2", "home", ELM_ICON_STANDARD, NULL,
@@ -66,21 +66,21 @@ _print_items(void *data, Evas_Object *obj, void *event_info)
    Elm_Object_Item *hoversel_it;
 
    EINA_LIST_FOREACH(items, l, hoversel_it)
-     printf("%s\n", elm_hoversel_item_label_get(hoversel_it));
+     printf("%s\n", elm_object_item_text_get(hoversel_it));
 }
 
 static void
 _rm_items(void *data, Evas_Object *obj, void *event_info)
 {
    if(!elm_hoversel_expanded_get(obj))
-      elm_hoversel_clear(obj);
+     elm_hoversel_clear(obj);
 }
 
 static void
 _sel(void *data, Evas_Object *obj, void *event_info)
 {
    if(!elm_hoversel_expanded_get(obj) && event_info != data)
-      elm_hoversel_item_del(event_info);
+     elm_hoversel_item_del(event_info);
 }
 
 static void

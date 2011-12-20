@@ -44,10 +44,10 @@ static void
 _hover_select_cb(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info)
 {
    EWeather *eweather = eweather_object_eweather_get(weather[0]);
-   module[0] = eweather_plugin_search(eweather, elm_hoversel_item_label_get(event_info));
+   module[0] = eweather_plugin_search(eweather, elm_object_item_text_get(event_info));
 
    eweather = eweather_object_eweather_get(weather[1]);
-   module[1] = eweather_plugin_search(eweather, elm_hoversel_item_label_get(event_info));
+   module[1] = eweather_plugin_search(eweather, elm_object_item_text_get(event_info));
    printf("%p %p\n", module[0], module[1]);
 }
 #endif

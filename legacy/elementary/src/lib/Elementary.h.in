@@ -15031,6 +15031,27 @@ extern "C" {
     * "selected" - an item in the hoversel list is selected. event_info is the item
     * "dismissed" - the hover is dismissed
     *
+    * Default contents parts of the hoversel widget that you can use for are:
+    * @li "icon" - An icon of the hoversel
+    * 
+    * Default text parts of the hoversel widget that you can use for are:
+    * @li "default" - Label of the hoversel
+    *  
+    * Supported elm_object common APIs.
+    * @li elm_object_disabled_set
+    * @li elm_object_text_set
+    * @li elm_object_part_text_set
+    * @li elm_object_text_get
+    * @li elm_object_part_text_get
+    * @li elm_object_content_set
+    * @li elm_object_part_content_set
+    * @li elm_object_content_unset
+    * @li elm_object_part_content_unset
+    *
+    * Supported elm_object_item common APIs.
+    * @li elm_object_item_text_get
+    * @li elm_object_item_part_text_get
+    *
     * See @ref tutorial_hoversel for an example.
     * @{
     */
@@ -15123,8 +15144,9 @@ extern "C" {
     * elm_hoversel_icon_unset() function.
     *
     * @see elm_object_content_set() for the button widget
+    * @deprecated Use elm_object_item_part_content_set() instead
     */
-   EAPI void               elm_hoversel_icon_set(Evas_Object *obj, Evas_Object *icon) EINA_ARG_NONNULL(1);
+   EINA_DEPRECATED EAPI void               elm_hoversel_icon_set(Evas_Object *obj, Evas_Object *icon) EINA_ARG_NONNULL(1);
 
    /**
     * @brief Get the icon of the hoversel button
@@ -15136,8 +15158,9 @@ extern "C" {
     * and expanded). Also see elm_object_content_get() for the button widget.
     *
     * @see elm_hoversel_icon_set()
+    * @deprecated Use elm_object_item_part_content_get() instead
     */
-   EAPI Evas_Object       *elm_hoversel_icon_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
+   EINA_DEPRECATED EAPI Evas_Object       *elm_hoversel_icon_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
 
    /**
     * @brief Get and unparent the icon of the hoversel button
@@ -15150,8 +15173,9 @@ extern "C" {
     *
     * @see elm_hoversel_icon_set()
     * @see elm_object_content_unset() for the button widget
+    * @deprecated Use elm_object_item_part_content_unset() instead
     */
-   EAPI Evas_Object       *elm_hoversel_icon_unset(Evas_Object *obj) EINA_ARG_NONNULL(1);
+   EINA_DEPRECATED EAPI Evas_Object       *elm_hoversel_icon_unset(Evas_Object *obj) EINA_ARG_NONNULL(1);
 
    /**
     * @brief This triggers the hoversel popup from code, the same as if the user
@@ -15260,8 +15284,9 @@ extern "C" {
     * @return The data pointer set with elm_hoversel_item_add()
     *
     * @see elm_hoversel_item_add()
+    * @deprecated Use elm_object_item_data_get() instead
     */
-   EAPI void              *elm_hoversel_item_data_get(const Elm_Object_Item *it) EINA_ARG_NONNULL(1);
+   EINA_DEPRECATED EAPI void              *elm_hoversel_item_data_get(const Elm_Object_Item *it) EINA_ARG_NONNULL(1);
 
    /**
     * @brief This returns the label text of the given hoversel item.
@@ -15270,8 +15295,9 @@ extern "C" {
     * @return The label text of the hoversel item
     *
     * @see elm_hoversel_item_add()
+    * @deprecated Use elm_object_item_text_get() instead
     */
-   EAPI const char        *elm_hoversel_item_label_get(const Elm_Object_Item *it) EINA_ARG_NONNULL(1);
+   EINA_DEPRECATED EAPI const char        *elm_hoversel_item_label_get(const Elm_Object_Item *it) EINA_ARG_NONNULL(1);
 
    /**
     * @brief This sets the icon for the given hoversel item.
@@ -27749,10 +27775,10 @@ extern "C" {
     * Default contents parts of the ctxpopup widget that you can use for are:
     * @li "default" - A content of the ctxpopup
     *
-    * Default contents parts of the naviframe items that you can use for are:
+    * Default contents parts of the ctxpopup items that you can use for are:
     * @li "icon" - An icon in the title area
     *
-    * Default text parts of the naviframe items that you can use for are:
+    * Default text parts of the ctxpopup items that you can use for are:
     * @li "default" - Title label in the title area
     *
     * @ref tutorial_ctxpopup shows the usage of a good deal of the API.

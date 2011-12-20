@@ -275,6 +275,41 @@ _elm_hoversel_label_get(const Evas_Object *obj, const char *item)
    return elm_object_text_get(wd->btn);
 }
 
+static void
+_content_set_hook(Evas_Object *obj, const char *part, Evas_Object *content)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype);
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return;
+   elm_object_part_content_set(wd->btn, part, content);
+}
+
+static Evas_Object *
+_content_get_hook(const Evas_Object *obj, const char *part)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype) NULL;
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if ((!wd) || (!wd->btn)) return NULL;
+   return elm_object_part_content_get(wd->btn, part);
+}
+
+static Evas_Object *
+_content_unset_hook(Evas_Object *obj, const char *part)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype) NULL;
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if ((!wd) || (!wd->btn)) return NULL;
+   return elm_object_part_content_unset(wd->btn, part);
+}
+
+static const char *
+_item_text_get_hook(const Elm_Object_Item *it, const char *part)
+{
+   ELM_OBJ_ITEM_CHECK_OR_RETURN(it, NULL);
+   if (part && strcmp(part, "default")) return NULL;
+   return ((Elm_Hoversel_Item *) it)->label;
+}
+
 EAPI Evas_Object *
 elm_hoversel_add(Evas_Object *parent)
 {
@@ -297,6 +332,9 @@ elm_hoversel_add(Evas_Object *parent)
    elm_widget_can_focus_set(obj, EINA_TRUE);
    elm_widget_text_set_hook_set(obj, _elm_hoversel_label_set);
    elm_widget_text_get_hook_set(obj, _elm_hoversel_label_get);
+   elm_widget_content_set_hook_set(obj, _content_set_hook);
+   elm_widget_content_get_hook_set(obj, _content_get_hook);
+   elm_widget_content_unset_hook_set(obj, _content_unset_hook);
 
    wd->btn = elm_button_add(parent);
    elm_widget_mirrored_automatic_set(wd->btn, EINA_FALSE);
@@ -372,28 +410,19 @@ elm_hoversel_horizontal_get(const Evas_Object *obj)
 EAPI void
 elm_hoversel_icon_set(Evas_Object *obj, Evas_Object *icon)
 {
-   ELM_CHECK_WIDTYPE(obj, widtype);
-   Widget_Data *wd = elm_widget_data_get(obj);
-   if (!wd) return;
-   elm_object_part_content_set(wd->btn, "icon", icon);
+   _content_set_hook(obj, "icon", icon);
 }
 
 EAPI Evas_Object *
 elm_hoversel_icon_get(const Evas_Object *obj)
 {
-   ELM_CHECK_WIDTYPE(obj, widtype) NULL;
-   Widget_Data *wd = elm_widget_data_get(obj);
-   if ((!wd) || (!wd->btn)) return NULL;
-   return elm_object_part_content_get(wd->btn, "icon");
+   _content_get_hook(obj, "icon");
 }
 
 EAPI Evas_Object *
 elm_hoversel_icon_unset(Evas_Object *obj)
 {
-   ELM_CHECK_WIDTYPE(obj, widtype) NULL;
-   Widget_Data *wd = elm_widget_data_get(obj);
-   if ((!wd) || (!wd->btn)) return NULL;
-   return elm_object_part_content_unset(wd->btn, "icon");
+   _content_unset_hook(obj, "icon");
 }
 
 EAPI void
@@ -456,6 +485,7 @@ elm_hoversel_item_add(Evas_Object *obj, const char *label, const char *icon_file
    if (!wd) return NULL;
    Elm_Hoversel_Item *item = elm_widget_item_new(obj, Elm_Hoversel_Item);
    if (!item) return NULL;
+   elm_widget_item_text_get_hook_set(item, _item_text_get_hook);
    wd->items = eina_list_append(wd->items, item);
    item->label = eina_stringshare_add(label);
    item->icon_file = eina_stringshare_add(icon_file);
@@ -492,15 +522,13 @@ elm_hoversel_item_del_cb_set(Elm_Object_Item *it, Evas_Smart_Cb func)
 EAPI void *
 elm_hoversel_item_data_get(const Elm_Object_Item *it)
 {
-   ELM_OBJ_ITEM_CHECK_OR_RETURN(it, NULL);
-   return elm_widget_item_data_get(it);
+   return elm_object_item_data_get(it);
 }
 
 EAPI const char *
 elm_hoversel_item_label_get(const Elm_Object_Item *it)
 {
-   ELM_OBJ_ITEM_CHECK_OR_RETURN(it, NULL);
-   return ((Elm_Hoversel_Item *) it)->label;
+   return _item_text_get_hook(it, NULL);
 }
 
 EAPI void
