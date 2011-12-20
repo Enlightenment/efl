@@ -565,6 +565,7 @@
 2011-12-16  Carsten Haitzler (The Rasterman)
 
         * Fix clip bug that shows up in buffer engine
+        * Fix SSE3 routines with buggy output - disable
         * Add new api to set and get default event flags.
 
 2011-12-19  Carsten Haitzler (The Rasterman)
