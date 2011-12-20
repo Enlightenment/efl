@@ -361,7 +361,7 @@ _ecore_evas_extn_shutdown(void)
 }
 
 static void
-_ecore_evas_extn_event_free(void *data, void *ev)
+_ecore_evas_extn_event_free(void *data, void *ev __UNUSED__)
 {
    Ecore_Evas *ee = data;
    if (ee->engine.buffer.image)
