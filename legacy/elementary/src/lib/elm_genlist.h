@@ -66,9 +66,9 @@ struct Elm_Gen_Item
 typedef struct _Pan Pan;
 struct _Pan
 {
-   Evas_Object_Smart_Clipped_Data __clipped_data;
-   Widget_Data                   *wd;
-   Ecore_Job                     *resize_job;
+   Evas_Object_Smart_Clipped_Data  __clipped_data;
+   Widget_Data                    *wd;
+   Ecore_Job                      *resize_job;
 };
 
 struct _Widget_Data
@@ -108,7 +108,7 @@ struct _Widget_Data
    Ecore_Idle_Enterer *queue_idle_enterer;
    Ecore_Idler        *must_recalc_idler;
    Eina_List        *queue;
-   Elm_Gen_Item *show_item, *anchor_item, *mode_item, *reorder_rel, *expanded_item;
+   Elm_Gen_Item     *show_item, *anchor_item, *mode_item, *reorder_rel, *expanded_item;
    Eina_Inlist      *item_cache; /* an inlist of edje object it cache. */
    Evas_Coord        anchor_y;
    Evas_Coord        reorder_start_y; /* reorder it's initial y coordinate in the pan. */
