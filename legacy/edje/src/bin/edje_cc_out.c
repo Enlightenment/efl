@@ -1702,12 +1702,14 @@ data_process_lookups(void)
      {
 	Edje_Part_Collection_Directory_Entry *de;
 
-        if (!group->part
-            || (group->part->type != EDJE_PART_TYPE_GROUP
+        if (group->part)
+	  {
+	    if (group->part->type != EDJE_PART_TYPE_GROUP
                 && group->part->type != EDJE_PART_TYPE_TEXTBLOCK
                 && group->part->type != EDJE_PART_TYPE_BOX
-                && group->part->type != EDJE_PART_TYPE_TABLE))
-          goto free_group;
+                && group->part->type != EDJE_PART_TYPE_TABLE)
+	      goto free_group;
+	  }
 
 	de = eina_hash_find(edje_file->collection, group->name);
 
