@@ -989,6 +989,7 @@ ecore_con_event_server_del(Ecore_Con_Server *svr)
 
     svr->event_count = eina_list_append(svr->event_count, e);
     _ecore_con_server_timer_update(svr);
+    svr->delete_me = EINA_TRUE;
     e->server = svr;
     if (svr->ecs)
       {
@@ -1080,6 +1081,7 @@ ecore_con_event_client_del(Ecore_Con_Client *cl)
     cl->host_server->event_count = eina_list_append(cl->host_server->event_count, e);
     _ecore_con_cl_timer_update(cl);
     e->client = cl;
+    cl->delete_me = EINA_TRUE;
     ecore_event_add(ECORE_CON_EVENT_CLIENT_DEL, e,
                     (Ecore_End_Cb)_ecore_con_event_client_del_free, cl->host_server);
    _ecore_con_event_count++;
@@ -2395,7 +2397,7 @@ _ecore_con_event_client_del_free(Ecore_Con_Server *svr,
              if ((!svr->event_count) && (svr->delete_me))
                _ecore_con_server_free(svr);
           }
-        if ((!e->client->event_count) && (e->client->delete_me))
+        if (!e->client->event_count)
           ecore_con_client_del(e->client);
      }
    ecore_con_event_client_del_free(e);
@@ -2487,7 +2489,7 @@ _ecore_con_event_server_del_free(void *data __UNUSED__,
    if (e->server)
      {
         e->server->event_count = eina_list_remove(e->server->event_count, ev);
-        if ((!e->server->event_count) && (e->server->delete_me))
+        if (!e->server->event_count)
           _ecore_con_server_free(e->server);
      }
    ecore_con_event_server_del_free(e);
