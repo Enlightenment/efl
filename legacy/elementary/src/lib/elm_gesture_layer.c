@@ -1692,12 +1692,13 @@ get_vector(Evas_Coord x1, Evas_Coord y1, Evas_Coord x2, Evas_Coord y2,
 static int
 _get_direction(Evas_Coord x1, Evas_Coord x2)
 {
-   if (x1 == x2)
-     return 0;
-   else if (x2 < x1)
+   if (x2 < x1)
      return -1;
-   else
+
+   if (x2 > x1)
      return 1;
+
+   return 0;
 }
 /**
  * @internal
@@ -1813,16 +1814,16 @@ _momentum_test(Evas_Object *obj, Pointer_Event *pe,
          else
            {
               int xdir, ydir;
-              xdir = _get_direction(st->line_st.x, pe_local.x);
-              ydir = _get_direction(st->line_st.y, pe_local.y);
-              if (!xdir || (xdir == (-st->xdir)))
+              xdir = _get_direction(st->line_end.x, pe_local.x);
+              ydir = _get_direction(st->line_end.y, pe_local.y);
+              if (xdir != st->xdir)
                 {
                    st->line_st.x = st->line_end.x;
                    st->info.tx = st->t_st_x = st->t_end;
                    st->xdir = xdir;
                 }
 
-              if (!ydir || (ydir == (-st->ydir)))
+              if (ydir != st->ydir)
                 {
                    st->line_st.y = st->line_end.y;
                    st->info.ty = st->t_st_y = st->t_end;
