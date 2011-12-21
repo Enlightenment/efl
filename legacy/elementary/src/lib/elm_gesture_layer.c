@@ -6,6 +6,7 @@
 #define ELM_MOUSE_DEVICE 0
 /* ELM_GESTURE_NEGATIVE_ANGLE - magic number says we didn't compute this yet */
 #define ELM_GESTURE_NEGATIVE_ANGLE (-1.0) /* Magic number */
+#define ELM_GESTURE_MOMENTUM_DELAY 25
 #define ELM_GESTURE_MOMENTUM_TIMEOUT 50
 #define ELM_GESTURE_MULTI_TIMEOUT 50
 #define ELM_GESTURE_MINIMUM_MOMENTUM 0.001
@@ -2404,7 +2405,7 @@ _zoom_momentum_get(Zoom_Type *st, unsigned int tm_end, double zoom_val)
         return 0.0;
      }
 
-   if ((tm_end - ELM_GESTURE_MOMENTUM_TIMEOUT) < st->m_st_tm)
+   if ((tm_end - ELM_GESTURE_MOMENTUM_DELAY) < st->m_st_tm)
      return 0.0; /* we don't start to compute momentum yet */
 
    if (st->dir)
