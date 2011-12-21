@@ -104,6 +104,45 @@ static void _ecore_con_lookup_done(void           *data,
 
 static const char * _ecore_con_pretty_ip(struct sockaddr *client_addr);
 
+
+static void
+_ecore_con_client_kill(Ecore_Con_Client *cl)
+{
+   if (cl->delete_me)
+     DBG("Multi kill request for client %p", cl);
+   else
+     ecore_con_event_client_del(cl);
+   INF("Lost client %s", (cl->ip) ? cl->ip : "");
+   if (cl->fd_handler)
+     ecore_main_fd_handler_del(cl->fd_handler);
+
+   cl->fd_handler = NULL;
+}
+
+void
+_ecore_con_server_kill(Ecore_Con_Server *svr)
+{
+   if (svr->delete_me)
+     DBG("Multi kill request for svr %p", svr);
+   else
+     ecore_con_event_server_del(svr);
+
+   if (svr->fd_handler)
+     ecore_main_fd_handler_del(svr->fd_handler);
+
+   svr->fd_handler = NULL;
+}
+
+#define _ecore_con_server_kill(svr) do { \
+   DBG("KILL %p", (svr)); \
+   _ecore_con_server_kill((svr)); \
+} while (0)
+
+#define _ecore_con_client_kill(cl) do { \
+   DBG("KILL %p", (cl)); \
+   _ecore_con_client_kill((cl)); \
+} while (0)
+
 EAPI int ECORE_CON_EVENT_CLIENT_ADD = 0;
 EAPI int ECORE_CON_EVENT_CLIENT_DEL = 0;
 EAPI int ECORE_CON_EVENT_SERVER_ADD = 0;
@@ -1255,20 +1294,6 @@ _ecore_con_server_free(Ecore_Con_Server *svr)
 }
 
 static void
-_ecore_con_client_kill(Ecore_Con_Client *cl)
-{
-   if (cl->delete_me)
-     DBG("Multi kill request for client %p", cl);
-   else
-     ecore_con_event_client_del(cl);
-   INF("Lost client %s", (cl->ip) ? cl->ip : "");
-   if (cl->fd_handler)
-     ecore_main_fd_handler_del(cl->fd_handler);
-
-   cl->fd_handler = NULL;
-}
-
-static void
 _ecore_con_client_free(Ecore_Con_Client *cl)
 {
    double t_start, t;
@@ -1318,20 +1343,6 @@ _ecore_con_client_free(Ecore_Con_Client *cl)
    cl->data = NULL;
    free(cl);
    return;
-}
-
-void
-_ecore_con_server_kill(Ecore_Con_Server *svr)
-{
-   if (svr->delete_me)
-     DBG("Multi kill request for svr %p", svr);
-   else
-     ecore_con_event_server_del(svr);
-
-   if (svr->fd_handler)
-     ecore_main_fd_handler_del(svr->fd_handler);
-
-   svr->fd_handler = NULL;
 }
 
 static Eina_Bool

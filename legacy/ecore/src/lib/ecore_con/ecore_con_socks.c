@@ -47,6 +47,11 @@
 #include "Ecore_Con.h"
 #include "ecore_con_private.h"
 
+#define _ecore_con_server_kill(svr) do { \
+   DBG("KILL %p", (svr)); \
+   _ecore_con_server_kill((svr)); \
+} while (0)
+
 Eina_List *ecore_con_socks_proxies = NULL;
 
 static Ecore_Con_Socks *
