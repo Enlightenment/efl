@@ -1097,7 +1097,6 @@ ecore_con_url_proxy_set(Ecore_Con_Url *url_con, const char *proxy)
    (void)url_con;
    (void)proxy;
 #endif
-   return res;
 }
 
 EAPI void
