@@ -430,3 +430,6 @@
 
 	* Add XIM attribute support to Ecore_IMF
 
+2011-12-21 Tae-Hwan Kim (Bluezery)
+
+	* Add proxy set and timeout set functions in ecore_con.

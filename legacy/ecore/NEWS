@@ -11,6 +11,8 @@ Additions:
      - ecore_con_ssl_server_verify_name_set/get
      - ecore_con_ssl_server_cafile_add() now accepts directories
      - ECORE_CON_REMOTE_CORK
+     - ecore_con_url_proxy_set()
+     - ecore_con_url_timeout_set()
     * ecore_x:
      - ecore_x_randr_output_backlight_available()
 

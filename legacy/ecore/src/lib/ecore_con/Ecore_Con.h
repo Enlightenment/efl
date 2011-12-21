@@ -1845,6 +1845,39 @@ EAPI int               ecore_con_url_ssl_ca_set(Ecore_Con_Url *url_con,
                                                 const char *ca_path);
 
 /**
+ * Set HTTP proxy to use.
+ *
+ * The parameter should be a char * to a zero terminated string holding
+ * the host name or dotted IP address. To specify port number in this string,
+ * append :[port] to the end of the host name.
+ * The proxy string may be prefixed with [protocol]:// since any such prefix
+ * will be ignored.
+ * The proxy's port number may optionally be specified with the separate option.
+ * If not specified, libcurl will default to using port 1080 for proxies.
+ *
+ * @param url_con Connection object that will use the proxy.
+ * @param proxy Porxy string or @c NULL to disable
+ *
+ * @return #EINA_TRUE on success, #EINA_FALSE on error.
+ * @since 1.2
+ */
+EAPI Eina_Bool ecore_con_url_proxy_set(Ecore_Con_Url *url_con, const char *proxy);
+
+/**
+ * Set timeout in seconds.
+ *
+ * the maximum time in seconds that you allow the ecore con url transfer
+ * operation to take. Normally, name lookups can take a considerable time
+ * and limiting operations to less than a few minutes risk aborting perfectly
+ * normal operations.
+ *
+ * @param url_con Connection object that will use the timeout.
+ * @param timeout time in seconds.
+ * @since 1.2
+ */
+EAPI void ecore_con_url_timeout_set(Ecore_Con_Url *url_con, double timeout);
+
+/**
  * @}
  */
 

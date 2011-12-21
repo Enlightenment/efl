@@ -204,6 +204,8 @@ struct _Ecore_Con_Url
    Eina_List *response_headers;
    const char *url;
 
+   Ecore_Timer *timer;
+
    Ecore_Con_Url_Time time_condition;
    double timestamp;
    void *data;

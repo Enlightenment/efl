@@ -57,6 +57,7 @@ static void      _ecore_con_event_url_free(void *data __UNUSED__,
                                            void      *ev);
 static Eina_Bool _ecore_con_url_idler_handler(void *data);
 static Eina_Bool _ecore_con_url_fd_handler(void *data __UNUSED__, Ecore_Fd_Handler *fd_handler __UNUSED__);
+static Eina_Bool _ecore_con_url_timeout_cb(void *data);
 
 static Eina_List *_url_con_list = NULL;
 static Eina_List *_fd_hd_list = NULL;
@@ -294,12 +295,13 @@ ecore_con_url_free(Ecore_Con_Url *url_con)
           {
              ret = curl_multi_remove_handle(_curlm, url_con->curl_easy);
              if (ret != CURLM_OK) ERR("curl_multi_remove_handle failed: %s", curl_multi_strerror(ret));
+             _url_con_list = eina_list_remove(_url_con_list, url_con);
           }
 
         curl_easy_cleanup(url_con->curl_easy);
      }
+   if (url_con->timer) ecore_timer_del(url_con->timer);
 
-   _url_con_list = eina_list_remove(_url_con_list, url_con);
    curl_slist_free_all(url_con->headers);
    EINA_LIST_FREE(url_con->additional_headers, s)
      free(s);
@@ -1067,12 +1069,93 @@ ecore_con_url_ssl_ca_set(Ecore_Con_Url *url_con, const char *ca_path)
    return res;
 }
 
+EAPI Eina_Bool
+ecore_con_url_proxy_set(Ecore_Con_Url *url_con, const char *proxy)
+{
+#ifdef HAVE_CURL
+   int res = -1;
+   if (!ECORE_MAGIC_CHECK(url_con, ECORE_MAGIC_CON_URL))
+     {
+        ECORE_MAGIC_FAIL(url_con, ECORE_MAGIC_CON_URL, "ecore_con_url_proxy_set");
+        return EINA_FALSE;
+     }
+
+   if (eina_list_data_find(_url_con_list, url_con)) return EINA_FALSE;
+   if (!url_con->url) return EINA_FALSE;
+
+   if (proxy == NULL) res = curl_easy_setopt(url_con->curl_easy, CURLOPT_PROXY, "");
+   else               res = curl_easy_setopt(url_con->curl_easy, CURLOPT_PROXY, proxy);
+
+   if (res != CURLE_OK)
+     {
+        ERR("curl_easy_setopt() failed");
+        return EINA_FALSE;
+     }
+   return EINA_TRUE;
+#else
+   return EINA_FALSE;
+   (void)url_con;
+   (void)proxy;
+#endif
+   return res;
+}
+
+EAPI void
+ecore_con_url_timeout_set(Ecore_Con_Url *url_con, double timeout)
+{
+#ifdef HAVE_CURL
+   if (!ECORE_MAGIC_CHECK(url_con, ECORE_MAGIC_CON_URL))
+     {
+        ECORE_MAGIC_FAIL(url_con, ECORE_MAGIC_CON_URL, "ecore_con_url_timeout_set");
+        return;
+     }
+
+   if (eina_list_data_find(_url_con_list, url_con)) return;
+   if (!url_con->url || timeout < 0) return;
+   if (url_con->timer) ecore_timer_del(url_con->timer);
+   url_con->timer = ecore_timer_add(timeout, _ecore_con_url_timeout_cb, url_con);
+#else
+   return;
+   (void)url_con;
+   (void)timeout;
+#endif
+}
 
 /**
  * @}
  */
 
 #ifdef HAVE_CURL
+static Eina_Bool
+_ecore_con_url_timeout_cb(void *data)
+{
+   Ecore_Con_Url *url_con = data;
+   CURLMcode ret;
+   Ecore_Con_Event_Url_Complete *e;
+
+   if (!url_con) return ECORE_CALLBACK_CANCEL;
+   if (!url_con->curl_easy) return ECORE_CALLBACK_CANCEL;
+   if (!eina_list_data_find(_url_con_list, url_con)) return ECORE_CALLBACK_CANCEL;
+
+   ret = curl_multi_remove_handle(_curlm, url_con->curl_easy);
+   if (ret != CURLM_OK) ERR("curl_multi_remove_handle failed: %s", curl_multi_strerror(ret));
+   _url_con_list = eina_list_remove(_url_con_list, url_con);
+
+   curl_slist_free_all(url_con->headers);
+   url_con->headers = NULL;
+
+   url_con->timer = NULL;
+
+   e = calloc(1, sizeof(Ecore_Con_Event_Url_Complete));
+   if (e)
+     {
+        e->url_con = url_con;
+        e->status = 0;
+        ecore_event_add(ECORE_CON_EVENT_URL_COMPLETE, e, _ecore_con_event_url_free, NULL);
+     }
+   return ECORE_CALLBACK_CANCEL;
+}
+
 static size_t
 _ecore_con_url_data_cb(void  *buffer,
                        size_t size,

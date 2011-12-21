@@ -15,6 +15,7 @@
 #ifdef BUILD_ECORE_CON
 
 #define ECORE_MAGIC_FILE_DOWNLOAD_JOB 0xf7427cb8
+#define ECORE_FILE_DOWNLOAD_TIMEOUT 30
 
 struct _Ecore_File_Download_Job
 {
@@ -361,6 +362,7 @@ _ecore_file_download_curl(const char *url, const char *dst,
      }
 
    if (headers) eina_hash_foreach(headers, _ecore_file_download_headers_foreach_cb, job);
+   ecore_con_url_timeout_set(job->url_con, ECORE_FILE_DOWNLOAD_TIMEOUT);
    ecore_con_url_fd_set(job->url_con, fileno(job->file));
    ecore_con_url_data_set(job->url_con, data);
 
