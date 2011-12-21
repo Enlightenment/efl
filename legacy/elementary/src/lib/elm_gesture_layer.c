@@ -212,6 +212,7 @@ struct _Zoom_Type
    Evas_Coord zoom_base;  /* Holds gap between fingers on zoom-start  */
    Evas_Coord zoom_distance_tolerance;
    unsigned int m_st_tm;      /* momentum start time */
+   unsigned int m_prev_tm;    /* momentum prev time  */
    int dir;   /* Direction: 1=zoom-in, (-1)=zoom-out */
    double m_base; /* zoom value when momentum starts */
    double next_step;
@@ -2396,6 +2397,15 @@ static double
 _zoom_momentum_get(Zoom_Type *st, unsigned int tm_end, double zoom_val)
 {
    unsigned int tm_total;
+   if (!st->m_st_tm)
+     {  /* Init, and we don't start computing momentum yet */
+        st->m_st_tm = st->m_prev_tm = tm_end;
+        st->m_base = zoom_val;
+        return 0.0;
+     }
+
+   if ((tm_end - ELM_GESTURE_MOMENTUM_TIMEOUT) < st->m_st_tm)
+     return 0.0; /* we don't start to compute momentum yet */
 
    if (st->dir)
      {  /* if direction was already defined, check if changed */
@@ -2404,21 +2414,23 @@ _zoom_momentum_get(Zoom_Type *st, unsigned int tm_end, double zoom_val)
           {  /* Direction changed, reset momentum */
              st->m_st_tm = 0;
              st->dir = (-st->dir);
+             return 0.0;
           }
      }
    else
      st->dir = (zoom_val > st->info.zoom) ? 1 : -1;  /* init */
 
-   if (!st->m_st_tm)
+   if ((tm_end - ELM_GESTURE_MOMENTUM_TIMEOUT) > st->m_prev_tm)
      {
-        st->m_st_tm = tm_end;
-        st->m_base = zoom_val;
+        st->m_st_tm = 0; /* Rest momentum when waiting too long */
+        return 0.0;
      }
 
+   st->m_prev_tm = tm_end;
    tm_total = tm_end - st->m_st_tm;
 
    if (tm_total)
-     return (((zoom_val / st->m_base) - 1.0)  * 1000) / tm_total;
+     return ((zoom_val - st->m_base)  * 1000) / tm_total;
    else
      return 0.0;
 }
@@ -2722,10 +2734,10 @@ _zoom_test(Evas_Object *obj, Pointer_Event *pe, void *event_info,
                 memcpy(&st->zoom_mv1, pe, sizeof(Pointer_Event));
 
               /* Compute change in zoom as fingers move */
-                st->info.zoom = compute_zoom(st,
-                      st->zoom_mv.x, st->zoom_mv.y,
-                      st->zoom_mv1.x, st->zoom_mv1.y,
-                      wd->zoom_finger_factor);
+              st->info.zoom = compute_zoom(st,
+                    st->zoom_mv.x, st->zoom_mv.y,
+                    st->zoom_mv1.x, st->zoom_mv1.y,
+                    wd->zoom_finger_factor);
 
               if (!st->zoom_distance_tolerance)
                 {  /* Zoom broke tolerance, report move */
@@ -2810,7 +2822,7 @@ _get_rotate_properties(Rotate_Type *st,
                {  /* We circle passing ZERO point */
                   prev_angle = (*angle);
                }
-             else m = (*angle) - prev_angle;
+             else m = prev_angle - (*angle);
 
              st->accum_momentum += m;
 
