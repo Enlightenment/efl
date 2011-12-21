@@ -75,6 +75,7 @@ void test_genlist11(void *data, Evas_Object *obj, void *event_info);
 void test_genlist12(void *data, Evas_Object *obj, void *event_info);
 void test_gesture_layer(void *data, Evas_Object *obj, void *event_info);
 void test_gesture_layer2(void *data, Evas_Object *obj, void *event_info);
+void test_gesture_layer3(void *data, Evas_Object *obj, void *event_info);
 void test_table(void *data, Evas_Object *obj, void *event_info);
 void test_table2(void *data, Evas_Object *obj, void *event_info);
 void test_table3(void *data, Evas_Object *obj, void *event_info);
@@ -414,6 +415,7 @@ add_tests:
    //------------------------------//
    ADD_TEST(NULL, "Input", "Gesture Layer", test_gesture_layer);
    ADD_TEST(NULL, "Input", "Gesture Layer 2", test_gesture_layer2);
+   ADD_TEST(NULL, "Input", "Gesture Layer 3", test_gesture_layer3);
    ADD_TEST(NULL, "Input", "Multi Touch", test_multi);
 
    //------------------------------//
