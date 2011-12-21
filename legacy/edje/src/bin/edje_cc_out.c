@@ -1376,7 +1376,7 @@ data_queue_group_lookup(const char *name, Edje_Part *part)
 {
    Group_Lookup *gl;
 
-   if (!name || strlen(name) == 0) return ;
+   if (!name || !name[0]) return;
 
    gl = mem_alloc(SZ(Group_Lookup));
    group_lookups = eina_list_append(group_lookups, gl);
