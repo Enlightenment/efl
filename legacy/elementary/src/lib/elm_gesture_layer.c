@@ -208,8 +208,9 @@ struct _Zoom_Type
    Evas_Event_Mouse_Wheel *zoom_wheel;
    Evas_Coord zoom_base;  /* Holds gap between fingers on zoom-start  */
    Evas_Coord zoom_distance_tolerance;
-   Elm_Gesture_Momentum_Info momentum1;      /* For continues gesture */
-   Elm_Gesture_Momentum_Info momentum2;      /* For continues gesture */
+   unsigned int m_st_tm;      /* momentum start time */
+   int dir;   /* Direction: 1=zoom-in, (-1)=zoom-out */
+   double m_base; /* zoom value when momentum starts */
    double next_step;
 };
 typedef struct _Zoom_Type Zoom_Type;
@@ -223,8 +224,6 @@ struct _Rotate_Type
    Pointer_Event rotate_mv1;
    double rotate_angular_tolerance;
    double next_step;
-   Elm_Gesture_Momentum_Info momentum1;      /* For continues gesture */
-   Elm_Gesture_Momentum_Info momentum2;      /* For continues gesture */
 };
 typedef struct _Rotate_Type Rotate_Type;
 
@@ -2361,6 +2360,50 @@ get_finger_gap_length(Evas_Coord x1, Evas_Coord y1, Evas_Coord x2,
  * This function is used for computing zoom value.
  *
  * @param st Pointer to zoom data based on user input.
+ * @param tm_end Recent input event timestamp.
+ * @param zoom_val Current computed zoom value.
+ *
+ * @return zoom momentum
+ *
+ * @ingroup Elm_Gesture_Layer
+ */
+static double
+_zoom_momentum_get(Zoom_Type *st, unsigned int tm_end, double zoom_val)
+{
+   unsigned int tm_total;
+
+   if (st->dir)
+     {  /* if direction was already defined, check if changed */
+        if (((st->dir < 0) && (zoom_val > st->info.zoom)) ||
+              ((st->dir > 0) && (zoom_val < st->info.zoom)))
+          {  /* Direction changed, reset momentum */
+             st->m_st_tm = 0;
+             st->dir = (-st->dir);
+          }
+     }
+   else
+     st->dir = (zoom_val > st->info.zoom) ? 1 : -1;  /* init */
+
+   if (!st->m_st_tm)
+     {
+        st->m_st_tm = tm_end;
+        st->m_base = zoom_val;
+     }
+
+   tm_total = tm_end - st->m_st_tm;
+
+   if (tm_total)
+     return (((zoom_val / st->m_base) - 1.0)  * 1000) / tm_total;
+   else
+     return 0.0;
+}
+
+/**
+ * @internal
+ *
+ * This function is used for computing zoom value.
+ *
+ * @param st Pointer to zoom data based on user input.
  * @param x1 first finger x location.
  * @param y1 first finger y location.
  * @param x2 second finger x location.
@@ -2372,10 +2415,13 @@ get_finger_gap_length(Evas_Coord x1, Evas_Coord y1, Evas_Coord x2,
  * @ingroup Elm_Gesture_Layer
  */
 static double
-compute_zoom(Zoom_Type *st, Evas_Coord x1, Evas_Coord y1, unsigned int tm1,
-      Evas_Coord x2, Evas_Coord y2, unsigned int tm2, double zoom_finger_factor)
+compute_zoom(Zoom_Type *st, Evas_Coord x1, Evas_Coord y1,
+      Evas_Coord x2, Evas_Coord y2, double zoom_finger_factor)
 {
    double rt = 1.0;
+   unsigned int tm_end = (st->zoom_mv.timestamp > st->zoom_mv1.timestamp) ?
+      st->zoom_mv.timestamp : st->zoom_mv1.timestamp;
+
    Evas_Coord diam = get_finger_gap_length(x1, y1, x2, y2,
          &st->info.x, &st->info.y);
 
@@ -2409,13 +2455,9 @@ compute_zoom(Zoom_Type *st, Evas_Coord x1, Evas_Coord y1, unsigned int tm1,
    rt = ((1.0) + ((((float) diam - (float) st->zoom_base) /
                (float) st->zoom_base) * zoom_finger_factor));
 
-#if 0
-   /* Momentum: zoom per second: (NOT YET SUPPORTED) */
-   st->info.momentum = (((rt - 1.0) * 1000) / (tm2 - tm1));
-#else
-   (void) tm1;
-   (void) tm2;
-#endif
+   /* Momentum: zoom per second: */
+   st->info.momentum = _zoom_momentum_get(st, tm_end, rt);
+
    return rt;
 }
 
@@ -2495,7 +2537,7 @@ _zoom_with_wheel_test(Evas_Object *obj, void *event_info,
 
               /* Using mouse wheel with CTRL for zoom */
               if (st->zoom_wheel || (st->zoom_distance_tolerance == 0))
-                {  /* when (zoom_wheel == NULL) and (zoom_distance_tolerance == 0)
+                {  /* (zoom_wheel == NULL) and (zoom_distance_tolerance == 0)
                       we continue a zoom gesture */
                    force = EINA_TRUE;
                    s = ELM_GESTURE_STATE_MOVE;
@@ -2525,6 +2567,9 @@ _zoom_with_wheel_test(Evas_Object *obj, void *event_info,
 
               if (st->info.zoom < 0.0)
                 st->info.zoom = 0.0;
+
+              st->info.momentum = _zoom_momentum_get(st,
+                    st->zoom_wheel->timestamp, st->info.zoom);
 
               ev_flag = _set_state(gesture_zoom, s, &st->info, force);
               consume_event(wd, event_info, event_type, ev_flag);
@@ -2650,8 +2695,8 @@ _zoom_test(Evas_Object *obj, Pointer_Event *pe, void *event_info,
 
               /* Compute change in zoom as fingers move */
                 st->info.zoom = compute_zoom(st,
-                      st->zoom_mv.x, st->zoom_mv.y, st->zoom_mv.timestamp,
-                      st->zoom_mv1.x, st->zoom_mv1.y, st->zoom_mv1.timestamp,
+                      st->zoom_mv.x, st->zoom_mv.y,
+                      st->zoom_mv1.x, st->zoom_mv1.y,
                       wd->zoom_finger_factor);
 
               if (!st->zoom_distance_tolerance)
