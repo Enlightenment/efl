@@ -105,10 +105,10 @@ collections {
            if ((type == MSG_INT_SET) && (id == MSG_COLOR)) {
                new r, g, b, a;
 
-               r = getarg(3);
-               g = getarg(4);
-               b = getarg(5);
-               a = getarg(6);
+               r = getarg(2);
+               g = getarg(3);
+               b = getarg(4);
+               a = getarg(5);
 
                set_color_class("cc", r, g, b, a);
            }
