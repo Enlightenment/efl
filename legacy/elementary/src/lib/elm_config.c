@@ -889,11 +889,11 @@ _config_load(void)
    _elm_config->is_mirrored = EINA_FALSE; /* Read sys value in env_get() */
    _elm_config->password_show_last = EINA_FALSE;
    _elm_config->password_show_last_timeout = 2.0;
-   _elm_config->glayer_zoom_finger_enable = EINA_FALSE;
+   _elm_config->glayer_zoom_finger_enable = EINA_TRUE;
    _elm_config->glayer_zoom_finger_factor = 1.0;
    _elm_config->glayer_zoom_wheel_factor = 0.05;
    _elm_config->glayer_zoom_distance_tolerance = 1.0; /* 1 times elm_finger_size_get() */
-   _elm_config->glayer_rotate_finger_enable = EINA_FALSE;
+   _elm_config->glayer_rotate_finger_enable = EINA_TRUE;
    _elm_config->glayer_rotate_angular_tolerance = 2.0; /* 2 DEG */
    _elm_config->glayer_line_min_length = 1.0;         /* 1 times elm_finger_size_get() */
    _elm_config->glayer_line_distance_tolerance = 3.0; /* 3 times elm_finger_size_get() */
