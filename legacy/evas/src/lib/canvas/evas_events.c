@@ -72,8 +72,11 @@ _evas_event_object_list_in_get(Evas *e, Eina_List *in,
                     }
                   if (norep)
                     {
-                       if (!obj->repeat_events) *no_rep = 1;
-                       return in;
+                       if (!obj->repeat_events)
+                         {
+                            *no_rep = 1;
+                            return in;
+                         }
                     }
                }
              else

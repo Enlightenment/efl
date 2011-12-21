@@ -573,3 +573,8 @@
         * Add new canvas events called just before and after evas rendering
         starts and stops.
 
+2011-12-21  ChunEon Park (Hermet)
+
+	* Events: repeat events should not be affected by children.
+	Fixed to object passes events to the next object in the same layer
+	if the repeat_events is enabled.
