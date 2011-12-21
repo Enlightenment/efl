@@ -2507,6 +2507,9 @@ _zoom_with_wheel_test(Evas_Object *obj, void *event_info,
                          ((gesture_zoom->state == ELM_GESTURE_STATE_START) ||
                           (gesture_zoom->state == ELM_GESTURE_STATE_MOVE)))
                      {  /* User released CTRL after zooming */
+                        st->info.momentum = _zoom_momentum_get(st,
+                              p->timestamp, st->info.zoom);
+
                         ev_flag = _set_state(gesture_zoom,
                               ELM_GESTURE_STATE_END, &st->info, EINA_FALSE);
                         consume_event(wd, event_info, event_type, ev_flag);
