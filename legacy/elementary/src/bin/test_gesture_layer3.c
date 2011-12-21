@@ -316,7 +316,7 @@ zoom_end(void *_po, void *event_info)
          p->zoom, p->momentum);
 
    /* Apply the zoom-momentum or zoom out animator */
-   po->zoom_dx = p->zoom / (zoom_momentum_animation_duration * 1000);
+   po->zoom_dx = p->momentum / (zoom_momentum_animation_duration * 1000);
    if (po->zoom_dx)
      {
         po->zoom_momentum = elm_transit_add();
