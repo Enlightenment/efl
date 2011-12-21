@@ -37,8 +37,44 @@ _print_current_dir(Evas_Object *obj)
      }
 }
 
+static Eina_Bool
+_ctxpopup_raise_timer_cb(void *data)
+{
+   printf("Timer Called\n");
+   Evas_Object *ctxpopup = (Evas_Object *) data;
+   evas_object_raise(ctxpopup);
+   return EINA_FALSE;
+}
+
 static void
-_ctxpopup_item_cb(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info)
+_btn_clicked(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+{
+   printf("Button Clicked\n");
+   Evas_Object *ctxpopup = (Evas_Object *) data;
+   Evas_Object *lb = elm_label_add(ctxpopup);
+   elm_label_line_wrap_set(lb, ELM_WRAP_CHAR);
+   elm_object_text_set(lb,
+                       "<b>"
+                       "This is more text designed to line-wrap here as "
+                       "This object is resized horizontally. As it is "
+                       "resized vertically though, nothing should change. "
+                       "The amount of space allocated vertically should "
+                       "change as horizontal size changes."
+                       "This is more text designed to line-wrap here as "
+                       "This object is resized horizontally. As it is "
+                       "resized vertically though, nothing should change. "
+                       "The amount of space allocated vertically should "
+                       "change as horizontal size changes."
+                       "</b>"
+                       );
+   evas_object_resize(lb, 200, 400);
+   evas_object_show(lb);
+
+   ecore_timer_add(1.5, _ctxpopup_raise_timer_cb, ctxpopup);
+}
+
+static void
+_ctxpopup_item_cb(void *data , Evas_Object *obj __UNUSED__, void *event_info)
 {
    printf("ctxpopup item selected: %s\n",
    elm_object_item_text_get(event_info));
@@ -204,6 +240,8 @@ _list_item_cb5(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_i
    evas_object_move(ctxpopup, x, y);
    evas_object_show(ctxpopup);
    _print_current_dir(ctxpopup);
+
+   evas_object_smart_callback_add(btn, "clicked", _btn_clicked, ctxpopup);
 }
 
 

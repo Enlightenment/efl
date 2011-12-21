@@ -119,6 +119,7 @@ static void _ctxpopup_move(void *data,
                            Evas *e,
                            Evas_Object *obj,
                            void *event_info);
+static void _restack(void *data, Evas *e, Evas_Object *obj, void *event_info);
 static void _item_select_cb(void *data, Evas_Object *obj,
                             const char *emission,
                             const char *source);
@@ -1103,6 +1104,17 @@ _ctxpopup_move(void *data __UNUSED__, Evas *e __UNUSED__, Evas_Object *obj,
 }
 
 static void
+_restack(void *data __UNUSED__, Evas *e __UNUSED__, Evas_Object *obj, void *event_info __UNUSED__)
+{
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return;
+   evas_object_layer_set(wd->bg,
+                         evas_object_layer_get(obj));
+   evas_object_layer_set(wd->base,
+                         evas_object_layer_get(obj));
+}
+
+static void
 _item_select_cb(void *data, Evas_Object *obj __UNUSED__,
                 const char *emission __UNUSED__, const char *source __UNUSED__)
 {
@@ -1272,6 +1284,7 @@ elm_ctxpopup_add(Evas_Object *parent)
                                   NULL);
    evas_object_event_callback_add(obj, EVAS_CALLBACK_MOVE, _ctxpopup_move,
                                   NULL);
+   evas_object_event_callback_add(obj, EVAS_CALLBACK_RESTACK, _restack, obj);
    evas_object_smart_callback_add(obj, "scroll-freeze-on", _freeze_on, obj);
    evas_object_smart_callback_add(obj, "scroll-freeze-off", _freeze_off, obj);
    evas_object_smart_callback_add(obj, "scroll-hold-on", _hold_on, obj);
