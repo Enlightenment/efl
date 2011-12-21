@@ -1605,7 +1605,9 @@ _set_momentum(Elm_Gesture_Momentum_Info *momentum, Evas_Coord x1, Evas_Coord y1,
  * @param x2 second finger x location.
  * @param y2 second finger y location.
  *
- * @return angle of the line between (x1,y1), (x2,y2) in Radians.
+ * @return angle of the line between (x1,y1), (x2,y2) in Deg.
+ * Angles now are given in DEG, not RAD.
+ * ZERO angle at 12-oclock, growing clockwise.
  *
  * @ingroup Elm_Gesture_Layer
  */
