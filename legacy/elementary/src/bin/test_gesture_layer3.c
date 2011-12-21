@@ -7,6 +7,7 @@
 /* We zoom out to this value so we'll be able to use map and have a nice
  * resolution when zooming in. */
 #define BASE_ZOOM 0.8
+#define MIN_ZOOM 0.4
 /* The amount of zoom to do when "lifting" objects. */
 #define LIFT_FACTOR 1.3
 /* The base size of the shadow image. */
@@ -15,10 +16,6 @@
 //#define RAD2DEG(x) ((x) * 57.295779513)
 
 #define MOMENTUM_FRICTION 2000
-#define ROTATE_MOMENTUM_FRICTION 30
-#define ZOOM_MOMENTUM_FRICTION 8
-#define TIMER_TICK 0.1
-
 #define ROTATE_MOMENTUM_FRICTION 30
 #define ZOOM_MOMENTUM_FRICTION 8
 #define TIMER_TICK 0.1
@@ -46,8 +43,9 @@ struct _Photo_Object {
       * per gesture, we have to keep the current rotate/zoom factor and the
       * one that was before we started the gesture. */
      int base_rotate, rotate;  /* base - initial angle */
-     double rot_momentum;
-     double base_zoom, zoom, zoom_dx;  /* zoom_dx used for zoom-momentum */
+     double rot_momentum, zoom_mom;
+     double zoom_mom_time;
+     double base_zoom, zoom;
      double shadow_zoom;
 };
 typedef struct _Photo_Object Photo_Object;
@@ -132,10 +130,26 @@ apply_changes(Photo_Object *po)
 /* Zoom momentum animation */
 static void
 zoom_momentum_animation_operation(void *_po, Elm_Transit *transit __UNUSED__,
-      double progress __UNUSED__)
+      double progress)
 {
    Photo_Object *po = (Photo_Object *) _po;
-   po->zoom += po->zoom_dx;
+   double time_prog = po->zoom_mom_time * progress;
+   double zoom_fric = ZOOM_MOMENTUM_FRICTION;
+
+   if (po->zoom_mom > 0)
+     zoom_fric *= -1;
+
+   /* Current = rot0 + (rotv0 * t) + (a * t^2 / 2) */
+   po->zoom = po->base_zoom +
+      ((po->zoom_mom * time_prog) +
+      (zoom_fric * (time_prog * time_prog) / 2));
+   printf("%f = %f + (%f + %f)\n", po->zoom, po->base_zoom,
+         (po->zoom_mom * time_prog),
+         (zoom_fric * (time_prog * time_prog) / 2));
+
+   if (po->zoom < MIN_ZOOM)
+     po->zoom = MIN_ZOOM;
+
    apply_changes(po);
 }
 
@@ -143,6 +157,7 @@ static void
 zoom_momentum_animation_end(void *_po, Elm_Transit *transit __UNUSED__)
 {
    Photo_Object *po = (Photo_Object *) _po;
+   po->base_zoom = po->zoom;
    po->zoom_momentum = NULL;
 }
 
@@ -337,8 +352,10 @@ zoom_end(void *_po, void *event_info)
 
    /* Apply the zoom-momentum or zoom out animator */
    double tot_time = fabs(p->momentum) / ZOOM_MOMENTUM_FRICTION;
-   po->zoom_dx = (p->momentum * tot_time + (ZOOM_MOMENTUM_FRICTION * tot_time * tot_time) / 2) - po->base_zoom;
-   if (po->zoom_dx)
+   po->zoom_mom_time = tot_time;
+   po->zoom_mom = p->momentum;
+   po->base_zoom = po->zoom;
+   if (po->zoom_mom)
      {
         po->zoom_momentum = elm_transit_add();
         elm_transit_duration_set(po->zoom_momentum,
@@ -349,7 +366,6 @@ zoom_end(void *_po, void *event_info)
         elm_transit_go(po->zoom_momentum);
      }
 
-   po->base_zoom  = po->zoom;
    return EVAS_EVENT_FLAG_NONE;
 }
 
@@ -488,7 +504,6 @@ photo_object_add(Evas_Object *parent, Evas_Object *ic, const char *icon,
    elm_gesture_layer_attach(po->gl, po->hit);
 
    /* FIXME: Add a po->rotate start so we take the first angle!!!! */
-   /*
    elm_gesture_layer_cb_set(po->gl, ELM_GESTURE_MOMENTUM,
          ELM_GESTURE_STATE_START, momentum_start, po);
    elm_gesture_layer_cb_set(po->gl, ELM_GESTURE_MOMENTUM,
@@ -497,7 +512,7 @@ photo_object_add(Evas_Object *parent, Evas_Object *ic, const char *icon,
          ELM_GESTURE_STATE_END, momentum_end, po);
    elm_gesture_layer_cb_set(po->gl, ELM_GESTURE_MOMENTUM,
          ELM_GESTURE_STATE_ABORT, momentum_abort, po);
-*/
+
    elm_gesture_layer_cb_set(po->gl, ELM_GESTURE_ZOOM,
          ELM_GESTURE_STATE_START, zoom_start, po);
    elm_gesture_layer_cb_set(po->gl, ELM_GESTURE_ZOOM,
@@ -506,7 +521,7 @@ photo_object_add(Evas_Object *parent, Evas_Object *ic, const char *icon,
          ELM_GESTURE_STATE_END, zoom_end, po);
    elm_gesture_layer_cb_set(po->gl, ELM_GESTURE_ZOOM,
          ELM_GESTURE_STATE_ABORT, zoom_end, po);
-/*
+
    elm_gesture_layer_cb_set(po->gl, ELM_GESTURE_ROTATE,
          ELM_GESTURE_STATE_START, rotate_start, po);
    elm_gesture_layer_cb_set(po->gl, ELM_GESTURE_ROTATE,
@@ -515,7 +530,7 @@ photo_object_add(Evas_Object *parent, Evas_Object *ic, const char *icon,
          ELM_GESTURE_STATE_END, rotate_end, po);
    elm_gesture_layer_cb_set(po->gl, ELM_GESTURE_ROTATE,
          ELM_GESTURE_STATE_ABORT, rotate_abort, po);
-*/
+
    po->rotate = po->base_rotate = angle;
    po->shadow_zoom = 1.3;
 
