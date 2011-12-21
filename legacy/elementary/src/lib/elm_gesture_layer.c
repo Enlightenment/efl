@@ -222,6 +222,9 @@ struct _Rotate_Type
    Pointer_Event rotate_mv;
    Pointer_Event rotate_st1;
    Pointer_Event rotate_mv1;
+   unsigned int prev_momentum_tm; /* timestamp of prev_momentum */
+   double prev_momentum;   /* Snapshot of momentum 0.01 sec ago */
+   double accum_momentum;
    double rotate_angular_tolerance;
    double next_step;
 };
@@ -2753,26 +2756,54 @@ _zoom_test(Evas_Object *obj, Pointer_Event *pe, void *event_info,
 
 static void
 _get_rotate_properties(Rotate_Type *st,
-      Evas_Coord x1, Evas_Coord y1, unsigned int tm1,
-      Evas_Coord x2, Evas_Coord y2, unsigned int tm2,
+      Evas_Coord x1, Evas_Coord y1,
+      Evas_Coord x2, Evas_Coord y2,
       double *angle)
 {
+   double prev_angle = *angle;
    st->info.radius = get_finger_gap_length(x1, y1, x2, y2,
          &st->info.x, &st->info.y) / 2;
 
    *angle = get_angle(x1, y1, x2, y2);
-#if 0 /* (NOT YET SUPPORTED) */
+
    if (angle == &st->info.angle)
-     {  /* Compute momentum: TODO: bug when breaking 0, 360 values */
-        st->info.momentum = (((*angle) - st->info.base_angle) /
-           (fabs(tm2 - tm1))) * 1000;
+     {  /* Fingers are moving, compute momentum */
+        unsigned int tm_start =
+           (st->rotate_st.timestamp > st->rotate_st1.timestamp)
+           ?  st->rotate_st.timestamp : st->rotate_st1.timestamp;
+        unsigned int tm_end =
+           (st->rotate_mv.timestamp > st->rotate_mv1.timestamp)
+           ? st->rotate_mv.timestamp : st->rotate_mv1.timestamp;
+
+        unsigned int tm_total = tm_end - tm_start;
+        if (tm_total)
+          {  /* Momentum computed as:
+                accumulated roation angle (rad) divided by time */
+             double m;
+             if ((prev_angle >= RAD_270DEG) && ((*angle) < RAD_180DEG))
+               {  /* We circle passing ZERO point */
+                  m = (RAD_360DEG - prev_angle) + (*angle);
+               }
+             else m = (*angle) - prev_angle;
+
+             st->accum_momentum += m;
+
+             if ((tm_end - st->prev_momentum_tm) < 100)
+               st->prev_momentum += m;
+             else
+               {
+                  if (fabs(st->prev_momentum) < 0.002)
+                    st->accum_momentum = 0.0;  /* reset momentum */
+
+                  st->prev_momentum = 0.0;     /* Start again    */
+                  st->prev_momentum_tm = tm_end;
+               }
+
+             st->info.momentum = (st->accum_momentum * 1000) / tm_total;
+          }
      }
    else
      st->info.momentum = 0;
-#else
-   (void) tm1;
-   (void) tm2;
-#endif
 }
 
 /**
@@ -2864,9 +2895,8 @@ _rotate_test(Evas_Object *obj, Pointer_Event *pe, void *event_info,
                    /* Compute length of line between fingers rotate start */
                    _get_rotate_properties(st,
                          st->rotate_st.x, st->rotate_st.y,
-                         st->rotate_st.timestamp,
                          st->rotate_st1.x, st->rotate_st1.y,
-                         st->rotate_st1.timestamp, &st->info.base_angle);
+                         &st->info.base_angle);
 
                    ev_flag = _set_state(gesture, ELM_GESTURE_STATE_START,
                          &st->info, EINA_FALSE);
@@ -2887,9 +2917,8 @@ _rotate_test(Evas_Object *obj, Pointer_Event *pe, void *event_info,
               /* Compute change in rotate as fingers move */
               _get_rotate_properties(st,
                     st->rotate_mv.x, st->rotate_mv.y,
-                    st->rotate_mv.timestamp,
                     st->rotate_mv1.x, st->rotate_mv1.y,
-                    st->rotate_mv1.timestamp, &st->info.angle);
+                    &st->info.angle);
 
               if (rotation_broke_tolerance(st))
                 {  /* Rotation broke tolerance, report move */
