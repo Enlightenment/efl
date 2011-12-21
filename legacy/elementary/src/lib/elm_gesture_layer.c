@@ -17,6 +17,9 @@
 #define RAD_360DEG (M_PI * 2)
 /* #define DEBUG_GESTURE_LAYER 1 */
 
+#define RAD2DEG(x) ((x) * 57.295779513)
+#define DEG2RAD(x) ((x) / 57.295779513)
+
 static void *
 _glayer_bufdup(void *buf, size_t size)
 {
@@ -1609,58 +1612,74 @@ _set_momentum(Elm_Gesture_Momentum_Info *momentum, Evas_Coord x1, Evas_Coord y1,
 static double
 get_angle(Evas_Coord x1, Evas_Coord y1, Evas_Coord x2, Evas_Coord y2)
 {
-   double a, xx, yy;
+   double a, xx, yy, rt = (-1);
    xx = fabs(x2 - x1);
    yy = fabs(y2 - y1);
 
    if (((int) xx) && ((int) yy))
      {
-        a = atan(yy / xx);
+        rt = a = RAD2DEG(atan(yy / xx));
         if (x1 < x2)
           {
              if (y1 < y2)
                {
-                  return RAD_360DEG - a;
+                  rt = 360 - a;
                }
              else
                {
-                  return (a);
+                  rt = (a);
                }
           }
         else
           {
              if (y1 < y2)
                {
-                  return RAD_180DEG + a;
+                  rt = 180 + a;
                }
              else
                {
-                  return RAD_180DEG - a;
+                  rt = 180 - a;
                }
           }
      }
 
-   if (((int) xx))
-     {  /* Horizontal line */
-        if (x2 < x1)
-          {
-             return RAD_180DEG;
+   if (rt < 0)
+     {  /* Do this only if rt is not set */
+        if (((int) xx))
+          {  /* Horizontal line */
+             if (x2 < x1)
+               {
+                  rt = 180;
+               }
+             else
+               {
+                  rt = 0.0;
+               }
           }
         else
-          {
-             return 0.0;
+          {  /* Vertical line */
+             if (y2 < y1)
+               {
+                  rt = 90;
+               }
+             else
+               {
+                  rt = 270;
+               }
           }
      }
 
-   /* Vertical line */
-   if (y2 < y1)
-     {
-        return RAD_90DEG;
-     }
-   else
-     {
-        return RAD_270DEG;
-     }
+   /* Now we want to change from:
+    *                      90                   0
+    * original circle   180   0   We want:  270   90
+    *                     270                 180
+    */
+
+   rt = 450 - rt;
+   if (rt >= 360)
+     rt -= 360;
+
+   return rt;
 }
 
 /**
@@ -2049,9 +2068,9 @@ _n_line_test(Evas_Object *obj, Pointer_Event *pe, void *event_info,
           {  /* if line direction was set, we test if broke tolerance */
              double a = fabs(angle - line->line_angle);
 
-             double d = (tan(a)) * line->line_length; /* Distance from line */
+             double d = (tan(DEG2RAD(a))) * line->line_length; /* Distance from line */
 #if defined(DEBUG_GESTURE_LAYER)
-             printf("%s a=<%f> d=<%f>\n", __func__, (a * 57.295779513), d);
+             printf("%s a=<%f> d=<%f>\n", __func__, a, d);
 #endif
              if ((d > wd->line_distance_tolerance) || (a > wd->line_angular_tolerance))
                {  /* Broke tolerance: abort line and start a new one */
@@ -2252,24 +2271,24 @@ rotation_broke_tolerance(Rotate_Type *st)
 
    if (low < 0)
      {
-        low += RAD_180DEG;
-        high += RAD_180DEG;
+        low += 180;
+        high += 180;
 
-        if (t < RAD_180DEG)
-          t += RAD_180DEG;
+        if (t < 180)
+          t += 180;
         else
-          t -= RAD_180DEG;
+          t -= 180;
      }
 
-   if (high > RAD_360DEG)
+   if (high > 360)
      {
-        low -= RAD_180DEG;
-        high -= RAD_180DEG;
+        low -= 180;
+        high -= 180;
 
-        if (t < RAD_180DEG)
-          t += RAD_180DEG;
+        if (t < 180)
+          t += 180;
         else
-          t -= RAD_180DEG;
+          t -= 180;
      }
 
 #if defined(DEBUG_GESTURE_LAYER)
@@ -2763,7 +2782,7 @@ _get_rotate_properties(Rotate_Type *st,
       Evas_Coord x1, Evas_Coord y1,
       Evas_Coord x2, Evas_Coord y2,
       double *angle)
-{
+{  /* FIXME: Fix momentum computation, it's wrong */
    double prev_angle = *angle;
    st->info.radius = get_finger_gap_length(x1, y1, x2, y2,
          &st->info.x, &st->info.y) / 2;
@@ -2782,10 +2801,10 @@ _get_rotate_properties(Rotate_Type *st,
         unsigned int tm_total = tm_end - tm_start;
         if (tm_total)
           {  /* Momentum computed as:
-                accumulated roation angle (rad) divided by time */
+                accumulated roation angle (deg) divided by time */
              double m = 0;;
-             if (((prev_angle < RAD_90DEG) && ((*angle) > RAD_270DEG)) ||
-                   ((prev_angle > RAD_270DEG) && ((*angle) < RAD_90DEG)))
+             if (((prev_angle < 90) && ((*angle) > 270)) ||
+                   ((prev_angle > 270) && ((*angle) < 90)))
                {  /* We circle passing ZERO point */
                   prev_angle = (*angle);
                }
