@@ -187,7 +187,7 @@ ecore_con_shutdown(void)
      {
         Ecore_Con_Event_Server_Add *ev;
 
-        svr->delete_me = svr->dead = EINA_TRUE;
+        svr->delete_me = EINA_TRUE;
         INF("svr %p is dead", svr);
         /* some pointer hacks here to prevent double frees if people are being stupid */
         EINA_LIST_FREE(svr->event_count, ev)
@@ -626,7 +626,7 @@ ecore_con_server_send(Ecore_Con_Server *svr,
         return 0;
      }
 
-   EINA_SAFETY_ON_TRUE_RETURN_VAL(svr->dead, 0);
+   EINA_SAFETY_ON_TRUE_RETURN_VAL(svr->delete_me, 0);
 
    EINA_SAFETY_ON_NULL_RETURN_VAL(data, 0);
 
@@ -734,7 +734,7 @@ ecore_con_client_send(Ecore_Con_Client *cl,
         return 0;
      }
 
-   EINA_SAFETY_ON_TRUE_RETURN_VAL(cl->dead, 0);
+   EINA_SAFETY_ON_TRUE_RETURN_VAL(cl->delete_me, 0);
 
    EINA_SAFETY_ON_NULL_RETURN_VAL(data, 0);
 
@@ -788,7 +788,7 @@ ecore_con_client_connected_get(Ecore_Con_Client *cl)
         return EINA_FALSE;
      }
 
-   return !cl->dead;
+   return !cl->delete_me;
 }
 
 EAPI void
@@ -1188,21 +1188,9 @@ _ecore_con_server_free(Ecore_Con_Server *svr)
         ecore_con_info_data_clear(svr->infos->data);
         svr->infos = eina_list_remove_list(svr->infos, svr->infos);
      }
-   if ((!svr->buf) && svr->delete_me && (!svr->dead) && (!svr->event_count))
-     {
-        /* this is a catch-all for cases when a server is not properly killed. */
-        CRIT("THIS SHOULD NOT BE REACHED! PLEASE SEND A FULL BT!");
-        abort();
-        /*
-        svr->dead = EINA_TRUE;
-        INF("svr %p is dead", svr);
-        ecore_con_event_server_del(svr);
-        return;
-        */
-     }
 
    t_start = ecore_time_get();
-   while (svr->buf && (!svr->dead))
+   while (svr->buf && (!svr->delete_me))
      {
         _ecore_con_server_flush(svr);
         t = ecore_time_get();
@@ -1232,7 +1220,7 @@ _ecore_con_server_free(Ecore_Con_Server *svr)
         /* some pointer hacks here to prevent double frees if people are being stupid */
         EINA_LIST_FREE(cl->event_count, ev)
           ev->server = NULL;
-        cl->delete_me = cl->dead = EINA_TRUE;
+        cl->delete_me = EINA_TRUE;
         INF("cl %p is dead", cl);
         _ecore_con_client_free(cl);
      }
@@ -1270,7 +1258,6 @@ _ecore_con_client_kill(Ecore_Con_Client *cl)
    if (!cl->delete_me)
      ecore_con_event_client_del(cl);
    INF("Lost client %s", (cl->ip) ? cl->ip : "");
-   cl->dead = EINA_TRUE;
    INF("cl %p is dead", cl);
    if (cl->fd_handler)
      ecore_main_fd_handler_del(cl->fd_handler);
@@ -1285,22 +1272,8 @@ _ecore_con_client_free(Ecore_Con_Client *cl)
 
    if (cl->event_count) return;
 
-   if (cl->delete_me && (!cl->dead) && (!cl->event_count))
-     {
-        /* this is a catch-all for cases when a client is not properly killed. */
-        CRIT("THIS SHOULD NOT BE REACHED! PLEASE SEND A FULL BT!");
-        abort();
-        /*
-        cl->dead = EINA_TRUE;
-        INF("cl %p is dead", cl);
-        ecore_con_event_client_del(cl);
-        return;
-        */
-     }
-
-
    t_start = ecore_time_get();
-   while ((cl->buf) && (!cl->dead))
+   while ((cl->buf) && (!cl->delete_me))
      {
         _ecore_con_client_flush(cl);
         t = ecore_time_get();
@@ -1350,7 +1323,6 @@ _ecore_con_server_kill(Ecore_Con_Server *svr)
    if (!svr->delete_me)
      ecore_con_event_server_del(svr);
 
-   svr->dead = EINA_TRUE;
    INF("svr %p is dead", svr);
    if (svr->fd_handler)
      ecore_main_fd_handler_del(svr->fd_handler);
@@ -1736,14 +1708,14 @@ svr_try_connect_plain(Ecore_Con_Server *svr)
    if (res == SOCKET_ERROR)
      so_err = WSAGetLastError();
 
-   if ((so_err == WSAEINPROGRESS) && !svr->dead)
+   if ((so_err == WSAEINPROGRESS) && !svr->delete_me)
      return ECORE_CON_INPROGRESS;
 
 #else
    if (res < 0)
      so_err = errno;
 
-   if ((so_err == EINPROGRESS) && !svr->dead)
+   if ((so_err == EINPROGRESS) && !svr->delete_me)
      return ECORE_CON_INPROGRESS;
 
 #endif
@@ -1771,7 +1743,7 @@ svr_try_connect_plain(Ecore_Con_Server *svr)
    if (svr->fd_handler && (!svr->buf))
      ecore_main_fd_handler_active_set(svr->fd_handler, ECORE_FD_READ);
 
-   if (!svr->dead)
+   if (!svr->delete_me)
      return ECORE_CON_CONNECTED;
    else
      return ECORE_CON_DISCONNECTED;
@@ -1826,7 +1798,7 @@ _ecore_con_svr_tcp_handler(void                        *data,
    const char *clerr = NULL;
 
    svr = data;
-   if (svr->dead)
+   if (svr->delete_me)
      return ECORE_CALLBACK_RENEW;
 
    if (svr->delete_me)
@@ -1956,7 +1928,7 @@ _ecore_con_cl_handler(void             *data,
    Eina_Bool want_read, want_write;
 
    svr = data;
-   if (svr->dead)
+   if (svr->delete_me)
      return ECORE_CALLBACK_RENEW;
 
    if (svr->delete_me)
@@ -2021,7 +1993,7 @@ _ecore_con_cl_udp_handler(void             *data,
    want_write = ecore_main_fd_handler_active_get(fd_handler, ECORE_FD_WRITE);
 
    svr = data;
-   if (svr->dead || svr->delete_me || ((!want_read) && (!want_write)))
+   if (svr->delete_me || svr->delete_me || ((!want_read) && (!want_write)))
      return ECORE_CALLBACK_RENEW;
 
    if (want_write)
@@ -2057,7 +2029,7 @@ _ecore_con_svr_udp_handler(void             *data,
 
    svr = data;
 
-   if (svr->delete_me || svr->dead)
+   if (svr->delete_me)
      return ECORE_CALLBACK_RENEW;
 
    if (ecore_main_fd_handler_active_get(fd_handler, ECORE_FD_WRITE))
@@ -2166,9 +2138,6 @@ _ecore_con_svr_cl_handler(void             *data,
    Ecore_Con_Client *cl;
 
    cl = data;
-   if (cl->dead)
-     return ECORE_CALLBACK_RENEW;
-
    if (cl->delete_me)
      return ECORE_CALLBACK_RENEW;
 
