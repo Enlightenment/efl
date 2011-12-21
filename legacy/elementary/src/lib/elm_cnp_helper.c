@@ -594,7 +594,8 @@ _get_selection_type(void *data, int size)
      {
         Cnp_Selection *sel;
         sel = selections + *((int *)data);
-        if (sel->active)
+        if (sel->active &&
+            (sel->format >= ELM_SEL_TARGETS) && (sel->format < ELM_SEL_FORMAT_MAX))
           return sel->format;
      }
    return ELM_SEL_FORMAT_NONE;
@@ -606,32 +607,30 @@ targets_converter(char *target __UNUSED__, void *data, int size, void **data_ret
    int i,count;
    Ecore_X_Atom *aret;
    Cnp_Selection *sel;
+   Elm_Sel_Format seltype;
 
    if (!data_ret) return EINA_FALSE;
 
    if (_get_selection_type(data, size) == ELM_SEL_FORMAT_NONE)
      {
-        if (data_ret)
-          {
-             *data_ret = malloc(size * sizeof(char) + 1);
-             memcpy(*data_ret, data, size);
-             ((char**)(data_ret))[0][size] = 0;
-          }
-        if (size_ret) *size_ret = size;
-        return EINA_TRUE;
+        /* TODO : fallback into precise type */
+        seltype = ELM_SEL_FORMAT_TEXT;
      }
-
-   sel = selections + *((int *)data);
+   else
+     {
+        sel = selections + *((int *)data);
+        seltype = sel->format;
+     }
 
    for (i = 0, count = 0; i < CNP_N_ATOMS ; i++)
      {
-        if (sel->format & atoms[i].formats) count++;
+        if (seltype & atoms[i].formats) count++;
      }
 
    aret = malloc(sizeof(Ecore_X_Atom) * count);
    for (i = 0, count = 0; i < CNP_N_ATOMS; i++)
      {
-        if (sel->format & atoms[i].formats) aret[count ++] = atoms[i].atom;
+        if (seltype & atoms[i].formats) aret[count ++] = atoms[i].atom;
      }
 
    *data_ret = aret;

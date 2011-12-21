@@ -741,6 +741,8 @@ typedef enum _Elm_Sel_Format
    ELM_SEL_FORMAT_VCARD  = 0x08,
    /** Raw HTMLish things for widgets that want that stuff (hello webkit!) */
    ELM_SEL_FORMAT_HTML   = 0x10,
+
+   ELM_SEL_FORMAT_MAX
 } Elm_Sel_Format;
 
 struct _Elm_Selection_Data
