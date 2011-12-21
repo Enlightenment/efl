@@ -6,15 +6,22 @@
 
 /* We zoom out to this value so we'll be able to use map and have a nice
  * resolution when zooming in. */
-#define BASE_ZOOM 0.5
+#define BASE_ZOOM 0.8
 /* The amount of zoom to do when "lifting" objects. */
 #define LIFT_FACTOR 1.3
 /* The base size of the shadow image. */
 #define SHADOW_W 118
 #define SHADOW_H 118
-#define RAD2DEG(x) ((x) * 57.295779513)
+//#define RAD2DEG(x) ((x) * 57.295779513)
 
-static double zoom_momentum_animation_duration = 0.4;
+#define MOMENTUM_FRICTION 2000
+#define ROTATE_MOMENTUM_FRICTION 30
+#define ZOOM_MOMENTUM_FRICTION 8
+#define TIMER_TICK 0.1
+
+#define ROTATE_MOMENTUM_FRICTION 30
+#define ZOOM_MOMENTUM_FRICTION 8
+#define TIMER_TICK 0.1
 
 struct _Photo_Object {
      Evas_Object *ic, *shadow;
@@ -24,7 +31,9 @@ struct _Photo_Object {
      /* 3 transit object to implement momentum animation */
      Elm_Transit *momentum;
      Elm_Transit *zoom_momentum;
-     Elm_Transit *rot_momentum;
+     Ecore_Timer *rot_timer;
+     double rot_tot_time;
+     double rot_progress;
      /* bx, by - current wanted coordinates of the photo object.
       * bw, bh - original size of the "ic" object.
       * dx, dy - Used to indicate the distance between the center point
@@ -37,7 +46,7 @@ struct _Photo_Object {
       * per gesture, we have to keep the current rotate/zoom factor and the
       * one that was before we started the gesture. */
      int base_rotate, rotate;  /* base - initial angle */
-     double r_momentum;
+     double rot_momentum;
      double base_zoom, zoom, zoom_dx;  /* zoom_dx used for zoom-momentum */
      double shadow_zoom;
 };
@@ -127,7 +136,6 @@ zoom_momentum_animation_operation(void *_po, Elm_Transit *transit __UNUSED__,
 {
    Photo_Object *po = (Photo_Object *) _po;
    po->zoom += po->zoom_dx;
-   printf("%s po->zoom=<%f>\n",__func__, po->zoom);
    apply_changes(po);
 }
 
@@ -139,28 +147,42 @@ zoom_momentum_animation_end(void *_po, Elm_Transit *transit __UNUSED__)
 }
 
 /* Rotate momentum animation */
-static void
-rotate_momentum_animation_operation(void *_po, Elm_Transit *transit __UNUSED__,
-      double progress)
+static Eina_Bool
+rotate_momentum_animation_operation(void *_po)
 {
-   printf("%s progress=<%f>\n", __func__, progress);
+   Eina_Bool rc = ECORE_CALLBACK_RENEW;
+   int deg_friction = ROTATE_MOMENTUM_FRICTION;
    Photo_Object *po = (Photo_Object *) _po;
-   po->rotate = po->base_rotate + RAD2DEG(po->r_momentum * progress);
+   po->rot_progress += TIMER_TICK;
+   if (po->rot_progress > po->rot_tot_time)
+     {
+        po->rot_timer = NULL;
+        po->rot_progress = po->rot_tot_time;
+        rc = ECORE_CALLBACK_CANCEL;
+     }
+
+   if (po->rot_momentum > 0)
+     deg_friction *= -1;
+
+   /* Current = rot0 + (rotv0 * t) + (a * t^2 / 2) */
+   po->rotate = po->base_rotate -
+      ((po->rot_momentum * po->rot_progress) +
+      (deg_friction * (po->rot_progress * po->rot_progress) / 2));
+   po->rotate = (po->rotate % 360);
    if (po->rotate < 0)
-      po->rotate = (po->rotate % 360) + 360;
-   printf("current-angle=<%d> base-angle=<%d> momentum-angle=<%d>\n",
-         po->rotate, po->base_rotate,
-         (int) RAD2DEG(po->r_momentum * progress));
+     po->rotate += 360;
+   printf("%d = %d - (%f + %f)\n", po->rotate, po->base_rotate,
+         (po->rot_momentum * po->rot_progress),
+         (deg_friction * (po->rot_progress * po->rot_progress) / 2));
+
+   if (rc == ECORE_CALLBACK_CANCEL)
+     {
+        po->base_rotate = po->rotate;
+        printf("%s po->rotate=<%d>\n", __func__, po->rotate);
+     }
 
    apply_changes(po);
-}
-
-static void
-rotate_momentum_animation_end(void *_po, Elm_Transit *transit __UNUSED__)
-{
-   Photo_Object *po = (Photo_Object *) _po;
-
-   po->rot_momentum = NULL;
+   return rc;
 }
 
 /* Momentum animation */
@@ -211,14 +233,15 @@ rotate_start(void *_po, void *event_info)
 {
    Photo_Object *po = (Photo_Object *) _po;
    Elm_Gesture_Rotate_Info *p = (Elm_Gesture_Rotate_Info *) event_info;
-   printf("rotate start <%d,%d> base=<%f> <%f>\n", p->x, p->y,
-         RAD2DEG(p->base_angle), RAD2DEG(p->angle));
+   printf("rotate start <%d,%d> po->rotate=<%d> base=<%f> p->angle=<%f>\n", p->x, p->y, po->rotate,
+         p->base_angle, p->angle);
 
    /* If there's an active animator, stop it */
-   if (po->rot_momentum)
+   if (po->rot_timer)
      {
-        elm_transit_del(po->rot_momentum);
-        po->rot_momentum = NULL;
+        po->base_rotate = po->rotate;
+        ecore_timer_del(po->rot_timer);
+        po->rot_timer = NULL;
      }
 
    return EVAS_EVENT_FLAG_NONE;
@@ -230,8 +253,9 @@ rotate_move(void *_po, void *event_info)
    Photo_Object *po = (Photo_Object *) _po;
    Elm_Gesture_Rotate_Info *p = (Elm_Gesture_Rotate_Info *) event_info;
    printf("rotate move <%d,%d> base=<%f> <%f> m=<%f>\n", p->x, p->y,
-         RAD2DEG(p->base_angle), RAD2DEG(p->angle), p->momentum);
-   po->rotate = po->base_rotate + (int) RAD2DEG(p->base_angle - p->angle);
+         p->base_angle, p->angle, p->momentum);
+   po->rotate = po->base_rotate + (int) (p->angle - p->base_angle);
+
    if (po->rotate < 0)
       po->rotate += 360;
    apply_changes(po);
@@ -244,23 +268,19 @@ rotate_end(void *_po, void *event_info)
    Photo_Object *po = (Photo_Object *) _po;
    Elm_Gesture_Rotate_Info *r_info = (Elm_Gesture_Rotate_Info *) event_info;
    printf("rotate end <%d,%d> base=<%f> <%f> m=<%f>\n", r_info->x, r_info->y,
-         RAD2DEG(r_info->base_angle), RAD2DEG(r_info->angle), r_info->momentum);
-   po->base_rotate += (int) RAD2DEG(r_info->base_angle - r_info->angle);
+         r_info->base_angle, r_info->angle, r_info->momentum);
    if (po->rotate < 0)
       po->rotate += 360;
 
+   po->base_rotate = po->rotate;
+
    /* Apply the rotate-momentum */
-   double tot_time = fabs(r_info->momentum) / 8;
-   po->r_momentum = r_info->momentum * tot_time - (8 * tot_time * tot_time) / 2;
-   if (po->r_momentum)
+   po->rot_tot_time = fabs(r_info->momentum) / ROTATE_MOMENTUM_FRICTION;
+   po->rot_momentum = r_info->momentum;
+   po->rot_progress = 0.0;
+   if (po->rot_momentum)
      {
-        po->rot_momentum = elm_transit_add();
-        printf("TOM %f\n", tot_time);
-        elm_transit_duration_set(po->rot_momentum, tot_time);
-        elm_transit_effect_add(po->rot_momentum,
-              rotate_momentum_animation_operation, po,
-              rotate_momentum_animation_end);
-        elm_transit_go(po->rot_momentum);
+        po->rot_timer = ecore_timer_add(TIMER_TICK, rotate_momentum_animation_operation, po);
      }
    return EVAS_EVENT_FLAG_NONE;
 }
@@ -271,8 +291,8 @@ rotate_abort(void *_po, void *event_info)
    Photo_Object *po = (Photo_Object *) _po;
    Elm_Gesture_Rotate_Info *p = (Elm_Gesture_Rotate_Info *) event_info;
    printf("rotate abort <%d,%d> base=<%f> <%f>\n", p->x, p->y,
-         RAD2DEG(p->base_angle), RAD2DEG(p->angle));
-   po->base_rotate += (int) RAD2DEG(p->base_angle - p->angle);
+         p->base_angle, p->angle);
+   po->base_rotate = po->rotate;
    if (po->rotate < 0)
       po->rotate += 360;
 
@@ -301,7 +321,7 @@ zoom_move(void *_po, void *event_info)
 {
    Photo_Object *po = (Photo_Object *) _po;
    Elm_Gesture_Zoom_Info *p = (Elm_Gesture_Zoom_Info *) event_info;
-   printf("zoom move <%d,%d> <%f>\n", p->x, p->y, p->zoom);
+   printf("zoom move <%d,%d> <%f> momentum=<%f>\n", p->x, p->y, p->zoom, p->momentum);
    po->zoom = po->base_zoom * p->zoom;
    apply_changes(po);
    return EVAS_EVENT_FLAG_NONE;
@@ -316,18 +336,20 @@ zoom_end(void *_po, void *event_info)
          p->zoom, p->momentum);
 
    /* Apply the zoom-momentum or zoom out animator */
-   po->zoom_dx = p->momentum / (zoom_momentum_animation_duration * 1000);
+   double tot_time = fabs(p->momentum) / ZOOM_MOMENTUM_FRICTION;
+   po->zoom_dx = (p->momentum * tot_time + (ZOOM_MOMENTUM_FRICTION * tot_time * tot_time) / 2) - po->base_zoom;
    if (po->zoom_dx)
      {
         po->zoom_momentum = elm_transit_add();
         elm_transit_duration_set(po->zoom_momentum,
-              zoom_momentum_animation_duration);
+              tot_time);
         elm_transit_effect_add(po->zoom_momentum,
               zoom_momentum_animation_operation, po,
               zoom_momentum_animation_end);
         elm_transit_go(po->zoom_momentum);
      }
 
+   po->base_zoom  = po->zoom;
    return EVAS_EVENT_FLAG_NONE;
 }
 
@@ -336,7 +358,7 @@ momentum_start(void *_po, void *event_info)
 {
    Photo_Object *po = (Photo_Object *) _po;
    Elm_Gesture_Momentum_Info *p = (Elm_Gesture_Momentum_Info *) event_info;
-   printf("momentum_start <%d,%d>\n", p->x2, p->y2);
+   printf("momentum_start po->rotate=<%d> <%d,%d>\n", po->rotate, p->x2, p->y2);
 
    /* If there's an active animator, stop it */
    if (po->momentum)
@@ -371,14 +393,17 @@ momentum_end(void *_po, void *event_info)
 {
    Photo_Object *po = (Photo_Object *) _po;
    Elm_Gesture_Momentum_Info *p = (Elm_Gesture_Momentum_Info *) event_info;
-   printf("momentum end <%d,%d> <%d,%d>\n", p->x2, p->y2, p->mx, p->my);
+   printf("momentum end po->rotate=<%d> <%d,%d> <%d,%d>\n", po->rotate, p->x2, p->y2, p->mx, p->my);
    pic_obj_keep_inframe(po);
    apply_changes(po);
    po->m_dx = p->mx / 200;
    po->m_dy = p->my / 200;
 
    po->momentum = elm_transit_add();
-   elm_transit_duration_set(po->momentum, 0.5);
+   double tot_time = sqrt((p->mx * p->mx) + (p->my * p->my))
+      / MOMENTUM_FRICTION;
+   printf("%s tot_time=<%f>\n", __func__, tot_time);
+   elm_transit_duration_set(po->momentum, tot_time);
    elm_transit_effect_add(po->momentum, momentum_animation_operation, po,
          momentum_animation_end);
    elm_transit_go(po->momentum);
@@ -463,6 +488,7 @@ photo_object_add(Evas_Object *parent, Evas_Object *ic, const char *icon,
    elm_gesture_layer_attach(po->gl, po->hit);
 
    /* FIXME: Add a po->rotate start so we take the first angle!!!! */
+   /*
    elm_gesture_layer_cb_set(po->gl, ELM_GESTURE_MOMENTUM,
          ELM_GESTURE_STATE_START, momentum_start, po);
    elm_gesture_layer_cb_set(po->gl, ELM_GESTURE_MOMENTUM,
@@ -471,7 +497,7 @@ photo_object_add(Evas_Object *parent, Evas_Object *ic, const char *icon,
          ELM_GESTURE_STATE_END, momentum_end, po);
    elm_gesture_layer_cb_set(po->gl, ELM_GESTURE_MOMENTUM,
          ELM_GESTURE_STATE_ABORT, momentum_abort, po);
-
+*/
    elm_gesture_layer_cb_set(po->gl, ELM_GESTURE_ZOOM,
          ELM_GESTURE_STATE_START, zoom_start, po);
    elm_gesture_layer_cb_set(po->gl, ELM_GESTURE_ZOOM,
@@ -480,7 +506,7 @@ photo_object_add(Evas_Object *parent, Evas_Object *ic, const char *icon,
          ELM_GESTURE_STATE_END, zoom_end, po);
    elm_gesture_layer_cb_set(po->gl, ELM_GESTURE_ZOOM,
          ELM_GESTURE_STATE_ABORT, zoom_end, po);
-
+/*
    elm_gesture_layer_cb_set(po->gl, ELM_GESTURE_ROTATE,
          ELM_GESTURE_STATE_START, rotate_start, po);
    elm_gesture_layer_cb_set(po->gl, ELM_GESTURE_ROTATE,
@@ -489,7 +515,7 @@ photo_object_add(Evas_Object *parent, Evas_Object *ic, const char *icon,
          ELM_GESTURE_STATE_END, rotate_end, po);
    elm_gesture_layer_cb_set(po->gl, ELM_GESTURE_ROTATE,
          ELM_GESTURE_STATE_ABORT, rotate_abort, po);
-
+*/
    po->rotate = po->base_rotate = angle;
    po->shadow_zoom = 1.3;
 
