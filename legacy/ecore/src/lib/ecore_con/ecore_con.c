@@ -984,12 +984,13 @@ ecore_con_event_server_del(Ecore_Con_Server *svr)
 {
     Ecore_Con_Event_Server_Del *e;
 
+    svr->delete_me = EINA_TRUE;
+    INF("svr %p is dead", svr);
     e = ecore_con_event_server_del_alloc();
     EINA_SAFETY_ON_NULL_RETURN(e);
 
     svr->event_count = eina_list_append(svr->event_count, e);
     _ecore_con_server_timer_update(svr);
-    svr->delete_me = EINA_TRUE;
     e->server = svr;
     if (svr->ecs)
       {
@@ -1074,6 +1075,8 @@ ecore_con_event_client_del(Ecore_Con_Client *cl)
     Ecore_Con_Event_Client_Del *e;
 
     if (!cl) return;
+    cl->delete_me = EINA_TRUE;
+    INF("cl %p is dead", cl);
     e = ecore_con_event_client_del_alloc();
     EINA_SAFETY_ON_NULL_RETURN(e);
     cl->event_count = eina_list_append(cl->event_count, e);
@@ -1081,7 +1084,6 @@ ecore_con_event_client_del(Ecore_Con_Client *cl)
     cl->host_server->event_count = eina_list_append(cl->host_server->event_count, e);
     _ecore_con_cl_timer_update(cl);
     e->client = cl;
-    cl->delete_me = EINA_TRUE;
     ecore_event_add(ECORE_CON_EVENT_CLIENT_DEL, e,
                     (Ecore_End_Cb)_ecore_con_event_client_del_free, cl->host_server);
    _ecore_con_event_count++;
@@ -1255,10 +1257,11 @@ _ecore_con_server_free(Ecore_Con_Server *svr)
 static void
 _ecore_con_client_kill(Ecore_Con_Client *cl)
 {
-   if (!cl->delete_me)
+   if (cl->delete_me)
+     DBG("Multi kill request for client %p", cl);
+   else
      ecore_con_event_client_del(cl);
    INF("Lost client %s", (cl->ip) ? cl->ip : "");
-   INF("cl %p is dead", cl);
    if (cl->fd_handler)
      ecore_main_fd_handler_del(cl->fd_handler);
 
@@ -1320,10 +1323,11 @@ _ecore_con_client_free(Ecore_Con_Client *cl)
 void
 _ecore_con_server_kill(Ecore_Con_Server *svr)
 {
-   if (!svr->delete_me)
+   if (svr->delete_me)
+     DBG("Multi kill request for svr %p", svr);
+   else
      ecore_con_event_server_del(svr);
 
-   INF("svr %p is dead", svr);
    if (svr->fd_handler)
      ecore_main_fd_handler_del(svr->fd_handler);
 
