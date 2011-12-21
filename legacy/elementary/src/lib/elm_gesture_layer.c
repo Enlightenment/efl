@@ -2779,10 +2779,11 @@ _get_rotate_properties(Rotate_Type *st,
         if (tm_total)
           {  /* Momentum computed as:
                 accumulated roation angle (rad) divided by time */
-             double m;
-             if ((prev_angle >= RAD_270DEG) && ((*angle) < RAD_180DEG))
+             double m = 0;;
+             if (((prev_angle < RAD_90DEG) && ((*angle) > RAD_270DEG)) ||
+                   ((prev_angle > RAD_270DEG) && ((*angle) < RAD_90DEG)))
                {  /* We circle passing ZERO point */
-                  m = (RAD_360DEG - prev_angle) + (*angle);
+                  prev_angle = (*angle);
                }
              else m = (*angle) - prev_angle;
 
@@ -2796,9 +2797,9 @@ _get_rotate_properties(Rotate_Type *st,
                     st->accum_momentum = 0.0;  /* reset momentum */
 
                   st->prev_momentum = 0.0;     /* Start again    */
-                  st->prev_momentum_tm = tm_end;
                }
 
+             st->prev_momentum_tm = tm_end;
              st->info.momentum = (st->accum_momentum * 1000) / tm_total;
           }
      }
