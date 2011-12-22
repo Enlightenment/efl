@@ -48,9 +48,7 @@ struct _Scaleitem
 #ifdef SCALECACHE
 static unsigned long long use_counter = 0;
 
-#ifdef BUILD_PTHREAD
 static LK(cache_lock);
-#endif
 static Eina_Inlist *cache_list = NULL;
 static unsigned int cache_size = 0;
 static int init = 0;
