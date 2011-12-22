@@ -1109,7 +1109,7 @@ ecore_con_url_proxy_set(Ecore_Con_Url *url_con, const char *proxy)
         // before curl version 7.21.7, socks protocol:// prefix is not supported
         // (e.g. socks4://, socks4a://, socks5:// or socks5h://, etc.)
         vers = curl_version_info(CURLVERSION_NOW);
-        if (vers->age >=0 && vers->version_num < 0x71507)
+        if (vers->version_num < 0x71507)
           {
              url_con->proxy_type = CURLPROXY_HTTP;
              if (strstr(proxy, "socks4"))       url_con->proxy_type = CURLPROXY_SOCKS4;
