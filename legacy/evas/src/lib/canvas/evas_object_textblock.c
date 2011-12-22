@@ -5173,7 +5173,11 @@ evas_textblock_text_markup_to_utf8(const Evas_Object *obj, const char *text)
                   tag_start++; /* Skip the < */
                   tag_end--; /* Skip the > */
                   if ((tag_end > tag_start) && (*(tag_end - 1) == '/'))
-                     tag_end --; /* Skip the terminating '/' */
+                    {
+                       tag_end --; /* Skip the terminating '/' */
+                       while (*(tag_end - 1) == ' ')
+                         tag_end--; /* skip trailing ' ' */
+                    }
 
                   ttag_len = tag_end - tag_start;
 
