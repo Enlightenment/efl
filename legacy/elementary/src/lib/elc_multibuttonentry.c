@@ -772,12 +772,12 @@ _add_button_item(Evas_Object *obj, const char *str, Multibuttonentry_Pos pos, co
         if (!(item_filter->callback_func(obj, str, data, item_filter->data)))
           return NULL;
      }
+   //entry is cleared when text is made to button
+   elm_entry_entry_set(wd->entry, "");
+
    // add button
    btn = edje_object_add(evas_object_evas_get(obj));
    str_utf8 = elm_entry_markup_to_utf8(str);
-
-   //entry is cleared when text is made to button
-   elm_entry_entry_set(wd->entry, "");
 
    _elm_theme_object_set(obj, btn, "multibuttonentry", "btn", elm_widget_style_get(obj));
    edje_object_part_text_set(btn, "elm.btn.text", str_utf8);
