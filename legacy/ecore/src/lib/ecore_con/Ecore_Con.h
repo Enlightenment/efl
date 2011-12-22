@@ -1864,6 +1864,38 @@ EAPI int               ecore_con_url_ssl_ca_set(Ecore_Con_Url *url_con,
 EAPI Eina_Bool ecore_con_url_proxy_set(Ecore_Con_Url *url_con, const char *proxy);
 
 /**
+ * Set zero terminated username to use for proxy.
+ *
+ * if socks protocol is used for proxy, protocol should be socks5 and above.
+ *
+ * @param url_con Connection object that will use the proxy.
+ * @param username Username string.
+ *
+ * @return #EINA_TRUE on success, #EINA_FALSE on error.
+ *
+ * @see ecore_con_url_proxy_set()
+ *
+ * @since 1.2 
+ */
+EAPI Eina_Bool ecore_con_url_proxy_username_set(Ecore_Con_Url *url_con, const char *username);
+
+/**
+ * Set zero terminated password to use for proxy.
+ *
+ * if socks protocol is used for proxy, protocol should be socks5 and above.
+ *
+ * @param url_con Connection object that will use the proxy.
+ * @param password Password string.
+ *
+ * @return #EINA_TRUE on success, #EINA_FALSE on error.
+ *
+ * @see ecore_con_url_proxy_set()
+ *
+ * @since 1.2
+ */
+EAPI Eina_Bool ecore_con_url_proxy_password_set(Ecore_Con_Url *url_con, const char *password);
+
+/**
  * Set timeout in seconds.
  *
  * the maximum time in seconds that you allow the ecore con url transfer
@@ -1873,6 +1905,9 @@ EAPI Eina_Bool ecore_con_url_proxy_set(Ecore_Con_Url *url_con, const char *proxy
  *
  * @param url_con Connection object that will use the timeout.
  * @param timeout time in seconds.
+ *
+ * @see ecore_con_url_cookies_jar_file_set()
+ *
  * @since 1.2
  */
 EAPI void ecore_con_url_timeout_set(Ecore_Con_Url *url_con, double timeout);

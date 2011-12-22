@@ -433,3 +433,7 @@
 2011-12-21 Tae-Hwan Kim (Bluezery)
 
 	* Add proxy set and timeout set functions in ecore_con.
+
+2011-12-26 Tae-Hwan Kim (Bluezery)
+
+	* Add proxy username/password set functions in ecore_con.

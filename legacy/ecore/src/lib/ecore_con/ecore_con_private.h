@@ -201,6 +201,7 @@ struct _Ecore_Con_Url
    Eina_List *additional_headers;
    Eina_List *response_headers;
    const char *url;
+   long proxy_type;
 
    Ecore_Timer *timer;
 

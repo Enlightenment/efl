@@ -13,6 +13,8 @@ Additions:
      - ECORE_CON_REMOTE_CORK
      - ecore_con_url_proxy_set()
      - ecore_con_url_timeout_set()
+     - ecore_con_url_proxy_username_set
+     - ecore_con_url_proxy_password_set()
     * ecore_x:
      - ecore_x_randr_output_backlight_available()
 

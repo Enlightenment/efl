@@ -196,6 +196,24 @@ ecore_con_url_new(const char *url)
         return NULL;
      }
 
+   url_con->proxy_type = -1;
+   if (_ecore_con_proxy_global)
+     {
+        if (_ecore_con_proxy_global->ip)
+          {
+             char host[128];
+             if (_ecore_con_proxy_global->port > 0 &&
+                 _ecore_con_proxy_global->port <= 65535)
+                snprintf(host, sizeof(host), "socks4://%s:%d",
+                         _ecore_con_proxy_global->ip,
+                         _ecore_con_proxy_global->port);
+             else
+                snprintf(host, sizeof(host), "socks4://%s",
+                         _ecore_con_proxy_global->ip);
+                ecore_con_url_proxy_set(url_con, host);
+          }
+     }
+
    ret = curl_easy_setopt(url_con->curl_easy, CURLOPT_ENCODING, "gzip,deflate");
    if (ret != CURLE_OK)
      {
@@ -1074,6 +1092,8 @@ ecore_con_url_proxy_set(Ecore_Con_Url *url_con, const char *proxy)
 {
 #ifdef HAVE_CURL
    int res = -1;
+   curl_version_info_data *vers = NULL;
+
    if (!ECORE_MAGIC_CHECK(url_con, ECORE_MAGIC_CON_URL))
      {
         ECORE_MAGIC_FAIL(url_con, ECORE_MAGIC_CON_URL, "ecore_con_url_proxy_set");
@@ -1083,12 +1103,33 @@ ecore_con_url_proxy_set(Ecore_Con_Url *url_con, const char *proxy)
    if (eina_list_data_find(_url_con_list, url_con)) return EINA_FALSE;
    if (!url_con->url) return EINA_FALSE;
 
-   if (proxy == NULL) res = curl_easy_setopt(url_con->curl_easy, CURLOPT_PROXY, "");
-   else               res = curl_easy_setopt(url_con->curl_easy, CURLOPT_PROXY, proxy);
-
+   if (!proxy) res = curl_easy_setopt(url_con->curl_easy, CURLOPT_PROXY, "");
+   else
+     {
+        // before curl version 7.21.7, socks protocol:// prefix is not supported
+        // (e.g. socks4://, socks4a://, socks5:// or socks5h://, etc.)
+        vers = curl_version_info(CURLVERSION_NOW);
+        if (vers->age >=0 && vers->version_num < 0x71507)
+          {
+             url_con->proxy_type = CURLPROXY_HTTP;
+             if (strstr(proxy, "socks4"))       url_con->proxy_type = CURLPROXY_SOCKS4;
+             else if (strstr(proxy, "socks4a")) url_con->proxy_type = CURLPROXY_SOCKS4A;
+             else if (strstr(proxy, "socks5"))  url_con->proxy_type = CURLPROXY_SOCKS5;
+             else if (strstr(proxy, "socks5h")) url_con->proxy_type = CURLPROXY_SOCKS5_HOSTNAME;
+             res = curl_easy_setopt(url_con->curl_easy, CURLOPT_PROXYTYPE, url_con->proxy_type);
+             if (res != CURLE_OK)
+               {
+                  ERR("curl proxy type setting failed: %s", curl_easy_strerror(res));
+                  url_con->proxy_type = -1;
+                  return EINA_FALSE;
+               }
+          }
+        res = curl_easy_setopt(url_con->curl_easy, CURLOPT_PROXY, proxy);
+     }
    if (res != CURLE_OK)
      {
-        ERR("curl_easy_setopt() failed");
+        ERR("curl proxy setting failed: %s", curl_easy_strerror(res));
+        url_con->proxy_type = -1;
         return EINA_FALSE;
      }
    return EINA_TRUE;
@@ -1117,6 +1158,73 @@ ecore_con_url_timeout_set(Ecore_Con_Url *url_con, double timeout)
    return;
    (void)url_con;
    (void)timeout;
+#endif
+}
+
+EAPI Eina_Bool
+ecore_con_url_proxy_username_set(Ecore_Con_Url *url_con, const char *username)
+{
+#ifdef HAVE_CURL
+   int res = -1;
+   if (!ECORE_MAGIC_CHECK(url_con, ECORE_MAGIC_CON_URL))
+     {
+        ECORE_MAGIC_FAIL(url_con, ECORE_MAGIC_CON_URL, "ecore_con_url_proxy_username_set");
+        return EINA_FALSE;
+     }
+
+   if (eina_list_data_find(_url_con_list, url_con)) return EINA_FALSE;
+   if (!url_con->url) return EINA_FALSE;
+   if (!username) return EINA_FALSE;
+   if (url_con->proxy_type == CURLPROXY_SOCKS4 || url_con->proxy_type == CURLPROXY_SOCKS4A)
+     {
+        ERR("Proxy type should be socks5 and above");
+        return EINA_FALSE;
+     }
+
+   res = curl_easy_setopt(url_con->curl_easy, CURLOPT_USERNAME, username);
+   if (res != CURLE_OK)
+     {
+        ERR("curl_easy_setopt() failed: %s", curl_easy_strerror(res));
+        return EINA_FALSE;
+     }
+   return EINA_TRUE;
+#else
+   return EINA_FALSE;
+   (void)url_con;
+   (void)username;
+#endif
+}
+
+EAPI Eina_Bool
+ecore_con_url_proxy_password_set(Ecore_Con_Url *url_con, const char *password)
+{
+#ifdef HAVE_CURL
+   int res = -1;
+   if (!ECORE_MAGIC_CHECK(url_con, ECORE_MAGIC_CON_URL))
+     {
+        ECORE_MAGIC_FAIL(url_con, ECORE_MAGIC_CON_URL, "ecore_con_url_proxy_password_set");
+        return EINA_FALSE;
+     }
+   if (eina_list_data_find(_url_con_list, url_con)) return EINA_FALSE;
+   if (!url_con->url) return EINA_FALSE;
+   if (!password) return EINA_FALSE;
+   if (url_con->proxy_type == CURLPROXY_SOCKS4 || url_con->proxy_type == CURLPROXY_SOCKS4A)
+     {
+        ERR("Proxy type should be socks5 and above");
+        return EINA_FALSE;
+     }
+
+   res = curl_easy_setopt(url_con->curl_easy, CURLOPT_PASSWORD, password);
+   if (res != CURLE_OK)
+     {
+        ERR("curl_easy_setopt() failed: %s", curl_easy_strerror(res));
+        return EINA_FALSE;
+     }
+   return EINA_TRUE;
+#else
+   return EINA_FALSE;
+   (void)url_con;
+   (void)password;
 #endif
 }
 
