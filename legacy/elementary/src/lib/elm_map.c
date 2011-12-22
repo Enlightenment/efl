@@ -1643,6 +1643,7 @@ _mouse_wheel_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, voi
 
    if (!wd->paused)
      {
+        int zoom_diff = 0;
         Evas_Event_Mouse_Wheel *ev = (Evas_Event_Mouse_Wheel*) event_info;
         Evas_Coord x, y, w, h;
 
@@ -1652,23 +1653,33 @@ _mouse_wheel_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, voi
         wd->calc_job = ecore_job_add(_calc_job, wd);
 
         wd->wheel_diff -= ev->z;
-        wd->pinch.level = pow(2.0, (double)wd->wheel_diff/10);
+        wd->pinch.level = wd->pinch.diff * pow(2.0, (double)wd->wheel_diff/10);
         wd->pinch.cx = x + ((double)w * 0.5);
         wd->pinch.cy = y + ((double)h * 0.5);
 
-        if (wd->wheel_diff >= 10 || wd->wheel_diff <= -10)
+        if (wd->pinch.level > 2.0 || wd->pinch.level < 1.0)
           {
-
+             wd->wheel_diff = 0;
+             if (wd->pinch.level > 2.0)
+               {
+                  zoom_diff = 1;
+                  wd->pinch.diff = 1.0;
+                  wd->pinch.level = 1.0;
+               }
+             else if (wd->pinch.level < 1.0)
+               {
+                  zoom_diff = -1;
+                  wd->pinch.diff = 2.0;
+                  wd->pinch.level = 2.0;
+               }
 
              Elm_Map_Zoom_Mode temp;
              temp = wd->mode;
              wd->mode = ELM_MAP_ZOOM_MODE_MANUAL;
              wd->paused = EINA_TRUE;
-             elm_map_zoom_set(data, wd->zoom + (wd->wheel_diff/10));
+             elm_map_zoom_set(data, wd->zoom + zoom_diff);
              wd->paused = EINA_FALSE;
              wd->mode = temp;
-             wd->pinch.level = 1.0;
-	     wd->wheel_diff = 0;
           }
         else
           {
