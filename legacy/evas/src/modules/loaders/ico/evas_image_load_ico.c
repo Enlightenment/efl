@@ -169,11 +169,15 @@ evas_image_load_file_head_ico(Image_Entry *ie, const char *file, const char *key
      }
    for (i = 0; i < count; i++)
      {
-        if (!read_uchar(map, fsize, &position, ((unsigned char *)&w))) goto close_file;
+        unsigned char tw = 0, th = 0, tcols = 0;
+        if (!read_uchar(map, fsize, &position, &tw)) goto close_file;
+        w = th;
         if (w <= 0) w = 256;
-        if (!read_uchar(map, fsize, &position, ((unsigned char *)&h))) goto close_file;
+        if (!read_uchar(map, fsize, &position, &th)) goto close_file;
+        h = th;
         if (h <= 0) h = 256;
-        if (!read_uchar(map, fsize, &position, ((unsigned char *)&cols))) goto close_file;
+        if (!read_uchar(map, fsize, &position, &tcols)) goto close_file;
+        cols = tcols;
         if (cols <= 0) cols = 256;
         if (!read_uchar(map, fsize, &position, &byte)) goto close_file;
         if (!read_ushort(map, fsize, &position, &word)) goto close_file;
@@ -394,11 +398,15 @@ evas_image_load_file_data_ico(Image_Entry *ie, const char *file, const char *key
      }
    for (i = 0; i < count; i++)
      {
-        if (!read_uchar(map, fsize, &position, ((unsigned char *)&w))) goto close_file;
+        unsigned char tw = 0, th = 0, tcols = 0;
+        if (!read_uchar(map, fsize, &position, &tw)) goto close_file;
+        w = th;
         if (w <= 0) w = 256;
-        if (!read_uchar(map, fsize, &position, ((unsigned char *)&h))) goto close_file;
+        if (!read_uchar(map, fsize, &position, &th)) goto close_file;
+        h = th;
         if (h <= 0) h = 256;
-        if (!read_uchar(map, fsize, &position, ((unsigned char *)&cols))) goto close_file;
+        if (!read_uchar(map, fsize, &position, &tcols)) goto close_file;
+        cols = tcols;
         if (cols <= 0) cols = 256;
         if (!read_uchar(map, fsize, &position, &byte)) goto close_file;
         if (!read_ushort(map, fsize, &position, &word)) goto close_file;
@@ -756,7 +764,7 @@ evas_image_load_file_data_ico(Image_Entry *ie, const char *file, const char *key
           }
      }
 
-   eina_file_map_free(map, f);
+   eina_file_map_free(f, map);
    eina_file_close(f);
 
    evas_common_image_premul(ie);
@@ -764,7 +772,7 @@ evas_image_load_file_data_ico(Image_Entry *ie, const char *file, const char *key
    return EINA_TRUE;
 
  close_file:
-   if (map) eina_file_map_free(map, f);
+   if (map) eina_file_map_free(f, map);
    eina_file_close(f);
    return EINA_FALSE;
 }
