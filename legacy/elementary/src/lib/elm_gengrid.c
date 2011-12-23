@@ -325,9 +325,10 @@ _event_hook(Evas_Object        *obj,
         ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
         return EINA_TRUE;
      }
-   else if ((!strcmp(ev->keyname, "Return")) ||
-            (!strcmp(ev->keyname, "KP_Enter")) ||
-            (!strcmp(ev->keyname, "space")))
+   else if (((!strcmp(ev->keyname, "Return")) ||
+             (!strcmp(ev->keyname, "KP_Enter")) ||
+             (!strcmp(ev->keyname, "space")))
+            && (!wd->multi) && (wd->selected))
      {
         it = elm_gengrid_selected_item_get(obj);
         evas_object_smart_callback_call(WIDGET(it), SIG_ACTIVATED, it);
