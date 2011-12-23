@@ -488,7 +488,7 @@ struct _Ecore_Con_Event_Proxy_Bind
 {
    Ecore_Con_Server *server; /**< the server object connected to the proxy */
    const char *ip;           /**< the proxy-bound ip address */
-   int port;                 /**< the proxy-bound port */ 
+   int port;                 /**< the proxy-bound port */
 };
 
 /**
@@ -1875,7 +1875,7 @@ EAPI Eina_Bool ecore_con_url_proxy_set(Ecore_Con_Url *url_con, const char *proxy
  *
  * @see ecore_con_url_proxy_set()
  *
- * @since 1.2 
+ * @since 1.2
  */
 EAPI Eina_Bool ecore_con_url_proxy_username_set(Ecore_Con_Url *url_con, const char *username);
 
