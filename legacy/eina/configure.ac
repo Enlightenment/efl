@@ -479,23 +479,29 @@ AC_ISC_POSIX
 AC_FUNC_ALLOCA
 AC_CHECK_FUNCS([strlcpy openat fstatat fpathconf execvp])
 
-AC_MSG_CHECKING([dirfd])
-AC_LINK_IFELSE([
-
+AC_MSG_CHECKING([for dirfd])
+AC_LINK_IFELSE(
+   [
+    AC_LANG_PROGRAM(
+       [[
 #include <dirent.h>
-
-DIR *dirp;
-
-int
-main(void)
+       ]],
+       [[
+int main(void)
 {
-	return dirfd(dirp);
+  DIR *dirp;
+  return dirfd(dirp);
 }
-], [ AC_MSG_RESULT([yes])
-     AC_DEFINE([HAVE_DIRFD], 1, [ Define to 1 if you have the `dirfd' function or macro. ])
+       ]])
    ],
-   [ AC_MSG_RESULT([no])]
-)
+   [have_dirfd="yes"],
+   [have_dirfd="no"])
+
+AC_MSG_RESULT([${have_dirfd}])
+
+if test "x${have_dirfd}" = "xyes" ; then
+   AC_DEFINE([HAVE_DIRFD], [1], [ Define to 1 if you have the `dirfd' function or macro.])
+fi
 
 # dlopen and dladdr
 dlopen_libs=""
@@ -810,7 +816,7 @@ echo "    on/off support.....: ${have_on_off_threads}"
 fi
 echo "  Amalgamation.........: ${do_amalgamation}"
 echo "  Iconv support........: ${have_iconv}"
-echo "  File dirfd...........: ${ac_cv_func_dirfd}"
+echo "  File dirfd...........: ${have_dirfd}"
 echo "  File xattr...........: ${have_xattr}"
 echo
 echo "  Documentation........: ${build_doc}"
