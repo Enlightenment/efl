@@ -3915,6 +3915,7 @@ module_open(Evas_Module *em)
    ORD(image_format_get);
    ORD(image_colorspace_set);
    ORD(image_colorspace_get);
+   ORD(image_can_region_get);
    ORD(image_mask_create);
    ORD(image_native_set);
    ORD(image_native_get);
