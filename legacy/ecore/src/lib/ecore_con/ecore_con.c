@@ -464,7 +464,6 @@ ecore_con_server_connect(Ecore_Con_Type compl_type,
              if (svr->ecs->lookup)
                svr->ecs_state = ECORE_CON_SOCKS_STATE_RESOLVED;
           }
-          
      }
    if (ecore_con_ssl_server_prepare(svr, compl_type & ECORE_CON_SSL))
      goto error;
@@ -2263,7 +2262,6 @@ _ecore_con_server_flush(Ecore_Con_Server *svr)
                }
 #endif
           }
-        
         if (svr->fd_handler)
           ecore_main_fd_handler_active_set(svr->fd_handler, ECORE_FD_READ);
      }

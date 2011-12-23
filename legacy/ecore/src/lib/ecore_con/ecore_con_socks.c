@@ -59,7 +59,7 @@ _ecore_con_socks_find(unsigned char version, const char *ip, int port, const cha
 {
    Eina_List *l;
    Ecore_Con_Socks *ecs;
- 
+
    if (!ecore_con_socks_proxies) return NULL;
 
    EINA_LIST_FOREACH(ecore_con_socks_proxies, l, ecs)
@@ -207,7 +207,7 @@ ecore_con_socks_svr_init(Ecore_Con_Server *svr)
         else
           sbuf[8] = 0;
         if (addrlen) memcpy(sbuf + 8 + ulen, svr->name, addrlen);
-        
+
         svr->ecs_buf = eina_binbuf_manage_new_length(sbuf, buflen);
      }
    return EINA_TRUE;
@@ -247,13 +247,13 @@ ecore_con_socks_init(void)
    /* username */
    if (h && (h - buf > 0)) *h++ = 0, u = buf;
    else h = buf;
-   
+
    /* host ip; I ain't resolvin shit here */
    p = strchr(h, ':');
    if (!p) return;
    *p++ = 0;
    if (!inet_pton(AF_INET, h, addr)) return;
-   
+
    errno = 0;
    port = strtol(p, &l, 10);
    if (errno || (port < 0) || (port > 65535)) return;
