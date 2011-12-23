@@ -426,8 +426,6 @@ evas_object_del(Evas_Object *obj)
         evas_object_free(obj, 1);
         return;
      }
-   obj->layer->evas->pointer.mouse_grabbed -= obj->mouse_grabbed;
-   obj->mouse_grabbed = 0;
    obj->mouse_in = 0;
    evas_object_grabs_cleanup(obj);
    while (obj->clip.clipees)
