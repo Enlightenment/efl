@@ -1,9 +1,9 @@
 #ifndef EVAS_COMMON_H
 #define EVAS_COMMON_H
 
-#ifdef HAVE_CONFIG_H
-# include "config.h"  /* so that EAPI in Evas.h is correctly defined */
-#endif
+//#ifdef HAVE_CONFIG_H
+#include "config.h"  /* so that EAPI in Evas.h is correctly defined */
+//#endif
 
 #ifdef HAVE_EVIL
 # include <Evil.h>
@@ -321,6 +321,21 @@ void *alloca (size_t);
 #else
 #define pld(addr, off)
 #endif /* __ARMEL__ */
+
+// these here are in config.h - just here for documentation
+//#ifdef __ARM_ARCH__
+// *IF* you enable pixman, this determines which things pixman will do
+////#define PIXMAN_FONT               1
+////#define PIXMAN_RECT               1
+////#define PIXMAN_LINE               1
+////#define PIXMAN_POLY               1
+//#define PIXMAN_IMAGE              1
+//#define PIXMAN_IMAGE_SCALE_SAMPLE 1
+//#endif
+// not related to pixman but an alternate rotate code
+//#define TILE_ROTATE               1
+
+#define TILE_CACHE_LINE_SIZE      64
 
 /*****************************************************************************/
 
@@ -662,6 +677,9 @@ struct _RGBA_Draw_Context
       DATA32 col;
    } mul;
    struct {
+#ifdef HAVE_PIXMAN
+   pixman_image_t  *pixman_color_image;
+#endif
       DATA32 col;
    } col;
    struct RGBA_Draw_Context_clip {
@@ -1016,14 +1034,14 @@ struct _Tilebuf
       int x, y, w, h;
    } prev_add, prev_del;
 #ifdef RECTUPDATE
-/*   
+/*
    Regionbuf *rb;
  */
 #elif defined(EVAS_RECT_SPLIT)
    int need_merge;
    list_t rects;
 #else
-/*   
+/*
    struct {
       int           w, h;
       Tilebuf_Tile *tiles;

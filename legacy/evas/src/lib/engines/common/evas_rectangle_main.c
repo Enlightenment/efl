@@ -58,16 +58,34 @@ rectangle_draw_internal(RGBA_Image *dst, RGBA_Draw_Context *dc, int x, int y, in
    RECTS_CLIP_TO_RECT(x, y, w, h, dc->clip.x, dc->clip.y, dc->clip.w, dc->clip.h);
    if ((w <= 0) || (h <= 0)) return;
 
-   func = evas_common_gfx_func_composite_color_span_get(dc->col.col, dst, w, dc->render_op);
-   ptr = dst->image.data + (y * dst->cache_entry.w) + x;
-   for (yy = 0; yy < h; yy++)
+#ifdef HAVE_PIXMAN
+# ifdef PIXMAN_RECT
+   pixman_op_t op = PIXMAN_OP_SRC; // _EVAS_RENDER_COPY
+   
+   if (dc->render_op == _EVAS_RENDER_BLEND)
+     op = PIXMAN_OP_OVER;
+
+   if ((dst->pixman.im) && (dc->col.pixman_color_image))
      {
-#ifdef EVAS_SLI
-	if (((yy + y) % dc->sli.h) == dc->sli.y)
+        pixman_image_composite(op, dc->col.pixman_color_image, NULL, 
+                               dst->pixman.im, x, y, 0, 0, 
+                               x, y, w, h);
+     }
+   else
+# endif     
 #endif
-	  {
-	     func(NULL, NULL, dc->col.col, ptr, w);
-	  }
-	ptr += dst->cache_entry.w;
+     {
+        func = evas_common_gfx_func_composite_color_span_get(dc->col.col, dst, w, dc->render_op);
+        ptr = dst->image.data + (y * dst->cache_entry.w) + x;
+        for (yy = 0; yy < h; yy++)
+          {
+#ifdef EVAS_SLI
+             if (((yy + y) % dc->sli.h) == dc->sli.y)
+#endif
+               {
+                  func(NULL, NULL, dc->col.col, ptr, w);
+               }
+             ptr += dst->cache_entry.w;
+          }
      }
 }

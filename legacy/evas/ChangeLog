@@ -584,3 +584,11 @@
         * Fix bug in ico loader that causes crashes (eina_file_close
           bug and mis-read of uchar into int).
 
+2011-12-23 Sanghee Park
+
+        * Extend pixman support to allow other operations to use
+          pixman when doing software rendering. On x86 this isn't useful
+          but on ARMv7 with NEON pixman happens to do better with image
+          blending and nearest scale blending.
+        * Add tiled rotator for 32bit display as an option.
+

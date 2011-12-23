@@ -154,7 +154,7 @@ scale_rgba_in_to_out_clip_sample_internal(RGBA_Image *src, RGBA_Image *dst,
         dst_clip_w = m_clip_w;
         dst_clip_h = m_clip_h;
      }
-   
+
    if (dst_clip_x < dst_region_x)
      {
 	dst_clip_w += dst_clip_x - dst_region_x;
@@ -258,7 +258,7 @@ scale_rgba_in_to_out_clip_sample_internal(RGBA_Image *src, RGBA_Image *dst,
        func = evas_common_gfx_func_composite_pixel_mask_span_get(src, dst, dst_clip_w, dc->render_op);
        maskobj = dc->mask.mask;
        mask = maskobj->mask.mask;
-/*        
+/*
        if (1 || dst_region_w > src_region_w || dst_region_h > src_region_h){
 	       printf("Mask w/h: %d/%d\n",maskobj->cache_entry.w,
 			       maskobj->cache_entry.h);
@@ -276,26 +276,47 @@ scale_rgba_in_to_out_clip_sample_internal(RGBA_Image *src, RGBA_Image *dst,
    if ((dst_region_w == src_region_w) && (dst_region_h == src_region_h))
      {
 #ifdef HAVE_PIXMAN
-        if ((1) &&
-            (src->pixman.im) && (dst->pixman.im) && 
+# ifdef PIXMAN_IMAGE_SCALE_SAMPLE        
+        if ((src->pixman.im) && (dst->pixman.im) && (!dc->mask.mask) &&
             ((!dc->mul.use) ||
                 ((dc->mul.use) && (dc->mul.col == 0xffffffff))) &&
             ((dc->render_op == _EVAS_RENDER_COPY) ||
-                (dc->render_op == _EVAS_RENDER_BLEND))
-            )
+                (dc->render_op == _EVAS_RENDER_BLEND)))
           {
              pixman_op_t op = PIXMAN_OP_SRC; // _EVAS_RENDER_COPY
-             if (dc->render_op == _EVAS_RENDER_BLEND) op = PIXMAN_OP_OVER;
+             if (dc->render_op == _EVAS_RENDER_BLEND)
+               op = PIXMAN_OP_OVER;
+             
              pixman_image_composite(op,
                                     src->pixman.im, NULL,
                                     dst->pixman.im,
                                     (dst_clip_x - dst_region_x) + src_region_x,
-                                    (dst_clip_y - dst_region_y) + src_region_y, 
+                                    (dst_clip_y - dst_region_y) + src_region_y,
                                     0, 0,
-                                    dst_clip_x, dst_clip_y, 
+                                    dst_clip_x, dst_clip_y,
+                                    dst_clip_w, dst_clip_h);
+          }
+        else if ((src->pixman.im) && (dst->pixman.im) &&
+                 (dc->mask.mask)  && (dc->mask.mask->pixman.im) &&
+                 ((dc->render_op == _EVAS_RENDER_COPY) ||
+                     (dc->render_op == _EVAS_RENDER_BLEND)))
+          {
+             // In case of pixel and color operation.
+             pixman_op_t op = PIXMAN_OP_SRC; // _EVAS_RENDER_COPY
+             if (dc->render_op == _EVAS_RENDER_BLEND)
+               op = PIXMAN_OP_OVER;
+             
+             pixman_image_composite(op,
+                                    src->pixman.im, dc->mask.mask->pixman.im,
+                                    dst->pixman.im,
+                                    (dst_clip_x - dst_region_x) + src_region_x,
+                                    (dst_clip_y - dst_region_y) + src_region_y,
+                                    0, 0,
+                                    dst_clip_x, dst_clip_y,
                                     dst_clip_w, dst_clip_h);
           }
         else
+# endif          
 #endif
           {
              ptr = src_data + ((dst_clip_y - dst_region_y + src_region_y) * src_w) + (dst_clip_x - dst_region_x) + src_region_x;
@@ -322,59 +343,59 @@ scale_rgba_in_to_out_clip_sample_internal(RGBA_Image *src, RGBA_Image *dst,
      }
    else
      {
-       /* fill scale tables */
+        /* fill scale tables */
 	for (x = 0; x < dst_clip_w; x++)
-	    lin_ptr[x] = (((x + dst_clip_x - dst_region_x) * src_region_w) / dst_region_w) + src_region_x;
+          lin_ptr[x] = (((x + dst_clip_x - dst_region_x) * src_region_w) / dst_region_w) + src_region_x;
 	for (y = 0; y < dst_clip_h; y++)
-	    row_ptr[y] = src_data + (((((y + dst_clip_y - dst_region_y) * src_region_h) / dst_region_h)
-			+ src_region_y) * src_w);
+          row_ptr[y] = src_data + (((((y + dst_clip_y - dst_region_y) * src_region_h) / dst_region_h)
+                                    + src_region_y) * src_w);
 	/* scale to dst */
 	dptr = dst_ptr;
 #ifdef DIRECT_SCALE
 	if ((!src->cache_entry.flags.alpha) &&
-	     (!dst->cache_entry.flags.alpha) &&
-	     (!dc->mul.use))
+            (!dst->cache_entry.flags.alpha) &&
+            (!dc->mul.use))
 	  {
 	     for (y = 0; y < dst_clip_h; y++)
 	       {
-#ifdef EVAS_SLI
-		 if (((y + dst_clip_y) % dc->sli.h) == dc->sli.y)
-#endif
-		   {
-		      dst_ptr = dptr;
-		      for (x = 0; x < dst_clip_w; x++)
-			{
-			   ptr = row_ptr[y] + lin_ptr[x];
-			   *dst_ptr = *ptr;
-			   dst_ptr++;
-			}
-		   }
-		 dptr += dst_w;
-	      }
+# ifdef EVAS_SLI
+                  if (((y + dst_clip_y) % dc->sli.h) == dc->sli.y)
+# endif
+                    {
+                       dst_ptr = dptr;
+                       for (x = 0; x < dst_clip_w; x++)
+                         {
+                            ptr = row_ptr[y] + lin_ptr[x];
+                            *dst_ptr = *ptr;
+                            dst_ptr++;
+                         }
+                    }
+                  dptr += dst_w;
+               }
 	  }
 	else
 #endif
 	  {
 	    /* a scanline buffer */
-	    buf = alloca(dst_clip_w * sizeof(DATA32));
-	    for (y = 0; y < dst_clip_h; y++)
-	      {
+             buf = alloca(dst_clip_w * sizeof(DATA32));
+             for (y = 0; y < dst_clip_h; y++)
+               {
 #ifdef EVAS_SLI
-		 if (((y + dst_clip_y) % dc->sli.h) == dc->sli.y)
+                  if (((y + dst_clip_y) % dc->sli.h) == dc->sli.y)
 #endif
-		   {
-		      dst_ptr = buf;
-		      for (x = 0; x < dst_clip_w; x++)
-			{
-			   ptr = row_ptr[y] + lin_ptr[x];
-			   *dst_ptr = *ptr;
-			   dst_ptr++;
-			}
-		      /* * blend here [clip_w *] buf -> dptr * */
-		      func(buf, NULL, dc->mul.col, dptr, dst_clip_w);
-		   }
-		dptr += dst_w;
-	      }
+                    {
+                       dst_ptr = buf;
+                       for (x = 0; x < dst_clip_w; x++)
+                         {
+                            ptr = row_ptr[y] + lin_ptr[x];
+                            *dst_ptr = *ptr;
+                            dst_ptr++;
+                         }
+                       /* * blend here [clip_w *] buf -> dptr * */
+                       func(buf, NULL, dc->mul.col, dptr, dst_clip_w);
+                    }
+                  dptr += dst_w;
+               }
 	  }
      }
 }

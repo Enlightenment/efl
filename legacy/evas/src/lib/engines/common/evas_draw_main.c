@@ -75,6 +75,14 @@ evas_common_draw_context_free(RGBA_Draw_Context *dc)
 {
    if (!dc) return;
 
+#ifdef HAVE_PIXMAN
+   if (dc->col.pixman_color_image)
+     {
+        pixman_image_unref(dc->col.pixman_color_image);
+        dc->col.pixman_color_image = NULL;
+     }
+#endif
+
    evas_common_draw_context_apply_clean_cutouts(&dc->cutout);
    free(dc);
 }
@@ -133,6 +141,20 @@ evas_common_draw_context_set_color(RGBA_Draw_Context *dc, int r, int g, int b, i
    G_VAL(&(dc->col.col)) = (DATA8)g;
    B_VAL(&(dc->col.col)) = (DATA8)b;
    A_VAL(&(dc->col.col)) = (DATA8)a;
+#ifdef HAVE_PIXMAN
+   if (dc && dc->col.pixman_color_image)
+     pixman_image_unref(dc->col.pixman_color_image);
+   
+   pixman_color_t pixman_color;
+   
+   pixman_color.alpha =  (dc->col.col & 0xff000000) >> 16;
+   pixman_color.red = (dc->col.col & 0x00ff0000) >> 8;
+   pixman_color.green = (dc->col.col & 0x0000ff00);
+   pixman_color.blue = (dc->col.col & 0x000000ff) << 8;
+
+   dc->col.pixman_color_image = pixman_image_create_solid_fill(&pixman_color);
+#endif
+
 }
 
 EAPI void
@@ -159,12 +181,42 @@ evas_common_draw_context_set_mask(RGBA_Draw_Context *dc, RGBA_Image *mask, int x
    dc->mask.y = y;
    dc->mask.w = w;
    dc->mask.h = h;
+
+#ifdef HAVE_PIXMAN
+   if (mask->pixman.im)
+     pixman_image_unref(mask->pixman.im);
+   
+   if (mask->cache_entry.flags.alpha)
+     {
+        mask->pixman.im = pixman_image_create_bits(PIXMAN_a8r8g8b8, w, h, 
+                                                   (uint32_t *)mask->mask.mask,
+                                                   w * 4);
+     }
+   else
+     {
+        mask->pixman.im = pixman_image_create_bits(PIXMAN_x8r8g8b8, w, h, 
+                                                   (uint32_t *)mask->mask.mask,
+                                                   w * 4);
+     }
+#endif
+
 }
 
 EAPI void
 evas_common_draw_context_unset_mask(RGBA_Draw_Context *dc)
 {
    dc->mask.mask = NULL;
+
+#ifdef HAVE_PIXMAN
+   RGBA_Image *mask;
+   mask = (RGBA_Image *)dc->mask.mask;
+
+   if (mask && mask->pixman.im)
+     {
+        pixman_image_unref(mask->pixman.im);
+        mask->pixman.im = NULL;
+     }
+#endif
 }
 
 
@@ -179,32 +231,32 @@ evas_common_draw_context_add_cutout(RGBA_Draw_Context *dc, int x, int y, int w, 
      {
 #if 1 // this is a bit faster
         int xa1, xa2, xb1, xb2;
-        
+
         xa1 = x;
         xa2 = xa1 + w - 1;
         xb1 = dc->clip.x;
         if (xa2 < xb1) return;
         xb2 = xb1 + dc->clip.w - 1;
         if (xa1 >= xb2) return;
-        if (xa2 > xb2) xa2 = xb2; 
+        if (xa2 > xb2) xa2 = xb2;
         if (xb1 > xa1) xa1 = xb1;
         x = xa1;
         w = xa2 - xa1 + 1;
-        
+
         xa1 = y;
         xa2 = xa1 + h - 1;
         xb1 = dc->clip.y;
         if (xa2 < xb1) return;
-        xb2 = xb1 + dc->clip.h - 1; 
+        xb2 = xb1 + dc->clip.h - 1;
         if (xa1 >= xb2) return;
-        if (xa2 > xb2) xa2 = xb2; 
+        if (xa2 > xb2) xa2 = xb2;
         if (xb1 > xa1) xa1 = xb1;
         y = xa1;
         h = xa2 - xa1 + 1;
-#else        
+#else
         RECTS_CLIP_TO_RECT(x, y, w, h,
 			   dc->clip.x, dc->clip.y, dc->clip.w, dc->clip.h);
-#endif        
+#endif
 	if ((w < 1) || (h < 1)) return;
      }
    evas_common_draw_context_cutouts_add(&dc->cutout, x, y, w, h);
@@ -513,7 +565,7 @@ evas_common_draw_context_apply_cutouts(RGBA_Draw_Context *dc)
 
    if (!dc->clip.use) return NULL;
    if ((dc->clip.w <= 0) || (dc->clip.h <= 0)) return NULL;
-  
+
 
    res = evas_common_draw_context_cutouts_new();
    evas_common_draw_context_cutouts_add(res, dc->clip.x, dc->clip.y, dc->clip.w, dc->clip.h);

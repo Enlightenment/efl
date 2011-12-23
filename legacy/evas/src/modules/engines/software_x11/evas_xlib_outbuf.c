@@ -579,6 +579,8 @@ evas_software_xlib_outbuf_new_region_for_update(Outbuf *buf, int x, int y, int w
              free(obr);
              return NULL;
           }
+        im->cache_entry.w = w;
+        im->cache_entry.h = h;
         im->cache_entry.flags.alpha |= alpha ? 1 : 0;
         evas_cache_image_surface_alloc(&im->cache_entry, w, h);
 	im->extended_info = obr;

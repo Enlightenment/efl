@@ -404,8 +404,8 @@ fi
 # Pixman
 have_pixman="no"
 AC_ARG_ENABLE([pixman],
-   AC_HELP_STRING([--disable-pixman],
-      [disable pixman for software rendering. @<:@default=enabled@:>@]),
+   AC_HELP_STRING([--enable-pixman],
+      [enable pixman for software rendering. @<:@default=enabled@:>@]),
    [
     if test "x${enableval}" = "xyes" ; then
        want_pixman="yes"
@@ -429,6 +429,69 @@ if test "x${want_pixman}" = "xyes" -o "x${want_pixman}" = "xauto" ; then
        fi
       ])
 fi
+
+have_pixman_font="no"
+AC_ARG_ENABLE(pixman-font,
+  AC_HELP_STRING([--enable-pixman-font], [Allow pixman to render fonts]),
+  [ 
+    have_pixman_font="yes"
+    AC_DEFINE(PIXMAN_FONT, 1, [Allow pixman to render fonts])
+  ]
+)
+
+have_pixman_rect="no"
+AC_ARG_ENABLE(pixman-rect,
+  AC_HELP_STRING([--enable-pixman-rect], [Allow pixman to render rects]),
+  [ 
+    have_pixman_rect="yes"
+    AC_DEFINE(PIXMAN_RECT, 1, [Allow pixman to render rects])
+  ]
+)
+
+have_pixman_line="no"
+AC_ARG_ENABLE(pixman-line,
+  AC_HELP_STRING([--enable-pixman-line], [Allow pixman to render lines]),
+  [ 
+    have_pixman_line="yes"
+    AC_DEFINE(PIXMAN_LINE, 1, [Allow pixman to render lines])
+  ]
+)
+
+have_pixman_poly="no"
+AC_ARG_ENABLE(pixman-poly,
+  AC_HELP_STRING([--enable-pixman-poly], [Allow pixman to render polys]),
+  [ 
+    have_pixman_poly="yes"
+    AC_DEFINE(PIXMAN_POLY, 1, [Allow pixman to render polys])
+  ]
+)
+
+have_pixman_image="no"
+AC_ARG_ENABLE(pixman-image,
+  AC_HELP_STRING([--enable-pixman-image], [Allow pixman to render images]),
+  [ 
+    have_pixman_image="yes"
+    AC_DEFINE(PIXMAN_IMAGE, 1, [Allow pixman to render images])
+  ]
+)
+
+have_pixman_image_scale_sample="no"
+AC_ARG_ENABLE(pixman-image-scale-sample,
+  AC_HELP_STRING([--enable-pixman-image-scale-sample], [Allow pixman to render sampled scaled images]),
+  [ 
+    have_pixman_image_scale_sample="yes"
+    AC_DEFINE(PIXMAN_IMAGE_SCALE_SAMPLE, 1, [Allow pixman to render image sampled scaling])
+  ]
+)
+
+have_tile_rotate="no"
+AC_ARG_ENABLE(tile-rotate,
+  AC_HELP_STRING([--enable-tile-rotate], [Enable tiled rotate algorithm]),
+  [ 
+    have_tile_rotate="yes"
+    AC_DEFINE(TILE_ROTATE, 1, [Enable tiled rotate algorithm])
+  ]
+)
 
 ### Checks for header files
 AC_HEADER_STDC
@@ -2022,6 +2085,16 @@ echo "  Async Image Preload.....: $build_async_preload"
 echo
 echo "  Word Cache..............: $want_word_cache"
 echo "  Metric Cache............: $want_metric_cache"
+echo
+echo "  Pixman..................: $have_pixman"
+echo "  Pixman Fonts............: $have_pixman_font"
+echo "  Pixman Rects............: $have_pixman_rect"
+echo "  Pixman Lines............: $have_pixman_line"
+echo "  Pixman Polygons.........: $have_pixman_poly"
+echo "  Pixman Images...........: $have_pixman_image"
+echo "  Pixman Image ScaleSample: $have_pixman_image_scale_sample"
+echo 
+echo "  Tiled 32BPP rotate......: $have_tile_rotate"
 echo
 echo "ARGB Software Engine Options:"
 echo "  Sampling Scaler.........: $scaler_sample"
