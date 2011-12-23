@@ -579,11 +579,6 @@
 	Fixed to object passes events to the next object in the same layer
 	if the repeat_events is enabled.
 
-2011-12-23  Carsten Haitzler (The Rasterman)
-
-        * Fix bug in ico loader that causes crashes (eina_file_close
-          bug and mis-read of uchar into int).
-
 2011-12-23 Sanghee Park
 
         * Extend pixman support to allow other operations to use
