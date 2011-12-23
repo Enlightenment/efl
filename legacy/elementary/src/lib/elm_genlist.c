@@ -346,9 +346,9 @@ _event_hook(Evas_Object       *obj,
         return EINA_TRUE;
      }
    else if (((!strcmp(ev->keyname, "Return")) ||
-            (!strcmp(ev->keyname, "KP_Enter")) ||
-            (!strcmp(ev->keyname, "space")))
-           && (!wd->multi) && (wd->selected))
+             (!strcmp(ev->keyname, "KP_Enter")) ||
+             (!strcmp(ev->keyname, "space")))
+            && (!wd->multi) && (wd->selected))
      {
         it = elm_genlist_selected_item_get(obj);
         elm_genlist_item_expanded_set(it,
