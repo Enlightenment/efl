@@ -14,6 +14,14 @@ typedef struct Elm_Gen_Item_Type Elm_Gen_Item_Type;
 typedef struct Elm_Gen_Item_Tooltip Elm_Gen_Item_Tooltip;
 typedef struct _Widget_Data Widget_Data;
 
+typedef enum _Elm_Genlist_Item_Scrollto_Type
+  {
+     ELM_GENLIST_ITEM_SCROLLTO_NONE = 0, /**< no scrollto */
+     ELM_GENLIST_ITEM_SCROLLTO_IN = (1 << 0), /**< show, bring in */
+     ELM_GENLIST_ITEM_SCROLLTO_TOP = (1 << 1), /**< top show, top bring in */
+     ELM_GENLIST_ITEM_SCROLLTO_MIDDLE = (1 << 2) /**< middle show, middle bring in */
+  } Elm_Genlist_Item_Scrollto_Type;
+
 struct Elm_Gen_Item_Tooltip
 {
    const void                 *data;
@@ -125,7 +133,7 @@ struct _Widget_Data
    Eina_Bool         multi_timeout : 1;
    Eina_Bool         multitouched : 1;
    Eina_Bool         longpressed : 1;
-   Eina_Bool         bring_in : 1;
+   Eina_Bool         bring_in : 1; /* a flag to describe the scroll animation. (show, bring in) */
    Eina_Bool         compress : 1;
    Eina_Bool         height_for_width : 1;
    Eina_Bool         homogeneous : 1;
@@ -134,6 +142,7 @@ struct _Widget_Data
    Eina_Bool         auto_scroll_enabled : 1;
    Eina_Bool         pan_changed : 1;
    Eina_Bool         requeued : 1; /* this is set to EINA_TRUE when the item is re-queued. this happens when the item is un-queued but the rel item is still in the queue. this item will be processed later. */
+   Eina_Bool         check_scroll : 1; /* this flag means genlist is supposed to be scrolled. if this flag is set to EINA_TRUE, genlist checks whether it's ok to scroll genlist now or not. */
    struct
    {
       Evas_Coord x, y;
@@ -145,9 +154,9 @@ struct _Widget_Data
    int               max_items_per_block; /* maximum number of items per block */
    double            longpress_timeout; /* longpress timeout. this value comes from _elm_config by default. this can be changed by elm_genlist_longpress_timeout_set() */
    int               generation; /* a generation of genlist. when genlist is cleared, this value will be increased and a new generation will start */
-
    Eina_Compare_Cb   item_compare_cb;
    Eina_Compare_Cb   item_compare_data_cb;
+   Elm_Genlist_Item_Scrollto_Type scrollto_type; /* a scrollto type which remembers where to scroll ex) in, top, middle */
 
    /* The stuff below directly come from gengrid without any thinking */
    unsigned int      nmax;
