@@ -171,7 +171,7 @@ evas_image_load_file_head_ico(Image_Entry *ie, const char *file, const char *key
      {
         unsigned char tw = 0, th = 0, tcols = 0;
         if (!read_uchar(map, fsize, &position, &tw)) goto close_file;
-        w = th;
+        w = tw;
         if (w <= 0) w = 256;
         if (!read_uchar(map, fsize, &position, &th)) goto close_file;
         h = th;
@@ -400,7 +400,7 @@ evas_image_load_file_data_ico(Image_Entry *ie, const char *file, const char *key
      {
         unsigned char tw = 0, th = 0, tcols = 0;
         if (!read_uchar(map, fsize, &position, &tw)) goto close_file;
-        w = th;
+        w = tw;
         if (w <= 0) w = 256;
         if (!read_uchar(map, fsize, &position, &th)) goto close_file;
         h = th;
