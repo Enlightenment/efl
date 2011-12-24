@@ -74,7 +74,7 @@ _btn_clicked(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED_
 }
 
 static void
-_ctxpopup_item_cb(void *data , Evas_Object *obj __UNUSED__, void *event_info)
+_ctxpopup_item_cb(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info)
 {
    printf("ctxpopup item selected: %s\n",
    elm_object_item_text_get(event_info));
