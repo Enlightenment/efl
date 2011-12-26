@@ -17,6 +17,10 @@ Additions:
      - ecore_con_url_proxy_password_set()
     * ecore_x:
      - ecore_x_randr_output_backlight_available()
+    * ecore_evas:
+     - Add Shm and Egl engines for ecore_evas to draw in Wayland.
+    * ecore_wayland
+     - Add Ecore_Wayland (backend to support Wayland).
 
 Improvements:
     * ecore:
