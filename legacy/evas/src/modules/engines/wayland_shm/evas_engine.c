@@ -185,18 +185,7 @@ eng_output_resize(void *data, int w, int h)
 
    if (!(re = (Render_Engine *)data)) return;
 
-   if (re->ob) 
-     {
-        re->outbuf_resize(re->ob, w, h);
-        /* int rot; */
-        /* void *dest; */
-
-        /* dest = re->ob->priv.dest; */
-        /* rot = re->ob->rotation; */
-        /* re->outbuf_free(re->ob); */
-        /* re->ob = evas_outbuf_setup(w, h, rot, dest); */
-     }
-
+   if (re->ob) re->outbuf_resize(re->ob, w, h);
    if (re->tb) evas_common_tilebuf_free(re->tb);
    if ((re->tb = evas_common_tilebuf_new(w, h)))
      evas_common_tilebuf_set_tile_size(re->tb, TILESIZE, TILESIZE);
@@ -267,10 +256,12 @@ eng_output_redraws_next_update_get(void *data, int *x, int *y, int *w, int *h, i
    if (!re->cur_rect) 
      {
         evas_common_tilebuf_free_render_rects(re->rects);
-        evas_common_tilebuf_clear(re->tb);
         re->rects = NULL;
         re->end = EINA_TRUE;
      }
+   if ((ux + uw) > re->ob->w) uw = re->ob->w - ux;
+   if ((uy + uh) > re->ob->h) uh = re->ob->h - uy;
+   if ((uw <= 0) || (uh <= 0)) return NULL;
    surface = 
      re->outbuf_new_region_for_update(re->ob, ux, uy, uw, uh, cx, cy, cw, ch);
    if (x) *x = ux;
