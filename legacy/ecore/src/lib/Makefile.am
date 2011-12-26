@@ -46,6 +46,10 @@ if BUILD_ECORE_COCOA
 SUBDIRS += ecore_cocoa
 endif
 
+if BUILD_ECORE_WAYLAND
+SUBDIRS += ecore_wayland
+endif
+
 if BUILD_ECORE_IPC
 SUBDIRS += ecore_ipc
 endif

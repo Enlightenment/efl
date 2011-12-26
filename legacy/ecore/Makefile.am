@@ -106,6 +106,7 @@ ecore-cocoa.pc.in \
 ecore-psl1ght.pc.in \
 ecore-input.pc.in \
 ecore-wince.pc.in \
+ecore-wayland.pc.in \
 ecore.spec.in \
 ecore.spec \
 m4/ac_abstract_socket.m4 \
@@ -188,6 +189,10 @@ endif
 
 if BUILD_ECORE_PSL1GHT
 pkgconfig_DATA += ecore-psl1ght.pc
+endif
+
+if BUILD_ECORE_WAYLAND
+pkgconfig_DATA += ecore-wayland.pc
 endif
 
 .PHONY: doc

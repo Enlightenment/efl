@@ -155,9 +155,9 @@ _ecore_evas_fb_render(Ecore_Evas *ee)
    if (ee->visible)
      {
         Eina_List *updates;
-
         Eina_List *ll;
         Ecore_Evas *ee2;
+
         if (ee->func.fn_pre_render) ee->func.fn_pre_render(ee);
 
         EINA_LIST_FOREACH(ee->sub_ecore_evas, ll, ee2)

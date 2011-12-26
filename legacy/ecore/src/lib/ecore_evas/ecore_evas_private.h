@@ -79,9 +79,17 @@
 # include <Evas_Engine_Gl_Cocoa.h>
 #endif
 
-/**
-   Log domain macros and variable
- **/
+#ifdef BUILD_ECORE_EVAS_WAYLAND_SHM
+# include "Ecore_Wayland.h"
+# include <Evas_Engine_Wayland_Shm.h>
+#endif
+
+#ifdef BUILD_ECORE_EVAS_WAYLAND_EGL
+# include "Ecore_Wayland.h"
+# include <Evas_Engine_Wayland_Egl.h>
+#endif
+
+/** Log domain macros and variables **/
 
 extern int _ecore_evas_log_dom;
 
@@ -260,6 +268,20 @@ struct _Ecore_Evas_Engine
    } ews;
 #endif
 
+#if defined(BUILD_ECORE_EVAS_WAYLAND_SHM) || defined(BUILD_ECORE_EVAS_WAYLAND_EGL)
+   struct 
+     {
+        Evas_Object *frame;
+
+# ifdef BUILD_ECORE_EVAS_WAYLAND_SHM
+        struct wl_surface *surface;
+        struct wl_shell_surface *shell_surface;
+        struct wl_buffer *buffer;
+# endif
+
+     } wl;
+#endif
+
    Ecore_Timer *idle_flush_timer;
 };
 
@@ -322,6 +344,7 @@ struct _Ecore_Evas
       char            withdrawn    : 1;
       char            sticky       : 1;
       char            request_pos  : 1;
+      char            draw_frame   : 1;
    } prop;
 
    struct {

@@ -133,6 +133,7 @@ want_ecore_psl1ght="no"
 want_ecore_fb="no"
 want_ecore_directfb="no"
 want_ecore_wince="no"
+want_ecore_wayland="no"
 
 # ecore_x options (both xlib and xcb)
 want_ecore_x_composite="yes"
@@ -173,6 +174,8 @@ want_ecore_evas_directfb="no"
 want_ecore_evas_fb="no"
 want_ecore_evas_software_16_wince="no"
 want_ecore_evas_ews="yes"
+want_ecore_evas_wayland_shm="no"
+want_ecore_evas_wayland_egl="no"
 
 # ecore_imf modules
 want_ecore_imf_xim="no"
@@ -225,6 +228,7 @@ case "$host_os" in
       want_ecore_fb="yes"
       want_ecore_imf="yes"
       want_ecore_x="yes"
+      want_ecore_wayland="yes"
       want_ecore_evas_software_x11="yes"
       want_ecore_evas_opengl_x11="yes"
       want_ecore_evas_software_16_x11="yes"
@@ -235,6 +239,8 @@ case "$host_os" in
       want_ecore_evas_gl_cocoa="no"
       want_ecore_evas_directfb="yes"
       want_ecore_evas_fb="yes"
+      want_ecore_evas_wayland_shm="yes"
+      want_ecore_evas_wayland_egl="yes"
       want_ecore_imf_xim="yes"
       want_ecore_imf_scim="yes"
       ;;
@@ -265,6 +271,7 @@ requirements_ecore_win32=""
 requirements_ecore_wince=""
 requirements_ecore_imf_xim=""
 requirements_ecore_imf_scim=""
+requirements_ecore_wayland=""
 
 AC_CHECK_DECL([MAXHOSTNAMELEN],[FOUND_MAXHOSTNAMELEN=yes])
 
@@ -1838,6 +1845,34 @@ ECORE_EVAS_CHECK_MODULE([psl1ght],
    [${have_ecore_psl1ght}],
    [requirements_ecore_evas="ecore-psl1ght >= 1.1.99 ${requirements_ecore_evas}"])
 
+### WAYLAND
+
+ecore_wayland_deps="no"
+have_wayland="no"
+if test "x${want_ecore_wayland}" = "xyes" ; then
+  PKG_CHECK_MODULES([WAYLAND], [wayland-client xkbcommon], [have_wayland="yes"], [have_wayland="no"])
+fi
+if test "x${have_ecore_input}" = "xyes" -a "x${have_wayland}" = "xyes" ; then
+  ecore_wayland_deps="yes"
+fi
+
+ECORE_CHECK_MODULE([wayland], [${want_ecore_wayland}], [Wayland], [${ecore_wayland_deps}])
+if test "x${have_ecore_wayland}" = "xyes" ; then
+  requirements_ecore_wayland="ecore-input >= 1.1.0 wayland-client xkbcommon ${requirements_ecore_wayland}"
+fi
+
+ECORE_EVAS_CHECK_MODULE_FULL([wayland-shm], [wayland-shm], 
+   [${want_ecore_evas_wayland_shm}],
+   [Wayland Shm],
+   [${have_ecore_wayland}],
+   [requirements_ecore_evas="ecore-wayland >= 1.1.0 ${requirements_ecore_evas}"])
+
+ECORE_EVAS_CHECK_MODULE_FULL([wayland-egl], [wayland-egl], 
+   [${want_ecore_evas_wayland_egl}],
+   [Wayland Egl],
+   [${have_ecore_wayland}],
+   [requirements_ecore_evas="ecore-wayland >= 1.1.0 ${requirements_ecore_evas}"])
+
 ### install and build examples
 
 EFL_CHECK_BUILD_EXAMPLES([enable_build_examples="yes"], [enable_build_examples="no"])
@@ -1865,6 +1900,7 @@ AC_SUBST(requirements_ecore_win32)
 AC_SUBST(requirements_ecore_wince)
 AC_SUBST(requirements_ecore_imf_xim)
 AC_SUBST(requirements_ecore_imf_scim)
+AC_SUBST(requirements_ecore_wayland)
 
 AC_CONFIG_FILES([
 Makefile
@@ -1885,6 +1921,7 @@ ecore-sdl.pc
 ecore-cocoa.pc
 ecore-psl1ght.pc
 ecore-wince.pc
+ecore-wayland.pc
 ecore.pc
 doc/ecore.dox
 doc/Makefile
@@ -1913,6 +1950,7 @@ src/lib/ecore_wince/Makefile
 src/lib/ecore_x/Makefile
 src/lib/ecore_x/xlib/Makefile
 src/lib/ecore_x/xcb/Makefile
+src/lib/ecore_wayland/Makefile
 src/examples/Makefile
 src/tests/Makefile
 src/modules/Makefile
@@ -2033,6 +2071,7 @@ fi
 echo "  Ecore_DirectFB...............: $have_ecore_directfb"
 echo "  Ecore_WinCE..................: $have_ecore_wince"
 echo "  Ecore_PSL1GHT................: $have_ecore_psl1ght"
+echo "  Ecore_Wayland................: $have_ecore_wayland"
 
 echo
 echo " Ecore Evas:"
@@ -2066,6 +2105,8 @@ if test "x${have_ecore_evas}" = "xyes" ; then
   echo "    Software 16bit DirectDraw..: $have_ecore_evas_software_16_ddraw"
   echo "    Software 16bit WinCE.......: $have_ecore_evas_software_16_wince"
   echo "    Sing.Proc. Windowing System: $have_ecore_evas_ews"
+  echo "    Wayland Shm................: $have_ecore_evas_wayland_shm"
+  echo "    Wayland Egl................: $have_ecore_evas_wayland_egl"
 fi
 echo
 echo "  Tests................: ${enable_tests}"

@@ -81,6 +81,8 @@ extern "C" {
 #define HAVE_ECORE_EVAS_WINCE 1
 #define HAVE_ECORE_EVAS_EWS 1
 #define HAVE_ECORE_EVAS_PSL1GHT 1
+#define HAVE_ECORE_EVAS_WAYLAND_SHM 1
+#define HAVE_ECORE_EVAS_WAYLAND_EGL 1
 
 typedef enum _Ecore_Evas_Engine_Type
 {
@@ -104,7 +106,9 @@ typedef enum _Ecore_Evas_Engine_Type
    ECORE_EVAS_ENGINE_SOFTWARE_16_WINCE,
    ECORE_EVAS_ENGINE_OPENGL_SDL,
    ECORE_EVAS_ENGINE_EWS,
-   ECORE_EVAS_ENGINE_PSL1GHT
+   ECORE_EVAS_ENGINE_PSL1GHT,
+   ECORE_EVAS_ENGINE_WAYLAND_SHM, 
+   ECORE_EVAS_ENGINE_WAYLAND_EGL
 } Ecore_Evas_Engine_Type;
 
 typedef enum _Ecore_Evas_Avoid_Damage_Type
@@ -142,6 +146,10 @@ typedef struct _Ecore_WinCE_Window Ecore_WinCE_Window;
 
 #ifndef __ECORE_COCOA_H__
 typedef struct _Ecore_Cocoa_Window Ecore_Cocoa_Window;
+#endif
+
+#ifndef _ECORE_WAYLAND_H_
+typedef struct _Ecore_Wl_Window Ecore_Wl_Window;
 #endif
 
 #ifndef _ECORE_EVAS_PRIVATE_H
@@ -688,6 +696,9 @@ EAPI Ecore_Evas     *ecore_evas_fb_new(const char *disp_name, int rotation, int 
 
 EAPI Ecore_Evas     *ecore_evas_directfb_new(const char *disp_name, int windowed, int x, int y, int w, int h);
 EAPI Ecore_DirectFB_Window *ecore_evas_directfb_window_get(const Ecore_Evas *ee);
+
+EAPI Ecore_Evas     *ecore_evas_wayland_shm_new(const char *disp_name, int x, int y, int w, int h, int frame);
+//EAPI Ecore_Evas     *ecore_evas_wayland_egl_new(const char *disp_name, int x, int y, int w, int h, int frame);
 
 /**
  * @brief Create a new @c Ecore_Evas canvas bound to the Evas
@@ -1449,6 +1460,9 @@ EAPI Eina_Bool   ecore_evas_comp_sync_get(const Ecore_Evas *ee);
  * @since 1.1
  */
 EAPI void        ecore_evas_screen_geometry_get(const Ecore_Evas *ee, int *x, int *y, int *w, int *h);
+
+EAPI void        ecore_evas_draw_frame_set(Ecore_Evas *ee, Eina_Bool draw_frame);
+EAPI Eina_Bool   ecore_evas_draw_frame_get(const Ecore_Evas *ee);
 
 /**
  * @brief Associate the given object to this ecore evas.
