@@ -64,6 +64,10 @@ struct _Item_Block
    Widget_Data *wd;
    Eina_List   *items;
    Evas_Coord   x, y, w, h, minw, minh;
+   int          position;
+   int          item_position_stamp;
+
+   Eina_Bool    position_update : 1;
    Eina_Bool    want_unrealize : 1;
    Eina_Bool    realized : 1;
    Eina_Bool    changed : 1;
@@ -175,6 +179,7 @@ static const char SIG_MULTI_PINCH_OUT[] = "multi,pinch,out";
 static const char SIG_MULTI_PINCH_IN[] = "multi,pinch,in";
 static const char SIG_SWIPE[] = "swipe";
 static const char SIG_MOVED[] = "moved";
+static const char SIG_INDEX_UPDATE[] = "index,update";
 
 static const Evas_Smart_Cb_Description _signals[] = {
    {SIG_CLICKED_DOUBLE, ""},
@@ -671,6 +676,31 @@ _item_unhighlight(Elm_Gen_Item *it)
 }
 
 static void
+_item_block_position_update(Eina_Inlist *list, int idx)
+{
+   Item_Block *tmp;
+
+   EINA_INLIST_FOREACH(list, tmp)
+     {
+        tmp->position = idx++;
+        tmp->position_update = EINA_TRUE;
+     }
+}
+
+static void
+_item_position_update(Eina_List *list, int idx)
+{
+   Elm_Gen_Item *it;
+   Eina_List *l;
+
+   EINA_LIST_FOREACH(list, l, it)
+     {
+        it->position = idx++;
+        it->position_update = EINA_TRUE;
+     }
+}
+
+static void
 _item_block_del(Elm_Gen_Item *it)
 {
    Eina_Inlist *il;
@@ -688,7 +718,10 @@ _item_block_del(Elm_Gen_Item *it)
         if (it->parent)
           it->parent->item->items = eina_list_remove(it->parent->item->items, it);
         else
-          it->wd->blocks = eina_inlist_remove(it->wd->blocks, il);
+          {
+             _item_block_position_update(il->next, itb->position);
+             it->wd->blocks = eina_inlist_remove(it->wd->blocks, il);
+          }
         free(itb);
         if (itbn) itbn->changed = EINA_TRUE;
      }
@@ -710,6 +743,8 @@ _item_block_del(Elm_Gen_Item *it)
                        itbp->count++;
                        itbp->changed = EINA_TRUE;
                     }
+                  _item_block_position_update(EINA_INLIST_GET(itb)->next,
+                                              itb->position);
                   it->wd->blocks = eina_inlist_remove(it->wd->blocks,
                                                       EINA_INLIST_GET(itb));
                   free(itb);
@@ -727,6 +762,8 @@ _item_block_del(Elm_Gen_Item *it)
                        itbn->count++;
                        itbn->changed = EINA_TRUE;
                     }
+                  _item_block_position_update(EINA_INLIST_GET(itb)->next,
+                                              itb->position);
                   it->wd->blocks =
                     eina_inlist_remove(it->wd->blocks, EINA_INLIST_GET(itb));
                   free(itb);
@@ -1542,6 +1579,16 @@ _item_cache_find(Elm_Gen_Item *it)
 }
 
 static void
+_elm_genlist_item_index_update(Elm_Gen_Item *it)
+{
+   if (it->position_update || it->item->block->position_update)
+     {
+        evas_object_smart_callback_call(WIDGET(it), SIG_INDEX_UPDATE, it);
+        it->position_update = EINA_FALSE;
+     }
+}
+
+static void
 _elm_genlist_item_odd_even_update(Elm_Gen_Item *it)
 {
    if (!it->item->nostacking)
@@ -1775,6 +1822,7 @@ _item_realize(Elm_Gen_Item *it,
              it->item->order_num_in = in;
              _elm_genlist_item_odd_even_update(it);
              _elm_genlist_item_state_update(it, NULL);
+             _elm_genlist_item_index_update(it);
           }
         //evas_event_thaw(evas_object_evas_get(it->wd->obj));
         //evas_event_thaw_eval(evas_object_evas_get(it->wd->obj));
@@ -1863,6 +1911,7 @@ _item_realize(Elm_Gen_Item *it,
                                        _multi_move, it);
 
         _elm_genlist_item_state_update(it, itc);
+        _elm_genlist_item_index_update(it);
      }
 
    if ((calc) && (it->wd->homogeneous) &&
@@ -2019,6 +2068,7 @@ _item_block_recalc(Item_Block *itb,
    itb->minw = minw;
    itb->minh = minh;
    itb->changed = EINA_FALSE;
+   itb->position_update = EINA_FALSE;
    //evas_event_thaw(evas_object_evas_get(itb->wd->obj));
    //evas_event_thaw_eval(evas_object_evas_get(itb->wd->obj));
    return showme;
@@ -3268,9 +3318,23 @@ _item_block_new(Widget_Data *wd, Eina_Bool prepend)
    if (!itb) return NULL;
    itb->wd = wd;
    if (prepend)
-     wd->blocks = eina_inlist_prepend(wd->blocks, EINA_INLIST_GET(itb));
+     {
+        wd->blocks = eina_inlist_prepend(wd->blocks, EINA_INLIST_GET(itb));
+        _item_block_position_update(wd->blocks, 0);
+     }
    else
-     wd->blocks = eina_inlist_append(wd->blocks, EINA_INLIST_GET(itb));
+     {
+        wd->blocks = eina_inlist_append(wd->blocks, EINA_INLIST_GET(itb));
+        itb->position_update = EINA_TRUE;
+        if (wd->blocks != EINA_INLIST_GET(itb))
+          {
+             itb->position = ((Item_Block *) (EINA_INLIST_GET(itb)->prev))->position + 1;
+          }
+        else
+          {
+             itb->position = 0;
+          }
+     }
    return itb;
 }
 
@@ -3293,16 +3357,36 @@ newblock:
                   wd->blocks =
                     eina_inlist_append(wd->blocks, EINA_INLIST_GET(itb));
                   itb->items = eina_list_append(itb->items, it);
+                  itb->position_update = EINA_TRUE;
+                  it->position = eina_list_count(itb->items);
+                  it->position_update = EINA_TRUE;
+
+                  if (wd->blocks != EINA_INLIST_GET(itb))
+                    {
+                       itb->position = ((Item_Block *) (EINA_INLIST_GET(itb)->prev))->position + 1;
+                    }
+                  else
+                    {
+                       itb->position = 0;
+                    }
                }
              else
                {
+                  Eina_List *tmp;
+
+                  tmp = eina_list_data_find_list(itb->items, it->item->rel);
                   if (it->item->before)
                     {
                        wd->blocks = eina_inlist_prepend_relative
                            (wd->blocks, EINA_INLIST_GET(itb),
                            EINA_INLIST_GET(it->item->rel->item->block));
                        itb->items =
-                         eina_list_prepend_relative(itb->items, it, it->item->rel);
+                         eina_list_prepend_relative_list(itb->items, it, tmp);
+
+                       /* Update index from where we prepended */
+                       _item_position_update(eina_list_prev(tmp), it->item->rel->position);
+                       _item_block_position_update(EINA_INLIST_GET(itb),
+                                                   it->item->rel->item->block->position);
                     }
                   else
                     {
@@ -3310,7 +3394,12 @@ newblock:
                            (wd->blocks, EINA_INLIST_GET(itb),
                            EINA_INLIST_GET(it->item->rel->item->block));
                        itb->items =
-                         eina_list_append_relative(itb->items, it, it->item->rel);
+                         eina_list_append_relative_list(itb->items, it, tmp);
+
+                       /* Update block index from where we appended */
+                       _item_position_update(eina_list_next(tmp), it->item->rel->position + 1);
+                       _item_block_position_update(EINA_INLIST_GET(itb),
+                                                   it->item->rel->item->block->position + 1);
                     }
                }
           }
@@ -3333,6 +3422,8 @@ newblock:
                        if (!itb) return EINA_FALSE;
                     }
                   itb->items = eina_list_prepend(itb->items, it);
+
+                  _item_position_update(itb->items, 0);
                }
              else
                {
@@ -3351,11 +3442,14 @@ newblock:
                        if (!itb) return EINA_FALSE;
                     }
                   itb->items = eina_list_append(itb->items, it);
+                  it->position = eina_list_count(itb->items);
                }
           }
      }
    else
      {
+        Eina_List *tmp;
+
         if (it->item->rel->item->queued)
           {
              /* NOTE: for a strange reason eina_list and eina_inlist don't have the same property
@@ -3371,10 +3465,17 @@ newblock:
           }
         itb = it->item->rel->item->block;
         if (!itb) goto newblock;
+        tmp = eina_list_data_find_list(itb->items, it->item->rel);
         if (it->item->before)
-          itb->items = eina_list_prepend_relative(itb->items, it, it->item->rel);
+          {
+             itb->items = eina_list_prepend_relative_list(itb->items, it, tmp);
+             _item_position_update(eina_list_prev(tmp), it->item->rel->position);
+          }
         else
-          itb->items = eina_list_append_relative(itb->items, it, it->item->rel);
+          {
+             itb->items = eina_list_append_relative_list(itb->items, it, tmp);
+             _item_position_update(eina_list_next(tmp), it->item->rel->position + 1);
+          }
      }
    itb->count++;
    itb->changed = EINA_TRUE;
@@ -3497,7 +3598,7 @@ _queue_process(Widget_Data *wd)
           {
              showme = _item_block_recalc(it->item->block, it->item->block->num, EINA_TRUE);
              it->item->block->changed = 0;
-             if(wd->pan_changed)
+             if (wd->pan_changed)
                {
                   if (wd->calc_job) ecore_job_del(wd->calc_job);
                   wd->calc_job = NULL;
@@ -3506,7 +3607,8 @@ _queue_process(Widget_Data *wd)
                }
           }
         if (showme) it->item->block->showme = EINA_TRUE;
-        if (eina_inlist_count(wd->blocks) > 1)
+        /* same as eina_inlist_count > 1 */
+        if (wd->blocks && wd->blocks->next)
           {
              if ((t - t0) > (ecore_animator_frametime_get())) break;
           }
@@ -4779,6 +4881,15 @@ elm_genlist_item_cursor_engine_only_get(const Elm_Gen_Item *it)
 {
    ELM_WIDGET_ITEM_WIDTYPE_CHECK_OR_RETURN(it, EINA_FALSE);
    return elm_widget_item_cursor_engine_only_get(it);
+}
+
+EAPI int
+elm_genlist_item_index_get(Elm_Gen_Item *it)
+{
+   ELM_WIDGET_ITEM_WIDTYPE_CHECK_OR_RETURN(it, -1);
+   if (it->item->block)
+     return it->position + it->item->block->position;
+   return -1;
 }
 
 EAPI void

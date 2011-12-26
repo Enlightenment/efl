@@ -20859,6 +20859,16 @@ extern "C" {
    EAPI Eina_Bool          elm_genlist_item_cursor_engine_only_get(const Elm_Genlist_Item *item) EINA_ARG_NONNULL(1);
 
    /**
+    * Get the index of the item. It is only valid once displayed.
+    *
+    * @param item a genlist item
+    * @return the position inside the list of item.
+    *
+    * @ingroup Genlist
+    */
+   EAPI int elm_genlist_item_index_get(Elm_Gen_Item *it);
+
+   /**
     * Update the contents of all realized items.
     *
     * @param obj The genlist object.
