@@ -25,6 +25,7 @@ evas_object_new(Evas *e __UNUSED__)
    obj->magic = MAGIC_OBJ;
    obj->cur.scale = 1.0;
    obj->prev.scale = 1.0;
+   obj->is_frame = EINA_FALSE;
 
    return obj;
 }
@@ -99,7 +100,8 @@ evas_object_change(Evas_Object *obj)
    /* set changed flag on all objects this one clips too */
    if (!((movch) && (obj->is_static_clip)))
      {
-        EINA_LIST_FOREACH(obj->clip.clipees, l, obj2) evas_object_change(obj2);
+        EINA_LIST_FOREACH(obj->clip.clipees, l, obj2) 
+          evas_object_change(obj2);
      }
    EINA_LIST_FOREACH(obj->proxy.proxies, l, obj2)
      {
@@ -111,8 +113,8 @@ evas_object_change(Evas_Object *obj)
 void
 evas_object_render_pre_visible_change(Eina_Array *rects, Evas_Object *obj, int is_v, int was_v)
 {
-   if (obj->smart.smart) return ;
-   if (is_v == was_v) return ;
+   if (obj->smart.smart) return;
+   if (is_v == was_v) return;
    if (is_v)
      {
         evas_add_rect(rects,
@@ -134,8 +136,8 @@ evas_object_render_pre_visible_change(Eina_Array *rects, Evas_Object *obj, int i
 void
 evas_object_render_pre_clipper_change(Eina_Array *rects, Evas_Object *obj)
 {
-   if (obj->smart.smart) return ;
-   if (obj->cur.clipper == obj->prev.clipper) return ;
+   if (obj->smart.smart) return;
+   if (obj->cur.clipper == obj->prev.clipper) return;
    if ((obj->cur.clipper) && (obj->prev.clipper))
      {
         /* get difference rects between clippers */
@@ -223,7 +225,8 @@ evas_object_clip_changes_clean(Evas_Object *obj)
 {
    Eina_Rectangle *r;
 
-   EINA_LIST_FREE(obj->clip.changes, r) eina_rectangle_free(r);
+   EINA_LIST_FREE(obj->clip.changes, r) 
+     eina_rectangle_free(r);
 }
 
 void
@@ -446,18 +449,32 @@ EAPI void
 evas_object_move(Evas_Object *obj, Evas_Coord x, Evas_Coord y)
 {
    int is, was = 0, pass = 0, freeze = 0;
+   int nx = 0, ny = 0;
 
    MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
    return;
    MAGIC_CHECK_END();
    if (obj->delete_me) return;
-   if (evas_object_intercept_call_move(obj, x, y)) return;
+
+   nx = x;
+   ny = y;
+   if (!obj->is_frame) 
+     {
+        int fx, fy;
+
+        evas_output_framespace_get(obj->layer->evas, &fx, &fy, NULL, NULL);
+        nx = x + fx;
+        ny = y + fy;
+     }
+
+   if (evas_object_intercept_call_move(obj, nx, ny)) return;
    if (obj->doing.in_move > 0)
      {
         WRN("evas_object_move() called on object %p when in the middle of moving the same object", obj);
         return;
      }
-   if ((obj->cur.geometry.x == x) && (obj->cur.geometry.y == y)) return;
+
+   if ((obj->cur.geometry.x == nx) && (obj->cur.geometry.y == ny)) return;
    if (obj->layer->evas->events_frozen <= 0)
      {
         pass = evas_event_passes_through(obj);
@@ -468,13 +485,16 @@ evas_object_move(Evas_Object *obj, Evas_Coord x, Evas_Coord y)
                                               obj->layer->evas->pointer.y, 1, 1);
      }
    obj->doing.in_move++;
+
    if (obj->smart.smart)
      {
         if (obj->smart.smart->smart_class->move)
-          obj->smart.smart->smart_class->move(obj, x, y);
+          obj->smart.smart->smart_class->move(obj, nx, ny);
      }
-   obj->cur.geometry.x = x;
-   obj->cur.geometry.y = y;
+
+   obj->cur.geometry.x = nx;
+   obj->cur.geometry.y = ny;
+
 ////   obj->cur.cache.geometry.validity = 0;
    obj->changed_move = 1;
    evas_object_change(obj);
@@ -506,19 +526,36 @@ EAPI void
 evas_object_resize(Evas_Object *obj, Evas_Coord w, Evas_Coord h)
 {
    int is, was = 0, pass = 0, freeze =0;
+   int nw = 0, nh = 0;
 
    MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
    return;
    MAGIC_CHECK_END();
    if (obj->delete_me) return;
    if (w < 0) w = 0; if (h < 0) h = 0;
+
+   nw = w;
+   nh = h;
+   if (!obj->is_frame) 
+     {
+        int fw, fh;
+
+        evas_output_framespace_get(obj->layer->evas, NULL, NULL, &fw, &fh);
+        nw = w - fw;
+        nh = h - fh;
+        if (nw < 0) nw = 0;
+        if (nh < 0) nh = 0;
+     }
+
    if (evas_object_intercept_call_resize(obj, w, h)) return;
+
    if (obj->doing.in_resize > 0)
      {
         WRN("evas_object_resize() called on object %p when in the middle of resizing the same object", obj);
         return;
      }
-   if ((obj->cur.geometry.w == w) && (obj->cur.geometry.h == h)) return;
+
+   if ((obj->cur.geometry.w == nw) && (obj->cur.geometry.h == nh)) return;
    if (obj->layer->evas->events_frozen <= 0)
      {
         pass = evas_event_passes_through(obj);
@@ -529,13 +566,16 @@ evas_object_resize(Evas_Object *obj, Evas_Coord w, Evas_Coord h)
                                               obj->layer->evas->pointer.y, 1, 1);
      }
    obj->doing.in_resize++;
+
    if (obj->smart.smart)
      {
        if (obj->smart.smart->smart_class->resize)
-         obj->smart.smart->smart_class->resize(obj, w, h);
+          obj->smart.smart->smart_class->resize(obj, nw, nh);
      }
-   obj->cur.geometry.w = w;
-   obj->cur.geometry.h = h;
+
+   obj->cur.geometry.w = nw;
+   obj->cur.geometry.h = nh;
+
 ////   obj->cur.cache.geometry.validity = 0;
    evas_object_change(obj);
    evas_object_clip_dirty(obj);
@@ -1313,3 +1353,20 @@ evas_object_static_clip_get(const Evas_Object *obj)
    return obj->is_static_clip;
 }
 
+EAPI void 
+evas_object_is_frame_object_set(Evas_Object *obj, Eina_Bool is_frame) 
+{
+   MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
+   return;
+   MAGIC_CHECK_END();
+   obj->is_frame = is_frame;
+}
+
+EAPI Eina_Bool 
+evas_object_is_frame_object_get(Evas_Object *obj) 
+{
+   MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
+   return EINA_FALSE;
+   MAGIC_CHECK_END();
+   return obj->is_frame;
+}
