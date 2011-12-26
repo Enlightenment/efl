@@ -9050,6 +9050,9 @@ EAPI void              evas_object_polygon_points_clear  (Evas_Object *obj) EINA
  * @}
  */
 
+EAPI void              evas_object_is_frame_object_set(Evas_Object *obj, Eina_Bool is_frame);
+EAPI Eina_Bool         evas_object_is_frame_object_get(Evas_Object *obj);
+
 /**
  * @defgroup Evas_Smart_Group Smart Functions
  *
