@@ -97,8 +97,8 @@ static void      _show_region_hook(void        *data,
                                    Evas_Object *obj);
 static void      _sizing_eval(Evas_Object *obj);
 static void      _item_realize(Elm_Gen_Item *it,
-                               int               in,
-                               Eina_Bool         calc);
+                               int           in,
+                               Eina_Bool     calc);
 static void      _item_unrealize_cb(Elm_Gen_Item *it);
 static void      _item_block_unrealize(Item_Block *itb);
 static void      _calc_job(void *data);
@@ -113,17 +113,17 @@ static Eina_Bool _event_hook(Evas_Object       *obj,
                              Evas_Callback_Type type,
                              void              *event_info);
 static void      _signal_emit_hook(Evas_Object *obj,
-                                   const char *emission,
-                                   const char *source);
+                                   const char  *emission,
+                                   const char  *source);
 static Eina_Bool _deselect_all_items(Widget_Data *wd);
 static void      _pan_calculate(Evas_Object *obj);
 static void      _pan_max_get(Evas_Object *obj,
                               Evas_Coord  *x,
                               Evas_Coord  *y);
 static void      _item_position(Elm_Gen_Item *it,
-                                Evas_Object      *obj,
-                                Evas_Coord        it_x,
-                                Evas_Coord        it_y);
+                                Evas_Object  *obj,
+                                Evas_Coord    it_x,
+                                Evas_Coord    it_y);
 static void      _mode_item_realize(Elm_Gen_Item *it);
 static void      _mode_item_unrealize(Elm_Gen_Item *it);
 static void      _item_mode_set(Elm_Gen_Item *it);
@@ -134,7 +134,8 @@ static void      _item_move_after(Elm_Gen_Item *it,
 static void      _item_move_before(Elm_Gen_Item *it,
                                    Elm_Gen_Item *before);
 static void      _item_auto_scroll(Widget_Data *wd);
-static void      _elm_genlist_clear(Evas_Object *obj, Eina_Bool standby);
+static void      _elm_genlist_clear(Evas_Object *obj,
+                                    Eina_Bool    standby);
 static void      _pan_child_size_get(Evas_Object *obj,
                                      Evas_Coord  *w,
                                      Evas_Coord  *h);
