@@ -452,9 +452,12 @@ _spacer_cb(void *data, Evas *e, Evas_Object *obj __UNUSED__, void *event_info)
    Evas_Event_Mouse_Down *ev = event_info;
    Evas_Coord x, y, w, h;
    double button_x, button_y;
+   double prev_button_x, prev_button_y;
 
    evas_object_geometry_get(wd->spacer, &x, &y, &w, &h);
-   edje_object_part_drag_value_get(wd->slider, "elm.dragable.slider", &button_x, &button_y);
+   edje_object_part_drag_value_get(wd->slider, "elm.dragable.slider", &prev_button_x, &prev_button_y);
+   button_x = prev_button_x;
+   button_y = prev_button_y;
    if (wd->horizontal)
      {
         button_x = ((double)ev->canvas.x - (double)x) / (double)w;
@@ -467,9 +470,15 @@ _spacer_cb(void *data, Evas *e, Evas_Object *obj __UNUSED__, void *event_info)
         if (button_y > 1) button_y = 1;
         if (button_y < 0) button_y = 0;
      }
-   edje_object_part_drag_value_set(wd->slider, "elm.dragable.slider", button_x, button_y);
-   evas_event_feed_mouse_cancel(e, 0, NULL);
-   evas_event_feed_mouse_down(e, 1, EVAS_BUTTON_NONE, 0, NULL);
+   if (button_x != prev_button_x || button_y != prev_button_y)
+     {
+        edje_object_part_drag_value_set(wd->slider, "elm.dragable.slider", button_x, button_y);
+     }
+   else
+     {
+        evas_event_feed_mouse_cancel(e, 0, NULL);
+        evas_event_feed_mouse_down(e, 1, EVAS_BUTTON_NONE, 0, NULL);
+     }
 }
 
 static void
