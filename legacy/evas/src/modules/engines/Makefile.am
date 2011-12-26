@@ -71,3 +71,6 @@ endif
 if !EVAS_STATIC_BUILD_WAYLAND_SHM
 SUBDIRS += wayland_shm
 endif
+if !EVAS_STATIC_BUILD_WAYLAND_EGL
+SUBDIRS += wayland_egl
+endif

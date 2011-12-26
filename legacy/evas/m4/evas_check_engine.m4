@@ -906,10 +906,10 @@ evas_engine_[]$1[]_cflags=""
 evas_engine_[]$1[]_libs=""
 
 PKG_CHECK_MODULES([WAYLAND_EGL],
-   [wayland-egl],
+   [egl >= 7.10 glesv2 gl wayland-client wayland-egl],
    [
     have_dep="yes"
-    requirement="wayland-egl"
+    requirement="egl >= 7.10 glesv2 gl wayland-client wayland-egl"
     evas_engine_[]$1[]_cflags="${WAYLAND_EGL_CFLAGS}"
     evas_engine_[]$1[]_libs="${WAYLAND_EGL_LIBS}"
    ],[
@@ -918,16 +918,18 @@ PKG_CHECK_MODULES([WAYLAND_EGL],
 )
 
 if test "x${have_dep}" = "xyes" ; then
+   PKG_CHECK_MODULES([GL_EET], [eet >= 1.5.0], [have_dep="yes"], [have_dep="no"])
    AC_CHECK_HEADER([GLES2/gl2.h],
       [have_egl="yes"],
       [have_egl="no"],
       [
 #include <GLES2/gl2.h>
 #include <EGL/egl.h>
+#include <GL/gl.h>
       ])
    if test "x${have_egl}" = "xyes" ; then
       evas_engine_[]$1[]_cflags="${WAYLAND_EGL_CFLAGS}"
-      evas_engine_[]$1[]_libs="${WAYLAND_EGL_LIBS} -lGLESv2 -lEGL"
+      evas_engine_[]$1[]_libs="${WAYLAND_EGL_LIBS} -lGL -lGLESv2 -lEGL"
    fi
 fi
 

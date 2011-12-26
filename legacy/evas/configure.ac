@@ -113,6 +113,7 @@ want_evas_engine_fb="no"
 want_evas_engine_directfb="no"
 want_evas_engine_psl1ght="no"
 want_evas_engine_wayland_shm="no"
+want_evas_engine_wayland_egl="no"
 
 want_evas_image_loader_edb="yes"
 want_evas_image_loader_eet="yes"
@@ -159,6 +160,8 @@ case "$host_os" in
       want_evas_engine_software_xcb="no"
       want_evas_engine_gl_xcb="no"
       want_evas_engine_fb="auto"
+      want_evas_engine_wayland_shm="auto"
+      want_evas_engine_wayland_egl="auto"
 ### no - not ready/usable/complete
 #      want_evas_engine_software_8_x11="auto"
 #      want_evas_engine_software_16_x11="auto"
@@ -768,6 +771,8 @@ EVAS_CHECK_ENGINE([software-16-wince], [${want_evas_engine_software_16_wince}], 
 EVAS_CHECK_ENGINE([software-16-sdl], [${want_evas_engine_software_16_sdl}], [no], [Software SDL 16 bits])
 
 EVAS_CHECK_ENGINE([wayland-shm], [${want_evas_engine_wayland_shm}], [no], [Wayland Shm])
+
+EVAS_CHECK_ENGINE([wayland-egl], [${want_evas_engine_wayland_egl}], [no], [Wayland Egl])
 
 # SDL primitive
 sdl_primitive="no"
@@ -1887,6 +1892,7 @@ evas-software-16-wince.pc
 evas-software-sdl.pc
 evas-psl1ght.pc
 evas-wayland-shm.pc
+evas-wayland-egl.pc
 evas.pc
 doc/evas.dox
 doc/Makefile
@@ -1932,6 +1938,7 @@ src/modules/engines/software_16_x11/Makefile
 src/modules/engines/software_16_ddraw/Makefile
 src/modules/engines/software_16_sdl/Makefile
 src/modules/engines/wayland_shm/Makefile
+src/modules/engines/wayland_egl/Makefile
 src/modules/loaders/Makefile
 src/modules/loaders/edb/Makefile
 src/modules/loaders/eet/Makefile
@@ -2029,6 +2036,7 @@ echo "  Software 16bit Directdraw..: $have_evas_engine_software_16_ddraw"
 echo "  Software 16bit WinCE.......: $have_evas_engine_software_16_wince"
 echo "  Software 16bit SDL.........: $have_evas_engine_software_16_sdl (primitive: $sdl_primitive)"
 echo "  Wayland Shm................: $have_evas_engine_wayland_shm"
+echo "  Wayland Egl................: $have_evas_engine_wayland_egl"
 echo
 echo "Image Loaders:"
 echo "  BMP.....................: $have_evas_image_loader_bmp"

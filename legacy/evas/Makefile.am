@@ -46,6 +46,7 @@ evas-software-16-wince.pc.in \
 evas-software-sdl.pc.in \
 evas-psl1ght.pc.in \
 evas-wayland-shm.pc.in \
+evas-wayland-egl.pc.in \
 evas.spec.in \
 evas.spec \
 m4/efl_attribute.m4 \
@@ -130,6 +131,10 @@ endif
 
 if BUILD_ENGINE_WAYLAND_SHM
 pkgconfig_DATA += evas-wayland-shm.pc
+endif
+
+if BUILD_ENGINE_WAYLAND_EGL
+pkgconfig_DATA += evas-wayland-egl.pc
 endif
 
 .PHONY: doc coverage
