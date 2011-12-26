@@ -764,9 +764,9 @@ isf_imf_context_client_window_set (Ecore_IMF_Context *ctx, void *window)
 
    EcoreIMFContextISF *context_scim = (EcoreIMFContextISF *)ecore_imf_context_data_get (ctx);
 
-   if (context_scim && context_scim->impl && context_scim->impl->client_window != (Ecore_X_Window) window)
+   if (context_scim && context_scim->impl && context_scim->impl->client_window != (Ecore_X_Window)((Ecore_Window)window))
      {
-        context_scim->impl->client_window = (Ecore_X_Window) window;
+        context_scim->impl->client_window = (Ecore_X_Window)((Ecore_Window)window);
 
         if ((context_scim->impl->client_window != 0) &&
             (context_scim->impl->client_window != _client_window))
