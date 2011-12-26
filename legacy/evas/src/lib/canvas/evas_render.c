@@ -1401,6 +1401,7 @@ evas_render_updates_internal(Evas *e,
         _evas_render_prev_cur_clip_cache_add(e, obj);
      }
    eina_array_clean(&e->restack_objects);
+
    /* phase 3. add exposes */
    EINA_LIST_FREE(e->damages, r)
      {
@@ -1408,13 +1409,20 @@ evas_render_updates_internal(Evas *e,
                                                 r->x, r->y, r->w, r->h);
         eina_rectangle_free(r);
      }
+
    /* phase 4. framespace, output & viewport changes */
    if (e->framespace.changed) 
      {
-        e->engine.func->output_redraws_rect_add(e->engine.data.output,
-                                                e->framespace.x, e->framespace.y,
-                                                e->framespace.w, e->framespace.h);
+        int fx, fy, fw, fh;
+
+        fx = e->viewport.x - e->framespace.x;
+        fy = e->viewport.y - e->framespace.y;
+        fw = e->viewport.w + e->framespace.w;
+        fh = e->viewport.h + e->framespace.h;
+        e->engine.func->output_redraws_rect_add(e->engine.data.output, 
+                                                fx, fy, fw, fh);
      }
+
    if (e->viewport.changed)
      {
         e->engine.func->output_redraws_rect_add(e->engine.data.output,
@@ -1439,6 +1447,7 @@ evas_render_updates_internal(Evas *e,
                                                 0, 0,
                                                 e->output.w, e->output.h);
      }
+
    /* phase 5. add obscures */
    EINA_LIST_FOREACH(e->obscures, ll, r)
      {
