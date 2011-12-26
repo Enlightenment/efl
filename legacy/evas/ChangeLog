@@ -587,3 +587,6 @@
           blending and nearest scale blending.
         * Add tiled rotator for 32bit display as an option.
 
+2011-12-26  Christopher Michael (devilhorns)
+
+        * Add functions to get/set if an object is a 'frame_object'
