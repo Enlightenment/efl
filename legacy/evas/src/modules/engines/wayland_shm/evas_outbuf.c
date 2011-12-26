@@ -54,8 +54,11 @@ evas_outbuf_new_region_for_update(Outbuf *ob, int x, int y, int w, int h, int *c
 
 	*cx = 0; *cy = 0; *cw = w; *ch = h;
 	im = (RGBA_Image *)evas_cache_image_empty(evas_common_image_cache_get());
-        im->cache_entry.flags.alpha = 1;
-        im = (RGBA_Image *)evas_cache_image_size_set(&im->cache_entry, w, h);
+        if (im) 
+          {
+             im->cache_entry.flags.alpha = 1;
+             im = (RGBA_Image *)evas_cache_image_size_set(&im->cache_entry, w, h);
+          }
 
         return im;
      }
@@ -77,7 +80,7 @@ evas_outbuf_push_updated_region(Outbuf *ob, RGBA_Image *update, int x __UNUSED__
              DATA32 *dst, *src;
              int yy = 0, bytes = 0;
 
-             bytes = (h * (w * sizeof(DATA32)));
+             bytes = ((w * sizeof(int)) * h);
              for (yy = 0; yy < h; yy++) 
                {
                   src = update->image.data + (yy * update->cache_entry.w);
