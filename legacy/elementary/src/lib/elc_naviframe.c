@@ -817,7 +817,6 @@ _title_content_unset(Elm_Naviframe_Item *it, const char *part)
    return content;
 }
 
-
 static void
 _item_del(Elm_Naviframe_Item *it)
 {
@@ -1362,6 +1361,8 @@ elm_naviframe_item_del(Elm_Object_Item *it)
      {
         wd->stack = eina_inlist_remove(wd->stack, EINA_INLIST_GET(navi_it));
         _item_del(navi_it);
+        //If the item is only one, the stack will be empty
+        if (!wd->stack) return;
         navi_it = EINA_INLIST_CONTAINER_GET(wd->stack->last,
                                             Elm_Naviframe_Item);
         evas_object_show(VIEW(navi_it));
