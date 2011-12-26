@@ -38,7 +38,7 @@ _print_current_dir(Evas_Object *obj)
 }
 
 static void
-_btn_clicked(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+_btn_clicked(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    printf("Button Clicked\n");
 }
