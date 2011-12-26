@@ -176,6 +176,7 @@ want_ecore_evas_ews="yes"
 
 # ecore_imf modules
 want_ecore_imf_xim="no"
+want_ecore_imf_scim="no"
 
 case "$host_os" in
    mingw32ce* | cegcc*)
@@ -235,6 +236,7 @@ case "$host_os" in
       want_ecore_evas_directfb="yes"
       want_ecore_evas_fb="yes"
       want_ecore_imf_xim="yes"
+      want_ecore_imf_scim="yes"
       ;;
 esac
 
@@ -262,6 +264,7 @@ requirements_ecore_x=""
 requirements_ecore_win32=""
 requirements_ecore_wince=""
 requirements_ecore_imf_xim=""
+requirements_ecore_imf_scim=""
 
 AC_CHECK_DECL([MAXHOSTNAMELEN],[FOUND_MAXHOSTNAMELEN=yes])
 
@@ -1547,6 +1550,22 @@ fi
 ECORE_CHECK_MODULE([imf-xim], [${want_ecore_imf}], [Imf_XIM], [${ecore_imf_xim_deps}],
    [requirements_ecore_imf_xim="ecore-imf >= 1.1.99 ecore-x >= 1.1.99 ecore-input >= 1.1.99 ${requirements_ecore_imf_xim}"])
 
+# ecore_imf_scim
+PKG_CHECK_MODULES([SCIM], [scim], [have_scim="yes"], [have_scim="no"])
+
+AM_CONDITIONAL(BUILD_ECORE_IMF_SCIM, false)
+ecore_imf_scim_deps="no"
+echo "have_ecore_x_xlib: ${have_ecore_x_xlib}"
+if test    "x${have_ecore_imf}" = "xyes" \
+        -a "x${have_scim}" =  "xyes" \
+        -a "x${have_ecore_input}" = "xyes" ; then
+   ecore_imf_scim_deps="yes"
+   AC_DEFINE(BUILD_ECORE_IMF_SCIM, 1, [Ecore Imf SCIM Support])
+fi
+
+ECORE_CHECK_MODULE([imf-scim], [${want_ecore_imf}], [Imf_SCIM], [${ecore_imf_scim_deps}],
+   [requirements_ecore_imf_scim="ecore-imf >= 1.1.0 ecore-x >= 1.1.0 ecore-input >= 1.1.0 ${requirements_ecore_imf_scim}"])
+
 ## Graphic systems
 
 # ecore_x{cb}
@@ -1845,6 +1864,7 @@ AC_SUBST(requirements_ecore_x)
 AC_SUBST(requirements_ecore_win32)
 AC_SUBST(requirements_ecore_wince)
 AC_SUBST(requirements_ecore_imf_xim)
+AC_SUBST(requirements_ecore_imf_scim)
 
 AC_CONFIG_FILES([
 Makefile
@@ -1898,6 +1918,7 @@ src/tests/Makefile
 src/modules/Makefile
 src/modules/immodules/Makefile
 src/modules/immodules/xim/Makefile
+src/modules/immodules/scim/Makefile
 ecore.spec
 $po_makefile_in
 ])
@@ -1956,6 +1977,7 @@ fi
 #echo "  Ecore_Config.................: $have_ecore_config (deprecated)"
 echo "  Ecore_IMF....................: $have_ecore_imf"
 echo "    XIM........................: $have_ecore_imf_xim"
+echo "    SCIM.......................: $have_ecore_imf_scim"
 echo "  Ecore_IMF_Evas...............: $have_ecore_imf_evas"
 echo "  Ecore_Input..................: $have_ecore_input"
 echo "  Ecore_Input_Evas.............: $have_ecore_input_evas"

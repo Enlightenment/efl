@@ -5,3 +5,7 @@ SUBDIRS =
 if BUILD_ECORE_IMF_XIM
 SUBDIRS += xim
 endif
+
+if BUILD_ECORE_IMF_SCIM
+SUBDIRS += scim
+endif
