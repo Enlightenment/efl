@@ -1135,7 +1135,7 @@ _view_init(Evas_Object *obj)
 static void
 _calculate_box_min_size(Evas_Object *box, Evas_Object_Box_Data *priv)
 {
-   Evas_Coord minw, minh, maxw, maxh, mnw, mnh, ww;
+   Evas_Coord minw, minh, mnw, mnh, ww;
    Evas_Coord w, cw = 0, cmaxh = 0;
    const Eina_List *l;
    Evas_Object_Box_Option *opt;
@@ -1144,8 +1144,6 @@ _calculate_box_min_size(Evas_Object *box, Evas_Object_Box_Data *priv)
    /* FIXME: need to calc max */
    minw = 0;
    minh = 0;
-   maxw = -1;
-   maxh = -1;
 
    evas_object_geometry_get(box, NULL, NULL, &w, NULL);
    evas_object_size_hint_min_get(box, &minw, NULL);
@@ -1228,8 +1226,7 @@ _box_layout_cb(Evas_Object *o, Evas_Object_Box_Data *priv, void *data __UNUSED__
    Evas_Coord x, y, w, h, xx, yy;
    const Eina_List *l;
    Evas_Object *obj;
-   Evas_Coord minw, minh, wdif, hdif;
-   int count = 0;
+   Evas_Coord minw, minh;
    double ax, ay;
    Evas_Object_Box_Option *opt;
 
@@ -1239,7 +1236,6 @@ _box_layout_cb(Evas_Object *o, Evas_Object_Box_Data *priv, void *data __UNUSED__
 
    evas_object_size_hint_min_get(o, &minw, &minh);
    evas_object_size_hint_align_get(o, &ax, &ay);
-   count = eina_list_count(priv->children);
    if (w < minw)
      {
         x = x + ((w - minw) * (1.0 - ax));
@@ -1251,8 +1247,6 @@ _box_layout_cb(Evas_Object *o, Evas_Object_Box_Data *priv, void *data __UNUSED__
         h = minh;
      }
 
-   wdif = w - minw;
-   hdif = h - minh;
    xx = x;
    yy = y;
 
@@ -1262,7 +1256,7 @@ _box_layout_cb(Evas_Object *o, Evas_Object_Box_Data *priv, void *data __UNUSED__
      {
         Evas_Coord mnw, mnh, mxw, mxh;
         double wx, wy;
-        int fw, fh, xw, xh;
+        int fw, fh;
 
         obj = opt->obj;
         evas_object_size_hint_align_get(obj, &ax, &ay);
@@ -1270,11 +1264,8 @@ _box_layout_cb(Evas_Object *o, Evas_Object_Box_Data *priv, void *data __UNUSED__
         evas_object_size_hint_min_get(obj, &mnw, &mnh);
         evas_object_size_hint_max_get(obj, &mxw, &mxh);
         fw = fh = 0;
-        xw = xh = 0;
         if (ax == -1.0) {fw = 1; ax = 0.5;}
         if (ay == -1.0) {fh = 1; ay = 0.5;}
-        if (wx > 0.0) xw = 1;
-        if (wy > 0.0) xh = 1;
         Evas_Coord ww, hh, ow, oh;
 
         if (wx)
