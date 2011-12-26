@@ -307,7 +307,6 @@ struct _Evas
       struct {
           Eina_List *in;
       } object;
-
    } pointer;
 
    struct  {
@@ -616,6 +615,8 @@ struct _Evas_Object
    Eina_Bool                   changed_move_only : 1;
    Eina_Bool                   changed_nomove : 1;
    Eina_Bool                   del_ref : 1;
+
+   Eina_Bool                   is_frame : 1;
 };
 
 struct _Evas_Func_Node
