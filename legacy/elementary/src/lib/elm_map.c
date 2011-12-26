@@ -3360,6 +3360,8 @@ elm_map_geo_region_get(const Evas_Object *obj, double *lon, double *lat)
    if (!wd) return;
    elm_smart_scroller_child_pos_get(wd->scr, &sx, &sy);
    elm_smart_scroller_child_viewport_size_get(wd->scr, &sw, &sh);
+   if (wd->size.w < sw) sw = wd->size.w;
+   if (wd->size.h < sh) sh = wd->size.h;
    sx += sw / 2;
    sy += sh / 2;
 
