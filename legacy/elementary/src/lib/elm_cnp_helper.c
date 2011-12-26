@@ -408,7 +408,7 @@ elm_selection_selection_has_owner(void)
 }
 
 Eina_Bool
-elm_selection_set(Elm_Sel_Type selection, Evas_Object *widget, Elm_Sel_Format format, const char *selbuf)
+elm_cnp_selection_set(Elm_Sel_Type selection, Evas_Object *widget, Elm_Sel_Format format, const char *selbuf)
 {
 #ifdef HAVE_ELEMENTARY_X
    Evas_Object *top = elm_widget_top_get(widget);
@@ -421,7 +421,7 @@ elm_selection_set(Elm_Sel_Type selection, Evas_Object *widget, Elm_Sel_Format fo
    if ((unsigned int)selection >= (unsigned int)ELM_SEL_MAX) return EINA_FALSE;
    if (!_elm_cnp_init_count) _elm_cnp_init();
    if ((!selbuf) && (format != ELM_SEL_FORMAT_IMAGE))
-     return elm_selection_clear(selection, widget);
+     return elm_cnp_selection_clear(selection, widget);
 
    sel = selections + selection;
 
@@ -439,7 +439,7 @@ elm_selection_set(Elm_Sel_Type selection, Evas_Object *widget, Elm_Sel_Format fo
 }
 
 Eina_Bool
-elm_selection_clear(Elm_Sel_Type selection, Evas_Object *widget)
+elm_cnp_selection_clear(Elm_Sel_Type selection, Evas_Object *widget)
 {
 #ifdef HAVE_ELEMENTARY_X
    Cnp_Selection *sel;
@@ -463,7 +463,7 @@ elm_selection_clear(Elm_Sel_Type selection, Evas_Object *widget)
 }
 
 Eina_Bool
-elm_selection_get(Elm_Sel_Type selection, Elm_Sel_Format format,
+elm_cnp_selection_get(Elm_Sel_Type selection, Elm_Sel_Format format,
                   Evas_Object *widget, Elm_Drop_Cb datacb, void *udata)
 {
 #ifdef HAVE_ELEMENTARY_X

@@ -711,51 +711,6 @@ EAPI Eina_Bool        _elm_widget_item_disabled_get(const Elm_Widget_Item *item)
  * And yes, elm_widget, should probably be elm_experimental...
  * Complaints about this code should go to /dev/null, or failing that nash.
  */
-typedef struct _Elm_Selection_Data Elm_Selection_Data;
-
-typedef Eina_Bool (*Elm_Drop_Cb) (void *d, Evas_Object *o, Elm_Selection_Data *data);
-
-typedef enum _Elm_Sel_Type
-{
-   ELM_SEL_PRIMARY,
-   ELM_SEL_SECONDARY,
-   ELM_SEL_CLIPBOARD,
-   ELM_SEL_XDND,
-
-   ELM_SEL_MAX,
-} Elm_Sel_Type;
-
-typedef enum _Elm_Sel_Format
-{
-   /** Targets: for matching every atom requesting */
-   ELM_SEL_TARGETS       = -1,
-   /** they come from outside of elm */
-   ELM_SEL_FORMAT_NONE   = 0x0,
-   /** Plain unformated text: Used for things that don't want rich markup */
-   ELM_SEL_FORMAT_TEXT   = 0x01,
-   /** Edje textblock markup, including inline images */
-   ELM_SEL_FORMAT_MARKUP = 0x02,
-   /** Images */
-   ELM_SEL_FORMAT_IMAGE  = 0x04,
-   /** Vcards */
-   ELM_SEL_FORMAT_VCARD  = 0x08,
-   /** Raw HTMLish things for widgets that want that stuff (hello webkit!) */
-   ELM_SEL_FORMAT_HTML   = 0x10,
-
-   ELM_SEL_FORMAT_MAX
-} Elm_Sel_Format;
-
-struct _Elm_Selection_Data
-{
-   int                   x, y;
-   Elm_Sel_Format        format;
-   void                 *data;
-   int                   len;
-};
-
-Eina_Bool            elm_selection_set(Elm_Sel_Type selection, Evas_Object *widget, Elm_Sel_Format format, const char *buf);
-Eina_Bool            elm_selection_clear(Elm_Sel_Type selection, Evas_Object *widget);
-Eina_Bool            elm_selection_get(Elm_Sel_Type selection, Elm_Sel_Format format, Evas_Object *widget, Elm_Drop_Cb datacb, void *udata);
 Eina_Bool            elm_selection_selection_has_owner(void);
 Eina_Bool            elm_drop_target_add(Evas_Object *widget, Elm_Sel_Type, Elm_Drop_Cb, void *);
 Eina_Bool            elm_drop_target_del(Evas_Object *widget);

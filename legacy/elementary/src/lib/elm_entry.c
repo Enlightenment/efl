@@ -1126,7 +1126,7 @@ _paste(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
         formats = ELM_SEL_FORMAT_MARKUP;
         if (!wd->textonly)
           formats |= ELM_SEL_FORMAT_IMAGE;
-        elm_selection_get(ELM_SEL_CLIPBOARD, formats, data, NULL, NULL);
+        elm_cnp_selection_get(ELM_SEL_CLIPBOARD, formats, data, NULL, NULL);
 #endif
      }
 }
@@ -1140,7 +1140,7 @@ _store_selection(Elm_Sel_Type seltype, Evas_Object *obj)
    if (!wd) return;
    sel = edje_object_part_text_selection_get(wd->ent, "elm.text");
    if ((!sel) || (!sel[0])) return; /* avoid deleting our own selection */
-   elm_selection_set(seltype, obj, ELM_SEL_FORMAT_MARKUP, sel);
+   elm_cnp_selection_set(seltype, obj, ELM_SEL_FORMAT_MARKUP, sel);
    if (seltype == ELM_SEL_CLIPBOARD)
      eina_stringshare_replace(&wd->cut_sel, sel);
 }
@@ -1531,7 +1531,7 @@ _signal_selection_start(void *data, Evas_Object *obj __UNUSED__, const char *emi
 
         top = elm_widget_top_get(data);
         if ((top) && (elm_win_xwindow_get(top)))
-          elm_selection_set(ELM_SEL_PRIMARY, data, ELM_SEL_FORMAT_MARKUP, txt);
+          elm_cnp_selection_set(ELM_SEL_PRIMARY, data, ELM_SEL_FORMAT_MARKUP, txt);
      }
 #endif
 }
@@ -1579,7 +1579,7 @@ _signal_selection_cleared(void *data, Evas_Object *obj __UNUSED__, const char *e
 
              top = elm_widget_top_get(data);
              if ((top) && (elm_win_xwindow_get(top)))
-               elm_selection_set(ELM_SEL_PRIMARY, data, ELM_SEL_FORMAT_MARKUP,
+               elm_cnp_selection_set(ELM_SEL_PRIMARY, data, ELM_SEL_FORMAT_MARKUP,
                                  wd->cut_sel);
 #endif
              eina_stringshare_del(wd->cut_sel);
@@ -1592,7 +1592,7 @@ _signal_selection_cleared(void *data, Evas_Object *obj __UNUSED__, const char *e
 
              top = elm_widget_top_get(data);
              if ((top) && (elm_win_xwindow_get(top)))
-               elm_selection_clear(ELM_SEL_PRIMARY, data);
+               elm_cnp_selection_clear(ELM_SEL_PRIMARY, data);
 #endif
           }
      }
@@ -1614,7 +1614,7 @@ _signal_entry_paste_request(void *data, Evas_Object *obj __UNUSED__, const char 
         if ((top) && (elm_win_xwindow_get(top)))
           {
              wd->selection_asked = EINA_TRUE;
-             elm_selection_get(type, ELM_SEL_FORMAT_MARKUP, data,
+             elm_cnp_selection_get(type, ELM_SEL_FORMAT_MARKUP, data,
                                NULL, NULL);
           }
 #endif
