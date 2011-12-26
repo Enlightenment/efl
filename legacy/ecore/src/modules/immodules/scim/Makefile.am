@@ -23,7 +23,8 @@ pkgdir = $(libdir)/ecore/immodules
 pkg_LTLIBRARIES = scim.la
 scim_la_SOURCES = \
 scim_imcontext.cpp \
-scim_module.cpp
+scim_module.cpp \
+scim_imcontext.h
 
 scim_la_LIBADD = \
 	 $(top_builddir)/src/lib/ecore_imf/libecore_imf.la \
