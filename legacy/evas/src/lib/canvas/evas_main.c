@@ -118,12 +118,16 @@ evas_new(void)
    e->output.render_method = RENDER_METHOD_INVALID;
    e->viewport.w = 1;
    e->viewport.h = 1;
+   e->framespace.x = 0;
+   e->framespace.y = 0;
+   e->framespace.w = 0;
+   e->framespace.h = 0;
    e->hinting = EVAS_FONT_HINTING_BYTECODE;
    e->name_hash = eina_hash_string_superfast_new(NULL);
    eina_clist_init(&e->calc_list);
    eina_clist_init(&e->calc_done);
 
-#define EVAS_ARRAY_SET(E, Array)		\
+#define EVAS_ARRAY_SET(E, Array) \
    eina_array_step_set(&E->Array, sizeof (E->Array), 4096);
 
    EVAS_ARRAY_SET(e, delete_objects);
@@ -419,18 +423,12 @@ evas_output_framespace_set(Evas *e, Evas_Coord x, Evas_Coord y, Evas_Coord w, Ev
        (w == e->framespace.w) && (h == e->framespace.h)) return;
    if (w <= 0) return;
    if (h <= 0) return;
-   /* if ((x != 0) || (y != 0)) */
-   /*   { */
-   /* 	ERR("Compat error. viewport x,y != 0,0 not supported"); */
-   /* 	x = 0; */
-   /* 	y = 0; */
-   /*   } */
    e->framespace.x = x;
    e->framespace.y = y;
    e->framespace.w = w;
    e->framespace.h = h;
    e->framespace.changed = 1;
-   /* e->output_validity++; */
+   e->output_validity++;
    e->changed = 1;
 }
 
