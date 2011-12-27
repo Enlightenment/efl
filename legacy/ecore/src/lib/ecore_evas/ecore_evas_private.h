@@ -300,6 +300,7 @@ struct _Ecore_Evas
    Eina_Bool   should_be_visible : 1;
    Eina_Bool   alpha  : 1;
    Eina_Bool   transparent  : 1;
+   Eina_Bool   in  : 1;
 
    Eina_Hash  *data;
 

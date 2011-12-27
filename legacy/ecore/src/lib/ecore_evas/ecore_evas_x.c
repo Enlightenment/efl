@@ -740,10 +740,14 @@ _ecore_evas_x_event_mouse_in(void *data __UNUSED__, int type __UNUSED__, void *e
    //       (e->mode == ECORE_X_EVENT_MODE_UNGRAB))
    //     return 0;
    /* if (e->mode != ECORE_X_EVENT_MODE_NORMAL) return 0; */
-   if (ee->func.fn_mouse_in) ee->func.fn_mouse_in(ee);
-   ecore_event_evas_modifier_lock_update(ee->evas, e->modifiers);
-   evas_event_feed_mouse_in(ee->evas, e->time, NULL);
-   _ecore_evas_mouse_move_process(ee, e->x, e->y, e->time);
+   if (!ee->in)
+     {
+        if (ee->func.fn_mouse_in) ee->func.fn_mouse_in(ee);
+        ecore_event_evas_modifier_lock_update(ee->evas, e->modifiers);
+        evas_event_feed_mouse_in(ee->evas, e->time, NULL);
+        _ecore_evas_mouse_move_process(ee, e->x, e->y, e->time);
+        ee->in = EINA_TRUE;
+     }
    return ECORE_CALLBACK_PASS_ON;
 }
 
@@ -792,13 +796,19 @@ _ecore_evas_x_event_mouse_out(void *data __UNUSED__, int type __UNUSED__, void *
    //       (e->mode == ECORE_X_EVENT_MODE_UNGRAB))
    //     return 0;
    /* if (e->mode != ECORE_X_EVENT_MODE_NORMAL) return 0; */
-   ecore_event_evas_modifier_lock_update(ee->evas, e->modifiers);
-   _ecore_evas_mouse_move_process(ee, e->x, e->y, e->time);
-   if (e->mode == ECORE_X_EVENT_MODE_GRAB)
-     evas_event_feed_mouse_cancel(ee->evas, e->time, NULL);
-   evas_event_feed_mouse_out(ee->evas, e->time, NULL);
-   if (ee->func.fn_mouse_out) ee->func.fn_mouse_out(ee);
-   if (ee->prop.cursor.object) evas_object_hide(ee->prop.cursor.object);
+   if (ee->in)
+     {
+        if (evas_event_down_count_get(ee->evas) > 0)
+          return ECORE_CALLBACK_PASS_ON;
+        ecore_event_evas_modifier_lock_update(ee->evas, e->modifiers);
+        _ecore_evas_mouse_move_process(ee, e->x, e->y, e->time);
+        if (e->mode == ECORE_X_EVENT_MODE_GRAB)
+          evas_event_feed_mouse_cancel(ee->evas, e->time, NULL);
+        evas_event_feed_mouse_out(ee->evas, e->time, NULL);
+        if (ee->func.fn_mouse_out) ee->func.fn_mouse_out(ee);
+        if (ee->prop.cursor.object) evas_object_hide(ee->prop.cursor.object);
+        ee->in = EINA_FALSE;
+     }
    return ECORE_CALLBACK_PASS_ON;
 }
 
@@ -1032,6 +1042,14 @@ _ecore_evas_x_event_window_hide(void *data __UNUSED__, int type __UNUSED__, void
    ee = ecore_event_window_match(e->win);
    if (!ee) return ECORE_CALLBACK_PASS_ON; /* pass on event */
    if (e->win != ee->prop.window) return ECORE_CALLBACK_PASS_ON;
+   if (ee->in)
+     {
+        evas_event_feed_mouse_cancel(ee->evas, e->time, NULL);
+        evas_event_feed_mouse_out(ee->evas, e->time, NULL);
+        if (ee->func.fn_mouse_out) ee->func.fn_mouse_out(ee);
+        if (ee->prop.cursor.object) evas_object_hide(ee->prop.cursor.object);
+        ee->in = EINA_FALSE;
+     }
    if (!ee->visible) return ECORE_CALLBACK_PASS_ON;
 //   if (!ee->visible) return ECORE_CALLBACK_DONE;
 //   printf("HIDE EVENT %p\n", ee);
