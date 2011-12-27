@@ -1126,7 +1126,7 @@ _paste(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
         formats = ELM_SEL_FORMAT_MARKUP;
         if (!wd->textonly)
           formats |= ELM_SEL_FORMAT_IMAGE;
-        elm_cnp_selection_get(ELM_SEL_CLIPBOARD, formats, data, NULL, NULL);
+        elm_cnp_selection_get(ELM_SEL_TYPE_CLIPBOARD, formats, data, NULL, NULL);
 #endif
      }
 }
@@ -1140,8 +1140,8 @@ _store_selection(Elm_Sel_Type seltype, Evas_Object *obj)
    if (!wd) return;
    sel = edje_object_part_text_selection_get(wd->ent, "elm.text");
    if ((!sel) || (!sel[0])) return; /* avoid deleting our own selection */
-   elm_cnp_selection_set(seltype, obj, ELM_SEL_FORMAT_MARKUP, sel);
-   if (seltype == ELM_SEL_CLIPBOARD)
+   elm_cnp_selection_set(seltype, obj, ELM_SEL_FORMAT_MARKUP, sel, strlen(sel));
+   if (seltype == ELM_SEL_TYPE_CLIPBOARD)
      eina_stringshare_replace(&wd->cut_sel, sel);
 }
 
@@ -1157,7 +1157,7 @@ _cut(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
    edje_object_signal_emit(wd->ent, "elm,state,select,off", "elm");
    if (!_elm_config->desktop_entry)
      elm_widget_scroll_hold_pop(data);
-   _store_selection(ELM_SEL_CLIPBOARD, data);
+   _store_selection(ELM_SEL_TYPE_CLIPBOARD, data);
    edje_object_part_text_insert(wd->ent, "elm.text", "");
    edje_object_part_text_select_none(wd->ent, "elm.text");
    _sizing_eval(data);
@@ -1175,7 +1175,7 @@ _copy(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
         edje_object_signal_emit(wd->ent, "elm,state,select,off", "elm");
         elm_widget_scroll_hold_pop(data);
      }
-   _store_selection(ELM_SEL_CLIPBOARD, data);
+   _store_selection(ELM_SEL_TYPE_CLIPBOARD, data);
    //   edje_object_part_text_select_none(wd->ent, "elm.text");
 }
 
@@ -1531,7 +1531,8 @@ _signal_selection_start(void *data, Evas_Object *obj __UNUSED__, const char *emi
 
         top = elm_widget_top_get(data);
         if ((top) && (elm_win_xwindow_get(top)))
-          elm_cnp_selection_set(ELM_SEL_PRIMARY, data, ELM_SEL_FORMAT_MARKUP, txt);
+          elm_cnp_selection_set(ELM_SEL_TYPE_PRIMARY, data,
+                                ELM_SEL_FORMAT_MARKUP, txt, strlen(txt));
      }
 #endif
 }
@@ -1559,7 +1560,7 @@ _signal_selection_changed(void *data, Evas_Object *obj __UNUSED__, const char *e
    if (!wd) return;
    wd->have_selection = EINA_TRUE;
    evas_object_smart_callback_call(data, SIG_SELECTION_CHANGED, NULL);
-   _store_selection(ELM_SEL_PRIMARY, data);
+   _store_selection(ELM_SEL_TYPE_PRIMARY, data);
 }
 
 static void
@@ -1579,8 +1580,9 @@ _signal_selection_cleared(void *data, Evas_Object *obj __UNUSED__, const char *e
 
              top = elm_widget_top_get(data);
              if ((top) && (elm_win_xwindow_get(top)))
-               elm_cnp_selection_set(ELM_SEL_PRIMARY, data, ELM_SEL_FORMAT_MARKUP,
-                                 wd->cut_sel);
+               elm_cnp_selection_set(ELM_SEL_TYPE_PRIMARY, data,
+                                     ELM_SEL_FORMAT_MARKUP, wd->cut_sel,
+                                     strlen(wd->cut_sel));
 #endif
              eina_stringshare_del(wd->cut_sel);
              wd->cut_sel = NULL;
@@ -1592,7 +1594,7 @@ _signal_selection_cleared(void *data, Evas_Object *obj __UNUSED__, const char *e
 
              top = elm_widget_top_get(data);
              if ((top) && (elm_win_xwindow_get(top)))
-               elm_cnp_selection_clear(ELM_SEL_PRIMARY, data);
+               elm_cnp_selection_clear(ELM_SEL_TYPE_PRIMARY, data);
 #endif
           }
      }
@@ -1602,7 +1604,8 @@ static void
 _signal_entry_paste_request(void *data, Evas_Object *obj __UNUSED__, const char *emission, const char *source __UNUSED__)
 {
    Widget_Data *wd = elm_widget_data_get(data);
-   Elm_Sel_Type type = (emission[sizeof("ntry,paste,request,")] == '1') ? ELM_SEL_PRIMARY : ELM_SEL_CLIPBOARD;
+   Elm_Sel_Type type = (emission[sizeof("ntry,paste,request,")] == '1') ?
+     ELM_SEL_TYPE_PRIMARY : ELM_SEL_TYPE_CLIPBOARD;
    if (!wd) return;
    evas_object_smart_callback_call(data, SIG_SELECTION_PASTE, NULL);
    if (wd->sel_notify_handler)

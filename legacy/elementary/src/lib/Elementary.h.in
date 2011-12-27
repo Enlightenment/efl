@@ -30414,30 +30414,30 @@ extern "C" {
 
    typedef enum _Elm_Sel_Type
    {
-      ELM_SEL_PRIMARY,
-      ELM_SEL_SECONDARY,
-      ELM_SEL_CLIPBOARD,
-      ELM_SEL_XDND,
+      ELM_SEL_TYPE_PRIMARY,
+      ELM_SEL_TYPE_SECONDARY,
+      ELM_SEL_TYPE_CLIPBOARD,
+      ELM_SEL_TYPE_XDND,
 
-      ELM_SEL_MAX,
+      ELM_SEL_TYPE_MAX,
    } Elm_Sel_Type;
 
    typedef enum _Elm_Sel_Format
    {
       /** Targets: for matching every atom requesting */
-      ELM_SEL_TARGETS       = -1,
+      ELM_SEL_FORMAT_TARGETS  = -1,
       /** they come from outside of elm */
-      ELM_SEL_FORMAT_NONE   = 0x0,
+      ELM_SEL_FORMAT_NONE     = 0x0,
       /** Plain unformated text: Used for things that don't want rich markup */
-      ELM_SEL_FORMAT_TEXT   = 0x01,
+      ELM_SEL_FORMAT_TEXT     = 0x01,
       /** Edje textblock markup, including inline images */
-      ELM_SEL_FORMAT_MARKUP = 0x02,
+      ELM_SEL_FORMAT_MARKUP   = 0x02,
       /** Images */
-      ELM_SEL_FORMAT_IMAGE  = 0x04,
+      ELM_SEL_FORMAT_IMAGE    = 0x04,
       /** Vcards */
-      ELM_SEL_FORMAT_VCARD  = 0x08,
+      ELM_SEL_FORMAT_VCARD    = 0x08,
       /** Raw HTMLish things for widgets that want that stuff (hello webkit!) */
-      ELM_SEL_FORMAT_HTML   = 0x10,
+      ELM_SEL_FORMAT_HTML     = 0x10,
 
       ELM_SEL_FORMAT_MAX
    } Elm_Sel_Format;
@@ -30445,9 +30445,9 @@ extern "C" {
    struct _Elm_Selection_Data
    {
       int                   x, y;
-      Elm_Sel_Format        format;
+      Elm_Sel_Format   format;
       void                 *data;
-      int                   len;
+      size_t                len;
    };
 
    /**
@@ -30466,7 +30466,7 @@ extern "C" {
     *
     */
 
-   EAPI Eina_Bool            elm_cnp_selection_set(Elm_Sel_Type selection, Evas_Object *widget, Elm_Sel_Format format, const char *buf);
+   EAPI Eina_Bool            elm_cnp_selection_set(Elm_Sel_Type selection, Evas_Object *widget, Elm_Sel_Format format, const void *buf, size_t buflen);
 
    /**
     * @brief Retrive the data from the widget which is set for copying and pasting.

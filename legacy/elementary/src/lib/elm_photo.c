@@ -189,7 +189,8 @@ _longpress(void *objv)
         /* FIXME: Deal with relative paths */
         buf = malloc(strlen(file) + strlen("file://") + 1);
         sprintf(buf, "%s%s","file://",file);
-        elm_drag_start(objv, ELM_SEL_FORMAT_IMAGE, buf, _drag_done_cb, NULL);
+        elm_drag_start(objv, ELM_SEL_FORMAT_IMAGE,
+                       buf, _drag_done_cb, NULL);
         free(buf);
      }
    elm_object_scroll_freeze_push(objv);
