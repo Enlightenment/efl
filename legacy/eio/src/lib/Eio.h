@@ -124,8 +124,8 @@ typedef void (*Eio_Stat_Cb)(void *data, Eio_File *handler, const struct stat *st
 typedef void (*Eio_Progress_Cb)(void *data, Eio_File *handler, const Eio_Progress *info);
 
 typedef void (*Eio_Open_Cb)(void *data, Eio_File *handler, Eina_File *file);
-typedef Eina_Bool (*Eio_Filter_Map_Cb)(void *data, Eio_File *handler, void *map);
-typedef void (*Eio_Map_Cb)(void *data, Eio_File *handler, void *map);
+  typedef Eina_Bool (*Eio_Filter_Map_Cb)(void *data, Eio_File *handler, void *map, size_t length);
+  typedef void (*Eio_Map_Cb)(void *data, Eio_File *handler, void *map, size_t length);
 
 typedef void (*Eio_Done_Data_Cb)(void *data, Eio_File *handler, const char *xattr_data, unsigned int xattr_size);
 typedef void (*Eio_Done_String_Cb)(void *data, Eio_File *handler, const char *xattr_string);

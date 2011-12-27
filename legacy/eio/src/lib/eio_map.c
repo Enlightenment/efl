@@ -101,7 +101,8 @@ _eio_file_map_all_job(void *data, Ecore_Thread *thread)
      {
         if (!map->filter_cb((void*) map->common.data,
                             &map->common,
-                            map->result))
+                            map->result,
+			    map->length))
           {
              eina_file_map_free(map->common.container, map->result);
              map->result = NULL;
@@ -123,7 +124,8 @@ _eio_file_map_new_job(void *data, Ecore_Thread *thread)
      {
         if (!map->filter_cb((void*) map->common.data,
                             &map->common,
-                            map->result))
+                            map->result,
+			    map->length))
           {
              eina_file_map_free(map->common.container, map->result);
              map->result = NULL;
@@ -139,7 +141,7 @@ _eio_file_map_end(void *data, Ecore_Thread *thread __UNUSED__)
 {
    Eio_File_Map_Rule *map = data;
 
-   map->map_cb((void*) map->common.data, &map->common, map->result);
+   map->map_cb((void*) map->common.data, &map->common, map->result, map->length);
    free(map);
 }
 
@@ -258,6 +260,7 @@ eio_file_map_all(Eina_File *f,
    map->map_cb = map_cb;
    map->rule = rule;
    map->result = NULL;
+   map->length = eina_file_size_get(f);
 
    if (!eio_file_set(&map->common,
                      NULL,
