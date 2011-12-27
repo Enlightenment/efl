@@ -2961,7 +2961,7 @@ _edje_entry_imf_event_commit_cb(void *data, int type __UNUSED__, void *event)
        _edje_password_show_last && (!en->preedit_start))
      {
         _text_filter_format_prepend(en, tc, "+ password=off");
-        _text_filter_markup_prepend(en, tc, ev->str);
+        _text_filter_text_prepend(en, tc, ev->str);
         _text_filter_format_prepend(en, tc, "- password");
         if (en->pw_timer)
           {
