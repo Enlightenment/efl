@@ -1,3 +1,7 @@
+#ifdef HAVE_CONFIG_H
+#include <config.h>
+#endif
+
 #define Uses_SCIM_DEBUG
 #define Uses_SCIM_BACKEND
 #define Uses_SCIM_IMENGINE_MODULE
@@ -1386,7 +1390,7 @@ isf_imf_context_filter_event (Ecore_IMF_Context *ctx, Ecore_IMF_Event_Type type,
 
 /* Panel Slot functions */
 static void
-panel_slot_reload_config (int context)
+panel_slot_reload_config (int context __UNUSED__)
 {
    SCIM_DEBUG_FRONTEND(1) << __FUNCTION__ << "...\n";
    _config->reload ();
@@ -1764,7 +1768,7 @@ panel_finalize (void)
 }
 
 static Eina_Bool
-panel_iochannel_handler (void *data, Ecore_Fd_Handler *fd_handler)
+panel_iochannel_handler (void *data __UNUSED__, Ecore_Fd_Handler *fd_handler)
 {
    SCIM_DEBUG_FRONTEND(1) << __FUNCTION__ << "...\n";
 
@@ -2665,14 +2669,9 @@ slot_update_property (IMEngineInstanceBase *si,
 }
 
 static void
-slot_beep (IMEngineInstanceBase *si)
+slot_beep (IMEngineInstanceBase *si __UNUSED__)
 {
    SCIM_DEBUG_FRONTEND(1) << __FUNCTION__ << "...\n";
-
-   EcoreIMFContextISF *ic = static_cast<EcoreIMFContextISF *> (si->get_frontend_data ());
-
-   if (ic && ic->impl && _focused_ic == ic)
-     ;//gdk_beep ();
 }
 
 static void
@@ -2798,7 +2797,7 @@ reload_config_callback (const ConfigPointer &config)
 }
 
 static void
-fallback_commit_string_cb (IMEngineInstanceBase  *si,
+fallback_commit_string_cb (IMEngineInstanceBase  *si __UNUSED__,
                            const WideString      &str)
 {
    SCIM_DEBUG_FRONTEND(1) << __FUNCTION__ << "...\n";

@@ -30,7 +30,7 @@ scim_la_LIBADD = \
 	 $(top_builddir)/src/lib/ecore_imf/libecore_imf.la \
 	 $(top_builddir)/src/lib/ecore_x/libecore_x.la \
 	@SCIM_LIBS@ \
-        @EVAS_LIBS@ \
+	@EVAS_LIBS@ \
 	@EINA_LIBS@
 scim_la_LDFLAGS = -no-undefined @lt_enable_auto_import@ -module -avoid-version
 scim_la_LIBTOOLFLAGS = --tag=disable-static
