@@ -909,7 +909,7 @@ evas_event_feed_mouse_out(Evas *e, unsigned int timestamp, const void *data)
 
    _evas_walk(e);
    /* if our mouse button is grabbed to any objects */
-   if (e->pointer.mouse_grabbed == 0)
+   if ((0) && (e->pointer.mouse_grabbed != 0))
      {
         /* go thru old list of in objects */
         Eina_List *l, *copy;
@@ -929,12 +929,14 @@ evas_event_feed_mouse_out(Evas *e, unsigned int timestamp, const void *data)
                        if (e->events_frozen <= 0)
                           evas_object_event_callback_call(obj, EVAS_CALLBACK_MOUSE_OUT, &ev, event_id);
                     }
+                  obj->mouse_grabbed = 0;
                }
              if (e->delete_me) break;
           }
         if (copy) copy = eina_list_free(copy);
         /* free our old list of ins */
         e->pointer.object.in =  eina_list_free(e->pointer.object.in);
+        e->pointer.mouse_grabbed = 0;
         _evas_post_event_callback_call(e);
      }
    _evas_unwalk(e);
@@ -1115,7 +1117,7 @@ evas_event_feed_multi_move(Evas *e,
    if (e->events_frozen > 0) return;
    e->last_timestamp = timestamp;
 
-   if (!e->pointer.inside) return;
+   if ((!e->pointer.inside) && (e->pointer.mouse_grabbed == 0)) return;
 
    _evas_walk(e);
    /* update moved touch point */
@@ -1673,4 +1675,13 @@ evas_event_refeed_event(Evas *e, void *event_copy, Evas_Callback_Type event_type
       default: /* All non-input events are not handeled */
          break;
      }
+}
+
+EAPI int
+evas_event_down_count_get(const Evas *e)
+{
+   MAGIC_CHECK(e, Evas, MAGIC_EVAS);
+   return 0;
+   MAGIC_CHECK_END();
+   return e->pointer.downs;
 }

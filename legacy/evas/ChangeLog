@@ -590,3 +590,9 @@
 2011-12-26  Christopher Michael (devilhorns)
 
         * Add functions to get/set if an object is a 'frame_object'
+
+2011-12-27  Carsten Haitzler (The Rasterman)
+
+        * Add feature to get number of pressed devices (help fix
+          ecore-evas bug).
+
