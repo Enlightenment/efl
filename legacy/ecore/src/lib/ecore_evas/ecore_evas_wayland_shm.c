@@ -31,6 +31,15 @@
 # include <Evas_Engine_Wayland_Shm.h>
 # include <Ecore_Wayland.h>
 
+/* local structures */
+typedef struct _EE_Wl_Smart_Data EE_Wl_Smart_Data;
+struct _EE_Wl_Smart_Data 
+{
+   Evas_Object *frame;
+   Evas_Object *text;
+   Evas_Coord x, y, w, h;
+};
+
 /* local function prototypes */
 static int _ecore_evas_wl_init(void);
 static int _ecore_evas_wl_shutdown(void);
@@ -43,6 +52,15 @@ static void _ecore_evas_wl_callback_focus_in_set(Ecore_Evas *ee, void (*func)(Ec
 static void _ecore_evas_wl_callback_focus_out_set(Ecore_Evas *ee, void (*func)(Ecore_Evas *ee));
 static void _ecore_evas_wl_resize(Ecore_Evas *ee, int w, int h);
 static void _ecore_evas_wl_show(Ecore_Evas *ee);
+static void _ecore_evas_wl_hide(Ecore_Evas *ee);
+static void _ecore_evas_wl_title_set(Ecore_Evas *ee, const char *t);
+static void _ecore_evas_wl_name_class_set(Ecore_Evas *ee, const char *n, const char *c);
+static void _ecore_evas_wl_size_min_set(Ecore_Evas *ee, int w, int h);
+static void _ecore_evas_wl_size_max_set(Ecore_Evas *ee, int w, int h);
+static void _ecore_evas_wl_size_base_set(Ecore_Evas *ee, int w, int h);
+static void _ecore_evas_wl_size_step_set(Ecore_Evas *ee, int w, int h);
+static void _ecore_evas_wl_object_cursor_set(Ecore_Evas *ee, Evas_Object  *obj, int layer, int hot_x, int hot_y);
+static void _ecore_evas_wl_object_cursor_del(void *data, Evas *evas __UNUSED__, Evas_Object *obj __UNUSED__, void *event __UNUSED__);
 static int _ecore_evas_wl_render(Ecore_Evas *ee);
 static void _ecore_evas_wl_screen_geometry_get(const Ecore_Evas *ee __UNUSED__, int *x, int *y, int *w, int *h);
 static void _ecore_evas_wl_buffer_new(Ecore_Evas *ee, void **dest);
@@ -55,6 +73,18 @@ static Eina_Bool _ecore_evas_wl_event_mouse_in(void *data __UNUSED__, int type _
 static Eina_Bool _ecore_evas_wl_event_mouse_out(void *data __UNUSED__, int type __UNUSED__, void *event);
 static Eina_Bool _ecore_evas_wl_event_focus_in(void *data __UNUSED__, int type __UNUSED__, void *event);
 static Eina_Bool _ecore_evas_wl_event_focus_out(void *data __UNUSED__, int type __UNUSED__, void *event);
+
+/* SMART stuff for frame */
+static Evas_Smart *_ecore_evas_wl_smart = NULL;
+
+static void _ecore_evas_wl_smart_init(void);
+static void _ecore_evas_wl_smart_add(Evas_Object *obj);
+static void _ecore_evas_wl_smart_del(Evas_Object *obj);
+static void _ecore_evas_wl_smart_resize(Evas_Object *obj, Evas_Coord w, Evas_Coord h);
+static void _ecore_evas_wl_smart_show(Evas_Object *obj);
+static void _ecore_evas_wl_smart_hide(Evas_Object *obj);
+
+static Evas_Object *_ecore_evas_wl_frame_add(Evas *evas);
 
 /* local variables */
 static int _ecore_evas_wl_init_count = 0;
@@ -84,17 +114,17 @@ static Ecore_Evas_Engine_Func _ecore_wl_engine_func =
    NULL, // func rotation set
    NULL, // func shaped set
    _ecore_evas_wl_show, 
-   NULL, // func hide
+   _ecore_evas_wl_hide, 
    NULL, // func raise
    NULL, // func lower
    NULL, // func activate
-   NULL, // func title set
-   NULL, // func name_class set
-   NULL, // func size min set
-   NULL, // func size max set
-   NULL, // func size base set
-   NULL, // func size step set
-   NULL, // func object cursor set
+   _ecore_evas_wl_title_set, 
+   _ecore_evas_wl_name_class_set, 
+   _ecore_evas_wl_size_min_set, 
+   _ecore_evas_wl_size_max_set, 
+   _ecore_evas_wl_size_base_set, 
+   _ecore_evas_wl_size_step_set, 
+   _ecore_evas_wl_object_cursor_set, 
    NULL, // func layer set
    NULL, // func focus set
    NULL, // func iconified set
@@ -200,6 +230,13 @@ ecore_evas_wayland_shm_new(const char *disp_name, int x, int y, int w, int h, in
     * engine destination */
    ecore_evas_callback_pre_free_set(ee, _ecore_evas_wl_pre_free);
 
+   if (ee->prop.draw_frame) 
+     {
+        ee->engine.wl.frame = _ecore_evas_wl_frame_add(ee->evas);
+        evas_object_is_frame_object_set(ee->engine.wl.frame, EINA_TRUE);
+        evas_object_move(ee->engine.wl.frame, 0, 0);
+     }
+
    ecore_evas_input_event_register(ee);
    _ecore_evas_register(ee);
 
@@ -280,6 +317,9 @@ _ecore_evas_wl_pre_free(Ecore_Evas *ee)
    Evas_Engine_Info_Wayland_Shm *einfo;
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
+
+   /* destroy frame */
+   if (ee->engine.wl.frame) evas_object_del(ee->engine.wl.frame);
 
    /* get engine info */
    einfo = (Evas_Engine_Info_Wayland_Shm *)evas_engine_info_get(ee->evas);
@@ -398,6 +438,8 @@ _ecore_evas_wl_resize(Ecore_Evas *ee, int w, int h)
    /* change evas output & viewport sizes */
    evas_output_size_set(ee->evas, ee->w, ee->h);
    evas_output_viewport_set(ee->evas, 0, 0, ee->w, ee->h);
+   if (ee->engine.wl.frame)
+     evas_object_resize(ee->engine.wl.frame, ee->w, ee->h);
 
    /* set new engine destination */
    evas_engine_info_set(ee->evas, (Evas_Engine_Info *)einfo);
@@ -448,6 +490,12 @@ _ecore_evas_wl_show(Ecore_Evas *ee)
    /* create buffer @ new size (also mmaps the new destination) */
    _ecore_evas_wl_buffer_new(ee, &einfo->info.dest);
 
+   if (ee->engine.wl.frame) 
+     {
+        evas_object_show(ee->engine.wl.frame);
+        evas_object_resize(ee->engine.wl.frame, ee->w, ee->h);
+     }
+
    /* set new engine destination */
    evas_engine_info_set(ee->evas, (Evas_Engine_Info *)einfo);
 
@@ -463,6 +511,179 @@ _ecore_evas_wl_show(Ecore_Evas *ee)
 
    ee->visible = 1;
    if (ee->func.fn_show) ee->func.fn_show(ee);
+}
+
+static void 
+_ecore_evas_wl_hide(Ecore_Evas *ee) 
+{
+   Evas_Engine_Info_Wayland_Shm *einfo;
+
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+
+   if (!ee) return;
+   if (!ee->visible) return;
+
+   /* get engine info */
+   einfo = (Evas_Engine_Info_Wayland_Shm *)evas_engine_info_get(ee->evas);
+   if (einfo->info.dest)
+     {
+        int ret = 0;
+
+        /* munmap previous engine destination */
+        ret = munmap(einfo->info.dest, ((ee->w * sizeof(int)) * ee->h));
+        einfo->info.dest = NULL;
+     }
+
+   /* free old buffer */
+   if (ee->engine.wl.buffer) wl_buffer_destroy(ee->engine.wl.buffer);
+   ee->engine.wl.buffer = NULL;
+
+   /* set new engine destination */
+   evas_engine_info_set(ee->evas, (Evas_Engine_Info *)einfo);
+
+   /* destroy shell surface */
+   if (ee->engine.wl.shell_surface) 
+     wl_shell_surface_destroy(ee->engine.wl.shell_surface);
+   ee->engine.wl.shell_surface = NULL;
+
+   /* destroy surface */
+   if (ee->engine.wl.surface) wl_surface_destroy(ee->engine.wl.surface);
+   ee->engine.wl.surface = NULL;
+
+   ee->visible = 0;
+   ee->should_be_visible = 0;
+   if (ee->func.fn_hide) ee->func.fn_hide(ee);
+}
+
+static void 
+_ecore_evas_wl_title_set(Ecore_Evas *ee, const char *t) 
+{
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+
+   if (!ee) return;
+   if (ee->prop.title) free(ee->prop.title);
+   ee->prop.title = NULL;
+   if (t) ee->prop.title = strdup(t);
+
+   if ((ee->prop.draw_frame) && (ee->engine.wl.frame)) 
+     {
+        EE_Wl_Smart_Data *sd;
+
+        if (!(sd = evas_object_smart_data_get(ee->engine.wl.frame))) return;
+        evas_object_text_text_set(sd->text, ee->prop.title);
+     }
+}
+
+static void 
+_ecore_evas_wl_name_class_set(Ecore_Evas *ee, const char *n, const char *c) 
+{
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+
+   if (!ee) return;
+   if (ee->prop.name) free(ee->prop.name);
+   if (ee->prop.clas) free(ee->prop.clas);
+   ee->prop.name = NULL;
+   ee->prop.clas = NULL;
+   if (n) ee->prop.name = strdup(n);
+   if (c) ee->prop.clas = strdup(c);
+   /* FIXME: Forward these changes to Wayland somehow */
+}
+
+static void 
+_ecore_evas_wl_size_min_set(Ecore_Evas *ee, int w, int h) 
+{
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+
+   if (!ee) return;
+   if (w < 0) w = 0;
+   if (h < 0) h = 0;
+   if ((ee->prop.min.w == w) && (ee->prop.min.h == h)) return;
+   ee->prop.min.w = w;
+   ee->prop.min.h = h;
+}
+
+static void 
+_ecore_evas_wl_size_max_set(Ecore_Evas *ee, int w, int h) 
+{
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+
+   if (!ee) return;
+   if (w < 0) w = 0;
+   if (h < 0) h = 0;
+   if ((ee->prop.max.w == w) && (ee->prop.max.h == h)) return;
+   ee->prop.max.w = w;
+   ee->prop.max.h = h;
+}
+
+static void 
+_ecore_evas_wl_size_base_set(Ecore_Evas *ee, int w, int h) 
+{
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+
+   if (!ee) return;
+   if (w < 0) w = 0;
+   if (h < 0) h = 0;
+   if ((ee->prop.base.w == w) && (ee->prop.base.h == h)) return;
+   ee->prop.base.w = w;
+   ee->prop.base.h = h;
+}
+
+static void 
+_ecore_evas_wl_size_step_set(Ecore_Evas *ee, int w, int h) 
+{
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+
+   if (!ee) return;
+   if (w < 0) w = 0;
+   if (h < 0) h = 0;
+   if ((ee->prop.step.w == w) && (ee->prop.step.h == h)) return;
+   ee->prop.step.w = w;
+   ee->prop.step.h = h;
+}
+
+static void 
+_ecore_evas_wl_object_cursor_set(Ecore_Evas *ee, Evas_Object  *obj, int layer, int hot_x, int hot_y) 
+{
+   int x = 0, y = 0;
+
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+
+   if (!ee) return;
+   if (ee->prop.cursor.object) evas_object_del(ee->prop.cursor.object);
+   ee->prop.cursor.object = NULL;
+
+   if (!obj) 
+     {
+        ee->prop.cursor.layer = 0;
+        ee->prop.cursor.hot.x = 0;
+        ee->prop.cursor.hot.y = 0;
+        return;
+     }
+
+   ee->prop.cursor.object = obj;
+   ee->prop.cursor.layer = layer;
+   ee->prop.cursor.hot.x = hot_x;
+   ee->prop.cursor.hot.y = hot_y;
+
+   evas_pointer_output_xy_get(ee->evas, &x, &y);
+   evas_object_layer_set(ee->prop.cursor.object, ee->prop.cursor.layer);
+   evas_object_move(ee->prop.cursor.object, 
+                    x - ee->prop.cursor.hot.x, y - ee->prop.cursor.hot.y);
+   evas_object_pass_events_set(ee->prop.cursor.object, 1);
+   if (evas_pointer_inside_get(ee->evas))
+     evas_object_show(ee->prop.cursor.object);
+
+   evas_object_event_callback_add(obj, EVAS_CALLBACK_DEL, 
+                                  _ecore_evas_wl_object_cursor_del, ee);
+}
+
+static void 
+_ecore_evas_wl_object_cursor_del(void *data, Evas *evas __UNUSED__, Evas_Object *obj __UNUSED__, void *event __UNUSED__) 
+{
+   Ecore_Evas *ee;
+
+   if (!(ee = data)) return;
+   ee->prop.cursor.object = NULL;
 }
 
 static int 
@@ -537,8 +758,6 @@ _ecore_evas_wl_event_mouse_down(void *data __UNUSED__, int type __UNUSED__, void
    ee = ecore_event_window_match(ev->window);
    if ((!ee) || (ee->ignore_events)) return ECORE_CALLBACK_PASS_ON;
    if (ev->window != ee->prop.window) return ECORE_CALLBACK_PASS_ON;
-   /* printf("Mouse Down: %d %d\t%d %d\n",  */
-   /*        ev->x, ev->y, ev->root.x, ev->root.y); */
    evas_event_feed_mouse_down(ee->evas, ev->buttons, ev->modifiers, 
                               ev->timestamp, NULL);
    return ECORE_CALLBACK_PASS_ON;
@@ -716,6 +935,117 @@ _ecore_evas_wl_buffer_new(Ecore_Evas *ee, void **dest)
      wl_shm_create_buffer(ecore_wl_shm_get(), fd, ee->w, ee->h, stride, format);
 
    close(fd);
+}
+
+static void 
+_ecore_evas_wl_smart_init(void) 
+{
+   if (_ecore_evas_wl_smart) return;
+     {
+        static const Evas_Smart_Class sc = 
+          {
+             "ecore_evas_wl_frame", EVAS_SMART_CLASS_VERSION, 
+             _ecore_evas_wl_smart_add, 
+             _ecore_evas_wl_smart_del, 
+             NULL, 
+             _ecore_evas_wl_smart_resize, 
+             _ecore_evas_wl_smart_show, 
+             _ecore_evas_wl_smart_hide, 
+             NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL
+          };
+        _ecore_evas_wl_smart = evas_smart_class_new(&sc);
+     }
+}
+
+static void 
+_ecore_evas_wl_smart_add(Evas_Object *obj) 
+{
+   EE_Wl_Smart_Data *sd;
+   Evas *evas;
+
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+
+   if (!(sd = calloc(1, sizeof(EE_Wl_Smart_Data)))) return;
+
+   evas = evas_object_evas_get(obj);
+
+   sd->x = 0;
+   sd->y = 0;
+   sd->w = 1;
+   sd->h = 1;
+
+   sd->frame = evas_object_rectangle_add(evas);
+   evas_object_is_frame_object_set(sd->frame, EINA_TRUE);
+   evas_object_color_set(sd->frame, 249, 249, 249, 255);
+   evas_object_smart_member_add(sd->frame, obj);
+
+   sd->text = evas_object_text_add(evas);
+   evas_object_color_set(sd->text, 0, 0, 0, 255);
+   evas_object_text_style_set(sd->text, EVAS_TEXT_STYLE_PLAIN);
+   evas_object_text_font_set(sd->text, "Sans", 10);
+   evas_object_text_text_set(sd->text, "Smart Test");
+
+   evas_object_smart_data_set(obj, sd);
+}
+
+static void 
+_ecore_evas_wl_smart_del(Evas_Object *obj) 
+{
+   EE_Wl_Smart_Data *sd;
+
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+
+   if (!(sd = evas_object_smart_data_get(obj))) return;
+   evas_object_del(sd->text);
+   evas_object_del(sd->frame);
+   free(sd);
+}
+
+static void 
+_ecore_evas_wl_smart_resize(Evas_Object *obj, Evas_Coord w, Evas_Coord h) 
+{
+   EE_Wl_Smart_Data *sd;
+
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+
+   if (!(sd = evas_object_smart_data_get(obj))) return;
+   if ((sd->w == w) && (sd->h == h)) return;
+   sd->w = w;
+   sd->h = h;
+   evas_object_resize(sd->frame, w, h);
+}
+
+static void 
+_ecore_evas_wl_smart_show(Evas_Object *obj) 
+{
+   EE_Wl_Smart_Data *sd;
+
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+
+   if (!(sd = evas_object_smart_data_get(obj))) return;
+   evas_object_show(sd->frame);
+   evas_object_show(sd->text);
+}
+
+static void 
+_ecore_evas_wl_smart_hide(Evas_Object *obj) 
+{
+   EE_Wl_Smart_Data *sd;
+
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+
+   if (!(sd = evas_object_smart_data_get(obj))) return;
+   evas_object_hide(sd->text);
+   evas_object_hide(sd->frame);
+}
+
+static Evas_Object *
+_ecore_evas_wl_frame_add(Evas *evas) 
+{
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+
+   _ecore_evas_wl_smart_init();
+   return evas_object_smart_add(evas, _ecore_evas_wl_smart);
 }
 
 #else
