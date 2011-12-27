@@ -12,11 +12,13 @@
 # define LOGFN(fl, ln, fn)
 #endif
 
+#ifdef BUILD_ECORE_EVAS_WAYLAND_SHM
 # include <stdlib.h>
 # include <string.h>
 # include <unistd.h>
 # include <sys/types.h>
 # include <sys/mman.h>
+#endif
 
 # include <Eina.h>
 # include <Evas.h>
@@ -28,9 +30,7 @@
 #ifdef BUILD_ECORE_EVAS_WAYLAND_SHM
 # include <Evas_Engine_Wayland_Shm.h>
 # include <Ecore_Wayland.h>
-#endif
 
-#ifdef BUILD_ECORE_EVAS_WAYLAND_SHM
 /* local function prototypes */
 static int _ecore_evas_wl_init(void);
 static int _ecore_evas_wl_shutdown(void);
