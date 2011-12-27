@@ -3382,7 +3382,7 @@ elm_map_paused_set(Evas_Object *obj, Eina_Bool paused)
 
    if (!wd) return;
    if (wd->paused == !!paused) return;
-   wd->paused = paused;
+   wd->paused = !!paused;
    if (wd->paused)
      {
         if (wd->zoom_animator)
