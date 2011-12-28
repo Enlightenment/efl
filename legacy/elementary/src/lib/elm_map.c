@@ -3392,6 +3392,14 @@ elm_map_paused_set(Evas_Object *obj, Eina_Bool paused)
              zoom_do(obj);
              evas_object_smart_callback_call(obj, SIG_ZOOM_STOP, NULL);
           }
+        edje_object_signal_emit(elm_smart_scroller_edje_object_get(wd->scr),
+                                "elm,state,busy,stop", "elm");
+     }
+   else
+     {
+        if (wd->download_num >= 1)
+           edje_object_signal_emit(elm_smart_scroller_edje_object_get(wd->scr),
+                                   "elm,state,busy,start", "elm");
      }
 #else
    (void) obj;
