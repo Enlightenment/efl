@@ -5805,21 +5805,22 @@ EAPI Evas_Object      *evas_object_name_find             (const Evas *e, const c
  * Retrieves the object from children of the given objec with the given name.
  * @param   obj  The parent (smart) object whose children to search.
  * @param   name The given name.
- * @param   recurse set to EINA_TRUE if this is to recurse down child objects.
+ * @param   recurse Set to the number of child levels to recurse (0 == don't recurse, 1 == only look at the children of @p obj or their immediate children, but no further etc.).
  * @return  If successful, the Evas object with the given name.  Otherwise,
  *          @c NULL.
  * 
  * This looks for the evas object given a name by evas_object_name_set(), but
- * it ONLY looks at the children of the biecjt *p obj, and will only recurse
- * into thsoe children if @p recurse is set to EINA_TRUE. If the name is not
+ * it ONLY looks at the children of the object *p obj, and will only recurse
+ * into those children if @p recurse is greater than 0. If the name is not
  * unique within immediate children (or the whole child tree) then it is not
- * defined which child object will be returned.
+ * defined which child object will be returned. If @p recurse is set to -1 then
+ * it will recurse without limit.
  * 
  * @since 1.2
  * 
  * @ingroup Evas_Object_Group_Find
  */
-EAPI Evas_Object      *evas_object_name_child_find        (const Evas_Object *obj, const char *name, Eina_Bool recurse) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1) EINA_PURE;
+EAPI Evas_Object      *evas_object_name_child_find        (const Evas_Object *obj, const char *name, int recurse) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1) EINA_PURE;
 
 /**
  * Retrieve the Evas object stacked at the top of a given position in

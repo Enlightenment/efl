@@ -40,7 +40,7 @@ evas_object_name_find(const Evas *e, const char *name)
 }
 
 static Evas_Object *
-_evas_object_name_child_find(const Evas_Object *obj, const char *name, Eina_Bool recurse)
+_evas_object_name_child_find(const Evas_Object *obj, const char *name, int recurse)
 {
    const Eina_Inlist *lst;
    Evas_Object *child;
@@ -52,9 +52,9 @@ _evas_object_name_child_find(const Evas_Object *obj, const char *name, Eina_Bool
         if (child->delete_me) continue;
         if (!child->name) continue;
         if (!strcmp(name, child->name)) return child;
-        if (recurse)
+        if (recurse != 0)
           {
-             if ((obj = _evas_object_name_child_find(child, name, recurse)))
+             if ((obj = _evas_object_name_child_find(child, name, recurse - 1)))
                return obj;
           }
      }
@@ -62,7 +62,7 @@ _evas_object_name_child_find(const Evas_Object *obj, const char *name, Eina_Bool
 }
 
 EAPI Evas_Object *
-evas_object_name_child_find(const Evas_Object *obj, const char *name, Eina_Bool recurse)
+evas_object_name_child_find(const Evas_Object *obj, const char *name, int recurse)
 {
    MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
    return NULL;
