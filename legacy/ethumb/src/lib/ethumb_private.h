@@ -2,6 +2,7 @@
 #define __ETHUMB_PRIVATE_H__ 1
 
 #include <Ethumb.h>
+#include <Ethumb_Plugin.h>
 
 typedef struct _Ethumb_Frame Ethumb_Frame;
 
@@ -48,6 +49,9 @@ struct _Ethumb
    void *cb_data;
    Eina_Free_Cb cb_data_free;
    int cb_result;
+
+   void *pdata;
+   Ethumb_Plugin *plugin;
 };
 
 #endif /* __ETHUMB_PRIVATE_H__ */

@@ -38,6 +38,9 @@ struct _emotion_plugin
    int w, h;
 };
 
+static Eina_Bool _frame_grab(void *data);
+static Eina_Bool _frame_grab_single(void *data);
+
 static void
 _resize_movie(struct _emotion_plugin *_plugin)
 {
@@ -59,6 +62,17 @@ _resize_movie(struct _emotion_plugin *_plugin)
    evas_object_resize(_plugin->video, fw, fh);
    evas_object_move(_plugin->video, fx, fy);
    emotion_object_audio_mute_set(_plugin->video, 1);
+}
+
+static void
+_frame_decode_cb(void *data, Evas_Object *o __UNUSED__, void *event_info __UNUSED__)
+{
+   struct _emotion_plugin *_plugin = data;
+
+   if (_plugin->ef)
+     _frame_grab(data);
+   else
+     _frame_grab_single(data);
 }
 
 static void
@@ -168,6 +182,8 @@ _finish_thumb_generation(struct _emotion_plugin *_plugin, int success)
    int r = 0;
    evas_object_smart_callback_del(_plugin->video, "frame_resize",
 				  _frame_resized_cb);
+   evas_object_smart_callback_del(_plugin->video, "frame_decode",
+				  _frame_decode_cb);
    emotion_object_play_set(_plugin->video, 0);
    evas_object_del(_plugin->video);
    if (_plugin->ef)
@@ -207,7 +223,7 @@ _frame_grab_single(void *data)
    emotion_object_play_set(_plugin->video, 0);
    evas_object_del(_plugin->video);
    free(_plugin);
-   
+
    ethumb_finished_callback_call(e, 1);
 
    return EINA_FALSE;
@@ -294,12 +310,10 @@ _generate_animated_thumb(struct _emotion_plugin *_plugin)
 	fprintf(stderr, "ERROR: could not open '%s'\n", thumb_path);
 	_finish_thumb_generation(_plugin, 0);
      }
-
-   ecore_timer_add(1.0 / ethumb_video_fps_get(e), _frame_grab, _plugin);
 }
 
-static void
-_generate_thumb(Ethumb *e)
+static void *
+_thumb_generate(Ethumb *e)
 {
    Evas_Object *o;
    int r;
@@ -308,7 +322,7 @@ _generate_thumb(Ethumb *e)
    struct _emotion_plugin *_plugin = calloc(sizeof(struct _emotion_plugin), 1);
 
    o = emotion_object_add(ethumb_evas_get(e));
-   r = emotion_object_init(o, "xine");
+   r = emotion_object_init(o, NULL);
    if (!r)
      {
 	fprintf(stderr, "ERROR: could not start emotion using gstreamer"
@@ -316,7 +330,7 @@ _generate_thumb(Ethumb *e)
 	evas_object_del(o);
 	ethumb_finished_callback_call(e, 0);
 	free(_plugin);
-	return;
+	return NULL;
      }
 
    _plugin->video = o;
@@ -334,6 +348,8 @@ _generate_thumb(Ethumb *e)
    _plugin->pcount = 1;
 
    _resize_movie(_plugin);
+   evas_object_smart_callback_add(o, "frame_decode",
+				  _frame_decode_cb, _plugin);
    evas_object_smart_callback_add(o, "frame_resize",
 				  _frame_resized_cb, _plugin);
    evas_object_smart_callback_add(o, "decode_stop",
@@ -343,14 +359,22 @@ _generate_thumb(Ethumb *e)
      {
 	_generate_animated_thumb(_plugin);
      }
-   else
-     {
-	ecore_timer_add(0.1, _frame_grab_single, _plugin);
-     }
 
    _video_pos_set(_plugin);
    emotion_object_play_set(o, 1);
    evas_object_show(o);
+
+   return _plugin;
+}
+
+static void
+_thumb_cancel(Ethumb *e __UNUSED__, void *data)
+{
+   struct _emotion_plugin *_plugin = data;
+
+   if (_plugin->ef) eet_close(_plugin->ef);
+   evas_object_del(_plugin->video);
+   free(_plugin);
 }
 
 EAPI Ethumb_Plugin *
@@ -361,7 +385,8 @@ ethumb_plugin_get(void)
    static Ethumb_Plugin plugin =
      {
 	extensions,
-	_generate_thumb,
+	_thumb_generate,
+	_thumb_cancel
      };
 
    _log_dom = eina_log_domain_register("ethumb_emotion", EINA_COLOR_GREEN);

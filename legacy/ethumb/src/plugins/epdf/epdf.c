@@ -76,6 +76,7 @@ ethumb_plugin_get(void)
      {
 	extensions,
 	_generate_thumb,
+	NULL /* This plugin is not assynchronous so not possible to cancel it at all */
      };
 
    return &plugin;

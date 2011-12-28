@@ -10,7 +10,8 @@ typedef struct _Ethumb_Plugin Ethumb_Plugin;
 struct _Ethumb_Plugin
 {
    const char **extensions;
-   void (*generate_thumb)(Ethumb *);
+   void *(*thumb_generate)(Ethumb *);
+   void (*thumb_cancel)(Ethumb *, void *);
 };
 
 EAPI void ethumb_calculate_aspect_from_ratio(Ethumb *e, float ia, int *w, int *h);

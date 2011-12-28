@@ -1185,7 +1185,8 @@ _ethumb_plugin_generate(Ethumb *e)
    else
      evas_object_hide(e->img);
 
-   plugin->generate_thumb(e);
+   e->plugin = plugin;
+   e->pdata = plugin->thumb_generate(e);
 
    return EINA_TRUE;
 }
@@ -1519,6 +1520,8 @@ ethumb_finished_callback_call(Ethumb *e, int result)
    if (e->finished_idler)
      ecore_idler_del(e->finished_idler);
    e->finished_idler = ecore_idler_add(_ethumb_finished_idler_cb, e);
+   e->plugin = NULL;
+   e->pdata = NULL;
 }
 
 EAPI Eina_Bool
@@ -1537,6 +1540,13 @@ ethumb_generate(Ethumb *e, Ethumb_Generate_Cb finished_cb, const void *data, Ein
 	ERR("thumbnail generation already in progress.");
 	return EINA_FALSE;
      }
+   if (e->pdata)
+     {
+        e->plugin->thumb_cancel(e, e->pdata);
+        e->pdata = NULL;
+        e->plugin = NULL;
+     }
+
    e->finished_cb = finished_cb;
    e->cb_data = (void *)data;
    e->cb_data_free = free_data;
@@ -1549,9 +1559,9 @@ ethumb_generate(Ethumb *e, Ethumb_Generate_Cb finished_cb, const void *data, Ein
      }
 
    r = _ethumb_plugin_generate(e);
+   fprintf(stderr, "ethumb generate: %i: %p\n", r, e->pdata);
    if (r)
      {
-        ethumb_finished_callback_call(e, r);
         return EINA_TRUE;
      }
 
@@ -1688,6 +1698,8 @@ ethumb_dup(const Ethumb *e)
    r->cb_data = NULL;
    r->cb_data_free = NULL;
    r->cb_result = 0;
+   r->plugin = NULL;
+   r->pdata = NULL;
 
    return r;
 }
