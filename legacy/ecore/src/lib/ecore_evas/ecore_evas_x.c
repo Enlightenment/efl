@@ -796,9 +796,13 @@ _ecore_evas_x_event_mouse_out(void *data __UNUSED__, int type __UNUSED__, void *
    //       (e->mode == ECORE_X_EVENT_MODE_UNGRAB))
    //     return 0;
    /* if (e->mode != ECORE_X_EVENT_MODE_NORMAL) return 0; */
+//   printf("OUT: ee->in=%i, e->mode=%i, e->detail=%i, dount_count=%i\n",
+//          ee->in, e->mode, e->detail, evas_event_down_count_get(ee->evas));
    if (ee->in)
      {
-        if (evas_event_down_count_get(ee->evas) > 0)
+        if ((evas_event_down_count_get(ee->evas) > 0) &&
+            (!((e->mode == ECORE_X_EVENT_MODE_GRAB) &&
+               (e->detail == ECORE_X_EVENT_DETAIL_NON_LINEAR))))
           return ECORE_CALLBACK_PASS_ON;
         ecore_event_evas_modifier_lock_update(ee->evas, e->modifiers);
         _ecore_evas_mouse_move_process(ee, e->x, e->y, e->time);
