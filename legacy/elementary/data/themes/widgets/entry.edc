@@ -706,12 +706,16 @@ group { name: "elm/entry/base/default";
          tag:  "em" "+ font_style=Oblique";
          tag:  "link" "+ color=#800 underline=on underline_color=#8008";
          tag:  "hilight" "+ font_weight=Bold";
+         tag:  "preedit" "+ underline=on underline_color=#000";
+         tag:  "preedit_sel" "+ backing=on backing_color=#000 color=#FFFFFF";
       }
       style { name: "entry_textblock_disabled_style";
          base: "font=Sans font_size=10 color=#00000080 wrap=word text_class=entry";
          tag:  "em" "+ font_style=Oblique";
          tag:  "link" "+ color=#00000080 underline=on underline_color=#00000080";
          tag:  "hilight" "+ font_weight=Bold";
+         tag:  "preedit" "+ underline=on underline_color=#000";
+         tag:  "preedit_sel" "+ backing=on backing_color=#000 color=#FFFFFF";
       }
    }
    data {
@@ -780,12 +784,16 @@ group { name: "elm/entry/base-mixedwrap/default";
          tag:  "em" "+ font_style=Oblique";
          tag:  "link" "+ color=#800 underline=on underline_color=#8008";
          tag:  "hilight" "+ font_weight=Bold";
+         tag:  "preedit" "+ underline=on underline_color=#000";
+         tag:  "preedit_sel" "+ backing=on backing_color=#000 color=#FFFFFF";
       }
       style { name: "entry_textblock_disabled_style_mixedwrap";
          base: "font=Sans font_size=10 color=#00000080 wrap=char text_class=entry";
          tag:  "em" "+ font_style=Oblique";
          tag:  "link" "+ color=#00000080 underline=on underline_color=#00000080";
          tag:  "hilight" "+ font_weight=Bold";
+         tag:  "preedit" "+ underline=on underline_color=#000";
+         tag:  "preedit_sel" "+ backing=on backing_color=#000 color=#FFFFFF";
       }
    }
    parts {
@@ -818,12 +826,16 @@ group { name: "elm/entry/base-charwrap/default";
          tag:  "em" "+ font_style=Oblique";
          tag:  "link" "+ color=#800 underline=on underline_color=#8008";
          tag:  "hilight" "+ font_weight=Bold";
+         tag:  "preedit" "+ underline=on underline_color=#000";
+         tag:  "preedit_sel" "+ backing=on backing_color=#000 color=#FFFFFF";
       }
       style { name: "entry_textblock_disabled_style_charwrap";
          base: "font=Sans font_size=10 color=#00000080 wrap=char text_class=entry";
          tag:  "em" "+ font_style=Oblique";
          tag:  "link" "+ color=#00000080 underline=on underline_color=#00000080";
          tag:  "hilight" "+ font_weight=Bold";
+         tag:  "preedit" "+ underline=on underline_color=#000";
+         tag:  "preedit_sel" "+ backing=on backing_color=#000 color=#FFFFFF";
       }
    }
    parts {
@@ -878,12 +890,16 @@ group { name: "elm/entry/base-single/default";
          tag:  "em" "+ font_style=Oblique";
          tag:  "link" "+ color=#800 underline=on underline_color=#8008";
          tag:  "hilight" "+ font_weight=Bold";
+         tag:  "preedit" "+ underline=on underline_color=#000";
+         tag:  "preedit_sel" "+ backing=on backing_color=#000 color=#FFFFFF";
       }
       style { name: "entry_single_textblock_disabled_style";
          base: "font=Sans font_size=10 color=#00000080 wrap=none text_class=entry";
          tag:  "em" "+ font_style=Oblique";
          tag:  "link" "+ color=#00000080 underline=on underline_color=#00000080";
          tag:  "hilight" "+ font_weight=Bold";
+         tag:  "preedit" "+ underline=on underline_color=#000";
+         tag:  "preedit_sel" "+ backing=on backing_color=#000 color=#FFFFFF";
       }
    }
    parts {
