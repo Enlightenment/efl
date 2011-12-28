@@ -1253,6 +1253,27 @@ extern "C" {
    EAPI void elm_object_access_info_set(Evas_Object *obj, const char *txt);
 
    /**
+    * Get a named object from the children
+    * 
+    * @param obj The parent object whose children to look at
+    * @param name The name of the child to find
+    * @param recurse Set to EINA_TRUE if you should recurse into children of children
+    * @return The found object of that name, or NULL if none is found
+    * 
+    * This function searches the children (or recursively children of
+    * children and so on) of the given @p obj object looking for a child with
+    * the name of @p name. If the child is found the object is returned, or
+    * NULL is returned. You can set the name of an object with 
+    * evas_object_name_set(). If the name is not unique within the child
+    * objects (or the tree is @p recurse is set to EINA_TRUE) then it is
+    * undefined as to which child of that name is returned, so ensure the name
+    * is unique amongst children.
+    * 
+    * @ingroup General
+    */
+   EAPI Evas_Object *elm_object_name_find(const Evas_Object *obj, const char *name, Eina_Bool recurse);
+       
+   /**
     * Get the widget object's handle which contains a given item
     *
     * @param item The Elementary object item

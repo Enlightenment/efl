@@ -8,7 +8,7 @@ static const char SMART_NAME[] = "elm_widget";
   if ((!sd) || (!_elm_widget_is(obj)))
 #define INTERNAL_ENTRY                               \
   Smart_Data * sd = evas_object_smart_data_get(obj); \
-  if (!sd) return;
+  if (!sd) return
 
 #undef elm_widget_text_set_hook_set
 #undef elm_widget_text_get_hook_set
@@ -197,7 +197,7 @@ _unfocus_parents(Evas_Object *obj)
 {
    for (; obj; obj = elm_widget_parent_get(obj))
      {
-        INTERNAL_ENTRY
+        INTERNAL_ENTRY;
         if (!sd->focused) return;
         sd->focused = 0;
      }
@@ -208,7 +208,7 @@ _focus_parents(Evas_Object *obj)
 {
    for (; obj; obj = elm_widget_parent_get(obj))
      {
-        INTERNAL_ENTRY
+        INTERNAL_ENTRY;
         if (sd->focused) return;
         sd->focused = 1;
      }
@@ -295,7 +295,7 @@ static void
 _propagate_x_drag_lock(Evas_Object *obj,
                        int          dir)
 {
-   INTERNAL_ENTRY
+   INTERNAL_ENTRY;
    if (sd->parent_obj)
      {
         Smart_Data *sd2 = evas_object_smart_data_get(sd->parent_obj);
@@ -311,7 +311,7 @@ static void
 _propagate_y_drag_lock(Evas_Object *obj,
                        int          dir)
 {
-   INTERNAL_ENTRY
+   INTERNAL_ENTRY;
    if (sd->parent_obj)
      {
         Smart_Data *sd2 = evas_object_smart_data_get(sd->parent_obj);
@@ -329,7 +329,7 @@ _propagate_event(void        *data,
                  Evas_Object *obj,
                  void        *event_info)
 {
-   INTERNAL_ENTRY
+   INTERNAL_ENTRY;
    Evas_Callback_Type type = (Evas_Callback_Type)(long)data;
    Evas_Event_Flags *event_flags = NULL;
 
@@ -2637,6 +2637,51 @@ elm_widget_type_check(const Evas_Object *obj,
    return EINA_FALSE;
 }
 
+static Evas_Object *
+_widget_name_find(const Evas_Object *obj, const char *name, Eina_Bool recurse)
+{
+   Eina_List *l;
+   Evas_Object *child;
+   const char *s;
+   INTERNAL_ENTRY NULL;
+   void **childlist = NULL;
+   
+   if (!_elm_widget_is(obj)) return NULL;
+   if (sd->resize_obj)
+     {
+        s = evas_object_name_get(sd->resize_obj);
+        if ((s) && (!strcmp(s, name))) return sd->resize_obj;
+        if ((recurse) && 
+            ((child = _widget_name_find(sd->resize_obj, name, recurse))))
+          return child;
+     }
+   EINA_LIST_FOREACH(sd->subobjs, l, child)
+     {
+        s = evas_object_name_get(child);
+        if ((s) && (!strcmp(s, name))) return child;
+        if ((recurse) && 
+            ((child = _widget_name_find(child, name, recurse))))
+          return child;
+     }
+   if (sd->hover_obj)
+     {
+        s = evas_object_name_get(sd->hover_obj);
+        if ((s) && (!strcmp(s, name))) return sd->hover_obj;
+        if ((recurse) && 
+            ((child = _widget_name_find(sd->hover_obj, name, recurse))))
+          return child;
+     }
+   return NULL;
+}
+
+EAPI Evas_Object *
+elm_widget_name_find(const Evas_Object *obj, const char *name, Eina_Bool recurse)
+{
+   API_ENTRY return NULL;
+   if (!name) return NULL;
+   return _widget_name_find(obj, name, recurse);
+}
+
 /**
  * @internal
  *
@@ -3452,7 +3497,7 @@ _if_focused_revert(Evas_Object *obj,
    Evas_Object *newest = NULL;
    unsigned int newest_focus_order = 0;
 
-   INTERNAL_ENTRY
+   INTERNAL_ENTRY;
 
    if (!sd->focused) return;
    if (!sd->parent_obj) return;
@@ -3476,7 +3521,7 @@ _smart_del(Evas_Object *obj)
    Edje_Signal_Data *esd;
    Elm_Translate_String_Data *ts;
 
-   INTERNAL_ENTRY
+   INTERNAL_ENTRY;
 
    if (sd->del_pre_func) sd->del_pre_func(obj);
    if (sd->resize_obj)
@@ -3535,7 +3580,7 @@ _smart_move(Evas_Object *obj,
             Evas_Coord   x,
             Evas_Coord   y)
 {
-   INTERNAL_ENTRY
+   INTERNAL_ENTRY;
    sd->x = x;
    sd->y = y;
    _smart_reconfigure(sd);
@@ -3546,7 +3591,7 @@ _smart_resize(Evas_Object *obj,
               Evas_Coord   w,
               Evas_Coord   h)
 {
-   INTERNAL_ENTRY
+   INTERNAL_ENTRY;
    sd->w = w;
    sd->h = h;
    _smart_reconfigure(sd);
@@ -3557,7 +3602,7 @@ _smart_show(Evas_Object *obj)
 {
    Eina_List *list;
    Evas_Object *o;
-   INTERNAL_ENTRY
+   INTERNAL_ENTRY;
    if ((list = evas_object_smart_members_get(obj)))
      {
         EINA_LIST_FREE(list, o)
@@ -3573,7 +3618,7 @@ _smart_hide(Evas_Object *obj)
 {
    Eina_List *list;
    Evas_Object *o;
-   INTERNAL_ENTRY
+   INTERNAL_ENTRY;
 
    list = evas_object_smart_members_get(obj);
    EINA_LIST_FREE(list, o)
@@ -3592,7 +3637,7 @@ _smart_color_set(Evas_Object *obj,
 {
    Eina_List *list;
    Evas_Object *o;
-   INTERNAL_ENTRY
+   INTERNAL_ENTRY;
    if ((list = evas_object_smart_members_get(obj)))
      {
         EINA_LIST_FREE(list, o)
@@ -3609,7 +3654,7 @@ _smart_clip_set(Evas_Object *obj,
 {
    Eina_List *list;
    Evas_Object *o;
-   INTERNAL_ENTRY
+   INTERNAL_ENTRY;
    if ((list = evas_object_smart_members_get(obj)))
      {
         EINA_LIST_FREE(list, o)
@@ -3625,7 +3670,7 @@ _smart_clip_unset(Evas_Object *obj)
 {
    Eina_List *list;
    Evas_Object *o;
-   INTERNAL_ENTRY
+   INTERNAL_ENTRY;
    if ((list = evas_object_smart_members_get(obj)))
      {
         EINA_LIST_FREE(list, o)
@@ -3639,7 +3684,7 @@ _smart_clip_unset(Evas_Object *obj)
 static void
 _smart_calculate(Evas_Object *obj)
 {
-   INTERNAL_ENTRY
+   INTERNAL_ENTRY;
    if (sd->changed_func) sd->changed_func(obj);
 }
 
@@ -3688,7 +3733,7 @@ _sub_obj_tree_dump(const Evas_Object *obj,
    if (_elm_widget_is(obj))
      {
         Eina_List *l;
-        INTERNAL_ENTRY
+        INTERNAL_ENTRY;
         printf("+ %s(%p)\n",
                sd->type,
                obj);
@@ -3710,7 +3755,7 @@ _sub_obj_tree_dot_dump(const Evas_Object *obj,
 {
    if (!_elm_widget_is(obj))
      return;
-   INTERNAL_ENTRY
+   INTERNAL_ENTRY;
 
    Eina_Bool visible = evas_object_visible_get(obj);
    Eina_Bool disabled = elm_widget_disabled_get(obj);
