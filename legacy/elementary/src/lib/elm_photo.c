@@ -38,7 +38,7 @@ struct _Widget_Data
 static Eina_List *_elm_icon_retry = NULL;
 static int _icon_pending_request = 0;
 
-static void _icon_thumb_exists(Ethumb_Client *client __UNUSED__, Ethumb_Exists *thread, Eina_Bool exists, void *data);
+static void _icon_thumb_exists(void *data, Ethumb_Client *client __UNUSED__, Ethumb_Exists *thread, Eina_Bool exists);
 static void _icon_thumb_stop(Widget_Data *wd, void *ethumbd);
 #endif
 
@@ -413,7 +413,7 @@ _icon_thumb_cb(void *data,
 }
 
 static void
-_icon_thumb_exists(Ethumb_Client *client __UNUSED__, Ethumb_Exists *thread, Eina_Bool exists, void *data)
+_icon_thumb_exists(void *data, Ethumb_Client *client __UNUSED__, Ethumb_Exists *thread, Eina_Bool exists)
 {
    Widget_Data *wd = data;
    Ethumb_Client *ethumbd;
