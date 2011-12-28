@@ -5791,9 +5791,35 @@ EAPI Evas_Object      *evas_focus_get                    (const Evas *e) EINA_WA
  * @param   name The given name.
  * @return  If successful, the Evas object with the given name.  Otherwise,
  *          @c NULL.
+ * 
+ * This looks for the evas object given a name by evas_object_name_set(). If
+ * the name is not unique canvas-wide, then which one of the many objects
+ * with that name is returned is undefined, so only use this if you can ensure
+ * the object name is unique.
+ * 
  * @ingroup Evas_Object_Group_Find
  */
 EAPI Evas_Object      *evas_object_name_find             (const Evas *e, const char *name) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1) EINA_PURE;
+
+/**
+ * Retrieves the object from children of the given objec with the given name.
+ * @param   obj  The parent (smart) object whose children to search.
+ * @param   name The given name.
+ * @param   recurse set to EINA_TRUE if this is to recurse down child objects.
+ * @return  If successful, the Evas object with the given name.  Otherwise,
+ *          @c NULL.
+ * 
+ * This looks for the evas object given a name by evas_object_name_set(), but
+ * it ONLY looks at the children of the biecjt *p obj, and will only recurse
+ * into thsoe children if @p recurse is set to EINA_TRUE. If the name is not
+ * unique within immediate children (or the whole child tree) then it is not
+ * defined which child object will be returned.
+ * 
+ * @since 1.2
+ * 
+ * @ingroup Evas_Object_Group_Find
+ */
+EAPI Evas_Object      *evas_object_name_child_find        (const Evas_Object *obj, const char *name, Eina_Bool recurse) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1) EINA_PURE;
 
 /**
  * Retrieve the Evas object stacked at the top of a given position in

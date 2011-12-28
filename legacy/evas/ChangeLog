@@ -596,3 +596,7 @@
         * Add feature to get number of pressed devices (help fix
           ecore-evas bug).
 
+2011-12-28  Carsten Haitzler (The Rasterman)
+
+        * Add recursive name find function - evas_object_name_child_find()
+

@@ -38,3 +38,35 @@ evas_object_name_find(const Evas *e, const char *name)
    if (!name) return NULL;
    return (Evas_Object *)eina_hash_find(e->name_hash, name);
 }
+
+static Evas_Object *
+_evas_object_name_child_find(const Evas_Object *obj, const char *name, Eina_Bool recurse)
+{
+   const Eina_Inlist *lst;
+   Evas_Object *child;
+   
+   if (!obj->smart.smart) return NULL;
+   lst = evas_object_smart_members_get_direct(obj);
+   EINA_INLIST_FOREACH(lst, child)
+     {
+        if (child->delete_me) continue;
+        if (!child->name) continue;
+        if (!strcmp(name, child->name)) return child;
+        if (recurse)
+          {
+             if ((obj = _evas_object_name_child_find(child, name, recurse)))
+               return obj;
+          }
+     }
+   return NULL;
+}
+
+EAPI Evas_Object *
+evas_object_name_child_find(const Evas_Object *obj, const char *name, Eina_Bool recurse)
+{
+   MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
+   return NULL;
+   MAGIC_CHECK_END();
+   if (!name) return NULL;
+   return _evas_object_name_child_find(obj, name, recurse);
+}
