@@ -55,7 +55,7 @@ _evas_object_name_child_find(const Evas_Object *obj, const char *name, int recur
         if (recurse != 0)
           {
              if ((obj = _evas_object_name_child_find(child, name, recurse - 1)))
-               return obj;
+               return (Evas_Object *)obj;
           }
      }
    return NULL;
