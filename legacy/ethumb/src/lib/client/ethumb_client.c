@@ -610,9 +610,9 @@ _ethumb_client_exists_end(void *data, Ecore_Thread *thread __UNUSED__)
         tmp = cb->client->ethumb;
         cb->client->ethumb = cb->dup;
 
-        cb->exists_cb(cb->client, cb,
-                      ethumb_exists(cb->client->ethumb),
-                      (void*) cb->data);
+        cb->exists_cb((void*) cb->data,
+                      cb->client, cb,
+                      ethumb_exists(cb->client->ethumb));
 
         cb->client->ethumb = tmp;
         EINA_REFCOUNT_UNREF(cb->client)
@@ -2229,7 +2229,7 @@ ethumb_client_thumb_exists(Ethumb_Client *client, Ethumb_Client_Thumb_Exists_Cb 
    return cb;
 
  on_error:
-   exists_cb(client, NULL, EINA_FALSE, (void*) data);
+   exists_cb((void*) data, client, NULL, EINA_FALSE);
 
    if (async)
      {
@@ -2430,7 +2430,7 @@ _ethumb_client_thumb_generate_idler(void *data __UNUSED__)
 }
 
 static void
-_ethumb_client_thumb_exists(Ethumb_Client *client, Ethumb_Exists *request, Eina_Bool exists, void *data)
+_ethumb_client_thumb_exists(void *data, Ethumb_Client *client, Ethumb_Exists *request, Eina_Bool exists)
 {
    Ethumb_Client_Async *async = data;
 

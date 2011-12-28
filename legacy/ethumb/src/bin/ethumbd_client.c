@@ -159,7 +159,7 @@ _finished_thumb(void *data __UNUSED__, Ethumb_Client *client __UNUSED__, int id 
 }
 
 static void
-_exists(Ethumb_Client *c, __UNUSED__ Ethumb_Exists *thread, Eina_Bool exists, void *data)
+_exists(void *data, Ethumb_Client *c, __UNUSED__ Ethumb_Exists *thread, Eina_Bool exists)
 {
    struct options *opts = data;
    const char *thumb_path, *thumb_key;

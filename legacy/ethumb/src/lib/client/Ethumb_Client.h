@@ -114,7 +114,7 @@ typedef void (*Ethumb_Client_Generate_Cb)(void *data, Ethumb_Client *client, int
  * temporarily realy restored to what it was when the call to
  * ethumb_client_thumb_exists() was done.
  */
-typedef void (*Ethumb_Client_Thumb_Exists_Cb)(Ethumb_Client *client, Ethumb_Exists *thread, Eina_Bool exists, void *data);
+typedef void (*Ethumb_Client_Thumb_Exists_Cb)(void *data, Ethumb_Client *client, Ethumb_Exists *thread, Eina_Bool exists);
 
 /**
  * @brief reports results of ethumb_client_generate_cancel()
