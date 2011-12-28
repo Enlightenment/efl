@@ -10,6 +10,7 @@
 Eina_Bool window_manager_video = EINA_FALSE;
 int _emotion_gstreamer_log_domain = -1;
 Eina_Bool debug_fps = EINA_FALSE;
+Eina_Bool _ecore_x_available = EINA_FALSE;
 
 /* Callbacks to get the eos */
 static void _for_each_tag    (GstTagList const* list, gchar const* tag, void *data);
@@ -1277,8 +1278,13 @@ module_open(Evas_Object           *obj,
    eina_threads_init();
 
 #ifdef HAVE_ECORE_X
+   if (ecore_x_init(NULL) > 0)
+     {
+        _ecore_x_available = EINA_TRUE;
+     }
+
    /* Check if the window manager is able to handle our special Xv window. */
-   roots = ecore_x_window_root_list(&num);
+   roots = _ecore_x_available ? ecore_x_window_root_list(&num) : NULL;
    if (roots && num > 0)
      {
         Ecore_X_Window  win, twin;
@@ -1333,6 +1339,13 @@ module_close(Emotion_Video_Module *module __UNUSED__,
              void                 *video)
 {
    em_module.shutdown(video);
+
+#ifdef HAVE_ECORE_X
+   if (_ecore_x_available)
+     {
+        ecore_x_shutdown();
+     }
+#endif
 
    eina_threads_shutdown();
 }

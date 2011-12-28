@@ -209,6 +209,7 @@ struct _Emotion_Gstreamer_Message
 extern Eina_Bool window_manager_video;
 extern Eina_Bool debug_fps;
 extern int _emotion_gstreamer_log_domain;
+extern Eina_Bool _ecore_x_available;
 #define DBG(...) EINA_LOG_DOM_DBG(_emotion_gstreamer_log_domain, __VA_ARGS__)
 #define INF(...) EINA_LOG_DOM_INFO(_emotion_gstreamer_log_domain, __VA_ARGS__)
 #define WRN(...) EINA_LOG_DOM_WARN(_emotion_gstreamer_log_domain, __VA_ARGS__)
