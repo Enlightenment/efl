@@ -1,6 +1,6 @@
 MAINTAINERCLEANFILES = Makefile.in
 
-pkglibdir = $(datadir)/$(PACKAGE)/examples
+examplesdir = $(datadir)/$(PACKAGE)/examples
 
 filesdir = $(datadir)/$(PACKAGE)/examples
 files_DATA =
@@ -59,7 +59,7 @@ SRCS = \
 EXTRA_DIST = $(SRCS) \
 	$(srcdir)/red.png
 
-pkglib_PROGRAMS =
+examples_PROGRAMS =
 
 if EFL_INSTALL_EXAMPLES
 files_DATA += $(SRCS) \
@@ -67,7 +67,7 @@ files_DATA += $(SRCS) \
 endif
 
 if EFL_BUILD_EXAMPLES
-pkglib_PROGRAMS += \
+examples_PROGRAMS += \
 	ecore_animator_example \
 	ecore_fd_handler_example \
 	ecore_poller_example \

@@ -1,6 +1,6 @@
 MAINTAINERCLEANFILES = Makefile.in
 
-pkglibdir = $(datadir)/$(PACKAGE)/examples
+examplesdir = $(datadir)/$(PACKAGE)/examples
 
 AM_CPPFLAGS = \
 -I. \
@@ -22,7 +22,7 @@ SRCS = \
 
 EXTRA_DIST = $(SRCS)
 
-pkglib_PROGRAMS =
+examples_PROGRAMS =
 
 if EFL_INSTALL_EXAMPLES
 filesdir = $(datadir)/$(PACKAGE)/examples
@@ -30,7 +30,7 @@ files_DATA = $(SRCS)
 endif
 
 if EFL_BUILD_EXAMPLES
-pkglib_PROGRAMS += \
+examples_PROGRAMS += \
 	emotion_basic_example \
 	emotion_generic_example \
 	emotion_border_example \

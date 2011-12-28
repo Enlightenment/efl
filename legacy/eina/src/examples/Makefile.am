@@ -1,6 +1,6 @@
 MAINTAINERCLEANFILES = Makefile.in
 
-pkglibdir = $(datadir)/$(PACKAGE)/examples
+examplesdir = $(datadir)/$(PACKAGE)/examples
 
 AM_CPPFLAGS = \
 -I. \
@@ -39,7 +39,7 @@ SRCS = \
 	eina_strbuf_01.c \
 	eina_tiler_01.c
 
-pkglib_PROGRAMS =
+examples_PROGRAMS =
 
 if EFL_INSTALL_EXAMPLES
 filesdir = $(datadir)/$(PACKAGE)/examples
@@ -47,7 +47,7 @@ files_DATA = $(SRCS)
 endif
 
 if EFL_BUILD_EXAMPLES
-pkglib_PROGRAMS += \
+examples_PROGRAMS += \
 	eina_accessor_01 \
 	eina_array_01 \
 	eina_array_02 \
@@ -77,7 +77,7 @@ pkglib_PROGRAMS += \
 
 if BUILD_TILER_EXAMPLE
 AM_CPPFLAGS += @ECORE_EVAS_CFLAGS@
-pkglib_PROGRAMS += eina_tiler_01
+examples_PROGRAMS += eina_tiler_01
 eina_tiler_01_LDADD = $(top_builddir)/src/lib/libeina.la @ECORE_EVAS_LIBS@
 endif
 

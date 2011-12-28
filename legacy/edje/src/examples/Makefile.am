@@ -1,6 +1,6 @@
 MAINTAINERCLEANFILES = Makefile.in
 
-pkglibdir = $(datadir)/$(PACKAGE)/examples
+examplesdir = $(datadir)/$(PACKAGE)/examples
 
 if ENABLE_MULTISENSE
 MULTISENSE_EDC_FILE = multisense.edc
@@ -64,7 +64,7 @@ AM_CPPFLAGS = \
 
 files_DATA += $(EDJS)
 
-pkglib_PROGRAMS = \
+examples_PROGRAMS = \
 	edje-basic \
 	edje-swallow \
 	edje-text \

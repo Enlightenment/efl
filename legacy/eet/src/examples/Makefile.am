@@ -1,6 +1,6 @@
 MAINTAINERCLEANFILES = Makefile.in
 
-pkglibdir = $(datadir)/$(PACKAGE)/examples
+examplesdir = $(datadir)/$(PACKAGE)/examples
 
 if BUILD_EXAMPLES
 AM_CPPFLAGS = \
@@ -8,7 +8,7 @@ AM_CPPFLAGS = \
 -I$(top_srcdir)/src/lib \
 @EINA_CFLAGS@
 
-pkglib_PROGRAMS = eet_basic eet_file eet_data_simple eet_data_nested eet_data_file_descriptor_01 eet_data_file_descriptor_02 eet_data_cipher_decipher
+examples_PROGRAMS = eet_basic eet_file eet_data_simple eet_data_nested eet_data_file_descriptor_01 eet_data_file_descriptor_02 eet_data_cipher_decipher
 
 eet_basic_SOURCES = eet-basic.c
 eet_basic_LDADD = $(top_builddir)/src/lib/libeet.la @EINA_LIBS@
