@@ -2090,7 +2090,7 @@ elm_object_access_info_set(Evas_Object *obj, const char *txt)
 }
 
 EAPI Evas_Object *
-elm_object_name_find(const Evas_Object *obj, const char *name, Eina_Bool recurse)
+elm_object_name_find(const Evas_Object *obj, const char *name, int recurse)
 {
    return elm_widget_name_find(obj, name, recurse);
 }

@@ -412,7 +412,7 @@ EAPI void             elm_widget_type_register(const char **ptr);
 EAPI void             elm_widget_type_unregister(const char **ptr);
 EAPI Eina_Bool        elm_widget_is_check(const Evas_Object *obj);
 EAPI Eina_Bool        elm_widget_type_check(const Evas_Object *obj, const char *type, const char *func);
-EAPI Evas_Object     *elm_widget_name_find(const Evas_Object *obj, const char *name, Eina_Bool recurse);
+EAPI Evas_Object     *elm_widget_name_find(const Evas_Object *obj, const char *name, int recurse);
 EAPI Eina_List       *elm_widget_stringlist_get(const char *str);
 EAPI void             elm_widget_stringlist_free(Eina_List *list);
 EAPI void             elm_widget_focus_hide_handle(Evas_Object *obj);

@@ -2638,44 +2638,43 @@ elm_widget_type_check(const Evas_Object *obj,
 }
 
 static Evas_Object *
-_widget_name_find(const Evas_Object *obj, const char *name, Eina_Bool recurse)
+_widget_name_find(const Evas_Object *obj, const char *name, int recurse)
 {
    Eina_List *l;
    Evas_Object *child;
    const char *s;
    INTERNAL_ENTRY NULL;
-   void **childlist = NULL;
    
    if (!_elm_widget_is(obj)) return NULL;
    if (sd->resize_obj)
      {
         s = evas_object_name_get(sd->resize_obj);
         if ((s) && (!strcmp(s, name))) return sd->resize_obj;
-        if ((recurse) && 
-            ((child = _widget_name_find(sd->resize_obj, name, recurse))))
+        if ((recurse != 0) && 
+            ((child = _widget_name_find(sd->resize_obj, name, recurse - 1))))
           return child;
      }
    EINA_LIST_FOREACH(sd->subobjs, l, child)
      {
         s = evas_object_name_get(child);
         if ((s) && (!strcmp(s, name))) return child;
-        if ((recurse) && 
-            ((child = _widget_name_find(child, name, recurse))))
+        if ((recurse != 0) && 
+            ((child = _widget_name_find(child, name, recurse - 1))))
           return child;
      }
    if (sd->hover_obj)
      {
         s = evas_object_name_get(sd->hover_obj);
         if ((s) && (!strcmp(s, name))) return sd->hover_obj;
-        if ((recurse) && 
-            ((child = _widget_name_find(sd->hover_obj, name, recurse))))
+        if ((recurse != 0) && 
+            ((child = _widget_name_find(sd->hover_obj, name, recurse - 1))))
           return child;
      }
    return NULL;
 }
 
 EAPI Evas_Object *
-elm_widget_name_find(const Evas_Object *obj, const char *name, Eina_Bool recurse)
+elm_widget_name_find(const Evas_Object *obj, const char *name, int recurse)
 {
    API_ENTRY return NULL;
    if (!name) return NULL;
