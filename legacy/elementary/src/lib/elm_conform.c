@@ -128,6 +128,7 @@ _content_set_hook(Evas_Object *obj, const char *part, Evas_Object *content)
 {
    ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd;
+
    if (part && strcmp(part, "default")) return;
    wd = elm_widget_data_get(obj);
    if (!wd) return;
@@ -150,6 +151,7 @@ _content_get_hook(const Evas_Object *obj, const char *part)
 {
    ELM_CHECK_WIDTYPE(obj, widtype) NULL;
    Widget_Data *wd;
+
    if (part && strcmp(part, "default")) return NULL;
    wd = elm_widget_data_get(obj);
    if (!wd) return NULL;
@@ -272,7 +274,9 @@ _conformant_part_sizing_eval(Evas_Object *obj, Conformant_Part_Type part_type)
                                                 &sx, &sy, &sw, &sh)) && (xwin))
           {
 #ifdef HAVE_ELEMENTARY_X
-             ecore_x_e_illume_indicator_geometry_get(zone, &sx, &sy, &sw, &sh);
+           //No information of the indicator geometry, reset the geometry.
+             if (!ecore_x_e_illume_indicator_geometry_get(zone, &sx, &sy, &sw, &sh))
+               sx = sy = sw = sh = 0;
 #else
              ;
 #endif
@@ -285,7 +289,9 @@ _conformant_part_sizing_eval(Evas_Object *obj, Conformant_Part_Type part_type)
                                                 &sx, &sy, &sw, &sh)) && (xwin))
           {
 #ifdef HAVE_ELEMENTARY_X
-             ecore_x_e_illume_keyboard_geometry_get(zone, &sx, &sy, &sw, &sh);
+           //No information of the keyboard geometry, reset the geometry.
+           if (!ecore_x_e_illume_keyboard_geometry_get(zone, &sx, &sy, &sw, &sh))
+             sx = sy = sw = sh = 0;
 #else
              ;
 #endif
@@ -298,7 +304,9 @@ _conformant_part_sizing_eval(Evas_Object *obj, Conformant_Part_Type part_type)
                                                 &sx, &sy, &sw, &sh)) && (xwin))
           {
 #ifdef HAVE_ELEMENTARY_X
-             ecore_x_e_illume_softkey_geometry_get(zone, &sx, &sy, &sw, &sh);
+           //No information of the softkey geometry, reset the geometry.
+           if (!ecore_x_e_illume_softkey_geometry_get(zone, &sx, &sy, &sw, &sh))
+             sx = sy = sw = sh = 0;
 #else
              ;
 #endif
