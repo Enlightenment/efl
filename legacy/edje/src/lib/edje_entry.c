@@ -3003,6 +3003,9 @@ _edje_entry_imf_event_preedit_changed_cb(void *data, int type __UNUSED__, void *
    char *preedit_string;
    int i;
    Eina_Bool preedit_end_state = EINA_FALSE;
+   Eina_List *attrs = NULL, *l = NULL;
+   Ecore_IMF_Preedit_Attr *attr;
+   Eina_Strbuf *buf;
 
    if ((!rp) || (!ev)) return ECORE_CALLBACK_PASS_ON;
 
@@ -3015,7 +3018,9 @@ _edje_entry_imf_event_preedit_changed_cb(void *data, int type __UNUSED__, void *
 
    if (en->imf_context != ev->ctx) return ECORE_CALLBACK_PASS_ON;
 
-   ecore_imf_context_preedit_string_get(en->imf_context, &preedit_string, &cursor_pos);
+   ecore_imf_context_preedit_string_with_attributes_get(en->imf_context,
+                                                        &preedit_string,
+                                                        &attrs, &cursor_pos);
    if (!preedit_string) return ECORE_CALLBACK_PASS_ON;
 
    if (!strcmp(preedit_string, ""))
@@ -3034,23 +3039,51 @@ _edje_entry_imf_event_preedit_changed_cb(void *data, int type __UNUSED__, void *
    preedit_start_pos = evas_textblock_cursor_pos_get(en->cursor);
 
    /* insert preedit character(s) */
-   if ((rp->part->entry_mode == EDJE_ENTRY_EDIT_MODE_PASSWORD) &&
-       _edje_password_show_last)
+   if (strlen(preedit_string) > 0)
      {
-        _text_filter_format_prepend(en, en->cursor, "+ password=off");
-        _text_filter_markup_prepend(en, en->cursor, preedit_string);
-        _text_filter_format_prepend(en, en->cursor, "- password");
-        if (en->pw_timer)
+        buf = eina_strbuf_new();
+        if (attrs)
           {
-             ecore_timer_del(en->pw_timer);
-             en->pw_timer = NULL;
+             EINA_LIST_FOREACH(attrs, l, attr)
+               {
+                  if (attr->preedit_type == ECORE_IMF_PREEDIT_TYPE_SUB1)
+                    {
+                       eina_strbuf_append(buf, "<preedit>");
+                       eina_strbuf_append_n(buf, preedit_string + attr->start_index,
+                                            attr->end_index - attr->start_index + 1);
+                       eina_strbuf_append(buf, "</preedit>");
+                    }
+
+                  else if (attr->preedit_type == ECORE_IMF_PREEDIT_TYPE_SUB2 ||
+                           attr->preedit_type == ECORE_IMF_PREEDIT_TYPE_SUB3)
+                    {
+                       eina_strbuf_append(buf, "<preedit_sel>");
+                       eina_strbuf_append_n(buf, preedit_string + attr->start_index,
+                                            attr->end_index - attr->start_index + 1);
+                       eina_strbuf_append(buf, "</preedit_sel>");
+                    }
+               }
           }
-        en->pw_timer = ecore_timer_add(_edje_password_show_last_timeout,
-                                       _password_timer_cb, en);
-     }
-   else
-     {
-        _text_filter_markup_prepend(en, en->cursor, preedit_string);
+        if ((rp->part->entry_mode == EDJE_ENTRY_EDIT_MODE_PASSWORD) &&
+            _edje_password_show_last)
+          {
+             _edje_entry_hide_visible_password(en->rp);
+             _text_filter_format_prepend(en, en->cursor, "+ password=off");
+             _text_filter_markup_prepend(en, en->cursor, eina_strbuf_string_get(buf));
+             _text_filter_format_prepend(en, en->cursor, "- password");
+             if (en->pw_timer)
+               {
+                  ecore_timer_del(en->pw_timer);
+                  en->pw_timer = NULL;
+               }
+             en->pw_timer = ecore_timer_add(_edje_password_show_last_timeout,
+                                            _password_timer_cb, en);
+          }
+        else
+          {
+             _text_filter_markup_prepend(en, en->cursor, eina_strbuf_string_get(buf));
+          }
+        eina_strbuf_free(buf);
      }
 
    if (!preedit_end_state)
@@ -3082,6 +3115,12 @@ _edje_entry_imf_event_preedit_changed_cb(void *data, int type __UNUSED__, void *
    _anchors_get(en->cursor, rp->object, en);
    _edje_emit(rp->edje, "preedit,changed", rp->part->name);
    _edje_emit(ed, "cursor,changed", rp->part->name);
+
+   /* delete attribute list */
+   if (attrs)
+     {
+        EINA_LIST_FREE(attrs, attr) free(attr);
+     }
 
    free(preedit_string);
 
