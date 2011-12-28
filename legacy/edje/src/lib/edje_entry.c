@@ -3050,7 +3050,7 @@ _edje_entry_imf_event_preedit_changed_cb(void *data, int type __UNUSED__, void *
                     {
                        eina_strbuf_append(buf, "<preedit>");
                        eina_strbuf_append_n(buf, preedit_string + attr->start_index,
-                                            attr->end_index - attr->start_index + 1);
+                                            attr->end_index - attr->start_index);
                        eina_strbuf_append(buf, "</preedit>");
                     }
 
@@ -3059,7 +3059,7 @@ _edje_entry_imf_event_preedit_changed_cb(void *data, int type __UNUSED__, void *
                     {
                        eina_strbuf_append(buf, "<preedit_sel>");
                        eina_strbuf_append_n(buf, preedit_string + attr->start_index,
-                                            attr->end_index - attr->start_index + 1);
+                                            attr->end_index - attr->start_index);
                        eina_strbuf_append(buf, "</preedit_sel>");
                     }
                }
