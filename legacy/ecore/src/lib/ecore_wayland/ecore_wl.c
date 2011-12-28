@@ -37,6 +37,7 @@ static void _ecore_wl_cb_handle_button(void *data __UNUSED__, struct wl_input_de
 static void _ecore_wl_cb_handle_key(void *data __UNUSED__, struct wl_input_device *dev, uint32_t t __UNUSED__, uint32_t key, uint32_t state);
 static void _ecore_wl_cb_handle_pointer_focus(void *data __UNUSED__, struct wl_input_device *dev, uint32_t t __UNUSED__, struct wl_surface *surface, int32_t x, int32_t y, int32_t sx, int32_t sy);
 static void _ecore_wl_cb_handle_keyboard_focus(void *data __UNUSED__, struct wl_input_device *dev, uint32_t t __UNUSED__, struct wl_surface *surface, struct wl_array *keys);
+
 static void _ecore_wl_mouse_out_send(void);
 static void _ecore_wl_mouse_in_send(void);
 static void _ecore_wl_focus_out_send(void);
@@ -62,6 +63,9 @@ static struct wl_shell *_ecore_wl_shell;
 static struct wl_output *_ecore_wl_output;
 static struct wl_input_device *_ecore_wl_input;
 static struct wl_surface *_ecore_wl_input_surface;
+static struct wl_data_device_manager *_ecore_wl_dnd_manager;
+static struct wl_data_device *_ecore_wl_dnd_dev;
+
 static const struct wl_shm_listener _ecore_wl_shm_listener = 
 {
    _ecore_wl_cb_shm_format_iterate
@@ -84,6 +88,21 @@ static const struct wl_input_device_listener _ecore_wl_input_listener =
    NULL, // touch frame
    NULL, // touch cancel
 };
+/* static const struct wl_data_source_listener _ecore_wl_dnd_listener =  */
+/* { */
+/*    _ecore_wl_cb_dnd_target,  */
+/*    _ecore_wl_cb_dnd_send,  */
+/*    _ecore_wl_cb_dnd_cancelled */
+/* }; */
+/* static const struct wl_data_device_listener _ecore_wl_data_listener =  */
+/* { */
+/*    _ecore_wl_cb_dnd_offer,  */
+/*    _ecore_wl_cb_dnd_enter,  */
+/*    _ecore_wl_cb_dnd_leave,  */
+/*    _ecore_wl_cb_dnd_motion,  */
+/*    _ecore_wl_cb_dnd_drop,  */
+/*    _ecore_wl_cb_dnd_selection */
+/* }; */
 
 /* external variables */
 int _ecore_wl_log_dom = -1;
@@ -280,6 +299,11 @@ _ecore_wl_shutdown(Eina_Bool close_display)
 
    if (close_display) 
      {
+        if (_ecore_wl_dnd_dev) wl_data_device_destroy(_ecore_wl_dnd_dev);
+        if (_ecore_wl_input) wl_input_device_destroy(_ecore_wl_input);
+        if (_ecore_wl_dnd_manager) 
+          wl_data_device_manager_destroy(_ecore_wl_dnd_manager);
+        if (_ecore_wl_shell) wl_shell_destroy(_ecore_wl_shell);
         if (_ecore_wl_shm) wl_shm_destroy(_ecore_wl_shm);
         if (_ecore_wl_comp) wl_compositor_destroy(_ecore_wl_comp);
         if (_ecore_wl_disp) wl_display_destroy(_ecore_wl_disp);
@@ -331,6 +355,18 @@ _ecore_wl_cb_disp_handle_global(struct wl_display *disp, uint32_t id, const char
           wl_display_bind(_ecore_wl_disp, id, &wl_input_device_interface);
         wl_input_device_add_listener(_ecore_wl_input, 
                                      &_ecore_wl_input_listener, NULL);
+
+        _ecore_wl_dnd_dev = 
+          wl_data_device_manager_get_data_device(_ecore_wl_dnd_manager, 
+                                                 _ecore_wl_input);
+        /* wl_data_device_add_listener(_ecore_wl_dnd_dev,  */
+        /*                             &_ecore_wl_data_listener, NULL); */
+     }
+   else if (!strcmp(interface, "wl_data_device_manager")) 
+     {
+        _ecore_wl_dnd_manager = 
+          wl_display_bind(_ecore_wl_disp, id, 
+                          &wl_data_device_manager_interface);
      }
 }
 
