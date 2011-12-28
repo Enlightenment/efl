@@ -49,7 +49,7 @@ endif
 if EFL_BUILD_EXAMPLES
 pkglib_PROGRAMS += \
 	eina_accessor_01 \
-    eina_array_01 \
+	eina_array_01 \
 	eina_array_02 \
 	eina_error_01 \
 	eina_file_01 \
