@@ -2,7 +2,7 @@ MAINTAINERCLEANFILES = Makefile.in
 
 .PHONY: screenshots
 
-pkglibdir = $(datadir)/$(PACKAGE)/examples
+examplesdir = $(datadir)/$(PACKAGE)/examples
 filesdir = $(datadir)/$(PACKAGE)/examples
 files_DATA =
 
@@ -124,7 +124,7 @@ SRCS = \
         efl_thread_5.c \
         efl_thread_6.c
 
-pkglib_PROGRAMS =
+examples_PROGRAMS =
 
 .edc.edj:
 	$(EDJE_CC) $(EDJE_FLAGS) $< $@
@@ -142,7 +142,7 @@ files_DATA += \
 clean-local:
 	rm -f *.edj
 
-pkglib_PROGRAMS += \
+examples_PROGRAMS += \
 	actionslider_example_01 \
 	anchorblock_example_01 \
 	bubble_example_01 \
