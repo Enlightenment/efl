@@ -418,8 +418,7 @@ elm_cnp_selection_set(Elm_Sel_Type selection, Evas_Object *widget,
 
    if (top) xwin = elm_win_xwindow_get(top);
    else xwin = elm_win_xwindow_get(widget);
-   if (!xwin) return EINA_FALSE;
-   if ((unsigned int)selection >= (unsigned int)ELM_SEL_TYPE_MAX)
+   if ((!xwin) || (selection >= ELM_SEL_TYPE_MAX))
      return EINA_FALSE;
    if (!_elm_cnp_init_count) _elm_cnp_init();
    if ((!selbuf) && (format != ELM_SEL_FORMAT_IMAGE))
@@ -429,7 +428,6 @@ elm_cnp_selection_set(Elm_Sel_Type selection, Evas_Object *widget,
 
    sel->active = EINA_TRUE;
    sel->widget = widget;
-
    sel->set(xwin, &selection, sizeof(Elm_Sel_Type));
    sel->format = format;
 
@@ -445,7 +443,6 @@ elm_cnp_selection_set(Elm_Sel_Type selection, Evas_Object *widget,
      }
    else
      sel->selbuf = NULL;
-
 
    return EINA_TRUE;
 #else
@@ -471,8 +468,10 @@ elm_cnp_selection_clear(Elm_Sel_Type selection, Evas_Object *widget)
    sel->active = EINA_FALSE;
    sel->widget = NULL;
    if (sel->selbuf)
-     free(sel->selbuf);
-   sel->selbuf = NULL;
+     {
+        free(sel->selbuf);
+        sel->selbuf = NULL;
+     }
    sel->clear();
 
    return EINA_TRUE;
@@ -489,7 +488,7 @@ elm_cnp_selection_get(Elm_Sel_Type selection, Elm_Sel_Format format,
    Evas_Object *top;
    Cnp_Selection *sel;
 
-   if ((unsigned int)selection >= (unsigned int)ELM_SEL_TYPE_MAX)
+   if (selection >= ELM_SEL_TYPE_MAX)
      return EINA_FALSE;
    if (!_elm_cnp_init_count) _elm_cnp_init();
 
@@ -550,8 +549,10 @@ selection_clear(void *udata __UNUSED__, int type __UNUSED__, void *event)
    sel->active = EINA_FALSE;
    sel->widget = NULL;
    if (sel->selbuf)
-     free(sel->selbuf);
-   sel->selbuf = NULL;
+     {
+        free(sel->selbuf);
+        sel->selbuf = NULL;
+     }
 
    return ECORE_CALLBACK_PASS_ON;
 }
@@ -614,8 +615,7 @@ _get_selection_type(void *data, int size)
 {
    if (size == sizeof(Elm_Sel_Type))
      {
-        Cnp_Selection *sel;
-        sel = selections + *((int *)data);
+        Cnp_Selection *sel = selections + *((int *)data);
         if (sel->active &&
             (sel->format >= ELM_SEL_FORMAT_TARGETS) &&
             (sel->format < ELM_SEL_FORMAT_MAX))
@@ -695,9 +695,9 @@ is_uri_type_data(Cnp_Selection *sel __UNUSED__, Ecore_X_Event_Selection_Notify *
    data = notify->data;
    cnp_debug("data->format is %d %p %p\n", data->format, notify, data);
    if (data->content == ECORE_X_SELECTION_CONTENT_FILES) return EINA_TRUE;
-   else p = (char *)data->data;
-
+   p = (char *)data->data;
    if (!p) return EINA_TRUE;
+
    cnp_debug("Got %s\n", p);
    if (strncmp(p, "file://", 7))
      {
@@ -764,8 +764,7 @@ response_handler_targets(Cnp_Selection *sel, Ecore_X_Event_Selection_Notify *not
    targets = notify->data;
    atomlist = (Ecore_X_Atom *)(targets->data.data);
 
-   /* Start from 1: Skip targets */
-   for (j = 1 ; j < CNP_N_ATOMS ; j ++)
+   for (j = (CNP_ATOM_LISTING_ATOMS+1); j < CNP_N_ATOMS; j++)
      {
         if (!(atoms[j].formats & sel->requestformat)) continue;
         for (i = 0 ; i < targets->data.length ; i ++)
@@ -777,13 +776,10 @@ response_handler_targets(Cnp_Selection *sel, Ecore_X_Event_Selection_Notify *not
                }
           }
      }
-found:
-   if (j == CNP_N_ATOMS)
-     {
-        cnp_debug("No matching type found\n");
-        return 0;
-     }
+   cnp_debug("No matching type found\n");
+   return 0;
 
+found:
    top = elm_widget_top_get(sel->requestwidget);
    if (!top) return 0;
 
@@ -949,7 +945,7 @@ notify_handler_image(Cnp_Selection *sel, Ecore_X_Event_Selection_Notify *notify)
    Ecore_X_Selection_Data *data;
    Tmp_Info *tmp;
 
-   cnp_debug("got a png (or a jpeg)!\n");
+   cnp_debug("got a image file!\n");
    data = notify->data;
 
    cnp_debug("Size if %d\n", data->length);
@@ -969,7 +965,7 @@ notify_handler_image(Cnp_Selection *sel, Ecore_X_Event_Selection_Notify *notify)
    /* generate tmp name */
    tmp = elm_cnp_tempfile_create(data->length);
    memcpy(tmp->map, data->data, data->length);
-   munmap(tmp->map,data->length);
+   munmap(tmp->map, data->length);
 
    /* FIXME: Add to paste image data to clean up */
    pasteimage_append(tmp->filename, sel->requestwidget);
@@ -1003,8 +999,7 @@ notify_handler_html(Cnp_Selection *sel, Ecore_X_Event_Selection_Notify *notify)
         return 0;
      }
 
-   char *stripstr = NULL;
-   stripstr = malloc(sizeof(char) * (data->length + 1));
+   char *stripstr = malloc(sizeof(char) * (data->length + 1));
    strncpy(stripstr, (char *)data->data, data->length);
    stripstr[data->length] = '\0';
    cnp_debug("String is %s (%d bytes)\n", stripstr, data->length);
@@ -1048,7 +1043,8 @@ text_converter(char *target __UNUSED__, void *data, int size, void **data_ret, i
      {
         cnp_debug("Image %s\n", evas_object_type_get(sel->widget));
         cnp_debug("Elm type: %s\n", elm_object_widget_type_get(sel->widget));
-        evas_object_image_file_get(elm_photocam_internal_image_get(sel->widget), (const char **)data_ret, NULL);
+        evas_object_image_file_get(elm_photocam_internal_image_get(sel->widget),
+                                   (const char **)data_ret, NULL);
         if (!*data_ret) *data_ret = strdup("No file");
         else *data_ret = strdup(*data_ret);
         *size_ret = strlen(*data_ret);
@@ -1071,9 +1067,7 @@ general_converter(char *target __UNUSED__, void *data, int size, void **data_ret
      }
    else
      {
-        Cnp_Selection *sel;
-
-        sel = selections + *((int *)data);
+        Cnp_Selection *sel = selections + *((int *)data);
         if (data_ret) *data_ret = strdup(sel->selbuf);
         if (size_ret) *size_ret = strlen(sel->selbuf);
      }
@@ -1087,8 +1081,7 @@ pasteimage_append(char *file, Evas_Object *entry)
    int len;
    static const char *tagstring = "<item absize=240x180 href=file://%s></item>";
 
-   if (!file) return EINA_FALSE;
-   if (!entry) return EINA_FALSE;
+   if ((!file) || (!entry)) return EINA_FALSE;
 
    len = strlen(tagstring)+strlen(file);
 
