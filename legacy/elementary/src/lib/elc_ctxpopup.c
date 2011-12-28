@@ -148,7 +148,7 @@ _freeze_on(void *data __UNUSED__, Evas_Object *obj,
    Widget_Data *wd = elm_widget_data_get(obj);
 
    if ((!wd) || (!wd->scr)) return;
-   elm_object_scroll_freeze_push(wd->scr);
+   elm_smart_scroller_freeze_set(wd->scr, EINA_TRUE);
 }
 
 static void
@@ -158,7 +158,7 @@ _freeze_off(void *data __UNUSED__, Evas_Object *obj,
    Widget_Data *wd = elm_widget_data_get(obj);
 
    if ((!wd) || (!wd->scr)) return;
-   elm_object_scroll_freeze_pop(wd->scr);
+   elm_smart_scroller_freeze_set(wd->scr, EINA_FALSE);
 }
 
 static void
