@@ -578,7 +578,7 @@ EAPI Eina_Bool eina_hash_del(Eina_Hash  *hash,
  * otherwise.
  */
 EAPI void *eina_hash_find(const Eina_Hash *hash,
-                          const void      *key) EINA_ARG_NONNULL(1, 2);
+                          const void      *key) EINA_ARG_NONNULL(2);
 
 /**
  * @brief Modify the entry pointer at the specified key and return the old
@@ -595,7 +595,7 @@ EAPI void *eina_hash_find(const Eina_Hash *hash,
  */
 EAPI void *eina_hash_modify(Eina_Hash  *hash,
                             const void *key,
-                            const void *data) EINA_ARG_NONNULL(1, 2, 3);
+                            const void *data) EINA_ARG_NONNULL(2, 3);
 
 /**
  * @brief Modify the entry pointer at the specified key and return the
