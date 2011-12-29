@@ -169,3 +169,7 @@
 2011-12-20  Cedric Bail
 
 	* Fix bug on eina_shutdown when using eina_error.
+
+2011-12-28  Cedric Bail
+
+	* Fix NONNULL argument for eina_hash_find.
