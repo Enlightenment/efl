@@ -127,7 +127,9 @@ struct _Eio_File_Map_Rule
    Eio_File common;
    Eio_Filter_Map_Cb filter_cb;
    Eio_Map_Cb map_cb;
+
    Eina_File_Populate rule;
+   Eina_File *file;
 
    unsigned long int offset;
    unsigned long int length;

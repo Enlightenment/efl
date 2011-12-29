@@ -96,6 +96,7 @@ _eio_file_map_all_job(void *data, Ecore_Thread *thread)
 {
    Eio_File_Map_Rule *map = data;
 
+   eio_file_container_set(&map->common, map->file);
    map->result = eina_file_map_all(map->common.container, map->rule);
    if (map->result && map->filter_cb)
      {
@@ -118,6 +119,7 @@ _eio_file_map_new_job(void *data, Ecore_Thread *thread)
 {
    Eio_File_Map_Rule *map = data;
 
+   eio_file_container_set(&map->common, map->file);
    map->result = eina_file_map_new(map->common.container, map->rule,
                                    map->offset, map->length);
    if (map->result && map->filter_cb)
@@ -255,7 +257,7 @@ eio_file_map_all(Eina_File *f,
    map = malloc(sizeof (Eio_File_Map_Rule));
    EINA_SAFETY_ON_NULL_RETURN_VAL(map, NULL);
 
-   map->common.container = f;
+   map->file = f;
    map->filter_cb = filter_cb;
    map->map_cb = map_cb;
    map->rule = rule;
