@@ -35,7 +35,8 @@ void *alloca(size_t);
 #include "Eet.h"
 #include "Eet_private.h"
 
-#define MAX_MSG_SIZE (64 * 1024)
+/* max message size: 1Mb - raised from original 64Kb */
+#define MAX_MSG_SIZE (1024 * 1024)
 #define MAGIC_EET_DATA_PACKET 0x4270ACE1
 
 struct _Eet_Connection

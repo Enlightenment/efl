@@ -556,3 +556,8 @@
         * added eet_file_get to return the filename of an Eet_File
         * Eet_File filenames are now stringshared
         * added mempool allocators
+
+2011-12-29 Carsten Haitzler (The Rasterman)
+
+        * increase eet_connection packet size to 1Mb - more reasonable.
+        
