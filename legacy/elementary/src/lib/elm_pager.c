@@ -415,14 +415,11 @@ elm_pager_content_promote(Evas_Object *obj, Evas_Object *content)
    ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
    Eina_List *l;
-   Item *it;
    if (!wd) return;
    l = _item_get(obj, content);
    if (!l) return;
 
-   it = l->data;
-   wd->stack = eina_list_remove_list(wd->stack, l);
-   wd->stack = eina_list_append(wd->stack, it);
+   wd->stack = eina_list_demote_list(wd->stack, l);
    _eval_top(obj);
 }
 
