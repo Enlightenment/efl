@@ -1563,6 +1563,7 @@ extern "C" {
     * @param size The cache flush interval time
     * @ingroup Caches
     */
+   // XXX: deprecate and replace with elm_config_all_flush()
    EAPI void         elm_cache_flush_interval_all_set(int size);
 
    /**
@@ -1605,6 +1606,7 @@ extern "C" {
     * @param size The cache flush enabled state
     * @ingroup Caches
     */
+   // XXX: deprecate and replace with elm_config_all_flush()
    EAPI void         elm_cache_flush_enabled_all_set(Eina_Bool enabled);
 
    /**
@@ -1637,6 +1639,7 @@ extern "C" {
     * @param size The font cache size
     * @ingroup Caches
     */
+   // XXX: deprecate and replace with elm_config_all_flush()
    EAPI void         elm_font_cache_all_set(int size);
 
    /**
@@ -1669,6 +1672,7 @@ extern "C" {
     * @param size The image cache size
     * @ingroup Caches
     */
+   // XXX: deprecate and replace with elm_config_all_flush()
    EAPI void         elm_image_cache_all_set(int size);
 
    /**
@@ -1703,6 +1707,7 @@ extern "C" {
     * @param size The edje file cache size
     * @ingroup Caches
     */
+   // XXX: deprecate and replace with elm_config_all_flush()
    EAPI void         elm_edje_file_cache_all_set(int size);
 
    /**
@@ -1737,6 +1742,7 @@ extern "C" {
     * @param size The edje collections cache size
     * @ingroup Caches
     */
+   // XXX: deprecate and replace with elm_config_all_flush()
    EAPI void         elm_edje_collection_cache_all_set(int size);
 
    /**
@@ -1788,6 +1794,7 @@ extern "C" {
     * @param scale The scaling factor to set
     * @ingroup Scaling
     */
+   // XXX: deprecate and replace with elm_config_all_flush()
    EAPI void         elm_scale_all_set(double scale);
 
    /**
@@ -2256,6 +2263,7 @@ extern "C" {
     *
     * @see elm_engine_set()
     */
+   // XXX: rename to elm_engine_get()
    EAPI const char  *elm_engine_current_get(void);
 
    /**
@@ -2386,6 +2394,7 @@ extern "C" {
     *
     * This applies all font overlays set to all objects in the UI.
     */
+   // XXX: deprecate and replace with elm_config_all_flush()
    EAPI void                 elm_font_overlay_all_apply(void);
 
    /**
@@ -2517,6 +2526,7 @@ extern "C" {
     * @param size The finger size
     * @ingroup Fingers
     */
+   // XXX: deprecate and replace with elm_config_all_flush()
    EAPI void             elm_finger_size_all_set(Evas_Coord size);
 
    /**
@@ -2858,6 +2868,7 @@ extern "C" {
     * @see elm_thumbscroll_bounce_enabled_get()
     * @ingroup Scrolling
     */
+   // XXX: deprecate and replace with elm_config_all_flush()
    EAPI void             elm_scroll_bounce_enabled_all_set(Eina_Bool enabled);
 
    /**
@@ -2890,6 +2901,7 @@ extern "C" {
     * @see elm_thumbscroll_bounce_friction_get()
     * @ingroup Scrolling
     */
+   // XXX: deprecate and replace with elm_config_all_flush()
    EAPI void             elm_scroll_bounce_friction_all_set(double friction);
 
    /**
@@ -2922,6 +2934,7 @@ extern "C" {
     * @see elm_thumbscroll_page_scroll_friction_get()
     * @ingroup Scrolling
     */
+   // XXX: deprecate and replace with elm_config_all_flush()
    EAPI void             elm_scroll_page_scroll_friction_all_set(double friction);
 
    /**
@@ -2954,6 +2967,7 @@ extern "C" {
     * @see elm_thumbscroll_bring_in_scroll_friction_get()
     * @ingroup Scrolling
     */
+   // XXX: deprecate and replace with elm_config_all_flush()
    EAPI void             elm_scroll_bring_in_scroll_friction_all_set(double friction);
 
    /**
@@ -2987,6 +3001,7 @@ extern "C" {
     * @see elm_thumbscroll_zoom_friction_get()
     * @ingroup Scrolling
     */
+   // XXX: deprecate and replace with elm_config_all_flush()
    EAPI void             elm_scroll_zoom_friction_all_set(double friction);
 
    /**
@@ -3023,6 +3038,7 @@ extern "C" {
     * @see elm_thumbscroll_enabled_get()
     * @ingroup Scrolling
     */
+   // XXX: deprecate and replace with elm_config_all_flush()
    EAPI void             elm_scroll_thumbscroll_enabled_all_set(Eina_Bool enabled);
 
    /**
@@ -3058,6 +3074,7 @@ extern "C" {
     * @see elm_thumbscroll_threshould_get()
     * @ingroup Scrolling
     */
+   // XXX: deprecate and replace with elm_config_all_flush()
    EAPI void             elm_scroll_thumbscroll_threshold_all_set(unsigned int threshold);
 
    /**
@@ -3093,6 +3110,7 @@ extern "C" {
     * @see elm_thumbscroll_momentum_threshould_get()
     * @ingroup Scrolling
     */
+   // XXX: deprecate and replace with elm_config_all_flush()
    EAPI void             elm_scroll_thumbscroll_momentum_threshold_all_set(double threshold);
 
    /**
@@ -3125,6 +3143,7 @@ extern "C" {
     * @see elm_thumbscroll_friction_get()
     * @ingroup Scrolling
     */
+   // XXX: deprecate and replace with elm_config_all_flush()
    EAPI void             elm_scroll_thumbscroll_friction_all_set(double friction);
 
    /**
@@ -3168,6 +3187,7 @@ extern "C" {
     *
     * @ingroup Scrolling
     */
+   // XXX: deprecate and replace with elm_config_all_flush()
    EAPI void             elm_scroll_thumbscroll_border_friction_all_set(double friction);
 
    /**
@@ -3208,6 +3228,7 @@ extern "C" {
     *
     * @ingroup Scrolling
     */
+   // XXX: deprecate and replace with elm_config_all_flush()
    EAPI void             elm_scroll_thumbscroll_sensitivity_friction_all_set(double friction);
 
    /**
@@ -4322,6 +4343,7 @@ extern "C" {
     *
     * @see elm_win_transparent_set()
     */
+   // XXX: deprecate this
    EAPI Eina_Bool    elm_win_transparent_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
 
    /**
@@ -4334,6 +4356,7 @@ extern "C" {
     *
     * @see elm_win_alpha_set()
     */
+   // XXX: deprecate this
    EAPI void         elm_win_transparent_set(Evas_Object *obj, Eina_Bool transparent) EINA_ARG_NONNULL(1);
 
    /**
@@ -4827,6 +4850,7 @@ extern "C" {
     * @param parent The parent object
     * @return The new object or NULL if it cannot be created
     */
+   // XXX: deprecate this
    EAPI Evas_Object          *elm_win_inwin_add(Evas_Object *obj) EINA_ARG_NONNULL(1);
 
    /**
@@ -4842,6 +4866,7 @@ extern "C" {
     *
     * @param obj The inwin to activate
     */
+   // XXX: deprecate this
    EAPI void                  elm_win_inwin_activate(Evas_Object *obj) EINA_ARG_NONNULL(1);
 
    /**
@@ -4854,6 +4879,7 @@ extern "C" {
     * @param obj The inwin object
     * @param content The object to set as content
     */
+   // XXX: deprecate this
    EAPI void                  elm_win_inwin_content_set(Evas_Object *obj, Evas_Object *content) EINA_ARG_NONNULL(1);
 
    /**
@@ -4871,6 +4897,7 @@ extern "C" {
     * @param obj The inwin object
     * @return The content that is being used
     */
+   // XXX: deprecate this
    EAPI Evas_Object          *elm_win_inwin_content_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
 
    /**
@@ -4881,6 +4908,7 @@ extern "C" {
     * @param obj The inwin object
     * @return The content that was being used
     */
+   // XXX: deprecate this
    EAPI Evas_Object          *elm_win_inwin_content_unset(Evas_Object *obj) EINA_ARG_NONNULL(1);
 
    /**
@@ -5677,8 +5705,11 @@ extern "C" {
         ELM_IMAGE_ROTATE_90 = 1, /**< rotate 90 degrees clockwise */
         ELM_IMAGE_ROTATE_180 = 2, /**< rotate 180 degrees clockwise */
         ELM_IMAGE_ROTATE_270 = 3, /**< rotate 90 degrees counter-clockwise (i.e. 270 degrees clockwise) */
+   // XXX: remove 
         /*EINA_DEPRECATED*/ELM_IMAGE_ROTATE_90_CW = 1, /**< rotate 90 degrees clockwise */
+   // XXX: remove 
         /*EINA_DEPRECATED*/ELM_IMAGE_ROTATE_180_CW = 2, /**< rotate 180 degrees clockwise */
+   // XXX: remove 
         /*EINA_DEPRECATED*/ELM_IMAGE_ROTATE_90_CCW = 3, /**< rotate 90 degrees counter-clockwise (i.e. 270 degrees clockwise) */
         ELM_IMAGE_FLIP_HORIZONTAL = 4, /**< flip image horizontally */
         ELM_IMAGE_FLIP_VERTICAL = 5, /**< flip image vertically */
