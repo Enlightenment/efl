@@ -2512,14 +2512,14 @@ EAPI void              evas_event_thaw_eval              (Evas *e) EINA_ARG_NONN
 
 /**
  * Get the number of mouse or multi presses currently active
- * 
+ *
  * @p e The given canvas pointer.
  * @return The numer of presses (0 if none active).
- * 
+ *
  * @since 1.2
  */
 EAPI int               evas_event_down_count_get         (const Evas *e) EINA_ARG_NONNULL(1);
-   
+
 /**
  * Mouse down event feed.
  *
