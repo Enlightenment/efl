@@ -446,7 +446,7 @@ _drag_down(void *data, Evas_Object *obj __UNUSED__, const char *emission __UNUSE
 }
 
 static void
-_spacer_cb(void *data, Evas *e, Evas_Object *obj __UNUSED__, void *event_info)
+_spacer_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info)
 {
    Widget_Data *wd = elm_widget_data_get(data);
    Evas_Event_Mouse_Down *ev = event_info;
@@ -474,11 +474,12 @@ _spacer_cb(void *data, Evas *e, Evas_Object *obj __UNUSED__, void *event_info)
      {
         edje_object_part_drag_value_set(wd->slider, "elm.dragable.slider", button_x, button_y);
      }
-   else
-     {
-        evas_event_feed_mouse_cancel(e, 0, NULL);
-        evas_event_feed_mouse_down(e, 1, EVAS_BUTTON_NONE, 0, NULL);
-     }
+
+   //What is a purpose of these two mouse events?
+   //I don't know the reason but these calls cause infinite loop.
+   //So blocked them.
+   //evas_event_feed_mouse_cancel(e, 0, NULL);
+   //evas_event_feed_mouse_down(e, 1, EVAS_BUTTON_NONE, 0, NULL);
 }
 
 static void
