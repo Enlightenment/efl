@@ -16,6 +16,7 @@ struct _Widget_Data
    Elm_Toolbar_Shrink_Mode shrink_mode;
    Elm_Icon_Lookup_Order lookup_order;
    int icon_size;
+   unsigned int item_count;
    double align;
    Eina_Bool homogeneous : 1;
    Eina_Bool no_select : 1;
@@ -855,6 +856,7 @@ _item_new(Evas_Object *obj, const char *icon, const char *label, Evas_Smart_Cb f
    evas_object_event_callback_add(VIEW(it), EVAS_CALLBACK_RESIZE,
                                   _resize_item, obj);
    if ((!wd->items) && wd->always_select) _item_select(it);
+   wd->item_count++;
    return it;
 }
 
@@ -1460,6 +1462,7 @@ elm_toolbar_item_del(Elm_Object_Item *it)
    obj2 = WIDGET(item);
    next = ELM_TOOLBAR_ITEM_FROM_INLIST(EINA_INLIST_GET(item)->next);
    wd->items = eina_inlist_remove(wd->items, EINA_INLIST_GET(item));
+   wd->item_count--;
    if (!next) next = ELM_TOOLBAR_ITEM_FROM_INLIST(wd->items);
    if (wd->always_select && item->selected && next) _item_select(next);
    _item_del(item);
@@ -2024,4 +2027,13 @@ elm_toolbar_horizontal_get(const Evas_Object *obj)
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return EINA_FALSE;
    return !wd->vertical;
+}
+
+EAPI unsigned int
+elm_toolbar_items_count(const Evas_Object *obj)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype) 0;
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return 0;
+   return wd->item_count;
 }
