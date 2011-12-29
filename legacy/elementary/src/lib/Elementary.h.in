@@ -528,8 +528,7 @@ extern "C" {
                           * Elm_Policy_Quit.
                           */
         ELM_POLICY_LAST
-    } Elm_Policy; /**< Elementary policy identifiers/groups enumeration.  @see elm_policy_set()
- */
+    } Elm_Policy; /**< Elementary policy identifiers/groups enumeration.  @see elm_policy_set() */
 
    typedef enum _Elm_Policy_Quit
      {
