@@ -5802,7 +5802,7 @@ EAPI Evas_Object      *evas_focus_get                    (const Evas *e) EINA_WA
 EAPI Evas_Object      *evas_object_name_find             (const Evas *e, const char *name) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1) EINA_PURE;
 
 /**
- * Retrieves the object from children of the given objec with the given name.
+ * Retrieves the object from children of the given object with the given name.
  * @param   obj  The parent (smart) object whose children to search.
  * @param   name The given name.
  * @param   recurse Set to the number of child levels to recurse (0 == don't recurse, 1 == only look at the children of @p obj or their immediate children, but no further etc.).
