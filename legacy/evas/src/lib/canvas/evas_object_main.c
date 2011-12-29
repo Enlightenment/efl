@@ -547,7 +547,7 @@ evas_object_resize(Evas_Object *obj, Evas_Coord w, Evas_Coord h)
         if (nh < 0) nh = 0;
      }
 
-   if (evas_object_intercept_call_resize(obj, w, h)) return;
+   if (evas_object_intercept_call_resize(obj, nw, nh)) return;
 
    if (obj->doing.in_resize > 0)
      {
