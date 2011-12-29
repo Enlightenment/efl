@@ -56,18 +56,18 @@ eet_connection_new(Eet_Read_Cb  *eet_read_cb,
                    const void   *user_data)
 {
    Eet_Connection *conn;
-
+   
    if (!eet_read_cb || !eet_write_cb)
      return NULL;
-
+   
    conn = calloc(1, sizeof (Eet_Connection));
    if (!conn)
      return NULL;
-
+   
    conn->eet_read_cb = eet_read_cb;
    conn->eet_write_cb = eet_write_cb;
    conn->user_data = (void *)user_data;
-
+   
    return conn;
 }
 
@@ -76,54 +76,46 @@ eet_connection_received(Eet_Connection *conn,
                         const void     *data,
                         size_t          size)
 {
-   if ((!conn) || (!data) || (!size))
-     return size;
-
-   do {
+   if ((!conn) || (!data) || (!size)) return size;
+   do
+     {
         size_t copy_size;
-
+        
         if (conn->size == 0)
           {
              const int *msg;
              size_t packet_size;
-
-             if (size < sizeof (int) * 2)
-               break;
+             
+             if (size < sizeof (int) * 2) break;
 
              msg = data;
              /* Check the magic */
-             if (ntohl(msg[0]) != MAGIC_EET_DATA_PACKET)
-               break;
+             if (ntohl(msg[0]) != MAGIC_EET_DATA_PACKET) break;
 
              packet_size = ntohl(msg[1]);
              /* Message should always be under 64K */
-             if (packet_size > 64 * 1024)
-               break;
+             if (packet_size > 64 * 1024) break;
 
              data = (void *)(msg + 2);
              size -= sizeof (int) * 2;
              if ((size_t)packet_size <= size)
                {
-     /* Not a partial receive, go the quick way. */
-                   if (!conn->eet_read_cb(data, packet_size, conn->user_data))
-                     break;
+                  /* Not a partial receive, go the quick way. */
+                  if (!conn->eet_read_cb(data, packet_size, conn->user_data))
+                    break;
 
                    data = (void *)((char *)data + packet_size);
                    size -= packet_size;
-
                    conn->received = 0;
                    continue;
                }
-
              conn->size = packet_size;
              if (conn->allocated < conn->size)
                {
                   void *tmp;
 
                   tmp = realloc(conn->buffer, conn->size);
-                  if (!tmp)
-                    break;
-
+                  if (!tmp) break;
                   conn->buffer = tmp;
                   conn->allocated = conn->size;
                }
@@ -132,31 +124,32 @@ eet_connection_received(Eet_Connection *conn,
         /* Partial receive */
         copy_size =
           (conn->size - conn->received >=
-           size) ? size : conn->size - conn->received;
+              size) ? size : conn->size - conn->received;
         memcpy((char *)conn->buffer + conn->received, data, copy_size);
-
+        
         conn->received += copy_size;
         data = (void *)((char *)data + copy_size);
         size -= copy_size;
-
+        
         if (conn->received == conn->size)
           {
              size_t data_size;
-
+             
              data_size = conn->size;
              conn->size = 0;
              conn->received = 0;
-
+             
              /* Completed a packet. */
              if (!conn->eet_read_cb(conn->buffer, data_size, conn->user_data))
                {
-     /* Something goes wrong. Stop now. */
-                   size += data_size;
-                   break;
+                  /* Something goes wrong. Stop now. */
+                  size += data_size;
+                  break;
                }
           }
-     } while (size > 0);
-
+     }
+   while (size > 0);
+   
    return size;
 }
 
