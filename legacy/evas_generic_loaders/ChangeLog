@@ -1,3 +1,8 @@
 2011-12-02 Carsten Haitzler (The Rasterman)
 
         1.1.0 release
+
+2011-12-02 Carsten Haitzler (The Rasterman)
+
+        * Add symlinks for *.dv, *.qt and *.rv video file formats
+

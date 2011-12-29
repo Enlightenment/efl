@@ -39,6 +39,7 @@ install-data-hook:
 	ln -sf evas_image_loader.gst $(DESTDIR)$(libdir)/evas/utils/evas_image_loader.bdmv
 	ln -sf evas_image_loader.gst $(DESTDIR)$(libdir)/evas/utils/evas_image_loader.clpi
 	ln -sf evas_image_loader.gst $(DESTDIR)$(libdir)/evas/utils/evas_image_loader.cpi
+	ln -sf evas_image_loader.gst $(DESTDIR)$(libdir)/evas/utils/evas_image_loader.dv
 	ln -sf evas_image_loader.gst $(DESTDIR)$(libdir)/evas/utils/evas_image_loader.fla
 	ln -sf evas_image_loader.gst $(DESTDIR)$(libdir)/evas/utils/evas_image_loader.flv
 	ln -sf evas_image_loader.gst $(DESTDIR)$(libdir)/evas/utils/evas_image_loader.m1v
@@ -62,12 +63,14 @@ install-data-hook:
 	ln -sf evas_image_loader.gst $(DESTDIR)$(libdir)/evas/utils/evas_image_loader.ogg
 	ln -sf evas_image_loader.gst $(DESTDIR)$(libdir)/evas/utils/evas_image_loader.ogm
 	ln -sf evas_image_loader.gst $(DESTDIR)$(libdir)/evas/utils/evas_image_loader.ogv
+	ln -sf evas_image_loader.gst $(DESTDIR)$(libdir)/evas/utils/evas_image_loader.qt
 	ln -sf evas_image_loader.gst $(DESTDIR)$(libdir)/evas/utils/evas_image_loader.rm
 	ln -sf evas_image_loader.gst $(DESTDIR)$(libdir)/evas/utils/evas_image_loader.rmj
 	ln -sf evas_image_loader.gst $(DESTDIR)$(libdir)/evas/utils/evas_image_loader.rmm
 	ln -sf evas_image_loader.gst $(DESTDIR)$(libdir)/evas/utils/evas_image_loader.rms
 	ln -sf evas_image_loader.gst $(DESTDIR)$(libdir)/evas/utils/evas_image_loader.rmx
 	ln -sf evas_image_loader.gst $(DESTDIR)$(libdir)/evas/utils/evas_image_loader.rmvb
+	ln -sf evas_image_loader.gst $(DESTDIR)$(libdir)/evas/utils/evas_image_loader.rv
 	ln -sf evas_image_loader.gst $(DESTDIR)$(libdir)/evas/utils/evas_image_loader.swf
 	ln -sf evas_image_loader.gst $(DESTDIR)$(libdir)/evas/utils/evas_image_loader.ts
 	ln -sf evas_image_loader.gst $(DESTDIR)$(libdir)/evas/utils/evas_image_loader.webm
