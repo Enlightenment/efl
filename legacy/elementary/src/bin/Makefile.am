@@ -43,6 +43,7 @@ test_button.c \
 test_calendar.c \
 test_check.c \
 test_clock.c \
+test_cnp.c \
 test_colorselector.c \
 test_conform.c \
 test_ctxpopup.c \

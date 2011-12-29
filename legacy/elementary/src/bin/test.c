@@ -14,6 +14,7 @@ void test_box_vert2(void *data, Evas_Object *obj, void *event_info);
 void test_box_horiz(void *data, Evas_Object *obj, void *event_info);
 void test_box_transition(void *data, Evas_Object *obj, void *event_info);
 void test_button(void *data, Evas_Object *obj, void *event_info);
+void test_cnp(void *data, Evas_Object *obj, void *event_info);
 void test_transit(void *data, Evas_Object *obj, void *event_info);
 void test_transit2(void *data, Evas_Object *obj, void *event_info);
 void test_transit3(void *data, Evas_Object *obj, void *event_info);
@@ -507,6 +508,7 @@ add_tests:
    ADD_TEST(NULL, "Helpers", "Factory", test_factory);
 
    //------------------------------//
+   ADD_TEST(NULL, "Micellaneous", "Copy And Paste", test_cnp);
    ADD_TEST(NULL, "Micellaneous", "Weather", test_weather);
    ADD_TEST(NULL, "Micellaneous", "Icon Desktops", test_icon_desktops);
    ADD_TEST(NULL, "Micellaneous", "Floating Objects", test_floating);
