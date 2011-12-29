@@ -854,8 +854,9 @@ eina_hash_free(Eina_Hash *hash)
 {
    int i;
 
+   if (!hash) return ;
+
    EINA_MAGIC_CHECK_HASH(hash);
-   EINA_SAFETY_ON_NULL_RETURN(hash);
 
    if (hash->buckets)
      {
