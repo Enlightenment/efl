@@ -208,6 +208,8 @@ struct _Ecore_Con_Url
    Ecore_Con_Url_Time time_condition;
    double timestamp;
    void *data;
+   
+   void *post_data;
 
    int received;
    int write_fd;

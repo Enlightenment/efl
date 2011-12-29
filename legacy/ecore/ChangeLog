@@ -447,3 +447,10 @@
 
         * Fix mouse down grab counts going bad by missing events.
 
+2011-12-29 Carsten Haitzler (The Rasterman)
+
+        * Fix massive post data probile in ecore-con that would cause
+        post data to be corrupted (as it was never copied into the
+        ecore con url struct) or could cause crashes if the memory
+        pointed to became invalid.
+
