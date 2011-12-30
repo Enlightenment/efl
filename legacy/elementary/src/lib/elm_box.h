@@ -87,9 +87,7 @@ typedef struct _Elm_Box_Transition Elm_Box_Transition;
  * @param parent The parent object
  * @return The new object or NULL if it cannot be created
  */
-EAPI Evas_Object *
-                         elm_box_add(Evas_Object *parent)
-EINA_ARG_NONNULL(1);
+EAPI Evas_Object        *elm_box_add(Evas_Object *parent) EINA_ARG_NONNULL(1);
 
 /**
  * Set the horizontal orientation

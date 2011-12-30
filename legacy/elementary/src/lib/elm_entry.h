@@ -1,4 +1,4 @@
-typedef enum _Elm_Text_Format
+typedef enum
 {
    ELM_TEXT_FORMAT_PLAIN_UTF8,
    ELM_TEXT_FORMAT_MARKUP_UTF8
@@ -314,9 +314,7 @@ typedef Edje_Entry_Change_Info Elm_Entry_Change_Info;
  * @param parent The parent object
  * @return The new object or NULL if it cannot be created
  */
-EAPI Evas_Object *
-                        elm_entry_add(Evas_Object *parent)
-EINA_ARG_NONNULL(1);
+EAPI Evas_Object       *elm_entry_add(Evas_Object *parent) EINA_ARG_NONNULL(1);
 
 /**
  * Sets the entry to single line mode.
@@ -367,28 +365,6 @@ EAPI void               elm_entry_password_set(Evas_Object *obj, Eina_Bool passw
  * @see elm_entry_password_set()
  */
 EAPI Eina_Bool          elm_entry_password_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
-
-/**
- * This sets the text displayed within the entry to @p entry.
- *
- * @param obj The entry object
- * @param entry The text to be displayed
- *
- * @deprecated Use elm_object_text_set() instead.
- * @note Using this function bypasses text filters
- */
-EAPI void               elm_entry_entry_set(Evas_Object *obj, const char *entry) EINA_ARG_NONNULL(1);
-
-/**
- * This returns the text currently shown in object @p entry.
- * See also elm_entry_entry_set().
- *
- * @param obj The entry object
- * @return The currently displayed text or NULL on failure
- *
- * @deprecated Use elm_object_text_get() instead.
- */
-EAPI const char        *elm_entry_entry_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
 
 /**
  * Appends @p entry to the text of the entry.
@@ -1157,8 +1133,7 @@ struct _Elm_Entry_Filter_Limit_Size
  * valid ones and avoid half unicode characters making it in.
  *
  * This filter, like any others, does not apply when setting the entry text
- * directly with elm_object_text_set() (or the deprecated
- * elm_entry_entry_set()).
+ * directly with elm_object_text_set().
  */
 EAPI void elm_entry_filter_limit_size(void *data, Evas_Object *entry, char **text) EINA_ARG_NONNULL(1, 2, 3);
 
@@ -1196,8 +1171,7 @@ struct _Elm_Entry_Filter_Accept_Set
  * raw markup text, so it can be used to remove formatting tags.
  *
  * This filter, like any others, does not apply when setting the entry text
- * directly with elm_object_text_set() (or the deprecated
- * elm_entry_entry_set()).
+ * directly with elm_object_text_set()
  */
 EAPI void                   elm_entry_filter_accept_set(void *data, Evas_Object *entry, char **text) EINA_ARG_NONNULL(1, 3);
 /**

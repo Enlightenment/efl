@@ -40,7 +40,7 @@
 /**
  * @brief Types of zoom available.
  */
-typedef enum _Elm_Photocam_Zoom_Mode
+typedef enum
 {
    ELM_PHOTOCAM_ZOOM_MODE_MANUAL = 0, /**< Zoom controlled normally by elm_photocam_zoom_set */
    ELM_PHOTOCAM_ZOOM_MODE_AUTO_FIT, /**< Zoom until photo fits in photocam */
@@ -55,9 +55,7 @@ typedef enum _Elm_Photocam_Zoom_Mode
  * @param parent The parent object
  * @return The new object or NULL if it cannot be created
  */
-EAPI Evas_Object *
-                            elm_photocam_add(Evas_Object *parent)
-EINA_ARG_NONNULL(1);
+EAPI Evas_Object           *elm_photocam_add(Evas_Object *parent) EINA_ARG_NONNULL(1);
 
 /**
  * @brief Set the photo file to be shown

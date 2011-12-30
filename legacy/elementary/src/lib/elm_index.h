@@ -60,9 +60,7 @@
  *
  * @ingroup Index
  */
-EAPI Evas_Object *
-                           elm_index_add(Evas_Object *parent)
-EINA_ARG_NONNULL(1);
+EAPI Evas_Object          *elm_index_add(Evas_Object *parent) EINA_ARG_NONNULL(1);
 
 /**
  * Set whether a given index widget is or not visible,
@@ -287,35 +285,6 @@ EAPI void                  elm_index_item_clear(Evas_Object *obj) EINA_ARG_NONNU
  * @ingroup Index
  */
 EAPI void                  elm_index_item_go(Evas_Object *obj, int level) EINA_ARG_NONNULL(1);
-
-/**
- * Return the data associated with a given index widget item
- *
- * @param it The index widget item handle
- * @return The data associated with @p it
- *
- * @see elm_index_item_data_set()
- * @deprecated Use elm_object_item_data_get() instead
- *
- * @ingroup Index
- */
-EINA_DEPRECATED EAPI void *elm_index_item_data_get(const Elm_Object_Item *item) EINA_ARG_NONNULL(1);
-
-/**
- * Set the data associated with a given index widget item
- *
- * @param it The index widget item handle
- * @param data The new data pointer to set to @p it
- *
- * This sets new item data on @p it.
- *
- * @warning The old data pointer won't be touched by this function, so
- * the user had better to free that old data himself/herself.
- *
- * @deprecated Use elm_object_item_data_set() instead
- * @ingroup Index
- */
-EINA_DEPRECATED EAPI void  elm_index_item_data_set(Elm_Object_Item *it, const void *data) EINA_ARG_NONNULL(1);
 
 /**
  * Set the function to be called when a given index widget item is freed.

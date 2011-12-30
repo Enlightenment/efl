@@ -62,7 +62,7 @@
  *
  * @ingroup Toolbar
  */
-typedef enum _Elm_Toolbar_Shrink_Mode
+typedef enum
 {
    ELM_TOOLBAR_SHRINK_NONE, /**< Set toolbar minimun size to fit all the items. */
    ELM_TOOLBAR_SHRINK_HIDE, /**< Hide exceeding items. */
@@ -84,9 +84,7 @@ typedef struct _Elm_Toolbar_Item_State Elm_Toolbar_Item_State;    /**< State of 
  *
  * @ingroup Toolbar
  */
-EAPI Evas_Object *
-                                  elm_toolbar_add(Evas_Object *parent)
-EINA_ARG_NONNULL(1);
+EAPI Evas_Object                 *elm_toolbar_add(Evas_Object *parent) EINA_ARG_NONNULL(1);
 
 /**
  * Set the icon size, in pixels, to be used by toolbar items.
@@ -410,19 +408,6 @@ EAPI Elm_Object_Item             *elm_toolbar_item_next_get(const Elm_Object_Ite
 EAPI Elm_Object_Item             *elm_toolbar_item_prev_get(const Elm_Object_Item *it) EINA_ARG_NONNULL(1);
 
 /**
- * Get the toolbar object from an item.
- *
- * @param it The item.
- * @return The toolbar object.
- *
- * This returns the toolbar object itself that an item belongs to.
- *
- * @deprecated use elm_object_item_object_get() instead.
- * @ingroup Toolbar
- */
-EINA_DEPRECATED EAPI Evas_Object *elm_toolbar_item_toolbar_get(const Elm_Object_Item *it) EINA_ARG_NONNULL(1);
-
-/**
  * Set the priority of a toolbar item.
  *
  * @param it The toolbar item.
@@ -452,76 +437,6 @@ EAPI void                         elm_toolbar_item_priority_set(Elm_Object_Item 
  * @ingroup Toolbar
  */
 EAPI int                          elm_toolbar_item_priority_get(const Elm_Object_Item *it) EINA_ARG_NONNULL(1);
-
-/**
- * Get the label of item.
- *
- * @param it The item of toolbar.
- * @return The label of item.
- *
- * The return value is a pointer to the label associated to @p item when
- * it was created, with function elm_toolbar_item_append() or similar,
- * or later,
- * with function elm_toolbar_item_label_set. If no label
- * was passed as argument, it will return @c NULL.
- *
- * @see elm_toolbar_item_label_set() for more details.
- * @see elm_toolbar_item_append()
- *
- * @deprecated use elm_object_item_text_get() instead.
- * @ingroup Toolbar
- */
-EINA_DEPRECATED EAPI const char  *elm_toolbar_item_label_get(const Elm_Object_Item *it) EINA_ARG_NONNULL(1);
-
-/**
- * Set the label of item.
- *
- * @param it The item of toolbar.
- * @param text The label of item.
- *
- * The label to be displayed by the item.
- * Label will be placed at icons bottom (if set).
- *
- * If a label was passed as argument on item creation, with function
- * elm_toolbar_item_append() or similar, it will be already
- * displayed by the item.
- *
- * @see elm_toolbar_item_label_get()
- * @see elm_toolbar_item_append()
- *
- * @deprecated use elm_object_item_text_set() instead
- * @ingroup Toolbar
- */
-EINA_DEPRECATED EAPI void         elm_toolbar_item_label_set(Elm_Object_Item *it, const char *label) EINA_ARG_NONNULL(1);
-
-/**
- * Return the data associated with a given toolbar widget item.
- *
- * @param it The toolbar widget item handle.
- * @return The data associated with @p item.
- *
- * @see elm_toolbar_item_data_set()
- *
- * @deprecated use elm_object_item_data_get() instead.
- * @ingroup Toolbar
- */
-EINA_DEPRECATED EAPI void        *elm_toolbar_item_data_get(const Elm_Object_Item *it) EINA_ARG_NONNULL(1);
-
-/**
- * Set the data associated with a given toolbar widget item.
- *
- * @param it The toolbar widget item handle
- * @param data The new data pointer to set to @p item.
- *
- * This sets new item data on @p item.
- *
- * @warning The old data pointer won't be touched by this function, so
- * the user had better to free that old data himself/herself.
- *
- * @deprecated use elm_object_item_data_set() instead.
- * @ingroup Toolbar
- */
-EINA_DEPRECATED EAPI void         elm_toolbar_item_data_set(Elm_Object_Item *it, const void *data) EINA_ARG_NONNULL(1);
 
 /**
  * Returns a pointer to a toolbar item by its label.
@@ -705,35 +620,6 @@ EAPI void                         elm_toolbar_item_del(Elm_Object_Item *it) EINA
  * @ingroup Toolbar
  */
 EAPI void                         elm_toolbar_item_del_cb_set(Elm_Object_Item *it, Evas_Smart_Cb func) EINA_ARG_NONNULL(1);
-
-/**
- * Get a value whether toolbar item is disabled or not.
- *
- * @param it The item.
- * @return The disabled state.
- *
- * @see elm_toolbar_item_disabled_set() for more details.
- *
- * @deprecated use elm_object_item_disabled_get() instead.
- * @ingroup Toolbar
- */
-EINA_DEPRECATED EAPI Eina_Bool    elm_toolbar_item_disabled_get(const Elm_Object_Item *it) EINA_ARG_NONNULL(1);
-
-/**
- * Sets the disabled/enabled state of a toolbar item.
- *
- * @param it The item.
- * @param disabled The disabled state.
- *
- * A disabled item cannot be selected or unselected. It will also
- * change its appearance (generally greyed out). This sets the
- * disabled state (@c EINA_TRUE for disabled, @c EINA_FALSE for
- * enabled).
- *
- * @deprecated use elm_object_item_disabled_set() instead.
- * @ingroup Toolbar
- */
-EINA_DEPRECATED EAPI void         elm_toolbar_item_disabled_set(Elm_Object_Item *it, Eina_Bool disabled) EINA_ARG_NONNULL(1);
 
 /**
  * Set or unset item as a separator.
@@ -1264,31 +1150,11 @@ EAPI Eina_Bool                    elm_toolbar_item_cursor_engine_only_get(const 
 /**
  * Change a toolbar's orientation
  * @param obj The toolbar object
- * @param vertical If @c EINA_TRUE, the toolbar is vertical
- * By default, a toolbar will be horizontal. Use this function to create a vertical toolbar.
- * @ingroup Toolbar
- * @deprecated use elm_toolbar_horizontal_set() instead.
- */
-EINA_DEPRECATED EAPI void         elm_toolbar_orientation_set(Evas_Object *obj, Eina_Bool vertical) EINA_ARG_NONNULL(1);
-
-/**
- * Change a toolbar's orientation
- * @param obj The toolbar object
  * @param horizontal If @c EINA_TRUE, the toolbar is horizontal
  * By default, a toolbar will be horizontal. Use this function to create a vertical toolbar.
  * @ingroup Toolbar
  */
 EAPI void                         elm_toolbar_horizontal_set(Evas_Object *obj, Eina_Bool horizontal) EINA_ARG_NONNULL(1);
-
-/**
- * Get a toolbar's orientation
- * @param obj The toolbar object
- * @return If @c EINA_TRUE, the toolbar is vertical
- * By default, a toolbar will be horizontal. Use this function to determine whether a toolbar is vertical.
- * @ingroup Toolbar
- * @deprecated use elm_toolbar_horizontal_get() instead.
- */
-EINA_DEPRECATED EAPI Eina_Bool    elm_toolbar_orientation_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
 
 /**
  * Get a toolbar's orientation

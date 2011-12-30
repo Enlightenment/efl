@@ -43,65 +43,6 @@
 EAPI Evas_Object *                elm_check_add(Evas_Object *parent) EINA_ARG_NONNULL(1);
 
 /**
- * @brief Set the text label of the check object
- *
- * @param obj The check object
- * @param label The text label string in UTF-8
- *
- * @deprecated use elm_object_text_set() instead.
- */
-EINA_DEPRECATED EAPI void         elm_check_label_set(Evas_Object *obj, const char *label) EINA_ARG_NONNULL(1);
-
-/**
- * @brief Get the text label of the check object
- *
- * @param obj The check object
- * @return The text label string in UTF-8
- *
- * @deprecated use elm_object_text_get() instead.
- */
-EINA_DEPRECATED EAPI const char  *elm_check_label_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
-
-/**
- * @brief Set the icon object of the check object
- *
- * @param obj The check object
- * @param icon The icon object
- *
- * Once the icon object is set, a previously set one will be deleted.
- * If you want to keep that old content object, use the
- * elm_object_content_unset() function.
- *
- * @deprecated use elm_object_part_content_set() instead.
- *
- */
-EINA_DEPRECATED EAPI void         elm_check_icon_set(Evas_Object *obj, Evas_Object *icon) EINA_ARG_NONNULL(1);
-
-/**
- * @brief Get the icon object of the check object
- *
- * @param obj The check object
- * @return The icon object
- *
- * @deprecated use elm_object_part_content_get() instead.
- *
- */
-EINA_DEPRECATED EAPI Evas_Object *elm_check_icon_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
-
-/**
- * @brief Unset the icon used for the check object
- *
- * @param obj The check object
- * @return The icon object that was being used
- *
- * Unparent and return the icon object which was set for this widget.
- *
- * @deprecated use elm_object_part_content_unset() instead.
- *
- */
-EINA_DEPRECATED EAPI Evas_Object *elm_check_icon_unset(Evas_Object *obj) EINA_ARG_NONNULL(1);
-
-/**
  * @brief Set the on/off state of the check object
  *
  * @param obj The check object
@@ -135,8 +76,6 @@ EAPI Eina_Bool                    elm_check_state_get(const Evas_Object *obj) EI
  * elm_check_state_set().
  */
 EAPI void                         elm_check_state_pointer_set(Evas_Object *obj, Eina_Bool *statep) EINA_ARG_NONNULL(1);
-EINA_DEPRECATED EAPI void         elm_check_states_labels_set(Evas_Object *obj, const char *ontext, const char *offtext) EINA_ARG_NONNULL(1, 2, 3);
-EINA_DEPRECATED EAPI void         elm_check_states_labels_get(const Evas_Object *obj, const char **ontext, const char **offtext) EINA_ARG_NONNULL(1, 2, 3);
 
 /**
  * @}

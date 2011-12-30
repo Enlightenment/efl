@@ -37,59 +37,7 @@
  *
  * @ingroup Mapbuf
  */
-EAPI Evas_Object *
-                                  elm_mapbuf_add(Evas_Object *parent)
-EINA_ARG_NONNULL(1);
-
-/**
- * Set the content of the mapbuf.
- *
- * @param obj The mapbuf object.
- * @param content The content that will be filled in this mapbuf object.
- *
- * Once the content object is set, a previously set one will be deleted.
- * If you want to keep that old content object, use the
- * elm_mapbuf_content_unset() function.
- *
- * To enable map, elm_mapbuf_enabled_set() should be used.
- *
- * @deprecated use elm_object_content_set() instead
- *
- * @ingroup Mapbuf
- */
-EINA_DEPRECATED EAPI void         elm_mapbuf_content_set(Evas_Object *obj, Evas_Object *content) EINA_ARG_NONNULL(1);
-
-/**
- * Get the content of the mapbuf.
- *
- * @param obj The mapbuf object.
- * @return The content that is being used.
- *
- * Return the content object which is set for this widget.
- *
- * @see elm_mapbuf_content_set() for details.
- *
- * @deprecated use elm_object_content_get() instead
- *
- * @ingroup Mapbuf
- */
-EINA_DEPRECATED EAPI Evas_Object *elm_mapbuf_content_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
-
-/**
- * Unset the content of the mapbuf.
- *
- * @param obj The mapbuf object.
- * @return The content that was being used.
- *
- * Unparent and return the content object which was set for this widget.
- *
- * @see elm_mapbuf_content_set() for details.
- *
- * @deprecated use elm_object_content_unset() instead
- *
- * @ingroup Mapbuf
- */
-EINA_DEPRECATED EAPI Evas_Object *elm_mapbuf_content_unset(Evas_Object *obj) EINA_ARG_NONNULL(1);
+EAPI Evas_Object                 *elm_mapbuf_add(Evas_Object *parent) EINA_ARG_NONNULL(1);
 
 /**
  * Enable or disable the map.

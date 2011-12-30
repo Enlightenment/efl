@@ -125,9 +125,7 @@ EAPI void             elm_font_overlay_all_apply(void);
  * elm_font_fontconfig_name_get(), for one style only (single font
  * instance, not family).
  */
-EAPI Elm_Font_Properties *
-                      elm_font_properties_get(const char *font)
-EINA_ARG_NONNULL(1);
+EAPI Elm_Font_Properties *elm_font_properties_get(const char *font) EINA_ARG_NONNULL(1);
 
 /**
  * Free font properties return by elm_font_properties_get().

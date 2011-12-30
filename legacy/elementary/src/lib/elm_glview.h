@@ -10,7 +10,7 @@
 
 typedef void (*Elm_GLView_Func_Cb)(Evas_Object *obj);
 
-typedef enum _Elm_GLView_Mode
+typedef enum
 {
    ELM_GLVIEW_ALPHA = 1,
    ELM_GLVIEW_DEPTH = 2,
@@ -22,13 +22,13 @@ typedef enum _Elm_GLView_Mode
  *
  * @note Default is ELM_GLVIEW_RESIZE_POLICY_RECREATE
  */
-typedef enum _Elm_GLView_Resize_Policy
+typedef enum
 {
    ELM_GLVIEW_RESIZE_POLICY_RECREATE = 1, /**< Resize the internal surface along with the image */
    ELM_GLVIEW_RESIZE_POLICY_SCALE = 2 /**< Only reize the internal image and not the surface */
 } Elm_GLView_Resize_Policy;
 
-typedef enum _Elm_GLView_Render_Policy
+typedef enum
 {
    ELM_GLVIEW_RENDER_POLICY_ON_DEMAND = 1, /**< Render only when there is a need for redrawing */
    ELM_GLVIEW_RENDER_POLICY_ALWAYS = 2 /**< Render always even when it is not visible */
@@ -42,9 +42,7 @@ typedef enum _Elm_GLView_Render_Policy
  *
  * @ingroup GLView
  */
-EAPI Evas_Object *
-                  elm_glview_add(Evas_Object *parent)
-EINA_ARG_NONNULL(1);
+EAPI Evas_Object *elm_glview_add(Evas_Object *parent) EINA_ARG_NONNULL(1);
 
 /**
  * Sets the size of the glview

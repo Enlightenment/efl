@@ -20,7 +20,7 @@
  *
  * @ingroup Calendar
  */
-typedef enum _Elm_Calendar_Mark_Repeat
+typedef enum
 {
    ELM_CALENDAR_UNIQUE, /**< Default value. Marks will be displayed only on event day. */
    ELM_CALENDAR_DAILY, /**< Marks will be displayed everyday after event day (inclusive). */
@@ -44,9 +44,7 @@ typedef struct _Elm_Calendar_Mark Elm_Calendar_Mark;    /**< Item handle for a c
  *
  * @ingroup Calendar
  */
-EAPI Evas_Object *
-                          elm_calendar_add(Evas_Object *parent)
-EINA_ARG_NONNULL(1);
+EAPI Evas_Object         *elm_calendar_add(Evas_Object *parent) EINA_ARG_NONNULL(1);
 
 /**
  * Get weekdays names displayed by the calendar.
@@ -359,75 +357,6 @@ EAPI const Eina_List     *elm_calendar_marks_get(const Evas_Object *obj) EINA_AR
  * @ingroup Calendar
  */
 EAPI void                 elm_calendar_marks_draw(Evas_Object *obj) EINA_ARG_NONNULL(1);
-
-/**
- * Set a day text color to the same that represents Saturdays.
- *
- * @param obj The calendar object.
- * @param pos The text position. Position is the cell counter, from left
- * to right, up to down. It starts on 0 and ends on 41.
- *
- * @deprecated use elm_calendar_mark_add() instead like:
- *
- * @code
- * struct tm t = { 0, 0, 12, 6, 0, 0, 6, 6, -1 };
- * elm_calendar_mark_add(obj, "sat", &t, ELM_CALENDAR_WEEKLY);
- * @endcode
- *
- * @see elm_calendar_mark_add()
- *
- * @ingroup Calendar
- */
-EINA_DEPRECATED EAPI void elm_calendar_text_saturday_color_set(Evas_Object *obj, int pos) EINA_ARG_NONNULL(1);
-
-/**
- * Set a day text color to the same that represents Sundays.
- *
- * @param obj The calendar object.
- * @param pos The text position. Position is the cell counter, from left
- * to right, up to down. It starts on 0 and ends on 41.
-
- * @deprecated use elm_calendar_mark_add() instead like:
- *
- * @code
- * struct tm t = { 0, 0, 12, 7, 0, 0, 0, 0, -1 };
- * elm_calendar_mark_add(obj, "sat", &t, ELM_CALENDAR_WEEKLY);
- * @endcode
- *
- * @see elm_calendar_mark_add()
- *
- * @ingroup Calendar
- */
-EINA_DEPRECATED EAPI void elm_calendar_text_sunday_color_set(Evas_Object *obj, int pos) EINA_ARG_NONNULL(1);
-
-/**
- * Set a day text color to the same that represents Weekdays.
- *
- * @param obj The calendar object
- * @param pos The text position. Position is the cell counter, from left
- * to right, up to down. It starts on 0 and ends on 41.
- *
- * @deprecated use elm_calendar_mark_add() instead like:
- *
- * @code
- * struct tm t = { 0, 0, 12, 1, 0, 0, 0, 0, -1 };
- *
- * elm_calendar_mark_add(obj, "week", &t, ELM_CALENDAR_WEEKLY); // monday
- * t.tm_tm_mday++; t.tm_wday++; t.tm_yday++;
- * elm_calendar_mark_add(obj, "week", &t, ELM_CALENDAR_WEEKLY); // tuesday
- * t.tm_tm_mday++; t.tm_wday++; t.tm_yday++;
- * elm_calendar_mark_add(obj, "week", &t, ELM_CALENDAR_WEEKLY); // wednesday
- * t.tm_tm_mday++; t.tm_wday++; t.tm_yday++;
- * elm_calendar_mark_add(obj, "week", &t, ELM_CALENDAR_WEEKLY); // thursday
- * t.tm_tm_mday++; t.tm_wday++; t.tm_yday++;
- * elm_calendar_mark_add(obj, "week", &t, ELM_CALENDAR_WEEKLY); // friday
- * @endcode
- *
- * @see elm_calendar_mark_add()
- *
- * @ingroup Calendar
- */
-EINA_DEPRECATED EAPI void elm_calendar_text_weekday_color_set(Evas_Object *obj, int pos) EINA_ARG_NONNULL(1);
 
 /**
  * Set the interval on time updates for an user mouse button hold

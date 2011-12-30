@@ -330,21 +330,19 @@
  */
 
 /**
- * @enum _Elm_Genlist_Item_Flags
- * @typedef Elm_Genlist_Item_Flags
- *
  * Defines if the item is of any special type (has subitems or it's the
  * index of a group), or is just a simple item.
  *
  * @ingroup Genlist
  */
-typedef enum _Elm_Genlist_Item_Flags
+typedef enum
 {
    ELM_GENLIST_ITEM_NONE = 0, /**< simple item */
    ELM_GENLIST_ITEM_SUBITEMS = (1 << 0), /**< may expand and have child items */
    ELM_GENLIST_ITEM_GROUP = (1 << 1) /**< index of a group of items */
 } Elm_Genlist_Item_Flags;
-typedef enum _Elm_Genlist_Item_Field_Flags
+
+typedef enum
 {
    ELM_GENLIST_ITEM_FIELD_ALL = 0,
    ELM_GENLIST_ITEM_FIELD_LABEL = (1 << 0),
@@ -428,9 +426,7 @@ struct _Elm_Genlist_Item_Class
  *
  * @ingroup Genlist
  */
-EAPI Evas_Object *
-                                   elm_genlist_add(Evas_Object *parent)
-EINA_ARG_NONNULL(1);
+EAPI Evas_Object                  *elm_genlist_add(Evas_Object *parent) EINA_ARG_NONNULL(1);
 
 /**
  * Remove all items from a given genlist widget.
@@ -494,7 +490,6 @@ EAPI Eina_Bool                     elm_genlist_multi_select_get(const Evas_Objec
  * @ingroup Genlist
  */
 EAPI void                          elm_genlist_horizontal_set(Evas_Object *obj, Elm_List_Mode mode) EINA_ARG_NONNULL(1);
-EINA_DEPRECATED EAPI void          elm_genlist_horizontal_mode_set(Evas_Object *obj, Elm_List_Mode mode) EINA_ARG_NONNULL(1);
 
 /**
  * Gets the horizontal stretching mode.
@@ -508,7 +503,6 @@ EINA_DEPRECATED EAPI void          elm_genlist_horizontal_mode_set(Evas_Object *
  * @ingroup Genlist
  */
 EAPI Elm_List_Mode                 elm_genlist_horizontal_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
-EINA_DEPRECATED EAPI Elm_List_Mode elm_genlist_horizontal_mode_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
 
 /**
  * Set the always select mode.
@@ -1437,7 +1431,6 @@ EAPI void                          elm_genlist_item_data_set(Elm_Genlist_Item *i
  * @ingroup Genlist
  */
 EAPI void                          elm_genlist_item_contents_orphan(Elm_Genlist_Item *it) EINA_ARG_NONNULL(1);
-EINA_DEPRECATED EAPI void          elm_genlist_item_icons_orphan(Elm_Genlist_Item *it) EINA_ARG_NONNULL(1);
 
 /**
  * Get the real Evas object created to implement the view of a

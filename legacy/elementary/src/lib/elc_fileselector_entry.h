@@ -56,30 +56,7 @@
  * @return a new file selector entry widget handle or @c NULL, on
  * errors
  */
-EAPI Evas_Object *
-                                 elm_fileselector_entry_add(Evas_Object *parent)
-EINA_ARG_NONNULL(1);
-
-/**
- * Set the label for a given file selector entry widget's button
- *
- * @param obj The file selector entry widget
- * @param label The text label to be displayed on @p obj widget's
- * button
- *
- * @deprecated use elm_object_text_set() instead.
- */
-EINA_DEPRECATED EAPI void        elm_fileselector_entry_button_label_set(Evas_Object *obj, const char *label) EINA_ARG_NONNULL(1);
-
-/**
- * Get the label set for a given file selector entry widget's button
- *
- * @param obj The file selector entry widget
- * @return The widget button's label
- *
- * @deprecated use elm_object_text_set() instead.
- */
-EINA_DEPRECATED EAPI const char *elm_fileselector_entry_button_label_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
+EAPI Evas_Object                *elm_fileselector_entry_add(Evas_Object *parent) EINA_ARG_NONNULL(1);
 
 /**
  * Set the icon on a given file selector entry widget's button

@@ -13,6 +13,7 @@
  *
  * See @ref tutorial_colorselector.
  */
+
 /**
  * @brief Add a new colorselector to the parent
  *
@@ -21,9 +22,8 @@
  *
  * @ingroup Colorselector
  */
-EAPI Evas_Object *
-          elm_colorselector_add(Evas_Object *parent)
-EINA_ARG_NONNULL(1);
+EAPI Evas_Object *elm_colorselector_add(Evas_Object *parent) EINA_ARG_NONNULL(1);
+
 /**
  * Set a color for the colorselector
  *
@@ -36,6 +36,7 @@ EINA_ARG_NONNULL(1);
  * @ingroup Colorselector
  */
 EAPI void elm_colorselector_color_set(Evas_Object *obj, int r, int g, int b, int a) EINA_ARG_NONNULL(1);
+
 /**
  * Get a color from the colorselector
  *
@@ -48,6 +49,7 @@ EAPI void elm_colorselector_color_set(Evas_Object *obj, int r, int g, int b, int
  * @ingroup Colorselector
  */
 EAPI void elm_colorselector_color_get(const Evas_Object *obj, int *r, int *g, int *b, int *a) EINA_ARG_NONNULL(1);
+
 /**
  * @}
  */

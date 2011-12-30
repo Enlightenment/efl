@@ -21,9 +21,7 @@ EAPI void      elm_mirrored_set(Eina_Bool mirrored);
  *
  * @return EINA_TRUE if mirrored is set, EINA_FALSE otherwise
  */
-EAPI Eina_Bool
-               elm_object_mirrored_get(const Evas_Object *obj)
-EINA_ARG_NONNULL(1);
+EAPI Eina_Bool elm_object_mirrored_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
 
 /**
  * Set the system mirrored mode. This determines the default mirrored mode

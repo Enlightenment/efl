@@ -44,77 +44,7 @@
  * @param parent The parent object
  * @return The new object or NULL if it cannot be created
  */
-EAPI Evas_Object *
-                                  elm_button_add(Evas_Object *parent)
-EINA_ARG_NONNULL(1);
-
-/**
- * Set the label used in the button
- *
- * The passed @p label can be NULL to clean any existing text in it and
- * leave the button as an icon only object.
- *
- * @param obj The button object
- * @param label The text will be written on the button
- * @deprecated use elm_object_text_set() instead.
- */
-EINA_DEPRECATED EAPI void         elm_button_label_set(Evas_Object *obj, const char *label) EINA_ARG_NONNULL(1);
-
-/**
- * Get the label set for the button
- *
- * The string returned is an internal pointer and should not be freed or
- * altered. It will also become invalid when the button is destroyed.
- * The string returned, if not NULL, is a stringshare, so if you need to
- * keep it around even after the button is destroyed, you can use
- * eina_stringshare_ref().
- *
- * @param obj The button object
- * @return The text set to the label, or NULL if nothing is set
- * @deprecated use elm_object_text_set() instead.
- */
-EINA_DEPRECATED EAPI const char  *elm_button_label_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
-
-/**
- * Set the icon used for the button
- *
- * Setting a new icon will delete any other that was previously set, making
- * any reference to them invalid. If you need to maintain the previous
- * object alive, unset it first with elm_button_icon_unset().
- *
- * @param obj The button object
- * @param icon The icon object for the button
- * @deprecated use elm_object_part_content_set() instead.
- */
-EINA_DEPRECATED EAPI void         elm_button_icon_set(Evas_Object *obj, Evas_Object *icon) EINA_ARG_NONNULL(1);
-
-/**
- * Get the icon used for the button
- *
- * Return the icon object which is set for this widget. If the button is
- * destroyed or another icon is set, the returned object will be deleted
- * and any reference to it will be invalid.
- *
- * @param obj The button object
- * @return The icon object that is being used
- *
- * @deprecated use elm_object_part_content_get() instead
- */
-EINA_DEPRECATED EAPI Evas_Object *elm_button_icon_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
-
-/**
- * Remove the icon set without deleting it and return the object
- *
- * This function drops the reference the button holds of the icon object
- * and returns this last object. It is used in case you want to remove any
- * icon, or set another one, without deleting the actual object. The button
- * will be left without an icon set.
- *
- * @param obj The button object
- * @return The icon object that was being used
- * @deprecated use elm_object_part_content_unset() instead.
- */
-EINA_DEPRECATED EAPI Evas_Object *elm_button_icon_unset(Evas_Object *obj) EINA_ARG_NONNULL(1);
+EAPI Evas_Object                 *elm_button_add(Evas_Object *parent) EINA_ARG_NONNULL(1);
 
 /**
  * Turn on/off the autorepeat event generated when the button is kept pressed

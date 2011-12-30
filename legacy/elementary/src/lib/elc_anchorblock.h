@@ -82,39 +82,7 @@ struct _Elm_Entry_Anchorblock_Info
  * @param parent The parent object
  * @return The new object or NULL if it cannot be created
  */
-EAPI Evas_Object *
-                                 elm_anchorblock_add(Evas_Object *parent)
-EINA_ARG_NONNULL(1);
-
-/**
- * Set the text to show in the anchorblock
- *
- * Sets the text of the anchorblock to @p text. This text can include markup
- * format tags, including <c>\<a href=anchorname\></a></c> to begin a segment
- * of text that will be specially styled and react to click events, ended
- * with either of \</a\> or \</\>. When clicked, the anchor will emit an
- * "anchor,clicked" signal that you can attach a callback to with
- * evas_object_smart_callback_add(). The name of the anchor given in the
- * event info struct will be the one set in the href attribute, in this
- * case, anchorname.
- *
- * Other markup can be used to style the text in different ways, but it's
- * up to the style defined in the theme which tags do what.
- * @deprecated use elm_object_text_set() instead.
- */
-EINA_DEPRECATED EAPI void        elm_anchorblock_text_set(Evas_Object *obj, const char *text) EINA_ARG_NONNULL(1);
-
-/**
- * Get the markup text set for the anchorblock
- *
- * Retrieves the text set on the anchorblock, with markup tags included.
- *
- * @param obj The anchorblock object
- * @return The markup text set or @c NULL if nothing was set or an error
- * occurred
- * @deprecated use elm_object_text_set() instead.
- */
-EINA_DEPRECATED EAPI const char *elm_anchorblock_text_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
+EAPI Evas_Object                *elm_anchorblock_add(Evas_Object *parent) EINA_ARG_NONNULL(1);
 
 /**
  * Set the parent of the hover popup

@@ -1,23 +1,3 @@
-/* TEMPORARY: DOCS WILL BE FILLED IN WITH CNP/SED */
-// XXX: elm_gen -> kill.
-typedef struct Elm_Gen_Item             Elm_Gen_Item;
-typedef struct _Elm_Gen_Item_Class      Elm_Gen_Item_Class;
-typedef struct _Elm_Gen_Item_Class_Func Elm_Gen_Item_Class_Func;    /**< Class functions for gen item classes. */
-typedef char                         *(*Elm_Gen_Item_Text_Get_Cb)(void *data, Evas_Object *obj, const char *part); /**< Label fetching class function for gen item classes. */
-typedef Evas_Object                  *(*Elm_Gen_Item_Content_Get_Cb)(void *data, Evas_Object *obj, const char *part); /**< Content(swallowed object) fetching class function for gen item classes. */
-typedef Eina_Bool                     (*Elm_Gen_Item_State_Get_Cb)(void *data, Evas_Object *obj, const char *part); /**< State fetching class function for gen item classes. */
-typedef void                          (*Elm_Gen_Item_Del_Cb)(void *data, Evas_Object *obj); /**< Deletion class function for gen item classes. */
-struct _Elm_Gen_Item_Class
-{
-   const char *item_style;
-   struct _Elm_Gen_Item_Class_Func
-   {
-      Elm_Gen_Item_Text_Get_Cb    text_get;
-      Elm_Gen_Item_Content_Get_Cb content_get;
-      Elm_Gen_Item_State_Get_Cb   state_get;
-      Elm_Gen_Item_Del_Cb         del;
-   } func;
-};
 EINA_DEPRECATED EAPI void          elm_gen_clear(Evas_Object *obj);
 EINA_DEPRECATED EAPI void          elm_gen_item_selected_set(Elm_Gen_Item *it, Eina_Bool selected);
 EINA_DEPRECATED EAPI Eina_Bool     elm_gen_item_selected_get(const Elm_Gen_Item *it);
@@ -82,9 +62,7 @@ EINA_DEPRECATED EAPI Evas_Object  *elm_gen_item_widget_get(const Elm_Gen_Item *i
  *
  * @return The toggle object
  */
-EINA_DEPRECATED EAPI Evas_Object *
-                                  elm_toggle_add(Evas_Object *parent)
-EINA_ARG_NONNULL(1);
+EINA_DEPRECATED EAPI Evas_Object *elm_toggle_add(Evas_Object *parent) EINA_ARG_NONNULL(1);
 
 /**
  * @brief Sets the label to be displayed with the toggle.
@@ -269,3 +247,2135 @@ EINA_DEPRECATED EAPI void         elm_scrolled_entry_autosave_set(Evas_Object *o
 EINA_DEPRECATED EAPI Eina_Bool    elm_scrolled_entry_autosave_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
 EINA_DEPRECATED EAPI void         elm_scrolled_entry_cnp_textonly_set(Evas_Object *obj, Eina_Bool textonly) EINA_ARG_NONNULL(1);
 EINA_DEPRECATED EAPI Eina_Bool    elm_scrolled_entry_cnp_textonly_get(Evas_Object *obj) EINA_ARG_NONNULL(1);
+
+/**
+ * This sets the text displayed within the entry to @p entry.
+ *
+ * @param obj The entry object
+ * @param entry The text to be displayed
+ *
+ * @deprecated Use elm_object_text_set() instead.
+ * @note Using this function bypasses text filters
+ */
+EINA_DEPRECATED EAPI void               elm_entry_entry_set(Evas_Object *obj, const char *entry) EINA_ARG_NONNULL(1);
+
+/**
+ * This returns the text currently shown in object @p entry.
+ * See also elm_entry_entry_set().
+ *
+ * @param obj The entry object
+ * @return The currently displayed text or NULL on failure
+ *
+ * @deprecated Use elm_object_text_get() instead.
+ */
+EINA_DEPRECATED EAPI const char        *elm_entry_entry_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
+
+/**
+ * Set the text to show in the anchorblock
+ *
+ * Sets the text of the anchorblock to @p text. This text can include markup
+ * format tags, including <c>\<a href=anchorname\></a></c> to begin a segment
+ * of text that will be specially styled and react to click events, ended
+ * with either of \</a\> or \</\>. When clicked, the anchor will emit an
+ * "anchor,clicked" signal that you can attach a callback to with
+ * evas_object_smart_callback_add(). The name of the anchor given in the
+ * event info struct will be the one set in the href attribute, in this
+ * case, anchorname.
+ *
+ * Other markup can be used to style the text in different ways, but it's
+ * up to the style defined in the theme which tags do what.
+ * @deprecated use elm_object_text_set() instead.
+ */
+EINA_DEPRECATED EAPI void        elm_anchorblock_text_set(Evas_Object *obj, const char *text) EINA_ARG_NONNULL(1);
+
+/**
+ * Get the markup text set for the anchorblock
+ *
+ * Retrieves the text set on the anchorblock, with markup tags included.
+ *
+ * @param obj The anchorblock object
+ * @return The markup text set or @c NULL if nothing was set or an error
+ * occurred
+ * @deprecated use elm_object_text_set() instead.
+ */
+EINA_DEPRECATED EAPI const char *elm_anchorblock_text_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
+
+/**
+ * Set the text to show in the anchorview
+ *
+ * Sets the text of the anchorview to @p text. This text can include markup
+ * format tags, including <c>\<a href=anchorname\></c> to begin a segment of
+ * text that will be specially styled and react to click events, ended with
+ * either of \</a\> or \</\>. When clicked, the anchor will emit an
+ * "anchor,clicked" signal that you can attach a callback to with
+ * evas_object_smart_callback_add(). The name of the anchor given in the
+ * event info struct will be the one set in the href attribute, in this
+ * case, anchorname.
+ *
+ * Other markup can be used to style the text in different ways, but it's
+ * up to the style defined in the theme which tags do what.
+ * @deprecated use elm_object_text_set() instead.
+ */
+EINA_DEPRECATED EAPI void        elm_anchorview_text_set(Evas_Object *obj, const char *text) EINA_ARG_NONNULL(1);
+
+/**
+ * Get the markup text set for the anchorview
+ *
+ * Retrieves the text set on the anchorview, with markup tags included.
+ *
+ * @param obj The anchorview object
+ * @return The markup text set or @c NULL if nothing was set or an error
+ * occurred
+ * @deprecated use elm_object_text_set() instead.
+ */
+EINA_DEPRECATED EAPI const char *elm_anchorview_text_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
+
+/**
+ * @brief Get the ctxpopup item's disabled/enabled state.
+ *
+ * @param it Ctxpopup item to be enabled/disabled
+ * @return disabled @c EINA_TRUE, if disabled, @c EINA_FALSE otherwise
+ *
+ * @see elm_ctxpopup_item_disabled_set()
+ * @deprecated use elm_object_item_disabled_get() instead
+ *
+ * @ingroup Ctxpopup
+ */
+EINA_DEPRECATED EAPI Eina_Bool                    elm_ctxpopup_item_disabled_get(const Elm_Object_Item *it) EINA_ARG_NONNULL(1);
+
+/**
+ * @brief Set the ctxpopup item's state as disabled or enabled.
+ *
+ * @param it Ctxpopup item to be enabled/disabled
+ * @param disabled @c EINA_TRUE to disable it, @c EINA_FALSE to enable it
+ *
+ * When disabled the item is greyed out to indicate it's state.
+ * @deprecated use elm_object_item_disabled_set() instead
+ *
+ * @ingroup Ctxpopup
+ */
+EINA_DEPRECATED EAPI void         elm_ctxpopup_item_disabled_set(Elm_Object_Item *it, Eina_Bool disabled) EINA_ARG_NONNULL(1);
+
+/**
+ * @brief Get the icon object for the given ctxpopup item.
+ *
+ * @param it Ctxpopup item
+ * @return icon object or @c NULL, if the item does not have icon or an error
+ * occurred
+ *
+ * @see elm_ctxpopup_item_append()
+ * @see elm_ctxpopup_item_icon_set()
+ *
+ * @deprecated use elm_object_item_part_content_get() instead
+ *
+ * @ingroup Ctxpopup
+ */
+EINA_DEPRECATED EAPI Evas_Object *elm_ctxpopup_item_icon_get(const Elm_Object_Item *it) EINA_ARG_NONNULL(1);
+
+/**
+ * @brief Sets the side icon associated with the ctxpopup item
+ *
+ * @param it Ctxpopup item
+ * @param icon Icon object to be set
+ *
+ * Once the icon object is set, a previously set one will be deleted.
+ * @warning Setting the same icon for two items will cause the icon to
+ * dissapear from the first item.
+ *
+ * @see elm_ctxpopup_item_append()
+ *
+ * @deprecated use elm_object_item_part_content_set() instead
+ *
+ * @ingroup Ctxpopup
+ */
+EINA_DEPRECATED EAPI void         elm_ctxpopup_item_icon_set(Elm_Object_Item *it, Evas_Object *icon) EINA_ARG_NONNULL(1);
+
+/**
+ * @brief Get the label for the given ctxpopup item.
+ *
+ * @param it Ctxpopup item
+ * @return label string or @c NULL, if the item does not have label or an
+ * error occured
+ *
+ * @see elm_ctxpopup_item_append()
+ * @see elm_ctxpopup_item_label_set()
+ *
+ * @deprecated use elm_object_item_text_get() instead
+ *
+ * @ingroup Ctxpopup
+ */
+EINA_DEPRECATED EAPI const char  *elm_ctxpopup_item_label_get(const Elm_Object_Item *it) EINA_ARG_NONNULL(1);
+
+/**
+ * @brief (Re)set the label on the given ctxpopup item.
+ *
+ * @param it Ctxpopup item
+ * @param label String to set as label
+ *
+ * @deprecated use elm_object_item_text_set() instead
+ *
+ * @ingroup Ctxpopup
+ */
+EINA_DEPRECATED EAPI void         elm_ctxpopup_item_label_set(Elm_Object_Item *it, const char *label) EINA_ARG_NONNULL(1);
+
+/**
+ * @brief Set an elm widget as the content of the ctxpopup.
+ *
+ * @param obj Ctxpopup object
+ * @param content Content to be swallowed
+ *
+ * If the content object is already set, a previous one will bedeleted. If
+ * you want to keep that old content object, use the
+ * elm_ctxpopup_content_unset() function.
+ *
+ * @warning Ctxpopup can't hold both a item list and a content at the same
+ * time. When a content is set, any previous items will be removed.
+ *
+ * @deprecated use elm_object_content_set() instead
+ *
+ * @ingroup Ctxpopup
+ */
+EINA_DEPRECATED EAPI void         elm_ctxpopup_content_set(Evas_Object *obj, Evas_Object *content) EINA_ARG_NONNULL(1, 2);
+
+/**
+ * @brief Unset the ctxpopup content
+ *
+ * @param obj Ctxpopup object
+ * @return The content that was being used
+ *
+ * Unparent and return the content object which was set for this widget.
+ *
+ * @deprecated use elm_object_content_unset()
+ *
+ * @see elm_ctxpopup_content_set()
+ *
+ * @deprecated use elm_object_content_unset() instead
+ *
+ * @ingroup Ctxpopup
+ */
+EINA_DEPRECATED EAPI Evas_Object *elm_ctxpopup_content_unset(Evas_Object *obj) EINA_ARG_NONNULL(1);
+
+/**
+ * Set the label for a given file selector button widget
+ *
+ * @param obj The file selector button widget
+ * @param label The text label to be displayed on @p obj
+ *
+ * @deprecated use elm_object_text_set() instead.
+ */
+EINA_DEPRECATED EAPI void        elm_fileselector_button_label_set(Evas_Object *obj, const char *label) EINA_ARG_NONNULL(1);
+
+/**
+ * Get the label set for a given file selector button widget
+ *
+ * @param obj The file selector button widget
+ * @return The button label
+ *
+ * @deprecated use elm_object_text_set() instead.
+ */
+EINA_DEPRECATED EAPI const char *elm_fileselector_button_label_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
+
+/**
+ * Set the label for a given file selector entry widget's button
+ *
+ * @param obj The file selector entry widget
+ * @param label The text label to be displayed on @p obj widget's
+ * button
+ *
+ * @deprecated use elm_object_text_set() instead.
+ */
+EINA_DEPRECATED EAPI void        elm_fileselector_entry_button_label_set(Evas_Object *obj, const char *label) EINA_ARG_NONNULL(1);
+
+/**
+ * Get the label set for a given file selector entry widget's button
+ *
+ * @param obj The file selector entry widget
+ * @return The widget button's label
+ *
+ * @deprecated use elm_object_text_set() instead.
+ */
+EINA_DEPRECATED EAPI const char *elm_fileselector_entry_button_label_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
+
+/**
+ * @brief Set the hoversel button label
+ *
+ * @param obj The hoversel object
+ * @param label The label text.
+ *
+ * This sets the label of the button that is always visible (before it is
+ * clicked and expanded).
+ *
+ * @deprecated elm_object_text_set()
+ */
+EINA_DEPRECATED EAPI void         elm_hoversel_label_set(Evas_Object *obj, const char *label) EINA_ARG_NONNULL(1);
+
+/**
+ * @brief Get the hoversel button label
+ *
+ * @param obj The hoversel object
+ * @return The label text.
+ *
+ * @deprecated elm_object_text_get()
+ */
+EINA_DEPRECATED EAPI const char  *elm_hoversel_label_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
+
+/**
+ * @brief Set the icon of the hoversel button
+ *
+ * @param obj The hoversel object
+ * @param icon The icon object
+ *
+ * Sets the icon of the button that is always visible (before it is clicked
+ * and expanded).  Once the icon object is set, a previously set one will be
+ * deleted, if you want to keep that old content object, use the
+ * elm_hoversel_icon_unset() function.
+ *
+ * @see elm_object_content_set() for the button widget
+ * @deprecated Use elm_object_item_part_content_set() instead
+ */
+EINA_DEPRECATED EAPI void         elm_hoversel_icon_set(Evas_Object *obj, Evas_Object *icon) EINA_ARG_NONNULL(1);
+
+/**
+ * @brief Get the icon of the hoversel button
+ *
+ * @param obj The hoversel object
+ * @return The icon object
+ *
+ * Get the icon of the button that is always visible (before it is clicked
+ * and expanded). Also see elm_object_content_get() for the button widget.
+ *
+ * @see elm_hoversel_icon_set()
+ * @deprecated Use elm_object_item_part_content_get() instead
+ */
+EINA_DEPRECATED EAPI Evas_Object *elm_hoversel_icon_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
+
+/**
+ * @brief Get and unparent the icon of the hoversel button
+ *
+ * @param obj The hoversel object
+ * @return The icon object that was being used
+ *
+ * Unparent and return the icon of the button that is always visible
+ * (before it is clicked and expanded).
+ *
+ * @see elm_hoversel_icon_set()
+ * @see elm_object_content_unset() for the button widget
+ * @deprecated Use elm_object_item_part_content_unset() instead
+ */
+EINA_DEPRECATED EAPI Evas_Object *elm_hoversel_icon_unset(Evas_Object *obj) EINA_ARG_NONNULL(1);
+
+/**
+ * @brief This returns the data pointer supplied with elm_hoversel_item_add()
+ * that will be passed to associated function callbacks.
+ *
+ * @param it The item to get the data from
+ * @return The data pointer set with elm_hoversel_item_add()
+ *
+ * @see elm_hoversel_item_add()
+ * @deprecated Use elm_object_item_data_get() instead
+ */
+EINA_DEPRECATED EAPI void        *elm_hoversel_item_data_get(const Elm_Object_Item *it) EINA_ARG_NONNULL(1);
+
+/**
+ * @brief This returns the label text of the given hoversel item.
+ *
+ * @param it The item to get the label
+ * @return The label text of the hoversel item
+ *
+ * @see elm_hoversel_item_add()
+ * @deprecated Use elm_object_item_text_get() instead
+ */
+EINA_DEPRECATED EAPI const char  *elm_hoversel_item_label_get(const Elm_Object_Item *it) EINA_ARG_NONNULL(1);
+
+/**
+ * Set actionslider labels.
+ *
+ * @param obj The actionslider object
+ * @param left_label The label to be set on the left.
+ * @param center_label The label to be set on the center.
+ * @param right_label The label to be set on the right.
+ * @deprecated use elm_object_text_set() instead.
+ */
+EINA_DEPRECATED EAPI void        elm_actionslider_labels_set(Evas_Object *obj, const char *left_label, const char *center_label, const char *right_label) EINA_ARG_NONNULL(1);
+
+/**
+ * Get actionslider labels.
+ *
+ * @param obj The actionslider object
+ * @param left_label A char** to place the left_label of @p obj into.
+ * @param center_label A char** to place the center_label of @p obj into.
+ * @param right_label A char** to place the right_label of @p obj into.
+ * @deprecated use elm_object_text_set() instead.
+ */
+EINA_DEPRECATED EAPI void        elm_actionslider_labels_get(const Evas_Object *obj, const char **left_label, const char **center_label, const char **right_label) EINA_ARG_NONNULL(1);
+
+/**
+ * Set the label used on the indicator.
+ *
+ * @param obj The actionslider object
+ * @param label The label to be set on the indicator.
+ * @deprecated use elm_object_text_set() instead.
+ */
+EINA_DEPRECATED EAPI void        elm_actionslider_indicator_label_set(Evas_Object *obj, const char *label) EINA_ARG_NONNULL(1);
+
+/**
+ * Get the label used on the indicator object.
+ *
+ * @param obj The actionslider object
+ * @return The indicator label
+ * @deprecated use elm_object_text_get() instead.
+ */
+EINA_DEPRECATED EAPI const char *elm_actionslider_indicator_label_get(Evas_Object *obj) EINA_ARG_NONNULL(1);
+
+/**
+ * Set the overlay object used for the background object.
+ *
+ * @param obj The bg object
+ * @param overlay The overlay object
+ *
+ * This provides a way for elm_bg to have an 'overlay' that will be on top
+ * of the bg. Once the over object is set, a previously set one will be
+ * deleted, even if you set the new one to NULL. If you want to keep that
+ * old content object, use the elm_bg_overlay_unset() function.
+ *
+ * @deprecated use elm_object_part_content_set() instead
+ *
+ * @ingroup Bg
+ */
+
+EINA_DEPRECATED EAPI void         elm_bg_overlay_set(Evas_Object *obj, Evas_Object *overlay) EINA_ARG_NONNULL(1);
+
+/**
+ * Get the overlay object used for the background object.
+ *
+ * @param obj The bg object
+ * @return The content that is being used
+ *
+ * Return the content object which is set for this widget
+ *
+ * @deprecated use elm_object_part_content_get() instead
+ *
+ * @ingroup Bg
+ */
+EINA_DEPRECATED EAPI Evas_Object *elm_bg_overlay_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
+
+/**
+ * Get the overlay object used for the background object.
+ *
+ * @param obj The bg object
+ * @return The content that was being used
+ *
+ * Unparent and return the overlay object which was set for this widget
+ *
+ * @deprecated use elm_object_part_content_unset() instead
+ *
+ * @ingroup Bg
+ */
+EINA_DEPRECATED EAPI Evas_Object *elm_bg_overlay_unset(Evas_Object *obj) EINA_ARG_NONNULL(1);
+
+
+/**
+ * Set the label of the bubble
+ *
+ * @param obj The bubble object
+ * @param label The string to set in the label
+ *
+ * This function sets the title of the bubble. Where this appears depends on
+ * the selected corner.
+ * @deprecated use elm_object_text_set() instead.
+ */
+EINA_DEPRECATED EAPI void         elm_bubble_label_set(Evas_Object *obj, const char *label) EINA_ARG_NONNULL(1);
+
+/**
+ * Get the label of the bubble
+ *
+ * @param obj The bubble object
+ * @return The string of set in the label
+ *
+ * This function gets the title of the bubble.
+ * @deprecated use elm_object_text_get() instead.
+ */
+EINA_DEPRECATED EAPI const char  *elm_bubble_label_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
+
+/**
+ * Set the info of the bubble
+ *
+ * @param obj The bubble object
+ * @param info The given info about the bubble
+ *
+ * This function sets the info of the bubble. Where this appears depends on
+ * the selected corner.
+ * @deprecated use elm_object_part_text_set() instead. (with "info" as the parameter).
+ */
+EINA_DEPRECATED EAPI void         elm_bubble_info_set(Evas_Object *obj, const char *info) EINA_ARG_NONNULL(1);
+
+/**
+ * Get the info of the bubble
+ *
+ * @param obj The bubble object
+ *
+ * @return The "info" string of the bubble
+ *
+ * This function gets the info text.
+ * @deprecated use elm_object_part_text_get() instead. (with "info" as the parameter).
+ */
+EINA_DEPRECATED EAPI const char  *elm_bubble_info_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
+
+/**
+ * Set the content to be shown in the bubble
+ *
+ * Once the content object is set, a previously set one will be deleted.
+ * If you want to keep the old content object, use the
+ * elm_bubble_content_unset() function.
+ *
+ * @param obj The bubble object
+ * @param content The given content of the bubble
+ *
+ * This function sets the content shown on the middle of the bubble.
+ *
+ * @deprecated use elm_object_content_set() instead
+ *
+ */
+EINA_DEPRECATED EAPI void         elm_bubble_content_set(Evas_Object *obj, Evas_Object *content) EINA_ARG_NONNULL(1);
+
+/**
+ * Get the content shown in the bubble
+ *
+ * Return the content object which is set for this widget.
+ *
+ * @param obj The bubble object
+ * @return The content that is being used
+ *
+ * @deprecated use elm_object_content_get() instead
+ *
+ */
+EINA_DEPRECATED EAPI Evas_Object *elm_bubble_content_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
+
+/**
+ * Unset the content shown in the bubble
+ *
+ * Unparent and return the content object which was set for this widget.
+ *
+ * @param obj The bubble object
+ * @return The content that was being used
+ *
+ * @deprecated use elm_object_content_unset() instead
+ *
+ */
+EINA_DEPRECATED EAPI Evas_Object *elm_bubble_content_unset(Evas_Object *obj) EINA_ARG_NONNULL(1);
+
+/**
+ * Set the icon of the bubble
+ *
+ * Once the icon object is set, a previously set one will be deleted.
+ * If you want to keep the old content object, use the
+ * elm_icon_content_unset() function.
+ *
+ * @param obj The bubble object
+ * @param icon The given icon for the bubble
+ *
+ * @deprecated use elm_object_part_content_set() instead
+ *
+ */
+EINA_DEPRECATED EAPI void         elm_bubble_icon_set(Evas_Object *obj, Evas_Object *icon) EINA_ARG_NONNULL(1);
+
+/**
+ * Get the icon of the bubble
+ *
+ * @param obj The bubble object
+ * @return The icon for the bubble
+ *
+ * This function gets the icon shown on the top left of bubble.
+ *
+ * @deprecated use elm_object_part_content_get() instead
+ *
+ */
+EINA_DEPRECATED EAPI Evas_Object *elm_bubble_icon_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
+
+/**
+ * Unset the icon of the bubble
+ *
+ * Unparent and return the icon object which was set for this widget.
+ *
+ * @param obj The bubble object
+ * @return The icon that was being used
+ *
+ * @deprecated use elm_object_part_content_unset() instead
+ *
+ */
+EINA_DEPRECATED EAPI Evas_Object *elm_bubble_icon_unset(Evas_Object *obj) EINA_ARG_NONNULL(1);
+
+
+/**
+ * Set the label used in the button
+ *
+ * The passed @p label can be NULL to clean any existing text in it and
+ * leave the button as an icon only object.
+ *
+ * @param obj The button object
+ * @param label The text will be written on the button
+ * @deprecated use elm_object_text_set() instead.
+ */
+EINA_DEPRECATED EAPI void         elm_button_label_set(Evas_Object *obj, const char *label) EINA_ARG_NONNULL(1);
+
+/**
+ * Get the label set for the button
+ *
+ * The string returned is an internal pointer and should not be freed or
+ * altered. It will also become invalid when the button is destroyed.
+ * The string returned, if not NULL, is a stringshare, so if you need to
+ * keep it around even after the button is destroyed, you can use
+ * eina_stringshare_ref().
+ *
+ * @param obj The button object
+ * @return The text set to the label, or NULL if nothing is set
+ * @deprecated use elm_object_text_set() instead.
+ */
+EINA_DEPRECATED EAPI const char  *elm_button_label_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
+
+/**
+ * Set the icon used for the button
+ *
+ * Setting a new icon will delete any other that was previously set, making
+ * any reference to them invalid. If you need to maintain the previous
+ * object alive, unset it first with elm_button_icon_unset().
+ *
+ * @param obj The button object
+ * @param icon The icon object for the button
+ * @deprecated use elm_object_part_content_set() instead.
+ */
+EINA_DEPRECATED EAPI void         elm_button_icon_set(Evas_Object *obj, Evas_Object *icon) EINA_ARG_NONNULL(1);
+
+/**
+ * Get the icon used for the button
+ *
+ * Return the icon object which is set for this widget. If the button is
+ * destroyed or another icon is set, the returned object will be deleted
+ * and any reference to it will be invalid.
+ *
+ * @param obj The button object
+ * @return The icon object that is being used
+ *
+ * @deprecated use elm_object_part_content_get() instead
+ */
+EINA_DEPRECATED EAPI Evas_Object *elm_button_icon_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
+
+/**
+ * Remove the icon set without deleting it and return the object
+ *
+ * This function drops the reference the button holds of the icon object
+ * and returns this last object. It is used in case you want to remove any
+ * icon, or set another one, without deleting the actual object. The button
+ * will be left without an icon set.
+ *
+ * @param obj The button object
+ * @return The icon object that was being used
+ * @deprecated use elm_object_part_content_unset() instead.
+ */
+EINA_DEPRECATED EAPI Evas_Object *elm_button_icon_unset(Evas_Object *obj) EINA_ARG_NONNULL(1);
+
+/**
+ * Set a day text color to the same that represents Saturdays.
+ *
+ * @param obj The calendar object.
+ * @param pos The text position. Position is the cell counter, from left
+ * to right, up to down. It starts on 0 and ends on 41.
+ *
+ * @deprecated use elm_calendar_mark_add() instead like:
+ *
+ * @code
+ * struct tm t = { 0, 0, 12, 6, 0, 0, 6, 6, -1 };
+ * elm_calendar_mark_add(obj, "sat", &t, ELM_CALENDAR_WEEKLY);
+ * @endcode
+ *
+ * @see elm_calendar_mark_add()
+ *
+ * @ingroup Calendar
+ */
+EINA_DEPRECATED EAPI void elm_calendar_text_saturday_color_set(Evas_Object *obj, int pos) EINA_ARG_NONNULL(1);
+
+/**
+ * Set a day text color to the same that represents Sundays.
+ *
+ * @param obj The calendar object.
+ * @param pos The text position. Position is the cell counter, from left
+ * to right, up to down. It starts on 0 and ends on 41.
+
+ * @deprecated use elm_calendar_mark_add() instead like:
+ *
+ * @code
+ * struct tm t = { 0, 0, 12, 7, 0, 0, 0, 0, -1 };
+ * elm_calendar_mark_add(obj, "sat", &t, ELM_CALENDAR_WEEKLY);
+ * @endcode
+ *
+ * @see elm_calendar_mark_add()
+ *
+ * @ingroup Calendar
+ */
+EINA_DEPRECATED EAPI void elm_calendar_text_sunday_color_set(Evas_Object *obj, int pos) EINA_ARG_NONNULL(1);
+
+/**
+ * Set a day text color to the same that represents Weekdays.
+ *
+ * @param obj The calendar object
+ * @param pos The text position. Position is the cell counter, from left
+ * to right, up to down. It starts on 0 and ends on 41.
+ *
+ * @deprecated use elm_calendar_mark_add() instead like:
+ *
+ * @code
+ * struct tm t = { 0, 0, 12, 1, 0, 0, 0, 0, -1 };
+ *
+ * elm_calendar_mark_add(obj, "week", &t, ELM_CALENDAR_WEEKLY); // monday
+ * t.tm_tm_mday++; t.tm_wday++; t.tm_yday++;
+ * elm_calendar_mark_add(obj, "week", &t, ELM_CALENDAR_WEEKLY); // tuesday
+ * t.tm_tm_mday++; t.tm_wday++; t.tm_yday++;
+ * elm_calendar_mark_add(obj, "week", &t, ELM_CALENDAR_WEEKLY); // wednesday
+ * t.tm_tm_mday++; t.tm_wday++; t.tm_yday++;
+ * elm_calendar_mark_add(obj, "week", &t, ELM_CALENDAR_WEEKLY); // thursday
+ * t.tm_tm_mday++; t.tm_wday++; t.tm_yday++;
+ * elm_calendar_mark_add(obj, "week", &t, ELM_CALENDAR_WEEKLY); // friday
+ * @endcode
+ *
+ * @see elm_calendar_mark_add()
+ *
+ * @ingroup Calendar
+ */
+EINA_DEPRECATED EAPI void elm_calendar_text_weekday_color_set(Evas_Object *obj, int pos) EINA_ARG_NONNULL(1);
+
+
+/**
+ * @brief Set the text label of the check object
+ *
+ * @param obj The check object
+ * @param label The text label string in UTF-8
+ *
+ * @deprecated use elm_object_text_set() instead.
+ */
+EINA_DEPRECATED EAPI void         elm_check_label_set(Evas_Object *obj, const char *label) EINA_ARG_NONNULL(1);
+
+/**
+ * @brief Get the text label of the check object
+ *
+ * @param obj The check object
+ * @return The text label string in UTF-8
+ *
+ * @deprecated use elm_object_text_get() instead.
+ */
+EINA_DEPRECATED EAPI const char  *elm_check_label_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
+
+/**
+ * @brief Set the icon object of the check object
+ *
+ * @param obj The check object
+ * @param icon The icon object
+ *
+ * Once the icon object is set, a previously set one will be deleted.
+ * If you want to keep that old content object, use the
+ * elm_object_content_unset() function.
+ *
+ * @deprecated use elm_object_part_content_set() instead.
+ *
+ */
+EINA_DEPRECATED EAPI void         elm_check_icon_set(Evas_Object *obj, Evas_Object *icon) EINA_ARG_NONNULL(1);
+
+/**
+ * @brief Get the icon object of the check object
+ *
+ * @param obj The check object
+ * @return The icon object
+ *
+ * @deprecated use elm_object_part_content_get() instead.
+ *
+ */
+EINA_DEPRECATED EAPI Evas_Object *elm_check_icon_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
+
+/**
+ * @brief Unset the icon used for the check object
+ *
+ * @param obj The check object
+ * @return The icon object that was being used
+ *
+ * Unparent and return the icon object which was set for this widget.
+ *
+ * @deprecated use elm_object_part_content_unset() instead.
+ *
+ */
+EINA_DEPRECATED EAPI Evas_Object *elm_check_icon_unset(Evas_Object *obj) EINA_ARG_NONNULL(1);
+
+/**
+ * @brief Set the text label of the check object
+ *
+ * @param obj The check object
+ * @param label The text label string in UTF-8
+ *
+ * @deprecated use elm_object_text_set() instead.
+ */
+EINA_DEPRECATED EAPI void         elm_check_label_set(Evas_Object *obj, const char *label) EINA_ARG_NONNULL(1);
+
+/**
+ * @brief Get the text label of the check object
+ *
+ * @param obj The check object
+ * @return The text label string in UTF-8
+ *
+ * @deprecated use elm_object_text_get() instead.
+ */
+EINA_DEPRECATED EAPI const char  *elm_check_label_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
+
+/**
+ * @brief Set the icon object of the check object
+ *
+ * @param obj The check object
+ * @param icon The icon object
+ *
+ * Once the icon object is set, a previously set one will be deleted.
+ * If you want to keep that old content object, use the
+ * elm_object_content_unset() function.
+ *
+ * @deprecated use elm_object_part_content_set() instead.
+ *
+ */
+EINA_DEPRECATED EAPI void         elm_check_icon_set(Evas_Object *obj, Evas_Object *icon) EINA_ARG_NONNULL(1);
+
+/**
+ * @brief Get the icon object of the check object
+ *
+ * @param obj The check object
+ * @return The icon object
+ *
+ * @deprecated use elm_object_part_content_get() instead.
+ *
+ */
+EINA_DEPRECATED EAPI Evas_Object *elm_check_icon_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
+
+/**
+ * @brief Unset the icon used for the check object
+ *
+ * @param obj The check object
+ * @return The icon object that was being used
+ *
+ * Unparent and return the icon object which was set for this widget.
+ *
+ * @deprecated use elm_object_part_content_unset() instead.
+ *
+ */
+EINA_DEPRECATED EAPI Evas_Object *elm_check_icon_unset(Evas_Object *obj) EINA_ARG_NONNULL(1);
+
+EINA_DEPRECATED EAPI void         elm_check_states_labels_set(Evas_Object *obj, const char *ontext, const char *offtext) EINA_ARG_NONNULL(1, 2, 3);
+EINA_DEPRECATED EAPI void         elm_check_states_labels_get(const Evas_Object *obj, const char **ontext, const char **offtext) EINA_ARG_NONNULL(1, 2, 3);
+
+
+/**
+ * Set the content of the conformant widget.
+ *
+ * @param obj The conformant object.
+ * @param content The content to be displayed by the conformant.
+ *
+ * Content will be sized and positioned considering the space required
+ * to display a virtual keyboard. So it won't fill all the conformant
+ * size. This way is possible to be sure that content won't resize
+ * or be re-positioned after the keyboard is displayed.
+ *
+ * Once the content object is set, a previously set one will be deleted.
+ * If you want to keep that old content object, use the
+ * elm_object_content_unset() function.
+ *
+ * @see elm_object_content_unset()
+ * @see elm_object_content_get()
+ *
+ * @deprecated use elm_object_content_set() instead
+ *
+ * @ingroup Conformant
+ */
+EINA_DEPRECATED EAPI void         elm_conformant_content_set(Evas_Object *obj, Evas_Object *content) EINA_ARG_NONNULL(1);
+
+/**
+ * Get the content of the conformant widget.
+ *
+ * @param obj The conformant object.
+ * @return The content that is being used.
+ *
+ * Return the content object which is set for this widget.
+ * It won't be unparent from conformant. For that, use
+ * elm_object_content_unset().
+ *
+ * @see elm_object_content_set().
+ * @see elm_object_content_unset()
+ *
+ * @deprecated use elm_object_content_get() instead
+ *
+ * @ingroup Conformant
+ */
+EINA_DEPRECATED EAPI Evas_Object *elm_conformant_content_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
+
+/**
+ * Unset the content of the conformant widget.
+ *
+ * @param obj The conformant object.
+ * @return The content that was being used.
+ *
+ * Unparent and return the content object which was set for this widget.
+ *
+ * @see elm_object_content_set().
+ *
+ * @deprecated use elm_object_content_unset() instead
+ *
+ * @ingroup Conformant
+ */
+EINA_DEPRECATED EAPI Evas_Object *elm_conformant_content_unset(Evas_Object *obj) EINA_ARG_NONNULL(1);
+
+/**
+ * Get the side labels max length.
+ *
+ * @deprecated use elm_diskselector_side_label_length_get() instead:
+ *
+ * @param obj The diskselector object.
+ * @return The max length defined for side labels, or 0 if not a valid
+ * diskselector.
+ *
+ * @ingroup Diskselector
+ */
+EINA_DEPRECATED EAPI int    elm_diskselector_side_label_lenght_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
+
+/**
+ * Set the side labels max length.
+ *
+ * @deprecated use elm_diskselector_side_label_length_set() instead:
+ *
+ * @param obj The diskselector object.
+ * @param len The max length defined for side labels.
+ *
+ * @ingroup Diskselector
+ */
+EINA_DEPRECATED EAPI void   elm_diskselector_side_label_lenght_set(Evas_Object *obj, int len) EINA_ARG_NONNULL(1);
+
+EINA_DEPRECATED EAPI void         elm_factory_content_set(Evas_Object *obj, Evas_Object *content);
+EINA_DEPRECATED EAPI Evas_Object *elm_factory_content_get(const Evas_Object *obj);
+
+/**
+ * Get the label of a given flip selector widget's item.
+ *
+ * @param it The item to get label from
+ * @return The text label of @p item or @c NULL, on errors
+ *
+ * @see elm_object_item_text_set()
+ *
+ * @deprecated see elm_object_item_text_get() instead
+ * @ingroup Flipselector
+ */
+EINA_DEPRECATED EAPI const char *elm_flipselector_item_label_get(const Elm_Object_Item *it) EINA_ARG_NONNULL(1);
+
+/**
+ * Set the label of a given flip selector widget's item.
+ *
+ * @param it The item to set label on
+ * @param label The text label string, in UTF-8 encoding
+ *
+ * @see elm_object_item_text_get()
+ *
+ * @deprecated see elm_object_item_text_set() instead
+ * @ingroup Flipselector
+ */
+EINA_DEPRECATED EAPI void        elm_flipselector_item_label_set(Elm_Object_Item *it, const char *label) EINA_ARG_NONNULL(1);
+
+/**
+ * Make a given Elementary object the focused one.
+ *
+ * @param obj The Elementary object to make focused.
+ *
+ * @note This object, if it can handle focus, will take the focus
+ * away from the one who had it previously and will, for now on, be
+ * the one receiving input events.
+ *
+ * @see elm_object_focus_get()
+ * @deprecated use elm_object_focus_set() instead.
+ *
+ * @ingroup Focus
+ */
+EINA_DEPRECATED EAPI void elm_object_focus(Evas_Object *obj) EINA_ARG_NONNULL(1);
+
+/**
+ * Remove the focus from an Elementary object
+ *
+ * @param obj The Elementary to take focus from
+ *
+ * This removes the focus from @p obj, passing it back to the
+ * previous element in the focus chain list.
+ *
+ * @see elm_object_focus() and elm_object_focus_custom_chain_get()
+ * @deprecated use elm_object_focus_set() instead.
+ *
+ * @ingroup Focus
+ */
+EINA_DEPRECATED EAPI void elm_object_unfocus(Evas_Object *obj) EINA_ARG_NONNULL(1);
+
+/**
+ * @brief Set the frame label
+ *
+ * @param obj The frame object
+ * @param label The label of this frame object
+ *
+ * @deprecated use elm_object_text_set() instead.
+ */
+EINA_DEPRECATED EAPI void         elm_frame_label_set(Evas_Object *obj, const char *label) EINA_ARG_NONNULL(1);
+
+/**
+ * @brief Get the frame label
+ *
+ * @param obj The frame object
+ *
+ * @return The label of this frame objet or NULL if unable to get frame
+ *
+ * @deprecated use elm_object_text_get() instead.
+ */
+EINA_DEPRECATED EAPI const char  *elm_frame_label_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
+
+/**
+ * @brief Set the content of the frame widget
+ *
+ * Once the content object is set, a previously set one will be deleted.
+ * If you want to keep that old content object, use the
+ * elm_frame_content_unset() function.
+ *
+ * @param obj The frame object
+ * @param content The content will be filled in this frame object
+ *
+ * @deprecated use elm_object_content_set() instead.
+ */
+EINA_DEPRECATED EAPI void         elm_frame_content_set(Evas_Object *obj, Evas_Object *content) EINA_ARG_NONNULL(1);
+
+/**
+ * @brief Get the content of the frame widget
+ *
+ * Return the content object which is set for this widget
+ *
+ * @param obj The frame object
+ * @return The content that is being used
+ *
+ * @deprecated use elm_object_content_get() instead.
+ */
+EINA_DEPRECATED EAPI Evas_Object *elm_frame_content_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
+
+/**
+ * @brief Unset the content of the frame widget
+ *
+ * Unparent and return the content object which was set for this widget
+ *
+ * @param obj The frame object
+ * @return The content that was being used
+ *
+ * @deprecated use elm_object_content_unset() instead.
+ */
+EINA_DEPRECATED EAPI Evas_Object *elm_frame_content_unset(Evas_Object *obj) EINA_ARG_NONNULL(1);
+
+EINA_DEPRECATED EAPI void          elm_genlist_horizontal_mode_set(Evas_Object *obj, Elm_List_Mode mode) EINA_ARG_NONNULL(1);
+EINA_DEPRECATED EAPI Elm_List_Mode elm_genlist_horizontal_mode_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
+EINA_DEPRECATED EAPI void          elm_genlist_item_icons_orphan(Elm_Genlist_Item *it) EINA_ARG_NONNULL(1);
+
+#define ELM_IMAGE_ROTATE_90_CW 1
+#define ELM_IMAGE_ROTATE_180_CW 2
+#define ELM_IMAGE_ROTATE_90_CCW 3
+
+/**
+ * Return the data associated with a given index widget item
+ *
+ * @param it The index widget item handle
+ * @return The data associated with @p it
+ * @deprecated Use elm_object_item_data_get() instead
+ *
+ * @see elm_index_item_data_set()
+ *
+ * @ingroup Index
+ */
+EINA_DEPRECATED EAPI void *elm_index_item_data_get(const Elm_Object_Item *item) EINA_ARG_NONNULL(1);
+
+/**
+ * Set the data associated with a given index widget item
+ *
+ * @param it The index widget item handle
+ * @param data The new data pointer to set to @p it
+ *
+ * This sets new item data on @p it.
+ *
+ * @warning The old data pointer won't be touched by this function, so
+ * the user had better to free that old data himself/herself.
+ *
+ * @deprecated Use elm_object_item_data_set() instead
+ * @ingroup Index
+ */
+EINA_DEPRECATED EAPI void  elm_index_item_data_set(Elm_Object_Item *it, const void *data) EINA_ARG_NONNULL(1);
+
+/**
+ * @brief Set the label on the label object
+ *
+ * @param obj The label object
+ * @param label The label will be used on the label object
+ * @deprecated See elm_object_text_set()
+ */
+EINA_DEPRECATED EAPI void        elm_label_label_set(Evas_Object *obj, const char *label) EINA_ARG_NONNULL(1);
+
+/**
+ * @brief Get the label used on the label object
+ *
+ * @param obj The label object
+ * @return The string inside the label
+ * @deprecated See elm_object_text_get()
+ */
+EINA_DEPRECATED EAPI const char *elm_label_label_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
+
+
+/**
+ * Set the layout content.
+ *
+ * @param obj The layout object
+ * @param swallow The swallow part name in the edje file
+ * @param content The child that will be added in this layout object
+ *
+ * Once the content object is set, a previously set one will be deleted.
+ * If you want to keep that old content object, use the
+ * elm_object_part_content_unset() function.
+ *
+ * @note In an Edje theme, the part used as a content container is called @c
+ * SWALLOW. This is why the parameter name is called @p swallow, but it is
+ * expected to be a part name just like the second parameter of
+ * elm_layout_box_append().
+ *
+ * @see elm_layout_box_append()
+ * @see elm_object_part_content_get()
+ * @see elm_object_part_content_unset()
+ * @see @ref secBox
+ * @deprecated use elm_object_part_content_set() instead
+ *
+ * @ingroup Layout
+ */
+EINA_DEPRECATED EAPI void         elm_layout_content_set(Evas_Object *obj, const char *swallow, Evas_Object *content) EINA_ARG_NONNULL(1);
+
+/**
+ * Get the child object in the given content part.
+ *
+ * @param obj The layout object
+ * @param swallow The SWALLOW part to get its content
+ *
+ * @return The swallowed object or NULL if none or an error occurred
+ *
+ * @deprecated use elm_object_part_content_get() instead
+ *
+ * @ingroup Layout
+ */
+EINA_DEPRECATED EAPI Evas_Object *elm_layout_content_get(const Evas_Object *obj, const char *swallow) EINA_ARG_NONNULL(1);
+
+/**
+ * Unset the layout content.
+ *
+ * @param obj The layout object
+ * @param swallow The swallow part name in the edje file
+ * @return The content that was being used
+ *
+ * Unparent and return the content object which was set for this part.
+ *
+ * @deprecated use elm_object_part_content_unset() instead
+ *
+ * @ingroup Layout
+ */
+EINA_DEPRECATED EAPI Evas_Object *elm_layout_content_unset(Evas_Object *obj, const char *swallow) EINA_ARG_NONNULL(1);
+
+/**
+ * Set the text of the given part
+ *
+ * @param obj The layout object
+ * @param part The TEXT part where to set the text
+ * @param text The text to set
+ *
+ * @ingroup Layout
+ * @deprecated use elm_object_part_text_set() instead.
+ */
+EINA_DEPRECATED EAPI void         elm_layout_text_set(Evas_Object *obj, const char *part, const char *text) EINA_ARG_NONNULL(1);
+
+/**
+ * Get the text set in the given part
+ *
+ * @param obj The layout object
+ * @param part The TEXT part to retrieve the text off
+ *
+ * @return The text set in @p part
+ *
+ * @ingroup Layout
+ * @deprecated use elm_object_part_text_get() instead.
+ */
+EINA_DEPRECATED EAPI const char  *elm_layout_text_get(const Evas_Object *obj, const char *part) EINA_ARG_NONNULL(1);
+
+/**
+ * @def elm_layout_label_set
+ * Convienience macro to set the label in a layout that follows the
+ * Elementary naming convention for its parts.
+ *
+ * @ingroup Layout
+ * @deprecated use elm_object_text_set() instead.
+ */
+#define elm_layout_label_set(_ly, _txt) \
+  elm_layout_text_set((_ly), "elm.text", (_txt))
+
+/**
+ * @def elm_layout_label_get
+ * Convenience macro to get the label in a layout that follows the
+ * Elementary naming convention for its parts.
+ *
+ * @ingroup Layout
+ * @deprecated use elm_object_text_set() instead.
+ */
+#define elm_layout_label_get(_ly) \
+  elm_layout_text_get((_ly), "elm.text")
+
+EINA_DEPRECATED EAPI Evas_Object *elm_list_item_base_get(const Elm_List_Item *item) EINA_ARG_NONNULL(1);
+
+
+/**
+ * Set the content of the mapbuf.
+ *
+ * @param obj The mapbuf object.
+ * @param content The content that will be filled in this mapbuf object.
+ *
+ * Once the content object is set, a previously set one will be deleted.
+ * If you want to keep that old content object, use the
+ * elm_mapbuf_content_unset() function.
+ *
+ * To enable map, elm_mapbuf_enabled_set() should be used.
+ *
+ * @deprecated use elm_object_content_set() instead
+ *
+ * @ingroup Mapbuf
+ */
+EINA_DEPRECATED EAPI void         elm_mapbuf_content_set(Evas_Object *obj, Evas_Object *content) EINA_ARG_NONNULL(1);
+
+/**
+ * Get the content of the mapbuf.
+ *
+ * @param obj The mapbuf object.
+ * @return The content that is being used.
+ *
+ * Return the content object which is set for this widget.
+ *
+ * @see elm_mapbuf_content_set() for details.
+ *
+ * @deprecated use elm_object_content_get() instead
+ *
+ * @ingroup Mapbuf
+ */
+EINA_DEPRECATED EAPI Evas_Object *elm_mapbuf_content_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
+
+/**
+ * Unset the content of the mapbuf.
+ *
+ * @param obj The mapbuf object.
+ * @return The content that was being used.
+ *
+ * Unparent and return the content object which was set for this widget.
+ *
+ * @see elm_mapbuf_content_set() for details.
+ *
+ * @deprecated use elm_object_content_unset() instead
+ *
+ * @ingroup Mapbuf
+ */
+EINA_DEPRECATED EAPI Evas_Object *elm_mapbuf_content_unset(Evas_Object *obj) EINA_ARG_NONNULL(1);
+
+/**
+ * @brief Set the label of a menu item
+ *
+ * @param it The menu item object.
+ * @param label The label to set for @p item
+ *
+ * @warning Don't use this funcion on items created with
+ * elm_menu_item_add_object() or elm_menu_item_separator_add().
+ *
+ * @deprecated Use elm_object_item_text_set() instead
+ */
+EINA_DEPRECATED EAPI void         elm_menu_item_label_set(Elm_Object_Item *it, const char *label) EINA_ARG_NONNULL(1);
+
+/**
+ * @brief Get the label of a menu item
+ *
+ * @param it The menu item object.
+ * @return The label of @p item
+ * @deprecated Use elm_object_item_text_get() instead
+ */
+EINA_DEPRECATED EAPI const char  *elm_menu_item_label_get(const Elm_Object_Item *it) EINA_ARG_NONNULL(1);
+
+/**
+ * @brief Set the content object of a menu item
+ *
+ * @param it The menu item object
+ * @param The content object or NULL
+ * @return EINA_TRUE on success, else EINA_FALSE
+ *
+ * Use this function to change the object swallowed by a menu item, deleting
+ * any previously swallowed object.
+ *
+ * @deprecated Use elm_object_item_content_set() instead
+ */
+EINA_DEPRECATED EAPI Eina_Bool    elm_menu_item_object_content_set(Elm_Object_Item *it, Evas_Object *obj) EINA_ARG_NONNULL(1);
+
+/**
+ * @brief Get the content object of a menu item
+ *
+ * @param it The menu item object
+ * @return The content object or NULL
+ * @note If @p item was added with elm_menu_item_add_object, this
+ * function will return the object passed, else it will return the
+ * icon object.
+ *
+ * @see elm_menu_item_object_content_set()
+ *
+ * @deprecated Use elm_object_item_content_get() instead
+ */
+EINA_DEPRECATED EAPI Evas_Object *elm_menu_item_object_content_get(const Elm_Object_Item *it) EINA_ARG_NONNULL(1);
+
+/**
+ * @brief Set the disabled state of @p item.
+ *
+ * @param it The menu item object.
+ * @param disabled The enabled/disabled state of the item
+ * @deprecated Use elm_object_item_disabled_set() instead
+ */
+EINA_DEPRECATED EAPI void         elm_menu_item_disabled_set(Elm_Object_Item *it, Eina_Bool disabled) EINA_ARG_NONNULL(1);
+
+/**
+ * @brief Get the disabled state of @p item.
+ *
+ * @param it The menu item object.
+ * @return The enabled/disabled state of the item
+ *
+ * @see elm_menu_item_disabled_set()
+ * @deprecated Use elm_object_item_disabled_get() instead
+ */
+EINA_DEPRECATED EAPI Eina_Bool    elm_menu_item_disabled_get(const Elm_Object_Item *it) EINA_ARG_NONNULL(1);
+
+/**
+ * @brief Returns the data associated with menu item @p item.
+ *
+ * @param it The item
+ * @return The data associated with @p item or NULL if none was set.
+ *
+ * This is the data set with elm_menu_add() or elm_menu_item_data_set().
+ *
+ * @deprecated Use elm_object_item_data_get() instead
+ */
+EINA_DEPRECATED EAPI void        *elm_menu_item_data_get(const Elm_Object_Item *it) EINA_ARG_NONNULL(1);
+
+/**
+ * @brief Sets the data to be associated with menu item @p item.
+ *
+ * @param it The item
+ * @param data The data to be associated with @p item
+ *
+ * @deprecated Use elm_object_item_data_set() instead
+ */
+EINA_DEPRECATED EAPI void         elm_menu_item_data_set(Elm_Object_Item *it, const void *data) EINA_ARG_NONNULL(1);
+
+/**
+ * @brief Set the content of the notify widget
+ *
+ * @param obj The notify object
+ * @param content The content will be filled in this notify object
+ *
+ * Once the content object is set, a previously set one will be deleted. If
+ * you want to keep that old content object, use the
+ * elm_notify_content_unset() function.
+ *
+ * @deprecated use elm_object_content_set() instead
+ *
+ */
+EINA_DEPRECATED EAPI void         elm_notify_content_set(Evas_Object *obj, Evas_Object *content) EINA_ARG_NONNULL(1);
+
+/**
+ * @brief Unset the content of the notify widget
+ *
+ * @param obj The notify object
+ * @return The content that was being used
+ *
+ * Unparent and return the content object which was set for this widget
+ *
+ * @see elm_notify_content_set()
+ * @deprecated use elm_object_content_unset() instead
+ *
+ */
+EINA_DEPRECATED EAPI Evas_Object *elm_notify_content_unset(Evas_Object *obj) EINA_ARG_NONNULL(1);
+
+/**
+ * @brief Return the content of the notify widget
+ *
+ * @param obj The notify object
+ * @return The content that is being used
+ *
+ * @see elm_notify_content_set()
+ * @deprecated use elm_object_content_get() instead
+ *
+ */
+EINA_DEPRECATED EAPI Evas_Object *elm_notify_content_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
+
+/**
+ * Set a label of an object
+ *
+ * @param obj The Elementary object
+ * @param part The text part name to set (NULL for the default label)
+ * @param label The new text of the label
+ *
+ * @note Elementary objects may have many labels (e.g. Action Slider)
+ * @deprecated Use elm_object_part_text_set() instead.
+ * @ingroup General
+ */
+EINA_DEPRECATED EAPI void         elm_object_text_part_set(Evas_Object *obj, const char *part, const char *label);
+
+/**
+ * Get a label of an object
+ *
+ * @param obj The Elementary object
+ * @param part The text part name to get (NULL for the default label)
+ * @return text of the label or NULL for any error
+ *
+ * @note Elementary objects may have many labels (e.g. Action Slider)
+ * @deprecated Use elm_object_part_text_get() instead.
+ * @ingroup General
+ */
+EINA_DEPRECATED EAPI const char  *elm_object_text_part_get(const Evas_Object *obj, const char *part);
+
+/**
+ * Set a content of an object
+ *
+ * @param obj The Elementary object
+ * @param part The content part name to set (NULL for the default content)
+ * @param content The new content of the object
+ *
+ * @note Elementary objects may have many contents
+ * @deprecated Use elm_object_part_content_set instead.
+ * @ingroup General
+ */
+EINA_DEPRECATED EAPI void         elm_object_content_part_set(Evas_Object *obj, const char *part, Evas_Object *content);
+
+/**
+ * Get a content of an object
+ *
+ * @param obj The Elementary object
+ * @param part The content part name to get (NULL for the default content)
+ * @return content of the object or NULL for any error
+ *
+ * @note Elementary objects may have many contents
+ * @deprecated Use elm_object_part_content_get instead.
+ * @ingroup General
+ */
+EINA_DEPRECATED EAPI Evas_Object *elm_object_content_part_get(const Evas_Object *obj, const char *part);
+
+/**
+ * Unset a content of an object
+ *
+ * @param obj The Elementary object
+ * @param part The content part name to unset (NULL for the default content)
+ *
+ * @note Elementary objects may have many contents
+ * @deprecated Use elm_object_part_content_unset instead.
+ * @ingroup General
+ */
+EINA_DEPRECATED EAPI Evas_Object *elm_object_content_part_unset(Evas_Object *obj, const char *part);
+
+/**
+ * Set a content of an object item
+ *
+ * @param it The Elementary object item
+ * @param part The content part name to set (NULL for the default content)
+ * @param content The new content of the object item
+ *
+ * @note Elementary object items may have many contents
+ * @deprecated Use elm_object_item_part_content_set instead.
+ * @ingroup General
+ */
+EINA_DEPRECATED EAPI void         elm_object_item_content_part_set(Elm_Object_Item *it, const char *part, Evas_Object *content);
+
+/**
+ * Get a content of an object item
+ *
+ * @param it The Elementary object item
+ * @param part The content part name to unset (NULL for the default content)
+ * @return content of the object item or NULL for any error
+ *
+ * @note Elementary object items may have many contents
+ * @deprecated Use elm_object_item_part_content_get instead.
+ * @ingroup General
+ */
+EINA_DEPRECATED EAPI Evas_Object                 *elm_object_item_content_part_get(const Elm_Object_Item *it, const char *part);
+
+/**
+ * Unset a content of an object item
+ *
+ * @param it The Elementary object item
+ * @param part The content part name to unset (NULL for the default content)
+ *
+ * @note Elementary object items may have many contents
+ * @deprecated Use elm_object_item_part_content_unset instead.
+ * @ingroup General
+ */
+EINA_DEPRECATED EAPI Evas_Object *elm_object_item_content_part_unset(Elm_Object_Item *it, const char *part);
+
+/**
+ * Get a label of an object item
+ *
+ * @param it The Elementary object item
+ * @param part The text part name to get (NULL for the default label)
+ * @return text of the label or NULL for any error
+ *
+ * @note Elementary object items may have many labels
+ * @deprecated Use elm_object_item_part_text_get instead.
+ * @ingroup General
+ */
+EINA_DEPRECATED EAPI const char  *elm_object_item_text_part_get(const Elm_Object_Item *it, const char *part);
+
+/**
+ * Set a label of an object item
+ *
+ * @param it The Elementary object item
+ * @param part The text part name to set (NULL for the default label)
+ * @param label The new text of the label
+ *
+ * @note Elementary object items may have many labels
+ * @deprecated Use elm_object_item_part_text_set instead.
+ * @ingroup General
+ */
+EINA_DEPRECATED EAPI void         elm_object_item_text_part_set(Elm_Object_Item *it, const char *part, const char *label);
+
+/**
+ * @brief Set the content of the panel.
+ *
+ * @param obj The panel object
+ * @param content The panel content
+ *
+ * Once the content object is set, a previously set one will be deleted.
+ * If you want to keep that old content object, use the
+ * elm_panel_content_unset() function.
+ *
+ * @deprecated use elm_object_content_set() instead
+ *
+ */
+EINA_DEPRECATED EAPI void         elm_panel_content_set(Evas_Object *obj, Evas_Object *content) EINA_ARG_NONNULL(1);
+
+/**
+ * @brief Get the content of the panel.
+ *
+ * @param obj The panel object
+ * @return The content that is being used
+ *
+ * Return the content object which is set for this widget.
+ *
+ * @see elm_panel_content_set()
+ *
+ * @deprecated use elm_object_content_get() instead
+ *
+ */
+EINA_DEPRECATED EAPI Evas_Object *elm_panel_content_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
+
+/**
+ * @brief Unset the content of the panel.
+ *
+ * @param obj The panel object
+ * @return The content that was being used
+ *
+ * Unparent and return the content object which was set for this widget.
+ *
+ * @see elm_panel_content_set()
+ *
+ * @deprecated use elm_object_content_unset() instead
+ *
+ */
+EINA_DEPRECATED EAPI Evas_Object *elm_panel_content_unset(Evas_Object *obj) EINA_ARG_NONNULL(1);
+
+/**
+ * Set the left content of the panes widget.
+ *
+ * @param obj The panes object.
+ * @param content The new left content object.
+ *
+ * Once the content object is set, a previously set one will be deleted.
+ * If you want to keep that old content object, use the
+ * elm_panes_content_left_unset() function.
+ *
+ * If panes is displayed vertically, left content will be displayed at
+ * top.
+ *
+ * @see elm_panes_content_left_get()
+ * @see elm_panes_content_right_set() to set content on the other side.
+ *
+ * @deprecated use elm_object_part_content_set() instead
+ *
+ * @ingroup Panes
+ */
+EINA_DEPRECATED EAPI void         elm_panes_content_left_set(Evas_Object *obj, Evas_Object *content) EINA_ARG_NONNULL(1);
+
+/**
+ * Set the right content of the panes widget.
+ *
+ * @param obj The panes object.
+ * @param content The new right content object.
+ *
+ * Once the content object is set, a previously set one will be deleted.
+ * If you want to keep that old content object, use the
+ * elm_panes_content_right_unset() function.
+ *
+ * If panes is displayed vertically, left content will be displayed at
+ * bottom.
+ *
+ * @see elm_panes_content_right_get()
+ * @see elm_panes_content_left_set() to set content on the other side.
+ *
+ * @deprecated use elm_object_part_content_set() instead
+ *
+ * @ingroup Panes
+ */
+EINA_DEPRECATED EAPI void         elm_panes_content_right_set(Evas_Object *obj, Evas_Object *content) EINA_ARG_NONNULL(1);
+
+/**
+ * Get the left content of the panes.
+ *
+ * @param obj The panes object.
+ * @return The left content object that is being used.
+ *
+ * Return the left content object which is set for this widget.
+ *
+ * @see elm_panes_content_left_set() for details.
+ *
+ * @deprecated use elm_object_part_content_get() instead
+ *
+ * @ingroup Panes
+ */
+EINA_DEPRECATED EAPI Evas_Object *elm_panes_content_left_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
+
+/**
+ * Get the right content of the panes.
+ *
+ * @param obj The panes object
+ * @return The right content object that is being used
+ *
+ * Return the right content object which is set for this widget.
+ *
+ * @see elm_panes_content_right_set() for details.
+ *
+ * @deprecated use elm_object_part_content_get() instead
+ *
+ * @ingroup Panes
+ */
+EINA_DEPRECATED EAPI Evas_Object *elm_panes_content_right_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
+
+/**
+ * Unset the left content used for the panes.
+ *
+ * @param obj The panes object.
+ * @return The left content object that was being used.
+ *
+ * Unparent and return the left content object which was set for this widget.
+ *
+ * @see elm_panes_content_left_set() for details.
+ * @see elm_panes_content_left_get().
+ *
+ * @deprecated use elm_object_part_content_unset() instead
+ *
+ * @ingroup Panes
+ */
+EINA_DEPRECATED EAPI Evas_Object *elm_panes_content_left_unset(Evas_Object *obj) EINA_ARG_NONNULL(1);
+
+/**
+ * Unset the right content used for the panes.
+ *
+ * @param obj The panes object.
+ * @return The right content object that was being used.
+ *
+ * Unparent and return the right content object which was set for this
+ * widget.
+ *
+ * @see elm_panes_content_right_set() for details.
+ * @see elm_panes_content_right_get().
+ *
+ * @deprecated use elm_object_part_content_unset() instead
+ *
+ * @ingroup Panes
+ */
+EINA_DEPRECATED EAPI Evas_Object *elm_panes_content_right_unset(Evas_Object *obj) EINA_ARG_NONNULL(1);
+/**
+ * Set the label of a given progress bar widget
+ *
+ * @param obj The progress bar object
+ * @param label The text label string, in UTF-8
+ *
+ * @ingroup Progressbar
+ * @deprecated use elm_object_text_set() instead.
+ */
+EINA_DEPRECATED EAPI void         elm_progressbar_label_set(Evas_Object *obj, const char *label) EINA_ARG_NONNULL(1);
+
+/**
+ * Get the label of a given progress bar widget
+ *
+ * @param obj The progressbar object
+ * @return The text label string, in UTF-8
+ *
+ * @ingroup Progressbar
+ * @deprecated use elm_object_text_set() instead.
+ */
+EINA_DEPRECATED EAPI const char  *elm_progressbar_label_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
+
+/**
+ * Set the icon object of a given progress bar widget
+ *
+ * @param obj The progress bar object
+ * @param icon The icon object
+ *
+ * Use this call to decorate @p obj with an icon next to it.
+ *
+ * @note Once the icon object is set, a previously set one will be
+ * deleted. If you want to keep that old content object, use the
+ * elm_progressbar_icon_unset() function.
+ *
+ * @see elm_progressbar_icon_get()
+ * @deprecated use elm_object_part_content_set() instead.
+ *
+ * @ingroup Progressbar
+ */
+EINA_DEPRECATED EAPI void         elm_progressbar_icon_set(Evas_Object *obj, Evas_Object *icon) EINA_ARG_NONNULL(1);
+
+/**
+ * Retrieve the icon object set for a given progress bar widget
+ *
+ * @param obj The progress bar object
+ * @return The icon object's handle, if @p obj had one set, or @c NULL,
+ * otherwise (and on errors)
+ *
+ * @see elm_progressbar_icon_set() for more details
+ * @deprecated use elm_object_part_content_get() instead.
+ *
+ * @ingroup Progressbar
+ */
+EINA_DEPRECATED EAPI Evas_Object *elm_progressbar_icon_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
+
+/**
+ * Unset an icon set on a given progress bar widget
+ *
+ * @param obj The progress bar object
+ * @return The icon object that was being used, if any was set, or
+ * @c NULL, otherwise (and on errors)
+ *
+ * This call will unparent and return the icon object which was set
+ * for this widget, previously, on success.
+ *
+ * @see elm_progressbar_icon_set() for more details
+ * @deprecated use elm_object_part_content_unset() instead.
+ *
+ * @ingroup Progressbar
+ */
+EINA_DEPRECATED EAPI Evas_Object *elm_progressbar_icon_unset(Evas_Object *obj) EINA_ARG_NONNULL(1);
+
+/**
+ * @brief Set the text label of the radio object
+ *
+ * @param obj The radio object
+ * @param label The text label string in UTF-8
+ *
+ * @deprecated use elm_object_text_set() instead.
+ */
+EINA_DEPRECATED EAPI void         elm_radio_label_set(Evas_Object *obj, const char *label) EINA_ARG_NONNULL(1);
+
+/**
+ * @brief Get the text label of the radio object
+ *
+ * @param obj The radio object
+ * @return The text label string in UTF-8
+ *
+ * @deprecated use elm_object_text_set() instead.
+ */
+EINA_DEPRECATED EAPI const char  *elm_radio_label_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
+
+/**
+ * @brief Set the icon object of the radio object
+ *
+ * @param obj The radio object
+ * @param icon The icon object
+ *
+ * Once the icon object is set, a previously set one will be deleted. If you
+ * want to keep that old content object, use the elm_radio_icon_unset()
+ * function.
+ *
+ * @deprecated use elm_object_part_content_set() instead.
+ *
+ */
+EINA_DEPRECATED EAPI void         elm_radio_icon_set(Evas_Object *obj, Evas_Object *icon) EINA_ARG_NONNULL(1);
+
+/**
+ * @brief Get the icon object of the radio object
+ *
+ * @param obj The radio object
+ * @return The icon object
+ *
+ * @see elm_radio_icon_set()
+ *
+ * @deprecated use elm_object_part_content_get() instead.
+ *
+ */
+EINA_DEPRECATED EAPI Evas_Object *elm_radio_icon_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
+
+/**
+ * @brief Unset the icon used for the radio object
+ *
+ * @param obj The radio object
+ * @return The icon object that was being used
+ *
+ * Unparent and return the icon object which was set for this widget.
+ *
+ * @see elm_radio_icon_set()
+ * @deprecated use elm_object_part_content_unset() instead.
+ *
+ */
+EINA_DEPRECATED EAPI Evas_Object *elm_radio_icon_unset(Evas_Object *obj) EINA_ARG_NONNULL(1);
+
+/**
+ * @brief Set the content of the scroller widget (the object to be scrolled around).
+ *
+ * @param obj The scroller object
+ * @param content The new content object
+ *
+ * Once the content object is set, a previously set one will be deleted.
+ * If you want to keep that old content object, use the
+ * elm_scroller_content_unset() function.
+ * @deprecated use elm_object_content_set() instead
+ */
+EINA_DEPRECATED EAPI void         elm_scroller_content_set(Evas_Object *obj, Evas_Object *child) EINA_ARG_NONNULL(1);
+
+/**
+ * @brief Get the content of the scroller widget
+ *
+ * @param obj The slider object
+ * @return The content that is being used
+ *
+ * Return the content object which is set for this widget
+ *
+ * @see elm_scroller_content_set()
+ * @deprecated use elm_object_content_get() instead.
+ */
+EINA_DEPRECATED EAPI Evas_Object *elm_scroller_content_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
+
+/**
+ * @brief Unset the content of the scroller widget
+ *
+ * @param obj The slider object
+ * @return The content that was being used
+ *
+ * Unparent and return the content object which was set for this widget
+ *
+ * @see elm_scroller_content_set()
+ * @deprecated use elm_object_content_unset() instead.
+ */
+EINA_DEPRECATED EAPI Evas_Object *elm_scroller_content_unset(Evas_Object *obj) EINA_ARG_NONNULL(1);
+
+/**
+ * Set the label of a given slider widget
+ *
+ * @param obj The progress bar object
+ * @param label The text label string, in UTF-8
+ *
+ * @ingroup Slider
+ * @deprecated use elm_object_text_set() instead.
+ */
+EINA_DEPRECATED EAPI void         elm_slider_label_set(Evas_Object *obj, const char *label) EINA_ARG_NONNULL(1);
+
+/**
+ * Get the label of a given slider widget
+ *
+ * @param obj The progressbar object
+ * @return The text label string, in UTF-8
+ *
+ * @ingroup Slider
+ * @deprecated use elm_object_text_get() instead.
+ */
+EINA_DEPRECATED EAPI const char  *elm_slider_label_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
+
+/**
+ * Set the icon object of the slider object.
+ *
+ * @param obj The slider object.
+ * @param icon The icon object.
+ *
+ * On horizontal mode, icon is placed at left, and on vertical mode,
+ * placed at top.
+ *
+ * @note Once the icon object is set, a previously set one will be deleted.
+ * If you want to keep that old content object, use the
+ * elm_slider_icon_unset() function.
+ *
+ * @warning If the object being set does not have minimum size hints set,
+ * it won't get properly displayed.
+ *
+ * @ingroup Slider
+ * @deprecated use elm_object_part_content_set() instead.
+ */
+EINA_DEPRECATED EAPI void         elm_slider_icon_set(Evas_Object *obj, Evas_Object *icon) EINA_ARG_NONNULL(1);
+
+/**
+ * Unset an icon set on a given slider widget.
+ *
+ * @param obj The slider object.
+ * @return The icon object that was being used, if any was set, or
+ * @c NULL, otherwise (and on errors).
+ *
+ * On horizontal mode, icon is placed at left, and on vertical mode,
+ * placed at top.
+ *
+ * This call will unparent and return the icon object which was set
+ * for this widget, previously, on success.
+ *
+ * @see elm_slider_icon_set() for more details
+ * @see elm_slider_icon_get()
+ * @deprecated use elm_object_part_content_unset() instead.
+ *
+ * @ingroup Slider
+ */
+EINA_DEPRECATED EAPI Evas_Object *elm_slider_icon_unset(Evas_Object *obj) EINA_ARG_NONNULL(1);
+
+/**
+ * Retrieve the icon object set for a given slider widget.
+ *
+ * @param obj The slider object.
+ * @return The icon object's handle, if @p obj had one set, or @c NULL,
+ * otherwise (and on errors).
+ *
+ * On horizontal mode, icon is placed at left, and on vertical mode,
+ * placed at top.
+ *
+ * @see elm_slider_icon_set() for more details
+ * @see elm_slider_icon_unset()
+ *
+ * @deprecated use elm_object_part_content_get() instead.
+ *
+ * @ingroup Slider
+ */
+EINA_DEPRECATED EAPI Evas_Object *elm_slider_icon_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
+
+/**
+ * Set the end object of the slider object.
+ *
+ * @param obj The slider object.
+ * @param end The end object.
+ *
+ * On horizontal mode, end is placed at left, and on vertical mode,
+ * placed at bottom.
+ *
+ * @note Once the icon object is set, a previously set one will be deleted.
+ * If you want to keep that old content object, use the
+ * elm_slider_end_unset() function.
+ *
+ * @warning If the object being set does not have minimum size hints set,
+ * it won't get properly displayed.
+ *
+ * @deprecated use elm_object_part_content_set() instead.
+ *
+ * @ingroup Slider
+ */
+EINA_DEPRECATED EAPI void         elm_slider_end_set(Evas_Object *obj, Evas_Object *end) EINA_ARG_NONNULL(1);
+
+/**
+ * Unset an end object set on a given slider widget.
+ *
+ * @param obj The slider object.
+ * @return The end object that was being used, if any was set, or
+ * @c NULL, otherwise (and on errors).
+ *
+ * On horizontal mode, end is placed at left, and on vertical mode,
+ * placed at bottom.
+ *
+ * This call will unparent and return the icon object which was set
+ * for this widget, previously, on success.
+ *
+ * @see elm_slider_end_set() for more details.
+ * @see elm_slider_end_get()
+ *
+ * @deprecated use elm_object_part_content_unset() instead
+ * instead.
+ *
+ * @ingroup Slider
+ */
+EINA_DEPRECATED EAPI Evas_Object *elm_slider_end_unset(Evas_Object *obj) EINA_ARG_NONNULL(1);
+
+/**
+ * Retrieve the end object set for a given slider widget.
+ *
+ * @param obj The slider object.
+ * @return The end object's handle, if @p obj had one set, or @c NULL,
+ * otherwise (and on errors).
+ *
+ * On horizontal mode, icon is placed at right, and on vertical mode,
+ * placed at bottom.
+ *
+ * @see elm_slider_end_set() for more details.
+ * @see elm_slider_end_unset()
+ *
+ *
+ * @deprecated use elm_object_part_content_get() instead
+ * instead.
+ *
+ * @ingroup Slider
+ */
+EINA_DEPRECATED EAPI Evas_Object *elm_slider_end_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
+
+/**
+ * Return the data associated with a given slideshow item
+ *
+ * @param it The slideshow item
+ * @return Returns the data associated to this item
+ *
+ * @deprecated use elm_object_item_data_get() instead
+ * @ingroup Slideshow
+ */
+EINA_DEPRECATED EAPI void *elm_slideshow_item_data_get(const Elm_Object_Item *it) EINA_ARG_NONNULL(1);
+
+/**
+ * Get the toolbar object from an item.
+ *
+ * @param it The item.
+ * @return The toolbar object.
+ *
+ * This returns the toolbar object itself that an item belongs to.
+ *
+ * @deprecated use elm_object_item_object_get() instead.
+ * @ingroup Toolbar
+ */
+EINA_DEPRECATED EAPI Evas_Object *elm_toolbar_item_toolbar_get(const Elm_Object_Item *it) EINA_ARG_NONNULL(1);
+
+/**
+ * Get the label of item.
+ *
+ * @param it The item of toolbar.
+ * @return The label of item.
+ *
+ * The return value is a pointer to the label associated to @p item when
+ * it was created, with function elm_toolbar_item_append() or similar,
+ * or later,
+ * with function elm_toolbar_item_label_set. If no label
+ * was passed as argument, it will return @c NULL.
+ *
+ * @see elm_toolbar_item_label_set() for more details.
+ * @see elm_toolbar_item_append()
+ *
+ * @deprecated use elm_object_item_text_get() instead.
+ * @ingroup Toolbar
+ */
+EINA_DEPRECATED EAPI const char  *elm_toolbar_item_label_get(const Elm_Object_Item *it) EINA_ARG_NONNULL(1);
+
+/**
+ * Set the label of item.
+ *
+ * @param it The item of toolbar.
+ * @param text The label of item.
+ *
+ * The label to be displayed by the item.
+ * Label will be placed at icons bottom (if set).
+ *
+ * If a label was passed as argument on item creation, with function
+ * elm_toolbar_item_append() or similar, it will be already
+ * displayed by the item.
+ *
+ * @see elm_toolbar_item_label_get()
+ * @see elm_toolbar_item_append()
+ *
+ * @deprecated use elm_object_item_text_set() instead
+ * @ingroup Toolbar
+ */
+EINA_DEPRECATED EAPI void         elm_toolbar_item_label_set(Elm_Object_Item *it, const char *label) EINA_ARG_NONNULL(1);
+
+/**
+ * Return the data associated with a given toolbar widget item.
+ *
+ * @param it The toolbar widget item handle.
+ * @return The data associated with @p item.
+ *
+ * @see elm_toolbar_item_data_set()
+ *
+ * @deprecated use elm_object_item_data_get() instead.
+ * @ingroup Toolbar
+ */
+EINA_DEPRECATED EAPI void        *elm_toolbar_item_data_get(const Elm_Object_Item *it) EINA_ARG_NONNULL(1);
+
+/**
+ * Set the data associated with a given toolbar widget item.
+ *
+ * @param it The toolbar widget item handle
+ * @param data The new data pointer to set to @p item.
+ *
+ * This sets new item data on @p item.
+ *
+ * @warning The old data pointer won't be touched by this function, so
+ * the user had better to free that old data himself/herself.
+ *
+ * @deprecated use elm_object_item_data_set() instead.
+ * @ingroup Toolbar
+ */
+EINA_DEPRECATED EAPI void         elm_toolbar_item_data_set(Elm_Object_Item *it, const void *data) EINA_ARG_NONNULL(1);
+
+/**
+ * Get a value whether toolbar item is disabled or not.
+ *
+ * @param it The item.
+ * @return The disabled state.
+ *
+ * @see elm_toolbar_item_disabled_set() for more details.
+ *
+ * @deprecated use elm_object_item_disabled_get() instead.
+ * @ingroup Toolbar
+ */
+EINA_DEPRECATED EAPI Eina_Bool    elm_toolbar_item_disabled_get(const Elm_Object_Item *it) EINA_ARG_NONNULL(1);
+
+/**
+ * Sets the disabled/enabled state of a toolbar item.
+ *
+ * @param it The item.
+ * @param disabled The disabled state.
+ *
+ * A disabled item cannot be selected or unselected. It will also
+ * change its appearance (generally greyed out). This sets the
+ * disabled state (@c EINA_TRUE for disabled, @c EINA_FALSE for
+ * enabled).
+ *
+ * @deprecated use elm_object_item_disabled_set() instead.
+ * @ingroup Toolbar
+ */
+EINA_DEPRECATED EAPI void         elm_toolbar_item_disabled_set(Elm_Object_Item *it, Eina_Bool disabled) EINA_ARG_NONNULL(1);
+
+/**
+ * Change a toolbar's orientation
+ * @param obj The toolbar object
+ * @param vertical If @c EINA_TRUE, the toolbar is vertical
+ * By default, a toolbar will be horizontal. Use this function to create a vertical toolbar.
+ * @ingroup Toolbar
+ * @deprecated use elm_toolbar_horizontal_set() instead.
+ */
+EINA_DEPRECATED EAPI void         elm_toolbar_orientation_set(Evas_Object *obj, Eina_Bool vertical) EINA_ARG_NONNULL(1);
+
+/**
+ * Get a toolbar's orientation
+ * @param obj The toolbar object
+ * @return If @c EINA_TRUE, the toolbar is vertical
+ * By default, a toolbar will be horizontal. Use this function to determine whether a toolbar is vertical.
+ * @ingroup Toolbar
+ * @deprecated use elm_toolbar_horizontal_get() instead.
+ */
+EINA_DEPRECATED EAPI Eina_Bool    elm_toolbar_orientation_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
+
+/**
+ * @brief Link a Elm_Payer with an Elm_Video object.
+ *
+ * @param player the Elm_Player object.
+ * @param video The Elm_Video object.
+ *
+ * This mean that action on the player widget will affect the
+ * video object and the state of the video will be reflected in
+ * the player itself.
+ *
+ * @see elm_player_add()
+ * @see elm_video_add()
+ * @deprecated use elm_object_part_content_set() instead
+ *
+ * @ingroup Video
+ */
+EINA_DEPRECATED EAPI void elm_player_video_set(Evas_Object *player, Evas_Object *video);

@@ -37,9 +37,7 @@
  *
  * @ingroup Cursors
  */
-EAPI void
-                 elm_object_cursor_set(Evas_Object *obj, const char *cursor)
-EINA_ARG_NONNULL(1);
+EAPI void        elm_object_cursor_set(Evas_Object *obj, const char *cursor) EINA_ARG_NONNULL(1);
 
 /**
  * Get the cursor to be shown when mouse is over the object

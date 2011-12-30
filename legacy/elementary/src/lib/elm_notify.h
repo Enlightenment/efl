@@ -29,7 +29,7 @@
  * and in conjunction with elm_notify_orient_get() to know where the notify
  * is appearing.
  */
-typedef enum _Elm_Notify_Orient
+typedef enum
 {
    ELM_NOTIFY_ORIENT_TOP, /**< Notify should appear in the top of parent, default */
    ELM_NOTIFY_ORIENT_CENTER, /**< Notify should appear in the center of parent */
@@ -49,50 +49,7 @@ typedef enum _Elm_Notify_Orient
  * @param parent The parent object
  * @return The new object or NULL if it cannot be created
  */
-EAPI Evas_Object *
-                                  elm_notify_add(Evas_Object *parent)
-EINA_ARG_NONNULL(1);
-
-/**
- * @brief Set the content of the notify widget
- *
- * @param obj The notify object
- * @param content The content will be filled in this notify object
- *
- * Once the content object is set, a previously set one will be deleted. If
- * you want to keep that old content object, use the
- * elm_notify_content_unset() function.
- *
- * @deprecated use elm_object_content_set() instead
- *
- */
-EINA_DEPRECATED EAPI void         elm_notify_content_set(Evas_Object *obj, Evas_Object *content) EINA_ARG_NONNULL(1);
-
-/**
- * @brief Unset the content of the notify widget
- *
- * @param obj The notify object
- * @return The content that was being used
- *
- * Unparent and return the content object which was set for this widget
- *
- * @see elm_notify_content_set()
- * @deprecated use elm_object_content_unset() instead
- *
- */
-EINA_DEPRECATED EAPI Evas_Object *elm_notify_content_unset(Evas_Object *obj) EINA_ARG_NONNULL(1);
-
-/**
- * @brief Return the content of the notify widget
- *
- * @param obj The notify object
- * @return The content that is being used
- *
- * @see elm_notify_content_set()
- * @deprecated use elm_object_content_get() instead
- *
- */
-EINA_DEPRECATED EAPI Evas_Object *elm_notify_content_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
+EAPI Evas_Object                 *elm_notify_add(Evas_Object *parent) EINA_ARG_NONNULL(1);
 
 /**
  * @brief Set the notify parent

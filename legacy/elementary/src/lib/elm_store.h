@@ -89,9 +89,7 @@ struct _Elm_Store_Item_Info_Filesystem
 EAPI void                    elm_store_free(Elm_Store *st);
 
 EAPI Elm_Store              *elm_store_filesystem_new(void);
-EAPI void
-                             elm_store_filesystem_directory_set(Elm_Store *st, const char *dir)
-EINA_ARG_NONNULL(1);
+EAPI void                    elm_store_filesystem_directory_set(Elm_Store *st, const char *dir) EINA_ARG_NONNULL(1);
 EAPI const char             *elm_store_filesystem_directory_get(const Elm_Store *st) EINA_ARG_NONNULL(1);
 EAPI const char             *elm_store_item_filesystem_path_get(const Elm_Store_Item *sti) EINA_ARG_NONNULL(1);
 

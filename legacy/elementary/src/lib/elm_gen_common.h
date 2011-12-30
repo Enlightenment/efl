@@ -14,7 +14,7 @@ typedef struct Elm_Gen_Item_Type    Elm_Gen_Item_Type;
 typedef struct Elm_Gen_Item_Tooltip Elm_Gen_Item_Tooltip;
 typedef struct _Widget_Data         Widget_Data;
 
-typedef enum _Elm_Genlist_Item_Scrollto_Type
+typedef enum
 {
    ELM_GENLIST_ITEM_SCROLLTO_NONE = 0,   /**< no scrollto */
    ELM_GENLIST_ITEM_SCROLLTO_IN = (1 << 0),   /**< show, bring in */

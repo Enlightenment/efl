@@ -54,7 +54,7 @@
  * Defines how a file selector widget is to layout its contents
  * (file system entries).
  */
-typedef enum _Elm_Fileselector_Mode
+typedef enum
 {
    ELM_FILESELECTOR_LIST = 0, /**< layout as a list */
    ELM_FILESELECTOR_GRID, /**< layout as a grid */
@@ -72,9 +72,7 @@ typedef enum _Elm_Fileselector_Mode
  *
  * @ingroup Fileselector
  */
-EAPI Evas_Object *
-                           elm_fileselector_add(Evas_Object *parent)
-EINA_ARG_NONNULL(1);
+EAPI Evas_Object          *elm_fileselector_add(Evas_Object *parent) EINA_ARG_NONNULL(1);
 
 /**
  * Enable/disable the file name entry box where the user can type

@@ -15,9 +15,7 @@
  *
  * @return The separator object, or NULL upon failure
  */
-EAPI Evas_Object *
-               elm_separator_add(Evas_Object *parent)
-EINA_ARG_NONNULL(1);
+EAPI Evas_Object *elm_separator_add(Evas_Object *parent) EINA_ARG_NONNULL(1);
 /**
  * @brief Set the horizontal mode of a separator object
  *

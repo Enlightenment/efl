@@ -170,9 +170,7 @@ EAPI Elm_Transit           *elm_transit_add(void);
  * @ingroup Transit
  * @warning Just call this function if you are sure the transit is alive.
  */
-EAPI void
-                            elm_transit_del(Elm_Transit *transit)
-EINA_ARG_NONNULL(1);
+EAPI void                   elm_transit_del(Elm_Transit *transit) EINA_ARG_NONNULL(1);
 
 /**
  * Add a new effect to the transit.

@@ -35,9 +35,7 @@ typedef Eina_Bool                   (*Elm_Multibuttonentry_Item_Filter_callback)
  * @return The new object or NULL if it cannot be created
  *
  */
-EAPI Evas_Object *
-                                elm_multibuttonentry_add(Evas_Object *parent)
-EINA_ARG_NONNULL(1);
+EAPI Evas_Object               *elm_multibuttonentry_add(Evas_Object *parent) EINA_ARG_NONNULL(1);
 
 /**
  * Get the label

@@ -38,7 +38,7 @@
  *
  * @see elm_scroller_policy_set()
  */
-typedef enum _Elm_Scroller_Policy
+typedef enum
 {
    ELM_SCROLLER_POLICY_AUTO = 0, /**< Show scrollbars as needed */
    ELM_SCROLLER_POLICY_ON, /**< Always show scrollbars */
@@ -52,48 +52,7 @@ typedef enum _Elm_Scroller_Policy
  * @param parent The parent object
  * @return The new object or NULL if it cannot be created
  */
-EAPI Evas_Object *
-                                  elm_scroller_add(Evas_Object *parent)
-EINA_ARG_NONNULL(1);
-
-/**
- * @brief Set the content of the scroller widget (the object to be scrolled around).
- *
- * @param obj The scroller object
- * @param content The new content object
- *
- * Once the content object is set, a previously set one will be deleted.
- * If you want to keep that old content object, use the
- * elm_scroller_content_unset() function.
- * @deprecated use elm_object_content_set() instead
- */
-EINA_DEPRECATED EAPI void         elm_scroller_content_set(Evas_Object *obj, Evas_Object *child) EINA_ARG_NONNULL(1);
-
-/**
- * @brief Get the content of the scroller widget
- *
- * @param obj The slider object
- * @return The content that is being used
- *
- * Return the content object which is set for this widget
- *
- * @see elm_scroller_content_set()
- * @deprecated use elm_object_content_get() instead.
- */
-EINA_DEPRECATED EAPI Evas_Object *elm_scroller_content_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
-
-/**
- * @brief Unset the content of the scroller widget
- *
- * @param obj The slider object
- * @return The content that was being used
- *
- * Unparent and return the content object which was set for this widget
- *
- * @see elm_scroller_content_set()
- * @deprecated use elm_object_content_unset() instead.
- */
-EINA_DEPRECATED EAPI Evas_Object *elm_scroller_content_unset(Evas_Object *obj) EINA_ARG_NONNULL(1);
+EAPI Evas_Object                 *elm_scroller_add(Evas_Object *parent) EINA_ARG_NONNULL(1);
 
 /**
  * @brief Set custom theme elements for the scroller

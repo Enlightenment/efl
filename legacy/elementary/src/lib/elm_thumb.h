@@ -53,7 +53,7 @@
  *
  * @ingroup Thumb
  */
-typedef enum _Elm_Thumb_Animation_Setting
+typedef enum
 {
    ELM_THUMB_ANIMATION_START = 0, /**< Play animation once */
    ELM_THUMB_ANIMATION_LOOP, /**< Keep playing animation until stop is requested */
@@ -72,9 +72,7 @@ typedef enum _Elm_Thumb_Animation_Setting
  *
  * @ingroup Thumb
  */
-EAPI Evas_Object *
-                                 elm_thumb_add(Evas_Object *parent)
-EINA_ARG_NONNULL(1);
+EAPI Evas_Object                *elm_thumb_add(Evas_Object *parent) EINA_ARG_NONNULL(1);
 
 /**
  * Reload thumbnail if it was generated before.

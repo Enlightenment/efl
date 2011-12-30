@@ -49,9 +49,7 @@
  *
  * @ingroup Flipselector
  */
-EAPI Evas_Object *
-                                 elm_flipselector_add(Evas_Object *parent)
-EINA_ARG_NONNULL(1);
+EAPI Evas_Object                *elm_flipselector_add(Evas_Object *parent) EINA_ARG_NONNULL(1);
 
 /**
  * Programmatically select the next item of a flip selector widget
@@ -237,32 +235,6 @@ EAPI Eina_Bool                   elm_flipselector_item_selected_get(const Elm_Ob
  * @ingroup Flipselector
  */
 EAPI void                        elm_flipselector_item_del(Elm_Object_Item *it) EINA_ARG_NONNULL(1);
-
-/**
- * Get the label of a given flip selector widget's item.
- *
- * @param it The item to get label from
- * @return The text label of @p item or @c NULL, on errors
- *
- * @see elm_object_item_text_set()
- *
- * @deprecated see elm_object_item_text_get() instead
- * @ingroup Flipselector
- */
-EINA_DEPRECATED EAPI const char *elm_flipselector_item_label_get(const Elm_Object_Item *it) EINA_ARG_NONNULL(1);
-
-/**
- * Set the label of a given flip selector widget's item.
- *
- * @param it The item to set label on
- * @param label The text label string, in UTF-8 encoding
- *
- * @see elm_object_item_text_get()
- *
- * @deprecated see elm_object_item_text_set() instead
- * @ingroup Flipselector
- */
-EINA_DEPRECATED EAPI void        elm_flipselector_item_label_set(Elm_Object_Item *it, const char *label) EINA_ARG_NONNULL(1);
 
 /**
  * Gets the item before @p item in a flip selector widget's

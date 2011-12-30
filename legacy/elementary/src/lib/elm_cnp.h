@@ -6,7 +6,7 @@
 typedef struct _Elm_Selection_Data Elm_Selection_Data;
 typedef Eina_Bool                (*Elm_Drop_Cb)(void *d, Evas_Object *o, Elm_Selection_Data *data);
 
-typedef enum _Elm_Sel_Type
+typedef enum
 {
    ELM_SEL_TYPE_PRIMARY,
    ELM_SEL_TYPE_SECONDARY,
@@ -16,7 +16,7 @@ typedef enum _Elm_Sel_Type
    ELM_SEL_TYPE_MAX,
 } Elm_Sel_Type;
 
-typedef enum _Elm_Sel_Format
+typedef enum
 {
    /** Targets: for matching every atom requesting */
    ELM_SEL_FORMAT_TARGETS = -1,

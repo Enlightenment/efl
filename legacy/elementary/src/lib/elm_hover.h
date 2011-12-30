@@ -44,7 +44,7 @@
  *
  * @{
  */
-typedef enum _Elm_Hover_Axis
+typedef enum
 {
    ELM_HOVER_AXIS_NONE, /**< ELM_HOVER_AXIS_NONE -- no prefered orientation */
    ELM_HOVER_AXIS_HORIZONTAL, /**< ELM_HOVER_AXIS_HORIZONTAL -- horizontal */
@@ -58,9 +58,7 @@ typedef enum _Elm_Hover_Axis
  * @param parent The parent object
  * @return The hover object or NULL if one could not be created
  */
-EAPI Evas_Object *
-                  elm_hover_add(Evas_Object *parent)
-EINA_ARG_NONNULL(1);
+EAPI Evas_Object *elm_hover_add(Evas_Object *parent) EINA_ARG_NONNULL(1);
 
 /**
  * @brief Sets the target object for the hover.

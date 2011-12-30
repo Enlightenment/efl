@@ -28,9 +28,7 @@ typedef Evas_Object *(*Elm_Tooltip_Item_Content_Cb)(void *data, Evas_Object *obj
 
 EAPI double      elm_tooltip_delay_get(void);
 EAPI Eina_Bool   elm_tooltip_delay_set(double delay);
-EAPI void
-                 elm_object_tooltip_show(Evas_Object *obj)
-EINA_ARG_NONNULL(1);
+EAPI void        elm_object_tooltip_show(Evas_Object *obj) EINA_ARG_NONNULL(1);
 EAPI void        elm_object_tooltip_hide(Evas_Object *obj) EINA_ARG_NONNULL(1);
 EAPI void        elm_object_tooltip_text_set(Evas_Object *obj, const char *text) EINA_ARG_NONNULL(1, 2);
 EAPI void        elm_object_tooltip_domain_translatable_text_set(Evas_Object *obj, const char *domain, const char *text) EINA_ARG_NONNULL(1, 3);

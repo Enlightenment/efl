@@ -22,7 +22,7 @@
  */
 
 /* bg */
-typedef enum _Elm_Bg_Option
+typedef enum
 {
    ELM_BG_OPTION_CENTER, /**< center the background */
    ELM_BG_OPTION_SCALE, /**< scale the background retaining aspect ratio */
@@ -38,9 +38,7 @@ typedef enum _Elm_Bg_Option
  *
  * @ingroup Bg
  */
-EAPI Evas_Object *
-                                  elm_bg_add(Evas_Object *parent)
-EINA_ARG_NONNULL(1);
+EAPI Evas_Object                 *elm_bg_add(Evas_Object *parent) EINA_ARG_NONNULL(1);
 
 /**
  * Set the file (image or edje) used for the background
@@ -118,52 +116,6 @@ EAPI void                         elm_bg_color_set(Evas_Object *obj, int r, int 
  * @ingroup Bg
  */
 EAPI void                         elm_bg_color_get(const Evas_Object *obj, int *r, int *g, int *b) EINA_ARG_NONNULL(1);
-
-/**
- * Set the overlay object used for the background object.
- *
- * @param obj The bg object
- * @param overlay The overlay object
- *
- * This provides a way for elm_bg to have an 'overlay' that will be on top
- * of the bg. Once the over object is set, a previously set one will be
- * deleted, even if you set the new one to NULL. If you want to keep that
- * old content object, use the elm_bg_overlay_unset() function.
- *
- * @deprecated use elm_object_part_content_set() instead
- *
- * @ingroup Bg
- */
-
-EINA_DEPRECATED EAPI void         elm_bg_overlay_set(Evas_Object *obj, Evas_Object *overlay) EINA_ARG_NONNULL(1);
-
-/**
- * Get the overlay object used for the background object.
- *
- * @param obj The bg object
- * @return The content that is being used
- *
- * Return the content object which is set for this widget
- *
- * @deprecated use elm_object_part_content_get() instead
- *
- * @ingroup Bg
- */
-EINA_DEPRECATED EAPI Evas_Object *elm_bg_overlay_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
-
-/**
- * Get the overlay object used for the background object.
- *
- * @param obj The bg object
- * @return The content that was being used
- *
- * Unparent and return the overlay object which was set for this widget
- *
- * @deprecated use elm_object_part_content_unset() instead
- *
- * @ingroup Bg
- */
-EINA_DEPRECATED EAPI Evas_Object *elm_bg_overlay_unset(Evas_Object *obj) EINA_ARG_NONNULL(1);
 
 /**
  * Set the size of the pixmap representation of the image.

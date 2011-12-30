@@ -49,7 +49,7 @@
  * @see elm_clock_edit_set()
  * @see elm_clock_digit_edit_set()
  */
-typedef enum _Elm_Clock_Digedit
+typedef enum
 {
    ELM_CLOCK_NONE = 0, /**< Default value. Means that all digits are editable, when in edition mode. */
    ELM_CLOCK_HOUR_DECIMAL = 1 << 0, /**< Decimal algarism of hours value should be editable */
@@ -72,9 +72,7 @@ typedef enum _Elm_Clock_Digedit
  *
  * @ingroup Clock
  */
-EAPI Evas_Object *
-                       elm_clock_add(Evas_Object *parent)
-EINA_ARG_NONNULL(1);
+EAPI Evas_Object      *elm_clock_add(Evas_Object *parent) EINA_ARG_NONNULL(1);
 
 /**
  * Set a clock widget's time, programmatically

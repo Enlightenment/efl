@@ -6,38 +6,12 @@
  * @param label The new text of the label
  *
  * @note Elementary objects may have many labels (e.g. Action Slider)
- * @deprecated Use elm_object_part_text_set() instead.
- * @ingroup General
- */
-EINA_DEPRECATED EAPI void         elm_object_text_part_set(Evas_Object *obj, const char *part, const char *label);
-
-/**
- * Set a label of an object
- *
- * @param obj The Elementary object
- * @param part The text part name to set (NULL for the default label)
- * @param label The new text of the label
- *
- * @note Elementary objects may have many labels (e.g. Action Slider)
  *
  * @ingroup General
  */
 EAPI void                         elm_object_part_text_set(Evas_Object *obj, const char *part, const char *label);
 
 #define elm_object_text_set(obj, label) elm_object_part_text_set((obj), NULL, (label))
-
-/**
- * Get a label of an object
- *
- * @param obj The Elementary object
- * @param part The text part name to get (NULL for the default label)
- * @return text of the label or NULL for any error
- *
- * @note Elementary objects may have many labels (e.g. Action Slider)
- * @deprecated Use elm_object_part_text_get() instead.
- * @ingroup General
- */
-EINA_DEPRECATED EAPI const char  *elm_object_text_part_get(const Evas_Object *obj, const char *part);
 
 /**
  * Get a label of an object
@@ -62,19 +36,6 @@ EAPI const char                  *elm_object_part_text_get(const Evas_Object *ob
  * @param content The new content of the object
  *
  * @note Elementary objects may have many contents
- * @deprecated Use elm_object_part_content_set instead.
- * @ingroup General
- */
-EINA_DEPRECATED EAPI void         elm_object_content_part_set(Evas_Object *obj, const char *part, Evas_Object *content);
-
-/**
- * Set a content of an object
- *
- * @param obj The Elementary object
- * @param part The content part name to set (NULL for the default content)
- * @param content The new content of the object
- *
- * @note Elementary objects may have many contents
  *
  * @ingroup General
  */
@@ -90,37 +51,12 @@ EAPI void                         elm_object_part_content_set(Evas_Object *obj, 
  * @return content of the object or NULL for any error
  *
  * @note Elementary objects may have many contents
- * @deprecated Use elm_object_part_content_get instead.
- * @ingroup General
- */
-EINA_DEPRECATED EAPI Evas_Object *elm_object_content_part_get(const Evas_Object *obj, const char *part);
-
-/**
- * Get a content of an object
- *
- * @param obj The Elementary object
- * @param part The content part name to get (NULL for the default content)
- * @return content of the object or NULL for any error
- *
- * @note Elementary objects may have many contents
  *
  * @ingroup General
  */
 EAPI Evas_Object                 *elm_object_part_content_get(const Evas_Object *obj, const char *part);
 
 #define elm_object_content_get(obj) elm_object_part_content_get((obj), NULL)
-
-/**
- * Unset a content of an object
- *
- * @param obj The Elementary object
- * @param part The content part name to unset (NULL for the default content)
- *
- * @note Elementary objects may have many contents
- * @deprecated Use elm_object_part_content_unset instead.
- * @ingroup General
- */
-EINA_DEPRECATED EAPI Evas_Object *elm_object_content_part_unset(Evas_Object *obj, const char *part);
 
 /**
  * Unset a content of an object
@@ -196,9 +132,7 @@ EAPI Evas_Object                 *elm_object_name_find(const Evas_Object *obj, c
  *
  * @ingroup Styles
  */
-EAPI void
-                  elm_object_style_set(Evas_Object *obj, const char *style)
-EINA_ARG_NONNULL(1);
+EAPI void         elm_object_style_set(Evas_Object *obj, const char *style) EINA_ARG_NONNULL(1);
 
 /**
  * Get the style used by the widget

@@ -156,6 +156,9 @@ EAPI extern Elm_Version * elm_version;
 #include <elm_entry.h>
 #include <elm_list.h>
 
+/* include deprecated before headers - things may still rely on definitions */
+#include <elm_deprecated_before.h>
+
 /* other includes */
 #include <elc_anchorblock.h>
 #include <elc_anchorview.h>
@@ -182,7 +185,6 @@ EAPI extern Elm_Version * elm_version;
 #include <elm_conform.h>
 #include <elm_cursor.h>
 #include <elm_debug.h>
-#include <elm_deprecated.h>
 #include <elm_diskselector.h>
 #include <elm_engine.h>
 #include <elm_factory.h>
@@ -235,6 +237,9 @@ EAPI extern Elm_Version * elm_version;
 #include <elm_video.h>
 #include <elm_web.h>
 #include <elm_win.h>
+
+/* include deprecated calls last of all */
+#include <elm_deprecated.h>
 
 #ifdef __cplusplus
 }

@@ -1,4 +1,4 @@
-typedef enum _Elm_Smart_Scroller_Policy
+typedef enum
 {
    ELM_SMART_SCROLLER_POLICY_AUTO,
    ELM_SMART_SCROLLER_POLICY_ON,

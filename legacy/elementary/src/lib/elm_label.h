@@ -37,27 +37,7 @@
  * @param parent The parent object
  * @return The new object or NULL if it cannot be created
  */
-EAPI Evas_Object *
-                                 elm_label_add(Evas_Object *parent)
-EINA_ARG_NONNULL(1);
-
-/**
- * @brief Set the label on the label object
- *
- * @param obj The label object
- * @param label The label will be used on the label object
- * @deprecated See elm_object_text_set()
- */
-EINA_DEPRECATED EAPI void        elm_label_label_set(Evas_Object *obj, const char *label) EINA_ARG_NONNULL(1);
-
-/**
- * @brief Get the label used on the label object
- *
- * @param obj The label object
- * @return The string inside the label
- * @deprecated See elm_object_text_get()
- */
-EINA_DEPRECATED EAPI const char *elm_label_label_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
+EAPI Evas_Object                *elm_label_add(Evas_Object *parent) EINA_ARG_NONNULL(1);
 
 /**
  * @brief Set the wrapping behavior of the label

@@ -72,7 +72,7 @@
  * @{
  */
 
-typedef enum _Elm_Icon_Type
+typedef enum
 {
    ELM_ICON_NONE,
    ELM_ICON_FILE,
@@ -88,7 +88,7 @@ typedef enum _Elm_Icon_Type
  *
  * @ingroup Icon
  */
-typedef enum _Elm_Icon_Lookup_Order
+typedef enum
 {
    ELM_ICON_LOOKUP_FDO_THEME, /**< icon look up order: freedesktop, theme */
    ELM_ICON_LOOKUP_THEME_FDO, /**< icon look up order: theme, freedesktop */
@@ -106,9 +106,7 @@ typedef enum _Elm_Icon_Lookup_Order
  *
  * @ingroup Icon
  */
-EAPI Evas_Object *
-                           elm_icon_add(Evas_Object *parent)
-EINA_ARG_NONNULL(1);
+EAPI Evas_Object          *elm_icon_add(Evas_Object *parent) EINA_ARG_NONNULL(1);
 
 /**
  * Set the file that will be used as icon.

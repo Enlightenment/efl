@@ -128,7 +128,7 @@ EAPI Eina_Bool                    elm_ctxpopup_horizontal_get(const Evas_Object 
  *
  * @ingroup Ctxpopup
  */
-Elm_Object_Item                  *elm_ctxpopup_item_append(Evas_Object *obj, const char *label, Evas_Object *icon, Evas_Smart_Cb func, const void *data) EINA_ARG_NONNULL(1);
+EAPI Elm_Object_Item             *elm_ctxpopup_item_append(Evas_Object *obj, const char *label, Evas_Object *icon, Evas_Smart_Cb func, const void *data) EINA_ARG_NONNULL(1);
 
 /**
  * @brief Delete the given item in a ctxpopup object.
@@ -140,131 +140,6 @@ Elm_Object_Item                  *elm_ctxpopup_item_append(Evas_Object *obj, con
  * @ingroup Ctxpopup
  */
 EAPI void                         elm_ctxpopup_item_del(Elm_Object_Item *it) EINA_ARG_NONNULL(1);
-
-/**
- * @brief Set the ctxpopup item's state as disabled or enabled.
- *
- * @param it Ctxpopup item to be enabled/disabled
- * @param disabled @c EINA_TRUE to disable it, @c EINA_FALSE to enable it
- *
- * When disabled the item is greyed out to indicate it's state.
- * @deprecated use elm_object_item_disabled_set() instead
- *
- * @ingroup Ctxpopup
- */
-EINA_DEPRECATED EAPI void         elm_ctxpopup_item_disabled_set(Elm_Object_Item *it, Eina_Bool disabled) EINA_ARG_NONNULL(1);
-
-/**
- * @brief Get the ctxpopup item's disabled/enabled state.
- *
- * @param it Ctxpopup item to be enabled/disabled
- * @return disabled @c EINA_TRUE, if disabled, @c EINA_FALSE otherwise
- *
- * @see elm_ctxpopup_item_disabled_set()
- * @deprecated use elm_object_item_disabled_get() instead
- *
- * @ingroup Ctxpopup
- */
-EAPI Eina_Bool                    elm_ctxpopup_item_disabled_get(const Elm_Object_Item *it) EINA_ARG_NONNULL(1);
-
-/**
- * @brief Get the icon object for the given ctxpopup item.
- *
- * @param it Ctxpopup item
- * @return icon object or @c NULL, if the item does not have icon or an error
- * occurred
- *
- * @see elm_ctxpopup_item_append()
- * @see elm_ctxpopup_item_icon_set()
- *
- * @deprecated use elm_object_item_part_content_get() instead
- *
- * @ingroup Ctxpopup
- */
-EINA_DEPRECATED EAPI Evas_Object *elm_ctxpopup_item_icon_get(const Elm_Object_Item *it) EINA_ARG_NONNULL(1);
-
-/**
- * @brief Sets the side icon associated with the ctxpopup item
- *
- * @param it Ctxpopup item
- * @param icon Icon object to be set
- *
- * Once the icon object is set, a previously set one will be deleted.
- * @warning Setting the same icon for two items will cause the icon to
- * dissapear from the first item.
- *
- * @see elm_ctxpopup_item_append()
- *
- * @deprecated use elm_object_item_part_content_set() instead
- *
- * @ingroup Ctxpopup
- */
-EINA_DEPRECATED EAPI void         elm_ctxpopup_item_icon_set(Elm_Object_Item *it, Evas_Object *icon) EINA_ARG_NONNULL(1);
-
-/**
- * @brief Get the label for the given ctxpopup item.
- *
- * @param it Ctxpopup item
- * @return label string or @c NULL, if the item does not have label or an
- * error occured
- *
- * @see elm_ctxpopup_item_append()
- * @see elm_ctxpopup_item_label_set()
- *
- * @deprecated use elm_object_item_text_get() instead
- *
- * @ingroup Ctxpopup
- */
-EINA_DEPRECATED EAPI const char  *elm_ctxpopup_item_label_get(const Elm_Object_Item *it) EINA_ARG_NONNULL(1);
-
-/**
- * @brief (Re)set the label on the given ctxpopup item.
- *
- * @param it Ctxpopup item
- * @param label String to set as label
- *
- * @deprecated use elm_object_item_text_set() instead
- *
- * @ingroup Ctxpopup
- */
-EINA_DEPRECATED EAPI void         elm_ctxpopup_item_label_set(Elm_Object_Item *it, const char *label) EINA_ARG_NONNULL(1);
-
-/**
- * @brief Set an elm widget as the content of the ctxpopup.
- *
- * @param obj Ctxpopup object
- * @param content Content to be swallowed
- *
- * If the content object is already set, a previous one will bedeleted. If
- * you want to keep that old content object, use the
- * elm_ctxpopup_content_unset() function.
- *
- * @warning Ctxpopup can't hold both a item list and a content at the same
- * time. When a content is set, any previous items will be removed.
- *
- * @deprecated use elm_object_content_set() instead
- *
- * @ingroup Ctxpopup
- */
-EINA_DEPRECATED EAPI void         elm_ctxpopup_content_set(Evas_Object *obj, Evas_Object *content) EINA_ARG_NONNULL(1, 2);
-
-/**
- * @brief Unset the ctxpopup content
- *
- * @param obj Ctxpopup object
- * @return The content that was being used
- *
- * Unparent and return the content object which was set for this widget.
- *
- * @deprecated use elm_object_content_unset()
- *
- * @see elm_ctxpopup_content_set()
- *
- * @deprecated use elm_object_content_unset() instead
- *
- * @ingroup Ctxpopup
- */
-EINA_DEPRECATED EAPI Evas_Object *elm_ctxpopup_content_unset(Evas_Object *obj) EINA_ARG_NONNULL(1);
 
 /**
  * @brief Set the direction priority of a ctxpopup.

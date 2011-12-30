@@ -53,9 +53,7 @@
  *
  * @ingroup Pager
  */
-EAPI Evas_Object *
-                  elm_pager_add(Evas_Object *parent)
-EINA_ARG_NONNULL(1);
+EAPI Evas_Object *elm_pager_add(Evas_Object *parent) EINA_ARG_NONNULL(1);
 
 /**
  * @brief Push an object to the top of the pager stack (and show it).

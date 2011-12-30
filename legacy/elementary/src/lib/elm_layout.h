@@ -152,9 +152,7 @@
  *
  * @ingroup Layout
  */
-EAPI Evas_Object *
-                                  elm_layout_add(Evas_Object *parent)
-EINA_ARG_NONNULL(1);
+EAPI Evas_Object                 *elm_layout_add(Evas_Object *parent) EINA_ARG_NONNULL(1);
 
 /**
  * Set the file that will be used as layout
@@ -182,86 +180,6 @@ EAPI Eina_Bool                    elm_layout_file_set(Evas_Object *obj, const ch
  * @ingroup Layout
  */
 EAPI Eina_Bool                    elm_layout_theme_set(Evas_Object *obj, const char *clas, const char *group, const char *style) EINA_ARG_NONNULL(1);
-
-/**
- * Set the layout content.
- *
- * @param obj The layout object
- * @param swallow The swallow part name in the edje file
- * @param content The child that will be added in this layout object
- *
- * Once the content object is set, a previously set one will be deleted.
- * If you want to keep that old content object, use the
- * elm_object_part_content_unset() function.
- *
- * @note In an Edje theme, the part used as a content container is called @c
- * SWALLOW. This is why the parameter name is called @p swallow, but it is
- * expected to be a part name just like the second parameter of
- * elm_layout_box_append().
- *
- * @see elm_layout_box_append()
- * @see elm_object_part_content_get()
- * @see elm_object_part_content_unset()
- * @see @ref secBox
- * @deprecated use elm_object_part_content_set() instead
- *
- * @ingroup Layout
- */
-EINA_DEPRECATED EAPI void         elm_layout_content_set(Evas_Object *obj, const char *swallow, Evas_Object *content) EINA_ARG_NONNULL(1);
-
-/**
- * Get the child object in the given content part.
- *
- * @param obj The layout object
- * @param swallow The SWALLOW part to get its content
- *
- * @return The swallowed object or NULL if none or an error occurred
- *
- * @deprecated use elm_object_part_content_get() instead
- *
- * @ingroup Layout
- */
-EINA_DEPRECATED EAPI Evas_Object *elm_layout_content_get(const Evas_Object *obj, const char *swallow) EINA_ARG_NONNULL(1);
-
-/**
- * Unset the layout content.
- *
- * @param obj The layout object
- * @param swallow The swallow part name in the edje file
- * @return The content that was being used
- *
- * Unparent and return the content object which was set for this part.
- *
- * @deprecated use elm_object_part_content_unset() instead
- *
- * @ingroup Layout
- */
-EINA_DEPRECATED EAPI Evas_Object *elm_layout_content_unset(Evas_Object *obj, const char *swallow) EINA_ARG_NONNULL(1);
-
-/**
- * Set the text of the given part
- *
- * @param obj The layout object
- * @param part The TEXT part where to set the text
- * @param text The text to set
- *
- * @ingroup Layout
- * @deprecated use elm_object_part_text_set() instead.
- */
-EINA_DEPRECATED EAPI void         elm_layout_text_set(Evas_Object *obj, const char *part, const char *text) EINA_ARG_NONNULL(1);
-
-/**
- * Get the text set in the given part
- *
- * @param obj The layout object
- * @param part The TEXT part to retrieve the text off
- *
- * @return The text set in @p part
- *
- * @ingroup Layout
- * @deprecated use elm_object_part_text_get() instead.
- */
-EINA_DEPRECATED EAPI const char  *elm_layout_text_get(const Evas_Object *obj, const char *part) EINA_ARG_NONNULL(1);
 
 /**
  * Append child to layout box part.
@@ -691,28 +609,6 @@ EAPI Eina_Bool                    elm_layout_part_cursor_engine_only_get(const E
  */
 #define elm_layout_end_get(_ly) \
   elm_object_part_content_get((_ly), "elm.swallow.end")
-
-/**
- * @def elm_layout_label_set
- * Convienience macro to set the label in a layout that follows the
- * Elementary naming convention for its parts.
- *
- * @ingroup Layout
- * @deprecated use elm_object_text_set() instead.
- */
-#define elm_layout_label_set(_ly, _txt) \
-  elm_layout_text_set((_ly), "elm.text", (_txt))
-
-/**
- * @def elm_layout_label_get
- * Convenience macro to get the label in a layout that follows the
- * Elementary naming convention for its parts.
- *
- * @ingroup Layout
- * @deprecated use elm_object_text_set() instead.
- */
-#define elm_layout_label_get(_ly) \
-  elm_layout_text_get((_ly), "elm.text")
 
 /* smart callbacks called:
  * "theme,changed" - when elm theme is changed.

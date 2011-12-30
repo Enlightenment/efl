@@ -56,11 +56,10 @@
  */
 
 /**
- * @enum _Elm_Gesture_Types
  * Enum of supported gesture types.
  * @ingroup Elm_Gesture_Layer
  */
-enum _Elm_Gesture_Types
+typedef enum
 {
    ELM_GESTURE_FIRST = 0,
 
@@ -78,35 +77,21 @@ enum _Elm_Gesture_Types
    ELM_GESTURE_ROTATE, /**< Rotate */
 
    ELM_GESTURE_LAST
-};
-
-/**
- * @typedef Elm_Gesture_Types
- * gesture types enum
- * @ingroup Elm_Gesture_Layer
- */
-typedef enum _Elm_Gesture_Types Elm_Gesture_Types;
+} Elm_Gesture_Types;
 
 /**
  * @enum _Elm_Gesture_State
  * Enum of gesture states.
  * @ingroup Elm_Gesture_Layer
  */
-enum _Elm_Gesture_State
+typedef enum
 {
    ELM_GESTURE_STATE_UNDEFINED = -1, /**< Gesture not STARTed */
    ELM_GESTURE_STATE_START, /**< Gesture STARTed     */
    ELM_GESTURE_STATE_MOVE, /**< Gesture is ongoing  */
    ELM_GESTURE_STATE_END, /**< Gesture completed   */
    ELM_GESTURE_STATE_ABORT /**< Onging gesture was ABORTed */
-};
-
-/**
- * @typedef Elm_Gesture_State
- * gesture states enum
- * @ingroup Elm_Gesture_Layer
- */
-typedef enum _Elm_Gesture_State Elm_Gesture_State;
+} Elm_Gesture_State;
 
 /**
  * @struct _Elm_Gesture_Taps_Info
@@ -247,9 +232,7 @@ typedef Evas_Event_Flags (*Elm_Gesture_Event_Cb)(void *data, void *event_info);
  *
  * @ingroup Elm_Gesture_Layer
  */
-EAPI void
-                  elm_gesture_layer_cb_set(Evas_Object *obj, Elm_Gesture_Types idx, Elm_Gesture_State cb_type, Elm_Gesture_Event_Cb cb, void *data)
-EINA_ARG_NONNULL(1);
+EAPI void         elm_gesture_layer_cb_set(Evas_Object *obj, Elm_Gesture_Types idx, Elm_Gesture_State cb_type, Elm_Gesture_Event_Cb cb, void *data) EINA_ARG_NONNULL(1);
 
 /**
  * Call this function to get repeat-events settings.

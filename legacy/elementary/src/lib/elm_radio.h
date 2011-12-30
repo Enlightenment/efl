@@ -39,71 +39,7 @@
  * @param parent The parent object
  * @return The new object or NULL if it cannot be created
  */
-EAPI Evas_Object *
-                                  elm_radio_add(Evas_Object *parent)
-EINA_ARG_NONNULL(1);
-
-/**
- * @brief Set the text label of the radio object
- *
- * @param obj The radio object
- * @param label The text label string in UTF-8
- *
- * @deprecated use elm_object_text_set() instead.
- */
-EINA_DEPRECATED EAPI void         elm_radio_label_set(Evas_Object *obj, const char *label) EINA_ARG_NONNULL(1);
-
-/**
- * @brief Get the text label of the radio object
- *
- * @param obj The radio object
- * @return The text label string in UTF-8
- *
- * @deprecated use elm_object_text_set() instead.
- */
-EINA_DEPRECATED EAPI const char  *elm_radio_label_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
-
-/**
- * @brief Set the icon object of the radio object
- *
- * @param obj The radio object
- * @param icon The icon object
- *
- * Once the icon object is set, a previously set one will be deleted. If you
- * want to keep that old content object, use the elm_radio_icon_unset()
- * function.
- *
- * @deprecated use elm_object_part_content_set() instead.
- *
- */
-EINA_DEPRECATED EAPI void         elm_radio_icon_set(Evas_Object *obj, Evas_Object *icon) EINA_ARG_NONNULL(1);
-
-/**
- * @brief Get the icon object of the radio object
- *
- * @param obj The radio object
- * @return The icon object
- *
- * @see elm_radio_icon_set()
- *
- * @deprecated use elm_object_part_content_get() instead.
- *
- */
-EINA_DEPRECATED EAPI Evas_Object *elm_radio_icon_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
-
-/**
- * @brief Unset the icon used for the radio object
- *
- * @param obj The radio object
- * @return The icon object that was being used
- *
- * Unparent and return the icon object which was set for this widget.
- *
- * @see elm_radio_icon_set()
- * @deprecated use elm_object_part_content_unset() instead.
- *
- */
-EINA_DEPRECATED EAPI Evas_Object *elm_radio_icon_unset(Evas_Object *obj) EINA_ARG_NONNULL(1);
+EAPI Evas_Object                 *elm_radio_add(Evas_Object *parent) EINA_ARG_NONNULL(1);
 
 /**
  * @brief Add this radio to a group of other radio objects

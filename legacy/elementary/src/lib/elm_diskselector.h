@@ -74,31 +74,6 @@ EAPI Eina_Bool              elm_diskselector_round_get(const Evas_Object *obj) E
 /**
  * Get the side labels max length.
  *
- * @deprecated use elm_diskselector_side_label_length_get() instead:
- *
- * @param obj The diskselector object.
- * @return The max length defined for side labels, or 0 if not a valid
- * diskselector.
- *
- * @ingroup Diskselector
- */
-EINA_DEPRECATED EAPI int    elm_diskselector_side_label_lenght_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
-
-/**
- * Set the side labels max length.
- *
- * @deprecated use elm_diskselector_side_label_length_set() instead:
- *
- * @param obj The diskselector object.
- * @param len The max length defined for side labels.
- *
- * @ingroup Diskselector
- */
-EINA_DEPRECATED EAPI void   elm_diskselector_side_label_lenght_set(Evas_Object *obj, int len) EINA_ARG_NONNULL(1);
-
-/**
- * Get the side labels max length.
- *
  * @see elm_diskselector_side_label_length_set() for details.
  *
  * @param obj The diskselector object.

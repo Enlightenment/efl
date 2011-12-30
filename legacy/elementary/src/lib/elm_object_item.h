@@ -18,38 +18,12 @@ EAPI Evas_Object                 *elm_object_item_object_get(const Elm_Object_It
  * @param content The new content of the object item
  *
  * @note Elementary object items may have many contents
- * @deprecated Use elm_object_item_part_content_set instead.
- * @ingroup General
- */
-EINA_DEPRECATED EAPI void         elm_object_item_content_part_set(Elm_Object_Item *it, const char *part, Evas_Object *content);
-
-/**
- * Set a content of an object item
- *
- * @param it The Elementary object item
- * @param part The content part name to set (NULL for the default content)
- * @param content The new content of the object item
- *
- * @note Elementary object items may have many contents
  *
  * @ingroup General
  */
 EAPI void                         elm_object_item_part_content_set(Elm_Object_Item *it, const char *part, Evas_Object *content);
 
 #define elm_object_item_content_set(it, content) elm_object_item_part_content_set((it), NULL, (content))
-
-/**
- * Get a content of an object item
- *
- * @param it The Elementary object item
- * @param part The content part name to unset (NULL for the default content)
- * @return content of the object item or NULL for any error
- *
- * @note Elementary object items may have many contents
- * @deprecated Use elm_object_item_part_content_get instead.
- * @ingroup General
- */
-EAPI Evas_Object                 *elm_object_item_content_part_get(const Elm_Object_Item *it, const char *part);
 
 /**
  * Get a content of an object item
@@ -73,37 +47,12 @@ EAPI Evas_Object                 *elm_object_item_part_content_get(const Elm_Obj
  * @param part The content part name to unset (NULL for the default content)
  *
  * @note Elementary object items may have many contents
- * @deprecated Use elm_object_item_part_content_unset instead.
- * @ingroup General
- */
-EINA_DEPRECATED EAPI Evas_Object *elm_object_item_content_part_unset(Elm_Object_Item *it, const char *part);
-
-/**
- * Unset a content of an object item
- *
- * @param it The Elementary object item
- * @param part The content part name to unset (NULL for the default content)
- *
- * @note Elementary object items may have many contents
  *
  * @ingroup General
  */
 EAPI Evas_Object                 *elm_object_item_part_content_unset(Elm_Object_Item *it, const char *part);
 
 #define elm_object_item_content_unset(it) elm_object_item_part_content_unset((it), NULL)
-
-/**
- * Set a label of an object item
- *
- * @param it The Elementary object item
- * @param part The text part name to set (NULL for the default label)
- * @param label The new text of the label
- *
- * @note Elementary object items may have many labels
- * @deprecated Use elm_object_item_part_text_set instead.
- * @ingroup General
- */
-EINA_DEPRECATED EAPI void         elm_object_item_text_part_set(Elm_Object_Item *it, const char *part, const char *label);
 
 /**
  * Set a label of an object item
@@ -120,18 +69,6 @@ EAPI void                         elm_object_item_part_text_set(Elm_Object_Item 
 
 #define elm_object_item_text_set(it, label) elm_object_item_part_text_set((it), NULL, (label))
 
-/**
- * Get a label of an object item
- *
- * @param it The Elementary object item
- * @param part The text part name to get (NULL for the default label)
- * @return text of the label or NULL for any error
- *
- * @note Elementary object items may have many labels
- * @deprecated Use elm_object_item_part_text_get instead.
- * @ingroup General
- */
-EINA_DEPRECATED EAPI const char  *elm_object_item_text_part_get(const Elm_Object_Item *it, const char *part);
 /**
  * Get a label of an object item
  *

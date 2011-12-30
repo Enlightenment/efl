@@ -21,9 +21,7 @@
  *
  * @ingroup Photo
  */
-EAPI Evas_Object *
-               elm_photo_add(Evas_Object *parent)
-EINA_ARG_NONNULL(1);
+EAPI Evas_Object *elm_photo_add(Evas_Object *parent) EINA_ARG_NONNULL(1);
 
 /**
  * Set the file that will be used as photo

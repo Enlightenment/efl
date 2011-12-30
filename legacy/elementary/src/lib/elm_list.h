@@ -61,7 +61,7 @@
  *
  * @ingroup List
  */
-typedef enum _Elm_List_Mode
+typedef enum
 {
    ELM_LIST_COMPRESS = 0, /**< Won't set any of its size hints to inform how a possible container should resize it. Then, if it's not created as a "resize object", it might end with zero dimensions. The list will respect the container's geometry and, if any of its items won't fit into its transverse axis, one won't be able to scroll it in that direction. */
    ELM_LIST_SCROLL, /**< Default value. Won't set any of its size hints to inform how a possible container should resize it. Then, if it's not created as a "resize object", it might end with zero dimensions. The list will respect the container's geometry and, if any of its items won't fit into its transverse axis, one will be able to scroll it in that direction (large items will get cropped). */
@@ -83,9 +83,7 @@ typedef struct _Elm_List_Item Elm_List_Item;    /**< Item of Elm_List. Sub-type 
  *
  * @ingroup List
  */
-EAPI Evas_Object *
-                                  elm_list_add(Evas_Object *parent)
-EINA_ARG_NONNULL(1);
+EAPI Evas_Object                 *elm_list_add(Evas_Object *parent) EINA_ARG_NONNULL(1);
 
 /**
  * Starts the list.
@@ -854,7 +852,6 @@ EAPI void                         elm_list_item_end_set(Elm_List_Item *item, Eva
  * @ingroup List
  */
 EAPI Evas_Object                 *elm_list_item_object_get(const Elm_List_Item *item) EINA_ARG_NONNULL(1);
-EINA_DEPRECATED EAPI Evas_Object *elm_list_item_base_get(const Elm_List_Item *item) EINA_ARG_NONNULL(1);
 
 /**
  * Get the label of item.

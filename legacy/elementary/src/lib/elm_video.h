@@ -47,24 +47,6 @@
 EAPI Evas_Object         *elm_player_add(Evas_Object *parent);
 
 /**
- * @brief Link a Elm_Payer with an Elm_Video object.
- *
- * @param player the Elm_Player object.
- * @param video The Elm_Video object.
- *
- * This mean that action on the player widget will affect the
- * video object and the state of the video will be reflected in
- * the player itself.
- *
- * @see elm_player_add()
- * @see elm_video_add()
- * @deprecated use elm_object_part_content_set() instead
- *
- * @ingroup Video
- */
-EINA_DEPRECATED EAPI void elm_player_video_set(Evas_Object *player, Evas_Object *video);
-
-/**
  * @brief Add a new Elm_Video object to the given parent Elementary (container) object.
  *
  * @param parent The parent object

@@ -47,9 +47,7 @@
  * @param parent The parent object
  * @return The new object or NULL if it cannot be created
  */
-EAPI Evas_Object *
-                                  elm_hoversel_add(Evas_Object *parent)
-EINA_ARG_NONNULL(1);
+EAPI Evas_Object                 *elm_hoversel_add(Evas_Object *parent) EINA_ARG_NONNULL(1);
 
 /**
  * @brief This sets the hoversel to expand horizontally.
@@ -95,74 +93,6 @@ EAPI void                         elm_hoversel_hover_parent_set(Evas_Object *obj
  * @see elm_hoversel_hover_parent_set()
  */
 EAPI Evas_Object                 *elm_hoversel_hover_parent_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
-
-/**
- * @brief Set the hoversel button label
- *
- * @param obj The hoversel object
- * @param label The label text.
- *
- * This sets the label of the button that is always visible (before it is
- * clicked and expanded).
- *
- * @deprecated elm_object_text_set()
- */
-EINA_DEPRECATED EAPI void         elm_hoversel_label_set(Evas_Object *obj, const char *label) EINA_ARG_NONNULL(1);
-
-/**
- * @brief Get the hoversel button label
- *
- * @param obj The hoversel object
- * @return The label text.
- *
- * @deprecated elm_object_text_get()
- */
-EINA_DEPRECATED EAPI const char  *elm_hoversel_label_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
-
-/**
- * @brief Set the icon of the hoversel button
- *
- * @param obj The hoversel object
- * @param icon The icon object
- *
- * Sets the icon of the button that is always visible (before it is clicked
- * and expanded).  Once the icon object is set, a previously set one will be
- * deleted, if you want to keep that old content object, use the
- * elm_hoversel_icon_unset() function.
- *
- * @see elm_object_content_set() for the button widget
- * @deprecated Use elm_object_item_part_content_set() instead
- */
-EINA_DEPRECATED EAPI void         elm_hoversel_icon_set(Evas_Object *obj, Evas_Object *icon) EINA_ARG_NONNULL(1);
-
-/**
- * @brief Get the icon of the hoversel button
- *
- * @param obj The hoversel object
- * @return The icon object
- *
- * Get the icon of the button that is always visible (before it is clicked
- * and expanded). Also see elm_object_content_get() for the button widget.
- *
- * @see elm_hoversel_icon_set()
- * @deprecated Use elm_object_item_part_content_get() instead
- */
-EINA_DEPRECATED EAPI Evas_Object *elm_hoversel_icon_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
-
-/**
- * @brief Get and unparent the icon of the hoversel button
- *
- * @param obj The hoversel object
- * @return The icon object that was being used
- *
- * Unparent and return the icon of the button that is always visible
- * (before it is clicked and expanded).
- *
- * @see elm_hoversel_icon_set()
- * @see elm_object_content_unset() for the button widget
- * @deprecated Use elm_object_item_part_content_unset() instead
- */
-EINA_DEPRECATED EAPI Evas_Object *elm_hoversel_icon_unset(Evas_Object *obj) EINA_ARG_NONNULL(1);
 
 /**
  * @brief This triggers the hoversel popup from code, the same as if the user
@@ -262,29 +192,6 @@ EAPI void                         elm_hoversel_item_del(Elm_Object_Item *it) EIN
  * @see elm_hoversel_item_add()
  */
 EAPI void                         elm_hoversel_item_del_cb_set(Elm_Object_Item *it, Evas_Smart_Cb func) EINA_ARG_NONNULL(1);
-
-/**
- * @brief This returns the data pointer supplied with elm_hoversel_item_add()
- * that will be passed to associated function callbacks.
- *
- * @param it The item to get the data from
- * @return The data pointer set with elm_hoversel_item_add()
- *
- * @see elm_hoversel_item_add()
- * @deprecated Use elm_object_item_data_get() instead
- */
-EINA_DEPRECATED EAPI void        *elm_hoversel_item_data_get(const Elm_Object_Item *it) EINA_ARG_NONNULL(1);
-
-/**
- * @brief This returns the label text of the given hoversel item.
- *
- * @param it The item to get the label
- * @return The label text of the hoversel item
- *
- * @see elm_hoversel_item_add()
- * @deprecated Use elm_object_item_text_get() instead
- */
-EINA_DEPRECATED EAPI const char  *elm_hoversel_item_label_get(const Elm_Object_Item *it) EINA_ARG_NONNULL(1);
 
 /**
  * @brief This sets the icon for the given hoversel item.

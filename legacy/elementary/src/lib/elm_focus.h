@@ -107,37 +107,6 @@ EAPI Eina_Bool            elm_object_focus_get(const Evas_Object *obj) EINA_ARG_
 EAPI void                 elm_object_focus_set(Evas_Object *obj, Eina_Bool focus) EINA_ARG_NONNULL(1);
 
 /**
- * Make a given Elementary object the focused one.
- *
- * @param obj The Elementary object to make focused.
- *
- * @note This object, if it can handle focus, will take the focus
- * away from the one who had it previously and will, for now on, be
- * the one receiving input events.
- *
- * @see elm_object_focus_get()
- * @deprecated use elm_object_focus_set() instead.
- *
- * @ingroup Focus
- */
-EINA_DEPRECATED EAPI void elm_object_focus(Evas_Object *obj) EINA_ARG_NONNULL(1);
-
-/**
- * Remove the focus from an Elementary object
- *
- * @param obj The Elementary to take focus from
- *
- * This removes the focus from @p obj, passing it back to the
- * previous element in the focus chain list.
- *
- * @see elm_object_focus() and elm_object_focus_custom_chain_get()
- * @deprecated use elm_object_focus_set() instead.
- *
- * @ingroup Focus
- */
-EINA_DEPRECATED EAPI void elm_object_unfocus(Evas_Object *obj) EINA_ARG_NONNULL(1);
-
-/**
  * Set the ability for an Element object to be focused
  *
  * @param obj The Elementary object to operate on

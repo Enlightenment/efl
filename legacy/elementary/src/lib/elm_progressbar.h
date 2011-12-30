@@ -50,9 +50,7 @@
  *
  * @ingroup Progressbar
  */
-EAPI Evas_Object *
-                                  elm_progressbar_add(Evas_Object *parent)
-EINA_ARG_NONNULL(1);
+EAPI Evas_Object                 *elm_progressbar_add(Evas_Object *parent) EINA_ARG_NONNULL(1);
 
 /**
  * Set whether a given progress bar widget is at "pulsing mode" or
@@ -137,78 +135,6 @@ EAPI void                         elm_progressbar_value_set(Evas_Object *obj, do
  * @ingroup Progressbar
  */
 EAPI double                       elm_progressbar_value_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
-
-/**
- * Set the label of a given progress bar widget
- *
- * @param obj The progress bar object
- * @param label The text label string, in UTF-8
- *
- * @ingroup Progressbar
- * @deprecated use elm_object_text_set() instead.
- */
-EINA_DEPRECATED EAPI void         elm_progressbar_label_set(Evas_Object *obj, const char *label) EINA_ARG_NONNULL(1);
-
-/**
- * Get the label of a given progress bar widget
- *
- * @param obj The progressbar object
- * @return The text label string, in UTF-8
- *
- * @ingroup Progressbar
- * @deprecated use elm_object_text_set() instead.
- */
-EINA_DEPRECATED EAPI const char  *elm_progressbar_label_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
-
-/**
- * Set the icon object of a given progress bar widget
- *
- * @param obj The progress bar object
- * @param icon The icon object
- *
- * Use this call to decorate @p obj with an icon next to it.
- *
- * @note Once the icon object is set, a previously set one will be
- * deleted. If you want to keep that old content object, use the
- * elm_progressbar_icon_unset() function.
- *
- * @see elm_progressbar_icon_get()
- * @deprecated use elm_object_part_content_set() instead.
- *
- * @ingroup Progressbar
- */
-EINA_DEPRECATED EAPI void         elm_progressbar_icon_set(Evas_Object *obj, Evas_Object *icon) EINA_ARG_NONNULL(1);
-
-/**
- * Retrieve the icon object set for a given progress bar widget
- *
- * @param obj The progress bar object
- * @return The icon object's handle, if @p obj had one set, or @c NULL,
- * otherwise (and on errors)
- *
- * @see elm_progressbar_icon_set() for more details
- * @deprecated use elm_object_part_content_get() instead.
- *
- * @ingroup Progressbar
- */
-EINA_DEPRECATED EAPI Evas_Object *elm_progressbar_icon_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
-
-/**
- * Unset an icon set on a given progress bar widget
- *
- * @param obj The progress bar object
- * @return The icon object that was being used, if any was set, or
- * @c NULL, otherwise (and on errors)
- *
- * This call will unparent and return the icon object which was set
- * for this widget, previously, on success.
- *
- * @see elm_progressbar_icon_set() for more details
- * @deprecated use elm_object_part_content_unset() instead.
- *
- * @ingroup Progressbar
- */
-EINA_DEPRECATED EAPI Evas_Object *elm_progressbar_icon_unset(Evas_Object *obj) EINA_ARG_NONNULL(1);
 
 /**
  * Set the (exact) length of the bar region of a given progress bar

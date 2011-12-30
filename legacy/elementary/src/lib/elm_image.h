@@ -31,9 +31,6 @@
  */
 
 /**
- * @enum _Elm_Image_Orient
- * @typedef Elm_Image_Orient
- *
  * Possible orientation options for elm_image_orient_set().
  *
  * @image html elm_image_orient_set.png
@@ -41,22 +38,13 @@
  *
  * @ingroup Image
  */
-typedef enum _Elm_Image_Orient
+typedef enum
 {
    ELM_IMAGE_ORIENT_NONE = 0, /**< no orientation change */
    ELM_IMAGE_ORIENT_0 = 0, /**< no orientation change */
    ELM_IMAGE_ROTATE_90 = 1, /**< rotate 90 degrees clockwise */
    ELM_IMAGE_ROTATE_180 = 2, /**< rotate 180 degrees clockwise */
    ELM_IMAGE_ROTATE_270 = 3, /**< rotate 90 degrees counter-clockwise (i.e. 270 degrees clockwise) */
-   // XXX: remove
-   /*EINA_DEPRECATED */ ELM_IMAGE_ROTATE_90_CW = 1,
-   /**< rotate 90 degrees clockwise */
-   // XXX: remove
-   /*EINA_DEPRECATED */ ELM_IMAGE_ROTATE_180_CW = 2,
-   /**< rotate 180 degrees clockwise */
-   // XXX: remove
-   /*EINA_DEPRECATED */ ELM_IMAGE_ROTATE_90_CCW = 3,
-   /**< rotate 90 degrees counter-clockwise (i.e. 270 degrees clockwise) */
    ELM_IMAGE_FLIP_HORIZONTAL = 4, /**< flip image horizontally */
    ELM_IMAGE_FLIP_VERTICAL = 5, /**< flip image vertically */
    ELM_IMAGE_FLIP_TRANSPOSE = 6, /**< flip the image along the y = (width - x) line (bottom-left to top-right) */
@@ -73,9 +61,7 @@ typedef enum _Elm_Image_Orient
  *
  * @ingroup Image
  */
-EAPI Evas_Object *
-                      elm_image_add(Evas_Object *parent)
-EINA_ARG_NONNULL(1);
+EAPI Evas_Object     *elm_image_add(Evas_Object *parent) EINA_ARG_NONNULL(1);
 
 /**
  * Set the file that will be used as image.

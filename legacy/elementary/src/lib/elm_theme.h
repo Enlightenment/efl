@@ -345,9 +345,7 @@ EAPI void             elm_theme_name_available_list_free(Eina_List *list);
  * configuration difficult. Avoid any custom themes at all if it can be
  * helped.
  */
-EAPI void
-                      elm_object_theme_set(Evas_Object *obj, Elm_Theme *th)
-EINA_ARG_NONNULL(1);
+EAPI void             elm_object_theme_set(Evas_Object *obj, Elm_Theme *th) EINA_ARG_NONNULL(1);
 
 /**
  * Get the specific theme to be used

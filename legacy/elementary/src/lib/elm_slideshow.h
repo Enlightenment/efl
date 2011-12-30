@@ -91,9 +91,7 @@ struct _Elm_Slideshow_Item_Class
  *
  * @ingroup Slideshow
  */
-EAPI Evas_Object *
-                           elm_slideshow_add(Evas_Object *parent)
-EINA_ARG_NONNULL(1);
+EAPI Evas_Object          *elm_slideshow_add(Evas_Object *parent) EINA_ARG_NONNULL(1);
 
 /**
  * Add (append) a new item in a given slideshow widget.
@@ -368,17 +366,6 @@ EAPI const Eina_List      *elm_slideshow_items_get(const Evas_Object *obj) EINA_
  * @ingroup Slideshow
  */
 EAPI void                  elm_slideshow_item_del(Elm_Object_Item *it) EINA_ARG_NONNULL(1);
-
-/**
- * Return the data associated with a given slideshow item
- *
- * @param it The slideshow item
- * @return Returns the data associated to this item
- *
- * @deprecated use elm_object_item_data_get() instead
- * @ingroup Slideshow
- */
-EINA_DEPRECATED EAPI void *elm_slideshow_item_data_get(const Elm_Object_Item *it) EINA_ARG_NONNULL(1);
 
 /**
  * Returns the currently displayed item, in a given slideshow widget

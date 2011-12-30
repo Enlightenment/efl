@@ -287,9 +287,7 @@ struct _Elm_Gengrid_Item_Class
  *
  * @ingroup Gengrid
  */
-EAPI Evas_Object *
-                                   elm_gengrid_add(Evas_Object *parent)
-EINA_ARG_NONNULL(1);
+EAPI Evas_Object                  *elm_gengrid_add(Evas_Object *parent) EINA_ARG_NONNULL(1);
 
 /**
  * Set the size for the items of a given gengrid widget

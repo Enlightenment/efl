@@ -119,7 +119,7 @@ struct _Elm_Web_Frame_Load_Error
 /**
  * The possibles types that the items in a menu can be
  */
-typedef enum _Elm_Web_Menu_Item_Type
+typedef enum
 {
    ELM_WEB_MENU_SEPARATOR,
    ELM_WEB_MENU_GROUP,
@@ -196,7 +196,7 @@ struct _Elm_Web_Download
 /**
  * Types of zoom available.
  */
-typedef enum _Elm_Web_Zoom_Mode
+typedef enum
 {
    ELM_WEB_ZOOM_MODE_MANUAL = 0, /**< Zoom controlled normally by elm_web_zoom_set */
    ELM_WEB_ZOOM_MODE_AUTO_FIT, /**< Zoom until content fits in web object */
@@ -348,9 +348,7 @@ typedef void (*Elm_Web_Console_Message)(void *data, Evas_Object *obj, const char
  * @see elm_web_uri_set()
  * @see elm_web_webkit_view_get()
  */
-EAPI Evas_Object *
-                       elm_web_add(Evas_Object *parent)
-EINA_ARG_NONNULL(1);
+EAPI Evas_Object      *elm_web_add(Evas_Object *parent) EINA_ARG_NONNULL(1);
 
 /**
  * Get internal ewk_view object from web object.

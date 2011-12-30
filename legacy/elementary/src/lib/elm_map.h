@@ -65,9 +65,6 @@
  */
 
 /**
- * @enum _Elm_Map_Zoom_Mode
- * @typedef Elm_Map_Zoom_Mode
- *
  * Set map's zoom behavior. It can be set to manual or automatic.
  *
  * Default value is #ELM_MAP_ZOOM_MODE_MANUAL.
@@ -82,7 +79,7 @@
  *
  * @ingroup Map
  */
-typedef enum _Elm_Map_Zoom_Mode
+typedef enum
 {
    ELM_MAP_ZOOM_MODE_MANUAL, /**< Zoom controlled manually by elm_map_zoom_set(). It's set by default. */
    ELM_MAP_ZOOM_MODE_AUTO_FIT, /**< Zoom until map fits inside the scroll frame with no pixels outside this area. */
@@ -91,9 +88,6 @@ typedef enum _Elm_Map_Zoom_Mode
 } Elm_Map_Zoom_Mode;
 
 /**
- * @enum _Elm_Map_Route_Sources
- * @typedef Elm_Map_Route_Sources
- *
  * Set route service to be used. By default used source is
  * #ELM_MAP_ROUTE_SOURCE_YOURS.
  *
@@ -102,7 +96,7 @@ typedef enum _Elm_Map_Zoom_Mode
  *
  * @ingroup Map
  */
-typedef enum _Elm_Map_Route_Sources
+typedef enum
 {
    ELM_MAP_ROUTE_SOURCE_YOURS, /**< Routing service http://www.yournavigation.org/ . Set by default.*/
    ELM_MAP_ROUTE_SOURCE_MONAV, /**< MoNav offers exact routing without heuristic assumptions. Its routing core is based on Contraction Hierarchies. It's not working with Map yet. */
@@ -110,23 +104,20 @@ typedef enum _Elm_Map_Route_Sources
    ELM_MAP_ROUTE_SOURCE_LAST
 } Elm_Map_Route_Sources;
 
-typedef enum _Elm_Map_Name_Sources
+typedef enum
 {
    ELM_MAP_NAME_SOURCE_NOMINATIM,
    ELM_MAP_NAME_SOURCE_LAST
 } Elm_Map_Name_Sources;
 
 /**
- * @enum _Elm_Map_Route_Type
- * @typedef Elm_Map_Route_Type
- *
  * Set type of transport used on route.
  *
  * @see elm_map_route_add()
  *
  * @ingroup Map
  */
-typedef enum _Elm_Map_Route_Type
+typedef enum
 {
    ELM_MAP_ROUTE_TYPE_MOTOCAR, /**< Route should consider an automobile will be used. */
    ELM_MAP_ROUTE_TYPE_BICYCLE, /**< Route should consider a bicycle will be used by the user. */
@@ -135,23 +126,20 @@ typedef enum _Elm_Map_Route_Type
 } Elm_Map_Route_Type;
 
 /**
- * @enum _Elm_Map_Route_Method
- * @typedef Elm_Map_Route_Method
- *
  * Set the routing method, what should be priorized, time or distance.
  *
  * @see elm_map_route_add()
  *
  * @ingroup Map
  */
-typedef enum _Elm_Map_Route_Method
+typedef enum
 {
    ELM_MAP_ROUTE_METHOD_FASTEST, /**< Route should priorize time. */
    ELM_MAP_ROUTE_METHOD_SHORTEST, /**< Route should priorize distance. */
    ELM_MAP_ROUTE_METHOD_LAST
 } Elm_Map_Route_Method;
 
-typedef enum _Elm_Map_Name_Method
+typedef enum
 {
    ELM_MAP_NAME_METHOD_SEARCH,
    ELM_MAP_NAME_METHOD_REVERSE,
@@ -190,9 +178,7 @@ typedef Eina_Bool                  (*ElmMapModuleCoordIntoGeoFunc)(const Evas_Ob
  *
  * @ingroup Map
  */
-EAPI Evas_Object *
-                           elm_map_add(Evas_Object *parent)
-EINA_ARG_NONNULL(1);
+EAPI Evas_Object          *elm_map_add(Evas_Object *parent) EINA_ARG_NONNULL(1);
 
 /**
  * Set the zoom level of the map.

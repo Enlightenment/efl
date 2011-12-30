@@ -27,9 +27,7 @@
  * @param obj The object
  * @ingroup Scrollhints
  */
-EAPI void
-               elm_object_scroll_hold_push(Evas_Object *obj)
-EINA_ARG_NONNULL(1);
+EAPI void      elm_object_scroll_hold_push(Evas_Object *obj) EINA_ARG_NONNULL(1);
 
 /**
  * Pop the scroll hold by 1

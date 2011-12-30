@@ -60,9 +60,7 @@
  *
  * @ingroup Naviframe
  */
-EAPI Evas_Object *
-                      elm_naviframe_add(Evas_Object *parent)
-EINA_ARG_NONNULL(1);
+EAPI Evas_Object     *elm_naviframe_add(Evas_Object *parent) EINA_ARG_NONNULL(1);
 
 /**
  * @brief Push a new item to the top of the naviframe stack (and show it).

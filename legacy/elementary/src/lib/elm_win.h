@@ -84,7 +84,7 @@
  *
  * Currently, only the X11 backed engines use them.
  */
-typedef enum _Elm_Win_Type
+typedef enum
 {
    ELM_WIN_BASIC, /**< A normal window. Indicates a normal, top-level
                      window. Almost every window will be created with this
@@ -142,7 +142,7 @@ typedef enum _Elm_Win_Type
  * any of the following layouts for the virtual keyboard.
  */
 // XXX: remove this as it conflicts with input panel
-typedef enum _Elm_Win_Keyboard_Mode
+typedef enum
 {
    ELM_WIN_KEYBOARD_UNKNOWN, /**< Unknown keyboard state */
    ELM_WIN_KEYBOARD_OFF, /**< Request to deactivate the keyboard */
@@ -168,7 +168,7 @@ typedef enum _Elm_Win_Keyboard_Mode
  * When running under an Illume session, a window may send commands to the
  * Illume manager to perform different actions.
  */
-typedef enum _Elm_Illume_Command
+typedef enum
 {
    ELM_ILLUME_COMMAND_FOCUS_BACK, /**< Reverts focus to the previous window */
    ELM_ILLUME_COMMAND_FOCUS_FORWARD, /**< Sends focus to the next window in the list */
@@ -236,9 +236,7 @@ EAPI Evas_Object          *elm_win_util_standard_add(const char *name, const cha
  * @param obj The window object
  * @param subobj The resize object to add
  */
-EAPI void
-                           elm_win_resize_object_add(Evas_Object *obj, Evas_Object *subobj)
-EINA_ARG_NONNULL(1);
+EAPI void                  elm_win_resize_object_add(Evas_Object *obj, Evas_Object *subobj) EINA_ARG_NONNULL(1);
 
 /**
  * Delete @p subobj as a resize object of window @p obj.

@@ -51,9 +51,7 @@
  * @ingroup Spinner
  *
  */
-EAPI Evas_Object *
-                 elm_spinner_add(Evas_Object *parent)
-EINA_ARG_NONNULL(1);
+EAPI Evas_Object *elm_spinner_add(Evas_Object *parent) EINA_ARG_NONNULL(1);
 
 /**
  * Set the format string of the displayed label.
