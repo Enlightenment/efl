@@ -33,7 +33,7 @@
  * BSD compliant.
  *
  * These functions are intended to be used in the Enlightenment
- * Fundations Libraries only and can be compiled only on Windows,
+ * Foundation Libraries only and can be compiled only on Windows,
  * using MSYS/MinGW on Windows, and cross-compilation on Unix. This
  * library is minimal in the sense that only the functions needed to
  * compile the EFL are available. The purpose of this library is NOT
@@ -65,7 +65,7 @@
  * @brief The file that provides miscellaneous functions ported from Unix.
  * @defgroup Evil Miscellaneous functions ported from Unix.
  *
- * This header provides miscallenaous functions that exist on Unix
+ * This header provides miscellaneous functions that exist on Unix
  * but not on Windows platform. They try to follow the conformance of
  * the Unix versions.
  */
