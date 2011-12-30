@@ -37,9 +37,100 @@ lib_LTLIBRARIES = libelementary.la
 
 includes_HEADERS = \
 Elementary.h \
-Elementary_Cursor.h \
-elm_widget.h
+Elementary_Cursor.h
 includesdir = $(includedir)/elementary-@VMAJ@
+
+includesunstable_HEADERS = \
+elm_widget.h
+includesunstabledir = $(includedir)/elementary-@VMAJ@
+
+includesub_HEADERS = \
+elc_anchorblock.h \
+elc_anchorview.h \
+elc_ctxpopup.h \
+elc_fileselector_button.h \
+elc_fileselector_entry.h \
+elc_fileselector.h \
+elc_hoversel.h \
+elc_multibuttonentry.h \
+elc_naviframe.h \
+elm_actionslider.h \
+elm_app.h \
+elm_bg.h \
+elm_box.h \
+elm_bubble.h \
+elm_button.h \
+elm_cache.h \
+elm_calendar.h \
+elm_check.h \
+elm_clock.h \
+elm_cnp.h \
+elm_colorselector.h \
+elm_config.h \
+elm_conform.h \
+elm_cursor.h \
+elm_debug.h \
+elm_deprecated.h \
+elm_diskselector.h \
+elm_engine.h \
+elm_entry.h \
+elm_factory.h \
+elm_finger.h \
+elm_flip.h \
+elm_flipselector.h \
+elm_focus.h \
+elm_fonts.h \
+elm_frame.h \
+elm_general.h \
+elm_gengrid.h \
+elm_genlist.h \
+elm_gesture_layer.h \
+elm_glview.h \
+elm_grid.h \
+elm_hover.h \
+elm_icon.h \
+elm_image.h \
+elm_index.h \
+elm_label.h \
+elm_layout.h \
+elm_list.h \
+elm_macros.h \
+elm_mapbuf.h \
+elm_map.h \
+elm_menu.h \
+elm_mirroring.h \
+elm_need.h \
+elm_notify.h \
+elm_object.h \
+elm_object_item.h \
+elm_pager.h \
+elm_panel.h \
+elm_panes.h \
+elm_password.h \
+elm_photocam.h \
+elm_photo.h \
+elm_progressbar.h \
+elm_radio.h \
+elm_route.h \
+elm_scale.h \
+elm_scroller.h \
+elm_scroll.h \
+elm_segment_control.h \
+elm_separator.h \
+elm_slider.h \
+elm_slideshow.h \
+elm_spinner.h \
+elm_store.h \
+elm_table.h \
+elm_theme.h \
+elm_thumb.h \
+elm_toolbar.h \
+elm_tooltip.h \
+elm_transit.h \
+elm_video.h \
+elm_web.h \
+elm_win.h
+includesubdir = $(includedir)/elementary-@VMAJ@/
 
 libelementary_la_SOURCES = \
 elm_priv.h \
@@ -75,9 +166,9 @@ elm_flipselector.c \
 elm_font.c \
 elm_frame.c \
 elm_gen.c \
-elm_genlist.h \
 elm_gengrid.c \
 elm_genlist.c \
+elm_gen_common.h \
 elm_gesture_layer.c \
 elm_glview.c \
 elm_grid.c \

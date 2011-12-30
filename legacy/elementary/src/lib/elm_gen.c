@@ -2,7 +2,7 @@
 #include <Elementary_Cursor.h>
 #include "elm_priv.h"
 #include "els_scroller.h"
-#include "elm_genlist.h"
+#include "elm_gen_common.h"
 
 EAPI void
 elm_gen_clear(Evas_Object *obj)

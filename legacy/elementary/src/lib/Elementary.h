@@ -91,8 +91,8 @@ INCLUDES = -I$(top_srcdir)
 bin_PROGRAMS = myapp
 
 myapp_SOURCES = main.c
-myapp_LDADD = @ELEMENTARY_LIBS@
-myapp_CFLAGS = @ELEMENTARY_CFLAGS@
+myapp_LDADD = -pthread -L/usr/local/lib -leina -leet -levas -lecore -lecore_evas -lecore_file -ledje  
+myapp_CFLAGS = -I/usr/local/include/eina-1 -I/usr/local/include/eina-1/eina -I/usr/local/include/eet-1 -I/usr/local/include/evas-1 -I/usr/local/include/ecore-1 -I/usr/local/include/edje-1 -I/usr/local/include -I/usr/local/include/embryo-1 -I/usr/include/freetype2 -I/usr/include/glib-2.0 -I/usr/lib/i386-linux-gnu/glib-2.0/include -I/usr/include/valgrind -I/usr/include/fribidi -I/usr/include/alsa -I/usr/include/lua5.1  
 @endverbatim
  *
  * autogen.sh:
@@ -310,18 +310,18 @@ contact with the developers and maintainers.
  * Elementary API.
  */
 
-@ELM_UNIX_DEF@ ELM_UNIX
-@ELM_WIN32_DEF@ ELM_WIN32
-@ELM_WINCE_DEF@ ELM_WINCE
-@ELM_EDBUS_DEF@ ELM_EDBUS
-@ELM_EFREET_DEF@ ELM_EFREET
-@ELM_ETHUMB_DEF@ ELM_ETHUMB
-@ELM_WEB_DEF@ ELM_WEB
-@ELM_EMAP_DEF@ ELM_EMAP
-@ELM_DEBUG_DEF@ ELM_DEBUG
-@ELM_ALLOCA_H_DEF@ ELM_ALLOCA_H
-@ELM_LIBINTL_H_DEF@ ELM_LIBINTL_H
-@ELM_DIRENT_H_DEF@ ELM_DIRENT_H
+#define ELM_UNIX
+#undef ELM_WIN32
+#undef ELM_WINCE
+#define ELM_EDBUS
+#define ELM_EFREET
+#define ELM_ETHUMB
+#undef ELM_WEB
+#undef ELM_EMAP
+#undef ELM_DEBUG
+#define ELM_ALLOCA_H
+#define ELM_LIBINTL_H
+#define ELM_DIRENT_H
 
 /* Standard headers for standard system calls etc. */
 #include <stdio.h>
@@ -373,8 +373,8 @@ contact with the developers and maintainers.
 #include <Ecore.h>
 #include <Ecore_Evas.h>
 #include <Ecore_File.h>
-@ELEMENTARY_ECORE_IMF_INC@
-@ELEMENTARY_ECORE_CON_INC@
+#include <Ecore_IMF.h>
+#include <Ecore_Con.h>
 #include <Edje.h>
 
 #ifdef ELM_EDBUS
@@ -432,8 +432,8 @@ contact with the developers and maintainers.
 extern "C" {
 #endif
 
-#define ELM_VERSION_MAJOR @VMAJ@
-#define ELM_VERSION_MINOR @VMIN@
+#define ELM_VERSION_MAJOR 0
+#define ELM_VERSION_MINOR 8
 
    typedef struct _Elm_Version
      {
