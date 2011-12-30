@@ -697,6 +697,8 @@ static inline Eina_Bool eio_file_is_lnk(const struct stat *stat);
  * @defgroup Eio_Map Manipulate an Eina_File assynchronously
  *
  * @brief This function help manipulating file assynchronously.
+ *
+ * @{
  */
 
 /**
