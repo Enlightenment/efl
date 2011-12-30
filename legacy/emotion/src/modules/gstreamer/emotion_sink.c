@@ -472,13 +472,13 @@ evas_video_sink_samsung_main_render(void *data)
 {
    Emotion_Gstreamer_Buffer *send;
    Emotion_Video_Stream *vstream;
-   EvasVideoSinkPrivate* priv;
+   EvasVideoSinkPrivate *priv = NULL;
    GstBuffer* buffer;
    unsigned char *evas_data;
    const guint8 *gst_data;
    GstFormat fmt = GST_FORMAT_TIME;
    gint64 pos;
-   Eina_Bool preroll;
+   Eina_Bool preroll = EINA_FALSE;
    int stride, elevation;
    Evas_Coord w, h;
 
@@ -591,10 +591,13 @@ evas_video_sink_samsung_main_render(void *data)
    emotion_gstreamer_buffer_free(send);
 
  exit_stream:
-   if (preroll || !priv->o) return ;
-
-   if (!priv->unlocked)
-     eina_condition_signal(&priv->c);
+   if (priv)
+     {
+        if (preroll || !priv->o) return;
+        
+        if (!priv->unlocked)
+          eina_condition_signal(&priv->c);
+     }
 }
 
 static void
@@ -603,12 +606,12 @@ evas_video_sink_main_render(void *data)
    Emotion_Gstreamer_Buffer *send;
    Emotion_Gstreamer_Video *ev = NULL;
    Emotion_Video_Stream *vstream;
-   EvasVideoSinkPrivate* priv;
-   GstBuffer* buffer;
+   EvasVideoSinkPrivate *priv = NULL;
+   GstBuffer *buffer;
    unsigned char *evas_data;
    GstFormat fmt = GST_FORMAT_TIME;
    gint64 pos;
-   Eina_Bool preroll;
+   Eina_Bool preroll = EINA_FALSE;
 
    send = data;
 
@@ -692,10 +695,13 @@ evas_video_sink_main_render(void *data)
    emotion_gstreamer_buffer_free(send);
 
  exit_stream:
-   if (preroll || !priv->o) return ;
-
-   if (!priv->unlocked)
-     eina_condition_signal(&priv->c);
+   if (priv)
+     {
+        if (preroll || !priv->o) return;
+        
+        if (!priv->unlocked)
+          eina_condition_signal(&priv->c);
+     }
 }
 
 static void
@@ -1076,7 +1082,7 @@ gstreamer_video_sink_new(Emotion_Gstreamer_Video *ev,
        evas_render_method_list_free(engines);
      }
 #else
-# warning "no ecore_x or xoverlay"
+# warning "missing: ecore_x OR xoverlay"
 #endif
 
    esink = gst_element_factory_make("emotion-sink", "sink");

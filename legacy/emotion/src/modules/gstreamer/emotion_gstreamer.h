@@ -1,6 +1,10 @@
 #ifndef __EMOTION_GSTREAMER_H__
 #define __EMOTION_GSTREAMER_H__
 
+#ifdef HAVE_ECORE_X
+#include <Ecore_X.h>
+#endif
+
 typedef void (*Evas_Video_Convert_Cb)(unsigned char *evas_data,
                                       const unsigned char *gst_data,
                                       unsigned int w,
