@@ -7,11 +7,7 @@
 #include <sys/stat.h>
 #include <fcntl.h>
 
-#ifdef _WIN32
-# include <windows.h>
-#else
-#include <semaphore.h>
-#endif
+#include <Eina.h>
 
 #define DEFAULTWIDTH		320
 #define DEFAULTHEIGHT		240

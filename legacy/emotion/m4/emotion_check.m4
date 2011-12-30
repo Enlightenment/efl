@@ -56,7 +56,7 @@ AC_DEFUN([EMOTION_CHECK_DEP_GENERIC_VLC],
 requirement=""
 
 PKG_CHECK_MODULES([GENERIC_VLC],
-   [libvlc >= 0.9],
+   [libvlc >= 0.9 eina >= 1.1.99],
    [
     have_dep="yes"
     requirement="libvlc"

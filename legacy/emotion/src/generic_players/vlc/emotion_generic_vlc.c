@@ -18,6 +18,7 @@
 #include <signal.h>
 
 #include <vlc/vlc.h>
+
 #include <Emotion_Generic_Plugin.h>
 
 enum _Thread_Events {
