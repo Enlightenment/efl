@@ -177,3 +177,7 @@
 2011-12-30  Vincent Torri
 
 	* Add Eina_Semaphore abstraction API.
+
+2011-12-30  Cedric Bail
+
+	* Let eina_hash_free behave like free.
