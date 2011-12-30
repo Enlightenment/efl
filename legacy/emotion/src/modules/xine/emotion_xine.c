@@ -1,3 +1,11 @@
+#ifdef HAVE_CONFIG_H
+# include "config.h"
+#endif
+
+#include <Eina.h>
+#include <Evas.h>
+#include <Ecore.h>
+
 #include "Emotion.h"
 #include "emotion_private.h"
 #include "emotion_xine.h"

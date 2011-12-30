@@ -1,10 +1,18 @@
 /***************************************************************************/
 /***                  emotion xine display engine                        ***/
 /***************************************************************************/
+#ifdef HAVE_CONFIG_H
+# include "config.h"
+#endif
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
 #include <string.h>
+
+#include <Eina.h>
+#include <Evas.h>
+#include <Ecore.h>
 
 #include "emotion_private.h"
 #include "emotion_xine.h"
