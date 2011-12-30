@@ -107,19 +107,19 @@ _player_send_cmd(Emotion_Generic_Video *ev, int cmd)
 	ERR("invalid command to player.");
 	return;
      }
-   write(ev->fd_write, &cmd, sizeof(cmd));
+   if (write(ev->fd_write, &cmd, sizeof(cmd)) < 0) perror("write");
 }
 
 static void
 _player_send_int(Emotion_Generic_Video *ev, int number)
 {
-   write(ev->fd_write, &number, sizeof(number));
+   if (write(ev->fd_write, &number, sizeof(number)) < 0) perror("write");
 }
 
 static void
 _player_send_float(Emotion_Generic_Video *ev, float number)
 {
-   write(ev->fd_write, &number, sizeof(number));
+   if (write(ev->fd_write, &number, sizeof(number)) < 0) perror("write");
 }
 
 static void
@@ -131,8 +131,8 @@ _player_send_str(Emotion_Generic_Video *ev, const char *str, Eina_Bool stringsha
      len = eina_stringshare_strlen(str) + 1;
    else
      len = strlen(str) + 1;
-   write(ev->fd_write, &len, sizeof(len));
-   write(ev->fd_write, str, len);
+   if (write(ev->fd_write, &len, sizeof(len)) < 0) perror("write");
+   if (write(ev->fd_write, str, len) < 0) perror("write");
 }
 
 static Eina_Bool
