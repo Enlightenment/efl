@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: elementary\n"
 "Report-Msgid-Bugs-To: enlightenment-devel@lists.sourceforge.net\n"
-"POT-Creation-Date: 2011-12-24 13:15+0900\n"
+"POT-Creation-Date: 2011-12-30 17:56+0900\n"
 "PO-Revision-Date: 2010-12-26 10:05+0200\n"
 "Last-Translator: Tom Hacohen <tom.hacohen@partner.samsung.com>\n"
 "Language-Team: General\n"
@@ -39,7 +39,7 @@ msgid "Clicked"
 msgstr ""
 
 #: src/lib/elm_button.c:408 src/lib/elm_check.c:366 src/lib/elm_radio.c:295
-#: src/lib/elm_toolbar.c:756
+#: src/lib/elm_toolbar.c:757
 msgid "State: Disabled"
 msgstr ""
 
@@ -101,22 +101,22 @@ msgstr ""
 msgid "OFF"
 msgstr ""
 
-#: src/lib/elm_toolbar.c:673
+#: src/lib/elm_toolbar.c:674
 msgid "Selected"
 msgstr ""
 
-#: src/lib/elm_toolbar.c:754
+#: src/lib/elm_toolbar.c:755
 msgid "Separator"
 msgstr ""
 
-#: src/lib/elm_toolbar.c:758
+#: src/lib/elm_toolbar.c:759
 msgid "State: Selected"
 msgstr ""
 
-#: src/lib/elm_toolbar.c:760
+#: src/lib/elm_toolbar.c:761
 msgid "Has menu"
 msgstr ""
 
-#: src/lib/elm_toolbar.c:795
+#: src/lib/elm_toolbar.c:796
 msgid "Tool Item"
 msgstr ""
