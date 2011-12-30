@@ -57,7 +57,7 @@ static void
 _sel_cb(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info)
 {
    Elm_Object_Item *ds_it = event_info;
-   printf("Selected label: %s\n", elm_diskselector_item_label_get(ds_it));
+   printf("Selected label: %s\n", elm_object_item_text_get(ds_it));
 }
 
 static void
@@ -78,7 +78,7 @@ _sel_data_cb(void *data, Evas_Object *obj __UNUSED__, void *event_info)
    char *content = data;
    Elm_Object_Item *ds_it = event_info;
    printf("Selected label: %s with data: %s\n",
-          elm_diskselector_item_label_get(ds_it), content);
+          elm_object_item_text_get(ds_it), content);
 }
 
 static void
@@ -134,7 +134,7 @@ _print_cb(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 
    items = elm_diskselector_items_get(ds);
    EINA_LIST_FOREACH(items, l, ds_it)
-     printf("%s\n", elm_diskselector_item_label_get(ds_it));
+     printf("%s\n", elm_object_item_text_get(ds_it));
 }
 
 static void

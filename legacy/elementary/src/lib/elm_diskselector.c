@@ -65,6 +65,16 @@ static void _item_click_cb(void *data, Evas_Object *obj __UNUSED__,
                            const char *emission __UNUSED__,
                            const char *source __UNUSED__);
 static void _selected_item_indicate(Elm_Diskselector_Item *it);
+static void _item_text_set_hook(Elm_Object_Item *it,
+                                const char *part,
+                                const char *label);
+static const char * _item_text_get_hook(const Elm_Object_Item *it,
+                                        const char *part);
+static void _item_content_set_hook(Elm_Object_Item *it,
+                                   const char *part,
+                                   Evas_Object *content);
+static Evas_Object * _item_content_get_hook(const Elm_Object_Item *it,
+                                            const char *part);
 
 static const char SIG_SELECTED[] = "selected";
 static const Evas_Smart_Cb_Description _signals[] = {
@@ -110,6 +120,11 @@ _item_new(Evas_Object *obj, Evas_Object *icon, const char *label, Evas_Smart_Cb 
 
    it = elm_widget_item_new(obj, Elm_Diskselector_Item);
    if (!it) return NULL;
+
+   elm_widget_item_text_set_hook_set(it, _item_text_set_hook);
+   elm_widget_item_text_get_hook_set(it, _item_text_get_hook);
+   elm_widget_item_content_set_hook_set(it, _item_content_set_hook);
+   elm_widget_item_content_get_hook_set(it, _item_content_get_hook);
 
    it->label = eina_stringshare_add(label);
    it->icon = icon;
@@ -570,8 +585,7 @@ _scroller_stop_cb(void *data, Evas_Object *obj __UNUSED__, void *event_info __UN
    Evas_Coord x, w, ow;
    Eina_List *l, *list;
 
-   if (wd->idler)
-     return;
+   if (wd->idler) return;
 
    if (!wd->round)
      list = wd->items;
@@ -582,13 +596,10 @@ _scroller_stop_cb(void *data, Evas_Object *obj __UNUSED__, void *event_info __UN
    EINA_LIST_FOREACH(list, l, it)
      {
         evas_object_geometry_get(VIEW(it), &x, NULL, &w, NULL);
-        if (abs((int)(ow / 2 - (int)(x + w / 2))) < 10)
-          break;
+        if (abs((int)(ow / 2 - (int)(x + w / 2))) < 10) break;
      }
 
-   if (!it)
-     return;
-
+   if (!it) return;
    _select_item(it);
 }
 
@@ -822,6 +833,44 @@ _check_identical_item(Elm_Diskselector_Item *it, Evas_Object *icon)
         if(dit) _item_icon_set(dit, icon);
         _sizing_eval(wd->self);
      }
+}
+
+static void
+_item_text_set_hook(Elm_Object_Item *it, const char *part, const char *label)
+{
+   ELM_OBJ_ITEM_CHECK_OR_RETURN(it);
+   Elm_Diskselector_Item *item;
+   if (part && strcmp(part, "default")) return;
+   item = (Elm_Diskselector_Item *) it;
+   eina_stringshare_replace(&item->label, label);
+   edje_object_part_text_set(VIEW(item), "elm.text", item->label);
+}
+
+static const char *
+_item_text_get_hook(const Elm_Object_Item *it, const char *part)
+{
+   ELM_OBJ_ITEM_CHECK_OR_RETURN(it, NULL);
+   if (part && strcmp(part, "default")) return NULL;
+   return ((Elm_Diskselector_Item *) it)->label;
+}
+
+static void
+_item_content_set_hook(Elm_Object_Item *it,
+                       const char *part,
+                       Evas_Object *content)
+{
+   ELM_OBJ_ITEM_CHECK_OR_RETURN(it);
+   if (part && strcmp(part, "icon")) return;
+   _item_icon_set((Elm_Diskselector_Item *) it, content);
+   _check_identical_item((Elm_Diskselector_Item *) it, content);
+}
+
+static Evas_Object *
+_item_content_get_hook(const Elm_Object_Item *it, const char *part)
+{
+   ELM_OBJ_ITEM_CHECK_OR_RETURN(it, NULL);
+   if (part && strcmp(part, "icon")) return NULL;
+   return ((Elm_Diskselector_Item *) it)->icon;
 }
 
 EAPI Evas_Object *
@@ -1218,17 +1267,13 @@ elm_diskselector_item_del(Elm_Object_Item * it)
 EAPI const char *
 elm_diskselector_item_label_get(const Elm_Object_Item * it)
 {
-   ELM_OBJ_ITEM_CHECK_OR_RETURN(it, NULL);
-   return ((Elm_Diskselector_Item *) it)->label;
+   return _item_text_get_hook(it, NULL);
 }
 
 EAPI void
 elm_diskselector_item_label_set(Elm_Object_Item * it, const char *label)
 {
-   ELM_OBJ_ITEM_CHECK_OR_RETURN(it);
-   Elm_Diskselector_Item *item = (Elm_Diskselector_Item *) it;
-   eina_stringshare_replace(&item->label, label);
-   edje_object_part_text_set(VIEW(item), "elm.text", item->label);
+   _item_text_set_hook(it, NULL, label);
 }
 
 EAPI Elm_Object_Item *
@@ -1283,23 +1328,19 @@ elm_diskselector_item_del_cb_set(Elm_Object_Item *it, Evas_Smart_Cb func)
 EAPI void *
 elm_diskselector_item_data_get(const Elm_Object_Item *it)
 {
-   ELM_OBJ_ITEM_CHECK_OR_RETURN(it, NULL);
-   return elm_widget_item_data_get(it);
+   return elm_object_item_data_get(it);
 }
 
 EAPI Evas_Object *
 elm_diskselector_item_icon_get(const Elm_Object_Item *it)
 {
-   ELM_OBJ_ITEM_CHECK_OR_RETURN(it, NULL);
-   return ((Elm_Diskselector_Item *) it)->icon;
+   return _item_content_get_hook(it, NULL);
 }
 
 EAPI void
 elm_diskselector_item_icon_set(Elm_Object_Item *it, Evas_Object *icon)
 {
-   ELM_OBJ_ITEM_CHECK_OR_RETURN(it);
-   _item_icon_set((Elm_Diskselector_Item *) it, icon);
-   _check_identical_item((Elm_Diskselector_Item *) it, icon);
+   _item_content_set_hook(it, NULL, icon);
 }
 
 EAPI Elm_Object_Item *

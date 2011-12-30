@@ -8,7 +8,7 @@ static void
 _disk_sel(void *data __UNUSED__, Evas_Object * obj __UNUSED__, void *event_info)
 {
    Elm_Object_Item *ds_it = event_info;
-   printf("Equinox: %s\n", elm_diskselector_item_label_get(ds_it));
+   printf("Equinox: %s\n", elm_object_item_text_get(ds_it));
 }
 
 static void
@@ -17,16 +17,15 @@ _disk_next(void *data __UNUSED__, Evas_Object * obj __UNUSED__, void *event_info
    Elm_Object_Item *next_ds_it, *prev_ds_it, *ds_it = event_info;
    prev_ds_it = elm_diskselector_item_prev_get(ds_it);
    next_ds_it = elm_diskselector_item_next_get(ds_it);
-   printf("Prev: %s, Next: %s\n",
-          elm_diskselector_item_label_get(prev_ds_it),
-          elm_diskselector_item_label_get(next_ds_it));
+   printf("Prev: %s, Next: %s\n", elm_object_item_text_get(prev_ds_it),
+          elm_object_item_text_get(next_ds_it));
 }
 
 static void
 _print_disk_info_cb(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info)
 {
    Elm_Object_Item *ds_it = event_info;
-   printf("Selected label: %s\n", elm_diskselector_item_label_get(ds_it));
+   printf("Selected label: %s\n", elm_object_item_text_get(ds_it));
 }
 
 static Evas_Object *

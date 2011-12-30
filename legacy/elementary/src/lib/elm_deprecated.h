@@ -1150,6 +1150,123 @@ EINA_DEPRECATED EAPI int    elm_diskselector_side_label_lenght_get(const Evas_Ob
  */
 EINA_DEPRECATED EAPI void   elm_diskselector_side_label_lenght_set(Evas_Object *obj, int len);
 
+/**
+ * Get the data associated to the item.
+ *
+ * @param it The diskselector item
+ * @return The data associated to @p it
+ *
+ * The return value is a pointer to data associated to @p item when it was
+ * created, with function elm_diskselector_item_append(). If no data
+ * was passed as argument, it will return @c NULL.
+ *
+ * @see elm_diskselector_item_append()
+ * @deprecated Use elm_object_item_data_get()
+ *
+ * @ingroup Diskselector
+ */
+EINA_DEPRECATED EAPI void                  *elm_diskselector_item_data_get(const Elm_Object_Item *it);
+
+/**
+ * Set the icon associated to the item.
+ *
+ * @param it The diskselector item
+ * @param icon The icon object to associate with @p it
+ *
+ * The icon object to use at left side of the item. An
+ * icon can be any Evas object, but usually it is an icon created
+ * with elm_icon_add().
+ *
+ * Once the icon object is set, a previously set one will be deleted.
+ * @warning Setting the same icon for two items will cause the icon to
+ * dissapear from the first item.
+ *
+ * If an icon was passed as argument on item creation, with function
+ * elm_diskselector_item_append(), it will be already
+ * associated to the item.
+ *
+ * @see elm_diskselector_item_append()
+ * @see elm_diskselector_item_icon_get()
+ *
+ * @deprecated Use elm_object_item_part_content_set() instead
+ * @ingroup Diskselector
+ */
+EINA_DEPRECATED EAPI void                   elm_diskselector_item_icon_set(Elm_Object_Item *it, Evas_Object *icon);
+
+/**
+ * Get the icon associated to the item.
+ *
+ * @param item The diskselector item
+ * @return The icon associated to @p it
+ *
+ * The return value is a pointer to the icon associated to @p item when it was
+ * created, with function elm_diskselector_item_append(), or later
+ * with function elm_diskselector_item_icon_set. If no icon
+ * was passed as argument, it will return @c NULL.
+ *
+ * @see elm_diskselector_item_append()
+ * @see elm_diskselector_item_icon_set()
+ *
+ * @deprecated Use elm_object_item_part_content_set() instead
+ * @ingroup Diskselector
+ */
+EAPI Evas_Object           *elm_diskselector_item_icon_get(const Elm_Object_Item *it);
+
+/**
+ * Set the label of item.
+ *
+ * @param it The item of diskselector.
+ * @param label The label of item.
+ *
+ * The label to be displayed by the item.
+ *
+ * If no icon is set, label will be centered on item position, otherwise
+ * the icon will be placed at left of the label, that will be shifted
+ * to the right.
+ *
+ * An item with label "January" would be displayed on side position as
+ * "Jan" if max length is set to 3 with function
+ * elm_diskselector_side_label_lenght_set(), or "Janu", if this property
+ * is set to 4.
+ *
+ * When this @p item is selected, the entire label will be displayed,
+ * except for width restrictions.
+ * In this case label will be cropped and "..." will be concatenated,
+ * but only for display purposes. It will keep the entire string, so
+ * if diskselector is resized the remaining characters will be displayed.
+ *
+ * If a label was passed as argument on item creation, with function
+ * elm_diskselector_item_append(), it will be already
+ * displayed by the item.
+ *
+ * @see elm_diskselector_side_label_lenght_set()
+ * @see elm_diskselector_item_label_get()
+ * @see elm_diskselector_item_append()
+ *
+ * @deprecated Use elm_object_item_text_set() instead
+ * @ingroup Diskselector
+ */
+EINA_DEPRECATED EAPI void                   elm_diskselector_item_label_set(Elm_Object_Item *it, const char *label);
+
+/**
+ * Get the label of item.
+ *
+ * @param it The item of diskselector.
+ * @return The label of item.
+ *
+ * The return value is a pointer to the label associated to @p item when it was
+ * created, with function elm_diskselector_item_append(), or later
+ * with function elm_diskselector_item_label_set. If no label
+ * was passed as argument, it will return @c NULL.
+ *
+ * @see elm_diskselector_item_label_set() for more details.
+ * @see elm_diskselector_item_append()
+ * @use elm_object_item_text_get()
+ *
+ * @ingroup Diskselector
+ */
+EINA_DEPRECATED EAPI const char            *elm_diskselector_item_label_get(const Elm_Object_Item *it);
+
 EINA_DEPRECATED EAPI void         elm_factory_content_set(Evas_Object *obj, Evas_Object *content);
 EINA_DEPRECATED EAPI Evas_Object *elm_factory_content_get(const Evas_Object *obj);
 
