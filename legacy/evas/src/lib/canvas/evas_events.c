@@ -482,9 +482,9 @@ evas_event_feed_mouse_up(Evas *e, int b, Evas_Button_Flags flags, unsigned int t
         ERR("BUG? e->pointer.mouse_grabbed (=%d) < 0!",
             e->pointer.mouse_grabbed);
      }
-  /* remove released touch point from the touch point list */
+   /* remove released touch point from the touch point list */
    _evas_touch_point_remove(e, 0);
-
+   
    _evas_unwalk(e);
 }
 
@@ -505,6 +505,7 @@ evas_event_feed_mouse_cancel(Evas *e, unsigned int timestamp, const void *data)
         if ((e->pointer.button & (1 << i)))
           evas_event_feed_mouse_up(e, i + 1, 0, timestamp, data);
      }
+   // FIXME: multi cancel too?
    _evas_unwalk(e);
 }
 
