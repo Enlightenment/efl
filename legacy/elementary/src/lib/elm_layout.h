@@ -152,7 +152,7 @@
  *
  * @ingroup Layout
  */
-EAPI Evas_Object                 *elm_layout_add(Evas_Object *parent) EINA_ARG_NONNULL(1);
+EAPI Evas_Object                 *elm_layout_add(Evas_Object *parent);
 
 /**
  * Set the file that will be used as layout
@@ -165,7 +165,7 @@ EAPI Evas_Object                 *elm_layout_add(Evas_Object *parent) EINA_ARG_N
  *
  * @ingroup Layout
  */
-EAPI Eina_Bool                    elm_layout_file_set(Evas_Object *obj, const char *file, const char *group) EINA_ARG_NONNULL(1);
+EAPI Eina_Bool                    elm_layout_file_set(Evas_Object *obj, const char *file, const char *group);
 
 /**
  * Set the edje group from the elementary theme that will be used as layout
@@ -179,7 +179,7 @@ EAPI Eina_Bool                    elm_layout_file_set(Evas_Object *obj, const ch
  *
  * @ingroup Layout
  */
-EAPI Eina_Bool                    elm_layout_theme_set(Evas_Object *obj, const char *clas, const char *group, const char *style) EINA_ARG_NONNULL(1);
+EAPI Eina_Bool                    elm_layout_theme_set(Evas_Object *obj, const char *clas, const char *group, const char *style);
 
 /**
  * Append child to layout box part.
@@ -200,7 +200,7 @@ EAPI Eina_Bool                    elm_layout_theme_set(Evas_Object *obj, const c
  *
  * @ingroup Layout
  */
-EAPI void                         elm_layout_box_append(Evas_Object *obj, const char *part, Evas_Object *child) EINA_ARG_NONNULL(1);
+EAPI void                         elm_layout_box_append(Evas_Object *obj, const char *part, Evas_Object *child);
 
 /**
  * Prepend child to layout box part.
@@ -221,7 +221,7 @@ EAPI void                         elm_layout_box_append(Evas_Object *obj, const 
  *
  * @ingroup Layout
  */
-EAPI void                         elm_layout_box_prepend(Evas_Object *obj, const char *part, Evas_Object *child) EINA_ARG_NONNULL(1);
+EAPI void                         elm_layout_box_prepend(Evas_Object *obj, const char *part, Evas_Object *child);
 
 /**
  * Insert child to layout box part before a reference object.
@@ -243,7 +243,7 @@ EAPI void                         elm_layout_box_prepend(Evas_Object *obj, const
  *
  * @ingroup Layout
  */
-EAPI void                         elm_layout_box_insert_before(Evas_Object *obj, const char *part, Evas_Object *child, const Evas_Object *reference) EINA_ARG_NONNULL(1);
+EAPI void                         elm_layout_box_insert_before(Evas_Object *obj, const char *part, Evas_Object *child, const Evas_Object *reference);
 
 /**
  * Insert child to layout box part at a given position.
@@ -265,7 +265,7 @@ EAPI void                         elm_layout_box_insert_before(Evas_Object *obj,
  *
  * @ingroup Layout
  */
-EAPI void                         elm_layout_box_insert_at(Evas_Object *obj, const char *part, Evas_Object *child, unsigned int pos) EINA_ARG_NONNULL(1);
+EAPI void                         elm_layout_box_insert_at(Evas_Object *obj, const char *part, Evas_Object *child, unsigned int pos);
 
 /**
  * Remove a child of the given part box.
@@ -284,7 +284,7 @@ EAPI void                         elm_layout_box_insert_at(Evas_Object *obj, con
  *
  * @ingroup Layout
  */
-EAPI Evas_Object                 *elm_layout_box_remove(Evas_Object *obj, const char *part, Evas_Object *child) EINA_ARG_NONNULL(1, 2, 3);
+EAPI Evas_Object                 *elm_layout_box_remove(Evas_Object *obj, const char *part, Evas_Object *child);
 
 /**
  * Remove all children of the given part box.
@@ -304,7 +304,7 @@ EAPI Evas_Object                 *elm_layout_box_remove(Evas_Object *obj, const 
  *
  * @ingroup Layout
  */
-EAPI void                         elm_layout_box_remove_all(Evas_Object *obj, const char *part, Eina_Bool clear) EINA_ARG_NONNULL(1, 2);
+EAPI void                         elm_layout_box_remove_all(Evas_Object *obj, const char *part, Eina_Bool clear);
 
 /**
  * Insert child to layout table part.
@@ -339,7 +339,7 @@ EAPI void                         elm_layout_box_remove_all(Evas_Object *obj, co
  *
  * @ingroup Layout
  */
-EAPI void                         elm_layout_table_pack(Evas_Object *obj, const char *part, Evas_Object *child_obj, unsigned short col, unsigned short row, unsigned short colspan, unsigned short rowspan) EINA_ARG_NONNULL(1);
+EAPI void                         elm_layout_table_pack(Evas_Object *obj, const char *part, Evas_Object *child_obj, unsigned short col, unsigned short row, unsigned short colspan, unsigned short rowspan);
 
 /**
  * Unpack (remove) a child of the given part table.
@@ -358,7 +358,7 @@ EAPI void                         elm_layout_table_pack(Evas_Object *obj, const 
  *
  * @ingroup Layout
  */
-EAPI Evas_Object                 *elm_layout_table_unpack(Evas_Object *obj, const char *part, Evas_Object *child_obj) EINA_ARG_NONNULL(1, 2, 3);
+EAPI Evas_Object                 *elm_layout_table_unpack(Evas_Object *obj, const char *part, Evas_Object *child_obj);
 
 /**
  * Remove all the child objects of the given part table.
@@ -378,7 +378,7 @@ EAPI Evas_Object                 *elm_layout_table_unpack(Evas_Object *obj, cons
  *
  * @ingroup Layout
  */
-EAPI void                         elm_layout_table_clear(Evas_Object *obj, const char *part, Eina_Bool clear) EINA_ARG_NONNULL(1, 2);
+EAPI void                         elm_layout_table_clear(Evas_Object *obj, const char *part, Eina_Bool clear);
 
 /**
  * Get the edje layout
@@ -408,7 +408,7 @@ EAPI void                         elm_layout_table_clear(Evas_Object *obj, const
  *
  * @ingroup Layout
  */
-EAPI Evas_Object                 *elm_layout_edje_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
+EAPI Evas_Object                 *elm_layout_edje_get(const Evas_Object *obj);
 
 /**
  * Get the edje data from the given layout
@@ -438,7 +438,7 @@ EAPI Evas_Object                 *elm_layout_edje_get(const Evas_Object *obj) EI
  *
  * @ingroup Layout
  */
-EAPI const char                  *elm_layout_data_get(const Evas_Object *obj, const char *key) EINA_ARG_NONNULL(1, 2);
+EAPI const char                  *elm_layout_data_get(const Evas_Object *obj, const char *key);
 
 /**
  * Eval sizing
@@ -461,7 +461,7 @@ EAPI const char                  *elm_layout_data_get(const Evas_Object *obj, co
  *
  * @ingroup Layout
  */
-EAPI void                         elm_layout_sizing_eval(Evas_Object *obj) EINA_ARG_NONNULL(1);
+EAPI void                         elm_layout_sizing_eval(Evas_Object *obj);
 
 /**
  * Sets a specific cursor for an edje part.
@@ -475,7 +475,7 @@ EAPI void                         elm_layout_sizing_eval(Evas_Object *obj) EINA_
  *
  * @ingroup Layout
  */
-EAPI Eina_Bool                    elm_layout_part_cursor_set(Evas_Object *obj, const char *part_name, const char *cursor) EINA_ARG_NONNULL(1, 2);
+EAPI Eina_Bool                    elm_layout_part_cursor_set(Evas_Object *obj, const char *part_name, const char *cursor);
 
 /**
  * Get the cursor to be shown when mouse is over an edje part
@@ -486,7 +486,7 @@ EAPI Eina_Bool                    elm_layout_part_cursor_set(Evas_Object *obj, c
  *
  * @ingroup Layout
  */
-EAPI const char                  *elm_layout_part_cursor_get(const Evas_Object *obj, const char *part_name) EINA_ARG_NONNULL(1, 2);
+EAPI const char                  *elm_layout_part_cursor_get(const Evas_Object *obj, const char *part_name);
 
 /**
  * Unsets a cursor previously set with elm_layout_part_cursor_set().
@@ -497,7 +497,7 @@ EAPI const char                  *elm_layout_part_cursor_get(const Evas_Object *
  *
  * @ingroup Layout
  */
-EAPI void                         elm_layout_part_cursor_unset(Evas_Object *obj, const char *part_name) EINA_ARG_NONNULL(1, 2);
+EAPI void                         elm_layout_part_cursor_unset(Evas_Object *obj, const char *part_name);
 
 /**
  * Sets a specific cursor style for an edje part.
@@ -511,7 +511,7 @@ EAPI void                         elm_layout_part_cursor_unset(Evas_Object *obj,
  *
  * @ingroup Layout
  */
-EAPI Eina_Bool                    elm_layout_part_cursor_style_set(Evas_Object *obj, const char *part_name, const char *style) EINA_ARG_NONNULL(1, 2);
+EAPI Eina_Bool                    elm_layout_part_cursor_style_set(Evas_Object *obj, const char *part_name, const char *style);
 
 /**
  * Gets a specific cursor style for an edje part.
@@ -524,7 +524,7 @@ EAPI Eina_Bool                    elm_layout_part_cursor_style_set(Evas_Object *
  *
  * @ingroup Layout
  */
-EAPI const char                  *elm_layout_part_cursor_style_get(const Evas_Object *obj, const char *part_name) EINA_ARG_NONNULL(1, 2);
+EAPI const char                  *elm_layout_part_cursor_style_get(const Evas_Object *obj, const char *part_name);
 
 /**
  * Sets if the cursor set should be searched on the theme or should use
@@ -544,7 +544,7 @@ EAPI const char                  *elm_layout_part_cursor_style_get(const Evas_Ob
  *
  * @ingroup Layout
  */
-EAPI Eina_Bool                    elm_layout_part_cursor_engine_only_set(Evas_Object *obj, const char *part_name, Eina_Bool engine_only) EINA_ARG_NONNULL(1, 2);
+EAPI Eina_Bool                    elm_layout_part_cursor_engine_only_set(Evas_Object *obj, const char *part_name, Eina_Bool engine_only);
 
 /**
  * Gets a specific cursor engine_only for an edje part.
@@ -556,7 +556,7 @@ EAPI Eina_Bool                    elm_layout_part_cursor_engine_only_set(Evas_Ob
  *
  * @ingroup Layout
  */
-EAPI Eina_Bool                    elm_layout_part_cursor_engine_only_get(const Evas_Object *obj, const char *part_name) EINA_ARG_NONNULL(1, 2);
+EAPI Eina_Bool                    elm_layout_part_cursor_engine_only_get(const Evas_Object *obj, const char *part_name);
 
 /**
  * @def elm_layout_icon_set

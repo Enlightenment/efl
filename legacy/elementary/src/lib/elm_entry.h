@@ -314,7 +314,7 @@ typedef Edje_Entry_Change_Info Elm_Entry_Change_Info;
  * @param parent The parent object
  * @return The new object or NULL if it cannot be created
  */
-EAPI Evas_Object       *elm_entry_add(Evas_Object *parent) EINA_ARG_NONNULL(1);
+EAPI Evas_Object       *elm_entry_add(Evas_Object *parent);
 
 /**
  * Sets the entry to single line mode.
@@ -331,7 +331,7 @@ EAPI Evas_Object       *elm_entry_add(Evas_Object *parent) EINA_ARG_NONNULL(1);
  * @param single_line If true, the text in the entry
  * will be on a single line.
  */
-EAPI void               elm_entry_single_line_set(Evas_Object *obj, Eina_Bool single_line) EINA_ARG_NONNULL(1);
+EAPI void               elm_entry_single_line_set(Evas_Object *obj, Eina_Bool single_line);
 
 /**
  * Gets whether the entry is set to be single line.
@@ -342,7 +342,7 @@ EAPI void               elm_entry_single_line_set(Evas_Object *obj, Eina_Bool si
  *
  * @see elm_entry_single_line_set()
  */
-EAPI Eina_Bool          elm_entry_single_line_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
+EAPI Eina_Bool          elm_entry_single_line_get(const Evas_Object *obj);
 
 /**
  * Sets the entry to password mode.
@@ -353,7 +353,7 @@ EAPI Eina_Bool          elm_entry_single_line_get(const Evas_Object *obj) EINA_A
  * @param obj The entry object
  * @param password If true, password mode is enabled.
  */
-EAPI void               elm_entry_password_set(Evas_Object *obj, Eina_Bool password) EINA_ARG_NONNULL(1);
+EAPI void               elm_entry_password_set(Evas_Object *obj, Eina_Bool password);
 
 /**
  * Gets whether the entry is set to password mode.
@@ -364,7 +364,7 @@ EAPI void               elm_entry_password_set(Evas_Object *obj, Eina_Bool passw
  *
  * @see elm_entry_password_set()
  */
-EAPI Eina_Bool          elm_entry_password_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
+EAPI Eina_Bool          elm_entry_password_get(const Evas_Object *obj);
 
 /**
  * Appends @p entry to the text of the entry.
@@ -379,7 +379,7 @@ EAPI Eina_Bool          elm_entry_password_get(const Evas_Object *obj) EINA_ARG_
  *
  * @see elm_entry_text_filter_append()
  */
-EAPI void               elm_entry_entry_append(Evas_Object *obj, const char *entry) EINA_ARG_NONNULL(1);
+EAPI void               elm_entry_entry_append(Evas_Object *obj, const char *entry);
 
 /**
  * Gets whether the entry is empty.
@@ -391,7 +391,7 @@ EAPI void               elm_entry_entry_append(Evas_Object *obj, const char *ent
  * @param obj The entry object
  * @return EINA_TRUE if the entry is empty, EINA_FALSE otherwise.
  */
-EAPI Eina_Bool          elm_entry_is_empty(const Evas_Object *obj) EINA_ARG_NONNULL(1);
+EAPI Eina_Bool          elm_entry_is_empty(const Evas_Object *obj);
 
 /**
  * Gets any selected text within the entry.
@@ -407,7 +407,7 @@ EAPI Eina_Bool          elm_entry_is_empty(const Evas_Object *obj) EINA_ARG_NONN
  * @param obj The entry object
  * @return The selected text within the entry or NULL on failure
  */
-EAPI const char        *elm_entry_selection_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
+EAPI const char        *elm_entry_selection_get(const Evas_Object *obj);
 
 /**
  * Returns the actual textblock object of the entry.
@@ -436,7 +436,7 @@ EAPI const char        *elm_entry_selection_get(const Evas_Object *obj) EINA_ARG
  * @param obj The entry object
  * @return The textblock object.
  */
-EAPI const Evas_Object *elm_entry_textblock_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
+EAPI const Evas_Object *elm_entry_textblock_get(const Evas_Object *obj);
 
 /**
  * Forces calculation of the entry size and text layouting.
@@ -448,7 +448,7 @@ EAPI const Evas_Object *elm_entry_textblock_get(const Evas_Object *obj) EINA_ARG
  *
  * @see elm_entry_textblock_get()
  */
-EAPI void               elm_entry_calc_force(const Evas_Object *obj) EINA_ARG_NONNULL(1);
+EAPI void               elm_entry_calc_force(const Evas_Object *obj);
 
 /**
  * Inserts the given text into the entry at the current cursor position.
@@ -468,7 +468,7 @@ EAPI void               elm_entry_calc_force(const Evas_Object *obj) EINA_ARG_NO
  *
  * @see elm_entry_text_filter_append()
  */
-EAPI void               elm_entry_entry_insert(Evas_Object *obj, const char *entry) EINA_ARG_NONNULL(1);
+EAPI void               elm_entry_entry_insert(Evas_Object *obj, const char *entry);
 
 /**
  * Set the line wrap type to use on multi-line entries.
@@ -484,7 +484,7 @@ EAPI void               elm_entry_entry_insert(Evas_Object *obj, const char *ent
  * @param obj The entry object
  * @param wrap The wrap mode to use. See Elm_Wrap_Type for details on them
  */
-EAPI void               elm_entry_line_wrap_set(Evas_Object *obj, Elm_Wrap_Type wrap) EINA_ARG_NONNULL(1);
+EAPI void               elm_entry_line_wrap_set(Evas_Object *obj, Elm_Wrap_Type wrap);
 
 /**
  * Gets the wrap mode the entry was set to use.
@@ -494,7 +494,7 @@ EAPI void               elm_entry_line_wrap_set(Evas_Object *obj, Elm_Wrap_Type 
  *
  * @see also elm_entry_line_wrap_set()
  */
-EAPI Elm_Wrap_Type      elm_entry_line_wrap_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
+EAPI Elm_Wrap_Type      elm_entry_line_wrap_get(const Evas_Object *obj);
 
 /**
  * Sets if the entry is to be editable or not.
@@ -512,7 +512,7 @@ EAPI Elm_Wrap_Type      elm_entry_line_wrap_get(const Evas_Object *obj) EINA_ARG
  * @param editable If EINA_TRUE, user input will be inserted in the entry,
  * if not, the entry is read-only and no user input is allowed.
  */
-EAPI void               elm_entry_editable_set(Evas_Object *obj, Eina_Bool editable) EINA_ARG_NONNULL(1);
+EAPI void               elm_entry_editable_set(Evas_Object *obj, Eina_Bool editable);
 
 /**
  * Gets whether the entry is editable or not.
@@ -523,21 +523,21 @@ EAPI void               elm_entry_editable_set(Evas_Object *obj, Eina_Bool edita
  *
  * @see elm_entry_editable_set()
  */
-EAPI Eina_Bool          elm_entry_editable_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
+EAPI Eina_Bool          elm_entry_editable_get(const Evas_Object *obj);
 
 /**
  * This drops any existing text selection within the entry.
  *
  * @param obj The entry object
  */
-EAPI void               elm_entry_select_none(Evas_Object *obj) EINA_ARG_NONNULL(1);
+EAPI void               elm_entry_select_none(Evas_Object *obj);
 
 /**
  * This selects all text within the entry.
  *
  * @param obj The entry object
  */
-EAPI void               elm_entry_select_all(Evas_Object *obj) EINA_ARG_NONNULL(1);
+EAPI void               elm_entry_select_all(Evas_Object *obj);
 
 /**
  * This moves the cursor one place to the right within the entry.
@@ -545,7 +545,7 @@ EAPI void               elm_entry_select_all(Evas_Object *obj) EINA_ARG_NONNULL(
  * @param obj The entry object
  * @return EINA_TRUE upon success, EINA_FALSE upon failure
  */
-EAPI Eina_Bool          elm_entry_cursor_next(Evas_Object *obj) EINA_ARG_NONNULL(1);
+EAPI Eina_Bool          elm_entry_cursor_next(Evas_Object *obj);
 
 /**
  * This moves the cursor one place to the left within the entry.
@@ -553,7 +553,7 @@ EAPI Eina_Bool          elm_entry_cursor_next(Evas_Object *obj) EINA_ARG_NONNULL
  * @param obj The entry object
  * @return EINA_TRUE upon success, EINA_FALSE upon failure
  */
-EAPI Eina_Bool          elm_entry_cursor_prev(Evas_Object *obj) EINA_ARG_NONNULL(1);
+EAPI Eina_Bool          elm_entry_cursor_prev(Evas_Object *obj);
 
 /**
  * This moves the cursor one line up within the entry.
@@ -561,7 +561,7 @@ EAPI Eina_Bool          elm_entry_cursor_prev(Evas_Object *obj) EINA_ARG_NONNULL
  * @param obj The entry object
  * @return EINA_TRUE upon success, EINA_FALSE upon failure
  */
-EAPI Eina_Bool          elm_entry_cursor_up(Evas_Object *obj) EINA_ARG_NONNULL(1);
+EAPI Eina_Bool          elm_entry_cursor_up(Evas_Object *obj);
 
 /**
  * This moves the cursor one line down within the entry.
@@ -569,35 +569,35 @@ EAPI Eina_Bool          elm_entry_cursor_up(Evas_Object *obj) EINA_ARG_NONNULL(1
  * @param obj The entry object
  * @return EINA_TRUE upon success, EINA_FALSE upon failure
  */
-EAPI Eina_Bool          elm_entry_cursor_down(Evas_Object *obj) EINA_ARG_NONNULL(1);
+EAPI Eina_Bool          elm_entry_cursor_down(Evas_Object *obj);
 
 /**
  * This moves the cursor to the beginning of the entry.
  *
  * @param obj The entry object
  */
-EAPI void               elm_entry_cursor_begin_set(Evas_Object *obj) EINA_ARG_NONNULL(1);
+EAPI void               elm_entry_cursor_begin_set(Evas_Object *obj);
 
 /**
  * This moves the cursor to the end of the entry.
  *
  * @param obj The entry object
  */
-EAPI void               elm_entry_cursor_end_set(Evas_Object *obj) EINA_ARG_NONNULL(1);
+EAPI void               elm_entry_cursor_end_set(Evas_Object *obj);
 
 /**
  * This moves the cursor to the beginning of the current line.
  *
  * @param obj The entry object
  */
-EAPI void               elm_entry_cursor_line_begin_set(Evas_Object *obj) EINA_ARG_NONNULL(1);
+EAPI void               elm_entry_cursor_line_begin_set(Evas_Object *obj);
 
 /**
  * This moves the cursor to the end of the current line.
  *
  * @param obj The entry object
  */
-EAPI void               elm_entry_cursor_line_end_set(Evas_Object *obj) EINA_ARG_NONNULL(1);
+EAPI void               elm_entry_cursor_line_end_set(Evas_Object *obj);
 
 /**
  * This begins a selection within the entry as though
@@ -605,7 +605,7 @@ EAPI void               elm_entry_cursor_line_end_set(Evas_Object *obj) EINA_ARG
  *
  * @param obj The entry object
  */
-EAPI void               elm_entry_cursor_selection_begin(Evas_Object *obj) EINA_ARG_NONNULL(1);
+EAPI void               elm_entry_cursor_selection_begin(Evas_Object *obj);
 
 /**
  * This ends a selection within the entry as though
@@ -613,7 +613,7 @@ EAPI void               elm_entry_cursor_selection_begin(Evas_Object *obj) EINA_
  *
  * @param obj The entry object
  */
-EAPI void               elm_entry_cursor_selection_end(Evas_Object *obj) EINA_ARG_NONNULL(1);
+EAPI void               elm_entry_cursor_selection_end(Evas_Object *obj);
 
 /**
  * Gets whether a format node exists at the current cursor position.
@@ -630,7 +630,7 @@ EAPI void               elm_entry_cursor_selection_end(Evas_Object *obj) EINA_AR
  *
  * @see elm_entry_cursor_is_visible_format_get()
  */
-EAPI Eina_Bool          elm_entry_cursor_is_format_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
+EAPI Eina_Bool          elm_entry_cursor_is_format_get(const Evas_Object *obj);
 
 /**
  * Gets if the current cursor position holds a visible format node.
@@ -641,7 +641,7 @@ EAPI Eina_Bool          elm_entry_cursor_is_format_get(const Evas_Object *obj) E
  *
  * @see elm_entry_cursor_is_format_get()
  */
-EAPI Eina_Bool          elm_entry_cursor_is_visible_format_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
+EAPI Eina_Bool          elm_entry_cursor_is_visible_format_get(const Evas_Object *obj);
 
 /**
  * Gets the character pointed by the cursor at its current position.
@@ -654,7 +654,7 @@ EAPI Eina_Bool          elm_entry_cursor_is_visible_format_get(const Evas_Object
  * @param obj The entry object
  * @return The text pointed by the cursors.
  */
-EAPI const char        *elm_entry_cursor_content_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
+EAPI const char        *elm_entry_cursor_content_get(const Evas_Object *obj);
 
 /**
  * This function returns the geometry of the cursor.
@@ -670,7 +670,7 @@ EAPI const char        *elm_entry_cursor_content_get(const Evas_Object *obj) EIN
  * @param h returned geometry
  * @return EINA_TRUE upon success, EINA_FALSE upon failure
  */
-EAPI Eina_Bool          elm_entry_cursor_geometry_get(const Evas_Object *obj, Evas_Coord *x, Evas_Coord *y, Evas_Coord *w, Evas_Coord *h) EINA_ARG_NONNULL(1);
+EAPI Eina_Bool          elm_entry_cursor_geometry_get(const Evas_Object *obj, Evas_Coord *x, Evas_Coord *y, Evas_Coord *w, Evas_Coord *h);
 
 /**
  * Sets the cursor position in the entry to the given value
@@ -681,7 +681,7 @@ EAPI Eina_Bool          elm_entry_cursor_geometry_get(const Evas_Object *obj, Ev
  * @param obj The entry object
  * @param pos The position of the cursor
  */
-EAPI void               elm_entry_cursor_pos_set(Evas_Object *obj, int pos) EINA_ARG_NONNULL(1);
+EAPI void               elm_entry_cursor_pos_set(Evas_Object *obj, int pos);
 
 /**
  * Retrieves the current position of the cursor in the entry
@@ -689,28 +689,28 @@ EAPI void               elm_entry_cursor_pos_set(Evas_Object *obj, int pos) EINA
  * @param obj The entry object
  * @return The cursor position
  */
-EAPI int                elm_entry_cursor_pos_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
+EAPI int                elm_entry_cursor_pos_get(const Evas_Object *obj);
 
 /**
  * This executes a "cut" action on the selected text in the entry.
  *
  * @param obj The entry object
  */
-EAPI void               elm_entry_selection_cut(Evas_Object *obj) EINA_ARG_NONNULL(1);
+EAPI void               elm_entry_selection_cut(Evas_Object *obj);
 
 /**
  * This executes a "copy" action on the selected text in the entry.
  *
  * @param obj The entry object
  */
-EAPI void               elm_entry_selection_copy(Evas_Object *obj) EINA_ARG_NONNULL(1);
+EAPI void               elm_entry_selection_copy(Evas_Object *obj);
 
 /**
  * This executes a "paste" action in the entry.
  *
  * @param obj The entry object
  */
-EAPI void               elm_entry_selection_paste(Evas_Object *obj) EINA_ARG_NONNULL(1);
+EAPI void               elm_entry_selection_paste(Evas_Object *obj);
 
 /**
  * This clears and frees the items in a entry's contextual (longpress)
@@ -720,7 +720,7 @@ EAPI void               elm_entry_selection_paste(Evas_Object *obj) EINA_ARG_NON
  *
  * @see elm_entry_context_menu_item_add()
  */
-EAPI void               elm_entry_context_menu_clear(Evas_Object *obj) EINA_ARG_NONNULL(1);
+EAPI void               elm_entry_context_menu_clear(Evas_Object *obj);
 
 /**
  * This adds an item to the entry's contextual menu.
@@ -741,7 +741,7 @@ EAPI void               elm_entry_context_menu_clear(Evas_Object *obj) EINA_ARG_
  * @param func The callback to execute when the item is clicked
  * @param data The data to associate with the item for related functions
  */
-EAPI void               elm_entry_context_menu_item_add(Evas_Object *obj, const char *label, const char *icon_file, Elm_Icon_Type icon_type, Evas_Smart_Cb func, const void *data) EINA_ARG_NONNULL(1);
+EAPI void               elm_entry_context_menu_item_add(Evas_Object *obj, const char *label, const char *icon_file, Elm_Icon_Type icon_type, Evas_Smart_Cb func, const void *data);
 
 /**
  * This disables the entry's contextual (longpress) menu.
@@ -749,7 +749,7 @@ EAPI void               elm_entry_context_menu_item_add(Evas_Object *obj, const 
  * @param obj The entry object
  * @param disabled If true, the menu is disabled
  */
-EAPI void               elm_entry_context_menu_disabled_set(Evas_Object *obj, Eina_Bool disabled) EINA_ARG_NONNULL(1);
+EAPI void               elm_entry_context_menu_disabled_set(Evas_Object *obj, Eina_Bool disabled);
 
 /**
  * This returns whether the entry's contextual (longpress) menu is
@@ -758,7 +758,7 @@ EAPI void               elm_entry_context_menu_disabled_set(Evas_Object *obj, Ei
  * @param obj The entry object
  * @return If true, the menu is disabled
  */
-EAPI Eina_Bool          elm_entry_context_menu_disabled_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
+EAPI Eina_Bool          elm_entry_context_menu_disabled_get(const Evas_Object *obj);
 
 /**
  * This appends a custom item provider to the list for that entry
@@ -776,7 +776,7 @@ EAPI Eina_Bool          elm_entry_context_menu_disabled_get(const Evas_Object *o
  *
  * @see @ref entry-items
  */
-EAPI void               elm_entry_item_provider_append(Evas_Object *obj, Evas_Object * (*func)(void *data, Evas_Object * entry, const char *item), void *data) EINA_ARG_NONNULL(1, 2);
+EAPI void               elm_entry_item_provider_append(Evas_Object *obj, Evas_Object * (*func)(void *data, Evas_Object * entry, const char *item), void *data);
 
 /**
  * This prepends a custom item provider to the list for that entry
@@ -788,7 +788,7 @@ EAPI void               elm_entry_item_provider_append(Evas_Object *obj, Evas_Ob
  * @param func The function called to provide the item object
  * @param data The data passed to @p func
  */
-EAPI void               elm_entry_item_provider_prepend(Evas_Object *obj, Evas_Object * (*func)(void *data, Evas_Object * entry, const char *item), void *data) EINA_ARG_NONNULL(1, 2);
+EAPI void               elm_entry_item_provider_prepend(Evas_Object *obj, Evas_Object * (*func)(void *data, Evas_Object * entry, const char *item), void *data);
 
 /**
  * This removes a custom item provider to the list for that entry
@@ -800,7 +800,7 @@ EAPI void               elm_entry_item_provider_prepend(Evas_Object *obj, Evas_O
  * @param func The function called to provide the item object
  * @param data The data passed to @p func
  */
-EAPI void               elm_entry_item_provider_remove(Evas_Object *obj, Evas_Object * (*func)(void *data, Evas_Object * entry, const char *item), void *data) EINA_ARG_NONNULL(1, 2);
+EAPI void               elm_entry_item_provider_remove(Evas_Object *obj, Evas_Object * (*func)(void *data, Evas_Object * entry, const char *item), void *data);
 
 /**
  * Append a filter function for text inserted in the entry
@@ -817,7 +817,7 @@ EAPI void               elm_entry_item_provider_remove(Evas_Object *obj, Evas_Ob
  * @param func The function to use as text filter
  * @param data User data to pass to @p func
  */
-EAPI void               elm_entry_text_filter_append(Evas_Object *obj, Elm_Entry_Filter_Cb func, void *data) EINA_ARG_NONNULL(1, 2);
+EAPI void               elm_entry_text_filter_append(Evas_Object *obj, Elm_Entry_Filter_Cb func, void *data);
 
 /**
  * Prepend a filter function for text insdrted in the entry
@@ -829,7 +829,7 @@ EAPI void               elm_entry_text_filter_append(Evas_Object *obj, Elm_Entry
  * @param func The function to use as text filter
  * @param data User data to pass to @p func
  */
-EAPI void               elm_entry_text_filter_prepend(Evas_Object *obj, Elm_Entry_Filter_Cb func, void *data) EINA_ARG_NONNULL(1, 2);
+EAPI void               elm_entry_text_filter_prepend(Evas_Object *obj, Elm_Entry_Filter_Cb func, void *data);
 
 /**
  * Remove a filter from the list
@@ -841,7 +841,7 @@ EAPI void               elm_entry_text_filter_prepend(Evas_Object *obj, Elm_Entr
  * @param func The filter function to remove
  * @param data The user data passed when adding the function
  */
-EAPI void               elm_entry_text_filter_remove(Evas_Object *obj, Elm_Entry_Filter_Cb func, void *data) EINA_ARG_NONNULL(1, 2);
+EAPI void               elm_entry_text_filter_remove(Evas_Object *obj, Elm_Entry_Filter_Cb func, void *data);
 
 /**
  * This converts a markup (HTML-like) string into UTF-8.
@@ -880,7 +880,7 @@ EINA_MALLOC EINA_WARN_UNUSED_RESULT;
  * @param file The path to the file to load and save
  * @param format The file format
  */
-EAPI void               elm_entry_file_set(Evas_Object *obj, const char *file, Elm_Text_Format format) EINA_ARG_NONNULL(1);
+EAPI void               elm_entry_file_set(Evas_Object *obj, const char *file, Elm_Text_Format format);
 
 /**
  * Gets the file being edited by the entry.
@@ -892,7 +892,7 @@ EAPI void               elm_entry_file_set(Evas_Object *obj, const char *file, E
  * @param file The path to the file to load and save
  * @param format The file format
  */
-EAPI void               elm_entry_file_get(const Evas_Object *obj, const char **file, Elm_Text_Format *format) EINA_ARG_NONNULL(1);
+EAPI void               elm_entry_file_get(const Evas_Object *obj, const char **file, Elm_Text_Format *format);
 
 /**
  * This function writes any changes made to the file set with
@@ -900,7 +900,7 @@ EAPI void               elm_entry_file_get(const Evas_Object *obj, const char **
  *
  * @param obj The entry object
  */
-EAPI void               elm_entry_file_save(Evas_Object *obj) EINA_ARG_NONNULL(1);
+EAPI void               elm_entry_file_save(Evas_Object *obj);
 
 /**
  * This sets the entry object to 'autosave' the loaded text file or not.
@@ -910,7 +910,7 @@ EAPI void               elm_entry_file_save(Evas_Object *obj) EINA_ARG_NONNULL(1
  *
  * @see elm_entry_file_set()
  */
-EAPI void               elm_entry_autosave_set(Evas_Object *obj, Eina_Bool autosave) EINA_ARG_NONNULL(1);
+EAPI void               elm_entry_autosave_set(Evas_Object *obj, Eina_Bool autosave);
 
 /**
  * This gets the entry object's 'autosave' status.
@@ -920,7 +920,7 @@ EAPI void               elm_entry_autosave_set(Evas_Object *obj, Eina_Bool autos
  *
  * @see elm_entry_file_set()
  */
-EAPI Eina_Bool          elm_entry_autosave_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
+EAPI Eina_Bool          elm_entry_autosave_get(const Evas_Object *obj);
 
 /**
  * Control pasting of text and images for the widget.
@@ -934,7 +934,7 @@ EAPI Eina_Bool          elm_entry_autosave_get(const Evas_Object *obj) EINA_ARG_
  * @param textonly paste mode - EINA_TRUE is text only, EINA_FALSE is
  * text+image+other.
  */
-EAPI void               elm_entry_cnp_textonly_set(Evas_Object *obj, Eina_Bool textonly) EINA_ARG_NONNULL(1);
+EAPI void               elm_entry_cnp_textonly_set(Evas_Object *obj, Eina_Bool textonly);
 
 /**
  * Getting elm_entry text paste/drop mode.
@@ -944,7 +944,7 @@ EAPI void               elm_entry_cnp_textonly_set(Evas_Object *obj, Eina_Bool t
  * @param obj The entry object
  * @return If the widget only accepts text from pastes.
  */
-EAPI Eina_Bool          elm_entry_cnp_textonly_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
+EAPI Eina_Bool          elm_entry_cnp_textonly_get(const Evas_Object *obj);
 
 /**
  * Enable or disable scrolling in entry
@@ -1135,7 +1135,7 @@ struct _Elm_Entry_Filter_Limit_Size
  * This filter, like any others, does not apply when setting the entry text
  * directly with elm_object_text_set().
  */
-EAPI void elm_entry_filter_limit_size(void *data, Evas_Object *entry, char **text) EINA_ARG_NONNULL(1, 2, 3);
+EAPI void elm_entry_filter_limit_size(void *data, Evas_Object *entry, char **text);
 
 /**
  * @typedef Elm_Entry_Filter_Accept_Set
@@ -1173,14 +1173,14 @@ struct _Elm_Entry_Filter_Accept_Set
  * This filter, like any others, does not apply when setting the entry text
  * directly with elm_object_text_set()
  */
-EAPI void                   elm_entry_filter_accept_set(void *data, Evas_Object *entry, char **text) EINA_ARG_NONNULL(1, 3);
+EAPI void                   elm_entry_filter_accept_set(void *data, Evas_Object *entry, char **text);
 /**
  * Set the input panel layout of the entry
  *
  * @param obj The entry object
  * @param layout layout type
  */
-EAPI void                   elm_entry_input_panel_layout_set(Evas_Object *obj, Elm_Input_Panel_Layout layout) EINA_ARG_NONNULL(1);
+EAPI void                   elm_entry_input_panel_layout_set(Evas_Object *obj, Elm_Input_Panel_Layout layout);
 
 /**
  * Get the input panel layout of the entry
@@ -1190,7 +1190,7 @@ EAPI void                   elm_entry_input_panel_layout_set(Evas_Object *obj, E
  *
  * @see elm_entry_input_panel_layout_set
  */
-EAPI Elm_Input_Panel_Layout elm_entry_input_panel_layout_get(Evas_Object *obj) EINA_ARG_NONNULL(1);
+EAPI Elm_Input_Panel_Layout elm_entry_input_panel_layout_get(Evas_Object *obj);
 
 /**
  * Set the autocapitalization type on the immodule.
@@ -1198,7 +1198,7 @@ EAPI Elm_Input_Panel_Layout elm_entry_input_panel_layout_get(Evas_Object *obj) E
  * @param obj The entry object
  * @param autocapital_type The type of autocapitalization
  */
-EAPI void                   elm_entry_autocapital_type_set(Evas_Object *obj, Elm_Autocapital_Type autocapital_type) EINA_ARG_NONNULL(1);
+EAPI void                   elm_entry_autocapital_type_set(Evas_Object *obj, Elm_Autocapital_Type autocapital_type);
 
 /**
  * Retrieve the autocapitalization type on the immodule.
@@ -1206,7 +1206,7 @@ EAPI void                   elm_entry_autocapital_type_set(Evas_Object *obj, Elm
  * @param obj The entry object
  * @return autocapitalization type
  */
-EAPI Elm_Autocapital_Type   elm_entry_autocapital_type_get(Evas_Object *obj) EINA_ARG_NONNULL(1);
+EAPI Elm_Autocapital_Type   elm_entry_autocapital_type_get(Evas_Object *obj);
 
 /**
  * Sets the attribute to show the input panel automatically.
@@ -1214,7 +1214,7 @@ EAPI Elm_Autocapital_Type   elm_entry_autocapital_type_get(Evas_Object *obj) EIN
  * @param obj The entry object
  * @param enabled If true, the input panel is appeared when entry is clicked or has a focus
  */
-EAPI void                   elm_entry_input_panel_enabled_set(Evas_Object *obj, Eina_Bool enabled) EINA_ARG_NONNULL(1);
+EAPI void                   elm_entry_input_panel_enabled_set(Evas_Object *obj, Eina_Bool enabled);
 
 /**
  * Retrieve the attribute to show the input panel automatically.
@@ -1222,7 +1222,7 @@ EAPI void                   elm_entry_input_panel_enabled_set(Evas_Object *obj, 
  * @param obj The entry object
  * @return EINA_TRUE if input panel will be appeared when the entry is clicked or has a focus, EINA_FALSE otherwise
  */
-EAPI Eina_Bool              elm_entry_input_panel_enabled_get(Evas_Object *obj) EINA_ARG_NONNULL(1);
+EAPI Eina_Bool              elm_entry_input_panel_enabled_get(Evas_Object *obj);
 
 /**
  * @}

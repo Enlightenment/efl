@@ -21,7 +21,7 @@
  * @param parent The parent object
  * @return The new object or NULL if it cannot be created
  */
-EAPI Evas_Object *elm_table_add(Evas_Object *parent) EINA_ARG_NONNULL(1);
+EAPI Evas_Object *elm_table_add(Evas_Object *parent);
 
 /**
  * @brief Set the homogeneous layout in the table
@@ -30,7 +30,7 @@ EAPI Evas_Object *elm_table_add(Evas_Object *parent) EINA_ARG_NONNULL(1);
  * @param homogeneous A boolean to set if the layout is homogeneous in the
  * table (EINA_TRUE = homogeneous,  EINA_FALSE = no homogeneous)
  */
-EAPI void      elm_table_homogeneous_set(Evas_Object *obj, Eina_Bool homogeneous) EINA_ARG_NONNULL(1);
+EAPI void      elm_table_homogeneous_set(Evas_Object *obj, Eina_Bool homogeneous);
 
 /**
  * @brief Get the current table homogeneous mode.
@@ -39,7 +39,7 @@ EAPI void      elm_table_homogeneous_set(Evas_Object *obj, Eina_Bool homogeneous
  * @return A boolean to indicating if the layout is homogeneous in the table
  * (EINA_TRUE = homogeneous,  EINA_FALSE = no homogeneous)
  */
-EAPI Eina_Bool elm_table_homogeneous_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
+EAPI Eina_Bool elm_table_homogeneous_get(const Evas_Object *obj);
 
 /**
  * @brief Set padding between cells.
@@ -50,7 +50,7 @@ EAPI Eina_Bool elm_table_homogeneous_get(const Evas_Object *obj) EINA_ARG_NONNUL
  *
  * Default value is 0.
  */
-EAPI void      elm_table_padding_set(Evas_Object *obj, Evas_Coord horizontal, Evas_Coord vertical) EINA_ARG_NONNULL(1);
+EAPI void      elm_table_padding_set(Evas_Object *obj, Evas_Coord horizontal, Evas_Coord vertical);
 
 /**
  * @brief Get padding between cells.
@@ -59,7 +59,7 @@ EAPI void      elm_table_padding_set(Evas_Object *obj, Evas_Coord horizontal, Ev
  * @param horizontal set the horizontal padding.
  * @param vertical set the vertical padding.
  */
-EAPI void      elm_table_padding_get(const Evas_Object *obj, Evas_Coord *horizontal, Evas_Coord *vertical) EINA_ARG_NONNULL(1);
+EAPI void      elm_table_padding_get(const Evas_Object *obj, Evas_Coord *horizontal, Evas_Coord *vertical);
 
 /**
  * @brief Add a subobject on the table with the coordinates passed
@@ -75,7 +75,7 @@ EAPI void      elm_table_padding_get(const Evas_Object *obj, Evas_Coord *horizon
  * a value of 0 for x and y, means the top left cell of the table, and a
  * value of 1 for w and h means @p subobj only takes that 1 cell.
  */
-EAPI void      elm_table_pack(Evas_Object *obj, Evas_Object *subobj, int x, int y, int w, int h) EINA_ARG_NONNULL(1);
+EAPI void      elm_table_pack(Evas_Object *obj, Evas_Object *subobj, int x, int y, int w, int h);
 
 /**
  * @brief Remove child from table.
@@ -83,7 +83,7 @@ EAPI void      elm_table_pack(Evas_Object *obj, Evas_Object *subobj, int x, int 
  * @param obj The table object
  * @param subobj The subobject
  */
-EAPI void      elm_table_unpack(Evas_Object *obj, Evas_Object *subobj) EINA_ARG_NONNULL(1);
+EAPI void      elm_table_unpack(Evas_Object *obj, Evas_Object *subobj);
 
 /**
  * @brief Faster way to remove all child objects from a table object.
@@ -91,7 +91,7 @@ EAPI void      elm_table_unpack(Evas_Object *obj, Evas_Object *subobj) EINA_ARG_
  * @param obj The table object
  * @param clear If true, will delete children, else just remove from table.
  */
-EAPI void      elm_table_clear(Evas_Object *obj, Eina_Bool clear) EINA_ARG_NONNULL(1);
+EAPI void      elm_table_clear(Evas_Object *obj, Eina_Bool clear);
 
 /**
  * @brief Set the packing location of an existing child of the table
@@ -108,7 +108,7 @@ EAPI void      elm_table_clear(Evas_Object *obj, Eina_Bool clear) EINA_ARG_NONNU
  * a value of 0 for x and y, means the top left cell of the table, and a
  * value of 1 for w and h means @p subobj only takes that 1 cell.
  */
-EAPI void      elm_table_pack_set(Evas_Object *subobj, int x, int y, int w, int h) EINA_ARG_NONNULL(1);
+EAPI void      elm_table_pack_set(Evas_Object *subobj, int x, int y, int w, int h);
 
 /**
  * @brief Get the packing location of an existing child of the table
@@ -121,7 +121,7 @@ EAPI void      elm_table_pack_set(Evas_Object *subobj, int x, int y, int w, int 
  *
  * @see elm_table_pack_set()
  */
-EAPI void      elm_table_pack_get(Evas_Object *subobj, int *x, int *y, int *w, int *h) EINA_ARG_NONNULL(1);
+EAPI void      elm_table_pack_get(Evas_Object *subobj, int *x, int *y, int *w, int *h);
 
 /**
  * @}

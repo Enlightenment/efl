@@ -72,7 +72,7 @@ typedef enum
  *
  * @ingroup Fileselector
  */
-EAPI Evas_Object          *elm_fileselector_add(Evas_Object *parent) EINA_ARG_NONNULL(1);
+EAPI Evas_Object          *elm_fileselector_add(Evas_Object *parent);
 
 /**
  * Enable/disable the file name entry box where the user can type
@@ -91,7 +91,7 @@ EAPI Evas_Object          *elm_fileselector_add(Evas_Object *parent) EINA_ARG_NO
  *
  * @ingroup Fileselector
  */
-EAPI void                  elm_fileselector_is_save_set(Evas_Object *obj, Eina_Bool is_save) EINA_ARG_NONNULL(1);
+EAPI void                  elm_fileselector_is_save_set(Evas_Object *obj, Eina_Bool is_save);
 
 /**
  * Get whether the given file selector is in "saving dialog" mode
@@ -104,7 +104,7 @@ EAPI void                  elm_fileselector_is_save_set(Evas_Object *obj, Eina_B
  *
  * @ingroup Fileselector
  */
-EAPI Eina_Bool             elm_fileselector_is_save_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
+EAPI Eina_Bool             elm_fileselector_is_save_get(const Evas_Object *obj);
 
 /**
  * Enable/disable folder-only view for a given file selector widget
@@ -121,7 +121,7 @@ EAPI Eina_Bool             elm_fileselector_is_save_get(const Evas_Object *obj) 
  *
  * @ingroup Fileselector
  */
-EAPI void                  elm_fileselector_folder_only_set(Evas_Object *obj, Eina_Bool only) EINA_ARG_NONNULL(1);
+EAPI void                  elm_fileselector_folder_only_set(Evas_Object *obj, Eina_Bool only);
 
 /**
  * Get whether folder-only view is set for a given file selector
@@ -136,7 +136,7 @@ EAPI void                  elm_fileselector_folder_only_set(Evas_Object *obj, Ei
  *
  * @ingroup Fileselector
  */
-EAPI Eina_Bool             elm_fileselector_folder_only_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
+EAPI Eina_Bool             elm_fileselector_folder_only_get(const Evas_Object *obj);
 
 /**
  * Enable/disable the "ok" and "cancel" buttons on a given file
@@ -153,7 +153,7 @@ EAPI Eina_Bool             elm_fileselector_folder_only_get(const Evas_Object *o
  *
  * @ingroup Fileselector
  */
-EAPI void                  elm_fileselector_buttons_ok_cancel_set(Evas_Object *obj, Eina_Bool buttons) EINA_ARG_NONNULL(1);
+EAPI void                  elm_fileselector_buttons_ok_cancel_set(Evas_Object *obj, Eina_Bool buttons);
 
 /**
  * Get whether the "ok" and "cancel" buttons on a given file
@@ -167,7 +167,7 @@ EAPI void                  elm_fileselector_buttons_ok_cancel_set(Evas_Object *o
  *
  * @ingroup Fileselector
  */
-EAPI Eina_Bool             elm_fileselector_buttons_ok_cancel_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
+EAPI Eina_Bool             elm_fileselector_buttons_ok_cancel_get(const Evas_Object *obj);
 
 /**
  * Enable/disable a tree view in the given file selector widget,
@@ -187,7 +187,7 @@ EAPI Eina_Bool             elm_fileselector_buttons_ok_cancel_get(const Evas_Obj
  *
  * @ingroup Fileselector
  */
-EAPI void                  elm_fileselector_expandable_set(Evas_Object *obj, Eina_Bool expand) EINA_ARG_NONNULL(1);
+EAPI void                  elm_fileselector_expandable_set(Evas_Object *obj, Eina_Bool expand);
 
 /**
  * Get whether tree view is enabled for the given file selector
@@ -201,7 +201,7 @@ EAPI void                  elm_fileselector_expandable_set(Evas_Object *obj, Ein
  *
  * @ingroup Fileselector
  */
-EAPI Eina_Bool             elm_fileselector_expandable_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
+EAPI Eina_Bool             elm_fileselector_expandable_get(const Evas_Object *obj);
 
 /**
  * Set, programmatically, the @b directory that a given file
@@ -218,7 +218,7 @@ EAPI Eina_Bool             elm_fileselector_expandable_get(const Evas_Object *ob
  *
  * @ingroup Fileselector
  */
-EAPI void                  elm_fileselector_path_set(Evas_Object *obj, const char *path) EINA_ARG_NONNULL(1);
+EAPI void                  elm_fileselector_path_set(Evas_Object *obj, const char *path);
 
 /**
  * Get the parent directory's path that a given file selector
@@ -232,7 +232,7 @@ EAPI void                  elm_fileselector_path_set(Evas_Object *obj, const cha
  *
  * @ingroup Fileselector
  */
-EAPI const char           *elm_fileselector_path_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
+EAPI const char           *elm_fileselector_path_get(const Evas_Object *obj);
 
 /**
  * Set, programmatically, the currently selected file/directory in
@@ -248,7 +248,7 @@ EAPI const char           *elm_fileselector_path_get(const Evas_Object *obj) EIN
  *
  * @ingroup Fileselector
  */
-EAPI Eina_Bool             elm_fileselector_selected_set(Evas_Object *obj, const char *path) EINA_ARG_NONNULL(1);
+EAPI Eina_Bool             elm_fileselector_selected_set(Evas_Object *obj, const char *path);
 
 /**
  * Get the currently selected item's (full) path, in the given file
@@ -265,7 +265,7 @@ EAPI Eina_Bool             elm_fileselector_selected_set(Evas_Object *obj, const
  *
  * @ingroup Fileselector
  */
-EAPI const char           *elm_fileselector_selected_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
+EAPI const char           *elm_fileselector_selected_get(const Evas_Object *obj);
 
 /**
  * Set the mode in which a given file selector widget will display
@@ -292,7 +292,7 @@ EAPI const char           *elm_fileselector_selected_get(const Evas_Object *obj)
  *
  * @ingroup Fileselector
  */
-EAPI void                  elm_fileselector_mode_set(Evas_Object *obj, Elm_Fileselector_Mode mode) EINA_ARG_NONNULL(1);
+EAPI void                  elm_fileselector_mode_set(Evas_Object *obj, Elm_Fileselector_Mode mode);
 
 /**
  * Get the mode in which a given file selector widget is displaying
@@ -305,7 +305,7 @@ EAPI void                  elm_fileselector_mode_set(Evas_Object *obj, Elm_Files
  *
  * @ingroup Fileselector
  */
-EAPI Elm_Fileselector_Mode elm_fileselector_mode_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
+EAPI Elm_Fileselector_Mode elm_fileselector_mode_get(const Evas_Object *obj);
 
 /**
  * @}

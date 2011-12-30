@@ -44,7 +44,7 @@ typedef struct _Elm_Calendar_Mark Elm_Calendar_Mark;    /**< Item handle for a c
  *
  * @ingroup Calendar
  */
-EAPI Evas_Object         *elm_calendar_add(Evas_Object *parent) EINA_ARG_NONNULL(1);
+EAPI Evas_Object         *elm_calendar_add(Evas_Object *parent);
 
 /**
  * Get weekdays names displayed by the calendar.
@@ -62,7 +62,7 @@ EAPI Evas_Object         *elm_calendar_add(Evas_Object *parent) EINA_ARG_NONNULL
  *
  * @ingroup Calendar
  */
-EAPI const char         **elm_calendar_weekdays_names_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
+EAPI const char         **elm_calendar_weekdays_names_get(const Evas_Object *obj);
 
 /**
  * Set weekdays names to be displayed by the calendar.
@@ -93,7 +93,7 @@ EAPI const char         **elm_calendar_weekdays_names_get(const Evas_Object *obj
  *
  * @ingroup Calendar
  */
-EAPI void                 elm_calendar_weekdays_names_set(Evas_Object *obj, const char *weekdays[]) EINA_ARG_NONNULL(1, 2);
+EAPI void                 elm_calendar_weekdays_names_set(Evas_Object *obj, const char *weekdays[]);
 
 /**
  * Set the minimum and maximum values for the year
@@ -115,7 +115,7 @@ EAPI void                 elm_calendar_weekdays_names_set(Evas_Object *obj, cons
  *
  * @ingroup Calendar
  */
-EAPI void                 elm_calendar_min_max_year_set(Evas_Object *obj, int min, int max) EINA_ARG_NONNULL(1);
+EAPI void                 elm_calendar_min_max_year_set(Evas_Object *obj, int min, int max);
 
 /**
  * Get the minimum and maximum values for the year
@@ -132,7 +132,7 @@ EAPI void                 elm_calendar_min_max_year_set(Evas_Object *obj, int mi
  *
  * @ingroup Calendar
  */
-EAPI void                 elm_calendar_min_max_year_get(const Evas_Object *obj, int *min, int *max) EINA_ARG_NONNULL(1);
+EAPI void                 elm_calendar_min_max_year_get(const Evas_Object *obj, int *min, int *max);
 
 /**
  * Enable or disable day selection
@@ -154,7 +154,7 @@ EAPI void                 elm_calendar_min_max_year_get(const Evas_Object *obj, 
  *
  * @ingroup Calendar
  */
-EAPI void                 elm_calendar_day_selection_enabled_set(Evas_Object *obj, Eina_Bool enabled) EINA_ARG_NONNULL(1);
+EAPI void                 elm_calendar_day_selection_enabled_set(Evas_Object *obj, Eina_Bool enabled);
 
 /**
  * Get a value whether day selection is enabled or not.
@@ -169,7 +169,7 @@ EAPI void                 elm_calendar_day_selection_enabled_set(Evas_Object *ob
  *
  * @ingroup Calendar
  */
-EAPI Eina_Bool            elm_calendar_day_selection_enabled_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
+EAPI Eina_Bool            elm_calendar_day_selection_enabled_get(const Evas_Object *obj);
 
 /**
  * Set selected date to be highlighted on calendar.
@@ -187,7 +187,7 @@ EAPI Eina_Bool            elm_calendar_day_selection_enabled_get(const Evas_Obje
  *
  * @ingroup Calendar
  */
-EAPI void                 elm_calendar_selected_time_set(Evas_Object *obj, struct tm *selected_time) EINA_ARG_NONNULL(1);
+EAPI void                 elm_calendar_selected_time_set(Evas_Object *obj, struct tm *selected_time);
 
 /**
  * Get selected date.
@@ -208,7 +208,7 @@ EAPI void                 elm_calendar_selected_time_set(Evas_Object *obj, struc
  *
  * @ingroup Calendar
  */
-EAPI Eina_Bool            elm_calendar_selected_time_get(const Evas_Object *obj, struct tm *selected_time) EINA_ARG_NONNULL(1, 2);
+EAPI Eina_Bool            elm_calendar_selected_time_get(const Evas_Object *obj, struct tm *selected_time);
 
 /**
  * Set a function to format the string that will be used to display
@@ -240,7 +240,7 @@ EAPI Eina_Bool            elm_calendar_selected_time_get(const Evas_Object *obj,
  *
  * @ingroup Calendar
  */
-EAPI void                 elm_calendar_format_function_set(Evas_Object *obj, char *(*format_function)(struct tm *stime)) EINA_ARG_NONNULL(1);
+EAPI void                 elm_calendar_format_function_set(Evas_Object *obj, char *(*format_function)(struct tm *stime));
 
 /**
  * Add a new mark to the calendar
@@ -291,7 +291,7 @@ EAPI void                 elm_calendar_format_function_set(Evas_Object *obj, cha
  *
  * @ingroup Calendar
  */
-EAPI Elm_Calendar_Mark   *elm_calendar_mark_add(Evas_Object *obj, const char *mark_type, struct tm *mark_time, Elm_Calendar_Mark_Repeat repeat) EINA_ARG_NONNULL(1);
+EAPI Elm_Calendar_Mark   *elm_calendar_mark_add(Evas_Object *obj, const char *mark_type, struct tm *mark_time, Elm_Calendar_Mark_Repeat repeat);
 
 /**
  * Delete mark from the calendar.
@@ -307,7 +307,7 @@ EAPI Elm_Calendar_Mark   *elm_calendar_mark_add(Evas_Object *obj, const char *ma
  *
  * @ingroup Calendar
  */
-EAPI void                 elm_calendar_mark_del(Elm_Calendar_Mark *mark) EINA_ARG_NONNULL(1);
+EAPI void                 elm_calendar_mark_del(Elm_Calendar_Mark *mark);
 
 /**
  * Remove all calendar's marks
@@ -319,7 +319,7 @@ EAPI void                 elm_calendar_mark_del(Elm_Calendar_Mark *mark) EINA_AR
  *
  * @ingroup Calendar
  */
-EAPI void                 elm_calendar_marks_clear(Evas_Object *obj) EINA_ARG_NONNULL(1);
+EAPI void                 elm_calendar_marks_clear(Evas_Object *obj);
 
 /**
  * Get a list of all the calendar marks.
@@ -333,7 +333,7 @@ EAPI void                 elm_calendar_marks_clear(Evas_Object *obj) EINA_ARG_NO
  *
  * @ingroup Calendar
  */
-EAPI const Eina_List     *elm_calendar_marks_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
+EAPI const Eina_List     *elm_calendar_marks_get(const Evas_Object *obj);
 
 /**
  * Draw calendar marks.
@@ -356,7 +356,7 @@ EAPI const Eina_List     *elm_calendar_marks_get(const Evas_Object *obj) EINA_AR
  *
  * @ingroup Calendar
  */
-EAPI void                 elm_calendar_marks_draw(Evas_Object *obj) EINA_ARG_NONNULL(1);
+EAPI void                 elm_calendar_marks_draw(Evas_Object *obj);
 
 /**
  * Set the interval on time updates for an user mouse button hold
@@ -383,7 +383,7 @@ EAPI void                 elm_calendar_marks_draw(Evas_Object *obj) EINA_ARG_NON
  *
  * @ingroup Calendar
  */
-EAPI void                 elm_calendar_interval_set(Evas_Object *obj, double interval) EINA_ARG_NONNULL(1);
+EAPI void                 elm_calendar_interval_set(Evas_Object *obj, double interval);
 
 /**
  * Get the interval on time updates for an user mouse button hold
@@ -396,7 +396,7 @@ EAPI void                 elm_calendar_interval_set(Evas_Object *obj, double int
  *
  * @ingroup Calendar
  */
-EAPI double               elm_calendar_interval_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
+EAPI double               elm_calendar_interval_get(const Evas_Object *obj);
 
 /**
  * @}

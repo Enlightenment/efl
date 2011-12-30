@@ -55,7 +55,7 @@ typedef enum
  * @param parent The parent object
  * @return The new object or NULL if it cannot be created
  */
-EAPI Evas_Object           *elm_photocam_add(Evas_Object *parent) EINA_ARG_NONNULL(1);
+EAPI Evas_Object           *elm_photocam_add(Evas_Object *parent);
 
 /**
  * @brief Set the photo file to be shown
@@ -71,7 +71,7 @@ EAPI Evas_Object           *elm_photocam_add(Evas_Object *parent) EINA_ARG_NONNU
  * photo that at some time in the future will be displayed at the full
  * quality needed.
  */
-EAPI Evas_Load_Error        elm_photocam_file_set(Evas_Object *obj, const char *file) EINA_ARG_NONNULL(1);
+EAPI Evas_Load_Error        elm_photocam_file_set(Evas_Object *obj, const char *file);
 
 /**
  * @brief Returns the path of the current image file
@@ -81,7 +81,7 @@ EAPI Evas_Load_Error        elm_photocam_file_set(Evas_Object *obj, const char *
  *
  * @see elm_photocam_file_set()
  */
-EAPI const char            *elm_photocam_file_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
+EAPI const char            *elm_photocam_file_get(const Evas_Object *obj);
 
 /**
  * @brief Set the zoom level of the photo
@@ -95,7 +95,7 @@ EAPI const char            *elm_photocam_file_get(const Evas_Object *obj) EINA_A
  * be greater than 0. It is usggested to stick to powers of 2. (1, 2, 4, 8,
  * 16, 32, etc.).
  */
-EAPI void                   elm_photocam_zoom_set(Evas_Object *obj, double zoom) EINA_ARG_NONNULL(1);
+EAPI void                   elm_photocam_zoom_set(Evas_Object *obj, double zoom);
 
 /**
  * @brief Get the zoom level of the photo
@@ -112,7 +112,7 @@ EAPI void                   elm_photocam_zoom_set(Evas_Object *obj, double zoom)
  * @see elm_photocam_zoom_set()
  * @see elm_photocam_zoom_mode_set()
  */
-EAPI double                 elm_photocam_zoom_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
+EAPI double                 elm_photocam_zoom_get(const Evas_Object *obj);
 
 /**
  * @brief Set the zoom mode
@@ -130,7 +130,7 @@ EAPI double                 elm_photocam_zoom_get(const Evas_Object *obj) EINA_A
  * area. ELM_PHOTOCAM_ZOOM_MODE_AUTO_FILL will be similar but ensure no
  * pixels within the frame are left unfilled.
  */
-EAPI void                   elm_photocam_zoom_mode_set(Evas_Object *obj, Elm_Photocam_Zoom_Mode mode) EINA_ARG_NONNULL(1);
+EAPI void                   elm_photocam_zoom_mode_set(Evas_Object *obj, Elm_Photocam_Zoom_Mode mode);
 
 /**
  * @brief Get the zoom mode
@@ -142,7 +142,7 @@ EAPI void                   elm_photocam_zoom_mode_set(Evas_Object *obj, Elm_Pho
  *
  * @see elm_photocam_zoom_mode_set()
  */
-EAPI Elm_Photocam_Zoom_Mode elm_photocam_zoom_mode_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
+EAPI Elm_Photocam_Zoom_Mode elm_photocam_zoom_mode_get(const Evas_Object *obj);
 
 /**
  * @brief Get the current image pixel width and height
@@ -155,7 +155,7 @@ EAPI Elm_Photocam_Zoom_Mode elm_photocam_zoom_mode_get(const Evas_Object *obj) E
  * The size will be returned in the integers @p w and @p h that are pointed
  * to.
  */
-EAPI void                   elm_photocam_image_size_get(const Evas_Object *obj, int *w, int *h) EINA_ARG_NONNULL(1);
+EAPI void                   elm_photocam_image_size_get(const Evas_Object *obj, int *w, int *h);
 
 /**
  * @brief Get the area of the image that is currently shown
@@ -169,7 +169,7 @@ EAPI void                   elm_photocam_image_size_get(const Evas_Object *obj, 
  * @see elm_photocam_image_region_show()
  * @see elm_photocam_image_region_bring_in()
  */
-EAPI void                   elm_photocam_region_get(const Evas_Object *obj, int *x, int *y, int *w, int *h) EINA_ARG_NONNULL(1);
+EAPI void                   elm_photocam_region_get(const Evas_Object *obj, int *x, int *y, int *w, int *h);
 
 /**
  * @brief Set the viewed portion of the image
@@ -182,7 +182,7 @@ EAPI void                   elm_photocam_region_get(const Evas_Object *obj, int 
  *
  * This shows the region of the image without using animation.
  */
-EAPI void                   elm_photocam_image_region_show(Evas_Object *obj, int x, int y, int w, int h) EINA_ARG_NONNULL(1);
+EAPI void                   elm_photocam_image_region_show(Evas_Object *obj, int x, int y, int w, int h);
 
 /**
  * @brief Bring in the viewed portion of the image
@@ -195,7 +195,7 @@ EAPI void                   elm_photocam_image_region_show(Evas_Object *obj, int
  *
  * This shows the region of the image using animation.
  */
-EAPI void                   elm_photocam_image_region_bring_in(Evas_Object *obj, int x, int y, int w, int h) EINA_ARG_NONNULL(1);
+EAPI void                   elm_photocam_image_region_bring_in(Evas_Object *obj, int x, int y, int w, int h);
 
 /**
  * @brief Set the paused state for photocam
@@ -208,7 +208,7 @@ EAPI void                   elm_photocam_image_region_bring_in(Evas_Object *obj,
  * zoom levels changes and change instantly. This will stop any existing
  * animations that are running.
  */
-EAPI void                   elm_photocam_paused_set(Evas_Object *obj, Eina_Bool paused) EINA_ARG_NONNULL(1);
+EAPI void                   elm_photocam_paused_set(Evas_Object *obj, Eina_Bool paused);
 
 /**
  * @brief Get the paused state for photocam
@@ -220,7 +220,7 @@ EAPI void                   elm_photocam_paused_set(Evas_Object *obj, Eina_Bool 
  *
  * @see elm_photocam_paused_set()
  */
-EAPI Eina_Bool              elm_photocam_paused_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
+EAPI Eina_Bool              elm_photocam_paused_get(const Evas_Object *obj);
 
 /**
  * @brief Get the internal low-res image used for photocam
@@ -232,7 +232,7 @@ EAPI Eina_Bool              elm_photocam_paused_get(const Evas_Object *obj) EINA
  * is for inspection only, and hooking callbacks to. Nothing else. It may be
  * deleted at any time as well.
  */
-EAPI Evas_Object           *elm_photocam_internal_image_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
+EAPI Evas_Object           *elm_photocam_internal_image_get(const Evas_Object *obj);
 
 /**
  * @brief Set the photocam scrolling bouncing.
@@ -241,7 +241,7 @@ EAPI Evas_Object           *elm_photocam_internal_image_get(const Evas_Object *o
  * @param h_bounce bouncing for horizontal
  * @param v_bounce bouncing for vertical
  */
-EAPI void                   elm_photocam_bounce_set(Evas_Object *obj, Eina_Bool h_bounce, Eina_Bool v_bounce) EINA_ARG_NONNULL(1);
+EAPI void                   elm_photocam_bounce_set(Evas_Object *obj, Eina_Bool h_bounce, Eina_Bool v_bounce);
 
 /**
  * @brief Get the photocam scrolling bouncing.
@@ -252,7 +252,7 @@ EAPI void                   elm_photocam_bounce_set(Evas_Object *obj, Eina_Bool 
  *
  * @see elm_photocam_bounce_set()
  */
-EAPI void                   elm_photocam_bounce_get(const Evas_Object *obj, Eina_Bool *h_bounce, Eina_Bool *v_bounce) EINA_ARG_NONNULL(1);
+EAPI void                   elm_photocam_bounce_get(const Evas_Object *obj, Eina_Bool *h_bounce, Eina_Bool *v_bounce);
 
 /**
  * @}

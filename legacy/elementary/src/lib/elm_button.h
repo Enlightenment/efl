@@ -44,7 +44,7 @@
  * @param parent The parent object
  * @return The new object or NULL if it cannot be created
  */
-EAPI Evas_Object                 *elm_button_add(Evas_Object *parent) EINA_ARG_NONNULL(1);
+EAPI Evas_Object                 *elm_button_add(Evas_Object *parent);
 
 /**
  * Turn on/off the autorepeat event generated when the button is kept pressed
@@ -61,7 +61,7 @@ EAPI Evas_Object                 *elm_button_add(Evas_Object *parent) EINA_ARG_N
  * @param obj The button object
  * @param on  A bool to turn on/off the event
  */
-EAPI void                         elm_button_autorepeat_set(Evas_Object *obj, Eina_Bool on) EINA_ARG_NONNULL(1);
+EAPI void                         elm_button_autorepeat_set(Evas_Object *obj, Eina_Bool on);
 
 /**
  * Get whether the autorepeat feature is enabled
@@ -71,7 +71,7 @@ EAPI void                         elm_button_autorepeat_set(Evas_Object *obj, Ei
  *
  * @see elm_button_autorepeat_set()
  */
-EAPI Eina_Bool                    elm_button_autorepeat_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
+EAPI Eina_Bool                    elm_button_autorepeat_get(const Evas_Object *obj);
 
 /**
  * Set the initial timeout before the autorepeat event is generated
@@ -87,7 +87,7 @@ EAPI Eina_Bool                    elm_button_autorepeat_get(const Evas_Object *o
  * @see elm_button_autorepeat_set()
  * @see elm_button_autorepeat_gap_timeout_set()
  */
-EAPI void                         elm_button_autorepeat_initial_timeout_set(Evas_Object *obj, double t) EINA_ARG_NONNULL(1);
+EAPI void                         elm_button_autorepeat_initial_timeout_set(Evas_Object *obj, double t);
 
 /**
  * Get the initial timeout before the autorepeat event is generated
@@ -97,7 +97,7 @@ EAPI void                         elm_button_autorepeat_initial_timeout_set(Evas
  *
  * @see elm_button_autorepeat_initial_timeout_set()
  */
-EAPI double                       elm_button_autorepeat_initial_timeout_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
+EAPI double                       elm_button_autorepeat_initial_timeout_get(const Evas_Object *obj);
 
 /**
  * Set the interval between each generated autorepeat event
@@ -110,7 +110,7 @@ EAPI double                       elm_button_autorepeat_initial_timeout_get(cons
  *
  * @see elm_button_autorepeat_initial_timeout_set()
  */
-EAPI void                         elm_button_autorepeat_gap_timeout_set(Evas_Object *obj, double t) EINA_ARG_NONNULL(1);
+EAPI void                         elm_button_autorepeat_gap_timeout_set(Evas_Object *obj, double t);
 
 /**
  * Get the interval between each generated autorepeat event
@@ -118,7 +118,7 @@ EAPI void                         elm_button_autorepeat_gap_timeout_set(Evas_Obj
  * @param obj The button object
  * @return Interval in seconds
  */
-EAPI double                       elm_button_autorepeat_gap_timeout_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
+EAPI double                       elm_button_autorepeat_gap_timeout_get(const Evas_Object *obj);
 
 /**
  * @}

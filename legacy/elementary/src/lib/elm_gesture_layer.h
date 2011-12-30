@@ -232,7 +232,7 @@ typedef Evas_Event_Flags (*Elm_Gesture_Event_Cb)(void *data, void *event_info);
  *
  * @ingroup Elm_Gesture_Layer
  */
-EAPI void         elm_gesture_layer_cb_set(Evas_Object *obj, Elm_Gesture_Types idx, Elm_Gesture_State cb_type, Elm_Gesture_Event_Cb cb, void *data) EINA_ARG_NONNULL(1);
+EAPI void         elm_gesture_layer_cb_set(Evas_Object *obj, Elm_Gesture_Types idx, Elm_Gesture_State cb_type, Elm_Gesture_Event_Cb cb, void *data);
 
 /**
  * Call this function to get repeat-events settings.
@@ -243,7 +243,7 @@ EAPI void         elm_gesture_layer_cb_set(Evas_Object *obj, Elm_Gesture_Types i
  * @see elm_gesture_layer_hold_events_set()
  * @ingroup Elm_Gesture_Layer
  */
-EAPI Eina_Bool    elm_gesture_layer_hold_events_get(Evas_Object *obj) EINA_ARG_NONNULL(1);
+EAPI Eina_Bool    elm_gesture_layer_hold_events_get(Evas_Object *obj);
 
 /**
  * This function called in order to make gesture-layer repeat events.
@@ -255,7 +255,7 @@ EAPI Eina_Bool    elm_gesture_layer_hold_events_get(Evas_Object *obj) EINA_ARG_N
  *
  * @ingroup Elm_Gesture_Layer
  */
-EAPI void         elm_gesture_layer_hold_events_set(Evas_Object *obj, Eina_Bool r) EINA_ARG_NONNULL(1);
+EAPI void         elm_gesture_layer_hold_events_set(Evas_Object *obj, Eina_Bool r);
 
 /**
  * This function sets step-value for zoom action.
@@ -267,7 +267,7 @@ EAPI void         elm_gesture_layer_hold_events_set(Evas_Object *obj, Eina_Bool 
  *
  * @ingroup Elm_Gesture_Layer
  */
-EAPI void         elm_gesture_layer_zoom_step_set(Evas_Object *obj, double s) EINA_ARG_NONNULL(1);
+EAPI void         elm_gesture_layer_zoom_step_set(Evas_Object *obj, double s);
 
 /**
  * This function sets step-value for rotate action.
@@ -279,7 +279,7 @@ EAPI void         elm_gesture_layer_zoom_step_set(Evas_Object *obj, double s) EI
  *
  * @ingroup Elm_Gesture_Layer
  */
-EAPI void         elm_gesture_layer_rotate_step_set(Evas_Object *obj, double s) EINA_ARG_NONNULL(1);
+EAPI void         elm_gesture_layer_rotate_step_set(Evas_Object *obj, double s);
 
 /**
  * This function called to attach gesture-layer to an Evas_Object.
@@ -290,7 +290,7 @@ EAPI void         elm_gesture_layer_rotate_step_set(Evas_Object *obj, double s) 
  *
  * @ingroup Elm_Gesture_Layer
  */
-EAPI Eina_Bool    elm_gesture_layer_attach(Evas_Object *obj, Evas_Object *t) EINA_ARG_NONNULL(1, 2);
+EAPI Eina_Bool    elm_gesture_layer_attach(Evas_Object *obj, Evas_Object *t);
 
 /**
  * Call this function to construct a new gesture-layer object.
@@ -303,4 +303,4 @@ EAPI Eina_Bool    elm_gesture_layer_attach(Evas_Object *obj, Evas_Object *t) EIN
  *
  * @ingroup Elm_Gesture_Layer
  */
-EAPI Evas_Object *elm_gesture_layer_add(Evas_Object *parent) EINA_ARG_NONNULL(1);
+EAPI Evas_Object *elm_gesture_layer_add(Evas_Object *parent);

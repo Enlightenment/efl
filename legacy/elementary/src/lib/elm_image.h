@@ -61,7 +61,7 @@ typedef enum
  *
  * @ingroup Image
  */
-EAPI Evas_Object     *elm_image_add(Evas_Object *parent) EINA_ARG_NONNULL(1);
+EAPI Evas_Object     *elm_image_add(Evas_Object *parent);
 
 /**
  * Set the file that will be used as image.
@@ -77,7 +77,7 @@ EAPI Evas_Object     *elm_image_add(Evas_Object *parent) EINA_ARG_NONNULL(1);
  *
  * @ingroup Image
  */
-EAPI Eina_Bool        elm_image_file_set(Evas_Object *obj, const char *file, const char *group) EINA_ARG_NONNULL(1, 2);
+EAPI Eina_Bool        elm_image_file_set(Evas_Object *obj, const char *file, const char *group);
 
 /**
  * Get the file that will be used as image.
@@ -90,7 +90,7 @@ EAPI Eina_Bool        elm_image_file_set(Evas_Object *obj, const char *file, con
  *
  * @ingroup Image
  */
-EAPI void             elm_image_file_get(const Evas_Object *obj, const char **file, const char **group) EINA_ARG_NONNULL(1);
+EAPI void             elm_image_file_get(const Evas_Object *obj, const char **file, const char **group);
 
 /**
  * Set the smooth effect for an image.
@@ -111,7 +111,7 @@ EAPI void             elm_image_file_get(const Evas_Object *obj, const char **fi
  *
  * @ingroup Image
  */
-EAPI void             elm_image_smooth_set(Evas_Object *obj, Eina_Bool smooth) EINA_ARG_NONNULL(1);
+EAPI void             elm_image_smooth_set(Evas_Object *obj, Eina_Bool smooth);
 
 /**
  * Get the smooth effect for an image.
@@ -123,7 +123,7 @@ EAPI void             elm_image_smooth_set(Evas_Object *obj, Eina_Bool smooth) E
  *
  * @ingroup Image
  */
-EAPI Eina_Bool        elm_image_smooth_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
+EAPI Eina_Bool        elm_image_smooth_get(const Evas_Object *obj);
 
 /**
  * Gets the current size of the image.
@@ -138,7 +138,7 @@ EAPI Eina_Bool        elm_image_smooth_get(const Evas_Object *obj) EINA_ARG_NONN
  *
  * @ingroup Image
  */
-EAPI void             elm_image_object_size_get(const Evas_Object *obj, int *w, int *h) EINA_ARG_NONNULL(1);
+EAPI void             elm_image_object_size_get(const Evas_Object *obj, int *w, int *h);
 
 /**
  * Disable scaling of this object.
@@ -158,7 +158,7 @@ EAPI void             elm_image_object_size_get(const Evas_Object *obj, int *w, 
  *
  * @ingroup Image
  */
-EAPI void             elm_image_no_scale_set(Evas_Object *obj, Eina_Bool no_scale) EINA_ARG_NONNULL(1);
+EAPI void             elm_image_no_scale_set(Evas_Object *obj, Eina_Bool no_scale);
 
 /**
  * Get whether scaling is disabled on the object.
@@ -170,7 +170,7 @@ EAPI void             elm_image_no_scale_set(Evas_Object *obj, Eina_Bool no_scal
  *
  * @ingroup Image
  */
-EAPI Eina_Bool        elm_image_no_scale_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
+EAPI Eina_Bool        elm_image_no_scale_get(const Evas_Object *obj);
 
 /**
  * Set if the object is (up/down) resizable.
@@ -189,7 +189,7 @@ EAPI Eina_Bool        elm_image_no_scale_get(const Evas_Object *obj) EINA_ARG_NO
  *
  * @ingroup Image
  */
-EAPI void             elm_image_scale_set(Evas_Object *obj, Eina_Bool scale_up, Eina_Bool scale_down) EINA_ARG_NONNULL(1);
+EAPI void             elm_image_scale_set(Evas_Object *obj, Eina_Bool scale_up, Eina_Bool scale_down);
 
 /**
  * Get if the object is (up/down) resizable.
@@ -202,7 +202,7 @@ EAPI void             elm_image_scale_set(Evas_Object *obj, Eina_Bool scale_up, 
  *
  * @ingroup Image
  */
-EAPI void             elm_image_scale_get(const Evas_Object *obj, Eina_Bool *scale_up, Eina_Bool *scale_down) EINA_ARG_NONNULL(1);
+EAPI void             elm_image_scale_get(const Evas_Object *obj, Eina_Bool *scale_up, Eina_Bool *scale_down);
 
 /**
  * Set if the image fills the entire object area, when keeping the aspect ratio.
@@ -225,7 +225,7 @@ EAPI void             elm_image_scale_get(const Evas_Object *obj, Eina_Bool *sca
  *
  * @ingroup Image
  */
-EAPI void             elm_image_fill_outside_set(Evas_Object *obj, Eina_Bool fill_outside) EINA_ARG_NONNULL(1);
+EAPI void             elm_image_fill_outside_set(Evas_Object *obj, Eina_Bool fill_outside);
 
 /**
  * Get if the object is filled outside
@@ -237,7 +237,7 @@ EAPI void             elm_image_fill_outside_set(Evas_Object *obj, Eina_Bool fil
  *
  * @ingroup Image
  */
-EAPI Eina_Bool        elm_image_fill_outside_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
+EAPI Eina_Bool        elm_image_fill_outside_get(const Evas_Object *obj);
 
 /**
  * Set the prescale size for the image
@@ -261,7 +261,7 @@ EAPI Eina_Bool        elm_image_fill_outside_get(const Evas_Object *obj) EINA_AR
  *
  * @ingroup Image
  */
-EAPI void             elm_image_prescale_set(Evas_Object *obj, int size) EINA_ARG_NONNULL(1);
+EAPI void             elm_image_prescale_set(Evas_Object *obj, int size);
 
 /**
  * Get the prescale size for the image
@@ -273,7 +273,7 @@ EAPI void             elm_image_prescale_set(Evas_Object *obj, int size) EINA_AR
  *
  * @ingroup Image
  */
-EAPI int              elm_image_prescale_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
+EAPI int              elm_image_prescale_get(const Evas_Object *obj);
 
 /**
  * Set the image orientation.
@@ -289,7 +289,7 @@ EAPI int              elm_image_prescale_get(const Evas_Object *obj) EINA_ARG_NO
  *
  * @ingroup Image
  */
-EAPI void             elm_image_orient_set(Evas_Object *obj, Elm_Image_Orient orient) EINA_ARG_NONNULL(1);
+EAPI void             elm_image_orient_set(Evas_Object *obj, Elm_Image_Orient orient);
 
 /**
  * Get the image orientation.
@@ -302,7 +302,7 @@ EAPI void             elm_image_orient_set(Evas_Object *obj, Elm_Image_Orient or
  *
  * @ingroup Image
  */
-EAPI Elm_Image_Orient elm_image_orient_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
+EAPI Elm_Image_Orient elm_image_orient_get(const Evas_Object *obj);
 
 /**
  * Make the image 'editable'.
@@ -315,7 +315,7 @@ EAPI Elm_Image_Orient elm_image_orient_get(const Evas_Object *obj) EINA_ARG_NONN
  *
  * @ingroup Image
  */
-EAPI void             elm_image_editable_set(Evas_Object *obj, Eina_Bool set) EINA_ARG_NONNULL(1);
+EAPI void             elm_image_editable_set(Evas_Object *obj, Eina_Bool set);
 
 /**
  * Check if the image 'editable'.
@@ -328,7 +328,7 @@ EAPI void             elm_image_editable_set(Evas_Object *obj, Eina_Bool set) EI
  *
  * @ingroup Image
  */
-EAPI Eina_Bool        elm_image_editable_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
+EAPI Eina_Bool        elm_image_editable_get(const Evas_Object *obj);
 
 /**
  * Get the basic Evas_Image object from this object (widget).
@@ -345,7 +345,7 @@ EAPI Eina_Bool        elm_image_editable_get(const Evas_Object *obj) EINA_ARG_NO
  *
  * @ingroup Image
  */
-EAPI Evas_Object     *elm_image_object_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
+EAPI Evas_Object     *elm_image_object_get(const Evas_Object *obj);
 
 /**
  * Set whether the original aspect ratio of the image should be kept on resize.
@@ -364,7 +364,7 @@ EAPI Evas_Object     *elm_image_object_get(const Evas_Object *obj) EINA_ARG_NONN
  *
  * @ingroup Image
  */
-EAPI void             elm_image_aspect_ratio_retained_set(Evas_Object *obj, Eina_Bool retained) EINA_ARG_NONNULL(1);
+EAPI void             elm_image_aspect_ratio_retained_set(Evas_Object *obj, Eina_Bool retained);
 
 /**
  * Get if the object retains the original aspect ratio.
@@ -375,7 +375,7 @@ EAPI void             elm_image_aspect_ratio_retained_set(Evas_Object *obj, Eina
  *
  * @ingroup Image
  */
-EAPI Eina_Bool        elm_image_aspect_ratio_retained_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
+EAPI Eina_Bool        elm_image_aspect_ratio_retained_get(const Evas_Object *obj);
 
 /**
  * @}

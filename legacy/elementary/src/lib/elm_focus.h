@@ -85,7 +85,7 @@ EAPI void                 elm_focus_highlight_animate_set(Eina_Bool animate);
  *
  * @ingroup Focus
  */
-EAPI Eina_Bool            elm_object_focus_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
+EAPI Eina_Bool            elm_object_focus_get(const Evas_Object *obj);
 
 /**
  * Set/unset focus to a given Elementary object.
@@ -104,7 +104,7 @@ EAPI Eina_Bool            elm_object_focus_get(const Evas_Object *obj) EINA_ARG_
  *
  * @ingroup Focus
  */
-EAPI void                 elm_object_focus_set(Evas_Object *obj, Eina_Bool focus) EINA_ARG_NONNULL(1);
+EAPI void                 elm_object_focus_set(Evas_Object *obj, Eina_Bool focus);
 
 /**
  * Set the ability for an Element object to be focused
@@ -122,7 +122,7 @@ EAPI void                 elm_object_focus_set(Evas_Object *obj, Eina_Bool focus
  *
  * @ingroup Focus
  */
-EAPI void                 elm_object_focus_allow_set(Evas_Object *obj, Eina_Bool enable) EINA_ARG_NONNULL(1);
+EAPI void                 elm_object_focus_allow_set(Evas_Object *obj, Eina_Bool enable);
 
 /**
  * Get whether an Elementary object is focusable or not
@@ -137,7 +137,7 @@ EAPI void                 elm_object_focus_allow_set(Evas_Object *obj, Eina_Bool
  *
  * @ingroup Focus
  */
-EAPI Eina_Bool            elm_object_focus_allow_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
+EAPI Eina_Bool            elm_object_focus_allow_get(const Evas_Object *obj);
 
 /**
  * Set custom focus chain.
@@ -152,7 +152,7 @@ EAPI Eina_Bool            elm_object_focus_allow_get(const Evas_Object *obj) EIN
  * @param objs Chain of objects to pass focus
  * @ingroup Focus
  */
-EAPI void                 elm_object_focus_custom_chain_set(Evas_Object *obj, Eina_List *objs) EINA_ARG_NONNULL(1);
+EAPI void                 elm_object_focus_custom_chain_set(Evas_Object *obj, Eina_List *objs);
 
 /**
  * Unset a custom focus chain on a given Elementary widget
@@ -164,7 +164,7 @@ EAPI void                 elm_object_focus_custom_chain_set(Evas_Object *obj, Ei
  *
  * @ingroup Focus
  */
-EAPI void                 elm_object_focus_custom_chain_unset(Evas_Object *obj) EINA_ARG_NONNULL(1);
+EAPI void                 elm_object_focus_custom_chain_unset(Evas_Object *obj);
 
 /**
  * Get custom focus chain
@@ -172,7 +172,7 @@ EAPI void                 elm_object_focus_custom_chain_unset(Evas_Object *obj) 
  * @param obj The container object
  * @ingroup Focus
  */
-EAPI const Eina_List     *elm_object_focus_custom_chain_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
+EAPI const Eina_List     *elm_object_focus_custom_chain_get(const Evas_Object *obj);
 
 /**
  * Append object to custom focus chain.
@@ -187,7 +187,7 @@ EAPI const Eina_List     *elm_object_focus_custom_chain_get(const Evas_Object *o
  * @param relative_child The relative object to position the child
  * @ingroup Focus
  */
-EAPI void                 elm_object_focus_custom_chain_append(Evas_Object *obj, Evas_Object *child, Evas_Object *relative_child) EINA_ARG_NONNULL(1, 2);
+EAPI void                 elm_object_focus_custom_chain_append(Evas_Object *obj, Evas_Object *child, Evas_Object *relative_child);
 
 /**
  * Prepend object to custom focus chain.
@@ -202,7 +202,7 @@ EAPI void                 elm_object_focus_custom_chain_append(Evas_Object *obj,
  * @param relative_child The relative object to position the child
  * @ingroup Focus
  */
-EAPI void                 elm_object_focus_custom_chain_prepend(Evas_Object *obj, Evas_Object *child, Evas_Object *relative_child) EINA_ARG_NONNULL(1, 2);
+EAPI void                 elm_object_focus_custom_chain_prepend(Evas_Object *obj, Evas_Object *child, Evas_Object *relative_child);
 
 /**
  * Give focus to next object in object tree.
@@ -216,7 +216,7 @@ EAPI void                 elm_object_focus_custom_chain_prepend(Evas_Object *obj
  *
  * @ingroup Focus
  */
-EAPI void                 elm_object_focus_cycle(Evas_Object *obj, Elm_Focus_Direction dir) EINA_ARG_NONNULL(1);
+EAPI void                 elm_object_focus_cycle(Evas_Object *obj, Elm_Focus_Direction dir);
 
 /**
  * Give focus to near object in one direction.
@@ -230,7 +230,7 @@ EAPI void                 elm_object_focus_cycle(Evas_Object *obj, Elm_Focus_Dir
  *
  * @ingroup Focus
  */
-EAPI void                 elm_object_focus_direction_go(Evas_Object *obj, int x, int y) EINA_ARG_NONNULL(1);
+EAPI void                 elm_object_focus_direction_go(Evas_Object *obj, int x, int y);
 
 /**
  * Make the elementary object and its children to be unfocusable
@@ -252,7 +252,7 @@ EAPI void                 elm_object_focus_direction_go(Evas_Object *obj, int x,
  *
  * @ingroup Focus
  */
-EAPI void                 elm_object_tree_unfocusable_set(Evas_Object *obj, Eina_Bool tree_unfocusable) EINA_ARG_NONNULL(1);
+EAPI void                 elm_object_tree_unfocusable_set(Evas_Object *obj, Eina_Bool tree_unfocusable);
 
 /**
  * Get whether an Elementary object and its children are unfocusable or not.
@@ -265,4 +265,4 @@ EAPI void                 elm_object_tree_unfocusable_set(Evas_Object *obj, Eina
  *
  * @ingroup Focus
  */
-EAPI Eina_Bool            elm_object_tree_unfocusable_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
+EAPI Eina_Bool            elm_object_tree_unfocusable_get(const Evas_Object *obj);

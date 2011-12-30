@@ -21,7 +21,7 @@
  *
  * @ingroup Photo
  */
-EAPI Evas_Object *elm_photo_add(Evas_Object *parent) EINA_ARG_NONNULL(1);
+EAPI Evas_Object *elm_photo_add(Evas_Object *parent);
 
 /**
  * Set the file that will be used as photo
@@ -33,7 +33,7 @@ EAPI Evas_Object *elm_photo_add(Evas_Object *parent) EINA_ARG_NONNULL(1);
  *
  * @ingroup Photo
  */
-EAPI Eina_Bool elm_photo_file_set(Evas_Object *obj, const char *file) EINA_ARG_NONNULL(1);
+EAPI Eina_Bool elm_photo_file_set(Evas_Object *obj, const char *file);
 
 /**
  * Set the file that will be used as thumbnail in the photo.
@@ -44,7 +44,7 @@ EAPI Eina_Bool elm_photo_file_set(Evas_Object *obj, const char *file) EINA_ARG_N
  *
  * @ingroup Photo
  */
-EAPI void      elm_photo_thumb_set(const Evas_Object *obj, const char *file, const char *group) EINA_ARG_NONNULL(1, 2);
+EAPI void      elm_photo_thumb_set(const Evas_Object *obj, const char *file, const char *group);
 
 /**
  * Set the size that will be used on the photo
@@ -54,7 +54,7 @@ EAPI void      elm_photo_thumb_set(const Evas_Object *obj, const char *file, con
  *
  * @ingroup Photo
  */
-EAPI void      elm_photo_size_set(Evas_Object *obj, int size) EINA_ARG_NONNULL(1);
+EAPI void      elm_photo_size_set(Evas_Object *obj, int size);
 
 /**
  * Set if the photo should be completely visible or not.
@@ -64,7 +64,7 @@ EAPI void      elm_photo_size_set(Evas_Object *obj, int size) EINA_ARG_NONNULL(1
  *
  * @ingroup Photo
  */
-EAPI void      elm_photo_fill_inside_set(Evas_Object *obj, Eina_Bool fill) EINA_ARG_NONNULL(1);
+EAPI void      elm_photo_fill_inside_set(Evas_Object *obj, Eina_Bool fill);
 
 /**
  * Set editability of the photo.
@@ -76,7 +76,7 @@ EAPI void      elm_photo_fill_inside_set(Evas_Object *obj, Eina_Bool fill) EINA_
  * @param obj The photo object.
  * @param set To set of clear editablity.
  */
-EAPI void      elm_photo_editable_set(Evas_Object *obj, Eina_Bool set) EINA_ARG_NONNULL(1);
+EAPI void      elm_photo_editable_set(Evas_Object *obj, Eina_Bool set);
 
 /**
  * @}

@@ -60,7 +60,7 @@ typedef enum
  * @param parent The parent object
  * @return The new object or NULL if it cannot be created
  */
-EAPI Evas_Object *elm_flip_add(Evas_Object *parent) EINA_ARG_NONNULL(1);
+EAPI Evas_Object *elm_flip_add(Evas_Object *parent);
 
 /**
  * @brief Set the front content of the flip widget.
@@ -72,7 +72,7 @@ EAPI Evas_Object *elm_flip_add(Evas_Object *parent) EINA_ARG_NONNULL(1);
  * If you want to keep that old content object, use the
  * elm_flip_content_front_unset() function.
  */
-EAPI void                 elm_flip_content_front_set(Evas_Object *obj, Evas_Object *content) EINA_ARG_NONNULL(1);
+EAPI void                 elm_flip_content_front_set(Evas_Object *obj, Evas_Object *content);
 
 /**
  * @brief Set the back content of the flip widget.
@@ -84,7 +84,7 @@ EAPI void                 elm_flip_content_front_set(Evas_Object *obj, Evas_Obje
  * If you want to keep that old content object, use the
  * elm_flip_content_back_unset() function.
  */
-EAPI void                 elm_flip_content_back_set(Evas_Object *obj, Evas_Object *content) EINA_ARG_NONNULL(1);
+EAPI void                 elm_flip_content_back_set(Evas_Object *obj, Evas_Object *content);
 
 /**
  * @brief Get the front content used for the flip
@@ -94,7 +94,7 @@ EAPI void                 elm_flip_content_back_set(Evas_Object *obj, Evas_Objec
  *
  * Return the front content object which is set for this widget.
  */
-EAPI Evas_Object         *elm_flip_content_front_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
+EAPI Evas_Object         *elm_flip_content_front_get(const Evas_Object *obj);
 
 /**
  * @brief Get the back content used for the flip
@@ -104,7 +104,7 @@ EAPI Evas_Object         *elm_flip_content_front_get(const Evas_Object *obj) EIN
  *
  * Return the back content object which is set for this widget.
  */
-EAPI Evas_Object         *elm_flip_content_back_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
+EAPI Evas_Object         *elm_flip_content_back_get(const Evas_Object *obj);
 
 /**
  * @brief Unset the front content used for the flip
@@ -114,7 +114,7 @@ EAPI Evas_Object         *elm_flip_content_back_get(const Evas_Object *obj) EINA
  *
  * Unparent and return the front content object which was set for this widget.
  */
-EAPI Evas_Object         *elm_flip_content_front_unset(Evas_Object *obj) EINA_ARG_NONNULL(1);
+EAPI Evas_Object         *elm_flip_content_front_unset(Evas_Object *obj);
 
 /**
  * @brief Unset the back content used for the flip
@@ -124,7 +124,7 @@ EAPI Evas_Object         *elm_flip_content_front_unset(Evas_Object *obj) EINA_AR
  *
  * Unparent and return the back content object which was set for this widget.
  */
-EAPI Evas_Object         *elm_flip_content_back_unset(Evas_Object *obj) EINA_ARG_NONNULL(1);
+EAPI Evas_Object         *elm_flip_content_back_unset(Evas_Object *obj);
 
 /**
  * @brief Get flip front visibility state
@@ -133,7 +133,7 @@ EAPI Evas_Object         *elm_flip_content_back_unset(Evas_Object *obj) EINA_ARG
  * @return EINA_TRUE if front front is showing, EINA_FALSE if the back is
  * showing.
  */
-EAPI Eina_Bool            elm_flip_front_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
+EAPI Eina_Bool            elm_flip_front_get(const Evas_Object *obj);
 
 /**
  * @brief Set flip perspective
@@ -145,7 +145,7 @@ EAPI Eina_Bool            elm_flip_front_get(const Evas_Object *obj) EINA_ARG_NO
  *
  * @warning This function currently does nothing.
  */
-EAPI void                 elm_flip_perspective_set(Evas_Object *obj, Evas_Coord foc, Evas_Coord x, Evas_Coord y) EINA_ARG_NONNULL(1);
+EAPI void                 elm_flip_perspective_set(Evas_Object *obj, Evas_Coord foc, Evas_Coord x, Evas_Coord y);
 
 /**
  * @brief Runs the flip animation
@@ -193,7 +193,7 @@ EAPI void                 elm_flip_perspective_set(Evas_Object *obj, Evas_Coord 
  * @image html elm_flip.png
  * @image latex elm_flip.eps width=\textwidth
  */
-EAPI void                 elm_flip_go(Evas_Object *obj, Elm_Flip_Mode mode) EINA_ARG_NONNULL(1);
+EAPI void                 elm_flip_go(Evas_Object *obj, Elm_Flip_Mode mode);
 
 /**
  * @brief Set the interactive flip mode

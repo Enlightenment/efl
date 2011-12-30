@@ -85,7 +85,7 @@ struct _Elm_Entry_Anchorview_Info
  * @param parent The parent object
  * @return The new object or NULL if it cannot be created
  */
-EAPI Evas_Object                *elm_anchorview_add(Evas_Object *parent) EINA_ARG_NONNULL(1);
+EAPI Evas_Object                *elm_anchorview_add(Evas_Object *parent);
 
 /**
  * Set the parent of the hover popup
@@ -97,7 +97,7 @@ EAPI Evas_Object                *elm_anchorview_add(Evas_Object *parent) EINA_AR
  * @param obj The anchorview object
  * @param parent The object to use as parent for the hover
  */
-EAPI void                        elm_anchorview_hover_parent_set(Evas_Object *obj, Evas_Object *parent) EINA_ARG_NONNULL(1);
+EAPI void                        elm_anchorview_hover_parent_set(Evas_Object *obj, Evas_Object *parent);
 
 /**
  * Get the parent of the hover popup
@@ -108,7 +108,7 @@ EAPI void                        elm_anchorview_hover_parent_set(Evas_Object *ob
  * @param obj The anchorview object
  * @return The object used as parent for the hover, NULL if none is set.
  */
-EAPI Evas_Object                *elm_anchorview_hover_parent_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
+EAPI Evas_Object                *elm_anchorview_hover_parent_get(const Evas_Object *obj);
 
 /**
  * Set the style that the hover should use
@@ -121,7 +121,7 @@ EAPI Evas_Object                *elm_anchorview_hover_parent_get(const Evas_Obje
  *
  * @see elm_object_style_set()
  */
-EAPI void                        elm_anchorview_hover_style_set(Evas_Object *obj, const char *style) EINA_ARG_NONNULL(1);
+EAPI void                        elm_anchorview_hover_style_set(Evas_Object *obj, const char *style);
 
 /**
  * Get the style that the hover should use
@@ -133,7 +133,7 @@ EAPI void                        elm_anchorview_hover_style_set(Evas_Object *obj
  *
  * @see elm_object_style_set()
  */
-EAPI const char                 *elm_anchorview_hover_style_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
+EAPI const char                 *elm_anchorview_hover_style_get(const Evas_Object *obj);
 
 /**
  * Ends the hover popup in the anchorview
@@ -144,7 +144,7 @@ EAPI const char                 *elm_anchorview_hover_style_get(const Evas_Objec
  *
  * @param obj The anchorview object
  */
-EAPI void                        elm_anchorview_hover_end(Evas_Object *obj) EINA_ARG_NONNULL(1);
+EAPI void                        elm_anchorview_hover_end(Evas_Object *obj);
 
 /**
  * Set bouncing behaviour when the scrolled content reaches an edge
@@ -158,7 +158,7 @@ EAPI void                        elm_anchorview_hover_end(Evas_Object *obj) EINA
  *
  * @see elm_scroller_bounce_set()
  */
-EAPI void                        elm_anchorview_bounce_set(Evas_Object *obj, Eina_Bool h_bounce, Eina_Bool v_bounce) EINA_ARG_NONNULL(1);
+EAPI void                        elm_anchorview_bounce_set(Evas_Object *obj, Eina_Bool h_bounce, Eina_Bool v_bounce);
 
 /**
  * Get the set bouncing behaviour of the internal scroller
@@ -174,7 +174,7 @@ EAPI void                        elm_anchorview_bounce_set(Evas_Object *obj, Ein
  *
  * @see elm_scroller_bounce_get()
  */
-EAPI void                        elm_anchorview_bounce_get(const Evas_Object *obj, Eina_Bool *h_bounce, Eina_Bool *v_bounce) EINA_ARG_NONNULL(1);
+EAPI void                        elm_anchorview_bounce_get(const Evas_Object *obj, Eina_Bool *h_bounce, Eina_Bool *v_bounce);
 
 /**
  * Appends a custom item provider to the given anchorview
@@ -196,7 +196,7 @@ EAPI void                        elm_anchorview_bounce_get(const Evas_Object *ob
  *
  * @see elm_entry_item_provider_append()
  */
-EAPI void                        elm_anchorview_item_provider_append(Evas_Object *obj, Evas_Object * (*func)(void *data, Evas_Object * anchorview, const char *item), void *data) EINA_ARG_NONNULL(1, 2);
+EAPI void                        elm_anchorview_item_provider_append(Evas_Object *obj, Evas_Object * (*func)(void *data, Evas_Object * anchorview, const char *item), void *data);
 
 /**
  * Prepend a custom item provider to the given anchorview
@@ -208,7 +208,7 @@ EAPI void                        elm_anchorview_item_provider_append(Evas_Object
  * @param func The function to add to the list of providers
  * @param data User data that will be passed to the callback function
  */
-EAPI void                        elm_anchorview_item_provider_prepend(Evas_Object *obj, Evas_Object * (*func)(void *data, Evas_Object * anchorview, const char *item), void *data) EINA_ARG_NONNULL(1, 2);
+EAPI void                        elm_anchorview_item_provider_prepend(Evas_Object *obj, Evas_Object * (*func)(void *data, Evas_Object * anchorview, const char *item), void *data);
 
 /**
  * Remove a custom item provider from the list of the given anchorview
@@ -223,7 +223,7 @@ EAPI void                        elm_anchorview_item_provider_prepend(Evas_Objec
  * @param func The function to remove from the list
  * @param data The data matching the function to remove from the list
  */
-EAPI void                        elm_anchorview_item_provider_remove(Evas_Object *obj, Evas_Object * (*func)(void *data, Evas_Object * anchorview, const char *item), void *data) EINA_ARG_NONNULL(1, 2);
+EAPI void                        elm_anchorview_item_provider_remove(Evas_Object *obj, Evas_Object * (*func)(void *data, Evas_Object * anchorview, const char *item), void *data);
 
 /**
  * @}

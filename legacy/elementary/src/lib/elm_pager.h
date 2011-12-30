@@ -53,7 +53,7 @@
  *
  * @ingroup Pager
  */
-EAPI Evas_Object *elm_pager_add(Evas_Object *parent) EINA_ARG_NONNULL(1);
+EAPI Evas_Object *elm_pager_add(Evas_Object *parent);
 
 /**
  * @brief Push an object to the top of the pager stack (and show it).
@@ -69,7 +69,7 @@ EAPI Evas_Object *elm_pager_add(Evas_Object *parent) EINA_ARG_NONNULL(1);
  * @warning Using this function on @p content already in the stack results in
  * undefined behavior.
  */
-EAPI void         elm_pager_content_push(Evas_Object *obj, Evas_Object *content) EINA_ARG_NONNULL(1);
+EAPI void         elm_pager_content_push(Evas_Object *obj, Evas_Object *content);
 
 /**
  * @brief Pop the object that is on top of the stack
@@ -80,7 +80,7 @@ EAPI void         elm_pager_content_push(Evas_Object *obj, Evas_Object *content)
  * disappear, then deletes the object. The object that was underneath it on
  * the stack will become visible.
  */
-EAPI void         elm_pager_content_pop(Evas_Object *obj) EINA_ARG_NONNULL(1);
+EAPI void         elm_pager_content_pop(Evas_Object *obj);
 
 /**
  * @brief Moves an object already in the pager stack to the top of the stack.
@@ -96,7 +96,7 @@ EAPI void         elm_pager_content_pop(Evas_Object *obj) EINA_ARG_NONNULL(1);
  * @warning Using this function on @p content not already in the stack
  * results in undefined behavior.
  */
-EAPI void         elm_pager_content_promote(Evas_Object *obj, Evas_Object *content) EINA_ARG_NONNULL(1);
+EAPI void         elm_pager_content_promote(Evas_Object *obj, Evas_Object *content);
 
 /**
  * @brief Return the object at the bottom of the pager stack
@@ -104,7 +104,7 @@ EAPI void         elm_pager_content_promote(Evas_Object *obj, Evas_Object *conte
  * @param obj The pager object
  * @return The bottom object or NULL if none
  */
-EAPI Evas_Object *elm_pager_content_bottom_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
+EAPI Evas_Object *elm_pager_content_bottom_get(const Evas_Object *obj);
 
 /**
  * @brief  Return the object at the top of the pager stack
@@ -112,7 +112,7 @@ EAPI Evas_Object *elm_pager_content_bottom_get(const Evas_Object *obj) EINA_ARG_
  * @param obj The pager object
  * @return The top object or NULL if none
  */
-EAPI Evas_Object *elm_pager_content_top_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
+EAPI Evas_Object *elm_pager_content_top_get(const Evas_Object *obj);
 
 /**
  * @}

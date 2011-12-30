@@ -58,7 +58,7 @@ typedef enum
  * @param parent The parent object
  * @return The hover object or NULL if one could not be created
  */
-EAPI Evas_Object *elm_hover_add(Evas_Object *parent) EINA_ARG_NONNULL(1);
+EAPI Evas_Object *elm_hover_add(Evas_Object *parent);
 
 /**
  * @brief Sets the target object for the hover.
@@ -68,7 +68,7 @@ EAPI Evas_Object *elm_hover_add(Evas_Object *parent) EINA_ARG_NONNULL(1);
  *
  * This function will cause the hover to be centered on the target object.
  */
-EAPI void         elm_hover_target_set(Evas_Object *obj, Evas_Object *target) EINA_ARG_NONNULL(1);
+EAPI void         elm_hover_target_set(Evas_Object *obj, Evas_Object *target);
 
 /**
  * @brief Gets the target object for the hover.
@@ -78,7 +78,7 @@ EAPI void         elm_hover_target_set(Evas_Object *obj, Evas_Object *target) EI
  *
  * @see elm_hover_target_set()
  */
-EAPI Evas_Object *elm_hover_target_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
+EAPI Evas_Object *elm_hover_target_get(const Evas_Object *obj);
 
 /**
  * @brief Sets the parent object for the hover.
@@ -89,7 +89,7 @@ EAPI Evas_Object *elm_hover_target_get(const Evas_Object *obj) EINA_ARG_NONNULL(
  * This function will cause the hover to take up the entire space that the
  * parent object fills.
  */
-EAPI void         elm_hover_parent_set(Evas_Object *obj, Evas_Object *parent) EINA_ARG_NONNULL(1);
+EAPI void         elm_hover_parent_set(Evas_Object *obj, Evas_Object *parent);
 
 /**
  * @brief Gets the parent object for the hover.
@@ -99,7 +99,7 @@ EAPI void         elm_hover_parent_set(Evas_Object *obj, Evas_Object *parent) EI
  *
  * @see elm_hover_parent_set()
  */
-EAPI Evas_Object *elm_hover_parent_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
+EAPI Evas_Object *elm_hover_parent_get(const Evas_Object *obj);
 
 /**
  * @brief Sets the content of the hover object and the direction in which it
@@ -130,7 +130,7 @@ EAPI Evas_Object *elm_hover_parent_get(const Evas_Object *obj) EINA_ARG_NONNULL(
  * directions other than "smart" are used, a previously content set
  * using it will be deleted, and vice-versa.
  */
-EAPI void         elm_hover_content_set(Evas_Object *obj, const char *swallow, Evas_Object *content) EINA_ARG_NONNULL(1);
+EAPI void         elm_hover_content_set(Evas_Object *obj, const char *swallow, Evas_Object *content);
 
 /**
  * @brief Get the content of the hover object, in a given direction.
@@ -144,7 +144,7 @@ EAPI void         elm_hover_content_set(Evas_Object *obj, const char *swallow, E
  *
  * @see elm_hover_content_set()
  */
-EAPI Evas_Object *elm_hover_content_get(const Evas_Object *obj, const char *swallow) EINA_ARG_NONNULL(1);
+EAPI Evas_Object *elm_hover_content_get(const Evas_Object *obj, const char *swallow);
 
 /**
  * @brief Unset the content of the hover object, in a given direction.
@@ -157,7 +157,7 @@ EAPI Evas_Object *elm_hover_content_get(const Evas_Object *obj, const char *swal
  *
  * @see elm_hover_content_set()
  */
-EAPI Evas_Object *elm_hover_content_unset(Evas_Object *obj, const char *swallow) EINA_ARG_NONNULL(1);
+EAPI Evas_Object *elm_hover_content_unset(Evas_Object *obj, const char *swallow);
 
 /**
  * @brief Returns the best swallow location for content in the hover.
@@ -185,7 +185,7 @@ EAPI Evas_Object *elm_hover_content_unset(Evas_Object *obj, const char *swallow)
  *
  * @see elm_hover_content_set()
  */
-EAPI const char  *elm_hover_best_content_location_get(const Evas_Object *obj, Elm_Hover_Axis pref_axis) EINA_ARG_NONNULL(1);
+EAPI const char  *elm_hover_best_content_location_get(const Evas_Object *obj, Elm_Hover_Axis pref_axis);
 
 /**
  * @}

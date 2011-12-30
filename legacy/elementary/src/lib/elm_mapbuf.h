@@ -37,7 +37,7 @@
  *
  * @ingroup Mapbuf
  */
-EAPI Evas_Object                 *elm_mapbuf_add(Evas_Object *parent) EINA_ARG_NONNULL(1);
+EAPI Evas_Object                 *elm_mapbuf_add(Evas_Object *parent);
 
 /**
  * Enable or disable the map.
@@ -63,7 +63,7 @@ EAPI Evas_Object                 *elm_mapbuf_add(Evas_Object *parent) EINA_ARG_N
  *
  * @ingroup Mapbuf
  */
-EAPI void                         elm_mapbuf_enabled_set(Evas_Object *obj, Eina_Bool enabled) EINA_ARG_NONNULL(1);
+EAPI void                         elm_mapbuf_enabled_set(Evas_Object *obj, Eina_Bool enabled);
 
 /**
  * Get a value whether map is enabled or not.
@@ -76,7 +76,7 @@ EAPI void                         elm_mapbuf_enabled_set(Evas_Object *obj, Eina_
  *
  * @ingroup Mapbuf
  */
-EAPI Eina_Bool                    elm_mapbuf_enabled_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
+EAPI Eina_Bool                    elm_mapbuf_enabled_get(const Evas_Object *obj);
 
 /**
  * Enable or disable smooth map rendering.
@@ -93,7 +93,7 @@ EAPI Eina_Bool                    elm_mapbuf_enabled_get(const Evas_Object *obj)
  *
  * @ingroup Mapbuf
  */
-EAPI void                         elm_mapbuf_smooth_set(Evas_Object *obj, Eina_Bool smooth) EINA_ARG_NONNULL(1);
+EAPI void                         elm_mapbuf_smooth_set(Evas_Object *obj, Eina_Bool smooth);
 
 /**
  * Get a value whether smooth map rendering is enabled or not.
@@ -106,7 +106,7 @@ EAPI void                         elm_mapbuf_smooth_set(Evas_Object *obj, Eina_B
  *
  * @ingroup Mapbuf
  */
-EAPI Eina_Bool                    elm_mapbuf_smooth_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
+EAPI Eina_Bool                    elm_mapbuf_smooth_get(const Evas_Object *obj);
 
 /**
  * Set or unset alpha flag for map rendering.
@@ -124,7 +124,7 @@ EAPI Eina_Bool                    elm_mapbuf_smooth_get(const Evas_Object *obj) 
  *
  * @ingroup Mapbuf
  */
-EAPI void                         elm_mapbuf_alpha_set(Evas_Object *obj, Eina_Bool alpha) EINA_ARG_NONNULL(1);
+EAPI void                         elm_mapbuf_alpha_set(Evas_Object *obj, Eina_Bool alpha);
 
 /**
  * Get a value whether alpha blending is enabled or not.
@@ -137,7 +137,7 @@ EAPI void                         elm_mapbuf_alpha_set(Evas_Object *obj, Eina_Bo
  *
  * @ingroup Mapbuf
  */
-EAPI Eina_Bool                    elm_mapbuf_alpha_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
+EAPI Eina_Bool                    elm_mapbuf_alpha_get(const Evas_Object *obj);
 
 /**
  * @}

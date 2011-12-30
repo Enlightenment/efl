@@ -49,7 +49,7 @@ typedef enum
  * @param parent The parent object
  * @return The new object or NULL if it cannot be created
  */
-EAPI Evas_Object                 *elm_notify_add(Evas_Object *parent) EINA_ARG_NONNULL(1);
+EAPI Evas_Object                 *elm_notify_add(Evas_Object *parent);
 
 /**
  * @brief Set the notify parent
@@ -60,7 +60,7 @@ EAPI Evas_Object                 *elm_notify_add(Evas_Object *parent) EINA_ARG_N
  * Once the parent object is set, a previously set one will be disconnected
  * and replaced.
  */
-EAPI void                         elm_notify_parent_set(Evas_Object *obj, Evas_Object *parent) EINA_ARG_NONNULL(1);
+EAPI void                         elm_notify_parent_set(Evas_Object *obj, Evas_Object *parent);
 
 /**
  * @brief Get the notify parent
@@ -70,7 +70,7 @@ EAPI void                         elm_notify_parent_set(Evas_Object *obj, Evas_O
  *
  * @see elm_notify_parent_set()
  */
-EAPI Evas_Object                 *elm_notify_parent_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
+EAPI Evas_Object                 *elm_notify_parent_get(const Evas_Object *obj);
 
 /**
  * @brief Set the orientation
@@ -82,7 +82,7 @@ EAPI Evas_Object                 *elm_notify_parent_get(const Evas_Object *obj) 
  *
  * @see @ref Elm_Notify_Orient for possible values.
  */
-EAPI void                         elm_notify_orient_set(Evas_Object *obj, Elm_Notify_Orient orient) EINA_ARG_NONNULL(1);
+EAPI void                         elm_notify_orient_set(Evas_Object *obj, Elm_Notify_Orient orient);
 
 /**
  * @brief Return the orientation
@@ -92,7 +92,7 @@ EAPI void                         elm_notify_orient_set(Evas_Object *obj, Elm_No
  * @see elm_notify_orient_set()
  * @see Elm_Notify_Orient
  */
-EAPI Elm_Notify_Orient            elm_notify_orient_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
+EAPI Elm_Notify_Orient            elm_notify_orient_get(const Evas_Object *obj);
 
 /**
  * @brief Set the time interval after which the notify window is going to be
@@ -112,7 +112,7 @@ EAPI Elm_Notify_Orient            elm_notify_orient_get(const Evas_Object *obj) 
  * @note If the value > 0.0 and the notify is previously visible, the
  * timer will be started with this value, canceling any running timer.
  */
-EAPI void                         elm_notify_timeout_set(Evas_Object *obj, double timeout) EINA_ARG_NONNULL(1);
+EAPI void                         elm_notify_timeout_set(Evas_Object *obj, double timeout);
 
 /**
  * @brief Return the timeout value (in seconds)
@@ -120,7 +120,7 @@ EAPI void                         elm_notify_timeout_set(Evas_Object *obj, doubl
  *
  * @see elm_notify_timeout_set()
  */
-EAPI double                       elm_notify_timeout_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
+EAPI double                       elm_notify_timeout_get(const Evas_Object *obj);
 
 /**
  * @brief Sets whether events should be passed to by a click outside
@@ -134,7 +134,7 @@ EAPI double                       elm_notify_timeout_get(const Evas_Object *obj)
  *
  * @note The default value is EINA_TRUE.
  */
-EAPI void                         elm_notify_repeat_events_set(Evas_Object *obj, Eina_Bool repeat) EINA_ARG_NONNULL(1);
+EAPI void                         elm_notify_repeat_events_set(Evas_Object *obj, Eina_Bool repeat);
 
 /**
  * @brief Return true if events are repeat below the notify object
@@ -142,7 +142,7 @@ EAPI void                         elm_notify_repeat_events_set(Evas_Object *obj,
  *
  * @see elm_notify_repeat_events_set()
  */
-EAPI Eina_Bool                    elm_notify_repeat_events_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
+EAPI Eina_Bool                    elm_notify_repeat_events_get(const Evas_Object *obj);
 
 /**
  * @}

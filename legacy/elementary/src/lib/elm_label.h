@@ -37,7 +37,7 @@
  * @param parent The parent object
  * @return The new object or NULL if it cannot be created
  */
-EAPI Evas_Object                *elm_label_add(Evas_Object *parent) EINA_ARG_NONNULL(1);
+EAPI Evas_Object                *elm_label_add(Evas_Object *parent);
 
 /**
  * @brief Set the wrapping behavior of the label
@@ -51,7 +51,7 @@ EAPI Evas_Object                *elm_label_add(Evas_Object *parent) EINA_ARG_NON
  * @li ELM_WRAP_WORD - wrap between words
  * @li ELM_WRAP_MIXED - Word wrap, and if that fails, char wrap
  */
-EAPI void                        elm_label_line_wrap_set(Evas_Object *obj, Elm_Wrap_Type wrap) EINA_ARG_NONNULL(1);
+EAPI void                        elm_label_line_wrap_set(Evas_Object *obj, Elm_Wrap_Type wrap);
 
 /**
  * @brief Get the wrapping behavior of the label
@@ -61,7 +61,7 @@ EAPI void                        elm_label_line_wrap_set(Evas_Object *obj, Elm_W
  *
  * @see elm_label_line_wrap_set()
  */
-EAPI Elm_Wrap_Type               elm_label_line_wrap_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
+EAPI Elm_Wrap_Type               elm_label_line_wrap_get(const Evas_Object *obj);
 
 /**
  * @brief Set wrap width of the label
@@ -73,7 +73,7 @@ EAPI Elm_Wrap_Type               elm_label_line_wrap_get(const Evas_Object *obj)
  *
  * @warning This is only relevant if the label is inside a container.
  */
-EAPI void                        elm_label_wrap_width_set(Evas_Object *obj, Evas_Coord w) EINA_ARG_NONNULL(1);
+EAPI void                        elm_label_wrap_width_set(Evas_Object *obj, Evas_Coord w);
 
 /**
  * @brief Get wrap width of the label
@@ -83,7 +83,7 @@ EAPI void                        elm_label_wrap_width_set(Evas_Object *obj, Evas
  *
  * @see elm_label_wrap_width_set()
  */
-EAPI Evas_Coord                  elm_label_wrap_width_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
+EAPI Evas_Coord                  elm_label_wrap_width_get(const Evas_Object *obj);
 
 /**
  * @brief Set wrap height of the label
@@ -95,7 +95,7 @@ EAPI Evas_Coord                  elm_label_wrap_width_get(const Evas_Object *obj
  *
  * @warning This is only relevant if the label is inside a container.
  */
-EAPI void                        elm_label_wrap_height_set(Evas_Object *obj, Evas_Coord h) EINA_ARG_NONNULL(1);
+EAPI void                        elm_label_wrap_height_set(Evas_Object *obj, Evas_Coord h);
 
 /**
  * @brief get wrap width of the label
@@ -103,7 +103,7 @@ EAPI void                        elm_label_wrap_height_set(Evas_Object *obj, Eva
  * @param obj The label object
  * @return The wrap height in pixels at a minimum where words need to wrap
  */
-EAPI Evas_Coord                  elm_label_wrap_height_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
+EAPI Evas_Coord                  elm_label_wrap_height_get(const Evas_Object *obj);
 
 /**
  * @brief Set the font size on the label object.
@@ -114,7 +114,7 @@ EAPI Evas_Coord                  elm_label_wrap_height_get(const Evas_Object *ob
  * @warning NEVER use this. It is for hyper-special cases only. use styles
  * instead. e.g. "default", "marker", "slide_long" etc.
  */
-EAPI void                        elm_label_fontsize_set(Evas_Object *obj, int fontsize) EINA_ARG_NONNULL(1);
+EAPI void                        elm_label_fontsize_set(Evas_Object *obj, int fontsize);
 
 /**
  * @brief Set the text color on the label object
@@ -128,7 +128,7 @@ EAPI void                        elm_label_fontsize_set(Evas_Object *obj, int fo
  * @warning NEVER use this. It is for hyper-special cases only. use styles
  * instead. e.g. "default", "marker", "slide_long" etc.
  */
-EAPI void                        elm_label_text_color_set(Evas_Object *obj, unsigned int r, unsigned int g, unsigned int b, unsigned int a) EINA_ARG_NONNULL(1);
+EAPI void                        elm_label_text_color_set(Evas_Object *obj, unsigned int r, unsigned int g, unsigned int b, unsigned int a);
 
 /**
  * @brief Set the text align on the label object
@@ -139,7 +139,7 @@ EAPI void                        elm_label_text_color_set(Evas_Object *obj, unsi
  * @warning NEVER use this. It is for hyper-special cases only. use styles
  * instead. e.g. "default", "marker", "slide_long" etc.
  */
-EAPI void                        elm_label_text_align_set(Evas_Object *obj, const char *alignmode) EINA_ARG_NONNULL(1);
+EAPI void                        elm_label_text_align_set(Evas_Object *obj, const char *alignmode);
 
 /**
  * @brief Set background color of the label
@@ -153,7 +153,7 @@ EAPI void                        elm_label_text_align_set(Evas_Object *obj, cons
  * @warning NEVER use this. It is for hyper-special cases only. use styles
  * instead. e.g. "default", "marker", "slide_long" etc.
  */
-EAPI void                        elm_label_background_color_set(Evas_Object *obj, unsigned int r, unsigned int g, unsigned int b, unsigned int a) EINA_ARG_NONNULL(1);
+EAPI void                        elm_label_background_color_set(Evas_Object *obj, unsigned int r, unsigned int g, unsigned int b, unsigned int a);
 
 /**
  * @brief Set the ellipsis behavior of the label
@@ -167,7 +167,7 @@ EAPI void                        elm_label_background_color_set(Evas_Object *obj
  * @warning This doesn't work with slide(elm_label_slide_set()) or if the
  * choosen wrap method was ELM_WRAP_WORD.
  */
-EAPI void                        elm_label_ellipsis_set(Evas_Object *obj, Eina_Bool ellipsis) EINA_ARG_NONNULL(1);
+EAPI void                        elm_label_ellipsis_set(Evas_Object *obj, Eina_Bool ellipsis);
 
 /**
  * @brief Set the text slide of the label
@@ -181,7 +181,7 @@ EAPI void                        elm_label_ellipsis_set(Evas_Object *obj, Eina_B
  * @warning This only works with the themes "slide_short", "slide_long" and
  * "slide_bounce".
  */
-EAPI void                        elm_label_slide_set(Evas_Object *obj, Eina_Bool slide) EINA_ARG_NONNULL(1);
+EAPI void                        elm_label_slide_set(Evas_Object *obj, Eina_Bool slide);
 
 /**
  * @brief Get the text slide mode of the label
@@ -191,7 +191,7 @@ EAPI void                        elm_label_slide_set(Evas_Object *obj, Eina_Bool
  *
  * @see elm_label_slide_set()
  */
-EAPI Eina_Bool                   elm_label_slide_get(Evas_Object *obj) EINA_ARG_NONNULL(1);
+EAPI Eina_Bool                   elm_label_slide_get(Evas_Object *obj);
 
 /**
  * @brief Set the slide duration(speed) of the label
@@ -200,7 +200,7 @@ EAPI Eina_Bool                   elm_label_slide_get(Evas_Object *obj) EINA_ARG_
  * @return The duration in seconds in moving text from slide begin position
  * to slide end position
  */
-EAPI void                        elm_label_slide_duration_set(Evas_Object *obj, double duration) EINA_ARG_NONNULL(1);
+EAPI void                        elm_label_slide_duration_set(Evas_Object *obj, double duration);
 
 /**
  * @brief Get the slide duration(speed) of the label
@@ -210,7 +210,7 @@ EAPI void                        elm_label_slide_duration_set(Evas_Object *obj, 
  *
  * @see elm_label_slide_duration_set()
  */
-EAPI double                      elm_label_slide_duration_get(Evas_Object *obj) EINA_ARG_NONNULL(1);
+EAPI double                      elm_label_slide_duration_get(Evas_Object *obj);
 
 /**
  * @}

@@ -84,7 +84,7 @@ typedef struct _Elm_Toolbar_Item_State Elm_Toolbar_Item_State;    /**< State of 
  *
  * @ingroup Toolbar
  */
-EAPI Evas_Object                 *elm_toolbar_add(Evas_Object *parent) EINA_ARG_NONNULL(1);
+EAPI Evas_Object                 *elm_toolbar_add(Evas_Object *parent);
 
 /**
  * Set the icon size, in pixels, to be used by toolbar items.
@@ -98,7 +98,7 @@ EAPI Evas_Object                 *elm_toolbar_add(Evas_Object *parent) EINA_ARG_
  *
  * @ingroup Toolbar
  */
-EAPI void                         elm_toolbar_icon_size_set(Evas_Object *obj, int icon_size) EINA_ARG_NONNULL(1);
+EAPI void                         elm_toolbar_icon_size_set(Evas_Object *obj, int icon_size);
 
 /**
  * Get the icon size, in pixels, to be used by toolbar items.
@@ -110,7 +110,7 @@ EAPI void                         elm_toolbar_icon_size_set(Evas_Object *obj, in
  *
  * @ingroup Toolbar
  */
-EAPI int                          elm_toolbar_icon_size_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
+EAPI int                          elm_toolbar_icon_size_get(const Evas_Object *obj);
 
 /**
  * Sets icon lookup order, for toolbar items' icons.
@@ -125,7 +125,7 @@ EAPI int                          elm_toolbar_icon_size_get(const Evas_Object *o
  *
  * @ingroup Toolbar
  */
-EAPI void                         elm_toolbar_icon_order_lookup_set(Evas_Object *obj, Elm_Icon_Lookup_Order order) EINA_ARG_NONNULL(1);
+EAPI void                         elm_toolbar_icon_order_lookup_set(Evas_Object *obj, Elm_Icon_Lookup_Order order);
 
 /**
  * Gets the icon lookup order.
@@ -137,7 +137,7 @@ EAPI void                         elm_toolbar_icon_order_lookup_set(Evas_Object 
  *
  * @ingroup Toolbar
  */
-EAPI Elm_Icon_Lookup_Order        elm_toolbar_icon_order_lookup_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
+EAPI Elm_Icon_Lookup_Order        elm_toolbar_icon_order_lookup_get(const Evas_Object *obj);
 
 /**
  * Set whether the toolbar should always have an item selected.
@@ -156,7 +156,7 @@ EAPI Elm_Icon_Lookup_Order        elm_toolbar_icon_order_lookup_get(const Evas_O
  *
  * @ingroup Toolbar
  */
-EAPI void                         elm_toolbar_always_select_mode_set(Evas_Object *obj, Eina_Bool always_select) EINA_ARG_NONNULL(1);
+EAPI void                         elm_toolbar_always_select_mode_set(Evas_Object *obj, Eina_Bool always_select);
 
 /**
  * Get whether the toolbar should always have an item selected.
@@ -169,7 +169,7 @@ EAPI void                         elm_toolbar_always_select_mode_set(Evas_Object
  *
  * @ingroup Toolbar
  */
-EAPI Eina_Bool                    elm_toolbar_always_select_mode_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
+EAPI Eina_Bool                    elm_toolbar_always_select_mode_get(const Evas_Object *obj);
 
 /**
  * Set whether the toolbar items' should be selected by the user or not.
@@ -188,7 +188,7 @@ EAPI Eina_Bool                    elm_toolbar_always_select_mode_get(const Evas_
  *
  * @ingroup Toolbar
  */
-EAPI void                         elm_toolbar_no_select_mode_set(Evas_Object *obj, Eina_Bool no_select) EINA_ARG_NONNULL(1);
+EAPI void                         elm_toolbar_no_select_mode_set(Evas_Object *obj, Eina_Bool no_select);
 
 /**
  * Set whether the toolbar items' should be selected by the user or not.
@@ -201,7 +201,7 @@ EAPI void                         elm_toolbar_no_select_mode_set(Evas_Object *ob
  *
  * @ingroup Toolbar
  */
-EAPI Eina_Bool                    elm_toolbar_no_select_mode_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
+EAPI Eina_Bool                    elm_toolbar_no_select_mode_get(const Evas_Object *obj);
 
 /**
  * Append item to the toolbar.
@@ -237,7 +237,7 @@ EAPI Eina_Bool                    elm_toolbar_no_select_mode_get(const Evas_Obje
  *
  * @ingroup Toolbar
  */
-EAPI Elm_Object_Item             *elm_toolbar_item_append(Evas_Object *obj, const char *icon, const char *label, Evas_Smart_Cb func, const void *data) EINA_ARG_NONNULL(1);
+EAPI Elm_Object_Item             *elm_toolbar_item_append(Evas_Object *obj, const char *icon, const char *label, Evas_Smart_Cb func, const void *data);
 
 /**
  * Prepend item to the toolbar.
@@ -273,7 +273,7 @@ EAPI Elm_Object_Item             *elm_toolbar_item_append(Evas_Object *obj, cons
  *
  * @ingroup Toolbar
  */
-EAPI Elm_Object_Item             *elm_toolbar_item_prepend(Evas_Object *obj, const char *icon, const char *label, Evas_Smart_Cb func, const void *data) EINA_ARG_NONNULL(1);
+EAPI Elm_Object_Item             *elm_toolbar_item_prepend(Evas_Object *obj, const char *icon, const char *label, Evas_Smart_Cb func, const void *data);
 
 /**
  * Insert a new item into the toolbar object before item @p before.
@@ -310,7 +310,7 @@ EAPI Elm_Object_Item             *elm_toolbar_item_prepend(Evas_Object *obj, con
  *
  * @ingroup Toolbar
  */
-EAPI Elm_Object_Item             *elm_toolbar_item_insert_before(Evas_Object *obj, Elm_Object_Item *before, const char *icon, const char *label, Evas_Smart_Cb func, const void *data) EINA_ARG_NONNULL(1);
+EAPI Elm_Object_Item             *elm_toolbar_item_insert_before(Evas_Object *obj, Elm_Object_Item *before, const char *icon, const char *label, Evas_Smart_Cb func, const void *data);
 
 /**
  * Insert a new item into the toolbar object after item @p after.
@@ -347,7 +347,7 @@ EAPI Elm_Object_Item             *elm_toolbar_item_insert_before(Evas_Object *ob
  *
  * @ingroup Toolbar
  */
-EAPI Elm_Object_Item             *elm_toolbar_item_insert_after(Evas_Object *obj, Elm_Object_Item *after, const char *icon, const char *label, Evas_Smart_Cb func, const void *data) EINA_ARG_NONNULL(1);
+EAPI Elm_Object_Item             *elm_toolbar_item_insert_after(Evas_Object *obj, Elm_Object_Item *after, const char *icon, const char *label, Evas_Smart_Cb func, const void *data);
 
 /**
  * Get the first item in the given toolbar widget's list of
@@ -362,7 +362,7 @@ EAPI Elm_Object_Item             *elm_toolbar_item_insert_after(Evas_Object *obj
  *
  * @ingroup Toolbar
  */
-EAPI Elm_Object_Item             *elm_toolbar_first_item_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
+EAPI Elm_Object_Item             *elm_toolbar_first_item_get(const Evas_Object *obj);
 
 /**
  * Get the last item in the given toolbar widget's list of
@@ -377,7 +377,7 @@ EAPI Elm_Object_Item             *elm_toolbar_first_item_get(const Evas_Object *
  *
  * @ingroup Toolbar
  */
-EAPI Elm_Object_Item             *elm_toolbar_last_item_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
+EAPI Elm_Object_Item             *elm_toolbar_last_item_get(const Evas_Object *obj);
 
 /**
  * Get the item after @p item in toolbar.
@@ -391,7 +391,7 @@ EAPI Elm_Object_Item             *elm_toolbar_last_item_get(const Evas_Object *o
  *
  * @ingroup Toolbar
  */
-EAPI Elm_Object_Item             *elm_toolbar_item_next_get(const Elm_Object_Item *it) EINA_ARG_NONNULL(1);
+EAPI Elm_Object_Item             *elm_toolbar_item_next_get(const Elm_Object_Item *it);
 
 /**
  * Get the item before @p item in toolbar.
@@ -405,7 +405,7 @@ EAPI Elm_Object_Item             *elm_toolbar_item_next_get(const Elm_Object_Ite
  *
  * @ingroup Toolbar
  */
-EAPI Elm_Object_Item             *elm_toolbar_item_prev_get(const Elm_Object_Item *it) EINA_ARG_NONNULL(1);
+EAPI Elm_Object_Item             *elm_toolbar_item_prev_get(const Elm_Object_Item *it);
 
 /**
  * Set the priority of a toolbar item.
@@ -424,7 +424,7 @@ EAPI Elm_Object_Item             *elm_toolbar_item_prev_get(const Elm_Object_Ite
  *
  * @ingroup Toolbar
  */
-EAPI void                         elm_toolbar_item_priority_set(Elm_Object_Item *it, int priority) EINA_ARG_NONNULL(1);
+EAPI void                         elm_toolbar_item_priority_set(Elm_Object_Item *it, int priority);
 
 /**
  * Get the priority of a toolbar item.
@@ -436,7 +436,7 @@ EAPI void                         elm_toolbar_item_priority_set(Elm_Object_Item 
  *
  * @ingroup Toolbar
  */
-EAPI int                          elm_toolbar_item_priority_get(const Elm_Object_Item *it) EINA_ARG_NONNULL(1);
+EAPI int                          elm_toolbar_item_priority_get(const Elm_Object_Item *it);
 
 /**
  * Returns a pointer to a toolbar item by its label.
@@ -449,7 +449,7 @@ EAPI int                          elm_toolbar_item_priority_get(const Elm_Object
  *
  * @ingroup Toolbar
  */
-EAPI Elm_Object_Item             *elm_toolbar_item_find_by_label(const Evas_Object *obj, const char *label) EINA_ARG_NONNULL(1);
+EAPI Elm_Object_Item             *elm_toolbar_item_find_by_label(const Evas_Object *obj, const char *label);
 
 /*
  * Get whether the @p item is selected or not.
@@ -463,7 +463,7 @@ EAPI Elm_Object_Item             *elm_toolbar_item_find_by_label(const Evas_Obje
  *
  * @ingroup Toolbar
  */
-EAPI Eina_Bool                    elm_toolbar_item_selected_get(const Elm_Object_Item *it) EINA_ARG_NONNULL(1);
+EAPI Eina_Bool                    elm_toolbar_item_selected_get(const Elm_Object_Item *it);
 
 /**
  * Set the selected state of an item.
@@ -485,7 +485,7 @@ EAPI Eina_Bool                    elm_toolbar_item_selected_get(const Elm_Object
  *
  * @ingroup Toolbar
  */
-EAPI void                         elm_toolbar_item_selected_set(Elm_Object_Item *it, Eina_Bool selected) EINA_ARG_NONNULL(1);
+EAPI void                         elm_toolbar_item_selected_set(Elm_Object_Item *it, Eina_Bool selected);
 
 /**
  * Get the selected item.
@@ -502,7 +502,7 @@ EAPI void                         elm_toolbar_item_selected_set(Elm_Object_Item 
  *
  * @ingroup Toolbar
  */
-EAPI Elm_Object_Item             *elm_toolbar_selected_item_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
+EAPI Elm_Object_Item             *elm_toolbar_selected_item_get(const Evas_Object *obj);
 
 /**
  * Set the icon associated with @p item.
@@ -520,7 +520,7 @@ EAPI Elm_Object_Item             *elm_toolbar_selected_item_get(const Evas_Objec
  *
  * @ingroup Toolbar
  */
-EAPI void                         elm_toolbar_item_icon_set(Elm_Object_Item *it, const char *icon) EINA_ARG_NONNULL(1);
+EAPI void                         elm_toolbar_item_icon_set(Elm_Object_Item *it, const char *icon);
 
 /**
  * Get the string used to set the icon of @p item.
@@ -532,7 +532,7 @@ EAPI void                         elm_toolbar_item_icon_set(Elm_Object_Item *it,
  *
  * @ingroup Toolbar
  */
-EAPI const char                  *elm_toolbar_item_icon_get(const Elm_Object_Item *it) EINA_ARG_NONNULL(1);
+EAPI const char                  *elm_toolbar_item_icon_get(const Elm_Object_Item *it);
 
 /**
  * Get the object of @p item.
@@ -542,7 +542,7 @@ EAPI const char                  *elm_toolbar_item_icon_get(const Elm_Object_Ite
  *
  * @ingroup Toolbar
  */
-EAPI Evas_Object                 *elm_toolbar_item_object_get(const Elm_Object_Item *it) EINA_ARG_NONNULL(1);
+EAPI Evas_Object                 *elm_toolbar_item_object_get(const Elm_Object_Item *it);
 
 /**
  * Get the icon object of @p item.
@@ -555,7 +555,7 @@ EAPI Evas_Object                 *elm_toolbar_item_object_get(const Elm_Object_I
  *
  * @ingroup Toolbar
  */
-EAPI Evas_Object                 *elm_toolbar_item_icon_object_get(Elm_Object_Item *it) EINA_ARG_NONNULL(1);
+EAPI Evas_Object                 *elm_toolbar_item_icon_object_get(Elm_Object_Item *it);
 
 /**
  * Set the icon associated with @p item to an image in a binary buffer.
@@ -573,7 +573,7 @@ EAPI Evas_Object                 *elm_toolbar_item_icon_object_get(Elm_Object_It
  *
  * @ingroup Toolbar
  */
-EAPI Eina_Bool                    elm_toolbar_item_icon_memfile_set(Elm_Object_Item *it, const void *img, size_t size, const char *format, const char *key) EINA_ARG_NONNULL(1);
+EAPI Eina_Bool                    elm_toolbar_item_icon_memfile_set(Elm_Object_Item *it, const void *img, size_t size, const char *format, const char *key);
 
 /**
  * Set the icon associated with @p item to an image in a binary buffer.
@@ -589,7 +589,7 @@ EAPI Eina_Bool                    elm_toolbar_item_icon_memfile_set(Elm_Object_I
  *
  * @ingroup Toolbar
  */
-EAPI Eina_Bool                    elm_toolbar_item_icon_file_set(Elm_Object_Item *it, const char *file, const char *key) EINA_ARG_NONNULL(1);
+EAPI Eina_Bool                    elm_toolbar_item_icon_file_set(Elm_Object_Item *it, const char *file, const char *key);
 
 /**
  * Delete them item from the toolbar.
@@ -601,7 +601,7 @@ EAPI Eina_Bool                    elm_toolbar_item_icon_file_set(Elm_Object_Item
  *
  * @ingroup Toolbar
  */
-EAPI void                         elm_toolbar_item_del(Elm_Object_Item *it) EINA_ARG_NONNULL(1);
+EAPI void                         elm_toolbar_item_del(Elm_Object_Item *it);
 
 /**
  * Set the function called when a toolbar item is freed.
@@ -619,7 +619,7 @@ EAPI void                         elm_toolbar_item_del(Elm_Object_Item *it) EINA
  *
  * @ingroup Toolbar
  */
-EAPI void                         elm_toolbar_item_del_cb_set(Elm_Object_Item *it, Evas_Smart_Cb func) EINA_ARG_NONNULL(1);
+EAPI void                         elm_toolbar_item_del_cb_set(Elm_Object_Item *it, Evas_Smart_Cb func);
 
 /**
  * Set or unset item as a separator.
@@ -637,7 +637,7 @@ EAPI void                         elm_toolbar_item_del_cb_set(Elm_Object_Item *i
  *
  * @ingroup Toolbar
  */
-EAPI void                         elm_toolbar_item_separator_set(Elm_Object_Item *it, Eina_Bool separator) EINA_ARG_NONNULL(1);
+EAPI void                         elm_toolbar_item_separator_set(Elm_Object_Item *it, Eina_Bool separator);
 
 /**
  * Get a value whether item is a separator or not.
@@ -650,7 +650,7 @@ EAPI void                         elm_toolbar_item_separator_set(Elm_Object_Item
  *
  * @ingroup Toolbar
  */
-EAPI Eina_Bool                    elm_toolbar_item_separator_get(const Elm_Object_Item *it) EINA_ARG_NONNULL(1);
+EAPI Eina_Bool                    elm_toolbar_item_separator_get(const Elm_Object_Item *it);
 
 /**
  * Set the shrink state of toolbar @p obj.
@@ -666,7 +666,7 @@ EAPI Eina_Bool                    elm_toolbar_item_separator_get(const Elm_Objec
  *
  * @ingroup Toolbar
  */
-EAPI void                         elm_toolbar_mode_shrink_set(Evas_Object *obj, Elm_Toolbar_Shrink_Mode shrink_mode) EINA_ARG_NONNULL(1);
+EAPI void                         elm_toolbar_mode_shrink_set(Evas_Object *obj, Elm_Toolbar_Shrink_Mode shrink_mode);
 
 /**
  * Get the shrink mode of toolbar @p obj.
@@ -678,7 +678,7 @@ EAPI void                         elm_toolbar_mode_shrink_set(Evas_Object *obj, 
  *
  * @ingroup Toolbar
  */
-EAPI Elm_Toolbar_Shrink_Mode      elm_toolbar_mode_shrink_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
+EAPI Elm_Toolbar_Shrink_Mode      elm_toolbar_mode_shrink_get(const Evas_Object *obj);
 
 /**
  * Enable/disable homogeneous mode.
@@ -692,7 +692,7 @@ EAPI Elm_Toolbar_Shrink_Mode      elm_toolbar_mode_shrink_get(const Evas_Object 
  *
  * @ingroup Toolbar
  */
-EAPI void                         elm_toolbar_homogeneous_set(Evas_Object *obj, Eina_Bool homogeneous) EINA_ARG_NONNULL(1);
+EAPI void                         elm_toolbar_homogeneous_set(Evas_Object *obj, Eina_Bool homogeneous);
 
 /**
  * Get whether the homogeneous mode is enabled.
@@ -705,7 +705,7 @@ EAPI void                         elm_toolbar_homogeneous_set(Evas_Object *obj, 
  *
  * @ingroup Toolbar
  */
-EAPI Eina_Bool                    elm_toolbar_homogeneous_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
+EAPI Eina_Bool                    elm_toolbar_homogeneous_get(const Evas_Object *obj);
 
 /**
  * Set the parent object of the toolbar items' menus.
@@ -723,7 +723,7 @@ EAPI Eina_Bool                    elm_toolbar_homogeneous_get(const Evas_Object 
  *
  * @ingroup Toolbar
  */
-EAPI void                         elm_toolbar_menu_parent_set(Evas_Object *obj, Evas_Object *parent) EINA_ARG_NONNULL(1);
+EAPI void                         elm_toolbar_menu_parent_set(Evas_Object *obj, Evas_Object *parent);
 
 /**
  * Get the parent object of the toolbar items' menus.
@@ -735,7 +735,7 @@ EAPI void                         elm_toolbar_menu_parent_set(Evas_Object *obj, 
  *
  * @ingroup Toolbar
  */
-EAPI Evas_Object                 *elm_toolbar_menu_parent_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
+EAPI Evas_Object                 *elm_toolbar_menu_parent_get(const Evas_Object *obj);
 
 /**
  * Set the alignment of the items.
@@ -754,7 +754,7 @@ EAPI Evas_Object                 *elm_toolbar_menu_parent_get(const Evas_Object 
  *
  * @ingroup Toolbar
  */
-EAPI void                         elm_toolbar_align_set(Evas_Object *obj, double align) EINA_ARG_NONNULL(1);
+EAPI void                         elm_toolbar_align_set(Evas_Object *obj, double align);
 
 /**
  * Get the alignment of the items.
@@ -767,7 +767,7 @@ EAPI void                         elm_toolbar_align_set(Evas_Object *obj, double
  *
  * @ingroup Toolbar
  */
-EAPI double                       elm_toolbar_align_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
+EAPI double                       elm_toolbar_align_get(const Evas_Object *obj);
 
 /**
  * Set whether the toolbar item opens a menu.
@@ -801,7 +801,7 @@ EAPI double                       elm_toolbar_align_get(const Evas_Object *obj) 
  *
  * @ingroup Toolbar
  */
-EAPI void                         elm_toolbar_item_menu_set(Elm_Object_Item *it, Eina_Bool menu) EINA_ARG_NONNULL(1);
+EAPI void                         elm_toolbar_item_menu_set(Elm_Object_Item *it, Eina_Bool menu);
 
 /**
  * Get toolbar item's menu.
@@ -816,7 +816,7 @@ EAPI void                         elm_toolbar_item_menu_set(Elm_Object_Item *it,
  *
  * @ingroup Toolbar
  */
-EAPI Evas_Object                 *elm_toolbar_item_menu_get(const Elm_Object_Item *it) EINA_ARG_NONNULL(1);
+EAPI Evas_Object                 *elm_toolbar_item_menu_get(const Elm_Object_Item *it);
 
 /**
  * Add a new state to @p item.
@@ -842,7 +842,7 @@ EAPI Evas_Object                 *elm_toolbar_item_menu_get(const Elm_Object_Ite
  *
  * @ingroup Toolbar
  */
-EAPI Elm_Toolbar_Item_State      *elm_toolbar_item_state_add(Elm_Object_Item *it, const char *icon, const char *label, Evas_Smart_Cb func, const void *data) EINA_ARG_NONNULL(1);
+EAPI Elm_Toolbar_Item_State      *elm_toolbar_item_state_add(Elm_Object_Item *it, const char *icon, const char *label, Evas_Smart_Cb func, const void *data);
 
 /**
  * Delete a previoulsy added state to @p item.
@@ -853,7 +853,7 @@ EAPI Elm_Toolbar_Item_State      *elm_toolbar_item_state_add(Elm_Object_Item *it
  *
  * @see elm_toolbar_item_state_add()
  */
-EAPI Eina_Bool                    elm_toolbar_item_state_del(Elm_Object_Item *it, Elm_Toolbar_Item_State *state) EINA_ARG_NONNULL(1);
+EAPI Eina_Bool                    elm_toolbar_item_state_del(Elm_Object_Item *it, Elm_Toolbar_Item_State *state);
 
 /**
  * Set @p state as the current state of @p it.
@@ -870,7 +870,7 @@ EAPI Eina_Bool                    elm_toolbar_item_state_del(Elm_Object_Item *it
  *
  * @ingroup Toolbar
  */
-EAPI Eina_Bool                    elm_toolbar_item_state_set(Elm_Object_Item *it, Elm_Toolbar_Item_State *state) EINA_ARG_NONNULL(1);
+EAPI Eina_Bool                    elm_toolbar_item_state_set(Elm_Object_Item *it, Elm_Toolbar_Item_State *state);
 
 /**
  * Unset the state of @p it.
@@ -883,7 +883,7 @@ EAPI Eina_Bool                    elm_toolbar_item_state_set(Elm_Object_Item *it
  *
  * @ingroup Toolbar
  */
-EAPI void                         elm_toolbar_item_state_unset(Elm_Object_Item *it) EINA_ARG_NONNULL(1);
+EAPI void                         elm_toolbar_item_state_unset(Elm_Object_Item *it);
 
 /**
  * Get the current state of @p it.
@@ -897,7 +897,7 @@ EAPI void                         elm_toolbar_item_state_unset(Elm_Object_Item *
  *
  * @ingroup Toolbar
  */
-EAPI Elm_Toolbar_Item_State      *elm_toolbar_item_state_get(const Elm_Object_Item *it) EINA_ARG_NONNULL(1);
+EAPI Elm_Toolbar_Item_State      *elm_toolbar_item_state_get(const Elm_Object_Item *it);
 
 /**
  * Get the state after selected state in toolbar's @p item.
@@ -912,7 +912,7 @@ EAPI Elm_Toolbar_Item_State      *elm_toolbar_item_state_get(const Elm_Object_It
  *
  * @ingroup Toolbar
  */
-EAPI Elm_Toolbar_Item_State      *elm_toolbar_item_state_next(Elm_Object_Item *it) EINA_ARG_NONNULL(1);
+EAPI Elm_Toolbar_Item_State      *elm_toolbar_item_state_next(Elm_Object_Item *it);
 
 /**
  * Get the state before selected state in toolbar's @p item.
@@ -927,7 +927,7 @@ EAPI Elm_Toolbar_Item_State      *elm_toolbar_item_state_next(Elm_Object_Item *i
  *
  * @ingroup Toolbar
  */
-EAPI Elm_Toolbar_Item_State      *elm_toolbar_item_state_prev(Elm_Object_Item *it) EINA_ARG_NONNULL(1);
+EAPI Elm_Toolbar_Item_State      *elm_toolbar_item_state_prev(Elm_Object_Item *it);
 
 /**
  * Set the text to be shown in a given toolbar item's tooltips.
@@ -943,7 +943,7 @@ EAPI Elm_Toolbar_Item_State      *elm_toolbar_item_state_prev(Elm_Object_Item *i
  *
  * @ingroup Toolbar
  */
-EAPI void                         elm_toolbar_item_tooltip_text_set(Elm_Object_Item *it, const char *text) EINA_ARG_NONNULL(1);
+EAPI void                         elm_toolbar_item_tooltip_text_set(Elm_Object_Item *it, const char *text);
 
 /**
  * Set the content to be shown in the tooltip item.
@@ -967,7 +967,7 @@ EAPI void                         elm_toolbar_item_tooltip_text_set(Elm_Object_I
  *
  * @ingroup Toolbar
  */
-EAPI void                         elm_toolbar_item_tooltip_content_cb_set(Elm_Object_Item *it, Elm_Tooltip_Item_Content_Cb func, const void *data, Evas_Smart_Cb del_cb) EINA_ARG_NONNULL(1);
+EAPI void                         elm_toolbar_item_tooltip_content_cb_set(Elm_Object_Item *it, Elm_Tooltip_Item_Content_Cb func, const void *data, Evas_Smart_Cb del_cb);
 
 /**
  * Unset tooltip from item.
@@ -983,7 +983,7 @@ EAPI void                         elm_toolbar_item_tooltip_content_cb_set(Elm_Ob
  *
  * @ingroup Toolbar
  */
-EAPI void                         elm_toolbar_item_tooltip_unset(Elm_Object_Item *it) EINA_ARG_NONNULL(1);
+EAPI void                         elm_toolbar_item_tooltip_unset(Elm_Object_Item *it);
 
 /**
  * Sets a different style for this item tooltip.
@@ -999,7 +999,7 @@ EAPI void                         elm_toolbar_item_tooltip_unset(Elm_Object_Item
  *
  * @ingroup Toolbar
  */
-EAPI void                         elm_toolbar_item_tooltip_style_set(Elm_Object_Item *it, const char *style) EINA_ARG_NONNULL(1);
+EAPI void                         elm_toolbar_item_tooltip_style_set(Elm_Object_Item *it, const char *style);
 
 /**
  * Get the style for this item tooltip.
@@ -1013,7 +1013,7 @@ EAPI void                         elm_toolbar_item_tooltip_style_set(Elm_Object_
  *
  * @ingroup Toolbar
  */
-EAPI const char                  *elm_toolbar_item_tooltip_style_get(const Elm_Object_Item *it) EINA_ARG_NONNULL(1);
+EAPI const char                  *elm_toolbar_item_tooltip_style_get(const Elm_Object_Item *it);
 
 /**
  * Set the type of mouse pointer/cursor decoration to be shown,
@@ -1037,7 +1037,7 @@ EAPI const char                  *elm_toolbar_item_tooltip_style_get(const Elm_O
  *
  * @ingroup Toolbar
  */
-EAPI void                         elm_toolbar_item_cursor_set(Elm_Object_Item *it, const char *cursor) EINA_ARG_NONNULL(1);
+EAPI void                         elm_toolbar_item_cursor_set(Elm_Object_Item *it, const char *cursor);
 
 /*
  * Get the type of mouse pointer/cursor decoration set to be shown,
@@ -1053,7 +1053,7 @@ EAPI void                         elm_toolbar_item_cursor_set(Elm_Object_Item *i
  *
  * @ingroup Toolbar
  */
-EAPI const char                  *elm_toolbar_item_cursor_get(const Elm_Object_Item *it) EINA_ARG_NONNULL(1);
+EAPI const char                  *elm_toolbar_item_cursor_get(const Elm_Object_Item *it);
 
 /**
  * Unset any custom mouse pointer/cursor decoration set to be
@@ -1070,7 +1070,7 @@ EAPI const char                  *elm_toolbar_item_cursor_get(const Elm_Object_I
  *
  * @ingroup Toolbar
  */
-EAPI void                         elm_toolbar_item_cursor_unset(Elm_Object_Item *it) EINA_ARG_NONNULL(1);
+EAPI void                         elm_toolbar_item_cursor_unset(Elm_Object_Item *it);
 
 /**
  * Set a different @b style for a given custom cursor set for a
@@ -1095,7 +1095,7 @@ EAPI void                         elm_toolbar_item_cursor_unset(Elm_Object_Item 
  *
  * @ingroup Toolbar
  */
-EAPI void                         elm_toolbar_item_cursor_style_set(Elm_Object_Item *it, const char *style) EINA_ARG_NONNULL(1);
+EAPI void                         elm_toolbar_item_cursor_style_set(Elm_Object_Item *it, const char *style);
 
 /**
  * Get the current @b style set for a given toolbar item's custom
@@ -1109,7 +1109,7 @@ EAPI void                         elm_toolbar_item_cursor_style_set(Elm_Object_I
  *
  * @ingroup Toolbar
  */
-EAPI const char                  *elm_toolbar_item_cursor_style_get(const Elm_Object_Item *it) EINA_ARG_NONNULL(1);
+EAPI const char                  *elm_toolbar_item_cursor_style_get(const Elm_Object_Item *it);
 
 /**
  * Set if the (custom)cursor for a given toolbar item should be
@@ -1129,7 +1129,7 @@ EAPI const char                  *elm_toolbar_item_cursor_style_get(const Elm_Ob
  *
  * @ingroup Toolbar
  */
-EAPI void                         elm_toolbar_item_cursor_engine_only_set(Elm_Object_Item *it, Eina_Bool engine_only) EINA_ARG_NONNULL(1);
+EAPI void                         elm_toolbar_item_cursor_engine_only_set(Elm_Object_Item *it, Eina_Bool engine_only);
 
 /**
  * Get if the (custom) cursor for a given toolbar item is being
@@ -1145,7 +1145,7 @@ EAPI void                         elm_toolbar_item_cursor_engine_only_set(Elm_Ob
  *
  * @ingroup Toolbar
  */
-EAPI Eina_Bool                    elm_toolbar_item_cursor_engine_only_get(const Elm_Object_Item *it) EINA_ARG_NONNULL(1);
+EAPI Eina_Bool                    elm_toolbar_item_cursor_engine_only_get(const Elm_Object_Item *it);
 
 /**
  * Change a toolbar's orientation
@@ -1154,7 +1154,7 @@ EAPI Eina_Bool                    elm_toolbar_item_cursor_engine_only_get(const 
  * By default, a toolbar will be horizontal. Use this function to create a vertical toolbar.
  * @ingroup Toolbar
  */
-EAPI void                         elm_toolbar_horizontal_set(Evas_Object *obj, Eina_Bool horizontal) EINA_ARG_NONNULL(1);
+EAPI void                         elm_toolbar_horizontal_set(Evas_Object *obj, Eina_Bool horizontal);
 
 /**
  * Get a toolbar's orientation
@@ -1163,7 +1163,7 @@ EAPI void                         elm_toolbar_horizontal_set(Evas_Object *obj, E
  * By default, a toolbar will be horizontal. Use this function to determine whether a toolbar is vertical.
  * @ingroup Toolbar
  */
-EAPI Eina_Bool                    elm_toolbar_horizontal_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
+EAPI Eina_Bool                    elm_toolbar_horizontal_get(const Evas_Object *obj);
 
 /**
  * Get the number of items in a toolbar
@@ -1171,7 +1171,7 @@ EAPI Eina_Bool                    elm_toolbar_horizontal_get(const Evas_Object *
  * @return The number of items in @p obj toolbar
  * @ingroup Toolbar
  */
-EAPI unsigned int                 elm_toolbar_items_count(const Evas_Object *obj) EINA_ARG_NONNULL(1) EINA_PURE;
+EAPI unsigned int                 elm_toolbar_items_count(const Evas_Object *obj);
 /**
  * @}
  */

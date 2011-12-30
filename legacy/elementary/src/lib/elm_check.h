@@ -40,7 +40,7 @@
  * @param parent The parent object
  * @return The new object or NULL if it cannot be created
  */
-EAPI Evas_Object *                elm_check_add(Evas_Object *parent) EINA_ARG_NONNULL(1);
+EAPI Evas_Object *                elm_check_add(Evas_Object *parent);
 
 /**
  * @brief Set the on/off state of the check object
@@ -52,7 +52,7 @@ EAPI Evas_Object *                elm_check_add(Evas_Object *parent) EINA_ARG_NO
  * with elm_check_state_pointer_set() the state of that variable is also
  * changed. Calling this @b doesn't cause the "changed" signal to be emited.
  */
-EAPI void                         elm_check_state_set(Evas_Object *obj, Eina_Bool state) EINA_ARG_NONNULL(1);
+EAPI void                         elm_check_state_set(Evas_Object *obj, Eina_Bool state);
 
 /**
  * @brief Get the state of the check object
@@ -60,7 +60,7 @@ EAPI void                         elm_check_state_set(Evas_Object *obj, Eina_Boo
  * @param obj The check object
  * @return The boolean state
  */
-EAPI Eina_Bool                    elm_check_state_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
+EAPI Eina_Bool                    elm_check_state_get(const Evas_Object *obj);
 
 /**
  * @brief Set a convenience pointer to a boolean to change
@@ -75,7 +75,7 @@ EAPI Eina_Bool                    elm_check_state_get(const Evas_Object *obj) EI
  * reflect the value of the boolean @p statep points to, just like calling
  * elm_check_state_set().
  */
-EAPI void                         elm_check_state_pointer_set(Evas_Object *obj, Eina_Bool *statep) EINA_ARG_NONNULL(1);
+EAPI void                         elm_check_state_pointer_set(Evas_Object *obj, Eina_Bool *statep);
 
 /**
  * @}

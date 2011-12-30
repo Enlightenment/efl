@@ -348,7 +348,7 @@ typedef void (*Elm_Web_Console_Message)(void *data, Evas_Object *obj, const char
  * @see elm_web_uri_set()
  * @see elm_web_webkit_view_get()
  */
-EAPI Evas_Object      *elm_web_add(Evas_Object *parent) EINA_ARG_NONNULL(1);
+EAPI Evas_Object      *elm_web_add(Evas_Object *parent);
 
 /**
  * Get internal ewk_view object from web object.
@@ -365,7 +365,7 @@ EAPI Evas_Object      *elm_web_add(Evas_Object *parent) EINA_ARG_NONNULL(1);
  *
  * @see elm_web_add()
  */
-EAPI Evas_Object      *elm_web_webkit_view_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
+EAPI Evas_Object      *elm_web_webkit_view_get(const Evas_Object *obj);
 
 /**
  * Sets the function to call when a new window is requested

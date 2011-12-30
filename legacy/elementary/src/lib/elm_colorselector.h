@@ -22,7 +22,7 @@
  *
  * @ingroup Colorselector
  */
-EAPI Evas_Object *elm_colorselector_add(Evas_Object *parent) EINA_ARG_NONNULL(1);
+EAPI Evas_Object *elm_colorselector_add(Evas_Object *parent);
 
 /**
  * Set a color for the colorselector
@@ -35,7 +35,7 @@ EAPI Evas_Object *elm_colorselector_add(Evas_Object *parent) EINA_ARG_NONNULL(1)
  *
  * @ingroup Colorselector
  */
-EAPI void elm_colorselector_color_set(Evas_Object *obj, int r, int g, int b, int a) EINA_ARG_NONNULL(1);
+EAPI void elm_colorselector_color_set(Evas_Object *obj, int r, int g, int b, int a);
 
 /**
  * Get a color from the colorselector
@@ -48,7 +48,7 @@ EAPI void elm_colorselector_color_set(Evas_Object *obj, int r, int g, int b, int
  *
  * @ingroup Colorselector
  */
-EAPI void elm_colorselector_color_get(const Evas_Object *obj, int *r, int *g, int *b, int *a) EINA_ARG_NONNULL(1);
+EAPI void elm_colorselector_color_get(const Evas_Object *obj, int *r, int *g, int *b, int *a);
 
 /**
  * @}

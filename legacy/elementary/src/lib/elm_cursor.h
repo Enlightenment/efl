@@ -37,7 +37,7 @@
  *
  * @ingroup Cursors
  */
-EAPI void        elm_object_cursor_set(Evas_Object *obj, const char *cursor) EINA_ARG_NONNULL(1);
+EAPI void        elm_object_cursor_set(Evas_Object *obj, const char *cursor);
 
 /**
  * Get the cursor to be shown when mouse is over the object
@@ -47,7 +47,7 @@ EAPI void        elm_object_cursor_set(Evas_Object *obj, const char *cursor) EIN
  *
  * @ingroup Cursors
  */
-EAPI const char *elm_object_cursor_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
+EAPI const char *elm_object_cursor_get(const Evas_Object *obj);
 
 /**
  * Unset cursor for object
@@ -60,7 +60,7 @@ EAPI const char *elm_object_cursor_get(const Evas_Object *obj) EINA_ARG_NONNULL(
  *
  * @ingroup Cursors
  */
-EAPI void        elm_object_cursor_unset(Evas_Object *obj) EINA_ARG_NONNULL(1);
+EAPI void        elm_object_cursor_unset(Evas_Object *obj);
 
 /**
  * Sets a different style for this object cursor.
@@ -73,7 +73,7 @@ EAPI void        elm_object_cursor_unset(Evas_Object *obj) EINA_ARG_NONNULL(1);
  *
  * @ingroup Cursors
  */
-EAPI void        elm_object_cursor_style_set(Evas_Object *obj, const char *style) EINA_ARG_NONNULL(1);
+EAPI void        elm_object_cursor_style_set(Evas_Object *obj, const char *style);
 
 /**
  * Get the style for this object cursor.
@@ -84,7 +84,7 @@ EAPI void        elm_object_cursor_style_set(Evas_Object *obj, const char *style
  *
  * @ingroup Cursors
  */
-EAPI const char *elm_object_cursor_style_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
+EAPI const char *elm_object_cursor_style_get(const Evas_Object *obj);
 
 /**
  * Set if the cursor set should be searched on the theme or should use
@@ -100,7 +100,7 @@ EAPI const char *elm_object_cursor_style_get(const Evas_Object *obj) EINA_ARG_NO
  *
  * @ingroup Cursors
  */
-EAPI void        elm_object_cursor_engine_only_set(Evas_Object *obj, Eina_Bool engine_only) EINA_ARG_NONNULL(1);
+EAPI void        elm_object_cursor_engine_only_set(Evas_Object *obj, Eina_Bool engine_only);
 
 /**
  * Get the cursor engine only usage for this object cursor.
@@ -113,7 +113,7 @@ EAPI void        elm_object_cursor_engine_only_set(Evas_Object *obj, Eina_Bool e
  *
  * @ingroup Cursors
  */
-EAPI Eina_Bool   elm_object_cursor_engine_only_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
+EAPI Eina_Bool   elm_object_cursor_engine_only_get(const Evas_Object *obj);
 
 /**
  * Get the configured cursor engine only usage

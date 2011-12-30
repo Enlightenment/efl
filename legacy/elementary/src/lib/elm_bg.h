@@ -38,7 +38,7 @@ typedef enum
  *
  * @ingroup Bg
  */
-EAPI Evas_Object                 *elm_bg_add(Evas_Object *parent) EINA_ARG_NONNULL(1);
+EAPI Evas_Object                 *elm_bg_add(Evas_Object *parent);
 
 /**
  * Set the file (image or edje) used for the background
@@ -56,7 +56,7 @@ EAPI Evas_Object                 *elm_bg_add(Evas_Object *parent) EINA_ARG_NONNU
  *
  * @ingroup Bg
  */
-EAPI void                         elm_bg_file_set(Evas_Object *obj, const char *file, const char *group) EINA_ARG_NONNULL(1);
+EAPI void                         elm_bg_file_set(Evas_Object *obj, const char *file, const char *group);
 
 /**
  * Get the file (image or edje) used for the background
@@ -67,7 +67,7 @@ EAPI void                         elm_bg_file_set(Evas_Object *obj, const char *
  *
  * @ingroup Bg
  */
-EAPI void                         elm_bg_file_get(const Evas_Object *obj, const char **file, const char **group) EINA_ARG_NONNULL(1);
+EAPI void                         elm_bg_file_get(const Evas_Object *obj, const char **file, const char **group);
 
 /**
  * Set the option used for the background image
@@ -80,7 +80,7 @@ EAPI void                         elm_bg_file_get(const Evas_Object *obj, const 
  *
  * @ingroup Bg
  */
-EAPI void                         elm_bg_option_set(Evas_Object *obj, Elm_Bg_Option option) EINA_ARG_NONNULL(1);
+EAPI void                         elm_bg_option_set(Evas_Object *obj, Elm_Bg_Option option);
 
 /**
  * Get the option used for the background image
@@ -90,7 +90,7 @@ EAPI void                         elm_bg_option_set(Evas_Object *obj, Elm_Bg_Opt
  *
  * @ingroup Bg
  */
-EAPI Elm_Bg_Option                elm_bg_option_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
+EAPI Elm_Bg_Option                elm_bg_option_get(const Evas_Object *obj);
 /**
  * Set the option used for the background color
  *
@@ -104,7 +104,7 @@ EAPI Elm_Bg_Option                elm_bg_option_get(const Evas_Object *obj) EINA
  *
  * @ingroup Bg
  */
-EAPI void                         elm_bg_color_set(Evas_Object *obj, int r, int g, int b) EINA_ARG_NONNULL(1);
+EAPI void                         elm_bg_color_set(Evas_Object *obj, int r, int g, int b);
 /**
  * Get the option used for the background color
  *
@@ -115,7 +115,7 @@ EAPI void                         elm_bg_color_set(Evas_Object *obj, int r, int 
  *
  * @ingroup Bg
  */
-EAPI void                         elm_bg_color_get(const Evas_Object *obj, int *r, int *g, int *b) EINA_ARG_NONNULL(1);
+EAPI void                         elm_bg_color_get(const Evas_Object *obj, int *r, int *g, int *b);
 
 /**
  * Set the size of the pixmap representation of the image.
@@ -136,7 +136,7 @@ EAPI void                         elm_bg_color_get(const Evas_Object *obj, int *
  *
  * @ingroup Bg
  */
-EAPI void                         elm_bg_load_size_set(Evas_Object *obj, Evas_Coord w, Evas_Coord h) EINA_ARG_NONNULL(1);
+EAPI void                         elm_bg_load_size_set(Evas_Object *obj, Evas_Coord w, Evas_Coord h);
 
 /**
  * @}

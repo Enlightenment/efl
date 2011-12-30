@@ -50,7 +50,7 @@
  *
  * @ingroup Progressbar
  */
-EAPI Evas_Object                 *elm_progressbar_add(Evas_Object *parent) EINA_ARG_NONNULL(1);
+EAPI Evas_Object                 *elm_progressbar_add(Evas_Object *parent);
 
 /**
  * Set whether a given progress bar widget is at "pulsing mode" or
@@ -75,7 +75,7 @@ EAPI Evas_Object                 *elm_progressbar_add(Evas_Object *parent) EINA_
  *
  * @ingroup Progressbar
  */
-EAPI void                         elm_progressbar_pulse_set(Evas_Object *obj, Eina_Bool pulse) EINA_ARG_NONNULL(1);
+EAPI void                         elm_progressbar_pulse_set(Evas_Object *obj, Eina_Bool pulse);
 
 /**
  * Get whether a given progress bar widget is at "pulsing mode" or
@@ -87,7 +87,7 @@ EAPI void                         elm_progressbar_pulse_set(Evas_Object *obj, Ei
  *
  * @ingroup Progressbar
  */
-EAPI Eina_Bool                    elm_progressbar_pulse_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
+EAPI Eina_Bool                    elm_progressbar_pulse_get(const Evas_Object *obj);
 
 /**
  * Start/stop a given progress bar "pulsing" animation, if its
@@ -103,7 +103,7 @@ EAPI Eina_Bool                    elm_progressbar_pulse_get(const Evas_Object *o
  *
  * @ingroup Progressbar
  */
-EAPI void                         elm_progressbar_pulse(Evas_Object *obj, Eina_Bool state) EINA_ARG_NONNULL(1);
+EAPI void                         elm_progressbar_pulse(Evas_Object *obj, Eina_Bool state);
 
 /**
  * Set the progress value (in percentage) on a given progress bar
@@ -121,7 +121,7 @@ EAPI void                         elm_progressbar_pulse(Evas_Object *obj, Eina_B
  *
  * @ingroup Progressbar
  */
-EAPI void                         elm_progressbar_value_set(Evas_Object *obj, double val) EINA_ARG_NONNULL(1);
+EAPI void                         elm_progressbar_value_set(Evas_Object *obj, double val);
 
 /**
  * Get the progress value (in percentage) on a given progress bar
@@ -134,7 +134,7 @@ EAPI void                         elm_progressbar_value_set(Evas_Object *obj, do
  *
  * @ingroup Progressbar
  */
-EAPI double                       elm_progressbar_value_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
+EAPI double                       elm_progressbar_value_get(const Evas_Object *obj);
 
 /**
  * Set the (exact) length of the bar region of a given progress bar
@@ -158,7 +158,7 @@ EAPI double                       elm_progressbar_value_get(const Evas_Object *o
  *
  * @ingroup Progressbar
  */
-EAPI void                         elm_progressbar_span_size_set(Evas_Object *obj, Evas_Coord size) EINA_ARG_NONNULL(1);
+EAPI void                         elm_progressbar_span_size_set(Evas_Object *obj, Evas_Coord size);
 
 /**
  * Get the length set for the bar region of a given progress bar
@@ -172,7 +172,7 @@ EAPI void                         elm_progressbar_span_size_set(Evas_Object *obj
  *
  * @ingroup Progressbar
  */
-EAPI Evas_Coord                   elm_progressbar_span_size_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
+EAPI Evas_Coord                   elm_progressbar_span_size_get(const Evas_Object *obj);
 
 /**
  * Set the format string for a given progress bar widget's units
@@ -196,7 +196,7 @@ EAPI Evas_Coord                   elm_progressbar_span_size_get(const Evas_Objec
  *
  * @ingroup Progressbar
  */
-EAPI void                         elm_progressbar_unit_format_set(Evas_Object *obj, const char *format) EINA_ARG_NONNULL(1);
+EAPI void                         elm_progressbar_unit_format_set(Evas_Object *obj, const char *format);
 
 /**
  * Retrieve the format string set for a given progress bar widget's
@@ -210,7 +210,7 @@ EAPI void                         elm_progressbar_unit_format_set(Evas_Object *o
  *
  * @ingroup Progressbar
  */
-EAPI const char                  *elm_progressbar_unit_format_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
+EAPI const char                  *elm_progressbar_unit_format_get(const Evas_Object *obj);
 
 /**
  * Set the orientation of a given progress bar widget
@@ -226,7 +226,7 @@ EAPI const char                  *elm_progressbar_unit_format_get(const Evas_Obj
  *
  * @ingroup Progressbar
  */
-EAPI void                         elm_progressbar_horizontal_set(Evas_Object *obj, Eina_Bool horizontal) EINA_ARG_NONNULL(1);
+EAPI void                         elm_progressbar_horizontal_set(Evas_Object *obj, Eina_Bool horizontal);
 
 /**
  * Retrieve the orientation of a given progress bar widget
@@ -239,7 +239,7 @@ EAPI void                         elm_progressbar_horizontal_set(Evas_Object *ob
  *
  * @ingroup Progressbar
  */
-EAPI Eina_Bool                    elm_progressbar_horizontal_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
+EAPI Eina_Bool                    elm_progressbar_horizontal_get(const Evas_Object *obj);
 
 /**
  * Invert a given progress bar widget's displaying values order
@@ -258,7 +258,7 @@ EAPI Eina_Bool                    elm_progressbar_horizontal_get(const Evas_Obje
  *
  * @ingroup Progressbar
  */
-EAPI void                         elm_progressbar_inverted_set(Evas_Object *obj, Eina_Bool inverted) EINA_ARG_NONNULL(1);
+EAPI void                         elm_progressbar_inverted_set(Evas_Object *obj, Eina_Bool inverted);
 
 /**
  * Get whether a given progress bar widget's displaying values are
@@ -272,7 +272,7 @@ EAPI void                         elm_progressbar_inverted_set(Evas_Object *obj,
  *
  * @ingroup Progressbar
  */
-EAPI Eina_Bool                    elm_progressbar_inverted_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
+EAPI Eina_Bool                    elm_progressbar_inverted_get(const Evas_Object *obj);
 
 /**
  * @}

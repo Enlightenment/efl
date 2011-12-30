@@ -132,7 +132,7 @@ EAPI Evas_Object                 *elm_object_name_find(const Evas_Object *obj, c
  *
  * @ingroup Styles
  */
-EAPI void         elm_object_style_set(Evas_Object *obj, const char *style) EINA_ARG_NONNULL(1);
+EAPI void         elm_object_style_set(Evas_Object *obj, const char *style);
 
 /**
  * Get the style used by the widget
@@ -148,7 +148,7 @@ EAPI void         elm_object_style_set(Evas_Object *obj, const char *style) EINA
  *
  * @ingroup Styles
  */
-EAPI const char  *elm_object_style_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
+EAPI const char  *elm_object_style_get(const Evas_Object *obj);
 
 /**
  * Set the disabled state of an Elementary object.
@@ -168,7 +168,7 @@ EAPI const char  *elm_object_style_get(const Evas_Object *obj) EINA_ARG_NONNULL(
  *
  * @ingroup Styles
  */
-EAPI void         elm_object_disabled_set(Evas_Object *obj, Eina_Bool disabled) EINA_ARG_NONNULL(1);
+EAPI void         elm_object_disabled_set(Evas_Object *obj, Eina_Bool disabled);
 
 /**
  * Get the disabled state of an Elementary object.
@@ -181,7 +181,7 @@ EAPI void         elm_object_disabled_set(Evas_Object *obj, Eina_Bool disabled) 
  *
  * @ingroup Styles
  */
-EAPI Eina_Bool    elm_object_disabled_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
+EAPI Eina_Bool    elm_object_disabled_get(const Evas_Object *obj);
 
 /**
  * @defgroup WidgetNavigation Widget Tree Navigation.
@@ -202,7 +202,7 @@ EAPI Eina_Bool    elm_object_disabled_get(const Evas_Object *obj) EINA_ARG_NONNU
  *         @c EINA_FALSE otherwise
  * @ingroup WidgetNavigation
  */
-EAPI Eina_Bool    elm_object_widget_check(const Evas_Object *obj) EINA_ARG_NONNULL(1);
+EAPI Eina_Bool    elm_object_widget_check(const Evas_Object *obj);
 
 /**
  * Get the first parent of the given object that is an Elementary
@@ -222,7 +222,7 @@ EAPI Eina_Bool    elm_object_widget_check(const Evas_Object *obj) EINA_ARG_NONNU
  *
  * @ingroup WidgetNavigation
  */
-EAPI Evas_Object *elm_object_parent_widget_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
+EAPI Evas_Object *elm_object_parent_widget_get(const Evas_Object *obj);
 
 /**
  * Get the top level parent of an Elementary widget.
@@ -232,7 +232,7 @@ EAPI Evas_Object *elm_object_parent_widget_get(const Evas_Object *obj) EINA_ARG_
  * found.
  * @ingroup WidgetNavigation
  */
-EAPI Evas_Object *elm_object_top_widget_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
+EAPI Evas_Object *elm_object_top_widget_get(const Evas_Object *obj);
 
 /**
  * Get the string that represents this Elementary widget.
@@ -248,7 +248,7 @@ EAPI Evas_Object *elm_object_top_widget_get(const Evas_Object *obj) EINA_ARG_NON
  * @return Elementary widget name, or @c NULL if not a valid widget.
  * @ingroup WidgetNavigation
  */
-EAPI const char  *elm_object_widget_type_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
+EAPI const char  *elm_object_widget_type_get(const Evas_Object *obj);
 
 /**
  * Send a signal to the widget edje object.
@@ -262,7 +262,7 @@ EAPI const char  *elm_object_widget_type_get(const Evas_Object *obj) EINA_ARG_NO
  * @param source The signal's source.
  * @ingroup General
  */
-EAPI void         elm_object_signal_emit(Evas_Object *obj, const char *emission, const char *source) EINA_ARG_NONNULL(1);
+EAPI void         elm_object_signal_emit(Evas_Object *obj, const char *emission, const char *source);
 
 /**
  * Add a callback for a signal emitted by widget edje object.
@@ -279,7 +279,7 @@ EAPI void         elm_object_signal_emit(Evas_Object *obj, const char *emission,
  * @param data A pointer to data to pass in to the callback function.
  * @ingroup General
  */
-EAPI void         elm_object_signal_callback_add(Evas_Object *obj, const char *emission, const char *source, Edje_Signal_Cb func, void *data) EINA_ARG_NONNULL(1, 4);
+EAPI void         elm_object_signal_callback_add(Evas_Object *obj, const char *emission, const char *source, Edje_Signal_Cb func, void *data);
 
 /**
  * Remove a signal-triggered callback from a widget edje object.
@@ -298,7 +298,7 @@ EAPI void         elm_object_signal_callback_add(Evas_Object *obj, const char *e
  * @return The data pointer
  * @ingroup General
  */
-EAPI void        *elm_object_signal_callback_del(Evas_Object *obj, const char *emission, const char *source, Edje_Signal_Cb func) EINA_ARG_NONNULL(1, 4);
+EAPI void        *elm_object_signal_callback_del(Evas_Object *obj, const char *emission, const char *source, Edje_Signal_Cb func);
 
 /**
  * Add a callback for input events (key up, key down, mouse wheel)
@@ -350,7 +350,7 @@ EAPI void        *elm_object_signal_callback_del(Evas_Object *obj, const char *e
  *
  * @ingroup General
  */
-EAPI void         elm_object_event_callback_add(Evas_Object *obj, Elm_Event_Cb func, const void *data) EINA_ARG_NONNULL(1, 2);
+EAPI void         elm_object_event_callback_add(Evas_Object *obj, Elm_Event_Cb func, const void *data);
 
 /**
  * Remove an event callback from a widget.
@@ -368,4 +368,4 @@ EAPI void         elm_object_event_callback_add(Evas_Object *obj, Elm_Event_Cb f
  * @return The data pointer
  * @ingroup General
  */
-EAPI void        *elm_object_event_callback_del(Evas_Object *obj, Elm_Event_Cb func, const void *data) EINA_ARG_NONNULL(1, 2);
+EAPI void        *elm_object_event_callback_del(Evas_Object *obj, Elm_Event_Cb func, const void *data);

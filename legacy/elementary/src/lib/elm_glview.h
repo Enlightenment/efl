@@ -42,7 +42,7 @@ typedef enum
  *
  * @ingroup GLView
  */
-EAPI Evas_Object *elm_glview_add(Evas_Object *parent) EINA_ARG_NONNULL(1);
+EAPI Evas_Object *elm_glview_add(Evas_Object *parent);
 
 /**
  * Sets the size of the glview
@@ -53,7 +53,7 @@ EAPI Evas_Object *elm_glview_add(Evas_Object *parent) EINA_ARG_NONNULL(1);
  *
  * @ingroup GLView
  */
-EAPI void         elm_glview_size_set(Evas_Object *obj, Evas_Coord width, Evas_Coord height) EINA_ARG_NONNULL(1);
+EAPI void         elm_glview_size_set(Evas_Object *obj, Evas_Coord width, Evas_Coord height);
 
 /**
  * Gets the size of the glview.
@@ -69,7 +69,7 @@ EAPI void         elm_glview_size_set(Evas_Object *obj, Evas_Coord width, Evas_C
  *
  * @ingroup GLView
  */
-EAPI void         elm_glview_size_get(const Evas_Object *obj, Evas_Coord *width, Evas_Coord *height) EINA_ARG_NONNULL(1);
+EAPI void         elm_glview_size_get(const Evas_Object *obj, Evas_Coord *width, Evas_Coord *height);
 
 /**
  * Gets the gl api struct for gl rendering
@@ -79,7 +79,7 @@ EAPI void         elm_glview_size_get(const Evas_Object *obj, Evas_Coord *width,
  *
  * @ingroup GLView
  */
-EAPI Evas_GL_API *elm_glview_gl_api_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
+EAPI Evas_GL_API *elm_glview_gl_api_get(const Evas_Object *obj);
 
 /**
  * Set the mode of the GLView. Supports Three simple modes.
@@ -90,7 +90,7 @@ EAPI Evas_GL_API *elm_glview_gl_api_get(const Evas_Object *obj) EINA_ARG_NONNULL
  *
  * @ingroup GLView
  */
-EAPI Eina_Bool    elm_glview_mode_set(Evas_Object *obj, Elm_GLView_Mode mode) EINA_ARG_NONNULL(1);
+EAPI Eina_Bool    elm_glview_mode_set(Evas_Object *obj, Elm_GLView_Mode mode);
 
 /**
  * Set the resize policy for the glview object.
@@ -107,7 +107,7 @@ EAPI Eina_Bool    elm_glview_mode_set(Evas_Object *obj, Elm_GLView_Mode mode) EI
  *
  * @ingroup GLView
  */
-EAPI Eina_Bool    elm_glview_resize_policy_set(Evas_Object *obj, Elm_GLView_Resize_Policy policy) EINA_ARG_NONNULL(1);
+EAPI Eina_Bool    elm_glview_resize_policy_set(Evas_Object *obj, Elm_GLView_Resize_Policy policy);
 
 /**
  * Set the render policy for the glview object.
@@ -124,7 +124,7 @@ EAPI Eina_Bool    elm_glview_resize_policy_set(Evas_Object *obj, Elm_GLView_Resi
  *
  * @ingroup GLView
  */
-EAPI Eina_Bool    elm_glview_render_policy_set(Evas_Object *obj, Elm_GLView_Render_Policy policy) EINA_ARG_NONNULL(1);
+EAPI Eina_Bool    elm_glview_render_policy_set(Evas_Object *obj, Elm_GLView_Render_Policy policy);
 
 /**
  * Set the init function that runs once in the main loop.
@@ -136,7 +136,7 @@ EAPI Eina_Bool    elm_glview_render_policy_set(Evas_Object *obj, Elm_GLView_Rend
  *
  * @ingroup GLView
  */
-EAPI void         elm_glview_init_func_set(Evas_Object *obj, Elm_GLView_Func_Cb func) EINA_ARG_NONNULL(1);
+EAPI void         elm_glview_init_func_set(Evas_Object *obj, Elm_GLView_Func_Cb func);
 
 /**
  * Set the render function that runs in the main loop.
@@ -148,7 +148,7 @@ EAPI void         elm_glview_init_func_set(Evas_Object *obj, Elm_GLView_Func_Cb 
  *
  * @ingroup GLView
  */
-EAPI void         elm_glview_del_func_set(Evas_Object *obj, Elm_GLView_Func_Cb func) EINA_ARG_NONNULL(1);
+EAPI void         elm_glview_del_func_set(Evas_Object *obj, Elm_GLView_Func_Cb func);
 
 /**
  * Set the resize function that gets called when resize happens.
@@ -158,7 +158,7 @@ EAPI void         elm_glview_del_func_set(Evas_Object *obj, Elm_GLView_Func_Cb f
  *
  * @ingroup GLView
  */
-EAPI void         elm_glview_resize_func_set(Evas_Object *obj, Elm_GLView_Func_Cb func) EINA_ARG_NONNULL(1);
+EAPI void         elm_glview_resize_func_set(Evas_Object *obj, Elm_GLView_Func_Cb func);
 
 /**
  * Set the render function that runs in the main loop.
@@ -168,7 +168,7 @@ EAPI void         elm_glview_resize_func_set(Evas_Object *obj, Elm_GLView_Func_C
  *
  * @ingroup GLView
  */
-EAPI void         elm_glview_render_func_set(Evas_Object *obj, Elm_GLView_Func_Cb func) EINA_ARG_NONNULL(1);
+EAPI void         elm_glview_render_func_set(Evas_Object *obj, Elm_GLView_Func_Cb func);
 
 /**
  * Notifies that there has been changes in the GLView.
@@ -177,7 +177,7 @@ EAPI void         elm_glview_render_func_set(Evas_Object *obj, Elm_GLView_Func_C
  *
  * @ingroup GLView
  */
-EAPI void         elm_glview_changed_set(Evas_Object *obj) EINA_ARG_NONNULL(1);
+EAPI void         elm_glview_changed_set(Evas_Object *obj);
 
 /**
  * @}

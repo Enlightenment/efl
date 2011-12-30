@@ -60,7 +60,7 @@
  *
  * @ingroup Naviframe
  */
-EAPI Evas_Object     *elm_naviframe_add(Evas_Object *parent) EINA_ARG_NONNULL(1);
+EAPI Evas_Object     *elm_naviframe_add(Evas_Object *parent);
 
 /**
  * @brief Push a new item to the top of the naviframe stack (and show it).
@@ -91,7 +91,7 @@ EAPI Evas_Object     *elm_naviframe_add(Evas_Object *parent) EINA_ARG_NONNULL(1)
  *
  * @ingroup Naviframe
  */
-EAPI Elm_Object_Item *elm_naviframe_item_push(Evas_Object *obj, const char *title_label, Evas_Object *prev_btn, Evas_Object *next_btn, Evas_Object *content, const char *item_style) EINA_ARG_NONNULL(1, 5);
+EAPI Elm_Object_Item *elm_naviframe_item_push(Evas_Object *obj, const char *title_label, Evas_Object *prev_btn, Evas_Object *next_btn, Evas_Object *content, const char *item_style);
 
 /**
  * @brief Insert a new item into the naviframe before item @p before.
@@ -122,7 +122,7 @@ EAPI Elm_Object_Item *elm_naviframe_item_push(Evas_Object *obj, const char *titl
  *
  * @ingroup Naviframe
  */
-EAPI Elm_Object_Item *elm_naviframe_item_insert_before(Elm_Object_Item *before, const char *title_label, Evas_Object *prev_btn, Evas_Object *next_btn, Evas_Object *content, const char *item_style) EINA_ARG_NONNULL(1, 5);
+EAPI Elm_Object_Item *elm_naviframe_item_insert_before(Elm_Object_Item *before, const char *title_label, Evas_Object *prev_btn, Evas_Object *next_btn, Evas_Object *content, const char *item_style);
 
 /**
  * @brief Insert a new item into the naviframe after item @p after.
@@ -153,7 +153,7 @@ EAPI Elm_Object_Item *elm_naviframe_item_insert_before(Elm_Object_Item *before, 
  *
  * @ingroup Naviframe
  */
-EAPI Elm_Object_Item *elm_naviframe_item_insert_after(Elm_Object_Item *after, const char *title_label, Evas_Object *prev_btn, Evas_Object *next_btn, Evas_Object *content, const char *item_style) EINA_ARG_NONNULL(1, 5);
+EAPI Elm_Object_Item *elm_naviframe_item_insert_after(Elm_Object_Item *after, const char *title_label, Evas_Object *prev_btn, Evas_Object *next_btn, Evas_Object *content, const char *item_style);
 
 /**
  * @brief Pop an item that is on top of the stack
@@ -170,7 +170,7 @@ EAPI Elm_Object_Item *elm_naviframe_item_insert_after(Elm_Object_Item *after, co
  *
  * @ingroup Naviframe
  */
-EAPI Evas_Object     *elm_naviframe_item_pop(Evas_Object *obj) EINA_ARG_NONNULL(1);
+EAPI Evas_Object     *elm_naviframe_item_pop(Evas_Object *obj);
 
 /**
  * @brief Pop the items between the top and the above one on the given item.
@@ -179,7 +179,7 @@ EAPI Evas_Object     *elm_naviframe_item_pop(Evas_Object *obj) EINA_ARG_NONNULL(
  *
  * @ingroup Naviframe
  */
-EAPI void             elm_naviframe_item_pop_to(Elm_Object_Item *it) EINA_ARG_NONNULL(1);
+EAPI void             elm_naviframe_item_pop_to(Elm_Object_Item *it);
 
 /**
  * Promote an item already in the naviframe stack to the top of the stack
@@ -191,7 +191,7 @@ EAPI void             elm_naviframe_item_pop_to(Elm_Object_Item *it) EINA_ARG_NO
  * naviframe stack to work.
  *
  */
-EAPI void             elm_naviframe_item_promote(Elm_Object_Item *it) EINA_ARG_NONNULL(1);
+EAPI void             elm_naviframe_item_promote(Elm_Object_Item *it);
 
 /**
  * @brief Delete the given item instantly.
@@ -204,7 +204,7 @@ EAPI void             elm_naviframe_item_promote(Elm_Object_Item *it) EINA_ARG_N
  *
  * @ingroup Naviframe
  */
-EAPI void             elm_naviframe_item_del(Elm_Object_Item *it) EINA_ARG_NONNULL(1);
+EAPI void             elm_naviframe_item_del(Elm_Object_Item *it);
 
 /**
  * @brief preserve the content objects when items are popped.
@@ -216,7 +216,7 @@ EAPI void             elm_naviframe_item_del(Elm_Object_Item *it) EINA_ARG_NONNU
  *
  * @ingroup Naviframe
  */
-EAPI void             elm_naviframe_content_preserve_on_pop_set(Evas_Object *obj, Eina_Bool preserve) EINA_ARG_NONNULL(1);
+EAPI void             elm_naviframe_content_preserve_on_pop_set(Evas_Object *obj, Eina_Bool preserve);
 
 /**
  * @brief Get a value whether preserve mode is enabled or not.
@@ -228,7 +228,7 @@ EAPI void             elm_naviframe_content_preserve_on_pop_set(Evas_Object *obj
  *
  * @ingroup Naviframe
  */
-EAPI Eina_Bool        elm_naviframe_content_preserve_on_pop_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
+EAPI Eina_Bool        elm_naviframe_content_preserve_on_pop_get(const Evas_Object *obj);
 
 /**
  * @brief Get a top item on the naviframe stack
@@ -239,7 +239,7 @@ EAPI Eina_Bool        elm_naviframe_content_preserve_on_pop_get(const Evas_Objec
  *
  * @ingroup Naviframe
  */
-EAPI Elm_Object_Item *elm_naviframe_top_item_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
+EAPI Elm_Object_Item *elm_naviframe_top_item_get(const Evas_Object *obj);
 
 /**
  * @brief Get a bottom item on the naviframe stack
@@ -250,7 +250,7 @@ EAPI Elm_Object_Item *elm_naviframe_top_item_get(const Evas_Object *obj) EINA_AR
  *
  * @ingroup Naviframe
  */
-EAPI Elm_Object_Item *elm_naviframe_bottom_item_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
+EAPI Elm_Object_Item *elm_naviframe_bottom_item_get(const Evas_Object *obj);
 
 /**
  * @brief Set an item style
@@ -265,7 +265,7 @@ EAPI Elm_Object_Item *elm_naviframe_bottom_item_get(const Evas_Object *obj) EINA
  *
  * @ingroup Naviframe
  */
-EAPI void             elm_naviframe_item_style_set(Elm_Object_Item *it, const char *item_style) EINA_ARG_NONNULL(1);
+EAPI void             elm_naviframe_item_style_set(Elm_Object_Item *it, const char *item_style);
 
 /**
  * @brief Get an item style
@@ -277,7 +277,7 @@ EAPI void             elm_naviframe_item_style_set(Elm_Object_Item *it, const ch
  *
  * @ingroup Naviframe
  */
-EAPI const char      *elm_naviframe_item_style_get(const Elm_Object_Item *it) EINA_ARG_NONNULL(1);
+EAPI const char      *elm_naviframe_item_style_get(const Elm_Object_Item *it);
 
 /**
  * @brief Show/Hide the title area
@@ -292,7 +292,7 @@ EAPI const char      *elm_naviframe_item_style_get(const Elm_Object_Item *it) EI
  *
  * @ingroup Naviframe
  */
-EAPI void             elm_naviframe_item_title_visible_set(Elm_Object_Item *it, Eina_Bool visible) EINA_ARG_NONNULL(1);
+EAPI void             elm_naviframe_item_title_visible_set(Elm_Object_Item *it, Eina_Bool visible);
 
 /**
  * @brief Get a value whether title area is visible or not.
@@ -304,7 +304,7 @@ EAPI void             elm_naviframe_item_title_visible_set(Elm_Object_Item *it, 
  *
  * @ingroup Naviframe
  */
-EAPI Eina_Bool        elm_naviframe_item_title_visible_get(const Elm_Object_Item *it) EINA_ARG_NONNULL(1);
+EAPI Eina_Bool        elm_naviframe_item_title_visible_get(const Elm_Object_Item *it);
 
 /**
  * @brief Set creating prev button automatically or not
@@ -318,7 +318,7 @@ EAPI Eina_Bool        elm_naviframe_item_title_visible_get(const Elm_Object_Item
  *
  * @ingroup Naviframe
  */
-EAPI void             elm_naviframe_prev_btn_auto_pushed_set(Evas_Object *obj, Eina_Bool auto_pushed) EINA_ARG_NONNULL(1);
+EAPI void             elm_naviframe_prev_btn_auto_pushed_set(Evas_Object *obj, Eina_Bool auto_pushed);
 
 /**
  * @brief Get a value whether prev button(back button) will be auto pushed or
@@ -332,7 +332,7 @@ EAPI void             elm_naviframe_prev_btn_auto_pushed_set(Evas_Object *obj, E
  *
  * @ingroup Naviframe
  */
-EAPI Eina_Bool        elm_naviframe_prev_btn_auto_pushed_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
+EAPI Eina_Bool        elm_naviframe_prev_btn_auto_pushed_get(const Evas_Object *obj);
 
 /**
  * @brief Get a list of all the naviframe items.
@@ -343,7 +343,7 @@ EAPI Eina_Bool        elm_naviframe_prev_btn_auto_pushed_get(const Evas_Object *
  *
  * @ingroup Naviframe
  */
-EAPI Eina_Inlist     *elm_naviframe_items_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
+EAPI Eina_Inlist     *elm_naviframe_items_get(const Evas_Object *obj);
 
 /**
  * @brief Set the event enabled when pushing/popping items
@@ -364,7 +364,7 @@ EAPI Eina_Inlist     *elm_naviframe_items_get(const Evas_Object *obj) EINA_ARG_N
  *
  * @ingroup Naviframe
  */
-EAPI void             elm_naviframe_event_enabled_set(Evas_Object *obj, Eina_Bool enabled) EINA_ARG_NONNULL(1);
+EAPI void             elm_naviframe_event_enabled_set(Evas_Object *obj, Eina_Bool enabled);
 
 /**
  * @brief Get the value of event enabled status.
@@ -376,7 +376,7 @@ EAPI void             elm_naviframe_event_enabled_set(Evas_Object *obj, Eina_Boo
  *
  * @ingroup Naviframe
  */
-EAPI Eina_Bool        elm_naviframe_event_enabled_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
+EAPI Eina_Bool        elm_naviframe_event_enabled_get(const Evas_Object *obj);
 
 /**
  * @}

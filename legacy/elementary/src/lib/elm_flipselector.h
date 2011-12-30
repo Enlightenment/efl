@@ -49,7 +49,7 @@
  *
  * @ingroup Flipselector
  */
-EAPI Evas_Object                *elm_flipselector_add(Evas_Object *parent) EINA_ARG_NONNULL(1);
+EAPI Evas_Object                *elm_flipselector_add(Evas_Object *parent);
 
 /**
  * Programmatically select the next item of a flip selector widget
@@ -62,7 +62,7 @@ EAPI Evas_Object                *elm_flipselector_add(Evas_Object *parent) EINA_
  *
  * @ingroup Flipselector
  */
-EAPI void                        elm_flipselector_flip_next(Evas_Object *obj) EINA_ARG_NONNULL(1);
+EAPI void                        elm_flipselector_flip_next(Evas_Object *obj);
 
 /**
  * Programmatically select the previous item of a flip selector
@@ -76,7 +76,7 @@ EAPI void                        elm_flipselector_flip_next(Evas_Object *obj) EI
  *
  * @ingroup Flipselector
  */
-EAPI void                        elm_flipselector_flip_prev(Evas_Object *obj) EINA_ARG_NONNULL(1);
+EAPI void                        elm_flipselector_flip_prev(Evas_Object *obj);
 
 /**
  * Append a (text) item to a flip selector widget
@@ -102,7 +102,7 @@ EAPI void                        elm_flipselector_flip_prev(Evas_Object *obj) EI
  *
  * @ingroup Flipselector
  */
-EAPI Elm_Object_Item            *elm_flipselector_item_append(Evas_Object *obj, const char *label, Evas_Smart_Cb func, void *data) EINA_ARG_NONNULL(1);
+EAPI Elm_Object_Item            *elm_flipselector_item_append(Evas_Object *obj, const char *label, Evas_Smart_Cb func, void *data);
 
 /**
  * Prepend a (text) item to a flip selector widget
@@ -128,7 +128,7 @@ EAPI Elm_Object_Item            *elm_flipselector_item_append(Evas_Object *obj, 
  *
  * @ingroup Flipselector
  */
-EAPI Elm_Object_Item            *elm_flipselector_item_prepend(Evas_Object *obj, const char *label, Evas_Smart_Cb func, void *data) EINA_ARG_NONNULL(1);
+EAPI Elm_Object_Item            *elm_flipselector_item_prepend(Evas_Object *obj, const char *label, Evas_Smart_Cb func, void *data);
 
 /**
  * Get the internal list of items in a given flip selector widget.
@@ -151,7 +151,7 @@ EAPI Elm_Object_Item            *elm_flipselector_item_prepend(Evas_Object *obj,
  *
  * @ingroup Flipselector
  */
-EAPI const Eina_List            *elm_flipselector_items_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
+EAPI const Eina_List            *elm_flipselector_items_get(const Evas_Object *obj);
 
 /**
  * Get the first item in the given flip selector widget's list of
@@ -166,7 +166,7 @@ EAPI const Eina_List            *elm_flipselector_items_get(const Evas_Object *o
  *
  * @ingroup Flipselector
  */
-EAPI Elm_Object_Item            *elm_flipselector_first_item_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
+EAPI Elm_Object_Item            *elm_flipselector_first_item_get(const Evas_Object *obj);
 
 /**
  * Get the last item in the given flip selector widget's list of
@@ -181,7 +181,7 @@ EAPI Elm_Object_Item            *elm_flipselector_first_item_get(const Evas_Obje
  *
  * @ingroup Flipselector
  */
-EAPI Elm_Object_Item            *elm_flipselector_last_item_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
+EAPI Elm_Object_Item            *elm_flipselector_last_item_get(const Evas_Object *obj);
 
 /**
  * Get the currently selected item in a flip selector widget.
@@ -192,7 +192,7 @@ EAPI Elm_Object_Item            *elm_flipselector_last_item_get(const Evas_Objec
  *
  * @ingroup Flipselector
  */
-EAPI Elm_Object_Item            *elm_flipselector_selected_item_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
+EAPI Elm_Object_Item            *elm_flipselector_selected_item_get(const Evas_Object *obj);
 
 /**
  * Set whether a given flip selector widget's item should be the
@@ -211,7 +211,7 @@ EAPI Elm_Object_Item            *elm_flipselector_selected_item_get(const Evas_O
  *
  * @ingroup Flipselector
  */
-EAPI void                        elm_flipselector_item_selected_set(Elm_Object_Item *it, Eina_Bool selected) EINA_ARG_NONNULL(1);
+EAPI void                        elm_flipselector_item_selected_set(Elm_Object_Item *it, Eina_Bool selected);
 
 /**
  * Get whether a given flip selector widget's item is the currently
@@ -225,7 +225,7 @@ EAPI void                        elm_flipselector_item_selected_set(Elm_Object_I
  *
  * @ingroup Flipselector
  */
-EAPI Eina_Bool                   elm_flipselector_item_selected_get(const Elm_Object_Item *it) EINA_ARG_NONNULL(1);
+EAPI Eina_Bool                   elm_flipselector_item_selected_get(const Elm_Object_Item *it);
 
 /**
  * Delete a given item from a flip selector widget.
@@ -234,7 +234,7 @@ EAPI Eina_Bool                   elm_flipselector_item_selected_get(const Elm_Ob
  *
  * @ingroup Flipselector
  */
-EAPI void                        elm_flipselector_item_del(Elm_Object_Item *it) EINA_ARG_NONNULL(1);
+EAPI void                        elm_flipselector_item_del(Elm_Object_Item *it);
 
 /**
  * Gets the item before @p item in a flip selector widget's
@@ -249,7 +249,7 @@ EAPI void                        elm_flipselector_item_del(Elm_Object_Item *it) 
  *
  * @ingroup Flipselector
  */
-EAPI Elm_Object_Item            *elm_flipselector_item_prev_get(Elm_Object_Item *it) EINA_ARG_NONNULL(1);
+EAPI Elm_Object_Item            *elm_flipselector_item_prev_get(Elm_Object_Item *it);
 
 /**
  * Gets the item after @p item in a flip selector widget's
@@ -264,7 +264,7 @@ EAPI Elm_Object_Item            *elm_flipselector_item_prev_get(Elm_Object_Item 
  *
  * @ingroup Flipselector
  */
-EAPI Elm_Object_Item            *elm_flipselector_item_next_get(Elm_Object_Item *it) EINA_ARG_NONNULL(1);
+EAPI Elm_Object_Item            *elm_flipselector_item_next_get(Elm_Object_Item *it);
 
 /**
  * Set the interval on time updates for an user mouse button hold
@@ -292,7 +292,7 @@ EAPI Elm_Object_Item            *elm_flipselector_item_next_get(Elm_Object_Item 
  *
  * @ingroup Flipselector
  */
-EAPI void                        elm_flipselector_interval_set(Evas_Object *obj, double interval) EINA_ARG_NONNULL(1);
+EAPI void                        elm_flipselector_interval_set(Evas_Object *obj, double interval);
 
 /**
  * Get the interval on time updates for an user mouse button hold
@@ -305,7 +305,7 @@ EAPI void                        elm_flipselector_interval_set(Evas_Object *obj,
  *
  * @ingroup Flipselector
  */
-EAPI double                      elm_flipselector_interval_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
+EAPI double                      elm_flipselector_interval_get(const Evas_Object *obj);
 /**
  * @}
  */

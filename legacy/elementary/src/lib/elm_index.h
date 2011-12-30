@@ -60,7 +60,7 @@
  *
  * @ingroup Index
  */
-EAPI Evas_Object          *elm_index_add(Evas_Object *parent) EINA_ARG_NONNULL(1);
+EAPI Evas_Object          *elm_index_add(Evas_Object *parent);
 
 /**
  * Set whether a given index widget is or not visible,
@@ -76,7 +76,7 @@ EAPI Evas_Object          *elm_index_add(Evas_Object *parent) EINA_ARG_NONNULL(1
  *
  * @ingroup Index
  */
-EAPI void                  elm_index_active_set(Evas_Object *obj, Eina_Bool active) EINA_ARG_NONNULL(1);
+EAPI void                  elm_index_active_set(Evas_Object *obj, Eina_Bool active);
 
 /**
  * Get whether a given index widget is currently visible or not.
@@ -88,7 +88,7 @@ EAPI void                  elm_index_active_set(Evas_Object *obj, Eina_Bool acti
  *
  * @ingroup Index
  */
-EAPI Eina_Bool             elm_index_active_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
+EAPI Eina_Bool             elm_index_active_get(const Evas_Object *obj);
 
 /**
  * Set the items level for a given index widget.
@@ -100,7 +100,7 @@ EAPI Eina_Bool             elm_index_active_get(const Evas_Object *obj) EINA_ARG
  *
  * @ingroup Index
  */
-EAPI void                  elm_index_item_level_set(Evas_Object *obj, int level) EINA_ARG_NONNULL(1);
+EAPI void                  elm_index_item_level_set(Evas_Object *obj, int level);
 
 /**
  * Get the items level set for a given index widget.
@@ -112,7 +112,7 @@ EAPI void                  elm_index_item_level_set(Evas_Object *obj, int level)
  *
  * @ingroup Index
  */
-EAPI int                   elm_index_item_level_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
+EAPI int                   elm_index_item_level_get(const Evas_Object *obj);
 
 /**
  * Returns the last selected item, for a given index widget.
@@ -122,7 +122,7 @@ EAPI int                   elm_index_item_level_get(const Evas_Object *obj) EINA
  *
  * @ingroup Index
  */
-EAPI Elm_Object_Item      *elm_index_item_selected_get(const Evas_Object *obj, int level) EINA_ARG_NONNULL(1);
+EAPI Elm_Object_Item      *elm_index_item_selected_get(const Evas_Object *obj, int level);
 
 /**
  * Append a new item on a given index widget.
@@ -140,7 +140,7 @@ EAPI Elm_Object_Item      *elm_index_item_selected_get(const Evas_Object *obj, i
  *
  * @ingroup Index
  */
-EAPI void                  elm_index_item_append(Evas_Object *obj, const char *letter, const void *item) EINA_ARG_NONNULL(1);
+EAPI void                  elm_index_item_append(Evas_Object *obj, const char *letter, const void *item);
 
 /**
  * Prepend a new item on a given index widget.
@@ -158,7 +158,7 @@ EAPI void                  elm_index_item_append(Evas_Object *obj, const char *l
  *
  * @ingroup Index
  */
-EAPI void                  elm_index_item_prepend(Evas_Object *obj, const char *letter, const void *item) EINA_ARG_NONNULL(1);
+EAPI void                  elm_index_item_prepend(Evas_Object *obj, const char *letter, const void *item);
 
 /**
  * Append a new item, on a given index widget, <b>after the item
@@ -181,7 +181,7 @@ EAPI void                  elm_index_item_prepend(Evas_Object *obj, const char *
  *
  * @ingroup Index
  */
-EAPI void                  elm_index_item_append_relative(Evas_Object *obj, const char *letter, const void *item, const Elm_Object_Item *relative) EINA_ARG_NONNULL(1);
+EAPI void                  elm_index_item_append_relative(Evas_Object *obj, const char *letter, const void *item, const Elm_Object_Item *relative);
 
 /**
  * Prepend a new item, on a given index widget, <b>after the item
@@ -204,7 +204,7 @@ EAPI void                  elm_index_item_append_relative(Evas_Object *obj, cons
  *
  * @ingroup Index
  */
-EAPI void                  elm_index_item_prepend_relative(Evas_Object *obj, const char *letter, const void *item, const Elm_Object_Item *relative) EINA_ARG_NONNULL(1);
+EAPI void                  elm_index_item_prepend_relative(Evas_Object *obj, const char *letter, const void *item, const Elm_Object_Item *relative);
 
 /**
  * Insert a new item into the given index widget, using @p cmp_func
@@ -237,7 +237,7 @@ EAPI void                  elm_index_item_prepend_relative(Evas_Object *obj, con
  *
  * @ingroup Index
  */
-EAPI void                  elm_index_item_sorted_insert(Evas_Object *obj, const char *letter, const void *item, Eina_Compare_Cb cmp_func, Eina_Compare_Cb cmp_data_func) EINA_ARG_NONNULL(1);
+EAPI void                  elm_index_item_sorted_insert(Evas_Object *obj, const char *letter, const void *item, Eina_Compare_Cb cmp_func, Eina_Compare_Cb cmp_data_func);
 
 /**
  * Remove an item from a given index widget, <b>to be referenced by
@@ -251,7 +251,7 @@ EAPI void                  elm_index_item_sorted_insert(Evas_Object *obj, const 
  *
  * @ingroup Index
  */
-EAPI void                  elm_index_item_del(Evas_Object *obj, Elm_Object_Item *item) EINA_ARG_NONNULL(1);
+EAPI void                  elm_index_item_del(Evas_Object *obj, Elm_Object_Item *item);
 
 /**
  * Find a given index widget's item, <b>using item data</b>.
@@ -262,7 +262,7 @@ EAPI void                  elm_index_item_del(Evas_Object *obj, Elm_Object_Item 
  *
  * @ingroup Index
  */
-EAPI Elm_Object_Item      *elm_index_item_find(Evas_Object *obj, const void *item) EINA_ARG_NONNULL(1);
+EAPI Elm_Object_Item      *elm_index_item_find(Evas_Object *obj, const void *item);
 
 /**
  * Removes @b all items from a given index widget.
@@ -274,7 +274,7 @@ EAPI Elm_Object_Item      *elm_index_item_find(Evas_Object *obj, const void *ite
  *
  * @ingroup Index
  */
-EAPI void                  elm_index_item_clear(Evas_Object *obj) EINA_ARG_NONNULL(1);
+EAPI void                  elm_index_item_clear(Evas_Object *obj);
 
 /**
  * Go to a given items level on a index widget
@@ -284,7 +284,7 @@ EAPI void                  elm_index_item_clear(Evas_Object *obj) EINA_ARG_NONNU
  *
  * @ingroup Index
  */
-EAPI void                  elm_index_item_go(Evas_Object *obj, int level) EINA_ARG_NONNULL(1);
+EAPI void                  elm_index_item_go(Evas_Object *obj, int level);
 
 /**
  * Set the function to be called when a given index widget item is freed.
@@ -298,7 +298,7 @@ EAPI void                  elm_index_item_go(Evas_Object *obj, int level) EINA_A
  *
  * @ingroup Index
  */
-EAPI void                  elm_index_item_del_cb_set(Elm_Object_Item *it, Evas_Smart_Cb func) EINA_ARG_NONNULL(1);
+EAPI void                  elm_index_item_del_cb_set(Elm_Object_Item *it, Evas_Smart_Cb func);
 
 /**
  * Get the letter (string) set on a given index widget item.
@@ -308,7 +308,7 @@ EAPI void                  elm_index_item_del_cb_set(Elm_Object_Item *it, Evas_S
  *
  * @ingroup Index
  */
-EAPI const char           *elm_index_item_letter_get(const Elm_Object_Item *item) EINA_ARG_NONNULL(1);
+EAPI const char           *elm_index_item_letter_get(const Elm_Object_Item *item);
 
 /**
  * @}

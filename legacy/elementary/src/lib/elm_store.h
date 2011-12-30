@@ -89,23 +89,23 @@ struct _Elm_Store_Item_Info_Filesystem
 EAPI void                    elm_store_free(Elm_Store *st);
 
 EAPI Elm_Store              *elm_store_filesystem_new(void);
-EAPI void                    elm_store_filesystem_directory_set(Elm_Store *st, const char *dir) EINA_ARG_NONNULL(1);
-EAPI const char             *elm_store_filesystem_directory_get(const Elm_Store *st) EINA_ARG_NONNULL(1);
-EAPI const char             *elm_store_item_filesystem_path_get(const Elm_Store_Item *sti) EINA_ARG_NONNULL(1);
+EAPI void                    elm_store_filesystem_directory_set(Elm_Store *st, const char *dir);
+EAPI const char             *elm_store_filesystem_directory_get(const Elm_Store *st);
+EAPI const char             *elm_store_item_filesystem_path_get(const Elm_Store_Item *sti);
 
-EAPI void                    elm_store_target_genlist_set(Elm_Store *st, Evas_Object *obj) EINA_ARG_NONNULL(1);
+EAPI void                    elm_store_target_genlist_set(Elm_Store *st, Evas_Object *obj);
 
-EAPI void                    elm_store_cache_set(Elm_Store *st, int max) EINA_ARG_NONNULL(1);
-EAPI int                     elm_store_cache_get(const Elm_Store *st) EINA_ARG_NONNULL(1);
-EAPI void                    elm_store_list_func_set(Elm_Store *st, Elm_Store_Item_List_Cb func, const void *data) EINA_ARG_NONNULL(1, 2);
-EAPI void                    elm_store_fetch_func_set(Elm_Store *st, Elm_Store_Item_Fetch_Cb func, const void *data) EINA_ARG_NONNULL(1, 2);
-EAPI void                    elm_store_fetch_thread_set(Elm_Store *st, Eina_Bool use_thread) EINA_ARG_NONNULL(1);
-EAPI Eina_Bool               elm_store_fetch_thread_get(const Elm_Store *st) EINA_ARG_NONNULL(1);
+EAPI void                    elm_store_cache_set(Elm_Store *st, int max);
+EAPI int                     elm_store_cache_get(const Elm_Store *st);
+EAPI void                    elm_store_list_func_set(Elm_Store *st, Elm_Store_Item_List_Cb func, const void *data);
+EAPI void                    elm_store_fetch_func_set(Elm_Store *st, Elm_Store_Item_Fetch_Cb func, const void *data);
+EAPI void                    elm_store_fetch_thread_set(Elm_Store *st, Eina_Bool use_thread);
+EAPI Eina_Bool               elm_store_fetch_thread_get(const Elm_Store *st);
 
-EAPI void                    elm_store_unfetch_func_set(Elm_Store *st, Elm_Store_Item_Unfetch_Cb func, const void *data) EINA_ARG_NONNULL(1, 2);
-EAPI void                    elm_store_sorted_set(Elm_Store *st, Eina_Bool sorted) EINA_ARG_NONNULL(1);
-EAPI Eina_Bool               elm_store_sorted_get(const Elm_Store *st) EINA_ARG_NONNULL(1);
-EAPI void                    elm_store_item_data_set(Elm_Store_Item *sti, void *data) EINA_ARG_NONNULL(1);
-EAPI void                   *elm_store_item_data_get(Elm_Store_Item *sti) EINA_ARG_NONNULL(1);
-EAPI const Elm_Store        *elm_store_item_store_get(const Elm_Store_Item *sti) EINA_ARG_NONNULL(1);
-EAPI const Elm_Genlist_Item *elm_store_item_genlist_item_get(const Elm_Store_Item *sti) EINA_ARG_NONNULL(1);
+EAPI void                    elm_store_unfetch_func_set(Elm_Store *st, Elm_Store_Item_Unfetch_Cb func, const void *data);
+EAPI void                    elm_store_sorted_set(Elm_Store *st, Eina_Bool sorted);
+EAPI Eina_Bool               elm_store_sorted_get(const Elm_Store *st);
+EAPI void                    elm_store_item_data_set(Elm_Store_Item *sti, void *data);
+EAPI void                   *elm_store_item_data_get(Elm_Store_Item *sti);
+EAPI const Elm_Store        *elm_store_item_store_get(const Elm_Store_Item *sti);
+EAPI const Elm_Genlist_Item *elm_store_item_genlist_item_get(const Elm_Store_Item *sti);

@@ -50,7 +50,7 @@
  *
  * @ingroup Panes
  */
-EAPI Evas_Object                 *elm_panes_add(Evas_Object *parent) EINA_ARG_NONNULL(1);
+EAPI Evas_Object                 *elm_panes_add(Evas_Object *parent);
 
 /**
  * Get the size proportion of panes widget's left side.
@@ -63,7 +63,7 @@ EAPI Evas_Object                 *elm_panes_add(Evas_Object *parent) EINA_ARG_NO
  *
  * @ingroup Panes
  */
-EAPI double                       elm_panes_content_left_size_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
+EAPI double                       elm_panes_content_left_size_get(const Evas_Object *obj);
 
 /**
  * Set the size proportion of panes widget's left side.
@@ -88,7 +88,7 @@ EAPI double                       elm_panes_content_left_size_get(const Evas_Obj
  *
  * @ingroup Panes
  */
-EAPI void                         elm_panes_content_left_size_set(Evas_Object *obj, double size) EINA_ARG_NONNULL(1);
+EAPI void                         elm_panes_content_left_size_set(Evas_Object *obj, double size);
 
 /**
  * Set the orientation of a given panes widget.
@@ -106,7 +106,7 @@ EAPI void                         elm_panes_content_left_size_set(Evas_Object *o
  *
  * @ingroup Panes
  */
-EAPI void                         elm_panes_horizontal_set(Evas_Object *obj, Eina_Bool horizontal) EINA_ARG_NONNULL(1);
+EAPI void                         elm_panes_horizontal_set(Evas_Object *obj, Eina_Bool horizontal);
 
 /**
  * Retrieve the orientation of a given panes widget.
@@ -119,9 +119,9 @@ EAPI void                         elm_panes_horizontal_set(Evas_Object *obj, Ein
  *
  * @ingroup Panes
  */
-EAPI Eina_Bool                    elm_panes_horizontal_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
-EAPI void                         elm_panes_fixed_set(Evas_Object *obj, Eina_Bool fixed) EINA_ARG_NONNULL(1);
-EAPI Eina_Bool                    elm_panes_fixed_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
+EAPI Eina_Bool                    elm_panes_horizontal_get(const Evas_Object *obj);
+EAPI void                         elm_panes_fixed_set(Evas_Object *obj, Eina_Bool fixed);
+EAPI Eina_Bool                    elm_panes_fixed_get(const Evas_Object *obj);
 
 /**
  * @}

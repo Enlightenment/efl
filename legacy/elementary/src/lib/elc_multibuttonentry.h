@@ -35,7 +35,7 @@ typedef Eina_Bool                   (*Elm_Multibuttonentry_Item_Filter_callback)
  * @return The new object or NULL if it cannot be created
  *
  */
-EAPI Evas_Object               *elm_multibuttonentry_add(Evas_Object *parent) EINA_ARG_NONNULL(1);
+EAPI Evas_Object               *elm_multibuttonentry_add(Evas_Object *parent);
 
 /**
  * Get the label
@@ -44,7 +44,7 @@ EAPI Evas_Object               *elm_multibuttonentry_add(Evas_Object *parent) EI
  * @return The label, or NULL if none
  *
  */
-EAPI const char                *elm_multibuttonentry_label_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
+EAPI const char                *elm_multibuttonentry_label_get(const Evas_Object *obj);
 
 /**
  * Set the label
@@ -53,7 +53,7 @@ EAPI const char                *elm_multibuttonentry_label_get(const Evas_Object
  * @param label The text label string
  *
  */
-EAPI void                       elm_multibuttonentry_label_set(Evas_Object *obj, const char *label) EINA_ARG_NONNULL(1);
+EAPI void                       elm_multibuttonentry_label_set(Evas_Object *obj, const char *label);
 
 /**
  * Get the entry of the multibuttonentry object
@@ -62,7 +62,7 @@ EAPI void                       elm_multibuttonentry_label_set(Evas_Object *obj,
  * @return The entry object, or NULL if none
  *
  */
-EAPI Evas_Object               *elm_multibuttonentry_entry_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
+EAPI Evas_Object               *elm_multibuttonentry_entry_get(const Evas_Object *obj);
 
 /**
  * Get the guide text
@@ -71,7 +71,7 @@ EAPI Evas_Object               *elm_multibuttonentry_entry_get(const Evas_Object
  * @return The guide text, or NULL if none
  *
  */
-EAPI const char                *elm_multibuttonentry_guide_text_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
+EAPI const char                *elm_multibuttonentry_guide_text_get(const Evas_Object *obj);
 
 /**
  * Set the guide text
@@ -80,7 +80,7 @@ EAPI const char                *elm_multibuttonentry_guide_text_get(const Evas_O
  * @param guidetext The guide text string
  *
  */
-EAPI void                       elm_multibuttonentry_guide_text_set(Evas_Object *obj, const char *guidetext) EINA_ARG_NONNULL(1);
+EAPI void                       elm_multibuttonentry_guide_text_set(Evas_Object *obj, const char *guidetext);
 
 /**
  * Get the value of shrink_mode state.
@@ -89,7 +89,7 @@ EAPI void                       elm_multibuttonentry_guide_text_set(Evas_Object 
  * @return the value of shrink mode state.
  *
  */
-EAPI int                        elm_multibuttonentry_shrink_mode_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
+EAPI int                        elm_multibuttonentry_shrink_mode_get(const Evas_Object *obj);
 
 /**
  * Set/Unset the multibuttonentry to shrink mode state of single line
@@ -98,7 +98,7 @@ EAPI int                        elm_multibuttonentry_shrink_mode_get(const Evas_
  * @param shrink the value of shrink_mode state. set this to 1 to set the multibuttonentry to shrink state of single line. set this to 0 to unset the contracted state.
  *
  */
-EAPI void                       elm_multibuttonentry_shrink_mode_set(Evas_Object *obj, int shrink) EINA_ARG_NONNULL(1);
+EAPI void                       elm_multibuttonentry_shrink_mode_set(Evas_Object *obj, int shrink);
 
 /**
  * Prepend a new item to the multibuttonentry
@@ -109,7 +109,7 @@ EAPI void                       elm_multibuttonentry_shrink_mode_set(Evas_Object
  * @return A handle to the item added or NULL if not possible
  *
  */
-EAPI Elm_Multibuttonentry_Item *elm_multibuttonentry_item_prepend(Evas_Object *obj, const char *label, void *data) EINA_ARG_NONNULL(1);
+EAPI Elm_Multibuttonentry_Item *elm_multibuttonentry_item_prepend(Evas_Object *obj, const char *label, void *data);
 
 /**
  * Append a new item to the multibuttonentry
@@ -120,7 +120,7 @@ EAPI Elm_Multibuttonentry_Item *elm_multibuttonentry_item_prepend(Evas_Object *o
  * @return A handle to the item added or NULL if not possible
  *
  */
-EAPI Elm_Multibuttonentry_Item *elm_multibuttonentry_item_append(Evas_Object *obj, const char *label, void *data) EINA_ARG_NONNULL(1);
+EAPI Elm_Multibuttonentry_Item *elm_multibuttonentry_item_append(Evas_Object *obj, const char *label, void *data);
 
 /**
  * Add a new item to the multibuttonentry before the indicated object
@@ -133,7 +133,7 @@ EAPI Elm_Multibuttonentry_Item *elm_multibuttonentry_item_append(Evas_Object *ob
  * @return A handle to the item added or NULL if not possible
  *
  */
-EAPI Elm_Multibuttonentry_Item *elm_multibuttonentry_item_insert_before(Evas_Object *obj, Elm_Multibuttonentry_Item *before, const char *label, void *data) EINA_ARG_NONNULL(1);
+EAPI Elm_Multibuttonentry_Item *elm_multibuttonentry_item_insert_before(Evas_Object *obj, Elm_Multibuttonentry_Item *before, const char *label, void *data);
 
 /**
  * Add a new item to the multibuttonentry after the indicated object
@@ -145,7 +145,7 @@ EAPI Elm_Multibuttonentry_Item *elm_multibuttonentry_item_insert_before(Evas_Obj
  * @return A handle to the item added or NULL if not possible
  *
  */
-EAPI Elm_Multibuttonentry_Item *elm_multibuttonentry_item_insert_after(Evas_Object *obj, Elm_Multibuttonentry_Item *after, const char *label, void *data) EINA_ARG_NONNULL(1);
+EAPI Elm_Multibuttonentry_Item *elm_multibuttonentry_item_insert_after(Evas_Object *obj, Elm_Multibuttonentry_Item *after, const char *label, void *data);
 
 /**
  * Get a list of items in the multibuttonentry
@@ -154,7 +154,7 @@ EAPI Elm_Multibuttonentry_Item *elm_multibuttonentry_item_insert_after(Evas_Obje
  * @return The list of items, or NULL if none
  *
  */
-EAPI const Eina_List           *elm_multibuttonentry_items_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
+EAPI const Eina_List           *elm_multibuttonentry_items_get(const Evas_Object *obj);
 
 /**
  * Get the first item in the multibuttonentry
@@ -163,7 +163,7 @@ EAPI const Eina_List           *elm_multibuttonentry_items_get(const Evas_Object
  * @return The first item, or NULL if none
  *
  */
-EAPI Elm_Multibuttonentry_Item *elm_multibuttonentry_first_item_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
+EAPI Elm_Multibuttonentry_Item *elm_multibuttonentry_first_item_get(const Evas_Object *obj);
 
 /**
  * Get the last item in the multibuttonentry
@@ -172,7 +172,7 @@ EAPI Elm_Multibuttonentry_Item *elm_multibuttonentry_first_item_get(const Evas_O
  * @return The last item, or NULL if none
  *
  */
-EAPI Elm_Multibuttonentry_Item *elm_multibuttonentry_last_item_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
+EAPI Elm_Multibuttonentry_Item *elm_multibuttonentry_last_item_get(const Evas_Object *obj);
 
 /**
  * Get the selected item in the multibuttonentry
@@ -181,7 +181,7 @@ EAPI Elm_Multibuttonentry_Item *elm_multibuttonentry_last_item_get(const Evas_Ob
  * @return The selected item, or NULL if none
  *
  */
-EAPI Elm_Multibuttonentry_Item *elm_multibuttonentry_selected_item_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
+EAPI Elm_Multibuttonentry_Item *elm_multibuttonentry_selected_item_get(const Evas_Object *obj);
 
 /**
  * Set the selected state of an item
@@ -190,7 +190,7 @@ EAPI Elm_Multibuttonentry_Item *elm_multibuttonentry_selected_item_get(const Eva
  * @param selected if it's EINA_TRUE, select the item otherwise, unselect the item
  *
  */
-EAPI void                       elm_multibuttonentry_item_select(Elm_Multibuttonentry_Item *item, Eina_Bool selected) EINA_ARG_NONNULL(1);
+EAPI void                       elm_multibuttonentry_item_select(Elm_Multibuttonentry_Item *item, Eina_Bool selected);
 
 /**
  * unselect all items.
@@ -198,7 +198,7 @@ EAPI void                       elm_multibuttonentry_item_select(Elm_Multibutton
  * @param obj The multibuttonentry object
  *
  */
-EAPI void                       elm_multibuttonentry_item_unselect_all(Evas_Object *obj) EINA_ARG_NONNULL(1);
+EAPI void                       elm_multibuttonentry_item_unselect_all(Evas_Object *obj);
 
 /**
  * Delete a given item
@@ -206,7 +206,7 @@ EAPI void                       elm_multibuttonentry_item_unselect_all(Evas_Obje
  * @param item The item
  *
  */
-EAPI void                       elm_multibuttonentry_item_del(Elm_Multibuttonentry_Item *item) EINA_ARG_NONNULL(1);
+EAPI void                       elm_multibuttonentry_item_del(Elm_Multibuttonentry_Item *item);
 
 /**
  * Remove all items in the multibuttonentry.
@@ -214,7 +214,7 @@ EAPI void                       elm_multibuttonentry_item_del(Elm_Multibuttonent
  * @param obj The multibuttonentry object
  *
  */
-EAPI void                       elm_multibuttonentry_clear(Evas_Object *obj) EINA_ARG_NONNULL(1);
+EAPI void                       elm_multibuttonentry_clear(Evas_Object *obj);
 
 /**
  * Get the label of a given item
@@ -223,7 +223,7 @@ EAPI void                       elm_multibuttonentry_clear(Evas_Object *obj) EIN
  * @return The label of a given item, or NULL if none
  *
  */
-EAPI const char                *elm_multibuttonentry_item_label_get(const Elm_Multibuttonentry_Item *item) EINA_ARG_NONNULL(1);
+EAPI const char                *elm_multibuttonentry_item_label_get(const Elm_Multibuttonentry_Item *item);
 
 /**
  * Set the label of a given item
@@ -232,7 +232,7 @@ EAPI const char                *elm_multibuttonentry_item_label_get(const Elm_Mu
  * @param str The text label string
  *
  */
-EAPI void                       elm_multibuttonentry_item_label_set(Elm_Multibuttonentry_Item *item, const char *str) EINA_ARG_NONNULL(1);
+EAPI void                       elm_multibuttonentry_item_label_set(Elm_Multibuttonentry_Item *item, const char *str);
 
 /**
  * Get the previous item in the multibuttonentry
@@ -241,7 +241,7 @@ EAPI void                       elm_multibuttonentry_item_label_set(Elm_Multibut
  * @return The item before the item @p item
  *
  */
-EAPI Elm_Multibuttonentry_Item *elm_multibuttonentry_item_prev_get(const Elm_Multibuttonentry_Item *item) EINA_ARG_NONNULL(1);
+EAPI Elm_Multibuttonentry_Item *elm_multibuttonentry_item_prev_get(const Elm_Multibuttonentry_Item *item);
 
 /**
  * Get the next item in the multibuttonentry
@@ -250,7 +250,7 @@ EAPI Elm_Multibuttonentry_Item *elm_multibuttonentry_item_prev_get(const Elm_Mul
  * @return The item after the item @p item
  *
  */
-EAPI Elm_Multibuttonentry_Item *elm_multibuttonentry_item_next_get(const Elm_Multibuttonentry_Item *item) EINA_ARG_NONNULL(1);
+EAPI Elm_Multibuttonentry_Item *elm_multibuttonentry_item_next_get(const Elm_Multibuttonentry_Item *item);
 
 /**
  * Append a item filter function for text inserted in the Multibuttonentry
@@ -268,7 +268,7 @@ EAPI Elm_Multibuttonentry_Item *elm_multibuttonentry_item_next_get(const Elm_Mul
  * @param data User data to pass to @p func
  *
  */
-EAPI void                       elm_multibuttonentry_item_filter_append(Evas_Object *obj, Elm_Multibuttonentry_Item_Filter_callback func, void *data) EINA_ARG_NONNULL(1);
+EAPI void                       elm_multibuttonentry_item_filter_append(Evas_Object *obj, Elm_Multibuttonentry_Item_Filter_callback func, void *data);
 
 /**
  * Prepend a filter function for text inserted in the Multibuttentry
@@ -281,7 +281,7 @@ EAPI void                       elm_multibuttonentry_item_filter_append(Evas_Obj
  * @param data User data to pass to @p func
  *
  */
-EAPI void                       elm_multibuttonentry_item_filter_prepend(Evas_Object *obj, Elm_Multibuttonentry_Item_Filter_callback func, void *data) EINA_ARG_NONNULL(1);
+EAPI void                       elm_multibuttonentry_item_filter_prepend(Evas_Object *obj, Elm_Multibuttonentry_Item_Filter_callback func, void *data);
 
 /**
  * Remove a filter from the list
@@ -294,7 +294,7 @@ EAPI void                       elm_multibuttonentry_item_filter_prepend(Evas_Ob
  * @param data The user data passed when adding the function
  *
  */
-EAPI void                       elm_multibuttonentry_item_filter_remove(Evas_Object *obj, Elm_Multibuttonentry_Item_Filter_callback func, void *data) EINA_ARG_NONNULL(1);
+EAPI void                       elm_multibuttonentry_item_filter_remove(Evas_Object *obj, Elm_Multibuttonentry_Item_Filter_callback func, void *data);
 
 /**
  * @}

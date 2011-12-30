@@ -51,7 +51,7 @@
  *
  * This function adds a text bubble to the given parent evas object.
  */
-EAPI Evas_Object                 *elm_bubble_add(Evas_Object *parent) EINA_ARG_NONNULL(1);
+EAPI Evas_Object                 *elm_bubble_add(Evas_Object *parent);
 
 /**
  * Set the corner of the bubble
@@ -69,7 +69,7 @@ EAPI Evas_Object                 *elm_bubble_add(Evas_Object *parent) EINA_ARG_N
  * @li "bottom_left"
  * @li "bottom_right"
  */
-EAPI void                         elm_bubble_corner_set(Evas_Object *obj, const char *corner) EINA_ARG_NONNULL(1, 2);
+EAPI void                         elm_bubble_corner_set(Evas_Object *obj, const char *corner);
 
 /**
  * Get the corner of the bubble
@@ -79,7 +79,7 @@ EAPI void                         elm_bubble_corner_set(Evas_Object *obj, const 
  *
  * This function gets the selected corner of the bubble.
  */
-EAPI const char                  *elm_bubble_corner_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
+EAPI const char                  *elm_bubble_corner_get(const Evas_Object *obj);
 
 /**
  * @}

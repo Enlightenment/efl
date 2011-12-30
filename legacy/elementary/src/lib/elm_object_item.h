@@ -8,7 +8,7 @@
  *
  * @ingroup General
  */
-EAPI Evas_Object                 *elm_object_item_object_get(const Elm_Object_Item *it) EINA_ARG_NONNULL(1);
+EAPI Evas_Object                 *elm_object_item_object_get(const Elm_Object_Item *it);
 
 /**
  * Set a content of an object item
@@ -124,7 +124,7 @@ EAPI void                         elm_object_item_data_set(Elm_Object_Item *it, 
  * @param source The signal's source.
  * @ingroup General
  */
-EAPI void                         elm_object_item_signal_emit(Elm_Object_Item *it, const char *emission, const char *source) EINA_ARG_NONNULL(1);
+EAPI void                         elm_object_item_signal_emit(Elm_Object_Item *it, const char *emission, const char *source);
 
 /**
  * Set the disabled state of an widget item.
@@ -144,7 +144,7 @@ EAPI void                         elm_object_item_signal_emit(Elm_Object_Item *i
  *
  * @ingroup Styles
  */
-EAPI void                         elm_object_item_disabled_set(Elm_Object_Item *it, Eina_Bool disabled) EINA_ARG_NONNULL(1);
+EAPI void                         elm_object_item_disabled_set(Elm_Object_Item *it, Eina_Bool disabled);
 
 /**
  * Get the disabled state of an widget item.
@@ -157,4 +157,4 @@ EAPI void                         elm_object_item_disabled_set(Elm_Object_Item *
  *
  * @ingroup Styles
  */
-EAPI Eina_Bool                    elm_object_item_disabled_get(const Elm_Object_Item *it) EINA_ARG_NONNULL(1);
+EAPI Eina_Bool                    elm_object_item_disabled_get(const Elm_Object_Item *it);

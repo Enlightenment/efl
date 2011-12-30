@@ -91,7 +91,7 @@ struct _Elm_Slideshow_Item_Class
  *
  * @ingroup Slideshow
  */
-EAPI Evas_Object          *elm_slideshow_add(Evas_Object *parent) EINA_ARG_NONNULL(1);
+EAPI Evas_Object          *elm_slideshow_add(Evas_Object *parent);
 
 /**
  * Add (append) a new item in a given slideshow widget.
@@ -114,7 +114,7 @@ EAPI Evas_Object          *elm_slideshow_add(Evas_Object *parent) EINA_ARG_NONNU
  *
  * @ingroup Slideshow
  */
-EAPI Elm_Object_Item      *elm_slideshow_item_add(Evas_Object *obj, const Elm_Slideshow_Item_Class *itc, const void *data) EINA_ARG_NONNULL(1);
+EAPI Elm_Object_Item      *elm_slideshow_item_add(Evas_Object *obj, const Elm_Slideshow_Item_Class *itc, const void *data);
 
 /**
  * Insert a new item into the given slideshow widget, using the @p func
@@ -140,7 +140,7 @@ EAPI Elm_Object_Item      *elm_slideshow_item_add(Evas_Object *obj, const Elm_Sl
  *
  * @ingroup Slideshow
  */
-EAPI Elm_Object_Item      *elm_slideshow_item_sorted_insert(Evas_Object *obj, const Elm_Slideshow_Item_Class *itc, const void *data, Eina_Compare_Cb func) EINA_ARG_NONNULL(1);
+EAPI Elm_Object_Item      *elm_slideshow_item_sorted_insert(Evas_Object *obj, const Elm_Slideshow_Item_Class *itc, const void *data, Eina_Compare_Cb func);
 
 /**
  * Display a given slideshow widget's item, programmatically.
@@ -153,7 +153,7 @@ EAPI Elm_Object_Item      *elm_slideshow_item_sorted_insert(Evas_Object *obj, co
  *
  * @ingroup Slideshow
  */
-EAPI void                  elm_slideshow_show(Elm_Object_Item *it) EINA_ARG_NONNULL(1);
+EAPI void                  elm_slideshow_show(Elm_Object_Item *it);
 
 /**
  * Slide to the @b next item, in a given slideshow widget
@@ -168,7 +168,7 @@ EAPI void                  elm_slideshow_show(Elm_Object_Item *it) EINA_ARG_NONN
  *
  * @ingroup Slideshow
  */
-EAPI void                  elm_slideshow_next(Evas_Object *obj) EINA_ARG_NONNULL(1);
+EAPI void                  elm_slideshow_next(Evas_Object *obj);
 
 /**
  * Slide to the @b previous item, in a given slideshow widget
@@ -183,7 +183,7 @@ EAPI void                  elm_slideshow_next(Evas_Object *obj) EINA_ARG_NONNULL
  *
  * @ingroup Slideshow
  */
-EAPI void                  elm_slideshow_previous(Evas_Object *obj) EINA_ARG_NONNULL(1);
+EAPI void                  elm_slideshow_previous(Evas_Object *obj);
 
 /**
  * Returns the list of sliding transition/effect names available, for a
@@ -221,7 +221,7 @@ EAPI void                  elm_slideshow_previous(Evas_Object *obj) EINA_ARG_NON
  *
  * @ingroup Slideshow
  */
-EAPI const Eina_List      *elm_slideshow_transitions_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
+EAPI const Eina_List      *elm_slideshow_transitions_get(const Evas_Object *obj);
 
 /**
  * Set the current slide transition/effect in use for a given
@@ -239,7 +239,7 @@ EAPI const Eina_List      *elm_slideshow_transitions_get(const Evas_Object *obj)
  *
  * @ingroup Slideshow
  */
-EAPI void                  elm_slideshow_transition_set(Evas_Object *obj, const char *transition) EINA_ARG_NONNULL(1);
+EAPI void                  elm_slideshow_transition_set(Evas_Object *obj, const char *transition);
 
 /**
  * Get the current slide transition/effect in use for a given
@@ -252,7 +252,7 @@ EAPI void                  elm_slideshow_transition_set(Evas_Object *obj, const 
  *
  * @ingroup Slideshow
  */
-EAPI const char           *elm_slideshow_transition_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
+EAPI const char           *elm_slideshow_transition_get(const Evas_Object *obj);
 
 /**
  * Set the interval between each image transition on a given
@@ -276,7 +276,7 @@ EAPI const char           *elm_slideshow_transition_get(const Evas_Object *obj) 
  *
  * @ingroup Slideshow
  */
-EAPI void                  elm_slideshow_timeout_set(Evas_Object *obj, double timeout) EINA_ARG_NONNULL(1);
+EAPI void                  elm_slideshow_timeout_set(Evas_Object *obj, double timeout);
 
 /**
  * Get the interval set for image transitions on a given slideshow
@@ -289,7 +289,7 @@ EAPI void                  elm_slideshow_timeout_set(Evas_Object *obj, double ti
  *
  * @ingroup Slideshow
  */
-EAPI double                elm_slideshow_timeout_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
+EAPI double                elm_slideshow_timeout_get(const Evas_Object *obj);
 
 /**
  * Set if, after a slideshow is started, for a given slideshow
@@ -309,7 +309,7 @@ EAPI double                elm_slideshow_timeout_get(const Evas_Object *obj) EIN
  *
  * @ingroup Slideshow
  */
-EAPI void                  elm_slideshow_loop_set(Evas_Object *obj, Eina_Bool loop) EINA_ARG_NONNULL(1);
+EAPI void                  elm_slideshow_loop_set(Evas_Object *obj, Eina_Bool loop);
 
 /**
  * Get if, after a slideshow is started, for a given slideshow
@@ -323,7 +323,7 @@ EAPI void                  elm_slideshow_loop_set(Evas_Object *obj, Eina_Bool lo
  *
  * @ingroup Slideshow
  */
-EAPI Eina_Bool             elm_slideshow_loop_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
+EAPI Eina_Bool             elm_slideshow_loop_get(const Evas_Object *obj);
 
 /**
  * Remove all items from a given slideshow widget
@@ -337,7 +337,7 @@ EAPI Eina_Bool             elm_slideshow_loop_get(const Evas_Object *obj) EINA_A
  *
  * @ingroup Slideshow
  */
-EAPI void                  elm_slideshow_clear(Evas_Object *obj) EINA_ARG_NONNULL(1);
+EAPI void                  elm_slideshow_clear(Evas_Object *obj);
 
 /**
  * Get the internal list of items in a given slideshow widget.
@@ -356,7 +356,7 @@ EAPI void                  elm_slideshow_clear(Evas_Object *obj) EINA_ARG_NONNUL
  *
  * @ingroup Slideshow
  */
-EAPI const Eina_List      *elm_slideshow_items_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
+EAPI const Eina_List      *elm_slideshow_items_get(const Evas_Object *obj);
 
 /**
  * Delete a given item from a slideshow widget.
@@ -365,7 +365,7 @@ EAPI const Eina_List      *elm_slideshow_items_get(const Evas_Object *obj) EINA_
  *
  * @ingroup Slideshow
  */
-EAPI void                  elm_slideshow_item_del(Elm_Object_Item *it) EINA_ARG_NONNULL(1);
+EAPI void                  elm_slideshow_item_del(Elm_Object_Item *it);
 
 /**
  * Returns the currently displayed item, in a given slideshow widget
@@ -376,7 +376,7 @@ EAPI void                  elm_slideshow_item_del(Elm_Object_Item *it) EINA_ARG_
  *
  * @ingroup Slideshow
  */
-EAPI Elm_Object_Item      *elm_slideshow_item_current_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
+EAPI Elm_Object_Item      *elm_slideshow_item_current_get(const Evas_Object *obj);
 
 /**
  * Get the real Evas object created to implement the view of a
@@ -398,7 +398,7 @@ EAPI Elm_Object_Item      *elm_slideshow_item_current_get(const Evas_Object *obj
  *
  * @ingroup Slideshow
  */
-EAPI Evas_Object          *elm_slideshow_item_object_get(const Elm_Object_Item *it) EINA_ARG_NONNULL(1);
+EAPI Evas_Object          *elm_slideshow_item_object_get(const Elm_Object_Item *it);
 
 /**
  * Get the the item, in a given slideshow widget, placed at
@@ -412,7 +412,7 @@ EAPI Evas_Object          *elm_slideshow_item_object_get(const Elm_Object_Item *
  *
  * @ingroup Slideshow
  */
-EAPI Elm_Object_Item      *elm_slideshow_item_nth_get(const Evas_Object *obj, unsigned int nth) EINA_ARG_NONNULL(1);
+EAPI Elm_Object_Item      *elm_slideshow_item_nth_get(const Evas_Object *obj, unsigned int nth);
 
 /**
  * Set the current slide layout in use for a given slideshow widget
@@ -428,7 +428,7 @@ EAPI Elm_Object_Item      *elm_slideshow_item_nth_get(const Evas_Object *obj, un
  *
  * @ingroup Slideshow
  */
-EAPI void                  elm_slideshow_layout_set(Evas_Object *obj, const char *layout) EINA_ARG_NONNULL(1);
+EAPI void                  elm_slideshow_layout_set(Evas_Object *obj, const char *layout);
 
 /**
  * Get the current slide layout in use for a given slideshow widget
@@ -440,7 +440,7 @@ EAPI void                  elm_slideshow_layout_set(Evas_Object *obj, const char
  *
  * @ingroup Slideshow
  */
-EAPI const char           *elm_slideshow_layout_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
+EAPI const char           *elm_slideshow_layout_get(const Evas_Object *obj);
 
 /**
  * Returns the list of @b layout names available, for a given
@@ -476,7 +476,7 @@ EAPI const char           *elm_slideshow_layout_get(const Evas_Object *obj) EINA
  *
  * @ingroup Slideshow
  */
-EAPI const Eina_List      *elm_slideshow_layouts_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
+EAPI const Eina_List      *elm_slideshow_layouts_get(const Evas_Object *obj);
 
 /**
  * Set the number of items to cache, on a given slideshow widget,
@@ -492,7 +492,7 @@ EAPI const Eina_List      *elm_slideshow_layouts_get(const Evas_Object *obj) EIN
  *
  * @ingroup Slideshow
  */
-EAPI void                  elm_slideshow_cache_before_set(Evas_Object *obj, int count) EINA_ARG_NONNULL(1);
+EAPI void                  elm_slideshow_cache_before_set(Evas_Object *obj, int count);
 
 /**
  * Retrieve the number of items to cache, on a given slideshow widget,
@@ -505,7 +505,7 @@ EAPI void                  elm_slideshow_cache_before_set(Evas_Object *obj, int 
  *
  * @ingroup Slideshow
  */
-EAPI int                   elm_slideshow_cache_before_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
+EAPI int                   elm_slideshow_cache_before_get(const Evas_Object *obj);
 
 /**
  * Set the number of items to cache, on a given slideshow widget,
@@ -521,7 +521,7 @@ EAPI int                   elm_slideshow_cache_before_get(const Evas_Object *obj
  *
  * @ingroup Slideshow
  */
-EAPI void                  elm_slideshow_cache_after_set(Evas_Object *obj, int count) EINA_ARG_NONNULL(1);
+EAPI void                  elm_slideshow_cache_after_set(Evas_Object *obj, int count);
 
 /**
  * Retrieve the number of items to cache, on a given slideshow widget,
@@ -534,7 +534,7 @@ EAPI void                  elm_slideshow_cache_after_set(Evas_Object *obj, int c
  *
  * @ingroup Slideshow
  */
-EAPI int                   elm_slideshow_cache_after_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
+EAPI int                   elm_slideshow_cache_after_get(const Evas_Object *obj);
 
 /**
  * Get the number of items stored in a given slideshow widget
@@ -544,7 +544,7 @@ EAPI int                   elm_slideshow_cache_after_get(const Evas_Object *obj)
  *
  * @ingroup Slideshow
  */
-EAPI unsigned int          elm_slideshow_count_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
+EAPI unsigned int          elm_slideshow_count_get(const Evas_Object *obj);
 
 /**
  * @}

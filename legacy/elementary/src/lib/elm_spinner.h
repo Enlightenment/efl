@@ -51,7 +51,7 @@
  * @ingroup Spinner
  *
  */
-EAPI Evas_Object *elm_spinner_add(Evas_Object *parent) EINA_ARG_NONNULL(1);
+EAPI Evas_Object *elm_spinner_add(Evas_Object *parent);
 
 /**
  * Set the format string of the displayed label.
@@ -73,7 +73,7 @@ EAPI Evas_Object *elm_spinner_add(Evas_Object *parent) EINA_ARG_NONNULL(1);
  *
  * @ingroup Spinner
  */
-EAPI void        elm_spinner_label_format_set(Evas_Object *obj, const char *fmt) EINA_ARG_NONNULL(1);
+EAPI void        elm_spinner_label_format_set(Evas_Object *obj, const char *fmt);
 
 /**
  * Get the label format of the spinner.
@@ -85,7 +85,7 @@ EAPI void        elm_spinner_label_format_set(Evas_Object *obj, const char *fmt)
  *
  * @ingroup Spinner
  */
-EAPI const char *elm_spinner_label_format_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
+EAPI const char *elm_spinner_label_format_get(const Evas_Object *obj);
 
 /**
  * Set the minimum and maximum values for the spinner.
@@ -108,7 +108,7 @@ EAPI const char *elm_spinner_label_format_get(const Evas_Object *obj) EINA_ARG_N
  *
  * @ingroup Spinner
  */
-EAPI void        elm_spinner_min_max_set(Evas_Object *obj, double min, double max) EINA_ARG_NONNULL(1);
+EAPI void        elm_spinner_min_max_set(Evas_Object *obj, double min, double max);
 
 /**
  * Get the minimum and maximum values of the spinner.
@@ -124,7 +124,7 @@ EAPI void        elm_spinner_min_max_set(Evas_Object *obj, double min, double ma
  *
  * @ingroup Spinner
  */
-EAPI void        elm_spinner_min_max_get(const Evas_Object *obj, double *min, double *max) EINA_ARG_NONNULL(1);
+EAPI void        elm_spinner_min_max_get(const Evas_Object *obj, double *min, double *max);
 
 /**
  * Set the step used to increment or decrement the spinner value.
@@ -145,7 +145,7 @@ EAPI void        elm_spinner_min_max_get(const Evas_Object *obj, double *min, do
  *
  * @ingroup Spinner
  */
-EAPI void        elm_spinner_step_set(Evas_Object *obj, double step) EINA_ARG_NONNULL(1);
+EAPI void        elm_spinner_step_set(Evas_Object *obj, double step);
 
 /**
  * Get the step used to increment or decrement the spinner value.
@@ -157,7 +157,7 @@ EAPI void        elm_spinner_step_set(Evas_Object *obj, double step) EINA_ARG_NO
  *
  * @ingroup Spinner
  */
-EAPI double      elm_spinner_step_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
+EAPI double      elm_spinner_step_get(const Evas_Object *obj);
 
 /**
  * Set the value the spinner displays.
@@ -177,7 +177,7 @@ EAPI double      elm_spinner_step_get(const Evas_Object *obj) EINA_ARG_NONNULL(1
  *
  * @ingroup Spinner
  */
-EAPI void        elm_spinner_value_set(Evas_Object *obj, double val) EINA_ARG_NONNULL(1);
+EAPI void        elm_spinner_value_set(Evas_Object *obj, double val);
 
 /**
  * Get the value displayed by the spinner.
@@ -189,7 +189,7 @@ EAPI void        elm_spinner_value_set(Evas_Object *obj, double val) EINA_ARG_NO
  *
  * @ingroup Spinner
  */
-EAPI double      elm_spinner_value_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
+EAPI double      elm_spinner_value_get(const Evas_Object *obj);
 
 /**
  * Set whether the spinner should wrap when it reaches its
@@ -225,7 +225,7 @@ EAPI double      elm_spinner_value_get(const Evas_Object *obj) EINA_ARG_NONNULL(
  *
  * @ingroup Spinner
  */
-EAPI void        elm_spinner_wrap_set(Evas_Object *obj, Eina_Bool wrap) EINA_ARG_NONNULL(1);
+EAPI void        elm_spinner_wrap_set(Evas_Object *obj, Eina_Bool wrap);
 
 /**
  * Get whether the spinner should wrap when it reaches its
@@ -239,7 +239,7 @@ EAPI void        elm_spinner_wrap_set(Evas_Object *obj, Eina_Bool wrap) EINA_ARG
  *
  * @ingroup Spinner
  */
-EAPI Eina_Bool   elm_spinner_wrap_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
+EAPI Eina_Bool   elm_spinner_wrap_get(const Evas_Object *obj);
 
 /**
  * Set whether the spinner can be directly edited by the user or not.
@@ -262,7 +262,7 @@ EAPI Eina_Bool   elm_spinner_wrap_get(const Evas_Object *obj) EINA_ARG_NONNULL(1
  *
  * @ingroup Spinner
  */
-EAPI void        elm_spinner_editable_set(Evas_Object *obj, Eina_Bool editable) EINA_ARG_NONNULL(1);
+EAPI void        elm_spinner_editable_set(Evas_Object *obj, Eina_Bool editable);
 
 /**
  * Get whether the spinner can be directly edited by the user or not.
@@ -275,7 +275,7 @@ EAPI void        elm_spinner_editable_set(Evas_Object *obj, Eina_Bool editable) 
  *
  * @ingroup Spinner
  */
-EAPI Eina_Bool   elm_spinner_editable_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
+EAPI Eina_Bool   elm_spinner_editable_get(const Evas_Object *obj);
 
 /**
  * Set a special string to display in the place of the numerical value.
@@ -299,7 +299,7 @@ EAPI Eina_Bool   elm_spinner_editable_get(const Evas_Object *obj) EINA_ARG_NONNU
  *
  * @ingroup Spinner
  */
-EAPI void        elm_spinner_special_value_add(Evas_Object *obj, double value, const char *label) EINA_ARG_NONNULL(1);
+EAPI void        elm_spinner_special_value_add(Evas_Object *obj, double value, const char *label);
 
 /**
  * Set the interval on time updates for an user mouse button hold
@@ -326,7 +326,7 @@ EAPI void        elm_spinner_special_value_add(Evas_Object *obj, double value, c
  *
  * @ingroup Spinner
  */
-EAPI void        elm_spinner_interval_set(Evas_Object *obj, double interval) EINA_ARG_NONNULL(1);
+EAPI void        elm_spinner_interval_set(Evas_Object *obj, double interval);
 
 /**
  * Get the interval on time updates for an user mouse button hold
@@ -339,7 +339,7 @@ EAPI void        elm_spinner_interval_set(Evas_Object *obj, double interval) EIN
  *
  * @ingroup Spinner
  */
-EAPI double      elm_spinner_interval_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
+EAPI double      elm_spinner_interval_get(const Evas_Object *obj);
 
 /**
  * @}

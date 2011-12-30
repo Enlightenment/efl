@@ -83,7 +83,7 @@ typedef struct _Elm_List_Item Elm_List_Item;    /**< Item of Elm_List. Sub-type 
  *
  * @ingroup List
  */
-EAPI Evas_Object                 *elm_list_add(Evas_Object *parent) EINA_ARG_NONNULL(1);
+EAPI Evas_Object                 *elm_list_add(Evas_Object *parent);
 
 /**
  * Starts the list.
@@ -103,7 +103,7 @@ EAPI Evas_Object                 *elm_list_add(Evas_Object *parent) EINA_ARG_NON
  *
  * @ingroup List
  */
-EAPI void                         elm_list_go(Evas_Object *obj) EINA_ARG_NONNULL(1);
+EAPI void                         elm_list_go(Evas_Object *obj);
 
 /**
  * Enable or disable multiple items selection on the list object.
@@ -122,7 +122,7 @@ EAPI void                         elm_list_go(Evas_Object *obj) EINA_ARG_NONNULL
  *
  * @ingroup List
  */
-EAPI void                         elm_list_multi_select_set(Evas_Object *obj, Eina_Bool multi) EINA_ARG_NONNULL(1);
+EAPI void                         elm_list_multi_select_set(Evas_Object *obj, Eina_Bool multi);
 
 /**
  * Get a value whether multiple items selection is enabled or not.
@@ -136,7 +136,7 @@ EAPI void                         elm_list_multi_select_set(Evas_Object *obj, Ei
  *
  * @ingroup List
  */
-EAPI Eina_Bool                    elm_list_multi_select_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
+EAPI Eina_Bool                    elm_list_multi_select_get(const Evas_Object *obj);
 
 /**
  * Set which mode to use for the list object.
@@ -157,7 +157,7 @@ EAPI Eina_Bool                    elm_list_multi_select_get(const Evas_Object *o
  *
  * @ingroup List
  */
-EAPI void                         elm_list_mode_set(Evas_Object *obj, Elm_List_Mode mode) EINA_ARG_NONNULL(1);
+EAPI void                         elm_list_mode_set(Evas_Object *obj, Elm_List_Mode mode);
 
 /**
  * Get the mode the list is at.
@@ -170,7 +170,7 @@ EAPI void                         elm_list_mode_set(Evas_Object *obj, Elm_List_M
  *
  * @ingroup List
  */
-EAPI Elm_List_Mode                elm_list_mode_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
+EAPI Elm_List_Mode                elm_list_mode_get(const Evas_Object *obj);
 
 /**
  * Enable or disable horizontal mode on the list object.
@@ -190,7 +190,7 @@ EAPI Elm_List_Mode                elm_list_mode_get(const Evas_Object *obj) EINA
  *
  * @ingroup List
  */
-EAPI void                         elm_list_horizontal_set(Evas_Object *obj, Eina_Bool horizontal) EINA_ARG_NONNULL(1);
+EAPI void                         elm_list_horizontal_set(Evas_Object *obj, Eina_Bool horizontal);
 
 /**
  * Get a value whether horizontal mode is enabled or not.
@@ -204,7 +204,7 @@ EAPI void                         elm_list_horizontal_set(Evas_Object *obj, Eina
  *
  * @ingroup List
  */
-EAPI Eina_Bool                    elm_list_horizontal_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
+EAPI Eina_Bool                    elm_list_horizontal_get(const Evas_Object *obj);
 
 /**
  * Enable or disable always select mode on the list object.
@@ -229,7 +229,7 @@ EAPI Eina_Bool                    elm_list_horizontal_get(const Evas_Object *obj
  *
  * @ingroup List
  */
-EAPI void                         elm_list_always_select_mode_set(Evas_Object *obj, Eina_Bool always_select) EINA_ARG_NONNULL(1);
+EAPI void                         elm_list_always_select_mode_set(Evas_Object *obj, Eina_Bool always_select);
 
 /**
  * Get a value whether always select mode is enabled or not, meaning that
@@ -244,7 +244,7 @@ EAPI void                         elm_list_always_select_mode_set(Evas_Object *o
  *
  * @ingroup List
  */
-EAPI Eina_Bool                    elm_list_always_select_mode_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
+EAPI Eina_Bool                    elm_list_always_select_mode_get(const Evas_Object *obj);
 
 /**
  * Set bouncing behaviour when the scrolled content reaches an edge.
@@ -260,7 +260,7 @@ EAPI Eina_Bool                    elm_list_always_select_mode_get(const Evas_Obj
  *
  * @ingroup List
  */
-EAPI void                         elm_list_bounce_set(Evas_Object *obj, Eina_Bool h_bounce, Eina_Bool v_bounce) EINA_ARG_NONNULL(1);
+EAPI void                         elm_list_bounce_set(Evas_Object *obj, Eina_Bool h_bounce, Eina_Bool v_bounce);
 
 /**
  * Get the bouncing behaviour of the internal scroller.
@@ -279,7 +279,7 @@ EAPI void                         elm_list_bounce_set(Evas_Object *obj, Eina_Boo
  *
  * @ingroup List
  */
-EAPI void                         elm_list_bounce_get(const Evas_Object *obj, Eina_Bool *h_bounce, Eina_Bool *v_bounce) EINA_ARG_NONNULL(1);
+EAPI void                         elm_list_bounce_get(const Evas_Object *obj, Eina_Bool *h_bounce, Eina_Bool *v_bounce);
 
 /**
  * Set the scrollbar policy.
@@ -299,7 +299,7 @@ EAPI void                         elm_list_bounce_get(const Evas_Object *obj, Ei
  *
  * @ingroup List
  */
-EAPI void                         elm_list_scroller_policy_set(Evas_Object *obj, Elm_Scroller_Policy policy_h, Elm_Scroller_Policy policy_v) EINA_ARG_NONNULL(1);
+EAPI void                         elm_list_scroller_policy_set(Evas_Object *obj, Elm_Scroller_Policy policy_h, Elm_Scroller_Policy policy_v);
 
 /**
  * Get the scrollbar policy.
@@ -312,7 +312,7 @@ EAPI void                         elm_list_scroller_policy_set(Evas_Object *obj,
  *
  * @ingroup List
  */
-EAPI void                         elm_list_scroller_policy_get(const Evas_Object *obj, Elm_Scroller_Policy *policy_h, Elm_Scroller_Policy *policy_v) EINA_ARG_NONNULL(1);
+EAPI void                         elm_list_scroller_policy_get(const Evas_Object *obj, Elm_Scroller_Policy *policy_h, Elm_Scroller_Policy *policy_v);
 
 /**
  * Append a new item to the list object.
@@ -364,7 +364,7 @@ EAPI void                         elm_list_scroller_policy_get(const Evas_Object
  *
  * @ingroup List
  */
-EAPI Elm_List_Item               *elm_list_item_append(Evas_Object *obj, const char *label, Evas_Object *icon, Evas_Object *end, Evas_Smart_Cb func, const void *data) EINA_ARG_NONNULL(1);
+EAPI Elm_List_Item               *elm_list_item_append(Evas_Object *obj, const char *label, Evas_Object *icon, Evas_Object *end, Evas_Smart_Cb func, const void *data);
 
 /**
  * Prepend a new item to the list object.
@@ -406,7 +406,7 @@ EAPI Elm_List_Item               *elm_list_item_append(Evas_Object *obj, const c
  *
  * @ingroup List
  */
-EAPI Elm_List_Item               *elm_list_item_prepend(Evas_Object *obj, const char *label, Evas_Object *icon, Evas_Object *end, Evas_Smart_Cb func, const void *data) EINA_ARG_NONNULL(1);
+EAPI Elm_List_Item               *elm_list_item_prepend(Evas_Object *obj, const char *label, Evas_Object *icon, Evas_Object *end, Evas_Smart_Cb func, const void *data);
 
 /**
  * Insert a new item into the list object before item @p before.
@@ -449,7 +449,7 @@ EAPI Elm_List_Item               *elm_list_item_prepend(Evas_Object *obj, const 
  *
  * @ingroup List
  */
-EAPI Elm_List_Item               *elm_list_item_insert_before(Evas_Object *obj, Elm_List_Item *before, const char *label, Evas_Object *icon, Evas_Object *end, Evas_Smart_Cb func, const void *data) EINA_ARG_NONNULL(1, 2);
+EAPI Elm_List_Item               *elm_list_item_insert_before(Evas_Object *obj, Elm_List_Item *before, const char *label, Evas_Object *icon, Evas_Object *end, Evas_Smart_Cb func, const void *data);
 
 /**
  * Insert a new item into the list object after item @p after.
@@ -492,7 +492,7 @@ EAPI Elm_List_Item               *elm_list_item_insert_before(Evas_Object *obj, 
  *
  * @ingroup List
  */
-EAPI Elm_List_Item               *elm_list_item_insert_after(Evas_Object *obj, Elm_List_Item *after, const char *label, Evas_Object *icon, Evas_Object *end, Evas_Smart_Cb func, const void *data) EINA_ARG_NONNULL(1, 2);
+EAPI Elm_List_Item               *elm_list_item_insert_after(Evas_Object *obj, Elm_List_Item *after, const char *label, Evas_Object *icon, Evas_Object *end, Evas_Smart_Cb func, const void *data);
 
 /**
  * Insert a new item into the sorted list object.
@@ -543,7 +543,7 @@ EAPI Elm_List_Item               *elm_list_item_insert_after(Evas_Object *obj, E
  *
  * @ingroup List
  */
-EAPI Elm_List_Item               *elm_list_item_sorted_insert(Evas_Object *obj, const char *label, Evas_Object *icon, Evas_Object *end, Evas_Smart_Cb func, const void *data, Eina_Compare_Cb cmp_func) EINA_ARG_NONNULL(1);
+EAPI Elm_List_Item               *elm_list_item_sorted_insert(Evas_Object *obj, const char *label, Evas_Object *icon, Evas_Object *end, Evas_Smart_Cb func, const void *data, Eina_Compare_Cb cmp_func);
 
 /**
  * Remove all list's items.
@@ -555,7 +555,7 @@ EAPI Elm_List_Item               *elm_list_item_sorted_insert(Evas_Object *obj, 
  *
  * @ingroup List
  */
-EAPI void                         elm_list_clear(Evas_Object *obj) EINA_ARG_NONNULL(1);
+EAPI void                         elm_list_clear(Evas_Object *obj);
 
 /**
  * Get a list of all the list items.
@@ -570,7 +570,7 @@ EAPI void                         elm_list_clear(Evas_Object *obj) EINA_ARG_NONN
  *
  * @ingroup List
  */
-EAPI const Eina_List             *elm_list_items_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
+EAPI const Eina_List             *elm_list_items_get(const Evas_Object *obj);
 
 /**
  * Get the selected item.
@@ -587,7 +587,7 @@ EAPI const Eina_List             *elm_list_items_get(const Evas_Object *obj) EIN
  *
  * @ingroup List
  */
-EAPI Elm_List_Item               *elm_list_selected_item_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
+EAPI Elm_List_Item               *elm_list_selected_item_get(const Evas_Object *obj);
 
 /**
  * Return a list of the currently selected list items.
@@ -604,7 +604,7 @@ EAPI Elm_List_Item               *elm_list_selected_item_get(const Evas_Object *
  *
  * @ingroup List
  */
-EAPI const Eina_List             *elm_list_selected_items_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
+EAPI const Eina_List             *elm_list_selected_items_get(const Evas_Object *obj);
 
 /**
  * Set the selected state of an item.
@@ -628,7 +628,7 @@ EAPI const Eina_List             *elm_list_selected_items_get(const Evas_Object 
  *
  * @ingroup List
  */
-EAPI void                         elm_list_item_selected_set(Elm_List_Item *item, Eina_Bool selected) EINA_ARG_NONNULL(1);
+EAPI void                         elm_list_item_selected_set(Elm_List_Item *item, Eina_Bool selected);
 
 /*
  * Get whether the @p item is selected or not.
@@ -642,7 +642,7 @@ EAPI void                         elm_list_item_selected_set(Elm_List_Item *item
  *
  * @ingroup List
  */
-EAPI Eina_Bool                    elm_list_item_selected_get(const Elm_List_Item *item) EINA_ARG_NONNULL(1);
+EAPI Eina_Bool                    elm_list_item_selected_get(const Elm_List_Item *item);
 
 /**
  * Set or unset item as a separator.
@@ -660,7 +660,7 @@ EAPI Eina_Bool                    elm_list_item_selected_get(const Elm_List_Item
  *
  * @ingroup List
  */
-EAPI void                         elm_list_item_separator_set(Elm_List_Item *it, Eina_Bool setting) EINA_ARG_NONNULL(1);
+EAPI void                         elm_list_item_separator_set(Elm_List_Item *it, Eina_Bool setting);
 
 /**
  * Get a value whether item is a separator or not.
@@ -673,7 +673,7 @@ EAPI void                         elm_list_item_separator_set(Elm_List_Item *it,
  *
  * @ingroup List
  */
-EAPI Eina_Bool                    elm_list_item_separator_get(const Elm_List_Item *it) EINA_ARG_NONNULL(1);
+EAPI Eina_Bool                    elm_list_item_separator_get(const Elm_List_Item *it);
 
 /**
  * Show @p item in the list view.
@@ -685,7 +685,7 @@ EAPI Eina_Bool                    elm_list_item_separator_get(const Elm_List_Ite
  *
  * @ingroup List
  */
-EAPI void                         elm_list_item_show(Elm_List_Item *item) EINA_ARG_NONNULL(1);
+EAPI void                         elm_list_item_show(Elm_List_Item *item);
 
 /**
  * Bring in the given item to list view.
@@ -701,7 +701,7 @@ EAPI void                         elm_list_item_show(Elm_List_Item *item) EINA_A
  *
  * @ingroup List
  */
-EAPI void                         elm_list_item_bring_in(Elm_List_Item *item) EINA_ARG_NONNULL(1);
+EAPI void                         elm_list_item_bring_in(Elm_List_Item *item);
 
 /**
  * Delete them item from the list.
@@ -717,7 +717,7 @@ EAPI void                         elm_list_item_bring_in(Elm_List_Item *item) EI
  *
  * @ingroup List
  */
-EAPI void                         elm_list_item_del(Elm_List_Item *item) EINA_ARG_NONNULL(1);
+EAPI void                         elm_list_item_del(Elm_List_Item *item);
 
 /**
  * Set the function called when a list item is freed.
@@ -735,7 +735,7 @@ EAPI void                         elm_list_item_del(Elm_List_Item *item) EINA_AR
  *
  * @ingroup List
  */
-EAPI void                         elm_list_item_del_cb_set(Elm_List_Item *item, Evas_Smart_Cb func) EINA_ARG_NONNULL(1);
+EAPI void                         elm_list_item_del_cb_set(Elm_List_Item *item, Evas_Smart_Cb func);
 
 /**
  * Get the data associated to the item.
@@ -751,7 +751,7 @@ EAPI void                         elm_list_item_del_cb_set(Elm_List_Item *item, 
  *
  * @ingroup List
  */
-EAPI void                        *elm_list_item_data_get(const Elm_List_Item *item) EINA_ARG_NONNULL(1);
+EAPI void                        *elm_list_item_data_get(const Elm_List_Item *item);
 
 /**
  * Get the left side icon associated to the item.
@@ -770,7 +770,7 @@ EAPI void                        *elm_list_item_data_get(const Elm_List_Item *it
  *
  * @ingroup List
  */
-EAPI Evas_Object                 *elm_list_item_icon_get(const Elm_List_Item *item) EINA_ARG_NONNULL(1);
+EAPI Evas_Object                 *elm_list_item_icon_get(const Elm_List_Item *item);
 
 /**
  * Set the left side icon associated to the item.
@@ -795,7 +795,7 @@ EAPI Evas_Object                 *elm_list_item_icon_get(const Elm_List_Item *it
  *
  * @ingroup List
  */
-EAPI void                         elm_list_item_icon_set(Elm_List_Item *item, Evas_Object *icon) EINA_ARG_NONNULL(1);
+EAPI void                         elm_list_item_icon_set(Elm_List_Item *item, Evas_Object *icon);
 
 /**
  * Get the right side icon associated to the item.
@@ -814,7 +814,7 @@ EAPI void                         elm_list_item_icon_set(Elm_List_Item *item, Ev
  *
  * @ingroup List
  */
-EAPI Evas_Object                 *elm_list_item_end_get(const Elm_List_Item *item) EINA_ARG_NONNULL(1);
+EAPI Evas_Object                 *elm_list_item_end_get(const Elm_List_Item *item);
 
 /**
  * Set the right side icon associated to the item.
@@ -839,7 +839,7 @@ EAPI Evas_Object                 *elm_list_item_end_get(const Elm_List_Item *ite
  *
  * @ingroup List
  */
-EAPI void                         elm_list_item_end_set(Elm_List_Item *item, Evas_Object *end) EINA_ARG_NONNULL(1);
+EAPI void                         elm_list_item_end_set(Elm_List_Item *item, Evas_Object *end);
 
 /**
  * Gets the base object of the item.
@@ -851,7 +851,7 @@ EAPI void                         elm_list_item_end_set(Elm_List_Item *item, Eva
  *
  * @ingroup List
  */
-EAPI Evas_Object                 *elm_list_item_object_get(const Elm_List_Item *item) EINA_ARG_NONNULL(1);
+EAPI Evas_Object                 *elm_list_item_object_get(const Elm_List_Item *item);
 
 /**
  * Get the label of item.
@@ -869,7 +869,7 @@ EAPI Evas_Object                 *elm_list_item_object_get(const Elm_List_Item *
  *
  * @ingroup List
  */
-EAPI const char                  *elm_list_item_label_get(const Elm_List_Item *item) EINA_ARG_NONNULL(1);
+EAPI const char                  *elm_list_item_label_get(const Elm_List_Item *item);
 
 /**
  * Set the label of item.
@@ -889,7 +889,7 @@ EAPI const char                  *elm_list_item_label_get(const Elm_List_Item *i
  *
  * @ingroup List
  */
-EAPI void                         elm_list_item_label_set(Elm_List_Item *item, const char *text) EINA_ARG_NONNULL(1);
+EAPI void                         elm_list_item_label_set(Elm_List_Item *item, const char *text);
 
 /**
  * Get the item before @p it in list.
@@ -904,7 +904,7 @@ EAPI void                         elm_list_item_label_set(Elm_List_Item *item, c
  *
  * @ingroup List
  */
-EAPI Elm_List_Item               *elm_list_item_prev(const Elm_List_Item *it) EINA_ARG_NONNULL(1);
+EAPI Elm_List_Item               *elm_list_item_prev(const Elm_List_Item *it);
 
 /**
  * Get the item after @p it in list.
@@ -919,7 +919,7 @@ EAPI Elm_List_Item               *elm_list_item_prev(const Elm_List_Item *it) EI
  *
  * @ingroup List
  */
-EAPI Elm_List_Item               *elm_list_item_next(const Elm_List_Item *it) EINA_ARG_NONNULL(1);
+EAPI Elm_List_Item               *elm_list_item_next(const Elm_List_Item *it);
 
 /**
  * Sets the disabled/enabled state of a list item.
@@ -934,7 +934,7 @@ EAPI Elm_List_Item               *elm_list_item_next(const Elm_List_Item *it) EI
  *
  * @ingroup List
  */
-EAPI void                         elm_list_item_disabled_set(Elm_List_Item *it, Eina_Bool disabled) EINA_ARG_NONNULL(1);
+EAPI void                         elm_list_item_disabled_set(Elm_List_Item *it, Eina_Bool disabled);
 
 /**
  * Get a value whether list item is disabled or not.
@@ -946,7 +946,7 @@ EAPI void                         elm_list_item_disabled_set(Elm_List_Item *it, 
  *
  * @ingroup List
  */
-EAPI Eina_Bool                    elm_list_item_disabled_get(const Elm_List_Item *it) EINA_ARG_NONNULL(1);
+EAPI Eina_Bool                    elm_list_item_disabled_get(const Elm_List_Item *it);
 
 /**
  * Set the text to be shown in a given list item's tooltips.
@@ -962,7 +962,7 @@ EAPI Eina_Bool                    elm_list_item_disabled_get(const Elm_List_Item
  *
  * @ingroup List
  */
-EAPI void                         elm_list_item_tooltip_text_set(Elm_List_Item *item, const char *text) EINA_ARG_NONNULL(1);
+EAPI void                         elm_list_item_tooltip_text_set(Elm_List_Item *item, const char *text);
 
 /**
  * @brief Disable size restrictions on an object's tooltip
@@ -973,7 +973,7 @@ EAPI void                         elm_list_item_tooltip_text_set(Elm_List_Item *
  * This function allows a tooltip to expand beyond its parant window's canvas.
  * It will instead be limited only by the size of the display.
  */
-EAPI Eina_Bool                    elm_list_item_tooltip_window_mode_set(Elm_List_Item *item, Eina_Bool disable) EINA_ARG_NONNULL(1);
+EAPI Eina_Bool                    elm_list_item_tooltip_window_mode_set(Elm_List_Item *item, Eina_Bool disable);
 /**
  * @brief Retrieve size restriction state of an object's tooltip
  * @param obj The tooltip's anchor object
@@ -983,7 +983,7 @@ EAPI Eina_Bool                    elm_list_item_tooltip_window_mode_set(Elm_List
  * its parant window's canvas.
  * It will instead be limited only by the size of the display.
  */
-EAPI Eina_Bool                    elm_list_item_tooltip_window_mode_get(const Elm_List_Item *item) EINA_ARG_NONNULL(1);
+EAPI Eina_Bool                    elm_list_item_tooltip_window_mode_get(const Elm_List_Item *item);
 
 /**
  * Set the content to be shown in the tooltip item.
@@ -1007,7 +1007,7 @@ EAPI Eina_Bool                    elm_list_item_tooltip_window_mode_get(const El
  *
  * @ingroup List
  */
-EAPI void                         elm_list_item_tooltip_content_cb_set(Elm_List_Item *item, Elm_Tooltip_Item_Content_Cb func, const void *data, Evas_Smart_Cb del_cb) EINA_ARG_NONNULL(1);
+EAPI void                         elm_list_item_tooltip_content_cb_set(Elm_List_Item *item, Elm_Tooltip_Item_Content_Cb func, const void *data, Evas_Smart_Cb del_cb);
 
 /**
  * Unset tooltip from item.
@@ -1023,7 +1023,7 @@ EAPI void                         elm_list_item_tooltip_content_cb_set(Elm_List_
  *
  * @ingroup List
  */
-EAPI void                         elm_list_item_tooltip_unset(Elm_List_Item *item) EINA_ARG_NONNULL(1);
+EAPI void                         elm_list_item_tooltip_unset(Elm_List_Item *item);
 
 /**
  * Sets a different style for this item tooltip.
@@ -1039,7 +1039,7 @@ EAPI void                         elm_list_item_tooltip_unset(Elm_List_Item *ite
  *
  * @ingroup List
  */
-EAPI void                         elm_list_item_tooltip_style_set(Elm_List_Item *item, const char *style) EINA_ARG_NONNULL(1);
+EAPI void                         elm_list_item_tooltip_style_set(Elm_List_Item *item, const char *style);
 
 /**
  * Get the style for this item tooltip.
@@ -1053,7 +1053,7 @@ EAPI void                         elm_list_item_tooltip_style_set(Elm_List_Item 
  *
  * @ingroup List
  */
-EAPI const char                  *elm_list_item_tooltip_style_get(const Elm_List_Item *item) EINA_ARG_NONNULL(1);
+EAPI const char                  *elm_list_item_tooltip_style_get(const Elm_List_Item *item);
 
 /**
  * Set the type of mouse pointer/cursor decoration to be shown,
@@ -1077,7 +1077,7 @@ EAPI const char                  *elm_list_item_tooltip_style_get(const Elm_List
  *
  * @ingroup List
  */
-EAPI void                         elm_list_item_cursor_set(Elm_List_Item *item, const char *cursor) EINA_ARG_NONNULL(1);
+EAPI void                         elm_list_item_cursor_set(Elm_List_Item *item, const char *cursor);
 
 /*
  * Get the type of mouse pointer/cursor decoration set to be shown,
@@ -1093,7 +1093,7 @@ EAPI void                         elm_list_item_cursor_set(Elm_List_Item *item, 
  *
  * @ingroup List
  */
-EAPI const char                  *elm_list_item_cursor_get(const Elm_List_Item *item) EINA_ARG_NONNULL(1);
+EAPI const char                  *elm_list_item_cursor_get(const Elm_List_Item *item);
 
 /**
  * Unset any custom mouse pointer/cursor decoration set to be
@@ -1110,7 +1110,7 @@ EAPI const char                  *elm_list_item_cursor_get(const Elm_List_Item *
  *
  * @ingroup List
  */
-EAPI void                         elm_list_item_cursor_unset(Elm_List_Item *item) EINA_ARG_NONNULL(1);
+EAPI void                         elm_list_item_cursor_unset(Elm_List_Item *item);
 
 /**
  * Set a different @b style for a given custom cursor set for a
@@ -1135,7 +1135,7 @@ EAPI void                         elm_list_item_cursor_unset(Elm_List_Item *item
  *
  * @ingroup List
  */
-EAPI void                         elm_list_item_cursor_style_set(Elm_List_Item *item, const char *style) EINA_ARG_NONNULL(1);
+EAPI void                         elm_list_item_cursor_style_set(Elm_List_Item *item, const char *style);
 
 /**
  * Get the current @b style set for a given list item's custom
@@ -1149,7 +1149,7 @@ EAPI void                         elm_list_item_cursor_style_set(Elm_List_Item *
  *
  * @ingroup List
  */
-EAPI const char                  *elm_list_item_cursor_style_get(const Elm_List_Item *item) EINA_ARG_NONNULL(1);
+EAPI const char                  *elm_list_item_cursor_style_get(const Elm_List_Item *item);
 
 /**
  * Set if the (custom)cursor for a given list item should be
@@ -1169,7 +1169,7 @@ EAPI const char                  *elm_list_item_cursor_style_get(const Elm_List_
  *
  * @ingroup List
  */
-EAPI void                         elm_list_item_cursor_engine_only_set(Elm_List_Item *item, Eina_Bool engine_only) EINA_ARG_NONNULL(1);
+EAPI void                         elm_list_item_cursor_engine_only_set(Elm_List_Item *item, Eina_Bool engine_only);
 
 /**
  * Get if the (custom) cursor for a given list item is being
@@ -1185,7 +1185,7 @@ EAPI void                         elm_list_item_cursor_engine_only_set(Elm_List_
  *
  * @ingroup List
  */
-EAPI Eina_Bool                    elm_list_item_cursor_engine_only_get(const Elm_List_Item *item) EINA_ARG_NONNULL(1);
+EAPI Eina_Bool                    elm_list_item_cursor_engine_only_get(const Elm_List_Item *item);
 
 /**
  * @}

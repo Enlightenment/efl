@@ -56,7 +56,7 @@
  * @return a new file selector entry widget handle or @c NULL, on
  * errors
  */
-EAPI Evas_Object                *elm_fileselector_entry_add(Evas_Object *parent) EINA_ARG_NONNULL(1);
+EAPI Evas_Object                *elm_fileselector_entry_add(Evas_Object *parent);
 
 /**
  * Set the icon on a given file selector entry widget's button
@@ -70,7 +70,7 @@ EAPI Evas_Object                *elm_fileselector_entry_add(Evas_Object *parent)
  *
  * @see elm_fileselector_entry_button_icon_get()
  */
-EAPI void                        elm_fileselector_entry_button_icon_set(Evas_Object *obj, Evas_Object *icon) EINA_ARG_NONNULL(1);
+EAPI void                        elm_fileselector_entry_button_icon_set(Evas_Object *obj, Evas_Object *icon);
 
 /**
  * Get the icon set for a given file selector entry widget's button
@@ -81,7 +81,7 @@ EAPI void                        elm_fileselector_entry_button_icon_set(Evas_Obj
  *
  * @see elm_fileselector_entry_button_icon_set()
  */
-EAPI Evas_Object                *elm_fileselector_entry_button_icon_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
+EAPI Evas_Object                *elm_fileselector_entry_button_icon_get(const Evas_Object *obj);
 
 /**
  * Unset the icon used in a given file selector entry widget's
@@ -96,7 +96,7 @@ EAPI Evas_Object                *elm_fileselector_entry_button_icon_get(const Ev
  *
  * @see elm_fileselector_entry_button_icon_set()
  */
-EAPI Evas_Object                *elm_fileselector_entry_button_icon_unset(Evas_Object *obj) EINA_ARG_NONNULL(1);
+EAPI Evas_Object                *elm_fileselector_entry_button_icon_unset(Evas_Object *obj);
 
 /**
  * Set the title for a given file selector entry widget's window
@@ -113,7 +113,7 @@ EAPI Evas_Object                *elm_fileselector_entry_button_icon_unset(Evas_O
  *
  * @see elm_fileselector_entry_window_title_get()
  */
-EAPI void                        elm_fileselector_entry_window_title_set(Evas_Object *obj, const char *title) EINA_ARG_NONNULL(1);
+EAPI void                        elm_fileselector_entry_window_title_set(Evas_Object *obj, const char *title);
 
 /**
  * Get the title set for a given file selector entry widget's
@@ -124,7 +124,7 @@ EAPI void                        elm_fileselector_entry_window_title_set(Evas_Ob
  *
  * @see elm_fileselector_entry_window_title_get() for more details
  */
-EAPI const char                 *elm_fileselector_entry_window_title_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
+EAPI const char                 *elm_fileselector_entry_window_title_get(const Evas_Object *obj);
 
 /**
  * Set the size of a given file selector entry widget's window,
@@ -140,7 +140,7 @@ EAPI const char                 *elm_fileselector_entry_window_title_get(const E
  *
  * @see elm_fileselector_entry_window_size_get()
  */
-EAPI void                        elm_fileselector_entry_window_size_set(Evas_Object *obj, Evas_Coord width, Evas_Coord height) EINA_ARG_NONNULL(1);
+EAPI void                        elm_fileselector_entry_window_size_set(Evas_Object *obj, Evas_Coord width, Evas_Coord height);
 
 /**
  * Get the size of a given file selector entry widget's window,
@@ -155,7 +155,7 @@ EAPI void                        elm_fileselector_entry_window_size_set(Evas_Obj
  *
  * @see elm_fileselector_entry_window_size_set(), for more details
  */
-EAPI void                        elm_fileselector_entry_window_size_get(const Evas_Object *obj, Evas_Coord *width, Evas_Coord *height) EINA_ARG_NONNULL(1);
+EAPI void                        elm_fileselector_entry_window_size_get(const Evas_Object *obj, Evas_Coord *width, Evas_Coord *height);
 
 /**
  * Set the initial file system path and the entry's path string for
@@ -171,7 +171,7 @@ EAPI void                        elm_fileselector_entry_window_size_get(const Ev
  *
  * @see elm_fileselector_entry_path_get()
  */
-EAPI void                        elm_fileselector_entry_path_set(Evas_Object *obj, const char *path) EINA_ARG_NONNULL(1);
+EAPI void                        elm_fileselector_entry_path_set(Evas_Object *obj, const char *path);
 
 /**
  * Get the entry's path string for a given file selector entry
@@ -182,7 +182,7 @@ EAPI void                        elm_fileselector_entry_path_set(Evas_Object *ob
  *
  * @see elm_fileselector_entry_path_set() for more details
  */
-EAPI const char                 *elm_fileselector_entry_path_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
+EAPI const char                 *elm_fileselector_entry_path_get(const Evas_Object *obj);
 
 /**
  * Enable/disable a tree view in the given file selector entry
@@ -201,7 +201,7 @@ EAPI const char                 *elm_fileselector_entry_path_get(const Evas_Obje
  *
  * @see elm_fileselector_expandable_get()
  */
-EAPI void                        elm_fileselector_entry_expandable_set(Evas_Object *obj, Eina_Bool value) EINA_ARG_NONNULL(1);
+EAPI void                        elm_fileselector_entry_expandable_set(Evas_Object *obj, Eina_Bool value);
 
 /**
  * Get whether tree view is enabled for the given file selector
@@ -213,7 +213,7 @@ EAPI void                        elm_fileselector_entry_expandable_set(Evas_Obje
  *
  * @see elm_fileselector_expandable_set() for more details
  */
-EAPI Eina_Bool                   elm_fileselector_entry_expandable_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
+EAPI Eina_Bool                   elm_fileselector_entry_expandable_get(const Evas_Object *obj);
 
 /**
  * Set whether a given file selector entry widget's internal file
@@ -231,7 +231,7 @@ EAPI Eina_Bool                   elm_fileselector_entry_expandable_get(const Eva
  *
  * @see elm_fileselector_folder_only_get()
  */
-EAPI void                        elm_fileselector_entry_folder_only_set(Evas_Object *obj, Eina_Bool value) EINA_ARG_NONNULL(1);
+EAPI void                        elm_fileselector_entry_folder_only_set(Evas_Object *obj, Eina_Bool value);
 
 /**
  * Get whether a given file selector entry widget's internal file
@@ -245,7 +245,7 @@ EAPI void                        elm_fileselector_entry_folder_only_set(Evas_Obj
  *
  * @see elm_fileselector_entry_folder_only_set() for more details
  */
-EAPI Eina_Bool                   elm_fileselector_entry_folder_only_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
+EAPI Eina_Bool                   elm_fileselector_entry_folder_only_get(const Evas_Object *obj);
 
 /**
  * Enable/disable the file name entry box where the user can type
@@ -262,7 +262,7 @@ EAPI Eina_Bool                   elm_fileselector_entry_folder_only_get(const Ev
  *
  * @see elm_fileselector_is_save_get()
  */
-EAPI void                        elm_fileselector_entry_is_save_set(Evas_Object *obj, Eina_Bool value) EINA_ARG_NONNULL(1);
+EAPI void                        elm_fileselector_entry_is_save_set(Evas_Object *obj, Eina_Bool value);
 
 /**
  * Get whether the given file selector entry widget's internal
@@ -275,7 +275,7 @@ EAPI void                        elm_fileselector_entry_is_save_set(Evas_Object 
  *
  * @see elm_fileselector_entry_is_save_set() for more details
  */
-EAPI Eina_Bool                   elm_fileselector_entry_is_save_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
+EAPI Eina_Bool                   elm_fileselector_entry_is_save_get(const Evas_Object *obj);
 
 /**
  * Set whether a given file selector entry widget's internal file
@@ -289,7 +289,7 @@ EAPI Eina_Bool                   elm_fileselector_entry_is_save_get(const Evas_O
  * @see elm_win_inwin_add() for more information on inner windows
  * @see elm_fileselector_entry_inwin_mode_get()
  */
-EAPI void                        elm_fileselector_entry_inwin_mode_set(Evas_Object *obj, Eina_Bool value) EINA_ARG_NONNULL(1);
+EAPI void                        elm_fileselector_entry_inwin_mode_set(Evas_Object *obj, Eina_Bool value);
 
 /**
  * Get whether a given file selector entry widget's internal file
@@ -302,7 +302,7 @@ EAPI void                        elm_fileselector_entry_inwin_mode_set(Evas_Obje
  *
  * @see elm_fileselector_entry_inwin_mode_set() for more details
  */
-EAPI Eina_Bool                   elm_fileselector_entry_inwin_mode_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
+EAPI Eina_Bool                   elm_fileselector_entry_inwin_mode_get(const Evas_Object *obj);
 
 /**
  * Set the initial file system path for a given file selector entry
@@ -318,7 +318,7 @@ EAPI Eina_Bool                   elm_fileselector_entry_inwin_mode_get(const Eva
  *
  * @see elm_fileselector_entry_path_get()
  */
-EAPI void                        elm_fileselector_entry_selected_set(Evas_Object *obj, const char *path) EINA_ARG_NONNULL(1);
+EAPI void                        elm_fileselector_entry_selected_set(Evas_Object *obj, const char *path);
 
 /**
  * Get the parent directory's path to the latest file selection on
@@ -330,7 +330,7 @@ EAPI void                        elm_fileselector_entry_selected_set(Evas_Object
  *
  * @see elm_fileselector_entry_path_set()
  */
-EAPI const char                 *elm_fileselector_entry_selected_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
+EAPI const char                 *elm_fileselector_entry_selected_get(const Evas_Object *obj);
 
 /**
  * @}

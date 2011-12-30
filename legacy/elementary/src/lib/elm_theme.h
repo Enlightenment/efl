@@ -345,7 +345,7 @@ EAPI void             elm_theme_name_available_list_free(Eina_List *list);
  * configuration difficult. Avoid any custom themes at all if it can be
  * helped.
  */
-EAPI void             elm_object_theme_set(Evas_Object *obj, Elm_Theme *th) EINA_ARG_NONNULL(1);
+EAPI void             elm_object_theme_set(Evas_Object *obj, Elm_Theme *th);
 
 /**
  * Get the specific theme to be used
@@ -358,7 +358,7 @@ EAPI void             elm_object_theme_set(Evas_Object *obj, Elm_Theme *th) EINA
  * the specific theme set for that specific object. See elm_object_theme_set()
  * for more information.
  */
-EAPI Elm_Theme       *elm_object_theme_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
+EAPI Elm_Theme       *elm_object_theme_get(const Evas_Object *obj);
 
 /**
  * Get a data item from a theme
@@ -370,7 +370,7 @@ EAPI Elm_Theme       *elm_object_theme_get(const Evas_Object *obj) EINA_ARG_NONN
  * This function is used to return data items from edc in @p th, an overlay, or an extension.
  * It works the same way as edje_file_data_get() except that the return is stringshared.
  */
-EAPI const char      *elm_theme_data_get(Elm_Theme *th, const char *key) EINA_ARG_NONNULL(2);
+EAPI const char      *elm_theme_data_get(Elm_Theme *th, const char *key);
 
 /**
  * @}

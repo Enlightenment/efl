@@ -178,7 +178,7 @@ typedef Eina_Bool                  (*ElmMapModuleCoordIntoGeoFunc)(const Evas_Ob
  *
  * @ingroup Map
  */
-EAPI Evas_Object          *elm_map_add(Evas_Object *parent) EINA_ARG_NONNULL(1);
+EAPI Evas_Object          *elm_map_add(Evas_Object *parent);
 
 /**
  * Set the zoom level of the map.
@@ -202,7 +202,7 @@ EAPI Evas_Object          *elm_map_add(Evas_Object *parent) EINA_ARG_NONNULL(1);
  *
  * @ingroup Map
  */
-EAPI void                  elm_map_zoom_set(Evas_Object *obj, int zoom) EINA_ARG_NONNULL(1);
+EAPI void                  elm_map_zoom_set(Evas_Object *obj, int zoom);
 
 /**
  * Get the zoom level of the map.
@@ -220,7 +220,7 @@ EAPI void                  elm_map_zoom_set(Evas_Object *obj, int zoom) EINA_ARG
  *
  * @ingroup Map
  */
-EAPI int                   elm_map_zoom_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
+EAPI int                   elm_map_zoom_get(const Evas_Object *obj);
 
 /**
  * Set the zoom mode used by the map object.
@@ -247,7 +247,7 @@ EAPI int                   elm_map_zoom_get(const Evas_Object *obj) EINA_ARG_NON
  *
  * @ingroup Map
  */
-EAPI void                  elm_map_zoom_mode_set(Evas_Object *obj, Elm_Map_Zoom_Mode mode) EINA_ARG_NONNULL(1);
+EAPI void                  elm_map_zoom_mode_set(Evas_Object *obj, Elm_Map_Zoom_Mode mode);
 
 /**
  * Get the zoom mode used by the map object.
@@ -263,7 +263,7 @@ EAPI void                  elm_map_zoom_mode_set(Evas_Object *obj, Elm_Map_Zoom_
  *
  * @ingroup Map
  */
-EAPI Elm_Map_Zoom_Mode     elm_map_zoom_mode_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
+EAPI Elm_Map_Zoom_Mode     elm_map_zoom_mode_get(const Evas_Object *obj);
 
 /**
  * Get the current coordinates of the map.
@@ -280,7 +280,7 @@ EAPI Elm_Map_Zoom_Mode     elm_map_zoom_mode_get(const Evas_Object *obj) EINA_AR
  *
  * @ingroup Map
  */
-EAPI void                  elm_map_geo_region_get(const Evas_Object *obj, double *lon, double *lat) EINA_ARG_NONNULL(1);
+EAPI void                  elm_map_geo_region_get(const Evas_Object *obj, double *lon, double *lat);
 
 /**
  * Animatedly bring in given coordinates to the center of the map.
@@ -299,7 +299,7 @@ EAPI void                  elm_map_geo_region_get(const Evas_Object *obj, double
  *
  * @ingroup Map
  */
-EAPI void                  elm_map_geo_region_bring_in(Evas_Object *obj, double lon, double lat) EINA_ARG_NONNULL(1);
+EAPI void                  elm_map_geo_region_bring_in(Evas_Object *obj, double lon, double lat);
 
 /**
  * Show the given coordinates at the center of the map, @b immediately.
@@ -317,7 +317,7 @@ EAPI void                  elm_map_geo_region_bring_in(Evas_Object *obj, double 
  *
  * @ingroup Map
  */
-EAPI void                  elm_map_geo_region_show(Evas_Object *obj, double lon, double lat) EINA_ARG_NONNULL(1);
+EAPI void                  elm_map_geo_region_show(Evas_Object *obj, double lon, double lat);
 
 /**
  * Pause or unpause the map.
@@ -338,7 +338,7 @@ EAPI void                  elm_map_geo_region_show(Evas_Object *obj, double lon,
  *
  * @ingroup Map
  */
-EAPI void                  elm_map_paused_set(Evas_Object *obj, Eina_Bool paused) EINA_ARG_NONNULL(1);
+EAPI void                  elm_map_paused_set(Evas_Object *obj, Eina_Bool paused);
 
 /**
  * Get a value whether map is paused or not.
@@ -353,7 +353,7 @@ EAPI void                  elm_map_paused_set(Evas_Object *obj, Eina_Bool paused
  *
  * @ingroup Map
  */
-EAPI Eina_Bool             elm_map_paused_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
+EAPI Eina_Bool             elm_map_paused_get(const Evas_Object *obj);
 
 /**
  * Set to show markers during zoom level changes or not.
@@ -382,7 +382,7 @@ EAPI Eina_Bool             elm_map_paused_get(const Evas_Object *obj) EINA_ARG_N
  *
  * @ingroup Map
  */
-EAPI void                  elm_map_paused_markers_set(Evas_Object *obj, Eina_Bool paused) EINA_ARG_NONNULL(1);
+EAPI void                  elm_map_paused_markers_set(Evas_Object *obj, Eina_Bool paused);
 
 /**
  * Get a value whether markers will be displayed on zoom level changes or not
@@ -397,7 +397,7 @@ EAPI void                  elm_map_paused_markers_set(Evas_Object *obj, Eina_Boo
  *
  * @ingroup Map
  */
-EAPI Eina_Bool             elm_map_paused_markers_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
+EAPI Eina_Bool             elm_map_paused_markers_get(const Evas_Object *obj);
 
 /**
  * Get the information of downloading status.
@@ -412,7 +412,7 @@ EAPI Eina_Bool             elm_map_paused_markers_get(const Evas_Object *obj) EI
  *
  * @ingroup Map
  */
-EAPI void                  elm_map_utils_downloading_status_get(const Evas_Object *obj, int *try_num, int *finish_num) EINA_ARG_NONNULL(1, 2, 3);
+EAPI void                  elm_map_utils_downloading_status_get(const Evas_Object *obj, int *try_num, int *finish_num);
 
 /**
  * Convert a pixel coordinate (x,y) into a geographic coordinate
@@ -433,7 +433,7 @@ EAPI void                  elm_map_utils_downloading_status_get(const Evas_Objec
  *
  * @ingroup Map
  */
-EAPI void                  elm_map_utils_convert_coord_into_geo(const Evas_Object *obj, int x, int y, int size, double *lon, double *lat) EINA_ARG_NONNULL(1, 5, 6);
+EAPI void                  elm_map_utils_convert_coord_into_geo(const Evas_Object *obj, int x, int y, int size, double *lon, double *lat);
 
 /**
  * Convert a geographic coordinate (longitude, latitude) into a pixel
@@ -456,7 +456,7 @@ EAPI void                  elm_map_utils_convert_coord_into_geo(const Evas_Objec
  *
  * @ingroup Map
  */
-EAPI void                  elm_map_utils_convert_geo_into_coord(const Evas_Object *obj, double lon, double lat, int size, int *x, int *y) EINA_ARG_NONNULL(1, 5, 6);
+EAPI void                  elm_map_utils_convert_geo_into_coord(const Evas_Object *obj, double lon, double lat, int size, int *x, int *y);
 
 /**
  * Convert a geographic coordinate (longitude, latitude) into a name
@@ -474,7 +474,7 @@ EAPI void                  elm_map_utils_convert_geo_into_coord(const Evas_Objec
  *
  * @ingroup Map
  */
-EAPI Elm_Map_Name         *elm_map_utils_convert_coord_into_name(const Evas_Object *obj, double lon, double lat) EINA_ARG_NONNULL(1);
+EAPI Elm_Map_Name         *elm_map_utils_convert_coord_into_name(const Evas_Object *obj, double lon, double lat);
 
 /**
  * Convert a name (address) into a geographic coordinate
@@ -491,7 +491,7 @@ EAPI Elm_Map_Name         *elm_map_utils_convert_coord_into_name(const Evas_Obje
  *
  * @ingroup Map
  */
-EAPI Elm_Map_Name         *elm_map_utils_convert_name_into_coord(const Evas_Object *obj, char *address) EINA_ARG_NONNULL(1, 2);
+EAPI Elm_Map_Name         *elm_map_utils_convert_name_into_coord(const Evas_Object *obj, char *address);
 
 /**
  * Convert a pixel coordinate into a rotated pixel coordinate.
@@ -507,7 +507,7 @@ EAPI Elm_Map_Name         *elm_map_utils_convert_name_into_coord(const Evas_Obje
  *
  * @ingroup Map
  */
-EAPI void                  elm_map_utils_rotate_coord(const Evas_Object *obj, const Evas_Coord x, const Evas_Coord y, const Evas_Coord cx, const Evas_Coord cy, const double degree, Evas_Coord *xx, Evas_Coord *yy) EINA_ARG_NONNULL(1);
+EAPI void                  elm_map_utils_rotate_coord(const Evas_Object *obj, const Evas_Coord x, const Evas_Coord y, const Evas_Coord cx, const Evas_Coord cy, const double degree, Evas_Coord *xx, Evas_Coord *yy);
 
 /**
  * Add a new marker to the map object.
@@ -546,7 +546,7 @@ EAPI void                  elm_map_utils_rotate_coord(const Evas_Object *obj, co
  *
  * @ingroup Map
  */
-EAPI Elm_Map_Marker       *elm_map_marker_add(Evas_Object *obj, double lon, double lat, Elm_Map_Marker_Class *clas, Elm_Map_Group_Class *clas_group, void *data) EINA_ARG_NONNULL(1, 4, 5);
+EAPI Elm_Map_Marker       *elm_map_marker_add(Evas_Object *obj, double lon, double lat, Elm_Map_Marker_Class *clas, Elm_Map_Group_Class *clas_group, void *data);
 
 /**
  * Set the maximum numbers of markers' content to be displayed in a group.
@@ -572,7 +572,7 @@ EAPI Elm_Map_Marker       *elm_map_marker_add(Evas_Object *obj, double lon, doub
  *
  * @ingroup Map
  */
-EAPI void                  elm_map_max_marker_per_group_set(Evas_Object *obj, int max) EINA_ARG_NONNULL(1);
+EAPI void                  elm_map_max_marker_per_group_set(Evas_Object *obj, int max);
 
 /**
  * Remove a marker from the map.
@@ -583,7 +583,7 @@ EAPI void                  elm_map_max_marker_per_group_set(Evas_Object *obj, in
  *
  * @ingroup Map
  */
-EAPI void                  elm_map_marker_remove(Elm_Map_Marker *marker) EINA_ARG_NONNULL(1);
+EAPI void                  elm_map_marker_remove(Elm_Map_Marker *marker);
 
 /**
  * Get the current coordinates of the marker.
@@ -599,7 +599,7 @@ EAPI void                  elm_map_marker_remove(Elm_Map_Marker *marker) EINA_AR
  *
  * @ingroup Map
  */
-EAPI void                  elm_map_marker_region_get(const Elm_Map_Marker *marker, double *lon, double *lat) EINA_ARG_NONNULL(1);
+EAPI void                  elm_map_marker_region_get(const Elm_Map_Marker *marker, double *lon, double *lat);
 
 /**
  * Animatedly bring in given marker to the center of the map.
@@ -616,7 +616,7 @@ EAPI void                  elm_map_marker_region_get(const Elm_Map_Marker *marke
  *
  * @ingroup Map
  */
-EAPI void                  elm_map_marker_bring_in(Elm_Map_Marker *marker) EINA_ARG_NONNULL(1);
+EAPI void                  elm_map_marker_bring_in(Elm_Map_Marker *marker);
 
 /**
  * Show the given marker at the center of the map, @b immediately.
@@ -634,7 +634,7 @@ EAPI void                  elm_map_marker_bring_in(Elm_Map_Marker *marker) EINA_
  *
  * @ingroup Map
  */
-EAPI void                  elm_map_marker_show(Elm_Map_Marker *marker) EINA_ARG_NONNULL(1);
+EAPI void                  elm_map_marker_show(Elm_Map_Marker *marker);
 
 /**
  * Move and zoom the map to display a list of markers.
@@ -652,7 +652,7 @@ EAPI void                  elm_map_marker_show(Elm_Map_Marker *marker) EINA_ARG_
  *
  * @ingroup Map
  */
-EAPI void                  elm_map_markers_list_show(Eina_List *markers) EINA_ARG_NONNULL(1);
+EAPI void                  elm_map_markers_list_show(Eina_List *markers);
 
 /**
  * Get the Evas object returned by the ElmMapMarkerGetFunc callback
@@ -677,7 +677,7 @@ EAPI void                  elm_map_markers_list_show(Eina_List *markers) EINA_AR
  *
  * @ingroup Map
  */
-EAPI Evas_Object          *elm_map_marker_object_get(const Elm_Map_Marker *marker) EINA_ARG_NONNULL(1);
+EAPI Evas_Object          *elm_map_marker_object_get(const Elm_Map_Marker *marker);
 
 /**
  * Update the marker
@@ -693,7 +693,7 @@ EAPI Evas_Object          *elm_map_marker_object_get(const Elm_Map_Marker *marke
  *
  * @ingroup Map
  */
-EAPI void                  elm_map_marker_update(Elm_Map_Marker *marker) EINA_ARG_NONNULL(1);
+EAPI void                  elm_map_marker_update(Elm_Map_Marker *marker);
 
 /**
  * Close all the bubbles opened by the user.
@@ -708,7 +708,7 @@ EAPI void                  elm_map_marker_update(Elm_Map_Marker *marker) EINA_AR
  *
  * @ingroup Map
  */
-EAPI void                  elm_map_bubbles_close(Evas_Object *obj) EINA_ARG_NONNULL(1);
+EAPI void                  elm_map_bubbles_close(Evas_Object *obj);
 
 /**
  * Create a new group class.
@@ -748,7 +748,7 @@ EAPI void                  elm_map_bubbles_close(Evas_Object *obj) EINA_ARG_NONN
  *
  * @ingroup Map
  */
-EAPI Elm_Map_Group_Class  *elm_map_group_class_new(Evas_Object *obj) EINA_ARG_NONNULL(1);
+EAPI Elm_Map_Group_Class  *elm_map_group_class_new(Evas_Object *obj);
 
 /**
  * Set the marker's style of a group class.
@@ -769,7 +769,7 @@ EAPI Elm_Map_Group_Class  *elm_map_group_class_new(Evas_Object *obj) EINA_ARG_NO
  *
  * @ingroup Map
  */
-EAPI void                  elm_map_group_class_style_set(Elm_Map_Group_Class *clas, const char *style) EINA_ARG_NONNULL(1);
+EAPI void                  elm_map_group_class_style_set(Elm_Map_Group_Class *clas, const char *style);
 
 /**
  * Set the icon callback function of a group class.
@@ -785,7 +785,7 @@ EAPI void                  elm_map_group_class_style_set(Elm_Map_Group_Class *cl
  *
  * @ingroup Map
  */
-EAPI void                  elm_map_group_class_icon_cb_set(Elm_Map_Group_Class *clas, ElmMapGroupIconGetFunc icon_get) EINA_ARG_NONNULL(1);
+EAPI void                  elm_map_group_class_icon_cb_set(Elm_Map_Group_Class *clas, ElmMapGroupIconGetFunc icon_get);
 
 /**
  * Set the data associated to the group class.
@@ -805,7 +805,7 @@ EAPI void                  elm_map_group_class_icon_cb_set(Elm_Map_Group_Class *
  *
  * @ingroup Map
  */
-EAPI void                  elm_map_group_class_data_set(Elm_Map_Group_Class *clas, void *data) EINA_ARG_NONNULL(1);
+EAPI void                  elm_map_group_class_data_set(Elm_Map_Group_Class *clas, void *data);
 
 /**
  * Set the minimum zoom from where the markers are displayed.
@@ -821,7 +821,7 @@ EAPI void                  elm_map_group_class_data_set(Elm_Map_Group_Class *cla
  *
  * @ingroup Map
  */
-EAPI void                  elm_map_group_class_zoom_displayed_set(Elm_Map_Group_Class *clas, int zoom) EINA_ARG_NONNULL(1);
+EAPI void                  elm_map_group_class_zoom_displayed_set(Elm_Map_Group_Class *clas, int zoom);
 
 /**
  * Set the zoom from where the markers are no more grouped.
@@ -837,7 +837,7 @@ EAPI void                  elm_map_group_class_zoom_displayed_set(Elm_Map_Group_
  *
  * @ingroup Map
  */
-EAPI void                  elm_map_group_class_zoom_grouped_set(Elm_Map_Group_Class *clas, int zoom) EINA_ARG_NONNULL(1);
+EAPI void                  elm_map_group_class_zoom_grouped_set(Elm_Map_Group_Class *clas, int zoom);
 
 /**
  * Set if the markers associated to the group class @p clas are hidden or not.
@@ -851,7 +851,7 @@ EAPI void                  elm_map_group_class_zoom_grouped_set(Elm_Map_Group_Cl
  *
  * @ingroup Map
  */
-EAPI void                  elm_map_group_class_hide_set(Evas_Object *obj, Elm_Map_Group_Class *clas, Eina_Bool hide) EINA_ARG_NONNULL(1, 2);
+EAPI void                  elm_map_group_class_hide_set(Evas_Object *obj, Elm_Map_Group_Class *clas, Eina_Bool hide);
 
 /**
  * Create a new marker class.
@@ -885,7 +885,7 @@ EAPI void                  elm_map_group_class_hide_set(Evas_Object *obj, Elm_Ma
  *
  * @ingroup Map
  */
-EAPI Elm_Map_Marker_Class *elm_map_marker_class_new(Evas_Object *obj) EINA_ARG_NONNULL(1);
+EAPI Elm_Map_Marker_Class *elm_map_marker_class_new(Evas_Object *obj);
 
 /**
  * Set the marker's style of a marker class.
@@ -906,7 +906,7 @@ EAPI Elm_Map_Marker_Class *elm_map_marker_class_new(Evas_Object *obj) EINA_ARG_N
  *
  * @ingroup Map
  */
-EAPI void                  elm_map_marker_class_style_set(Elm_Map_Marker_Class *clas, const char *style) EINA_ARG_NONNULL(1);
+EAPI void                  elm_map_marker_class_style_set(Elm_Map_Marker_Class *clas, const char *style);
 
 /**
  * Set the icon callback function of a marker class.
@@ -922,7 +922,7 @@ EAPI void                  elm_map_marker_class_style_set(Elm_Map_Marker_Class *
  *
  * @ingroup Map
  */
-EAPI void                  elm_map_marker_class_icon_cb_set(Elm_Map_Marker_Class *clas, ElmMapMarkerIconGetFunc icon_get) EINA_ARG_NONNULL(1);
+EAPI void                  elm_map_marker_class_icon_cb_set(Elm_Map_Marker_Class *clas, ElmMapMarkerIconGetFunc icon_get);
 
 /**
  * Set the bubble content callback function of a marker class.
@@ -943,7 +943,7 @@ EAPI void                  elm_map_marker_class_icon_cb_set(Elm_Map_Marker_Class
  *
  * @ingroup Map
  */
-EAPI void                  elm_map_marker_class_get_cb_set(Elm_Map_Marker_Class *clas, ElmMapMarkerGetFunc get) EINA_ARG_NONNULL(1);
+EAPI void                  elm_map_marker_class_get_cb_set(Elm_Map_Marker_Class *clas, ElmMapMarkerGetFunc get);
 
 /**
  * Set the callback function used to delete bubble content of a marker class.
@@ -969,7 +969,7 @@ EAPI void                  elm_map_marker_class_get_cb_set(Elm_Map_Marker_Class 
  *
  * @ingroup Map
  */
-EAPI void                  elm_map_marker_class_del_cb_set(Elm_Map_Marker_Class *clas, ElmMapMarkerDelFunc del) EINA_ARG_NONNULL(1);
+EAPI void                  elm_map_marker_class_del_cb_set(Elm_Map_Marker_Class *clas, ElmMapMarkerDelFunc del);
 
 /**
  * Get the list of available sources.
@@ -992,7 +992,7 @@ EAPI void                  elm_map_marker_class_del_cb_set(Elm_Map_Marker_Class 
  *
  * @ingroup Map
  */
-EAPI const char          **elm_map_source_names_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
+EAPI const char          **elm_map_source_names_get(const Evas_Object *obj);
 
 /**
  * Set the source of the map.
@@ -1017,7 +1017,7 @@ EAPI const char          **elm_map_source_names_get(const Evas_Object *obj) EINA
  *
  * @ingroup Map
  */
-EAPI void                  elm_map_source_name_set(Evas_Object *obj, const char *source_name) EINA_ARG_NONNULL(1);
+EAPI void                  elm_map_source_name_set(Evas_Object *obj, const char *source_name);
 
 /**
  * Get the name of currently used source.
@@ -1029,7 +1029,7 @@ EAPI void                  elm_map_source_name_set(Evas_Object *obj, const char 
  *
  * @ingroup Map
  */
-EAPI const char           *elm_map_source_name_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
+EAPI const char           *elm_map_source_name_get(const Evas_Object *obj);
 
 /**
  * Set the source of the route service to be used by the map.
@@ -1054,7 +1054,7 @@ EAPI const char           *elm_map_source_name_get(const Evas_Object *obj) EINA_
  *
  * @ingroup Map
  */
-EAPI void                  elm_map_route_source_set(Evas_Object *obj, Elm_Map_Route_Sources source) EINA_ARG_NONNULL(1);
+EAPI void                  elm_map_route_source_set(Evas_Object *obj, Elm_Map_Route_Sources source);
 
 /**
  * Get the current route source.
@@ -1066,7 +1066,7 @@ EAPI void                  elm_map_route_source_set(Evas_Object *obj, Elm_Map_Ro
  *
  * @ingroup Map
  */
-EAPI Elm_Map_Route_Sources elm_map_route_source_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
+EAPI Elm_Map_Route_Sources elm_map_route_source_get(const Evas_Object *obj);
 
 /**
  * Set the minimum zoom of the source.
@@ -1078,7 +1078,7 @@ EAPI Elm_Map_Route_Sources elm_map_route_source_get(const Evas_Object *obj) EINA
  *
  * @ingroup Map
  */
-EAPI void                  elm_map_source_zoom_min_set(Evas_Object *obj, int zoom) EINA_ARG_NONNULL(1);
+EAPI void                  elm_map_source_zoom_min_set(Evas_Object *obj, int zoom);
 
 /**
  * Get the minimum zoom of the source.
@@ -1090,7 +1090,7 @@ EAPI void                  elm_map_source_zoom_min_set(Evas_Object *obj, int zoo
  *
  * @ingroup Map
  */
-EAPI int                   elm_map_source_zoom_min_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
+EAPI int                   elm_map_source_zoom_min_get(const Evas_Object *obj);
 
 /**
  * Set the maximum zoom of the source.
@@ -1102,7 +1102,7 @@ EAPI int                   elm_map_source_zoom_min_get(const Evas_Object *obj) E
  *
  * @ingroup Map
  */
-EAPI void                  elm_map_source_zoom_max_set(Evas_Object *obj, int zoom) EINA_ARG_NONNULL(1);
+EAPI void                  elm_map_source_zoom_max_set(Evas_Object *obj, int zoom);
 
 /**
  * Get the maximum zoom of the source.
@@ -1114,7 +1114,7 @@ EAPI void                  elm_map_source_zoom_max_set(Evas_Object *obj, int zoo
  *
  * @ingroup Map
  */
-EAPI int                   elm_map_source_zoom_max_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
+EAPI int                   elm_map_source_zoom_max_get(const Evas_Object *obj);
 
 /**
  * Set the user agent used by the map object to access routing services.
@@ -1132,7 +1132,7 @@ EAPI int                   elm_map_source_zoom_max_get(const Evas_Object *obj) E
  *
  * @ingroup Map
  */
-EAPI void                  elm_map_user_agent_set(Evas_Object *obj, const char *user_agent) EINA_ARG_NONNULL(1, 2);
+EAPI void                  elm_map_user_agent_set(Evas_Object *obj, const char *user_agent);
 
 /**
  * Get the user agent used by the map object.
@@ -1144,7 +1144,7 @@ EAPI void                  elm_map_user_agent_set(Evas_Object *obj, const char *
  *
  * @ingroup Map
  */
-EAPI const char           *elm_map_user_agent_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
+EAPI const char           *elm_map_user_agent_get(const Evas_Object *obj);
 
 /**
  * Add a new route to the map object.
@@ -1183,7 +1183,7 @@ EAPI const char           *elm_map_user_agent_get(const Evas_Object *obj) EINA_A
  *
  * @ingroup Map
  */
-EAPI Elm_Map_Route        *elm_map_route_add(Evas_Object *obj, Elm_Map_Route_Type type, Elm_Map_Route_Method method, double flon, double flat, double tlon, double tlat) EINA_ARG_NONNULL(1);
+EAPI Elm_Map_Route        *elm_map_route_add(Evas_Object *obj, Elm_Map_Route_Type type, Elm_Map_Route_Method method, double flon, double flat, double tlon, double tlat);
 
 /**
  * Remove a route from the map.
@@ -1194,7 +1194,7 @@ EAPI Elm_Map_Route        *elm_map_route_add(Evas_Object *obj, Elm_Map_Route_Typ
  *
  * @ingroup Map
  */
-EAPI void                  elm_map_route_remove(Elm_Map_Route *route) EINA_ARG_NONNULL(1);
+EAPI void                  elm_map_route_remove(Elm_Map_Route *route);
 
 /**
  * Set the route color.
@@ -1222,7 +1222,7 @@ EAPI void                  elm_map_route_remove(Elm_Map_Route *route) EINA_ARG_N
  *
  * @ingroup Map
  */
-EAPI void                  elm_map_route_color_set(Elm_Map_Route *route, int r, int g, int b, int a) EINA_ARG_NONNULL(1);
+EAPI void                  elm_map_route_color_set(Elm_Map_Route *route, int r, int g, int b, int a);
 
 /**
  * Get the route color.
@@ -1237,7 +1237,7 @@ EAPI void                  elm_map_route_color_set(Elm_Map_Route *route, int r, 
  *
  * @ingroup Map
  */
-EAPI void                  elm_map_route_color_get(const Elm_Map_Route *route, int *r, int *g, int *b, int *a) EINA_ARG_NONNULL(1);
+EAPI void                  elm_map_route_color_get(const Elm_Map_Route *route, int *r, int *g, int *b, int *a);
 
 /**
  * Get the route distance in kilometers.
@@ -1247,7 +1247,7 @@ EAPI void                  elm_map_route_color_get(const Elm_Map_Route *route, i
  *
  * @ingroup Map
  */
-EAPI double                elm_map_route_distance_get(const Elm_Map_Route *route) EINA_ARG_NONNULL(1);
+EAPI double                elm_map_route_distance_get(const Elm_Map_Route *route);
 
 /**
  * Get the information of route nodes.
@@ -1257,7 +1257,7 @@ EAPI double                elm_map_route_distance_get(const Elm_Map_Route *route
  *
  * @ingroup Map
  */
-EAPI const char           *elm_map_route_node_get(const Elm_Map_Route *route) EINA_ARG_NONNULL(1);
+EAPI const char           *elm_map_route_node_get(const Elm_Map_Route *route);
 
 /**
  * Get the information of route waypoint.
@@ -1267,7 +1267,7 @@ EAPI const char           *elm_map_route_node_get(const Elm_Map_Route *route) EI
  *
  * @ingroup Map
  */
-EAPI const char           *elm_map_route_waypoint_get(const Elm_Map_Route *route) EINA_ARG_NONNULL(1);
+EAPI const char           *elm_map_route_waypoint_get(const Elm_Map_Route *route);
 
 /**
  * Get the address of the name.
@@ -1283,7 +1283,7 @@ EAPI const char           *elm_map_route_waypoint_get(const Elm_Map_Route *route
  *
  * @ingroup Map
  */
-EAPI const char           *elm_map_name_address_get(const Elm_Map_Name *name) EINA_ARG_NONNULL(1);
+EAPI const char           *elm_map_name_address_get(const Elm_Map_Name *name);
 
 /**
  * Get the current coordinates of the name.
@@ -1300,7 +1300,7 @@ EAPI const char           *elm_map_name_address_get(const Elm_Map_Name *name) EI
  *
  * @ingroup Map
  */
-EAPI void                  elm_map_name_region_get(const Elm_Map_Name *name, double *lon, double *lat) EINA_ARG_NONNULL(1);
+EAPI void                  elm_map_name_region_get(const Elm_Map_Name *name, double *lon, double *lat);
 
 /**
  * Remove a name from the map.
@@ -1315,7 +1315,7 @@ EAPI void                  elm_map_name_region_get(const Elm_Map_Name *name, dou
  *
  * @ingroup Map
  */
-EAPI void                  elm_map_name_remove(Elm_Map_Name *name) EINA_ARG_NONNULL(1);
+EAPI void                  elm_map_name_remove(Elm_Map_Name *name);
 
 /**
  * Rotate the map.
@@ -1329,7 +1329,7 @@ EAPI void                  elm_map_name_remove(Elm_Map_Name *name) EINA_ARG_NONN
  *
  * @ingroup Map
  */
-EAPI void                  elm_map_rotate_set(Evas_Object *obj, double degree, Evas_Coord cx, Evas_Coord cy) EINA_ARG_NONNULL(1);
+EAPI void                  elm_map_rotate_set(Evas_Object *obj, double degree, Evas_Coord cx, Evas_Coord cy);
 
 /**
  * Get the rotate degree of the map
@@ -1344,7 +1344,7 @@ EAPI void                  elm_map_rotate_set(Evas_Object *obj, double degree, E
  *
  * @ingroup Map
  */
-EAPI void                  elm_map_rotate_get(const Evas_Object *obj, double *degree, Evas_Coord *cx, Evas_Coord *cy) EINA_ARG_NONNULL(1, 2, 3, 4);
+EAPI void                  elm_map_rotate_get(const Evas_Object *obj, double *degree, Evas_Coord *cx, Evas_Coord *cy);
 
 /**
  * Enable or disable mouse wheel to be used to zoom in / out the map.
@@ -1361,7 +1361,7 @@ EAPI void                  elm_map_rotate_get(const Evas_Object *obj, double *de
  *
  * @ingroup Map
  */
-EAPI void                  elm_map_wheel_disabled_set(Evas_Object *obj, Eina_Bool disabled) EINA_ARG_NONNULL(1);
+EAPI void                  elm_map_wheel_disabled_set(Evas_Object *obj, Eina_Bool disabled);
 
 /**
  * Get a value whether mouse wheel is enabled or not.
@@ -1376,7 +1376,7 @@ EAPI void                  elm_map_wheel_disabled_set(Evas_Object *obj, Eina_Boo
  *
  * @ingroup Map
  */
-EAPI Eina_Bool             elm_map_wheel_disabled_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
+EAPI Eina_Bool             elm_map_wheel_disabled_get(const Evas_Object *obj);
 
 #ifdef ELM_EMAP
 /**
@@ -1390,7 +1390,7 @@ EAPI Eina_Bool             elm_map_wheel_disabled_get(const Evas_Object *obj) EI
  *
  * @ingroup Map
  */
-EAPI Evas_Object          *elm_map_track_add(Evas_Object *obj, EMap_Route *emap) EINA_ARG_NONNULL(1);
+EAPI Evas_Object          *elm_map_track_add(Evas_Object *obj, EMap_Route *emap);
 #endif
 
 /**
@@ -1401,7 +1401,7 @@ EAPI Evas_Object          *elm_map_track_add(Evas_Object *obj, EMap_Route *emap)
  *
  * @ingroup Map
  */
-EAPI void                  elm_map_track_remove(Evas_Object *obj, Evas_Object *route) EINA_ARG_NONNULL(1);
+EAPI void                  elm_map_track_remove(Evas_Object *obj, Evas_Object *route);
 
 /**
  * @}

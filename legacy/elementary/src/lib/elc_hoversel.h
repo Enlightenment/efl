@@ -47,7 +47,7 @@
  * @param parent The parent object
  * @return The new object or NULL if it cannot be created
  */
-EAPI Evas_Object                 *elm_hoversel_add(Evas_Object *parent) EINA_ARG_NONNULL(1);
+EAPI Evas_Object                 *elm_hoversel_add(Evas_Object *parent);
 
 /**
  * @brief This sets the hoversel to expand horizontally.
@@ -59,7 +59,7 @@ EAPI Evas_Object                 *elm_hoversel_add(Evas_Object *parent) EINA_ARG
  * @note The initial button will display horizontally regardless of this
  * setting.
  */
-EAPI void                         elm_hoversel_horizontal_set(Evas_Object *obj, Eina_Bool horizontal) EINA_ARG_NONNULL(1);
+EAPI void                         elm_hoversel_horizontal_set(Evas_Object *obj, Eina_Bool horizontal);
 
 /**
  * @brief This returns whether the hoversel is set to expand horizontally.
@@ -69,7 +69,7 @@ EAPI void                         elm_hoversel_horizontal_set(Evas_Object *obj, 
  *
  * @see elm_hoversel_horizontal_set()
  */
-EAPI Eina_Bool                    elm_hoversel_horizontal_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
+EAPI Eina_Bool                    elm_hoversel_horizontal_get(const Evas_Object *obj);
 
 /**
  * @brief Set the Hover parent
@@ -81,7 +81,7 @@ EAPI Eina_Bool                    elm_hoversel_horizontal_get(const Evas_Object 
  * hoversel is clicked. Should probably be the window that the hoversel is
  * in. See @ref Hover objects for more information.
  */
-EAPI void                         elm_hoversel_hover_parent_set(Evas_Object *obj, Evas_Object *parent) EINA_ARG_NONNULL(1);
+EAPI void                         elm_hoversel_hover_parent_set(Evas_Object *obj, Evas_Object *parent);
 /**
  * @brief Get the Hover parent
  *
@@ -92,7 +92,7 @@ EAPI void                         elm_hoversel_hover_parent_set(Evas_Object *obj
  *
  * @see elm_hoversel_hover_parent_set()
  */
-EAPI Evas_Object                 *elm_hoversel_hover_parent_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
+EAPI Evas_Object                 *elm_hoversel_hover_parent_get(const Evas_Object *obj);
 
 /**
  * @brief This triggers the hoversel popup from code, the same as if the user
@@ -100,7 +100,7 @@ EAPI Evas_Object                 *elm_hoversel_hover_parent_get(const Evas_Objec
  *
  * @param obj The hoversel object
  */
-EAPI void                         elm_hoversel_hover_begin(Evas_Object *obj) EINA_ARG_NONNULL(1);
+EAPI void                         elm_hoversel_hover_begin(Evas_Object *obj);
 
 /**
  * @brief This dismisses the hoversel popup as if the user had clicked
@@ -108,7 +108,7 @@ EAPI void                         elm_hoversel_hover_begin(Evas_Object *obj) EIN
  *
  * @param obj The hoversel object
  */
-EAPI void                         elm_hoversel_hover_end(Evas_Object *obj) EINA_ARG_NONNULL(1);
+EAPI void                         elm_hoversel_hover_end(Evas_Object *obj);
 
 /**
  * @brief Returns whether the hoversel is expanded.
@@ -117,7 +117,7 @@ EAPI void                         elm_hoversel_hover_end(Evas_Object *obj) EINA_
  * @return  This will return EINA_TRUE if the hoversel is expanded or
  * EINA_FALSE if it is not expanded.
  */
-EAPI Eina_Bool                    elm_hoversel_expanded_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
+EAPI Eina_Bool                    elm_hoversel_expanded_get(const Evas_Object *obj);
 
 /**
  * @brief This will remove all the children items from the hoversel.
@@ -130,7 +130,7 @@ EAPI Eina_Bool                    elm_hoversel_expanded_get(const Evas_Object *o
  * @see elm_hoversel_item_del_cb_set()
  * @see elm_hoversel_item_del()
  */
-EAPI void                         elm_hoversel_clear(Evas_Object *obj) EINA_ARG_NONNULL(1);
+EAPI void                         elm_hoversel_clear(Evas_Object *obj);
 
 /**
  * @brief Get the list of items within the given hoversel.
@@ -140,7 +140,7 @@ EAPI void                         elm_hoversel_clear(Evas_Object *obj) EINA_ARG_
  *
  * @see elm_hoversel_item_add()
  */
-EAPI const Eina_List             *elm_hoversel_items_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
+EAPI const Eina_List             *elm_hoversel_items_get(const Evas_Object *obj);
 
 /**
  * @brief Add an item to the hoversel button
@@ -162,7 +162,7 @@ EAPI const Eina_List             *elm_hoversel_items_get(const Evas_Object *obj)
  * For more information on what @p icon_file and @p icon_type are see the
  * @ref Icon "icon documentation".
  */
-EAPI Elm_Object_Item             *elm_hoversel_item_add(Evas_Object *obj, const char *label, const char *icon_file, Elm_Icon_Type icon_type, Evas_Smart_Cb func, const void *data) EINA_ARG_NONNULL(1);
+EAPI Elm_Object_Item             *elm_hoversel_item_add(Evas_Object *obj, const char *label, const char *icon_file, Elm_Icon_Type icon_type, Evas_Smart_Cb func, const void *data);
 
 /**
  * @brief Delete an item from the hoversel
@@ -175,7 +175,7 @@ EAPI Elm_Object_Item             *elm_hoversel_item_add(Evas_Object *obj, const 
  * @see elm_hoversel_item_add()
  * @see elm_hoversel_item_del_cb_set()
  */
-EAPI void                         elm_hoversel_item_del(Elm_Object_Item *it) EINA_ARG_NONNULL(1);
+EAPI void                         elm_hoversel_item_del(Elm_Object_Item *it);
 
 /**
  * @brief Set the function to be called when an item from the hoversel is
@@ -191,7 +191,7 @@ EAPI void                         elm_hoversel_item_del(Elm_Object_Item *it) EIN
  *
  * @see elm_hoversel_item_add()
  */
-EAPI void                         elm_hoversel_item_del_cb_set(Elm_Object_Item *it, Evas_Smart_Cb func) EINA_ARG_NONNULL(1);
+EAPI void                         elm_hoversel_item_del_cb_set(Elm_Object_Item *it, Evas_Smart_Cb func);
 
 /**
  * @brief This sets the icon for the given hoversel item.
@@ -208,7 +208,7 @@ EAPI void                         elm_hoversel_item_del_cb_set(Elm_Object_Item *
  *
  * @see elm_hoversel_item_add()
  */
-EAPI void                         elm_hoversel_item_icon_set(Elm_Object_Item *it, const char *icon_file, const char *icon_group, Elm_Icon_Type icon_type) EINA_ARG_NONNULL(1);
+EAPI void                         elm_hoversel_item_icon_set(Elm_Object_Item *it, const char *icon_file, const char *icon_group, Elm_Icon_Type icon_type);
 
 /**
  * @brief Get the icon object of the hoversel item
@@ -223,7 +223,7 @@ EAPI void                         elm_hoversel_item_icon_set(Elm_Object_Item *it
  * @see elm_hoversel_item_icon_set()
  * @see elm_hoversel_item_add()
  */
-EAPI void                         elm_hoversel_item_icon_get(const Elm_Object_Item *it, const char **icon_file, const char **icon_group, Elm_Icon_Type *icon_type) EINA_ARG_NONNULL(1);
+EAPI void                         elm_hoversel_item_icon_get(const Elm_Object_Item *it, const char **icon_file, const char **icon_group, Elm_Icon_Type *icon_type);
 
 /**
  * @}

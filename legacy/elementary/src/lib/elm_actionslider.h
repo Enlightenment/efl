@@ -46,7 +46,7 @@ typedef enum
  * @param parent The parent object
  * @return The new actionslider object or NULL if it cannot be created
  */
-EAPI Evas_Object                *elm_actionslider_add(Evas_Object *parent) EINA_ARG_NONNULL(1);
+EAPI Evas_Object                *elm_actionslider_add(Evas_Object *parent);
 
 /**
  * Get actionslider selected label.
@@ -54,7 +54,7 @@ EAPI Evas_Object                *elm_actionslider_add(Evas_Object *parent) EINA_
  * @param obj The actionslider object
  * @return The selected label
  */
-EAPI const char                 *elm_actionslider_selected_label_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
+EAPI const char                 *elm_actionslider_selected_label_get(const Evas_Object *obj);
 
 /**
  * Set actionslider indicator position.
@@ -62,7 +62,7 @@ EAPI const char                 *elm_actionslider_selected_label_get(const Evas_
  * @param obj The actionslider object.
  * @param pos The position of the indicator.
  */
-EAPI void                        elm_actionslider_indicator_pos_set(Evas_Object *obj, Elm_Actionslider_Pos pos) EINA_ARG_NONNULL(1);
+EAPI void                        elm_actionslider_indicator_pos_set(Evas_Object *obj, Elm_Actionslider_Pos pos);
 
 /**
  * Get actionslider indicator position.
@@ -70,7 +70,7 @@ EAPI void                        elm_actionslider_indicator_pos_set(Evas_Object 
  * @param obj The actionslider object.
  * @return The position of the indicator.
  */
-EAPI Elm_Actionslider_Pos        elm_actionslider_indicator_pos_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
+EAPI Elm_Actionslider_Pos        elm_actionslider_indicator_pos_get(const Evas_Object *obj);
 
 /**
  * Set actionslider magnet position. To make multiple positions magnets @c or
@@ -79,7 +79,7 @@ EAPI Elm_Actionslider_Pos        elm_actionslider_indicator_pos_get(const Evas_O
  * @param obj The actionslider object.
  * @param pos Bit mask indicating the magnet positions.
  */
-EAPI void                        elm_actionslider_magnet_pos_set(Evas_Object *obj, Elm_Actionslider_Pos pos) EINA_ARG_NONNULL(1);
+EAPI void                        elm_actionslider_magnet_pos_set(Evas_Object *obj, Elm_Actionslider_Pos pos);
 
 /**
  * Get actionslider magnet position.
@@ -87,7 +87,7 @@ EAPI void                        elm_actionslider_magnet_pos_set(Evas_Object *ob
  * @param obj The actionslider object.
  * @return The positions with magnet property.
  */
-EAPI Elm_Actionslider_Pos        elm_actionslider_magnet_pos_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
+EAPI Elm_Actionslider_Pos        elm_actionslider_magnet_pos_get(const Evas_Object *obj);
 
 /**
  * Set actionslider enabled position. To set multiple positions as enabled @c or
@@ -98,7 +98,7 @@ EAPI Elm_Actionslider_Pos        elm_actionslider_magnet_pos_get(const Evas_Obje
  * @param obj The actionslider object.
  * @param pos Bit mask indicating the enabled positions.
  */
-EAPI void                        elm_actionslider_enabled_pos_set(Evas_Object *obj, Elm_Actionslider_Pos pos) EINA_ARG_NONNULL(1);
+EAPI void                        elm_actionslider_enabled_pos_set(Evas_Object *obj, Elm_Actionslider_Pos pos);
 
 /**
  * Get actionslider enabled position.
@@ -106,7 +106,7 @@ EAPI void                        elm_actionslider_enabled_pos_set(Evas_Object *o
  * @param obj The actionslider object.
  * @return The enabled positions.
  */
-EAPI Elm_Actionslider_Pos        elm_actionslider_enabled_pos_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
+EAPI Elm_Actionslider_Pos        elm_actionslider_enabled_pos_get(const Evas_Object *obj);
 
 /**
  * @}

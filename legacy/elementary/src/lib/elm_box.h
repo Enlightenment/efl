@@ -87,7 +87,7 @@ typedef struct _Elm_Box_Transition Elm_Box_Transition;
  * @param parent The parent object
  * @return The new object or NULL if it cannot be created
  */
-EAPI Evas_Object        *elm_box_add(Evas_Object *parent) EINA_ARG_NONNULL(1);
+EAPI Evas_Object        *elm_box_add(Evas_Object *parent);
 
 /**
  * Set the horizontal orientation
@@ -103,7 +103,7 @@ EAPI Evas_Object        *elm_box_add(Evas_Object *parent) EINA_ARG_NONNULL(1);
  * @param horizontal The horizontal flag (EINA_TRUE = horizontal,
  * EINA_FALSE = vertical)
  */
-EAPI void                elm_box_horizontal_set(Evas_Object *obj, Eina_Bool horizontal) EINA_ARG_NONNULL(1);
+EAPI void                elm_box_horizontal_set(Evas_Object *obj, Eina_Bool horizontal);
 
 /**
  * Get the horizontal orientation
@@ -111,7 +111,7 @@ EAPI void                elm_box_horizontal_set(Evas_Object *obj, Eina_Bool hori
  * @param obj The box object
  * @return EINA_TRUE if the box is set to horizontal mode, EINA_FALSE otherwise
  */
-EAPI Eina_Bool           elm_box_horizontal_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
+EAPI Eina_Bool           elm_box_horizontal_get(const Evas_Object *obj);
 
 /**
  * Set the box to arrange its children homogeneously
@@ -124,7 +124,7 @@ EAPI Eina_Bool           elm_box_horizontal_get(const Evas_Object *obj) EINA_ARG
  * @param obj The box object
  * @param homogeneous The homogeneous flag
  */
-EAPI void                elm_box_homogeneous_set(Evas_Object *obj, Eina_Bool homogeneous) EINA_ARG_NONNULL(1);
+EAPI void                elm_box_homogeneous_set(Evas_Object *obj, Eina_Bool homogeneous);
 
 /**
  * Get whether the box is using homogeneous mode or not
@@ -132,7 +132,7 @@ EAPI void                elm_box_homogeneous_set(Evas_Object *obj, Eina_Bool hom
  * @param obj The box object
  * @return EINA_TRUE if it's homogeneous, EINA_FALSE otherwise
  */
-EAPI Eina_Bool           elm_box_homogeneous_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
+EAPI Eina_Bool           elm_box_homogeneous_get(const Evas_Object *obj);
 
 /**
  * Add an object to the beginning of the pack list
@@ -153,7 +153,7 @@ EAPI Eina_Bool           elm_box_homogeneous_get(const Evas_Object *obj) EINA_AR
  * @see elm_box_unpack_all()
  * @see elm_box_clear()
  */
-EAPI void                elm_box_pack_start(Evas_Object *obj, Evas_Object *subobj) EINA_ARG_NONNULL(1);
+EAPI void                elm_box_pack_start(Evas_Object *obj, Evas_Object *subobj);
 
 /**
  * Add an object at the end of the pack list
@@ -174,7 +174,7 @@ EAPI void                elm_box_pack_start(Evas_Object *obj, Evas_Object *subob
  * @see elm_box_unpack_all()
  * @see elm_box_clear()
  */
-EAPI void                elm_box_pack_end(Evas_Object *obj, Evas_Object *subobj) EINA_ARG_NONNULL(1);
+EAPI void                elm_box_pack_end(Evas_Object *obj, Evas_Object *subobj);
 
 /**
  * Adds an object to the box before the indicated object
@@ -195,7 +195,7 @@ EAPI void                elm_box_pack_end(Evas_Object *obj, Evas_Object *subobj)
  * @see elm_box_unpack_all()
  * @see elm_box_clear()
  */
-EAPI void                elm_box_pack_before(Evas_Object *obj, Evas_Object *subobj, Evas_Object *before) EINA_ARG_NONNULL(1);
+EAPI void                elm_box_pack_before(Evas_Object *obj, Evas_Object *subobj, Evas_Object *before);
 
 /**
  * Adds an object to the box after the indicated object
@@ -216,7 +216,7 @@ EAPI void                elm_box_pack_before(Evas_Object *obj, Evas_Object *subo
  * @see elm_box_unpack_all()
  * @see elm_box_clear()
  */
-EAPI void                elm_box_pack_after(Evas_Object *obj, Evas_Object *subobj, Evas_Object *after) EINA_ARG_NONNULL(1);
+EAPI void                elm_box_pack_after(Evas_Object *obj, Evas_Object *subobj, Evas_Object *after);
 
 /**
  * Clear the box of all children
@@ -229,7 +229,7 @@ EAPI void                elm_box_pack_after(Evas_Object *obj, Evas_Object *subob
  * @see elm_box_unpack()
  * @see elm_box_unpack_all()
  */
-EAPI void                elm_box_clear(Evas_Object *obj) EINA_ARG_NONNULL(1);
+EAPI void                elm_box_clear(Evas_Object *obj);
 
 /**
  * Unpack a box item
@@ -243,7 +243,7 @@ EAPI void                elm_box_clear(Evas_Object *obj) EINA_ARG_NONNULL(1);
  * @see elm_box_unpack_all()
  * @see elm_box_clear()
  */
-EAPI void                elm_box_unpack(Evas_Object *obj, Evas_Object *subobj) EINA_ARG_NONNULL(1);
+EAPI void                elm_box_unpack(Evas_Object *obj, Evas_Object *subobj);
 
 /**
  * Remove all items from the box, without deleting them
@@ -259,7 +259,7 @@ EAPI void                elm_box_unpack(Evas_Object *obj, Evas_Object *subobj) E
  * @see elm_box_clear()
  * @see elm_box_unpack()
  */
-EAPI void                elm_box_unpack_all(Evas_Object *obj) EINA_ARG_NONNULL(1);
+EAPI void                elm_box_unpack_all(Evas_Object *obj);
 
 /**
  * Retrieve a list of the objects packed into the box
@@ -271,7 +271,7 @@ EAPI void                elm_box_unpack_all(Evas_Object *obj) EINA_ARG_NONNULL(1
  *
  * @param obj The box object
  */
-EAPI const Eina_List    *elm_box_children_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
+EAPI const Eina_List    *elm_box_children_get(const Evas_Object *obj);
 
 /**
  * Set the space (padding) between the box's elements.
@@ -285,7 +285,7 @@ EAPI const Eina_List    *elm_box_children_get(const Evas_Object *obj) EINA_ARG_N
  * @param horizontal The horizontal space between elements
  * @param vertical The vertical space between elements
  */
-EAPI void                elm_box_padding_set(Evas_Object *obj, Evas_Coord horizontal, Evas_Coord vertical) EINA_ARG_NONNULL(1);
+EAPI void                elm_box_padding_set(Evas_Object *obj, Evas_Coord horizontal, Evas_Coord vertical);
 
 /**
  * Get the space (padding) between the box's elements.
@@ -296,7 +296,7 @@ EAPI void                elm_box_padding_set(Evas_Object *obj, Evas_Coord horizo
  *
  * @see elm_box_padding_set()
  */
-EAPI void                elm_box_padding_get(const Evas_Object *obj, Evas_Coord *horizontal, Evas_Coord *vertical) EINA_ARG_NONNULL(1);
+EAPI void                elm_box_padding_get(const Evas_Object *obj, Evas_Coord *horizontal, Evas_Coord *vertical);
 
 /**
  * Set the alignment of the whole bouding box of contents.
@@ -309,7 +309,7 @@ EAPI void                elm_box_padding_get(const Evas_Object *obj, Evas_Coord 
  * @param horizontal The horizontal alignment of elements
  * @param vertical The vertical alignment of elements
  */
-EAPI void                elm_box_align_set(Evas_Object *obj, double horizontal, double vertical) EINA_ARG_NONNULL(1);
+EAPI void                elm_box_align_set(Evas_Object *obj, double horizontal, double vertical);
 
 /**
  * Get the alignment of the whole bouding box of contents.
@@ -320,7 +320,7 @@ EAPI void                elm_box_align_set(Evas_Object *obj, double horizontal, 
  *
  * @see elm_box_align_set()
  */
-EAPI void                elm_box_align_get(const Evas_Object *obj, double *horizontal, double *vertical) EINA_ARG_NONNULL(1);
+EAPI void                elm_box_align_get(const Evas_Object *obj, double *horizontal, double *vertical);
 
 /**
  * Force the box to recalculate its children packing.
@@ -368,7 +368,7 @@ EAPI void                elm_box_recalculate(Evas_Object *obj);
  *
  * @see elm_box_layout_transition()
  */
-EAPI void                elm_box_layout_set(Evas_Object *obj, Evas_Object_Box_Layout cb, const void *data, void (*free_data)(void *data)) EINA_ARG_NONNULL(1);
+EAPI void                elm_box_layout_set(Evas_Object *obj, Evas_Object_Box_Layout cb, const void *data, void (*free_data)(void *data));
 
 /**
  * Special layout function that animates the transition from one layout to another
@@ -435,7 +435,7 @@ EAPI void                elm_box_layout_transition(Evas_Object *obj, Evas_Object
  * @see elm_box_transition_new
  * @see elm_box_layout_transition
  */
-EAPI Elm_Box_Transition *elm_box_transition_new(const double duration, Evas_Object_Box_Layout start_layout, void *start_layout_data, void (*start_layout_free_data)(void *data), Evas_Object_Box_Layout end_layout, void *end_layout_data, void (*end_layout_free_data)(void *data), void (*transition_end_cb)(void *data), void *transition_end_data) EINA_ARG_NONNULL(2, 5);
+EAPI Elm_Box_Transition *elm_box_transition_new(const double duration, Evas_Object_Box_Layout start_layout, void *start_layout_data, void (*start_layout_free_data)(void *data), Evas_Object_Box_Layout end_layout, void *end_layout_data, void (*end_layout_free_data)(void *data), void (*transition_end_cb)(void *data), void *transition_end_data);
 
 /**
  * Free a Elm_Box_Transition instance created with elm_box_transition_new().

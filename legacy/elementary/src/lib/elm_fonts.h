@@ -125,7 +125,7 @@ EAPI void             elm_font_overlay_all_apply(void);
  * elm_font_fontconfig_name_get(), for one style only (single font
  * instance, not family).
  */
-EAPI Elm_Font_Properties *elm_font_properties_get(const char *font) EINA_ARG_NONNULL(1);
+EAPI Elm_Font_Properties *elm_font_properties_get(const char *font);
 
 /**
  * Free font properties return by elm_font_properties_get().
@@ -134,7 +134,7 @@ EAPI Elm_Font_Properties *elm_font_properties_get(const char *font) EINA_ARG_NON
  *
  * @ingroup Fonts
  */
-EAPI void             elm_font_properties_free(Elm_Font_Properties *efp) EINA_ARG_NONNULL(1);
+EAPI void             elm_font_properties_free(Elm_Font_Properties *efp);
 
 /**
  * Translate a font name, bound to a style, into fontconfig's font names
@@ -151,7 +151,7 @@ EAPI void             elm_font_properties_free(Elm_Font_Properties *efp) EINA_AR
  * elm_font_properties_get(), for one style only (single font
  * instance, not family).
  */
-EAPI const char      *elm_font_fontconfig_name_get(const char *name, const char *style) EINA_ARG_NONNULL(1);
+EAPI const char      *elm_font_fontconfig_name_get(const char *name, const char *style);
 
 /**
  * Free the font string return by elm_font_fontconfig_name_get().
@@ -160,7 +160,7 @@ EAPI const char      *elm_font_fontconfig_name_get(const char *name, const char 
  *
  * @ingroup Fonts
  */
-EAPI void             elm_font_fontconfig_name_free(const char *name) EINA_ARG_NONNULL(1);
+EAPI void             elm_font_fontconfig_name_free(const char *name);
 
 /**
  * Create a font hash table of available system fonts.

@@ -72,7 +72,7 @@ typedef enum
  *
  * @ingroup Clock
  */
-EAPI Evas_Object      *elm_clock_add(Evas_Object *parent) EINA_ARG_NONNULL(1);
+EAPI Evas_Object      *elm_clock_add(Evas_Object *parent);
 
 /**
  * Set a clock widget's time, programmatically
@@ -97,7 +97,7 @@ EAPI Evas_Object      *elm_clock_add(Evas_Object *parent) EINA_ARG_NONNULL(1);
  *
  * @ingroup Clock
  */
-EAPI void              elm_clock_time_set(Evas_Object *obj, int hrs, int min, int sec) EINA_ARG_NONNULL(1);
+EAPI void              elm_clock_time_set(Evas_Object *obj, int hrs, int min, int sec);
 
 /**
  * Get a clock widget's time values
@@ -115,7 +115,7 @@ EAPI void              elm_clock_time_set(Evas_Object *obj, int hrs, int min, in
  *
  * @ingroup Clock
  */
-EAPI void              elm_clock_time_get(const Evas_Object *obj, int *hrs, int *min, int *sec) EINA_ARG_NONNULL(1);
+EAPI void              elm_clock_time_get(const Evas_Object *obj, int *hrs, int *min, int *sec);
 
 /**
  * Set whether a given clock widget is under <b>edition mode</b> or
@@ -139,7 +139,7 @@ EAPI void              elm_clock_time_get(const Evas_Object *obj, int *hrs, int 
  *
  * @ingroup Clock
  */
-EAPI void              elm_clock_edit_set(Evas_Object *obj, Eina_Bool edit) EINA_ARG_NONNULL(1);
+EAPI void              elm_clock_edit_set(Evas_Object *obj, Eina_Bool edit);
 
 /**
  * Retrieve whether a given clock widget is under editing mode
@@ -155,7 +155,7 @@ EAPI void              elm_clock_edit_set(Evas_Object *obj, Eina_Bool edit) EINA
  *
  * @ingroup Clock
  */
-EAPI Eina_Bool         elm_clock_edit_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
+EAPI Eina_Bool         elm_clock_edit_get(const Evas_Object *obj);
 
 /**
  * Set what digits of the given clock widget should be editable
@@ -173,7 +173,7 @@ EAPI Eina_Bool         elm_clock_edit_get(const Evas_Object *obj) EINA_ARG_NONNU
  *
  * @ingroup Clock
  */
-EAPI void              elm_clock_digit_edit_set(Evas_Object *obj, Elm_Clock_Digedit digedit) EINA_ARG_NONNULL(1);
+EAPI void              elm_clock_digit_edit_set(Evas_Object *obj, Elm_Clock_Digedit digedit);
 
 /**
  * Retrieve what digits of the given clock widget should be
@@ -187,7 +187,7 @@ EAPI void              elm_clock_digit_edit_set(Evas_Object *obj, Elm_Clock_Dige
  *
  * @ingroup Clock
  */
-EAPI Elm_Clock_Digedit elm_clock_digit_edit_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
+EAPI Elm_Clock_Digedit elm_clock_digit_edit_get(const Evas_Object *obj);
 
 /**
  * Set if the given clock widget must show hours in military or
@@ -206,7 +206,7 @@ EAPI Elm_Clock_Digedit elm_clock_digit_edit_get(const Evas_Object *obj) EINA_ARG
  *
  * @ingroup Clock
  */
-EAPI void              elm_clock_show_am_pm_set(Evas_Object *obj, Eina_Bool am_pm) EINA_ARG_NONNULL(1);
+EAPI void              elm_clock_show_am_pm_set(Evas_Object *obj, Eina_Bool am_pm);
 
 /**
  * Get if the given clock widget shows hours in military or am/pm
@@ -223,7 +223,7 @@ EAPI void              elm_clock_show_am_pm_set(Evas_Object *obj, Eina_Bool am_p
  *
  * @ingroup Clock
  */
-EAPI Eina_Bool         elm_clock_show_am_pm_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
+EAPI Eina_Bool         elm_clock_show_am_pm_get(const Evas_Object *obj);
 
 /**
  * Set if the given clock widget must show time with seconds or not
@@ -238,7 +238,7 @@ EAPI Eina_Bool         elm_clock_show_am_pm_get(const Evas_Object *obj) EINA_ARG
  *
  * @ingroup Clock
  */
-EAPI void              elm_clock_show_seconds_set(Evas_Object *obj, Eina_Bool seconds) EINA_ARG_NONNULL(1);
+EAPI void              elm_clock_show_seconds_set(Evas_Object *obj, Eina_Bool seconds);
 
 /**
  * Get whether the given clock widget is showing time with seconds
@@ -254,7 +254,7 @@ EAPI void              elm_clock_show_seconds_set(Evas_Object *obj, Eina_Bool se
  *
  * @ingroup Clock
  */
-EAPI Eina_Bool         elm_clock_show_seconds_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
+EAPI Eina_Bool         elm_clock_show_seconds_get(const Evas_Object *obj);
 
 /**
  * Set the interval on time updates for an user mouse button hold
@@ -282,7 +282,7 @@ EAPI Eina_Bool         elm_clock_show_seconds_get(const Evas_Object *obj) EINA_A
  *
  * @ingroup Clock
  */
-EAPI void              elm_clock_interval_set(Evas_Object *obj, double interval) EINA_ARG_NONNULL(1);
+EAPI void              elm_clock_interval_set(Evas_Object *obj, double interval);
 
 /**
  * Get the interval on time updates for an user mouse button hold
@@ -295,7 +295,7 @@ EAPI void              elm_clock_interval_set(Evas_Object *obj, double interval)
  *
  * @ingroup Clock
  */
-EAPI double            elm_clock_interval_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
+EAPI double            elm_clock_interval_get(const Evas_Object *obj);
 
 /**
  * @}

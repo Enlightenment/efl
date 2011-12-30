@@ -42,7 +42,7 @@
  *
  * @ingroup Conformant
  */
-EAPI Evas_Object                 *elm_conformant_add(Evas_Object *parent) EINA_ARG_NONNULL(1);
+EAPI Evas_Object                 *elm_conformant_add(Evas_Object *parent);
 
 /**
  * Returns the Evas_Object that represents the content area.
@@ -52,7 +52,7 @@ EAPI Evas_Object                 *elm_conformant_add(Evas_Object *parent) EINA_A
  *
  * @ingroup Conformant
  */
-EAPI Evas_Object                 *elm_conformant_content_area_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
+EAPI Evas_Object                 *elm_conformant_content_area_get(const Evas_Object *obj);
 
 /**
  * @}

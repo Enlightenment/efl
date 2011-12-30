@@ -33,7 +33,7 @@ typedef enum
  *
  * @return The panel object, or NULL on failure
  */
-EAPI Evas_Object                 *elm_panel_add(Evas_Object *parent) EINA_ARG_NONNULL(1);
+EAPI Evas_Object                 *elm_panel_add(Evas_Object *parent);
 
 /**
  * @brief Sets the orientation of the panel
@@ -46,7 +46,7 @@ EAPI Evas_Object                 *elm_panel_add(Evas_Object *parent) EINA_ARG_NO
  *
  * Sets from where the panel will (dis)appear.
  */
-EAPI void                         elm_panel_orient_set(Evas_Object *obj, Elm_Panel_Orient orient) EINA_ARG_NONNULL(1);
+EAPI void                         elm_panel_orient_set(Evas_Object *obj, Elm_Panel_Orient orient);
 
 /**
  * @brief Get the orientation of the panel.
@@ -54,7 +54,7 @@ EAPI void                         elm_panel_orient_set(Evas_Object *obj, Elm_Pan
  * @param obj The panel object
  * @return The Elm_Panel_Orient, or ELM_PANEL_ORIENT_LEFT on failure.
  */
-EAPI Elm_Panel_Orient             elm_panel_orient_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
+EAPI Elm_Panel_Orient             elm_panel_orient_get(const Evas_Object *obj);
 
 /**
  * @brief Set the state of the panel.
@@ -62,7 +62,7 @@ EAPI Elm_Panel_Orient             elm_panel_orient_get(const Evas_Object *obj) E
  * @param obj The panel object
  * @param hidden If true, the panel will run the animation to contract
  */
-EAPI void                         elm_panel_hidden_set(Evas_Object *obj, Eina_Bool hidden) EINA_ARG_NONNULL(1);
+EAPI void                         elm_panel_hidden_set(Evas_Object *obj, Eina_Bool hidden);
 
 /**
  * @brief Get the state of the panel.
@@ -70,14 +70,14 @@ EAPI void                         elm_panel_hidden_set(Evas_Object *obj, Eina_Bo
  * @param obj The panel object
  * @param hidden If true, the panel is in the "hide" state
  */
-EAPI Eina_Bool                    elm_panel_hidden_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
+EAPI Eina_Bool                    elm_panel_hidden_get(const Evas_Object *obj);
 
 /**
  * @brief Toggle the hidden state of the panel from code
  *
  * @param obj The panel object
  */
-EAPI void                         elm_panel_toggle(Evas_Object *obj) EINA_ARG_NONNULL(1);
+EAPI void                         elm_panel_toggle(Evas_Object *obj);
 
 /**
  * @}

@@ -49,7 +49,7 @@ typedef enum
  *
  * @ingroup Ctxpopup
  */
-EAPI Evas_Object                 *elm_ctxpopup_add(Evas_Object *parent) EINA_ARG_NONNULL(1);
+EAPI Evas_Object                 *elm_ctxpopup_add(Evas_Object *parent);
 
 /**
  * @brief Set the Ctxpopup's parent
@@ -67,7 +67,7 @@ EAPI Evas_Object                 *elm_ctxpopup_add(Evas_Object *parent) EINA_ARG
  *
  * @ingroup Ctxpopup
  */
-EAPI void                         elm_ctxpopup_hover_parent_set(Evas_Object *obj, Evas_Object *parent) EINA_ARG_NONNULL(1, 2);
+EAPI void                         elm_ctxpopup_hover_parent_set(Evas_Object *obj, Evas_Object *parent);
 
 /**
  * @brief Get the Ctxpopup's parent
@@ -78,7 +78,7 @@ EAPI void                         elm_ctxpopup_hover_parent_set(Evas_Object *obj
  *
  * @ingroup Ctxpopup
  */
-EAPI Evas_Object                 *elm_ctxpopup_hover_parent_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
+EAPI Evas_Object                 *elm_ctxpopup_hover_parent_get(const Evas_Object *obj);
 
 /**
  * @brief Clear all items in the given ctxpopup object.
@@ -87,7 +87,7 @@ EAPI Evas_Object                 *elm_ctxpopup_hover_parent_get(const Evas_Objec
  *
  * @ingroup Ctxpopup
  */
-EAPI void                         elm_ctxpopup_clear(Evas_Object *obj) EINA_ARG_NONNULL(1);
+EAPI void                         elm_ctxpopup_clear(Evas_Object *obj);
 
 /**
  * @brief Change the ctxpopup's orientation to horizontal or vertical.
@@ -97,7 +97,7 @@ EAPI void                         elm_ctxpopup_clear(Evas_Object *obj) EINA_ARG_
  *
  * @ingroup Ctxpopup
  */
-EAPI void                         elm_ctxpopup_horizontal_set(Evas_Object *obj, Eina_Bool horizontal) EINA_ARG_NONNULL(1);
+EAPI void                         elm_ctxpopup_horizontal_set(Evas_Object *obj, Eina_Bool horizontal);
 
 /**
  * @brief Get the value of current ctxpopup object's orientation.
@@ -109,7 +109,7 @@ EAPI void                         elm_ctxpopup_horizontal_set(Evas_Object *obj, 
  *
  * @ingroup Ctxpopup
  */
-EAPI Eina_Bool                    elm_ctxpopup_horizontal_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
+EAPI Eina_Bool                    elm_ctxpopup_horizontal_get(const Evas_Object *obj);
 
 /**
  * @brief Add a new item to a ctxpopup object.
@@ -128,7 +128,7 @@ EAPI Eina_Bool                    elm_ctxpopup_horizontal_get(const Evas_Object 
  *
  * @ingroup Ctxpopup
  */
-EAPI Elm_Object_Item             *elm_ctxpopup_item_append(Evas_Object *obj, const char *label, Evas_Object *icon, Evas_Smart_Cb func, const void *data) EINA_ARG_NONNULL(1);
+EAPI Elm_Object_Item             *elm_ctxpopup_item_append(Evas_Object *obj, const char *label, Evas_Object *icon, Evas_Smart_Cb func, const void *data);
 
 /**
  * @brief Delete the given item in a ctxpopup object.
@@ -139,7 +139,7 @@ EAPI Elm_Object_Item             *elm_ctxpopup_item_append(Evas_Object *obj, con
  *
  * @ingroup Ctxpopup
  */
-EAPI void                         elm_ctxpopup_item_del(Elm_Object_Item *it) EINA_ARG_NONNULL(1);
+EAPI void                         elm_ctxpopup_item_del(Elm_Object_Item *it);
 
 /**
  * @brief Set the direction priority of a ctxpopup.
@@ -158,7 +158,7 @@ EAPI void                         elm_ctxpopup_item_del(Elm_Object_Item *it) EIN
  *
  * @ingroup Ctxpopup
  */
-EAPI void                         elm_ctxpopup_direction_priority_set(Evas_Object *obj, Elm_Ctxpopup_Direction first, Elm_Ctxpopup_Direction second, Elm_Ctxpopup_Direction third, Elm_Ctxpopup_Direction fourth) EINA_ARG_NONNULL(1);
+EAPI void                         elm_ctxpopup_direction_priority_set(Evas_Object *obj, Elm_Ctxpopup_Direction first, Elm_Ctxpopup_Direction second, Elm_Ctxpopup_Direction third, Elm_Ctxpopup_Direction fourth);
 
 /**
  * @brief Get the direction priority of a ctxpopup.
@@ -173,7 +173,7 @@ EAPI void                         elm_ctxpopup_direction_priority_set(Evas_Objec
  *
  * @ingroup Ctxpopup
  */
-EAPI void                         elm_ctxpopup_direction_priority_get(Evas_Object *obj, Elm_Ctxpopup_Direction *first, Elm_Ctxpopup_Direction *second, Elm_Ctxpopup_Direction *third, Elm_Ctxpopup_Direction *fourth) EINA_ARG_NONNULL(1);
+EAPI void                         elm_ctxpopup_direction_priority_get(Evas_Object *obj, Elm_Ctxpopup_Direction *first, Elm_Ctxpopup_Direction *second, Elm_Ctxpopup_Direction *third, Elm_Ctxpopup_Direction *fourth);
 
 /**
  * @brief Get the current direction of a ctxpopup.
@@ -185,7 +185,7 @@ EAPI void                         elm_ctxpopup_direction_priority_get(Evas_Objec
  *
  * @ingroup Ctxpopup
  */
-EAPI Elm_Ctxpopup_Direction       elm_ctxpopup_direction_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
+EAPI Elm_Ctxpopup_Direction       elm_ctxpopup_direction_get(const Evas_Object *obj);
 
 /**
  * @}

@@ -170,7 +170,7 @@ EAPI Elm_Transit           *elm_transit_add(void);
  * @ingroup Transit
  * @warning Just call this function if you are sure the transit is alive.
  */
-EAPI void                   elm_transit_del(Elm_Transit *transit) EINA_ARG_NONNULL(1);
+EAPI void                   elm_transit_del(Elm_Transit *transit);
 
 /**
  * Add a new effect to the transit.
@@ -204,7 +204,7 @@ EAPI void                   elm_transit_del(Elm_Transit *transit) EINA_ARG_NONNU
  * @warning The transit free the context data at the and of the transition with
  * the data_free_cb function, do not use the context data in another transit.
  */
-EAPI void                   elm_transit_effect_add(Elm_Transit *transit, Elm_Transit_Effect_Transition_Cb transition_cb, Elm_Transit_Effect *effect, Elm_Transit_Effect_End_Cb end_cb) EINA_ARG_NONNULL(1, 2);
+EAPI void                   elm_transit_effect_add(Elm_Transit *transit, Elm_Transit_Effect_Transition_Cb transition_cb, Elm_Transit_Effect *effect, Elm_Transit_Effect_End_Cb end_cb);
 
 /**
  * Delete an added effect.
@@ -224,7 +224,7 @@ EAPI void                   elm_transit_effect_add(Elm_Transit *transit, Elm_Tra
  *
  * @ingroup Transit
  */
-EAPI void                   elm_transit_effect_del(Elm_Transit *transit, Elm_Transit_Effect_Transition_Cb transition_cb, Elm_Transit_Effect *effect) EINA_ARG_NONNULL(1, 2);
+EAPI void                   elm_transit_effect_del(Elm_Transit *transit, Elm_Transit_Effect_Transition_Cb transition_cb, Elm_Transit_Effect *effect);
 
 /**
  * Add new object to apply the effects.
@@ -247,7 +247,7 @@ EAPI void                   elm_transit_effect_del(Elm_Transit *transit, Elm_Tra
  * @ingroup Transit
  * @warning It is not allowed to add a new object after transit begins to go.
  */
-EAPI void                   elm_transit_object_add(Elm_Transit *transit, Evas_Object *obj) EINA_ARG_NONNULL(1, 2);
+EAPI void                   elm_transit_object_add(Elm_Transit *transit, Evas_Object *obj);
 
 /**
  * Removes an added object from the transit.
@@ -262,7 +262,7 @@ EAPI void                   elm_transit_object_add(Elm_Transit *transit, Evas_Ob
  * @ingroup Transit
  * @warning It is not allowed to remove objects after transit begins to go.
  */
-EAPI void                   elm_transit_object_remove(Elm_Transit *transit, Evas_Object *obj) EINA_ARG_NONNULL(1, 2);
+EAPI void                   elm_transit_object_remove(Elm_Transit *transit, Evas_Object *obj);
 
 /**
  * Get the objects of the transit.
@@ -272,7 +272,7 @@ EAPI void                   elm_transit_object_remove(Elm_Transit *transit, Evas
  *
  * @ingroup Transit
  */
-EAPI const Eina_List       *elm_transit_objects_get(const Elm_Transit *transit) EINA_ARG_NONNULL(1);
+EAPI const Eina_List       *elm_transit_objects_get(const Elm_Transit *transit);
 
 /**
  * Enable/disable keeping up the objects states.
@@ -286,7 +286,7 @@ EAPI const Eina_List       *elm_transit_objects_get(const Elm_Transit *transit) 
  *
  * @ingroup Transit
  */
-EAPI void                   elm_transit_objects_final_state_keep_set(Elm_Transit *transit, Eina_Bool state_keep) EINA_ARG_NONNULL(1);
+EAPI void                   elm_transit_objects_final_state_keep_set(Elm_Transit *transit, Eina_Bool state_keep);
 
 /**
  * Get a value whether the objects states will be reset or not.
@@ -301,7 +301,7 @@ EAPI void                   elm_transit_objects_final_state_keep_set(Elm_Transit
  *
  * @ingroup Transit
  */
-EAPI Eina_Bool              elm_transit_objects_final_state_keep_get(const Elm_Transit *transit) EINA_ARG_NONNULL(1);
+EAPI Eina_Bool              elm_transit_objects_final_state_keep_get(const Elm_Transit *transit);
 
 /**
  * Set the event enabled when transit is operating.
@@ -320,7 +320,7 @@ EAPI Eina_Bool              elm_transit_objects_final_state_keep_get(const Elm_T
  *
  * @ingroup Transit
  */
-EAPI void                   elm_transit_event_enabled_set(Elm_Transit *transit, Eina_Bool enabled) EINA_ARG_NONNULL(1);
+EAPI void                   elm_transit_event_enabled_set(Elm_Transit *transit, Eina_Bool enabled);
 
 /**
  * Get the value of event enabled status.
@@ -333,7 +333,7 @@ EAPI void                   elm_transit_event_enabled_set(Elm_Transit *transit, 
  *
  * @ingroup Transit
  */
-EAPI Eina_Bool              elm_transit_event_enabled_get(const Elm_Transit *transit) EINA_ARG_NONNULL(1);
+EAPI Eina_Bool              elm_transit_event_enabled_get(const Elm_Transit *transit);
 
 /**
  * Set the user-callback function when the transit is deleted.
@@ -348,7 +348,7 @@ EAPI Eina_Bool              elm_transit_event_enabled_get(const Elm_Transit *tra
  *
  * @ingroup Transit
  */
-EAPI void                   elm_transit_del_cb_set(Elm_Transit *transit, Elm_Transit_Del_Cb cb, void *data) EINA_ARG_NONNULL(1);
+EAPI void                   elm_transit_del_cb_set(Elm_Transit *transit, Elm_Transit_Del_Cb cb, void *data);
 
 /**
  * Set reverse effect automatically.
@@ -364,7 +364,7 @@ EAPI void                   elm_transit_del_cb_set(Elm_Transit *transit, Elm_Tra
  *
  * @ingroup Transit
  */
-EAPI void                   elm_transit_auto_reverse_set(Elm_Transit *transit, Eina_Bool reverse) EINA_ARG_NONNULL(1);
+EAPI void                   elm_transit_auto_reverse_set(Elm_Transit *transit, Eina_Bool reverse);
 
 /**
  * Get if the auto reverse is on.
@@ -377,7 +377,7 @@ EAPI void                   elm_transit_auto_reverse_set(Elm_Transit *transit, E
  *
  * @ingroup Transit
  */
-EAPI Eina_Bool              elm_transit_auto_reverse_get(const Elm_Transit *transit) EINA_ARG_NONNULL(1);
+EAPI Eina_Bool              elm_transit_auto_reverse_get(const Elm_Transit *transit);
 
 /**
  * Set the transit repeat count. Effect will be repeated by repeat count.
@@ -394,7 +394,7 @@ EAPI Eina_Bool              elm_transit_auto_reverse_get(const Elm_Transit *tran
  *
  * @ingroup Transit
  */
-EAPI void                   elm_transit_repeat_times_set(Elm_Transit *transit, int repeat) EINA_ARG_NONNULL(1);
+EAPI void                   elm_transit_repeat_times_set(Elm_Transit *transit, int repeat);
 
 /**
  * Get the transit repeat count.
@@ -407,7 +407,7 @@ EAPI void                   elm_transit_repeat_times_set(Elm_Transit *transit, i
  *
  * @ingroup Transit
  */
-EAPI int                    elm_transit_repeat_times_get(const Elm_Transit *transit) EINA_ARG_NONNULL(1);
+EAPI int                    elm_transit_repeat_times_get(const Elm_Transit *transit);
 
 /**
  * Set the transit animation acceleration type.
@@ -423,7 +423,7 @@ EAPI int                    elm_transit_repeat_times_get(const Elm_Transit *tran
  *
  * @ingroup Transit
  */
-EAPI void                   elm_transit_tween_mode_set(Elm_Transit *transit, Elm_Transit_Tween_Mode tween_mode) EINA_ARG_NONNULL(1);
+EAPI void                   elm_transit_tween_mode_set(Elm_Transit *transit, Elm_Transit_Tween_Mode tween_mode);
 
 /**
  * Get the transit animation acceleration type.
@@ -436,7 +436,7 @@ EAPI void                   elm_transit_tween_mode_set(Elm_Transit *transit, Elm
  *
  * @ingroup Transit
  */
-EAPI Elm_Transit_Tween_Mode elm_transit_tween_mode_get(const Elm_Transit *transit) EINA_ARG_NONNULL(1);
+EAPI Elm_Transit_Tween_Mode elm_transit_tween_mode_get(const Elm_Transit *transit);
 
 /**
  * Set the transit animation time
@@ -448,7 +448,7 @@ EAPI Elm_Transit_Tween_Mode elm_transit_tween_mode_get(const Elm_Transit *transi
  *
  * @ingroup Transit
  */
-EAPI void                   elm_transit_duration_set(Elm_Transit *transit, double duration) EINA_ARG_NONNULL(1);
+EAPI void                   elm_transit_duration_set(Elm_Transit *transit, double duration);
 
 /**
  * Get the transit animation time
@@ -461,7 +461,7 @@ EAPI void                   elm_transit_duration_set(Elm_Transit *transit, doubl
  *
  * @ingroup Transit
  */
-EAPI double                 elm_transit_duration_get(const Elm_Transit *transit) EINA_ARG_NONNULL(1);
+EAPI double                 elm_transit_duration_get(const Elm_Transit *transit);
 
 /**
  * Starts the transition.
@@ -473,7 +473,7 @@ EAPI double                 elm_transit_duration_get(const Elm_Transit *transit)
  *
  * @ingroup Transit
  */
-EAPI void                   elm_transit_go(Elm_Transit *transit) EINA_ARG_NONNULL(1);
+EAPI void                   elm_transit_go(Elm_Transit *transit);
 
 /**
  * Pause/Resume the transition.
@@ -488,7 +488,7 @@ EAPI void                   elm_transit_go(Elm_Transit *transit) EINA_ARG_NONNUL
  *
  * @ingroup Transit
  */
-EAPI void                   elm_transit_paused_set(Elm_Transit *transit, Eina_Bool paused) EINA_ARG_NONNULL(1);
+EAPI void                   elm_transit_paused_set(Elm_Transit *transit, Eina_Bool paused);
 
 /**
  * Get the value of paused status.
@@ -503,7 +503,7 @@ EAPI void                   elm_transit_paused_set(Elm_Transit *transit, Eina_Bo
  *
  * @ingroup Transit
  */
-EAPI Eina_Bool              elm_transit_paused_get(const Elm_Transit *transit) EINA_ARG_NONNULL(1);
+EAPI Eina_Bool              elm_transit_paused_get(const Elm_Transit *transit);
 
 /**
  * Get the time progression of the animation (a double value between 0.0 and 1.0).
@@ -520,7 +520,7 @@ EAPI Eina_Bool              elm_transit_paused_get(const Elm_Transit *transit) E
  *
  * @ingroup Transit
  */
-EAPI double                 elm_transit_progress_value_get(const Elm_Transit *transit) EINA_ARG_NONNULL(1);
+EAPI double                 elm_transit_progress_value_get(const Elm_Transit *transit);
 
 /**
  * Makes the chain relationship between two transits.
@@ -538,7 +538,7 @@ EAPI double                 elm_transit_progress_value_get(const Elm_Transit *tr
  *
  * @ingroup Transit
  */
-EAPI void                   elm_transit_chain_transit_add(Elm_Transit *transit, Elm_Transit *chain_transit) EINA_ARG_NONNULL(1, 2);
+EAPI void                   elm_transit_chain_transit_add(Elm_Transit *transit, Elm_Transit *chain_transit);
 
 /**
  * Cut off the chain relationship between two transits.
@@ -553,7 +553,7 @@ EAPI void                   elm_transit_chain_transit_add(Elm_Transit *transit, 
  *
  * @ingroup Transit
  */
-EAPI void                   elm_transit_chain_transit_del(Elm_Transit *transit, Elm_Transit *chain_transit) EINA_ARG_NONNULL(1, 2);
+EAPI void                   elm_transit_chain_transit_del(Elm_Transit *transit, Elm_Transit *chain_transit);
 
 /**
  * Get the current chain transit list.
