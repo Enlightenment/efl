@@ -876,6 +876,8 @@ EAPI Elm_Genlist_Item             *elm_genlist_item_insert_after(Evas_Object *ob
  *
  * @ingroup Genlist
  */
+// XXX: deprecate elm_genlist_item_sorted_insert() and rename
+// elm_genlist_item_direct_sorted_insert() 
 EAPI Elm_Genlist_Item             *elm_genlist_item_sorted_insert(Evas_Object *obj, const Elm_Genlist_Item_Class *itc, const void *data, Elm_Genlist_Item *parent, Elm_Genlist_Item_Flags flags, Eina_Compare_Cb comp, Evas_Smart_Cb func, const void *func_data);
 EAPI Elm_Genlist_Item             *elm_genlist_item_direct_sorted_insert(Evas_Object *obj, const Elm_Genlist_Item_Class *itc, const void *data, Elm_Genlist_Item *parent, Elm_Genlist_Item_Flags flags, Eina_Compare_Cb comp, Evas_Smart_Cb func, const void *func_data);
 
