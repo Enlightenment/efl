@@ -8,7 +8,7 @@
 /**
  * Print Tree object hierarchy in stdout
  *
- * @param obj The root object
+ * @param top The root object
  * @ingroup Debug
  */
 EAPI void elm_object_tree_dump(const Evas_Object *top);

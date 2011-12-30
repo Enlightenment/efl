@@ -395,7 +395,7 @@ EAPI void                   elm_diskselector_item_icon_set(Elm_Diskselector_Item
 /**
  * Get the icon associated to the item.
  *
- * @param it The diskselector item
+ * @param item The diskselector item
  * @return The icon associated to @p it
  *
  * The return value is a pointer to the icon associated to @p item when it was

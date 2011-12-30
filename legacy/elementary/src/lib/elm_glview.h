@@ -1,5 +1,5 @@
 /**
- * @defgroup GLView
+ * @defgroup GLView GLView
  *
  * A simple GLView widget that allows GL rendering.
  *

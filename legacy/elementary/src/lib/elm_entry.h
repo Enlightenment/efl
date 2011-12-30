@@ -7,14 +7,14 @@ typedef enum _Elm_Text_Format
 /**
  * Line wrapping types.
  */
-typedef enum _Elm_Wrap_Type
+typedef enum
 {
    ELM_WRAP_NONE = 0, /**< No wrap - value is zero */
    ELM_WRAP_CHAR, /**< Char wrap - wrap between characters */
    ELM_WRAP_WORD, /**< Word wrap - wrap in allowed wrapping points (as defined in the unicode standard) */
    ELM_WRAP_MIXED, /**< Mixed wrap - Word wrap, and if that fails, char wrap. */
    ELM_WRAP_LAST
-} Elm_Wrap_Type;
+} Elm_Wrap_Type; /**< Type of word or character wrapping to use */
 
 typedef enum
 {
@@ -27,15 +27,15 @@ typedef enum
    ELM_INPUT_PANEL_LAYOUT_MONTH, /**< Month layout */
    ELM_INPUT_PANEL_LAYOUT_NUMBERONLY, /**< Number Only layout */
    ELM_INPUT_PANEL_LAYOUT_INVALID // XXX: remove this so we can expand
-} Elm_Input_Panel_Layout;
+} Elm_Input_Panel_Layout; /**< Type of input panel (virtual keyboard) to use */
 
 typedef enum
 {
-   ELM_AUTOCAPITAL_TYPE_NONE,
-   ELM_AUTOCAPITAL_TYPE_WORD,
-   ELM_AUTOCAPITAL_TYPE_SENTENCE,
-   ELM_AUTOCAPITAL_TYPE_ALLCHARACTER,
-} Elm_Autocapital_Type;
+   ELM_AUTOCAPITAL_TYPE_NONE, /**< No auto-capitalization when typing */
+   ELM_AUTOCAPITAL_TYPE_WORD, /**< Autocapitalize each word typed */
+   ELM_AUTOCAPITAL_TYPE_SENTENCE, /**< Autocapitalize the start of each sentence */
+   ELM_AUTOCAPITAL_TYPE_ALLCHARACTER, /**< Autocapitalize all letters */
+} Elm_Autocapital_Type; /**< Choose method of auto-capitalization */
 
 /**
  * @defgroup Entry Entry
@@ -56,7 +56,7 @@ typedef enum
  *
  * They can also be single line or multi line (the default) and when set
  * to multi line mode they support text wrapping in any of the modes
- * indicated by #Elm_Wrap_Type.
+ * indicated by Elm_Wrap_Type.
  *
  * Other features include password mode, filtering of inserted text with
  * elm_entry_text_filter_append() and related functions, inline "items" and
@@ -498,7 +498,7 @@ EAPI void               elm_entry_entry_insert(Evas_Object *obj, const char *ent
  * Set the line wrap type to use on multi-line entries.
  *
  * Sets the wrap type used by the entry to any of the specified in
- * #Elm_Wrap_Type. This tells how the text will be implicitly cut into a new
+ * Elm_Wrap_Type. This tells how the text will be implicitly cut into a new
  * line (without inserting a line break or paragraph separator) when it
  * reaches the far edge of the widget.
  *
@@ -506,7 +506,7 @@ EAPI void               elm_entry_entry_insert(Evas_Object *obj, const char *ent
  * to be single line will never wrap.
  *
  * @param obj The entry object
- * @param wrap The wrap mode to use. See #Elm_Wrap_Type for details on them
+ * @param wrap The wrap mode to use. See Elm_Wrap_Type for details on them
  */
 EAPI void               elm_entry_line_wrap_set(Evas_Object *obj, Elm_Wrap_Type wrap) EINA_ARG_NONNULL(1);
 
@@ -1104,8 +1104,8 @@ EAPI void               elm_entry_scrollbar_policy_set(Evas_Object *obj, Elm_Scr
  * the end of the contained entry.
  *
  * @param obj The scrolled entry object
- * @param h The horizontal bounce state
- * @param v The vertical bounce state
+ * @param h_bounce The horizontal bounce state
+ * @param v_bounce The vertical bounce state
  */
 EAPI void               elm_entry_bounce_set(Evas_Object *obj, Eina_Bool h_bounce, Eina_Bool v_bounce);
 

@@ -43,8 +43,9 @@ EAPI Eina_Bool            elm_focus_highlight_enabled_get(void);
 /**
  * Set the enable status of the focus highlight
  *
- * Set whether to show or not the highlight on focused objects
  * @param enable Enable highlight if EINA_TRUE, disable otherwise
+ * 
+ * Set whether to show or not the highlight on focused objects
  * @ingroup Focus
  */
 EAPI void                 elm_focus_highlight_enabled_set(Eina_Bool enable);
@@ -52,8 +53,11 @@ EAPI void                 elm_focus_highlight_enabled_set(Eina_Bool enable);
 /**
  * Get the enable status of the highlight animation
  *
+ * @return The focus hilight mode set
+ * 
  * Get whether the focus highlight, if enabled, will animate its switch from
  * one object to the next
+ * 
  * @ingroup Focus
  */
 EAPI Eina_Bool            elm_focus_highlight_animate_get(void);
@@ -61,9 +65,11 @@ EAPI Eina_Bool            elm_focus_highlight_animate_get(void);
 /**
  * Set the enable status of the highlight animation
  *
+ * @param animate Enable animation if EINA_TRUE, disable otherwise
+ * 
  * Set whether the focus highlight, if enabled, will animate its switch from
  * one object to the next
- * @param animate Enable animation if EINA_TRUE, disable otherwise
+ * 
  * @ingroup Focus
  */
 EAPI void                 elm_focus_highlight_animate_set(Eina_Bool animate);
@@ -79,9 +85,7 @@ EAPI void                 elm_focus_highlight_animate_set(Eina_Bool animate);
  *
  * @ingroup Focus
  */
-EAPI Eina_Bool
-                          elm_object_focus_get(const Evas_Object *obj)
-EINA_ARG_NONNULL(1);
+EAPI Eina_Bool            elm_object_focus_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
 
 /**
  * Set/unset focus to a given Elementary object.

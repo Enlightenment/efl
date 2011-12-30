@@ -32,7 +32,7 @@
  * @{
  */
 
-typedef enum _Elm_Ctxpopup_Direction
+typedef enum
 {
    ELM_CTXPOPUP_DIRECTION_DOWN, /**< ctxpopup show appear below clicked area */
    ELM_CTXPOPUP_DIRECTION_RIGHT, /**< ctxpopup show appear to the right of the clicked area */
@@ -49,9 +49,7 @@ typedef enum _Elm_Ctxpopup_Direction
  *
  * @ingroup Ctxpopup
  */
-EAPI Evas_Object *
-                                  elm_ctxpopup_add(Evas_Object *parent)
-EINA_ARG_NONNULL(1);
+EAPI Evas_Object                 *elm_ctxpopup_add(Evas_Object *parent) EINA_ARG_NONNULL(1);
 
 /**
  * @brief Set the Ctxpopup's parent

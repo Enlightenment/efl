@@ -22,7 +22,7 @@
  *
  * @{
  */
-typedef enum _Elm_Flip_Mode
+typedef enum
 {
    ELM_FLIP_ROTATE_Y_CENTER_AXIS,
    ELM_FLIP_ROTATE_X_CENTER_AXIS,
@@ -37,14 +37,16 @@ typedef enum _Elm_Flip_Mode
    ELM_FLIP_PAGE_UP,
    ELM_FLIP_PAGE_DOWN
 } Elm_Flip_Mode;
-typedef enum _Elm_Flip_Interaction
+
+typedef enum
 {
    ELM_FLIP_INTERACTION_NONE,
    ELM_FLIP_INTERACTION_ROTATE,
    ELM_FLIP_INTERACTION_CUBE,
    ELM_FLIP_INTERACTION_PAGE
 } Elm_Flip_Interaction;
-typedef enum _Elm_Flip_Direction
+
+typedef enum
 {
    ELM_FLIP_DIRECTION_UP, /**< Allows interaction with the top of the widget */
    ELM_FLIP_DIRECTION_DOWN, /**< Allows interaction with the bottom of the widget */
@@ -58,9 +60,7 @@ typedef enum _Elm_Flip_Direction
  * @param parent The parent object
  * @return The new object or NULL if it cannot be created
  */
-EAPI Evas_Object *
-                          elm_flip_add(Evas_Object *parent)
-EINA_ARG_NONNULL(1);
+EAPI Evas_Object *elm_flip_add(Evas_Object *parent) EINA_ARG_NONNULL(1);
 
 /**
  * @brief Set the front content of the flip widget.
