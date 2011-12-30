@@ -273,7 +273,7 @@ _load(Evas_Object *obj)
    if (!wd) return;
    if (!wd->file)
      {
-        elm_entry_entry_set(obj, "");
+        elm_object_text_set(obj, "");
         return;
      }
    switch (wd->format)
@@ -290,11 +290,11 @@ _load(Evas_Object *obj)
      }
    if (text)
      {
-        elm_entry_entry_set(obj, text);
+        elm_object_text_set(obj, text);
         free(text);
      }
    else
-     elm_entry_entry_set(obj, "");
+     elm_object_text_set(obj, "");
 }
 
 static void
@@ -338,10 +338,10 @@ _save(Evas_Object *obj)
    switch (wd->format)
      {
       case ELM_TEXT_FORMAT_PLAIN_UTF8:
-         _save_plain_utf8(wd->file, elm_entry_entry_get(obj));
+         _save_plain_utf8(wd->file, elm_object_text_get(obj));
          break;
       case ELM_TEXT_FORMAT_MARKUP_UTF8:
-         _save_markup_utf8(wd->file, elm_entry_entry_get(obj));
+         _save_markup_utf8(wd->file, elm_object_text_get(obj));
          break;
       default:
          break;
@@ -519,11 +519,11 @@ _theme_hook(Evas_Object *obj)
    _elm_widget_mirrored_reload(obj);
    _mirrored_set(obj, elm_widget_mirrored_get(obj));
 
-   t = eina_stringshare_add(elm_entry_entry_get(obj));
+   t = eina_stringshare_add(elm_object_text_get(obj));
    _elm_theme_object_set(obj, wd->ent, "entry", _getbase(obj), elm_widget_style_get(obj));
    if (_elm_config->desktop_entry)
      edje_object_part_text_select_allow_set(wd->ent, "elm.text", EINA_TRUE);
-   elm_entry_entry_set(obj, t);
+   elm_object_text_set(obj, t);
    eina_stringshare_del(t);
    if (elm_widget_disabled_get(obj))
      edje_object_signal_emit(wd->ent, "elm,state,disabled", "elm");
@@ -2475,7 +2475,7 @@ elm_entry_password_get(const Evas_Object *obj)
    return wd->password;
 }
 
-EAPI void
+EINA_DEPRECATED EAPI void
 elm_entry_entry_set(Evas_Object *obj, const char *entry)
 {
    _elm_entry_text_set(obj, NULL, entry);
@@ -2512,7 +2512,7 @@ elm_entry_entry_append(Evas_Object *obj, const char *entry)
      }
 }
 
-EAPI const char *
+EINA_DEPRECATED EAPI const char *
 elm_entry_entry_get(const Evas_Object *obj)
 {
    return _elm_entry_text_get(obj, NULL);
@@ -3021,6 +3021,12 @@ elm_entry_utf8_to_markup(const char *s)
    return ss;
 }
 
+static const char *
+_text_get(const Evas_Object *obj)
+{
+   return elm_object_text_get(obj);
+}
+
 EAPI void
 elm_entry_filter_limit_size(void *data, Evas_Object *entry, char **text)
 {
@@ -3037,10 +3043,7 @@ elm_entry_filter_limit_size(void *data, Evas_Object *entry, char **text)
    /* hack. I don't want to copy the entire function to work with
     * scrolled_entry */
    widget_type = elm_widget_type_get(entry);
-   if (!strcmp(widget_type, "entry"))
-     text_get = elm_entry_entry_get;
-   else /* huh? */
-     return;
+   text_get = _text_get;
 
    current = elm_entry_markup_to_utf8(text_get(entry));
    utfstr = elm_entry_markup_to_utf8(*text);

@@ -50,7 +50,7 @@ elm_main(int argc __UNUSED__, char **argv __UNUSED__)
 
    en = elm_entry_add(win);
    elm_entry_scrollable_set(en, EINA_TRUE);
-   elm_entry_entry_set(en,
+   elm_object_text_set(en,
                        "This is a multi-line entry at the bottom<br>"
                        "This can contain more than 1 line of text and be "
                        "scrolled around to allow for entering of lots of "

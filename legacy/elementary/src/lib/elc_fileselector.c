@@ -376,7 +376,7 @@ _sel_do(void *data)
         if (wd->expand && wd->mode == ELM_FILESELECTOR_LIST)
           {
              _do_anchors(sd->fs, path);
-             elm_entry_entry_set(wd->filename_entry, "");
+             elm_object_text_set(wd->filename_entry, "");
           }
         else
           {
@@ -398,7 +398,7 @@ _sel_do(void *data)
              _populate(sd->fs, p, NULL);
              eina_stringshare_del(p);
           }
-        elm_entry_entry_set(wd->filename_entry,
+        elm_object_text_set(wd->filename_entry,
                                      ecore_file_file_get(path));
      }
 
@@ -544,7 +544,7 @@ _do_anchors(Evas_Object *obj,
    free(tok[0]);
    free(tok);
 
-   elm_entry_entry_set(wd->path_entry, buf);
+   elm_object_text_set(wd->path_entry, buf);
 }
 
 #ifdef HAVE_EIO
@@ -636,7 +636,7 @@ _signal_first(Widget_Request *wr)
         _do_anchors(wr->obj, wr->path);
      }
 
-   if (wr->wd->filename_entry) elm_entry_entry_set(wr->wd->filename_entry, "");
+   if (wr->wd->filename_entry) elm_object_text_set(wr->wd->filename_entry, "");
 
    wr->first = EINA_FALSE;
 }
@@ -733,7 +733,7 @@ _populate(Evas_Object      *obj,
         _do_anchors(obj, path);
      }
 
-   if (wd->filename_entry) elm_entry_entry_set(wd->filename_entry, "");
+   if (wd->filename_entry) elm_object_text_set(wd->filename_entry, "");
    EINA_ITERATOR_FOREACH(it, file)
      {
         const char *filename;
@@ -1141,7 +1141,7 @@ elm_fileselector_selected_get(const Evas_Object *obj)
         char *dir;
 
         dir = wd->only_folder ? ecore_file_dir_get(wd->path) : strdup(wd->path);
-        name = elm_entry_entry_get(wd->filename_entry);
+        name = elm_object_text_get(wd->filename_entry);
         snprintf(buf, sizeof(buf), "%s/%s",
                  dir, name);
         if (wd->only_folder && !ecore_file_is_dir(buf))
@@ -1186,7 +1186,7 @@ elm_fileselector_selected_set(Evas_Object *obj,
         _populate(obj, ecore_file_dir_get(path), NULL);
         if (wd->filename_entry)
           {
-             elm_entry_entry_set(wd->filename_entry,
+             elm_object_text_set(wd->filename_entry,
                                           ecore_file_file_get(path));
              eina_stringshare_replace(&wd->selection, path);
           }

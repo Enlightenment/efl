@@ -21,7 +21,7 @@ elm_box_pack_end(bx, btn);
 
 Evas_Object *en = elm_entry_add(win);
 elm_entry_scrollable_set(en, EINA_TRUE);
-elm_entry_entry_set(en,
+elm_object_text_set(en,
                     "This is a multi-line entry<br>"
                     "This can contain more than 1 line of text and be "
                     "scrolled around to allow for entering of lots of "

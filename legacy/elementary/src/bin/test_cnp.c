@@ -47,7 +47,7 @@ test_cnp(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __
    elm_entry_line_wrap_set(en, ELM_WRAP_CHAR);
    evas_object_size_hint_weight_set(en, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(en, EVAS_HINT_FILL, EVAS_HINT_FILL);
-   elm_entry_entry_set(en,
+   elm_object_text_set(en,
 				"Elementary provides "
                                 );
    elm_grid_pack(gd, en, 10, 10, 60, 40);
@@ -64,7 +64,7 @@ test_cnp(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __
    elm_entry_line_wrap_set(en, ELM_WRAP_CHAR);
    evas_object_size_hint_weight_set(en, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(en, EVAS_HINT_FILL, EVAS_HINT_FILL);
-   elm_entry_entry_set(en,
+   elm_object_text_set(en,
 				"rich copying and pasting functionality,"
                                 );
    elm_grid_pack(gd, en, 10, 50, 60, 40);

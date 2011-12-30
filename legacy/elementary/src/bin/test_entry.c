@@ -7,14 +7,14 @@ static void
 my_entry_bt_1(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    Evas_Object *en = data;
-   elm_entry_entry_set(en, "");
+   elm_object_text_set(en, "");
 }
 
 static void
 my_entry_bt_2(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    Evas_Object *en = data;
-   const char *s = elm_entry_entry_get(en);
+   const char *s = elm_object_text_get(en);
    printf("ENTRY:\n");
    if (s) printf("%s\n", s);
    printf("ENTRY PLAIN UTF8:\n");
@@ -127,7 +127,7 @@ test_entry(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info 
             " ... end."
             , elm_app_data_dir_get()
             );
-   elm_entry_entry_set(en, buf);
+   elm_object_text_set(en, buf);
    evas_object_size_hint_weight_set(en, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(en, EVAS_HINT_FILL, EVAS_HINT_FILL);
    elm_box_pack_end(bx, en);
@@ -209,14 +209,14 @@ static void
 my_scrolled_entry_bt_1(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    Evas_Object *en = data;
-   elm_entry_entry_set(en, "");
+   elm_object_text_set(en, "");
 }
 
 static void
 my_scrolled_entry_bt_2(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    Evas_Object *en = data;
-   const char *s = elm_entry_entry_get(en);
+   const char *s = elm_object_text_get(en);
    printf("ENTRY:\n");
    if (s) printf("%s\n", s);
    printf("ENTRY PLAIN UTF8:\n");
@@ -261,7 +261,7 @@ static void
 my_scrolled_entry_bt_5(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    Evas_Object *en = data;
-   const char *s = elm_entry_entry_get(en);
+   const char *s = elm_object_text_get(en);
    printf("PASSWORD: '%s'\n", s ? s : "");
 }
 
@@ -299,7 +299,7 @@ test_entry_scrolled(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *ev
    evas_object_size_hint_weight_set(en, EVAS_HINT_EXPAND, 0.0);
    evas_object_size_hint_align_set(en, EVAS_HINT_FILL, 0.5);
    elm_entry_scrollbar_policy_set(en, ELM_SCROLLER_POLICY_OFF, ELM_SCROLLER_POLICY_OFF);
-   elm_entry_entry_set(en, "Disabled entry");
+   elm_object_text_set(en, "Disabled entry");
    elm_entry_single_line_set(en, 1);
    elm_object_disabled_set(en, 1);
    evas_object_show(en);
@@ -313,7 +313,7 @@ test_entry_scrolled(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *ev
    elm_entry_scrollbar_policy_set(en, ELM_SCROLLER_POLICY_OFF, ELM_SCROLLER_POLICY_OFF);
    elm_entry_password_set(en, 1);
    elm_entry_single_line_set(en, 1);
-   elm_entry_entry_set(en, "Access denied, give up!");
+   elm_object_text_set(en, "Access denied, give up!");
    elm_object_disabled_set(en, 1);
    evas_object_show(en);
    elm_box_pack_end(bx, en);
@@ -327,7 +327,7 @@ test_entry_scrolled(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *ev
    elm_object_disabled_set(en, 1);
    elm_entry_context_menu_item_add(en, "Hello", NULL, ELM_ICON_NONE, NULL, NULL);
    elm_entry_context_menu_item_add(en, "World", NULL, ELM_ICON_NONE, NULL, NULL);
-   elm_entry_entry_set(en,
+   elm_object_text_set(en,
 				"Multi-line disabled entry widget :)<br/>"
 				"We can use markup <b>like this</> for styling and<br/>"
 				"formatting <em>like this</>, as well as<br/>"
@@ -346,7 +346,7 @@ test_entry_scrolled(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *ev
    elm_entry_scrollable_set(en, EINA_TRUE);
    evas_object_size_hint_weight_set(en, EVAS_HINT_EXPAND, 0.0);
    evas_object_size_hint_align_set(en, EVAS_HINT_FILL, 0.5);
-   elm_entry_entry_set(en, "This is a single line");
+   elm_object_text_set(en, "This is a single line");
    elm_entry_scrollbar_policy_set(en, ELM_SCROLLER_POLICY_OFF, ELM_SCROLLER_POLICY_OFF);
    elm_entry_single_line_set(en, 1);
    elm_entry_select_all(en);
@@ -358,7 +358,7 @@ test_entry_scrolled(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *ev
    elm_entry_scrollable_set(en, EINA_TRUE);
    evas_object_size_hint_weight_set(en, EVAS_HINT_EXPAND, 0.0);
    evas_object_size_hint_align_set(en, EVAS_HINT_FILL, 0.5);
-   elm_entry_entry_set(en, "01234");
+   elm_object_text_set(en, "01234");
    elm_entry_scrollbar_policy_set(en, ELM_SCROLLER_POLICY_OFF, ELM_SCROLLER_POLICY_OFF);
    elm_entry_single_line_set(en, 1);
    evas_object_show(en);
@@ -373,7 +373,7 @@ test_entry_scrolled(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *ev
    elm_entry_scrollable_set(en, EINA_TRUE);
    evas_object_size_hint_weight_set(en, EVAS_HINT_EXPAND, 0.0);
    evas_object_size_hint_align_set(en, EVAS_HINT_FILL, 0.5);
-   elm_entry_entry_set(en, "No numbers here");
+   elm_object_text_set(en, "No numbers here");
    elm_entry_scrollbar_policy_set(en, ELM_SCROLLER_POLICY_OFF, ELM_SCROLLER_POLICY_OFF);
    elm_entry_single_line_set(en, 1);
    evas_object_show(en);
@@ -388,7 +388,7 @@ test_entry_scrolled(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *ev
    elm_entry_scrollable_set(en, EINA_TRUE);
    evas_object_size_hint_weight_set(en, EVAS_HINT_EXPAND, 0.0);
    evas_object_size_hint_align_set(en, EVAS_HINT_FILL, 0.5);
-   elm_entry_entry_set(en, "Just 20 chars");
+   elm_object_text_set(en, "Just 20 chars");
    elm_entry_scrollbar_policy_set(en, ELM_SCROLLER_POLICY_OFF, ELM_SCROLLER_POLICY_OFF);
    elm_entry_single_line_set(en, 1);
    evas_object_show(en);
@@ -403,7 +403,7 @@ test_entry_scrolled(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *ev
    elm_entry_scrollable_set(en, EINA_TRUE);
    evas_object_size_hint_weight_set(en, EVAS_HINT_EXPAND, 0.0);
    evas_object_size_hint_align_set(en, EVAS_HINT_FILL, 0.5);
-   elm_entry_entry_set(en, "And now only 30 bytes");
+   elm_object_text_set(en, "And now only 30 bytes");
    elm_entry_scrollbar_policy_set(en, ELM_SCROLLER_POLICY_OFF, ELM_SCROLLER_POLICY_OFF);
    elm_entry_single_line_set(en, 1);
    evas_object_show(en);
@@ -419,7 +419,7 @@ test_entry_scrolled(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *ev
    evas_object_size_hint_weight_set(en_p, EVAS_HINT_EXPAND, 0.0);
    evas_object_size_hint_align_set(en_p, EVAS_HINT_FILL, 0.5);
    elm_entry_scrollbar_policy_set(en_p, ELM_SCROLLER_POLICY_OFF, ELM_SCROLLER_POLICY_OFF);
-   elm_entry_entry_set(en_p, "Password here");
+   elm_object_text_set(en_p, "Password here");
    elm_entry_single_line_set(en_p, 1);
    elm_entry_password_set(en_p, 1);
    evas_object_show(en_p);
@@ -444,7 +444,7 @@ test_entry_scrolled(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *ev
    evas_object_size_hint_min_set(bt, 48, 48);
    evas_object_show(bt);
    elm_entry_end_set(en, bt);
-   elm_entry_entry_set(en, "scrolled entry with icon and end objects");
+   elm_object_text_set(en, "scrolled entry with icon and end objects");
    evas_object_show(en);
    elm_box_pack_end(bx, en);
 
@@ -454,7 +454,7 @@ test_entry_scrolled(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *ev
    evas_object_size_hint_weight_set(en, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(en, EVAS_HINT_FILL, EVAS_HINT_FILL);
    elm_entry_scrollbar_policy_set(en, ELM_SCROLLER_POLICY_ON, ELM_SCROLLER_POLICY_ON);
-   elm_entry_entry_set(en,
+   elm_object_text_set(en,
 				"This is an entry widget in this window that<br/>"
 				"uses markup <b>like this</> for styling and<br/>"
 				"formatting <em>like this</>, as well as<br/>"
@@ -538,14 +538,14 @@ static void
 my_ent_bt_clr(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    Evas_Object *en = data;
-   elm_entry_entry_set(en, "");
+   elm_object_text_set(en, "");
 }
 
 static void
 my_ent_bt_pri(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    Evas_Object *en = data;
-   const char *s = elm_entry_entry_get(en);
+   const char *s = elm_object_text_get(en);
    printf("ENTRY:\n");
    if (s) printf("%s\n", s);
    printf("ENTRY PLAIN UTF8:\n");
@@ -739,7 +739,7 @@ test_entry3(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info
    evas_object_size_hint_weight_set(en, EVAS_HINT_EXPAND, 0.0);
    evas_object_size_hint_align_set(en, EVAS_HINT_FILL, 0.5);
    elm_entry_scrollbar_policy_set(en, ELM_SCROLLER_POLICY_OFF, ELM_SCROLLER_POLICY_OFF);
-   elm_entry_entry_set(en, "This is a single line");
+   elm_object_text_set(en, "This is a single line");
    elm_entry_single_line_set(en, 1);
    elm_box_pack_end(bx, en);
    evas_object_show(en);
@@ -1001,7 +1001,7 @@ test_entry3(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info
    elm_entry_scrollable_set(en, EINA_TRUE);
    evas_object_size_hint_weight_set(en, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(en, EVAS_HINT_FILL, EVAS_HINT_FILL);
-   elm_entry_entry_set(en,
+   elm_object_text_set(en,
 				"This is an entry widget in this window that<br/>"
 				"uses markup <b>like this</> for styling and<br/>"
 				"formatting <em>like this</>, as well as<br/>"
@@ -1303,14 +1303,14 @@ test_entry4(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info
    evas_object_size_hint_weight_set(en, EVAS_HINT_EXPAND, 0.0);
    evas_object_size_hint_align_set(en, EVAS_HINT_FILL, 0.5);
    elm_entry_scrollbar_policy_set(en, ELM_SCROLLER_POLICY_OFF, ELM_SCROLLER_POLICY_OFF);
-   elm_entry_entry_set(en, "This is a single line");
+   elm_object_text_set(en, "This is a single line");
    elm_entry_single_line_set(en, 1);
    elm_object_part_content_set(ly, "element1", en);
    evas_object_show(en);
 
    en = elm_entry_add(win);
    elm_entry_line_wrap_set(en, ELM_WRAP_NONE);
-   elm_entry_entry_set(en,
+   elm_object_text_set(en,
 		       "This is an entry widget<br/>"
 		       "that uses markup<br/>"
                        "<b>like this</> and has<br/>"
@@ -1325,7 +1325,7 @@ test_entry4(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info
    elm_entry_scrollable_set(en, EINA_TRUE);
    evas_object_size_hint_weight_set(en, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(en, EVAS_HINT_FILL, EVAS_HINT_FILL);
-   elm_entry_entry_set(en,
+   elm_object_text_set(en,
 				"This is an entry widget in this window that<br/>"
 				"uses markup <b>like this</> for styling and<br/>"
 				"formatting <em>like this</>, as well as<br/>"
@@ -1369,7 +1369,7 @@ test_entry5(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info
    elm_entry_line_wrap_set(en, ELM_WRAP_CHAR);
    evas_object_size_hint_weight_set(en, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(en, EVAS_HINT_FILL, EVAS_HINT_FILL);
-   elm_entry_entry_set(en,
+   elm_object_text_set(en,
 				"This is an entry widget in this window that "
 				"uses markup like this for styling and "
 				"formatting like this, as well as "
@@ -1645,7 +1645,7 @@ static void
 _scrolled_entry_clear(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    Evas_Object *en = data;
-   elm_entry_entry_set(en, "");
+   elm_object_text_set(en, "");
 }
 
 void

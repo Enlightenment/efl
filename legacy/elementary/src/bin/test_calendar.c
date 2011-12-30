@@ -53,7 +53,7 @@ _print_cal_info(Evas_Object *cal, Evas_Object *en)
 	 interval, year_min, year_max, sel_enabled,
 	 wds[0], wds[1], wds[2], wds[3], wds[4], wds[5], wds[6]);
 
-   elm_entry_entry_set(en, info);
+   elm_object_text_set(en, info);
 }
 
 static void

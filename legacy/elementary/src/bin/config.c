@@ -2182,10 +2182,10 @@ _profiles_list_selected_cb(void            *data,
 
    en = evas_object_data_get(obj, "prof_desc_entry");
 #ifdef ELM_EFREET
-   if (desk) elm_entry_entry_set(en, desk->comment);
+   if (desk) elm_object_text_set(en, desk->comment);
    else
 #endif
-   elm_entry_entry_set(en, "Unknown");
+   elm_object_text_set(en, "Unknown");
 
 #ifdef ELM_EFREET
    if (desk) efreet_desktop_free(desk);

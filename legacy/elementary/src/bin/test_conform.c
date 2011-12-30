@@ -32,7 +32,7 @@ test_conformant(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event 
    elm_entry_scrollable_set(en, EINA_TRUE);
    elm_entry_single_line_set(en, 1);
    elm_entry_bounce_set(en, 1, 0);
-   elm_entry_entry_set(en, "This is the top entry here");
+   elm_object_text_set(en, "This is the top entry here");
    evas_object_size_hint_weight_set(en, EVAS_HINT_EXPAND, 0.0);
    evas_object_size_hint_align_set(en, EVAS_HINT_FILL, 0.5);
    evas_object_show(en);
@@ -49,7 +49,7 @@ test_conformant(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event 
    elm_entry_scrollable_set(en, EINA_TRUE);
    elm_entry_single_line_set(en, 1);
    elm_entry_bounce_set(en, 1, 0);
-   elm_entry_entry_set(en, "This is the middle entry here");
+   elm_object_text_set(en, "This is the middle entry here");
    evas_object_size_hint_weight_set(en, EVAS_HINT_EXPAND, 0.0);
    evas_object_size_hint_align_set(en, EVAS_HINT_FILL, 0.5);
    evas_object_show(en);
@@ -65,7 +65,7 @@ test_conformant(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event 
    en = elm_entry_add(win);
    elm_entry_scrollable_set(en, EINA_TRUE);
    elm_entry_bounce_set(en, 0, 1);
-   elm_entry_entry_set(en,
+   elm_object_text_set(en,
                        "This is a multi-line entry at the bottom<br/>"
                        "This can contain more than 1 line of text and be "
                        "scrolled around to allow for entering of lots of "
@@ -118,7 +118,7 @@ test_conformant2(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event
    elm_entry_scrollable_set(en, EINA_TRUE);
    elm_entry_single_line_set(en, 1);
    elm_entry_bounce_set(en, 1, 0);
-   elm_entry_entry_set(en, "This is the top entry here");
+   elm_object_text_set(en, "This is the top entry here");
    evas_object_size_hint_weight_set(en, EVAS_HINT_EXPAND, 0.0);
    evas_object_size_hint_align_set(en, EVAS_HINT_FILL, 0.5);
    elm_box_pack_end(bx, en);
@@ -153,7 +153,7 @@ test_conformant2(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event
    en = elm_entry_add(win);
    elm_entry_scrollable_set(en, EINA_TRUE);
    elm_entry_bounce_set(en, 0, 1);
-   elm_entry_entry_set(en, "This entry and button below get deleted.");
+   elm_object_text_set(en, "This entry and button below get deleted.");
    evas_object_size_hint_weight_set(en, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(en, EVAS_HINT_FILL, EVAS_HINT_FILL);
    evas_object_show(en);
@@ -185,7 +185,7 @@ test_conformant2(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event
    en = elm_entry_add(win);
    elm_entry_scrollable_set(en, EINA_TRUE);
    elm_entry_bounce_set(en, 0, 1);
-   elm_entry_entry_set(en, "This entry and button below get deleted.");
+   elm_object_text_set(en, "This entry and button below get deleted.");
    evas_object_size_hint_weight_set(en, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(en, EVAS_HINT_FILL, EVAS_HINT_FILL);
    evas_object_show(en);

@@ -36,7 +36,7 @@ static void _apply_cb(void *data __UNUSED__, Evas_Object *o __UNUSED__, void *ev
 
    if (module[current])
      eweather_plugin_set(eweather, module[current]);
-   eweather_code_set(eweather, elm_entry_entry_get(en));
+   eweather_code_set(eweather, elm_object_text_get(en));
    printf("CURRENT %d %p %p\n", current, module[current], eweather);
 }
 
@@ -147,7 +147,7 @@ test_weather(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_inf
    en = elm_entry_add(win);
    elm_entry_line_wrap_set(en, ELM_WRAP_NONE);
    elm_entry_single_line_set(en, EINA_TRUE);
-   elm_entry_entry_set(en, "Paris");
+   elm_object_text_set(en, "Paris");
    evas_object_size_hint_weight_set(en, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(en, EVAS_HINT_FILL, EVAS_HINT_FILL);
    elm_box_pack_end(bx0, en);

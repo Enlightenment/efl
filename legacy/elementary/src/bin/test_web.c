@@ -66,7 +66,7 @@ _uri_changed_cb(void *data, Evas_Object *obj __UNUSED__, void *event_info)
 {
    Web_Test *wt = data;
 
-   elm_entry_entry_set(wt->url_entry, event_info);
+   elm_object_text_set(wt->url_entry, event_info);
 
    elm_object_disabled_set(wt->btn_back, !elm_web_back_possible(wt->web));
    elm_object_disabled_set(wt->btn_fwd, !elm_web_forward_possible(wt->web));

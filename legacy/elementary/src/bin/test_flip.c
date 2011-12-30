@@ -301,7 +301,7 @@ test_flip2(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info 
             " ... end."
             , elm_app_data_dir_get()
            );
-   elm_entry_entry_set(en, buf);
+   elm_object_text_set(en, buf);
    evas_object_size_hint_align_set(en, EVAS_HINT_FILL, EVAS_HINT_FILL);
    evas_object_size_hint_weight_set(en, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
 

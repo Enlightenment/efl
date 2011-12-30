@@ -148,7 +148,7 @@ test_cursor(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info
 
    entry = elm_entry_add(win);
    elm_entry_scrollable_set(entry, EINA_TRUE);
-   elm_entry_entry_set(entry, "Xterm cursor");
+   elm_object_text_set(entry, "Xterm cursor");
    elm_entry_single_line_set(entry, EINA_TRUE);
    evas_object_size_hint_weight_set(entry, EVAS_HINT_EXPAND, 0);
    evas_object_size_hint_fill_set(entry, EVAS_HINT_FILL, EVAS_HINT_FILL);

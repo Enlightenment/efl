@@ -182,7 +182,7 @@ _elm_anchorview_text_set(Evas_Object *obj, const char *item, const char *text)
    Widget_Data *wd = elm_widget_data_get(obj);
    if (item && strcmp(item, "default")) return;
    if (!wd) return;
-   elm_entry_entry_set(wd->entry, text);
+   elm_object_text_set(wd->entry, text);
    if (wd->hover) evas_object_del(wd->hover);
    if (wd->pop) evas_object_del(wd->pop);
    wd->hover = NULL;
@@ -197,7 +197,7 @@ _elm_anchorview_text_get(const Evas_Object *obj, const char *item)
    Widget_Data *wd = elm_widget_data_get(obj);
    if (item && strcmp(item, "default")) return NULL;
    if (!wd) return NULL;
-   return elm_entry_entry_get(wd->entry);
+   return elm_object_text_get(wd->entry);
 }
 
 EAPI Evas_Object *
@@ -233,7 +233,7 @@ elm_anchorview_add(Evas_Object *parent)
    evas_object_event_callback_add(wd->entry, EVAS_CALLBACK_CHANGED_SIZE_HINTS,
                                   _changed_size_hints, obj);
 
-   elm_entry_entry_set(wd->entry, "");
+   elm_object_text_set(wd->entry, "");
 
    evas_object_smart_callback_add(wd->entry, "anchor,clicked",
                                   _anchor_clicked, obj);

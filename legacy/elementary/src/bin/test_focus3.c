@@ -28,7 +28,7 @@ _add(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 
    en = elm_entry_add(elm_object_top_widget_get(bx));
    elm_entry_scrollable_set(en, EINA_TRUE);
-   elm_entry_entry_set(en, "An entry");
+   elm_object_text_set(en, "An entry");
    evas_object_smart_callback_add(en, "focused", _foc, NULL);
    evas_object_smart_callback_add(en, "unfocused", _unfoc, NULL);
    evas_object_size_hint_weight_set(en, EVAS_HINT_EXPAND, 0.0);
@@ -73,7 +73,7 @@ test_focus3(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info
 
    en = elm_entry_add(win);
    elm_entry_scrollable_set(en, EINA_TRUE);
-   elm_entry_entry_set(en, "An entry");
+   elm_object_text_set(en, "An entry");
    evas_object_smart_callback_add(en, "focused", _foc, NULL);
    evas_object_smart_callback_add(en, "unfocused", _unfoc, NULL);
    evas_object_size_hint_weight_set(en, EVAS_HINT_EXPAND, 0.0);

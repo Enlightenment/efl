@@ -200,7 +200,7 @@ _entry_show(Widget_Data *wd)
           }
      }
    snprintf(buf, sizeof(buf), fmt, wd->val);
-   elm_entry_entry_set(wd->ent, buf);
+   elm_object_text_set(wd->ent, buf);
 }
 
 static void
@@ -364,7 +364,7 @@ _apply_entry_value(Evas_Object *obj)
 
    if (!wd) return;
    _hide_entry(obj);
-   str = elm_entry_entry_get(wd->ent);
+   str = elm_object_text_get(wd->ent);
    if (!str) return;
    val = strtod(str, &end);
    if ((*end != '\0') && (!isspace(*end))) return;

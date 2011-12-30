@@ -385,7 +385,7 @@ test_gesture_layer(void *data __UNUSED__, Evas_Object *obj __UNUSED__,
    photo_array[ind++] = photo_object_add(win, NULL, buf, 40, 300, 365, 400, 45);
 
    Evas_Object *en = elm_entry_add(win);
-   elm_entry_entry_set(en, "You can use whatever object you want, "
+   elm_object_text_set(en, "You can use whatever object you want, "
          "even entries like this.");
    elm_entry_line_wrap_set(en, ELM_WRAP_MIXED);
 

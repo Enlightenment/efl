@@ -13,7 +13,7 @@ _file_chosen(void            *data,
    const char *file = event_info;
    if (file)
      {
-        elm_entry_entry_set(entry, file);
+        elm_object_text_set(entry, file);
         printf("File chosen: %s\n", file);
      }
    else

@@ -71,7 +71,7 @@ _FILE_CHOSEN_fwd(void *data, Evas_Object *obj __UNUSED__, void *event_info)
 {
    Widget_Data *wd = elm_widget_data_get(data);
    const char *file = event_info;
-   elm_entry_entry_set(wd->entry, file);
+   elm_object_text_set(wd->entry, file);
    evas_object_smart_callback_call(data, SIG_FILE_CHOSEN, event_info);
 }
 
@@ -79,7 +79,7 @@ static void
 _ACTIVATED_fwd(void *data, Evas_Object *obj __UNUSED__, void *event_info)
 {
    Widget_Data *wd = elm_widget_data_get(data);
-   const char *file = elm_entry_entry_get(wd->entry);
+   const char *file = elm_object_text_get(wd->entry);
    elm_fileselector_button_path_set(wd->button, file);
    evas_object_smart_callback_call(data, SIG_ACTIVATED, event_info);
 }
@@ -385,7 +385,7 @@ elm_fileselector_entry_path_set(Evas_Object *obj, const char *path)
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return;
    elm_fileselector_button_path_set(wd->button, path);
-   elm_entry_entry_set(wd->entry, path);
+   elm_object_text_set(wd->entry, path);
 }
 
 EAPI const char *
@@ -394,7 +394,7 @@ elm_fileselector_entry_path_get(const Evas_Object *obj)
    ELM_CHECK_WIDTYPE(obj, widtype) NULL;
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return NULL;
-   return elm_entry_entry_get(wd->entry);
+   return elm_object_text_get(wd->entry);
 }
 
 EAPI void

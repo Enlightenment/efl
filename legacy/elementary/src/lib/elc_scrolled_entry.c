@@ -46,13 +46,13 @@ elm_scrolled_entry_password_get(const Evas_Object *obj)
 {return elm_entry_password_get(obj);}
 EINA_DEPRECATED EAPI void
 elm_scrolled_entry_entry_set(Evas_Object *obj, const char *entry)
-{elm_entry_entry_set(obj, entry);}
+{elm_object_text_set(obj, entry);}
 EINA_DEPRECATED EAPI void
 elm_scrolled_entry_entry_append(Evas_Object *obj, const char *entry)
 {elm_entry_entry_append(obj, entry);}
 EINA_DEPRECATED EAPI const char *
 elm_scrolled_entry_entry_get(const Evas_Object *obj)
-{return elm_entry_entry_get(obj);}
+{return elm_object_text_get(obj);}
 EINA_DEPRECATED EAPI Eina_Bool
 elm_scrolled_entry_is_empty(const Evas_Object *obj)
 {return elm_entry_is_empty(obj);}

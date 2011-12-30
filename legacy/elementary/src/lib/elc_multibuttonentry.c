@@ -777,7 +777,7 @@ _add_button_item(Evas_Object *obj, const char *str, Multibuttonentry_Pos pos, co
    str_utf8 = elm_entry_markup_to_utf8(str);
 
    //entry is cleared when text is made to button
-   elm_entry_entry_set(wd->entry, "");
+   elm_object_text_set(wd->entry, "");
 
    _elm_theme_object_set(obj, btn, "multibuttonentry", "btn", elm_widget_style_get(obj));
    edje_object_part_text_set(btn, "elm.btn.text", str_utf8);
@@ -984,7 +984,7 @@ _entry_key_up_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, vo
 
    if (!wd || !wd->base || !wd->box) return;
 
-   str = elm_entry_entry_get(wd->entry);
+   str = elm_object_text_get(wd->entry);
 
    if ((strcmp(str, "") != 0) && (strcmp(ev->keyname, "KP_Enter") == 0 || strcmp(ev->keyname, "Return") == 0 ))
      {
@@ -1027,7 +1027,7 @@ _entry_focus_out_cb(void *data, Evas_Object *obj __UNUSED__, void *event_info __
 
    if (!wd) return;
 
-   str = elm_entry_entry_get(wd->entry);
+   str = elm_object_text_get(wd->entry);
    if (strlen(str))
      _add_button(data, str);
 }
@@ -1040,7 +1040,7 @@ _entry_changed_cb(void *data, Evas_Object *obj __UNUSED__, void *event_info __UN
 
    if (!wd) return;
 
-   str = elm_entry_entry_get(wd->entry);
+   str = elm_object_text_get(wd->entry);
    wd->n_str = strlen(str);
 }
 
@@ -1089,7 +1089,7 @@ _view_init(Evas_Object *obj)
         wd->entry = elm_entry_add (obj);
         if (!wd->entry) return;
         elm_entry_single_line_set(wd->entry, EINA_TRUE);
-        elm_entry_entry_set(wd->entry, "");
+        elm_object_text_set(wd->entry, "");
         elm_entry_cursor_end_set(wd->entry);
         evas_object_size_hint_min_set(wd->entry, MIN_W_ENTRY, 0);
         evas_object_size_hint_weight_set(wd->entry, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);

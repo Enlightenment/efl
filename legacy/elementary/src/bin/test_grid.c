@@ -34,14 +34,14 @@ test_grid(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info _
 
    en = elm_entry_add(win);
    elm_entry_scrollable_set(en, EINA_TRUE);
-   elm_entry_entry_set(en, "Entry text");
+   elm_object_text_set(en, "Entry text");
    elm_entry_single_line_set(en, 1);
    elm_grid_pack(gd, en, 50, 10, 40, 10);
    evas_object_show(en);
 
    en = elm_entry_add(win);
    elm_entry_scrollable_set(en, EINA_TRUE);
-   elm_entry_entry_set(en, "Entry text 2");
+   elm_object_text_set(en, "Entry text 2");
    elm_entry_single_line_set(en, 1);
    elm_grid_pack(gd, en, 60, 20, 30, 10);
    evas_object_show(en);
