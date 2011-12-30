@@ -72,6 +72,7 @@ elm_conform.h \
 elm_cursor.h \
 elm_debug.h \
 elm_deprecated.h \
+elm_deprecated_before.h \
 elm_diskselector.h \
 elm_engine.h \
 elm_entry.h \
