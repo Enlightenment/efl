@@ -174,63 +174,62 @@
  */
 
 #ifndef ELM_INTERNAL_API_ARGESFSDFEFC
-# warning "You are using an internal elementary API. This API is not stable"
-# warning "and is subject to change. You use this at your own risk."
-# warning "Remember to call elm_widget_api_check(ELM_INTERNAL_API_VERSION);"
-# warning "in your widgets before you call any other elm_widget calls to do"
-# warning "a correct runtime version check. Also remember - you don't NEED"
-# warning "to make an Elementary widget is almost ALL cases. You can easily"
-# warning "make a smart object with Evas's API and do everything you need"
-# warning "there. You only need a widget if you want to seamlessly be part"
-# warning "of the focus tree and want to transparently become a container"
-# warning "for any number of child Elementary widgets"
-# error "ERROR. Compile aborted."
+#warning "You are using an internal elementary API. This API is not stable"
+#warning "and is subject to change. You use this at your own risk."
+#warning "Remember to call elm_widget_api_check(ELM_INTERNAL_API_VERSION);"
+#warning "in your widgets before you call any other elm_widget calls to do"
+#warning "a correct runtime version check. Also remember - you don't NEED"
+#warning "to make an Elementary widget is almost ALL cases. You can easily"
+#warning "make a smart object with Evas's API and do everything you need"
+#warning "there. You only need a widget if you want to seamlessly be part"
+#warning "of the focus tree and want to transparently become a container"
+#warning "for any number of child Elementary widgets"
+#error "ERROR. Compile aborted."
 #endif
 #define ELM_INTERNAL_API_VERSION 7000
 
-typedef struct _Elm_Tooltip Elm_Tooltip;
-typedef struct _Elm_Cursor Elm_Cursor;
+typedef struct _Elm_Tooltip     Elm_Tooltip;
+typedef struct _Elm_Cursor      Elm_Cursor;
 typedef struct _Elm_Widget_Item Elm_Widget_Item; /**< base structure for all widget items that are not Elm_Widget themselves */
 
 typedef struct _Elm_Access_Info Elm_Access_Info; /**< accessibility information to be able to set and get from the access API */
 typedef struct _Elm_Access_Item Elm_Access_Item; /**< accessibility info item */
 
-typedef void (*Elm_Widget_On_Text_Set_Cb)(void *data, const char *part, const char *text);
-typedef void (*Elm_Widget_On_Content_Set_Cb)(void *data, const char *part, Evas_Object *content);
-typedef const char *(*Elm_Widget_On_Text_Get_Cb)(const void *data, const char *part);
-typedef Evas_Object *(*Elm_Widget_On_Content_Get_Cb)(const void *data, const char *part);
-typedef Evas_Object *(*Elm_Widget_On_Content_Unset_Cb)(const void *data, const char *part);
-typedef void (*Elm_Widget_On_Signal_Emit_Cb)(void *data, const char *emission, const char *source);
-typedef void (*Elm_Widget_On_Disable_Set_Cb)(void *data);
+typedef void                  (*Elm_Widget_On_Text_Set_Cb)(void *data, const char *part, const char *text);
+typedef void                  (*Elm_Widget_On_Content_Set_Cb)(void *data, const char *part, Evas_Object *content);
+typedef const char           *(*Elm_Widget_On_Text_Get_Cb)(const void *data, const char *part);
+typedef Evas_Object          *(*Elm_Widget_On_Content_Get_Cb)(const void *data, const char *part);
+typedef Evas_Object          *(*Elm_Widget_On_Content_Unset_Cb)(const void *data, const char *part);
+typedef void                  (*Elm_Widget_On_Signal_Emit_Cb)(void *data, const char *emission, const char *source);
+typedef void                  (*Elm_Widget_On_Disable_Set_Cb)(void *data);
 
+#define ELM_ACCESS_TYPE    0    // when reading out widget or item this is read first
+#define ELM_ACCESS_INFO    1    // next read is info - this is normally label
+#define ELM_ACCESS_STATE   2    // if there is a state (eg checkbox) then read state out
+#define ELM_ACCESS_CONTENT 3    // read ful content - eg all of the label, not a shortened version
 
-#define ELM_ACCESS_TYPE     0 // when reading out widget or item this is read first
-#define ELM_ACCESS_INFO     1 // next read is info - this is normally label
-#define ELM_ACCESS_STATE    2 // if there is a state (eg checkbox) then read state out
-#define ELM_ACCESS_CONTENT  3 // read ful content - eg all of the label, not a shortened version
-
-#define ELM_ACCESS_DONE    -1 // sentence done - send done event here
-#define ELM_ACCESS_CANCEL  -2 // stop reading immediately
+#define ELM_ACCESS_DONE    -1   // sentence done - send done event here
+#define ELM_ACCESS_CANCEL  -2   // stop reading immediately
 
 typedef char *(*Elm_Access_Content_Cb)(void *data, Evas_Object *obj, Elm_Widget_Item *item);
 
 struct _Elm_Access_Item
 {
-   int type;
-   const void *data;
+   int                   type;
+   const void           *data;
    Elm_Access_Content_Cb func;
 };
 
 struct _Elm_Access_Info
 {
-   Eina_List *items;
+   Eina_List   *items;
    Ecore_Timer *delay_timer;
 };
 
 EAPI void             _elm_access_clear(Elm_Access_Info *ac);
 EAPI void             _elm_access_text_set(Elm_Access_Info *ac, int type, const char *text);
 EAPI void             _elm_access_callback_set(Elm_Access_Info *ac, int type, Elm_Access_Content_Cb func, const void *data);
-EAPI char            *_elm_access_text_get(Elm_Access_Info *ac, int type,  Evas_Object *obj, Elm_Widget_Item *item);
+EAPI char            *_elm_access_text_get(Elm_Access_Info *ac, int type, Evas_Object *obj, Elm_Widget_Item *item);
 EAPI void             _elm_access_read(Elm_Access_Info *ac, int type, Evas_Object *obj, Elm_Widget_Item *item);
 EAPI void             _elm_access_say(const char *txt);
 EAPI Elm_Access_Info *_elm_access_object_get(Evas_Object *obj);
@@ -242,7 +241,7 @@ EAPI void             _elm_access_object_register(Evas_Object *obj, Evas_Object 
 EAPI void             _elm_access_item_register(Elm_Widget_Item *item, Evas_Object *hoverobj);
 EAPI Eina_Bool        _elm_access_2nd_click_timeout(Evas_Object *obj);
 
-#define ELM_WIDGET_ITEM Elm_Widget_Item base /**< put this as the first member in your widget item struct */
+#define ELM_WIDGET_ITEM       Elm_Widget_Item base /**< put this as the first member in your widget item struct */
 struct _Elm_Widget_Item
 {
    /* ef1 ~~ efl, el3 ~~ elm */
@@ -250,22 +249,22 @@ struct _Elm_Widget_Item
    EINA_MAGIC;
 
 /* simple accessor macros */
-#define VIEW(X) X->base.view
+#define VIEW(X)   X->base.view
 #define WIDGET(X) X->base.widget
-   Evas_Object   *widget; /**< the owner widget that owns this item */
-   Evas_Object   *view; /**< the base view object */
-   const void    *data; /**< item specific data */
-   Evas_Smart_Cb  del_cb; /**< used to notify the item is being deleted */
-   Elm_Widget_On_Content_Set_Cb on_content_set_func;
-   Elm_Widget_On_Content_Get_Cb on_content_get_func;
+   Evas_Object                   *widget; /**< the owner widget that owns this item */
+   Evas_Object                   *view; /**< the base view object */
+   const void                    *data; /**< item specific data */
+   Evas_Smart_Cb                  del_cb; /**< used to notify the item is being deleted */
+   Elm_Widget_On_Content_Set_Cb   on_content_set_func;
+   Elm_Widget_On_Content_Get_Cb   on_content_get_func;
    Elm_Widget_On_Content_Unset_Cb on_content_unset_func;
-   Elm_Widget_On_Text_Set_Cb on_text_set_func;
-   Elm_Widget_On_Text_Get_Cb on_text_get_func;
-   Elm_Widget_On_Signal_Emit_Cb on_signal_emit_func;
-   Elm_Widget_On_Disable_Set_Cb disable_func;
-   Elm_Access_Info *access;
-   const char *access_info;
-   Eina_Bool disabled: 1;
+   Elm_Widget_On_Text_Set_Cb      on_text_set_func;
+   Elm_Widget_On_Text_Get_Cb      on_text_get_func;
+   Elm_Widget_On_Signal_Emit_Cb   on_signal_emit_func;
+   Elm_Widget_On_Disable_Set_Cb   disable_func;
+   Elm_Access_Info               *access;
+   const char                    *access_info;
+   Eina_Bool                      disabled : 1;
    /* widget variations should have data from here and on */
    /* @todo: TODO check if this is enough for 1.0 release, maybe add padding! */
 };
@@ -277,43 +276,43 @@ struct _Elm_Object_Item
 
 #define ELM_NEW(t) calloc(1, sizeof(t))
 
-#define ELM_OBJ_ITEM_CHECK_OR_RETURN(it, ...)                               \
-   ELM_WIDGET_ITEM_CHECK_OR_RETURN((Elm_Widget_Item *) (it), __VA_ARGS__);  \
-   ELM_CHECK_WIDTYPE(it->base.widget, widtype) __VA_ARGS__;
+#define ELM_OBJ_ITEM_CHECK_OR_RETURN(it, ...)                            \
+  ELM_WIDGET_ITEM_CHECK_OR_RETURN((Elm_Widget_Item *)(it), __VA_ARGS__); \
+  ELM_CHECK_WIDTYPE(it->base.widget, widtype) __VA_ARGS__;
 
 EAPI Eina_Bool        elm_widget_api_check(int ver);
 EAPI Evas_Object     *elm_widget_add(Evas *evas);
-EAPI void             elm_widget_del_hook_set(Evas_Object *obj, void (*func) (Evas_Object *obj));
-EAPI void             elm_widget_del_pre_hook_set(Evas_Object *obj, void (*func) (Evas_Object *obj));
-EAPI void             elm_widget_focus_hook_set(Evas_Object *obj, void (*func) (Evas_Object *obj));
-EAPI void             elm_widget_activate_hook_set(Evas_Object *obj, void (*func) (Evas_Object *obj));
-EAPI void             elm_widget_disable_hook_set(Evas_Object *obj, void (*func) (Evas_Object *obj));
-EAPI void             elm_widget_theme_hook_set(Evas_Object *obj, void (*func) (Evas_Object *obj));
-EAPI void             elm_widget_translate_hook_set(Evas_Object *obj, void (*func) (Evas_Object *obj));
-EAPI void             elm_widget_event_hook_set(Evas_Object *obj, Eina_Bool (*func) (Evas_Object *obj, Evas_Object *source, Evas_Callback_Type type, void *event_info));
-EAPI void             elm_widget_changed_hook_set(Evas_Object *obj, void (*func) (Evas_Object *obj));
-EAPI void             elm_widget_signal_emit_hook_set(Evas_Object *obj, void (*func) (Evas_Object *obj, const char *emission, const char *source));
-EAPI void             elm_widget_signal_callback_add_hook_set(Evas_Object *obj, void (*func) (Evas_Object *obj, const char *emission, const char *source, Edje_Signal_Cb func_cb, void *data));
-EAPI void             elm_widget_signal_callback_del_hook_set(Evas_Object *obj, void (*func) (Evas_Object *obj, const char *emission, const char *source, Edje_Signal_Cb func_cb, void *data));
+EAPI void             elm_widget_del_hook_set(Evas_Object *obj, void (*func)(Evas_Object *obj));
+EAPI void             elm_widget_del_pre_hook_set(Evas_Object *obj, void (*func)(Evas_Object *obj));
+EAPI void             elm_widget_focus_hook_set(Evas_Object *obj, void (*func)(Evas_Object *obj));
+EAPI void             elm_widget_activate_hook_set(Evas_Object *obj, void (*func)(Evas_Object *obj));
+EAPI void             elm_widget_disable_hook_set(Evas_Object *obj, void (*func)(Evas_Object *obj));
+EAPI void             elm_widget_theme_hook_set(Evas_Object *obj, void (*func)(Evas_Object *obj));
+EAPI void             elm_widget_translate_hook_set(Evas_Object *obj, void (*func)(Evas_Object *obj));
+EAPI void             elm_widget_event_hook_set(Evas_Object *obj, Eina_Bool (*func)(Evas_Object *obj, Evas_Object *source, Evas_Callback_Type type, void *event_info));
+EAPI void             elm_widget_changed_hook_set(Evas_Object *obj, void (*func)(Evas_Object *obj));
+EAPI void             elm_widget_signal_emit_hook_set(Evas_Object *obj, void (*func)(Evas_Object *obj, const char *emission, const char *source));
+EAPI void             elm_widget_signal_callback_add_hook_set(Evas_Object *obj, void (*func)(Evas_Object *obj, const char *emission, const char *source, Edje_Signal_Cb func_cb, void *data));
+EAPI void             elm_widget_signal_callback_del_hook_set(Evas_Object *obj, void (*func)(Evas_Object *obj, const char *emission, const char *source, Edje_Signal_Cb func_cb, void *data));
 EAPI void             elm_widget_theme(Evas_Object *obj);
 EAPI void             elm_widget_theme_specific(Evas_Object *obj, Elm_Theme *th, Eina_Bool force);
 EAPI void             elm_widget_translate(Evas_Object *obj);
-EAPI void             elm_widget_focus_next_hook_set(Evas_Object *obj, Eina_Bool (*func) (const Evas_Object *obj, Elm_Focus_Direction dir, Evas_Object **next));
-EAPI void             elm_widget_on_focus_hook_set(Evas_Object *obj, void (*func) (void *data, Evas_Object *obj), void *data);
-EAPI void             elm_widget_on_change_hook_set(Evas_Object *obj, void (*func) (void *data, Evas_Object *obj), void *data);
-EAPI void             elm_widget_on_show_region_hook_set(Evas_Object *obj, void (*func) (void *data, Evas_Object *obj), void *data);
-EAPI void             elm_widget_focus_region_hook_set(Evas_Object *obj, void (*func) (Evas_Object *obj, Evas_Coord x, Evas_Coord y, Evas_Coord w, Evas_Coord h));
+EAPI void             elm_widget_focus_next_hook_set(Evas_Object *obj, Eina_Bool (*func)(const Evas_Object *obj, Elm_Focus_Direction dir, Evas_Object **next));
+EAPI void             elm_widget_on_focus_hook_set(Evas_Object *obj, void (*func)(void *data, Evas_Object *obj), void *data);
+EAPI void             elm_widget_on_change_hook_set(Evas_Object *obj, void (*func)(void *data, Evas_Object *obj), void *data);
+EAPI void             elm_widget_on_show_region_hook_set(Evas_Object *obj, void (*func)(void *data, Evas_Object *obj), void *data);
+EAPI void             elm_widget_focus_region_hook_set(Evas_Object *obj, void (*func)(Evas_Object *obj, Evas_Coord x, Evas_Coord y, Evas_Coord w, Evas_Coord h));
 EAPI void             elm_widget_text_set_hook_set(Evas_Object *obj, Elm_Widget_On_Text_Set_Cb func);
-#define elm_widget_text_set_hook_set(obj, func) elm_widget_text_set_hook_set(obj, (Elm_Widget_On_Text_Set_Cb)(func))
+#define elm_widget_text_set_hook_set(obj, func)      elm_widget_text_set_hook_set(obj, (Elm_Widget_On_Text_Set_Cb)(func))
 EAPI void             elm_widget_text_get_hook_set(Evas_Object *obj, Elm_Widget_On_Text_Get_Cb func);
-#define elm_widget_text_get_hook_set(obj, func) elm_widget_text_get_hook_set(obj, (Elm_Widget_On_Text_Get_Cb)(func))
+#define elm_widget_text_get_hook_set(obj, func)      elm_widget_text_get_hook_set(obj, (Elm_Widget_On_Text_Get_Cb)(func))
 EAPI void             elm_widget_content_set_hook_set(Evas_Object *obj, Elm_Widget_On_Content_Set_Cb func);
-#define elm_widget_content_set_hook_set(obj, func) elm_widget_content_set_hook_set(obj, (Elm_Widget_On_Content_Set_Cb)(func))
+#define elm_widget_content_set_hook_set(obj, func)   elm_widget_content_set_hook_set(obj, (Elm_Widget_On_Content_Set_Cb)(func))
 EAPI void             elm_widget_content_get_hook_set(Evas_Object *obj, Elm_Widget_On_Content_Get_Cb func);
-#define elm_widget_content_get_hook_set(obj, func) elm_widget_content_get_hook_set(obj, (Elm_Widget_On_Content_Get_Cb)(func))
+#define elm_widget_content_get_hook_set(obj, func)   elm_widget_content_get_hook_set(obj, (Elm_Widget_On_Content_Get_Cb)(func))
 EAPI void             elm_widget_content_unset_hook_set(Evas_Object *obj, Elm_Widget_On_Content_Unset_Cb func);
 #define elm_widget_content_unset_hook_set(obj, func) elm_widget_content_unset_hook_set(obj, (Elm_Widget_On_Content_Unset_Cb)(func))
-EAPI void             elm_widget_on_focus_region_hook_set(Evas_Object *obj, void (*func) (const Evas_Object *obj, Evas_Coord *x, Evas_Coord *y, Evas_Coord *w, Evas_Coord *h));
+EAPI void             elm_widget_on_focus_region_hook_set(Evas_Object *obj, void (*func)(const Evas_Object *obj, Evas_Coord *x, Evas_Coord *y, Evas_Coord *w, Evas_Coord *h));
 EAPI void             elm_widget_data_set(Evas_Object *obj, void *data);
 EAPI void            *elm_widget_data_get(const Evas_Object *obj);
 EAPI void             elm_widget_sub_object_add(Evas_Object *obj, Evas_Object *sobj);
@@ -349,7 +348,7 @@ EAPI void             elm_widget_focus_custom_chain_prepend(Evas_Object *obj, Ev
 EAPI void             elm_widget_focus_cycle(Evas_Object *obj, Elm_Focus_Direction dir);
 EAPI void             elm_widget_focus_direction_go(Evas_Object *obj, int x, int y);
 EAPI Eina_Bool        elm_widget_focus_next_get(const Evas_Object *obj, Elm_Focus_Direction dir, Evas_Object **next);
-EAPI Eina_Bool        elm_widget_focus_list_next_get(const Evas_Object *obj, const Eina_List *items, void *(*list_data_get) (const Eina_List *list), Elm_Focus_Direction dir, Evas_Object **next);
+EAPI Eina_Bool        elm_widget_focus_list_next_get(const Evas_Object *obj, const Eina_List *items, void *(*list_data_get)(const Eina_List *list), Elm_Focus_Direction dir, Evas_Object **next);
 EAPI void             elm_widget_focus_set(Evas_Object *obj, int first);
 EAPI void             elm_widget_focused_object_clear(Evas_Object *obj);
 EAPI Evas_Object     *elm_widget_parent_get(const Evas_Object *obj);
@@ -387,7 +386,9 @@ EAPI void             elm_widget_scroll_freeze_pop(Evas_Object *obj);
 EAPI int              elm_widget_scroll_freeze_get(const Evas_Object *obj);
 EAPI void             elm_widget_scale_set(Evas_Object *obj, double scale);
 EAPI double           elm_widget_scale_get(const Evas_Object *obj);
-EAPI Eina_Bool        elm_widget_mirrored_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
+EAPI Eina_Bool
+                      elm_widget_mirrored_get(const Evas_Object *obj)
+EINA_ARG_NONNULL(1);
 EAPI void             elm_widget_mirrored_set(Evas_Object *obj, Eina_Bool mirrored) EINA_ARG_NONNULL(1);
 EAPI Eina_Bool        elm_widget_mirrored_automatic_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
 EAPI void             elm_widget_mirrored_automatic_set(Evas_Object *obj, Eina_Bool automatic) EINA_ARG_NONNULL(1);
@@ -528,7 +529,7 @@ EAPI void             elm_widget_tree_dot_dump(const Evas_Object *top, FILE *out
  * @see _elm_widget_item_tooltip_content_cb_set()
  */
 #define elm_widget_item_tooltip_content_cb_set(item, func, data, del_cb) \
-  _elm_widget_item_tooltip_content_cb_set((Elm_Widget_Item *)item, \
+  _elm_widget_item_tooltip_content_cb_set((Elm_Widget_Item *)item,       \
                                           func, data, del_cb)
 /**
  * Convenience function to unset widget item tooltip.
@@ -639,68 +640,68 @@ EAPI void             elm_widget_tree_dot_dump(const Evas_Object *top, FILE *out
 #define elm_widget_item_disabled_get(item) \
   _elm_widget_item_disabled_get((Elm_Widget_Item *)item)
 
-EAPI Eina_Bool        _elm_widget_item_disabled_get(const Elm_Widget_Item *item);
+EAPI Eina_Bool _elm_widget_item_disabled_get(const Elm_Widget_Item *item);
 
 /**
  * Convenience function to query disable set hook.
  * @see _elm_widget_item_disable_set_hook_set()
  */
 #define elm_widget_item_disable_set_hook_set(item, func) \
-  _elm_widget_item_disable_set_hook_set((Elm_Widget_Item *) item, (Elm_Widget_On_Disable_Set_Cb)func)
+  _elm_widget_item_disable_set_hook_set((Elm_Widget_Item *)item, (Elm_Widget_On_Disable_Set_Cb)func)
 
-#define ELM_WIDGET_ITEM_CHECK_OR_RETURN(item, ...) \
-   do { \
-      if (!item) { \
-         CRITICAL("Elm_Widget_Item " # item " is NULL!"); \
-         return __VA_ARGS__; \
-      } \
-      if (!EINA_MAGIC_CHECK(item, ELM_WIDGET_ITEM_MAGIC)) { \
-         EINA_MAGIC_FAIL(item, ELM_WIDGET_ITEM_MAGIC); \
-         return __VA_ARGS__; \
-      } \
-   } while (0)
+#define ELM_WIDGET_ITEM_CHECK_OR_RETURN(item, ...)           \
+  do {                                                       \
+       if (!item) {                                          \
+            CRITICAL("Elm_Widget_Item " # item " is NULL!"); \
+            return __VA_ARGS__;                              \
+         }                                                   \
+       if (!EINA_MAGIC_CHECK(item, ELM_WIDGET_ITEM_MAGIC)) { \
+            EINA_MAGIC_FAIL(item, ELM_WIDGET_ITEM_MAGIC);    \
+            return __VA_ARGS__;                              \
+         }                                                   \
+    } while (0)
 
-#define ELM_WIDGET_ITEM_CHECK_OR_GOTO(item, label) \
-   do { \
-      if (!item) { \
-         CRITICAL("Elm_Widget_Item " # item " is NULL!"); \
-         goto label; \
-      } \
-      if (!EINA_MAGIC_CHECK(item, ELM_WIDGET_ITEM_MAGIC)) { \
-         EINA_MAGIC_FAIL(item, ELM_WIDGET_ITEM_MAGIC); \
-         goto label; \
-      } \
-   } while (0)
+#define ELM_WIDGET_ITEM_CHECK_OR_GOTO(item, label)           \
+  do {                                                       \
+       if (!item) {                                          \
+            CRITICAL("Elm_Widget_Item " # item " is NULL!"); \
+            goto label;                                      \
+         }                                                   \
+       if (!EINA_MAGIC_CHECK(item, ELM_WIDGET_ITEM_MAGIC)) { \
+            EINA_MAGIC_FAIL(item, ELM_WIDGET_ITEM_MAGIC);    \
+            goto label;                                      \
+         }                                                   \
+    } while (0)
 
-#define ELM_SET_WIDTYPE(widtype, type) \
-   do { \
-      if (!widtype) { \
-         widtype = eina_stringshare_add(type); \
-         elm_widget_type_register(&widtype); \
-      } \
-   } while (0)
+#define ELM_SET_WIDTYPE(widtype, type)            \
+  do {                                            \
+       if (!widtype) {                            \
+            widtype = eina_stringshare_add(type); \
+            elm_widget_type_register(&widtype);   \
+         }                                        \
+    } while (0)
 
 #define ELM_CHECK_WID_IS(obj) \
-   if (!elm_widget_is_check(obj)) return
+  if (!elm_widget_is_check(obj)) return
 
 #define ELM_CHECK_WIDTYPE(obj, widtype) \
-   if (!obj || !elm_widget_type_check((obj), (widtype), __func__)) return
+  if (!obj || !elm_widget_type_check((obj), (widtype), __func__)) return
 
-#define ELM_WIDGET_ITEM_WIDTYPE_CHECK_OR_RETURN(it, ...)                \
-   ELM_WIDGET_ITEM_CHECK_OR_RETURN((Elm_Widget_Item *)it, __VA_ARGS__); \
-   ELM_CHECK_WIDTYPE(it->base.widget, widtype) __VA_ARGS__;
+#define ELM_WIDGET_ITEM_WIDTYPE_CHECK_OR_RETURN(it, ...)               \
+  ELM_WIDGET_ITEM_CHECK_OR_RETURN((Elm_Widget_Item *)it, __VA_ARGS__); \
+  ELM_CHECK_WIDTYPE(it->base.widget, widtype) __VA_ARGS__;
 
-#define ELM_WIDGET_ITEM_WIDTYPE_CHECK_OR_GOTO(it, label)                \
-   ELM_WIDGET_ITEM_CHECK_OR_GOTO((Elm_Widget_Item *)it, label);         \
-   if (!elm_widget_type_check((it->base.widget), (widtype), __func__)) goto label;
+#define ELM_WIDGET_ITEM_WIDTYPE_CHECK_OR_GOTO(it, label)       \
+  ELM_WIDGET_ITEM_CHECK_OR_GOTO((Elm_Widget_Item *)it, label); \
+  if (!elm_widget_type_check((it->base.widget), (widtype), __func__)) goto label;
 
-#define ELM_WIDGET_STANDARD_SETUP(wdat, wdtype, par, evas, ob, ret) \
-   do { \
-      EINA_SAFETY_ON_NULL_RETURN_VAL((par), (ret)); \
-      evas = evas_object_evas_get(par); if (!(evas)) return (ret); \
-      wdat = ELM_NEW(wdtype); if (!(wdat)) return (ret); \
-      ob = elm_widget_add(evas); if (!(ob)) { free(wdat); return (ret); } \
-   } while (0)
+#define ELM_WIDGET_STANDARD_SETUP(wdat, wdtype, par, evas, ob, ret)        \
+  do {                                                                     \
+       EINA_SAFETY_ON_NULL_RETURN_VAL((par), (ret));                       \
+       evas = evas_object_evas_get(par); if (!(evas)) return (ret);        \
+       wdat = ELM_NEW(wdtype); if (!(wdat)) return (ret);                  \
+       ob = elm_widget_add(evas); if (!(ob)) { free(wdat); return (ret); } \
+    } while (0)
 
 /**
  * The drag and drop API.
@@ -712,9 +713,9 @@ EAPI Eina_Bool        _elm_widget_item_disabled_get(const Elm_Widget_Item *item)
  * And yes, elm_widget, should probably be elm_experimental...
  * Complaints about this code should go to /dev/null, or failing that nash.
  */
-Eina_Bool            elm_selection_selection_has_owner(void);
-Eina_Bool            elm_drop_target_add(Evas_Object *widget, Elm_Sel_Type, Elm_Drop_Cb, void *);
-Eina_Bool            elm_drop_target_del(Evas_Object *widget);
-Eina_Bool            elm_drag_start(Evas_Object *, Elm_Sel_Format, const char *, void (*)(void *,Evas_Object*),void*);
+Eina_Bool elm_selection_selection_has_owner(void);
+Eina_Bool elm_drop_target_add(Evas_Object *widget, Elm_Sel_Type, Elm_Drop_Cb, void *);
+Eina_Bool elm_drop_target_del(Evas_Object *widget);
+Eina_Bool elm_drag_start(Evas_Object *, Elm_Sel_Format, const char *, void (*)(void *, Evas_Object *), void *);
 
 #endif

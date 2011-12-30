@@ -85,4 +85,3 @@
 #define ELM_CURSOR_XTERM               "xterm"
 
 #endif // ifndef _ELM_CURSOR_H
-

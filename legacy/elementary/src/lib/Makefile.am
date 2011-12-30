@@ -56,6 +56,7 @@ elc_multibuttonentry.h \
 elc_naviframe.h \
 elm_actionslider.h \
 elm_app.h \
+elm_authors.h \
 elm_bg.h \
 elm_box.h \
 elm_bubble.h \
@@ -85,12 +86,14 @@ elm_general.h \
 elm_gengrid.h \
 elm_genlist.h \
 elm_gesture_layer.h \
+elm_getting_started.h \
 elm_glview.h \
 elm_grid.h \
 elm_hover.h \
 elm_icon.h \
 elm_image.h \
 elm_index.h \
+elm_intro.h \
 elm_label.h \
 elm_layout.h \
 elm_list.h \

@@ -2600,7 +2600,7 @@
  * @skipline elm_toolbar_add
  * @until Update
  *
- * The only difference here is that we set shrink mode to #ELM_SHRINK_MODE_HIDE,
+ * The only difference here is that we set shrink mode to #ELM_TOOLBAR_SHRINK_HIDE,
  * that won't display items that doesn't fit to the window.
  *
  * Now, let's add an item with states. First, add the item just as any other.
