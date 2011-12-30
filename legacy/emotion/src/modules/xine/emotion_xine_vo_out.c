@@ -14,6 +14,7 @@
 #include <Evas.h>
 #include <Ecore.h>
 
+#include "Emotion.h"
 #include "emotion_private.h"
 #include "emotion_xine.h"
 
