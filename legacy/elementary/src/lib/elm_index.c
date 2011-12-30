@@ -799,15 +799,13 @@ elm_index_item_go(Evas_Object *obj, int level __UNUSED__)
 EAPI void *
 elm_index_item_data_get(const Elm_Object_Item *it)
 {
-   ELM_OBJ_ITEM_CHECK_OR_RETURN(it, NULL);
-   return elm_widget_item_data_get(it);
+   return elm_object_item_data_get(it);
 }
 
 EAPI void
 elm_index_item_data_set(Elm_Object_Item *it, const void *data)
 {
-   ELM_OBJ_ITEM_CHECK_OR_RETURN(it);
-   elm_widget_item_data_set(it, data);
+   elm_object_item_data_set(it, (void *) data);
 }
 
 EAPI void

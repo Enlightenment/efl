@@ -23391,10 +23391,11 @@ extern "C" {
     * @return The data associated with @p it
     *
     * @see elm_index_item_data_set()
+    * @deprecated Use elm_object_item_data_get() instead
     *
     * @ingroup Index
     */
-   EAPI void           *elm_index_item_data_get(const Elm_Object_Item *it) EINA_ARG_NONNULL(1);
+   EINA_DEPRECATED EAPI void           *elm_index_item_data_get(const Elm_Object_Item *it) EINA_ARG_NONNULL(1);
 
    /**
     * Set the data associated with a given index widget item
@@ -23407,9 +23408,10 @@ extern "C" {
     * @warning The old data pointer won't be touched by this function, so
     * the user had better to free that old data himself/herself.
     *
+    * @deprecated Use elm_object_item_data_set() instead
     * @ingroup Index
     */
-   EAPI void            elm_index_item_data_set(Elm_Object_Item *it, const void *data) EINA_ARG_NONNULL(1);
+   EINA_DEPRECATED EAPI void            elm_index_item_data_set(Elm_Object_Item *it, const void *data) EINA_ARG_NONNULL(1);
 
    /**
     * Set the function to be called when a given index widget item is freed.
