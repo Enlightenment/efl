@@ -426,6 +426,16 @@ EAPI Eio_File *eio_dir_unlink(const char *path,
 			      Eio_Error_Cb error_cb,
 			      const void *data);
 
+/**
+ * @brief Assynchronously list all eXtended attribute
+ * @param path The path to get the eXtended attribute from.
+ * @param filter_cb Callback called in the thread to validate the eXtended attribute.
+ * @param main_cb Callback called in the main loop for each accepted eXtended attribute.
+ * @param done_cb Callback called in the main loop when the all the eXtended attribute have been listed.
+ * @param error_cb Callback called in the main loop when something goes wrong during the listing of the eXtended attribute.
+ * @param data Data passed to callback and not modified at all by eio_file_ls.
+ * @return A reference to the IO operation.
+ */
 EAPI Eio_File *eio_file_xattr(const char *path,
 			      Eio_Filter_Cb filter_cb,
 			      Eio_Main_Cb main_cb,
