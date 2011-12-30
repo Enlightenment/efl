@@ -69,6 +69,8 @@ struct _Emotion_Lut
    uint8_t foo   : 8;
 } __attribute__ ((packed));
 
+typedef void (*done_func_type)(void *data);
+
 /***************************************************************************/
 static void        *_emotion_class_init            (xine_t *xine, void *visual);
 static void         _emotion_class_dispose         (video_driver_class_t *driver_class);
@@ -442,10 +444,10 @@ _emotion_frame_display(vo_driver_t *vo_driver, vo_frame_t *vo_frame)
 	
 	buf = &(fr->frame);
 	fr->frame.timestamp = (double)fr->vo_frame.vpts / 90000.0;
-	fr->frame.done_func = _emotion_frame_data_unlock;
+	fr->frame.done_func = (done_func_type)_emotion_frame_data_unlock;
 	fr->frame.done_data = fr;
 //	DBG("FRAME FOR %p", dv->ev);
-	write(dv->ev->fd_write, &buf, sizeof(void *));
+	if (write(dv->ev->fd_write, &buf, sizeof(void *)) < 0) perror("write");
 //	DBG("-- FRAME DEC %p == %i", fr->frame.obj, ret);
 	fr->in_use = 1;
 	dv->ev->fq++;

@@ -366,7 +366,7 @@ _em_slave_event(void *data, int type, void *arg)
    new_ev->xine_event = arg;
    buf[0] = data;
    buf[1] = new_ev;
-   write(ev->fd_slave_write, buf, sizeof(buf));
+   if (write(ev->fd_slave_write, buf, sizeof(buf)) < 0) perror("write");
 }
 
 static unsigned char
@@ -1189,6 +1189,7 @@ _em_fd_active(void *data, Ecore_Fd_Handler *fdh)
 	  }
      }
    return EINA_TRUE;
+   data = NULL;
 }
 
 static void
@@ -1215,7 +1216,7 @@ _em_event(void *data, const xine_event_t *event)
      }
    buf[0] = data;
    buf[1] = new_ev;
-   write(ev->fd_ev_write, buf, sizeof(buf));
+   if (write(ev->fd_ev_write, buf, sizeof(buf)) < 0) perror("write");
 }
 
 static void
@@ -1232,7 +1233,7 @@ _em_module_event(void *data, int type)
    new_ev->type = -1;
    buf[0] = data;
    buf[1] = new_ev;
-   write(ev->fd_ev_write, buf, sizeof(buf));
+   if (write(ev->fd_ev_write, buf, sizeof(buf)) < 0) perror("write");
 }
 
 static Eina_Bool
