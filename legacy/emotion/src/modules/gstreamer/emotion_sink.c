@@ -1,3 +1,21 @@
+#ifdef HAVE_CONFIG_H
+# include "config.h"
+#endif
+
+#include <Eina.h>
+#include <Evas.h>
+#include <Ecore.h>
+
+#define HTTP_STREAM 0
+#define RTSP_STREAM 1
+#include <glib.h>
+#include <gst/gst.h>
+#include <glib-object.h>
+#include <gst/video/gstvideosink.h>
+#include <gst/video/video.h>
+
+#include "Emotion.h"
+#include "emotion_private.h"
 #include "emotion_gstreamer.h"
 
 static GstStaticPadTemplate sinktemplate = GST_STATIC_PAD_TEMPLATE("sink",
@@ -831,9 +849,9 @@ static void
 _video_resize(void *data, Evas_Object *obj __UNUSED__, const Evas_Video_Surface *surface __UNUSED__,
               Evas_Coord w, Evas_Coord h)
 {
+#ifdef HAVE_ECORE_X
    Emotion_Gstreamer_Video *ev = data;
 
-#ifdef HAVE_ECORE_X
    ecore_x_window_resize(ev->win, w, h);
 #endif
    fprintf(stderr, "resize: %i, %i\n", w, h);
@@ -843,8 +861,8 @@ static void
 _video_move(void *data, Evas_Object *obj __UNUSED__, const Evas_Video_Surface *surface __UNUSED__,
             Evas_Coord x, Evas_Coord y)
 {
-   Emotion_Gstreamer_Video *ev = data;
 #ifdef HAVE_ECORE_X
+   Emotion_Gstreamer_Video *ev = data;
    unsigned int pos[2];
 
    fprintf(stderr, "move: %i, %i\n", x, y);
@@ -890,10 +908,10 @@ _block_pad_link_cb(GstPad *pad, gboolean blocked, gpointer user_data)
 static void
 _video_show(void *data, Evas_Object *obj __UNUSED__, const Evas_Video_Surface *surface __UNUSED__)
 {
+#ifdef HAVE_ECORE_X
    Emotion_Gstreamer_Video *ev = data;
 
    fprintf(stderr, "show xv\n");
-#ifdef HAVE_ECORE_X
    ecore_x_window_show(ev->win);
 #endif
    /* gst_pad_set_blocked_async(ev->teepad, TRUE, _block_pad_link_cb, ev); */
@@ -902,10 +920,10 @@ _video_show(void *data, Evas_Object *obj __UNUSED__, const Evas_Video_Surface *s
 static void
 _video_hide(void *data, Evas_Object *obj __UNUSED__, const Evas_Video_Surface *surface __UNUSED__)
 {
+#ifdef HAVE_ECORE_X
    Emotion_Gstreamer_Video *ev = data;
 
    fprintf(stderr, "hide xv\n");
-#ifdef HAVE_ECORE_X
    ecore_x_window_hide(ev->win);
 #endif
    /* gst_pad_set_blocked_async(ev->teepad, TRUE, _block_pad_unlink_cb, ev); */

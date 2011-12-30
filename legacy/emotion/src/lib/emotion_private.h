@@ -1,18 +1,6 @@
 #ifndef EMOTION_PRIVATE_H
 #define EMOTION_PRIVATE_H
 
-#ifdef HAVE_CONFIG_H
-# include "config.h"
-#endif
-
-#include <stdlib.h>
-#include <stdio.h>
-#include <string.h>
-
-#include <Evas.h>
-#include <Ecore.h>
-#include <Emotion.h>
-
 #define META_TRACK_TITLE 1
 #define META_TRACK_ARTIST 2
 #define META_TRACK_GENRE 3

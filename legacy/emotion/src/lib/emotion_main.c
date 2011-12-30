@@ -1,10 +1,13 @@
-#include "emotion_private.h"
-#include "Emotion.h"
+#ifdef HAVE_CONFIG_H
+# include "config.h"
+#endif
+
+#include <stdio.h>
 
 #ifdef EMOTION_HAVE_EEZE
-#include <sys/types.h>
-#include <sys/stat.h>
-#include <fcntl.h>
+# include <sys/types.h>
+# include <sys/stat.h>
+# include <fcntl.h>
 # include <sys/ioctl.h>
 # ifdef HAVE_V4L2
 #  include <linux/videodev2.h>
@@ -15,6 +18,9 @@
 #endif
 
 #include <Eet.h>
+
+#include "Emotion.h"
+#include "emotion_private.h"
 
 EAPI int EMOTION_WEBCAM_UPDATE = 0;
 

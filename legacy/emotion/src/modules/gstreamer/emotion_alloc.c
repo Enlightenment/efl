@@ -1,10 +1,17 @@
+#ifdef HAVE_CONFIG_H
+# include "config.h"
+#endif
+
+#include <Eina.h>
+#include <Evas.h>
+#include <Ecore.h>
+
 #include <glib.h>
 #include <gst/gst.h>
 #include <gst/video/video.h>
 #include <gst/video/gstvideosink.h>
 
-#include <Ecore.h>
-
+#include "Emotion.h"
 #include "emotion_gstreamer.h"
 
 Emotion_Gstreamer_Buffer *

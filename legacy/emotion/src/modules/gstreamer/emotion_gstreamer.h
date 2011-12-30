@@ -1,31 +1,6 @@
 #ifndef __EMOTION_GSTREAMER_H__
 #define __EMOTION_GSTREAMER_H__
 
-#ifdef HAVE_CONFIG_H
-# include "config.h"
-#endif
-
-#include <Evas.h>
-#include <Ecore.h>
-
-#ifdef HAVE_ECORE_X
-# include <Ecore_X.h>
-# include <Ecore_Evas.h>
-# ifdef HAVE_XOVERLAY_H
-#  include <gst/interfaces/xoverlay.h>
-# endif
-#endif
-
-#define HTTP_STREAM 0
-#define RTSP_STREAM 1
-#include <glib.h>
-#include <gst/gst.h>
-#include <glib-object.h>
-#include <gst/video/gstvideosink.h>
-#include <gst/video/video.h>
-
-#include "emotion_private.h"
-
 typedef void (*Evas_Video_Convert_Cb)(unsigned char *evas_data,
                                       const unsigned char *gst_data,
                                       unsigned int w,

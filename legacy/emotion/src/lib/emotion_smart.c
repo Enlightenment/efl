@@ -1,9 +1,22 @@
-#include "emotion_private.h"
-#include "Emotion.h"
+#ifdef HAVE_CONFIG_H
+# include "config.h"
+#endif
+
+#include <Evas.h>
+#include <Ecore.h>
 
 #ifdef HAVE_EIO
 # include <math.h>
 # include <Eio.h>
+#endif
+
+#include "Emotion.h"
+#include "emotion_private.h"
+
+#ifdef _WIN32
+# define FMT_UCHAR "%c"
+#else
+# define FMT_UCHAR "%hhu"
 #endif
 
 #define E_SMART_OBJ_GET(smart, o, type) \
@@ -515,7 +528,7 @@ _emotion_object_aspect_border_apply(Evas_Object *obj, Smart_Data *sd, int w, int
    double ir;
    double r;
 
-   int aspect_opt;
+   int aspect_opt = 0;
 
    iw = sd->video.w;
    ih = sd->video.h;
@@ -681,7 +694,7 @@ emotion_object_play_set(Evas_Object *obj, Eina_Bool play)
    Smart_Data *sd;
 
    E_SMART_OBJ_GET(sd, obj, E_OBJ_NAME);
-   DBG("play=%hhu, was=%hhu", play, sd->play);
+   DBG("play=" FMT_UCHAR ", was=" FMT_UCHAR, play, sd->play);
    if (play == sd->play) return;
    if (!sd->module) return;
    if (!sd->video_data) return;
@@ -872,7 +885,7 @@ emotion_object_audio_mute_set(Evas_Object *obj, Eina_Bool mute)
    Smart_Data *sd;
 
    E_SMART_OBJ_GET(sd, obj, E_OBJ_NAME);
-   DBG("mute=%hhu", mute);
+   DBG("mute=" FMT_UCHAR, mute);
    if (!sd->module) return;
    if (!sd->video_data) return;
    sd->module->audio_channel_mute_set(sd->video_data, mute);
@@ -940,7 +953,7 @@ emotion_object_video_mute_set(Evas_Object *obj, Eina_Bool mute)
    Smart_Data *sd;
 
    E_SMART_OBJ_GET(sd, obj, E_OBJ_NAME);
-   DBG("mute=%hhu", mute);
+   DBG("mute=" FMT_UCHAR, mute);
    if (!sd->module) return;
    if (!sd->video_data) return;
    sd->module->video_channel_mute_set(sd->video_data, mute);
@@ -1008,7 +1021,7 @@ emotion_object_spu_mute_set(Evas_Object *obj, Eina_Bool mute)
    Smart_Data *sd;
 
    E_SMART_OBJ_GET(sd, obj, E_OBJ_NAME);
-   DBG("mute=%hhu", mute);
+   DBG("mute=" FMT_UCHAR, mute);
    if (!sd->module) return;
    if (!sd->video_data) return;
    sd->module->spu_channel_mute_set(sd->video_data, mute);

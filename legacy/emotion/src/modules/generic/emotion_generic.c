@@ -1,14 +1,18 @@
 #ifdef HAVE_CONFIG_H
 # include "config.h"
 #endif
+
 #include <sys/mman.h>
 #include <sys/stat.h>
 #include <sys/time.h>
 #include <sys/types.h>
 #include <fcntl.h>
 #include <unistd.h>
+#include <errno.h>
+
 #include <Eina.h>
 #include <Evas.h>
+#include <Ecore.h>
 
 #include "Emotion.h"
 #include "emotion_private.h"
@@ -161,7 +165,7 @@ _create_shm_data(Emotion_Generic_Video *ev, const char *shmname)
    vs = mmap(NULL, size, PROT_READ|PROT_WRITE, MAP_SHARED, shmfd, 0);
    if (vs == MAP_FAILED)
      {
-	ERR("error when mapping shared memory.\n");
+	ERR("error when mapping shared memory");
 	return EINA_FALSE;
      }
 
@@ -174,7 +178,17 @@ _create_shm_data(Emotion_Generic_Video *ev, const char *shmname)
    vs->frame.last = 2;
    vs->frame.next = 2;
    vs->frame_drop = 0;
+#ifdef _WIN32
+   /* FIXME: maximum count for the semaphore: 10. Is it sufficient ? */
+   vs->lock = CreateSemaphore(NULL, 1, 10, NULL);
+   if (!vs->lock)
+     {
+	ERR("can not create semaphore");
+	return EINA_FALSE;
+     }
+#else
    sem_init(&vs->lock, 1, 1);
+#endif
    ev->frame.frames[0] = (unsigned char *)vs + sizeof(*vs);
    ev->frame.frames[1] = (unsigned char *)vs + sizeof(*vs) + vs->height * vs->width * vs->pitch;
    ev->frame.frames[2] = (unsigned char *)vs + sizeof(*vs) + 2 * vs->height * vs->width * vs->pitch;
@@ -469,7 +483,11 @@ static void
 _player_file_closed(Emotion_Generic_Video *ev)
 {
    INF("Closed previous file.");
+#ifdef _WIN32
+   CloseHandle(ev->shared->lock);
+#else
    sem_destroy(&ev->shared->lock);
+#endif
 
    ev->closing = EINA_FALSE;
 
@@ -899,8 +917,8 @@ _player_exec(Emotion_Generic_Video *ev)
       ECORE_EXE_PIPE_READ_LINE_BUFFERED | ECORE_EXE_NOT_LEADER,
       ev);
 
-   INF("created pipe emotion -> player: %d -> %d\n", pipe_out[1], pipe_out[0]);
-   INF("created pipe player -> emotion: %d -> %d\n", pipe_in[1], pipe_in[0]);
+   INF("created pipe emotion -> player: %d -> %d", pipe_out[1], pipe_out[0]);
+   INF("created pipe player -> emotion: %d -> %d", pipe_in[1], pipe_in[0]);
 
    close(pipe_in[1]);
    close(pipe_out[0]);
@@ -1239,12 +1257,21 @@ static int
 em_bgra_data_get(void *data, unsigned char **bgra_data)
 {
    Emotion_Generic_Video *ev = data;
+#ifdef _WIN32
+   DWORD res;
+#endif
 
    if (!ev || !ev->file_ready)
      return 0;
 
    // lock frame here
+#ifdef _WIN32
+   res = WaitForSingleObject(ev->shared->lock, 0L);
+   if (res != WAIT_OBJECT_0)
+     return 0;
+#else
    sem_wait(&ev->shared->lock);
+#endif
 
    // send current frame to emotion
    if (ev->shared->frame.emotion != ev->shared->frame.last)
@@ -1259,7 +1286,11 @@ em_bgra_data_get(void *data, unsigned char **bgra_data)
    ev->shared->frame_drop = 0;
 
    // unlock frame here
+#ifdef _WIN32
+   ReleaseSemaphore(ev->shared->lock, 1, NULL);
+#else
    sem_post(&ev->shared->lock);
+#endif
    ev->drop = 0;
 
    return 1;

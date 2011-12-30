@@ -1,12 +1,17 @@
 #ifndef EMOTION_GENERIC_PLUGIN_H
 #define EMOTION_GENERIC_PLUGIN_H
 
-#include <semaphore.h>
 #include <stdlib.h>
 #include <unistd.h>
 #include <sys/mman.h>
 #include <sys/stat.h>
 #include <fcntl.h>
+
+#ifdef _WIN32
+# include <windows.h>
+#else
+#include <semaphore.h>
+#endif
 
 #define DEFAULTWIDTH		320
 #define DEFAULTHEIGHT		240
@@ -88,7 +93,12 @@ struct _Emotion_Generic_Video_Shared
 	int last;
 	int next;
    } frame;
+  /* FIXME: maybe abstracting that in Eina ? */
+#ifdef _WIN32
+   HANDLE lock;
+#else
    sem_t lock;
+#endif
    int frame_drop;
 };
 

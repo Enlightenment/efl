@@ -55,9 +55,10 @@ AC_SUBST(VMAJ)
 
 want_generic="yes"
 case "$host_os" in
-   mingw* | cegcc*)
+   mingw*)
       want_xine="no"
       want_gstreamer="yes"
+      want_generic="no"
       want_generic_vlc="no"
       ;;
    *)
@@ -145,6 +146,8 @@ fi
 
 ### Checks for header files
 AC_HEADER_STDC
+
+AC_CHECK_HEADERS([unistd.h])
 
 ### Checks for types
 
