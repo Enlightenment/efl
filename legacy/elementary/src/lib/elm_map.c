@@ -1658,20 +1658,20 @@ _mouse_wheel_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, voi
         wd->pinch.cx = x + ((double)w * 0.5);
         wd->pinch.cy = y + ((double)h * 0.5);
 
-        if (wd->pinch.level > 2.0 || wd->pinch.level < 1.0)
+        if (wd->pinch.level > 1.99 || wd->pinch.level < 1.01)
           {
              wd->wheel_diff = 0;
-             if (wd->pinch.level > 2.0)
+             if (wd->pinch.level > 1.99)
                {
                   zoom_diff = 1;
-                  wd->pinch.diff = 1.0;
-                  wd->pinch.level = 1.0;
+                  wd->pinch.diff = wd->pinch.level / 2.0;
+                  wd->pinch.level = wd->pinch.level / 2.0;
                }
-             else if (wd->pinch.level < 1.0)
+             else if (wd->pinch.level < 1.01)
                {
                   zoom_diff = -1;
-                  wd->pinch.diff = 2.0;
-                  wd->pinch.level = 2.0;
+                  wd->pinch.diff = wd->pinch.level * 2.0;
+                  wd->pinch.level = wd->pinch.level * 2.0;
                }
 
              Elm_Map_Zoom_Mode temp;
@@ -2839,6 +2839,8 @@ zoom_start_cb(void *data, void *event_info __UNUSED__)
    elm_smart_scroller_freeze_set(wd->scr, 1);
    _scr_drag_start(wd->obj, NULL, NULL);
 
+   wd->pinch.diff += 0.001;
+
    return EVAS_EVENT_FLAG_NONE;
 }
 
@@ -2875,19 +2877,19 @@ zoom_cb(void *data, void *event_info)
         wd->pinch.cx = x + ((double)w * 0.5);
         wd->pinch.cy = y + ((double)h * 0.5);
 
-        if (wd->pinch.level > 2.0 || wd->pinch.level < 1.0)
+        if (wd->pinch.level > 1.999 || wd->pinch.level < 1.001)
           {
-             if (wd->pinch.level > 2.0)
+             if (wd->pinch.level > 1.999)
                {
                   zoom_diff = 1;
-                  wd->pinch.diff = 1.0;
-                  wd->pinch.level = 1.0;
+                  wd->pinch.diff = wd->pinch.level / 2.0;
+                  wd->pinch.level = wd->pinch.level / 2.0;
                }
-             else if (wd->pinch.level < 1.0)
+             else if (wd->pinch.level < 1.001)
                {
                   zoom_diff = -1;
-                  wd->pinch.diff = 2.0;
-                  wd->pinch.level = 2.0;
+                  wd->pinch.diff = wd->pinch.level * 2.0;
+                  wd->pinch.level = wd->pinch.level * 2.0;
                }
              Elm_Map_Zoom_Mode temp;
              elm_gesture_layer_cb_set(wd->ges, ELM_GESTURE_ZOOM, ELM_GESTURE_STATE_MOVE, NULL, wd);  // ei->zoom is refreshed
