@@ -58,6 +58,8 @@ struct _Eina_Win32_RWLock
 
 typedef DWORD     Eina_TLS;
 
+typedef HANDLE    Eina_Semaphore;
+
 EAPI extern Eina_Bool _eina_threads_activated;
 
 static inline Eina_Bool
@@ -461,6 +463,50 @@ eina_tls_set(Eina_TLS key, const void *data)
    if (TlsSetValue(key, (LPVOID)data) == 0)
       return EINA_FALSE;
    return EINA_TRUE;
+}
+
+static inline Eina_Bool
+eina_semaphore_new(Eina_Semaphore *sem, int count_init)
+{
+   if (!sem || (count_init <= 0))
+     return EINA_FALSE;
+
+   *sem = CreateSemaphore(NULL, count_init, 32767, NULL);
+   if (!*sem)
+     return EINA_FALSE;
+}
+
+static inline Eina_Bool
+eina_semaphore_free(Eina_Semaphore *sem)
+{
+  if (!sem)
+     return EINA_FALSE;
+
+  CloseHandle(*sem);
+}
+
+static inline Eina_Bool
+eina_semaphore_lock(Eina_Semaphore *sem)
+{
+   DWORD res;
+
+   if (!sem)
+     return EINA_FALSE;
+
+   res = WaitForSingleObject(ev->shared->lock, 0L);
+   if (res == WAIT_OBJECT_0)
+     return EINA_TRUE;
+
+   return EINA_FALSE;
+}
+
+static inline Eina_Bool
+eina_semaphore_release(Eina_Semaphore *sem, int count_release)
+{
+   if (!sem)
+     return EINA_FALSE;
+
+   return ReleaseSemaphore(*sem, count_release, NULL) ? EINA_TRUE : EINA_FALSE;
 }
 
 #endif

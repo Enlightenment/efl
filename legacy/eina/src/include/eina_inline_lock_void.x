@@ -47,6 +47,7 @@ typedef void *Eina_Lock;
 typedef void *Eina_RWLock;
 typedef void *Eina_Condition;
 typedef void *Eina_TLS;
+typedef void *Eina_Semaphore;
 
 /**
  * @brief Create a new #Eina_Lock.
@@ -239,6 +240,31 @@ eina_tls_set(Eina_TLS key EINA_UNUSED, const void *data EINA_UNUSED)
    return EINA_FALSE;
 }
 
+static inline Eina_Bool
+eina_semaphore_new(Eina_Semaphore *sem EINA_UNUSED,
+                   int count_init EINA_UNUSED)
+{
+   return EINA_FALSE;
+}
+
+static inline Eina_Bool
+eina_semaphore_free(Eina_Semaphore *sem EINA_UNUSED)
+{
+   return EINA_FALSE;
+}
+
+static inline Eina_Bool
+eina_semaphore_lock(Eina_Semaphore *sem EINA_UNUSED)
+{
+   return EINA_FALSE;
+}
+
+static inline Eina_Bool
+eina_semaphore_release(Eina_Semaphore *sem EINA_UNUSED,
+                       int count_release EINA_UNUSED)
+{
+   return EINA_FALSE;
+}
 
 /**
  * @}

@@ -6,6 +6,7 @@ Changes since Eina 1.1.0:
 Additions:
 
     * eina_mempool_calloc
+    * Eina_Semaphore abstraction API
 
 
 Eina 1.1.0

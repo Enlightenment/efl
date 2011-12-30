@@ -81,6 +81,10 @@ static inline void eina_tls_free(Eina_TLS key);
 static inline void *eina_tls_get(Eina_TLS key);
 static inline Eina_Bool eina_tls_set(Eina_TLS key, const void *data);
 
+static inline Eina_Bool eina_semaphore_new(Eina_Semaphore *sem, int count_init);
+static inline Eina_Bool eina_semaphore_free(Eina_Semaphore *sem);
+static inline Eina_Bool eina_semaphore_lock(Eina_Semaphore *sem);
+static inline Eina_Bool eina_semaphore_release(Eina_Semaphore *sem, int count_release);
 
 #ifdef EINA_HAVE_DEBUG_THREADS
 # define EINA_MAIN_LOOP_CHECK_RETURN_VAL(val)				\

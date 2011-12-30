@@ -19,6 +19,15 @@
 #ifndef EINA_INLINE_LOCK_WIN32_X_
 #define EINA_INLINE_LOCK_WIN32_X_
 
+#ifdef EINA_UNUSED
+# undef EINA_UNUSED
+#endif
+#ifdef __GNUC__
+# define EINA_UNUSED __attribute__((unused))
+#else
+# define EINA_UNUSED
+#endif
+
 #include <windows.h>
 
 EAPI extern Eina_Bool _threads_activated;
@@ -26,6 +35,7 @@ EAPI extern Eina_Bool _threads_activated;
 typedef HANDLE    Eina_Lock;
 typedef Eina_Lock Eina_RWLock;
 typedef DWORD     Eina_TLS;
+typedef void *    Eina_Semaphore;
 
 static inline Eina_Bool
 eina_lock_new(Eina_Lock *mutex)
@@ -173,6 +183,30 @@ eina_tls_set(Eina_TLS key, const void *data)
    return EINA_TRUE;
 }
 
+static inline Eina_Bool
+eina_semaphore_new(Eina_Semaphore *sem EINA_UNUSED,
+                   int count_init EINA_UNUSED)
+{
+   return EINA_FALSE;
+}
 
+static inline Eina_Bool
+eina_semaphore_free(Eina_Semaphore *sem EINA_UNUSED)
+{
+   return EINA_FALSE;
+}
+
+static inline Eina_Bool
+eina_semaphore_lock(Eina_Semaphore *sem EINA_UNUSED)
+{
+   return EINA_FALSE;
+}
+
+static inline Eina_Bool
+eina_semaphore_release(Eina_Semaphore *sem EINA_UNUSED,
+                       int count_release EINA_UNUSED)
+{
+   return EINA_FALSE;
+}
 
 #endif

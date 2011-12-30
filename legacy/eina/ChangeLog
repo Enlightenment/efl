@@ -173,3 +173,7 @@
 2011-12-28  Cedric Bail
 
 	* Fix NONNULL argument for eina_hash_find.
+
+2011-12-30  Vincent Torri
+
+	* Add Eina_Semaphore abstraction API.
