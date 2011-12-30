@@ -90,7 +90,7 @@ _free_data(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 static void
 _add_data_cb(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
-   Elm_Diskselector_Item *ds_it;
+   Elm_Object_Item *ds_it;
    Evas_Object *ds = data;
    char label[32];
    char *content = malloc(sizeof(char) * 32);
@@ -169,7 +169,7 @@ _select_last_cb(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUS
 static void
 _select_next_cb(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
-   Elm_Diskselector_Item *selected_ds_it, *next_ds_it;
+   Elm_Object_Item *selected_ds_it, *next_ds_it;
    Evas_Object *ds = data;
 
    selected_ds_it = elm_diskselector_selected_item_get(ds);
