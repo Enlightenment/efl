@@ -45,8 +45,6 @@
  * @li elm_object_item_content_unset
  * @li elm_object_item_part_content_unset
  * @li elm_object_item_signal_emit
- *
- * @ref tutorial_naviframe gives a good overview of the usage of the API.
  */
 
 /**
@@ -259,7 +257,7 @@ EAPI Elm_Object_Item *elm_naviframe_bottom_item_get(const Evas_Object *obj) EINA
 /**
  * @brief Set an item style
  *
- * @param obj The naviframe item
+ * @param it The naviframe item
  * @param item_style The current item style name. @c NULL would be default
  *
  * The following styles are available for this item:
@@ -274,7 +272,7 @@ EAPI void             elm_naviframe_item_style_set(Elm_Object_Item *it, const ch
 /**
  * @brief Get an item style
  *
- * @param obj The naviframe item
+ * @param it The naviframe item
  * @return The current item style name
  *
  * @see also elm_naviframe_item_style_set()

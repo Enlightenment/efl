@@ -212,8 +212,7 @@ EAPI const char                 *elm_fileselector_entry_path_get(const Evas_Obje
  * widget's internal file selector
  *
  * @param obj The file selector entry widget
- * @param expand @c EINA_TRUE to enable tree view, @c EINA_FALSE to
- * disable
+ * @param value @c EINA_TRUE to enable tree view, @c EINA_FALSE to disable
  *
  * This has the same effect as elm_fileselector_expandable_set(),
  * but now applied to a file selector entry's internal file
@@ -245,7 +244,7 @@ EAPI Eina_Bool                   elm_fileselector_entry_expandable_get(const Eva
  * as well.
  *
  * @param obj The file selector entry widget
- * @param only @c EINA_TRUE to make @p obj widget's internal file
+ * @param value @c EINA_TRUE to make @p obj widget's internal file
  * selector only display directories, @c EINA_FALSE to make files
  * to be displayed in it too
  *
@@ -277,7 +276,7 @@ EAPI Eina_Bool                   elm_fileselector_entry_folder_only_get(const Ev
  * internal file selector.
  *
  * @param obj The file selector entry widget
- * @param is_save @c EINA_TRUE to make @p obj widget's internal
+ * @param value @c EINA_TRUE to make @p obj widget's internal
  * file selector a "saving dialog", @c EINA_FALSE otherwise
  *
  * This has the same effect as elm_fileselector_is_save_set(),

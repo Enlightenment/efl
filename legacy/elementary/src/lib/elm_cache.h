@@ -87,7 +87,7 @@ EAPI Eina_Bool elm_cache_flush_enabled_get(void);
  *
  * This sets the globally configured cache flush enabled state.
  *
- * @param size The cache flush enabled state
+ * @param enabled The cache flush enabled state
  * @ingroup Caches
  *
  * @see elm_all_flush()
@@ -101,7 +101,7 @@ EAPI void      elm_cache_flush_enabled_set(Eina_Bool enabled);
  * This sets the globally configured cache flush enabled state for all
  * applications on the display.
  *
- * @param size The cache flush enabled state
+ * @param enabled The cache flush enabled state
  * @ingroup Caches
  */
 // XXX: deprecate and replace with elm_config_all_flush()

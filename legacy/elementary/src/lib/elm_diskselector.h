@@ -319,7 +319,7 @@ EAPI Elm_Diskselector_Item *elm_diskselector_item_append(Evas_Object *obj, const
 /**
  * Delete them item from the diskselector.
  *
- * @param it The item of diskselector to be deleted.
+ * @param item The item of diskselector to be deleted.
  *
  * If deleting all diskselector items is required, elm_diskselector_clear()
  * should be used instead of getting items list and deleting each one.
@@ -335,7 +335,7 @@ EAPI void                   elm_diskselector_item_del(Elm_Diskselector_Item *ite
 /**
  * Set the function called when a diskselector item is freed.
  *
- * @param it The item to set the callback on
+ * @param item The item to set the callback on
  * @param func The function called
  *
  * If there is a @p func, then it will be called prior item's memory release.
@@ -354,7 +354,7 @@ EAPI void                   elm_diskselector_item_del_cb_set(Elm_Diskselector_It
 /**
  * Get the data associated to the item.
  *
- * @param it The diskselector item
+ * @param item The diskselector item
  * @return The data associated to @p it
  *
  * The return value is a pointer to data associated to @p item when it was
@@ -370,7 +370,7 @@ EAPI void                  *elm_diskselector_item_data_get(const Elm_Diskselecto
 /**
  * Set the icon associated to the item.
  *
- * @param it The diskselector item
+ * @param item The diskselector item
  * @param icon The icon object to associate with @p it
  *
  * The icon object to use at left side of the item. An
@@ -413,7 +413,7 @@ EAPI Evas_Object           *elm_diskselector_item_icon_get(const Elm_Diskselecto
 /**
  * Set the label of item.
  *
- * @param it The item of diskselector.
+ * @param item The item of diskselector.
  * @param label The label of item.
  *
  * The label to be displayed by the item.
@@ -448,7 +448,7 @@ EAPI void                   elm_diskselector_item_label_set(Elm_Diskselector_Ite
 /**
  * Get the label of item.
  *
- * @param it The item of diskselector.
+ * @param item The item of diskselector.
  * @return The label of item.
  *
  * The return value is a pointer to the label associated to @p item when it was
@@ -485,7 +485,7 @@ EAPI Elm_Diskselector_Item *elm_diskselector_selected_item_get(const Evas_Object
 /**
  * Set the selected state of an item.
  *
- * @param it The diskselector item
+ * @param item The diskselector item
  * @param selected The selected state
  *
  * This sets the selected state of the given item @p it.
@@ -513,7 +513,7 @@ EAPI void                   elm_diskselector_item_selected_set(Elm_Diskselector_
 /*
  * Get whether the @p item is selected or not.
  *
- * @param it The diskselector item.
+ * @param item The diskselector item.
  * @return @c EINA_TRUE means item is selected. @c EINA_FALSE indicates
  * it's not. If @p obj is @c NULL, @c EINA_FALSE is returned.
  *
@@ -559,7 +559,7 @@ EAPI Elm_Diskselector_Item *elm_diskselector_last_item_get(const Evas_Object *ob
 /**
  * Get the item before @p item in diskselector.
  *
- * @param it The diskselector item.
+ * @param item The diskselector item.
  * @return The item before @p item, or @c NULL if none or on failure.
  *
  * The list of items follows append order. So it will return item appended
@@ -578,7 +578,7 @@ EAPI Elm_Diskselector_Item *elm_diskselector_item_prev_get(const Elm_Diskselecto
 /**
  * Get the item after @p item in diskselector.
  *
- * @param it The diskselector item.
+ * @param item The diskselector item.
  * @return The item after @p item, or @c NULL if none or on failure.
  *
  * The list of items follows append order. So it will return item appended

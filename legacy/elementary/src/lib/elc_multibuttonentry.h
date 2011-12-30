@@ -18,9 +18,6 @@
  * - @c "expanded" - when multibuttonentry is expanded.
  * - @c "shrank" - when multibuttonentry is shrank.
  * - @c "shrank,state,changed" - when shrink mode state of multibuttonentry is changed.
- *
- * Here is an example on its usage:
- * @li @ref multibuttonentry_example
  */
 
 /**
@@ -82,7 +79,7 @@ EAPI const char                *elm_multibuttonentry_guide_text_get(const Evas_O
  * Set the guide text
  *
  * @param obj The multibuttonentry object
- * @param label The guide text string
+ * @param guidetext The guide text string
  *
  */
 EAPI void                       elm_multibuttonentry_guide_text_set(Evas_Object *obj, const char *guidetext) EINA_ARG_NONNULL(1);
@@ -91,7 +88,7 @@ EAPI void                       elm_multibuttonentry_guide_text_set(Evas_Object 
  * Get the value of shrink_mode state.
  *
  * @param obj The multibuttonentry object
- * @param the value of shrink mode state.
+ * @return the value of shrink mode state.
  *
  */
 EAPI int                        elm_multibuttonentry_shrink_mode_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
@@ -100,7 +97,7 @@ EAPI int                        elm_multibuttonentry_shrink_mode_get(const Evas_
  * Set/Unset the multibuttonentry to shrink mode state of single line
  *
  * @param obj The multibuttonentry object
- * @param the value of shrink_mode state. set this to 1 to set the multibuttonentry to shrink state of single line. set this to 0 to unset the contracted state.
+ * @param shrink the value of shrink_mode state. set this to 1 to set the multibuttonentry to shrink state of single line. set this to 0 to unset the contracted state.
  *
  */
 EAPI void                       elm_multibuttonentry_shrink_mode_set(Evas_Object *obj, int shrink) EINA_ARG_NONNULL(1);
@@ -234,7 +231,7 @@ EAPI const char                *elm_multibuttonentry_item_label_get(const Elm_Mu
  * Set the label of a given item
  *
  * @param item The item
- * @param label The text label string
+ * @param str The text label string
  *
  */
 EAPI void                       elm_multibuttonentry_item_label_set(Elm_Multibuttonentry_Item *item, const char *str) EINA_ARG_NONNULL(1);

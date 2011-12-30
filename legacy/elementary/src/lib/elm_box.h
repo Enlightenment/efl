@@ -240,6 +240,7 @@ EAPI void                elm_box_clear(Evas_Object *obj) EINA_ARG_NONNULL(1);
  * deleting it.
  *
  * @param obj The box object
+ * @param subobj The object to unpack
  *
  * @see elm_box_unpack_all()
  * @see elm_box_clear()
@@ -421,10 +422,12 @@ EAPI void                elm_box_layout_transition(Evas_Object *obj, Evas_Object
  * set the definitive layout for the box, usually the same as the end
  * layout for the animation, but could be used to start another transition.
  *
+ * @param duration The duration of the transition in seconds
  * @param start_layout The layout function that will be used to start the animation
  * @param start_layout_data The data to be passed the @p start_layout function
  * @param start_layout_free_data Function to free @p start_layout_data
  * @param end_layout The layout function that will be used to end the animation
+ * @param end_layout_data Data param passed to @p end_layout
  * @param end_layout_free_data The data to be passed the @p end_layout function
  * @param end_layout_free_data Function to free @p end_layout_data
  * @param transition_end_cb Callback function called when animation ends

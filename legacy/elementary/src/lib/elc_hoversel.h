@@ -251,7 +251,7 @@ EAPI void                         elm_hoversel_item_del(Elm_Object_Item *it) EIN
  * @brief Set the function to be called when an item from the hoversel is
  * freed.
  *
- * @param item The item to set the callback on
+ * @param it The item to set the callback on
  * @param func The function called
  *
  * That function will receive these parameters:
@@ -289,7 +289,7 @@ EINA_DEPRECATED EAPI const char  *elm_hoversel_item_label_get(const Elm_Object_I
 /**
  * @brief This sets the icon for the given hoversel item.
  *
- * @param item The item to set the icon
+ * @param it The item to set the icon
  * @param icon_file An image file path on disk to use for the icon or standard
  * icon name
  * @param icon_group The edje group to use if @p icon_file is an edje file. Set this
@@ -306,7 +306,7 @@ EAPI void                         elm_hoversel_item_icon_set(Elm_Object_Item *it
 /**
  * @brief Get the icon object of the hoversel item
  *
- * @param item The item to get the icon from
+ * @param it The item to get the icon from
  * @param icon_file The image file path on disk used for the icon or standard
  * icon name
  * @param icon_group The edje group used if @p icon_file is an edje file. NULL

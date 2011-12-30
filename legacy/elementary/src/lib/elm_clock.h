@@ -144,12 +144,11 @@ EAPI void              elm_clock_time_get(const Evas_Object *obj, int *hrs, int 
 EAPI void              elm_clock_edit_set(Evas_Object *obj, Eina_Bool edit) EINA_ARG_NONNULL(1);
 
 /**
- * Retrieve whether a given clock widget is under <b>edition
- * mode</b> or under (default) displaying-only mode.
+ * Retrieve whether a given clock widget is under editing mode
+ * or under (default) displaying-only mode.
  *
  * @param obj The clock object
- * @param edit @c EINA_TRUE, if it's in edition mode, @c EINA_FALSE
- * otherwise
+ * @return @c EINA_TRUE, if it's in edition mode, @c EINA_FALSE otherwise
  *
  * This function retrieves whether the clock's time can be edited
  * or not by user interaction.
