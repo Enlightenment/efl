@@ -3,6 +3,7 @@
 #include "els_box.h"
 
 typedef struct _Widget_Data Widget_Data;
+typedef struct _Elm_Index_Item Elm_Index_Item;
 
 struct _Widget_Data
 {
@@ -204,7 +205,7 @@ _item_find(Evas_Object *obj, const void *item)
    Elm_Index_Item *it;
    if (!wd) return NULL;
    EINA_LIST_FOREACH(wd->items, l, it)
-      if (it->base.data == item) return it;
+     if (it->base.data == item) return it;
    return NULL;
 }
 
@@ -298,7 +299,7 @@ static Eina_Bool
 _delay_change(void *data)
 {
    Widget_Data *wd = elm_widget_data_get(data);
-   Elm_Index_Item *item;
+   Elm_Object_Item *item;
    if (!wd) return ECORE_CALLBACK_CANCEL;
    wd->delay = NULL;
    item = elm_index_item_selected_get(data, wd->level);
@@ -452,7 +453,7 @@ _mouse_up(void *data, Evas *e __UNUSED__, Evas_Object *o __UNUSED__, void *event
 {
    Widget_Data *wd = elm_widget_data_get(data);
    Evas_Event_Mouse_Up *ev = event_info;
-   Elm_Index_Item *item;
+   Elm_Object_Item *item;
    if (!wd) return;
    if (ev->button != 1) return;
    wd->down = 0;
@@ -628,7 +629,7 @@ elm_index_item_level_get(const Evas_Object *obj)
    return wd->level;
 }
 
-EAPI Elm_Index_Item *
+EAPI Elm_Object_Item *
 elm_index_item_selected_get(const Evas_Object *obj, int level)
 {
    ELM_CHECK_WIDTYPE(obj, widtype) NULL;
@@ -637,8 +638,10 @@ elm_index_item_selected_get(const Evas_Object *obj, int level)
    Elm_Index_Item *it;
    if (!wd) return NULL;
    EINA_LIST_FOREACH(wd->items, l, it)
-      if ((it->selected) && (it->level == level))
-        return it;
+     {
+        if ((it->selected) && (it->level == level))
+          return (Elm_Object_Item *) it;
+     }
    return NULL;
 }
 
@@ -670,7 +673,7 @@ elm_index_item_prepend(Evas_Object *obj, const char *letter, const void *item)
 }
 
 EAPI void
-elm_index_item_append_relative(Evas_Object *obj, const char *letter, const void *item, const Elm_Index_Item *relative)
+elm_index_item_append_relative(Evas_Object *obj, const char *letter, const void *item, const Elm_Object_Item *relative)
 {
    ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
@@ -688,7 +691,7 @@ elm_index_item_append_relative(Evas_Object *obj, const char *letter, const void 
 }
 
 EAPI void
-elm_index_item_prepend_relative(Evas_Object *obj, const char *letter, const void *item, const Elm_Index_Item *relative)
+elm_index_item_prepend_relative(Evas_Object *obj, const char *letter, const void *item, const Elm_Object_Item *relative)
 {
    ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
@@ -747,23 +750,23 @@ elm_index_item_sorted_insert(Evas_Object *obj, const char *letter, const void *i
 }
 
 EAPI void
-elm_index_item_del(Evas_Object *obj, Elm_Index_Item *item)
+elm_index_item_del(Evas_Object *obj, Elm_Object_Item *it)
 {
    ELM_CHECK_WIDTYPE(obj, widtype);
+   ELM_OBJ_ITEM_CHECK_OR_RETURN(it);
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return;
-   if (!item) return;
-   _item_free(item);
+   _item_free((Elm_Index_Item *) it);
    _index_box_clear(obj, wd->bx[wd->level], wd->level);
 }
 
-EAPI Elm_Index_Item *
+EAPI Elm_Object_Item *
 elm_index_item_find(Evas_Object *obj, const void *item)
 {
    ELM_CHECK_WIDTYPE(obj, widtype) NULL;
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return NULL;
-   return _item_find(obj, item);
+   return (Elm_Object_Item *) _item_find(obj, item);
 }
 
 EAPI void
@@ -794,30 +797,30 @@ elm_index_item_go(Evas_Object *obj, int level __UNUSED__)
 }
 
 EAPI void *
-elm_index_item_data_get(const Elm_Index_Item *it)
+elm_index_item_data_get(const Elm_Object_Item *it)
 {
-   ELM_WIDGET_ITEM_WIDTYPE_CHECK_OR_RETURN(it, NULL);
+   ELM_OBJ_ITEM_CHECK_OR_RETURN(it, NULL);
    return elm_widget_item_data_get(it);
 }
 
 EAPI void
-elm_index_item_data_set(Elm_Index_Item *it, const void *data)
+elm_index_item_data_set(Elm_Object_Item *it, const void *data)
 {
-   ELM_WIDGET_ITEM_WIDTYPE_CHECK_OR_RETURN(it);
+   ELM_OBJ_ITEM_CHECK_OR_RETURN(it);
    elm_widget_item_data_set(it, data);
 }
 
 EAPI void
-elm_index_item_del_cb_set(Elm_Index_Item *it, Evas_Smart_Cb func)
+elm_index_item_del_cb_set(Elm_Object_Item *it, Evas_Smart_Cb func)
 {
-   ELM_WIDGET_ITEM_WIDTYPE_CHECK_OR_RETURN(it);
+   ELM_OBJ_ITEM_CHECK_OR_RETURN(it);
    elm_widget_item_del_cb_set(it, func);
 }
 
 EAPI const char *
-elm_index_item_letter_get(const Elm_Index_Item *it)
+elm_index_item_letter_get(const Elm_Object_Item *it)
 {
-   ELM_WIDGET_ITEM_WIDTYPE_CHECK_OR_RETURN(it, NULL);
-   return it->letter;
+   ELM_OBJ_ITEM_CHECK_OR_RETURN(it, NULL);
+   return ((Elm_Index_Item *) it)->letter;
 }
 

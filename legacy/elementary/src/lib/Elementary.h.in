@@ -1272,7 +1272,7 @@ extern "C" {
     * @ingroup General
     */
    EAPI Evas_Object *elm_object_name_find(const Evas_Object *obj, const char *name, int recurse);
-       
+
    /**
     * Get the widget object's handle which contains a given item
     *
@@ -23147,8 +23147,6 @@ extern "C" {
     * @{
     */
 
-   typedef struct _Elm_Index_Item Elm_Index_Item; /**< Opaque handle for items of Elementary index widgets */
-
    /**
     * Add a new index widget to the given parent Elementary
     * (container) object
@@ -23222,7 +23220,7 @@ extern "C" {
     *
     * @ingroup Index
     */
-   EAPI Elm_Index_Item *elm_index_item_selected_get(const Evas_Object *obj, int level) EINA_ARG_NONNULL(1);
+   EAPI Elm_Object_Item *elm_index_item_selected_get(const Evas_Object *obj, int level) EINA_ARG_NONNULL(1);
 
    /**
     * Append a new item on a given index widget.
@@ -23281,7 +23279,7 @@ extern "C" {
     *
     * @ingroup Index
     */
-   EAPI void            elm_index_item_append_relative(Evas_Object *obj, const char *letter, const void *item, const Elm_Index_Item *relative) EINA_ARG_NONNULL(1);
+   EAPI void            elm_index_item_append_relative(Evas_Object *obj, const char *letter, const void *item, const Elm_Object_Item *relative) EINA_ARG_NONNULL(1);
 
    /**
     * Prepend a new item, on a given index widget, <b>after the item
@@ -23304,7 +23302,7 @@ extern "C" {
     *
     * @ingroup Index
     */
-   EAPI void            elm_index_item_prepend_relative(Evas_Object *obj, const char *letter, const void *item, const Elm_Index_Item *relative) EINA_ARG_NONNULL(1);
+   EAPI void            elm_index_item_prepend_relative(Evas_Object *obj, const char *letter, const void *item, const Elm_Object_Item *relative) EINA_ARG_NONNULL(1);
 
    /**
     * Insert a new item into the given index widget, using @p cmp_func
@@ -23314,7 +23312,7 @@ extern "C" {
     * @param letter Letter under which the item should be indexed
     * @param item The item data to set for the index's item
     * @param cmp_func The comparing function to be used to sort index
-    * items <b>by #Elm_Index_Item item handles</b>
+    * items <b>by #index item handles</b>
     * @param cmp_data_func A @b fallback function to be called for the
     * sorting of index items <b>by item data</b>). It will be used
     * when @p cmp_func returns @c 0 (equality), which means an index
@@ -23351,7 +23349,7 @@ extern "C" {
     *
     * @ingroup Index
     */
-   EAPI void            elm_index_item_del(Evas_Object *obj, Elm_Index_Item *item) EINA_ARG_NONNULL(1);
+   EAPI void            elm_index_item_del(Evas_Object *obj, Elm_Object_Item *it) EINA_ARG_NONNULL(1);
 
    /**
     * Find a given index widget's item, <b>using item data</b>.
@@ -23362,7 +23360,7 @@ extern "C" {
     *
     * @ingroup Index
     */
-   EAPI Elm_Index_Item *elm_index_item_find(Evas_Object *obj, const void *item) EINA_ARG_NONNULL(1);
+   EAPI Elm_Object_Item *elm_index_item_find(Evas_Object *obj, const void *item) EINA_ARG_NONNULL(1);
 
    /**
     * Removes @b all items from a given index widget.
@@ -23396,7 +23394,7 @@ extern "C" {
     *
     * @ingroup Index
     */
-   EAPI void           *elm_index_item_data_get(const Elm_Index_Item *item) EINA_ARG_NONNULL(1);
+   EAPI void           *elm_index_item_data_get(const Elm_Object_Item *it) EINA_ARG_NONNULL(1);
 
    /**
     * Set the data associated with a given index widget item
@@ -23411,7 +23409,7 @@ extern "C" {
     *
     * @ingroup Index
     */
-   EAPI void            elm_index_item_data_set(Elm_Index_Item *it, const void *data) EINA_ARG_NONNULL(1);
+   EAPI void            elm_index_item_data_set(Elm_Object_Item *it, const void *data) EINA_ARG_NONNULL(1);
 
    /**
     * Set the function to be called when a given index widget item is freed.
@@ -23425,7 +23423,7 @@ extern "C" {
     *
     * @ingroup Index
     */
-   EAPI void            elm_index_item_del_cb_set(Elm_Index_Item *it, Evas_Smart_Cb func) EINA_ARG_NONNULL(1);
+   EAPI void            elm_index_item_del_cb_set(Elm_Object_Item *it, Evas_Smart_Cb func) EINA_ARG_NONNULL(1);
 
    /**
     * Get the letter (string) set on a given index widget item.
@@ -23435,7 +23433,7 @@ extern "C" {
     *
     * @ingroup Index
     */
-   EAPI const char     *elm_index_item_letter_get(const Elm_Index_Item *item) EINA_ARG_NONNULL(1);
+   EAPI const char     *elm_index_item_letter_get(const Elm_Object_Item *it) EINA_ARG_NONNULL(1);
 
    /**
     * @}

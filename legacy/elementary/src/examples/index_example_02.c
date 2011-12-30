@@ -83,11 +83,11 @@ _index_icmp(const void *data1,
 {
    const char *label1, *label2;
 
-   const Elm_Index_Item *it1 = data1;
-   const Elm_Index_Item *it2 = data2;
+   const Elm_Object_Item *index_it1 = data1;
+   const Elm_Object_Item *index_it2 = data2;
 
-   label1 = elm_index_item_letter_get(it1);
-   label2 = elm_index_item_letter_get(it2);
+   label1 = elm_index_item_letter_get(index_it1);
+   label2 = elm_index_item_letter_get(index_it2);
 
    return strcasecmp(label1, label2);
 }

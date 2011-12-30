@@ -3773,8 +3773,8 @@
  * @until }
  *
  * It will get the last index item selected's data and find the
- * respective #Elm_Index_Item handle with elm_index_item_find(). We
- * need the latter to query the indexing letter string from, with
+ * respective index item handle(#Elm_Object_Item) with elm_index_item_find().
+ * We need the latter to query the indexing letter string from, with
  * elm_index_item_letter_get(). Next, comes the delition, itself,
  * which will also trigger the @c _index_item_del callback function,
  * as said above.
@@ -3827,7 +3827,7 @@
  * each index item to base our ordering on. The parameters on
  * @c _index_cmp have to be declared as void pointers because of the
  * @c Eina_Compare_Cb prototype requisition, but in this case we know
- * they'll be #Elm_Index_Item's:
+ * they'll be index item(#Elm_Object_Item)'s:
  * @dontinclude index_example_02.c
  * @skip ordering alphabetically
  * @until }

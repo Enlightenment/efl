@@ -49,15 +49,15 @@ _item_del(void        *data __UNUSED__,
           Evas_Object *obj __UNUSED__,
           void        *event_info __UNUSED__)
 {
-   Elm_Index_Item *it;
+   Elm_Object_Item *iit;
    Elm_List_Item *lit = elm_index_item_selected_get(d.index, 0);
 
-   it = elm_index_item_find(d.index, lit);
+   iit = elm_index_item_find(d.index, lit);
 
-   if (!it) return;
+   if (!iit) return;
 
    fprintf(stdout, "Deleting last selected index item, which had letter"
-                    " %s (pointing to %s)\n", elm_index_item_letter_get(it),
+           " %s (pointing to %s)\n", elm_index_item_letter_get(iit),
            elm_list_item_label_get(lit));
 
    elm_index_item_del(d.index, lit);
@@ -154,7 +154,7 @@ elm_main(int    argc __UNUSED__,
 
         if (curr != dict[i][0])
           {
-             Elm_Index_Item *index_it;
+             Elm_Object_Item *index_it;
              char buf[32];
 
              curr = dict[i][0];

@@ -126,11 +126,11 @@ int
 test_index2_icmp(const void *data1, const void *data2)
 {
    const char *label1, *label2;
-   const Elm_Index_Item *it1 = data1;
-   const Elm_Index_Item *it2 = data2;
+   const Elm_Object_Item *index_it1 = data1;
+   const Elm_Object_Item *index_it2 = data2;
 
-   label1 = elm_index_item_letter_get(it1);
-   label2 = elm_index_item_letter_get(it2);
+   label1 = elm_index_item_letter_get(index_it1);
+   label2 = elm_index_item_letter_get(index_it2);
 
    return strcasecmp(label1, label2);
 }
@@ -146,9 +146,9 @@ test_index2_it_add(void *data, Evas_Object *obj __UNUSED__, void *event_info __U
    label = elm_entry_entry_get(gui->entry);
    snprintf(letter, sizeof(letter), "%c", label[0]);
    it = elm_list_item_sorted_insert(gui->lst, label, NULL, NULL, NULL, NULL,
-	 test_index2_cmp);
+                                    test_index2_cmp);
    elm_index_item_sorted_insert(gui->id, letter, it, test_index2_icmp,
-	 test_index2_cmp);
+                                test_index2_cmp);
    elm_list_go(gui->lst);
    /* FIXME it's not showing the recently added item */
    elm_list_item_show(it);
@@ -160,7 +160,7 @@ test_index2_it_del(void *data, Evas_Object *obj, void *event_info __UNUSED__)
    Test_Index2_Elements *gui = data;
    const char *label, *label_next;
    Elm_List_Item *it, *it_next;
-   Elm_Index_Item *iit;
+   Elm_Object_Item *iit;
 
    it = elm_list_selected_item_get(obj);
    it_next = elm_list_item_next(it);
@@ -169,8 +169,8 @@ test_index2_it_del(void *data, Evas_Object *obj, void *event_info __UNUSED__)
      {
         iit = elm_index_item_find(gui->id, it);
         if (iit) elm_index_item_del(gui->id, iit);
-	elm_list_item_del(it);
-	return;
+        elm_list_item_del(it);
+        return;
      }
 
    label = elm_list_item_label_get(it);
