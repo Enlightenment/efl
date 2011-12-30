@@ -13,6 +13,7 @@
 #define DISPLAY_ITEM_NUM_MIN 3
 
 typedef struct _Widget_Data Widget_Data;
+typedef struct _Elm_Diskselector_Item Elm_Diskselector_Item;
 
 struct _Widget_Data
 {
@@ -49,10 +50,6 @@ struct _Elm_Diskselector_Item
 };
 
 static const char *widtype = NULL;
-
-#define ELM_DISKSELECTOR_ITEM_CHECK_OR_RETURN(it, ...)                  \
-   ELM_WIDGET_ITEM_CHECK_OR_RETURN((Elm_Widget_Item *)it, __VA_ARGS__); \
-   ELM_CHECK_WIDTYPE(WIDGET(it), widtype) __VA_ARGS__;
 
 static Eina_Bool _move_scroller(void *data);
 static void _del_hook(Evas_Object * obj);
@@ -1075,7 +1072,7 @@ elm_diskselector_items_get(const Evas_Object *obj)
    return wd->items;
 }
 
-EAPI Elm_Diskselector_Item *
+EAPI Elm_Object_Item *
 elm_diskselector_item_append(Evas_Object *obj, const char *label, Evas_Object *icon, Evas_Smart_Cb func, const void *data)
 {
    Elm_Diskselector_Item *it;
@@ -1113,31 +1110,32 @@ elm_diskselector_item_append(Evas_Object *obj, const char *label, Evas_Object *i
    if (!wd->idler)
      wd->idler = ecore_idle_enterer_before_add(_move_scroller, obj);
    _sizing_eval(obj);
-   return it;
+   return (Elm_Object_Item *) it;
 }
 
 EAPI void
-elm_diskselector_item_del(Elm_Diskselector_Item * it)
+elm_diskselector_item_del(Elm_Object_Item * it)
 {
-   ELM_DISKSELECTOR_ITEM_CHECK_OR_RETURN(it);
-   Elm_Diskselector_Item *dit;
-   Elm_Diskselector_Item *item;
+   ELM_OBJ_ITEM_CHECK_OR_RETURN(it);
+   Elm_Diskselector_Item *item, *item2, *dit;
    Eina_List *l;
    int i = 0;
-   Widget_Data *wd = elm_widget_data_get(WIDGET(it));
+   Widget_Data *wd;
+   item = (Elm_Diskselector_Item *) it;
+   wd = elm_widget_data_get(WIDGET(item));
    if (!wd) return;
 
-   elm_box_unpack(wd->main_box, VIEW(it));
+   elm_box_unpack(wd->main_box, VIEW(item));
 
    if (wd->round)
-     wd->r_items = eina_list_remove(wd->r_items, it);
+     wd->r_items = eina_list_remove(wd->r_items, item);
 
-   wd->items = eina_list_remove(wd->items, it);
+   wd->items = eina_list_remove(wd->items, item);
 
-   if (wd->selected_item == it)
+   if (wd->selected_item == item)
      {
         dit = (Elm_Diskselector_Item *) eina_list_nth(wd->items, 0);
-        if (dit != it)
+        if (dit != item)
           wd->selected_item = dit;
         else
           wd->selected_item = eina_list_nth(wd->items, 1);
@@ -1145,7 +1143,7 @@ elm_diskselector_item_del(Elm_Diskselector_Item * it)
         _selected_item_indicate(wd->selected_item);
      }
 
-   _item_del(it);
+   _item_del(item);
    wd->item_count -= 1;
 
    if (wd->round)
@@ -1157,11 +1155,11 @@ elm_diskselector_item_del(Elm_Diskselector_Item * it)
              evas_object_hide(wd->VIEW(last));
              evas_object_hide(wd->VIEW(s_last));
 
-             EINA_LIST_FOREACH(wd->under_items, l, item)
-                evas_object_hide(VIEW(item));
+             EINA_LIST_FOREACH(wd->under_items, l, item2)
+               evas_object_hide(VIEW(item2));
 
-             EINA_LIST_FOREACH(wd->over_items, l, item)
-                evas_object_hide(VIEW(item));
+             EINA_LIST_FOREACH(wd->over_items, l, item2)
+               evas_object_hide(VIEW(item2));
           }
         else
           {
@@ -1183,9 +1181,9 @@ elm_diskselector_item_del(Elm_Diskselector_Item * it)
              for (i = 2; i < CEIL(wd->display_item_num); i++)
                {
                   dit = eina_list_nth(wd->items, i);
-                  item = eina_list_nth(wd->over_items, i - 2);
-                  eina_stringshare_replace(&item->label, dit->label);
-                  edje_object_part_text_set(VIEW(item), "elm.text", item->label);
+                  item2 = eina_list_nth(wd->over_items, i - 2);
+                  eina_stringshare_replace(&item2->label, dit->label);
+                  edje_object_part_text_set(VIEW(item2), "elm.text", item2->label);
                }
 
              dit = eina_list_nth(wd->items, eina_list_count(wd->items) - 1);
@@ -1206,9 +1204,10 @@ elm_diskselector_item_del(Elm_Diskselector_Item * it)
              for (i = 3; i <= CEIL(wd->display_item_num); i++)
                {
                   dit = eina_list_nth(wd->items, wd->item_count - i);
-                  item = eina_list_nth(wd->under_items, i - 3);
-                  eina_stringshare_replace(&item->label, dit->label);
-                  edje_object_part_text_set(VIEW(item), "elm.text", item->label);
+                  item2 = eina_list_nth(wd->under_items, i - 3);
+                  eina_stringshare_replace(&item2->label, dit->label);
+                  edje_object_part_text_set(VIEW(item2), "elm.text",
+                                            item2->label);
                }
           }
      }
@@ -1217,216 +1216,210 @@ elm_diskselector_item_del(Elm_Diskselector_Item * it)
 }
 
 EAPI const char *
-elm_diskselector_item_label_get(const Elm_Diskselector_Item * it)
+elm_diskselector_item_label_get(const Elm_Object_Item * it)
 {
-   ELM_DISKSELECTOR_ITEM_CHECK_OR_RETURN(it, NULL);
-   return it->label;
+   ELM_OBJ_ITEM_CHECK_OR_RETURN(it, NULL);
+   return ((Elm_Diskselector_Item *) it)->label;
 }
 
 EAPI void
-elm_diskselector_item_label_set(Elm_Diskselector_Item * it, const char *label)
+elm_diskselector_item_label_set(Elm_Object_Item * it, const char *label)
 {
-   ELM_DISKSELECTOR_ITEM_CHECK_OR_RETURN(it);
-   eina_stringshare_replace(&it->label, label);
-   edje_object_part_text_set(VIEW(it), "elm.text", it->label);
+   ELM_OBJ_ITEM_CHECK_OR_RETURN(it);
+   Elm_Diskselector_Item *item = (Elm_Diskselector_Item *) it;
+   eina_stringshare_replace(&item->label, label);
+   edje_object_part_text_set(VIEW(item), "elm.text", item->label);
 }
 
-EAPI Elm_Diskselector_Item *
+EAPI Elm_Object_Item *
 elm_diskselector_selected_item_get(const Evas_Object *obj)
 {
    ELM_CHECK_WIDTYPE(obj, widtype) NULL;
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return NULL;
-   return wd->selected_item;
+   return (Elm_Object_Item *) wd->selected_item;
 }
 
 EAPI void
-elm_diskselector_item_selected_set(Elm_Diskselector_Item *it, Eina_Bool selected)
+elm_diskselector_item_selected_set(Elm_Object_Item *it, Eina_Bool selected)
 {
-   ELM_DISKSELECTOR_ITEM_CHECK_OR_RETURN(it);
+   ELM_OBJ_ITEM_CHECK_OR_RETURN(it);
    Widget_Data *wd;
-   wd = elm_widget_data_get(WIDGET(it));
+   Elm_Diskselector_Item *item = (Elm_Diskselector_Item *) it;
+   wd = elm_widget_data_get(WIDGET(item));
    if (!wd) return;
 
-   if ((wd->selected_item == it) && (selected))
+   if ((wd->selected_item == item) && (selected))
      return;
 
-   if ((wd->selected_item == it) && (!selected))
+   if ((wd->selected_item == item) && (!selected))
      wd->selected_item = eina_list_data_get(wd->items);
    else
      {
-        wd->selected_item = it;
+        wd->selected_item = item;
         _selected_item_indicate(wd->selected_item);
      }
 
    if (!wd->idler)
-     wd->idler = ecore_idle_enterer_before_add(_move_scroller, WIDGET(it));
+     wd->idler = ecore_idle_enterer_before_add(_move_scroller, WIDGET(item));
 }
 
 EAPI Eina_Bool
-elm_diskselector_item_selected_get(const Elm_Diskselector_Item *it)
+elm_diskselector_item_selected_get(const Elm_Object_Item *it)
 {
-   ELM_DISKSELECTOR_ITEM_CHECK_OR_RETURN(it, EINA_FALSE);
-   Widget_Data *wd;
-
-   wd = elm_widget_data_get(WIDGET(it));
+   ELM_OBJ_ITEM_CHECK_OR_RETURN(it, EINA_FALSE);
+   Widget_Data *wd = elm_widget_data_get(WIDGET(it));
    if (!wd) return EINA_FALSE;
-   return (wd->selected_item == it);
+   return (wd->selected_item == ((Elm_Diskselector_Item *) it));
 }
 
 EAPI void
-elm_diskselector_item_del_cb_set(Elm_Diskselector_Item *it, Evas_Smart_Cb func)
+elm_diskselector_item_del_cb_set(Elm_Object_Item *it, Evas_Smart_Cb func)
 {
-   ELM_DISKSELECTOR_ITEM_CHECK_OR_RETURN(it);
+   ELM_OBJ_ITEM_CHECK_OR_RETURN(it);
    elm_widget_item_del_cb_set(it, func);
 }
 
 EAPI void *
-elm_diskselector_item_data_get(const Elm_Diskselector_Item *it)
+elm_diskselector_item_data_get(const Elm_Object_Item *it)
 {
-   ELM_DISKSELECTOR_ITEM_CHECK_OR_RETURN(it, NULL);
+   ELM_OBJ_ITEM_CHECK_OR_RETURN(it, NULL);
    return elm_widget_item_data_get(it);
 }
 
 EAPI Evas_Object *
-elm_diskselector_item_icon_get(const Elm_Diskselector_Item *it)
+elm_diskselector_item_icon_get(const Elm_Object_Item *it)
 {
-   ELM_DISKSELECTOR_ITEM_CHECK_OR_RETURN(it, NULL);
-   return it->icon;
+   ELM_OBJ_ITEM_CHECK_OR_RETURN(it, NULL);
+   return ((Elm_Diskselector_Item *) it)->icon;
 }
 
 EAPI void
-elm_diskselector_item_icon_set(Elm_Diskselector_Item *it, Evas_Object *icon)
+elm_diskselector_item_icon_set(Elm_Object_Item *it, Evas_Object *icon)
 {
-   ELM_DISKSELECTOR_ITEM_CHECK_OR_RETURN(it);
-   _item_icon_set(it, icon);
-   _check_identical_item(it, icon);
+   ELM_OBJ_ITEM_CHECK_OR_RETURN(it);
+   _item_icon_set((Elm_Diskselector_Item *) it, icon);
+   _check_identical_item((Elm_Diskselector_Item *) it, icon);
 }
 
-EAPI Elm_Diskselector_Item *
-elm_diskselector_item_prev_get(const Elm_Diskselector_Item *it)
+EAPI Elm_Object_Item *
+elm_diskselector_item_prev_get(const Elm_Object_Item *it)
 {
-   ELM_DISKSELECTOR_ITEM_CHECK_OR_RETURN(it, NULL);
-   if (it->node->prev) return it->node->prev->data;
+   ELM_OBJ_ITEM_CHECK_OR_RETURN(it, NULL);
+   Elm_Diskselector_Item *item = (Elm_Diskselector_Item *) it;
+   if (item->node->prev) return item->node->prev->data;
    else return NULL;
 }
 
-EAPI Elm_Diskselector_Item *
-elm_diskselector_item_next_get(const Elm_Diskselector_Item *it)
+EAPI Elm_Object_Item *
+elm_diskselector_item_next_get(const Elm_Object_Item *it)
 {
-   ELM_DISKSELECTOR_ITEM_CHECK_OR_RETURN(it, NULL);
-   if (it->node->next) return it->node->next->data;
+   ELM_OBJ_ITEM_CHECK_OR_RETURN(it, NULL);
+   Elm_Diskselector_Item *item = (Elm_Diskselector_Item *) it;
+   if (item->node->next) return item->node->next->data;
    else return NULL;
 }
 
-EAPI Elm_Diskselector_Item *
+EAPI Elm_Object_Item *
 elm_diskselector_first_item_get(const Evas_Object *obj)
 {
    ELM_CHECK_WIDTYPE(obj, widtype) NULL;
-   Widget_Data *wd;
-
-   wd = elm_widget_data_get(obj);
-   if (!wd || !wd->items)
-     return NULL;
-
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd || !wd->items) return NULL;
    return eina_list_data_get(wd->items);
 }
 
-EAPI Elm_Diskselector_Item *
+EAPI Elm_Object_Item *
 elm_diskselector_last_item_get(const Evas_Object *obj)
 {
    ELM_CHECK_WIDTYPE(obj, widtype) NULL;
-
-   Widget_Data *wd;
-   wd = elm_widget_data_get(obj);
-   if (!wd || !wd->items)
-     return NULL;
-
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd || !wd->items) return NULL;
    return eina_list_data_get(eina_list_last(wd->items));
 }
 
 EAPI void
-elm_diskselector_item_tooltip_text_set(Elm_Diskselector_Item *item, const char *text)
+elm_diskselector_item_tooltip_text_set(Elm_Object_Item *it, const char *text)
 {
-   ELM_DISKSELECTOR_ITEM_CHECK_OR_RETURN(item);
-   elm_widget_item_tooltip_text_set(item, text);
+   ELM_OBJ_ITEM_CHECK_OR_RETURN(it);
+   elm_widget_item_tooltip_text_set(it, text);
 }
 
 EAPI void
-elm_diskselector_item_tooltip_content_cb_set(Elm_Diskselector_Item *item, Elm_Tooltip_Item_Content_Cb func, const void *data, Evas_Smart_Cb del_cb)
+elm_diskselector_item_tooltip_content_cb_set(Elm_Object_Item *it, Elm_Tooltip_Item_Content_Cb func, const void *data, Evas_Smart_Cb del_cb)
 {
-   ELM_DISKSELECTOR_ITEM_CHECK_OR_RETURN(item);
-   elm_widget_item_tooltip_content_cb_set(item, func, data, del_cb);
+   ELM_OBJ_ITEM_CHECK_OR_RETURN(it);
+   elm_widget_item_tooltip_content_cb_set(it, func, data, del_cb);
 }
 
 EAPI void
-elm_diskselector_item_tooltip_unset(Elm_Diskselector_Item *item)
+elm_diskselector_item_tooltip_unset(Elm_Object_Item *it)
 {
-   ELM_DISKSELECTOR_ITEM_CHECK_OR_RETURN(item);
-   elm_widget_item_tooltip_unset(item);
+   ELM_OBJ_ITEM_CHECK_OR_RETURN(it);
+   elm_widget_item_tooltip_unset(it);
 }
 
 EAPI void
-elm_diskselector_item_tooltip_style_set(Elm_Diskselector_Item *item, const char *style)
+elm_diskselector_item_tooltip_style_set(Elm_Object_Item *it, const char *style)
 {
-   ELM_DISKSELECTOR_ITEM_CHECK_OR_RETURN(item);
-   elm_widget_item_tooltip_style_set(item, style);
+   ELM_OBJ_ITEM_CHECK_OR_RETURN(it);
+   elm_widget_item_tooltip_style_set(it, style);
 }
 
 EAPI const char *
-elm_diskselector_item_tooltip_style_get(const Elm_Diskselector_Item *item)
+elm_diskselector_item_tooltip_style_get(const Elm_Object_Item *it)
 {
-   ELM_DISKSELECTOR_ITEM_CHECK_OR_RETURN(item, NULL);
-   return elm_widget_item_tooltip_style_get(item);
+   ELM_OBJ_ITEM_CHECK_OR_RETURN(it, NULL);
+   return elm_widget_item_tooltip_style_get(it);
 }
 
 EAPI void
-elm_diskselector_item_cursor_set(Elm_Diskselector_Item *item, const char *cursor)
+elm_diskselector_item_cursor_set(Elm_Object_Item *it, const char *cursor)
 {
-   ELM_DISKSELECTOR_ITEM_CHECK_OR_RETURN(item);
-   elm_widget_item_cursor_set(item, cursor);
+   ELM_OBJ_ITEM_CHECK_OR_RETURN(it);
+   elm_widget_item_cursor_set(it, cursor);
 }
 
 EAPI const char *
-elm_diskselector_item_cursor_get(const Elm_Diskselector_Item *item)
+elm_diskselector_item_cursor_get(const Elm_Object_Item *it)
 {
-   ELM_DISKSELECTOR_ITEM_CHECK_OR_RETURN(item, NULL);
-   return elm_widget_item_cursor_get(item);
+   ELM_OBJ_ITEM_CHECK_OR_RETURN(it, NULL);
+   return elm_widget_item_cursor_get(it);
 }
 
 EAPI void
-elm_diskselector_item_cursor_unset(Elm_Diskselector_Item *item)
+elm_diskselector_item_cursor_unset(Elm_Object_Item *it)
 {
-   ELM_DISKSELECTOR_ITEM_CHECK_OR_RETURN(item);
-   elm_widget_item_cursor_unset(item);
+   ELM_OBJ_ITEM_CHECK_OR_RETURN(it);
+   elm_widget_item_cursor_unset(it);
 }
 
 EAPI void
-elm_diskselector_item_cursor_style_set(Elm_Diskselector_Item *item, const char *style)
+elm_diskselector_item_cursor_style_set(Elm_Object_Item *it, const char *style)
 {
-   ELM_DISKSELECTOR_ITEM_CHECK_OR_RETURN(item);
-   elm_widget_item_cursor_style_set(item, style);
+   ELM_OBJ_ITEM_CHECK_OR_RETURN(it);
+   elm_widget_item_cursor_style_set(it, style);
 }
 
 EAPI const char *
-elm_diskselector_item_cursor_style_get(const Elm_Diskselector_Item *item)
+elm_diskselector_item_cursor_style_get(const Elm_Object_Item *it)
 {
-   ELM_DISKSELECTOR_ITEM_CHECK_OR_RETURN(item, NULL);
-   return elm_widget_item_cursor_style_get(item);
+   ELM_OBJ_ITEM_CHECK_OR_RETURN(it, NULL);
+   return elm_widget_item_cursor_style_get(it);
 }
 
 EAPI void
-elm_diskselector_item_cursor_engine_only_set(Elm_Diskselector_Item *item, Eina_Bool engine_only)
+elm_diskselector_item_cursor_engine_only_set(Elm_Object_Item *it, Eina_Bool engine_only)
 {
-   ELM_DISKSELECTOR_ITEM_CHECK_OR_RETURN(item);
-   elm_widget_item_cursor_engine_only_set(item, engine_only);
+   ELM_OBJ_ITEM_CHECK_OR_RETURN(it);
+   elm_widget_item_cursor_engine_only_set(it, engine_only);
 }
 
 EAPI Eina_Bool
-elm_diskselector_item_cursor_engine_only_get(const Elm_Diskselector_Item *item)
+elm_diskselector_item_cursor_engine_only_get(const Elm_Object_Item *it)
 {
-   ELM_DISKSELECTOR_ITEM_CHECK_OR_RETURN(item, EINA_FALSE);
-   return elm_widget_item_cursor_engine_only_get(item);
+   ELM_OBJ_ITEM_CHECK_OR_RETURN(it, EINA_FALSE);
+   return elm_widget_item_cursor_engine_only_get(it);
 }
 
 EAPI void

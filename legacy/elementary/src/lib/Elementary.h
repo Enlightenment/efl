@@ -2,19 +2,8 @@
  * @file Elementary.h
  * @brief Elementary Widget Library
  */
-#include <elm_intro.h>
-#include <elm_getting_started.h>
-#include <elm_authors.h>
-
 #ifndef ELEMENTARY_H
 #define ELEMENTARY_H
-
-/**
- * @file Elementary.h
- * @brief Elementary's API
- *
- * Elementary API.
- */
 
 #define ELM_UNIX
 #undef ELM_WIN32
@@ -137,6 +126,11 @@
 extern "C"
 {
 #endif
+
+/* docs */
+#include <elm_intro.h>
+#include <elm_getting_started.h>
+#include <elm_authors.h>
 
 #define ELM_VERSION_MAJOR 0
 #define ELM_VERSION_MINOR 8

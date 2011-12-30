@@ -29,20 +29,19 @@ _on_done(void        *data __UNUSED__,
 static void
 _add_cb(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
-   Elm_Diskselector_Item *it;
+   Elm_Object_Item *ds_it;
    Evas_Object *ds = data;
    char label[32];
 
    snprintf(label, sizeof(label), "Item %i", counter++);
-   it = elm_diskselector_item_append(ds, label, NULL, NULL, NULL);
-   if (!it)
-     printf("Error adding item\n");
+   ds_it = elm_diskselector_item_append(ds, label, NULL, NULL, NULL);
+   if (!ds_it) printf("Error adding item\n");
 }
 
 static void
 _add_ic_cb(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
-   Elm_Diskselector_Item *it;
+   Elm_Object_Item *ds_it;
    Evas_Object *ic, *ds = data;
    char label[32];
 
@@ -50,38 +49,36 @@ _add_ic_cb(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
    ic = elm_icon_add(ds);
    elm_icon_standard_set(ic, "home");
 
-   it = elm_diskselector_item_append(ds, label, ic, NULL, NULL);
-   if (!it)
-     printf("Error adding item with icon\n");
+   ds_it = elm_diskselector_item_append(ds, label, ic, NULL, NULL);
+   if (!ds_it) printf("Error adding item with icon\n");
 }
 
 static void
 _sel_cb(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info)
 {
-   Elm_Diskselector_Item *it = event_info;
-   printf("Selected label: %s\n", elm_diskselector_item_label_get(it));
+   Elm_Object_Item *ds_it = event_info;
+   printf("Selected label: %s\n", elm_diskselector_item_label_get(ds_it));
 }
 
 static void
 _add_func_cb(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
-   Elm_Diskselector_Item *it;
+   Elm_Object_Item *ds_it;
    Evas_Object *ds = data;
    char label[32];
 
    snprintf(label, sizeof(label), "Item %i", counter++);
-   it = elm_diskselector_item_append(ds, label, NULL, _sel_cb, NULL);
-   if (!it)
-     printf("Error adding item\n");
+   ds_it = elm_diskselector_item_append(ds, label, NULL, _sel_cb, NULL);
+   if (!ds_it) printf("Error adding item\n");
 }
 
 static void
 _sel_data_cb(void *data, Evas_Object *obj __UNUSED__, void *event_info)
 {
    char *content = data;
-   Elm_Diskselector_Item *it = event_info;
+   Elm_Object_Item *ds_it = event_info;
    printf("Selected label: %s with data: %s\n",
-          elm_diskselector_item_label_get(it), content);
+          elm_diskselector_item_label_get(ds_it), content);
 }
 
 static void
@@ -93,51 +90,51 @@ _free_data(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 static void
 _add_data_cb(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
-   Elm_Diskselector_Item *it;
+   Elm_Diskselector_Item *ds_it;
    Evas_Object *ds = data;
    char label[32];
    char *content = malloc(sizeof(char) * 32);
 
    snprintf(content, 32, "Item content %i", counter);
    snprintf(label, sizeof(label), "Item %i", counter++);
-   it = elm_diskselector_item_append(ds, label, NULL, _sel_data_cb, content);
-   if (!it) {
+   ds_it = elm_diskselector_item_append(ds, label, NULL, _sel_data_cb, content);
+   if (!ds_it) {
      printf("Error adding item\n");
      return;
    }
-   elm_diskselector_item_del_cb_set(it, _free_data);
+   elm_diskselector_item_del_cb_set(ds_it, _free_data);
 }
 
 static void
 _del_cb(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
-   Elm_Diskselector_Item *selected_item;
+   Elm_Object_Item *selected_ds_it;
    Evas_Object *ds = data;
 
-   selected_item = elm_diskselector_selected_item_get(ds);
-   elm_diskselector_item_del(selected_item);
+   selected_ds_it = elm_diskselector_selected_item_get(ds);
+   elm_diskselector_item_del(selected_ds_it);
 }
 
 static void
 _unselect_cb(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
-   Elm_Diskselector_Item *selected_item;
+   Elm_Object_Item *selected_ds_it;
    Evas_Object *ds = data;
 
-   selected_item = elm_diskselector_selected_item_get(ds);
-   elm_diskselector_item_selected_set(selected_item, EINA_FALSE);
+   selected_ds_it = elm_diskselector_selected_item_get(ds);
+   elm_diskselector_item_selected_set(selected_ds_it, EINA_FALSE);
 }
 
 static void
 _print_cb(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    const Eina_List *l, *items;
-   Elm_Diskselector_Item *it;
+   Elm_Object_Item *ds_it;
    Evas_Object *ds = data;
 
    items = elm_diskselector_items_get(ds);
-   EINA_LIST_FOREACH(items, l, it)
-      printf("%s\n", elm_diskselector_item_label_get(it));
+   EINA_LIST_FOREACH(items, l, ds_it)
+     printf("%s\n", elm_diskselector_item_label_get(ds_it));
 }
 
 static void
@@ -150,51 +147,51 @@ _clear_cb(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 static void
 _select_first_cb(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
-   Elm_Diskselector_Item *first_item;
+   Elm_Object_Item *first_ds_it;
    Evas_Object *ds = data;
 
-   first_item = elm_diskselector_first_item_get(ds);
-   if (first_item)
-     elm_diskselector_item_selected_set(first_item, EINA_TRUE);
+   first_ds_it = elm_diskselector_first_item_get(ds);
+   if (first_ds_it)
+     elm_diskselector_item_selected_set(first_ds_it, EINA_TRUE);
 }
 
 static void
 _select_last_cb(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
-   Elm_Diskselector_Item *last_item;
+   Elm_Object_Item *last_ds_it;
    Evas_Object *ds = data;
 
-   last_item = elm_diskselector_last_item_get(ds);
-   if (last_item)
-     elm_diskselector_item_selected_set(last_item, EINA_TRUE);
+   last_ds_it = elm_diskselector_last_item_get(ds);
+   if (last_ds_it)
+     elm_diskselector_item_selected_set(last_ds_it, EINA_TRUE);
 }
 
 static void
 _select_next_cb(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
-   Elm_Diskselector_Item *selected_item, *next_item;
+   Elm_Diskselector_Item *selected_ds_it, *next_ds_it;
    Evas_Object *ds = data;
 
-   selected_item = elm_diskselector_selected_item_get(ds);
-   if (!selected_item) return;
+   selected_ds_it = elm_diskselector_selected_item_get(ds);
+   if (!selected_ds_it) return;
 
-   next_item = elm_diskselector_item_next_get(selected_item);
-   if (next_item)
-     elm_diskselector_item_selected_set(next_item, EINA_TRUE);
+   next_ds_it = elm_diskselector_item_next_get(selected_ds_it);
+   if (next_ds_it)
+     elm_diskselector_item_selected_set(next_ds_it, EINA_TRUE);
 }
 
 static void
 _select_prev_cb(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
-   Elm_Diskselector_Item *selected_item, *prev_item;
+   Elm_Object_Item *selected_ds_it, *prev_ds_it;
    Evas_Object *ds = data;
 
-   selected_item = elm_diskselector_selected_item_get(ds);
-   if (!selected_item) return;
+   selected_ds_it = elm_diskselector_selected_item_get(ds);
+   if (!selected_ds_it) return;
 
-   prev_item = elm_diskselector_item_prev_get(selected_item);
-   if (prev_item)
-     elm_diskselector_item_selected_set(prev_item, EINA_TRUE);
+   prev_ds_it = elm_diskselector_item_prev_get(selected_ds_it);
+   if (prev_ds_it)
+     elm_diskselector_item_selected_set(prev_ds_it, EINA_TRUE);
 }
 
 EAPI_MAIN int

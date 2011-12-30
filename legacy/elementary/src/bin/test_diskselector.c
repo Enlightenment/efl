@@ -7,31 +7,32 @@
 static void
 _disk_sel(void *data __UNUSED__, Evas_Object * obj __UNUSED__, void *event_info)
 {
-   Elm_Diskselector_Item *it = event_info;
-   printf("Equinox: %s\n", elm_diskselector_item_label_get(it));
+   Elm_Object_Item *ds_it = event_info;
+   printf("Equinox: %s\n", elm_diskselector_item_label_get(ds_it));
 }
 
 static void
 _disk_next(void *data __UNUSED__, Evas_Object * obj __UNUSED__, void *event_info)
 {
-   Elm_Diskselector_Item *next, *prev, *it = event_info;
-   prev = elm_diskselector_item_prev_get(it);
-   next = elm_diskselector_item_next_get(it);
-   printf("Prev: %s, Next: %s\n", elm_diskselector_item_label_get(prev),
-          elm_diskselector_item_label_get(next));
+   Elm_Object_Item *next_ds_it, *prev_ds_it, *ds_it = event_info;
+   prev_ds_it = elm_diskselector_item_prev_get(ds_it);
+   next_ds_it = elm_diskselector_item_next_get(ds_it);
+   printf("Prev: %s, Next: %s\n",
+          elm_diskselector_item_label_get(prev_ds_it),
+          elm_diskselector_item_label_get(next_ds_it));
 }
 
 static void
 _print_disk_info_cb(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info)
 {
-   Elm_Diskselector_Item *it = event_info;
-   printf("Selected label: %s\n", elm_diskselector_item_label_get(it));
+   Elm_Object_Item *ds_it = event_info;
+   printf("Selected label: %s\n", elm_diskselector_item_label_get(ds_it));
 }
 
 static Evas_Object *
 _disk_create(Evas_Object *win, Eina_Bool round)
 {
-   Elm_Diskselector_Item *it;
+   Elm_Object_Item *ds_it;
    Evas_Object *di;
 
    di = elm_diskselector_add(win);
@@ -43,13 +44,13 @@ _disk_create(Evas_Object *win, Eina_Bool round)
    elm_diskselector_item_append(di, "May", NULL, NULL, NULL);
    elm_diskselector_item_append(di, "June", NULL, NULL, NULL);
    elm_diskselector_item_append(di, "July", NULL, NULL, NULL);
-   it = elm_diskselector_item_append(di, "August", NULL, NULL, NULL);
+   ds_it = elm_diskselector_item_append(di, "August", NULL, NULL, NULL);
    elm_diskselector_item_append(di, "September", NULL, _disk_sel, NULL);
    elm_diskselector_item_append(di, "October", NULL, NULL, NULL);
    elm_diskselector_item_append(di, "November", NULL, NULL, NULL);
    elm_diskselector_item_append(di, "December", NULL, NULL, NULL);
 
-   elm_diskselector_item_selected_set(it, EINA_TRUE);
+   elm_diskselector_item_selected_set(ds_it, EINA_TRUE);
    elm_diskselector_round_set(di, round);
 
    return di;
@@ -59,7 +60,7 @@ void
 test_diskselector(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    Evas_Object *win, *bg, *bx, *disk, *ic;
-   Elm_Diskselector_Item *it;
+   Elm_Object_Item *ds_it;
    char buf[PATH_MAX];
    int idx = 0;
 
@@ -93,8 +94,8 @@ test_diskselector(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *even
    elm_box_pack_end(bx, disk);
    evas_object_show(disk);
    evas_object_smart_callback_add(disk, "selected", _print_disk_info_cb, NULL);
-   it = elm_diskselector_selected_item_get(disk);
-   elm_diskselector_item_selected_set(it, EINA_FALSE);
+   ds_it = elm_diskselector_selected_item_get(disk);
+   elm_diskselector_item_selected_set(ds_it, EINA_FALSE);
 
    disk = _disk_create(win, EINA_FALSE);
    evas_object_size_hint_weight_set(disk, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
@@ -102,9 +103,9 @@ test_diskselector(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *even
    elm_box_pack_end(bx, disk);
    evas_object_show(disk);
    evas_object_smart_callback_add(disk, "selected", _print_disk_info_cb, NULL);
-   it = elm_diskselector_first_item_get(disk);
-   it = elm_diskselector_item_next_get(it);
-   elm_diskselector_item_selected_set(it, EINA_TRUE);
+   ds_it = elm_diskselector_first_item_get(disk);
+   ds_it = elm_diskselector_item_next_get(ds_it);
+   elm_diskselector_item_selected_set(ds_it, EINA_TRUE);
 
    disk = _disk_create(win, EINA_FALSE);
    evas_object_size_hint_weight_set(disk, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
@@ -155,14 +156,16 @@ test_diskselector(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *even
    // displayed item number setting example
    disk = elm_diskselector_add(win);
    elm_diskselector_display_item_num_set(disk, 5);
-   printf("Number of Items in DiskSelector : %d\n", elm_diskselector_display_item_num_get(disk));
+   printf("Number of Items in DiskSelector : %d\n",
+          elm_diskselector_display_item_num_get(disk));
 
    for (idx = 0; idx < (int)(sizeof(month_list) / sizeof(month_list[0])); idx++)
      {
-        it = elm_diskselector_item_append(disk, month_list[idx], NULL, NULL, NULL);
+        ds_it = elm_diskselector_item_append(disk, month_list[idx], NULL, NULL,
+                                             NULL);
      }
 
-   elm_diskselector_item_selected_set(it, EINA_TRUE);
+   elm_diskselector_item_selected_set(ds_it, EINA_TRUE);
    elm_diskselector_round_set(disk, EINA_TRUE);
    evas_object_size_hint_weight_set(disk, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(disk, EVAS_HINT_FILL, 0.5);
@@ -173,22 +176,22 @@ test_diskselector(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *even
    // displayed item number setting example
    disk = elm_diskselector_add(win);
    elm_diskselector_display_item_num_set(disk, 7);
-   printf("Number of Items in DiskSelector : %d\n", elm_diskselector_display_item_num_get(disk));
+   printf("Number of Items in DiskSelector : %d\n",
+          elm_diskselector_display_item_num_get(disk));
 
    for (idx = 1; idx < 31; idx++)
      {
         snprintf(date, sizeof(date), "%d", idx);
-        it = elm_diskselector_item_append(disk, date, NULL, NULL, NULL);
+        ds_it = elm_diskselector_item_append(disk, date, NULL, NULL, NULL);
      }
 
-   elm_diskselector_item_selected_set(it, EINA_TRUE);
+   elm_diskselector_item_selected_set(ds_it, EINA_TRUE);
    elm_diskselector_round_set(disk, EINA_TRUE);
    evas_object_size_hint_weight_set(disk, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(disk, EVAS_HINT_FILL, 0.5);
    elm_box_pack_end(bx, disk);
    evas_object_show(disk);
    evas_object_smart_callback_add(disk, "selected", _print_disk_info_cb, NULL);
-
 
    evas_object_resize(win, 320, 480);
    evas_object_show(win);
