@@ -101,7 +101,7 @@
    contact with the developers and maintainers.
  */
 
-/*
+/**
    @page Ecore_Main_Loop_Page The Ecore Main Loop
 
    @section intro What is Ecore?
