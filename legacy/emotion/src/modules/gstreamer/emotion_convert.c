@@ -10,6 +10,14 @@
 #include <gst/video/video.h>
 #include <gst/video/gstvideosink.h>
 
+#ifdef HAVE_ECORE_X
+# include <Ecore_X.h>
+# include <Ecore_Evas.h>
+# ifdef HAVE_XOVERLAY_H
+#  include <gst/interfaces/xoverlay.h>
+# endif
+#endif
+
 #include "Emotion.h"
 #include "emotion_gstreamer.h"
 

@@ -14,6 +14,14 @@
 #include <gst/video/gstvideosink.h>
 #include <gst/video/video.h>
 
+#ifdef HAVE_ECORE_X
+# include <Ecore_X.h>
+# include <Ecore_Evas.h>
+# ifdef HAVE_XOVERLAY_H
+#  include <gst/interfaces/xoverlay.h>
+# endif
+#endif
+
 #include "Emotion.h"
 #include "emotion_private.h"
 #include "emotion_gstreamer.h"
