@@ -91,8 +91,8 @@ EAPI Eina_Bool            elm_object_focus_get(const Evas_Object *obj) EINA_ARG_
  * Set/unset focus to a given Elementary object.
  *
  * @param obj The Elementary object to operate on.
- * @param enable @c EINA_TRUE Set focus to a given object,
- *               @c EINA_FALSE Unset focus to a given object.
+ * @param focus @c EINA_TRUE Set focus to a given object,
+ *              @c EINA_FALSE Unset focus to a given object.
  *
  * @note When you set focus to this object, if it can handle focus, will
  * take the focus away from the one who had it previously and will, for

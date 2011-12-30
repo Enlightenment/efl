@@ -158,7 +158,7 @@ EAPI const char      *elm_font_fontconfig_name_get(const char *name, const char 
 /**
  * Free the font string return by elm_font_fontconfig_name_get().
  *
- * @param efp the font properties struct
+ * @param name the font properties struct
  *
  * @ingroup Fonts
  */

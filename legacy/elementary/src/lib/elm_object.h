@@ -86,7 +86,7 @@ EAPI void                         elm_object_part_content_set(Evas_Object *obj, 
  * Get a content of an object
  *
  * @param obj The Elementary object
- * @param item The content part name to get (NULL for the default content)
+ * @param part The content part name to get (NULL for the default content)
  * @return content of the object or NULL for any error
  *
  * @note Elementary objects may have many contents
@@ -99,7 +99,7 @@ EINA_DEPRECATED EAPI Evas_Object *elm_object_content_part_get(const Evas_Object 
  * Get a content of an object
  *
  * @param obj The Elementary object
- * @param item The content part name to get (NULL for the default content)
+ * @param part The content part name to get (NULL for the default content)
  * @return content of the object or NULL for any error
  *
  * @note Elementary objects may have many contents
@@ -114,7 +114,7 @@ EAPI Evas_Object                 *elm_object_part_content_get(const Evas_Object 
  * Unset a content of an object
  *
  * @param obj The Elementary object
- * @param item The content part name to unset (NULL for the default content)
+ * @param part The content part name to unset (NULL for the default content)
  *
  * @note Elementary objects may have many contents
  * @deprecated Use elm_object_part_content_unset instead.
@@ -126,7 +126,7 @@ EINA_DEPRECATED EAPI Evas_Object *elm_object_content_part_unset(Evas_Object *obj
  * Unset a content of an object
  *
  * @param obj The Elementary object
- * @param item The content part name to unset (NULL for the default content)
+ * @param part The content part name to unset (NULL for the default content)
  *
  * @note Elementary objects may have many contents
  *
@@ -391,7 +391,7 @@ EAPI void        *elm_object_signal_callback_del(Evas_Object *obj, const char *e
  *   propagation, too.
  *
  * @note Your event callback will be issued on those events taking
- * place only if no other child widget of @obj has consumed the
+ * place only if no other child widget of @p obj has consumed the
  * event already.
  *
  * @note Not to be confused with @c

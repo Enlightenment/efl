@@ -24,7 +24,7 @@
  * @note whenever extending with new values, try to keep some padding
  *       to siblings so there is room for further extensions.
  */
-typedef enum _Elm_Object_Layer
+typedef enum
 {
    ELM_OBJECT_LAYER_BACKGROUND = EVAS_LAYER_MIN + 64, /**< where to place backgrounds */
    ELM_OBJECT_LAYER_DEFAULT = 0, /**< Evas_Object default layer (and thus for Elementary) */
@@ -70,7 +70,7 @@ struct _Elm_Event_Policy_Changed
 /**
  * Policy identifiers.
  */
-typedef enum _Elm_Policy
+typedef enum
 {
    ELM_POLICY_QUIT, /**< under which circumstances the application
                      * should quit automatically. @see
@@ -79,7 +79,7 @@ typedef enum _Elm_Policy
    ELM_POLICY_LAST
 } Elm_Policy; /**< Elementary policy identifiers/groups enumeration.  @see elm_policy_set() */
 
-typedef enum _Elm_Policy_Quit
+typedef enum
 {
    ELM_POLICY_QUIT_NONE = 0, /**< never quit the application
                               * automatically */
@@ -88,7 +88,7 @@ typedef enum _Elm_Policy_Quit
                                        * window is closed */
 } Elm_Policy_Quit; /**< Possible values for the #ELM_POLICY_QUIT policy */
 
-typedef enum _Elm_Focus_Direction
+typedef enum
 {
    ELM_FOCUS_PREVIOUS,
    ELM_FOCUS_NEXT

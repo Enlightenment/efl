@@ -1,16 +1,14 @@
 /**
  * Get the widget object's handle which contains a given item
  *
- * @param item The Elementary object item
+ * @param it The Elementary object item
  * @return The widget object
  *
  * @note This returns the widget object itself that an item belongs to.
  *
  * @ingroup General
  */
-EAPI Evas_Object *
-                                  elm_object_item_object_get(const Elm_Object_Item *it)
-EINA_ARG_NONNULL(1);
+EAPI Evas_Object                 *elm_object_item_object_get(const Elm_Object_Item *it) EINA_ARG_NONNULL(1);
 
 /**
  * Set a content of an object item
