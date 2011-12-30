@@ -293,7 +293,6 @@ EAPI void                  elm_index_item_go(Evas_Object *obj, int level) EINA_A
  *
  * @param it The index widget item handle
  * @return The data associated with @p it
- * @deprecated Use elm_object_item_data_get() instead
  *
  * @see elm_index_item_data_set()
  * @deprecated Use elm_object_item_data_get() instead
