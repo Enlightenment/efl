@@ -20,7 +20,7 @@ index_changed2(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_i
 {
    // called on a change but delayed in case multiple changes happen in a
    // short timespan
-   elm_genlist_item_top_bring_in(elm_index_item_data_get(event_info));
+   elm_genlist_item_top_bring_in(elm_object_item_data_get(event_info));
 }
 
 void
@@ -34,7 +34,7 @@ void
 index_selected(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info)
 {
    // called on final select
-   elm_genlist_item_top_bring_in(elm_index_item_data_get(event_info));
+   elm_genlist_item_top_bring_in(elm_object_item_data_get(event_info));
 }
 
 void
@@ -178,7 +178,7 @@ test_index2_it_del(void *data, Evas_Object *obj, void *event_info __UNUSED__)
 
    iit = elm_index_item_find(gui->id, it);
    if (label[0] == label_next[0])
-     elm_index_item_data_set(iit, it_next);
+     elm_object_item_data_set(iit, it_next);
    else
      elm_index_item_del(gui->id, iit);
 
@@ -188,7 +188,7 @@ test_index2_it_del(void *data, Evas_Object *obj, void *event_info __UNUSED__)
 void
 test_index2_id_changed(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info)
 {
-   elm_list_item_show(elm_index_item_data_get(event_info));
+   elm_list_item_show(elm_object_item_data_get(event_info));
 }
 
 void
