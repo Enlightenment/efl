@@ -93,12 +93,7 @@ struct _Emotion_Generic_Video_Shared
 	int last;
 	int next;
    } frame;
-  /* FIXME: maybe abstracting that in Eina ? */
-#ifdef _WIN32
-   HANDLE lock;
-#else
-   sem_t lock;
-#endif
+   Eina_Semaphore lock;
    int frame_drop;
 };
 

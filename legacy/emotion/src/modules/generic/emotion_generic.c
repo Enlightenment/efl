@@ -178,17 +178,11 @@ _create_shm_data(Emotion_Generic_Video *ev, const char *shmname)
    vs->frame.last = 2;
    vs->frame.next = 2;
    vs->frame_drop = 0;
-#ifdef _WIN32
-   /* FIXME: maximum count for the semaphore: 10. Is it sufficient ? */
-   vs->lock = CreateSemaphore(NULL, 1, 10, NULL);
-   if (!vs->lock)
+   if (!eina_semaphore_new(&vs->lock, 1))
      {
 	ERR("can not create semaphore");
 	return EINA_FALSE;
      }
-#else
-   sem_init(&vs->lock, 1, 1);
-#endif
    ev->frame.frames[0] = (unsigned char *)vs + sizeof(*vs);
    ev->frame.frames[1] = (unsigned char *)vs + sizeof(*vs) + vs->height * vs->width * vs->pitch;
    ev->frame.frames[2] = (unsigned char *)vs + sizeof(*vs) + 2 * vs->height * vs->width * vs->pitch;
@@ -483,12 +477,7 @@ static void
 _player_file_closed(Emotion_Generic_Video *ev)
 {
    INF("Closed previous file.");
-#ifdef _WIN32
-   CloseHandle(ev->shared->lock);
-#else
-   sem_destroy(&ev->shared->lock);
-#endif
-
+   eina_semaphore_free(&ev->shared->lock);
    ev->closing = EINA_FALSE;
 
    if (ev->opening)
@@ -1257,21 +1246,13 @@ static int
 em_bgra_data_get(void *data, unsigned char **bgra_data)
 {
    Emotion_Generic_Video *ev = data;
-#ifdef _WIN32
-   DWORD res;
-#endif
 
    if (!ev || !ev->file_ready)
      return 0;
 
    // lock frame here
-#ifdef _WIN32
-   res = WaitForSingleObject(ev->shared->lock, 0L);
-   if (res != WAIT_OBJECT_0)
+   if (!eina_semaphore_lock(&ev->shared->lock))
      return 0;
-#else
-   sem_wait(&ev->shared->lock);
-#endif
 
    // send current frame to emotion
    if (ev->shared->frame.emotion != ev->shared->frame.last)
@@ -1286,11 +1267,7 @@ em_bgra_data_get(void *data, unsigned char **bgra_data)
    ev->shared->frame_drop = 0;
 
    // unlock frame here
-#ifdef _WIN32
-   ReleaseSemaphore(ev->shared->lock, 1, NULL);
-#else
-   sem_post(&ev->shared->lock);
-#endif
+   eina_semaphore_release(&ev->shared->lock, 1);
    ev->drop = 0;
 
    return 1;

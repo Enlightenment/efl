@@ -7,7 +7,7 @@ AC_DEFUN([EMOTION_CHECK_DEP_XINE],
 requirement=""
 
 PKG_CHECK_MODULES([XINE],
-   [libxine >= 1.1.1 evas >= 0.9.9],
+   [libxine >= 1.1.1 evas >= 1.0.0],
    [
     have_dep="yes"
     requirement="libxine"
@@ -33,7 +33,7 @@ GST_MAJORMINOR=0.10
 
 requirement=""
 PKG_CHECK_MODULES([GSTREAMER],
-   [gstreamer-$GST_MAJORMINOR >= $GST_REQS gstreamer-plugins-base-$GST_MAJORMINOR >= $GSTPLUG_REQS gstreamer-video-$GST_MAJORMINOR >= $GSTPLUG_REQS evas >= 0.9.9],
+   [gstreamer-$GST_MAJORMINOR >= $GST_REQS gstreamer-plugins-base-$GST_MAJORMINOR >= $GSTPLUG_REQS gstreamer-video-$GST_MAJORMINOR >= $GSTPLUG_REQS evas >= 1.0.0 eina >= 1.1.99],
    [
     have_dep="yes"
     requirement="gstreamer-$GST_MAJORMINOR gstreamer-plugins-base-$GST_MAJORMINOR"
@@ -79,7 +79,7 @@ AC_DEFUN([EMOTION_CHECK_DEP_GENERIC],
 requirement=""
 
 PKG_CHECK_MODULES([GENERIC],
-   [evas >= 0.9.9],
+   [evas >= 1.0.0],
    [
     have_dep="yes"
    ],
