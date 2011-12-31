@@ -135,6 +135,12 @@ evas_gl_context_create(Evas_GL *evas_gl, Evas_GL_Context *share_ctx)
         return NULL;
      }
 
+   if (!evas_gl->evas->engine.func->gl_context_create)
+     {
+        ERR("GL engine not available\n");
+        return NULL;
+     }
+
    // Call engine->gl_create_context
    if (share_ctx)
      {
