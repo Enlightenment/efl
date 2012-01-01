@@ -1788,6 +1788,7 @@ _momentum_test(Evas_Object *obj, Pointer_Event *pe,
    if ((st->info.n) && (st->info.n < cnt))
      state_to_report = ELM_GESTURE_STATE_ABORT;
 
+
    if (st->info.n < cnt)
      st->info.n = cnt;
 
@@ -1820,10 +1821,21 @@ _momentum_test(Evas_Object *obj, Pointer_Event *pe,
            }
 
 
-         /* ABORT gesture if got DOWN or MOVE event after UP+timeout */
-         if ((st->t_up) &&
-         ((st->t_up + ELM_GESTURE_MULTI_TIMEOUT) < pe_local.timestamp))
-           state_to_report = ELM_GESTURE_STATE_ABORT;
+         if (st->t_up)
+           {
+              Eina_Bool force = EINA_TRUE;  /* for move state */
+              if ((st->t_up + ELM_GESTURE_MULTI_TIMEOUT) < pe_local.timestamp)
+                {  /* ABORT if got DOWN or MOVE event after UP+timeout */
+                   state_to_report = ELM_GESTURE_STATE_ABORT;
+                   force = EINA_FALSE;
+                }
+
+              /* We report state but don't compute momentum now */
+              ev_flag = _set_state(gesture, state_to_report, &st->info,
+                    force);
+              consume_event(wd, event_info, event_type, ev_flag);
+              return; /* Stop computing when user remove finger */
+           }
 
          if ((pe_local.timestamp - ELM_GESTURE_MOMENTUM_TIMEOUT) > st->t_end)
            {  /*  Too long of a wait, reset all values */
@@ -1839,14 +1851,14 @@ _momentum_test(Evas_Object *obj, Pointer_Event *pe,
               int xdir, ydir;
               xdir = _get_direction(st->line_end.x, pe_local.x);
               ydir = _get_direction(st->line_end.y, pe_local.y);
-              if (xdir != st->xdir)
+              if (xdir && (xdir != st->xdir))
                 {
                    st->line_st.x = st->line_end.x;
                    st->info.tx = st->t_st_x = st->t_end;
                    st->xdir = xdir;
                 }
 
-              if (ydir != st->ydir)
+              if (ydir && (ydir != st->ydir))
                 {
                    st->line_st.y = st->line_end.y;
                    st->info.ty = st->t_st_y = st->t_end;
@@ -1857,8 +1869,10 @@ _momentum_test(Evas_Object *obj, Pointer_Event *pe,
          st->info.x2 = st->line_end.x = pe_local.x;
          st->info.y2 = st->line_end.y = pe_local.y;
          st->t_end = pe_local.timestamp;
-         _set_momentum(&st->info, st->line_st.x, st->line_st.y, pe_local.x, pe_local.y,
-               st->t_st_x, st->t_st_y, pe_local.timestamp);
+         _set_momentum(&st->info, st->line_st.x, st->line_st.y,
+               pe_local.x, pe_local.y, st->t_st_x, st->t_st_y,
+               pe_local.timestamp);
+
          ev_flag = _set_state(gesture, state_to_report, &st->info,
                EINA_TRUE);
          consume_event(wd, event_info, event_type, ev_flag);
@@ -1885,9 +1899,6 @@ _momentum_test(Evas_Object *obj, Pointer_Event *pe,
          st->line_end.x = pe_local.x;
          st->line_end.y = pe_local.y;
          st->t_end = pe_local.timestamp;
-
-         _set_momentum(&st->info, st->line_st.x, st->line_st.y, pe_local.x, pe_local.y,
-               st->t_st_x, st->t_st_y, pe_local.timestamp);
 
          if ((fabs(st->info.mx) > ELM_GESTURE_MINIMUM_MOMENTUM) ||
                (fabs(st->info.my) > ELM_GESTURE_MINIMUM_MOMENTUM))
