@@ -600,3 +600,10 @@
 
         * Add recursive name find function - evas_object_name_child_find()
 
+2012-01-01  Carsten Haitzler (The Rasterman)
+
+        * Improve CPU use on nvidia drivers when vsyncing. It was
+          actually glXWaitGL() spinning, not glXSwapBuffers(), so this
+          points to a bug in the nvidia drivers where the sleep logic
+          in glXSwapBuffers() hasn't been transferred to glXWaitGL().
+          Avoid use of glXWaitGL() to avoid the nvidia bug.
