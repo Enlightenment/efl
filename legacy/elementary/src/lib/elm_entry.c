@@ -1530,7 +1530,7 @@ _signal_selection_start(void *data, Evas_Object *obj __UNUSED__, const char *emi
         Evas_Object *top;
 
         top = elm_widget_top_get(data);
-        if ((top) && (elm_win_xwindow_get(top)))
+        if (txt && top && (elm_win_xwindow_get(top)))
           elm_cnp_selection_set(ELM_SEL_TYPE_PRIMARY, data,
                                 ELM_SEL_FORMAT_MARKUP, txt, strlen(txt));
      }
