@@ -15,7 +15,8 @@
 #define SHADOW_H 118
 //#define RAD2DEG(x) ((x) * 57.295779513)
 
-#define MOMENTUM_FRICTION 2000
+#define MOMENTUM_FACTOR 30
+#define MOMENTUM_FRICTION 1000
 #define ROTATE_MOMENTUM_FRICTION 30
 #define ZOOM_MOMENTUM_FRICTION 8
 #define TIMER_TICK 0.1
@@ -26,9 +27,9 @@ struct _Photo_Object {
      Evas_Object *gl;
 
      /* 3 transit object to implement momentum animation */
-     Elm_Transit *momentum;
      Elm_Transit *zoom_momentum;
      Ecore_Timer *rot_timer;
+     Ecore_Timer *mom_timer;
      double rot_tot_time;
      double rot_progress;
      /* bx, by - current wanted coordinates of the photo object.
@@ -43,7 +44,10 @@ struct _Photo_Object {
       * per gesture, we have to keep the current rotate/zoom factor and the
       * one that was before we started the gesture. */
      int base_rotate, rotate;  /* base - initial angle */
+     double mx, my; /* momentum on x, y */
+     double mom_x_acc, mom_y_acc;
      double rot_momentum, zoom_mom;
+     double mom_tot_time;
      double zoom_mom_time;
      double base_zoom, zoom;
      double shadow_zoom;
@@ -200,17 +204,6 @@ rotate_momentum_animation_operation(void *_po)
    return rc;
 }
 
-/* Momentum animation */
-static void
-momentum_animation_operation(void *_po, Elm_Transit *transit __UNUSED__,
-      double progress __UNUSED__)
-{
-   Photo_Object *po = (Photo_Object *) _po;
-   po->bx += po->m_dx;
-   po->by += po->m_dy;
-   apply_changes(po);
-}
-
 static void
 pic_obj_keep_inframe(void *_po)
 {  /* Make sure middle is in the screen, if not, fix it. */
@@ -230,17 +223,6 @@ pic_obj_keep_inframe(void *_po)
      po->by = 0 - (po->bw / 2);
    else if (my > 800)
      po->by = 800 - (po->bh / 2);
-}
-
-static void
-momentum_animation_end(void *_po, Elm_Transit *transit __UNUSED__)
-{
-   Photo_Object *po = (Photo_Object *) _po;
-
-   pic_obj_keep_inframe(po);
-   apply_changes(po);
-
-   po->momentum = NULL;
 }
 
 static Evas_Event_Flags
@@ -377,10 +359,10 @@ momentum_start(void *_po, void *event_info)
    printf("momentum_start po->rotate=<%d> <%d,%d>\n", po->rotate, p->x2, p->y2);
 
    /* If there's an active animator, stop it */
-   if (po->momentum)
+   if (po->mom_timer)
      {
-        elm_transit_del(po->momentum);
-        po->momentum = NULL;
+        ecore_timer_del(po->mom_timer);
+        po->mom_timer = NULL;
      }
 
    po->dx = p->x2 - po->bx;
@@ -404,25 +386,57 @@ momentum_move(void *_po, void *event_info)
    return EVAS_EVENT_FLAG_NONE;
 }
 
+/* Momentum animation */
+static Eina_Bool
+momentum_animation_operation(void *_po)
+{
+   Photo_Object *po = (Photo_Object *) _po;
+   Eina_Bool rc = ECORE_CALLBACK_RENEW;
+   Evas_Coord x = po->bx;
+   Evas_Coord y = po->by;
+   po->mom_tot_time -= TIMER_TICK;
+   if (po->mom_tot_time <= 0)
+     {
+        po->mom_timer = NULL;
+        rc = ECORE_CALLBACK_CANCEL;
+     }
+
+   /* x = v0t + 0.5at^2 */
+   po->bx += ((po->mx * po->mom_tot_time) +
+         (0.5 * po->mom_x_acc * (po->mom_tot_time * po->mom_tot_time)));
+
+   po->by += ((po->my * po->mom_tot_time) +
+         (0.5 * po->mom_y_acc * (po->mom_tot_time * po->mom_tot_time)));
+
+   printf("%s prev_bx-new_bx,y=(%d,%d)\n", __func__, x-po->bx, y-po->by);
+   if (rc == ECORE_CALLBACK_CANCEL)
+     pic_obj_keep_inframe(po);
+
+   apply_changes(po);
+   return rc;
+}
+
 static Evas_Event_Flags
 momentum_end(void *_po, void *event_info)
 {
    Photo_Object *po = (Photo_Object *) _po;
    Elm_Gesture_Momentum_Info *p = (Elm_Gesture_Momentum_Info *) event_info;
-   printf("momentum end po->rotate=<%d> <%d,%d> <%d,%d>\n", po->rotate, p->x2, p->y2, p->mx, p->my);
+   printf("momentum end x2,y2=<%d,%d> mx,my=<%d,%d>\n", p->x2, p->y2, p->mx, p->my);
    pic_obj_keep_inframe(po);
    apply_changes(po);
-   po->m_dx = p->mx / 200;
-   po->m_dy = p->my / 200;
-
-   po->momentum = elm_transit_add();
-   double tot_time = sqrt((p->mx * p->mx) + (p->my * p->my))
+   /* Make up some total-time for the movement */
+   po->mom_tot_time = sqrt((p->mx * p->mx) + (p->my * p->my))
       / MOMENTUM_FRICTION;
-   printf("%s tot_time=<%f>\n", __func__, tot_time);
-   elm_transit_duration_set(po->momentum, tot_time);
-   elm_transit_effect_add(po->momentum, momentum_animation_operation, po,
-         momentum_animation_end);
-   elm_transit_go(po->momentum);
+
+   if (po->mom_tot_time)
+     {  /* Compute acceleration for both compenents, and launch timer */
+        po->mom_x_acc = (p->mx) / po->mom_tot_time; /* a = (v-v0) / t */
+        po->mom_y_acc = (p->my) / po->mom_tot_time; /* a = (v-v0) / t */
+        po->mom_x_acc /= MOMENTUM_FACTOR;
+        po->mom_y_acc /= MOMENTUM_FACTOR;
+        po->mom_timer = ecore_timer_add(TIMER_TICK, momentum_animation_operation, po);
+     }
+
    return EVAS_EVENT_FLAG_NONE;
 }
 
