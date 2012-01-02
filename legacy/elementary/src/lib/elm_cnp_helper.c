@@ -1612,7 +1612,7 @@ elm_drag_start(Evas_Object *obj, Elm_Sel_Format format, const char *data, void (
    ecore_x_dnd_callback_pos_update_set(_drag_move, NULL);
    ecore_x_dnd_begin(xwin, (unsigned char *)&xdnd, sizeof(Elm_Sel_Type));
    evas_object_event_callback_add(obj, EVAS_CALLBACK_MOUSE_UP,
-                                  _drag_mouse_up, (void *)xwin);
+                                  _drag_mouse_up, (uintptr_t *)xwin);
 
    handler_status = ecore_event_handler_add(ECORE_X_EVENT_XDND_STATUS,
                                             _dnd_status, NULL);
