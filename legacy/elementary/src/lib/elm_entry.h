@@ -668,12 +668,12 @@ EAPI Eina_Bool          elm_entry_cursor_is_visible_format_get(const Evas_Object
  * This function returns a string with the utf8 character stored at the
  * current cursor position.
  * Only the text is returned, any format that may exist will not be part
- * of the return value.
+ * of the return value. You must free the string when done with free().
  *
  * @param obj The entry object
  * @return The text pointed by the cursors.
  */
-EAPI const char        *elm_entry_cursor_content_get(const Evas_Object *obj);
+EAPI char              *elm_entry_cursor_content_get(const Evas_Object *obj);
 
 /**
  * This function returns the geometry of the cursor.

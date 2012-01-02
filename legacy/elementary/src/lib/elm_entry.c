@@ -2792,7 +2792,7 @@ elm_entry_cursor_is_visible_format_get(const Evas_Object *obj)
    return edje_object_part_text_cursor_is_visible_format_get(wd->ent, "elm.text", EDJE_CURSOR_MAIN);
 }
 
-EAPI const char *
+EAPI char *
 elm_entry_cursor_content_get(const Evas_Object *obj)
 {
    ELM_CHECK_WIDTYPE(obj, widtype) NULL;
