@@ -1555,10 +1555,12 @@ elm_drop_target_del(Evas_Object *obj)
 
 
 static void
-_drag_mouse_up(void *un __UNUSED__, Evas *e __UNUSED__, Evas_Object *obj, void *data __UNUSED__)
+_drag_mouse_up(void *un __UNUSED__, Evas *e __UNUSED__, Evas_Object *obj, void *data)
 {
+   Ecore_X_Window xwin = *((Ecore_X_Window *)data);
    evas_object_event_callback_del(obj, EVAS_CALLBACK_MOUSE_UP, _drag_mouse_up);
    ecore_x_dnd_drop();
+   ecore_x_dnd_aware_set(xwin, EINA_FALSE);
    if (dragdonecb)
      {
         dragdonecb(dragdonecb,selections[ELM_SEL_TYPE_XDND].widget);
@@ -1606,10 +1608,11 @@ elm_drag_start(Evas_Object *obj, Elm_Sel_Format format, const char *data, void (
    dragdonecb = dragdone;
    dragdonedata = donecbdata;
 
+   ecore_x_dnd_aware_set(xwin, EINA_TRUE);
    ecore_x_dnd_callback_pos_update_set(_drag_move, NULL);
    ecore_x_dnd_begin(xwin, (unsigned char *)&xdnd, sizeof(Elm_Sel_Type));
    evas_object_event_callback_add(obj, EVAS_CALLBACK_MOUSE_UP,
-                                  _drag_mouse_up, NULL);
+                                  _drag_mouse_up, (void *)xwin);
 
    handler_status = ecore_event_handler_add(ECORE_X_EVENT_XDND_STATUS,
                                             _dnd_status, NULL);
