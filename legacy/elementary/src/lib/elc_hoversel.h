@@ -24,17 +24,13 @@
  *
  * Supported elm_object common APIs.
  * @li elm_object_disabled_set
- * @li elm_object_text_set
+ * @li elm_object_disabled_get
  * @li elm_object_part_text_set
- * @li elm_object_text_get
  * @li elm_object_part_text_get
- * @li elm_object_content_set
  * @li elm_object_part_content_set
- * @li elm_object_content_unset
  * @li elm_object_part_content_unset
  *
  * Supported elm_object_item common APIs.
- * @li elm_object_item_text_get
  * @li elm_object_item_part_text_get
  *
  * See @ref tutorial_hoversel for an example.

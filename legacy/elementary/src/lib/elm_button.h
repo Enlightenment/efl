@@ -34,6 +34,16 @@
  * Default text parts of the button widget that you can use for are:
  * @li "default" - Label of the button
  *
+ * Supported elm_object common APIs.
+ * @li elm_object_part_text_set
+ * @li elm_object_part_text_get
+ * @li elm_object_part_content_set
+ * @li elm_object_part_content_get
+ * @li elm_object_part_content_unset
+ * @li elm_object_signal_emit
+ * @li elm_object_signal_callback_add
+ * @li elm_object_signal_callback_del
+ * 
  * Follow through a complete example @ref button_example_01 "here".
  * @{
  */

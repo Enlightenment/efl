@@ -323,7 +323,7 @@ _elm_actionslider_label_set(Evas_Object *obj, const char *item, const char *labe
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return;
 
-   if (!item || !strcmp(item, "default"))
+   if (!item || !strcmp(item, "indicator"))
      {
         eina_stringshare_replace(&wd->indicator_label, label);
         edje_object_part_text_set(wd->as, "elm.text.indicator",
@@ -333,13 +333,9 @@ _elm_actionslider_label_set(Evas_Object *obj, const char *item, const char *labe
      {
         eina_stringshare_replace(&wd->text_left, label);
         if (!elm_widget_mirrored_get(obj))
-          {
-             edje_object_part_text_set(wd->as, "elm.text.left", wd->text_left);
-          }
+          edje_object_part_text_set(wd->as, "elm.text.left", wd->text_left);
         else
-          {
-             edje_object_part_text_set(wd->as, "elm.text.right", wd->text_left);
-          }
+          edje_object_part_text_set(wd->as, "elm.text.right", wd->text_left);
      }
    else if (!strcmp(item, "center"))
      {
@@ -350,13 +346,9 @@ _elm_actionslider_label_set(Evas_Object *obj, const char *item, const char *labe
      {
         eina_stringshare_replace(&wd->text_right, label);
         if (!elm_widget_mirrored_get(obj))
-          {
-             edje_object_part_text_set(wd->as, "elm.text.right", wd->text_right);
-          }
+          edje_object_part_text_set(wd->as, "elm.text.right", wd->text_right);
         else
-          {
-             edje_object_part_text_set(wd->as, "elm.text.left", wd->text_right);
-          }
+          edje_object_part_text_set(wd->as, "elm.text.left", wd->text_right);
      }
 }
 
@@ -367,22 +359,14 @@ _elm_actionslider_label_get(const Evas_Object *obj, const char *item)
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return NULL;
 
-   if (!item || !strcmp(item, "default"))
-     {
-        return wd->indicator_label;
-     }
+   if (!item || !strcmp(item, "indicator"))
+     return wd->indicator_label;
    else if (!strcmp(item, "left"))
-     {
-        return wd->text_left;
-     }
+     return wd->text_left;
    else if (!strcmp(item, "center"))
-     {
-        return wd->text_center;
-     }
+     return wd->text_center;
    else if (!strcmp(item, "right"))
-     {
-        return wd->text_right;
-     }
+     return wd->text_right;
 
    return NULL;
 }

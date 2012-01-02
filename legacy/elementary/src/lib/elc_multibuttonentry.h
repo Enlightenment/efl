@@ -26,6 +26,15 @@
  * Default text parts of the multibuttonentry items that you can use for are:
  * @li "default" - A label of the multibuttonentry item
  *
+ * Supported elm_object common APIs.
+ * @li elm_object_signal_emit
+ * @li elm_object_part_text_set
+ * @li elm_object_part_text_get
+ *
+ * Supported elm_object_item common APIs.
+ * @li elm_object_item_part_text_set
+ * @li elm_object_item_part_text_get
+ *
  */
 
 /**

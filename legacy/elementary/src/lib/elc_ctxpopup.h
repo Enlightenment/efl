@@ -28,6 +28,20 @@
  * Default text parts of the ctxpopup items that you can use for are:
  * @li "default" - Title label in the title area
  *
+ * Supported elm_object common APIs.
+ * @li elm_object_part_content_set
+ * @li elm_object_part_content_get
+ * @li elm_object_part_content_unset
+ *
+ * Supported elm_object_item common APIs.
+ * @li elm_object_item_disabled_set
+ * @li elm_object_item_disabled_get
+ * @li elm_object_item_part_text_set
+ * @li elm_object_item_part_text_get
+ * @li elm_object_item_part_content_set
+ * @li elm_object_item_part_content_get
+ * @li elm_object_item_signal_emit
+ *
  * @ref tutorial_ctxpopup shows the usage of a good deal of the API.
  * @{
  */

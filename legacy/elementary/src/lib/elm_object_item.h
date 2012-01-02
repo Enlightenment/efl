@@ -5,7 +5,7 @@
  * @return The widget object
  *
  * @note This returns the widget object itself that an item belongs to.
- *
+ * @note Every elm_object_item supports this API
  * @ingroup General
  */
 EAPI Evas_Object                 *elm_object_item_object_get(const Elm_Object_Item *it);
@@ -99,6 +99,7 @@ EAPI void                         elm_object_item_access_info_set(Elm_Object_Ite
  * @param it The Elementary object item
  * @return The data associated with @p it
  *
+ * @note Every elm_object_item supports this API
  * @ingroup General
  */
 EAPI void                        *elm_object_item_data_get(const Elm_Object_Item *it);
@@ -108,6 +109,7 @@ EAPI void                        *elm_object_item_data_get(const Elm_Object_Item
  * @param it The Elementary object item
  * @param data The data to be associated with @p it
  *
+ * @note Every elm_object_item supports this API
  * @ingroup General
  */
 EAPI void                         elm_object_item_data_set(Elm_Object_Item *it, void *data);
@@ -170,6 +172,8 @@ EAPI Eina_Bool                    elm_object_item_disabled_get(const Elm_Object_
  * @li void * item data
  * @li Evas_Object * widget object
  * @li Elm_Object_Item * widget item
+ *
+ * @note Every elm_object_item supports this API
  *
  * @see elm_object_item_del()
  * @ingroup General

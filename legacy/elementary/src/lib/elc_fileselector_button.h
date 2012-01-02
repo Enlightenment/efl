@@ -29,6 +29,16 @@
  *   pointer comes as the @c event_info data (a stringshared
  *   string)
  *
+ * Default text parts of the fileselector_button widget that you can use for
+ * are:
+ * @li "default" - Label of the fileselector_button
+ *
+ * Supported elm_object common APIs.
+ * @li elm_object_part_text_set
+ * @li elm_object_part_text_get
+ * @li elm_object_disabled_set
+ * @li elm_object_disabled_get
+ *
  * Here is an example on its usage:
  * @li @ref fileselector_button_example
  *

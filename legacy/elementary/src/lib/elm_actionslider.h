@@ -22,12 +22,21 @@
  *
  * Signals that you can add callbacks for are:
  *
- * "selected" - when user selects an enabled position (the label is passed
- *              as event info)".
- * @n
+ * "selected" - when user selects an enabled position (the label is passed as
+ *              event info)".
  * "pos_changed" - when the indicator reaches any of the positions("left",
  *                 "right" or "center").
  *
+ * Default text parts of the actionslider widget that you can use for are:
+ * @li "indicator" - A indicator label of the actionslider
+ * @li "left" - A left label of the actionslider
+ * @li "right" - A right label of the actionslider
+ * @li "center" - A center label of the actionslider
+ *
+ * Supported elm_object common APIs.
+ * @li elm_object_part_text_set
+ * @li elm_object_part_text_get
+ * 
  * See an example of actionslider usage @ref actionslider_example_page "here"
  * @{
  */

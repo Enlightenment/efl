@@ -16,6 +16,11 @@
  *
  * Values don't work as bitmask, only one can be choosen.
  *
+ * Supported elm_object common APIs.
+ * @li elm_object_signal_emit
+ * @li elm_object_signal_callback_add
+ * @li elm_object_signal_callback_del
+ *
  * @see elm_calendar_mark_add()
  *
  * @ingroup Calendar

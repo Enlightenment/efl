@@ -21,6 +21,13 @@
  * @see Entry
  * @see Hover
  *
+ * Default text parts of the anchorblock widget that you can use for are:
+ * @li "default" - A label of the anchorblock
+ *
+ * Supported elm_object common APIs.
+ * @li elm_object_part_text_set
+ * @li elm_object_part_text_get
+ *
  * Since examples are usually better than plain words, we might as well
  * try @ref tutorial_anchorblock_example "one".
  */

@@ -27,7 +27,18 @@
  * @li "icon" - An icon of the check
  *
  * Default text parts of the check widget that you can use for are:
- * @li "elm.text" - Label of the check
+ * @li "default" - A label of the check
+ * @li "on" - On state label of the check
+ * @li "off" - Off state label of the check
+ *
+ * Supported elm_object common APIs.
+ * @li elm_object_disabled_set
+ * @li elm_object_disabled_get
+ * @li elm_object_part_text_set
+ * @li elm_object_part_text_get
+ * @li elm_object_part_content_set
+ * @li elm_object_part_content_get
+ * @li elm_object_part_content_unset
  *
  * @ref tutorial_check should give you a firm grasp of how to use this widget.
  * 

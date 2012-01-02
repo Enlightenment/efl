@@ -32,6 +32,11 @@
  * Smart callbacks one can register to:
  * - "changed" - the clock's user changed the time
  *
+ * Supported elm_object common APIs.
+ * @li elm_object_signal_emit
+ * @li elm_object_signal_callback_add
+ * @li elm_object_signal_callbacka_del
+ *
  * Here is an example on its usage:
  * @li @ref clock_example
  */
