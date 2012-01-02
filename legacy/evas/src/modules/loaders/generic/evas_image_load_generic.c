@@ -118,7 +118,7 @@ _load(Image_Entry *ie, const char *file, const char *key, int *error, Eina_Bool 
    int read_data = 0;
    char *tmpfname = NULL, *shmfname = NULL;
    DATA32 *body;
-   FILE *f;
+   FILE *f = NULL;
 
    libdir = _evas_module_libdir_get();
    cmd_len = strlen(libdir);

@@ -607,3 +607,8 @@
           points to a bug in the nvidia drivers where the sleep logic
           in glXSwapBuffers() hasn't been transferred to glXWaitGL().
           Avoid use of glXWaitGL() to avoid the nvidia bug.
+
+2012-01-02  Cedric Bail
+
+	* Fix unitialized value when running generic loader without any
+	application found to open the file.
