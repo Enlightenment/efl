@@ -116,15 +116,16 @@ _ecore_evas_obj_callback_hide(void *data, Evas *e __UNUSED__, Evas_Object *obj _
 }
 
 static void
-_ecore_evas_obj_callback_resize(void *data, Evas *e __UNUSED__, Evas_Object *obj, void *event_info __UNUSED__)
+_ecore_evas_obj_callback_resize(void *data, Evas *e, Evas_Object *obj, void *event_info __UNUSED__)
 {
    Ecore_Evas *ee = data;
-   Evas_Coord ow, oh, w, h;
+   Evas_Coord ow, oh, fw, fh;
 
    evas_object_geometry_get(obj, NULL, NULL, &ow, &oh);
-   ecore_evas_geometry_get(ee, NULL, NULL, &w, &h);
-   /*if ((w != ow) || (h != oh))*/ /* avoid recursion on ecore_evas_resize side */
-     ecore_evas_resize(ee, ow, oh);
+   evas_output_framespace_get(e, NULL, NULL, &fw, &fh);
+   ow += fw;
+   oh += fh;
+   ecore_evas_resize(ee, ow, oh);
 }
 
 static void
