@@ -2,6 +2,7 @@
 #include "elm_priv.h"
 
 typedef struct _Widget_Data Widget_Data;
+typedef struct _Elm_Segment_Item Elm_Segment_Item;
 
 struct _Widget_Data
 {
@@ -518,7 +519,7 @@ elm_segment_control_add(Evas_Object *parent)
    return obj;
 }
 
-EAPI Elm_Segment_Item *
+EAPI Elm_Object_Item *
 elm_segment_control_item_add(Evas_Object *obj, Evas_Object *icon,
                              const char *label)
 {
@@ -535,10 +536,10 @@ elm_segment_control_item_add(Evas_Object *obj, Evas_Object *icon,
    wd->seg_items = eina_list_append(wd->seg_items, it);
    _update_list(wd);
 
-   return it;
+   return (Elm_Object_Item *) it;
 }
 
-EAPI Elm_Segment_Item *
+EAPI Elm_Object_Item *
 elm_segment_control_item_insert_at(Evas_Object *obj, Evas_Object *icon,
                                    const char *label, int idx)
 {
@@ -560,19 +561,20 @@ elm_segment_control_item_insert_at(Evas_Object *obj, Evas_Object *icon,
      wd->seg_items = eina_list_append(wd->seg_items, it);
 
    _update_list(wd);
-   return it;
+   return (Elm_Object_Item *) it;
 }
 
 EAPI void
-elm_segment_control_item_del(Elm_Segment_Item *it)
+elm_segment_control_item_del(Elm_Object_Item *it)
 {
-   ELM_WIDGET_ITEM_WIDTYPE_CHECK_OR_RETURN(it);
+   ELM_OBJ_ITEM_CHECK_OR_RETURN(it);
    Widget_Data *wd;
+   Elm_Segment_Item *item = (Elm_Segment_Item *) it;
 
-   wd = elm_widget_item_data_get(it);
+   wd = elm_widget_item_data_get(item);
    if (!wd) return;
 
-   _item_free(it);
+   _item_free(item);
    _update_list(wd);
 }
 
@@ -605,22 +607,23 @@ elm_segment_control_item_label_get(const Evas_Object *obj, int idx)
 }
 
 EAPI void
-elm_segment_control_item_label_set(Elm_Segment_Item* it, const char* label)
+elm_segment_control_item_label_set(Elm_Object_Item* it, const char* label)
 {
-   ELM_WIDGET_ITEM_WIDTYPE_CHECK_OR_RETURN(it);
+   ELM_OBJ_ITEM_CHECK_OR_RETURN(it);
    Widget_Data *wd;
+   Elm_Segment_Item *item = (Elm_Segment_Item *) it;
 
-   wd = elm_widget_item_data_get(it);
+   wd = elm_widget_item_data_get(item);
    if (!wd) return;
 
-   eina_stringshare_replace(&it->label, label);
-   if (it->label)
-     edje_object_signal_emit(VIEW(it), "elm,state,text,visible", "elm");
+   eina_stringshare_replace(&item->label, label);
+   if (item->label)
+     edje_object_signal_emit(VIEW(item), "elm,state,text,visible", "elm");
    else
-     edje_object_signal_emit(VIEW(it), "elm,state,text,hidden", "elm");
-   edje_object_message_signal_process(VIEW(it));
+     edje_object_signal_emit(VIEW(item), "elm,state,text,hidden", "elm");
+   edje_object_message_signal_process(VIEW(item));
    //label can be NULL also.
-   edje_object_part_text_set(VIEW(it), "elm.text", it->label);
+   edje_object_part_text_set(VIEW(item), "elm.text", item->label);
 }
 
 EAPI Evas_Object *
@@ -636,27 +639,28 @@ elm_segment_control_item_icon_get(const Evas_Object *obj, int idx)
 }
 
 EAPI void
-elm_segment_control_item_icon_set(Elm_Segment_Item *it, Evas_Object *icon)
+elm_segment_control_item_icon_set(Elm_Object_Item *it, Evas_Object *icon)
 {
-   ELM_WIDGET_ITEM_WIDTYPE_CHECK_OR_RETURN(it);
+   ELM_OBJ_ITEM_CHECK_OR_RETURN(it);
+   Elm_Segment_Item *item = (Elm_Segment_Item *) it;
 
    //Remove the existing icon
-   if (it->icon)
+   if (item->icon)
      {
-        edje_object_part_unswallow(VIEW(it), it->icon);
-        evas_object_del(it->icon);
-        it->icon = NULL;
+        edje_object_part_unswallow(VIEW(item), item->icon);
+        evas_object_del(item->icon);
+        item->icon = NULL;
      }
 
-   it->icon = icon;
-   if (it->icon)
+   item->icon = icon;
+   if (item->icon)
      {
-        elm_widget_sub_object_add(VIEW(it), it->icon);
-        edje_object_part_swallow(VIEW(it), "elm.swallow.icon", it->icon);
-        edje_object_signal_emit(VIEW(it), "elm,state,icon,visible", "elm");
+        elm_widget_sub_object_add(VIEW(item), item->icon);
+        edje_object_part_swallow(VIEW(item), "elm.swallow.icon", item->icon);
+        edje_object_signal_emit(VIEW(item), "elm,state,icon,visible", "elm");
      }
    else
-     edje_object_signal_emit(VIEW(it), "elm,state,icon,hidden", "elm");
+     edje_object_signal_emit(VIEW(item), "elm,state,icon,hidden", "elm");
 }
 
 EAPI int
@@ -672,63 +676,55 @@ elm_segment_control_item_count_get(const Evas_Object *obj)
 }
 
 EAPI Evas_Object*
-elm_segment_control_item_object_get(const Elm_Segment_Item *it)
+elm_segment_control_item_object_get(const Elm_Object_Item *it)
 {
-   ELM_WIDGET_ITEM_WIDTYPE_CHECK_OR_RETURN(it, NULL);
-
+   ELM_OBJ_ITEM_CHECK_OR_RETURN(it, NULL);
    return VIEW(it);
 }
 
-EAPI Elm_Segment_Item*
+EAPI Elm_Object_Item*
 elm_segment_control_item_selected_get(const Evas_Object *obj)
 {
    ELM_CHECK_WIDTYPE(obj, widtype) NULL;
-   Widget_Data *wd;
-
-   wd = elm_widget_data_get(obj);
+   Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return NULL;
-
-   return wd->selected_item;
+   return (Elm_Object_Item *) wd->selected_item;
 }
 
 EAPI void
-elm_segment_control_item_selected_set(Elm_Segment_Item *it, Eina_Bool selected)
+elm_segment_control_item_selected_set(Elm_Object_Item *it, Eina_Bool selected)
 {
-   ELM_WIDGET_ITEM_WIDTYPE_CHECK_OR_RETURN(it);
+   ELM_OBJ_ITEM_CHECK_OR_RETURN(it);
    Widget_Data *wd;
+   Elm_Segment_Item *item = (Elm_Segment_Item *) it;
 
-   wd = elm_widget_item_data_get(it);
+   wd = elm_widget_item_data_get(item);
    if (!wd) return;
 
-   if (it == wd->selected_item)
+   if (item == wd->selected_item)
      {
         //already in selected state.
         if (selected) return;
 
         //unselect case
-        _segment_off(it);
+        _segment_off(item);
      }
    else if (selected)
-     _segment_on(it);
+     _segment_on(item);
 
    return;
 }
 
-EAPI Elm_Segment_Item *
+EAPI Elm_Object_Item *
 elm_segment_control_item_get(const Evas_Object *obj, int idx)
 {
    ELM_CHECK_WIDTYPE(obj, widtype) NULL;
-   Elm_Segment_Item *it;
-
-   it = _item_find(obj, idx);
-
-   return it;
+   return (Elm_Object_Item *) _item_find(obj, idx);
 }
 
 EAPI int
-elm_segment_control_item_index_get(const Elm_Segment_Item *it)
+elm_segment_control_item_index_get(const Elm_Object_Item *it)
 {
-   ELM_WIDGET_ITEM_WIDTYPE_CHECK_OR_RETURN(it, -1);
-
-   return it->seg_index;
+   ELM_OBJ_ITEM_CHECK_OR_RETURN(it, -1);
+   return ((Elm_Segment_Item *) it)->seg_index;
 }

@@ -28,7 +28,7 @@ int
 elm_main(int argc __UNUSED__, char **argv __UNUSED__)
 {
    Evas_Object *win, *bg, *sc, *ic;
-   Elm_Segment_Item *it;
+   Elm_Object_Item *seg_it;
    int count, index;
 
    win = elm_win_add(NULL, "segment_control", ELM_WIN_BASIC);
@@ -62,20 +62,20 @@ elm_main(int argc __UNUSED__, char **argv __UNUSED__)
    count = elm_segment_control_item_count_get(sc);
    elm_segment_control_item_insert_at(sc, NULL, "Inserted at", count - 1);
 
-   it = elm_segment_control_item_insert_at(sc, NULL, "To be deleted", 2);
-   elm_segment_control_item_del(it);
+   seg_it = elm_segment_control_item_insert_at(sc, NULL, "To be deleted", 2);
+   elm_segment_control_item_del(seg_it);
 
    elm_segment_control_item_insert_at(sc, NULL, "To be deleted", 2);
    elm_segment_control_item_del_at(sc, 2);
 
-   it = elm_segment_control_item_get(sc, 0);
-   elm_segment_control_item_label_set(it, "Only Text");
+   seg_it = elm_segment_control_item_get(sc, 0);
+   elm_segment_control_item_label_set(seg_it, "Only Text");
 
    count = elm_segment_control_item_count_get(sc);
-   it = elm_segment_control_item_get(sc, count / 2);
-   elm_segment_control_item_selected_set(it, EINA_TRUE);
-   it = elm_segment_control_item_selected_get(sc);
-   index = elm_segment_control_item_index_get(it);
+   seg_it = elm_segment_control_item_get(sc, count / 2);
+   elm_segment_control_item_selected_set(seg_it, EINA_TRUE);
+   seg_it = elm_segment_control_item_selected_get(sc);
+   index = elm_segment_control_item_index_get(seg_it);
    printf("Item selected: %i\n", index);
 
    evas_object_show(win);

@@ -35,8 +35,6 @@
  * @{
  */
 
-typedef struct _Elm_Segment_Item Elm_Segment_Item;    /**< Item handle for a segment control widget. */
-
 /**
  * Add a new segment control widget to the given parent Elementary
  * (container) object.
@@ -91,7 +89,7 @@ EAPI Evas_Object      *elm_segment_control_add(Evas_Object *parent);
  *
  * @ingroup SegmentControl
  */
-EAPI Elm_Segment_Item *elm_segment_control_item_add(Evas_Object *obj, Evas_Object *icon, const char *label);
+EAPI Elm_Object_Item *elm_segment_control_item_add(Evas_Object *obj, Evas_Object *icon, const char *label);
 
 /**
  * Insert a new item to the segment control object at specified position.
@@ -124,7 +122,7 @@ EAPI Elm_Segment_Item *elm_segment_control_item_add(Evas_Object *obj, Evas_Objec
  *
  * @ingroup SegmentControl
  */
-EAPI Elm_Segment_Item *elm_segment_control_item_insert_at(Evas_Object *obj, Evas_Object *icon, const char *label, int index);
+EAPI Elm_Object_Item *elm_segment_control_item_insert_at(Evas_Object *obj, Evas_Object *icon, const char *label, int index);
 
 /**
  * Remove a segment control item from its parent, deleting it.
@@ -136,7 +134,7 @@ EAPI Elm_Segment_Item *elm_segment_control_item_insert_at(Evas_Object *obj, Evas
  *
  * @ingroup SegmentControl
  */
-EAPI void              elm_segment_control_item_del(Elm_Segment_Item *it);
+EAPI void              elm_segment_control_item_del(Elm_Object_Item *it);
 
 /**
  * Remove a segment control item at given index from its parent,
@@ -178,7 +176,7 @@ EAPI int               elm_segment_control_item_count_get(const Evas_Object *obj
  *
  * @ingroup SegmentControl
  */
-EAPI Elm_Segment_Item *elm_segment_control_item_get(const Evas_Object *obj, int index);
+EAPI Elm_Object_Item *elm_segment_control_item_get(const Evas_Object *obj, int index);
 
 /**
  * Get the label of item.
@@ -217,7 +215,7 @@ EAPI const char       *elm_segment_control_item_label_get(const Evas_Object *obj
  *
  * @ingroup SegmentControl
  */
-EAPI void              elm_segment_control_item_label_set(Elm_Segment_Item *it, const char *label);
+EAPI void              elm_segment_control_item_label_set(Elm_Object_Item *it, const char *label);
 
 /**
  * Get the icon associated to the item.
@@ -261,7 +259,7 @@ EAPI Evas_Object      *elm_segment_control_item_icon_get(const Evas_Object *obj,
  *
  * @ingroup SegmentControl
  */
-EAPI void              elm_segment_control_item_icon_set(Elm_Segment_Item *it, Evas_Object *icon);
+EAPI void              elm_segment_control_item_icon_set(Elm_Object_Item *it, Evas_Object *icon);
 
 /**
  * Get the index of an item.
@@ -276,7 +274,7 @@ EAPI void              elm_segment_control_item_icon_set(Elm_Segment_Item *it, E
  *
  * @ingroup SegmentControl
  */
-EAPI int               elm_segment_control_item_index_get(const Elm_Segment_Item *it);
+EAPI int               elm_segment_control_item_index_get(const Elm_Object_Item *it);
 
 /**
  * Get the base object of the item.
@@ -288,7 +286,7 @@ EAPI int               elm_segment_control_item_index_get(const Elm_Segment_Item
  *
  * @ingroup SegmentControl
  */
-EAPI Evas_Object      *elm_segment_control_item_object_get(const Elm_Segment_Item *it);
+EAPI Evas_Object      *elm_segment_control_item_object_get(const Elm_Object_Item *it);
 
 /**
  * Get the selected item.
@@ -304,7 +302,7 @@ EAPI Evas_Object      *elm_segment_control_item_object_get(const Elm_Segment_Ite
  *
  * @ingroup SegmentControl
  */
-EAPI Elm_Segment_Item *elm_segment_control_item_selected_get(const Evas_Object *obj);
+EAPI Elm_Object_Item *elm_segment_control_item_selected_get(const Evas_Object *obj);
 
 /**
  * Set the selected state of an item.
@@ -325,7 +323,7 @@ EAPI Elm_Segment_Item *elm_segment_control_item_selected_get(const Evas_Object *
  *
  * @ingroup SegmentControl
  */
-EAPI void              elm_segment_control_item_selected_set(Elm_Segment_Item *it, Eina_Bool select);
+EAPI void              elm_segment_control_item_selected_set(Elm_Object_Item *it, Eina_Bool select);
 
 /**
  * @}
