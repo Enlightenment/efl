@@ -3431,9 +3431,9 @@ elm_entry_input_panel_layout_set(Evas_Object *obj, Elm_Input_Panel_Layout layout
 EAPI Elm_Input_Panel_Layout
 elm_entry_input_panel_layout_get(Evas_Object *obj)
 {
-   ELM_CHECK_WIDTYPE(obj, widtype) ELM_INPUT_PANEL_LAYOUT_INVALID;
+   ELM_CHECK_WIDTYPE(obj, widtype) ELM_INPUT_PANEL_LAYOUT_NORMAL;
    Widget_Data *wd = elm_widget_data_get(obj);
-   if (!wd) return ELM_INPUT_PANEL_LAYOUT_INVALID;
+   if (!wd) return ELM_INPUT_PANEL_LAYOUT_NORMAL;
 
    return wd->input_panel_layout;
 }

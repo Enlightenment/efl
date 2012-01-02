@@ -26,8 +26,9 @@ typedef enum
    ELM_INPUT_PANEL_LAYOUT_IP, /**< IP layout */
    ELM_INPUT_PANEL_LAYOUT_MONTH, /**< Month layout */
    ELM_INPUT_PANEL_LAYOUT_NUMBERONLY, /**< Number Only layout */
-   ELM_INPUT_PANEL_LAYOUT_INVALID // XXX: remove this so we can expand
-} Elm_Input_Panel_Layout; /**< Type of input panel (virtual keyboard) to use */
+   ELM_INPUT_PANEL_LAYOUT_HEX, /**< Hexadecimal layout */
+   ELM_INPUT_PANEL_LAYOUT_TERMINAL, /**< Command-line terminal layout */
+} Elm_Input_Panel_Layout; /**< Type of input panel (virtual keyboard) to use - this is a hint and may not provide exactly what is desired. */
 
 typedef enum
 {
@@ -871,8 +872,7 @@ EAPI void               elm_entry_text_filter_remove(Evas_Object *obj, Elm_Entry
  * @param s The string (in markup) to be converted
  * @return The converted string (in UTF-8). It should be freed.
  */
-EAPI char              *elm_entry_markup_to_utf8(const char *s)
-EINA_MALLOC EINA_WARN_UNUSED_RESULT;
+EAPI char              *elm_entry_markup_to_utf8(const char *s);
 
 /**
  * This converts a UTF-8 string into markup (HTML-like).
@@ -883,8 +883,7 @@ EINA_MALLOC EINA_WARN_UNUSED_RESULT;
  * @param s The string (in UTF-8) to be converted
  * @return The converted string (in markup). It should be freed.
  */
-EAPI char              *elm_entry_utf8_to_markup(const char *s)
-EINA_MALLOC EINA_WARN_UNUSED_RESULT;
+EAPI char              *elm_entry_utf8_to_markup(const char *s);
 
 /**
  * This sets the file (and implicitly loads it) for the text to display and
@@ -1008,6 +1007,7 @@ EAPI void               elm_entry_icon_set(Evas_Object *obj, Evas_Object *icon);
  * @param obj The scrolled entry object
  * @return the left widget inside the scroller
  */
+// XXX: deprecate - used elm_object_content_set()
 EAPI Evas_Object       *elm_entry_icon_get(const Evas_Object *obj);
 
 /**
@@ -1020,6 +1020,7 @@ EAPI Evas_Object       *elm_entry_icon_get(const Evas_Object *obj);
  *
  * @see elm_entry_icon_set()
  */
+// XXX: deprecate - used elm_object_content_set()
 EAPI Evas_Object       *elm_entry_icon_unset(Evas_Object *obj);
 
 /**
@@ -1045,6 +1046,7 @@ EAPI void               elm_entry_icon_visible_set(Evas_Object *obj, Eina_Bool s
  *
  * @see elm_entry_icon_set
  */
+// XXX: deprecate - used elm_object_content_set()
 EAPI void               elm_entry_end_set(Evas_Object *obj, Evas_Object *end);
 
 /**
@@ -1054,6 +1056,7 @@ EAPI void               elm_entry_end_set(Evas_Object *obj, Evas_Object *end);
  * @param obj The scrolled entry object
  * @return the right widget inside the scroller
  */
+// XXX: deprecate - used elm_object_content_set()
 EAPI Evas_Object       *elm_entry_end_get(const Evas_Object *obj);
 
 /**
@@ -1066,6 +1069,7 @@ EAPI Evas_Object       *elm_entry_end_get(const Evas_Object *obj);
  *
  * @see elm_entry_icon_set()
  */
+// XXX: deprecate - used elm_object_content_set()
 EAPI Evas_Object       *elm_entry_end_unset(Evas_Object *obj);
 
 /**
@@ -1113,7 +1117,58 @@ EAPI void               elm_entry_bounce_set(Evas_Object *obj, Eina_Bool h_bounc
  */
 EAPI void               elm_entry_bounce_get(const Evas_Object *obj, Eina_Bool *h_bounce, Eina_Bool *v_bounce);
 
+/**
+ * Set the input panel layout of the entry
+ *
+ * @param obj The entry object
+ * @param layout layout type
+ */
+EAPI void                   elm_entry_input_panel_layout_set(Evas_Object *obj, Elm_Input_Panel_Layout layout);
+
+/**
+ * Get the input panel layout of the entry
+ *
+ * @param obj The entry object
+ * @return layout type
+ *
+ * @see elm_entry_input_panel_layout_set
+ */
+EAPI Elm_Input_Panel_Layout elm_entry_input_panel_layout_get(Evas_Object *obj);
+
+/**
+ * Set the autocapitalization type on the immodule.
+ *
+ * @param obj The entry object
+ * @param autocapital_type The type of autocapitalization
+ */
+EAPI void                   elm_entry_autocapital_type_set(Evas_Object *obj, Elm_Autocapital_Type autocapital_type);
+
+/**
+ * Retrieve the autocapitalization type on the immodule.
+ *
+ * @param obj The entry object
+ * @return autocapitalization type
+ */
+EAPI Elm_Autocapital_Type   elm_entry_autocapital_type_get(Evas_Object *obj);
+
+/**
+ * Sets the attribute to show the input panel automatically.
+ *
+ * @param obj The entry object
+ * @param enabled If true, the input panel is appeared when entry is clicked or has a focus
+ */
+EAPI void                   elm_entry_input_panel_enabled_set(Evas_Object *obj, Eina_Bool enabled);
+
+/**
+ * Retrieve the attribute to show the input panel automatically.
+ *
+ * @param obj The entry object
+ * @return EINA_TRUE if input panel will be appeared when the entry is clicked or has a focus, EINA_FALSE otherwise
+ */
+EAPI Eina_Bool              elm_entry_input_panel_enabled_get(Evas_Object *obj);
+
 /* pre-made filters for entries */
+
 /**
  * @typedef Elm_Entry_Filter_Limit_Size
  *
@@ -1193,55 +1248,6 @@ struct _Elm_Entry_Filter_Accept_Set
  * directly with elm_object_text_set()
  */
 EAPI void                   elm_entry_filter_accept_set(void *data, Evas_Object *entry, char **text);
-/**
- * Set the input panel layout of the entry
- *
- * @param obj The entry object
- * @param layout layout type
- */
-EAPI void                   elm_entry_input_panel_layout_set(Evas_Object *obj, Elm_Input_Panel_Layout layout);
-
-/**
- * Get the input panel layout of the entry
- *
- * @param obj The entry object
- * @return layout type
- *
- * @see elm_entry_input_panel_layout_set
- */
-EAPI Elm_Input_Panel_Layout elm_entry_input_panel_layout_get(Evas_Object *obj);
-
-/**
- * Set the autocapitalization type on the immodule.
- *
- * @param obj The entry object
- * @param autocapital_type The type of autocapitalization
- */
-EAPI void                   elm_entry_autocapital_type_set(Evas_Object *obj, Elm_Autocapital_Type autocapital_type);
-
-/**
- * Retrieve the autocapitalization type on the immodule.
- *
- * @param obj The entry object
- * @return autocapitalization type
- */
-EAPI Elm_Autocapital_Type   elm_entry_autocapital_type_get(Evas_Object *obj);
-
-/**
- * Sets the attribute to show the input panel automatically.
- *
- * @param obj The entry object
- * @param enabled If true, the input panel is appeared when entry is clicked or has a focus
- */
-EAPI void                   elm_entry_input_panel_enabled_set(Evas_Object *obj, Eina_Bool enabled);
-
-/**
- * Retrieve the attribute to show the input panel automatically.
- *
- * @param obj The entry object
- * @return EINA_TRUE if input panel will be appeared when the entry is clicked or has a focus, EINA_FALSE otherwise
- */
-EAPI Eina_Bool              elm_entry_input_panel_enabled_get(Evas_Object *obj);
 
 /**
  * @}
