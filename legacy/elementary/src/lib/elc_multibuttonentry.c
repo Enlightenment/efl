@@ -38,7 +38,6 @@ struct _Multibuttonentry_Item
   {
      ELM_WIDGET_ITEM;
      Evas_Object *button;
-     void *data;
      Evas_Coord vw, rw; // vw: visual width, real width
      Eina_Bool  visible: 1;
   };
@@ -793,10 +792,10 @@ _add_button_item(Evas_Object *obj, const char *str, Multibuttonentry_Pos pos, co
    item = elm_widget_item_new(obj, Elm_Multibuttonentry_Item);
    if (item)
      {
+        elm_widget_item_data_set(item, data);
         Evas_Coord rw, vw;
         _resize_button(btn, &rw, &vw);
         item->button = btn;
-        item->data = data;
         item->rw = rw;
         item->vw = vw;
         item->visible = EINA_TRUE;
@@ -1427,10 +1426,8 @@ EAPI Elm_Multibuttonentry_Item *
 elm_multibuttonentry_item_prepend(Evas_Object *obj, const char *label, void *data)
 {
    ELM_CHECK_WIDTYPE(obj, widtype) NULL;
-   Widget_Data *wd = elm_widget_data_get(obj);
    Elm_Multibuttonentry_Item *item;
-
-   if (!wd || !label) return NULL;
+   if (!label) return NULL;
    item = _add_button_item(obj, label, MULTIBUTTONENTRY_POS_START, NULL, data);
    return item;
 }
@@ -1439,10 +1436,8 @@ EAPI Elm_Multibuttonentry_Item *
 elm_multibuttonentry_item_append(Evas_Object *obj, const char *label, void *data)
 {
    ELM_CHECK_WIDTYPE(obj, widtype) NULL;
-   Widget_Data *wd = elm_widget_data_get(obj);
    Elm_Multibuttonentry_Item *item;
-
-   if (!wd || !label) return NULL;
+   if (!label) return NULL;
    item = _add_button_item(obj, label, MULTIBUTTONENTRY_POS_END, NULL, data);
    return item;
 }
@@ -1451,10 +1446,8 @@ EAPI Elm_Multibuttonentry_Item *
 elm_multibuttonentry_item_insert_before(Evas_Object *obj, Elm_Multibuttonentry_Item *before, const char *label, void *data)
 {
    ELM_CHECK_WIDTYPE(obj, widtype) NULL;
-   Widget_Data *wd = elm_widget_data_get(obj);
    Elm_Multibuttonentry_Item *item;
-
-   if (!wd || !label) return NULL;
+   if (!label) return NULL;
    item = _add_button_item(obj, label, MULTIBUTTONENTRY_POS_BEFORE, before, data);
    return item;
 }
@@ -1463,10 +1456,8 @@ EAPI Elm_Multibuttonentry_Item *
 elm_multibuttonentry_item_insert_after(Evas_Object *obj, Elm_Multibuttonentry_Item *after, const char *label, void *data)
 {
    ELM_CHECK_WIDTYPE(obj, widtype) NULL;
-   Widget_Data *wd = elm_widget_data_get(obj);
    Elm_Multibuttonentry_Item *item;
-
-   if (!wd || !label) return NULL;
+   if (!label) return NULL;
    item = _add_button_item(obj, label, MULTIBUTTONENTRY_POS_AFTER, after, data);
    return item;
 }
@@ -1476,7 +1467,6 @@ elm_multibuttonentry_items_get(const Evas_Object *obj)
 {
    ELM_CHECK_WIDTYPE(obj, widtype) NULL;
    Widget_Data *wd = elm_widget_data_get(obj);
-
    if (!wd) return NULL;
    return wd->items;
 }
@@ -1486,8 +1476,7 @@ elm_multibuttonentry_first_item_get(const Evas_Object *obj)
 {
    ELM_CHECK_WIDTYPE(obj, widtype) NULL;
    Widget_Data *wd = elm_widget_data_get(obj);
-
-   if (!wd || !wd->items) return NULL;
+   if (!wd) return NULL;
    return eina_list_data_get(wd->items);
 }
 
@@ -1496,8 +1485,7 @@ elm_multibuttonentry_last_item_get(const Evas_Object *obj)
 {
    ELM_CHECK_WIDTYPE(obj, widtype) NULL;
    Widget_Data *wd = elm_widget_data_get(obj);
-
-   if (!wd || !wd->items) return NULL;
+   if (!wd) return NULL;
    return eina_list_data_get(eina_list_last(wd->items));
 }
 
@@ -1506,33 +1494,16 @@ elm_multibuttonentry_selected_item_get(const Evas_Object *obj)
 {
    ELM_CHECK_WIDTYPE(obj, widtype) NULL;
    Widget_Data *wd = elm_widget_data_get(obj);
-
-   if (!wd || !wd->current) return NULL;
+   if (!wd) return NULL;
    return eina_list_data_get(wd->current);
 }
 
 EAPI void
 elm_multibuttonentry_item_select(Elm_Multibuttonentry_Item *item, Eina_Bool selected)
 {
-   Widget_Data *wd;
-   Eina_List *l;
-   Elm_Multibuttonentry_Item *_item;
-
    if (!item) return;
-   ELM_CHECK_WIDTYPE(WIDGET(item), widtype);
-   wd = elm_widget_data_get(WIDGET(item));
-   if (!wd) return;
-
-   EINA_LIST_FOREACH(wd->items, l, _item)
-     {
-        if (_item == item)
-          {
-             if (selected)
-               _select_button(WIDGET(item), item->button);
-             else
-               _select_button(WIDGET(item), NULL);
-          }
-     }
+   if (selected) _select_button(WIDGET(item), item->button);
+   else _select_button(WIDGET(item), NULL);
 }
 
 EAPI void
@@ -1541,7 +1512,6 @@ elm_multibuttonentry_item_unselect_all(Evas_Object *obj)
    ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return;
-
    _select_button(obj, NULL);
 }
 
@@ -1549,12 +1519,12 @@ EAPI void
 elm_multibuttonentry_clear(Evas_Object *obj)
 {
    ELM_CHECK_WIDTYPE(obj, widtype);
+   Elm_Multibuttonentry_Item *item;
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return;
 
    if (wd->items)
      {
-        Elm_Multibuttonentry_Item *item;
         EINA_LIST_FREE(wd->items, item)
           {
              elm_box_unpack(wd->box, item->button);
@@ -1577,41 +1547,16 @@ elm_multibuttonentry_item_del(Elm_Multibuttonentry_Item *item)
 EAPI const char *
 elm_multibuttonentry_item_label_get(const Elm_Multibuttonentry_Item *item)
 {
-   Widget_Data *wd;
-   Eina_List *l;
-   Elm_Multibuttonentry_Item *_item;
    if (!item) return NULL;
-   ELM_CHECK_WIDTYPE(WIDGET(item), widtype) NULL;
-   wd = elm_widget_data_get(WIDGET(item));
-   if (!wd || !wd->items) return NULL;
-
-   EINA_LIST_FOREACH(wd->items, l, _item)
-     {
-        if (_item == item)
-          return edje_object_part_text_get(_item->button, "elm.btn.text");
-     }
-
-   return NULL;
+   return edje_object_part_text_get(item->button, "elm.btn.text");
 }
 
 EAPI void
 elm_multibuttonentry_item_label_set(Elm_Multibuttonentry_Item *item, const char *str)
 {
-   Widget_Data *wd;
-   Eina_List *l;
-   Elm_Multibuttonentry_Item *_item;
    if (!item || !str) return;
-   ELM_CHECK_WIDTYPE(WIDGET(item), widtype);
-   wd = elm_widget_data_get(WIDGET(item));
-   if (!wd || !wd->items) return;
-
-   EINA_LIST_FOREACH(wd->items, l, _item)
-     if (_item == item)
-       {
-          edje_object_part_text_set(_item->button, "elm.btn.text", str);
-          _resize_button(_item->button, &_item->rw, &_item->vw);
-          break;
-       }
+    edje_object_part_text_set(item->button, "elm.btn.text", str);
+    _resize_button(item->button, &item->rw, &item->vw);
 }
 
 EAPI Elm_Multibuttonentry_Item *
@@ -1620,18 +1565,20 @@ elm_multibuttonentry_item_prev_get(const Elm_Multibuttonentry_Item *item)
    Widget_Data *wd;
    Eina_List *l;
    Elm_Multibuttonentry_Item *_item;
+
    if (!item) return NULL;
-   ELM_CHECK_WIDTYPE(WIDGET(item), widtype) NULL;
    wd = elm_widget_data_get(WIDGET(item));
-   if (!wd || !wd->items) return NULL;
+   ELM_CHECK_WIDTYPE(WIDGET(item), widtype) NULL;
 
    EINA_LIST_FOREACH(wd->items, l, _item)
-      if (_item == item)
-        {
-           l = eina_list_prev(l);
-           if (!l) return NULL;
-           return eina_list_data_get(l);
-        }
+     {
+        if (_item == item)
+          {
+             l = eina_list_prev(l);
+             if (!l) return NULL;
+             return eina_list_data_get(l);
+          }
+     }
    return NULL;
 }
 
@@ -1643,17 +1590,18 @@ elm_multibuttonentry_item_next_get(const Elm_Multibuttonentry_Item *item)
    Elm_Multibuttonentry_Item *_item;
 
    if (!item) return NULL;
-   ELM_CHECK_WIDTYPE(WIDGET(item), widtype) NULL;
    wd = elm_widget_data_get(WIDGET(item));
-   if (!wd || !wd->items) return NULL;
+   ELM_CHECK_WIDTYPE(WIDGET(item), widtype) NULL;
 
    EINA_LIST_FOREACH(wd->items, l, _item)
-      if (_item == item)
-        {
-           l = eina_list_next(l);
-           if (!l) return NULL;
-           return eina_list_data_get(l);
-        }
+     {
+        if (_item == item)
+          {
+             l = eina_list_next(l);
+             if (!l) return NULL;
+             return eina_list_data_get(l);
+          }
+     }
    return NULL;
 }
 
@@ -1661,14 +1609,14 @@ EAPI void *
 elm_multibuttonentry_item_data_get(const Elm_Multibuttonentry_Item *item)
 {
    if (!item) return NULL;
-   return item->data;
+   return elm_widget_item_data_get(item);
 }
 
 EAPI void
 elm_multibuttonentry_item_data_set(Elm_Multibuttonentry_Item *item, void *data)
 {
    if (!item) return;
-   item->data = data;
+   return elm_widget_item_data_set(item, data);
 }
 
 EAPI void
