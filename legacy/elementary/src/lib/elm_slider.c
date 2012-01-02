@@ -28,6 +28,7 @@ struct _Widget_Data
    Eina_Bool horizontal : 1;
    Eina_Bool inverted : 1;
    Eina_Bool indicator_show : 1;
+   Eina_Bool spacer_down : 1;
 };
 
 #define ELM_SLIDER_INVERTED_FACTOR (-1.0)
@@ -50,7 +51,9 @@ static void _drag_down(void *data, Evas_Object *obj,
                     const char *emission, const char *source);
 static Eina_Bool _event_hook(Evas_Object *obj, Evas_Object *src,
                              Evas_Callback_Type type, void *event_info);
-static void _spacer_cb(void *data, Evas * e, Evas_Object * obj, void *event_info);
+static void _spacer_down_cb(void *data, Evas * e, Evas_Object * obj, void *event_info);
+static void _spacer_move_cb(void *data, Evas * e, Evas_Object * obj, void *event_info);
+static void _spacer_up_cb(void *data, Evas * e, Evas_Object * obj, void *event_info);
 
 static const char SIG_CHANGED[] = "changed";
 static const char SIG_DELAY_CHANGED[] = "delay,changed";
@@ -446,18 +449,15 @@ _drag_down(void *data, Evas_Object *obj __UNUSED__, const char *emission __UNUSE
 }
 
 static void
-_spacer_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info)
+_spacer_down_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info)
 {
    Widget_Data *wd = elm_widget_data_get(data);
    Evas_Event_Mouse_Down *ev = event_info;
    Evas_Coord x, y, w, h;
-   double button_x, button_y;
-   double prev_button_x, prev_button_y;
+   double button_x = 0.0, button_y = 0.0;
 
+   wd->spacer_down = EINA_TRUE;
    evas_object_geometry_get(wd->spacer, &x, &y, &w, &h);
-   edje_object_part_drag_value_get(wd->slider, "elm.dragable.slider", &prev_button_x, &prev_button_y);
-   button_x = prev_button_x;
-   button_y = prev_button_y;
    if (wd->horizontal)
      {
         button_x = ((double)ev->canvas.x - (double)x) / (double)w;
@@ -470,16 +470,57 @@ _spacer_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *ev
         if (button_y > 1) button_y = 1;
         if (button_y < 0) button_y = 0;
      }
-   if (button_x != prev_button_x || button_y != prev_button_y)
-     {
-        edje_object_part_drag_value_set(wd->slider, "elm.dragable.slider", button_x, button_y);
-     }
+   edje_object_part_drag_value_set(wd->slider, "elm.dragable.slider", button_x, button_y);
+   _val_fetch(data);
+   evas_object_smart_callback_call(data, SIG_DRAG_START, NULL);
+   _units_set(data);
+   _indicator_set(data);
+   elm_widget_scroll_freeze_push(data);
+   edje_object_signal_emit(wd->slider, "elm,state,indicator,show", "elm");
+}
 
-   //What is a purpose of these two mouse events?
-   //I don't know the reason but these calls cause infinite loop.
-   //So blocked them.
-   //evas_event_feed_mouse_cancel(e, 0, NULL);
-   //evas_event_feed_mouse_down(e, 1, EVAS_BUTTON_NONE, 0, NULL);
+static void
+_spacer_move_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info)
+{
+   Widget_Data *wd = elm_widget_data_get(data);
+   Evas_Event_Mouse_Move *ev = event_info;
+   Evas_Coord x, y, w, h;
+   double button_x = 0.0, button_y = 0.0;
+
+   if  (wd->spacer_down)
+     {
+        evas_object_geometry_get(wd->spacer, &x, &y, &w, &h);
+        if (wd->horizontal)
+          {
+             button_x = ((double)ev->cur.canvas.x - (double)x) / (double)w;
+             if (button_x > 1) button_x = 1;
+             if (button_x < 0) button_x = 0;
+          }
+        else
+          {
+             button_y = ((double)ev->cur.canvas.y - (double)y) / (double)h;
+             if (button_y > 1) button_y = 1;
+             if (button_y < 0) button_y = 0;
+          }
+        edje_object_part_drag_value_set(wd->slider, "elm.dragable.slider", button_x, button_y);
+        _val_fetch(data);
+        _units_set(data);
+        _indicator_set(data);
+     }
+}
+
+static void
+_spacer_up_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+{
+   Widget_Data *wd = elm_widget_data_get(data);
+
+   if (wd->spacer_down) wd->spacer_down = EINA_FALSE;
+   _val_fetch(data);
+   evas_object_smart_callback_call(data, SIG_DRAG_STOP, NULL);
+   _units_set(data);
+   _indicator_set(data);
+   elm_widget_scroll_freeze_pop(data);
+   edje_object_signal_emit(wd->slider, "elm,state,indicator,hide", "elm");
 }
 
 static void
@@ -712,7 +753,9 @@ elm_slider_add(Evas_Object *parent)
    evas_object_pass_events_set(wd->spacer, EINA_TRUE);
    elm_widget_sub_object_add(obj, wd->spacer);
    edje_object_part_swallow(wd->slider, "elm.swallow.bar", wd->spacer);
-   evas_object_event_callback_add(wd->spacer, EVAS_CALLBACK_MOUSE_DOWN, _spacer_cb, obj);
+   evas_object_event_callback_add(wd->spacer, EVAS_CALLBACK_MOUSE_DOWN, _spacer_down_cb, obj);
+   evas_object_event_callback_add(wd->spacer, EVAS_CALLBACK_MOUSE_MOVE, _spacer_move_cb, obj);
+   evas_object_event_callback_add(wd->spacer, EVAS_CALLBACK_MOUSE_UP, _spacer_up_cb, obj);
    evas_object_smart_callback_add(obj, "sub-object-del", _sub_del, obj);
 
    _mirrored_set(obj, elm_widget_mirrored_get(obj));

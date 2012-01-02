@@ -1231,11 +1231,24 @@ group { name: "elm/slider/horizontal/indicator/default";
          script {
             thumb_down();
          }
-
       }
       program { name: "val_hide";
          signal: "mouse,up,*";
          source: "button_events";
+         script {
+            thumb_up();
+         }
+      }
+      program { name: "indicator_show";
+         signal: "elm,state,indicator,show";
+         source: "elm";
+         script {
+            thumb_down();
+         }
+      }
+      program { name: "indicator_hide";
+         signal: "elm,state,indicator,hide";
+         source: "elm";
          script {
             thumb_up();
          }
