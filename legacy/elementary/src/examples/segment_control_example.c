@@ -69,7 +69,7 @@ elm_main(int argc __UNUSED__, char **argv __UNUSED__)
    elm_segment_control_item_del_at(sc, 2);
 
    seg_it = elm_segment_control_item_get(sc, 0);
-   elm_segment_control_item_label_set(seg_it, "Only Text");
+   elm_object_item_text_set(seg_it, "Only Text");
 
    count = elm_segment_control_item_count_get(sc);
    seg_it = elm_segment_control_item_get(sc, count / 2);

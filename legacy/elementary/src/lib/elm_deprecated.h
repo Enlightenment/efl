@@ -2496,3 +2496,51 @@ EINA_DEPRECATED EAPI Eina_Bool    elm_toolbar_orientation_get(const Evas_Object 
  * @ingroup Video
  */
 EINA_DEPRECATED EAPI void elm_player_video_set(Evas_Object *player, Evas_Object *video);
+
+/**
+ * Set the label of item.
+ *
+ * @param it The item of segment control.
+ * @param text The label of item.
+ *
+ * The label to be displayed by the item.
+ * Label will be at right of the icon (if set).
+ *
+ * If a label was passed as argument on item creation, with function
+ * elm_control_segment_item_add(), it will be already
+ * displayed by the item.
+ *
+ * @see elm_segment_control_item_label_get()
+ * @see elm_segment_control_item_add()
+ * @deprecated Use elm_object_item_text_set() instead
+ *
+ * @ingroup SegmentControl
+ */
+EINA_DEPRECATED EAPI void              elm_segment_control_item_label_set(Elm_Object_Item *it, const char *label);
+
+
+/**
+ * Set the icon associated to the item.
+ *
+ * @param it The segment control item.
+ * @param icon The icon object to associate with @p it.
+ *
+ * The icon object to use at left side of the item. An
+ * icon can be any Evas object, but usually it is an icon created
+ * with elm_icon_add().
+ *
+ * Once the icon object is set, a previously set one will be deleted.
+ * @warning Setting the same icon for two items will cause the icon to
+ * dissapear from the first item.
+ *
+ * If an icon was passed as argument on item creation, with function
+ * elm_segment_control_item_add(), it will be already
+ * associated to the item.
+ *
+ * @see elm_segment_control_item_add()
+ * @see elm_segment_control_item_icon_get()
+ * @deprecated Use elm_object_item_part_content_set() instead
+ *
+ * @ingroup SegmentControl
+ */
+EINA_DEPRECATED EAPI void              elm_segment_control_item_icon_set(Elm_Object_Item *it, Evas_Object *icon);

@@ -434,6 +434,75 @@ _item_find(const Evas_Object *obj, int idx)
    return it;
 }
 
+static void
+_item_text_set_hook(Elm_Object_Item *it, const char *part, const char *label)
+{
+   ELM_OBJ_ITEM_CHECK_OR_RETURN(it);
+   Widget_Data *wd;
+   Elm_Segment_Item *item;
+
+   if (part && strcmp(part, "default")) return;
+
+   item = (Elm_Segment_Item *) it;
+   wd = elm_widget_item_data_get(item);
+   if (!wd) return;
+
+   eina_stringshare_replace(&item->label, label);
+   if (item->label)
+     edje_object_signal_emit(VIEW(item), "elm,state,text,visible", "elm");
+   else
+     edje_object_signal_emit(VIEW(item), "elm,state,text,hidden", "elm");
+   edje_object_message_signal_process(VIEW(item));
+   //label can be NULL also.
+   edje_object_part_text_set(VIEW(item), "elm.text", item->label);
+}
+
+static const char *
+_item_text_get_hook(const Elm_Object_Item *it, const char *part)
+{
+   ELM_OBJ_ITEM_CHECK_OR_RETURN(it, NULL);
+   if (part && strcmp(part, "default")) return NULL;
+   return ((Elm_Segment_Item *) it)->label;
+}
+
+static void
+_item_content_set_hook(Elm_Object_Item *it,
+                       const char *part,
+                       Evas_Object *content)
+{
+   ELM_OBJ_ITEM_CHECK_OR_RETURN(it);
+   Elm_Segment_Item *item;
+
+   if (part && strcmp(part, "icon")) return;
+
+   item = (Elm_Segment_Item *) it;
+
+   //Remove the existing icon
+   if (item->icon)
+     {
+        edje_object_part_unswallow(VIEW(item), item->icon);
+        evas_object_del(item->icon);
+        item->icon = NULL;
+     }
+   item->icon = content;
+   if (item->icon)
+     {
+        elm_widget_sub_object_add(VIEW(item), item->icon);
+        edje_object_part_swallow(VIEW(item), "elm.swallow.icon", item->icon);
+        edje_object_signal_emit(VIEW(item), "elm,state,icon,visible", "elm");
+     }
+   else
+     edje_object_signal_emit(VIEW(item), "elm,state,icon,hidden", "elm");
+}
+
+static Evas_Object *
+_item_content_get_hook(const Elm_Object_Item *it, const char *part)
+{
+   ELM_OBJ_ITEM_CHECK_OR_RETURN(it, NULL);
+   if (part && strcmp(part, "icon")) return NULL;
+   return ((Elm_Segment_Item *) it)->icon;
+}
+
 static Elm_Segment_Item*
 _item_new(Evas_Object *obj, Evas_Object *icon, const char *label)
 {
@@ -446,6 +515,10 @@ _item_new(Evas_Object *obj, Evas_Object *icon, const char *label)
    it = elm_widget_item_new(obj, Elm_Segment_Item);
    if (!it) return NULL;
    elm_widget_item_data_set(it, wd);
+   elm_widget_item_text_set_hook_set(it, _item_text_set_hook);
+   elm_widget_item_text_get_hook_set(it, _item_text_get_hook);
+   elm_widget_item_content_set_hook_set(it, _item_content_set_hook);
+   elm_widget_item_content_get_hook_set(it, _item_content_get_hook);
 
    VIEW(it) = edje_object_add(evas_object_evas_get(obj));
    edje_object_scale_set(VIEW(it), elm_widget_scale_get(VIEW(it))
@@ -598,69 +671,30 @@ EAPI const char*
 elm_segment_control_item_label_get(const Evas_Object *obj, int idx)
 {
    ELM_CHECK_WIDTYPE(obj, widtype) NULL;
-   Elm_Segment_Item *it;
-
-   it = _item_find(obj, idx);
+   Elm_Segment_Item *it = _item_find(obj, idx);
    if (it) return it->label;
-
    return NULL;
 }
 
 EAPI void
 elm_segment_control_item_label_set(Elm_Object_Item* it, const char* label)
 {
-   ELM_OBJ_ITEM_CHECK_OR_RETURN(it);
-   Widget_Data *wd;
-   Elm_Segment_Item *item = (Elm_Segment_Item *) it;
-
-   wd = elm_widget_item_data_get(item);
-   if (!wd) return;
-
-   eina_stringshare_replace(&item->label, label);
-   if (item->label)
-     edje_object_signal_emit(VIEW(item), "elm,state,text,visible", "elm");
-   else
-     edje_object_signal_emit(VIEW(item), "elm,state,text,hidden", "elm");
-   edje_object_message_signal_process(VIEW(item));
-   //label can be NULL also.
-   edje_object_part_text_set(VIEW(item), "elm.text", item->label);
+   _item_text_set_hook(it, NULL, label);
 }
 
 EAPI Evas_Object *
 elm_segment_control_item_icon_get(const Evas_Object *obj, int idx)
 {
    ELM_CHECK_WIDTYPE(obj, widtype) NULL;
-   Elm_Segment_Item *it;
-
-   it = _item_find(obj, idx);
+   Elm_Segment_Item *it = _item_find(obj, idx);
    if (it) return it->icon;
-
    return NULL;
 }
 
 EAPI void
 elm_segment_control_item_icon_set(Elm_Object_Item *it, Evas_Object *icon)
 {
-   ELM_OBJ_ITEM_CHECK_OR_RETURN(it);
-   Elm_Segment_Item *item = (Elm_Segment_Item *) it;
-
-   //Remove the existing icon
-   if (item->icon)
-     {
-        edje_object_part_unswallow(VIEW(item), item->icon);
-        evas_object_del(item->icon);
-        item->icon = NULL;
-     }
-
-   item->icon = icon;
-   if (item->icon)
-     {
-        elm_widget_sub_object_add(VIEW(item), item->icon);
-        edje_object_part_swallow(VIEW(item), "elm.swallow.icon", item->icon);
-        edje_object_signal_emit(VIEW(item), "elm,state,icon,visible", "elm");
-     }
-   else
-     edje_object_signal_emit(VIEW(item), "elm,state,icon,hidden", "elm");
+   _item_content_set_hook(it, NULL, icon);
 }
 
 EAPI int

@@ -198,26 +198,6 @@ EAPI Elm_Object_Item *elm_segment_control_item_get(const Evas_Object *obj, int i
 EAPI const char       *elm_segment_control_item_label_get(const Evas_Object *obj, int index);
 
 /**
- * Set the label of item.
- *
- * @param it The item of segment control.
- * @param text The label of item.
- *
- * The label to be displayed by the item.
- * Label will be at right of the icon (if set).
- *
- * If a label was passed as argument on item creation, with function
- * elm_control_segment_item_add(), it will be already
- * displayed by the item.
- *
- * @see elm_segment_control_item_label_get()
- * @see elm_segment_control_item_add()
- *
- * @ingroup SegmentControl
- */
-EAPI void              elm_segment_control_item_label_set(Elm_Object_Item *it, const char *label);
-
-/**
  * Get the icon associated to the item.
  *
  * @param obj The segment control object.
@@ -235,31 +215,6 @@ EAPI void              elm_segment_control_item_label_set(Elm_Object_Item *it, c
  * @ingroup SegmentControl
  */
 EAPI Evas_Object      *elm_segment_control_item_icon_get(const Evas_Object *obj, int index);
-
-/**
- * Set the icon associated to the item.
- *
- * @param it The segment control item.
- * @param icon The icon object to associate with @p it.
- *
- * The icon object to use at left side of the item. An
- * icon can be any Evas object, but usually it is an icon created
- * with elm_icon_add().
- *
- * Once the icon object is set, a previously set one will be deleted.
- * @warning Setting the same icon for two items will cause the icon to
- * dissapear from the first item.
- *
- * If an icon was passed as argument on item creation, with function
- * elm_segment_control_item_add(), it will be already
- * associated to the item.
- *
- * @see elm_segment_control_item_add()
- * @see elm_segment_control_item_icon_get()
- *
- * @ingroup SegmentControl
- */
-EAPI void              elm_segment_control_item_icon_set(Elm_Object_Item *it, Evas_Object *icon);
 
 /**
  * Get the index of an item.
