@@ -9,8 +9,8 @@ _item_selected_cb(void *data __UNUSED__,
                   Evas_Object *obj __UNUSED__,
                   void *event_info)
 {
-   Elm_Multibuttonentry_Item *item = (Elm_Multibuttonentry_Item *)event_info;
-   printf("selected item = %s\n", elm_multibuttonentry_item_label_get(item));
+   Elm_Object_Item *mbe_it = event_info;
+   printf("selected item = %s\n", elm_multibuttonentry_item_label_get(mbe_it));
 }
 
 // "item,added" smart callback of multibuttonentry.
@@ -19,8 +19,8 @@ _item_added_cb(void *data __UNUSED__,
                Evas_Object *obj __UNUSED__,
                void *event_info)
 {
-   Elm_Multibuttonentry_Item *item = (Elm_Multibuttonentry_Item *)event_info;
-   printf("added item = %s\n", elm_multibuttonentry_item_label_get(item));
+   Elm_Object_Item *mbe_it = event_info;
+   printf("added item = %s\n", elm_multibuttonentry_item_label_get(mbe_it));
 }
 
 // "item,deleted" smart callback
@@ -38,8 +38,8 @@ _item_clicked_cb(void *data __UNUSED__,
                  Evas_Object *obj __UNUSED__,
                  void *event_info )
 {
-   Elm_Multibuttonentry_Item *item = (Elm_Multibuttonentry_Item *)event_info;
-   printf("clicked item = %s\n", elm_multibuttonentry_item_label_get(item));
+   Elm_Object_Item *mbe_it = event_info;
+   printf("clicked item = %s\n", elm_multibuttonentry_item_label_get(mbe_it));
 }
 
 static void
