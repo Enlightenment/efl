@@ -1390,7 +1390,7 @@ eng_output_flush(void *data)
      {
         re->info->callback.pre_swap(re->info->callback.data, re->evas);
      }
-#if 1
+#if 0
    if (1)
 #else
    if ((re->win->draw.x1 == 0) && (re->win->draw.y1 == 0) && (re->win->draw.x2 == (re->win->w - 1)) && (re->win->draw.y2 == (re->win->h - 1)))
@@ -1420,16 +1420,14 @@ eng_output_flush(void *data)
         sh = (re->win->draw.y2 - re->win->draw.y1) + 1;
         sy = re->win->h - sy - sh;
         
-        glPixelZoom(1.0, 1.0);
-        glDisable(GL_BLEND);
-        glDisable(GL_SCISSOR_TEST);
-        glRasterPos2i(sx, re->win->h - sy);
-        glReadBuffer(GL_BACK);
+        glBitmap(0, 0, 0, 0, sx, re->win->h - sy, NULL);
+        glEnable(GL_SCISSOR_TEST);
+        glScissor(sx, sy, sw, sh);
         glDrawBuffer(GL_FRONT);
         glCopyPixels(sx, sy, sw, sh, GL_COLOR);
         glDrawBuffer(GL_BACK);
-        glReadBuffer(GL_BACK);
-        glRasterPos2i(0, 0);
+        glDisable(GL_SCISSOR_TEST);
+        glBitmap(0, 0, 0, 0, 0, 0, NULL);
         glFlush();
      }
    if (re->info->callback.post_swap)
