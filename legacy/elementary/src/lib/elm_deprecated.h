@@ -249,28 +249,6 @@ EINA_DEPRECATED EAPI void         elm_scrolled_entry_cnp_textonly_set(Evas_Objec
 EINA_DEPRECATED EAPI Eina_Bool    elm_scrolled_entry_cnp_textonly_get(Evas_Object *obj);
 
 /**
- * This sets the text displayed within the entry to @p entry.
- *
- * @param obj The entry object
- * @param entry The text to be displayed
- *
- * @deprecated Use elm_object_text_set() instead.
- * @note Using this function bypasses text filters
- */
-EINA_DEPRECATED EAPI void               elm_entry_entry_set(Evas_Object *obj, const char *entry);
-
-/**
- * This returns the text currently shown in object @p entry.
- * See also elm_entry_entry_set().
- *
- * @param obj The entry object
- * @return The currently displayed text or NULL on failure
- *
- * @deprecated Use elm_object_text_get() instead.
- */
-EINA_DEPRECATED EAPI const char        *elm_entry_entry_get(const Evas_Object *obj);
-
-/**
  * Set the text to show in the anchorblock
  *
  * Sets the text of the anchorblock to @p text. This text can include markup

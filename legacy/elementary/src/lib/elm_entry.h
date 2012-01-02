@@ -367,6 +367,25 @@ EAPI void               elm_entry_password_set(Evas_Object *obj, Eina_Bool passw
 EAPI Eina_Bool          elm_entry_password_get(const Evas_Object *obj);
 
 /**
+ * This sets the text displayed within the entry to @p entry.
+ *
+ * @param obj The entry object
+ * @param entry The text to be displayed
+ *
+ * @note Using this function bypasses text filters
+ */
+EAPI void               elm_entry_entry_set(Evas_Object *obj, const char *entry);
+
+/**
+ * This returns the text currently shown in object @p entry.
+ * See also elm_entry_entry_set().
+ *
+ * @param obj The entry object
+ * @return The currently displayed text or NULL on failure
+ */
+EAPI const char        *elm_entry_entry_get(const Evas_Object *obj);
+
+/**
  * Appends @p entry to the text of the entry.
  *
  * Adds the text in @p entry to the end of any text already present in the

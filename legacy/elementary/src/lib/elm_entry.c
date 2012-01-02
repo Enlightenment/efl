@@ -2475,10 +2475,16 @@ elm_entry_password_get(const Evas_Object *obj)
    return wd->password;
 }
 
-EINA_DEPRECATED EAPI void
+EAPI void
 elm_entry_entry_set(Evas_Object *obj, const char *entry)
 {
    _elm_entry_text_set(obj, NULL, entry);
+}
+
+EAPI const char *
+elm_entry_entry_get(const Evas_Object *obj)
+{
+   return _elm_entry_text_get(obj, NULL);
 }
 
 EAPI void
@@ -2510,12 +2516,6 @@ elm_entry_entry_append(Evas_Object *obj, const char *entry)
         /* FIXME: Add chunked appending here (like in entry_set) */
         edje_object_part_text_append(wd->ent, "elm.text", entry);
      }
-}
-
-EINA_DEPRECATED EAPI const char *
-elm_entry_entry_get(const Evas_Object *obj)
-{
-   return _elm_entry_text_get(obj, NULL);
 }
 
 EAPI Eina_Bool
