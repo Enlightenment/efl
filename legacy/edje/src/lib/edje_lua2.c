@@ -3685,7 +3685,7 @@ _elua_text_font(lua_State *L)                                   // Stack usage [
 @page luaref
 @subsubsection text_text text_object:text(text)
 
-Get (and optionally set) the actual tetx for this text object.
+Get (and optionally set) the actual text for this text object.
 
 Wraps evas_object_text_text_set().
 
@@ -3892,6 +3892,8 @@ _edje_lua2_script_init(Edje *ed)                                  // Stack usage
      {
         int err;
 
+        /* This ends up pushing a function onto the stack for the lua_pcall() below to use.
+         * The function is the compiled code. */
         err = luaL_loadbuffer(L, data, size, "edje_lua_script");  // Stack usage [-0, +1, m]
         if (err)
           {
