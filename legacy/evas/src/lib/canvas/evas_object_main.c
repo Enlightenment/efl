@@ -458,16 +458,21 @@ evas_object_move(Evas_Object *obj, Evas_Coord x, Evas_Coord y)
 
    nx = x;
    ny = y;
+
    if (!obj->is_frame) 
      {
         int fx, fy;
 
         evas_output_framespace_get(obj->layer->evas, &fx, &fy, NULL, NULL);
-        nx = x + fx;
-        ny = y + fy;
+        if (!obj->smart.parent) 
+          {
+             nx += fx;
+             ny += fy;
+          }
      }
 
    if (evas_object_intercept_call_move(obj, nx, ny)) return;
+
    if (obj->doing.in_move > 0)
      {
         WRN("evas_object_move() called on object %p when in the middle of moving the same object", obj);
@@ -475,6 +480,7 @@ evas_object_move(Evas_Object *obj, Evas_Coord x, Evas_Coord y)
      }
 
    if ((obj->cur.geometry.x == nx) && (obj->cur.geometry.y == ny)) return;
+
    if (obj->layer->evas->events_frozen <= 0)
      {
         pass = evas_event_passes_through(obj);
@@ -541,10 +547,13 @@ evas_object_resize(Evas_Object *obj, Evas_Coord w, Evas_Coord h)
         int fw, fh;
 
         evas_output_framespace_get(obj->layer->evas, NULL, NULL, &fw, &fh);
-        nw = w - fw;
-        nh = h - fh;
-        if (nw < 0) nw = 0;
-        if (nh < 0) nh = 0;
+        if (!obj->smart.parent) 
+          {
+             nw = w - fw;
+             nh = h - fh;
+             if (nw < 0) nw = 0;
+             if (nh < 0) nh = 0;
+          }
      }
 
    if (evas_object_intercept_call_resize(obj, nw, nh)) return;
@@ -556,6 +565,7 @@ evas_object_resize(Evas_Object *obj, Evas_Coord w, Evas_Coord h)
      }
 
    if ((obj->cur.geometry.w == nw) && (obj->cur.geometry.h == nh)) return;
+
    if (obj->layer->evas->events_frozen <= 0)
      {
         pass = evas_event_passes_through(obj);
@@ -618,6 +628,7 @@ evas_object_geometry_get(const Evas_Object *obj, Evas_Coord *x, Evas_Coord *y, E
         if (x) *x = 0; if (y) *y = 0; if (w) *w = 0; if (h) *h = 0;
         return;
      }
+
    if (x) *x = obj->cur.geometry.x;
    if (y) *y = obj->cur.geometry.y;
    if (w) *w = obj->cur.geometry.w;
