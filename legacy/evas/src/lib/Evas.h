@@ -8830,8 +8830,10 @@ EAPI char                        *evas_textblock_cursor_range_text_get(const Eva
 /**
  * Return the content of the cursor.
  *
+ * Free the returned string pointer when done (if it is not NULL).
+ * 
  * @param cur the cursor
- * @return the text in the range
+ * @return the text in the range, terminated by a nul byte (may be utf8).
  */
 EAPI char                        *evas_textblock_cursor_content_get(const Evas_Textblock_Cursor *cur) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1) EINA_MALLOC;
 
