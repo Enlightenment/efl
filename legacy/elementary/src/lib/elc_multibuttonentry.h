@@ -17,7 +17,15 @@
  * - @c "unfocused" - when multibuttonentry is unfocused.
  * - @c "expanded" - when multibuttonentry is expanded.
  * - @c "shrank" - when multibuttonentry is shrank.
- * - @c "shrank,state,changed" - when shrink mode state of multibuttonentry is changed.
+ * - @c "shrank,state,changed" - when shrink mode state of multibuttonentry is
+ *                               changed.
+ * 
+ * Default text parts of the multibuttonentry widget that you can use for are:
+ * @li "default" - A label of the multibuttonentry
+ *
+ * Default text parts of the multibuttonentry items that you can use for are:
+ * @li "default" - A label of the multibuttonentry item
+ *
  */
 
 /**
@@ -36,23 +44,6 @@ typedef Eina_Bool                   (*Elm_Multibuttonentry_Item_Filter_callback)
  */
 EAPI Evas_Object               *elm_multibuttonentry_add(Evas_Object *parent);
 
-/**
- * Get the label
- *
- * @param obj The multibuttonentry object
- * @return The label, or NULL if none
- *
- */
-EAPI const char                *elm_multibuttonentry_label_get(const Evas_Object *obj);
-
-/**
- * Set the label
- *
- * @param obj The multibuttonentry object
- * @param label The text label string
- *
- */
-EAPI void                       elm_multibuttonentry_label_set(Evas_Object *obj, const char *label);
 
 /**
  * Get the entry of the multibuttonentry object
@@ -185,7 +176,7 @@ EAPI Elm_Object_Item *elm_multibuttonentry_selected_item_get(const Evas_Object *
 /**
  * Set the selected state of an item
  *
- * @param item The it
+ * @param it The item
  * @param selected if it's EINA_TRUE, select the item otherwise, unselect the item
  *
  */
@@ -214,24 +205,6 @@ EAPI void                       elm_multibuttonentry_item_del(Elm_Object_Item *i
  *
  */
 EAPI void                       elm_multibuttonentry_clear(Evas_Object *obj);
-
-/**
- * Get the label of a given item
- *
- * @param it The item
- * @return The label of a given item, or NULL if none
- *
- */
-EAPI const char                *elm_multibuttonentry_item_label_get(const Elm_Object_Item *it);
-
-/**
- * Set the label of a given item
- *
- * @param it The item
- * @param str The text label string
- *
- */
-EAPI void                       elm_multibuttonentry_item_label_set(Elm_Object_Item *it, const char *str);
 
 /**
  * Get the previous item in the multibuttonentry

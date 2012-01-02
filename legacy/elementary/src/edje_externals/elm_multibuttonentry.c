@@ -16,7 +16,7 @@ external_multibuttonentry_state_set(void *data __UNUSED__, Evas_Object *obj, con
    else return;
 
    if (p->label)
-     elm_multibuttonentry_label_set(obj, p->label);
+     elm_object_text_set(obj, p->label);
    if (p->guide_text)
      elm_multibuttonentry_guide_text_set(obj, p->guide_text);
 }
@@ -26,19 +26,19 @@ external_multibuttonentry_param_set(void *data __UNUSED__, Evas_Object *obj, con
 {
    if (!strcmp(param->name, "label"))
      {
-	if (param->type == EDJE_EXTERNAL_PARAM_TYPE_STRING)
-	  {
-	     elm_multibuttonentry_label_set(obj, param->s);
-	     return EINA_TRUE;
-	  }
+        if (param->type == EDJE_EXTERNAL_PARAM_TYPE_STRING)
+          {
+             elm_object_text_set(obj, param->s);
+             return EINA_TRUE;
+          }
      }
    else if (!strcmp(param->name, "guide text"))
      {
-	if (param->type == EDJE_EXTERNAL_PARAM_TYPE_STRING)
-	  {
-	     elm_multibuttonentry_guide_text_set(obj, param->s);
-	     return EINA_TRUE;
-	  }
+        if (param->type == EDJE_EXTERNAL_PARAM_TYPE_STRING)
+          {
+             elm_multibuttonentry_guide_text_set(obj, param->s);
+             return EINA_TRUE;
+          }
      }
 
    ERR("unknown parameter '%s' of type '%s'",
@@ -52,19 +52,19 @@ external_multibuttonentry_param_get(void *data __UNUSED__, const Evas_Object *ob
 {
    if (!strcmp(param->name, "label"))
      {
-	if (param->type == EDJE_EXTERNAL_PARAM_TYPE_STRING)
-	  {
-	     param->s = elm_multibuttonentry_label_get(obj);
-	     return EINA_TRUE;
-	  }
+        if (param->type == EDJE_EXTERNAL_PARAM_TYPE_STRING)
+          {
+             param->s = elm_object_text_get(obj);
+             return EINA_TRUE;
+          }
      }
    else if (!strcmp(param->name, "guide text"))
      {
-	if (param->type == EDJE_EXTERNAL_PARAM_TYPE_STRING)
-	  {
-	     param->s = elm_multibuttonentry_guide_text_get(obj);
-	     return EINA_TRUE;
-	  }
+        if (param->type == EDJE_EXTERNAL_PARAM_TYPE_STRING)
+          {
+             param->s = elm_multibuttonentry_guide_text_get(obj);
+             return EINA_TRUE;
+          }
      }
 
    ERR("unknown parameter '%s' of type '%s'",
@@ -86,20 +86,19 @@ external_multibuttonentry_params_parse(void *data __UNUSED__, Evas_Object *obj _
 
    EINA_LIST_FOREACH(params, l, param)
      {
-	if (!strcmp(param->name, "label"))
-	  mem->label = eina_stringshare_add(param->s);
-	else if (!strcmp(param->name, "guide text"))
-	  mem->guide_text = eina_stringshare_add(param->s);
+        if (!strcmp(param->name, "label"))
+          mem->label = eina_stringshare_add(param->s);
+        else if (!strcmp(param->name, "guide text"))
+          mem->guide_text = eina_stringshare_add(param->s);
      }
 
    return mem;
 }
 
-static Evas_Object *external_multibuttonentry_content_get(void *data __UNUSED__,
-		const Evas_Object *obj __UNUSED__, const char *content __UNUSED__)
+static Evas_Object *external_multibuttonentry_content_get(void *data __UNUSED__, const Evas_Object *obj __UNUSED__, const char *content __UNUSED__)
 {
-	ERR("so content");
-	return NULL;
+   ERR("so content");
+   return NULL;
 }
 
 static void

@@ -112,6 +112,11 @@ static void _set_vis_guidetext(Evas_Object *obj);
 static void _calculate_box_min_size(Evas_Object *box, Evas_Object_Box_Data *priv);
 static Evas_Coord _calculate_item_max_height(Evas_Object *box, Evas_Object_Box_Data *priv, int obj_index);
 static void _box_layout_cb(Evas_Object *o, Evas_Object_Box_Data *priv, void *data);
+static void _item_text_set_hook(Elm_Object_Item *it,
+                               const char *part,
+                               const char *label);
+static const char * _item_text_get_hook(const Elm_Object_Item *it,
+                                        const char *part);
 
 static void
 _del_hook(Evas_Object *obj)
@@ -794,6 +799,8 @@ _add_button_item(Evas_Object *obj, const char *str, Multibuttonentry_Pos pos, co
    item = elm_widget_item_new(obj, Elm_Multibuttonentry_Item);
    if (item)
      {
+        elm_widget_item_text_set_hook_set(item, _item_text_set_hook);
+        elm_widget_item_text_get_hook_set(item, _item_text_get_hook);
         elm_widget_item_data_set(item, data);
         Evas_Coord rw, vw;
         _resize_button(btn, &rw, &vw);
@@ -1305,6 +1312,50 @@ _box_layout_cb(Evas_Object *o, Evas_Object_Box_Data *priv, void *data __UNUSED__
      }
 }
 
+static void
+_item_text_set_hook(Elm_Object_Item *it, const char *part, const char *label)
+{
+   ELM_OBJ_ITEM_CHECK_OR_RETURN(it);
+
+   Elm_Multibuttonentry_Item *item;
+   if (part && strcmp(part, "default")) return;
+   if (!label) return;
+   item = (Elm_Multibuttonentry_Item *) it;
+   edje_object_part_text_set(item->button, "elm.btn.text", label);
+   _resize_button(item->button, &item->rw, &item->vw);
+}
+
+static const char *
+_item_text_get_hook(const Elm_Object_Item *it, const char *part)
+{
+   ELM_OBJ_ITEM_CHECK_OR_RETURN(it, NULL);
+   Elm_Multibuttonentry_Item *item;
+   if (part && strcmp(part, "default")) return NULL;
+   item = (Elm_Multibuttonentry_Item *) it;
+   return edje_object_part_text_get(item->button, "elm.btn.text");
+}
+
+static void
+_text_set_hook(Evas_Object *obj, const char *part, const char *label)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype);
+   if (part && strcmp(part, "default")) return;
+   if (label) _set_label(obj, label);
+   else  _set_label(obj, "");
+}
+
+static const char *
+_text_get_hook(const Evas_Object *obj, const char *part)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype) NULL;
+   Widget_Data *wd;
+   if (part && strcmp(part, "default")) return NULL;
+   wd = elm_widget_data_get(obj);
+   if (!wd) return NULL;
+   if (wd->label) return edje_object_part_text_get(wd->label, "mbe.label");
+   return NULL;
+}
+
 EAPI Evas_Object *
 elm_multibuttonentry_add(Evas_Object *parent)
 {
@@ -1324,6 +1375,8 @@ elm_multibuttonentry_add(Evas_Object *parent)
    elm_widget_event_hook_set(obj, _event_hook);
    elm_widget_on_focus_hook_set(obj, _on_focus_hook, NULL);
    elm_widget_signal_emit_hook_set(obj, _signal_emit_hook);
+   elm_widget_text_set_hook_set(obj, _text_set_hook);
+   elm_widget_text_get_hook_set(obj, _text_get_hook);
 
    wd->base = edje_object_add(e);
    _elm_theme_object_set(obj, wd->base, "multibuttonentry", "base", "default");
@@ -1358,25 +1411,13 @@ elm_multibuttonentry_entry_get(const Evas_Object *obj)
 EAPI const char *
 elm_multibuttonentry_label_get(const Evas_Object *obj)
 {
-   ELM_CHECK_WIDTYPE(obj, widtype) NULL;
-   Widget_Data *wd = elm_widget_data_get(obj);
-
-   if (!wd) return NULL;
-   if (wd->label) return edje_object_part_text_get(wd->label, "mbe.label");
-   return NULL;
+   return _text_get_hook(obj, NULL);
 }
 
 EAPI void
 elm_multibuttonentry_label_set(Evas_Object *obj, const char *label)
 {
-   ELM_CHECK_WIDTYPE(obj, widtype);
-   Widget_Data *wd = elm_widget_data_get(obj);
-
-   if (!wd) return;
-   if (label)
-     _set_label(obj, label);
-   else
-     _set_label(obj, "");
+   _text_set_hook(obj, NULL, label);
 }
 
 EAPI const char *
@@ -1552,19 +1593,13 @@ elm_multibuttonentry_item_del(Elm_Object_Item *it)
 EAPI const char *
 elm_multibuttonentry_item_label_get(const Elm_Object_Item *it)
 {
-   ELM_OBJ_ITEM_CHECK_OR_RETURN(it, NULL);
-   Elm_Multibuttonentry_Item *item = (Elm_Multibuttonentry_Item *) it;
-   return edje_object_part_text_get(item->button, "elm.btn.text");
+   return _item_text_get_hook(it, NULL);
 }
 
 EAPI void
 elm_multibuttonentry_item_label_set(Elm_Object_Item *it, const char *str)
 {
-   ELM_OBJ_ITEM_CHECK_OR_RETURN(it);
-   Elm_Multibuttonentry_Item *item = (Elm_Multibuttonentry_Item *) it;
-   if (!str) return;
-    edje_object_part_text_set(item->button, "elm.btn.text", str);
-    _resize_button(item->button, &item->rw, &item->vw);
+   _item_text_set_hook(it, NULL, str);
 }
 
 EAPI Elm_Object_Item *

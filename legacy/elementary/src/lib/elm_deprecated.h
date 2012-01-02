@@ -2544,3 +2544,46 @@ EINA_DEPRECATED EAPI void              elm_segment_control_item_label_set(Elm_Ob
  * @ingroup SegmentControl
  */
 EINA_DEPRECATED EAPI void              elm_segment_control_item_icon_set(Elm_Object_Item *it, Evas_Object *icon);
+
+/**
+ * Get the label
+ *
+ * @param obj The multibuttonentry object
+ * @return The label, or NULL if none
+ *
+ * @deprecated Use elm_object_text_get() instead 
+ *
+ */
+EINA_DEPRECATED EAPI const char                *elm_multibuttonentry_label_get(const Evas_Object *obj);
+
+/**
+ * Set the label
+ *
+ * @param obj The multibuttonentry object
+ * @param label The text label string
+ *
+ * @deprecated Use elm_object_text_set() instead
+ *
+ */
+EINA_DEPRECATED EAPI void                       elm_multibuttonentry_label_set(Evas_Object *obj, const char *label);
+
+/**
+ * Get the label of a given item
+ *
+ * @param it The item
+ * @return The label of a given item, or NULL if none
+ *
+ * @deprecated Use elm_object_item_text_get() instead
+ *
+ */
+EINA_DEPRECATED EAPI const char                *elm_multibuttonentry_item_label_get(const Elm_Object_Item *it);
+
+/**
+ * Set the label of a given item
+ *
+ * @param it The item
+ * @param str The text label string
+ *
+ * @deprecated Use elm_object_item_text_set() instead
+ */
+EINA_DEPRECATED EAPI void                       elm_multibuttonentry_item_label_set(Elm_Object_Item *it, const char *str);
