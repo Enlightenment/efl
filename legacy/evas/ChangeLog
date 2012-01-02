@@ -561,7 +561,7 @@
 	* Textblock: Added "b" and "i" as default tags that can be overridden
 	by style, and added the infra to support this.
 	* Textblock: Added evas_textblock_text_utf8_to_markup
-        
+
 2011-12-16  Carsten Haitzler (The Rasterman)
 
         * Fix clip bug that shows up in buffer engine
@@ -612,3 +612,4 @@
 
 	* Fix unitialized value when running generic loader without any
 	application found to open the file.
+	* Use Eina_File when openning XPM file.

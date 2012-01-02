@@ -28,13 +28,16 @@ static Evas_Image_Load_Func evas_image_load_xpm_func =
   EINA_FALSE
 };
 
-// TODO: REWRITE THIS WITH THREAD SAFE VERSION NOT USING THIS HANDLE!!!!
-static FILE *rgb_txt = NULL;
+static Eina_File *rgb_txt;
+static void *rgb_txt_map;
 
 static void
 xpm_parse_color(char *color, int *r, int *g, int *b)
 {
-   char                buf[4096];
+   char *tmp;
+   char *max;
+   char *endline;
+   char buf[4096];
 
    /* is a #ff00ff like color */
    if (color[0] == '#')
@@ -76,19 +79,22 @@ xpm_parse_color(char *color, int *r, int *g, int *b)
         return;
      }
    /* look in rgb txt database */
-   if (!rgb_txt) rgb_txt = fopen("/usr/lib/X11/rgb.txt", "r");
-   if (!rgb_txt) rgb_txt = fopen("/usr/X11/lib/X11/rgb.txt", "r");
-   if (!rgb_txt) rgb_txt = fopen("/usr/X11R6/lib/X11/rgb.txt", "r");
-   if (!rgb_txt) rgb_txt = fopen("/usr/openwin/lib/X11/rgb.txt", "r");
    if (!rgb_txt) return;
-   fseek(rgb_txt, 0, SEEK_SET);
-   while (fgets(buf, sizeof(buf), rgb_txt))
+   tmp = rgb_txt_map;
+   max = tmp + eina_file_size_get(rgb_txt);
+
+   while (tmp < max)
      {
-	buf[sizeof(buf) - 1] = 0;
-        if (buf[0] != '!')
+        endline = memchr(tmp, '\n', max - tmp);
+        if (!endline) endline = max;
+        if ((*tmp != '!') && ((endline - tmp) < (int) (sizeof(buf) - 1)))
           {
              int rr, gg, bb;
              char name[4096];
+
+             /* FIXME: not really efficient */
+             memcpy(buf, tmp, endline - tmp);
+             buf[endline - tmp + 1] = '\0';
 
              if (sscanf(buf, "%i %i %i %[^\n]", &rr, &gg, &bb, name) == 4)
 	       {
@@ -101,33 +107,30 @@ xpm_parse_color(char *color, int *r, int *g, int *b)
 		    }
 	       }
           }
+        tmp = endline + 1;
      }
 }
-
-static void
-xpm_parse_done(void)
-{
-   if (rgb_txt) fclose(rgb_txt);
-   rgb_txt = NULL;
-}
-
 
 /** FIXME: clean this up and make more efficient  **/
 static Eina_Bool
 evas_image_load_file_xpm(Image_Entry *ie, const char *file, const char *key __UNUSED__, int load_data, int *error)
 {
    DATA32             *ptr, *end;
-   FILE               *f;
+   Eina_File          *f;
+   const char         *map;
+   size_t              length;
+   size_t              position;
 
    int                 pc, c, i, j, k, w, h, ncolors, cpp, comment, transp,
                        quote, context, len, done, r, g, b, backslash, lu1, lu2;
-   char               *line, s[256], tok[128], col[256], *tl;
+   char               *line = NULL;
+   char                s[256], tok[128], col[256], *tl;
    int                 lsz = 256;
    struct _cmap {
       char             str[6];
       unsigned char    transp;
       short            r, g, b;
-   }                  *cmap;
+   }                  *cmap = NULL;
 
    short               lookup[128 - 32][128 - 32];
    int                 count, pixels;
@@ -139,28 +142,37 @@ evas_image_load_file_xpm(Image_Entry *ie, const char *file, const char *key __UN
    /* if immediate_load is 1, then dont delay image laoding as below, or */
    /* already data in this image - dont load it again */
 
-   f = fopen(file, "rb");
+   f = eina_file_open(file, 0);
    if (!f)
      {
-        xpm_parse_done();
+        ERR("XPM ERROR: file failed to open");
 	*error = EVAS_LOAD_ERROR_DOES_NOT_EXIST;
 	return EINA_FALSE;
      }
-   if (fread(s, 9, 1, f) != 1)
+   length = eina_file_size_get(f);
+   position = 0;
+   if (length < 9)
      {
-        fclose(f);
-	xpm_parse_done();
+        ERR("XPM ERROR: file size, %i, is to small", length);
+        eina_file_close(f);
 	*error = EVAS_LOAD_ERROR_CORRUPT_FILE;
 	return EINA_FALSE;
      }
-   rewind(f);
-   s[9] = 0;
-   if (strcmp("/* XPM */", s))
+
+   map = eina_file_map_all(f, EINA_FILE_SEQUENTIAL);
+   if (!map)
      {
-        fclose(f);
-        xpm_parse_done();
-	*error = EVAS_LOAD_ERROR_UNKNOWN_FORMAT;
+        ERR("XPM ERROR: file failed to mmap");
+        eina_file_close(f);
+	*error = EVAS_LOAD_ERROR_CORRUPT_FILE;
 	return EINA_FALSE;
+     }
+
+   if (strncmp("/* XPM */", map, 9))
+     {
+        ERR("XPM ERROR: header not found");
+	*error = EVAS_LOAD_ERROR_UNKNOWN_FORMAT;
+        goto on_error;
      }
 
    i = 0;
@@ -179,10 +191,8 @@ evas_image_load_file_xpm(Image_Entry *ie, const char *file, const char *key __UN
    line = malloc(lsz);
    if (!line)
      {
-        fclose(f);
-        xpm_parse_done();
 	*error = EVAS_LOAD_ERROR_RESOURCE_ALLOCATION_FAILED;
-	return EINA_FALSE;
+        goto on_error;
      }
 
    backslash = 0;
@@ -190,8 +200,8 @@ evas_image_load_file_xpm(Image_Entry *ie, const char *file, const char *key __UN
    while (!done)
      {
         pc = c;
-        c = fgetc(f);
-        if (c == EOF) break;
+        if (position == length) break ;
+        c = (char) map[position++];
         if (!quote)
           {
              if ((pc == '/') && (c == '*'))
@@ -216,56 +226,38 @@ evas_image_load_file_xpm(Image_Entry *ie, const char *file, const char *key __UN
                        if (sscanf(line, "%i %i %i %i", &w, &h, &ncolors, &cpp) != 4)
 			 {
 			    ERR("XPM ERROR: XPM file malformed header");
-                            free(line);
-                            fclose(f);
-                            xpm_parse_done();
 			    *error = EVAS_LOAD_ERROR_CORRUPT_FILE;
-			    return EINA_FALSE;
+                            goto on_error;
 			 }
                        if ((ncolors > 32766) || (ncolors < 1))
                          {
                             ERR("XPM ERROR: XPM files with colors > 32766 or < 1 not supported");
-                            free(line);
-                            fclose(f);
-                            xpm_parse_done();
 			    *error = EVAS_LOAD_ERROR_UNKNOWN_FORMAT;
-			    return EINA_FALSE;
+                            goto on_error;
                          }
                        if ((cpp > 5) || (cpp < 1))
                          {
 			    ERR("XPM ERROR: XPM files with characters per pixel > 5 or < 1not supported");
-                            free(line);
-                            fclose(f);
-                            xpm_parse_done();
 			    *error = EVAS_LOAD_ERROR_UNKNOWN_FORMAT;
-			    return EINA_FALSE;
+                            goto on_error;
                          }
                        if ((w > IMG_MAX_SIZE) || (w < 1))
                          {
 			    ERR("XPM ERROR: Image width > IMG_MAX_SIZE or < 1 pixels for file");
-                            free(line);
-                            fclose(f);
-                            xpm_parse_done();
 			    *error = EVAS_LOAD_ERROR_GENERIC;
-			    return EINA_FALSE;
+                            goto on_error;
                          }
                        if ((h > IMG_MAX_SIZE) || (h < 1))
                          {
 			    ERR("XPM ERROR: Image height > IMG_MAX_SIZE or < 1 pixels for file");
-                            free(line);
-                            fclose(f);
-                            xpm_parse_done();
 			    *error = EVAS_LOAD_ERROR_GENERIC;
-			    return EINA_FALSE;
+                            goto on_error;
                          }
                        if (IMG_TOO_BIG(w, h))
                          {
                             ERR("XPM ERROR: Image just too big to ever allocate");
-                            free(line);
-                            fclose(f);
-                            xpm_parse_done();
 			    *error = EVAS_LOAD_ERROR_RESOURCE_ALLOCATION_FAILED;
-			    return EINA_FALSE;
+                            goto on_error;
                          }
 
                        if (!cmap)
@@ -273,11 +265,8 @@ evas_image_load_file_xpm(Image_Entry *ie, const char *file, const char *key __UN
                             cmap = malloc(sizeof(struct _cmap) * ncolors);
                             if (!cmap)
                               {
-                                free(line);
-                                fclose(f);
-                                xpm_parse_done();
 				*error = EVAS_LOAD_ERROR_RESOURCE_ALLOCATION_FAILED;
-				return EINA_FALSE;
+                                goto on_error;
                               }
                          }
                        ie->w = w;
@@ -399,24 +388,16 @@ evas_image_load_file_xpm(Image_Entry *ie, const char *file, const char *key __UN
                             ptr = evas_cache_image_pixels(ie);
                             if (!ptr)
                               {
-                                 free(cmap);
-                                 free(line);
-                                 fclose(f);
-                                 xpm_parse_done();
 				 *error = EVAS_LOAD_ERROR_RESOURCE_ALLOCATION_FAILED;
-				 return EINA_FALSE;
+                                 goto on_error;
                               }
                             pixels = w * h;
                             end = ptr + pixels;
                          }
                        else
                          {
-                            free(cmap);
-                            free(line);
-                            fclose(f);
-                            xpm_parse_done();
 			    *error = EVAS_LOAD_ERROR_NONE;
-			    return EINA_TRUE;
+                            goto on_success;
                          }
                     }
                   else
@@ -632,13 +613,21 @@ evas_image_load_file_xpm(Image_Entry *ie, const char *file, const char *key __UN
 	  break;
      }
 
+ on_success:
    free(cmap);
    free(line);
-   fclose(f);
 
-   xpm_parse_done();
+   eina_file_map_free(f, (void*) map);
+   eina_file_close(f);
+
    *error = EVAS_LOAD_ERROR_NONE;
    return EINA_TRUE;
+
+ on_error:
+   free(line);
+   eina_file_map_free(f, (void*) map);
+   eina_file_close(f);
+   return EINA_FALSE;
 }
 
 static Eina_Bool
@@ -664,6 +653,14 @@ module_open(Evas_Module *em)
         EINA_LOG_ERR("Can not create a module log domain.");
         return 0;
      }
+
+   /* Shouldn't we make that PATH configurable ? */
+   rgb_txt = eina_file_open("/usr/lib/X11/rgb.txt", 0);
+   if (!rgb_txt) rgb_txt = eina_file_open("/usr/X11/lib/X11/rgb.txt", 0);
+   if (!rgb_txt) rgb_txt = eina_file_open("/usr/X11R6/lib/X11/rgb.txt", 0);
+   if (!rgb_txt) rgb_txt = eina_file_open("/usr/openwin/lib/X11/rgb.txt", 0);
+   if (rgb_txt)
+     rgb_txt_map = eina_file_map_all(rgb_txt, EINA_FILE_SEQUENTIAL);
    em->functions = (void *)(&evas_image_load_xpm_func);
    return 1;
 }
@@ -671,6 +668,12 @@ module_open(Evas_Module *em)
 static void
 module_close(Evas_Module *em __UNUSED__)
 {
+   if (rgb_txt)
+     {
+        eina_file_map_free(rgb_txt, rgb_txt_map);
+        eina_file_close(rgb_txt);
+        rgb_txt = NULL;
+     }
    eina_log_domain_unregister(_evas_loader_xpm_log_dom);
 }
 
