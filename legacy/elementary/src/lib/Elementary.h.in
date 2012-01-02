@@ -1,6 +1,8 @@
-/**
- * @file Elementary.h
- * @brief Elementary Widget Library
+/* This is the primary Elementary header file that includes all other useful
+ * headers.
+ * 
+ * Elementary is distrubted under the LGPLv2 license. Please see the COPYING
+ * file that was distributed with this source.
  */
 #ifndef ELEMENTARY_H
 #define ELEMENTARY_H
@@ -143,7 +145,7 @@ typedef struct _Elm_Version
    int revision;
 } Elm_Version;
 
-EAPI extern Elm_Version * elm_version;
+EAPI extern Elm_Version *elm_version;
 
 /* include these first for general used definitions */
 #include <elm_general.h>
