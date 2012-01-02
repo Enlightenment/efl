@@ -268,7 +268,7 @@ EAPI const Eina_List       *elm_diskselector_items_get(const Evas_Object *obj);
  * elm_diskselector_item_del().
  *
  * Associated @p data can be properly freed when item is deleted if a
- * callback function is set with elm_diskselector_item_del_cb_set().
+ * callback function is set with elm_object_item_del_cb_set().
  *
  * If a function is passed as argument, it will be called everytime this item
  * is selected, i.e., the user stops the diskselector with this
@@ -285,7 +285,6 @@ EAPI const Eina_List       *elm_diskselector_items_get(const Evas_Object *obj);
  * @endcode
  *
  * @see elm_diskselector_item_del()
- * @see elm_diskselector_item_del_cb_set()
  * @see elm_diskselector_clear()
  * @see elm_icon_add()
  *
@@ -304,30 +303,10 @@ EAPI Elm_Object_Item *elm_diskselector_item_append(Evas_Object *obj, const char 
  *
  * @see elm_diskselector_clear()
  * @see elm_diskselector_item_append()
- * @see elm_diskselector_item_del_cb_set()
  *
  * @ingroup Diskselector
  */
 EAPI void                   elm_diskselector_item_del(Elm_Object_Item *it);
-
-/**
- * Set the function called when a diskselector item is freed.
- *
- * @param it The item to set the callback on
- * @param func The function called
- *
- * If there is a @p func, then it will be called prior item's memory release.
- * That will be called with the following arguments:
- * @li item's data;
- * @li item's Evas object;
- * @li item itself;
- *
- * This way, a data associated to a diskselector item could be properly
- * freed.
- *
- * @ingroup Diskselector
- */
-EAPI void                   elm_diskselector_item_del_cb_set(Elm_Object_Item *it, Evas_Smart_Cb func);
 
 /**
  * Get the selected item.

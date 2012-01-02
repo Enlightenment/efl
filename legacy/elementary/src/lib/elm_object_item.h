@@ -158,3 +158,20 @@ EAPI void                         elm_object_item_disabled_set(Elm_Object_Item *
  * @ingroup Styles
  */
 EAPI Eina_Bool                    elm_object_item_disabled_get(const Elm_Object_Item *it);
+
+/**
+ * @brief Set the function to be called when an item from the widget is
+ * freed.
+ *
+ * @param it The item to set the callback on
+ * @param func The function called
+ *
+ * That function will receive these parameters:
+ * @li void * item data
+ * @li Evas_Object * widget object
+ * @li Elm_Object_Item * widget item
+ *
+ * @see elm_object_item_del()
+ * @ingroup General
+ */
+EAPI void                         elm_object_item_del_cb_set(Elm_Object_Item *it, Evas_Smart_Cb del_cb);

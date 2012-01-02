@@ -246,7 +246,7 @@ EAPI void                  elm_index_item_sorted_insert(Evas_Object *obj, const 
  * @param obj The index object
  * @param item The item to be removed from @p obj
  *
- * If a deletion callback is set, via elm_index_item_del_cb_set(),
+ * If a deletion callback is set, via elm_object_item_del_cb_set(),
  * that callback function will be called by this one.
  *
  * @ingroup Index
@@ -269,7 +269,7 @@ EAPI Elm_Object_Item      *elm_index_item_find(Evas_Object *obj, const void *ite
  *
  * @param obj The index object.
  *
- * If deletion callbacks are set, via elm_index_item_del_cb_set(),
+ * If deletion callbacks are set, via elm_object_item_del_cb_set(),
  * that callback function will be called for each item in @p obj.
  *
  * @ingroup Index
@@ -285,20 +285,6 @@ EAPI void                  elm_index_item_clear(Evas_Object *obj);
  * @ingroup Index
  */
 EAPI void                  elm_index_item_go(Evas_Object *obj, int level);
-
-/**
- * Set the function to be called when a given index widget item is freed.
- *
- * @param it The item to set the callback on
- * @param func The function to call on the item's deletion
- *
- * When called, @p func will have both @c data and @c event_info
- * arguments with the @p it item's data value and, naturally, the
- * @c obj argument with a handle to the parent index widget.
- *
- * @ingroup Index
- */
-EAPI void                  elm_index_item_del_cb_set(Elm_Object_Item *it, Evas_Smart_Cb func);
 
 /**
  * Get the letter (string) set on a given index widget item.

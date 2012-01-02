@@ -94,7 +94,7 @@ _add_item(void *data, Evas_Object *obj, void *event_info)
 
    hoversel_it = elm_hoversel_item_add(obj, str, NULL, ELM_ICON_NONE, NULL,
                                        str);
-   elm_hoversel_item_del_cb_set(hoversel_it, _free);
+   elm_object_item_del_cb_set(hoversel_it, _free);
 }
 
 static void

@@ -102,7 +102,7 @@ _add_data_cb(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED_
      printf("Error adding item\n");
      return;
    }
-   elm_diskselector_item_del_cb_set(ds_it, _free_data);
+   elm_object_item_del_cb_set(ds_it, _free_data);
 }
 
 static void

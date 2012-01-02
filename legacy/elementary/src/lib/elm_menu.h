@@ -187,17 +187,6 @@ EAPI Eina_Bool                    elm_menu_item_is_separator(Elm_Object_Item *it
 EAPI void                         elm_menu_item_del(Elm_Object_Item *it);
 
 /**
- * @brief Set the function called when a menu item is deleted.
- *
- * @param it The item to set the callback on
- * @param func The function called
- *
- * @see elm_menu_item_add()
- * @see elm_menu_item_del()
- */
-EAPI void                         elm_menu_item_del_cb_set(Elm_Object_Item *it, Evas_Smart_Cb func);
-
-/**
  * @brief Returns a list of @p item's subitems.
  *
  * @param it The item

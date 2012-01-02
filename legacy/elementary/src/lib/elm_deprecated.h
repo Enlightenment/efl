@@ -566,6 +566,23 @@ EINA_DEPRECATED EAPI void        *elm_hoversel_item_data_get(const Elm_Object_It
 EINA_DEPRECATED EAPI const char  *elm_hoversel_item_label_get(const Elm_Object_Item *it);
 
 /**
+ * @brief Set the function to be called when an item from the hoversel is
+ * freed.
+ *
+ * @param it The item to set the callback on
+ * @param func The function called
+ *
+ * That function will receive these parameters:
+ * @li void * item data
+ * @li Evas_Object * hoversel object
+ * @li Elm_Object_Item * hoversel item
+ *
+ * @see elm_hoversel_item_add()
+ * @deprecated Use elm_object_item_del_cb_set() instead
+ */
+EINA_DEPRECATED EAPI void                         elm_hoversel_item_del_cb_set(Elm_Object_Item *it, Evas_Smart_Cb func);
+
+/**
  * Set actionslider labels.
  *
  * @param obj The actionslider object
@@ -1245,6 +1262,26 @@ EINA_DEPRECATED EAPI void                   elm_diskselector_item_label_set(Elm_
  */
 EINA_DEPRECATED EAPI const char            *elm_diskselector_item_label_get(const Elm_Object_Item *it);
 
+/**
+ * Set the function called when a diskselector item is freed.
+ *
+ * @param it The item to set the callback on
+ * @param func The function called
+ *
+ * If there is a @p func, then it will be called prior item's memory release.
+ * That will be called with the following arguments:
+ * @li item's data;
+ * @li item's Evas object;
+ * @li item itself;
+ *
+ * This way, a data associated to a diskselector item could be properly
+ * freed.
+ * @deprecated Use elm_object_item_del_cb_set() instead
+ *
+ * @ingroup Diskselector
+ */
+EINA_DEPRECATED EAPI void                   elm_diskselector_item_del_cb_set(Elm_Object_Item *it, Evas_Smart_Cb func);
+
 EINA_DEPRECATED EAPI void         elm_factory_content_set(Evas_Object *obj, Evas_Object *content);
 EINA_DEPRECATED EAPI Evas_Object *elm_factory_content_get(const Evas_Object *obj);
 
@@ -1402,7 +1439,22 @@ EINA_DEPRECATED EAPI void *elm_index_item_data_get(const Elm_Object_Item *item);
 EINA_DEPRECATED EAPI void  elm_index_item_data_set(Elm_Object_Item *it, const void *data);
 
 /**
- * @brief Set the label on the label object
+ * Set the function to be called when a given index widget item is freed.
+ *
+ * @param it The item to set the callback on
+ * @param func The function to call on the item's deletion
+ *
+ * When called, @p func will have both @c data and @c event_info
+ * arguments with the @p it item's data value and, naturally, the
+ * @c obj argument with a handle to the parent index widget.
+ *
+ * @deprecated Use elm_object_item_del_cb_set() instead
+ * @ingroup Index
+ */
+EINA_DEPRECATED EAPI void                  elm_index_item_del_cb_set(Elm_Object_Item *it, Evas_Smart_Cb func);
+
+/**
+* @brief Set the label on the label object
  *
  * @param obj The label object
  * @param label The label will be used on the label object
@@ -1657,6 +1709,18 @@ EINA_DEPRECATED EAPI Eina_Bool    elm_menu_item_disabled_get(const Elm_Object_It
  * @deprecated Use elm_object_item_data_get() instead
  */
 EINA_DEPRECATED EAPI void        *elm_menu_item_data_get(const Elm_Object_Item *it);
+
+/**
+ * @brief Set the function called when a menu item is deleted.
+ *
+ * @param it The item to set the callback on
+ * @param func The function called
+ *
+ * @see elm_menu_item_add()
+ * @see elm_menu_item_del()
+ * @deprecated Use elm_object_item_del_cb_set() instead
+ */
+EINA_DEPRECATED EAPI void                         elm_menu_item_del_cb_set(Elm_Object_Item *it, Evas_Smart_Cb func);
 
 /**
  * @brief Sets the data to be associated with menu item @p item.
@@ -2456,6 +2520,25 @@ EINA_DEPRECATED EAPI void         elm_toolbar_orientation_set(Evas_Object *obj, 
  * @deprecated use elm_toolbar_horizontal_get() instead.
  */
 EINA_DEPRECATED EAPI Eina_Bool    elm_toolbar_orientation_get(const Evas_Object *obj);
+
+/**
+ * Set the function called when a toolbar item is freed.
+ *
+ * @param it The item to set the callback on.
+ * @param func The function called.
+ *
+ * If there is a @p func, then it will be called prior item's memory release.
+ * That will be called with the following arguments:
+ * @li item's data;
+ * @li item's Evas object;
+ * @li item itself;
+ *
+ * This way, a data associated to a toolbar item could be properly freed.
+ *
+ * @deprecated Use elm_object_item_del_cb_set() instead 
+ * @ingroup Toolbar
+ */
+EINA_DEPRECATED EAPI void                         elm_toolbar_item_del_cb_set(Elm_Object_Item *it, Evas_Smart_Cb func);
 
 /**
  * @brief Link a Elm_Payer with an Elm_Video object.

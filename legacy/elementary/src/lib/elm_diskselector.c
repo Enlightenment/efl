@@ -1321,8 +1321,7 @@ elm_diskselector_item_selected_get(const Elm_Object_Item *it)
 EAPI void
 elm_diskselector_item_del_cb_set(Elm_Object_Item *it, Evas_Smart_Cb func)
 {
-   ELM_OBJ_ITEM_CHECK_OR_RETURN(it);
-   elm_widget_item_del_cb_set(it, func);
+   elm_object_item_del_cb_set(it, func);
 }
 
 EAPI void *

@@ -220,7 +220,7 @@ EAPI Eina_Bool                    elm_toolbar_no_select_mode_get(const Evas_Obje
  * elm_toolbar_item_del().
  *
  * Associated @p data can be properly freed when item is deleted if a
- * callback function is set with elm_toolbar_item_del_cb_set().
+ * callback function is set with elm_object_item_del_cb_set().
  *
  * If a function is passed as argument, it will be called everytime this item
  * is selected, i.e., the user clicks over an unselected item.
@@ -233,7 +233,6 @@ EAPI Eina_Bool                    elm_toolbar_no_select_mode_get(const Evas_Obje
  *
  * @see elm_toolbar_item_icon_set()
  * @see elm_toolbar_item_del()
- * @see elm_toolbar_item_del_cb_set()
  *
  * @ingroup Toolbar
  */
@@ -256,7 +255,7 @@ EAPI Elm_Object_Item             *elm_toolbar_item_append(Evas_Object *obj, cons
  * elm_toolbar_item_del().
  *
  * Associated @p data can be properly freed when item is deleted if a
- * callback function is set with elm_toolbar_item_del_cb_set().
+ * callback function is set with elm_object_item_del_cb_set().
  *
  * If a function is passed as argument, it will be called everytime this item
  * is selected, i.e., the user clicks over an unselected item.
@@ -269,7 +268,6 @@ EAPI Elm_Object_Item             *elm_toolbar_item_append(Evas_Object *obj, cons
  *
  * @see elm_toolbar_item_icon_set()
  * @see elm_toolbar_item_del()
- * @see elm_toolbar_item_del_cb_set()
  *
  * @ingroup Toolbar
  */
@@ -293,7 +291,7 @@ EAPI Elm_Object_Item             *elm_toolbar_item_prepend(Evas_Object *obj, con
  * elm_toolbar_item_del().
  *
  * Associated @p data can be properly freed when item is deleted if a
- * callback function is set with elm_toolbar_item_del_cb_set().
+ * callback function is set with elm_object_item_del_cb_set().
  *
  * If a function is passed as argument, it will be called everytime this item
  * is selected, i.e., the user clicks over an unselected item.
@@ -306,7 +304,6 @@ EAPI Elm_Object_Item             *elm_toolbar_item_prepend(Evas_Object *obj, con
  *
  * @see elm_toolbar_item_icon_set()
  * @see elm_toolbar_item_del()
- * @see elm_toolbar_item_del_cb_set()
  *
  * @ingroup Toolbar
  */
@@ -330,7 +327,7 @@ EAPI Elm_Object_Item             *elm_toolbar_item_insert_before(Evas_Object *ob
  * elm_toolbar_item_del().
  *
  * Associated @p data can be properly freed when item is deleted if a
- * callback function is set with elm_toolbar_item_del_cb_set().
+ * callback function is set with elm_object_item_del_cb_set().
  *
  * If a function is passed as argument, it will be called everytime this item
  * is selected, i.e., the user clicks over an unselected item.
@@ -343,7 +340,6 @@ EAPI Elm_Object_Item             *elm_toolbar_item_insert_before(Evas_Object *ob
  *
  * @see elm_toolbar_item_icon_set()
  * @see elm_toolbar_item_del()
- * @see elm_toolbar_item_del_cb_set()
  *
  * @ingroup Toolbar
  */
@@ -597,29 +593,11 @@ EAPI Eina_Bool                    elm_toolbar_item_icon_file_set(Elm_Object_Item
  * @param it The item of toolbar to be deleted.
  *
  * @see elm_toolbar_item_append()
- * @see elm_toolbar_item_del_cb_set()
  *
  * @ingroup Toolbar
  */
 EAPI void                         elm_toolbar_item_del(Elm_Object_Item *it);
 
-/**
- * Set the function called when a toolbar item is freed.
- *
- * @param it The item to set the callback on.
- * @param func The function called.
- *
- * If there is a @p func, then it will be called prior item's memory release.
- * That will be called with the following arguments:
- * @li item's data;
- * @li item's Evas object;
- * @li item itself;
- *
- * This way, a data associated to a toolbar item could be properly freed.
- *
- * @ingroup Toolbar
- */
-EAPI void                         elm_toolbar_item_del_cb_set(Elm_Object_Item *it, Evas_Smart_Cb func);
 
 /**
  * Set or unset item as a separator.

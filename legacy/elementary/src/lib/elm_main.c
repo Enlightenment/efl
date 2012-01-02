@@ -2129,3 +2129,7 @@ EAPI Eina_Bool elm_object_item_disabled_get(const Elm_Object_Item *it)
    return _elm_widget_item_disabled_get((Elm_Widget_Item *) it);
 }
 
+EAPI void elm_object_item_del_cb_set(Elm_Object_Item *it, Evas_Smart_Cb del_cb)
+{
+   _elm_widget_item_del_cb_set((Elm_Widget_Item *) it, del_cb);
+}

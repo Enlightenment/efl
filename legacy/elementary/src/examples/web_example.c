@@ -156,7 +156,7 @@ tab_add(App_Data *ad)
    td->app = ad;
    td->tab = elm_toolbar_item_append(td->app->tabs, NULL, "New tab",
                                      _tab_clicked_cb, td);
-   elm_toolbar_item_del_cb_set(td->tab, _tb_item_del_cb);
+   elm_object_item_del_cb_set(td->tab, _tb_item_del_cb);
 
    evas_object_data_set(td->web, "tab_data", td);
 

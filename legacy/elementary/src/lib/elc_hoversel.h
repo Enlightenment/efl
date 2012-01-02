@@ -127,7 +127,6 @@ EAPI Eina_Bool                    elm_hoversel_expanded_get(const Evas_Object *o
  * @warning Should @b not be called while the hoversel is active; use
  * elm_hoversel_expanded_get() to check first.
  *
- * @see elm_hoversel_item_del_cb_set()
  * @see elm_hoversel_item_del()
  */
 EAPI void                         elm_hoversel_clear(Evas_Object *obj);
@@ -173,25 +172,8 @@ EAPI Elm_Object_Item             *elm_hoversel_item_add(Evas_Object *obj, const 
  * hoversel is active; use elm_hoversel_expanded_get() to check first).
  *
  * @see elm_hoversel_item_add()
- * @see elm_hoversel_item_del_cb_set()
  */
 EAPI void                         elm_hoversel_item_del(Elm_Object_Item *it);
-
-/**
- * @brief Set the function to be called when an item from the hoversel is
- * freed.
- *
- * @param it The item to set the callback on
- * @param func The function called
- *
- * That function will receive these parameters:
- * @li void * item data
- * @li Evas_Object * hoversel object
- * @li Elm_Object_Item * hoversel item
- *
- * @see elm_hoversel_item_add()
- */
-EAPI void                         elm_hoversel_item_del_cb_set(Elm_Object_Item *it, Evas_Smart_Cb func);
 
 /**
  * @brief This sets the icon for the given hoversel item.
