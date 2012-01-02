@@ -1675,7 +1675,7 @@ edje_object_part_text_cursor_is_visible_format_get(const Evas_Object *obj, const
    return 0;
 }
 
-EAPI const char *
+EAPI char *
 edje_object_part_text_cursor_content_get(const Evas_Object *obj, const char *part, Edje_Cursor cur)
 {
    Edje *ed;

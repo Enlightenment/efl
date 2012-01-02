@@ -2757,12 +2757,15 @@ EAPI Eina_Bool        edje_object_part_text_cursor_is_visible_format_get(const E
 /**
  * @brief Returns the content (char) at the cursor position.
  * @see evas_textblock_cursor_content_get
+ * 
+ * You must free the return (if not NULL) after you are done with it.
  *
  * @param obj A valid Evas_Object handle
  * @param part The part name
  * @param cur The cursor to use
+ * @return The character string pointed to (may be a multi-byte utf8 sequence) terminated by a nul byte.
  */
-EAPI const char      *edje_object_part_text_cursor_content_get          (const Evas_Object *obj, const char *part, Edje_Cursor cur);
+EAPI char            *edje_object_part_text_cursor_content_get          (const Evas_Object *obj, const char *part, Edje_Cursor cur);
 
 /**
  * @brief Sets the cursor position to the given value

@@ -2783,7 +2783,7 @@ _edje_entry_cursor_is_visible_format_get(Edje_Real_Part *rp, Edje_Cursor cur)
    return evas_textblock_cursor_format_is_visible_get(c);
 }
 
-const char *
+char *
 _edje_entry_cursor_content_get(Edje_Real_Part *rp, Edje_Cursor cur)
 {
    static char *s = NULL;
