@@ -852,3 +852,14 @@ elm_hover_best_content_location_get(const Evas_Object *obj, Elm_Hover_Axis pref_
    else if (spc_b > spc_r) return _HOV_BOTTOM;
    return _HOV_LEFT;
 }
+
+EAPI void
+elm_hover_dismiss(Evas_Object *obj)
+{
+   Widget_Data *wd;
+   ELM_CHECK_WIDTYPE(obj, widtype);
+   wd = elm_widget_data_get(obj);
+   if (!wd) return;
+
+   edje_object_signal_emit(wd->cov, "elm,action,dismiss", "");
+}

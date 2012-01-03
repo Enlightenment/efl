@@ -188,5 +188,13 @@ EAPI Evas_Object *elm_hover_content_unset(Evas_Object *obj, const char *swallow)
 EAPI const char  *elm_hover_best_content_location_get(const Evas_Object *obj, Elm_Hover_Axis pref_axis);
 
 /**
+ * @brief Dismiss a hover object
+ *
+ * @param obj The hover object
+ * Use this function to simulate clicking outside the hover to dismiss it.
+ * In this way, the hover will be hidden and the "clicked" signal will be emitted.
+ */
+EAPI void elm_hover_dismiss(Evas_Object *obj);
+/**
  * @}
  */
