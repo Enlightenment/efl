@@ -179,3 +179,7 @@ EAPI Eina_Bool                    elm_object_item_disabled_get(const Elm_Object_
  * @ingroup General
  */
 EAPI void                         elm_object_item_del_cb_set(Elm_Object_Item *it, Evas_Smart_Cb del_cb);
+
+
+// XXX: One more API is to be added.
+//EAPI void                       elm_object_item_del(Elm_Object_Item *it);
