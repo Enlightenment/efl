@@ -90,6 +90,7 @@ static Evas_Object *_ecore_evas_wl_frame_add(Evas *evas);
 /* local variables */
 static int _ecore_evas_wl_init_count = 0;
 static Ecore_Event_Handler *_ecore_evas_wl_event_handlers[8];
+static uint32_t _ecore_evas_wl_btn_timestamp;
 
 static Ecore_Evas_Engine_Func _ecore_wl_engine_func = 
 {
@@ -408,13 +409,19 @@ _ecore_evas_wl_move(Ecore_Evas *ee, int x, int y)
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
    if (!ee) return;
-   if ((ee->x == x) && (ee->y == y)) return;
+//   if ((ee->x == x) && (ee->y == y)) return;
    ee->req.x = x;
    ee->req.y = y;
 
    ee->x = x;
    ee->y = y;
+
    /* FIXME: Forward this to Wayland */
+   wl_shell_surface_move(ee->engine.wl.shell_surface, 
+                         ecore_wl_input_device_get(), 
+                         _ecore_evas_wl_btn_timestamp);
+
+   if (ee->func.fn_move) ee->func.fn_move(ee);
 }
 
 static void 
@@ -771,6 +778,7 @@ _ecore_evas_wl_event_mouse_down(void *data __UNUSED__, int type __UNUSED__, void
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
    ev = event;
+   _ecore_evas_wl_btn_timestamp = ev->timestamp;
    ee = ecore_event_window_match(ev->window);
    if ((!ee) || (ee->ignore_events)) return ECORE_CALLBACK_PASS_ON;
    if (ev->window != ee->prop.window) return ECORE_CALLBACK_PASS_ON;
@@ -808,7 +816,7 @@ _ecore_evas_wl_event_mouse_move(void *data __UNUSED__, int type __UNUSED__, void
    if (ev->window != ee->prop.window) return ECORE_CALLBACK_PASS_ON;
    ee->mouse.x = ev->x;
    ee->mouse.y = ev->y;
-   evas_event_feed_mouse_move(ee->evas, ev->x, ev->y, ev->timestamp, NULL);
+//   evas_event_feed_mouse_move(ee->evas, ev->x, ev->y, ev->timestamp, NULL);
    _ecore_evas_mouse_move_process(ee, ev->x, ev->y, ev->timestamp);
    return ECORE_CALLBACK_PASS_ON;
 }
