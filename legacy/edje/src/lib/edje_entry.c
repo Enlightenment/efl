@@ -2917,6 +2917,7 @@ _edje_entry_imf_event_commit_cb(void *data, int type __UNUSED__, void *event)
    Ecore_IMF_Event_Commit *ev = event;
    Evas_Textblock_Cursor *tc;
    Eina_Bool cursor_move = EINA_FALSE;
+   int start_pos;
 
    if ((!rp) || (!ev) || (!ev->str)) return ECORE_CALLBACK_PASS_ON;
 
@@ -2933,7 +2934,7 @@ _edje_entry_imf_event_commit_cb(void *data, int type __UNUSED__, void *event)
         if (strcmp(ev->str, ""))
           {
              /* delete selected characters */
-             _range_del(en->cursor, rp->object, en);
+             _range_del_emit(ed, en->cursor, rp->object, en);
              _sel_clear(en->cursor, rp->object, en);
           }
      }
@@ -2945,6 +2946,9 @@ _edje_entry_imf_event_commit_cb(void *data, int type __UNUSED__, void *event)
      evas_textblock_cursor_copy(en->preedit_start, tc);
    else
      evas_textblock_cursor_copy(en->cursor, tc);
+
+   start_pos = evas_textblock_cursor_pos_get(tc);
+
 
 #ifdef HAVE_ECORE_IMF
    /* delete preedit characters */
@@ -2985,8 +2989,18 @@ _edje_entry_imf_event_commit_cb(void *data, int type __UNUSED__, void *event)
    _edje_entry_imf_cursor_info_set(en);
    _anchors_get(en->cursor, rp->object, en);
    _edje_emit(rp->edje, "entry,changed", rp->part->name);
-   _edje_emit(ed, "entry,changed,user", rp->part->name);
-   _edje_emit(ed, "cursor,changed", rp->part->name);
+
+     {
+        Edje_Entry_Change_Info *info = calloc(1, sizeof(*info));
+        info->insert = EINA_TRUE;
+        info->change.insert.pos = start_pos;
+        info->change.insert.content = eina_stringshare_add(ev->str);
+        info->change.insert.plain_length =
+           eina_unicode_utf8_get_len(info->change.insert.content);
+        _edje_emit_full(ed, "entry,changed,user", rp->part->name,
+                        info, _free_entry_change_info);
+        _edje_emit(ed, "cursor,changed", rp->part->name);
+     }
 
    return ECORE_CALLBACK_DONE;
 }
@@ -3029,7 +3043,7 @@ _edje_entry_imf_event_preedit_changed_cb(void *data, int type __UNUSED__, void *
    if (en->have_selection && !preedit_end_state)
      {
         /* delete selected characters */
-        _range_del(en->cursor, rp->object, en);
+        _range_del_emit(ed, en->cursor, rp->object, en);
         _sel_clear(en->cursor, rp->object, en);
      }
 
