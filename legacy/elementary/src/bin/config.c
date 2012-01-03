@@ -2712,6 +2712,7 @@ _elm_engine_supported(const char *engine)
       "ews",
       "opengl_cocoa",
       "psl1ght",
+      "wayland_shm",
       NULL
    };
 
