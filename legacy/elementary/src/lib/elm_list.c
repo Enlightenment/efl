@@ -1863,8 +1863,6 @@ elm_list_item_disabled_get(const Elm_List_Item *it)
    return elm_object_item_disabled_get((Elm_Object_Item *)it);
 }
 
-// XXX: the below need to use the elm_object_item infra indicated
-// use elm_object_item_data_set
 EINA_DEPRECATED EAPI void
 elm_list_item_del_cb_set(Elm_List_Item *it, Evas_Smart_Cb func)
 {
@@ -1872,7 +1870,6 @@ elm_list_item_del_cb_set(Elm_List_Item *it, Evas_Smart_Cb func)
    elm_widget_item_del_cb_set(it, func);
 }
 
-// use elm_object_item_data_get
 EINA_DEPRECATED EAPI void *
 elm_list_item_data_get(const Elm_List_Item *it)
 {
@@ -1880,6 +1877,7 @@ elm_list_item_data_get(const Elm_List_Item *it)
    return elm_widget_item_data_get(it);
 }
 
+// XXX: the below need to use the elm_object_item infra indicated
 // use elm_object_item_part_content_get
 EINA_DEPRECATED EAPI Evas_Object *
 elm_list_item_icon_get(const Elm_List_Item *it)

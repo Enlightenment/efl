@@ -336,7 +336,7 @@ EAPI void                         elm_list_scroller_policy_get(const Evas_Object
  * elm_list_item_del().
  *
  * Associated @p data can be properly freed when item is deleted if a
- * callback function is set with elm_list_item_del_cb_set().
+ * callback function is set with elm_widget_item_del_cb_set().
  *
  * If a function is passed as argument, it will be called everytime this item
  * is selected, i.e., the user clicks over an unselected item.
@@ -358,7 +358,7 @@ EAPI void                         elm_list_scroller_policy_get(const Evas_Object
  *
  * @see elm_list_always_select_mode_set()
  * @see elm_list_item_del()
- * @see elm_list_item_del_cb_set()
+ * @see elm_widget_item_del_cb_set()
  * @see elm_list_clear()
  * @see elm_icon_add()
  *
@@ -388,7 +388,7 @@ EAPI Elm_List_Item               *elm_list_item_append(Evas_Object *obj, const c
  * elm_list_item_del().
  *
  * Associated @p data can be properly freed when item is deleted if a
- * callback function is set with elm_list_item_del_cb_set().
+ * callback function is set with elm_widget_item_del_cb_set().
  *
  * If a function is passed as argument, it will be called everytime this item
  * is selected, i.e., the user clicks over an unselected item.
@@ -400,7 +400,7 @@ EAPI Elm_List_Item               *elm_list_item_append(Evas_Object *obj, const c
  * @see elm_list_item_append() for a simple code example.
  * @see elm_list_always_select_mode_set()
  * @see elm_list_item_del()
- * @see elm_list_item_del_cb_set()
+ * @see elm_widget_item_del_cb_set()
  * @see elm_list_clear()
  * @see elm_icon_add()
  *
@@ -431,7 +431,7 @@ EAPI Elm_List_Item               *elm_list_item_prepend(Evas_Object *obj, const 
  * elm_list_item_del().
  *
  * Associated @p data can be properly freed when item is deleted if a
- * callback function is set with elm_list_item_del_cb_set().
+ * callback function is set with elm_widget_item_del_cb_set().
  *
  * If a function is passed as argument, it will be called everytime this item
  * is selected, i.e., the user clicks over an unselected item.
@@ -443,7 +443,7 @@ EAPI Elm_List_Item               *elm_list_item_prepend(Evas_Object *obj, const 
  * @see elm_list_item_append() for a simple code example.
  * @see elm_list_always_select_mode_set()
  * @see elm_list_item_del()
- * @see elm_list_item_del_cb_set()
+ * @see elm_widget_item_del_cb_set()
  * @see elm_list_clear()
  * @see elm_icon_add()
  *
@@ -474,7 +474,7 @@ EAPI Elm_List_Item               *elm_list_item_insert_before(Evas_Object *obj, 
  * elm_list_item_del().
  *
  * Associated @p data can be properly freed when item is deleted if a
- * callback function is set with elm_list_item_del_cb_set().
+ * callback function is set with elm_widget_item_del_cb_set().
  *
  * If a function is passed as argument, it will be called everytime this item
  * is selected, i.e., the user clicks over an unselected item.
@@ -486,7 +486,7 @@ EAPI Elm_List_Item               *elm_list_item_insert_before(Evas_Object *obj, 
  * @see elm_list_item_append() for a simple code example.
  * @see elm_list_always_select_mode_set()
  * @see elm_list_item_del()
- * @see elm_list_item_del_cb_set()
+ * @see elm_widget_item_del_cb_set()
  * @see elm_list_clear()
  * @see elm_icon_add()
  *
@@ -525,7 +525,7 @@ EAPI Elm_List_Item               *elm_list_item_insert_after(Evas_Object *obj, E
  * elm_list_item_del().
  *
  * Associated @p data can be properly freed when item is deleted if a
- * callback function is set with elm_list_item_del_cb_set().
+ * callback function is set with elm_widget_item_del_cb_set().
  *
  * If a function is passed as argument, it will be called everytime this item
  * is selected, i.e., the user clicks over an unselected item.
@@ -537,7 +537,7 @@ EAPI Elm_List_Item               *elm_list_item_insert_after(Evas_Object *obj, E
  * @see elm_list_item_append() for a simple code example.
  * @see elm_list_always_select_mode_set()
  * @see elm_list_item_del()
- * @see elm_list_item_del_cb_set()
+ * @see elm_widget_item_del_cb_set()
  * @see elm_list_clear()
  * @see elm_icon_add()
  *
@@ -713,45 +713,11 @@ EAPI void                         elm_list_item_bring_in(Elm_List_Item *item);
  *
  * @see elm_list_clear()
  * @see elm_list_item_append()
- * @see elm_list_item_del_cb_set()
+ * @see elm_widget_item_del_cb_set()
  *
  * @ingroup List
  */
 EAPI void                         elm_list_item_del(Elm_List_Item *item);
-
-/**
- * Set the function called when a list item is freed.
- *
- * @param item The item to set the callback on
- * @param func The function called
- *
- * If there is a @p func, then it will be called prior item's memory release.
- * That will be called with the following arguments:
- * @li item's data;
- * @li item's Evas object;
- * @li item itself;
- *
- * This way, a data associated to a list item could be properly freed.
- *
- * @ingroup List
- */
-EAPI void                         elm_list_item_del_cb_set(Elm_List_Item *item, Evas_Smart_Cb func);
-
-/**
- * Get the data associated to the item.
- *
- * @param item The list item
- * @return The data associated to @p item
- *
- * The return value is a pointer to data associated to @p item when it was
- * created, with function elm_list_item_append() or similar. If no data
- * was passed as argument, it will return @c NULL.
- *
- * @see elm_list_item_append()
- *
- * @ingroup List
- */
-EAPI void                        *elm_list_item_data_get(const Elm_List_Item *item);
 
 /**
  * Get the left side icon associated to the item.

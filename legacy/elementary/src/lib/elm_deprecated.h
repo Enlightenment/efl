@@ -2679,3 +2679,42 @@ EINA_DEPRECATED EAPI void                         elm_list_item_disabled_set(Elm
  * @ingroup List
  */
 EINA_DEPRECATED EAPI Eina_Bool                    elm_list_item_disabled_get(const Elm_List_Item *it);
+
+/**
+ * Set the function called when a list item is freed.
+ *
+ * @param item The item to set the callback on
+ * @param func The function called
+ *
+ * If there is a @p func, then it will be called prior item's memory release.
+ * That will be called with the following arguments:
+ * @li item's data;
+ * @li item's Evas object;
+ * @li item itself;
+ *
+ * This way, a data associated to a list item could be properly freed.
+ * 
+ * @deprecated Please use elm_widget_item_del_cb_set() instead.
+ *
+ * @ingroup List
+ */
+EINA_DEPRECATED EAPI void                         elm_list_item_del_cb_set(Elm_List_Item *item, Evas_Smart_Cb func);
+
+/**
+ * Get the data associated to the item.
+ *
+ * @param item The list item
+ * @return The data associated to @p item
+ *
+ * The return value is a pointer to data associated to @p item when it was
+ * created, with function elm_list_item_append() or similar. If no data
+ * was passed as argument, it will return @c NULL.
+ *
+ * @see elm_list_item_append()
+ *
+ * @deprecated Please use elm_widget_item_data_get() instead.
+ * 
+ * @ingroup List
+ */
+EINA_DEPRECATED EAPI void                        *elm_list_item_data_get(const Elm_List_Item *item);
+
