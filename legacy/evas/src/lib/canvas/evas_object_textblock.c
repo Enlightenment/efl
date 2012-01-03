@@ -6333,8 +6333,8 @@ _evas_textblock_node_format_remove_matching(Evas_Object_Textblock *o,
              Evas_Object_Textblock_Node_Format *fnode;
              size_t fstr_len;
              fstr_len = strlen(fstr);
-             /* Generic popper, just pop */
-             if (((fstr[0] == ' ') && !fstr[1]) || !fstr[0])
+             /* Generic popper, just pop (if there's anything to pop). */
+             if (formats && (((fstr[0] == ' ') && !fstr[1]) || !fstr[0]))
                {
                   fnode = eina_list_data_get(formats);
                   formats = eina_list_remove_list(formats, formats);
