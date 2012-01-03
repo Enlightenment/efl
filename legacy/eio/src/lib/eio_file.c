@@ -248,6 +248,22 @@ _eio_file_direct_notify(void *data, Ecore_Thread *thread __UNUSED__, void *msg_d
 static void
 _eio_file_copy_xattr(Ecore_Thread *thread __UNUSED__,
                      Eio_File_Progress *op __UNUSED__,
+                     Eina_File *f, int out)
+{
+   Eina_Iterator *it;
+   Eina_Xattr *attr;
+
+   it = eina_file_xattr_value_get(f);
+   EINA_ITERATOR_FOREACH(it, attr)
+     {
+        fsetxattr(out, attr->name, attr->value, attr->length, 0);
+     }
+   eina_iterator_free(it);
+}
+
+static void
+_eio_file_copy_xattr(Ecore_Thread *thread __UNUSED__,
+                     Eio_File_Progress *op __UNUSED__,
                      int in, int out)
 {
    char *tmp;
@@ -298,7 +314,7 @@ _eio_file_write(int fd, void *mem, ssize_t length)
 #endif
 
 static Eina_Bool
-_eio_file_copy_mmap(Ecore_Thread *thread, Eio_File_Progress *op, int in, int out, long long size)
+_eio_file_copy_mmap(Ecore_Thread *thread, Eio_File_Progress *op, Eina_File *f, int out, long long size)
 {
    char *m = MAP_FAILED;
    long long i;
@@ -309,11 +325,10 @@ _eio_file_copy_mmap(Ecore_Thread *thread, Eio_File_Progress *op, int in, int out
 	int k;
 	int c;
 
-	m = mmap(NULL, EIO_PACKET_SIZE * EIO_PACKET_COUNT, PROT_READ, MAP_FILE | MAP_HUGETLB | MAP_SHARED, in, i);
-	if (m == MAP_FAILED)
+        m = eina_file_map_new(f, EINA_FILE_SEQUENTIAL,
+                              i, EIO_PACKET_SIZE * EIO_PACKET_COUNT);
+	if (!m)
 	  goto on_error;
-
-	madvise(m, EIO_PACKET_SIZE * EIO_PACKET_COUNT, MADV_SEQUENTIAL);
 
 	c = size - i;
 	if (c - EIO_PACKET_SIZE * EIO_PACKET_COUNT > 0)
@@ -332,10 +347,13 @@ _eio_file_copy_mmap(Ecore_Thread *thread, Eio_File_Progress *op, int in, int out
 	if (!_eio_file_write(out, m + k, c - k))
 	  goto on_error;
 
+        if (eina_file_map_faulted(f, m))
+          goto on_error;
+
 	eio_progress_send(thread, op, i + c, size);
 
-	munmap(m, EIO_PACKET_SIZE * EIO_PACKET_COUNT);
-	m = MAP_FAILED;
+        eina_file_map_free(f, m);
+	m = NULL;
 
 	if (ecore_thread_check(thread))
           goto on_error;
@@ -344,7 +362,7 @@ _eio_file_copy_mmap(Ecore_Thread *thread, Eio_File_Progress *op, int in, int out
    return EINA_TRUE;
 
  on_error:
-   if (m != MAP_FAILED) munmap(m, EIO_PACKET_SIZE * EIO_PACKET_COUNT);
+   if (m != NULL) eina_file_map_free(f, m);
    return EINA_FALSE;
 }
 
@@ -580,11 +598,15 @@ eio_progress_cb(Eio_Progress *progress, Eio_File_Progress *op)
 Eina_Bool
 eio_file_copy_do(Ecore_Thread *thread, Eio_File_Progress *copy)
 {
+   Eina_File *f;
+#ifdef EFL_HAVE_SPLICE
    struct stat buf;
-   int result = -1;
    int in = -1;
+#endif
+   int result = -1;
    int out = -1;
 
+#ifdef EFL_HAVE_SPLICE
    in = open(copy->source, O_RDONLY);
    if (in < 0)
      {
@@ -598,6 +620,7 @@ eio_file_copy_do(Ecore_Thread *thread, Eio_File_Progress *copy)
     */
    if (fstat(in, &buf) < 0)
      goto on_error;
+#endif
 
    /* open write */
    out = open(copy->dest, O_WRONLY | O_CREAT | O_TRUNC, buf.st_mode);
@@ -612,8 +635,29 @@ eio_file_copy_do(Ecore_Thread *thread, Eio_File_Progress *copy)
 #endif
 
    /* classic copy method using mmap and write */
-   if (result == -1 && !_eio_file_copy_mmap(thread, copy, in, out, buf.st_size))
-     goto on_error;
+   if (result == -1)
+     {
+        f = eina_file_open(copy->source, 0);
+        if (!f) goto on_error;
+
+        if (!_eio_file_copy_mmap(thread, copy, f, out, buf.st_size))
+          {
+             eina_file_close(f);
+             goto on_error;
+          }
+
+#ifdef HAVE_XATTR
+        _eio_file_copy_eina_xattr(thread, copy, f, out);
+#endif
+
+        eina_file_close(f);
+     }
+   else
+     {
+#ifdef HAVE_XATTR
+       _eio_file_copy_xattr(thread, copy, in, out);
+#endif
+     }
 
    /* change access right to match source */
 #ifdef HAVE_CHMOD
@@ -624,12 +668,10 @@ eio_file_copy_do(Ecore_Thread *thread, Eio_File_Progress *copy)
      goto on_error;
 #endif
 
-#ifdef HAVE_XATTR
-   _eio_file_copy_xattr(thread, copy, in, out);
-#endif
-
    close(out);
+#ifdef EFL_HAVE_SPLICE
    close(in);
+#endif
 
    return EINA_TRUE;
 
