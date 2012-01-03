@@ -18,6 +18,7 @@ widgets/fileselector.edc \
 widgets/menu.edc \
 widgets/segment_control.edc \
 widgets/bg.edc \
+widgets/border.edc \
 widgets/flipselector.edc \
 widgets/naviframe.edc \
 widgets/multibuttonentry.edc \
@@ -65,6 +66,21 @@ ews.edc \
 arrow_down.png \
 arrow_up.png \
 bar_shine.png \
+bd_bottom.png \
+bd_button_close_focused.png \
+bd_button_close_shadow.png \
+bd_button_close_unfocused.png \
+bd_button_max_focused.png \
+bd_button_max_shadow.png \
+bd_button_max_unfocused.png \
+bd_button_min_focused.png \
+bd_button_min_shadow.png \
+bd_button_min_unfocused.png \
+bd_resize_b.png \
+bd_title_bg.png \
+bd_title_over.png \
+bd_top_hilight.png \
+bd_top.png \
 bt_base1.png \
 bt_base2.png \
 bt_bases.png \
@@ -86,6 +102,7 @@ ctxpopup_arrow_up.png \
 dia_botshad.png \
 dia_grad.png \
 dia_topshad.png \
+exclam.png \
 frame_1.png \
 frame_2.png \
 flip_0b.png \

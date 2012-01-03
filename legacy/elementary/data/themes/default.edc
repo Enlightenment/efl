@@ -318,6 +318,7 @@ collections {
    }
 
 #include "widgets/bg.edc"
+#include "widgets/border.edc"
 #include "widgets/scroller.edc"
 #include "widgets/label.edc"
 #include "widgets/button.edc"
