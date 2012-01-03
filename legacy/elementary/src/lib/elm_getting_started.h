@@ -147,7 +147,7 @@
  * EAPI_MAIN int
  * elm_main(int argc, char **argv)
  * {
- * Evas_Object *win, *bg, *box, *lab, *btn;
+ * Evas_Object *win, *box, *lab, *btn;
  * 
  * // new window - do the usual and give it a name (hello) and title (Hello)
  * win = elm_win_util_standard_add("hello", "Hello");
