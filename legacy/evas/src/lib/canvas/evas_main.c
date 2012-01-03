@@ -421,8 +421,6 @@ evas_output_framespace_set(Evas *e, Evas_Coord x, Evas_Coord y, Evas_Coord w, Ev
 
    if ((x == e->framespace.x) && (y == e->framespace.y) &&
        (w == e->framespace.w) && (h == e->framespace.h)) return;
-   if (w <= 0) return;
-   if (h <= 0) return;
    e->framespace.x = x;
    e->framespace.y = y;
    e->framespace.w = w;
