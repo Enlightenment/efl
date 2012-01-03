@@ -144,9 +144,10 @@ _shot_file_get(Elm_Win *win)
                   char *dotptr = strrchr(tmp, '.');
                   if (dotptr)
                     {
-                       repname = malloc(sizeof(char)*(strlen(tmp) + 16));
+                       size_t size = sizeof(char)*(strlen(tmp) + 16);
+                       repname = malloc(size);
                        strncpy(repname, tmp, dotptr - tmp);
-                       sprintf(repname + (dotptr - tmp), "%03i",
+                       snprintf(repname + (dotptr - tmp), size - (dotptr - tmp), "%03i",
                                win->shot.shot_counter + 1);
                        strcat(repname, dotptr);
                        free(tmp);
@@ -157,12 +158,10 @@ _shot_file_get(Elm_Win *win)
      }
    free(tmp);
    if (!win->shot.repeat_count) return strdup("out.png");
-   else
-     {
-        repname = malloc(sizeof(char) * 24);
-        sprintf(repname, "out%03i.png", win->shot.shot_counter + 1);
-        return repname;
-     }
+
+   repname = malloc(sizeof(char) * 24);
+   snprintf(repname, sizeof(char) * 24, "out%03i.png", win->shot.shot_counter + 1);
+   return repname;
 }
 
 static int
