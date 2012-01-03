@@ -323,6 +323,7 @@ _elm_win_focus_in(Ecore_Evas *ee)
    _elm_win_focus_highlight_reconfigure_job_start(win);
    if (win->frame_obj)
      {
+        edje_object_signal_emit(win->frame_obj, "elm,action,focus", "elm");
      }
    else if (win->img_obj)
      {
@@ -346,6 +347,7 @@ _elm_win_focus_out(Ecore_Evas *ee)
    _elm_win_focus_highlight_reconfigure_job_start(win);
    if (win->frame_obj)
      {
+        edje_object_signal_emit(win->frame_obj, "elm,action,unfocus", "elm");
      }
    else if (win->img_obj)
      {
@@ -459,6 +461,7 @@ _elm_win_obj_callback_hide(void *data, Evas *e __UNUSED__, Evas_Object *obj __UN
 
    if (win->frame_obj)
      {
+        evas_object_hide(win->frame_obj);
      }
    else if (win->img_obj)
      {
@@ -588,14 +591,15 @@ _elm_win_obj_intercept_show(void *data, Evas_Object *obj)
    // sizes BEFORE we show the window to make sure it initially appears at
    // our desired size (ie min size is known first)
    evas_smart_objects_calculate(evas_object_evas_get(obj));
-   evas_object_show(obj);
    if (win->frame_obj)
      {
+        evas_object_show(win->frame_obj);
      }
    else if (win->img_obj)
      {
         evas_object_show(win->img_obj);
      }
+   evas_object_show(obj);
 }
 
 static void
@@ -614,6 +618,11 @@ _elm_win_obj_callback_move(void *data, Evas *e __UNUSED__, Evas_Object *obj, voi
      }
    if (win->frame_obj)
      {
+        Evas_Coord x, y;
+
+        evas_object_geometry_get(obj, &x, &y, NULL, NULL);
+        win->screen.x = x;
+        win->screen.y = y;
      }
    else if (win->img_obj)
      {
@@ -688,13 +697,14 @@ _elm_win_resize_job(void *data)
         w = MIN(w, sw);
         h = MIN(h, sh);
      }
-   evas_object_resize(win->win_obj, w, h);
    if (win->frame_obj)
      {
+        evas_object_resize(win->frame_obj, w, h);
      }
    else if (win->img_obj)
      {
      }
+   evas_object_resize(win->win_obj, w, h);
    EINA_LIST_FOREACH(win->subobjs, l, obj)
      {
         evas_object_move(obj, 0, 0);
@@ -1535,6 +1545,18 @@ elm_win_add(Evas_Object *parent, const char *name, Elm_Win_Type type)
           {
              win->ee = ecore_evas_ews_new(0, 0, 1, 1);
           }
+        else if (ENGINE_COMPARE(ELM_WAYLAND_SHM)) 
+          {
+             win->ee = ecore_evas_wayland_shm_new(NULL, 0, 0, 1, 1, 0);
+             win->evas = ecore_evas_get(win->ee);
+             evas_output_framespace_set(win->evas, 0, 22, 0, 26);
+
+             win->frame_obj = edje_object_add(win->evas);
+             _elm_theme_set(NULL, win->frame_obj, "border", "base", "default");
+             evas_object_is_frame_object_set(win->frame_obj, EINA_TRUE);
+             evas_object_move(win->frame_obj, 0, 0);
+             evas_object_resize(win->frame_obj, 1, 1);
+          }
         else if (!strncmp(_elm_config->engine, "shot:", 5))
           {
              win->ee = ecore_evas_buffer_new(1, 1);
@@ -1582,6 +1604,12 @@ elm_win_add(Evas_Object *parent, const char *name, Elm_Win_Type type)
    evas_object_resize(win->win_obj, 1, 1);
    evas_object_layer_set(win->win_obj, 50);
    evas_object_pass_events_set(win->win_obj, EINA_TRUE);
+
+   if (win->frame_obj) 
+     {
+//        evas_object_clip_set(win->win_obj, win->frame_obj);
+        evas_object_stack_below(win->frame_obj, win->win_obj);
+     }
 
    if (type == ELM_WIN_INLINED_IMAGE)
      elm_widget_parent2_set(win->win_obj, parent);
@@ -1721,6 +1749,8 @@ elm_win_title_set(Evas_Object *obj, const char *title)
    win = elm_widget_data_get(obj);
    if (!win) return;
    ecore_evas_title_set(win->ee, title);
+   if (win->frame_obj)
+     edje_object_part_text_set(win->frame_obj, "elm.text.title", title);
 }
 
 EAPI const char *
