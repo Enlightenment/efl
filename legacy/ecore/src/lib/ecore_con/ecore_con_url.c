@@ -1555,16 +1555,16 @@ _ecore_con_url_idler_handler(void *data __UNUSED__)
    CURLMcode ret;
 
    ret = curl_multi_perform(_curlm, &still_running);
-   if (ret != CURLM_OK)
+   if (ret == CURLM_CALL_MULTI_PERFORM)
+     {
+        DBG("Call multiperform again");
+        return ECORE_CALLBACK_RENEW;
+     }
+   else if (ret != CURLM_OK)
      {
         ERR("curl_multi_perform() failed: %s", curl_multi_strerror(ret));
         _ecore_con_url_curl_clear();
         ecore_timer_freeze(_curl_timeout);
-        return ECORE_CALLBACK_RENEW;
-     }
-   if (ret == CURLM_CALL_MULTI_PERFORM)
-     {
-        DBG("Call multiperform again");
         return ECORE_CALLBACK_RENEW;
      }
 
