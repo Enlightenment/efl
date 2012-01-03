@@ -61,48 +61,57 @@ enum {
 };
 
 static Eina_Bool get_compressed_channels_length(PSD_Header *Head,
-                                                FILE *file,
+                                                const unsigned char *map, size_t length, size_t *position,
                                                 unsigned short *rle_table,
                                                 unsigned int *chanlen);
 
 static int
-read_ushort(FILE *file, unsigned short *ret)
+read_ushort(const unsigned char *map, size_t length, size_t *position, unsigned short *ret)
 {
-   unsigned char b[2];
-   if (fread(b, sizeof(unsigned char), 2, file) != 2) return 0;
+   if (*position + 2 > length) return 0;
    // FIXME: need to check order
-   *ret = (b[0] << 8) | b[1];
+   *ret = (map[(*position) + 0] << 8) | map[(*position) + 1];
+   *position += 2;
    return 1;
 }
 
 static int
-read_uint(FILE *file, unsigned int *ret)
+read_uint(const unsigned char *map, size_t length, size_t *position, unsigned int *ret)
 {
-   unsigned char       b[4];
-   if (fread(b, sizeof(unsigned char), 4, file) != 4) return 0;
+   if (*position + 4 > length) return 0;
    // FIXME: need to check order
-   *ret = ARGB_JOIN(b[0], b[1], b[2], b[3]);
+   *ret = ARGB_JOIN(map[(*position) + 0], map[(*position) + 1], map[(*position) + 2], map[(*position) + 3]);
+   *position += 4;
+   return 1;
+}
+
+static int
+read_block(const unsigned char *map, size_t length, size_t *position, void *target, size_t size)
+{
+   if (*position + size > length) return 0;
+   memcpy(target, map + *position, size);
+   *position += size;
    return 1;
 }
 
 // Internal function used to get the Psd header from the current file.
 Eina_Bool
-psd_get_header(PSD_Header *header, FILE * file)
+psd_get_header(PSD_Header *header, const unsigned char *map, size_t length, size_t *position)
 {
    unsigned short tmp;
 
-#define CHECK_RET(Call, Value)                  \
-   if (Call != Value) return EINA_FALSE;
+#define CHECK_RET(Call)                         \
+   if (!Call) return EINA_FALSE;
 
-   CHECK_RET(fread(header->signature, sizeof (unsigned char), 4, file), 4);
-   CHECK_RET(read_ushort(file, &header->version), 1);
-   CHECK_RET(fread(header->reserved, sizeof (unsigned char), 6, file), 6);
-   CHECK_RET(read_ushort(file, &header->channels), 1);
-   CHECK_RET(read_uint(file, &header->height), 1);
-   CHECK_RET(read_uint(file, &header->width), 1);
-   CHECK_RET(read_ushort(file, &header->depth), 1);
+   CHECK_RET(read_block(map, length, position, header->signature, 4));
+   CHECK_RET(read_ushort(map, length, position, &header->version));
+   CHECK_RET(read_block(map, length, position, header->reserved, 6));
+   CHECK_RET(read_ushort(map, length, position, &header->channels));
+   CHECK_RET(read_uint(map, length, position, &header->height));
+   CHECK_RET(read_uint(map, length, position, &header->width));
+   CHECK_RET(read_ushort(map, length, position, &header->depth));
 
-   CHECK_RET(read_ushort(file, &tmp), 1);
+   CHECK_RET(read_ushort(map, length, position, &tmp));
    header->mode = tmp;
 
 #undef CHECK_RET
@@ -144,20 +153,35 @@ static Eina_Bool
 evas_image_load_file_head_psd(Image_Entry *ie, const char *FileName, 
                               const char *key __UNUSED__, int *error)
 {
-   FILE	*f;
+   Eina_File *f;
+   void *map;
+   size_t length;
+   size_t position;
    PSD_Header header;
    Eina_Bool correct;
 
    *error = EVAS_LOAD_ERROR_NONE;
 
-   f = fopen(FileName, "rb");
+   f = eina_file_open(FileName, 0);
    if (f == NULL)
      {
         *error = EVAS_LOAD_ERROR_DOES_NOT_EXIST;
         return EINA_FALSE;
      }
-   correct = psd_get_header(&header, f);
-   fclose(f);
+
+   map = eina_file_map_all(f, EINA_FILE_SEQUENTIAL);
+   length = eina_file_size_get(f);
+   position = 0;
+   if (!map || length < 1)
+     {
+        eina_file_close(f);
+        *error = EVAS_LOAD_ERROR_CORRUPT_FILE;
+        return EINA_FALSE;
+     }
+   correct = psd_get_header(&header, map, length, &position);
+
+   eina_file_map_free(f, map);
+   eina_file_close(f);
 
    if (!correct || !is_psd(&header))
      {
@@ -174,7 +198,7 @@ evas_image_load_file_head_psd(Image_Entry *ie, const char *FileName,
 }
 
 static unsigned int
-read_compressed_channel(FILE* file,
+read_compressed_channel(const unsigned char *map, size_t length, size_t *position,
 			const unsigned int channel_length __UNUSED__, 
                         unsigned int size,
 			unsigned char* channel)
@@ -183,19 +207,18 @@ read_compressed_channel(FILE* file,
    unsigned int i;
    char headbyte, c;
 
-#define CHECK_RET(Call, Value)                                          \
-   if (Call != Value) return READ_COMPRESSED_ERROR_FILE_READ_ERROR;
+#define CHECK_RET(Call)                                         \
+   if (!Call) return READ_COMPRESSED_ERROR_FILE_READ_ERROR;	\
 
    for (i = 0; i < size; )
      {
-        CHECK_RET(fread(&headbyte, 1, 1, file), 1);
+        CHECK_RET(read_block(map, length, position, &headbyte, 1));
 
         if (headbyte >= 0)
           {
              if (i + headbyte > size)
-	       return READ_COMPRESSED_ERROR_FILE_CORRUPT;
-
-	     CHECK_RET(fread(channel + i, headbyte + 1, 1, file), 1);
+               return READ_COMPRESSED_ERROR_FILE_CORRUPT;
+	     CHECK_RET(read_block(map, length, position, channel + i, headbyte + 1));
 
              i += headbyte + 1;
           }
@@ -203,14 +226,14 @@ read_compressed_channel(FILE* file,
           {
              int run;
 
-	     CHECK_RET(fread(&c, 1, 1, file), 1);
+	     CHECK_RET(read_block(map, length, position, &c, 1));
 
              run = c;
              /* if (run == -1) */
 	     /*   return READ_COMPRESSED_ERROR_FILE_READ_ERROR; */
 
              if (i + (-headbyte + 1) > size)
-	       return READ_COMPRESSED_ERROR_FILE_CORRUPT;
+               return READ_COMPRESSED_ERROR_FILE_CORRUPT;
 
              memset(channel + i, run, -headbyte + 1);
              i += -headbyte + 1;
@@ -226,7 +249,7 @@ read_compressed_channel(FILE* file,
 Eina_Bool
 psd_get_data(Image_Entry *ie __UNUSED__,
 	     PSD_Header *head,
-	     FILE *f,
+             const unsigned char *map, size_t length, size_t *position,
 	     unsigned char *buffer, Eina_Bool compressed,
 	     int *error)
 {
@@ -268,13 +291,12 @@ psd_get_data(Image_Entry *ie __UNUSED__,
      {
         free(data);
 	free(channel);
-        fprintf(stderr, "unsupported file format.\n");
         *error = EVAS_LOAD_ERROR_UNKNOWN_FORMAT;
         return EINA_FALSE;
      }
 
-#define CHECK_RET(Call, Value)			\
-   if (Call != Value)				\
+#define CHECK_RET(Call)                         \
+   if (!Call)                                   \
      {						\
         free(data);				\
         free(channel);				\
@@ -289,7 +311,7 @@ psd_get_data(Image_Entry *ie __UNUSED__,
                {
                   unsigned char *tmp = channel;
 
-                  CHECK_RET(fread(tmp, pixels_count, 1, f), 1);
+                  CHECK_RET(read_block(map, length, position, tmp, pixels_count));
 
                   for (y = 0; y < head->height * bps; y += bps)
                     {
@@ -306,7 +328,7 @@ psd_get_data(Image_Entry *ie __UNUSED__,
                {
                   unsigned char *tmp = channel;
 
-                  CHECK_RET(fread(channel, pixels_count, 1, f), 1);
+                  CHECK_RET(read_block(map, length, position, channel, pixels_count));
 
                   for (y = 0; y < head->height * bps; y += bps)
                     {
@@ -333,7 +355,7 @@ psd_get_data(Image_Entry *ie __UNUSED__,
                {
                   unsigned short *shortptr = (unsigned short*) channel;
 
-                  CHECK_RET(fread(channel, pixels_count * 2, 1, f), 1);
+                  CHECK_RET(read_block(map, length, position, channel, pixels_count * 2));
 
                   for (y = 0; y < head->height * bps2; y += bps2)
                     {
@@ -350,7 +372,7 @@ psd_get_data(Image_Entry *ie __UNUSED__,
                {
 		  unsigned short *shortptr = (unsigned short*) channel;
 
-		  CHECK_RET(fread(channel, pixels_count * 2, 1, f), 1);
+		  CHECK_RET(read_block(map, length, position, channel, pixels_count * 2));
 
 		  for (y = 0; y < head->height * bps2; y += bps2)
                     {
@@ -373,7 +395,7 @@ psd_get_data(Image_Entry *ie __UNUSED__,
 
 	rle_table = alloca(head->height * head->channel_num * sizeof (unsigned short));
 	chanlen = alloca(head->channel_num * sizeof (unsigned int));
-        if (!get_compressed_channels_length(head, f, rle_table, chanlen))
+        if (!get_compressed_channels_length(head, map, length, position, rle_table, chanlen))
 	  goto file_read_error;
 
         for (c = 0; c < numchan; c++)
@@ -381,7 +403,7 @@ psd_get_data(Image_Entry *ie __UNUSED__,
 	     unsigned char *tmp = channel;
 	     int err;
 
-	     err = read_compressed_channel(f,
+	     err = read_compressed_channel(map, length, position,
 					   chanlen[c],
 					   pixels_count,
 					   channel);
@@ -416,7 +438,7 @@ psd_get_data(Image_Entry *ie __UNUSED__,
 		  unsigned char *tmp = channel;
 		  int err;
 
-                  err = read_compressed_channel(f,
+                  err = read_compressed_channel(map, length, position,
 						chanlen[c],
 						pixels_count,
 						channel);
@@ -482,7 +504,7 @@ psd_get_data(Image_Entry *ie __UNUSED__,
 Eina_Bool
 get_single_channel(Image_Entry *ie __UNUSED__,
 		   PSD_Header *head,
-		   FILE *f,
+		   const unsigned char *map, size_t length, size_t *position,
 		   unsigned char *buffer,
 		   Eina_Bool compressed)
 {
@@ -496,29 +518,29 @@ get_single_channel(Image_Entry *ie __UNUSED__,
    bpc = (head->depth / 8);
    pixels_count = head->width * head->height;
 
-#define CHECK_RET(Call, Value)                  \
-   if (Call != Value) return EINA_FALSE;
+#define CHECK_RET(Call)                  \
+   if (!Call) return EINA_FALSE;
 
    if (!compressed)
      {
         if (bpc == 1)
           {
-             CHECK_RET(fread(buffer, pixels_count, 1, f), 1);
+             CHECK_RET(read_block(map, length, position, buffer, pixels_count));
           }
         else
           {  // Bpc == 2
-             CHECK_RET(fread(buffer, pixels_count * 2, 1, f), 1);
+             CHECK_RET(read_block(map, length, position, buffer, pixels_count * 2));
           }
      }
    else
      {
         for (i = 0; i < (unsigned int)pixels_count; )
           {
-             CHECK_RET(fread(&headbyte, 1, 1, f), 1);
+             CHECK_RET(read_block(map, length, position, &headbyte, 1));
 
              if (headbyte >= 0)
                {  //  && HeadByte <= 127
-                  CHECK_RET(fread(buffer + i, headbyte + 1, 1, f), 1);
+                  CHECK_RET(read_block(map, length, position, buffer + i, headbyte + 1));
 
                   i += headbyte + 1;
                }
@@ -526,7 +548,7 @@ get_single_channel(Image_Entry *ie __UNUSED__,
                {
                   int run;
 
-                  CHECK_RET(fread(&c, 1, 1, f), 1);
+                  CHECK_RET(read_block(map, length, position, &c, 1));
 
                   run = c;
                   if (run == -1) return EINA_FALSE;
@@ -543,7 +565,7 @@ get_single_channel(Image_Entry *ie __UNUSED__,
 }
 
 Eina_Bool
-read_psd_grey(Image_Entry *ie, PSD_Header *head, FILE * f, int *error)
+read_psd_grey(Image_Entry *ie, PSD_Header *head, const unsigned char *map, size_t length, size_t *position, int *error)
 {
    unsigned int color_mode, resource_size, misc_info;
    unsigned short compressed;
@@ -552,22 +574,21 @@ read_psd_grey(Image_Entry *ie, PSD_Header *head, FILE * f, int *error)
 
    *error = EVAS_LOAD_ERROR_CORRUPT_FILE;
 
-#define CHECK_RET(Call, Value)                  \
-   if (Call != Value) return EINA_FALSE;
+#define CHECK_RET(Call)                  \
+   if (!Call) return EINA_FALSE;
 
-   CHECK_RET(read_uint(f, &color_mode), 1);
+   CHECK_RET(read_uint(map, length, position, &color_mode));
    // Skip over the 'color mode data section'
-   CHECK_RET(fseek(f, color_mode, SEEK_CUR), 0);
+   *position += color_mode;
 
-   CHECK_RET(read_uint(f, &resource_size), 1);
+   CHECK_RET(read_uint(map, length, position, &resource_size));
    // Read the 'image resources section'
+   *position += resource_size;
 
-   CHECK_RET(fseek(f, resource_size, SEEK_CUR), 0);
+   CHECK_RET(read_uint(map, length, position, &misc_info));
+   *position += misc_info;
 
-   CHECK_RET(read_uint(f, &misc_info), 1);
-   CHECK_RET(fseek(f, misc_info, SEEK_CUR), 0);
-
-   CHECK_RET(read_ushort(f, &compressed), 1);
+   CHECK_RET(read_ushort(map, length, position, &compressed));
 
    ie->w = head->width;
    ie->h = head->height;
@@ -599,7 +620,7 @@ read_psd_grey(Image_Entry *ie, PSD_Header *head, FILE * f, int *error)
         goto cleanup_error;
      }
 
-   if (!psd_get_data(ie, head, f, surface, compressed, error))
+   if (!psd_get_data(ie, head, map, length, position, surface, compressed, error))
      goto cleanup_error;
 
    return EINA_TRUE;
@@ -612,7 +633,7 @@ read_psd_grey(Image_Entry *ie, PSD_Header *head, FILE * f, int *error)
 
 
 Eina_Bool
-read_psd_indexed(Image_Entry *ie, PSD_Header *head, FILE * f, int *error)
+read_psd_indexed(Image_Entry *ie, PSD_Header *head, const unsigned char *map, size_t length, size_t *position, int *error)
 {
    unsigned int color_mode, resource_size, misc_info;
    unsigned short compressed;
@@ -620,11 +641,11 @@ read_psd_indexed(Image_Entry *ie, PSD_Header *head, FILE * f, int *error)
 
    *error = EVAS_LOAD_ERROR_CORRUPT_FILE;
 
-#define CHECK_RET(Call, Value)                  \
-   if (Call != Value) return EINA_FALSE;
+#define CHECK_RET(Call)                  \
+   if (!(Call)) return EINA_FALSE;
 
-   CHECK_RET(read_uint(f, &color_mode), 1);
-   CHECK_RET((color_mode % 3), 0);
+   CHECK_RET(read_uint(map, length, position, &color_mode));
+   CHECK_RET(!(color_mode % 3));
    /*
      Palette = (unsigned char*)malloc(Colormode);
      if (Palette == NULL)
@@ -633,16 +654,16 @@ read_psd_indexed(Image_Entry *ie, PSD_Header *head, FILE * f, int *error)
      goto cleanup_error;
    */
    // Skip over the 'color mode data section'
-   CHECK_RET(fseek(f, color_mode, SEEK_CUR), 0);
+   *position += color_mode;
 
    // Read the 'image resources section'
-   CHECK_RET(read_uint(f, &resource_size), 1);
-   CHECK_RET(fseek(f, resource_size, SEEK_CUR), 0);
+   CHECK_RET(read_uint(map, length, position, &resource_size));
+   *position += resource_size;
 
-   CHECK_RET(read_uint(f, &misc_info), 1);
-   CHECK_RET(fseek(f, misc_info, SEEK_CUR), 0);
+   CHECK_RET(read_uint(map, length, position, &misc_info));
+   *position += misc_info;
 
-   CHECK_RET(read_ushort(f, &compressed), 1);
+   CHECK_RET(read_ushort(map, length, position, &compressed));
 
    if (head->channels != 1 || head->depth != 8)
      {
@@ -664,7 +685,7 @@ read_psd_indexed(Image_Entry *ie, PSD_Header *head, FILE * f, int *error)
         return EINA_FALSE;
      }
 
-   if (!psd_get_data(ie, head, f, surface, compressed, error))
+   if (!psd_get_data(ie, head, map, length, position, surface, compressed, error))
      return EINA_FALSE;
    return EINA_TRUE;
 
@@ -672,28 +693,28 @@ read_psd_indexed(Image_Entry *ie, PSD_Header *head, FILE * f, int *error)
 }
 
 Eina_Bool
-read_psd_rgb(Image_Entry *ie, PSD_Header *head, FILE *f, int *error)
+read_psd_rgb(Image_Entry *ie, PSD_Header *head, const unsigned char *map, size_t length, size_t *position, int *error)
 {
    unsigned int color_mode, resource_size, misc_info;
    unsigned short compressed;
    unsigned int type;
    void *surface;
 
-#define CHECK_RET(Call, Value)                  \
-   if (Call != Value) return EINA_FALSE;
+#define CHECK_RET(Call)                  \
+   if (!Call) return EINA_FALSE;
 
-   CHECK_RET(read_uint(f, &color_mode), 1);
+   CHECK_RET(read_uint(map, length, position, &color_mode));
    // Skip over the 'color mode data section'
-   CHECK_RET(fseek(f, color_mode, SEEK_CUR), 0);
+   *position += color_mode;
 
    // Read the 'image resources section'
-   CHECK_RET(read_uint(f, &resource_size), 1);
-   CHECK_RET(fseek(f, resource_size, SEEK_CUR), 0);
+   CHECK_RET(read_uint(map, length, position, &resource_size));
+   *position += resource_size;
 
-   CHECK_RET(read_uint(f, &misc_info), 1);
-   CHECK_RET(fseek(f, misc_info, SEEK_CUR), 0);
+   CHECK_RET(read_uint(map, length, position, &misc_info));
+   *position += misc_info;
 
-   CHECK_RET(read_ushort(f, &compressed), 1);
+   CHECK_RET(read_ushort(map, length, position, &compressed));
 
    head->channel_num = head->channels;
 
@@ -722,7 +743,7 @@ read_psd_rgb(Image_Entry *ie, PSD_Header *head, FILE *f, int *error)
         goto cleanup_error;
      }
 
-   if (!psd_get_data(ie, head, f, surface, compressed, error))
+   if (!psd_get_data(ie, head, map, length, position, surface, compressed, error))
      goto cleanup_error;
 
    evas_common_image_premul(ie);
@@ -735,7 +756,7 @@ read_psd_rgb(Image_Entry *ie, PSD_Header *head, FILE *f, int *error)
 }
 
 Eina_Bool
-read_psd_cmyk(Image_Entry *ie, PSD_Header *head, FILE *f, int *error)
+read_psd_cmyk(Image_Entry *ie, PSD_Header *head, const unsigned char *map, size_t length, size_t *position, int *error)
 {
    unsigned int color_mode, resource_size, misc_info, size, i, j, data_size;
    unsigned short compressed;
@@ -745,21 +766,21 @@ read_psd_cmyk(Image_Entry *ie, PSD_Header *head, FILE *f, int *error)
 
    *error = EVAS_LOAD_ERROR_CORRUPT_FILE;
 
-#define CHECK_RET(Call, Value)                  \
-   if (Call != Value) return EINA_FALSE;
+#define CHECK_RET(Call)                  \
+   if (!Call) return EINA_FALSE;
 
-   CHECK_RET(read_uint(f, &color_mode), 1);
+   CHECK_RET(read_uint(map, length, position, &color_mode));
    // Skip over the 'color mode data section'
-   CHECK_RET(fseek(f, color_mode, SEEK_CUR), 0);
+   *position += color_mode;
 
-   CHECK_RET(read_uint(f, &resource_size), 1);
+   CHECK_RET(read_uint(map, length, position, &resource_size));
    // Read the 'image resources section'
-   CHECK_RET(fseek(f, resource_size, SEEK_CUR), 0);
+   *position += resource_size;
 
-   CHECK_RET(read_uint(f, &misc_info), 1);
-   CHECK_RET(fseek(f, misc_info, SEEK_CUR), 0);
+   CHECK_RET(read_uint(map, length, position, &misc_info));
+   *position += misc_info;
 
-   CHECK_RET(read_ushort(f, &compressed), 1);
+   CHECK_RET(read_ushort(map, length, position, &compressed));
 
    switch (head->channels)
      {
@@ -804,14 +825,14 @@ read_psd_cmyk(Image_Entry *ie, PSD_Header *head, FILE *f, int *error)
         goto cleanup_error;
      }
 
-   if (!psd_get_data(ie, head, f, surface, compressed, error))
+   if (!psd_get_data(ie, head, map, length, position, surface, compressed, error))
      goto cleanup_error;
 
    size = type * ie->w * ie->h;
    kchannel = malloc(size);
    if (kchannel == NULL)
      goto cleanup_error;
-   if (!get_single_channel(ie, head, f, kchannel, compressed))
+   if (!get_single_channel(ie, head, map, length, position, kchannel, compressed))
      goto cleanup_error;
 
    data_size = head->channels * type * ie->w * ie->h;
@@ -861,20 +882,34 @@ evas_image_load_file_data_psd(Image_Entry *ie,
                               const char *key __UNUSED__,
                               int *error)
 {
-   FILE *f;
+   Eina_File *f;
+   void *map;
+   size_t length;
+   size_t position;
    PSD_Header header;
    Eina_Bool bpsd = EINA_FALSE;
 
-   f = fopen(file, "rb");
+   f = eina_file_open(file, 0);
    if (f == NULL)
      {
         *error = EVAS_LOAD_ERROR_DOES_NOT_EXIST;
         return bpsd;
      }
 
-   if (!psd_get_header(&header, f) || !is_psd(&header))
+   map = eina_file_map_all(f, EINA_FILE_SEQUENTIAL);
+   length = eina_file_size_get(f);
+   position = 0;
+   if (!map || length < 1)
      {
-        fclose(f);
+        eina_file_close(f);
+        *error = EVAS_LOAD_ERROR_CORRUPT_FILE;
+        return EINA_FALSE;
+     }
+
+   if (!psd_get_header(&header, map, length, &position) || !is_psd(&header))
+     {
+        eina_file_map_free(f, map);
+        eina_file_close(f);
         *error = EVAS_LOAD_ERROR_GENERIC;
         return EINA_FALSE;
      }
@@ -887,39 +922,39 @@ evas_image_load_file_data_psd(Image_Entry *ie,
    switch (header.mode)
      {
       case PSD_GREYSCALE:  // Greyscale
-         bpsd = read_psd_grey(ie, &header, f, error);
+         bpsd = read_psd_grey(ie, &header, map, length, &position, error);
          break;
       case PSD_INDEXED:  // Indexed
-         bpsd = read_psd_indexed(ie, &header, f, error);
+         bpsd = read_psd_indexed(ie, &header, map, length, &position, error);
          break;
       case PSD_RGB:  // RGB
-         bpsd = read_psd_rgb(ie, &header, f, error);
+         bpsd = read_psd_rgb(ie, &header, map, length, &position, error);
          break;
       case PSD_CMYK:  // CMYK
-         bpsd = read_psd_cmyk(ie, &header, f, error);
+         bpsd = read_psd_cmyk(ie, &header, map, length, &position, error);
          break;
       default :
          *error = EVAS_LOAD_ERROR_UNKNOWN_FORMAT;
          bpsd = EINA_FALSE;
      }
-   fclose(f);
+
+   eina_file_map_free(f, map);
+   eina_file_close(f);
 
    return bpsd;
 }
 
 static Eina_Bool
 get_compressed_channels_length(PSD_Header *head,
-			       FILE * file,
+                               const unsigned char *map, size_t length, size_t *position,
 			       unsigned short *rle_table,
 			       unsigned int *chanlen)
 {
    unsigned int j;
    unsigned int c;
 
-   if (fread(rle_table,
-	     sizeof(unsigned short),
-	     head->height * head->channel_num,
-	     file) != head->height * head->channel_num)
+   if (!read_block(map, length, position, rle_table,
+                   sizeof (unsigned short) * head->height * head->channel_num))
      return EINA_FALSE;
 
    memset(chanlen, 0, head->channel_num * sizeof(unsigned int));

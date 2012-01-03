@@ -613,3 +613,7 @@
 	* Fix unitialized value when running generic loader without any
 	application found to open the file.
 	* Use Eina_File when openning XPM file.
+
+2012-01-03  Cedric Bail
+
+	* Use Eina_File for PSD file to.
