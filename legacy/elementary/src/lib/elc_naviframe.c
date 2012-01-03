@@ -977,14 +977,12 @@ _item_style_set(Elm_Naviframe_Item *navi_it, const char *item_style)
 
    if (!item_style)
      {
-        sprintf(buf, "item/basic");
+        strcpy(buf, "item/basic");
         eina_stringshare_replace(&navi_it->style, "basic");
      }
    else
      {
-        if (strlen(item_style) > sizeof(buf))
-          WRN("too much long style name! : naviframe=%p", WIDGET(navi_it));
-        sprintf(buf, "item/%s", item_style);
+        snprintf(buf, sizeof(buf), "item/%s", item_style);
         eina_stringshare_replace(&navi_it->style, item_style);
      }
    _elm_theme_object_set(WIDGET(navi_it),
