@@ -2648,3 +2648,34 @@ EINA_DEPRECATED EAPI const char                *elm_multibuttonentry_item_label_
  * @deprecated Use elm_object_item_text_set() instead
  */
 EINA_DEPRECATED EAPI void                       elm_multibuttonentry_item_label_set(Elm_Object_Item *it, const char *str);
+
+/**
+ * Sets the disabled/enabled state of a list item.
+ *
+ * @param it The item.
+ * @param disabled The disabled state.
+ *
+ * A disabled item cannot be selected or unselected. It will also
+ * change its appearance (generally greyed out). This sets the
+ * disabled state (@c EINA_TRUE for disabled, @c EINA_FALSE for
+ * enabled).
+ *
+ * @deprecated Use elm_object_item_disabled_set() instead
+ * 
+ * @ingroup List
+ */
+EINA_DEPRECATED EAPI void                         elm_list_item_disabled_set(Elm_List_Item *it, Eina_Bool disabled);
+
+/**
+ * Get a value whether list item is disabled or not.
+ *
+ * @param it The item.
+ * @return The disabled state.
+ *
+ * @see elm_list_item_disabled_set() for more details.
+ *
+ * @deprecated Use elm_object_item_disabled_get() instead
+ * 
+ * @ingroup List
+ */
+EINA_DEPRECATED EAPI Eina_Bool                    elm_list_item_disabled_get(const Elm_List_Item *it);

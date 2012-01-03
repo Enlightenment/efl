@@ -41,7 +41,6 @@ struct _Elm_List_Item
    Ecore_Timer *long_timer;
    Ecore_Timer *swipe_timer;
    Eina_Bool deleted : 1;
-   Eina_Bool disabled : 1;
    Eina_Bool even : 1;
    Eina_Bool is_even : 1;
    Eina_Bool is_separator : 1;
@@ -702,7 +701,7 @@ _item_highlight(Elm_List_Item *it)
 
    if (!wd) return;
    ELM_LIST_ITEM_CHECK_DELETED_RETURN(it);
-   if ((it->highlighted) || (it->disabled)) return;
+   if ((it->highlighted) || (it->base.disabled)) return;
 
    evas_object_ref(obj);
    _elm_list_walk(wd);
@@ -725,7 +724,7 @@ _item_select(Elm_List_Item *it)
 
    if (!wd) return;
    ELM_LIST_ITEM_CHECK_DELETED_RETURN(it);
-   if (it->disabled) return;
+   if (it->base.disabled) return;
    if (it->selected)
      {
         if (wd->always_select) goto call;
@@ -875,7 +874,7 @@ _long_press(void *data)
 
    ELM_LIST_ITEM_CHECK_DELETED_RETURN(it, ECORE_CALLBACK_CANCEL);
    it->long_timer = NULL;
-   if (it->disabled) goto end;
+   if (it->base.disabled) goto end;
 
    wd->longpressed = EINA_TRUE;
    evas_object_smart_callback_call(WIDGET(it), SIG_LONGPRESSED, it);
@@ -979,7 +978,7 @@ _mouse_up(void *data, Evas *evas __UNUSED__, Evas_Object *obj __UNUSED__, void *
         return;
      }
 
-   if (it->disabled)
+   if (it->base.disabled)
      return;
    if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD) return;
 
@@ -1020,6 +1019,16 @@ _mouse_up(void *data, Evas *evas __UNUSED__, Evas_Object *obj __UNUSED__, void *
    evas_object_unref(obj2);
 }
 
+static void
+_item_disable(void *data)
+{
+   Elm_List_Item *it = data;
+   if (it->base.disabled)
+     edje_object_signal_emit(VIEW(it), "elm,state,disabled", "elm");
+   else
+     edje_object_signal_emit(VIEW(it), "elm,state,enabled", "elm");
+}
+
 static Elm_List_Item *
 _item_new(Evas_Object *obj, const char *label, Evas_Object *icon, Evas_Object *end, Evas_Smart_Cb func, const void *data)
 {
@@ -1056,6 +1065,7 @@ _item_new(Evas_Object *obj, const char *label, Evas_Object *icon, Evas_Object *e
         evas_object_event_callback_add(it->end, EVAS_CALLBACK_CHANGED_SIZE_HINTS,
                                        _changed_size_hints, obj);
      }
+   _elm_widget_item_disable_set_hook_set((Elm_Widget_Item *)it, _item_disable);
    return it;
 }
 
@@ -1241,7 +1251,7 @@ _fix_items(Evas_Object *obj)
                   if ((selectraise) && (!strcmp(selectraise, "on")))
                     evas_object_raise(VIEW(it));
                }
-             if (it->disabled)
+             if (it->base.disabled)
                edje_object_signal_emit(VIEW(it), "elm,state,disabled",
                                        "elm");
 
@@ -2040,26 +2050,14 @@ elm_list_scroller_policy_get(const Evas_Object *obj, Elm_Scroller_Policy *policy
    if (policy_v) *policy_v = (Elm_Scroller_Policy) s_policy_v;
 }
 
-EAPI void
+EINA_DEPRECATED EAPI void
 elm_list_item_disabled_set(Elm_List_Item *it, Eina_Bool disabled)
 {
-   ELM_LIST_ITEM_CHECK_DELETED_RETURN(it);
-
-   if (it->disabled == disabled)
-     return;
-
-   it->disabled = !!disabled;
-
-   if (it->disabled)
-     edje_object_signal_emit(VIEW(it), "elm,state,disabled", "elm");
-   else
-     edje_object_signal_emit(VIEW(it), "elm,state,enabled", "elm");
+   elm_object_item_disabled_set((Elm_Object_Item *)it, disabled);
 }
 
-EAPI Eina_Bool
+EINA_DEPRECATED EAPI Eina_Bool
 elm_list_item_disabled_get(const Elm_List_Item *it)
 {
-   ELM_LIST_ITEM_CHECK_DELETED_RETURN(it, EINA_FALSE);
-
-   return it->disabled;
+   return elm_object_item_disabled_get((Elm_Object_Item *)it);
 }

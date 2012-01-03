@@ -922,33 +922,6 @@ EAPI Elm_List_Item               *elm_list_item_prev(const Elm_List_Item *it);
 EAPI Elm_List_Item               *elm_list_item_next(const Elm_List_Item *it);
 
 /**
- * Sets the disabled/enabled state of a list item.
- *
- * @param it The item.
- * @param disabled The disabled state.
- *
- * A disabled item cannot be selected or unselected. It will also
- * change its appearance (generally greyed out). This sets the
- * disabled state (@c EINA_TRUE for disabled, @c EINA_FALSE for
- * enabled).
- *
- * @ingroup List
- */
-EAPI void                         elm_list_item_disabled_set(Elm_List_Item *it, Eina_Bool disabled);
-
-/**
- * Get a value whether list item is disabled or not.
- *
- * @param it The item.
- * @return The disabled state.
- *
- * @see elm_list_item_disabled_set() for more details.
- *
- * @ingroup List
- */
-EAPI Eina_Bool                    elm_list_item_disabled_get(const Elm_List_Item *it);
-
-/**
  * Set the text to be shown in a given list item's tooltips.
  *
  * @param item Target item.
@@ -974,6 +947,7 @@ EAPI void                         elm_list_item_tooltip_text_set(Elm_List_Item *
  * It will instead be limited only by the size of the display.
  */
 EAPI Eina_Bool                    elm_list_item_tooltip_window_mode_set(Elm_List_Item *item, Eina_Bool disable);
+
 /**
  * @brief Retrieve size restriction state of an object's tooltip
  * @param obj The tooltip's anchor object
