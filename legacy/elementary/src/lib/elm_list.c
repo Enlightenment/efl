@@ -1385,139 +1385,6 @@ elm_list_add(Evas_Object *parent)
    return obj;
 }
 
-EAPI Elm_List_Item *
-elm_list_item_append(Evas_Object *obj, const char *label, Evas_Object *icon, Evas_Object *end, Evas_Smart_Cb func, const void *data)
-{
-   ELM_CHECK_WIDTYPE(obj, widtype) NULL;
-   Widget_Data *wd = elm_widget_data_get(obj);
-   Elm_List_Item *it = _item_new(obj, label, icon, end, func, data);
-
-   wd->items = eina_list_append(wd->items, it);
-   it->node = eina_list_last(wd->items);
-   elm_box_pack_end(wd->box, VIEW(it));
-   return it;
-}
-
-EAPI Elm_List_Item *
-elm_list_item_prepend(Evas_Object *obj, const char *label, Evas_Object *icon, Evas_Object *end, Evas_Smart_Cb func, const void *data)
-{
-   ELM_CHECK_WIDTYPE(obj, widtype) NULL;
-   Widget_Data *wd = elm_widget_data_get(obj);
-   Elm_List_Item *it = _item_new(obj, label, icon, end, func, data);
-
-   wd->items = eina_list_prepend(wd->items, it);
-   it->node = wd->items;
-   elm_box_pack_start(wd->box, VIEW(it));
-   return it;
-}
-
-EAPI Elm_List_Item *
-elm_list_item_insert_before(Evas_Object *obj, Elm_List_Item *before, const char *label, Evas_Object *icon, Evas_Object *end, Evas_Smart_Cb func, const void *data)
-{
-   Widget_Data *wd;
-   Elm_List_Item *it;
-
-   EINA_SAFETY_ON_NULL_RETURN_VAL(before, NULL);
-   if (!before->node) return NULL;
-   ELM_LIST_ITEM_CHECK_DELETED_RETURN(before, NULL);
-
-   ELM_CHECK_WIDTYPE(obj, widtype) NULL;
-   wd = elm_widget_data_get(obj);
-   if (!wd) return NULL;
-   it = _item_new(obj, label, icon, end, func, data);
-   wd->items = eina_list_prepend_relative_list(wd->items, it, before->node);
-   it->node = before->node->prev;
-   elm_box_pack_before(wd->box, VIEW(it), VIEW(before));
-   return it;
-}
-
-EAPI Elm_List_Item *
-elm_list_item_insert_after(Evas_Object *obj, Elm_List_Item *after, const char *label, Evas_Object *icon, Evas_Object *end, Evas_Smart_Cb func, const void *data)
-{
-   Widget_Data *wd;
-   Elm_List_Item *it;
-
-   EINA_SAFETY_ON_NULL_RETURN_VAL(after, NULL);
-   if (!after->node) return NULL;
-   ELM_LIST_ITEM_CHECK_DELETED_RETURN(after, NULL);
-
-   ELM_CHECK_WIDTYPE(obj, widtype) NULL;
-   wd = elm_widget_data_get(obj);
-   if (!wd) return NULL;
-   it = _item_new(obj, label, icon, end, func, data);
-   wd->items = eina_list_append_relative_list(wd->items, it, after->node);
-   it->node = after->node->next;
-   elm_box_pack_after(wd->box, VIEW(it), VIEW(after));
-   return it;
-}
-
-EAPI Elm_List_Item *
-elm_list_item_sorted_insert(Evas_Object *obj, const char *label, Evas_Object *icon, Evas_Object *end, Evas_Smart_Cb func, const void *data, Eina_Compare_Cb cmp_func)
-{
-   ELM_CHECK_WIDTYPE(obj, widtype) NULL;
-   Widget_Data *wd = elm_widget_data_get(obj);
-   Elm_List_Item *it = _item_new(obj, label, icon, end, func, data);
-   Eina_List *l;
-
-   wd->items = eina_list_sorted_insert(wd->items, cmp_func, it);
-   l = eina_list_data_find_list(wd->items, it);
-   l = eina_list_next(l);
-   if (!l)
-     {
-        it->node = eina_list_last(wd->items);
-        elm_box_pack_end(wd->box, VIEW(it));
-     }
-   else
-     {
-        Elm_List_Item *before = eina_list_data_get(l);
-        it->node = before->node->prev;
-        elm_box_pack_before(wd->box, VIEW(it), VIEW(before));
-     }
-   return it;
-}
-
-EAPI void
-elm_list_clear(Evas_Object *obj)
-{
-   ELM_CHECK_WIDTYPE(obj, widtype);
-   Widget_Data *wd = elm_widget_data_get(obj);
-   Elm_List_Item *it;
-
-   if (!wd) return;
-   if (!wd->items) return;
-
-   eina_list_free(wd->selected);
-   wd->selected = NULL;
-
-   if (wd->walking > 0)
-     {
-        Eina_List *n;
-
-        EINA_LIST_FOREACH(wd->items, n, it)
-          {
-             if (it->deleted) continue;
-             it->deleted = EINA_TRUE;
-             wd->to_delete = eina_list_append(wd->to_delete, it);
-          }
-        return;
-     }
-
-   evas_object_ref(obj);
-   _elm_list_walk(wd);
-
-   EINA_LIST_FREE(wd->items, it)
-     {
-        elm_widget_item_pre_notify_del(it);
-        _elm_list_item_free(it);
-     }
-
-   _elm_list_unwalk(wd);
-
-   _fix_items(obj);
-   _sizing_eval(obj);
-   evas_object_unref(obj);
-}
-
 EAPI void
 elm_list_go(Evas_Object *obj)
 {
@@ -1637,6 +1504,91 @@ elm_list_always_select_mode_get(const Evas_Object *obj)
    return wd->always_select;
 }
 
+EAPI void
+elm_list_bounce_set(Evas_Object *obj, Eina_Bool h_bounce, Eina_Bool v_bounce)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype);
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return;
+   if (wd->scr)
+     elm_smart_scroller_bounce_allow_set(wd->scr, h_bounce, v_bounce);
+}
+
+EAPI void
+elm_list_bounce_get(const Evas_Object *obj, Eina_Bool *h_bounce, Eina_Bool *v_bounce)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype);
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return;
+   elm_smart_scroller_bounce_allow_get(wd->scr, h_bounce, v_bounce);
+}
+
+EAPI void
+elm_list_scroller_policy_set(Evas_Object *obj, Elm_Scroller_Policy policy_h, Elm_Scroller_Policy policy_v)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype);
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if ((!wd) || (!wd->scr)) return;
+   if ((policy_h >= ELM_SCROLLER_POLICY_LAST) ||
+       (policy_v >= ELM_SCROLLER_POLICY_LAST))
+     return;
+   elm_smart_scroller_policy_set(wd->scr, policy_h, policy_v);
+}
+
+EAPI void
+elm_list_scroller_policy_get(const Evas_Object *obj, Elm_Scroller_Policy *policy_h, Elm_Scroller_Policy *policy_v)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype);
+   Widget_Data *wd = elm_widget_data_get(obj);
+   Elm_Smart_Scroller_Policy s_policy_h, s_policy_v;
+   if ((!wd) || (!wd->scr)) return;
+   elm_smart_scroller_policy_get(wd->scr, &s_policy_h, &s_policy_v);
+   if (policy_h) *policy_h = (Elm_Scroller_Policy) s_policy_h;
+   if (policy_v) *policy_v = (Elm_Scroller_Policy) s_policy_v;
+}
+
+EAPI void
+elm_list_clear(Evas_Object *obj)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype);
+   Widget_Data *wd = elm_widget_data_get(obj);
+   Elm_List_Item *it;
+
+   if (!wd) return;
+   if (!wd->items) return;
+
+   eina_list_free(wd->selected);
+   wd->selected = NULL;
+
+   if (wd->walking > 0)
+     {
+        Eina_List *n;
+
+        EINA_LIST_FOREACH(wd->items, n, it)
+          {
+             if (it->deleted) continue;
+             it->deleted = EINA_TRUE;
+             wd->to_delete = eina_list_append(wd->to_delete, it);
+          }
+        return;
+     }
+
+   evas_object_ref(obj);
+   _elm_list_walk(wd);
+
+   EINA_LIST_FREE(wd->items, it)
+     {
+        elm_widget_item_pre_notify_del(it);
+        _elm_list_item_free(it);
+     }
+
+   _elm_list_unwalk(wd);
+
+   _fix_items(obj);
+   _sizing_eval(obj);
+   evas_object_unref(obj);
+}
+
 EAPI const Eina_List *
 elm_list_items_get(const Evas_Object *obj)
 {
@@ -1665,6 +1617,97 @@ elm_list_selected_items_get(const Evas_Object *obj)
    return wd->selected;
 }
 
+EAPI Elm_List_Item *
+elm_list_item_append(Evas_Object *obj, const char *label, Evas_Object *icon, Evas_Object *end, Evas_Smart_Cb func, const void *data)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype) NULL;
+   Widget_Data *wd = elm_widget_data_get(obj);
+   Elm_List_Item *it = _item_new(obj, label, icon, end, func, data);
+
+   wd->items = eina_list_append(wd->items, it);
+   it->node = eina_list_last(wd->items);
+   elm_box_pack_end(wd->box, VIEW(it));
+   return it;
+}
+
+EAPI Elm_List_Item *
+elm_list_item_prepend(Evas_Object *obj, const char *label, Evas_Object *icon, Evas_Object *end, Evas_Smart_Cb func, const void *data)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype) NULL;
+   Widget_Data *wd = elm_widget_data_get(obj);
+   Elm_List_Item *it = _item_new(obj, label, icon, end, func, data);
+
+   wd->items = eina_list_prepend(wd->items, it);
+   it->node = wd->items;
+   elm_box_pack_start(wd->box, VIEW(it));
+   return it;
+}
+
+EAPI Elm_List_Item *
+elm_list_item_insert_before(Evas_Object *obj, Elm_List_Item *before, const char *label, Evas_Object *icon, Evas_Object *end, Evas_Smart_Cb func, const void *data)
+{
+   Widget_Data *wd;
+   Elm_List_Item *it;
+
+   EINA_SAFETY_ON_NULL_RETURN_VAL(before, NULL);
+   if (!before->node) return NULL;
+   ELM_LIST_ITEM_CHECK_DELETED_RETURN(before, NULL);
+
+   ELM_CHECK_WIDTYPE(obj, widtype) NULL;
+   wd = elm_widget_data_get(obj);
+   if (!wd) return NULL;
+   it = _item_new(obj, label, icon, end, func, data);
+   wd->items = eina_list_prepend_relative_list(wd->items, it, before->node);
+   it->node = before->node->prev;
+   elm_box_pack_before(wd->box, VIEW(it), VIEW(before));
+   return it;
+}
+
+EAPI Elm_List_Item *
+elm_list_item_insert_after(Evas_Object *obj, Elm_List_Item *after, const char *label, Evas_Object *icon, Evas_Object *end, Evas_Smart_Cb func, const void *data)
+{
+   Widget_Data *wd;
+   Elm_List_Item *it;
+
+   EINA_SAFETY_ON_NULL_RETURN_VAL(after, NULL);
+   if (!after->node) return NULL;
+   ELM_LIST_ITEM_CHECK_DELETED_RETURN(after, NULL);
+
+   ELM_CHECK_WIDTYPE(obj, widtype) NULL;
+   wd = elm_widget_data_get(obj);
+   if (!wd) return NULL;
+   it = _item_new(obj, label, icon, end, func, data);
+   wd->items = eina_list_append_relative_list(wd->items, it, after->node);
+   it->node = after->node->next;
+   elm_box_pack_after(wd->box, VIEW(it), VIEW(after));
+   return it;
+}
+
+EAPI Elm_List_Item *
+elm_list_item_sorted_insert(Evas_Object *obj, const char *label, Evas_Object *icon, Evas_Object *end, Evas_Smart_Cb func, const void *data, Eina_Compare_Cb cmp_func)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype) NULL;
+   Widget_Data *wd = elm_widget_data_get(obj);
+   Elm_List_Item *it = _item_new(obj, label, icon, end, func, data);
+   Eina_List *l;
+
+   wd->items = eina_list_sorted_insert(wd->items, cmp_func, it);
+   l = eina_list_data_find_list(wd->items, it);
+   l = eina_list_next(l);
+   if (!l)
+     {
+        it->node = eina_list_last(wd->items);
+        elm_box_pack_end(wd->box, VIEW(it));
+     }
+   else
+     {
+        Elm_List_Item *before = eina_list_data_get(l);
+        it->node = before->node->prev;
+        elm_box_pack_before(wd->box, VIEW(it), VIEW(before));
+     }
+   return it;
+}
+
 EAPI void
 elm_list_item_separator_set(Elm_List_Item *it, Eina_Bool setting)
 {
@@ -1678,7 +1721,6 @@ elm_list_item_separator_get(const Elm_List_Item *it)
    ELM_LIST_ITEM_CHECK_DELETED_RETURN(it, EINA_FALSE);
    return it->is_separator;
 }
-
 
 EAPI void
 elm_list_item_selected_set(Elm_List_Item *it, Eina_Bool selected)
@@ -1780,21 +1822,66 @@ elm_list_item_del(Elm_List_Item *it)
    evas_object_unref(obj);
 }
 
-EAPI void
+EAPI Evas_Object *
+elm_list_item_object_get(const Elm_List_Item *it)
+{
+   ELM_LIST_ITEM_CHECK_DELETED_RETURN(it, NULL);
+   return VIEW(it);
+}
+
+EAPI Elm_List_Item *
+elm_list_item_prev(const Elm_List_Item *it)
+{
+   ELM_LIST_ITEM_CHECK_DELETED_RETURN(it, NULL);
+   if (it->node->prev) return it->node->prev->data;
+   else return NULL;
+}
+
+EAPI Elm_List_Item *
+elm_list_item_next(const Elm_List_Item *it)
+{
+   ELM_LIST_ITEM_CHECK_DELETED_RETURN(it, NULL);
+   if (it->node->next) return it->node->next->data;
+   else return NULL;
+}
+
+EINA_DEPRECATED EAPI Evas_Object *
+elm_list_item_base_get(const Elm_List_Item *it)
+{
+   return elm_list_item_object_get(it);
+}
+
+EINA_DEPRECATED EAPI void
+elm_list_item_disabled_set(Elm_List_Item *it, Eina_Bool disabled)
+{
+   elm_object_item_disabled_set((Elm_Object_Item *)it, disabled);
+}
+
+EINA_DEPRECATED EAPI Eina_Bool
+elm_list_item_disabled_get(const Elm_List_Item *it)
+{
+   return elm_object_item_disabled_get((Elm_Object_Item *)it);
+}
+
+// XXX: the below need to use the elm_object_item infra indicated
+// use elm_object_item_data_set
+EINA_DEPRECATED EAPI void
 elm_list_item_del_cb_set(Elm_List_Item *it, Evas_Smart_Cb func)
 {
    ELM_LIST_ITEM_CHECK_DELETED_RETURN(it);
    elm_widget_item_del_cb_set(it, func);
 }
 
-EAPI void *
+// use elm_object_item_data_get
+EINA_DEPRECATED EAPI void *
 elm_list_item_data_get(const Elm_List_Item *it)
 {
    ELM_LIST_ITEM_CHECK_DELETED_RETURN(it, NULL);
    return elm_widget_item_data_get(it);
 }
 
-EAPI Evas_Object *
+// use elm_object_item_part_content_get
+EINA_DEPRECATED EAPI Evas_Object *
 elm_list_item_icon_get(const Elm_List_Item *it)
 {
    ELM_LIST_ITEM_CHECK_DELETED_RETURN(it, NULL);
@@ -1802,7 +1889,8 @@ elm_list_item_icon_get(const Elm_List_Item *it)
    return it->icon;
 }
 
-EAPI void
+// use elm_object_item_part_content_set
+EINA_DEPRECATED EAPI void
 elm_list_item_icon_set(Elm_List_Item *it, Evas_Object *icon)
 {
    ELM_LIST_ITEM_CHECK_DELETED_RETURN(it);
@@ -1829,7 +1917,8 @@ elm_list_item_icon_set(Elm_List_Item *it, Evas_Object *icon)
      edje_object_part_swallow(VIEW(it), "elm.swallow.icon", icon);
 }
 
-EAPI Evas_Object *
+// use elm_object_item_part_content_get
+EINA_DEPRECATED EAPI Evas_Object *
 elm_list_item_end_get(const Elm_List_Item *it)
 {
    ELM_LIST_ITEM_CHECK_DELETED_RETURN(it, NULL);
@@ -1837,7 +1926,8 @@ elm_list_item_end_get(const Elm_List_Item *it)
    return it->end;
 }
 
-EAPI void
+// use elm_object_item_part_content_set
+EINA_DEPRECATED EAPI void
 elm_list_item_end_set(Elm_List_Item *it, Evas_Object *end)
 {
    ELM_LIST_ITEM_CHECK_DELETED_RETURN(it);
@@ -1864,27 +1954,16 @@ elm_list_item_end_set(Elm_List_Item *it, Evas_Object *end)
      edje_object_part_swallow(VIEW(it), "elm.swallow.end", end);
 }
 
-EAPI Evas_Object *
-elm_list_item_base_get(const Elm_List_Item *it)
-{
-   return elm_list_item_object_get(it);
-}
-
-EAPI Evas_Object *
-elm_list_item_object_get(const Elm_List_Item *it)
-{
-   ELM_LIST_ITEM_CHECK_DELETED_RETURN(it, NULL);
-   return VIEW(it);
-}
-
-EAPI const char *
+// use elm_object_item_part_text_get
+EINA_DEPRECATED EAPI const char *
 elm_list_item_label_get(const Elm_List_Item *it)
 {
    ELM_LIST_ITEM_CHECK_DELETED_RETURN(it, NULL);
    return it->label;
 }
 
-EAPI void
+// use elm_object_item_part_text_set
+EINA_DEPRECATED EAPI void
 elm_list_item_label_set(Elm_List_Item *it, const char *text)
 {
    ELM_LIST_ITEM_CHECK_DELETED_RETURN(it);
@@ -1893,171 +1972,101 @@ elm_list_item_label_set(Elm_List_Item *it, const char *text)
      edje_object_part_text_set(VIEW(it), "elm.text", it->label);
 }
 
-EAPI Elm_List_Item *
-elm_list_item_prev(const Elm_List_Item *it)
-{
-   ELM_LIST_ITEM_CHECK_DELETED_RETURN(it, NULL);
-   if (it->node->prev) return it->node->prev->data;
-   else return NULL;
-}
-
-EAPI Elm_List_Item *
-elm_list_item_next(const Elm_List_Item *it)
-{
-   ELM_LIST_ITEM_CHECK_DELETED_RETURN(it, NULL);
-   if (it->node->next) return it->node->next->data;
-   else return NULL;
-}
-
-EAPI void
+// XXX: all the below - make elm_object_item*() calls to do these
+EINA_DEPRECATED EAPI void
 elm_list_item_tooltip_text_set(Elm_List_Item *item, const char *text)
 {
    ELM_LIST_ITEM_CHECK_DELETED_RETURN(item);
    elm_widget_item_tooltip_text_set(item, text);
 }
 
-EAPI void
+EINA_DEPRECATED EAPI void
 elm_list_item_tooltip_content_cb_set(Elm_List_Item *item, Elm_Tooltip_Item_Content_Cb func, const void *data, Evas_Smart_Cb del_cb)
 {
    ELM_LIST_ITEM_CHECK_DELETED_RETURN(item);
    elm_widget_item_tooltip_content_cb_set(item, func, data, del_cb);
 }
 
-EAPI void
+EINA_DEPRECATED EAPI void
 elm_list_item_tooltip_unset(Elm_List_Item *item)
 {
    ELM_LIST_ITEM_CHECK_DELETED_RETURN(item);
    elm_widget_item_tooltip_unset(item);
 }
 
-EAPI Eina_Bool
+EINA_DEPRECATED EAPI Eina_Bool
 elm_list_item_tooltip_window_mode_set(Elm_List_Item *item, Eina_Bool disable)
 {
    ELM_LIST_ITEM_CHECK_DELETED_RETURN(item, EINA_FALSE);
    return elm_widget_item_tooltip_window_mode_set(item, disable);
 }
 
-EAPI Eina_Bool
+EINA_DEPRECATED EAPI Eina_Bool
 elm_list_item_tooltip_window_mode_get(const Elm_List_Item *item)
 {
    ELM_LIST_ITEM_CHECK_DELETED_RETURN(item, EINA_FALSE);
    return elm_widget_item_tooltip_window_mode_get(item);
 }
 
-EAPI void
+EINA_DEPRECATED EAPI void
 elm_list_item_tooltip_style_set(Elm_List_Item *item, const char *style)
 {
    ELM_LIST_ITEM_CHECK_DELETED_RETURN(item);
    elm_widget_item_tooltip_style_set(item, style);
 }
 
-EAPI const char *
+EINA_DEPRECATED EAPI const char *
 elm_list_item_tooltip_style_get(const Elm_List_Item *item)
 {
    ELM_LIST_ITEM_CHECK_DELETED_RETURN(item, NULL);
    return elm_widget_item_tooltip_style_get(item);
 }
 
-EAPI void
+EINA_DEPRECATED EAPI void
 elm_list_item_cursor_set(Elm_List_Item *item, const char *cursor)
 {
    ELM_LIST_ITEM_CHECK_DELETED_RETURN(item);
    elm_widget_item_cursor_set(item, cursor);
 }
 
-EAPI const char *
+EINA_DEPRECATED EAPI const char *
 elm_list_item_cursor_get(const Elm_List_Item *item)
 {
    ELM_LIST_ITEM_CHECK_DELETED_RETURN(item, NULL);
    return elm_widget_item_cursor_get(item);
 }
 
-EAPI void
+EINA_DEPRECATED EAPI void
 elm_list_item_cursor_unset(Elm_List_Item *item)
 {
    ELM_LIST_ITEM_CHECK_DELETED_RETURN(item);
    elm_widget_item_cursor_unset(item);
 }
 
-EAPI void
+EINA_DEPRECATED EAPI void
 elm_list_item_cursor_style_set(Elm_List_Item *item, const char *style)
 {
    ELM_LIST_ITEM_CHECK_DELETED_RETURN(item);
    elm_widget_item_cursor_style_set(item, style);
 }
 
-EAPI const char *
+EINA_DEPRECATED EAPI const char *
 elm_list_item_cursor_style_get(const Elm_List_Item *item)
 {
    ELM_LIST_ITEM_CHECK_DELETED_RETURN(item, NULL);
    return elm_widget_item_cursor_style_get(item);
 }
 
-EAPI void
+EINA_DEPRECATED EAPI void
 elm_list_item_cursor_engine_only_set(Elm_List_Item *item, Eina_Bool engine_only)
 {
    ELM_LIST_ITEM_CHECK_DELETED_RETURN(item);
    elm_widget_item_cursor_engine_only_set(item, engine_only);
 }
 
-EAPI Eina_Bool
+EINA_DEPRECATED EAPI Eina_Bool
 elm_list_item_cursor_engine_only_get(const Elm_List_Item *item)
 {
    ELM_LIST_ITEM_CHECK_DELETED_RETURN(item, EINA_FALSE);
    return elm_widget_item_cursor_engine_only_get(item);
-}
-
-EAPI void
-elm_list_bounce_set(Evas_Object *obj, Eina_Bool h_bounce, Eina_Bool v_bounce)
-{
-   ELM_CHECK_WIDTYPE(obj, widtype);
-   Widget_Data *wd = elm_widget_data_get(obj);
-   if (!wd) return;
-   if (wd->scr)
-     elm_smart_scroller_bounce_allow_set(wd->scr, h_bounce, v_bounce);
-}
-
-EAPI void
-elm_list_bounce_get(const Evas_Object *obj, Eina_Bool *h_bounce, Eina_Bool *v_bounce)
-{
-   ELM_CHECK_WIDTYPE(obj, widtype);
-   Widget_Data *wd = elm_widget_data_get(obj);
-   if (!wd) return;
-   elm_smart_scroller_bounce_allow_get(wd->scr, h_bounce, v_bounce);
-}
-
-EAPI void
-elm_list_scroller_policy_set(Evas_Object *obj, Elm_Scroller_Policy policy_h, Elm_Scroller_Policy policy_v)
-{
-   ELM_CHECK_WIDTYPE(obj, widtype);
-   Widget_Data *wd = elm_widget_data_get(obj);
-   if ((!wd) || (!wd->scr)) return;
-   if ((policy_h >= ELM_SCROLLER_POLICY_LAST) ||
-       (policy_v >= ELM_SCROLLER_POLICY_LAST))
-     return;
-   elm_smart_scroller_policy_set(wd->scr, policy_h, policy_v);
-}
-
-EAPI void
-elm_list_scroller_policy_get(const Evas_Object *obj, Elm_Scroller_Policy *policy_h, Elm_Scroller_Policy *policy_v)
-{
-   ELM_CHECK_WIDTYPE(obj, widtype);
-   Widget_Data *wd = elm_widget_data_get(obj);
-   Elm_Smart_Scroller_Policy s_policy_h, s_policy_v;
-   if ((!wd) || (!wd->scr)) return;
-   elm_smart_scroller_policy_get(wd->scr, &s_policy_h, &s_policy_v);
-   if (policy_h) *policy_h = (Elm_Scroller_Policy) s_policy_h;
-   if (policy_v) *policy_v = (Elm_Scroller_Policy) s_policy_v;
-}
-
-EINA_DEPRECATED EAPI void
-elm_list_item_disabled_set(Elm_List_Item *it, Eina_Bool disabled)
-{
-   elm_object_item_disabled_set((Elm_Object_Item *)it, disabled);
-}
-
-EINA_DEPRECATED EAPI Eina_Bool
-elm_list_item_disabled_get(const Elm_List_Item *it)
-{
-   return elm_object_item_disabled_get((Elm_Object_Item *)it);
 }
