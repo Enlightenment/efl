@@ -2,7 +2,7 @@
 # include "config.h"
 #endif
 
-#define LOGFNS 1
+//#define LOGFNS 1
 
 #ifdef LOGFNS
 # include <stdio.h>
@@ -50,6 +50,7 @@ static void _ecore_evas_wl_callback_move_set(Ecore_Evas *ee, void (*func)(Ecore_
 static void _ecore_evas_wl_callback_delete_request_set(Ecore_Evas *ee, void (*func)(Ecore_Evas *ee));
 static void _ecore_evas_wl_callback_focus_in_set(Ecore_Evas *ee, void (*func)(Ecore_Evas *ee));
 static void _ecore_evas_wl_callback_focus_out_set(Ecore_Evas *ee, void (*func)(Ecore_Evas *ee));
+static void _ecore_evas_wl_move(Ecore_Evas *ee, int x, int y);
 static void _ecore_evas_wl_resize(Ecore_Evas *ee, int w, int h);
 static void _ecore_evas_wl_show(Ecore_Evas *ee);
 static void _ecore_evas_wl_hide(Ecore_Evas *ee);
@@ -107,7 +108,7 @@ static Ecore_Evas_Engine_Func _ecore_wl_engine_func =
    NULL, // callback unsticky set
    NULL, // callback pre render set
    NULL, // callback post render set
-   NULL, // func move
+   _ecore_evas_wl_move, 
    NULL, // func managed move
    _ecore_evas_wl_resize, 
    NULL, // func move_resize
@@ -402,6 +403,21 @@ _ecore_evas_wl_callback_focus_out_set(Ecore_Evas *ee, void (*func)(Ecore_Evas *e
 }
 
 static void 
+_ecore_evas_wl_move(Ecore_Evas *ee, int x, int y) 
+{
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+
+   if (!ee) return;
+   if ((ee->x == x) && (ee->y == y)) return;
+   ee->req.x = x;
+   ee->req.y = y;
+
+   ee->x = x;
+   ee->y = y;
+   /* FIXME: Forward this to Wayland */
+}
+
+static void 
 _ecore_evas_wl_resize(Ecore_Evas *ee, int w, int h)
 {
    Evas_Engine_Info_Wayland_Shm *einfo;
@@ -411,9 +427,9 @@ _ecore_evas_wl_resize(Ecore_Evas *ee, int w, int h)
    if (!ee) return;
    if (w < 1) w = 1;
    if (h < 1) h = 1;
+   if ((ee->w == w) && (ee->h == h)) return;
    ee->req.w = w;
    ee->req.h = h;
-   if ((ee->w == w) && (ee->h == h)) return;
 
    /* get engine info */
    einfo = (Evas_Engine_Info_Wayland_Shm *)evas_engine_info_get(ee->evas);
