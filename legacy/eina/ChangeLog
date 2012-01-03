@@ -151,7 +151,7 @@
 2011-12-02 Carsten Haitzler (The Rasterman)
 
         1.1.0 release
-        
+
 2011-12-02  Mike Blumenkrantz (discomfitor/zmike)
 
         * Add eina_mempool_calloc for returning zeroed memory
@@ -181,3 +181,10 @@
 2011-12-30  Cedric Bail
 
 	* Let eina_hash_free behave like free.
+
+2012-01-03  Cedric Bail
+
+	* Add eina_xattr_fd_ls, eina_xattr_value_fd_ls and eina_xattr_value_ls.
+	* Detect fault during access to Eina_File mmap memory, use eina_file_map_faulted
+	to learn if it happens.
+	* Add eina_file_xattr_get and eina_file_xattr_value_get.

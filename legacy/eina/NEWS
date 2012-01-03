@@ -7,7 +7,10 @@ Additions:
 
     * eina_mempool_calloc
     * Eina_Semaphore abstraction API
-
+    * eina_xattr_fd_ls
+    * Eina_Xattr iterator : eina_xattr_value_fd_ls and eina_xattr_value_ls API
+    * eina_file_map_faulted API
+    * Xattr iterator for Eina_File : eina_file_xattr_get and eina_file_xattr_value_get API
 
 Eina 1.1.0
 

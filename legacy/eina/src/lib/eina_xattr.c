@@ -35,6 +35,7 @@
 #include "eina_safety_checks.h"
 #include "eina_xattr.h"
 #include "eina_convert.h"
+#include "eina_stringshare.h"
 
 /*============================================================================*
  *                                  Local                                     *
@@ -50,13 +51,82 @@ struct _Eina_Xattr_Iterator
 {
    Eina_Iterator iterator;
 
+   const char *file;
+   Eina_Xattr *attr;
+
    ssize_t length;
    ssize_t offset;
+
+   int fd;
 
    char xattr[1];
 };
 
 #ifdef HAVE_XATTR
+static Eina_Bool
+_eina_xattr_value_ls_fd_iterator_next(Eina_Xattr_Iterator *it, void **data)
+{
+   char *tmp;
+
+   if (it->offset >= it->length)
+     return EINA_FALSE;
+
+   *data = it->attr;
+   it->attr->name = it->xattr + it->offset;
+
+   it->attr->length = fgetxattr(it->fd, it->attr->name, NULL, 0);
+   if (it->attr->length)
+     {
+        tmp = realloc((void*) it->attr->value, it->attr->length);
+        if (!tmp)
+          {
+             free((void*) it->attr->value);
+             it->attr->value = NULL;
+             it->attr->length = 0;
+          }
+        else
+          {
+             it->attr->length = fgetxattr(it->fd, it->attr->name,
+                                          (void *) it->attr->value,
+                                          it->attr->length);
+          }
+     }
+
+   return EINA_TRUE;
+}
+
+static Eina_Bool
+_eina_xattr_value_ls_iterator_next(Eina_Xattr_Iterator *it, void **data)
+{
+   char *tmp;
+
+   if (it->offset >= it->length)
+     return EINA_FALSE;
+
+   *data = it->attr;
+   it->attr->name = it->xattr + it->offset;
+
+   it->attr->length = getxattr(it->file, it->attr->name, NULL, 0);
+   if (it->attr->length)
+     {
+        tmp = realloc((void*) it->attr->value, it->attr->length);
+        if (!tmp)
+          {
+             free((void*) it->attr->value);
+             it->attr->value = NULL;
+             it->attr->length = 0;
+          }
+        else
+          {
+             it->attr->length = getxattr(it->file, it->attr->name,
+                                         (void*) it->attr->value,
+                                         it->attr->length);
+          }
+     }
+
+   return EINA_TRUE;
+}
+
 static Eina_Bool
 _eina_xattr_ls_iterator_next(Eina_Xattr_Iterator *it, void **data)
 {
@@ -79,6 +149,9 @@ static void
 _eina_xattr_ls_iterator_free(Eina_Xattr_Iterator *it)
 {
    EINA_MAGIC_SET(&it->iterator, 0);
+   if (it->attr) free((void *) it->attr->value);
+   eina_stringshare_del(it->file);
+   free(it->attr);
    free(it);
 }
 #endif
@@ -97,6 +170,85 @@ _eina_xattr_ls_iterator_free(Eina_Xattr_Iterator *it)
  *                                   API                                      *
  *============================================================================*/
 
+EAPI Eina_Iterator *
+eina_xattr_value_fd_ls(int fd)
+{
+#ifdef HAVE_XATTR
+   Eina_Xattr_Iterator *it;
+   ssize_t length;
+
+   if (fd < 0) return NULL;
+
+   length = flistxattr(fd, NULL, 0);
+   if (length <= 0) return NULL;
+
+   it = calloc(1, sizeof (Eina_Xattr_Iterator) + length - 1);
+   if (!it) return NULL;
+
+   it->attr = calloc(1, sizeof (Eina_Xattr));
+   if (!it->attr)
+     {
+        free(it);
+        return NULL;
+     }
+
+   EINA_MAGIC_SET(&it->iterator, EINA_MAGIC_ITERATOR);
+
+   it->fd = fd;
+   it->length = flistxattr(fd, it->xattr, length);
+   if (it->length != length)
+     {
+        free(it);
+	return NULL;
+     }
+
+   it->iterator.version = EINA_ITERATOR_VERSION;
+   it->iterator.next = FUNC_ITERATOR_NEXT(_eina_xattr_value_ls_fd_iterator_next);
+   it->iterator.get_container = FUNC_ITERATOR_GET_CONTAINER(_eina_xattr_ls_iterator_container);
+   it->iterator.free = FUNC_ITERATOR_FREE(_eina_xattr_ls_iterator_free);
+
+   return &it->iterator;
+#else
+   return NULL;
+   (void)file;
+#endif
+}
+
+EAPI Eina_Iterator *
+eina_xattr_fd_ls(int fd)
+{
+#ifdef HAVE_XATTR
+   Eina_Xattr_Iterator *it;
+   ssize_t length;
+
+   if (fd < 0) return NULL;
+
+   length = flistxattr(fd, NULL, 0);
+   if (length <= 0) return NULL;
+
+   it = calloc(1, sizeof (Eina_Xattr_Iterator) + length - 1);
+   if (!it) return NULL;
+
+   EINA_MAGIC_SET(&it->iterator, EINA_MAGIC_ITERATOR);
+
+   it->length = flistxattr(fd, it->xattr, length);
+   if (it->length != length)
+     {
+        free(it);
+	return NULL;
+     }
+
+   it->iterator.version = EINA_ITERATOR_VERSION;
+   it->iterator.next = FUNC_ITERATOR_NEXT(_eina_xattr_ls_iterator_next);
+   it->iterator.get_container = FUNC_ITERATOR_GET_CONTAINER(_eina_xattr_ls_iterator_container);
+   it->iterator.free = FUNC_ITERATOR_FREE(_eina_xattr_ls_iterator_free);
+
+   return &it->iterator;
+#else
+   return NULL;
+   (void)file;
+#endif
+}
 
 EAPI Eina_Iterator *
 eina_xattr_ls(const char *file)
@@ -124,6 +276,44 @@ eina_xattr_ls(const char *file)
 
    it->iterator.version = EINA_ITERATOR_VERSION;
    it->iterator.next = FUNC_ITERATOR_NEXT(_eina_xattr_ls_iterator_next);
+   it->iterator.get_container = FUNC_ITERATOR_GET_CONTAINER(_eina_xattr_ls_iterator_container);
+   it->iterator.free = FUNC_ITERATOR_FREE(_eina_xattr_ls_iterator_free);
+
+   return &it->iterator;
+#else
+   return NULL;
+   (void)file;
+#endif
+}
+
+EAPI Eina_Iterator *
+eina_xattr_value_ls(const char *file)
+{
+#ifdef HAVE_XATTR
+   Eina_Xattr_Iterator *it;
+   ssize_t length;
+
+   EINA_SAFETY_ON_NULL_RETURN_VAL(file, NULL);
+
+   length = listxattr(file, NULL, 0);
+   if (length <= 0) return NULL;
+
+   it = calloc(1, sizeof (Eina_Xattr_Iterator) + length - 1);
+   if (!it) return NULL;
+
+   EINA_MAGIC_SET(&it->iterator, EINA_MAGIC_ITERATOR);
+
+   it->length = listxattr(file, it->xattr, length);
+   if (it->length != length)
+     {
+        free(it);
+	return NULL;
+     }
+
+   it->file = eina_stringshare_add(file);
+
+   it->iterator.version = EINA_ITERATOR_VERSION;
+   it->iterator.next = FUNC_ITERATOR_NEXT(_eina_xattr_value_ls_iterator_next);
    it->iterator.get_container = FUNC_ITERATOR_GET_CONTAINER(_eina_xattr_ls_iterator_container);
    it->iterator.free = FUNC_ITERATOR_FREE(_eina_xattr_ls_iterator_free);
 

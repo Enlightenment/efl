@@ -110,6 +110,8 @@ _eina_mmap_safe_sigbus(int sig __UNUSED__,
         errno = perrno;
         abort();
      }
+   /* Look into mmaped Eina_File if it was one of them, just to remember for later request */
+   eina_file_mmap_faulty(addr, _eina_mmap_pagesize);
    /* restore previous errno */
    errno = perrno;
 }

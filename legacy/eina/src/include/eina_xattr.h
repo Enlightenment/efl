@@ -39,6 +39,14 @@ typedef enum {
   EINA_XATTR_CREATED /**< This will only succeed if the extended attribute wasn't previously set */
 } Eina_Xattr_Flags;
 
+typedef struct _Eina_Xattr Eina_Xattr;
+struct _Eina_Xattr
+{
+   const char *name; /**< The eXtended attribute name @since 1.2 */
+   const char *value; /**< The eXtended attribute value @since 1.2 */
+
+   size_t length; /**< The length of the eXtended attribute value @since 1.2 */
+};
 
 /**
  * @brief Get an iterator that list all extended attribute of a file.
@@ -52,6 +60,45 @@ typedef enum {
  * @since 1.1
  */
 EAPI Eina_Iterator *eina_xattr_ls(const char *file);
+
+/**
+ * @brief Get an iterator that list all extended attribute value related to a fd.
+ *
+ * @param file The filename to retrieve the extended attribute list from.
+ * @return an iterator.
+ *
+ * The iterator will not allocate any data during the iteration step, so you need to copy them yourself
+ * if you need. The iterator will provide an Eina_Xattr structure.
+ *
+ * @since 1.2
+ */
+EAPI Eina_Iterator *eina_xattr_value_ls(const char *file);
+
+/**
+ * @brief Get an iterator that list all extended attribute related to a fd.
+ *
+ * @param fd The file descriptor to retrieve the extended attribute list from.
+ * @return an iterator.
+ *
+ * The iterator will not allocate any data during the iteration step, so you need to copy them yourself
+ * if you need.
+ *
+ * @since 1.2
+ */
+EAPI Eina_Iterator *eina_xattr_fd_ls(int fd);
+
+/**
+ * @brief Get an iterator that list all extended attribute value related to a fd.
+ *
+ * @param fd The file descriptor to retrieve the extended attribute list from.
+ * @return an iterator.
+ *
+ * The iterator will not allocate any data during the iteration step, so you need to copy them yourself
+ * if you need. The iterator will provide an Eina_Xattr structure.
+ *
+ * @since 1.2
+ */
+EAPI Eina_Iterator *eina_xattr_value_fd_ls(int fd);
 
 /**
  * @brief Retrieve an extended attribute from a file.
