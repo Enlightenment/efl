@@ -189,13 +189,14 @@ _longpress(void *objv)
         /* FIXME: Deal with relative paths */
         buf = malloc(strlen(file) + strlen("file://") + 1);
         sprintf(buf, "%s%s","file://",file);
-        elm_drag_start(objv, ELM_SEL_FORMAT_IMAGE,
-                       buf, _drag_done_cb, NULL);
+        if (elm_drag_start(objv, ELM_SEL_FORMAT_IMAGE,
+                           buf, _drag_done_cb, NULL))
+          {
+             elm_object_scroll_freeze_push(objv);
+             evas_object_smart_callback_call(objv, SIG_DRAG_START, NULL);
+          }
         free(buf);
      }
-   elm_object_scroll_freeze_push(objv);
-
-   evas_object_smart_callback_call(objv, SIG_DRAG_START, NULL);
 
    return 0; /* Don't call again */
 }

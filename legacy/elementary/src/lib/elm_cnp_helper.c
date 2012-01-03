@@ -1563,7 +1563,7 @@ _drag_mouse_up(void *un __UNUSED__, Evas *e __UNUSED__, Evas_Object *obj, void *
    ecore_x_dnd_aware_set(xwin, EINA_FALSE);
    if (dragdonecb)
      {
-        dragdonecb(dragdonecb,selections[ELM_SEL_TYPE_XDND].widget);
+        dragdonecb(dragdonedata, selections[ELM_SEL_TYPE_XDND].widget);
         dragdonecb = NULL;
      }
    if (dragwin)
@@ -1599,9 +1599,15 @@ elm_drag_start(Evas_Object *obj, Elm_Sel_Format format, const char *data, void (
 
    cnp_debug("starting drag...\n");
 
-   ecore_x_dnd_type_set(xwin, "text/uri-list", 1);
+   if (dragwin)
+     {
+        cnp_debug("another obj is dragging...\n");
+        return EINA_FALSE;
+     }
+
+   ecore_x_dnd_type_set(xwin, "text/uri-list", EINA_TRUE);
    sel = selections + ELM_SEL_TYPE_XDND;
-   sel->active = 1;
+   sel->active = EINA_TRUE;
    sel->widget = obj;
    sel->format = format;
    sel->selbuf = data ? strdup(data) : NULL;
@@ -1618,12 +1624,12 @@ elm_drag_start(Evas_Object *obj, Elm_Sel_Format format, const char *data, void (
                                             _dnd_status, NULL);
 
    dragwin = elm_win_add(NULL, "Elm Drag Object", ELM_WIN_UTILITY);
-   elm_win_override_set(dragwin, 1);
+   elm_win_override_set(dragwin, EINA_TRUE);
 
    /* FIXME: Images only */
    icon = elm_icon_add(dragwin);
    elm_icon_file_set(icon, data + 7, NULL); /* 7!? "file://" */
-   elm_win_resize_object_add(dragwin,icon);
+   elm_win_resize_object_add(dragwin, icon);
    evas_object_size_hint_weight_set(icon, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(icon, EVAS_HINT_FILL, EVAS_HINT_FILL);
 
