@@ -720,94 +720,6 @@ EAPI void                         elm_list_item_bring_in(Elm_List_Item *item);
 EAPI void                         elm_list_item_del(Elm_List_Item *item);
 
 /**
- * Get the left side icon associated to the item.
- *
- * @param item The list item
- * @return The left side icon associated to @p item
- *
- * The return value is a pointer to the icon associated to @p item when
- * it was
- * created, with function elm_list_item_append() or similar, or later
- * with function elm_list_item_icon_set(). If no icon
- * was passed as argument, it will return @c NULL.
- *
- * @see elm_list_item_append()
- * @see elm_list_item_icon_set()
- *
- * @ingroup List
- */
-EAPI Evas_Object                 *elm_list_item_icon_get(const Elm_List_Item *item);
-
-/**
- * Set the left side icon associated to the item.
- *
- * @param item The list item
- * @param icon The left side icon object to associate with @p item
- *
- * The icon object to use at left side of the item. An
- * icon can be any Evas object, but usually it is an icon created
- * with elm_icon_add().
- *
- * Once the icon object is set, a previously set one will be deleted.
- * @warning Setting the same icon for two items will cause the icon to
- * dissapear from the first item.
- *
- * If an icon was passed as argument on item creation, with function
- * elm_list_item_append() or similar, it will be already
- * associated to the item.
- *
- * @see elm_list_item_append()
- * @see elm_list_item_icon_get()
- *
- * @ingroup List
- */
-EAPI void                         elm_list_item_icon_set(Elm_List_Item *item, Evas_Object *icon);
-
-/**
- * Get the right side icon associated to the item.
- *
- * @param item The list item
- * @return The right side icon associated to @p item
- *
- * The return value is a pointer to the icon associated to @p item when
- * it was
- * created, with function elm_list_item_append() or similar, or later
- * with function elm_list_item_icon_set(). If no icon
- * was passed as argument, it will return @c NULL.
- *
- * @see elm_list_item_append()
- * @see elm_list_item_icon_set()
- *
- * @ingroup List
- */
-EAPI Evas_Object                 *elm_list_item_end_get(const Elm_List_Item *item);
-
-/**
- * Set the right side icon associated to the item.
- *
- * @param item The list item
- * @param end The right side icon object to associate with @p item
- *
- * The icon object to use at right side of the item. An
- * icon can be any Evas object, but usually it is an icon created
- * with elm_icon_add().
- *
- * Once the icon object is set, a previously set one will be deleted.
- * @warning Setting the same icon for two items will cause the icon to
- * dissapear from the first item.
- *
- * If an icon was passed as argument on item creation, with function
- * elm_list_item_append() or similar, it will be already
- * associated to the item.
- *
- * @see elm_list_item_append()
- * @see elm_list_item_end_get()
- *
- * @ingroup List
- */
-EAPI void                         elm_list_item_end_set(Elm_List_Item *item, Evas_Object *end);
-
-/**
  * Gets the base object of the item.
  *
  * @param item The list item
@@ -818,44 +730,6 @@ EAPI void                         elm_list_item_end_set(Elm_List_Item *item, Eva
  * @ingroup List
  */
 EAPI Evas_Object                 *elm_list_item_object_get(const Elm_List_Item *item);
-
-/**
- * Get the label of item.
- *
- * @param item The item of list.
- * @return The label of item.
- *
- * The return value is a pointer to the label associated to @p item when
- * it was created, with function elm_list_item_append(), or later
- * with function elm_list_item_label_set. If no label
- * was passed as argument, it will return @c NULL.
- *
- * @see elm_list_item_label_set() for more details.
- * @see elm_list_item_append()
- *
- * @ingroup List
- */
-EAPI const char                  *elm_list_item_label_get(const Elm_List_Item *item);
-
-/**
- * Set the label of item.
- *
- * @param item The item of list.
- * @param text The label of item.
- *
- * The label to be displayed by the item.
- * Label will be placed between left and right side icons (if set).
- *
- * If a label was passed as argument on item creation, with function
- * elm_list_item_append() or similar, it will be already
- * displayed by the item.
- *
- * @see elm_list_item_label_get()
- * @see elm_list_item_append()
- *
- * @ingroup List
- */
-EAPI void                         elm_list_item_label_set(Elm_List_Item *item, const char *text);
 
 /**
  * Get the item before @p it in list.

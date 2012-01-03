@@ -1029,6 +1029,104 @@ _item_disable(void *data)
      edje_object_signal_emit(VIEW(it), "elm,state,enabled", "elm");
 }
 
+static void
+_item_content_set(void *data, const char *part, Evas_Object *content)
+{
+   Elm_List_Item *it = data;
+   Evas_Object **icon_p = NULL;
+   Eina_Bool dummy = EINA_FALSE;
+   
+   if ((!part) || (!strcmp(part, "start")))
+     {
+        icon_p = &(it->icon);
+        dummy = it->dummy_icon;
+        if (!content) it->dummy_icon = EINA_FALSE;
+        else it->dummy_icon = EINA_TRUE;
+     }
+   else if (!strcmp(part, "end"))
+     {
+        icon_p = &(it->end);
+        dummy = it->dummy_end;
+        if (!content) it->dummy_end = EINA_FALSE;
+        else it->dummy_end = EINA_TRUE;
+     }
+   else
+     return;
+        
+   if (content == *icon_p) return;
+   if ((dummy) && (!content)) return;
+   if (dummy) evas_object_del(*icon_p);
+   if (!content)
+     {
+        content = evas_object_rectangle_add(evas_object_evas_get(WIDGET(it)));
+        evas_object_color_set(content, 0, 0, 0, 0);
+     }
+   if (*icon_p)
+     {
+        evas_object_del(*icon_p);
+        *icon_p = NULL;
+     }
+   *icon_p = content;
+   if (VIEW(it))
+     edje_object_part_swallow(VIEW(it), "elm.swallow.icon", content);
+}
+
+static Evas_Object *
+_item_content_get(const void *data, const char *part)
+{
+   Elm_List_Item *it = (Elm_List_Item *)data;
+
+   if ((!part) || (!strcmp(part, "start")))
+     {
+        if (it->dummy_icon) return NULL;
+        return it->icon;
+     }
+   else if (!strcmp(part, "end"))
+     {
+        if (it->dummy_end) return NULL;
+        return it->end;
+     }
+   return NULL;
+}
+
+static Evas_Object *
+_item_content_unset(const void *data, const char *part)
+{
+   Elm_List_Item *it = (Elm_List_Item *)data;
+
+   if ((!part) || (!strcmp(part, "start")))
+     {
+        Evas_Object *obj = it->icon;
+        _item_content_set((void *)data, part, NULL);
+        return obj;
+     }
+   else if (!strcmp(part, "end"))
+     {
+        Evas_Object *obj = it->end;
+        _item_content_set((void *)data, part, NULL);
+        return obj;
+     }
+   return NULL;
+}
+
+static void
+_item_text_set(void *data, const char *part __UNUSED__, const char *text)
+{
+   Elm_List_Item *it = data;
+
+   if (!eina_stringshare_replace(&it->label, text)) return;
+   if (VIEW(it))
+     edje_object_part_text_set(VIEW(it), "elm.text", it->label);
+}
+
+static const char *
+_item_text_get(const void *data, const char *part __UNUSED__)
+{
+   Elm_List_Item *it = (Elm_List_Item *)data;
+
+   return it->label;
+}
+
 static Elm_List_Item *
 _item_new(Evas_Object *obj, const char *label, Evas_Object *icon, Evas_Object *end, Evas_Smart_Cb func, const void *data)
 {
@@ -1066,6 +1164,11 @@ _item_new(Evas_Object *obj, const char *label, Evas_Object *icon, Evas_Object *e
                                        _changed_size_hints, obj);
      }
    _elm_widget_item_disable_set_hook_set((Elm_Widget_Item *)it, _item_disable);
+   _elm_widget_item_content_set_hook_set((Elm_Widget_Item *)it, _item_content_set);
+   _elm_widget_item_content_get_hook_set((Elm_Widget_Item *)it, _item_content_get);
+   _elm_widget_item_content_unset_hook_set((Elm_Widget_Item *)it, _item_content_unset);
+   _elm_widget_item_text_set_hook_set((Elm_Widget_Item *)it, _item_text_set);
+   _elm_widget_item_text_get_hook_set((Elm_Widget_Item *)it, _item_text_get);
    return it;
 }
 
@@ -1866,108 +1969,49 @@ elm_list_item_disabled_get(const Elm_List_Item *it)
 EINA_DEPRECATED EAPI void
 elm_list_item_del_cb_set(Elm_List_Item *it, Evas_Smart_Cb func)
 {
-   ELM_LIST_ITEM_CHECK_DELETED_RETURN(it);
    elm_widget_item_del_cb_set(it, func);
 }
 
 EINA_DEPRECATED EAPI void *
 elm_list_item_data_get(const Elm_List_Item *it)
 {
-   ELM_LIST_ITEM_CHECK_DELETED_RETURN(it, NULL);
    return elm_widget_item_data_get(it);
 }
 
-// XXX: the below need to use the elm_object_item infra indicated
-// use elm_object_item_part_content_get
 EINA_DEPRECATED EAPI Evas_Object *
 elm_list_item_icon_get(const Elm_List_Item *it)
 {
-   ELM_LIST_ITEM_CHECK_DELETED_RETURN(it, NULL);
-   if (it->dummy_icon) return NULL;
-   return it->icon;
+   return _elm_widget_item_content_part_get((Elm_Widget_Item *)it, NULL);
 }
 
-// use elm_object_item_part_content_set
 EINA_DEPRECATED EAPI void
 elm_list_item_icon_set(Elm_List_Item *it, Evas_Object *icon)
 {
-   ELM_LIST_ITEM_CHECK_DELETED_RETURN(it);
-   if (it->icon == icon) return;
-   if ((it->dummy_icon) && (!icon)) return;
-   if (it->dummy_icon)
-     {
-        evas_object_del(it->icon);
-        it->dummy_icon = EINA_FALSE;
-     }
-   if (!icon)
-     {
-        icon = evas_object_rectangle_add(evas_object_evas_get(WIDGET(it)));
-        evas_object_color_set(icon, 0, 0, 0, 0);
-        it->dummy_icon = EINA_TRUE;
-     }
-   if (it->icon)
-     {
-        evas_object_del(it->icon);
-        it->icon = NULL;
-     }
-   it->icon = icon;
-   if (VIEW(it))
-     edje_object_part_swallow(VIEW(it), "elm.swallow.icon", icon);
+   _elm_widget_item_content_part_set((Elm_Widget_Item *)it, NULL, icon);
 }
 
-// use elm_object_item_part_content_get
 EINA_DEPRECATED EAPI Evas_Object *
 elm_list_item_end_get(const Elm_List_Item *it)
 {
-   ELM_LIST_ITEM_CHECK_DELETED_RETURN(it, NULL);
-   if (it->dummy_end) return NULL;
-   return it->end;
+   return _elm_widget_item_content_part_get((Elm_Widget_Item *)it, "end");
 }
 
-// use elm_object_item_part_content_set
 EINA_DEPRECATED EAPI void
 elm_list_item_end_set(Elm_List_Item *it, Evas_Object *end)
 {
-   ELM_LIST_ITEM_CHECK_DELETED_RETURN(it);
-   if (it->end == end) return;
-   if ((it->dummy_end) && (!end)) return;
-   if (it->dummy_end)
-     {
-        evas_object_del(it->end);
-        it->dummy_icon = EINA_FALSE;
-     }
-   if (!end)
-     {
-        end = evas_object_rectangle_add(evas_object_evas_get(WIDGET(it)));
-        evas_object_color_set(end, 0, 0, 0, 0);
-        it->dummy_end = EINA_TRUE;
-     }
-   if (it->end)
-     {
-        evas_object_del(it->end);
-        it->end = NULL;
-     }
-   it->end = end;
-   if (VIEW(it))
-     edje_object_part_swallow(VIEW(it), "elm.swallow.end", end);
+   _elm_widget_item_content_part_set((Elm_Widget_Item *)it, "end", end);
 }
 
-// use elm_object_item_part_text_get
 EINA_DEPRECATED EAPI const char *
 elm_list_item_label_get(const Elm_List_Item *it)
 {
-   ELM_LIST_ITEM_CHECK_DELETED_RETURN(it, NULL);
-   return it->label;
+   return _elm_widget_item_text_part_get((Elm_Widget_Item *)it, NULL);
 }
 
-// use elm_object_item_part_text_set
 EINA_DEPRECATED EAPI void
 elm_list_item_label_set(Elm_List_Item *it, const char *text)
 {
-   ELM_LIST_ITEM_CHECK_DELETED_RETURN(it);
-   if (!eina_stringshare_replace(&it->label, text)) return;
-   if (VIEW(it))
-     edje_object_part_text_set(VIEW(it), "elm.text", it->label);
+   _elm_widget_item_text_part_set((Elm_Widget_Item *)it, NULL, text);
 }
 
 // XXX: all the below - make elm_object_item*() calls to do these
