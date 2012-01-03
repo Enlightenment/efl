@@ -1,7 +1,7 @@
 PROJECT_NAME           = Elementary
 PROJECT_NUMBER         =
 OUTPUT_DIRECTORY       = .
-INPUT                  = @srcdir@/examples.dox @top_srcdir@/src/lib/*.h @top_srcdir@/src/lib/Elementary.h.in @top_srcdir@/src/lib @srcdir@/index.doxy
+INPUT                  = @srcdir@/examples.dox @top_srcdir@/src/lib @srcdir@/index.doxy
 IMAGE_PATH             = @srcdir@/img
 OUTPUT_LANGUAGE        = English
 GENERATE_HTML          = YES
@@ -64,7 +64,7 @@ WARN_FORMAT            = "$file:$line: $text"
 WARN_LOGFILE           =
 FILE_PATTERNS          =
 RECURSIVE              = NO
-EXCLUDE                = @top_builddir@/src/lib/Elementary.h
+EXCLUDE                =
 EXCLUDE_SYMLINKS       = NO
 EXCLUDE_PATTERNS       =
 EXAMPLE_PATH           = @top_srcdir@/src/examples
