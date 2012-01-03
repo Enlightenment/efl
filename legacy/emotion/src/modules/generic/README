@@ -73,7 +73,7 @@ problems
 ========
  - file_set has some critical time when file is not set yet when we can't call
  some functions (I think only another file_set now);
- - comunication player -> emotion depends on '\n' to delimitate commands, will
+ - communication player -> emotion depends on '\n' to delimitate commands, will
  remove this soon (fix this urgently!);
  - need to implement missing APIs;
 
