@@ -22,10 +22,7 @@ edje_init(void)
    srand(time(NULL));
 
    if (!eina_init())
-     {
-	fprintf(stderr, "Edje: Eina init failed");
-	return --_edje_init_count;
-     }
+     return --_edje_init_count;
 
    _edje_default_log_dom = eina_log_domain_register
      ("edje", EDJE_DEFAULT_LOG_COLOR);

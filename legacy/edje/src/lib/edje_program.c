@@ -992,7 +992,7 @@ _edje_emit_full(Edje *ed, const char *sig, const char *src, void *data, void (*f
               break ;
 
            default:
-              fprintf(stderr, "SPANK SPANK SPANK !!!\nYou should never be here !\n");
+              ERR("SPANK SPANK SPANK !!!\nYou should never be here !");
               break;
           }
      }
