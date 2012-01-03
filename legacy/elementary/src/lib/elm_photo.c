@@ -175,7 +175,6 @@ _longpress(void *objv)
    Widget_Data *wd = elm_widget_data_get(objv);
    Evas_Object *tmp;
    const char *file;
-   char *buf;
 
    DBG("Long press: start drag!");
    wd->longtimer = NULL; /* clear: must return NULL now */
@@ -186,16 +185,15 @@ _longpress(void *objv)
    evas_object_image_file_get(tmp,&file,NULL);
    if (file)
      {
-        /* FIXME: Deal with relative paths */
-        buf = malloc(strlen(file) + strlen("file://") + 1);
-        sprintf(buf, "%s%s","file://",file);
+        char buf[4096 + 7];
+        /* FIXME: Deal with relative paths; use PATH_MAX */
+        snprintf(buf, sizeof(buf), "file://%s", file);
         if (elm_drag_start(objv, ELM_SEL_FORMAT_IMAGE,
                            buf, _drag_done_cb, NULL))
           {
              elm_object_scroll_freeze_push(objv);
              evas_object_smart_callback_call(objv, SIG_DRAG_START, NULL);
           }
-        free(buf);
      }
 
    return 0; /* Don't call again */
