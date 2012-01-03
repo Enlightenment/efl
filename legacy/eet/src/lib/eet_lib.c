@@ -374,7 +374,7 @@ eet_flush2(Eet_File *ef)
         if (!fp)
           return EET_ERROR_NOT_WRITABLE;
 
-        fcntl(fileno(fp), F_SETFD, FD_CLOEXEC);
+        fcntl(fd, F_SETFD, FD_CLOEXEC);
      }
    else
      return EET_ERROR_NOT_WRITABLE;
@@ -507,14 +507,6 @@ eet_flush2(Eet_File *ef)
 
    /* flush all write to the file. */
    fflush(fp);
-// this is going to really cause trouble. if ANYTHING this needs to go into a
-// thread spawned off - but even then...
-// in this case... ext4 is "wrong". (yes we can jump up and down and point posix
-// manual pages at eachother, but ext4 broke behavior that has been in place
-// for decades and that 1000's of apps rely on daily - that is that one operation
-// to disk is committed to disk BEFORE following operations, so the fs retains
-// a consistent state
-//   fsync(fileno(fp));
 
    /* append signature if required */
    if (ef->key)
