@@ -273,12 +273,15 @@ struct _Ecore_Evas_Engine
      {
         Evas_Object *frame;
 
-# ifdef BUILD_ECORE_EVAS_WAYLAND_SHM
-        struct wl_surface *surface;
         struct wl_shell_surface *shell_surface;
+        struct wl_surface *surface;
+
+# ifdef BUILD_ECORE_EVAS_WAYLAND_SHM
         struct wl_buffer *buffer;
 # endif
-
+# ifdef BUILD_ECORE_EVAS_WAYLAND_EGL
+        struct wl_egl_window *win;
+# endif
      } wl;
 #endif
 
