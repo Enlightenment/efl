@@ -50,10 +50,10 @@ static uint32_t _ecore_wl_disp_mask = 0;
 static uint32_t _ecore_wl_disp_format = WL_SHM_FORMAT_PREMULTIPLIED_ARGB32;
 static Eina_Rectangle _ecore_wl_screen;
 static Ecore_Fd_Handler *_ecore_wl_fd_hdl = NULL;
-static int _ecore_wl_input_x = 0;
-static int _ecore_wl_input_y = 0;
-static int _ecore_wl_input_sx = 0;
-static int _ecore_wl_input_sy = 0;
+static int _ecore_wl_screen_x = 0;
+static int _ecore_wl_screen_y = 0;
+static int _ecore_wl_surface_x = 0;
+static int _ecore_wl_surface_y = 0;
 static int _ecore_wl_input_modifiers = 0;
 static struct xkb_desc *_ecore_wl_xkb;
 
@@ -281,6 +281,13 @@ ecore_wl_sync(void)
    wl_display_iterate(_ecore_wl_disp, WL_DISPLAY_READABLE);
 }
 
+EAPI void 
+ecore_wl_pointer_xy_get(int *x, int *y) 
+{
+   if (x) *x = _ecore_wl_screen_x;
+   if (y) *y = _ecore_wl_screen_y;
+}
+
 /* local functions */
 static Eina_Bool 
 _ecore_wl_shutdown(Eina_Bool close_display) 
@@ -445,16 +452,16 @@ _ecore_wl_cb_handle_motion(void *data __UNUSED__, struct wl_input_device *dev, u
    if (dev != _ecore_wl_input) return;
    if (!(ev = malloc(sizeof(Ecore_Event_Mouse_Move)))) return;
 
-   _ecore_wl_input_x = x;
-   _ecore_wl_input_y = y;
-   _ecore_wl_input_sx = sx;
-   _ecore_wl_input_sy = sy;
+   _ecore_wl_screen_x = x;
+   _ecore_wl_screen_y = y;
+   _ecore_wl_surface_x = sx;
+   _ecore_wl_surface_y = sy;
 
    ev->timestamp = t;
-   ev->x = sx;
-   ev->y = sy;
-   ev->root.x = x;
-   ev->root.y = y;
+   ev->x = _ecore_wl_surface_x;
+   ev->y = _ecore_wl_surface_y;
+   ev->root.x = _ecore_wl_screen_x;
+   ev->root.y = _ecore_wl_screen_y;
 
    if (_ecore_wl_input_surface) 
      {
@@ -482,10 +489,10 @@ _ecore_wl_cb_handle_button(void *data __UNUSED__, struct wl_input_device *dev, u
         if (!(ev = malloc(sizeof(Ecore_Event_Mouse_Wheel)))) return;
 
         ev->timestamp = t;
-        ev->x = _ecore_wl_input_sx;
-        ev->y = _ecore_wl_input_sy;
-        ev->root.x = _ecore_wl_input_x;
-        ev->root.y = _ecore_wl_input_y;
+        ev->x = _ecore_wl_surface_x;
+        ev->y = _ecore_wl_surface_y;
+        ev->root.x = _ecore_wl_screen_x;
+        ev->root.y = _ecore_wl_screen_y;
         ev->modifiers = _ecore_wl_input_modifiers;
         ev->direction = 0;
 
@@ -514,6 +521,8 @@ _ecore_wl_cb_handle_button(void *data __UNUSED__, struct wl_input_device *dev, u
      {
         Ecore_Event_Mouse_Button *ev;
 
+        /* NB: Maybe need to handle _ecore_mouse_move here ?? */
+
         if (!(ev = malloc(sizeof(Ecore_Event_Mouse_Button)))) return;
 
         if (btn == BTN_LEFT)
@@ -524,10 +533,10 @@ _ecore_wl_cb_handle_button(void *data __UNUSED__, struct wl_input_device *dev, u
           ev->buttons = 3;
 
         ev->timestamp = t;
-        ev->x = _ecore_wl_input_sx;
-        ev->y = _ecore_wl_input_sy;
-        ev->root.x = _ecore_wl_input_x;
-        ev->root.y = _ecore_wl_input_y;
+        ev->x = _ecore_wl_surface_x;
+        ev->y = _ecore_wl_surface_y;
+        ev->root.x = _ecore_wl_screen_x;
+        ev->root.y = _ecore_wl_screen_y;
         ev->modifiers = _ecore_wl_input_modifiers;
 
         if (_ecore_wl_input_surface) 
@@ -568,10 +577,10 @@ _ecore_wl_cb_handle_pointer_focus(void *data __UNUSED__, struct wl_input_device 
 {
    if (dev != _ecore_wl_input) return;
 
-   _ecore_wl_input_x = x;
-   _ecore_wl_input_y = y;
-   _ecore_wl_input_sx = sx;
-   _ecore_wl_input_sy = sy;
+   _ecore_wl_screen_x = x;
+   _ecore_wl_screen_y = y;
+   _ecore_wl_surface_x = sx;
+   _ecore_wl_surface_y = sy;
 
    if (surface) 
      {
@@ -637,10 +646,10 @@ _ecore_wl_mouse_out_send(void)
 
    if (!(ev = calloc(1, sizeof(Ecore_Wl_Event_Mouse_Out)))) return;
 
-   ev->x = _ecore_wl_input_sx;
-   ev->y = _ecore_wl_input_sy;
-   ev->root.x = _ecore_wl_input_x;
-   ev->root.y = _ecore_wl_input_y;
+   ev->x = _ecore_wl_surface_x;
+   ev->y = _ecore_wl_surface_y;
+   ev->root.x = _ecore_wl_screen_x;
+   ev->root.y = _ecore_wl_screen_y;
    ev->modifiers = _ecore_wl_input_modifiers;
    ev->time = ecore_time_get();
 
@@ -662,10 +671,10 @@ _ecore_wl_mouse_in_send(void)
 
    if (!(ev = calloc(1, sizeof(Ecore_Wl_Event_Mouse_In)))) return;
 
-   ev->x = _ecore_wl_input_sx;
-   ev->y = _ecore_wl_input_sy;
-   ev->root.x = _ecore_wl_input_x;
-   ev->root.y = _ecore_wl_input_y;
+   ev->x = _ecore_wl_surface_x;
+   ev->y = _ecore_wl_surface_y;
+   ev->root.x = _ecore_wl_screen_x;
+   ev->root.y = _ecore_wl_screen_y;
    ev->modifiers = _ecore_wl_input_modifiers;
    ev->time = ecore_time_get();
 

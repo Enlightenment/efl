@@ -87,8 +87,9 @@ EAPI struct wl_shell *ecore_wl_shell_get(void);
 EAPI struct wl_input_device *ecore_wl_input_device_get(void);
 EAPI void ecore_wl_screen_size_get(int *w, int *h);
 EAPI unsigned int ecore_wl_format_get(void);
-EAPI void ecore_wl_sync(void);
 EAPI void ecore_wl_flush(void);
+EAPI void ecore_wl_sync(void);
+EAPI void ecore_wl_pointer_xy_get(int *x, int *y);
 
 EAPI extern int ECORE_WL_EVENT_MOUSE_IN;
 EAPI extern int ECORE_WL_EVENT_MOUSE_OUT;
