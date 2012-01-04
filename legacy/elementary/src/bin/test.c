@@ -209,7 +209,8 @@ my_win_main(char *autorun, Eina_Bool test_win_only)
    Evas_Object *fr = NULL, *tg = NULL, *sc = NULL, *ic = NULL;
    Evas_Object *tbx = NULL, *cfr = NULL, *tbx2 = NULL, *bt = NULL;
    Eina_List *tests, *l;
-   struct elm_test *t, *tt;
+   struct elm_test *t;
+   void *tt;
 
    if (test_win_only) goto add_tests;
    /* Create an elm window - It returns an evas object. This is a little
@@ -574,6 +575,7 @@ add_tests:
              evas_object_show(bt);
              evas_object_smart_callback_add(bt, "clicked", t->cb, NULL);
              pcat = t->category;
+             if (t == tt) tt = cfr;
              free(t);
           }
      }
@@ -584,10 +586,11 @@ add_tests:
    if (!test_win_only)
      {
         evas_object_show(win);
+        /* bring in autorun frame */
         if (autorun)
           {
              Evas_Coord x, y;
-             evas_object_geometry_get(tbx2, &x, &y, NULL, NULL);
+             evas_object_geometry_get(tt, &x, &y, NULL, NULL);
              elm_scroller_region_bring_in(sc, x, y, 0, 0);
           }
      }
