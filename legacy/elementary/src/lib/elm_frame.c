@@ -8,6 +8,8 @@ struct _Widget_Data
    Evas_Object *frm;
    Evas_Object *content;
    const char *label;
+   Eina_Bool collapsed : 1;
+   Eina_Bool collapsible : 1;
 };
 
 static const char SIG_CLICKED[] = "clicked";
@@ -192,6 +194,9 @@ _signal_click(Evas_Object *fr, Evas_Object *obj __UNUSED__, const char *emission
    wd = elm_widget_data_get(fr);
    if (!wd) return;
    evas_object_smart_callback_call(fr, SIG_CLICKED, NULL);
+   if (!wd->collapsible) return;
+   edje_object_signal_emit(wd->frm, "elm,action,collapse", "elm");
+   wd->collapsed++;
 }
 
 EAPI Evas_Object *
@@ -230,6 +235,50 @@ elm_frame_add(Evas_Object *parent)
    _sizing_eval(obj);
    return obj;
 }
+
+EAPI void
+elm_frame_autocollapse_set(Evas_Object *obj, Eina_Bool enable)
+{
+   Widget_Data *wd;
+   ELM_CHECK_WIDTYPE(obj, widtype);
+   wd = elm_widget_data_get(obj);
+   if (!wd) return;
+   wd->collapsible = !!enable;
+}
+
+EAPI Eina_Bool
+elm_frame_autocollapse_get(Evas_Object *obj)
+{
+   Widget_Data *wd;
+   ELM_CHECK_WIDTYPE(obj, widtype) EINA_FALSE;
+   wd = elm_widget_data_get(obj);
+   if (!wd) return EINA_FALSE;
+   return wd->collapsible;
+}
+
+EAPI void
+elm_frame_collapse_set(Evas_Object *obj, Eina_Bool enable)
+{
+   Widget_Data *wd;
+   ELM_CHECK_WIDTYPE(obj, widtype);
+   wd = elm_widget_data_get(obj);
+   if (!wd) return;
+   enable = !!enable;
+   if (wd->collapsed == enable) return;
+   edje_object_signal_emit(wd->frm, "elm,action,collapse", "elm");
+   wd->collapsed = enable;
+}
+
+EAPI Eina_Bool
+elm_frame_collapse_get(Evas_Object *obj)
+{
+   Widget_Data *wd;
+   ELM_CHECK_WIDTYPE(obj, widtype) EINA_FALSE;
+   wd = elm_widget_data_get(obj);
+   if (!wd) return EINA_FALSE;
+   return wd->collapsed;
+}
+
 
 EAPI void
 elm_frame_label_set(Evas_Object *obj, const char *label)

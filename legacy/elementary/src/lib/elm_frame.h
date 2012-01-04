@@ -41,5 +41,44 @@
 EAPI Evas_Object                 *elm_frame_add(Evas_Object *parent);
 
 /**
+ * @brief Toggle autocollapsing of a frame
+ * @param obj The frame
+ * @param enable Whether to enable autocollapse
+ *
+ * When @p enable is EINA_TRUE, clicking a frame's label will collapse the frame
+ * vertically, shrinking it to the height of the label.
+ * By default, this is DISABLED.
+ */
+EAPI void elm_frame_autocollapse_set(Evas_Object *obj, Eina_Bool enable);
+
+/**
+ * @brief Determine autocollapsing of a frame
+ * @param obj The frame
+ * @return Whether autocollapse is enabled
+ *
+ * When this returns EINA_TRUE, clicking a frame's label will collapse the frame
+ * vertically, shrinking it to the height of the label.
+ * By default, this is DISABLED.
+ */
+EAPI Eina_Bool elm_frame_autocollapse_get(Evas_Object *obj);
+
+/**
+ * @brief Manually collapse a frame
+ * @param obj The frame
+ * @param enable true to collapse, false to expand
+ *
+ * Use this to toggle the collapsed state of a frame.
+ */
+EAPI void elm_frame_collapse_set(Evas_Object *obj, Eina_Bool enable);
+
+/**
+ * @brief Determine the collapse state of a frame
+ * @param obj The frame
+ * @return true if collapsed, false otherwise
+ *
+ * Use this to determine the collapse state of a frame.
+ */
+EAPI Eina_Bool elm_frame_collapse_get(Evas_Object *obj);
+/**
  * @}
  */
