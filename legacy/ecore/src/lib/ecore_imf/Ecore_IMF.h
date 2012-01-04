@@ -138,7 +138,10 @@ typedef enum
    ECORE_IMF_INPUT_PANEL_LAYOUT_IP,              /**< IP layout */
    ECORE_IMF_INPUT_PANEL_LAYOUT_MONTH,           /**< Month layout */
    ECORE_IMF_INPUT_PANEL_LAYOUT_NUMBERONLY,      /**< Number Only layout */
-   ECORE_IMF_INPUT_PANEL_LAYOUT_INVALID
+   ECORE_IMF_INPUT_PANEL_LAYOUT_INVALID,         /**< Never use this */
+   ECORE_IMF_INPUT_PANEL_LAYOUT_HEX,             /**< Hexadecimal layout @since 1.2 */
+   ECORE_IMF_INPUT_PANEL_LAYOUT_TERMINAL,        /**< Command-line terminal layout @since 1.2 */
+   ECORE_IMF_INPUT_PANEL_LAYOUT_PASSWORD         /**< Like normal, but no auto-correct, no auto-capitalization etc. @since 1.2 */
 } Ecore_IMF_Input_Panel_Layout;
 
 typedef enum

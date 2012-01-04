@@ -454,3 +454,7 @@
         ecore con url struct) or could cause crashes if the memory
         pointed to became invalid.
 
+2012-01-04 Carsten Haitzler (The Rasterman)
+
+        * Add HEX, TERMINAL and PASSWORD layouts to ecore-imf
+
