@@ -73,7 +73,7 @@ static void
 _sel_cb(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info)
 {
    Elm_List_Item *it = event_info;
-   printf("Selected label: %s\n", elm_list_item_label_get(it));
+   printf("Selected label: %s\n", elm_object_item_text_get(it));
 }
 
 static void
@@ -95,7 +95,7 @@ _sel_data_cb(void *data, Evas_Object *obj __UNUSED__, void *event_info)
    char *content = data;
    Elm_List_Item *it = event_info;
    printf("Selected label: %s with data: %s\n",
-          elm_list_item_label_get(it), content);
+          elm_object_item_text_get(it), content);
 }
 
 static void
@@ -151,7 +151,7 @@ _print_cb(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 
    items = elm_list_items_get(li);
    EINA_LIST_FOREACH(items, l, it)
-      printf("%s\n", elm_list_item_label_get(it));
+      printf("%s\n", elm_object_item_text_get(it));
 }
 
 static void

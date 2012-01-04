@@ -113,11 +113,11 @@ int
 test_index2_cmp(const void *data1, const void *data2)
 {
    const char *label1, *label2;
-   const Elm_List_Item *it1 = data1;
-   const Elm_List_Item *it2 = data2;
+   const Elm_Object_Item *li_it1 = data1;
+   const Elm_Object_Item *li_it2 = data2;
 
-   label1 = elm_list_item_label_get(it1);
-   label2 = elm_list_item_label_get(it2);
+   label1 = elm_object_item_text_get(li_it1);
+   label2 = elm_object_item_text_get(li_it2);
 
    return strcasecmp(label1, label2);
 }
@@ -173,8 +173,8 @@ test_index2_it_del(void *data, Evas_Object *obj, void *event_info __UNUSED__)
         return;
      }
 
-   label = elm_list_item_label_get(it);
-   label_next = elm_list_item_label_get(it_next);
+   label = elm_object_item_text_get(it);
+   label_next = elm_object_item_text_get(it_next);
 
    iit = elm_index_item_find(gui->id, it);
    if (label[0] == label_next[0])

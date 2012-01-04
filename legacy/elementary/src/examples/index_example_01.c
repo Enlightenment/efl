@@ -36,7 +36,7 @@ _index_item_del(void        *data,
    fprintf(stdout, "Deleting associated list node (%s). Comparing index "
                    "item data reported via callback with the one returned by "
                    "index's API on items: %s.\n",
-           elm_list_item_label_get(data),
+           elm_object_item_text_get(data),
            data == elm_index_item_data_get(event_info) ? "OK" :
            "FAIL, something went wrong");
 
@@ -58,7 +58,7 @@ _item_del(void        *data __UNUSED__,
 
    fprintf(stdout, "Deleting last selected index item, which had letter"
            " %s (pointing to %s)\n", elm_index_item_letter_get(iit),
-           elm_list_item_label_get(lit));
+           elm_object_item_text_get(lit));
 
    elm_index_item_del(d.index, lit);
 }

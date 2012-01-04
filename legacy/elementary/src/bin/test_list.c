@@ -601,7 +601,7 @@ test_list4_swipe(void        *data,
    char *item_data;
    if ((!event_info) || (!data)) return;
 
-   item_data = elm_list_item_data_get(event_info);
+   item_data = elm_object_item_data_get(event_info);
 
    box = elm_box_add(info->win);
    elm_box_horizontal_set(box, EINA_FALSE);
@@ -750,16 +750,16 @@ test_list5_swipe(void        *data __UNUSED__,
                  void        *event_info)
 {
    Evas_Object *button;
-   struct list5_data_cb *info = elm_list_item_data_get(event_info);
+   struct list5_data_cb *info = elm_object_item_data_get(event_info);
 
-   if (elm_list_item_end_get(event_info)) return;
+   if (elm_object_item_part_content_get(event_info, "end")) return;
 
    button = elm_button_add(info->win);
    elm_object_text_set(button, "delete");
    evas_object_propagate_events_set(button, 0);
    evas_object_smart_callback_add(button, "clicked", test_list5_item_del,
                                   event_info);
-   elm_list_item_end_set(event_info, button);
+   elm_object_item_part_content_set(event_info, "end", button);
 }
 
 void
