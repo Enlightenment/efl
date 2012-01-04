@@ -210,7 +210,7 @@ eina_xattr_value_fd_ls(int fd)
    return &it->iterator;
 #else
    return NULL;
-   (void)file;
+   (void)fd;
 #endif
 }
 
@@ -246,7 +246,7 @@ eina_xattr_fd_ls(int fd)
    return &it->iterator;
 #else
    return NULL;
-   (void)file;
+   (void)fd;
 #endif
 }
 
