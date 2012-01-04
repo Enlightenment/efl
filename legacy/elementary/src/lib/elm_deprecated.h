@@ -2694,7 +2694,7 @@ EINA_DEPRECATED EAPI Eina_Bool                    elm_list_item_disabled_get(con
  *
  * This way, a data associated to a list item could be properly freed.
  * 
- * @deprecated Please use elm_widget_item_del_cb_set() instead.
+ * @deprecated Please use elm_object_item_del_cb_set() instead.
  *
  * @ingroup List
  */
@@ -2712,7 +2712,7 @@ EINA_DEPRECATED EAPI void                         elm_list_item_del_cb_set(Elm_L
  *
  * @see elm_list_item_append()
  *
- * @deprecated Please use elm_widget_item_data_get() instead.
+ * @deprecated Please use elm_object_item_data_get() instead.
  * 
  * @ingroup List
  */
