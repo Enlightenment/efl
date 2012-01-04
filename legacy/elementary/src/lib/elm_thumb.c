@@ -158,6 +158,7 @@ _thumb_ready(Widget_Data *wd, const char *thumb_path, const char *thumb_key)
    evas_object_size_hint_min_set(wd->self, mw, mh);
    eina_stringshare_replace(&(wd->thumb.file), thumb_path);
    eina_stringshare_replace(&(wd->thumb.key), thumb_key);
+   edje_object_signal_emit(wd->frame, EDJE_SIGNAL_PULSE_STOP, "elm");
    edje_object_signal_emit(wd->frame, EDJE_SIGNAL_GENERATE_STOP, "elm");
    evas_object_smart_callback_call(wd->self, SIG_GENERATE_STOP, NULL);
 }
@@ -348,8 +349,6 @@ _elm_thumb_done(Ethumb_Client *client __UNUSED__, const char *thumb_path, const 
 
    pending_request--;
    wd->thumb.request = NULL;
-
-   edje_object_signal_emit(wd->frame, EDJE_SIGNAL_PULSE_STOP, "elm");
 
    _finished_thumb(wd, thumb_path, thumb_key);
 }
