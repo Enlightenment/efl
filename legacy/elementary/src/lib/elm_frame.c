@@ -186,12 +186,12 @@ _content_unset_hook(Evas_Object *obj, const char *part)
 }
 
 static void
-_signal_click(void *data __UNUSED__, Evas_Object *obj, const char *emission __UNUSED__, const char *source __UNUSED__)
+_signal_click(Evas_Object *fr, Evas_Object *obj __UNUSED__, const char *emission __UNUSED__, const char *source __UNUSED__)
 {
    Widget_Data *wd;
-   wd = elm_widget_data_get(obj);
+   wd = elm_widget_data_get(fr);
    if (!wd) return;
-   evas_object_smart_callback_call(obj, SIG_CLICKED, NULL);
+   evas_object_smart_callback_call(fr, SIG_CLICKED, NULL);
 }
 
 EAPI Evas_Object *
@@ -222,8 +222,8 @@ elm_frame_add(Evas_Object *parent)
    elm_widget_resize_object_set(obj, wd->frm);
 
    evas_object_smart_callback_add(obj, "sub-object-del", _sub_del, obj);
-   edje_object_signal_callback_add(obj, "elm,action,click", "elm",
-                                   _signal_click, NULL);
+   edje_object_signal_callback_add(wd->frm, "elm,action,click", "elm",
+                                   (Edje_Signal_Cb)_signal_click, obj);
    evas_object_smart_callbacks_descriptions_set(obj, _signals);
 
    _mirrored_set(obj, elm_widget_mirrored_get(obj));
