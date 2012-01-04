@@ -171,6 +171,7 @@ struct _Widget_Data
    Eina_Bool                      horizontal : 1;
    Eina_Bool                      move_effect_enabled : 1;
    Eina_Bool                      reorder_item_changed : 1;
+   Eina_Bool                      filled : 1;
 };
 
 Elm_Gen_Item *_elm_genlist_item_new(Widget_Data *wd, const Elm_Gen_Item_Class *itc, const void *data, Elm_Gen_Item *parent, Evas_Smart_Cb func, const void *func_data);

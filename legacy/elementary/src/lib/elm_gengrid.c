@@ -799,6 +799,7 @@ _mouse_down(void        *data,
    it->wd->longpressed = EINA_FALSE;
    if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD) it->wd->on_hold = EINA_TRUE;
    else it->wd->on_hold = EINA_FALSE;
+   if (it->wd->on_hold) return;
    it->wd->wasselected = it->selected;
    _item_highlight(it);
    if (ev->flags & EVAS_BUTTON_DOUBLE_CLICK)
@@ -1195,7 +1196,11 @@ _item_place(Elm_Gen_Item *it,
         items_row = items_visible;
         if (items_row > it->wd->count)
           items_row = it->wd->count;
-        tch = items_row * it->wd->item_height;
+         if (it->wd->filled
+             && (unsigned int)it->wd->nmax > (unsigned int)it->wd->count)
+           tch = it->wd->nmax * it->wd->item_height;
+         else
+           tch = items_row * it->wd->item_height;
         alignh = (vh - tch) * it->wd->align_y;
      }
    else
@@ -1217,7 +1222,11 @@ _item_place(Elm_Gen_Item *it,
         items_col = items_visible;
         if (items_col > it->wd->count)
           items_col = it->wd->count;
-        tcw = items_col * it->wd->item_width;
+         if (it->wd->filled
+             && (unsigned int)it->wd->nmax > (unsigned int)it->wd->count)
+           tcw = it->wd->nmax * it->wd->item_width;
+         else
+           tcw = items_col * it->wd->item_width;
         alignw = (vw - tcw) * it->wd->align_x;
      }
 
@@ -2716,3 +2725,24 @@ elm_gengrid_item_bring_in(Elm_Gen_Item *it)
                                         it->wd->item_width,
                                         it->wd->item_height);
 }
+
+EAPI void
+elm_gengrid_filled_set(Evas_Object *obj, Eina_Bool fill)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype);
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return;
+   fill = !!fill;
+   if (wd->filled != fill)
+     wd->filled = fill;
+}
+
+EAPI Eina_Bool
+elm_gengrid_filled_get(const Evas_Object *obj)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype) EINA_FALSE;
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return EINA_FALSE;
+   return wd->filled;
+}
+

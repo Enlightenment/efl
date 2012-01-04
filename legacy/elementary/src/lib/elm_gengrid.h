@@ -1511,5 +1511,44 @@ EAPI Elm_Gengrid_Item             *elm_gengrid_selected_item_get(const Evas_Obje
 EAPI const Eina_List              *elm_gengrid_selected_items_get(const Evas_Object *obj);
 
 /**
+ * Set how the items grid's filled within a given gengrid widget
+ *
+ * @param obj The gengrid object.
+ * @param fill Filled if True
+ *
+ * This sets the fill state of the whole grid of items of a gengrid
+ * within its given viewport. By default, this value is False, meaning
+ * that if the first line of items grid's aren't filled
+ *
+ * Set how the items grid's filled within a given gengrid widget.
+ * This sets the fill state of the whole grid of items of a gengrid
+ * within its given viewport. By default, this value is false, meaning
+ * that if the first line of items grid's isn't filled, the items are
+ * centered with the alignment
+ *
+ * @see elm_gengrid_filled_get()
+ *
+ * @ingroup Gengrid
+ */
+EAPI void                          elm_gengrid_filled_set(Evas_Object *obj, Eina_Bool fill);
+
+
+/**
+ * Get how the items grid's filled within a given gengrid widget
+ *
+ * @param obj The gengrid object.
+ * @return @c EINA_TRUE, if filled is on, @c EINA_FALSE if it's
+ * off
+ *
+ * @note Use @c NULL pointers on the alignment values you're not
+ * interested in: they'll be ignored by the function.
+ *
+ * @see elm_gengrid_align_set() for more details
+ *
+ * @ingroup Gengrid
+ */
+EAPI Eina_Bool                     elm_gengrid_filled_get(const Evas_Object *obj);
+
+/**
  * @}
  */
