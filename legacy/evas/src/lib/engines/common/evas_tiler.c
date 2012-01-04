@@ -19,7 +19,9 @@ static inline list_node_t *rect_list_add_split_fuzzy(list_t *rects, list_node_t 
 static inline void rect_list_merge_rects(list_t *rects, list_t *to_merge, int accepted_error);
 static inline void rect_list_add_split_fuzzy_and_merge(list_t *rects, list_node_t *node, int split_accepted_error, int merge_accepted_error);
 static inline void rect_print(const rect_t r);
+#if 0
 static inline void rect_list_print(const list_t rects);
+#endif
 
 static const list_node_t list_node_zeroed = { NULL };
 static const list_t list_zeroed = { NULL, NULL };
@@ -117,6 +119,7 @@ rect_print(const rect_t r)
    INF("<rect(%d, %d, %d, %d)>", r.left, r.top, r.width, r.height);
 }
 
+#if 0
 static inline void
 rect_list_print(const list_t rects)
 {
@@ -143,6 +146,7 @@ rect_list_print(const list_t rects)
      }
    putchar(']');
 }
+#endif
 
 static inline void
 rect_list_append_node(list_t *rects, list_node_t *node)
