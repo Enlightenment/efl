@@ -122,7 +122,6 @@ group { name: "elm/frame/base/default";
          signal:  "mouse,up,1";
          source:  "event";
          action:  SIGNAL_EMIT "elm,action,click" "elm";
-         after: "toggle";
       }
       program { name: "toggle";
          signal:  "elm,action,collapse";
