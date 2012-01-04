@@ -1653,8 +1653,21 @@ EAPI void         edje_box_layout_register        (const char *name, Evas_Object
  *   }
  *
  * @endcode
+ * 
+ * @note You can get a callback every time edje re-calculates the object
+ * (either due to animation or some kind of signal or input). This is called
+ * in-line just after the recalculation has occured. It is a good idea not
+ * to go and delete or alter the object inside this callbacks, simply make
+ * a note that the recalculation has taken place and then do somethnig about
+ * it outside the callback. to register a callback use code like:
+ * 
+ * @code
+ *    evas_object_smart_callback_add(edje_obj, "recalc", my_cb, my_cb_data);
+ * @endcode
+ * 
+ * @see evas_object_smart_callback_add()
  *
- * @note before creating the first Edje object in your code, remember
+ * @note Before creating the first Edje object in your code, remember
  * to initialize the library, with edje_init(), or unexpected behavior
  * might occur.
  */
