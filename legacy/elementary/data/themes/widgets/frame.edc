@@ -141,12 +141,17 @@ group { name: "elm/frame/base/default";
          target: "over";
          target: "base";
          transition: LINEAR 0.1;
+         after: "signal";
       }
       program { name: "expand";
          action:  STATE_SET "default" 0.0;
          target: "over";
          target: "base";
          transition: LINEAR 0.1;
+         after: "signal";
+      }
+      program { name: "signal";
+         action: SIGNAL_EMIT "anim,done" "elm";
       }
    }
 }
