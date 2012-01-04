@@ -24,6 +24,7 @@ color_classes {
 
 group {
    name: "elm/border/base/default";
+   data.item: "focus_highlight" "off";
    images {
       image: "bd_top.png" COMP;
       image: "bd_top_hilight.png" COMP;
@@ -848,6 +849,36 @@ group {
          action: STATE_SET "default" 0.0;
          target: "bt_max_unfoc";
          target: "bt_max_foc";
+      }
+      program {
+         name: "move_start";
+         signal: "mouse,down,1";
+         source: "elm.event.titlebar";
+         action: SIGNAL_EMIT "elm,action,move,start" "elm";
+      }
+      program {
+         name: "move_stop";
+         signal: "mouse,up,1";
+         source: "elm.event.titlebar";
+         action: SIGNAL_EMIT "elm,action,move,stop" "elm";
+      }
+      program {
+         name: "minimize";
+         signal: "mouse,clicked,1";
+         source: "elm.event.minimize";
+         action: SIGNAL_EMIT "elm,action,minimize" "elm";
+      }
+      program {
+         name: "maximized";
+         signal: "mouse,clicked,1";
+         source: "elm.event.maximize";
+         action: SIGNAL_EMIT "elm,action,maximize" "elm";
+      }
+      program {
+         name: "close";
+         signal: "mouse,clicked,1";
+         source: "elm.event.close";
+         action: SIGNAL_EMIT "elm,action,close" "elm";
       }
    }
 }
