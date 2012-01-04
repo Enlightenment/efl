@@ -2135,6 +2135,12 @@ EAPI void elm_object_item_del_cb_set(Elm_Object_Item *it, Evas_Smart_Cb del_cb)
 }
 
 EAPI void
+elm_object_item_tooltip_text_set(Elm_Object_Item *item, const char *text)
+{
+   elm_widget_item_tooltip_text_set(item, text);
+}
+
+EAPI void
 elm_object_item_tooltip_content_cb_set(Elm_Object_Item *item, Elm_Tooltip_Item_Content_Cb func, const void *data, Evas_Smart_Cb del_cb)
 {
    elm_widget_item_tooltip_content_cb_set(item, func, data, del_cb);
