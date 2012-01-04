@@ -149,8 +149,8 @@ EAPI extern Elm_Version *elm_version;
 
 /* include these first for general used definitions */
 #include <elm_general.h>
-#include <elm_object_item.h>
 #include <elm_tooltip.h>
+#include <elm_object_item.h>
 
 /* special widgets - types used elsewhere */
 #include <elm_icon.h>

@@ -2133,3 +2133,40 @@ EAPI void elm_object_item_del_cb_set(Elm_Object_Item *it, Evas_Smart_Cb del_cb)
 {
    _elm_widget_item_del_cb_set((Elm_Widget_Item *) it, del_cb);
 }
+
+EAPI void
+elm_object_item_tooltip_content_cb_set(Elm_Object_Item *item, Elm_Tooltip_Item_Content_Cb func, const void *data, Evas_Smart_Cb del_cb)
+{
+   elm_widget_item_tooltip_content_cb_set(item, func, data, del_cb);
+}
+
+EAPI void
+elm_object_item_tooltip_unset(Elm_Object_Item *item)
+{
+   elm_widget_item_tooltip_unset(item);
+}
+
+EAPI Eina_Bool
+elm_object_item_tooltip_window_mode_set(Elm_Object_Item *item, Eina_Bool disable)
+{
+   return elm_widget_item_tooltip_window_mode_set(item, disable);
+}
+
+EAPI Eina_Bool
+elm_object_item_tooltip_window_mode_get(const Elm_Object_Item *item)
+{
+   return elm_widget_item_tooltip_window_mode_get(item);
+}
+
+EAPI void
+elm_object_item_tooltip_style_set(Elm_Object_Item *item, const char *style)
+{
+   elm_widget_item_tooltip_style_set(item, style);
+}
+
+EAPI const char *
+elm_object_item_tooltip_style_get(const Elm_Object_Item *item)
+{
+   return elm_widget_item_tooltip_style_get(item);
+}
+
