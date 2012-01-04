@@ -34,6 +34,7 @@ Additions:
     * add change information to "entry,changed,user"
     * add "CURRENT" option for transitions to transition from current state
     * lua color/text class, map, text, image, line, polygon and edje object API's
+    * "recalc" smart callback for object size changes
 
 Fixes:
 
