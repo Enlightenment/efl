@@ -100,6 +100,7 @@ _changed_size_hints(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__,
    // FIXME: why is this needed? how does edje get this unswallowed or
    // lose its callbacks to edje
    if (!wd) return;
+   if (wd->anim) return;
    edje_object_part_swallow(wd->frm, "elm.swallow.content", wd->content);
    _sizing_eval(data);
 }
