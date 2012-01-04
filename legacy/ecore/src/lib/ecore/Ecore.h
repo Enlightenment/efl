@@ -95,7 +95,17 @@
    @author Mike McCormack <mj.mccormack@samsung.com>
    @author Sangho Park <gouache95@gmail.com>
    @author Jihoon Kim <jihoon48.kim@samsung.com> <imfine98@gmail.com>
+   @author PnB <Poor.NewBie@gmail.com>
    @author Daniel Juyung Seo <seojuyung2@gmail.com> <juyung.seo@samsung.com>
+   @author Christopher 'devilhorns' Michael <cpmichael1@comcast.net>
+   @author ChunEon Park <hermet@hermet.pe.kr>
+   @author xlopez@igalia.com
+   @author Rafael Antognolli <antognolli@profusion.mobi>
+   @author Kim Yunhan <spbear@gmail.com>
+   @author Youness Alaoui <kakaroto@kakaroto.homelinux.net>
+   @author Bluezery <ohpowel@gmail.com>
+   @author Doyoun Kang <wayofmine@gmail.com> <doyoun.kang@samsung.com>
+   @author Haifeng Deng <haifeng.deng@samsung.com>
 
    Please contact <enlightenment-devel@lists.sourceforge.net> to get in
    contact with the developers and maintainers.
