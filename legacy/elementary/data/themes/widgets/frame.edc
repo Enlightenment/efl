@@ -151,7 +151,7 @@ group { name: "elm/frame/base/default";
          after: "signal";
       }
       program { name: "signal";
-         action: SIGNAL_EMIT "anim,done" "elm";
+         action: SIGNAL_EMIT "elm,anim,done" "elm";
       }
    }
 }
