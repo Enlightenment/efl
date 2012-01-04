@@ -257,3 +257,7 @@
 2012-01-03  Tom Hacohen (TAsn)
 
 	* Entry: Fixed undo/redo with IMF.
+
+2012-01-04 Carsten Haitzler (The Rasterman)
+
+        * Add HEX, TERMINAL and PASSWORD layouts to edje

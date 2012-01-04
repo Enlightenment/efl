@@ -794,7 +794,7 @@ typedef enum _Edje_External_Param_Flags
                                             EDJE_EXTERNAL_PARAM_FLAGS_STATE) /**< Convenience flag that sets property as GET, SET and STATE. */
 } Edje_External_Param_Flags;
 
-typedef enum
+typedef enum _Edje_Input_Panel_Layout
 {
    EDJE_INPUT_PANEL_LAYOUT_NORMAL,          /**< Default layout */
    EDJE_INPUT_PANEL_LAYOUT_NUMBER,          /**< Number layout */
@@ -804,7 +804,10 @@ typedef enum
    EDJE_INPUT_PANEL_LAYOUT_IP,              /**< IP layout */
    EDJE_INPUT_PANEL_LAYOUT_MONTH,           /**< Month layout */
    EDJE_INPUT_PANEL_LAYOUT_NUMBERONLY,      /**< Number Only layout */
-   EDJE_INPUT_PANEL_LAYOUT_INVALID
+   EDJE_INPUT_PANEL_LAYOUT_INVALID,         /**< Never use this */
+   EDJE_INPUT_PANEL_LAYOUT_HEX,             /**< Hexadecimal layout @since 1.2 */
+   EDJE_INPUT_PANEL_LAYOUT_TERMINAL,        /**< Command-line terminal layout @since 1.2 */
+   EDJE_INPUT_PANEL_LAYOUT_PASSWORD         /**< Like normal, but no auto-correct, no auto-capitalization etc. @since 1.2 */
 } Edje_Input_Panel_Layout;
 
 /**
