@@ -35,7 +35,7 @@
  * - @c func - A struct with pointers to functions that will be called when
  *   an item is going to be actually created. All of them receive a @c data
  *   parameter that will point to the same data passed to
- *   elm_genlist_item_append() and related item creation functions, and a @c
+ *   elm_genlist_item_append() and related item creation functions, and an @c
  *   obj parameter that points to the genlist object itself.
  *
  * The function pointers inside @c func are @c text_get, @c content_get, @c
@@ -165,7 +165,7 @@
  *
  * If an item changes (state of boolean changes, text or contents change),
  * then use elm_genlist_item_update() to have genlist update the item with
- * the new state. Genlist will re-realize the item thus call the functions
+ * the new state. Genlist will re-realize the item and thus call the functions
  * in the _Elm_Genlist_Item_Class for that item.
  *
  * To programmatically (un)select an item use elm_genlist_item_selected_set().
