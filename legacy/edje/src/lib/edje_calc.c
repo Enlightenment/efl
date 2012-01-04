@@ -460,7 +460,8 @@ _edje_recalc_do(Edje *ed)
    ed->all_part_change = 0;
    ed->text_part_change = 0;
 #endif
-   evas_object_smart_callback_call(ed->obj, "recalc", NULL);
+   if (!ed->calc_only)
+     evas_object_smart_callback_call(ed->obj, "recalc", NULL);
 }
 
 void
