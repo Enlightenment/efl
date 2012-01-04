@@ -35,13 +35,14 @@ static Eina_Bool _ecore_wl_cb_fd_handle(void *data, Ecore_Fd_Handler *hdl __UNUS
 static void _ecore_wl_cb_handle_motion(void *data __UNUSED__, struct wl_input_device *dev, uint32_t t, int32_t x, int32_t y, int32_t sx, int32_t sy);
 static void _ecore_wl_cb_handle_button(void *data __UNUSED__, struct wl_input_device *dev, uint32_t t, uint32_t btn, uint32_t state);
 static void _ecore_wl_cb_handle_key(void *data __UNUSED__, struct wl_input_device *dev, uint32_t t __UNUSED__, uint32_t key, uint32_t state);
-static void _ecore_wl_cb_handle_pointer_focus(void *data __UNUSED__, struct wl_input_device *dev, uint32_t t __UNUSED__, struct wl_surface *surface, int32_t x, int32_t y, int32_t sx, int32_t sy);
+static void _ecore_wl_cb_handle_pointer_focus(void *data __UNUSED__, struct wl_input_device *dev, uint32_t t, struct wl_surface *surface, int32_t x, int32_t y, int32_t sx, int32_t sy);
 static void _ecore_wl_cb_handle_keyboard_focus(void *data __UNUSED__, struct wl_input_device *dev, uint32_t t __UNUSED__, struct wl_surface *surface, struct wl_array *keys);
 
-static void _ecore_wl_mouse_out_send(void);
-static void _ecore_wl_mouse_in_send(void);
-static void _ecore_wl_focus_out_send(void);
-static void _ecore_wl_focus_in_send(void);
+static void _ecore_wl_mouse_move_send(uint32_t timestamp);
+static void _ecore_wl_mouse_out_send(struct wl_surface *surface, uint32_t timestamp);
+static void _ecore_wl_mouse_in_send(struct wl_surface *surface, uint32_t timestamp);
+static void _ecore_wl_focus_out_send(struct wl_surface *surface, uint32_t timestamp);
+static void _ecore_wl_focus_in_send(struct wl_surface *surface, uint32_t timestamp);
 
 /* local variables */
 static int _ecore_wl_init_count = 0;
@@ -447,34 +448,14 @@ _ecore_wl_cb_fd_handle(void *data, Ecore_Fd_Handler *hdl __UNUSED__)
 static void 
 _ecore_wl_cb_handle_motion(void *data __UNUSED__, struct wl_input_device *dev, uint32_t t, int32_t x, int32_t y, int32_t sx, int32_t sy) 
 {
-   Ecore_Event_Mouse_Move *ev;
-
    if (dev != _ecore_wl_input) return;
-   if (!(ev = malloc(sizeof(Ecore_Event_Mouse_Move)))) return;
 
    _ecore_wl_screen_x = x;
    _ecore_wl_screen_y = y;
    _ecore_wl_surface_x = sx;
    _ecore_wl_surface_y = sy;
 
-   ev->timestamp = t;
-   ev->x = _ecore_wl_surface_x;
-   ev->y = _ecore_wl_surface_y;
-   ev->root.x = _ecore_wl_screen_x;
-   ev->root.y = _ecore_wl_screen_y;
-
-   if (_ecore_wl_input_surface) 
-     {
-        unsigned int id = 0;
-
-        if ((id = (unsigned int)wl_surface_get_user_data(_ecore_wl_input_surface)))
-          {
-             ev->window = id;
-             ev->event_window = id;
-          }
-     }
-
-   ecore_event_add(ECORE_EVENT_MOUSE_MOVE, ev, NULL, NULL);
+   _ecore_wl_mouse_move_send(t);
 }
 
 static void 
@@ -521,7 +502,7 @@ _ecore_wl_cb_handle_button(void *data __UNUSED__, struct wl_input_device *dev, u
      {
         Ecore_Event_Mouse_Button *ev;
 
-        /* NB: Maybe need to handle _ecore_mouse_move here ?? */
+        _ecore_wl_mouse_move_send(t);
 
         if (!(ev = malloc(sizeof(Ecore_Event_Mouse_Button)))) return;
 
@@ -538,6 +519,21 @@ _ecore_wl_cb_handle_button(void *data __UNUSED__, struct wl_input_device *dev, u
         ev->root.x = _ecore_wl_screen_x;
         ev->root.y = _ecore_wl_screen_y;
         ev->modifiers = _ecore_wl_input_modifiers;
+
+        /* FIXME: Need to get these from Wayland somehow */
+        ev->double_click = 0;
+        ev->triple_click = 0;
+
+        ev->multi.device = 0;
+        ev->multi.radius = 1;
+        ev->multi.radius_x = 1;
+        ev->multi.radius_y = 1;
+        ev->multi.pressure = 1.0;
+        ev->multi.angle = 0.0;
+        ev->multi.x = _ecore_wl_surface_x;
+        ev->multi.y = _ecore_wl_surface_y;
+        ev->multi.root.x = _ecore_wl_screen_x;
+        ev->multi.root.y = _ecore_wl_screen_y;
 
         if (_ecore_wl_input_surface) 
           {
@@ -573,7 +569,7 @@ _ecore_wl_cb_handle_key(void *data __UNUSED__, struct wl_input_device *dev, uint
 }
 
 static void 
-_ecore_wl_cb_handle_pointer_focus(void *data __UNUSED__, struct wl_input_device *dev, uint32_t t __UNUSED__, struct wl_surface *surface, int32_t x, int32_t y, int32_t sx, int32_t sy) 
+_ecore_wl_cb_handle_pointer_focus(void *data __UNUSED__, struct wl_input_device *dev, uint32_t t, struct wl_surface *surface, int32_t x, int32_t y, int32_t sx, int32_t sy) 
 {
    if (dev != _ecore_wl_input) return;
 
@@ -582,56 +578,80 @@ _ecore_wl_cb_handle_pointer_focus(void *data __UNUSED__, struct wl_input_device 
    _ecore_wl_surface_x = sx;
    _ecore_wl_surface_y = sy;
 
+   _ecore_wl_mouse_move_send(t);
+
    if (surface) 
      {
         if (_ecore_wl_input_surface) 
           {
              if (_ecore_wl_input_surface != surface) 
                {
-                  /* NB: Pointer focus in different window. Send mouse & focus 
-                   * out events for previous window */
-                  _ecore_wl_mouse_out_send();
-                  _ecore_wl_focus_out_send();
+                  /* NB: Send mouse out events for previous window */
+                  _ecore_wl_mouse_out_send(_ecore_wl_input_surface, t);
 
-                  /* NB: Send mouse & focus in events for new window */
-                  _ecore_wl_input_surface = surface;
-                  _ecore_wl_mouse_in_send();
-                  _ecore_wl_focus_in_send();
+                  /* NB: Send mouse in events for new window */
+                  _ecore_wl_mouse_in_send(surface, t);
                }
           }
         else 
-          {
-             _ecore_wl_input_surface = surface;
-             _ecore_wl_mouse_in_send();
-             _ecore_wl_focus_in_send();
-             /* printf("\tPointer Focus In New Window\n"); */
-          }
+          _ecore_wl_mouse_in_send(surface, t);
      }
    else 
      {
         if (_ecore_wl_input_surface) 
-          {
-             _ecore_wl_mouse_out_send();
-             _ecore_wl_focus_out_send();
-             /* printf("\tPointer Focus Not On a Window\n"); */
-          }
-        else
-          printf("\tUnhandled Pointer Focus Case !!!\n");
-        _ecore_wl_input_surface = NULL;
+          _ecore_wl_mouse_out_send(_ecore_wl_input_surface, t);
+        /* else */
+        /*   printf("\tUnhandled Pointer Focus Case !!!\n"); */
+//        _ecore_wl_input_surface = NULL;
      }
 }
 
 static void 
-_ecore_wl_cb_handle_keyboard_focus(void *data __UNUSED__, struct wl_input_device *dev, uint32_t t __UNUSED__, struct wl_surface *surface, struct wl_array *keys) 
+_ecore_wl_cb_handle_keyboard_focus(void *data __UNUSED__, struct wl_input_device *dev, uint32_t t, struct wl_surface *surface, struct wl_array *keys) 
 {
    unsigned int *keyend = 0, *i = 0;
 
    if (dev != _ecore_wl_input) return;
 
-   if ((surface) && (surface != _ecore_wl_input_surface)) 
-     _ecore_wl_input_surface = surface;
-   else if (!surface) 
-     _ecore_wl_input_surface = NULL;
+   if (surface) 
+     {
+        if (_ecore_wl_input_surface) 
+          {
+             if (_ecore_wl_input_surface != surface) 
+               {
+                  /* send focus out to previous */
+                  _ecore_wl_focus_out_send(_ecore_wl_input_surface, t);
+
+                  /* set new input surface */
+                  _ecore_wl_input_surface = surface;
+
+                  /* send focus to new surface */
+                  _ecore_wl_focus_in_send(surface, t);
+               }
+          }
+        else 
+          {
+             /* set new input surface */
+             _ecore_wl_input_surface = surface;
+
+             /* send focus to new surface */
+             _ecore_wl_focus_in_send(surface, t);
+          }
+     }
+   else 
+     {
+        if (_ecore_wl_input_surface) 
+          _ecore_wl_focus_out_send(_ecore_wl_input_surface, t);
+        /* else */
+        /*   printf("Unhandled Focus Case\n"); */
+
+        _ecore_wl_input_surface = NULL;
+     }
+
+   /* if ((surface) && (surface != _ecore_wl_input_surface))  */
+   /*   _ecore_wl_input_surface = surface; */
+   /* else if (!surface)  */
+   /*   _ecore_wl_input_surface = NULL; */
 
    keyend = keys->data + keys->size;
    _ecore_wl_input_modifiers = 0;
@@ -640,7 +660,46 @@ _ecore_wl_cb_handle_keyboard_focus(void *data __UNUSED__, struct wl_input_device
 }
 
 static void 
-_ecore_wl_mouse_out_send(void) 
+_ecore_wl_mouse_move_send(uint32_t timestamp)
+{
+   Ecore_Event_Mouse_Move *ev;
+
+   if (!(ev = malloc(sizeof(Ecore_Event_Mouse_Move)))) return;
+
+   ev->timestamp = timestamp;
+   ev->x = _ecore_wl_surface_x;
+   ev->y = _ecore_wl_surface_y;
+   ev->root.x = _ecore_wl_screen_x;
+   ev->root.y = _ecore_wl_screen_y;
+   ev->modifiers = _ecore_wl_input_modifiers;
+
+   ev->multi.device = 0;
+   ev->multi.radius = 1;
+   ev->multi.radius_x = 1;
+   ev->multi.radius_y = 1;
+   ev->multi.pressure = 1.0;
+   ev->multi.angle = 0.0;
+   ev->multi.x = _ecore_wl_surface_x;
+   ev->multi.y = _ecore_wl_surface_y;
+   ev->multi.root.x = _ecore_wl_screen_x;
+   ev->multi.root.y = _ecore_wl_screen_y;
+
+   if (_ecore_wl_input_surface) 
+     {
+        unsigned int id = 0;
+
+        if ((id = (unsigned int)wl_surface_get_user_data(_ecore_wl_input_surface)))
+          {
+             ev->window = id;
+             ev->event_window = id;
+          }
+     }
+
+   ecore_event_add(ECORE_EVENT_MOUSE_MOVE, ev, NULL, NULL);
+}
+
+static void 
+_ecore_wl_mouse_out_send(struct wl_surface *surface, uint32_t timestamp) 
 {
    Ecore_Wl_Event_Mouse_Out *ev;
 
@@ -651,13 +710,13 @@ _ecore_wl_mouse_out_send(void)
    ev->root.x = _ecore_wl_screen_x;
    ev->root.y = _ecore_wl_screen_y;
    ev->modifiers = _ecore_wl_input_modifiers;
-   ev->time = ecore_time_get();
+   ev->time = timestamp;
 
-   if (_ecore_wl_input_surface) 
+   if (surface) 
      {
         unsigned int id = 0;
 
-        if ((id = (unsigned int)wl_surface_get_user_data(_ecore_wl_input_surface))) 
+        if ((id = (unsigned int)wl_surface_get_user_data(surface))) 
           ev->window = id;
      }
 
@@ -665,7 +724,7 @@ _ecore_wl_mouse_out_send(void)
 }
 
 static void 
-_ecore_wl_mouse_in_send(void) 
+_ecore_wl_mouse_in_send(struct wl_surface *surface, uint32_t timestamp) 
 {
    Ecore_Wl_Event_Mouse_In *ev;
 
@@ -676,13 +735,13 @@ _ecore_wl_mouse_in_send(void)
    ev->root.x = _ecore_wl_screen_x;
    ev->root.y = _ecore_wl_screen_y;
    ev->modifiers = _ecore_wl_input_modifiers;
-   ev->time = ecore_time_get();
+   ev->time = timestamp;
 
-   if (_ecore_wl_input_surface) 
+   if (surface) 
      {
         unsigned int id = 0;
 
-        if ((id = (unsigned int)wl_surface_get_user_data(_ecore_wl_input_surface))) 
+        if ((id = (unsigned int)wl_surface_get_user_data(surface))) 
           ev->window = id;
      }
 
@@ -690,34 +749,34 @@ _ecore_wl_mouse_in_send(void)
 }
 
 static void 
-_ecore_wl_focus_out_send(void) 
+_ecore_wl_focus_out_send(struct wl_surface *surface, uint32_t timestamp) 
 {
    Ecore_Wl_Event_Focus_Out *ev;
 
    if (!(ev = calloc(1, sizeof(Ecore_Wl_Event_Focus_Out)))) return;
-   ev->time = ecore_time_get();
-   if (_ecore_wl_input_surface) 
+   ev->time = timestamp;
+   if (surface) 
      {
         unsigned int id = 0;
 
-        if ((id = (unsigned int)wl_surface_get_user_data(_ecore_wl_input_surface))) 
+        if ((id = (unsigned int)wl_surface_get_user_data(surface))) 
           ev->window = id;
      }
    ecore_event_add(ECORE_WL_EVENT_FOCUS_OUT, ev, NULL, NULL);
 }
 
 static void 
-_ecore_wl_focus_in_send(void) 
+_ecore_wl_focus_in_send(struct wl_surface *surface, uint32_t timestamp) 
 {
    Ecore_Wl_Event_Focus_In *ev;
 
    if (!(ev = calloc(1, sizeof(Ecore_Wl_Event_Focus_In)))) return;
-   ev->time = ecore_time_get();
-   if (_ecore_wl_input_surface) 
+   ev->time = timestamp;
+   if (surface) 
      {
         unsigned int id = 0;
 
-        if ((id = (unsigned int)wl_surface_get_user_data(_ecore_wl_input_surface))) 
+        if ((id = (unsigned int)wl_surface_get_user_data(surface))) 
           ev->window = id;
      }
    ecore_event_add(ECORE_WL_EVENT_FOCUS_IN, ev, NULL, NULL);
