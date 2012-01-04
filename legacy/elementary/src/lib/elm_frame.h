@@ -16,7 +16,10 @@
  * @li outdent_top
  * @li outdent_bottom
  *
- * Of all this styles only default shows the title. Frame emits no signals.
+ * Of all this styles only default shows the title.
+ *
+ * Smart callbacks one can listen to:
+ * - @c "clicked" - The user has clicked the frame's label
  *
  * Default contents parts of the frame widget that you can use for are:
  * @li "default" - A content of the frame

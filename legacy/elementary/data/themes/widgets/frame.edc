@@ -35,7 +35,6 @@ group { name: "elm/frame/base/default";
       }
       part { name: "elm.text";
          type: TEXT;
-         mouse_events:   0;
          scale: 1;
          description { state: "default" 0.0;
             align: 0.0 0.0;
@@ -83,6 +82,13 @@ group { name: "elm/frame/base/default";
             }
             rel2.offset: -9 -9;
          }
+      }
+   }
+   programs {
+      program { name: "click";
+         signal:  "mouse,up,1";
+         source:  "elm.text";
+         action:  SIGNAL_EMIT "elm,action,click" "elm";
       }
    }
 }
