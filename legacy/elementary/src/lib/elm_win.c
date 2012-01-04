@@ -76,9 +76,13 @@ static void _elm_win_focus_highlight_reconfigure_job_stop(Elm_Win *win);
 static void _elm_win_focus_highlight_anim_end(void *data, Evas_Object *obj, const char *emission, const char *source);
 static void _elm_win_focus_highlight_reconfigure(Elm_Win *win);
 
-static void _elm_win_frame_callback_mouse_down(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info);
-static void _elm_win_frame_callback_mouse_move(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info);
-static void _elm_win_frame_callback_mouse_up(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info);
+static void _elm_win_frame_add(Elm_Win *win, const char *style);
+static void _elm_win_frame_cb_move_start(void *data, Evas_Object *obj __UNUSED__, const char *sig __UNUSED__, const char *source __UNUSED__);
+static void _elm_win_frame_cb_move_stop(void *data, Evas_Object *obj __UNUSED__, const char *sig __UNUSED__, const char *source __UNUSED__);
+static void _elm_win_frame_cb_minimize(void *data, Evas_Object *obj __UNUSED__, const char *sig __UNUSED__, const char *source __UNUSED__);
+static void _elm_win_frame_cb_maximize(void *data, Evas_Object *obj __UNUSED__, const char *sig __UNUSED__, const char *source __UNUSED__);
+static void _elm_win_frame_cb_close(void *data, Evas_Object *obj __UNUSED__, const char *sig __UNUSED__, const char *source __UNUSED__);
+static void _elm_win_frame_cb_mouse_move(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info);
 
 static const char SIG_DELETE_REQUEST[] = "delete,request";
 static const char SIG_FOCUS_OUT[] = "focus,out";
@@ -172,7 +176,6 @@ _shot_file_get(Elm_Win *win)
 static int
 _shot_repeat_count_get(Elm_Win *win)
 {
-
    char *p, *pd;
    char *d = strdup(win->shot.info);
 
@@ -1302,22 +1305,78 @@ the_end:
 }
 
 static void 
-_elm_win_frame_callback_mouse_down(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info) 
+_elm_win_frame_add(Elm_Win *win, const char *style)
 {
-   Elm_Win *win;
-   Evas_Event_Mouse_Down *ev;
+   evas_output_framespace_set(win->evas, 0, 22, 0, 26);
 
-   if (!(win = data)) return;
-   ev = event_info;
-   if (ev->button == 1) 
-     {
-        win->moving = EINA_TRUE;
-        /* FIXME: Change Mouse Pointer */
-     }
+   win->frame_obj = edje_object_add(win->evas);
+   _elm_theme_set(NULL, win->frame_obj, "border", "base", style);
+   evas_object_is_frame_object_set(win->frame_obj, EINA_TRUE);
+   evas_object_move(win->frame_obj, 0, 0);
+   evas_object_resize(win->frame_obj, 1, 1);
+
+   evas_object_event_callback_add(win->frame_obj, EVAS_CALLBACK_MOUSE_MOVE, 
+                                  _elm_win_frame_cb_mouse_move, win);
+
+   edje_object_signal_callback_add(win->frame_obj, "elm,action,move,start", 
+                                   "elm", _elm_win_frame_cb_move_start, win);
+   edje_object_signal_callback_add(win->frame_obj, "elm,action,move,stop", 
+                                   "elm", _elm_win_frame_cb_move_stop, win);
+   edje_object_signal_callback_add(win->frame_obj, "elm,action,minimize", 
+                                   "elm", _elm_win_frame_cb_minimize, win);
+   edje_object_signal_callback_add(win->frame_obj, "elm,action,maximize", 
+                                   "elm", _elm_win_frame_cb_maximize, win);
+   edje_object_signal_callback_add(win->frame_obj, "elm,action,close", 
+                                   "elm", _elm_win_frame_cb_close, win);
 }
 
 static void 
-_elm_win_frame_callback_mouse_move(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info) 
+_elm_win_frame_cb_move_start(void *data, Evas_Object *obj __UNUSED__, const char *sig __UNUSED__, const char *source __UNUSED__)
+{
+   Elm_Win *win;
+
+   if (!(win = data)) return;
+   win->moving = EINA_TRUE;
+}
+
+static void 
+_elm_win_frame_cb_move_stop(void *data, Evas_Object *obj __UNUSED__, const char *sig __UNUSED__, const char *source __UNUSED__)
+{
+   Elm_Win *win;
+
+   if (!(win = data)) return;
+   win->moving = EINA_FALSE;
+}
+
+static void 
+_elm_win_frame_cb_minimize(void *data, Evas_Object *obj __UNUSED__, const char *sig __UNUSED__, const char *source __UNUSED__)
+{
+   Elm_Win *win;
+
+   if (!(win = data)) return;
+   ecore_evas_iconified_set(win->ee, EINA_TRUE);
+}
+
+static void 
+_elm_win_frame_cb_maximize(void *data, Evas_Object *obj __UNUSED__, const char *sig __UNUSED__, const char *source __UNUSED__)
+{
+   Elm_Win *win;
+
+   if (!(win = data)) return;
+   ecore_evas_maximized_set(win->ee, EINA_TRUE);
+}
+
+static void 
+_elm_win_frame_cb_close(void *data, Evas_Object *obj __UNUSED__, const char *sig __UNUSED__, const char *source __UNUSED__)
+{
+   Elm_Win *win;
+
+   if (!(win = data)) return;
+   evas_object_del(win->win_obj);
+}
+
+static void 
+_elm_win_frame_cb_mouse_move(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info) 
 {
    Elm_Win *win;
    Evas_Event_Mouse_Move *ev;
@@ -1326,23 +1385,8 @@ _elm_win_frame_callback_mouse_move(void *data, Evas *e __UNUSED__, Evas_Object *
    ev = event_info;
    if (win->moving) 
      {
-        /* NB: 0, 0 are bogus values and not used */
+        /* NB: 0, 0 are bogus values and not used in wayland */
         ecore_evas_move(win->ee, 0, 0);
-     }
-}
-
-static void 
-_elm_win_frame_callback_mouse_up(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info) 
-{
-   Elm_Win *win;
-   Evas_Event_Mouse_Up *ev;
-
-   if (!(win = data)) return;
-   ev = event_info;
-   if (ev->button == 1) 
-     {
-        win->moving = EINA_FALSE;
-        /* FIXME: Change Mouse Pointer */
      }
 }
 
@@ -1597,26 +1641,8 @@ elm_win_add(Evas_Object *parent, const char *name, Elm_Win_Type type)
           {
              win->ee = ecore_evas_wayland_shm_new(NULL, 0, 0, 1, 1, 0);
              win->evas = ecore_evas_get(win->ee);
-             evas_output_framespace_set(win->evas, 0, 22, 0, 26);
 
-             win->frame_obj = edje_object_add(win->evas);
-             _elm_theme_set(NULL, win->frame_obj, "border", "base", "default");
-             evas_object_is_frame_object_set(win->frame_obj, EINA_TRUE);
-             evas_object_move(win->frame_obj, 0, 0);
-             evas_object_resize(win->frame_obj, 1, 1);
-
-             evas_object_event_callback_add(win->frame_obj, 
-                                            EVAS_CALLBACK_MOUSE_DOWN,
-                                            _elm_win_frame_callback_mouse_down, 
-                                            win);
-             evas_object_event_callback_add(win->frame_obj, 
-                                            EVAS_CALLBACK_MOUSE_MOVE,
-                                            _elm_win_frame_callback_mouse_move, 
-                                            win);
-             evas_object_event_callback_add(win->frame_obj, 
-                                            EVAS_CALLBACK_MOUSE_UP,
-                                            _elm_win_frame_callback_mouse_up, 
-                                            win);
+             _elm_win_frame_add(win, "default");
           }
         else if (!strncmp(_elm_config->engine, "shot:", 5))
           {
