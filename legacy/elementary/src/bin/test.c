@@ -209,7 +209,7 @@ my_win_main(char *autorun, Eina_Bool test_win_only)
    Evas_Object *fr = NULL, *tg = NULL, *sc = NULL, *ic = NULL;
    Evas_Object *tbx = NULL, *cfr = NULL, *tbx2 = NULL, *bt = NULL;
    Eina_List *tests, *l;
-   struct elm_test *t;
+   struct elm_test *t, *tt;
 
    if (test_win_only) goto add_tests;
    /* Create an elm window - It returns an evas object. This is a little
@@ -528,6 +528,7 @@ add_tests:
           }
 
      }
+   tt = t;
 
    if (test_win_only) return;
 
@@ -541,6 +542,7 @@ add_tests:
                {
                   cfr = elm_frame_add(win);
                   // FIXME: add new style of frame for this
+                  elm_frame_autocollapse_set(cfr, EINA_TRUE);
                   elm_object_text_set(cfr, t->category);
                   evas_object_size_hint_weight_set(cfr, EVAS_HINT_EXPAND, 0.0);
                   evas_object_size_hint_fill_set(cfr, EVAS_HINT_FILL, 0.0);
@@ -580,7 +582,15 @@ add_tests:
    evas_object_resize(win, 480, 480);
    /* show the window */
    if (!test_win_only)
-     evas_object_show(win);
+     {
+        evas_object_show(win);
+        if (autorun)
+          {
+             Evas_Coord x, y;
+             evas_object_geometry_get(tbx2, &x, &y, NULL, NULL);
+             elm_scroller_region_bring_in(sc, x, y, 0, 0);
+          }
+     }
 }
 
 /* this is your elementary main function - it MUST be called IMMEDIATELY
