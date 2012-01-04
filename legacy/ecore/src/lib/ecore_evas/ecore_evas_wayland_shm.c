@@ -67,6 +67,8 @@ static void _ecore_evas_wl_object_cursor_set(Ecore_Evas *ee, Evas_Object  *obj, 
 static void _ecore_evas_wl_object_cursor_del(void *data, Evas *evas __UNUSED__, Evas_Object *obj __UNUSED__, void *event __UNUSED__);
 static void _ecore_evas_wl_layer_set(Ecore_Evas *ee, int layer);
 static void _ecore_evas_wl_focus_set(Ecore_Evas *ee, int focus __UNUSED__);
+static void _ecore_evas_wl_iconified_set(Ecore_Evas *ee, int iconify);
+static void _ecore_evas_wl_maximized_set(Ecore_Evas *ee, int max);
 static int _ecore_evas_wl_render(Ecore_Evas *ee);
 static void _ecore_evas_wl_screen_geometry_get(const Ecore_Evas *ee __UNUSED__, int *x, int *y, int *w, int *h);
 static void _ecore_evas_wl_buffer_new(Ecore_Evas *ee, void **dest);
@@ -134,10 +136,10 @@ static Ecore_Evas_Engine_Func _ecore_wl_engine_func =
    _ecore_evas_wl_object_cursor_set, 
    _ecore_evas_wl_layer_set, 
    _ecore_evas_wl_focus_set, 
-   NULL, // func iconified set
+   _ecore_evas_wl_iconified_set, 
    NULL, // func borderless set
    NULL, // func override set
-   NULL, // func maximized set
+   _ecore_evas_wl_maximized_set, 
    NULL, // func fullscreen set
    NULL, // func avoid_damage set
    NULL, // func withdrawn set
@@ -763,6 +765,28 @@ _ecore_evas_wl_focus_set(Ecore_Evas *ee, int focus __UNUSED__)
    if ((!ee) || (!ee->visible)) return;
    if (!ee->engine.wl.shell_surface) return;
    wl_shell_surface_set_toplevel(ee->engine.wl.shell_surface);
+}
+
+static void 
+_ecore_evas_wl_iconified_set(Ecore_Evas *ee, int iconify)
+{
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+
+   if (!ee) return;
+   if (ee->prop.iconified == iconify) return;
+   ee->prop.iconified = iconify;
+   /* FIXME: Implement this in Wayland someshow */
+}
+
+static void 
+_ecore_evas_wl_maximized_set(Ecore_Evas *ee, int max)
+{
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+
+   if (!ee) return;
+   if (ee->prop.maximized == max) return;
+   ee->prop.maximized = max;
+   /* FIXME: Implement this in Wayland someshow */
 }
 
 static int 
