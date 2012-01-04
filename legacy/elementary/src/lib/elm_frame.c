@@ -188,6 +188,21 @@ _content_unset_hook(Evas_Object *obj, const char *part)
 }
 
 static void
+_recalc(Evas_Object *fr, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+{
+   _sizing_eval(fr);
+}
+
+static void
+_recalc_done(Evas_Object *fr, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+{
+   Widget_Data *wd;
+   wd = elm_widget_data_get(fr);
+   if (!wd) return;
+   evas_object_smart_callback_del(wd->frm, "recalc", (Evas_Smart_Cb)_recalc);
+}
+
+static void
 _signal_click(Evas_Object *fr, Evas_Object *obj __UNUSED__, const char *emission __UNUSED__, const char *source __UNUSED__)
 {
    Widget_Data *wd;
@@ -195,6 +210,7 @@ _signal_click(Evas_Object *fr, Evas_Object *obj __UNUSED__, const char *emission
    if (!wd) return;
    evas_object_smart_callback_call(fr, SIG_CLICKED, NULL);
    if (!wd->collapsible) return;
+   evas_object_smart_callback_add(wd->frm, "recalc", (Evas_Smart_Cb)_recalc, fr);
    edje_object_signal_emit(wd->frm, "elm,action,collapse", "elm");
    wd->collapsed++;
 }
@@ -227,6 +243,7 @@ elm_frame_add(Evas_Object *parent)
    elm_widget_resize_object_set(obj, wd->frm);
 
    evas_object_smart_callback_add(obj, "sub-object-del", _sub_del, obj);
+   evas_object_smart_callback_add(wd->frm, "elm,anim,done", (Evas_Smart_Cb)_recalc_done, obj);
    edje_object_signal_callback_add(wd->frm, "elm,action,click", "elm",
                                    (Edje_Signal_Cb)_signal_click, obj);
    evas_object_smart_callbacks_descriptions_set(obj, _signals);
@@ -266,6 +283,7 @@ elm_frame_collapse_set(Evas_Object *obj, Eina_Bool enable)
    enable = !!enable;
    if (wd->collapsed == enable) return;
    edje_object_signal_emit(wd->frm, "elm,action,collapse", "elm");
+   evas_object_smart_callback_add(wd->frm, "recalc", (Evas_Smart_Cb)_recalc, obj);
    wd->collapsed = enable;
 }
 
