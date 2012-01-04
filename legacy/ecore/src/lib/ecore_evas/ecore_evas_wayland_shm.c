@@ -54,6 +54,9 @@ static void _ecore_evas_wl_move(Ecore_Evas *ee, int x, int y);
 static void _ecore_evas_wl_resize(Ecore_Evas *ee, int w, int h);
 static void _ecore_evas_wl_show(Ecore_Evas *ee);
 static void _ecore_evas_wl_hide(Ecore_Evas *ee);
+static void _ecore_evas_wl_raise(Ecore_Evas *ee);
+static void _ecore_evas_wl_lower(Ecore_Evas *ee);
+static void _ecore_evas_wl_activate(Ecore_Evas *ee);
 static void _ecore_evas_wl_title_set(Ecore_Evas *ee, const char *t);
 static void _ecore_evas_wl_name_class_set(Ecore_Evas *ee, const char *n, const char *c);
 static void _ecore_evas_wl_size_min_set(Ecore_Evas *ee, int w, int h);
@@ -62,6 +65,8 @@ static void _ecore_evas_wl_size_base_set(Ecore_Evas *ee, int w, int h);
 static void _ecore_evas_wl_size_step_set(Ecore_Evas *ee, int w, int h);
 static void _ecore_evas_wl_object_cursor_set(Ecore_Evas *ee, Evas_Object  *obj, int layer, int hot_x, int hot_y);
 static void _ecore_evas_wl_object_cursor_del(void *data, Evas *evas __UNUSED__, Evas_Object *obj __UNUSED__, void *event __UNUSED__);
+static void _ecore_evas_wl_layer_set(Ecore_Evas *ee, int layer);
+static void _ecore_evas_wl_focus_set(Ecore_Evas *ee, int focus __UNUSED__);
 static int _ecore_evas_wl_render(Ecore_Evas *ee);
 static void _ecore_evas_wl_screen_geometry_get(const Ecore_Evas *ee __UNUSED__, int *x, int *y, int *w, int *h);
 static void _ecore_evas_wl_buffer_new(Ecore_Evas *ee, void **dest);
@@ -117,9 +122,9 @@ static Ecore_Evas_Engine_Func _ecore_wl_engine_func =
    NULL, // func shaped set
    _ecore_evas_wl_show, 
    _ecore_evas_wl_hide, 
-   NULL, // func raise
-   NULL, // func lower
-   NULL, // func activate
+   _ecore_evas_wl_raise, 
+   _ecore_evas_wl_lower, 
+   _ecore_evas_wl_activate, 
    _ecore_evas_wl_title_set, 
    _ecore_evas_wl_name_class_set, 
    _ecore_evas_wl_size_min_set, 
@@ -127,8 +132,8 @@ static Ecore_Evas_Engine_Func _ecore_wl_engine_func =
    _ecore_evas_wl_size_base_set, 
    _ecore_evas_wl_size_step_set, 
    _ecore_evas_wl_object_cursor_set, 
-   NULL, // func layer set
-   NULL, // func focus set
+   _ecore_evas_wl_layer_set, 
+   _ecore_evas_wl_focus_set, 
    NULL, // func iconified set
    NULL, // func borderless set
    NULL, // func override set
@@ -579,6 +584,35 @@ _ecore_evas_wl_hide(Ecore_Evas *ee)
 }
 
 static void 
+_ecore_evas_wl_raise(Ecore_Evas *ee)
+{
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+
+   if ((!ee) || (!ee->visible)) return;
+   if (!ee->engine.wl.shell_surface) return;
+   wl_shell_surface_set_toplevel(ee->engine.wl.shell_surface);
+}
+
+static void 
+_ecore_evas_wl_lower(Ecore_Evas *ee)
+{
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+
+   if ((!ee) || (!ee->visible)) return;
+   /* FIXME: Need a way to tell Wayland to lower */
+}
+
+static void 
+_ecore_evas_wl_activate(Ecore_Evas *ee)
+{
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+
+   if ((!ee) || (!ee->visible)) return;
+   if (!ee->engine.wl.shell_surface) return;
+   wl_shell_surface_set_toplevel(ee->engine.wl.shell_surface);
+}
+
+static void 
 _ecore_evas_wl_title_set(Ecore_Evas *ee, const char *t) 
 {
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
@@ -709,6 +743,28 @@ _ecore_evas_wl_object_cursor_del(void *data, Evas *evas __UNUSED__, Evas_Object 
    ee->prop.cursor.object = NULL;
 }
 
+static void 
+_ecore_evas_wl_layer_set(Ecore_Evas *ee, int layer)
+{
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+
+   if (!ee) return;
+   if (ee->prop.layer == layer) return;
+   if (layer < 1) layer = 1;
+   else if (layer > 255) layer = 255;
+   ee->prop.layer = layer;
+}
+
+static void 
+_ecore_evas_wl_focus_set(Ecore_Evas *ee, int focus __UNUSED__)
+{
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+
+   if ((!ee) || (!ee->visible)) return;
+   if (!ee->engine.wl.shell_surface) return;
+   wl_shell_surface_set_toplevel(ee->engine.wl.shell_surface);
+}
+
 static int 
 _ecore_evas_wl_render(Ecore_Evas *ee)
 {
@@ -816,7 +872,7 @@ _ecore_evas_wl_event_mouse_move(void *data __UNUSED__, int type __UNUSED__, void
    if (ev->window != ee->prop.window) return ECORE_CALLBACK_PASS_ON;
    ee->mouse.x = ev->x;
    ee->mouse.y = ev->y;
-//   evas_event_feed_mouse_move(ee->evas, ev->x, ev->y, ev->timestamp, NULL);
+   evas_event_feed_mouse_move(ee->evas, ev->x, ev->y, ev->timestamp, NULL);
    _ecore_evas_mouse_move_process(ee, ev->x, ev->y, ev->timestamp);
    return ECORE_CALLBACK_PASS_ON;
 }
