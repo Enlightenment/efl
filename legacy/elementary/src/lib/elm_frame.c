@@ -10,6 +10,7 @@ struct _Widget_Data
    const char *label;
    Eina_Bool collapsed : 1;
    Eina_Bool collapsible : 1;
+   Eina_Bool anim : 1;
 };
 
 static const char SIG_CLICKED[] = "clicked";
@@ -79,8 +80,15 @@ _sizing_eval(Evas_Object *obj)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
    Evas_Coord minw = -1, minh = -1;
+   Evas_Coord cminw = -1, cminh = -1;
+   static int x;
    if (!wd) return;
+   if (wd->anim)
+      if (x++ != 40) return;
+   x = 0;
    edje_object_size_min_calc(wd->frm, &minw, &minh);
+   evas_object_size_hint_min_get(obj, &cminw, &cminh);
+   if ((minw == cminw) && (minh == cminh)) return;
    evas_object_size_hint_min_set(obj, minw, minh);
    evas_object_size_hint_max_set(obj, -1, -1);
 }
@@ -200,6 +208,8 @@ _recalc_done(Evas_Object *fr, Evas_Object *obj __UNUSED__, void *event_info __UN
    wd = elm_widget_data_get(fr);
    if (!wd) return;
    evas_object_smart_callback_del(wd->frm, "recalc", (Evas_Smart_Cb)_recalc);
+   wd->anim = EINA_FALSE;
+   _sizing_eval(fr);
 }
 
 static void
@@ -213,6 +223,7 @@ _signal_click(Evas_Object *fr, Evas_Object *obj __UNUSED__, const char *emission
    evas_object_smart_callback_add(wd->frm, "recalc", (Evas_Smart_Cb)_recalc, fr);
    edje_object_signal_emit(wd->frm, "elm,action,collapse", "elm");
    wd->collapsed++;
+   wd->anim = EINA_TRUE;
 }
 
 EAPI Evas_Object *
@@ -285,6 +296,7 @@ elm_frame_collapse_set(Evas_Object *obj, Eina_Bool enable)
    edje_object_signal_emit(wd->frm, "elm,action,collapse", "elm");
    evas_object_smart_callback_add(wd->frm, "recalc", (Evas_Smart_Cb)_recalc, obj);
    wd->collapsed = enable;
+   wd->anim = EINA_TRUE;
 }
 
 EAPI Eina_Bool
