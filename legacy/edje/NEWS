@@ -3,6 +3,10 @@ Edje 1.1.0
 Changes since Edje 1.1.0:
 -------------------------
 
+Additions:
+
+    * "recalc" smart callback for object size changes
+
 Improvements:
     * speedup load time of Edje file.
     * check existence of group at compile time also.
@@ -34,7 +38,6 @@ Additions:
     * add change information to "entry,changed,user"
     * add "CURRENT" option for transitions to transition from current state
     * lua color/text class, map, text, image, line, polygon and edje object API's
-    * "recalc" smart callback for object size changes
 
 Fixes:
 
