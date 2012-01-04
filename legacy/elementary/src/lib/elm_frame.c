@@ -8,6 +8,7 @@ struct _Widget_Data
    Evas_Object *frm;
    Evas_Object *content;
    const char *label;
+   unsigned int recalc_count;
    Eina_Bool collapsed : 1;
    Eina_Bool collapsible : 1;
    Eina_Bool anim : 1;
@@ -81,11 +82,10 @@ _sizing_eval(Evas_Object *obj)
    Widget_Data *wd = elm_widget_data_get(obj);
    Evas_Coord minw = -1, minh = -1;
    Evas_Coord cminw = -1, cminh = -1;
-   static int x;
    if (!wd) return;
    if (wd->anim)
-      if (x++ != 40) return;
-   x = 0;
+      if (wd->recalc_count++ != 40) return;
+   wd->recalc_count = 0;
    edje_object_size_min_calc(wd->frm, &minw, &minh);
    evas_object_size_hint_min_get(obj, &cminw, &cminh);
    if ((minw == cminw) && (minh == cminh)) return;
