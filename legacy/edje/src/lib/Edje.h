@@ -377,6 +377,13 @@ part of Edje's API:
 @author Sebastian Dransfeld <sd@@tango.flipp.net>
 @author Tom Hacohen <tom@@stosb.com>
 @author Aharon Hillel <a.hillel@@partner.samsung.com>
+@author Shilpa Singh <shilpa.singh@samsung.com> <shilpasingh.o@gmail.com>
+@author Mike Blumenkrantz <michael.blumenkrantz@gmail.com
+@author Jaehwan Kim <jae.hwan.kim@samsung.com>
+@author billiob (Boris Faure) <billiob@gmail.com>
+@author Govindaraju SM <govi.sm@samsung.com> <govism@gmail.com>
+@author Prince Kumar Dubey <prince.dubey@samsung.com> <prince.dubey@gmail.com>
+@author David Seikel <onefang at gmail.com>
 
 Please contact <enlightenment-devel@lists.sourceforge.net> to get in
 contact with the developers and maintainers.
