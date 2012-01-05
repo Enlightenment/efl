@@ -258,7 +258,11 @@
 
 	* Entry: Fixed undo/redo with IMF.
 
-2012-01-04 Carsten Haitzler (The Rasterman)
+2012-01-04  Carsten Haitzler (The Rasterman)
 
         * Add HEX, TERMINAL and PASSWORD layouts to edje
         * Add "recalc" smart callback for object size changes
+
+2012-01-05  Cedric Bail
+
+	* Reduce call to stat during edje_object_file_set.

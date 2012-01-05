@@ -128,18 +128,11 @@ _edje_file_coll_open(Edje_File *edf, const char *coll)
 }
 
 static Edje_File *
-_edje_file_open(const char *file, const char *coll, int *error_ret, Edje_Part_Collection **edc_ret)
+_edje_file_open(const char *file, const char *coll, int *error_ret, Edje_Part_Collection **edc_ret, time_t mtime)
 {
    Edje_File *edf;
    Edje_Part_Collection *edc;
    Eet_File *ef;
-   struct stat st;
-
-   if (stat(file, &st) != 0)
-     {
-	*error_ret = EDJE_LOAD_ERROR_DOES_NOT_EXIST;
-	return NULL;
-     }
 
    ef = eet_open(file, EET_FILE_MODE_READ);
    if (!ef)
@@ -156,7 +149,7 @@ _edje_file_open(const char *file, const char *coll, int *error_ret, Edje_Part_Co
      }
 
    edf->ef = ef;
-   edf->mtime = st.st_mtime;
+   edf->mtime = mtime;
 
    if (edf->version != EDJE_FILE_VERSION)
      {
@@ -262,7 +255,7 @@ open_new:
    if (!_edje_file_hash)
       _edje_file_hash = eina_hash_string_small_new(NULL);
 
-   edf = _edje_file_open(file, coll, error_ret, edc_ret);
+   edf = _edje_file_open(file, coll, error_ret, edc_ret, st.st_mtime);
    if (!edf)
       return NULL;
 

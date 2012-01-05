@@ -10,6 +10,7 @@ Additions:
 Improvements:
     * speedup load time of Edje file.
     * check existence of group at compile time also.
+    * reduce number of call to stat during edje_object_file_set.
 
 Changes since Edje 1.0.0:
 -------------------------
