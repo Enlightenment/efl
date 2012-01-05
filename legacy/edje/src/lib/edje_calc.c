@@ -423,17 +423,23 @@ _edje_recalc(Edje *ed)
 	     return;
 	  }
      }
-   if (ed->postponed) return;
-   evas_object_smart_changed(ed->obj);
-   ed->postponed = 1;
+// XXX: dont need this with current smart calc infra. remove me later
+//   if (ed->postponed) return;
+   if (!ed->calc_only)
+     evas_object_smart_changed(ed->obj);
+// XXX: dont need this with current smart calc infra. remove me later
+//   ed->postponed = 1;
 }
 
 void
 _edje_recalc_do(Edje *ed)
 {
    unsigned int i;
+   Eina_Bool need_calc;
 
-   ed->postponed = 0;
+// XXX: dont need this with current smart calc infra. remove me later
+//   ed->postponed = 0;
+   need_calc = evas_object_smart_need_recalculate_get(ed->obj);
    evas_object_smart_need_recalculate_set(ed->obj, 0);
    if (!ed->dirty) return;
    ed->have_mapped_part = 0;
@@ -462,6 +468,8 @@ _edje_recalc_do(Edje *ed)
 #endif
    if (!ed->calc_only)
      evas_object_smart_callback_call(ed->obj, "recalc", NULL);
+   else
+     evas_object_smart_need_recalculate_set(ed->obj, need_calc);
 }
 
 void
