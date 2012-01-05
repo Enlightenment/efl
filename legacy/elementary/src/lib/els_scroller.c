@@ -120,7 +120,6 @@ struct _Smart_Data
 /* local subsystem functions */
 static void _smart_child_del_hook(void *data, Evas *e, Evas_Object *obj, void *event_info);
 static void _smart_pan_changed_hook(void *data, Evas_Object *obj, void *event_info);
-static void _smart_pan_pan_changed_hook(void *data, Evas_Object *obj, void *event_info);
 static void _smart_event_wheel(void *data, Evas *e, Evas_Object *obj, void *event_info);
 static void _smart_event_mouse_down(void *data, Evas *e, Evas_Object *obj, void *event_info);
 static Eina_Bool  _smart_hold_animator(void *data);
@@ -220,7 +219,6 @@ elm_smart_scroller_child_set(Evas_Object *obj, Evas_Object *child)
         o = _elm_smart_pan_add(evas_object_evas_get(obj));
         sd->pan_obj = o;
         evas_object_smart_callback_add(o, "changed", _smart_pan_changed_hook, sd);
-        evas_object_smart_callback_add(o, "pan_changed", _smart_pan_pan_changed_hook, sd);
         edje_object_part_swallow(sd->edje_obj, "elm.swallow.content", o);
      }
 
@@ -256,7 +254,6 @@ elm_smart_scroller_extern_pan_set(Evas_Object *obj, Evas_Object *pan,
    if (sd->pan_obj)
      {
         evas_object_smart_callback_del(sd->pan_obj, "changed", _smart_pan_changed_hook);
-        evas_object_smart_callback_del(sd->pan_obj, "pan_changed", _smart_pan_pan_changed_hook);
      }
 
    if (sd->extern_pan)
@@ -291,7 +288,6 @@ elm_smart_scroller_extern_pan_set(Evas_Object *obj, Evas_Object *pan,
    sd->pan_func.gravity_get = _elm_smart_pan_gravity_get;
    sd->extern_pan = EINA_TRUE;
    evas_object_smart_callback_add(sd->pan_obj, "changed", _smart_pan_changed_hook, sd);
-   evas_object_smart_callback_add(sd->pan_obj, "pan_changed", _smart_pan_pan_changed_hook, sd);
    edje_object_part_swallow(sd->edje_obj, "elm.swallow.content", sd->pan_obj);
    evas_object_show(sd->pan_obj);
 }
@@ -1585,46 +1581,6 @@ _smart_pan_changed_hook(void *data, Evas_Object *obj __UNUSED__, void *event_inf
         sd->child.resized = EINA_TRUE;
         _elm_smart_scroller_wanted_region_set(sd->smart_obj);
      }
-}
-
-static void
-_smart_pan_pan_changed_hook(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
-{
-   Smart_Data *sd;
-
-   sd = data;
-   if ((sd->down.bounce_x_animator) || (sd->down.bounce_y_animator) ||
-       (sd->scrollto.x.animator) || (sd->scrollto.y.animator))
-     {
-        _smart_anim_stop(sd->smart_obj);
-     }
-   if (sd->scrollto.x.animator)
-     {
-        ecore_animator_del(sd->scrollto.x.animator);
-        sd->scrollto.x.animator = NULL;
-     }
-   if (sd->scrollto.y.animator)
-     {
-        ecore_animator_del(sd->scrollto.y.animator);
-        sd->scrollto.y.animator = NULL;
-     }
-   if (sd->down.bounce_x_animator)
-     {
-        ecore_animator_del(sd->down.bounce_x_animator);
-        sd->down.bounce_x_animator = NULL;
-        sd->bouncemex = EINA_FALSE;
-        if (sd->child.resized)
-          _elm_smart_scroller_wanted_region_set(sd->smart_obj);
-     }
-   if (sd->down.bounce_y_animator)
-     {
-        ecore_animator_del(sd->down.bounce_y_animator);
-        sd->down.bounce_y_animator = NULL;
-        sd->bouncemey = EINA_FALSE;
-        if (sd->child.resized)
-          _elm_smart_scroller_wanted_region_set(sd->smart_obj);
-     }
-   _elm_smart_scroller_wanted_region_set(sd->smart_obj);
 }
 
 void
