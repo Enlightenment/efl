@@ -617,3 +617,9 @@
 2012-01-03  Cedric Bail
 
 	* Use Eina_File for PSD file to.
+
+2012-01-06  Sung W. Park (sung_)
+
+        * Add EvasGL support to software backend using OSMesa.  Requires OSMesa
+          library.  Due to caveats in OSMesa, surface config stays with a 
+          context
