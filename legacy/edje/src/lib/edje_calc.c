@@ -425,7 +425,7 @@ _edje_recalc(Edje *ed)
      }
 // XXX: dont need this with current smart calc infra. remove me later
 //   if (ed->postponed) return;
-   if (!ed->calc_only)
+//   if (!ed->calc_only)
      evas_object_smart_changed(ed->obj);
 // XXX: dont need this with current smart calc infra. remove me later
 //   ed->postponed = 1;
