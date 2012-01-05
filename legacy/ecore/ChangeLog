@@ -458,3 +458,10 @@
 
         * Add HEX, TERMINAL and PASSWORD layouts to ecore-imf
 
+2011-01-05 Jiyoun Park (Jypark)
+
+        * Fix Ecore-evas extn (external) for multi client model.
+        "Socket" creates canvas and other process can show that canvas 
+        using "Plug" image object. Before only one to one communication 
+        is possible, but now many "plug"s can show socket's canvas.
+

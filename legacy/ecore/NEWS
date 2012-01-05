@@ -19,6 +19,7 @@ Additions:
      - ecore_x_randr_output_backlight_available()
     * ecore_evas:
      - Add Shm and Egl engines for ecore_evas to draw in Wayland.
+     - Add Socket and Plug to draw other process area.
     * ecore_wayland
      - Add Ecore_Wayland (backend to support Wayland).
 

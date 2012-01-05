@@ -321,24 +321,24 @@ typedef struct _Extn Extn;
 struct _Extn
 {
    struct {
-      Ecore_Ipc_Server *server;
-      Ecore_Ipc_Client *client;
-      Eina_List *handlers;
-      Eina_Bool am_server : 1;
+        Ecore_Ipc_Server *server;
+        Eina_List *clients;
+        Eina_List *handlers;
+        Eina_Bool am_server : 1;
    } ipc;
    struct {
-      const char *name;
-      int         num;
-      Eina_Bool   sys : 1;
+        const char *name;
+        int         num;
+        Eina_Bool   sys : 1;
    } svc;
    struct {
-      const char *lock;
-      int         lockfd;
-      const char *shm;
-      int         w, h;
-      Shmfile    *shmfile;
-      Eina_List  *updates;
-      Eina_Bool   have_lock : 1;
+        const char *lock;
+        int         lockfd;
+        const char *shm;
+        int         w, h;
+        Shmfile    *shmfile;
+        Eina_List  *updates;
+        Eina_Bool   have_lock : 1;
    } file;
 };
 
@@ -406,21 +406,21 @@ _ecore_evas_socket_unlock(Ecore_Evas *ee)
 }
 
 static void
-_ecore_evas_extn_socket_targer_render_pre(void *data, Evas *e __UNUSED__, void *event_info __UNUSED__)
+_ecore_evas_extn_plug_targer_render_pre(void *data, Evas *e __UNUSED__, void *event_info __UNUSED__)
 {
    Ecore_Evas *ee = data;
    if (ee) _ecore_evas_socket_lock(ee);
 }
 
 static void
-_ecore_evas_extn_socket_targer_render_post(void *data, Evas *e __UNUSED__, void *event_info __UNUSED__)
+_ecore_evas_extn_plug_targer_render_post(void *data, Evas *e __UNUSED__, void *event_info __UNUSED__)
 {
    Ecore_Evas *ee = data;
    if (ee) _ecore_evas_socket_unlock(ee);
 }
 
 static void
-_ecore_evas_extn_socket_image_obj_del(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+_ecore_evas_extn_plug_image_obj_del(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    Ecore_Evas *ee = data;
    if (ee) ecore_evas_free(ee);
@@ -468,6 +468,7 @@ static void
 _ecore_evas_extn_free(Ecore_Evas *ee)
 {
    Extn *extn;
+   Ecore_Ipc_Client *client;
 
    extn = ee->engine.buffer.data;
    if (extn)
@@ -485,19 +486,24 @@ _ecore_evas_extn_free(Ecore_Evas *ee)
                }
           }
         if (extn->svc.name) eina_stringshare_del(extn->svc.name);
-        if (extn->ipc.client) ecore_ipc_client_del(extn->ipc.client);
+        if (extn->ipc.clients)
+          {
+             EINA_LIST_FREE(extn->ipc.clients, client)
+               ecore_ipc_client_del(client);
+          }
         if (extn->ipc.server) ecore_ipc_server_del(extn->ipc.server);
         if (extn->file.lock) eina_stringshare_del(extn->file.lock);
         if (extn->file.shm) eina_stringshare_del(extn->file.shm);
         if (extn->file.shmfile)
           {
              if (extn->ipc.am_server)
-               shmfile_close(extn->file.shmfile);
-             else
                shmfile_free(extn->file.shmfile);
+             else
+               shmfile_close(extn->file.shmfile);
           }
+
         EINA_LIST_FREE(extn->ipc.handlers, hdl)
-           ecore_event_handler_del(hdl);
+          ecore_event_handler_del(hdl);
         free(extn);
         ecore_ipc_shutdown();
         ee->engine.buffer.data = NULL;
@@ -508,15 +514,15 @@ _ecore_evas_extn_free(Ecore_Evas *ee)
 
         evas_object_event_callback_del_full(ee->engine.buffer.image,
                                             EVAS_CALLBACK_DEL,
-                                            _ecore_evas_extn_socket_image_obj_del,
+                                            _ecore_evas_extn_plug_image_obj_del,
                                             ee);
         evas_event_callback_del_full(evas_object_evas_get(ee->engine.buffer.image),
                                      EVAS_CALLBACK_RENDER_PRE,
-                                     _ecore_evas_extn_socket_targer_render_pre,
+                                     _ecore_evas_extn_plug_targer_render_pre,
                                      ee);
         evas_event_callback_del_full(evas_object_evas_get(ee->engine.buffer.image),
                                      EVAS_CALLBACK_RENDER_POST,
-                                     _ecore_evas_extn_socket_targer_render_post,
+                                     _ecore_evas_extn_plug_targer_render_post,
                                      ee);
         evas_object_del(ee->engine.buffer.image);
         ee2 = evas_object_data_get(ee->engine.buffer.image, "Ecore_Evas_Parent");
@@ -532,6 +538,8 @@ static void
 _ecore_evas_resize(Ecore_Evas *ee, int w, int h)
 {
    Extn *extn;
+   Eina_List *l;
+   Ecore_Ipc_Client *client;
 
    if (w < 1) w = 1;
    if (h < 1) h = 1;
@@ -544,14 +552,15 @@ _ecore_evas_resize(Ecore_Evas *ee, int w, int h)
    extn = ee->engine.buffer.data;
    if (ee->engine.buffer.image)
      evas_object_image_size_set(ee->engine.buffer.image, ee->w, ee->h);
-   if ((extn) && (extn->ipc.client))
-     {
-        Ipc_Data_Resize ipc;
+   /* Server can have many plugs, so I block resize comand from client to server *
+      if ((extn) && (extn->ipc.server))
+      {
+      Ipc_Data_Resize ipc;
 
-        ipc.w = ee->w;
-        ipc.h = ee->h;
-        ecore_ipc_client_send(extn->ipc.client, MAJOR, OP_RESIZE, 0, 0, 0, &ipc, sizeof(ipc));
-     }
+      ipc.w = ee->w;
+      ipc.h = ee->h;
+      ecore_ipc_server_send(extn->ipc.server, MAJOR, OP_RESIZE, 0, 0, 0, &ipc, sizeof(ipc));
+      }*/
    if (ee->func.fn_resize) ee->func.fn_resize(ee);
 }
 
@@ -619,14 +628,14 @@ _ecore_evas_extn_cb_mouse_in(void *data, Evas *e __UNUSED__, Evas_Object *obj __
 
    extn = ee->engine.buffer.data;
    if (!extn) return;
-   if (extn->ipc.client)
+   if (extn->ipc.server)
      {
         Ipc_Data_Ev_Mouse_In ipc;
 
         ipc.timestamp = ev->timestamp;
         ipc.mask = _ecore_evas_modifiers_locks_mask_get(ee->evas);
         ipc.event_flags = ev->event_flags;
-        ecore_ipc_client_send(extn->ipc.client, MAJOR, OP_EV_MOUSE_IN, 0, 0, 0, &ipc, sizeof(ipc));
+        ecore_ipc_server_send(extn->ipc.server, MAJOR, OP_EV_MOUSE_IN, 0, 0, 0, &ipc, sizeof(ipc));
      }
 }
 
@@ -639,14 +648,14 @@ _ecore_evas_extn_cb_mouse_out(void *data, Evas *e __UNUSED__, Evas_Object *obj _
 
    extn = ee->engine.buffer.data;
    if (!extn) return;
-   if (extn->ipc.client)
+   if (extn->ipc.server)
      {
         Ipc_Data_Ev_Mouse_Out ipc;
 
         ipc.timestamp = ev->timestamp;
         ipc.mask = _ecore_evas_modifiers_locks_mask_get(ee->evas);
         ipc.event_flags = ev->event_flags;
-        ecore_ipc_client_send(extn->ipc.client, MAJOR, OP_EV_MOUSE_OUT, 0, 0, 0, &ipc, sizeof(ipc));
+        ecore_ipc_server_send(extn->ipc.server, MAJOR, OP_EV_MOUSE_OUT, 0, 0, 0, &ipc, sizeof(ipc));
      }
 }
 
@@ -659,7 +668,7 @@ _ecore_evas_extn_cb_mouse_down(void *data, Evas *e __UNUSED__, Evas_Object *obj 
 
    extn = ee->engine.buffer.data;
    if (!extn) return;
-   if (extn->ipc.client)
+   if (extn->ipc.server)
      {
         Ipc_Data_Ev_Mouse_Down ipc;
 
@@ -668,7 +677,7 @@ _ecore_evas_extn_cb_mouse_down(void *data, Evas *e __UNUSED__, Evas_Object *obj 
         ipc.timestamp = ev->timestamp;
         ipc.mask = _ecore_evas_modifiers_locks_mask_get(ee->evas);
         ipc.event_flags = ev->event_flags;
-        ecore_ipc_client_send(extn->ipc.client, MAJOR, OP_EV_MOUSE_DOWN, 0, 0, 0, &ipc, sizeof(ipc));
+        ecore_ipc_server_send(extn->ipc.server, MAJOR, OP_EV_MOUSE_DOWN, 0, 0, 0, &ipc, sizeof(ipc));
      }
 }
 
@@ -681,7 +690,7 @@ _ecore_evas_extn_cb_mouse_up(void *data, Evas *e __UNUSED__, Evas_Object *obj __
 
    extn = ee->engine.buffer.data;
    if (!extn) return;
-   if (extn->ipc.client)
+   if (extn->ipc.server)
      {
         Ipc_Data_Ev_Mouse_Up ipc;
 
@@ -690,7 +699,7 @@ _ecore_evas_extn_cb_mouse_up(void *data, Evas *e __UNUSED__, Evas_Object *obj __
         ipc.timestamp = ev->timestamp;
         ipc.mask = _ecore_evas_modifiers_locks_mask_get(ee->evas);
         ipc.event_flags = ev->event_flags;
-        ecore_ipc_client_send(extn->ipc.client, MAJOR, OP_EV_MOUSE_UP, 0, 0, 0, &ipc, sizeof(ipc));
+        ecore_ipc_server_send(extn->ipc.server, MAJOR, OP_EV_MOUSE_UP, 0, 0, 0, &ipc, sizeof(ipc));
      }
 }
 
@@ -703,7 +712,7 @@ _ecore_evas_extn_cb_mouse_move(void *data, Evas *e __UNUSED__, Evas_Object *obj 
 
    extn = ee->engine.buffer.data;
    if (!extn) return;
-   if (extn->ipc.client)
+   if (extn->ipc.server)
      {
         Ipc_Data_Ev_Mouse_Move ipc;
         Evas_Coord x, y;
@@ -716,7 +725,7 @@ _ecore_evas_extn_cb_mouse_move(void *data, Evas *e __UNUSED__, Evas_Object *obj 
         ipc.timestamp = ev->timestamp;
         ipc.mask = _ecore_evas_modifiers_locks_mask_get(ee->evas);
         ipc.event_flags = ev->event_flags;
-        ecore_ipc_client_send(extn->ipc.client, MAJOR, OP_EV_MOUSE_MOVE, 0, 0, 0, &ipc, sizeof(ipc));
+        ecore_ipc_server_send(extn->ipc.server, MAJOR, OP_EV_MOUSE_MOVE, 0, 0, 0, &ipc, sizeof(ipc));
      }
 }
 
@@ -729,7 +738,7 @@ _ecore_evas_extn_cb_mouse_wheel(void *data, Evas *e __UNUSED__, Evas_Object *obj
 
    extn = ee->engine.buffer.data;
    if (!extn) return;
-   if (extn->ipc.client)
+   if (extn->ipc.server)
      {
         Ipc_Data_Ev_Mouse_Wheel ipc;
 
@@ -738,7 +747,7 @@ _ecore_evas_extn_cb_mouse_wheel(void *data, Evas *e __UNUSED__, Evas_Object *obj
         ipc.timestamp = ev->timestamp;
         ipc.mask = _ecore_evas_modifiers_locks_mask_get(ee->evas);
         ipc.event_flags = ev->event_flags;
-        ecore_ipc_client_send(extn->ipc.client, MAJOR, OP_EV_MOUSE_WHEEL, 0, 0, 0, &ipc, sizeof(ipc));
+        ecore_ipc_server_send(extn->ipc.server, MAJOR, OP_EV_MOUSE_WHEEL, 0, 0, 0, &ipc, sizeof(ipc));
      }
 }
 
@@ -751,7 +760,7 @@ _ecore_evas_extn_cb_multi_down(void *data, Evas *e __UNUSED__, Evas_Object *obj 
 
    extn = ee->engine.buffer.data;
    if (!extn) return;
-   if (extn->ipc.client)
+   if (extn->ipc.server)
      {
         Ipc_Data_Ev_Multi_Down ipc;
         Evas_Coord x, y;
@@ -773,7 +782,7 @@ _ecore_evas_extn_cb_multi_down(void *data, Evas *e __UNUSED__, Evas_Object *obj 
         ipc.timestamp = ev->timestamp;
         ipc.mask = _ecore_evas_modifiers_locks_mask_get(ee->evas);
         ipc.event_flags = ev->event_flags;
-        ecore_ipc_client_send(extn->ipc.client, MAJOR, OP_EV_MULTI_DOWN, 0, 0, 0, &ipc, sizeof(ipc));
+        ecore_ipc_server_send(extn->ipc.server, MAJOR, OP_EV_MULTI_DOWN, 0, 0, 0, &ipc, sizeof(ipc));
      }
 }
 
@@ -787,7 +796,7 @@ _ecore_evas_extn_cb_multi_up(void *data, Evas *e __UNUSED__, Evas_Object *obj __
 
    extn = ee->engine.buffer.data;
    if (!extn) return;
-   if (extn->ipc.client)
+   if (extn->ipc.server)
      {
         Ipc_Data_Ev_Multi_Up ipc;
         Evas_Coord x, y;
@@ -809,7 +818,7 @@ _ecore_evas_extn_cb_multi_up(void *data, Evas *e __UNUSED__, Evas_Object *obj __
         ipc.timestamp = ev->timestamp;
         ipc.mask = _ecore_evas_modifiers_locks_mask_get(ee->evas);
         ipc.event_flags = ev->event_flags;
-        ecore_ipc_client_send(extn->ipc.client, MAJOR, OP_EV_MULTI_UP, 0, 0, 0, &ipc, sizeof(ipc));
+        ecore_ipc_server_send(extn->ipc.server, MAJOR, OP_EV_MULTI_UP, 0, 0, 0, &ipc, sizeof(ipc));
      }
 }
 
@@ -822,7 +831,7 @@ _ecore_evas_extn_cb_multi_move(void *data, Evas *e __UNUSED__, Evas_Object *obj 
 
    extn = ee->engine.buffer.data;
    if (!extn) return;
-   if (extn->ipc.client)
+   if (extn->ipc.server)
      {
         Ipc_Data_Ev_Multi_Move ipc;
         Evas_Coord x, y;
@@ -843,7 +852,7 @@ _ecore_evas_extn_cb_multi_move(void *data, Evas *e __UNUSED__, Evas_Object *obj 
         ipc.timestamp = ev->timestamp;
         ipc.mask = _ecore_evas_modifiers_locks_mask_get(ee->evas);
         ipc.event_flags = ev->event_flags;
-        ecore_ipc_client_send(extn->ipc.client, MAJOR, OP_EV_MULTI_MOVE, 0, 0, 0, &ipc, sizeof(ipc));
+        ecore_ipc_server_send(extn->ipc.server, MAJOR, OP_EV_MULTI_MOVE, 0, 0, 0, &ipc, sizeof(ipc));
      }
 }
 
@@ -865,7 +874,7 @@ _ecore_evas_extn_cb_key_down(void *data, Evas *e __UNUSED__, Evas_Object *obj __
 
    extn = ee->engine.buffer.data;
    if (!extn) return;
-   if (extn->ipc.client)
+   if (extn->ipc.server)
      {
         Ipc_Data_Ev_Key_Down *ipc;
         char *st, *p;
@@ -908,7 +917,7 @@ _ecore_evas_extn_cb_key_down(void *data, Evas *e __UNUSED__, Evas_Object *obj __
         ipc->timestamp = ev->timestamp;
         ipc->mask = _ecore_evas_modifiers_locks_mask_get(ee->evas);
         ipc->event_flags = ev->event_flags;
-        ecore_ipc_client_send(extn->ipc.client, MAJOR, OP_EV_KEY_DOWN, 0, 0, 0, ipc, len);
+        ecore_ipc_server_send(extn->ipc.server, MAJOR, OP_EV_KEY_DOWN, 0, 0, 0, ipc, len);
      }
 }
 
@@ -921,7 +930,7 @@ _ecore_evas_extn_cb_key_up(void *data, Evas *e __UNUSED__, Evas_Object *obj __UN
 
    extn = ee->engine.buffer.data;
    if (!extn) return;
-   if (extn->ipc.client)
+   if (extn->ipc.server)
      {
         Ipc_Data_Ev_Key_Up *ipc;
         char *st, *p;
@@ -964,7 +973,7 @@ _ecore_evas_extn_cb_key_up(void *data, Evas *e __UNUSED__, Evas_Object *obj __UN
         ipc->timestamp = ev->timestamp;
         ipc->mask = _ecore_evas_modifiers_locks_mask_get(ee->evas);
         ipc->event_flags = ev->event_flags;
-        ecore_ipc_client_send(extn->ipc.client, MAJOR, OP_EV_KEY_UP, 0, 0, 0, ipc, len);
+        ecore_ipc_server_send(extn->ipc.server, MAJOR, OP_EV_KEY_UP, 0, 0, 0, ipc, len);
      }
 }
 
@@ -977,14 +986,14 @@ _ecore_evas_extn_cb_hold(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUS
 
    extn = ee->engine.buffer.data;
    if (!extn) return;
-   if (extn->ipc.client)
+   if (extn->ipc.server)
      {
         Ipc_Data_Ev_Hold ipc;
 
         ipc.hold = ev->hold;
         ipc.timestamp = ev->timestamp;
         ipc.event_flags = ev->event_flags;
-        ecore_ipc_client_send(extn->ipc.client, MAJOR, OP_EV_HOLD, 0, 0, 0, &ipc, sizeof(ipc));
+        ecore_ipc_server_send(extn->ipc.server, MAJOR, OP_EV_HOLD, 0, 0, 0, &ipc, sizeof(ipc));
      }
 }
 
@@ -998,8 +1007,8 @@ _ecore_evas_extn_cb_focus_in(void *data, Evas *e __UNUSED__, Evas_Object *obj __
    ee->prop.focused = 1;
    extn = ee->engine.buffer.data;
    if (!extn) return;
-   if (!extn->ipc.client) return;
-   ecore_ipc_client_send(extn->ipc.client, MAJOR, OP_FOCUS, 0, 0, 0, NULL, 0);
+   if (!extn->ipc.server) return;
+   ecore_ipc_server_send(extn->ipc.server, MAJOR, OP_FOCUS, 0, 0, 0, NULL, 0);
 }
 
 static void
@@ -1012,8 +1021,8 @@ _ecore_evas_extn_cb_focus_out(void *data, Evas *e __UNUSED__, Evas_Object *obj _
    ee->prop.focused = 0;
    extn = ee->engine.buffer.data;
    if (!extn) return;
-   if (!extn->ipc.client) return;
-   ecore_ipc_client_send(extn->ipc.client, MAJOR, OP_UNFOCUS, 0, 0, 0, NULL, 0);
+   if (!extn->ipc.server) return;
+   ecore_ipc_server_send(extn->ipc.server, MAJOR, OP_UNFOCUS, 0, 0, 0, NULL, 0);
 }
 
 static void
@@ -1026,8 +1035,8 @@ _ecore_evas_extn_cb_show(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUS
    ee->visible = 1;
    extn = ee->engine.buffer.data;
    if (!extn) return;
-   if (!extn->ipc.client) return;
-   ecore_ipc_client_send(extn->ipc.client, MAJOR, OP_SHOW, 0, 0, 0, NULL, 0);
+   if (!extn->ipc.server) return;
+   ecore_ipc_server_send(extn->ipc.server, MAJOR, OP_SHOW, 0, 0, 0, NULL, 0);
 }
 
 static void
@@ -1040,11 +1049,11 @@ _ecore_evas_extn_cb_hide(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUS
    ee->visible = 0;
    extn = ee->engine.buffer.data;
    if (!extn) return;
-   if (!extn->ipc.client) return;
-   ecore_ipc_client_send(extn->ipc.client, MAJOR, OP_HIDE, 0, 0, 0, NULL, 0);
+   if (!extn->ipc.server) return;
+   ecore_ipc_server_send(extn->ipc.server, MAJOR, OP_HIDE, 0, 0, 0, NULL, 0);
 }
 
-static const Ecore_Evas_Engine_Func _ecore_extn_socket_engine_func =
+static const Ecore_Evas_Engine_Func _ecore_extn_plug_engine_func =
 {
    _ecore_evas_extn_free,
    NULL,
@@ -1098,79 +1107,57 @@ static const Ecore_Evas_Engine_Func _ecore_extn_socket_engine_func =
 };
 
 static Eina_Bool
-_ipc_client_add(void *data, int type __UNUSED__, void *event)
+_ipc_server_add(void *data, int type __UNUSED__, void *event)
 {
-   Ecore_Ipc_Event_Client_Add *e = event;
+   Ecore_Ipc_Event_Server_Add *e = event;
    Ecore_Evas *ee = data;
    Extn *extn;
 
-   if (ee != ecore_ipc_server_data_get(ecore_ipc_client_server_get(e->client)))
+   if (ee != ecore_ipc_server_data_get(e->server))
      return ECORE_CALLBACK_PASS_ON;
    if (!eina_list_data_find(extn_ee_list, ee))
      return ECORE_CALLBACK_PASS_ON;
    extn = ee->engine.buffer.data;
    if (!extn) return ECORE_CALLBACK_PASS_ON;
-   if (extn->ipc.client)
-     {
-        ecore_ipc_client_del(e->client);
-        return ECORE_CALLBACK_PASS_ON;
-     }
-   extn->ipc.client = e->client;
-
-   ecore_ipc_client_send(extn->ipc.client, MAJOR, OP_LOCK_FILE, 0, 0, 0,
-                         extn->file.lock, strlen(extn->file.lock) + 1);
-     {
-        Ipc_Data_Resize ipc;
-
-        ipc.w = ee->w;
-        ipc.h = ee->h;
-        ecore_ipc_client_send(extn->ipc.client, MAJOR, OP_RESIZE, 0, 0, 0, &ipc, sizeof(ipc));
-     }
-   if (ee->visible)
-     ecore_ipc_client_send(extn->ipc.client, MAJOR, OP_SHOW, 0, 0, 0, NULL, 0);
-   if (ee->prop.focused)
-     ecore_ipc_client_send(extn->ipc.client, MAJOR, OP_FOCUS, 0, 0, 0, NULL, 0);
-   _ecore_evas_extn_event(ee, ECORE_EVAS_EXTN_CLIENT_ADD);
+   //FIXME: find a way to let app know server there
    return ECORE_CALLBACK_PASS_ON;
 }
 
 static Eina_Bool
-_ipc_client_del(void *data, int type __UNUSED__, void *event)
+_ipc_server_del(void *data, int type __UNUSED__, void *event)
 {
-   Ecore_Ipc_Event_Client_Del *e = event;
+   Ecore_Ipc_Event_Server_Del *e = event;
    Ecore_Evas *ee = data;
    Extn *extn;
 
    extn = ee->engine.buffer.data;
    if (!extn) return ECORE_CALLBACK_PASS_ON;
-   if (extn->ipc.client == e->client)
+   if (extn->ipc.server != e->server) return ECORE_CALLBACK_PASS_ON;
+   evas_object_image_data_set(ee->engine.buffer.image, NULL);
+   ee->engine.buffer.pixels = NULL;
+   if (extn->file.shmfile)
      {
-        evas_object_image_data_set(ee->engine.buffer.image, NULL);
-        ee->engine.buffer.pixels = NULL;
-        if (extn->file.shmfile)
-          {
-             shmfile_close(extn->file.shmfile);
-             extn->file.shmfile = NULL;
-          }
-        if (extn->file.shm)
-          {
-             eina_stringshare_del(extn->file.shm);
-             extn->file.shm = NULL;
-          }
-        extn->ipc.client = NULL;
+        shmfile_close(extn->file.shmfile);
+        extn->file.shmfile = NULL;
      }
-   _ecore_evas_extn_event(ee, ECORE_EVAS_EXTN_CLIENT_DEL);
+   if (extn->file.shm)
+     {
+        eina_stringshare_del(extn->file.shm);
+        extn->file.shm = NULL;
+     }
+   extn->ipc.server = NULL;
+   if (ee->func.fn_delete_request) ee->func.fn_delete_request(ee);
    return ECORE_CALLBACK_PASS_ON;
 }
 
 static Eina_Bool
-_ipc_client_data(void *data, int type __UNUSED__, void *event)
+_ipc_server_data(void *data, int type __UNUSED__, void *event)
 {
-   Ecore_Ipc_Event_Client_Data *e = event;
+   Ecore_Ipc_Event_Server_Data *e = event;
    Ecore_Evas *ee = data;
    Extn *extn;
 
-   if (ee != ecore_ipc_server_data_get(ecore_ipc_client_server_get(e->client)))
+   if (ee != ecore_ipc_server_data_get(e->server))
      return ECORE_CALLBACK_PASS_ON;
    if (!eina_list_data_find(extn_ee_list, ee))
      return ECORE_CALLBACK_PASS_ON;
@@ -1204,6 +1191,16 @@ _ipc_client_data(void *data, int type __UNUSED__, void *event)
                                                        ipc->x, ipc->y,
                                                        ipc->w, ipc->h);
                 }
+           }
+         break;
+      case OP_LOCK_FILE:
+         if ((e->data) && (e->size > 0) &&
+             (((unsigned char *)e->data)[e->size - 1] == 0))
+           {
+              if (extn->file.lockfd) close(extn->file.lockfd);
+              if (extn->file.lock) eina_stringshare_del(extn->file.lock);
+              extn->file.lock = eina_stringshare_add(e->data);
+              extn->file.lockfd = open(extn->file.lock, O_RDONLY);
            }
          break;
       case OP_SHM_REF:
@@ -1267,6 +1264,13 @@ _ipc_client_data(void *data, int type __UNUSED__, void *event)
                 evas_object_image_data_set(ee->engine.buffer.image, NULL);
            }
          break;
+      case OP_RESIZE:
+         if ((e->data) && (e->size >= (int)sizeof(Ipc_Data_Resize)))
+           {
+              Ipc_Data_Resize *ipc = e->data;
+              _ecore_evas_resize(ee, ipc->w, ipc->h);
+           }
+         break;
       default:
          break;
      }
@@ -1285,7 +1289,7 @@ _ecore_evas_extn_shutdown(void)
 #endif
 
 EAPI Evas_Object *
-ecore_evas_extn_socket_new(Ecore_Evas *ee_target, const char *svcname, int svcnum, Eina_Bool svcsys)
+ecore_evas_extn_plug_new(Ecore_Evas *ee_target, const char *svcname, int svcnum, Eina_Bool svcsys)
 {
 #ifdef EXTN_ENABLED
    Extn *extn;
@@ -1305,9 +1309,9 @@ ecore_evas_extn_socket_new(Ecore_Evas *ee_target, const char *svcname, int svcnu
 
    ECORE_MAGIC_SET(ee, ECORE_MAGIC_EVAS);
 
-   ee->engine.func = (Ecore_Evas_Engine_Func *)&_ecore_extn_socket_engine_func;
+   ee->engine.func = (Ecore_Evas_Engine_Func *)&_ecore_extn_plug_engine_func;
 
-   ee->driver = "extn_socket";
+   ee->driver = "extn_plug";
 
    ee->rotation = 0;
    ee->visible = 0;
@@ -1384,7 +1388,7 @@ ecore_evas_extn_socket_new(Ecore_Evas *ee_target, const char *svcname, int svcnu
 
    evas_object_event_callback_add(ee->engine.buffer.image,
                                   EVAS_CALLBACK_DEL,
-                                  _ecore_evas_extn_socket_image_obj_del, ee);
+                                  _ecore_evas_extn_plug_image_obj_del, ee);
 
    extn = calloc(1, sizeof(Extn));
    if (!extn)
@@ -1395,44 +1399,18 @@ ecore_evas_extn_socket_new(Ecore_Evas *ee_target, const char *svcname, int svcnu
    else
      {
         Ecore_Ipc_Type ipctype = ECORE_IPC_LOCAL_USER;
-        char buf[PATH_MAX];
 
         ecore_ipc_init();
         extn->svc.name = eina_stringshare_add(svcname);
         extn->svc.num = svcnum;
         extn->svc.sys = svcsys;
 
-        snprintf(buf, sizeof(buf), "/tmp/ee-lock-XXXXXX");
-        extn->file.lockfd = mkstemp(buf);
-        if (extn->file.lockfd >= 0)
-          extn->file.lock = eina_stringshare_add(buf);
-        if ((extn->file.lockfd < 0) || (!extn->file.lock))
-          {
-             if (extn->file.lockfd)
-               {
-                  close(extn->file.lockfd);
-                  unlink(buf);
-               }
-             eina_stringshare_del(extn->svc.name);
-             if (extn->file.lock) eina_stringshare_del(extn->file.lock);
-             free(extn);
-             ecore_ipc_shutdown();
-             ecore_evas_free(ee);
-             return NULL;
-          }
         if (extn->svc.sys) ipctype = ECORE_IPC_LOCAL_SYSTEM;
-        extn->ipc.am_server = EINA_TRUE;
-        extn->ipc.server = ecore_ipc_server_add(ipctype, extn->svc.name,
-                                                extn->svc.num, ee);
+        extn->ipc.server = ecore_ipc_server_connect(ipctype, (char *)extn->svc.name,
+                                                    extn->svc.num, ee);
         if (!extn->ipc.server)
           {
-             if (extn->file.lockfd)
-               {
-                  close(extn->file.lockfd);
-                  if (extn->file.lock) unlink(extn->file.lock);
-               }
              eina_stringshare_del(extn->svc.name);
-             eina_stringshare_del(extn->file.lock);
              free(extn);
              ecore_ipc_shutdown();
              ecore_evas_free(ee);
@@ -1441,25 +1419,25 @@ ecore_evas_extn_socket_new(Ecore_Evas *ee_target, const char *svcname, int svcnu
         ee->engine.buffer.data = extn;
         extn->ipc.handlers = eina_list_append
            (extn->ipc.handlers,
-            ecore_event_handler_add(ECORE_IPC_EVENT_CLIENT_ADD,
-                                    _ipc_client_add, ee));
+            ecore_event_handler_add(ECORE_IPC_EVENT_SERVER_ADD,
+                                    _ipc_server_add, ee));
         extn->ipc.handlers = eina_list_append
            (extn->ipc.handlers,
-            ecore_event_handler_add(ECORE_IPC_EVENT_CLIENT_DEL,
-                                    _ipc_client_del, ee));
+            ecore_event_handler_add(ECORE_IPC_EVENT_SERVER_DEL,
+                                    _ipc_server_del, ee));
         extn->ipc.handlers = eina_list_append
            (extn->ipc.handlers,
-            ecore_event_handler_add(ECORE_IPC_EVENT_CLIENT_DATA,
-                                    _ipc_client_data, ee));
+            ecore_event_handler_add(ECORE_IPC_EVENT_SERVER_DATA,
+                                    _ipc_server_data, ee));
      }
 
    extn_ee_list = eina_list_append(extn_ee_list, ee);
    ee_target->sub_ecore_evas = eina_list_append(ee_target->sub_ecore_evas, ee);
 
    evas_event_callback_add(ee_target->evas, EVAS_CALLBACK_RENDER_PRE,
-                           _ecore_evas_extn_socket_targer_render_pre, ee);
+                           _ecore_evas_extn_plug_targer_render_pre, ee);
    evas_event_callback_add(ee_target->evas, EVAS_CALLBACK_RENDER_POST,
-                           _ecore_evas_extn_socket_targer_render_post, ee);
+                           _ecore_evas_extn_plug_targer_render_post, ee);
    return o;
 #else
    return NULL;
@@ -1467,7 +1445,7 @@ ecore_evas_extn_socket_new(Ecore_Evas *ee_target, const char *svcname, int svcnu
 }
 
 EAPI void
-ecore_evas_extn_socket_object_data_lock(Evas_Object *obj)
+ecore_evas_extn_plug_object_data_lock(Evas_Object *obj)
 {
 #ifdef EXTN_ENABLED
    Ecore_Evas *ee;
@@ -1479,7 +1457,7 @@ ecore_evas_extn_socket_object_data_lock(Evas_Object *obj)
 }
 
 EAPI void
-ecore_evas_extn_socket_object_data_unlock(Evas_Object *obj)
+ecore_evas_extn_plug_object_data_unlock(Evas_Object *obj)
 {
 #ifdef EXTN_ENABLED
    Ecore_Evas *ee;
@@ -1492,7 +1470,7 @@ ecore_evas_extn_socket_object_data_unlock(Evas_Object *obj)
 
 #ifdef EXTN_ENABLED
 static void
-_ecore_evas_plug_resize(Ecore_Evas *ee, int w, int h)
+_ecore_evas_socket_resize(Ecore_Evas *ee, int w, int h)
 {
    Extn *extn;
    Evas_Engine_Info_Buffer *einfo;
@@ -1508,7 +1486,6 @@ _ecore_evas_plug_resize(Ecore_Evas *ee, int w, int h)
    evas_output_size_set(ee->evas, ee->w, ee->h);
    evas_output_viewport_set(ee->evas, 0, 0, ee->w, ee->h);
    evas_damage_rectangle_add(ee->evas, 0, 0, ee->w, ee->h);
-
    extn = ee->engine.buffer.data;
    if (extn)
      {
@@ -1519,6 +1496,7 @@ _ecore_evas_plug_resize(Ecore_Evas *ee, int w, int h)
                                          ee->w * ee->h * 4, extn->svc.sys);
         if (extn->file.shmfile)
           ee->engine.buffer.pixels = extn->file.shmfile->addr;
+
         stride = ee->w * 4;
         einfo = (Evas_Engine_Info_Buffer *)evas_engine_info_get(ee->evas);
         if (einfo)
@@ -1539,37 +1517,42 @@ _ecore_evas_plug_resize(Ecore_Evas *ee, int w, int h)
                }
           }
 
-        if (extn->ipc.server && extn->file.shmfile)
+        if (extn->ipc.clients && extn->file.shmfile)
           {
              Ipc_Data_Resize ipc;
+             Eina_List *l;
+             Ecore_Ipc_Client *client;
 
-             ecore_ipc_server_send(extn->ipc.server, MAJOR, OP_SHM_REF,
-                                   ee->w, ee->h, ee->alpha,
-                                   extn->file.shmfile->file,
-                                   strlen(extn->file.shmfile->file) + 1);
+             EINA_LIST_FOREACH(extn->ipc.clients, l, client)
+                ecore_ipc_client_send(client, MAJOR, OP_SHM_REF,
+                                      ee->w, ee->h, ee->alpha,
+                                      extn->file.shmfile->file,
+                                      strlen(extn->file.shmfile->file) + 1);
              ipc.w = ee->w;
              ipc.h = ee->h;
-             ecore_ipc_server_send(extn->ipc.server, MAJOR, OP_RESIZE,
-                                   0, 0, 0, &ipc, sizeof(ipc));
+             EINA_LIST_FOREACH(extn->ipc.clients, l, client)
+                ecore_ipc_client_send(client, MAJOR, OP_RESIZE,
+                                      0, 0, 0, &ipc, sizeof(ipc));
           }
      }
    if (ee->func.fn_resize) ee->func.fn_resize(ee);
 }
 
 static void
-_ecore_evas_plug_move_resize(Ecore_Evas *ee, int x __UNUSED__, int y __UNUSED__, int w, int h)
+_ecore_evas_socket_move_resize(Ecore_Evas *ee, int x __UNUSED__, int y __UNUSED__, int w, int h)
 {
-   _ecore_evas_plug_resize(ee, w, h);
+   _ecore_evas_socket_resize(ee, w, h);
 }
 
 int
-_ecore_evas_extn_plug_render(Ecore_Evas *ee)
+_ecore_evas_extn_socket_render(Ecore_Evas *ee)
 {
    Eina_List *updates = NULL, *l, *ll;
    Ecore_Evas *ee2;
    int rend = 0;
    Eina_Rectangle *r;
    Extn *extn;
+   Ecore_Ipc_Client *client;
 
    extn = ee->engine.buffer.data;
    EINA_LIST_FOREACH(ee->sub_ecore_evas, ll, ee2)
@@ -1589,62 +1572,84 @@ _ecore_evas_extn_plug_render(Ecore_Evas *ee)
      {
         Ipc_Data_Update ipc;
 
+
         ipc.x = r->x;
         ipc.y = r->y;
         ipc.w = r->w;
         ipc.h = r->h;
-        ecore_ipc_server_send(extn->ipc.server, MAJOR, OP_UPDATE, 0, 0, 0, &ipc, sizeof(ipc));
+        EINA_LIST_FOREACH(extn->ipc.clients, ll, client)
+           ecore_ipc_client_send(client, MAJOR, OP_UPDATE, 0, 0, 0, &ipc, sizeof(ipc));
      }
    if (updates)
      {
         evas_render_updates_free(updates);
         _ecore_evas_idle_timeout_update(ee);
-        ecore_ipc_server_send(extn->ipc.server, MAJOR, OP_UPDATE_DONE, 0, 0, 0, NULL, 0);
+        EINA_LIST_FOREACH(extn->ipc.clients, ll, client)
+           ecore_ipc_client_send(client, MAJOR, OP_UPDATE_DONE, 0, 0, 0, NULL, 0);
      }
 
    return updates ? 1 : rend;
 }
 
 static Eina_Bool
-_ipc_server_add(void *data, int type __UNUSED__, void *event)
+_ipc_client_add(void *data, int type __UNUSED__, void *event)
 {
-   Ecore_Ipc_Event_Server_Add *e = event;
+   Ecore_Ipc_Event_Client_Add *e = event;
    Ecore_Evas *ee = data;
    Extn *extn;
 
-   if (ee != ecore_ipc_server_data_get(e->server))
+   if (ee != ecore_ipc_server_data_get(ecore_ipc_client_server_get(e->client)))
      return ECORE_CALLBACK_PASS_ON;
    if (!eina_list_data_find(extn_ee_list, ee))
      return ECORE_CALLBACK_PASS_ON;
    extn = ee->engine.buffer.data;
    if (!extn) return ECORE_CALLBACK_PASS_ON;
+
+   extn->ipc.clients = eina_list_append(extn->ipc.clients, e->client);
+   ecore_ipc_client_send(e->client, MAJOR, OP_LOCK_FILE, 0, 0, 0, extn->file.lock, strlen(extn->file.lock) + 1);
+
+   if (extn->file.shmfile)
+     {
+        Ipc_Data_Resize ipc;
+
+        ecore_ipc_client_send(e->client, MAJOR, OP_SHM_REF,
+                              ee->w, ee->h, ee->alpha,
+                              extn->file.shmfile->file,
+                              strlen(extn->file.shmfile->file) + 1);
+        ipc.w = ee->w;
+        ipc.h = ee->h;
+
+        ecore_ipc_client_send(e->client, MAJOR, OP_RESIZE,
+                              0, 0, 0, &ipc, sizeof(ipc));
+     }
+   _ecore_evas_extn_event(ee, ECORE_EVAS_EXTN_CLIENT_ADD);
    return ECORE_CALLBACK_PASS_ON;
-   // FIXME: find a way to let app know server there
 }
 
 static Eina_Bool
-_ipc_server_del(void *data, int type __UNUSED__, void *event)
+_ipc_client_del(void *data, int type __UNUSED__, void *event)
 {
-   Ecore_Ipc_Event_Server_Del *e = event;
+   Ecore_Ipc_Event_Client_Del *e = event;
    Ecore_Evas *ee = data;
    Extn *extn;
-
    extn = ee->engine.buffer.data;
    if (!extn) return ECORE_CALLBACK_PASS_ON;
-   if (extn->ipc.server != e->server) return ECORE_CALLBACK_PASS_ON;
-   extn->ipc.server = NULL;
-   if (ee->func.fn_delete_request) ee->func.fn_delete_request(ee);
+   if (!eina_list_data_find(extn->ipc.clients, e->client)) return ECORE_CALLBACK_PASS_ON;
+
+   extn->ipc.clients = eina_list_remove(extn->ipc.clients, e->client);
+
+   _ecore_evas_extn_event(ee, ECORE_EVAS_EXTN_CLIENT_DEL);
    return ECORE_CALLBACK_PASS_ON;
 }
 
 static Eina_Bool
-_ipc_server_data(void *data, int type __UNUSED__, void *event)
+_ipc_client_data(void *data, int type __UNUSED__, void *event)
 {
-   Ecore_Ipc_Event_Server_Data *e = event;
+   Ecore_Ipc_Event_Client_Data *e = event;
    Ecore_Evas *ee = data;
    Extn *extn;
 
-   if (ee != ecore_ipc_server_data_get(e->server))
+   if (ee != ecore_ipc_server_data_get(ecore_ipc_client_server_get(e->client)))
      return ECORE_CALLBACK_PASS_ON;
    if (!eina_list_data_find(extn_ee_list, ee))
      return ECORE_CALLBACK_PASS_ON;
@@ -1657,9 +1662,10 @@ _ipc_server_data(void *data, int type __UNUSED__, void *event)
       case OP_RESIZE:
          if ((e->data) && (e->size >= (int)sizeof(Ipc_Data_Resize)))
            {
-              Ipc_Data_Resize *ipc = e->data;
 
-              _ecore_evas_plug_resize(ee, ipc->w, ipc->h);
+              Ipc_Data_Resize *ipc = e->data;
+              /* create callbacke data size changed */
+              _ecore_evas_socket_resize(ee, ipc->w, ipc->h);
            }
          break;
       case OP_SHOW:
@@ -1690,16 +1696,6 @@ _ipc_server_data(void *data, int type __UNUSED__, void *event)
               ee->prop.focused = 0;
               evas_focus_out(ee->evas);
               if (ee->func.fn_focus_out) ee->func.fn_focus_out(ee);
-           }
-         break;
-      case OP_LOCK_FILE:
-         if ((e->data) && (e->size > 0) &&
-             (((unsigned char *)e->data)[e->size - 1] == 0))
-           {
-              if (extn->file.lockfd) close(extn->file.lockfd);
-              if (extn->file.lock) eina_stringshare_del(extn->file.lock);
-              extn->file.lock = eina_stringshare_add(e->data);
-              extn->file.lockfd = open(extn->file.lock, O_RDONLY);
            }
          break;
       case OP_EV_MOUSE_IN:
@@ -1889,9 +1885,11 @@ _ipc_server_data(void *data, int type __UNUSED__, void *event)
 }
 
 static void
-_ecore_evas_extn_plug_alpha_set(Ecore_Evas *ee, int alpha)
+_ecore_evas_extn_socket_alpha_set(Ecore_Evas *ee, int alpha)
 {
    Extn *extn;
+   Eina_List *l;
+   Ecore_Ipc_Client *client;
 
    if (((ee->alpha) && (alpha)) || ((!ee->alpha) && (!alpha))) return;
    ee->alpha = alpha;
@@ -1911,14 +1909,15 @@ _ecore_evas_extn_plug_alpha_set(Ecore_Evas *ee, int alpha)
              evas_engine_info_set(ee->evas, (Evas_Engine_Info *)einfo);
              evas_damage_rectangle_add(ee->evas, 0, 0, ee->w, ee->h);
           }
-        ecore_ipc_server_send(extn->ipc.server, MAJOR, OP_SHM_REF,
-                              ee->w, ee->h, ee->alpha,
-                              extn->file.shmfile->file,
-                              strlen(extn->file.shmfile->file) + 1);
+        EINA_LIST_FOREACH(extn->ipc.clients, l, client)
+           ecore_ipc_client_send(client, MAJOR, OP_SHM_REF,
+                                 ee->w, ee->h, ee->alpha,
+                                 extn->file.shmfile->file,
+                                 strlen(extn->file.shmfile->file) + 1);
      }
 }
 
-static const Ecore_Evas_Engine_Func _ecore_extn_plug_engine_func =
+static const Ecore_Evas_Engine_Func _ecore_extn_socket_engine_func =
 {
    _ecore_evas_extn_free,
    NULL,
@@ -1937,8 +1936,8 @@ static const Ecore_Evas_Engine_Func _ecore_extn_plug_engine_func =
    NULL,
    NULL,
    NULL,
-   _ecore_evas_plug_resize,
-   _ecore_evas_plug_move_resize,
+   _ecore_evas_socket_resize,
+   _ecore_evas_socket_move_resize,
    NULL,
    NULL,
    NULL,
@@ -1964,17 +1963,17 @@ static const Ecore_Evas_Engine_Func _ecore_extn_plug_engine_func =
    NULL,
    NULL,
    NULL,
-   _ecore_evas_extn_plug_alpha_set,
+   _ecore_evas_extn_socket_alpha_set,
    NULL, //transparent
 
-   _ecore_evas_extn_plug_render, // render
+   _ecore_evas_extn_socket_render, // render
    NULL  // screen_geometry_get
 };
 
 #endif
 
 EAPI Ecore_Evas *
-ecore_evas_extn_plug_new(const char *svcname, int svcnum, Eina_Bool svcsys)
+ecore_evas_extn_socket_new(const char *svcname, int svcnum, Eina_Bool svcsys)
 {
 #ifdef EXTN_ENABLED
    Extn *extn;
@@ -1990,9 +1989,9 @@ ecore_evas_extn_plug_new(const char *svcname, int svcnum, Eina_Bool svcsys)
 
    ECORE_MAGIC_SET(ee, ECORE_MAGIC_EVAS);
 
-   ee->engine.func = (Ecore_Evas_Engine_Func *)&_ecore_extn_plug_engine_func;
+   ee->engine.func = (Ecore_Evas_Engine_Func *)&_ecore_extn_socket_engine_func;
 
-   ee->driver = "extn_plug";
+   ee->driver = "extn_socket";
 
    ee->rotation = 0;
    ee->visible = 0;
@@ -2064,19 +2063,46 @@ ecore_evas_extn_plug_new(const char *svcname, int svcnum, Eina_Bool svcsys)
    else
      {
         Ecore_Ipc_Type ipctype = ECORE_IPC_LOCAL_USER;
+        char buf[PATH_MAX];
 
         ecore_ipc_init();
         extn->svc.name = eina_stringshare_add(svcname);
         extn->svc.num = svcnum;
         extn->svc.sys = svcsys;
 
+        snprintf(buf, sizeof(buf), "/tmp/ee-lock-XXXXXX");
+        extn->file.lockfd = mkstemp(buf);
+        if (extn->file.lockfd >= 0)
+          extn->file.lock = eina_stringshare_add(buf);
+        if ((extn->file.lockfd < 0) || (!extn->file.lock))
+          {
+             if (extn->file.lockfd)
+               {
+                  close(extn->file.lockfd);
+                  unlink(buf);
+               }
+             eina_stringshare_del(extn->svc.name);
+             if (extn->file.lock) eina_stringshare_del(extn->file.lock);
+             free(extn);
+             ecore_ipc_shutdown();
+             ecore_evas_free(ee);
+             return NULL;
+          }
+
         if (extn->svc.sys) ipctype = ECORE_IPC_LOCAL_SYSTEM;
-        extn->ipc.server = ecore_ipc_server_connect(ipctype,
-                                                    (char *)extn->svc.name,
-                                                    extn->svc.num, ee);
+        extn->ipc.am_server = EINA_TRUE;
+        extn->ipc.server = ecore_ipc_server_add(ipctype,
+                                                (char *)extn->svc.name,
+                                                extn->svc.num, ee);
         if (!extn->ipc.server)
           {
+             if (extn->file.lockfd)
+               {
+                  close(extn->file.lockfd);
+                  if (extn->file.lock) unlink(extn->file.lock);
+               }
              eina_stringshare_del(extn->svc.name);
+             eina_stringshare_del(extn->file.lock);
              free(extn);
              ecore_ipc_shutdown();
              ecore_evas_free(ee);
@@ -2085,17 +2111,18 @@ ecore_evas_extn_plug_new(const char *svcname, int svcnum, Eina_Bool svcsys)
         ee->engine.buffer.data = extn;
         extn->ipc.handlers = eina_list_append
            (extn->ipc.handlers,
-            ecore_event_handler_add(ECORE_IPC_EVENT_SERVER_ADD,
-                                    _ipc_server_add, ee));
+            ecore_event_handler_add(ECORE_IPC_EVENT_CLIENT_ADD,
+                                    _ipc_client_add, ee));
         extn->ipc.handlers = eina_list_append
            (extn->ipc.handlers,
-            ecore_event_handler_add(ECORE_IPC_EVENT_SERVER_DEL,
-                                    _ipc_server_del, ee));
+            ecore_event_handler_add(ECORE_IPC_EVENT_CLIENT_DEL,
+                                    _ipc_client_del, ee));
         extn->ipc.handlers = eina_list_append
            (extn->ipc.handlers,
-            ecore_event_handler_add(ECORE_IPC_EVENT_SERVER_DATA,
-                                    _ipc_server_data, ee));
+            ecore_event_handler_add(ECORE_IPC_EVENT_CLIENT_DATA,
+                                    _ipc_client_data, ee));
      }
+
    extn_ee_list = eina_list_append(extn_ee_list, ee);
 
    _ecore_evas_register(ee);
