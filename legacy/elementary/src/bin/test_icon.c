@@ -18,7 +18,7 @@ test_icon(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info _
    win = elm_win_add(NULL, "icon-transparent", ELM_WIN_BASIC);
    elm_win_title_set(win, "Icon Transparent");
    elm_win_autodel_set(win, EINA_TRUE);
-   elm_win_alpha_set(win, 1);
+   elm_win_alpha_set(win, EINA_TRUE);
 
    ic = elm_icon_add(win);
    snprintf(buf, sizeof(buf), "%s/images/logo.png", elm_app_data_dir_get());

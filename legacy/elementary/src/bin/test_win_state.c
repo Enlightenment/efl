@@ -17,7 +17,7 @@ my_bt_38_alpha_on(void *data, Evas_Object *obj __UNUSED__, void *event_info __UN
    Evas_Object *win = data;
    Evas_Object *bg = evas_object_data_get(win, "bg");
    evas_object_hide(bg);
-   elm_win_alpha_set(win, 1);
+   elm_win_alpha_set(win, EINA_TRUE);
 }
 
 static void
@@ -26,7 +26,7 @@ my_bt_38_alpha_off(void *data, Evas_Object *obj __UNUSED__, void *event_info __U
    Evas_Object *win = data;
    Evas_Object *bg = evas_object_data_get(win, "bg");
    evas_object_show(bg);
-   elm_win_alpha_set(win, 0);
+   elm_win_alpha_set(win, EINA_FALSE);
 }
 
 static void

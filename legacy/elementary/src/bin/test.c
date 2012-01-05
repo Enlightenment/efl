@@ -238,8 +238,8 @@ my_win_main(char *autorun, Eina_Bool test_win_only)
 
    /* Add a background to our window. This just uses the standard theme set
     * background. Without a background, you could make a window seem
-    * transparent with elm_win_alpha_set(win, 1); For example. if you have
-    * a compositor running this will make the window able to be
+    * transparent with elm_win_alpha_set(win, EINA_TRUE); For example. if you
+    * have a compositor running this will make the window able to be
     * semi-transparent and any space not filled by object/widget pixels will
     * be transparent or translucent based on alpha. If you do not have a
     * compositor running this should fall back to using shaped windows

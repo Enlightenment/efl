@@ -46,7 +46,7 @@ test_video(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info 
    win = elm_win_add(NULL, "video", ELM_WIN_BASIC);
    elm_win_title_set(win, "Video");
    elm_win_autodel_set(win, EINA_TRUE);
-   elm_win_alpha_set(win, 1); /* Needed to turn video fast path on */
+   elm_win_alpha_set(win, EINA_TRUE); /* Needed to turn video fast path on */
 
    bg = elm_bg_add(win);
    evas_object_size_hint_weight_set(bg, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
