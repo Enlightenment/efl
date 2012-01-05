@@ -173,8 +173,8 @@ test_index2_it_del(void *data, Evas_Object *obj, void *event_info __UNUSED__)
         return;
      }
 
-   label = elm_object_item_text_get(it);
-   label_next = elm_object_item_text_get(it_next);
+   label = elm_object_item_text_get((Elm_Object_Item *)it);
+   label_next = elm_object_item_text_get((Elm_Object_Item *)it_next);
 
    iit = elm_index_item_find(gui->id, it);
    if (label[0] == label_next[0])
