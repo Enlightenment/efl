@@ -5101,7 +5101,7 @@ EAPI void              evas_object_size_hint_min_get     (const Evas_Object *obj
  * @skip evas_object_size_hint_min_set
  * @until return
  *
- * In this example the minimum size hints change de behavior of an
+ * In this example the minimum size hints change the behavior of an
  * Evas box when layouting its children. See the full @ref
  * Example_Evas_Size_Hints "example".
  *
@@ -5145,7 +5145,7 @@ EAPI void              evas_object_size_hint_max_get     (const Evas_Object *obj
  * @skip evas_object_size_hint_max_set
  * @until return
  *
- * In this example the maximum size hints change de behavior of an
+ * In this example the maximum size hints change the behavior of an
  * Evas box when layouting its children. See the full @ref
  * Example_Evas_Size_Hints "example".
  *
@@ -5320,7 +5320,7 @@ EAPI void              evas_object_size_hint_align_get   (const Evas_Object *obj
  * @skip evas_object_size_hint_align_set
  * @until return
  *
- * In this example the alignment hints change de behavior of an Evas
+ * In this example the alignment hints change the behavior of an Evas
  * box when layouting its children. See the full @ref
  * Example_Evas_Size_Hints "example".
  *
@@ -5379,7 +5379,7 @@ EAPI void              evas_object_size_hint_weight_get  (const Evas_Object *obj
  * @skip evas_object_size_hint_weight_set
  * @until return
  *
- * In this example the weight hints change de behavior of an Evas box
+ * In this example the weight hints change the behavior of an Evas box
  * when layouting its children. See the full @ref
  * Example_Evas_Size_Hints "example".
  *
@@ -5415,7 +5415,7 @@ EAPI void              evas_object_size_hint_weight_set  (Evas_Object *obj, doub
  * @skip evas_object_size_hint_padding_set
  * @until return
  *
- * In this example the padding hints change de behavior of an Evas box
+ * In this example the padding hints change the behavior of an Evas box
  * when layouting its children. See the full @ref
  * Example_Evas_Size_Hints "example".
  *
@@ -7853,7 +7853,7 @@ EAPI void              evas_object_text_style_set        (Evas_Object *obj, Evas
  * - #EVAS_TEXT_STYLE_SOFT_SHADOW
  * - #EVAS_TEXT_STYLE_FAR_SOFT_SHADOW
  *
- * One can also change de direction the shadow grows to, with
+ * One can also change the direction where the shadow grows to, with
  * evas_object_text_style_set().
  *
  * @see evas_object_text_shadow_color_get()
