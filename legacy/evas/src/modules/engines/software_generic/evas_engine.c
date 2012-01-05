@@ -1,18 +1,20 @@
 #include "evas_common.h" /* Also includes international specific stuff */
 #include "evas_private.h"
 
-
-#define EVAS_GL_NO_GL_H_CHECK 1
-#include "Evas_GL.h"
-
 #ifdef HAVE_DLSYM
 # include <dlfcn.h>      /* dlopen,dlclose,etc */
+
+# define EVAS_GL 1
+# define EVAS_GL_NO_GL_H_CHECK 1
+# include "Evas_GL.h"
+
 #else
-# error software_generic should not get compiled if dlsym is not found on the system!
+# warning software_generic will not be able to have Evas_GL API.
 #endif
 
+#ifdef EVAS_GL
 //----------------------------------//
-// OSMesa... 
+// OSMesa...
 
 #define OSMESA_MAJOR_VERSION 6
 #define OSMESA_MINOR_VERSION 5
@@ -52,6 +54,7 @@
 
 typedef void (*OSMESAproc)();
 typedef struct osmesa_context *OSMesaContext;
+#endif
 
 typedef struct _Render_Engine_GL_Surface    Render_Engine_GL_Surface;
 typedef struct _Render_Engine_GL_Context    Render_Engine_GL_Context;
@@ -61,7 +64,9 @@ struct _Render_Engine_GL_Surface
    int     initialized;
    int     w, h;
 
+#ifdef EVAS_GL
    GLenum  internal_fmt;
+#endif
    int     internal_cpp;   // Component per pixel.  ie. RGB = 3
 
    int     depth_bits;
@@ -73,6 +78,7 @@ struct _Render_Engine_GL_Surface
    Render_Engine_GL_Context   *current_ctx;
 };
 
+#ifdef EVAS_GL
 struct _Render_Engine_GL_Context
 {
    int            initialized;
@@ -84,9 +90,8 @@ struct _Render_Engine_GL_Context
    Render_Engine_GL_Surface   *current_sfc;
 };
 
-
 //------------------------------------------------------//
-typedef void                   (*_eng_fn) (void );       
+typedef void                   (*_eng_fn) (void );
 typedef _eng_fn                (*glsym_func_eng_fn) ();
 typedef void                   (*glsym_func_void) ();
 typedef unsigned int           (*glsym_func_uint) ();
@@ -263,6 +268,7 @@ static void       (*_sym_glViewport)                            (GLint x, GLint 
 static void       (*_sym_glGetProgramBinary)                    (GLuint a, GLsizei b, GLsizei* c, GLenum* d, void* e) = NULL;
 static void       (*_sym_glProgramBinary)                       (GLuint a, GLenum b, const void* c, GLint d) = NULL;
 static void       (*_sym_glProgramParameteri)                   (GLuint a, GLuint b, GLint d) = NULL;
+#endif
 
 /*
  *****
@@ -1341,6 +1347,7 @@ eng_image_load_error_get(void *data __UNUSED__, void *image)
 static void *
 eng_gl_surface_create(void *data __UNUSED__, void *config, int w, int h)
 {
+#ifdef EVAS_GL
    Render_Engine_GL_Surface *sfc;
    Evas_GL_Config *cfg;
 
@@ -1425,11 +1432,18 @@ eng_gl_surface_create(void *data __UNUSED__, void *config, int w, int h)
      }
 
    return sfc;
+#else
+   (void) config;
+   (void) w;
+   (void) h;
+   return NULL;
+#endif
 }
 
 static int
 eng_gl_surface_destroy(void *data __UNUSED__, void *surface)
 {
+#ifdef EVAS_GL
    Render_Engine_GL_Surface *sfc;
 
    sfc = (Render_Engine_GL_Surface*)surface;
@@ -1443,11 +1457,16 @@ eng_gl_surface_destroy(void *data __UNUSED__, void *surface)
    surface = NULL;
 
    return 1;
+#else
+   (void) surface;
+   return 1;
+#endif
 }
 
 static void *
 eng_gl_context_create(void *data __UNUSED__, void *share_context)
 {
+#ifdef EVAS_GL
    Render_Engine_GL_Context *ctx;
    Render_Engine_GL_Context *share_ctx;
 
@@ -1477,11 +1496,16 @@ eng_gl_context_create(void *data __UNUSED__, void *share_context)
    ctx->initialized = 0;
 
    return ctx;
+#else
+   (void) share_context;
+   return NULL;
+#endif
 }
 
 static int
 eng_gl_context_destroy(void *data __UNUSED__, void *context)
 {
+#ifdef EVAS_GL
    Render_Engine_GL_Context *ctx;
 
    ctx = (Render_Engine_GL_Context*)context;
@@ -1494,11 +1518,16 @@ eng_gl_context_destroy(void *data __UNUSED__, void *context)
    context = NULL;
 
    return 1;
+#else
+   (void) context;
+   return 0;
+#endif
 }
 
 static int
 eng_gl_make_current(void *data __UNUSED__, void *surface, void *context)
 {
+#ifdef EVAS_GL
    Render_Engine_GL_Surface *sfc;
    Render_Engine_GL_Context *ctx;
    OSMesaContext share_ctx;
@@ -1555,6 +1584,11 @@ eng_gl_make_current(void *data __UNUSED__, void *surface, void *context)
    sfc->current_ctx = ctx;
 
    return 1;
+#else
+   (void) surface;
+   (void) context;
+   return 1;
+#endif
 }
 
 // FIXME!!! Implement later
@@ -1567,13 +1601,19 @@ eng_gl_string_query(void *data, int name)
 static void *
 eng_gl_proc_address_get(void *data __UNUSED__, const char *name)
 {
+#ifdef EVAS_GL
    if (_sym_OSMesaGetProcAddress) return _sym_OSMesaGetProcAddress(name);
    return dlsym(RTLD_DEFAULT, name);
+#else
+   (void) name;
+   return NULL;
+#endif
 }
 
 static int
 eng_gl_native_surface_get(void *data __UNUSED__, void *surface, void *native_surface)
 {
+#ifdef EVAS_GL
    Render_Engine_GL_Surface *sfc;
    Evas_Native_Surface *ns;
 
@@ -1587,13 +1627,22 @@ eng_gl_native_surface_get(void *data __UNUSED__, void *surface, void *native_sur
    ns->data.x11.visual = sfc->buffer;
 
    return 1;
+#else
+   (void) surface;
+   (void) native_surface;
+   return 1;
+#endif
 }
 
 
 static void *
 eng_gl_api_get(void *data __UNUSED__)
 {
+#ifdef EVAS_GL
    return &gl_funcs;
+#else
+   return NULL;
+#endif
 }
 
 //------------------------------------------------//
@@ -1753,14 +1802,14 @@ static Evas_Func func =
 //                      Load Symbols                              //
 //                                                                //
 //----------------------------------------------------------------//
+#ifdef EVAS_GL
 static void
 sym_missing(void)
 {
    ERR("GL symbols missing!\n");
 }
 
-
-static int 
+static int
 glue_sym_init(void)
 {
    //------------------------------------------------//
@@ -1797,7 +1846,7 @@ glue_sym_init(void)
    return 1;
 }
 
-static int 
+static int
 gl_sym_init(void)
 {
    //------------------------------------------------//
@@ -2247,7 +2296,7 @@ gl_sym_init(void)
         DBG("GL Library is GLES.");
         gl_lib_is_gles = 1;
      }
-   
+
    return 1;
 }
 
@@ -2507,9 +2556,11 @@ evgl_glShaderBinary(GLsizei n, const GLuint* shaders, GLenum binaryformat, const
    //n = binaryformat = length = 0;
    //shaders = binary = 0;
 }
+#endif
 //--------------------------------------------------------------//
 
 
+#ifdef EVAS_GL
 static void
 override_gl_apis(Evas_GL_API *api)
 {
@@ -2673,11 +2724,13 @@ override_gl_apis(Evas_GL_API *api)
    ORD(glShaderSource);    // Do precision stripping in both cases
 #undef ORD
 }
+#endif
 
 //-------------------------------------------//
 static int
 gl_lib_init(void)
 {
+#ifdef EVAS_GL
    // dlopen OSMesa 
    gl_lib_handle = dlopen("libOSMesa.so.1", RTLD_NOW);
    if (!gl_lib_handle) gl_lib_handle = dlopen("libOSMesa.so", RTLD_NOW);
@@ -2692,13 +2745,16 @@ gl_lib_init(void)
    if (!gl_sym_init()) return 0;
 
    override_gl_apis(&gl_funcs);
-  
+
    return 1;
+#else
+   return 0;
+#endif
 }
 
 
-static void 
-init_gl()
+static void
+init_gl(void)
 {
    DBG("Initializing Software OpenGL APIs...\n");
 
