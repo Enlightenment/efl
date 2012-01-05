@@ -417,6 +417,9 @@ evas_image_load_file_data_bmp(Image_Entry *ie, const char *file, const char *key
    fsize = eina_file_size_get(f);
    if (fsize < 2) goto close_file;
 
+   map = eina_file_map_all(f, EINA_FILE_SEQUENTIAL);
+   if (!map) goto close_file;
+   
    if (strncmp(map, "BM", 2)) goto close_file; // magic number
    position += 2;
    *error = EVAS_LOAD_ERROR_CORRUPT_FILE;
