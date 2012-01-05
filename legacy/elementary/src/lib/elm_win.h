@@ -4,7 +4,7 @@
  * @image html img/widget/win/preview-00.png
  * @image latex img/widget/win/preview-00.eps
  *
- * The window class of Elementary.  Contains functions to manipulate
+ * The window class of Elementary. Contains functions to manipulate
  * windows. The Evas engine used to render the window contents is specified
  * in the system or user elementary config files (whichever is found last),
  * and can be overridden with the ELM_ENGINE environment variable for
@@ -136,7 +136,7 @@ typedef enum
 } Elm_Win_Type;
 
 /**
- * The differents layouts that can be requested for the virtual keyboard.
+ * The different layouts that can be requested for the virtual keyboard.
  *
  * When the application window is being managed by Illume, it may request
  * any of the following layouts for the virtual keyboard.
