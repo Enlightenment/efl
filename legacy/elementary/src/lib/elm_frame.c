@@ -83,12 +83,10 @@ _sizing_eval(Evas_Object *obj)
    Evas_Coord minw = -1, minh = -1;
    Evas_Coord cminw = -1, cminh = -1;
    if (!wd) return;
-   if (wd->anim)
-      if (wd->recalc_count++ != 40) return;
-   wd->recalc_count = 0;
    edje_object_size_min_calc(wd->frm, &minw, &minh);
    evas_object_size_hint_min_get(obj, &cminw, &cminh);
    if ((minw == cminw) && (minh == cminh)) return;
+   printf("min: %3.3f %ix%i\n", ecore_loop_time_get(), minw, minh);
    evas_object_size_hint_min_set(obj, minw, minh);
    evas_object_size_hint_max_set(obj, -1, -1);
 }
@@ -197,31 +195,33 @@ _content_unset_hook(Evas_Object *obj, const char *part)
 }
 
 static void
-_recalc(Evas_Object *fr, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+_recalc(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
-   _sizing_eval(fr);
+   printf("recalc %3.3f\n", ecore_loop_time_get());
+   _sizing_eval(data);
 }
 
 static void
-_recalc_done(Evas_Object *fr, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+_recalc_done(void *data, Evas_Object *obj __UNUSED__, const char *sig __UNUSED__, const char *src __UNUSED__)
 {
-   Widget_Data *wd;
-   wd = elm_widget_data_get(fr);
+   Widget_Data *wd = elm_widget_data_get(data);
    if (!wd) return;
-   evas_object_smart_callback_del(wd->frm, "recalc", (Evas_Smart_Cb)_recalc);
+   printf("recalc done %3.3f\n", ecore_loop_time_get());
+   evas_object_smart_callback_del(wd->frm, "recalc", _recalc);
    wd->anim = EINA_FALSE;
-   _sizing_eval(fr);
+   _sizing_eval(data);
 }
 
 static void
-_signal_click(Evas_Object *fr, Evas_Object *obj __UNUSED__, const char *emission __UNUSED__, const char *source __UNUSED__)
+_signal_click(void *data, Evas_Object *obj __UNUSED__, const char *sig __UNUSED__, const char *src __UNUSED__)
 {
-   Widget_Data *wd;
-   wd = elm_widget_data_get(fr);
+   Widget_Data *wd = elm_widget_data_get(data);
    if (!wd) return;
-   evas_object_smart_callback_call(fr, SIG_CLICKED, NULL);
+   if (wd->anim) return;
+   evas_object_smart_callback_call(data, SIG_CLICKED, NULL);
    if (!wd->collapsible) return;
-   evas_object_smart_callback_add(wd->frm, "recalc", (Evas_Smart_Cb)_recalc, fr);
+   printf("recalc begin %3.3f\n", ecore_loop_time_get());
+   evas_object_smart_callback_add(wd->frm, "recalc", _recalc, data);
    edje_object_signal_emit(wd->frm, "elm,action,collapse", "elm");
    wd->collapsed++;
    wd->anim = EINA_TRUE;
@@ -255,9 +255,10 @@ elm_frame_add(Evas_Object *parent)
    elm_widget_resize_object_set(obj, wd->frm);
 
    evas_object_smart_callback_add(obj, "sub-object-del", _sub_del, obj);
-   evas_object_smart_callback_add(wd->frm, "elm,anim,done", (Evas_Smart_Cb)_recalc_done, obj);
+   edje_object_signal_callback_add(wd->frm, "elm,anim,done", "elm",
+                                   _recalc_done, obj);
    edje_object_signal_callback_add(wd->frm, "elm,action,click", "elm",
-                                   (Edje_Signal_Cb)_signal_click, obj);
+                                   _signal_click, obj);
    evas_object_smart_callbacks_descriptions_set(obj, _signals);
 
    _mirrored_set(obj, elm_widget_mirrored_get(obj));

@@ -63,22 +63,12 @@ group { name: "elm/frame/base/default";
             }
          }
       }
-      part {
-         name: "clip";
-         type: RECT;
-         description {
-            state: "default" 0.0;
-            min: 1 1;
-            rel1.to: "over";
-            rel2.to: "over";
-         }
-      }
       part { name: "over";
          mouse_events:  0;
          description { state:    "default" 0.0;
             min: 2 2;
             rel1.offset: 4 4;
-            rel2.to: "elm.swallow.content";
+            rel2.to: "clip";
             rel2.offset: 5 5;
             image {
                normal: "frame_1.png";
@@ -87,17 +77,12 @@ group { name: "elm/frame/base/default";
             }
             fill.smooth : 0;
          }
-         description { state: "collapsed" 0.0;
-            inherit: "default" 0.0;
-            rel2.to_y: "elm.text";
-            rel2.offset: 5 0;
-         }
       }
-      part { name: "elm.swallow.content";
-         type: SWALLOW;
-         clip_to: "clip";
-         description { state: "default" 0.0;
-            align: 0.0 0.0;
+      part {
+         name: "clip";
+         type: RECT;
+         description {
+            state: "default" 0.0;
             rel1 {
                to_y: "elm.text";
                relative: 0.0 1.0;
@@ -106,14 +91,31 @@ group { name: "elm/frame/base/default";
             rel2.offset: -9 -9;
          }
       }
+      part { name: "elm.swallow.content";
+         type: SWALLOW;
+         clip_to: "clip";
+         description { state: "default" 0.0;
+            align: 0.0 1.0;
+            rel1 {
+               to: "clip";
+               relative: 0.0 0.0;
+            }
+            rel2.to: "clip";
+         }
+         description { state: "collapsed" 0.0;
+            inherit: "default" 0.0;
+//            rel1.relative: 0.0 1.0;
+            rel1.offset: 0 -100;
+         }
+      }
       part { name: "event";
          type: RECT;
          mouse_events: 1;
-         repeat_events: 1;
+         ignore_flags: ON_HOLD;
          description { state: "default" 0.0;
             color: 0 0 0 0;
-            rel1.to: "elm.text";
-            rel2.to: "elm.text";
+            rel1.to_y: "elm.text";
+            rel2.to_y: "elm.text";
          }
       }
    }
@@ -138,16 +140,14 @@ group { name: "elm/frame/base/default";
       }
       program { name: "collapse";
          action:  STATE_SET "collapsed" 0.0;
-         target: "over";
-         target: "base";
-         transition: LINEAR 0.1;
+         target: "elm.swallow.content";
+         transition: LINEAR 1.0;
          after: "signal";
       }
       program { name: "expand";
          action:  STATE_SET "default" 0.0;
-         target: "over";
-         target: "base";
-         transition: LINEAR 0.1;
+         target: "elm.swallow.content";
+         transition: LINEAR 1.0;
          after: "signal";
       }
       program { name: "signal";
