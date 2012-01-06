@@ -3433,10 +3433,9 @@ st_collections_group_parts_part_entry_mode(void)
         [MODE]
     @effect
         Sets the selection mode for a textblock part to one of:
-        @li DEFAULT
-        @li EXPLICIT
-        DEFAULT selection mode is what you would expect on any desktop. Press
-        mouse, drag and release to end. EXPLICIT mode requires the application
+        @li DEFAULT selection mode is what you would expect on any desktop. Press
+        mouse, drag and release to end.
+        @li EXPLICITmode requires the application
         controlling the edje object has to explicitly begin and end selection
         modes, and the selection itself is dragable at both ends.
     @endproperty
@@ -3460,11 +3459,9 @@ st_collections_group_parts_part_select_mode(void)
         [MODE]
     @effect
         Sets the cursor mode for a textblock part to one of:
-        @li UNDER
-        @li BEFORE
-        UNDER cursor mode means the cursor will draw below the character pointed
+        @li UNDER cursor mode means the cursor will draw below the character pointed
         at. That's the default.
-        BEFORE cursor mode means the cursor is drawn as a vertical line before
+        @li BEFORE cursor mode means the cursor is drawn as a vertical line before
         the current character, just like many other GUI toolkits handle it.
     @endproperty
 */
