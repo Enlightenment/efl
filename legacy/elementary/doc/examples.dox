@@ -3472,7 +3472,7 @@
   * elm_image_orient_set() is used to flip the image around the (1, 0) (0, 1)
   * diagonal.
   *
-  * elm_image_aspect_ratio_retained_set() is used to keep the original aspect
+  * elm_image_aspect_fixed_set() is used to keep the original aspect
   * ratio of the image, even when the window is resized to another aspect ratio.
   *
   * elm_image_fill_outside_set() is used to ensure that the image will fill the

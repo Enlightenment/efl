@@ -218,10 +218,10 @@ EAPI void             elm_image_scale_get(const Evas_Object *obj, Eina_Bool *sca
  * and the image will fill the entire object (@p fill_outside is @c EINA_TRUE).
  *
  * @note This option will have no effect if
- * elm_image_aspect_ratio_retained_set() is set to @c EINA_FALSE.
+ * elm_image_aspect_fixed_set() is set to @c EINA_FALSE.
  *
  * @see elm_image_fill_outside_get()
- * @see elm_image_aspect_ratio_retained_set()
+ * @see elm_image_aspect_fixed_set()
  *
  * @ingroup Image
  */
@@ -351,7 +351,7 @@ EAPI Evas_Object     *elm_image_object_get(const Evas_Object *obj);
  * Set whether the original aspect ratio of the image should be kept on resize.
  *
  * @param obj The image object.
- * @param retained @c EINA_TRUE if the image should retain the aspect,
+ * @param fixed @c EINA_TRUE if the image should retain the aspect,
  * @c EINA_FALSE otherwise.
  *
  * The original aspect ratio (width / height) of the image is usually
@@ -359,12 +359,12 @@ EAPI Evas_Object     *elm_image_object_get(const Evas_Object *obj);
  * this original aspect, and the way that the image is fit into the object's
  * area depends on the option set by elm_image_fill_outside_set().
  *
- * @see elm_image_aspect_ratio_retained_get()
+ * @see elm_image_aspect_fixed_get()
  * @see elm_image_fill_outside_set()
  *
  * @ingroup Image
  */
-EAPI void             elm_image_aspect_ratio_retained_set(Evas_Object *obj, Eina_Bool retained);
+EAPI void             elm_image_aspect_fixed_set(Evas_Object *obj, Eina_Bool fixed);
 
 /**
  * Get if the object retains the original aspect ratio.
@@ -375,7 +375,7 @@ EAPI void             elm_image_aspect_ratio_retained_set(Evas_Object *obj, Eina
  *
  * @ingroup Image
  */
-EAPI Eina_Bool        elm_image_aspect_ratio_retained_get(const Evas_Object *obj);
+EAPI Eina_Bool        elm_image_aspect_fixed_get(const Evas_Object *obj);
 
 /**
  * @}

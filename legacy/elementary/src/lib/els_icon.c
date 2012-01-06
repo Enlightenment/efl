@@ -24,7 +24,7 @@ struct _Smart_Data
    Eina_Bool show : 1;
    Eina_Bool edit : 1;
    Eina_Bool edje : 1;
-   Eina_Bool aspect_ratio_retained: 1;
+   Eina_Bool aspect_fixed: 1;
    Elm_Image_Orient orient;
 };
 
@@ -489,27 +489,27 @@ _els_smart_icon_edje_get(Evas_Object *obj)
 }
 
 void
-_els_smart_icon_aspect_ratio_retained_set(Evas_Object *obj, Eina_Bool retained)
+_els_smart_icon_aspect_fixed_set(Evas_Object *obj, Eina_Bool fixed)
 {
    Smart_Data *sd;
 
    sd = evas_object_smart_data_get(obj);
    if (!sd) return;
 
-   retained = !!retained;
-   if (sd->aspect_ratio_retained == retained) return;
-   sd->aspect_ratio_retained = retained;
+   fixed = !!fixed;
+   if (sd->aspect_fixed == fixed) return;
+   sd->aspect_fixed = fixed;
    _smart_reconfigure(sd);
 }
 
 Eina_Bool
-_els_smart_icon_aspect_ratio_retained_get(const Evas_Object *obj)
+_els_smart_icon_aspect_fixed_get(const Evas_Object *obj)
 {
    Smart_Data *sd;
 
    sd = evas_object_smart_data_get(obj);
    if (!sd) return EINA_FALSE;
-   return sd->aspect_ratio_retained;
+   return sd->aspect_fixed;
 }
 
 /* local subsystem globals */
@@ -547,7 +547,7 @@ _smart_reconfigure(Smart_Data *sd)
         if (iw < 1) iw = 1;
         if (ih < 1) ih = 1;
 
-        if (sd->aspect_ratio_retained)
+        if (sd->aspect_fixed)
           {
              h = ((double)ih * w) / (double)iw;
              if (sd->fill_inside)
@@ -635,7 +635,7 @@ _smart_add(Evas_Object *obj)
    sd->fill_inside = EINA_TRUE;
    sd->scale_up = EINA_TRUE;
    sd->scale_down = EINA_TRUE;
-   sd->aspect_ratio_retained = EINA_TRUE;
+   sd->aspect_fixed = EINA_TRUE;
    sd->size = 64;
    sd->scale = 1.0;
    evas_object_smart_member_add(sd->obj, obj);
