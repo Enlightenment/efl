@@ -69,7 +69,6 @@ main(int argc, char **argv)
        eina_shutdown();
        exit(-1);
      }
-   eina_log_level_set(EINA_LOG_LEVEL_INFO);
    progname = argv[0];
    for (i = 1; i < argc; i++)
      {
@@ -104,7 +103,7 @@ main(int argc, char **argv)
    if (!decomp()) return -1;
    output();
 
-   printf("WARNING! If any Image or audio data was encoded in a LOSSY way, then\n"
+   fprintf(stderr, "WARNING! If any Image or audio data was encoded in a LOSSY way, then\n"
           "re-encoding will drop quality even more. You need access to the original\n"
           "data to ensure no loss of quality.\n");
    eet_close(ef);
