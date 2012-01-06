@@ -351,6 +351,24 @@ typedef void (*Elm_Web_Console_Message)(void *data, Evas_Object *obj, const char
 EAPI Evas_Object      *elm_web_add(Evas_Object *parent);
 
 /**
+ * Change useragent of a elm_web object
+ * 
+ * @param obj The object
+ * @param useragent String for useragent
+ *
+ */
+EAPI void elm_web_useragent_set(Evas_Object *obj, const char *user_agent);
+
+/**
+ * Return current useragent of elm_web object
+ *
+ * @param obj The object
+ * @return Useragent string
+ *
+ */
+EAPI const char* elm_web_useragent_get(const Evas_Object *obj);
+
+/**
  * Get internal ewk_view object from web object.
  *
  * Elementary may not provide some low level features of EWebKit,

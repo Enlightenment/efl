@@ -11,6 +11,7 @@ typedef struct
    Evas_Object *btn_fwd;
    Evas_Object *url_entry;
    Eina_List *sub_wins;
+   const char* user_agent;
    Eina_Bool js_hooks : 1;
 } Web_Test;
 
@@ -102,6 +103,7 @@ _new_window_hook(void *data, Evas_Object *obj __UNUSED__, Eina_Bool js __UNUSED_
    evas_object_show(bg);
 
    new_web = elm_web_add(new_win);
+   elm_web_useragent_set(new_web, wt->user_agent);
    evas_object_size_hint_weight_set(new_web, EVAS_HINT_EXPAND,
                                     EVAS_HINT_EXPAND);
    elm_win_resize_object_add(new_win, new_web);
@@ -332,8 +334,10 @@ _main_web_del_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, vo
 }
 
 void
-test_web(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+test_web(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__, Eina_Bool mobile)
 {
+   const char user_agent_firefox[] = "Mozilla/5.0 (X11; Linux x86_64; rv:9.0.1) Gecko/20100101 Firefox/9.0.1";
+   const char user_agent_mobile[] = "Mozilla/5.0 (iPhone; U; CPU like Mac OS X; en) AppleWebKit/420+ (KHTML, like Gecko) Version/3.0 Mobile/1A543a Safari/419.3";
    Evas_Object *win, *bg, *bx, *bx2, *bt, *web, *url;
    Web_Test *wt;
 
@@ -342,7 +346,18 @@ test_web(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __
    wt = calloc(1, sizeof(*wt));
 
    win = elm_win_add(NULL, "web", ELM_WIN_BASIC);
-   elm_win_title_set(win, "Web");
+
+   if (mobile == EINA_TRUE)
+   {
+      wt->user_agent = user_agent_mobile;
+      elm_win_title_set(win, "Web-mobile");
+   }
+   else
+   {
+      wt->user_agent = user_agent_firefox;
+      elm_win_title_set(win, "Web");
+   }
+
    elm_win_autodel_set(win, EINA_TRUE);
 
    bg = elm_bg_add(win);
@@ -363,6 +378,8 @@ test_web(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __
    evas_object_show(bx2);
 
    web = elm_web_add(win);
+   elm_web_useragent_set(web, wt->user_agent);
+   printf("elm_web useragent: %s\n", elm_web_useragent_get(web));
    evas_object_size_hint_weight_set(web, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(web, EVAS_HINT_FILL, EVAS_HINT_FILL);
    elm_box_pack_end(bx, web);
@@ -480,5 +497,17 @@ test_web(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __
 
    evas_object_resize(win, 320, 480);
    evas_object_show(win);
+}
+
+void
+test_web_normal(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+{
+   test_web(data, obj, event_info, EINA_FALSE);
+}
+
+void
+test_web_mobile(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+{
+   test_web(data, obj, event_info, EINA_TRUE);
 }
 #endif

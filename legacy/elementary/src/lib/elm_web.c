@@ -1203,6 +1203,32 @@ elm_web_console_message_hook_set(Evas_Object *obj, Elm_Web_Console_Message func,
 #endif
 }
 
+EAPI void 
+elm_web_useragent_set(Evas_Object *obj, const char *user_agent)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype);
+#ifdef HAVE_ELEMENTARY_WEB
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return;
+   ewk_view_setting_user_agent_set(wd->ewk_view, user_agent);
+#else
+   (void)user_agent;
+#endif
+}
+
+EAPI const char* 
+elm_web_useragent_get(const Evas_Object *obj)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype) NULL;
+#ifdef HAVE_ELEMENTARY_WEB
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return NULL;
+   return ewk_view_setting_user_agent_get(wd->ewk_view);
+#else
+   return NULL;
+#endif
+}
+
 EAPI Eina_Bool
 elm_web_tab_propagate_get(const Evas_Object *obj)
 {

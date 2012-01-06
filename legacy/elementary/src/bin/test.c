@@ -156,7 +156,8 @@ void test_video(void *data, Evas_Object *obj, void *event_info);
 void test_eio(void *data, Evas_Object *obj, void *event_info);
 #endif
 #ifdef HAVE_ELEMENTARY_WEB
-void test_web(void *data, Evas_Object *obj, void *event_info);
+void test_web_normal(void *data, Evas_Object *obj, void *event_info);
+void test_web_mobile(void *data, Evas_Object *obj, void *event_info);
 #endif
 
 struct elm_test
@@ -412,7 +413,8 @@ add_tests:
 
    //------------------------------//
 #ifdef HAVE_ELEMENTARY_WEB
-   ADD_TEST(NULL, "Web", "Web", test_web);
+   ADD_TEST(NULL, "Web", "Web", test_web_normal);
+   ADD_TEST(NULL, "Web", "Web-mobile", test_web_mobile);
 #endif
 
    //------------------------------//
