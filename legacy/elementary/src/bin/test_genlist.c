@@ -1945,4 +1945,96 @@ test_genlist12(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_i
    evas_object_resize(win, 400, 500);
    evas_object_show(win);
 }
+
+static int
+gl13_cmp(const void *pa, const void *pb)
+{
+   const Elm_Genlist_Item *ia = pa, *ib = pb;
+   int a = (int)(long)elm_genlist_item_data_get(ia);
+   int b = (int)(long)elm_genlist_item_data_get(ib);
+   printf(">>> cmp: %d, %d\n", a, b);
+   return a - b;
+}
+
+void
+test_genlist13(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+{
+   Elm_Genlist_Item *pi[6];
+   Evas_Object *win, *bg, *bx, *gl;
+   int i, base, idx[3] = {1, 10, 20};
+
+   win = elm_win_add(NULL, "genlist-tree-insert-sorted", ELM_WIN_BASIC);
+   elm_win_title_set(win, "Genlist Tree, Insert Sorted");
+   elm_win_autodel_set(win, EINA_TRUE);
+
+   bg = elm_bg_add(win);
+   elm_win_resize_object_add(win, bg);
+   evas_object_size_hint_weight_set(bg, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_show(bg);
+
+   bx = elm_box_add(win);
+   evas_object_size_hint_weight_set(bx, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   elm_win_resize_object_add(win, bx);
+   evas_object_show(bx);
+
+   gl = elm_genlist_add(win);
+   evas_object_size_hint_align_set(gl, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   evas_object_size_hint_weight_set(gl, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_show(gl);
+
+   itc4.item_style = "default";
+   itc4.func.text_get = gl4_text_get;
+   itc4.func.content_get = NULL;
+   itc4.func.state_get = NULL;
+   itc4.func.del = NULL;
+
+   /* mixed order to test insert sorted */
+
+   for (i = 0; i < 3; i++)
+     {
+        pi[i] = elm_genlist_item_direct_sorted_insert
+          (gl, &itc4, (void *)idx[i]/* item data */, NULL/* parent */,
+           ELM_GENLIST_ITEM_SUBITEMS, gl13_cmp/* cmp */,
+           NULL/* func */, NULL/* func data */);
+     }
+
+   for (i = 0, base = 100; i < 3; i++, base += 100)
+     {
+        int j;
+        for (j = 0; j < 3; j++)
+          {
+             elm_genlist_item_direct_sorted_insert
+               (gl, &itc4, (void *)(idx[j] + base)/* item data */,
+                pi[i]/* parent */, ELM_GENLIST_ITEM_NONE,
+                gl13_cmp/* cmp */, NULL/* func */, NULL/* func data */);
+          }
+     }
+
+   for (i = 0; i < 3; i++)
+     {
+        pi[i + 3] = elm_genlist_item_direct_sorted_insert
+          (gl, &itc4, (void *)(idx[i] * 2)/* item data */, NULL/* parent */,
+           ELM_GENLIST_ITEM_SUBITEMS, gl13_cmp/* cmp */, NULL/* func */,
+           NULL/* func data */);
+     }
+
+
+   for (i = 0, base = 10000; i < 3; i++, base += 10000)
+     {
+        int j;
+        for (j = 0; j < 3; j++)
+          {
+             elm_genlist_item_direct_sorted_insert
+               (gl, &itc4, (void *)(idx[j] + base)/* item data */,
+                pi[i + 3]/* parent */, ELM_GENLIST_ITEM_NONE,
+                gl13_cmp/* cmp */, NULL/* func */, NULL/* func data */);
+          }
+     }
+
+   elm_box_pack_end(bx, gl);
+   evas_object_show(bx);
+
+   evas_object_resize(win, 320, 320);
+   evas_object_show(win);
+}
 #endif
