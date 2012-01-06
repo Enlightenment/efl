@@ -11,6 +11,7 @@ Improvements:
     * speedup load time of Edje file.
     * check existence of group at compile time also.
     * reduce number of call to stat during edje_object_file_set.
+    * unswallow object about to be swallowed if necessary.
 
 Changes since Edje 1.0.0:
 -------------------------

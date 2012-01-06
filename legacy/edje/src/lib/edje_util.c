@@ -1908,6 +1908,13 @@ edje_object_part_swallow(Evas_Object *obj, const char *part, Evas_Object *obj_sw
    // XXX: by Sachiel, January 21th 2009, 19:30 UTC
    _edje_recalc_do(ed);
 
+   rp = evas_object_data_get(obj_swallow, "\377 edje.swallowing_part");
+   if (rp)
+     {
+        /* The object is already swallowed somewhere, unswallow it first */
+        edje_object_part_unswallow(rp->edje->obj, obj_swallow);
+     }
+
    rp = _edje_real_part_recursive_get(ed, (char *)part);
    if (!rp) return EINA_FALSE;
    if (rp->part->type != EDJE_PART_TYPE_SWALLOW)
