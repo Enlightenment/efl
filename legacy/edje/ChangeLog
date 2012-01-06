@@ -270,3 +270,4 @@
 2012-01-06  Cedric Bail
 
 	* Unswallow object that are about to be swallowed if necessary.
+	* Add EDJE_ASPECT_PREFER_SOURCE.

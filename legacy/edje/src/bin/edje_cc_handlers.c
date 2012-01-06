@@ -4621,7 +4621,7 @@ st_collections_group_parts_part_description_aspect(void)
         [DIMENSION]
     @effect
         Sets the scope of the "aspect" property to a given dimension. Available
-        options are BOTH, VERTICAL, HORIZONTAL and NONE
+        options are BOTH, VERTICAL, HORIZONTAL, SOURCE and NONE
     @endproperty
 */
 static void
@@ -4634,6 +4634,7 @@ st_collections_group_parts_part_description_aspect_preference(void)
 				   "VERTICAL", EDJE_ASPECT_PREFER_VERTICAL,
 				   "HORIZONTAL", EDJE_ASPECT_PREFER_HORIZONTAL,
 				   "BOTH", EDJE_ASPECT_PREFER_BOTH,
+				   "SOURCE", EDJE_ASPECT_PREFER_SOURCE,
 				   NULL);
 }
 

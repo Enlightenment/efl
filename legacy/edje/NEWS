@@ -6,6 +6,7 @@ Changes since Edje 1.1.0:
 Additions:
 
     * "recalc" smart callback for object size changes
+    * EDJE_ASPECT_PREFER_SOURCE.
 
 Improvements:
     * speedup load time of Edje file.
