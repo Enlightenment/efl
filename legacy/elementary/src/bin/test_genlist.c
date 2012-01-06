@@ -1952,7 +1952,6 @@ gl13_cmp(const void *pa, const void *pb)
    const Elm_Genlist_Item *ia = pa, *ib = pb;
    int a = (int)(long)elm_genlist_item_data_get(ia);
    int b = (int)(long)elm_genlist_item_data_get(ib);
-   printf(">>> cmp: %d, %d\n", a, b);
    return a - b;
 }
 
