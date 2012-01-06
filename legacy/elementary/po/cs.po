@@ -1,12 +1,12 @@
 # Header entry was created by Lokalize.
 #
 # Vít Pelčák <vit@pelcak.org>, 2011.
-#: src/lib/elm_config.c:1405
+#: src/lib/elm_config.c:1408
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: enlightenment-devel@lists.sourceforge.net\n"
-"POT-Creation-Date: 2011-12-30 17:56+0900\n"
+"POT-Creation-Date: 2012-01-06 15:21+0900\n"
 "PO-Revision-Date: 2011-10-23 01:31+0100\n"
 "Last-Translator: Daniel Kolesa <quaker66@gmail.com>\n"
 "Language-Team: Czech <kde-i18n-doc@kde.org>\n"
@@ -68,7 +68,7 @@ msgstr "Stav"
 msgid "Check"
 msgstr "Ověřit"
 
-#: src/lib/elm_config.c:1342
+#: src/lib/elm_config.c:1345
 msgid "default:LTR"
 msgstr "výchozí:LTR"
 

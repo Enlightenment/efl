@@ -1,12 +1,12 @@
 # Portuguese translation for Elementary.
 # This file is put in the public domain.
 # Sérgio Marques <smarquespt@gmail.com>, 2011.
-#: src/lib/elm_config.c:1405
+#: src/lib/elm_config.c:1408
 msgid ""
 msgstr ""
 "Project-Id-Version: Elementary\n"
 "Report-Msgid-Bugs-To: enlightenment-devel@lists.sourceforge.net\n"
-"POT-Creation-Date: 2011-12-30 17:56+0900\n"
+"POT-Creation-Date: 2012-01-06 15:21+0900\n"
 "PO-Revision-Date: 2011-11-17 12:25-0000\n"
 "Last-Translator: Sérgio Marques <smarquespt@gmail.com>\n"
 "Language-Team: \n"
@@ -68,7 +68,7 @@ msgstr "Estado"
 msgid "Check"
 msgstr "Verificar"
 
-#: src/lib/elm_config.c:1342
+#: src/lib/elm_config.c:1345
 msgid "default:LTR"
 msgstr "omissão: LTR"
 

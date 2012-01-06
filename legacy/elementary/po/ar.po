@@ -2,12 +2,12 @@
 # This file is distributed under the same license as the Elementary package.
 # FIRST AUTHOR <tom.hacohen@partner.samsung.com>, 2010.
 #
-#: src/lib/elm_config.c:1405
+#: src/lib/elm_config.c:1408
 msgid ""
 msgstr ""
 "Project-Id-Version: elementary\n"
 "Report-Msgid-Bugs-To: enlightenment-devel@lists.sourceforge.net\n"
-"POT-Creation-Date: 2011-12-30 17:56+0900\n"
+"POT-Creation-Date: 2012-01-06 15:21+0900\n"
 "PO-Revision-Date: 2010-12-26 10:05+0200\n"
 "Last-Translator: Tom Hacohen <tom.hacohen@partner.samsung.com>\n"
 "Language-Team: General\n"
@@ -69,7 +69,7 @@ msgstr ""
 msgid "Check"
 msgstr ""
 
-#: src/lib/elm_config.c:1342
+#: src/lib/elm_config.c:1345
 msgid "default:LTR"
 msgstr "default:RTL"
 

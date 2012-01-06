@@ -4,12 +4,12 @@
 # This file is distributed under the same license as the elementary package.
 # Fabian Nowak <timystery@arcor.de>, 2011.
 #
-#: src/lib/elm_config.c:1405
+#: src/lib/elm_config.c:1408
 msgid ""
 msgstr ""
 "Project-Id-Version: elementary 0.7.0.57309\n"
 "Report-Msgid-Bugs-To: enlightenment-devel@lists.sourceforge.net\n"
-"POT-Creation-Date: 2011-12-30 17:56+0900\n"
+"POT-Creation-Date: 2012-01-06 15:21+0900\n"
 "PO-Revision-Date: 2011-06-19 16:41+0100\n"
 "Last-Translator: Heimen Stoffels <vistausss@gmail.com>\n"
 "Language-Team: Dutch <vistausss@gmail.com>\n"
@@ -72,7 +72,7 @@ msgstr ""
 msgid "Check"
 msgstr ""
 
-#: src/lib/elm_config.c:1342
+#: src/lib/elm_config.c:1345
 msgid "default:LTR"
 msgstr "Standaard: LTR"
 

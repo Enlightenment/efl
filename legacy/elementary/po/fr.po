@@ -3,12 +3,12 @@
 # batden <batden@orange.fr>, 2011.
 # dazibao <dazibao@sfr.fr>, 2011.
 #
-#: src/lib/elm_config.c:1405
+#: src/lib/elm_config.c:1408
 msgid ""
 msgstr ""
 "Project-Id-Version: Elementary\n"
 "Report-Msgid-Bugs-To: enlightenment-devel@lists.sourceforge.net\n"
-"POT-Creation-Date: 2011-12-30 17:56+0900\n"
+"POT-Creation-Date: 2012-01-06 15:21+0900\n"
 "PO-Revision-Date: 2011-11-08 07:57+0100\n"
 "Last-Translator: dazibao <dazibao@sfr.fr>\n"
 "Language-Team: French <sansgourou@gmail.com>\n"
@@ -72,7 +72,7 @@ msgstr "État"
 msgid "Check"
 msgstr "À cocher"
 
-#: src/lib/elm_config.c:1342
+#: src/lib/elm_config.c:1345
 msgid "default:LTR"
 msgstr "LTR par défaut"
 
