@@ -1074,7 +1074,7 @@ elm_toolbar_add(Evas_Object *parent)
    elm_smart_scroller_child_set(wd->scr, wd->bx);
    evas_object_show(wd->bx);
 
-   elm_toolbar_mode_shrink_set(obj, _elm_config->toolbar_shrink_mode);
+   elm_toolbar_shrink_mode_set(obj, _elm_config->toolbar_shrink_mode);
    evas_object_event_callback_add(wd->scr, EVAS_CALLBACK_RESIZE, _resize, obj);
    evas_object_event_callback_add(wd->bx, EVAS_CALLBACK_RESIZE, _resize, obj);
    elm_toolbar_icon_order_lookup_set(obj, ELM_ICON_LOOKUP_THEME_FDO);
@@ -1509,7 +1509,7 @@ elm_toolbar_item_separator_get(const Elm_Object_Item *it)
 }
 
 EAPI void
-elm_toolbar_mode_shrink_set(Evas_Object *obj, Elm_Toolbar_Shrink_Mode shrink_mode)
+elm_toolbar_shrink_mode_set(Evas_Object *obj, Elm_Toolbar_Shrink_Mode shrink_mode)
 {
    ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
@@ -1544,7 +1544,7 @@ elm_toolbar_mode_shrink_set(Evas_Object *obj, Elm_Toolbar_Shrink_Mode shrink_mod
 }
 
 EAPI Elm_Toolbar_Shrink_Mode
-elm_toolbar_mode_shrink_get(const Evas_Object *obj)
+elm_toolbar_shrink_mode_get(const Evas_Object *obj)
 {
    ELM_CHECK_WIDTYPE(obj, widtype) ELM_TOOLBAR_SHRINK_NONE;
    Widget_Data *wd = elm_widget_data_get(obj);
@@ -2035,4 +2035,16 @@ elm_toolbar_items_count(const Evas_Object *obj)
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return 0;
    return wd->item_count;
+}
+
+EINA_DEPRECATED EAPI void
+elm_toolbar_mode_shrink_set(Evas_Object *obj, Elm_Toolbar_Shrink_Mode shrink_mode)
+{
+   elm_toolbar_shrink_mode_set(obj, shrink_mode);
+}
+
+EINA_DEPRECATED EAPI Elm_Toolbar_Shrink_Mode
+elm_toolbar_mode_shrink_get(const Evas_Object *obj)
+{
+   return elm_toolbar_shrink_mode_get(obj);
 }

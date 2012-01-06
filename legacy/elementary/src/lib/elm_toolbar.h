@@ -57,8 +57,8 @@
  *
  * Values <b> don't </b> work as bitmask, only one can be choosen.
  *
- * @see elm_toolbar_mode_shrink_set()
- * @see elm_toolbar_mode_shrink_get()
+ * @see elm_toolbar_shrink_mode_set()
+ * @see elm_toolbar_shrink_mode_get()
  *
  * @ingroup Toolbar
  */
@@ -644,7 +644,7 @@ EAPI Eina_Bool                    elm_toolbar_item_separator_get(const Elm_Objec
  *
  * @ingroup Toolbar
  */
-EAPI void                         elm_toolbar_mode_shrink_set(Evas_Object *obj, Elm_Toolbar_Shrink_Mode shrink_mode);
+EAPI void                         elm_toolbar_shrink_mode_set(Evas_Object *obj, Elm_Toolbar_Shrink_Mode shrink_mode);
 
 /**
  * Get the shrink mode of toolbar @p obj.
@@ -652,11 +652,11 @@ EAPI void                         elm_toolbar_mode_shrink_set(Evas_Object *obj, 
  * @param obj The toolbar object.
  * @return Toolbar's items display behavior.
  *
- * @see elm_toolbar_mode_shrink_set() for details.
+ * @see elm_toolbar_shrink_mode_set() for details.
  *
  * @ingroup Toolbar
  */
-EAPI Elm_Toolbar_Shrink_Mode      elm_toolbar_mode_shrink_get(const Evas_Object *obj);
+EAPI Elm_Toolbar_Shrink_Mode      elm_toolbar_shrink_mode_get(const Evas_Object *obj);
 
 /**
  * Enable/disable homogeneous mode.

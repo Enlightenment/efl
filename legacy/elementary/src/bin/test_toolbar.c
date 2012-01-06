@@ -86,7 +86,7 @@ test_toolbar(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_inf
 
    tb = elm_toolbar_add(win);
    elm_toolbar_homogeneous_set(tb, 0);
-   elm_toolbar_mode_shrink_set(tb, ELM_TOOLBAR_SHRINK_MENU);
+   elm_toolbar_shrink_mode_set(tb, ELM_TOOLBAR_SHRINK_MENU);
    evas_object_size_hint_weight_set(tb, 0.0, 0.0);
    evas_object_size_hint_align_set(tb, EVAS_HINT_FILL, 0.0);
 
@@ -196,7 +196,7 @@ test_toolbar2(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_in
 
    tb = elm_toolbar_add(win);
    elm_toolbar_homogeneous_set(tb, 0);
-   elm_toolbar_mode_shrink_set(tb, ELM_TOOLBAR_SHRINK_SCROLL);
+   elm_toolbar_shrink_mode_set(tb, ELM_TOOLBAR_SHRINK_SCROLL);
    evas_object_size_hint_weight_set(tb, 0.0, 0.0);
    evas_object_size_hint_align_set(tb, EVAS_HINT_FILL, 0.0);
 
@@ -306,7 +306,7 @@ test_toolbar3(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_in
 
    tb = elm_toolbar_add(win);
    elm_toolbar_homogeneous_set(tb, 0);
-   elm_toolbar_mode_shrink_set(tb, ELM_TOOLBAR_SHRINK_NONE);
+   elm_toolbar_shrink_mode_set(tb, ELM_TOOLBAR_SHRINK_NONE);
    evas_object_size_hint_weight_set(tb, 0.0, 0.0);
    evas_object_size_hint_align_set(tb, EVAS_HINT_FILL, 0.0);
 
@@ -416,7 +416,7 @@ test_toolbar4(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_in
 
    tb = elm_toolbar_add(win);
    elm_toolbar_homogeneous_set(tb, 0);
-   elm_toolbar_mode_shrink_set(tb, ELM_TOOLBAR_SHRINK_HIDE);
+   elm_toolbar_shrink_mode_set(tb, ELM_TOOLBAR_SHRINK_HIDE);
    evas_object_size_hint_weight_set(tb, 0.0, 0.0);
    evas_object_size_hint_align_set(tb, EVAS_HINT_FILL, 0.0);
 
@@ -526,7 +526,7 @@ test_toolbar5(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_in
 
    tb = elm_toolbar_add(win);
    elm_toolbar_homogeneous_set(tb, 0);
-   elm_toolbar_mode_shrink_set(tb, ELM_TOOLBAR_SHRINK_MENU);
+   elm_toolbar_shrink_mode_set(tb, ELM_TOOLBAR_SHRINK_MENU);
    evas_object_size_hint_weight_set(tb, 0.0, 0.0);
    evas_object_size_hint_align_set(tb, EVAS_HINT_FILL, 0.0);
    elm_toolbar_no_select_mode_set(tb, EINA_TRUE);
@@ -642,7 +642,7 @@ test_toolbar6(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_in
 
    tb = elm_toolbar_add(win);
    elm_toolbar_horizontal_set(tb, EINA_FALSE);
-   elm_toolbar_mode_shrink_set(tb, ELM_TOOLBAR_SHRINK_MENU);
+   elm_toolbar_shrink_mode_set(tb, ELM_TOOLBAR_SHRINK_MENU);
    evas_object_size_hint_weight_set(tb, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(tb, EVAS_HINT_FILL, EVAS_HINT_FILL);
 

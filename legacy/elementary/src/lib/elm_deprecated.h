@@ -2850,3 +2850,32 @@ EINA_DEPRECATED EAPI const char                  *elm_list_item_label_get(const 
  */
 EINA_DEPRECATED EAPI void                         elm_list_item_label_set(Elm_List_Item *item, const char *text);
 
+/**
+ * Set the shrink state of toolbar @p obj.
+ *
+ * @param obj The toolbar object.
+ * @param shrink_mode Toolbar's items display behavior.
+ *
+ * The toolbar won't scroll if #ELM_TOOLBAR_SHRINK_NONE,
+ * but will enforce a minimun size so all the items will fit, won't scroll
+ * and won't show the items that don't fit if #ELM_TOOLBAR_SHRINK_HIDE,
+ * will scroll if #ELM_TOOLBAR_SHRINK_SCROLL, and will create a button to
+ * pop up excess elements with #ELM_TOOLBAR_SHRINK_MENU.
+ *
+ * @deprecated Please use elm_toolbar_shrink_mode_set(obj, shrink_mode);
+ * @ingroup Toolbar
+ */
+EINA_DEPRECATED EAPI void                         elm_toolbar_mode_shrink_set(Evas_Object *obj, Elm_Toolbar_Shrink_Mode shrink_mode);
+
+/**
+ * Get the shrink mode of toolbar @p obj.
+ *
+ * @param obj The toolbar object.
+ * @return Toolbar's items display behavior.
+ *
+ * @see elm_toolbar_shrink_mode_set() for details.
+ *
+ * @deprecated Please use elm_toolbar_shrink_mode_get(obj);
+ * @ingroup Toolbar
+ */
+EINA_DEPRECATED EAPI Elm_Toolbar_Shrink_Mode      elm_toolbar_mode_shrink_get(const Evas_Object *obj);

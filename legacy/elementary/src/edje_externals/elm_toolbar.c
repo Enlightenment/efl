@@ -63,7 +63,7 @@ external_toolbar_state_set(void *data __UNUSED__, Evas_Object *obj, const void *
    if (p->shrink_mode)
      {
         shrink_mode = _toolbar_shrink_choices_setting_get(p->shrink_mode);
-        elm_toolbar_mode_shrink_set(obj, shrink_mode);
+        elm_toolbar_shrink_mode_set(obj, shrink_mode);
      }
 }
 
@@ -125,7 +125,7 @@ external_toolbar_param_set(void *data __UNUSED__, Evas_Object *obj, const Edje_E
         if (param->type == EDJE_EXTERNAL_PARAM_TYPE_STRING)
           {
              shrink_mode = _toolbar_shrink_choices_setting_get(param->s);
-             elm_toolbar_mode_shrink_set(obj, shrink_mode);
+             elm_toolbar_shrink_mode_set(obj, shrink_mode);
              return EINA_TRUE;
           }
      }
@@ -192,7 +192,7 @@ external_toolbar_param_get(void *data __UNUSED__, const Evas_Object *obj, Edje_E
         if (param->type == EDJE_EXTERNAL_PARAM_TYPE_STRING)
           {
              Elm_Toolbar_Shrink_Mode shrink_mode;
-             shrink_mode = elm_toolbar_mode_shrink_get(obj);
+             shrink_mode = elm_toolbar_shrink_mode_get(obj);
              param->s = _toolbar_shrink_modes[shrink_mode];
              return EINA_TRUE;
           }

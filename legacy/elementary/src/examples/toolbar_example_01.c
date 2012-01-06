@@ -74,7 +74,7 @@ elm_main(int argc __UNUSED__, char **argv __UNUSED__)
    evas_object_show(bt);
 
    tb = elm_toolbar_add(win);
-   elm_toolbar_mode_shrink_set(tb, ELM_TOOLBAR_SHRINK_SCROLL);
+   elm_toolbar_shrink_mode_set(tb, ELM_TOOLBAR_SHRINK_SCROLL);
    evas_object_size_hint_weight_set(tb, 0.0, 0.0);
    evas_object_size_hint_align_set(tb, EVAS_HINT_FILL, 0.0);
    evas_object_show(tb);
