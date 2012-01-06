@@ -79,5 +79,34 @@ EAPI void      elm_photo_fill_inside_set(Evas_Object *obj, Eina_Bool fill);
 EAPI void      elm_photo_editable_set(Evas_Object *obj, Eina_Bool set);
 
 /**
+ * Set whether the original aspect ratio of the photo should be kept on resize.
+ *
+ * @param obj The photo object.
+ * @param fixed @c EINA_TRUE if the photo should fix the aspect,
+ * @c EINA_FALSE otherwise.
+ *
+ * The original aspect ratio (width / height) of the photo is usually
+ * distorted to match the object's size. Enabling this option will fix
+ * this original aspect, and the way that the photo is fit into
+ * the object's area
+ *
+ * @see elm_photo_aspect_fixed_get()
+ *
+ * @ingroup Photo
+ */
+EAPI void             elm_photo_aspect_fixed_set(Evas_Object *obj, Eina_Bool fixed);
+
+/**
+ * Get if the object fixes the original aspect ratio.
+ *
+ * @param obj The photo object.
+ * @return @c EINA_TRUE if the object keeps the original aspect, @c EINA_FALSE
+ * otherwise.
+ *
+ * @ingroup Photo
+ */
+EAPI Eina_Bool        elm_photo_aspect_fixed_get(const Evas_Object *obj);
+
+/**
  * @}
  */

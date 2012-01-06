@@ -51,6 +51,7 @@ test_photo(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info 
                       elm_app_data_dir_get(), img[n]);
              n++;
              if (n >= 9) n = 0;
+             elm_photo_aspect_fixed_set(ph, EINA_FALSE);
              elm_photo_size_set(ph, 80);
              if (n == 8)
                elm_photo_thumb_set(ph, buf, NULL);
