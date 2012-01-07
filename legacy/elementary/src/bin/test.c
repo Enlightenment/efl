@@ -75,6 +75,7 @@ void test_genlist10(void *data, Evas_Object *obj, void *event_info);
 void test_genlist11(void *data, Evas_Object *obj, void *event_info);
 void test_genlist12(void *data, Evas_Object *obj, void *event_info);
 void test_genlist13(void *data, Evas_Object *obj, void *event_info);
+void test_genlist14(void *data, Evas_Object *obj, void *event_info);
 void test_gesture_layer(void *data, Evas_Object *obj, void *event_info);
 void test_gesture_layer2(void *data, Evas_Object *obj, void *event_info);
 void test_gesture_layer3(void *data, Evas_Object *obj, void *event_info);
@@ -400,6 +401,7 @@ add_tests:
 #endif
    ADD_TEST(NULL, "Lists", "Genlist Textblock", test_genlist12);
    ADD_TEST(NULL, "Lists", "Genlist Tree, Insert Sorted", test_genlist13);
+   ADD_TEST(NULL, "Lists", "Genlist Tree, Insert Relative", test_genlist14);
    ADD_TEST(NULL, "Lists", "GenGrid", test_gengrid);
    ADD_TEST(NULL, "Lists", "GenGrid 2", test_gengrid2);
    ADD_TEST(NULL, "Lists", "GenGrid Group", test_gengrid3);

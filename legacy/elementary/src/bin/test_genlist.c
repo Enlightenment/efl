@@ -1960,7 +1960,7 @@ test_genlist13(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_i
 {
    Elm_Genlist_Item *pi[6];
    Evas_Object *win, *bg, *bx, *gl;
-   int i, base, idx[3] = {1, 10, 20};
+   int i, base, idx[3] = {1, 10, 15};
 
    win = elm_win_add(NULL, "genlist-tree-insert-sorted", ELM_WIN_BASIC);
    elm_win_title_set(win, "Genlist Tree, Insert Sorted");
@@ -2032,6 +2032,229 @@ test_genlist13(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_i
 
    elm_box_pack_end(bx, gl);
    evas_object_show(bx);
+
+   evas_object_resize(win, 320, 320);
+   evas_object_show(win);
+}
+
+static void
+my_gl_insert_before_rel(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+{
+   Evas_Object *gl = data;
+   static int i = 1000;
+   Elm_Genlist_Item *gli_selected;
+
+   itc1.item_style = "default";
+   itc1.func.text_get = gl_text_get;
+   itc1.func.content_get = NULL;
+   itc1.func.state_get = NULL;
+   itc1.func.del = NULL;
+
+   gli_selected = elm_genlist_selected_item_get(gl);
+   if (!gli_selected)
+     {
+        printf("no item selected\n");
+        return;
+     }
+
+   elm_genlist_item_insert_before(gl, &itc1,
+                                  (void *)(long)i/* item data */,
+                                  elm_genlist_item_parent_get(gli_selected),
+                                  gli_selected/* item before */,
+                                  ELM_GENLIST_ITEM_NONE,
+                                  NULL/* func */, NULL/* func data */);
+   i++;
+}
+
+static void
+my_gl_insert_after_rel(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+{
+   Evas_Object *gl = data;
+   static int i = 0;
+   Elm_Genlist_Item *gli_selected;
+
+   itc1.item_style = "default";
+   itc1.func.text_get = gl_text_get;
+   itc1.func.content_get = NULL;
+   itc1.func.state_get = NULL;
+   itc1.func.del = NULL;
+
+   gli_selected = elm_genlist_selected_item_get(gl);
+   if (!gli_selected)
+     {
+        printf("no item selected\n");
+        return;
+     }
+
+   elm_genlist_item_insert_after(gl, &itc1,
+                                  (void *)(long)i/* item data */,
+                                  elm_genlist_item_parent_get(gli_selected),
+                                  gli_selected/* item after */,
+                                  ELM_GENLIST_ITEM_NONE,
+                                  NULL/* func */, NULL/* func data */);
+   i++;
+}
+
+void
+test_genlist14(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+{
+   Elm_Genlist_Item *pi[6];
+   Evas_Object *win, *bg, *bx, *bx2, *bt, *gl;
+   int i, base;
+   /* index: 0,  1,  2,  3,  4,  5
+    * items: 1, 15, 11,  2, 33, 21
+    * final: 1,  2, 11, 15, 21, 33
+    */
+   const int idx[6] = {1, 15, 11, 2, 33, 21};
+   const int relative[6] = {
+      0, /* item  '1' -  not used */
+      0, /* item '15' - insert after pi[0], item '1' */
+     -1, /* item '11' - insert before pi[1], item '15' */
+     -2, /* item  '2' - insert before pi[2], item '11' */
+      1, /* item '33' - insert after pi[1], item '15' */
+     -4  /* item '21' - insert before pi[4], item '33' */
+   };
+
+   win = elm_win_add(NULL, "genlist-tree-insert-relative", ELM_WIN_BASIC);
+   elm_win_title_set(win, "Genlist Tree, Insert Relative");
+   elm_win_autodel_set(win, EINA_TRUE);
+
+   bg = elm_bg_add(win);
+   elm_win_resize_object_add(win, bg);
+   evas_object_size_hint_weight_set(bg, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_show(bg);
+
+   bx = elm_box_add(win);
+   evas_object_size_hint_weight_set(bx, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   elm_win_resize_object_add(win, bx);
+   evas_object_show(bx);
+
+   gl = elm_genlist_add(win);
+   evas_object_size_hint_align_set(gl, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   evas_object_size_hint_weight_set(gl, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_show(gl);
+
+   itc4.item_style = "default";
+   itc4.func.text_get = gl4_text_get;
+   itc4.func.content_get = NULL;
+   itc4.func.state_get = NULL;
+   itc4.func.del = NULL;
+
+   /* mixed order to test insert sorted */
+
+   // BUG1: should be able to insert before=NULL, prepend
+   // BUG2: should be able to insert after=NULL, append
+
+   pi[0] = elm_genlist_item_append
+     (gl, &itc4, (void *)idx[0]/* item data */,
+      NULL/* parent */,
+      ELM_GENLIST_ITEM_SUBITEMS, NULL/* func */, NULL/* func data */);
+
+   for (i = 1; i < 3; i++)
+     {
+        if (relative[i] < 0)
+          pi[i] = elm_genlist_item_insert_before
+            (gl, &itc4, (void *)idx[i]/* item data */,
+             NULL/* parent */, pi[-relative[i]],
+             ELM_GENLIST_ITEM_SUBITEMS, NULL/* func */, NULL/* func data */);
+        else
+          pi[i] = elm_genlist_item_insert_after
+            (gl, &itc4, (void *)idx[i]/* item data */,
+             NULL/* parent */, pi[relative[i]],
+             ELM_GENLIST_ITEM_SUBITEMS, NULL/* func */, NULL/* func data */);
+     }
+
+   for (i = 0; i < 3; i++)
+     {
+        Elm_Genlist_Item *sub[6];
+        int j;
+
+        base = 1000 * (long)elm_genlist_item_data_get(pi[i]);
+
+        sub[0] = elm_genlist_item_append
+          (gl, &itc4, (void *)(idx[0] + base)/* item data */, pi[i]/* parent */,
+           ELM_GENLIST_ITEM_SUBITEMS, NULL/* func */, NULL/* func data */);
+
+        for (j = 1; j < 6; j++) {
+           if (relative[j] < 0)
+             sub[j] = elm_genlist_item_insert_before
+               (gl, &itc4, (void *)(idx[j] + base)/* item data */,
+                pi[i]/* parent */, sub[-relative[j]],
+                ELM_GENLIST_ITEM_SUBITEMS, NULL/* func */, NULL/* func data */);
+           else
+             sub[j] = elm_genlist_item_insert_after
+               (gl, &itc4, (void *)(idx[j] + base)/* item data */,
+                pi[i]/* parent */, sub[relative[j]],
+                ELM_GENLIST_ITEM_SUBITEMS, NULL/* func */, NULL/* func data */);
+        }
+     }
+
+   for (i = 3; i < 6; i++)
+     {
+        if (relative[i] < 0)
+          pi[i] = elm_genlist_item_insert_before
+            (gl, &itc4, (void *)idx[i]/* item data */,
+             NULL/* parent */, pi[-relative[i]],
+             ELM_GENLIST_ITEM_SUBITEMS, NULL/* func */, NULL/* func data */);
+        else
+          pi[i] = elm_genlist_item_insert_after
+            (gl, &itc4, (void *)idx[i]/* item data */,
+             NULL/* parent */, pi[relative[i]],
+             ELM_GENLIST_ITEM_SUBITEMS, NULL/* func */, NULL/* func data */);
+     }
+
+   for (i = 3; i < 6; i++)
+     {
+        Elm_Genlist_Item *sub[6];
+        int j;
+
+        base = 1000 * (long)elm_genlist_item_data_get(pi[i]);
+
+        sub[0] = elm_genlist_item_append
+          (gl, &itc4, (void *)(idx[0] + base)/* item data */, pi[i]/* parent */,
+           ELM_GENLIST_ITEM_SUBITEMS, NULL/* func */, NULL/* func data */);
+
+        for (j = 1; j < 6; j++) {
+           if (relative[j] < 0)
+             sub[j] = elm_genlist_item_insert_before
+               (gl, &itc4, (void *)(idx[j] + base)/* item data */,
+                pi[i]/* parent */, sub[-relative[j]],
+                ELM_GENLIST_ITEM_SUBITEMS, NULL/* func */, NULL/* func data */);
+           else
+             sub[j] = elm_genlist_item_insert_after
+               (gl, &itc4, (void *)(idx[j] + base)/* item data */,
+                pi[i]/* parent */, sub[relative[j]],
+                ELM_GENLIST_ITEM_SUBITEMS, NULL/* func */, NULL/* func data */);
+        }
+     }
+
+   elm_box_pack_end(bx, gl);
+   evas_object_show(bx);
+
+   bx2 = elm_box_add(win);
+   elm_box_horizontal_set(bx2, EINA_TRUE);
+   elm_box_homogeneous_set(bx2, EINA_TRUE);
+   evas_object_size_hint_weight_set(bx2, EVAS_HINT_EXPAND, 0.0);
+   evas_object_size_hint_align_set(bx2, EVAS_HINT_FILL, EVAS_HINT_FILL);
+
+   bt = elm_button_add(win);
+   elm_object_text_set(bt, "+ before");
+   evas_object_smart_callback_add(bt, "clicked", my_gl_insert_before_rel, gl);
+   evas_object_size_hint_align_set(bt, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   evas_object_size_hint_weight_set(bt, EVAS_HINT_EXPAND, 0.0);
+   elm_box_pack_end(bx2, bt);
+   evas_object_show(bt);
+
+   bt = elm_button_add(win);
+   elm_object_text_set(bt, "+ after");
+   evas_object_smart_callback_add(bt, "clicked", my_gl_insert_after_rel, gl);
+   evas_object_size_hint_align_set(bt, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   evas_object_size_hint_weight_set(bt, EVAS_HINT_EXPAND, 0.0);
+   elm_box_pack_end(bx2, bt);
+   evas_object_show(bt);
+
+   elm_box_pack_end(bx, bx2);
+   evas_object_show(bx2);
 
    evas_object_resize(win, 320, 320);
    evas_object_show(win);
