@@ -352,6 +352,92 @@ PKG_CHECK_MODULES([ECORE_EVAS],
 
 AM_CONDITIONAL([BUILD_TILER_EXAMPLE], [test "x${build_tiler_example}" = "xyes"])
 
+### Checks for compiler characteristics
+AC_C_CONST
+AC_C_BIGENDIAN
+AC_C_INLINE
+AC_PROG_CC_STDC
+EFL_ATTRIBUTE_UNUSED
+
+have_wince="no"
+have_win32="no"
+EINA_CPPFLAGS=""
+EINA_CFLAGS=""
+case "$host_os" in
+   mingw32ce*)
+      EINA_CPPFLAGS="-D_WIN32_WCE=0x0420"
+      EINA_CFLAGS="${EVIL_CFLAGS}"
+      have_win32="yes"
+      have_wince="yes"
+      ;;
+   mingw*)
+      EINA_CPPFLAGS="-D_WIN32_WINNT=0x0501"
+      EINA_CFLAGS="${EVIL_CFLAGS}"
+      have_win32="yes"
+      ;;
+esac
+AM_CONDITIONAL([EINA_HAVE_WINCE], [test "x$have_wince" = "xyes"])
+AM_CONDITIONAL([EINA_HAVE_WIN32], [test "x$have_win32" = "xyes"])
+
+m4_ifdef([v_mic],
+   [
+    EFL_COMPILER_FLAG([-Wall])
+    EFL_COMPILER_FLAG([-W])
+   ])
+
+EFL_COMPILER_FLAG([-Wshadow])
+
+case "$host_vendor" in
+  ps3*)
+      PKG_CHECK_MODULES([ESCAPE], [escape])
+      AC_DEFINE(HAVE_ESCAPE, 1, [Set to 1 if evil package is installed])
+      requirement_eina="escape"
+      EINA_CFLAGS="${ESCAPE_CFLAGS} ${EINA_CFLAGS}"
+    ;;
+esac
+
+AC_SUBST([EINA_CPPFLAGS])
+AC_SUBST([EINA_CFLAGS])
+
+
+### Checks for linker characteristics
+EINA_LIBS=
+lt_enable_auto_import=""
+case "${host_os}" in
+   mingw*)
+      EINA_LIBS="-ldl ${EVIL_LIBS} -lm"
+      lt_enable_auto_import="-Wl,--enable-auto-import"
+   ;;
+   dragonfly*|openbsd*)
+      EINA_LIBS="-lm"
+   ;;
+   freebsd*|netbsd*)
+      EINA_LIBS="-lrt -lm"
+   ;;
+   darwin*)
+      EINA_LIBS="-lm"
+   ;;
+   cygwin*)
+      EINA_LIBS="-ldl -lm"
+   ;;
+   *)
+      EINA_LIBS="-ldl -lrt -lm"
+   ;;
+esac
+case "$host_vendor" in
+  ps3*)
+      # Escape had already been checked to exist
+      EINA_LIBS="${ESCAPE_LIBS}"
+    ;;
+esac
+AC_SUBST([EINA_LIBS])
+AC_SUBST([lt_enable_auto_import])
+
+EFL_LINKER_FLAG([-fno-strict-aliasing])
+
+CFLAGS=${EINA_CFLAGS}
+LDFLAGS=${EINA_LDFLAGS}
+LIBS=${EINA_LIBS}
 
 ### Checks for header files
 AC_HEADER_ASSERT
@@ -394,85 +480,6 @@ if test "x${have_dirent}" = "xyes" ; then
     AC_DEFINE([HAVE_DIRENT_H], [1], [Define to 1 if you have a valid <dirent.h> header file.])
 fi
 AC_SUBST([EINA_CONFIGURE_HAVE_DIRENT_H])
-
-### Checks for compiler characteristics
-AC_C_CONST
-AC_C_BIGENDIAN
-AC_C_INLINE
-AC_PROG_CC_STDC
-EFL_ATTRIBUTE_UNUSED
-
-have_wince="no"
-have_win32="no"
-EINA_CPPFLAGS=""
-EINA_CFLAGS=""
-case "$host_os" in
-   mingw32ce*)
-      EINA_CPPFLAGS="-D_WIN32_WCE=0x0420"
-      EINA_CFLAGS="${EVIL_CFLAGS}"
-      have_win32="yes"
-      have_wince="yes"
-      ;;
-   mingw*)
-      EINA_CPPFLAGS="-D_WIN32_WINNT=0x0501"
-      EINA_CFLAGS="${EVIL_CFLAGS}"
-      have_win32="yes"
-      ;;
-esac
-AM_CONDITIONAL([EINA_HAVE_WINCE], [test "x$have_wince" = "xyes"])
-AM_CONDITIONAL([EINA_HAVE_WIN32], [test "x$have_win32" = "xyes"])
-
-m4_ifdef([v_mic],
-   [
-    EFL_COMPILER_FLAG([-Wall])
-    EFL_COMPILER_FLAG([-W])
-   ])
-
-EFL_COMPILER_FLAG([-Wshadow])
-
-AC_SUBST([EINA_CPPFLAGS])
-AC_SUBST([EINA_CFLAGS])
-
-
-### Checks for linker characteristics
-EINA_LIBS=
-lt_enable_auto_import=""
-case "${host_os}" in
-   mingw*)
-      EINA_LIBS="-ldl ${EVIL_LIBS} -lm"
-      lt_enable_auto_import="-Wl,--enable-auto-import"
-   ;;
-   dragonfly*|openbsd*)
-      EINA_LIBS="-lm"
-   ;;
-   freebsd*|netbsd*)
-      EINA_LIBS="-lrt -lm"
-   ;;
-   darwin*)
-      EINA_LIBS="-lm"
-   ;;
-   cygwin*)
-      EINA_LIBS="-ldl -lm"
-   ;;
-   *)
-      EINA_LIBS="-ldl -lrt -lm"
-   ;;
-esac
-AC_SUBST([EINA_LIBS])
-AC_SUBST([lt_enable_auto_import])
-
-case "$host_vendor" in
-  ps3*)
-      PKG_CHECK_MODULES([ESCAPE], [escape])
-      AC_DEFINE(HAVE_ESCAPE, 1, [Set to 1 if evil package is installed])
-      requirement_eina="escape"
-      EINA_LIBS="${ESCAPE_LIBS}"
-      EINA_CFLAGS="${ESCAPE_CFLAGS} ${EINA_CFLAGS}"
-    ;;
-esac
-
-EFL_LINKER_FLAG([-fno-strict-aliasing])
-
 
 ### Checks for library functions
 AC_ISC_POSIX
