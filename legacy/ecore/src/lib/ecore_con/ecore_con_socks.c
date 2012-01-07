@@ -18,6 +18,16 @@
 # include <net/if.h>
 #endif
 
+/* if net/if.h is not found or if an older versions of net/if.h is provided
+   which does not define IF_NAMESIZE. We must define it ourselves */
+#ifndef IF_NAMESIZE
+#  ifdef IFNAMSIZ
+#    define IF_NAMESIZE IFNAMSIZ
+#  else
+#    define IF_NAMESIZE 16
+#  endif
+#endif
+
 #ifdef HAVE_NETINET_IN_H
 # include <netinet/in.h>
 #endif
