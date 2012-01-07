@@ -168,6 +168,14 @@ collections {
          print(D.text:text());
          D.text:show();
 
+	--// Put a few bogus API calls here to test the bogus API protection,
+	--// If the bogus API protection works, these should get ignored, but everything else runs smoothly.
+	--// Otherwise, the map is not done, the bubbles are not done, but the timers keep runinng.
+         bogus.failme(1, "two", D.rect);
+         temp = bogus.failme2();
+         D.text.bogus();
+         edje.bogus2();
+
          --// Fun with maps!
          D.map = edje.map(4);  --// 4 is the only supported map size at the moment.
          --// These all do the same thing.

@@ -271,3 +271,10 @@
 
 	* Unswallow object that are about to be swallowed if necessary.
 	* Add EDJE_ASPECT_PREFER_SOURCE.
+
+2011-11-07  David Seikel (onefang)
+
+	* Lua: Calling non exstent functions no longer crashes scripts.
+	   This is so that future scripts will still work with old libraries,
+	   and lets us add the "host can provide Lua API" feature soon.
+

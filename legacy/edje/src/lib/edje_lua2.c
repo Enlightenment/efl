@@ -3724,25 +3724,80 @@ _elua_text_text(lua_State *L)                                   // Stack usage [
 
 
 //--------------------------------------------------------------------------//
+
+// A metatable and functions so that calling non existant API does not crash Lua scripts.
+
+static int _elua_bogan_nilfunc(lua_State *L);
+static int _elua_bogan_index(lua_State *L);
+
+static const struct luaL_reg _elua_bogan_funcs [] =
+{
+     {"nilfunc",         _elua_bogan_nilfunc}, // Just return a nil.
+     {"__index",         _elua_bogan_index},   // Return the above func.
+
+     {NULL, NULL} // end
+};
+
+static int
+_elua_bogan_nilfunc(lua_State *L)
+{
+   lua_getglobal(L, "nil");
+   return 1;
+}
+
+static int
+_elua_bogan_index(lua_State *L)
+{
+   const char *key;
+
+   key = lua_tostring(L, 2);
+   LE("%s does not exist!", key);
+   lua_pushcfunction(L, _elua_bogan_nilfunc);
+   return 1;
+}
+
+static void
+_elua_bogan_protect(lua_State *L)                    // Stack usage [-3, +3, m]
+{
+   lua_pushnil(L);                                   // Stack usage [-0, +1, -]
+   luaL_newmetatable(L, "bogan");                    // Stack usage [-0, +1, m]
+   luaL_register(L, 0, _elua_bogan_funcs);           // Stack usage [-1, +1, m]
+   lua_setmetatable(L, -2);                          // Stack usage [-1, +0, -]
+   lua_pop(L, 1);                                    // Stack usage [-1, +0, -]
+}
+
+//--------------------------------------------------------------------------//
+
 // Brain dead inheritance thingy, built for speed.  Kinda.  Part 1.
 static void
 _elua_add_functions(lua_State *L, const char *api, const luaL_Reg *funcs, const char *meta, const char *parent, const char *base)  // Stack usage [-3, +5, m]  if inheriting [-6, +11, em]
 {
+   // Create an api table, fill it full of the methods.
    luaL_register(L, api, funcs);              // Stack usage [-0, +1, m]
+   // Set the api metatable to the bogan metatable.
+   luaL_getmetatable(L, "bogan");             // Stack usage [-0, +1, -]
+   lua_setmetatable(L, -2);                   // Stack usage [-1, +0, -]
+   // Creat a meta metatable.
    luaL_newmetatable(L, meta);                // Stack usage [-0, +1, m]
+   // Put the gc functions in the metatable.
    luaL_register(L, 0, _elua_edje_gc_funcs);  // Stack usage [-1, +1, m]
+   // Create an __index entry in the metatable, make it point to the api table.
    lua_pushliteral(L, "__index");             // Stack usage [-0, +1, m]
    lua_pushvalue(L, -3);                      // Stack usage [-0, +1, -]
    lua_rawset(L, -3);                         // Stack usage [-2, +0, m]
+   // Later this metatable is used as the metatable for newly created objects of this class.
 
    if (base && parent)
      {
         // Inherit from base
         lua_getglobal(L, base);               // Stack usage [-0, +1, e]
+        // Create a new parent metatable.
         luaL_newmetatable(L, parent);         // Stack usage [-0, +1, m]
+        // Create an __index entry in the metatable, make it point to the base table.
         lua_pushliteral(L, "__index");        // Stack usage [-0, +1, m]
         lua_pushvalue(L, -3);                 // Stack usage [-0, +1, -]
         lua_rawset(L, -3);                    // Stack usage [-2, +0, m]
+        // Set the metatable for the api table to the parent metatable.
         lua_getglobal(L, api);                // Stack usage [-0, +1, e]
         luaL_getmetatable(L, parent);         // Stack usage [-0, +1, -]
         lua_setmetatable(L, -2);              // Stack usage [-1, +0, -]
@@ -3850,7 +3905,11 @@ _edje_lua2_script_init(Edje *ed)                                  // Stack usage
         lua_call(L, 1, 0);                                        // Stack usage [-2, +0, m]
      }
 
+   _elua_bogan_protect(L);                                        // Stack usage [+3, -3, m]
+
    luaL_register(L, _elua_edje_api, _elua_edje_funcs);            // Stack usage [-0, +1, m]
+   luaL_getmetatable(L, "bogan");                                 // Stack usage [-0, +1, -]
+   lua_setmetatable(L, -2);                                       // Stack usage [-1, +0, -]
    luaL_newmetatable(L, _elua_edje_meta);                         // Stack usage [-0, +1, m]
    luaL_register(L, 0, _elua_edje_gc_funcs);                      // Stack usage [-1, +1, m]
 
