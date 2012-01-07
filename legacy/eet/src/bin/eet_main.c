@@ -77,7 +77,7 @@ do_eet_extract(const char *file,
    Eet_File *ef;
    void *data;
    int size = 0;
-   FILE *f;
+   FILE *f = stdout;
 
    ef = eet_open(file, EET_FILE_MODE_READ);
    if (!ef)
@@ -93,20 +93,23 @@ do_eet_extract(const char *file,
         exit(-1);
      }
 
-   f = fopen(out, "wb");
-   if (!f)
+   if (out)
      {
-        ERR("cannot open %s", out);
-        exit(-1);
+        f = fopen(out, "wb");
+        if (!f)
+          {
+             ERR("cannot open %s", out);
+             exit(-1);
+          }
      }
 
    if (fwrite(data, size, 1, f) != 1)
      {
-        ERR("cannot write to %s", out);
+        ERR("cannot write to %s", out ? out : "standard output");
         exit(-1);
      }
 
-   fclose(f);
+   if (out) fclose(f);
    free(data);
    eet_close(ef);
 } /* do_eet_extract */
@@ -125,7 +128,7 @@ do_eet_decode(const char *file,
               const char *crypto_key)
 {
    Eet_File *ef;
-   FILE *f;
+   FILE *f = stdout;
 
    ef = eet_open(file, EET_FILE_MODE_READ);
    if (!ef)
@@ -134,20 +137,23 @@ do_eet_decode(const char *file,
         exit(-1);
      }
 
-   f = fopen(out, "wb");
-   if (!f)
+   if (out)
      {
-        ERR("cannot open %s", out);
-        exit(-1);
+        f = fopen(out, "wb");
+        if (!f)
+          {
+             ERR("cannot open %s", out);
+             exit(-1);
+          }
      }
 
    if (!eet_data_dump_cipher(ef, key, crypto_key, do_eet_decode_dump, f))
      {
-        ERR("cannot write to %s", out);
+        ERR("cannot write to %s", out ? out : "standard output");
         exit(-1);
      }
 
-   fclose(f);
+   if (out) fclose(f);
    eet_close(ef);
 } /* do_eet_decode */
 
@@ -352,9 +358,9 @@ main(int    argc,
 help:
         printf(
           "Usage:\n"
-          "  eet -l FILE.EET				     list all keys in FILE.EET\n"
-          "  eet -x FILE.EET KEY OUT-FILE [CRYPTO_KEY]          extract data stored in KEY in FILE.EET and write to OUT-FILE\n"
-          "  eet -d FILE.EET KEY OUT-FILE [CRYPTO_KEY]          extract and decode data stored in KEY in FILE.EET and write to OUT-FILE\n"
+          "  eet -l FILE.EET                                    list all keys in FILE.EET\n"
+          "  eet -x FILE.EET KEY [OUT-FILE] [CRYPTO_KEY]        extract data stored in KEY in FILE.EET and write to OUT-FILE or standard output\n"
+          "  eet -d FILE.EET KEY [OUT-FILE] [CRYPTO_KEY]        extract and decode data stored in KEY in FILE.EET and write to OUT-FILE or standard output\n"
           "  eet -i FILE.EET KEY IN-FILE COMPRESS [CRYPTO_KEY]  insert data to KEY in FILE.EET from IN-FILE and if COMPRESS is 1, compress it\n"
           "  eet -e FILE.EET KEY IN-FILE COMPRESS [CRYPTO_KEY]  insert and encode to KEY in FILE.EET from IN-FILE and if COMPRESS is 1, compress it\n"
           "  eet -r FILE.EET KEY                                remove KEY in FILE.EET\n"
@@ -369,19 +375,47 @@ help:
      goto help;
    else if ((!strcmp(argv[1], "-l")) && (argc > 2))
      do_eet_list(argv[2]);
-   else if ((!strcmp(argv[1], "-x")) && (argc > 4))
+   else if ((!strcmp(argv[1], "-x")) && (argc > 3))
      {
-        if (argc > 5)
-          do_eet_extract(argv[2], argv[3], argv[4], argv[5]);
-        else
-          do_eet_extract(argv[2], argv[3], argv[4], NULL);
+        switch (argc)
+          {
+           case 4:
+             {
+               do_eet_extract(argv[2], argv[3], NULL, NULL);
+               break;
+             }
+           case 5:
+             {
+               do_eet_extract(argv[2], argv[3], argv[4], NULL);
+               break;
+             }
+           default:
+             {
+               do_eet_extract(argv[2], argv[3], argv[4], argv[5]);
+               break;
+             }
+          }
      }
-   else if ((!strcmp(argv[1], "-d")) && (argc > 4))
+   else if ((!strcmp(argv[1], "-d")) && (argc > 3))
      {
-        if (argc > 5)
-          do_eet_decode(argv[2], argv[3], argv[4], argv[5]);
-        else
-          do_eet_decode(argv[2], argv[3], argv[4], NULL);
+        switch (argc)
+          {
+           case 4:
+             {
+               do_eet_decode(argv[2], argv[3], NULL, NULL);
+               break;
+             }
+           case 5:
+             {
+               do_eet_decode(argv[2], argv[3], argv[4], NULL);
+               break;
+             }
+           default:
+             {
+               do_eet_decode(argv[2], argv[3], argv[4], argv[5]);
+               break;
+             }
+          }
      }
    else if ((!strcmp(argv[1], "-i")) && (argc > 5))
      {

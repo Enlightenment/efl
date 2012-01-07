@@ -560,4 +560,8 @@
 2011-12-29 Carsten Haitzler (The Rasterman)
 
         * increase eet_connection packet size to 1Mb - more reasonable.
+
+2012-01-07 Boris Faure (billiob)
+
+        * make eet tool write to standard output if no output file given.
         
