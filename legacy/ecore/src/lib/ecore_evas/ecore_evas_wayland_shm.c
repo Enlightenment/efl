@@ -50,6 +50,7 @@ static void _ecore_evas_wl_callback_move_set(Ecore_Evas *ee, void (*func)(Ecore_
 static void _ecore_evas_wl_callback_delete_request_set(Ecore_Evas *ee, void (*func)(Ecore_Evas *ee));
 static void _ecore_evas_wl_callback_focus_in_set(Ecore_Evas *ee, void (*func)(Ecore_Evas *ee));
 static void _ecore_evas_wl_callback_focus_out_set(Ecore_Evas *ee, void (*func)(Ecore_Evas *ee));
+static void _ecore_evas_wl_callback_mouse_in_set(Ecore_Evas *ee, void (*func)(Ecore_Evas *ee));
 static void _ecore_evas_wl_move(Ecore_Evas *ee, int x, int y);
 static void _ecore_evas_wl_resize(Ecore_Evas *ee, int w, int h);
 static void _ecore_evas_wl_show(Ecore_Evas *ee);
@@ -82,6 +83,8 @@ static Eina_Bool _ecore_evas_wl_event_mouse_out(void *data __UNUSED__, int type 
 static Eina_Bool _ecore_evas_wl_event_focus_in(void *data __UNUSED__, int type __UNUSED__, void *event);
 static Eina_Bool _ecore_evas_wl_event_focus_out(void *data __UNUSED__, int type __UNUSED__, void *event);
 
+static void _ecore_evas_wl_handle_configure(void *data, struct wl_shell_surface *shell_surface __UNUSED__, uint32_t timestamp __UNUSED__, uint32_t edges __UNUSED__, int32_t width, int32_t height);
+
 /* SMART stuff for frame */
 static Evas_Smart *_ecore_evas_wl_smart = NULL;
 
@@ -98,6 +101,10 @@ static Evas_Object *_ecore_evas_wl_frame_add(Evas *evas);
 static int _ecore_evas_wl_init_count = 0;
 static Ecore_Event_Handler *_ecore_evas_wl_event_handlers[8];
 static uint32_t _ecore_evas_wl_btn_timestamp;
+static const struct wl_shell_surface_listener _ecore_evas_wl_shell_surface_listener = 
+{
+   _ecore_evas_wl_handle_configure,
+};
 
 static Ecore_Evas_Engine_Func _ecore_wl_engine_func = 
 {
@@ -110,7 +117,7 @@ static Ecore_Evas_Engine_Func _ecore_wl_engine_func =
    NULL, // callback destroy set
    _ecore_evas_wl_callback_focus_in_set, 
    _ecore_evas_wl_callback_focus_out_set, 
-   NULL, // callback mouse in set
+   _ecore_evas_wl_callback_mouse_in_set, 
    NULL, // callback mouse out set
    NULL, // callback sticky set
    NULL, // callback unsticky set
@@ -258,6 +265,17 @@ ecore_evas_wayland_shm_new(const char *disp_name, int x, int y, int w, int h, in
    evas_event_feed_mouse_in(ee->evas, (unsigned int)((unsigned long long)(ecore_time_get() * 1000.0) & 0xffffffff), NULL);
 
    return ee;
+}
+
+EAPI void 
+ecore_evas_wayland_shm_resize(Ecore_Evas *ee, int location)
+{
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+
+   if ((!ee) || (!ee->engine.wl.shell_surface)) return;
+   wl_shell_surface_resize(ee->engine.wl.shell_surface, 
+                           ecore_wl_input_device_get(), 
+                           _ecore_evas_wl_btn_timestamp, location);
 }
 
 /* local functions */
@@ -411,6 +429,15 @@ _ecore_evas_wl_callback_focus_out_set(Ecore_Evas *ee, void (*func)(Ecore_Evas *e
 }
 
 static void 
+_ecore_evas_wl_callback_mouse_in_set(Ecore_Evas *ee, void (*func)(Ecore_Evas *ee))
+{
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+
+   if (!ee) return;
+   ee->func.fn_mouse_in = func;
+}
+
+static void 
 _ecore_evas_wl_move(Ecore_Evas *ee, int x, int y) 
 {
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
@@ -423,7 +450,6 @@ _ecore_evas_wl_move(Ecore_Evas *ee, int x, int y)
    ee->x = x;
    ee->y = y;
 
-   /* FIXME: Forward this to Wayland */
    wl_shell_surface_move(ee->engine.wl.shell_surface, 
                          ecore_wl_input_device_get(), 
                          _ecore_evas_wl_btn_timestamp);
@@ -465,6 +491,9 @@ _ecore_evas_wl_resize(Ecore_Evas *ee, int w, int h)
    /* create buffer @ new size (also mmaps the new destination) */
    _ecore_evas_wl_buffer_new(ee, &einfo->info.dest);
 
+   /* flush new buffer fd */
+   ecore_wl_flush();
+
    /* change evas output & viewport sizes */
    evas_output_size_set(ee->evas, ee->w, ee->h);
    evas_output_viewport_set(ee->evas, 0, 0, ee->w, ee->h);
@@ -473,9 +502,6 @@ _ecore_evas_wl_resize(Ecore_Evas *ee, int w, int h)
 
    /* set new engine destination */
    evas_engine_info_set(ee->evas, (Evas_Engine_Info *)einfo);
-
-   /* flush new buffer fd */
-   ecore_wl_flush();
 
    /* damage buffer */
    wl_buffer_damage(ee->engine.wl.buffer, 0, 0, ee->w, ee->h);
@@ -513,6 +539,10 @@ _ecore_evas_wl_show(Ecore_Evas *ee)
    /* get new shell surface */
    ee->engine.wl.shell_surface = 
      wl_shell_get_shell_surface(ecore_wl_shell_get(), ee->engine.wl.surface);
+
+   /* add configure listener for wayland resize events */
+   wl_shell_surface_add_listener(ee->engine.wl.shell_surface, 
+                                 &_ecore_evas_wl_shell_surface_listener, ee);
 
    /* set toplevel */
    wl_shell_surface_set_toplevel(ee->engine.wl.shell_surface);
@@ -991,6 +1021,20 @@ _ecore_evas_wl_event_focus_out(void *data __UNUSED__, int type __UNUSED__, void 
    ee->prop.focused = 0;
    if (ee->func.fn_focus_out) ee->func.fn_focus_out(ee);
    return ECORE_CALLBACK_PASS_ON;
+}
+
+static void 
+_ecore_evas_wl_handle_configure(void *data, struct wl_shell_surface *shell_surface, uint32_t timestamp __UNUSED__, uint32_t edges __UNUSED__, int32_t width, int32_t height) 
+{
+   Ecore_Evas *ee;
+
+   if (!(ee = data)) return;
+   if ((shell_surface) && (ee->engine.wl.shell_surface)) 
+     {
+        if (ee->engine.wl.shell_surface != shell_surface) return;
+     }
+
+   ecore_evas_resize(ee, width, height);
 }
 
 static void 
