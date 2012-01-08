@@ -15,7 +15,7 @@
 
 #define GL_GLEXT_PROTOTYPES
 
-#ifdef BUILD_ENGINE_GL_QUARTZ
+#ifdef BUILD_ENGINE_GL_COCOA
 # include <OpenGL/gl.h>
 # include <OpenGL/glext.h>
 #else
