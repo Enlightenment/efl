@@ -104,6 +104,10 @@ collections {
          print("lua::init ... " .. D.val);
          edje.echo("lua::echo('hello world')");
 
+         --// How to check the edje version.
+         version = edje.version();
+         print("The edje version number is " .. version.major .. "." .. version.minor);
+
          --// actually add the timer to call mycb in 1.23 sec
          D.tim = edje.timer(1.23, mycb);
          D.tra = edje.transition(5.0, mycb3);

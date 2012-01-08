@@ -614,6 +614,7 @@ static int _elua_echo(lua_State *L);
 static int _elua_date(lua_State *L);
 static int _elua_looptime(lua_State *L);
 static int _elua_seconds(lua_State *L);
+static int _elua_version(lua_State *L);
 
 static int _elua_objgeom(lua_State *L);
 static int _elua_objpos(lua_State *L);
@@ -649,6 +650,7 @@ static const struct luaL_reg _elua_edje_funcs [] =
      {"date",         _elua_date}, // get date in a table
      {"looptime",     _elua_looptime}, // get loop time
      {"seconds",      _elua_seconds}, // get seconds
+     {"version",      _elua_version}, // edje version
 
    // query edje - size, pos
      {"geom",         _elua_objgeom}, // get while edje object geometry in canvas
@@ -799,6 +801,25 @@ _elua_seconds(lua_State *L)  // Stack usage [-0, +1, -]
    double t = ecore_time_get();
    lua_pushnumber(L, t);     // Stack usage [-0, +1, -]
    return 1;
+}
+
+/**
+@page luaref
+@subsubsection edje_version edje:version()
+
+Retrieves the current edje version number.
+
+@returns A table with these fields:
+    - integer major: The edje version major number.
+    - integer minor: The edje version minor number.
+
+@since 1.2.0
+*/
+static int
+_elua_version(lua_State *L)                                                // Stack usage [-4, +5, em]
+{
+   _elua_ret(L, "%major %minor", EDJE_VERSION_MAJOR, EDJE_VERSION_MINOR);  // Stack usage [-4, +5, em]
+    return 1;
 }
 
 //-------------

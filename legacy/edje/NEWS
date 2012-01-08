@@ -7,6 +7,7 @@ Additions:
 
     * "recalc" smart callback for object size changes
     * EDJE_ASPECT_PREFER_SOURCE.
+    * edje.version() Lua function.
 
 Improvements:
     * speedup load time of Edje file.
