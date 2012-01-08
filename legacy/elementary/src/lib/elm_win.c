@@ -1,4 +1,4 @@
-#include <Elementary.h>
+ #include <Elementary.h>
 #include "elm_priv.h"
 
 typedef struct _Elm_Win Elm_Win;
@@ -26,7 +26,8 @@ struct _Elm_Win
    } shot;
    Eina_Bool autodel : 1;
    Eina_Bool constrain : 1;
-   Eina_Bool moving : 1;
+   Eina_Bool resizing : 1;
+   int resize_location;
    int *autodel_clear, rot;
    int show_count;
    struct {
@@ -78,11 +79,10 @@ static void _elm_win_focus_highlight_reconfigure(Elm_Win *win);
 
 static void _elm_win_frame_add(Elm_Win *win, const char *style);
 static void _elm_win_frame_cb_move_start(void *data, Evas_Object *obj __UNUSED__, const char *sig __UNUSED__, const char *source __UNUSED__);
-static void _elm_win_frame_cb_move_stop(void *data, Evas_Object *obj __UNUSED__, const char *sig __UNUSED__, const char *source __UNUSED__);
+static void _elm_win_frame_cb_resize_start(void *data, Evas_Object *obj __UNUSED__, const char *sig __UNUSED__, const char *source);
 static void _elm_win_frame_cb_minimize(void *data, Evas_Object *obj __UNUSED__, const char *sig __UNUSED__, const char *source __UNUSED__);
 static void _elm_win_frame_cb_maximize(void *data, Evas_Object *obj __UNUSED__, const char *sig __UNUSED__, const char *source __UNUSED__);
 static void _elm_win_frame_cb_close(void *data, Evas_Object *obj __UNUSED__, const char *sig __UNUSED__, const char *source __UNUSED__);
-static void _elm_win_frame_cb_mouse_move(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info);
 
 static const char SIG_DELETE_REQUEST[] = "delete,request";
 static const char SIG_FOCUS_OUT[] = "focus,out";
@@ -306,6 +306,17 @@ _elm_win_resize(Ecore_Evas *ee)
    if (!win) return;
    if (win->deferred_resize_job) ecore_job_del(win->deferred_resize_job);
    win->deferred_resize_job = ecore_job_add(_elm_win_resize_job, win);
+}
+
+static void 
+_elm_win_mouse_in(Ecore_Evas *ee)
+{
+   Evas_Object *obj;
+   Elm_Win *win;
+
+   if (!(obj = ecore_evas_object_associate_get(ee))) return;
+   if (!(win = elm_widget_data_get(obj))) return;
+   if (win->resizing) win->resizing = EINA_FALSE;
 }
 
 static void
@@ -1315,13 +1326,10 @@ _elm_win_frame_add(Elm_Win *win, const char *style)
    evas_object_move(win->frame_obj, 0, 0);
    evas_object_resize(win->frame_obj, 1, 1);
 
-   evas_object_event_callback_add(win->frame_obj, EVAS_CALLBACK_MOUSE_MOVE, 
-                                  _elm_win_frame_cb_mouse_move, win);
-
    edje_object_signal_callback_add(win->frame_obj, "elm,action,move,start", 
                                    "elm", _elm_win_frame_cb_move_start, win);
-   edje_object_signal_callback_add(win->frame_obj, "elm,action,move,stop", 
-                                   "elm", _elm_win_frame_cb_move_stop, win);
+   edje_object_signal_callback_add(win->frame_obj, "elm,action,resize,start", 
+                                   "*", _elm_win_frame_cb_resize_start, win);
    edje_object_signal_callback_add(win->frame_obj, "elm,action,minimize", 
                                    "elm", _elm_win_frame_cb_minimize, win);
    edje_object_signal_callback_add(win->frame_obj, "elm,action,maximize", 
@@ -1336,16 +1344,44 @@ _elm_win_frame_cb_move_start(void *data, Evas_Object *obj __UNUSED__, const char
    Elm_Win *win;
 
    if (!(win = data)) return;
-   win->moving = EINA_TRUE;
+   /* FIXME: Change mouse pointer */
+
+   /* NB: 0,0 are dummy values. Wayland handles the move by itself */
+   ecore_evas_move(win->ee, 0, 0);
 }
 
 static void 
-_elm_win_frame_cb_move_stop(void *data, Evas_Object *obj __UNUSED__, const char *sig __UNUSED__, const char *source __UNUSED__)
+_elm_win_frame_cb_resize_start(void *data, Evas_Object *obj __UNUSED__, const char *sig __UNUSED__, const char *source)
 {
    Elm_Win *win;
 
    if (!(win = data)) return;
-   win->moving = EINA_FALSE;
+   if (win->resizing) return;
+   win->resizing = EINA_TRUE;
+
+   /* FIXME: Change mouse pointer */
+
+   if (!strcmp(source, "elm.event.resize.t"))
+     win->resize_location = 1;
+   else if (!strcmp(source, "elm.event.resize.b"))
+     win->resize_location = 2;
+   else if (!strcmp(source, "elm.event.resize.l"))
+     win->resize_location = 4;
+   else if (!strcmp(source, "elm.event.resize.r"))
+     win->resize_location = 8;
+   else if (!strcmp(source, "elm.event.resize.tl"))
+     win->resize_location = 5;
+   else if (!strcmp(source, "elm.event.resize.tr"))
+     win->resize_location = 9;
+   else if (!strcmp(source, "elm.event.resize.bl"))
+     win->resize_location = 6;
+   else if (!strcmp(source, "elm.event.resize.br"))
+     win->resize_location = 10;
+   else
+     win->resize_location = 0;
+
+   if (win->resize_location > 0)
+     ecore_evas_wayland_shm_resize(win->ee, win->resize_location);
 }
 
 static void 
@@ -1373,21 +1409,6 @@ _elm_win_frame_cb_close(void *data, Evas_Object *obj __UNUSED__, const char *sig
 
    if (!(win = data)) return;
    evas_object_del(win->win_obj);
-}
-
-static void 
-_elm_win_frame_cb_mouse_move(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info) 
-{
-   Elm_Win *win;
-   Evas_Event_Mouse_Move *ev;
-
-   if (!(win = data)) return;
-   ev = event_info;
-   if (win->moving) 
-     {
-        /* NB: 0, 0 are bogus values and not used in wayland */
-        ecore_evas_move(win->ee, 0, 0);
-     }
 }
 
 #ifdef ELM_DEBUG
@@ -1724,6 +1745,7 @@ elm_win_add(Evas_Object *parent, const char *name, Elm_Win_Type type)
    ecore_evas_name_class_set(win->ee, name, _elm_appname);
    ecore_evas_callback_delete_request_set(win->ee, _elm_win_delete_request);
    ecore_evas_callback_resize_set(win->ee, _elm_win_resize);
+   ecore_evas_callback_mouse_in_set(win->ee, _elm_win_mouse_in);
    ecore_evas_callback_focus_in_set(win->ee, _elm_win_focus_in);
    ecore_evas_callback_focus_out_set(win->ee, _elm_win_focus_out);
    ecore_evas_callback_move_set(win->ee, _elm_win_move);
