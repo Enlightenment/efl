@@ -74,6 +74,7 @@ evas_common_cpu_sse3_test(void)
 #endif
 }
 
+#ifdef BUILD_ALTIVEC
 void
 evas_common_cpu_altivec_test(void)
 {
@@ -85,6 +86,7 @@ evas_common_cpu_altivec_test(void)
 #endif /* __VEC__ */
 #endif /* __POWERPC__ */
 }
+#endif /* BUILD_ALTIVEC */
 
 void
 evas_common_cpu_neon_test(void)
@@ -177,6 +179,7 @@ evas_common_cpu_init(void)
 #endif /* BUILD_SSE3 */
 #endif /* BUILD_SSE */
 #endif /* BUILD_MMX */
+#ifdef BUILD_ALTIVEC
 #ifdef __POWERPC__
 #ifdef __VEC__
    cpu_feature_mask |= CPU_FEATURE_ALTIVEC *
@@ -186,6 +189,7 @@ evas_common_cpu_init(void)
      cpu_feature_mask &= ~CPU_FEATURE_ALTIVEC;
 #endif /* __VEC__ */
 #endif /* __POWERPC__ */
+#endif /* BUILD_ALTIVEC */
 #ifdef __SPARC__
    cpu_feature_mask |= CPU_FEATURE_VIS *
      evas_common_cpu_feature_test(evas_common_cpu_vis_test);
