@@ -435,9 +435,9 @@ AC_SUBST([lt_enable_auto_import])
 
 EFL_LINKER_FLAG([-fno-strict-aliasing])
 
-CFLAGS=${EINA_CFLAGS}
-LDFLAGS=${EINA_LDFLAGS}
-LIBS=${EINA_LIBS}
+CFLAGS="${CFLAGS} ${EINA_CFLAGS}"
+LDFLAGS="${LDFLAGS} ${EINA_LDFLAGS}"
+LIBS="${LIBS} ${EINA_LIBS}"
 
 ### Checks for header files
 AC_HEADER_ASSERT
