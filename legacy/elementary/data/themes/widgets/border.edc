@@ -857,12 +857,6 @@ group {
          action: SIGNAL_EMIT "elm,action,move,start" "elm";
       }
       program {
-         name: "move_stop";
-         signal: "mouse,up,1";
-         source: "elm.event.titlebar";
-         action: SIGNAL_EMIT "elm,action,move,stop" "elm";
-      }
-      program {
          name: "minimize";
          signal: "mouse,clicked,1";
          source: "elm.event.minimize";
@@ -879,6 +873,42 @@ group {
          signal: "mouse,clicked,1";
          source: "elm.event.close";
          action: SIGNAL_EMIT "elm,action,close" "elm";
+      }
+      program {
+         name: "resize_t_down";
+         signal: "mouse,down,1";
+         source: "elm.event.resize.t";
+         action: SIGNAL_EMIT "elm,action,resize,start" "elm.event.resize.t";
+      }
+      program {
+         name: "resize_b_down";
+         signal: "mouse,down,1";
+         source: "elm.event.resize.b";
+         action: SIGNAL_EMIT "elm,action,resize,start" "elm.event.resize.b";
+      }
+      program {
+         name: "resize_tl_down";
+         signal: "mouse,down,1";
+         source: "elm.event.resize.tl";
+         action: SIGNAL_EMIT "elm,action,resize,start" "elm.event.resize.tl";
+      }
+      program {
+         name: "resize_tr_down";
+         signal: "mouse,down,1";
+         source: "elm.event.resize.tr";
+         action: SIGNAL_EMIT "elm,action,resize,start" "elm.event.resize.tr";
+      }
+      program {
+         name: "resize_bl_down";
+         signal: "mouse,down,1";
+         source: "elm.event.resize.bl";
+         action: SIGNAL_EMIT "elm,action,resize,start" "elm.event.resize.bl";
+      }
+      program {
+         name: "resize_br_down";
+         signal: "mouse,down,1";
+         source: "elm.event.resize.br";
+         action: SIGNAL_EMIT "elm,action,resize,start" "elm.event.resize.br";
       }
    }
 }
