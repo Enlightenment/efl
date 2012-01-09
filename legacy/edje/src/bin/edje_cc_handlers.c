@@ -4597,7 +4597,7 @@ st_collections_group_parts_part_description_step(void)
         Normally width and height can be resized to any values independently.
         The aspect property forces the width to height ratio to be kept between
         the minimum and maximum set. For example, "1.0 1.0" will increase the
-        width a pixel for every pixel added to heigh. The default value is
+        width a pixel for every pixel added to height. The default value is
         "0.0 0.0" disabling aspect.
     @endproperty
 */
