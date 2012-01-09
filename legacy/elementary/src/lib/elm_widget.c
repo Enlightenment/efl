@@ -2237,10 +2237,10 @@ elm_widget_scroll_freeze_pop(Evas_Object *obj)
 {
    API_ENTRY return;
    sd->scroll_freeze--;
-   if (sd->scroll_freeze < 0) sd->scroll_freeze = 0;
    if (!sd->scroll_freeze)
      evas_object_smart_callback_call(obj, "scroll-freeze-off", obj);
    if (sd->parent_obj) elm_widget_scroll_freeze_pop(sd->parent_obj);
+   if (sd->scroll_freeze < 0) sd->scroll_freeze = 0;
 }
 
 EAPI int
