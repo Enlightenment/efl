@@ -24,6 +24,7 @@
 void eina_test_stringshare(TCase *tc);
 void eina_test_ustringshare(TCase *tc);
 void eina_test_binshare(TCase *tc);
+void eina_test_inarray(TCase *tc);
 void eina_test_array(TCase *tc);
 void eina_test_log(TCase *tc);
 void eina_test_error(TCase *tc);

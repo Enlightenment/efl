@@ -15,6 +15,7 @@ eina_inline_hash.x \
 eina_lalloc.h \
 eina_clist.h \
 eina_inline_clist.x \
+eina_inarray.h \
 eina_inlist.h \
 eina_list.h \
 eina_file.h \

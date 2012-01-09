@@ -22,6 +22,7 @@ eina_error.c \
 eina_fp.c \
 eina_hamster.c \
 eina_hash.c \
+eina_inarray.c \
 eina_inlist.c \
 eina_iterator.c \
 eina_lalloc.c \

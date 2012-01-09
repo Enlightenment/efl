@@ -67,6 +67,7 @@
 #include "eina_rectangle.h"
 #include "eina_safety_checks.h"
 #include "eina_inlist.h"
+#include "eina_inarray.h"
 
 /*============================================================================*
 *                                  Local                                     *
@@ -131,6 +132,7 @@ EAPI Eina_Inlist *_eina_tracking = NULL;
    S(magic_string);
    S(iterator);
    S(accessor);
+   S(inarray);
    S(array);
    S(module);
    S(mempool);
@@ -167,6 +169,7 @@ static const struct eina_desc_setup _eina_desc_setup[] = {
    S(magic_string),
    S(iterator),
    S(accessor),
+   S(inarray),
    S(array),
    S(module),
    S(mempool),

@@ -188,3 +188,7 @@
 	* Detect fault during access to Eina_File mmap memory, use eina_file_map_faulted
 	to learn if it happens.
 	* Add eina_file_xattr_get and eina_file_xattr_value_get.
+
+2012-01-09  Gustavo Barbieri
+
+	* Add eina_inarray data type.
