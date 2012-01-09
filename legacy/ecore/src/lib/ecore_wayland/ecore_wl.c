@@ -10,6 +10,7 @@
 
 /* FIXME: This gives BTN_LEFT/RIGHT/MIDDLE for linux systems ... 
  *        What about other OSs ?? */
+#include <fcntl.h>
 #ifdef __linux__
 # include <linux/input.h>
 #else
@@ -59,6 +60,7 @@ static int _ecore_wl_surface_x = 0;
 static int _ecore_wl_surface_y = 0;
 static int _ecore_wl_input_modifiers = 0;
 static struct xkb_desc *_ecore_wl_xkb;
+static uint32_t _ecore_wl_input_button = 0;
 
 static struct wl_compositor *_ecore_wl_comp;
 static struct wl_shm *_ecore_wl_shm;
@@ -200,14 +202,9 @@ ecore_wl_init(const char *name)
    fd = wl_display_get_fd(_ecore_wl_disp, 
                           _ecore_wl_cb_disp_event_mask_update, NULL);
 
-   /* NB: DO NOT TOUCH THIS OR YOU WILL PAY THE PRICE OF FAILURE !! */
-   /* Without a ECORE_FD_WRITE, then animators/timers break */
-
-   /* NB: krh says to just listen on fd_read */
    _ecore_wl_fd_hdl = 
-     ecore_main_fd_handler_add(fd, ECORE_FD_READ | ECORE_FD_WRITE, 
-                               _ecore_wl_cb_fd_handle, _ecore_wl_disp, 
-                               NULL, NULL);
+     ecore_main_fd_handler_add(fd, ECORE_FD_READ, _ecore_wl_cb_fd_handle, 
+                               _ecore_wl_disp, NULL, NULL);
    if (!_ecore_wl_fd_hdl) 
      {
         wl_display_destroy(_ecore_wl_disp);
@@ -276,8 +273,6 @@ EAPI void
 ecore_wl_flush(void) 
 {
    wl_display_flush(_ecore_wl_disp);
-   /* if (_ecore_wl_disp_mask & WL_DISPLAY_WRITABLE) */
-   /*   wl_display_iterate(_ecore_wl_disp, WL_DISPLAY_WRITABLE); */
 }
 
 EAPI void 
@@ -388,6 +383,7 @@ _ecore_wl_cb_disp_event_mask_update(uint32_t mask, void *data __UNUSED__)
 //   LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
    _ecore_wl_disp_mask = mask;
+
    return 0;
 }
 
@@ -435,21 +431,16 @@ _ecore_wl_cb_fd_handle(void *data, Ecore_Fd_Handler *hdl __UNUSED__)
 {
    struct wl_display *disp;
 
+//   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+
    if (!(disp = data)) return ECORE_CALLBACK_RENEW;
    if (disp != _ecore_wl_disp) return ECORE_CALLBACK_RENEW;
 
-//   LOGFN(__FILE__, __LINE__, __FUNCTION__);
-
    if (_ecore_wl_disp_mask & WL_DISPLAY_WRITABLE)
-     wl_display_roundtrip(_ecore_wl_disp);
-   else
-     wl_display_iterate(_ecore_wl_disp, _ecore_wl_disp_mask);
+     wl_display_iterate(_ecore_wl_disp, WL_DISPLAY_WRITABLE);
 
-   /* NB: This handles iterate for writable AND readable.
-    * DO NOT TOUCH THIS OR YOU WILL PAY THE PRICE OF FAILURE !!
-    * Without this, animators/timers die */
-   /* if (_ecore_wl_disp_mask & (WL_DISPLAY_READABLE | WL_DISPLAY_WRITABLE)) */
-   /*   wl_display_roundtrip(_ecore_wl_disp); */
+   if (_ecore_wl_disp_mask & WL_DISPLAY_READABLE)
+     wl_display_iterate(_ecore_wl_disp, WL_DISPLAY_READABLE);
 
    return ECORE_CALLBACK_RENEW;
 }
@@ -509,12 +500,16 @@ _ecore_wl_cb_handle_button(void *data __UNUSED__, struct wl_input_device *dev, u
      }
    else 
      {
-        _ecore_wl_mouse_move_send(t);
-
         if (state)
-          _ecore_wl_mouse_down_send(_ecore_wl_input_surface, btn, t);
+          {
+             _ecore_wl_input_button = btn;
+             _ecore_wl_mouse_down_send(_ecore_wl_input_surface, btn, t);
+          }
         else
-          _ecore_wl_mouse_up_send(_ecore_wl_input_surface, btn, t);
+          {
+             _ecore_wl_input_button = 0;
+             _ecore_wl_mouse_up_send(_ecore_wl_input_surface, btn, t);
+          }
      }
 }
 
@@ -538,20 +533,33 @@ _ecore_wl_cb_handle_pointer_focus(void *data __UNUSED__, struct wl_input_device 
 {
    if (dev != _ecore_wl_input) return;
 
+   /* NB: Wayland pointer focus is weird. It's not pointer focus in the normal 
+    * sense...Wayland 'moving/resizing' (and maybe other stuff) has a habit 
+    * of stealing the pointer focus and thus this cannot be used to control 
+    * normal pointer focus. On mouse down, the 'active' surface is stolen 
+    * by Wayland for the grab, so 'surface' here ends up being NULL. When a 
+    * move or resize is finished, we get this event again, but this time 
+    * with an active surface */
    _ecore_wl_screen_x = x;
    _ecore_wl_screen_y = y;
    _ecore_wl_surface_x = sx;
    _ecore_wl_surface_y = sy;
 
-   _ecore_wl_mouse_move_send(t);
-
-   if ((_ecore_wl_input_surface) && (_ecore_wl_input_surface != surface))
-     _ecore_wl_mouse_out_send(_ecore_wl_input_surface, t);
+   if ((_ecore_wl_input_surface) && (_ecore_wl_input_surface != surface)) 
+     {
+        if (!_ecore_wl_input_button)
+          _ecore_wl_mouse_out_send(_ecore_wl_input_surface, t);
+     }
 
    if (surface) 
      {
-        /* NB: Send mouse in events for window */
-        _ecore_wl_mouse_in_send(surface, t);
+        if (_ecore_wl_input_button)
+          {
+             _ecore_wl_mouse_up_send(surface, _ecore_wl_input_button, t);
+             _ecore_wl_input_button = 0;
+          }
+        else
+          _ecore_wl_mouse_in_send(surface, t);
      }
 }
 
@@ -562,6 +570,7 @@ _ecore_wl_cb_handle_keyboard_focus(void *data __UNUSED__, struct wl_input_device
 
    if (dev != _ecore_wl_input) return;
 
+   /* NB: Remove old keyboard focus */
    if ((_ecore_wl_input_surface) && (_ecore_wl_input_surface != surface))
      _ecore_wl_focus_out_send(_ecore_wl_input_surface, t);
 
@@ -577,6 +586,9 @@ _ecore_wl_cb_handle_keyboard_focus(void *data __UNUSED__, struct wl_input_device
         /* set new input surface */
         _ecore_wl_input_surface = surface;
 
+        /* send mouse in to new surface */
+        /* _ecore_wl_mouse_in_send(surface, t); */
+
         /* send focus to new surface */
         _ecore_wl_focus_in_send(surface, t);
      }
@@ -586,6 +598,8 @@ static void
 _ecore_wl_mouse_move_send(uint32_t timestamp)
 {
    Ecore_Event_Mouse_Move *ev;
+
+   if (!_ecore_wl_input_surface) return;
 
    if (!(ev = malloc(sizeof(Ecore_Event_Mouse_Move)))) return;
 
@@ -607,7 +621,6 @@ _ecore_wl_mouse_move_send(uint32_t timestamp)
    ev->multi.root.x = _ecore_wl_screen_x;
    ev->multi.root.y = _ecore_wl_screen_y;
 
-   if (_ecore_wl_input_surface) 
      {
         unsigned int id = 0;
 
@@ -707,7 +720,6 @@ _ecore_wl_mouse_up_send(struct wl_surface *surface, uint32_t button, uint32_t ti
    ev->multi.root.x = _ecore_wl_screen_x;
    ev->multi.root.y = _ecore_wl_screen_y;
 
-   if (surface) 
      {
         unsigned int id = 0;
 
@@ -757,7 +769,6 @@ _ecore_wl_mouse_down_send(struct wl_surface *surface, uint32_t button, uint32_t 
    ev->multi.root.x = _ecore_wl_screen_x;
    ev->multi.root.y = _ecore_wl_screen_y;
 
-   if (surface) 
      {
         unsigned int id = 0;
 
