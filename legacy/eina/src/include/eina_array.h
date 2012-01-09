@@ -351,7 +351,8 @@ static inline void     *eina_array_data_get(const Eina_Array *array,
 static inline void      eina_array_data_set(const Eina_Array *array,
                                             unsigned int      idx,
                                             const void       *data) EINA_ARG_NONNULL(1);
-static inline unsigned int eina_array_count_get(const Eina_Array *array) EINA_ARG_NONNULL(1);
+static inline unsigned int eina_array_count_get(const Eina_Array *array) EINA_ARG_NONNULL(1) EINA_WARN_UNUSED_RESULT EINA_DEPRECATED;
+static inline unsigned int eina_array_count(const Eina_Array *array) EINA_ARG_NONNULL(1) EINA_WARN_UNUSED_RESULT;
 
 /**
  * @brief Returned a new iterator associated to an array.
@@ -429,7 +430,7 @@ static inline Eina_Bool    eina_array_foreach(Eina_Array  *array,
  */
 #define EINA_ARRAY_ITER_NEXT(array, index, item, iterator)                  \
   for (index = 0, iterator = (array)->data;                                 \
-       (index < eina_array_count_get(array)) && ((item = *((iterator)++))); \
+       (index < eina_array_count(array)) && ((item = *((iterator)++)));     \
                                                   ++(index))
 
 #include "eina_inline_array.x"

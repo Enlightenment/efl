@@ -119,7 +119,7 @@ eina_array_iterator_next(Eina_Iterator_Array *it, void **data)
 {
    EINA_MAGIC_CHECK_ARRAY_ITERATOR(it, EINA_FALSE);
 
-   if (!(it->index < eina_array_count_get(it->array)))
+   if (!(it->index < eina_array_count(it->array)))
       return EINA_FALSE;
 
    if (data)
@@ -150,7 +150,7 @@ eina_array_accessor_get_at(Eina_Accessor_Array *it,
 {
    EINA_MAGIC_CHECK_ARRAY_ACCESSOR(it, EINA_FALSE);
 
-   if (!(idx < eina_array_count_get(it->array)))
+   if (!(idx < eina_array_count(it->array)))
       return EINA_FALSE;
 
    if (data)
