@@ -2208,10 +2208,10 @@ elm_widget_scroll_hold_pop(Evas_Object *obj)
 {
    API_ENTRY return;
    sd->scroll_hold--;
-   if (sd->scroll_hold < 0) sd->scroll_hold = 0;
    if (!sd->scroll_hold)
      evas_object_smart_callback_call(obj, "scroll-hold-off", obj);
    if (sd->parent_obj) elm_widget_scroll_hold_pop(sd->parent_obj);
+   if (sd->scroll_hold < 0) sd->scroll_hold = 0;
 }
 
 EAPI int
