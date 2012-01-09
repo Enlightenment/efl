@@ -498,7 +498,7 @@ _item_submenu_obj_create(Elm_Menu_Item *item)
    elm_widget_mirrored_set(item->submenu.bx, EINA_FALSE);
    evas_object_size_hint_weight_set(item->submenu.bx, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_show(item->submenu.bx);
-   elm_hover_content_set(item->submenu.hv, elm_hover_best_content_location_get(item->submenu.hv, ELM_HOVER_AXIS_VERTICAL), item->submenu.bx);
+   elm_object_part_content_set(item->submenu.hv, elm_hover_best_content_location_get(item->submenu.hv, ELM_HOVER_AXIS_VERTICAL), item->submenu.bx);
 
    edje_object_mirrored_set(VIEW(item), elm_widget_mirrored_get(WIDGET(item)));
    _elm_theme_object_set(WIDGET(item), VIEW(item), "menu", "item_with_submenu",  elm_widget_style_get(WIDGET(item)));
@@ -548,7 +548,7 @@ elm_menu_add(Evas_Object *parent)
    elm_widget_mirrored_set(wd->bx, EINA_FALSE);
    evas_object_size_hint_weight_set(wd->bx, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_show(wd->bx);
-   elm_hover_content_set(wd->hv, elm_hover_best_content_location_get(wd->hv, ELM_HOVER_AXIS_VERTICAL), wd->bx);
+   elm_object_part_content_set(wd->hv, elm_hover_best_content_location_get(wd->hv, ELM_HOVER_AXIS_VERTICAL), wd->bx);
 
    evas_object_event_callback_add(wd->parent, EVAS_CALLBACK_RESIZE, _parent_resize, wd->obj);
    evas_object_event_callback_add(wd->parent, EVAS_CALLBACK_DEL, _parent_del, wd);

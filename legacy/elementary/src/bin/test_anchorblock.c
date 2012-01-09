@@ -26,7 +26,7 @@ my_anchorblock_anchor(void *data, Evas_Object *obj, void *event_info)
 
    bt = elm_button_add(obj);
    elm_object_text_set(bt, ei->name);
-   elm_hover_content_set(ei->hover, "middle", bt);
+   elm_object_part_content_set(ei->hover, "middle", bt);
    evas_object_show(bt);
 
    // hints as to where we probably should put hover contents (buttons etc.).
@@ -48,14 +48,14 @@ my_anchorblock_anchor(void *data, Evas_Object *obj, void *event_info)
 	elm_box_pack_end(bx, bt);
 	evas_object_smart_callback_add(bt, "clicked", my_anchorblock_bt, av);
 	evas_object_show(bt);
-	elm_hover_content_set(ei->hover, "top", bx);
+	elm_object_part_content_set(ei->hover, "top", bx);
 	evas_object_show(bx);
      }
    if (ei->hover_bottom)
      {
 	bt = elm_button_add(obj);
 	elm_object_text_set(bt, "Bot");
-	elm_hover_content_set(ei->hover, "bottom", bt);
+	elm_object_part_content_set(ei->hover, "bottom", bt);
 	evas_object_smart_callback_add(bt, "clicked", my_anchorblock_bt, av);
 	evas_object_show(bt);
      }
@@ -63,7 +63,7 @@ my_anchorblock_anchor(void *data, Evas_Object *obj, void *event_info)
      {
 	bt = elm_button_add(obj);
 	elm_object_text_set(bt, "Left");
-	elm_hover_content_set(ei->hover, "left", bt);
+	elm_object_part_content_set(ei->hover, "left", bt);
 	evas_object_smart_callback_add(bt, "clicked", my_anchorblock_bt, av);
 	evas_object_show(bt);
      }
@@ -71,7 +71,7 @@ my_anchorblock_anchor(void *data, Evas_Object *obj, void *event_info)
      {
 	bt = elm_button_add(obj);
 	elm_object_text_set(bt, "Right");
-	elm_hover_content_set(ei->hover, "right", bt);
+	elm_object_part_content_set(ei->hover, "right", bt);
 	evas_object_smart_callback_add(bt, "clicked", my_anchorblock_bt, av);
 	evas_object_show(bt);
      }

@@ -560,6 +560,68 @@ EINA_DEPRECATED EAPI Evas_Object                *elm_fileselector_entry_button_i
 EINA_DEPRECATED EAPI Evas_Object                *elm_fileselector_entry_button_icon_unset(Evas_Object *obj);
 
 /**
+ * @brief Sets the content of the hover object and the direction in which it
+ * will pop out.
+ *
+ * @param obj The hover object
+ * @param swallow The direction that the object will be displayed
+ * at. Accepted values are "left", "top-left", "top", "top-right",
+ * "right", "bottom-right", "bottom", "bottom-left", "middle" and
+ * "smart".
+ * @param content The content to place at @p swallow
+ *
+ * Once the content object is set for a given direction, a previously
+ * set one (on the same direction) will be deleted. If you want to
+ * keep that old content object, use the elm_hover_content_unset()
+ * function.
+ *
+ * All directions may have contents at the same time, except for
+ * "smart". This is a special placement hint and its use case
+ * independs of the calculations coming from
+ * elm_hover_best_content_location_get(). Its use is for cases when
+ * one desires only one hover content, but with a dynamic special
+ * placement within the hover area. The content's geometry, whenever
+ * it changes, will be used to decide on a best location, not
+ * extrapolating the hover's parent object view to show it in (still
+ * being the hover's target determinant of its medium part -- move and
+ * resize it to simulate finger sizes, for example). If one of the
+ * directions other than "smart" are used, a previously content set
+ * using it will be deleted, and vice-versa.
+ *
+ * @deprecated Use elm_object_part_content_set() instead
+ */
+EINA_DEPRECATED EAPI void         elm_hover_content_set(Evas_Object *obj, const char *swallow, Evas_Object *content);
+
+/**
+ * @brief Get the content of the hover object, in a given direction.
+ *
+ * Return the content object which was set for this widget in the
+ * @p swallow direction.
+ *
+ * @param obj The hover object
+ * @param swallow The direction that the object was display at.
+ * @return The content that was being used
+ *
+ * @deprecated Use elm_object_part_content_get() instead
+ * @see elm_hover_content_set()
+ */
+EINA_DEPRECATED EAPI Evas_Object *elm_hover_content_get(const Evas_Object *obj, const char *swallow);
+
+/**
+ * @brief Unset the content of the hover object, in a given direction.
+ *
+ * Unparent and return the content object set at @p swallow direction.
+ *
+ * @param obj The hover object
+ * @param swallow The direction that the object was display at.
+ * @return The content that was being used.
+ *
+ * @deprecated Use elm_object_part_content_unset() instead
+ * @see elm_hover_content_set()
+ */
+EINA_DEPRECATED EAPI Evas_Object *elm_hover_content_unset(Evas_Object *obj, const char *swallow);
+
+/**
  * @brief Set the hoversel button label
  *
  * @param obj The hoversel object

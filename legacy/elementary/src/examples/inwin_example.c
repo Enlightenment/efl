@@ -99,7 +99,7 @@ _win_del_cb(void *data __UNUSED__, Evas_Object *obj, void *event __UNUSED__)
         inwin = NULL;
         hover = elm_hover_add(obj);
         elm_hover_target_set(hover, obj);
-        elm_hover_content_set(hover, "middle", o);
+        elm_object_part_content_set(hover, "middle", o);
         evas_object_show(hover);
         return;
      }

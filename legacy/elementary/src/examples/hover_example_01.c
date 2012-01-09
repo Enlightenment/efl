@@ -63,10 +63,10 @@ elm_main(int argc, char **argv)
 
    elm_object_style_set(hover, "popout");
 
-   elm_hover_content_set(hover, "left", rect);
-   elm_hover_content_set(hover, "top", rect2);
-   elm_hover_content_set(hover, "right", rect3);
-   elm_hover_content_set(hover, "middle", bt2);
+   elm_object_part_content_set(hover, "left", rect);
+   elm_object_part_content_set(hover, "top", rect2);
+   elm_object_part_content_set(hover, "right", rect3);
+   elm_object_part_content_set(hover, "middle", bt2);
 
    evas_object_smart_callback_add(bt, "clicked", _show_hover, hover);
    evas_object_smart_callback_add(bt2, "clicked", _hide_hover, hover);

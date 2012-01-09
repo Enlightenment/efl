@@ -138,7 +138,7 @@ _anchor_buttons_create(Evas_Object *ao, Elm_Entry_Anchorblock_Info *info, Evas_S
      {
         elm_object_text_set(btn, "Nothing to see here");
         evas_object_smart_callback_add(btn, "clicked", btn_end_cb, ao);
-        elm_hover_content_set(info->hover, "middle", btn);
+        elm_object_part_content_set(info->hover, "middle", btn);
         return;
      }
 
@@ -230,14 +230,14 @@ _anchor_buttons_create(Evas_Object *ao, Elm_Entry_Anchorblock_Info *info, Evas_S
 
    evas_object_smart_callback_add(btn, "clicked", btn_end_cb, ao);
    evas_object_smart_callback_add(btn, "clicked", _btn_clicked_cb, str);
-   elm_hover_content_set(info->hover, "middle", btn);
+   elm_object_part_content_set(info->hover, "middle", btn);
 
    if (secondary)
      {
         if (info->hover_right)
-          elm_hover_content_set(info->hover, "right", secondary);
+          elm_object_part_content_set(info->hover, "right", secondary);
         else if (info->hover_left)
-          elm_hover_content_set(info->hover, "left", secondary);
+          elm_object_part_content_set(info->hover, "left", secondary);
         else
           evas_object_del(secondary);
      }
@@ -245,9 +245,9 @@ _anchor_buttons_create(Evas_Object *ao, Elm_Entry_Anchorblock_Info *info, Evas_S
    if (box)
      {
         if (info->hover_bottom)
-          elm_hover_content_set(info->hover, "bottom", box);
+          elm_object_part_content_set(info->hover, "bottom", box);
         else if (info->hover_top)
-          elm_hover_content_set(info->hover, "top", box);
+          elm_object_part_content_set(info->hover, "top", box);
         else
           evas_object_del(box);
      }

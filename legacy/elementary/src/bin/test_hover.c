@@ -41,7 +41,7 @@ test_hover(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info 
 
    bt = elm_button_add(win);
    elm_object_text_set(bt, "Popup");
-   elm_hover_content_set(hv, "middle", bt);
+   elm_object_part_content_set(hv, "middle", bt);
    evas_object_show(bt);
 
    bx = elm_box_add(win);
@@ -67,21 +67,21 @@ test_hover(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info 
    evas_object_show(bt);
 
    evas_object_show(bx);
-   elm_hover_content_set(hv, "top", bx);
+   elm_object_part_content_set(hv, "top", bx);
 
    bt = elm_button_add(win);
    elm_object_text_set(bt, "Bottom");
-   elm_hover_content_set(hv, "bottom", bt);
+   elm_object_part_content_set(hv, "bottom", bt);
    evas_object_show(bt);
 
    bt = elm_button_add(win);
    elm_object_text_set(bt, "Left");
-   elm_hover_content_set(hv, "left", bt);
+   elm_object_part_content_set(hv, "left", bt);
    evas_object_show(bt);
 
    bt = elm_button_add(win);
    elm_object_text_set(bt, "Right");
-   elm_hover_content_set(hv, "right", bt);
+   elm_object_part_content_set(hv, "right", bt);
    evas_object_show(bt);
 
    evas_object_size_hint_min_set(bg, 160, 160);
@@ -123,7 +123,7 @@ test_hover2(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info
 
    bt = elm_button_add(win);
    elm_object_text_set(bt, "Popup");
-   elm_hover_content_set(hv, "middle", bt);
+   elm_object_part_content_set(hv, "middle", bt);
    evas_object_show(bt);
 
    bx = elm_box_add(win);
@@ -147,21 +147,21 @@ test_hover2(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info
    elm_box_pack_end(bx, bt);
    evas_object_show(bt);
    evas_object_show(bx);
-   elm_hover_content_set(hv, "top", bx);
+   elm_object_part_content_set(hv, "top", bx);
 
    bt = elm_button_add(win);
    elm_object_text_set(bt, "Bot");
-   elm_hover_content_set(hv, "bottom", bt);
+   elm_object_part_content_set(hv, "bottom", bt);
    evas_object_show(bt);
 
    bt = elm_button_add(win);
    elm_object_text_set(bt, "Left");
-   elm_hover_content_set(hv, "left", bt);
+   elm_object_part_content_set(hv, "left", bt);
    evas_object_show(bt);
 
    bt = elm_button_add(win);
    elm_object_text_set(bt, "Right");
-   elm_hover_content_set(hv, "right", bt);
+   elm_object_part_content_set(hv, "right", bt);
    evas_object_show(bt);
 
    evas_object_size_hint_min_set(bg, 160, 160);

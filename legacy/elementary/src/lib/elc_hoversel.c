@@ -218,12 +218,12 @@ _activate(Evas_Object *obj)
      }
 
    if (wd->horizontal)
-     elm_hover_content_set(wd->hover,
+     elm_object_part_content_set(wd->hover,
                            elm_hover_best_content_location_get(wd->hover,
                                                                ELM_HOVER_AXIS_HORIZONTAL),
                            bx);
    else
-     elm_hover_content_set(wd->hover,
+     elm_object_part_content_set(wd->hover,
                            elm_hover_best_content_location_get(wd->hover,
                                                                ELM_HOVER_AXIS_VERTICAL),
                            bx);
