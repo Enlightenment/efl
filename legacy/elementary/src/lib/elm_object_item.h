@@ -180,10 +180,14 @@ EAPI Eina_Bool                    elm_object_item_disabled_get(const Elm_Object_
  */
 EAPI void                         elm_object_item_del_cb_set(Elm_Object_Item *it, Evas_Smart_Cb del_cb);
 
-
-// XXX: One more API is to be added.
-//EAPI void                       elm_object_item_del(Elm_Object_Item *it);
-
+/**
+ * Delete the given item.
+ *
+ * @param it The item to be deleted.
+ *
+ * @ingroup General
+ */
+EAPI void                       elm_object_item_del(Elm_Object_Item *it);
 
 /**
  * Set the text to be shown in a given object item's tooltips.

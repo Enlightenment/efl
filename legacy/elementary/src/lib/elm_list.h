@@ -704,7 +704,7 @@ EAPI void                         elm_list_item_show(Elm_List_Item *item);
 EAPI void                         elm_list_item_bring_in(Elm_List_Item *item);
 
 /**
- * Delete them item from the list.
+ * Delete the item from the list.
  *
  * @param item The item of list to be deleted.
  *
