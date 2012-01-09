@@ -255,6 +255,25 @@ typedef enum
  * @li "preedit,changed": The preedit string has changed.
  * @li "language,changed": Program language changed.
  *
+ * Default contents parts of the entry items that you can use for are:
+ * @li "elm.swallow.icon" - An icon in the entry
+ * @li "elm.swallow.end" - A content in the end of the entry
+ *
+ * Default text parts of the entry that you can use for are:
+ * @li "default" - text of the entry
+ *
+ * Supported elm_object common APIs.
+ * @li elm_object_signal_emit
+ * @li elm_object_part_text_set
+ * @li elm_object_part_text_get
+ * @li elm_object_part_content_set
+ * @li elm_object_part_content_get
+ * @li elm_object_part_content_unset
+ * @li elm_object_signal_callback_add
+ * @li elm_object_signal_callback_del
+ * @li elm_object_disabled_set
+ * @li elm_object_disabled_get
+ *
  * @section entry-examples
  *
  * An overview of the Entry API can be seen in @ref entry_example_01

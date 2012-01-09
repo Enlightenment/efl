@@ -16,6 +16,11 @@
  * Default contents parts of the notify widget that you can use for are:
  * @li "default" - A content of the notify
  *
+ * Supported elm_object common APIs.
+ * @li elm_object_part_content_set
+ * @li elm_object_part_content_get
+ * @li elm_object_part_content_unset
+ *
  * @ref tutorial_notify show usage of the API.
  *
  * @{

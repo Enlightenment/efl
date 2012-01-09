@@ -23,7 +23,13 @@
  *
  * Default text parts of the diskselector items that you can use for are:
  * @li "default" - Label of the diskselector item
- * 
+ *
+ * Supported elm_object_item common APIs.
+ * @li elm_object_item_part_text_set
+ * @li elm_object_item_part_text_get
+ * @li elm_object_item_part_content_set
+ * @li elm_object_item_part_content_get
+ *
  * List of examples:
  * @li @ref diskselector_example_01
  * @li @ref diskselector_example_02

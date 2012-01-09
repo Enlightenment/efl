@@ -25,9 +25,13 @@
  * Available styles for it:
  * - @c "default"
  *
- * To set/get the label of the flipselector item, you can use
- * elm_object_item_text_set/get APIs.
- * Once the text is set, a previously set one will be deleted.
+ * Default text parts of the flipselector items that you can use for are:
+ * @li "default" - label of the flipselector item
+ *
+ * Supported elm_object_item common APIs.
+ * @li elm_object_item_text_set
+ * @li elm_object_item_part_text_set
+ * @li elm_object_item_signal_emit
  *
  * Here is an example on its usage:
  * @li @ref flipselector_example

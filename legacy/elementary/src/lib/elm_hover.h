@@ -40,6 +40,11 @@
  * @li "smart,changed" - a content object placed under the "smart"
  *                   policy was replaced to a new slot direction.
  *
+ * Supported elm_object common APIs.
+ * @li elm_object_signal_emit
+ * @li elm_object_signal_callback_add
+ * @li elm_object_signal_callback_del
+ *
  * See @ref tutorial_hover for more information.
  *
  * @{

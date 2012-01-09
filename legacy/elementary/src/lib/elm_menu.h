@@ -18,6 +18,14 @@
  * Default text parts of the menu items that you can use for are:
  * @li "default" - label in the menu item
  *
+ * Supported elm_object_item common APIs.
+ * @li elm_object_item_part_text_set
+ * @li elm_object_item_part_text_get
+ * @li elm_object_item_part_content_set
+ * @li elm_object_item_part_content_get
+ * @li elm_object_item_disabled_set
+ * @li elm_object_item_disabled_get 
+ *
  * @see @ref tutorial_menu
  * @{
  */

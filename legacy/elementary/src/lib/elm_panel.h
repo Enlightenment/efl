@@ -15,6 +15,14 @@
  * Default contents parts of the panel widget that you can use for are:
  * @li "default" - A content of the panel
  *
+ * Supported elm_object common APIs.
+ * @li elm_object_signal_emit
+ * @li elm_object_signal_callback_add
+ * @li elm_object_signal_callback_del
+ * @li elm_object_part_content_set
+ * @li elm_object_part_content_get
+ * @li elm_object_part_content_unset
+ *
  * @ref tutorial_panel shows one way to use this widget.
  * @{
  */

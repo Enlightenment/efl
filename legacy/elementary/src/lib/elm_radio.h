@@ -26,8 +26,20 @@
  * @li changed - This is called whenever the user changes the state of one of
  * the radio objects within the group of radio objects that work together.
  *
+ * Default text parts of the radio widget that you can use for are:
+ * @li "default" - Label of the radio
+ *
  * Default contents parts of the radio widget that you can use for are:
  * @li "icon" - An icon of the radio
+ *
+ * Supported elm_object common APIs.
+ * @li elm_object_part_text_set
+ * @li elm_object_part_text_get
+ * @li elm_object_part_content_set
+ * @li elm_object_part_content_get
+ * @li elm_object_part_content_unset
+ * @li elm_object_disabled_set
+ * @li elm_object_disabled_get
  *
  * @ref tutorial_radio show most of this API in action.
  * @{

@@ -25,7 +25,14 @@
  * @li "default" - A content of the frame
  *
  * Default text parts of the frame widget that you can use for are:
- * @li "elm.text" - Label of the frame
+ * @li "default" - Label of the frame
+ *
+ * Supported elm_object common APIs.
+ * @li elm_object_part_text_set
+ * @li elm_object_part_text_get
+ * @li elm_object_part_content_set
+ * @li elm_object_part_content_get
+ * @li elm_object_part_content_unset
  *
  * For a detailed example see the @ref tutorial_frame.
  *

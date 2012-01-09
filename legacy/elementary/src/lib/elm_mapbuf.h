@@ -15,6 +15,11 @@
  * Default contents parts of the mapbuf widget that you can use for are:
  * @li "default" - A content of the mapbuf
  *
+ * Supported elm_object common APIs.
+ * @li elm_object_part_content_set
+ * @li elm_object_part_content_get
+ * @li elm_object_part_content_unset
+ *
  * To enable map, elm_mapbuf_enabled_set() should be used.
  *
  * See how to use this widget in this example:

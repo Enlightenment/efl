@@ -53,6 +53,11 @@
  * Setting glayer_continues_enable to false in @ref Config will change this behavior
  * so gesture starts when user touches (a *DOWN event) touch-surface
  * and ends when no fingers touches surface (a *UP event).
+ *
+ * Supported elm_object common APIs.
+ * @li elm_object_disabled_set
+ * @li elm_object_disabled_get
+ *
  */
 
 /**

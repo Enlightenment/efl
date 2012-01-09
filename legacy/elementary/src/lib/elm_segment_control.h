@@ -26,8 +26,25 @@
  * Available styles for it:
  * - @c "default"
  *
+ * Default contents parts of the segment control items that you can use for are:
+ * @li "icon" - An icon in a segment control item
+ *
+ * Default text parts of the segment control items that you can use for are:
+ * @li "default" - Title label in a segment control item
+ *
+ * Supported elm_object common APIs.
+ * @li elm_object_disabled_set
+ * @li elm_object_disabled_get
+ *
+ * Supported elm_object_item common APIs.
+ * @li elm_object_item_part_text_set
+ * @li elm_object_item_part_text_get
+ * @li elm_object_item_part_content_set
+ * @li elm_object_item_part_content_get
+ * 
  * Here is an example on its usage:
  * @li @ref segment_control_example
+ *
  */
 
 /**
