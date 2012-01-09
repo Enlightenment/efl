@@ -3026,3 +3026,84 @@ EINA_DEPRECATED EAPI void                         elm_toolbar_mode_shrink_set(Ev
  * @ingroup Toolbar
  */
 EINA_DEPRECATED EAPI Elm_Toolbar_Shrink_Mode      elm_toolbar_mode_shrink_get(const Evas_Object *obj);
+
+/**
+ * This sets a widget to be displayed to the left of a scrolled entry.
+ *
+ * @param obj The scrolled entry object
+ * @param icon The widget to display on the left side of the scrolled
+ * entry.
+ *
+ * @note A previously set widget will be destroyed.
+ * @note If the object being set does not have minimum size hints set,
+ * it won't get properly displayed.
+ *
+ * @deprecated Use elm_object_part_content_set() instead
+ * @see elm_entry_end_set()
+ */
+EINA_DEPRECATED EAPI void               elm_entry_icon_set(Evas_Object *obj, Evas_Object *icon);
+
+/**
+ * Gets the leftmost widget of the scrolled entry. This object is
+ * owned by the scrolled entry and should not be modified.
+ *
+ * @param obj The scrolled entry object
+ * @return the left widget inside the scroller
+ *
+ * @deprecated Use elm_object_part_content_get() instead
+ */
+EINA_DEPRECATED EAPI Evas_Object       *elm_entry_icon_get(const Evas_Object *obj);
+
+/**
+ * Unset the leftmost widget of the scrolled entry, unparenting and
+ * returning it.
+ *
+ * @param obj The scrolled entry object
+ * @return the previously set icon sub-object of this entry, on
+ * success.
+ *
+ * @deprecated Use elm_object_part_content_unset() instead
+ * @see elm_entry_icon_set()
+ */
+EINA_DEPRECATED EAPI Evas_Object       *elm_entry_icon_unset(Evas_Object *obj);
+
+/**
+ * This sets a widget to be displayed to the end of a scrolled entry.
+ *
+ * @param obj The scrolled entry object
+ * @param end The widget to display on the right side of the scrolled
+ * entry.
+ *
+ * @note A previously set widget will be destroyed.
+ * @note If the object being set does not have minimum size hints set,
+ * it won't get properly displayed.
+ *
+ * @deprecated Use elm_object_part_content_set() instead
+ * @see elm_entry_icon_set
+ */
+EINA_DEPRECATED EAPI void               elm_entry_end_set(Evas_Object *obj, Evas_Object *end);
+
+/**
+ * Gets the endmost widget of the scrolled entry. This object is owned
+ * by the scrolled entry and should not be modified.
+ *
+ * @param obj The scrolled entry object
+ * @return the right widget inside the scroller
+ *
+ * @deprecated Use elm_object_part_content_get() instead
+ */
+EAPI Evas_Object       *elm_entry_end_get(const Evas_Object *obj);
+
+/**
+ * Unset the endmost widget of the scrolled entry, unparenting and
+ * returning it.
+ *
+ * @param obj The scrolled entry object
+ * @return the previously set icon sub-object of this entry, on
+ * success.
+ *
+ * @deprecated Use elm_object_part_content_unset() instead
+ * @see elm_entry_icon_set()
+ */
+EINA_DEPRECATED EAPI Evas_Object       *elm_entry_end_unset(Evas_Object *obj);
+

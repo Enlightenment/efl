@@ -10,25 +10,25 @@ elm_scrolled_entry_add(Evas_Object *parent)
 }
 EINA_DEPRECATED EAPI void
 elm_scrolled_entry_icon_set(Evas_Object *obj, Evas_Object *icon)
-{elm_entry_icon_set(obj, icon);}
+{elm_object_part_content_set(obj, "icon", icon);}
 EINA_DEPRECATED EAPI Evas_Object *
 elm_scrolled_entry_icon_get(const Evas_Object *obj)
-{return elm_entry_icon_get(obj);}
+{return elm_object_part_content_get(obj, "icon");}
 EINA_DEPRECATED EAPI Evas_Object *
 elm_scrolled_entry_icon_unset(Evas_Object *obj)
-{return elm_entry_icon_unset(obj);}
+{return elm_object_part_content_unset(obj, "icon");}
 EINA_DEPRECATED EAPI void
 elm_scrolled_entry_icon_visible_set(Evas_Object *obj, Eina_Bool setting)
 {elm_entry_icon_visible_set(obj, setting);}
 EINA_DEPRECATED EAPI void
 elm_scrolled_entry_end_set(Evas_Object *obj, Evas_Object *end)
-{elm_entry_end_set(obj, end);}
+{elm_object_part_content_set(obj, "end", end);}
 EINA_DEPRECATED EAPI Evas_Object *
 elm_scrolled_entry_end_get(const Evas_Object *obj)
-{return elm_entry_end_get(obj);}
+{return elm_object_part_content_get(obj, "end");}
 EINA_DEPRECATED EAPI Evas_Object *
 elm_scrolled_entry_end_unset(Evas_Object *obj)
-{return elm_entry_end_unset(obj);}
+{return elm_object_part_content_unset(obj, "end");}
 EINA_DEPRECATED EAPI void
 elm_scrolled_entry_end_visible_set(Evas_Object *obj, Eina_Bool setting)
 {elm_entry_end_visible_set(obj, setting);}

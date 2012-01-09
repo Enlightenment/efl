@@ -810,23 +810,33 @@ _content_set_hook(Evas_Object *obj, const char *part, Evas_Object *content)
       edje = wd->ent;
 
    /* Delete the currently swallowed object */
-     {
-        Evas_Object *cswallow = edje_object_part_swallow_get(edje, part);
-        if (cswallow)
-           evas_object_del(cswallow);
-     }
+   Evas_Object *cswallow;
 
-   if (!strcmp(part, "elm.swallow.icon"))
+   if (!part || !strcmp(part, "icon"))
      {
+        cswallow = edje_object_part_swallow_get(edje, "elm.swallow.icon");
         edje_object_signal_emit(edje, "elm,action,show,icon", "elm");
      }
-   else if (!strcmp(part, "elm.swallow.end"))
+   else if (!strcmp(part, "end"))
      {
+        cswallow = edje_object_part_swallow_get(edje, "elm.swallow.end");
         edje_object_signal_emit(edje, "elm,action,show,end", "elm");
      }
+   else
+     cswallow = edje_object_part_swallow_get(edje, part);
+
+   if (cswallow) evas_object_del(cswallow);
+
    evas_event_freeze(evas_object_evas_get(obj));
    elm_widget_sub_object_add(obj, content);
-   edje_object_part_swallow(edje, part, content);
+
+   if (!part || !strcmp(part, "icon"))
+     edje_object_part_swallow(edje, "elm.swallow.icon", content);
+   else if (!strcmp(part, "end"))
+     edje_object_part_swallow(edje, "elm.swallow.end", content);
+   else
+     edje_object_part_swallow(edje, part, content);
+
    _sizing_eval(obj);
    evas_event_thaw(evas_object_evas_get(obj));
    evas_event_thaw_eval(evas_object_evas_get(obj));
@@ -844,16 +854,19 @@ _content_unset_hook(Evas_Object *obj, const char *part)
    else
       edje = wd->ent;
 
-   if (!strcmp(part, "elm.swallow.icon"))
+   if (!part || !strcmp(part, "icon"))
      {
         edje_object_signal_emit(edje, "elm,action,hide,icon", "elm");
+        content = edje_object_part_swallow_get(edje, "elm.swallow.icon");
      }
-   else if (!strcmp(part, "elm.swallow.end"))
+   else if (!strcmp(part, "end"))
      {
         edje_object_signal_emit(edje, "elm,action,hide,end", "elm");
+        content = edje_object_part_swallow_get(edje, "elm.swallow.end");
      }
+   else
+     content = edje_object_part_swallow_get(edje, part);
 
-   content = edje_object_part_swallow_get(edje, part);
    edje_object_part_swallow(edje, part, NULL);
    if (!content) return NULL;
    evas_event_freeze(evas_object_evas_get(obj));
@@ -878,8 +891,15 @@ _content_get_hook(const Evas_Object *obj, const char *part)
    else
       edje = wd->ent;
 
-   if (edje)
+   if (!edje) return NULL;
+
+   if (!part || !strcmp(part, "icon"))
+     content = edje_object_part_swallow_get(edje, "elm.swallow.icon");
+   else if (!strcmp(part, "end"))
+     content = edje_object_part_swallow_get(edje, "elm.swallow.end");
+   else
      content = edje_object_part_swallow_get(edje, part);
+
    return content;
 }
 
@@ -3298,21 +3318,21 @@ elm_entry_icon_set(Evas_Object *obj, Evas_Object *icon)
 {
    ELM_CHECK_WIDTYPE(obj, widtype);
    EINA_SAFETY_ON_NULL_RETURN(icon);
-   _content_set_hook(obj, "elm.swallow.icon", icon);
+   _content_set_hook(obj, NULL, icon);
 }
 
 EAPI Evas_Object *
 elm_entry_icon_get(const Evas_Object *obj)
 {
    ELM_CHECK_WIDTYPE(obj, widtype) NULL;
-   return _content_get_hook(obj, "elm.swallow.icon");
+   return _content_get_hook(obj, NULL);
 }
 
 EAPI Evas_Object *
 elm_entry_icon_unset(Evas_Object *obj)
 {
    ELM_CHECK_WIDTYPE(obj, widtype) NULL;
-   return _content_unset_hook(obj, "elm.swallow.icon");
+   return _content_unset_hook(obj, NULL);
 }
 
 EAPI void
@@ -3340,21 +3360,21 @@ elm_entry_end_set(Evas_Object *obj, Evas_Object *end)
 {
    ELM_CHECK_WIDTYPE(obj, widtype);
    EINA_SAFETY_ON_NULL_RETURN(end);
-   _content_set_hook(obj, "elm.swallow.end", end);
+   _content_set_hook(obj, "end", end);
 }
 
 EAPI Evas_Object *
 elm_entry_end_get(const Evas_Object *obj)
 {
    ELM_CHECK_WIDTYPE(obj, widtype) NULL;
-   return _content_get_hook(obj, "elm.swallow.end");
+   return _content_get_hook(obj, "end");
 }
 
 EAPI Evas_Object *
 elm_entry_end_unset(Evas_Object *obj)
 {
    ELM_CHECK_WIDTYPE(obj, widtype) NULL;
-   return _content_unset_hook(obj, "elm.swallow.end");
+   return _content_unset_hook(obj, "end");
 }
 
 EAPI void

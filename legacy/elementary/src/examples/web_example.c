@@ -397,7 +397,7 @@ _win_search_trigger_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED
 
    box2 = elm_box_add(ad->win);
    elm_box_horizontal_set(box2, EINA_TRUE);
-   elm_entry_end_set(entry, box2);
+   elm_object_part_content_set(entry, "end", box2);
 
    btn = elm_button_add(ad->win);
    elm_box_pack_end(box2, btn);
@@ -512,7 +512,7 @@ elm_main(int argc __UNUSED__, char *argv[] __UNUSED__)
 
    box2 = elm_box_add(win);
    elm_box_horizontal_set(box2, EINA_TRUE);
-   elm_entry_icon_set(url, box2);
+   elm_object_part_content_set(url, "icon", box2);
    elm_entry_icon_visible_set(url, EINA_FALSE);
 
    btn = elm_button_add(win);

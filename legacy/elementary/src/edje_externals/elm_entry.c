@@ -56,7 +56,7 @@ external_entry_state_set(void *data __UNUSED__, Evas_Object *obj, const void *fr
    if (p->label)
      elm_object_text_set(obj, p->label);
    if (p->icon)
-     elm_entry_icon_set(obj, p->icon);
+     elm_object_part_content_set(obj, "icon", p->icon);
    if (p->entry)
      elm_object_text_set(obj, p->entry);
    if (p->scrollable_exists)
@@ -100,7 +100,7 @@ external_entry_param_set(void *data __UNUSED__, Evas_Object *obj, const Edje_Ext
         if (param->type == EDJE_EXTERNAL_PARAM_TYPE_STRING)
           {
              Evas_Object *icon = external_common_param_icon_get(obj, param);
-             elm_entry_icon_set(obj, icon);
+             elm_object_part_content_set(obj, "icon", icon);
              return EINA_TRUE;
           }
      }

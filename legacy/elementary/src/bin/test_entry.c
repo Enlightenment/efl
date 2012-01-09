@@ -437,13 +437,13 @@ test_entry_scrolled(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *ev
    evas_object_size_hint_min_set(bt, 48, 48);
    evas_object_color_set(bt, 255, 0, 0, 128);
    evas_object_show(bt);
-   elm_entry_icon_set(en, bt);
+   elm_object_part_content_set(en, "icon", bt);
    bt = elm_icon_add(win);
    elm_icon_standard_set(bt, "delete");
    evas_object_color_set(bt, 255, 0, 0, 128);
    evas_object_size_hint_min_set(bt, 48, 48);
    evas_object_show(bt);
-   elm_entry_end_set(en, bt);
+   elm_object_part_content_set(en, "end", bt);
    elm_object_text_set(en, "scrolled entry with icon and end objects");
    evas_object_show(en);
    elm_box_pack_end(bx, en);
