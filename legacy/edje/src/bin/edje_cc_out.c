@@ -809,8 +809,8 @@ data_write_groups(Eet_File *ef, int *collection_num)
 
 	if (verbose)
 	  {
-	     printf("%s: Wrote %9i bytes (%4iKb) for \"%s\" collection entry\n",
-		    progname, bytes, (bytes + 512) / 1024, buf);
+	     printf("%s: Wrote %9i bytes (%4iKb) for \"%s\" aka \"%s\" collection entry\n",
+		    progname, bytes, (bytes + 512) / 1024, buf, pc->part);
 	  }
      }
 
