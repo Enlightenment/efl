@@ -1202,4 +1202,10 @@ ecore_evas_wayland_shm_new(const char *disp_name __UNUSED__, int x __UNUSED__, i
 {
    return NULL;
 }
+
+EAPI void 
+ecore_evas_wayland_shm_resize(Ecore_Evas *ee __UNUSED__, int location __UNUSED__)
+{
+
+}
 #endif
