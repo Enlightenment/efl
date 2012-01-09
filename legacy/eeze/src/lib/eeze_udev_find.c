@@ -237,6 +237,9 @@ eeze_udev_find_by_type(Eeze_Udev_Type etype,
       case EEZE_UDEV_TYPE_V4L:
 	udev_enumerate_add_match_subsystem(en, "video4linux");
         break;
+      case EEZE_UDEV_TYPE_BLUETOOTH:
+	udev_enumerate_add_match_subsystem(en, "bluetooth");
+        break;
       default:
         break;
      }

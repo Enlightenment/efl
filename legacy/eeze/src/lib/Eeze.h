@@ -213,7 +213,9 @@ typedef enum
    /** - Network devices */
    EEZE_UDEV_TYPE_NET,
    /** - WebCam */
-   EEZE_UDEV_TYPE_V4L
+   EEZE_UDEV_TYPE_V4L,
+   /** - Bluetooth */
+   EEZE_UDEV_TYPE_BLUETOOTH
 } Eeze_Udev_Type;
 /**@}*/
 
