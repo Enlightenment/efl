@@ -538,8 +538,6 @@ static void
 _ecore_evas_resize(Ecore_Evas *ee, int w, int h)
 {
    Extn *extn;
-   Eina_List *l;
-   Ecore_Ipc_Client *client;
 
    if (w < 1) w = 1;
    if (h < 1) h = 1;
