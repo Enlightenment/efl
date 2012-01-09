@@ -861,6 +861,8 @@ _ecore_evas_wl_render(Ecore_Evas *ee)
              evas_render_updates_free(updates);
              _ecore_evas_idle_timeout_update(ee);
              rend = 1;
+
+             ecore_wl_flush();
           }
 
         if (ee->func.fn_post_render) ee->func.fn_post_render(ee);
