@@ -153,7 +153,7 @@ test_eio(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __
    evas_object_size_hint_aspect_set(ic, EVAS_ASPECT_CONTROL_VERTICAL, 1, 1);
    fs_bt = elm_fileselector_button_add(win);
    elm_object_text_set(fs_bt, "Select a dir");
-   elm_fileselector_button_icon_set(fs_bt, ic);
+   elm_object_part_content_set(fs_bt, "icon", ic);
    elm_fileselector_button_inwin_mode_set(fs_bt, EINA_TRUE);
    elm_fileselector_button_folder_only_set(fs_bt, EINA_TRUE);
 

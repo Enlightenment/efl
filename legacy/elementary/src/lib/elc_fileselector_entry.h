@@ -45,9 +45,16 @@
  * are:
  * @li "default" - Label of the fileselector_button
  *
+ * Default contents parts of the fileselector_entry widget that you can use for
+ * are:
+ * @li "button icon" - Button icon of the fileselector_entry
+ *
  * Supported elm_object common APIs.
  * @li elm_object_part_text_set
  * @li elm_object_part_text_get
+ * @li elm_object_part_content_set
+ * @li elm_object_part_content_get
+ * @li elm_object_part_content_unset
  * @li elm_object_disabled_set
  * @li elm_object_disabled_get
  *
@@ -67,46 +74,6 @@
  * errors
  */
 EAPI Evas_Object                *elm_fileselector_entry_add(Evas_Object *parent);
-
-/**
- * Set the icon on a given file selector entry widget's button
- *
- * @param obj The file selector entry widget
- * @param icon The icon object for the entry's button
- *
- * Once the icon object is set, a previously set one will be
- * deleted. If you want to keep the latter, use the
- * elm_fileselector_entry_button_icon_unset() function.
- *
- * @see elm_fileselector_entry_button_icon_get()
- */
-EAPI void                        elm_fileselector_entry_button_icon_set(Evas_Object *obj, Evas_Object *icon);
-
-/**
- * Get the icon set for a given file selector entry widget's button
- *
- * @param obj The file selector entry widget
- * @return The icon object currently set on @p obj widget's button
- * or @c NULL, if none is
- *
- * @see elm_fileselector_entry_button_icon_set()
- */
-EAPI Evas_Object                *elm_fileselector_entry_button_icon_get(const Evas_Object *obj);
-
-/**
- * Unset the icon used in a given file selector entry widget's
- * button
- *
- * @param obj The file selector entry widget
- * @return The icon object that was being used on @p obj widget's
- * button or @c NULL, on errors
- *
- * Unparent and return the icon object which was set for this
- * widget's button.
- *
- * @see elm_fileselector_entry_button_icon_set()
- */
-EAPI Evas_Object                *elm_fileselector_entry_button_icon_unset(Evas_Object *obj);
 
 /**
  * Set the title for a given file selector entry widget's window

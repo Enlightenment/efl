@@ -92,7 +92,7 @@ test_fileselector_button(void *data       __UNUSED__,
    evas_object_size_hint_aspect_set(ic, EVAS_ASPECT_CONTROL_VERTICAL, 1, 1);
    fs_bt = elm_fileselector_button_add(win);
    elm_object_text_set(fs_bt, "Select a file");
-   elm_fileselector_button_icon_set(fs_bt, ic);
+   elm_object_part_content_set(fs_bt, "icon", ic);
 
    elm_box_pack_end(vbox, fs_bt);
    evas_object_show(fs_bt);

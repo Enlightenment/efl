@@ -117,7 +117,7 @@ elm_main(int    argc __UNUSED__,
    evas_object_size_hint_align_set(fs_entry, EVAS_HINT_FILL, 0);
    elm_fileselector_entry_path_set(fs_entry, "/tmp");
    elm_object_text_set(fs_entry, "Select a file");
-   elm_fileselector_entry_button_icon_set(fs_entry, ic);
+   elm_object_part_content_set(fs_entry, "button icon", ic);
 
    elm_box_pack_end(vbox, fs_entry);
    evas_object_show(fs_entry);

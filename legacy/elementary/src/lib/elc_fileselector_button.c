@@ -274,6 +274,33 @@ _elm_fileselector_button_label_get(const Evas_Object *obj, const char *item)
    return elm_object_text_get(wd->btn);
 }
 
+static void
+_content_set_hook(Evas_Object *obj, const char *part, Evas_Object *content)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype);
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return;
+   elm_object_part_content_set(wd->btn, part, content);
+}
+
+static Evas_Object *
+_content_get_hook(const Evas_Object *obj, const char *part)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype) NULL;
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return NULL;
+   return elm_object_part_content_get(wd->btn, part);
+}
+
+static Evas_Object *
+_content_unset_hook(Evas_Object *obj, const char *part)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype) NULL;
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return NULL;
+   return elm_object_part_content_unset(wd->btn, part);
+}
+
 EAPI Evas_Object *
 elm_fileselector_button_add(Evas_Object *parent)
 {
@@ -296,6 +323,9 @@ elm_fileselector_button_add(Evas_Object *parent)
    elm_widget_activate_hook_set(obj, _activate_hook);
    elm_widget_text_set_hook_set(obj, _elm_fileselector_button_label_set);
    elm_widget_text_get_hook_set(obj, _elm_fileselector_button_label_get);
+   elm_widget_content_set_hook_set(obj, _content_set_hook);
+   elm_widget_content_get_hook_set(obj, _content_get_hook);
+   elm_widget_content_unset_hook_set(obj, _content_unset_hook);
 
    wd->self = obj;
    wd->window_title = eina_stringshare_add(DEFAULT_WINDOW_TITLE);
@@ -505,31 +535,18 @@ EAPI void
 elm_fileselector_button_icon_set(Evas_Object *obj,
                                  Evas_Object *icon)
 {
-   ELM_CHECK_WIDTYPE(obj, widtype);
-   Widget_Data *wd = elm_widget_data_get(obj);
-   if (!wd)
-     {
-        evas_object_del(icon);
-        return;
-     }
-   elm_object_part_content_set(wd->btn, "icon", icon);
+   _content_set_hook(obj, NULL, icon);
 }
 
 EAPI Evas_Object *
 elm_fileselector_button_icon_get(const Evas_Object *obj)
 {
-   ELM_CHECK_WIDTYPE(obj, widtype) NULL;
-   Widget_Data *wd = elm_widget_data_get(obj);
-   if (!wd) return NULL;
-   return elm_object_part_content_get(wd->btn, "icon");
+   return _content_get_hook(obj, NULL);
 }
 
 EAPI Evas_Object *
 elm_fileselector_button_icon_unset(Evas_Object *obj)
 {
-   ELM_CHECK_WIDTYPE(obj, widtype) NULL;
-   Widget_Data *wd = elm_widget_data_get(obj);
-   if (!wd) return NULL;
-   return elm_object_part_content_unset(wd->btn, "icon");
+   return _content_unset_hook(obj, NULL);
 }
 
