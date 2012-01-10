@@ -108,16 +108,18 @@ struct _Elm_Map_Marker_Class
    const char *style;
    int zoom_displayed;
 
-   struct _Elm_Map_Marker_Class_Func {
+   struct _Elm_Map_Marker_Class_Func
+     {
         ElmMapMarkerGetFunc get;
         ElmMapMarkerDelFunc del; //if NULL the object will be destroyed with evas_object_del()
         ElmMapMarkerIconGetFunc icon_get;
-   } func;
+     } func;
 
-   struct { //this part is private, do not modify these values
+   struct
+     { //this part is private, do not modify these values
         Eina_Bool set : 1;
         Evas_Coord edje_w, edje_h;
-   } priv;
+     } priv;
 };
 
 struct _Elm_Map_Marker
@@ -142,18 +144,20 @@ struct _Elm_Map_Group_Class
    int zoom_grouped; // group the markers only if the zoom is <= to zoom_groups
    Eina_Bool hide : 1;
 
-   struct {
+   struct
+     {
         ElmMapGroupIconGetFunc icon_get;
-   } func;
+     } func;
 
-   struct { //this part is private, do not modify these values
+   struct
+     { //this part is private, do not modify these values
         Eina_Bool set : 1;
         Evas_Coord edje_w, edje_h;
         Evas_Coord edje_max_w, edje_max_h;
 
         Eina_List *objs_used;
         Eina_List *objs_notused;
-   } priv;
+     } priv;
 };
 
 struct _Marker_Group
@@ -192,23 +196,25 @@ struct _Elm_Map_Route
    Eina_List *nodes, *path;
    Eina_List *waypoint;
 
-   struct {
-      int node_count;
-      int waypoint_count;
-      const char *nodes;
-      const char *waypoints;
-      double distance; /* unit : km */
-   } info;
+   struct
+     {
+        int node_count;
+        int waypoint_count;
+        const char *nodes;
+        const char *waypoints;
+        double distance; /* unit : km */
+     } info;
 
    Eina_List *handlers;
    Url_Data ud;
 
-   struct {
-      int r;
-      int g;
-      int b;
-      int a;
-   } color;
+   struct
+     {
+        int r;
+        int g;
+        int b;
+        int a;
+     } color;
 
    Eina_Bool inbound : 1;
 };
@@ -218,10 +224,11 @@ struct _Path_Node
    Widget_Data *wd;
 
    int idx;
-   struct {
-      double lon, lat;
-      char *address;
-   } pos;
+   struct
+     {
+        double lon, lat;
+        char *address;
+     } pos;
 };
 
 struct _Path_Waypoint
@@ -252,9 +259,10 @@ struct _Grid_Item
    //Evas_Object *txt;
    const char *file;
    const char *source;
-   struct {
+   struct
+     {
         int x, y, w, h;
-   } src, out;
+     } src, out;
 
    Eina_Bool file_have : 1;
    Ecore_File_Download_Job *job;
@@ -293,17 +301,20 @@ struct _Widget_Data
    Ecore_Timer *long_timer;
    Ecore_Animator *zoom_animator;
    double t;
-   struct {
+   struct
+     {
         int w, h;
         int ow, oh, nw, nh;
-        struct {
+        struct
+          {
              double x, y;
-        } spos;
-   } size;
-   struct {
+          } spos;
+     } size;
+   struct
+     {
         Eina_Bool show : 1;
         Evas_Coord x, y ,w ,h;
-   } show;
+     } show;
    int tsize;
    int nosmooth;
    Eina_List *grids;
@@ -312,10 +323,11 @@ struct _Widget_Data
    Eina_Bool paused : 1;
    Eina_Bool paused_markers : 1;
 
-   struct {
+   struct
+     {
         Eina_Bool enabled;
         double lon, lat;
-   } center_on;
+     } center_on;
 
    Ecore_Job *markers_place_job;
    Eina_Matrixsparse **markers;
@@ -341,15 +353,17 @@ struct _Widget_Data
    Eina_List *names;
    int multi_count;
 
-   struct {
+   struct
+     {
         Evas_Coord cx, cy;
         double level, diff;
-   } pinch;
+     } pinch;
 
-   struct {
+   struct
+     {
         Evas_Coord cx, cy;
         double a, d;
-   } rotate;
+     } rotate;
 
    int wheel_diff;
    Eina_Bool wheel_disabled : 1;
@@ -377,13 +391,15 @@ struct _Event
 {
    int device;
 
-   struct {
+   struct
+     {
         Evas_Coord x, y;
-   } start;
+     } start;
 
-   struct {
+   struct
+     {
         Evas_Coord x, y;
-   } prev;
+     } prev;
 
    Evas_Coord x, y, w, h;
 
