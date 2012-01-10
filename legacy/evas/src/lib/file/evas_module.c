@@ -285,7 +285,7 @@ evas_module_register(const Evas_Module_Api *module, Evas_Module_Type type)
    if (type == EVAS_MODULE_TYPE_ENGINE)
      {
 	eina_array_push(evas_engines, em);
-	em->id_engine = eina_array_count_get(evas_engines);
+	em->id_engine = eina_array_count(evas_engines);
      }
 
    eina_hash_direct_add(evas_modules[type], module->name, em);
@@ -398,7 +398,7 @@ Evas_Module *
 evas_module_engine_get(int render_method)
 {
    if ((render_method <= 0) ||
-       ((unsigned int)render_method > eina_array_count_get(evas_engines)))
+       ((unsigned int)render_method > eina_array_count(evas_engines)))
      return NULL;
    return eina_array_data_get(evas_engines, render_method - 1);
 }
