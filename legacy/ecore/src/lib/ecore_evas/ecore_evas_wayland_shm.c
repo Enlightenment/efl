@@ -378,6 +378,7 @@ _ecore_evas_wl_free(Ecore_Evas *ee)
    ee->engine.wl.surface = NULL;
 
    ecore_event_window_unregister(ee->prop.window);
+   ecore_evas_input_event_unregister(ee);
 
    _ecore_evas_wl_shutdown();
    ecore_wl_shutdown();
@@ -468,8 +469,21 @@ _ecore_evas_wl_resize(Ecore_Evas *ee, int w, int h)
    if (w < 1) w = 1;
    if (h < 1) h = 1;
    if ((ee->w == w) && (ee->h == h)) return;
+
    ee->req.w = w;
    ee->req.h = h;
+
+   if (ee->visible) 
+     {
+        /* damage old surface, if it exists */
+
+        /* NB: This removes any lingering screen artifacts in the compositor.
+         * This may be a 'HACK' if the issue is actually in the wayland 
+         * compositor, but for now lets implement this so we don't have screen 
+         * artifacts laying around during a resize */
+        if (ee->engine.wl.surface)
+          wl_surface_damage(ee->engine.wl.surface, 0, 0, ee->w, ee->h);
+     }
 
    /* get engine info */
    einfo = (Evas_Engine_Info_Wayland_Shm *)evas_engine_info_get(ee->evas);
@@ -497,6 +511,7 @@ _ecore_evas_wl_resize(Ecore_Evas *ee, int w, int h)
    /* change evas output & viewport sizes */
    evas_output_size_set(ee->evas, ee->w, ee->h);
    evas_output_viewport_set(ee->evas, 0, 0, ee->w, ee->h);
+   evas_damage_rectangle_add(ee->evas, 0, 0, ee->w, ee->h);
    if (ee->engine.wl.frame)
      evas_object_resize(ee->engine.wl.frame, ee->w, ee->h);
 
@@ -508,11 +523,11 @@ _ecore_evas_wl_resize(Ecore_Evas *ee, int w, int h)
 
    if (ee->visible) 
      {
-        /* if visible, attach to surface */
-        wl_surface_attach(ee->engine.wl.surface, ee->engine.wl.buffer, 0, 0);
-
         /* damage surface */
         wl_surface_damage(ee->engine.wl.surface, 0, 0, ee->w, ee->h);
+
+        /* if visible, attach to surface */
+        wl_surface_attach(ee->engine.wl.surface, ee->engine.wl.buffer, 0, 0);
      }
 
    if (ee->func.fn_resize) ee->func.fn_resize(ee);
@@ -1030,13 +1045,16 @@ _ecore_evas_wl_handle_configure(void *data, struct wl_shell_surface *shell_surfa
 {
    Ecore_Evas *ee;
 
+   /* NB: Trap to prevent compositor from crashing */
+   if ((width <= 0) || (height <= 0)) return;
+
    if (!(ee = data)) return;
+
    if ((shell_surface) && (ee->engine.wl.shell_surface)) 
      {
         if (ee->engine.wl.shell_surface != shell_surface) return;
+        ecore_evas_resize(ee, width, height);
      }
-
-   ecore_evas_resize(ee, width, height);
 }
 
 static void 
