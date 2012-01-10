@@ -1018,7 +1018,7 @@ EAPI void               elm_entry_icon_visible_set(Evas_Object *obj, Eina_Bool s
 
 /**
  * Sets the visibility of the end widget of the scrolled entry, set by
- * elm_entry_end_set().
+ * elm_object_part_content_set(ent, "end", content).
  *
  * @param obj The scrolled entry object
  * @param setting EINA_TRUE if the object should be displayed,

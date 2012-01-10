@@ -3175,7 +3175,7 @@ EINA_DEPRECATED EAPI Elm_Toolbar_Shrink_Mode      elm_toolbar_mode_shrink_get(co
  * @note If the object being set does not have minimum size hints set,
  * it won't get properly displayed.
  *
- * @deprecated Use elm_object_part_content_set() instead
+ * @deprecated Use elm_object_part_content_set(entry, "icon", content) instead
  * @see elm_entry_end_set()
  */
 EINA_DEPRECATED EAPI void               elm_entry_icon_set(Evas_Object *obj, Evas_Object *icon);
@@ -3187,7 +3187,7 @@ EINA_DEPRECATED EAPI void               elm_entry_icon_set(Evas_Object *obj, Eva
  * @param obj The scrolled entry object
  * @return the left widget inside the scroller
  *
- * @deprecated Use elm_object_part_content_get() instead
+ * @deprecated Use elm_object_part_content_get(entry, "icon") instead
  */
 EINA_DEPRECATED EAPI Evas_Object       *elm_entry_icon_get(const Evas_Object *obj);
 
@@ -3199,7 +3199,7 @@ EINA_DEPRECATED EAPI Evas_Object       *elm_entry_icon_get(const Evas_Object *ob
  * @return the previously set icon sub-object of this entry, on
  * success.
  *
- * @deprecated Use elm_object_part_content_unset() instead
+ * @deprecated Use elm_object_part_content_unset(entry, "icon") instead
  * @see elm_entry_icon_set()
  */
 EINA_DEPRECATED EAPI Evas_Object       *elm_entry_icon_unset(Evas_Object *obj);
@@ -3215,7 +3215,7 @@ EINA_DEPRECATED EAPI Evas_Object       *elm_entry_icon_unset(Evas_Object *obj);
  * @note If the object being set does not have minimum size hints set,
  * it won't get properly displayed.
  *
- * @deprecated Use elm_object_part_content_set() instead
+ * @deprecated Use elm_object_part_content_set(entry, "end", content) instead
  * @see elm_entry_icon_set
  */
 EINA_DEPRECATED EAPI void               elm_entry_end_set(Evas_Object *obj, Evas_Object *end);
@@ -3227,7 +3227,7 @@ EINA_DEPRECATED EAPI void               elm_entry_end_set(Evas_Object *obj, Evas
  * @param obj The scrolled entry object
  * @return the right widget inside the scroller
  *
- * @deprecated Use elm_object_part_content_get() instead
+ * @deprecated Use elm_object_part_content_get(entry, "end") instead
  */
 EAPI Evas_Object       *elm_entry_end_get(const Evas_Object *obj);
 
@@ -3239,7 +3239,7 @@ EAPI Evas_Object       *elm_entry_end_get(const Evas_Object *obj);
  * @return the previously set icon sub-object of this entry, on
  * success.
  *
- * @deprecated Use elm_object_part_content_unset() instead
+ * @deprecated Use elm_object_part_content_unset(entry, "end") instead
  * @see elm_entry_icon_set()
  */
 EINA_DEPRECATED EAPI Evas_Object       *elm_entry_end_unset(Evas_Object *obj);
