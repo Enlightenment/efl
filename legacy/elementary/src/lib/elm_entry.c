@@ -530,7 +530,8 @@ _theme_hook(Evas_Object *obj)
    edje_object_part_text_input_panel_layout_set(wd->ent, "elm.text", wd->input_panel_layout);
    edje_object_part_text_autocapital_type_set(wd->ent, "elm.text", wd->autocapital_type);
    edje_object_part_text_input_panel_enabled_set(wd->ent, "elm.text", wd->input_panel_enable);
-   elm_entry_cursor_pos_set(obj, wd->cursor_pos);
+   if (wd->cursor_pos != 0)
+     elm_entry_cursor_pos_set(obj, wd->cursor_pos);
    if (elm_widget_focus_get(obj))
      edje_object_signal_emit(wd->ent, "elm,action,focus", "elm");
    edje_object_message_signal_process(wd->ent);
