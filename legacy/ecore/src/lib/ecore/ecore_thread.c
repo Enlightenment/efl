@@ -389,7 +389,7 @@ static void _ecore_thread_handler(void        *data __UNUSED__,
 static Ecore_Pipe *
 _ecore_thread_pipe_get(void)
 {
-   if (eina_array_count_get(_ecore_thread_pipe) > 0)
+   if (eina_array_count(_ecore_thread_pipe) > 0)
      return eina_array_pop(_ecore_thread_pipe);
 
    return ecore_pipe_add(_ecore_thread_handler, NULL);
@@ -459,7 +459,7 @@ _ecore_thread_pipe_free(void *data __UNUSED__,
 {
    Ecore_Pipe *p = event;
 
-   if (eina_array_count_get(_ecore_thread_pipe) < 50)
+   if (eina_array_count(_ecore_thread_pipe) < 50)
      eina_array_push(_ecore_thread_pipe, p);
    else
      ecore_pipe_del(p);
