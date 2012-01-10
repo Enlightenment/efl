@@ -26,6 +26,8 @@
 /**
  * @addtogroup Eina_Data_Types_Group Data Types
  *
+ * @since 1.2
+ *
  * @{
  */
 
@@ -45,6 +47,8 @@
 /**
  * @typedef Eina_Inarray
  * Inlined array type.
+ *
+ * @since 1.2
  */
 typedef struct _Eina_Inarray Eina_Inarray;
 
@@ -53,6 +57,8 @@ typedef struct _Eina_Inarray Eina_Inarray;
  *
  * Do not modify these fields directly, use eina_inarray_setup() or
  * eina_inarray_new() instead.
+ *
+ * @since 1.2
  */
 struct _Eina_Inarray
 {
@@ -81,6 +87,8 @@ struct _Eina_Inarray
  * set. If @a member_size is zero, then @c NULL is returned.
  *
  * @see eina_inarray_free()
+ *
+ * @since 1.2
  */
 EAPI Eina_Inarray *eina_inarray_new(unsigned int member_size,
                                     unsigned int step) EINA_MALLOC EINA_WARN_UNUSED_RESULT;
@@ -90,6 +98,8 @@ EAPI Eina_Inarray *eina_inarray_new(unsigned int member_size,
  * @param array array object
  *
  * @see eina_inarray_flush()
+ *
+ * @since 1.2
  */
 EAPI void eina_inarray_free(Eina_Inarray *array) EINA_ARG_NONNULL(1);
 
@@ -107,6 +117,8 @@ EAPI void eina_inarray_free(Eina_Inarray *array) EINA_ARG_NONNULL(1);
  * allocated at stack.
  *
  * @see eina_inarray_flush()
+ *
+ * @since 1.2
  */
 EAPI void eina_inarray_setup(Eina_Inarray *array,
                              unsigned int member_size,
@@ -115,6 +127,8 @@ EAPI void eina_inarray_setup(Eina_Inarray *array,
 /**
  * @brief Remove every member from array.
  * @param array array object
+ *
+ * @since 1.2
  */
 EAPI void eina_inarray_flush(Eina_Inarray *array) EINA_ARG_NONNULL(1);
 
@@ -129,6 +143,8 @@ EAPI void eina_inarray_flush(Eina_Inarray *array) EINA_ARG_NONNULL(1);
  * members array using the previously defined @c member_size.
  *
  * @see eina_inarray_insert_at().
+ *
+ * @since 1.2
  */
 EAPI int eina_inarray_append(Eina_Inarray *array,
                              const void *data) EINA_ARG_NONNULL(1, 2);
@@ -151,6 +167,8 @@ EAPI int eina_inarray_append(Eina_Inarray *array,
  * @see eina_inarray_insert_sorted()
  * @see eina_inarray_insert_at()
  * @see eina_inarray_append()
+ *
+ * @since 1.2
  */
 EAPI int eina_inarray_insert(Eina_Inarray *array,
                              const void *data,
@@ -175,6 +193,8 @@ EAPI int eina_inarray_insert(Eina_Inarray *array,
  * is already sorted by doing binary search.
  *
  * @see eina_inarray_sort()
+ *
+ * @since 1.2
  */
 EAPI int eina_inarray_insert_sorted(Eina_Inarray *array,
                                     const void *data,
@@ -192,6 +212,8 @@ EAPI int eina_inarray_insert_sorted(Eina_Inarray *array,
  *
  * @see eina_inarray_pop()
  * @see eina_inarray_remove_at()
+ *
+ * @since 1.2
  */
 EAPI int eina_inarray_remove(Eina_Inarray *array,
                              const void *data) EINA_ARG_NONNULL(1, 2);
@@ -200,6 +222,8 @@ EAPI int eina_inarray_remove(Eina_Inarray *array,
  * @brief Removes the last member of the array
  * @param array array object
  * @return the index of the removed member or -1 on errors.
+ *
+ * @since 1.2
  */
 EAPI int eina_inarray_pop(Eina_Inarray *array) EINA_ARG_NONNULL(1);
 
@@ -215,6 +239,8 @@ EAPI int eina_inarray_pop(Eina_Inarray *array) EINA_ARG_NONNULL(1);
  * eina_inarray_insert_at() or eina_inarray_remove_at() or variants.
  *
  * See also eina_inarray_lookup() and eina_inarray_lookup_sorted().
+ *
+ * @since 1.2
  */
 EAPI void *eina_inarray_nth(const Eina_Inarray *array,
                             unsigned int position) EINA_ARG_NONNULL(1) EINA_WARN_UNUSED_RESULT;
@@ -238,6 +264,8 @@ EAPI void *eina_inarray_nth(const Eina_Inarray *array,
  * eina_inarray_count()), then the member is appended.
  *
  * If @a position is bigger than the array length, it will fail.
+ *
+ * @since 1.2
  */
 EAPI Eina_Bool eina_inarray_insert_at(Eina_Inarray *array,
                                       unsigned int position,
@@ -253,6 +281,8 @@ EAPI Eina_Bool eina_inarray_insert_at(Eina_Inarray *array,
  * towards the array head.
  *
  * See also eina_inarray_pop() and eina_inarray_remove().
+ *
+ * @since 1.2
  */
 EAPI Eina_Bool eina_inarray_remove_at(Eina_Inarray *array,
                                       unsigned int position) EINA_ARG_NONNULL(1);
@@ -265,6 +295,8 @@ EAPI Eina_Bool eina_inarray_remove_at(Eina_Inarray *array,
  * backwards, then use EINA_INARRAY_REVERSE_FOREACH() macro.
  *
  * @see EINA_INARRAY_REVERSE_FOREACH()
+ *
+ * @since 1.2
  */
 EAPI void eina_inarray_reverse(Eina_Inarray *array) EINA_ARG_NONNULL(1);
 
@@ -279,6 +311,8 @@ EAPI void eina_inarray_reverse(Eina_Inarray *array) EINA_ARG_NONNULL(1);
  * memory itself, do no change it.
  *
  * @see eina_inarray_insert_sorted()
+ *
+ * @since 1.2
  */
 EAPI void eina_inarray_sort(Eina_Inarray *array,
                             Eina_Compare_Cb compare) EINA_ARG_NONNULL(1, 2);
@@ -297,6 +331,8 @@ EAPI void eina_inarray_sort(Eina_Inarray *array,
  * memory itself, do no change it.
  *
  * See also eina_inarray_lookup_sorted().
+ *
+ * @since 1.2
  */
 EAPI int eina_inarray_search(const Eina_Inarray *array,
                              const void *data,
@@ -313,6 +349,8 @@ EAPI int eina_inarray_search(const Eina_Inarray *array,
  *
  * The data given to @a compare function are the pointer to member
  * memory itself, do no change it.
+ *
+ * @since 1.2
  */
 EAPI int eina_inarray_search_sorted(const Eina_Inarray *array,
                                     const void *data,
@@ -336,6 +374,8 @@ EAPI int eina_inarray_search_sorted(const Eina_Inarray *array,
  * itself.
  *
  * @see EINA_INARRAY_FOREACH()
+ *
+ * @since 1.2
  */
 EAPI Eina_Bool eina_inarray_foreach(const Eina_Inarray *array,
                                     Eina_Each_Cb function,
@@ -350,6 +390,8 @@ EAPI Eina_Bool eina_inarray_foreach(const Eina_Inarray *array,
  *
  * Remove all entries in the @a array where @a match function
  * returns #EINA_TRUE.
+ *
+ * @since 1.2
  */
 EAPI int eina_inarray_foreach_remove(Eina_Inarray *array,
                                      Eina_Each_Cb match,
@@ -359,6 +401,8 @@ EAPI int eina_inarray_foreach_remove(Eina_Inarray *array,
  * @brief number of members in array.
  * @param array array object
  * @return number of members in array.
+ *
+ * @since 1.2
  */
 EAPI unsigned int eina_inarray_count(const Eina_Inarray *array) EINA_ARG_NONNULL(1) EINA_WARN_UNUSED_RESULT;
 
@@ -377,6 +421,8 @@ EAPI unsigned int eina_inarray_count(const Eina_Inarray *array) EINA_ARG_NONNULL
  * @warning if the array structure changes then the iterator becomes
  *          invalid! That is, if you add or remove members this
  *          iterator behavior is undefined and your program may crash!
+ *
+ * @since 1.2
  */
 EAPI Eina_Iterator *eina_inarray_iterator_new(const Eina_Inarray *array) EINA_MALLOC EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1);
 
@@ -397,6 +443,8 @@ EAPI Eina_Iterator *eina_inarray_iterator_new(const Eina_Inarray *array) EINA_MA
  * @warning if the array structure changes then the iterator becomes
  *          invalid! That is, if you add or remove nodes this iterator
  *          behavior is undefined and your program may crash!
+ *
+ * @since 1.2
  */
 EAPI Eina_Iterator *eina_inarray_iterator_reversed_new(const Eina_Inarray *array) EINA_MALLOC EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1);
 
@@ -411,6 +459,8 @@ EAPI Eina_Iterator *eina_inarray_iterator_reversed_new(const Eina_Inarray *array
  * If the memory can not be allocated, NULL is returned and
  * #EINA_ERROR_OUT_OF_MEMORY is set. Otherwise, a valid accessor is
  * returned.
+ *
+ * @since 1.2
  */
 EAPI Eina_Accessor *eina_inarray_accessor_new(const Eina_Inarray *array) EINA_MALLOC EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1);
 
@@ -428,6 +478,8 @@ EAPI Eina_Accessor *eina_inarray_accessor_new(const Eina_Inarray *array) EINA_MA
  *
  * @warning Do not modify array as you walk it! If that is desired,
  *          then use eina_inarray_foreach_remove()
+ *
+ * @since 1.2
  */
 #define EINA_INARRAY_FOREACH(array, itr)                                \
   for ((itr) = array->members;                                          \
@@ -447,6 +499,8 @@ EAPI Eina_Accessor *eina_inarray_accessor_new(const Eina_Inarray *array) EINA_MA
  *
  * @warning Do not modify array as you walk it! If that is desired,
  *          then use eina_inarray_foreach_remove()
+ *
+ * @since 1.2
  */
 #define EINA_INARRAY_REVERSE_FOREACH(array, itr)                        \
   for ((itr) = ((((typeof(*(itr))*)array->members) + array->len) - 1);  \
