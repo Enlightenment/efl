@@ -568,7 +568,6 @@ elm_notify_parent_set(Evas_Object *obj, Evas_Object *parent)
                                        _parent_del, obj);
         evas_object_event_callback_add(parent, EVAS_CALLBACK_HIDE,
                                        _parent_hide, obj);
-        edje_object_part_swallow(wd->notify, "elm.swallow.parent", parent);
         _sizing_eval(obj);
      }
    _calc(obj);
