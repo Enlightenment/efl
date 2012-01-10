@@ -1163,7 +1163,7 @@ _item_new(Evas_Object *obj, const char *label, Evas_Object *icon, Evas_Object *e
         evas_object_event_callback_add(it->end, EVAS_CALLBACK_CHANGED_SIZE_HINTS,
                                        _changed_size_hints, obj);
      }
-   _elm_widget_item_disable_set_hook_set((Elm_Widget_Item *)it, _item_disable);
+   _elm_widget_item_disable_hook_set((Elm_Widget_Item *)it, _item_disable);
    _elm_widget_item_content_set_hook_set((Elm_Widget_Item *)it, _item_content_set);
    _elm_widget_item_content_get_hook_set((Elm_Widget_Item *)it, _item_content_get);
    _elm_widget_item_content_unset_hook_set((Elm_Widget_Item *)it, _item_content_unset);

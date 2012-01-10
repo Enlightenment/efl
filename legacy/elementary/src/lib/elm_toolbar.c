@@ -88,7 +88,7 @@ static const Evas_Smart_Cb_Description _signals[] = {
 };
 
 static void
-_item_disable_set_hook(Elm_Object_Item *it)
+_item_disable_hook(Elm_Object_Item *it)
 {
    ELM_OBJ_ITEM_CHECK_OR_RETURN(it);
 
@@ -780,7 +780,7 @@ _item_new(Evas_Object *obj, const char *icon, const char *label, Evas_Smart_Cb f
         return NULL;
      }
 
-   elm_widget_item_disable_set_hook_set(it, _item_disable_set_hook);
+   elm_widget_item_disable_hook_set(it, _item_disable_hook);
    elm_widget_item_text_set_hook_set(it, _item_text_set_hook);
    elm_widget_item_text_get_hook_set(it, _item_text_get_hook);
 

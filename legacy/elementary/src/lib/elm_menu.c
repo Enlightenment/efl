@@ -35,7 +35,7 @@ struct _Widget_Data
 static const char *widtype = NULL;
 static void _del_hook(Evas_Object *obj);
 static void _theme_hook(Evas_Object *obj);
-static void _item_disable_set_hook(Elm_Object_Item *it);
+static void _item_disable_hook(Elm_Object_Item *it);
 static void _sizing_eval(Evas_Object *obj);
 static void _submenu_sizing_eval(Elm_Menu_Item *parent);
 static void _item_sizing_eval(Elm_Menu_Item *item);
@@ -131,7 +131,7 @@ _theme_hook(Evas_Object *obj)
                   elm_menu_item_object_icon_name_set((Elm_Object_Item *) item,
                                                      item->icon_str);
                }
-             _item_disable_set_hook((Elm_Object_Item *) item);
+             _item_disable_hook((Elm_Object_Item *) item);
              edje_object_scale_set(VIEW(item), elm_widget_scale_get(obj) *
                                    _elm_config->scale);
           }
@@ -205,7 +205,7 @@ _item_content_get_hook(const Elm_Object_Item *it, const char *part)
 }
 
 static void
-_item_disable_set_hook(Elm_Object_Item *it)
+_item_disable_hook(Elm_Object_Item *it)
 {
    ELM_OBJ_ITEM_CHECK_OR_RETURN(it);
    Elm_Menu_Item *item = (Elm_Menu_Item *) it;
@@ -710,7 +710,7 @@ elm_menu_item_add(Evas_Object *obj, Elm_Object_Item *parent, const char *icon, c
         return NULL;
      }
 
-   elm_widget_item_disable_set_hook_set(subitem, _item_disable_set_hook);
+   elm_widget_item_disable_hook_set(subitem, _item_disable_hook);
    elm_widget_item_text_set_hook_set(subitem, _item_text_set_hook);
    elm_widget_item_text_get_hook_set(subitem, _item_text_get_hook);
    elm_widget_item_content_set_hook_set(subitem, _item_content_set_hook);
@@ -745,7 +745,7 @@ elm_menu_item_add_object(Evas_Object *obj, Elm_Object_Item *parent, Evas_Object 
    subitem = elm_widget_item_new(obj, Elm_Menu_Item);
    if (!subitem) return NULL;
 
-   elm_widget_item_disable_set_hook_set(subitem, _item_disable_set_hook);
+   elm_widget_item_disable_hook_set(subitem, _item_disable_hook);
    elm_widget_item_text_set_hook_set(subitem, _item_text_set_hook);
    elm_widget_item_text_get_hook_set(subitem, _item_text_get_hook);
    elm_widget_item_content_set_hook_set(subitem, _item_content_set_hook);
@@ -840,7 +840,7 @@ elm_menu_item_separator_add(Evas_Object *obj, Elm_Object_Item *parent)
    subitem = elm_widget_item_new(obj, Elm_Menu_Item);
    if (!subitem) return NULL;
 
-   elm_widget_item_disable_set_hook_set(subitem, _item_disable_set_hook);
+   elm_widget_item_disable_hook_set(subitem, _item_disable_hook);
    elm_widget_item_text_set_hook_set(subitem, _item_text_set_hook);
    elm_widget_item_text_get_hook_set(subitem, _item_text_get_hook);
    elm_widget_item_content_set_hook_set(subitem, _item_content_set_hook);

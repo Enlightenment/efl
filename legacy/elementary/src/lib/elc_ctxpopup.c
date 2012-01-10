@@ -91,7 +91,7 @@ static void _item_content_set_hook(Elm_Object_Item *it,
                                    Evas_Object *content);
 static Evas_Object * _item_content_get_hook(const Elm_Object_Item *it,
                                             const char *part);
-static void _item_disable_set_hook(Elm_Object_Item *it);
+static void _item_disable_hook(Elm_Object_Item *it);
 static void _item_signal_emit_hook(Elm_Object_Item *it,
                                    const char *emission,
                                    const char *source);
@@ -963,7 +963,7 @@ _item_content_get_hook(const Elm_Object_Item *it, const char *part)
 }
 
 static void
-_item_disable_set_hook(Elm_Object_Item *it)
+_item_disable_hook(Elm_Object_Item *it)
 {
    ELM_OBJ_ITEM_CHECK_OR_RETURN(it);
 
@@ -1450,7 +1450,7 @@ elm_ctxpopup_item_append(Evas_Object *obj, const char *label,
    item = elm_widget_item_new(obj, Elm_Ctxpopup_Item);
    if (!item) return NULL;
 
-   elm_widget_item_disable_set_hook_set(item, _item_disable_set_hook);
+   elm_widget_item_disable_hook_set(item, _item_disable_hook);
    elm_widget_item_text_set_hook_set(item, _item_text_set_hook);
    elm_widget_item_text_get_hook_set(item, _item_text_get_hook);
    elm_widget_item_content_set_hook_set(item, _item_content_set_hook);

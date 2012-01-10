@@ -2864,7 +2864,7 @@ _elm_widget_item_del(Elm_Widget_Item *item)
  * @ingroup Widget
  */
 EAPI void
-_elm_widget_item_del_pre_hook_set(Elm_Widget_Item *item, Elm_Widget_Item_Del_Pre_Cb func)
+_elm_widget_item_del_pre_hook_set(Elm_Widget_Item *item, Elm_Widget_Del_Pre_Cb func)
 {
    ELM_WIDGET_ITEM_CHECK_OR_RETURN(item);
    if ((item->del_pre_func) && (item->del_pre_func != func))
@@ -2983,8 +2983,8 @@ _elm_widget_item_disabled_get(const Elm_Widget_Item *item)
 }
 
 EAPI void
-_elm_widget_item_disable_set_hook_set(Elm_Widget_Item *item,
-                                      Elm_Widget_Disable_Set_Cb func)
+_elm_widget_item_disable_hook_set(Elm_Widget_Item *item,
+                                  Elm_Widget_Disable_Cb func)
 {
    ELM_WIDGET_ITEM_CHECK_OR_RETURN(item);
    item->disable_func = func;
