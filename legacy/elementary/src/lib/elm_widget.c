@@ -2829,6 +2829,9 @@ _elm_widget_item_del(Elm_Widget_Item *item)
    if (item->del_cb)
      item->del_cb((void *)item->data, item->widget, item);
 
+   if (item->on_del_pre_cb)
+     item->on_del_pre_cb((Elm_Object_Item *) item);
+
    if (item->view)
      evas_object_del(item->view);
 
@@ -2847,6 +2850,16 @@ _elm_widget_item_del(Elm_Widget_Item *item)
    EINA_MAGIC_SET(item, EINA_MAGIC_NONE);
    free(item);
 }
+
+EAPI void
+_elm_widget_item_del_pre_hook_set(Elm_Widget_Item *item, Elm_Widget_Item_On_Del_Pre_Cb func)
+{
+   ELM_WIDGET_ITEM_CHECK_OR_RETURN(item);
+   if ((item->on_del_pre_cb) && (item->on_del_pre_cb != func))
+     WRN("You're replacing a previously set del_pre_cb %p of item %p with %p", item->on_del_pre_cb, item, func);
+   item->on_del_pre_cb = func;
+}
+
 
 /**
  * @internal

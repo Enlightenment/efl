@@ -202,6 +202,7 @@ typedef Evas_Object          *(*Elm_Widget_On_Content_Get_Cb)(const void *data, 
 typedef Evas_Object          *(*Elm_Widget_On_Content_Unset_Cb)(const void *data, const char *part);
 typedef void                  (*Elm_Widget_On_Signal_Emit_Cb)(void *data, const char *emission, const char *source);
 typedef void                  (*Elm_Widget_On_Disable_Set_Cb)(void *data);
+typedef void                  (*Elm_Widget_Item_On_Del_Pre_Cb)(Elm_Object_Item *it);
 
 #define ELM_ACCESS_TYPE    0    // when reading out widget or item this is read first
 #define ELM_ACCESS_INFO    1    // next read is info - this is normally label
@@ -241,20 +242,28 @@ EAPI void             _elm_access_object_register(Evas_Object *obj, Evas_Object 
 EAPI void             _elm_access_item_register(Elm_Widget_Item *item, Evas_Object *hoverobj);
 EAPI Eina_Bool        _elm_access_2nd_click_timeout(Evas_Object *obj);
 
-#define ELM_WIDGET_ITEM       Elm_Widget_Item base /**< put this as the first member in your widget item struct */
+/**< put this as the first member in your widget item struct */
+#define ELM_WIDGET_ITEM       Elm_Widget_Item base
+
 struct _Elm_Widget_Item
 {
-   /* ef1 ~~ efl, el3 ~~ elm */
+/* ef1 ~~ efl, el3 ~~ elm */
 #define ELM_WIDGET_ITEM_MAGIC 0xef1e1301
    EINA_MAGIC;
 
 /* simple accessor macros */
 #define VIEW(X)   X->base.view
 #define WIDGET(X) X->base.widget
-   Evas_Object                   *widget; /**< the owner widget that owns this item */
-   Evas_Object                   *view; /**< the base view object */
-   const void                    *data; /**< item specific data */
-   Evas_Smart_Cb                  del_cb; /**< used to notify the item is being deleted */
+   /**< the owner widget that owns this item */
+   Evas_Object                   *widget;
+   /**< the base view object */
+   Evas_Object                   *view;
+   /**< item specific data */
+   const void                    *data;
+   /**< used to notify the item is being deleted */
+   Evas_Smart_Cb                  del_cb;
+   /**< don't expose this callback call */
+   Elm_Widget_Item_On_Del_Pre_Cb  on_del_pre_cb;
    Elm_Widget_On_Content_Set_Cb   on_content_set_func;
    Elm_Widget_On_Content_Get_Cb   on_content_get_func;
    Elm_Widget_On_Content_Unset_Cb on_content_unset_func;
@@ -464,6 +473,7 @@ EAPI void             _elm_widget_item_access_info_set(Elm_Widget_Item *item, co
 EAPI void             _elm_widget_item_disabled_set(Elm_Widget_Item *item, Eina_Bool disabled);
 EAPI Eina_Bool        _elm_widget_item_disabled_get(const Elm_Widget_Item *item);
 EAPI void             _elm_widget_item_disable_set_hook_set(Elm_Widget_Item *item, Elm_Widget_On_Disable_Set_Cb func);
+EAPI void             _elm_widget_item_del_pre_hook_set(Elm_Widget_Item *item, Elm_Widget_Item_On_Del_Pre_Cb func);
 
 /* debug function. don't use it unless you are tracking parenting issues */
 EAPI void             elm_widget_tree_dump(const Evas_Object *top);
@@ -637,15 +647,18 @@ EAPI void             elm_widget_tree_dot_dump(const Evas_Object *top, FILE *out
  */
 #define elm_widget_item_disabled_get(item) \
   _elm_widget_item_disabled_get((Elm_Widget_Item *)item)
-
-EAPI Eina_Bool _elm_widget_item_disabled_get(const Elm_Widget_Item *item);
-
 /**
  * Convenience function to query disable set hook.
  * @see _elm_widget_item_disable_set_hook_set()
  */
 #define elm_widget_item_disable_set_hook_set(item, func) \
   _elm_widget_item_disable_set_hook_set((Elm_Widget_Item *)item, (Elm_Widget_On_Disable_Set_Cb)func)
+/**
+ * Convenience function to query del pre hook.
+ * @see _elm_widget_item_del_pre_hook_set()
+ */
+#define elm_widget_item_del_pre_hook_set(item, func) \
+  _elm_widget_item_del_pre_hook_set((Elm_Widget_Item *)item, (Elm_Widget_Item_On_Del_Pre_Cb)func)
 
 #define ELM_WIDGET_ITEM_CHECK_OR_RETURN(item, ...)           \
   do {                                                       \
