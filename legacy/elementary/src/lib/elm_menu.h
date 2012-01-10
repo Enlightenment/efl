@@ -186,15 +186,6 @@ EAPI Elm_Object_Item             *elm_menu_item_separator_add(Evas_Object *obj, 
 EAPI Eina_Bool                    elm_menu_item_is_separator(Elm_Object_Item *it);
 
 /**
- * @brief Deletes an item from the menu.
- *
- * @param it The item to delete.
- *
- * @see elm_menu_item_add()
- */
-EAPI void                         elm_menu_item_del(Elm_Object_Item *it);
-
-/**
  * @brief Returns a list of @p item's subitems.
  *
  * @param it The item

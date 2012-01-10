@@ -333,7 +333,7 @@ EAPI Eina_Bool             elm_slideshow_loop_get(const Evas_Object *obj);
  * This removes (and deletes) all items in @p obj, leaving it
  * empty.
  *
- * @see elm_slideshow_item_del(), to remove just one item.
+ * @see elm_object_item_del(), to remove just one item.
  *
  * @ingroup Slideshow
  */
@@ -348,7 +348,7 @@ EAPI void                  elm_slideshow_clear(Evas_Object *obj);
  *
  * This list is @b not to be modified in any way and must not be
  * freed. Use the list members with functions like
- * elm_slideshow_item_del(), elm_slideshow_item_data_get().
+ * elm_object_item_del(), elm_slideshow_item_data_get().
  *
  * @warning This list is only valid until @p obj object's internal
  * items list is changed. It should be fetched again with another
@@ -357,15 +357,6 @@ EAPI void                  elm_slideshow_clear(Evas_Object *obj);
  * @ingroup Slideshow
  */
 EAPI const Eina_List      *elm_slideshow_items_get(const Evas_Object *obj);
-
-/**
- * Delete a given item from a slideshow widget.
- *
- * @param it The slideshow item
- *
- * @ingroup Slideshow
- */
-EAPI void                  elm_slideshow_item_del(Elm_Object_Item *it);
 
 /**
  * Returns the currently displayed item, in a given slideshow widget

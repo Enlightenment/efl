@@ -34,7 +34,7 @@ _navi_pop(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 void
 _navi_it_del(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
-   elm_naviframe_item_del(data);
+   elm_object_item_del(data);
 }
 
 void

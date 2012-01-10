@@ -348,6 +348,38 @@ _timer_cb(void *data)
    return ECORE_CALLBACK_CANCEL;
 }
 
+static void
+_item_del_pre_hook(Elm_Object_Item *it)
+{
+   ELM_OBJ_ITEM_CHECK_OR_RETURN(it);
+
+   Elm_Slideshow_Item *item = (Elm_Slideshow_Item *) it;
+   Widget_Data *wd = elm_widget_data_get(WIDGET(item));
+   if (!wd) return;
+   if (wd->previous == item) wd->previous = NULL;
+   if (wd->current == item)
+     {
+        Eina_List *l = eina_list_data_find_list(wd->items, item);
+        Eina_List *l2 = eina_list_next(l);
+        wd->current = NULL;
+        if (!l2)
+          {
+             l2 = eina_list_prev(l);
+             if (l2)
+               elm_slideshow_show(eina_list_data_get(l2));
+
+          }
+        else
+          elm_slideshow_show(eina_list_data_get(l2));
+     }
+
+   wd->items = eina_list_remove_list(wd->items, item->l);
+   wd->items_built = eina_list_remove_list(wd->items_built, item->l_built);
+
+   if ((VIEW(item)) && (item->itc->func.del))
+     item->itc->func.del(elm_widget_item_data_get(item), VIEW(item));
+}
+
 EAPI Evas_Object *
 elm_slideshow_add(Evas_Object *parent)
 {
@@ -409,7 +441,7 @@ elm_slideshow_item_add(Evas_Object *obj, const Elm_Slideshow_Item_Class *itc, co
    if (!wd) return NULL;
    item = elm_widget_item_new(obj, Elm_Slideshow_Item);
    if (!item) return NULL;
-
+   elm_widget_item_del_pre_hook_set(item, _item_del_pre_hook);
    item->itc = itc;
    item->l = eina_list_append(item->l, item);
    elm_widget_item_data_set(item, data);
@@ -431,7 +463,7 @@ elm_slideshow_item_sorted_insert(Evas_Object *obj, const Elm_Slideshow_Item_Clas
 
    item = elm_widget_item_new(obj, Elm_Slideshow_Item);
    if (!item) return NULL;
-
+   elm_widget_item_del_pre_hook_set(item, _item_del_pre_hook);
    item->itc = itc;
    item->l = eina_list_append(item->l, item);
    elm_widget_item_data_set(item, data);
@@ -648,49 +680,16 @@ elm_slideshow_clear(Evas_Object *obj)
      {
         if (item->itc->func.del)
           item->itc->func.del(elm_widget_item_data_get(item), VIEW(item));
-        evas_object_del(VIEW(item));
-        VIEW(item) = NULL;
      }
 
    EINA_LIST_FREE(wd->items, item)
-     {
-        elm_widget_item_del(item);
-     }
+     elm_widget_item_free(item);
 }
 
 EAPI void
 elm_slideshow_item_del(Elm_Object_Item *it)
 {
-   ELM_OBJ_ITEM_CHECK_OR_RETURN(it);
-
-   Elm_Slideshow_Item *item = (Elm_Slideshow_Item *) it;
-   Widget_Data *wd = elm_widget_data_get(WIDGET(item));
-   if (!wd) return;
-   if (wd->previous == item) wd->previous = NULL;
-   if (wd->current == item)
-     {
-        Eina_List *l = eina_list_data_find_list(wd->items, item);
-        Eina_List *l2 = eina_list_next(l);
-        wd->current = NULL;
-        if (!l2)
-          {
-             l2 = eina_list_prev(l);
-             if (l2)
-               elm_slideshow_show(eina_list_data_get(l2));
-
-          }
-        else
-          elm_slideshow_show(eina_list_data_get(l2));
-     }
-
-   wd->items = eina_list_remove_list(wd->items, item->l);
-   wd->items_built = eina_list_remove_list(wd->items_built, item->l_built);
-
-   if ((VIEW(item)) && (item->itc->func.del))
-     item->itc->func.del(elm_widget_item_data_get(item), VIEW(item));
-   if (VIEW(item))
-     evas_object_del(VIEW(item));
-   free(item);
+   elm_object_item_del(it);
 }
 
 EAPI const Eina_List *

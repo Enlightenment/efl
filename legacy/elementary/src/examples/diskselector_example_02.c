@@ -112,7 +112,7 @@ _del_cb(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
    Evas_Object *ds = data;
 
    selected_ds_it = elm_diskselector_selected_item_get(ds);
-   elm_diskselector_item_del(selected_ds_it);
+   elm_object_item_del(selected_ds_it);
 }
 
 static void

@@ -200,14 +200,6 @@ EAPI void                       elm_multibuttonentry_item_select(Elm_Object_Item
 EAPI void                       elm_multibuttonentry_item_unselect_all(Evas_Object *obj);
 
 /**
- * Delete a given item
- *
- * @param it The item
- *
- */
-EAPI void                       elm_multibuttonentry_item_del(Elm_Object_Item *it);
-
-/**
  * Remove all items in the multibuttonentry.
  *
  * @param obj The multibuttonentry object

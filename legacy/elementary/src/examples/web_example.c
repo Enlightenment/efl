@@ -118,7 +118,7 @@ _web_free_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *
    Tab_Data *td = data;
 
    if (td->tab)
-     elm_toolbar_item_del(td->tab);
+     elm_object_item_del(td->tab);
 
    free(td);
 }

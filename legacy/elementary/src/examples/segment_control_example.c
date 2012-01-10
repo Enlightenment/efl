@@ -63,7 +63,7 @@ elm_main(int argc __UNUSED__, char **argv __UNUSED__)
    elm_segment_control_item_insert_at(sc, NULL, "Inserted at", count - 1);
 
    seg_it = elm_segment_control_item_insert_at(sc, NULL, "To be deleted", 2);
-   elm_segment_control_item_del(seg_it);
+   elm_object_item_del(seg_it);
 
    elm_segment_control_item_insert_at(sc, NULL, "To be deleted", 2);
    elm_segment_control_item_del_at(sc, 2);

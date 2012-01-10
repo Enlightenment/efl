@@ -262,10 +262,11 @@ struct _Elm_Widget_Item
    Evas_Object                   *widget;
    /**< the base view object */
    Evas_Object                   *view;
-   /**< item specific data. used for del callback*/
+   /**< item specific data. used for del callback */
    const void                    *data;
+   /**< user delete callback function */
    Evas_Smart_Cb                  del_func;
-   /**< don't expose this callback call */
+   /**< widget delete callback function. don't expose this callback call */
    Elm_Widget_Del_Pre_Cb          del_pre_func;
 
    Elm_Widget_Content_Set_Cb      content_set_func;
@@ -441,6 +442,7 @@ EAPI Evas_Object     *elm_widget_content_part_unset(Evas_Object *obj, const char
 EAPI void             elm_widget_access_info_set(Evas_Object *obj, const char *txt);
 EAPI const char      *elm_widget_access_info_get(Evas_Object *obj);
 EAPI Elm_Widget_Item *_elm_widget_item_new(Evas_Object *parent, size_t alloc_size);
+EAPI void             _elm_widget_item_free(Elm_Widget_Item *item);
 EAPI void             _elm_widget_item_del(Elm_Widget_Item *item);
 EAPI void             _elm_widget_item_pre_notify_del(Elm_Widget_Item *item);
 EAPI void             _elm_widget_item_del_cb_set(Elm_Widget_Item *item, Evas_Smart_Cb del_cb);
@@ -491,6 +493,14 @@ EAPI void             elm_widget_tree_dot_dump(const Evas_Object *top, FILE *out
  */
 #define elm_widget_item_new(parent, type) \
   (type *)_elm_widget_item_new((parent), sizeof(type))
+/**
+ * Convenience macro to free widget item, doing casts for you.
+ * @see _elm_widget_item_free()
+ * @param item a valid item.
+ */
+#define elm_widget_item_free(item) \
+  _elm_widget_item_free((Elm_Widget_Item *)item)
+
 /**
  * Convenience macro to delete widget item, doing casts for you.
  * @see _elm_widget_item_del()

@@ -145,7 +145,7 @@ EAPI Elm_Object_Item            *elm_flipselector_item_prepend(Evas_Object *obj,
  * freed. Use the list members with functions like
  * elm_object_item_text_set(),
  * elm_object_item_text_get(),
- * elm_flipselector_item_del(),
+ * elm_object_item_del(),
  * elm_flipselector_item_selected_get(),
  * elm_flipselector_item_selected_set().
  *
@@ -230,15 +230,6 @@ EAPI void                        elm_flipselector_item_selected_set(Elm_Object_I
  * @ingroup Flipselector
  */
 EAPI Eina_Bool                   elm_flipselector_item_selected_get(const Elm_Object_Item *it);
-
-/**
- * Delete a given item from a flip selector widget.
- *
- * @param it The item to delete
- *
- * @ingroup Flipselector
- */
-EAPI void                        elm_flipselector_item_del(Elm_Object_Item *it);
 
 /**
  * Gets the item before @p item in a flip selector widget's

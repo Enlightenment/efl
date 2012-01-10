@@ -60,7 +60,7 @@ _item_del(void        *data __UNUSED__,
            " %s (pointing to %s)\n", elm_index_item_letter_get(iit),
            elm_object_item_text_get(lit));
 
-   elm_index_item_del(d.index, lit);
+   elm_object_item_del(lit);
 }
 
 static void

@@ -2803,6 +2803,33 @@ _elm_widget_item_new(Evas_Object *widget,
    return item;
 }
 
+void
+_elm_widget_item_free(Elm_Widget_Item *item)
+{
+   ELM_WIDGET_ITEM_CHECK_OR_RETURN(item);
+
+   if (item->del_func)
+     item->del_func((void *)item->data, item->widget, item);
+
+   if (item->view)
+     evas_object_del(item->view);
+
+   if (item->access)
+     {
+        _elm_access_clear(item->access);
+        free(item->access);
+        item->access = NULL;
+     }
+   if (item->access_info)
+     {
+        eina_stringshare_del(item->access_info);
+        item->access_info = NULL;
+     }
+
+   EINA_MAGIC_SET(item, EINA_MAGIC_NONE);
+   free(item);
+}
+
 /**
  * @internal
  *
@@ -2826,29 +2853,11 @@ _elm_widget_item_del(Elm_Widget_Item *item)
 {
    ELM_WIDGET_ITEM_CHECK_OR_RETURN(item);
 
-   if (item->del_func)
-     item->del_func((void *)item->data, item->widget, item);
-
+   //Widget delete callback
    if (item->del_pre_func)
      item->del_pre_func((Elm_Object_Item *) item);
 
-   if (item->view)
-     evas_object_del(item->view);
-
-   if (item->access)
-     {
-        _elm_access_clear(item->access);
-        free(item->access);
-        item->access = NULL;
-     }
-   if (item->access_info)
-     {
-        eina_stringshare_del(item->access_info);
-        item->access_info = NULL;
-     }
-
-   EINA_MAGIC_SET(item, EINA_MAGIC_NONE);
-   free(item);
+   _elm_widget_item_free(item);
 }
 
 /**

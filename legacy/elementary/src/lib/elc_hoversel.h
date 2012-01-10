@@ -123,7 +123,7 @@ EAPI Eina_Bool                    elm_hoversel_expanded_get(const Evas_Object *o
  * @warning Should @b not be called while the hoversel is active; use
  * elm_hoversel_expanded_get() to check first.
  *
- * @see elm_hoversel_item_del()
+ * @see elm_object_item_del()
  */
 EAPI void                         elm_hoversel_clear(Evas_Object *obj);
 
@@ -158,18 +158,6 @@ EAPI const Eina_List             *elm_hoversel_items_get(const Evas_Object *obj)
  * @ref Icon "icon documentation".
  */
 EAPI Elm_Object_Item             *elm_hoversel_item_add(Evas_Object *obj, const char *label, const char *icon_file, Elm_Icon_Type icon_type, Evas_Smart_Cb func, const void *data);
-
-/**
- * @brief Delete an item from the hoversel
- *
- * @param it The item to delete
- *
- * This deletes the item from the hoversel (should not be called while the
- * hoversel is active; use elm_hoversel_expanded_get() to check first).
- *
- * @see elm_hoversel_item_add()
- */
-EAPI void                         elm_hoversel_item_del(Elm_Object_Item *it);
 
 /**
  * @brief This sets the icon for the given hoversel item.

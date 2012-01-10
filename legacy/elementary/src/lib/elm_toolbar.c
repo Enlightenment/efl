@@ -244,7 +244,6 @@ _item_del(Elm_Toolbar_Item *it)
 {
    Elm_Toolbar_Item_State *it_state;
    _item_unselect(it);
-   elm_widget_item_pre_notify_del(it);
    EINA_LIST_FREE(it->states, it_state)
      {
         if (it->icon == it_state->icon)
@@ -259,7 +258,6 @@ _item_del(Elm_Toolbar_Item *it)
    if (it->icon) evas_object_del(it->icon);
    //TODO: See if checking for wd->menu_parent is necessary before deleting menu
    if (it->o_menu) evas_object_del(it->o_menu);
-   elm_widget_item_del(it);
 }
 
 static void
@@ -274,10 +272,14 @@ _del_pre_hook(Evas_Object *obj)
      {
         next = ELM_TOOLBAR_ITEM_FROM_INLIST(EINA_INLIST_GET(it)->next);
         _item_del(it);
+        elm_widget_item_free(it);
         it = next;
      }
    if (wd->more_item)
-     _item_del(wd->more_item);
+     {
+        _item_del(wd->more_item);
+        elm_widget_item_free(wd->more_item);
+     }
    if (wd->long_timer)
      {
         ecore_timer_del(wd->long_timer);
@@ -762,6 +764,28 @@ _access_state_cb(void *data __UNUSED__, Evas_Object *obj __UNUSED__, Elm_Widget_
    return NULL;
 }
 
+static void
+_item_del_pre_hook(Elm_Object_Item *it)
+{
+   ELM_OBJ_ITEM_CHECK_OR_RETURN(it);
+
+   Widget_Data *wd;
+   Evas_Object *obj2;
+   Elm_Toolbar_Item *item, *next;
+   item = (Elm_Toolbar_Item *) it;
+
+   wd = elm_widget_data_get(WIDGET(item));
+   if (!wd) return;
+   obj2 = WIDGET(item);
+   next = ELM_TOOLBAR_ITEM_FROM_INLIST(EINA_INLIST_GET(item)->next);
+   wd->items = eina_inlist_remove(wd->items, EINA_INLIST_GET(item));
+   wd->item_count--;
+   if (!next) next = ELM_TOOLBAR_ITEM_FROM_INLIST(wd->items);
+   if (wd->always_select && item->selected && next) _item_select(next);
+   _item_del(item);
+   _theme_hook(obj2);
+}
+
 static Elm_Toolbar_Item *
 _item_new(Evas_Object *obj, const char *icon, const char *label, Evas_Smart_Cb func, const void *data)
 {
@@ -780,6 +804,7 @@ _item_new(Evas_Object *obj, const char *icon, const char *label, Evas_Smart_Cb f
         return NULL;
      }
 
+   elm_widget_item_del_pre_hook_set(it, _item_del_pre_hook);
    elm_widget_item_disable_hook_set(it, _item_disable_hook);
    elm_widget_item_text_set_hook_set(it, _item_text_set_hook);
    elm_widget_item_text_get_hook_set(it, _item_text_get_hook);
@@ -1450,23 +1475,7 @@ elm_toolbar_item_icon_file_set(Elm_Object_Item *it, const char *file, const char
 EAPI void
 elm_toolbar_item_del(Elm_Object_Item *it)
 {
-   ELM_OBJ_ITEM_CHECK_OR_RETURN(it);
-
-   Widget_Data *wd;
-   Evas_Object *obj2;
-   Elm_Toolbar_Item *item, *next;
-   item = (Elm_Toolbar_Item *) it;
-
-   wd = elm_widget_data_get(WIDGET(item));
-   if (!wd) return;
-   obj2 = WIDGET(item);
-   next = ELM_TOOLBAR_ITEM_FROM_INLIST(EINA_INLIST_GET(item)->next);
-   wd->items = eina_inlist_remove(wd->items, EINA_INLIST_GET(item));
-   wd->item_count--;
-   if (!next) next = ELM_TOOLBAR_ITEM_FROM_INLIST(wd->items);
-   if (wd->always_select && item->selected && next) _item_select(next);
-   _item_del(item);
-   _theme_hook(obj2);
+   elm_object_item_del(it);
 }
 
 EAPI void
@@ -1524,6 +1533,7 @@ elm_toolbar_shrink_mode_set(Evas_Object *obj, Elm_Toolbar_Shrink_Mode shrink_mod
    if (wd->more_item)
      {
         _item_del(wd->more_item);
+        elm_widget_item_free(wd->more_item);
         wd->more_item = NULL;
      }
 

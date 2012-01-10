@@ -54,7 +54,7 @@ _del_cb(void        *data,
    Evas_Object *fp = data;
 
    it = elm_flipselector_selected_item_get(fp);
-   if (it) elm_flipselector_item_del(it);
+   if (it) elm_object_item_del(it);
 }
 
 void /* underflow callback */

@@ -145,17 +145,6 @@ EAPI Eina_Bool                    elm_ctxpopup_horizontal_get(const Evas_Object 
 EAPI Elm_Object_Item             *elm_ctxpopup_item_append(Evas_Object *obj, const char *label, Evas_Object *icon, Evas_Smart_Cb func, const void *data);
 
 /**
- * @brief Delete the given item in a ctxpopup object.
- *
- * @param it Ctxpopup item to be deleted
- *
- * @see elm_ctxpopup_item_append()
- *
- * @ingroup Ctxpopup
- */
-EAPI void                         elm_ctxpopup_item_del(Elm_Object_Item *it);
-
-/**
  * @brief Set the direction priority of a ctxpopup.
  *
  * @param obj Ctxpopup object

@@ -80,7 +80,7 @@ static void
 _sel(void *data, Evas_Object *obj, void *event_info)
 {
    if(!elm_hoversel_expanded_get(obj) && event_info != data)
-     elm_hoversel_item_del(event_info);
+     elm_object_item_del(event_info);
 }
 
 static void

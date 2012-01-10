@@ -131,6 +131,7 @@ static Evas_Object * _title_icon_unset(Elm_Naviframe_Item *it);
 static Evas_Object * _title_content_unset(Elm_Naviframe_Item *it,
                                           const char *part);
 static void _item_del(Elm_Naviframe_Item *it);
+static void _item_del_pre_hook(Elm_Object_Item *it);
 static void _pushed_finished(void *data,
                              Evas_Object *obj,
                              const char *emission,
@@ -175,6 +176,7 @@ _del_hook(Evas_Object *obj)
                                             Elm_Naviframe_Item);
              wd->stack = eina_inlist_remove(wd->stack, wd->stack->last);
              _item_del(it);
+             elm_widget_item_free(it);
              if (!wd->stack) break;
           }
      }
@@ -867,8 +869,38 @@ _item_del(Elm_Naviframe_Item *it)
      }
 
    eina_stringshare_del(it->style);
+}
 
-   elm_widget_item_del(it);
+static void
+_item_del_pre_hook(Elm_Object_Item *it)
+{
+   ELM_OBJ_ITEM_CHECK_OR_RETURN(it);
+   Elm_Naviframe_Item *navi_it;
+   Widget_Data *wd;
+
+   navi_it =(Elm_Naviframe_Item *) it;
+   wd = elm_widget_data_get(WIDGET(navi_it));
+   if (!wd) return;
+
+   if (it == elm_naviframe_top_item_get(WIDGET(navi_it)))
+     {
+        wd->stack = eina_inlist_remove(wd->stack, EINA_INLIST_GET(navi_it));
+        _item_del(navi_it);
+        elm_widget_item_free(navi_it);
+        //If the item is only one, the stack will be empty
+        if (!wd->stack) return;
+        navi_it = EINA_INLIST_CONTAINER_GET(wd->stack->last,
+                                            Elm_Naviframe_Item);
+        evas_object_show(VIEW(navi_it));
+        evas_object_raise(VIEW(navi_it));
+        edje_object_signal_emit(VIEW(navi_it), "elm,state,visible", "elm");
+     }
+   else
+     {
+        wd->stack = eina_inlist_remove(wd->stack, EINA_INLIST_GET(navi_it));
+        _item_del(navi_it);
+        elm_widget_item_free(navi_it);
+     }
 }
 
 static void
@@ -904,6 +936,7 @@ _popped_finished(void *data,
                                    SIG_POP_FINISHED,
                                    data);
    _item_del(data);
+   elm_widget_item_free(data);
 }
 
 static void
@@ -1061,6 +1094,7 @@ _item_new(Evas_Object *obj,
         return NULL;
      }
 
+   elm_widget_item_del_pre_hook_set(it, _item_del_pre_hook);
    elm_widget_item_text_set_hook_set(it, _item_text_set_hook);
    elm_widget_item_text_get_hook_set(it, _item_text_get_hook);
    elm_widget_item_content_set_hook_set(it, _item_content_set_hook);
@@ -1278,7 +1312,10 @@ elm_naviframe_item_pop(Evas_Object *obj)
         edje_object_message_signal_process(VIEW(prev_it));
      }
    else
-     _item_del(it);
+     {
+        _item_del(it);
+        elm_widget_item_free(it);
+     }
 
    return content;
 }
@@ -1306,6 +1343,8 @@ elm_naviframe_item_pop_to(Elm_Object_Item *it)
         prev_l = l->prev;
         wd->stack = eina_inlist_remove(wd->stack, l);
         _item_del(EINA_INLIST_CONTAINER_GET(l, Elm_Naviframe_Item));
+        elm_widget_item_free(EINA_INLIST_CONTAINER_GET(l,
+                                                       Elm_Naviframe_Item));
         l = prev_l;
      }
    elm_naviframe_item_pop(WIDGET(navi_it));
@@ -1347,31 +1386,7 @@ elm_naviframe_item_promote(Elm_Object_Item *it)
 EAPI void
 elm_naviframe_item_del(Elm_Object_Item *it)
 {
-   ELM_OBJ_ITEM_CHECK_OR_RETURN(it);
-   Elm_Naviframe_Item *navi_it;
-   Widget_Data *wd;
-
-   navi_it =(Elm_Naviframe_Item *) it;
-   wd = elm_widget_data_get(WIDGET(navi_it));
-   if (!wd) return;
-
-   if (it == elm_naviframe_top_item_get(WIDGET(navi_it)))
-     {
-        wd->stack = eina_inlist_remove(wd->stack, EINA_INLIST_GET(navi_it));
-        _item_del(navi_it);
-        //If the item is only one, the stack will be empty
-        if (!wd->stack) return;
-        navi_it = EINA_INLIST_CONTAINER_GET(wd->stack->last,
-                                            Elm_Naviframe_Item);
-        evas_object_show(VIEW(navi_it));
-        evas_object_raise(VIEW(navi_it));
-        edje_object_signal_emit(VIEW(navi_it), "elm,state,visible", "elm");
-     }
-   else
-     {
-        wd->stack = eina_inlist_remove(wd->stack, EINA_INLIST_GET(navi_it));
-        _item_del(navi_it);
-     }
+   elm_object_item_del(it);
 }
 
 EAPI void

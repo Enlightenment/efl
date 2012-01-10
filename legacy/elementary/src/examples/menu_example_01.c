@@ -13,7 +13,7 @@ _del_it(void *data, Evas_Object *obj, void *event_info)
    Elm_Object_Item *menu_it = elm_menu_first_item_get(data);
    menu_it = elm_menu_item_next_get(menu_it);
    l = elm_menu_item_subitems_get(menu_it);
-   elm_menu_item_del(eina_list_data_get(l));
+   elm_object_item_del(eina_list_data_get(l));
 }
 
 static void

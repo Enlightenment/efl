@@ -112,6 +112,223 @@ _diskselector_object_resize(void *data, Evas *e __UNUSED__, Evas_Object *obj, vo
      wd->idler = ecore_idle_enterer_before_add(_move_scroller, data);
 }
 
+static void
+_item_del(Elm_Diskselector_Item *item)
+{
+   if (!item) return;
+   eina_stringshare_del(item->label);
+   if (item->icon)
+     evas_object_del(item->icon);
+}
+
+static int
+_count_letter(const char *str)
+{
+   int pos = 0;
+   int code = 0, chnum;
+
+   for (chnum = 0; ; chnum++)
+     {
+        pos = evas_string_char_next_get(str, pos, &code);
+        if (code == 0) break;
+     }
+   return chnum;
+}
+
+static int
+_check_letter(const char *str, int length)
+{
+   int pos = 0;
+   int code = 0, chnum;
+
+   for (chnum = 0; ; chnum++)
+     {
+        if (chnum == length) break;
+        pos = evas_string_char_next_get(str, pos, &code);
+        if (code == 0) break;
+     }
+   return pos;
+}
+
+static Eina_Bool
+_check_string(void *data)
+{
+   int mid, steps, length, diff;
+   Elm_Diskselector_Item *it;
+   Eina_List *list, *l;
+   Evas_Coord ox, ow;
+   char buf[1024];
+   Widget_Data *wd = data;
+
+   evas_object_geometry_get(wd->scroller, &ox, NULL, &ow, NULL);
+   if (ow <= 0)
+     return EINA_FALSE;
+   if (!wd->init)
+     return EINA_FALSE;
+   if (!wd->round)
+     list = wd->items;
+   else
+     list = wd->r_items;
+
+   EINA_LIST_FOREACH(list, l, it)
+     {
+        Evas_Coord x, w;
+        int len;
+        evas_object_geometry_get(VIEW(it), &x, NULL, &w, NULL);
+        /* item not visible */
+        if ((x + w <= ox) || (x >= ox + ow))
+          continue;
+
+        len = _count_letter(it->label);
+//        // FIXME: len should be # of ut8f letters. ie count using utf8 string walk, not stringshare len
+//        len = eina_stringshare_strlen(it->label);
+
+        if (x <= ox + 5)
+          edje_object_signal_emit(VIEW(it), "elm,state,left_side",
+                                  "elm");
+        else if (x + w >= ox + ow - 5)
+          edje_object_signal_emit(VIEW(it), "elm,state,right_side",
+                                  "elm");
+        else
+          {
+             if ((wd->len_threshold) && (len > wd->len_threshold))
+               edje_object_signal_emit(VIEW(it), "elm,state,center_small",
+                                       "elm");
+             else
+               edje_object_signal_emit(VIEW(it), "elm,state,center",
+                                       "elm");
+          }
+
+        // if len is les that the limit len, skip anyway
+        if (len <= wd->len_side)
+          continue;
+
+        steps = len - wd->len_side + 1;
+        mid = x + w / 2;
+        if (mid <= ox + ow / 2)
+          diff = (ox + ow / 2) - mid;
+        else
+          diff = mid - (ox + ow / 2);
+
+        length = len - (int)(diff * steps / (ow / 3));
+        length = MAX(length, wd->len_side);
+        // limit string len to "length" ut8f chars
+        length = _check_letter(it->label, length);
+        // cut it off at byte mark returned form _check_letter
+        strncpy(buf, it->label, length);
+        buf[length] = '\0';
+        edje_object_part_text_set(VIEW(it), "elm.text", buf);
+     }
+
+   if (wd->check_idler)
+     ecore_idle_enterer_del(wd->check_idler);
+   wd->check_idler = NULL;
+   return EINA_FALSE;
+}
+
+static void
+_item_del_pre_hook(Elm_Object_Item *it)
+{
+   ELM_OBJ_ITEM_CHECK_OR_RETURN(it);
+   Elm_Diskselector_Item *item, *item2, *dit;
+   Eina_List *l;
+   int i = 0;
+   Widget_Data *wd;
+   item = (Elm_Diskselector_Item *) it;
+   wd = elm_widget_data_get(WIDGET(item));
+   if (!wd) return;
+
+   elm_box_unpack(wd->main_box, VIEW(item));
+
+   if (wd->round)
+     wd->r_items = eina_list_remove(wd->r_items, item);
+
+   wd->items = eina_list_remove(wd->items, item);
+
+   if (wd->selected_item == item)
+     {
+        dit = (Elm_Diskselector_Item *) eina_list_nth(wd->items, 0);
+        if (dit != item)
+          wd->selected_item = dit;
+        else
+          wd->selected_item = eina_list_nth(wd->items, 1);
+
+        _selected_item_indicate(wd->selected_item);
+     }
+
+   _item_del(item);
+   wd->item_count -= 1;
+
+   if (wd->round)
+     {
+        if (!wd->item_count)
+          {
+             evas_object_hide(wd->VIEW(first));
+             evas_object_hide(wd->VIEW(second));
+             evas_object_hide(wd->VIEW(last));
+             evas_object_hide(wd->VIEW(s_last));
+
+             EINA_LIST_FOREACH(wd->under_items, l, item2)
+               evas_object_hide(VIEW(item2));
+
+             EINA_LIST_FOREACH(wd->over_items, l, item2)
+               evas_object_hide(VIEW(item2));
+          }
+        else
+          {
+             dit = eina_list_nth(wd->items, 0);
+             if (dit)
+               {
+                  eina_stringshare_replace(&wd->first->label, dit->label);
+                  edje_object_part_text_set(wd->VIEW(first), "elm.text",
+                                            wd->first->label);
+               }
+             dit = eina_list_nth(wd->items, 1);
+             if (dit)
+               {
+                  eina_stringshare_replace(&wd->second->label, dit->label);
+                  edje_object_part_text_set(wd->VIEW(second), "elm.text",
+                                            wd->second->label);
+               }
+             // if more than 3 itmes should be displayed
+             for (i = 2; i < CEIL(wd->display_item_num); i++)
+               {
+                  dit = eina_list_nth(wd->items, i);
+                  item2 = eina_list_nth(wd->over_items, i - 2);
+                  eina_stringshare_replace(&item2->label, dit->label);
+                  edje_object_part_text_set(VIEW(item2), "elm.text", item2->label);
+               }
+
+             dit = eina_list_nth(wd->items, eina_list_count(wd->items) - 1);
+             if (dit)
+               {
+                  eina_stringshare_replace(&wd->last->label, dit->label);
+                  edje_object_part_text_set(wd->VIEW(last), "elm.text",
+                                            wd->last->label);
+               }
+             dit = eina_list_nth(wd->items, eina_list_count(wd->items) - 2);
+             if (dit)
+               {
+                  eina_stringshare_replace(&wd->s_last->label, dit->label);
+                  edje_object_part_text_set(wd->VIEW(s_last), "elm.text",
+                                            wd->s_last->label);
+               }
+             // if more than 3 itmes should be displayed
+             for (i = 3; i <= CEIL(wd->display_item_num); i++)
+               {
+                  dit = eina_list_nth(wd->items, wd->item_count - i);
+                  item2 = eina_list_nth(wd->under_items, i - 3);
+                  eina_stringshare_replace(&item2->label, dit->label);
+                  edje_object_part_text_set(VIEW(item2), "elm.text",
+                                            item2->label);
+               }
+          }
+     }
+   wd->check_idler = ecore_idle_enterer_before_add(_check_string, wd);
+   _sizing_eval(wd->self);
+
+}
+
 static Elm_Diskselector_Item *
 _item_new(Evas_Object *obj, Evas_Object *icon, const char *label, Evas_Smart_Cb func, const void *data)
 {
@@ -121,6 +338,7 @@ _item_new(Evas_Object *obj, Evas_Object *icon, const char *label, Evas_Smart_Cb 
    it = elm_widget_item_new(obj, Elm_Diskselector_Item);
    if (!it) return NULL;
 
+   elm_widget_item_del_pre_hook_set(it, _item_del_pre_hook);
    elm_widget_item_text_set_hook_set(it, _item_text_set_hook);
    elm_widget_item_text_get_hook_set(it, _item_text_get_hook);
    elm_widget_item_content_set_hook_set(it, _item_content_set_hook);
@@ -152,16 +370,6 @@ _item_new(Evas_Object *obj, Evas_Object *icon, const char *label, Evas_Smart_Cb 
         elm_widget_sub_object_add(obj, it->icon);
      }
    return it;
-}
-
-static void
-_item_del(Elm_Diskselector_Item *item)
-{
-   if (!item) return;
-   eina_stringshare_del(item->label);
-   if (item->icon)
-     evas_object_del(item->icon);
-   elm_widget_item_del(item);
 }
 
 static void
@@ -254,7 +462,11 @@ _del_pre_hook(Evas_Object * obj)
         }
    }
 
-   EINA_LIST_FREE(wd->items, it) _item_del(it);
+   EINA_LIST_FREE(wd->items, it)
+     {
+        _item_del(it);
+        elm_widget_item_free(it);
+     }
    eina_list_free(wd->r_items);
 }
 
@@ -409,111 +621,6 @@ _event_hook(Evas_Object *obj, Evas_Object *src __UNUSED__, Evas_Callback_Type ty
    return EINA_TRUE;
 }
 
-static int
-_count_letter(const char *str)
-{
-   int pos = 0;
-   int code = 0, chnum;
-
-   for (chnum = 0; ; chnum++)
-     {
-        pos = evas_string_char_next_get(str, pos, &code);
-        if (code == 0) break;
-     }
-   return chnum;
-}
-
-static int
-_check_letter(const char *str, int length)
-{
-   int pos = 0;
-   int code = 0, chnum;
-
-   for (chnum = 0; ; chnum++)
-     {
-        if (chnum == length) break;
-        pos = evas_string_char_next_get(str, pos, &code);
-        if (code == 0) break;
-     }
-   return pos;
-}
-
-static Eina_Bool
-_check_string(void *data)
-{
-   int mid, steps, length, diff;
-   Elm_Diskselector_Item *it;
-   Eina_List *list, *l;
-   Evas_Coord ox, ow;
-   char buf[1024];
-   Widget_Data *wd = data;
-
-   evas_object_geometry_get(wd->scroller, &ox, NULL, &ow, NULL);
-   if (ow <= 0)
-     return EINA_FALSE;
-   if (!wd->init)
-     return EINA_FALSE;
-   if (!wd->round)
-     list = wd->items;
-   else
-     list = wd->r_items;
-
-   EINA_LIST_FOREACH(list, l, it)
-     {
-        Evas_Coord x, w;
-        int len;
-        evas_object_geometry_get(VIEW(it), &x, NULL, &w, NULL);
-        /* item not visible */
-        if ((x + w <= ox) || (x >= ox + ow))
-          continue;
-
-        len = _count_letter(it->label);
-//        // FIXME: len should be # of ut8f letters. ie count using utf8 string walk, not stringshare len
-//        len = eina_stringshare_strlen(it->label);
-
-        if (x <= ox + 5)
-          edje_object_signal_emit(VIEW(it), "elm,state,left_side",
-                                  "elm");
-        else if (x + w >= ox + ow - 5)
-          edje_object_signal_emit(VIEW(it), "elm,state,right_side",
-                                  "elm");
-        else
-          {
-             if ((wd->len_threshold) && (len > wd->len_threshold))
-               edje_object_signal_emit(VIEW(it), "elm,state,center_small",
-                                       "elm");
-             else
-               edje_object_signal_emit(VIEW(it), "elm,state,center",
-                                       "elm");
-          }
-
-        // if len is les that the limit len, skip anyway
-        if (len <= wd->len_side)
-          continue;
-
-        steps = len - wd->len_side + 1;
-        mid = x + w / 2;
-        if (mid <= ox + ow / 2)
-          diff = (ox + ow / 2) - mid;
-        else
-          diff = mid - (ox + ow / 2);
-
-        length = len - (int)(diff * steps / (ow / 3));
-        length = MAX(length, wd->len_side);
-        // limit string len to "length" ut8f chars
-        length = _check_letter(it->label, length);
-        // cut it off at byte mark returned form _check_letter
-        strncpy(buf, it->label, length);
-        buf[length] = '\0';
-        edje_object_part_text_set(VIEW(it), "elm.text", buf);
-     }
-
-   if (wd->check_idler)
-     ecore_idle_enterer_del(wd->check_idler);
-   wd->check_idler = NULL;
-   return EINA_FALSE;
-}
-
 static void
 _selected_item_indicate(Elm_Diskselector_Item *it)
 {
@@ -664,8 +771,7 @@ _round_item_del(Widget_Data *wd, Elm_Diskselector_Item *it)
    elm_box_unpack(wd->main_box, VIEW(it));
    wd->r_items = eina_list_remove(wd->r_items, it);
    eina_stringshare_del(it->label);
-   evas_object_del(VIEW(it));
-   free(it);
+   elm_widget_item_free(it);
 }
 
 static void
@@ -872,6 +978,7 @@ _item_content_get_hook(const Elm_Object_Item *it, const char *part)
    if (part && strcmp(part, "icon")) return NULL;
    return ((Elm_Diskselector_Item *) it)->icon;
 }
+
 
 EAPI Evas_Object *
 elm_diskselector_add(Evas_Object *parent)
@@ -1107,7 +1214,11 @@ elm_diskselector_clear(Evas_Object *obj)
    if (!wd->items) return;
 
    wd->selected_item = NULL;
-   EINA_LIST_FREE(wd->items, it) _item_del(it);
+   EINA_LIST_FREE(wd->items, it)
+     {
+        _item_del(it);
+        elm_widget_item_free(it);
+     }
    _round_items_del(wd);
    _sizing_eval(obj);
 }
@@ -1165,103 +1276,7 @@ elm_diskselector_item_append(Evas_Object *obj, const char *label, Evas_Object *i
 EAPI void
 elm_diskselector_item_del(Elm_Object_Item * it)
 {
-   ELM_OBJ_ITEM_CHECK_OR_RETURN(it);
-   Elm_Diskselector_Item *item, *item2, *dit;
-   Eina_List *l;
-   int i = 0;
-   Widget_Data *wd;
-   item = (Elm_Diskselector_Item *) it;
-   wd = elm_widget_data_get(WIDGET(item));
-   if (!wd) return;
-
-   elm_box_unpack(wd->main_box, VIEW(item));
-
-   if (wd->round)
-     wd->r_items = eina_list_remove(wd->r_items, item);
-
-   wd->items = eina_list_remove(wd->items, item);
-
-   if (wd->selected_item == item)
-     {
-        dit = (Elm_Diskselector_Item *) eina_list_nth(wd->items, 0);
-        if (dit != item)
-          wd->selected_item = dit;
-        else
-          wd->selected_item = eina_list_nth(wd->items, 1);
-
-        _selected_item_indicate(wd->selected_item);
-     }
-
-   _item_del(item);
-   wd->item_count -= 1;
-
-   if (wd->round)
-     {
-        if (!wd->item_count)
-          {
-             evas_object_hide(wd->VIEW(first));
-             evas_object_hide(wd->VIEW(second));
-             evas_object_hide(wd->VIEW(last));
-             evas_object_hide(wd->VIEW(s_last));
-
-             EINA_LIST_FOREACH(wd->under_items, l, item2)
-               evas_object_hide(VIEW(item2));
-
-             EINA_LIST_FOREACH(wd->over_items, l, item2)
-               evas_object_hide(VIEW(item2));
-          }
-        else
-          {
-             dit = eina_list_nth(wd->items, 0);
-             if (dit)
-               {
-                  eina_stringshare_replace(&wd->first->label, dit->label);
-                  edje_object_part_text_set(wd->VIEW(first), "elm.text",
-                                            wd->first->label);
-               }
-             dit = eina_list_nth(wd->items, 1);
-             if (dit)
-               {
-                  eina_stringshare_replace(&wd->second->label, dit->label);
-                  edje_object_part_text_set(wd->VIEW(second), "elm.text",
-                                            wd->second->label);
-               }
-             // if more than 3 itmes should be displayed
-             for (i = 2; i < CEIL(wd->display_item_num); i++)
-               {
-                  dit = eina_list_nth(wd->items, i);
-                  item2 = eina_list_nth(wd->over_items, i - 2);
-                  eina_stringshare_replace(&item2->label, dit->label);
-                  edje_object_part_text_set(VIEW(item2), "elm.text", item2->label);
-               }
-
-             dit = eina_list_nth(wd->items, eina_list_count(wd->items) - 1);
-             if (dit)
-               {
-                  eina_stringshare_replace(&wd->last->label, dit->label);
-                  edje_object_part_text_set(wd->VIEW(last), "elm.text",
-                                            wd->last->label);
-               }
-             dit = eina_list_nth(wd->items, eina_list_count(wd->items) - 2);
-             if (dit)
-               {
-                  eina_stringshare_replace(&wd->s_last->label, dit->label);
-                  edje_object_part_text_set(wd->VIEW(s_last), "elm.text",
-                                            wd->s_last->label);
-               }
-             // if more than 3 itmes should be displayed
-             for (i = 3; i <= CEIL(wd->display_item_num); i++)
-               {
-                  dit = eina_list_nth(wd->items, wd->item_count - i);
-                  item2 = eina_list_nth(wd->under_items, i - 3);
-                  eina_stringshare_replace(&item2->label, dit->label);
-                  edje_object_part_text_set(VIEW(item2), "elm.text",
-                                            item2->label);
-               }
-          }
-     }
-   wd->check_idler = ecore_idle_enterer_before_add(_check_string, wd);
-   _sizing_eval(wd->self);
+   elm_object_item_del(it);
 }
 
 EAPI const char *

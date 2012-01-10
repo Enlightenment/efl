@@ -55,10 +55,16 @@ static void
 _del_pre_hook(Evas_Object *obj)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
+   Elm_Index_Item *it;
    if (!wd) return;
    _index_box_clear(obj, wd->bx[wd->level], wd->level);
    _index_box_clear(obj, wd->bx[0], 0);
-   while (wd->items) _item_free(wd->items->data);
+   while (wd->items)
+     {
+        it = wd->items->data;
+        _item_free(it);
+        elm_widget_item_free(it);
+     }
    if (wd->delay) ecore_timer_del(wd->delay);
 }
 
@@ -183,6 +189,16 @@ _sizing_eval(Evas_Object *obj)
    evas_object_size_hint_max_set(obj, maxw, maxh);
 }
 
+static void
+_item_del_pre_hook(Elm_Object_Item *it)
+{
+   ELM_OBJ_ITEM_CHECK_OR_RETURN(it);
+   Widget_Data *wd = elm_widget_data_get(WIDGET(it));
+   if (!wd) return;
+   _item_free((Elm_Index_Item *) it);
+   _index_box_clear(WIDGET(it), wd->bx[wd->level], wd->level);
+}
+
 static Elm_Index_Item *
 _item_new(Evas_Object *obj, const char *letter, const void *item)
 {
@@ -191,6 +207,7 @@ _item_new(Evas_Object *obj, const char *letter, const void *item)
    if (!wd) return NULL;
    it = elm_widget_item_new(obj, Elm_Index_Item);
    if (!it) return NULL;
+   elm_widget_item_del_pre_hook_set(it, _item_del_pre_hook);
    it->letter = eina_stringshare_add(letter);
    it->base.data = item;
    it->level = wd->level;
@@ -215,9 +232,7 @@ _item_free(Elm_Index_Item *it)
    Widget_Data *wd = elm_widget_data_get(WIDGET(it));
    if (!wd) return;
    wd->items = eina_list_remove(wd->items, it);
-   elm_widget_item_pre_notify_del(it);
    eina_stringshare_del(it->letter);
-   elm_widget_item_del(it);
 }
 
 // FIXME: always have index filled
@@ -743,6 +758,7 @@ elm_index_item_sorted_insert(Evas_Object *obj, const char *letter, const void *i
              if (cmp_data_func(p_it->base.data, it->base.data) >= 0)
                p_it->base.data = it->base.data;
              _item_free(it);
+             elm_widget_item_free(it);
           }
      }
 
@@ -750,14 +766,9 @@ elm_index_item_sorted_insert(Evas_Object *obj, const char *letter, const void *i
 }
 
 EAPI void
-elm_index_item_del(Evas_Object *obj, Elm_Object_Item *it)
+elm_index_item_del(Evas_Object *obj __UNUSED__, Elm_Object_Item *it)
 {
-   ELM_CHECK_WIDTYPE(obj, widtype);
-   ELM_OBJ_ITEM_CHECK_OR_RETURN(it);
-   Widget_Data *wd = elm_widget_data_get(obj);
-   if (!wd) return;
-   _item_free((Elm_Index_Item *) it);
-   _index_box_clear(obj, wd->bx[wd->level], wd->level);
+   elm_object_item_del(it);
 }
 
 EAPI Elm_Object_Item *
@@ -783,7 +794,11 @@ elm_index_item_clear(Evas_Object *obj)
         if (it->level != wd->level) continue;
         clear = eina_list_append(clear, it);
      }
-   EINA_LIST_FREE(clear, it) _item_free(it);
+   EINA_LIST_FREE(clear, it)
+     {
+        _item_free(it);
+        elm_widget_item_free(it);
+     }
 }
 
 EAPI void

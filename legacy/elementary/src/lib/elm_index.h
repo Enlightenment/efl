@@ -240,20 +240,6 @@ EAPI void                  elm_index_item_prepend_relative(Evas_Object *obj, con
 EAPI void                  elm_index_item_sorted_insert(Evas_Object *obj, const char *letter, const void *item, Eina_Compare_Cb cmp_func, Eina_Compare_Cb cmp_data_func);
 
 /**
- * Remove an item from a given index widget, <b>to be referenced by
- * it's data value</b>.
- *
- * @param obj The index object
- * @param item The item to be removed from @p obj
- *
- * If a deletion callback is set, via elm_object_item_del_cb_set(),
- * that callback function will be called by this one.
- *
- * @ingroup Index
- */
-EAPI void                  elm_index_item_del(Evas_Object *obj, Elm_Object_Item *item);
-
-/**
  * Find a given index widget's item, <b>using item data</b>.
  *
  * @param obj The index object

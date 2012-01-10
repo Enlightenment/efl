@@ -83,7 +83,7 @@ EAPI Evas_Object      *elm_segment_control_add(Evas_Object *parent);
  * elm_segment_control_item_insert_at() should be used instead.
  *
  * Items created with this function can be deleted with function
- * elm_segment_control_item_del() or elm_segment_control_item_del_at().
+ * elm_object_item_del() or elm_segment_control_item_del_at().
  *
  * @note @p label set to @c NULL is different from empty string "".
  * If an item
@@ -102,7 +102,7 @@ EAPI Evas_Object      *elm_segment_control_add(Evas_Object *parent);
  * @endcode
  *
  * @see elm_segment_control_item_insert_at()
- * @see elm_segment_control_item_del()
+ * @see elm_object_item_del()
  *
  * @ingroup SegmentControl
  */
@@ -125,7 +125,7 @@ EAPI Elm_Object_Item *elm_segment_control_item_add(Evas_Object *obj, Evas_Object
  * to segment control, just like elm_segment_control_item_add().
  *
  * Items created with this function can be deleted with function
- * elm_segment_control_item_del() or elm_segment_control_item_del_at().
+ * elm_object_item_del() or elm_segment_control_item_del_at().
  *
  * @note @p label set to @c NULL is different from empty string "".
  * If an item
@@ -135,23 +135,11 @@ EAPI Elm_Object_Item *elm_segment_control_item_add(Evas_Object *obj, Evas_Object
  *
  * @see elm_segment_control_item_add()
  * @see elm_segment_control_item_count_get()
- * @see elm_segment_control_item_del()
+ * @see elm_object_item_del()
  *
  * @ingroup SegmentControl
  */
 EAPI Elm_Object_Item *elm_segment_control_item_insert_at(Evas_Object *obj, Evas_Object *icon, const char *label, int index);
-
-/**
- * Remove a segment control item from its parent, deleting it.
- *
- * @param it The item to be removed.
- *
- * Items can be added with elm_segment_control_item_add() or
- * elm_segment_control_item_insert_at().
- *
- * @ingroup SegmentControl
- */
-EAPI void              elm_segment_control_item_del(Elm_Object_Item *it);
 
 /**
  * Remove a segment control item at given index from its parent,

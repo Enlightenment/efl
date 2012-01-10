@@ -216,7 +216,7 @@ EAPI Eina_Bool                    elm_toolbar_no_select_mode_get(const Evas_Obje
  * be set as @b last item.
  *
  * Items created with this method can be deleted with
- * elm_toolbar_item_del().
+ * elm_object_item_del().
  *
  * Associated @p data can be properly freed when item is deleted if a
  * callback function is set with elm_object_item_del_cb_set().
@@ -231,7 +231,7 @@ EAPI Eina_Bool                    elm_toolbar_no_select_mode_get(const Evas_Obje
  * If an absolute path is provided it will load it direct from a file.
  *
  * @see elm_toolbar_item_icon_set()
- * @see elm_toolbar_item_del()
+ * @see elm_object_item_del()
  *
  * @ingroup Toolbar
  */
@@ -251,7 +251,7 @@ EAPI Elm_Object_Item             *elm_toolbar_item_append(Evas_Object *obj, cons
  * be set as @b first item.
  *
  * Items created with this method can be deleted with
- * elm_toolbar_item_del().
+ * elm_object_item_del().
  *
  * Associated @p data can be properly freed when item is deleted if a
  * callback function is set with elm_object_item_del_cb_set().
@@ -266,7 +266,7 @@ EAPI Elm_Object_Item             *elm_toolbar_item_append(Evas_Object *obj, cons
  * If an absolute path is provided it will load it direct from a file.
  *
  * @see elm_toolbar_item_icon_set()
- * @see elm_toolbar_item_del()
+ * @see elm_object_item_del()
  *
  * @ingroup Toolbar
  */
@@ -287,7 +287,7 @@ EAPI Elm_Object_Item             *elm_toolbar_item_prepend(Evas_Object *obj, con
  * this toolbar will be just before item @p before.
  *
  * Items created with this method can be deleted with
- * elm_toolbar_item_del().
+ * elm_object_item_del().
  *
  * Associated @p data can be properly freed when item is deleted if a
  * callback function is set with elm_object_item_del_cb_set().
@@ -302,7 +302,7 @@ EAPI Elm_Object_Item             *elm_toolbar_item_prepend(Evas_Object *obj, con
  * If an absolute path is provided it will load it direct from a file.
  *
  * @see elm_toolbar_item_icon_set()
- * @see elm_toolbar_item_del()
+ * @see elm_object_item_del()
  *
  * @ingroup Toolbar
  */
@@ -323,7 +323,7 @@ EAPI Elm_Object_Item             *elm_toolbar_item_insert_before(Evas_Object *ob
  * this toolbar will be just after item @p after.
  *
  * Items created with this method can be deleted with
- * elm_toolbar_item_del().
+ * elm_object_item_del().
  *
  * Associated @p data can be properly freed when item is deleted if a
  * callback function is set with elm_object_item_del_cb_set().
@@ -338,7 +338,7 @@ EAPI Elm_Object_Item             *elm_toolbar_item_insert_before(Evas_Object *ob
  * If an absolute path is provided it will load it direct from a file.
  *
  * @see elm_toolbar_item_icon_set()
- * @see elm_toolbar_item_del()
+ * @see elm_object_item_del()
  *
  * @ingroup Toolbar
  */
@@ -585,18 +585,6 @@ EAPI Eina_Bool                    elm_toolbar_item_icon_memfile_set(Elm_Object_I
  * @ingroup Toolbar
  */
 EAPI Eina_Bool                    elm_toolbar_item_icon_file_set(Elm_Object_Item *it, const char *file, const char *key);
-
-/**
- * Delete them item from the toolbar.
- *
- * @param it The item of toolbar to be deleted.
- *
- * @see elm_toolbar_item_append()
- *
- * @ingroup Toolbar
- */
-EAPI void                         elm_toolbar_item_del(Elm_Object_Item *it);
-
 
 /**
  * Set or unset item as a separator.

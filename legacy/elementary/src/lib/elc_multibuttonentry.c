@@ -692,7 +692,6 @@ _del_button_item(Elm_Multibuttonentry_Item *item)
 
              _del_button_obj(obj, _item->button);
 
-             free(_item);
              if (wd->current == l)
                wd->current = NULL;
              break;
@@ -760,6 +759,13 @@ _resize_button(Evas_Object *btn, Evas_Coord *realw, Evas_Coord *vieww)
    if (vieww) *vieww = vw;
 }
 
+static void
+_item_del_pre_hook(Elm_Object_Item *it)
+{
+   ELM_OBJ_ITEM_CHECK_OR_RETURN(it);
+   _del_button_item((Elm_Multibuttonentry_Item *) it);
+}
+
 static Elm_Multibuttonentry_Item*
 _add_button_item(Evas_Object *obj, const char *str, Multibuttonentry_Pos pos, const Elm_Multibuttonentry_Item *reference, void *data)
 {
@@ -799,6 +805,7 @@ _add_button_item(Evas_Object *obj, const char *str, Multibuttonentry_Pos pos, co
    item = elm_widget_item_new(obj, Elm_Multibuttonentry_Item);
    if (item)
      {
+        elm_widget_item_del_pre_hook_set(item, _item_del_pre_hook);
         elm_widget_item_text_set_hook_set(item, _item_text_set_hook);
         elm_widget_item_text_get_hook_set(item, _item_text_get_hook);
         elm_widget_item_data_set(item, data);
@@ -954,6 +961,7 @@ _evas_mbe_key_up_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__,
              if (item)
                {
                   _del_button_item(item);
+                  elm_widget_item_free(item);
                   elm_object_focus_set(wd->entry, EINA_TRUE);
                }
           }
@@ -1586,8 +1594,7 @@ elm_multibuttonentry_clear(Evas_Object *obj)
 EAPI void
 elm_multibuttonentry_item_del(Elm_Object_Item *it)
 {
-   ELM_OBJ_ITEM_CHECK_OR_RETURN(it);
-   _del_button_item((Elm_Multibuttonentry_Item *) it);
+   elm_object_item_del(it);
 }
 
 EAPI const char *

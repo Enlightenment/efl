@@ -168,7 +168,7 @@ test_index2_it_del(void *data, Evas_Object *obj, void *event_info __UNUSED__)
    if (!it_next)
      {
         iit = elm_index_item_find(gui->id, it);
-        if (iit) elm_index_item_del(gui->id, iit);
+        if (iit) elm_object_item_del(iit);
         elm_list_item_del(it);
         return;
      }
@@ -180,7 +180,7 @@ test_index2_it_del(void *data, Evas_Object *obj, void *event_info __UNUSED__)
    if (label[0] == label_next[0])
      elm_object_item_data_set(iit, it_next);
    else
-     elm_index_item_del(gui->id, iit);
+     elm_object_item_del(iit);
 
    elm_list_item_del(it);
 }

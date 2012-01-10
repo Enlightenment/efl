@@ -434,6 +434,18 @@ EINA_DEPRECATED EAPI void         elm_ctxpopup_content_set(Evas_Object *obj, Eva
 EINA_DEPRECATED EAPI Evas_Object *elm_ctxpopup_content_unset(Evas_Object *obj);
 
 /**
+ * @brief Delete the given item in a ctxpopup object.
+ *
+ * @param it Ctxpopup item to be deleted
+ *
+ * @deprecated Use elm_object_item_del() instead
+ * @see elm_ctxpopup_item_append()
+ *
+ * @ingroup Ctxpopup
+ */
+EINA_DEPRECATED EAPI void                         elm_ctxpopup_item_del(Elm_Object_Item *it);
+
+/**
  * Set the label for a given file selector button widget
  *
  * @param obj The file selector button widget
@@ -728,6 +740,19 @@ EINA_DEPRECATED EAPI const char  *elm_hoversel_item_label_get(const Elm_Object_I
  * @deprecated Use elm_object_item_del_cb_set() instead
  */
 EINA_DEPRECATED EAPI void                         elm_hoversel_item_del_cb_set(Elm_Object_Item *it, Evas_Smart_Cb func);
+
+/**
+ * @brief Delete an item from the hoversel
+ *
+ * @param it The item to delete
+ *
+ * This deletes the item from the hoversel (should not be called while the
+ * hoversel is active; use elm_hoversel_expanded_get() to check first).
+ *
+ * @deprecated Use elm_object_item_del() instead
+ * @see elm_hoversel_item_add()
+ */
+EINA_DEPRECATED EAPI void                         elm_hoversel_item_del(Elm_Object_Item *it);
 
 /**
  * Set actionslider labels.
@@ -1429,6 +1454,22 @@ EINA_DEPRECATED EAPI const char            *elm_diskselector_item_label_get(cons
  */
 EINA_DEPRECATED EAPI void                   elm_diskselector_item_del_cb_set(Elm_Object_Item *it, Evas_Smart_Cb func);
 
+/**
+ * Delete them item from the diskselector.
+ *
+ * @param it The item of diskselector to be deleted.
+ *
+ * If deleting all diskselector items is required, elm_diskselector_clear()
+ * should be used instead of getting items list and deleting each one.
+ *
+ * @deprecated Use elm_object_item_del() instead
+ * @see elm_diskselector_clear()
+ * @see elm_diskselector_item_append()
+ *
+ * @ingroup Diskselector
+ */
+EINA_DEPRECATED EAPI void                   elm_diskselector_item_del(Elm_Object_Item *it);
+
 EINA_DEPRECATED EAPI void         elm_factory_content_set(Evas_Object *obj, Evas_Object *content);
 EINA_DEPRECATED EAPI Evas_Object *elm_factory_content_get(const Evas_Object *obj);
 
@@ -1457,6 +1498,16 @@ EINA_DEPRECATED EAPI const char *elm_flipselector_item_label_get(const Elm_Objec
  * @ingroup Flipselector
  */
 EINA_DEPRECATED EAPI void        elm_flipselector_item_label_set(Elm_Object_Item *it, const char *label);
+
+/**
+ * Delete a given item from a flip selector widget.
+ *
+ * @param it The item to delete
+ *
+ * @deprecated Use elm_object_item_del() instead
+ * @ingroup Flipselector
+ */
+EINA_DEPRECATED EAPI void       elm_flipselector_item_del(Elm_Object_Item *it);
 
 /**
  * Make a given Elementary object the focused one.
@@ -1599,6 +1650,21 @@ EINA_DEPRECATED EAPI void  elm_index_item_data_set(Elm_Object_Item *it, const vo
  * @ingroup Index
  */
 EINA_DEPRECATED EAPI void                  elm_index_item_del_cb_set(Elm_Object_Item *it, Evas_Smart_Cb func);
+
+/**
+ * Remove an item from a given index widget, <b>to be referenced by
+ * it's data value</b>.
+ *
+ * @param obj The index object
+ * @param item The item to be removed from @p obj
+ *
+ * If a deletion callback is set, via elm_object_item_del_cb_set(),
+ * that callback function will be called by this one.
+ *
+ * @deprecated Use elm_object_item_del() instead
+ * @ingroup Index
+ */
+EINA_DEPRECATED EAPI void                  elm_index_item_del(Evas_Object *obj, Elm_Object_Item *item);
 
 /**
 * @brief Set the label on the label object
@@ -1878,6 +1944,16 @@ EINA_DEPRECATED EAPI void                         elm_menu_item_del_cb_set(Elm_O
  * @deprecated Use elm_object_item_data_set() instead
  */
 EINA_DEPRECATED EAPI void         elm_menu_item_data_set(Elm_Object_Item *it, const void *data);
+
+/**
+ * @brief Deletes an item from the menu.
+ *
+ * @param it The item to delete.
+ *
+ * @deprecated Use elm_object_item_del() instead
+ * @see elm_menu_item_add()
+ */
+EINA_DEPRECATED EAPI void                         elm_menu_item_del(Elm_Object_Item *it);
 
 /**
  * @brief Set the content of the notify widget
@@ -2537,6 +2613,16 @@ EINA_DEPRECATED EAPI Evas_Object *elm_slider_end_get(const Evas_Object *obj);
 EINA_DEPRECATED EAPI void *elm_slideshow_item_data_get(const Elm_Object_Item *it);
 
 /**
+ * Delete a given item from a slideshow widget.
+ *
+ * @param it The slideshow item
+ *
+ * @deprecated Use elm_object_item_de() instead
+ * @ingroup Slideshow
+ */
+EINA_DEPRECATED EAPI void                  elm_slideshow_item_del(Elm_Object_Item *it);
+
+/**
  * Get the toolbar object from an item.
  *
  * @param it The item.
@@ -2688,6 +2774,18 @@ EINA_DEPRECATED EAPI Eina_Bool    elm_toolbar_orientation_get(const Evas_Object 
 EINA_DEPRECATED EAPI void                         elm_toolbar_item_del_cb_set(Elm_Object_Item *it, Evas_Smart_Cb func);
 
 /**
+ * Delete them item from the toolbar.
+ *
+ * @param it The item of toolbar to be deleted.
+ *
+ * @deprecated Use elm_object_item_del() instead
+ * @see elm_toolbar_item_append()
+ *
+ * @ingroup Toolbar
+ */
+EINA_DEPRECATED EAPI void                         elm_toolbar_item_del(Elm_Object_Item *it);
+
+/**
  * @brief Link a Elm_Payer with an Elm_Video object.
  *
  * @param player the Elm_Player object.
@@ -2754,6 +2852,19 @@ EINA_DEPRECATED EAPI void              elm_segment_control_item_label_set(Elm_Ob
 EINA_DEPRECATED EAPI void              elm_segment_control_item_icon_set(Elm_Object_Item *it, Evas_Object *icon);
 
 /**
+ * Remove a segment control item from its parent, deleting it.
+ *
+ * @param it The item to be removed.
+ *
+ * Items can be added with elm_segment_control_item_add() or
+ * elm_segment_control_item_insert_at().
+ *
+ * @deprecated Use elm_object_item_del() instead
+ * @ingroup SegmentControl
+ */
+EINA_DEPRECATED EAPI void              elm_segment_control_item_del(Elm_Object_Item *it);
+
+/**
  * Get the label
  *
  * @param obj The multibuttonentry object
@@ -2795,6 +2906,32 @@ EINA_DEPRECATED EAPI const char                *elm_multibuttonentry_item_label_
  * @deprecated Use elm_object_item_text_set() instead
  */
 EINA_DEPRECATED EAPI void                       elm_multibuttonentry_item_label_set(Elm_Object_Item *it, const char *str);
+
+/**
+ * Delete a given item
+ *
+ * @param it The item
+ * 
+ * @deprecated Use elm_object_item_del() instead 
+ *
+ */
+EINA_DEPRECATED EAPI void                       elm_multibuttonentry_item_del(Elm_Object_Item *it);
+
+/**
+ * @brief Delete the given item instantly.
+ *
+ * @param it The naviframe item
+ *
+ * This just deletes the given item from the naviframe item list instantly.
+ * So this would not emit any signals for view transitions but just change
+ * the current view if the given item is a top one.
+ *
+ * @deprecated Use elm_object_item_del() instead
+ * @ingroup Naviframe
+ */
+EINA_DEPRECATED EAPI void             elm_naviframe_item_del(Elm_Object_Item *it);
+
+
 
 /**
  * Sets the disabled/enabled state of a list item.

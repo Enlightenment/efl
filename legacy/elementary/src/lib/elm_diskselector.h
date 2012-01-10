@@ -227,7 +227,7 @@ EAPI void                   elm_diskselector_scroller_policy_set(Evas_Object *ob
  *
  * @param obj The diskselector object.
  *
- * @see elm_diskselector_item_del()
+ * @see elm_object_item_del()
  * @see elm_diskselector_item_append()
  *
  * @ingroup Diskselector
@@ -242,7 +242,7 @@ EAPI void                   elm_diskselector_clear(Evas_Object *obj);
  * or @c NULL on failure.
  *
  * @see elm_diskselector_item_append()
- * @see elm_diskselector_item_del()
+ * @see elm_object_item_del()
  * @see elm_diskselector_clear()
  *
  * @ingroup Diskselector
@@ -271,7 +271,7 @@ EAPI const Eina_List       *elm_diskselector_items_get(const Evas_Object *obj);
  * to the right.
  *
  * Items created with this method can be deleted with
- * elm_diskselector_item_del().
+ * elm_object_item_del().
  *
  * Associated @p data can be properly freed when item is deleted if a
  * callback function is set with elm_object_item_del_cb_set().
@@ -290,29 +290,13 @@ EAPI const Eina_List       *elm_diskselector_items_get(const Evas_Object *obj);
  * elm_diskselector_item_append(disk, "label", ic, NULL, NULL);
  * @endcode
  *
- * @see elm_diskselector_item_del()
+ * @see elm_object_item_del()
  * @see elm_diskselector_clear()
  * @see elm_icon_add()
  *
  * @ingroup Diskselector
  */
 EAPI Elm_Object_Item *elm_diskselector_item_append(Evas_Object *obj, const char *label, Evas_Object *icon, Evas_Smart_Cb func, const void *data);
-
-
-/**
- * Delete them item from the diskselector.
- *
- * @param it The item of diskselector to be deleted.
- *
- * If deleting all diskselector items is required, elm_diskselector_clear()
- * should be used instead of getting items list and deleting each one.
- *
- * @see elm_diskselector_clear()
- * @see elm_diskselector_item_append()
- *
- * @ingroup Diskselector
- */
-EAPI void                   elm_diskselector_item_del(Elm_Object_Item *it);
 
 /**
  * Get the selected item.

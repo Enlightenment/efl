@@ -58,8 +58,6 @@ _del_item(Elm_Menu_Item *item)
 {
    Elm_Menu_Item *child;
 
-   elm_widget_item_pre_notify_del(item);
-
    EINA_LIST_FREE(item->submenu.items, child)
      _del_item(child);
 
@@ -67,7 +65,7 @@ _del_item(Elm_Menu_Item *item)
    if (item->submenu.hv) evas_object_del(item->submenu.hv);
    if (item->submenu.location) evas_object_del(item->submenu.location);
    if (item->icon_str) eina_stringshare_del(item->icon_str);
-   elm_widget_item_del(item);
+   elm_widget_item_free(item);
 }
 
 static void
@@ -81,7 +79,7 @@ _del_pre_hook(Evas_Object *obj)
    evas_object_event_callback_del_full(wd->parent, EVAS_CALLBACK_DEL, _parent_del, wd);
 
    EINA_LIST_FREE(wd->items, item)
-      _del_item(item);
+     _del_item(item);
 
    if (wd->hv) evas_object_del(wd->hv);
    if (wd->location) evas_object_del(wd->location);
@@ -692,6 +690,28 @@ _elm_menu_item_add_helper(Evas_Object *obj, Elm_Menu_Item *parent, Elm_Menu_Item
    _sizing_eval(obj);
 }
 
+static void
+_item_del_pre_hook(Elm_Object_Item *it)
+{
+   ELM_OBJ_ITEM_CHECK_OR_RETURN(it);
+   Elm_Menu_Item *item = (Elm_Menu_Item *) it;
+   Elm_Object_Item *_item;
+
+   EINA_LIST_FREE(item->submenu.items, _item) elm_object_item_del(_item);
+   if (item->label) eina_stringshare_del(item->label);
+   if (item->content) evas_object_del(item->content);
+   if (item->submenu.hv) evas_object_del(item->submenu.hv);
+   if (item->submenu.location) evas_object_del(item->submenu.location);
+
+   if (item->parent)
+     item->parent->submenu.items = eina_list_remove(item->parent->submenu.items, item);
+   else
+     {
+        Widget_Data *wd = elm_widget_data_get(WIDGET(item));
+        wd->items = eina_list_remove(wd->items, item);
+     }
+}
+
 EAPI Elm_Object_Item *
 elm_menu_item_add(Evas_Object *obj, Elm_Object_Item *parent, const char *icon, const char *label, Evas_Smart_Cb func, const void *data)
 {
@@ -710,6 +730,7 @@ elm_menu_item_add(Evas_Object *obj, Elm_Object_Item *parent, const char *icon, c
         return NULL;
      }
 
+   elm_widget_item_del_pre_hook_set(subitem, _item_del_pre_hook);
    elm_widget_item_disable_hook_set(subitem, _item_disable_hook);
    elm_widget_item_text_set_hook_set(subitem, _item_text_set_hook);
    elm_widget_item_text_get_hook_set(subitem, _item_text_get_hook);
@@ -745,6 +766,7 @@ elm_menu_item_add_object(Evas_Object *obj, Elm_Object_Item *parent, Evas_Object 
    subitem = elm_widget_item_new(obj, Elm_Menu_Item);
    if (!subitem) return NULL;
 
+   elm_widget_item_del_pre_hook_set(subitem, _item_del_pre_hook);
    elm_widget_item_disable_hook_set(subitem, _item_disable_hook);
    elm_widget_item_text_set_hook_set(subitem, _item_text_set_hook);
    elm_widget_item_text_get_hook_set(subitem, _item_text_get_hook);
@@ -840,6 +862,7 @@ elm_menu_item_separator_add(Evas_Object *obj, Elm_Object_Item *parent)
    subitem = elm_widget_item_new(obj, Elm_Menu_Item);
    if (!subitem) return NULL;
 
+   elm_widget_item_del_pre_hook_set(subitem, _item_del_pre_hook);
    elm_widget_item_disable_hook_set(subitem, _item_disable_hook);
    elm_widget_item_text_set_hook_set(subitem, _item_text_set_hook);
    elm_widget_item_text_get_hook_set(subitem, _item_text_get_hook);
@@ -894,27 +917,7 @@ elm_menu_item_is_separator(Elm_Object_Item *it)
 EAPI void
 elm_menu_item_del(Elm_Object_Item *it)
 {
-   ELM_OBJ_ITEM_CHECK_OR_RETURN(it);
-   Elm_Menu_Item *item = (Elm_Menu_Item *) it;
-   Elm_Object_Item *_item;
-
-   elm_widget_item_pre_notify_del(item);
-
-   EINA_LIST_FREE(item->submenu.items, _item) elm_menu_item_del(_item);
-   if (item->label) eina_stringshare_del(item->label);
-   if (item->content) evas_object_del(item->content);
-   if (item->submenu.hv) evas_object_del(item->submenu.hv);
-   if (item->submenu.location) evas_object_del(item->submenu.location);
-
-   if (item->parent)
-     item->parent->submenu.items = eina_list_remove(item->parent->submenu.items, item);
-   else
-     {
-        Widget_Data *wd = elm_widget_data_get(WIDGET(item));
-        wd->items = eina_list_remove(wd->items, item);
-     }
-
-   elm_widget_item_del(item);
+   elm_object_item_del(it);
 }
 
 EAPI void

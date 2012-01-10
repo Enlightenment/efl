@@ -57,6 +57,7 @@ static void _update_view(Evas_Object *obj);
 static void _callbacks_set(Evas_Object *obj);
 static void _flip_up(Widget_Data *wd);
 static void _flip_down(Widget_Data *wd);
+static void _item_del_pre_hook(Elm_Object_Item *it);
 
 static const char SIG_SELECTED[] = "selected";
 static const char SIG_UNDERFLOWED[] = "underflowed";
@@ -143,6 +144,7 @@ _item_new(Evas_Object *obj, const char *label, Evas_Smart_Cb func, const void *d
    it = elm_widget_item_new(obj, Elm_Flipselector_Item);
    if (!it) return NULL;
 
+   elm_widget_item_del_pre_hook_set(it, _item_del_pre_hook);
    elm_widget_item_text_set_hook_set(it, _item_text_set_hook);
    elm_widget_item_text_get_hook_set(it, _item_text_get_hook);
    elm_widget_item_signal_emit_hook_set(it, _item_signal_emit_hook);
@@ -164,7 +166,7 @@ static inline void
 _item_free(Elm_Flipselector_Item *it)
 {
    eina_stringshare_del(it->label);
-   elm_widget_item_del(it);
+   elm_widget_item_free(it);
 }
 
 static void
@@ -574,6 +576,51 @@ _callbacks_set(Evas_Object *obj)
                                    "", _signal_val_change_stop, obj);
 }
 
+static void
+_item_del_pre_hook(Elm_Object_Item *it)
+{
+   ELM_OBJ_ITEM_CHECK_OR_RETURN(it);
+   Widget_Data *wd;
+   Elm_Flipselector_Item *item, *item2;
+   Eina_List *l;
+
+   item = (Elm_Flipselector_Item *) it;
+   wd = elm_widget_data_get(WIDGET(item));
+   if (!wd) return;
+
+   if (wd->walking > 0)
+     {
+        item->deleted = EINA_TRUE;
+        return;
+     }
+
+   _flipselector_walk(wd);
+
+   EINA_LIST_FOREACH(wd->items, l, item2)
+     {
+        if (item2 == item)
+          {
+             wd->items = eina_list_remove_list(wd->items, l);
+             if (wd->current == l)
+               {
+                  wd->current = l->prev;
+                  if (!wd->current) wd->current = l->next;
+                  if (wd->current)
+                    {
+                       item2 = wd->current->data;
+                       _send_msg(wd, MSG_FLIP_DOWN, (char *)item2->label);
+                    }
+                  else
+                     _send_msg(wd, MSG_FLIP_DOWN, "");
+               }
+             break;
+          }
+     }
+   eina_stringshare_del(item->label);
+   _sentinel_eval(wd);
+   _flipselector_unwalk(wd);
+}
+
 EAPI Evas_Object *
 elm_flipselector_add(Evas_Object *parent)
 {
@@ -836,46 +883,7 @@ elm_flipselector_item_selected_get(const Elm_Object_Item *it)
 EAPI void
 elm_flipselector_item_del(Elm_Object_Item *it)
 {
-   ELM_OBJ_ITEM_CHECK_OR_RETURN(it);
-   Widget_Data *wd;
-   Elm_Flipselector_Item *item, *item2;
-   Eina_List *l;
-
-   item = (Elm_Flipselector_Item *) it;
-   wd = elm_widget_data_get(WIDGET(item));
-   if (!wd) return;
-
-   if (wd->walking > 0)
-     {
-        item->deleted = EINA_TRUE;
-        return;
-     }
-
-   _flipselector_walk(wd);
-
-   EINA_LIST_FOREACH(wd->items, l, item2)
-     {
-        if (item2 == item)
-          {
-             wd->items = eina_list_remove_list(wd->items, l);
-             if (wd->current == l)
-               {
-                  wd->current = l->prev;
-                  if (!wd->current) wd->current = l->next;
-                  if (wd->current)
-                    {
-                       item2 = wd->current->data;
-                       _send_msg(wd, MSG_FLIP_DOWN, (char *)item2->label);
-                    }
-                  else
-                     _send_msg(wd, MSG_FLIP_DOWN, "");
-               }
-             break;
-          }
-     }
-   _item_free(item);
-   _sentinel_eval(wd);
-   _flipselector_unwalk(wd);
+   elm_object_item_del(it);
 }
 
 EAPI const char *

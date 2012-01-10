@@ -79,7 +79,11 @@ _del_hook(Evas_Object *obj)
    wd = elm_widget_data_get(obj);
    if (!wd) return;
 
-   EINA_LIST_FREE(wd->seg_items, it) _item_free(it);
+   EINA_LIST_FREE(wd->seg_items, it)
+     {
+        _item_free(it);
+        elm_widget_item_free(it);
+     }
 
    free(wd);
 }
@@ -180,12 +184,8 @@ _item_free(Elm_Segment_Item *it)
    if (wd->selected_item == it) wd->selected_item = NULL;
    if (wd->seg_items) wd->seg_items = eina_list_remove(wd->seg_items, it);
 
-   elm_widget_item_pre_notify_del(it);
-
    if (it->icon) evas_object_del(it->icon);
    if (it->label) eina_stringshare_del(it->label);
-
-   elm_widget_item_del(it);
 }
 
 static void
@@ -503,6 +503,20 @@ _item_content_get_hook(const Elm_Object_Item *it, const char *part)
    return ((Elm_Segment_Item *) it)->icon;
 }
 
+static void
+_item_del_pre_hook(Elm_Object_Item *it)
+{
+   ELM_OBJ_ITEM_CHECK_OR_RETURN(it);
+   Widget_Data *wd;
+   Elm_Segment_Item *item = (Elm_Segment_Item *) it;
+
+   wd = elm_widget_item_data_get(item);
+   if (!wd) return;
+
+   _item_free(item);
+   _update_list(wd);
+}
+
 static Elm_Segment_Item*
 _item_new(Evas_Object *obj, Evas_Object *icon, const char *label)
 {
@@ -515,6 +529,7 @@ _item_new(Evas_Object *obj, Evas_Object *icon, const char *label)
    it = elm_widget_item_new(obj, Elm_Segment_Item);
    if (!it) return NULL;
    elm_widget_item_data_set(it, wd);
+   elm_widget_item_del_pre_hook_set(it, _item_del_pre_hook);
    elm_widget_item_text_set_hook_set(it, _item_text_set_hook);
    elm_widget_item_text_get_hook_set(it, _item_text_get_hook);
    elm_widget_item_content_set_hook_set(it, _item_content_set_hook);
@@ -640,15 +655,7 @@ elm_segment_control_item_insert_at(Evas_Object *obj, Evas_Object *icon,
 EAPI void
 elm_segment_control_item_del(Elm_Object_Item *it)
 {
-   ELM_OBJ_ITEM_CHECK_OR_RETURN(it);
-   Widget_Data *wd;
-   Elm_Segment_Item *item = (Elm_Segment_Item *) it;
-
-   wd = elm_widget_item_data_get(item);
-   if (!wd) return;
-
-   _item_free(item);
-   _update_list(wd);
+   elm_object_item_del(it);
 }
 
 EAPI void
@@ -663,8 +670,7 @@ elm_segment_control_item_del_at(Evas_Object *obj, int idx)
 
    it = _item_find(obj, idx);
    if (!it) return;
-   _item_free(it);
-   _update_list(wd);
+   elm_object_item_del((Elm_Object_Item *) it);
 }
 
 EAPI const char*

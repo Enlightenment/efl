@@ -189,19 +189,6 @@ EAPI void             elm_naviframe_item_pop_to(Elm_Object_Item *it);
 EAPI void             elm_naviframe_item_promote(Elm_Object_Item *it);
 
 /**
- * @brief Delete the given item instantly.
- *
- * @param it The naviframe item
- *
- * This just deletes the given item from the naviframe item list instantly.
- * So this would not emit any signals for view transitions but just change
- * the current view if the given item is a top one.
- *
- * @ingroup Naviframe
- */
-EAPI void             elm_naviframe_item_del(Elm_Object_Item *it);
-
-/**
  * @brief preserve the content objects when items are popped.
  *
  * @param obj The naviframe object

@@ -1225,10 +1225,42 @@ _remove_items(Widget_Data *wd)
         if (item->icon)
           evas_object_del(item->icon);
         wd->items = eina_list_remove(wd->items, item);
-        free(item);
+        elm_widget_item_free(item);
      }
 
    wd->items = NULL;
+}
+
+static void
+_item_del_pre_hook(Elm_Object_Item *it)
+{
+   ELM_OBJ_ITEM_CHECK_OR_RETURN(it);
+
+   Widget_Data *wd;
+   Elm_Ctxpopup_Item *ctxpopup_it = (Elm_Ctxpopup_Item *) it;
+
+   wd = elm_widget_data_get(WIDGET(ctxpopup_it));
+   if (!wd) return;
+
+   if (ctxpopup_it->icon)
+     evas_object_del(ctxpopup_it->icon);
+   if (VIEW(ctxpopup_it))
+     evas_object_del(VIEW(ctxpopup_it));
+
+   eina_stringshare_del(ctxpopup_it->label);
+
+   wd->items = eina_list_remove(wd->items, ctxpopup_it);
+
+   wd->dir = ELM_CTXPOPUP_DIRECTION_UNKNOWN;
+
+   if (eina_list_count(wd->items) < 1)
+     {
+        evas_object_hide(WIDGET(ctxpopup_it));
+        return;
+     }
+
+   if (wd->visible)
+     _sizing_eval(WIDGET(ctxpopup_it));
 }
 
 EAPI Evas_Object *
@@ -1450,6 +1482,7 @@ elm_ctxpopup_item_append(Evas_Object *obj, const char *label,
    item = elm_widget_item_new(obj, Elm_Ctxpopup_Item);
    if (!item) return NULL;
 
+   elm_widget_item_del_pre_hook_set(item, _item_del_pre_hook);
    elm_widget_item_disable_hook_set(item, _item_disable_hook);
    elm_widget_item_text_set_hook_set(item, _item_text_set_hook);
    elm_widget_item_text_get_hook_set(item, _item_text_get_hook);
@@ -1492,36 +1525,7 @@ elm_ctxpopup_item_append(Evas_Object *obj, const char *label,
 EAPI void
 elm_ctxpopup_item_del(Elm_Object_Item *it)
 {
-   ELM_OBJ_ITEM_CHECK_OR_RETURN(it);
-
-   Widget_Data *wd;
-   Elm_Ctxpopup_Item *ctxpopup_it = (Elm_Ctxpopup_Item *) it;
-
-   wd = elm_widget_data_get(WIDGET(ctxpopup_it));
-   if (!wd) return;
-
-   if (ctxpopup_it->icon)
-     evas_object_del(ctxpopup_it->icon);
-   if (VIEW(ctxpopup_it))
-     evas_object_del(VIEW(ctxpopup_it));
-
-   eina_stringshare_del(ctxpopup_it->label);
-
-   wd->items = eina_list_remove(wd->items, ctxpopup_it);
-
-   wd->dir = ELM_CTXPOPUP_DIRECTION_UNKNOWN;
-
-   elm_widget_item_del(ctxpopup_it);
-
-   if (eina_list_count(wd->items) < 1)
-     {
-        evas_object_hide(WIDGET(ctxpopup_it));
-        return;
-     }
-
-   if (wd->visible)
-     _sizing_eval(WIDGET(ctxpopup_it));
-
+   elm_object_item_del(it);
 }
 
 EAPI void
