@@ -151,7 +151,7 @@ START_TEST(eina_array_remove_stuff)
      }
    fail_if(eina_array_remove(ea, keep_int, NULL) != EINA_TRUE);
 
-   fail_if(eina_array_count_get(ea) != 990);
+   fail_if(eina_array_count(ea) != 990);
    EINA_ARRAY_ITER_NEXT(ea, i, tmp, it)
      fail_if(*tmp == 0);
 
@@ -165,7 +165,7 @@ START_TEST(eina_array_remove_stuff)
         eina_array_remove(ea, keep_int, NULL);
 
    // Remove all items
-   fail_if(eina_array_count_get(ea) != 980);
+   fail_if(eina_array_count(ea) != 980);
    EINA_ARRAY_ITER_NEXT(ea, i, tmp, it)
      {
         fail_if(*tmp == 0);
@@ -174,7 +174,7 @@ START_TEST(eina_array_remove_stuff)
 
    eina_array_remove(ea, keep_int, NULL);
 
-   fail_if(eina_array_count_get(ea) != 0);
+   fail_if(eina_array_count(ea) != 0);
 
    eina_array_free(ea);
 

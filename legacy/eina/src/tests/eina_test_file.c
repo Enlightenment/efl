@@ -48,7 +48,7 @@ START_TEST(eina_file_split_simple)
 #endif
 
    fail_if(!ea);
-   fail_if(eina_array_count_get(ea) != 5);
+   fail_if(eina_array_count(ea) != 5);
    fail_if(strcmp(eina_array_data_get(ea, 0), "this"));
    fail_if(strcmp(eina_array_data_get(ea, 1), "is"));
    fail_if(strcmp(eina_array_data_get(ea, 2), "a"));
@@ -66,7 +66,7 @@ START_TEST(eina_file_split_simple)
 #endif
 
    fail_if(!ea);
-   fail_if(eina_array_count_get(ea) != 6);
+   fail_if(eina_array_count(ea) != 6);
    fail_if(strcmp(eina_array_data_get(ea, 0), "this"));
    fail_if(strcmp(eina_array_data_get(ea, 1), "is"));
    fail_if(strcmp(eina_array_data_get(ea, 2), "a "));

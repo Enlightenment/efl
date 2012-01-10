@@ -83,7 +83,7 @@ _eina_rbtree_iterator_list_new(const Eina_Rbtree *tree)
 static Eina_Rbtree *
 _eina_rbtree_iterator_get_content(Eina_Iterator_Rbtree *it)
 {
-   if (eina_array_count_get(it->stack) <= 0)
+   if (eina_array_count(it->stack) <= 0)
       return NULL;
 
    return eina_array_data_get(it->stack, 0);
@@ -110,10 +110,10 @@ _eina_rbtree_iterator_next(Eina_Iterator_Rbtree *it, void **data)
    Eina_Iterator_Rbtree_List *new;
    Eina_Rbtree *tree;
 
-   if (eina_array_count_get(it->stack) <= 0)
+   if (eina_array_count(it->stack) <= 0)
       return EINA_FALSE;
 
-   last = eina_array_data_get(it->stack, eina_array_count_get(it->stack) - 1);
+   last = eina_array_data_get(it->stack, eina_array_count(it->stack) - 1);
    tree = last->tree;
 
    if (!last->tree || last->up == EINA_TRUE)
@@ -128,10 +128,10 @@ _eina_rbtree_iterator_next(Eina_Iterator_Rbtree *it, void **data)
                   {
                      free(last);
 
-                     if (eina_array_count_get(it->stack) > 0)
+                     if (eina_array_count(it->stack) > 0)
                        {
                           last = eina_array_data_get(it->stack,
-                                                     eina_array_count_get(
+                                                     eina_array_count(
                                                         it->
                                                         stack)
                                                      - 1);

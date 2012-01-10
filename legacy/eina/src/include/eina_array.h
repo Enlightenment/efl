@@ -169,7 +169,7 @@
  * element, use eina_array_push() and to remove the last element, use
  * eina_array_pop(). To retrieve the element at a given position, use
  * eina_array_data_get(). The number of elements can be retrieved with
- * eina_array_count_get().
+ * eina_array_count().
  *
  * Eina_Array is different from a conventional C array in a number of ways, most
  * importantly they grow and shrink dynamically, this means that if you add an
