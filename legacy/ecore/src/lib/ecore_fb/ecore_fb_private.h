@@ -31,6 +31,8 @@
 #include <fcntl.h>
 #include <errno.h>
 
+#include <Ecore_Fb.h>
+
 /* ecore_fb_li.c */
 struct _Ecore_Fb_Input_Device
 {
