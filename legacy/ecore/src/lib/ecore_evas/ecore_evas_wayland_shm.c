@@ -84,6 +84,7 @@ static Eina_Bool _ecore_evas_wl_event_focus_in(void *data __UNUSED__, int type _
 static Eina_Bool _ecore_evas_wl_event_focus_out(void *data __UNUSED__, int type __UNUSED__, void *event);
 
 static void _ecore_evas_wl_handle_configure(void *data, struct wl_shell_surface *shell_surface __UNUSED__, uint32_t timestamp __UNUSED__, uint32_t edges __UNUSED__, int32_t width, int32_t height);
+static void _ecore_evas_wl_handle_popup_done(void *data __UNUSED__, struct wl_shell_surface *shell_surface __UNUSED__);
 
 /* SMART stuff for frame */
 static Evas_Smart *_ecore_evas_wl_smart = NULL;
@@ -104,6 +105,7 @@ static uint32_t _ecore_evas_wl_btn_timestamp;
 static const struct wl_shell_surface_listener _ecore_evas_wl_shell_surface_listener = 
 {
    _ecore_evas_wl_handle_configure,
+   _ecore_evas_wl_handle_popup_done
 };
 
 static Ecore_Evas_Engine_Func _ecore_wl_engine_func = 
@@ -1055,6 +1057,12 @@ _ecore_evas_wl_handle_configure(void *data, struct wl_shell_surface *shell_surfa
         if (ee->engine.wl.shell_surface != shell_surface) return;
         ecore_evas_resize(ee, width, height);
      }
+}
+
+static void 
+_ecore_evas_wl_handle_popup_done(void *data __UNUSED__, struct wl_shell_surface *shell_surface __UNUSED__) 
+{
+
 }
 
 static void 
