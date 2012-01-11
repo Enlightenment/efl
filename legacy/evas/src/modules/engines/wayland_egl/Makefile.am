@@ -7,15 +7,16 @@ AM_CPPFLAGS = \
 -I$(top_srcdir)/src/lib/include \
 -I$(top_srcdir)/src/modules/engines/gl_common \
 @FREETYPE_CFLAGS@ \
-@GL_EET_CFLAGS@ \
+@PIXMAN_CFLAGS@ \
 @EINA_CFLAGS@ \
+@GL_EET_CFLAGS@ \
 @evas_engine_wayland_egl_cflags@
 
 if BUILD_ENGINE_WAYLAND_EGL
 
-WAYLAND_EGL_SOURCES = \
+WAYLAND_EGL_SOURCES  = \
 evas_engine.c \
-evas_outbuf.c
+evas_wl_main.c
 
 WAYLAND_EGL_LIBADD = @FREETYPE_LIBS@ @GL_EET_LIBS@ @EINA_LIBS@ @evas_engine_wayland_egl_libs@ $(top_builddir)/src/modules/engines/gl_common/libevas_engine_gl_common.la
 
@@ -25,12 +26,13 @@ includesdir = $(includedir)/evas-@VMAJ@
 if !EVAS_STATIC_BUILD_WAYLAND_EGL
 
 pkgdir = $(libdir)/evas/modules/engines/wayland_egl/$(MODULE_ARCH)
-pkg_LTLIBRARIES	= module.la
+pkg_LTLIBRARIES = module.la
 
 module_la_SOURCES = $(WAYLAND_EGL_SOURCES)
 module_la_LIBADD = $(WAYLAND_EGL_LIBADD) $(top_builddir)/src/lib/libevas.la
 module_la_LDFLAGS = -no-undefined -module -avoid-version
 module_la_LIBTOOLFLAGS = --tag=disable-static
+
 
 else
 
@@ -42,5 +44,4 @@ libevas_engine_wayland_egl_la_LIBADD = $(WAYLAND_EGL_LIBADD)
 endif
 endif
 
-EXTRA_DIST = \
-evas_engine.h
+EXTRA_DIST = evas_engine.h

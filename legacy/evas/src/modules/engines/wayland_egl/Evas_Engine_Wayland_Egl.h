@@ -1,26 +1,46 @@
-#ifndef _EVAS_ENGINE_WAYLAND_EGL_H
-# define _EVAS_ENGINE_WAYLAND_EGL_H
+#ifndef _EVAS_ENGINE_GL_WL_H
+#define _EVAS_ENGINE_GL_WL_H
 
-# include <wayland-client.h>
-# include <wayland-egl.h>
+//#include <X11/Xlib.h>
 
-typedef struct _Evas_Engine_Info_Wayland_Egl Evas_Engine_Info_Wayland_Egl;
-struct _Evas_Engine_Info_Wayland_Egl 
+#include <wayland-client.h>
+
+typedef struct _Evas_Engine_Info_GL_Wl Evas_Engine_Info_GL_Wl;
+
+struct _Evas_Engine_Info_GL_Wl
 {
+   /* PRIVATE - don't mess with this baby or evas will poke its tongue out */
+   /* at you and make nasty noises */
    Evas_Engine_Info magic;
 
-   struct 
-     {
-        struct wl_display *disp;
-        struct wl_compositor *comp;
-        struct wl_shell *shell;
+   /* engine specific data & parameters it needs to set up */
+   struct {
+      struct wl_display *display;
+      struct wl_surface *surface;
+      int          depth;
+      int          screen;
+      int          rotation;
+      unsigned int destination_alpha  : 1;
+   } info;
+   /* engine specific function calls to query stuff about the destination */
+   /* engine (what visual & colormap & depth to use, performance info etc. */
+   struct {
+//      Visual *  (*best_visual_get)   (Evas_Engine_Info_GL_X11 *einfo);
+//      Colormap  (*best_colormap_get) (Evas_Engine_Info_GL_X11 *einfo);
+      int       (*best_depth_get)    (Evas_Engine_Info_GL_Wl *einfo);
+   } func;
 
-        int rotation;
+   struct {
+      void      (*pre_swap)          (void *data, Evas *e);
+      void      (*post_swap)         (void *data, Evas *e);
 
-        Eina_Bool debug : 1;
-     } info;
+      void       *data; // data for callback calls
+   } callback;
 
+   /* non-blocking or blocking mode */
    Evas_Engine_Render_Mode render_mode;
-};
 
+   unsigned char vsync : 1; // does nothing right now
+   unsigned char indirect : 1; // use indirect rendering
+};
 #endif
