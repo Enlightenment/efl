@@ -1865,13 +1865,18 @@ ECORE_EVAS_CHECK_MODULE_FULL([wayland-shm], [wayland-shm],
    [${want_ecore_evas_wayland_shm}],
    [Wayland Shm],
    [${have_ecore_wayland}],
-   [requirements_ecore_evas="ecore-wayland >= 1.1.0 ${requirements_ecore_evas}"])
+   [requirements_ecore_evas="${requirements_ecore_wayland} ${requirements_ecore_evas}"])
 
 ECORE_EVAS_CHECK_MODULE_FULL([wayland-egl], [wayland-egl], 
    [${want_ecore_evas_wayland_egl}],
    [Wayland Egl],
    [${have_ecore_wayland}],
-   [requirements_ecore_evas="ecore-wayland >= 1.1.0 ${requirements_ecore_evas}"])
+   [
+      PKG_CHECK_MODULES([WAYLAND_EGL], [wayland-egl], [have_wayland_egl="yes"], [have_wayland_egl="no"])
+      if test "x${have_wayland_egl}" = "xyes" ; then
+         requirements_ecore_evas="wayland-egl ${requirements_ecore_wayland} ${requirements_ecore_evas}"
+      fi
+   ])
 
 ### install and build examples
 

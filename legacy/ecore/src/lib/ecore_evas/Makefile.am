@@ -106,7 +106,8 @@ $(ECORE_WAYLAND_INC) \
 $(ECORE_IPC_INC) \
 @EVAS_CFLAGS@ \
 @EINA_CFLAGS@ \
-@EVIL_CFLAGS@
+@EVIL_CFLAGS@ \
+@WAYLAND_EGL_CFLAGS@
 
 AM_CFLAGS = @WIN32_CFLAGS@
 
@@ -128,6 +129,7 @@ ecore_evas_wince.c \
 ecore_evas_ews.c \
 ecore_evas_psl1ght.c \
 ecore_evas_wayland_shm.c \
+ecore_evas_wayland_egl.c \
 ecore_evas_extn.c
 
 libecore_evas_la_LIBADD = \
@@ -148,7 +150,8 @@ $(top_builddir)/src/lib/ecore_input_evas/libecore_input_evas.la \
 $(top_builddir)/src/lib/ecore/libecore.la \
 @EVAS_LIBS@ \
 @EINA_LIBS@ \
-@EVIL_LIBS@
+@EVIL_LIBS@ \
+@WAYLAND_EGL_LIBS@
 
 libecore_evas_la_LDFLAGS = -no-undefined @lt_enable_auto_import@ -version-info @version_info@ @release_info@
 
