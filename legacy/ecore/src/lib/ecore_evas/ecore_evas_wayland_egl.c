@@ -165,7 +165,7 @@ static Ecore_Evas_Engine_Func _ecore_wl_engine_func =
 EAPI Ecore_Evas *
 ecore_evas_wayland_egl_new(const char *disp_name, int x, int y, int w, int h, int frame) 
 {
-   Evas_Engine_Info_GL_Wl *einfo;
+   Evas_Engine_Info_Wayland_Egl *einfo;
    Ecore_Evas *ee;
    int method = 0;
    static int _win_id = 1;
@@ -224,7 +224,7 @@ ecore_evas_wayland_egl_new(const char *disp_name, int x, int y, int w, int h, in
    if (ee->prop.draw_frame) 
      evas_output_framespace_set(ee->evas, 4, 18, 8, 22);
 
-   if ((einfo = (Evas_Engine_Info_GL_Wl *)evas_engine_info_get(ee->evas))) 
+   if ((einfo = (Evas_Engine_Info_Wayland_Egl *)evas_engine_info_get(ee->evas))) 
      {
         einfo->info.display = ecore_wl_display_get();
         /* einfo->info.comp = ecore_wl_compositor_get(); */
@@ -397,7 +397,7 @@ _ecore_evas_wl_move(Ecore_Evas *ee, int x, int y)
 static void 
 _ecore_evas_wl_resize(Ecore_Evas *ee, int w, int h) 
 {
-   Evas_Engine_Info_GL_Wl *einfo;
+   Evas_Engine_Info_Wayland_Egl *einfo;
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
@@ -416,7 +416,7 @@ _ecore_evas_wl_resize(Ecore_Evas *ee, int w, int h)
      }
 
    /* get existing engine info */
-   einfo = (Evas_Engine_Info_GL_Wl *)evas_engine_info_get(ee->evas);
+   einfo = (Evas_Engine_Info_Wayland_Egl *)evas_engine_info_get(ee->evas);
 
    /* destroy old buffer */
    if (ee->engine.wl.buffer) wl_buffer_destroy(ee->engine.wl.buffer);
@@ -462,7 +462,7 @@ _ecore_evas_wl_resize(Ecore_Evas *ee, int w, int h)
 static void 
 _ecore_evas_wl_show(Ecore_Evas *ee) 
 {
-   Evas_Engine_Info_GL_Wl *einfo;
+   Evas_Engine_Info_Wayland_Egl *einfo;
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
@@ -471,7 +471,7 @@ _ecore_evas_wl_show(Ecore_Evas *ee)
 
    /* TODO: Finish me */
 
-   einfo = (Evas_Engine_Info_GL_Wl *)evas_engine_info_get(ee->evas);
+   einfo = (Evas_Engine_Info_Wayland_Egl *)evas_engine_info_get(ee->evas);
 
    /* create new surface */
    ee->engine.wl.surface = 
