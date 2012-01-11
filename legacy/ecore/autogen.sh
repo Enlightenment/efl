@@ -20,6 +20,7 @@ echo "OLD_CFLAGS=\"$CFLAGS\"" >> config.cache-env.tmp
 echo "OLD_PATH=\"$PATH\"" >> config.cache-env.tmp
 echo "OLD_PKG_CONFIG_PATH=\"$PKG_CONFIG_PATH\"" >> config.cache-env.tmp
 echo "OLD_LDFLAGS=\"$LDFLAGS\"" >> config.cache-env.tmp
+echo "OLD_CXXFLAGS=\"$CXXFLAGS\"" >> config.cache-env.tmp
 
 cmp config.cache-env.tmp config.cache-env >> /dev/null
 if [ $? -ne 0 ]; then
