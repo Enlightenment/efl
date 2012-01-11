@@ -1173,7 +1173,7 @@ elm_naviframe_item_pop(Evas_Object *obj)
    Evas_Object *content = NULL;
 
    wd = elm_widget_data_get(obj);
-   if (!wd || !wd->stack) return NULL;
+   if (!wd) return NULL;
 
    it = (Elm_Naviframe_Item *) elm_naviframe_top_item_get(obj);
    if (!it) return NULL;
