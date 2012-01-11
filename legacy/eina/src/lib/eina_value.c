@@ -2416,7 +2416,11 @@ _eina_value_type_array_copy(const Eina_Value_Type *type __UNUSED__, const void *
         int i = eina_inarray_append(d->array, placeholder);
         void *imem = eina_inarray_nth(d->array, i);
         if ((i < 0) || (!imem)) goto error;
-        if (!subtype->copy(subtype, ptr, imem)) goto error;
+        if (!subtype->copy(subtype, ptr, imem))
+          {
+             eina_inarray_pop(d->array);
+             goto error;
+          }
      }
 
    return EINA_TRUE;
