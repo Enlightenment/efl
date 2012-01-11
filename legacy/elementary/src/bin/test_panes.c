@@ -29,7 +29,7 @@ static void
 _clicked_double(void *data __UNUSED__, Evas_Object *obj, void *event_info __UNUSED__)
 {
     printf("clicked double\n");
-    if(elm_panes_content_left_size_get(obj) > 0)
+    if (elm_panes_content_left_size_get(obj) > 0)
     {
         size = elm_panes_content_left_size_get(obj);
         elm_panes_content_left_size_set(obj, 0.0);

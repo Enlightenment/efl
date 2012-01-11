@@ -99,7 +99,7 @@ _icon_properties_find(icon_properties *icons, char *name)
 {
    int n;
 
-   for(n = 0; n < N_GESTURE_TYPE; n++)
+   for (n = 0; n < N_GESTURE_TYPE; n++)
      if (!strcmp(icons[n].name, name))
        return &icons[n];
 
@@ -132,7 +132,7 @@ _icon_color_set_cb(void *data)
    icon_properties *icons = data;
    icon_properties *i;
 
-   for(n = 0; n < N_GESTURE_TYPE; n++)
+   for (n = 0; n < N_GESTURE_TYPE; n++)
      {
         i = &icons[n];
 

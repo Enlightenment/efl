@@ -193,7 +193,7 @@ _photocam_mouse_wheel_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUS
 
    val = 1;
    int _zoom = zoom;
-   while(_zoom>1)
+   while (_zoom>1)
      {
 	_zoom /= 2;
 	val++;

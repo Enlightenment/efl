@@ -217,7 +217,7 @@ my_gl_insert_before(void *data, Evas_Object *obj __UNUSED__, void *event_info __
    itc1.func.del       = gl_del;
 
    gli_selected = elm_genlist_selected_item_get(gl);
-   if(!gli_selected)
+   if (!gli_selected)
      {
         printf("no item selected\n");
         return ;
@@ -247,7 +247,7 @@ my_gl_insert_after(void *data, Evas_Object *obj __UNUSED__, void *event_info __U
    itc1.func.del       = gl_del;
 
    gli_selected = elm_genlist_selected_item_get(gl);
-   if(!gli_selected)
+   if (!gli_selected)
      {
         printf("no item selected\n");
         return ;

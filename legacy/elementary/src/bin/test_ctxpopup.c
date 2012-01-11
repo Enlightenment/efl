@@ -10,7 +10,7 @@ _dismissed(void *data __UNUSED__, Evas_Object *obj, void *event_info __UNUSED__)
 {
    void *ctxpopup_data;
    ctxpopup_data = evas_object_data_get(obj, "im");
-   if(ctxpopup_data)
+   if (ctxpopup_data)
      {
         evas_object_hide(ctxpopup_data);
         evas_object_del(ctxpopup_data);
@@ -55,12 +55,12 @@ _btn_clicked(void *data, Evas_Object *obj, void *event_info __UNUSED__)
    void *ctxpopup_data;
 
    ctxpopup_data = evas_object_data_get(data, "id");
-   if(!ctxpopup_data) return;
+   if (!ctxpopup_data) return;
 
-   if(!strcmp("list_item_6", (char *) ctxpopup_data))
+   if (!strcmp("list_item_6", (char *) ctxpopup_data))
      {
         ctxpopup_data = evas_object_data_get(data, "im");
-        if(ctxpopup_data) return;
+        if (ctxpopup_data) return;
 
         im = evas_object_image_filled_add(evas_object_evas_get(obj));
         snprintf(buf, sizeof(buf), "%s/images/%s",
@@ -83,7 +83,7 @@ _ctxpopup_item_cb(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *even
 }
 
 #define ITEM_NEW(_hov, _label, _icon)                                           \
-   if(_icon)                                                                    \
+   if (_icon)                                                                    \
      {                                                                          \
         ic = elm_icon_add(obj);                                                 \
         elm_icon_standard_set(ic, _icon);                                       \
