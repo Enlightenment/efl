@@ -47,7 +47,7 @@ struct _Elm_Store_Item
    Ecore_Job                    *eval_job;
    const Elm_Store_Item_Mapping *mapping;
    void                         *data;
-   Eina_Lock                    *lock;
+   Eina_Lock                     lock;
    Eina_Bool                     live : 1;
    Eina_Bool                     was_live : 1;
    Eina_Bool                     realized : 1;
@@ -82,24 +82,24 @@ _store_cache_trim(Elm_Store *st)
              st->realized = eina_list_remove_list(st->realized, st->realized);
              sti->realized = EINA_FALSE;
           }
-        eina_lock_take(sti->lock);
+        eina_lock_take(&sti->lock);
         if (!sti->fetched)
           {
-             eina_lock_release(sti->lock);
+             eina_lock_release(&sti->lock);
              if (sti->fetch_th)
                {
                   ecore_thread_cancel(sti->fetch_th);
                   sti->fetch_th = NULL;
                }
-             eina_lock_take(sti->lock);
+             eina_lock_take(&sti->lock);
           }
         sti->fetched = EINA_FALSE;
-        eina_lock_release(sti->lock);
+        eina_lock_release(&sti->lock);
         if (st->cb.unfetch.func)
           st->cb.unfetch.func(st->cb.unfetch.data, sti);
-        eina_lock_take(sti->lock);
+        eina_lock_take(&sti->lock);
         sti->data = NULL;
-        eina_lock_release(sti->lock);
+        eina_lock_release(&sti->lock);
      }
 }
 
@@ -130,7 +130,7 @@ _store_genlist_del(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, 
                st->cb.unfetch.func(st->cb.unfetch.data, sti);
              sti->data = NULL;
           }
-        eina_lock_free(sti->lock);
+        eina_lock_free(&sti->lock);
 	st->items = NULL;
         free(sti);
      }
@@ -145,21 +145,21 @@ static void
 _store_filesystem_fetch_do(void *data, Ecore_Thread *th __UNUSED__)
 {
    Elm_Store_Item *sti = data;
-   eina_lock_take(sti->lock);
+   eina_lock_take(&sti->lock);
    if (sti->data)
      {
-        eina_lock_release(sti->lock);
+        eina_lock_release(&sti->lock);
         return;
      }
    if (!sti->fetched)
      {
-        eina_lock_release(sti->lock);
+        eina_lock_release(&sti->lock);
         if (sti->store->cb.fetch.func)
           sti->store->cb.fetch.func(sti->store->cb.fetch.data, sti);
-        eina_lock_take(sti->lock);
+        eina_lock_take(&sti->lock);
         sti->fetched = EINA_TRUE;
      }
-   eina_lock_release(sti->lock);
+   eina_lock_release(&sti->lock);
 }
 //     ************************************************************************
 ////   * End of separate thread function.                                     *
@@ -169,9 +169,9 @@ static void
 _store_filesystem_fetch_end(void *data, Ecore_Thread *th)
 {
    Elm_Store_Item *sti = data;
-   eina_lock_take(sti->lock);
+   eina_lock_take(&sti->lock);
    if (sti->data) elm_genlist_item_update(sti->item);
-   eina_lock_release(sti->lock);
+   eina_lock_release(&sti->lock);
    if (th == sti->fetch_th) sti->fetch_th = NULL;
 }
 
@@ -180,10 +180,10 @@ static void
 _store_filesystem_fetch_cancel(void *data, Ecore_Thread *th)
 {
    Elm_Store_Item *sti = data;
-   eina_lock_take(sti->lock);
+   eina_lock_take(&sti->lock);
    if (th == sti->fetch_th) sti->fetch_th = NULL;
    if (sti->data) elm_genlist_item_update(sti->item);
-   eina_lock_release(sti->lock);
+   eina_lock_release(&sti->lock);
 }
 
 static void
@@ -266,7 +266,7 @@ _store_item_text_get(void *data, Evas_Object *obj __UNUSED__, const char *part)
 {
    Elm_Store_Item *sti = data;
    const char *s = "";
-   eina_lock_take(sti->lock);
+   eina_lock_take(&sti->lock);
    if (sti->data)
      {
         const Elm_Store_Item_Mapping *m = _store_item_mapping_find(sti, part);
@@ -286,7 +286,7 @@ _store_item_text_get(void *data, Evas_Object *obj __UNUSED__, const char *part)
                }
           }
      }
-   eina_lock_release(sti->lock);
+   eina_lock_release(&sti->lock);
    return s ? strdup(s) : NULL;
 }
 
@@ -294,7 +294,7 @@ static Evas_Object *
 _store_item_content_get(void *data, Evas_Object *obj, const char *part)
 {
    Elm_Store_Item *sti = data;
-   eina_lock_take(sti->lock);
+   eina_lock_take(&sti->lock);
    if (sti->data)
      {
         const Elm_Store_Item_Mapping *m = _store_item_mapping_find(sti, part);
@@ -340,11 +340,11 @@ _store_item_content_get(void *data, Evas_Object *obj, const char *part)
                 default:
                    break;
                }
-             eina_lock_release(sti->lock);
+             eina_lock_release(&sti->lock);
              return ic;
           }
      }
-   eina_lock_release(sti->lock);
+   eina_lock_release(&sti->lock);
    return NULL;
 }
 
@@ -442,7 +442,7 @@ _store_filesystem_list_update(void *data, Ecore_Thread *th __UNUSED__, void *msg
 
    sti = calloc(1, sizeof(Elm_Store_Item_Filesystem));
    if (!sti) goto done;
-   eina_lock_new(sti->base.lock);
+   eina_lock_new(&sti->base.lock);
    EINA_MAGIC_SET(&(sti->base), ELM_STORE_ITEM_MAGIC);
    sti->base.store = st;
    sti->base.data = info->base.data;
@@ -553,7 +553,7 @@ elm_store_free(Elm_Store *st)
                st->cb.unfetch.func(st->cb.unfetch.data, sti);
              sti->data = NULL;
           }
-        eina_lock_free(sti->lock);
+        eina_lock_free(&sti->lock);
         free(sti);
      }
    if (st->genlist)
@@ -688,9 +688,9 @@ EAPI void
 elm_store_item_data_set(Elm_Store_Item *sti, void *data)
 {
    if (!EINA_MAGIC_CHECK(sti, ELM_STORE_ITEM_MAGIC)) return;
-   eina_lock_take(sti->lock);
+   eina_lock_take(&sti->lock);
    sti->data = data;
-   eina_lock_release(sti->lock);
+   eina_lock_release(&sti->lock);
 }
 
 EAPI void *
@@ -698,9 +698,9 @@ elm_store_item_data_get(Elm_Store_Item *sti)
 {
    if (!EINA_MAGIC_CHECK(sti, ELM_STORE_ITEM_MAGIC)) return NULL;
    void *d;
-   eina_lock_take(sti->lock);
+   eina_lock_take(&sti->lock);
    d = sti->data;
-   eina_lock_release(sti->lock);
+   eina_lock_release(&sti->lock);
    return d;
 }
 
