@@ -185,12 +185,11 @@ _ecore_evas_fb_render(Ecore_Evas *ee)
 static int
 _ecore_evas_fb_init(Ecore_Evas *ee, int w, int h)
 {
+   Eina_File_Direct_Info *info;
+   Eina_Iterator *ls;
    Ecore_Fb_Input_Device *device;
    Ecore_Fb_Input_Device_Cap caps;
    int mouse_handled = 0;
-
-   DIR *input_dir;
-   struct dirent *input_entry;
 
    _ecore_evas_init_count++;
    if (_ecore_evas_init_count > 1) return _ecore_evas_init_count;
@@ -198,18 +197,14 @@ _ecore_evas_fb_init(Ecore_Evas *ee, int w, int h)
    ecore_event_evas_init();
 
    /* register all input devices */
-   input_dir = opendir("/dev/input/");
-   if (!input_dir) return _ecore_evas_init_count;
+   ls = eina_file_direct_ls("/dev/input/");
 
-   while ((input_entry = readdir(input_dir)))
+   EINA_ITERATOR_FOREACH(ls, info)
      {
-        char device_path[256];
-
-        if (strncmp(input_entry->d_name, "event", 5) != 0)
+        if (strncmp(info->path + info->name_start, "event", 5) != 0)
           continue;
 
-        snprintf(device_path, 256, "/dev/input/%s", input_entry->d_name);
-        if (!(device = ecore_fb_input_device_open(device_path)))
+        if (!(device = ecore_fb_input_device_open(info->path)))
           continue;
         ecore_fb_input_device_window_set(device, ee);
 
@@ -241,7 +236,7 @@ _ecore_evas_fb_init(Ecore_Evas *ee, int w, int h)
              ecore_evas_input_devices = eina_list_append(ecore_evas_input_devices, device);
           }
      }
-   closedir(input_dir);
+   eina_iterator_free(ls);
 
    if (!mouse_handled)
      {
