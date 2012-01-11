@@ -309,7 +309,7 @@ eng_window_resurf(Evas_GL_Wl_Window *gw)
 }
 
 int
-eng_best_depth_get(Evas_Engine_Info_GL_Wl *einfo)
+eng_best_depth_get(Evas_Engine_Info_Wayland_Egl *einfo)
 {
    if (!einfo) return 0;
    if (!einfo->info.display) return 0;

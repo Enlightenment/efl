@@ -76,6 +76,6 @@ void      eng_window_use(Evas_GL_Wl_Window *gw);
 void      eng_window_unsurf(Evas_GL_Wl_Window *gw);
 void      eng_window_resurf(Evas_GL_Wl_Window *gw);
 
-int       eng_best_depth_get(Evas_Engine_Info_GL_Wl *einfo);
+int       eng_best_depth_get(Evas_Engine_Info_Wayland_Egl *einfo);
 
 #endif

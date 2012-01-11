@@ -19,7 +19,7 @@ typedef struct _Extension_Entry             Extension_Entry;
 struct _Render_Engine
 {
    Evas_GL_Wl_Window      *win;
-   Evas_Engine_Info_GL_Wl *info;
+   Evas_Engine_Info_Wayland_Egl *info;
    Evas                    *evas;
    Tilebuf                 *tb;
    int                      end;
@@ -478,7 +478,7 @@ eng_info(Evas *e)
 {
    Evas_Engine_Info_GL_Wl *info;
 
-   info = calloc(1, sizeof(Evas_Engine_Info_GL_Wl));
+   info = calloc(1, sizeof(Evas_Engine_Info_Wayland_Egl));
    info->magic.magic = rand();
    info->func.best_depth_get = eng_best_depth_get;
    info->render_mode = EVAS_RENDER_MODE_BLOCKING;
@@ -489,10 +489,10 @@ eng_info(Evas *e)
 static void
 eng_info_free(Evas *e __UNUSED__, void *info)
 {
-   Evas_Engine_Info_GL_Wl *in;
+   Evas_Engine_Info_Wayland_Egl *in;
 // dont free! why bother? its not worth it
 //   eina_log_domain_unregister(_evas_engine_GL_X11_log_dom);
-   in = (Evas_Engine_Info_GL_Wl *)info;
+   in = (Evas_Engine_Info_Wayland_Egl *)info;
    free(in);
 }
 
@@ -599,9 +599,9 @@ static int
 eng_setup(Evas *e, void *in)
 {
    Render_Engine *re;
-   Evas_Engine_Info_GL_Wl *info;
+   Evas_Engine_Info_Wayland_Egl *info;
 
-   info = (Evas_Engine_Info_GL_Wl *)in;
+   info = (Evas_Engine_Info_Wayland_Egl *)in;
    if (!e->engine.data.output)
      {
         re = calloc(1, sizeof(Render_Engine));
