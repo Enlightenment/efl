@@ -545,7 +545,7 @@ _ecore_thread_kill(Ecore_Pthread_Worker *work)
    LKD(work->mutex);
    if (work->hash)
      eina_hash_free(work->hash);
-   free(work);
+   _ecore_thread_worker_free(work);
 }
 
 static void
@@ -595,7 +595,8 @@ _ecore_notify_handler(void        *data,
 }
 
 static void
-_ecore_short_job(Ecore_Pipe *end_pipe)
+_ecore_short_job(Ecore_Pipe *end_pipe,
+		 PH(thread))
 {
    Ecore_Pthread_Worker *work;
 
@@ -615,6 +616,7 @@ _ecore_short_job(Ecore_Pipe *end_pipe)
 
         LKU(_ecore_pending_job_threads_mutex);
 
+        work->self = thread;
         if (!work->cancel)
           work->u.short_run.func_blocking((void *)work->data, (Ecore_Thread *)work);
 
@@ -738,7 +740,7 @@ _ecore_thread_worker(Ecore_Pthread_Data *pth)
    eina_sched_prio_drop();
 
 restart:
-   if (_ecore_pending_job_threads) _ecore_short_job(pth->p);
+   if (_ecore_pending_job_threads) _ecore_short_job(pth->p, pth->thread);
    if (_ecore_pending_job_threads_feedback) _ecore_feedback_job(pth->p, pth->thread);
 
    /* FIXME: Check if there is feedback running task todo, and switch to feedback run handler. */
@@ -928,6 +930,7 @@ ecore_thread_run(Ecore_Thread_Cb func_blocking,
    work->kill = EINA_FALSE;
    work->reschedule = EINA_FALSE;
    work->data = data;
+   work->self = 0;
 
 #ifdef EFL_HAVE_THREADS
    work->hash = NULL;
@@ -1115,6 +1118,7 @@ ecore_thread_feedback_run(Ecore_Thread_Cb        func_heavy,
    worker->feedback_run = EINA_TRUE;
    worker->kill = EINA_FALSE;
    worker->reschedule = EINA_FALSE;
+   worker->self = 0;
 
    worker->u.feedback_run.send = 0;
    worker->u.feedback_run.received = 0;

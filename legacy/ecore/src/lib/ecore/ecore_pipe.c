@@ -536,7 +536,6 @@ _ecore_pipe_read(void             *data,
               else if ((ret == PIPE_FD_ERROR) &&
                        ((errno == EINTR) || (errno == EAGAIN)))
                 {
-                   _ecore_pipe_unhandle(p);
                    return ECORE_CALLBACK_RENEW;
                 }
               else
@@ -544,7 +543,6 @@ _ecore_pipe_read(void             *data,
                    ERR("An unhandled error (ret: %i errno: %i [%s])"
                        "occurred while reading from the pipe the length",
                        (int)ret, errno, strerror(errno));
-                   _ecore_pipe_unhandle(p);
                    return ECORE_CALLBACK_RENEW;
                 }
 #else
