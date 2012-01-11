@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: elementary 0.7.0.57309\n"
 "Report-Msgid-Bugs-To: enlightenment-devel@lists.sourceforge.net\n"
-"POT-Creation-Date: 2012-01-06 15:21+0900\n"
+"POT-Creation-Date: 2012-01-11 11:00+0900\n"
 "PO-Revision-Date: 2011-02-25 20:22+0100\n"
 "Last-Translator: Fabian Nowak <timystery@arcor.de>\n"
 "Language-Team: German\n"
@@ -27,7 +27,7 @@ msgstr "Aufwärts"
 msgid "Home"
 msgstr "Persönlicher Ordner"
 
-#: src/lib/elc_fileselector.c:1002 src/lib/elm_entry.c:1246
+#: src/lib/elc_fileselector.c:1002 src/lib/elm_entry.c:1267
 msgid "Cancel"
 msgstr "Abbrechen"
 
@@ -40,7 +40,7 @@ msgid "Clicked"
 msgstr ""
 
 #: src/lib/elm_button.c:408 src/lib/elm_check.c:366 src/lib/elm_radio.c:295
-#: src/lib/elm_toolbar.c:757
+#: src/lib/elm_toolbar.c:759
 msgid "State: Disabled"
 msgstr ""
 
@@ -74,19 +74,19 @@ msgstr ""
 msgid "default:LTR"
 msgstr "Standard: LTR"
 
-#: src/lib/elm_entry.c:1240
+#: src/lib/elm_entry.c:1261
 msgid "Copy"
 msgstr "Kopieren"
 
-#: src/lib/elm_entry.c:1243
+#: src/lib/elm_entry.c:1264
 msgid "Cut"
 msgstr "Ausschneiden"
 
-#: src/lib/elm_entry.c:1257
+#: src/lib/elm_entry.c:1278
 msgid "Select"
 msgstr "Auswählen"
 
-#: src/lib/elm_entry.c:1263
+#: src/lib/elm_entry.c:1284
 msgid "Paste"
 msgstr "Einfügen"
 
@@ -102,23 +102,23 @@ msgstr ""
 msgid "OFF"
 msgstr ""
 
-#: src/lib/elm_toolbar.c:674
+#: src/lib/elm_toolbar.c:676
 #, fuzzy
 msgid "Selected"
 msgstr "Auswählen"
 
-#: src/lib/elm_toolbar.c:755
+#: src/lib/elm_toolbar.c:757
 msgid "Separator"
 msgstr ""
 
-#: src/lib/elm_toolbar.c:759
+#: src/lib/elm_toolbar.c:761
 msgid "State: Selected"
 msgstr ""
 
-#: src/lib/elm_toolbar.c:761
+#: src/lib/elm_toolbar.c:763
 msgid "Has menu"
 msgstr ""
 
-#: src/lib/elm_toolbar.c:796
+#: src/lib/elm_toolbar.c:821
 msgid "Tool Item"
 msgstr ""

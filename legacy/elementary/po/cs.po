@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: enlightenment-devel@lists.sourceforge.net\n"
-"POT-Creation-Date: 2012-01-06 15:21+0900\n"
+"POT-Creation-Date: 2012-01-11 11:00+0900\n"
 "PO-Revision-Date: 2011-10-23 01:31+0100\n"
 "Last-Translator: Daniel Kolesa <quaker66@gmail.com>\n"
 "Language-Team: Czech <kde-i18n-doc@kde.org>\n"
@@ -25,7 +25,7 @@ msgstr "Nahoru"
 msgid "Home"
 msgstr "Domů"
 
-#: src/lib/elc_fileselector.c:1002 src/lib/elm_entry.c:1246
+#: src/lib/elc_fileselector.c:1002 src/lib/elm_entry.c:1267
 msgid "Cancel"
 msgstr "Zrušit"
 
@@ -38,7 +38,7 @@ msgid "Clicked"
 msgstr "Kliknuto"
 
 #: src/lib/elm_button.c:408 src/lib/elm_check.c:366 src/lib/elm_radio.c:295
-#: src/lib/elm_toolbar.c:757
+#: src/lib/elm_toolbar.c:759
 msgid "State: Disabled"
 msgstr "Stav: Zakázáno"
 
@@ -72,19 +72,19 @@ msgstr "Ověřit"
 msgid "default:LTR"
 msgstr "výchozí:LTR"
 
-#: src/lib/elm_entry.c:1240
+#: src/lib/elm_entry.c:1261
 msgid "Copy"
 msgstr "Kopírovat"
 
-#: src/lib/elm_entry.c:1243
+#: src/lib/elm_entry.c:1264
 msgid "Cut"
 msgstr "Vyjmout"
 
-#: src/lib/elm_entry.c:1257
+#: src/lib/elm_entry.c:1278
 msgid "Select"
 msgstr "Vybrat"
 
-#: src/lib/elm_entry.c:1263
+#: src/lib/elm_entry.c:1284
 msgid "Paste"
 msgstr "Vložit"
 
@@ -100,22 +100,22 @@ msgstr "ZAPNUTO"
 msgid "OFF"
 msgstr "VYPNUTO"
 
-#: src/lib/elm_toolbar.c:674
+#: src/lib/elm_toolbar.c:676
 msgid "Selected"
 msgstr "Vybrané"
 
-#: src/lib/elm_toolbar.c:755
+#: src/lib/elm_toolbar.c:757
 msgid "Separator"
 msgstr "Oddělovač"
 
-#: src/lib/elm_toolbar.c:759
+#: src/lib/elm_toolbar.c:761
 msgid "State: Selected"
 msgstr "Stav: Vybráno"
 
-#: src/lib/elm_toolbar.c:761
+#: src/lib/elm_toolbar.c:763
 msgid "Has menu"
 msgstr "Má nabídku"
 
-#: src/lib/elm_toolbar.c:796
+#: src/lib/elm_toolbar.c:821
 msgid "Tool Item"
 msgstr "Položka nástrojů"

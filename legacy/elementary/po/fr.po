@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Elementary\n"
 "Report-Msgid-Bugs-To: enlightenment-devel@lists.sourceforge.net\n"
-"POT-Creation-Date: 2012-01-06 15:21+0900\n"
+"POT-Creation-Date: 2012-01-11 11:00+0900\n"
 "PO-Revision-Date: 2011-11-08 07:57+0100\n"
 "Last-Translator: dazibao <dazibao@sfr.fr>\n"
 "Language-Team: French <sansgourou@gmail.com>\n"
@@ -29,7 +29,7 @@ msgstr "Monter"
 msgid "Home"
 msgstr "Home"
 
-#: src/lib/elc_fileselector.c:1002 src/lib/elm_entry.c:1246
+#: src/lib/elc_fileselector.c:1002 src/lib/elm_entry.c:1267
 msgid "Cancel"
 msgstr "Annuler"
 
@@ -42,7 +42,7 @@ msgid "Clicked"
 msgstr "Cliqué"
 
 #: src/lib/elm_button.c:408 src/lib/elm_check.c:366 src/lib/elm_radio.c:295
-#: src/lib/elm_toolbar.c:757
+#: src/lib/elm_toolbar.c:759
 msgid "State: Disabled"
 msgstr "État : désactivé"
 
@@ -76,19 +76,19 @@ msgstr "À cocher"
 msgid "default:LTR"
 msgstr "LTR par défaut"
 
-#: src/lib/elm_entry.c:1240
+#: src/lib/elm_entry.c:1261
 msgid "Copy"
 msgstr "Copier"
 
-#: src/lib/elm_entry.c:1243
+#: src/lib/elm_entry.c:1264
 msgid "Cut"
 msgstr "Couper"
 
-#: src/lib/elm_entry.c:1257
+#: src/lib/elm_entry.c:1278
 msgid "Select"
 msgstr "Sélectionner"
 
-#: src/lib/elm_entry.c:1263
+#: src/lib/elm_entry.c:1284
 msgid "Paste"
 msgstr "Coller"
 
@@ -104,22 +104,22 @@ msgstr "OUI"
 msgid "OFF"
 msgstr "NON"
 
-#: src/lib/elm_toolbar.c:674
+#: src/lib/elm_toolbar.c:676
 msgid "Selected"
 msgstr "Sélectionné"
 
-#: src/lib/elm_toolbar.c:755
+#: src/lib/elm_toolbar.c:757
 msgid "Separator"
 msgstr "Séparateur"
 
-#: src/lib/elm_toolbar.c:759
+#: src/lib/elm_toolbar.c:761
 msgid "State: Selected"
 msgstr "État : sélectionné"
 
-#: src/lib/elm_toolbar.c:761
+#: src/lib/elm_toolbar.c:763
 msgid "Has menu"
 msgstr "Possède un menu"
 
-#: src/lib/elm_toolbar.c:796
+#: src/lib/elm_toolbar.c:821
 msgid "Tool Item"
 msgstr "Élément outil"
