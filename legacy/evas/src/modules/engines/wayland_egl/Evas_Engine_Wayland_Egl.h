@@ -1,7 +1,5 @@
-#ifndef _EVAS_ENGINE_GL_WL_H
-#define _EVAS_ENGINE_GL_WL_H
-
-//#include <X11/Xlib.h>
+#ifndef _EVAS_ENGINE_WAYLAND_EGL_H
+#define _EVAS_ENGINE_WAYLAND_EGL_H
 
 #include <wayland-client.h>
 
