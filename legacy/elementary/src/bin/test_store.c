@@ -1,3 +1,10 @@
+/* NOTE : Before testing elm_store,
+          email data files should exist in your local storage.
+          And you can just get example files in enlightenment website.
+          Use wget to obtain it. It almost 50 Megabytes.
+          http://www.enlightenment.org/~raster/store.tar.gz
+ */
+
 #include <Elementary.h>
 
 #ifdef HAVE_CONFIG_H
