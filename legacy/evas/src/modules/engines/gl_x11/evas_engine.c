@@ -1242,16 +1242,16 @@ eng_output_redraws_next_update_get(void *data, int *x, int *y, int *w, int *h, i
 
 //#define FRAMECOUNT 1
 
-//#ifdef FRAMECOUNT
+#ifdef FRAMECOUNT
 static double
 get_time(void)
 {
-   struct timeval      timev;
+   struct timeval timev;
 
    gettimeofday(&timev, NULL);
    return (double)timev.tv_sec + (((double)timev.tv_usec) / 1000000);
 }
-//#endif
+#endif
 
 static int safe_native = -1;
 
