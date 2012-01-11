@@ -148,10 +148,6 @@ typedef struct _Ecore_WinCE_Window Ecore_WinCE_Window;
 typedef struct _Ecore_Cocoa_Window Ecore_Cocoa_Window;
 #endif
 
-#ifndef _ECORE_WAYLAND_H_
-typedef struct _Ecore_Wl_Window Ecore_Wl_Window;
-#endif
-
 #ifndef _ECORE_EVAS_PRIVATE_H
 /* basic data types */
 typedef struct _Ecore_Evas Ecore_Evas;
@@ -698,7 +694,7 @@ EAPI Ecore_Evas     *ecore_evas_directfb_new(const char *disp_name, int windowed
 EAPI Ecore_DirectFB_Window *ecore_evas_directfb_window_get(const Ecore_Evas *ee);
 
 EAPI Ecore_Evas     *ecore_evas_wayland_shm_new(const char *disp_name, int x, int y, int w, int h, int frame);
-//EAPI Ecore_Evas     *ecore_evas_wayland_egl_new(const char *disp_name, int x, int y, int w, int h, int frame);
+EAPI Ecore_Evas     *ecore_evas_wayland_egl_new(const char *disp_name, int x, int y, int w, int h, int frame);
 EAPI void            ecore_evas_wayland_shm_resize(Ecore_Evas *ee, int location);
 
 /**
