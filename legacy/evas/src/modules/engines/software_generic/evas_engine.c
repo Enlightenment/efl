@@ -265,9 +265,9 @@ static void       (*_sym_glVertexAttribPointer)                 (GLuint indx, GL
 static void       (*_sym_glViewport)                            (GLint x, GLint y, GLsizei width, GLsizei height) = NULL;
 
 // GLES Extensions...
-static void       (*_sym_glGetProgramBinary)                    (GLuint a, GLsizei b, GLsizei* c, GLenum* d, void* e) = NULL;
-static void       (*_sym_glProgramBinary)                       (GLuint a, GLenum b, const void* c, GLint d) = NULL;
-static void       (*_sym_glProgramParameteri)                   (GLuint a, GLuint b, GLint d) = NULL;
+/* static void       (*_sym_glGetProgramBinary)                    (GLuint a, GLsizei b, GLsizei* c, GLenum* d, void* e) = NULL; */
+/* static void       (*_sym_glProgramBinary)                       (GLuint a, GLenum b, const void* c, GLint d) = NULL; */
+/* static void       (*_sym_glProgramParameteri)                   (GLuint a, GLuint b, GLint d) = NULL; */
 #endif
 
 /*
@@ -1593,7 +1593,7 @@ eng_gl_make_current(void *data __UNUSED__, void *surface, void *context)
 
 // FIXME!!! Implement later
 static void *
-eng_gl_string_query(void *data, int name)
+eng_gl_string_query(void *data __UNUSED__, int name __UNUSED__)
 {
    return NULL;
 }
@@ -2469,13 +2469,7 @@ patch_gles_shader(const char *source, int length, int *patched_len)
 static void
 evgl_glShaderSource(GLuint shader, GLsizei count, const char** string, const GLint* length)
 {
-   char *newstr;
-   char *srcbk;
-   char *token = NULL;
-   char *saveptr;
-   int i = 0;
-   int len = 0;
-   int token_len = 0;
+   int i = 0, len = 0;
 
    char **s = malloc(count * sizeof(char*));
    GLint *l = malloc(count * sizeof(GLint));
@@ -2548,7 +2542,7 @@ evgl_glReleaseShaderCompiler(void)
 }
 
 static void
-evgl_glShaderBinary(GLsizei n, const GLuint* shaders, GLenum binaryformat, const void* binary, GLsizei length)
+evgl_glShaderBinary(GLsizei n __UNUSED__, const GLuint* shaders __UNUSED__, GLenum binaryformat __UNUSED__, const void* binary __UNUSED__, GLsizei length __UNUSED__)
 {
    // FIXME: need to dlsym/getprocaddress for this
    DBG("Not supported in Desktop GL");
