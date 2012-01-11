@@ -2494,18 +2494,8 @@ _eina_value_type_array_convert_to(const Eina_Value_Type *type __UNUSED__, const 
    const Eina_Value_Array *tmem = type_mem;
    Eina_Bool ret = EINA_FALSE;
 
-   if ((tmem->array) && (tmem->array->len == 1))
-     {
-        const Eina_Value_Type *subtype = tmem->subtype;
-        void *imem = tmem->array->members;
-
-        if (subtype->convert_to)
-          ret = subtype->convert_to(subtype, convert, imem, convert_mem);
-        if ((!ret) && (convert->convert_from))
-          ret = convert->convert_from(convert, subtype, convert_mem, imem);
-     }
-   else if ((convert == EINA_VALUE_TYPE_STRING) ||
-            (convert == EINA_VALUE_TYPE_STRINGSHARE))
+   if ((convert == EINA_VALUE_TYPE_STRING) ||
+       (convert == EINA_VALUE_TYPE_STRINGSHARE))
      {
         Eina_Strbuf *str = eina_strbuf_new();
         if (!tmem->array) eina_strbuf_append(str, "[]");
@@ -2558,6 +2548,16 @@ _eina_value_type_array_convert_to(const Eina_Value_Type *type __UNUSED__, const 
              ret = eina_value_type_pset(convert, convert_mem, &ptr);
              eina_strbuf_free(str);
           }
+     }
+   else if ((tmem->array) && (tmem->array->len == 1))
+     {
+        const Eina_Value_Type *subtype = tmem->subtype;
+        void *imem = tmem->array->members;
+
+        if (subtype->convert_to)
+          ret = subtype->convert_to(subtype, convert, imem, convert_mem);
+        if ((!ret) && (convert->convert_from))
+          ret = convert->convert_from(convert, subtype, convert_mem, imem);
      }
 
    if (!ret)
