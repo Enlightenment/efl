@@ -624,14 +624,14 @@ _ecore_evas_constructor_wayland_egl(int x, int y, int w, int h, const char *extr
 {
    char *disp_name = NULL;
    unsigned int frame = 0;
-//   Ecore_Evas *ee;
+   Ecore_Evas *ee;
 
    _ecore_evas_parse_extra_options_str(extra_options, "display=", &disp_name);
    _ecore_evas_parse_extra_options_uint(extra_options, "frame=", &frame);
-//   ee = ecore_evas_wayland_egl_new(disp_name, x, y, w, h, frame);
+   ee = ecore_evas_wayland_egl_new(disp_name, x, y, w, h, frame);
    free(disp_name);
 
-   return NULL;
+   return ee;
 }
 #endif
 
