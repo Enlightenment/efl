@@ -23,6 +23,7 @@
 #include "eina_fp.h" /* defines int64_t and uint64_t */
 #include "eina_inarray.h"
 #include "eina_list.h"
+#include "eina_hash.h"
 #include <stdarg.h>
 
 /**
@@ -222,6 +223,19 @@ EAPI extern const Eina_Value_Type *EINA_VALUE_TYPE_ARRAY;
  */
 EAPI extern const Eina_Value_Type *EINA_VALUE_TYPE_LIST;
 
+/**
+ * @var EINA_VALUE_TYPE_HASH
+ *
+ * manages hash type. The value get/set are the type of elements in
+ * the hash, use the alternaties:
+ *  @li eina_value_hash_get() and eina_value_hash_set()
+ *  @li eina_value_hash_vget() and eina_value_hash_vset()
+ *  @li eina_value_hash_pget() and eina_value_hash_pset()
+ *
+ * @since 1.2
+ */
+EAPI extern const Eina_Value_Type *EINA_VALUE_TYPE_HASH;
+
 
 /**
  * @var EINA_ERROR_VALUE_FAILED
@@ -383,6 +397,7 @@ static inline int eina_value_compare(const Eina_Value *a,
  * @li EINA_VALUE_TYPE_STRING: const char *
  * @li EINA_VALUE_TYPE_ARRAY: Eina_Value_Array
  * @li EINA_VALUE_TYPE_LIST: Eina_Value_List
+ * @li EINA_VALUE_TYPE_HASH: Eina_Value_Hash
  *
  * @code
  *     Eina_Value *value = eina_value_new(EINA_VALUE_TYPE_INT);
@@ -400,6 +415,7 @@ static inline int eina_value_compare(const Eina_Value *a,
  *
  * @note for array member see eina_value_array_set()
  * @note for list member see eina_value_list_set()
+ * @note for hash member see eina_value_hash_set()
  *
  * @see eina_value_get()
  * @see eina_value_vset()
@@ -439,6 +455,7 @@ static inline Eina_Bool eina_value_set(Eina_Value *value,
  * @li EINA_VALUE_TYPE_STRING: const char **
  * @li EINA_VALUE_TYPE_ARRAY: Eina_Value_Array*
  * @li EINA_VALUE_TYPE_LIST: Eina_Value_List*
+ * @li EINA_VALUE_TYPE_HASH: Eina_Value_Hash*
  *
  * @code
  *     Eina_Value *value = eina_value_new(EINA_VALUE_TYPE_INT);
@@ -459,6 +476,7 @@ static inline Eina_Bool eina_value_set(Eina_Value *value,
  *
  * @note for array member see eina_value_array_get()
  * @note for list member see eina_value_list_get()
+ * @note for hash member see eina_value_hash_get()
  *
  * @see eina_value_set()
  * @see eina_value_vset()
@@ -477,6 +495,7 @@ static inline Eina_Bool eina_value_get(const Eina_Value *value,
  *
  * @note for array member see eina_value_array_vset()
  * @note for list member see eina_value_list_vset()
+ * @note for hash member see eina_value_hash_vset()
  *
  * @see eina_value_vget()
  * @see eina_value_set()
@@ -500,6 +519,7 @@ static inline Eina_Bool eina_value_vset(Eina_Value *value,
  *
  * @note for array member see eina_value_array_vget()
  * @note for list member see eina_value_list_vget()
+ * @note for hash member see eina_value_hash_vget()
  *
  * @see eina_value_vset()
  * @see eina_value_get()
@@ -535,6 +555,7 @@ static inline Eina_Bool eina_value_vget(const Eina_Value *value,
  * @li EINA_VALUE_TYPE_STRING: const char **
  * @li EINA_VALUE_TYPE_ARRAY: Eina_Value_Array*
  * @li EINA_VALUE_TYPE_LIST: Eina_Value_List*
+ * @li EINA_VALUE_TYPE_HASH: Eina_Value_Hash*
  *
  * @note the pointer contents are written using the size defined by
  *       type. It can be larger than void* or uint64_t.
@@ -556,6 +577,7 @@ static inline Eina_Bool eina_value_vget(const Eina_Value *value,
  *
  * @note for array member see eina_value_array_pset()
  * @note for list member see eina_value_list_pset()
+ * @note for hash member see eina_value_hash_pset()
  *
  * @see eina_value_pget()
  * @see eina_value_set()
@@ -596,6 +618,7 @@ static inline Eina_Bool eina_value_pset(Eina_Value *value,
  * @li EINA_VALUE_TYPE_STRING: const char **
  * @li EINA_VALUE_TYPE_ARRAY: Eina_Value_Array*
  * @li EINA_VALUE_TYPE_LIST: Eina_Value_List*
+ * @li EINA_VALUE_TYPE_HASH: Eina_Value_Hash*
  *
  * @code
  *     Eina_Value *value = eina_value_new(EINA_VALUE_TYPE_INT);
@@ -616,6 +639,7 @@ static inline Eina_Bool eina_value_pset(Eina_Value *value,
  *
  * @note for array member see eina_value_array_get()
  * @note for list member see eina_value_list_get()
+ * @note for hash member see eina_value_hash_get()
  *
  * @see eina_value_set()
  * @see eina_value_vset()
@@ -800,9 +824,11 @@ static inline Eina_Bool eina_value_array_remove(Eina_Value *value,
  * @li EINA_VALUE_TYPE_STRINGSHARE: const char *
  * @li EINA_VALUE_TYPE_STRING: const char *
  * @li EINA_VALUE_TYPE_ARRAY: Eina_Value_Array
+ * @li EINA_VALUE_TYPE_LIST: Eina_Value_List
+ * @li EINA_VALUE_TYPE_HASH: Eina_Value_Hash
  *
  * @code
- *     Eina_Value *value = eina_value_array_new(EINA_VALUE_TYPE_INT);
+ *     Eina_Value *value = eina_value_array_new(EINA_VALUE_TYPE_INT, 0);
  *     int x;
  *
  *     eina_value_array_append(value, 1234);
@@ -856,9 +882,11 @@ static inline Eina_Bool eina_value_array_set(Eina_Value *value,
  * @li EINA_VALUE_TYPE_STRINGSHARE: const char **
  * @li EINA_VALUE_TYPE_STRING: const char **
  * @li EINA_VALUE_TYPE_ARRAY: Eina_Value_Array*
+ * @li EINA_VALUE_TYPE_LIST: Eina_Value_List*
+ * @li EINA_VALUE_TYPE_HASH: Eina_Value_Hash*
  *
  * @code
- *     Eina_Value *value = eina_value_array_new(EINA_VALUE_TYPE_INT);
+ *     Eina_Value *value = eina_value_array_new(EINA_VALUE_TYPE_INT, 0);
  *     int x;
  *
  *     eina_value_array_append(value, 1234);
@@ -900,9 +928,11 @@ static inline Eina_Bool eina_value_array_get(const Eina_Value *value,
  * @li EINA_VALUE_TYPE_STRINGSHARE: const char *
  * @li EINA_VALUE_TYPE_STRING: const char *
  * @li EINA_VALUE_TYPE_ARRAY: Eina_Value_Array
+ * @li EINA_VALUE_TYPE_LIST: Eina_Value_List
+ * @li EINA_VALUE_TYPE_HASH: Eina_Value_Hash
  *
  * @code
- *     Eina_Value *value = eina_value_array_new(EINA_VALUE_TYPE_INT);
+ *     Eina_Value *value = eina_value_array_new(EINA_VALUE_TYPE_INT, 0);
  *     int x;
  *
  *     eina_value_array_insert(value, 0, 1234);
@@ -950,9 +980,11 @@ static inline Eina_Bool eina_value_array_insert(Eina_Value *value,
  * @li EINA_VALUE_TYPE_STRINGSHARE: const char *
  * @li EINA_VALUE_TYPE_STRING: const char *
  * @li EINA_VALUE_TYPE_ARRAY: Eina_Value_Array
+ * @li EINA_VALUE_TYPE_LIST: Eina_Value_List
+ * @li EINA_VALUE_TYPE_HASH: Eina_Value_Hash
  *
  * @code
- *     Eina_Value *value = eina_value_array_new(EINA_VALUE_TYPE_INT);
+ *     Eina_Value *value = eina_value_array_new(EINA_VALUE_TYPE_INT, 0);
  *     int x;
  *
  *     eina_value_array_append(value, 1234);
@@ -1086,12 +1118,14 @@ static inline Eina_Bool eina_value_array_vappend(Eina_Value *value,
  * @li EINA_VALUE_TYPE_STRINGSHARE: const char **
  * @li EINA_VALUE_TYPE_STRING: const char **
  * @li EINA_VALUE_TYPE_ARRAY: Eina_Value_Array*
+ * @li EINA_VALUE_TYPE_LIST: Eina_Value_List
+ * @li EINA_VALUE_TYPE_HASH: Eina_Value_Hash
  *
  * @note the pointer contents are written using the size defined by
  *       type. It can be larger than void* or uint64_t.
  *
  * @code
- *     Eina_Value *value = eina_value_array_new(EINA_VALUE_TYPE_INT);
+ *     Eina_Value *value = eina_value_array_new(EINA_VALUE_TYPE_INT, 0);
  *     int x = 1234;
  *
  *     eina_value_array_append(value, 1234);
@@ -1146,9 +1180,11 @@ static inline Eina_Bool eina_value_array_pset(Eina_Value *value,
  * @li EINA_VALUE_TYPE_STRINGSHARE: const char **
  * @li EINA_VALUE_TYPE_STRING: const char **
  * @li EINA_VALUE_TYPE_ARRAY: Eina_Value_Array*
+ * @li EINA_VALUE_TYPE_LIST: Eina_Value_List
+ * @li EINA_VALUE_TYPE_HASH: Eina_Value_Hash
  *
  * @code
- *     Eina_Value *value = eina_value_array_new(EINA_VALUE_TYPE_INT);
+ *     Eina_Value *value = eina_value_array_new(EINA_VALUE_TYPE_INT, 0);
  *     int x;
  *
  *     eina_value_array_append(value, 1234);
@@ -1191,12 +1227,14 @@ static inline Eina_Bool eina_value_array_pget(const Eina_Value *value,
  * @li EINA_VALUE_TYPE_STRINGSHARE: const char **
  * @li EINA_VALUE_TYPE_STRING: const char **
  * @li EINA_VALUE_TYPE_ARRAY: Eina_Value_Array*
+ * @li EINA_VALUE_TYPE_LIST: Eina_Value_List
+ * @li EINA_VALUE_TYPE_HASH: Eina_Value_Hash
  *
  * @note the pointer contents are written using the size defined by
  *       type. It can be larger than void* or uint64_t.
  *
  * @code
- *     Eina_Value *value = eina_value_array_new(EINA_VALUE_TYPE_INT);
+ *     Eina_Value *value = eina_value_array_new(EINA_VALUE_TYPE_INT, 0);
  *     int x = 1234;
  *
  *     eina_value_array_pinsert(value, 0, &x);
@@ -1244,12 +1282,14 @@ static inline Eina_Bool eina_value_array_pinsert(Eina_Value *value,
  * @li EINA_VALUE_TYPE_STRINGSHARE: const char **
  * @li EINA_VALUE_TYPE_STRING: const char **
  * @li EINA_VALUE_TYPE_ARRAY: Eina_Value_Array*
+ * @li EINA_VALUE_TYPE_LIST: Eina_Value_List
+ * @li EINA_VALUE_TYPE_HASH: Eina_Value_Hash
  *
  * @note the pointer contents are written using the size defined by
  *       type. It can be larger than void* or uint64_t.
  *
  * @code
- *     Eina_Value *value = eina_value_array_new(EINA_VALUE_TYPE_INT);
+ *     Eina_Value *value = eina_value_array_new(EINA_VALUE_TYPE_INT, 0);
  *     int x = 1234;
  *
  *     eina_value_array_pappend(value, &x);
@@ -1866,6 +1906,336 @@ static inline Eina_Bool eina_value_list_pappend(Eina_Value *value,
 /**
  * @}
  */
+
+/**
+ * @defgroup Eina_Value_Hash_Group Generic Value Hash management
+ *
+ * @{
+ */
+
+/**
+ * @typedef Eina_Value_Hash
+ * Value type for #EINA_VALUE_TYPE_HASH
+ *
+ * @since 1.2
+ */
+typedef struct _Eina_Value_Hash Eina_Value_Hash;
+
+/**
+ * @struct _Eina_Value_Hash
+ * Used to store the hash and its subtype.
+ */
+struct _Eina_Value_Hash
+{
+   const Eina_Value_Type *subtype; /**< how to allocate and access items */
+   unsigned int buckets_power_size; /**< how to allocate hash buckets, if zero a sane default is chosen. */
+   Eina_Hash *hash; /**< the hash that holds data, members are of subtype->value_size bytes. */
+};
+
+/**
+ * @brief Create generic value storage of type hash.
+ * @param subtype how to manage this hash members.
+ * @param buckets_power_size how to allocate hash buckets (2 ^
+ *        buckets_power_size), if zero then a sane value is chosen.
+ * @return The new value or @c NULL on failure.
+ *
+ * Create a new generic value storage of type hash. The members are
+ * managed using the description specified by @a subtype.
+ *
+ * On failure, @c NULL is returned and #EINA_ERROR_OUT_OF_MEMORY or
+ * #EINA_ERROR_VALUE_FAILED is set.
+ *
+ * @note this is a helper around eina_value_hash_setup() doing malloc
+ *       for you.
+ *
+ * @see eina_value_free()
+ * @see eina_value_hash_setup()
+ *
+ * @since 1.2
+ */
+EAPI Eina_Value *eina_value_hash_new(const Eina_Value_Type *subtype, unsigned int buckets_power_size) EINA_ARG_NONNULL(1);
+
+/**
+ * @brief Setup generic value storage of type hash.
+ * @param value value object
+ * @param subtype how to manage this hash members.
+ * @param buckets_power_size how to allocate hash buckets (2 ^
+ *        buckets_power_size), if zero then a sane value is chosen.
+ * @return #EINA_TRUE on success, #EINA_FALSE otherwise.
+ *
+ * Setups new generic value storage of type hash with the given
+ * @a subtype.
+ *
+ * This is the same as calling eina_value_set() with
+ * #EINA_VALUE_TYPE_HASH followed by eina_value_pset() with the
+ * #Eina_Value_Hash description configured.
+ *
+ * @note Existing memory is ignored! If it was previously set, then
+ *       use eina_value_flush() first.
+ *
+ * On failure, #EINA_FALSE is returned and #EINA_ERROR_OUT_OF_MEMORY
+ * or #EINA_ERROR_VALUE_FAILED is set.
+ *
+ * @see eina_value_flush()
+ *
+ * @since 1.2
+ */
+static inline Eina_Bool eina_value_hash_setup(Eina_Value *value,
+                                              const Eina_Value_Type *subtype,
+                                              unsigned int buckets_power_size) EINA_ARG_NONNULL(1, 2);
+
+/**
+ * @brief Query number of elements in value of hash type.
+ * @param value value object.
+ * @return number of child elements.
+ * @since 1.2
+ */
+static inline unsigned int eina_value_hash_population(const Eina_Value *value);
+
+/**
+ * @brief Remove element at given position in value of hash type.
+ * @param value value object.
+ * @param key key to find the member
+ * @return #EINA_TRUE on success, #EINA_FALSE otherwise.
+ * @since 1.2
+ */
+static inline Eina_Bool eina_value_hash_del(Eina_Value *value,
+                                            const char *key) EINA_ARG_NONNULL(1);
+
+/**
+ * @brief Set the generic value in an hash member.
+ * @param value source value object
+ * @param key key to find the member
+ * @return #EINA_TRUE on success, #EINA_FALSE otherwise.
+ *
+ * The variable argument is dependent on chosen subtype. The hash for
+ * basic types:
+ *
+ * @li EINA_VALUE_TYPE_UCHAR: unsigned char
+ * @li EINA_VALUE_TYPE_USHORT: unsigned short
+ * @li EINA_VALUE_TYPE_UINT: unsigned int
+ * @li EINA_VALUE_TYPE_ULONG: unsigned long
+ * @li EINA_VALUE_TYPE_UINT64: uint64_t
+ * @li EINA_VALUE_TYPE_CHAR: char
+ * @li EINA_VALUE_TYPE_SHORT: short
+ * @li EINA_VALUE_TYPE_INT: int
+ * @li EINA_VALUE_TYPE_LONG: long
+ * @li EINA_VALUE_TYPE_INT64: int64_t
+ * @li EINA_VALUE_TYPE_FLOAT: float
+ * @li EINA_VALUE_TYPE_DOUBLE: double
+ * @li EINA_VALUE_TYPE_STRINGSHARE: const char *
+ * @li EINA_VALUE_TYPE_STRING: const char *
+ * @li EINA_VALUE_TYPE_HASH: Eina_Value_Hash
+ *
+ * @code
+ *     Eina_Value *value = eina_value_hash_new(EINA_VALUE_TYPE_INT, 0);
+ *     int x;
+ *
+ *     eina_value_hash_set(value, "abc", 5678);
+ *     eina_value_hash_get(value, "abc", &x);
+ *     eina_value_free(value);
+ * @endcode
+ *
+ * @see eina_value_hash_get()
+ * @see eina_value_hash_vset()
+ * @see eina_value_hash_pset()
+ * @see eina_value_hash_del()
+ *
+ * @since 1.2
+ */
+static inline Eina_Bool eina_value_hash_set(Eina_Value *value,
+                                            const char *key,
+                                            ...) EINA_ARG_NONNULL(1);
+
+/**
+ * @brief Get the generic value from an hash member.
+ * @param value source value object
+ * @param key key to find the member
+ * @return #EINA_TRUE on success, #EINA_FALSE otherwise.
+ *
+ * The value is returned in the variable argument parameter, the
+ * actual value is type-dependent, but usually it will be what is
+ * stored inside the object. There shouldn't be any memory allocation,
+ * thus the contents should @b not be free'd.
+ *
+ * The variable argument is dependent on chosen subtype. The hash for
+ * basic types:
+ *
+ * @li EINA_VALUE_TYPE_UCHAR: unsigned char*
+ * @li EINA_VALUE_TYPE_USHORT: unsigned short*
+ * @li EINA_VALUE_TYPE_UINT: unsigned int*
+ * @li EINA_VALUE_TYPE_ULONG: unsigned long*
+ * @li EINA_VALUE_TYPE_UINT64: uint64_t*
+ * @li EINA_VALUE_TYPE_CHAR: char*
+ * @li EINA_VALUE_TYPE_SHORT: short*
+ * @li EINA_VALUE_TYPE_INT: int*
+ * @li EINA_VALUE_TYPE_LONG: long*
+ * @li EINA_VALUE_TYPE_INT64: int64_t*
+ * @li EINA_VALUE_TYPE_FLOAT: float*
+ * @li EINA_VALUE_TYPE_DOUBLE: double*
+ * @li EINA_VALUE_TYPE_STRINGSHARE: const char **
+ * @li EINA_VALUE_TYPE_STRING: const char **
+ * @li EINA_VALUE_TYPE_HASH: Eina_Value_Hash*
+ *
+ * @code
+ *     Eina_Value *value = eina_value_hash_new(EINA_VALUE_TYPE_INT, 0);
+ *     int x;
+ *
+ *     eina_value_hash_set(value, "abc", 1234);
+ *     eina_value_hash_get(value, "abc", &x);
+ *     eina_value_free(value);
+ * @endcode
+ *
+ * @see eina_value_hash_set()
+ * @see eina_value_hash_vset()
+ * @see eina_value_hash_pset()
+ *
+ * @since 1.2
+ */
+static inline Eina_Bool eina_value_hash_get(const Eina_Value *value,
+                                            const char *key,
+                                            ...) EINA_ARG_NONNULL(1);
+
+/**
+ * @brief Set the generic value in an hash member.
+ * @param value source value object
+ * @param key key to find the member
+ * @param args variable argument
+ * @return #EINA_TRUE on success, #EINA_FALSE otherwise.
+ * @see eina_value_hash_set()
+ * @see eina_value_hash_get()
+ * @see eina_value_hash_pset()
+ *
+ * @since 1.2
+ */
+static inline Eina_Bool eina_value_hash_vset(Eina_Value *value,
+                                             const char *key,
+                                             va_list args) EINA_ARG_NONNULL(1);
+
+/**
+ * @brief Get the generic value from an hash member.
+ * @param value source value object
+ * @param key key to find the member
+ * @param args variable argument
+ * @return #EINA_TRUE on success, #EINA_FALSE otherwise.
+ *
+ * The value is returned in the variable argument parameter, the
+ * actual value is type-dependent, but usually it will be what is
+ * stored inside the object. There shouldn't be any memory allocation,
+ * thus the contents should @b not be free'd.
+ *
+ * @see eina_value_hash_vset()
+ * @see eina_value_hash_get()
+ * @see eina_value_hash_pget()
+ *
+ * @since 1.2
+ */
+static inline Eina_Bool eina_value_hash_vget(const Eina_Value *value,
+                                             const char *key,
+                                             va_list args) EINA_ARG_NONNULL(1);
+
+/**
+ * @brief Set the generic value in an hash member from pointer.
+ * @param value source value object
+ * @param key key to find the member
+ * @param ptr pointer to specify the contents.
+ * @return #EINA_TRUE on success, #EINA_FALSE otherwise.
+ *
+ * The pointer type is dependent on chosen value type. The hash for
+ * basic types:
+ *
+ * @li EINA_VALUE_TYPE_UCHAR: unsigned char*
+ * @li EINA_VALUE_TYPE_USHORT: unsigned short*
+ * @li EINA_VALUE_TYPE_UINT: unsigned int*
+ * @li EINA_VALUE_TYPE_ULONG: unsigned long*
+ * @li EINA_VALUE_TYPE_UINT64: uint64_t*
+ * @li EINA_VALUE_TYPE_CHAR: char*
+ * @li EINA_VALUE_TYPE_SHORT: short*
+ * @li EINA_VALUE_TYPE_INT: int*
+ * @li EINA_VALUE_TYPE_LONG: long*
+ * @li EINA_VALUE_TYPE_INT64: int64_t*
+ * @li EINA_VALUE_TYPE_FLOAT: float*
+ * @li EINA_VALUE_TYPE_DOUBLE: double*
+ * @li EINA_VALUE_TYPE_STRINGSHARE: const char **
+ * @li EINA_VALUE_TYPE_STRING: const char **
+ * @li EINA_VALUE_TYPE_HASH: Eina_Value_Hash*
+ *
+ * @note the pointer contents are written using the size defined by
+ *       type. It can be larger than void* or uint64_t.
+ *
+ * @code
+ *     Eina_Value *value = eina_value_hash_new(EINA_VALUE_TYPE_INT, 0);
+ *     int x = 1234;
+ *
+ *     eina_value_hash_pset(value, "abc", &x);
+ *     eina_value_hash_pget(value, "abc", &x);
+ *     eina_value_free(value);
+ * @endcode
+ *
+ * @see eina_value_hash_set()
+ * @see eina_value_hash_get()
+ * @see eina_value_hash_vset()
+ *
+ * @since 1.2
+ */
+static inline Eina_Bool eina_value_hash_pset(Eina_Value *value,
+                                             const char *key,
+                                             const void *ptr) EINA_ARG_NONNULL(1, 3);
+
+/**
+ * @brief Get the generic value to pointer from an hash member.
+ * @param value source value object
+ * @param key key to find the member
+ * @param ptr pointer to receive the contents.
+ * @return #EINA_TRUE on success, #EINA_FALSE otherwise.
+ *
+ * The value is returned in pointer contents, the actual value is
+ * type-dependent, but usually it will be what is stored inside the
+ * object. There shouldn't be any memory allocation, thus the contents
+ * should @b not be free'd.
+ *
+ * The pointer type is dependent on chosen value type. The hash for
+ * basic types:
+ *
+ * @li EINA_VALUE_TYPE_UCHAR: unsigned char*
+ * @li EINA_VALUE_TYPE_USHORT: unsigned short*
+ * @li EINA_VALUE_TYPE_UINT: unsigned int*
+ * @li EINA_VALUE_TYPE_ULONG: unsigned long*
+ * @li EINA_VALUE_TYPE_UINT64: uint64_t*
+ * @li EINA_VALUE_TYPE_CHAR: char*
+ * @li EINA_VALUE_TYPE_SHORT: short*
+ * @li EINA_VALUE_TYPE_INT: int*
+ * @li EINA_VALUE_TYPE_LONG: long*
+ * @li EINA_VALUE_TYPE_INT64: int64_t*
+ * @li EINA_VALUE_TYPE_FLOAT: float*
+ * @li EINA_VALUE_TYPE_DOUBLE: double*
+ * @li EINA_VALUE_TYPE_STRINGSHARE: const char **
+ * @li EINA_VALUE_TYPE_STRING: const char **
+ * @li EINA_VALUE_TYPE_HASH: Eina_Value_Hash*
+ *
+ * @code
+ *     Eina_Value *value = eina_value_hash_new(EINA_VALUE_TYPE_INT, 0);
+ *     int x;
+ *
+ *     eina_value_hash_set(value, "abc", 1234);
+ *     eina_value_hash_pget(value, "abc", &x);
+ *     eina_value_free(value);
+ * @endcode
+ *
+ * @see eina_value_hash_set()
+ * @see eina_value_hash_vset()
+ * @see eina_value_hash_pset()
+ *
+ * @since 1.2
+ */
+static inline Eina_Bool eina_value_hash_pget(const Eina_Value *value,
+                                             const char *key,
+                                             void *ptr) EINA_ARG_NONNULL(1, 3);
+
+/**
+ * @}
+ */
+
 
 /**
  * @defgroup Eina_Value_Type_Group Generic Value Type management

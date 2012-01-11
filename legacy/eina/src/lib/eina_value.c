@@ -2962,6 +2962,371 @@ static const Eina_Value_Type _EINA_VALUE_TYPE_LIST = {
   _eina_value_type_list_pget
 };
 
+static Eina_Bool
+_eina_value_type_hash_setup(const Eina_Value_Type *type __UNUSED__, void *mem)
+{
+   memset(mem, 0, sizeof(Eina_Value_Hash));
+   return EINA_TRUE;
+}
+
+struct _eina_value_type_hash_flush_each_ctx
+{
+   const Eina_Value_Type *subtype;
+   Eina_Bool ret;
+};
+
+static Eina_Bool
+_eina_value_type_hash_flush_each(const Eina_Hash *hash __UNUSED__, const void *key __UNUSED__, void *mem, void *user_data)
+{
+   struct _eina_value_type_hash_flush_each_ctx *ctx = user_data;
+   ctx->ret &= eina_value_type_flush(ctx->subtype, mem);
+   return EINA_TRUE;
+}
+
+static Eina_Bool
+_eina_value_type_hash_flush_elements(Eina_Value_Hash *tmem)
+{
+   struct _eina_value_type_hash_flush_each_ctx ctx = {
+     tmem->subtype,
+     EINA_TRUE
+   };
+
+   if (!tmem->hash) return EINA_TRUE;
+
+   eina_hash_foreach(tmem->hash, _eina_value_type_hash_flush_each, &ctx);
+   eina_hash_free(tmem->hash);
+   tmem->hash = NULL;
+   return ctx.ret;
+}
+
+static Eina_Bool
+_eina_value_type_hash_flush(const Eina_Value_Type *type __UNUSED__, void *mem)
+{
+   Eina_Value_Hash *tmem = mem;
+   Eina_Bool ret =_eina_value_type_hash_flush_elements(tmem);
+   tmem->subtype = NULL;
+   return ret;
+}
+
+static unsigned int
+_eina_value_hash_key_length(const void *key)
+{
+   if (!key)
+      return 0;
+   return (int)strlen(key) + 1;
+}
+
+static int
+_eina_value_hash_key_cmp(const void *key1, int key1_len, const void *key2, int key2_len)
+{
+   int r = key1_len - key2_len;
+   if (r != 0)
+     return r;
+   return strcmp(key1, key2);
+}
+
+static Eina_Bool
+_eina_value_type_hash_create(Eina_Value_Hash *desc)
+{
+   if (!desc->buckets_power_size)
+     desc->buckets_power_size = 5;
+
+   desc->hash = eina_hash_new(_eina_value_hash_key_length,
+                              _eina_value_hash_key_cmp,
+                              EINA_KEY_HASH(eina_hash_superfast),
+                              NULL, desc->buckets_power_size);
+   return !!desc->hash;
+}
+
+struct _eina_value_type_hash_copy_each_ctx
+{
+   const Eina_Value_Type *subtype;
+   Eina_Value_Hash *dest;
+   Eina_Bool ret;
+};
+
+static Eina_Bool
+_eina_value_type_hash_copy_each(const Eina_Hash *hash __UNUSED__, const void *key, void *_ptr, void *user_data)
+{
+   struct _eina_value_type_hash_copy_each_ctx *ctx = user_data;
+   const void *ptr = _ptr;
+   void *imem = malloc(ctx->subtype->value_size);
+   if (!imem)
+     {
+        ctx->ret = EINA_FALSE;
+        return EINA_FALSE;
+     }
+   if (!ctx->subtype->copy(ctx->subtype, ptr, imem))
+     {
+        free(imem);
+        ctx->ret = EINA_FALSE;
+        return EINA_FALSE;
+     }
+   if (!eina_hash_add(ctx->dest->hash, key, imem))
+     {
+        eina_value_type_flush(ctx->subtype, imem);
+        free(imem);
+        ctx->ret = EINA_FALSE;
+        return EINA_FALSE;
+     }
+   return EINA_TRUE;
+}
+
+static Eina_Bool
+_eina_value_type_hash_copy(const Eina_Value_Type *type __UNUSED__, const void *src, void *dst)
+{
+   const Eina_Value_Hash *s = src;
+   Eina_Value_Hash *d = dst;
+   struct _eina_value_type_hash_copy_each_ctx ctx = {s->subtype, d, EINA_TRUE};
+
+   d->subtype = s->subtype;
+   d->buckets_power_size = s->buckets_power_size;
+
+   if ((!s->hash) || (!s->subtype))
+     {
+        d->hash = NULL;
+        return EINA_TRUE;
+     }
+
+   if (!s->subtype->copy)
+     {
+        eina_error_set(EINA_ERROR_VALUE_FAILED);
+        return EINA_FALSE;
+     }
+
+   if (!_eina_value_type_hash_create(d))
+     return EINA_FALSE;
+
+   eina_hash_foreach(s->hash, _eina_value_type_hash_copy_each, &ctx);
+   if (!ctx.ret)
+     {
+        _eina_value_type_hash_flush_elements(d);
+        return EINA_FALSE;
+     }
+   return EINA_TRUE;
+}
+
+struct _eina_value_type_hash_compare_each_ctx
+{
+   const Eina_Value_Type *subtype;
+   const Eina_Hash *other;
+   int cmp;
+};
+
+static Eina_Bool
+_eina_value_type_hash_compare_each(const Eina_Hash *hash __UNUSED__, const void *key, void *_ptr, void *user_data)
+{
+   struct _eina_value_type_hash_compare_each_ctx *ctx = user_data;
+   const void *self_ptr = _ptr;
+   const void *other_ptr = eina_hash_find(ctx->other, key);
+   if (!other_ptr) return EINA_TRUE;
+   ctx->cmp = ctx->subtype->compare(ctx->subtype, self_ptr, other_ptr);
+   return ctx->cmp == 0;
+}
+
+static int
+_eina_value_type_hash_compare(const Eina_Value_Type *type __UNUSED__, const void *a, const void *b)
+{
+   const Eina_Value_Hash *eva_a = a, *eva_b = b;
+   struct _eina_value_type_hash_compare_each_ctx ctx = {
+     eva_a->subtype, eva_b->hash, 0
+   };
+
+   if (eva_a->subtype != eva_b->subtype)
+     {
+        eina_error_set(EINA_ERROR_VALUE_FAILED);
+        return -1;
+     }
+
+   if (!eva_a->subtype->compare)
+     {
+        eina_error_set(EINA_ERROR_VALUE_FAILED);
+        return 0;
+     }
+
+   if ((!eva_a->hash) && (!eva_b->hash))
+     return 0;
+   else if (!eva_a->hash)
+     return -1;
+   else if (!eva_b->hash)
+     return 1;
+
+   eina_hash_foreach(eva_a->hash, _eina_value_type_hash_compare_each, &ctx);
+   if (ctx.cmp == 0)
+     {
+        unsigned int count_a = eina_hash_population(eva_a->hash);
+        unsigned int count_b = eina_hash_population(eva_b->hash);
+        if (count_a < count_b)
+          return -1;
+        else if (count_a > count_b)
+          return 1;
+        return 0;
+     }
+
+   return ctx.cmp;
+}
+
+static Eina_Bool
+_eina_value_type_hash_find_first(const Eina_Hash *hash __UNUSED__, const void *key __UNUSED__, void *ptr, void *user_data)
+{
+   void **ret = user_data;
+   *ret = ptr;
+   return EINA_FALSE;
+}
+
+struct _eina_value_type_hash_convert_to_string_each_ctx
+{
+   const Eina_Value_Type *subtype;
+   Eina_Strbuf *str;
+   Eina_Value tmp;
+   Eina_Bool first;
+};
+
+static Eina_Bool
+_eina_value_type_hash_convert_to_string_each(const Eina_Hash *hash __UNUSED__, const void *_key, void *_ptr, void *user_data)
+{
+   struct _eina_value_type_hash_convert_to_string_each_ctx *ctx = user_data;
+   const char *key = _key;
+   const void *ptr = _ptr;
+   Eina_Bool r = EINA_FALSE;
+
+   if (ctx->first) ctx->first = EINA_FALSE;
+   else eina_strbuf_append_length(ctx->str, ", ", 2);
+
+   eina_strbuf_append(ctx->str, key);
+   eina_strbuf_append_length(ctx->str, ": ", 2);
+
+   if (ctx->subtype->convert_to)
+     {
+        r = ctx->subtype->convert_to(ctx->subtype, EINA_VALUE_TYPE_STRING,
+                                     ptr, ctx->tmp.value.buf);
+        if (r)
+          {
+             eina_strbuf_append(ctx->str, ctx->tmp.value.ptr);
+             free(ctx->tmp.value.ptr);
+             ctx->tmp.value.ptr = NULL;
+          }
+     }
+
+   if (!r)
+     eina_strbuf_append_char(ctx->str, '?');
+
+   return EINA_TRUE;
+}
+
+static Eina_Bool
+_eina_value_type_hash_convert_to(const Eina_Value_Type *type __UNUSED__, const Eina_Value_Type *convert, const void *type_mem, void *convert_mem)
+{
+   const Eina_Value_Hash *tmem = type_mem;
+   Eina_Bool ret = EINA_FALSE;
+
+   if ((convert == EINA_VALUE_TYPE_STRING) ||
+       (convert == EINA_VALUE_TYPE_STRINGSHARE))
+     {
+        Eina_Strbuf *str = eina_strbuf_new();
+        if (!tmem->hash) eina_strbuf_append(str, "{}");
+        else
+          {
+             struct _eina_value_type_hash_convert_to_string_each_ctx ctx;
+             const char *s;
+
+             ctx.subtype = tmem->subtype;
+             ctx.str = str;
+             ctx.first = EINA_TRUE;
+             eina_value_setup(&ctx.tmp, EINA_VALUE_TYPE_STRING);
+
+             eina_strbuf_append_char(str, '{');
+
+             eina_hash_foreach(tmem->hash,
+                               _eina_value_type_hash_convert_to_string_each,
+                               &ctx);
+
+             eina_strbuf_append_char(str, '}');
+             s = eina_strbuf_string_get(str);
+             ret = eina_value_type_pset(convert, convert_mem, &s);
+             eina_strbuf_free(str);
+          }
+     }
+   else if ((tmem->hash) && (eina_hash_population(tmem->hash) == 1))
+     {
+        const Eina_Value_Type *subtype = tmem->subtype;
+        void *imem = NULL;
+
+        eina_hash_foreach(tmem->hash, _eina_value_type_hash_find_first, &imem);
+        if (!imem) /* shouldn't happen... */
+          ret = EINA_FALSE;
+        else
+          {
+             if (subtype->convert_to)
+               ret = subtype->convert_to(subtype, convert, imem, convert_mem);
+             if ((!ret) && (convert->convert_from))
+               ret = convert->convert_from(convert, subtype, convert_mem, imem);
+          }
+     }
+
+   if (!ret)
+     {
+        eina_error_set(EINA_ERROR_VALUE_FAILED);
+        return EINA_FALSE;
+     }
+   return EINA_TRUE;
+}
+
+static Eina_Bool
+_eina_value_type_hash_pset(const Eina_Value_Type *type __UNUSED__, void *mem, const void *ptr)
+{
+   Eina_Value_Hash *tmem = mem;
+   const Eina_Value_Hash *desc = ptr;
+   unsigned int buckets_power;
+
+   if ((!tmem->subtype) && (!desc->subtype))
+     return EINA_TRUE;
+
+   if (desc->buckets_power_size)
+     buckets_power = desc->buckets_power_size;
+   else
+     buckets_power = 5;
+
+   if (tmem->hash) _eina_value_type_hash_flush_elements(tmem);
+
+   if (!_eina_value_type_hash_create(tmem))
+     return EINA_FALSE;
+
+   tmem->subtype = desc->subtype;
+
+   return EINA_TRUE;
+}
+
+static Eina_Bool
+_eina_value_type_hash_vset(const Eina_Value_Type *type, void *mem, va_list args)
+{
+   const Eina_Value_Hash desc = va_arg(args, Eina_Value_Hash);
+   _eina_value_type_hash_pset(type, mem, &desc);
+   return EINA_TRUE;
+}
+
+static Eina_Bool
+_eina_value_type_hash_pget(const Eina_Value_Type *type __UNUSED__, const void *mem, void *ptr)
+{
+   memcpy(ptr, mem, sizeof(Eina_Value_Hash));
+   return EINA_TRUE;
+}
+
+static const Eina_Value_Type _EINA_VALUE_TYPE_HASH = {
+  EINA_VALUE_TYPE_VERSION,
+  sizeof(Eina_Value_Hash),
+  "Eina_Value_Hash",
+  _eina_value_type_hash_setup,
+  _eina_value_type_hash_flush,
+  _eina_value_type_hash_copy,
+  _eina_value_type_hash_compare,
+  _eina_value_type_hash_convert_to,
+  NULL, /* no convert from */
+  _eina_value_type_hash_vset,
+  _eina_value_type_hash_pset,
+  _eina_value_type_hash_pget
+};
+
 /* keep all basic types inlined in an array so we can compare if it's
  * a basic type using pointer arithmetic.
  *
@@ -3221,6 +3586,7 @@ eina_value_init(void)
 
    EINA_VALUE_TYPE_ARRAY = &_EINA_VALUE_TYPE_ARRAY;
    EINA_VALUE_TYPE_LIST = &_EINA_VALUE_TYPE_LIST;
+   EINA_VALUE_TYPE_HASH = &_EINA_VALUE_TYPE_HASH;
 
    return EINA_TRUE;
 }
@@ -3271,6 +3637,7 @@ EAPI const Eina_Value_Type *EINA_VALUE_TYPE_STRINGSHARE = NULL;
 EAPI const Eina_Value_Type *EINA_VALUE_TYPE_STRING = NULL;
 EAPI const Eina_Value_Type *EINA_VALUE_TYPE_ARRAY = NULL;
 EAPI const Eina_Value_Type *EINA_VALUE_TYPE_LIST = NULL;
+EAPI const Eina_Value_Type *EINA_VALUE_TYPE_HASH = NULL;
 
 EAPI Eina_Error EINA_ERROR_VALUE_FAILED = 0;
 
@@ -3413,6 +3780,26 @@ eina_value_list_new(const Eina_Value_Type *subtype)
      return NULL;
 
    if (!eina_value_list_setup(value, subtype))
+     {
+        free(value);
+        return NULL;
+     }
+
+   return value;
+}
+
+EAPI Eina_Value *
+eina_value_hash_new(const Eina_Value_Type *subtype, unsigned int buckets_power_size)
+{
+   Eina_Value *value;
+
+   EINA_SAFETY_ON_FALSE_RETURN_VAL(eina_value_type_check(subtype), EINA_FALSE);
+
+   value = calloc(1, sizeof(Eina_Value));
+   if (!value)
+     return NULL;
+
+   if (!eina_value_hash_setup(value, subtype, buckets_power_size))
      {
         free(value);
         return NULL;

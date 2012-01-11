@@ -380,6 +380,52 @@ START_TEST(eina_value_test_compare)
    fail_unless(eina_value_list_set(b, 0, 10));
    fail_unless(eina_value_compare(a, b) < 0);
 
+   eina_value_flush(a);
+   eina_value_flush(b);
+
+   fail_unless(eina_value_hash_setup(a, EINA_VALUE_TYPE_CHAR, 0));
+   fail_unless(eina_value_hash_setup(b, EINA_VALUE_TYPE_CHAR, 0));
+   fail_unless(eina_value_compare(a, b) == 0);
+
+   fail_unless(eina_value_hash_set(a, "abc", 1));
+   fail_unless(eina_value_hash_set(a, "xyz", 2));
+   fail_unless(eina_value_hash_set(a, "hello", 3));
+
+   fail_unless(eina_value_hash_set(b, "abc", 1));
+   fail_unless(eina_value_hash_set(b, "xyz", 2));
+   fail_unless(eina_value_hash_set(b, "hello", 3));
+
+   fail_unless(eina_value_compare(a, b) == 0);
+
+   fail_unless(eina_value_hash_set(a, "abc", 0));
+   fail_unless(eina_value_compare(a, b) < 0);
+
+   fail_unless(eina_value_hash_set(a, "abc", 10));
+   fail_unless(eina_value_compare(a, b) > 0);
+
+   fail_unless(eina_value_hash_set(a, "abc", 1));
+
+   fail_unless(eina_value_hash_set(b, "abc", 0));
+   fail_unless(eina_value_compare(a, b) > 0);
+
+   fail_unless(eina_value_hash_set(b, "abc", 10));
+   fail_unless(eina_value_compare(a, b) < 0);
+
+   fail_unless(eina_value_hash_set(b, "abc", 1));
+   fail_unless(eina_value_compare(a, b) == 0);
+
+   /* bigger hashs are greater */
+   fail_unless(eina_value_hash_set(b,"newkey", 0));
+   fail_unless(eina_value_compare(a, b) < 0);
+
+   fail_unless(eina_value_hash_set(a, "newkey", 0));
+   fail_unless(eina_value_hash_set(a, "onemorenewkey", 0));
+   fail_unless(eina_value_compare(a, b) > 0);
+
+   /* bigger hashs are greater, unless an element says otherwise */
+   fail_unless(eina_value_hash_set(b, "abc", 10));
+   fail_unless(eina_value_compare(a, b) < 0);
+
    eina_value_free(a);
    eina_value_free(b);
    eina_shutdown();
@@ -1176,6 +1222,91 @@ START_TEST(eina_value_test_list)
 }
 END_TEST
 
+START_TEST(eina_value_test_hash)
+{
+   Eina_Value *value, other;
+   char c;
+   char buf[1024];
+   char *str;
+
+   eina_init();
+
+   value = eina_value_hash_new(EINA_VALUE_TYPE_CHAR, 0);
+   fail_unless(value != NULL);
+
+   fail_unless(eina_value_hash_set(value, "first", 'k'));
+   fail_unless(eina_value_hash_set(value, "second", '-'));
+   fail_unless(eina_value_hash_set(value, "third", 's'));
+
+   fail_unless(eina_value_hash_get(value, "first", &c));
+   fail_unless(c == 'k');
+   fail_unless(eina_value_hash_get(value, "second", &c));
+   fail_unless(c == '-');
+   fail_unless(eina_value_hash_get(value, "third", &c));
+   fail_unless(c == 's');
+
+   fail_unless(eina_value_hash_set(value, "first", '!'));
+   fail_unless(eina_value_hash_get(value, "first", &c));
+   fail_unless(c == '!');
+   fail_unless(eina_value_hash_get(value, "second", &c));
+   fail_unless(c == '-');
+   fail_unless(eina_value_hash_get(value, "third", &c));
+   fail_unless(c == 's');
+
+   puts("testing hash to string -- may fail due hash algorithm changes!");
+
+   /* watchout, this is the order I got -- hash algorithm changes may change
+    * the order!
+    */
+   snprintf(buf, sizeof(buf), "{first: %hhd, second: %hhd, third: %hhd}",
+            '!', '-', 's');
+
+   str = eina_value_to_string(value);
+   fail_unless(str != NULL);
+   printf("want: %s\n", buf);
+   printf("got.: %s\n", str);
+   fail_unless(strcmp(str, buf) == 0);
+   free(str);
+
+   eina_value_flush(value);
+   fail_unless(eina_value_hash_setup(value, EINA_VALUE_TYPE_STRINGSHARE, 0));
+
+   fail_unless(eina_value_hash_set(value, "a", "Enlightenment.org"));
+   fail_unless(eina_value_hash_set(value, "b", "X11"));
+   fail_unless(eina_value_hash_set(value, "c", "Pants"));
+   fail_unless(eina_value_hash_set(value, "d", "on!!!"));
+   fail_unless(eina_value_hash_set(value, "e", "k-s"));
+
+   /* watchout, this is the order I got -- hash algorithm changes may change
+    * the order!
+    */
+   strcpy(buf, "{e: k-s, d: on!!!, a: Enlightenment.org, b: X11, c: Pants}");
+
+   str = eina_value_to_string(value);
+   fail_unless(str != NULL);
+   printf("want: %s\n", buf);
+   printf("got.: %s\n", str);
+   fail_unless(strcmp(str, buf) == 0);
+   free(str);
+
+   eina_value_flush(value);
+   fail_unless(eina_value_hash_setup(value, EINA_VALUE_TYPE_CHAR, 0));
+   fail_unless(eina_value_setup(&other, EINA_VALUE_TYPE_CHAR));
+
+   fail_unless(eina_value_set(&other, 100));
+   fail_unless(eina_value_get(&other, &c));
+   fail_unless(c == 100);
+
+   fail_unless(eina_value_hash_set(value, "first", 33));
+   fail_unless(eina_value_convert(value, &other));
+   fail_unless(eina_value_get(&other, &c));
+   fail_unless(c == 33);
+
+   eina_value_free(value);
+   eina_shutdown();
+}
+END_TEST
+
 void
 eina_test_value(TCase *tc)
 {
@@ -1189,4 +1320,5 @@ eina_test_value(TCase *tc)
    // TODO: other converters...
    tcase_add_test(tc, eina_value_test_array);
    tcase_add_test(tc, eina_value_test_list);
+   tcase_add_test(tc, eina_value_test_hash);
 }

@@ -1220,6 +1220,208 @@ eina_value_list_pappend(Eina_Value *value, const void *ptr)
 }
 #undef EINA_VALUE_TYPE_LIST_CHECK_RETURN_VAL
 
+#define EINA_VALUE_TYPE_HASH_CHECK_RETURN_VAL(value, retval)   \
+  EINA_SAFETY_ON_NULL_RETURN_VAL(value, retval);                \
+  EINA_SAFETY_ON_FALSE_RETURN_VAL(value->type == EINA_VALUE_TYPE_HASH, retval)
+
+static inline Eina_Bool
+eina_value_hash_setup(Eina_Value *value, const Eina_Value_Type *subtype, unsigned int buckets_power_size)
+{
+   Eina_Value_Hash desc = { subtype, buckets_power_size, NULL };
+   if (!eina_value_setup(value, EINA_VALUE_TYPE_HASH))
+     return EINA_FALSE;
+   if (!eina_value_pset(value, &desc))
+     {
+        eina_value_flush(value);
+        return EINA_FALSE;
+     }
+   return EINA_TRUE;
+}
+
+static inline unsigned int
+eina_value_hash_population(const Eina_Value *value)
+{
+   Eina_Value_Hash *desc;
+   EINA_VALUE_TYPE_HASH_CHECK_RETURN_VAL(value, 0);
+   desc = eina_value_memory_get(value);
+   if (!desc)
+     return 0;
+   return eina_hash_population(desc->hash);
+}
+
+static inline Eina_Bool
+eina_value_hash_del(Eina_Value *value, const char *key)
+{
+   Eina_Value_Hash *desc;
+   void *mem;
+
+   EINA_VALUE_TYPE_HASH_CHECK_RETURN_VAL(value, EINA_FALSE);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(key, EINA_FALSE);
+   desc = eina_value_memory_get(value);
+   if (!desc)
+     return EINA_FALSE;
+
+   mem = eina_hash_find(desc->hash, key);
+   if (!mem)
+     return EINA_FALSE;
+
+   eina_value_type_flush(desc->subtype, mem);
+   free(mem);
+   eina_hash_del_by_key(desc->hash, key);
+   return EINA_TRUE;
+}
+
+static inline Eina_Bool
+eina_value_hash_vset(Eina_Value *value, const char *key, va_list args)
+{
+   Eina_Value_Hash *desc;
+   void *mem;
+
+   EINA_VALUE_TYPE_HASH_CHECK_RETURN_VAL(value, EINA_FALSE);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(key, EINA_FALSE);
+   desc = eina_value_memory_get(value);
+   if (!desc)
+     return EINA_FALSE;
+
+   mem = eina_hash_find(desc->hash, key);
+   if (mem)
+     eina_value_type_flush(desc->subtype, mem);
+   else
+     {
+        mem = malloc(desc->subtype->value_size);
+        if (!mem)
+          {
+             eina_error_set(EINA_ERROR_OUT_OF_MEMORY);
+             return EINA_FALSE;
+          }
+        if (!eina_hash_add(desc->hash, key, mem))
+          {
+             free(mem);
+             return EINA_FALSE;
+          }
+     }
+
+   if (!eina_value_type_setup(desc->subtype, mem)) goto error_setup;
+   if (!eina_value_type_vset(desc->subtype, mem, args)) goto error_set;
+   return EINA_TRUE;
+
+ error_set:
+   eina_value_type_flush(desc->subtype, mem);
+ error_setup:
+   eina_hash_del_by_key(desc->hash, key);
+   free(mem);
+   return EINA_FALSE;
+}
+
+static inline Eina_Bool
+eina_value_hash_vget(const Eina_Value *value, const char *key, va_list args)
+{
+   Eina_Value_Hash *desc;
+   const void *mem;
+   void *ptr;
+   Eina_Bool ret;
+
+   EINA_VALUE_TYPE_HASH_CHECK_RETURN_VAL(value, EINA_FALSE);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(key, EINA_FALSE);
+   desc = eina_value_memory_get(value);
+   if (!desc)
+     return EINA_FALSE;
+
+   mem = eina_hash_find(desc->hash, key);
+   if (!mem)
+     return EINA_FALSE;
+
+   ptr = va_arg(args, void *);
+   ret = eina_value_type_pget(desc->subtype, mem, ptr);
+   return ret;
+}
+
+static inline Eina_Bool
+eina_value_hash_set(Eina_Value *value, const char *key, ...)
+{
+   va_list args;
+   Eina_Bool ret;
+   va_start(args, key);
+   ret = eina_value_hash_vset(value, key, args);
+   va_end(args);
+   return ret;
+}
+
+static inline Eina_Bool
+eina_value_hash_get(const Eina_Value *value, const char *key, ...)
+{
+   va_list args;
+   Eina_Bool ret;
+   va_start(args, key);
+   ret = eina_value_hash_vget(value, key, args);
+   va_end(args);
+   return ret;
+}
+
+static inline Eina_Bool
+eina_value_hash_pset(Eina_Value *value, const char *key, const void *ptr)
+{
+   Eina_Value_Hash *desc;
+   void *mem;
+
+   EINA_VALUE_TYPE_HASH_CHECK_RETURN_VAL(value, 0);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(key, EINA_FALSE);
+   desc = eina_value_memory_get(value);
+   if (!desc)
+     return EINA_FALSE;
+
+   mem = eina_hash_find(desc->hash, key);
+   if (mem)
+     eina_value_type_flush(desc->subtype, mem);
+   else
+     {
+        mem = malloc(desc->subtype->value_size);
+        if (!mem)
+          {
+             eina_error_set(EINA_ERROR_OUT_OF_MEMORY);
+             return EINA_FALSE;
+          }
+        if (!eina_hash_add(desc->hash, key, mem))
+          {
+             free(mem);
+             return EINA_FALSE;
+          }
+     }
+
+   if (!eina_value_type_setup(desc->subtype, mem)) goto error_setup;
+   if (!eina_value_type_pset(desc->subtype, mem, ptr)) goto error_set;
+   return EINA_TRUE;
+
+ error_set:
+   eina_value_type_flush(desc->subtype, mem);
+ error_setup:
+   eina_hash_del_by_key(desc->hash, key);
+   free(mem);
+   return EINA_FALSE;
+}
+
+static inline Eina_Bool
+eina_value_hash_pget(const Eina_Value *value, const char *key, void *ptr)
+{
+   Eina_Value_Hash *desc;
+   const void *mem;
+   Eina_Bool ret;
+
+   EINA_VALUE_TYPE_HASH_CHECK_RETURN_VAL(value, 0);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(key, EINA_FALSE);
+   desc = eina_value_memory_get(value);
+   if (!desc)
+     return EINA_FALSE;
+
+   mem = eina_hash_find(desc->hash, key);
+   if (!mem)
+     return EINA_FALSE;
+
+   ret = eina_value_type_pget(desc->subtype, mem, ptr);
+   return ret;
+}
+#undef EINA_VALUE_TYPE_HASH_CHECK_RETURN_VAL
+
 
 static inline Eina_Bool
 eina_value_type_setup(const Eina_Value_Type *type, void *mem)
