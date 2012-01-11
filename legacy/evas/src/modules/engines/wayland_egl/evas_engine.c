@@ -476,7 +476,7 @@ static Evas_GL_API gl_funcs;
 static void *
 eng_info(Evas *e)
 {
-   Evas_Engine_Info_GL_Wl *info;
+   Evas_Engine_Info_Wayland_Egl *info;
 
    info = calloc(1, sizeof(Evas_Engine_Info_Wayland_Egl));
    info->magic.magic = rand();
