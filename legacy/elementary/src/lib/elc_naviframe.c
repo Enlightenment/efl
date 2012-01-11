@@ -427,7 +427,7 @@ _sizing_eval(Evas_Object *obj)
 
    EINA_INLIST_FOREACH(wd->stack, it)
      {
-        evas_object_geometry_get(WIDGET(it), &x, &y, &w, &h);
+        evas_object_geometry_get(obj, &x, &y, &w, &h);
         evas_object_move(VIEW(it), x, y);
         evas_object_resize(VIEW(it), w, h);
         edje_object_size_min_calc(VIEW(it), &it->minw, &it->minh);
