@@ -3470,7 +3470,10 @@ evgl_evasglCreateImage(int target, void* buffer, int *attrib_list)
                                     attrib_list);
      }
    else
-      ERR("Invalid Engine... (Can't acccess EGL Display)\n");
+     {
+        ERR("Invalid Engine... (Can't acccess EGL Display)\n");
+        return NULL;
+     }
 }
 
 static void
