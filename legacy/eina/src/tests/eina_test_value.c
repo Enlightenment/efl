@@ -1000,7 +1000,7 @@ END_TEST
 
 START_TEST(eina_value_test_array)
 {
-   Eina_Value *value;
+   Eina_Value *value, other;
    char c;
    char buf[1024];
    char *str;
@@ -1062,6 +1062,25 @@ START_TEST(eina_value_test_array)
    fail_unless(str != NULL);
    fail_unless(strcmp(str, "[Enlightenment.org, X11, Pants, on!!!, k-s]") == 0);
    free(str);
+
+   eina_value_flush(value);
+   fail_unless(eina_value_array_setup(value, EINA_VALUE_TYPE_CHAR, 0));
+   fail_unless(eina_value_setup(&other, EINA_VALUE_TYPE_CHAR));
+
+   fail_unless(eina_value_set(&other, 100));
+   fail_unless(eina_value_get(&other, &c));
+   fail_unless(c == 100);
+
+   fail_unless(eina_value_convert(&other, value));
+   str = eina_value_to_string(value);
+   fail_unless(str != NULL);
+   fail_unless(strcmp(str, "[100]") == 0);
+   free(str);
+
+   fail_unless(eina_value_array_set(value, 0, 33));
+   fail_unless(eina_value_convert(value, &other));
+   fail_unless(eina_value_get(&other, &c));
+   fail_unless(c == 33);
 
    eina_value_free(value);
    eina_shutdown();
