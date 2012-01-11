@@ -157,7 +157,7 @@ static Elm_Naviframe_Item * _item_new(Evas_Object *obj,
                                       const char *item_style);
 static Eina_Bool _focus_next_hook(const Evas_Object *obj,
                                   Elm_Focus_Direction dir,
-                                  Evas_Object **next)
+                                  Evas_Object **next);
 
 static void
 _del_hook(Evas_Object *obj)
