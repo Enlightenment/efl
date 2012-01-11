@@ -275,12 +275,10 @@ struct _Ecore_Evas_Engine
 
         struct wl_shell_surface *shell_surface;
         struct wl_surface *surface;
-
-# ifdef BUILD_ECORE_EVAS_WAYLAND_SHM
         struct wl_buffer *buffer;
-# endif
+
 # ifdef BUILD_ECORE_EVAS_WAYLAND_EGL
-        struct wl_egl_window *win;
+        struct wl_egl_pixmap *pixmap;
 # endif
      } wl;
 #endif
