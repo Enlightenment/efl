@@ -28,10 +28,9 @@
 # include "config.h"
 #endif
 
-/* _GNU_SOURCE: asprintf() */
-#ifndef _GNU_SOURCE
-#define _GNU_SOURCE
-#endif
+#include <stdio.h> /* asprintf() */
+#include <inttypes.h> /* PRId64 and PRIu64 */
+
 #include "eina_config.h"
 #include "eina_private.h"
 #include "eina_error.h"
@@ -41,9 +40,6 @@
 /* undefs EINA_ARG_NONULL() so NULL checks are not compiled out! */
 #include "eina_safety_checks.h"
 #include "eina_value.h"
-
-#include <stdio.h> /* asprintf() */
-#include <inttypes.h> /* PRId64 and PRIu64 */
 
 /*============================================================================*
 *                                  Local                                     *
@@ -981,7 +977,7 @@ _eina_value_type_char_compare(const Eina_Value_Type *type __UNUSED__, const void
 static Eina_Bool
 _eina_value_type_char_convert_to(const Eina_Value_Type *type __UNUSED__, const Eina_Value_Type *convert, const void *type_mem, void *convert_mem)
 {
-   const char v = *(const char *)type_mem;
+   const signed char v = *(const signed char *)type_mem;
 
    eina_error_set(0);
 
@@ -1518,7 +1514,7 @@ _eina_value_type_long_convert_to(const Eina_Value_Type *type __UNUSED__, const E
         unsigned char other_mem = v;
         if (EINA_UNLIKELY(v < 0))
           return EINA_FALSE;
-        if (EINA_UNLIKELY(v > eina_value_uchar_max))
+        if (EINA_UNLIKELY((unsigned long) v > eina_value_uchar_max))
             return EINA_FALSE;
         return eina_value_type_pset(convert, convert_mem, &other_mem);
      }
@@ -1527,7 +1523,7 @@ _eina_value_type_long_convert_to(const Eina_Value_Type *type __UNUSED__, const E
         unsigned short other_mem = v;
         if (EINA_UNLIKELY(v < 0))
           return EINA_FALSE;
-        if (EINA_UNLIKELY(v > eina_value_ushort_max))
+        if (EINA_UNLIKELY((unsigned long) v > eina_value_ushort_max))
           return EINA_FALSE;
         return eina_value_type_pset(convert, convert_mem, &other_mem);
      }
@@ -1536,7 +1532,7 @@ _eina_value_type_long_convert_to(const Eina_Value_Type *type __UNUSED__, const E
         unsigned int other_mem = v;
         if (EINA_UNLIKELY(v < 0))
           return EINA_FALSE;
-        if (EINA_UNLIKELY(v > eina_value_uint_max))
+        if (EINA_UNLIKELY((unsigned long) v > eina_value_uint_max))
           return EINA_FALSE;
         return eina_value_type_pset(convert, convert_mem, &other_mem);
      }

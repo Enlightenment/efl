@@ -20,6 +20,8 @@
 #define EINA_INLINE_VALUE_X_
 
 #include <string.h>
+#include <alloca.h>
+
 #include "eina_stringshare.h"
 
 /* NOTE: most of value is implemented here for performance reasons */
@@ -127,7 +129,7 @@ eina_value_flush(Eina_Value *value)
      {
         if (type == EINA_VALUE_TYPE_STRINGSHARE)
           {
-             if (value->value.ptr) eina_stringshare_del(value->value.ptr);
+             if (value->value.ptr) eina_stringshare_del((const char*) value->value.ptr);
           }
         else if (type == EINA_VALUE_TYPE_STRING)
           {
@@ -161,7 +163,7 @@ eina_value_compare(const Eina_Value *a, const Eina_Value *b)
 #ifndef EINA_VALUE_NO_OPTIMIZE
    if (type == EINA_VALUE_TYPE_UCHAR)
      {
-        unsigned char *ta = pa, *tb = pb;
+        unsigned char *ta = (unsigned char *) pa, *tb = (unsigned char *) pb;
         if (*ta < *tb)
           return -1;
         else if (*ta > *tb)
@@ -170,7 +172,7 @@ eina_value_compare(const Eina_Value *a, const Eina_Value *b)
      }
    else if (type == EINA_VALUE_TYPE_USHORT)
      {
-        unsigned short *ta = pa, *tb = pb;
+        unsigned short *ta = (unsigned short *) pa, *tb = (unsigned short *) pb;
         if (*ta < *tb)
           return -1;
         else if (*ta > *tb)
@@ -179,7 +181,7 @@ eina_value_compare(const Eina_Value *a, const Eina_Value *b)
      }
    else if (type == EINA_VALUE_TYPE_UINT)
      {
-        unsigned int *ta = pa, *tb = pb;
+        unsigned int *ta = (unsigned int *) pa, *tb = (unsigned int *) pb;
         if (*ta < *tb)
           return -1;
         else if (*ta > *tb)
@@ -188,7 +190,7 @@ eina_value_compare(const Eina_Value *a, const Eina_Value *b)
      }
    else if (type == EINA_VALUE_TYPE_ULONG)
      {
-        unsigned long *ta = pa, *tb = pb;
+        unsigned long *ta = (unsigned long *) pa, *tb = (unsigned long *) pb;
         if (*ta < *tb)
           return -1;
         else if (*ta > *tb)
@@ -197,7 +199,7 @@ eina_value_compare(const Eina_Value *a, const Eina_Value *b)
      }
    else if (type == EINA_VALUE_TYPE_UINT64)
      {
-        uint64_t *ta = pa, *tb = pb;
+        uint64_t *ta = (uint64_t *) pa, *tb = (uint64_t *) pb;
         if (*ta < *tb)
           return -1;
         else if (*ta > *tb)
@@ -206,7 +208,7 @@ eina_value_compare(const Eina_Value *a, const Eina_Value *b)
      }
    else if (type == EINA_VALUE_TYPE_CHAR)
      {
-        char *ta = pa, *tb = pb;
+        char *ta = (char *) pa, *tb = (char *) pb;
         if (*ta < *tb)
           return -1;
         else if (*ta > *tb)
@@ -215,7 +217,7 @@ eina_value_compare(const Eina_Value *a, const Eina_Value *b)
      }
    else if (type == EINA_VALUE_TYPE_SHORT)
      {
-        short *ta = pa, *tb = pb;
+        short *ta = (short *) pa, *tb = (short *) pb;
         if (*ta < *tb)
           return -1;
         else if (*ta > *tb)
@@ -224,7 +226,7 @@ eina_value_compare(const Eina_Value *a, const Eina_Value *b)
      }
    else if (type == EINA_VALUE_TYPE_INT)
      {
-        int *ta = pa, *tb = pb;
+        int *ta = (int *) pa, *tb = (int *) pb;
         if (*ta < *tb)
           return -1;
         else if (*ta > *tb)
@@ -233,7 +235,7 @@ eina_value_compare(const Eina_Value *a, const Eina_Value *b)
      }
    else if (type == EINA_VALUE_TYPE_LONG)
      {
-        long *ta = pa, *tb = pb;
+        long *ta = (long *) pa, *tb = (long *) pb;
         if (*ta < *tb)
           return -1;
         else if (*ta > *tb)
@@ -242,7 +244,7 @@ eina_value_compare(const Eina_Value *a, const Eina_Value *b)
      }
    else if (type == EINA_VALUE_TYPE_INT64)
      {
-        int64_t *ta = pa, *tb = pb;
+        int64_t *ta = (int64_t *) pa, *tb = (int64_t *) pb;
         if (*ta < *tb)
           return -1;
         else if (*ta > *tb)
@@ -251,7 +253,7 @@ eina_value_compare(const Eina_Value *a, const Eina_Value *b)
      }
    else if (type == EINA_VALUE_TYPE_FLOAT)
      {
-        float *ta = pa, *tb = pb;
+        float *ta = (float *) pa, *tb = (float *) pb;
         if (*ta < *tb)
           return -1;
         else if (*ta > *tb)
@@ -260,7 +262,7 @@ eina_value_compare(const Eina_Value *a, const Eina_Value *b)
      }
    else if (type == EINA_VALUE_TYPE_DOUBLE)
      {
-        double *ta = pa, *tb = pb;
+        double *ta = (double *) pa, *tb = (double *) pb;
         if (*ta < *tb)
           return -1;
         else if (*ta > *tb)
@@ -322,84 +324,84 @@ eina_value_vset(Eina_Value *value, va_list args)
 #ifndef EINA_VALUE_NO_OPTIMIZE
    if (type == EINA_VALUE_TYPE_UCHAR)
      {
-        unsigned char *tmem = mem;
+        unsigned char *tmem = (unsigned char *) mem;
         *tmem = va_arg(args, unsigned int); /* promoted by va_arg */
         return EINA_TRUE;
      }
    else if (type == EINA_VALUE_TYPE_USHORT)
      {
-        unsigned short *tmem = mem;
+        unsigned short *tmem = (unsigned short *) mem;
         *tmem = va_arg(args, unsigned int); /* promoted by va_arg */
         return EINA_TRUE;
      }
    else if (type == EINA_VALUE_TYPE_UINT)
      {
-        unsigned int *tmem = mem;
+        unsigned int *tmem = (unsigned int *) mem;
         *tmem = va_arg(args, unsigned int);
         return EINA_TRUE;
      }
    else if (type == EINA_VALUE_TYPE_ULONG)
      {
-        unsigned long *tmem = mem;
+        unsigned long *tmem = (unsigned long *) mem;
         *tmem = va_arg(args, unsigned long);
         return EINA_TRUE;
      }
    else if (type == EINA_VALUE_TYPE_UINT64)
      {
-        uint64_t *tmem = mem;
+        uint64_t *tmem = (uint64_t *) mem;
         *tmem = va_arg(args, uint64_t);
         return EINA_TRUE;
      }
    else if (type == EINA_VALUE_TYPE_CHAR)
      {
-        char *tmem = mem;
+        char *tmem = (char *) mem;
         *tmem = va_arg(args, int); /* promoted by va_arg */
         return EINA_TRUE;
      }
    else if (type == EINA_VALUE_TYPE_SHORT)
      {
-        short *tmem = mem;
+        short *tmem = (short *) mem;
         *tmem = va_arg(args, int); /* promoted by va_arg */
         return EINA_TRUE;
      }
    else if (type == EINA_VALUE_TYPE_INT)
      {
-        int *tmem = mem;
+        int *tmem = (int *) mem;
         *tmem = va_arg(args, int);
         return EINA_TRUE;
      }
    else if (type == EINA_VALUE_TYPE_LONG)
      {
-        long *tmem = mem;
+        long *tmem = (long *) mem;
         *tmem = va_arg(args, long);
         return EINA_TRUE;
      }
    else if (type == EINA_VALUE_TYPE_INT64)
      {
-        int64_t *tmem = mem;
+        int64_t *tmem = (int64_t *) mem;
         *tmem = va_arg(args, int64_t);
         return EINA_TRUE;
      }
    else if (type == EINA_VALUE_TYPE_FLOAT)
      {
-        float *tmem = mem;
+        float *tmem = (float *) mem;
         *tmem = va_arg(args, double); /* promoted by va_arg */
         return EINA_TRUE;
      }
    else if (type == EINA_VALUE_TYPE_DOUBLE)
      {
-        double *tmem = mem;
+        double *tmem = (double *) mem;
         *tmem = va_arg(args, double);
         return EINA_TRUE;
      }
    else if (type == EINA_VALUE_TYPE_STRINGSHARE)
      {
-        const char *str = va_arg(args, const char *);
+        const char *str = (const char *) va_arg(args, const char *);
         return eina_stringshare_replace((const char **)&value->value.ptr, str);
      }
    else if (type == EINA_VALUE_TYPE_STRING)
      {
-        const char *str = va_arg(args, const char *);
+        const char *str = (const char *) va_arg(args, const char *);
         free(value->value.ptr);
         if (!str)
           value->value.ptr = NULL;
@@ -460,19 +462,23 @@ eina_value_pset(Eina_Value *value, const void *ptr)
      {
         if (type == EINA_VALUE_TYPE_STRINGSHARE)
           {
-             const char * const *str = ptr;
+             const char * const *pstr = (const char * const *) ptr;
+             const char *str = *pstr;
+
              return eina_stringshare_replace((const char **)&value->value.ptr,
-                                             *str);
+                                             str);
           }
         else if (type == EINA_VALUE_TYPE_STRING)
           {
-             const char * const *str = ptr;
+             const char * const * pstr = (const char * const *) ptr;
+             const char *str = *pstr;
+
              free(value->value.ptr);
-             if (!*str)
+             if (!str)
                value->value.ptr = NULL;
              else
                {
-                  value->value.ptr = strdup(*str);
+                  value->value.ptr = strdup(str);
                   if (!value->value.ptr)
                     {
                        eina_error_set(EINA_ERROR_OUT_OF_MEMORY);
@@ -526,7 +532,7 @@ eina_value_type_get(const Eina_Value *value)
 static inline Eina_Bool
 eina_value_array_setup(Eina_Value *value, const Eina_Value_Type *subtype, unsigned int step)
 {
-   Eina_Value_Array desc = {subtype, step, NULL};
+   Eina_Value_Array desc = { subtype, step, NULL };
    if (!eina_value_setup(value, EINA_VALUE_TYPE_ARRAY))
      return EINA_FALSE;
    if (!eina_value_pset(value, &desc))

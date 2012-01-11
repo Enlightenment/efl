@@ -681,7 +681,7 @@ struct _Eina_Value_Array
    const Eina_Value_Type *subtype; /**< how to allocate and access items */
    unsigned int step; /**< how to grow the members array */
    Eina_Inarray *array; /**< the array that holds data, members are of subtype->value_size bytes. */
- };
+};
 
 /**
  * @brief Create generic value storage of type array.
