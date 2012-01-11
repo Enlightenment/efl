@@ -582,7 +582,7 @@ EAPI Eina_List            *eina_list_remove(Eina_List *list, const void *data) E
 
 
 /**
- * @brief Remove the specified data.
+ * @brief Remove the specified list node.
  *
  * @param list The given linked list.
  * @param remove_list The list node which is to be removed.
