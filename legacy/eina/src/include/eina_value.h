@@ -22,6 +22,7 @@
 #include "eina_types.h"
 #include "eina_fp.h" /* defines int64_t and uint64_t */
 #include "eina_inarray.h"
+#include "eina_list.h"
 #include <stdarg.h>
 
 /**
@@ -208,6 +209,19 @@ EAPI extern const Eina_Value_Type *EINA_VALUE_TYPE_STRING;
  */
 EAPI extern const Eina_Value_Type *EINA_VALUE_TYPE_ARRAY;
 
+/**
+ * @var EINA_VALUE_TYPE_LIST
+ *
+ * manages list type. The value get/set are the type of elements in
+ * the list, use the alternaties:
+ *  @li eina_value_list_get() and eina_value_list_set()
+ *  @li eina_value_list_vget() and eina_value_list_vset()
+ *  @li eina_value_list_pget() and eina_value_list_pset()
+ *
+ * @since 1.2
+ */
+EAPI extern const Eina_Value_Type *EINA_VALUE_TYPE_LIST;
+
 
 /**
  * @var EINA_ERROR_VALUE_FAILED
@@ -368,6 +382,7 @@ static inline int eina_value_compare(const Eina_Value *a,
  * @li EINA_VALUE_TYPE_STRINGSHARE: const char *
  * @li EINA_VALUE_TYPE_STRING: const char *
  * @li EINA_VALUE_TYPE_ARRAY: Eina_Value_Array
+ * @li EINA_VALUE_TYPE_LIST: Eina_Value_List
  *
  * @code
  *     Eina_Value *value = eina_value_new(EINA_VALUE_TYPE_INT);
@@ -384,6 +399,7 @@ static inline int eina_value_compare(const Eina_Value *a,
  * @endcode
  *
  * @note for array member see eina_value_array_set()
+ * @note for list member see eina_value_list_set()
  *
  * @see eina_value_get()
  * @see eina_value_vset()
@@ -422,6 +438,7 @@ static inline Eina_Bool eina_value_set(Eina_Value *value,
  * @li EINA_VALUE_TYPE_STRINGSHARE: const char **
  * @li EINA_VALUE_TYPE_STRING: const char **
  * @li EINA_VALUE_TYPE_ARRAY: Eina_Value_Array*
+ * @li EINA_VALUE_TYPE_LIST: Eina_Value_List*
  *
  * @code
  *     Eina_Value *value = eina_value_new(EINA_VALUE_TYPE_INT);
@@ -441,6 +458,7 @@ static inline Eina_Bool eina_value_set(Eina_Value *value,
  * @endcode
  *
  * @note for array member see eina_value_array_get()
+ * @note for list member see eina_value_list_get()
  *
  * @see eina_value_set()
  * @see eina_value_vset()
@@ -458,6 +476,7 @@ static inline Eina_Bool eina_value_get(const Eina_Value *value,
  * @return #EINA_TRUE on success, #EINA_FALSE otherwise.
  *
  * @note for array member see eina_value_array_vset()
+ * @note for list member see eina_value_list_vset()
  *
  * @see eina_value_vget()
  * @see eina_value_set()
@@ -480,6 +499,7 @@ static inline Eina_Bool eina_value_vset(Eina_Value *value,
  * thus the contents should @b not be free'd.
  *
  * @note for array member see eina_value_array_vget()
+ * @note for list member see eina_value_list_vget()
  *
  * @see eina_value_vset()
  * @see eina_value_get()
@@ -514,6 +534,7 @@ static inline Eina_Bool eina_value_vget(const Eina_Value *value,
  * @li EINA_VALUE_TYPE_STRINGSHARE: const char **
  * @li EINA_VALUE_TYPE_STRING: const char **
  * @li EINA_VALUE_TYPE_ARRAY: Eina_Value_Array*
+ * @li EINA_VALUE_TYPE_LIST: Eina_Value_List*
  *
  * @note the pointer contents are written using the size defined by
  *       type. It can be larger than void* or uint64_t.
@@ -534,6 +555,7 @@ static inline Eina_Bool eina_value_vget(const Eina_Value *value,
  * @endcode
  *
  * @note for array member see eina_value_array_pset()
+ * @note for list member see eina_value_list_pset()
  *
  * @see eina_value_pget()
  * @see eina_value_set()
@@ -573,6 +595,7 @@ static inline Eina_Bool eina_value_pset(Eina_Value *value,
  * @li EINA_VALUE_TYPE_STRINGSHARE: const char **
  * @li EINA_VALUE_TYPE_STRING: const char **
  * @li EINA_VALUE_TYPE_ARRAY: Eina_Value_Array*
+ * @li EINA_VALUE_TYPE_LIST: Eina_Value_List*
  *
  * @code
  *     Eina_Value *value = eina_value_new(EINA_VALUE_TYPE_INT);
@@ -592,6 +615,7 @@ static inline Eina_Bool eina_value_pset(Eina_Value *value,
  * @endcode
  *
  * @note for array member see eina_value_array_get()
+ * @note for list member see eina_value_list_get()
  *
  * @see eina_value_set()
  * @see eina_value_vset()
@@ -1246,6 +1270,597 @@ static inline Eina_Bool eina_value_array_pinsert(Eina_Value *value,
  * @since 1.2
  */
 static inline Eina_Bool eina_value_array_pappend(Eina_Value *value,
+                                                 const void *ptr) EINA_ARG_NONNULL(1);
+
+/**
+ * @}
+ */
+
+
+/**
+ * @defgroup Eina_Value_List_Group Generic Value List management
+ *
+ * @{
+ */
+
+
+/**
+ * @typedef Eina_Value_List
+ * Value type for #EINA_VALUE_TYPE_LIST
+ *
+ * @since 1.2
+ */
+typedef struct _Eina_Value_List Eina_Value_List;
+
+/**
+ * @struct _Eina_Value_List
+ * Used to store the list and its subtype.
+ */
+struct _Eina_Value_List
+{
+   const Eina_Value_Type *subtype; /**< how to allocate and access items */
+   Eina_List *list; /**< the list that holds data, members are of subtype->value_size bytes. */
+};
+
+/**
+ * @brief Create generic value storage of type list.
+ * @param subtype how to manage this list members.
+ * @return The new value or @c NULL on failure.
+ *
+ * Create a new generic value storage of type list. The members are
+ * managed using the description specified by @a subtype.
+ *
+ * On failure, @c NULL is returned and #EINA_ERROR_OUT_OF_MEMORY or
+ * #EINA_ERROR_VALUE_FAILED is set.
+ *
+ * @note this is a helper around eina_value_list_setup() doing malloc
+ *       for you.
+ *
+ * @see eina_value_free()
+ * @see eina_value_list_setup()
+ *
+ * @since 1.2
+ */
+EAPI Eina_Value *eina_value_list_new(const Eina_Value_Type *subtype) EINA_ARG_NONNULL(1);
+
+/**
+ * @brief Setup generic value storage of type list.
+ * @param value value object
+ * @param subtype how to manage this list members.
+ * @return #EINA_TRUE on success, #EINA_FALSE otherwise.
+ *
+ * Setups new generic value storage of type list with the given
+ * @a subtype.
+ *
+ * This is the same as calling eina_value_set() with
+ * #EINA_VALUE_TYPE_LIST followed by eina_value_pset() with the
+ * #Eina_Value_List description configured.
+ *
+ * @note Existing memory is ignored! If it was previously set, then
+ *       use eina_value_flush() first.
+ *
+ * On failure, #EINA_FALSE is returned and #EINA_ERROR_OUT_OF_MEMORY
+ * or #EINA_ERROR_VALUE_FAILED is set.
+ *
+ * @see eina_value_flush()
+ *
+ * @since 1.2
+ */
+static inline Eina_Bool eina_value_list_setup(Eina_Value *value,
+                                               const Eina_Value_Type *subtype) EINA_ARG_NONNULL(1, 2);
+
+/**
+ * @brief Query number of elements in value of list type.
+ * @param value value object.
+ * @return number of child elements.
+ * @since 1.2
+ */
+static inline unsigned int eina_value_list_count(const Eina_Value *value);
+
+/**
+ * @brief Remove element at given position in value of list type.
+ * @param value value object.
+ * @param position index of the member
+ * @return #EINA_TRUE on success, #EINA_FALSE otherwise.
+ * @since 1.2
+ */
+static inline Eina_Bool eina_value_list_remove(Eina_Value *value,
+                                                unsigned int position) EINA_ARG_NONNULL(1);
+
+/**
+ * @brief Set the generic value in an list member.
+ * @param value source value object
+ * @param position index of the member
+ * @return #EINA_TRUE on success, #EINA_FALSE otherwise.
+ *
+ * The variable argument is dependent on chosen subtype. The list for
+ * basic types:
+ *
+ * @li EINA_VALUE_TYPE_UCHAR: unsigned char
+ * @li EINA_VALUE_TYPE_USHORT: unsigned short
+ * @li EINA_VALUE_TYPE_UINT: unsigned int
+ * @li EINA_VALUE_TYPE_ULONG: unsigned long
+ * @li EINA_VALUE_TYPE_UINT64: uint64_t
+ * @li EINA_VALUE_TYPE_CHAR: char
+ * @li EINA_VALUE_TYPE_SHORT: short
+ * @li EINA_VALUE_TYPE_INT: int
+ * @li EINA_VALUE_TYPE_LONG: long
+ * @li EINA_VALUE_TYPE_INT64: int64_t
+ * @li EINA_VALUE_TYPE_FLOAT: float
+ * @li EINA_VALUE_TYPE_DOUBLE: double
+ * @li EINA_VALUE_TYPE_STRINGSHARE: const char *
+ * @li EINA_VALUE_TYPE_STRING: const char *
+ * @li EINA_VALUE_TYPE_LIST: Eina_Value_List
+ *
+ * @code
+ *     Eina_Value *value = eina_value_list_new(EINA_VALUE_TYPE_INT);
+ *     int x;
+ *
+ *     eina_value_list_append(value, 1234);
+ *     eina_value_list_set(value, 0, 5678);
+ *     eina_value_list_get(value, 0, &x);
+ *     eina_value_free(value);
+ * @endcode
+ *
+ * @see eina_value_list_get()
+ * @see eina_value_list_vset()
+ * @see eina_value_list_pset()
+ * @see eina_value_list_insert()
+ * @see eina_value_list_vinsert()
+ * @see eina_value_list_pinsert()
+ * @see eina_value_list_append()
+ * @see eina_value_list_vappend()
+ * @see eina_value_list_pappend()
+ *
+ * @since 1.2
+ */
+static inline Eina_Bool eina_value_list_set(Eina_Value *value,
+                                             unsigned int position,
+                                             ...) EINA_ARG_NONNULL(1);
+
+/**
+ * @brief Get the generic value from an list member.
+ * @param value source value object
+ * @param position index of the member
+ * @return #EINA_TRUE on success, #EINA_FALSE otherwise.
+ *
+ * The value is returned in the variable argument parameter, the
+ * actual value is type-dependent, but usually it will be what is
+ * stored inside the object. There shouldn't be any memory allocation,
+ * thus the contents should @b not be free'd.
+ *
+ * The variable argument is dependent on chosen subtype. The list for
+ * basic types:
+ *
+ * @li EINA_VALUE_TYPE_UCHAR: unsigned char*
+ * @li EINA_VALUE_TYPE_USHORT: unsigned short*
+ * @li EINA_VALUE_TYPE_UINT: unsigned int*
+ * @li EINA_VALUE_TYPE_ULONG: unsigned long*
+ * @li EINA_VALUE_TYPE_UINT64: uint64_t*
+ * @li EINA_VALUE_TYPE_CHAR: char*
+ * @li EINA_VALUE_TYPE_SHORT: short*
+ * @li EINA_VALUE_TYPE_INT: int*
+ * @li EINA_VALUE_TYPE_LONG: long*
+ * @li EINA_VALUE_TYPE_INT64: int64_t*
+ * @li EINA_VALUE_TYPE_FLOAT: float*
+ * @li EINA_VALUE_TYPE_DOUBLE: double*
+ * @li EINA_VALUE_TYPE_STRINGSHARE: const char **
+ * @li EINA_VALUE_TYPE_STRING: const char **
+ * @li EINA_VALUE_TYPE_LIST: Eina_Value_List*
+ *
+ * @code
+ *     Eina_Value *value = eina_value_list_new(EINA_VALUE_TYPE_INT);
+ *     int x;
+ *
+ *     eina_value_list_append(value, 1234);
+ *     eina_value_list_get(value, 0, &x);
+ *     eina_value_free(value);
+ * @endcode
+ *
+ * @see eina_value_list_set()
+ * @see eina_value_list_vset()
+ * @see eina_value_list_pset()
+ *
+ * @since 1.2
+ */
+static inline Eina_Bool eina_value_list_get(const Eina_Value *value,
+                                             unsigned int position,
+                                             ...) EINA_ARG_NONNULL(1);
+
+/**
+ * @brief Insert the generic value in an list member position.
+ * @param value source value object
+ * @param position index of the member
+ * @return #EINA_TRUE on success, #EINA_FALSE otherwise.
+ *
+ * The variable argument is dependent on chosen subtype. The list for
+ * basic types:
+ *
+ * @li EINA_VALUE_TYPE_UCHAR: unsigned char
+ * @li EINA_VALUE_TYPE_USHORT: unsigned short
+ * @li EINA_VALUE_TYPE_UINT: unsigned int
+ * @li EINA_VALUE_TYPE_ULONG: unsigned long
+ * @li EINA_VALUE_TYPE_UINT64: uint64_t
+ * @li EINA_VALUE_TYPE_CHAR: char
+ * @li EINA_VALUE_TYPE_SHORT: short
+ * @li EINA_VALUE_TYPE_INT: int
+ * @li EINA_VALUE_TYPE_LONG: long
+ * @li EINA_VALUE_TYPE_INT64: int64_t
+ * @li EINA_VALUE_TYPE_FLOAT: float
+ * @li EINA_VALUE_TYPE_DOUBLE: double
+ * @li EINA_VALUE_TYPE_STRINGSHARE: const char *
+ * @li EINA_VALUE_TYPE_STRING: const char *
+ * @li EINA_VALUE_TYPE_LIST: Eina_Value_List
+ *
+ * @code
+ *     Eina_Value *value = eina_value_list_new(EINA_VALUE_TYPE_INT);
+ *     int x;
+ *
+ *     eina_value_list_insert(value, 0, 1234);
+ *     eina_value_list_get(value, 0, &x);
+ *     eina_value_free(value);
+ * @endcode
+ *
+ * @see eina_value_list_set()
+ * @see eina_value_list_get()
+ * @see eina_value_list_vset()
+ * @see eina_value_list_pset()
+ * @see eina_value_list_vinsert()
+ * @see eina_value_list_pinsert()
+ * @see eina_value_list_append()
+ * @see eina_value_list_vappend()
+ * @see eina_value_list_pappend()
+ *
+ * @since 1.2
+ */
+static inline Eina_Bool eina_value_list_insert(Eina_Value *value,
+                                                unsigned int position,
+                                                ...) EINA_ARG_NONNULL(1);
+
+
+/**
+ * @brief Append the generic value in an list.
+ * @param value source value object
+ * @return #EINA_TRUE on success, #EINA_FALSE otherwise.
+ *
+ * The variable argument is dependent on chosen subtype. The list for
+ * basic types:
+ *
+ * @li EINA_VALUE_TYPE_UCHAR: unsigned char
+ * @li EINA_VALUE_TYPE_USHORT: unsigned short
+ * @li EINA_VALUE_TYPE_UINT: unsigned int
+ * @li EINA_VALUE_TYPE_ULONG: unsigned long
+ * @li EINA_VALUE_TYPE_UINT64: uint64_t
+ * @li EINA_VALUE_TYPE_CHAR: char
+ * @li EINA_VALUE_TYPE_SHORT: short
+ * @li EINA_VALUE_TYPE_INT: int
+ * @li EINA_VALUE_TYPE_LONG: long
+ * @li EINA_VALUE_TYPE_INT64: int64_t
+ * @li EINA_VALUE_TYPE_FLOAT: float
+ * @li EINA_VALUE_TYPE_DOUBLE: double
+ * @li EINA_VALUE_TYPE_STRINGSHARE: const char *
+ * @li EINA_VALUE_TYPE_STRING: const char *
+ * @li EINA_VALUE_TYPE_LIST: Eina_Value_List
+ *
+ * @code
+ *     Eina_Value *value = eina_value_list_new(EINA_VALUE_TYPE_INT);
+ *     int x;
+ *
+ *     eina_value_list_append(value, 1234);
+ *     eina_value_list_get(value, 0, &x);
+ *     eina_value_free(value);
+ * @endcode
+ *
+ * @see eina_value_list_set()
+ * @see eina_value_list_get()
+ * @see eina_value_list_vset()
+ * @see eina_value_list_pset()
+ * @see eina_value_list_vinsert()
+ * @see eina_value_list_pinsert()
+ * @see eina_value_list_append()
+ * @see eina_value_list_vappend()
+ * @see eina_value_list_pappend()
+ *
+ * @since 1.2
+ */
+static inline Eina_Bool eina_value_list_append(Eina_Value *value,
+                                                ...) EINA_ARG_NONNULL(1);
+
+/**
+ * @brief Set the generic value in an list member.
+ * @param value source value object
+ * @param position index of the member
+ * @param args variable argument
+ * @return #EINA_TRUE on success, #EINA_FALSE otherwise.
+ * @see eina_value_list_set()
+ * @see eina_value_list_get()
+ * @see eina_value_list_pset()
+ * @see eina_value_list_insert()
+ * @see eina_value_list_vinsert()
+ * @see eina_value_list_pinsert()
+ * @see eina_value_list_append()
+ * @see eina_value_list_vappend()
+ * @see eina_value_list_pappend()
+ *
+ * @since 1.2
+ */
+static inline Eina_Bool eina_value_list_vset(Eina_Value *value,
+                                              unsigned int position,
+                                              va_list args) EINA_ARG_NONNULL(1);
+
+/**
+ * @brief Get the generic value from an list member.
+ * @param value source value object
+ * @param position index of the member
+ * @param args variable argument
+ * @return #EINA_TRUE on success, #EINA_FALSE otherwise.
+ *
+ * The value is returned in the variable argument parameter, the
+ * actual value is type-dependent, but usually it will be what is
+ * stored inside the object. There shouldn't be any memory allocation,
+ * thus the contents should @b not be free'd.
+ *
+ * @see eina_value_list_vset()
+ * @see eina_value_list_get()
+ * @see eina_value_list_pget()
+ *
+ * @since 1.2
+ */
+static inline Eina_Bool eina_value_list_vget(const Eina_Value *value,
+                                              unsigned int position,
+                                              va_list args) EINA_ARG_NONNULL(1);
+/**
+ * @brief Insert the generic value in an list member position.
+ * @param value source value object
+ * @param position index of the member
+ * @param args variable argument
+ * @return #EINA_TRUE on success, #EINA_FALSE otherwise.
+ * @see eina_value_list_set()
+ * @see eina_value_list_get()
+ * @see eina_value_list_vset()
+ * @see eina_value_list_pset()
+ * @see eina_value_list_insert()
+ * @see eina_value_list_pinsert()
+ * @see eina_value_list_append()
+ * @see eina_value_list_vappend()
+ * @see eina_value_list_pappend()
+ *
+ * @since 1.2
+ */
+static inline Eina_Bool eina_value_list_vinsert(Eina_Value *value,
+                                                unsigned int position,
+                                                va_list args) EINA_ARG_NONNULL(1);
+
+/**
+ * @brief Append the generic value in an list.
+ * @param value source value object
+ * @param args variable argument
+ * @return #EINA_TRUE on success, #EINA_FALSE otherwise.
+ * @see eina_value_list_set()
+ * @see eina_value_list_get()
+ * @see eina_value_list_vget()
+ * @see eina_value_list_pset()
+ * @see eina_value_list_insert()
+ * @see eina_value_list_vinsert()
+ * @see eina_value_list_pinsert()
+ * @see eina_value_list_append()
+ * @see eina_value_list_pappend()
+ *
+ * @since 1.2
+ */
+static inline Eina_Bool eina_value_list_vappend(Eina_Value *value,
+                                                 va_list args) EINA_ARG_NONNULL(1);
+
+
+/**
+ * @brief Set the generic value in an list member from pointer.
+ * @param value source value object
+ * @param position index of the member
+ * @param ptr pointer to specify the contents.
+ * @return #EINA_TRUE on success, #EINA_FALSE otherwise.
+ *
+ * The pointer type is dependent on chosen value type. The list for
+ * basic types:
+ *
+ * @li EINA_VALUE_TYPE_UCHAR: unsigned char*
+ * @li EINA_VALUE_TYPE_USHORT: unsigned short*
+ * @li EINA_VALUE_TYPE_UINT: unsigned int*
+ * @li EINA_VALUE_TYPE_ULONG: unsigned long*
+ * @li EINA_VALUE_TYPE_UINT64: uint64_t*
+ * @li EINA_VALUE_TYPE_CHAR: char*
+ * @li EINA_VALUE_TYPE_SHORT: short*
+ * @li EINA_VALUE_TYPE_INT: int*
+ * @li EINA_VALUE_TYPE_LONG: long*
+ * @li EINA_VALUE_TYPE_INT64: int64_t*
+ * @li EINA_VALUE_TYPE_FLOAT: float*
+ * @li EINA_VALUE_TYPE_DOUBLE: double*
+ * @li EINA_VALUE_TYPE_STRINGSHARE: const char **
+ * @li EINA_VALUE_TYPE_STRING: const char **
+ * @li EINA_VALUE_TYPE_LIST: Eina_Value_List*
+ *
+ * @note the pointer contents are written using the size defined by
+ *       type. It can be larger than void* or uint64_t.
+ *
+ * @code
+ *     Eina_Value *value = eina_value_list_new(EINA_VALUE_TYPE_INT);
+ *     int x = 1234;
+ *
+ *     eina_value_list_append(value, 1234);
+ *     eina_value_list_pset(value, 0, &x);
+ *     eina_value_list_pget(value, 0, &x);
+ *     eina_value_free(value);
+ * @endcode
+ *
+ * @see eina_value_list_set()
+ * @see eina_value_list_get()
+ * @see eina_value_list_vset()
+ * @see eina_value_list_insert()
+ * @see eina_value_list_vinsert()
+ * @see eina_value_list_pinsert()
+ * @see eina_value_list_append()
+ * @see eina_value_list_vappend()
+ * @see eina_value_list_pappend()
+ *
+ * @since 1.2
+ */
+static inline Eina_Bool eina_value_list_pset(Eina_Value *value,
+                                              unsigned int position,
+                                              const void *ptr) EINA_ARG_NONNULL(1, 3);
+
+/**
+ * @brief Get the generic value to pointer from an list member.
+ * @param value source value object
+ * @param position index of the member
+ * @param ptr pointer to receive the contents.
+ * @return #EINA_TRUE on success, #EINA_FALSE otherwise.
+ *
+ * The value is returned in pointer contents, the actual value is
+ * type-dependent, but usually it will be what is stored inside the
+ * object. There shouldn't be any memory allocation, thus the contents
+ * should @b not be free'd.
+ *
+ * The pointer type is dependent on chosen value type. The list for
+ * basic types:
+ *
+ * @li EINA_VALUE_TYPE_UCHAR: unsigned char*
+ * @li EINA_VALUE_TYPE_USHORT: unsigned short*
+ * @li EINA_VALUE_TYPE_UINT: unsigned int*
+ * @li EINA_VALUE_TYPE_ULONG: unsigned long*
+ * @li EINA_VALUE_TYPE_UINT64: uint64_t*
+ * @li EINA_VALUE_TYPE_CHAR: char*
+ * @li EINA_VALUE_TYPE_SHORT: short*
+ * @li EINA_VALUE_TYPE_INT: int*
+ * @li EINA_VALUE_TYPE_LONG: long*
+ * @li EINA_VALUE_TYPE_INT64: int64_t*
+ * @li EINA_VALUE_TYPE_FLOAT: float*
+ * @li EINA_VALUE_TYPE_DOUBLE: double*
+ * @li EINA_VALUE_TYPE_STRINGSHARE: const char **
+ * @li EINA_VALUE_TYPE_STRING: const char **
+ * @li EINA_VALUE_TYPE_LIST: Eina_Value_List*
+ *
+ * @code
+ *     Eina_Value *value = eina_value_list_new(EINA_VALUE_TYPE_INT);
+ *     int x;
+ *
+ *     eina_value_list_append(value, 1234);
+ *     eina_value_list_pget(value, 0, &x);
+ *     eina_value_free(value);
+ * @endcode
+ *
+ * @see eina_value_list_set()
+ * @see eina_value_list_vset()
+ * @see eina_value_list_pset()
+ *
+ * @since 1.2
+ */
+static inline Eina_Bool eina_value_list_pget(const Eina_Value *value,
+                                              unsigned int position,
+                                              void *ptr) EINA_ARG_NONNULL(1, 3);
+
+/**
+ * @brief Insert the generic value in an list member position from pointer.
+ * @param value source value object
+ * @param position index of the member
+ * @param ptr pointer to specify the contents.
+ * @return #EINA_TRUE on success, #EINA_FALSE otherwise.
+ *
+ * The pointer type is dependent on chosen value type. The list for
+ * basic types:
+ *
+ * @li EINA_VALUE_TYPE_UCHAR: unsigned char*
+ * @li EINA_VALUE_TYPE_USHORT: unsigned short*
+ * @li EINA_VALUE_TYPE_UINT: unsigned int*
+ * @li EINA_VALUE_TYPE_ULONG: unsigned long*
+ * @li EINA_VALUE_TYPE_UINT64: uint64_t*
+ * @li EINA_VALUE_TYPE_CHAR: char*
+ * @li EINA_VALUE_TYPE_SHORT: short*
+ * @li EINA_VALUE_TYPE_INT: int*
+ * @li EINA_VALUE_TYPE_LONG: long*
+ * @li EINA_VALUE_TYPE_INT64: int64_t*
+ * @li EINA_VALUE_TYPE_FLOAT: float*
+ * @li EINA_VALUE_TYPE_DOUBLE: double*
+ * @li EINA_VALUE_TYPE_STRINGSHARE: const char **
+ * @li EINA_VALUE_TYPE_STRING: const char **
+ * @li EINA_VALUE_TYPE_LIST: Eina_Value_List*
+ *
+ * @note the pointer contents are written using the size defined by
+ *       type. It can be larger than void* or uint64_t.
+ *
+ * @code
+ *     Eina_Value *value = eina_value_list_new(EINA_VALUE_TYPE_INT);
+ *     int x = 1234;
+ *
+ *     eina_value_list_pinsert(value, 0, &x);
+ *     eina_value_list_pget(value, 0, &x);
+ *     eina_value_free(value);
+ * @endcode
+ *
+ * @see eina_value_list_set()
+ * @see eina_value_list_get()
+ * @see eina_value_list_vset()
+ * @see eina_value_list_insert()
+ * @see eina_value_list_vinsert()
+ * @see eina_value_list_pinsert()
+ * @see eina_value_list_append()
+ * @see eina_value_list_vappend()
+ * @see eina_value_list_pappend()
+ *
+ * @since 1.2
+ */
+static inline Eina_Bool eina_value_list_pinsert(Eina_Value *value,
+                                                 unsigned int position,
+                                                 const void *ptr) EINA_ARG_NONNULL(1);
+
+/**
+ * @brief Append the generic value in an list from pointer.
+ * @param value source value object
+ * @param ptr pointer to specify the contents.
+ * @return #EINA_TRUE on success, #EINA_FALSE otherwise.
+ *
+ * The pointer type is dependent on chosen value type. The list for
+ * basic types:
+ *
+ * @li EINA_VALUE_TYPE_UCHAR: unsigned char*
+ * @li EINA_VALUE_TYPE_USHORT: unsigned short*
+ * @li EINA_VALUE_TYPE_UINT: unsigned int*
+ * @li EINA_VALUE_TYPE_ULONG: unsigned long*
+ * @li EINA_VALUE_TYPE_UINT64: uint64_t*
+ * @li EINA_VALUE_TYPE_CHAR: char*
+ * @li EINA_VALUE_TYPE_SHORT: short*
+ * @li EINA_VALUE_TYPE_INT: int*
+ * @li EINA_VALUE_TYPE_LONG: long*
+ * @li EINA_VALUE_TYPE_INT64: int64_t*
+ * @li EINA_VALUE_TYPE_FLOAT: float*
+ * @li EINA_VALUE_TYPE_DOUBLE: double*
+ * @li EINA_VALUE_TYPE_STRINGSHARE: const char **
+ * @li EINA_VALUE_TYPE_STRING: const char **
+ * @li EINA_VALUE_TYPE_LIST: Eina_Value_List*
+ *
+ * @note the pointer contents are written using the size defined by
+ *       type. It can be larger than void* or uint64_t.
+ *
+ * @code
+ *     Eina_Value *value = eina_value_list_new(EINA_VALUE_TYPE_INT);
+ *     int x = 1234;
+ *
+ *     eina_value_list_pappend(value, &x);
+ *     eina_value_list_pget(value, 0, &x);
+ *     eina_value_free(value);
+ * @endcode
+ *
+ * @see eina_value_list_set()
+ * @see eina_value_list_get()
+ * @see eina_value_list_vset()
+ * @see eina_value_list_insert()
+ * @see eina_value_list_vinsert()
+ * @see eina_value_list_pinsert()
+ * @see eina_value_list_append()
+ * @see eina_value_list_vappend()
+ * @see eina_value_list_pappend()
+ *
+ * @since 1.2
+ */
+static inline Eina_Bool eina_value_list_pappend(Eina_Value *value,
                                                  const void *ptr) EINA_ARG_NONNULL(1);
 
 /**

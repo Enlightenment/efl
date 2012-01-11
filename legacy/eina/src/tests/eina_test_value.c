@@ -334,6 +334,52 @@ START_TEST(eina_value_test_compare)
    fail_unless(eina_value_array_set(b, 0, 10));
    fail_unless(eina_value_compare(a, b) < 0);
 
+   eina_value_flush(a);
+   eina_value_flush(b);
+
+   fail_unless(eina_value_list_setup(a, EINA_VALUE_TYPE_CHAR));
+   fail_unless(eina_value_list_setup(b, EINA_VALUE_TYPE_CHAR));
+   fail_unless(eina_value_compare(a, b) == 0);
+
+   fail_unless(eina_value_list_append(a, 1));
+   fail_unless(eina_value_list_append(a, 2));
+   fail_unless(eina_value_list_append(a, 3));
+
+   fail_unless(eina_value_list_append(b, 1));
+   fail_unless(eina_value_list_append(b, 2));
+   fail_unless(eina_value_list_append(b, 3));
+
+   fail_unless(eina_value_compare(a, b) == 0);
+
+   fail_unless(eina_value_list_set(a, 0, 0));
+   fail_unless(eina_value_compare(a, b) < 0);
+
+   fail_unless(eina_value_list_set(a, 0, 10));
+   fail_unless(eina_value_compare(a, b) > 0);
+
+   fail_unless(eina_value_list_set(a, 0, 1));
+
+   fail_unless(eina_value_list_set(b, 0, 0));
+   fail_unless(eina_value_compare(a, b) > 0);
+
+   fail_unless(eina_value_list_set(b, 0, 10));
+   fail_unless(eina_value_compare(a, b) < 0);
+
+   fail_unless(eina_value_list_set(b, 0, 1));
+   fail_unless(eina_value_compare(a, b) == 0);
+
+   /* bigger lists are greater */
+   fail_unless(eina_value_list_append(b, 0));
+   fail_unless(eina_value_compare(a, b) < 0);
+
+   fail_unless(eina_value_list_append(a, 0));
+   fail_unless(eina_value_list_append(a, 0));
+   fail_unless(eina_value_compare(a, b) > 0);
+
+   /* bigger lists are greater, unless an element says otherwise */
+   fail_unless(eina_value_list_set(b, 0, 10));
+   fail_unless(eina_value_compare(a, b) < 0);
+
    eina_value_free(a);
    eina_value_free(b);
    eina_shutdown();
@@ -1022,6 +1068,95 @@ START_TEST(eina_value_test_array)
 }
 END_TEST
 
+START_TEST(eina_value_test_list)
+{
+   Eina_Value *value, other;
+   char c;
+   char buf[1024];
+   char *str;
+
+   eina_init();
+
+   value = eina_value_list_new(EINA_VALUE_TYPE_CHAR);
+   fail_unless(value != NULL);
+
+   fail_unless(eina_value_list_append(value, 'k'));
+   fail_unless(eina_value_list_append(value, '-'));
+   fail_unless(eina_value_list_append(value, 's'));
+
+   fail_unless(eina_value_list_get(value, 0, &c));
+   fail_unless(c == 'k');
+   fail_unless(eina_value_list_get(value, 1, &c));
+   fail_unless(c == '-');
+   fail_unless(eina_value_list_get(value, 2, &c));
+   fail_unless(c == 's');
+
+   fail_unless(eina_value_list_insert(value, 0, '!'));
+   fail_unless(eina_value_list_get(value, 0, &c));
+   fail_unless(c == '!');
+   fail_unless(eina_value_list_get(value, 1, &c));
+   fail_unless(c == 'k');
+   fail_unless(eina_value_list_get(value, 2, &c));
+   fail_unless(c == '-');
+   fail_unless(eina_value_list_get(value, 3, &c));
+   fail_unless(c == 's');
+
+   fail_unless(eina_value_list_set(value, 0, '*'));
+   fail_unless(eina_value_list_get(value, 0, &c));
+   fail_unless(c == '*');
+   fail_unless(eina_value_list_get(value, 1, &c));
+   fail_unless(c == 'k');
+   fail_unless(eina_value_list_get(value, 2, &c));
+   fail_unless(c == '-');
+   fail_unless(eina_value_list_get(value, 3, &c));
+   fail_unless(c == 's');
+
+   snprintf(buf, sizeof(buf), "[%hhd, %hhd, %hhd, %hhd]",
+            '*', 'k', '-', 's');
+
+   str = eina_value_to_string(value);
+   fail_unless(str != NULL);
+   fail_unless(strcmp(str, buf) == 0);
+   free(str);
+
+   eina_value_flush(value);
+   fail_unless(eina_value_list_setup(value, EINA_VALUE_TYPE_STRINGSHARE));
+
+   fail_unless(eina_value_list_append(value, "Enlightenment.org"));
+   fail_unless(eina_value_list_append(value, "X11"));
+   fail_unless(eina_value_list_append(value, "Pants"));
+   fail_unless(eina_value_list_append(value, "on!!!"));
+   fail_unless(eina_value_list_append(value, "k-s"));
+
+   str = eina_value_to_string(value);
+   fail_unless(str != NULL);
+   fail_unless(strcmp(str, "[Enlightenment.org, X11, Pants, on!!!, k-s]") == 0);
+   free(str);
+
+   eina_value_flush(value);
+   fail_unless(eina_value_list_setup(value, EINA_VALUE_TYPE_CHAR));
+   fail_unless(eina_value_setup(&other, EINA_VALUE_TYPE_CHAR));
+
+   fail_unless(eina_value_set(&other, 100));
+   fail_unless(eina_value_get(&other, &c));
+   fail_unless(c == 100);
+
+   fail_unless(eina_value_convert(&other, value));
+   str = eina_value_to_string(value);
+   fail_unless(str != NULL);
+   fail_unless(strcmp(str, "[100]") == 0);
+   free(str);
+
+   fail_unless(eina_value_list_set(value, 0, 33));
+   fail_unless(eina_value_convert(value, &other));
+   fail_unless(eina_value_get(&other, &c));
+   fail_unless(c == 33);
+
+   eina_value_free(value);
+   eina_shutdown();
+}
+END_TEST
+
 void
 eina_test_value(TCase *tc)
 {
@@ -1034,4 +1169,5 @@ eina_test_value(TCase *tc)
    tcase_add_test(tc, eina_value_test_convert_uchar);
    // TODO: other converters...
    tcase_add_test(tc, eina_value_test_array);
+   tcase_add_test(tc, eina_value_test_list);
 }
