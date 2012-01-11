@@ -62,7 +62,9 @@ eina_lock.h \
 eina_prefix.h \
 eina_refcount.h \
 eina_mmap.h \
-eina_xattr.h
+eina_xattr.h \
+eina_value.h \
+eina_inline_value.x
 
 # Will be back for developper after 1.1.
 # eina_object.h

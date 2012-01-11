@@ -272,6 +272,26 @@ EAPI Eina_Bool eina_inarray_insert_at(Eina_Inarray *array,
                                       const void *data) EINA_ARG_NONNULL(1, 3);
 
 /**
+ * @brief Copy the data over the given position.
+ * @param array array object
+ * @param position where to replace the member
+ * @param data data to be copied at position
+ * @return #EINA_TRUE on success, #EINA_FALSE on failure.
+ *
+ * Copies the given pointer contents at the given @a position in the
+ * array. The pointer is not referenced, instead it's contents is
+ * copied to the members array using the previously defined
+ * @c member_size.
+ *
+ * If @a position does not exist, it will fail.
+ *
+ * @since 1.2
+ */
+EAPI Eina_Bool eina_inarray_replace_at(Eina_Inarray *array,
+                                       unsigned int position,
+                                       const void *data) EINA_ARG_NONNULL(1, 3);
+
+/**
  * @brief Remove member at given position
  * @param array array object
  * @param position position to be removed

@@ -523,6 +523,20 @@ eina_inarray_insert_at(Eina_Inarray *array, unsigned int position, const void *d
 }
 
 EAPI Eina_Bool
+eina_inarray_replace_at(Eina_Inarray *array, unsigned int position, const void *data)
+{
+   unsigned char *p;
+
+   EINA_MAGIC_CHECK_INARRAY(array, EINA_FALSE);
+   EINA_SAFETY_ON_TRUE_RETURN_VAL(position >= array->len, EINA_FALSE);
+
+   p = _eina_inarray_get(array, position);
+   memcpy(p, data, array->member_size);
+
+   return EINA_TRUE;
+}
+
+EAPI Eina_Bool
 eina_inarray_remove_at(Eina_Inarray *array, unsigned int position)
 {
    EINA_MAGIC_CHECK_INARRAY(array, EINA_FALSE);

@@ -192,3 +192,4 @@
 2012-01-09  Gustavo Barbieri
 
 	* Add eina_inarray data type.
+	* Add eina_value data type (generic value storage).

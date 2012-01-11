@@ -188,6 +188,7 @@ extern "C" {
 #include "eina_refcount.h"
 #include "eina_mmap.h"
 #include "eina_xattr.h"
+#include "eina_value.h"
 
 #ifdef __cplusplus
 }

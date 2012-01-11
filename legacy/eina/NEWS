@@ -12,6 +12,7 @@ Additions:
     * eina_file_map_faulted API
     * Xattr iterator for Eina_File : eina_file_xattr_get and eina_file_xattr_value_get API
     * Added eina_inarray data type
+    * Added eina_value data type (generic value storage)
 
 Eina 1.1.0
 
