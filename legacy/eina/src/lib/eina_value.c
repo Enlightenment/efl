@@ -252,21 +252,6 @@ _eina_value_type_uchar_pget(const Eina_Value_Type *type __UNUSED__, const void *
    return EINA_TRUE;
 }
 
-static const Eina_Value_Type _EINA_VALUE_TYPE_UCHAR = {
-  EINA_VALUE_TYPE_VERSION,
-  sizeof(unsigned char),
-  "unsigned char",
-  _eina_value_type_uchar_setup,
-  _eina_value_type_uchar_flush,
-  _eina_value_type_uchar_copy,
-  _eina_value_type_uchar_compare,
-  _eina_value_type_uchar_convert_to,
-  NULL, /* no convert from */
-  _eina_value_type_uchar_vset,
-  _eina_value_type_uchar_pset,
-  _eina_value_type_uchar_pget
-};
-
 static Eina_Bool
 _eina_value_type_ushort_setup(const Eina_Value_Type *type __UNUSED__, void *mem)
 {
@@ -417,21 +402,6 @@ _eina_value_type_ushort_pget(const Eina_Value_Type *type __UNUSED__, const void 
    *p = *tmem;
    return EINA_TRUE;
 }
-
-static const Eina_Value_Type _EINA_VALUE_TYPE_USHORT = {
-  EINA_VALUE_TYPE_VERSION,
-  sizeof(unsigned short),
-  "unsigned short",
-  _eina_value_type_ushort_setup,
-  _eina_value_type_ushort_flush,
-  _eina_value_type_ushort_copy,
-  _eina_value_type_ushort_compare,
-  _eina_value_type_ushort_convert_to,
-  NULL, /* no convert from */
-  _eina_value_type_ushort_vset,
-  _eina_value_type_ushort_pset,
-  _eina_value_type_ushort_pget
-};
 
 static Eina_Bool
 _eina_value_type_uint_setup(const Eina_Value_Type *type __UNUSED__, void *mem)
@@ -587,21 +557,6 @@ _eina_value_type_uint_pget(const Eina_Value_Type *type __UNUSED__, const void *m
    *p = *tmem;
    return EINA_TRUE;
 }
-
-static const Eina_Value_Type _EINA_VALUE_TYPE_UINT = {
-  EINA_VALUE_TYPE_VERSION,
-  sizeof(unsigned int),
-  "unsigned int",
-  _eina_value_type_uint_setup,
-  _eina_value_type_uint_flush,
-  _eina_value_type_uint_copy,
-  _eina_value_type_uint_compare,
-  _eina_value_type_uint_convert_to,
-  NULL, /* no convert from */
-  _eina_value_type_uint_vset,
-  _eina_value_type_uint_pset,
-  _eina_value_type_uint_pget
-};
 
 static Eina_Bool
 _eina_value_type_ulong_setup(const Eina_Value_Type *type __UNUSED__, void *mem)
@@ -761,22 +716,6 @@ _eina_value_type_ulong_pget(const Eina_Value_Type *type __UNUSED__, const void *
    *p = *tmem;
    return EINA_TRUE;
 }
-
-static const Eina_Value_Type _EINA_VALUE_TYPE_ULONG = {
-  EINA_VALUE_TYPE_VERSION,
-  sizeof(unsigned long),
-  "unsigned long",
-  _eina_value_type_ulong_setup,
-  _eina_value_type_ulong_flush,
-  _eina_value_type_ulong_copy,
-  _eina_value_type_ulong_compare,
-  _eina_value_type_ulong_convert_to,
-  NULL, /* no convert from */
-  _eina_value_type_ulong_vset,
-  _eina_value_type_ulong_pset,
-  _eina_value_type_ulong_pget
-};
-
 
 static Eina_Bool
 _eina_value_type_uint64_setup(const Eina_Value_Type *type __UNUSED__, void *mem)
@@ -942,21 +881,6 @@ _eina_value_type_uint64_pget(const Eina_Value_Type *type __UNUSED__, const void 
    return EINA_TRUE;
 }
 
-static const Eina_Value_Type _EINA_VALUE_TYPE_UINT64 = {
-  EINA_VALUE_TYPE_VERSION,
-  sizeof(uint64_t),
-  "uint64_t",
-  _eina_value_type_uint64_setup,
-  _eina_value_type_uint64_flush,
-  _eina_value_type_uint64_copy,
-  _eina_value_type_uint64_compare,
-  _eina_value_type_uint64_convert_to,
-  NULL, /* no convert from */
-  _eina_value_type_uint64_vset,
-  _eina_value_type_uint64_pset,
-  _eina_value_type_uint64_pget
-};
-
 static Eina_Bool
 _eina_value_type_char_setup(const Eina_Value_Type *type __UNUSED__, void *mem)
 {
@@ -1111,21 +1035,6 @@ _eina_value_type_char_pget(const Eina_Value_Type *type __UNUSED__, const void *m
    *p = *tmem;
    return EINA_TRUE;
 }
-
-static const Eina_Value_Type _EINA_VALUE_TYPE_CHAR = {
-  EINA_VALUE_TYPE_VERSION,
-  sizeof(char),
-  "char",
-  _eina_value_type_char_setup,
-  _eina_value_type_char_flush,
-  _eina_value_type_char_copy,
-  _eina_value_type_char_compare,
-  _eina_value_type_char_convert_to,
-  NULL, /* no convert from */
-  _eina_value_type_char_vset,
-  _eina_value_type_char_pset,
-  _eina_value_type_char_pget
-};
 
 static Eina_Bool
 _eina_value_type_short_setup(const Eina_Value_Type *type __UNUSED__, void *mem)
@@ -1287,21 +1196,6 @@ _eina_value_type_short_pget(const Eina_Value_Type *type __UNUSED__, const void *
    *p = *tmem;
    return EINA_TRUE;
 }
-
-static const Eina_Value_Type _EINA_VALUE_TYPE_SHORT = {
-  EINA_VALUE_TYPE_VERSION,
-  sizeof(short),
-  "short",
-  _eina_value_type_short_setup,
-  _eina_value_type_short_flush,
-  _eina_value_type_short_copy,
-  _eina_value_type_short_compare,
-  _eina_value_type_short_convert_to,
-  NULL, /* no convert from */
-  _eina_value_type_short_vset,
-  _eina_value_type_short_pset,
-  _eina_value_type_short_pget
-};
 
 static Eina_Bool
 _eina_value_type_int_setup(const Eina_Value_Type *type __UNUSED__, void *mem)
@@ -1469,21 +1363,6 @@ _eina_value_type_int_pget(const Eina_Value_Type *type __UNUSED__, const void *me
    *p = *tmem;
    return EINA_TRUE;
 }
-
-static const Eina_Value_Type _EINA_VALUE_TYPE_INT = {
-  EINA_VALUE_TYPE_VERSION,
-  sizeof(int),
-  "int",
-  _eina_value_type_int_setup,
-  _eina_value_type_int_flush,
-  _eina_value_type_int_copy,
-  _eina_value_type_int_compare,
-  _eina_value_type_int_convert_to,
-  NULL, /* no convert from */
-  _eina_value_type_int_vset,
-  _eina_value_type_int_pset,
-  _eina_value_type_int_pget
-};
 
 static Eina_Bool
 _eina_value_type_long_setup(const Eina_Value_Type *type __UNUSED__, void *mem)
@@ -1657,21 +1536,6 @@ _eina_value_type_long_pget(const Eina_Value_Type *type __UNUSED__, const void *m
    *p = *tmem;
    return EINA_TRUE;
 }
-
-static const Eina_Value_Type _EINA_VALUE_TYPE_LONG = {
-  EINA_VALUE_TYPE_VERSION,
-  sizeof(long),
-  "long",
-  _eina_value_type_long_setup,
-  _eina_value_type_long_flush,
-  _eina_value_type_long_copy,
-  _eina_value_type_long_compare,
-  _eina_value_type_long_convert_to,
-  NULL, /* no convert from */
-  _eina_value_type_long_vset,
-  _eina_value_type_long_pset,
-  _eina_value_type_long_pget
-};
 
 static Eina_Bool
 _eina_value_type_int64_setup(const Eina_Value_Type *type __UNUSED__, void *mem)
@@ -1852,21 +1716,6 @@ _eina_value_type_int64_pget(const Eina_Value_Type *type __UNUSED__, const void *
    *p = *tmem;
    return EINA_TRUE;
 }
-
-static const Eina_Value_Type _EINA_VALUE_TYPE_INT64 = {
-  EINA_VALUE_TYPE_VERSION,
-  sizeof(int64_t),
-  "int64_t",
-  _eina_value_type_int64_setup,
-  _eina_value_type_int64_flush,
-  _eina_value_type_int64_copy,
-  _eina_value_type_int64_compare,
-  _eina_value_type_int64_convert_to,
-  NULL, /* no convert from */
-  _eina_value_type_int64_vset,
-  _eina_value_type_int64_pset,
-  _eina_value_type_int64_pget
-};
 
 static Eina_Bool
 _eina_value_type_float_setup(const Eina_Value_Type *type __UNUSED__, void *mem)
@@ -2054,21 +1903,6 @@ _eina_value_type_float_pget(const Eina_Value_Type *type __UNUSED__, const void *
    return EINA_TRUE;
 }
 
-static const Eina_Value_Type _EINA_VALUE_TYPE_FLOAT = {
-  EINA_VALUE_TYPE_VERSION,
-  sizeof(float),
-  "float",
-  _eina_value_type_float_setup,
-  _eina_value_type_float_flush,
-  _eina_value_type_float_copy,
-  _eina_value_type_float_compare,
-  _eina_value_type_float_convert_to,
-  NULL, /* no convert from */
-  _eina_value_type_float_vset,
-  _eina_value_type_float_pset,
-  _eina_value_type_float_pget
-};
-
 static Eina_Bool
 _eina_value_type_double_setup(const Eina_Value_Type *type __UNUSED__, void *mem)
 {
@@ -2248,21 +2082,6 @@ _eina_value_type_double_pget(const Eina_Value_Type *type __UNUSED__, const void 
    *p = *tmem;
    return EINA_TRUE;
 }
-
-static const Eina_Value_Type _EINA_VALUE_TYPE_DOUBLE = {
-  EINA_VALUE_TYPE_VERSION,
-  sizeof(double),
-  "double",
-  _eina_value_type_double_setup,
-  _eina_value_type_double_flush,
-  _eina_value_type_double_copy,
-  _eina_value_type_double_compare,
-  _eina_value_type_double_convert_to,
-  NULL, /* no convert from */
-  _eina_value_type_double_vset,
-  _eina_value_type_double_pset,
-  _eina_value_type_double_pget
-};
 
 static Eina_Bool
 _eina_value_type_string_common_setup(const Eina_Value_Type *type __UNUSED__, void *mem)
@@ -2450,21 +2269,6 @@ _eina_value_type_stringshare_pset(const Eina_Value_Type *type __UNUSED__, void *
    return eina_stringshare_replace((const char **)mem, *str);
 }
 
-static const Eina_Value_Type _EINA_VALUE_TYPE_STRINGSHARE = {
-  EINA_VALUE_TYPE_VERSION,
-  sizeof(const char *),
-  "stringshare",
-  _eina_value_type_string_common_setup,
-  _eina_value_type_stringshare_flush,
-  _eina_value_type_stringshare_copy,
-  _eina_value_type_string_common_compare,
-  _eina_value_type_string_common_convert_to,
-  NULL, /* no convert from */
-  _eina_value_type_stringshare_vset,
-  _eina_value_type_stringshare_pset,
-  _eina_value_type_string_common_pget
-};
-
 static Eina_Bool
 _eina_value_type_string_flush(const Eina_Value_Type *type __UNUSED__, void *mem)
 {
@@ -2533,22 +2337,6 @@ _eina_value_type_string_pset(const Eina_Value_Type *type __UNUSED__, void *mem, 
    eina_error_set(0);
    return EINA_TRUE;
 }
-
-static const Eina_Value_Type _EINA_VALUE_TYPE_STRING = {
-  EINA_VALUE_TYPE_VERSION,
-  sizeof(char *),
-  "string",
-  _eina_value_type_string_common_setup,
-  _eina_value_type_string_flush,
-  _eina_value_type_string_copy,
-  _eina_value_type_string_common_compare,
-  _eina_value_type_string_common_convert_to,
-  NULL, /* no convert from */
-  _eina_value_type_string_vset,
-  _eina_value_type_string_pset,
-  _eina_value_type_string_common_pget
-};
-
 
 static Eina_Bool
 _eina_value_type_array_setup(const Eina_Value_Type *type __UNUSED__, void *mem)
@@ -2867,6 +2655,210 @@ static const Eina_Value_Type _EINA_VALUE_TYPE_ARRAY = {
   _eina_value_type_array_pget
 };
 
+/* keep all basic types inlined in an array so we can compare if it's
+ * a basic type using pointer arithmetic.
+ *
+ * NOTE-1: JUST BASIC TYPES, DO NOT ADD MORE TYPES HERE!!!
+ * NOTE-2: KEEP ORDER, see eina_value_init()
+ */
+static const Eina_Value_Type _EINA_VALUE_TYPE_BASICS[] = {
+  {
+    EINA_VALUE_TYPE_VERSION,
+    sizeof(unsigned char),
+    "unsigned char",
+    _eina_value_type_uchar_setup,
+    _eina_value_type_uchar_flush,
+    _eina_value_type_uchar_copy,
+    _eina_value_type_uchar_compare,
+    _eina_value_type_uchar_convert_to,
+    NULL, /* no convert from */
+    _eina_value_type_uchar_vset,
+    _eina_value_type_uchar_pset,
+    _eina_value_type_uchar_pget
+  },
+  {
+    EINA_VALUE_TYPE_VERSION,
+    sizeof(unsigned short),
+    "unsigned short",
+    _eina_value_type_ushort_setup,
+    _eina_value_type_ushort_flush,
+    _eina_value_type_ushort_copy,
+    _eina_value_type_ushort_compare,
+    _eina_value_type_ushort_convert_to,
+    NULL, /* no convert from */
+    _eina_value_type_ushort_vset,
+    _eina_value_type_ushort_pset,
+    _eina_value_type_ushort_pget
+  },
+  {
+    EINA_VALUE_TYPE_VERSION,
+    sizeof(unsigned int),
+    "unsigned int",
+    _eina_value_type_uint_setup,
+    _eina_value_type_uint_flush,
+    _eina_value_type_uint_copy,
+    _eina_value_type_uint_compare,
+    _eina_value_type_uint_convert_to,
+    NULL, /* no convert from */
+    _eina_value_type_uint_vset,
+    _eina_value_type_uint_pset,
+    _eina_value_type_uint_pget
+  },
+  {
+    EINA_VALUE_TYPE_VERSION,
+    sizeof(unsigned long),
+    "unsigned long",
+    _eina_value_type_ulong_setup,
+    _eina_value_type_ulong_flush,
+    _eina_value_type_ulong_copy,
+    _eina_value_type_ulong_compare,
+    _eina_value_type_ulong_convert_to,
+    NULL, /* no convert from */
+    _eina_value_type_ulong_vset,
+    _eina_value_type_ulong_pset,
+    _eina_value_type_ulong_pget
+  },
+  {
+    EINA_VALUE_TYPE_VERSION,
+    sizeof(uint64_t),
+    "uint64_t",
+    _eina_value_type_uint64_setup,
+    _eina_value_type_uint64_flush,
+    _eina_value_type_uint64_copy,
+    _eina_value_type_uint64_compare,
+    _eina_value_type_uint64_convert_to,
+    NULL, /* no convert from */
+    _eina_value_type_uint64_vset,
+    _eina_value_type_uint64_pset,
+    _eina_value_type_uint64_pget
+  },
+  {
+    EINA_VALUE_TYPE_VERSION,
+    sizeof(char),
+    "char",
+    _eina_value_type_char_setup,
+    _eina_value_type_char_flush,
+    _eina_value_type_char_copy,
+    _eina_value_type_char_compare,
+    _eina_value_type_char_convert_to,
+    NULL, /* no convert from */
+    _eina_value_type_char_vset,
+    _eina_value_type_char_pset,
+    _eina_value_type_char_pget
+  },
+  {
+    EINA_VALUE_TYPE_VERSION,
+    sizeof(short),
+    "short",
+    _eina_value_type_short_setup,
+    _eina_value_type_short_flush,
+    _eina_value_type_short_copy,
+    _eina_value_type_short_compare,
+    _eina_value_type_short_convert_to,
+    NULL, /* no convert from */
+    _eina_value_type_short_vset,
+    _eina_value_type_short_pset,
+    _eina_value_type_short_pget
+  },
+  {
+    EINA_VALUE_TYPE_VERSION,
+    sizeof(int),
+    "int",
+    _eina_value_type_int_setup,
+    _eina_value_type_int_flush,
+    _eina_value_type_int_copy,
+    _eina_value_type_int_compare,
+    _eina_value_type_int_convert_to,
+    NULL, /* no convert from */
+    _eina_value_type_int_vset,
+    _eina_value_type_int_pset,
+    _eina_value_type_int_pget
+  },
+  {
+    EINA_VALUE_TYPE_VERSION,
+    sizeof(long),
+    "long",
+    _eina_value_type_long_setup,
+    _eina_value_type_long_flush,
+    _eina_value_type_long_copy,
+    _eina_value_type_long_compare,
+    _eina_value_type_long_convert_to,
+    NULL, /* no convert from */
+    _eina_value_type_long_vset,
+    _eina_value_type_long_pset,
+    _eina_value_type_long_pget
+  },
+  {
+    EINA_VALUE_TYPE_VERSION,
+    sizeof(int64_t),
+    "int64_t",
+    _eina_value_type_int64_setup,
+    _eina_value_type_int64_flush,
+    _eina_value_type_int64_copy,
+    _eina_value_type_int64_compare,
+    _eina_value_type_int64_convert_to,
+    NULL, /* no convert from */
+    _eina_value_type_int64_vset,
+    _eina_value_type_int64_pset,
+    _eina_value_type_int64_pget
+  },
+  {
+    EINA_VALUE_TYPE_VERSION,
+    sizeof(float),
+    "float",
+    _eina_value_type_float_setup,
+    _eina_value_type_float_flush,
+    _eina_value_type_float_copy,
+    _eina_value_type_float_compare,
+    _eina_value_type_float_convert_to,
+    NULL, /* no convert from */
+    _eina_value_type_float_vset,
+    _eina_value_type_float_pset,
+    _eina_value_type_float_pget
+  },
+  {
+    EINA_VALUE_TYPE_VERSION,
+    sizeof(double),
+    "double",
+    _eina_value_type_double_setup,
+    _eina_value_type_double_flush,
+    _eina_value_type_double_copy,
+    _eina_value_type_double_compare,
+    _eina_value_type_double_convert_to,
+    NULL, /* no convert from */
+    _eina_value_type_double_vset,
+    _eina_value_type_double_pset,
+    _eina_value_type_double_pget
+  },
+  {
+    EINA_VALUE_TYPE_VERSION,
+    sizeof(const char *),
+    "stringshare",
+    _eina_value_type_string_common_setup,
+    _eina_value_type_stringshare_flush,
+    _eina_value_type_stringshare_copy,
+    _eina_value_type_string_common_compare,
+    _eina_value_type_string_common_convert_to,
+    NULL, /* no convert from */
+    _eina_value_type_stringshare_vset,
+    _eina_value_type_stringshare_pset,
+    _eina_value_type_string_common_pget
+  },
+  {
+    EINA_VALUE_TYPE_VERSION,
+    sizeof(char *),
+    "string",
+    _eina_value_type_string_common_setup,
+    _eina_value_type_string_flush,
+    _eina_value_type_string_copy,
+    _eina_value_type_string_common_compare,
+    _eina_value_type_string_common_convert_to,
+    NULL, /* no convert from */
+    _eina_value_type_string_vset,
+    _eina_value_type_string_pset,
+    _eina_value_type_string_common_pget
+  }
+};
 
 /**
  * @endcond
@@ -2899,20 +2891,27 @@ eina_value_init(void)
    EINA_ERROR_VALUE_FAILED = eina_error_msg_static_register(
          EINA_ERROR_VALUE_FAILED_STR);
 
-   EINA_VALUE_TYPE_UCHAR = &_EINA_VALUE_TYPE_UCHAR;
-   EINA_VALUE_TYPE_USHORT = &_EINA_VALUE_TYPE_USHORT;
-   EINA_VALUE_TYPE_UINT = &_EINA_VALUE_TYPE_UINT;
-   EINA_VALUE_TYPE_ULONG = &_EINA_VALUE_TYPE_ULONG;
-   EINA_VALUE_TYPE_UINT64 = &_EINA_VALUE_TYPE_UINT64;
-   EINA_VALUE_TYPE_CHAR = &_EINA_VALUE_TYPE_CHAR;
-   EINA_VALUE_TYPE_SHORT = &_EINA_VALUE_TYPE_SHORT;
-   EINA_VALUE_TYPE_INT = &_EINA_VALUE_TYPE_INT;
-   EINA_VALUE_TYPE_LONG = &_EINA_VALUE_TYPE_LONG;
-   EINA_VALUE_TYPE_INT64 = &_EINA_VALUE_TYPE_INT64;
-   EINA_VALUE_TYPE_FLOAT = &_EINA_VALUE_TYPE_FLOAT;
-   EINA_VALUE_TYPE_DOUBLE = &_EINA_VALUE_TYPE_DOUBLE;
-   EINA_VALUE_TYPE_STRINGSHARE = &_EINA_VALUE_TYPE_STRINGSHARE;
-   EINA_VALUE_TYPE_STRING = &_EINA_VALUE_TYPE_STRING;
+   EINA_VALUE_TYPE_UCHAR       = _EINA_VALUE_TYPE_BASICS +  0;
+   EINA_VALUE_TYPE_USHORT      = _EINA_VALUE_TYPE_BASICS +  1;
+   EINA_VALUE_TYPE_UINT        = _EINA_VALUE_TYPE_BASICS +  2;
+   EINA_VALUE_TYPE_ULONG       = _EINA_VALUE_TYPE_BASICS +  3;
+   EINA_VALUE_TYPE_UINT64      = _EINA_VALUE_TYPE_BASICS +  4;
+   EINA_VALUE_TYPE_CHAR        = _EINA_VALUE_TYPE_BASICS +  5;
+   EINA_VALUE_TYPE_SHORT       = _EINA_VALUE_TYPE_BASICS +  6;
+   EINA_VALUE_TYPE_INT         = _EINA_VALUE_TYPE_BASICS +  7;
+   EINA_VALUE_TYPE_LONG        = _EINA_VALUE_TYPE_BASICS +  8;
+   EINA_VALUE_TYPE_INT64       = _EINA_VALUE_TYPE_BASICS +  9;
+   EINA_VALUE_TYPE_FLOAT       = _EINA_VALUE_TYPE_BASICS + 10;
+   EINA_VALUE_TYPE_DOUBLE      = _EINA_VALUE_TYPE_BASICS + 11;
+   EINA_VALUE_TYPE_STRINGSHARE = _EINA_VALUE_TYPE_BASICS + 12;
+   EINA_VALUE_TYPE_STRING      = _EINA_VALUE_TYPE_BASICS + 13;
+
+   _EINA_VALUE_TYPE_BASICS_START = _EINA_VALUE_TYPE_BASICS +  0;
+   _EINA_VALUE_TYPE_BASICS_END   = _EINA_VALUE_TYPE_BASICS + 13;
+
+   EINA_SAFETY_ON_FALSE_RETURN_VAL((sizeof(_EINA_VALUE_TYPE_BASICS)/sizeof(_EINA_VALUE_TYPE_BASICS[0])) == 14, EINA_FALSE);
+
+
    EINA_VALUE_TYPE_ARRAY = &_EINA_VALUE_TYPE_ARRAY;
 
    return EINA_TRUE;
@@ -2945,7 +2944,8 @@ eina_value_shutdown(void)
 *                                   API                                      *
 *============================================================================*/
 
-EAPI extern const Eina_Value_Type *EINA_VALUE_TYPE_UCHAR;
+EAPI const Eina_Value_Type *_EINA_VALUE_TYPE_BASICS_START = NULL;
+EAPI const Eina_Value_Type *_EINA_VALUE_TYPE_BASICS_END = NULL;
 
 EAPI const Eina_Value_Type *EINA_VALUE_TYPE_UCHAR = NULL;
 EAPI const Eina_Value_Type *EINA_VALUE_TYPE_USHORT = NULL;

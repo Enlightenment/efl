@@ -30,21 +30,23 @@
 #ifdef EINA_VALUE_NO_OPTIMIZE
 #define EINA_VALUE_TYPE_DEFAULT(type) (0)
 #else
+
+/**
+ * @var _EINA_VALUE_TYPE_BASICS_START
+ * pointer to the first basic type.
+ * @private
+ */
+EAPI extern const Eina_Value_Type *_EINA_VALUE_TYPE_BASICS_START;
+
+/**
+ * @var _EINA_VALUE_TYPE_BASICS_END
+ * pointer to the last (inclusive) basic type.
+ * @private
+ */
+EAPI extern const Eina_Value_Type *_EINA_VALUE_TYPE_BASICS_END;
 #define EINA_VALUE_TYPE_DEFAULT(type)           \
-  ((type == EINA_VALUE_TYPE_UCHAR) ||           \
-   (type == EINA_VALUE_TYPE_USHORT) ||          \
-   (type == EINA_VALUE_TYPE_UINT) ||            \
-   (type == EINA_VALUE_TYPE_ULONG) ||           \
-   (type == EINA_VALUE_TYPE_UINT64) ||          \
-   (type == EINA_VALUE_TYPE_CHAR) ||            \
-   (type == EINA_VALUE_TYPE_SHORT) ||           \
-   (type == EINA_VALUE_TYPE_INT) ||             \
-   (type == EINA_VALUE_TYPE_LONG) ||            \
-   (type == EINA_VALUE_TYPE_INT64) ||           \
-   (type == EINA_VALUE_TYPE_FLOAT) ||           \
-   (type == EINA_VALUE_TYPE_DOUBLE) ||          \
-   (type == EINA_VALUE_TYPE_STRINGSHARE) ||     \
-   (type == EINA_VALUE_TYPE_STRING))
+  ((_EINA_VALUE_TYPE_BASICS_START <= type) &&   \
+   (type <= _EINA_VALUE_TYPE_BASICS_END))
 #endif
 
 #define EINA_VALUE_TYPE_CHECK_RETURN(value)     \
