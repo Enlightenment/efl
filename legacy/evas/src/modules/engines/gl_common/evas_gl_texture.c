@@ -481,7 +481,6 @@ _pool_tex_dynamic_new(Evas_Engine_GL_Context *gc, int w, int h, int intformat, i
 #if defined (GLES_VARIETY_S3C6410) || defined (GLES_VARIETY_SGX)
    int fmt; // EGL_MAP_GL_TEXTURE_RGBA_SEC or EGL_MAP_GL_TEXTURE_RGB_SEC or bust
    int pixtype; // EGL_MAP_GL_TEXTURE_UNSIGNED_BYTE_SEC or bust
-   int glformat;
    int attr[] =
      {
         EGL_MAP_GL_TEXTURE_WIDTH_SEC, 32,
