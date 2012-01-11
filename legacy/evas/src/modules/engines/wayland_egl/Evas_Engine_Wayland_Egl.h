@@ -3,9 +3,9 @@
 
 #include <wayland-client.h>
 
-typedef struct _Evas_Engine_Info_GL_Wl Evas_Engine_Info_GL_Wl;
+typedef struct _Evas_Engine_Info_Wayland_Egl Evas_Engine_Info_Wayland_Egl;
 
-struct _Evas_Engine_Info_GL_Wl
+struct _Evas_Engine_Info_Wayland_Egl
 {
    /* PRIVATE - don't mess with this baby or evas will poke its tongue out */
    /* at you and make nasty noises */
@@ -23,9 +23,7 @@ struct _Evas_Engine_Info_GL_Wl
    /* engine specific function calls to query stuff about the destination */
    /* engine (what visual & colormap & depth to use, performance info etc. */
    struct {
-//      Visual *  (*best_visual_get)   (Evas_Engine_Info_GL_X11 *einfo);
-//      Colormap  (*best_colormap_get) (Evas_Engine_Info_GL_X11 *einfo);
-      int       (*best_depth_get)    (Evas_Engine_Info_GL_Wl *einfo);
+      int       (*best_depth_get)    (Evas_Engine_Info_Wayland_Egl *einfo);
    } func;
 
    struct {
