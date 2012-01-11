@@ -205,6 +205,7 @@ eng_window_free(Evas_GL_Wl_Window *gw)
    win_count--;
    eng_window_use(gw);
    if (gw == _evas_gl_x11_window) _evas_gl_x11_window = NULL;
+   if (gw->win) wl_egl_window_destroy(gw->win);
    if (gw->gl_context)
      {
         ref = gw->gl_context->references - 1;
