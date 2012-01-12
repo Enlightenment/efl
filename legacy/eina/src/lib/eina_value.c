@@ -3690,33 +3690,6 @@ _eina_value_type_blob_convert_to(const Eina_Value_Type *type __UNUSED__, const E
      }
 }
 
-static void
-_eina_value_type_blob_converted_ops_free(const Eina_Value_Blob_Operations *ops __UNUSED__, void *memory, size_t size __UNUSED__)
-{
-   free(memory);
-}
-
-static void *
-_eina_value_type_blob_converted_ops_copy(const Eina_Value_Blob_Operations *ops __UNUSED__, const void *memory, size_t size)
-{
-   void *ret = malloc(size);
-   if (!ret)
-     {
-        eina_error_set(EINA_ERROR_OUT_OF_MEMORY);
-        return NULL;
-     }
-   memcpy(ret, memory, size);
-   return ret;
-}
-
-static const Eina_Value_Blob_Operations _eina_value_type_blob_converted_ops = {
-  EINA_VALUE_BLOB_OPERATIONS_VERSION,
-  _eina_value_type_blob_converted_ops_free,
-  _eina_value_type_blob_converted_ops_copy,
-  NULL, /* default compare */
-  NULL, /* default to_string */
-};
-
 static Eina_Bool
 _eina_value_type_blob_convert_from(const Eina_Value_Type *type, const Eina_Value_Type *convert, void *type_mem, const void *convert_mem)
 {
@@ -3732,7 +3705,7 @@ _eina_value_type_blob_convert_from(const Eina_Value_Type *type, const Eina_Value
    if (!eina_value_type_pget(convert, convert_mem, buf))
      return EINA_FALSE;
 
-   desc.ops = &_eina_value_type_blob_converted_ops;
+   desc.ops = EINA_VALUE_BLOB_OPERATIONS_MALLOC;
    desc.memory = buf;
    desc.size = convert->value_size;
    return eina_value_type_pset(type, type_mem, &desc);
@@ -3987,6 +3960,33 @@ static const Eina_Value_Type _EINA_VALUE_TYPE_BASICS[] = {
   }
 };
 
+static void
+_eina_value_blob_operations_malloc_free(const Eina_Value_Blob_Operations *ops __UNUSED__, void *memory, size_t size __UNUSED__)
+{
+   free(memory);
+}
+
+static void *
+_eina_value_blob_operations_malloc_copy(const Eina_Value_Blob_Operations *ops __UNUSED__, const void *memory, size_t size)
+{
+   void *ret = malloc(size);
+   if (!ret)
+     {
+        eina_error_set(EINA_ERROR_OUT_OF_MEMORY);
+        return NULL;
+     }
+   memcpy(ret, memory, size);
+   return ret;
+}
+
+static const Eina_Value_Blob_Operations _EINA_VALUE_BLOB_OPERATIONS_MALLOC = {
+  EINA_VALUE_BLOB_OPERATIONS_VERSION,
+  _eina_value_blob_operations_malloc_free,
+  _eina_value_blob_operations_malloc_copy,
+  NULL,
+  NULL
+};
+
 /**
  * @endcond
  */
@@ -4045,6 +4045,8 @@ eina_value_init(void)
    EINA_VALUE_TYPE_TIMEVAL = &_EINA_VALUE_TYPE_TIMEVAL;
    EINA_VALUE_TYPE_BLOB = &_EINA_VALUE_TYPE_BLOB;
 
+   EINA_VALUE_BLOB_OPERATIONS_MALLOC = &_EINA_VALUE_BLOB_OPERATIONS_MALLOC;
+
    return EINA_TRUE;
 }
 
@@ -4097,6 +4099,8 @@ EAPI const Eina_Value_Type *EINA_VALUE_TYPE_LIST = NULL;
 EAPI const Eina_Value_Type *EINA_VALUE_TYPE_HASH = NULL;
 EAPI const Eina_Value_Type *EINA_VALUE_TYPE_TIMEVAL = NULL;
 EAPI const Eina_Value_Type *EINA_VALUE_TYPE_BLOB = NULL;
+
+EAPI const Eina_Value_Blob_Operations *EINA_VALUE_BLOB_OPERATIONS_MALLOC = NULL;
 
 EAPI Eina_Error EINA_ERROR_VALUE_FAILED = 0;
 

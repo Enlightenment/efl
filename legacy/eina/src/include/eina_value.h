@@ -287,6 +287,16 @@ EAPI extern const Eina_Value_Type *EINA_VALUE_TYPE_TIMEVAL;
 /**
  * @var EINA_VALUE_TYPE_BLOB
  * manages blob of bytes type, see @ref Eina_Value_Blob
+ *
+ * eina_value_set() takes an #Eina_Value_Blob
+ * eina_value_pset() takes a pointer to #Eina_Value_Blob.
+ *
+ * eina_value_get() and eina_value_pget() takes a pointer to
+ * #Eina_Value_Blob and it's an exact copy of value, no allocations
+ * are made.
+ *
+ * Memory is untouched unless you provide @c ops (operations) pointer.
+ *
  * @since 1.2
  */
 EAPI extern const Eina_Value_Type *EINA_VALUE_TYPE_BLOB;
@@ -2369,6 +2379,17 @@ struct _Eina_Value_Blob_Operations
    int (*compare)(const Eina_Value_Blob_Operations *ops, const void *data1, size_t size_data1, const void *data2, size_t size_data2);
    char *(*to_string)(const Eina_Value_Blob_Operations *ops, const void *memory, size_t size);
 };
+
+/**
+ * @var EINA_VALUE_BLOB_OPERATIONS_MALLOC
+ *
+ * Assumes @c memory was create with malloc() and applies free() to it
+ * during flush (Eina_Value_Blob_Operations::free). Copy is done with
+ * malloc() as well.
+ *
+ * No compare or to_string are provided, defaults will be used.
+ */
+EAPI extern const Eina_Value_Blob_Operations *EINA_VALUE_BLOB_OPERATIONS_MALLOC;
 
 /**
  * @typedef Eina_Value_Blob
