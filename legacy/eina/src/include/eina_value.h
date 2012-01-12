@@ -236,6 +236,13 @@ EAPI extern const Eina_Value_Type *EINA_VALUE_TYPE_LIST;
  */
 EAPI extern const Eina_Value_Type *EINA_VALUE_TYPE_HASH;
 
+/**
+ * @var EINA_VALUE_TYPE_TIMEVAL
+ * manages 'struct timeval' type
+ * @since 1.2
+ */
+EAPI extern const Eina_Value_Type *EINA_VALUE_TYPE_TIMEVAL;
+
 
 /**
  * @var EINA_ERROR_VALUE_FAILED

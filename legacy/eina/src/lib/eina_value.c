@@ -47,6 +47,7 @@ void *alloca (size_t);
 
 #include <stdio.h> /* asprintf() */
 #include <inttypes.h> /* PRId64 and PRIu64 */
+#include <sys/time.h> /* struct timeval */
 
 #include "eina_config.h"
 #include "eina_private.h"
@@ -3327,6 +3328,207 @@ static const Eina_Value_Type _EINA_VALUE_TYPE_HASH = {
   _eina_value_type_hash_pget
 };
 
+static Eina_Bool
+_eina_value_type_timeval_setup(const Eina_Value_Type *type __UNUSED__, void *mem)
+{
+   memset(mem, 0, sizeof(struct timeval));
+   return EINA_TRUE;
+}
+
+static Eina_Bool
+_eina_value_type_timeval_flush(const Eina_Value_Type *type __UNUSED__, void *mem __UNUSED__)
+{
+   return EINA_TRUE;
+}
+
+static Eina_Bool
+_eina_value_type_timeval_copy(const Eina_Value_Type *type __UNUSED__, const void *src, void *dst)
+{
+   const struct timeval *s = src;
+   struct timeval *d = dst;
+   *d = *s;
+   return EINA_TRUE;
+}
+
+static inline struct timeval _eina_value_type_timeval_fix(const struct timeval *input)
+{
+   struct timeval ret = *input;
+   if (EINA_UNLIKELY(ret.tv_usec < 0))
+     {
+        ret.tv_sec -= 1;
+        ret.tv_usec += 1e6;
+     }
+   return ret;
+}
+
+static int
+_eina_value_type_timeval_compare(const Eina_Value_Type *type __UNUSED__, const void *a, const void *b)
+{
+   struct timeval va = _eina_value_type_timeval_fix(a);
+   struct timeval vb = _eina_value_type_timeval_fix(b);
+   if (timercmp(&va, &vb, <))
+     return -1;
+   else if (timercmp(&va, &vb, >))
+     return 1;
+   return 0;
+}
+
+static Eina_Bool
+_eina_value_type_timeval_convert_to(const Eina_Value_Type *type __UNUSED__, const Eina_Value_Type *convert, const void *type_mem, void *convert_mem)
+{
+   struct timeval v = _eina_value_type_timeval_fix(type_mem);
+
+   eina_error_set(0);
+
+   if (convert == EINA_VALUE_TYPE_UCHAR)
+     {
+        unsigned char other_mem = v.tv_sec;
+        if (EINA_UNLIKELY(v.tv_sec < 0))
+          return EINA_FALSE;
+        if (EINA_UNLIKELY(v.tv_sec > eina_value_uchar_max))
+            return EINA_FALSE;
+        return eina_value_type_pset(convert, convert_mem, &other_mem);
+     }
+   else if (convert == EINA_VALUE_TYPE_USHORT)
+     {
+        unsigned short other_mem = v.tv_sec;
+        if (EINA_UNLIKELY(v.tv_sec < 0))
+          return EINA_FALSE;
+        if (EINA_UNLIKELY(v.tv_sec > eina_value_ushort_max))
+          return EINA_FALSE;
+        return eina_value_type_pset(convert, convert_mem, &other_mem);
+     }
+   else if (convert == EINA_VALUE_TYPE_UINT)
+     {
+        unsigned int other_mem = v.tv_sec;
+        if (EINA_UNLIKELY(v.tv_sec < 0))
+          return EINA_FALSE;
+        if (EINA_UNLIKELY(v.tv_sec > eina_value_uint_max))
+          return EINA_FALSE;
+        return eina_value_type_pset(convert, convert_mem, &other_mem);
+     }
+   else if (convert == EINA_VALUE_TYPE_ULONG)
+     {
+        unsigned long other_mem = v.tv_sec;
+        if (EINA_UNLIKELY(v.tv_sec < 0))
+          return EINA_FALSE;
+        if (EINA_UNLIKELY((sizeof(other_mem) != sizeof(v)) &&
+                          ((unsigned long)v.tv_sec > eina_value_ulong_max)))
+          return EINA_FALSE;
+        return eina_value_type_pset(convert, convert_mem, &other_mem);
+     }
+   else if (convert == EINA_VALUE_TYPE_UINT64)
+     {
+        uint64_t other_mem = v.tv_sec;
+        if (EINA_UNLIKELY(v.tv_sec < 0))
+          return EINA_FALSE;
+        return eina_value_type_pset(convert, convert_mem, &other_mem);
+     }
+   else if (convert == EINA_VALUE_TYPE_CHAR)
+     {
+        char other_mem = v.tv_sec;
+        if (EINA_UNLIKELY(v.tv_sec < eina_value_char_min))
+          return EINA_FALSE;
+        if (EINA_UNLIKELY(v.tv_sec > eina_value_char_max))
+          return EINA_FALSE;
+        return eina_value_type_pset(convert, convert_mem, &other_mem);
+     }
+   else if (convert == EINA_VALUE_TYPE_SHORT)
+     {
+        short other_mem = v.tv_sec;
+        if (EINA_UNLIKELY(v.tv_sec < eina_value_short_min))
+          return EINA_FALSE;
+        if (EINA_UNLIKELY(v.tv_sec > eina_value_short_max))
+          return EINA_FALSE;
+        return eina_value_type_pset(convert, convert_mem, &other_mem);
+     }
+   else if (convert == EINA_VALUE_TYPE_INT)
+     {
+        int other_mem = v.tv_sec;
+        if (EINA_UNLIKELY(v.tv_sec < eina_value_int_min))
+          return EINA_FALSE;
+        if (EINA_UNLIKELY(v.tv_sec > eina_value_int_max))
+          return EINA_FALSE;
+        return eina_value_type_pset(convert, convert_mem, &other_mem);
+     }
+   else if (convert == EINA_VALUE_TYPE_LONG)
+     {
+        long other_mem = v.tv_sec;
+        if (EINA_UNLIKELY(v.tv_sec < eina_value_long_min))
+          return EINA_FALSE;
+        if (EINA_UNLIKELY(v.tv_sec > eina_value_long_max))
+          return EINA_FALSE;
+        return eina_value_type_pset(convert, convert_mem, &other_mem);
+     }
+   else if (convert == EINA_VALUE_TYPE_INT64)
+     {
+        int64_t other_mem = v.tv_sec;
+        return eina_value_type_pset(convert, convert_mem, &other_mem);
+     }
+   else if (convert == EINA_VALUE_TYPE_FLOAT)
+     {
+        float other_mem = (float)v.tv_sec + (float)v.tv_usec / 1.0e6;
+        return eina_value_type_pset(convert, convert_mem, &other_mem);
+     }
+   else if (convert == EINA_VALUE_TYPE_DOUBLE)
+     {
+        double other_mem = (double)v.tv_sec + (double)v.tv_usec / 1.0e6;
+        return eina_value_type_pset(convert, convert_mem, &other_mem);
+     }
+   else if (convert == EINA_VALUE_TYPE_STRINGSHARE ||
+            convert == EINA_VALUE_TYPE_STRING)
+     {
+        const char *other_mem;
+        char buf[64];
+        snprintf(buf, sizeof(buf), "%ld.%06ld", v.tv_sec, v.tv_usec);
+        other_mem = buf; /* required due &buf == buf */
+        return eina_value_type_pset(convert, convert_mem, &other_mem);
+     }
+   else
+     {
+        eina_error_set(EINA_ERROR_VALUE_FAILED);
+        return EINA_FALSE;
+     }
+}
+
+static Eina_Bool
+_eina_value_type_timeval_pset(const Eina_Value_Type *type __UNUSED__, void *mem, const void *ptr)
+{
+   struct timeval *tmem = mem;
+   *tmem = _eina_value_type_timeval_fix(ptr);
+   return EINA_TRUE;
+}
+
+static Eina_Bool
+_eina_value_type_timeval_vset(const Eina_Value_Type *type, void *mem, va_list args)
+{
+   const struct timeval desc = va_arg(args, struct timeval);
+   _eina_value_type_timeval_pset(type, mem, &desc);
+   return EINA_TRUE;
+}
+
+static Eina_Bool
+_eina_value_type_timeval_pget(const Eina_Value_Type *type __UNUSED__, const void *mem, void *ptr)
+{
+   memcpy(ptr, mem, sizeof(struct timeval));
+   return EINA_TRUE;
+}
+
+static const Eina_Value_Type _EINA_VALUE_TYPE_TIMEVAL = {
+  EINA_VALUE_TYPE_VERSION,
+  sizeof(struct timeval),
+  "struct timeval",
+  _eina_value_type_timeval_setup,
+  _eina_value_type_timeval_flush,
+  _eina_value_type_timeval_copy,
+  _eina_value_type_timeval_compare,
+  _eina_value_type_timeval_convert_to,
+  NULL, /* no convert from */
+  _eina_value_type_timeval_vset,
+  _eina_value_type_timeval_pset,
+  _eina_value_type_timeval_pget
+};
+
 /* keep all basic types inlined in an array so we can compare if it's
  * a basic type using pointer arithmetic.
  *
@@ -3587,6 +3789,7 @@ eina_value_init(void)
    EINA_VALUE_TYPE_ARRAY = &_EINA_VALUE_TYPE_ARRAY;
    EINA_VALUE_TYPE_LIST = &_EINA_VALUE_TYPE_LIST;
    EINA_VALUE_TYPE_HASH = &_EINA_VALUE_TYPE_HASH;
+   EINA_VALUE_TYPE_TIMEVAL = &_EINA_VALUE_TYPE_TIMEVAL;
 
    return EINA_TRUE;
 }
@@ -3638,6 +3841,7 @@ EAPI const Eina_Value_Type *EINA_VALUE_TYPE_STRING = NULL;
 EAPI const Eina_Value_Type *EINA_VALUE_TYPE_ARRAY = NULL;
 EAPI const Eina_Value_Type *EINA_VALUE_TYPE_LIST = NULL;
 EAPI const Eina_Value_Type *EINA_VALUE_TYPE_HASH = NULL;
+EAPI const Eina_Value_Type *EINA_VALUE_TYPE_TIMEVAL = NULL;
 
 EAPI Eina_Error EINA_ERROR_VALUE_FAILED = 0;
 

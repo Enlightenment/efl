@@ -1307,6 +1307,84 @@ START_TEST(eina_value_test_hash)
 }
 END_TEST
 
+
+START_TEST(eina_value_test_timeval)
+{
+   Eina_Value *value, other;
+   struct timeval itv, otv;
+   char c;
+   char *str;
+
+   eina_init();
+
+   value = eina_value_new(EINA_VALUE_TYPE_TIMEVAL);
+   fail_unless(value != NULL);
+
+   itv.tv_sec = 1;
+   itv.tv_usec = 123;
+   fail_unless(eina_value_set(value, itv));
+   fail_unless(eina_value_get(value, &otv));
+   fail_unless(memcmp(&itv, &otv, sizeof(struct timeval)) == 0);
+
+   itv.tv_sec = 3;
+   itv.tv_usec = -1;
+   fail_unless(eina_value_set(value, itv));
+   fail_unless(eina_value_get(value, &otv));
+   itv.tv_sec = 2;
+   itv.tv_usec = 999999;
+   fail_unless(memcmp(&itv, &otv, sizeof(struct timeval)) == 0);
+
+   fail_unless(eina_value_setup(&other, EINA_VALUE_TYPE_CHAR));
+   fail_unless(eina_value_convert(value, &other));
+   fail_unless(eina_value_get(&other, &c));
+   fail_unless(c == 2);
+   eina_value_flush(&other);
+
+   itv.tv_sec = 12345;
+   itv.tv_usec = 6789;
+   fail_unless(eina_value_set(value, itv));
+   str = eina_value_to_string(value);
+   fail_unless(str != NULL);
+   fail_unless(strcmp(str, "12345.006789") == 0);
+   free(str);
+
+   fail_unless(eina_value_setup(&other, EINA_VALUE_TYPE_TIMEVAL));
+   fail_unless(eina_value_set(&other, itv));
+   fail_unless(eina_value_compare(value, &other) == 0);
+
+   itv.tv_sec++;
+   fail_unless(eina_value_set(&other, itv));
+   fail_unless(eina_value_compare(value, &other) < 0);
+
+   itv.tv_sec -= 2;
+   fail_unless(eina_value_set(&other, itv));
+   fail_unless(eina_value_compare(value, &other) > 0);
+
+   itv.tv_sec++;
+   fail_unless(eina_value_set(&other, itv));
+   fail_unless(eina_value_compare(value, &other) == 0);
+
+   itv.tv_usec++;
+   fail_unless(eina_value_set(&other, itv));
+   fail_unless(eina_value_compare(value, &other) < 0);
+
+   itv.tv_usec -= 2;
+   fail_unless(eina_value_set(&other, itv));
+   fail_unless(eina_value_compare(value, &other) > 0);
+
+   itv.tv_usec++;
+   fail_unless(eina_value_set(&other, itv));
+   fail_unless(eina_value_compare(value, &other) == 0);
+
+
+   eina_value_flush(&other);
+
+
+   eina_value_free(value);
+   eina_shutdown();
+}
+END_TEST
+
 void
 eina_test_value(TCase *tc)
 {
@@ -1321,4 +1399,5 @@ eina_test_value(TCase *tc)
    tcase_add_test(tc, eina_value_test_array);
    tcase_add_test(tc, eina_value_test_list);
    tcase_add_test(tc, eina_value_test_hash);
+   tcase_add_test(tc, eina_value_test_timeval);
 }
