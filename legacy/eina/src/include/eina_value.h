@@ -57,7 +57,7 @@ typedef struct _Eina_Value Eina_Value;
 
 /**
  * @typedef Eina_Value_Type
- * Describes access to the value
+ * Describes the data contained by the value
  *
  * @since 1.2
  */
@@ -65,7 +65,7 @@ typedef struct _Eina_Value_Type Eina_Value_Type;
 
 /**
  * @typedef Eina_Value_Union
- * Union with all known values to be hold.
+ * Union of all known value types.
  *
  * @since 1.2
  */
@@ -73,7 +73,7 @@ typedef union _Eina_Value_Union Eina_Value_Union;
 
 /**
  * @union _Eina_Value_Union
- * All possible values to be hold.
+ * All possible value types.
  *
  * @since 1.2
  */
@@ -182,7 +182,7 @@ EAPI extern const Eina_Value_Type *EINA_VALUE_TYPE_DOUBLE;
 
 /**
  * @var EINA_VALUE_TYPE_STRINGSHARE
- * manages stringshare type.
+ * manages stringshared string type.
  *
  * @since 1.2
  */
@@ -200,8 +200,7 @@ EAPI extern const Eina_Value_Type *EINA_VALUE_TYPE_STRING;
 /**
  * @var EINA_VALUE_TYPE_ARRAY
  *
- * manages array type. The value get/set are the type of elements in
- * the array, use the alternaties:
+ * manages array type. Use the value get/set for arrays:
  *  @li eina_value_array_get() and eina_value_array_set()
  *  @li eina_value_array_vget() and eina_value_array_vset()
  *  @li eina_value_array_pget() and eina_value_array_pset()
@@ -213,8 +212,7 @@ EAPI extern const Eina_Value_Type *EINA_VALUE_TYPE_ARRAY;
 /**
  * @var EINA_VALUE_TYPE_LIST
  *
- * manages list type. The value get/set are the type of elements in
- * the list, use the alternaties:
+ * manages list type. Use the value get/set for lists:
  *  @li eina_value_list_get() and eina_value_list_set()
  *  @li eina_value_list_vget() and eina_value_list_vset()
  *  @li eina_value_list_pget() and eina_value_list_pset()
@@ -226,8 +224,7 @@ EAPI extern const Eina_Value_Type *EINA_VALUE_TYPE_LIST;
 /**
  * @var EINA_VALUE_TYPE_HASH
  *
- * manages hash type. The value get/set are the type of elements in
- * the hash, use the alternaties:
+ * manages hash type. Use the value get/set for hashes:
  *  @li eina_value_hash_get() and eina_value_hash_set()
  *  @li eina_value_hash_vget() and eina_value_hash_vset()
  *  @li eina_value_hash_pget() and eina_value_hash_pset()
@@ -284,15 +281,15 @@ struct _Eina_Value
  * Create a new generic value storage. The members are managed using
  * the description specified by @a type.
  *
- * Some types may specify more operations, as an example
- * #EINA_VALUE_TYPE_ARRAY uses eina_value_array_set(),
+ * Some types may specify more operations:
+ * eg. #EINA_VALUE_TYPE_ARRAY uses eina_value_array_set(),
  * eina_value_array_get() and so on.
  *
- * On failure, @c NULL is returned and #EINA_ERROR_OUT_OF_MEMORY or
+ * On failure, @c NULL is returned and either #EINA_ERROR_OUT_OF_MEMORY or
  * #EINA_ERROR_VALUE_FAILED is set.
  *
- * @note this is a helper around eina_value_setup() doing malloc for
- *       you. Consider using eina_value_flush() and eina_value_setup()
+ * @note this calls malloc and then uses eina_value_setup().
+ * Consider using eina_value_flush() and eina_value_setup() instead
  *       to avoid memory allocations.
  *
  * @see eina_value_free()
@@ -313,19 +310,19 @@ EAPI void eina_value_free(Eina_Value *value) EINA_ARG_NONNULL(1);
 
 
 /**
- * @brief Setup generic value storage.
+ * @brief Initialize generic value storage.
  * @param value value object
  * @param type how to manage this value.
  * @return #EINA_TRUE on success, #EINA_FALSE otherwise.
  *
- * Setups new generic value storage. The members are managed using the
+ * Initializes existing generic value storage. The members are managed using the
  * description specified by @a type.
  *
  * Some types may specify more operations, as an example
  * #EINA_VALUE_TYPE_ARRAY uses eina_value_array_set(),
  * eina_value_array_get() and so on.
  *
- * @note Existing memory is ignored! If it was previously set, then
+ * @note Existing contents are ignored! If the value was previously used, then
  *       use eina_value_flush() first.
  *
  * On failure, #EINA_FALSE is returned and #EINA_ERROR_OUT_OF_MEMORY
@@ -342,7 +339,7 @@ static inline Eina_Bool eina_value_setup(Eina_Value *value,
  * @brief Create generic value storage.
  * @param value value object
  *
- * Releases all the resources associated with a generic value. The
+ * Releases all the resources associated with an #Eina_Value. The
  * value must be already set with eina_value_setup() or
  * eina_value_new().
  *
@@ -363,7 +360,7 @@ static inline void eina_value_flush(Eina_Value *value) EINA_ARG_NONNULL(1);
  * @return #EINA_TRUE on success, #EINA_FALSE otherwise.
  *
  * The @a copy object is considered internalized and its existing
- * contents are ignored (just as if eina_value_flush() was called on
+ * contents are overwritten (just as if eina_value_flush() was called on
  * it).
  *
  * The copy happens by calling eina_value_setup() on @a copy, followed
@@ -379,7 +376,7 @@ EAPI Eina_Bool eina_value_copy(const Eina_Value *value,
  * @param a left side of comparison
  * @param b right side of comparison
  * @return less than zero if a < b, greater than zero if a > b, zero
- *         if equals
+ *         if a == b
  *
  * @since 1.2
  */
@@ -447,7 +444,7 @@ static inline Eina_Bool eina_value_set(Eina_Value *value,
  * The value is returned in the variable argument parameter, the
  * actual value is type-dependent, but usually it will be what is
  * stored inside the object. There shouldn't be any memory allocation,
- * thus the contents should @b not be free'd.
+ * thus the contents should @b not be freed.
  *
  * The variable argument is dependent on chosen type. The list for
  * basic types:
@@ -528,7 +525,7 @@ static inline Eina_Bool eina_value_vset(Eina_Value *value,
  * The value is returned in the variable argument parameter, the
  * actual value is type-dependent, but usually it will be what is
  * stored inside the object. There shouldn't be any memory allocation,
- * thus the contents should @b not be free'd.
+ * thus the contents should @b not be freed.
  *
  * @note for array member see eina_value_array_vget()
  * @note for list member see eina_value_list_vget()
@@ -610,7 +607,7 @@ static inline Eina_Bool eina_value_pset(Eina_Value *value,
  * The value is returned in pointer contents, the actual value is
  * type-dependent, but usually it will be what is stored inside the
  * object. There shouldn't be any memory allocation, thus the contents
- * should @b not be free'd.
+ * should @b not be freed.
  *
  * The pointer type is dependent on chosen value type. The list for
  * basic types:
@@ -670,10 +667,10 @@ static inline Eina_Bool eina_value_pget(const Eina_Value *value,
  * @return #EINA_TRUE if converted, #EINA_FALSE otherwise.
  *
  * Converts one value to another trying first @a value type
- * @c convert_to() function, if it did not work, try @a convert
- * type @c convert_from() function.
+ * @c convert_to() function. If unsuccessful, tries using @c convert_from()
+ * function in @a convert.
  *
- * Conversion functions are type defined, the basic types can convert
+ * Conversion functions are type defined, and the basic types can convert
  * between themselves, but conversion is strict! That is, if
  * converting from negative value to unsigned type, it will fail. It
  * also fails on value overflow.
@@ -681,7 +678,7 @@ static inline Eina_Bool eina_value_pget(const Eina_Value *value,
  * It is recommended that all types implement at least convert to
  * string, used by eina_value_to_string().
  *
- * @note Both objects must be setup beforehand!
+ * @note Both objects must have eina_value_setup() called on them beforehand!
  *
  * @since 1.2
  */
@@ -756,9 +753,7 @@ struct _Eina_Value_Array
  * On failure, @c NULL is returned and #EINA_ERROR_OUT_OF_MEMORY or
  * #EINA_ERROR_VALUE_FAILED is set.
  *
- * @note this is a helper around eina_value_array_setup() doing malloc
- *       for you.
- *
+ * @note this calls malloc and then uses eina_value_array_setup().
  * @see eina_value_free()
  * @see eina_value_array_setup()
  *
@@ -768,20 +763,20 @@ EAPI Eina_Value *eina_value_array_new(const Eina_Value_Type *subtype,
                                       unsigned int step) EINA_ARG_NONNULL(1);
 
 /**
- * @brief Setup generic value storage of type array.
+ * @brief Initialize generic value storage of type array.
  * @param value value object
- * @param subtype how to manage this array members.
+ * @param subtype how to manage array members.
  * @param step how to grow the members array.
  * @return #EINA_TRUE on success, #EINA_FALSE otherwise.
  *
- * Setups new generic value storage of type array with the given
+ * Initializes new generic value storage of type array with the given
  * @a subtype.
  *
  * This is the same as calling eina_value_set() with
  * #EINA_VALUE_TYPE_ARRAY followed by eina_value_pset() with the
  * #Eina_Value_Array description configured.
  *
- * @note Existing memory is ignored! If it was previously set, then
+ * @note Existing contents are ignored! If the value was previously used, then
  *       use eina_value_flush() first.
  *
  * On failure, #EINA_FALSE is returned and #EINA_ERROR_OUT_OF_MEMORY
@@ -872,10 +867,10 @@ static inline Eina_Bool eina_value_array_set(Eina_Value *value,
  * @param position index of the member
  * @return #EINA_TRUE on success, #EINA_FALSE otherwise.
  *
- * The value is returned in the variable argument parameter, the
+ * The value is returned in the variable argument parameter, and the
  * actual value is type-dependent, but usually it will be what is
- * stored inside the object. There shouldn't be any memory allocation,
- * thus the contents should @b not be free'd.
+ * stored inside the object. There shouldn't be any memory allocation;
+ * thus the contents should @b not be freed.
  *
  * The variable argument is dependent on chosen subtype. The list for
  * basic types:
@@ -918,7 +913,7 @@ static inline Eina_Bool eina_value_array_get(const Eina_Value *value,
                                              ...) EINA_ARG_NONNULL(1);
 
 /**
- * @brief Insert the generic value in an array member position.
+ * @brief Insert a generic value in an array member position.
  * @param value source value object
  * @param position index of the member
  * @return #EINA_TRUE on success, #EINA_FALSE otherwise.
@@ -971,7 +966,7 @@ static inline Eina_Bool eina_value_array_insert(Eina_Value *value,
 
 
 /**
- * @brief Append the generic value in an array.
+ * @brief Append a generic value in an array.
  * @param value source value object
  * @return #EINA_TRUE on success, #EINA_FALSE otherwise.
  *
@@ -1021,7 +1016,7 @@ static inline Eina_Bool eina_value_array_append(Eina_Value *value,
                                                 ...) EINA_ARG_NONNULL(1);
 
 /**
- * @brief Set the generic value in an array member.
+ * @brief Set a generic value to an array member.
  * @param value source value object
  * @param position index of the member
  * @param args variable argument
@@ -1052,7 +1047,7 @@ static inline Eina_Bool eina_value_array_vset(Eina_Value *value,
  * The value is returned in the variable argument parameter, the
  * actual value is type-dependent, but usually it will be what is
  * stored inside the object. There shouldn't be any memory allocation,
- * thus the contents should @b not be free'd.
+ * thus the contents should @b not be freed.
  *
  * @see eina_value_array_vset()
  * @see eina_value_array_get()
@@ -1064,7 +1059,7 @@ static inline Eina_Bool eina_value_array_vget(const Eina_Value *value,
                                               unsigned int position,
                                               va_list args) EINA_ARG_NONNULL(1);
 /**
- * @brief Insert the generic value in an array member position.
+ * @brief Insert a generic value to an array member position.
  * @param value source value object
  * @param position index of the member
  * @param args variable argument
@@ -1086,7 +1081,7 @@ static inline Eina_Bool eina_value_array_vinsert(Eina_Value *value,
                                                 va_list args) EINA_ARG_NONNULL(1);
 
 /**
- * @brief Append the generic value in an array.
+ * @brief Append a generic value to an array.
  * @param value source value object
  * @param args variable argument
  * @return #EINA_TRUE on success, #EINA_FALSE otherwise.
@@ -1107,7 +1102,7 @@ static inline Eina_Bool eina_value_array_vappend(Eina_Value *value,
 
 
 /**
- * @brief Set the generic value in an array member from pointer.
+ * @brief Set a generic value to an array member from a pointer.
  * @param value source value object
  * @param position index of the member
  * @param ptr pointer to specify the contents.
@@ -1164,7 +1159,7 @@ static inline Eina_Bool eina_value_array_pset(Eina_Value *value,
                                               const void *ptr) EINA_ARG_NONNULL(1, 3);
 
 /**
- * @brief Get the generic value to pointer from an array member.
+ * @brief Retrieve a generic value into a pointer from an array member.
  * @param value source value object
  * @param position index of the member
  * @param ptr pointer to receive the contents.
@@ -1173,7 +1168,7 @@ static inline Eina_Bool eina_value_array_pset(Eina_Value *value,
  * The value is returned in pointer contents, the actual value is
  * type-dependent, but usually it will be what is stored inside the
  * object. There shouldn't be any memory allocation, thus the contents
- * should @b not be free'd.
+ * should @b not be freed.
  *
  * The pointer type is dependent on chosen value type. The list for
  * basic types:
@@ -1216,7 +1211,7 @@ static inline Eina_Bool eina_value_array_pget(const Eina_Value *value,
                                               void *ptr) EINA_ARG_NONNULL(1, 3);
 
 /**
- * @brief Insert the generic value in an array member position from pointer.
+ * @brief Insert a generic value to an array member position from a pointer.
  * @param value source value object
  * @param position index of the member
  * @param ptr pointer to specify the contents.
@@ -1272,7 +1267,7 @@ static inline Eina_Bool eina_value_array_pinsert(Eina_Value *value,
                                                  const void *ptr) EINA_ARG_NONNULL(1);
 
 /**
- * @brief Append the generic value in an array from pointer.
+ * @brief Append a generic value to an array from a pointer.
  * @param value source value object
  * @param ptr pointer to specify the contents.
  * @return #EINA_TRUE on success, #EINA_FALSE otherwise.
@@ -1366,8 +1361,7 @@ struct _Eina_Value_List
  * On failure, @c NULL is returned and #EINA_ERROR_OUT_OF_MEMORY or
  * #EINA_ERROR_VALUE_FAILED is set.
  *
- * @note this is a helper around eina_value_list_setup() doing malloc
- *       for you.
+ * @note this calls malloc and then uses eina_value_list_setup().
  *
  * @see eina_value_free()
  * @see eina_value_list_setup()
@@ -1377,19 +1371,19 @@ struct _Eina_Value_List
 EAPI Eina_Value *eina_value_list_new(const Eina_Value_Type *subtype) EINA_ARG_NONNULL(1);
 
 /**
- * @brief Setup generic value storage of type list.
+ * @brief Initialize generic value storage of type list.
  * @param value value object
  * @param subtype how to manage this list members.
  * @return #EINA_TRUE on success, #EINA_FALSE otherwise.
  *
- * Setups new generic value storage of type list with the given
+ * Initializes new generic value storage of type list with the given
  * @a subtype.
  *
  * This is the same as calling eina_value_set() with
  * #EINA_VALUE_TYPE_LIST followed by eina_value_pset() with the
  * #Eina_Value_List description configured.
  *
- * @note Existing memory is ignored! If it was previously set, then
+ * @note Existing contents are ignored! If the value was previously used, then
  *       use eina_value_flush() first.
  *
  * On failure, #EINA_FALSE is returned and #EINA_ERROR_OUT_OF_MEMORY
@@ -1480,7 +1474,7 @@ static inline Eina_Bool eina_value_list_set(Eina_Value *value,
  * The value is returned in the variable argument parameter, the
  * actual value is type-dependent, but usually it will be what is
  * stored inside the object. There shouldn't be any memory allocation,
- * thus the contents should @b not be free'd.
+ * thus the contents should @b not be freed.
  *
  * The variable argument is dependent on chosen subtype. The list for
  * basic types:
@@ -1651,7 +1645,7 @@ static inline Eina_Bool eina_value_list_vset(Eina_Value *value,
  * The value is returned in the variable argument parameter, the
  * actual value is type-dependent, but usually it will be what is
  * stored inside the object. There shouldn't be any memory allocation,
- * thus the contents should @b not be free'd.
+ * thus the contents should @b not be freed.
  *
  * @see eina_value_list_vset()
  * @see eina_value_list_get()
@@ -1770,7 +1764,7 @@ static inline Eina_Bool eina_value_list_pset(Eina_Value *value,
  * The value is returned in pointer contents, the actual value is
  * type-dependent, but usually it will be what is stored inside the
  * object. There shouldn't be any memory allocation, thus the contents
- * should @b not be free'd.
+ * should @b not be freed.
  *
  * The pointer type is dependent on chosen value type. The list for
  * basic types:
@@ -1958,8 +1952,7 @@ struct _Eina_Value_Hash
  * On failure, @c NULL is returned and #EINA_ERROR_OUT_OF_MEMORY or
  * #EINA_ERROR_VALUE_FAILED is set.
  *
- * @note this is a helper around eina_value_hash_setup() doing malloc
- *       for you.
+ * @note this calls malloc and then uses eina_value_hash_setup().
  *
  * @see eina_value_free()
  * @see eina_value_hash_setup()
@@ -1969,21 +1962,21 @@ struct _Eina_Value_Hash
 EAPI Eina_Value *eina_value_hash_new(const Eina_Value_Type *subtype, unsigned int buckets_power_size) EINA_ARG_NONNULL(1);
 
 /**
- * @brief Setup generic value storage of type hash.
+ * @brief Initialize generic value storage of type hash.
  * @param value value object
  * @param subtype how to manage this hash members.
  * @param buckets_power_size how to allocate hash buckets (2 ^
  *        buckets_power_size), if zero then a sane value is chosen.
  * @return #EINA_TRUE on success, #EINA_FALSE otherwise.
  *
- * Setups new generic value storage of type hash with the given
+ * Initializes new generic value storage of type hash with the given
  * @a subtype.
  *
  * This is the same as calling eina_value_set() with
  * #EINA_VALUE_TYPE_HASH followed by eina_value_pset() with the
  * #Eina_Value_Hash description configured.
  *
- * @note Existing memory is ignored! If it was previously set, then
+ * @note Existing contents are ignored! If the value was previously used, then
  *       use eina_value_flush() first.
  *
  * On failure, #EINA_FALSE is returned and #EINA_ERROR_OUT_OF_MEMORY
@@ -2069,7 +2062,7 @@ static inline Eina_Bool eina_value_hash_set(Eina_Value *value,
  * The value is returned in the variable argument parameter, the
  * actual value is type-dependent, but usually it will be what is
  * stored inside the object. There shouldn't be any memory allocation,
- * thus the contents should @b not be free'd.
+ * thus the contents should @b not be freed.
  *
  * The variable argument is dependent on chosen subtype. The hash for
  * basic types:
@@ -2135,7 +2128,7 @@ static inline Eina_Bool eina_value_hash_vset(Eina_Value *value,
  * The value is returned in the variable argument parameter, the
  * actual value is type-dependent, but usually it will be what is
  * stored inside the object. There shouldn't be any memory allocation,
- * thus the contents should @b not be free'd.
+ * thus the contents should @b not be freed.
  *
  * @see eina_value_hash_vset()
  * @see eina_value_hash_get()
@@ -2205,7 +2198,7 @@ static inline Eina_Bool eina_value_hash_pset(Eina_Value *value,
  * The value is returned in pointer contents, the actual value is
  * type-dependent, but usually it will be what is stored inside the
  * object. There shouldn't be any memory allocation, thus the contents
- * should @b not be free'd.
+ * should @b not be freed.
  *
  * The pointer type is dependent on chosen value type. The hash for
  * basic types:
@@ -2352,7 +2345,7 @@ EAPI const char *eina_value_type_name_get(const Eina_Value_Type *type) EINA_PURE
 EAPI Eina_Bool eina_value_type_check(const Eina_Value_Type *type) EINA_PURE EINA_ARG_NONNULL(1) EINA_WARN_UNUSED_RESULT;
 
 /**
- * @brief Setup memory using type descriptor.
+ * @brief Initialize memory using type descriptor.
  * @param type type reference.
  * @param mem memory to operate, must be of size @c type->value_size.
  * @return #EINA_TRUE on success, #EINA_FALSE otherwise.
