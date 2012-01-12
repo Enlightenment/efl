@@ -1157,9 +1157,11 @@ END_TEST
 START_TEST(eina_value_test_list)
 {
    Eina_Value *value, other;
+   Eina_Value_List desc;
    char c;
    char buf[1024];
    char *str;
+   const char *s;
 
    eina_init();
 
@@ -1237,6 +1239,23 @@ START_TEST(eina_value_test_list)
    fail_unless(eina_value_convert(value, &other));
    fail_unless(eina_value_get(&other, &c));
    fail_unless(c == 33);
+
+   desc.subtype = EINA_VALUE_TYPE_STRING;
+   desc.list = NULL;
+   desc.list = eina_list_append(desc.list, strdup("hello"));
+   desc.list = eina_list_append(desc.list, strdup("world"));
+   desc.list = eina_list_append(desc.list, strdup("eina"));
+   fail_unless(eina_list_count(desc.list) == 3);
+   fail_unless(eina_value_set(value, desc));
+   fail_unless(eina_value_list_get(value, 0, &s));
+   fail_unless(s != NULL);
+   fail_unless(strcmp(s, "hello") == 0);
+   fail_unless(eina_value_list_get(value, 1, &s));
+   fail_unless(s != NULL);
+   fail_unless(strcmp(s, "world") == 0);
+   fail_unless(eina_value_list_get(value, 2, &s));
+   fail_unless(s != NULL);
+   fail_unless(strcmp(s, "eina") == 0);
 
    eina_value_free(value);
    eina_shutdown();

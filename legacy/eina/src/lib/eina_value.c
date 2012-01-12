@@ -2944,6 +2944,7 @@ _eina_value_type_list_pset(const Eina_Value_Type *type __UNUSED__, void *mem, co
 
    _eina_value_type_list_flush_elements(tmem);
    tmem->subtype = desc->subtype;
+   tmem->list = desc->list;
 
    return EINA_TRUE;
 }
