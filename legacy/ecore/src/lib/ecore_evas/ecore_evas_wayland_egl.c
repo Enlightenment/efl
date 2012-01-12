@@ -333,18 +333,32 @@ _ecore_evas_wl_pre_free(Ecore_Evas *ee)
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
    if (!ee) return;
-
    if (ee->engine.wl.frame) evas_object_del(ee->engine.wl.frame);
-   /* TODO: unmap destination buffer */
 }
 
 static void 
 _ecore_evas_wl_free(Ecore_Evas *ee) 
 {
+   Evas_Engine_Info_Wayland_Egl *einfo;
+
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
    if (ee) 
      {
+        /* get engine info */
+        einfo = (Evas_Engine_Info_Wayland_Egl *)evas_engine_info_get(ee->evas);
+        einfo->info.surface = NULL;
+        evas_engine_info_set(ee->evas, (Evas_Engine_Info *)einfo);
+
+        /* destroy shell surface */
+        if (ee->engine.wl.shell_surface)
+          wl_shell_surface_destroy(ee->engine.wl.shell_surface);
+        ee->engine.wl.shell_surface = NULL;
+
+        /* destroy surface */
+        if (ee->engine.wl.surface) wl_surface_destroy(ee->engine.wl.surface);
+        ee->engine.wl.surface = NULL;
+
         ecore_event_window_unregister(ee->prop.window);
         ecore_evas_input_event_unregister(ee);
      }
@@ -516,9 +530,30 @@ _ecore_evas_wl_show(Ecore_Evas *ee)
 static void 
 _ecore_evas_wl_hide(Ecore_Evas *ee) 
 {
+   Evas_Engine_Info_Wayland_Egl *einfo;
+
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
    if (!ee) return;
+   if (!ee->visible) return;
+
+   /* get engine info */
+   einfo = (Evas_Engine_Info_Wayland_Egl *)evas_engine_info_get(ee->evas);
+   einfo->info.surface = NULL;
+   evas_engine_info_set(ee->evas, (Evas_Engine_Info *)einfo);
+
+   /* destroy shell surface */
+   if (ee->engine.wl.shell_surface)
+     wl_shell_surface_destroy(ee->engine.wl.shell_surface);
+   ee->engine.wl.shell_surface = NULL;
+
+   /* destroy surface */
+   if (ee->engine.wl.surface) wl_surface_destroy(ee->engine.wl.surface);
+   ee->engine.wl.surface = NULL;
+
+   ee->visible = 0;
+   ee->should_be_visible = 0;
+   if (ee->func.fn_hide) ee->func.fn_hide(ee);
 }
 
 static void 
