@@ -60,6 +60,7 @@ group {
          description {
             state: "default" 0.0;
             rel2.to_y: "title_base";
+            color_class: "border_top";
             image {
                normal: "bd_top.png";
                border: 2 2 2 2;
@@ -76,6 +77,7 @@ group {
                relative: 0.0 1.0;
                offset: 0 -4;
             }
+            color_class: "border_bottom";
             image {
                normal: "bd_bottom.png";
                border: 2 2 0 0;
@@ -191,12 +193,13 @@ group {
                offset: -8 2;
                to_x: "title_base";
             }
+            color_class: "border_title";
             text {
                font: "Sans:style=Bold";
                size: 10;
                min: 0 1;
                align: 0.0 0.0;
-               text_class: "title_base";
+               text_class: "title_bar";
             }
          }
          description {
