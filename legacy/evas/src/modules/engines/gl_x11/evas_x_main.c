@@ -534,10 +534,10 @@ eng_window_free(Evas_GL_X11_Window *gw)
    if (ref == 0)
      {
         if (context) eglDestroyContext(gw->egl_disp, context);
-        eglTerminate(gw->egl_disp);
         context = EGL_NO_CONTEXT;
      }
    eglMakeCurrent(gw->egl_disp, EGL_NO_SURFACE, EGL_NO_SURFACE, EGL_NO_CONTEXT);
+   if (ref == 0) eglTerminate(gw->egl_disp);
 #else
    if (gw->glxwin) glXDestroyWindow(gw->disp, gw->glxwin);
    if (ref == 0)
