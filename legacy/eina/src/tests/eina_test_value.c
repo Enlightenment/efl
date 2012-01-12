@@ -1376,6 +1376,50 @@ START_TEST(eina_value_test_timeval)
    fail_unless(eina_value_set(&other, itv));
    fail_unless(eina_value_compare(value, &other) == 0);
 
+   eina_value_flush(&other);
+
+
+   eina_value_free(value);
+   eina_shutdown();
+}
+END_TEST
+
+
+START_TEST(eina_value_test_blob)
+{
+   Eina_Value *value, other;
+   Eina_Value_Blob in, out;
+   unsigned char blob[] = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
+   int i = 0x11223344;
+   char *str;
+
+   eina_init();
+
+   value = eina_value_new(EINA_VALUE_TYPE_BLOB);
+   fail_unless(value != NULL);
+
+   in.ops = NULL;
+   in.memory = blob;
+   in.size = sizeof(blob);
+   fail_unless(eina_value_set(value, in));
+   fail_unless(eina_value_get(value, &out));
+   fail_unless(out.memory == blob);
+   fail_unless(out.size == sizeof(blob));
+   fail_unless(memcmp(&in, &out, sizeof(Eina_Value_Blob)) == 0);
+
+   str = eina_value_to_string(value);
+   fail_unless(str != NULL);
+   fail_unless(strcmp(str, "BLOB(10, [01 02 03 04 05 06 07 08 09 0a])") == 0);
+   free(str);
+
+   fail_unless(eina_value_setup(&other, EINA_VALUE_TYPE_INT));
+   fail_unless(eina_value_set(&other, i));
+   fail_unless(eina_value_convert(&other, value));
+   fail_unless(eina_value_get(value, &out));
+
+   fail_unless(out.memory != NULL);
+   fail_unless(out.size == sizeof(int));
+   fail_unless(memcmp(&i, out.memory, sizeof(int)) == 0);
 
    eina_value_flush(&other);
 
@@ -1400,4 +1444,5 @@ eina_test_value(TCase *tc)
    tcase_add_test(tc, eina_value_test_list);
    tcase_add_test(tc, eina_value_test_hash);
    tcase_add_test(tc, eina_value_test_timeval);
+   tcase_add_test(tc, eina_value_test_blob);
 }

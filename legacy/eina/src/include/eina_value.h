@@ -243,6 +243,12 @@ EAPI extern const Eina_Value_Type *EINA_VALUE_TYPE_HASH;
  */
 EAPI extern const Eina_Value_Type *EINA_VALUE_TYPE_TIMEVAL;
 
+/**
+ * @var EINA_VALUE_TYPE_BLOB
+ * manages blob of bytes type, see @ref Eina_Value_Blob
+ * @since 1.2
+ */
+EAPI extern const Eina_Value_Type *EINA_VALUE_TYPE_BLOB;
 
 /**
  * @var EINA_ERROR_VALUE_FAILED
@@ -2243,6 +2249,54 @@ static inline Eina_Bool eina_value_hash_pget(const Eina_Value *value,
  * @}
  */
 
+/**
+ * @defgroup Eina_Value_Blob_Group Generic Value Blob management
+ *
+ * @{
+ */
+
+/**
+ * @typedef Eina_Value_Blob_Operations
+ * How to manage blob. Any @c NULL callback is ignored.
+ * @since 1.2
+ */
+typedef struct _Eina_Value_Blob_Operations Eina_Value_Blob_Operations;
+
+/**
+ * @struct _Eina_Value_Blob_Operations
+ * How to manage blob. Any @c NULL callback is ignored.
+ * @since 1.2
+ */
+struct _Eina_Value_Blob_Operations
+{
+#define EINA_VALUE_BLOB_OPERATIONS_VERSION (1)
+   unsigned int version; /**< must be EINA_VALUE_BLOB_OPERATIONS_VERSION */
+   void (*free)(const Eina_Value_Blob_Operations *ops, void *memory, size_t size);
+   void *(*copy)(const Eina_Value_Blob_Operations *ops, const void *memory, size_t size);
+   int (*compare)(const Eina_Value_Blob_Operations *ops, const void *data1, size_t size_data1, const void *data2, size_t size_data2);
+   char *(*to_string)(const Eina_Value_Blob_Operations *ops, const void *memory, size_t size);
+};
+
+/**
+ * @typedef Eina_Value_Blob
+ * @since 1.2
+ */
+typedef struct _Eina_Value_Blob Eina_Value_Blob;
+
+/**
+ * @struct _Eina_Value_Blob
+ * @since 1.2
+ */
+struct _Eina_Value_Blob
+{
+   const Eina_Value_Blob_Operations *ops; /**< if @c NULL, nothing is freed, copy will just copy the memory pointer, not its value. */
+   const void *memory;
+   unsigned int size;
+};
+
+/**
+ * @}
+ */
 
 /**
  * @defgroup Eina_Value_Type_Group Generic Value Type management

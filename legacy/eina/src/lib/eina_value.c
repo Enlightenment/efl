@@ -3529,6 +3529,234 @@ static const Eina_Value_Type _EINA_VALUE_TYPE_TIMEVAL = {
   _eina_value_type_timeval_pget
 };
 
+static Eina_Bool
+_eina_value_type_blob_setup(const Eina_Value_Type *type __UNUSED__, void *mem)
+{
+   memset(mem, 0, sizeof(Eina_Value_Blob));
+   return EINA_TRUE;
+}
+
+static inline const Eina_Value_Blob_Operations *
+_eina_value_type_blob_ops_get(const Eina_Value_Blob *blob)
+{
+   if (!blob) return NULL;
+   if (!blob->ops) return NULL;
+   EINA_SAFETY_ON_FALSE_RETURN_VAL
+     (blob->ops->version == EINA_VALUE_BLOB_OPERATIONS_VERSION, NULL);
+   return blob->ops;
+}
+
+static Eina_Bool
+_eina_value_type_blob_flush(const Eina_Value_Type *type __UNUSED__, void *mem)
+{
+   const Eina_Value_Blob_Operations *ops = _eina_value_type_blob_ops_get(mem);
+   Eina_Value_Blob *tmem = mem;
+   if ((ops) && (ops->free))
+     ops->free(ops, (void *)tmem->memory, tmem->size);
+   return EINA_TRUE;
+}
+
+static Eina_Bool
+_eina_value_type_blob_copy(const Eina_Value_Type *type __UNUSED__, const void *src, void *dst)
+{
+   const Eina_Value_Blob_Operations *ops = _eina_value_type_blob_ops_get(src);
+   const Eina_Value_Blob *s = src;
+   Eina_Value_Blob *d = dst;
+
+   *d = *s;
+
+   if ((ops) && (ops->copy))
+     {
+        d->memory = ops->copy(ops, s->memory, s->size);
+        if ((d->memory == NULL) && (s->size > 0))
+          return EINA_FALSE;
+     }
+
+   return EINA_TRUE;
+}
+
+static int
+_eina_value_type_blob_compare(const Eina_Value_Type *type __UNUSED__, const void *a, const void *b)
+{
+   const Eina_Value_Blob_Operations *ops = _eina_value_type_blob_ops_get(a);
+   const Eina_Value_Blob *ta = a, *tb = b;
+   size_t minsize;
+   if (ta->ops != tb->ops)
+     {
+        eina_error_set(EINA_ERROR_VALUE_FAILED);
+        return -1;
+     }
+   if ((ops) && (ops->compare))
+     return ops->compare(ops, ta->memory, ta->size, tb->memory, tb->size);
+
+   if (ta->size < tb->size)
+     minsize = ta->size;
+   else
+     minsize = tb->size;
+
+   return memcmp(ta->memory, tb->memory, minsize);
+}
+
+static Eina_Bool
+_eina_value_type_blob_convert_to(const Eina_Value_Type *type __UNUSED__, const Eina_Value_Type *convert, const void *type_mem, void *convert_mem)
+{
+   const Eina_Value_Blob *tmem = type_mem;
+
+   eina_error_set(0);
+   if (convert == EINA_VALUE_TYPE_STRINGSHARE ||
+       convert == EINA_VALUE_TYPE_STRING)
+     {
+        const Eina_Value_Blob_Operations *ops;
+        Eina_Strbuf *str;
+        const char *other_mem;
+        Eina_Bool ret = EINA_FALSE, first = EINA_TRUE;
+        const unsigned char *ptr, *ptr_end;
+
+        ops = _eina_value_type_blob_ops_get(tmem);
+        if ((ops) && (ops->to_string))
+          {
+             char *x = ops->to_string(ops, tmem->memory, tmem->size);
+             if (x)
+               {
+                  ret = eina_value_type_pset(convert, convert_mem, &x);
+                  free(x);
+               }
+             return ret;
+          }
+
+        str = eina_strbuf_new();
+        if (!str)
+          return EINA_FALSE;
+
+        if (!eina_strbuf_append_printf(str, "BLOB(%u, [", tmem->size))
+          goto error;
+
+        ptr = tmem->memory;
+        ptr_end = ptr + tmem->size;
+        for (; ptr < ptr_end; ptr++)
+          {
+             if (first)
+               {
+                  first = EINA_FALSE;
+                  if (!eina_strbuf_append_printf(str, "%02hhx", *ptr))
+                    goto error;
+               }
+             else
+               {
+                  if (!eina_strbuf_append_printf(str, " %02hhx", *ptr))
+                    goto error;
+               }
+          }
+
+        if (!eina_strbuf_append(str, "])"))
+          goto error;
+
+        other_mem = eina_strbuf_string_get(str);
+        ret = eina_value_type_pset(convert, convert_mem, &other_mem);
+
+     error:
+        eina_strbuf_free(str);
+        return ret;
+     }
+   else
+     {
+        eina_error_set(EINA_ERROR_VALUE_FAILED);
+        return EINA_FALSE;
+     }
+}
+
+static void
+_eina_value_type_blob_converted_ops_free(const Eina_Value_Blob_Operations *ops __UNUSED__, void *memory, size_t size __UNUSED__)
+{
+   free(memory);
+}
+
+static void *
+_eina_value_type_blob_converted_ops_copy(const Eina_Value_Blob_Operations *ops __UNUSED__, const void *memory, size_t size)
+{
+   void *ret = malloc(size);
+   if (!ret)
+     {
+        eina_error_set(EINA_ERROR_OUT_OF_MEMORY);
+        return NULL;
+     }
+   memcpy(ret, memory, size);
+   return ret;
+}
+
+static const Eina_Value_Blob_Operations _eina_value_type_blob_converted_ops = {
+  EINA_VALUE_BLOB_OPERATIONS_VERSION,
+  _eina_value_type_blob_converted_ops_free,
+  _eina_value_type_blob_converted_ops_copy,
+  NULL, /* default compare */
+  NULL, /* default to_string */
+};
+
+static Eina_Bool
+_eina_value_type_blob_convert_from(const Eina_Value_Type *type, const Eina_Value_Type *convert, void *type_mem, const void *convert_mem)
+{
+   Eina_Value_Blob desc;
+   char *buf;
+
+   buf = malloc(convert->value_size);
+   if (!buf)
+     {
+        eina_error_set(EINA_ERROR_OUT_OF_MEMORY);
+        return EINA_FALSE;
+     }
+   if (!eina_value_type_pget(convert, convert_mem, buf))
+     return EINA_FALSE;
+
+   desc.ops = &_eina_value_type_blob_converted_ops;
+   desc.memory = buf;
+   desc.size = convert->value_size;
+   return eina_value_type_pset(type, type_mem, &desc);
+}
+
+static Eina_Bool
+_eina_value_type_blob_pset(const Eina_Value_Type *type __UNUSED__, void *mem, const void *ptr)
+{
+   const Eina_Value_Blob_Operations *ops = _eina_value_type_blob_ops_get(mem);
+   Eina_Value_Blob *tmem = mem;
+   const Eina_Value_Blob *desc = ptr;
+
+   if ((ops) && (ops->free))
+     ops->free(ops, (void *)tmem->memory, tmem->size);
+
+   *tmem = *desc;
+   return EINA_TRUE;
+}
+
+static Eina_Bool
+_eina_value_type_blob_vset(const Eina_Value_Type *type, void *mem, va_list args)
+{
+   const Eina_Value_Blob desc = va_arg(args, Eina_Value_Blob);
+   _eina_value_type_blob_pset(type, mem, &desc);
+   return EINA_TRUE;
+}
+
+static Eina_Bool
+_eina_value_type_blob_pget(const Eina_Value_Type *type __UNUSED__, const void *mem, void *ptr)
+{
+   memcpy(ptr, mem, sizeof(Eina_Value_Blob));
+   return EINA_TRUE;
+}
+
+static const Eina_Value_Type _EINA_VALUE_TYPE_BLOB = {
+  EINA_VALUE_TYPE_VERSION,
+  sizeof(Eina_Value_Blob),
+  "Eina_Value_Blob",
+  _eina_value_type_blob_setup,
+  _eina_value_type_blob_flush,
+  _eina_value_type_blob_copy,
+  _eina_value_type_blob_compare,
+  _eina_value_type_blob_convert_to,
+  _eina_value_type_blob_convert_from,
+  _eina_value_type_blob_vset,
+  _eina_value_type_blob_pset,
+  _eina_value_type_blob_pget
+};
+
 /* keep all basic types inlined in an array so we can compare if it's
  * a basic type using pointer arithmetic.
  *
@@ -3790,6 +4018,7 @@ eina_value_init(void)
    EINA_VALUE_TYPE_LIST = &_EINA_VALUE_TYPE_LIST;
    EINA_VALUE_TYPE_HASH = &_EINA_VALUE_TYPE_HASH;
    EINA_VALUE_TYPE_TIMEVAL = &_EINA_VALUE_TYPE_TIMEVAL;
+   EINA_VALUE_TYPE_BLOB = &_EINA_VALUE_TYPE_BLOB;
 
    return EINA_TRUE;
 }
@@ -3842,6 +4071,7 @@ EAPI const Eina_Value_Type *EINA_VALUE_TYPE_ARRAY = NULL;
 EAPI const Eina_Value_Type *EINA_VALUE_TYPE_LIST = NULL;
 EAPI const Eina_Value_Type *EINA_VALUE_TYPE_HASH = NULL;
 EAPI const Eina_Value_Type *EINA_VALUE_TYPE_TIMEVAL = NULL;
+EAPI const Eina_Value_Type *EINA_VALUE_TYPE_BLOB = NULL;
 
 EAPI Eina_Error EINA_ERROR_VALUE_FAILED = 0;
 
