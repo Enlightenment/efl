@@ -398,12 +398,12 @@ test_tooltip(void *data       __UNUSED__,
    evas_object_show(tb);
 
    tb_it = elm_toolbar_item_append(tb, NULL, "Open", NULL, NULL);
-   elm_toolbar_item_tooltip_text_set(tb_it, "Opens a file");
+   elm_object_item_tooltip_text_set(tb_it, "Opens a file");
 
    tb_it = elm_toolbar_item_append(tb, NULL, "Icon", NULL, NULL);
-   elm_toolbar_item_tooltip_content_cb_set
+   elm_object_item_tooltip_content_cb_set
      (tb_it, _tt_item_icon, (void *)456L, _tt_item_icon_del);
-   elm_toolbar_item_tooltip_style_set(tb_it, "transparent");
+   elm_object_item_tooltip_style_set(tb_it, "transparent");
 
    bt = elm_button_add(win);
    elm_object_text_set(bt, "Simple text tooltip");

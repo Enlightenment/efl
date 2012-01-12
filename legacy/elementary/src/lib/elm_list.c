@@ -1020,13 +1020,13 @@ _mouse_up(void *data, Evas *evas __UNUSED__, Evas_Object *obj __UNUSED__, void *
 }
 
 static void
-_item_disable(void *data)
+_item_disable(Elm_Object_Item *it)
 {
-   Elm_List_Item *it = data;
-   if (it->base.disabled)
-     edje_object_signal_emit(VIEW(it), "elm,state,disabled", "elm");
+   Elm_List_Item *item = (Elm_List_Item *) it;
+   if (item->base.disabled)
+     edje_object_signal_emit(VIEW(item), "elm,state,disabled", "elm");
    else
-     edje_object_signal_emit(VIEW(it), "elm,state,enabled", "elm");
+     edje_object_signal_emit(VIEW(item), "elm,state,enabled", "elm");
 }
 
 static void
@@ -1075,7 +1075,7 @@ _item_content_set(Elm_Object_Item *it, const char *part, Evas_Object *content)
 static Evas_Object *
 _item_content_get(const Elm_Object_Item *it, const char *part)
 {
-   ELM_OBJ_ITEM_CHECK_OR_RETURN(it);
+   ELM_OBJ_ITEM_CHECK_OR_RETURN(it, NULL);
    Elm_List_Item *item = (Elm_List_Item *) it;
 
    if ((!part) || (!strcmp(part, "start")))
@@ -1092,20 +1092,20 @@ _item_content_get(const Elm_Object_Item *it, const char *part)
 }
 
 static Evas_Object *
-_item_content_unset(const void *data, const char *part)
+_item_content_unset(const Elm_Object_Item *it, const char *part)
 {
-   Elm_List_Item *it = (Elm_List_Item *)data;
+   Elm_List_Item *item = (Elm_List_Item *) it;
 
    if ((!part) || (!strcmp(part, "start")))
      {
-        Evas_Object *obj = it->icon;
-        _item_content_set((void *)data, part, NULL);
+        Evas_Object *obj = item->icon;
+        _item_content_set((Elm_Object_Item *) it, part, NULL);
         return obj;
      }
    else if (!strcmp(part, "end"))
      {
-        Evas_Object *obj = it->end;
-        _item_content_set((void *)data, part, NULL);
+        Evas_Object *obj = item->end;
+        _item_content_set((Elm_Object_Item *) it, part, NULL);
         return obj;
      }
    return NULL;
@@ -1116,7 +1116,7 @@ _item_text_set(Elm_Object_Item *it, const char *part, const char *text)
 {
    ELM_OBJ_ITEM_CHECK_OR_RETURN(it);
    Elm_List_Item *list_it = (Elm_List_Item *) it;
-   if (part && strcmp(part, "default")) return NULL;
+   if (part && strcmp(part, "default")) return;
    if (!eina_stringshare_replace(&list_it->label, text)) return;
    if (VIEW(list_it))
      edje_object_part_text_set(VIEW(list_it), "elm.text", text);
@@ -1126,6 +1126,7 @@ static const char *
 _item_text_get(const Elm_Object_Item *it, const char *part)
 {
    ELM_OBJ_ITEM_CHECK_OR_RETURN(it, NULL);
+   if (part && strcmp(part, "default")) return NULL;
    return ((Elm_List_Item *) it)->label;
 }
 
@@ -1165,12 +1166,12 @@ _item_new(Evas_Object *obj, const char *label, Evas_Object *icon, Evas_Object *e
         evas_object_event_callback_add(it->end, EVAS_CALLBACK_CHANGED_SIZE_HINTS,
                                        _changed_size_hints, obj);
      }
-   _elm_widget_item_disable_hook_set((Elm_Widget_Item *)it, _item_disable);
-   _elm_widget_item_content_set_hook_set((Elm_Widget_Item *)it, _item_content_set);
-   _elm_widget_item_content_get_hook_set((Elm_Widget_Item *)it, _item_content_get);
-   _elm_widget_item_content_unset_hook_set((Elm_Widget_Item *)it, _item_content_unset);
-   _elm_widget_item_text_set_hook_set((Elm_Widget_Item *)it, _item_text_set);
-   _elm_widget_item_text_get_hook_set((Elm_Widget_Item *)it, _item_text_get);
+   elm_widget_item_disable_hook_set(it, _item_disable);
+   elm_widget_item_content_set_hook_set(it, _item_content_set);
+   elm_widget_item_content_get_hook_set(it, _item_content_get);
+   elm_widget_item_content_unset_hook_set(it, _item_content_unset);
+   elm_widget_item_text_set_hook_set(it, _item_text_set);
+   elm_widget_item_text_get_hook_set(it, _item_text_get);
    return it;
 }
 

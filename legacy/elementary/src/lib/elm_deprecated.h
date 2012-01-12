@@ -1470,6 +1470,96 @@ EINA_DEPRECATED EAPI void                   elm_diskselector_item_del_cb_set(Elm
  */
 EINA_DEPRECATED EAPI void                   elm_diskselector_item_del(Elm_Object_Item *it);
 
+/**
+ * Set the text to be shown in the diskselector item.
+ *
+ * @param it Target item
+ * @param text The text to set in the content
+ *
+ * Setup the text as tooltip to object. The item can have only one tooltip,
+ * so any previous tooltip data is removed.
+ *
+ * @deprecated Use elm_object_item_tooltip_text_set() instead
+ * @see elm_object_tooltip_text_set() for more details.
+ *
+ * @ingroup Diskselector
+ */
+EINA_DEPRECATED EAPI void                   elm_diskselector_item_tooltip_text_set(Elm_Object_Item *it, const char *text);
+
+/**
+ * Set the content to be shown in the tooltip item.
+ *
+ * Setup the tooltip to item. The item can have only one tooltip,
+ * so any previous tooltip data is removed. @p func(with @p data) will
+ * be called every time that need show the tooltip and it should
+ * return a valid Evas_Object. This object is then managed fully by
+ * tooltip system and is deleted when the tooltip is gone.
+ *
+ * @param it the diskselector item being attached a tooltip.
+ * @param func the function used to create the tooltip contents.
+ * @param data what to provide to @a func as callback data/context.
+ * @param del_cb called when data is not needed anymore, either when
+ *        another callback replaces @p func, the tooltip is unset with
+ *        elm_diskselector_item_tooltip_unset() or the owner @a item
+ *        dies. This callback receives as the first parameter the
+ *        given @a data, and @c event_info is the item.
+ *
+ * @deprecated Use elm_object_item_tooltip_content_cb_set() instead
+ * @see elm_object_tooltip_content_cb_set() for more details.
+ *
+ * @ingroup Diskselector
+ */
+EINA_DEPRECATED EAPI void                   elm_diskselector_item_tooltip_content_cb_set(Elm_Object_Item *it, Elm_Tooltip_Item_Content_Cb func, const void *data, Evas_Smart_Cb del_cb);
+
+/**
+ * Unset tooltip from item.
+ *
+ * @param it diskselector item to remove previously set tooltip.
+ *
+ * Remove tooltip from item. The callback provided as del_cb to
+ * elm_diskselector_item_tooltip_content_cb_set() will be called to notify
+ * it is not used anymore.
+ *
+ * @deprecated Use elm_object_item_tooltip_unset() instead
+ * @see elm_object_tooltip_unset() for more details.
+ * @see elm_diskselector_item_tooltip_content_cb_set()
+ *
+ * @ingroup Diskselector
+ */
+EINA_DEPRECATED EAPI void                   elm_diskselector_item_tooltip_unset(Elm_Object_Item *it);
+
+/**
+ * Sets a different style for this item tooltip.
+ *
+ * @note before you set a style you should define a tooltip with
+ *       elm_diskselector_item_tooltip_content_cb_set() or
+ *       elm_diskselector_item_tooltip_text_set()
+ *
+ * @param it diskselector item with tooltip already set.
+ * @param style the theme style to use (default, transparent, ...)
+ *
+ * @deprecated Use elm_object_item_tooltip_style_set() instead
+ * @see elm_object_tooltip_style_set() for more details.
+ *
+ * @ingroup Diskselector
+ */
+EINA_DEPRECATED EAPI void                   elm_diskselector_item_tooltip_style_set(Elm_Object_Item *it, const char *style);
+
+/**
+ * Get the style for this item tooltip.
+ *
+ * @param it diskselector item with tooltip already set.
+ * @return style the theme style in use, defaults to "default". If the
+ *         object does not have a tooltip set, then NULL is returned.
+ *
+ * @deprecated Use elm_object_item_tooltip_style_get() instead
+ * @see elm_object_tooltip_style_get() for more details.
+ * @see elm_diskselector_item_tooltip_style_set()
+ *
+ * @ingroup Diskselector
+ */
+EINA_DEPRECATED EAPI const char            *elm_diskselector_item_tooltip_style_get(const Elm_Object_Item *it);
+
 EINA_DEPRECATED EAPI void         elm_factory_content_set(Evas_Object *obj, Evas_Object *content);
 EINA_DEPRECATED EAPI Evas_Object *elm_factory_content_get(const Evas_Object *obj);
 
@@ -2784,6 +2874,97 @@ EINA_DEPRECATED EAPI void                         elm_toolbar_item_del_cb_set(El
  * @ingroup Toolbar
  */
 EINA_DEPRECATED EAPI void                         elm_toolbar_item_del(Elm_Object_Item *it);
+
+/**
+ * Set the text to be shown in a given toolbar item's tooltips.
+ *
+ * @param it toolbar item.
+ * @param text The text to set in the content.
+ *
+ * Setup the text as tooltip to object. The item can have only one tooltip,
+ * so any previous tooltip data - set with this function or
+ * elm_toolbar_item_tooltip_content_cb_set() - is removed.
+ *
+ * @deprecated Use elm_object_item_tooltip_text_set() instead
+ * @see elm_object_tooltip_text_set() for more details.
+ *
+ * @ingroup Toolbar
+ */
+EINA_DEPRECATED EAPI void                         elm_toolbar_item_tooltip_text_set(Elm_Object_Item *it, const char *text);
+
+/**
+ * Set the content to be shown in the tooltip item.
+ *
+ * Setup the tooltip to item. The item can have only one tooltip,
+ * so any previous tooltip data is removed. @p func(with @p data) will
+ * be called every time that need show the tooltip and it should
+ * return a valid Evas_Object. This object is then managed fully by
+ * tooltip system and is deleted when the tooltip is gone.
+ *
+ * @param it the toolbar item being attached a tooltip.
+ * @param func the function used to create the tooltip contents.
+ * @param data what to provide to @a func as callback data/context.
+ * @param del_cb called when data is not needed anymore, either when
+ *        another callback replaces @a func, the tooltip is unset with
+ *        elm_toolbar_item_tooltip_unset() or the owner @a item
+ *        dies. This callback receives as the first parameter the
+ *        given @a data, and @c event_info is the item.
+ *
+ * @deprecated Use elm_object_item_tooltip_content_cb_set() instead
+ * @see elm_object_tooltip_content_cb_set() for more details.
+ *
+ * @ingroup Toolbar
+ */
+EINA_DEPRECATED EAPI void                         elm_toolbar_item_tooltip_content_cb_set(Elm_Object_Item *it, Elm_Tooltip_Item_Content_Cb func, const void *data, Evas_Smart_Cb del_cb);
+
+/**
+ * Unset tooltip from item.
+ *
+ * @param it toolbar item to remove previously set tooltip.
+ *
+ * Remove tooltip from item. The callback provided as del_cb to
+ * elm_toolbar_item_tooltip_content_cb_set() will be called to notify
+ * it is not used anymore.
+ *
+ * @deprecated Use elm_object_item_tooltip_unset() instead
+ * @see elm_object_tooltip_unset() for more details.
+ * @see elm_toolbar_item_tooltip_content_cb_set()
+ *
+ * @ingroup Toolbar
+ */
+EINA_DEPRECATED EAPI void                         elm_toolbar_item_tooltip_unset(Elm_Object_Item *it);
+
+/**
+ * Sets a different style for this item tooltip.
+ *
+ * @note before you set a style you should define a tooltip with
+ *       elm_toolbar_item_tooltip_content_cb_set() or
+ *       elm_toolbar_item_tooltip_text_set()
+ *
+ * @param it toolbar item with tooltip already set.
+ * @param style the theme style to use (default, transparent, ...)
+ *
+ * @deprecated Use elm_object_item_tooltip_style_set() instead
+ * @see elm_object_tooltip_style_set() for more details.
+ *
+ * @ingroup Toolbar
+ */
+EINA_DEPRECATED EAPI void                         elm_toolbar_item_tooltip_style_set(Elm_Object_Item *it, const char *style);
+
+/**
+ * Get the style for this item tooltip.
+ *
+ * @param it toolbar item with tooltip already set.
+ * @return style the theme style in use, defaults to "default". If the
+ *         object does not have a tooltip set, then NULL is returned.
+ *
+ * @deprecated Use elm_object_item_style_get() instead
+ * @see elm_object_tooltip_style_get() for more details.
+ * @see elm_toolbar_item_tooltip_style_set()
+ *
+ * @ingroup Toolbar
+ */
+EINA_DEPRECATED EAPI const char                  *elm_toolbar_item_tooltip_style_get(const Elm_Object_Item *it);
 
 /**
  * @brief Link a Elm_Payer with an Elm_Video object.
