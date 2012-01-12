@@ -11,7 +11,7 @@ struct _Widget_Data
 {
    Evas_Object *scr, *box, *self;
    Eina_List *items, *selected, *to_delete;
-   Elm_List_Item *last_selected_item;
+   Elm_Object_Item *last_selected_item;
    Elm_List_Mode mode;
    Elm_List_Mode h_mode;
    Evas_Coord minw[2], minh[2];
@@ -318,15 +318,14 @@ _item_multi_select_up(Widget_Data *wd)
    if (!wd->selected) return EINA_FALSE;
    if (!wd->multi) return EINA_FALSE;
 
-   Elm_Object_Item *prev = elm_list_item_prev((Elm_Object_Item *) wd->last_selected_item);
+   Elm_Object_Item *prev = elm_list_item_prev(wd->last_selected_item);
    if (!prev) return EINA_TRUE;
 
    if (elm_list_item_selected_get(prev))
      {
-        elm_list_item_selected_set((Elm_Object_Item *) wd->last_selected_item,
-                                   EINA_FALSE);
-        wd->last_selected_item = (Elm_List_Item *) prev;
-        elm_list_item_show((Elm_Object_Item *) wd->last_selected_item);
+        elm_list_item_selected_set(wd->last_selected_item, EINA_FALSE);
+        wd->last_selected_item = prev;
+        elm_list_item_show(wd->last_selected_item);
      }
    else
      {
@@ -342,15 +341,14 @@ _item_multi_select_down(Widget_Data *wd)
    if (!wd->selected) return EINA_FALSE;
    if (!wd->multi) return EINA_FALSE;
 
-   Elm_Object_Item *next = elm_list_item_next((Elm_Object_Item *) wd->last_selected_item);
+   Elm_Object_Item *next = elm_list_item_next(wd->last_selected_item);
    if (!next) return EINA_TRUE;
 
    if (elm_list_item_selected_get(next))
      {
-        elm_list_item_selected_set((Elm_Object_Item *) wd->last_selected_item,
-                                   EINA_FALSE);
-        wd->last_selected_item = (Elm_List_Item *) next;
-        elm_list_item_show((Elm_Object_Item *) wd->last_selected_item);
+        elm_list_item_selected_set(wd->last_selected_item, EINA_FALSE);
+        wd->last_selected_item = next;
+        elm_list_item_show(wd->last_selected_item);
      }
    else
      {
@@ -366,7 +364,7 @@ _item_single_select_up(Widget_Data *wd)
    Elm_Object_Item *prev;
 
    if (!wd->selected) prev = eina_list_data_get(eina_list_last(wd->items));
-   else prev = elm_list_item_prev((Elm_Object_Item *) wd->last_selected_item);
+   else prev = elm_list_item_prev(wd->last_selected_item);
    if (!prev) return EINA_FALSE;
 
    _deselect_all_items(wd);
@@ -382,7 +380,7 @@ _item_single_select_down(Widget_Data *wd)
    Elm_Object_Item *next;
 
    if (!wd->selected) next = eina_list_data_get(wd->items);
-   else next = elm_list_item_next((Elm_Object_Item *) wd->last_selected_item);
+   else next = elm_list_item_next(wd->last_selected_item);
    if (!next) return EINA_FALSE;
 
    _deselect_all_items(wd);
@@ -741,7 +739,7 @@ call:
 
    if (it->func) it->func((void *)it->base.data, WIDGET(it), it);
    evas_object_smart_callback_call(obj, SIG_SELECTED, it);
-   it->wd->last_selected_item = it;
+   it->wd->last_selected_item = (Elm_Object_Item *) it;
 
    _elm_list_unwalk(wd);
    evas_object_unref(obj);
