@@ -28,7 +28,7 @@ endif
 
 if EFL_ENABLE_TESTS
 
-check_PROGRAMS = eina_suite
+check_PROGRAMS = eina_suite cxx_compile_test
 
 eina_suite_SOURCES = 	\
 eina_suite.c 		\
@@ -69,6 +69,9 @@ eina_test_simple_xml_parser.c \
 eina_test_value.c
 
 eina_suite_LDADD = @CHECK_LIBS@ $(top_builddir)/src/lib/libeina.la -lm
+
+cxx_compile_test_SOURCES = cxx_compile_test.cxx
+cxx_compile_test_LDADD = $(top_builddir)/src/lib/libeina.la
 
 module_dummydir = $(libdir)/eina/test
 module_dummy_LTLIBRARIES = module_dummy.la

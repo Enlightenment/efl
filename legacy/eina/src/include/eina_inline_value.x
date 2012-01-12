@@ -883,7 +883,7 @@ eina_value_list_count(const Eina_Value *value)
 {
    Eina_Value_List *desc;
    EINA_VALUE_TYPE_LIST_CHECK_RETURN_VAL(value, 0);
-   desc = eina_value_memory_get(value);
+   desc = (Eina_Value_List *)eina_value_memory_get(value);
    if (!desc)
      return 0;
    return eina_list_count(desc->list);
@@ -897,7 +897,7 @@ eina_value_list_remove(Eina_Value *value, unsigned int position)
    void *mem;
 
    EINA_VALUE_TYPE_LIST_CHECK_RETURN_VAL(value, 0);
-   desc = eina_value_memory_get(value);
+   desc = (Eina_Value_List *)eina_value_memory_get(value);
    if (!desc)
      return EINA_FALSE;
 
@@ -920,7 +920,7 @@ eina_value_list_vset(Eina_Value *value, unsigned int position, va_list args)
    void *mem;
 
    EINA_VALUE_TYPE_LIST_CHECK_RETURN_VAL(value, 0);
-   desc = eina_value_memory_get(value);
+   desc = (Eina_Value_List *)eina_value_memory_get(value);
    if (!desc)
      return EINA_FALSE;
 
@@ -951,7 +951,7 @@ eina_value_list_vget(const Eina_Value *value, unsigned int position, va_list arg
    Eina_Bool ret;
 
    EINA_VALUE_TYPE_LIST_CHECK_RETURN_VAL(value, 0);
-   desc = eina_value_memory_get(value);
+   desc = (Eina_Value_List *)eina_value_memory_get(value);
    if (!desc)
      return EINA_FALSE;
 
@@ -973,7 +973,7 @@ eina_value_list_vinsert(Eina_Value *value, unsigned int position, va_list args)
    void *mem;
 
    EINA_VALUE_TYPE_LIST_CHECK_RETURN_VAL(value, 0);
-   desc = eina_value_memory_get(value);
+   desc = (Eina_Value_List *)eina_value_memory_get(value);
    if (!desc)
      return EINA_FALSE;
 
@@ -1017,7 +1017,7 @@ eina_value_list_vappend(Eina_Value *value, va_list args)
    void *mem;
 
    EINA_VALUE_TYPE_LIST_CHECK_RETURN_VAL(value, 0);
-   desc = eina_value_memory_get(value);
+   desc = (Eina_Value_List *)eina_value_memory_get(value);
    if (!desc)
      return EINA_FALSE;
 
@@ -1096,7 +1096,7 @@ eina_value_list_pset(Eina_Value *value, unsigned int position, const void *ptr)
    void *mem;
 
    EINA_VALUE_TYPE_LIST_CHECK_RETURN_VAL(value, 0);
-   desc = eina_value_memory_get(value);
+   desc = (Eina_Value_List *)eina_value_memory_get(value);
    if (!desc)
      return EINA_FALSE;
 
@@ -1126,7 +1126,7 @@ eina_value_list_pget(const Eina_Value *value, unsigned int position, void *ptr)
    Eina_Bool ret;
 
    EINA_VALUE_TYPE_LIST_CHECK_RETURN_VAL(value, 0);
-   desc = eina_value_memory_get(value);
+   desc = (Eina_Value_List *)eina_value_memory_get(value);
    if (!desc)
      return EINA_FALSE;
 
@@ -1147,7 +1147,7 @@ eina_value_list_pinsert(Eina_Value *value, unsigned int position, const void *pt
    void *mem;
 
    EINA_VALUE_TYPE_LIST_CHECK_RETURN_VAL(value, 0);
-   desc = eina_value_memory_get(value);
+   desc = (Eina_Value_List *)eina_value_memory_get(value);
    if (!desc)
      return EINA_FALSE;
 
@@ -1191,7 +1191,7 @@ eina_value_list_pappend(Eina_Value *value, const void *ptr)
    void *mem;
 
    EINA_VALUE_TYPE_LIST_CHECK_RETURN_VAL(value, 0);
-   desc = eina_value_memory_get(value);
+   desc = (Eina_Value_List *)eina_value_memory_get(value);
    if (!desc)
      return EINA_FALSE;
 
@@ -1243,7 +1243,7 @@ eina_value_hash_population(const Eina_Value *value)
 {
    Eina_Value_Hash *desc;
    EINA_VALUE_TYPE_HASH_CHECK_RETURN_VAL(value, 0);
-   desc = eina_value_memory_get(value);
+   desc = (Eina_Value_Hash *)eina_value_memory_get(value);
    if (!desc)
      return 0;
    return eina_hash_population(desc->hash);
@@ -1257,7 +1257,7 @@ eina_value_hash_del(Eina_Value *value, const char *key)
 
    EINA_VALUE_TYPE_HASH_CHECK_RETURN_VAL(value, EINA_FALSE);
    EINA_SAFETY_ON_NULL_RETURN_VAL(key, EINA_FALSE);
-   desc = eina_value_memory_get(value);
+   desc = (Eina_Value_Hash *)eina_value_memory_get(value);
    if (!desc)
      return EINA_FALSE;
 
@@ -1279,7 +1279,7 @@ eina_value_hash_vset(Eina_Value *value, const char *key, va_list args)
 
    EINA_VALUE_TYPE_HASH_CHECK_RETURN_VAL(value, EINA_FALSE);
    EINA_SAFETY_ON_NULL_RETURN_VAL(key, EINA_FALSE);
-   desc = eina_value_memory_get(value);
+   desc = (Eina_Value_Hash *)eina_value_memory_get(value);
    if (!desc)
      return EINA_FALSE;
 
@@ -1323,7 +1323,7 @@ eina_value_hash_vget(const Eina_Value *value, const char *key, va_list args)
 
    EINA_VALUE_TYPE_HASH_CHECK_RETURN_VAL(value, EINA_FALSE);
    EINA_SAFETY_ON_NULL_RETURN_VAL(key, EINA_FALSE);
-   desc = eina_value_memory_get(value);
+   desc = (Eina_Value_Hash *)eina_value_memory_get(value);
    if (!desc)
      return EINA_FALSE;
 
@@ -1366,7 +1366,7 @@ eina_value_hash_pset(Eina_Value *value, const char *key, const void *ptr)
 
    EINA_VALUE_TYPE_HASH_CHECK_RETURN_VAL(value, 0);
    EINA_SAFETY_ON_NULL_RETURN_VAL(key, EINA_FALSE);
-   desc = eina_value_memory_get(value);
+   desc = (Eina_Value_Hash *)eina_value_memory_get(value);
    if (!desc)
      return EINA_FALSE;
 
@@ -1409,7 +1409,7 @@ eina_value_hash_pget(const Eina_Value *value, const char *key, void *ptr)
 
    EINA_VALUE_TYPE_HASH_CHECK_RETURN_VAL(value, 0);
    EINA_SAFETY_ON_NULL_RETURN_VAL(key, EINA_FALSE);
-   desc = eina_value_memory_get(value);
+   desc = (Eina_Value_Hash *)eina_value_memory_get(value);
    if (!desc)
      return EINA_FALSE;
 
