@@ -34,6 +34,29 @@
  * Available styles for it:
  * - @c "default"
  *
+ * Default content parts of the list items that you can use for are:
+ * @li "start" - A start position object in the list item
+ * @li "end" - A end position object in the list item
+ *
+ * Default text parts of the list items that you can use for are:
+ * @li "default" - label in the list item
+ *
+ * Supported elm_object_item common APIs.
+ * @li elm_object_item_disabled_set
+ * @li elm_object_item_disabled_get
+ * @li elm_object_item_part_text_set
+ * @li elm_object_item_part_text_get
+ * @li elm_object_item_part_content_set
+ * @li elm_object_item_part_content_get
+ * @li elm_object_item_part_content_unset
+ * @li elm_object_item_tooltip_text_set
+ * @li elm_object_item_tooltip_window_mode_set
+ * @li elm_object_item_tooltip_window_mode_get
+ * @li elm_object_item_tooltip_content_cb_set
+ * @li elm_object_item_tooltip_unset
+ * @li elm_object_item_tooltip_style_set
+ * @li elm_object_item_tooltip_style_get
+ *
  * List of examples:
  * @li @ref list_example_01
  * @li @ref list_example_02
@@ -759,113 +782,6 @@ EAPI Elm_Object_Item               *elm_list_item_prev(const Elm_Object_Item *it
  */
 EAPI Elm_Object_Item               *elm_list_item_next(const Elm_Object_Item *it);
 
-/**
- * Set the text to be shown in a given list item's tooltips.
- *
- * @param it Target item.
- * @param text The text to set in the content.
- *
- * Setup the text as tooltip to object. The item can have only one tooltip,
- * so any previous tooltip data - set with this function or
- * elm_list_item_tooltip_content_cb_set() - is removed.
- *
- * @see elm_object_tooltip_text_set() for more details.
- *
- * @ingroup List
- */
-EAPI void                         elm_list_item_tooltip_text_set(Elm_Object_Item *it, const char *text);
-
-/**
- * @brief Disable size restrictions on an object's tooltip
- * @param it The tooltip's anchor object
- * @param disable If EINA_TRUE, size restrictions are disabled
- * @return EINA_FALSE on failure, EINA_TRUE on success
- *
- * This function allows a tooltip to expand beyond its parant window's canvas.
- * It will instead be limited only by the size of the display.
- */
-EAPI Eina_Bool                    elm_list_item_tooltip_window_mode_set(Elm_Object_Item *it, Eina_Bool disable);
-
-/**
- * @brief Retrieve size restriction state of an object's tooltip
- * @param obj The tooltip's anchor object
- * @return If EINA_TRUE, size restrictions are disabled
- *
- * This function returns whether a tooltip is allowed to expand beyond
- * its parant window's canvas.
- * It will instead be limited only by the size of the display.
- */
-EAPI Eina_Bool                    elm_list_item_tooltip_window_mode_get(const Elm_Object_Item *it);
-
-/**
- * Set the content to be shown in the tooltip item.
- *
- * Setup the tooltip to item. The item can have only one tooltip,
- * so any previous tooltip data is removed. @p func(with @p data) will
- * be called every time that need show the tooltip and it should
- * return a valid Evas_Object. This object is then managed fully by
- * tooltip system and is deleted when the tooltip is gone.
- *
- * @param it the list item being attached a tooltip.
- * @param func the function used to create the tooltip contents.
- * @param data what to provide to @a func as callback data/context.
- * @param del_cb called when data is not needed anymore, either when
- *        another callback replaces @a func, the tooltip is unset with
- *        elm_list_item_tooltip_unset() or the owner @a item
- *        dies. This callback receives as the first parameter the
- *        given @a data, and @c event_info is the item.
- *
- * @see elm_object_tooltip_content_cb_set() for more details.
- *
- * @ingroup List
- */
-EAPI void                         elm_list_item_tooltip_content_cb_set(Elm_Object_Item *it, Elm_Tooltip_Item_Content_Cb func, const void *data, Evas_Smart_Cb del_cb);
-
-/**
- * Unset tooltip from item.
- *
- * @param it list item to remove previously set tooltip.
- *
- * Remove tooltip from item. The callback provided as del_cb to
- * elm_list_item_tooltip_content_cb_set() will be called to notify
- * it is not used anymore.
- *
- * @see elm_object_tooltip_unset() for more details.
- * @see elm_list_item_tooltip_content_cb_set()
- *
- * @ingroup List
- */
-EAPI void                         elm_list_item_tooltip_unset(Elm_Object_Item *it);
-
-/**
- * Sets a different style for this item tooltip.
- *
- * @note before you set a style you should define a tooltip with
- *       elm_list_item_tooltip_content_cb_set() or
- *       elm_list_item_tooltip_text_set()
- *
- * @param it list item with tooltip already set.
- * @param style the theme style to use (default, transparent, ...)
- *
- * @see elm_object_tooltip_style_set() for more details.
- *
- * @ingroup List
- */
-EAPI void                         elm_list_item_tooltip_style_set(Elm_Object_Item *it, const char *style);
-
-/**
- * Get the style for this item tooltip.
- *
- * @param item list item with tooltip already set.
- * @return style the theme style in use, defaults to "default". If the
- *         object does not have a tooltip set, then NULL is returned.
- *
- * @see elm_object_tooltip_style_get() for more details.
- * @see elm_list_item_tooltip_style_set()
- *
- * @ingroup List
- */
-EAPI const char                  *elm_list_item_tooltip_style_get(const Elm_Object_Item *it);
 
 /**
  * Set the type of mouse pointer/cursor decoration to be shown,

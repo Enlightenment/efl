@@ -487,18 +487,18 @@ test_tooltip(void *data       __UNUSED__,
 
    lst = elm_list_add(win);
    lit = elm_list_item_append(lst, "Hello", NULL, NULL, NULL, NULL);
-   elm_list_item_tooltip_content_cb_set(lit, _tt_item_label, NULL, NULL);
-   elm_list_item_tooltip_window_mode_set(lit, EINA_TRUE);
+   elm_object_item_tooltip_content_cb_set(lit, _tt_item_label, NULL, NULL);
+   elm_object_item_tooltip_window_mode_set(lit, EINA_TRUE);
    lit = elm_list_item_append(lst, "Icon Tooltip", NULL, NULL, NULL, NULL);
-   elm_list_item_tooltip_content_cb_set(lit, _tt_item_icon, NULL, NULL);
+   elm_object_item_tooltip_content_cb_set(lit, _tt_item_icon, NULL, NULL);
    lit = elm_list_item_append(lst, "Big Icon Tooltip", NULL, NULL, NULL, NULL);
-   elm_list_item_tooltip_content_cb_set(lit, _tt_item_icon2, NULL, NULL);
-   elm_list_item_tooltip_style_set(lit, "transparent");
-   elm_list_item_tooltip_window_mode_set(lit, EINA_TRUE);
+   elm_object_item_tooltip_content_cb_set(lit, _tt_item_icon2, NULL, NULL);
+   elm_object_item_tooltip_style_set(lit, "transparent");
+   elm_object_item_tooltip_window_mode_set(lit, EINA_TRUE);
    lit = elm_list_item_append(lst, "Insanely Big Icon Tooltip", NULL, NULL, NULL, NULL);
-   elm_list_item_tooltip_content_cb_set(lit, _tt_item_icon3, NULL, NULL);
-   elm_list_item_tooltip_style_set(lit, "transparent");
-   elm_list_item_tooltip_window_mode_set(lit, EINA_TRUE);
+   elm_object_item_tooltip_content_cb_set(lit, _tt_item_icon3, NULL, NULL);
+   elm_object_item_tooltip_style_set(lit, "transparent");
+   elm_object_item_tooltip_window_mode_set(lit, EINA_TRUE);
    evas_object_size_hint_weight_set(lst, EVAS_HINT_EXPAND,
                                     EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(lst, EVAS_HINT_FILL, EVAS_HINT_FILL);
