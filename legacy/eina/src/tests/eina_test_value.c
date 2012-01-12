@@ -1265,9 +1265,12 @@ END_TEST
 START_TEST(eina_value_test_hash)
 {
    Eina_Value *value, other;
+   Eina_Value_Hash desc;
    char c;
    char buf[1024];
+   char **ptr;
    char *str;
+   const char *s;
 
    eina_init();
 
@@ -1341,6 +1344,28 @@ START_TEST(eina_value_test_hash)
    fail_unless(eina_value_convert(value, &other));
    fail_unless(eina_value_get(&other, &c));
    fail_unless(c == 33);
+
+   desc.subtype = EINA_VALUE_TYPE_STRING;
+   desc.buckets_power_size = 0;
+   desc.hash = eina_hash_string_small_new(NULL);
+   fail_unless(desc.hash != NULL);
+   /* watch out hash pointer is to a size of subtype->value_size! */
+   ptr = malloc(sizeof(char *));
+   *ptr = strdup("there");
+   fail_unless(eina_hash_add(desc.hash, "hi", ptr));
+   ptr = malloc(sizeof(char *));
+   *ptr = strdup("y");
+   fail_unless(eina_hash_add(desc.hash, "x", ptr));
+
+   fail_unless(eina_value_set(value, desc));
+
+   fail_unless(eina_value_hash_get(value, "hi", &s));
+   fail_unless(s != NULL);
+   fail_unless(strcmp(s, "there") == 0);
+
+   fail_unless(eina_value_hash_get(value, "x", &s));
+   fail_unless(s != NULL);
+   fail_unless(strcmp(s, "y") == 0);
 
    eina_value_free(value);
    eina_shutdown();

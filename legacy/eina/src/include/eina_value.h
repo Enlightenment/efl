@@ -249,6 +249,23 @@ EAPI extern const Eina_Value_Type *EINA_VALUE_TYPE_LIST;
  *  @li eina_value_hash_vget() and eina_value_hash_vset()
  *  @li eina_value_hash_pget() and eina_value_hash_pset()
  *
+ * eina_value_set() takes an #Eina_Value_Hash where just @c subtype
+ * and @c buckets_power_size are used. If there is an @c hash, it will
+ * be adopted and its contents must be properly configurable as @c
+ * subtype expects. eina_value_pset() takes a pointer to an
+ * #Eina_Value_Hash.  For your convenience, use
+ * eina_value_hash_setup().
+ *
+ * eina_value_get() and eina_value_pget() takes a pointer to
+ * #Eina_Value_Hash, it's an exact copy of the current structure in
+ * use by value, no copies are done.
+ *
+ * @note be aware that hash data is always an allocated memory of size
+ *       defined by @c subtype->value_size. If your @c subtype is an
+ *       integer, add as data malloc(sizeof(int)). If your @c subtype
+ *       is an string, add as data malloc(sizeof(char*)) and this data
+ *       value must point to strdup(string)!
+ *
  * @since 1.2
  */
 EAPI extern const Eina_Value_Type *EINA_VALUE_TYPE_HASH;

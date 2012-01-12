@@ -3306,7 +3306,9 @@ _eina_value_type_hash_pset(const Eina_Value_Type *type __UNUSED__, void *mem, co
 
    if (tmem->hash) _eina_value_type_hash_flush_elements(tmem);
 
-   if (!_eina_value_type_hash_create(tmem))
+   if (desc->hash)
+     tmem->hash = desc->hash;
+   else if (!_eina_value_type_hash_create(tmem))
      return EINA_FALSE;
 
    tmem->subtype = desc->subtype;
