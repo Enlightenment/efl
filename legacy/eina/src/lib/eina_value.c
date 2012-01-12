@@ -3694,18 +3694,84 @@ _eina_value_type_blob_convert_from(const Eina_Value_Type *type, const Eina_Value
    Eina_Value_Blob desc;
    char *buf;
 
-   buf = malloc(convert->value_size);
-   if (!buf)
-     {
-        eina_error_set(EINA_ERROR_OUT_OF_MEMORY);
-        return EINA_FALSE;
-     }
-   if (!eina_value_type_pget(convert, convert_mem, buf))
-     return EINA_FALSE;
-
    desc.ops = EINA_VALUE_BLOB_OPERATIONS_MALLOC;
-   desc.memory = buf;
-   desc.size = convert->value_size;
+
+   if ((convert == EINA_VALUE_TYPE_STRING) ||
+       (convert == EINA_VALUE_TYPE_STRINGSHARE))
+     {
+        const char *str = *(const char **)convert_mem;
+        if (!str)
+          {
+             desc.size = 0;
+             desc.memory = NULL;
+          }
+        else
+          {
+             desc.size = strlen(str) + 1;
+             desc.memory = buf = malloc(desc.size);
+             if (!desc.memory)
+               {
+                  eina_error_set(EINA_ERROR_OUT_OF_MEMORY);
+                  return EINA_FALSE;
+               }
+             memcpy(buf, str, desc.size);
+          }
+     }
+   else if (convert == EINA_VALUE_TYPE_ARRAY)
+     {
+        const Eina_Value_Array *a = convert_mem;
+        if ((!a->array) || (a->array->len == 0))
+          {
+             desc.size = 0;
+             desc.memory = NULL;
+          }
+        else
+          {
+             desc.size = a->array->len * a->array->member_size;
+             desc.memory = buf = malloc(desc.size);
+             if (!desc.memory)
+               {
+                  eina_error_set(EINA_ERROR_OUT_OF_MEMORY);
+                  return EINA_FALSE;
+               }
+             memcpy(buf, a->array->members, desc.size);
+          }
+     }
+   else if (convert == EINA_VALUE_TYPE_BLOB)
+     {
+        const Eina_Value_Blob *b = convert_mem;
+        if (b->size == 0)
+          {
+             desc.size = 0;
+             desc.memory = NULL;
+          }
+        else
+          {
+             desc.size = b->size;
+             desc.memory = buf = malloc(desc.size);
+             if (!desc.memory)
+               {
+                  eina_error_set(EINA_ERROR_OUT_OF_MEMORY);
+                  return EINA_FALSE;
+               }
+             memcpy(buf, b->memory, desc.size);
+          }
+     }
+   else
+     {
+        desc.size = convert->value_size;
+        desc.memory = buf = malloc(convert->value_size);
+        if (!desc.memory)
+          {
+             eina_error_set(EINA_ERROR_OUT_OF_MEMORY);
+             return EINA_FALSE;
+          }
+        if (!eina_value_type_pget(convert, convert_mem, buf))
+          {
+             free(buf);
+             return EINA_FALSE;
+          }
+     }
    return eina_value_type_pset(type, type_mem, &desc);
 }
 

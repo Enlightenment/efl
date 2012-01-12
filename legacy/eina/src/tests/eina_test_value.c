@@ -1488,6 +1488,50 @@ START_TEST(eina_value_test_blob)
 
    eina_value_flush(&other);
 
+   fail_unless(eina_value_setup(&other, EINA_VALUE_TYPE_STRING));
+   fail_unless(eina_value_set(&other, "hi there!"));
+   fail_unless(eina_value_convert(&other, value));
+   fail_unless(eina_value_get(value, &out));
+   fail_unless(out.memory != NULL);
+   fail_unless(out.size == sizeof("hi there!"));
+   fail_unless(strcmp(out.memory, "hi there!") == 0);
+
+   str = eina_value_to_string(value);
+   fail_unless(str != NULL);
+   fail_unless(strcmp(str, "BLOB(10, [68 69 20 74 68 65 72 65 21 00])") == 0);
+   free(str);
+
+   eina_value_flush(&other);
+
+   fail_unless(eina_value_array_setup(&other, EINA_VALUE_TYPE_CHAR, 0));
+   fail_unless(eina_value_array_append(&other, 0xa));
+   fail_unless(eina_value_array_append(&other, 0xb));
+   fail_unless(eina_value_array_append(&other, 0xc));
+   fail_unless(eina_value_convert(&other, value));
+   fail_unless(eina_value_get(value, &out));
+   fail_unless(out.memory != NULL);
+   fail_unless(out.size == 3);
+
+   str = eina_value_to_string(value);
+   fail_unless(str != NULL);
+   fail_unless(strcmp(str, "BLOB(3, [0a 0b 0c])") == 0);
+   free(str);
+
+   eina_value_flush(&other);
+
+   fail_unless(eina_value_setup(&other, EINA_VALUE_TYPE_BLOB));
+   fail_unless(eina_value_set(&other, in));
+   fail_unless(eina_value_convert(value, &other));
+   fail_unless(eina_value_get(&other, &out));
+   fail_unless(out.memory != NULL);
+   fail_unless(out.size == 3);
+
+   str = eina_value_to_string(&other);
+   fail_unless(str != NULL);
+   fail_unless(strcmp(str, "BLOB(3, [0a 0b 0c])") == 0);
+   free(str);
+
+   eina_value_flush(&other);
 
    eina_value_free(value);
    eina_shutdown();
