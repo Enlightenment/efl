@@ -41,7 +41,7 @@ struct _EE_Wl_Smart_Data
 };
 
 /* local function prototypes */
-static int _ecore_evas_wl_init(Ecore_Evas *ee);
+static int _ecore_evas_wl_init(void);
 static int _ecore_evas_wl_shutdown(void);
 static void _ecore_evas_wl_pre_free(Ecore_Evas *ee);
 static void _ecore_evas_wl_free(Ecore_Evas *ee);
@@ -98,7 +98,7 @@ static void _ecore_evas_wl_smart_hide(Evas_Object *obj);
 static Evas_Object *_ecore_evas_wl_frame_add(Evas *evas);
 
 /* local variables */
-static int _ecore_evas_init_count = 0;
+static int _ecore_evas_wl_init_count = 0;
 static Ecore_Event_Handler *_ecore_evas_wl_event_handlers[8];
 static uint32_t _ecore_evas_wl_btn_timestamp;
 static const struct wl_shell_surface_listener _ecore_evas_wl_shell_surface_listener = 
@@ -193,7 +193,7 @@ ecore_evas_wayland_egl_new(const char *disp_name, int x, int y, int w, int h, in
 
    ECORE_MAGIC_SET(ee, ECORE_MAGIC_EVAS);
 
-   _ecore_evas_wl_init(ee);
+   _ecore_evas_wl_init();
 
    ee->engine.func = (Ecore_Evas_Engine_Func *)&_ecore_wl_engine_func;
 
@@ -227,10 +227,7 @@ ecore_evas_wayland_egl_new(const char *disp_name, int x, int y, int w, int h, in
    if ((einfo = (Evas_Engine_Info_Wayland_Egl *)evas_engine_info_get(ee->evas))) 
      {
         einfo->info.display = ecore_wl_display_get();
-        /* einfo->info.comp = ecore_wl_compositor_get(); */
-        /* einfo->info.shell = ecore_wl_shell_get(); */
         einfo->info.rotation = ee->rotation;
-        /* einfo->info.debug = EINA_FALSE; */
         if (!evas_engine_info_set(ee->evas, (Evas_Engine_Info *)einfo)) 
           {
              printf("Failed to set Evas Engine Info for '%s'.", ee->driver);
@@ -272,28 +269,62 @@ ecore_evas_wayland_egl_new(const char *disp_name, int x, int y, int w, int h, in
 
 /* local functions */
 static int 
-_ecore_evas_wl_init(Ecore_Evas *ee) 
+_ecore_evas_wl_init(void) 
 {
-   _ecore_evas_init_count++;
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
-   /* TODO: Add handlers */
+   if (++_ecore_evas_wl_init_count != 1)
+     return _ecore_evas_wl_init_count;
 
-   if (_ecore_evas_init_count > 1) return _ecore_evas_init_count;
+   _ecore_evas_wl_event_handlers[0] = 
+     ecore_event_handler_add(ECORE_EVENT_MOUSE_BUTTON_DOWN, 
+                             _ecore_evas_wl_event_mouse_down, NULL);
+   _ecore_evas_wl_event_handlers[1] = 
+     ecore_event_handler_add(ECORE_EVENT_MOUSE_BUTTON_UP, 
+                             _ecore_evas_wl_event_mouse_up, NULL);
+   _ecore_evas_wl_event_handlers[2] = 
+     ecore_event_handler_add(ECORE_EVENT_MOUSE_MOVE, 
+                             _ecore_evas_wl_event_mouse_move, NULL);
+   _ecore_evas_wl_event_handlers[3] = 
+     ecore_event_handler_add(ECORE_EVENT_MOUSE_WHEEL, 
+                             _ecore_evas_wl_event_mouse_wheel, NULL);
+   _ecore_evas_wl_event_handlers[4] = 
+     ecore_event_handler_add(ECORE_WL_EVENT_MOUSE_IN, 
+                             _ecore_evas_wl_event_mouse_in, NULL);
+   _ecore_evas_wl_event_handlers[5] = 
+     ecore_event_handler_add(ECORE_WL_EVENT_MOUSE_OUT, 
+                             _ecore_evas_wl_event_mouse_out, NULL);
+   _ecore_evas_wl_event_handlers[6] = 
+     ecore_event_handler_add(ECORE_WL_EVENT_FOCUS_IN, 
+                             _ecore_evas_wl_event_focus_in, NULL);
+   _ecore_evas_wl_event_handlers[7] = 
+     ecore_event_handler_add(ECORE_WL_EVENT_FOCUS_OUT, 
+                             _ecore_evas_wl_event_focus_out, NULL);
+
    ecore_event_evas_init();
 
-   return _ecore_evas_init_count;
+   return _ecore_evas_wl_init_count;
 }
 
 static int 
 _ecore_evas_wl_shutdown(void) 
 {
-   _ecore_evas_init_count--;
-   if (_ecore_evas_init_count == 0) 
+   unsigned int i = 0;
+
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+
+   if (--_ecore_evas_wl_init_count != 0)
+     return _ecore_evas_wl_init_count;
+
+   for (i = 0; i < sizeof(_ecore_evas_wl_event_handlers) / sizeof(Ecore_Event_Handler *); i++) 
      {
-        /* TODO: Delete handlers */
+        if (_ecore_evas_wl_event_handlers[i])
+          ecore_event_handler_del(_ecore_evas_wl_event_handlers[i]);
      }
-   if (_ecore_evas_init_count < 0) _ecore_evas_init_count = 0;
-   return _ecore_evas_init_count;
+
+   ecore_event_evas_shutdown();
+
+   return _ecore_evas_wl_init_count;
 }
 
 static void 
@@ -387,18 +418,18 @@ _ecore_evas_wl_move(Ecore_Evas *ee, int x, int y)
 
    ee->x = x;
    ee->y = y;
-   /* wl_shell_surface_move(ee->engine.wl.shell_surface,  */
-   /*                       ecore_wl_input_device_get(),  */
-   /*                       _ecore_evas_wl_btn_timestamp); */
-
+   if (ee->engine.wl.shell_surface)
+     {
+        wl_shell_surface_move(ee->engine.wl.shell_surface, 
+                              ecore_wl_input_device_get(), 
+                              _ecore_evas_wl_btn_timestamp);
+     }
    if (ee->func.fn_move) ee->func.fn_move(ee);
 }
 
 static void 
 _ecore_evas_wl_resize(Ecore_Evas *ee, int w, int h) 
 {
-   Evas_Engine_Info_Wayland_Egl *einfo;
-
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
    if (!ee) return;
@@ -409,35 +440,22 @@ _ecore_evas_wl_resize(Ecore_Evas *ee, int w, int h)
    ee->req.w = w;
    ee->req.h = h;
 
-   if (ee->visible)
-     {
-        if (ee->engine.wl.surface)
-          wl_surface_damage(ee->engine.wl.surface, 0, 0, ee->w, ee->h);
-     }
+   /* if (ee->visible)  */
+   /*   { */
+        /* damage old surface, if it exists */
 
-   /* get existing engine info */
-   einfo = (Evas_Engine_Info_Wayland_Egl *)evas_engine_info_get(ee->evas);
-
-   /* destroy old buffer */
-   if (ee->engine.wl.buffer) wl_buffer_destroy(ee->engine.wl.buffer);
-   ee->engine.wl.buffer = NULL;
-   if (ee->engine.wl.pixmap) wl_egl_pixmap_destroy(ee->engine.wl.pixmap);
-   ee->engine.wl.pixmap = NULL;
-
-   ecore_wl_flush();
+        /* NB: This removes any lingering screen artifacts in the compositor.
+         * This may be a 'HACK' if the issue is actually in the wayland 
+         * compositor, but for now lets implement this so we don't have screen 
+         * artifacts laying around during a resize */
+        /* if (ee->engine.wl.surface) */
+        /*   wl_surface_damage(ee->engine.wl.surface, 0, 0, ee->w, ee->h); */
+     /* } */
 
    ee->w = w;
    ee->h = h;
 
-   /* create new buffer @ new size */
-   ee->engine.wl.pixmap = wl_egl_pixmap_create(ee->w, ee->h, 0);
-   if (!ee->engine.wl.pixmap) printf("Pixmap Creation Failed !!\n");
-   else printf("Have Egl Pixmap: %p\n", ee->engine.wl.pixmap);
-
-   ecore_wl_flush();
-
-   ee->engine.wl.buffer = wl_egl_pixmap_create_buffer(ee->engine.wl.pixmap);
-   if (!ee->engine.wl.buffer) printf("Pixmap Buffer creation failed !!\n");
+//   ecore_wl_flush();
 
    evas_output_size_set(ee->evas, ee->w, ee->h);
    evas_output_viewport_set(ee->evas, 0, 0, ee->w, ee->h);
@@ -445,16 +463,8 @@ _ecore_evas_wl_resize(Ecore_Evas *ee, int w, int h)
    if (ee->engine.wl.frame)
      evas_object_resize(ee->engine.wl.frame, ee->w, ee->h);
 
-   einfo->info.surface = ee->engine.wl.surface;
-   evas_engine_info_set(ee->evas, (Evas_Engine_Info *)einfo);
-
-   wl_buffer_damage(ee->engine.wl.buffer, 0, 0, ee->w, ee->h);
-
-   if (ee->visible) 
-     {
-        wl_surface_damage(ee->engine.wl.surface, 0, 0, ee->w, ee->h);
-        wl_surface_attach(ee->engine.wl.surface, ee->engine.wl.buffer, 0, 0);
-     }
+   /* if ((ee->visible) && (ee->engine.wl.surface)) */
+   /*   wl_surface_damage(ee->engine.wl.surface, 0, 0, ee->w, ee->h); */
 
    if (ee->func.fn_resize) ee->func.fn_resize(ee);
 }
@@ -468,8 +478,6 @@ _ecore_evas_wl_show(Ecore_Evas *ee)
 
    if (!ee) return;
    if (ee->visible) return;
-
-   /* TODO: Finish me */
 
    einfo = (Evas_Engine_Info_Wayland_Egl *)evas_engine_info_get(ee->evas);
 
@@ -486,12 +494,12 @@ _ecore_evas_wl_show(Ecore_Evas *ee)
    wl_shell_surface_add_listener(ee->engine.wl.shell_surface, 
                                  &_ecore_evas_wl_shell_surface_listener, ee);
 
+   /* set the engine surface here. This should trigger an egl window create */
+   einfo->info.surface = ee->engine.wl.surface;
+   evas_engine_info_set(ee->evas, (Evas_Engine_Info *)einfo);
+
    /* Raise this surface to the top */
    wl_shell_surface_set_toplevel(ee->engine.wl.shell_surface);
-
-   /* create a new buffer */
-   ee->engine.wl.pixmap = wl_egl_pixmap_create(ee->w, ee->h, 0);
-   ee->engine.wl.buffer = wl_egl_pixmap_create_buffer(ee->engine.wl.pixmap);
 
    if (ee->engine.wl.frame)
      {
@@ -499,14 +507,7 @@ _ecore_evas_wl_show(Ecore_Evas *ee)
         evas_object_resize(ee->engine.wl.frame, ee->w, ee->h);
      }
 
-   /* set the engine surface here. This should trigger an egl window create */
-   einfo->info.surface = ee->engine.wl.surface;
-   evas_engine_info_set(ee->evas, (Evas_Engine_Info *)einfo);
-
    ecore_wl_flush();
-
-   /* TODO: Attach surface */
-   wl_surface_attach(ee->engine.wl.surface, ee->engine.wl.buffer, 0, 0);
 
    ee->visible = 1;
    if (ee->func.fn_show) ee->func.fn_show(ee);
@@ -749,15 +750,16 @@ _ecore_evas_wl_render(Ecore_Evas *ee)
 
         if ((updates = evas_render_updates(ee->evas))) 
           {
-             Eina_List *l = NULL;
-             Eina_Rectangle *r;
+             /* if (ee->engine.wl.surface) */
+             /*   { */
+             /*      Eina_List *l = NULL; */
+             /*      Eina_Rectangle *r; */
 
-             EINA_LIST_FOREACH(updates, l, r)
-               {
-                  if (ee->engine.wl.surface)
-                    wl_surface_damage(ee->engine.wl.surface, 
-                                      r->x, r->y, r->w, r->h);
-               }
+             /*      EINA_LIST_FOREACH(updates, l, r) */
+             /*        wl_surface_damage(ee->engine.wl.surface,  */
+             /*                          r->x, r->y, r->w, r->h); */
+             /*   } */
+
              evas_render_updates_free(updates);
              _ecore_evas_idle_timeout_update(ee);
              rend = 1;
@@ -781,6 +783,150 @@ _ecore_evas_wl_screen_geometry_get(const Ecore_Evas *ee __UNUSED__, int *x, int 
    ecore_wl_screen_size_get(w, h);
 }
 
+static Eina_Bool 
+_ecore_evas_wl_event_mouse_down(void *data __UNUSED__, int type __UNUSED__, void *event)
+{
+   Ecore_Evas *ee;
+   Ecore_Event_Mouse_Button *ev;
+
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+
+   ev = event;
+   _ecore_evas_wl_btn_timestamp = ev->timestamp;
+   ee = ecore_event_window_match(ev->window);
+   if ((!ee) || (ee->ignore_events)) return ECORE_CALLBACK_PASS_ON;
+   if (ev->window != ee->prop.window) return ECORE_CALLBACK_PASS_ON;
+   evas_event_feed_mouse_down(ee->evas, ev->buttons, ev->modifiers, 
+                              ev->timestamp, NULL);
+   return ECORE_CALLBACK_PASS_ON;
+}
+
+static Eina_Bool 
+_ecore_evas_wl_event_mouse_up(void *data __UNUSED__, int type __UNUSED__, void *event)
+{
+   Ecore_Evas *ee;
+   Ecore_Event_Mouse_Button *ev;
+
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+
+   ev = event;
+   ee = ecore_event_window_match(ev->window);
+   if ((!ee) || (ee->ignore_events)) return ECORE_CALLBACK_PASS_ON;
+   if (ev->window != ee->prop.window) return ECORE_CALLBACK_PASS_ON;
+   evas_event_feed_mouse_up(ee->evas, ev->buttons, ev->modifiers, 
+                            ev->timestamp, NULL);
+   return ECORE_CALLBACK_PASS_ON;
+}
+
+static Eina_Bool 
+_ecore_evas_wl_event_mouse_move(void *data __UNUSED__, int type __UNUSED__, void *event)
+{
+   Ecore_Evas *ee;
+   Ecore_Event_Mouse_Move *ev;
+
+   ev = event;
+   ee = ecore_event_window_match(ev->window);
+   if ((!ee) || (ee->ignore_events)) return ECORE_CALLBACK_PASS_ON;
+   if (ev->window != ee->prop.window) return ECORE_CALLBACK_PASS_ON;
+   ee->mouse.x = ev->x;
+   ee->mouse.y = ev->y;
+   evas_event_feed_mouse_move(ee->evas, ev->x, ev->y, ev->timestamp, NULL);
+   _ecore_evas_mouse_move_process(ee, ev->x, ev->y, ev->timestamp);
+   return ECORE_CALLBACK_PASS_ON;
+}
+
+static Eina_Bool 
+_ecore_evas_wl_event_mouse_wheel(void *data __UNUSED__, int type __UNUSED__, void *event)
+{
+   Ecore_Evas *ee;
+   Ecore_Event_Mouse_Wheel *ev;
+
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+
+   ev = event;
+   ee = ecore_event_window_match(ev->window);
+   if ((!ee) || (ee->ignore_events)) return ECORE_CALLBACK_PASS_ON;
+   if (ev->window != ee->prop.window) return ECORE_CALLBACK_PASS_ON;
+   evas_event_feed_mouse_wheel(ee->evas, ev->direction, ev->z, 
+                               ev->timestamp, NULL);
+   return ECORE_CALLBACK_PASS_ON;
+}
+
+static Eina_Bool 
+_ecore_evas_wl_event_mouse_in(void *data __UNUSED__, int type __UNUSED__, void *event)
+{
+   Ecore_Evas *ee;
+   Ecore_Wl_Event_Mouse_In *ev;
+
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+
+   ev = event;
+   ee = ecore_event_window_match(ev->window);
+   if ((!ee) || (ee->ignore_events)) return ECORE_CALLBACK_PASS_ON;
+   if (ev->window != ee->prop.window) return ECORE_CALLBACK_PASS_ON;
+   if (ee->func.fn_mouse_in) ee->func.fn_mouse_in(ee);
+   ecore_event_evas_modifier_lock_update(ee->evas, ev->modifiers);
+   evas_event_feed_mouse_in(ee->evas, ev->time, NULL);
+   _ecore_evas_mouse_move_process(ee, ev->x, ev->y, ev->time);
+   return ECORE_CALLBACK_PASS_ON;
+}
+
+static Eina_Bool 
+_ecore_evas_wl_event_mouse_out(void *data __UNUSED__, int type __UNUSED__, void *event)
+{
+   Ecore_Evas *ee;
+   Ecore_Wl_Event_Mouse_Out *ev;
+
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+
+   ev = event;
+   ee = ecore_event_window_match(ev->window);
+   if ((!ee) || (ee->ignore_events)) return ECORE_CALLBACK_PASS_ON;
+   if (ev->window != ee->prop.window) return ECORE_CALLBACK_PASS_ON;
+   ecore_event_evas_modifier_lock_update(ee->evas, ev->modifiers);
+   _ecore_evas_mouse_move_process(ee, ev->x, ev->y, ev->time);
+   evas_event_feed_mouse_out(ee->evas, ev->time, NULL);
+   if (ee->func.fn_mouse_out) ee->func.fn_mouse_out(ee);
+   if (ee->prop.cursor.object) evas_object_hide(ee->prop.cursor.object);
+   return ECORE_CALLBACK_PASS_ON;
+}
+
+static Eina_Bool 
+_ecore_evas_wl_event_focus_in(void *data __UNUSED__, int type __UNUSED__, void *event)
+{
+   Ecore_Evas *ee;
+   Ecore_Wl_Event_Focus_In *ev;
+
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+
+   ev = event;
+   ee = ecore_event_window_match(ev->window);
+   if ((!ee) || (ee->ignore_events)) return ECORE_CALLBACK_PASS_ON;
+   if (ev->window != ee->prop.window) return ECORE_CALLBACK_PASS_ON;
+   ee->prop.focused = 1;
+   evas_focus_in(ee->evas);
+   if (ee->func.fn_focus_in) ee->func.fn_focus_in(ee);
+   return ECORE_CALLBACK_PASS_ON;
+}
+
+static Eina_Bool 
+_ecore_evas_wl_event_focus_out(void *data __UNUSED__, int type __UNUSED__, void *event)
+{
+   Ecore_Evas *ee;
+   Ecore_Wl_Event_Focus_Out *ev;
+
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+
+   ev = event;
+   ee = ecore_event_window_match(ev->window);
+   if ((!ee) || (ee->ignore_events)) return ECORE_CALLBACK_PASS_ON;
+   if (ev->window != ee->prop.window) return ECORE_CALLBACK_PASS_ON;
+   evas_focus_out(ee->evas);
+   ee->prop.focused = 0;
+   if (ee->func.fn_focus_out) ee->func.fn_focus_out(ee);
+   return ECORE_CALLBACK_PASS_ON;
+}
+
 static void 
 _ecore_evas_wl_handle_configure(void *data, struct wl_shell_surface *shell_surface, uint32_t timestamp __UNUSED__, uint32_t edges __UNUSED__, int32_t width, int32_t height) 
 {
@@ -791,6 +937,7 @@ _ecore_evas_wl_handle_configure(void *data, struct wl_shell_surface *shell_surfa
 
    if (!(ee = data)) return;
 
+   printf("EGL Handle Configure Message\n");
    if ((shell_surface) && (ee->engine.wl.shell_surface)) 
      {
         if (ee->engine.wl.shell_surface != shell_surface) return;
@@ -914,6 +1061,18 @@ _ecore_evas_wl_frame_add(Evas *evas)
    _ecore_evas_wl_smart_init();
    return evas_object_smart_add(evas, _ecore_evas_wl_smart);
 }
+
+void 
+_ecore_evas_wayland_egl_resize(Ecore_Evas *ee, int location)
+{
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+
+   if ((!ee) || (!ee->engine.wl.shell_surface)) return;
+   wl_shell_surface_resize(ee->engine.wl.shell_surface, 
+                           ecore_wl_input_device_get(), 
+                           _ecore_evas_wl_btn_timestamp, location);
+}
+
 #else
 EAPI Ecore_Evas *
 ecore_evas_wayland_egl_new(const char *disp_name __UNUSED__, int x __UNUSED__, int y __UNUSED__, int w __UNUSED__, int h __UNUSED__, int frame __UNUSED__) 
