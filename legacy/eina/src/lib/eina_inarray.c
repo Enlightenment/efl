@@ -522,6 +522,28 @@ eina_inarray_insert_at(Eina_Inarray *array, unsigned int position, const void *d
    return EINA_TRUE;
 }
 
+EAPI void *
+eina_inarray_alloc_at(Eina_Inarray *array, unsigned int position, unsigned int member_count)
+{
+   unsigned int sz;
+   unsigned char *p;
+
+   EINA_MAGIC_CHECK_INARRAY(array, NULL);
+   EINA_SAFETY_ON_TRUE_RETURN_VAL(position > array->len, NULL);
+   EINA_SAFETY_ON_TRUE_RETURN_VAL(member_count == 0, NULL);
+
+   if (!_eina_inarray_resize(array, array->len + member_count))
+     return NULL;
+
+   p = _eina_inarray_get(array, position);
+   sz = array->member_size;
+   if (array->len > position)
+     memmove(p + member_count * sz, p, (array->len - position) * sz);
+
+   array->len += member_count;
+   return p;
+}
+
 EAPI Eina_Bool
 eina_inarray_replace_at(Eina_Inarray *array, unsigned int position, const void *data)
 {

@@ -272,6 +272,35 @@ EAPI Eina_Bool eina_inarray_insert_at(Eina_Inarray *array,
                                       const void *data) EINA_ARG_NONNULL(1, 3);
 
 /**
+ * @brief Opens a space at given position, returning its pointer.
+ * @param array array object
+ * @param position where to insert first member (open/allocate space)
+ * @param member_count how many times member_size bytes will be allocated.
+ * @return pointer to first member memory allocated or @c NULL on errors.
+ *
+ * This is similar to eina_inarray_insert_at(), but useful if the
+ * members contents are still unknown or unallocated. It will make
+ * room for the required number of items and return the pointer to the
+ * first item, similar to malloc(member_count * member_size), with the
+ * guarantee all memory is within members array.
+ *
+ * The new member memory is undefined, it's not automatically zeroed.
+ *
+ * All the members from @a position to the end of the array are
+ * shifted to the end.
+ *
+ * If @a position is equal to the end of the array (equals to
+ * eina_inarray_count()), then the member is appended.
+ *
+ * If @a position is bigger than the array length, it will fail.
+ *
+ * @since 1.2
+ */
+EAPI void *eina_inarray_alloc_at(Eina_Inarray *array,
+                                 unsigned int position,
+                                 unsigned int member_count) EINA_ARG_NONNULL(1) EINA_WARN_UNUSED_RESULT;
+
+/**
  * @brief Copy the data over the given position.
  * @param array array object
  * @param position where to replace the member

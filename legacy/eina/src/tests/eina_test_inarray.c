@@ -87,6 +87,46 @@ START_TEST(eina_inarray_test_simple)
 }
 END_TEST
 
+
+START_TEST(eina_inarray_test_alloc_at)
+{
+   Eina_Inarray *array;
+   int *member;
+   int i;
+
+   eina_init();
+
+   array = eina_inarray_new(sizeof(int), 2);
+   fail_unless(array != NULL);
+
+   member = eina_inarray_alloc_at(array, 0, 4);
+   fail_unless(member != NULL);
+   fail_unless(eina_inarray_count(array) == 4);
+
+   for (i = 0; i < 4; i++)
+     member[i] = i + 2;
+
+   member = eina_inarray_alloc_at(array, 0, 2);
+   fail_unless(member != NULL);
+   fail_unless(eina_inarray_count(array) == 6);
+   for (i = 0; i < 2; i++)
+     member[i] = i;
+
+   member = eina_inarray_alloc_at(array, 6, 2);
+   fail_unless(member != NULL);
+   fail_unless(eina_inarray_count(array) == 8);
+   for (i = 0; i < 2; i++)
+     member[i] = i + 6;
+
+   member = array->members;
+   for (i = 0; i < 8; i++)
+     fail_unless(member[i] == i);
+
+   eina_inarray_free(array);
+   eina_shutdown();
+}
+END_TEST
+
 static const short rand_numbers[] = {
   9, 0, 2, 3, 6, 5, 4, 7, 8, 1, 10
 };
@@ -353,6 +393,7 @@ void
 eina_test_inarray(TCase *tc)
 {
    tcase_add_test(tc, eina_inarray_test_simple);
+   tcase_add_test(tc, eina_inarray_test_alloc_at);
    tcase_add_test(tc, eina_inarray_test_insert_sort);
    tcase_add_test(tc, eina_inarray_test_sort);
    tcase_add_test(tc, eina_inarray_test_reverse);
