@@ -453,9 +453,12 @@ _ecore_evas_wl_move(Ecore_Evas *ee, int x, int y)
    ee->x = x;
    ee->y = y;
 
-   wl_shell_surface_move(ee->engine.wl.shell_surface, 
-                         ecore_wl_input_device_get(), 
-                         _ecore_evas_wl_btn_timestamp);
+   if (ee->engine.wl.shell_surface)
+     {
+        wl_shell_surface_move(ee->engine.wl.shell_surface, 
+                              ecore_wl_input_device_get(), 
+                              _ecore_evas_wl_btn_timestamp);
+     }
 
    if (ee->func.fn_move) ee->func.fn_move(ee);
 }
