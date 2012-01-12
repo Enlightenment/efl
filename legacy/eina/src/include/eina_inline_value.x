@@ -92,6 +92,19 @@ eina_value_memory_get(const Eina_Value *value)
    return value->value.ptr;
 }
 
+/**
+ * @brief Allocate memory for internal value types.
+ * @since 1.2
+ * @private
+ */
+EAPI void *eina_value_inner_alloc(size_t size);
+/**
+ * @brief Releases memory for internal value types.
+ * @since 1.2
+ * @private
+ */
+EAPI void eina_value_inner_free(size_t size, void *mem);
+
 static inline Eina_Bool
 eina_value_setup(Eina_Value *value, const Eina_Value_Type *type)
 {
@@ -102,16 +115,14 @@ eina_value_setup(Eina_Value *value, const Eina_Value_Type *type)
 
    value->type = type;
 
-   if (type->value_size <= 8)
-     {
-        mem = &value->value;
-        memset(mem, 0, type->value_size);
-     }
+   if (type->value_size <= 8) mem = &value->value;
    else
      {
-        mem = value->value.ptr = calloc(1, type->value_size);
+        mem = value->value.ptr = eina_value_inner_alloc(type->value_size);
         EINA_SAFETY_ON_NULL_RETURN_VAL(mem, EINA_FALSE);
      }
+
+   memset(mem, 0, type->value_size);
 
    if (EINA_VALUE_TYPE_DEFAULT(type))
      {
@@ -144,13 +155,15 @@ eina_value_flush(Eina_Value *value)
           {
              if (value->value.ptr) free(value->value.ptr);
           }
-        else if (type->value_size > 8) free(mem);
+        else if (type->value_size > 8)
+          eina_value_inner_free(type->value_size, mem);
         eina_error_set(0);
         return;
      }
 
    EINA_VALUE_TYPE_DISPATCH(type, flush, EINA_ERROR_VALUE_FAILED, mem);
-   if (type->value_size > 8) free(mem);
+   if (type->value_size > 8)
+     eina_value_inner_free(type->value_size, mem);
    value->type = NULL;
 }
 

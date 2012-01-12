@@ -342,9 +342,9 @@ struct _Eina_Value
  * On failure, @c NULL is returned and either #EINA_ERROR_OUT_OF_MEMORY or
  * #EINA_ERROR_VALUE_FAILED is set.
  *
- * @note this calls malloc and then uses eina_value_setup().
- * Consider using eina_value_flush() and eina_value_setup() instead
- *       to avoid memory allocations.
+ * @note this calls creates from mempool and then uses
+ *       eina_value_setup(). Consider using eina_value_flush() and
+ *       eina_value_setup() instead to avoid memory allocations.
  *
  * @see eina_value_free()
  *
@@ -815,9 +815,9 @@ struct _Eina_Value_Array
  * On failure, @c NULL is returned and #EINA_ERROR_OUT_OF_MEMORY or
  * #EINA_ERROR_VALUE_FAILED is set.
  *
- * @note this calls malloc and then uses eina_value_array_setup().
- * @see eina_value_free()
- * @see eina_value_array_setup()
+ * @note this creates from mempool and then uses
+ *       eina_value_array_setup().  @see eina_value_free() @see
+ *       eina_value_array_setup()
  *
  * @since 1.2
  */
@@ -1439,7 +1439,8 @@ struct _Eina_Value_List
  * On failure, @c NULL is returned and #EINA_ERROR_OUT_OF_MEMORY or
  * #EINA_ERROR_VALUE_FAILED is set.
  *
- * @note this calls malloc and then uses eina_value_list_setup().
+ * @note this creates from mempool and then uses
+ *       eina_value_list_setup().
  *
  * @see eina_value_free()
  * @see eina_value_list_setup()
@@ -2054,7 +2055,8 @@ struct _Eina_Value_Hash
  * On failure, @c NULL is returned and #EINA_ERROR_OUT_OF_MEMORY or
  * #EINA_ERROR_VALUE_FAILED is set.
  *
- * @note this calls malloc and then uses eina_value_hash_setup().
+ * @note this creates from mempool and then uses
+ *       eina_value_hash_setup().
  *
  * @see eina_value_free()
  * @see eina_value_hash_setup()

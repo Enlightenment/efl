@@ -54,6 +54,8 @@ void *alloca (size_t);
 #include "eina_error.h"
 #include "eina_log.h"
 #include "eina_strbuf.h"
+#include "eina_mempool.h"
+#include "eina_lock.h"
 
 /* undefs EINA_ARG_NONULL() so NULL checks are not compiled out! */
 #include "eina_safety_checks.h"
@@ -67,6 +69,10 @@ void *alloca (size_t);
  * @cond LOCAL
  */
 
+static Eina_Mempool *_eina_value_mp = NULL;
+static Eina_Hash *_eina_value_inner_mps = NULL;
+static Eina_Lock _eina_value_inner_mps_lock;
+static char *_eina_value_mp_choice = NULL;
 static int _eina_value_log_dom = -1;
 
 #ifdef ERR
@@ -3987,11 +3993,118 @@ static const Eina_Value_Blob_Operations _EINA_VALUE_BLOB_OPERATIONS_MALLOC = {
   NULL
 };
 
+typedef struct _Eina_Value_Inner_Mp Eina_Value_Inner_Mp;
+struct _Eina_Value_Inner_Mp
+{
+   Eina_Mempool *mempool;
+   int references;
+};
+
 /**
  * @endcond
  */
 
 static const char EINA_ERROR_VALUE_FAILED_STR[] = "Value check failed.";
+
+/**
+ */
+
+static inline void
+_eina_value_inner_mp_dispose(int size, Eina_Value_Inner_Mp *imp)
+{
+   EINA_SAFETY_ON_FALSE_RETURN(imp->references == 0);
+
+   eina_hash_del_by_key(_eina_value_inner_mps, &size);
+   eina_mempool_del(imp->mempool);
+   free(imp);
+}
+
+static inline Eina_Value_Inner_Mp *
+_eina_value_inner_mp_get(int size)
+{
+   Eina_Value_Inner_Mp *imp = eina_hash_find(_eina_value_inner_mps, &size);
+   if (imp) return imp;
+
+   imp = malloc(sizeof(Eina_Value_Inner_Mp));
+   if (!imp)
+     return NULL;
+
+   imp->references = 0;
+
+   imp->mempool = eina_mempool_add(_eina_value_mp_choice,
+                                   "Eina_Value_Inner_Mp", NULL, size, 128);
+   if (!imp->mempool)
+     {
+        free(imp);
+        return NULL;
+     }
+
+   if (!eina_hash_add(_eina_value_inner_mps, &size, imp))
+     {
+        eina_mempool_del(imp->mempool);
+        free(imp);
+        return NULL;
+     }
+
+   return imp;
+}
+
+static inline void *
+_eina_value_inner_alloc_internal(int size)
+{
+   Eina_Value_Inner_Mp *imp;
+   void *mem;
+
+   imp = _eina_value_inner_mp_get(size);
+   if (!imp) return NULL;
+
+   mem = eina_mempool_malloc(imp->mempool, size);
+   if (mem) imp->references++;
+   else if (imp->references == 0) _eina_value_inner_mp_dispose(size, imp);
+
+   return mem;
+}
+
+static inline void
+_eina_value_inner_free_internal(int size, void *mem)
+{
+   Eina_Value_Inner_Mp *imp = eina_hash_find(_eina_value_inner_mps, &size);
+   EINA_SAFETY_ON_NULL_RETURN(imp);
+
+   eina_mempool_free(imp->mempool, mem);
+
+   imp->references--;
+   if (imp->references > 0) return;
+   _eina_value_inner_mp_dispose(size, imp);
+}
+
+EAPI void *
+eina_value_inner_alloc(size_t size)
+{
+   void *mem;
+
+   if (size > 256) return malloc(size);
+
+   eina_lock_take(&_eina_value_inner_mps_lock);
+   mem = _eina_value_inner_alloc_internal(size);
+   eina_lock_release(&_eina_value_inner_mps_lock);
+
+   return mem;
+}
+
+EAPI void
+eina_value_inner_free(size_t size, void *mem)
+{
+   if (size > 256)
+     {
+        free(mem);
+        return;
+     }
+
+   eina_lock_take(&_eina_value_inner_mps_lock);
+   _eina_value_inner_free_internal(size, mem);
+   eina_lock_release(&_eina_value_inner_mps_lock);
+}
 
 /**
  * @internal
@@ -4007,12 +4120,46 @@ static const char EINA_ERROR_VALUE_FAILED_STR[] = "Value check failed.";
 Eina_Bool
 eina_value_init(void)
 {
+   const char *choice, *tmp;
+
    _eina_value_log_dom = eina_log_domain_register("eina_value",
                                                   EINA_LOG_COLOR_DEFAULT);
    if (_eina_value_log_dom < 0)
      {
         EINA_LOG_ERR("Could not register log domain: eina_value");
         return EINA_FALSE;
+     }
+
+#ifdef EINA_DEFAULT_MEMPOOL
+   choice = "pass_through";
+#else
+   choice = "chained_mempool";
+#endif
+   tmp = getenv("EINA_MEMPOOL");
+   if (tmp && tmp[0])
+     choice = tmp;
+
+   if (choice)
+     _eina_value_mp_choice = strdup(choice);
+
+   _eina_value_mp = eina_mempool_add
+      (_eina_value_mp_choice, "value", NULL, sizeof(Eina_Value), 320);
+   if (!_eina_value_mp)
+     {
+        ERR("Mempool for value cannot be allocated in value init.");
+        goto on_init_fail_mp;
+     }
+
+   if (!eina_lock_new(&_eina_value_inner_mps_lock))
+     {
+        ERR("Cannot create lock in value init.");
+        goto on_init_fail_lock;
+     }
+   _eina_value_inner_mps = eina_hash_int32_new(NULL);
+   if (!_eina_value_inner_mps)
+     {
+        ERR("Cannot create hash for inner mempools in value init.");
+        goto on_init_fail_hash;
      }
 
    EINA_ERROR_VALUE_FAILED = eina_error_msg_static_register(
@@ -4048,6 +4195,17 @@ eina_value_init(void)
    EINA_VALUE_BLOB_OPERATIONS_MALLOC = &_EINA_VALUE_BLOB_OPERATIONS_MALLOC;
 
    return EINA_TRUE;
+
+ on_init_fail_hash:
+   eina_lock_free(&_eina_value_inner_mps_lock);
+ on_init_fail_lock:
+   eina_mempool_del(_eina_value_mp);
+ on_init_fail_mp:
+   free(_eina_value_mp_choice);
+   _eina_value_mp_choice = NULL;
+   eina_log_domain_unregister(_eina_value_log_dom);
+   _eina_value_log_dom = -1;
+   return EINA_FALSE;
 }
 
 /**
@@ -4064,6 +4222,17 @@ eina_value_init(void)
 Eina_Bool
 eina_value_shutdown(void)
 {
+   eina_lock_take(&_eina_value_inner_mps_lock);
+   if (eina_hash_population(_eina_value_inner_mps) != 0)
+     ERR("Cannot free eina_value internal memory pools -- still in use!");
+   else
+     eina_hash_free(_eina_value_inner_mps);
+   eina_lock_release(&_eina_value_inner_mps_lock);
+   eina_lock_free(&_eina_value_inner_mps_lock);
+
+   free(_eina_value_mp_choice);
+   _eina_value_mp_choice = NULL;
+   eina_mempool_del(_eina_value_mp);
    eina_log_domain_unregister(_eina_value_log_dom);
    _eina_value_log_dom = -1;
    return EINA_TRUE;
@@ -4114,7 +4283,7 @@ EAPI const unsigned int eina_prime_table[] =
 EAPI Eina_Value *
 eina_value_new(const Eina_Value_Type *type)
 {
-   Eina_Value *value = malloc(sizeof(Eina_Value));
+   Eina_Value *value = eina_mempool_malloc(_eina_value_mp, sizeof(Eina_Value));;
    if (!value)
      {
         eina_error_set(EINA_ERROR_OUT_OF_MEMORY);
@@ -4133,7 +4302,7 @@ eina_value_free(Eina_Value *value)
 {
    EINA_SAFETY_ON_NULL_RETURN(value);
    eina_value_flush(value);
-   free(value);
+   eina_mempool_free(_eina_value_mp, value);
 }
 
 
