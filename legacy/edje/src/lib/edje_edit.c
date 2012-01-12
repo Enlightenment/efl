@@ -388,72 +388,59 @@ _edje_real_part_free(Edje_Real_Part *rp)
 static Eina_Bool
 _edje_import_font_file(Edje *ed, const char *path, const char *entry)
 {
+   Eina_File *f;
+   Eet_File *eetf = NULL;
    void *fdata = NULL;
    long fsize = 0;
 
    /* Read font data from file */
-   {
-      FILE *f = fopen(path, "rb");
-      if (!f)
-	{
-	   ERR("Unable to open font file \"%s\"", path);
-	   return EINA_FALSE;
-	}
+   f = eina_file_open(path, 0);
+   if (!f)
+     {
+        ERR("Unable to open font file \"%s\"", path);
+        return EINA_FALSE;
+     }
 
-      fseek(f, 0, SEEK_END);
-      fsize = ftell(f);
-      rewind(f);
-      fdata = malloc(fsize);
-      if (!fdata)
-         {
-	    ERR("Unable to alloc font file \"%s\"", path);
-	    fclose(f);
-	    return EINA_FALSE;
-         }
-      if (fread(fdata, fsize, 1, f) != 1)
-	 {
-            free(fdata);
-            fclose(f);
-	    ERR("Unable to read all of font file \"%s\"", path);
-	    return EINA_FALSE;
-	 }
-      fclose(f);
-   }
+   fsize = eina_file_size_get(f);
+   fdata = eina_file_map_all(f, EINA_FILE_SEQUENTIAL);
+   if (!fdata)
+     {
+        ERR("Unable to map font file \"%s\"", path);
+        goto on_error;
+     }
 
    /* Write font to edje file */
-   {
-      /* open the eet file */
-      Eet_File *eetf = eet_open(ed->path, EET_FILE_MODE_READ_WRITE);
-      if (!eetf)
-	{
-	   ERR("Unable to open \"%s\" for writing output", ed->path);
-	   free(fdata);
-	   return EINA_FALSE;
-	}
+   eetf = eet_open(ed->path, EET_FILE_MODE_READ_WRITE);
+   if (!eetf)
+     {
+        ERR("Unable to open \"%s\" for writing output", ed->path);
+        goto on_error;
+     }
 
-      if (eet_write(eetf, entry, fdata, fsize, 1) <= 0)
-        {
-           ERR("Unable to write font part \"%s\" as \"%s\" part entry",
-	       path, entry);
-           eet_close(eetf);
-           free(fdata);
-           return EINA_FALSE;
-        }
+   if (eet_write(eetf, entry, fdata, fsize, 1) <= 0)
+     {
+        ERR("Unable to write font part \"%s\" as \"%s\" part entry",
+            path, entry);
+        goto on_error;
+     }
 
-      free(fdata);
+   /* write the edje_file */
+   if (!_edje_edit_edje_file_save(eetf, ed->file))
+     goto on_error;
 
-      /* write the edje_file */
-      if (!_edje_edit_edje_file_save(eetf, ed->file))
-	{
-	   eet_delete(eetf, entry);
-	   eet_close(eetf);
-	   return EINA_FALSE;
-	}
+   eet_close(eetf);
 
-      eet_close(eetf);
-   }
+   eina_file_map_free(f, fdata);
+   eina_file_close(f);
 
    return EINA_TRUE;
+
+ on_error:
+   if (eetf) eet_close(eetf);
+   eina_file_map_free(f, fdata);
+   eina_file_close(f);
+
+   return EINA_FALSE;
 }
 
 
