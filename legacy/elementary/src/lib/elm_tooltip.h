@@ -22,7 +22,7 @@ typedef Evas_Object *(*Elm_Tooltip_Content_Cb)(void *data, Evas_Object *obj, Eva
  * @param obj owner widget.
  * @param tooltip The tooltip object (affix content to this!)
  * @param item context dependent item. As an example, if tooltip was
- *        set on Elm_List_Item, then it is of this type.
+ *        set on elm_list item, then it is of this type.
  */
 typedef Evas_Object *(*Elm_Tooltip_Item_Content_Cb)(void *data, Evas_Object *obj, Evas_Object *tooltip, void *item);
 

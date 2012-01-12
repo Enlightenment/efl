@@ -2372,7 +2372,7 @@
  *
  * This code places a Elementary list widgets on a window,
  * along with some buttons trigerring actions on it (though its API).
- * It covers most of Elm_List_Item functions.
+ * It covers most of elm_list_item functions.
  *
  * On our @c main function, we are adding a default list with
  * 3 items. We are only setting their labels (second parameter of function

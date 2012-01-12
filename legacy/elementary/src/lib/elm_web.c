@@ -856,14 +856,14 @@ static void
 _popup_item_selected(void *data, Evas_Object *obj, void *event_info __UNUSED__)
 {
    Evas_Object *view = data;
-   Elm_List_Item *it = elm_list_selected_item_get(obj);
+   Elm_Object_Item *list_it = elm_list_selected_item_get(obj);
    const Eina_List *itr, *list = elm_list_items_get(obj);
    void *d;
    int i = 0;
 
    EINA_LIST_FOREACH(list, itr, d)
    {
-      if (d == it)
+      if (d == list_it)
          break;
 
       i++;

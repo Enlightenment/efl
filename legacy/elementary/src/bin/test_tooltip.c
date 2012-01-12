@@ -372,7 +372,7 @@ test_tooltip(void *data       __UNUSED__,
 {
    Evas_Object *win, *bg, *bx, *tb, *bt, *se, *lst;
    Elm_Object_Item *tb_it;
-   Elm_List_Item *li;
+   Elm_Object_Item *lit;
 
    win = elm_win_add(NULL, "tooltip", ELM_WIN_BASIC);
    elm_win_title_set(win, "Tooltip");
@@ -486,19 +486,19 @@ test_tooltip(void *data       __UNUSED__,
    evas_object_show(se);
 
    lst = elm_list_add(win);
-   li = elm_list_item_append(lst, "Hello", NULL, NULL, NULL, NULL);
-   elm_list_item_tooltip_content_cb_set(li, _tt_item_label, NULL, NULL);
-   elm_list_item_tooltip_window_mode_set(li, EINA_TRUE);
-   li = elm_list_item_append(lst, "Icon Tooltip", NULL, NULL, NULL, NULL);
-   elm_list_item_tooltip_content_cb_set(li, _tt_item_icon, NULL, NULL);
-   li = elm_list_item_append(lst, "Big Icon Tooltip", NULL, NULL, NULL, NULL);
-   elm_list_item_tooltip_content_cb_set(li, _tt_item_icon2, NULL, NULL);
-   elm_list_item_tooltip_style_set(li, "transparent");
-   elm_list_item_tooltip_window_mode_set(li, EINA_TRUE);
-   li = elm_list_item_append(lst, "Insanely Big Icon Tooltip", NULL, NULL, NULL, NULL);
-   elm_list_item_tooltip_content_cb_set(li, _tt_item_icon3, NULL, NULL);
-   elm_list_item_tooltip_style_set(li, "transparent");
-   elm_list_item_tooltip_window_mode_set(li, EINA_TRUE);
+   lit = elm_list_item_append(lst, "Hello", NULL, NULL, NULL, NULL);
+   elm_list_item_tooltip_content_cb_set(lit, _tt_item_label, NULL, NULL);
+   elm_list_item_tooltip_window_mode_set(lit, EINA_TRUE);
+   lit = elm_list_item_append(lst, "Icon Tooltip", NULL, NULL, NULL, NULL);
+   elm_list_item_tooltip_content_cb_set(lit, _tt_item_icon, NULL, NULL);
+   lit = elm_list_item_append(lst, "Big Icon Tooltip", NULL, NULL, NULL, NULL);
+   elm_list_item_tooltip_content_cb_set(lit, _tt_item_icon2, NULL, NULL);
+   elm_list_item_tooltip_style_set(lit, "transparent");
+   elm_list_item_tooltip_window_mode_set(lit, EINA_TRUE);
+   lit = elm_list_item_append(lst, "Insanely Big Icon Tooltip", NULL, NULL, NULL, NULL);
+   elm_list_item_tooltip_content_cb_set(lit, _tt_item_icon3, NULL, NULL);
+   elm_list_item_tooltip_style_set(lit, "transparent");
+   elm_list_item_tooltip_window_mode_set(lit, EINA_TRUE);
    evas_object_size_hint_weight_set(lst, EVAS_HINT_EXPAND,
                                     EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(lst, EVAS_HINT_FILL, EVAS_HINT_FILL);

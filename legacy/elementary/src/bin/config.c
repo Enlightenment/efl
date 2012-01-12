@@ -755,15 +755,15 @@ _font_overlay_set_all(void            *data,
 {
    Evas_Object *win, *fclasses, *fnames, *fstyles, *fsizes;
    Elm_Text_Class_Data *tc_data, *tc;
-   Elm_List_Item *it;
+   Elm_Object_Item *list_it;
    Eina_List *l;
 
    win = data;
 
    fclasses = evas_object_data_get(win, "font_classes_list");
-   it = elm_list_selected_item_get(fclasses);
-   if (!it) return;
-   tc_data = elm_object_item_data_get(it);
+   list_it = elm_list_selected_item_get(fclasses);
+   if (!list_it) return;
+   tc_data = elm_object_item_data_get(list_it);
 
    fnames = evas_object_data_get(win, "font_names_list");
    fstyles = evas_object_data_get(win, "font_styles_list");
@@ -786,14 +786,14 @@ _font_overlay_reset(void            *data,
 {
    Evas_Object *win, *fclasses, *fnames, *fstyles, *fsizes;
    Elm_Text_Class_Data *tc_data;
-   Elm_List_Item *it;
+   Elm_Object_Item *list_it;
 
    win = data;
 
    fclasses = evas_object_data_get(win, "font_classes_list");
-   it = elm_list_selected_item_get(fclasses);
-   if (!it) return;
-   tc_data = elm_object_item_data_get(it);
+   list_it = elm_list_selected_item_get(fclasses);
+   if (!list_it) return;
+   tc_data = elm_object_item_data_get(list_it);
 
    fnames = evas_object_data_get(win, "font_names_list");
    fstyles = evas_object_data_get(win, "font_styles_list");
@@ -822,7 +822,7 @@ _font_overlay_reset_all(void            *data,
 {
    Evas_Object *win, *fclasses, *fnames, *fstyles, *fsizes;
    Elm_Text_Class_Data *tc_data;
-   Elm_List_Item *it;
+   Elm_Object_Item *list_it;
    Eina_List *l;
 
    win = data;
@@ -844,8 +844,8 @@ _font_overlay_reset_all(void            *data,
    fstyles = evas_object_data_get(win, "font_styles_list");
    fsizes = evas_object_data_get(win, "font_sizes_list");
 
-   it = elm_list_selected_item_get(fclasses);
-   if (it) elm_list_item_selected_set(it, EINA_FALSE);
+   list_it = elm_list_selected_item_get(fclasses);
+   if (list_it) elm_list_item_selected_set(list_it, EINA_FALSE);
 
    ELM_LIST_DISABLE(fnames);
    ELM_LIST_DISABLE(fstyles);
@@ -893,7 +893,7 @@ _config_display_update(Evas_Object *win)
    const char *curr_theme, *curr_engine;
    const Eina_List *l_items, *l;
    Eina_Bool s_bounce, ts;
-   Elm_List_Item *it;
+   Elm_Object_Item *list_it;
    Elm_Theme *th;
    int fs;
 
@@ -991,11 +991,11 @@ _config_display_update(Evas_Object *win)
 
    curr_engine = elm_engine_current_get();
    l_items = elm_list_items_get(evas_object_data_get(win, "engines_list"));
-   EINA_LIST_FOREACH(l_items, l, it)
+   EINA_LIST_FOREACH(l_items, l, list_it)
      {
-        if (!strcmp(elm_object_item_data_get(it), curr_engine))
+        if (!strcmp(elm_object_item_data_get(list_it), curr_engine))
           {
-             elm_list_item_selected_set(it, EINA_TRUE);
+             elm_list_item_selected_set(list_it, EINA_TRUE);
              break;
           }
      }
@@ -1125,7 +1125,7 @@ _theme_sel(void            *data __UNUSED__,
    Evas_Object *win = elm_object_top_widget_get(obj);
    Evas_Object *sample = evas_object_data_get(win, "theme_preview");
    Elm_Theme *th, *sth;
-   Elm_List_Item *it;
+   Elm_Object_Item *list_it;
    const char *defth;
    Eina_Strbuf *newth;
    Eina_List *l;
@@ -1142,9 +1142,9 @@ _theme_sel(void            *data __UNUSED__,
         eina_strbuf_free(newth);
         return;
      }
-   EINA_LIST_REVERSE_FOREACH((Eina_List*)tsel, l, it)
+   EINA_LIST_REVERSE_FOREACH((Eina_List*)tsel, l, list_it)
      {
-        Theme *t = elm_object_item_data_get(it);
+        Theme *t = elm_object_item_data_get(list_it);
         eina_strbuf_append_printf(newth, "%s:", t->name);
         if ((!l->prev) && strcmp(t->name, "default"))
           /* ensure default theme is always there for fallback */
@@ -1312,7 +1312,7 @@ _status_config_themes(Evas_Object *win,
    Eina_List *list, *l;
    char *th, *s, *ext;
    Elm_Theme *d;
-   Elm_List_Item *it, *def_it = NULL;
+   Elm_Object_Item *list_it, *def_it = NULL;
    const char *theme_name, *sep[20];
    unsigned int x;
 
@@ -1394,16 +1394,16 @@ _status_config_themes(Evas_Object *win,
                t->label = eina_stringshare_add(s);
           }
         themes = eina_list_append(themes, t);
-        it = elm_list_item_append(li, t->label, NULL, NULL, NULL, t);
-        if (!strcmp(t->name, "default")) def_it = it;
+        list_it = elm_list_item_append(li, t->label, NULL, NULL, NULL, t);
+        if (!strcmp(t->name, "default")) def_it = list_it;
         for (y = x - 1 /* ignore default e theme */; y > 0; y--)
           {
              const char *start = (sep[y - 1][0] == ':') ? sep[y - 1] + 1 : sep[y - 1];
              unsigned int len = (unsigned int)(sep[y] - start);
              if (strncmp(start , t->name, len) || (strlen(t->name) != len)) continue;
 
-             if (!elm_list_item_selected_get(it))
-               elm_list_item_selected_set(it, EINA_TRUE);
+             if (!elm_list_item_selected_get(list_it))
+               elm_list_item_selected_set(list_it, EINA_TRUE);
              break;
           }
      }
@@ -1515,7 +1515,7 @@ _font_classes_list_sel(void *data   __UNUSED__,
    const Eina_List *f_names_items, *l;
    Elm_Text_Class_Data *tc_data;
    Evas_Object *f_names_list;
-   Elm_List_Item *it;
+   Elm_Object_Item *list_it;
 
    tc_data = elm_object_item_data_get(event_info);
 
@@ -1525,16 +1525,16 @@ _font_classes_list_sel(void *data   __UNUSED__,
 
    f_names_items = elm_list_items_get(f_names_list);
 
-   EINA_LIST_FOREACH(f_names_items, l, it)
+   EINA_LIST_FOREACH(f_names_items, l, list_it)
      {
         const char *l;
 
-        l = elm_object_item_text_get(it);
+        l = elm_object_item_text_get(list_it);
 
         if (tc_data->font && !strcmp(l, tc_data->font))
           {
-             elm_list_item_selected_set(it, EINA_TRUE);
-             elm_list_item_show(it);
+             elm_list_item_selected_set(list_it, EINA_TRUE);
+             elm_list_item_show(list_it);
              break;
           }
      }
@@ -1548,25 +1548,25 @@ _font_names_list_sel(void *data   __UNUSED__,
    Evas_Object *style_list, *cls_list, *sizes_list, *win;
    const char *style, *sel_font;
    Elm_Text_Class_Data *tc_data;
-   Elm_List_Item *it, *fc_it;
+   Elm_Object_Item *list_it, *fc_list_it;
    Elm_Font_Properties *efp;
    const Eina_List *l;
 
-   it = event_info;
-   sel_font = elm_object_item_text_get(it);
+   list_it = event_info;
+   sel_font = elm_object_item_text_get(list_it);
 
    win = elm_object_top_widget_get(obj);
    style_list = evas_object_data_get(win, "font_styles_list");
    cls_list = evas_object_data_get(win, "font_classes_list");
    sizes_list = evas_object_data_get(win, "font_sizes_list");
 
-   fc_it = elm_list_selected_item_get(cls_list);
-   if (!fc_it) return;  /* should not happen, fonts list disabled in
+   fc_list_it = elm_list_selected_item_get(cls_list);
+   if (!fc_list_it) return;  /* should not happen, fonts list disabled in
                          * this case */
 
    eina_stringshare_replace(&fdata.cur_font, sel_font);
 
-   tc_data = elm_object_item_data_get(fc_it);
+   tc_data = elm_object_item_data_get(fc_list_it);
    if (tc_data->font) eina_stringshare_del(tc_data->font);
    if (fdata.cur_font) tc_data->font = eina_stringshare_ref(fdata.cur_font);
 
@@ -1579,17 +1579,17 @@ _font_names_list_sel(void *data   __UNUSED__,
    evas_event_freeze(evas_object_evas_get(style_list));
    edje_freeze();
 
-   it = NULL;
+   list_it = NULL;
 
    EINA_LIST_FOREACH(efp->styles, l, style)
      {
-        Elm_List_Item *i;
+        Elm_Object_Item *i;
 
         i = elm_list_item_append(style_list, style, NULL, NULL,
                                  _font_styles_list_sel, NULL);
 
         if (tc_data->style && (!strcmp(style, tc_data->style)))
-          it = i;
+          list_it = i;
      }
 
    elm_list_go(style_list);
@@ -1597,8 +1597,8 @@ _font_names_list_sel(void *data   __UNUSED__,
    edje_thaw();
    evas_event_thaw(evas_object_evas_get(style_list));
 
-   if (it)
-     elm_list_item_selected_set(it, EINA_TRUE);
+   if (list_it)
+     elm_list_item_selected_set(list_it, EINA_TRUE);
 
    _font_preview_update(win);
 }
@@ -1611,37 +1611,37 @@ _font_styles_list_sel(void *data   __UNUSED__,
    Evas_Object *fc_list, *fs_list, *win;
    Elm_Text_Class_Data *tc_data;
    const Eina_List *l;
-   Elm_List_Item *it;
+   Elm_Object_Item *list_it;
 
    win = elm_object_top_widget_get(obj);
    fc_list = evas_object_data_get(win, "font_classes_list");
    fs_list = evas_object_data_get(win, "font_sizes_list");
 
-   it = elm_list_selected_item_get(fc_list);
-   if (!it) return;  /* should not happen */
+   list_it = elm_list_selected_item_get(fc_list);
+   if (!list_it) return;  /* should not happen */
 
    eina_stringshare_replace(&fdata.cur_style,
                             elm_object_item_text_get(event_info));
    ELM_LIST_ENABLE(fs_list);
 
-   tc_data = elm_object_item_data_get(it);
+   tc_data = elm_object_item_data_get(list_it);
    eina_stringshare_del(tc_data->style);
    tc_data->style = eina_stringshare_ref(fdata.cur_style);
 
    evas_event_freeze(evas_object_evas_get(fs_list));
    edje_freeze();
 
-   EINA_LIST_FOREACH(elm_list_items_get(fs_list), l, it)
+   EINA_LIST_FOREACH(elm_list_items_get(fs_list), l, list_it)
      {
         Elm_Font_Size_Data *sdata;
 
-        sdata = elm_object_item_data_get(it);
+        sdata = elm_object_item_data_get(list_it);
         elm_list_item_selected_set(l->data, EINA_FALSE);
 
         if (tc_data->size == sdata->size)
           {
-             elm_list_item_selected_set(it, EINA_TRUE);
-             elm_list_item_show(it);
+             elm_list_item_selected_set(list_it, EINA_TRUE);
+             elm_list_item_show(list_it);
              break;
           }
      }
@@ -1660,18 +1660,18 @@ _font_sizes_list_sel(void *data       __UNUSED__,
    Elm_Text_Class_Data *tc_data;
    Evas_Object *fc_list, *win;
    Elm_Font_Size_Data *sd;
-   Elm_List_Item *it;
+   Elm_Object_Item *list_it;
 
    win = elm_object_top_widget_get(obj);
    fc_list = evas_object_data_get(win, "font_classes_list");
 
-   it = elm_list_selected_item_get(fc_list);
-   if (!it) return;  /* should not happen */
+   list_it = elm_list_selected_item_get(fc_list);
+   if (!list_it) return;  /* should not happen */
 
    sd = elm_object_item_data_get(event_info);
    fdata.cur_size = sd->size;
 
-   tc_data = elm_object_item_data_get(it);
+   tc_data = elm_object_item_data_get(list_it);
    tc_data->size = fdata.cur_size;
 
    _font_preview_update(win);
@@ -2215,7 +2215,7 @@ _profiles_list_fill(Evas_Object *l_widget,
 #endif
         const char *label, *ext, *pdir;
         char buf[PATH_MAX];
-        Elm_List_Item *it;
+        Elm_Object_Item *list_it;
         Evas_Object *ic;
 
         pdir = elm_profile_dir_get(profile, EINA_TRUE);
@@ -2255,11 +2255,12 @@ _profiles_list_fill(Evas_Object *l_widget,
                                          1, 1);
         evas_object_show(ic);
 
-        it = elm_list_item_append(l_widget, label, ic, NULL,
-                                  _profiles_list_selected_cb, strdup(profile));
-        elm_list_item_del_cb_set(it, _profiles_list_item_del_cb);
+        list_it = elm_list_item_append(l_widget, label, ic, NULL,
+                                       _profiles_list_selected_cb,
+                                       strdup(profile));
+        elm_object_item_del_cb_set(list_it, _profiles_list_item_del_cb);
         if (cur_profile && !strcmp(profile, cur_profile))
-          sel_it = it;
+          sel_it = list_it;
 
         elm_profile_dir_free(pdir);
 
@@ -2745,20 +2746,20 @@ _engines_list_fill(Evas_Object *l_widget,
    EINA_LIST_FOREACH(e_names, l, engine)
      {
         const char *label;
-        Elm_List_Item *it;
+        Elm_Object_Item *list_it;
 
         if (!_elm_engine_supported(engine))
           continue;
 
         label = _engine_name_prettify(engine);
 
-        it = elm_list_item_append(l_widget, label, NULL, NULL, NULL,
+        list_it = elm_list_item_append(l_widget, label, NULL, NULL, NULL,
                                   strdup(engine));
-        elm_list_item_del_cb_set(it, _engines_list_item_del_cb);
+        elm_object_item_del_cb_set(list_it, _engines_list_item_del_cb);
         free((void *)label);
 
         if (!strcmp(cur_engine, engine))
-          sel_it = it;
+          sel_it = list_it;
      }
 
    if (sel_it) elm_list_item_selected_set(sel_it, EINA_TRUE);

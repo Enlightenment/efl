@@ -50,7 +50,7 @@ _item_del(void        *data __UNUSED__,
           void        *event_info __UNUSED__)
 {
    Elm_Object_Item *iit;
-   Elm_List_Item *lit = elm_index_item_selected_get(d.index, 0);
+   Elm_Object_Item *lit = elm_index_item_selected_get(d.index, 0);
 
    iit = elm_index_item_find(d.index, lit);
 
@@ -95,11 +95,11 @@ _index_selected(void        *data __UNUSED__,
                 Evas_Object *obj,
                 void        *event_info)
 {
-   Elm_List_Item *it = event_info;
+   Elm_Object_Item *lit = event_info;
 
    fprintf(stdout, "New index item selected. Comparing item reported"
                    " via callback with the selection returned by the API: "
-                   "%s.\n", it == elm_index_item_selected_get(obj, 0) ? "OK" :
+                   "%s.\n", lit == elm_index_item_selected_get(obj, 0) ? "OK" :
            "FAIL, something went wrong");
 }
 
@@ -116,7 +116,7 @@ elm_main(int    argc __UNUSED__,
          char **argv __UNUSED__)
 {
    Evas_Object *win, *bg, *hbox, *vbox, *bt, *sep;
-   Elm_List_Item *it;
+   Elm_Object_Item *lit;
    unsigned int i;
    char curr = 0;
 
@@ -150,7 +150,7 @@ elm_main(int    argc __UNUSED__,
 
    for (i = 0; i < (sizeof(dict) / sizeof(dict[0])); i++)
      {
-        it = elm_list_item_append(d.list, dict[i], NULL, NULL, NULL, NULL);
+        lit = elm_list_item_append(d.list, dict[i], NULL, NULL, NULL, NULL);
 
         if (curr != dict[i][0])
           {
@@ -161,8 +161,8 @@ elm_main(int    argc __UNUSED__,
              /* indexing by first letters */
 
              snprintf(buf, sizeof(buf), "%c", curr);
-             elm_index_item_append(d.index, buf, it);
-             index_it = elm_index_item_find(d.index, it);
+             elm_index_item_append(d.index, buf, lit);
+             index_it = elm_index_item_find(d.index, lit);
 
              elm_object_item_del_cb_set(index_it, _index_item_del);
           }

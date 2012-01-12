@@ -70,8 +70,6 @@ typedef enum
    ELM_LIST_LAST /**< Indicates error if returned by elm_list_mode_get() */
 } Elm_List_Mode;
 
-typedef struct _Elm_List_Item Elm_List_Item;    /**< Item of Elm_List. Sub-type of Elm_Widget_Item. Can be created with elm_list_item_append(), elm_list_item_prepend() and functions to add items in relative positions, like elm_list_item_insert_before(), and deleted with elm_list_item_del().  */
-
 /**
  * Add a new list widget to the given parent Elementary
  * (container) object.
@@ -364,7 +362,7 @@ EAPI void                         elm_list_scroller_policy_get(const Evas_Object
  *
  * @ingroup List
  */
-EAPI Elm_List_Item               *elm_list_item_append(Evas_Object *obj, const char *label, Evas_Object *icon, Evas_Object *end, Evas_Smart_Cb func, const void *data);
+EAPI Elm_Object_Item               *elm_list_item_append(Evas_Object *obj, const char *label, Evas_Object *icon, Evas_Object *end, Evas_Smart_Cb func, const void *data);
 
 /**
  * Prepend a new item to the list object.
@@ -406,7 +404,7 @@ EAPI Elm_List_Item               *elm_list_item_append(Evas_Object *obj, const c
  *
  * @ingroup List
  */
-EAPI Elm_List_Item               *elm_list_item_prepend(Evas_Object *obj, const char *label, Evas_Object *icon, Evas_Object *end, Evas_Smart_Cb func, const void *data);
+EAPI Elm_Object_Item               *elm_list_item_prepend(Evas_Object *obj, const char *label, Evas_Object *icon, Evas_Object *end, Evas_Smart_Cb func, const void *data);
 
 /**
  * Insert a new item into the list object before item @p before.
@@ -449,7 +447,7 @@ EAPI Elm_List_Item               *elm_list_item_prepend(Evas_Object *obj, const 
  *
  * @ingroup List
  */
-EAPI Elm_List_Item               *elm_list_item_insert_before(Evas_Object *obj, Elm_List_Item *before, const char *label, Evas_Object *icon, Evas_Object *end, Evas_Smart_Cb func, const void *data);
+EAPI Elm_Object_Item               *elm_list_item_insert_before(Evas_Object *obj, Elm_Object_Item *before, const char *label, Evas_Object *icon, Evas_Object *end, Evas_Smart_Cb func, const void *data);
 
 /**
  * Insert a new item into the list object after item @p after.
@@ -492,7 +490,7 @@ EAPI Elm_List_Item               *elm_list_item_insert_before(Evas_Object *obj, 
  *
  * @ingroup List
  */
-EAPI Elm_List_Item               *elm_list_item_insert_after(Evas_Object *obj, Elm_List_Item *after, const char *label, Evas_Object *icon, Evas_Object *end, Evas_Smart_Cb func, const void *data);
+EAPI Elm_Object_Item               *elm_list_item_insert_after(Evas_Object *obj, Elm_Object_Item *after, const char *label, Evas_Object *icon, Evas_Object *end, Evas_Smart_Cb func, const void *data);
 
 /**
  * Insert a new item into the sorted list object.
@@ -507,7 +505,7 @@ EAPI Elm_List_Item               *elm_list_item_insert_after(Evas_Object *obj, E
  * @param func The function to call when the item is clicked.
  * @param data The data to associate with the item for related callbacks.
  * @param cmp_func The comparing function to be used to sort list
- * items <b>by #Elm_List_Item item handles</b>. This function will
+ * items <b>by #Elm_Object_Item item handles</b>. This function will
  * receive two items and compare them, returning a non-negative integer
  * if the second item should be place after the first, or negative value
  * if should be placed before.
@@ -543,7 +541,7 @@ EAPI Elm_List_Item               *elm_list_item_insert_after(Evas_Object *obj, E
  *
  * @ingroup List
  */
-EAPI Elm_List_Item               *elm_list_item_sorted_insert(Evas_Object *obj, const char *label, Evas_Object *icon, Evas_Object *end, Evas_Smart_Cb func, const void *data, Eina_Compare_Cb cmp_func);
+EAPI Elm_Object_Item               *elm_list_item_sorted_insert(Evas_Object *obj, const char *label, Evas_Object *icon, Evas_Object *end, Evas_Smart_Cb func, const void *data, Eina_Compare_Cb cmp_func);
 
 /**
  * Remove all list's items.
@@ -561,7 +559,7 @@ EAPI void                         elm_list_clear(Evas_Object *obj);
  * Get a list of all the list items.
  *
  * @param obj The list object
- * @return An @c Eina_List of list items, #Elm_List_Item,
+ * @return An @c Eina_List of list items, #Elm_Object_Item,
  * or @c NULL on failure.
  *
  * @see elm_list_item_append()
@@ -587,13 +585,13 @@ EAPI const Eina_List             *elm_list_items_get(const Evas_Object *obj);
  *
  * @ingroup List
  */
-EAPI Elm_List_Item               *elm_list_selected_item_get(const Evas_Object *obj);
+EAPI Elm_Object_Item               *elm_list_selected_item_get(const Evas_Object *obj);
 
 /**
  * Return a list of the currently selected list items.
  *
  * @param obj The list object.
- * @return An @c Eina_List of list items, #Elm_List_Item,
+ * @return An @c Eina_List of list items, #Elm_Object_Item,
  * or @c NULL on failure.
  *
  * Multiple items can be selected if multi select is enabled. It can be
@@ -609,7 +607,7 @@ EAPI const Eina_List             *elm_list_selected_items_get(const Evas_Object 
 /**
  * Set the selected state of an item.
  *
- * @param item The list item
+ * @param it The list item
  * @param selected The selected state
  *
  * This sets the selected state of the given item @p it.
@@ -628,12 +626,12 @@ EAPI const Eina_List             *elm_list_selected_items_get(const Evas_Object 
  *
  * @ingroup List
  */
-EAPI void                         elm_list_item_selected_set(Elm_List_Item *item, Eina_Bool selected);
+EAPI void                         elm_list_item_selected_set(Elm_Object_Item *it, Eina_Bool selected);
 
 /*
  * Get whether the @p item is selected or not.
  *
- * @param item The list item.
+ * @param it The list item.
  * @return @c EINA_TRUE means item is selected. @c EINA_FALSE indicates
  * it's not. If @p obj is @c NULL, @c EINA_FALSE is returned.
  *
@@ -642,7 +640,7 @@ EAPI void                         elm_list_item_selected_set(Elm_List_Item *item
  *
  * @ingroup List
  */
-EAPI Eina_Bool                    elm_list_item_selected_get(const Elm_List_Item *item);
+EAPI Eina_Bool                    elm_list_item_selected_get(const Elm_Object_Item *it);
 
 /**
  * Set or unset item as a separator.
@@ -660,7 +658,7 @@ EAPI Eina_Bool                    elm_list_item_selected_get(const Elm_List_Item
  *
  * @ingroup List
  */
-EAPI void                         elm_list_item_separator_set(Elm_List_Item *it, Eina_Bool setting);
+EAPI void                         elm_list_item_separator_set(Elm_Object_Item *it, Eina_Bool setting);
 
 /**
  * Get a value whether item is a separator or not.
@@ -673,24 +671,24 @@ EAPI void                         elm_list_item_separator_set(Elm_List_Item *it,
  *
  * @ingroup List
  */
-EAPI Eina_Bool                    elm_list_item_separator_get(const Elm_List_Item *it);
+EAPI Eina_Bool                    elm_list_item_separator_get(const Elm_Object_Item *it);
 
 /**
  * Show @p item in the list view.
  *
- * @param item The list item to be shown.
+ * @param it The list item to be shown.
  *
  * It won't animate list until item is visible. If such behavior is wanted,
  * use elm_list_bring_in() intead.
  *
  * @ingroup List
  */
-EAPI void                         elm_list_item_show(Elm_List_Item *item);
+EAPI void                         elm_list_item_show(Elm_Object_Item *it);
 
 /**
  * Bring in the given item to list view.
  *
- * @param item The item.
+ * @param it The item.
  *
  * This causes list to jump to the given item @p item and show it
  * (by scrolling), if it is not fully visible.
@@ -701,12 +699,12 @@ EAPI void                         elm_list_item_show(Elm_List_Item *item);
  *
  * @ingroup List
  */
-EAPI void                         elm_list_item_bring_in(Elm_List_Item *item);
+EAPI void                         elm_list_item_bring_in(Elm_Object_Item *it);
 
 /**
  * Delete the item from the list.
  *
- * @param item The item of list to be deleted.
+ * @param it The item of list to be deleted.
  *
  * If deleting all list items is required, elm_list_clear()
  * should be used instead of getting items list and deleting each one.
@@ -717,19 +715,19 @@ EAPI void                         elm_list_item_bring_in(Elm_List_Item *item);
  *
  * @ingroup List
  */
-EAPI void                         elm_list_item_del(Elm_List_Item *item);
+EAPI void                         elm_list_item_del(Elm_Object_Item *it);
 
 /**
  * Gets the base object of the item.
  *
- * @param item The list item
+ * @param it The list item
  * @return The base object associated with @p item
  *
  * Base object is the @c Evas_Object that represents that item.
  *
  * @ingroup List
  */
-EAPI Evas_Object                 *elm_list_item_object_get(const Elm_List_Item *item);
+EAPI Evas_Object                 *elm_list_item_object_get(const Elm_Object_Item *it);
 
 /**
  * Get the item before @p it in list.
@@ -744,7 +742,7 @@ EAPI Evas_Object                 *elm_list_item_object_get(const Elm_List_Item *
  *
  * @ingroup List
  */
-EAPI Elm_List_Item               *elm_list_item_prev(const Elm_List_Item *it);
+EAPI Elm_Object_Item               *elm_list_item_prev(const Elm_Object_Item *it);
 
 /**
  * Get the item after @p it in list.
@@ -759,12 +757,12 @@ EAPI Elm_List_Item               *elm_list_item_prev(const Elm_List_Item *it);
  *
  * @ingroup List
  */
-EAPI Elm_List_Item               *elm_list_item_next(const Elm_List_Item *it);
+EAPI Elm_Object_Item               *elm_list_item_next(const Elm_Object_Item *it);
 
 /**
  * Set the text to be shown in a given list item's tooltips.
  *
- * @param item Target item.
+ * @param it Target item.
  * @param text The text to set in the content.
  *
  * Setup the text as tooltip to object. The item can have only one tooltip,
@@ -775,18 +773,18 @@ EAPI Elm_List_Item               *elm_list_item_next(const Elm_List_Item *it);
  *
  * @ingroup List
  */
-EAPI void                         elm_list_item_tooltip_text_set(Elm_List_Item *item, const char *text);
+EAPI void                         elm_list_item_tooltip_text_set(Elm_Object_Item *it, const char *text);
 
 /**
  * @brief Disable size restrictions on an object's tooltip
- * @param item The tooltip's anchor object
+ * @param it The tooltip's anchor object
  * @param disable If EINA_TRUE, size restrictions are disabled
  * @return EINA_FALSE on failure, EINA_TRUE on success
  *
  * This function allows a tooltip to expand beyond its parant window's canvas.
  * It will instead be limited only by the size of the display.
  */
-EAPI Eina_Bool                    elm_list_item_tooltip_window_mode_set(Elm_List_Item *item, Eina_Bool disable);
+EAPI Eina_Bool                    elm_list_item_tooltip_window_mode_set(Elm_Object_Item *it, Eina_Bool disable);
 
 /**
  * @brief Retrieve size restriction state of an object's tooltip
@@ -797,7 +795,7 @@ EAPI Eina_Bool                    elm_list_item_tooltip_window_mode_set(Elm_List
  * its parant window's canvas.
  * It will instead be limited only by the size of the display.
  */
-EAPI Eina_Bool                    elm_list_item_tooltip_window_mode_get(const Elm_List_Item *item);
+EAPI Eina_Bool                    elm_list_item_tooltip_window_mode_get(const Elm_Object_Item *it);
 
 /**
  * Set the content to be shown in the tooltip item.
@@ -808,7 +806,7 @@ EAPI Eina_Bool                    elm_list_item_tooltip_window_mode_get(const El
  * return a valid Evas_Object. This object is then managed fully by
  * tooltip system and is deleted when the tooltip is gone.
  *
- * @param item the list item being attached a tooltip.
+ * @param it the list item being attached a tooltip.
  * @param func the function used to create the tooltip contents.
  * @param data what to provide to @a func as callback data/context.
  * @param del_cb called when data is not needed anymore, either when
@@ -821,12 +819,12 @@ EAPI Eina_Bool                    elm_list_item_tooltip_window_mode_get(const El
  *
  * @ingroup List
  */
-EAPI void                         elm_list_item_tooltip_content_cb_set(Elm_List_Item *item, Elm_Tooltip_Item_Content_Cb func, const void *data, Evas_Smart_Cb del_cb);
+EAPI void                         elm_list_item_tooltip_content_cb_set(Elm_Object_Item *it, Elm_Tooltip_Item_Content_Cb func, const void *data, Evas_Smart_Cb del_cb);
 
 /**
  * Unset tooltip from item.
  *
- * @param item list item to remove previously set tooltip.
+ * @param it list item to remove previously set tooltip.
  *
  * Remove tooltip from item. The callback provided as del_cb to
  * elm_list_item_tooltip_content_cb_set() will be called to notify
@@ -837,7 +835,7 @@ EAPI void                         elm_list_item_tooltip_content_cb_set(Elm_List_
  *
  * @ingroup List
  */
-EAPI void                         elm_list_item_tooltip_unset(Elm_List_Item *item);
+EAPI void                         elm_list_item_tooltip_unset(Elm_Object_Item *it);
 
 /**
  * Sets a different style for this item tooltip.
@@ -846,14 +844,14 @@ EAPI void                         elm_list_item_tooltip_unset(Elm_List_Item *ite
  *       elm_list_item_tooltip_content_cb_set() or
  *       elm_list_item_tooltip_text_set()
  *
- * @param item list item with tooltip already set.
+ * @param it list item with tooltip already set.
  * @param style the theme style to use (default, transparent, ...)
  *
  * @see elm_object_tooltip_style_set() for more details.
  *
  * @ingroup List
  */
-EAPI void                         elm_list_item_tooltip_style_set(Elm_List_Item *item, const char *style);
+EAPI void                         elm_list_item_tooltip_style_set(Elm_Object_Item *it, const char *style);
 
 /**
  * Get the style for this item tooltip.
@@ -867,13 +865,13 @@ EAPI void                         elm_list_item_tooltip_style_set(Elm_List_Item 
  *
  * @ingroup List
  */
-EAPI const char                  *elm_list_item_tooltip_style_get(const Elm_List_Item *item);
+EAPI const char                  *elm_list_item_tooltip_style_get(const Elm_Object_Item *it);
 
 /**
  * Set the type of mouse pointer/cursor decoration to be shown,
  * when the mouse pointer is over the given list widget item
  *
- * @param item list item to customize cursor on
+ * @param it list item to customize cursor on
  * @param cursor the cursor type's name
  *
  * This function works analogously as elm_object_cursor_set(), but
@@ -891,13 +889,13 @@ EAPI const char                  *elm_list_item_tooltip_style_get(const Elm_List
  *
  * @ingroup List
  */
-EAPI void                         elm_list_item_cursor_set(Elm_List_Item *item, const char *cursor);
+EAPI void                         elm_list_item_cursor_set(Elm_Object_Item *it, const char *cursor);
 
 /*
  * Get the type of mouse pointer/cursor decoration set to be shown,
  * when the mouse pointer is over the given list widget item
  *
- * @param item list item with custom cursor set
+ * @param it list item with custom cursor set
  * @return the cursor type's name or @c NULL, if no custom cursors
  * were set to @p item (and on errors)
  *
@@ -907,14 +905,14 @@ EAPI void                         elm_list_item_cursor_set(Elm_List_Item *item, 
  *
  * @ingroup List
  */
-EAPI const char                  *elm_list_item_cursor_get(const Elm_List_Item *item);
+EAPI const char                  *elm_list_item_cursor_get(const Elm_Object_Item *it);
 
 /**
  * Unset any custom mouse pointer/cursor decoration set to be
  * shown, when the mouse pointer is over the given list widget
  * item, thus making it show the @b default cursor again.
  *
- * @param item a list item
+ * @param it a list item
  *
  * Use this call to undo any custom settings on this item's cursor
  * decoration, bringing it back to defaults (no custom style set).
@@ -924,13 +922,13 @@ EAPI const char                  *elm_list_item_cursor_get(const Elm_List_Item *
  *
  * @ingroup List
  */
-EAPI void                         elm_list_item_cursor_unset(Elm_List_Item *item);
+EAPI void                         elm_list_item_cursor_unset(Elm_Object_Item *it);
 
 /**
  * Set a different @b style for a given custom cursor set for a
  * list item.
  *
- * @param item list item with custom cursor set
+ * @param it list item with custom cursor set
  * @param style the <b>theme style</b> to use (e.g. @c "default",
  * @c "transparent", etc)
  *
@@ -949,13 +947,13 @@ EAPI void                         elm_list_item_cursor_unset(Elm_List_Item *item
  *
  * @ingroup List
  */
-EAPI void                         elm_list_item_cursor_style_set(Elm_List_Item *item, const char *style);
+EAPI void                         elm_list_item_cursor_style_set(Elm_Object_Item *it, const char *style);
 
 /**
  * Get the current @b style set for a given list item's custom
  * cursor
  *
- * @param item list item with custom cursor set.
+ * @param it list item with custom cursor set.
  * @return style the cursor style in use. If the object does not
  *         have a cursor set, then @c NULL is returned.
  *
@@ -963,14 +961,14 @@ EAPI void                         elm_list_item_cursor_style_set(Elm_List_Item *
  *
  * @ingroup List
  */
-EAPI const char                  *elm_list_item_cursor_style_get(const Elm_List_Item *item);
+EAPI const char                  *elm_list_item_cursor_style_get(const Elm_Object_Item *it);
 
 /**
  * Set if the (custom)cursor for a given list item should be
  * searched in its theme, also, or should only rely on the
  * rendering engine.
  *
- * @param item item with custom (custom) cursor already set on
+ * @param it item with custom (custom) cursor already set on
  * @param engine_only Use @c EINA_TRUE to have cursors looked for
  * only on those provided by the rendering engine, @c EINA_FALSE to
  * have them searched on the widget's theme, as well.
@@ -983,14 +981,14 @@ EAPI const char                  *elm_list_item_cursor_style_get(const Elm_List_
  *
  * @ingroup List
  */
-EAPI void                         elm_list_item_cursor_engine_only_set(Elm_List_Item *item, Eina_Bool engine_only);
+EAPI void                         elm_list_item_cursor_engine_only_set(Elm_Object_Item *it, Eina_Bool engine_only);
 
 /**
  * Get if the (custom) cursor for a given list item is being
  * searched in its theme, also, or is only relying on the rendering
  * engine.
  *
- * @param item a list item
+ * @param it a list item
  * @return @c EINA_TRUE, if cursors are being looked for only on
  * those provided by the rendering engine, @c EINA_FALSE if they
  * are being searched on the widget's theme, as well.
@@ -999,7 +997,7 @@ EAPI void                         elm_list_item_cursor_engine_only_set(Elm_List_
  *
  * @ingroup List
  */
-EAPI Eina_Bool                    elm_list_item_cursor_engine_only_get(const Elm_List_Item *item);
+EAPI Eina_Bool                    elm_list_item_cursor_engine_only_get(const Elm_Object_Item *it);
 
 /**
  * @}

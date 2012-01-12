@@ -29,33 +29,33 @@ _on_done(void        *data __UNUSED__,
 static void
 _prepend_cb(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
-   Elm_List_Item *it;
+   Elm_Object_Item *list_it;
    Evas_Object *li = data;
    char label[32];
 
    snprintf(label, sizeof(label), "Item %i", counter++);
-   it = elm_list_item_prepend(li, label, NULL, NULL, NULL, NULL);
-   if (!it)
+   list_it = elm_list_item_prepend(li, label, NULL, NULL, NULL, NULL);
+   if (!list_it)
      printf("Error adding item\n");
 }
 
 static void
 _add_cb(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
-   Elm_List_Item *it;
+   Elm_Object_Item *list_it;
    Evas_Object *li = data;
    char label[32];
 
    snprintf(label, sizeof(label), "Item %i", counter++);
-   it = elm_list_item_append(li, label, NULL, NULL, NULL, NULL);
-   if (!it)
+   list_it = elm_list_item_append(li, label, NULL, NULL, NULL, NULL);
+   if (!list_it)
      printf("Error adding item\n");
 }
 
 static void
 _add_ic_cb(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
-   Elm_List_Item *it;
+   Elm_Object_Item *list_it;
    Evas_Object *ic, *li = data;
    char label[32];
 
@@ -64,28 +64,28 @@ _add_ic_cb(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
    elm_icon_standard_set(ic, "home");
    elm_icon_scale_set(ic, EINA_FALSE, EINA_FALSE);
 
-   it = elm_list_item_append(li, label, ic,  NULL, NULL, NULL);
-   if (!it)
+   list_it = elm_list_item_append(li, label, ic,  NULL, NULL, NULL);
+   if (!list_it)
      printf("Error adding item with icon\n");
 }
 
 static void
 _sel_cb(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info)
 {
-   Elm_List_Item *it = event_info;
-   printf("Selected label: %s\n", elm_object_item_text_get(it));
+   Elm_Object_Item *list_it = event_info;
+   printf("Selected label: %s\n", elm_object_item_text_get(list_it));
 }
 
 static void
 _add_func_cb(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
-   Elm_List_Item *it;
+   Elm_Object_Item *list_it;
    Evas_Object *li = data;
    char label[32];
 
    snprintf(label, sizeof(label), "Item %i", counter++);
-   it = elm_list_item_append(li, label, NULL, NULL, _sel_cb, NULL);
-   if (!it)
+   list_it = elm_list_item_append(li, label, NULL, NULL, _sel_cb, NULL);
+   if (!list_it)
      printf("Error adding item\n");
 }
 
@@ -93,9 +93,9 @@ static void
 _sel_data_cb(void *data, Evas_Object *obj __UNUSED__, void *event_info)
 {
    char *content = data;
-   Elm_List_Item *it = event_info;
+   Elm_Object_Item *list_it = event_info;
    printf("Selected label: %s with data: %s\n",
-          elm_object_item_text_get(it), content);
+          elm_object_item_text_get(list_it), content);
 }
 
 static void
@@ -107,25 +107,25 @@ _free_data(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 static void
 _add_data_cb(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
-   Elm_List_Item *it;
+   Elm_Object_Item *list_it;
    Evas_Object *li = data;
    char label[32];
    char *content = malloc(sizeof(char) * 32);
 
    snprintf(content, 32, "Item content %i", counter);
    snprintf(label, sizeof(label), "Item %i", counter++);
-   it = elm_list_item_append(li, label, NULL, NULL, _sel_data_cb, content);
-   if (!it) {
+   list_it = elm_list_item_append(li, label, NULL, NULL, _sel_data_cb, content);
+   if (!list_it) {
      printf("Error adding item\n");
      return;
    }
-   elm_list_item_del_cb_set(it, _free_data);
+   elm_list_item_del_cb_set(list_it, _free_data);
 }
 
 static void
 _del_cb(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
-   Elm_List_Item *selected_item;
+   Elm_Object_Item *selected_item;
    Evas_Object *li = data;
 
    selected_item = elm_list_selected_item_get(li);
@@ -135,7 +135,7 @@ _del_cb(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 static void
 _unselect_cb(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
-   Elm_List_Item *selected_item;
+   Elm_Object_Item *selected_item;
    Evas_Object *li = data;
 
    selected_item = elm_list_selected_item_get(li);
@@ -146,12 +146,12 @@ static void
 _print_cb(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    const Eina_List *l, *items;
-   Elm_List_Item *it;
+   Elm_Object_Item *list_it;
    Evas_Object *li = data;
 
    items = elm_list_items_get(li);
-   EINA_LIST_FOREACH(items, l, it)
-      printf("%s\n", elm_object_item_text_get(it));
+   EINA_LIST_FOREACH(items, l, list_it)
+     printf("%s\n", elm_object_item_text_get(list_it));
 }
 
 static void
@@ -164,7 +164,7 @@ _clear_cb(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 static void
 _select_next_cb(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
-   Elm_List_Item *selected_item, *next_item;
+   Elm_Object_Item *selected_item, *next_item;
    Evas_Object *li = data;
 
    selected_item = elm_list_selected_item_get(li);
@@ -178,7 +178,7 @@ _select_next_cb(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUS
 static void
 _insert_after_cb(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
-   Elm_List_Item *selected_item, *it;
+   Elm_Object_Item *selected_item, *list_it;
    Evas_Object *li = data;
    char label[32];
 
@@ -186,16 +186,16 @@ _insert_after_cb(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNU
    if (!selected_item) return;
 
    snprintf(label, sizeof(label), "Item %i", counter++);
-   it = elm_list_item_insert_after(li, selected_item, label, NULL, NULL, NULL,
-                                   NULL);
-   if (!it)
+   list_it = elm_list_item_insert_after(li, selected_item, label, NULL, NULL,
+                                        NULL, NULL);
+   if (!list_it)
      printf("Error adding item\n");
 }
 
 static void
 _select_prev_cb(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
-   Elm_List_Item *selected_item, *prev_item;
+   Elm_Object_Item *selected_item, *prev_item;
    Evas_Object *li = data;
 
    selected_item = elm_list_selected_item_get(li);
@@ -209,7 +209,7 @@ _select_prev_cb(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUS
 static void
 _insert_before_cb(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
-   Elm_List_Item *selected_item, *it;
+   Elm_Object_Item *selected_item, *list_it;
    Evas_Object *li = data;
    char label[32];
 
@@ -217,16 +217,16 @@ _insert_before_cb(void *data, Evas_Object *obj __UNUSED__, void *event_info __UN
    if (!selected_item) return;
 
    snprintf(label, sizeof(label), "Item %i", counter++);
-   it = elm_list_item_insert_before(li, selected_item, label, NULL, NULL,
+   list_it = elm_list_item_insert_before(li, selected_item, label, NULL, NULL,
                                     NULL, NULL);
-   if (!it)
+   if (!list_it)
      printf("Error adding item\n");
 }
 
 static void
 _set_separator_cb(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
-   Elm_List_Item *selected_item;
+   Elm_Object_Item *selected_item;
    Evas_Object *li = data;
 
    selected_item = elm_list_selected_item_get(li);
@@ -237,7 +237,7 @@ _set_separator_cb(void *data, Evas_Object *obj __UNUSED__, void *event_info __UN
 static void
 _disable_cb(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
-   Elm_List_Item *selected_item;
+   Elm_Object_Item *selected_item;
    Evas_Object *li = data;
 
    selected_item = elm_list_selected_item_get(li);

@@ -29,11 +29,11 @@ unsigned int i;
 for (i = 0; i < (sizeof(dict) / sizeof(dict[0])); i++)
   {
      char buf[32];
-     Elm_List_Item *it;
+     Elm_Object_Item *list_it;
 
-     it = elm_list_item_append(o, dict[i], NULL, NULL, NULL, NULL);
+     list_it = elm_list_item_append(o, dict[i], NULL, NULL, NULL, NULL);
      snprintf(buf, sizeof(buf), "%c", dict[i][0]);
-     elm_index_item_append(id, buf, it);
+     elm_index_item_append(id, buf, list_it);
   }
 
 elm_index_active_set(id, EINA_TRUE);

@@ -50,7 +50,7 @@ test_list(void        *data __UNUSED__,
 {
    Evas_Object *win, *bg, *li, *ic, *ic2, *bx, *tb2, *bt;
    char buf[PATH_MAX];
-   Elm_List_Item *it1, *it2, *it3, *it4, *it5;
+   Elm_Object_Item *list_it1, *list_it2, *list_it3, *list_it4, *list_it5;
 
    win = elm_win_add(NULL, "list", ELM_WIN_BASIC);
    elm_win_title_set(win, "List");
@@ -70,7 +70,7 @@ test_list(void        *data __UNUSED__,
    snprintf(buf, sizeof(buf), "%s/images/logo_small.png", elm_app_data_dir_get());
    elm_icon_file_set(ic, buf, NULL);
    elm_icon_scale_set(ic, 1, 1);
-   it1 = elm_list_item_append(li, "Hello", ic, NULL, NULL, NULL);
+   list_it1 = elm_list_item_append(li, "Hello", ic, NULL, NULL, NULL);
    ic = elm_icon_add(win);
    snprintf(buf, sizeof(buf), "%s/images/logo_small.png", elm_app_data_dir_get());
    elm_icon_scale_set(ic, 0, 0);
@@ -87,7 +87,7 @@ test_list(void        *data __UNUSED__,
    ic2 = elm_icon_add(win);
    elm_icon_standard_set(ic2, "clock");
    elm_icon_scale_set(ic2, 0, 0);
-   it2 = elm_list_item_append(li, "How", ic, ic2, NULL, NULL);
+   list_it2 = elm_list_item_append(li, "How", ic, ic2, NULL, NULL);
 
    bx = elm_box_add(win);
    elm_box_horizontal_set(bx, EINA_TRUE);
@@ -118,18 +118,18 @@ test_list(void        *data __UNUSED__,
    elm_list_item_append(li, "are", bx, NULL, NULL, NULL);
 
    elm_list_item_append(li, "you", NULL, NULL, NULL, NULL);
-   it3 = elm_list_item_append(li, "doing", NULL, NULL, NULL, NULL);
+   list_it3 = elm_list_item_append(li, "doing", NULL, NULL, NULL, NULL);
    elm_list_item_append(li, "out", NULL, NULL, NULL, NULL);
    elm_list_item_append(li, "there", NULL, NULL, NULL, NULL);
    elm_list_item_append(li, "today", NULL, NULL, NULL, NULL);
    elm_list_item_append(li, "?", NULL, NULL, NULL, NULL);
-   it4 = elm_list_item_append(li, "Here", NULL, NULL, NULL, NULL);
+   list_it4 = elm_list_item_append(li, "Here", NULL, NULL, NULL, NULL);
    elm_list_item_append(li, "are", NULL, NULL, NULL, NULL);
    elm_list_item_append(li, "some", NULL, NULL, NULL, NULL);
    elm_list_item_append(li, "more", NULL, NULL, NULL, NULL);
    elm_list_item_append(li, "items", NULL, NULL, NULL, NULL);
    elm_list_item_append(li, "Is this label long enough?", NULL, NULL, NULL, NULL);
-   it5 = elm_list_item_append(li, "Maybe this one is even longer so we can test long long items.", NULL, NULL, NULL, NULL);
+   list_it5 = elm_list_item_append(li, "Maybe this one is even longer so we can test long long items.", NULL, NULL, NULL, NULL);
 
    elm_list_go(li);
 
@@ -141,7 +141,7 @@ test_list(void        *data __UNUSED__,
 
    bt = elm_button_add(win);
    elm_object_text_set(bt, "Hello");
-   evas_object_smart_callback_add(bt, "clicked", my_show_it, it1);
+   evas_object_smart_callback_add(bt, "clicked", my_show_it, list_it1);
    evas_object_size_hint_weight_set(bt, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(bt, 0.9, 0.5);
    elm_table_pack(tb2, bt, 0, 0, 1, 1);
@@ -149,7 +149,7 @@ test_list(void        *data __UNUSED__,
 
    bt = elm_button_add(win);
    elm_object_text_set(bt, "How");
-   evas_object_smart_callback_add(bt, "clicked", my_show_it, it2);
+   evas_object_smart_callback_add(bt, "clicked", my_show_it, list_it2);
    evas_object_size_hint_weight_set(bt, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(bt, 0.9, 0.5);
    elm_table_pack(tb2, bt, 0, 1, 1, 1);
@@ -157,7 +157,7 @@ test_list(void        *data __UNUSED__,
 
    bt = elm_button_add(win);
    elm_object_text_set(bt, "doing");
-   evas_object_smart_callback_add(bt, "clicked", my_show_it, it3);
+   evas_object_smart_callback_add(bt, "clicked", my_show_it, list_it3);
    evas_object_size_hint_weight_set(bt, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(bt, 0.9, 0.5);
    elm_table_pack(tb2, bt, 0, 2, 1, 1);
@@ -165,7 +165,7 @@ test_list(void        *data __UNUSED__,
 
    bt = elm_button_add(win);
    elm_object_text_set(bt, "Here");
-   evas_object_smart_callback_add(bt, "clicked", my_show_it, it4);
+   evas_object_smart_callback_add(bt, "clicked", my_show_it, list_it4);
    evas_object_size_hint_weight_set(bt, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(bt, 0.9, 0.5);
    elm_table_pack(tb2, bt, 0, 3, 1, 1);
@@ -173,7 +173,7 @@ test_list(void        *data __UNUSED__,
 
    bt = elm_button_add(win);
    elm_object_text_set(bt, "Maybe this...");
-   evas_object_smart_callback_add(bt, "clicked", my_show_it, it5);
+   evas_object_smart_callback_add(bt, "clicked", my_show_it, list_it5);
    evas_object_size_hint_weight_set(bt, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(bt, 0.9, 0.5);
    elm_table_pack(tb2, bt, 0, 4, 1, 1);
@@ -197,7 +197,7 @@ test_list_horizontal(void        *data __UNUSED__,
 {
    Evas_Object *win, *bg, *li, *ic, *ic2, *bx, *tb2, *bt;
    char buf[PATH_MAX];
-   Elm_List_Item *it1, *it2, *it3, *it4;
+   Elm_Object_Item *list_it1, *list_it2, *list_it3, *list_it4;
 
    win = elm_win_add(NULL, "list-horizontal", ELM_WIN_BASIC);
    elm_win_title_set(win, "List Horizontal");
@@ -218,7 +218,7 @@ test_list_horizontal(void        *data __UNUSED__,
    snprintf(buf, sizeof(buf), "%s/images/logo_small.png", elm_app_data_dir_get());
    elm_icon_file_set(ic, buf, NULL);
    elm_icon_scale_set(ic, 1, 1);
-   it1 = elm_list_item_append(li, "Hello", ic, NULL, NULL, NULL);
+   list_it1 = elm_list_item_append(li, "Hello", ic, NULL, NULL, NULL);
    ic = elm_icon_add(win);
    snprintf(buf, sizeof(buf), "%s/images/logo_small.png", elm_app_data_dir_get());
    elm_icon_scale_set(ic, 0, 0);
@@ -235,7 +235,7 @@ test_list_horizontal(void        *data __UNUSED__,
    ic2 = elm_icon_add(win);
    elm_icon_standard_set(ic2, "clock");
    elm_icon_scale_set(ic2, 0, 0);
-   it2 = elm_list_item_append(li, "How", ic, ic2, NULL, NULL);
+   list_it2 = elm_list_item_append(li, "How", ic, ic2, NULL, NULL);
 
    bx = elm_box_add(win);
 
@@ -258,13 +258,13 @@ test_list_horizontal(void        *data __UNUSED__,
    elm_list_item_append(li, "are", bx, NULL, NULL, NULL);
 
    elm_list_item_append(li, "you", NULL, NULL, NULL, NULL);
-   it3 = elm_list_item_append(li, "doing", NULL, NULL, NULL, NULL);
+   list_it3 = elm_list_item_append(li, "doing", NULL, NULL, NULL, NULL);
    elm_list_item_append(li, "out", NULL, NULL, NULL, NULL);
    elm_list_item_append(li, "there", NULL, NULL, NULL, NULL);
    elm_list_item_append(li, "today", NULL, NULL, NULL, NULL);
    elm_list_item_append(li, "?", NULL, NULL, NULL, NULL);
 
-   it4 = elm_list_item_append(li, "And", NULL, NULL, NULL, NULL);
+   list_it4 = elm_list_item_append(li, "And", NULL, NULL, NULL, NULL);
    elm_list_item_append(li, "here", NULL, NULL, NULL, NULL);
    elm_list_item_append(li, "we", NULL, NULL, NULL, NULL);
    elm_list_item_append(li, "are", NULL, NULL, NULL, NULL);
@@ -282,7 +282,7 @@ test_list_horizontal(void        *data __UNUSED__,
 
    bt = elm_button_add(win);
    elm_object_text_set(bt, "Hello");
-   evas_object_smart_callback_add(bt, "clicked", my_show_it, it1);
+   evas_object_smart_callback_add(bt, "clicked", my_show_it, list_it1);
    evas_object_size_hint_weight_set(bt, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(bt, 0.5, 0.9);
    elm_table_pack(tb2, bt, 0, 0, 1, 1);
@@ -290,7 +290,7 @@ test_list_horizontal(void        *data __UNUSED__,
 
    bt = elm_button_add(win);
    elm_object_text_set(bt, "How");
-   evas_object_smart_callback_add(bt, "clicked", my_show_it, it2);
+   evas_object_smart_callback_add(bt, "clicked", my_show_it, list_it2);
    evas_object_size_hint_weight_set(bt, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(bt, 0.5, 0.9);
    elm_table_pack(tb2, bt, 1, 0, 1, 1);
@@ -298,7 +298,7 @@ test_list_horizontal(void        *data __UNUSED__,
 
    bt = elm_button_add(win);
    elm_object_text_set(bt, "doing");
-   evas_object_smart_callback_add(bt, "clicked", my_show_it, it3);
+   evas_object_smart_callback_add(bt, "clicked", my_show_it, list_it3);
    evas_object_size_hint_weight_set(bt, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(bt, 0.5, 0.9);
    elm_table_pack(tb2, bt, 2, 0, 1, 1);
@@ -306,7 +306,7 @@ test_list_horizontal(void        *data __UNUSED__,
 
    bt = elm_button_add(win);
    elm_object_text_set(bt, "And");
-   evas_object_smart_callback_add(bt, "clicked", my_show_it, it4);
+   evas_object_smart_callback_add(bt, "clicked", my_show_it, list_it4);
    evas_object_size_hint_weight_set(bt, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(bt, 0.5, 0.9);
    elm_table_pack(tb2, bt, 3, 0, 1, 1);
@@ -333,9 +333,8 @@ my_li2_sel(void        *data __UNUSED__,
            Evas_Object *obj,
            void        *event_info __UNUSED__)
 {
-   Elm_List_Item *it = elm_list_selected_item_get(obj);
-   elm_list_item_selected_set(it, 0);
-//   elm_list_item_selected_set(event_info, 0);
+   Elm_Object_Item *list_it = elm_list_selected_item_get(obj);
+   elm_list_item_selected_set(list_it, 0);
 }
 
 void
@@ -345,7 +344,7 @@ test_list2(void        *data __UNUSED__,
 {
    Evas_Object *win, *bg, *li, *ic, *ic2, *bx, *bx2, *bt;
    char buf[PATH_MAX];
-   Elm_List_Item *it;
+   Elm_Object_Item *list_it;
 
    win = elm_win_add(NULL, "list2", ELM_WIN_BASIC);
    elm_win_title_set(win, "List 2");
@@ -372,8 +371,8 @@ test_list2(void        *data __UNUSED__,
    ic = elm_icon_add(win);
    snprintf(buf, sizeof(buf), "%s/images/logo_small.png", elm_app_data_dir_get());
    elm_icon_file_set(ic, buf, NULL);
-   it = elm_list_item_append(li, "Hello", ic, NULL, my_li2_sel, NULL);
-   elm_list_item_selected_set(it, 1);
+   list_it = elm_list_item_append(li, "Hello", ic, NULL, my_li2_sel, NULL);
+   elm_list_item_selected_set(list_it, EINA_TRUE);
    ic = elm_icon_add(win);
    snprintf(buf, sizeof(buf), "%s/images/logo_small.png", elm_app_data_dir_get());
    elm_icon_scale_set(ic, 0, 0);

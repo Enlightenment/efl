@@ -97,7 +97,7 @@ void
 test_cursor(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    Evas_Object *win, *bg, *bx, *bt, *list, *entry, *ck;
-   Elm_List_Item *lit;
+   Elm_Object_Item *lit;
 
    win = elm_win_add(NULL, "cursor", ELM_WIN_BASIC);
    elm_win_title_set(win, "Cursor");
@@ -166,7 +166,7 @@ test_cursor2(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_inf
    Evas_Object *win, *bg, *bx, *o, *grid, *gl;
    Elm_Genlist_Item *it1, *it2, *it3;
    Elm_Object_Item *tb_it;
-   Elm_List_Item *lit;
+   Elm_Object_Item *lit;
    char buf[PATH_MAX];
    static Testitem ti[144];
    int i, n;
@@ -288,7 +288,7 @@ void
 test_cursor3(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    Evas_Object *win, *bg, *bx, *o;
-   Elm_List_Item *lit;
+   Elm_Object_Item *lit;
    char buf[PATH_MAX];
 
    win = elm_win_add(NULL, "cursor3", ELM_WIN_BASIC);

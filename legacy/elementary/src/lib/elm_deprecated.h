@@ -1787,7 +1787,7 @@ EINA_DEPRECATED EAPI const char  *elm_layout_text_get(const Evas_Object *obj, co
 #define elm_layout_label_get(_ly) \
   elm_layout_text_get((_ly), "elm.text")
 
-EINA_DEPRECATED EAPI Evas_Object *elm_list_item_base_get(const Elm_List_Item *item);
+EINA_DEPRECATED EAPI Evas_Object *elm_list_item_base_get(const Elm_Object_Item *it);
 
 
 /**
@@ -2948,7 +2948,7 @@ EINA_DEPRECATED EAPI void             elm_naviframe_item_del(Elm_Object_Item *it
  * 
  * @ingroup List
  */
-EINA_DEPRECATED EAPI void                         elm_list_item_disabled_set(Elm_List_Item *it, Eina_Bool disabled);
+EINA_DEPRECATED EAPI void                         elm_list_item_disabled_set(Elm_Object_Item *it, Eina_Bool disabled);
 
 /**
  * Get a value whether list item is disabled or not.
@@ -2962,12 +2962,12 @@ EINA_DEPRECATED EAPI void                         elm_list_item_disabled_set(Elm
  * 
  * @ingroup List
  */
-EINA_DEPRECATED EAPI Eina_Bool                    elm_list_item_disabled_get(const Elm_List_Item *it);
+EINA_DEPRECATED EAPI Eina_Bool                    elm_list_item_disabled_get(const Elm_Object_Item *it);
 
 /**
  * Set the function called when a list item is freed.
  *
- * @param item The item to set the callback on
+ * @param it The item to set the callback on
  * @param func The function called
  *
  * If there is a @p func, then it will be called prior item's memory release.
@@ -2982,12 +2982,12 @@ EINA_DEPRECATED EAPI Eina_Bool                    elm_list_item_disabled_get(con
  *
  * @ingroup List
  */
-EINA_DEPRECATED EAPI void                         elm_list_item_del_cb_set(Elm_List_Item *item, Evas_Smart_Cb func);
+EINA_DEPRECATED EAPI void                         elm_list_item_del_cb_set(Elm_Object_Item *it, Evas_Smart_Cb func);
 
 /**
  * Get the data associated to the item.
  *
- * @param item The list item
+ * @param it The list item
  * @return The data associated to @p item
  *
  * The return value is a pointer to data associated to @p item when it was
@@ -3000,12 +3000,12 @@ EINA_DEPRECATED EAPI void                         elm_list_item_del_cb_set(Elm_L
  * 
  * @ingroup List
  */
-EINA_DEPRECATED EAPI void                        *elm_list_item_data_get(const Elm_List_Item *item);
+EINA_DEPRECATED EAPI void                        *elm_list_item_data_get(const Elm_Object_Item *it);
 
 /**
  * Get the left side icon associated to the item.
  *
- * @param item The list item
+ * @param it The list item
  * @return The left side icon associated to @p item
  *
  * The return value is a pointer to the icon associated to @p item when
@@ -3020,12 +3020,12 @@ EINA_DEPRECATED EAPI void                        *elm_list_item_data_get(const E
  * @deprecated Please use elm_object_item_part_content_get(item, NULL);
  * @ingroup List
  */
-EINA_DEPRECATED EAPI Evas_Object                 *elm_list_item_icon_get(const Elm_List_Item *item);
+EINA_DEPRECATED EAPI Evas_Object                 *elm_list_item_icon_get(const Elm_Object_Item *it);
 
 /**
  * Set the left side icon associated to the item.
  *
- * @param item The list item
+ * @param it The list item
  * @param icon The left side icon object to associate with @p item
  *
  * The icon object to use at left side of the item. An
@@ -3046,12 +3046,12 @@ EINA_DEPRECATED EAPI Evas_Object                 *elm_list_item_icon_get(const E
  * @deprecated Please use elm_object_item_part_content_set(item, NULL, icon);
  * @ingroup List
  */
-EINA_DEPRECATED EAPI void                         elm_list_item_icon_set(Elm_List_Item *item, Evas_Object *icon);
+EINA_DEPRECATED EAPI void                         elm_list_item_icon_set(Elm_Object_Item *it, Evas_Object *icon);
 
 /**
  * Get the right side icon associated to the item.
  *
- * @param item The list item
+ * @param it The list item
  * @return The right side icon associated to @p item
  *
  * The return value is a pointer to the icon associated to @p item when
@@ -3066,12 +3066,12 @@ EINA_DEPRECATED EAPI void                         elm_list_item_icon_set(Elm_Lis
  * @deprecated Please use elm_object_item_part_content_get(item, "end");
  * @ingroup List
  */
-EINA_DEPRECATED EAPI Evas_Object                 *elm_list_item_end_get(const Elm_List_Item *item);
+EINA_DEPRECATED EAPI Evas_Object                 *elm_list_item_end_get(const Elm_Object_Item *it);
 
 /**
  * Set the right side icon associated to the item.
  *
- * @param item The list item
+ * @param it The list item
  * @param end The right side icon object to associate with @p item
  *
  * The icon object to use at right side of the item. An
@@ -3092,12 +3092,12 @@ EINA_DEPRECATED EAPI Evas_Object                 *elm_list_item_end_get(const El
  * @deprecated Please use elm_object_item_part_content_set(item, "end", end);
  * @ingroup List
  */
-EINA_DEPRECATED EAPI void                         elm_list_item_end_set(Elm_List_Item *item, Evas_Object *end);
+EINA_DEPRECATED EAPI void                         elm_list_item_end_set(Elm_Object_Item *it, Evas_Object *end);
 
 /**
  * Get the label of item.
  *
- * @param item The item of list.
+ * @param it The item of list.
  * @return The label of item.
  *
  * The return value is a pointer to the label associated to @p item when
@@ -3111,12 +3111,12 @@ EINA_DEPRECATED EAPI void                         elm_list_item_end_set(Elm_List
  * @deprecated Please use elm_object_item_text_get(item);
  * @ingroup List
  */
-EINA_DEPRECATED EAPI const char                  *elm_list_item_label_get(const Elm_List_Item *item);
+EINA_DEPRECATED EAPI const char                  *elm_list_item_label_get(const Elm_Object_Item *it);
 
 /**
  * Set the label of item.
  *
- * @param item The item of list.
+ * @param it The item of list.
  * @param text The label of item.
  *
  * The label to be displayed by the item.
@@ -3132,7 +3132,7 @@ EINA_DEPRECATED EAPI const char                  *elm_list_item_label_get(const 
  * @deprecated Please use elm_object_item_text_set(item, text);
  * @ingroup List
  */
-EINA_DEPRECATED EAPI void                         elm_list_item_label_set(Elm_List_Item *item, const char *text);
+EINA_DEPRECATED EAPI void                         elm_list_item_label_set(Elm_Object_Item *it, const char *text);
 
 /**
  * Set the shrink state of toolbar @p obj.
