@@ -47,6 +47,7 @@ struct _Evas_GL_Wl_Window
 {
    struct wl_display *disp;
    struct wl_egl_window *win;
+   struct wl_surface *surface;
    int              w, h;
    int              screen;
 //   XVisualInfo     *visualinfo;

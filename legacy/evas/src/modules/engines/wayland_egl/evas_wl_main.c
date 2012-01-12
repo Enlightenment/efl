@@ -1,6 +1,6 @@
 #include "evas_engine.h"
 
-static Evas_GL_Wl_Window *_evas_gl_x11_window = NULL;
+static Evas_GL_Wl_Window *_evas_gl_wl_window = NULL;
 
 static EGLContext context = EGL_NO_CONTEXT;
 
@@ -25,10 +25,8 @@ eng_window_new(struct wl_display *disp, struct wl_surface *surface, int screen,
 
    win_count++;
    gw->disp = disp;
-//   gw->win = win;
+   gw->surface = surface;
    gw->screen = screen;
-//   gw->visual = vis;
-//   gw->colormap = cmap;
    gw->depth = depth;
    gw->alpha = alpha;
    gw->w = w;
@@ -138,20 +136,20 @@ eng_window_new(struct wl_display *disp, struct wl_surface *surface, int screen,
 	eng_window_free(gw);
         return NULL;
      }
-   /* FIXME: !!! */
-   gw->win = wl_egl_window_create(surface, gw->w, gw->h);
+
+   gw->win = wl_egl_window_create(gw->surface, gw->w, gw->h);
 
    gw->egl_surface[0] = eglCreateWindowSurface(gw->egl_disp, gw->egl_config,
                                                (EGLNativeWindowType)gw->win,
                                                NULL);
    if (gw->egl_surface[0] == EGL_NO_SURFACE)
      {
-        /* FIXME: !! */
-        /* ERR("eglCreateWindowSurface() fail for %#x. code=%#x", */
-        /*     (unsigned int)gw->win, eglGetError()); */
+        ERR("eglCreateWindowSurface() fail for %#x. code=%#x",
+            (unsigned int)gw->win, eglGetError());
 	eng_window_free(gw);
         return NULL;
      }
+
    if (context == EGL_NO_CONTEXT)
      context = eglCreateContext(gw->egl_disp, gw->egl_config, NULL,
                                 context_attrs);
@@ -162,6 +160,7 @@ eng_window_new(struct wl_display *disp, struct wl_surface *surface, int screen,
 	eng_window_free(gw);
         return NULL;
      }
+
    if (eglMakeCurrent(gw->egl_disp, gw->egl_surface[0], gw->egl_surface[0],
                       gw->egl_context[0]) == EGL_FALSE)
      {
@@ -204,8 +203,8 @@ eng_window_free(Evas_GL_Wl_Window *gw)
 
    win_count--;
    eng_window_use(gw);
-   if (gw == _evas_gl_x11_window) _evas_gl_x11_window = NULL;
-   if (gw->win) wl_egl_window_destroy(gw->win);
+   if (gw == _evas_gl_wl_window) _evas_gl_wl_window = NULL;
+//   if (gw->win) wl_egl_window_destroy(gw->win);
    if (gw->gl_context)
      {
         ref = gw->gl_context->references - 1;
@@ -216,10 +215,11 @@ eng_window_free(Evas_GL_Wl_Window *gw)
    if (ref == 0)
      {
         if (context) eglDestroyContext(gw->egl_disp, context);
-        eglTerminate(gw->egl_disp);
         context = EGL_NO_CONTEXT;
      }
    eglMakeCurrent(gw->egl_disp, EGL_NO_SURFACE, EGL_NO_SURFACE, EGL_NO_CONTEXT);
+   if (ref == 0) eglTerminate(gw->egl_disp);
+   eglReleaseThread();
    free(gw);
 }
 
@@ -228,36 +228,36 @@ eng_window_use(Evas_GL_Wl_Window *gw)
 {
    Eina_Bool force_use = EINA_FALSE;
 
-   if (_evas_gl_x11_window)
+   if (_evas_gl_wl_window)
      {
         if ((eglGetCurrentContext() !=
-             _evas_gl_x11_window->egl_context[0]) ||
+             _evas_gl_wl_window->egl_context[0]) ||
             (eglGetCurrentSurface(EGL_READ) !=
-                _evas_gl_x11_window->egl_surface[0]) ||
+                _evas_gl_wl_window->egl_surface[0]) ||
             (eglGetCurrentSurface(EGL_DRAW) !=
-                _evas_gl_x11_window->egl_surface[0]))
+                _evas_gl_wl_window->egl_surface[0]))
            force_use = EINA_TRUE;
      }
-   if ((_evas_gl_x11_window != gw) || (force_use))
+   if ((_evas_gl_wl_window != gw) || (force_use))
      {
-        if (_evas_gl_x11_window)
+        if (_evas_gl_wl_window)
           {
-             evas_gl_common_context_use(_evas_gl_x11_window->gl_context);
-             evas_gl_common_context_flush(_evas_gl_x11_window->gl_context);
+             evas_gl_common_context_use(_evas_gl_wl_window->gl_context);
+             evas_gl_common_context_flush(_evas_gl_wl_window->gl_context);
           }
-        _evas_gl_x11_window = gw;
+        _evas_gl_wl_window = gw;
         if (gw)
           {
-// EGL / GLES
-           if (gw->egl_surface[0] != EGL_NO_SURFACE)
-             {
-                if (eglMakeCurrent(gw->egl_disp, gw->egl_surface[0],
-                                   gw->egl_surface[0],
-                                   gw->egl_context[0]) == EGL_FALSE)
-                  {
-                     ERR("eglMakeCurrent() failed!");
-                  }
-             }
+             // EGL / GLES
+             if (gw->egl_surface[0] != EGL_NO_SURFACE)
+               {
+                  if (eglMakeCurrent(gw->egl_disp, gw->egl_surface[0],
+                                     gw->egl_surface[0],
+                                     gw->egl_context[0]) == EGL_FALSE)
+                    {
+                       ERR("eglMakeCurrent() failed!");
+                    }
+               }
           }
      }
    if (gw) evas_gl_common_context_use(gw->gl_context);
@@ -270,15 +270,15 @@ eng_window_unsurf(Evas_GL_Wl_Window *gw)
    if (!getenv("EVAS_GL_WIN_RESURF")) return;
    if (getenv("EVAS_GL_INFO")) printf("unsurf %p\n", gw);
 
-   if (_evas_gl_x11_window)
-      evas_gl_common_context_flush(_evas_gl_x11_window->gl_context);
-   if (_evas_gl_x11_window == gw)
+   if (_evas_gl_wl_window)
+      evas_gl_common_context_flush(_evas_gl_wl_window->gl_context);
+   if (_evas_gl_wl_window == gw)
      {
         eglMakeCurrent(gw->egl_disp, EGL_NO_SURFACE, EGL_NO_SURFACE, EGL_NO_CONTEXT);
         if (gw->egl_surface[0] != EGL_NO_SURFACE)
            eglDestroySurface(gw->egl_disp, gw->egl_surface[0]);
         gw->egl_surface[0] = EGL_NO_SURFACE;
-        _evas_gl_x11_window = NULL;
+        _evas_gl_wl_window = NULL;
      }
    gw->surf = 0;
 }
@@ -289,15 +289,14 @@ eng_window_resurf(Evas_GL_Wl_Window *gw)
    if (gw->surf) return;
    if (getenv("EVAS_GL_INFO")) printf("resurf %p\n", gw);
 
-   /* FIXME !! */
-   /* gw->egl_surface[0] = eglCreateWindowSurface(gw->egl_disp, gw->egl_config, */
-   /*                                             (EGLNativeWindowType)gw->win, */
-   /*                                             NULL); */
+   gw->egl_surface[0] = 
+     eglCreateWindowSurface(gw->egl_disp, gw->egl_config,
+                            (EGLNativeWindowType)gw->win, NULL);
+
    if (gw->egl_surface[0] == EGL_NO_SURFACE)
      {
-        /* FIXME: !! */
-        /* ERR("eglCreateWindowSurface() fail for %#x. code=%#x", */
-        /*     (unsigned int)gw->win, eglGetError()); */
+        ERR("eglCreateWindowSurface() fail for %#x. code=%#x",
+            (unsigned int)gw->win, eglGetError());
         return;
      }
    if (eglMakeCurrent(gw->egl_disp, gw->egl_surface[0], gw->egl_surface[0],

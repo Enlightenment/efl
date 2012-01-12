@@ -923,9 +923,6 @@ if test "x${have_dep}" = "xyes" ; then
       [have_egl="yes"],
       [have_egl="no"],
       [
-#include <GLES2/gl2.h>
-#include <EGL/egl.h>
-#include <GL/gl.h>
       ])
    if test "x${have_egl}" = "xyes" ; then
       evas_engine_[]$1[]_cflags="${WAYLAND_EGL_CFLAGS}"

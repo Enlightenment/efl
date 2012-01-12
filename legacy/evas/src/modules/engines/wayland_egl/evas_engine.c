@@ -612,7 +612,9 @@ eng_setup(Evas *e, void *in)
         re->w = e->output.w;
         re->h = e->output.h;
 
-        re->win = eng_window_new(re->info->info.display, re->info->info.surface, re->info->info.screen,
+        re->win = eng_window_new(re->info->info.display, 
+                                 re->info->info.surface, 
+                                 re->info->info.screen,
                                  re->info->info.depth, re->w, re->h,
                                  re->info->indirect,
                                  re->info->info.destination_alpha,
@@ -654,6 +656,7 @@ eng_setup(Evas *e, void *in)
         if (_re_wincheck(re))
           {
              if ((re->info->info.display != re->win->disp) ||
+                 (re->info->info.surface != re->win->surface) ||
                  (re->info->info.screen != re->win->screen) ||
                  (re->info->info.depth != re->win->depth) ||
                  (re->info->info.destination_alpha != re->win->alpha) ||
@@ -789,6 +792,17 @@ eng_output_resize(void *data, int w, int h)
    re->win->w = w;
    re->win->h = h;
    eng_window_use(re->win);
+
+   if (re->win->win)
+     {
+        int nw, nh;
+        wl_egl_window_get_attached_size(re->win->win, &nw, &nh);
+        printf("Attached Size: %d %d\n", nw, nh);
+        wl_egl_window_resize(re->win->win, w, h, 0, 0);
+        wl_egl_window_get_attached_size(re->win->win, &nw, &nh);
+        printf("Attached Size: %d %d\n\n", nw, nh);
+     }
+
    evas_gl_common_context_resize(re->win->gl_context, w, h, re->win->rot);
    evas_common_tilebuf_free(re->tb);
    re->tb = evas_common_tilebuf_new(w, h);
@@ -984,79 +998,23 @@ eng_output_flush(void *data)
         else eglSwapInterval(re->win->egl_disp, 0);
         re->vsync = 1;
      }
+
    if (re->info->callback.pre_swap)
-     {
-        re->info->callback.pre_swap(re->info->callback.data, re->evas);
-     }
+     re->info->callback.pre_swap(re->info->callback.data, re->evas);
+
    eglSwapBuffers(re->win->egl_disp, re->win->egl_surface[0]);
    if (!safe_native) eglWaitGL();
+
    if (re->info->callback.post_swap)
-     {
-        re->info->callback.post_swap(re->info->callback.data, re->evas);
-     }
+     re->info->callback.post_swap(re->info->callback.data, re->evas);
+
+   if (eglGetError() != EGL_SUCCESS)
+     printf("Error:  eglSwapBuffers() fail.\n");
+
 # ifdef FRAMECOUNT
    double t1 = get_time();
    printf("%1.5f\n", t1 - t0);
 # endif
-   if (eglGetError() != EGL_SUCCESS)
-     {
-        printf("Error:  eglSwapBuffers() fail.\n");
-     }
-
-   if (re->info->callback.pre_swap)
-     {
-        re->info->callback.pre_swap(re->info->callback.data, re->evas);
-     }
-#if 1
-   if (1)
-#else
-   if ((re->win->draw.x1 == 0) && (re->win->draw.y1 == 0) && (re->win->draw.x2 == (re->win->w - 1)) && (re->win->draw.y2 == (re->win->h - 1)))
-#endif     
-     {
-#ifdef FRAMECOUNT
-        double t, t2 = 0.0;
-        t = get_time();
-#endif
-
-        eglSwapBuffers(re->win->egl_disp, re->win->egl_surface[0]);
-
-#ifdef FRAMECOUNT
-        t = get_time() - t;
-        if (!safe_native)
-          {
-             t2 = get_time();
-             eglWaitGL();
-             t2 = get_time() - t2;
-          }
-        printf("swap: %3.5f (%3.5fms), x wait gl: %3.5f (%3.5fms)\n", 
-               t, t * 1000.0, t2, t2 * 1000.0);
-#endif
-     }
-   else
-     {
-// FIXME: this doesn't work.. why oh why?
-//        int sx, sy, sw, sh;
-
-//        sx = re->win->draw.x1;
-//        sy = re->win->draw.y1;
-//        sw = (re->win->draw.x2 - re->win->draw.x1) + 1;
-//        sh = (re->win->draw.y2 - re->win->draw.y1) + 1;
-//        sy = re->win->h - sy - sh;
-        
-//        glBitmap(0, 0, 0, 0, sx, re->win->h - sy, NULL);
-//        glEnable(GL_SCISSOR_TEST);
-//        glScissor(sx, sy, sw, sh);
-//        glDrawBuffer(GL_FRONT);
-//        glCopyPixels(sx, sy, sw, sh, GL_COLOR);
-//        glDrawBuffer(GL_BACK);
-//        glDisable(GL_SCISSOR_TEST);
-//        glBitmap(0, 0, 0, 0, 0, 0, NULL);
-//        glFlush();
-     }
-   if (re->info->callback.post_swap)
-     {
-        re->info->callback.post_swap(re->info->callback.data, re->evas);
-     }
 }
 
 static void
@@ -1355,27 +1313,17 @@ _native_bind_cb(void *data, void *image)
    Evas_GL_Image *im = image;
    Native *n = im->native.data;
 
-  /* if (n->ns.type == EVAS_NATIVE_SURFACE_X11) */
-  /*   { */
-/* #if defined (GLES_VARIETY_S3C6410) || defined (GLES_VARIETY_SGX) */
-  /*     if (n->egl_surface) */
-  /*       { */
-  /*         if (glsym_glEGLImageTargetTexture2DOES) */
-  /*           { */
-  /*             glsym_glEGLImageTargetTexture2DOES(GL_TEXTURE_2D, n->egl_surface); */
-  /*             if (eglGetError() != EGL_SUCCESS) */
-  /*               ERR("glEGLImageTargetTexture2DOES() failed."); */
-  /*           } */
-  /*         else */
-  /*           ERR("Try glEGLImageTargetTexture2DOES on EGL with no support"); */
-  /*       } */
-/* #endif */
-  /*   } */
-  /* else if (n->ns.type == EVAS_NATIVE_SURFACE_OPENGL) */
-    {
-      glBindTexture(GL_TEXTURE_2D, n->ns.data.opengl.texture_id);
-      GLERR(__FUNCTION__, __FILE__, __LINE__, "");
-    }
+   if (n->egl_surface)
+     {
+        if (glsym_glEGLImageTargetTexture2DOES)
+          {
+             glsym_glEGLImageTargetTexture2DOES(GL_TEXTURE_2D, n->egl_surface);
+             if (eglGetError() != EGL_SUCCESS)
+               ERR("glEGLImageTargetTexture2DOES() failed.");
+          }
+        else
+          ERR("Try glEGLImageTargetTexture2DOES on EGL with no support");
+     }
    return;
    data = NULL;
 }
@@ -1384,17 +1332,17 @@ static void
 _native_unbind_cb(void *data, void *image)
 {
   Evas_GL_Image *im = image;
-  Native *n = im->native.data;
+  /* Native *n = im->native.data; */
 
   /* if (n->ns.type == EVAS_NATIVE_SURFACE_X11) */
   /*   { */
   /*     // nothing */
   /*   } */
   /* else if (n->ns.type == EVAS_NATIVE_SURFACE_OPENGL) */
-    {
-      glBindTexture(GL_TEXTURE_2D, 0);
-      GLERR(__FUNCTION__, __FILE__, __LINE__, "");
-    }
+    /* { */
+      /* glBindTexture(GL_TEXTURE_2D, 0); */
+      /* GLERR(__FUNCTION__, __FILE__, __LINE__, ""); */
+    /* } */
    return;
    data = NULL;
 }
@@ -1408,45 +1356,38 @@ _native_free_cb(void *data, void *image)
    uint32_t texid;
 //  uint32_t pmid, texid;
 
-  /* if (n->ns.type == EVAS_NATIVE_SURFACE_X11) */
-  /*   { */
-  /*     eina_hash_del(re->win->gl_context->shared->native_pm_hash, &pmid, im); */
-  /*     if (n->egl_surface) */
-  /*       { */
-  /*         if (glsym_eglDestroyImage) */
-  /*           { */
-  /*             glsym_eglDestroyImage(re->win->egl_disp, n->egl_surface); */
-  /*             if (eglGetError() != EGL_SUCCESS) */
-  /*               ERR("eglDestroyImage() failed."); */
-  /*           } */
-  /*         else */
-  /*           ERR("Try eglDestroyImage on EGL with no support"); */
-  /*       } */
-  /*   } */
-  /* else if (n->ns.type == EVAS_NATIVE_SURFACE_OPENGL) */
-    {
-      texid = n->ns.data.opengl.texture_id;
-      eina_hash_del(re->win->gl_context->shared->native_tex_hash, &texid, im);
-    }
-  im->native.data        = NULL;
-  im->native.func.data   = NULL;
-  im->native.func.bind   = NULL;
-  im->native.func.unbind = NULL;
-  im->native.func.free   = NULL;
-  free(n);
+   /*     eina_hash_del(re->win->gl_context->shared->native_pm_hash, &pmid, im); */
+   if (n->egl_surface)
+     {
+        if (glsym_eglDestroyImage)
+          {
+             glsym_eglDestroyImage(re->win->egl_disp, n->egl_surface);
+             if (eglGetError() != EGL_SUCCESS)
+               ERR("eglDestroyImage() failed.");
+          }
+        else
+          ERR("Try eglDestroyImage on EGL with no support");
+     }
+
+   im->native.data        = NULL;
+   im->native.func.data   = NULL;
+   im->native.func.bind   = NULL;
+   im->native.func.unbind = NULL;
+   im->native.func.free   = NULL;
+   free(n);
 }
 
 static void *
 eng_image_native_set(void *data, void *image, void *native)
 {
-  Render_Engine *re = (Render_Engine *)data;
-  Evas_Native_Surface *ns = native;
-  Evas_GL_Image *im = image, *im2 = NULL;
-   struct wl_egl_pixmap *pm;
-  Native *n = NULL;
-  uint32_t pmid, texid;
-  unsigned int tex = 0;
-  unsigned int fbo = 0;
+   Render_Engine *re = (Render_Engine *)data;
+   Evas_Native_Surface *ns = native;
+   Evas_GL_Image *im = image, *im2 = NULL;
+   Native *n = NULL;
+//   uint32_t pmid;
+//   uint32_t texid;
+   unsigned int tex = 0;
+   unsigned int fbo = 0;
 
   if (!im)
     {
@@ -1464,30 +1405,15 @@ eng_image_native_set(void *data, void *image, void *native)
 
   if (ns)
     {
-      /* if (ns->type == EVAS_NATIVE_SURFACE_X11) */
-      /*   { */
       /*     vis = ns->data.x11.visual; */
-      /*     pm = ns->data.x11.pixmap; */
-      /*     if (im->native.data) */
-      /*       { */
-      /*         Evas_Native_Surface *ens = im->native.data; */
-      /*         if ((ens->data.x11.visual == vis) && */
-      /*             (ens->data.x11.pixmap == pm)) */
-      /*           return im; */
-      /*       } */
-      /*   } */
-      /* else if (ns->type == EVAS_NATIVE_SURFACE_OPENGL) */
-        {
-          tex = ns->data.opengl.texture_id;
-          fbo = ns->data.opengl.framebuffer_id;
+          /* pm = ns->data.x11.pixmap; */
           if (im->native.data)
             {
               Evas_Native_Surface *ens = im->native.data;
-              if ((ens->data.opengl.texture_id == tex) &&
-                  (ens->data.opengl.framebuffer_id == fbo))
+      /*         if ((ens->data.x11.visual == vis) && */
+      /*             (ens->data.x11.pixmap == pm)) */
                 return im;
             }
-        }
     }
   if ((!ns) && (!im->native.data)) return im;
 
@@ -1506,131 +1432,79 @@ eng_image_native_set(void *data, void *image, void *native)
   /*   { */
   /*      pmid = pm; */
   /*      im2 = eina_hash_find(re->win->gl_context->shared->native_pm_hash, &pmid); */
-  /*     if (im2 == im) return im; */
-  /*     if (im2) */
-  /*       { */
-  /*          n = im2->native.data; */
-  /*          if (n) */
-  /*            { */
-  /*               evas_gl_common_image_ref(im2); */
-  /*               evas_gl_common_image_free(im); */
-  /*               return im2; */
-  /*            } */
-  /*       } */
-  /*   } */
-  /* else if (ns->type == EVAS_NATIVE_SURFACE_OPENGL) */
-    {
-       texid = tex;
-       im2 = eina_hash_find(re->win->gl_context->shared->native_tex_hash, &texid);
-       if (im2 == im) return im;
-       if (im2)
-         {
-            n = im2->native.data;
-            if (n)
-              {
-                 evas_gl_common_image_ref(im2);
-                 evas_gl_common_image_free(im);
-                 return im2;
-              }
-         }
+      if (im2 == im) return im;
+      if (im2)
+        {
+           n = im2->native.data;
+           if (n)
+             {
+                evas_gl_common_image_ref(im2);
+                evas_gl_common_image_free(im);
+                return im2;
+             }
+        }
 
-    }
-  im2 = evas_gl_common_image_new_from_data(re->win->gl_context,
+   im2 = evas_gl_common_image_new_from_data(re->win->gl_context,
                                            im->w, im->h, NULL, im->alpha,
                                            EVAS_COLORSPACE_ARGB8888);
   evas_gl_common_image_free(im);
   im = im2;
-  /* if (ns->type == EVAS_NATIVE_SURFACE_X11) */
-  /*   { */
-  /*     if (native) */
-  /*       { */
-  /*         n = calloc(1, sizeof(Native)); */
-  /*         if (n) */
-  /*           { */
-  /*             EGLConfig egl_config; */
-  /*             int config_attrs[20]; */
-  /*             int num_config, i = 0; */
+       /* if (native) */
+       /*  { */
+       /*    n = calloc(1, sizeof(Native)); */
+       /*    if (n) */
+       /*      { */
+       /*        EGLConfig egl_config; */
+       /*        int config_attrs[20]; */
+       /*        int num_config, i = 0; */
 
   /*             eina_hash_add(re->win->gl_context->shared->native_pm_hash, &pmid, im); */
 
-  /*             config_attrs[i++] = EGL_RED_SIZE; */
-  /*             config_attrs[i++] = 8; */
-  /*             config_attrs[i++] = EGL_GREEN_SIZE; */
-  /*             config_attrs[i++] = 8; */
-  /*             config_attrs[i++] = EGL_BLUE_SIZE; */
-  /*             config_attrs[i++] = 8; */
-  /*             config_attrs[i++] = EGL_ALPHA_SIZE; */
-  /*             config_attrs[i++] = 8; */
-  /*             config_attrs[i++] = EGL_DEPTH_SIZE; */
-  /*             config_attrs[i++] = 0; */
-  /*             config_attrs[i++] = EGL_STENCIL_SIZE; */
-  /*             config_attrs[i++] = 0; */
-  /*             config_attrs[i++] = EGL_RENDERABLE_TYPE; */
-  /*             config_attrs[i++] = EGL_OPENGL_ES2_BIT; */
-  /*             config_attrs[i++] = EGL_SURFACE_TYPE; */
-  /*             config_attrs[i++] = EGL_PIXMAP_BIT; */
-  /*             config_attrs[i++] = EGL_NONE; */
+              /* config_attrs[i++] = EGL_RED_SIZE; */
+              /* config_attrs[i++] = 8; */
+              /* config_attrs[i++] = EGL_GREEN_SIZE; */
+              /* config_attrs[i++] = 8; */
+              /* config_attrs[i++] = EGL_BLUE_SIZE; */
+              /* config_attrs[i++] = 8; */
+              /* config_attrs[i++] = EGL_ALPHA_SIZE; */
+              /* config_attrs[i++] = 8; */
+              /* config_attrs[i++] = EGL_DEPTH_SIZE; */
+              /* config_attrs[i++] = 0; */
+              /* config_attrs[i++] = EGL_STENCIL_SIZE; */
+              /* config_attrs[i++] = 0; */
+              /* config_attrs[i++] = EGL_RENDERABLE_TYPE; */
+              /* config_attrs[i++] = EGL_OPENGL_ES2_BIT; */
+              /* config_attrs[i++] = EGL_SURFACE_TYPE; */
+              /* config_attrs[i++] = EGL_PIXMAP_BIT; */
+              /* config_attrs[i++] = EGL_NONE; */
 
-  /*              if (!eglChooseConfig(re->win->egl_disp, config_attrs, */
-  /*                                   &egl_config, 1, &num_config)) */
-  /*                ERR("eglChooseConfig() failed for pixmap 0x%x, num_config = %i", (unsigned int)pm, num_config); */
-  /*              memcpy(&(n->ns), ns, sizeof(Evas_Native_Surface)); */
-  /*              n->pixmap = pm; */
-  /*             if (glsym_eglCreateImage) */
-  /*               n->egl_surface = glsym_eglCreateImage(re->win->egl_disp, */
-  /*                                                     EGL_NO_CONTEXT, */
-  /*                                                     EGL_NATIVE_PIXMAP_KHR, */
-  /*                                                     (void *)pm, */
-  /*                                                     NULL); */
-  /*             else */
-  /*               ERR("Try eglCreateImage on EGL with no support"); */
-  /*             if (!n->egl_surface) */
-  /*               ERR("eglCreatePixmapSurface() for 0x%x failed", (unsigned int)pm); */
-  /*             im->native.yinvert     = 1; */
-  /*             im->native.loose       = 0; */
-  /*             im->native.data        = n; */
-  /*             im->native.func.data   = re; */
-  /*             im->native.func.bind   = _native_bind_cb; */
-  /*             im->native.func.unbind = _native_unbind_cb; */
-  /*             im->native.func.free   = _native_free_cb; */
-  /*             im->native.target      = GL_TEXTURE_2D; */
-  /*             im->native.mipmap      = 0; */
-  /*             evas_gl_common_image_native_enable(im); */
-  /*           } */
-  /*       } */
-  /*   } */
-  /* else if (ns->type == EVAS_NATIVE_SURFACE_OPENGL) */
-    {
-      if (native)
-        {
-          n = calloc(1, sizeof(Native));
-          if (n)
-            {
-              memcpy(&(n->ns), ns, sizeof(Evas_Native_Surface));
-
-              eina_hash_add(re->win->gl_context->shared->native_tex_hash, &texid, im);
-
-               n->pixmap = NULL;
-               n->egl_surface = 0;
-
-              im->native.yinvert     = 0;
-              im->native.loose       = 0;
-              im->native.data        = n;
-              im->native.func.data   = re;
-              im->native.func.bind   = _native_bind_cb;
-              im->native.func.unbind = _native_unbind_cb;
-              im->native.func.free   = _native_free_cb;
-              im->native.target      = GL_TEXTURE_2D;
-              im->native.mipmap      = 0;
-
-              // FIXME: need to implement mapping sub texture regions
-              // x, y, w, h for possible texture atlasing
-
-              evas_gl_common_image_native_enable(im);
-            }
-        }
-
-    }
+              /*  if (!eglChooseConfig(re->win->egl_disp, config_attrs, */
+              /*                       &egl_config, 1, &num_config)) */
+              /*    ERR("eglChooseConfig() failed for, num_config = %i", num_config); */
+              /*  memcpy(&(n->ns), ns, sizeof(Evas_Native_Surface)); */
+              /*  n->pixmap = pm; */
+              /* if (glsym_eglCreateImage) */
+              /*   n->egl_surface = glsym_eglCreateImage(re->win->egl_disp, */
+              /*                                         EGL_NO_CONTEXT, */
+              /*                                         EGL_NATIVE_PIXMAP_KHR, */
+              /*                                         (void *)pm, */
+              /*                                         NULL); */
+              /* else */
+              /*   ERR("Try eglCreateImage on EGL with no support"); */
+              /* if (!n->egl_surface) */
+              /*   ERR("eglCreatePixmapSurface() for 0x%x failed", (unsigned int)pm); */
+              /* im->native.yinvert     = 1; */
+              /* im->native.loose       = 0; */
+              /* im->native.data        = n; */
+              /* im->native.func.data   = re; */
+              /* im->native.func.bind   = _native_bind_cb; */
+              /* im->native.func.unbind = _native_unbind_cb; */
+              /* im->native.func.free   = _native_free_cb; */
+              /* im->native.target      = GL_TEXTURE_2D; */
+              /* im->native.mipmap      = 0; */
+              /* evas_gl_common_image_native_enable(im); */
+            /* } */
+        /* } */
    return im;
 }
 
@@ -1678,11 +1552,6 @@ eng_image_filtered_free(void *im, Filtered_Image *fim)
    evas_gl_common_image_filtered_free(im, fim);
 }
 #endif
-
-
-//
-//
-/////////////////////////////////////////////////////////////////////////
 
 static void *
 eng_image_load(void *data, const char *file, const char *key, int *error, Evas_Image_Load_Opts *lo)
@@ -1793,7 +1662,7 @@ eng_image_size_set(void *data, void *image, int w, int h)
 	     evas_common_blit_rectangle(im_old->im, im->im, 0, 0, w, h, 0, 0);
 	     evas_common_cpu_end_opt();
 	  }
- */
+         */
         evas_gl_common_image_free(im_old);
      }
    else
@@ -1862,7 +1731,7 @@ eng_image_data_get(void *data, void *image, int to_write, DATA32 **image_data, i
         return im;
      }
 
-   /* Engine can be fail to create texture after cache drop like eng_image_content_hint_set function,
+   /* Engine can fail to create texture after cache drop like eng_image_content_hint_set function,
     so it is need to add code which check im->im's NULL value*/
 
    if (!im->im)
