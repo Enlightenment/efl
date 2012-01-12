@@ -2,7 +2,7 @@
 # include "config.h"
 #endif
 
-//#define LOGFNS 1
+#define LOGFNS 1
 
 #ifdef LOGFNS
 # include <stdio.h>
@@ -267,17 +267,6 @@ ecore_evas_wayland_shm_new(const char *disp_name, int x, int y, int w, int h, in
    evas_event_feed_mouse_in(ee->evas, (unsigned int)((unsigned long long)(ecore_time_get() * 1000.0) & 0xffffffff), NULL);
 
    return ee;
-}
-
-EAPI void 
-ecore_evas_wayland_shm_resize(Ecore_Evas *ee, int location)
-{
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
-
-   if ((!ee) || (!ee->engine.wl.shell_surface)) return;
-   wl_shell_surface_resize(ee->engine.wl.shell_surface, 
-                           ecore_wl_input_device_get(), 
-                           _ecore_evas_wl_btn_timestamp, location);
 }
 
 /* local functions */
@@ -1227,16 +1216,21 @@ _ecore_evas_wl_frame_add(Evas *evas)
    return evas_object_smart_add(evas, _ecore_evas_wl_smart);
 }
 
+void 
+_ecore_evas_wayland_shm_resize(Ecore_Evas *ee, int location)
+{
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+
+   if ((!ee) || (!ee->engine.wl.shell_surface)) return;
+   wl_shell_surface_resize(ee->engine.wl.shell_surface, 
+                           ecore_wl_input_device_get(), 
+                           _ecore_evas_wl_btn_timestamp, location);
+}
+
 #else
 EAPI Ecore_Evas *
 ecore_evas_wayland_shm_new(const char *disp_name __UNUSED__, int x __UNUSED__, int y __UNUSED__, int w __UNUSED__, int h __UNUSED__, int frame __UNUSED__)
 {
    return NULL;
-}
-
-EAPI void 
-ecore_evas_wayland_shm_resize(Ecore_Evas *ee __UNUSED__, int location __UNUSED__)
-{
-
 }
 #endif
