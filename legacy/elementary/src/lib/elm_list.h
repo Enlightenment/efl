@@ -49,13 +49,6 @@
  * @li elm_object_item_part_content_set
  * @li elm_object_item_part_content_get
  * @li elm_object_item_part_content_unset
- * @li elm_object_item_tooltip_text_set
- * @li elm_object_item_tooltip_window_mode_set
- * @li elm_object_item_tooltip_window_mode_get
- * @li elm_object_item_tooltip_content_cb_set
- * @li elm_object_item_tooltip_unset
- * @li elm_object_item_tooltip_style_set
- * @li elm_object_item_tooltip_style_get
  *
  * List of examples:
  * @li @ref list_example_01
