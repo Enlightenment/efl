@@ -276,10 +276,6 @@ struct _Ecore_Evas_Engine
         struct wl_shell_surface *shell_surface;
         struct wl_surface *surface;
         struct wl_buffer *buffer;
-
-# ifdef BUILD_ECORE_EVAS_WAYLAND_EGL
-        struct wl_egl_pixmap *pixmap;
-# endif
      } wl;
 #endif
 
@@ -405,6 +401,14 @@ int _ecore_evas_wince_shutdown(void);
 #ifdef BUILD_ECORE_EVAS_EWS
 void _ecore_evas_ews_events_init(void);
 int _ecore_evas_ews_shutdown(void);
+#endif
+
+#ifdef BUILD_ECORE_EVAS_WAYLAND_SHM
+void _ecore_evas_wayland_shm_resize(Ecore_Evas *ee, int location);
+#endif
+
+#ifdef BUILD_ECORE_EVAS_WAYLAND_EGL
+void _ecore_evas_wayland_egl_resize(Ecore_Evas *ee, int location);
 #endif
 
 void _ecore_evas_fps_debug_init(void);

@@ -2675,3 +2675,21 @@ ecore_evas_input_event_unregister(Ecore_Evas *ee)
 {
    ecore_event_window_unregister((Ecore_Window)ee);
 }
+
+#if defined(BUILD_ECORE_EVAS_WAYLAND_SHM) || defined (BUILD_ECORE_EVAS_WAYLAND_EGL)
+EAPI void 
+ecore_evas_wayland_resize(Ecore_Evas *ee, int location)
+{
+   if (!ee) return;
+   if (!strcmp(ee->driver, "wayland_shm"))
+     _ecore_evas_wayland_shm_resize(ee, location);
+   else if (!strcmp(ee->driver, "wayland_egl"))
+     _ecore_evas_wayland_egl_resize(ee, location);
+}
+#else
+EAPI void 
+ecore_evas_wayland_resize(Ecore_Evas *ee __UNUSED__, int location __UNUSED__)
+{
+
+}
+#endif
