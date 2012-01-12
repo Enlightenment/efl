@@ -339,17 +339,10 @@ _ecore_evas_wl_pre_free(Ecore_Evas *ee)
 static void 
 _ecore_evas_wl_free(Ecore_Evas *ee) 
 {
-   Evas_Engine_Info_Wayland_Egl *einfo;
-
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
    if (ee) 
      {
-        /* get engine info */
-        einfo = (Evas_Engine_Info_Wayland_Egl *)evas_engine_info_get(ee->evas);
-        einfo->info.surface = NULL;
-        evas_engine_info_set(ee->evas, (Evas_Engine_Info *)einfo);
-
         /* destroy shell surface */
         if (ee->engine.wl.shell_surface)
           wl_shell_surface_destroy(ee->engine.wl.shell_surface);
