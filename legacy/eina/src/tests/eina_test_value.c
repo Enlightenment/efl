@@ -1544,9 +1544,6 @@ START_TEST(eina_value_test_struct)
    struct mybigst {
       int a, b, c, d, e, f, g, h, i, j, k, l, m, n, o, p, q, r, s, t, u, v, x;
    };
-#define EINA_VALUE_STRUCT_MEMBER(eina_value_type, type, member) \
-   {#member, eina_value_type, offsetof(type, member)}
-#define EINA_VALUE_STRUCT_MEMBER_SENTINEL {NULL, NULL, 0}
    const Eina_Value_Struct_Member mybigst_members[] = {
      EINA_VALUE_STRUCT_MEMBER(EINA_VALUE_TYPE_INT, struct mybigst, a),
      EINA_VALUE_STRUCT_MEMBER(EINA_VALUE_TYPE_INT, struct mybigst, b),
@@ -1712,6 +1709,75 @@ START_TEST(eina_value_test_struct)
 }
 END_TEST
 
+
+START_TEST(eina_value_test_array_of_struct)
+{
+   struct myst {
+      int a, b, c;
+      const char *s;
+   };
+   const Eina_Value_Struct_Member myst_members[] = {
+     EINA_VALUE_STRUCT_MEMBER(EINA_VALUE_TYPE_INT, struct myst, a),
+     EINA_VALUE_STRUCT_MEMBER(EINA_VALUE_TYPE_INT, struct myst, b),
+     EINA_VALUE_STRUCT_MEMBER(EINA_VALUE_TYPE_INT, struct myst, c),
+     EINA_VALUE_STRUCT_MEMBER(EINA_VALUE_TYPE_STRING, struct myst, s),
+     EINA_VALUE_STRUCT_MEMBER_SENTINEL
+   };
+   const Eina_Value_Struct_Desc myst_desc = {
+     EINA_VALUE_STRUCT_DESC_VERSION,
+     EINA_VALUE_STRUCT_OPERATIONS_BINSEARCH,
+     myst_members, 4, sizeof(struct myst)
+   };
+   Eina_Value *value;
+   char *str;
+   int i;
+
+   eina_init();
+
+   value = eina_value_array_new(EINA_VALUE_TYPE_STRUCT, 0);
+   fail_unless(value != NULL);
+
+   for (i = 0; i < 10; i++)
+     {
+        Eina_Value_Struct desc;
+        struct myst *st;
+        char buf[64];
+
+        snprintf(buf, sizeof(buf), "item%02d", i);
+        st = malloc(sizeof(struct myst));
+        fail_unless(st != NULL);
+        st->a = i;
+        st->b = i * 10;
+        st->c = i * 100;
+        st->s = strdup(buf);
+        fail_unless(st->s != NULL);
+
+        desc.desc = &myst_desc;
+        desc.memory = st;
+        fail_unless(eina_value_array_append(value, desc));
+     }
+
+   str = eina_value_to_string(value);
+   fail_unless(str != NULL);
+   fail_unless(strcmp(str, "["
+                      "{a: 0, b: 0, c: 0, s: item00}, "
+                      "{a: 1, b: 10, c: 100, s: item01}, "
+                      "{a: 2, b: 20, c: 200, s: item02}, "
+                      "{a: 3, b: 30, c: 300, s: item03}, "
+                      "{a: 4, b: 40, c: 400, s: item04}, "
+                      "{a: 5, b: 50, c: 500, s: item05}, "
+                      "{a: 6, b: 60, c: 600, s: item06}, "
+                      "{a: 7, b: 70, c: 700, s: item07}, "
+                      "{a: 8, b: 80, c: 800, s: item08}, "
+                      "{a: 9, b: 90, c: 900, s: item09}"
+                      "]") == 0);
+   free(str);
+
+   eina_value_free(value);
+   eina_shutdown();
+}
+END_TEST
+
 void
 eina_test_value(TCase *tc)
 {
@@ -1729,4 +1795,5 @@ eina_test_value(TCase *tc)
    tcase_add_test(tc, eina_value_test_timeval);
    tcase_add_test(tc, eina_value_test_blob);
    tcase_add_test(tc, eina_value_test_struct);
+   tcase_add_test(tc, eina_value_test_array_of_struct);
 }

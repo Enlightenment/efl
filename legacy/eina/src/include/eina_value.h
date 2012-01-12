@@ -2563,6 +2563,28 @@ struct _Eina_Value_Struct_Desc
 };
 
 /**
+ * @def EINA_VALUE_STRUCT_MEMBER
+ *
+ * Helper to define Eina_Value_Struct_Member fields, uses offsetof()
+ * with type and member.
+ *
+ * @since 1.2
+ */
+#define EINA_VALUE_STRUCT_MEMBER(eina_value_type, type, member) \
+   {#member, eina_value_type, offsetof(type, member)}
+
+/**
+ * @def EINA_VALUE_STRUCT_MEMBER_SENTINEL
+ *
+ * Helper to define Eina_Value_Struct_Member fields for sentinel (last
+ * item), useful if you did not define @c member_count.
+ *
+ * @since 1.2
+ */
+#define EINA_VALUE_STRUCT_MEMBER_SENTINEL {NULL, NULL, 0}
+
+
+/**
  * @struct _Eina_Value_Struct
  * @since 1.2
  */
