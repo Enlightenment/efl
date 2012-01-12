@@ -499,6 +499,7 @@ eng_info_free(Evas *e __UNUSED__, void *info)
 static int
 _re_wincheck(Render_Engine *re)
 {
+   if (!re) return 0;
    if (re->win->surf) return 1;
    eng_window_resurf(re->win);
    if (!re->win->surf)
@@ -652,7 +653,7 @@ eng_setup(Evas *e, void *in)
      }
    else
      {
-        re = e->engine.data.output;
+        if (!(re = e->engine.data.output)) return 0;
         if (_re_wincheck(re))
           {
              if ((re->info->info.display != re->win->disp) ||
@@ -663,6 +664,21 @@ eng_setup(Evas *e, void *in)
                  (re->info->info.rotation != re->win->rot))
                {
                   int inc = 0;
+
+                  /* if we already have a window surface, check for NULL input surface.
+                   * this will mean we are hiding the window and should destroy 
+                   * things properly */
+                  if ((re->win->surface) && (re->info->info.surface = NULL))
+                    {
+                       if (re->win)
+                         {
+                            eng_window_free(re->win);
+                            gl_wins--;
+                         }
+                       free(re);
+                       e->engine.data.output = NULL;
+                       return 0;
+                    }
 
                   if (re->win)
                     {
@@ -700,9 +716,11 @@ eng_setup(Evas *e, void *in)
                }
           }
      }
+
    if (!re->win)
      {
         free(re);
+        e->engine.data.output = NULL;
         return 0;
      }
 
@@ -714,6 +732,7 @@ eng_setup(Evas *e, void *in)
              gl_wins--;
           }
         free(re);
+        e->engine.data.output = NULL;
         return 0;
      }
    re->tb = evas_common_tilebuf_new(re->win->w, re->win->h);
@@ -725,6 +744,7 @@ eng_setup(Evas *e, void *in)
              gl_wins--;
           }
         free(re);
+        e->engine.data.output = NULL;
         return 0;
      }
    evas_common_tilebuf_set_tile_size(re->tb, TILESIZE, TILESIZE);

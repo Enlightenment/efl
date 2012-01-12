@@ -212,14 +212,14 @@ eng_window_free(Evas_GL_Wl_Window *gw)
      }
    if (gw->egl_surface[0] != EGL_NO_SURFACE)
       eglDestroySurface(gw->egl_disp, gw->egl_surface[0]);
+   eglMakeCurrent(gw->egl_disp, EGL_NO_SURFACE, EGL_NO_SURFACE, EGL_NO_CONTEXT);
    if (ref == 0)
      {
         if (context) eglDestroyContext(gw->egl_disp, context);
         context = EGL_NO_CONTEXT;
+        eglTerminate(gw->egl_disp);
+        eglReleaseThread();
      }
-   eglMakeCurrent(gw->egl_disp, EGL_NO_SURFACE, EGL_NO_SURFACE, EGL_NO_CONTEXT);
-   if (ref == 0) eglTerminate(gw->egl_disp);
-   eglReleaseThread();
    free(gw);
 }
 
