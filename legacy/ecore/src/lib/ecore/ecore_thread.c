@@ -930,9 +930,9 @@ ecore_thread_run(Ecore_Thread_Cb func_blocking,
    work->kill = EINA_FALSE;
    work->reschedule = EINA_FALSE;
    work->data = data;
-   work->self = 0;
 
 #ifdef EFL_HAVE_THREADS
+   work->self = 0;
    work->hash = NULL;
    CDI(work->cond);
    LKI(work->mutex);
