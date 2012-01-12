@@ -36,6 +36,7 @@ const char *_elm_engines[] = {
    "opengl_cocoa",
    "psl1ght",
    "wayland_shm",
+   "wayland_egl",
    NULL
 };
 
@@ -1202,6 +1203,8 @@ _env_get(void)
           eina_stringshare_replace(&_elm_config->engine, ELM_EWS);
         else if ((!strcasecmp(s, "wayland_shm")))
           eina_stringshare_replace(&_elm_config->engine, ELM_WAYLAND_SHM);
+        else if ((!strcasecmp(s, "wayland_egl")))
+          eina_stringshare_replace(&_elm_config->engine, ELM_WAYLAND_EGL);
      }
 
    s = getenv("ELM_VSYNC");

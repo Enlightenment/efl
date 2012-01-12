@@ -2714,6 +2714,7 @@ _elm_engine_supported(const char *engine)
       "opengl_cocoa",
       "psl1ght",
       "wayland_shm",
+      "wayland_egl",
       NULL
    };
 

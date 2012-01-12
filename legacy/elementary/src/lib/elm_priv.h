@@ -90,6 +90,7 @@ extern const char *_elm_engines[];
 #define ELM_OPENGL_COCOA      (_elm_engines[14])
 #define ELM_SOFTWARE_PSL1GHT  (_elm_engines[15])
 #define ELM_WAYLAND_SHM       (_elm_engines[16])
+#define ELM_WAYLAND_EGL       (_elm_engines[17])
 
 #define ELM_FONT_TOKEN_STYLE  ":style="
 

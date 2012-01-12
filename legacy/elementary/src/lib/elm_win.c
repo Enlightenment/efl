@@ -1,4 +1,4 @@
- #include <Elementary.h>
+#include <Elementary.h>
 #include "elm_priv.h"
 
 typedef struct _Elm_Win Elm_Win;
@@ -1380,8 +1380,9 @@ _elm_win_frame_cb_resize_start(void *data, Evas_Object *obj __UNUSED__, const ch
    else
      win->resize_location = 0;
 
+   /* FIXME: Change to more generic wayland resize function */
    if (win->resize_location > 0)
-     ecore_evas_wayland_shm_resize(win->ee, win->resize_location);
+     ecore_evas_wayland_resize(win->ee, win->resize_location);
 }
 
 static void 
@@ -1661,6 +1662,13 @@ elm_win_add(Evas_Object *parent, const char *name, Elm_Win_Type type)
         else if (ENGINE_COMPARE(ELM_WAYLAND_SHM)) 
           {
              win->ee = ecore_evas_wayland_shm_new(NULL, 0, 0, 1, 1, 0);
+             win->evas = ecore_evas_get(win->ee);
+
+             _elm_win_frame_add(win, "default");
+          }
+        else if (ENGINE_COMPARE(ELM_WAYLAND_EGL)) 
+          {
+             win->ee = ecore_evas_wayland_egl_new(NULL, 0, 0, 1, 1, 0);
              win->evas = ecore_evas_get(win->ee);
 
              _elm_win_frame_add(win, "default");
