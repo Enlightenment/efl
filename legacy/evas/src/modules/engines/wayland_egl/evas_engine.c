@@ -794,14 +794,7 @@ eng_output_resize(void *data, int w, int h)
    eng_window_use(re->win);
 
    if (re->win->win)
-     {
-        int nw, nh;
-        wl_egl_window_get_attached_size(re->win->win, &nw, &nh);
-        printf("Attached Size: %d %d\n", nw, nh);
-        wl_egl_window_resize(re->win->win, w, h, 0, 0);
-        wl_egl_window_get_attached_size(re->win->win, &nw, &nh);
-        printf("Attached Size: %d %d\n\n", nw, nh);
-     }
+     wl_egl_window_resize(re->win->win, w, h, 0, 0);
 
    evas_gl_common_context_resize(re->win->gl_context, w, h, re->win->rot);
    evas_common_tilebuf_free(re->tb);
