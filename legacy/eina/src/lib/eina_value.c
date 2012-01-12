@@ -3366,10 +3366,17 @@ _eina_value_type_timeval_compare(const Eina_Value_Type *type __UNUSED__, const v
 {
    struct timeval va = _eina_value_type_timeval_fix(a);
    struct timeval vb = _eina_value_type_timeval_fix(b);
-   if (timercmp(&va, &vb, <))
+
+   if (va.tv_sec < vb.tv_sec)
      return -1;
-   else if (timercmp(&va, &vb, >))
+   else if (va.tv_sec > vb.tv_sec)
      return 1;
+
+   if (va.tv_usec < vb.tv_usec)
+     return -1;
+   else if (va.tv_usec > vb.tv_usec)
+     return 1;
+
    return 0;
 }
 
