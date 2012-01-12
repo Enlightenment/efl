@@ -1047,6 +1047,8 @@ END_TEST
 START_TEST(eina_value_test_array)
 {
    Eina_Value *value, other;
+   Eina_Value_Array desc;
+   Eina_Inarray *inarray;
    char c;
    char buf[1024];
    char *str;
@@ -1127,6 +1129,25 @@ START_TEST(eina_value_test_array)
    fail_unless(eina_value_convert(value, &other));
    fail_unless(eina_value_get(&other, &c));
    fail_unless(c == 33);
+
+   inarray = eina_inarray_new(sizeof(char), 0);
+   fail_unless(inarray != NULL);
+   c = 11;
+   fail_unless(eina_inarray_append(inarray, &c) >= 0);
+   c = 21;
+   fail_unless(eina_inarray_append(inarray, &c) >= 0);
+   c = 31;
+   fail_unless(eina_inarray_append(inarray, &c) >= 0);
+   desc.subtype = EINA_VALUE_TYPE_CHAR;
+   desc.step = 0;
+   desc.array = inarray; /* will be adopted and freed by value */
+   fail_unless(eina_value_set(value, desc)); /* manually configure */
+   fail_unless(eina_value_array_get(value, 0, &c));
+   fail_unless(c == 11);
+   fail_unless(eina_value_array_get(value, 1, &c));
+   fail_unless(c == 21);
+   fail_unless(eina_value_array_get(value, 2, &c));
+   fail_unless(c == 31);
 
    eina_value_free(value);
    eina_shutdown();

@@ -2612,21 +2612,36 @@ _eina_value_type_array_pset(const Eina_Value_Type *type __UNUSED__, void *mem, c
 {
    Eina_Value_Array *tmem = mem;
    const Eina_Value_Array *desc = ptr;
+   Eina_Inarray *desc_array;
 
    if ((!tmem->subtype) && (!desc->subtype))
      return EINA_TRUE;
 
+   desc_array = desc->array;
+   if (desc_array)
+     {
+        EINA_SAFETY_ON_FALSE_RETURN_VAL
+          (desc_array->member_size == desc->subtype->value_size, EINA_FALSE);
+     }
+
    if (tmem->array)
      {
         _eina_value_type_array_flush_elements(tmem);
-        eina_inarray_setup(tmem->array, desc->subtype->value_size, desc->step);
+        if (desc_array)
+          eina_inarray_free(tmem->array);
+        else
+          eina_inarray_setup(tmem->array, desc->subtype->value_size,
+                             desc->step);
      }
-   else
+   else if (!desc_array)
      {
         tmem->array = eina_inarray_new(desc->subtype->value_size, desc->step);
         if (!tmem->array)
           return EINA_FALSE;
      }
+
+   if (desc_array)
+     tmem->array = desc_array;
 
    tmem->subtype = desc->subtype;
 

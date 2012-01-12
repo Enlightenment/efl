@@ -205,6 +205,16 @@ EAPI extern const Eina_Value_Type *EINA_VALUE_TYPE_STRING;
  *  @li eina_value_array_vget() and eina_value_array_vset()
  *  @li eina_value_array_pget() and eina_value_array_pset()
  *
+ * eina_value_set() takes an #Eina_Value_Array where just @c subtype
+ * and @c step are used. If there is an @c array, it will be adopted
+ * and its contents must be properly configurable as @c subtype
+ * expects. eina_value_pset() takes a pointer to an #Eina_Value_Array.
+ * For your convenience, use eina_value_array_setup().
+ *
+ * eina_value_get() and eina_value_pget() takes a pointer to
+ * #Eina_Value_Array, it's an exact copy of the current structure in
+ * use by value, no copies are done.
+ *
  * @since 1.2
  */
 EAPI extern const Eina_Value_Type *EINA_VALUE_TYPE_ARRAY;
