@@ -192,8 +192,11 @@ _elm_scroller_focus_next_hook(const Evas_Object *obj, Elm_Focus_Direction dir, E
    cur = wd->content;
 
    /* Try Focus cycle in subitem */
-   if ((elm_widget_can_focus_get(cur)) || (elm_widget_child_can_focus_get(cur)))
-     return elm_widget_focus_next_get(cur, dir, next);
+   if (elm_widget_focus_get(obj))
+     {
+        if ((elm_widget_can_focus_get(cur)) || (elm_widget_child_can_focus_get(cur)))
+          return elm_widget_focus_next_get(cur, dir, next);
+     }
 
    /* Return */
    *next = (Evas_Object *)obj;
