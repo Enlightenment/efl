@@ -644,18 +644,13 @@ static inline Eina_Bool
 eina_value_array_vinsert(Eina_Value *value, unsigned int position, va_list args)
 {
    Eina_Value_Array desc;
-   void *mem, *placeholder;
+   void *mem;
 
    EINA_VALUE_TYPE_ARRAY_CHECK_RETURN_VAL(value, 0);
    if (!eina_value_pget(value, &desc))
      return EINA_FALSE;
 
-   placeholder = alloca(desc.subtype->value_size);
-   memset(placeholder, 0, desc.subtype->value_size);
-   if (!eina_inarray_insert_at(desc.array, position, placeholder))
-     return EINA_FALSE;
-
-   mem = eina_inarray_nth(desc.array, position);
+   mem = eina_inarray_alloc_at(desc.array, position, 1);
    if (!mem)
      return EINA_FALSE;
 
@@ -674,20 +669,15 @@ static inline Eina_Bool
 eina_value_array_vappend(Eina_Value *value, va_list args)
 {
    Eina_Value_Array desc;
-   void *mem, *placeholder;
+   void *mem;
    int position;
 
    EINA_VALUE_TYPE_ARRAY_CHECK_RETURN_VAL(value, 0);
    if (!eina_value_pget(value, &desc))
      return EINA_FALSE;
 
-   placeholder = alloca(desc.subtype->value_size);
-   memset(placeholder, 0, desc.subtype->value_size);
-   position = eina_inarray_append(desc.array, placeholder);
-   if (position < 0)
-     return EINA_FALSE;
-
-   mem = eina_inarray_nth(desc.array, position);
+   position = eina_inarray_count(desc.array);
+   mem = eina_inarray_alloc_at(desc.array, position, 1);
    if (!mem)
      return EINA_FALSE;
 
@@ -794,18 +784,13 @@ static inline Eina_Bool
 eina_value_array_pinsert(Eina_Value *value, unsigned int position, const void *ptr)
 {
    Eina_Value_Array desc;
-   void *mem, *placeholder;
+   void *mem;
 
    EINA_VALUE_TYPE_ARRAY_CHECK_RETURN_VAL(value, 0);
    if (!eina_value_pget(value, &desc))
      return EINA_FALSE;
 
-   placeholder = alloca(desc.subtype->value_size);
-   memset(placeholder, 0, desc.subtype->value_size);
-   if (!eina_inarray_insert_at(desc.array, position, placeholder))
-     return EINA_FALSE;
-
-   mem = eina_inarray_nth(desc.array, position);
+   mem = eina_inarray_alloc_at(desc.array, position, 1);
    if (!mem)
      return EINA_FALSE;
 
@@ -824,20 +809,15 @@ static inline Eina_Bool
 eina_value_array_pappend(Eina_Value *value, const void *ptr)
 {
    Eina_Value_Array desc;
-   void *mem, *placeholder;
+   void *mem;
    int position;
 
    EINA_VALUE_TYPE_ARRAY_CHECK_RETURN_VAL(value, 0);
    if (!eina_value_pget(value, &desc))
      return EINA_FALSE;
 
-   placeholder = alloca(desc.subtype->value_size);
-   memset(placeholder, 0, desc.subtype->value_size);
-   position = eina_inarray_append(desc.array, placeholder);
-   if (position < 0)
-     return EINA_FALSE;
-
-   mem = eina_inarray_nth(desc.array, position);
+   position = eina_inarray_count(desc.array);
+   mem = eina_inarray_alloc_at(desc.array, position, 1);
    if (!mem)
      return EINA_FALSE;
 

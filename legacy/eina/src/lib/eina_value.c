@@ -2391,8 +2391,8 @@ _eina_value_type_array_copy(const Eina_Value_Type *type __UNUSED__, const void *
    const Eina_Value_Type *subtype;
    const Eina_Value_Array *s = src;
    Eina_Value_Array *d = dst;
-   unsigned int count, sz;
-   char *placeholder, *ptr, *ptr_end;
+   unsigned int i, count, sz;
+   char *ptr, *ptr_end;
 
    d->subtype = subtype = s->subtype;
    d->step = s->step;
@@ -2414,18 +2414,15 @@ _eina_value_type_array_copy(const Eina_Value_Type *type __UNUSED__, const void *
      return EINA_FALSE;
 
    sz = s->array->member_size;
-   placeholder = alloca(sz);
-   memset(placeholder, 0, sz);
 
    count = eina_inarray_count(s->array);
    ptr = s->array->members;
    ptr_end = ptr + (count * sz);
 
-   for (; ptr < ptr_end; ptr += sz)
+   for (i = 0; ptr < ptr_end; ptr += sz, i++)
      {
-        int i = eina_inarray_append(d->array, placeholder);
-        void *imem = eina_inarray_nth(d->array, i);
-        if ((i < 0) || (!imem)) goto error;
+        void *imem = eina_inarray_alloc_at(d->array, i, 1);
+        if (!imem) goto error;
         if (!subtype->copy(subtype, ptr, imem))
           {
              eina_inarray_pop(d->array);
@@ -2583,7 +2580,7 @@ _eina_value_type_array_convert_from(const Eina_Value_Type *type, const Eina_Valu
 {
    Eina_Value_Array *tmem = type_mem;
    Eina_Value_Array desc = {convert, tmem->step, NULL};
-   char *buf, *placeholder;
+   char *buf;
    void *imem;
 
    if (!eina_value_type_pset(type, tmem, &desc))
@@ -2593,12 +2590,7 @@ _eina_value_type_array_convert_from(const Eina_Value_Type *type, const Eina_Valu
    if (!eina_value_type_pget(convert, convert_mem, &buf))
      return EINA_FALSE;
 
-   placeholder = alloca(convert->value_size);
-   memset(placeholder, 0, convert->value_size);
-
-   if (eina_inarray_append(tmem->array, placeholder) != 0)
-     return EINA_FALSE;
-   imem = eina_inarray_nth(tmem->array, 0);
+   imem = eina_inarray_alloc_at(tmem->array, 0, 1);
    if (!imem)
      return EINA_FALSE;
 
