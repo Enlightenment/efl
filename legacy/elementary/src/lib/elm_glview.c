@@ -12,7 +12,7 @@ struct _Widget_Data
    Elm_GLView_Render_Policy  render_policy;
 
    Evas_GL                  *evasgl;
-   Evas_GL_Config            config;
+   Evas_GL_Config           *config;
    Evas_GL_Surface          *surface;
    Evas_GL_Context          *context;
 
@@ -53,6 +53,7 @@ _del_hook(Evas_Object *obj)
 
    if (wd->surface) evas_gl_surface_destroy(wd->evasgl, wd->surface);
    if (wd->context) evas_gl_context_destroy(wd->evasgl, wd->context);
+   if (wd->config) evas_gl_config_free(wd->config);
    if (wd->evasgl) evas_gl_free(wd->evasgl);
 
    free(wd);
@@ -95,7 +96,7 @@ _glview_update_surface(Evas_Object *obj)
      {
         Evas_Native_Surface ns;
 
-        wd->surface = evas_gl_surface_create(wd->evasgl, &wd->config,
+        wd->surface = evas_gl_surface_create(wd->evasgl, wd->config,
                                              wd->w, wd->h);
         evas_gl_native_surface_get(wd->evasgl, wd->surface, &ns);
         evas_object_image_native_surface_set(wd->glview_image, &ns);
@@ -219,9 +220,6 @@ elm_glview_add(Evas_Object *parent)
    Evas_Object *obj;
    Evas *e;
    Widget_Data *wd;
-   Evas_GL_Config cfg = { EVAS_GL_RGB_888,
-                          EVAS_GL_DEPTH_NONE,
-                          EVAS_GL_STENCIL_NONE };
 
    ELM_WIDGET_STANDARD_SETUP(wd, Widget_Data, parent, e, obj, NULL);
 
@@ -240,6 +238,16 @@ elm_glview_add(Evas_Object *parent)
         return NULL;
      }
 
+   // Create a default config
+   wd->config = evas_gl_config_new();
+   if (!wd->config)
+     {
+        ERR("Failed Creating a Config Object.\n");
+        evas_gl_free(wd->evasgl);
+        return NULL;
+     }
+   wd->config->color_format = EVAS_GL_RGB_888;
+
    // Create image to render Evas_GL Surface
    wd->glview_image = evas_object_image_filled_add(e);
    evas_object_image_size_set(wd->glview_image, 1, 1);
@@ -252,7 +260,6 @@ elm_glview_add(Evas_Object *parent)
    wd->mode                = 0;
    wd->scale_policy        = ELM_GLVIEW_RESIZE_POLICY_RECREATE;
    wd->render_policy       = ELM_GLVIEW_RENDER_POLICY_ON_DEMAND;
-   wd->config              = cfg;
    wd->surface             = NULL;
 
    // Initialize it to (64,64)  (It's an arbitrary value)
@@ -295,20 +302,28 @@ elm_glview_mode_set(Evas_Object *obj, Elm_GLView_Mode mode)
 {
    ELM_CHECK_WIDTYPE(obj, widtype) EINA_FALSE;
    Widget_Data *wd = elm_widget_data_get(obj);
-   Evas_GL_Config cfg = { EVAS_GL_RGBA_8888,
-                          EVAS_GL_DEPTH_NONE,
-                          EVAS_GL_STENCIL_NONE };
    if (!wd) return EINA_FALSE;
 
    // Set the configs
    if (mode & ELM_GLVIEW_ALPHA)
-     cfg.color_format = EVAS_GL_RGBA_8888;
+      wd->config->color_format = EVAS_GL_RGBA_8888;
+   else
+      wd->config->color_format = EVAS_GL_RGB_888;
 
    if (mode & ELM_GLVIEW_DEPTH)
-     cfg.depth_bits = EVAS_GL_DEPTH_BIT_24;
+      wd->config->depth_bits = EVAS_GL_DEPTH_BIT_24;
+   else
+      wd->config->depth_bits = EVAS_GL_DEPTH_NONE;
 
    if (mode & ELM_GLVIEW_STENCIL)
-     cfg.stencil_bits = EVAS_GL_STENCIL_BIT_8;
+      wd->config->stencil_bits = EVAS_GL_STENCIL_BIT_8;
+   else
+      wd->config->stencil_bits = EVAS_GL_STENCIL_NONE;
+
+   if (mode & ELM_GLVIEW_DIRECT)
+      wd->config->options_bits = EVAS_GL_OPTIONS_DIRECT;
+   else
+      wd->config->options_bits = EVAS_GL_OPTIONS_NONE;
 
    // Check for Alpha Channel and enable it
    if (mode & ELM_GLVIEW_ALPHA)
@@ -316,8 +331,7 @@ elm_glview_mode_set(Evas_Object *obj, Elm_GLView_Mode mode)
    else
      evas_object_image_alpha_set(wd->glview_image, EINA_FALSE);
 
-   wd->mode   = mode;
-   wd->config = cfg;
+   wd->mode = mode;
 
    elm_glview_changed_set(obj);
 

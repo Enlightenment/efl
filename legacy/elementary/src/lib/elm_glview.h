@@ -10,11 +10,13 @@
 
 typedef void (*Elm_GLView_Func_Cb)(Evas_Object *obj);
 
-typedef enum
+typedef enum _Elm_GLView_Mode
 {
-   ELM_GLVIEW_ALPHA = 1,
-   ELM_GLVIEW_DEPTH = 2,
-   ELM_GLVIEW_STENCIL = 4
+   ELM_GLVIEW_NONE    = 0,
+   ELM_GLVIEW_ALPHA   = (1<<1),
+   ELM_GLVIEW_DEPTH   = (1<<2),
+   ELM_GLVIEW_STENCIL = (1<<3),
+   ELM_GLVIEW_DIRECT  = (1<<4)
 } Elm_GLView_Mode;
 
 /**
