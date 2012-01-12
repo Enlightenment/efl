@@ -1,4 +1,4 @@
-/* EINA - EFL data type library
+/* Eina - EFL data type library
  * Copyright (C) 2012 ProFUSION embedded systems
  *
  * This library is free software; you can redistribute it and/or
@@ -34,6 +34,7 @@
 /**
  * @var _EINA_VALUE_TYPE_BASICS_START
  * pointer to the first basic type.
+ * @since 1.2
  * @private
  */
 EAPI extern const Eina_Value_Type *_EINA_VALUE_TYPE_BASICS_START;
@@ -41,6 +42,7 @@ EAPI extern const Eina_Value_Type *_EINA_VALUE_TYPE_BASICS_START;
 /**
  * @var _EINA_VALUE_TYPE_BASICS_END
  * pointer to the last (inclusive) basic type.
+ * @since 1.2
  * @private
  */
 EAPI extern const Eina_Value_Type *_EINA_VALUE_TYPE_BASICS_END;
@@ -77,6 +79,11 @@ EAPI extern const Eina_Value_Type *_EINA_VALUE_TYPE_BASICS_END;
     }                                                                   \
   while (0)
 
+/**
+ * @brief Get memory for given value (inline or allocated buffer).
+ * @since 1.2
+ * @private
+ */
 static inline void *
 eina_value_memory_get(const Eina_Value *value)
 {
