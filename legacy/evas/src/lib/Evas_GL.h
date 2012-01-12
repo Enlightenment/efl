@@ -28,7 +28,7 @@ typedef enum _Evas_GL_Depth_Bits
     EVAS_GL_DEPTH_BIT_8  = 1,
     EVAS_GL_DEPTH_BIT_16 = 2,
     EVAS_GL_DEPTH_BIT_24 = 3,
-    EVAS_GL_DEPTH_BIT_32 = 4,
+    EVAS_GL_DEPTH_BIT_32 = 4
 } Evas_GL_Depth_Bits;
 
 typedef enum _Evas_GL_Stencil_Bits
@@ -38,14 +38,21 @@ typedef enum _Evas_GL_Stencil_Bits
     EVAS_GL_STENCIL_BIT_2  = 2,
     EVAS_GL_STENCIL_BIT_4  = 3,
     EVAS_GL_STENCIL_BIT_8  = 4,
-    EVAS_GL_STENCIL_BIT_16 = 5,
+    EVAS_GL_STENCIL_BIT_16 = 5
 } Evas_GL_Stencil_Bits;
+
+typedef enum _Evas_GL_Options_Bits
+{
+   EVAS_GL_OPTIONS_NONE    = 0,
+   EVAS_GL_OPTIONS_DIRECT  = (1<<0)
+} Evas_GL_Options_Bits;
 
 struct _Evas_GL_Config
 {
-    Evas_GL_Color_Format     color_format;
-    Evas_GL_Depth_Bits       depth_bits;
-    Evas_GL_Stencil_Bits     stencil_bits;
+   Evas_GL_Color_Format     color_format;
+   Evas_GL_Depth_Bits       depth_bits;
+   Evas_GL_Stencil_Bits     stencil_bits;
+   Evas_GL_Options_Bits     options_bits;
 };
 
 #define EVAS_GL_EXTENSIONS       1
@@ -73,6 +80,7 @@ typedef struct _GLData
 {
    Evas_GL_Context *ctx;
    Evas_GL_Surface *sfc;
+   Evas_GL_Config  *cfg;
    Evas_GL         *evasgl;
    Evas_GL_API     *glapi;
    GLuint           program;
@@ -93,13 +101,6 @@ static GLuint    load_shader  (GLData *gld, GLenum type, const char *shader_src)
 int
 main(int argc, char **argv)
 {
-   // config for the surface for evas_gl
-   Evas_GL_Config config =
-     {
-        EVAS_GL_RGBA_8888,
-        EVAS_GL_DEPTH_NONE,
-        EVAS_GL_STENCIL_NONE
-     };
    // a size by default
    int w = 256, h = 256;
    // some variables we will use
@@ -124,8 +125,16 @@ main(int argc, char **argv)
    // get the evas gl handle for doing gl things
    gld->evasgl = evas_gl_new(canvas);
    gld->glapi = evas_gl_api_get(gld->evasgl);
+
+   // Set a surface config
+   gld->cfg = evas_gl_config_new();
+   gld->cfg->color_format = EVAS_GL_RGBA_8888;
+   //gld->cfg->depth_bits   = EVAS_GL_DEPTH_NONE;        // Othe config options
+   //gld->cfg->stencil_bits = EVAS_GL_STENCIL_NONE;
+   //gld->cfg->options_bits = EVAS_GL_OPTIONS_NONE;
+
    // create a surface and context
-   gld->sfc = evas_gl_surface_create(gld->evasgl, &config, w, h);
+   gld->sfc = evas_gl_surface_create(gld->evasgl, gld->cfg, w, h);
    gld->ctx = evas_gl_context_create(gld->evasgl, NULL);
    //-//
    //-//-//-// END GL INIT BLOB
@@ -207,6 +216,7 @@ on_del(void *data, Evas *e, Evas_Object *obj, void *event_info)
 
    evas_gl_surface_destroy(gld->evasgl, gld->sfc);
    evas_gl_context_destroy(gld->evasgl, gld->ctx);
+   evas_gl_config_free(gld->cfg);
    evas_gl_free(gld->evasgl);
    free(gld);
 }
@@ -387,6 +397,22 @@ EAPI Evas_GL                 *evas_gl_new                (Evas *e) EINA_WARN_UNU
  * @param evas_gl The given Evas_GL object.
  */
 EAPI void                     evas_gl_free               (Evas_GL *evas_gl) EINA_ARG_NONNULL(1);
+
+/**
+ * Allocates a new config object for the user to fill out.
+ *
+ * As long as the Evas creates a config object for the user, it takes care
+ * of the backward compatibility issue.
+ */
+EAPI Evas_GL_Config          *evas_gl_config_new         ();
+
+/**
+ * Frees a config object created from evas_gl_config_new.
+ *
+ * As long as the Evas creates a config object for the user, it takes care
+ * of the backward compatibility issue.
+ */
+EAPI void                     evas_gl_config_free        (Evas_GL_Config *cfg) EINA_ARG_NONNULL(1);
 
 /**
  * Creates and returns new Evas_GL_Surface object for GL Rendering.

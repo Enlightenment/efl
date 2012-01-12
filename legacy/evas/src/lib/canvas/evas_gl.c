@@ -37,6 +37,13 @@ evas_gl_new(Evas *e)
    evas_gl->magic = MAGIC_EVAS_GL;
    evas_gl->evas = e;
 
+   if (!evas_gl->evas->engine.func->gl_context_create)
+     {
+        ERR("GL engine not available\n");
+        free(evas_gl);
+        return NULL;
+     }
+
    return evas_gl;
 }
 
@@ -60,6 +67,24 @@ evas_gl_free(Evas_GL *evas_gl)
    free(evas_gl);
 }
 
+EAPI Evas_GL_Config *
+evas_gl_config_new()
+{
+   Evas_GL_Config *cfg;
+
+   cfg = calloc(1, sizeof(Evas_GL_Config));
+
+   if (!cfg) return NULL;
+
+   return cfg;
+}
+
+EAPI void
+evas_gl_config_free(Evas_GL_Config *cfg)
+{
+   if (cfg) free(cfg);
+}
+
 EAPI Evas_GL_Surface *
 evas_gl_surface_create(Evas_GL *evas_gl, Evas_GL_Config *config, int width, int height)
 {
@@ -76,6 +101,8 @@ evas_gl_surface_create(Evas_GL *evas_gl, Evas_GL_Config *config, int width, int 
      }
 
    surf = calloc(1, sizeof(Evas_GL_Surface));
+
+   if (!surf) return NULL;
 
    surf->data = evas_gl->evas->engine.func->gl_surface_create(evas_gl->evas->engine.data.output, config, width, height);
 
@@ -132,12 +159,6 @@ evas_gl_context_create(Evas_GL *evas_gl, Evas_GL_Context *share_ctx)
    if (!ctx)
      {
         ERR("Unable to create a Evas_GL_Context object\n");
-        return NULL;
-     }
-
-   if (!evas_gl->evas->engine.func->gl_context_create)
-     {
-        ERR("GL engine not available\n");
         return NULL;
      }
 

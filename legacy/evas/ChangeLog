@@ -622,4 +622,15 @@
 
         * Add EvasGL support to software backend using OSMesa.  Requires OSMesa
           library.  Due to caveats in OSMesa, surface config stays with a 
-          context
+          context rather than with a surface.  So for now, the config of a 
+          surface remains with the first context that it binds to.  May need
+          to come up with a different solution in the near future.
+
+2012-01-12  Sung W. Park (sung_)
+
+	* Add new api evas_gl_config_new/free() to ensure backward compatibility.
+          Previously, the user simply declared a Evas_GL_Config object but this
+          can cause issues if new configs are added. Now we have evas allocate it
+          for you.
+
+

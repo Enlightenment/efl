@@ -584,25 +584,30 @@ _extensions_init(Render_Engine *re)
 
 #if defined (GLES_VARIETY_S3C6410) || defined (GLES_VARIETY_SGX)
    // EGL Extensions
-   evasglexts = glsym_eglQueryString(re->win->egl_disp, EGL_EXTENSIONS);
+   if (glsym_eglQueryString)
+     {
+        evasglexts = glsym_eglQueryString(re->win->egl_disp, EGL_EXTENSIONS);
 #else
-   evasglexts = glXQueryExtensionsString(re->info->info.display, 
-                                         re->info->info.screen);
+   if (glsym_glXQueryExtensionsString)
+     {
+        evasglexts = glXQueryExtensionsString(re->info->info.display, 
+                                              re->info->info.screen);
 #endif
 
-   DBG("--------EvasGL Extensions----------");
-   for (i = 0; _evasgl_ext_entries[i].name != NULL; i++)
-     {
-        if ( (strstr(evasglexts, _evasgl_ext_entries[i].name) != NULL) ||
-             (strstr(evasglexts, _evasgl_ext_entries[i].real_name) != NULL) )
+        DBG("--------EvasGL Extensions----------");
+        for (i = 0; _evasgl_ext_entries[i].name != NULL; i++)
           {
-             _evasgl_ext_entries[i].supported = 1;
-             strcat(_evasgl_ext_string, _evasgl_ext_entries[i].name);
-             strcat(_evasgl_ext_string, " ");
-             DBG("\t%s", _evasgl_ext_entries[i].name);
+             if ( (strstr(evasglexts, _evasgl_ext_entries[i].name) != NULL) ||
+                  (strstr(evasglexts, _evasgl_ext_entries[i].real_name) != NULL) )
+               {
+                  _evasgl_ext_entries[i].supported = 1;
+                  strcat(_evasgl_ext_string, _evasgl_ext_entries[i].name);
+                  strcat(_evasgl_ext_string, " ");
+                  DBG("\t%s", _evasgl_ext_entries[i].name);
+               }
           }
+        DBG(" ");
      }
-   DBG(" ");
 }
 
 int _evas_engine_GL_X11_log_dom = -1;
