@@ -1538,6 +1538,180 @@ START_TEST(eina_value_test_blob)
 }
 END_TEST
 
+
+START_TEST(eina_value_test_struct)
+{
+   struct mybigst {
+      int a, b, c, d, e, f, g, h, i, j, k, l, m, n, o, p, q, r, s, t, u, v, x;
+   };
+#define EINA_VALUE_STRUCT_MEMBER(eina_value_type, type, member) \
+   {#member, eina_value_type, offsetof(type, member)}
+#define EINA_VALUE_STRUCT_MEMBER_SENTINEL {NULL, NULL, 0}
+   const Eina_Value_Struct_Member mybigst_members[] = {
+     EINA_VALUE_STRUCT_MEMBER(EINA_VALUE_TYPE_INT, struct mybigst, a),
+     EINA_VALUE_STRUCT_MEMBER(EINA_VALUE_TYPE_INT, struct mybigst, b),
+     EINA_VALUE_STRUCT_MEMBER(EINA_VALUE_TYPE_INT, struct mybigst, c),
+     EINA_VALUE_STRUCT_MEMBER(EINA_VALUE_TYPE_INT, struct mybigst, d),
+     EINA_VALUE_STRUCT_MEMBER(EINA_VALUE_TYPE_INT, struct mybigst, e),
+     EINA_VALUE_STRUCT_MEMBER(EINA_VALUE_TYPE_INT, struct mybigst, f),
+     EINA_VALUE_STRUCT_MEMBER(EINA_VALUE_TYPE_INT, struct mybigst, g),
+     EINA_VALUE_STRUCT_MEMBER(EINA_VALUE_TYPE_INT, struct mybigst, h),
+     EINA_VALUE_STRUCT_MEMBER(EINA_VALUE_TYPE_INT, struct mybigst, i),
+     EINA_VALUE_STRUCT_MEMBER(EINA_VALUE_TYPE_INT, struct mybigst, j),
+     EINA_VALUE_STRUCT_MEMBER(EINA_VALUE_TYPE_INT, struct mybigst, k),
+     EINA_VALUE_STRUCT_MEMBER(EINA_VALUE_TYPE_INT, struct mybigst, l),
+     EINA_VALUE_STRUCT_MEMBER(EINA_VALUE_TYPE_INT, struct mybigst, m),
+     EINA_VALUE_STRUCT_MEMBER(EINA_VALUE_TYPE_INT, struct mybigst, n),
+     EINA_VALUE_STRUCT_MEMBER(EINA_VALUE_TYPE_INT, struct mybigst, o),
+     EINA_VALUE_STRUCT_MEMBER(EINA_VALUE_TYPE_INT, struct mybigst, p),
+     EINA_VALUE_STRUCT_MEMBER(EINA_VALUE_TYPE_INT, struct mybigst, q),
+     EINA_VALUE_STRUCT_MEMBER(EINA_VALUE_TYPE_INT, struct mybigst, r),
+     EINA_VALUE_STRUCT_MEMBER(EINA_VALUE_TYPE_INT, struct mybigst, s),
+     EINA_VALUE_STRUCT_MEMBER(EINA_VALUE_TYPE_INT, struct mybigst, t),
+     EINA_VALUE_STRUCT_MEMBER(EINA_VALUE_TYPE_INT, struct mybigst, u),
+     EINA_VALUE_STRUCT_MEMBER(EINA_VALUE_TYPE_INT, struct mybigst, v),
+     EINA_VALUE_STRUCT_MEMBER(EINA_VALUE_TYPE_INT, struct mybigst, x),
+     EINA_VALUE_STRUCT_MEMBER_SENTINEL
+   };
+   const Eina_Value_Struct_Desc mybigst_desc = {
+     EINA_VALUE_STRUCT_DESC_VERSION,
+     EINA_VALUE_STRUCT_OPERATIONS_BINSEARCH,
+     mybigst_members, 23, sizeof(struct mybigst)
+   };
+   struct myst {
+      int i;
+      char c;
+   };
+   const Eina_Value_Struct_Member myst_members[] = {
+     {"i", EINA_VALUE_TYPE_INT, 0},
+     {"c", EINA_VALUE_TYPE_CHAR, 4},
+     {NULL, NULL, 0}
+   };
+   const Eina_Value_Struct_Desc myst_desc = {
+     EINA_VALUE_STRUCT_DESC_VERSION,
+     NULL, myst_members, 2, sizeof(struct myst)
+   };
+   Eina_Value *value, other;
+   int i;
+   char c;
+   char *str;
+
+   eina_init();
+
+   value = eina_value_struct_new(&myst_desc);
+   fail_unless(value != NULL);
+
+   fail_unless(eina_value_struct_set(value, "i", 5678));
+   fail_unless(eina_value_struct_set(value, "c", 0xf));
+
+   fail_unless(eina_value_struct_get(value, "i", &i));
+   fail_unless(i == 5678);
+   fail_unless(eina_value_struct_get(value, "c", &c));
+   fail_unless(c == 0xf);
+
+   str = eina_value_to_string(value);
+   fail_unless(str != NULL);
+   fail_unless(strcmp(str, "{i: 5678, c: 15}") == 0);
+   free(str);
+
+   fail_if(eina_value_struct_get(value, "x", 1234));
+
+   i = 0x11223344;
+   fail_unless(eina_value_struct_pset(value, "i", &i));
+   i = -1;
+   fail_unless(eina_value_struct_pget(value, "i", &i));
+   fail_unless(i == 0x11223344);
+
+   fail_unless(eina_value_copy(value, &other));
+   str = eina_value_to_string(&other);
+   fail_unless(str != NULL);
+   fail_unless(strcmp(str, "{i: 287454020, c: 15}") == 0);
+   free(str);
+
+   eina_value_flush(&other);
+
+   fail_unless(eina_value_struct_setup(&other, &mybigst_desc));
+   fail_unless(eina_value_struct_set(&other, "a",  1) );
+   fail_unless(eina_value_struct_set(&other, "b",  2));
+   fail_unless(eina_value_struct_set(&other, "c",  3));
+   fail_unless(eina_value_struct_set(&other, "d",  4));
+   fail_unless(eina_value_struct_set(&other, "e",  5));
+   fail_unless(eina_value_struct_set(&other, "f",  6));
+   fail_unless(eina_value_struct_set(&other, "g",  7));
+   fail_unless(eina_value_struct_set(&other, "h",  8));
+   fail_unless(eina_value_struct_set(&other, "i",  9));
+   fail_unless(eina_value_struct_set(&other, "j", 10));
+   fail_unless(eina_value_struct_set(&other, "k", 12));
+   fail_unless(eina_value_struct_set(&other, "l", 13));
+   fail_unless(eina_value_struct_set(&other, "m", 14));
+   fail_unless(eina_value_struct_set(&other, "n", 15));
+   fail_unless(eina_value_struct_set(&other, "o", 16));
+   fail_unless(eina_value_struct_set(&other, "p", 17));
+   fail_unless(eina_value_struct_set(&other, "q", 18));
+   fail_unless(eina_value_struct_set(&other, "r", 19));
+   fail_unless(eina_value_struct_set(&other, "s", 20));
+   fail_unless(eina_value_struct_set(&other, "t", 21));
+   fail_unless(eina_value_struct_set(&other, "u", 22));
+   fail_unless(eina_value_struct_set(&other, "v", 23));
+   fail_unless(eina_value_struct_set(&other, "x", 24));
+
+   fail_unless(eina_value_struct_get(&other, "a", &i));
+   fail_unless(i ==  1);
+   fail_unless(eina_value_struct_get(&other, "b", &i));
+   fail_unless(i ==  2);
+   fail_unless(eina_value_struct_get(&other, "c", &i));
+   fail_unless(i ==  3);
+   fail_unless(eina_value_struct_get(&other, "d", &i));
+   fail_unless(i ==  4);
+   fail_unless(eina_value_struct_get(&other, "e", &i));
+   fail_unless(i ==  5);
+   fail_unless(eina_value_struct_get(&other, "f", &i));
+   fail_unless(i ==  6);
+   fail_unless(eina_value_struct_get(&other, "g", &i));
+   fail_unless(i ==  7);
+   fail_unless(eina_value_struct_get(&other, "h", &i));
+   fail_unless(i ==  8);
+   fail_unless(eina_value_struct_get(&other, "i", &i));
+   fail_unless(i ==  9);
+   fail_unless(eina_value_struct_get(&other, "j", &i));
+   fail_unless(i == 10);
+   fail_unless(eina_value_struct_get(&other, "k", &i));
+   fail_unless(i == 12);
+   fail_unless(eina_value_struct_get(&other, "l", &i));
+   fail_unless(i == 13);
+   fail_unless(eina_value_struct_get(&other, "m", &i));
+   fail_unless(i == 14);
+   fail_unless(eina_value_struct_get(&other, "n", &i));
+   fail_unless(i == 15);
+   fail_unless(eina_value_struct_get(&other, "o", &i));
+   fail_unless(i == 16);
+   fail_unless(eina_value_struct_get(&other, "p", &i));
+   fail_unless(i == 17);
+   fail_unless(eina_value_struct_get(&other, "q", &i));
+   fail_unless(i == 18);
+   fail_unless(eina_value_struct_get(&other, "r", &i));
+   fail_unless(i == 19);
+   fail_unless(eina_value_struct_get(&other, "s", &i));
+   fail_unless(i == 20);
+   fail_unless(eina_value_struct_get(&other, "t", &i));
+   fail_unless(i == 21);
+   fail_unless(eina_value_struct_get(&other, "u", &i));
+   fail_unless(i == 22);
+   fail_unless(eina_value_struct_get(&other, "v", &i));
+   fail_unless(i == 23);
+   fail_unless(eina_value_struct_get(&other, "x", &i));
+   fail_unless(i == 24);
+
+   str = eina_value_to_string(&other);
+   fail_unless(str != NULL);
+   fail_unless(strcmp(str, "{a: 1, b: 2, c: 3, d: 4, e: 5, f: 6, g: 7, h: 8, i: 9, j: 10, k: 12, l: 13, m: 14, n: 15, o: 16, p: 17, q: 18, r: 19, s: 20, t: 21, u: 22, v: 23, x: 24}") == 0);
+   free(str);
+
+   eina_value_free(value);
+   eina_shutdown();
+}
+END_TEST
+
 void
 eina_test_value(TCase *tc)
 {
@@ -1554,4 +1728,5 @@ eina_test_value(TCase *tc)
    tcase_add_test(tc, eina_value_test_hash);
    tcase_add_test(tc, eina_value_test_timeval);
    tcase_add_test(tc, eina_value_test_blob);
+   tcase_add_test(tc, eina_value_test_struct);
 }

@@ -3819,6 +3819,497 @@ static const Eina_Value_Type _EINA_VALUE_TYPE_BLOB = {
   _eina_value_type_blob_pget
 };
 
+static int
+_eina_value_struct_operations_binsearch_cmp(const void *pa, const void *pb)
+{
+   const Eina_Value_Struct_Member *a = pa, *b = pb;
+   return strcmp(a->name, b->name);
+}
+
+static const Eina_Value_Struct_Member *
+_eina_value_struct_operations_binsearch_find_member(const Eina_Value_Struct_Operations *ops __UNUSED__, const Eina_Value_Struct_Desc *desc, const char *name)
+{
+   unsigned int count = desc->member_count;
+   Eina_Value_Struct_Member search;
+   if (count == 0)
+     {
+        const Eina_Value_Struct_Member *itr = desc->members;
+        for (; itr->name != NULL; itr++)
+          count++;
+     }
+
+   search.name = name;
+   return bsearch(&search, desc->members, count,
+                  sizeof(Eina_Value_Struct_Member),
+                  _eina_value_struct_operations_binsearch_cmp);
+}
+
+static Eina_Value_Struct_Operations _EINA_VALUE_STRUCT_OPERATIONS_BINSEARCH = {
+  EINA_VALUE_STRUCT_OPERATIONS_VERSION,
+  NULL, /* default alloc */
+  NULL, /* default free */
+  NULL, /* default copy */
+  NULL, /* default compare */
+  _eina_value_struct_operations_binsearch_find_member
+};
+
+static const Eina_Value_Struct_Member *
+_eina_value_struct_operations_stringshare_find_member(const Eina_Value_Struct_Operations *ops __UNUSED__, const Eina_Value_Struct_Desc *desc, const char *name)
+{
+   const Eina_Value_Struct_Member *itr = desc->members;
+
+   /* assumes name is stringshared.
+    *
+    * we do this because it's the recommended usage pattern, moreover
+    * we expect to find the member, as users shouldn't look for
+    * non-existent members!
+    */
+   if (desc->member_count > 0)
+     {
+        const Eina_Value_Struct_Member *itr_end = itr + desc->member_count;
+        for (; itr < itr_end; itr++)
+          if (itr->name == name)
+            return itr;
+     }
+   else
+     {
+        for (; itr->name != NULL; itr++)
+          if (itr->name == name)
+            return itr;
+     }
+
+   name = eina_stringshare_add(name);
+   eina_stringshare_del(name); /* we'll not use the contents, this is fine */
+   /* stringshare and look again */
+   if (desc->member_count > 0)
+     {
+        const Eina_Value_Struct_Member *itr_end = itr + desc->member_count;
+        for (; itr < itr_end; itr++)
+          if (itr->name == name)
+            return itr;
+     }
+   else
+     {
+        for (; itr->name != NULL; itr++)
+          if (itr->name == name)
+            return itr;
+     }
+
+   return NULL;
+}
+
+static Eina_Value_Struct_Operations _EINA_VALUE_STRUCT_OPERATIONS_STRINGSHARE = {
+  EINA_VALUE_STRUCT_OPERATIONS_VERSION,
+  NULL, /* default alloc */
+  NULL, /* default free */
+  NULL, /* default copy */
+  NULL, /* default compare */
+  _eina_value_struct_operations_stringshare_find_member
+};
+
+static inline const Eina_Value_Struct_Operations *
+_eina_value_type_struct_ops_get(const Eina_Value_Struct *st)
+{
+   if (!st) return NULL;
+   if (!st->desc) return NULL;
+   if (!st->desc->ops) return NULL;
+   EINA_SAFETY_ON_FALSE_RETURN_VAL
+     (st->desc->ops->version == EINA_VALUE_STRUCT_OPERATIONS_VERSION, NULL);
+   return st->desc->ops;
+}
+
+EAPI const Eina_Value_Struct_Member *
+eina_value_struct_member_find(const Eina_Value_Struct *st, const char *name)
+{
+   const Eina_Value_Struct_Operations *ops;
+   const Eina_Value_Struct_Member *itr;
+
+   EINA_SAFETY_ON_NULL_RETURN_VAL(st, NULL);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(st->desc, NULL);
+
+   ops = _eina_value_type_struct_ops_get(st);
+   if ((ops) && (ops->find_member))
+     return ops->find_member(ops, st->desc, name);
+
+   itr = st->desc->members;
+   if (st->desc->member_count)
+     {
+        const Eina_Value_Struct_Member *itr_end = itr + st->desc->member_count;
+        for (; itr < itr_end; itr++)
+          {
+             if (strcmp(name, itr->name) == 0)
+               return itr;
+          }
+        return NULL;
+     }
+   else
+     {
+        for (; itr->name != NULL; itr++)
+          {
+             if (strcmp(name, itr->name) == 0)
+               return itr;
+          }
+        return NULL;
+     }
+}
+
+static Eina_Bool
+_eina_value_type_struct_setup(const Eina_Value_Type *type __UNUSED__, void *mem)
+{
+   memset(mem, 0, sizeof(Eina_Value_Struct));
+   return EINA_TRUE;
+}
+
+static Eina_Bool
+_eina_value_type_struct_flush_member(const Eina_Value_Struct_Member *member, Eina_Value_Struct *st)
+{
+   unsigned char *base = st->memory;
+   return eina_value_type_flush(member->type, base + member->offset);
+}
+
+static Eina_Bool
+_eina_value_type_struct_flush(const Eina_Value_Type *type __UNUSED__, void *mem)
+{
+   const Eina_Value_Struct_Operations *ops;
+   const Eina_Value_Struct_Member *itr;
+   Eina_Value_Struct *tmem = mem;
+   Eina_Bool ret = EINA_TRUE;
+
+   itr = tmem->desc->members;
+   if (tmem->desc->member_count > 0)
+     {
+        const Eina_Value_Struct_Member *itr_end;
+        itr_end = itr + tmem->desc->member_count;
+        for (; itr < itr_end; itr++)
+          ret &= _eina_value_type_struct_flush_member(itr, tmem);
+     }
+   else
+     {
+        for (; itr->name != NULL; itr++)
+          ret &= _eina_value_type_struct_flush_member(itr, tmem);
+     }
+
+   ops = _eina_value_type_struct_ops_get(mem);
+   if ((ops) && (ops->free))
+     ops->free(ops, tmem->desc, tmem->memory);
+   else
+     free(tmem->memory);
+
+   return ret;
+}
+
+static Eina_Bool
+_eina_value_type_struct_copy_member(const Eina_Value_Struct_Member *member, const Eina_Value_Struct *s, Eina_Value_Struct *d)
+{
+   const unsigned char *base_s = s->memory;
+   unsigned char *base_d = d->memory;
+   return eina_value_type_copy(member->type,
+                               base_s + member->offset,
+                               base_d + member->offset);
+}
+
+static Eina_Bool
+_eina_value_type_struct_copy(const Eina_Value_Type *type __UNUSED__, const void *src, void *dst)
+{
+   const Eina_Value_Struct_Operations *ops;
+   const Eina_Value_Struct_Member *itr;
+   const Eina_Value_Struct *s = src;
+   Eina_Value_Struct *d = dst;
+
+   *d = *s;
+
+   ops = _eina_value_type_struct_ops_get(src);
+   if ((ops) && (ops->copy))
+     {
+        d->memory = ops->copy(ops, s->desc, s->memory);
+        if (d->memory == NULL)
+          return EINA_FALSE;
+        return EINA_TRUE;
+     }
+
+   d->memory = malloc(s->desc->size);
+   if (!d->memory)
+     {
+        eina_error_set(EINA_ERROR_OUT_OF_MEMORY);
+        return EINA_FALSE;
+     }
+
+   itr = s->desc->members;
+   if (s->desc->member_count > 0)
+     {
+        const Eina_Value_Struct_Member *itr_end = itr + s->desc->member_count;
+        for (; itr < itr_end; itr++)
+          if (!_eina_value_type_struct_copy_member(itr, s, d))
+            goto error;
+     }
+   else
+     {
+        for (; itr->name != NULL; itr++)
+          if (!_eina_value_type_struct_copy_member(itr, s, d))
+            goto error;
+     }
+
+
+   return EINA_TRUE;
+
+ error:
+   itr--;
+   for (; itr >= s->desc->members; itr--)
+     _eina_value_type_struct_flush_member(itr, d);
+   free(d->memory);
+   return EINA_FALSE;
+}
+
+static inline int
+_eina_value_type_struct_compare_member(const Eina_Value_Struct_Member *member, const Eina_Value_Struct *ta, const Eina_Value_Struct *tb)
+{
+   const unsigned char *base_a = ta->memory;
+   const unsigned char *base_b = tb->memory;
+   return eina_value_type_compare(member->type,
+                                  base_a + member->offset,
+                                  base_b + member->offset);
+}
+
+static int
+_eina_value_type_struct_compare(const Eina_Value_Type *type __UNUSED__, const void *a, const void *b)
+{
+   const Eina_Value_Struct_Operations *ops = _eina_value_type_struct_ops_get(a);
+   const Eina_Value_Struct *ta = a, *tb = b;
+   const Eina_Value_Struct_Member *itr;
+   int cmp = 0;
+
+   if (ta->desc != tb->desc)
+     {
+        eina_error_set(EINA_ERROR_VALUE_FAILED);
+        return -1;
+     }
+   if (ta->desc->ops != tb->desc->ops)
+     {
+        eina_error_set(EINA_ERROR_VALUE_FAILED);
+        return -1;
+     }
+   if ((!ta->memory) && (!tb->memory))
+     return 0;
+   else if (!ta->memory)
+     return -1;
+   else if (!tb->memory)
+     return 1;
+
+   if ((ops) && (ops->compare))
+     return ops->compare(ops, ta->desc, ta->memory, tb->memory);
+
+   itr = ta->desc->members;
+   if (ta->desc->member_count > 0)
+     {
+        const Eina_Value_Struct_Member *itr_end = itr + ta->desc->member_count;
+        for (; (cmp == 0) && (itr < itr_end); itr++)
+          cmp = _eina_value_type_struct_compare_member(itr, ta, tb);
+     }
+   else
+     {
+        for (; (cmp == 0) && (itr->name != NULL); itr++)
+          cmp = _eina_value_type_struct_compare_member(itr, ta, tb);
+     }
+   return cmp;
+}
+
+static void
+_eina_value_type_struct_convert_to_string_member(const Eina_Value_Struct *st, const Eina_Value_Struct_Member *member, Eina_Strbuf *str)
+{
+   const unsigned char *p = st->memory;
+   Eina_Bool first = st->desc->members == member;
+   Eina_Bool r = EINA_FALSE;
+
+   if (first) eina_strbuf_append_printf(str, "%s: ", member->name);
+   else eina_strbuf_append_printf(str, ", %s: ", member->name);
+
+   if ((member->type) && (member->type->convert_to))
+     {
+        const Eina_Value_Type *type = member->type;
+        char *conv = NULL;
+
+        r = eina_value_type_convert_to(type, EINA_VALUE_TYPE_STRING,
+                                       p + member->offset, &conv);
+        if (r)
+          {
+             eina_strbuf_append(str, conv);
+             free(conv);
+          }
+     }
+
+   if (!r)
+     eina_strbuf_append_char(str, '?');
+}
+
+static Eina_Bool
+_eina_value_type_struct_convert_to(const Eina_Value_Type *type __UNUSED__, const Eina_Value_Type *convert, const void *type_mem, void *convert_mem)
+{
+   const Eina_Value_Struct *tmem = type_mem;
+
+   eina_error_set(0);
+   if (convert == EINA_VALUE_TYPE_STRINGSHARE ||
+       convert == EINA_VALUE_TYPE_STRING)
+     {
+        Eina_Strbuf *str = eina_strbuf_new();
+        const char *s;
+        Eina_Bool ret;
+
+        if (!tmem->memory) eina_strbuf_append(str, "{}");
+        else
+          {
+             const Eina_Value_Struct_Member *itr = tmem->desc->members;
+
+             eina_strbuf_append_char(str, '{');
+
+             if (tmem->desc->member_count > 0)
+               {
+                  const Eina_Value_Struct_Member *itr_end;
+
+                  itr_end = itr + tmem->desc->member_count;
+                  for (; itr < itr_end; itr++)
+                    _eina_value_type_struct_convert_to_string_member
+                      (tmem, itr, str);
+               }
+             else
+               {
+                  for (; itr->name != NULL; itr++)
+                    _eina_value_type_struct_convert_to_string_member
+                      (tmem, itr, str);
+               }
+
+             eina_strbuf_append_char(str, '}');
+          }
+        s = eina_strbuf_string_get(str);
+        ret = eina_value_type_pset(convert, convert_mem, &s);
+        eina_strbuf_free(str);
+        return ret;
+     }
+   else
+     {
+        eina_error_set(EINA_ERROR_VALUE_FAILED);
+        return EINA_FALSE;
+     }
+}
+
+static Eina_Bool
+_eina_value_type_struct_desc_check(const Eina_Value_Struct_Desc *desc)
+{
+   unsigned int minsize = 0;
+   const Eina_Value_Struct_Member *itr;
+
+   EINA_SAFETY_ON_NULL_RETURN_VAL(desc, EINA_FALSE);
+   EINA_SAFETY_ON_FALSE_RETURN_VAL
+     (desc->version == EINA_VALUE_STRUCT_DESC_VERSION, EINA_FALSE);
+
+   itr = desc->members;
+   if (desc->member_count > 0)
+     {
+        const Eina_Value_Struct_Member *itr_end = itr + desc->member_count;
+        for (; itr < itr_end; itr++)
+          {
+             unsigned int member_end;
+
+             EINA_SAFETY_ON_FALSE_RETURN_VAL
+               (eina_value_type_check(itr->type), EINA_FALSE);
+             EINA_SAFETY_ON_FALSE_RETURN_VAL
+               (itr->type->value_size > 0, EINA_FALSE);
+
+             member_end = itr->offset + itr->type->value_size;
+             if (minsize < member_end)
+               minsize = member_end;
+          }
+     }
+   else
+     {
+        for (; itr->name != NULL; itr++)
+          {
+             unsigned int member_end;
+
+             EINA_SAFETY_ON_FALSE_RETURN_VAL
+               (eina_value_type_check(itr->type), EINA_FALSE);
+             EINA_SAFETY_ON_FALSE_RETURN_VAL
+               (itr->type->value_size > 0, EINA_FALSE);
+
+             member_end = itr->offset + itr->type->value_size;
+             if (minsize < member_end)
+               minsize = member_end;
+          }
+     }
+
+   EINA_SAFETY_ON_FALSE_RETURN_VAL(minsize > 0, EINA_FALSE);
+   EINA_SAFETY_ON_FALSE_RETURN_VAL(desc->size >= minsize, EINA_FALSE);
+   return EINA_TRUE;
+}
+
+static Eina_Bool
+_eina_value_type_struct_pset(const Eina_Value_Type *type __UNUSED__, void *mem, const void *ptr)
+{
+   const Eina_Value_Struct_Operations *ops = _eina_value_type_struct_ops_get(mem);
+   Eina_Value_Struct *tmem = mem;
+   const Eina_Value_Struct *desc = ptr;
+
+   if (!_eina_value_type_struct_desc_check(desc->desc))
+     {
+        eina_error_set(EINA_ERROR_VALUE_FAILED);
+        return EINA_FALSE;
+     }
+
+   if ((ops) && (ops->free))
+     ops->free(ops, tmem->desc, tmem->memory);
+   else
+     free(tmem->memory);
+
+   *tmem = *desc;
+
+   ops = _eina_value_type_struct_ops_get(desc);
+   if (!tmem->memory)
+     {
+        if ((ops) && (ops->alloc))
+          tmem->memory = ops->alloc(ops, tmem->desc);
+        else
+          tmem->memory = malloc(tmem->desc->size);
+
+        if (!tmem->memory)
+          {
+             eina_error_set(EINA_ERROR_OUT_OF_MEMORY);
+             return EINA_FALSE;
+          }
+     }
+
+   eina_error_set(0);
+   return EINA_TRUE;
+}
+
+static Eina_Bool
+_eina_value_type_struct_vset(const Eina_Value_Type *type, void *mem, va_list args)
+{
+   const Eina_Value_Struct desc = va_arg(args, Eina_Value_Struct);
+   _eina_value_type_struct_pset(type, mem, &desc);
+   return EINA_TRUE;
+}
+
+static Eina_Bool
+_eina_value_type_struct_pget(const Eina_Value_Type *type __UNUSED__, const void *mem, void *ptr)
+{
+   memcpy(ptr, mem, sizeof(Eina_Value_Struct));
+   return EINA_TRUE;
+}
+
+static const Eina_Value_Type _EINA_VALUE_TYPE_STRUCT = {
+  EINA_VALUE_TYPE_VERSION,
+  sizeof(Eina_Value_Struct),
+  "Eina_Value_Struct",
+  _eina_value_type_struct_setup,
+  _eina_value_type_struct_flush,
+  _eina_value_type_struct_copy,
+  _eina_value_type_struct_compare,
+  _eina_value_type_struct_convert_to,
+  NULL, /* no convert from */
+  _eina_value_type_struct_vset,
+  _eina_value_type_struct_pset,
+  _eina_value_type_struct_pget
+};
+
 /* keep all basic types inlined in an array so we can compare if it's
  * a basic type using pointer arithmetic.
  *
@@ -4249,8 +4740,12 @@ eina_value_init(void)
    EINA_VALUE_TYPE_HASH = &_EINA_VALUE_TYPE_HASH;
    EINA_VALUE_TYPE_TIMEVAL = &_EINA_VALUE_TYPE_TIMEVAL;
    EINA_VALUE_TYPE_BLOB = &_EINA_VALUE_TYPE_BLOB;
+   EINA_VALUE_TYPE_STRUCT = &_EINA_VALUE_TYPE_STRUCT;
 
    EINA_VALUE_BLOB_OPERATIONS_MALLOC = &_EINA_VALUE_BLOB_OPERATIONS_MALLOC;
+
+   EINA_VALUE_STRUCT_OPERATIONS_BINSEARCH = &_EINA_VALUE_STRUCT_OPERATIONS_BINSEARCH;
+   EINA_VALUE_STRUCT_OPERATIONS_STRINGSHARE = &_EINA_VALUE_STRUCT_OPERATIONS_STRINGSHARE;
 
    return EINA_TRUE;
 
@@ -4326,8 +4821,12 @@ EAPI const Eina_Value_Type *EINA_VALUE_TYPE_LIST = NULL;
 EAPI const Eina_Value_Type *EINA_VALUE_TYPE_HASH = NULL;
 EAPI const Eina_Value_Type *EINA_VALUE_TYPE_TIMEVAL = NULL;
 EAPI const Eina_Value_Type *EINA_VALUE_TYPE_BLOB = NULL;
+EAPI const Eina_Value_Type *EINA_VALUE_TYPE_STRUCT = NULL;
 
 EAPI const Eina_Value_Blob_Operations *EINA_VALUE_BLOB_OPERATIONS_MALLOC = NULL;
+
+EAPI const Eina_Value_Struct_Operations *EINA_VALUE_STRUCT_OPERATIONS_BINSEARCH = NULL;
+EAPI const Eina_Value_Struct_Operations *EINA_VALUE_STRUCT_OPERATIONS_STRINGSHARE = NULL;
 
 EAPI Eina_Error EINA_ERROR_VALUE_FAILED = 0;
 
@@ -4445,13 +4944,13 @@ eina_value_array_new(const Eina_Value_Type *subtype, unsigned int step)
 
    EINA_SAFETY_ON_FALSE_RETURN_VAL(eina_value_type_check(subtype), EINA_FALSE);
 
-   value = calloc(1, sizeof(Eina_Value));
+   value = eina_mempool_malloc(_eina_value_mp, sizeof(Eina_Value));;
    if (!value)
      return NULL;
 
    if (!eina_value_array_setup(value, subtype, step))
      {
-        free(value);
+        eina_mempool_free(_eina_value_mp, value);
         return NULL;
      }
 
@@ -4465,13 +4964,13 @@ eina_value_list_new(const Eina_Value_Type *subtype)
 
    EINA_SAFETY_ON_FALSE_RETURN_VAL(eina_value_type_check(subtype), EINA_FALSE);
 
-   value = calloc(1, sizeof(Eina_Value));
+   value = eina_mempool_malloc(_eina_value_mp, sizeof(Eina_Value));;
    if (!value)
      return NULL;
 
    if (!eina_value_list_setup(value, subtype))
      {
-        free(value);
+        eina_mempool_free(_eina_value_mp, value);
         return NULL;
      }
 
@@ -4485,13 +4984,31 @@ eina_value_hash_new(const Eina_Value_Type *subtype, unsigned int buckets_power_s
 
    EINA_SAFETY_ON_FALSE_RETURN_VAL(eina_value_type_check(subtype), EINA_FALSE);
 
-   value = calloc(1, sizeof(Eina_Value));
+   value = eina_mempool_malloc(_eina_value_mp, sizeof(Eina_Value));;
    if (!value)
      return NULL;
 
    if (!eina_value_hash_setup(value, subtype, buckets_power_size))
      {
-        free(value);
+        eina_mempool_free(_eina_value_mp, value);
+        return NULL;
+     }
+
+   return value;
+}
+
+EAPI Eina_Value *
+eina_value_struct_new(const Eina_Value_Struct_Desc *desc)
+{
+   Eina_Value *value;
+
+   value = eina_mempool_malloc(_eina_value_mp, sizeof(Eina_Value));;
+   if (!value)
+     return NULL;
+
+   if (!eina_value_struct_setup(value, desc))
+     {
+        eina_mempool_free(_eina_value_mp, value);
         return NULL;
      }
 

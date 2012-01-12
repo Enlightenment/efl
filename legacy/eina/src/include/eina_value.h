@@ -302,6 +302,28 @@ EAPI extern const Eina_Value_Type *EINA_VALUE_TYPE_TIMEVAL;
 EAPI extern const Eina_Value_Type *EINA_VALUE_TYPE_BLOB;
 
 /**
+ * @var EINA_VALUE_TYPE_STRUCT
+ *
+ * manages struct type. Use the value get/set for structs:
+ *  @li eina_value_struct_get() and eina_value_struct_set()
+ *  @li eina_value_struct_vget() and eina_value_struct_vset()
+ *  @li eina_value_struct_pget() and eina_value_struct_pset()
+ *
+ * eina_value_set() takes an #Eina_Value_Struct where just @c desc is
+ * used. If there is an @c memory, it will be adopted and its contents
+ * must be properly configurable as @c desc expects. eina_value_pset()
+ * takes a pointer to an #Eina_Value_Struct.  For your convenience, use
+ * eina_value_struct_setup().
+ *
+ * eina_value_get() and eina_value_pget() takes a pointer to
+ * #Eina_Value_Struct, it's an exact copy of the current structure in
+ * use by value, no copies are done.
+ *
+ * @since 1.2
+ */
+EAPI extern const Eina_Value_Type *EINA_VALUE_TYPE_STRUCT;
+
+/**
  * @var EINA_ERROR_VALUE_FAILED
  * Error identifier corresponding to value check failure.
  *
@@ -464,6 +486,7 @@ static inline int eina_value_compare(const Eina_Value *a,
  * @li EINA_VALUE_TYPE_HASH: Eina_Value_Hash
  * @li EINA_VALUE_TYPE_TIMEVAL: struct timeval
  * @li EINA_VALUE_TYPE_BLOB: Eina_Value_Blob
+ * @li EINA_VALUE_TYPE_STRUCT: Eina_Value_Struct
  *
  * @code
  *     Eina_Value *value = eina_value_new(EINA_VALUE_TYPE_INT);
@@ -524,6 +547,7 @@ static inline Eina_Bool eina_value_set(Eina_Value *value,
  * @li EINA_VALUE_TYPE_HASH: Eina_Value_Hash*
  * @li EINA_VALUE_TYPE_TIMEVAL: struct timeval*
  * @li EINA_VALUE_TYPE_BLOB: Eina_Value_Blob*
+ * @li EINA_VALUE_TYPE_STRUCT: Eina_Value_Struct*
  *
  * @code
  *     Eina_Value *value = eina_value_new(EINA_VALUE_TYPE_INT);
@@ -626,6 +650,7 @@ static inline Eina_Bool eina_value_vget(const Eina_Value *value,
  * @li EINA_VALUE_TYPE_HASH: Eina_Value_Hash*
  * @li EINA_VALUE_TYPE_TIMEVAL: struct timeval*
  * @li EINA_VALUE_TYPE_BLOB: Eina_Value_Blob*
+ * @li EINA_VALUE_TYPE_STRUCT: Eina_Value_Struct*
  *
  * @note the pointer contents are written using the size defined by
  *       type. It can be larger than void* or uint64_t.
@@ -690,6 +715,7 @@ static inline Eina_Bool eina_value_pset(Eina_Value *value,
  * @li EINA_VALUE_TYPE_LIST: Eina_Value_List*
  * @li EINA_VALUE_TYPE_HASH: Eina_Value_Hash*
  * @li EINA_VALUE_TYPE_TIMEVAL: struct timeval*
+ * @li EINA_VALUE_TYPE_BLOB: Eina_Value_Blob*
  * @li EINA_VALUE_TYPE_BLOB: Eina_Value_Blob*
  *
  * @code
@@ -898,6 +924,7 @@ static inline Eina_Bool eina_value_array_remove(Eina_Value *value,
  * @li EINA_VALUE_TYPE_HASH: Eina_Value_Hash
  * @li EINA_VALUE_TYPE_TIMEVAL: struct timeval
  * @li EINA_VALUE_TYPE_BLOB: Eina_Value_Blob
+ * @li EINA_VALUE_TYPE_STRUCT: Eina_Value_Struct
  *
  * @code
  *     Eina_Value *value = eina_value_array_new(EINA_VALUE_TYPE_INT, 0);
@@ -958,6 +985,7 @@ static inline Eina_Bool eina_value_array_set(Eina_Value *value,
  * @li EINA_VALUE_TYPE_HASH: Eina_Value_Hash*
  * @li EINA_VALUE_TYPE_TIMEVAL: struct timeval*
  * @li EINA_VALUE_TYPE_BLOB: Eina_Value_Blob*
+ * @li EINA_VALUE_TYPE_STRUCT: Eina_Value_Struct*
  *
  * @code
  *     Eina_Value *value = eina_value_array_new(EINA_VALUE_TYPE_INT, 0);
@@ -1006,6 +1034,7 @@ static inline Eina_Bool eina_value_array_get(const Eina_Value *value,
  * @li EINA_VALUE_TYPE_HASH: Eina_Value_Hash
  * @li EINA_VALUE_TYPE_TIMEVAL: struct timeval
  * @li EINA_VALUE_TYPE_BLOB: Eina_Value_Blob
+ * @li EINA_VALUE_TYPE_STRUCT: Eina_Value_Struct
  *
  * @code
  *     Eina_Value *value = eina_value_array_new(EINA_VALUE_TYPE_INT, 0);
@@ -1060,6 +1089,7 @@ static inline Eina_Bool eina_value_array_insert(Eina_Value *value,
  * @li EINA_VALUE_TYPE_HASH: Eina_Value_Hash
  * @li EINA_VALUE_TYPE_TIMEVAL: struct timeval
  * @li EINA_VALUE_TYPE_BLOB: Eina_Value_Blob
+ * @li EINA_VALUE_TYPE_STRUCT: Eina_Value_Struct
  *
  * @code
  *     Eina_Value *value = eina_value_array_new(EINA_VALUE_TYPE_INT, 0);
@@ -1200,6 +1230,7 @@ static inline Eina_Bool eina_value_array_vappend(Eina_Value *value,
  * @li EINA_VALUE_TYPE_HASH: Eina_Value_Hash*
  * @li EINA_VALUE_TYPE_TIMEVAL: struct timeval*
  * @li EINA_VALUE_TYPE_BLOB: Eina_Value_Blob*
+ * @li EINA_VALUE_TYPE_STRUCT: Eina_Value_Struct*
  *
  * @note the pointer contents are written using the size defined by
  *       type. It can be larger than void* or uint64_t.
@@ -1264,6 +1295,7 @@ static inline Eina_Bool eina_value_array_pset(Eina_Value *value,
  * @li EINA_VALUE_TYPE_HASH: Eina_Value_Hash*
  * @li EINA_VALUE_TYPE_TIMEVAL: struct timeval*
  * @li EINA_VALUE_TYPE_BLOB: Eina_Value_Blob*
+ * @li EINA_VALUE_TYPE_STRUCT: Eina_Value_Struct*
  *
  * @code
  *     Eina_Value *value = eina_value_array_new(EINA_VALUE_TYPE_INT, 0);
@@ -1313,6 +1345,7 @@ static inline Eina_Bool eina_value_array_pget(const Eina_Value *value,
  * @li EINA_VALUE_TYPE_HASH: Eina_Value_Hash*
  * @li EINA_VALUE_TYPE_TIMEVAL: struct timeval*
  * @li EINA_VALUE_TYPE_BLOB: Eina_Value_Blob*
+ * @li EINA_VALUE_TYPE_STRUCT: Eina_Value_Struct*
  *
  * @note the pointer contents are written using the size defined by
  *       type. It can be larger than void* or uint64_t.
@@ -1370,6 +1403,7 @@ static inline Eina_Bool eina_value_array_pinsert(Eina_Value *value,
  * @li EINA_VALUE_TYPE_HASH: Eina_Value_Hash*
  * @li EINA_VALUE_TYPE_TIMEVAL: struct timeval*
  * @li EINA_VALUE_TYPE_BLOB: Eina_Value_Blob*
+ * @li EINA_VALUE_TYPE_STRUCT: Eina_Value_Struct*
  *
  * @note the pointer contents are written using the size defined by
  *       type. It can be larger than void* or uint64_t.
@@ -1520,6 +1554,7 @@ static inline Eina_Bool eina_value_list_remove(Eina_Value *value,
  * @li EINA_VALUE_TYPE_HASH: Eina_Value_Hash
  * @li EINA_VALUE_TYPE_TIMEVAL: struct timeval
  * @li EINA_VALUE_TYPE_BLOB: Eina_Value_Blob
+ * @li EINA_VALUE_TYPE_STRUCT: Eina_Value_Struct
  *
  * @code
  *     Eina_Value *value = eina_value_list_new(EINA_VALUE_TYPE_INT);
@@ -1579,6 +1614,7 @@ static inline Eina_Bool eina_value_list_set(Eina_Value *value,
  * @li EINA_VALUE_TYPE_HASH: Eina_Value_Hash*
  * @li EINA_VALUE_TYPE_TIMEVAL: struct timeval*
  * @li EINA_VALUE_TYPE_BLOB: Eina_Value_Blob*
+ * @li EINA_VALUE_TYPE_STRUCT: Eina_Value_Struct*
  *
  * @code
  *     Eina_Value *value = eina_value_list_new(EINA_VALUE_TYPE_INT);
@@ -1626,6 +1662,7 @@ static inline Eina_Bool eina_value_list_get(const Eina_Value *value,
  * @li EINA_VALUE_TYPE_HASH: Eina_Value_Hash
  * @li EINA_VALUE_TYPE_TIMEVAL: struct timeval
  * @li EINA_VALUE_TYPE_BLOB: Eina_Value_Blob
+ * @li EINA_VALUE_TYPE_STRUCT: Eina_Value_Struct
  *
  * @code
  *     Eina_Value *value = eina_value_list_new(EINA_VALUE_TYPE_INT);
@@ -1679,6 +1716,7 @@ static inline Eina_Bool eina_value_list_insert(Eina_Value *value,
  * @li EINA_VALUE_TYPE_HASH: Eina_Value_Hash
  * @li EINA_VALUE_TYPE_TIMEVAL: struct timeval
  * @li EINA_VALUE_TYPE_BLOB: Eina_Value_Blob
+ * @li EINA_VALUE_TYPE_STRUCT: Eina_Value_Struct
  *
  * @code
  *     Eina_Value *value = eina_value_list_new(EINA_VALUE_TYPE_INT);
@@ -1818,6 +1856,7 @@ static inline Eina_Bool eina_value_list_vappend(Eina_Value *value,
  * @li EINA_VALUE_TYPE_HASH: Eina_Value_Hash*
  * @li EINA_VALUE_TYPE_TIMEVAL: struct timeval*
  * @li EINA_VALUE_TYPE_BLOB: Eina_Value_Blob*
+ * @li EINA_VALUE_TYPE_STRUCT: Eina_Value_Struct*
  *
  * @note the pointer contents are written using the size defined by
  *       type. It can be larger than void* or uint64_t.
@@ -1881,6 +1920,7 @@ static inline Eina_Bool eina_value_list_pset(Eina_Value *value,
  * @li EINA_VALUE_TYPE_HASH: Eina_Value_Hash*
  * @li EINA_VALUE_TYPE_TIMEVAL: struct timeval*
  * @li EINA_VALUE_TYPE_BLOB: Eina_Value_Blob*
+ * @li EINA_VALUE_TYPE_STRUCT: Eina_Value_Struct*
  *
  * @code
  *     Eina_Value *value = eina_value_list_new(EINA_VALUE_TYPE_INT);
@@ -1929,6 +1969,7 @@ static inline Eina_Bool eina_value_list_pget(const Eina_Value *value,
  * @li EINA_VALUE_TYPE_HASH: Eina_Value_Hash*
  * @li EINA_VALUE_TYPE_TIMEVAL: struct timeval*
  * @li EINA_VALUE_TYPE_BLOB: Eina_Value_Blob*
+ * @li EINA_VALUE_TYPE_STRUCT: Eina_Value_Struct*
  *
  * @note the pointer contents are written using the size defined by
  *       type. It can be larger than void* or uint64_t.
@@ -1985,6 +2026,7 @@ static inline Eina_Bool eina_value_list_pinsert(Eina_Value *value,
  * @li EINA_VALUE_TYPE_HASH: Eina_Value_Hash*
  * @li EINA_VALUE_TYPE_TIMEVAL: struct timeval*
  * @li EINA_VALUE_TYPE_BLOB: Eina_Value_Blob*
+ * @li EINA_VALUE_TYPE_STRUCT: Eina_Value_Struct*
  *
  * @note the pointer contents are written using the size defined by
  *       type. It can be larger than void* or uint64_t.
@@ -2118,7 +2160,7 @@ static inline Eina_Bool eina_value_hash_del(Eina_Value *value,
  * @param key key to find the member
  * @return #EINA_TRUE on success, #EINA_FALSE otherwise.
  *
- * The variable argument is dependent on chosen subtype. The hash for
+ * The variable argument is dependent on chosen subtype. The list for
  * basic types:
  *
  * @li EINA_VALUE_TYPE_UCHAR: unsigned char
@@ -2138,6 +2180,7 @@ static inline Eina_Bool eina_value_hash_del(Eina_Value *value,
  * @li EINA_VALUE_TYPE_HASH: Eina_Value_Hash
  * @li EINA_VALUE_TYPE_TIMEVAL: struct timeval*
  * @li EINA_VALUE_TYPE_BLOB: Eina_Value_Blob*
+ * @li EINA_VALUE_TYPE_STRUCT: Eina_Value_Struct*
  *
  * @code
  *     Eina_Value *value = eina_value_hash_new(EINA_VALUE_TYPE_INT, 0);
@@ -2170,7 +2213,7 @@ static inline Eina_Bool eina_value_hash_set(Eina_Value *value,
  * stored inside the object. There shouldn't be any memory allocation,
  * thus the contents should @b not be freed.
  *
- * The variable argument is dependent on chosen subtype. The hash for
+ * The variable argument is dependent on chosen subtype. The list for
  * basic types:
  *
  * @li EINA_VALUE_TYPE_UCHAR: unsigned char*
@@ -2190,6 +2233,7 @@ static inline Eina_Bool eina_value_hash_set(Eina_Value *value,
  * @li EINA_VALUE_TYPE_HASH: Eina_Value_Hash*
  * @li EINA_VALUE_TYPE_TIMEVAL: struct timeval*
  * @li EINA_VALUE_TYPE_BLOB: Eina_Value_Blob*
+ * @li EINA_VALUE_TYPE_STRUCT: Eina_Value_Struct*
  *
  * @code
  *     Eina_Value *value = eina_value_hash_new(EINA_VALUE_TYPE_INT, 0);
@@ -2255,7 +2299,7 @@ static inline Eina_Bool eina_value_hash_vget(const Eina_Value *value,
  * @param ptr pointer to specify the contents.
  * @return #EINA_TRUE on success, #EINA_FALSE otherwise.
  *
- * The pointer type is dependent on chosen value type. The hash for
+ * The pointer type is dependent on chosen value type. The list for
  * basic types:
  *
  * @li EINA_VALUE_TYPE_UCHAR: unsigned char*
@@ -2275,6 +2319,7 @@ static inline Eina_Bool eina_value_hash_vget(const Eina_Value *value,
  * @li EINA_VALUE_TYPE_HASH: Eina_Value_Hash*
  * @li EINA_VALUE_TYPE_TIMEVAL: struct timeval*
  * @li EINA_VALUE_TYPE_BLOB: Eina_Value_Blob*
+ * @li EINA_VALUE_TYPE_STRUCT: Eina_Value_Struct*
  *
  * @note the pointer contents are written using the size defined by
  *       type. It can be larger than void* or uint64_t.
@@ -2310,7 +2355,7 @@ static inline Eina_Bool eina_value_hash_pset(Eina_Value *value,
  * object. There shouldn't be any memory allocation, thus the contents
  * should @b not be freed.
  *
- * The pointer type is dependent on chosen value type. The hash for
+ * The pointer type is dependent on chosen value type. The list for
  * basic types:
  *
  * @li EINA_VALUE_TYPE_UCHAR: unsigned char*
@@ -2330,6 +2375,7 @@ static inline Eina_Bool eina_value_hash_pset(Eina_Value *value,
  * @li EINA_VALUE_TYPE_HASH: Eina_Value_Hash*
  * @li EINA_VALUE_TYPE_TIMEVAL: struct timeval*
  * @li EINA_VALUE_TYPE_BLOB: Eina_Value_Blob*
+ * @li EINA_VALUE_TYPE_STRUCT: Eina_Value_Struct*
  *
  * @code
  *     Eina_Value *value = eina_value_hash_new(EINA_VALUE_TYPE_INT, 0);
@@ -2413,6 +2459,475 @@ struct _Eina_Value_Blob
 /**
  * @}
  */
+
+/**
+ * @defgroup Eina_Value_Struct_Group Generic Value Struct management
+ *
+ * @{
+ */
+
+/**
+ * @typedef Eina_Value_Struct_Operations
+ * How to manage struct. Any @c NULL callback is ignored.
+ * @since 1.2
+ */
+typedef struct _Eina_Value_Struct_Operations Eina_Value_Struct_Operations;
+
+/**
+ * @typedef Eina_Value_Struct_Member
+ * Describes a single member of struct.
+ * @since 1.2
+ */
+typedef struct _Eina_Value_Struct_Member Eina_Value_Struct_Member;
+
+/**
+ * @typedef Eina_Value_Struct_Desc
+ * Describes the struct by listing its size, members and operations.
+ * @since 1.2
+ */
+typedef struct _Eina_Value_Struct_Desc Eina_Value_Struct_Desc;
+
+/**
+ * @typedef Eina_Value_Struct
+ * @since 1.2
+ */
+typedef struct _Eina_Value_Struct Eina_Value_Struct;
+
+/**
+ * @struct _Eina_Value_Struct_Operations
+ * How to manage struct. Any @c NULL callback is ignored.
+ * @since 1.2
+ */
+struct _Eina_Value_Struct_Operations
+{
+#define EINA_VALUE_STRUCT_OPERATIONS_VERSION (1)
+   unsigned int version; /**< must be EINA_VALUE_STRUCT_OPERATIONS_VERSION */
+   void *(*alloc)(const Eina_Value_Struct_Operations *ops, const Eina_Value_Struct_Desc *desc);
+   void (*free)(const Eina_Value_Struct_Operations *ops, const Eina_Value_Struct_Desc *desc, void *memory);
+   void *(*copy)(const Eina_Value_Struct_Operations *ops, const Eina_Value_Struct_Desc *desc, const void *memory);
+   int (*compare)(const Eina_Value_Struct_Operations *ops, const Eina_Value_Struct_Desc *desc, const void *data1, const void *data2);
+   const Eina_Value_Struct_Member *(*find_member)(const Eina_Value_Struct_Operations *ops, const Eina_Value_Struct_Desc *desc, const char *name); /**< replace the function to find description for member. For huge structures consider using binary search, stringshared, hash or gperf. The default function does linear search using strcmp(). */
+};
+
+/**
+ * @var EINA_VALUE_STRUCT_OPERATIONS_BINSEARCH
+ *
+ * Assumes @c members is sorted by name and applies binary search for
+ * names.
+ *
+ * Ideally the @c member_count field is set to speed it up.
+ *
+ * No other methods are set (alloc, free, copy, compare), then it uses
+ * the default operations.
+ */
+EAPI extern const Eina_Value_Struct_Operations *EINA_VALUE_STRUCT_OPERATIONS_BINSEARCH;
+
+/**
+ * @var EINA_VALUE_STRUCT_OPERATIONS_STRINGSHARE
+ *
+ * Assumes @c members name are stringshared and can be compared for
+ * equality without using its contents (simple pointer comparison).
+ *
+ * Ideally the search @c name will be stringshared as well, but it
+ * will do a second loop with a forced stringshare if it did not find
+ * the member.
+ *
+ * No other methods are set (alloc, free, copy, compare), then it uses
+ * the default operations.
+ */
+EAPI extern const Eina_Value_Struct_Operations *EINA_VALUE_STRUCT_OPERATIONS_STRINGSHARE;
+
+/**
+ * @struct _Eina_Value_Struct_Member
+ * @since 1.2
+ */
+struct _Eina_Value_Struct_Member
+{
+   const char *name;
+   const Eina_Value_Type *type;
+   unsigned int offset;
+};
+
+/**
+ * @struct _Eina_Value_Struct_Desc
+ * @since 1.2
+ */
+struct _Eina_Value_Struct_Desc
+{
+#define EINA_VALUE_STRUCT_DESC_VERSION (1)
+   unsigned int version; /**< must be EINA_VALUE_STRUCT_DESC_VERSION */
+   const Eina_Value_Struct_Operations *ops; /**< operations, if @c NULL defaults will be used. You may use operations to optimize member lookup using binary search or gperf hash. */
+   const Eina_Value_Struct_Member *members; /**< array of member descriptions, if @c member_count is zero, then it must be @c NULL terminated. */
+   unsigned int member_count; /**< if > 0, specifies number of members. If zero then @c members must be NULL terminated. */
+   unsigned int size; /**< byte size to allocate, may be bigger than sum of members */
+};
+
+/**
+ * @struct _Eina_Value_Struct
+ * @since 1.2
+ */
+struct _Eina_Value_Struct
+{
+   const Eina_Value_Struct_Desc *desc;
+   void *memory;
+};
+
+/**
+ * @brief Create generic value storage of type struct.
+ * @param desc how to manage this struct members.
+ * @return The new value or @c NULL on failure.
+ *
+ * Create a new generic value storage of type struct. The members are
+ * managed using the description specified by @a desc.
+ *
+ * On failure, @c NULL is returned and #EINA_ERROR_OUT_OF_MEMORY or
+ * #EINA_ERROR_VALUE_FAILED is set.
+ *
+ * @note this creates from mempool and then uses
+ *       eina_value_struct_setup().
+ *
+ * @see eina_value_free()
+ * @see eina_value_struct_setup()
+ *
+ * @since 1.2
+ */
+EAPI Eina_Value *eina_value_struct_new(const Eina_Value_Struct_Desc *desc) EINA_ARG_NONNULL(1);
+
+/**
+ * @brief Initialize generic value storage of type struct.
+ * @param value value object
+ * @param desc how to manage this struct members.
+ * @return #EINA_TRUE on success, #EINA_FALSE otherwise.
+ *
+ * Initializes new generic value storage of type struct with the given
+ * @a desc.
+ *
+ * This is the same as calling eina_value_set() with
+ * #EINA_VALUE_TYPE_STRUCT followed by eina_value_pset() with the
+ * #Eina_Value_Struct description configured.
+ *
+ * @note Existing contents are ignored! If the value was previously used, then
+ *       use eina_value_flush() first.
+ *
+ * On failure, #EINA_FALSE is returned and #EINA_ERROR_OUT_OF_MEMORY
+ * or #EINA_ERROR_VALUE_FAILED is set.
+ *
+ * @see eina_value_flush()
+ *
+ * @since 1.2
+ */
+static inline Eina_Bool eina_value_struct_setup(Eina_Value *value,
+                                                const Eina_Value_Struct_Desc *desc) EINA_ARG_NONNULL(1, 2);
+
+/**
+ * @brief Set the generic value in an struct member.
+ * @param value source value object
+ * @param name name to find the member
+ * @return #EINA_TRUE on success, #EINA_FALSE otherwise.
+ *
+ * The variable argument is dependent on chosen member type. The list
+ * for basic types:
+ *
+ * @li EINA_VALUE_TYPE_UCHAR: unsigned char
+ * @li EINA_VALUE_TYPE_USHORT: unsigned short
+ * @li EINA_VALUE_TYPE_UINT: unsigned int
+ * @li EINA_VALUE_TYPE_ULONG: unsigned long
+ * @li EINA_VALUE_TYPE_UINT64: uint64_t
+ * @li EINA_VALUE_TYPE_CHAR: char
+ * @li EINA_VALUE_TYPE_SHORT: short
+ * @li EINA_VALUE_TYPE_INT: int
+ * @li EINA_VALUE_TYPE_LONG: long
+ * @li EINA_VALUE_TYPE_INT64: int64_t
+ * @li EINA_VALUE_TYPE_FLOAT: float
+ * @li EINA_VALUE_TYPE_DOUBLE: double
+ * @li EINA_VALUE_TYPE_STRINGSHARE: const char *
+ * @li EINA_VALUE_TYPE_STRING: const char *
+ * @li EINA_VALUE_TYPE_HASH: Eina_Value_Hash
+ * @li EINA_VALUE_TYPE_TIMEVAL: struct timeval*
+ * @li EINA_VALUE_TYPE_BLOB: Eina_Value_Blob*
+ * @li EINA_VALUE_TYPE_STRUCT: Eina_Value_Struct*
+ *
+ * @code
+ *     struct myst {
+ *         int i;
+ *         char c;
+ *     };
+ *     const Eina_Value_Struct_Member myst_members[] = {
+ *         {"i", EINA_VALUE_TYPE_INT, 0},
+ *         {"c", EINA_VALUE_TYPE_CHAR, 4},
+ *         {NULL, NULL, 0}
+ *     };
+ *     const Eina_Value_Struct_Desc myst_desc = {
+ *         EINA_VALUE_STRUCT_DESC_VERSION,
+ *         NULL, myst_members, 2, sizeof(struct myst)
+ *     };
+ *     Eina_Value *value = eina_value_struct_new(&my_desc);
+ *     int x;
+ *     char y;
+ *
+ *     eina_value_struct_set(value, "i", 5678);
+ *     eina_value_struct_get(value, "i", &x);
+ *     eina_value_struct_set(value, "c", 0xf);
+ *     eina_value_struct_get(value, "c", &y);
+ *     eina_value_free(value);
+ * @endcode
+ *
+ * @see eina_value_struct_get()
+ * @see eina_value_struct_vset()
+ * @see eina_value_struct_pset()
+ *
+ * @since 1.2
+ */
+static inline Eina_Bool eina_value_struct_set(Eina_Value *value,
+                                              const char *name,
+                                              ...) EINA_ARG_NONNULL(1);
+
+/**
+ * @brief Get the generic value from an struct member.
+ * @param value source value object
+ * @param name name to find the member
+ * @return #EINA_TRUE on success, #EINA_FALSE otherwise.
+ *
+ * The value is returned in the variable argument parameter, the
+ * actual value is type-dependent, but usually it will be what is
+ * stored inside the object. There shouldn't be any memory allocation,
+ * thus the contents should @b not be freed.
+ *
+ * The variable argument is dependent on chosen member type. The list
+ * for basic types:
+ *
+ * @li EINA_VALUE_TYPE_UCHAR: unsigned char*
+ * @li EINA_VALUE_TYPE_USHORT: unsigned short*
+ * @li EINA_VALUE_TYPE_UINT: unsigned int*
+ * @li EINA_VALUE_TYPE_ULONG: unsigned long*
+ * @li EINA_VALUE_TYPE_UINT64: uint64_t*
+ * @li EINA_VALUE_TYPE_CHAR: char*
+ * @li EINA_VALUE_TYPE_SHORT: short*
+ * @li EINA_VALUE_TYPE_INT: int*
+ * @li EINA_VALUE_TYPE_LONG: long*
+ * @li EINA_VALUE_TYPE_INT64: int64_t*
+ * @li EINA_VALUE_TYPE_FLOAT: float*
+ * @li EINA_VALUE_TYPE_DOUBLE: double*
+ * @li EINA_VALUE_TYPE_STRINGSHARE: const char **
+ * @li EINA_VALUE_TYPE_STRING: const char **
+ * @li EINA_VALUE_TYPE_HASH: Eina_Value_Hash*
+ * @li EINA_VALUE_TYPE_TIMEVAL: struct timeval*
+ * @li EINA_VALUE_TYPE_BLOB: Eina_Value_Blob*
+ * @li EINA_VALUE_TYPE_STRUCT: Eina_Value_Struct*
+ *
+ * @code
+ *     struct myst {
+ *         int i;
+ *         char c;
+ *     };
+ *     const Eina_Value_Struct_Member myst_members[] = {
+ *         {"i", EINA_VALUE_TYPE_INT, 0},
+ *         {"c", EINA_VALUE_TYPE_CHAR, 4},
+ *         {NULL, NULL, 0}
+ *     };
+ *     const Eina_Value_Struct_Desc myst_desc = {
+ *         EINA_VALUE_STRUCT_DESC_VERSION,
+ *         NULL, myst_members, 2, sizeof(struct myst)
+ *     };
+ *     Eina_Value *value = eina_value_struct_new(&my_desc);
+ *     int x;
+ *     char y;
+ *
+ *     eina_value_struct_set(value, "i", 5678);
+ *     eina_value_struct_get(value, "i", &x);
+ *     eina_value_struct_set(value, "c", 0xf);
+ *     eina_value_struct_get(value, "c", &y);
+ *     eina_value_free(value);
+ * @endcode
+ *
+ * @see eina_value_struct_set()
+ * @see eina_value_struct_vset()
+ * @see eina_value_struct_pset()
+ *
+ * @since 1.2
+ */
+static inline Eina_Bool eina_value_struct_get(const Eina_Value *value,
+                                              const char *name,
+                                              ...) EINA_ARG_NONNULL(1);
+
+/**
+ * @brief Set the generic value in an struct member.
+ * @param value source value object
+ * @param name name to find the member
+ * @param args variable argument
+ * @return #EINA_TRUE on success, #EINA_FALSE otherwise.
+ * @see eina_value_struct_set()
+ * @see eina_value_struct_get()
+ * @see eina_value_struct_pset()
+ *
+ * @since 1.2
+ */
+static inline Eina_Bool eina_value_struct_vset(Eina_Value *value,
+                                               const char *name,
+                                               va_list args) EINA_ARG_NONNULL(1);
+
+/**
+ * @brief Get the generic value from an struct member.
+ * @param value source value object
+ * @param name name to find the member
+ * @param args variable argument
+ * @return #EINA_TRUE on success, #EINA_FALSE otherwise.
+ *
+ * The value is returned in the variable argument parameter, the
+ * actual value is type-dependent, but usually it will be what is
+ * stored inside the object. There shouldn't be any memory allocation,
+ * thus the contents should @b not be freed.
+ *
+ * @see eina_value_struct_vset()
+ * @see eina_value_struct_get()
+ * @see eina_value_struct_pget()
+ *
+ * @since 1.2
+ */
+static inline Eina_Bool eina_value_struct_vget(const Eina_Value *value,
+                                               const char *name,
+                                               va_list args) EINA_ARG_NONNULL(1);
+
+/**
+ * @brief Set the generic value in an struct member from pointer.
+ * @param value source value object
+ * @param name name to find the member
+ * @param ptr pointer to specify the contents.
+ * @return #EINA_TRUE on success, #EINA_FALSE otherwise.
+ *
+ * The pointer type is dependent on chosen value type. The list for
+ * basic types:
+ *
+ * @li EINA_VALUE_TYPE_UCHAR: unsigned char*
+ * @li EINA_VALUE_TYPE_USHORT: unsigned short*
+ * @li EINA_VALUE_TYPE_UINT: unsigned int*
+ * @li EINA_VALUE_TYPE_ULONG: unsigned long*
+ * @li EINA_VALUE_TYPE_UINT64: uint64_t*
+ * @li EINA_VALUE_TYPE_CHAR: char*
+ * @li EINA_VALUE_TYPE_SHORT: short*
+ * @li EINA_VALUE_TYPE_INT: int*
+ * @li EINA_VALUE_TYPE_LONG: long*
+ * @li EINA_VALUE_TYPE_INT64: int64_t*
+ * @li EINA_VALUE_TYPE_FLOAT: float*
+ * @li EINA_VALUE_TYPE_DOUBLE: double*
+ * @li EINA_VALUE_TYPE_STRINGSHARE: const char **
+ * @li EINA_VALUE_TYPE_STRING: const char **
+ * @li EINA_VALUE_TYPE_HASH: Eina_Value_Hash*
+ * @li EINA_VALUE_TYPE_TIMEVAL: struct timeval*
+ * @li EINA_VALUE_TYPE_BLOB: Eina_Value_Blob*
+ * @li EINA_VALUE_TYPE_STRUCT: Eina_Value_Struct*
+ *
+ * @note the pointer contents are written using the size defined by
+ *       type. It can be larger than void* or uint64_t.
+ *
+ * @code
+ *     struct myst {
+ *         int i;
+ *         char c;
+ *     };
+ *     const Eina_Value_Struct_Member myst_members[] = {
+ *         {"i", EINA_VALUE_TYPE_INT, 0},
+ *         {"c", EINA_VALUE_TYPE_CHAR, 4},
+ *         {NULL, NULL, 0}
+ *     };
+ *     const Eina_Value_Struct_Desc myst_desc = {
+ *         EINA_VALUE_STRUCT_DESC_VERSION,
+ *         NULL, myst_members, 2, sizeof(struct myst)
+ *     };
+ *     Eina_Value *value = eina_value_struct_new(&my_desc);
+ *     int x = 5678;
+ *     char y = 0xf;
+ *
+ *     eina_value_struct_pset(value, "i", &);
+ *     eina_value_struct_pget(value, "i", &x);
+ *     eina_value_struct_pset(value, "c", &y);
+ *     eina_value_struct_pget(value, "c", &y);
+ *     eina_value_free(value);
+ * @endcode
+ *
+ * @see eina_value_struct_set()
+ * @see eina_value_struct_get()
+ * @see eina_value_struct_vset()
+ *
+ * @since 1.2
+ */
+static inline Eina_Bool eina_value_struct_pset(Eina_Value *value,
+                                               const char *name,
+                                               const void *ptr) EINA_ARG_NONNULL(1, 3);
+
+/**
+ * @brief Get the generic value to pointer from an struct member.
+ * @param value source value object
+ * @param name name to find the member
+ * @param ptr pointer to receive the contents.
+ * @return #EINA_TRUE on success, #EINA_FALSE otherwise.
+ *
+ * The value is returned in pointer contents, the actual value is
+ * type-dependent, but usually it will be what is stored inside the
+ * object. There shouldn't be any memory allocation, thus the contents
+ * should @b not be freed.
+ *
+ * The pointer type is dependent on chosen value type. The list for
+ * basic types:
+ *
+ * @li EINA_VALUE_TYPE_UCHAR: unsigned char*
+ * @li EINA_VALUE_TYPE_USHORT: unsigned short*
+ * @li EINA_VALUE_TYPE_UINT: unsigned int*
+ * @li EINA_VALUE_TYPE_ULONG: unsigned long*
+ * @li EINA_VALUE_TYPE_UINT64: uint64_t*
+ * @li EINA_VALUE_TYPE_CHAR: char*
+ * @li EINA_VALUE_TYPE_SHORT: short*
+ * @li EINA_VALUE_TYPE_INT: int*
+ * @li EINA_VALUE_TYPE_LONG: long*
+ * @li EINA_VALUE_TYPE_INT64: int64_t*
+ * @li EINA_VALUE_TYPE_FLOAT: float*
+ * @li EINA_VALUE_TYPE_DOUBLE: double*
+ * @li EINA_VALUE_TYPE_STRINGSHARE: const char **
+ * @li EINA_VALUE_TYPE_STRING: const char **
+ * @li EINA_VALUE_TYPE_HASH: Eina_Value_Hash*
+ * @li EINA_VALUE_TYPE_TIMEVAL: struct timeval*
+ * @li EINA_VALUE_TYPE_BLOB: Eina_Value_Blob*
+ * @li EINA_VALUE_TYPE_STRUCT: Eina_Value_Struct*
+ *
+ * @code
+ *     struct myst {
+ *         int i;
+ *         char c;
+ *     };
+ *     const Eina_Value_Struct_Member myst_members[] = {
+ *         {"i", EINA_VALUE_TYPE_INT, 0},
+ *         {"c", EINA_VALUE_TYPE_CHAR, 4},
+ *         {NULL, NULL, 0}
+ *     };
+ *     const Eina_Value_Struct_Desc myst_desc = {
+ *         EINA_VALUE_STRUCT_DESC_VERSION,
+ *         NULL, myst_members, 2, sizeof(struct myst)
+ *     };
+ *     Eina_Value *value = eina_value_struct_new(&my_desc);
+ *     int x = 5678;
+ *     char y = 0xf;
+ *
+ *     eina_value_struct_pset(value, "i", &);
+ *     eina_value_struct_pget(value, "i", &x);
+ *     eina_value_struct_pset(value, "c", &y);
+ *     eina_value_struct_pget(value, "c", &y);
+ *     eina_value_free(value);
+ * @endcode
+ *
+ * @see eina_value_struct_set()
+ * @see eina_value_struct_vset()
+ * @see eina_value_struct_pset()
+ *
+ * @since 1.2
+ */
+static inline Eina_Bool eina_value_struct_pget(const Eina_Value *value,
+                                               const char *name,
+                                               void *ptr) EINA_ARG_NONNULL(1, 3);
+
+/**
+ * @}
+ */
+
 
 /**
  * @defgroup Eina_Value_Type_Group Generic Value Type management
@@ -2503,7 +3018,7 @@ static inline Eina_Bool eina_value_type_copy(const Eina_Value_Type *type, const 
  * @return less than zero if a < b, greater than zero if a > b, zero if equal.
  * @since 1.2
  */
-static inline int eina_value_type_compare(const Eina_Value_Type *type, const void *a, void *b);
+static inline int eina_value_type_compare(const Eina_Value_Type *type, const void *a, const void *b);
 
 /**
  * @brief Convert memory using type descriptor.

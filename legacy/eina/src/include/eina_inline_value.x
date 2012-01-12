@@ -944,14 +944,14 @@ eina_value_list_vset(Eina_Value *value, unsigned int position, va_list args)
 static inline Eina_Bool
 eina_value_list_vget(const Eina_Value *value, unsigned int position, va_list args)
 {
-   Eina_Value_List *desc;
+   const Eina_Value_List *desc;
    const Eina_List *node;
    const void *mem;
    void *ptr;
    Eina_Bool ret;
 
    EINA_VALUE_TYPE_LIST_CHECK_RETURN_VAL(value, 0);
-   desc = (Eina_Value_List *)eina_value_memory_get(value);
+   desc = (const Eina_Value_List *)eina_value_memory_get(value);
    if (!desc)
      return EINA_FALSE;
 
@@ -1120,13 +1120,13 @@ eina_value_list_pset(Eina_Value *value, unsigned int position, const void *ptr)
 static inline Eina_Bool
 eina_value_list_pget(const Eina_Value *value, unsigned int position, void *ptr)
 {
-   Eina_Value_List *desc;
+   const Eina_Value_List *desc;
    const Eina_List *node;
    const void *mem;
    Eina_Bool ret;
 
    EINA_VALUE_TYPE_LIST_CHECK_RETURN_VAL(value, 0);
-   desc = (Eina_Value_List *)eina_value_memory_get(value);
+   desc = (const Eina_Value_List *)eina_value_memory_get(value);
    if (!desc)
      return EINA_FALSE;
 
@@ -1316,14 +1316,14 @@ eina_value_hash_vset(Eina_Value *value, const char *key, va_list args)
 static inline Eina_Bool
 eina_value_hash_vget(const Eina_Value *value, const char *key, va_list args)
 {
-   Eina_Value_Hash *desc;
+   const Eina_Value_Hash *desc;
    const void *mem;
    void *ptr;
    Eina_Bool ret;
 
    EINA_VALUE_TYPE_HASH_CHECK_RETURN_VAL(value, EINA_FALSE);
    EINA_SAFETY_ON_NULL_RETURN_VAL(key, EINA_FALSE);
-   desc = (Eina_Value_Hash *)eina_value_memory_get(value);
+   desc = (const Eina_Value_Hash *)eina_value_memory_get(value);
    if (!desc)
      return EINA_FALSE;
 
@@ -1403,13 +1403,13 @@ eina_value_hash_pset(Eina_Value *value, const char *key, const void *ptr)
 static inline Eina_Bool
 eina_value_hash_pget(const Eina_Value *value, const char *key, void *ptr)
 {
-   Eina_Value_Hash *desc;
+   const Eina_Value_Hash *desc;
    const void *mem;
    Eina_Bool ret;
 
    EINA_VALUE_TYPE_HASH_CHECK_RETURN_VAL(value, 0);
    EINA_SAFETY_ON_NULL_RETURN_VAL(key, EINA_FALSE);
-   desc = (Eina_Value_Hash *)eina_value_memory_get(value);
+   desc = (const Eina_Value_Hash *)eina_value_memory_get(value);
    if (!desc)
      return EINA_FALSE;
 
@@ -1421,6 +1421,172 @@ eina_value_hash_pget(const Eina_Value *value, const char *key, void *ptr)
    return ret;
 }
 #undef EINA_VALUE_TYPE_HASH_CHECK_RETURN_VAL
+
+#define EINA_VALUE_TYPE_STRUCT_CHECK_RETURN_VAL(value, retval)          \
+  EINA_SAFETY_ON_NULL_RETURN_VAL(value, retval);                        \
+  EINA_SAFETY_ON_FALSE_RETURN_VAL(value->type == EINA_VALUE_TYPE_STRUCT, retval)
+
+/**
+ * @brief Find member of struct
+ * @since 1.2
+ * @internal
+ */
+EAPI const Eina_Value_Struct_Member *eina_value_struct_member_find(const Eina_Value_Struct *st, const char *name) EINA_ARG_NONNULL(1, 2) EINA_WARN_UNUSED_RESULT;
+
+static inline Eina_Bool
+eina_value_struct_setup(Eina_Value *value, const Eina_Value_Struct_Desc *sdesc)
+{
+   Eina_Value_Struct desc = {sdesc, NULL};
+   if (!eina_value_setup(value, EINA_VALUE_TYPE_STRUCT))
+     return EINA_FALSE;
+   if (!eina_value_pset(value, &desc))
+     {
+        eina_value_flush(value);
+        return EINA_FALSE;
+     }
+   return EINA_TRUE;
+}
+
+static inline void *
+eina_value_struct_member_memory_get(const Eina_Value_Struct *st, const Eina_Value_Struct_Member *member)
+{
+   unsigned char *base = (unsigned char *)st->memory;
+   if (!base) return NULL;
+   return base + member->offset;
+}
+
+static inline Eina_Bool
+eina_value_struct_vset(Eina_Value *value, const char *name, va_list args)
+{
+   const Eina_Value_Struct_Member *member;
+   Eina_Value_Struct *st;
+   void *mem;
+
+   EINA_VALUE_TYPE_STRUCT_CHECK_RETURN_VAL(value, EINA_FALSE);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(name, EINA_FALSE);
+   st = (Eina_Value_Struct *)eina_value_memory_get(value);
+   if (!st)
+     return EINA_FALSE;
+   member = eina_value_struct_member_find(st, name);
+   if (!member)
+     return EINA_FALSE;
+   mem = eina_value_struct_member_memory_get(st, member);
+   if (!mem)
+     return EINA_FALSE;
+
+   eina_value_type_flush(member->type, mem);
+   if (!eina_value_type_setup(member->type, mem)) goto error_setup;
+   if (!eina_value_type_vset(member->type, mem, args)) goto error_set;
+   return EINA_TRUE;
+
+ error_set:
+   eina_value_type_flush(member->type, mem);
+ error_setup:
+   return EINA_FALSE;
+}
+
+static inline Eina_Bool
+eina_value_struct_vget(const Eina_Value *value, const char *name, va_list args)
+{
+   const Eina_Value_Struct_Member *member;
+   const Eina_Value_Struct *st;
+   const void *mem;
+   void *ptr;
+   Eina_Bool ret;
+
+   EINA_VALUE_TYPE_STRUCT_CHECK_RETURN_VAL(value, EINA_FALSE);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(name, EINA_FALSE);
+   st = (const Eina_Value_Struct *)eina_value_memory_get(value);
+   if (!st)
+     return EINA_FALSE;
+   member = eina_value_struct_member_find(st, name);
+   if (!member)
+     return EINA_FALSE;
+   mem = eina_value_struct_member_memory_get(st, member);
+   if (!mem)
+     return EINA_FALSE;
+
+   ptr = va_arg(args, void *);
+   ret = eina_value_type_pget(member->type, mem, ptr);
+   return ret;
+}
+
+static inline Eina_Bool
+eina_value_struct_set(Eina_Value *value, const char *name, ...)
+{
+   va_list args;
+   Eina_Bool ret;
+   va_start(args, name);
+   ret = eina_value_struct_vset(value, name, args);
+   va_end(args);
+   return ret;
+}
+
+static inline Eina_Bool
+eina_value_struct_get(const Eina_Value *value, const char *name, ...)
+{
+   va_list args;
+   Eina_Bool ret;
+   va_start(args, name);
+   ret = eina_value_struct_vget(value, name, args);
+   va_end(args);
+   return ret;
+}
+
+static inline Eina_Bool
+eina_value_struct_pset(Eina_Value *value, const char *name, const void *ptr)
+{
+   const Eina_Value_Struct_Member *member;
+   Eina_Value_Struct *st;
+   void *mem;
+
+   EINA_VALUE_TYPE_STRUCT_CHECK_RETURN_VAL(value, 0);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(name, EINA_FALSE);
+   st = (Eina_Value_Struct *)eina_value_memory_get(value);
+   if (!st)
+     return EINA_FALSE;
+   member = eina_value_struct_member_find(st, name);
+   if (!member)
+     return EINA_FALSE;
+   mem = eina_value_struct_member_memory_get(st, member);
+   if (!mem)
+     return EINA_FALSE;
+
+   eina_value_type_flush(member->type, mem);
+   if (!eina_value_type_setup(member->type, mem)) goto error_setup;
+   if (!eina_value_type_pset(member->type, mem, ptr)) goto error_set;
+   return EINA_TRUE;
+
+ error_set:
+   eina_value_type_flush(member->type, mem);
+ error_setup:
+   return EINA_FALSE;
+}
+
+static inline Eina_Bool
+eina_value_struct_pget(const Eina_Value *value, const char *name, void *ptr)
+{
+   const Eina_Value_Struct_Member *member;
+   const Eina_Value_Struct *st;
+   const void *mem;
+   Eina_Bool ret;
+
+   EINA_VALUE_TYPE_STRUCT_CHECK_RETURN_VAL(value, 0);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(name, EINA_FALSE);
+   st = (const Eina_Value_Struct *)eina_value_memory_get(value);
+   if (!st)
+     return EINA_FALSE;
+   member = eina_value_struct_member_find(st, name);
+   if (!member)
+     return EINA_FALSE;
+   mem = eina_value_struct_member_memory_get(st, member);
+   if (!mem)
+     return EINA_FALSE;
+
+   ret = eina_value_type_pget(member->type, mem, ptr);
+   return ret;
+}
+#undef EINA_VALUE_TYPE_STRUCT_CHECK_RETURN_VAL
 
 
 static inline Eina_Bool
@@ -1460,7 +1626,7 @@ eina_value_type_copy(const Eina_Value_Type *type, const void *src, void *dst)
 }
 
 static inline int
-eina_value_type_compare(const Eina_Value_Type *type, const void *a, void *b)
+eina_value_type_compare(const Eina_Value_Type *type, const void *a, const void *b)
 {
    EINA_SAFETY_ON_FALSE_RETURN_VAL(eina_value_type_check(type), EINA_FALSE);
    if (!type->compare)
