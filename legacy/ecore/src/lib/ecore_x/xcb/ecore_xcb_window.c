@@ -783,13 +783,14 @@ ecore_x_window_focus(Ecore_X_Window win)
  */
 EAPI void
 ecore_x_window_focus_at_time(Ecore_X_Window win,
-                             Ecore_X_Time   time)
+                             Ecore_X_Time   time __UNUSED__)
 {
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
    CHECK_XCB_CONN;
 
    if (!win) win = ((xcb_screen_t *)_ecore_xcb_screen)->root;
-   xcb_set_input_focus(_ecore_xcb_conn, XCB_INPUT_FOCUS_PARENT, win, time);
+   xcb_set_input_focus(_ecore_xcb_conn, 
+                       XCB_INPUT_FOCUS_PARENT, win, XCB_CURRENT_TIME);
 //   ecore_x_flush();
 }
 
