@@ -66,7 +66,7 @@ static void _ecore_wl_focus_in_send(struct wl_surface *surface, uint32_t timesta
 static int _ecore_wl_init_count = 0;
 static struct wl_display *_ecore_wl_disp = NULL;
 static uint32_t _ecore_wl_disp_mask = 0;
-static uint32_t _ecore_wl_disp_format = WL_SHM_FORMAT_ARGB8888;
+static uint32_t _ecore_wl_disp_format = -1;
 static Eina_Rectangle _ecore_wl_screen;
 static Ecore_Fd_Handler *_ecore_wl_fd_hdl = NULL;
 static int _ecore_wl_screen_x = 0;
@@ -414,9 +414,15 @@ _ecore_wl_cb_shm_format_iterate(void *data __UNUSED__, struct wl_shm *shm __UNUS
 {
 //   LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
-//   if (_ecore_wl_disp_format < 1) return;
+   /* if we have already iterated here and found the format, then no need to 
+    * check anymore */
+   if (_ecore_wl_disp_format >= 0) return;
+
    switch (format) 
      {
+      case WL_SHM_FORMAT_ARGB8888:
+        _ecore_wl_disp_format = format;
+        break;
       case WL_SHM_FORMAT_XRGB8888:
         _ecore_wl_disp_format = format;
         break;
