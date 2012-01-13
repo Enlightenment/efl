@@ -497,13 +497,13 @@ _ecore_evas_wl_show(Ecore_Evas *ee)
    ee->engine.wl.shell_surface = 
      wl_shell_get_shell_surface(ecore_wl_shell_get(), ee->engine.wl.surface);
 
-   /* add listener for configure events (happen on shell surface resize) */
-   wl_shell_surface_add_listener(ee->engine.wl.shell_surface, 
-                                 &_ecore_evas_wl_shell_surface_listener, ee);
-
    /* set the engine surface here. This should trigger an egl window create */
    einfo->info.surface = ee->engine.wl.surface;
    evas_engine_info_set(ee->evas, (Evas_Engine_Info *)einfo);
+
+   /* add listener for configure events (happen on shell surface resize) */
+   wl_shell_surface_add_listener(ee->engine.wl.shell_surface, 
+                                 &_ecore_evas_wl_shell_surface_listener, ee);
 
    /* Raise this surface to the top */
    wl_shell_surface_set_toplevel(ee->engine.wl.shell_surface);

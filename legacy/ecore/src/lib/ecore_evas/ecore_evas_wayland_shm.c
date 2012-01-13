@@ -549,10 +549,6 @@ _ecore_evas_wl_show(Ecore_Evas *ee)
    ee->engine.wl.shell_surface = 
      wl_shell_get_shell_surface(ecore_wl_shell_get(), ee->engine.wl.surface);
 
-   /* add configure listener for wayland resize events */
-   wl_shell_surface_add_listener(ee->engine.wl.shell_surface, 
-                                 &_ecore_evas_wl_shell_surface_listener, ee);
-
    /* set toplevel */
    wl_shell_surface_set_toplevel(ee->engine.wl.shell_surface);
 
@@ -567,6 +563,10 @@ _ecore_evas_wl_show(Ecore_Evas *ee)
 
    /* set new engine destination */
    evas_engine_info_set(ee->evas, (Evas_Engine_Info *)einfo);
+
+   /* add configure listener for wayland resize events */
+   wl_shell_surface_add_listener(ee->engine.wl.shell_surface, 
+                                 &_ecore_evas_wl_shell_surface_listener, ee);
 
    /* flush new buffer fd */
    ecore_wl_flush();
