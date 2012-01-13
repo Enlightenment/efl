@@ -1,3 +1,7 @@
+#ifdef HAVE_CONFIG_H
+# include <config.h>
+#endif
+
 #include <Eina.h>
 #include <Ecore.h>
 #include <Ecore_Input.h>
@@ -12,9 +16,6 @@
 #include <string.h>
 #include <langinfo.h>
 #include <assert.h>
-#ifdef HAVE_CONFIG_H
-# include <config.h>
-#endif
 
 #define CLAMP(x, low, high) (x > high) ? high : (x < low) ? low : x
 #define _(x)                x
