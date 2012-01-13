@@ -66,7 +66,7 @@ static void _ecore_wl_focus_in_send(struct wl_surface *surface, uint32_t timesta
 static int _ecore_wl_init_count = 0;
 static struct wl_display *_ecore_wl_disp = NULL;
 static uint32_t _ecore_wl_disp_mask = 0;
-static uint32_t _ecore_wl_disp_format = -1;
+static int32_t _ecore_wl_disp_format = -1;
 static Eina_Rectangle _ecore_wl_screen;
 static Ecore_Fd_Handler *_ecore_wl_fd_hdl = NULL;
 static int _ecore_wl_screen_x = 0;
@@ -335,7 +335,11 @@ _ecore_wl_shutdown(Eina_Bool close_display)
         if (_ecore_wl_shell) wl_shell_destroy(_ecore_wl_shell);
         if (_ecore_wl_shm) wl_shm_destroy(_ecore_wl_shm);
         if (_ecore_wl_comp) wl_compositor_destroy(_ecore_wl_comp);
-        if (_ecore_wl_disp) wl_display_destroy(_ecore_wl_disp);
+        if (_ecore_wl_disp)
+          {
+             wl_display_flush(_ecore_wl_disp);
+             wl_display_destroy(_ecore_wl_disp);
+          }
         _ecore_wl_disp = NULL;
      }
 
