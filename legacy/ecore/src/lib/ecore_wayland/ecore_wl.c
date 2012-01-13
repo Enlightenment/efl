@@ -38,6 +38,11 @@ static void _ecore_wl_cb_handle_button(void *data __UNUSED__, struct wl_input_de
 static void _ecore_wl_cb_handle_key(void *data __UNUSED__, struct wl_input_device *dev, uint32_t t __UNUSED__, uint32_t key, uint32_t state);
 static void _ecore_wl_cb_handle_pointer_focus(void *data __UNUSED__, struct wl_input_device *dev, uint32_t t, struct wl_surface *surface, int32_t x, int32_t y, int32_t sx, int32_t sy);
 static void _ecore_wl_cb_handle_keyboard_focus(void *data __UNUSED__, struct wl_input_device *dev, uint32_t t __UNUSED__, struct wl_surface *surface, struct wl_array *keys);
+static void _ecore_wl_cb_handle_touch_down(void *data __UNUSED__, struct wl_input_device *dev __UNUSED__, uint32_t timestamp, struct wl_surface *surface, int32_t id, int32_t x, int32_t y);
+static void _ecore_wl_cb_handle_touch_up(void *data __UNUSED__, struct wl_input_device *dev __UNUSED__, uint32_t timestamp, int32_t id);
+static void _ecore_wl_cb_handle_touch_motion(void *data __UNUSED__, struct wl_input_device *dev __UNUSED__, uint32_t timestamp, int32_t id, int32_t x, int32_t y);
+static void _ecore_wl_cb_handle_touch_frame(void *data __UNUSED__, struct wl_input_device *dev __UNUSED__);
+static void _ecore_wl_cb_handle_touch_cancel(void *data __UNUSED__, struct wl_input_device *dev __UNUSED__);
 
 static void _ecore_wl_mouse_move_send(uint32_t timestamp);
 static void _ecore_wl_mouse_out_send(struct wl_surface *surface, uint32_t timestamp);
@@ -58,6 +63,8 @@ static int _ecore_wl_screen_x = 0;
 static int _ecore_wl_screen_y = 0;
 static int _ecore_wl_surface_x = 0;
 static int _ecore_wl_surface_y = 0;
+static int _ecore_wl_touch_x = 0;
+static int _ecore_wl_touch_y = 0;
 static int _ecore_wl_input_modifiers = 0;
 static struct xkb_desc *_ecore_wl_xkb;
 static uint32_t _ecore_wl_input_button = 0;
@@ -68,6 +75,7 @@ static struct wl_shell *_ecore_wl_shell;
 static struct wl_output *_ecore_wl_output;
 static struct wl_input_device *_ecore_wl_input;
 static struct wl_surface *_ecore_wl_input_surface;
+static struct wl_surface *_ecore_wl_touch_surface;
 static struct wl_data_device_manager *_ecore_wl_dnd_manager;
 static struct wl_data_device *_ecore_wl_dnd_dev;
 
@@ -87,11 +95,11 @@ static const struct wl_input_device_listener _ecore_wl_input_listener =
    _ecore_wl_cb_handle_key, 
    _ecore_wl_cb_handle_pointer_focus, 
    _ecore_wl_cb_handle_keyboard_focus, 
-   NULL, // touch down
-   NULL, // touch up
-   NULL, // touch motion
-   NULL, // touch frame
-   NULL, // touch cancel
+   _ecore_wl_cb_handle_touch_down, 
+   _ecore_wl_cb_handle_touch_up, 
+   _ecore_wl_cb_handle_touch_motion, 
+   _ecore_wl_cb_handle_touch_frame, 
+   _ecore_wl_cb_handle_touch_cancel,
 };
 /* static const struct wl_data_source_listener _ecore_wl_dnd_listener =  */
 /* { */
@@ -592,6 +600,164 @@ _ecore_wl_cb_handle_keyboard_focus(void *data __UNUSED__, struct wl_input_device
         /* send focus to new surface */
         _ecore_wl_focus_in_send(surface, t);
      }
+}
+
+static void 
+_ecore_wl_cb_handle_touch_down(void *data __UNUSED__, struct wl_input_device *dev __UNUSED__, uint32_t timestamp, struct wl_surface *surface, int32_t id, int32_t x, int32_t y)
+{
+   Ecore_Event_Mouse_Button *ev;
+
+   _ecore_wl_touch_surface = surface;
+   _ecore_wl_touch_x = x;
+   _ecore_wl_touch_y = y;
+
+   if (!(ev = malloc(sizeof(Ecore_Event_Mouse_Button)))) return;
+
+   ev->timestamp = timestamp;
+
+   /* NB: Need to verify using x,y for these */
+   ev->x = x;
+   ev->y = y;
+   ev->root.x = x;
+   ev->root.y = y;
+   ev->modifiers = 0;
+   ev->buttons = 0;
+   ev->same_screen = 1;
+
+   /* FIXME: Need to get these from Wayland somehow */
+   ev->double_click = 0;
+   ev->triple_click = 0;
+
+   ev->multi.device = id;
+   ev->multi.radius = 1;
+   ev->multi.radius_x = 1;
+   ev->multi.radius_y = 1;
+   ev->multi.pressure = 1.0;
+   ev->multi.angle = 0.0;
+   /* NB: Need to verify using x,y for these */
+   ev->multi.x = x;
+   ev->multi.y = y;
+   ev->multi.root.x = x;
+   ev->multi.root.y = y;
+
+     {
+        unsigned int id = 0;
+
+        if ((id = (unsigned int)wl_surface_get_user_data(surface))) 
+          {
+             ev->window = id;
+             ev->event_window = id;
+          }
+     }
+
+   ecore_event_add(ECORE_EVENT_MOUSE_BUTTON_DOWN, ev, NULL, NULL);
+}
+
+static void 
+_ecore_wl_cb_handle_touch_up(void *data __UNUSED__, struct wl_input_device *dev __UNUSED__, uint32_t timestamp, int32_t id)
+{
+   Ecore_Event_Mouse_Button *ev;
+
+   if (!(ev = malloc(sizeof(Ecore_Event_Mouse_Button)))) return;
+
+   ev->timestamp = timestamp;
+
+   /* TODO: Need to verify using x,y for these */
+   ev->x = _ecore_wl_touch_x;
+   ev->y = _ecore_wl_touch_y;
+   ev->root.x = _ecore_wl_touch_x;
+   ev->root.y = _ecore_wl_touch_y;
+   ev->modifiers = 0;
+   ev->buttons = 0;
+   ev->same_screen = 1;
+
+   /* FIXME: Need to get these from Wayland somehow */
+   ev->double_click = 0;
+   ev->triple_click = 0;
+
+   ev->multi.device = id;
+   ev->multi.radius = 1;
+   ev->multi.radius_x = 1;
+   ev->multi.radius_y = 1;
+   ev->multi.pressure = 1.0;
+   ev->multi.angle = 0.0;
+
+   /* TODO: Need to verify using x,y for these */
+   ev->multi.x = _ecore_wl_touch_x;
+   ev->multi.y = _ecore_wl_touch_y;
+   ev->multi.root.x = _ecore_wl_touch_x;
+   ev->multi.root.y = _ecore_wl_touch_y;
+
+     {
+        unsigned int id = 0;
+
+        if ((id = (unsigned int)wl_surface_get_user_data(_ecore_wl_touch_surface))) 
+          {
+             ev->window = id;
+             ev->event_window = id;
+          }
+     }
+
+   _ecore_wl_touch_surface = NULL;
+
+   ecore_event_add(ECORE_EVENT_MOUSE_BUTTON_UP, ev, NULL, NULL);
+}
+
+static void 
+_ecore_wl_cb_handle_touch_motion(void *data __UNUSED__, struct wl_input_device *dev __UNUSED__, uint32_t timestamp, int32_t id, int32_t x, int32_t y)
+{
+   Ecore_Event_Mouse_Move *ev;
+
+   if (!_ecore_wl_touch_surface) return;
+
+   if (!(ev = malloc(sizeof(Ecore_Event_Mouse_Move)))) return;
+
+   ev->timestamp = timestamp;
+   /* TODO: Need to verify using x,y for these */
+   ev->x = x;
+   ev->y = y;
+   ev->root.x = x;
+   ev->root.y = y;
+   ev->modifiers = 0; //_ecore_wl_input_modifiers;
+   ev->same_screen = 1;
+
+   ev->multi.device = id;
+   ev->multi.radius = 1;
+   ev->multi.radius_x = 1;
+   ev->multi.radius_y = 1;
+   ev->multi.pressure = 1.0;
+   ev->multi.angle = 0.0;
+
+   /* TODO: Need to verify using x,y for these */
+   ev->multi.x = x;
+   ev->multi.y = y;
+   ev->multi.root.x = x;
+   ev->multi.root.y = y;
+
+     {
+        unsigned int id = 0;
+
+        if ((id = (unsigned int)wl_surface_get_user_data(_ecore_wl_touch_surface)))
+          {
+             ev->window = id;
+             ev->event_window = id;
+          }
+     }
+
+   ecore_event_add(ECORE_EVENT_MOUSE_MOVE, ev, NULL, NULL);
+}
+
+static void 
+_ecore_wl_cb_handle_touch_frame(void *data __UNUSED__, struct wl_input_device *dev __UNUSED__)
+{
+   /* FIXME: Need to get a device and actually test what happens here */
+}
+
+static void 
+_ecore_wl_cb_handle_touch_cancel(void *data __UNUSED__, struct wl_input_device *dev __UNUSED__)
+{
+   /* FIXME: Need to get a device and actually test what happens here */
+   _ecore_wl_touch_surface = NULL;
 }
 
 static void 
