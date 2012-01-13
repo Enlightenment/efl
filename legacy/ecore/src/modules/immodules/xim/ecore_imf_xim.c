@@ -140,6 +140,8 @@ _ecore_imf_context_xim_add(Ecore_IMF_Context *ctx)
    imf_context_data->in_toplevel = EINA_FALSE;
 
    ecore_imf_context_data_set(ctx, imf_context_data);
+#else
+   (void)ctx;
 #endif
 }
 
@@ -177,6 +179,8 @@ _ecore_imf_context_xim_del(Ecore_IMF_Context *ctx)
    set_ic_client_window(ctx, 0);
 
    imf_context_data_destroy(imf_context_data);
+#else
+   (void)ctx;
 #endif
 }
 
@@ -187,6 +191,9 @@ _ecore_imf_context_xim_client_window_set(Ecore_IMF_Context *ctx,
    EINA_LOG_DBG("in");
 #ifdef ENABLE_XIM
    set_ic_client_window(ctx, (Ecore_X_Window)((Ecore_Window)window));
+#else
+   (void)ctx;
+   (void)window;
 #endif
 }
 
@@ -221,6 +228,7 @@ _ecore_imf_context_xim_preedit_string_get(Ecore_IMF_Context *ctx,
    if(cursor_pos)
      *cursor_pos = imf_context_data->preedit_cursor;
 #else
+   (void)ctx;
    if(str)
      *str = NULL;
    if(cursor_pos)
@@ -265,6 +273,7 @@ _ecore_imf_context_xim_preedit_string_with_attributes_get(Ecore_IMF_Context *ctx
    if (start >= 0)
      add_feedback_attr (attrs, *str, last_feedback, start, i);
 #else
+   (void)ctx;
    if(str)
      *str = NULL;
    if(attrs)
@@ -297,6 +306,8 @@ _ecore_imf_context_xim_focus_in(Ecore_IMF_Context *ctx)
 
         XSetICFocus(ic);
      }
+#else
+   (void)ctx;
 #endif
 }
 
@@ -315,6 +326,8 @@ _ecore_imf_context_xim_focus_out(Ecore_IMF_Context *ctx)
         if(ic)
           XUnsetICFocus(ic);
      }
+#else
+   (void)ctx;
 #endif
 }
 
@@ -388,6 +401,8 @@ _ecore_imf_context_xim_reset(Ecore_IMF_Context *ctx)
      }
 
    XFree (result);
+#else
+   (void)ctx;
 #endif
 }
 
@@ -407,6 +422,9 @@ _ecore_imf_context_xim_use_preedit_set(Ecore_IMF_Context *ctx,
         imf_context_data->use_preedit = use_preedit;
         reinitialize_ic(ctx);
      }
+#else
+   (void)ctx;
+   (void)use_preedit;
 #endif
 }
 
@@ -470,6 +488,11 @@ _ecore_imf_context_xim_cursor_location_set (Ecore_IMF_Context   *ctx,
                  NULL);
 
    XFree(preedit_attr);
+#else
+   (void)ctx;
+   (void)x;
+   (void)y;
+   (void)h;
 #endif
    (void)(w); // yes w is unused, but only a bi-product of the algorithm
 }
@@ -691,6 +714,9 @@ _ecore_imf_context_xim_filter_event(Ecore_IMF_Context   *ctx,
 
    return result;
 #else
+   (void)ctx;
+   (void)type;
+   (void)event;
    return EINA_FALSE;
 #endif
 }
