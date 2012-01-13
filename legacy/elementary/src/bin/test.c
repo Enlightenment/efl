@@ -212,7 +212,7 @@ my_win_main(char *autorun, Eina_Bool test_win_only)
    Evas_Object *fr = NULL, *tg = NULL, *sc = NULL, *ic = NULL;
    Evas_Object *tbx = NULL, *cfr = NULL, *tbx2 = NULL, *bt = NULL;
    Eina_List *tests, *l;
-   struct elm_test *t;
+   struct elm_test *t = NULL;
    void *tt;
 
    if (test_win_only) goto add_tests;
