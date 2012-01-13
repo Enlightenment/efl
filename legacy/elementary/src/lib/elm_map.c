@@ -2369,12 +2369,12 @@ _group_bubble_place(Marker_Group *group)
 
    evas_object_move(group->bubble, xx, yy);
    evas_object_resize(group->bubble, ww, hh);
-   obj_rotate_zoom(group->wd, group->bubble);
+   obj_rotate_zoom(group->wd->obj, group->bubble);
    evas_object_show(group->bubble);
 
    evas_object_move(group->rect, xx, yy);
    evas_object_resize(group->rect, ww, hh);
-   obj_rotate_zoom(group->wd, group->rect);
+   obj_rotate_zoom(group->wd->obj, group->rect);
    evas_object_show(group->rect);
 }
 
