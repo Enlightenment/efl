@@ -44,4 +44,19 @@ extern int _ecore_wl_log_dom;
 # endif
 # define CRIT(...) EINA_LOG_DOM_CRIT(_ecore_wl_log_dom, __VA_ARGS__)
 
+typedef struct _Ecore_Wl_Dnd_Source
+{
+   struct wl_data_offer *offer;
+   int refs;
+
+   Eina_Array *types;
+
+   void *data;
+} Ecore_Wl_Dnd_Source;
+
+typedef struct _Ecore_Wl_Dnd_Target
+{
+
+} Ecore_Wl_Dnd_Target;
+
 #endif

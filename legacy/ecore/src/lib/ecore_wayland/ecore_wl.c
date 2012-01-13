@@ -43,6 +43,16 @@ static void _ecore_wl_cb_handle_touch_up(void *data __UNUSED__, struct wl_input_
 static void _ecore_wl_cb_handle_touch_motion(void *data __UNUSED__, struct wl_input_device *dev __UNUSED__, uint32_t timestamp, int32_t id, int32_t x, int32_t y);
 static void _ecore_wl_cb_handle_touch_frame(void *data __UNUSED__, struct wl_input_device *dev __UNUSED__);
 static void _ecore_wl_cb_handle_touch_cancel(void *data __UNUSED__, struct wl_input_device *dev __UNUSED__);
+static void _ecore_wl_cb_source_target(void *data, struct wl_data_source *source, const char *mime_type);
+static void _ecore_wl_cb_source_send(void *data, struct wl_data_source *source, const char *mime_type, int32_t fd);
+static void _ecore_wl_cb_source_cancelled(void *data, struct wl_data_source *source);
+static void _ecore_wl_cb_source_offer(void *data, struct wl_data_offer *offer __UNUSED__, const char *type);
+static void _ecore_wl_cb_data_offer(void *data, struct wl_data_device *data_dev, uint32_t id);
+static void _ecore_wl_cb_data_enter(void *data, struct wl_data_device *data_dev, uint32_t timestamp, struct wl_surface *surface, int32_t x, int32_t y, struct wl_data_offer *offer);
+static void _ecore_wl_cb_data_leave(void *data, struct wl_data_device *data_dev __UNUSED__);
+static void _ecore_wl_cb_data_motion(void *data, struct wl_data_device *data_dev, uint32_t timestamp, int32_t x, int32_t y);
+static void _ecore_wl_cb_data_drop(void *data, struct wl_data_device *data_dev);
+static void _ecore_wl_cb_data_selection(void *data, struct wl_data_device *data_dev, struct wl_data_offer *offer);
 
 static void _ecore_wl_mouse_move_send(uint32_t timestamp);
 static void _ecore_wl_mouse_out_send(struct wl_surface *surface, uint32_t timestamp);
@@ -56,7 +66,7 @@ static void _ecore_wl_focus_in_send(struct wl_surface *surface, uint32_t timesta
 static int _ecore_wl_init_count = 0;
 static struct wl_display *_ecore_wl_disp = NULL;
 static uint32_t _ecore_wl_disp_mask = 0;
-static uint32_t _ecore_wl_disp_format = WL_SHM_FORMAT_PREMULTIPLIED_ARGB32;
+static uint32_t _ecore_wl_disp_format = WL_SHM_FORMAT_ARGB8888;
 static Eina_Rectangle _ecore_wl_screen;
 static Ecore_Fd_Handler *_ecore_wl_fd_hdl = NULL;
 static int _ecore_wl_screen_x = 0;
@@ -73,11 +83,11 @@ static struct wl_compositor *_ecore_wl_comp;
 static struct wl_shm *_ecore_wl_shm;
 static struct wl_shell *_ecore_wl_shell;
 static struct wl_output *_ecore_wl_output;
-static struct wl_input_device *_ecore_wl_input;
+static struct wl_input_device *_ecore_wl_input_dev;
 static struct wl_surface *_ecore_wl_input_surface;
 static struct wl_surface *_ecore_wl_touch_surface;
-static struct wl_data_device_manager *_ecore_wl_dnd_manager;
-static struct wl_data_device *_ecore_wl_dnd_dev;
+static struct wl_data_device_manager *_ecore_wl_data_manager;
+static struct wl_data_device *_ecore_wl_data_dev;
 
 static const struct wl_shm_listener _ecore_wl_shm_listener = 
 {
@@ -101,21 +111,25 @@ static const struct wl_input_device_listener _ecore_wl_input_listener =
    _ecore_wl_cb_handle_touch_frame, 
    _ecore_wl_cb_handle_touch_cancel,
 };
-/* static const struct wl_data_source_listener _ecore_wl_dnd_listener =  */
-/* { */
-/*    _ecore_wl_cb_dnd_target,  */
-/*    _ecore_wl_cb_dnd_send,  */
-/*    _ecore_wl_cb_dnd_cancelled */
-/* }; */
-/* static const struct wl_data_device_listener _ecore_wl_data_listener =  */
-/* { */
-/*    _ecore_wl_cb_dnd_offer,  */
-/*    _ecore_wl_cb_dnd_enter,  */
-/*    _ecore_wl_cb_dnd_leave,  */
-/*    _ecore_wl_cb_dnd_motion,  */
-/*    _ecore_wl_cb_dnd_drop,  */
-/*    _ecore_wl_cb_dnd_selection */
-/* }; */
+static const struct wl_data_source_listener _ecore_wl_source_listener = 
+{
+   _ecore_wl_cb_source_target, 
+   _ecore_wl_cb_source_send, 
+   _ecore_wl_cb_source_cancelled
+};
+static const struct wl_data_device_listener _ecore_wl_data_listener = 
+{
+   _ecore_wl_cb_data_offer, 
+   _ecore_wl_cb_data_enter, 
+   _ecore_wl_cb_data_leave, 
+   _ecore_wl_cb_data_motion, 
+   _ecore_wl_cb_data_drop, 
+   _ecore_wl_cb_data_selection
+};
+static const struct wl_data_offer_listener _ecore_wl_offer_listener = 
+{
+   _ecore_wl_cb_source_offer,
+};
 
 /* external variables */
 int _ecore_wl_log_dom = -1;
@@ -261,7 +275,7 @@ ecore_wl_shell_get(void)
 EAPI struct wl_input_device *
 ecore_wl_input_device_get(void) 
 {
-   return _ecore_wl_input;
+   return _ecore_wl_input_dev;
 }
 
 EAPI void 
@@ -314,10 +328,10 @@ _ecore_wl_shutdown(Eina_Bool close_display)
 
    if (close_display) 
      {
-        if (_ecore_wl_dnd_dev) wl_data_device_destroy(_ecore_wl_dnd_dev);
-        if (_ecore_wl_input) wl_input_device_destroy(_ecore_wl_input);
-        if (_ecore_wl_dnd_manager) 
-          wl_data_device_manager_destroy(_ecore_wl_dnd_manager);
+        if (_ecore_wl_data_dev) wl_data_device_destroy(_ecore_wl_data_dev);
+        if (_ecore_wl_input_dev) wl_input_device_destroy(_ecore_wl_input_dev);
+        if (_ecore_wl_data_manager) 
+          wl_data_device_manager_destroy(_ecore_wl_data_manager);
         if (_ecore_wl_shell) wl_shell_destroy(_ecore_wl_shell);
         if (_ecore_wl_shm) wl_shm_destroy(_ecore_wl_shm);
         if (_ecore_wl_comp) wl_compositor_destroy(_ecore_wl_comp);
@@ -366,20 +380,20 @@ _ecore_wl_cb_disp_handle_global(struct wl_display *disp, uint32_t id, const char
      }
    else if (!strcmp(interface, "wl_input_device")) 
      {
-        _ecore_wl_input = 
+        _ecore_wl_input_dev = 
           wl_display_bind(_ecore_wl_disp, id, &wl_input_device_interface);
-        wl_input_device_add_listener(_ecore_wl_input, 
+        wl_input_device_add_listener(_ecore_wl_input_dev, 
                                      &_ecore_wl_input_listener, NULL);
 
-        _ecore_wl_dnd_dev = 
-          wl_data_device_manager_get_data_device(_ecore_wl_dnd_manager, 
-                                                 _ecore_wl_input);
-        /* wl_data_device_add_listener(_ecore_wl_dnd_dev,  */
-        /*                             &_ecore_wl_data_listener, NULL); */
+        _ecore_wl_data_dev = 
+          wl_data_device_manager_get_data_device(_ecore_wl_data_manager, 
+                                                 _ecore_wl_input_dev);
+        wl_data_device_add_listener(_ecore_wl_data_dev, 
+                                    &_ecore_wl_data_listener, NULL);
      }
    else if (!strcmp(interface, "wl_data_device_manager")) 
      {
-        _ecore_wl_dnd_manager = 
+        _ecore_wl_data_manager = 
           wl_display_bind(_ecore_wl_disp, id, 
                           &wl_data_device_manager_interface);
      }
@@ -400,16 +414,10 @@ _ecore_wl_cb_shm_format_iterate(void *data __UNUSED__, struct wl_shm *shm __UNUS
 {
 //   LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
-   if (_ecore_wl_disp_format < 2) return;
+//   if (_ecore_wl_disp_format < 1) return;
    switch (format) 
      {
-      case WL_SHM_FORMAT_ARGB32:
-        /* NB: Ignore argb32. We prefer premul */
-        break;
-      case WL_SHM_FORMAT_PREMULTIPLIED_ARGB32:
-        _ecore_wl_disp_format = format;
-        break;
-      case WL_SHM_FORMAT_XRGB32:
+      case WL_SHM_FORMAT_XRGB8888:
         _ecore_wl_disp_format = format;
         break;
       default:
@@ -456,7 +464,7 @@ _ecore_wl_cb_fd_handle(void *data, Ecore_Fd_Handler *hdl __UNUSED__)
 static void 
 _ecore_wl_cb_handle_motion(void *data __UNUSED__, struct wl_input_device *dev, uint32_t t, int32_t x, int32_t y, int32_t sx, int32_t sy) 
 {
-   if (dev != _ecore_wl_input) return;
+   if (dev != _ecore_wl_input_dev) return;
 
    _ecore_wl_screen_x = x;
    _ecore_wl_screen_y = y;
@@ -469,7 +477,7 @@ _ecore_wl_cb_handle_motion(void *data __UNUSED__, struct wl_input_device *dev, u
 static void 
 _ecore_wl_cb_handle_button(void *data __UNUSED__, struct wl_input_device *dev, uint32_t t, uint32_t btn, uint32_t state) 
 {
-   if (dev != _ecore_wl_input) return;
+   if (dev != _ecore_wl_input_dev) return;
 
    if ((btn >= BTN_SIDE) && (btn <= BTN_BACK))
      {
@@ -512,9 +520,21 @@ _ecore_wl_cb_handle_button(void *data __UNUSED__, struct wl_input_device *dev, u
           {
              _ecore_wl_input_button = btn;
              _ecore_wl_mouse_down_send(_ecore_wl_input_surface, btn, t);
+             if ((_ecore_wl_input_surface) || (_ecore_wl_touch_surface))
+               {
+                  /* record item which was grabbed */
+               }
           }
         else
           {
+             if ((_ecore_wl_input_surface) || (_ecore_wl_touch_surface))
+               {
+                  /* release grabbed button and finish drag */
+                  if ((_ecore_wl_input_button) && (_ecore_wl_input_button == btn))
+                    {
+                       
+                    }
+               }
              _ecore_wl_input_button = 0;
              _ecore_wl_mouse_up_send(_ecore_wl_input_surface, btn, t);
           }
@@ -526,7 +546,7 @@ _ecore_wl_cb_handle_key(void *data __UNUSED__, struct wl_input_device *dev, uint
 {
    unsigned int keycode = 0;
 
-   if (dev != _ecore_wl_input) return;
+   if (dev != _ecore_wl_input_dev) return;
 
    keycode = key + _ecore_wl_xkb->min_key_code;
 
@@ -539,7 +559,7 @@ _ecore_wl_cb_handle_key(void *data __UNUSED__, struct wl_input_device *dev, uint
 static void 
 _ecore_wl_cb_handle_pointer_focus(void *data __UNUSED__, struct wl_input_device *dev, uint32_t t, struct wl_surface *surface, int32_t x, int32_t y, int32_t sx, int32_t sy) 
 {
-   if (dev != _ecore_wl_input) return;
+   if (dev != _ecore_wl_input_dev) return;
 
    /* NB: Wayland pointer focus is weird. It's not pointer focus in the normal 
     * sense...Wayland 'moving/resizing' (and maybe other stuff) has a habit 
@@ -576,7 +596,7 @@ _ecore_wl_cb_handle_keyboard_focus(void *data __UNUSED__, struct wl_input_device
 {
    unsigned int *keyend = 0, *i = 0;
 
-   if (dev != _ecore_wl_input) return;
+   if (dev != _ecore_wl_input_dev) return;
 
    /* NB: Remove old keyboard focus */
    if ((_ecore_wl_input_surface) && (_ecore_wl_input_surface != surface))
@@ -758,6 +778,86 @@ _ecore_wl_cb_handle_touch_cancel(void *data __UNUSED__, struct wl_input_device *
 {
    /* FIXME: Need to get a device and actually test what happens here */
    _ecore_wl_touch_surface = NULL;
+}
+
+static void 
+_ecore_wl_cb_source_target(void *data, struct wl_data_source *source, const char *mime_type)
+{
+
+}
+
+static void 
+_ecore_wl_cb_source_send(void *data, struct wl_data_source *source, const char *mime_type, int32_t fd)
+{
+
+}
+
+static void 
+_ecore_wl_cb_source_cancelled(void *data, struct wl_data_source *source)
+{
+   /* The cancelled event usually means source is no longer in use by 
+    * the drag (or selection). */
+}
+
+static void 
+_ecore_wl_cb_source_offer(void *data, struct wl_data_offer *offer __UNUSED__, const char *type)
+{
+   Ecore_Wl_Dnd_Source *s;
+
+   if (!(s = data)) return;
+   eina_array_push(s->types, strdup(type));
+}
+
+static void 
+_ecore_wl_cb_data_offer(void *data, struct wl_data_device *data_dev, uint32_t id)
+{
+   Ecore_Wl_Dnd_Source *source;
+
+   /* data being offered. Could be dnd, or selection */
+
+   /* create a new 'data offer' structure and setup a listener for it */
+   if (!(source = calloc(1, sizeof(Ecore_Wl_Dnd_Source)))) return;
+   source->types = eina_array_new(1);
+   source->data = data;
+   source->refs = 1;
+
+   /* NB: This will need to change when Wayland has typesafe wrappers for this */
+   source->offer = (struct wl_data_offer *)
+     wl_proxy_create_for_id((struct wl_proxy *)data_dev, 
+                            id, &wl_data_offer_interface);
+
+   wl_data_device_set_user_data(data_dev, source);
+   wl_data_offer_add_listener(source->offer, &_ecore_wl_offer_listener, source);
+}
+
+static void 
+_ecore_wl_cb_data_enter(void *data, struct wl_data_device *data_dev, uint32_t timestamp, struct wl_surface *surface, int32_t x, int32_t y, struct wl_data_offer *offer)
+{
+
+}
+
+static void 
+_ecore_wl_cb_data_leave(void *data __UNUSED__, struct wl_data_device *data_dev __UNUSED__)
+{
+
+}
+
+static void 
+_ecore_wl_cb_data_motion(void *data, struct wl_data_device *data_dev, uint32_t timestamp, int32_t x, int32_t y)
+{
+
+}
+
+static void 
+_ecore_wl_cb_data_drop(void *data, struct wl_data_device *data_dev)
+{
+
+}
+
+static void 
+_ecore_wl_cb_data_selection(void *data, struct wl_data_device *data_dev, struct wl_data_offer *offer)
+{
+
 }
 
 static void 
