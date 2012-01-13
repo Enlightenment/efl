@@ -29,7 +29,6 @@
 static Eina_Bool _ecore_wl_shutdown(Eina_Bool close_display);
 static void _ecore_wl_cb_disp_handle_global(struct wl_display *disp, uint32_t id, const char *interface, uint32_t version __UNUSED__, void *data __UNUSED__);
 static int _ecore_wl_cb_disp_event_mask_update(uint32_t mask, void *data __UNUSED__);
-static void _ecore_wl_cb_shm_format_iterate(void *data __UNUSED__, struct wl_shm *shm __UNUSED__, uint32_t format);
 static void _ecore_wl_cb_disp_handle_geometry(void *data __UNUSED__, struct wl_output *output __UNUSED__, int x, int y, int pw __UNUSED__, int ph __UNUSED__, int subpixel __UNUSED__, const char *make __UNUSED__, const char *model __UNUSED__);
 static void _ecore_wl_cb_disp_handle_mode(void *data __UNUSED__, struct wl_output *output __UNUSED__, uint32_t flags, int w, int h, int refresh __UNUSED__);
 static Eina_Bool _ecore_wl_cb_fd_handle(void *data, Ecore_Fd_Handler *hdl __UNUSED__);
@@ -66,7 +65,7 @@ static void _ecore_wl_focus_in_send(struct wl_surface *surface, uint32_t timesta
 static int _ecore_wl_init_count = 0;
 static struct wl_display *_ecore_wl_disp = NULL;
 static uint32_t _ecore_wl_disp_mask = 0;
-static int32_t _ecore_wl_disp_format = -1;
+static uint32_t _ecore_wl_disp_format = WL_SHM_FORMAT_ARGB8888;
 static Eina_Rectangle _ecore_wl_screen;
 static Ecore_Fd_Handler *_ecore_wl_fd_hdl = NULL;
 static int _ecore_wl_screen_x = 0;
@@ -89,10 +88,6 @@ static struct wl_surface *_ecore_wl_touch_surface;
 static struct wl_data_device_manager *_ecore_wl_data_manager;
 static struct wl_data_device *_ecore_wl_data_dev;
 
-static const struct wl_shm_listener _ecore_wl_shm_listener = 
-{
-   _ecore_wl_cb_shm_format_iterate
-};
 static const struct wl_output_listener _ecore_wl_output_listener = 
 {
    _ecore_wl_cb_disp_handle_geometry, 
@@ -137,6 +132,8 @@ EAPI int ECORE_WL_EVENT_MOUSE_IN = 0;
 EAPI int ECORE_WL_EVENT_MOUSE_OUT = 0;
 EAPI int ECORE_WL_EVENT_FOCUS_IN = 0;
 EAPI int ECORE_WL_EVENT_FOCUS_OUT = 0;
+EAPI int ECORE_WL_EVENT_DRAG_START = 0;
+EAPI int ECORE_WL_EVENT_DRAG_STOP = 0;
 
 EAPI int 
 ecore_wl_init(const char *name) 
@@ -368,7 +365,6 @@ _ecore_wl_cb_disp_handle_global(struct wl_display *disp, uint32_t id, const char
      {
         _ecore_wl_shm = 
           wl_display_bind(_ecore_wl_disp, id, &wl_shm_interface);
-        wl_shm_add_listener(_ecore_wl_shm, &_ecore_wl_shm_listener, NULL);
      }
    else if (!strcmp(interface, "wl_output")) 
      {
@@ -411,28 +407,6 @@ _ecore_wl_cb_disp_event_mask_update(uint32_t mask, void *data __UNUSED__)
    _ecore_wl_disp_mask = mask;
 
    return 0;
-}
-
-static void 
-_ecore_wl_cb_shm_format_iterate(void *data __UNUSED__, struct wl_shm *shm __UNUSED__, uint32_t format) 
-{
-//   LOGFN(__FILE__, __LINE__, __FUNCTION__);
-
-   /* if we have already iterated here and found the format, then no need to 
-    * check anymore */
-   if (_ecore_wl_disp_format >= 0) return;
-
-   switch (format) 
-     {
-      case WL_SHM_FORMAT_ARGB8888:
-        _ecore_wl_disp_format = format;
-        break;
-      case WL_SHM_FORMAT_XRGB8888:
-        _ecore_wl_disp_format = format;
-        break;
-      default:
-        break;
-     }
 }
 
 static void 
@@ -530,9 +504,14 @@ _ecore_wl_cb_handle_button(void *data __UNUSED__, struct wl_input_device *dev, u
           {
              _ecore_wl_input_button = btn;
              _ecore_wl_mouse_down_send(_ecore_wl_input_surface, btn, t);
+             /* NB: Ideally, this is not the place to check for drags.
+              * IMO, drags should be handled by the client. EG: we raise the 
+              * mouse_down to the client, and the client can 'request' a 
+              * drag_start from ecore_wl */
              if ((_ecore_wl_input_surface) || (_ecore_wl_touch_surface))
                {
-                  /* record item which was grabbed */
+                  /* record item which was grabbed. 
+                   * create drag source. start drag */
                }
           }
         else
@@ -540,7 +519,8 @@ _ecore_wl_cb_handle_button(void *data __UNUSED__, struct wl_input_device *dev, u
              if ((_ecore_wl_input_surface) || (_ecore_wl_touch_surface))
                {
                   /* release grabbed button and finish drag */
-                  if ((_ecore_wl_input_button) && (_ecore_wl_input_button == btn))
+                  if ((_ecore_wl_input_button) && 
+                      (_ecore_wl_input_button == btn))
                     {
                        
                     }
@@ -793,7 +773,25 @@ _ecore_wl_cb_handle_touch_cancel(void *data __UNUSED__, struct wl_input_device *
 static void 
 _ecore_wl_cb_source_target(void *data, struct wl_data_source *source, const char *mime_type)
 {
+   Ecore_Wl_Event_Drag_Start *ev;
 
+   if (!(ev = calloc(1, sizeof(Ecore_Wl_Event_Drag_Start)))) return;
+
+//   wl_data_device_set_user_data(data_dev, source);
+
+   /* ev->device = ; */
+   /* ev->surface = ; */
+   /* ev->mime_type = mime_type; */
+   /* ev->timestamp = ; */
+
+   /* will need to pass the device to the callback/event */
+   /* raise a callback/event to have Ecore_Evas do: */
+
+   /* create a surface & buffer to represent the dragging object */
+   /* attach buffer to the surface */
+   /* attach to device */
+
+   ecore_event_add(ECORE_WL_EVENT_DRAG_START, ev, NULL, NULL);
 }
 
 static void 
@@ -805,6 +803,9 @@ _ecore_wl_cb_source_send(void *data, struct wl_data_source *source, const char *
 static void 
 _ecore_wl_cb_source_cancelled(void *data, struct wl_data_source *source)
 {
+   /* raise this to ecore_evas so the surface/buffer 
+    * of the drag can be destroyed */
+
    /* The cancelled event usually means source is no longer in use by 
     * the drag (or selection). */
 }
@@ -827,6 +828,7 @@ _ecore_wl_cb_data_offer(void *data, struct wl_data_device *data_dev, uint32_t id
 
    /* create a new 'data offer' structure and setup a listener for it */
    if (!(source = calloc(1, sizeof(Ecore_Wl_Dnd_Source)))) return;
+
    source->types = eina_array_new(1);
    source->data = data;
    source->refs = 1;
@@ -836,7 +838,7 @@ _ecore_wl_cb_data_offer(void *data, struct wl_data_device *data_dev, uint32_t id
      wl_proxy_create_for_id((struct wl_proxy *)data_dev, 
                             id, &wl_data_offer_interface);
 
-   wl_data_device_set_user_data(data_dev, source);
+//   wl_data_device_set_user_data(data_dev, source);
    wl_data_offer_add_listener(source->offer, &_ecore_wl_offer_listener, source);
 }
 

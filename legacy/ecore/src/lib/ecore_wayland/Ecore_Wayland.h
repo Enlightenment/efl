@@ -23,6 +23,9 @@ typedef struct _Ecore_Wl_Event_Mouse_Out Ecore_Wl_Event_Mouse_Out;
 typedef struct _Ecore_Wl_Event_Focus_In Ecore_Wl_Event_Focus_In;
 typedef struct _Ecore_Wl_Event_Focus_Out Ecore_Wl_Event_Focus_Out;
 
+typedef struct _Ecore_Wl_Event_Drag_Start Ecore_Wl_Event_Drag_Start;
+typedef struct _Ecore_Wl_Event_Drag_Stop Ecore_Wl_Event_Drag_Stop;
+
 struct _Ecore_Wl_Event_Mouse_In 
 {
    int modifiers;
@@ -67,6 +70,19 @@ struct _Ecore_Wl_Event_Focus_Out
    unsigned int time;
 };
 
+struct _Ecore_Wl_Event_Drag_Start
+{
+   struct wl_data_device *device;
+   struct wl_surface *surface;
+   const char *mime_type;
+   uint32_t timestamp;
+};
+
+struct _Ecore_Wl_Event_Drag_Stop
+{
+
+};
+
 /**
  * @file
  * @brief Ecore functions for dealing with the Wayland window system
@@ -90,10 +106,14 @@ EAPI unsigned int ecore_wl_format_get(void);
 EAPI void ecore_wl_flush(void);
 EAPI void ecore_wl_sync(void);
 EAPI void ecore_wl_pointer_xy_get(int *x, int *y);
+EAPI void ecore_wl_drag_start();
+EAPI void ecore_wl_drag_stop();
 
 EAPI extern int ECORE_WL_EVENT_MOUSE_IN;
 EAPI extern int ECORE_WL_EVENT_MOUSE_OUT;
 EAPI extern int ECORE_WL_EVENT_FOCUS_IN;
 EAPI extern int ECORE_WL_EVENT_FOCUS_OUT;
+EAPI extern int ECORE_WL_EVENT_DRAG_START;
+EAPI extern int ECORE_WL_EVENT_DRAG_STOP;
 
 #endif
