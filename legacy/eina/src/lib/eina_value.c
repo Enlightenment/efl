@@ -3292,15 +3292,9 @@ _eina_value_type_hash_pset(const Eina_Value_Type *type __UNUSED__, void *mem, co
 {
    Eina_Value_Hash *tmem = mem;
    const Eina_Value_Hash *desc = ptr;
-   unsigned int buckets_power;
 
    if ((!tmem->subtype) && (!desc->subtype))
      return EINA_TRUE;
-
-   if (desc->buckets_power_size)
-     buckets_power = desc->buckets_power_size;
-   else
-     buckets_power = 5;
 
    if (tmem->hash) _eina_value_type_hash_flush_elements(tmem);
 
