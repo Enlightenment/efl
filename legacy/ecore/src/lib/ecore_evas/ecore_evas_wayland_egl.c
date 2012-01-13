@@ -70,6 +70,7 @@ static void _ecore_evas_wl_layer_set(Ecore_Evas *ee, int layer);
 static void _ecore_evas_wl_focus_set(Ecore_Evas *ee, int focus __UNUSED__);
 static void _ecore_evas_wl_iconified_set(Ecore_Evas *ee, int iconify);
 static void _ecore_evas_wl_maximized_set(Ecore_Evas *ee, int max);
+static void _ecore_evas_wl_fullscreen_set(Ecore_Evas *ee, int full __UNUSED__);
 static int _ecore_evas_wl_render(Ecore_Evas *ee);
 static void _ecore_evas_wl_screen_geometry_get(const Ecore_Evas *ee __UNUSED__, int *x, int *y, int *w, int *h);
 
@@ -148,7 +149,7 @@ static Ecore_Evas_Engine_Func _ecore_wl_engine_func =
    NULL, // func borderless set
    NULL, // func override set
    _ecore_evas_wl_maximized_set, 
-   NULL, // func fullscreen set
+   _ecore_evas_wl_fullscreen_set,
    NULL, // _ecore_evas_wl_avoid_damage_set, 
    NULL, // func withdrawn set
    NULL, // func sticky set
@@ -751,6 +752,16 @@ _ecore_evas_wl_maximized_set(Ecore_Evas *ee, int max)
    if (ee->prop.maximized == max) return;
    ee->prop.maximized = max;
    /* FIXME: Implement this in Wayland someshow */
+}
+
+static void 
+_ecore_evas_wl_fullscreen_set(Ecore_Evas *ee, int full __UNUSED__)
+{
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+
+   if ((!ee) || (!ee->visible)) return;
+   if (!ee->engine.wl.shell_surface) return;
+   wl_shell_surface_set_fullscreen(ee->engine.wl.shell_surface);
 }
 
 static int 
