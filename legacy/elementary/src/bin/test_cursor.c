@@ -441,7 +441,6 @@ test_cursor4(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_inf
    evas_object_size_hint_align_set(ly, EVAS_HINT_FILL, EVAS_HINT_FILL);
    elm_layout_part_cursor_set(ly, "top-left", ELM_CURSOR_CROSS);
    elm_layout_part_cursor_set(ly, "bottom-left", ELM_CURSOR_PIRATE);
-   elm_layout_file_set(ly, buf, "test/layout/parts");
    elm_box_pack_end(bx, ly);
    evas_object_show(ly);
 
