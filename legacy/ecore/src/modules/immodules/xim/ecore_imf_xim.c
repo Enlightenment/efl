@@ -108,6 +108,7 @@ static void xim_destroy_callback(XIM      xim,
                                  XPointer call_data);
 #endif
 
+#ifdef ENABLE_XIM
 static unsigned int
 utf8_offset_to_index(const char *str, int offset)
 {
@@ -120,6 +121,7 @@ utf8_offset_to_index(const char *str, int offset)
 
    return index;
 }
+#endif
 
 static void
 _ecore_imf_context_xim_add(Ecore_IMF_Context *ctx)
@@ -233,6 +235,7 @@ _ecore_imf_context_xim_preedit_string_with_attributes_get(Ecore_IMF_Context *ctx
 {
    EINA_LOG_DBG("in");
 
+#ifdef ENABLE_XIM
    Ecore_IMF_Context_Data *imf_context_data = ecore_imf_context_data_get(ctx);
 
    _ecore_imf_context_xim_preedit_string_get(ctx, str, cursor_pos);
@@ -260,6 +263,14 @@ _ecore_imf_context_xim_preedit_string_with_attributes_get(Ecore_IMF_Context *ctx
 
    if (start >= 0)
      add_feedback_attr (attrs, *str, last_feedback, start, i);
+#else
+   if(str)
+     *str = NULL;
+   if(attrs)
+     *attrs = NULL;
+   if(cursor_pos)
+     *cursor_pos = 0;
+#endif
 }
 
 static void
@@ -398,6 +409,7 @@ _ecore_imf_context_xim_use_preedit_set(Ecore_IMF_Context *ctx,
 #endif
 }
 
+#ifdef ENABLE_XIM
 static void
 add_feedback_attr (Eina_List **attrs,
                    const char   *str,
@@ -427,6 +439,7 @@ add_feedback_attr (Eina_List **attrs,
    if (feedback & XIMHighlight)
      attr->preedit_type = ECORE_IMF_PREEDIT_TYPE_SUB3;
 }
+#endif
 
 static void
 _ecore_imf_context_xim_cursor_location_set (Ecore_IMF_Context   *ctx,
