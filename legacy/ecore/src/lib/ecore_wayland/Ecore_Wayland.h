@@ -23,6 +23,8 @@ typedef struct _Ecore_Wl_Event_Mouse_Out Ecore_Wl_Event_Mouse_Out;
 typedef struct _Ecore_Wl_Event_Focus_In Ecore_Wl_Event_Focus_In;
 typedef struct _Ecore_Wl_Event_Focus_Out Ecore_Wl_Event_Focus_Out;
 
+typedef struct _Ecore_Wl_Drag_Source Ecore_Wl_Drag_Source;
+
 typedef struct _Ecore_Wl_Event_Drag_Start Ecore_Wl_Event_Drag_Start;
 typedef struct _Ecore_Wl_Event_Drag_Stop Ecore_Wl_Event_Drag_Stop;
 
@@ -106,8 +108,10 @@ EAPI unsigned int ecore_wl_format_get(void);
 EAPI void ecore_wl_flush(void);
 EAPI void ecore_wl_sync(void);
 EAPI void ecore_wl_pointer_xy_get(int *x, int *y);
-EAPI void ecore_wl_drag_start();
-EAPI void ecore_wl_drag_stop();
+
+EAPI Ecore_Wl_Drag_Source *ecore_wl_drag_source_create(int hotspot_x, int hotspot_y, int offset_x, int offset_y, const char *mimetype, unsigned int timestamp, void *data);
+EAPI void ecore_wl_drag_start(Ecore_Wl_Drag_Source *source, struct wl_surface *surface);
+EAPI void ecore_wl_drag_stop(void);
 
 EAPI extern int ECORE_WL_EVENT_MOUSE_IN;
 EAPI extern int ECORE_WL_EVENT_MOUSE_OUT;

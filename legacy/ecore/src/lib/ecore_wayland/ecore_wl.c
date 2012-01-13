@@ -180,6 +180,8 @@ ecore_wl_init(const char *name)
         ECORE_WL_EVENT_MOUSE_OUT = ecore_event_type_new();
         ECORE_WL_EVENT_FOCUS_IN = ecore_event_type_new();
         ECORE_WL_EVENT_FOCUS_OUT = ecore_event_type_new();
+        ECORE_WL_EVENT_DRAG_START = ecore_event_type_new();
+        ECORE_WL_EVENT_DRAG_STOP = ecore_event_type_new();
      }
 
    /* init xkb */
@@ -305,6 +307,49 @@ ecore_wl_pointer_xy_get(int *x, int *y)
 {
    if (x) *x = _ecore_wl_screen_x;
    if (y) *y = _ecore_wl_screen_y;
+}
+
+EAPI Ecore_Wl_Drag_Source *
+ecore_wl_drag_source_create(int hotspot_x, int hotspot_y, int offset_x, int offset_y, const char *mimetype, unsigned int timestamp, void *data)
+{
+   Ecore_Wl_Drag_Source *source;
+
+   if (!(source = calloc(1, sizeof(Ecore_Wl_Drag_Source)))) return NULL;
+
+   source->data_dev = _ecore_wl_data_dev;
+   source->hotspot_x = hotspot_x;
+   source->hotspot_y = hotspot_y;
+   source->offset_x = offset_x;
+   source->offset_y = offset_y;
+   source->mimetype = mimetype;
+   source->timestamp = timestamp;
+   source->data = data;
+
+   source->data_source = 
+     wl_data_device_manager_create_data_source(_ecore_wl_data_manager);
+
+   wl_data_source_add_listener(source->data_source, 
+                               &_ecore_wl_source_listener, source);
+
+   wl_data_source_offer(source->data_source, source->mimetype);
+
+   /* NB: Do we add some default mimetypes here ?? */
+   /* text/plain, etc */
+
+   return source;
+}
+
+EAPI void 
+ecore_wl_drag_start(Ecore_Wl_Drag_Source *source, struct wl_surface *surface)
+{
+   wl_data_device_start_drag(source->data_dev, source->data_source, 
+                             surface, source->timestamp);
+}
+
+EAPI void 
+ecore_wl_drag_stop(void)
+{
+
 }
 
 /* local functions */
@@ -617,6 +662,8 @@ _ecore_wl_cb_handle_touch_down(void *data __UNUSED__, struct wl_input_device *de
 {
    Ecore_Event_Mouse_Button *ev;
 
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+
    _ecore_wl_touch_surface = surface;
    _ecore_wl_touch_x = x;
    _ecore_wl_touch_y = y;
@@ -668,6 +715,8 @@ _ecore_wl_cb_handle_touch_up(void *data __UNUSED__, struct wl_input_device *dev 
 {
    Ecore_Event_Mouse_Button *ev;
 
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+
    if (!(ev = malloc(sizeof(Ecore_Event_Mouse_Button)))) return;
 
    ev->timestamp = timestamp;
@@ -718,6 +767,8 @@ _ecore_wl_cb_handle_touch_motion(void *data __UNUSED__, struct wl_input_device *
 {
    Ecore_Event_Mouse_Move *ev;
 
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+
    if (!_ecore_wl_touch_surface) return;
 
    if (!(ev = malloc(sizeof(Ecore_Event_Mouse_Move)))) return;
@@ -760,12 +811,16 @@ _ecore_wl_cb_handle_touch_motion(void *data __UNUSED__, struct wl_input_device *
 static void 
 _ecore_wl_cb_handle_touch_frame(void *data __UNUSED__, struct wl_input_device *dev __UNUSED__)
 {
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+
    /* FIXME: Need to get a device and actually test what happens here */
 }
 
 static void 
 _ecore_wl_cb_handle_touch_cancel(void *data __UNUSED__, struct wl_input_device *dev __UNUSED__)
 {
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+
    /* FIXME: Need to get a device and actually test what happens here */
    _ecore_wl_touch_surface = NULL;
 }
@@ -773,25 +828,17 @@ _ecore_wl_cb_handle_touch_cancel(void *data __UNUSED__, struct wl_input_device *
 static void 
 _ecore_wl_cb_source_target(void *data, struct wl_data_source *source, const char *mime_type)
 {
-   Ecore_Wl_Event_Drag_Start *ev;
+   /* Ecore_Wl_Drag_Source *source; */
 
-   if (!(ev = calloc(1, sizeof(Ecore_Wl_Event_Drag_Start)))) return;
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+
+   /* if (!(source = data)) return; */
 
 //   wl_data_device_set_user_data(data_dev, source);
-
-   /* ev->device = ; */
-   /* ev->surface = ; */
-   /* ev->mime_type = mime_type; */
-   /* ev->timestamp = ; */
-
-   /* will need to pass the device to the callback/event */
-   /* raise a callback/event to have Ecore_Evas do: */
 
    /* create a surface & buffer to represent the dragging object */
    /* attach buffer to the surface */
    /* attach to device */
-
-   ecore_event_add(ECORE_WL_EVENT_DRAG_START, ev, NULL, NULL);
 }
 
 static void 
@@ -877,7 +924,7 @@ _ecore_wl_mouse_move_send(uint32_t timestamp)
 {
    Ecore_Event_Mouse_Move *ev;
 
-   if (!_ecore_wl_input_surface) return;
+//   if (!_ecore_wl_input_surface) return;
 
    if (!(ev = malloc(sizeof(Ecore_Event_Mouse_Move)))) return;
 
