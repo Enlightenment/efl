@@ -422,9 +422,8 @@ ecore_x_dnd_actions_set(Ecore_X_Window win,
  * @param data User data.
  */
 EAPI void
-ecore_x_dnd_callback_pos_update_set(void                                                           (*cb)(void *,
-                                                                            Ecore_X_Xdnd_Position *data),
-                                    const void                                                    *data)
+ecore_x_dnd_callback_pos_update_set(void (*cb)(void *, Ecore_X_Xdnd_Position *data),
+                                    const void *data)
 {
    _posupdatecb = cb;
    _posupdatedata = (void *)data;
