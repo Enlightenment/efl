@@ -4562,6 +4562,7 @@ st_collections_group_parts_part_description_min(void)
         A multiplier FORCIBLY applied to whatever minimum size is only during
         minimum size calculation.
     @endproperty
+    @since 1.2
 */
 static void
 st_collections_group_parts_part_description_minmul(void)
