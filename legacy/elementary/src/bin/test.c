@@ -204,6 +204,11 @@ _ui_tg_changed(void *data, Evas_Object *obj, void *event_info)
    elm_mirrored_set(elm_check_state_get(obj));
 }
 
+static void
+_frame_clicked(void *data __UNUSED__, Evas_Object *obj, void *event_info __UNUSED__)
+{
+   printf("frame %p is: %s\n", obj, elm_frame_collapse_get(obj) ? "collapsed" : "expanded");
+}
 
 static void
 my_win_main(char *autorun, Eina_Bool test_win_only)
@@ -268,6 +273,7 @@ my_win_main(char *autorun, Eina_Bool test_win_only)
    evas_object_show(bx0);
 
    fr = elm_frame_add(win);
+   evas_object_smart_callback_add(fr, "clicked", _frame_clicked, NULL);
    elm_frame_autocollapse_set(fr, EINA_TRUE);
    elm_object_text_set(fr, "Information");
    elm_box_pack_end(bx0, fr);
@@ -550,6 +556,7 @@ add_tests:
                {
                   cfr = elm_frame_add(win);
                   // FIXME: add new style of frame for this
+                  evas_object_smart_callback_add(cfr, "clicked", _frame_clicked, NULL);
                   elm_frame_autocollapse_set(cfr, EINA_TRUE);
                   elm_object_text_set(cfr, t->category);
                   evas_object_size_hint_weight_set(cfr, EVAS_HINT_EXPAND, 0.0);
