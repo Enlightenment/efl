@@ -72,20 +72,20 @@ EAPI Eina_Bool elm_frame_autocollapse_get(Evas_Object *obj);
 /**
  * @brief Manually collapse a frame without animations
  * @param obj The frame
- * @param enable true to collapse, false to expand
+ * @param collapse true to collapse, false to expand
  *
  * Use this to toggle the collapsed state of a frame, bypassing animations.
  */
-EAPI void elm_frame_collapse_set(Evas_Object *obj, Eina_Bool enable);
+EAPI void elm_frame_collapse_set(Evas_Object *obj, Eina_Bool collapse);
 
 /**
  * @brief Manually collapse a frame with animations
  * @param obj The frame
- * @param enable true to collapse, false to expand
+ * @param collapse true to collapse, false to expand
  *
  * Use this to toggle the collapsed state of a frame, triggering animations.
  */
-EAPI void elm_frame_collapse_go(Evas_Object *obj, Eina_Bool enable);
+EAPI void elm_frame_collapse_go(Evas_Object *obj, Eina_Bool collapse);
 
 /**
  * @brief Determine the collapse state of a frame
