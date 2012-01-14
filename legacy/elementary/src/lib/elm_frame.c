@@ -293,6 +293,22 @@ elm_frame_collapse_set(Evas_Object *obj, Eina_Bool enable)
    if (!wd) return;
    enable = !!enable;
    if (wd->collapsed == enable) return;
+   edje_object_signal_emit(wd->frm, "elm,action,switch", "elm");
+   edje_object_message_signal_process(wd->frm);
+   wd->collapsed = enable;
+   wd->anim = EINA_FALSE;
+   _sizing_eval(obj);
+}
+
+EAPI void
+elm_frame_collapse_go(Evas_Object *obj, Eina_Bool enable)
+{
+   Widget_Data *wd;
+   ELM_CHECK_WIDTYPE(obj, widtype);
+   wd = elm_widget_data_get(obj);
+   if (!wd) return;
+   enable = !!enable;
+   if (wd->collapsed == enable) return;
    edje_object_signal_emit(wd->frm, "elm,action,toggle", "elm");
    evas_object_smart_callback_add(wd->frm, "recalc", (Evas_Smart_Cb)_recalc, obj);
    wd->collapsed = enable;

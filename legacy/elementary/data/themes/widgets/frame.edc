@@ -145,6 +145,19 @@ group { name: "elm/frame/base/default";
               run_program(PROGRAM:"expand");
          }
       }
+      program { name: "switch";
+         signal:  "elm,action,switch";
+         source: "elm";
+         script {
+            new st[31];
+            new Float:vl;
+            get_state(PART:"elm.swallow.content", st, 30, vl);
+            if (!strcmp(st, "default"))
+              set_state(PART:"elm.swallow.content", "collapsed", 0.0);
+            else
+              set_state(PART:"elm.swallow.content", "default", 0.0);
+         }
+      }
       program { name: "signal";
          action: SIGNAL_EMIT "elm,anim,done" "elm";
       }
