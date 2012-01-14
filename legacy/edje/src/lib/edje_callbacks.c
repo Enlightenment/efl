@@ -134,6 +134,7 @@ _edje_mouse_down_signal_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj, voi
 		  _edje_emit(ed, buf, events->part->name);
 	       }
 	     ed->dirty = 1;
+             ed->recalc_call = 1;
 #ifdef EDJE_CALC_CACHE
 	     rp->invalidate = 1;
 #endif
@@ -157,6 +158,7 @@ _edje_mouse_down_signal_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj, voi
 		rp->drag->val.y = dy;
 		if (!ignored)
 		  _edje_emit(ed, "drag", rp->part->name);
+                ed->recalc_call = 1;
 		ed->dirty = 1;
 #ifdef EDJE_CALC_CACHE
 		rp->invalidate = 1;
@@ -235,6 +237,7 @@ _edje_mouse_up_signal_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj, void 
 	     if (rp->drag->down.count == 0)
 	       {
 		  rp->drag->need_reset = 1;
+                  ed->recalc_call = 1;
 		  ed->dirty = 1;
 #ifdef EDJE_CALC_CACHE
 		  rp->invalidate = 1;
@@ -314,6 +317,7 @@ _edje_mouse_move_signal_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj, voi
 	       rp->drag->tmp.x = ev->cur.canvas.x - rp->drag->down.x;
 	     if (rp->part->dragable.y)
 	       rp->drag->tmp.y = ev->cur.canvas.y - rp->drag->down.y;
+             ed->recalc_call = 1;
 	     ed->dirty = 1;
 #ifdef EDJE_CALC_CACHE
 	     rp->invalidate = 1;
@@ -332,6 +336,7 @@ _edje_mouse_move_signal_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj, voi
 		  rp->drag->val.y = dy;
 		  if (!ignored)
 		    _edje_emit(ed, "drag", rp->part->name);
+                  ed->recalc_call = 1;
 		  ed->dirty = 1;
 #ifdef EDJE_CALC_CACHE
 		  rp->invalidate = 1;

@@ -1621,6 +1621,7 @@ _edje_param_native_set(Edje_Real_Part *rp, const char *name, const Edje_External
 		  if (param->type != EDJE_EXTERNAL_PARAM_TYPE_DOUBLE)
 		    return EINA_FALSE;
 		  rp->drag->size.x = FROM_DOUBLE(CLAMP(param->d, 0.0, 1.0));
+                  rp->edje->recalc_call = 1;
 		  rp->edje->dirty = 1;
 #ifdef EDJE_CALC_CACHE
 		  rp->invalidate = 1;
@@ -1633,6 +1634,7 @@ _edje_param_native_set(Edje_Real_Part *rp, const char *name, const Edje_External
 		  if (param->type != EDJE_EXTERNAL_PARAM_TYPE_DOUBLE)
 		    return EINA_FALSE;
 		  rp->drag->size.y = FROM_DOUBLE(CLAMP(param->d, 0.0, 1.0));
+                  rp->edje->recalc_call = 1;
 		  rp->edje->dirty = 1;
 #ifdef EDJE_CALC_CACHE
 		  rp->invalidate = 1;

@@ -525,7 +525,7 @@ _edje_object_file_set_internal(Evas_Object *obj, const char *file, const char *g
 			 }
 
 		       rp->swallow_params.min.w = 0;
-		       rp->swallow_params.min.w = 0;
+		       rp->swallow_params.min.h = 0;
 		       rp->swallow_params.max.w = -1;
 		       rp->swallow_params.max.h = -1;
 
@@ -603,6 +603,7 @@ _edje_object_file_set_internal(Evas_Object *obj, const char *file, const char *g
 		       _edje_dragable_pos_set(ed, rp, rp->drag->val.x, rp->drag->val.y);
 		    }
 	       }
+             ed->recalc_call = 1;
 	     ed->dirty = 1;
 #ifdef EDJE_CALC_CACHE
 	     ed->all_part_change = 1;

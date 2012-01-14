@@ -674,6 +674,7 @@ _edje_embryo_fn_set_min_size(Embryo_Program *ep, Embryo_Cell *params)
    if (h < 0.0) h = 0.0;
    ed->collection->prop.min.w = w;
    ed->collection->prop.min.h = h;
+   ed->recalc_call = 1;
    ed->dirty = 1;
 #ifdef EDJE_CALC_CACHE
    ed->all_part_change = 1;
@@ -701,6 +702,7 @@ _edje_embryo_fn_set_max_size(Embryo_Program *ep, Embryo_Cell *params)
    if (h < 0.0) h = 0.0;
    ed->collection->prop.max.w = w;
    ed->collection->prop.max.h = h;
+   ed->recalc_call = 1;
    ed->dirty = 1;
 #ifdef EDJE_CALC_CACHE
    ed->all_part_change = 1;

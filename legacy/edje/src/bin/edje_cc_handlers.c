@@ -172,6 +172,7 @@ static void st_collections_group_parts_part_description_visible(void);
 static void st_collections_group_parts_part_description_align(void);
 static void st_collections_group_parts_part_description_fixed(void);
 static void st_collections_group_parts_part_description_min(void);
+static void st_collections_group_parts_part_description_minmul(void);
 static void st_collections_group_parts_part_description_max(void);
 static void st_collections_group_parts_part_description_step(void);
 static void st_collections_group_parts_part_description_aspect(void);
@@ -434,6 +435,7 @@ New_Statement_Handler statement_handlers[] =
      {"collections.group.parts.part.description.align", st_collections_group_parts_part_description_align},
      {"collections.group.parts.part.description.fixed", st_collections_group_parts_part_description_fixed},
      {"collections.group.parts.part.description.min", st_collections_group_parts_part_description_min},
+     {"collections.group.parts.part.description.minmul", st_collections_group_parts_part_description_minmul},
      {"collections.group.parts.part.description.max", st_collections_group_parts_part_description_max},
      {"collections.group.parts.part.description.step", st_collections_group_parts_part_description_step},
      {"collections.group.parts.part.description.aspect", st_collections_group_parts_part_description_aspect},
@@ -4132,6 +4134,9 @@ ob_collections_group_parts_part_description(void)
    ed->map.persp_on = 0;
    ed->persp.zplane = 0;
    ed->persp.focal = 1000;
+   ed->minmul.have = 1;
+   ed->minmul.w = FROM_INT(1);
+   ed->minmul.h = FROM_INT(1);
 }
 
 /**
@@ -4545,6 +4550,26 @@ st_collections_group_parts_part_description_min(void)
 
    current_desc->min.w = parse_float_range(0, 0, 0x7fffffff);
    current_desc->min.h = parse_float_range(1, 0, 0x7fffffff);
+}
+
+/**
+    @page edcref
+    @property
+        minmul
+    @parameters
+        [width multipler] [height multiplier]
+    @effect
+        A multiplier FORCIBLY applied to whatever minimum size is only during
+        minimum size calculation.
+    @endproperty
+*/
+static void
+st_collections_group_parts_part_description_minmul(void)
+{
+   check_arg_count(2);
+
+   current_desc->minmul.w = FROM_DOUBLE(parse_float_range(0, 0, 999999));
+   current_desc->minmul.h = FROM_DOUBLE(parse_float_range(1, 0, 999999));
 }
 
 /**
