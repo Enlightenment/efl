@@ -196,7 +196,6 @@ _content_unset_hook(Evas_Object *obj, const char *part)
 static void
 _recalc(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
-//   printf("recalc %3.3f\n", ecore_loop_time_get());
    _sizing_eval(data);
 }
 
@@ -205,7 +204,6 @@ _recalc_done(void *data, Evas_Object *obj __UNUSED__, const char *sig __UNUSED__
 {
    Widget_Data *wd = elm_widget_data_get(data);
    if (!wd) return;
-//   printf("recalc done %3.3f\n", ecore_loop_time_get());
    evas_object_smart_callback_del(wd->frm, "recalc", _recalc);
    wd->anim = EINA_FALSE;
    _sizing_eval(data);
@@ -217,13 +215,14 @@ _signal_click(void *data, Evas_Object *obj __UNUSED__, const char *sig __UNUSED_
    Widget_Data *wd = elm_widget_data_get(data);
    if (!wd) return;
    if (wd->anim) return;
+   if (wd->collapsible)
+     {
+        evas_object_smart_callback_add(wd->frm, "recalc", _recalc, data);
+        edje_object_signal_emit(wd->frm, "elm,action,toggle", "elm");
+        wd->collapsed++;
+        wd->anim = EINA_TRUE;
+     }
    evas_object_smart_callback_call(data, SIG_CLICKED, NULL);
-   if (!wd->collapsible) return;
-//   printf("recalc begin %3.3f\n", ecore_loop_time_get());
-   evas_object_smart_callback_add(wd->frm, "recalc", _recalc, data);
-   edje_object_signal_emit(wd->frm, "elm,action,toggle", "elm");
-   wd->collapsed++;
-   wd->anim = EINA_TRUE;
 }
 
 EAPI Evas_Object *
