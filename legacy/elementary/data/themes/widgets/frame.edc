@@ -133,7 +133,7 @@ group { name: "elm/frame/base/default";
          action:  SIGNAL_EMIT "elm,action,click" "elm";
       }
       program { name: "toggle";
-         signal:  "elm,action,collapse";
+         signal:  "elm,action,toggle";
          source: "elm";
          script {
             new st[31];
