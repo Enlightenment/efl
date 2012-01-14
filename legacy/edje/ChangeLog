@@ -282,3 +282,6 @@
 
 	* Lua: Added edje.version().
 
+2012-01-14  Carsten Haitzler (The Rasterman)
+
+        * Added minmul propery for edje to multiply minimum size during min size calc
