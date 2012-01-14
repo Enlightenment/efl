@@ -5402,6 +5402,11 @@ _elm_genlist_item_del_serious(Elm_Gen_Item *it)
    if (it->group)
      it->wd->group_items = eina_list_remove(it->wd->group_items, it);
 
+   if (it->wd->state)
+     {
+        eina_inlist_sorted_state_free(it->wd->state);
+        it->wd->state = NULL;
+     }
    if (it->wd->calc_job) ecore_job_del(it->wd->calc_job);
    it->wd->calc_job = ecore_job_add(it->wd->calc_cb, it->wd);
    free(it->item);
