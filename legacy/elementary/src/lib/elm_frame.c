@@ -86,7 +86,6 @@ _sizing_eval(Evas_Object *obj)
    edje_object_size_min_calc(wd->frm, &minw, &minh);
    evas_object_size_hint_min_get(obj, &cminw, &cminh);
    if ((minw == cminw) && (minh == cminh)) return;
-   //printf("min: %3.3f %ix%i\n", ecore_loop_time_get(), minw, minh);
    evas_object_size_hint_min_set(obj, minw, minh);
    evas_object_size_hint_max_set(obj, -1, -1);
 }

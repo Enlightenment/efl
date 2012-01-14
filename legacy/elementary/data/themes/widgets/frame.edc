@@ -32,11 +32,6 @@ group { name: "elm/frame/base/default";
             }
             fill.smooth : 0;
          }
-         description { state: "collapsed" 0.0;
-            inherit: "default" 0.0;
-            rel2.to_y: "elm.text";
-            rel2.offset: 9 0;
-         }
       }
       part { name: "elm.text";
          type: TEXT;
@@ -97,15 +92,15 @@ group { name: "elm/frame/base/default";
          description { state: "default" 0.0;
             align: 0.0 1.0;
             rel1 {
-               to: "clip";
-               relative: 0.0 0.0;
+               to_y: "elm.text";
+               relative: 0.0 1.0;
+               offset: 8 2;
             }
-            rel2.to: "clip";
+            rel2.offset: -9 -9;
          }
          description { state: "collapsed" 0.0;
             inherit: "default" 0.0;
-//            rel1.relative: 0.0 1.0;
-            rel1.offset: 0 -100;
+            minmul: 1.0 0.0;
          }
       }
       part { name: "event";
@@ -120,6 +115,18 @@ group { name: "elm/frame/base/default";
       }
    }
    programs {
+      program { name: "collapse";
+         action:  STATE_SET "collapsed" 0.0;
+         target: "elm.swallow.content";
+         transition: BOUNCE 0.5 1.0 3;
+         after: "signal";
+      }
+      program { name: "expand";
+         action:  STATE_SET "default" 0.0;
+         target: "elm.swallow.content";
+         transition: BOUNCE 0.5 1.0 3;
+         after: "signal";
+      }
       program { name: "click";
          signal:  "mouse,up,1";
          source:  "event";
@@ -131,24 +138,12 @@ group { name: "elm/frame/base/default";
          script {
             new st[31];
             new Float:vl;
-            get_state(PART:"over", st, 30, vl);
+            get_state(PART:"elm.swallow.content", st, 30, vl);
             if (!strcmp(st, "default"))
               run_program(PROGRAM:"collapse");
             else
               run_program(PROGRAM:"expand");
          }
-      }
-      program { name: "collapse";
-         action:  STATE_SET "collapsed" 0.0;
-         target: "elm.swallow.content";
-         transition: LINEAR 1.0;
-         after: "signal";
-      }
-      program { name: "expand";
-         action:  STATE_SET "default" 0.0;
-         target: "elm.swallow.content";
-         transition: LINEAR 1.0;
-         after: "signal";
       }
       program { name: "signal";
          action: SIGNAL_EMIT "elm,anim,done" "elm";
