@@ -3420,7 +3420,7 @@ _eina_value_type_timeval_convert_to(const Eina_Value_Type *type __UNUSED__, cons
         unsigned int other_mem = v.tv_sec;
         if (EINA_UNLIKELY(v.tv_sec < 0))
           return EINA_FALSE;
-        if (EINA_UNLIKELY(v.tv_sec > eina_value_uint_max))
+        if (EINA_UNLIKELY((unsigned long) v.tv_sec > eina_value_uint_max))
           return EINA_FALSE;
         return eina_value_type_pset(convert, convert_mem, &other_mem);
      }
