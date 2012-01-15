@@ -24,6 +24,8 @@
 
 #include "eet_suite.h"
 
+#define CERT_DIR "src/tests/" TESTS_SRC_DIR
+
 START_TEST(eet_test_init)
 {
    int ret;
@@ -1640,7 +1642,7 @@ START_TEST(eet_identity_simple)
    eet_init();
 
    fail_if(!(file = tmpnam(file)));
-   fail_if(chdir("src/tests"));
+   fail_if(chdir(CERT_DIR));
    fail_if(!(noread = fopen("/dev/null", "w")));
 
    /* Sign an eet file. */
@@ -1707,7 +1709,7 @@ START_TEST(eet_identity_open_simple)
 
    eet_init();
 
-   fail_if(chdir("src/tests"));
+   fail_if(chdir(CERT_DIR));
 
    k = eet_identity_open("cert.pem", "key.pem", NULL);
    fail_if(!k);
@@ -1725,7 +1727,7 @@ START_TEST(eet_identity_open_pkcs8)
 
    eet_init();
 
-   fail_if(chdir("src/tests"));
+   fail_if(chdir(CERT_DIR));
 
    k = eet_identity_open("cert.pem", "key_enc_none.pem", NULL);
    fail_if(!k);
@@ -1774,7 +1776,7 @@ START_TEST(eet_identity_open_pkcs8_enc)
 
    eet_init();
 
-   fail_if(chdir("src/tests"));
+   fail_if(chdir(CERT_DIR));
 
    k = eet_identity_open("cert.pem", "key_enc.pem", NULL);
    fail_if(k);
@@ -1810,7 +1812,7 @@ START_TEST(eet_cipher_decipher_simple)
    eet_init();
 
    fail_if(!(file = tmpnam(file)));
-   fail_if(chdir("src/tests"));
+   fail_if(chdir(CERT_DIR));
 
    /* Crypt an eet file. */
    ef = eet_open(file, EET_FILE_MODE_WRITE);

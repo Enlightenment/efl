@@ -2,6 +2,7 @@ MAINTAINERCLEANFILES = Makefile.in
 
 AM_CPPFLAGS = \
 -I$(top_srcdir)/src/lib \
+-DTESTS_SRC_DIR=\"$(top_srcdir)/src/tests\" \
 @CHECK_CFLAGS@ \
 @EINA_CFLAGS@
 
