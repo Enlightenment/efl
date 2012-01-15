@@ -73,7 +73,6 @@ int
 main(int argc, char **argv)
 {
    Eina_Benchmark *test;
-   Eina_Array *ea;
    unsigned int i;
 
    if (argc != 2)
@@ -91,7 +90,7 @@ main(int argc, char **argv)
 
         etc[i].build(test);
 
-        ea = eina_benchmark_run(test);
+        eina_benchmark_run(test);
 
         eina_benchmark_free(test);
      }

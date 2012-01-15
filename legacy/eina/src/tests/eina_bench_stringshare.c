@@ -64,6 +64,8 @@ eina_bench_stringshare_job(int request)
            tmp = eina_stringshare_add(build);
         }
 
+   /* Suppress warnings as we really don't want to do anything. */
+   (void) tmp;
    eina_shutdown();
 }
 
@@ -125,6 +127,9 @@ eina_bench_evas_job(int request)
            eina_convert_xtoa(rand() % request, build + 7);
            tmp = evas_stringshare_add(build);
         }
+
+   /* Suppress warnings as we really don't want to do anything. */
+   (void) tmp;
 }
 
 static void
@@ -154,6 +159,9 @@ eina_bench_ecore_job(int request)
            eina_convert_xtoa(rand() % request, build + 7);
            tmp = ecore_string_instance(build);
         }
+
+   /* Suppress warnings as we really don't want to do anything. */
+   (void) tmp;
 
    ecore_string_shutdown();
 }

@@ -962,7 +962,7 @@ evas_list_sort(Evas_List *list, int size, int (*func)(void *, void *))
    Evas_List *last;
    unsigned int list_number;
    unsigned int middle;
-   int list_size;
+   unsigned int list_size;
 
    if (!list || !func)
       return NULL;

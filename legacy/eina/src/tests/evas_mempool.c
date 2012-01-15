@@ -56,7 +56,7 @@ _evas_mp_pool_free(Pool *p)
 }
 
 void *
-evas_mempool_malloc(Evas_Mempool *pool, int size)
+evas_mempool_malloc(Evas_Mempool *pool, int size __UNUSED__)
 {
 #ifdef NOPOOL
    return malloc(size);

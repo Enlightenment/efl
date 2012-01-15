@@ -139,6 +139,8 @@ eina_bench_lookup_rbtree(int request)
                                            EINA_RBTREE_CMP_KEY_CB(
                                               _eina_bench_rbtree_key),
                                            NULL);
+           /* Suppress warnings as we really don't want to do anything. */
+           (void) tmp;
         }
 
    eina_rbtree_delete(root, EINA_RBTREE_FREE_CB(_eina_bench_rbtree_free), NULL);
