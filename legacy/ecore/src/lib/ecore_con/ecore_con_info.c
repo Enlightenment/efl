@@ -244,7 +244,6 @@ ecore_con_info_get(Ecore_Con_Server *svr,
         unsigned char *tosend = NULL;
         int tosend_len;
         int canonname_len = 0;
-        int err;
 
         eina_convert_itoa(svr->ecs ? svr->ecs->port : svr->port, service);
         /* CHILD */
@@ -281,13 +280,13 @@ ecore_con_info_get(Ecore_Con_Server *svr,
                   memcpy(container->service, sbuf, sizeof(container->service));
                }
 
-             err = write(fd[1], tosend, tosend_len);
+             write(fd[1], tosend, tosend_len);
           }
 
         if (result)
           freeaddrinfo(result);
 
-        err = write(fd[1], "", 1);
+        write(fd[1], "", 1);
         close(fd[1]);
 #if defined(__USE_ISOC99) && !defined(__UCLIBC__)
         _Exit(0);
