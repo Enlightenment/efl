@@ -211,14 +211,12 @@ ecore_x_randr_screen_primary_output_size_set(Ecore_X_Window root,
 {
 #ifdef ECORE_XRANDR
    XRRScreenConfiguration *sc = NULL;
-   XRRScreenSize *sizes;
    Eina_Bool ret = EINA_FALSE;
    int nsizes = 0;
 
    if (size_index >= 0 && _ecore_x_randr_root_validate(root))
      {
-        sizes =
-          XRRSizes(_ecore_x_disp, XRRRootToScreen(_ecore_x_disp,
+        XRRSizes(_ecore_x_disp, XRRRootToScreen(_ecore_x_disp,
                                                   root), &nsizes);
 
         if (size_index < nsizes)
