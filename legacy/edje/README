@@ -4,16 +4,16 @@ Edje 1.1.0
 
  FOR ANY ISSUES PLEASE EMAIL:
  enlightenment-devel@lists.sourceforge.net
-  
+
 ******************************************************************************
-  
+
 Requirements:
 -------------
 
 Must:
   libc
-  libm 
-  eet (at least 1.5.0) 
+  libm
+  eet (at least 1.5.0)
   ecore (at least 1.1.0)
   ecore-evas (at least 1.1.0)
   ecore-file (at least 1.1.0)
