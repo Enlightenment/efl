@@ -1642,15 +1642,7 @@ START_TEST(eet_identity_simple)
    eet_init();
 
    fail_if(!(file = tmpnam(file)));
-   /* Hack to fix issue in buildbot. */
-   int chret = chdir(CERT_DIR);
-   if (chret)
-     {
-        static char CWD[1024];
-        getcwd(CWD, 1024);
-        printf("TAsn: '%s' '%s' '%s'\n", strerror(errno), CWD, CERT_DIR);
-     }
-   fail_if(chret);
+   fail_if(chdir(CERT_DIR));
    fail_if(!(noread = fopen("/dev/null", "w")));
 
    /* Sign an eet file. */
