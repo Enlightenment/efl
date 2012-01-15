@@ -27,8 +27,8 @@
 START_TEST(binbuf_simple)
 {
    Eina_Binbuf *buf;
-   char *txt;
-   const char cbuf[] = "Null in the middle \0 and more text afterwards and \0 anotehr null just there and another one \0 here.";
+   unsigned char *txt;
+   const unsigned char cbuf[] = "Null in the middle \0 and more text afterwards and \0 anotehr null just there and another one \0 here.";
    size_t size = sizeof(cbuf) - 1; /* We don't care about the real NULL */
 
 
@@ -69,7 +69,7 @@ END_TEST
 START_TEST(binbuf_remove)
 {
    Eina_Binbuf *buf;
-   const char cbuf[] = "12\0 456 78\0 abcthis is some more random junk here!";
+   const unsigned char cbuf[] = "12\0 456 78\0 abcthis is some more random junk here!";
    size_t size = sizeof(cbuf) - 1; /* We don't care about the real NULL */
 
    eina_init();
@@ -101,12 +101,15 @@ END_TEST
 START_TEST(binbuf_manage_simple)
 {
    Eina_Binbuf *buf;
-   const unsigned char cbuf[] = "12\0 456 78\0 abcthis is some more random junk here!";
+   const char *_cbuf = "12\0 456 78\0 abcthis is some more random junk here!";
+   const unsigned char *cbuf = (const unsigned char *) _cbuf;
    size_t size = sizeof(cbuf) - 1; /* We don't care about the real NULL */
+   unsigned char *alloc_buf = malloc(size);
+   memcpy(alloc_buf, cbuf, size);
 
    eina_init();
 
-   buf = eina_binbuf_manage_new_length(cbuf, size);
+   buf = eina_binbuf_manage_new_length(alloc_buf, size);
    fail_if(!buf);
 
    fail_if(memcmp(eina_binbuf_string_get(buf), cbuf, size));
@@ -178,7 +181,7 @@ END_TEST
 START_TEST(binbuf_realloc)
 {
    Eina_Binbuf *buf;
-   char pattern[1024 * 16];
+   unsigned char pattern[1024 * 16];
    unsigned int i;
    size_t sz;
 
@@ -256,4 +259,5 @@ eina_test_binbuf(TCase *tc)
    tcase_add_test(tc, binbuf_remove);
    tcase_add_test(tc, binbuf_insert);
    tcase_add_test(tc, binbuf_realloc);
+   tcase_add_test(tc, binbuf_manage_simple);
 }
