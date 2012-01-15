@@ -17,7 +17,7 @@ Eina is a library providing data structure utilities for EFL that are meant
 to be lean, efficient and tailored to EFL's needs. This saves each
 library implementing its own custom datatype handling and duplicating
 the code. Some of the datatypes handles are:
-  Arrays (variable sized)
+  Arrays (variable sized, including inline members)
   Hash tables
   Inlined linked lists
   Linked lists
