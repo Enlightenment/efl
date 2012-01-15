@@ -24,7 +24,7 @@
 
 #include "eet_suite.h"
 
-#define CERT_DIR "src/tests/" TESTS_SRC_DIR
+#define CERT_DIR ((*TESTS_SRC_DIR == '/') ? TESTS_SRC_DIR : "src/tests/" TESTS_SRC_DIR)
 
 START_TEST(eet_test_init)
 {
@@ -1648,8 +1648,7 @@ START_TEST(eet_identity_simple)
      {
         static char CWD[1024];
         getcwd(CWD, 1024);
-        perror(NULL);
-        printf("TAsn: '%s' '%s'\n", CWD, CERT_DIR);
+        printf("TAsn: '%s' '%s' '%s'\n", strerror(errno), CWD, CERT_DIR);
      }
    fail_if(chret);
    fail_if(!(noread = fopen("/dev/null", "w")));
