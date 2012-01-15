@@ -30,7 +30,7 @@ doc:
 
 endif
 
-EXTRA_DIST = $(srcdir)/Doxyfile \
+EXTRA_DIST = $(builddir)/Doxyfile \
 	$(srcdir)/e.css \
 	$(srcdir)/foot.html \
 	$(srcdir)/head.html \
