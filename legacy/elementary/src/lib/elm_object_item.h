@@ -8,7 +8,7 @@
  * @note Every elm_object_item supports this API
  * @ingroup General
  */
-EAPI Evas_Object                 *elm_object_item_object_get(const Elm_Object_Item *it);
+EAPI Evas_Object                 *elm_object_item_widget_get(const Elm_Object_Item *it);
 
 /**
  * Set a content of an object item

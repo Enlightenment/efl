@@ -1259,7 +1259,7 @@ EAPI Evas_Object *
 elm_toolbar_item_toolbar_get(const Elm_Object_Item *it)
 {
    ELM_OBJ_ITEM_CHECK_OR_RETURN(it, NULL);
-   return elm_object_item_object_get(it);
+   return elm_object_item_widget_get(it);
 }
 
 EAPI void

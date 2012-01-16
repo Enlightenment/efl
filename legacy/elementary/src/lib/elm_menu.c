@@ -1036,7 +1036,7 @@ elm_menu_item_next_get(const Elm_Object_Item *it)
 EAPI Evas_Object *
 elm_menu_item_menu_get(const Elm_Object_Item *it)
 {
-   return elm_object_item_object_get(it);
+   return elm_object_item_widget_get(it);
 }
 
 EAPI Elm_Object_Item *

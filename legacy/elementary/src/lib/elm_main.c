@@ -2008,9 +2008,9 @@ elm_longpress_timeout_get(void)
 }
 
 EAPI Evas_Object *
-elm_object_item_object_get(const Elm_Object_Item *it)
+elm_object_item_widget_get(const Elm_Object_Item *it)
 {
-   return ((Elm_Widget_Item *) it)->widget;
+   return WIDGET(it);
 }
 
 EAPI void
@@ -2181,3 +2181,8 @@ elm_object_item_tooltip_style_get(const Elm_Object_Item *item)
    return elm_widget_item_tooltip_style_get(item);
 }
 
+EINA_DEPRECATED EAPI Evas_Object *
+elm_object_item_object_get(const Elm_Object_Item *it)
+{
+   return elm_object_item_widget_get(it);
+}
