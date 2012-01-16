@@ -633,4 +633,8 @@
           can cause issues if new configs are added. Now we have evas allocate it
           for you.
 
+2012-01-16  Raphael Kubo da Costa (rakuco)
 
+	* Add evas_object_smart_callback_del_full() to allow users to
+	unregister a specific smart event callback instead of all
+	callbacks matching a given type and function pointer.

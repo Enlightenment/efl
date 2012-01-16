@@ -7,6 +7,7 @@ Additions:
 
    * Textblock now supports self-closing tags, i.e <br/>. Those should be used instead of the old <br> way.
    * Shm engine for drawing in Wayland.
+   * evas_object_smart_callback_del_full API.
 
 Improvements:
 

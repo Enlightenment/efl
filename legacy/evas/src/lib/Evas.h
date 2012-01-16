@@ -9847,6 +9847,34 @@ EAPI void              evas_object_smart_callback_priority_add(Evas_Object *obj,
 EAPI void             *evas_object_smart_callback_del    (Evas_Object *obj, const char *event, Evas_Smart_Cb func) EINA_ARG_NONNULL(1, 2, 3);
 
 /**
+ * Delete (unregister) a callback function from the smart event
+ * specified by @p event on the smart object @p obj.
+ *
+ * @param obj a smart object
+ * @param event the event's name string
+ * @param func the callback function
+ * @param data the data pointer that was passed to the callback
+ * @return the data pointer
+ *
+ * This function removes <b>the first</b> added smart callback on the
+ * object @p obj matching the event name @p event, the registered
+ * function pointer @p func and the callback data pointer @p data. If
+ * the removal is successful it will also return the data pointer that
+ * was passed to evas_object_smart_callback_add() (that will be the same
+ * as the parameter) when the callback(s) was(were) added to the canvas.
+ * If not successful @c NULL will be returned. A common use would be to
+ * remove an exact match of a callback
+ *
+ * @see evas_object_smart_callback_add() for more details.
+ * @since 1.2.0
+ * @ingroup Evas_Smart_Object_Group
+ *
+ * @note To delete all smart event callbacks which match @p type and @p func,
+ * use evas_object_smart_callback_del().
+ */
+EAPI void             *evas_object_smart_callback_del_full(Evas_Object *obj, const char *event, Evas_Smart_Cb func, const void *data) EINA_ARG_NONNULL(1, 2, 3);
+
+/**
  * Call a given smart callback on the smart object @p obj.
  *
  * @param obj the smart object

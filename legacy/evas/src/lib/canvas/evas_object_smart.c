@@ -402,6 +402,37 @@ evas_object_smart_callback_del(Evas_Object *obj, const char *event, Evas_Smart_C
    return NULL;
 }
 
+EAPI void *
+evas_object_smart_callback_del_full(Evas_Object *obj, const char *event, Evas_Smart_Cb func, const void *data)
+{
+   Evas_Object_Smart *o;
+   Eina_List *l;
+   Evas_Smart_Callback *cb;
+
+   MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
+   return NULL;
+   MAGIC_CHECK_END();
+   o = (Evas_Object_Smart *)(obj->object_data);
+   MAGIC_CHECK(o, Evas_Object_Smart, MAGIC_OBJ_SMART);
+   return NULL;
+   MAGIC_CHECK_END();
+   if (!event) return NULL;
+   EINA_LIST_FOREACH(o->callbacks, l, cb)
+     {
+        if ((!strcmp(cb->event, event)) && (cb->func == func) && (cb->func_data == data))
+          {
+             void *data;
+
+             data = cb->func_data;
+             cb->delete_me = 1;
+             o->deletions_waiting = 1;
+             evas_object_smart_callbacks_clear(obj);
+             return data;
+          }
+     }
+   return NULL;
+}
+
 EAPI void
 evas_object_smart_callback_call(Evas_Object *obj, const char *event, void *event_info)
 {
