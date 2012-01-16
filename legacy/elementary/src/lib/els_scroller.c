@@ -1167,6 +1167,7 @@ _elm_smart_scroller_child_region_show_internal(Evas_Object *obj, Evas_Coord *_x,
 void
 elm_smart_scroller_child_region_set(Evas_Object *obj, Evas_Coord x, Evas_Coord y, Evas_Coord w, Evas_Coord h)
 {
+   API_ENTRY return;
    if (_elm_smart_scroller_child_region_show_internal(obj, &x, &y, w, h))
      {
         elm_smart_scroller_child_pos_set(obj, x, y);
