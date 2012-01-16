@@ -44,7 +44,9 @@ main(int argc, char **argv)
    int                 argi = 1;	/* Next argument to handle. */
    struct cpp_options *opts = &options;
    enum cpp_token      kind;
-   int                 got_text;
+#if EPP_DEBUG
+   int                 got_text = 0;
+#endif
 
    p = argv[0] + strlen(argv[0]);
 #ifndef __EMX__
@@ -76,7 +78,6 @@ main(int argc, char **argv)
    else if (!freopen(opts->out_fname, "w", stdout))
       cpp_pfatal_with_name(&parse_in, opts->out_fname);
 
-   got_text = 0;
    for (i = 0;; i++)
      {
 	kind = cpp_get_token(&parse_in);
@@ -108,7 +109,9 @@ main(int argc, char **argv)
 	  case CPP_COMMA:
 	  case CPP_SEMICOLON:
 	  case CPP_3DOTS:
-	     got_text = 1;
+#if EPP_DEBUG
+             got_text = 1;
+#endif
 	     continue;
 
 	  case CPP_COMMENT:
@@ -130,7 +133,9 @@ main(int argc, char **argv)
 		exit(FATAL_EXIT_CODE);
 	  }
 	parse_in.limit = parse_in.token_buffer;
-	got_text = 0;
+#if EPP_DEBUG
+        got_text = 0;
+#endif
      }
 
  done:

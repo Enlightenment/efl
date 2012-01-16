@@ -351,8 +351,10 @@ _edje_multisense_internal_sound_sample_play(Edje *ed, const char *sample_name, c
    command.type.sample.speed = speed;
    size = write(command_pipe[1], &command, sizeof(command));
 #else
-   ed = NULL; // warning shh
-   if (speed > 0) sample_name = NULL; // warning shh
+   // warning shh
+   (void) ed;
+   (void) sample_name;
+   (void) speed;
 #endif
    return (size == sizeof(Edje_Multisense_Sound_Action));
 }
@@ -371,8 +373,10 @@ _edje_multisense_internal_sound_tone_play(Edje *ed, const char *tone_name, const
    command.type.tone.duration = duration;
    size = write(command_pipe[1], &command, sizeof(command));
 #else   
-   ed = NULL; // warning shh
-   if (duration > 0) tone_name = NULL; // warning shh
+   // warning shh
+   (void) ed;
+   (void) duration;
+   (void) tone_name;
 #endif
    return (size == sizeof(Edje_Multisense_Sound_Action));
 

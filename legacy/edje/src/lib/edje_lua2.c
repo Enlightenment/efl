@@ -376,7 +376,7 @@ _elua_gc(lua_State *L)  // Stack usage [-0, +0, e]
 //  nil      ~
 
 static char *
-_elua_push_name(lua_State *L, char *q, int index)  // Stack usage [-0, +1, e or m]
+_elua_push_name(lua_State *L, char *q, int idx)  // Stack usage [-0, +1, e or m]
 {
    char *p = q;
    char temp = '\0';
@@ -387,8 +387,8 @@ _elua_push_name(lua_State *L, char *q, int index)  // Stack usage [-0, +1, e or 
       q++;
    temp = *q;
    *q = '\0';
-   if (index > 0)
-      lua_getfield(L, index, p);  // Stack usage [-0, +1, e]
+   if (idx > 0)
+      lua_getfield(L, idx, p);  // Stack usage [-0, +1, e]
    else
       lua_pushstring(L, p);       // Stack usage [-0, +1, m]
    *q = temp;

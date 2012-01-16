@@ -20,14 +20,18 @@ EAPI Eina_Error EDJE_EDIT_ERROR_GROUP_CURRENTLY_USED = 0 ;
 EAPI Eina_Error EDJE_EDIT_ERROR_GROUP_REFERENCED = 0;
 EAPI Eina_Error EDJE_EDIT_ERROR_GROUP_DOES_NOT_EXIST = 0;
 
-/* Get ed(Edje*) from obj(Evas_Object*) */
-#define GET_ED_OR_RETURN(RET) \
-   Edje *ed; \
+/* Get eed(Edje_Edit*) from obj(Evas_Object*) */
+#define GET_EED_OR_RETURN(RET) \
    Edje_Edit *eed; \
    if (!evas_object_smart_type_check_ptr(obj, _edje_edit_type)) \
      return RET; \
    eed = evas_object_smart_data_get(obj); \
-   if (!eed) return RET; \
+   if (!eed) return RET;
+
+/* Get ed(Edje*) from obj(Evas_Object*) */
+#define GET_ED_OR_RETURN(RET) \
+   Edje *ed; \
+   GET_EED_OR_RETURN(RET); \
    ed = (Edje *)eed;
 
 /* Get rp(Edje_Real_Part*) from obj(Evas_Object*) and part(char*) */
@@ -4778,7 +4782,7 @@ edje_edit_image_id_get(Evas_Object *obj, const char *image_name)
 {
    eina_error_set(0);
 
-   GET_ED_OR_RETURN(-1);
+   GET_EED_OR_RETURN(-1);
 
    return _edje_image_id_find(eed, image_name);
 }
@@ -5161,7 +5165,6 @@ EAPI Eina_Bool
 edje_edit_program_add(Evas_Object *obj, const char *name)
 {
    Edje_Program *epr;
-   Edje_Part_Collection *pc;
 
    eina_error_set(0);
 
@@ -5178,7 +5181,7 @@ edje_edit_program_add(Evas_Object *obj, const char *name)
    if (!epr) return EINA_FALSE;
 
    //Add program to group
-   pc = ed->collection;
+   // pc = ed->collection;
 
    /* By default, source and signal are empty, so they fill in nocmp category */
    ed->collection->programs.nocmp = realloc(ed->collection->programs.nocmp,
@@ -5224,7 +5227,6 @@ edje_edit_program_del(Evas_Object *obj, const char *prog)
    Eina_List *l, *l_next;
    Edje_Program_Target *prt;
    Edje_Program_After *pa;
-   Edje_Part_Collection *pc;
    Edje_Program *p;
    Program_Script *ps, *old_ps;
    int id, i;
@@ -5235,7 +5237,7 @@ edje_edit_program_del(Evas_Object *obj, const char *prog)
    GET_ED_OR_RETURN(EINA_FALSE);
    GET_EPR_OR_RETURN(EINA_FALSE);
 
-   pc = ed->collection;
+   //pc = ed->collection;
 
    //Remove program from programs list
    id = epr->id;
@@ -5724,7 +5726,7 @@ edje_edit_program_action_set(Evas_Object *obj, const char *prog, Edje_Action_Typ
 
    eina_error_set(0);
 
-   GET_ED_OR_RETURN(EINA_FALSE);
+   GET_EED_OR_RETURN(EINA_FALSE);
    GET_EPR_OR_RETURN(EINA_FALSE);
 
    //printf("SET ACTION for program: %s [%d]\n", prog, action);
@@ -6068,7 +6070,7 @@ edje_edit_script_set(Evas_Object *obj, const char *code)
 {
    eina_error_set(0);
 
-   GET_ED_OR_RETURN();
+   GET_EED_OR_RETURN();
 
    free(eed->embryo_source);
    free(eed->embryo_processed);
@@ -6091,7 +6093,7 @@ edje_edit_script_program_get(Evas_Object *obj, const char *prog)
 
    eina_error_set(0);
 
-   GET_ED_OR_RETURN(NULL);
+   GET_EED_OR_RETURN(NULL);
    GET_EPR_OR_RETURN(NULL);
 
    if (epr->action != EDJE_ACTION_TYPE_SCRIPT)
@@ -6111,7 +6113,7 @@ edje_edit_script_program_set(Evas_Object *obj, const char *prog, const char *cod
 
    eina_error_set(0);
 
-   GET_ED_OR_RETURN();
+   GET_EED_OR_RETURN();
    GET_EPR_OR_RETURN();
 
    if (epr->action != EDJE_ACTION_TYPE_SCRIPT)
@@ -6537,7 +6539,7 @@ almost_out:
 EAPI Eina_Bool
 edje_edit_script_compile(Evas_Object *obj)
 {
-   GET_ED_OR_RETURN(EINA_FALSE);
+   GET_EED_OR_RETURN(EINA_FALSE);
 
    if (!eed->script_need_recompile)
      return EINA_TRUE;
@@ -6548,7 +6550,7 @@ edje_edit_script_compile(Evas_Object *obj)
 EAPI const Eina_List *
 edje_edit_script_error_list_get(Evas_Object *obj)
 {
-   GET_ED_OR_RETURN(NULL);
+   GET_EED_OR_RETURN(NULL);
    return eed->errors;
 }
 
@@ -6630,7 +6632,7 @@ _edje_generate_source_of_program(Evas_Object *obj, const char *program, Eina_Str
    const char *api_name, *api_description;
    Edje_Program *epr;
 
-   GET_ED_OR_RETURN(EINA_FALSE);
+   GET_EED_OR_RETURN(EINA_FALSE);
 
    epr = _edje_program_get_byname(obj, program);
 
@@ -7773,7 +7775,7 @@ edje_edit_print_internal_status(Evas_Object *obj)
 */
    eina_error_set(0);
 
-   GET_ED_OR_RETURN();
+   GET_EED_OR_RETURN();
 
    _edje_generate_source(obj);
 /*
