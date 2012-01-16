@@ -537,8 +537,6 @@ _ecore_evas_extn_free(Ecore_Evas *ee)
 static void
 _ecore_evas_resize(Ecore_Evas *ee, int w, int h)
 {
-   Extn *extn;
-
    if (w < 1) w = 1;
    if (h < 1) h = 1;
    ee->req.w = w;
@@ -547,7 +545,12 @@ _ecore_evas_resize(Ecore_Evas *ee, int w, int h)
    ee->w = w;
    ee->h = h;
 
+   /*
+    * No need for it if not used later.
+   Extn *extn;
+
    extn = ee->engine.buffer.data;
+   */
    if (ee->engine.buffer.image)
      evas_object_image_size_set(ee->engine.buffer.image, ee->w, ee->h);
    /* Server can have many plugs, so I block resize comand from client to server *

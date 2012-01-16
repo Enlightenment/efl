@@ -568,7 +568,7 @@ ecore_evas_cocoa_new(Ecore_Cocoa_Window *parent, int x, int y, int w, int h)
 #else
   ERR("Cocoa support in ecore-evas not enabled");
   return NULL;
-  parent = NULL;
-  x = y = w = h = 0;
+  (void) parent;
+  (void) x; (void) y; (void) w; (void) h;
 #endif
 }
