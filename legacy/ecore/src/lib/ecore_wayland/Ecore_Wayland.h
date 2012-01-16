@@ -110,7 +110,7 @@ EAPI void ecore_wl_sync(void);
 EAPI void ecore_wl_pointer_xy_get(int *x, int *y);
 
 EAPI Ecore_Wl_Drag_Source *ecore_wl_drag_source_create(int hotspot_x, int hotspot_y, int offset_x, int offset_y, const char *mimetype, unsigned int timestamp, void *data);
-EAPI void ecore_wl_drag_start(Ecore_Wl_Drag_Source *source, struct wl_surface *surface);
+EAPI void ecore_wl_drag_start(Ecore_Wl_Drag_Source *source, struct wl_surface *surface, struct wl_buffer *buffer);
 EAPI void ecore_wl_drag_stop(void);
 
 EAPI extern int ECORE_WL_EVENT_MOUSE_IN;

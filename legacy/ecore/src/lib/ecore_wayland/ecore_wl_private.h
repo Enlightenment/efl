@@ -51,6 +51,7 @@ typedef struct _Ecore_Wl_Dnd_Source
 
    Eina_Array *types;
 
+   uint32_t timestamp;
    void *data;
 } Ecore_Wl_Dnd_Source;
 
@@ -63,12 +64,14 @@ typedef struct _Ecore_Wl_Dnd_Target
 
    Eina_Array *types;
 
+   uint32_t timestamp;
    void *data;
 } Ecore_Wl_Dnd_Target;
 
 struct _Ecore_Wl_Drag_Source
 {
    struct wl_data_device *data_dev;
+   struct wl_buffer *buffer;
 
    int32_t hotspot_x, hotspot_y;
    int32_t offset_x, offset_y;

@@ -42,15 +42,15 @@ static void _ecore_wl_cb_handle_touch_up(void *data __UNUSED__, struct wl_input_
 static void _ecore_wl_cb_handle_touch_motion(void *data __UNUSED__, struct wl_input_device *dev __UNUSED__, uint32_t timestamp, int32_t id, int32_t x, int32_t y);
 static void _ecore_wl_cb_handle_touch_frame(void *data __UNUSED__, struct wl_input_device *dev __UNUSED__);
 static void _ecore_wl_cb_handle_touch_cancel(void *data __UNUSED__, struct wl_input_device *dev __UNUSED__);
-static void _ecore_wl_cb_source_target(void *data, struct wl_data_source *source, const char *mime_type);
+static void _ecore_wl_cb_source_target(void *data, struct wl_data_source *source __UNUSED__, const char *mime_type __UNUSED__);
 static void _ecore_wl_cb_source_send(void *data, struct wl_data_source *source, const char *mime_type, int32_t fd);
-static void _ecore_wl_cb_source_cancelled(void *data, struct wl_data_source *source);
+static void _ecore_wl_cb_source_cancelled(void *data, struct wl_data_source *source __UNUSED__);
 static void _ecore_wl_cb_source_offer(void *data, struct wl_data_offer *offer __UNUSED__, const char *type);
 static void _ecore_wl_cb_data_offer(void *data, struct wl_data_device *data_dev, uint32_t id);
-static void _ecore_wl_cb_data_enter(void *data, struct wl_data_device *data_dev, uint32_t timestamp, struct wl_surface *surface, int32_t x, int32_t y, struct wl_data_offer *offer);
-static void _ecore_wl_cb_data_leave(void *data, struct wl_data_device *data_dev __UNUSED__);
-static void _ecore_wl_cb_data_motion(void *data, struct wl_data_device *data_dev, uint32_t timestamp, int32_t x, int32_t y);
-static void _ecore_wl_cb_data_drop(void *data, struct wl_data_device *data_dev);
+static void _ecore_wl_cb_data_enter(void *data __UNUSED__, struct wl_data_device *data_dev, uint32_t timestamp, struct wl_surface *surface, int32_t x, int32_t y, struct wl_data_offer *offer);
+static void _ecore_wl_cb_data_leave(void *data __UNUSED__, struct wl_data_device *data_dev);
+static void _ecore_wl_cb_data_motion(void *data __UNUSED__, struct wl_data_device *data_dev, uint32_t timestamp, int32_t x, int32_t y);
+static void _ecore_wl_cb_data_drop(void *data __UNUSED__, struct wl_data_device *data_dev);
 static void _ecore_wl_cb_data_selection(void *data, struct wl_data_device *data_dev, struct wl_data_offer *offer);
 
 static void _ecore_wl_mouse_move_send(uint32_t timestamp);
@@ -340,8 +340,10 @@ ecore_wl_drag_source_create(int hotspot_x, int hotspot_y, int offset_x, int offs
 }
 
 EAPI void 
-ecore_wl_drag_start(Ecore_Wl_Drag_Source *source, struct wl_surface *surface)
+ecore_wl_drag_start(Ecore_Wl_Drag_Source *source, struct wl_surface *surface, struct wl_buffer *buffer)
 {
+   source->buffer = buffer;
+
    wl_data_device_start_drag(source->data_dev, source->data_source, 
                              surface, source->timestamp);
 }
@@ -429,18 +431,21 @@ _ecore_wl_cb_disp_handle_global(struct wl_display *disp, uint32_t id, const char
           wl_display_bind(_ecore_wl_disp, id, &wl_input_device_interface);
         wl_input_device_add_listener(_ecore_wl_input_dev, 
                                      &_ecore_wl_input_listener, NULL);
-
-        _ecore_wl_data_dev = 
-          wl_data_device_manager_get_data_device(_ecore_wl_data_manager, 
-                                                 _ecore_wl_input_dev);
-        wl_data_device_add_listener(_ecore_wl_data_dev, 
-                                    &_ecore_wl_data_listener, NULL);
      }
    else if (!strcmp(interface, "wl_data_device_manager")) 
      {
         _ecore_wl_data_manager = 
           wl_display_bind(_ecore_wl_disp, id, 
                           &wl_data_device_manager_interface);
+     }
+
+   if ((_ecore_wl_input_dev) && (_ecore_wl_data_manager) && (!_ecore_wl_data_dev))
+     {
+        _ecore_wl_data_dev = 
+          wl_data_device_manager_get_data_device(_ecore_wl_data_manager, 
+                                                 _ecore_wl_input_dev);
+        wl_data_device_add_listener(_ecore_wl_data_dev, 
+                                    &_ecore_wl_data_listener, NULL);
      }
 }
 
@@ -826,35 +831,59 @@ _ecore_wl_cb_handle_touch_cancel(void *data __UNUSED__, struct wl_input_device *
 }
 
 static void 
-_ecore_wl_cb_source_target(void *data, struct wl_data_source *source, const char *mime_type)
+_ecore_wl_cb_source_target(void *data, struct wl_data_source *source __UNUSED__, const char *mime_type __UNUSED__)
 {
-   /* Ecore_Wl_Drag_Source *source; */
+   Ecore_Wl_Drag_Source *s;
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
-   /* if (!(source = data)) return; */
+   printf("Ecore_Wl Source Target\n");
+   if (!(s = data)) return;
+   printf("\tHave Drag Source\n");
 
-//   wl_data_device_set_user_data(data_dev, source);
-
-   /* create a surface & buffer to represent the dragging object */
-   /* attach buffer to the surface */
-   /* attach to device */
+   /* FIXME: buffer here should really be the mouse cursor buffer */
+   wl_data_device_attach(s->data_dev, s->timestamp, s->buffer, 
+                         s->hotspot_x, s->hotspot_y);
 }
 
 static void 
 _ecore_wl_cb_source_send(void *data, struct wl_data_source *source, const char *mime_type, int32_t fd)
 {
+   Ecore_Wl_Drag_Source *s;
 
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+
+   printf("Ecore_Wl Source Send\n");
+   if (!(s = data)) return;
+   printf("\tHave Drag Source\n");
+
+   /* FIXME: write message to fd */
+
+   /* NB: Wayland really sucks in this regard. Why should selection stuff 
+    * require an 'fd' ?? */
 }
 
 static void 
-_ecore_wl_cb_source_cancelled(void *data, struct wl_data_source *source)
+_ecore_wl_cb_source_cancelled(void *data, struct wl_data_source *source __UNUSED__)
 {
-   /* raise this to ecore_evas so the surface/buffer 
-    * of the drag can be destroyed */
+   Ecore_Wl_Drag_Source *s;
+
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
    /* The cancelled event usually means source is no longer in use by 
     * the drag (or selection). */
+
+   printf("Ecore_Wl Source Cancel\n");
+   if (!(s = data)) return;
+   printf("\tHave Drag Source\n");
+
+   /* FIXME: raise this to ecore_evas so the surface/buffer 
+    * of the drag can be destroyed */
+
+   if (s->data_source) wl_data_source_destroy(s->data_source);
+   s->data_source = NULL;
+
+   free(s);
 }
 
 static void 
@@ -871,8 +900,6 @@ _ecore_wl_cb_data_offer(void *data, struct wl_data_device *data_dev, uint32_t id
 {
    Ecore_Wl_Dnd_Source *source;
 
-   /* data being offered. Could be dnd, or selection */
-
    /* create a new 'data offer' structure and setup a listener for it */
    if (!(source = calloc(1, sizeof(Ecore_Wl_Dnd_Source)))) return;
 
@@ -880,43 +907,87 @@ _ecore_wl_cb_data_offer(void *data, struct wl_data_device *data_dev, uint32_t id
    source->data = data;
    source->refs = 1;
 
-   /* NB: This will need to change when Wayland has typesafe wrappers for this */
+   /* FIXME: This will need to change when Wayland has typesafe wrappers for this */
    source->offer = (struct wl_data_offer *)
      wl_proxy_create_for_id((struct wl_proxy *)data_dev, 
                             id, &wl_data_offer_interface);
 
-//   wl_data_device_set_user_data(data_dev, source);
+   wl_data_device_set_user_data(data_dev, source);
    wl_data_offer_add_listener(source->offer, &_ecore_wl_offer_listener, source);
 }
 
 static void 
-_ecore_wl_cb_data_enter(void *data, struct wl_data_device *data_dev, uint32_t timestamp, struct wl_surface *surface, int32_t x, int32_t y, struct wl_data_offer *offer)
+_ecore_wl_cb_data_enter(void *data __UNUSED__, struct wl_data_device *data_dev, uint32_t timestamp, struct wl_surface *surface, int32_t x, int32_t y, struct wl_data_offer *offer)
 {
+   Ecore_Wl_Dnd_Source *source;
 
+   if (!(source = wl_data_device_get_user_data(data_dev))) return;
+
+   /* TODO: maybe set pointer focus here ?? */
+
+   source->timestamp = timestamp;
 }
 
 static void 
-_ecore_wl_cb_data_leave(void *data __UNUSED__, struct wl_data_device *data_dev __UNUSED__)
+_ecore_wl_cb_data_leave(void *data __UNUSED__, struct wl_data_device *data_dev)
 {
+   Ecore_Wl_Dnd_Source *source;
 
+   if (!(source = wl_data_device_get_user_data(data_dev))) return;
+
+   /* destroy drag offer */
+   wl_data_offer_destroy(source->offer);
+
+   while (eina_array_count(source->types))
+     free(eina_array_pop(source->types));
+
+   eina_array_free(source->types);
+   free(source);
+
+   wl_data_device_set_user_data(data_dev, NULL);
 }
 
 static void 
-_ecore_wl_cb_data_motion(void *data, struct wl_data_device *data_dev, uint32_t timestamp, int32_t x, int32_t y)
+_ecore_wl_cb_data_motion(void *data __UNUSED__, struct wl_data_device *data_dev, uint32_t timestamp, int32_t x, int32_t y)
 {
+   Ecore_Wl_Dnd_Source *source;
 
+   if (!(source = wl_data_device_get_user_data(data_dev))) return;
+   /* TODO: Here we should raise motion events for dragging */
 }
 
 static void 
-_ecore_wl_cb_data_drop(void *data, struct wl_data_device *data_dev)
+_ecore_wl_cb_data_drop(void *data __UNUSED__, struct wl_data_device *data_dev)
 {
+   Ecore_Wl_Dnd_Source *source;
 
+   if (!(source = wl_data_device_get_user_data(data_dev))) return;
+
+   /* TODO: Raise event for drop */
+
+   wl_data_offer_accept(source->offer, source->timestamp, NULL);
+//                        eina_array_data_get(source->types, 0));
 }
 
 static void 
 _ecore_wl_cb_data_selection(void *data, struct wl_data_device *data_dev, struct wl_data_offer *offer)
 {
+   Ecore_Wl_Dnd_Source *source;
 
+   printf("Ecore_Wl Data Selection\n");
+   if ((source = wl_data_device_get_user_data(data_dev)))
+     {
+        /* destroy old source */
+        wl_data_offer_destroy(source->offer);
+
+        while (eina_array_count(source->types))
+          free(eina_array_pop(source->types));
+
+        eina_array_free(source->types);
+        free(source);
+
+        wl_data_device_set_user_data(data_dev, NULL);
+     }
 }
 
 static void 
