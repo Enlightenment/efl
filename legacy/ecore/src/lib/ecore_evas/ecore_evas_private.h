@@ -405,10 +405,12 @@ int _ecore_evas_ews_shutdown(void);
 
 #ifdef BUILD_ECORE_EVAS_WAYLAND_SHM
 void _ecore_evas_wayland_shm_resize(Ecore_Evas *ee, int location);
+void _ecore_evas_wayland_shm_drag_start(Ecore_Evas *ee, Ecore_Evas *drag_ee, void *source);
 #endif
 
 #ifdef BUILD_ECORE_EVAS_WAYLAND_EGL
 void _ecore_evas_wayland_egl_resize(Ecore_Evas *ee, int location);
+void _ecore_evas_wayland_egl_drag_start(Ecore_Evas *ee, Ecore_Evas *drag_ee, void *source);
 #endif
 
 void _ecore_evas_fps_debug_init(void);

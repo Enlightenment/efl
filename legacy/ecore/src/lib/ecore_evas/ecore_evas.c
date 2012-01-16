@@ -2682,13 +2682,47 @@ ecore_evas_wayland_resize(Ecore_Evas *ee, int location)
 {
    if (!ee) return;
    if (!strcmp(ee->driver, "wayland_shm"))
-     _ecore_evas_wayland_shm_resize(ee, location);
+     {
+#ifdef BUILD_ECORE_EVAS_WAYLAND_SHM
+        _ecore_evas_wayland_shm_resize(ee, location);
+#endif
+     }
    else if (!strcmp(ee->driver, "wayland_egl"))
-     _ecore_evas_wayland_egl_resize(ee, location);
+     {
+#ifdef BUILD_ECORE_EVAS_WAYLAND_EGL
+        _ecore_evas_wayland_egl_resize(ee, location);
+#endif
+     }
+}
+
+EAPI void 
+ecore_evas_wayland_drag_start(Ecore_Evas *ee, Ecore_Evas *drag_ee, void *source)
+{
+   if ((!ee) || (!source)) return;
+   if (!ee->engine.wl.surface) return;
+
+   if (!strcmp(ee->driver, "wayland_shm"))
+     {
+#ifdef BUILD_ECORE_EVAS_WAYLAND_SHM
+        _ecore_evas_wayland_shm_drag_start(ee, drag_ee, source);
+#endif
+     }
+   else if (!strcmp(ee->driver, "wayland_egl"))
+     {
+#ifdef BUILD_ECORE_EVAS_WAYLAND_EGL
+        _ecore_evas_wayland_egl_drag_start(ee, drag_ee, source);
+#endif
+     }
 }
 #else
 EAPI void 
 ecore_evas_wayland_resize(Ecore_Evas *ee __UNUSED__, int location __UNUSED__)
+{
+
+}
+
+EAPI void 
+ecore_evas_wayland_drag_start(Ecore_Evas *ee __UNUSED__, Ecore_Evas *drag_ee __UNUSED__, void *source __UNUSED__)
 {
 
 }

@@ -2,7 +2,7 @@
 # include "config.h"
 #endif
 
-#define LOGFNS 1
+//#define LOGFNS 1
 
 #ifdef LOGFNS
 # include <stdio.h>
@@ -1236,6 +1236,16 @@ _ecore_evas_wayland_shm_resize(Ecore_Evas *ee, int location)
    wl_shell_surface_resize(ee->engine.wl.shell_surface, 
                            ecore_wl_input_device_get(), 
                            _ecore_evas_wl_btn_timestamp, location);
+}
+
+void 
+_ecore_evas_wayland_shm_drag_start(Ecore_Evas *ee, Ecore_Evas *drag_ee, void *source)
+{
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+
+   if ((!ee) || (!ee->engine.wl.surface)) return;
+   if ((!source) || (!drag_ee)) return;
+   ecore_wl_drag_start(source, ee->engine.wl.surface, drag_ee->engine.wl.buffer);
 }
 
 #else
