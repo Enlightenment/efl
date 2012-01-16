@@ -1293,7 +1293,6 @@ EAPI Evas_Object *
 ecore_evas_extn_plug_new(Ecore_Evas *ee_target)
 {
 #ifdef EXTN_ENABLED
-   Extn *extn;
    Evas_Object *o;
    Ecore_Evas *ee;
    int w = 1, h = 1;
@@ -1990,7 +1989,6 @@ EAPI Ecore_Evas *
 ecore_evas_extn_socket_new(int w, int h)
 {
 #ifdef EXTN_ENABLED
-   Extn *extn;
    Evas_Engine_Info_Buffer *einfo;
    Ecore_Evas *ee;
    int rmethod;
