@@ -1545,6 +1545,11 @@ elm_win_add(Evas_Object *parent, const char *name, Elm_Win_Type type)
            win->img_obj = NULL;
         }
         break;
+
+      case ELM_WIN_SOCKET_IMAGE:
+        win->ee = ecore_evas_extn_socket_new(1, 1);
+        break;
+
       default:
         if (ENGINE_COMPARE(ELM_SOFTWARE_X11))
           {
@@ -2882,6 +2887,24 @@ elm_win_inwin_content_unset(Evas_Object *obj)
    edje_object_part_unswallow(wd->frm, wd->content);
    wd->content = NULL;
    return content;
+}
+
+EAPI Eina_Bool
+elm_win_socket_listen(Evas_Object *obj, const char *svcname, int svcnum, Eina_Bool svcsys)
+{
+
+   Elm_Win *win;
+   Ecore_Evas *ee = NULL;
+
+   ELM_CHECK_WIDTYPE(obj, widtype) EINA_FALSE;
+   win = elm_widget_data_get(obj);
+   if (!win) return EINA_FALSE;
+   if (!win->ee) return EINA_FALSE;
+
+   if(!ecore_evas_extn_socket_listen(win->ee, svcname, svcnum, svcsys))
+     return EINA_FALSE;
+
+   return EINA_TRUE;
 }
 
 /* windowing spcific calls - shall we do this differently? */

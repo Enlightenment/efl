@@ -145,6 +145,8 @@ void test_bubble(void *data, Evas_Object *obj, void *event_info);
 void test_segment_control(void *data, Evas_Object *obj, void *event_info);
 void test_store(void *data, Evas_Object *obj, void *event_info);
 void test_win_inline(void *data, Evas_Object *obj, void *event_info);
+void test_win_socket(void *data, Evas_Object *obj, void *event_info);
+void test_win_plug(void *data, Evas_Object *obj, void *event_info);
 void test_grid(void *data, Evas_Object *obj, void *event_info);
 void test_glview_simple(void *data, Evas_Object *obj, void *event_info);
 void test_glview(void *data, Evas_Object *obj, void *event_info);
@@ -321,6 +323,8 @@ add_tests:
    ADD_TEST(NULL, "Window / Background", "Inwin", test_inwin);
    ADD_TEST(NULL, "Window / Background", "Inwin 2", test_inwin2);
    ADD_TEST(NULL, "Window / Background", "Window Inline", test_win_inline);
+   ADD_TEST(NULL, "Window / Background", "Window Socket", test_win_socket);
+   ADD_TEST(NULL, "Window / Background", "Window Plug", test_win_plug);
 
    //------------------------------//
    ADD_TEST(NULL, "Images", "Icon Transparent", test_icon);

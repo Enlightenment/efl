@@ -133,6 +133,12 @@ typedef enum
                              of window that requires the @c parent
                              parameter of elm_win_add() to be a valid @c
                              Evas_Object. */
+   ELM_WIN_SOCKET_IMAGE,/**< The window is rendered onto an image buffer
+			     and can be shown other process's plug image object.
+			     No actural window is created for this type, 
+			     instead the window and all of its contents will be
+			     rendered to an image buffer and can be shown 
+			     other process's plug image object*/
 } Elm_Win_Type;
 
 /**
@@ -875,6 +881,17 @@ EAPI Eina_Bool             elm_win_keyboard_win_get(const Evas_Object *obj);
  * @param y The int to store the y coordinate to
  */
 EAPI void                  elm_win_screen_position_get(const Evas_Object *obj, int *x, int *y);
+
+/**
+ * Create a socket to provide the service for Plug widget
+ *
+ * @param obj The window object
+ * @param svcname The name of the service to be advertised. ensure that it is unique (when combined with @p svcnum) otherwise creation may fail.
+ * @param svcnum A number (any value, 0 beig the common default) to differentiate multiple instances of services with the same name.
+ * @param svcsys A boolean that if true, specifies to create a system-wide service all users can connect to, otherwise the service is private to the user ide that created the service.
+ * @return If socket creation is successful
+ */
+EAPI Eina_Bool             elm_win_socket_listen(Evas_Object *obj, const char *svcname, int svcnum, Eina_Bool svcsys);
 
 /**
  * @}

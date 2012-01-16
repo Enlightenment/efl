@@ -111,6 +111,8 @@ test_video.c \
 test_weather.c \
 test_web.c \
 test_win_inline.c \
+test_win_socket.c \
+test_win_plug.c \
 test_win_state.c
 
 if HAVE_EIO

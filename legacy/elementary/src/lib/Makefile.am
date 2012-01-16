@@ -93,6 +93,7 @@ elm_grid.h \
 elm_hover.h \
 elm_icon.h \
 elm_image.h \
+elm_plug.h \
 elm_index.h \
 elm_intro.h \
 elm_label.h \
@@ -179,6 +180,7 @@ elm_grid.c \
 elm_hover.c \
 elm_icon.c \
 elm_image.c \
+elm_plug.c \
 elm_index.c \
 elm_label.c \
 elm_layout.c \

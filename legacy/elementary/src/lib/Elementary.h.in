@@ -220,6 +220,7 @@ EAPI extern Elm_Version *elm_version;
 #include <elm_password.h>
 #include <elm_photocam.h>
 #include <elm_photo.h>
+#include <elm_plug.h>
 #include <elm_progressbar.h>
 #include <elm_radio.h>
 #include <elm_route.h>
