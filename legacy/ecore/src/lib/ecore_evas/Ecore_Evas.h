@@ -1677,25 +1677,46 @@ EAPI extern int ECORE_EVAS_EXTN_CLIENT_ADD; /**< this event is received when a p
 EAPI extern int ECORE_EVAS_EXTN_CLIENT_DEL; /**< this event is received when a plug has disconnected from an extn socket @since 1.2 */
    
 /**
- * Create a new external ecore evas socket
- *
- * @param svcname The name of the service to be advertised. ensure that it is unique (when combined with @p svcnum) otherwise creation may fail.
- * @param svcnum A number (any value, 0 beig the common default) to differentiate multiple instances of services with the same name.
- * @param svcsys A boolean that if true, specifies to create a system-wide service all users can connect to, otherwise the service is private to the user ide that created the service.
+ * @brief Create a new Ecore_Evas canvas for the new external ecore evas socket
  * 
- * This creates an Ecore_evas canvas wrapper and creates
- * socket specified by @p svcname, @p svcnum and @p svcsys. If creation
- * is successful, an Ecore_Evas handle is returned or NULL if creation
+ * @param w The width of the canvas, in pixels
+ * @param h The height of the canvas, in pixels
+ * @return A new @c Ecore_Evas instance or @c NULL, on failure
+ * 
+ * This creates a new extn_socket canvas wrapper, with image data array
+ * @b bound to the ARGB format, 8 bits per pixel.
+ *
+ * If creation is successful, an Ecore_Evas handle is returned or NULL if creation
  * fails. Also focus, show, hide etc. callbacks
  * will also be called if the plug object is shown, or already visible on
  * connect, or if it is hidden later, focused or unfocused.
  *
- * The server create ecore buffer canvas. 
- * When a client connects, you will get the ECORE_EVAS_EXTN_CLIENT_ADD event
+ * This function has to be flowed by ecore_evas_extn_socket_listen(),
+ * for starting ecore ipc service.
+ *
+ * @code
+ * Eina_Bool res = EINA_FALSE;
+ * Ecore_Evas *ee = ecore_evas_extn_socket_new(1, 1);
+ *
+ * res = ecore_evas_extn_socket_listen("svcname", 1, EINA_FALSE);
+ * if (!res) return;
+ * ecore_evas_resize(ee, 240, 400);
+ * @endcode
+ *
+ * or
+ *
+ * @code
+ * Eina_Bool res = EINA_FALSE;
+ * Ecore_Evas *ee = ecore_evas_extn_socket_new(240, 400);
+ *
+ * res = ecore_evas_extn_socket_listen("svcname", 1, EINA_FALSE);
+ * if (!res) return;
+ * @endcode
+ *
+ * When a client(plug) connects, you will get the ECORE_EVAS_EXTN_CLIENT_ADD event
  * in the ecore event queue, with event_info being the image object pointer
  * passed as a void pointer. When a client disconnects you will get the
  * ECORE_EVAS_EXTN_CLIENT_DEL event.
- * When a server disconnects, the image object will become blank.
  * 
  * You can set up event handles for these events as follows:
  * 
@@ -1728,21 +1749,38 @@ EAPI extern int ECORE_EVAS_EXTN_CLIENT_DEL; /**< this event is received when a p
  * may have been freed after deleting, but the object may still be around
  * awating cleanup and thus still be valid.You can change the size with something like:
  * 
- * @code
- * Ecore_Evas *ee = ecore_evas_extn_socket_new("svcname", 1, EINA_FALSE);
- * ecore_evas_resize(ee, 240, 400);
- * @endcode
- 
+ * @see ecore_evas_extn_socket_listen()
  * @see ecore_evas_extn_plug_new()
  * @see ecore_evas_extn_plug_object_data_lock()
  * @see ecore_evas_extn_plug_object_data_unlock()
  * 
  * @since 1.2
  */
-EAPI Ecore_Evas *ecore_evas_extn_socket_new(const char *svcname, int svcnum, Eina_Bool svcsys);
+EAPI Ecore_Evas *ecore_evas_extn_socket_new(int w, int h);
 
 /**
- * Lock the pixel data so the socket cannot change it
+ * @brief Create a socket to provide the service for external ecore evas socket. 
+ *
+ * @param svcname The name of the service to be advertised. ensure that it is unique (when combined with @p svcnum) otherwise creation may fail.
+ * @param svcnum A number (any value, 0 beig the common default) to differentiate multiple instances of services with the same name.
+ * @param svcsys A boolean that if true, specifies to create a system-wide service all users can connect to, otherwise the service is private to the user ide that created the service.
+ * @return EINA_TRUE if creation is successful, EINA_FALSE if it does not.
+ * 
+ * This creates socket specified by @p svcname, @p svcnum and @p svcsys. If creation
+ * is successful, EINA_TRUE is returned or EINA_FALSE if creation
+ * fails. 
+ *
+ * @see ecore_evas_extn_socket_new()
+ * @see ecore_evas_extn_plug_new()
+ * @see ecore_evas_extn_plug_object_data_lock()
+ * @see ecore_evas_extn_plug_object_data_unlock()
+ * 
+ * @since 1.2
+ */
+EAPI Eina_Bool ecore_evas_extn_socket_listen(Ecore_Evas *ee, const char *svcname, int svcnum, Eina_Bool svcsys);
+
+/**
+ * @briefLock the pixel data so the socket cannot change it
  *
  * @param obj The image object returned by ecore_evas_extn_plug_new() to lock
  * 
@@ -1766,7 +1804,7 @@ EAPI Ecore_Evas *ecore_evas_extn_socket_new(const char *svcname, int svcnum, Ein
 EAPI void ecore_evas_extn_plug_object_data_lock(Evas_Object *obj);
 
 /**
- * Unlock the pixel data so the socket can change it again.
+ * @brief Unlock the pixel data so the socket can change it again.
  *
  * @param obj The image object returned by ecore_evas_extn_plug_new() to unlock
  * 
@@ -1781,12 +1819,9 @@ EAPI void ecore_evas_extn_plug_object_data_lock(Evas_Object *obj);
 EAPI void ecore_evas_extn_plug_object_data_unlock(Evas_Object *obj); 
   
 /**
- * Create a new external ecore evas plug
+ * @brief Create a new external ecore evas plug
  *
  * @param ee_target The Ecore_Evas containing the canvas in which the new image object will live.
- * @param svcname The service name to connect to set up by the socket.
- * @param svcnum The service number to connect to (set up by socket).
- * @param svcsys Booleain to set if the service is a system one or not (set up by socket).
  * @return An evas image object that will contain the image output of a socket.
  * 
  * This creates an image object that will contain the output of another
@@ -1800,16 +1835,35 @@ EAPI void ecore_evas_extn_plug_object_data_unlock(Evas_Object *obj);
  * plug canvas. You can change the size with something like:
  * 
  * @code
- * ecore_evas_resize(ecore_evas_object_ecore_evas_get(obj), 240, 400);
+ * Eina_Bool res = EINA_FALSE;
+ * Evas_Object *obj = ecore_evas_extn_plug_new(ee);
+ *
+ * res = ecore_evas_extn_plug_connect("svcname", 1, EINA_FALSE);
+ * if (!res) return;
+ * ecore_evas_resize(ee, 240, 400);
  * @endcode
  * 
- * 
- * 
  * @see ecore_evas_extn_socket_new()
+ * @see ecore_evas_extn_plug_connect() 
+ * @since 1.2
+ */
+EAPI Evas_Object *ecore_evas_extn_plug_new(Ecore_Evas *ee_target);
+
+/**
+ * @brief Connect a external ecore evas plug to service provided by external ecore evas socket
+ *
+ * @param ee_target The Ecore_Evas containing the canvas in which the new image object will live.
+ * @param svcname The service name to connect to set up by the socket.
+ * @param svcnum The service number to connect to (set up by socket).
+ * @param svcsys Booleain to set if the service is a system one or not (set up by socket).
+ * @return EINA_TRUE if creation is successful, EINA_FALSE if it does not.
+ * 
+ *
+ * @see ecore_evas_extn_plug_new()
  * 
  * @since 1.2
  */
-EAPI Evas_Object *ecore_evas_extn_plug_new(Ecore_Evas *ee_target, const char *svcname, int svcnum, Eina_Bool svcsys);
+EAPI Eina_Bool ecore_evas_extn_plug_connect(Evas_Object *obj, const char *svcname, int svcnum, Eina_Bool svcsys);
         
 /**
  * @}

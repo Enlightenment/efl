@@ -1287,13 +1287,15 @@ _ecore_evas_extn_shutdown(void)
 #endif
 
 EAPI Evas_Object *
-ecore_evas_extn_plug_new(Ecore_Evas *ee_target, const char *svcname, int svcnum, Eina_Bool svcsys)
+ecore_evas_extn_plug_new(Ecore_Evas *ee_target)
 {
 #ifdef EXTN_ENABLED
    Extn *extn;
    Evas_Object *o;
    Ecore_Evas *ee;
    int w = 1, h = 1;
+
+   if (!ee_target) return NULL;
 
    ee = calloc(1, sizeof(Ecore_Evas));
    if (!ee) return NULL;
@@ -1388,46 +1390,6 @@ ecore_evas_extn_plug_new(Ecore_Evas *ee_target, const char *svcname, int svcnum,
                                   EVAS_CALLBACK_DEL,
                                   _ecore_evas_extn_plug_image_obj_del, ee);
 
-   extn = calloc(1, sizeof(Extn));
-   if (!extn)
-     {
-        ecore_evas_free(ee);
-        return NULL;
-     }
-   else
-     {
-        Ecore_Ipc_Type ipctype = ECORE_IPC_LOCAL_USER;
-
-        ecore_ipc_init();
-        extn->svc.name = eina_stringshare_add(svcname);
-        extn->svc.num = svcnum;
-        extn->svc.sys = svcsys;
-
-        if (extn->svc.sys) ipctype = ECORE_IPC_LOCAL_SYSTEM;
-        extn->ipc.server = ecore_ipc_server_connect(ipctype, (char *)extn->svc.name,
-                                                    extn->svc.num, ee);
-        if (!extn->ipc.server)
-          {
-             eina_stringshare_del(extn->svc.name);
-             free(extn);
-             ecore_ipc_shutdown();
-             ecore_evas_free(ee);
-             return NULL;
-          }
-        ee->engine.buffer.data = extn;
-        extn->ipc.handlers = eina_list_append
-           (extn->ipc.handlers,
-            ecore_event_handler_add(ECORE_IPC_EVENT_SERVER_ADD,
-                                    _ipc_server_add, ee));
-        extn->ipc.handlers = eina_list_append
-           (extn->ipc.handlers,
-            ecore_event_handler_add(ECORE_IPC_EVENT_SERVER_DEL,
-                                    _ipc_server_del, ee));
-        extn->ipc.handlers = eina_list_append
-           (extn->ipc.handlers,
-            ecore_event_handler_add(ECORE_IPC_EVENT_SERVER_DATA,
-                                    _ipc_server_data, ee));
-     }
 
    extn_ee_list = eina_list_append(extn_ee_list, ee);
    ee_target->sub_ecore_evas = eina_list_append(ee_target->sub_ecore_evas, ee);
@@ -1439,6 +1401,57 @@ ecore_evas_extn_plug_new(Ecore_Evas *ee_target, const char *svcname, int svcnum,
    return o;
 #else
    return NULL;
+#endif
+}
+
+EAPI Eina_Bool
+ecore_evas_extn_plug_connect(Evas_Object *obj, const char *svcname, int svcnum, Eina_Bool svcsys)
+{
+#ifdef EXTN_ENABLED
+   Extn *extn;
+   Ecore_Evas *ee = NULL;
+
+   if (!obj) return EINA_FALSE;
+
+   ee = evas_object_data_get(obj, "Ecore_Evas");
+   if (!ECORE_MAGIC_CHECK(ee, ECORE_MAGIC_EVAS)) return EINA_FALSE;
+
+   extn = calloc(1, sizeof(Extn));
+   if (!extn) return EINA_FALSE;
+
+   Ecore_Ipc_Type ipctype = ECORE_IPC_LOCAL_USER;
+
+   ecore_ipc_init();
+   extn->svc.name = eina_stringshare_add(svcname);
+   extn->svc.num = svcnum;
+   extn->svc.sys = svcsys;
+
+   if (extn->svc.sys) ipctype = ECORE_IPC_LOCAL_SYSTEM;
+   extn->ipc.server = ecore_ipc_server_connect(ipctype, (char *)extn->svc.name,
+                                               extn->svc.num, ee);
+   if (!extn->ipc.server)
+     {
+        eina_stringshare_del(extn->svc.name);
+        free(extn);
+        ecore_ipc_shutdown();
+        return EINA_FALSE;
+     }
+   ee->engine.buffer.data = extn;
+   extn->ipc.handlers = eina_list_append
+      (extn->ipc.handlers,
+       ecore_event_handler_add(ECORE_IPC_EVENT_SERVER_ADD,
+                               _ipc_server_add, ee));
+   extn->ipc.handlers = eina_list_append
+      (extn->ipc.handlers,
+       ecore_event_handler_add(ECORE_IPC_EVENT_SERVER_DEL,
+                               _ipc_server_del, ee));
+   extn->ipc.handlers = eina_list_append
+      (extn->ipc.handlers,
+       ecore_event_handler_add(ECORE_IPC_EVENT_SERVER_DATA,
+                               _ipc_server_data, ee));
+   return EINA_TRUE;
+#else
+   return EINA_FALSE;
 #endif
 }
 
@@ -1971,14 +1984,13 @@ static const Ecore_Evas_Engine_Func _ecore_extn_socket_engine_func =
 #endif
 
 EAPI Ecore_Evas *
-ecore_evas_extn_socket_new(const char *svcname, int svcnum, Eina_Bool svcsys)
+ecore_evas_extn_socket_new(int w, int h)
 {
 #ifdef EXTN_ENABLED
    Extn *extn;
    Evas_Engine_Info_Buffer *einfo;
    Ecore_Evas *ee;
    int rmethod;
-   int w = 1, h = 1;
 
    rmethod = evas_render_method_lookup("buffer");
    if (!rmethod) return NULL;
@@ -2052,11 +2064,26 @@ ecore_evas_extn_socket_new(const char *svcname, int svcnum, Eina_Bool svcsys)
    evas_key_lock_add(ee->evas, "Num_Lock");
    evas_key_lock_add(ee->evas, "Scroll_Lock");
 
+   extn_ee_list = eina_list_append(extn_ee_list, ee);
+
+   _ecore_evas_register(ee);
+
+   return ee;
+#else
+   return NULL;
+#endif
+}
+
+EAPI Eina_Bool
+ecore_evas_extn_socket_listen(Ecore_Evas *ee, const char *svcname, int svcnum, Eina_Bool svcsys)
+{
+#ifdef EXTN_ENABLED
+   Extn *extn;
+
    extn = calloc(1, sizeof(Extn));
    if (!extn)
      {
-        ecore_evas_free(ee);
-        return NULL;
+        return EINA_FALSE;
      }
    else
      {
@@ -2083,8 +2110,7 @@ ecore_evas_extn_socket_new(const char *svcname, int svcnum, Eina_Bool svcsys)
              if (extn->file.lock) eina_stringshare_del(extn->file.lock);
              free(extn);
              ecore_ipc_shutdown();
-             ecore_evas_free(ee);
-             return NULL;
+             return EINA_FALSE;
           }
 
         if (extn->svc.sys) ipctype = ECORE_IPC_LOCAL_SYSTEM;
@@ -2103,8 +2129,7 @@ ecore_evas_extn_socket_new(const char *svcname, int svcnum, Eina_Bool svcsys)
              eina_stringshare_del(extn->file.lock);
              free(extn);
              ecore_ipc_shutdown();
-             ecore_evas_free(ee);
-             return NULL;
+             return EINA_FALSE;
           }
         ee->engine.buffer.data = extn;
         extn->ipc.handlers = eina_list_append
@@ -2120,13 +2145,8 @@ ecore_evas_extn_socket_new(const char *svcname, int svcnum, Eina_Bool svcsys)
             ecore_event_handler_add(ECORE_IPC_EVENT_CLIENT_DATA,
                                     _ipc_client_data, ee));
      }
-
-   extn_ee_list = eina_list_append(extn_ee_list, ee);
-
-   _ecore_evas_register(ee);
-
-   return ee;
+   return EINA_TRUE;
 #else
-   return NULL;
+   return EINA_FALSE;
 #endif
 }
