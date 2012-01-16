@@ -454,6 +454,8 @@ _smart_scrollto_x_animator(void *data)
      {
         px = sd->scrollto.x.end;
         elm_smart_scroller_child_pos_set(sd->smart_obj, px, py);
+        sd->down.sx = px;
+        sd->down.x = sd->down.history[0].x;
         _update_wanted_coordinates(sd, px, py);
         sd->scrollto.x.animator = NULL;
         if ((!sd->scrollto.y.animator) && (!sd->down.bounce_y_animator))
@@ -546,6 +548,8 @@ _smart_scrollto_y_animator(void *data)
      {
         py = sd->scrollto.y.end;
         elm_smart_scroller_child_pos_set(sd->smart_obj, px, py);
+        sd->down.sy = py;
+        sd->down.y = sd->down.history[0].y;
         _update_wanted_coordinates(sd, px, py);
         sd->scrollto.y.animator = NULL;
         if ((!sd->scrollto.x.animator) && (!sd->down.bounce_x_animator))
@@ -1164,7 +1168,13 @@ void
 elm_smart_scroller_child_region_set(Evas_Object *obj, Evas_Coord x, Evas_Coord y, Evas_Coord w, Evas_Coord h)
 {
    if (_elm_smart_scroller_child_region_show_internal(obj, &x, &y, w, h))
-     elm_smart_scroller_child_pos_set(obj, x, y);
+     {
+        elm_smart_scroller_child_pos_set(obj, x, y);
+        sd->down.sx = x;
+        sd->down.sy = y;
+        sd->down.x = sd->down.history[0].x;
+        sd->down.y = sd->down.history[0].y;
+     }
 }
 
 /* Set should be used for setting the wanted position, for example a user scroll
@@ -1178,7 +1188,13 @@ elm_smart_scroller_child_region_show(Evas_Object *obj, Evas_Coord x, Evas_Coord 
    sd->ww = w;
    sd->wh = h;
    if (_elm_smart_scroller_child_region_show_internal(obj, &x, &y, w, h))
-     elm_smart_scroller_child_pos_set(obj, x, y);
+     {
+        elm_smart_scroller_child_pos_set(obj, x, y);
+        sd->down.sx = x;
+        sd->down.sy = y;
+        sd->down.x = sd->down.history[0].x;
+        sd->down.y = sd->down.history[0].y;
+     }
 }
 
 void
@@ -2255,6 +2271,26 @@ _smart_event_mouse_move(void *data, Evas *e, Evas_Object *obj __UNUSED__, void *
    if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD)
      sd->down.hold_parent = EINA_TRUE;
    evas_post_event_callback_push(e, _smart_event_post_move, sd);
+
+   if (sd->scrollto.x.animator)
+     {
+        Evas_Coord px;
+        ecore_animator_del(sd->scrollto.x.animator);
+        sd->scrollto.x.animator = NULL;
+        sd->pan_func.get(sd->pan_obj, &px, NULL);
+        sd->down.sx = px;
+        sd->down.x = sd->down.history[0].x;
+     }
+
+   if (sd->scrollto.y.animator)
+     {
+        Evas_Coord py;
+        ecore_animator_del(sd->scrollto.y.animator);
+        sd->scrollto.y.animator = NULL;
+        sd->pan_func.get(sd->pan_obj, NULL, &py);
+        sd->down.sy = py;
+        sd->down.y = sd->down.history[0].y;
+     }
    // FIXME: respect elm_widget_scroll_hold_get of parent container
    if (_elm_config->thumbscroll_enable)
      {
