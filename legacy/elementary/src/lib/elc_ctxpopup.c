@@ -729,6 +729,8 @@ _del_pre_hook(Evas_Object *obj)
    wd = elm_widget_data_get(obj);
    if (!wd) return;
 
+   evas_object_event_callback_del_full(wd->box, EVAS_CALLBACK_RESIZE,
+                                       _content_resize, obj);
    _parent_cut_off(obj);
 }
 
