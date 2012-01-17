@@ -1435,7 +1435,8 @@ _edje_key_down_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, v
 
              info->change.insert.pos =
                 evas_textblock_cursor_pos_get(en->cursor);
-             if (shift)
+             if (shift ||
+                 evas_object_textblock_legacy_newline_get(rp->object))
                {
                   //yy
 //                  evas_textblock_cursor_format_prepend(en->cursor, "br");
@@ -2030,6 +2031,8 @@ _edje_entry_real_part_init(Edje_Real_Part *rp)
    evas_object_clip_set(en->cursor_fg, evas_object_clip_get(rp->object));
    evas_object_pass_events_set(en->cursor_fg, EINA_TRUE);
    _edje_subobj_register(en->rp->edje, en->cursor_fg);
+
+   evas_object_textblock_legacy_newline_set(rp->object, EINA_TRUE);
 
    if (rp->part->entry_mode >= EDJE_ENTRY_EDIT_MODE_EDITABLE)
      {
