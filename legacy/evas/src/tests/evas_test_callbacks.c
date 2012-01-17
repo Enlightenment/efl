@@ -28,7 +28,7 @@ do \
 } \
 while (0)
 
-static int counter = 1;
+static uintptr_t counter = 1;
 
 static void
 _obj_event_cb(void *data, Evas *e, Evas_Object *obj, void *event_info)
@@ -37,7 +37,7 @@ _obj_event_cb(void *data, Evas *e, Evas_Object *obj, void *event_info)
    (void) obj;
    (void) event_info;
 
-   fail_if(((int) data) != counter);
+   fail_if(((uintptr_t) data) != counter);
 
    counter++;
 }
@@ -83,7 +83,7 @@ _event_cb(void *data, Evas *e, void *event_info)
    (void) e;
    (void) event_info;
 
-   fail_if(((int) data) != counter);
+   fail_if(((uintptr_t) data) != counter);
 
    counter++;
 }
