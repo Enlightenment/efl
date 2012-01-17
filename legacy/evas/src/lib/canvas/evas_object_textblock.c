@@ -4738,7 +4738,11 @@ _escaped_char_match(const char *s, int *adv)
         while ((*mc) && (*sc))
           {
              if ((unsigned char)*sc < (unsigned char)*mc) return NULL;
-             if (*sc != *mc) match = 0;
+             if (*sc != *mc)
+               {
+                  match = 0;
+                  break;
+               }
              mc++;
              sc++;
           }
