@@ -99,7 +99,7 @@ ecore_x_damage_new(Ecore_X_Drawable            drawable,
 /**
  * Destroy a damage object
  *
- * @param The damage object to destroy
+ * @param damage The damage object to destroy
  *
  * Destroys the damage object @p damage
  *

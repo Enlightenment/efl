@@ -758,7 +758,7 @@ ecore_file_can_write(const char *file)
 }
 
 /**
- * @bbrief Check if the given file can be executed.
+ * @brief Check if the given file can be executed.
  *
  * @param  file The name of the file.
  * @return EINA_TRUE if the file can be executed, EINA_FALSE otherwise.
@@ -1037,7 +1037,7 @@ ecore_file_escape_name(const char *filename)
 }
 
 /**
- * @bried Remove the extension from the given file name.
+ * @brief Remove the extension from the given file name.
  *
  * @param  path The name of the file.
  * @return A newly allocated string with the extension stripped out or

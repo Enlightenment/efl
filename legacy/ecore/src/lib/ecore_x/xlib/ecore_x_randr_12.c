@@ -1064,7 +1064,7 @@ ecore_x_randr_crtc_settings_set(Ecore_X_Window root,
  * @brief sets a CRTC relative to another one.
  * @param crtc_r1 the CRTC to be positioned.
  * @param crtc_r2 the CRTC the position should be relative to
- * @param position the relation between the crtcs
+ * @param policy the relation between the crtcs
  * @param alignment in case CRTCs size differ, aligns CRTC1 accordingly at CRTC2's
  * borders
  * @return EINA_TRUE if crtc could be successfully positioned. EINA_FALSE if

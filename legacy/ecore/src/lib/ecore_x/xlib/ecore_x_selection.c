@@ -732,7 +732,7 @@ ecore_x_selection_parser_del(const char *target)
  * Change the owner and last-change time for the specified selection.
  * @param win The owner of the specified atom.
  * @param atom The selection atom
- * @param time Specifies the time
+ * @param tim Specifies the time
  * @since 1.1.0
  */
 EAPI void

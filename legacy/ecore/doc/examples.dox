@@ -940,7 +940,7 @@
  * @example ecore_con_url_headers_example.c
  * Shows how to make GET or POST requests using an @ref Ecore_Con_Url object,
  * and make use of most of its API.  See the complete example description at
- * @ref ecore_con_headers_example_c
+ * @ref ecore_con_url_headers_example_c
  */
 
 /**
@@ -1394,7 +1394,7 @@
  * On this example, we accomplish the very same task, but by using the
  * @c Ecore_Evas helper wrapper functions on a buffer engine
  * canvas. If you compare both codes, you'll see how much code one is
- * saved from by using the @Ecore_Evas wrapper functions.
+ * saved from by using the @c Ecore_Evas wrapper functions.
  *
  * The code is simple as it can be. After instantianting our canvas
  * window, with ecore_evas_buffer_new(), we grab its canvas pointer

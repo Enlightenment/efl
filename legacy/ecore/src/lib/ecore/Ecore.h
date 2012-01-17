@@ -398,7 +398,7 @@ EAPI extern Ecore_Version *ecore_version;
 typedef Eina_Bool (*Ecore_Task_Cb)(void *data);
 
 /**
- * @typedef Ecore_Eselect_Function Ecore_Eselect_Function
+ * @typedef Ecore_Eselect_Function
  * A function which can be used to replace select() in the main loop
  */
 typedef int (*Ecore_Select_Function)(int nfds, fd_set *readfds, fd_set *writefds, fd_set *exceptfds, struct timeval *timeout);
@@ -846,7 +846,7 @@ EAPI void *ecore_main_win32_handler_del(Ecore_Win32_Handler *win32_handler);
  * areound a core poll interval.  For now only 1 core poller type is
  * supprted: ECORE_POLLER_CORE
  *
- * Example of @ref Ecore_Poller:
+ * Example of @ref Ecore_Poller :
  * @li @ref ecore_poller_example_c
  *
  * @ingroup Ecore_Main_Loop_Group
@@ -1621,7 +1621,7 @@ EAPI Eina_Bool ecore_thread_feedback(Ecore_Thread *thread, const void *msg_data)
  *         EINA_FALSE if anything goes wrong.
  *
  * This function should be called only from the same function represented
- * by @pthread.
+ * by @p thread.
  *
  * Calling this function will mark the thread for a reschedule, so as soon
  * as it returns, it will be added to the end of the list of pending tasks.
@@ -2082,7 +2082,7 @@ EAPI int ecore_pipe_wait(Ecore_Pipe *p, int message_count, double wait);
  * will be processed first). This also gives the chance to other
  * actions in your program to cancel the job before it is started.
  *
- * Examples of using @ref Ecore_Job:
+ * Examples of using @ref Ecore_Job :
  * @li @ref ecore_job_example_c
  *
  * @ingroup Ecore_Main_Loop_Group

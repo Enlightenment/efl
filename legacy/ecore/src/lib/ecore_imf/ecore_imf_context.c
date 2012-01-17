@@ -529,7 +529,7 @@ ecore_imf_context_cursor_location_set(Ecore_IMF_Context *ctx, int x, int y, int 
 
 /**
  * Set whether the IM context should use the preedit string
- * to display feedback. If @use_preedit is EINA_FALSE (default
+ * to display feedback. If @c use_preedit is EINA_FALSE (default
  * is EINA_TRUE), then the IM context may use some other method to display
  * feedback, such as displaying it in a child of the root window.
  *
@@ -551,7 +551,7 @@ ecore_imf_context_use_preedit_set(Ecore_IMF_Context *ctx, Eina_Bool use_preedit)
 
 /**
  * Set whether the IM context should allow to use the text prediction.
- * If @prediction is EINA_FALSE (default is EINA_TRUE), then the IM context will not display the text prediction window.
+ * If @c prediction is EINA_FALSE (default is EINA_TRUE), then the IM context will not display the text prediction window.
  *
  * @param ctx An #Ecore_IMF_Context.
  * @param prediction Whether the IM context should allow to use the text prediction.

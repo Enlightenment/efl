@@ -86,7 +86,7 @@ _ecore_file_path_from_env(const char *env)
 /**
  * @brief Check if the given directory is in PATH.
  *
- * @param The name of the directory to search in PATH.
+ * @param in_dir The name of the directory to search in PATH.
  * @return EINA_TRUE if the directory exist in PATH, EINA_FALSE otherwise.
  *
  * This function checks if @p in_dir is in the environment variable

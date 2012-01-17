@@ -1096,7 +1096,7 @@ ecore_x_icccm_transient_for_set(Ecore_X_Window win,
 
 /**
  * Remove the transient_for setting from a window.
- * @param The window
+ * @param win The window
  */
 EAPI void
 ecore_x_icccm_transient_for_unset(Ecore_X_Window win)

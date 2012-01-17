@@ -1637,7 +1637,7 @@ EAPI Eina_Bool         ecore_con_url_post(Ecore_Con_Url *url_con,
  * modification time.
  *
  * @param url_con   Ecore_Con_Url to act upon.
- * @param condition Condition to use for HTTP requests.
+ * @param time_condition Condition to use for HTTP requests.
  * @param timestamp Time since 1 Jan 1970 to use in the condition.
  *
  * This function may set the header "If-Modified-Since" or

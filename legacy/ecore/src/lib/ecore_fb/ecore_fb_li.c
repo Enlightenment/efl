@@ -454,9 +454,9 @@ ecore_fb_input_device_listen(Ecore_Fb_Input_Device *dev, Eina_Bool listen)
 #endif
 
 /**
- * @brief Associates an input device with the given @ref Ecore_Evas.
+ * @brief Associates an input device with the given @ref Ecore_Evas_Group.
  *
- * @param dev The input being associated with an @ref Ecore_Evas (not @c NULL).
+ * @param dev The input being associated with an @ref Ecore_Evas_Group (not @c NULL).
  * @param window The window which this input is being associated to.
  * @c NULL will remove any previous association.
  *
@@ -477,7 +477,7 @@ ecore_fb_input_device_listen(Ecore_Fb_Input_Device *dev, Eina_Bool listen)
  * @endcode
  *
  * On the previous code, all input captured on the mentioned device will be
- * delivered to the @Ecore_Evas @c ee.
+ * delivered to the @c Ecore_Evas @c ee.
  *
  * @since 1.1
  */

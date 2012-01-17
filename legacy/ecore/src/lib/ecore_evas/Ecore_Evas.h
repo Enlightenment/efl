@@ -827,7 +827,7 @@ EAPI void ecore_evas_ews_delete_request(Ecore_Evas *ee);
 
 /**
  * @brief Create an Evas image object with image data <b>bound to an
- * own, internal @c Ecore_Evas canvas wrapper<b>
+ * own, internal @c Ecore_Evas canvas wrapper</b>
  *
  * @param ee_target @c Ecore_Evas to have the canvas receiving the new
  * image object
@@ -1329,7 +1329,7 @@ EAPI void        ecore_evas_size_base_get(const Ecore_Evas *ee, int *w, int *h);
  * @param h The step height
  *
  * This function sets the size steps of @p ee to be @p w x @p h. This
- * limits the size of this @cEcore_Evas window to be @b always an
+ * limits the size of this @c Ecore_Evas window to be @b always an
  * integer multiple of the step size, for each axis.
  */
 EAPI void        ecore_evas_size_step_set(Ecore_Evas *ee, int w, int h);
@@ -1781,7 +1781,7 @@ EAPI Ecore_Evas *ecore_evas_extn_socket_new(int w, int h);
 EAPI Eina_Bool ecore_evas_extn_socket_listen(Ecore_Evas *ee, const char *svcname, int svcnum, Eina_Bool svcsys);
 
 /**
- * @briefLock the pixel data so the socket cannot change it
+ * @brief Lock the pixel data so the socket cannot change it
  *
  * @param obj The image object returned by ecore_evas_extn_plug_new() to lock
  * 
@@ -1853,7 +1853,7 @@ EAPI Evas_Object *ecore_evas_extn_plug_new(Ecore_Evas *ee_target);
 /**
  * @brief Connect a external ecore evas plug to service provided by external ecore evas socket
  *
- * @param ee_target The Ecore_Evas containing the canvas in which the new image object will live.
+ * @param obj The Ecore_Evas containing the canvas in which the new image object will live.
  * @param svcname The service name to connect to set up by the socket.
  * @param svcnum The service number to connect to (set up by socket).
  * @param svcsys Booleain to set if the service is a system one or not (set up by socket).

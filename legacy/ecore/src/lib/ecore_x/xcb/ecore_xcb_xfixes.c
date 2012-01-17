@@ -178,7 +178,7 @@ ecore_x_region_new_from_bitmap(Ecore_X_Pixmap bitmap)
 
 /**
  * Create a region from a window.
- * @param window The window used to initialize the region.
+ * @param win The window used to initialize the region.
  * @param type   The type of the region.
  * @return       The newly created region.
  *
@@ -609,8 +609,8 @@ ecore_x_region_expand(Ecore_X_Region dest,
  * Change clip-mask in a graphic context to the specified region.
  * @param region   The region to change.
  * @param gc       The clip-mask graphic context.
- * @param x_origin The horizontal translation.
- * @param y_origin The vertical translation.
+ * @param x The horizontal translation.
+ * @param y The vertical translation.
  *
  * Changes clip-mask in @p gc to the specified @p region and
  * sets the clip origin with the values of @p x_origin and @p y_origin.
@@ -643,8 +643,8 @@ ecore_x_region_gc_clip_set(Ecore_X_Region region,
  * @param region   The region.
  * @param dest     The window whose shape is changed.
  * @param type     The kind of shape.
- * @param x_offset The horizontal offset.
- * @param y_offset The vertical offset.
+ * @param x The horizontal offset.
+ * @param y The vertical offset.
  *
  * Set the specified Shape extension region of @p window to @p region,
  * offset by @p x_offset and @p y_offset. Future changes to region
@@ -673,8 +673,8 @@ ecore_x_region_window_shape_set(Ecore_X_Region     region,
  * Change clip-mask in picture to the specified region.
  * @param region   The region.
  * @param picture  The picture.
- * @param x_origin The X coordinate of the origin.
- * @param y_origin The Y coordinate of the origin.
+ * @param x The X coordinate of the origin.
+ * @param y The Y coordinate of the origin.
  *
  * Changes clip-mask in picture to the specified @p region
  * and sets the clip origin.  Input and output will be clipped to

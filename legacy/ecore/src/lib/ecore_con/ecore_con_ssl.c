@@ -819,7 +819,7 @@ ecore_con_ssl_server_upgrade(Ecore_Con_Server *svr, Ecore_Con_Type ssl_type)
  * Once the upgrade has been completed, an ECORE_CON_EVENT_CLIENT_UPGRADE event will be emitted.
  * The connection should be treated as disconnected until the next event.
  * @param cl The client object
- * @param compl_type The SSL connection type (ONLY).
+ * @param ssl_type The SSL connection type (ONLY).
  * @return EINA_FALSE if the connection cannot be upgraded, otherwise EINA_TRUE.
  * @warning Setting a wrong value for @p compl_type WILL mess up your program.
  * @since 1.1

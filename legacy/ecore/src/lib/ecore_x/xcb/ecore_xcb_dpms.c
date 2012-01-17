@@ -270,7 +270,7 @@ ecore_x_dpms_timeout_off_get(void)
 
 /**
  * Sets the standby timeout (in unit of seconds).
- * @param new_standby Amount of time of inactivity before standby mode will be invoked.
+ * @param new_timeout Amount of time of inactivity before standby mode will be invoked.
  * @ingroup Ecore_X_DPMS_Group
  */
 EAPI void
@@ -286,7 +286,7 @@ ecore_x_dpms_timeout_standby_set(unsigned int new_timeout)
 
 /**
  * Sets the suspend timeout (in unit of seconds).
- * @param suspend Amount of time of inactivity before the screen is placed into suspend mode.
+ * @param new_timeout Amount of time of inactivity before the screen is placed into suspend mode.
  * @ingroup Ecore_X_DPMS_Group
  */
 EAPI void
@@ -302,7 +302,7 @@ ecore_x_dpms_timeout_suspend_set(unsigned int new_timeout)
 
 /**
  * Sets the off timeout (in unit of seconds).
- * @param off     Amount of time of inactivity before the monitor is shut off.
+ * @param new_timeout     Amount of time of inactivity before the monitor is shut off.
  * @ingroup Ecore_X_DPMS_Group
  */
 EAPI void

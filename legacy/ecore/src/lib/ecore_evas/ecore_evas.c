@@ -2005,7 +2005,7 @@ ecore_evas_fullscreen_get(const Ecore_Evas *ee)
  * Set whether or not an Ecore_Evas' window should avoid damage
  *
  * @param ee The Ecore_Evas
- * @param The type of the damage management
+ * @param on The type of the damage management
  *
  * This function causes @p ee to be drawn to a pixmap to avoid recalculations.
  * On expose events it will copy from the pixmap to the window.

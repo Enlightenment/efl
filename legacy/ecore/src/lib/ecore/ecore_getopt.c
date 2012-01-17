@@ -1763,7 +1763,7 @@ _ecore_getopt_find_help(const Ecore_Getopt *parser)
  * will be applied on them if ecore was compiled with such support.
  *
  * @param parser description of how to work.
- * @param value where to store values, it is assumed that this is a vector
+ * @param values where to store values, it is assumed that this is a vector
  *        of the same size as @c parser->descs. Values should be previously
  *        initialized.
  * @param argc how many elements in @a argv. If not provided it will be
@@ -1855,7 +1855,8 @@ ecore_getopt_list_free(Eina_List *list)
 /**
  * Helper ecore_getopt callback to parse geometry (x:y:w:h).
  *
- * Storage must be a pointer to @c Eina_Rectangle and will be used to
+ * @param str Geometry value
+ * @param storage must be a pointer to @c Eina_Rectangle and will be used to
  * store the four values passed in the given string.
  *
  * @c callback_data value is ignored, you can safely use @c NULL.
@@ -1881,7 +1882,8 @@ ecore_getopt_callback_geometry_parse(const Ecore_Getopt      *parser __UNUSED__,
 /**
  * Helper ecore_getopt callback to parse geometry size (WxH).
  *
- * Storage must be a pointer to @c Eina_Rectangle and will be used to
+ * @param str size value
+ * @param storage must be a pointer to @c Eina_Rectangle and will be used to
  * store the two values passed in the given string and 0 in the x and y
  * fields.
  *
