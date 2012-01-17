@@ -2894,7 +2894,6 @@ elm_win_socket_listen(Evas_Object *obj, const char *svcname, int svcnum, Eina_Bo
 {
 
    Elm_Win *win;
-   Ecore_Evas *ee = NULL;
 
    ELM_CHECK_WIDTYPE(obj, widtype) EINA_FALSE;
    win = elm_widget_data_get(obj);
