@@ -304,6 +304,7 @@ struct _Evas
       int            downs;
       DATA32         button;
       Evas_Coord     x, y;
+      int            nogrep;
       struct {
           Eina_List *in;
       } object;
@@ -584,7 +585,7 @@ struct _Evas_Object
    unsigned char               recalculate_cycle;
    Eina_Clist                  calc_entry;
 
-   Evas_Object_Pointer_Mode    pointer_mode : 1;
+   Evas_Object_Pointer_Mode    pointer_mode : 2;
 
    Eina_Bool                   store : 1;
    Eina_Bool                   pass_events : 1;

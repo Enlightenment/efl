@@ -1065,7 +1065,8 @@ struct _Evas_Event_Hold /** Hold change event */
 typedef enum _Evas_Object_Pointer_Mode
 {
    EVAS_OBJECT_POINTER_MODE_AUTOGRAB, /**< default, X11-like */
-   EVAS_OBJECT_POINTER_MODE_NOGRAB /**< pointer always bound to the object right below it */
+   EVAS_OBJECT_POINTER_MODE_NOGRAB, /**< pointer always bound to the object right below it */
+   EVAS_OBJECT_POINTER_MODE_NOGRAB_NO_REPEAT_UPDOWN /**< useful on object with "repeat events" enabled, where mouse/touch up and down events WONT be repeated to objects and these objects wont be auto-grabbed. @since 1.2 */
 } Evas_Object_Pointer_Mode; /**< How the mouse pointer should be handled by Evas. */
 
 typedef void      (*Evas_Smart_Cb) (void *data, Evas_Object *obj, void *event_info); /**< Evas smart objects' "smart callback" function signature */

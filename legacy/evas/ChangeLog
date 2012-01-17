@@ -638,3 +638,9 @@
 	* Add evas_object_smart_callback_del_full() to allow users to
 	unregister a specific smart event callback instead of all
 	callbacks matching a given type and function pointer.
+        
+2012-01-17  Carsten Haitzler (The Rasterman)
+
+        * Add EVAS_OBJECT_POINTER_MODE_NOGRAB_NO_REPEAT_UPDOWN pointer mode
+        for some very specific behavior needed for accessibility.
+
