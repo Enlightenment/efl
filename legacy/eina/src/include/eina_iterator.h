@@ -25,7 +25,7 @@
 #include "eina_magic.h"
 
 /**
- * @page eina_iterator_example Eina_Iterator usage
+ * @page eina_iterator_example_page Eina_Iterator usage
  * @dontinclude eina_iterator_01.c
  *
  * As always when using eina we need to include it:
@@ -48,7 +48,7 @@
  * @until eina_init
  *
  * Next we populate both an array and a list with our strings, for more details
- * see @ref eina_list_01_example and @ref eina_array_01_example:
+ * see @ref eina_list_01_example_page and @ref eina_array_01_example_page :
  * @until }
  *
  * And now we create an array and because the first element of the container
@@ -63,7 +63,7 @@
  * iterator itself:
  * @until eina_iterator_free
  *
- * But so far you're not impressed in @ref eina_array_01_example an array is
+ * But so far you're not impressed in @ref eina_array_01_example_page an array is
  * also printed, so now we go to the cool stuff and use an iterator to do same
  * stuff to a list:
  * @until eina_iterator_free
@@ -99,7 +99,7 @@
  * eina_iterator_next(). To call a function on all the elements of a
  * container, use eina_iterator_foreach().
  * 
- * Here an @ref eina_iterator_example "example"
+ * Here an @ref eina_iterator_example_page "example"
  */
 
 /**

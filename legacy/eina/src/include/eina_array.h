@@ -31,7 +31,7 @@
 
 
 /**
- * @page array_01_example_page Basic array usage
+ * @page eina_array_01_example_page Basic array usage
  * @dontinclude eina_array_01.c
  *
  * For this example we add stdlib.h, stdio.h and string.h for some
@@ -94,7 +94,7 @@
  */
 
 /**
- * @page array_02_example_page Removing array elements
+ * @page eina_array_02_example_page Removing array elements
  * @dontinclude eina_array_02.c
  *
  * Just the usual includes:
@@ -191,8 +191,8 @@
  * of void pointers.
  *
  * See here some examples:
- * @li @ref array_01_example_page
- * @li @ref array_02_example_page
+ * @li @ref eina_array_01_example_page
+ * @li @ref eina_array_02_example_page
  */
 
 /**

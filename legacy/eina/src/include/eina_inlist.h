@@ -25,7 +25,7 @@
 #include <stddef.h>
 
 /**
- * @page inlist_01_example_page Eina_Inlist basic usage
+ * @page eina_inlist_01_example_page Eina_Inlist basic usage
  * @dontinclude eina_inlist_01.c
  *
  * To see the full source for this example, click here: @ref
@@ -111,7 +111,7 @@
  */
 
 /**
- * @page inlist_02_example_page Eina_Inlist advanced usage - lists and inlists
+ * @page eina_inlist_02_example_page Eina_Inlist advanced usage - lists and inlists
  * @dontinclude eina_inlist_02.c
  *
  * This example describes the usage of @ref Eina_Inlist mixed with @ref
@@ -120,7 +120,7 @@
  * from this normal list.
  *
  * The struct that is going to be used is the same used in @ref
- * inlist_01_example_page , since we still need the @ref EINA_INLIST macro to
+ * eina_inlist_01_example_page , since we still need the @ref EINA_INLIST macro to
  * declare the inlist node info:
  *
  * @skip struct
@@ -184,7 +184,7 @@
  */
 
 /**
- * @page inlist_03_example_page Eina_Inlist advanced usage - multi-inlists
+ * @page eina_inlist_03_example_page Eina_Inlist advanced usage - multi-inlists
  * @dontinclude eina_inlist_03.c
  *
  * This example describes the usage of multiple inlists storing the same data.
@@ -315,7 +315,7 @@
  * exactly what type this list is.
  *
  * A simple example demonstrating the basic usage of an inlist can be found
- * here: @ref inlist_01_example_page
+ * here: @ref eina_inlist_01_example_page
  *
  * @section inlist_algo Algorithm
  *
@@ -368,9 +368,9 @@
  * @ref inlist_03_example_page
  *
  * List of examples:
- * @li @ref inlist_01_example_page
- * @li @ref inlist_02_example_page
- * @li @ref inlist_03_example_page
+ * @li @ref eina_inlist_01_example_page
+ * @li @ref eina_inlist_02_example_page
+ * @li @ref eina_inlist_03_example_page
  */
 
 /**
@@ -787,6 +787,7 @@ EAPI Eina_Inlist *eina_inlist_sort(Eina_Inlist *head, Eina_Compare_Cb func);
                                                   _EINA_INLIST_OFFSET(ref))
 #endif
 
+/** Macro to iterate over an inlist */
 #define EINA_INLIST_FOREACH(list, l)                                     \
   for (l = NULL, l = (list ? _EINA_INLIST_CONTAINER(l, list) : NULL); l; \
        l = (EINA_INLIST_GET(l)->next ? _EINA_INLIST_CONTAINER(l, EINA_INLIST_GET(l)->next) : NULL))

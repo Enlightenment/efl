@@ -59,7 +59,7 @@
  * Linux, BSD, Opensolaris and Windows (XP and CE).
  *
  * The data types that are available are (see @ref Eina_Data_Types_Group):
- * @li @ref Eina_Inarray_Group standard array of inlined members.
+ * @li @ref Eina_Inline_Array_Group standard array of inlined members.
  * @li @ref Eina_Array_Group standard array of @c void* data.
  * @li @ref Eina_Hash_Group standard hash of @c void* data.
  * @li @ref Eina_Inline_List_Group list with nodes inlined into user type.
