@@ -918,12 +918,8 @@ evas_cache_image_drop(Image_Entry *im)
 EAPI void
 evas_cache_image_data_not_needed(Image_Entry *im)
 {
-   Evas_Cache_Image *cache;
    int references;
 
-   /* FIXME: no one uses this api... well evas_cache_engine_parent_not_needed()
-    * does, but nothing uses that! */
-   cache = im->cache;
 #ifdef EVAS_FRAME_QUEUING
    LKL(im->lock_references);
 #endif
@@ -959,15 +955,13 @@ evas_cache_image_dirty(Image_Entry *im, unsigned int x, unsigned int y, unsigned
         else
 #endif
           {
-             int error;
-             
              im_dirty = 
                 evas_cache_image_copied_data(cache, im->w, im->h, 
                                              evas_cache_image_pixels(im), 
                                              im->flags.alpha, im->space);
              if (!im_dirty) goto on_error;
              if (cache->func.debug) cache->func.debug("dirty-src", im);
-             error = cache->func.dirty(im_dirty, im);
+             cache->func.dirty(im_dirty, im);
              if (cache->func.debug) cache->func.debug("dirty-out", im_dirty);
 #ifdef EVAS_FRAME_QUEUING
              LKL(im_dirty->lock_references);
@@ -1014,15 +1008,13 @@ evas_cache_image_alone(Image_Entry *im)
      }
    else
      {
-        int error;
-
         im_dirty = evas_cache_image_copied_data(cache, im->w, im->h, 
                                                 evas_cache_image_pixels(im), 
                                                 im->flags.alpha, 
                                                 im->space);
         if (!im_dirty) goto on_error;
         if (cache->func.debug) cache->func.debug("dirty-src", im);
-        error = cache->func.dirty(im_dirty, im);
+        cache->func.dirty(im_dirty, im);
         if (cache->func.debug) cache->func.debug("dirty-out", im_dirty);
 #ifdef EVAS_FRAME_QUEUING
         LKL(im_dirty->lock_references);

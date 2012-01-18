@@ -1363,7 +1363,7 @@ _evas_object_box_layout_flow_horizontal_row_info_collect(Evas_Object_Box_Data *p
 EAPI void
 evas_object_box_layout_flow_horizontal(Evas_Object *o, Evas_Object_Box_Data *priv, void *data __UNUSED__)
 {
-   int n_children, v_justify;
+   int n_children;
    int r, row_count = 0;
    int min_w = 0, min_h = 0;
    int max_h, inc_y;
@@ -1398,7 +1398,6 @@ evas_object_box_layout_flow_horizontal(Evas_Object *o, Evas_Object_Box_Data *pri
      (priv, w, &row_count, row_max_h, row_break, row_width, &offset_y, &max_h);
 
    inc_y = 0;
-   v_justify = 0;
    remain_y = h - (offset_y + max_h);
 
    if (remain_y > 0)

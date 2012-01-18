@@ -744,7 +744,7 @@ _evas_draw_line_aa(RGBA_Image *dst, RGBA_Draw_Context *dc, int x0, int y0, int x
    int     dx, dy, rx, by, p0_in, p1_in, dh, a_a = 1;
    int     delx, dely, xx, yy, dxx, dyy;
    int     clx, cly, clw, clh;
-   int     dstw, dsth;
+   int     dstw;
    DATA32  *p, *data, color;
    RGBA_Gfx_Pt_Func pfunc;
 
@@ -801,7 +801,6 @@ _evas_draw_line_aa(RGBA_Image *dst, RGBA_Draw_Context *dc, int x0, int y0, int x
 
    data = evas_cache_image_pixels(&dst->cache_entry);
    dstw = dst->cache_entry.w;
-   dsth = dst->cache_entry.h;
 
    data += (dstw * cly) + clx;
    x0 -= clx;

@@ -1091,7 +1091,7 @@ _evas_nv12tiledtorgb_raster(unsigned char **yuv, unsigned char *rgb, int w, int 
    const int offset_value[2] = { 0, 64 * 16 };
    int mb_x, mb_y, mb_w, mb_h;
    int base_h;
-   int uv_x, uv_y, uv_step;
+   int uv_x, uv_step;
    int stride;
 
    /* Idea iterate over each macroblock and convert each of them using _evas_nv12torgb_raster */
@@ -1128,7 +1128,7 @@ _evas_nv12tiledtorgb_raster(unsigned char **yuv, unsigned char *rgb, int w, int 
    base_h = (mb_h >> 1) + (mb_h & 0x1);
    stride = w * sizeof (int);
 
-   uv_x = 0; uv_y = 0;
+   uv_x = 0;
 
    /* In this format we linearize macroblock on two line to form a Z and it's invert */
    for (mb_y = 0; mb_y < (mb_h >> 1); mb_y++)

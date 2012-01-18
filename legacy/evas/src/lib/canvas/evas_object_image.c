@@ -3840,9 +3840,7 @@ static void
 evas_object_image_filled_resize_listener(void *data __UNUSED__, Evas *e __UNUSED__, Evas_Object *obj, void *einfo __UNUSED__)
 {
    Evas_Coord w, h;
-   Evas_Object_Image *o;
 
-   o = obj->object_data;
    evas_object_geometry_get(obj, NULL, NULL, &w, &h);
    evas_object_image_fill_set(obj, 0, 0, w, h);
 }
