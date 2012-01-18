@@ -50,7 +50,7 @@
  * @def EINA_VERSION_MINOR
  * @brief Minor version of Eina
  */
-#define EINA_VERSION_MINOR 0
+#define EINA_VERSION_MINOR 2
 
 /**
  * @typedef Eina_Version

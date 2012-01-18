@@ -479,7 +479,7 @@ extern "C" {
 #endif
 
 #define EDJE_VERSION_MAJOR 1
-#define EDJE_VERSION_MINOR 0
+#define EDJE_VERSION_MINOR 2
 
    typedef struct _Edje_Version
      {
