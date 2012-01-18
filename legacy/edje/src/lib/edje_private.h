@@ -233,7 +233,7 @@ struct _Edje_Color
 struct _Edje_Aspect_Prefer
 {
    FLOAT_T min, max;
-   Edje_Internal_Aspect prefer;
+   char prefer;
 };
 
 struct _Edje_Aspect
