@@ -16,7 +16,7 @@
 static int _ecore_evas_init_count = 0;
 
 static Ecore_Evas *psl1ght_ee = NULL;
-static Ecore_Event_Handler *ecore_evas_event_handlers[4] = {
+static Ecore_Event_Handler *ecore_evas_event_handlers[5] = {
    NULL, NULL, NULL, NULL
 };
 
@@ -48,7 +48,7 @@ _ecore_evas_psl1ght_event_got_focus(void *data __UNUSED__, int type __UNUSED__, 
    ee->prop.focused = 1;
    evas_focus_in(ee->evas);
    if (ee->func.fn_focus_in) ee->func.fn_focus_in(ee);
-   
+
    return ECORE_CALLBACK_PASS_ON;
 }
 
@@ -64,7 +64,7 @@ _ecore_evas_psl1ght_event_lost_focus(void *data __UNUSED__, int type __UNUSED__,
    evas_focus_out(ee->evas);
    ee->prop.focused = 0;
    if (ee->func.fn_focus_out) ee->func.fn_focus_out(ee);
-   
+
    return ECORE_CALLBACK_PASS_ON;
 }
 
@@ -95,6 +95,19 @@ _ecore_evas_psl1ght_event_key_modifiers(void *data __UNUSED__, int type __UNUSED
    if (!ee) return ECORE_CALLBACK_PASS_ON;
    ecore_event_evas_modifier_lock_update(ee->evas, e->modifiers);
 
+   return ECORE_CALLBACK_PASS_ON;
+}
+
+static Eina_Bool
+_ecore_evas_psl1ght_event_quit (void *data __UNUSED__, int type __UNUSED__, void *event __UNUSED__)
+{
+   Ecore_Evas *ee;
+
+   ee = _ecore_evas_psl1ght_match();
+
+   if (!ee) return ECORE_CALLBACK_PASS_ON; /* pass on event */
+   if (ee->func.fn_delete_request)
+     ee->func.fn_delete_request(ee);
    return ECORE_CALLBACK_PASS_ON;
 }
 
@@ -170,10 +183,21 @@ _ecore_evas_psl1ght_init(int w __UNUSED__, int h __UNUSED__)
 
    ecore_event_evas_init();
 
-   ecore_evas_event_handlers[0] = ecore_event_handler_add(ECORE_PSL1GHT_EVENT_GOT_FOCUS, _ecore_evas_psl1ght_event_got_focus, NULL);
-   ecore_evas_event_handlers[1] = ecore_event_handler_add(ECORE_PSL1GHT_EVENT_LOST_FOCUS, _ecore_evas_psl1ght_event_lost_focus, NULL);
-   ecore_evas_event_handlers[2] = ecore_event_handler_add(ECORE_PSL1GHT_EVENT_EXPOSE, _ecore_evas_psl1ght_event_video_expose, NULL);
-   ecore_evas_event_handlers[3] = ecore_event_handler_add(ECORE_PSL1GHT_EVENT_KEY_MODIFIERS, _ecore_evas_psl1ght_event_key_modifiers, NULL);
+   ecore_evas_event_handlers[0] =
+       ecore_event_handler_add(ECORE_PSL1GHT_EVENT_GOT_FOCUS,
+           _ecore_evas_psl1ght_event_got_focus, NULL);
+   ecore_evas_event_handlers[1] =
+       ecore_event_handler_add(ECORE_PSL1GHT_EVENT_LOST_FOCUS,
+           _ecore_evas_psl1ght_event_lost_focus, NULL);
+   ecore_evas_event_handlers[2] =
+       ecore_event_handler_add(ECORE_PSL1GHT_EVENT_EXPOSE,
+           _ecore_evas_psl1ght_event_video_expose, NULL);
+   ecore_evas_event_handlers[3] =
+       ecore_event_handler_add(ECORE_PSL1GHT_EVENT_KEY_MODIFIERS,
+           _ecore_evas_psl1ght_event_key_modifiers, NULL);
+   ecore_evas_event_handlers[4] =
+       ecore_event_handler_add(ECORE_PSL1GHT_EVENT_QUIT,
+           _ecore_evas_psl1ght_event_quit, NULL);
 
    return _ecore_evas_init_count;
 }
@@ -206,6 +230,12 @@ _ecore_evas_psl1ght_free(Ecore_Evas *ee)
    ecore_event_window_unregister(0);
    _ecore_evas_psl1ght_shutdown();
    ecore_psl1ght_shutdown();
+}
+
+static void
+_ecore_evas_psl1ght_callback_delete_request_set(Ecore_Evas *ee, void (*func) (Ecore_Evas *ee))
+{
+   ee->func.fn_delete_request = func;
 }
 
 static void
@@ -324,7 +354,7 @@ static Ecore_Evas_Engine_Func _ecore_psl1ght_engine_func =
    NULL,
    NULL,
    NULL,
-   NULL,
+   _ecore_evas_psl1ght_callback_delete_request_set,
    NULL,
    NULL,
    NULL,

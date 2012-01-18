@@ -31,6 +31,7 @@ EAPI int ECORE_PSL1GHT_EVENT_KEY_MODIFIERS = 0;
 EAPI int ECORE_PSL1GHT_EVENT_GOT_FOCUS = 0;
 EAPI int ECORE_PSL1GHT_EVENT_LOST_FOCUS = 0;
 EAPI int ECORE_PSL1GHT_EVENT_EXPOSE = 0;
+EAPI int ECORE_PSL1GHT_EVENT_QUIT = 0;
 
 static int _ecore_psl1ght_init_count = 0;
 static int window_width = 0;
@@ -47,6 +48,7 @@ static KbMkey keyboard_mods = {{0}};
 static u16 keyboard_old_key = 0;
 /* Pad support */
 static padData pad_data;
+static padData old_pad_data = {0};
 static int pad_old_x = 0;
 static int pad_old_o = 0;
 /* Move support */
@@ -148,6 +150,7 @@ ecore_psl1ght_init(const char *name __UNUSED__)
    ECORE_PSL1GHT_EVENT_LOST_FOCUS = ecore_event_type_new();
    ECORE_PSL1GHT_EVENT_EXPOSE = ecore_event_type_new();
    ECORE_PSL1GHT_EVENT_KEY_MODIFIERS = ecore_event_type_new();
+   ECORE_PSL1GHT_EVENT_QUIT = ecore_event_type_new();
 
    mouse_x = 0;
    mouse_y = 0;
@@ -175,6 +178,7 @@ ecore_psl1ght_shutdown(void)
    ECORE_PSL1GHT_EVENT_LOST_FOCUS = 0;
    ECORE_PSL1GHT_EVENT_EXPOSE = 0;
    ECORE_PSL1GHT_EVENT_KEY_MODIFIERS = 0;
+   ECORE_PSL1GHT_EVENT_QUIT = 0;
 
    ioPadEnd();
    ioMouseEnd();
@@ -354,7 +358,6 @@ _ecore_psl1ght_event_key(u16 key)
    ev->event_window = 0;
    ev->modifiers = _ecore_psl1ght_get_modifiers();
 
-   printf ("Key is %X\n", key);
    key &= ~KB_KEYPAD;
    for (i = 0; i < sizeof(keystable) / sizeof(struct _ecore_psl1ght_keys_s); ++i)
      if (keystable[i].code == key)
@@ -364,13 +367,11 @@ _ecore_psl1ght_event_key(u16 key)
           ev->string = keystable[i].compose;
           ev->compose = keystable[i].compose;
 
-          printf ("Found key '%s' in the table\n", ev->keyname);
           return ev;
        }
 
    utf16 = ioKbCnvRawCode (KB_MAPPING_101, keyboard_mods, keyboard_leds, key);
    unicodeToUtf8(utf16, utf8);
-   printf ("Converting to utf16 : %X - utf8 : %s\n", utf16, utf8);
    ev->keyname = ev->key = ev->string = ev->compose = strdup (utf8);
 
    return ev;
@@ -460,6 +461,30 @@ _ecore_psl1ght_mouse_wheel(s8 wheel, s8 tilt)
    ecore_event_add(ECORE_EVENT_MOUSE_WHEEL, ev, NULL, NULL);
 }
 
+static void
+_ecore_psl1ght_pad_button (const char *name, int pressed)
+{
+   Ecore_Event_Key *ev = NULL;
+
+   ev = malloc(sizeof(Ecore_Event_Key));
+   if (!ev) return;
+
+   ev->timestamp = _ecore_psl1ght_get_time ();
+   ev->window = 0;
+   ev->event_window = 0;
+   ev->modifiers = 0;
+
+   ev->keyname = name;
+   ev->key = name;
+   ev->string = "";
+   ev->compose = "";
+
+   if (pressed)
+     ecore_event_add(ECORE_EVENT_KEY_DOWN, ev, NULL, NULL);
+   else
+     ecore_event_add(ECORE_EVENT_KEY_UP, ev, NULL, NULL);
+}
+
 #define PAD_STICK_DEADZONE 0x20
 
 static void
@@ -502,15 +527,44 @@ _ecore_psl1ght_poll_joypad(void)
              if (analog_h != 0 || analog_v != 0)
                _ecore_psl1ght_mouse_move (analog_h, analog_v);
 
-             if (pad_old_x != pad_data.BTN_CROSS)
+             if (old_pad_data.BTN_CROSS ^ pad_data.BTN_CROSS) {
+               _ecore_psl1ght_pad_button ("Cross", pad_data.BTN_CROSS);
                _ecore_psl1ght_mouse_button (1, pad_data.BTN_CROSS);
-             if (pad_old_o != pad_data.BTN_CIRCLE)
+             }
+             if (old_pad_data.BTN_CIRCLE ^ pad_data.BTN_CIRCLE) {
+               _ecore_psl1ght_pad_button ("Circle", pad_data.BTN_CIRCLE);
                _ecore_psl1ght_mouse_button (3, pad_data.BTN_CIRCLE);
+             }
+             if (old_pad_data.BTN_SQUARE ^ pad_data.BTN_SQUARE)
+               _ecore_psl1ght_pad_button ("Square", pad_data.BTN_SQUARE);
+             if (old_pad_data.BTN_TRIANGLE ^ pad_data.BTN_TRIANGLE)
+               _ecore_psl1ght_pad_button ("Triangle", pad_data.BTN_TRIANGLE);
+             if (old_pad_data.BTN_UP ^ pad_data.BTN_UP)
+               _ecore_psl1ght_pad_button ("Up", pad_data.BTN_UP);
+             if (old_pad_data.BTN_DOWN ^ pad_data.BTN_DOWN)
+               _ecore_psl1ght_pad_button ("Down", pad_data.BTN_DOWN);
+             if (old_pad_data.BTN_LEFT ^ pad_data.BTN_LEFT)
+               _ecore_psl1ght_pad_button ("Left", pad_data.BTN_LEFT);
+             if (old_pad_data.BTN_RIGHT ^ pad_data.BTN_RIGHT)
+               _ecore_psl1ght_pad_button ("Right", pad_data.BTN_RIGHT);
+             if (old_pad_data.BTN_L1 ^ pad_data.BTN_L1)
+               _ecore_psl1ght_pad_button ("L1", pad_data.BTN_L1);
+             if (old_pad_data.BTN_L2 ^ pad_data.BTN_L2)
+               _ecore_psl1ght_pad_button ("L2", pad_data.BTN_L2);
+             if (old_pad_data.BTN_L3 ^ pad_data.BTN_L3)
+               _ecore_psl1ght_pad_button ("L3", pad_data.BTN_L3);
+             if (old_pad_data.BTN_R1 ^ pad_data.BTN_R1)
+               _ecore_psl1ght_pad_button ("R1", pad_data.BTN_R1);
+             if (old_pad_data.BTN_R2 ^ pad_data.BTN_R2)
+               _ecore_psl1ght_pad_button ("R2", pad_data.BTN_R2);
+             if (old_pad_data.BTN_R3 ^ pad_data.BTN_R3)
+               _ecore_psl1ght_pad_button ("R3", pad_data.BTN_R3);
+             if (old_pad_data.BTN_START ^ pad_data.BTN_START)
+               _ecore_psl1ght_pad_button ("Start", pad_data.BTN_START);
+             if (old_pad_data.BTN_SELECT ^ pad_data.BTN_SELECT)
+               _ecore_psl1ght_pad_button ("Select", pad_data.BTN_SELECT);
 
-             pad_old_x = pad_data.BTN_CROSS;
-             pad_old_o = pad_data.BTN_CIRCLE;
-
-             //pad_buttons = paddata.buttons;
+             old_pad_data = pad_data;
           }
      }
 }
@@ -602,7 +656,7 @@ _ecore_psl1ght_poll_move(void)
 
       case 4:
         // Move button
-        printf ("Calibrating\n");
+        //printf ("Calibrating\n");
         gemCalibrate (0);
         calibrated = 1;
         break;
@@ -717,23 +771,24 @@ _ecore_psl1ght_poll_keyboard(void)
 static void
 xmb_event_handler(u64 status, u64 param, void *user_data)
 {
-   printf ("Received event %lX\n", status);
-   if (status == SYSUTIL_EXIT_GAME)
-     {
-        ecore_main_loop_quit();
-     }
-   else if (status == SYSUTIL_MENU_OPEN)
-     {
-     }
-   else if (status == SYSUTIL_MENU_CLOSE)
-     {
-     }
-   else if (status == SYSUTIL_DRAW_BEGIN)
-     {
-     }
-   else if (status == SYSUTIL_DRAW_END)
-     {
-     }
+   //printf ("Received event %lX\n", status);
+   switch (status) {
+     case SYSUTIL_EXIT_GAME:
+        ecore_event_add(ECORE_PSL1GHT_EVENT_QUIT, NULL, NULL, NULL);
+        break;
+     case SYSUTIL_DRAW_BEGIN:
+        ecore_event_add(ECORE_PSL1GHT_EVENT_EXPOSE, NULL, NULL, NULL);
+     case SYSUTIL_MENU_OPEN:
+        ecore_event_add(ECORE_PSL1GHT_EVENT_LOST_FOCUS, NULL, NULL, NULL);
+        break;
+     case SYSUTIL_DRAW_END:
+        ecore_event_add(ECORE_PSL1GHT_EVENT_EXPOSE, NULL, NULL, NULL);
+     case SYSUTIL_MENU_CLOSE:
+        ecore_event_add(ECORE_PSL1GHT_EVENT_GOT_FOCUS, NULL, NULL, NULL);
+        break;
+     default:
+       break;
+   }
 }
 
 EAPI void

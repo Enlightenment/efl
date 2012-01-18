@@ -28,6 +28,7 @@ EAPI extern int ECORE_PSL1GHT_EVENT_KEY_MODIFIERS;
 EAPI extern int ECORE_PSL1GHT_EVENT_GOT_FOCUS;
 EAPI extern int ECORE_PSL1GHT_EVENT_LOST_FOCUS;
 EAPI extern int ECORE_PSL1GHT_EVENT_EXPOSE;
+EAPI extern int ECORE_PSL1GHT_EVENT_QUIT;
 
 typedef struct _Ecore_Psl1ght_Event_Key_Modifiers Ecore_Psl1ght_Event_Key_Modifiers;
 struct _Ecore_Psl1ght_Event_Key_Modifiers /** PSL1GHT Key Modifier event */
@@ -105,14 +106,10 @@ struct _Ecore_Psl1ght_Event_Mouse_Wheel /** PSL1GHT Mouse Wheel event */
    unsigned int time;
 };
 
-EAPI int
-          ecore_psl1ght_init(const char *name);
-EAPI int
-          ecore_psl1ght_shutdown(void);
-EAPI void
-          ecore_psl1ght_resolution_set(int width, int height);
-EAPI void
-          ecore_psl1ght_poll_events(void);
+EAPI int ecore_psl1ght_init(const char *name);
+EAPI int ecore_psl1ght_shutdown(void);
+EAPI void ecore_psl1ght_resolution_set(int width, int height);
+EAPI void ecore_psl1ght_poll_events(void);
 
 EAPI void ecore_psl1ght_screen_resolution_get(int *w, int *h);
 EAPI void ecore_psl1ght_optimal_screen_resolution_get(int *w, int *h);
