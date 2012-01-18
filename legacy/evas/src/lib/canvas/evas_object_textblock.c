@@ -8030,7 +8030,9 @@ evas_textblock_cursor_geometry_get(const Evas_Textblock_Cursor *cur, Evas_Coord 
          * the position of the previous */
         if ((cur->pos > 0) && !_evas_textblock_cursor_is_at_the_end(cur))
           {
+#ifdef BIDI_SUPPORT
              Eina_Bool before_char = EINA_FALSE;
+#endif
              cur2.obj = cur->obj;
              evas_textblock_cursor_copy(cur, &cur2);
              evas_textblock_cursor_char_prev(&cur2);
@@ -8040,12 +8042,16 @@ evas_textblock_cursor_geometry_get(const Evas_Textblock_Cursor *cur, Evas_Coord 
              if (!fmt || !_IS_LINE_SEPARATOR(fmt->format))
                {
                   dir_cur = &cur2;
+#ifdef BIDI_SUPPORT
                   before_char = EINA_FALSE;
+#endif
                }
+#ifdef BIDI_SUPPORT
              else
                {
                   before_char = EINA_TRUE;
                }
+#endif
              ret = evas_textblock_cursor_pen_geometry_get(
                    dir_cur, &x, &y, &w, &h);
 #ifdef BIDI_SUPPORT
