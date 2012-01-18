@@ -314,10 +314,13 @@ _eio_file_write(int fd, void *mem, ssize_t length)
 #endif
 
 static Eina_Bool
-_eio_file_copy_mmap(Ecore_Thread *thread, Eio_File_Progress *op, Eina_File *f, int out, long long size)
+_eio_file_copy_mmap(Ecore_Thread *thread, Eio_File_Progress *op, Eina_File *f, int out)
 {
    char *m = MAP_FAILED;
    long long i;
+   long long size;
+
+   size = eina_file_size_get(f);
 
    for (i = 0; i < size; i += EIO_PACKET_SIZE * EIO_PACKET_COUNT)
      {
@@ -603,6 +606,7 @@ eio_file_copy_do(Ecore_Thread *thread, Eio_File_Progress *copy)
    struct stat buf;
    int in = -1;
 #endif
+   mode_t md;
    int result = -1;
    int out = -1;
 
@@ -620,10 +624,12 @@ eio_file_copy_do(Ecore_Thread *thread, Eio_File_Progress *copy)
     */
    if (fstat(in, &buf) < 0)
      goto on_error;
+
+   md = buf.st_mode;
 #endif
 
    /* open write */
-   out = open(copy->dest, O_WRONLY | O_CREAT | O_TRUNC, buf.st_mode);
+   out = open(copy->dest, O_WRONLY | O_CREAT | O_TRUNC);
    if (out < 0)
      goto on_error;
 
@@ -637,10 +643,19 @@ eio_file_copy_do(Ecore_Thread *thread, Eio_File_Progress *copy)
    /* classic copy method using mmap and write */
    if (result == -1)
      {
+#ifndef EFL_HAVE_SPLICE
+        struct stat buf;
+
+        if (stat(copy->source, &buf) < 0)
+          goto on_error;
+
+        md = buf.st_mode;
+#endif
+
         f = eina_file_open(copy->source, 0);
         if (!f) goto on_error;
 
-        if (!_eio_file_copy_mmap(thread, copy, f, out, buf.st_size))
+        if (!_eio_file_copy_mmap(thread, copy, f, out))
           {
              eina_file_close(f);
              goto on_error;
@@ -661,10 +676,10 @@ eio_file_copy_do(Ecore_Thread *thread, Eio_File_Progress *copy)
 
    /* change access right to match source */
 #ifdef HAVE_CHMOD
-   if (fchmod(out, buf.st_mode) != 0)
+   if (fchmod(out, md) != 0)
      goto on_error;
 #else
-   if (chmod(copy->dest, buf.st_mode) != 0)
+   if (chmod(copy->dest, md) != 0)
      goto on_error;
 #endif
 
@@ -678,7 +693,9 @@ eio_file_copy_do(Ecore_Thread *thread, Eio_File_Progress *copy)
  on_error:
    eio_file_thread_error(&copy->common, thread);
 
+#ifdef EFL_HAVE_SPLICE
    if (in >= 0) close(in);
+#endif
    if (out >= 0) close(out);
    if (out >= 0)
      unlink(copy->dest);
