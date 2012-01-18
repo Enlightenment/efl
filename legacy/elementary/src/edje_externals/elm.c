@@ -1,7 +1,7 @@
 #include "Elementary.h"
 #include "private.h"
 
-int _elm_log_dom = -1;
+int _elm_ext_log_dom = -1;
 
 static int init_count = 0;
 
@@ -302,7 +302,7 @@ static Edje_External_Type_Info elm_external_types[] =
 static Eina_Bool
 elm_mod_init(void)
 {
-   _elm_log_dom = eina_log_domain_register("elm-externals", EINA_COLOR_LIGHTBLUE);
+   _elm_ext_log_dom = eina_log_domain_register("elm-externals", EINA_COLOR_LIGHTBLUE);
    edje_external_type_array_register(elm_external_types);
    return EINA_TRUE;
 }
@@ -311,8 +311,8 @@ static void
 elm_mod_shutdown(void)
 {
    edje_external_type_array_unregister(elm_external_types);
-   if (_elm_log_dom >= 0) eina_log_domain_unregister(_elm_log_dom);
-   _elm_log_dom = -1;
+   if (_elm_ext_log_dom >= 0) eina_log_domain_unregister(_elm_log_dom);
+   _elm_ext_log_dom = -1;
 }
 
 EINA_MODULE_INIT(elm_mod_init);

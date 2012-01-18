@@ -4,11 +4,25 @@
 #include "Elementary.h"
 #include "elm_priv.h"
 
+#undef CRITICAL
+#undef ERR
+#undef WRN
+#undef INF
+#undef DBG
+
+#define CRITICAL(...) EINA_LOG_DOM_CRIT(_elm_ext_log_dom, __VA_ARGS__)
+#define ERR(...)      EINA_LOG_DOM_ERR (_elm_ext_log_dom, __VA_ARGS__)
+#define WRN(...)      EINA_LOG_DOM_WARN(_elm_ext_log_dom, __VA_ARGS__)
+#define INF(...)      EINA_LOG_DOM_INFO(_elm_ext_log_dom, __VA_ARGS__)
+#define DBG(...)      EINA_LOG_DOM_DBG (_elm_ext_log_dom, __VA_ARGS__)
+
 typedef struct {
     const char *style;
     Eina_Bool disabled:1;
     Eina_Bool disabled_exists:1;
 } Elm_Params;
+
+extern int _elm_ext_log_dom;
 
 void external_elm_init(void);
 void external_signal(void *data, Evas_Object *obj, const char *signal, const char *source);
