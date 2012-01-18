@@ -223,6 +223,8 @@ ecore_imf_context_info_get(Ecore_IMF_Context *ctx)
 EAPI void
 ecore_imf_context_del(Ecore_IMF_Context *ctx)
 {
+   Ecore_IMF_Func_Node *fn;
+
    if (!ECORE_MAGIC_CHECK(ctx, ECORE_MAGIC_CONTEXT))
      {
         ECORE_MAGIC_FAIL(ctx, ECORE_MAGIC_CONTEXT,
@@ -230,6 +232,13 @@ ecore_imf_context_del(Ecore_IMF_Context *ctx)
         return;
      }
    if (ctx->klass->del) ctx->klass->del(ctx);
+
+   if (ctx->callbacks)
+     {
+        EINA_LIST_FREE(ctx->callbacks, fn)
+           free(fn);
+     }
+
    ECORE_MAGIC_SET(ctx, ECORE_MAGIC_NONE);
    free(ctx);
 }
@@ -1013,6 +1022,134 @@ ecore_imf_context_delete_surrounding_event_add(Ecore_IMF_Context *ctx, int offse
    ev->n_chars = n_chars;
    ecore_event_add(ECORE_IMF_EVENT_DELETE_SURROUNDING,
                    ev, _ecore_imf_event_free_delete_surrounding, NULL);
+}
+
+/**
+ * Add (register) a callback function to a given context event.
+ *
+ * This function adds a function callback to the context @p ctx when the
+ * event of type @p type occurs on it. The function pointer is @p
+ * func.
+ *
+ * The event type @p type to trigger the function may be one of
+ * #ECORE_IMF_CALLBACK_PREEDIT_START, #ECORE_IMF_CALLBACK_PREEDIT_END,
+ * #ECORE_IMF_CALLBACK_PREEDIT_CHANGED, #ECORE_IMF_CALLBACK_COMMIT and
+ * #ECORE_IMF_CALLBACK_DELETE_SURROUNDING.
+ *
+ * @param ctx Ecore_IMF_Context to attach a callback to.
+ * @param type The type of event that will trigger the callback
+ * @param func The (callback) function to be called when the event is
+ *        triggered
+ * @param data The data pointer to be passed to @p func
+ * @ingroup Ecore_IMF_Context_Module_Group
+ * @since 1.2.0
+ */
+EAPI void
+ecore_imf_context_event_callback_add(Ecore_IMF_Context *ctx, Ecore_IMF_Callback_Type type, Ecore_IMF_Event_Cb func, const void *data)
+{
+   Ecore_IMF_Func_Node *fn = NULL;
+
+   if (!ECORE_MAGIC_CHECK(ctx, ECORE_MAGIC_CONTEXT))
+     {
+        ECORE_MAGIC_FAIL(ctx, ECORE_MAGIC_CONTEXT,
+                         "ecore_imf_context_event_callback_add");
+        return;
+     }
+
+   if (!func) return;
+
+   fn = calloc(1, sizeof (Ecore_IMF_Func_Node));
+   if (!fn) return;
+
+   fn->func = func;
+   fn->data = data;
+   fn->type = type;
+
+   ctx->callbacks = eina_list_append(ctx->callbacks, fn);
+}
+
+/**
+ * Delete (unregister) a callback function registered to a given
+ * context event.
+ *
+ * This function removes a function callback from the context @p ctx when the
+ * event of type @p type occurs on it. The function pointer is @p
+ * func.
+ *
+ * @see ecore_imf_context_event_callback_add() for more details
+ *
+ * @param ctx Ecore_IMF_Context to remove a callback from.
+ * @param type The type of event that was trigerring the callback
+ * @param func The (callback) function that was to be called when the event was triggered
+ * @return the data pointer
+ * @ingroup Ecore_IMF_Context_Module_Group
+ * @since 1.2.0
+ */
+EAPI void *
+ecore_imf_context_event_callback_del(Ecore_IMF_Context *ctx, Ecore_IMF_Callback_Type type, Ecore_IMF_Event_Cb func)
+{
+   Eina_List *l = NULL;
+   Eina_List *l_next = NULL;
+   Ecore_IMF_Func_Node *fn = NULL;
+
+   if (!ECORE_MAGIC_CHECK(ctx, ECORE_MAGIC_CONTEXT))
+     {
+        ECORE_MAGIC_FAIL(ctx, ECORE_MAGIC_CONTEXT,
+                         "ecore_imf_context_event_callback_del");
+        return;
+     }
+
+   if (!func) return NULL;
+   if (!ctx->callbacks) return NULL;
+
+   EINA_LIST_FOREACH_SAFE(ctx->callbacks, l, l_next, fn)
+     {
+        if ((fn) && (fn->func == func) && (fn->type == type))
+          {
+             void *tmp = fn->data;
+             free(fn);
+             ctx->callbacks = eina_list_remove_list(ctx->callbacks, l);
+             return tmp;
+          }
+     }
+   return NULL;
+}
+
+/**
+ * Call a given callback on the context @p ctx.
+ *
+ * ecore_imf_context_preedit_start_event_add, ecore_imf_context_preedit_end_event_add, 
+ * ecore_imf_context_preedit_changed_event_add, ecore_imf_context_commit_event_add and
+ * ecore_imf_context_delete_surrounding_event_add APIs are asynchronous 
+ * because those API adds each event to the event queue.
+ *
+ * This API provides the way to call each callback function immediately.
+ *
+ * @param ctx Ecore_IMF_Context.
+ * @param type The type of event that will trigger the callback
+ * @param event_info The pointer to event specific struct or information to
+ *        pass to the callback functions registered on this event
+ * @ingroup Ecore_IMF_Context_Module_Group
+ * @since 1.2.0
+ */
+EAPI void
+ecore_imf_context_event_callback_call(Ecore_IMF_Context *ctx, Ecore_IMF_Callback_Type type, void *event_info)
+{
+   Ecore_IMF_Func_Node *fn = NULL;
+   Eina_List *l = NULL;
+
+   if (!ECORE_MAGIC_CHECK(ctx, ECORE_MAGIC_CONTEXT))
+     {
+        ECORE_MAGIC_FAIL(ctx, ECORE_MAGIC_CONTEXT,
+                         "ecore_imf_context_event_callback_call");
+        return;
+     }
+
+   EINA_LIST_FOREACH(ctx->callbacks, l, fn)
+     {
+        if ((fn) && (fn->type == type) && (fn->func))
+          fn->func(fn->data, ctx, event_info);
+     }
 }
 
 /**

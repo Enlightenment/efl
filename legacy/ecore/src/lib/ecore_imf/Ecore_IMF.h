@@ -64,6 +64,17 @@ EAPI extern int ECORE_IMF_EVENT_PREEDIT_CHANGED;
 EAPI extern int ECORE_IMF_EVENT_COMMIT;
 EAPI extern int ECORE_IMF_EVENT_DELETE_SURROUNDING;
 
+typedef void (*Ecore_IMF_Event_Cb) (void *data, Ecore_IMF_Context *ctx, void *event_info);
+
+typedef enum
+{
+    ECORE_IMF_CALLBACK_PREEDIT_START,
+    ECORE_IMF_CALLBACK_PREEDIT_END,
+    ECORE_IMF_CALLBACK_PREEDIT_CHANGED,
+    ECORE_IMF_CALLBACK_COMMIT,
+    ECORE_IMF_CALLBACK_DELETE_SURROUNDING
+} Ecore_IMF_Callback_Type;
+
 typedef enum
 {
    ECORE_IMF_EVENT_MOUSE_DOWN,
@@ -388,6 +399,9 @@ EAPI void                          ecore_imf_context_preedit_end_event_add(Ecore
 EAPI void                          ecore_imf_context_preedit_changed_event_add(Ecore_IMF_Context *ctx);
 EAPI void                          ecore_imf_context_commit_event_add(Ecore_IMF_Context *ctx, const char *str);
 EAPI void                          ecore_imf_context_delete_surrounding_event_add(Ecore_IMF_Context *ctx, int offset, int n_chars);
+EAPI void                          ecore_imf_context_event_callback_add(Ecore_IMF_Context *ctx, Ecore_IMF_Callback_Type type, Ecore_IMF_Event_Cb func, const void *data);
+EAPI void                         *ecore_imf_context_event_callback_del(Ecore_IMF_Context *ctx, Ecore_IMF_Callback_Type type, Ecore_IMF_Event_Cb func);
+EAPI void                          ecore_imf_context_event_callback_call(Ecore_IMF_Context *ctx, Ecore_IMF_Callback_Type type, void *event_info);
 EAPI void                          ecore_imf_context_prediction_allow_set(Ecore_IMF_Context *ctx, Eina_Bool prediction);
 EAPI Eina_Bool                     ecore_imf_context_prediction_allow_get(Ecore_IMF_Context *ctx);
 EAPI void                          ecore_imf_context_autocapital_type_set(Ecore_IMF_Context *ctx, Ecore_IMF_Autocapital_Type autocapital_type);

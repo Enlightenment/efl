@@ -389,6 +389,7 @@ _ecore_imf_context_xim_reset(Ecore_IMF_Context *ctx)
         imf_context_data->preedit_chars = NULL;
 
         ecore_imf_context_preedit_changed_event_add(ctx);
+        ecore_imf_context_event_callback_call(ctx, ECORE_IMF_CALLBACK_PREEDIT_CHANGED, NULL);
      }
 
    if (result)
@@ -397,6 +398,7 @@ _ecore_imf_context_xim_reset(Ecore_IMF_Context *ctx)
         if (result_utf8)
           {
              ecore_imf_context_commit_event_add(ctx, result_utf8);
+             ecore_imf_context_event_callback_call(ctx, ECORE_IMF_CALLBACK_COMMIT, result_utf8);
              free(result_utf8);
           }
      }
@@ -707,6 +709,7 @@ _ecore_imf_context_xim_filter_event(Ecore_IMF_Context *ctx,
              if (unicode[0] >= 0x20 && unicode[0] != 0x7f)
                {
                   ecore_imf_context_commit_event_add(ctx, compose);
+                  ecore_imf_context_event_callback_call(ctx, ECORE_IMF_CALLBACK_COMMIT, compose);
                   result = EINA_TRUE;
                }
              free(compose);
@@ -872,8 +875,10 @@ preedit_start_callback(XIC xic __UNUSED__,
    imf_context_data = ecore_imf_context_data_get(ctx);
 
    if (imf_context_data->finalizing == EINA_FALSE)
-     ecore_imf_context_preedit_start_event_add(ctx);
-
+     {
+        ecore_imf_context_preedit_start_event_add(ctx);
+        ecore_imf_context_event_callback_call(ctx, ECORE_IMF_CALLBACK_PREEDIT_START, NULL);
+     }
    return -1;
 }
 
@@ -893,10 +898,14 @@ preedit_done_callback(XIC xic __UNUSED__,
         free(imf_context_data->preedit_chars);
         imf_context_data->preedit_chars = NULL;
         ecore_imf_context_preedit_changed_event_add(ctx);
+        ecore_imf_context_event_callback_call(ctx, ECORE_IMF_CALLBACK_PREEDIT_CHANGED, NULL);
      }
 
    if (imf_context_data->finalizing == EINA_FALSE)
-     ecore_imf_context_preedit_end_event_add(ctx);
+     {
+        ecore_imf_context_preedit_end_event_add(ctx);
+        ecore_imf_context_event_callback_call(ctx, ECORE_IMF_CALLBACK_PREEDIT_END, NULL);
+     }
 }
 
 /* FIXME */
@@ -1023,6 +1032,7 @@ done:
           }
 
         ecore_imf_context_preedit_changed_event_add(ctx);
+        ecore_imf_context_event_callback_call(ctx, ECORE_IMF_CALLBACK_PREEDIT_CHANGED, NULL);
      }
 
    free(new_text);
@@ -1044,7 +1054,10 @@ preedit_caret_callback(XIC xic __UNUSED__,
         // printf("call_data->position:%d\n", call_data->position);
         imf_context_data->preedit_cursor = call_data->position;
         if (imf_context_data->finalizing == EINA_FALSE)
-          ecore_imf_context_preedit_changed_event_add(ctx);
+          {
+             ecore_imf_context_preedit_changed_event_add(ctx);
+             ecore_imf_context_event_callback_call(ctx, ECORE_IMF_CALLBACK_PREEDIT_CHANGED, NULL);
+          }
      }
 }
 
@@ -1210,6 +1223,7 @@ reinitialize_ic(Ecore_IMF_Context *ctx)
              free(imf_context_data->preedit_chars);
              imf_context_data->preedit_chars = NULL;
              ecore_imf_context_preedit_changed_event_add(ctx);
+             ecore_imf_context_event_callback_call(ctx, ECORE_IMF_CALLBACK_PREEDIT_CHANGED, NULL);
           }
      }
 }
