@@ -280,13 +280,13 @@ ecore_con_info_get(Ecore_Con_Server *svr,
                   memcpy(container->service, sbuf, sizeof(container->service));
                }
 
-             write(fd[1], tosend, tosend_len);
+             if (write(fd[1], tosend, tosend_len) < 0) perror("write");
           }
 
         if (result)
           freeaddrinfo(result);
 
-        write(fd[1], "", 1);
+        if (write(fd[1], "", 1) < 0) perror("write");
         close(fd[1]);
 #if defined(__USE_ISOC99) && !defined(__UCLIBC__)
         _Exit(0);
