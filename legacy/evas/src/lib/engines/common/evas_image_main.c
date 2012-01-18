@@ -295,10 +295,10 @@ _evas_common_rgba_image_post_surface(Image_Entry *ie)
         );
      }
 # else
-   ie = NULL;
+   (void)ie;
 # endif
 #else
-   ie = NULL;
+   (void)ie;
 #endif
 }
 

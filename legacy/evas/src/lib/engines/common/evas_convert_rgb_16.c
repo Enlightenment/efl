@@ -117,7 +117,7 @@ evas_common_convert_rgba2_to_16bpp_rgb_565_dith (DATA32 *src, DATA8 *dst, int sr
      }
 #endif   
    return;
-   pal = 0;
+   (void)pal;
 #else
    DATA16 *d = (DATA16 *)dst;
    int w0 = w;
@@ -144,7 +144,7 @@ evas_common_convert_rgba2_to_16bpp_rgb_565_dith (DATA32 *src, DATA8 *dst, int sr
 	d += dst_jump;
      }
    return;
-   pal = 0;
+   (void)pal;
 #endif
 }
 #endif
@@ -216,7 +216,7 @@ evas_common_convert_rgba_to_16bpp_rgb_565_dith (DATA32 *src, DATA8 *dst, int src
      }
 #endif   
    return;
-   pal = 0;
+   (void)pal;
 #else
    DATA16 *d = (DATA16 *)dst;
    int w0 = w;
@@ -233,7 +233,7 @@ evas_common_convert_rgba_to_16bpp_rgb_565_dith (DATA32 *src, DATA8 *dst, int src
 	d += dst_jump;
      }
    return;
-   pal = 0;
+   (void)pal;
 #endif
 }
 #endif
@@ -295,7 +295,7 @@ evas_common_convert_rgba2_to_16bpp_rgb_565_dith_rot_180 (DATA32 *src, DATA8 *dst
 
    CONVERT_LOOP2_END_ROT_180();
    return;
-   pal = 0;
+   (void)pal;
 }
 #endif
 #endif
@@ -333,7 +333,7 @@ evas_common_convert_rgba_to_16bpp_rgb_565_dith_rot_180 (DATA32 *src, DATA8 *dst,
 
    CONVERT_LOOP_END_ROT_180();
    return;
-   pal = 0;
+   (void)pal;
 }
 #endif
 #endif
@@ -394,7 +394,7 @@ evas_common_convert_rgba2_to_16bpp_rgb_565_dith_rot_270 (DATA32 *src, DATA8 *dst
 
    CONVERT_LOOP2_END_ROT_270();
    return;
-   pal = 0;
+   (void)pal;
 }
 #endif
 #endif
@@ -432,7 +432,7 @@ evas_common_convert_rgba_to_16bpp_rgb_565_dith_rot_270 (DATA32 *src, DATA8 *dst,
 
    CONVERT_LOOP_END_ROT_270();
    return;
-   pal = 0;
+   (void)pal;
 }
 #endif
 #endif
@@ -493,7 +493,7 @@ evas_common_convert_rgba2_to_16bpp_rgb_565_dith_rot_90 (DATA32 *src, DATA8 *dst,
 
    CONVERT_LOOP2_END_ROT_90();
    return;
-   pal = 0;
+   (void)pal;
 }
 #endif
 #endif
@@ -531,7 +531,7 @@ evas_common_convert_rgba_to_16bpp_rgb_565_dith_rot_90 (DATA32 *src, DATA8 *dst, 
 
    CONVERT_LOOP_END_ROT_90();
    return;
-   pal = 0;
+   (void)pal;
 }
 #endif
 #endif
@@ -592,7 +592,7 @@ evas_common_convert_rgba2_to_16bpp_bgr_565_dith (DATA32 *src, DATA8 *dst, int sr
 
    CONVERT_LOOP2_END_ROT_0();
    return;
-   pal = 0;
+   (void)pal;
 }
 #endif
 #endif
@@ -630,7 +630,7 @@ evas_common_convert_rgba_to_16bpp_bgr_565_dith (DATA32 *src, DATA8 *dst, int src
 
    CONVERT_LOOP_END_ROT_0();
    return;
-   pal = 0;
+   (void)pal;
 }
 #endif
 #endif
@@ -691,7 +691,7 @@ evas_common_convert_rgba2_to_16bpp_bgr_565_dith_rot_180 (DATA32 *src, DATA8 *dst
 
    CONVERT_LOOP2_END_ROT_180();
    return;
-   pal = 0;
+   (void)pal;
 }
 #endif
 #endif
@@ -731,7 +731,7 @@ evas_common_convert_rgba_to_16bpp_bgr_565_dith_rot_180 (DATA32 *src, DATA8 *dst,
 
    CONVERT_LOOP_END_ROT_180();
    return;
-   pal = 0;
+   (void)pal;
 }
 #endif
 #endif
@@ -792,7 +792,7 @@ evas_common_convert_rgba2_to_16bpp_bgr_565_dith_rot_270 (DATA32 *src, DATA8 *dst
 
    CONVERT_LOOP2_END_ROT_270();
    return;
-   pal = 0;
+   (void)pal;
 }
 #endif
 #endif
@@ -830,7 +830,7 @@ evas_common_convert_rgba_to_16bpp_bgr_565_dith_rot_270 (DATA32 *src, DATA8 *dst,
 
    CONVERT_LOOP_END_ROT_270();
    return;
-   pal = 0;
+   (void)pal;
 }
 #endif
 #endif
@@ -891,7 +891,7 @@ evas_common_convert_rgba2_to_16bpp_bgr_565_dith_rot_90 (DATA32 *src, DATA8 *dst,
 
    CONVERT_LOOP2_END_ROT_90();
    return;
-   pal = 0;
+   (void)pal;
 }
 #endif
 #endif
@@ -929,7 +929,7 @@ evas_common_convert_rgba_to_16bpp_bgr_565_dith_rot_90 (DATA32 *src, DATA8 *dst, 
 
    CONVERT_LOOP_END_ROT_90();
    return;
-   pal = 0;
+   (void)pal;
 }
 #endif
 #endif
@@ -988,7 +988,7 @@ evas_common_convert_rgba2_to_16bpp_rgb_444_dith (DATA32 *src, DATA8 *dst, int sr
 
    CONVERT_LOOP2_END_ROT_0();
    return;
-   pal = 0;
+   (void)pal;
 }
 #endif
 #endif
@@ -1025,7 +1025,7 @@ evas_common_convert_rgba_to_16bpp_rgb_444_dith (DATA32 *src, DATA8 *dst, int src
 
    CONVERT_LOOP_END_ROT_0();
    return;
-   pal = 0;
+   (void)pal;
 }
 #endif
 #endif
@@ -1084,7 +1084,7 @@ evas_common_convert_rgba2_to_16bpp_rgb_444_dith_rot_180 (DATA32 *src, DATA8 *dst
 
    CONVERT_LOOP2_END_ROT_180();
    return;
-   pal = 0;
+   (void)pal;
 }
 #endif
 #endif
@@ -1121,7 +1121,7 @@ evas_common_convert_rgba_to_16bpp_rgb_444_dith_rot_180 (DATA32 *src, DATA8 *dst,
 
    CONVERT_LOOP_END_ROT_180();
    return;
-   pal = 0;
+   (void)pal;
 }
 #endif
 #endif
@@ -1180,7 +1180,7 @@ evas_common_convert_rgba2_to_16bpp_rgb_444_dith_rot_270 (DATA32 *src, DATA8 *dst
 
    CONVERT_LOOP2_END_ROT_270();
    return;
-   pal = 0;
+   (void)pal;
 }
 #endif
 #endif
@@ -1217,7 +1217,7 @@ evas_common_convert_rgba_to_16bpp_rgb_444_dith_rot_270 (DATA32 *src, DATA8 *dst,
 
    CONVERT_LOOP_END_ROT_270();
    return;
-   pal = 0;
+   (void)pal;
 }
 #endif
 #endif
@@ -1276,7 +1276,7 @@ evas_common_convert_rgba2_to_16bpp_rgb_444_dith_rot_90 (DATA32 *src, DATA8 *dst,
 
    CONVERT_LOOP2_END_ROT_90();
    return;
-   pal = 0;
+   (void)pal;
 }
 #endif
 #endif
@@ -1313,7 +1313,7 @@ evas_common_convert_rgba_to_16bpp_rgb_444_dith_rot_90 (DATA32 *src, DATA8 *dst, 
 
    CONVERT_LOOP_END_ROT_90();
    return;
-   pal = 0;
+   (void)pal;
 }
 #endif
 #endif
@@ -1372,7 +1372,7 @@ evas_common_convert_rgba2_to_16bpp_rgb_454645_dith (DATA32 *src, DATA8 *dst, int
 
    CONVERT_LOOP2_END_ROT_0();
    return;
-   pal = 0;
+   (void)pal;
 }
 #endif
 #endif
@@ -1409,7 +1409,7 @@ evas_common_convert_rgba_to_16bpp_rgb_454645_dith (DATA32 *src, DATA8 *dst, int 
 
    CONVERT_LOOP_END_ROT_0();
    return;
-   pal = 0;
+   (void)pal;
 }
 #endif
 #endif
@@ -1468,7 +1468,7 @@ evas_common_convert_rgba2_to_16bpp_rgb_454645_dith_rot_180 (DATA32 *src, DATA8 *
 
    CONVERT_LOOP2_END_ROT_180();
    return;
-   pal = 0;
+   (void)pal;
 }
 #endif
 #endif
@@ -1505,7 +1505,7 @@ evas_common_convert_rgba_to_16bpp_rgb_454645_dith_rot_180 (DATA32 *src, DATA8 *d
 
    CONVERT_LOOP_END_ROT_180();
    return;
-   pal = 0;
+   (void)pal;
 }
 #endif
 #endif
@@ -1565,7 +1565,7 @@ evas_common_convert_rgba2_to_16bpp_rgb_454645_dith_rot_270 (DATA32 *src, DATA8 *
 
    CONVERT_LOOP2_END_ROT_270();
    return;
-   pal = 0;
+   (void)pal;
 }
 #endif
 #endif
@@ -1602,7 +1602,7 @@ evas_common_convert_rgba_to_16bpp_rgb_454645_dith_rot_270 (DATA32 *src, DATA8 *d
 
    CONVERT_LOOP_END_ROT_270();
    return;
-   pal = 0;
+   (void)pal;
 }
 #endif
 #endif
@@ -1661,7 +1661,7 @@ evas_common_convert_rgba2_to_16bpp_rgb_454645_dith_rot_90 (DATA32 *src, DATA8 *d
 
    CONVERT_LOOP2_END_ROT_90();
    return;
-   pal = 0;
+   (void)pal;
 }
 #endif
 #endif
@@ -1698,7 +1698,7 @@ evas_common_convert_rgba_to_16bpp_rgb_454645_dith_rot_90 (DATA32 *src, DATA8 *ds
 
    CONVERT_LOOP_END_ROT_90();
    return;
-   pal = 0;
+   (void)pal;
 }
 #endif
 #endif
@@ -1757,7 +1757,7 @@ evas_common_convert_rgba2_to_16bpp_rgb_555_dith (DATA32 *src, DATA8 *dst, int sr
 
    CONVERT_LOOP2_END_ROT_0();
    return;
-   pal = 0;
+   (void)pal;
 }
 #endif
 #endif
@@ -1794,7 +1794,7 @@ evas_common_convert_rgba_to_16bpp_rgb_555_dith (DATA32 *src, DATA8 *dst, int src
 
    CONVERT_LOOP_END_ROT_0();
    return;
-   pal = 0;
+   (void)pal;
 }
 #endif
 #endif
@@ -1853,7 +1853,7 @@ evas_common_convert_rgba2_to_16bpp_rgb_555_dith_rot_180 (DATA32 *src, DATA8 *dst
 
    CONVERT_LOOP2_END_ROT_180();
    return;
-   pal = 0;
+   (void)pal;
 }
 #endif
 #endif
@@ -1890,7 +1890,7 @@ evas_common_convert_rgba_to_16bpp_rgb_555_dith_rot_180 (DATA32 *src, DATA8 *dst,
 
    CONVERT_LOOP_END_ROT_180();
    return;
-   pal = 0;
+   (void)pal;
 }
 #endif
 #endif
@@ -1949,7 +1949,7 @@ evas_common_convert_rgba2_to_16bpp_rgb_555_dith_rot_270 (DATA32 *src, DATA8 *dst
 
    CONVERT_LOOP2_END_ROT_270();
    return;
-   pal = 0;
+   (void)pal;
 }
 #endif
 #endif
@@ -1986,7 +1986,7 @@ evas_common_convert_rgba_to_16bpp_rgb_555_dith_rot_270 (DATA32 *src, DATA8 *dst,
 
    CONVERT_LOOP_END_ROT_270();
    return;
-   pal = 0;
+   (void)pal;
 }
 #endif
 #endif
@@ -2045,7 +2045,7 @@ evas_common_convert_rgba2_to_16bpp_rgb_555_dith_rot_90 (DATA32 *src, DATA8 *dst,
 
    CONVERT_LOOP2_END_ROT_90();
    return;
-   pal = 0;
+   (void)pal;
 }
 #endif
 #endif
@@ -2082,7 +2082,7 @@ evas_common_convert_rgba_to_16bpp_rgb_555_dith_rot_90 (DATA32 *src, DATA8 *dst, 
 
    CONVERT_LOOP_END_ROT_90();
    return;
-   pal = 0;
+   (void)pal;
 }
 #endif
 #endif
