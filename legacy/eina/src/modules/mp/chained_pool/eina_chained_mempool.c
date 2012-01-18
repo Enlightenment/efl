@@ -31,6 +31,10 @@
 # endif
 #endif
 
+#ifdef EINA_DEBUG_MALLOC
+# include <malloc.h>
+#endif
+
 #ifdef EFL_HAVE_WIN32_THREADS
 # define WIN32_LEAN_AND_MEAN
 # include <windows.h>
@@ -51,7 +55,7 @@
 # include <valgrind/memcheck.h>
 #endif
 
-#ifdef DEBUG
+#if defined DEBUG || defined EINA_DEBUG_MALLOC
 #include <assert.h>
 #include "eina_log.h"
 
@@ -74,6 +78,9 @@ struct _Chained_Mempool
    int alloc_size;
    int group_size;
    int usage;
+#ifdef EINA_DEBUG_MALLOC
+   int minimal_size;
+#endif
 #ifdef EFL_DEBUG_THREADS
    pthread_t self;
 #endif
@@ -124,6 +131,20 @@ _eina_chained_mp_pool_new(Chained_Mempool *pool)
         eina_error_set(EINA_ERROR_OUT_OF_MEMORY);
         return NULL;
      }
+
+#ifdef EINA_DEBUG_MALLOC
+   {
+      size_t sz;
+
+      sz = malloc_usable_size(p);
+      if (sz - pool->minimal_size > 0)
+        INF("Just allocated %0.2f%% to much memory in '%s' for one block of size %i that means %i bytes to much.",
+            ((float)(sz - pool->minimal_size) * 100) / (float) (pool->alloc_size),
+            pool->name,
+            pool->alloc_size,
+            sz - pool->minimal_size);
+   }
+#endif
 
    alignof = eina_mempool_alignof(sizeof(Chained_Pool));
    ptr = (unsigned char *)p + alignof;
@@ -444,6 +465,10 @@ eina_chained_mempool_init(const char *context,
         memcpy((char *)mp->name, context, length);
      }
 
+#ifdef EINA_DEBUG_MALLOC
+   mp->minimal_size = item_size * mp->pool_size + sizeof(Chained_Pool);
+#endif
+
    mp->item_alloc = eina_mempool_alignof(item_size);
    mp->group_size = mp->item_alloc * mp->pool_size;
    mp->alloc_size = mp->group_size + eina_mempool_alignof(sizeof(Chained_Pool));
@@ -517,7 +542,7 @@ static Eina_Mempool_Backend _eina_chained_mp_backend = {
 
 Eina_Bool chained_init(void)
 {
-#ifdef DEBUG
+#if defined DEBUG || defined EINA_DEBUG_MALLOC
    _eina_chained_mp_log_dom = eina_log_domain_register("eina_mempool",
                                                        EINA_LOG_COLOR_DEFAULT);
    if (_eina_chained_mp_log_dom < 0)
@@ -533,7 +558,7 @@ Eina_Bool chained_init(void)
 void chained_shutdown(void)
 {
    eina_mempool_unregister(&_eina_chained_mp_backend);
-#ifdef DEBUG
+#if defined DEBUG || defined EINA_DEBUG_MALLOC
    eina_log_domain_unregister(_eina_chained_mp_log_dom);
    _eina_chained_mp_log_dom = -1;
 #endif

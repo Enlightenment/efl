@@ -510,6 +510,27 @@ if test "x${have_dirfd}" = "xyes" ; then
    AC_DEFINE([HAVE_DIRFD], [1], [ Define to 1 if you have the `dirfd' function or macro.])
 fi
 
+# check debug information for malloc
+AC_CHECK_FUNCS([malloc_usable_size], [malloc_true_size="yes"], [malloc_true_size="no"])
+if test "x${malloc_true_size}" = "xyes" ; then
+   AC_DEFINE([HAVE_MALLOC_USABLE_SIZE], [1], [We will be able to know the exact amount of wasted memory])
+fi
+
+want_debug_malloc="no"
+AC_ARG_ENABLE([debug-malloc],
+   [AC_HELP_STRING([--enable-debug-malloc], [enable debugging of malloc usage overhead in our allocator @<:@default=enabled@:>@])],
+   [
+     if test "x${enableval}" = "xyes" ; then
+     	want_debug_malloc="yes"
+     else
+	want_debug_malloc="no"
+     fi
+   ], [want_debug_malloc="no"])
+
+if test "x${malloc_true_size}" = "xyes" -a "x${want_debug_malloc}" = "xyes"; then
+   AC_DEFINE([EINA_DEBUG_MALLOC], [1], [Turn on debugging overhead in mempool])
+fi
+
 # dlopen and dladdr
 dlopen_libs=""
 case "$host_os" in
