@@ -376,7 +376,6 @@ _post_up_handle(Evas *e, unsigned int timestamp, const void *data)
      {
         Evas_Event_Mouse_In ev_in;
         Evas_Object *obj_itr;
-        int event_id = 0;
 
         _evas_object_event_new();
 

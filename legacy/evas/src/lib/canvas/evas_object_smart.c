@@ -421,13 +421,13 @@ evas_object_smart_callback_del_full(Evas_Object *obj, const char *event, Evas_Sm
      {
         if ((!strcmp(cb->event, event)) && (cb->func == func) && (cb->func_data == data))
           {
-             void *data;
+             void *ret;
 
-             data = cb->func_data;
+             ret = cb->func_data;
              cb->delete_me = 1;
              o->deletions_waiting = 1;
              evas_object_smart_callbacks_clear(obj);
-             return data;
+             return ret;
           }
      }
    return NULL;
