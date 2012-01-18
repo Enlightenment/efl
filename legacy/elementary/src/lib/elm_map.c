@@ -2964,6 +2964,72 @@ rotate_end_cb(void *data, void *event_info __UNUSED__)
    return EVAS_EVENT_FLAG_NONE;
 }
 
+static void
+_region_get(Widget_Data *wd, Evas_Coord *x, Evas_Coord *y, Evas_Coord *cx, Evas_Coord *cy, Evas_Coord *w, Evas_Coord *h)
+{
+   EINA_SAFETY_ON_NULL_RETURN(wd);
+   Evas_Coord sx, sy, tx, ty, tcx, tcy, sw, sh, tw, th, rw, rh;
+
+   elm_smart_scroller_child_pos_get(wd->scr, &sx, &sy);
+   elm_smart_scroller_child_viewport_size_get(wd->scr, &sw, &sh);
+   rw = wd->size.w * wd->pinch.level;
+   rh = wd->size.h * wd->pinch.level;
+
+   if (wd->size.w < sw)
+     {
+        tw = rw;
+        tcx = sx + tw/2;
+        tx = sx + (sw - tw)/2;
+     }
+   else
+     {
+        tw = sw;
+        tcx = (sx + tw/2) * wd->pinch.level;
+        tx = tcx - tw/2;
+
+     }
+   if (wd->size.h < sh)
+     {
+        th = rh;
+        ty = sy + (sh - th)/2;
+        tcy = sy + th/2;
+     }
+   else
+     {
+        th = sw;
+        tcy = (sy + th/2) * wd->pinch.level;
+        ty = tcy - th/2;
+     }
+
+   if (x) *x = tx;
+   if (y) *y = ty;
+   if (cx) *cx= tcx;
+   if (cy) *cy = tcy;
+   if (w) *w = tw;
+   if (h) *h = th;
+}
+
+static void
+_coord_rotate(const Evas_Coord x, const Evas_Coord y, const Evas_Coord cx, const Evas_Coord cy, const double degree, Evas_Coord *xx, Evas_Coord *yy)
+{
+   EINA_SAFETY_ON_NULL_RETURN(xx);
+   EINA_SAFETY_ON_NULL_RETURN(yy);
+
+   double r = (degree * M_PI) / 180.0;
+   double tx, ty, ttx, tty;
+
+   tx = x - cx;
+   ty = y - cy;
+
+   ttx = tx * cos(r);
+   tty = tx * sin(r);
+   tx = ttx + (ty * cos(r + M_PI_2));
+   ty = tty + (ty * sin(r + M_PI_2));
+
+   *xx = tx + cx;
+   *yy = ty + cy;
+}
+
 #endif
 
 EAPI Evas_Object *
@@ -3373,17 +3439,16 @@ elm_map_geo_region_get(const Evas_Object *obj, double *lon, double *lat)
 #ifdef HAVE_ELEMENTARY_ECORE_CON
    ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
-   Evas_Coord sx, sy, sw, sh;
+   Evas_Coord cx, cy;
+   int rw;
+   double tlon, tlat;
+   EINA_SAFETY_ON_NULL_RETURN(wd);
 
-   if (!wd) return;
-   elm_smart_scroller_child_pos_get(wd->scr, &sx, &sy);
-   elm_smart_scroller_child_viewport_size_get(wd->scr, &sw, &sh);
-   if (wd->size.w < sw) sw = wd->size.w;
-   if (wd->size.h < sh) sh = wd->size.h;
-   sx += sw / 2;
-   sy += sh / 2;
-
-   elm_map_utils_convert_coord_into_geo(obj, sx, sy, wd->size.w, lon, lat);
+   _region_get(wd, NULL, NULL, &cx, &cy, NULL, NULL);
+   rw = wd->size.w * wd->pinch.level;
+   elm_map_utils_convert_coord_into_geo(obj, cx, cy, rw, &tlon, &tlat);
+   if (lon) *lon = tlon;
+   if (lat) *lat = tlat;
 #else
    (void) obj;
    (void) lon;
@@ -3584,25 +3649,12 @@ elm_map_utils_convert_name_into_coord(const Evas_Object *obj, char *address)
 #endif
 }
 
-EAPI void
-elm_map_utils_rotate_coord(const Evas_Object *obj __UNUSED__, const Evas_Coord x, const Evas_Coord y, const Evas_Coord cx, const Evas_Coord cy, const double degree, Evas_Coord *xx, Evas_Coord *yy)
+EINA_DEPRECATED EAPI void
+elm_map_utils_rotate_coord(const Evas_Object *obj, const Evas_Coord x, const Evas_Coord y, const Evas_Coord cx, const Evas_Coord cy, const double degree, Evas_Coord *xx, Evas_Coord *yy)
 {
 #ifdef HAVE_ELEMENTARY_ECORE_CON
-   if ((!xx) || (!yy)) return;
-
-   double r = (degree * M_PI) / 180.0;
-   double tx, ty, ttx, tty;
-
-   tx = x - cx;
-   ty = y - cy;
-
-   ttx = tx * cos(r);
-   tty = tx * sin(r);
-   tx = ttx + (ty * cos(r + M_PI_2));
-   ty = tty + (ty * sin(r + M_PI_2));
-
-   *xx = tx + cx;
-   *yy = ty + cy;
+   ELM_CHECK_WIDTYPE(obj, widtype);
+   _coord_rotate(x, y, cx, cy, degree, xx, yy);
 #else
    (void) x;
    (void) y;
@@ -3611,6 +3663,44 @@ elm_map_utils_rotate_coord(const Evas_Object *obj __UNUSED__, const Evas_Coord x
    (void) degree;
    (void) xx;
    (void) yy;
+#endif
+}
+
+EAPI void
+elm_map_canvas_to_geo_convert(const Evas_Object *obj, const Evas_Coord x, const Evas_Coord y, double *lon, double *lat)
+{
+#ifdef HAVE_ELEMENTARY_ECORE_CON
+   ELM_CHECK_WIDTYPE(obj, widtype);
+   Widget_Data *wd = elm_widget_data_get(obj);
+   EINA_SAFETY_ON_NULL_RETURN(lon);
+   EINA_SAFETY_ON_NULL_RETURN(lat);
+   EINA_SAFETY_ON_NULL_RETURN(wd);
+
+   Evas_Coord xx, yy, w, h, mw, tx, ty, cx, cy;
+   double d;
+
+   _region_get(wd, &xx, &yy, &cx, &cy, &w, &h);
+   mw = wd->size.w * wd->pinch.level;
+   if (w < mw)
+     {
+        xx += x;
+        yy += y;
+     }
+   else
+     {
+        xx = x - xx;
+        yy = y - yy;
+     }
+
+   elm_map_rotate_get(obj, &d, NULL, NULL);
+   _coord_rotate(xx, yy, cx, cy, -d, &tx, &ty);
+   elm_map_utils_convert_coord_into_geo(obj, tx, ty, mw, lon, lat);
+#else
+   (void) obj;
+   (void) x;
+   (void) y;
+   (void) lon;
+   (void) lat;
 #endif
 }
 

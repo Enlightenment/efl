@@ -3561,3 +3561,20 @@ EAPI Evas_Object       *elm_entry_end_get(const Evas_Object *obj);
  */
 EINA_DEPRECATED EAPI Evas_Object       *elm_entry_end_unset(Evas_Object *obj);
 
+/**
+ * Convert a pixel coordinate into a rotated pixel coordinate.
+ *
+ * @param obj The map object.
+ * @param x horizontal coordinate of the point to rotate.
+ * @param y vertical coordinate of the point to rotate.
+ * @param cx rotation's center horizontal position.
+ * @param cy rotation's center vertical position.
+ * @param degree amount of degrees from 0.0 to 360.0 to rotate arount Z axis.
+ * @param xx Pointer where to store rotated x.
+ * @param yy Pointer where to store rotated y.
+ *
+ * @ingroup Map
+ * @deprecated Rotation is not needed to know. Use elm_map_canvas_to_geo_convert() instead
+ */
+EINA_DEPRECATED EAPI void                  elm_map_utils_rotate_coord(const Evas_Object *obj, const Evas_Coord x, const Evas_Coord y, const Evas_Coord cx, const Evas_Coord cy, const double degree, Evas_Coord *xx, Evas_Coord *yy);
+

@@ -86,59 +86,36 @@ my_map_press(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_inf
 }
 
 static void
-my_map_longpressed(void *data, Evas_Object *obj __UNUSED__, void *event_info)
+my_map_longpressed(void *data __UNUSED__, Evas_Object *obj, void *event_info)
 {
    printf("longpressed\n");
    double lon, lat;
-   Evas_Coord ox, oy, x, y, w, h;
-   int zoom;
    Evas_Event_Mouse_Down *down = (Evas_Event_Mouse_Down *)event_info;
    if (!down) return;
+   if (elm_map_zoom_get(obj) < 5) return;
 
-   evas_object_geometry_get(data, &ox, &oy, &w, &h);
-   zoom = elm_map_zoom_get(data);
-   elm_map_geo_region_get(obj, &lon, &lat);
-   elm_map_utils_convert_geo_into_coord(obj, lon, lat, pow(2.0, zoom) * 256, &x, &y);
-   x += down->canvas.x - (w / 2) - ox;
-   y += down->canvas.y - (h / 2) - oy;
-   elm_map_utils_convert_coord_into_geo(obj, x, y, pow(2.0, zoom) * 256, &lon, &lat);
-
-   name = elm_map_utils_convert_coord_into_name(data, lon, lat);
+   elm_map_canvas_to_geo_convert(obj, down->canvas.x, down->canvas.y, &lon, &lat);
+   printf("x:%d, y:%d, lon:%lf, lat:%lf\n", down->canvas.x, down->canvas.y, lon, lat);
+   name = elm_map_utils_convert_coord_into_name(obj, lon, lat);
 }
 
 static void
-my_map_clicked_double(void *data, Evas_Object *obj, void *event_info)
+my_map_clicked_double(void *data __UNUSED__, Evas_Object *obj, void *event_info)
 {
    printf("clicked,double\n");
    double lon, lat;
    double flon, flat, tlon, tlat;
-   Evas_Coord ox, oy, x, y, w, h, rx, ry, tx, ty;
-   double d;
-   int zoom;
-   Evas_Coord size;
    Evas_Event_Mouse_Down *down = (Evas_Event_Mouse_Down *)event_info;
    if (!down) return;
+   if (elm_map_zoom_get(obj) < 5) return;
 
-   evas_object_geometry_get(data, &ox, &oy, &w, &h);
-   zoom = elm_map_zoom_get(data);
-   if (zoom < 5) return;
-   size = pow(2.0, zoom) * 256;
-   elm_map_geo_region_get(obj, &lon, &lat);
-   elm_map_utils_convert_geo_into_coord(obj, lon, lat, size, &x, &y);
-
-   rx = x;
-   ry = y;
-   x += down->canvas.x - ((float)w * 0.5) - ox;
-   y += down->canvas.y - ((float)h * 0.5) - oy;
-   elm_map_rotate_get(data, &d, NULL, NULL);
-   elm_map_utils_rotate_coord(data, x, y, rx, ry, -d, &tx, &ty);
-   elm_map_utils_convert_coord_into_geo(obj, tx, ty, size, &lon, &lat);
-
-   itc1 = elm_map_marker_class_new(data);
+   elm_map_canvas_to_geo_convert(obj, down->canvas.x, down->canvas.y, &lon, &lat);
+   printf("x:%d, y:%d, lon:%lf, lat:%lf\n", down->canvas.x, down->canvas.y, lon, lat);
+   itc1 = elm_map_marker_class_new(obj);
 
    elm_map_marker_class_del_cb_set(itc1, NULL);
 
-   itc_group1 = elm_map_group_class_new(data);
+   itc_group1 = elm_map_group_class_new(obj);
    elm_map_group_class_icon_cb_set(itc_group1, _group_icon_get);
    elm_map_group_class_data_set(itc_group1, (void *)PACKAGE_DATA_DIR"/images/bubble.png");
    elm_map_group_class_style_set(itc_group1, "empty");
@@ -153,14 +130,14 @@ my_map_clicked_double(void *data, Evas_Object *obj, void *event_info)
         elm_map_route_remove(route);
      }
 
-   if (!route_from) route_from = elm_map_marker_add(data, lon, lat, itc1, itc_group1, NULL);
-   else route_to = elm_map_marker_add(data, lon, lat, itc1, itc_group1, NULL);
+   if (!route_from) route_from = elm_map_marker_add(obj, lon, lat, itc1, itc_group1, NULL);
+   else route_to = elm_map_marker_add(obj, lon, lat, itc1, itc_group1, NULL);
 
    if (route_from && route_to)
      {
         elm_map_marker_region_get(route_from, &flon, &flat);
         elm_map_marker_region_get(route_to, &tlon, &tlat);
-        route = elm_map_route_add(data, ELM_MAP_ROUTE_TYPE_MOTOCAR, ELM_MAP_ROUTE_METHOD_FASTEST, flon, flat, tlon, tlat);
+        route = elm_map_route_add(obj, ELM_MAP_ROUTE_TYPE_MOTOCAR, ELM_MAP_ROUTE_METHOD_FASTEST, flon, flat, tlon, tlat);
         elm_map_route_color_set(route, 255, 0, 0, 255);
      }
 }

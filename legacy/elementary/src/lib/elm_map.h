@@ -266,7 +266,7 @@ EAPI void                  elm_map_zoom_mode_set(Evas_Object *obj, Elm_Map_Zoom_
 EAPI Elm_Map_Zoom_Mode     elm_map_zoom_mode_get(const Evas_Object *obj);
 
 /**
- * Get the current coordinates of the map.
+ * Get the current geographic coordinates of the map.
  *
  * @param obj The map object.
  * @param lon Pointer where to store longitude.
@@ -494,20 +494,26 @@ EAPI Elm_Map_Name         *elm_map_utils_convert_coord_into_name(const Evas_Obje
 EAPI Elm_Map_Name         *elm_map_utils_convert_name_into_coord(const Evas_Object *obj, char *address);
 
 /**
- * Convert a pixel coordinate into a rotated pixel coordinate.
+ * Convert canvas coordinates into a geographic coordinate
+ * (longitude, latitude).
  *
  * @param obj The map object.
- * @param x horizontal coordinate of the point to rotate.
- * @param y vertical coordinate of the point to rotate.
- * @param cx rotation's center horizontal position.
- * @param cy rotation's center vertical position.
- * @param degree amount of degrees from 0.0 to 360.0 to rotate arount Z axis.
- * @param xx Pointer where to store rotated x.
- * @param yy Pointer where to store rotated y.
+ * @param x   horizontal coordinate of the point to convert.
+ * @param y   vertical coordinate of the point to convert.
+ * @param lon A poniter to the longitude.
+ * @param lat A pointer to the latitude.
+ *
+ * This gets longitude and latitude from canvas x, y coordinates. The canvas
+ * coordinates mean x, y coordinate from current viewport.
+ * elm_map_utils_convert_coord_into_geo() internally to get the geographic
+ * location.
+ *
+ * see elm_map_rotate_get()
+ * see elm_map_utils_convert_coord_into_geo()
  *
  * @ingroup Map
  */
-EAPI void                  elm_map_utils_rotate_coord(const Evas_Object *obj, const Evas_Coord x, const Evas_Coord y, const Evas_Coord cx, const Evas_Coord cy, const double degree, Evas_Coord *xx, Evas_Coord *yy);
+EAPI void                  elm_map_canvas_to_geo_convert(const Evas_Object *obj, const Evas_Coord x, const Evas_Coord y, double *lon, double *lat);
 
 /**
  * Add a new marker to the map object.
