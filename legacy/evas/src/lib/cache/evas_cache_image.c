@@ -937,11 +937,12 @@ evas_cache_image_dirty(Image_Entry *im, unsigned int x, unsigned int y, unsigned
 {
    Image_Entry *im_dirty = im;
    Evas_Cache_Image *cache;
-   int references;
 
    cache = im->cache;
    if (!(im->flags.dirty))
      {
+#ifndef EVAS_CSERVE
+        int references;
 #ifdef EVAS_FRAME_QUEUING
         LKL(im->lock_references);
 #endif
@@ -949,7 +950,6 @@ evas_cache_image_dirty(Image_Entry *im, unsigned int x, unsigned int y, unsigned
 #ifdef EVAS_FRAME_QUEUING
         LKU(im->lock_references);
 #endif
-#ifndef EVAS_CSERVE
         // if ref 1 also copy if using shared cache as its read-only
         if (references == 1) im_dirty = im;
         else
