@@ -64,7 +64,7 @@ typedef void *Eina_Semaphore;
 static inline Eina_Bool
 eina_lock_new(Eina_Lock *mutex EINA_UNUSED)
 {
-   return EINA_FALSE;
+   return EINA_TRUE;
 }
 
 /**
@@ -95,7 +95,7 @@ eina_lock_free(Eina_Lock *mutex EINA_UNUSED)
 static inline Eina_Lock_Result
 eina_lock_take(Eina_Lock *mutex EINA_UNUSED)
 {
-   return EINA_LOCK_FAIL;
+   return EINA_LOCK_SUCCEED;
 }
 
 /**
@@ -116,7 +116,7 @@ eina_lock_take(Eina_Lock *mutex EINA_UNUSED)
 static inline Eina_Lock_Result
 eina_lock_take_try(Eina_Lock *mutex EINA_UNUSED)
 {
-   return EINA_LOCK_FAIL;
+   return EINA_LOCK_SUCCEED;
 }
 
 /**
@@ -133,7 +133,7 @@ eina_lock_take_try(Eina_Lock *mutex EINA_UNUSED)
 static inline Eina_Lock_Result
 eina_lock_release(Eina_Lock *mutex EINA_UNUSED)
 {
-   return EINA_LOCK_FAIL;
+   return EINA_LOCK_SUCCEED;
 }
 
 static inline void
@@ -144,7 +144,7 @@ eina_lock_debug(const Eina_Lock *mutex EINA_UNUSED)
 static inline Eina_Bool
 eina_condition_new(Eina_Condition *cond EINA_UNUSED, Eina_Lock *mutex EINA_UNUSED)
 {
-   return EINA_FALSE;
+   return EINA_TRUE;
 }
 
 static inline void
@@ -155,72 +155,72 @@ eina_condition_free(Eina_Condition *cond EINA_UNUSED)
 static inline Eina_Bool
 eina_condition_wait(Eina_Condition *cond EINA_UNUSED)
 {
-   return EINA_FALSE;
+   return EINA_TRUE;
 }
 
 static inline Eina_Bool
 eina_condition_timedwait(Eina_Condition *cond EINA_UNUSED, double val EINA_UNUSED)
 {
-   return EINA_FALSE;
+   return EINA_TRUE;
 }
 
 static inline Eina_Bool
 eina_condition_broadcast(Eina_Condition *cond EINA_UNUSED)
 {
-   return EINA_FALSE;
+   return EINA_TRUE;
 }
 
 static inline Eina_Bool
 eina_condition_signal(Eina_Condition *cond EINA_UNUSED)
 {
-   return EINA_FALSE;
+   return EINA_TRUE;
 }
 
 static inline Eina_Bool
 eina_rwlock_new(Eina_RWLock *mutex EINA_UNUSED)
 {
-   return EINA_FALSE;
+   return EINA_TRUE;
 }
 
 static inline void
- eina_rwlock_free(Eina_RWLock *mutex EINA_UNUSED)
+eina_rwlock_free(Eina_RWLock *mutex EINA_UNUSED)
 {
 }
 
 static inline Eina_Lock_Result
 eina_rwlock_read_take(Eina_RWLock *mutex EINA_UNUSED)
 {
-   return EINA_LOCK_FAIL;
+   return EINA_LOCK_SUCCEED;
 }
 
 static inline Eina_Lock_Result
 eina_rwlock_write_take(Eina_RWLock *mutex EINA_UNUSED)
 {
-   return EINA_LOCK_FAIL;
+   return EINA_LOCK_SUCCEED;
 }
 
 static inline Eina_Lock_Result
 eina_rwlock_release(Eina_RWLock *mutex EINA_UNUSED)
 {
-   return EINA_LOCK_FAIL;
+   return EINA_LOCK_SUCCEED;
 }
 
 static inline Eina_Lock_Result
 eina_rwlock_take_read(Eina_RWLock *mutex EINA_UNUSED)
 {
-   return EINA_LOCK_FAIL;
+   return EINA_LOCK_SUCCEED;
 }
 
 static inline Eina_Lock_Result
 eina_rwlock_take_write(Eina_RWLock *mutex EINA_UNUSED)
 {
-   return EINA_LOCK_FAIL;
+   return EINA_LOCK_SUCCEED;
 }
 
 static inline Eina_Bool
 eina_tls_new(Eina_TLS *key EINA_UNUSED)
 {
-   return EINA_FALSE;
+   return EINA_TRUE;
 }
 
 static inline void
@@ -237,33 +237,33 @@ eina_tls_get(Eina_TLS key EINA_UNUSED)
 static inline Eina_Bool
 eina_tls_set(Eina_TLS key EINA_UNUSED, const void *data EINA_UNUSED)
 {
-   return EINA_FALSE;
+   return EINA_TRUE;
 }
 
 static inline Eina_Bool
 eina_semaphore_new(Eina_Semaphore *sem EINA_UNUSED,
                    int count_init EINA_UNUSED)
 {
-   return EINA_FALSE;
+   return EINA_TRUE;
 }
 
 static inline Eina_Bool
 eina_semaphore_free(Eina_Semaphore *sem EINA_UNUSED)
 {
-   return EINA_FALSE;
+   return EINA_TRUE;
 }
 
 static inline Eina_Bool
 eina_semaphore_lock(Eina_Semaphore *sem EINA_UNUSED)
 {
-   return EINA_FALSE;
+   return EINA_TRUE;
 }
 
 static inline Eina_Bool
 eina_semaphore_release(Eina_Semaphore *sem EINA_UNUSED,
                        int count_release EINA_UNUSED)
 {
-   return EINA_FALSE;
+   return EINA_TRUE;
 }
 
 /**
