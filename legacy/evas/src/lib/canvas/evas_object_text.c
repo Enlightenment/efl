@@ -531,8 +531,9 @@ _evas_object_text_layout(Evas_Object *obj, Evas_Object_Text *o, const Eina_Unico
 {
    EvasBiDiStrIndex *v_to_l = NULL;
    size_t pos, visual_pos;
-   int len = eina_unicode_strlen(text), par_len;
+   int len = eina_unicode_strlen(text);
 #ifdef BIDI_SUPPORT
+   int par_len = len;
    int *segment_idxs = NULL;
    if (o->bidi_delimiters)
       segment_idxs = evas_bidi_segment_idxs_get(text, o->bidi_delimiters);
@@ -543,7 +544,6 @@ _evas_object_text_layout(Evas_Object *obj, Evas_Object_Text *o, const Eina_Unico
 #endif
    visual_pos = pos = 0;
 
-   par_len = len;
    while (len > 0)
      {
         Evas_Font_Instance *script_fi = NULL;
