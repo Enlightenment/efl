@@ -175,6 +175,7 @@ _on_focus_hook(void *data __UNUSED__, Evas_Object *obj)
    if (elm_widget_focus_get(obj))
      {
         wd->focused = EINA_TRUE;
+        if (wd->entry) elm_entry_cursor_end_set(wd->entry);
         evas_object_smart_callback_call(obj, "focused", NULL);
      }
    else
@@ -1071,7 +1072,9 @@ _entry_resized_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, v
    evas_object_geometry_get(wd->entry, &en_x, &en_y, &en_w, &en_h);
    evas_object_geometry_get(wd->box, &bx_x, &bx_y, NULL, NULL);
 
-   elm_widget_show_region_set(wd->box, en_x - bx_x, en_y - bx_y, en_w, en_h, EINA_TRUE);
+   if (wd->focused)
+     elm_widget_show_region_set(wd->box, en_x - bx_x, en_y - bx_y, en_w,
+                                en_h, EINA_TRUE);
 }
 
 static void
@@ -1105,7 +1108,6 @@ _view_init(Evas_Object *obj)
         if (!wd->entry) return;
         elm_entry_single_line_set(wd->entry, EINA_TRUE);
         elm_object_text_set(wd->entry, "");
-        elm_entry_cursor_end_set(wd->entry);
         evas_object_size_hint_min_set(wd->entry, MIN_W_ENTRY, 0);
         evas_object_size_hint_weight_set(wd->entry, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
         evas_object_size_hint_align_set(wd->entry, EVAS_HINT_FILL, EVAS_HINT_FILL);
