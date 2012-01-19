@@ -88,7 +88,7 @@ evas_image_load_file_head_ico(Image_Entry *ie, const char *file, const char *key
    unsigned short word;
    unsigned char byte;
    int wanted_w = 0, wanted_h = 0, w, h, cols, i, planes = 0,
-      hot_x = 0, hot_y = 0, bpp = 0, pdelta, search = -1, have_choice = 0,
+      bpp = 0, pdelta, search = -1, have_choice = 0,
       hasa = 1;
    unsigned int bmoffset, bmsize, fsize;
    unsigned short reserved, type, count;
@@ -182,10 +182,10 @@ evas_image_load_file_head_ico(Image_Entry *ie, const char *file, const char *key
         if (!read_uchar(map, fsize, &position, &byte)) goto close_file;
         if (!read_ushort(map, fsize, &position, &word)) goto close_file;
         if (type == CURSOR) planes = word;
-        else hot_x = word;
+        //else hot_x = word;
         if (!read_ushort(map, fsize, &position, &word)) goto close_file;
         if (type == CURSOR) bpp = word;
-        else hot_y = word;
+        //else hot_y = word;
         if (!read_uint(map, fsize, &position, &bmsize)) goto close_file;
         if (!read_uint(map, fsize, &position, &bmoffset)) goto close_file;
         if ((bmsize <= 0) || (bmoffset <= 0) || (bmoffset >= fsize)) goto close_file;
@@ -315,11 +315,11 @@ evas_image_load_file_data_ico(Image_Entry *ie, const char *file, const char *key
    unsigned char byte;
    unsigned int dword;
    int wanted_w = 0, wanted_h = 0, w, h, cols, i, planes = 0,
-      hot_x = 0, hot_y = 0, bpp = 0, pdelta, search = -1, have_choice = 0,
+      bpp = 0, pdelta, search = -1, have_choice = 0,
       stride, pstride, j, right_way_up = 0, diff_size = 0, cols2;
-   unsigned int bmoffset, bmsize, bitcount, compression, imagesize, fsize, 
-      colorsused, colorsimportant, *pal, *surface, *pix, none_zero_alpha = 0;
-   unsigned short reserved, type, count, planes2;
+   unsigned int bmoffset, bmsize, bitcount, fsize,
+      *pal, *surface, *pix, none_zero_alpha = 0;
+   unsigned short reserved, type, count;
    unsigned char *maskbuf, *pixbuf, *p;
    struct {
       int pdelta;
@@ -411,10 +411,10 @@ evas_image_load_file_data_ico(Image_Entry *ie, const char *file, const char *key
         if (!read_uchar(map, fsize, &position, &byte)) goto close_file;
         if (!read_ushort(map, fsize, &position, &word)) goto close_file;
         if (type == 1) planes = word;
-        else hot_x = word;
+        //else hot_x = word;
         if (!read_ushort(map, fsize, &position, &word)) goto close_file;
         if (type == 1) bpp = word;
-        else hot_y = word;
+        //else hot_y = word;
         if (!read_uint(map, fsize, &position, &bmsize)) goto close_file;
         if (!read_uint(map, fsize, &position, &bmoffset)) goto close_file;
         if ((bmsize <= 0) || (bmoffset <= 0) || (bmoffset >= fsize)) goto close_file;
@@ -540,19 +540,19 @@ evas_image_load_file_data_ico(Image_Entry *ie, const char *file, const char *key
             file, ie->w, ie->h, w, h);
      }
    if (!read_ushort(map, fsize, &position, &word)) goto close_file; // planes
-   planes2 = word;
+   //planes2 = word;
    if (!read_ushort(map, fsize, &position, &word)) goto close_file; // bitcount
    bitcount = word;
    if (!read_uint(map, fsize, &position, &dword)) goto close_file; // compression
-   compression = dword;
+   //compression = dword;
    if (!read_uint(map, fsize, &position, &dword)) goto close_file; // imagesize
-   imagesize = dword;
+   //imagesize = dword;
    if (!read_uint(map, fsize, &position, &dword)) goto close_file; // z pixels per m
    if (!read_uint(map, fsize, &position, &dword)) goto close_file; // y pizels per m
    if (!read_uint(map, fsize, &position, &dword)) goto close_file; // colors used
-   colorsused = dword;
+   //colorsused = dword;
    if (!read_uint(map, fsize, &position, &dword)) goto close_file; // colors important
-   colorsimportant = dword;
+   //colorsimportant = dword;
 
    evas_cache_image_surface_alloc(ie, ie->w, ie->h);
    surface = evas_cache_image_pixels(ie);

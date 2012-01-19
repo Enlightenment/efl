@@ -509,12 +509,10 @@ get_single_channel(Image_Entry *ie __UNUSED__,
 		   Eina_Bool compressed)
 {
    unsigned int i, bpc;
-   unsigned short *tmp;
    char headbyte;
    int c;
    int pixels_count;
 
-   tmp = (unsigned short*)buffer;
    bpc = (head->depth / 8);
    pixels_count = head->width * head->height;
 
@@ -569,7 +567,6 @@ read_psd_grey(Image_Entry *ie, PSD_Header *head, const unsigned char *map, size_
 {
    unsigned int color_mode, resource_size, misc_info;
    unsigned short compressed;
-   unsigned int type;
    void *surface = NULL;
 
    *error = EVAS_LOAD_ERROR_CORRUPT_FILE;
@@ -602,10 +599,7 @@ read_psd_grey(Image_Entry *ie, PSD_Header *head, const unsigned char *map, size_
    switch (head->depth)
      {
       case 8:
-         type = 1;
-         break;
       case 16:
-         type = 2;
          break;
       default:
          *error = EVAS_LOAD_ERROR_UNKNOWN_FORMAT;
@@ -697,7 +691,6 @@ read_psd_rgb(Image_Entry *ie, PSD_Header *head, const unsigned char *map, size_t
 {
    unsigned int color_mode, resource_size, misc_info;
    unsigned short compressed;
-   unsigned int type;
    void *surface;
 
 #define CHECK_RET(Call)                  \
@@ -721,10 +714,7 @@ read_psd_rgb(Image_Entry *ie, PSD_Header *head, const unsigned char *map, size_t
    switch (head->depth)
      {
       case 8:
-         type = 1;
-         break;
       case 16:
-         type = 2;
          break;
       default:
          *error = EVAS_LOAD_ERROR_UNKNOWN_FORMAT;
@@ -758,7 +748,7 @@ read_psd_rgb(Image_Entry *ie, PSD_Header *head, const unsigned char *map, size_t
 Eina_Bool
 read_psd_cmyk(Image_Entry *ie, PSD_Header *head, const unsigned char *map, size_t length, size_t *position, int *error)
 {
-   unsigned int color_mode, resource_size, misc_info, size, i, j, data_size;
+   unsigned int color_mode, resource_size, misc_info, size, j, data_size;
    unsigned short compressed;
    unsigned int format, type;
    unsigned char *kchannel = NULL;
@@ -841,7 +831,7 @@ read_psd_cmyk(Image_Entry *ie, PSD_Header *head, const unsigned char *map, size_
         unsigned char *tmp = surface;
         const unsigned char *limit = tmp + data_size;
 
-        for (i = 0, j = 0; tmp < limit; tmp++, j++)
+        for (j = 0; tmp < limit; tmp++, j++)
           {
              int k;
 
@@ -857,7 +847,7 @@ read_psd_cmyk(Image_Entry *ie, PSD_Header *head, const unsigned char *map, size_
         const unsigned char *limit = tmp + data_size;
 
         // The KChannel array really holds the alpha channel on this one.
-        for (i = 0, j = 0; tmp < limit; tmp += 4, j++)
+        for (j = 0; tmp < limit; tmp += 4, j++)
           {
              tmp[0] = (tmp[0] * tmp[3]) >> 8;
              tmp[1] = (tmp[1] * tmp[3]) >> 8;

@@ -76,10 +76,9 @@ evas_image_load_file_head_tga(Image_Entry *ie, const char *file, const char *key
    unsigned char *seg = NULL, *filedata;
    tga_header *header;
    tga_footer *footer, tfooter;
-   char hasa = 0, footer_present = 0, vinverted = 0;
+   char hasa = 0;
    int w = 0, h = 0, bpp;
    int x, y;
-   int abits;
 
    f = eina_file_open(file, EINA_FALSE);
    *error = EVAS_LOAD_ERROR_DOES_NOT_EXIST;
@@ -98,7 +97,7 @@ evas_image_load_file_head_tga(Image_Entry *ie, const char *file, const char *key
    memcpy((unsigned char *)(&tfooter),
           (unsigned char *)footer,
           sizeof(tga_footer));
-   printf("0\n");
+   //printf("0\n");
    if (!memcmp(tfooter.signature, TGA_SIGNATURE, sizeof(tfooter.signature)))
      {
         if ((tfooter.dot == '.') && (tfooter.null == 0))
@@ -106,14 +105,12 @@ evas_image_load_file_head_tga(Image_Entry *ie, const char *file, const char *key
              // footer is there and matches. this is a tga file - any problems now
              // are a corrupt file
              *error = EVAS_LOAD_ERROR_CORRUPT_FILE;
-             footer_present = 1;
           }
      }
 //   else goto close_file;
-   printf("1\n");
+   //printf("1\n");
    
    filedata = (unsigned char *)filedata + sizeof(tga_header);
-   vinverted = !(header->descriptor & TGA_DESC_VERTICAL);
    switch (header->imageType)
      {
      case TGA_TYPE_COLOR_RLE:
@@ -131,7 +128,6 @@ evas_image_load_file_head_tga(Image_Entry *ie, const char *file, const char *key
    if (!((bpp == 32) || (bpp == 24) || (bpp == 16) || (bpp == 8)))
      goto close_file;
    if ((bpp == 32) && (header->descriptor & TGA_DESC_ABITS)) hasa = 1;
-   abits = header->descriptor & TGA_DESC_ABITS;
    // don't handle colormapped images
    if ((header->colorMapType) != 0)
      goto close_file;
