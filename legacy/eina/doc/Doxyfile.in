@@ -631,7 +631,7 @@ RECURSIVE              = YES
 # excluded from the INPUT source files. This way you can easily exclude a
 # subdirectory from a directory tree whose root is specified with the INPUT tag.
 
-EXCLUDE                = @top_srcdir@/src/lib/eina_amalgamation.c
+EXCLUDE                = @top_builddir@/src/lib/eina_amalgamation.c
 
 # The EXCLUDE_SYMLINKS tag can be used select whether or not files or
 # directories that are symbolic links (a Unix file system feature) are excluded
@@ -795,7 +795,12 @@ COLS_IN_ALPHA_INDEX    = 2
 # The IGNORE_PREFIX tag can be used to specify one or more prefixes that
 # should be ignored while generating the index headers.
 
-IGNORE_PREFIX          = eina
+IGNORE_PREFIX          = eina_ \
+                         _eina_ \
+                         Eina_ \
+                         _Eina_ \
+                         EINA_ \
+                         _EINA_
 
 #---------------------------------------------------------------------------
 # configuration options related to the HTML output
@@ -1192,7 +1197,7 @@ PDF_HYPERLINKS         = YES
 # plain latex in the generated Makefile. Set this option to YES to get a
 # higher quality PDF documentation.
 
-USE_PDFLATEX           = NO
+USE_PDFLATEX           = YES
 
 # If the LATEX_BATCHMODE tag is set to YES, doxygen will add the \\batchmode.
 # command to the generated LaTeX files. This will instruct LaTeX to keep
@@ -1420,7 +1425,9 @@ PREDEFINED             = EINA_MAGIC_DEBUG \
                          EINA_ARG_NONNULL()= \
                          EINA_MALLOC= \
                          EINA_WARN_UNUSED_RESULT= \
-                         EAPI=
+                         EAPI= \
+                         EINA_PURE= \
+                         EINA_CONST=
 
 # If the MACRO_EXPANSION and EXPAND_ONLY_PREDEF tags are set to YES then
 # this tag can be used to specify a list of macro names that should be expanded.
