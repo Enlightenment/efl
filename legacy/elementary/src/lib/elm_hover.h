@@ -161,7 +161,7 @@ EAPI Evas_Object *elm_hover_parent_get(const Evas_Object *obj);
  * ELM_HOVER_AXIS_BOTH or ELM_HOVER_AXIS_NONE has the same effect and the
  * returned position may be in either axis.
  *
- * @see elm_hover_content_set()
+ * @see elm_object_part_content_set()
  */
 EAPI const char  *elm_hover_best_content_location_get(const Evas_Object *obj, Elm_Hover_Axis pref_axis);
 

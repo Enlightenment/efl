@@ -597,7 +597,7 @@ EINA_DEPRECATED EAPI Evas_Object                *elm_fileselector_entry_button_i
  *
  * Once the content object is set for a given direction, a previously
  * set one (on the same direction) will be deleted. If you want to
- * keep that old content object, use the elm_hover_content_unset()
+ * keep that old content object, use the elm_object_part_content_unset()
  * function.
  *
  * All directions may have contents at the same time, except for
@@ -628,7 +628,7 @@ EINA_DEPRECATED EAPI void         elm_hover_content_set(Evas_Object *obj, const 
  * @return The content that was being used
  *
  * @deprecated Use elm_object_part_content_get() instead
- * @see elm_hover_content_set()
+ * @see elm_object_part_content_set()
  */
 EINA_DEPRECATED EAPI Evas_Object *elm_hover_content_get(const Evas_Object *obj, const char *swallow);
 
@@ -642,7 +642,7 @@ EINA_DEPRECATED EAPI Evas_Object *elm_hover_content_get(const Evas_Object *obj, 
  * @return The content that was being used.
  *
  * @deprecated Use elm_object_part_content_unset() instead
- * @see elm_hover_content_set()
+ * @see elm_object_part_content_set()
  */
 EINA_DEPRECATED EAPI Evas_Object *elm_hover_content_unset(Evas_Object *obj, const char *swallow);
 
