@@ -194,3 +194,7 @@
 	* Deprecated eina_array_count_get(), use eina_array_count() instead.
 	* Add eina_inarray data type.
 	* Add eina_value data type (generic value storage).
+
+2012-01-19  Shinwoo Kim
+
+	* Fix compilation of eina_semaphore_lock() (Windows port)

@@ -493,7 +493,7 @@ eina_semaphore_lock(Eina_Semaphore *sem)
    if (!sem)
      return EINA_FALSE;
 
-   res = WaitForSingleObject(ev->shared->lock, 0L);
+   res = WaitForSingleObject(*sem, 0L);
    if (res == WAIT_OBJECT_0)
      return EINA_TRUE;
 
