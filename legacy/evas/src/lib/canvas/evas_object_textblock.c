@@ -3264,28 +3264,33 @@ _layout_update_par(Ctxt *c)
 /* -1 means no wrap */
 static int
 _layout_get_charwrap(Ctxt *c, Evas_Object_Textblock_Format *fmt,
-      const Evas_Object_Textblock_Text_Item *ti, size_t line_start,
+      const Evas_Object_Textblock_Item *it, size_t line_start,
       const char *breaks)
 {
    int wrap;
    size_t uwrap;
-   size_t len = eina_ustrbuf_length_get(ti->parent.text_node->unicode);
+   size_t len = eina_ustrbuf_length_get(it->text_node->unicode);
    /* Currently not being used, because it doesn't contain relevant
     * information */
    (void) breaks;
 
      {
-        wrap = _layout_text_cutoff_get(c, fmt, ti);
+        if (it->type == EVAS_TEXTBLOCK_ITEM_FORMAT)
+           wrap = 0;
+        else
+           wrap = _layout_text_cutoff_get(c, fmt, _ITEM_TEXT(it));
+
         if (wrap < 0)
            return -1;
-        uwrap = (size_t) wrap + ti->parent.text_pos;
+        uwrap = (size_t) wrap + it->text_pos;
      }
 
 
-   if (uwrap == line_start)
+   if ((uwrap == line_start) && (it->type == EVAS_TEXTBLOCK_ITEM_TEXT))
      {
-        uwrap = ti->parent.text_pos +
-           (size_t) evas_common_text_props_cluster_next(&ti->text_props, wrap);
+        uwrap = it->text_pos +
+           (size_t) evas_common_text_props_cluster_next(
+                 &_ITEM_TEXT(it)->text_props, wrap);
      }
    if ((uwrap <= line_start) || (uwrap > len))
       return -1;
@@ -3308,16 +3313,16 @@ _layout_get_charwrap(Ctxt *c, Evas_Object_Textblock_Format *fmt,
 #endif
 static int
 _layout_get_word_mixwrap_common(Ctxt *c, Evas_Object_Textblock_Format *fmt,
-      const Evas_Object_Textblock_Text_Item *ti, Eina_Bool mixed_wrap,
+      const Evas_Object_Textblock_Item *it, Eina_Bool mixed_wrap,
       size_t line_start, const char *breaks)
 {
    Eina_Bool wrap_after = EINA_FALSE;
    size_t wrap;
    size_t orig_wrap;
    const Eina_Unicode *str = eina_ustrbuf_string_get(
-         ti->parent.text_node->unicode);
-   int item_start = ti->parent.text_pos;
-   size_t len = eina_ustrbuf_length_get(ti->parent.text_node->unicode);
+         it->text_node->unicode);
+   int item_start = it->text_pos;
+   size_t len = eina_ustrbuf_length_get(it->text_node->unicode);
 #ifndef HAVE_LINEBREAK
    /* Not used without liblinebreak ATM. */
    (void) breaks;
@@ -3325,7 +3330,10 @@ _layout_get_word_mixwrap_common(Ctxt *c, Evas_Object_Textblock_Format *fmt,
 
      {
         int swrap = -1;
-        swrap = _layout_text_cutoff_get(c, fmt, ti);
+        if (it->type == EVAS_TEXTBLOCK_ITEM_FORMAT)
+           swrap = 0;
+        else
+           swrap = _layout_text_cutoff_get(c, fmt, _ITEM_TEXT(it));
         /* Avoiding too small textblocks to even contain one char.
          * FIXME: This can cause breaking inside ligatures. */
 
@@ -3380,7 +3388,7 @@ _layout_get_word_mixwrap_common(Ctxt *c, Evas_Object_Textblock_Format *fmt,
      {
         if (mixed_wrap)
           {
-             return _layout_get_charwrap(c, fmt, ti,
+             return _layout_get_charwrap(c, fmt, it,
                    line_start, breaks);
           }
         else
@@ -3411,20 +3419,20 @@ _layout_get_word_mixwrap_common(Ctxt *c, Evas_Object_Textblock_Format *fmt,
 /* -1 means no wrap */
 static int
 _layout_get_wordwrap(Ctxt *c, Evas_Object_Textblock_Format *fmt,
-      const Evas_Object_Textblock_Text_Item *ti, size_t line_start,
+      const Evas_Object_Textblock_Item *it, size_t line_start,
       const char *breaks)
 {
-   return _layout_get_word_mixwrap_common(c, fmt, ti, EINA_FALSE, line_start,
+   return _layout_get_word_mixwrap_common(c, fmt, it, EINA_FALSE, line_start,
          breaks);
 }
 
 /* -1 means no wrap */
 static int
 _layout_get_mixedwrap(Ctxt *c, Evas_Object_Textblock_Format *fmt,
-      const Evas_Object_Textblock_Text_Item *ti, size_t line_start,
+      const Evas_Object_Textblock_Item *it, size_t line_start,
       const char *breaks)
 {
-   return _layout_get_word_mixwrap_common(c, fmt, ti, EINA_TRUE, line_start,
+   return _layout_get_word_mixwrap_common(c, fmt, it, EINA_TRUE, line_start,
          breaks);
 }
 
@@ -3707,21 +3715,13 @@ _layout_par(Ctxt *c)
              else if ((it->format->wrap_word || it->format->wrap_char ||
                 it->format->wrap_mixed) && it->text_node)
                {
-                  if (it->type == EVAS_TEXTBLOCK_ITEM_FORMAT)
                     {
-                       /* Don't wrap if it's the only item */
-                       if (c->ln->items)
-                         {
-                            /*FIXME: I should handle format correctly,
-                              i.e verify we are allowed to break here */
-                            _layout_line_advance(c, it->format);
-                            wrap = -1;
-                         }
-                    }
-                  else
-                    {
-                       Evas_Object_Textblock_Text_Item *ti = _ITEM_TEXT(it);
                        size_t line_start;
+                       size_t it_len;
+
+                       it_len = (it->type == EVAS_TEXTBLOCK_ITEM_FORMAT) ?
+                          1 : _ITEM_TEXT(it)->text_props.text_len;
+
 
 #ifdef HAVE_LINEBREAK
                        /* If we haven't calculated the linebreaks yet,
@@ -3748,20 +3748,20 @@ _layout_par(Ctxt *c)
                        if (c->ln->items)
                           line_start = c->ln->items->text_pos;
                        else
-                          line_start = ti->parent.text_pos;
+                          line_start = it->text_pos;
 
                        adv_line = 1;
                        /* If we don't already have a wrap point from before */
                        if (wrap < 0)
                          {
                             if (it->format->wrap_word)
-                               wrap = _layout_get_wordwrap(c, it->format, ti,
+                               wrap = _layout_get_wordwrap(c, it->format, it,
                                      line_start, line_breaks);
                             else if (it->format->wrap_char)
-                               wrap = _layout_get_charwrap(c, it->format, ti,
+                               wrap = _layout_get_charwrap(c, it->format, it,
                                      line_start, line_breaks);
                             else if (it->format->wrap_mixed)
-                               wrap = _layout_get_mixedwrap(c, it->format, ti,
+                               wrap = _layout_get_mixedwrap(c, it->format, it,
                                      line_start, line_breaks);
                             else
                                wrap = -1;
@@ -3773,7 +3773,7 @@ _layout_par(Ctxt *c)
                        if (wrap > 0)
                          {
                             size_t uwrap = (size_t) wrap;
-                            if (uwrap < ti->parent.text_pos)
+                            if (uwrap < it->text_pos)
                               {
                                  /* Rollback latest additions, and cut that
                                     item */
@@ -3798,18 +3798,21 @@ _layout_par(Ctxt *c)
                             /* If it points to the end, it means the previous
                              * char is a whitespace we should remove, so this
                              * is a wanted cutting point. */
-                            else if (uwrap > ti->parent.text_pos +
-                                  ti->text_props.text_len)
+                            else if (uwrap > it->text_pos + it_len)
                                wrap = -1; /* Delay the cut in a smart way
                                i.e use the item_pos as the line_start, because
                                there's already no cut before*/
                             else
-                               wrap -= ti->parent.text_pos; /* Cut here */
+                               wrap -= it->text_pos; /* Cut here */
                          }
 
                        if (wrap > 0)
                          {
-                            _layout_item_text_split_strip_white(c, ti, i, wrap);
+                           if (it->type == EVAS_TEXTBLOCK_ITEM_TEXT)
+                             {
+                                _layout_item_text_split_strip_white(c,
+                                      _ITEM_TEXT(it), i, wrap);
+                             }
                          }
                        else if (wrap == 0)
                          {
