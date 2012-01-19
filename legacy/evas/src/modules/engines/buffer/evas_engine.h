@@ -52,14 +52,17 @@ struct _Outbuf
 
    void                         *dest;
    unsigned int                  dest_row_bytes;
+   void                         *switch_data;
 
    int                           alpha_level;
    DATA32                        color_key;
    char                          use_color_key : 1;
+   char                          first_frame : 1;
 
    struct {
       void * (*new_update_region) (int x, int y, int w, int h, int *row_bytes);
       void   (*free_update_region) (int x, int y, int w, int h, void *data);
+      void * (*switch_buffer) (void *data, void *dest_buffer);
    } func;
 
    struct {
@@ -74,12 +77,15 @@ void         evas_buffer_outbuf_buf_free                   (Outbuf *buf);
 
 Outbuf      *evas_buffer_outbuf_buf_setup_fb               (int w, int h, Outbuf_Depth depth, void *dest, int dest_row_bytes, int use_color_key, DATA32 color_key, int alpha_level,
 							    void * (*new_update_region) (int x, int y, int w, int h, int *row_bytes),
-							    void   (*free_update_region) (int x, int y, int w, int h, void *data));
+							    void   (*free_update_region) (int x, int y, int w, int h, void *data),
+                                                            void * (*switch_buffer)(void *switch_data, void *dest),
+                                                            void *switch_data);
 
 
 RGBA_Image  *evas_buffer_outbuf_buf_new_region_for_update  (Outbuf *buf, int x, int y, int w, int h, int *cx, int *cy, int *cw, int *ch);
 void         evas_buffer_outbuf_buf_free_region_for_update (Outbuf *buf, RGBA_Image *update);
 void         evas_buffer_outbuf_buf_push_updated_region    (Outbuf *buf, RGBA_Image *update, int x, int y, int w, int h);
+void         evas_buffer_outbuf_buf_switch_buffer          (Outbuf *buf);
 
 #endif
 

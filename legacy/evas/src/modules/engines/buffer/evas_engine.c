@@ -25,11 +25,12 @@ struct _Render_Engine
    Outbuf           *ob;
    Tilebuf_Rect     *rects;
    Eina_Inlist *cur_rect;
+   Eina_Inarray      previous_rects;
    int               end : 1;
 };
 
 /* prototypes we will use here */
-static void *_output_setup(int w, int h, void *dest_buffer, int dest_buffer_row_bytes, int depth_type, int use_color_key, int alpha_threshold, int color_key_r, int color_key_g, int color_key_b, void *(*new_update_region) (int x, int y, int w, int h, int *row_bytes), void (*free_update_region) (int x, int y, int w, int h, void *data));
+static void *_output_setup(int w, int h, void *dest_buffer, int dest_buffer_row_bytes, int depth_type, int use_color_key, int alpha_threshold, int color_key_r, int color_key_g, int color_key_b, void *(*new_update_region) (int x, int y, int w, int h, int *row_bytes), void (*free_update_region) (int x, int y, int w, int h, void *data), void *(*switch_buffer) (void *data, void *dest_buffer), void *switch_data);
 
 static void *eng_info(Evas *e __UNUSED__);
 static void eng_info_free(Evas *e __UNUSED__, void *info);
@@ -58,7 +59,9 @@ _output_setup(int w,
 	      int color_key_g,
 	      int color_key_b,
 	      void *(*new_update_region) (int x, int y, int w, int h, int *row_bytes),
-	      void (*free_update_region) (int x, int y, int w, int h, void *data)
+	      void (*free_update_region) (int x, int y, int w, int h, void *data),
+              void *(*switch_buffer) (void *data, void *dest_buffer),
+              void *switch_data
 	      )
 {
    Render_Engine *re;
@@ -81,7 +84,7 @@ _output_setup(int w,
    evas_common_tilebuf_init();
 
    evas_buffer_outbuf_buf_init();
-   
+
      {
 	Outbuf_Depth dep;
 	DATA32 color_key = 0;
@@ -110,10 +113,13 @@ _output_setup(int w,
 						 color_key,
 						 alpha_threshold,
 						 new_update_region,
-						 free_update_region);
+						 free_update_region,
+                                                 switch_buffer,
+                                                 switch_data);
      }
    re->tb = evas_common_tilebuf_new(w, h);
    evas_common_tilebuf_set_tile_size(re->tb, TILESIZE, TILESIZE);
+   eina_inarray_setup(&re->previous_rects, sizeof (Eina_Rectangle), 8);
    return re;
 }
 
@@ -155,7 +161,9 @@ eng_setup(Evas *e, void *in)
 		      info->info.color_key_g,
 		      info->info.color_key_b,
 		      info->info.func.new_update_region,
-		      info->info.func.free_update_region);
+		      info->info.func.free_update_region,
+                      info->info.func.switch_buffer,
+                      info->info.switch_data);
    if (e->engine.data.output)
      eng_output_free(e->engine.data.output);
    e->engine.data.output = re;
@@ -195,6 +203,8 @@ eng_output_resize(void *data, int w, int h)
 	char     use_color_key;
 	void * (*new_update_region) (int x, int y, int w, int h, int *row_bytes);
 	void   (*free_update_region) (int x, int y, int w, int h, void *data);
+        void * (*switch_buffer) (void *switch_data, void *dest);
+        void    *switch_data;
 
 	depth = re->ob->depth;
 	dest = re->ob->dest;
@@ -204,6 +214,8 @@ eng_output_resize(void *data, int w, int h)
 	use_color_key = re->ob->use_color_key;
 	new_update_region = re->ob->func.new_update_region;
 	free_update_region = re->ob->func.free_update_region;
+        switch_buffer = re->ob->func.switch_buffer;
+        switch_data = re->ob->switch_data;
 	evas_buffer_outbuf_buf_free(re->ob);
 	re->ob = evas_buffer_outbuf_buf_setup_fb(w,
 						 h,
@@ -214,7 +226,9 @@ eng_output_resize(void *data, int w, int h)
 						 color_key,
 						 alpha_level,
 						 new_update_region,
-						 free_update_region);
+						 free_update_region,
+                                                 switch_buffer,
+                                                 switch_data);
      }
    evas_common_tilebuf_free(re->tb);
    re->tb = evas_common_tilebuf_new(w, h);
@@ -275,6 +289,37 @@ eng_output_redraws_next_update_get(void *data, int *x, int *y, int *w, int *h, i
    if (!re->rects)
      {
 	re->rects = evas_common_tilebuf_get_render_rects(re->tb);
+
+        /* handle double buffering */
+        if (re->ob->func.switch_buffer)
+          {
+             Eina_Rectangle *pushing;
+
+             if (re->ob->first_frame && !re->previous_rects.len)
+               {
+                  evas_common_tilebuf_add_redraw(re->tb, 0, 0, re->ob->w, re->ob->h);
+                  re->ob->first_frame = 0;
+               }
+
+             /* push previous frame */
+             EINA_INARRAY_FOREACH(&re->previous_rects, pushing)
+               evas_common_tilebuf_add_redraw(re->tb, pushing->x, pushing->y, pushing->w, pushing->h);
+             eina_inarray_flush(&re->previous_rects);
+
+             /* save current list of damage */
+             EINA_INLIST_FOREACH(re->rects, rect)
+               {
+                  Eina_Rectangle local;
+
+                  EINA_RECTANGLE_SET(&local, rect->x, rect->y, rect->w, rect->h);
+                  eina_inarray_append(&re->previous_rects, &local);
+               }
+
+             /* and regenerate the damage list by tacking into account the damage over two frames */
+             evas_common_tilebuf_free_render_rects(re->rects);
+             re->rects = evas_common_tilebuf_get_render_rects(re->tb);
+          }
+
 	re->cur_rect = EINA_INLIST_GET(re->rects);
      }
    if (!re->cur_rect) return NULL;
@@ -306,7 +351,7 @@ eng_output_redraws_next_update_push(void *data, void *surface, int x, int y, int
    re = (Render_Engine *)data;
 #ifdef BUILD_PIPE_RENDER
    evas_common_pipe_map_begin(surface);
-#endif   
+#endif
    evas_buffer_outbuf_buf_push_updated_region(re->ob, surface, x, y, w, h);
    evas_buffer_outbuf_buf_free_region_for_update(re->ob, surface);
    evas_common_cpu_end_opt();
@@ -318,6 +363,7 @@ eng_output_flush(void *data)
    Render_Engine *re;
 
    re = (Render_Engine *)data;
+   evas_buffer_outbuf_buf_switch_buffer(re->ob);
 }
 
 static void

@@ -644,3 +644,6 @@
         * Add EVAS_OBJECT_POINTER_MODE_NOGRAB_NO_REPEAT_UPDOWN pointer mode
         for some very specific behavior needed for accessibility.
 
+2012-01-19  Cedric Bail
+
+	* Add double buffer support to buffer engine.
