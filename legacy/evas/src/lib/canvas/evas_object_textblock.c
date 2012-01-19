@@ -3798,9 +3798,23 @@ _layout_par(Ctxt *c)
                         * char is a whitespace we should remove, so this
                         * is a wanted cutting point. */
                        else if (uwrap > it->text_pos + it_len)
-                          wrap = -1; /* Delay the cut in a smart way
-                                        i.e use the item_pos as the line_start, because
-                                        there's already no cut before*/
+                         {
+                            /* FIXME: Should redo the ellipsis handling.
+                             * If we can do ellipsis, just cut here. */
+                            if (it->format->ellipsis == 1.0)
+                              {
+                                 _layout_handle_ellipsis(c, it, i);
+                                 ret = 1;
+                                 goto end;
+                              }
+                            else
+                              {
+                                 /* Delay the cut in a smart way i.e use the
+                                    item_pos as the line_start, because
+                                    there's already no cut before*/
+                                 wrap = -1;
+                              }
+                        }
                        else
                           wrap -= it->text_pos; /* Cut here */
                     }
