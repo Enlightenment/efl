@@ -291,6 +291,7 @@ void ecore_con_event_client_data(Ecore_Con_Client *cl, unsigned char *buf, int n
 void ecore_con_event_client_del(Ecore_Con_Client *cl);
 void ecore_con_event_client_error(Ecore_Con_Client *cl, const char *error);
 void _ecore_con_server_kill(Ecore_Con_Server *svr);
+void _ecore_con_client_kill(Ecore_Con_Client *cl);
 /* from ecore_local_win32.c */
 #ifdef _WIN32
 Eina_Bool ecore_con_local_listen(Ecore_Con_Server *svr);

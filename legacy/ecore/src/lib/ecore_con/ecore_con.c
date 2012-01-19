@@ -45,7 +45,6 @@
 
 static Eina_Bool _ecore_con_client_timer(Ecore_Con_Client *cl);
 static void      _ecore_con_cl_timer_update(Ecore_Con_Client *cl);
-static void      _ecore_con_client_kill(Ecore_Con_Client *cl);
 static Eina_Bool _ecore_con_server_timer(Ecore_Con_Server *svr);
 static void      _ecore_con_server_timer_update(Ecore_Con_Server *svr);
 
@@ -105,7 +104,7 @@ static void _ecore_con_lookup_done(void           *data,
 static const char * _ecore_con_pretty_ip(struct sockaddr *client_addr);
 
 
-static void
+void
 _ecore_con_client_kill(Ecore_Con_Client *cl)
 {
    if (cl->delete_me)
