@@ -2353,8 +2353,8 @@ EAPI Eina_Bool
 edje_object_parts_extends_calc(Evas_Object *obj, Evas_Coord *x, Evas_Coord *y, Evas_Coord *w, Evas_Coord *h)
 {
    Edje *ed;
-   Evas_Coord x1 = INT_MAX, y1 = INT_MAX;
-   Evas_Coord x2 = 0, y2 = 0;
+   Evas_Coord xx1 = INT_MAX, yy1 = INT_MAX;
+   Evas_Coord xx2 = 0, yy2 = 0;
    unsigned int i;
 
    ed = _edje_fetch(obj);
@@ -2386,18 +2386,18 @@ edje_object_parts_extends_calc(Evas_Object *obj, Evas_Coord *x, Evas_Coord *y, E
 	rpx2 = rpx1 + rp->w;
 	rpy2 = rpy1 + rp->h;
 
-	if (x1 > rpx1) x1 = rpx1;
-	if (y1 > rpy1) y1 = rpy1;
-	if (x2 < rpx2) x2 = rpx2;
-	if (y2 < rpy2) y2 = rpy2;
+	if (xx1 > rpx1) xx1 = rpx1;
+	if (yy1 > rpy1) yy1 = rpy1;
+	if (xx2 < rpx2) xx2 = rpx2;
+	if (yy2 < rpy2) yy2 = rpy2;
      }
 
    ed->calc_only = 0;
 
-   if (x) *x = x1;
-   if (y) *y = y1;
-   if (w) *w = x2 - x1;
-   if (h) *h = y2 - y1;
+   if (x) *x = xx1;
+   if (y) *y = yy1;
+   if (w) *w = xx2 - xx1;
+   if (h) *h = yy2 - yy1;
 
    return EINA_TRUE;
 }

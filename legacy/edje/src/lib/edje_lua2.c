@@ -2935,16 +2935,16 @@ static int _elua_line_xy(lua_State *L)                          // Stack usage [
 {
    Edje_Lua_Obj *obj = (Edje_Lua_Obj *)lua_touserdata(L, 1);    // Stack usage [-0, +0, -]
    Edje_Lua_Evas_Object *elo = (Edje_Lua_Evas_Object *)obj;
-   Evas_Coord x1, y1, x2, y2;
+   Evas_Coord xx1, yy1, xx2, yy2;
 
    if (!_elua_isa(obj, _elua_evas_line_meta)) return 0;
 
-   if (_elua_scan_params(L, 2, "%x1 %y1 %x2 %y2", &x1, &y1, &x2, &y2) > 0)
+   if (_elua_scan_params(L, 2, "%xx1 %yy1 %xx2 %yy2", &xx1, &yy1, &xx2, &yy2) > 0)
      {                                                          // Stack usage [-0, +0, m] unless it's in a table [-4, +4, e]
-        evas_object_line_xy_set(elo->evas_obj, x1, y1, x2, y2);
+        evas_object_line_xy_set(elo->evas_obj, xx1, yy1, xx2, yy2);
      }
-   evas_object_line_xy_get(elo->evas_obj, &x1, &y1, &x2, &y2);
-   _elua_ret(L, "%x1 %y1 %x2 %y2", x1, y1, x2, y2);
+   evas_object_line_xy_get(elo->evas_obj, &xx1, &yy1, &xx2, &yy2);
+   _elua_ret(L, "%xx1 %yy1 %xx2 %yy2", xx1, yy1, xx2, yy2);
                                                                 // Stack usage [-8, +9, em]
    return 1;
 }
