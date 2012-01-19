@@ -35,7 +35,7 @@ _evas_map_calc_geom_change(Evas_Object *obj)
 static void
 _evas_map_calc_map_geometry(Evas_Object *obj)
 {
-   Evas_Coord x1, x2, y1, y2;
+   Evas_Coord x1, x2, yy1, yy2;
    const Evas_Map_Point *p, *p_end;
    Eina_Bool ch = EINA_FALSE;
 
@@ -82,7 +82,7 @@ _evas_map_calc_map_geometry(Evas_Object *obj)
    p = obj->cur.map->points;
    p_end = p + obj->cur.map->count;
    x1 = x2 = lround(p->x);
-   y1 = y2 = lround(p->y);
+   yy1 = yy2 = lround(p->y);
    p++;
    for (; p < p_end; p++)
      {
@@ -92,21 +92,21 @@ _evas_map_calc_map_geometry(Evas_Object *obj)
         y = lround(p->y);
         if (x < x1) x1 = x;
         if (x > x2) x2 = x;
-        if (y < y1) y1 = y;
-        if (y > y2) y2 = y;
+        if (y < yy1) yy1 = y;
+        if (y > yy2) yy2 = y;
      }
 // this causes clip-out bugs now mapped objs canbe opaque!!!   
 //   // add 1 pixel of fuzz around the map region to ensure updates are correct
-//   x1 -= 1; y1 -= 1;
-//   x2 += 1; y2 += 1;
+//   x1 -= 1; yy1 -= 1;
+//   x2 += 1; yy2 += 1;
    if (obj->cur.map->normal_geometry.x != x1) ch = 1;
-   if (obj->cur.map->normal_geometry.y != y1) ch = 1;
+   if (obj->cur.map->normal_geometry.y != yy1) ch = 1;
    if (obj->cur.map->normal_geometry.w != (x2 - x1)) ch = 1;
-   if (obj->cur.map->normal_geometry.h != (y2 - y1)) ch = 1;
+   if (obj->cur.map->normal_geometry.h != (yy2 - yy1)) ch = 1;
    obj->cur.map->normal_geometry.x = x1;
-   obj->cur.map->normal_geometry.y = y1;
+   obj->cur.map->normal_geometry.y = yy1;
    obj->cur.map->normal_geometry.w = (x2 - x1);
-   obj->cur.map->normal_geometry.h = (y2 - y1);
+   obj->cur.map->normal_geometry.h = (yy2 - yy1);
    if (ch) _evas_map_calc_geom_change(obj);
 }
 
@@ -896,7 +896,7 @@ evas_map_util_3d_lighting(Evas_Map *m,
    for (i = 0; i < m->count; i++)
      {
         double x, y, z;
-        double nx, ny, nz, x1, y1, z1, x2, y2, z2, ln, br;
+        double nx, ny, nz, x1, yy1, z1, x2, yy2, z2, ln, br;
         int h, j, mr, mg, mb;
 
         x = m->points[i].x;
@@ -907,15 +907,15 @@ evas_map_util_3d_lighting(Evas_Map *m,
         j = (i + 1)     % 4 + (i & ~0x3); // next point
 
         x1 = m->points[h].x - x;
-        y1 = m->points[h].y - y;
+        yy1 = m->points[h].y - y;
         z1 = m->points[h].z - z;
 
         x2 = m->points[j].x - x;
-        y2 = m->points[j].y - y;
+        yy2 = m->points[j].y - y;
         z2 = m->points[j].z - z;
-        nx = (y1 * z2) - (z1 * y2);
+        nx = (yy1 * z2) - (z1 * yy2);
         ny = (z1 * x2) - (x1 * z2);
-        nz = (x1 * y2) - (y1 * x2);
+        nz = (x1 * yy2) - (yy1 * x2);
 
         ln = (nx * nx) + (ny * ny) + (nz * nz);
         ln = sqrt(ln);

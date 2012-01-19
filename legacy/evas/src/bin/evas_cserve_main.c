@@ -642,10 +642,9 @@ mem_cache_adjust(void)
 {
    int pval = cache_max_adjust;
    int max = 0;
-   int mem_used;
 
    if (mem_total <= 0) return;
-   mem_used = mem_total - mem_free - mem_cached - mem_buffers;
+   //int mem_used = mem_total - mem_free - mem_cached - mem_buffers;
 #if 0 // this lets the image cache to grow to fill all real free ram, if
       // there is any (ie ram unused by disk cache)
    if (mem_free < mem_total)

@@ -230,7 +230,7 @@ evas_object_clip_changes_clean(Evas_Object *obj)
 }
 
 void
-evas_object_render_pre_effect_updates(Eina_Array *rects, Evas_Object *obj, int is_v, int was_v)
+evas_object_render_pre_effect_updates(Eina_Array *rects, Evas_Object *obj, int is_v, int was_v __UNUSED__)
 {
    Eina_Rectangle *r;
    Evas_Object *clipper;
@@ -241,7 +241,6 @@ evas_object_render_pre_effect_updates(Eina_Array *rects, Evas_Object *obj, int i
 
    if (obj->smart.smart) goto end;
    /* FIXME: was_v isn't used... why? */
-   was_v = 0;
    if (!obj->clip.clipees)
      {
         EINA_ARRAY_ITER_NEXT(rects, i, r, it)

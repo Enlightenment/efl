@@ -74,7 +74,7 @@ _output_setup(int w, int h, int rot, int vt, int dev, int refresh)
 
 /* engine api this module provides */
 static void *
-eng_info(Evas *e)
+eng_info(Evas *e __UNUSED__)
 {
    Evas_Engine_Info_FB *info;
    info = calloc(1, sizeof(Evas_Engine_Info_FB));
@@ -82,7 +82,6 @@ eng_info(Evas *e)
    info->magic.magic = rand();
    info->render_mode = EVAS_RENDER_MODE_BLOCKING;
    return info;
-   e = NULL;
 }
 
 static void
@@ -231,19 +230,13 @@ eng_output_redraws_next_update_push(void *data, void *surface, int x, int y, int
 }
 
 static void
-eng_output_flush(void *data)
+eng_output_flush(void *data __UNUSED__)
 {
-   Render_Engine *re;
-
-   re = (Render_Engine *)data;
 }
 
 static void
-eng_output_idle_flush(void *data)
+eng_output_idle_flush(void *data __UNUSED__)
 {
-   Render_Engine *re;
-
-   re = (Render_Engine *)data;
 }
 
 static Eina_Bool

@@ -25,7 +25,7 @@ evas_fb_outbuf_fb_setup_fb(int w, int h, int rot, Outbuf_Depth depth, int vt_no,
    /* setup window and/or fb */
    /* if (dithered) create backbuf */
    Outbuf *buf;
-   int fb_fd = -1;
+   int fb_fd;
    int fb_depth;
 
    fb_depth = -1;
@@ -51,6 +51,11 @@ evas_fb_outbuf_fb_setup_fb(int w, int h, int rot, Outbuf_Depth depth, int vt_no,
 	return NULL;
      }
    fb_fd = fb_postinit(buf->priv.fb.fb);
+   if (fb_fd < 1)
+     {
+        free(buf);
+        return NULL;
+     }
 
    if (rot == 0 || rot == 180)
      {

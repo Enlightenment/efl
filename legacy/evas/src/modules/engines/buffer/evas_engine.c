@@ -358,20 +358,14 @@ eng_output_redraws_next_update_push(void *data, void *surface, int x, int y, int
 }
 
 static void
-eng_output_flush(void *data)
+eng_output_flush(void *data __UNUSED__)
 {
-   Render_Engine *re;
-
-   re = (Render_Engine *)data;
    evas_buffer_outbuf_buf_switch_buffer(re->ob);
 }
 
 static void
-eng_output_idle_flush(void *data)
+eng_output_idle_flush(void *data __UNUSED__)
 {
-   Render_Engine *re;
-
-   re = (Render_Engine *)data;
 }
 
 static Eina_Bool

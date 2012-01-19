@@ -90,7 +90,6 @@ scale_rgba_in_to_out_clip_sample_internal(RGBA_Image *src, RGBA_Image *dst,
    DATA32  *buf, *dptr;
    DATA32 **row_ptr;
    DATA32  *ptr, *dst_ptr, *src_data, *dst_data;
-   int      dst_jump;
    int      dst_clip_x, dst_clip_y, dst_clip_w, dst_clip_h;
    int      m_clip_x = 0, m_clip_y = 0, m_clip_w = 0, m_clip_h = 0, mdx = 0, mdy = 0;
    int      src_w, src_h, dst_w, dst_h;
@@ -248,7 +247,7 @@ scale_rgba_in_to_out_clip_sample_internal(RGBA_Image *src, RGBA_Image *dst,
    row_ptr = alloca(dst_clip_h * sizeof(DATA32 *));
 
    /* figure out dst jump */
-   dst_jump = dst_w - dst_clip_w;
+   //dst_jump = dst_w - dst_clip_w;
 
    /* figure out dest start ptr */
    dst_ptr = dst_data + dst_clip_x + (dst_clip_y * dst_w);

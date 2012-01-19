@@ -25,7 +25,6 @@ evas_buffer_outbuf_buf_setup_fb(int w, int h, Outbuf_Depth depth, void *dest, in
 				)
 {
    Outbuf *buf;
-   int bpp;
    
    buf = calloc(1, sizeof(Outbuf));
    if (!buf) return NULL;
@@ -46,11 +45,6 @@ evas_buffer_outbuf_buf_setup_fb(int w, int h, Outbuf_Depth depth, void *dest, in
    buf->func.free_update_region = free_update_region;
    buf->func.switch_buffer = switch_buffer;
    buf->switch_data = switch_data;
-
-   bpp = sizeof(DATA32);
-   if ((buf->depth == OUTBUF_DEPTH_RGB_24BPP_888_888) ||
-       (buf->depth == OUTBUF_DEPTH_BGR_24BPP_888_888))
-     bpp = 3;
 
    if ((buf->depth == OUTBUF_DEPTH_ARGB_32BPP_8888_8888) &&
        (buf->dest) && (buf->dest_row_bytes == (buf->w * sizeof(DATA32))))

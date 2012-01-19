@@ -133,7 +133,7 @@ evas_common_polygon_draw(RGBA_Image *dst, RGBA_Draw_Context *dc, RGBA_Polygon_Po
    int                num_active_edges;
    int                n;
    int                i, j, k;
-   int                y0, y1, yi;
+   int                yy0, yy1, yi;
    int                ext_x, ext_y, ext_w, ext_h;
    int               *sorted_index;
 
@@ -211,14 +211,14 @@ evas_common_polygon_draw(RGBA_Image *dst, RGBA_Draw_Context *dc, RGBA_Polygon_Po
 	k++;
      }
 
-   y0 = MAX(ext_y, ceil(point[sorted_index[0]].y - 0.5));
-   y1 = MIN(ext_y + ext_h - 1, floor(point[sorted_index[n - 1]].y - 0.5));
+   yy0 = MAX(ext_y, ceil(point[sorted_index[0]].y - 0.5));
+   yy1 = MIN(ext_y + ext_h - 1, floor(point[sorted_index[n - 1]].y - 0.5));
 
    k = 0;
    num_active_edges = 0;
    spans = NULL;
 
-   for (yi = y0; yi <= y1; yi++)
+   for (yi = yy0; yi <= yy1; yi++)
      {
 	for (; (k < n) && (point[sorted_index[k]].y <= ((double)yi + 0.5)); k++)
 	  {

@@ -591,11 +591,8 @@ eng_image_border_set(void *data __UNUSED__, void *image, int l __UNUSED__, int r
 }
 
 static void
-eng_image_border_get(void *data __UNUSED__, void *image, int *l __UNUSED__, int *r __UNUSED__, int *t __UNUSED__, int *b __UNUSED__)
+eng_image_border_get(void *data __UNUSED__, void *image __UNUSED__, int *l __UNUSED__, int *r __UNUSED__, int *t __UNUSED__, int *b __UNUSED__)
 {
-   RGBA_Image *im;
-
-   im = image;
 }
 
 static char *
@@ -704,18 +701,16 @@ eng_image_size_get(void *data __UNUSED__, void *image, int *w, int *h)
 static void *
 eng_image_size_set(void *data __UNUSED__, void *image, int w, int h)
 {
-   Image_Entry *im;
-
-   im = image;
-   return evas_cache_image_size_set(image, w, h);
+   Image_Entry *im = image;
+   if (!im) return NULL;
+   return evas_cache_image_size_set(im, w, h);
 }
 
 static void *
 eng_image_dirty_region(void *data __UNUSED__, void *image, int x, int y, int w, int h)
 {
    Image_Entry *im = image;
-
-   if (!image) return NULL;
+   if (!im) return NULL;
    return evas_cache_image_dirty(im, x, y, w, h);
 }
 
@@ -931,11 +926,10 @@ static void *
 eng_image_map_surface_new(void *data __UNUSED__, int w, int h, int alpha)
 {
    void *surface;
-   DATA32 *pixels;
    surface = evas_cache_image_copied_data(evas_common_image_cache_get(), 
                                           w, h, NULL, alpha, 
                                           EVAS_COLORSPACE_ARGB8888);
-   pixels = evas_cache_image_pixels(surface);
+   evas_cache_image_pixels(surface);
    return surface;
 }
 
@@ -2519,7 +2513,7 @@ evgl_glShaderSource(GLuint shader, GLsizei count, const char** string, const GLi
 
 
 static void
-evgl_glGetShaderPrecisionFormat(GLenum shadertype, GLenum precisiontype, GLint* range, GLint* precision)
+evgl_glGetShaderPrecisionFormat(GLenum shadertype __UNUSED__, GLenum precisiontype __UNUSED__, GLint* range, GLint* precision)
 {
    if (range)
      {
@@ -2531,7 +2525,6 @@ evgl_glGetShaderPrecisionFormat(GLenum shadertype, GLenum precisiontype, GLint* 
         precision[0] = 24; // floor(-log2((1.0/16777218.0)));
      }
    return;
-   shadertype = precisiontype = 0;
 }
 
 static void

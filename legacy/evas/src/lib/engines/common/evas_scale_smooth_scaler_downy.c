@@ -3,7 +3,7 @@
    DATA32 *dptr, *pix, *pbuf, **yp;
    int r, g, b, a, rr, gg, bb, aa;
    int *xp, xap, yap, pos;
-   int dyy, dxx;
+   //int dyy, dxx;
    int w = dst_clip_w;
 #ifdef EVAS_SLI
    int ysli = dst_clip_y;
@@ -11,8 +11,8 @@
 
    dptr = dst_ptr;
    pos = (src_region_y * src_w) + src_region_x;
-   dyy = dst_clip_y - dst_region_y;
-   dxx = dst_clip_x - dst_region_x;
+   //dyy = dst_clip_y - dst_region_y;
+   //dxx = dst_clip_x - dst_region_x;
 
    xp = xpoints;// + dxx;
    yp = ypoints;// + dyy;
