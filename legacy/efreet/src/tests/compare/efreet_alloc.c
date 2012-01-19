@@ -6,7 +6,7 @@
 int
 main(void)
 {
-    int i = 0, k;
+   int i = 0, k, errs = 0;
     const char *path;
 
     efreet_init();
@@ -16,14 +16,15 @@ main(void)
         for (i = 0; icons[i]; i++)
         {
             path = efreet_icon_path_find(THEME, icons[i], SIZE);
-//            printf("%s: %s\n", icons[i], (path ? path : "NOT FOUND"));
+            if (!path)
+              {
+                 printf("%s: NOT FOUND\n", icons[i]);
+                 errs++;
+              }
         }
     }
 
-    (void) path;
-
     efreet_shutdown();
 
-    return 0;
+    return errs > 0;
 }
-
