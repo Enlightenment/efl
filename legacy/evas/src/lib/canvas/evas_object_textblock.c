@@ -3715,115 +3715,113 @@ _layout_par(Ctxt *c)
              else if ((it->format->wrap_word || it->format->wrap_char ||
                 it->format->wrap_mixed) && it->text_node)
                {
-                    {
-                       size_t line_start;
-                       size_t it_len;
+                  size_t line_start;
+                  size_t it_len;
 
-                       it_len = (it->type == EVAS_TEXTBLOCK_ITEM_FORMAT) ?
-                          1 : _ITEM_TEXT(it)->text_props.text_len;
+                  it_len = (it->type == EVAS_TEXTBLOCK_ITEM_FORMAT) ?
+                     1 : _ITEM_TEXT(it)->text_props.text_len;
 
 
 #ifdef HAVE_LINEBREAK
-                       /* If we haven't calculated the linebreaks yet,
-                        * do */
-                       if (!line_breaks)
+                  /* If we haven't calculated the linebreaks yet,
+                   * do */
+                  if (!line_breaks)
+                    {
+                       /* Only relevant in those cases */
+                       if (it->format->wrap_word || it->format->wrap_mixed)
                          {
-                            /* Only relevant in those cases */
-                            if (it->format->wrap_word || it->format->wrap_mixed)
-                              {
-                                 const char *lang;
-                                 lang = (it->format->font.fdesc) ?
-                                    it->format->font.fdesc->lang : "";
-                                 size_t len =
-                                    eina_ustrbuf_length_get(
-                                          it->text_node->unicode);
-                                 line_breaks = malloc(len);
-                                 set_linebreaks_utf32((const utf32_t *)
-                                    eina_ustrbuf_string_get(
-                                       it->text_node->unicode),
-                                    len, lang, line_breaks);
-                              }
+                            const char *lang;
+                            lang = (it->format->font.fdesc) ?
+                               it->format->font.fdesc->lang : "";
+                            size_t len =
+                               eina_ustrbuf_length_get(
+                                     it->text_node->unicode);
+                            line_breaks = malloc(len);
+                            set_linebreaks_utf32((const utf32_t *)
+                                  eina_ustrbuf_string_get(
+                                     it->text_node->unicode),
+                                  len, lang, line_breaks);
                          }
+                    }
 #endif
-                       if (c->ln->items)
-                          line_start = c->ln->items->text_pos;
+                  if (c->ln->items)
+                     line_start = c->ln->items->text_pos;
+                  else
+                     line_start = it->text_pos;
+
+                  adv_line = 1;
+                  /* If we don't already have a wrap point from before */
+                  if (wrap < 0)
+                    {
+                       if (it->format->wrap_word)
+                          wrap = _layout_get_wordwrap(c, it->format, it,
+                                line_start, line_breaks);
+                       else if (it->format->wrap_char)
+                          wrap = _layout_get_charwrap(c, it->format, it,
+                                line_start, line_breaks);
+                       else if (it->format->wrap_mixed)
+                          wrap = _layout_get_mixedwrap(c, it->format, it,
+                                line_start, line_breaks);
                        else
-                          line_start = it->text_pos;
+                          wrap = -1;
+                    }
 
-                       adv_line = 1;
-                       /* If we don't already have a wrap point from before */
-                       if (wrap < 0)
+                  /* If it's before the item, rollback and apply.
+                     if it's in the item, cut.
+                     If it's after the item, delay the cut */
+                  if (wrap > 0)
+                    {
+                       size_t uwrap = (size_t) wrap;
+                       if (uwrap < it->text_pos)
                          {
-                            if (it->format->wrap_word)
-                               wrap = _layout_get_wordwrap(c, it->format, it,
-                                     line_start, line_breaks);
-                            else if (it->format->wrap_char)
-                               wrap = _layout_get_charwrap(c, it->format, it,
-                                     line_start, line_breaks);
-                            else if (it->format->wrap_mixed)
-                               wrap = _layout_get_mixedwrap(c, it->format, it,
-                                     line_start, line_breaks);
-                            else
-                               wrap = -1;
-                         }
-
-                       /* If it's before the item, rollback and apply.
-                          if it's in the item, cut.
-                          If it's after the item, delay the cut */
-                       if (wrap > 0)
-                         {
-                            size_t uwrap = (size_t) wrap;
-                            if (uwrap < it->text_pos)
+                            /* Rollback latest additions, and cut that
+                               item */
+                            i = eina_list_prev(i);
+                            it = eina_list_data_get(i);
+                            while (uwrap < it->text_pos)
                               {
-                                 /* Rollback latest additions, and cut that
-                                    item */
-                                 i = eina_list_prev(i);
-                                 it = eina_list_data_get(i);
-                                 while (uwrap < it->text_pos)
-                                   {
-                                      c->ln->items = _ITEM(
-                                            eina_inlist_remove(
-                                               EINA_INLIST_GET(c->ln->items),
-                                               EINA_INLIST_GET(it)));
-                                      i = eina_list_prev(i);
-                                      it = eina_list_data_get(i);
-                                   }
-                                 c->x = it->x;
                                  c->ln->items = _ITEM(
                                        eina_inlist_remove(
                                           EINA_INLIST_GET(c->ln->items),
                                           EINA_INLIST_GET(it)));
-                                 continue;
+                                 i = eina_list_prev(i);
+                                 it = eina_list_data_get(i);
                               }
-                            /* If it points to the end, it means the previous
-                             * char is a whitespace we should remove, so this
-                             * is a wanted cutting point. */
-                            else if (uwrap > it->text_pos + it_len)
-                               wrap = -1; /* Delay the cut in a smart way
-                               i.e use the item_pos as the line_start, because
-                               there's already no cut before*/
-                            else
-                               wrap -= it->text_pos; /* Cut here */
+                            c->x = it->x;
+                            c->ln->items = _ITEM(
+                                  eina_inlist_remove(
+                                     EINA_INLIST_GET(c->ln->items),
+                                     EINA_INLIST_GET(it)));
+                            continue;
                          }
-
-                       if (wrap > 0)
-                         {
-                           if (it->type == EVAS_TEXTBLOCK_ITEM_TEXT)
-                             {
-                                _layout_item_text_split_strip_white(c,
-                                      _ITEM_TEXT(it), i, wrap);
-                             }
-                         }
-                       else if (wrap == 0)
-                         {
-                            /* Should wrap before the item */
-                            adv_line = 0;
-                            redo_item = 1;
-                            _layout_line_advance(c, it->format);
-                         }
-                       /* Reset wrap */
-                       wrap = -1;
+                       /* If it points to the end, it means the previous
+                        * char is a whitespace we should remove, so this
+                        * is a wanted cutting point. */
+                       else if (uwrap > it->text_pos + it_len)
+                          wrap = -1; /* Delay the cut in a smart way
+                                        i.e use the item_pos as the line_start, because
+                                        there's already no cut before*/
+                       else
+                          wrap -= it->text_pos; /* Cut here */
                     }
+
+                  if (wrap > 0)
+                    {
+                       if (it->type == EVAS_TEXTBLOCK_ITEM_TEXT)
+                         {
+                            _layout_item_text_split_strip_white(c,
+                                  _ITEM_TEXT(it), i, wrap);
+                         }
+                    }
+                  else if (wrap == 0)
+                    {
+                       /* Should wrap before the item */
+                       adv_line = 0;
+                       redo_item = 1;
+                       _layout_line_advance(c, it->format);
+                    }
+                  /* Reset wrap */
+                  wrap = -1;
                }
           }
 
