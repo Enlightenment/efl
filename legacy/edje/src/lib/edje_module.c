@@ -136,12 +136,12 @@ edje_available_modules_get(void)
 
 		  snprintf(tmp, sizeof (tmp), "%s/%s/" EDJE_MODULE_NAME, info->path, MODULE_ARCH
 #ifdef EDJE_EXTRA_MODULE_NAME
-                           , ecore_file_file_get(info->path)
+                           , info->path + info->name_start
 #endif
                            );
 
 		  if (ecore_file_exists(tmp))
-		    result = eina_list_append(result, eina_stringshare_add(ecore_file_file_get(info->path)));
+		    result = eina_list_append(result, eina_stringshare_add(info->path + info->name_start));
 	       }
 
 	     eina_iterator_free(it);
