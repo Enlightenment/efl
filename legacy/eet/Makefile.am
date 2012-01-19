@@ -49,7 +49,7 @@ pkgconfig_DATA = eet.pc
 
 doc:
 	@echo "entering doc/"
-	make -C doc doc
+	$(MAKE) -C doc doc
 
 # Unit tests
 
@@ -83,9 +83,9 @@ lcov-report:
 	@genhtml -t "$(PACKAGE_STRING)" -o coverage coverage/coverage.info
 
 coverage:
-	@make lcov-reset
-	@make check
-	@make lcov-report
+	@$(MAKE) lcov-reset
+	@$(MAKE) check
+	@$(MAKE) lcov-report
 
 clean-local:
 	@rm -rf coverage

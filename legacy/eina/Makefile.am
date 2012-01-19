@@ -57,7 +57,7 @@ m4/efl_path_max.m4
 
 doc:
 	@echo "entering doc/"
-	@cd doc && make doc
+	@cd doc && $(MAKE) doc
 
 # Unit tests
 
@@ -91,9 +91,9 @@ lcov-report:
 	@genhtml -t "$(PACKAGE_STRING)" -o coverage coverage/coverage.info
 
 coverage:
-	@make lcov-reset
-	@make check
-	@make lcov-report
+	@$(MAKE) lcov-reset
+	@$(MAKE) check
+	@$(MAKE) lcov-report
 else
 lcov-reset:
 	@echo "reconfigure with --enable-coverage"
@@ -108,7 +108,7 @@ endif
 if EFL_ENABLE_BENCHMARK
 
 benchmark:
-	@cd src && make benchmark
+	@cd src && $(MAKE) benchmark
 	@mkdir result || true
 	@cd result && ../src/tests/eina_bench `date +%F_%s`
 
