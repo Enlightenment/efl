@@ -43,11 +43,11 @@ eeze_net_shutdown(void)
 Eeze_Net *
 eeze_net_new(const char *name)
 {
-   const char *syspath;
+   const char *syspath = NULL;
    const char *idx;
    _udev_enumerate *en;
    _udev_list_entry *devs, *cur;
-   _udev_device *device;
+   _udev_device *device = NULL;
    Eeze_Net *net;
 
    net = eina_hash_find(eeze_nets, name);
@@ -163,7 +163,7 @@ eeze_net_scan(Eeze_Net *net)
    struct sockaddr_in6 *sa6;
 #endif
    int sock;
-   int ioctls[5] = {SIOCGIFADDR, SIOCGIFBRDADDR, SIOCGIFNETMASK}, *i = ioctls;
+   int ioctls[3] = {SIOCGIFADDR, SIOCGIFBRDADDR, SIOCGIFNETMASK}, *i = ioctls;
    struct ifreq ifr;
    struct sockaddr_in *sa;
 
@@ -192,6 +192,7 @@ eeze_net_scan(Eeze_Net *net)
 
    close(sock);
 #ifdef HAVE_IPV6
+   i = ioctls;
    ifr.ifr_addr.sa_family = AF_INET6;
    sock = socket(AF_INET6, SOCK_DGRAM, 0);
    if (sock < 0) return EINA_FALSE;
