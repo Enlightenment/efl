@@ -25,7 +25,6 @@
 #include <sys/types.h>
 #include <unistd.h>
 #include <math.h>
-#include <netinet/in.h>
 #include <time.h>
 #include <sys/mman.h>
 #include <sys/stat.h>
