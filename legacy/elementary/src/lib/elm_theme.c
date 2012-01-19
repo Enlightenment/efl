@@ -75,7 +75,7 @@ _elm_theme_theme_element_try(Elm_Theme *th, const char *home, const char *f, con
         snprintf(buf, sizeof(buf), "%s/%s", home, f + 2);
         return _elm_theme_find_try(th, buf, group);
      }
-   snprintf(buf, sizeof(buf), "%s/.elementary/themes/%s.edj", home, f);
+   snprintf(buf, sizeof(buf), "%s/"ELEMENTARY_BASE_DIR"/themes/%s.edj", home, f);
    file = _elm_theme_find_try(th, buf, group);
    if (file) return file;
    snprintf(buf, sizeof(buf), "%s/themes/%s.edj", _elm_data_dir, f);
@@ -148,7 +148,7 @@ _elm_theme_theme_data_try(Elm_Theme *th, const char *home, const char *f, const 
         snprintf(buf, sizeof(buf), "%s/%s", home, f + 2);
         return _elm_theme_find_try(th, buf, key);
      }
-   snprintf(buf, sizeof(buf), "%s/.elementary/themes/%s.edj", home, f);
+   snprintf(buf, sizeof(buf), "%s/"ELEMENTARY_BASE_DIR"/themes/%s.edj", home, f);
    data = _elm_theme_find_data_try(th, buf, key);
    if (data) return data;
    snprintf(buf, sizeof(buf), "%s/themes/%s.edj", _elm_data_dir, f);
@@ -544,7 +544,7 @@ elm_theme_list_item_path_get(const char *f, Eina_Bool *in_search_path)
         snprintf(buf, sizeof(buf), "%s/%s", home, f + 2);
         return strdup(buf);
      }
-   snprintf(buf, sizeof(buf), "%s/.elementary/themes/%s.edj", home, f);
+   snprintf(buf, sizeof(buf), "%s/"ELEMENTARY_BASE_DIR"/themes/%s.edj", home, f);
    if (ecore_file_exists(buf))
      {
         if (in_search_path) *in_search_path = EINA_TRUE;
@@ -616,11 +616,11 @@ elm_theme_name_available_list_new(void)
         if (!home) home = "";
      }
 
-   snprintf(buf, sizeof(buf), "%s/.elementary/themes", home);
+   snprintf(buf, sizeof(buf), "%s/"ELEMENTARY_BASE_DIR"/themes", home);
    dir = ecore_file_ls(buf);
    EINA_LIST_FREE(dir, file)
      {
-        snprintf(buf, sizeof(buf), "%s/.elementary/themes/%s", home, file);
+        snprintf(buf, sizeof(buf), "%s/"ELEMENTARY_BASE_DIR"/themes/%s", home, file);
         if ((!ecore_file_is_dir(buf)) && (ecore_file_size(buf) > 0))
           {
              s = strchr(file, '.');

@@ -684,6 +684,14 @@ AM_CONDITIONAL([HAVE_PO], [test "x${have_po}" = "xyes"])
 
 EFL_CHECK_PATH_MAX
 
+elementary_base_dir=".elementary"
+AC_ARG_WITH([elementary-base-dir],
+   [AC_HELP_STRING([--with-elementary-base-dir=PATH], [specify the subdirectory for all elementary data @<:@default=${elementary_base_dir}@:>@])],
+   [elementary_base_dir=${withval}],
+   [elementary_base_dir=".elementary"])
+
+AC_MSG_NOTICE([ELEMENTARY_BASE_DIR set to ${elementary_base_dir}])
+AC_DEFINE_UNQUOTED(ELEMENTARY_BASE_DIR, "${elementary_base_dir}", "subdirectory for all elementary data")
 
 ### Build and install examples
 EFL_CHECK_BUILD_EXAMPLES([enable_build_examples="yes"], [enable_build_examples="no"])

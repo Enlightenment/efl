@@ -414,7 +414,7 @@ _elm_user_dir_snprintf(char       *dst,
      home = "/";
 
    user_dir_len = eina_str_join_len(dst, size, '/', home, strlen(home),
-                                    ".elementary", sizeof(".elementary") - 1);
+                                    ELEMENTARY_BASE_DIR, sizeof(ELEMENTARY_BASE_DIR) - 1);
 
    off = user_dir_len + 1;
    if (off >= size)
