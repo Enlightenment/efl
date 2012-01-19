@@ -4930,6 +4930,7 @@ evas_object_textblock_text_markup_prepend(Evas_Textblock_Cursor *cur, const char
          * NULL is reached. */
         for (;;)
           {
+             size_t text_len;
              /* If we got to the end of string or just finished/started tag
               * or escape sequence handling. */
              if ((*p == 0) ||
@@ -5008,14 +5009,19 @@ evas_object_textblock_text_markup_prepend(Evas_Textblock_Cursor *cur, const char
                }
              /* Unicode object replcament char */
              else if (!strncmp(_REPLACEMENT_CHAR_UTF8, p,
-                      strlen(_REPLACEMENT_CHAR_UTF8)))
+                      text_len = strlen(_REPLACEMENT_CHAR_UTF8)) ||
+                   !strncmp(_NEWLINE_UTF8, p,
+                      text_len = strlen(_NEWLINE_UTF8)) ||
+                   !strncmp(_PARAGRAPH_SEPARATOR_UTF8, p,
+                      text_len = strlen(_PARAGRAPH_SEPARATOR_UTF8)))
                {
                   /*FIXME: currently just remove them, maybe do something
                    * fancier in the future, atm it breaks if this char
                    * is inside <> */
                   _prepend_text_run(cur, s, p);
-                  p += 2; /* it's also advanced later in this loop need +3
-                           * in total*/
+                  /* it's also advanced later in this loop need +text_len
+                     in total*/
+                  p += text_len - 1;
                   s = p + 1; /* One after the end of the replacement char */
                }
              p++;
