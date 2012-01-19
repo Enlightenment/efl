@@ -164,6 +164,9 @@ eina_mmap_safety_enabled_set(Eina_Bool enabled)
         sa.sa_sigaction = _eina_mmap_safe_sigbus;
         sa.sa_flags = SA_RESTART | SA_SIGINFO;
         sigemptyset(&sa.sa_mask);
+        /* FIXME: This is rubbish. We return EINA_FALSE whether sigaction
+         * fails or not. And we never set mmap_safe, so we always hit this
+         * code path. */
         if (sigaction(SIGBUS, &sa, NULL) == 0) return EINA_FALSE;
         /* setup of SIGBUS handler failed, lets close zero page dev and fail */
         close(_eina_mmap_zero_fd);
