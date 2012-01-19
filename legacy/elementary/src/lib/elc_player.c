@@ -368,8 +368,7 @@ _cleanup_callback(Widget_Data *wd)
                                   _play_started);
    evas_object_smart_callback_del(wd->emotion, "playback_finished",
                                   _play_finished);
-	printf("%p\n", wd->slider);
-	elm_object_disabled_set(wd->slider, EINA_TRUE);
+   elm_object_disabled_set(wd->slider, EINA_TRUE);
    elm_object_disabled_set(wd->forward, EINA_TRUE);
    elm_object_disabled_set(wd->info, EINA_TRUE);
    elm_object_disabled_set(wd->next, EINA_TRUE);
