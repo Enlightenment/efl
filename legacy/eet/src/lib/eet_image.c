@@ -246,7 +246,7 @@ eet_data_image_jpeg_rgb_decode(const void   *data,
                                unsigned int  w,
                                unsigned int  h,
                                unsigned int  row_stride);
-static void *
+static int
 eet_data_image_jpeg_alpha_decode(const void   *data,
                                  int           size,
                                  unsigned int  src_x,
@@ -560,7 +560,7 @@ eet_data_image_jpeg_rgb_decode(const void   *data,
    return 1;
 }
 
-static void *
+static int
 eet_data_image_jpeg_alpha_decode(const void   *data,
                                  int           size,
                                  unsigned int  src_x,
@@ -577,6 +577,10 @@ eet_data_image_jpeg_alpha_decode(const void   *data,
    unsigned int x, y, l, scans;
    unsigned int i, iw;
 
+   /* FIXME: handle src_x, src_y and row_stride correctly */
+   if (!d)
+     return 0;
+
    memset(&cinfo, 0, sizeof (struct jpeg_decompress_struct));
 
    cinfo.err = jpeg_std_error(&(jerr.pub));
@@ -584,14 +588,14 @@ eet_data_image_jpeg_alpha_decode(const void   *data,
    jerr.pub.emit_message = _JPEGErrorHandler2;
    jerr.pub.output_message = _JPEGErrorHandler;
    if (setjmp(jerr.setjmp_buffer))
-     return NULL;
+     return 0;
 
    jpeg_create_decompress(&cinfo);
 
    if (eet_jpeg_membuf_src(&cinfo, data, (size_t)size))
      {
         jpeg_destroy_decompress(&cinfo);
-        return NULL;
+        return 0;
      }
 
    jpeg_read_header(&cinfo, TRUE);
@@ -609,7 +613,7 @@ eet_data_image_jpeg_alpha_decode(const void   *data,
         cinfo.src = NULL;
 
         jpeg_destroy_decompress(&cinfo);
-        return NULL;
+        return 0;
      }
 
    /* end head decoding */
@@ -620,11 +624,12 @@ eet_data_image_jpeg_alpha_decode(const void   *data,
         cinfo.src = NULL;
 
         jpeg_destroy_decompress(&cinfo);
-        return NULL;
+        return 0;
      }
 
    tdata = alloca(w * 16 * 3);
    ptr2 = d;
+
    if (cinfo.output_components == 1)
      {
         for (i = 0; i < (unsigned int)cinfo.rec_outbuf_height; i++)
@@ -666,7 +671,7 @@ eet_data_image_jpeg_alpha_decode(const void   *data,
    /* end data decoding */
    jpeg_finish_decompress(&cinfo);
    jpeg_destroy_decompress(&cinfo);
-   return d;
+   return 1;
 }
 
 static void *
