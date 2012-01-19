@@ -368,7 +368,8 @@ _cleanup_callback(Widget_Data *wd)
                                   _play_started);
    evas_object_smart_callback_del(wd->emotion, "playback_finished",
                                   _play_finished);
-   elm_object_disabled_set(wd->slider, EINA_TRUE);
+	printf("%p\n", wd->slider);
+	elm_object_disabled_set(wd->slider, EINA_TRUE);
    elm_object_disabled_set(wd->forward, EINA_TRUE);
    elm_object_disabled_set(wd->info, EINA_TRUE);
    elm_object_disabled_set(wd->next, EINA_TRUE);
@@ -382,11 +383,9 @@ _cleanup_callback(Widget_Data *wd)
 }
 
 static void
-_track_video(void *data __UNUSED__, Evas *e __UNUSED__, Evas_Object *obj, void *event_info __UNUSED__)
+_track_video(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
-   Widget_Data *wd = elm_widget_data_get(obj);
-
-   _cleanup_callback(wd);
+   _cleanup_callback(data);
 }
 
 static void
@@ -489,7 +488,7 @@ _content_set_hook(Evas_Object *obj, const char *part, Evas_Object *content)
    wd->emotion = elm_video_emotion_get(wd->video);
    emotion_object_priority_set(wd->emotion, EINA_TRUE);
    evas_object_event_callback_add(wd->video, EVAS_CALLBACK_DEL,
-                                  _track_video, obj);
+                                  _track_video, wd);
 
    seekable = elm_video_is_seekable(wd->video);
    length = elm_video_play_length_get(wd->video);
