@@ -20,8 +20,6 @@ extern "C"
 void *alloca (size_t);
 #endif
 
-#include <dirent.h>
-
 #ifdef HAVE_EVIL
 # include <Evil.h>
 #endif
@@ -1005,23 +1003,18 @@ efreet_desktop_changes_listen(void)
 static void
 efreet_desktop_changes_listen_recursive(const char *path)
 {
-    char buf[PATH_MAX];
-    DIR *files;
-    struct dirent *file;
+    Eina_Iterator *it;
+    Eina_File_Direct_Info *info;
 
     efreet_desktop_changes_monitor_add(path);
 
-    files = opendir(path);
-    if (!files) return;
-    while ((file = readdir(files)))
+    it = eina_file_direct_ls(path);
+    if (!it) return;
+    EINA_ITERATOR_FOREACH(it, info)
     {
-        if (!file) break;
-        if (!strcmp(file->d_name, ".") || !strcmp(file->d_name, "..")) continue;
-
-        snprintf(buf, sizeof(buf), "%s/%s", path, file->d_name);
-        if (ecore_file_is_dir(buf)) efreet_desktop_changes_listen_recursive(buf);
+        if (ecore_file_is_dir(info->path)) efreet_desktop_changes_listen_recursive(info->path);
     }
-    closedir(files);
+    eina_iterator_free(it);
 }
 
 static void

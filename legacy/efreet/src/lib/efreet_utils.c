@@ -23,7 +23,6 @@ void *alloca (size_t);
 #endif
 
 #include <fnmatch.h>
-#include <dirent.h>
 
 #include <Ecore_File.h>
 
@@ -344,25 +343,25 @@ efreet_util_menus_find(void)
 static Eina_List *
 efreet_util_menus_find_helper(Eina_List *menus, const char *config_dir)
 {
-    DIR *files = NULL;
-    struct dirent *file = NULL;
-    char dbuf[PATH_MAX], fbuf[PATH_MAX];
+    Eina_Iterator *it;
+    Eina_File_Direct_Info *info;
+    char dbuf[PATH_MAX];
 
     snprintf(dbuf, sizeof(dbuf), "%s/menus", config_dir);
-    files = opendir(dbuf);
-    if (!files) return menus;
-    while ((file = readdir(files))) {
+    it = eina_file_direct_ls(dbuf);
+    if (!it) return menus;
+    EINA_ITERATOR_FOREACH(it, info)
+    {
         const char *exten;
-        exten = strrchr(file->d_name, '.');
+        exten = strrchr(info->path + info->name_length, '.');
         if (!exten) continue;
         if (strcmp(".menu", exten)) continue;
 
-        snprintf(fbuf, sizeof(fbuf), "%s/%s", dbuf, file->d_name);
-        if (ecore_file_is_dir(fbuf)) continue;
+        if (ecore_file_is_dir(info->path)) continue;
 
-        menus = eina_list_append(menus, strdup(fbuf));
+        menus = eina_list_append(menus, strdup(info->path));
     }
-    closedir(files);
+    eina_iterator_free(it);
     return menus;
 }
 

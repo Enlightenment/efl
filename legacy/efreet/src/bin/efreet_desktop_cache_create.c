@@ -5,7 +5,6 @@
 #include <sys/stat.h>
 #include <fcntl.h>
 #include <unistd.h>
-#include <dirent.h>
 
 #include <Eina.h>
 #include <Eet.h>
@@ -130,29 +129,30 @@ cache_scan(const char *path, const char *base_id, int priority, int recurse, int
     char *file_id = NULL;
     char id[PATH_MAX];
     char buf[PATH_MAX];
-    DIR *files;
-    struct dirent *ent;
+    Eina_Iterator *it;
+    Eina_File_Direct_Info *info;
 
     if (!ecore_file_is_dir(path)) return 1;
 
-    files = opendir(path);
-    if (!files) return 1;
-    id[0] = '\0';
-    while ((ent = readdir(files)))
-    {
-        if (!ent) break;
-        if (!strcmp(ent->d_name, ".") || !strcmp(ent->d_name, "..")) continue;
+    it = eina_file_direct_ls(path);
+    if (!it) return 1;
 
+    id[0] = '\0';
+    EINA_ITERATOR_FOREACH(it, info)
+    {
+        const char *fname;
+       
+        fname = info->path + info->name_start;
         if (base_id)
         {
             if (*base_id)
-                snprintf(id, sizeof(id), "%s-%s", base_id, ent->d_name);
+                snprintf(id, sizeof(id), "%s-%s", base_id, fname);
             else
-                strcpy(id, ent->d_name);
+                strcpy(id, fname);
             file_id = id;
         }
 
-        snprintf(buf, sizeof(buf), "%s/%s", path, ent->d_name);
+        snprintf(buf, sizeof(buf), "%s/%s", path, fname);
         if (ecore_file_is_dir(buf))
         {
             if (recurse)
@@ -162,12 +162,12 @@ cache_scan(const char *path, const char *base_id, int priority, int recurse, int
         {
             if (!cache_add(buf, file_id, priority, changed))
             {
-                closedir(files);
+                eina_iterator_free(it);
                 return 0;
             }
         }
     }
-    closedir(files);
+    eina_iterator_free(it);
     return 1;
 }
 
