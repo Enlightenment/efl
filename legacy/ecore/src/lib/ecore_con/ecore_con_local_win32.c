@@ -77,7 +77,6 @@ _ecore_con_local_win32_server_read_client_handler(void *data, Ecore_Win32_Handle
 #endif
        if (!cl->delete_me)
          ecore_con_event_client_del(cl);
-       cl->dead = EINA_TRUE;
        return ECORE_CALLBACK_CANCEL;
     }
 
@@ -112,7 +111,6 @@ _ecore_con_local_win32_server_peek_client_handler(void *data, Ecore_Win32_Handle
 #endif
    if (!cl->host_server->delete_me)
      ecore_con_event_server_del(cl->host_server);
-   cl->host_server->dead = EINA_TRUE;
    return ECORE_CALLBACK_CANCEL;
 
    ecore_main_win32_handler_del(wh);
@@ -142,7 +140,6 @@ _ecore_con_local_win32_client_peek_server_handler(void *data, Ecore_Win32_Handle
 #endif
    if (!svr->delete_me)
      ecore_con_event_server_del(svr);
-   svr->dead = EINA_TRUE;
    return ECORE_CALLBACK_CANCEL;
 
    ecore_main_win32_handler_del(wh);
@@ -193,7 +190,6 @@ _ecore_con_local_win32_client_read_server_handler(void *data, Ecore_Win32_Handle
 #endif
        if (!svr->delete_me)
          ecore_con_event_server_del(svr);
-       svr->dead = EINA_TRUE;
        return ECORE_CALLBACK_CANCEL;
     }
 
@@ -294,9 +290,6 @@ _ecore_con_local_win32_client_add(void *data, Ecore_Win32_Handler *wh)
    svr = (Ecore_Con_Server *)data;
 
    if (!svr->pipe)
-     return ECORE_CALLBACK_CANCEL;
-
-   if (svr->dead)
      return ECORE_CALLBACK_CANCEL;
 
    if (svr->delete_me)
@@ -700,7 +693,6 @@ ecore_con_local_win32_server_flush(Ecore_Con_Server *svr)
           }
         if (!svr->delete_me)
           ecore_con_event_server_del(svr);
-        svr->dead = EINA_TRUE;
      }
 
    svr->write_buf_offset += written;
@@ -751,7 +743,6 @@ ecore_con_local_win32_client_flush(Ecore_Con_Client *cl)
           }
         if (!cl->delete_me)
           ecore_con_event_client_del(cl);
-        cl->dead = EINA_TRUE;
      }
 
    cl->buf_offset += written;
