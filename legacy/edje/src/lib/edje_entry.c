@@ -2911,7 +2911,7 @@ _edje_entry_imf_retrieve_surrounding_cb(void *data, Ecore_IMF_Context *ctx __UNU
 }
 
 static void
-_edje_entry_imf_event_commit_cb(void *data, Ecore_IMF_Context *ctx, void *event_info)
+_edje_entry_imf_event_commit_cb(void *data, Ecore_IMF_Context *ctx __UNUSED__, void *event_info)
 {
    Edje *ed = data;
    Edje_Real_Part *rp = ed->focused_part;
@@ -2984,12 +2984,11 @@ _edje_entry_imf_event_commit_cb(void *data, Ecore_IMF_Context *ctx, void *event_
 }
 
 static void
-_edje_entry_imf_event_preedit_changed_cb(void *data, Ecore_IMF_Context *ctx, void *event_info)
+_edje_entry_imf_event_preedit_changed_cb(void *data, Ecore_IMF_Context *ctx __UNUSED__, void *event_info __UNUSED__)
 {
    Edje *ed = data;
    Edje_Real_Part *rp = ed->focused_part;
    Entry *en;
-   char *str = event_info;
    int cursor_pos;
    int preedit_start_pos, preedit_end_pos;
    char *preedit_string;
@@ -3116,7 +3115,7 @@ _edje_entry_imf_event_preedit_changed_cb(void *data, Ecore_IMF_Context *ctx, voi
 }
 
 static void
-_edje_entry_imf_event_delete_surrounding_cb(void *data, Ecore_IMF_Context *ctx, void *event_info)
+_edje_entry_imf_event_delete_surrounding_cb(void *data, Ecore_IMF_Context *ctx __UNUSED__, void *event_info)
 {
    Edje *ed = data;
    Edje_Real_Part *rp = ed->focused_part;

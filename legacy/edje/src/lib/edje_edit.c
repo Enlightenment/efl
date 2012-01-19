@@ -6805,7 +6805,7 @@ _edje_generate_source_of_state(Evas_Object *obj, const char *part, const char *s
    if (pd->aspect.min || pd->aspect.max)
       BUF_APPENDF(I5"aspect: %g %g;\n", TO_DOUBLE(pd->aspect.min), TO_DOUBLE(pd->aspect.max));
    if (pd->aspect.prefer)
-      BUF_APPENDF(I5"aspect_preference: %s;\n", prefers[pd->aspect.prefer]);
+      BUF_APPENDF(I5"aspect_preference: %s;\n", prefers[(int) pd->aspect.prefer]);
 
    if (pd->color_class)
      BUF_APPENDF(I5"color_class: \"%s\";\n", pd->color_class);
