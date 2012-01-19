@@ -25,6 +25,9 @@
 #else
 # include <asm/unistd.h>
 # include <linux/inotify.h>
+static inline int inotify_init(void);
+static inline int inotify_add_watch(int fd, const char *name, __u32 mask);
+static inline int inotify_rm_watch(int fd, __u32 wd);
 #endif
 
 struct _Eio_Monitor_Backend
@@ -205,3 +208,23 @@ void eio_monitor_backend_del(Eio_Monitor *monitor)
    eina_hash_del(_inotify_monitors, &monitor->backend->hwnd, monitor->backend);
    monitor->backend = NULL;
 }
+
+#ifndef HAVE_SYS_INOTIFY
+static inline int
+inotify_init(void)
+{
+   return syscall(__NR_inotify_init);
+}
+
+static inline int
+inotify_add_watch(int fd, const char *name, __u32 mask)
+{
+   return syscall(__NR_inotify_add_watch, fd, name, mask);
+}
+
+static inline int
+inotify_rm_watch(int fd, __u32 wd)
+{
+   return syscall(__NR_inotify_rm_watch, fd, wd);
+}
+#endif
