@@ -238,8 +238,6 @@ next_token(char *p, char *end, char **new_p, int *delim)
    int in_comment_sa  = 0;
    int had_quote = 0;
    int is_escaped = 0;
-   char *cpp_token_line = NULL;
-   char *cpp_token_file = NULL;
 
    *delim = 0;
    if (p >= end) return NULL;
@@ -249,8 +247,6 @@ next_token(char *p, char *end, char **new_p, int *delim)
 	  {
 	     in_comment_ss = 0;
 	     in_comment_cpp = 0;
-	     cpp_token_line = NULL;
-	     cpp_token_file = NULL;
 	     line++;
 	  }
 	if ((!in_comment_ss) && (!in_comment_sa))
@@ -275,8 +271,6 @@ next_token(char *p, char *end, char **new_p, int *delim)
 	     /* their line format is
 	      * #line <line no. of next line> <filename from next line on> [??]
 	      */
-	     cpp_token_line = NULL;
-	     cpp_token_file = NULL;
 
 	     pp = p;
 	     while ((pp < end) && (*pp != '\n'))
