@@ -2273,31 +2273,32 @@ _smart_event_mouse_move(void *data, Evas *e, Evas_Object *obj __UNUSED__, void *
      sd->down.hold_parent = EINA_TRUE;
    evas_post_event_callback_push(e, _smart_event_post_move, sd);
 
-   if (sd->scrollto.x.animator)
-     {
-        Evas_Coord px;
-        ecore_animator_del(sd->scrollto.x.animator);
-        sd->scrollto.x.animator = NULL;
-        sd->pan_func.get(sd->pan_obj, &px, NULL);
-        sd->down.sx = px;
-        sd->down.x = sd->down.history[0].x;
-     }
-
-   if (sd->scrollto.y.animator)
-     {
-        Evas_Coord py;
-        ecore_animator_del(sd->scrollto.y.animator);
-        sd->scrollto.y.animator = NULL;
-        sd->pan_func.get(sd->pan_obj, NULL, &py);
-        sd->down.sy = py;
-        sd->down.y = sd->down.history[0].y;
-     }
    // FIXME: respect elm_widget_scroll_hold_get of parent container
    if (_elm_config->thumbscroll_enable)
      {
         if (sd->down.now)
           {
              int dodir = 0;
+
+             if (sd->scrollto.x.animator)
+               {
+                  Evas_Coord px;
+                  ecore_animator_del(sd->scrollto.x.animator);
+                  sd->scrollto.x.animator = NULL;
+                  sd->pan_func.get(sd->pan_obj, &px, NULL);
+                  sd->down.sx = px;
+                  sd->down.x = sd->down.history[0].x;
+               }
+
+             if (sd->scrollto.y.animator)
+               {
+                  Evas_Coord py;
+                  ecore_animator_del(sd->scrollto.y.animator);
+                  sd->scrollto.y.animator = NULL;
+                  sd->pan_func.get(sd->pan_obj, NULL, &py);
+                  sd->down.sy = py;
+                  sd->down.y = sd->down.history[0].y;
+               }
 
 #ifdef SCROLLDBG
              printf("::: %i %i\n", ev->cur.canvas.x, ev->cur.canvas.y);
