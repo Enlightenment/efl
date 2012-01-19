@@ -5012,6 +5012,8 @@ evas_object_textblock_text_markup_prepend(Evas_Textblock_Cursor *cur, const char
                       text_len = strlen(_REPLACEMENT_CHAR_UTF8)) ||
                    !strncmp(_NEWLINE_UTF8, p,
                       text_len = strlen(_NEWLINE_UTF8)) ||
+                   !strncmp(_TAB_UTF8, p,
+                      text_len = strlen(_TAB_UTF8)) ||
                    !strncmp(_PARAGRAPH_SEPARATOR_UTF8, p,
                       text_len = strlen(_PARAGRAPH_SEPARATOR_UTF8)))
                {
