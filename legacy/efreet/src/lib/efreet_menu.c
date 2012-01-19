@@ -1625,7 +1625,7 @@ efreet_menu_merge_dir(Efreet_Menu_Internal *parent, Efreet_Xml *xml, const char 
     {
         char *p;
 
-        p = strrchr(info->path + info->name_length, '.');
+        p = strrchr(info->path + info->name_start, '.');
         if (!p) continue;
         if (strcmp(p, ".menu")) continue;
 
@@ -1816,7 +1816,7 @@ efreet_menu_handle_legacy_dir_helper(Efreet_Menu_Internal *root,
             char *exten;
             const char *fname;
 
-            fname = info->path + info->name_length;
+            fname = info->path + info->name_start;
             /* recurse into sub directories */
             if (ecore_file_is_dir(info->path))
             {
@@ -3296,7 +3296,7 @@ efreet_menu_app_dir_scan(Efreet_Menu_Internal *internal, const char *path, const
     {
         const char *fname;
 
-        fname = info->path + info->name_length;
+        fname = info->path + info->name_start;
         if (id)
             snprintf(buf2, sizeof(buf2), "%s-%s", id, fname);
         else
@@ -3404,7 +3404,7 @@ efreet_menu_directory_dir_scan(const char *path, const char *relative_path,
     {
         const char *fname;
 
-        fname = info->path + info->name_length;
+        fname = info->path + info->name_start;
         if (relative_path)
             snprintf(buf2, sizeof(buf2), "%s/%s", relative_path, fname);
         else

@@ -353,7 +353,7 @@ efreet_util_menus_find_helper(Eina_List *menus, const char *config_dir)
     EINA_ITERATOR_FOREACH(it, info)
     {
         const char *exten;
-        exten = strrchr(info->path + info->name_length, '.');
+        exten = strrchr(info->path + info->name_start, '.');
         if (!exten) continue;
         if (strcmp(".menu", exten)) continue;
 
