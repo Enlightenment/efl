@@ -20,6 +20,8 @@ main(void)
         }
     }
 
+    (void) path;
+
     efreet_shutdown();
 
     return 0;
