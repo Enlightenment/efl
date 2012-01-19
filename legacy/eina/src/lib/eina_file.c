@@ -523,8 +523,8 @@ slprintf(char *str, size_t size, const char *format, ...)
    va_end(ap);
 }
 
-static char*
-_eina_file_escape(const char* path, int* length)
+static char *
+_eina_file_escape(const char *path, int *length)
 {
    char *result = strdup(path ? path : "");
    char *p = result;
