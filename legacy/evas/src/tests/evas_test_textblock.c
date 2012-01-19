@@ -1431,21 +1431,25 @@ START_TEST(evas_textblock_editing)
    fail_if(evas_textblock_cursor_paragraph_next(cur));
 
    /* Insert illegal characters inside the format. */
-   evas_object_textblock_text_markup_set(tb, "a\n");
-   evas_textblock_cursor_pos_set(cur, 1);
-   evas_textblock_cursor_content_get(cur);
+     {
+        const char *content;
+        evas_object_textblock_text_markup_set(tb, "a\n");
+        evas_textblock_cursor_pos_set(cur, 1);
+        content = evas_textblock_cursor_content_get(cur);
 
-   evas_object_textblock_text_markup_set(tb, "a\t");
-   evas_textblock_cursor_pos_set(cur, 1);
-   evas_textblock_cursor_content_get(cur);
+        evas_object_textblock_text_markup_set(tb, "a\t");
+        evas_textblock_cursor_pos_set(cur, 1);
+        content = evas_textblock_cursor_content_get(cur);
 
-   evas_object_textblock_text_markup_set(tb, "a\xEF\xBF\xBC");
-   evas_textblock_cursor_pos_set(cur, 1);
-   evas_textblock_cursor_content_get(cur);
+        evas_object_textblock_text_markup_set(tb, "a\xEF\xBF\xBC");
+        evas_textblock_cursor_pos_set(cur, 1);
+        content = evas_textblock_cursor_content_get(cur);
 
-   evas_object_textblock_text_markup_set(tb, "a\xE2\x80\xA9");
-   evas_textblock_cursor_pos_set(cur, 1);
-   evas_textblock_cursor_content_get(cur);
+        evas_object_textblock_text_markup_set(tb, "a\xE2\x80\xA9");
+        evas_textblock_cursor_pos_set(cur, 1);
+        content = evas_textblock_cursor_content_get(cur);
+        (void) content;
+     }
 
    /* FIXME: Also add text appending/prepending */
 
