@@ -45,44 +45,44 @@ static Elm_Genlist_Item_Class itct;
 static void
 glt_exp(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info)
 {
-   Elm_Genlist_Item *it = event_info;
-   Evas_Object *gl = elm_genlist_item_genlist_get(it);
-   int val = (int)(long)elm_genlist_item_data_get(it);
-   Elm_Genlist_Item *it1, *it2, *it3;
+   Elm_Object_Item *glit = event_info;
+   Evas_Object *gl = elm_genlist_item_genlist_get(glit);
+   int val = (int)(long)elm_genlist_item_data_get(glit);
+   Elm_Object_Item *glit1, *glit2, *glit3;
 
    val *= 10;
-   it1 = elm_genlist_item_append(gl, &itct, (void *)(long)(val + 1), it,
-                                 ELM_GENLIST_ITEM_NONE, NULL, NULL);
-   it2 = elm_genlist_item_append(gl, &itct, (void *)(long)(val + 2), it,
-                                 ELM_GENLIST_ITEM_NONE, NULL, NULL);
-   it3 = elm_genlist_item_append(gl, &itct, (void *)(long)(val + 3), it,
-                                 ELM_GENLIST_ITEM_SUBITEMS, NULL, NULL);
+   glit1 = elm_genlist_item_append(gl, &itct, (void *)(long)(val + 1), glit,
+                                   ELM_GENLIST_ITEM_NONE, NULL, NULL);
+   glit2 = elm_genlist_item_append(gl, &itct, (void *)(long)(val + 2), glit,
+                                   ELM_GENLIST_ITEM_NONE, NULL, NULL);
+   glit3 = elm_genlist_item_append(gl, &itct, (void *)(long)(val + 3), glit,
+                                   ELM_GENLIST_ITEM_SUBITEMS, NULL, NULL);
 
-   elm_genlist_item_cursor_set(it1, ELM_CURSOR_HAND2);
-   elm_genlist_item_cursor_set(it2, ELM_CURSOR_HAND2);
-   elm_genlist_item_cursor_set(it3, ELM_CURSOR_HAND1);
+   elm_genlist_item_cursor_set(glit1, ELM_CURSOR_HAND2);
+   elm_genlist_item_cursor_set(glit2, ELM_CURSOR_HAND2);
+   elm_genlist_item_cursor_set(glit3, ELM_CURSOR_HAND1);
 
 }
 
 static void
 glt_con(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info)
 {
-   Elm_Genlist_Item *it = event_info;
-   elm_genlist_item_subitems_clear(it);
+   Elm_Object_Item *glit = event_info;
+   elm_genlist_item_subitems_clear(glit);
 }
 
 static void
 glt_exp_req(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info)
 {
-   Elm_Genlist_Item *it = event_info;
-   elm_genlist_item_expanded_set(it, 1);
+   Elm_Object_Item *glit = event_info;
+   elm_genlist_item_expanded_set(glit, EINA_TRUE);
 }
 
 static void
 glt_con_req(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info)
 {
-   Elm_Genlist_Item *it = event_info;
-   elm_genlist_item_expanded_set(it, 0);
+   Elm_Object_Item *glit = event_info;
+   elm_genlist_item_expanded_set(glit, EINA_FALSE);
 }
 
 char *
@@ -164,7 +164,7 @@ void
 test_cursor2(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    Evas_Object *win, *bg, *bx, *o, *grid, *gl;
-   Elm_Genlist_Item *it1, *it2, *it3;
+   Elm_Object_Item *glit1, *glit2, *glit3;
    Elm_Object_Item *tb_it;
    Elm_Object_Item *lit;
    char buf[PATH_MAX];
@@ -233,16 +233,16 @@ test_cursor2(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_inf
    itct.item_style     = "default";
    itct.func.text_get = glt_text_get;
 
-   it1 = elm_genlist_item_append(gl, &itct, (void *) 1, NULL,
-                                 ELM_GENLIST_ITEM_SUBITEMS, NULL, NULL);
-   it2 = elm_genlist_item_append(gl, &itct, (void *) 2, NULL,
-                                 ELM_GENLIST_ITEM_SUBITEMS, NULL, NULL);
-   it3 = elm_genlist_item_append(gl, &itct, (void *) 3, NULL,
-                                 ELM_GENLIST_ITEM_NONE, NULL, NULL);
+   glit1 = elm_genlist_item_append(gl, &itct, (void *) 1, NULL,
+                                   ELM_GENLIST_ITEM_SUBITEMS, NULL, NULL);
+   glit2 = elm_genlist_item_append(gl, &itct, (void *) 2, NULL,
+                                   ELM_GENLIST_ITEM_SUBITEMS, NULL, NULL);
+   glit3 = elm_genlist_item_append(gl, &itct, (void *) 3, NULL,
+                                   ELM_GENLIST_ITEM_NONE, NULL, NULL);
 
-   elm_genlist_item_cursor_set(it1, ELM_CURSOR_HAND1);
-   elm_genlist_item_cursor_set(it2, ELM_CURSOR_HAND1);
-   elm_genlist_item_cursor_set(it3, ELM_CURSOR_CROSS);
+   elm_genlist_item_cursor_set(glit1, ELM_CURSOR_HAND1);
+   elm_genlist_item_cursor_set(glit2, ELM_CURSOR_HAND1);
+   elm_genlist_item_cursor_set(glit3, ELM_CURSOR_CROSS);
 
    evas_object_smart_callback_add(gl, "expand,request", glt_exp_req, gl);
    evas_object_smart_callback_add(gl, "contract,request", glt_con_req, gl);

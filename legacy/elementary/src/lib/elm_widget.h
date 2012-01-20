@@ -292,7 +292,11 @@ struct _Elm_Object_Item
 
 #define ELM_OBJ_ITEM_CHECK_OR_RETURN(it, ...)                            \
   ELM_WIDGET_ITEM_CHECK_OR_RETURN((Elm_Widget_Item *)(it), __VA_ARGS__); \
-  ELM_CHECK_WIDTYPE(it->base.widget, widtype) __VA_ARGS__;
+  ELM_CHECK_WIDTYPE(WIDGET(it), widtype) __VA_ARGS__;
+
+#define ELM_OBJ_ITEM_CHECK_OR_GOTO(it, label) \
+  ELM_WIDGET_ITEM_CHECK_OR_GOTO((Elm_Widget_Item *)it, label); \
+  if (!elm_widget_type_check(WIDGET(it), (widtype), __func__)) goto label;
 
 EAPI Eina_Bool        elm_widget_api_check(int ver);
 EAPI Evas_Object     *elm_widget_add(Evas *evas);

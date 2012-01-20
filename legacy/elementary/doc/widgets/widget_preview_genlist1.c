@@ -34,7 +34,7 @@ elm_win_resize_object_add(win, genlist);
 evas_object_show(genlist);
 
 Elm_Genlist_Item_Class gic;
-Elm_Genlist_Item *it, *top;
+Elm_Object_Item *glit, *glit_top;
 gic.item_style = "default";
 gic.func.text_get = _text_get;
 gic.func.content_get = _content_get;
@@ -43,15 +43,15 @@ gic.func.del = NULL;
 
 elm_genlist_item_append(genlist, &gic, NULL, NULL, ELM_GENLIST_ITEM_NONE, NULL, NULL);
 elm_genlist_item_append(genlist, &gic, NULL, NULL, ELM_GENLIST_ITEM_NONE, NULL, NULL);
-it = elm_genlist_item_append(genlist, &gic, NULL, NULL, ELM_GENLIST_ITEM_NONE, NULL, NULL);
-top = it;
-elm_genlist_item_expanded_set(it, EINA_TRUE);
-elm_genlist_item_append(genlist, &gic, NULL, it, ELM_GENLIST_ITEM_NONE, NULL, NULL);
-it = elm_genlist_item_append(genlist, &gic, NULL, it, ELM_GENLIST_ITEM_NONE, NULL, NULL);
-elm_genlist_item_append(genlist, &gic, NULL, it, ELM_GENLIST_ITEM_NONE, NULL, NULL);
+glit = elm_genlist_item_append(genlist, &gic, NULL, NULL, ELM_GENLIST_ITEM_NONE, NULL, NULL);
+glit_top = glit;
+elm_genlist_item_expanded_set(glit, EINA_TRUE);
+elm_genlist_item_append(genlist, &gic, NULL, glit, ELM_GENLIST_ITEM_NONE, NULL, NULL);
+glit = elm_genlist_item_append(genlist, &gic, NULL, glit, ELM_GENLIST_ITEM_NONE, NULL, NULL);
+elm_genlist_item_append(genlist, &gic, NULL, glit, ELM_GENLIST_ITEM_NONE, NULL, NULL);
 elm_genlist_item_append(genlist, &gic, NULL, NULL, ELM_GENLIST_ITEM_NONE, NULL, NULL);
 elm_genlist_item_append(genlist, &gic, NULL, NULL, ELM_GENLIST_ITEM_NONE, NULL, NULL);
 
-elm_genlist_item_top_show(top);
+elm_genlist_item_top_show(glit_top);
 
 #include "widget_preview_tmpl_foot.c"

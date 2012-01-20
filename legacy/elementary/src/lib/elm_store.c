@@ -42,7 +42,7 @@ struct _Elm_Store_Item
    EINA_INLIST;
    EINA_MAGIC;
    Elm_Store                    *store;
-   Elm_Genlist_Item             *item;
+   Elm_Object_Item              *item;
    Ecore_Thread                 *fetch_th;
    Ecore_Job                    *eval_job;
    const Elm_Store_Item_Mapping *mapping;
@@ -226,7 +226,7 @@ static void
 _store_genlist_item_realized(void *data, Evas_Object *obj __UNUSED__, void *event_info)
 {
    Elm_Store *st = data;
-   Elm_Genlist_Item *gli = event_info;
+   Elm_Object_Item *gli = event_info;
    Elm_Store_Item *sti = elm_genlist_item_data_get(gli);
    if (!sti) return;
    st->realized_count++;
@@ -239,7 +239,7 @@ static void
 _store_genlist_item_unrealized(void *data, Evas_Object *obj __UNUSED__, void *event_info)
 {
    Elm_Store *st = data;
-   Elm_Genlist_Item *gli = event_info;
+   Elm_Object_Item *gli = event_info;
    Elm_Store_Item *sti = elm_genlist_item_data_get(gli);
    if (!sti) return;
    st->realized_count--;
@@ -712,7 +712,7 @@ elm_store_item_store_get(const Elm_Store_Item *sti)
    return sti->store;
 }
 
-EAPI const Elm_Genlist_Item *
+EAPI const Elm_Object_Item *
 elm_store_item_genlist_item_get(const Elm_Store_Item *sti)
 {
    if (!EINA_MAGIC_CHECK(sti, ELM_STORE_ITEM_MAGIC)) return NULL;

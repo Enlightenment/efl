@@ -14,13 +14,13 @@ EAPI void
 elm_gen_item_selected_set(Elm_Gen_Item *it,
                           Eina_Bool     selected)
 {
-   elm_genlist_item_selected_set(it, selected);
+   elm_genlist_item_selected_set((Elm_Object_Item *) it, selected);
 }
 
 EAPI Eina_Bool
 elm_gen_item_selected_get(const Elm_Gen_Item *it)
 {
-   return elm_genlist_item_selected_get(it);
+   return elm_genlist_item_selected_get((const Elm_Object_Item *) it);
 }
 
 EAPI void
@@ -126,13 +126,13 @@ elm_gen_last_item_get(const Evas_Object *obj)
 EAPI Elm_Gen_Item *
 elm_gen_item_next_get(const Elm_Gen_Item *it)
 {
-   return (Elm_Gen_Item *)elm_genlist_item_next_get(it);
+   return (Elm_Gen_Item *) elm_genlist_item_next_get((Elm_Object_Item *) it);
 }
 
 EAPI Elm_Gen_Item *
 elm_gen_item_prev_get(const Elm_Gen_Item *it)
 {
-   return (Elm_Gen_Item *)elm_genlist_item_prev_get(it);
+   return (Elm_Gen_Item *)elm_genlist_item_prev_get((Elm_Object_Item *) it);
 }
 
 EAPI Evas_Object *

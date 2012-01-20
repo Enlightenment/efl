@@ -55,21 +55,21 @@ _show_status_cb(void *data, Evas_Object *o __UNUSED__, void *event_info __UNUSED
 {
    Evas_Object *list = data;
    Evas_Coord x, y, w, h, mx, my;
-   Elm_Genlist_Item *it = elm_genlist_selected_item_get(list);
+   Elm_Object_Item *glit = elm_genlist_selected_item_get(list);
 
    const Eina_List *selected, *l, *realized;
-   printf("\nfirst selected item: %p\n", it);
+   printf("\nfirst selected item: %p\n", glit);
 
    selected = elm_genlist_selected_items_get(list);
    printf("all selected items (%d): ", eina_list_count(selected));
-   EINA_LIST_FOREACH(selected, l, it)
-     printf("%p ", it);
+   EINA_LIST_FOREACH(selected, l, glit)
+     printf("%p ", glit);
    printf("\n");
 
    realized = elm_genlist_realized_items_get(list);
    printf("realized items (%d): ", eina_list_count(realized));
-   EINA_LIST_FOREACH(realized, l, it)
-      printf("%p  ", it);
+   EINA_LIST_FOREACH(realized, l, glit)
+     printf("%p  ", glit);
    printf("\n");
    printf("genlist mode: %s\n", elm_genlist_mode_get(list));
    printf("mode item: %p\n", elm_genlist_mode_item_get(list));
@@ -77,8 +77,8 @@ _show_status_cb(void *data, Evas_Object *o __UNUSED__, void *event_info __UNUSED
    evas_object_geometry_get(list, &x, &y, &w, &h);
    mx = w / 2 + x;
    my = h / 2 + y;
-   it = elm_genlist_at_xy_item_get(list, mx, my, NULL);
-   printf("item in the middle of the screen: %p\n", it);
+   glit = elm_genlist_at_xy_item_get(list, mx, my, NULL);
+   printf("item in the middle of the screen: %p\n", glit);
 }
 
 static void

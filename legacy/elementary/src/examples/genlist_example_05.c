@@ -105,70 +105,67 @@ static void
 _append_cb(void *data, Evas_Object *o __UNUSED__, void *event_info __UNUSED__)
 {
    Evas_Object *list = data;
-   Elm_Genlist_Item *it, *parent = NULL;
+   Elm_Object_Item *glit, *parent = NULL;
    Node_Data *pdata, *d = malloc(sizeof(*d));
 
    d->children = NULL;
    d->value = nitems++;
    d->favorite = EINA_FALSE;
 
-   it = elm_genlist_selected_item_get(list);
-   if (it)
-     parent = elm_genlist_item_parent_get(it);
+   glit = elm_genlist_selected_item_get(list);
+   if (glit)
+     parent = elm_genlist_item_parent_get(glit);
 
    if (parent)
      {
-	d->level = elm_genlist_item_expanded_depth_get(parent) + 1;
-	pdata = elm_genlist_item_data_get(parent);
-	pdata->children = eina_list_append(pdata->children, d);
+        d->level = elm_genlist_item_expanded_depth_get(parent) + 1;
+        pdata = elm_genlist_item_data_get(parent);
+        pdata->children = eina_list_append(pdata->children, d);
      }
    else
      d->level = 0;
 
    elm_genlist_item_append(list, &_itc,
-			   d, parent,
-			   ELM_GENLIST_ITEM_NONE,
-			   _item_sel_cb, NULL);
-
+                           d, parent,
+                           ELM_GENLIST_ITEM_NONE,
+                           _item_sel_cb, NULL);
 }
 
 static void
 _favorite_cb(void *data, Evas_Object *o __UNUSED__, void *event_info __UNUSED__)
 {
    Evas_Object *list = data;
-   Elm_Genlist_Item *it = elm_genlist_selected_item_get(list);
+   Elm_Object_Item *glit = elm_genlist_selected_item_get(list);
 
-   if (!it)
-     return;
+   if (!glit) return;
 
-   Node_Data *d = elm_genlist_item_data_get(it);
+   Node_Data *d = elm_genlist_item_data_get(glit);
    d->favorite = !d->favorite;
    if (d->favorite)
-     elm_genlist_item_item_class_update(it, &_itfav);
+     elm_genlist_item_item_class_update(glit, &_itfav);
    else
      {
-	if (d->children)
-	  elm_genlist_item_item_class_update(it, &_itp);
-	else
-	  elm_genlist_item_item_class_update(it, &_itc);
+        if (d->children)
+          elm_genlist_item_item_class_update(glit, &_itp);
+        else
+          elm_genlist_item_item_class_update(glit, &_itc);
      }
 
-   elm_genlist_item_update(it);
+   elm_genlist_item_update(glit);
 }
 
 static void
 _add_child_cb(void *data, Evas_Object *o __UNUSED__, void *event_info __UNUSED__)
 {
    Evas_Object *list = data;
-   Elm_Genlist_Item *it = elm_genlist_selected_item_get(list);
-   Elm_Genlist_Item *prev, *parent;
+   Elm_Object_Item *glit = elm_genlist_selected_item_get(list);
+   Elm_Object_Item *glit_prev, *glit_parent;
 
-   if (!it)
-     return;
+   if (!glit) return;
 
-   Node_Data *d = elm_genlist_item_data_get(it);
-   prev = elm_genlist_item_prev_get(it);
-   parent = elm_genlist_item_parent_get(it);
+   Node_Data *d = elm_genlist_item_data_get(glit);
+   glit_prev = elm_genlist_item_prev_get(glit);
+   glit_parent = elm_genlist_item_parent_get(glit);
 
    Eina_Bool change_item = !d->children;
 
@@ -177,32 +174,33 @@ _add_child_cb(void *data, Evas_Object *o __UNUSED__, void *event_info __UNUSED__
    ndata->value = nitems++;
    ndata->children = NULL;
    ndata->favorite = EINA_FALSE;
-   ndata->level = elm_genlist_item_expanded_depth_get(it) + 1;
+   ndata->level = elm_genlist_item_expanded_depth_get(glit) + 1;
    d->children = eina_list_append(d->children, ndata);
 
    // Changing leaf item to parent item
    if (change_item)
      {
-        elm_genlist_item_del(it);
+        elm_genlist_item_del(glit);
 
-	if (prev != parent)
-	  it = elm_genlist_item_insert_after(list, &_itp, d, parent, prev,
-					     ELM_GENLIST_ITEM_SUBITEMS,
-					     _item_sel_cb, NULL);
-	else
-	  it = elm_genlist_item_prepend(list, &_itp, d, parent,
-					ELM_GENLIST_ITEM_SUBITEMS,
-					_item_sel_cb, NULL);
-	elm_genlist_item_expanded_set(it, EINA_FALSE);
-	elm_genlist_item_selected_set(it, EINA_TRUE);
+        if (glit_prev != glit_parent)
+          glit = elm_genlist_item_insert_after(list, &_itp, d, glit_parent,
+                                               glit_prev,
+                                               ELM_GENLIST_ITEM_SUBITEMS,
+                                               _item_sel_cb, NULL);
+        else
+          glit = elm_genlist_item_prepend(list, &_itp, d, glit_parent,
+                                          ELM_GENLIST_ITEM_SUBITEMS,
+                                          _item_sel_cb, NULL);
+        elm_genlist_item_expanded_set(glit, EINA_FALSE);
+        elm_genlist_item_selected_set(glit, EINA_TRUE);
      }
-   else if (elm_genlist_item_expanded_get(it))
+   else if (elm_genlist_item_expanded_get(glit))
      {
-	elm_genlist_item_append(list, &_itc, ndata, it,
-				ELM_GENLIST_ITEM_NONE, _item_sel_cb, NULL);
+        elm_genlist_item_append(list, &_itc, ndata, glit,
+                                ELM_GENLIST_ITEM_NONE, _item_sel_cb, NULL);
      }
 
-   elm_genlist_item_update(it);
+   elm_genlist_item_update(glit);
 
 }
 
@@ -220,79 +218,77 @@ static void
 _del_item_cb(void *data, Evas_Object *o __UNUSED__, void *event_info __UNUSED__)
 {
    Evas_Object *list = data;
-   Elm_Genlist_Item *it = elm_genlist_selected_item_get(list);
-   Elm_Genlist_Item *parent = NULL;
+   Elm_Object_Item *glit = elm_genlist_selected_item_get(list);
+   Elm_Object_Item *glit_parent = NULL;
 
-   if (!it)
-     return;
+   if (!glit) return;
 
-   Node_Data *pdata, *d = elm_genlist_item_data_get(it);
-   parent = elm_genlist_item_parent_get(it);
-   elm_genlist_item_subitems_clear(it);
-   elm_genlist_item_del(it);
+   Node_Data *pdata, *d = elm_genlist_item_data_get(glit);
+   glit_parent = elm_genlist_item_parent_get(glit_it);
+   elm_genlist_item_subitems_clear(glit);
+   elm_genlist_item_del(glit);
 
    _clear_list(d);
 
-   if (!parent)
-     return;
+   if (!glit_parent) return;
 
-   pdata = elm_genlist_item_data_get(parent);
+   pdata = elm_genlist_item_data_get(glit_parent);
    pdata->children = eina_list_remove(pdata->children, d);
-   elm_genlist_item_update(parent);
+   elm_genlist_item_update(glit_parent);
 }
 
 static void
 _expand_request_cb(void *data __UNUSED__, Evas_Object *o __UNUSED__, void *event_info)
 {
-   Elm_Genlist_Item *it = event_info;
+   Elm_Object_Item *glit = event_info;
    printf("expand request on item: %p\n", event_info);
-   elm_genlist_item_expanded_set(it, EINA_TRUE);
+   elm_genlist_item_expanded_set(glit, EINA_TRUE);
 }
 
 static void
 _contract_request_cb(void *data __UNUSED__, Evas_Object *o __UNUSED__, void *event_info)
 {
-   Elm_Genlist_Item *it = event_info;
+   Elm_Object_Item *glit = event_info;
    printf("contract request on item: %p\n", event_info);
-   elm_genlist_item_expanded_set(it, EINA_FALSE);
+   elm_genlist_item_expanded_set(glit, EINA_FALSE);
 }
 
 static void
 _expanded_cb(void *data __UNUSED__, Evas_Object *o __UNUSED__, void *event_info)
 {
    Eina_List *l;
-   Elm_Genlist_Item *it = event_info;
-   Node_Data *it_data, *d = elm_genlist_item_data_get(it);
-   Evas_Object *list = elm_genlist_item_genlist_get(it);
+   Elm_Object_Item *glit = event_info;
+   Node_Data *it_data, *d = elm_genlist_item_data_get(glit);
+   Evas_Object *list = elm_genlist_item_genlist_get(glit);
 
    Elm_Genlist_Item_Class *ic;
 
    EINA_LIST_FOREACH(d->children, l, it_data)
      {
-	Elm_Genlist_Item *nitem;
-	Elm_Genlist_Item_Flags flags = ELM_GENLIST_ITEM_NONE;
-	printf("expanding item: #%d from parent #%d\n", it_data->value, d->value);
-	if (it_data->favorite)
-	  ic = &_itfav;
-	else if (it_data->children)
-	  {
-	     ic = &_itp;
-	     flags = ELM_GENLIST_ITEM_SUBITEMS;
-	  }
-	else
-	  ic = &_itc;
+        Elm_Object_Item *nitem;
+        Elm_Genlist_Item_Flags flags = ELM_GENLIST_ITEM_NONE;
+        printf("expanding item: #%d from parent #%d\n", it_data->value, d->value);
+        if (it_data->favorite)
+          ic = &_itfav;
+        else if (it_data->children)
+          {
+             ic = &_itp;
+             flags = ELM_GENLIST_ITEM_SUBITEMS;
+          }
+        else
+          ic = &_itc;
 
-	nitem = elm_genlist_item_append(list, ic, it_data, it,
-					flags, _item_sel_cb, NULL);
-	elm_genlist_item_expanded_set(nitem, EINA_FALSE);
+        nitem = elm_genlist_item_append(list, ic, it_data, glit,
+                                        flags, _item_sel_cb, NULL);
+        elm_genlist_item_expanded_set(nitem, EINA_FALSE);
      }
 }
 
 static void
 _contracted_cb(void *data __UNUSED__, Evas_Object *o __UNUSED__, void *event_info)
 {
-   Elm_Genlist_Item *it = event_info;
-   elm_genlist_item_subitems_clear(it);
+   Elm_Object_Item *glit = event_info;
+   elm_genlist_item_subitems_clear(glit);
 }
 
 static Evas_Object *
@@ -362,7 +358,7 @@ elm_main(int argc __UNUSED__, char **argv __UNUSED__)
 
    fbox = elm_box_add(win);
    elm_box_layout_set(fbox, evas_object_box_layout_flow_horizontal,
-		      NULL, NULL);
+                      NULL, NULL);
    evas_object_size_hint_weight_set(fbox, EVAS_HINT_EXPAND, 0);
    evas_object_size_hint_align_set(fbox, EVAS_HINT_FILL, EVAS_HINT_FILL);
    elm_box_pack_end(box, fbox);
@@ -375,33 +371,33 @@ elm_main(int argc __UNUSED__, char **argv __UNUSED__)
 
    for (i = 0; i < N_ITEMS; i++)
      {
-	Elm_Genlist_Item *gli, *glg;
-	Node_Data *data = malloc(sizeof(*data)); // data for this item
-	data->children = NULL;
-	data->value = i;
-	data->favorite = EINA_FALSE;
-	nitems++;
+        Elm_Object_Item *gli, *glg;
+        Node_Data *data = malloc(sizeof(*data)); // data for this item
+        data->children = NULL;
+        data->value = i;
+        data->favorite = EINA_FALSE;
+        nitems++;
 
-	Node_Data *pdata; // data for the parent of the group
+        Node_Data *pdata; // data for the parent of the group
 
-	printf("creating item: #%d\n", data->value);
-	if (i % 3 == 0)
-	  {
-	     glg = gli = elm_genlist_item_append(list, &_itp, data, NULL,
-						 ELM_GENLIST_ITEM_SUBITEMS,
-						 _item_sel_cb, NULL);
-	     elm_genlist_item_expanded_set(glg, EINA_TRUE);
-	     pdata = data;
-	     data->level = 0;
-	  }
-	else
-	  {
-	     gli = elm_genlist_item_append(list, &_itc, data, glg,
-					   ELM_GENLIST_ITEM_NONE,
-					   _item_sel_cb, NULL);
-	     pdata->children = eina_list_append(pdata->children, data);
-	     data->level = 1;
-	  }
+        printf("creating item: #%d\n", data->value);
+        if (i % 3 == 0)
+          {
+             glg = gli = elm_genlist_item_append(list, &_itp, data, NULL,
+                                                 ELM_GENLIST_ITEM_SUBITEMS,
+                                                 _item_sel_cb, NULL);
+             elm_genlist_item_expanded_set(glg, EINA_TRUE);
+             pdata = data;
+             data->level = 0;
+          }
+        else
+          {
+             gli = elm_genlist_item_append(list, &_itc, data, glg,
+                                           ELM_GENLIST_ITEM_NONE,
+                                           _item_sel_cb, NULL);
+             pdata->children = eina_list_append(pdata->children, data);
+             data->level = 1;
+          }
      }
 
    evas_object_smart_callback_add(list, "expand,request", _expand_request_cb, list);

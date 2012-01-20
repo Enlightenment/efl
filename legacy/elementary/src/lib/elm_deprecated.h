@@ -1704,7 +1704,7 @@ EINA_DEPRECATED EAPI Evas_Object *elm_frame_content_unset(Evas_Object *obj);
 
 EINA_DEPRECATED EAPI void          elm_genlist_horizontal_mode_set(Evas_Object *obj, Elm_List_Mode mode);
 EINA_DEPRECATED EAPI Elm_List_Mode elm_genlist_horizontal_mode_get(const Evas_Object *obj);
-EINA_DEPRECATED EAPI void          elm_genlist_item_icons_orphan(Elm_Genlist_Item *it);
+EINA_DEPRECATED EAPI void          elm_genlist_item_icons_orphan(Elm_Object_Item *it);
 
 #define ELM_IMAGE_ROTATE_90_CW 1
 #define ELM_IMAGE_ROTATE_180_CW 2

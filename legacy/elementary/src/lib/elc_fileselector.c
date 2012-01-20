@@ -64,7 +64,7 @@ typedef struct _Widget_Request Widget_Request;
 struct _Widget_Request
 {
    Widget_Data *wd;
-   Elm_Genlist_Item *parent;
+   Elm_Object_Item *parent;
 
    Evas_Object *obj;
    const char *path;
@@ -103,7 +103,7 @@ static const Evas_Smart_Cb_Description _signals[] = {
 
 static void _populate(Evas_Object      *obj,
                       const char       *path,
-                      Elm_Genlist_Item *parent);
+                      Elm_Object_Item  *parent);
 static void _do_anchors(Evas_Object *obj,
                         const char  *path);
 
@@ -326,7 +326,7 @@ _expand_done(void            *data,
              Evas_Object *obj __UNUSED__,
              void            *event_info)
 {
-   Elm_Genlist_Item *it = event_info;
+   Elm_Object_Item *it = event_info;
    const char *path = elm_genlist_item_data_get(it);
    _populate(data, path, it);
 }
@@ -336,7 +336,7 @@ _contract_done(void *data       __UNUSED__,
                Evas_Object *obj __UNUSED__,
                void            *event_info)
 {
-   Elm_Genlist_Item *it = event_info;
+   Elm_Object_Item *it = event_info;
    elm_genlist_item_subitems_clear(it);
 }
 
@@ -345,8 +345,8 @@ _expand_req(void *data       __UNUSED__,
             Evas_Object *obj __UNUSED__,
             void            *event_info)
 {
-   Elm_Genlist_Item *it = event_info;
-   elm_genlist_item_expanded_set(it, 1);
+   Elm_Object_Item *it = event_info;
+   elm_genlist_item_expanded_set(it, EINA_TRUE);
 }
 
 static void
@@ -354,8 +354,8 @@ _contract_req(void *data       __UNUSED__,
               Evas_Object *obj __UNUSED__,
               void            *event_info)
 {
-   Elm_Genlist_Item *it = event_info;
-   elm_genlist_item_expanded_set(it, 0);
+   Elm_Object_Item *it = event_info;
+   elm_genlist_item_expanded_set(it, EINA_FALSE);
 }
 
 /***  PRIVATES  ***/
@@ -605,8 +605,8 @@ _file_grid_cmp(const void *a, const void *b)
 static int
 _file_list_cmp(const void *a, const void *b)
 {
-   const Elm_Genlist_Item *la = a;
-   const Elm_Genlist_Item *lb = b;
+   const Elm_Object_Item *la = a;
+   const Elm_Object_Item *lb = b;
    const Elm_Genlist_Item_Class *ca = elm_genlist_item_item_class_get(la);
    const Elm_Genlist_Item_Class *cb = elm_genlist_item_item_class_get(lb);
 
@@ -707,7 +707,7 @@ _error_cb(void *data, Eio_File *handler, int error __UNUSED__)
 static void
 _populate(Evas_Object      *obj,
           const char       *path,
-          Elm_Genlist_Item *parent)
+          Elm_Object_Item  *parent)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
 #ifdef HAVE_EIO
@@ -1154,7 +1154,7 @@ elm_fileselector_selected_get(const Evas_Object *obj)
 
    if (wd->mode == ELM_FILESELECTOR_LIST)
      {
-        Elm_Genlist_Item *it;
+        Elm_Object_Item *it;
         it = elm_genlist_selected_item_get(wd->files_list);
         if (it) return elm_genlist_item_data_get(it);
      }

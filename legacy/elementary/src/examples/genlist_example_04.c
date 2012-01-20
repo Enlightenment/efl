@@ -82,9 +82,9 @@ _append_cb(void *data, Evas_Object *o __UNUSED__, void *event_info __UNUSED__)
    Evas_Object *list = data;
 
    elm_genlist_item_append(list, &_itc,
-			   (void *)(long)nitems++, NULL,
-			   ELM_GENLIST_ITEM_NONE,
-			   _item_sel_cb, NULL);
+                           (void *)(long)nitems++, NULL,
+                           ELM_GENLIST_ITEM_NONE,
+                           _item_sel_cb, NULL);
 
 }
 
@@ -94,9 +94,9 @@ _prepend_cb(void *data, Evas_Object *o __UNUSED__, void *event_info __UNUSED__)
    Evas_Object *list = data;
 
    elm_genlist_item_prepend(list, &_itc,
-			   (void *)(long)nitems++, NULL,
-			   ELM_GENLIST_ITEM_NONE,
-			   _item_sel_cb, NULL);
+                            (void *)(long)nitems++, NULL,
+                            ELM_GENLIST_ITEM_NONE,
+                            _item_sel_cb, NULL);
 
 }
 
@@ -104,15 +104,14 @@ static void
 _insert_before_cb(void *data, Evas_Object *o __UNUSED__, void *event_info __UNUSED__)
 {
    Evas_Object *list = data;
-   Elm_Genlist_Item *it = elm_genlist_selected_item_get(list);
+   Elm_Object_Item *glit = elm_genlist_selected_item_get(list);
 
-   if (!it)
-     return;
+   if (!glit) return;
 
    elm_genlist_item_insert_before(list, &_itc,
-				  (void *)(long)nitems++, NULL,
-				  it, ELM_GENLIST_ITEM_NONE,
-				  _item_sel_cb, NULL);
+                                  (void *)(long)nitems++, NULL,
+                                  glit, ELM_GENLIST_ITEM_NONE,
+                                  _item_sel_cb, NULL);
 
 }
 
@@ -120,15 +119,14 @@ static void
 _insert_after_cb(void *data, Evas_Object *o __UNUSED__, void *event_info __UNUSED__)
 {
    Evas_Object *list = data;
-   Elm_Genlist_Item *it = elm_genlist_selected_item_get(list);
+   Elm_Object_Item *glit = elm_genlist_selected_item_get(list);
 
-   if (!it)
-     return;
+   if (!glit) return;
 
    elm_genlist_item_insert_after(list, &_itc,
-				 (void *)(long)nitems++, NULL,
-				 it, ELM_GENLIST_ITEM_NONE,
-				 _item_sel_cb, NULL);
+                                 (void *)(long)nitems++, NULL,
+                                 glit, ELM_GENLIST_ITEM_NONE,
+                                 _item_sel_cb, NULL);
 
 }
 
@@ -136,112 +134,90 @@ static void
 _next_cb(void *data, Evas_Object *o __UNUSED__, void *event_info __UNUSED__)
 {
    Evas_Object *list = data;
-   Elm_Genlist_Item *it;
+   Elm_Object_Item *glit = elm_genlist_selected_item_get(list);
 
-   it = elm_genlist_selected_item_get(list);
-   if (it)
-     it = elm_genlist_item_next_get(it);
+   if (glit) glit = elm_genlist_item_next_get(it);
+   if (!glit) glit = elm_genlist_first_item_get(list);
 
-   if (!it)
-     it = elm_genlist_first_item_get(list);
-
-   elm_genlist_item_selected_set(it, EINA_TRUE);
-   elm_genlist_item_show(it);
+   elm_genlist_item_selected_set(glit, EINA_TRUE);
+   elm_genlist_item_show(glit);
 }
 
 static void
 _prev_cb(void *data, Evas_Object *o __UNUSED__, void *event_info __UNUSED__)
 {
    Evas_Object *list = data;
-   Elm_Genlist_Item *it;
+   Elm_Object_Item *glit = elm_genlist_selected_item_get(list);
 
-   it = elm_genlist_selected_item_get(list);
-   if (it)
-     it = elm_genlist_item_prev_get(it);
+   if (glit) glit = elm_genlist_item_prev_get(glit);
+   if (!glit) glit = elm_genlist_last_item_get(list);
 
-   if (!it)
-     it = elm_genlist_last_item_get(list);
-
-   elm_genlist_item_selected_set(it, EINA_TRUE);
-   elm_genlist_item_show(it);
+   elm_genlist_item_selected_set(glit, EINA_TRUE);
+   elm_genlist_item_show(glit);
 }
 
 static void
 _bring_in_cb(void *data, Evas_Object *o __UNUSED__, void *event_info __UNUSED__)
 {
-   Elm_Genlist_Item *it = data;
+   Elm_Object_Item *glit = data;
+   if (!glit) return;
 
-   if (!it)
-     return;
-
-   elm_genlist_item_bring_in(it);
+   elm_genlist_item_bring_in(glit);
 }
 
 static void
 _show_cb(void *data, Evas_Object *o __UNUSED__, void *event_info __UNUSED__)
 {
-   Elm_Genlist_Item *it = data;
+   Elm_Object_Item *glit = data;
+   if (!glit) return;
 
-   if (!it)
-     return;
-
-   elm_genlist_item_show(it);
+   elm_genlist_item_show(glit);
 }
 
 static void
 _middle_in_cb(void *data, Evas_Object *o __UNUSED__, void *event_info __UNUSED__)
 {
-   Elm_Genlist_Item *it = data;
+   Elm_Object_Item *glit = data;
+   if (!glit) return;
 
-   if (!it)
-     return;
-
-   elm_genlist_item_middle_bring_in(it);
+   elm_genlist_item_middle_bring_in(glit);
 }
 
 static void
 _middle_show_cb(void *data, Evas_Object *o __UNUSED__, void *event_info __UNUSED__)
 {
-   Elm_Genlist_Item *it = data;
+   Elm_Object_Item *glit = data;
+   if (!glit) return;
 
-   if (!it)
-     return;
-
-   elm_genlist_item_middle_show(it);
+   elm_genlist_item_middle_show(glit);
 }
 
 static void
 _top_in_cb(void *data, Evas_Object *o __UNUSED__, void *event_info __UNUSED__)
 {
-   Elm_Genlist_Item *it = data;
+   Elm_Object_Item *glit = data;
+   if (!glit) return;
 
-   if (!it)
-     return;
-
-   elm_genlist_item_top_bring_in(it);
+   elm_genlist_item_top_bring_in(glit);
 }
 
 static void
 _top_show_cb(void *data, Evas_Object *o __UNUSED__, void *event_info __UNUSED__)
 {
-   Elm_Genlist_Item *it = data;
+   Elm_Object_Item *glit = data;
+   if (!glit) return;
 
-   if (!it)
-     return;
-
-   elm_genlist_item_top_show(it);
+   elm_genlist_item_top_show(glit);
 }
 
 static void
 _realize_cb(void *data, Evas_Object *o __UNUSED__, void *event_info __UNUSED__)
 {
    Evas_Object *list = data;
-   Elm_Genlist_Item *it = elm_genlist_selected_item_get(list);
+   Elm_Object_Item *glit = elm_genlist_selected_item_get(list);
+   if (!glit) return;
 
-   if (!it)
-     return;
-
-   elm_genlist_item_update(it);
+   elm_genlist_item_update(glit);
 }
 
 static Evas_Object *
@@ -330,7 +306,7 @@ elm_main(int argc __UNUSED__, char **argv __UNUSED__)
 
    for (i = 0; i < N_ITEMS; i++)
      {
-	Elm_Genlist_Item *gli, *glg;
+        Elm_Object_Item *gli, *glg;
 
 	if (i % 7 == 0)
 	  {

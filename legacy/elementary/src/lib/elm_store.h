@@ -108,4 +108,4 @@ EAPI Eina_Bool               elm_store_sorted_get(const Elm_Store *st);
 EAPI void                    elm_store_item_data_set(Elm_Store_Item *sti, void *data);
 EAPI void                   *elm_store_item_data_get(Elm_Store_Item *sti);
 EAPI const Elm_Store        *elm_store_item_store_get(const Elm_Store_Item *sti);
-EAPI const Elm_Genlist_Item *elm_store_item_genlist_item_get(const Elm_Store_Item *sti);
+EAPI const Elm_Object_Item *elm_store_item_genlist_item_get(const Elm_Store_Item *sti);

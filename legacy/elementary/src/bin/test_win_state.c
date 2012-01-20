@@ -5,7 +5,7 @@
 #ifndef ELM_LIB_QUICKLAUNCH
 typedef struct _Testitem
 {
-   Elm_Genlist_Item *item;
+   Elm_Object_Item *item;
    int mode, onoff;
 } Testitem;
 

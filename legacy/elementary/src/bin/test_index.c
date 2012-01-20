@@ -41,7 +41,7 @@ void
 test_index(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    Evas_Object *win, *bg, *gl, *id;
-   Elm_Genlist_Item *it;
+   Elm_Object_Item *glit;
    int i, j;
 
    win = elm_win_add(NULL, "index", ELM_WIN_BASIC);
@@ -73,16 +73,17 @@ test_index(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info 
    j = 0;
    for (i = 0; i < 100; i++)
      {
-        it = elm_genlist_item_append(gl, &itci,
-                                     (void *)(long)j/* item data */,
-                                     NULL/* parent */, ELM_GENLIST_ITEM_NONE,
-                                     NULL/* func */, NULL/* func data */);
+        glit = elm_genlist_item_append(gl, &itci,
+                                       (void *)(long)j/* item data */,
+                                       NULL/* parent */,
+                                       ELM_GENLIST_ITEM_NONE,
+                                       NULL/* func */, NULL/* func data */);
         if (!(j & 0xf))
           {
              char buf[32];
 
              snprintf(buf, sizeof(buf), "%c", 'A' + ((j >> 4) & 0xf));
-             elm_index_item_append(id, buf, it);
+             elm_index_item_append(id, buf, glit);
           }
         j += 2;
      }
