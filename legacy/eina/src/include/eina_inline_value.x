@@ -69,7 +69,7 @@ EAPI extern const Eina_Value_Type *_EINA_VALUE_TYPE_BASICS_END;
     }                                                                   \
   while (0)
 
-#define EINA_VALUE_TYPE_DISPATCH_RETURN(value, method, no_method_err, def_ret, ...) \
+#define EINA_VALUE_TYPE_DISPATCH_RETURN(type, method, no_method_err, def_ret, ...) \
   do                                                                    \
     {                                                                   \
        if (type->method)                                                \
