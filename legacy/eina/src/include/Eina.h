@@ -120,15 +120,22 @@
  * @author Carsten Haitzler <raster@@rasterman.com>
  * @author Cedric Bail <cedric.bail@@free.fr>
  * @author Corey "atmos" Donohoe <atmos@@atmos.org>
+ * @author Vincent "caro" Torri  <vtorri at univ-evry dot fr>
  * @author Fabiano Fidêncio <fidencio@@profusion.mobi>
  * @author Gustavo Chaves <glima@@profusion.mobi>
  * @author Gustavo Sverzut Barbieri <barbieri@@profusion.mobi>
  * @author Jorge Luis "turran" Zapata <jorgeluis.zapata@@gmail.com>
+ * @author Tilman Sauerbeck <tilman@@code-monkey.de>
  * @author Peter "pfritz" Wehrfritz <peter.wehrfritz@@web.de>
  * @author Raphael Kubo da Costa <kubo@@profusion.mobi>
- * @author Tilman Sauerbeck <tilman@@code-monkey.de>
- * @author Vincent "caro" Torri  <vtorri at univ-evry dot fr>
  * @author Tom Hacohen <tom@@stosb.com>
+ * @author Brett Nash <nash@@nash.id.au>
+ * @author Sebastian Dransfeld <sd@@tango.flipp.net>
+ * @author Myungjae Lee <mjae.lee@@samsung.com>
+ * @author Youness Alaoui <kakaroto@@kakaroto.homelinux.net>
+ * @author Boris "billiob" Faure <billiob@@gmail.com>
+ * @author Sung W. Park <sungwoo@@gmail.com>
+ * @author Guillaume Friloux <guillaume.friloux@@asp64.com>
  *
  * Please contact <enlightenment-devel@lists.sourceforge.net> to get in
  * contact with the developers and maintainers.
