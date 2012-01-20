@@ -2186,3 +2186,45 @@ elm_object_item_object_get(const Elm_Object_Item *it)
 {
    return elm_object_item_widget_get(it);
 }
+
+EAPI void
+elm_object_item_cursor_set(Elm_Object_Item *item, const char *cursor)
+{
+   elm_widget_item_tooltip_style_set(item, cursor);
+}
+
+EAPI const char *
+elm_object_item_cursor_get(const Elm_Object_Item *item)
+{
+   return elm_widget_item_cursor_get(item);
+}
+
+EAPI void
+elm_object_item_cursor_unset(Elm_Object_Item *item)
+{
+   elm_widget_item_cursor_unset(item);
+}
+
+EAPI void
+elm_object_item_cursor_style_set(Elm_Object_Item *item, const char *style)
+{
+   elm_widget_item_cursor_style_set(item, style);
+}
+
+EAPI const char *
+elm_object_item_cursor_style_get(const Elm_Object_Item *item)
+{
+   return elm_widget_item_cursor_style_get(item);
+}
+
+EAPI void
+elm_object_item_cursor_engine_only_set(Elm_Object_Item *item, Eina_Bool engine_only)
+{
+   elm_widget_item_cursor_engine_only_set(item, engine_only);
+}
+
+EAPI Eina_Bool
+elm_object_item_cursor_engine_only_get(const Elm_Object_Item *item)
+{
+   return elm_widget_item_cursor_engine_only_get(item);
+}

@@ -296,3 +296,137 @@ EAPI void                         elm_object_item_tooltip_style_set(Elm_Object_I
  * @ingroup General
  */
 EAPI const char                  *elm_object_item_tooltip_style_get(const Elm_Object_Item *item);
+
+ 
+/**
+  * Set the type of mouse pointer/cursor decoration to be shown,
+  * when the mouse pointer is over the given item
+  *
+  * @param ite, item to customize cursor on
+  * @param cursor the cursor type's name
+  *
+  * This function works analogously as elm_object_cursor_set(), but
+  * here the cursor's changing area is restricted to the item's
+  * area, and not the whole widget's. Note that that item cursors
+  * have precedence over widget cursors, so that a mouse over an
+  * item with custom cursor set will always show @b that cursor.
+  *
+  * If this function is called twice for an object, a previously set
+  * cursor will be unset on the second call.
+  *
+  * @see elm_object_cursor_set()
+  * @see elm_object_item_cursor_get()
+  * @see elm_object_item_cursor_unset()
+  *
+  * @ingroup General
+  */
+EAPI void                         elm_object_item_cursor_set(Elm_Object_Item *item, const char *cursor);
+
+/*
+ * Get the type of mouse pointer/cursor decoration set to be shown,
+ * when the mouse pointer is over the given item
+ *
+ * @param item item with custom cursor set
+ * @return the cursor type's name or @c NULL, if no custom cursors
+ * were set to @p item (and on errors)
+ *
+ * @see elm_object_cursor_get()
+ * @see elm_object_item_cursor_set()
+ * @see elm_object_item_cursor_unset()
+ *
+ * @ingroup General
+ */
+EAPI const char                  *elm_object_item_cursor_get(const Elm_Object_Item *item);
+
+/**
+ * Unset any custom mouse pointer/cursor decoration set to be
+ * shown, when the mouse pointer is over the given
+ * item, thus making it show the @b default cursor again.
+ *
+ * @param item the item
+ *
+ * Use this call to undo any custom settings on this item's cursor
+ * decoration, bringing it back to defaults (no custom style set).
+ *
+ * @see elm_object_cursor_unset()
+ * @see elm_object_item_cursor_set()
+ *
+ * @ingroup General
+ */
+EAPI void                         elm_list_item_cursor_unset(Elm_Object_Item *item);
+
+/**
+ * Set a different @b style for a given custom cursor set for an
+ * item.
+ *
+ * @param item item with custom cursor set
+ * @param style the <b>theme style</b> to use (e.g. @c "default",
+ * @c "transparent", etc)
+ *
+ * This function only makes sense when one is using custom mouse
+ * cursor decorations <b>defined in a theme file</b>, which can have,
+ * given a cursor name/type, <b>alternate styles</b> on it. It
+ * works analogously as elm_object_cursor_style_set(), but here
+ * applyed only to item objects.
+ *
+ * @warning Before you set a cursor style you should have definen a
+ *       custom cursor previously on the item, with
+ *       elm_list_item_cursor_set()
+ *
+ * @see elm_object_item_cursor_engine_only_set()
+ * @see elm_object_item_cursor_style_get()
+ *
+ * @ingroup General
+ */
+EAPI void                         elm_list_item_cursor_style_set(Elm_Object_Item *item, const char *style);
+
+/**
+ * Get the current @b style set for a given item's custom
+ * cursor
+ *
+ * @param item item with custom cursor set.
+ * @return style the cursor style in use. If the object does not
+ *         have a cursor set, then @c NULL is returned.
+ *
+ * @see elm_object_item_cursor_style_set() for more details
+ *
+ * @ingroup General
+ */
+EAPI const char                  *elm_list_item_cursor_style_get(const Elm_Object_Item *item);
+
+/**
+ * Set if the (custom)cursor for a given item should be
+ * searched in its theme, also, or should only rely on the
+ * rendering engine.
+ *
+ * @param item item with custom (custom) cursor already set on
+ * @param engine_only Use @c EINA_TRUE to have cursors looked for
+ * only on those provided by the rendering engine, @c EINA_FALSE to
+ * have them searched on the widget's theme, as well.
+ *
+ * @note This call is of use only if you've set a custom cursor
+ * for items, with elm_object_item_cursor_set().
+ *
+ * @note By default, cursors will only be looked for between those
+ * provided by the rendering engine.
+ *
+ * @ingroup General
+ */
+EAPI void                         elm_list_item_cursor_engine_only_set(Elm_Object_Item *item, Eina_Bool engine_only);
+
+/**
+ * Get if the (custom) cursor for a given item is being
+ * searched in its theme, also, or is only relying on the rendering
+ * engine.
+ *
+ * @param item an item
+ * @return @c EINA_TRUE, if cursors are being looked for only on
+ * those provided by the rendering engine, @c EINA_FALSE if they
+ * are being searched on the widget's theme, as well.
+ *
+ * @see elm_object_item_cursor_engine_only_set(), for more details
+ *
+ * @ingroup General
+ */
+EAPI Eina_Bool                    elm_list_item_cursor_engine_only_get(const Elm_Object_Item *item);
+    

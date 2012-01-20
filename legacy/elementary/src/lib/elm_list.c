@@ -2081,42 +2081,42 @@ elm_list_item_cursor_set(Elm_Object_Item *it, const char *cursor)
    elm_widget_item_cursor_set(it, cursor);
 }
 
-EAPI const char *
+EINA_DEPRECATED EAPI const char *
 elm_list_item_cursor_get(const Elm_Object_Item *it)
 {
    ELM_LIST_ITEM_CHECK_DELETED_RETURN(it, NULL);
    return elm_widget_item_cursor_get(it);
 }
 
-EAPI void
+EINA_DEPRECATED EAPI void
 elm_list_item_cursor_unset(Elm_Object_Item *it)
 {
    ELM_LIST_ITEM_CHECK_DELETED_RETURN(it);
    elm_widget_item_cursor_unset(it);
 }
 
-EAPI void
+EINA_DEPRECATED EAPI void
 elm_list_item_cursor_style_set(Elm_Object_Item *it, const char *style)
 {
    ELM_LIST_ITEM_CHECK_DELETED_RETURN(it);
    elm_widget_item_cursor_style_set(it, style);
 }
 
-EAPI const char *
+EINA_DEPRECATED EAPI const char *
 elm_list_item_cursor_style_get(const Elm_Object_Item *it)
 {
    ELM_LIST_ITEM_CHECK_DELETED_RETURN(it, NULL);
    return elm_widget_item_cursor_style_get(it);
 }
 
-EAPI void
+EINA_DEPRECATED EAPI void
 elm_list_item_cursor_engine_only_set(Elm_Object_Item *it, Eina_Bool engine_only)
 {
    ELM_LIST_ITEM_CHECK_DELETED_RETURN(it);
    elm_widget_item_cursor_engine_only_set(it, engine_only);
 }
 
-EAPI Eina_Bool
+EINA_DEPRECATED EAPI Eina_Bool
 elm_list_item_cursor_engine_only_get(const Elm_Object_Item *it)
 {
    ELM_LIST_ITEM_CHECK_DELETED_RETURN(it, EINA_FALSE);
