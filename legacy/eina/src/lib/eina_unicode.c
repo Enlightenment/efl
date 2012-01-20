@@ -15,10 +15,17 @@
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library;
  * if not, see <http://www.gnu.org/licenses/>.
-
  */
 
-#include <Eina.h>
+#ifdef HAVE_CONFIG_H
+# include "config.h"
+#endif
+
+#include "eina_config.h"
+#include "eina_private.h"
+
+/* undefs EINA_ARG_NONULL() so NULL checks are not compiled out! */
+#include "eina_safety_checks.h"
 #include "eina_unicode.h"
 
 /* FIXME: check if sizeof(wchar_t) == sizeof(Eina_Unicode) if so,
