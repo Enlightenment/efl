@@ -294,6 +294,7 @@ _edje_object_file_set_internal(Evas_Object *obj, const char *file, const char *g
 
    ed->load_error = EDJE_LOAD_ERROR_NONE;
    _edje_file_add(ed);
+   ed->block_break = 0;
 
    if (ed->file && ed->file->external_dir)
      {

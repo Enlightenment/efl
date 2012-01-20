@@ -285,3 +285,9 @@
 2012-01-14  Carsten Haitzler (The Rasterman)
 
         * Added minmul propery for edje to multiply minimum size during min size calc
+
+2012-01-20  Carsten Haitzler (The Rasterman)
+
+        * Fix the ability to change the edje file source of an edje object
+        inside a callback - it worked but you couldn't swallow/set text etc.
+
