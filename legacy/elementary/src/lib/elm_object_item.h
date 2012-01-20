@@ -353,7 +353,7 @@ EAPI const char                  *elm_object_item_cursor_get(const Elm_Object_It
  *
  * @ingroup General
  */
-EAPI void                         elm_list_item_cursor_unset(Elm_Object_Item *item);
+EAPI void                         elm_object_item_cursor_unset(Elm_Object_Item *item);
 
 /**
  * Set a different @b style for a given custom cursor set for an
@@ -371,14 +371,14 @@ EAPI void                         elm_list_item_cursor_unset(Elm_Object_Item *it
  *
  * @warning Before you set a cursor style you should have definen a
  *       custom cursor previously on the item, with
- *       elm_list_item_cursor_set()
+ *       elm_object_item_cursor_set()
  *
  * @see elm_object_item_cursor_engine_only_set()
  * @see elm_object_item_cursor_style_get()
  *
  * @ingroup General
  */
-EAPI void                         elm_list_item_cursor_style_set(Elm_Object_Item *item, const char *style);
+EAPI void                         elm_object_item_cursor_style_set(Elm_Object_Item *item, const char *style);
 
 /**
  * Get the current @b style set for a given item's custom
@@ -392,7 +392,7 @@ EAPI void                         elm_list_item_cursor_style_set(Elm_Object_Item
  *
  * @ingroup General
  */
-EAPI const char                  *elm_list_item_cursor_style_get(const Elm_Object_Item *item);
+EAPI const char                  *elm_object_item_cursor_style_get(const Elm_Object_Item *item);
 
 /**
  * Set if the (custom)cursor for a given item should be
@@ -412,7 +412,7 @@ EAPI const char                  *elm_list_item_cursor_style_get(const Elm_Objec
  *
  * @ingroup General
  */
-EAPI void                         elm_list_item_cursor_engine_only_set(Elm_Object_Item *item, Eina_Bool engine_only);
+EAPI void                         elm_object_item_cursor_engine_only_set(Elm_Object_Item *item, Eina_Bool engine_only);
 
 /**
  * Get if the (custom) cursor for a given item is being
@@ -428,5 +428,5 @@ EAPI void                         elm_list_item_cursor_engine_only_set(Elm_Objec
  *
  * @ingroup General
  */
-EAPI Eina_Bool                    elm_list_item_cursor_engine_only_get(const Elm_Object_Item *item);
+EAPI Eina_Bool                    elm_object_item_cursor_engine_only_get(const Elm_Object_Item *item);
     
