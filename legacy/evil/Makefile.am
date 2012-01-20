@@ -29,7 +29,10 @@ EXTRA_DIST = \
 COPYING \
 COPYING-PLAIN \
 autogen.sh \
-evil.pc.in
+evil.pc.in \
+m4/common/efl_attribute.m4 \
+m4/common/efl_doxygen.m4 \
+m4/evil/evil_windows.m4
 
 pkgconfigdir = $(libdir)/pkgconfig
 pkgconfig_DATA = evil.pc

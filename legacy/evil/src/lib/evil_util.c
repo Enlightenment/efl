@@ -216,3 +216,23 @@ evil_homedir_get(void)
    return homedir;
 #endif /* ! _WIN32_WCE */
 }
+
+int
+evil_path_is_absolute(const char *path)
+{
+   size_t length;
+
+   if (!path)
+     return 0;
+
+   length = strlen(path);
+   if (length < 3) return 0;
+
+   if ((((*path >= 'a') && (*path <= 'z')) ||
+        ((*path >= 'A') && (*path <= 'Z'))) &&
+       (path[1] == ':') &&
+       ((path[2] == '/') || (path[2] == '\\')))
+     return 1;
+
+   return 0;
+}

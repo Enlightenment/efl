@@ -39,6 +39,5 @@ test_realpath_run(suite *s)
 int
 test_realpath(suite *s)
 {
-
    return test_realpath_run(s);
 }

@@ -17,11 +17,7 @@ evil_basename(char *path)
    size_t length;
 
    /* path must begin by "?:\" or "?:/" */
-   if ((!path) ||
-       (strlen(path) <= 3) ||
-       ((path[0] < 'a' || path[0] > 'z') && (path[0] < 'A' || path[0] > 'Z')) ||
-       (path[1] != ':') ||
-       ((path[2] != '/') && (path[2] != '\\')))
+   if ((!path) || !evil_path_is_absolute(path))
      {
         memcpy(_evil_basename_buf, "C:\\", 4);
         return _evil_basename_buf;
@@ -67,11 +63,7 @@ evil_dirname(char *path)
    size_t length;
 
    /* path must begin by "?:\" or "?:/" */
-   if ((!path) ||
-       (strlen(path) <= 3) ||
-       ((path[0] < 'a' || path[0] > 'z') && (path[0] < 'A' || path[0] > 'Z')) ||
-       (path[1] != ':') ||
-       ((path[2] != '/') && (path[2] != '\\')))
+   if ((!path) || !evil_path_is_absolute(path))
      {
         memcpy(_evil_dirname_buf, "C:\\", 4);
         return _evil_dirname_buf;

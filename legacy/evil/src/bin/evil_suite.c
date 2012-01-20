@@ -19,6 +19,7 @@
 #include "evil_test_mkstemp.h"
 #include "evil_test_pipe.h"
 #include "evil_test_realpath.h"
+#include "evil_test_util.h"
 
 
 typedef int(*function)(suite *s);
@@ -185,6 +186,7 @@ main(void)
      { "mkstemp     ",  test_mkstemp },
      { "pipe        ",  test_pipe },
      { "realpath    ",  test_realpath },
+     { "util        ",  test_util },
 /*      { "memcpy      ",  test_memcpy }, */
      { NULL,            NULL },
    };

@@ -20,7 +20,7 @@ test_dlfcn_test_dlopen(void)
 {
    void *handle;
 
-   handle = dlopen("libevil-0.dll", 0);
+   handle = dlopen("libevil-1.dll", 0);
    if (!handle)
      return 0;
 
@@ -37,7 +37,7 @@ test_dlfcn_test_dlsym(void)
    _evil_init     sym_init;
    _evil_shutdwon sym_shutdown;
 
-   handle = dlopen("libevil-0.dll", 0);
+   handle = dlopen("libevil-1.dll", 0);
    if (!handle)
      return 0;
 

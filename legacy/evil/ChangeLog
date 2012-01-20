@@ -1,3 +1,19 @@
+2012-01-20  Vincent Torri  <doursse at users dot sf dot net>
+
+	* Makefile.am:
+	Fix EXTRA_DIST variable
+
+	* src/bin/Makefile.am:
+	* src/bin/evil_suite.c:
+	* src/lib/evil_libgen.c:
+	* src/lib/evil_util.c:
+	* src/lib/evil_util.h:
+	Add evil_path_is_absolute() API and use it.
+
+	* src/bin/evil_test_dlfcn.c:
+	* src/bin/evil_test_realpath.c:
+	clean up.
+
 2011-12-02  Vincent Torri  <doursse at users dot sf dot net>
 
 	Release Version 1.0.0.
