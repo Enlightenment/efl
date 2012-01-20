@@ -66,6 +66,9 @@ Additions:
     * underline dashing suport to textblock
     * API to get largest image size
     * GL Cocoa engine
+    * Evas GL support in software backend through OSMesa
+    * API to new/free Evas_GL_Config rather than user declaring it
+    * Evas GL Direct rendering option hint to allow rendering to evas' window when possible
 
 Fixes:
 

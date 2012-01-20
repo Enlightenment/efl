@@ -638,7 +638,7 @@
 	* Add evas_object_smart_callback_del_full() to allow users to
 	unregister a specific smart event callback instead of all
 	callbacks matching a given type and function pointer.
-        
+
 2012-01-17  Carsten Haitzler (The Rasterman)
 
         * Add EVAS_OBJECT_POINTER_MODE_NOGRAB_NO_REPEAT_UPDOWN pointer mode
@@ -647,3 +647,16 @@
 2012-01-19  Cedric Bail
 
 	* Add double buffer support to buffer engine.
+
+2012-01-20  Sung W. Park (sung_)
+
+	* Add Direct Rendering to Evas' window optimization for Evas_GL.  This 
+          optimization can be significant since it avoids and extra copy from
+          an offscreen buffer.  Normally, Evas_GL will render to a render
+          target using an FBO. This can be enabled by giving 
+          EVAS_GL_OPTIONS_DIRECT hint in the config options_bits. Direct 
+          rendering is actually done if the following conditions are met - 
+          1) All GL rendering is done in the pixel_getter callback 2) No 
+          rotation on the image object 3) Corresponding image 
+          object has alpha disabled.
+
