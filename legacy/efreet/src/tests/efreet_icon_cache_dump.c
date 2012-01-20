@@ -3,8 +3,6 @@
 #endif
 #include <limits.h>
 #include <stdio.h>
-#include <dirent.h>
-#include <sys/types.h>
 #include <sys/stat.h>
 #include <sys/mman.h>
 #include <fcntl.h>
