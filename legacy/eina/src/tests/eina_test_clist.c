@@ -6,7 +6,7 @@
 #include <string.h>
 #include <assert.h>
 
-#include <Eina.h>
+#include "Eina.h"
 #include "eina_suite.h"
 
 Eina_Clist string_list = EINA_CLIST_INIT(string_list);
