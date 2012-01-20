@@ -629,7 +629,7 @@ eio_file_copy_do(Ecore_Thread *thread, Eio_File_Progress *copy)
 #endif
 
    /* open write */
-   out = open(copy->dest, O_WRONLY | O_CREAT | O_TRUNC);
+   out = open(copy->dest, O_WRONLY | O_CREAT | O_TRUNC, S_IRUSR | S_IWUSR);
    if (out < 0)
      goto on_error;
 
