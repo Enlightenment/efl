@@ -23,6 +23,7 @@
 
 #include "eina_config.h"
 #include "eina_private.h"
+#include <string.h>
 
 /* undefs EINA_ARG_NONULL() so NULL checks are not compiled out! */
 #include "eina_safety_checks.h"
@@ -37,6 +38,9 @@ EAPI const Eina_Unicode *EINA_UNICODE_EMPTY_STRING = _EINA_UNICODE_EMPTY_STRING;
 EAPI int
 eina_unicode_strcmp(const Eina_Unicode *a, const Eina_Unicode *b)
 {
+   EINA_SAFETY_ON_NULL_RETURN_VAL(a, -1);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(b, -1);
+
    for (; *a && *a == *b; a++, b++)
       ;
    if (*a == *b)
@@ -52,6 +56,9 @@ eina_unicode_strcpy(Eina_Unicode *dest, const Eina_Unicode *source)
 {
    Eina_Unicode *ret = dest;
 
+   EINA_SAFETY_ON_NULL_RETURN_VAL(dest, NULL);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(source, NULL);
+
    while (*source)
       *dest++ = *source++;
    *dest = 0;
@@ -62,6 +69,9 @@ EAPI Eina_Unicode *
 eina_unicode_strncpy(Eina_Unicode *dest, const Eina_Unicode *source, size_t n)
 {
    Eina_Unicode *ret = dest;
+
+   EINA_SAFETY_ON_NULL_RETURN_VAL(dest, NULL);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(source, NULL);
 
    for ( ; n && *source ; n--)
       *dest++ = *source++;
@@ -74,6 +84,9 @@ EAPI size_t
 eina_unicode_strlen(const Eina_Unicode *ustr)
 {
    const Eina_Unicode *end;
+
+   EINA_SAFETY_ON_NULL_RETURN_VAL(ustr, 0);
+
    for (end = ustr; *end; end++)
       ;
    return end - ustr;
@@ -84,6 +97,9 @@ eina_unicode_strnlen(const Eina_Unicode *ustr, int n)
 {
    const Eina_Unicode *end;
    const Eina_Unicode *last = ustr + n; /* technically not portable ;-) */
+
+   EINA_SAFETY_ON_NULL_RETURN_VAL(ustr, 0);
+
    for (end = ustr; end < last && *end; end++)
       ;
    return end - ustr;
@@ -97,7 +113,9 @@ eina_unicode_strndup(const Eina_Unicode *text, size_t n)
 {
    Eina_Unicode *ustr;
 
-   ustr = (Eina_Unicode *) malloc((n + 1) * sizeof(Eina_Unicode));
+   EINA_SAFETY_ON_NULL_RETURN_VAL(text, NULL);
+
+   ustr = malloc((n + 1) * sizeof(Eina_Unicode));
    memcpy(ustr, text, n * sizeof(Eina_Unicode));
    ustr[n] = 0;
    return ustr;
@@ -108,6 +126,8 @@ eina_unicode_strdup(const Eina_Unicode *text)
 {
    size_t len;
 
+   EINA_SAFETY_ON_NULL_RETURN_VAL(text, NULL);
+
    len = eina_unicode_strlen(text);
    return eina_unicode_strndup(text, len);
 }
@@ -116,6 +136,9 @@ EAPI Eina_Unicode *
 eina_unicode_strstr(const Eina_Unicode *haystack, const Eina_Unicode *needle)
 {
    const Eina_Unicode *i, *j;
+
+   EINA_SAFETY_ON_NULL_RETURN_VAL(haystack, NULL);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(needle, NULL);
 
    for (i = haystack; *i; i++)
      {
@@ -137,6 +160,8 @@ eina_unicode_escape(const Eina_Unicode *str)
 {
    Eina_Unicode *s2, *d;
    const Eina_Unicode *s;
+
+   EINA_SAFETY_ON_NULL_RETURN_VAL(str, NULL);
 
    s2 = malloc((eina_unicode_strlen(str) * 2) + 1);
    if (!s2)
@@ -171,6 +196,9 @@ eina_unicode_utf8_get_next(const char *buf, int *iindex)
    int ind = *iindex;
    Eina_Unicode r;
    unsigned char d;
+
+   EINA_SAFETY_ON_NULL_RETURN_VAL(buf, 0);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(iindex, 0);
 
    /* if this char is the null terminator, exit */
    if ((d = buf[ind++]) == 0) return 0;
@@ -273,8 +301,12 @@ error:
 EAPI Eina_Unicode
 eina_unicode_utf8_get_prev(const char *buf, int *iindex)
 {
-   int r;
-   int ind = *iindex;
+   int r, ind;
+
+   EINA_SAFETY_ON_NULL_RETURN_VAL(buf, 0);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(iindex, 0);
+
+   ind = *iindex;
    /* First obtain the codepoint at iindex */
    r = eina_unicode_utf8_get_next(buf, &ind);
 
@@ -299,6 +331,8 @@ eina_unicode_utf8_get_len(const char *buf)
    /* returns the number of utf8 characters (not bytes) in the string */
    int i = 0, len = 0;
 
+   EINA_SAFETY_ON_NULL_RETURN_VAL(buf, 0);
+
    while (eina_unicode_utf8_get_next(buf, &i))
         len++;
 
@@ -312,6 +346,8 @@ eina_unicode_utf8_to_unicode(const char *utf, int *_len)
    int len, i;
    int ind;
    Eina_Unicode *buf, *uind;
+
+   EINA_SAFETY_ON_NULL_RETURN_VAL(utf, NULL);
 
    len = eina_unicode_utf8_get_len(utf);
    if (_len)
@@ -334,6 +370,8 @@ eina_unicode_unicode_to_utf8(const Eina_Unicode *uni, int *_len)
    const Eina_Unicode *uind;
    char *ind;
    int ulen, len;
+
+   EINA_SAFETY_ON_NULL_RETURN_VAL(uni, NULL);
 
    ulen = eina_unicode_strlen(uni);
    buf = (char *) calloc(ulen + 1, EINA_UNICODE_UTF8_BYTES_PER_CHAR);
