@@ -162,7 +162,7 @@ EAPI extern Elm_Version *elm_version;
 #include <elm_deprecated_before.h>
 
 /* other includes */
-#include <elc_anchorblock.h>
+#include <elc_anchorblock.h> // <-- up to here (1.0 review)
 #include <elc_anchorview.h>
 #include <elc_ctxpopup.h>
 #include <elc_fileselector_button.h>
