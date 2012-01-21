@@ -80,7 +80,7 @@ _eina_test_log_safety(const Eina_Log_Domain *d, Eina_Log_Level level, const char
    const char *str;
 
    va_copy(cp_args, args);
-   str = va_arg(args, const char *);
+   str = va_arg(cp_args, const char *);
    va_end(cp_args);
 
    ck_assert_int_eq(ctx->level, level);
