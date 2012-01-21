@@ -95,6 +95,8 @@
 #define EINA_MAGIC_INARRAY_ITERATOR 0x98761271
 #define EINA_MAGIC_INARRAY_ACCESSOR 0x98761272
 
+#define EINA_MAGIC_MODEL 0x98761280
+
 #define EINA_MAGIC_CLASS 0x9877CB30
 
 /* undef the following, we want out version */

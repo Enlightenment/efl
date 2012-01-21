@@ -196,6 +196,7 @@ extern "C" {
 #include "eina_mmap.h"
 #include "eina_xattr.h"
 #include "eina_value.h"
+#include "eina_model.h"
 
 #ifdef __cplusplus
 }

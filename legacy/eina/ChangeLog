@@ -198,3 +198,7 @@
 2012-01-19  Shinwoo Kim
 
 	* Fix compilation of eina_semaphore_lock() (Windows port)
+
+2012-01-20  Gustavo Barbieri
+
+	* Add eina_model data type (generic hierarchy data access).

@@ -69,6 +69,7 @@
 #include "eina_inlist.h"
 #include "eina_inarray.h"
 #include "eina_value.h"
+#include "eina_model.h"
 
 /*============================================================================*
 *                                  Local                                     *
@@ -153,6 +154,7 @@ EAPI Eina_Inlist *_eina_tracking = NULL;
    S(file);
    S(prefix);
    S(value);
+   S(model);
 #undef S
 
 struct eina_desc_setup
@@ -189,7 +191,8 @@ static const struct eina_desc_setup _eina_desc_setup[] = {
    S(simple_xml),
    S(file),
    S(prefix),
-   S(value)
+   S(value),
+   S(model)
 #undef S
 };
 static const size_t _eina_desc_setup_len = sizeof(_eina_desc_setup) /

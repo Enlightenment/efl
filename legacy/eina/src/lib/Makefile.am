@@ -51,7 +51,8 @@ eina_unicode.c \
 eina_ustrbuf.c \
 eina_ustringshare.c \
 eina_value.c \
-eina_xattr.c
+eina_xattr.c \
+eina_model.c
 
 # Will be back for developper after 1.1
 # eina_object.c
