@@ -27,18 +27,116 @@
 #include "eina_suite.h"
 #include "Eina.h"
 
-   START_TEST(eina_log_macro)
+struct log_ctx {
+   int level;
+   int line;
+   const char *msg;
+   const char *fnc;
+   const char *dom;
+   Eina_Bool did;
+};
+
+/* tests should not output on success, just uncomment this for debugging */
+//#define SHOW_LOG 1
+
+static void
+_eina_test_log(const Eina_Log_Domain *d, Eina_Log_Level level, const char *file, const char *fnc, int line, const char *fmt, void *data, va_list args __UNUSED__)
 {
+   struct log_ctx *ctx = data;
+   ck_assert_int_eq(ctx->level, level);
+   ck_assert_int_eq(ctx->line, line);
+   ck_assert_str_eq(ctx->msg, fmt);
+   ck_assert_str_eq(ctx->fnc, fnc);
+   ck_assert_str_eq(file, __FILE__);
+   ctx->did = EINA_TRUE;
+#ifdef SHOW_LOG
+   eina_log_print_cb_stderr(d, level, file, fnc, line, fmt, NULL, args);
+#else
+   (void)d;
+#endif
+}
+
+static void
+_eina_test_log_domain(const Eina_Log_Domain *d, Eina_Log_Level level, const char *file, const char *fnc, int line, const char *fmt, void *data, va_list args __UNUSED__)
+{
+   struct log_ctx *ctx = data;
+   ck_assert_int_eq(ctx->level, level);
+   ck_assert_int_eq(ctx->line, line);
+   ck_assert_str_eq(ctx->msg, fmt);
+   ck_assert_str_eq(ctx->fnc, fnc);
+   ck_assert_str_eq(file, __FILE__);
+   ck_assert_str_eq(ctx->dom, d->name);
+   ctx->did = EINA_TRUE;
+#ifdef SHOW_LOG
+   eina_log_print_cb_stderr(d, level, file, fnc, line, fmt, NULL, args);
+#endif
+}
+
+static void
+_eina_test_log_safety(const Eina_Log_Domain *d, Eina_Log_Level level, const char *file, const char *fnc, int line, const char *fmt, void *data, va_list args __UNUSED__)
+{
+   struct log_ctx *ctx = data;
+   va_list cp_args;
+   const char *str;
+
+   va_copy(cp_args, args);
+   str = va_arg(args, const char *);
+   va_end(cp_args);
+
+   ck_assert_int_eq(ctx->level, level);
+   ck_assert_str_eq(fmt, "%s");
+   ck_assert_str_eq(ctx->msg, str);
+   ck_assert_str_eq(ctx->fnc, fnc);
+   ctx->did = EINA_TRUE;
+
+#ifdef SHOW_LOG
+   eina_log_print_cb_stderr(d, level, file, fnc, line, fmt, NULL, args);
+#else
+   (void)d;
+   (void)file;
+   (void)line;
+#endif
+}
+
+START_TEST(eina_log_macro)
+{
+   struct log_ctx ctx;
+
    fail_if(!eina_init());
 
    eina_log_level_set(EINA_LOG_LEVEL_DBG);
-   eina_log_print_cb_set(eina_log_print_cb_file, stderr);
+   eina_log_print_cb_set(_eina_test_log, &ctx);
 
-   EINA_LOG_CRIT("Critical message\n");
-   EINA_LOG_ERR("An error\n");
-   EINA_LOG_INFO("An info\n");
-   EINA_LOG_WARN("A warning\n");
-   EINA_LOG_DBG("A debug\n");
+#define TEST_LOG_CTX(lvl, _msg)                 \
+   ctx.level = lvl;                             \
+   ctx.line = __LINE__ + 1;                     \
+   ctx.msg = _msg;                              \
+   ctx.fnc = __FUNCTION__;                      \
+   ctx.did = EINA_FALSE
+
+   TEST_LOG_CTX(EINA_LOG_LEVEL_CRITICAL, "Critical message");
+   EINA_LOG_CRIT("Critical message");
+   fail_unless(ctx.did);
+
+   TEST_LOG_CTX(EINA_LOG_LEVEL_ERR, "An error");
+   EINA_LOG_ERR("An error");
+   fail_unless(ctx.did);
+
+   TEST_LOG_CTX(EINA_LOG_LEVEL_WARN, "A warning");
+   EINA_LOG_WARN("A warning");
+   fail_unless(ctx.did);
+
+   TEST_LOG_CTX(EINA_LOG_LEVEL_INFO, "An info");
+   EINA_LOG_INFO("An info");
+   fail_unless(ctx.did);
+
+   TEST_LOG_CTX(EINA_LOG_LEVEL_DBG, "A debug");
+   EINA_LOG_DBG("A debug");
+   fail_unless(ctx.did);
+
+#undef TEST_LOG_CTX
+
+   eina_log_print_cb_set(eina_log_print_cb_stderr, NULL);
 
    eina_shutdown();
 }
@@ -46,16 +144,51 @@ END_TEST
 
 START_TEST(eina_log_domains_macros)
 {
+   struct log_ctx ctx;
+
    fail_if(!eina_init());
+
+   /* make global log level blocker */
+   eina_log_level_set(EINA_LOG_LEVEL_CRITICAL);
+   eina_log_print_cb_set(_eina_test_log_domain, &ctx);
 
    int d = eina_log_domain_register("MyDomain", EINA_COLOR_GREEN);
    fail_if(d < 0);
 
-   EINA_LOG_DOM_CRIT(d, "A critical message\n");
-   EINA_LOG_DOM_ERR(d, "An error\n");
-   EINA_LOG_DOM_WARN(d, "A warning\n");
-   EINA_LOG_DOM_DBG(d, "A debug\n");
-   EINA_LOG_DOM_INFO(d, "An info\n");
+   /* make specific domain permissive */
+   eina_log_domain_level_set("MyDomain", EINA_LOG_LEVEL_DBG);
+
+#define TEST_LOG_CTX(lvl, _msg)                 \
+   ctx.level = lvl;                             \
+   ctx.line = __LINE__ + 1;                     \
+   ctx.msg = _msg;                              \
+   ctx.fnc = __FUNCTION__;                      \
+   ctx.dom = "MyDomain";                        \
+   ctx.did = EINA_FALSE
+
+   TEST_LOG_CTX(EINA_LOG_LEVEL_CRITICAL, "A critical message");
+   EINA_LOG_DOM_CRIT(d, "A critical message");
+   fail_unless(ctx.did);
+
+   TEST_LOG_CTX(EINA_LOG_LEVEL_ERR, "An error");
+   EINA_LOG_DOM_ERR(d, "An error");
+   fail_unless(ctx.did);
+
+   TEST_LOG_CTX(EINA_LOG_LEVEL_WARN, "A warning");
+   EINA_LOG_DOM_WARN(d, "A warning");
+   fail_unless(ctx.did);
+
+   TEST_LOG_CTX(EINA_LOG_LEVEL_INFO, "An info");
+   EINA_LOG_DOM_INFO(d, "An info");
+   fail_unless(ctx.did);
+
+   TEST_LOG_CTX(EINA_LOG_LEVEL_DBG, "A debug");
+   EINA_LOG_DOM_DBG(d, "A debug");
+   fail_unless(ctx.did);
+
+#undef TEST_LOG_CTX
+
+   eina_log_print_cb_set(eina_log_print_cb_stderr, NULL);
 
    eina_shutdown();
 }
@@ -120,6 +253,8 @@ END_TEST
 
 START_TEST(eina_log_level_indexes)
 {
+   struct log_ctx ctx;
+
    fail_if(!eina_init());
    fail_if(!eina_threads_init());
    fail_if(!eina_threads_init());
@@ -127,11 +262,41 @@ START_TEST(eina_log_level_indexes)
    int d = eina_log_domain_register("Levels", EINA_COLOR_GREEN);
    fail_if(d < 0);
 
+   eina_log_print_cb_set(_eina_test_log_domain, &ctx);
+
+#define TEST_LOG_CTX(lvl, _msg)                 \
+   ctx.level = lvl;                             \
+   ctx.line = __LINE__ + 1;                     \
+   ctx.msg = _msg;                              \
+   ctx.fnc = __FUNCTION__;                      \
+   ctx.dom = "Levels";                          \
+   ctx.did = EINA_FALSE;
+
    // Displayed unless user sets level lower than -1
-   EINA_LOG(d, -1, "Negative index message\n");
+   eina_log_domain_level_set("Levels", -1);
+   TEST_LOG_CTX(-1, "Negative index message");
+   EINA_LOG(d, -1, "Negative index message");
+   fail_unless(ctx.did);
+
+   eina_log_domain_level_set("Levels", -2);
+   TEST_LOG_CTX(-1, "Negative index message");
+   EINA_LOG(d, -1, "Negative index message");
+   fail_if(ctx.did);
 
    // Displayed only if user sets level 6 or higher
-   EINA_LOG(d, 6,  "Higher level debug\n");
+   eina_log_domain_level_set("Levels", 6);
+   TEST_LOG_CTX(6, "Higher level debug");
+   EINA_LOG(d, 6, "Higher level debug");
+   fail_unless(ctx.did);
+
+   eina_log_domain_level_set("Levels", 5);
+   TEST_LOG_CTX(6, "Higher level debug");
+   EINA_LOG(d, 6, "Higher level debug");
+   fail_if(ctx.did);
+
+#undef TEST_LOG_CTX
+
+   eina_log_print_cb_set(eina_log_print_cb_stderr, NULL);
 
    eina_threads_shutdown();
    eina_threads_shutdown();
@@ -141,6 +306,7 @@ END_TEST
 
 START_TEST(eina_log_customize)
 {
+   struct log_ctx ctx;
    int d;
 
    /* please don't define EINA_LOG_LEVELS for it */
@@ -182,11 +348,28 @@ START_TEST(eina_log_customize)
    fail_if(eina_log_domain_registered_level_get(d) != 890);
 
    eina_log_domain_unregister(d);
+
+#ifdef EINA_SAFETY_CHECKS
+#ifdef SHOW_LOG
    fputs("NOTE: You should see a failed safety check or "
          "a crash if compiled without safety checks support.\n",
          stderr);
+#endif
    eina_log_abort_on_critical_set(EINA_FALSE);
+   eina_log_function_disable_set(EINA_FALSE);
+
+   eina_log_print_cb_set(_eina_test_log_safety, &ctx);
+   ctx.level = EINA_LOG_LEVEL_ERR;
+   ctx.msg = "safety check failed: _log_domains[domain].deleted is true";
+   ctx.fnc = "eina_log_domain_registered_level_get";
+   ctx.did = EINA_FALSE;
    fail_if(eina_log_domain_registered_level_get(d) != EINA_LOG_LEVEL_UNKNOWN);
+   fail_unless(ctx.did);
+
+   eina_log_print_cb_set(eina_log_print_cb_stderr, NULL);
+#else
+#warning "Compiled without safety checks"
+#endif
 
 #undef test_set_get_bool
 #undef test_set_get
