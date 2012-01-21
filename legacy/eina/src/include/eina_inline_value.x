@@ -19,8 +19,8 @@
 #ifndef EINA_INLINE_VALUE_X_
 #define EINA_INLINE_VALUE_X_
 
+#include <stdlib.h>
 #include <string.h>
-#include <alloca.h>
 
 #include "eina_stringshare.h"
 
