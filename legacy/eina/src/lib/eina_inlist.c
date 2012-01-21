@@ -430,6 +430,8 @@ eina_inlist_find(Eina_Inlist *list, Eina_Inlist *item)
 {
    Eina_Inlist *l;
 
+   EINA_SAFETY_ON_NULL_RETURN_VAL(item, NULL);
+
    for (l = list; l; l = l->next) {
         if (l == item)
            return item;
@@ -558,6 +560,9 @@ eina_inlist_sorted_insert(Eina_Inlist *list,
    int inf, sup;
    int cur = 0;
    int count;
+
+   EINA_SAFETY_ON_NULL_RETURN_VAL(item, list);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(func, list);
 
    if (!list) return eina_inlist_append(NULL, item);
 
