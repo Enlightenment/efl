@@ -51,11 +51,23 @@ _eina_test_model_check_safety_null(const Eina_Log_Domain *d, Eina_Log_Level leve
 }
 
 static void
-_eina_test_model_cb_count(void *data, Eina_Model *model __UNUSED__, const Eina_Model_Event_Description *desc __UNUSED__, void *event_info __UNUSED__)
+_eina_test_model_cb_count(void *data, Eina_Model *model, const Eina_Model_Event_Description *desc, void *event_info)
 {
    unsigned *count = data;
    (*count)++;
-   //printf("%p %s\n", model, desc->name);
+#if SHOW_LOG
+   if ((desc->type) && (strcmp(desc->type, "u") == 0))
+     {
+        unsigned *pos = event_info;
+        printf("%2u %p %s at %u\n", *count, model, desc->name, *pos);
+     }
+   else
+     printf("%2u %p %s\n", *count, model, desc->name);
+#else
+   (void)model;
+   (void)desc;
+   (void)event_info;
+#endif
 }
 
 START_TEST(eina_model_test_properties)
@@ -83,7 +95,7 @@ START_TEST(eina_model_test_properties)
    fail_unless(eina_value_setup(&inv, EINA_VALUE_TYPE_INT));
    fail_unless(eina_value_set(&inv, 1234));
    fail_unless(eina_value_get(&inv, &i));
-   fail_unless(i == 1234);
+   ck_assert_int_eq(i, 1234);
 
    fail_unless(eina_model_property_set(m, "abc", &inv));
 
@@ -94,35 +106,35 @@ START_TEST(eina_model_test_properties)
    fail_unless(eina_model_property_set(m, "value", &inv));
 
    lst = eina_model_properties_names_list_get(m);
-   fail_unless(eina_list_count(lst) == 3);
+   ck_assert_int_eq(eina_list_count(lst), 3);
 
    lst = eina_list_sort(lst, 0, EINA_COMPARE_CB(strcmp));
-   fail_unless(strcmp("abc", eina_list_nth(lst, 0)) == 0);
-   fail_unless(strcmp("value", eina_list_nth(lst, 1)) == 0);
-   fail_unless(strcmp("xyz", eina_list_nth(lst, 2)) == 0);
+   ck_assert_str_eq("abc", eina_list_nth(lst, 0));
+   ck_assert_str_eq("value", eina_list_nth(lst, 1));
+   ck_assert_str_eq("xyz", eina_list_nth(lst, 2));
 
    eina_model_properties_names_list_free(lst);
 
    fail_unless(eina_model_property_get(m, "abc", &outv));
    fail_unless(eina_value_get(&outv, &i));
-   fail_unless(i == 1234);
+   ck_assert_int_eq(i, 1234);
    eina_value_flush(&outv);
 
    fail_unless(eina_model_property_get(m, "xyz", &outv));
    fail_unless(eina_value_get(&outv, &i));
-   fail_unless(i == 5678);
+   ck_assert_int_eq(i, 5678);
    eina_value_flush(&outv);
 
    fail_unless(eina_model_property_get(m, "value", &outv));
    fail_unless(eina_value_get(&outv, &i));
-   fail_unless(i == 171);
+   ck_assert_int_eq(i, 171);
    eina_value_flush(&outv);
 
    fail_unless(eina_value_set(&inv, 666));
    fail_unless(eina_model_property_set(m, "value", &inv));
    fail_unless(eina_model_property_get(m, "value", &outv));
    fail_unless(eina_value_get(&outv, &i));
-   fail_unless(i == 666);
+   ck_assert_int_eq(i, 666);
 
    eina_value_flush(&outv);
    eina_value_flush(&inv);
@@ -134,7 +146,7 @@ START_TEST(eina_model_test_properties)
    fail_unless(eina_model_property_get(m, "string", &outv));
    fail_unless(eina_value_get(&outv, &s));
    fail_unless(s != NULL);
-   fail_unless(strcmp(s, "Hello world!") == 0);
+   ck_assert_str_eq(s, "Hello world!");
 
    eina_value_flush(&outv);
    eina_value_flush(&inv);
@@ -148,14 +160,14 @@ START_TEST(eina_model_test_properties)
    fail_unless(eina_model_property_get(m, "stringshare", &outv));
    fail_unless(eina_value_get(&outv, &s));
    fail_unless(s != NULL);
-   fail_unless(strcmp(s, "Hello world-STRINGSHARED!") == 0);
+   ck_assert_str_eq(s, "Hello world-STRINGSHARED!");
 
    eina_value_flush(&outv);
    eina_value_flush(&inv);
 
    s = eina_model_to_string(m);
    fail_unless(s != NULL);
-   fail_unless(strcmp(s, "Eina_Model_Type_Generic({abc: 1234, string: Hello world!, stringshare: Hello world-STRINGSHARED!, value: 666, xyz: 5678}, [])") == 0);
+   ck_assert_str_eq(s, "Eina_Model_Type_Generic({abc: 1234, string: Hello world!, stringshare: Hello world-STRINGSHARED!, value: 666, xyz: 5678}, [])");
    free(s);
 
    fail_unless(eina_model_property_del(m, "value"));
@@ -178,12 +190,12 @@ START_TEST(eina_model_test_properties)
    /* revert print_cb to default */
    eina_log_print_cb_set(eina_log_print_cb_stderr, NULL);
 
-   fail_unless(eina_model_refcount(m) == 1);
+   ck_assert_int_eq(eina_model_refcount(m), 1);
 
    eina_model_unref(m);
-   fail_unless(count_del == 1);
-   fail_unless(count_pset == 7);
-   fail_unless(count_pdel == 1);
+   ck_assert_int_eq(count_del, 1);
+   ck_assert_int_eq(count_pset, 7);
+   ck_assert_int_eq(count_pdel, 1);
    eina_shutdown();
 }
 END_TEST
@@ -201,6 +213,7 @@ START_TEST(eina_model_test_children)
    char *s;
    int i;
 
+   printf("eina_model_test_children: BEGIN\n");
    eina_init();
 
    m = eina_model_new(EINA_MODEL_TYPE_GENERIC);
@@ -236,13 +249,13 @@ START_TEST(eina_model_test_children)
         fail_unless(eina_model_property_set(c, "value", &val));
 
         fail_unless(eina_model_child_append(m, c) >= 0);
-        fail_unless(eina_model_refcount(c) == 2);
+        ck_assert_int_eq(eina_model_refcount(c), 2);
 
         eina_value_flush(&val);
         eina_model_unref(c);
      }
 
-   fail_unless(eina_model_child_count(m) == 10);
+   ck_assert_int_eq(eina_model_child_count(m), 10);
 
    for (i = 0; i < 10; i++)
      {
@@ -251,11 +264,11 @@ START_TEST(eina_model_test_children)
 
         c = eina_model_child_get(m, i);
         fail_unless(c != NULL);
-        fail_unless(eina_model_refcount(c) == 2);
+        ck_assert_int_eq(eina_model_refcount(c), 2);
 
         fail_unless(eina_model_property_get(c, "value", &val));
         fail_unless(eina_value_get(&val, &x));
-        fail_unless(x == i);
+        ck_assert_int_eq(x, i);
 
         eina_value_flush(&val);
         eina_model_unref(c);
@@ -270,11 +283,11 @@ START_TEST(eina_model_test_children)
 
         c = eina_model_child_get(m, i);
         fail_unless(c != NULL);
-        fail_unless(eina_model_refcount(c) == 2);
+        ck_assert_int_eq(eina_model_refcount(c), 2);
 
         fail_unless(eina_model_property_get(c, "value", &val));
         fail_unless(eina_value_get(&val, &x));
-        fail_unless(x == 10 - i - 1);
+        ck_assert_int_eq(x, 10 - i - 1);
 
         eina_value_flush(&val);
         eina_model_unref(c);
@@ -284,7 +297,7 @@ START_TEST(eina_model_test_children)
 
    s = eina_model_to_string(m);
    fail_unless(s != NULL);
-   fail_unless(strcmp(s, "Eina_Model_Type_Generic({}, [Eina_Model_Type_Generic({value: 0}, []), Eina_Model_Type_Generic({value: 1}, []), Eina_Model_Type_Generic({value: 2}, []), Eina_Model_Type_Generic({value: 3}, []), Eina_Model_Type_Generic({value: 4}, []), Eina_Model_Type_Generic({value: 5}, []), Eina_Model_Type_Generic({value: 6}, []), Eina_Model_Type_Generic({value: 7}, []), Eina_Model_Type_Generic({value: 8}, []), Eina_Model_Type_Generic({value: 9}, [])])") == 0);
+   ck_assert_str_eq(s, "Eina_Model_Type_Generic({}, [Eina_Model_Type_Generic({value: 0}, []), Eina_Model_Type_Generic({value: 1}, []), Eina_Model_Type_Generic({value: 2}, []), Eina_Model_Type_Generic({value: 3}, []), Eina_Model_Type_Generic({value: 4}, []), Eina_Model_Type_Generic({value: 5}, []), Eina_Model_Type_Generic({value: 6}, []), Eina_Model_Type_Generic({value: 7}, []), Eina_Model_Type_Generic({value: 8}, []), Eina_Model_Type_Generic({value: 9}, [])])");
    free(s);
 
    c = eina_model_child_get(m, 0);
@@ -296,18 +309,19 @@ START_TEST(eina_model_test_children)
 
    s = eina_model_to_string(m);
    fail_unless(s != NULL);
-   fail_unless(strcmp(s, "Eina_Model_Type_Generic({}, [Eina_Model_Type_Generic({value: 0}, []), Eina_Model_Type_Generic({value: 2}, []), Eina_Model_Type_Generic({value: 3}, []), Eina_Model_Type_Generic({value: 4}, []), Eina_Model_Type_Generic({value: 5}, []), Eina_Model_Type_Generic({value: 6}, []), Eina_Model_Type_Generic({value: 7}, []), Eina_Model_Type_Generic({value: 8}, [])])") == 0);
+   ck_assert_str_eq(s, "Eina_Model_Type_Generic({}, [Eina_Model_Type_Generic({value: 0}, []), Eina_Model_Type_Generic({value: 2}, []), Eina_Model_Type_Generic({value: 3}, []), Eina_Model_Type_Generic({value: 4}, []), Eina_Model_Type_Generic({value: 5}, []), Eina_Model_Type_Generic({value: 6}, []), Eina_Model_Type_Generic({value: 7}, []), Eina_Model_Type_Generic({value: 8}, [])])");
    free(s);
 
-   fail_unless(eina_model_refcount(m) == 1);
+   ck_assert_int_eq(eina_model_refcount(m), 1);
    eina_model_unref(m);
 
-   fail_unless(count_del == 11);
-   fail_unless(count_cins == 10);
-   fail_unless(count_cset == 1);
-   fail_unless(count_cdel == 2);
+   ck_assert_int_eq(count_del, 11);
+   ck_assert_int_eq(count_cins, 10);
+   ck_assert_int_eq(count_cset, 1);
+   ck_assert_int_eq(count_cdel, 2);
 
    eina_shutdown();
+   printf("eina_model_test_children: END\n");
 }
 END_TEST
 
@@ -355,7 +369,7 @@ START_TEST(eina_model_test_copy)
 
    s1 = eina_model_to_string(m);
    fail_unless(s1 != NULL);
-   fail_unless(strcmp(s1, "Eina_Model_Type_Generic({a: 0, b: 1, c: 2, d: 3, e: 4}, [Eina_Model_Type_Generic({x: 0}, []), Eina_Model_Type_Generic({x: 1}, []), Eina_Model_Type_Generic({x: 2}, []), Eina_Model_Type_Generic({x: 3}, []), Eina_Model_Type_Generic({x: 4}, [])])") == 0);
+   ck_assert_str_eq(s1, "Eina_Model_Type_Generic({a: 0, b: 1, c: 2, d: 3, e: 4}, [Eina_Model_Type_Generic({x: 0}, []), Eina_Model_Type_Generic({x: 1}, []), Eina_Model_Type_Generic({x: 2}, []), Eina_Model_Type_Generic({x: 3}, []), Eina_Model_Type_Generic({x: 4}, [])])");
 
    cp = eina_model_copy(m);
    fail_unless(cp != NULL);
@@ -366,7 +380,7 @@ START_TEST(eina_model_test_copy)
 
    s2 = eina_model_to_string(cp);
    fail_unless(s2 != NULL);
-   fail_unless(strcmp(s1, s2) == 0);
+   ck_assert_str_eq(s1, s2);
 
    for (i = 0; i < 5; i++)
      {
@@ -375,7 +389,7 @@ START_TEST(eina_model_test_copy)
 
         fail_unless(c1 != NULL);
         fail_unless(c1 == c2);
-        fail_unless(eina_model_refcount(c1) == 4);
+        ck_assert_int_eq(eina_model_refcount(c1), 4);
 
         eina_model_unref(c1);
         eina_model_unref(c2);
@@ -384,13 +398,13 @@ START_TEST(eina_model_test_copy)
    free(s1);
    free(s2);
 
-   fail_unless(eina_model_refcount(m) == 1);
+   ck_assert_int_eq(eina_model_refcount(m), 1);
    eina_model_unref(m);
 
-   fail_unless(eina_model_refcount(cp) == 1);
+   ck_assert_int_eq(eina_model_refcount(cp), 1);
    eina_model_unref(cp);
 
-   fail_unless(count_del == 2 + 5);
+   ck_assert_int_eq(count_del, 2 + 5);
 
    eina_shutdown();
 }
@@ -440,7 +454,7 @@ START_TEST(eina_model_test_deep_copy)
 
    s1 = eina_model_to_string(m);
    fail_unless(s1 != NULL);
-   fail_unless(strcmp(s1, "Eina_Model_Type_Generic({a: 0, b: 1, c: 2, d: 3, e: 4}, [Eina_Model_Type_Generic({x: 0}, []), Eina_Model_Type_Generic({x: 1}, []), Eina_Model_Type_Generic({x: 2}, []), Eina_Model_Type_Generic({x: 3}, []), Eina_Model_Type_Generic({x: 4}, [])])") == 0);
+   ck_assert_str_eq(s1, "Eina_Model_Type_Generic({a: 0, b: 1, c: 2, d: 3, e: 4}, [Eina_Model_Type_Generic({x: 0}, []), Eina_Model_Type_Generic({x: 1}, []), Eina_Model_Type_Generic({x: 2}, []), Eina_Model_Type_Generic({x: 3}, []), Eina_Model_Type_Generic({x: 4}, [])])");;
 
    cp = eina_model_deep_copy(m);
    fail_unless(cp != NULL);
@@ -451,7 +465,7 @@ START_TEST(eina_model_test_deep_copy)
 
    s2 = eina_model_to_string(cp);
    fail_unless(s2 != NULL);
-   fail_unless(strcmp(s1, s2) == 0);
+   ck_assert_str_eq(s1, s2);
 
    for (i = 0; i < 5; i++)
      {
@@ -460,8 +474,8 @@ START_TEST(eina_model_test_deep_copy)
 
         fail_unless(c1 != NULL);
         fail_unless(c1 != c2);
-        fail_unless(eina_model_refcount(c1) == 2);
-        fail_unless(eina_model_refcount(c2) == 2);
+        ck_assert_int_eq(eina_model_refcount(c1), 2);
+        ck_assert_int_eq(eina_model_refcount(c2), 2);
 
         eina_model_event_callback_add
           (c2, "deleted", _eina_test_model_cb_count, &count_del);
@@ -473,13 +487,13 @@ START_TEST(eina_model_test_deep_copy)
    free(s1);
    free(s2);
 
-   fail_unless(eina_model_refcount(m) == 1);
+   ck_assert_int_eq(eina_model_refcount(m), 1);
    eina_model_unref(m);
 
-   fail_unless(eina_model_refcount(cp) == 1);
+   ck_assert_int_eq(eina_model_refcount(cp), 1);
    eina_model_unref(cp);
 
-   fail_unless(count_del == 2 + 10);
+   ck_assert_int_eq(count_del, 2 + 10);
 
    eina_shutdown();
 }
@@ -535,20 +549,20 @@ START_TEST(eina_model_test_child_iterator)
         Eina_Value tmp;
         int x;
 
-        fail_unless(eina_model_refcount(c) == 2);
+        ck_assert_int_eq(eina_model_refcount(c), 2);
         fail_unless(eina_model_property_get(c, "x", &tmp));
         fail_unless(eina_value_get(&tmp, &x));
-        fail_unless(x == i);
+        ck_assert_int_eq(x, i);
 
         eina_model_unref(c);
         i++;
      }
-   fail_unless(i == 5);
+   ck_assert_int_eq(i, 5);
    eina_iterator_free(it);
 
-   fail_unless(eina_model_refcount(m) == 1);
+   ck_assert_int_eq(eina_model_refcount(m), 1);
    eina_model_unref(m);
-   fail_unless(count_del == 6);
+   ck_assert_int_eq(count_del, 6);
    eina_shutdown();
 }
 END_TEST
@@ -571,20 +585,20 @@ START_TEST(eina_model_test_child_reversed_iterator)
         Eina_Value tmp;
         int x;
 
-        fail_unless(eina_model_refcount(c) == 2);
+        ck_assert_int_eq(eina_model_refcount(c), 2);
         fail_unless(eina_model_property_get(c, "x", &tmp));
         fail_unless(eina_value_get(&tmp, &x));
-        fail_unless(x == i);
+        ck_assert_int_eq(x, i);
 
         eina_model_unref(c);
         i--;
      }
-   fail_unless(i == -1);
+   ck_assert_int_eq(i, -1);
    eina_iterator_free(it);
 
-   fail_unless(eina_model_refcount(m) == 1);
+   ck_assert_int_eq(eina_model_refcount(m), 1);
    eina_model_unref(m);
-   fail_unless(count_del == 6);
+   ck_assert_int_eq(count_del, 6);
    eina_shutdown();
 }
 END_TEST
@@ -609,15 +623,15 @@ START_TEST(eina_model_test_child_sorted_iterator)
         int x;
 
         /* 3 because sort takes an extra reference for its temp array */
-        fail_unless(eina_model_refcount(c) == 3);
+        ck_assert_int_eq(eina_model_refcount(c), 3);
         fail_unless(eina_model_property_get(c, "x", &tmp));
         fail_unless(eina_value_get(&tmp, &x));
-        fail_unless(x == i);
+        ck_assert_int_eq(x, i);
 
         eina_model_unref(c);
         i--;
      }
-   fail_unless(i == -1);
+   ck_assert_int_eq(i, -1);
    eina_iterator_free(it);
 
    it = eina_model_child_sorted_iterator_get
@@ -630,20 +644,20 @@ START_TEST(eina_model_test_child_sorted_iterator)
         int x;
 
         /* 3 because sort takes an extra reference for its temp array */
-        fail_unless(eina_model_refcount(c) == 3);
+        ck_assert_int_eq(eina_model_refcount(c), 3);
         fail_unless(eina_model_property_get(c, "x", &tmp));
         fail_unless(eina_value_get(&tmp, &x));
-        fail_unless(x == i);
+        ck_assert_int_eq(x, i);
 
         eina_model_unref(c);
         i++;
      }
-   fail_unless(i == 5);
+   ck_assert_int_eq(i, 5);
    eina_iterator_free(it);
 
-   fail_unless(eina_model_refcount(m) == 1);
+   ck_assert_int_eq(eina_model_refcount(m), 1);
    eina_model_unref(m);
-   fail_unless(count_del == 6);
+   ck_assert_int_eq(count_del, 6);
    eina_shutdown();
 }
 END_TEST
@@ -680,25 +694,25 @@ START_TEST(eina_model_test_child_filtered_iterator)
         Eina_Value tmp;
         int x;
 
-        fail_unless(idx % 2 == 0);
-        fail_unless(idx == i);
+        ck_assert_int_eq(idx % 2, 0);
+        ck_assert_int_eq(idx, i);
 
         c = eina_model_child_get(m, idx);
         fail_unless(c != NULL);
-        fail_unless(eina_model_refcount(c) == 2);
+        ck_assert_int_eq(eina_model_refcount(c), 2);
         fail_unless(eina_model_property_get(c, "x", &tmp));
         fail_unless(eina_value_get(&tmp, &x));
-        fail_unless(x == i);
+        ck_assert_int_eq(x, i);
 
         eina_model_unref(c);
         i += 2;
      }
-   fail_unless(i == 6);
+   ck_assert_int_eq(i, 6);
    eina_iterator_free(it);
 
-   fail_unless(eina_model_refcount(m) == 1);
+   ck_assert_int_eq(eina_model_refcount(m), 1);
    eina_model_unref(m);
-   fail_unless(count_del == 6);
+   ck_assert_int_eq(count_del, 6);
    eina_shutdown();
 }
 END_TEST
