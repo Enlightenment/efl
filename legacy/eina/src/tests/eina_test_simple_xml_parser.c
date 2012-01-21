@@ -52,7 +52,8 @@ START_TEST(eina_simple_xml_parser_node_dump)
                        Eina_Simple_XML_Node_Root *root = eina_simple_xml_node_load
                          (buf, sz, EINA_TRUE);
                        char *out = eina_simple_xml_node_dump(&root->base, "  ");
-                       puts(out);
+                       //puts(out);
+                       ck_assert_str_eq(out, buf);
                        free(out);
                        eina_simple_xml_node_root_free(root);
                        free(buf);
