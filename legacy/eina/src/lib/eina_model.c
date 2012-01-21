@@ -3346,6 +3346,7 @@ eina_model_event_callback_add(Eina_Model *model, const char *event_name, Eina_Mo
 
    el->cb = cb;
    el->data = data;
+   el->deleted = EINA_FALSE;
    model->listeners.entries[event_id] = eina_inlist_append
      (model->listeners.entries[event_id], EINA_INLIST_GET(el));
 
