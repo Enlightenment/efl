@@ -33,6 +33,7 @@ eina_main.c \
 eina_matrixsparse.c \
 eina_mempool.c \
 eina_mmap.c \
+eina_model.c \
 eina_module.c \
 eina_prefix.c \
 eina_quadtree.c \
@@ -51,8 +52,7 @@ eina_unicode.c \
 eina_ustrbuf.c \
 eina_ustringshare.c \
 eina_value.c \
-eina_xattr.c \
-eina_model.c
+eina_xattr.c
 
 # Will be back for developper after 1.1
 # eina_object.c
