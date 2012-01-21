@@ -71,7 +71,7 @@ const char *eina_share_common_add_length(Eina_Share *share,
                                          unsigned int null_size)
 EINA_WARN_UNUSED_RESULT;
 const char *eina_share_common_ref(Eina_Share *share, const char *str);
-void        eina_share_common_del(Eina_Share *share, const char *str);
+Eina_Bool   eina_share_common_del(Eina_Share *share, const char *str) EINA_WARN_UNUSED_RESULT;
 int         eina_share_common_length(Eina_Share *share,
                                      const char *str) EINA_CONST
 EINA_WARN_UNUSED_RESULT;
@@ -83,21 +83,4 @@ void        eina_share_common_dump(Eina_Share *share, void (*additional_dump)(
 void        eina_share_common_population_add(Eina_Share *share, int slen);
 void        eina_share_common_population_del(Eina_Share *share, int slen);
 
-/* Share logging */
-#ifdef CRITICAL
-#undef CRITICAL
-#endif
-#define CRITICAL(...) EINA_LOG_DOM_CRIT(_eina_share_common_log_dom, __VA_ARGS__)
-
-#ifdef ERR
-#undef ERR
-#endif
-#define ERR(...) EINA_LOG_DOM_ERR(_eina_share_common_log_dom, __VA_ARGS__)
-
-#ifdef DBG
-#undef DBG
-#endif
-#define DBG(...) EINA_LOG_DOM_DBG(_eina_share_common_log_dom, __VA_ARGS__)
-extern int _eina_share_common_log_dom;
-
-#endif /* EINA_STRINGSHARE_H_ */
+#endif /* EINA_SHARE_COMMON_H_ */

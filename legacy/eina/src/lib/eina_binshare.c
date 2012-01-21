@@ -21,9 +21,18 @@
 
  */
 
-#include "eina_share_common.h"
-#include "eina_unicode.h"
+#ifdef HAVE_CONFIG_H
+# include "config.h"
+#endif
+
+#include "eina_config.h"
 #include "eina_private.h"
+#include "eina_unicode.h"
+#include "eina_log.h"
+#include "eina_share_common.h"
+
+/* undefs EINA_ARG_NONULL() so NULL checks are not compiled out! */
+#include "eina_safety_checks.h"
 #include "eina_binshare.h"
 
 /*============================================================================*
@@ -34,6 +43,23 @@
  * @cond LOCAL
  */
 
+#ifdef CRITICAL
+#undef CRITICAL
+#endif
+#define CRITICAL(...) EINA_LOG_DOM_CRIT(_eina_share_binshare_log_dom, __VA_ARGS__)
+
+#ifdef ERR
+#undef ERR
+#endif
+#define ERR(...) EINA_LOG_DOM_ERR(_eina_share_binshare_log_dom, __VA_ARGS__)
+
+#ifdef DBG
+#undef DBG
+#endif
+#define DBG(...) EINA_LOG_DOM_DBG(_eina_share_binshare_log_dom, __VA_ARGS__)
+
+static int _eina_share_binshare_log_dom = -1;
+
 /* The actual share */
 static Eina_Share *binshare_share;
 static const char EINA_MAGIC_BINSHARE_NODE_STR[] = "Eina Binshare Node";
@@ -41,7 +67,6 @@ static const char EINA_MAGIC_BINSHARE_NODE_STR[] = "Eina Binshare Node";
 /**
  * @endcond
  */
-
 
 /*============================================================================*
 *                                 Global                                     *
@@ -61,9 +86,31 @@ static const char EINA_MAGIC_BINSHARE_NODE_STR[] = "Eina Binshare Node";
 EAPI Eina_Bool
 eina_binshare_init(void)
 {
-   return eina_share_common_init(&binshare_share,
-                                 EINA_MAGIC_BINSHARE_NODE,
-                                 EINA_MAGIC_BINSHARE_NODE_STR);
+   Eina_Bool ret;
+
+   if (_eina_share_binshare_log_dom < 0)
+     {
+        _eina_share_binshare_log_dom = eina_log_domain_register
+          ("eina_binshare", EINA_LOG_COLOR_DEFAULT);
+
+        if (_eina_share_binshare_log_dom < 0)
+          {
+             EINA_LOG_ERR("Could not register log domain: eina_binshare");
+             return EINA_FALSE;
+          }
+     }
+
+   ret = eina_share_common_init(&binshare_share,
+                                EINA_MAGIC_BINSHARE_NODE,
+                                EINA_MAGIC_BINSHARE_NODE_STR);
+
+   if (!ret)
+     {
+        eina_log_domain_unregister(_eina_share_binshare_log_dom);
+        _eina_share_binshare_log_dom = -1;
+     }
+
+   return ret;
 }
 
 /**
@@ -82,6 +129,13 @@ eina_binshare_shutdown(void)
 {
    Eina_Bool ret;
    ret = eina_share_common_shutdown(&binshare_share);
+
+   if (_eina_share_binshare_log_dom > 0)
+     {
+        eina_log_domain_unregister(_eina_share_binshare_log_dom);
+        _eina_share_binshare_log_dom = -1;
+     }
+
    return ret;
 }
 
@@ -96,7 +150,8 @@ eina_binshare_del(const void *obj)
    if (!obj)
       return;
 
-   eina_share_common_del(binshare_share, obj);
+   if (!eina_share_common_del(binshare_share, obj))
+     CRITICAL("EEEK trying to del non-shared binshare %p", obj);
 }
 
 EAPI const void *

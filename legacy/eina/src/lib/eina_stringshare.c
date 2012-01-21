@@ -55,12 +55,30 @@ void *alloca (size_t);
 #include "eina_private.h"
 #include "eina_error.h"
 #include "eina_log.h"
-#include "eina_stringshare.h"
 #include "eina_lock.h"
+#include "eina_share_common.h"
 
 /* undefs EINA_ARG_NONULL() so NULL checks are not compiled out! */
 #include "eina_safety_checks.h"
-#include "eina_share_common.h"
+#include "eina_stringshare.h"
+
+
+#ifdef CRITICAL
+#undef CRITICAL
+#endif
+#define CRITICAL(...) EINA_LOG_DOM_CRIT(_eina_share_stringshare_log_dom, __VA_ARGS__)
+
+#ifdef ERR
+#undef ERR
+#endif
+#define ERR(...) EINA_LOG_DOM_ERR(_eina_share_stringshare_log_dom, __VA_ARGS__)
+
+#ifdef DBG
+#undef DBG
+#endif
+#define DBG(...) EINA_LOG_DOM_DBG(_eina_share_stringshare_log_dom, __VA_ARGS__)
+
+static int _eina_share_stringshare_log_dom = -1;
 
 /* The actual share */
 static Eina_Share *stringshare_share;
@@ -500,11 +518,29 @@ Eina_Bool
 eina_stringshare_init(void)
 {
    Eina_Bool ret;
+
+   if (_eina_share_stringshare_log_dom < 0)
+     {
+        _eina_share_stringshare_log_dom = eina_log_domain_register
+          ("eina_stringshare", EINA_LOG_COLOR_DEFAULT);
+
+        if (_eina_share_stringshare_log_dom < 0)
+          {
+             EINA_LOG_ERR("Could not register log domain: eina_stringshare");
+             return EINA_FALSE;
+          }
+     }
+
    ret = eina_share_common_init(&stringshare_share,
                                 EINA_MAGIC_STRINGSHARE_NODE,
                                 EINA_MAGIC_STRINGSHARE_NODE_STR);
    if (ret)
       _eina_stringshare_small_init();
+   else
+     {
+        eina_log_domain_unregister(_eina_share_stringshare_log_dom);
+        _eina_share_stringshare_log_dom = -1;
+     }
 
    return ret;
 }
@@ -526,6 +562,13 @@ eina_stringshare_shutdown(void)
    Eina_Bool ret;
    _eina_stringshare_small_shutdown();
    ret = eina_share_common_shutdown(&stringshare_share);
+
+   if (_eina_share_stringshare_log_dom >= 0)
+     {
+        eina_log_domain_unregister(_eina_share_stringshare_log_dom);
+        _eina_share_stringshare_log_dom = -1;
+     }
+
    return ret;
 }
 
@@ -564,7 +607,8 @@ eina_stringshare_del(const char *str)
         return;
      }
 
-   eina_share_common_del(stringshare_share, str);
+   if (!eina_share_common_del(stringshare_share, str))
+     CRITICAL("EEEK trying to del non-shared stringshare \"%s\"", str);
 }
 
 EAPI const char *

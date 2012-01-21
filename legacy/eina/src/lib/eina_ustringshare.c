@@ -27,10 +27,37 @@
  *
  */
 
-#include "eina_share_common.h"
-#include "eina_unicode.h"
+#ifdef HAVE_CONFIG_H
+# include "config.h"
+#endif
+
+#include "eina_config.h"
 #include "eina_private.h"
+#include "eina_unicode.h"
+#include "eina_log.h"
+#include "eina_share_common.h"
+
+/* undefs EINA_ARG_NONULL() so NULL checks are not compiled out! */
+#include "eina_safety_checks.h"
 #include "eina_ustringshare.h"
+
+
+#ifdef CRITICAL
+#undef CRITICAL
+#endif
+#define CRITICAL(...) EINA_LOG_DOM_CRIT(_eina_share_ustringshare_log_dom, __VA_ARGS__)
+
+#ifdef ERR
+#undef ERR
+#endif
+#define ERR(...) EINA_LOG_DOM_ERR(_eina_share_ustringshare_log_dom, __VA_ARGS__)
+
+#ifdef DBG
+#undef DBG
+#endif
+#define DBG(...) EINA_LOG_DOM_DBG(_eina_share_ustringshare_log_dom, __VA_ARGS__)
+
+static int _eina_share_ustringshare_log_dom = -1;
 
 /* The actual share */
 static Eina_Share *ustringshare_share;
@@ -54,9 +81,31 @@ static const char EINA_MAGIC_USTRINGSHARE_NODE_STR[] = "Eina UStringshare Node";
 Eina_Bool
 eina_ustringshare_init(void)
 {
-   return eina_share_common_init(&ustringshare_share,
-                                 EINA_MAGIC_USTRINGSHARE_NODE,
-                                 EINA_MAGIC_USTRINGSHARE_NODE_STR);
+   Eina_Bool ret;
+
+   if (_eina_share_ustringshare_log_dom < 0)
+     {
+        _eina_share_ustringshare_log_dom = eina_log_domain_register
+          ("eina_ustringshare", EINA_LOG_COLOR_DEFAULT);
+
+        if (_eina_share_ustringshare_log_dom < 0)
+          {
+             EINA_LOG_ERR("Could not register log domain: eina_ustringshare");
+             return EINA_FALSE;
+          }
+     }
+
+   ret = eina_share_common_init(&ustringshare_share,
+                                EINA_MAGIC_USTRINGSHARE_NODE,
+                                EINA_MAGIC_USTRINGSHARE_NODE_STR);
+
+   if (!ret)
+     {
+        eina_log_domain_unregister(_eina_share_ustringshare_log_dom);
+        _eina_share_ustringshare_log_dom = -1;
+     }
+
+   return ret;
 }
 
 /**
@@ -75,6 +124,13 @@ eina_ustringshare_shutdown(void)
 {
    Eina_Bool ret;
    ret = eina_share_common_shutdown(&ustringshare_share);
+
+   if (_eina_share_ustringshare_log_dom >= 0)
+     {
+        eina_log_domain_unregister(_eina_share_ustringshare_log_dom);
+        _eina_share_ustringshare_log_dom = -1;
+     }
+
    return ret;
 }
 
@@ -88,7 +144,8 @@ eina_ustringshare_del(const Eina_Unicode *str)
    if (!str)
       return;
 
-   eina_share_common_del(ustringshare_share,(const char *)str);
+   if (!eina_share_common_del(ustringshare_share, (const char *)str))
+     CRITICAL("EEEK trying to del non-shared ustringshare \"%s\"", (const char *)str);
 }
 
 EAPI const Eina_Unicode *

@@ -76,7 +76,6 @@
 #include "eina_hash.h"
 #include "eina_rbtree.h"
 #include "eina_error.h"
-#include "eina_log.h"
 #include "eina_lock.h"
 
 /* undefs EINA_ARG_NONULL() so NULL checks are not compiled out! */
@@ -125,8 +124,6 @@ typedef struct _Eina_Share_Common_Population Eina_Share_Common_Population;
 typedef struct _Eina_Share_Common Eina_Share_Common;
 typedef struct _Eina_Share_Common_Node Eina_Share_Common_Node;
 typedef struct _Eina_Share_Common_Head Eina_Share_Common_Head;
-
-int _eina_share_common_log_dom = -1;
 
 struct _Eina_Share
 {
@@ -600,28 +597,8 @@ eina_share_common_init(Eina_Share **_share,
    share = *_share = calloc(sizeof(Eina_Share), 1);
    if (!share) goto on_error;
 
-   if (_eina_share_common_log_dom < 0) /*Only register if not already */
-      _eina_share_common_log_dom = eina_log_domain_register(
-            "eina_share",
-            EINA_LOG_COLOR_DEFAULT);
-
-   if (_eina_share_common_log_dom < 0)
-     {
-        EINA_LOG_ERR("Could not register log domain: eina_share_common");
-        goto on_error;
-     }
-
    share->share = calloc(1, sizeof(Eina_Share_Common));
-   if (!share->share)
-     {
-        if (_eina_share_common_log_dom > 0)
-          {
-             eina_log_domain_unregister(_eina_share_common_log_dom);
-             _eina_share_common_log_dom = -1;
-          }
-
-        goto on_error;
-     }
+   if (!share->share) goto on_error;
 
    share->node_magic = node_magic;
 #define EMS(n) eina_magic_string_static_set(n, n ## _STR)
@@ -678,11 +655,6 @@ eina_share_common_shutdown(Eina_Share **_share)
    MAGIC_FREE(share->share);
 
    _eina_share_common_population_shutdown(share);
-   if (_eina_share_common_log_dom > 0) /* Only free if necessary */
-     {
-        eina_log_domain_unregister(_eina_share_common_log_dom);
-        _eina_share_common_log_dom = -1;
-     }
 
    eina_lock_release(&_mutex_big);
 
@@ -833,7 +805,7 @@ eina_share_common_ref(Eina_Share *share, const char *str)
 }
 
 
-void
+Eina_Bool
 eina_share_common_del(Eina_Share *share, const char *str)
 {
    unsigned int slen;
@@ -843,7 +815,7 @@ eina_share_common_del(Eina_Share *share, const char *str)
    int hash_num, hash;
 
    if (!str)
-      return;
+      return EINA_TRUE;
 
    eina_lock_take(&_mutex_big);
 
@@ -857,7 +829,7 @@ eina_share_common_del(Eina_Share *share, const char *str)
      {
         node->references--;
         eina_lock_release(&_mutex_big);
-        return;
+        return EINA_TRUE;
      }
 
    node->references = 0;
@@ -871,7 +843,7 @@ eina_share_common_del(Eina_Share *share, const char *str)
    if (!ed)
       goto on_error;
 
-   EINA_MAGIC_CHECK_SHARE_COMMON_HEAD(ed, eina_lock_release(&_mutex_big));
+   EINA_MAGIC_CHECK_SHARE_COMMON_HEAD(ed, eina_lock_release(&_mutex_big), EINA_FALSE);
 
    if (!_eina_share_common_head_remove_node(ed, node))
       goto on_error;
@@ -886,12 +858,12 @@ eina_share_common_del(Eina_Share *share, const char *str)
 
    eina_lock_release(&_mutex_big);
 
-   return;
+   return EINA_TRUE;
 
 on_error:
    eina_lock_release(&_mutex_big);
    /* possible segfault happened before here, but... */
-   CRITICAL("EEEK trying to del non-shared share_common \"%s\"", str);
+   return EINA_FALSE;
 }
 
 int
