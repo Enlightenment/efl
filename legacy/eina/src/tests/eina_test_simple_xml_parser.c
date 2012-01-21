@@ -44,13 +44,14 @@ START_TEST(eina_simple_xml_parser_node_dump)
              char *buf;
 
              fseek(f, 0, SEEK_SET);
-             buf = malloc(sz);
+             buf = malloc(sz + 1);
              if (buf)
                {
                   if (fread(buf, 1, sz, f))
                     {
                        Eina_Simple_XML_Node_Root *root = eina_simple_xml_node_load
                          (buf, sz, EINA_TRUE);
+                       buf[sz] = '\0';
                        char *out = eina_simple_xml_node_dump(&root->base, "  ");
                        //puts(out);
                        ck_assert_str_eq(out, buf);
