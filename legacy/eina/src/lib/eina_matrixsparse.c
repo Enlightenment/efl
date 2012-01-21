@@ -1078,6 +1078,8 @@ eina_matrixsparse_size_set(Eina_Matrixsparse *m,
 
              r = r->next;
              _eina_matrixsparse_row_free(r_aux, free_func, user_data);
+             if ((update_last_used_row) && (m->last_used == r_aux))
+               m->last_used = r;
           }
         else
           {
