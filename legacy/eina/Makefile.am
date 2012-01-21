@@ -1,6 +1,6 @@
 ## Process this file with automake to produce Makefile.in
 
-ACLOCAL_AMFLAGS = -I m4
+ACLOCAL_AMFLAGS = -I m4 -I m4/common -I m4/eina
 
 SUBDIRS = src doc
 
@@ -38,18 +38,18 @@ autogen.sh \
 eina.pc.in \
 eina.spec \
 eina.spec.in \
-m4/efl_attribute.m4 \
-m4/efl_benchmark.m4 \
-m4/efl_compiler_flag.m4 \
-m4/efl_coverage.m4 \
-m4/efl_cpu.m4 \
-m4/efl_doxygen.m4 \
-m4/efl_fnmatch.m4 \
-m4/efl_tests.m4 \
-m4/efl_threads.m4 \
-m4/eina_bench.m4 \
-m4/eina_check.m4 \
-m4/efl_path_max.m4
+m4/common/efl_attribute.m4 \
+m4/common/efl_benchmark.m4 \
+m4/common/efl_compiler_flag.m4 \
+m4/common/efl_coverage.m4 \
+m4/common/efl_cpu.m4 \
+m4/common/efl_doxygen.m4 \
+m4/common/efl_fnmatch.m4 \
+m4/common/efl_tests.m4 \
+m4/common/efl_threads.m4 \
+m4/common/efl_path_max.m4 \
+m4/eina/eina_bench.m4 \
+m4/eina/eina_check.m4
 
 .PHONY: doc coverage benchmark
 
