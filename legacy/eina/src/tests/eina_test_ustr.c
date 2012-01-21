@@ -28,6 +28,43 @@
 #include "eina_suite.h"
 #include "Eina.h"
 
+#ifdef EINA_SAFETY_CHECKS
+struct log_ctx {
+   const char *msg;
+   const char *fnc;
+   Eina_Bool did;
+};
+
+/* tests should not output on success, just uncomment this for debugging */
+//#define SHOW_LOG 1
+
+static void
+_eina_test_safety_print_cb(const Eina_Log_Domain *d, Eina_Log_Level level, const char *file, const char *fnc, int line, const char *fmt, void *data, va_list args __UNUSED__)
+{
+   struct log_ctx *ctx = data;
+   va_list cp_args;
+   const char *str;
+
+   va_copy(cp_args, args);
+   str = va_arg(cp_args, const char *);
+   va_end(cp_args);
+
+   ck_assert_int_eq(level, EINA_LOG_LEVEL_ERR);
+   ck_assert_str_eq(fmt, "%s");
+   ck_assert_str_eq(ctx->msg, str);
+   ck_assert_str_eq(ctx->fnc, fnc);
+   ctx->did = EINA_TRUE;
+
+#ifdef SHOW_LOG
+   eina_log_print_cb_stderr(d, level, file, fnc, line, fmt, NULL, args);
+#else
+   (void)d;
+   (void)file;
+   (void)line;
+#endif
+}
+#endif
+
 static const Eina_Unicode STR1[] = {'P', 'a', 'n', 't', 's',' ', 'O', 'n', 0};
 static const Eina_Unicode STR2[] = {'P', 'a', 'n', 't', 's',' ', 'O', 'f', 'f', 0};
 static const Eina_Unicode STR3[] = {'P', 'a', 'n', 't', 's',' ', 'O', 'n', 0};
@@ -126,14 +163,42 @@ START_TEST(eina_unicode_strncpy_test)
    rv = eina_unicode_strncpy(buf, STR1, 0);
    fail_if(buf[0] != '7');
 
-   /* may segfault */
-   buf[0] = '7';
-   rv = eina_unicode_strncpy(buf, NULL, 0);
-   fail_if(buf[0] != '7');
+#ifdef EINA_SAFETY_CHECKS
+   {
+      struct log_ctx ctx;
 
-   /* Hopefully won't segfault */
-   rv = eina_unicode_strncpy(NULL, STR1, 0);
-   fail_if(rv != NULL);
+#define TEST_MAGIC_SAFETY(fn, _msg)             \
+      ctx.msg = _msg;                           \
+      ctx.fnc = fn;                             \
+      ctx.did = EINA_FALSE
+
+      eina_log_print_cb_set(_eina_test_safety_print_cb, &ctx);
+
+      /* may segfault */
+      buf[0] = '7';
+#ifdef SHOW_LOG
+      fprintf(stderr, "you should have a safety check failure below:\n");
+#endif
+      TEST_MAGIC_SAFETY("eina_unicode_strncpy",
+                        "safety check failed: source == NULL");
+      rv = eina_unicode_strncpy(buf, NULL, 0);
+      fail_if(buf[0] != '7');
+      fail_unless(ctx.did);
+
+      /* Hopefully won't segfault */
+#ifdef SHOW_LOG
+      fprintf(stderr, "you should have a safety check failure below:\n");
+#endif
+      TEST_MAGIC_SAFETY("eina_unicode_strncpy",
+                        "safety check failed: dest == NULL");
+      rv = eina_unicode_strncpy(NULL, STR1, 0);
+      fail_if(rv != NULL);
+      fail_unless(ctx.did);
+
+      eina_log_print_cb_set(eina_log_print_cb_stderr, NULL);
+#undef TEST_MAGIC_SAFETY
+   }
+#endif
 
    eina_shutdown();
 }
@@ -151,8 +216,30 @@ START_TEST(eina_ustr_strlen_test)
    fail_if(eina_unicode_strlen(STR3) != 8);
    fail_if(eina_unicode_strlen(STR4) != 1);
    fail_if(eina_unicode_strlen(EMPTYSTR) != 0);
-   /* Eina unicode doesn't take NULL */
-   // fail_if(eina_unicode_strlen(NULL));
+
+#ifdef EINA_SAFETY_CHECKS
+   {
+      struct log_ctx ctx;
+
+#define TEST_MAGIC_SAFETY(fn, _msg)             \
+      ctx.msg = _msg;                           \
+      ctx.fnc = fn;                             \
+      ctx.did = EINA_FALSE
+
+      eina_log_print_cb_set(_eina_test_safety_print_cb, &ctx);
+
+#ifdef SHOW_LOG
+      fprintf(stderr, "you should have a safety check failure below:\n");
+#endif
+      TEST_MAGIC_SAFETY("eina_unicode_strlen",
+                        "safety check failed: ustr == NULL");
+      fail_if(eina_unicode_strlen(NULL));
+      fail_unless(ctx.did);
+
+      eina_log_print_cb_set(eina_log_print_cb_stderr, NULL);
+#undef TEST_MAGIC_SAFETY
+   }
+#endif
 
    eina_shutdown();
 }
@@ -174,7 +261,30 @@ START_TEST(eina_unicode_strnlen_test)
    fail_if(eina_unicode_strnlen(STR2,3) != 3);
    fail_if(eina_unicode_strnlen(STR3,3) != 3);
    fail_if(eina_unicode_strnlen(EMPTYSTR,1) != 0);
-   fail_if(eina_unicode_strnlen(NULL,0) != 0);
+
+#ifdef EINA_SAFETY_CHECKS
+   {
+      struct log_ctx ctx;
+
+#define TEST_MAGIC_SAFETY(fn, _msg)             \
+      ctx.msg = _msg;                           \
+      ctx.fnc = fn;                             \
+      ctx.did = EINA_FALSE
+
+      eina_log_print_cb_set(_eina_test_safety_print_cb, &ctx);
+
+#ifdef SHOW_LOG
+      fprintf(stderr, "you should have a safety check failure below:\n");
+#endif
+      TEST_MAGIC_SAFETY("eina_unicode_strnlen",
+                        "safety check failed: ustr == NULL");
+      fail_if(eina_unicode_strnlen(NULL,0) != 0);
+      fail_unless(ctx.did);
+
+      eina_log_print_cb_set(eina_log_print_cb_stderr, NULL);
+#undef TEST_MAGIC_SAFETY
+   }
+#endif
 
    eina_shutdown();
 }
