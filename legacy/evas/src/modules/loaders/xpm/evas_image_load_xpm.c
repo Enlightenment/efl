@@ -153,7 +153,7 @@ evas_image_load_file_xpm(Image_Entry *ie, const char *file, const char *key __UN
    position = 0;
    if (length < 9)
      {
-        ERR("XPM ERROR: file size, %i, is to small", length);
+        ERR("XPM ERROR: file size, %zd, is to small", length);
         eina_file_close(f);
 	*error = EVAS_LOAD_ERROR_CORRUPT_FILE;
 	return EINA_FALSE;
