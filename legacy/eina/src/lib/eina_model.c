@@ -3023,7 +3023,7 @@ _eina_model_free(Eina_Model *model)
    const Eina_Model_Description *desc = model->desc;
    unsigned int i;
 
-   DBG("model %p (%s) refcount=%d deleted=%hhu",
+   DBG("model %p (%s) refcount=%d deleted=" FMT_UCHAR,
        model, model->desc->cache.types[0]->name,
        model->refcount, model->deleted);
 
@@ -3081,7 +3081,7 @@ _eina_model_del(Eina_Model *model)
 {
    const Eina_Model_Description *desc = model->desc;
 
-   DBG("model %p (%s) refcount=%d deleted=%hhu",
+   DBG("model %p (%s) refcount=%d deleted=" FMT_UCHAR,
        model, model->desc->cache.types[0]->name,
        model->refcount, model->deleted);
 
@@ -3098,7 +3098,7 @@ _eina_model_del(Eina_Model *model)
 static void
 _eina_model_unref(Eina_Model *model)
 {
-   DBG("model %p (%s) refcount=%d deleted=%hhu",
+   DBG("model %p (%s) refcount=%d deleted=" FMT_UCHAR,
        model, model->desc->cache.types[0]->name,
        model->refcount, model->deleted);
 
@@ -3291,7 +3291,7 @@ EAPI Eina_Model *
 eina_model_ref(Eina_Model *model)
 {
    EINA_MODEL_INSTANCE_CHECK_VAL(model, NULL);
-   DBG("model %p (%s) refcount=%d deleted=%hhu",
+   DBG("model %p (%s) refcount=%d deleted=" FMT_UCHAR,
        model, model->desc->cache.types[0]->name,
        model->refcount, model->deleted);
    model->refcount++;
