@@ -31,7 +31,9 @@
 #ifdef HAVE_ALLOCA_H
 # include <alloca.h>
 #elif defined __GNUC__
-# define alloca __builtin_alloca
+# ifndef alloca
+#  define alloca __builtin_alloca
+# endif
 #elif defined _AIX
 # define alloca __alloca
 #elif defined _MSC_VER
