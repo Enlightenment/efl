@@ -404,7 +404,7 @@ EAPI void                     evas_gl_free               (Evas_GL *evas_gl) EINA
  * As long as the Evas creates a config object for the user, it takes care
  * of the backward compatibility issue.
  */
-EAPI Evas_GL_Config          *evas_gl_config_new         ();
+EAPI Evas_GL_Config          *evas_gl_config_new         (void);
 
 /**
  * Frees a config object created from evas_gl_config_new.
