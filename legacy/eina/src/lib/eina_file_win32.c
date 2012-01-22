@@ -887,7 +887,6 @@ eina_file_open(const char *path, Eina_Bool shared)
    WIN32_FILE_ATTRIBUTE_DATA fad;
    ULARGE_INTEGER length;
    ULARGE_INTEGER mtime;
-   Eina_Bool create = EINA_FALSE;
 
    EINA_SAFETY_ON_NULL_RETURN_VAL(path, NULL);
 
