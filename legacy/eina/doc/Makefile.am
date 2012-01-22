@@ -21,6 +21,7 @@ doc: all
 	rm -rf $(PACKAGE_DOCNAME)/
 	mv $(PACKAGE_DOCNAME).tar.bz2 $(top_builddir)
 	@echo "Documentation Package: $(top_builddir)/$(PACKAGE_DOCNAME).tar.bz2"
+	@echo "Documentation HTML: $(builddir)/html"
 
 clean-local: doc-clean
 
