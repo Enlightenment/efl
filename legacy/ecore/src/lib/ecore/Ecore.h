@@ -9,7 +9,7 @@
    @mainpage Ecore
 
    @version 1.1
-   @date 2000-2011
+   @date 2000-2012
 
    Please see the @ref authors page for contact details.
 
@@ -35,21 +35,31 @@
    pkgconfig (.pc) files are installed for every ecore module.
    Thus, to compile using any of them, you can use something like the following:
 
-   @verbatim
-   gcc *.c $(pkg-config ecore ecore-$x ecore-$y [...] --cflags --libs)
-   @endverbatim
+@verbatim
+gcc *.c $(pkg-config ecore ecore-$x ecore-$y [...] --cflags --libs)
+@endverbatim
 
    @section install How is it installed?
 
-   Suggested configure options for evas for a Linux desktop X display:
+   Suggested configure options for ecore for a Linux desktop X display
+   with OpenGL and Software support, communication (networking) and
+   IPC (inter process communication):
 
-   @verbatim
-   ./configure \
-   make
-   su -
-   ...
-   make install
-   @endverbatim
+@verbatim
+./configure \
+    --enable-ecore-con \
+    --enable-ecore-ipc \
+    --enable-ecore-file \
+    --enable-ecore-input \
+    --enable-ecore-input-evas \
+    --enable-ecore-x \
+    --enable-ecore-evas \
+    --enable-ecore-evas-software-buffer \
+    --enable-ecore-evas-software-x11 \
+    --enable-ecore-evas-opengl-x11
+make
+sudo make install
+@endverbatim
 
  */
 
