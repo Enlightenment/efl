@@ -20,6 +20,8 @@ doc: all doc-clean
 	bzip2 -9 $(PACKAGE_DOCNAME).tar
 	rm -rf $(PACKAGE_DOCNAME)/
 	mv $(PACKAGE_DOCNAME).tar.bz2 $(top_builddir)
+	@echo "Documentation Package: doc/$(PACKAGE_DOCNAME).tar.bz2"
+	@echo "Documentation HTML: doc/html"
 
 clean-local: doc-clean
 
