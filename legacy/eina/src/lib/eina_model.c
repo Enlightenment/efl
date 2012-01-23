@@ -2097,7 +2097,7 @@ _eina_model_type_mixin_compare(const Eina_Model *a, const Eina_Model *b, int *cm
           }
      }
 
-   if ((ret) && (cmp == 0))
+   if ((ret) && (*cmp == 0))
      {
         if (priv->if_children)
           {
