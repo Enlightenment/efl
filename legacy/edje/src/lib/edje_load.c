@@ -132,7 +132,7 @@ edje_file_group_exists(const char *file, const char *glob)
    edf = _edje_cache_file_coll_open(file, NULL, &error_ret, NULL);
    if (!edf)
       return EINA_FALSE;
-   
+
    for (p = glob; *p; p++)
      {
        if ((*p == '*') || (*p == '?') || (*p == '['))
@@ -141,7 +141,7 @@ edje_file_group_exists(const char *file, const char *glob)
            break;
          }
      }
-  
+
    if (is_glob)
      {
        if (!edf->collection_patterns)
@@ -149,18 +149,18 @@ edje_file_group_exists(const char *file, const char *glob)
            Edje_Part_Collection_Directory_Entry *ce;
            Eina_Iterator *i;
            Eina_List *l = NULL;
-           
+
            i = eina_hash_iterator_data_new(edf->collection);
-           
+
            EINA_ITERATOR_FOREACH(i, ce)
              l = eina_list_append(l, ce);
-           
+
            eina_iterator_free(i);
-           
+
            edf->collection_patterns = edje_match_collection_dir_init(l);
            eina_list_free(l);
          }
-       
+
        succeed = edje_match_collection_dir_exec(edf->collection_patterns, glob);
        if (edf->collection_patterns)
          {
