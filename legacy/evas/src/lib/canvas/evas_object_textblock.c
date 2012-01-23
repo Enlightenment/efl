@@ -430,6 +430,7 @@ struct _Evas_Object_Textblock
 {
    DATA32                              magic;
    Evas_Textblock_Style               *style;
+   Evas_Textblock_Style               *style_user;
    Evas_Textblock_Cursor              *cursor;
    Eina_List                          *cursors;
    Evas_Object_Textblock_Node_Text    *text_nodes;
@@ -4185,11 +4186,27 @@ _layout(const Evas_Object *obj, int w, int h, int *w_ret, int *h_ret)
 
    /* Start of logical layout creation */
    /* setup default base style */
-   if ((c->o->style) && (c->o->style->default_tag))
      {
-        c->fmt = _layout_format_push(c, NULL, NULL);
-        _format_fill(c->obj, c->fmt, c->o->style->default_tag);
-        _format_finalize(c->obj, c->fmt);
+        Eina_Bool finalize = EINA_FALSE;
+        if ((c->o->style) && (c->o->style->default_tag))
+          {
+             c->fmt = _layout_format_push(c, NULL, NULL);
+             _format_fill(c->obj, c->fmt, c->o->style->default_tag);
+             finalize = EINA_TRUE;
+          }
+
+        if ((c->o->style_user) && (c->o->style_user->default_tag))
+          {
+             if (!c->fmt)
+               {
+                  c->fmt = _layout_format_push(c, NULL, NULL);
+               }
+             _format_fill(c->obj, c->fmt, c->o->style_user->default_tag);
+             finalize = EINA_TRUE;
+          }
+
+        if (finalize)
+           _format_finalize(c->obj, c->fmt);
      }
    if (!c->fmt)
      {
@@ -4576,13 +4593,15 @@ evas_textblock_style_get(const Evas_Textblock_Style *ts)
 }
 
 /* textblock styles */
-EAPI void
-evas_object_textblock_style_set(Evas_Object *obj, Evas_Textblock_Style *ts)
+
+static void
+_textblock_style_generic_set(Evas_Object *obj, Evas_Textblock_Style *ts,
+      Evas_Textblock_Style **obj_ts)
 {
    TB_HEAD();
-   if (ts == o->style) return;
+   if (ts == *obj_ts) return;
    if ((ts) && (ts->delete_me)) return;
-   if (o->style)
+   if (*obj_ts)
      {
         Evas_Textblock_Style *old_ts;
         if (o->markup_text)
@@ -4591,7 +4610,7 @@ evas_object_textblock_style_set(Evas_Object *obj, Evas_Textblock_Style *ts)
              o->markup_text = NULL;
           }
 
-        old_ts = o->style;
+        old_ts = *obj_ts;
         old_ts->objects = eina_list_remove(old_ts->objects, obj);
         if ((old_ts->delete_me) && (!old_ts->objects))
           evas_textblock_style_free(old_ts);
@@ -4600,10 +4619,17 @@ evas_object_textblock_style_set(Evas_Object *obj, Evas_Textblock_Style *ts)
      {
         ts->objects = eina_list_append(ts->objects, obj);
      }
-   o->style = ts;
+   *obj_ts = ts;
 
    _evas_textblock_invalidate_all(o);
    _evas_textblock_changed(o, obj);
+}
+
+EAPI void
+evas_object_textblock_style_set(Evas_Object *obj, Evas_Textblock_Style *ts)
+{
+   TB_HEAD();
+   _textblock_style_generic_set(obj, ts, &(o->style));
 }
 
 EAPI const Evas_Textblock_Style *
@@ -4611,6 +4637,20 @@ evas_object_textblock_style_get(const Evas_Object *obj)
 {
    TB_HEAD_RETURN(NULL);
    return o->style;
+}
+
+EAPI void
+evas_object_textblock_style_user_set(Evas_Object *obj, Evas_Textblock_Style *ts)
+{
+   TB_HEAD();
+   _textblock_style_generic_set(obj, ts, &(o->style_user));
+}
+
+EAPI const Evas_Textblock_Style *
+evas_object_textblock_style_user_get(const Evas_Object *obj)
+{
+   TB_HEAD_RETURN(NULL);
+   return o->style_user;
 }
 
 EAPI void
@@ -4902,7 +4942,7 @@ evas_object_textblock_text_markup_set(Evas_Object *obj, const char *text)
         o->markup_text = NULL;
      }
    _nodes_clear(obj);
-   if (!o->style)
+   if (!o->style && !o->style_user)
      {
         if (text != o->markup_text)
           {
@@ -7241,7 +7281,13 @@ _evas_textblock_node_format_new(Evas_Object_Textblock *o, const char *_format)
                }
           }
 
-        match = _style_match_tag(o->style, format, format_len, &replace_len);
+        if (!o->style_user || !(match = _style_match_tag(o->style_user, format,
+                    format_len, &replace_len)))
+          {
+             match = _style_match_tag(o->style, format, format_len,
+                   &replace_len);
+          }
+
         if (match)
           {
              if (match[0] != '-')

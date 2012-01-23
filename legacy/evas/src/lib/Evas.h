@@ -8286,6 +8286,28 @@ EAPI void                         evas_object_textblock_style_set(Evas_Object *o
 EAPI const Evas_Textblock_Style  *evas_object_textblock_style_get(const Evas_Object *obj) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1);
 
 /**
+ * Set the objects user style to ts.
+ *
+ * The user style overrides the corresponding elements of the regular style.
+ * This is the proper way to do theme overrides in code.
+ * @param obj the Evas object to set the style to.
+ * @param ts  the style to set.
+ * @return Returns no value.
+ * @see evas_object_textblock_style_set
+ * @since 1.2.0
+ */
+EAPI void                         evas_object_textblock_style_user_set(Evas_Object *obj, Evas_Textblock_Style *ts) EINA_ARG_NONNULL(1);
+
+/**
+ * Return the user style of an object.
+ * @param obj  the object to get the style from.
+ * @return the style of the object.
+ * @see evas_object_textblock_style_get
+ * @since 1.2.0
+ */
+EAPI const Evas_Textblock_Style  *evas_object_textblock_style_user_get(const Evas_Object *obj) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1);
+
+/**
  * @brief Set the "replacement character" to use for the given textblock object.
  *
  * @param obj The given textblock object.
