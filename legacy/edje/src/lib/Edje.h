@@ -2448,6 +2448,33 @@ EAPI Eina_Bool    edje_object_part_text_set           (Evas_Object *obj, const c
 EAPI const char  *edje_object_part_text_get           (const Evas_Object *obj, const char *part);
 
 /**
+ * @brief Set the style of the
+ *
+ * @param obj A valid Evas_Object handle
+ * @param part The part name
+ * @param style The style to set (textblock conventions).
+ *
+ * This function sets the style associated with the textblock part.
+ *
+ * @since 1.2.0
+ */
+EAPI void edje_object_part_text_style_user_set(Evas_Object *obj, const char *part, const char *style);
+
+/**
+ * @brief Return the text of the object part.
+ *
+ * @param obj A valid Evas_Object handle
+ * @param part The part name
+ *
+ * @return The text string
+ *
+ * This function returns the style associated with the textblock part.
+ *
+ * @since 1.2.0
+ */
+EAPI const char *edje_object_part_text_style_user_get(Evas_Object *obj, const char *part);
+
+/**
  * @brief Sets the raw (non escaped) text for an object part.
  *
  * @param obj A valid Evas Object handle

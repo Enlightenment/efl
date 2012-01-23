@@ -1058,6 +1058,45 @@ _edje_object_part_text_raw_append(Evas_Object *obj, Edje_Real_Part *rp, const ch
    return EINA_TRUE;
 }
 
+EAPI void
+edje_object_part_text_style_user_set(Evas_Object *obj, const char *part,
+                                const char *style)
+{
+   Edje *ed;
+   Edje_Real_Part *rp;
+   Evas_Textblock_Style *ts;
+
+   ed = _edje_fetch(obj);
+   if ((!ed) || (!part) || (!style)) return;
+   rp = _edje_real_part_recursive_get(ed, (char *)part);
+   if (!rp) return;
+   if (rp->part->type != EDJE_PART_TYPE_TEXTBLOCK) return;
+
+   ts = evas_textblock_style_new();
+   evas_textblock_style_set(ts, style);
+   evas_object_textblock_style_user_set(rp->object, ts);
+}
+
+EAPI const char *
+edje_object_part_text_style_user_get(Evas_Object *obj, const char *part)
+{
+   Edje *ed;
+   Edje_Real_Part *rp;
+   const Evas_Textblock_Style *ts;
+
+   ed = _edje_fetch(obj);
+   if ((!ed) || (!part)) return NULL;
+   rp = _edje_real_part_recursive_get(ed, (char *)part);
+   if (!rp) return NULL;
+   if (rp->part->type != EDJE_PART_TYPE_TEXTBLOCK) return NULL;
+
+   ts = evas_object_textblock_style_user_get(rp->object);
+   if (ts)
+      return evas_textblock_style_get(ts);
+   else
+      return NULL;
+}
+
 EAPI Eina_Bool
 edje_object_part_text_set(Evas_Object *obj, const char *part, const char *text)
 {
