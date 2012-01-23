@@ -1933,7 +1933,7 @@ START_TEST(eet_cache_concurrency)
    thread = _beginthreadex(NULL, 0, open_close_worker, file, 0, &thread_id);
 # endif /* ifdef _EET_INCLUDED_PTHREAD */
    /* clear the cache repeatedly in this thread */
-   for (n = 0; n < 50000; ++n)
+   for (n = 0; n < 20000; ++n)
      {
         eet_clearcache();
      }
