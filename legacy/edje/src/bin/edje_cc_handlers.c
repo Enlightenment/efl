@@ -2242,6 +2242,14 @@ st_collections_group_inherit(void)
             progname, file_in, line - 1, parent_name);
         exit(-1);
      }
+   if (pc2 == pc)
+     {
+        ERR("%s: Error. parse error %s:%i. You are trying to inherit '%s' from itself. That's not possible."
+            "If there is another group of the same name, you want to inherit from that group and have the"
+            "same name as that group, there is a trick ! Just put the inherit before the directive that set"
+            "the name !", progname, file_in, line - 1, parent_name);
+        exit(-1);
+     }
 
    if (pc2->data)
      {
