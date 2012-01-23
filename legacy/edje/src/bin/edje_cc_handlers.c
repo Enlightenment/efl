@@ -2171,6 +2171,7 @@ st_collections_group_name(void)
 
 	     pc->id = i++;
 	     if (older) older->id = pc->id;
+	     else if (pc->part == current_pc->part) current_de->id = pc->id;
 	  }
      }
 
