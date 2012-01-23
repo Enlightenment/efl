@@ -224,7 +224,7 @@ _del_item_cb(void *data, Evas_Object *o __UNUSED__, void *event_info __UNUSED__)
    if (!glit) return;
 
    Node_Data *pdata, *d = elm_genlist_item_data_get(glit);
-   glit_parent = elm_genlist_item_parent_get(glit_it);
+   glit_parent = elm_genlist_item_parent_get(glit);
    elm_genlist_item_subitems_clear(glit);
    elm_genlist_item_del(glit);
 

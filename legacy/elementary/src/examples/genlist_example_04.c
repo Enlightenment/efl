@@ -136,7 +136,7 @@ _next_cb(void *data, Evas_Object *o __UNUSED__, void *event_info __UNUSED__)
    Evas_Object *list = data;
    Elm_Object_Item *glit = elm_genlist_selected_item_get(list);
 
-   if (glit) glit = elm_genlist_item_next_get(it);
+   if (glit) glit = elm_genlist_item_next_get(glit);
    if (!glit) glit = elm_genlist_first_item_get(list);
 
    elm_genlist_item_selected_set(glit, EINA_TRUE);
