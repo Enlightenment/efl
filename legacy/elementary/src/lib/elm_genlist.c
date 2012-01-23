@@ -218,6 +218,46 @@ static const Evas_Smart_Cb_Description _signals[] = {
    {NULL, NULL}
 };
 
+/* TEMPORARY */
+#undef ELM_CHECK_WIDTYPE
+#define ELM_CHECK_WIDTYPE(obj, widtype) \
+   if ((!obj) || (!elm_genlist_type_check((obj), __func__))) return
+#undef ELM_WIDGET_ITEM_WIDTYPE_CHECK_OR_RETURN
+#define ELM_WIDGET_ITEM_WIDTYPE_CHECK_OR_RETURN(it, ...)                \
+   ELM_WIDGET_ITEM_CHECK_OR_RETURN((Elm_Widget_Item *)it, __VA_ARGS__); \
+   ELM_CHECK_WIDTYPE(WIDGET((it)), widtype) __VA_ARGS__;
+
+static const char *_gengrid = NULL;
+static const char *_genlist = NULL;
+
+/* THIS FUNCTION IS HACKY AND TEMPORARY!!! */
+Eina_Bool
+elm_genlist_type_check(const Evas_Object *obj,
+                       const char        *func)
+{
+   const char *provided, *expected = "(unknown)";
+   static int abort_on_warn = -1;
+   provided = elm_widget_type_get(obj);
+   if (!_genlist) _genlist = eina_stringshare_add("genlist");
+   if (!_gengrid) _gengrid = eina_stringshare_add("gengrid");
+   if (EINA_LIKELY(provided == _genlist) || EINA_LIKELY(provided == _gengrid))
+     return EINA_TRUE;
+   if ((!provided) || (!provided[0]))
+     {
+        provided = evas_object_type_get(obj);
+        if ((!provided) || (!provided[0]))
+          provided = "(unknown)";
+     }
+   ERR("Passing Object: %p in function: %s, of type: '%s' when expecting type: '%s'", obj, func, provided, expected);
+   if (abort_on_warn == -1)
+     {
+        if (getenv("ELM_ERROR_ABORT")) abort_on_warn = 1;
+        else abort_on_warn = 0;
+     }
+   if (abort_on_warn == 1) abort();
+   return EINA_FALSE;
+}
+
 static Eina_Bool
 _event_hook(Evas_Object       *obj,
             Evas_Object       *src __UNUSED__,
