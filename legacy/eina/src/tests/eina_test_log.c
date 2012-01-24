@@ -101,9 +101,11 @@ _eina_test_log_safety(const Eina_Log_Domain *d, Eina_Log_Level level, const char
 START_TEST(eina_log_macro)
 {
    struct log_ctx ctx;
+   int oldlevel;
 
    fail_if(!eina_init());
 
+   oldlevel = eina_log_level_get();
    eina_log_level_set(EINA_LOG_LEVEL_DBG);
    eina_log_print_cb_set(_eina_test_log, &ctx);
 
@@ -137,6 +139,7 @@ START_TEST(eina_log_macro)
 #undef TEST_LOG_CTX
 
    eina_log_print_cb_set(eina_log_print_cb_stderr, NULL);
+   eina_log_level_set(oldlevel);
 
    eina_shutdown();
 }
@@ -145,10 +148,12 @@ END_TEST
 START_TEST(eina_log_domains_macros)
 {
    struct log_ctx ctx;
+   int oldlevel;
 
    fail_if(!eina_init());
 
    /* make global log level blocker */
+   oldlevel = eina_log_level_get();
    eina_log_level_set(EINA_LOG_LEVEL_CRITICAL);
    eina_log_print_cb_set(_eina_test_log_domain, &ctx);
 
@@ -189,6 +194,7 @@ START_TEST(eina_log_domains_macros)
 #undef TEST_LOG_CTX
 
    eina_log_print_cb_set(eina_log_print_cb_stderr, NULL);
+   eina_log_level_set(oldlevel);
 
    eina_shutdown();
 }
