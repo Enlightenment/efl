@@ -758,7 +758,7 @@ START_TEST(eina_model_test_struct)
    };
    Eina_Value inv, outv;
    int i;
-   char c;
+   char c, *s;
    Eina_List *lst;
    Eina_Bool ck;
 
@@ -813,9 +813,7 @@ START_TEST(eina_model_test_struct)
    /* negative test (check safety was displayed by using print_cb) */
    eina_log_print_cb_set(_eina_test_model_check_safety_null, &ck);
 
-   ck = EINA_FALSE;
    fail_if(eina_model_property_get(m, "non-existent", &outv));
-   fail_unless(ck == EINA_TRUE);
 
    ck = EINA_FALSE;
    fail_if(eina_model_property_get(m, NULL, &outv));
@@ -842,6 +840,11 @@ START_TEST(eina_model_test_struct)
    fail_if(eina_model_property_del(m, "c"));
 
    eina_value_flush(&inv);
+
+   s = eina_model_to_string(m);
+   fail_unless(s != NULL);
+   ck_assert_str_eq(s, "Eina_Model_Type_Struct({c: 33, i: 1234}, [])");
+   free(s);
 
    ck_assert_int_eq(eina_model_refcount(m), 1);
 

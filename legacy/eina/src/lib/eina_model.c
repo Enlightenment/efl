@@ -2567,54 +2567,17 @@ _eina_model_interface_properties_struct_destructor(Eina_Model *model)
 static Eina_Bool
 _eina_model_interface_properties_struct_get(const Eina_Model *model, const char *name, Eina_Value *val)
 {
-   EINA_MODEL_INTERFACE_PROPERTIES_STRUCT_GET(model);
-   const Eina_Value_Struct_Member *m;
-   const void *p;
-
-   /* highly optimized, but duplicates code from eina_inline_value.x */
-
-   m = eina_value_struct_member_find(priv, name);
-   EINA_SAFETY_ON_NULL_RETURN_VAL(m, EINA_FALSE);
-
-   p = eina_value_struct_member_memory_get(priv, m);
-   EINA_SAFETY_ON_NULL_RETURN_VAL(p, EINA_FALSE);
-   EINA_SAFETY_ON_FALSE_RETURN_VAL(eina_value_setup(val, m->type), EINA_FALSE);
-   EINA_SAFETY_ON_FALSE_GOTO(eina_value_pset(val, p), error);
-   return EINA_TRUE;
-
- error:
-   eina_value_flush(val);
-   return EINA_FALSE;
+   const Eina_Value *v = eina_model_interface_private_data_get
+     (model, EINA_MODEL_INTERFACE_PROPERTIES_STRUCT);
+   return eina_value_struct_value_get(v, name, val);
 }
 
 static Eina_Bool
 _eina_model_interface_properties_struct_set(Eina_Model *model, const char *name, const Eina_Value *val)
 {
-   EINA_MODEL_INTERFACE_PROPERTIES_STRUCT_GET(model);
-   const Eina_Value_Struct_Member *m;
-   const void *src;
-   void *dst;
-
-   /* highly optimized, but duplicates code from eina_inline_value.x */
-
-   m = eina_value_struct_member_find(priv, name);
-   EINA_SAFETY_ON_NULL_RETURN_VAL(m, EINA_FALSE);
-   EINA_SAFETY_ON_FALSE_RETURN_VAL(val->type == m->type, EINA_FALSE);
-
-   dst = eina_value_struct_member_memory_get(priv, m);
-   EINA_SAFETY_ON_NULL_RETURN_VAL(dst, EINA_FALSE);
-   src = eina_value_memory_get(val);
-   EINA_SAFETY_ON_NULL_RETURN_VAL(src, EINA_FALSE);
-
-   eina_value_type_flush(m->type, dst);
-   if (!eina_value_type_setup(m->type, dst)) goto error_setup;
-   if (!eina_value_type_pset(m->type, dst, src)) goto error_set;
-   return EINA_TRUE;
-
- error_set:
-   eina_value_type_flush(m->type, dst);
- error_setup:
-   return EINA_FALSE;
+   Eina_Value *v = eina_model_interface_private_data_get
+     (model, EINA_MODEL_INTERFACE_PROPERTIES_STRUCT);
+   return eina_value_struct_value_set(v, name, val);
 }
 
 static Eina_Bool

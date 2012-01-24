@@ -435,7 +435,7 @@ static inline void eina_value_flush(Eina_Value *value) EINA_ARG_NONNULL(1);
  * @param copy destination value object
  * @return #EINA_TRUE on success, #EINA_FALSE otherwise.
  *
- * The @a copy object is considered internalized and its existing
+ * The @a copy object is considered uninitialized and its existing
  * contents are overwritten (just as if eina_value_flush() was called on
  * it).
  *
@@ -2702,7 +2702,7 @@ static inline Eina_Bool eina_value_struct_setup(Eina_Value *value,
  */
 static inline Eina_Bool eina_value_struct_set(Eina_Value *value,
                                               const char *name,
-                                              ...) EINA_ARG_NONNULL(1);
+                                              ...) EINA_ARG_NONNULL(1, 2);
 
 /**
  * @brief Get the generic value from an struct member.
@@ -2770,7 +2770,7 @@ static inline Eina_Bool eina_value_struct_set(Eina_Value *value,
  */
 static inline Eina_Bool eina_value_struct_get(const Eina_Value *value,
                                               const char *name,
-                                              ...) EINA_ARG_NONNULL(1);
+                                              ...) EINA_ARG_NONNULL(1, 2);
 
 /**
  * @brief Set the generic value in an struct member.
@@ -2786,7 +2786,7 @@ static inline Eina_Bool eina_value_struct_get(const Eina_Value *value,
  */
 static inline Eina_Bool eina_value_struct_vset(Eina_Value *value,
                                                const char *name,
-                                               va_list args) EINA_ARG_NONNULL(1);
+                                               va_list args) EINA_ARG_NONNULL(1, 2);
 
 /**
  * @brief Get the generic value from an struct member.
@@ -2808,7 +2808,7 @@ static inline Eina_Bool eina_value_struct_vset(Eina_Value *value,
  */
 static inline Eina_Bool eina_value_struct_vget(const Eina_Value *value,
                                                const char *name,
-                                               va_list args) EINA_ARG_NONNULL(1);
+                                               va_list args) EINA_ARG_NONNULL(1, 2);
 
 /**
  * @brief Set the generic value in an struct member from pointer.
@@ -2875,7 +2875,7 @@ static inline Eina_Bool eina_value_struct_vget(const Eina_Value *value,
  */
 static inline Eina_Bool eina_value_struct_pset(Eina_Value *value,
                                                const char *name,
-                                               const void *ptr) EINA_ARG_NONNULL(1, 3);
+                                               const void *ptr) EINA_ARG_NONNULL(1, 2, 3);
 
 /**
  * @brief Get the generic value to pointer from an struct member.
@@ -2944,7 +2944,34 @@ static inline Eina_Bool eina_value_struct_pset(Eina_Value *value,
  */
 static inline Eina_Bool eina_value_struct_pget(const Eina_Value *value,
                                                const char *name,
-                                               void *ptr) EINA_ARG_NONNULL(1, 3);
+                                               void *ptr) EINA_ARG_NONNULL(1, 2, 3);
+
+/**
+ * @brief Get the member as Eina_Value copy
+ * @param src source value object
+ * @param name name to find the member
+ * @param dst where to return the member value.
+ *
+ * The argument @a dst is considered uninitialized and it's setup to
+ * the type of the member.
+ *
+ * @since 1.2
+ */
+static inline Eina_Bool eina_value_struct_value_get(const Eina_Value *src,
+                                                    const char *name,
+                                                    Eina_Value *dst) EINA_ARG_NONNULL(1, 2, 3);
+
+/**
+ * @brief Set the member from Eina_Value source
+ * @param dst destination value object
+ * @param name name to find the member
+ * @param src source value
+ *
+ * @since 1.2
+ */
+static inline Eina_Bool eina_value_struct_value_set(Eina_Value *dst,
+                                                    const char *name,
+                                                    const Eina_Value *src) EINA_ARG_NONNULL(1, 2, 3);
 
 /**
  * @}
