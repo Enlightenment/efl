@@ -196,6 +196,8 @@ void eio_monitor_backend_add(Eio_Monitor *monitor)
    backend->hwnd = inotify_add_watch(ecore_main_fd_handler_fd_get(_inotify_fdh), monitor->path, mask);
    if (!backend->hwnd)
      return eio_monitor_fallback_add(monitor);
+
+   eina_hash_direct_add(_inotify_monitors, &backend->hwnd, backend);
 }
 
 void eio_monitor_backend_del(Eio_Monitor *monitor)

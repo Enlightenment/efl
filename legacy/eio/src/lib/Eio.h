@@ -815,9 +815,41 @@ struct _Eio_Monitor_Event
    const char *filename;
 };
 
+/**
+ * @brief Adds a file/directory to monitor (inotify mechanism)
+ * @param path file/directory to monitor
+ * @return NULL in case of a failure.
+ *
+ * This function will add the given path to its internal
+ * list of files to monitor. Its using inotify mechanism
+ * introduced in kernel 2.6.13 to get non active monitoring.
+ */
 EAPI Eio_Monitor *eio_monitor_add(const char *path);
+
+/**
+ * @param path file/directory to monitor
+ * @return NULL in case of a failure.
+ * Does the same thing than eio_monitor_add() but
+ * expects an eina_stringshared buffer.
+ * @warning dont give anything else than a stringshared buffer!
+ *  if you dont know what you do, use eio_monitor_add().
+ */
 EAPI Eio_Monitor *eio_monitor_stringshared_add(const char *path);
+
+/**
+ * @brief Deletes a path from the “watched” list
+ * @param monitor Eio_Monitor you want to stop watching.
+ *  it can only be an Eio_Monitor given to you when calling
+ *  eio_monitor_add() or eio_monitor_stringshared_add()
+ */
 EAPI void eio_monitor_del(Eio_Monitor *monitor);
+
+/**
+ * @brief returns the path being watched by the given
+ *  Eio_Monitor.
+ * @param monitor Eio_Monitor that you want to get path
+ * @return returns a stringshared buffer, do not free it!
+ */
 EAPI const char *eio_monitor_path_get(Eio_Monitor *monitor);
 
 /**

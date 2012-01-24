@@ -26,7 +26,8 @@
  * @author Stephen "okra" Houston <unixtitan@@gmail.com>
  * @author Gustavo Sverzut Barbieri <barbieri@@gmail.com>
  * @author Vincent "caro" Torri  <vtorri at univ-evry dot fr>
- * @date 2010-2011
+ * @author Guillaume "kuri" Friloux <guillaume.friloux@@asp64.com>
+ * @date 2010-2012
  *
  * @section eio_intro_sec Introduction
  * @version @PACKAGE_VERSION@
@@ -282,5 +283,62 @@
  * }
  *
  * @endcode
+ */
+
+/**
+ * @page tutorial_monitor_add eio_monitor_add() tutorial
+ *
+ * To use eio_monitor_add(), you have to define callbacks
+ * for events declared by eio.
+ * Available events are :
+ * - EIO_MONITOR_FILE_CREATED
+ * - EIO_MONITOR_FILE_DELETED
+ * - EIO_MONITOR_FILE_MODIFIED
+ * - EIO_MONITOR_FILE_CLOSED
+ * - EIO_MONITOR_DIRECTORY_CREATED
+ * - EIO_MONITOR_DIRECTORY_DELETED
+ * - EIO_MONITOR_DIRECTORY_CLOSED
+ * - EIO_MONITOR_SELF_RENAME
+ * - EIO_MONITOR_SELF_DELETED
+ *
+ * As nothing is worth an example, here it is :
+ * @code
+ * #include <Eina.h>
+ * #include <Ecore.h>
+ * #include <Eio.h>
+ *
+ * void file_modified(void *data, int type, void *event)
+ * {
+ *    const char *filename = (const char *)data;
+ *    printf("file %s ", filename);
+ *    if( type == EIO_MONITOR_FILE_MODIFIED )
+ *       printf("is being modified");
+ *    else if( type == EIO_MONITOR_FILE_CLOSED )
+ *       printf("is not more being modified");
+ *    else printf("got unexpected changes");
+ *    printf("\n");
+ * }
+ *
+ * int main(int argc, char **argv) {
+ *    Eio_Monitor *monitor  = NULL,
+ *                *monitor2 = NULL;
+ *    eio_init();
+ *    const char *filename = eina_stringshare_add("/tmp/eio_notify_testfile");
+ *
+ *    monitor  = eio_monitor_add(filename);
+ *    ecore_event_handler_add(EIO_MONITOR_FILE_MODIFIED, (Ecore_Event_Handler_Cb)file_modified, filename);
+ *    ecore_event_handler_add(EIO_MONITOR_FILE_CLOSED, (Ecore_Event_Handler_Cb)file_modified, filename);
+ *
+ *    ecore_main_loop_begin();
+ *    eio_shutdown();
+ *    eina_stringshare_del(filename);
+ * }
+ * @endcode
+ * Build the example doing :
+ * @verbatim gcc -o tutorial_monitor_add tutorial_monitor_add.c `pkg-config --libs --cflags eio ecore ecore-file eina`
+ * then create the file /tmp/eio_notify_testfile :
+ * @verbatim touch /tmp/eio_notify_testfile
+ * and launch tutorial_monitor_add, and in another terminal, write into /tmp/eio_notify_testfile, doing for example :
+ * @verbatim echo "test" >> /tmp/eio_notify_testfile
  */
 

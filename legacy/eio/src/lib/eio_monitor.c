@@ -112,7 +112,7 @@ _eio_monitor_error_cb(void *data, Eio_File *handler __UNUSED__, int error)
    monitor->error = error;
    monitor->exist = NULL;
 
-   if (EINA_REFCOUNT_GET(monitor) > 1)
+   if (EINA_REFCOUNT_GET(monitor) >= 1)
      _eio_monitor_error(monitor, error);
 
    EINA_REFCOUNT_UNREF(monitor)
@@ -195,6 +195,7 @@ eio_monitor_stringshared_add(const char *path)
    monitor->rename = EINA_FALSE;
 
    EINA_REFCOUNT_INIT(monitor);
+   EINA_REFCOUNT_REF(monitor); /* as we spawn a thread for this monitor, we need to refcount specifically for it */
 
    monitor->exist = eio_file_direct_stat(monitor->path,
                                          _eio_monitor_stat_cb,
@@ -262,6 +263,8 @@ _eio_monitor_rename(Eio_Monitor *monitor, const char *newpath)
       _eio_monitor_error(monitor, -1);
       return ;
     }
+
+  EINA_REFCOUNT_REF(monitor); /* as we spawn a thread for this monitor, we need to refcount specifically for it */
 
   /* restart */
   monitor->rename = EINA_TRUE;
