@@ -484,11 +484,11 @@ EAPI Eina_Bool                     elm_genlist_multi_select_get(const Evas_Objec
  * ELM_LIST_LIMIT, items will be expanded to the viewport width and
  * limited to that size.
  *
- * @see elm_genlist_horizontal_get()
+ * @see elm_genlist_mode_get()
  *
  * @ingroup Genlist
  */
-EAPI void                          elm_genlist_horizontal_set(Evas_Object *obj, Elm_List_Mode mode);
+EAPI void                          elm_genlist_mode_set(Evas_Object *obj, Elm_List_Mode mode);
 
 /**
  * Gets the horizontal stretching mode.
@@ -501,7 +501,7 @@ EAPI void                          elm_genlist_horizontal_set(Evas_Object *obj, 
  *
  * @ingroup Genlist
  */
-EAPI Elm_List_Mode                 elm_genlist_horizontal_get(const Evas_Object *obj);
+EAPI Elm_List_Mode                 elm_genlist_mode_get(const Evas_Object *obj);
 
 /**
  * Set the always select mode.
@@ -1866,7 +1866,7 @@ EAPI void                          elm_genlist_item_mode_set(Elm_Object_Item *it
  *
  * @ingroup Genlist
  */
-EAPI const char                   *elm_genlist_mode_get(const Evas_Object *obj);
+EAPI const char                   *elm_genlist_mode_type_get(const Evas_Object *obj);
 
 /**
  * Get active genlist mode item

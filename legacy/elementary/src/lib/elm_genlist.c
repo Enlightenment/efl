@@ -4938,8 +4938,8 @@ elm_genlist_item_index_get(Elm_Object_Item *it)
 }
 
 EAPI void
-elm_genlist_horizontal_set(Evas_Object  *obj,
-                           Elm_List_Mode mode)
+elm_genlist_mode_set(Evas_Object  *obj,
+		     Elm_List_Mode mode)
 {
    ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
@@ -4950,14 +4950,21 @@ elm_genlist_horizontal_set(Evas_Object  *obj,
 }
 
 EAPI void
+elm_genlist_horizontal_set(Evas_Object  *obj,
+                           Elm_List_Mode mode)
+{
+   elm_genlist_mode_set(obj, mode);
+}
+
+EAPI void
 elm_genlist_horizontal_mode_set(Evas_Object  *obj,
                                 Elm_List_Mode mode)
 {
-   elm_genlist_horizontal_set(obj, mode);
+   elm_genlist_mode_set(obj, mode);
 }
 
 EAPI Elm_List_Mode
-elm_genlist_horizontal_get(const Evas_Object *obj)
+elm_genlist_mode_get(const Evas_Object *obj)
 {
    ELM_CHECK_WIDTYPE(obj, widtype) ELM_LIST_LAST;
    Widget_Data *wd = elm_widget_data_get(obj);
@@ -4966,9 +4973,15 @@ elm_genlist_horizontal_get(const Evas_Object *obj)
 }
 
 EAPI Elm_List_Mode
+elm_genlist_horizontal_get(const Evas_Object *obj)
+{
+   return elm_genlist_mode_get(obj);
+}
+
+EAPI Elm_List_Mode
 elm_genlist_horizontal_mode_get(const Evas_Object *obj)
 {
-   return elm_genlist_horizontal_get(obj);
+   return elm_genlist_mode_get(obj);
 }
 
 EAPI void
@@ -5248,7 +5261,7 @@ elm_genlist_mode_item_style_set(Evas_Object *obj, const char *style)
 }
 
 EAPI const char *
-elm_genlist_mode_get(const Evas_Object *obj)
+elm_genlist_mode_type_get(const Evas_Object *obj)
 {
    ELM_CHECK_WIDTYPE(obj, widtype) NULL;
    Widget_Data *wd = elm_widget_data_get(obj);

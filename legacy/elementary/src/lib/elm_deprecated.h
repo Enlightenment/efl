@@ -1705,6 +1705,41 @@ EINA_DEPRECATED EAPI Evas_Object *elm_frame_content_unset(Evas_Object *obj);
 EINA_DEPRECATED EAPI void          elm_genlist_horizontal_mode_set(Evas_Object *obj, Elm_List_Mode mode);
 EINA_DEPRECATED EAPI Elm_List_Mode elm_genlist_horizontal_mode_get(const Evas_Object *obj);
 EINA_DEPRECATED EAPI void          elm_genlist_item_icons_orphan(Elm_Object_Item *it);
+/**
+ * This sets the horizontal stretching mode.
+ *
+ * @param obj The genlist object
+ * @param mode The mode to use (one of #ELM_LIST_SCROLL or #ELM_LIST_LIMIT).
+ *
+ * This sets the mode used for sizing items horizontally. Valid modes
+ * are #ELM_LIST_LIMIT and #ELM_LIST_SCROLL. The default is
+ * ELM_LIST_SCROLL. This mode means that if items are too wide to fit,
+ * the scroller will scroll horizontally. Otherwise items are expanded
+ * to fill the width of the viewport of the scroller. If it is
+ * ELM_LIST_LIMIT, items will be expanded to the viewport width and
+ * limited to that size.
+ *
+ * @see elm_genlist_horizontal_get()
+ *
+ * @deprecated use elm_genlist_mode_set()
+ * @ingroup Genlist
+ */
+EINA_DEPRECATED EAPI void                          elm_genlist_horizontal_set(Evas_Object *obj, Elm_List_Mode mode);
+
+/**
+ * Gets the horizontal stretching mode.
+ *
+ * @param obj The genlist object
+ * @return The mode to use
+ * (#ELM_LIST_LIMIT, #ELM_LIST_SCROLL)
+ *
+ * @see elm_genlist_horizontal_set()
+ *
+ * @deprecated use elm_genlist_mode_get()
+ * @ingroup Genlist
+ */
+EAPI Elm_List_Mode                 elm_genlist_horizontal_get(const Evas_Object *obj);
+
 
 #define ELM_IMAGE_ROTATE_90_CW 1
 #define ELM_IMAGE_ROTATE_180_CW 2

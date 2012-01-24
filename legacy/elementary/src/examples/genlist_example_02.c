@@ -71,7 +71,7 @@ _show_status_cb(void *data, Evas_Object *o __UNUSED__, void *event_info __UNUSED
    EINA_LIST_FOREACH(realized, l, glit)
      printf("%p  ", glit);
    printf("\n");
-   printf("genlist mode: %s\n", elm_genlist_mode_get(list));
+   printf("genlist mode: %s\n", elm_genlist_mode_type_get(list));
    printf("mode item: %p\n", elm_genlist_mode_item_get(list));
 
    evas_object_geometry_get(list, &x, &y, &w, &h);
@@ -129,7 +129,7 @@ elm_main(int argc __UNUSED__, char **argv __UNUSED__)
    printf("bounce - horizontal: %d, vertical: %d\n", hbounce, vbounce);
    printf("compress mode: %d\n", elm_genlist_compress_mode_get(list));
    printf("homogeneous: %d\n", elm_genlist_homogeneous_get(list));
-   printf("horizontal mode: %d\n", elm_genlist_horizontal_mode_get(list));
+   printf("horizontal mode: %d\n", elm_genlist_mode_get(list));
    printf("longpress timeout: %0.3f\n",
 	  elm_genlist_longpress_timeout_get(list));
    printf("multi selection: %d\n", elm_genlist_multi_select_get(list));
@@ -145,7 +145,7 @@ elm_main(int argc __UNUSED__, char **argv __UNUSED__)
    elm_genlist_bounce_set(list, EINA_FALSE, EINA_FALSE);
    elm_genlist_compress_mode_set(list, EINA_TRUE);
    elm_genlist_homogeneous_set(list, EINA_FALSE);
-   elm_genlist_horizontal_mode_set(list, ELM_LIST_LIMIT);
+   elm_genlist_mode_set(list, ELM_LIST_LIMIT);
    elm_genlist_multi_select_set(list, EINA_TRUE);
    elm_genlist_no_select_mode_set(list, EINA_FALSE);
    elm_genlist_height_for_width_mode_set(list, EINA_FALSE);
