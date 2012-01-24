@@ -2583,6 +2583,8 @@ elm_entry_calc_force(const Evas_Object *obj)
    if (!wd) return;
 
    edje_object_calc_force(wd->ent);
+   wd->changed = EINA_TRUE;
+   _sizing_eval(obj);
 }
 
 
