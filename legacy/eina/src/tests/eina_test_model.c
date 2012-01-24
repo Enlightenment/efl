@@ -51,6 +51,30 @@ _eina_test_model_check_safety_null(const Eina_Log_Domain *d, Eina_Log_Level leve
 }
 
 static void
+_eina_test_model_check_safety_false(const Eina_Log_Domain *d, Eina_Log_Level level, const char *file, const char *fnc, int line, const char *fmt, void *data, va_list args)
+{
+   Eina_Bool *ck = data;
+
+   if ((level == EINA_LOG_LEVEL_ERR) && (strcmp(fmt, "%s") == 0))
+     {
+        const char *str;
+        va_list cp_args;
+
+        va_copy(cp_args, args);
+        str = va_arg(cp_args, const char *);
+        va_end(cp_args);
+        if (eina_str_has_prefix(str, "safety check failed: ") &&
+            eina_str_has_suffix(str, " is false"))
+          {
+             *ck = EINA_TRUE;
+             return;
+          }
+     }
+   *ck = EINA_FALSE;
+   eina_log_print_cb_stderr(d, level, file, fnc, line, fmt, NULL, args);
+}
+
+static void
 _eina_test_model_cb_count(void *data, Eina_Model *model, const Eina_Model_Event_Description *desc, void *event_info)
 {
    unsigned *count = data;
@@ -213,7 +237,6 @@ START_TEST(eina_model_test_children)
    char *s;
    int i;
 
-   printf("eina_model_test_children: BEGIN\n");
    eina_init();
 
    m = eina_model_new(EINA_MODEL_TYPE_GENERIC);
@@ -321,7 +344,6 @@ START_TEST(eina_model_test_children)
    ck_assert_int_eq(count_cdel, 2);
 
    eina_shutdown();
-   printf("eina_model_test_children: END\n");
 }
 END_TEST
 
@@ -717,6 +739,120 @@ START_TEST(eina_model_test_child_filtered_iterator)
 }
 END_TEST
 
+START_TEST(eina_model_test_struct)
+{
+   unsigned int count_del = 0, count_pset = 0, count_pdel = 0;
+   Eina_Model *m;
+   struct myst {
+      int i;
+      char c;
+   };
+   const Eina_Value_Struct_Member myst_members[] = {
+     {"i", EINA_VALUE_TYPE_INT, 0},
+     {"c", EINA_VALUE_TYPE_CHAR, 4},
+     {NULL, NULL, 0}
+   };
+   const Eina_Value_Struct_Desc myst_desc = {
+     EINA_VALUE_STRUCT_DESC_VERSION,
+     NULL, myst_members, 2, sizeof(struct myst)
+   };
+   Eina_Value inv, outv;
+   int i;
+   char c;
+   Eina_List *lst;
+   Eina_Bool ck;
+
+   eina_init();
+
+   m = eina_model_struct_new(&myst_desc);
+   fail_unless(m != NULL);
+
+   eina_model_event_callback_add
+     (m, "deleted", _eina_test_model_cb_count, &count_del);
+   eina_model_event_callback_add
+     (m, "property,set", _eina_test_model_cb_count, &count_pset);
+   eina_model_event_callback_add
+     (m, "property,deleted", _eina_test_model_cb_count, &count_pdel);
+
+   fail_unless(eina_value_setup(&inv, EINA_VALUE_TYPE_INT));
+   fail_unless(eina_value_set(&inv, 1234));
+   fail_unless(eina_value_get(&inv, &i));
+   ck_assert_int_eq(i, 1234);
+   fail_unless(eina_model_property_set(m, "i", &inv));
+
+   eina_value_flush(&inv);
+   fail_unless(eina_value_setup(&inv, EINA_VALUE_TYPE_CHAR));
+   fail_unless(eina_value_set(&inv, 33));
+   fail_unless(eina_value_get(&inv, &c));
+   ck_assert_int_eq(c, 33);
+   fail_unless(eina_model_property_set(m, "c", &inv));
+
+   lst = eina_model_properties_names_list_get(m);
+   ck_assert_int_eq(eina_list_count(lst), 2);
+
+   lst = eina_list_sort(lst, 0, EINA_COMPARE_CB(strcmp));
+   ck_assert_str_eq("c", eina_list_nth(lst, 0));
+   ck_assert_str_eq("i", eina_list_nth(lst, 1));
+
+   eina_model_properties_names_list_free(lst);
+
+   fail_unless(eina_model_property_get(m, "i", &outv));
+   fail_unless(outv.type == EINA_VALUE_TYPE_INT);
+   fail_unless(eina_value_get(&outv, &i));
+   ck_assert_int_eq(i, 1234);
+   eina_value_flush(&outv);
+
+   fail_unless(eina_model_property_get(m, "c", &outv));
+   fail_unless(outv.type == EINA_VALUE_TYPE_CHAR);
+   fail_unless(eina_value_get(&outv, &c));
+   ck_assert_int_eq(c, 33);
+   eina_value_flush(&outv);
+
+   eina_value_flush(&inv);
+
+   /* negative test (check safety was displayed by using print_cb) */
+   eina_log_print_cb_set(_eina_test_model_check_safety_null, &ck);
+
+   ck = EINA_FALSE;
+   fail_if(eina_model_property_get(m, "non-existent", &outv));
+   fail_unless(ck == EINA_TRUE);
+
+   ck = EINA_FALSE;
+   fail_if(eina_model_property_get(m, NULL, &outv));
+   fail_unless(ck == EINA_TRUE);
+
+   fail_unless(eina_value_setup(&inv, EINA_VALUE_TYPE_STRING));
+   fail_unless(eina_value_set(&inv, "hello world"));
+
+   eina_log_print_cb_set(_eina_test_model_check_safety_false, &ck);
+
+   ck = EINA_FALSE;
+   fail_if(eina_model_property_set(m, "i", &inv));
+   fail_unless(ck == EINA_TRUE);
+
+   ck = EINA_FALSE;
+   fail_if(eina_model_property_set(m, "c", &inv));
+   fail_unless(ck == EINA_TRUE);
+
+   /* revert print_cb to default */
+   eina_log_print_cb_set(eina_log_print_cb_stderr, NULL);
+
+   fail_if(eina_model_property_del(m, "value"));
+   fail_if(eina_model_property_del(m, "i"));
+   fail_if(eina_model_property_del(m, "c"));
+
+   eina_value_flush(&inv);
+
+   ck_assert_int_eq(eina_model_refcount(m), 1);
+
+   eina_model_unref(m);
+   ck_assert_int_eq(count_del, 1);
+   ck_assert_int_eq(count_pset, 2);
+   ck_assert_int_eq(count_pdel, 0);
+   eina_shutdown();
+}
+END_TEST
+
 void
 eina_test_model(TCase *tc)
 {
@@ -728,4 +864,5 @@ eina_test_model(TCase *tc)
    tcase_add_test(tc, eina_model_test_child_reversed_iterator);
    tcase_add_test(tc, eina_model_test_child_sorted_iterator);
    tcase_add_test(tc, eina_model_test_child_filtered_iterator);
+   tcase_add_test(tc, eina_model_test_struct);
 }

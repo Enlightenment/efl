@@ -714,9 +714,30 @@ EAPI extern const Eina_Model_Type *EINA_MODEL_TYPE_MIXIN;
  * Should be generic enough to hold lots of items with runtime
  * configurable properties of any type.
  *
+ * @see #EINA_MODEL_TYPE_STRUCT
+ *
  * @since 1.2
  */
 EAPI extern const Eina_Model_Type *EINA_MODEL_TYPE_GENERIC;
+
+/**
+ * @var EINA_MODEL_TYPE_STRUCT
+ *
+ * Subclass of #EINA_MODEL_TYPE_MIXIN that uses
+ * #EINA_MODEL_INTERFACE_PROPERTIES_STRUCT and
+ * #EINA_MODEL_INTERFACE_CHILDREN_INARRAY.
+ *
+ * Should be struct enough to hold lots of items with compile time
+ * configurable properties of any type.
+ *
+ * @see #EINA_MODEL_TYPE_GENERIC
+ *
+ * @since 1.2
+ */
+EAPI extern const Eina_Model_Type *EINA_MODEL_TYPE_STRUCT;
+
+EAPI Eina_Model *eina_model_struct_new(const Eina_Value_Struct_Desc *desc) EINA_ARG_NONNULL(1) EINA_WARN_UNUSED_RESULT EINA_MALLOC;
+
 
 /**
  * @var EINA_MODEL_INTERFACE_NAME_PROPERTIES
@@ -775,10 +796,66 @@ EAPI Eina_List *eina_model_interface_properties_names_list_get(const Eina_Model_
  *       hash data type. For huge number of elements it's better to
  *       use custom implementation instead.
  *
+ * @see EINA_MODEL_INTERFACE_PROPERTIES_STRUCT
+ *
  * @since 1.2
  */
 EAPI extern const Eina_Model_Interface *EINA_MODEL_INTERFACE_PROPERTIES_HASH;
 
+/**
+ * @var EINA_MODEL_INTERFACE_PROPERTIES_STRUCT
+ *
+ * Implements #Eina_Model_Interface_Properties
+ * (#EINA_MODEL_INTERFACE_NAME_PROPERTIES) using #Eina_Value_Struct.
+ *
+ * The interface private data is #Eina_Value of type
+ * #EINA_VALUE_TYPE_STRUCT. Properties will be accessed using
+ * #Eina_Value_Struct::desc information that can be set by types such
+ * as #EINA_MODEL_TYPE_STRUCT
+ *
+ * @see EINA_MODEL_INTERFACE_PROPERTIES_HASH
+ *
+ * @since 1.2
+ */
+EAPI extern const Eina_Model_Interface *EINA_MODEL_INTERFACE_PROPERTIES_STRUCT;
+
+/**
+ * @brief Configure the internal properties of model implementing #EINA_MODEL_INTERFACE_PROPERTIES_STRUCT.
+ *
+ * @param model The model instance to configure.
+ * @param desc The structure description to use.
+ * @param memory If not @c NULL, will be adopted by model.
+ * @return #EINA_TRUE on success, #EINA_FALSE on failure.
+ *
+ * This will setup the internal pointers so that the given @a desc is
+ * used to manage the properties of this struct.
+ *
+ * If a given memory is provided, it will be adopted (not copied!),
+ * being free'd when the model is gone.
+ *
+ * @see #EINA_VALUE_TYPE_STRUCT
+ *
+ * @since 1.2
+ */
+EAPI Eina_Bool eina_model_struct_set(Eina_Model *model,
+                                     const Eina_Value_Struct_Desc *desc,
+                                     void *memory) EINA_ARG_NONNULL(1, 2);
+/**
+ * @brief Get the internal properties of model implementing #EINA_MODEL_INTERFACE_PROPERTIES_STRUCT.
+ *
+ * @param model the model instance.
+ * @param p_desc where to return the structure description in use.
+ * @param p_memory where to return the structure memory in use.
+ * @return #EINA_TRUE on success, #EINA_FALSE on failure.
+ *
+ * No copies are made! The memory and description may be invalidaded
+ * by calls to eina_model_struct_set() or eina_model_del().
+ *
+ * @since 1.2
+ */
+EAPI Eina_Bool eina_model_struct_get(const Eina_Model *model,
+                                     const Eina_Value_Struct_Desc **p_desc,
+                                     void **p_memory) EINA_ARG_NONNULL(1, 2);
 
 /**
  * @var EINA_MODEL_INTERFACE_NAME_CHILDREN
