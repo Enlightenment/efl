@@ -272,11 +272,11 @@ ecore_animator_pos_map(double        pos,
          return pos;
 
        case ECORE_POS_MAP_ACCELERATE:
-         pos = 1.0 - _pos_map_sin((M_PI / 2.0) + ((pos * M_PI) / 2.0));
+         pos = 1.0 - _pos_map_sin(M_PI_2 + pos * M_PI_2);
          return pos;
 
        case ECORE_POS_MAP_DECELERATE:
-         pos = _pos_map_sin((pos * M_PI) / 2.0);
+         pos = _pos_map_sin(pos * M_PI_2);
          return pos;
 
        case ECORE_POS_MAP_SINUSOIDAL:
