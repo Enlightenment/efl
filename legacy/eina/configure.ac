@@ -361,17 +361,14 @@ EFL_ATTRIBUTE_UNUSED
 
 have_wince="no"
 have_win32="no"
-EINA_CPPFLAGS=""
 EINA_CFLAGS=""
 case "$host_os" in
    mingw32ce*)
-      EINA_CPPFLAGS="-D_WIN32_WCE=0x0420"
       EINA_CFLAGS="${EVIL_CFLAGS}"
       have_win32="yes"
       have_wince="yes"
       ;;
    mingw*)
-      EINA_CPPFLAGS="-D_WIN32_WINNT=0x0501"
       EINA_CFLAGS="${EVIL_CFLAGS}"
       have_win32="yes"
       ;;
@@ -396,7 +393,6 @@ case "$host_vendor" in
     ;;
 esac
 
-AC_SUBST([EINA_CPPFLAGS])
 AC_SUBST([EINA_CFLAGS])
 
 
