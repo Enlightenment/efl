@@ -531,7 +531,7 @@ _edje_program_run(Edje *ed, Edje_Program *pr, Eina_Bool force, const char *ssig,
                               }
 
 			    if (rp->program)
-			      _edje_program_end(ed, rp->program);
+                              _edje_program_end(ed, rp->program);
 			    _edje_part_description_apply(ed, rp,
 							 rp->param1.description->state.name,
 							 rp->param1.description->state.value,
@@ -570,7 +570,7 @@ _edje_program_run(Edje *ed, Edje_Program *pr, Eina_Bool force, const char *ssig,
 		       if (rp)
 			 {
 			    if (rp->program)
-			      _edje_program_end(ed, rp->program);
+                              _edje_program_end(ed, rp->program);
 			    _edje_part_description_apply(ed, rp,
 							 pr->state,
 							 pr->value,
@@ -1170,7 +1170,12 @@ _edje_emit_handle(Edje *ed, const char *sig, const char *src,
 
                             rp = _edje_real_part_get(ed, pr->filter.part ? pr->filter.part : src);
                             if (rp)
-                              exec = (rp->chosen_description->state.name == pr->filter.state);
+                              {
+                                 if (rp->program)
+                                   exec = EINA_FALSE;
+                                 else
+                                   exec = (rp->chosen_description->state.name == pr->filter.state);
+                              }
                          }
 
                        if (exec)

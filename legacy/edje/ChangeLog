@@ -299,3 +299,7 @@
 2012-01-23  Cedric Bail
 
 	* Fix overridding group in edje_cc by fixing with the right index.
+
+2012-01-24  Cedric Bail
+
+	* Filter should only be valid once all program affecting there part are done.

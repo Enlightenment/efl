@@ -66,7 +66,7 @@ _edje_part_pos_set(Edje *ed, Edje_Real_Part *ep, int mode, FLOAT_T pos, FLOAT_T 
         break;
       case EDJE_TWEEN_MODE_DECELERATE:
         npos = FROM_DOUBLE(ecore_animator_pos_map(TO_DOUBLE(pos),
-                                                  ECORE_POS_MAP_DECELERATE, 
+                                                  ECORE_POS_MAP_DECELERATE,
                                                   0.0, 0.0));
         break;
       case EDJE_TWEEN_MODE_LINEAR:
@@ -564,7 +564,7 @@ _edje_part_description_apply(Edje *ed, Edje_Real_Part *ep, const char *d1, doubl
 
 	_edje_real_part_rel_to_apply(ed, ep, ep->param2);
 
-	if (ep->description_pos != 0.0)
+	if (ep->description_pos > FROM_DOUBLE(0.0))
 	  ep->chosen_description = epd2;
      }
 
