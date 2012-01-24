@@ -316,7 +316,7 @@ case "$host_os" in
    mingw*)
       PKG_CHECK_MODULES([EVIL], [evil >= 1.0.0])
       AC_DEFINE([HAVE_EVIL], [1], [Set to 1 if evil package is installed])
-      requirement_eina="evil"
+      requirement_eina="${requirement_eina} evil"
       EFL_EINA_BUILD="-DEFL_EINA_BUILD"
    ;;
 esac
@@ -387,8 +387,8 @@ EFL_COMPILER_FLAG([-Wshadow])
 case "$host_vendor" in
   ps3*)
       PKG_CHECK_MODULES([ESCAPE], [escape])
-      AC_DEFINE(HAVE_ESCAPE, 1, [Set to 1 if evil package is installed])
-      requirement_eina="escape"
+      AC_DEFINE(HAVE_ESCAPE, 1, [Set to 1 if Escape package is installed])
+      requirement_eina="${requirement_eina} escape"
       EINA_CFLAGS="${ESCAPE_CFLAGS} ${EINA_CFLAGS}"
     ;;
 esac
@@ -781,7 +781,7 @@ if test -n "$CXX" && test "x$enable_benchmark" = "xyes" ; then
 fi
 AM_CONDITIONAL([CITYHASH_BENCH], [test -n "$CXX" && test "x$enable_benchmark" = "xyes"])
 
-AC_SUBST(requirement_eina)
+AC_SUBST([requirement_eina])
 
 ### Build and install examples
 EFL_CHECK_BUILD_EXAMPLES([enable_build_examples="yes"], [enable_build_examples="no"])
