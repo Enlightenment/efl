@@ -1561,10 +1561,11 @@ data_queue_image_remove(int *dest, Eina_Bool *set)
         if (il->dest == dest && il->set == set)
           {
              image_lookups = eina_list_remove_list(image_lookups, l);
+             free(il);
              return ;
           }
      }
-}
+ }
 
 void
 data_queue_copied_image_lookup(int *src, int *dest, Eina_Bool *set)
@@ -1619,9 +1620,55 @@ data_process_lookups(void)
    Program_Lookup *program;
    Group_Lookup *group;
    Image_Lookup *image;
+   Eina_List *l2;
    Eina_List *l;
    Eina_Hash *images_in_use;
    void *data;
+
+   /* remove all unreferenced Edje_Part_Collection */
+   EINA_LIST_FOREACH_SAFE(edje_collections, l, l2, pc)
+     {
+        Edje_Part_Collection_Directory_Entry *alias;
+        Edje_Part_Collection_Directory_Entry *find;
+        Eina_List *l3;
+        unsigned int id = 0;
+        unsigned int i;
+
+        find = eina_hash_find(edje_file->collection, pc->part);
+        if (find && find->id == pc->id)
+          continue ;
+
+        EINA_LIST_FOREACH(aliases, l3, alias)
+          if (alias->id == pc->id)
+            continue ;
+
+        /* This Edje_Part_Collection is not used at all */
+        edje_collections = eina_list_remove_list(edje_collections, l);
+        l3 = eina_list_nth_list(codes, pc->id);
+        codes = eina_list_remove_list(codes, l3);
+
+        /* Unref all image used by that group */
+        for (i = 0; i < pc->parts_count; ++i)
+	  part_description_image_cleanup(pc->parts[i]);
+
+        /* Correct all id */
+        EINA_LIST_FOREACH(edje_collections, l3, pc)
+          {
+             Eina_List *l4;
+
+             /* Some group could be removed from the collection, but still be referenced by alias */
+             find = eina_hash_find(edje_file->collection, pc->part);
+             if (pc->id != find->id) find = NULL;
+
+             /* Update all matching alias */
+             EINA_LIST_FOREACH(aliases, l4, alias)
+               if (pc->id == alias->id)
+                 alias->id = id;
+
+             pc->id = id++;
+             if (find) find->id = pc->id;
+          }
+     }
 
    EINA_LIST_FOREACH(edje_collections, l, pc)
      {

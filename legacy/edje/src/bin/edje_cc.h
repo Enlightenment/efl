@@ -156,6 +156,7 @@ void    data_process_lookups(void);
 void    data_process_scripts(void);
 void    data_process_script_lookups(void);
 
+void    part_description_image_cleanup(Edje_Part *ep);
 
 int     is_verbatim(void);
 void    track_verbatim(int on);

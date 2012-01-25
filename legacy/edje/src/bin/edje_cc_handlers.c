@@ -847,6 +847,25 @@ _edje_part_description_image_remove(Edje_Part_Description_Image *ed)
                              &(ed->image.tweens[j]->set));
 }
 
+void
+part_description_image_cleanup(Edje_Part *ep)
+{
+   Edje_Part_Description_Image *ed;
+   unsigned int j;
+
+   if (ep->type != EDJE_PART_TYPE_IMAGE)
+     return ;
+
+   ed = (Edje_Part_Description_Image*) ep->default_desc;
+   _edje_part_description_image_remove(ed);
+
+   for (j = 0; j < ep->other.desc_count; j++)
+     {
+        ed = (Edje_Part_Description_Image*) ep->other.desc[j];
+        _edje_part_description_image_remove(ed);
+     }
+}
+
 static Edje_Part_Description_Common *
 _edje_part_description_alloc(unsigned char type, const char *collection, const char *part)
 {
@@ -2153,8 +2172,10 @@ ob_collections_group(void)
 static void
 st_collections_group_name(void)
 {
+   Edje_Part_Collection_Directory_Entry *alias;
    Edje_Part_Collection_Directory_Entry *older;
    Edje_Part_Collection *current_pc;
+   Eina_List *l = NULL;
 
    check_arg_count(1);
 
@@ -2164,51 +2185,23 @@ st_collections_group_name(void)
    current_pc->part = current_de->entry;
 
    older = eina_hash_find(edje_file->collection, current_de->entry);
-
-   if (older)
-     {
-	Edje_Part_Collection *pc;
-	Eina_List *l;
-	Code *cd;
-	unsigned int id = 0;
-        unsigned int i;
-
-	pc = eina_list_nth(edje_collections, older->id);
-	cd = eina_list_nth(codes, older->id);
-
-	eina_hash_del(edje_file->collection, current_de->entry, older);
-	edje_collections = eina_list_remove(edje_collections, pc);
-	codes = eina_list_remove(codes, cd);
-
-	for (i = 0; i < pc->parts_count; ++i)
-	  {
-             Edje_Part_Description_Image *ed;
-             unsigned int j;
-
-             if (pc->parts[i]->type != EDJE_PART_TYPE_IMAGE)
-               continue ;
-
-             ed = (Edje_Part_Description_Image*) pc->parts[i]->default_desc;
-	     _edje_part_description_image_remove(ed);
-
-	     for (j = 0; j < pc->parts[i]->other.desc_count; j++)
-               {
-                  ed = (Edje_Part_Description_Image*) pc->parts[i]->other.desc[j];
-                  _edje_part_description_image_remove(ed);
-               }
-	  }
-
-	EINA_LIST_FOREACH(edje_collections, l, pc)
-	  {
-	     older = eina_hash_find(edje_file->collection, pc->part);
-
-	     pc->id = id++;
-	     if (older) older->id = pc->id;
-	     else if (pc->part == current_pc->part) current_de->id = pc->id;
-	  }
-     }
-
+   if (older) eina_hash_del(edje_file->collection, current_de->entry, older);
    eina_hash_direct_add(edje_file->collection, current_de->entry, current_de);
+
+   EINA_LIST_FOREACH(aliases, l, alias)
+     if (strcmp(alias->entry, current_de->entry) == 0)
+       {
+          Edje_Part_Collection *pc;
+
+          pc = eina_list_nth(edje_collections, older->id);
+          INF("overriding alias ('%s' => '%s') by group '%s'",
+              alias->entry, pc->part,
+              current_de->entry);
+          aliases = eina_list_remove_list(aliases, l);
+          free(alias);
+          break;
+       }
+
 }
 
 typedef struct _Edje_List_Foreach_Data Edje_List_Foreach_Data;
@@ -2505,12 +2498,28 @@ static void
 st_collections_group_alias(void)
 {
    Edje_Part_Collection_Directory_Entry *alias;
+   Edje_Part_Collection_Directory_Entry *tmp;
+   Eina_List *l;
 
    check_arg_count(1);
 
    alias = mem_alloc(SZ(Edje_Part_Collection_Directory_Entry));
    alias->id = current_de->id;
    alias->entry = parse_str(0);
+
+   EINA_LIST_FOREACH(aliases, l, tmp)
+     if (strcmp(alias->entry, tmp->entry) == 0)
+       {
+          Edje_Part_Collection *pc;
+
+          pc = eina_list_nth(edje_collections, tmp->id);
+          INF("overriding alias ('%s' => '%s') to ('%s' => '%s')",
+              tmp->entry, pc->part,
+              alias->entry, current_de->entry);
+          aliases = eina_list_remove_list(aliases, l);
+          free(tmp);
+          break;
+       }
 
    aliases = eina_list_append(aliases, alias);
 }
@@ -2989,21 +2998,57 @@ st_collections_group_parts_part_name(void)
 static void
 st_collections_group_parts_part_type(void)
 {
+   unsigned int type;
+
    check_arg_count(1);
 
-   current_part->type = parse_enum(0,
-                                   "NONE", EDJE_PART_TYPE_NONE,
-                                   "RECT", EDJE_PART_TYPE_RECTANGLE,
-                                   "TEXT", EDJE_PART_TYPE_TEXT,
-                                   "IMAGE", EDJE_PART_TYPE_IMAGE,
-                                   "SWALLOW", EDJE_PART_TYPE_SWALLOW,
-                                   "TEXTBLOCK", EDJE_PART_TYPE_TEXTBLOCK,
-                                   "GROUP", EDJE_PART_TYPE_GROUP,
-                                   "BOX", EDJE_PART_TYPE_BOX,
-                                   "TABLE", EDJE_PART_TYPE_TABLE,
-                                   "EXTERNAL", EDJE_PART_TYPE_EXTERNAL,
-                                   "PROXY", EDJE_PART_TYPE_PROXY,
-                                   NULL);
+   type = parse_enum(0,
+                     "NONE", EDJE_PART_TYPE_NONE,
+                     "RECT", EDJE_PART_TYPE_RECTANGLE,
+                     "TEXT", EDJE_PART_TYPE_TEXT,
+                     "IMAGE", EDJE_PART_TYPE_IMAGE,
+                     "SWALLOW", EDJE_PART_TYPE_SWALLOW,
+                     "TEXTBLOCK", EDJE_PART_TYPE_TEXTBLOCK,
+                     "GROUP", EDJE_PART_TYPE_GROUP,
+                     "BOX", EDJE_PART_TYPE_BOX,
+                     "TABLE", EDJE_PART_TYPE_TABLE,
+                     "EXTERNAL", EDJE_PART_TYPE_EXTERNAL,
+                     "PROXY", EDJE_PART_TYPE_PROXY,
+                     NULL);
+
+   /* handle type change of inherited part */
+   if (type != current_part->type)
+     {
+        Edje_Part_Description_Common *new, *previous;
+        Edje_Part_Collection *pc;
+        Edje_Part *ep;
+        unsigned int i;
+
+        /* we don't free old part as we don't remove all reference to them */
+        part_description_image_cleanup(current_part);
+
+        pc = eina_list_data_get(eina_list_last(edje_collections));
+        ep = current_part;
+
+        previous = ep->default_desc;
+        if (previous)
+          {
+             new = _edje_part_description_alloc(type, pc->part, ep->name);
+             memcpy(new, previous, sizeof (Edje_Part_Description_Common));
+
+             ep->default_desc = new;
+          }
+
+        for (i = 0; i < ep->other.desc_count; i++)
+          {
+             previous = ep->other.desc[i];
+             new = _edje_part_description_alloc(type, pc->part, ep->name);
+             memcpy(new, previous, sizeof (Edje_Part_Description_Common));
+             ep->other.desc[i] = new;
+          }
+     }
+
+   current_part->type = type;
 }
 
 /**
@@ -4334,6 +4379,7 @@ st_collections_group_parts_part_description_inherit(void)
 
               ied->image = iparent->image;
 
+              data_queue_image_remove(&ied->image.id, &ied->image.set);
               data_queue_copied_image_lookup(&iparent->image.id, &ied->image.id, &ied->image.set);
 
               ied->image.tweens = calloc(iparent->image.tweens_count,
@@ -4345,6 +4391,7 @@ st_collections_group_parts_part_description_inherit(void)
                    iid = iparent->image.tweens[i];
 
                    iid_new = mem_alloc(SZ(Edje_Part_Image_Id));
+                   data_queue_image_remove(&ied->image.id, &ied->image.set);
                    data_queue_copied_image_lookup(&(iid->id), &(iid_new->id), &(iid_new->set));
                    ied->image.tweens[i] = iid_new;
                 }
@@ -4487,6 +4534,9 @@ st_collections_group_parts_part_description_state(void)
         if ((ep->default_desc->state.name && !strcmp(s, ep->default_desc->state.name) && ed->state.value == ep->default_desc->state.value) ||
             (!ep->default_desc->state.name && !strcmp(s, "default") && ed->state.value == ep->default_desc->state.value))
           {
+             if (ep->type == EDJE_PART_TYPE_IMAGE)
+               _edje_part_description_image_remove((Edje_Part_Description_Image*) ed);
+
              free(ed);
              ep->other.desc_count--;
              ep->other.desc = realloc(ep->other.desc,
@@ -4500,6 +4550,9 @@ st_collections_group_parts_part_description_state(void)
                {
                   if (!strcmp(s, ep->other.desc[i]->state.name) && ed->state.value == ep->other.desc[i]->state.value)
                     {
+                       if (ep->type == EDJE_PART_TYPE_IMAGE)
+                         _edje_part_description_image_remove((Edje_Part_Description_Image*) ed);
+
                        free(ed);
                        ep->other.desc_count--;
                        ep->other.desc = realloc(ep->other.desc,
@@ -5081,6 +5134,7 @@ st_collections_group_parts_part_description_image_normal(void)
       char *name;
 
       name = parse_str(0);
+      data_queue_image_remove(&(ed->image.id), &(ed->image.set));
       data_queue_image_lookup(name, &(ed->image.id), &(ed->image.set));
       free(name);
    }
@@ -5125,6 +5179,7 @@ st_collections_group_parts_part_description_image_tween(void)
 				 sizeof (Edje_Part_Image_Id*) * ed->image.tweens_count);
       ed->image.tweens[ed->image.tweens_count - 1] = iid;
       name = parse_str(0);
+      data_queue_image_remove(&(iid->id), &(iid->set));
       data_queue_image_lookup(name, &(iid->id), &(iid->set));
       free(name);
    }
