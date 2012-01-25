@@ -3872,6 +3872,7 @@ _eina_value_struct_operations_stringshare_find_member(const Eina_Value_Struct_Op
             return itr;
      }
 
+   itr = desc->members;
    name = eina_stringshare_add(name);
    eina_stringshare_del(name); /* we'll not use the contents, this is fine */
    /* stringshare and look again */
