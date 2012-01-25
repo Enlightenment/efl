@@ -1844,10 +1844,17 @@ data_process_lookups(void)
 
 		      if ((set->name) && (!strcmp(set->name, image->name)))
 			{
+                           Edje_Image_Directory_Set_Entry *child;
+                           Eina_List *lc;
+
 			   handle_slave_lookup(image_slave_lookups, image->dest, set->id);
 			   *(image->dest) = set->id;
 			   *(image->set) = EINA_TRUE;
 			   find = EINA_TRUE;
+
+			   EINA_LIST_FOREACH(set->entries, lc, child)
+                             if (!eina_hash_find(images_in_use, child->name))
+                               eina_hash_direct_add(images_in_use, child->name, child);
 
                            if (!eina_hash_find(images_in_use, image->name))
                              eina_hash_direct_add(images_in_use, set->name, set);
