@@ -41,7 +41,7 @@
  * @defgroup Eina_Model_Group Data Model API.
  *
  * Abstracts data access to hierarchical data in an efficient way,
- * extensible to different backign store such as database or remote
+ * extensible to different backing stores such as database or remote
  * access.
  *
  * It is heavily based on #Eina_Value, as properties are exchanged
@@ -235,7 +235,7 @@ EAPI int eina_model_child_count(const Eina_Model *model) EINA_ARG_NONNULL(1) EIN
  * @return child instance with reference @b increased, or @c NULL on error.
  *
  * The given @a position must be valid, otherwise it may fail and
- * return @c NULL, one can check for a valid position with
+ * return @c NULL, one should check for a valid position with
  * eina_model_child_count().
  *
  * The returned model has its reference increased, you must release it
@@ -253,7 +253,7 @@ EAPI Eina_Model *eina_model_child_get(const Eina_Model *model,
  * @return #EINA_TRUE on success, #EINA_FALSE on failure.
  *
  * The given @a position must be valid, otherwise it may fail and
- * return #EINA_FALSE, one can check for a valid position with
+ * return #EINA_FALSE, one should check for a valid position with
  * eina_model_child_count().
  *
  * The existing child is replaced. Its reference will be decreased
@@ -460,8 +460,8 @@ EAPI char *eina_model_to_string(const Eina_Model *model) EINA_ARG_NONNULL(1) EIN
  *
  * Private are created @b automatically and should be setup with @c
  * setup and flushed with @c flush. All types (or interfaces)
- * functions that exist are called! Don't call parent's @c setup or @c
- * flush! The setup is done from parent to child. Flush is done from
+ * functions that exist are called! Don't call your parent's @c setup or
+ * @c flush! The setup is done from parent to child. Flush is done from
  * child to parent.
  *
  * After memory setup was done, @c constructor of the toplevel type
@@ -481,7 +481,7 @@ EAPI char *eina_model_to_string(const Eina_Model *model) EINA_ARG_NONNULL(1) EIN
  * called, do them in the desired order from the type destructor.
  *
  * @note a runtime check will enforce just types with ABI version
- *       #EINA_MODEL_TYPE_VERSION are used by comparing with @c version
+ *       #EINA_MODEL_TYPE_VERSION are used by comparing with the @c version
  *       member.
  *
  * @since 1.2
@@ -496,7 +496,7 @@ struct _Eina_Model_Type
    unsigned int version; /**< must be #EINA_MODEL_TYPE_VERSION */
    unsigned int private_size; /**< used to allocate type private data */
    const char *name; /**< name for debug and introspection */
-   const Eina_Model_Type *parent; /**< parent type */
+   const Eina_Model_Type *parent; /**< parent type, must be EINA_MODEL_TYPE_BASE or a child of */
    const Eina_Model_Interface **interfaces; /**< null terminated array of interfaces */
    const Eina_Model_Event_Description *events; /**< null terminated array of events */
    Eina_Bool (*setup)(Eina_Model *model); /**< setup type private data, do @b not call parent type setup! */
@@ -682,7 +682,7 @@ EAPI void *eina_model_interface_private_data_get(const Eina_Model *model,
 
 /**
  * @var EINA_MODEL_TYPE_BASE
- * Base type for all types.
+ * Base type for all eina model types.
  *
  * @since 1.2
  */
@@ -695,7 +695,7 @@ EAPI extern const Eina_Model_Type *EINA_MODEL_TYPE_BASE;
  * #EINA_MODEL_INTERFACE_NAME_CHILDREN to manage the model.
  *
  * This is an abstract type, it does not work out of the box as one
- * need to subclass it and define the interface implementations for
+ * needs to subclass it and define the interface implementations for
  * properties and children, as done by #EINA_MODEL_TYPE_GENERIC
  *
  * @see EINA_MODEL_TYPE_GENERIC
@@ -938,7 +938,7 @@ EAPI void eina_model_interface_children_sort(const Eina_Model_Interface *iface,
  * (#EINA_MODEL_INTERFACE_NAME_CHILDREN) using #Eina_Inarray. It
  * should be efficient in space and time for most operations.
  *
- * @note it may become slow if eina_model_child_insert_at() is used at
+ * @note it may become slow if eina_model_child_insert_at() is used at(or near)
  *       the beginning of the array as the members from that position
  *       to the end must be memmove()d.
  *
