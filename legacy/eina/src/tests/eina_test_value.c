@@ -1606,6 +1606,20 @@ START_TEST(eina_value_test_struct)
    fail_unless(eina_value_struct_get(value, "c", &c));
    fail_unless(c == 0xf);
 
+   fail_unless(eina_value_struct_member_value_get
+               (value, myst_members + 0, &other));
+   fail_unless(other.type == EINA_VALUE_TYPE_INT);
+   fail_unless(eina_value_get(&other, &i));
+   fail_unless(i == 5678);
+   eina_value_flush(&other);
+
+   fail_unless(eina_value_struct_member_value_get
+               (value, myst_members + 1, &other));
+   fail_unless(other.type == EINA_VALUE_TYPE_CHAR);
+   fail_unless(eina_value_get(&other, &c));
+   fail_unless(c = 0xf);
+   eina_value_flush(&other);
+
    str = eina_value_to_string(value);
    fail_unless(str != NULL);
    fail_unless(strcmp(str, "{i: 5678, c: 15}") == 0);

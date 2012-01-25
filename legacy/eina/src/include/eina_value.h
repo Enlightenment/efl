@@ -2974,6 +2974,34 @@ static inline Eina_Bool eina_value_struct_value_set(Eina_Value *dst,
                                                     const Eina_Value *src) EINA_ARG_NONNULL(1, 2, 3);
 
 /**
+ * @brief Get the member as Eina_Value copy given its member description.
+ * @param src source value object
+ * @param member the member description to use
+ * @param dst where to return the member value.
+ *
+ * The argument @a dst is considered uninitialized and it's setup to
+ * the type of the member.
+ *
+ * @since 1.2
+ */
+static inline Eina_Bool eina_value_struct_member_value_get(const Eina_Value *src,
+                                                           const Eina_Value_Struct_Member *member,
+                                                           Eina_Value *dst) EINA_ARG_NONNULL(1, 2, 3);
+
+/**
+ * @brief Set the member from Eina_Value source
+ * @param dst destination value object
+ * @param member the member description to use
+ * @param src source value
+ *
+ * @since 1.2
+ */
+static inline Eina_Bool eina_value_struct_member_value_set(Eina_Value *dst,
+                                                           const Eina_Value_Struct_Member *member,
+                                                           const Eina_Value *src) EINA_ARG_NONNULL(1, 2, 3);
+
+
+/**
  * @}
  */
 
