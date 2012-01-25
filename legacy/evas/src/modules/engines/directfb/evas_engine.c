@@ -1138,7 +1138,8 @@ evas_engine_dfb_rectangle_draw(void *data, void *context, void *surface, int x, 
 static void
 evas_engine_dfb_polygon_draw(void *data __UNUSED__, void *context, void *surface, void *polygon, int x, int y)
 {
-   _dfb_polygon_draw(surface, context, polygon, x, y);
+   DirectFB_Engine_Image_Entry *eim = surface;
+   _dfb_polygon_draw(eim->surface, context, polygon, x, y);
 }
 #else
 static void
