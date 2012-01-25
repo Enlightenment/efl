@@ -2170,7 +2170,8 @@ st_collections_group_name(void)
 	Edje_Part_Collection *pc;
 	Eina_List *l;
 	Code *cd;
-	unsigned int i = 0;
+	unsigned int id = 0;
+        unsigned int i;
 
 	pc = eina_list_nth(edje_collections, older->id);
 	cd = eina_list_nth(codes, older->id);
@@ -2201,7 +2202,7 @@ st_collections_group_name(void)
 	  {
 	     older = eina_hash_find(edje_file->collection, pc->part);
 
-	     pc->id = i++;
+	     pc->id = id++;
 	     if (older) older->id = pc->id;
 	     else if (pc->part == current_pc->part) current_de->id = pc->id;
 	  }
