@@ -4123,7 +4123,7 @@ eng_gl_img_obj_set(void *data, void *image, int has_alpha)
 
    // Normally direct rendering isn't allowed if alpha is on and
    // rotation is not 0.  BUT, if override is on, allow it. 
-   if ((has_alpha) && (re->win->gl_context->rot!=0)) 
+   if ((has_alpha) || (re->win->gl_context->rot!=0)) 
      {
         if (gl_direct_override)
            gl_direct_img_obj = image;
