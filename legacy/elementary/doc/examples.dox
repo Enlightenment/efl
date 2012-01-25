@@ -4683,7 +4683,7 @@
  * elm_genlist_homogeneous_set() is set to false.
  *
  * Since the compress mode is active, the call to
- * elm_genlist_horizontal_mode_set() doesn't make difference, but the current
+ * elm_genlist_mode_set() doesn't make difference, but the current
  * option would make the list to have at least the width of the largest item.
  *
  * This list will support multiple selection, so we call

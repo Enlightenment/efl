@@ -112,7 +112,7 @@ elm_main(int argc __UNUSED__, char **argv __UNUSED__)
    _genlist_fill(list);
 
    list = _genlist_add(box);
-   elm_genlist_horizontal_mode_set(list, ELM_LIST_LIMIT);
+   elm_genlist_mode_set(list, ELM_LIST_LIMIT);
    _genlist_fill(list);
 
    list = _genlist_add(box);
