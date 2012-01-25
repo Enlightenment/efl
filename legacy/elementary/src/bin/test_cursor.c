@@ -139,10 +139,10 @@ test_cursor(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info
    elm_object_cursor_set(list, ELM_CURSOR_WATCH);
    lit = elm_list_item_append(list, "watch over list | hand1", NULL, NULL, NULL,
                         NULL);
-   elm_list_item_cursor_set(lit, ELM_CURSOR_HAND1);
+   elm_object_item_cursor_set(lit, ELM_CURSOR_HAND1);
    lit = elm_list_item_append(list, "watch over list | hand2", NULL, NULL, NULL,
                         NULL);
-   elm_list_item_cursor_set(lit, ELM_CURSOR_HAND2);
+   elm_object_item_cursor_set(lit, ELM_CURSOR_HAND2);
    elm_list_go(list);
    evas_object_show(list);
 
@@ -216,12 +216,12 @@ test_cursor2(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_inf
    evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_fill_set(o, EVAS_HINT_FILL, EVAS_HINT_FILL);
    lit = elm_list_item_append(o, "cursor bogosity", NULL, NULL,  NULL, NULL);
-   elm_list_item_cursor_set(lit, ELM_CURSOR_BOGOSITY);
+   elm_object_item_cursor_set(lit, ELM_CURSOR_BOGOSITY);
    lit = elm_list_item_append(o, "cursor unset", NULL, NULL,  NULL, NULL);
-   elm_list_item_cursor_set(lit, ELM_CURSOR_BOGOSITY);
-   elm_list_item_cursor_unset(lit);
+   elm_object_item_cursor_set(lit, ELM_CURSOR_BOGOSITY);
+   elm_object_item_cursor_unset(lit);
    lit = elm_list_item_append(o, "cursor xterm", NULL, NULL,  NULL, NULL);
-   elm_list_item_cursor_set(lit, ELM_CURSOR_XTERM);
+   elm_object_item_cursor_set(lit, ELM_CURSOR_XTERM);
    elm_list_go(o);
    evas_object_show(o);
 
@@ -376,18 +376,18 @@ test_cursor3(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_inf
    evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_fill_set(o, EVAS_HINT_FILL, EVAS_HINT_FILL);
    lit = elm_list_item_append(o, "cursor hand2 x", NULL, NULL,  NULL, NULL);
-   elm_list_item_cursor_set(lit, ELM_CURSOR_HAND2);
+   elm_object_item_cursor_set(lit, ELM_CURSOR_HAND2);
    lit = elm_list_item_append(o, "cursor hand2", NULL, NULL,  NULL, NULL);
-   elm_list_item_cursor_set(lit, ELM_CURSOR_HAND2);
-   elm_list_item_cursor_engine_only_set(lit, EINA_FALSE);
+   elm_object_item_cursor_set(lit, ELM_CURSOR_HAND2);
+   elm_object_item_cursor_engine_only_set(lit, EINA_FALSE);
    lit = elm_list_item_append(o, "cursor hand3", NULL, NULL,  NULL, NULL);
-   elm_list_item_cursor_set(lit, "hand3");
-   elm_list_item_cursor_engine_only_set(lit, EINA_FALSE);
+   elm_object_item_cursor_set(lit, "hand3");
+   elm_object_item_cursor_engine_only_set(lit, EINA_FALSE);
    lit = elm_list_item_append(o, "cursor hand3 transparent", NULL, NULL,
                               NULL, NULL);
-   elm_list_item_cursor_set(lit, "hand3");
-   elm_list_item_cursor_style_set(lit, "transparent");
-   elm_list_item_cursor_engine_only_set(lit, EINA_FALSE);
+   elm_object_item_cursor_set(lit, "hand3");
+   elm_object_item_cursor_style_set(lit, "transparent");
+   elm_object_item_cursor_engine_only_set(lit, EINA_FALSE);
    elm_list_go(o);
    evas_object_show(o);
 
