@@ -57,7 +57,7 @@
  *
  *    static void _cb_on_deleted(void *data, Eina_Model *model, const Eina_Model_Event_Description *desc, void *event_info)
  *    {
- *       printf("deleted %p\n". model);
+ *       printf("deleted %p\n", model);
  *    }
  *
  *    int main(void)
