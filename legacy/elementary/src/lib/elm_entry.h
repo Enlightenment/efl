@@ -477,7 +477,7 @@ EAPI const char        *elm_entry_selection_get(const Evas_Object *obj);
  * @param obj The entry object
  * @return The textblock object.
  */
-EAPI const Evas_Object *elm_entry_textblock_get(const Evas_Object *obj);
+EAPI Evas_Object *      elm_entry_textblock_get(Evas_Object *obj);
 
 /**
  * Forces calculation of the entry size and text layouting.
@@ -489,7 +489,7 @@ EAPI const Evas_Object *elm_entry_textblock_get(const Evas_Object *obj);
  *
  * @see elm_entry_textblock_get()
  */
-EAPI void               elm_entry_calc_force(const Evas_Object *obj);
+EAPI void               elm_entry_calc_force(Evas_Object *obj);
 
 /**
  * Inserts the given text into the entry at the current cursor position.

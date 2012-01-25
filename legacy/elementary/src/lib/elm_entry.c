@@ -2565,8 +2565,8 @@ elm_entry_is_empty(const Evas_Object *obj)
    return !ret;
 }
 
-EAPI const Evas_Object *
-elm_entry_textblock_get(const Evas_Object *obj)
+EAPI Evas_Object *
+elm_entry_textblock_get(Evas_Object *obj)
 {
    ELM_CHECK_WIDTYPE(obj, widtype) NULL;
    Widget_Data *wd = elm_widget_data_get(obj);
@@ -2576,7 +2576,7 @@ elm_entry_textblock_get(const Evas_Object *obj)
 }
 
 EAPI void
-elm_entry_calc_force(const Evas_Object *obj)
+elm_entry_calc_force(Evas_Object *obj)
 {
    ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
