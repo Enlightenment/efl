@@ -2165,15 +2165,6 @@ st_collections_group_name(void)
 	edje_collections = eina_list_remove(edje_collections, pc);
 	codes = eina_list_remove(codes, cd);
 
-	EINA_LIST_FOREACH(edje_collections, l, pc)
-	  {
-	     older = eina_hash_find(edje_file->collection, pc->part);
-
-	     pc->id = i++;
-	     if (older) older->id = pc->id;
-	     else if (pc->part == current_pc->part) current_de->id = pc->id;
-	  }
-
 	for (i = 0; i < pc->parts_count; ++i)
 	  {
              Edje_Part_Description_Image *ed;
@@ -2189,6 +2180,15 @@ st_collections_group_name(void)
              for (j = 0; j < ed->image.tweens_count; ++j)
                data_queue_image_remove(&(ed->image.tweens[ed->image.tweens_count - 1]->id),
                                        &(ed->image.tweens[ed->image.tweens_count - 1]->set));
+	  }
+
+	EINA_LIST_FOREACH(edje_collections, l, pc)
+	  {
+	     older = eina_hash_find(edje_file->collection, pc->part);
+
+	     pc->id = i++;
+	     if (older) older->id = pc->id;
+	     else if (pc->part == current_pc->part) current_de->id = pc->id;
 	  }
      }
 
