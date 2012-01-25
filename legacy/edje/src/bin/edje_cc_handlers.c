@@ -833,6 +833,20 @@ _edje_part_description_fill(Edje_Part_Description_Spec_Fill *fill)
    fill->type = EDJE_FILL_TYPE_SCALE;
 }
 
+static void
+_edje_part_description_image_remove(Edje_Part_Description_Image *ed)
+{
+   unsigned int j;
+
+   if (!ed) return;
+
+   data_queue_image_remove(&(ed->image.id), &(ed->image.set));
+
+   for (j = 0; j < ed->image.tweens_count; ++j)
+     data_queue_image_remove(&(ed->image.tweens[j]->id),
+                             &(ed->image.tweens[j]->set));
+}
+
 static Edje_Part_Description_Common *
 _edje_part_description_alloc(unsigned char type, const char *collection, const char *part)
 {
@@ -2173,13 +2187,14 @@ st_collections_group_name(void)
              if (pc->parts[i]->type != EDJE_PART_TYPE_IMAGE)
                continue ;
 
-             ed = (Edje_Part_Description_Image*) &pc->parts[i];
+             ed = (Edje_Part_Description_Image*) pc->parts[i]->default_desc;
+	     _edje_part_description_image_remove(ed);
 
-             data_queue_image_remove(&(ed->image.id), &(ed->image.set));
-
-             for (j = 0; j < ed->image.tweens_count; ++j)
-               data_queue_image_remove(&(ed->image.tweens[ed->image.tweens_count - 1]->id),
-                                       &(ed->image.tweens[ed->image.tweens_count - 1]->set));
+	     for (j = 0; j < pc->parts[i]->other.desc_count; j++)
+               {
+                  ed = (Edje_Part_Description_Image*) pc->parts[i]->other.desc[j];
+                  _edje_part_description_image_remove(ed);
+               }
 	  }
 
 	EINA_LIST_FOREACH(edje_collections, l, pc)
