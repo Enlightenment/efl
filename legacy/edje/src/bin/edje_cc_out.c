@@ -102,7 +102,7 @@ struct _Code_Lookup
    Eina_Bool set;
 };
 
-static void data_process_string(Edje_Part_Collection *pc, const char *prefix, char *s, void (*func)(Edje_Part_Collection *pc, char *name, char *ptr, int len));
+static void data_process_string(Edje_Part_Collection *pc, const char *prefix, char *s, void (*func)(Edje_Part_Collection *pc, char *name, char* ptr, int len));
 
 Edje_File *edje_file = NULL;
 Eina_List *edje_collections = NULL;
@@ -500,7 +500,8 @@ data_write_images(Eet_File *ef, int *image_num, int *input_bytes, int *input_raw
 	  {
 	     img = &edje_file->image_dir->entries[i];
 
-	     if (img->source_type == EDJE_IMAGE_SOURCE_TYPE_EXTERNAL)
+	     if (img->source_type == EDJE_IMAGE_SOURCE_TYPE_EXTERNAL
+                 || img->entry == NULL)
 	       {
 	       }
 	     else
@@ -1550,6 +1551,22 @@ data_queue_image_lookup(char *name, int *dest, Eina_Bool *set)
 }
 
 void
+data_queue_image_remove(int *dest, Eina_Bool *set)
+{
+   Eina_List *l;
+   Image_Lookup *il;
+
+   EINA_LIST_FOREACH(image_lookups, l, il)
+     {
+        if (il->dest == dest && il->set == set)
+          {
+             image_lookups = eina_list_remove_list(image_lookups, l);
+             return ;
+          }
+     }
+}
+
+void
 data_queue_copied_image_lookup(int *src, int *dest, Eina_Bool *set)
 {
    Eina_List *l;
@@ -1603,6 +1620,7 @@ data_process_lookups(void)
    Group_Lookup *group;
    Image_Lookup *image;
    Eina_List *l;
+   Eina_Hash *images_in_use;
    void *data;
 
    EINA_LIST_FOREACH(edje_collections, l, pc)
@@ -1738,13 +1756,15 @@ data_process_lookups(void)
         free(group);
      }
 
+   images_in_use = eina_hash_string_superfast_new(NULL);
+
    EINA_LIST_FREE(image_lookups, image)
      {
-	Edje_Image_Directory_Entry *de;
 	Eina_Bool find = EINA_FALSE;
 
 	if (edje_file->image_dir)
 	  {
+             Edje_Image_Directory_Entry *de;
 	     unsigned int i;
 
 	     for (i = 0; i < edje_file->image_dir->entries_count; ++i)
@@ -1760,6 +1780,9 @@ data_process_lookups(void)
 			 *(image->dest) = de->id;
 		       *(image->set) = EINA_FALSE;
 		       find = EINA_TRUE;
+
+                       if (!eina_hash_find(images_in_use, image->name))
+                         eina_hash_direct_add(images_in_use, de->entry, de);
 		       break;
 		    }
 	       }
@@ -1778,6 +1801,9 @@ data_process_lookups(void)
 			   *(image->dest) = set->id;
 			   *(image->set) = EINA_TRUE;
 			   find = EINA_TRUE;
+
+                           if (!eina_hash_find(images_in_use, image->name))
+                             eina_hash_direct_add(images_in_use, set->name, set);
 			   break;
 			}
 		   }
@@ -1794,6 +1820,54 @@ data_process_lookups(void)
 	free(image->name);
 	free(image);
      }
+
+   if (edje_file->image_dir)
+     {
+	Edje_Image_Directory_Entry *de;
+        Edje_Image_Directory_Set *set;
+        unsigned int i;
+
+        for (i = 0; i < edje_file->image_dir->entries_count; ++i)
+          {
+             de = edje_file->image_dir->entries + i;
+
+             if (de->entry && eina_hash_find(images_in_use, de->entry))
+               continue ;
+
+             if (verbose)
+               {
+                  printf("%s: Image '%s' in ressource 'edje/image/%i' will not be included as it is unused.\n", progname, de->entry, de->id);
+               }
+             else
+               {
+                  INF("Image '%s' in ressource 'edje/image/%i' will not be included as it is unused.", de->entry, de->id);
+               }
+
+             de->entry = NULL;
+          }
+
+        for (i = 0; i < edje_file->image_dir->sets_count; ++i)
+          {
+             set = edje_file->image_dir->sets + i;
+
+             if (set->name && eina_hash_find(images_in_use, set->name))
+               continue ;
+
+             if (verbose)
+               {
+                  printf("%s: Set '%s' will not be included as it is unused.\n", progname, set->name);
+               }
+             else
+               {
+                  INF("Set '%s' will not be included as it is unused.", set->name);
+               }
+
+             set->name = NULL;
+             set->entries = NULL;
+          }
+     }
+
+   eina_hash_free(images_in_use);
 
    EINA_LIST_FREE(part_slave_lookups, data)
      free(data);

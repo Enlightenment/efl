@@ -303,3 +303,7 @@
 2012-01-24  Cedric Bail
 
 	* Filter should only be valid once all program affecting there part are done.
+
+2012-01-25  Cedric Bail
+
+	* Only store the image used by active group.

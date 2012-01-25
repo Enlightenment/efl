@@ -16,6 +16,7 @@ Improvements:
     * reduce number of call to stat during edje_object_file_set.
     * unswallow object about to be swallowed if necessary.
     * Lua scripts now more resilient against API changes.
+    * edje_cc only store the image activelly used in an edje file.
 
 Changes since Edje 1.0.0:
 -------------------------

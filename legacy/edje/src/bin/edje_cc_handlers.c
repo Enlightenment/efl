@@ -2156,7 +2156,7 @@ st_collections_group_name(void)
 	Edje_Part_Collection *pc;
 	Eina_List *l;
 	Code *cd;
-	int i = 0;
+	unsigned int i = 0;
 
 	pc = eina_list_nth(edje_collections, older->id);
 	cd = eina_list_nth(codes, older->id);
@@ -2172,6 +2172,23 @@ st_collections_group_name(void)
 	     pc->id = i++;
 	     if (older) older->id = pc->id;
 	     else if (pc->part == current_pc->part) current_de->id = pc->id;
+	  }
+
+	for (i = 0; i < pc->parts_count; ++i)
+	  {
+             Edje_Part_Description_Image *ed;
+             unsigned int j;
+
+             if (pc->parts[i]->type != EDJE_PART_TYPE_IMAGE)
+               continue ;
+
+             ed = (Edje_Part_Description_Image*) &pc->parts[i];
+
+             data_queue_image_remove(&(ed->image.id), &(ed->image.set));
+
+             for (j = 0; j < ed->image.tweens_count; ++j)
+               data_queue_image_remove(&(ed->image.tweens[ed->image.tweens_count - 1]->id),
+                                       &(ed->image.tweens[ed->image.tweens_count - 1]->set));
 	  }
      }
 
