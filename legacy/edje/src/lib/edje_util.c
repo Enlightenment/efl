@@ -1075,6 +1075,7 @@ edje_object_part_text_style_user_set(Evas_Object *obj, const char *part,
    ts = evas_textblock_style_new();
    evas_textblock_style_set(ts, style);
    evas_object_textblock_style_user_set(rp->object, ts);
+   evas_textblock_style_free(ts);
 }
 
 EAPI const char *
