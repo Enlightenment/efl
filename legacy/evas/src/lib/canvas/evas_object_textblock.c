@@ -9272,6 +9272,7 @@ evas_object_textblock_free(Evas_Object *obj)
 
    evas_object_textblock_clear(obj);
    evas_object_textblock_style_set(obj, NULL);
+   evas_object_textblock_style_user_set(obj, NULL);
    o = (Evas_Object_Textblock *)(obj->object_data);
    free(o->cursor);
    while (o->cursors)
