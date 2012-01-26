@@ -1740,6 +1740,41 @@ EINA_DEPRECATED EAPI void                          elm_genlist_horizontal_set(Ev
  */
 EAPI Elm_List_Mode                 elm_genlist_horizontal_get(const Evas_Object *obj);
 
+/**
+ * Return the data associated to a given genlist item
+ *
+ * @param it The genlist item.
+ * @return the data associated to this item.
+ *
+ * This returns the @c data value passed on the
+ * elm_genlist_item_append() and related item addition calls.
+ *
+ * @see elm_genlist_item_append()
+ * @see elm_genlist_item_data_set()
+ *
+ * @deprecated Use elm_object_item_data_get() instead
+ * @ingroup Genlist
+ */
+EINA_DEPRECATED EAPI void                         *elm_genlist_item_data_get(const Elm_Object_Item *it);
+
+/**
+ * Set the data associated to a given genlist item
+ *
+ * @param it The genlist item
+ * @param data The new data pointer to set on it
+ *
+ * This @b overrides the @c data value passed on the
+ * elm_genlist_item_append() and related item addition calls. This
+ * function @b won't call elm_genlist_item_update() automatically,
+ * so you'd issue it afterwards if you want to hove the item
+ * updated to reflect the that new data.
+ *
+ * @see elm_genlist_item_data_get()
+ *
+ * @deprecated Use elm_object_item_data_set() instead
+ * @ingroup Genlist
+ */
+EINA_DEPRECATED EAPI void                          elm_genlist_item_data_set(Elm_Object_Item *it, const void *data);
 
 #define ELM_IMAGE_ROTATE_90_CW 1
 #define ELM_IMAGE_ROTATE_180_CW 2

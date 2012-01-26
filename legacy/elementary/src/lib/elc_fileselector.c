@@ -327,7 +327,7 @@ _expand_done(void            *data,
              void            *event_info)
 {
    Elm_Object_Item *it = event_info;
-   const char *path = elm_genlist_item_data_get(it);
+   const char *path = elm_object_item_data_get(it);
    _populate(data, path, it);
 }
 
@@ -426,7 +426,7 @@ _sel(void            *data,
    sd = malloc(sizeof(*sd));
    sd->fs = data;
    sd->path = wd->mode == ELM_FILESELECTOR_LIST ?
-       elm_genlist_item_data_get(event_info) :
+       elm_object_item_data_get(event_info) :
        elm_gengrid_item_data_get(event_info);
 
    if (!sd->path)
@@ -620,7 +620,7 @@ _file_list_cmp(const void *a, const void *b)
         return 1;
      }
 
-   return strcoll(elm_genlist_item_data_get(la), elm_genlist_item_data_get(lb));
+   return strcoll(elm_object_item_data_get(la), elm_object_item_data_get(lb));
 }
 
 static void
@@ -1156,7 +1156,7 @@ elm_fileselector_selected_get(const Evas_Object *obj)
      {
         Elm_Object_Item *it;
         it = elm_genlist_selected_item_get(wd->files_list);
-        if (it) return elm_genlist_item_data_get(it);
+        if (it) return elm_object_item_data_get(it);
      }
    else
      {

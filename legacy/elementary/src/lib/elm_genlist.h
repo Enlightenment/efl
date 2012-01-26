@@ -160,7 +160,7 @@
  * There are also convenience functions. elm_genlist_item_genlist_get() will
  * return the genlist object the item belongs to. elm_genlist_item_show()
  * will make the scroller scroll to show that specific item so its visible.
- * elm_genlist_item_data_get() returns the data pointer set by the item
+ * elm_object_item_data_get() returns the data pointer set by the item
  * creation functions.
  *
  * If an item changes (state of boolean changes, text or contents change),
@@ -1386,40 +1386,6 @@ EAPI void                          elm_genlist_item_middle_bring_in(Elm_Object_I
 EAPI void                          elm_genlist_item_del(Elm_Object_Item *it);
 
 /**
- * Return the data associated to a given genlist item
- *
- * @param it The genlist item.
- * @return the data associated to this item.
- *
- * This returns the @c data value passed on the
- * elm_genlist_item_append() and related item addition calls.
- *
- * @see elm_genlist_item_append()
- * @see elm_genlist_item_data_set()
- *
- * @ingroup Genlist
- */
-EAPI void                         *elm_genlist_item_data_get(const Elm_Object_Item *it);
-
-/**
- * Set the data associated to a given genlist item
- *
- * @param it The genlist item
- * @param data The new data pointer to set on it
- *
- * This @b overrides the @c data value passed on the
- * elm_genlist_item_append() and related item addition calls. This
- * function @b won't call elm_genlist_item_update() automatically,
- * so you'd issue it afterwards if you want to hove the item
- * updated to reflect the that new data.
- *
- * @see elm_genlist_item_data_get()
- *
- * @ingroup Genlist
- */
-EAPI void                          elm_genlist_item_data_set(Elm_Object_Item *it, const void *data);
-
-/**
  * Tells genlist to "orphan" contents fetchs by the item class
  *
  * @param it The item
@@ -1449,7 +1415,7 @@ EAPI void                          elm_genlist_item_contents_orphan(Elm_Object_I
  * lower level callbacks for events on that object. Do not delete
  * this object under any circumstances.
  *
- * @see elm_genlist_item_data_get()
+ * @see elm_object_item_data_get()
  *
  * @ingroup Genlist
  */

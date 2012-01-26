@@ -119,7 +119,7 @@ _append_cb(void *data, Evas_Object *o __UNUSED__, void *event_info __UNUSED__)
    if (parent)
      {
         d->level = elm_genlist_item_expanded_depth_get(parent) + 1;
-        pdata = elm_genlist_item_data_get(parent);
+        pdata = elm_object_item_data_get(parent);
         pdata->children = eina_list_append(pdata->children, d);
      }
    else
@@ -139,7 +139,7 @@ _favorite_cb(void *data, Evas_Object *o __UNUSED__, void *event_info __UNUSED__)
 
    if (!glit) return;
 
-   Node_Data *d = elm_genlist_item_data_get(glit);
+   Node_Data *d = elm_object_item_data_get(glit);
    d->favorite = !d->favorite;
    if (d->favorite)
      elm_genlist_item_item_class_update(glit, &_itfav);
@@ -163,7 +163,7 @@ _add_child_cb(void *data, Evas_Object *o __UNUSED__, void *event_info __UNUSED__
 
    if (!glit) return;
 
-   Node_Data *d = elm_genlist_item_data_get(glit);
+   Node_Data *d = elm_object_item_data_get(glit);
    glit_prev = elm_genlist_item_prev_get(glit);
    glit_parent = elm_genlist_item_parent_get(glit);
 
@@ -223,7 +223,7 @@ _del_item_cb(void *data, Evas_Object *o __UNUSED__, void *event_info __UNUSED__)
 
    if (!glit) return;
 
-   Node_Data *pdata, *d = elm_genlist_item_data_get(glit);
+   Node_Data *pdata, *d = elm_object_item_data_get(glit);
    glit_parent = elm_genlist_item_parent_get(glit);
    elm_genlist_item_subitems_clear(glit);
    elm_genlist_item_del(glit);
@@ -232,7 +232,7 @@ _del_item_cb(void *data, Evas_Object *o __UNUSED__, void *event_info __UNUSED__)
 
    if (!glit_parent) return;
 
-   pdata = elm_genlist_item_data_get(glit_parent);
+   pdata = elm_object_item_data_get(glit_parent);
    pdata->children = eina_list_remove(pdata->children, d);
    elm_genlist_item_update(glit_parent);
 }
@@ -258,7 +258,7 @@ _expanded_cb(void *data __UNUSED__, Evas_Object *o __UNUSED__, void *event_info)
 {
    Eina_List *l;
    Elm_Object_Item *glit = event_info;
-   Node_Data *it_data, *d = elm_genlist_item_data_get(glit);
+   Node_Data *it_data, *d = elm_object_item_data_get(glit);
    Evas_Object *list = elm_genlist_item_genlist_get(glit);
 
    Elm_Genlist_Item_Class *ic;

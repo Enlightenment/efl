@@ -53,7 +53,7 @@ gltt_exp(void *data       __UNUSED__,
 {
    Elm_Object_Item *glit = event_info;
    Evas_Object *gl = elm_genlist_item_genlist_get(glit);
-   int val = (int)(long)elm_genlist_item_data_get(glit);
+   int val = (int) elm_object_item_data_get(glit);
    Elm_Object_Item *glit1, *glit2, *glit3;
 
    val *= 10;

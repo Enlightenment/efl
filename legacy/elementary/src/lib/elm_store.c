@@ -227,7 +227,7 @@ _store_genlist_item_realized(void *data, Evas_Object *obj __UNUSED__, void *even
 {
    Elm_Store *st = data;
    Elm_Object_Item *gli = event_info;
-   Elm_Store_Item *sti = elm_genlist_item_data_get(gli);
+   Elm_Store_Item *sti = elm_object_item_data_get(gli);
    if (!sti) return;
    st->realized_count++;
    sti->live = EINA_TRUE;
@@ -240,7 +240,7 @@ _store_genlist_item_unrealized(void *data, Evas_Object *obj __UNUSED__, void *ev
 {
    Elm_Store *st = data;
    Elm_Object_Item *gli = event_info;
-   Elm_Store_Item *sti = elm_genlist_item_data_get(gli);
+   Elm_Store_Item *sti = elm_object_item_data_get(gli);
    if (!sti) return;
    st->realized_count--;
    sti->live = EINA_FALSE;
