@@ -1888,6 +1888,7 @@ _eina_model_type_base_to_string(const Eina_Model *model)
              eina_value_flush(&val);
           }
      }
+   eina_list_free(props);
 
    eina_strbuf_append(str, "}, [");
 
