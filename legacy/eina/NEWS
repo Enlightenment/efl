@@ -16,7 +16,12 @@ Additions:
     * Added eina_value data type (generic value storage)
     * Added eina_model data type (generic hierarchy data access)
 
-Eina 1.1.0
+Fixes:
+
+    * compilation errors in Eina_RWLock code when building code on Windows > XP
+
+
+Eina 1.1.0 (2011-12-02)
 
 Changes since Eina 1.0.0:
 -------------------------

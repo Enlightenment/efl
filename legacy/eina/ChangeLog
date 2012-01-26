@@ -202,3 +202,7 @@
 2012-01-20  Gustavo Barbieri
 
 	* Add eina_model data type (generic hierarchy data access).
+
+2011-12-30  Vincent Torri
+
+	* Fix Eina_RWLock code on Windows > XP.
