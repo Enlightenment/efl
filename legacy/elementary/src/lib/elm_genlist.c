@@ -1654,15 +1654,6 @@ _item_cache_free(Item_Cache *itc)
 }
 
 static void
-_item_del_hook(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info)
-{
-   Elm_Gen_Item *it = event_info;
-   if (!it) return;
-   if (it->wd->last_selected_item == it)
-     it->wd->last_selected_item = NULL;
-}
-
-static void
 _item_text_realize(Elm_Gen_Item *it,
                     Evas_Object *target,
                     Eina_List **source,
@@ -3293,7 +3284,6 @@ _item_new(Widget_Data                  *wd,
    it->item->flags = flags;
    if (flags & ELM_GENLIST_ITEM_GROUP) it->group++;
    it->item->expanded_depth = 0;
-   elm_widget_item_del_cb_set(it, _item_del_hook);
    ELM_GEN_ITEM_SETUP(it);
    if (it->parent)
      {
@@ -5470,6 +5460,9 @@ _elm_genlist_item_del_serious(Elm_Gen_Item *it)
    if (it->wd->calc_job) ecore_job_del(it->wd->calc_job);
    it->wd->calc_job = ecore_job_add(it->wd->calc_cb, it->wd);
    free(it->item);
+
    it->item = NULL;
+   if (it->wd->last_selected_item == it)
+     it->wd->last_selected_item = NULL;
    elm_widget_item_del(it);
 }
