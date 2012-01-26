@@ -1958,7 +1958,7 @@ _edje_part_recalc_single(Edje *ed,
              if (lminh > minh) minh = lminh;
           }
      }
-   else if ((ep->part->type == EDJE_PART_TYPE_BOX) &&
+   else if ((ep->part->type == EDJE_PART_TYPE_IMAGE) &&
 	    ((((Edje_Part_Description_Image *)chosen_desc)->image.min.limit) ||
              (((Edje_Part_Description_Image *)chosen_desc)->image.max.limit)))
      {
