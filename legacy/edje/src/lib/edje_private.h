@@ -839,7 +839,7 @@ struct _Edje_Part_Description_Common
       unsigned char have;
       FLOAT_T w, h;
    } minmul;
-   
+
    Edje_Size min, max;
    Edje_Position step; /* size stepping by n pixels, 0 = none */
    Edje_Aspect_Prefer aspect;
@@ -913,6 +913,9 @@ struct _Edje_Part_Description_Spec_Image
    int            id; /* the image id to use */
    int            scale_hint; /* evas scale hint */
    Eina_Bool      set; /* if image condition it's content */
+   struct {
+      Eina_Bool   limit; /* should we limit ourself to the size of the image */
+   } min, max;
 
    Edje_Part_Description_Spec_Border border;
 };

@@ -307,3 +307,7 @@
 2012-01-25  Cedric Bail
 
 	* Only store the image used by active group.
+
+2012-01-26  Cedric Bail
+
+	* Add min: SOURCE, max: SOURCE.

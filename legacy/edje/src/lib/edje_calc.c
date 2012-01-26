@@ -1746,7 +1746,6 @@ _edje_part_recalc_single_min_max(FLOAT_T sc,
           }
      }
 
-
    /* XXX TODO: remove need of EDJE_INF_MAX_H, see edje_util.c */
    if ((ep->swallow_params.max.h <= 0) ||
        (ep->swallow_params.max.h == EDJE_INF_MAX_H))
@@ -1957,6 +1956,30 @@ _edje_part_recalc_single(Edje *ed,
         if (((Edje_Part_Description_Box *)chosen_desc)->box.min.v)
           {
              if (lminh > minh) minh = lminh;
+          }
+     }
+   else if ((ep->part->type == EDJE_PART_TYPE_BOX) &&
+	    ((((Edje_Part_Description_Image *)chosen_desc)->image.min.limit) ||
+             (((Edje_Part_Description_Image *)chosen_desc)->image.max.limit)))
+     {
+        Evas_Coord w, h;
+
+        /* We only need pos to find the right image that would be displayed */
+        /* Yes, if someone set aspect preference to SOURCE and also max,min
+           to SOURCE, it will be under efficient, but who cares at the
+           moment. */
+        _edje_real_part_image_set(ed, ep, pos);
+        evas_object_image_size_get(ep->object, &w, &h);
+
+        if (((Edje_Part_Description_Image *)chosen_desc)->image.min.limit)
+          {
+             if (w > minw) minw = w;
+             if (h > minh) minh = h;
+          }
+        if (((Edje_Part_Description_Image *)chosen_desc)->image.max.limit)
+          {
+             if (w < maxw) maxw = w;
+             if (h < maxh) maxh = h;
           }
      }
 

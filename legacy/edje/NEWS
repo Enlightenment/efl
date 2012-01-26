@@ -5,10 +5,11 @@ Changes since Edje 1.1.0:
 
 Additions:
 
-    * "recalc" smart callback for object size changes
+    * "recalc" smart callback for object size changes.
     * EDJE_ASPECT_PREFER_SOURCE.
     * edje.version() Lua function.
-    * minmul edc property
+    * minmul edc property.
+    * add min: SOURCE and max: SOURCE.
 
 Improvements:
     * speedup load time of Edje file.

@@ -4633,18 +4633,40 @@ st_collections_group_parts_part_description_fixed(void)
     @property
         min
     @parameters
-        [width] [height]
+        [width] [height] or SOURCE
     @effect
         The minimum size of the state.
+
+        When min is defined to SOURCE, it will look at the original
+        image size and enforce it minimal size to match at least the
+        original one. The part must be an IMAGE part.
     @endproperty
 */
 static void
 st_collections_group_parts_part_description_min(void)
 {
-   check_arg_count(2);
+   check_min_arg_count(1);
 
-   current_desc->min.w = parse_float_range(0, 0, 0x7fffffff);
-   current_desc->min.h = parse_float_range(1, 0, 0x7fffffff);
+   if (is_param(1)) {
+      current_desc->min.w = parse_float_range(0, 0, 0x7fffffff);
+      current_desc->min.h = parse_float_range(1, 0, 0x7fffffff);
+   } else {
+      Edje_Part_Description_Image *desc;
+      char *tmp;
+
+      tmp = parse_str(0);
+      if (current_part->type != EDJE_PART_TYPE_IMAGE ||
+          !tmp || strcmp(tmp, "SOURCE") != 0)
+        {
+           ERR("%s: Error. parse error %s:%i. "
+               "Only IMAGE part can have a min: SOURCE; defined",
+               progname, file_in, line - 1);
+           exit(-1);
+        }
+
+      desc = (Edje_Part_Description_Image *) current_desc;
+      desc->image.min.limit = EINA_TRUE;
+   }
 }
 
 /**
@@ -4673,18 +4695,40 @@ st_collections_group_parts_part_description_minmul(void)
     @property
         max
     @parameters
-        [width] [height]
+        [width] [height] or SOURCE
     @effect
         The maximum size of the state. A size of -1.0 means that it will be ignored in one direction.
+
+        When max is set to SOURCE, edje will enforce the part to be
+        not more than the original image size. The part must be an
+        IMAGE part.
     @endproperty
 */
 static void
 st_collections_group_parts_part_description_max(void)
 {
-   check_arg_count(2);
+   check_min_arg_count(1);
 
-   current_desc->max.w = parse_float_range(0, -1.0, 0x7fffffff);
-   current_desc->max.h = parse_float_range(1, -1.0, 0x7fffffff);
+   if (is_param(1)) {
+      current_desc->max.w = parse_float_range(0, -1.0, 0x7fffffff);
+      current_desc->max.h = parse_float_range(1, -1.0, 0x7fffffff);
+   } else {
+      Edje_Part_Description_Image *desc;
+      char *tmp;
+
+      tmp = parse_str(0);
+      if (current_part->type != EDJE_PART_TYPE_IMAGE ||
+          !tmp || strcmp(tmp, "SOURCE") != 0)
+        {
+           ERR("%s: Error. parse error %s:%i. "
+               "Only IMAGE part can have a max: SOURCE; defined",
+               progname, file_in, line - 1);
+           exit(-1);
+        }
+
+      desc = (Edje_Part_Description_Image *) current_desc;
+      desc->image.max.limit = EINA_TRUE;
+   }
 }
 
 /**
