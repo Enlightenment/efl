@@ -75,7 +75,7 @@ struct _Gesture_Info
   Evas_Object *obj;
   void *data; /**< Holds gesture intemidiate processing data */
   Func_Data fn[ELM_GESTURE_STATE_ABORT + 1]; /**< Callback info for states */
-  Elm_Gesture_Types g_type;  /**< gesture type */
+  Elm_Gesture_Type g_type;  /**< gesture type */
   Elm_Gesture_State state;  /**< gesture state */
   void *info;                        /**< Data for the state callback */
   Eina_Bool test; /**< if true this gesture should be tested on input */
@@ -270,7 +270,7 @@ static Eina_Bool _event_history_clear(Evas_Object *obj);
 static void _reset_states(Widget_Data *wd);
 static void _key_down_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info);
 static void _key_up_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info);
-static void _zoom_with_wheel_test(Evas_Object *obj, void *event_info, Evas_Callback_Type event_type, Elm_Gesture_Types g_type);
+static void _zoom_with_wheel_test(Evas_Object *obj, void *event_info, Evas_Callback_Type event_type, Elm_Gesture_Type g_type);
 static void _mouse_wheel(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info);
 static void _mouse_down(void *data, Evas *e, Evas_Object *obj, void *event_info);
 static void _mouse_move(void *data, Evas *e, Evas_Object *obj, void *event_info);
@@ -1438,7 +1438,7 @@ _compute_taps_center(Long_Tap_Type *st,
 static void
 _n_long_tap_test(Evas_Object *obj, Pointer_Event *pe,
                  void *event_info, Evas_Callback_Type event_type,
-                 Elm_Gesture_Types g_type)
+                 Elm_Gesture_Type g_type)
 {  /* Here we fill Recent_Taps struct and fire-up click/tap timers */
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return;
@@ -1738,7 +1738,7 @@ _get_direction(Evas_Coord x1, Evas_Coord x2)
 static void
 _momentum_test(Evas_Object *obj, Pointer_Event *pe,
       void *event_info, Evas_Callback_Type event_type,
-      Elm_Gesture_Types g_type)
+      Elm_Gesture_Type g_type)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return;
@@ -2010,7 +2010,7 @@ _single_line_process(Elm_Gesture_Line_Info *info, Line_Data *st,
  */
 static void
 _n_line_test(Evas_Object *obj, Pointer_Event *pe, void *event_info,
-      Evas_Callback_Type event_type, Elm_Gesture_Types g_type)
+      Evas_Callback_Type event_type, Elm_Gesture_Type g_type)
 {
    if (!pe)
      return;
@@ -2524,7 +2524,7 @@ compute_zoom(Zoom_Type *st, Evas_Coord x1, Evas_Coord y1,
  */
 static void
 _zoom_with_wheel_test(Evas_Object *obj, void *event_info,
-      Evas_Callback_Type event_type, Elm_Gesture_Types g_type)
+      Evas_Callback_Type event_type, Elm_Gesture_Type g_type)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return;
@@ -2650,7 +2650,7 @@ _zoom_with_wheel_test(Evas_Object *obj, void *event_info,
  */
 static void
 _zoom_test(Evas_Object *obj, Pointer_Event *pe, void *event_info,
-      Evas_Callback_Type event_type, Elm_Gesture_Types g_type)
+      Evas_Callback_Type event_type, Elm_Gesture_Type g_type)
 {
    if (!pe)
      return;
@@ -2873,7 +2873,7 @@ _get_rotate_properties(Rotate_Type *st,
  */
 static void
 _rotate_test(Evas_Object *obj, Pointer_Event *pe, void *event_info,
-      Evas_Callback_Type event_type, Elm_Gesture_Types g_type)
+      Evas_Callback_Type event_type, Elm_Gesture_Type g_type)
 {
    if (!pe)
      return;
@@ -3444,7 +3444,7 @@ elm_gesture_layer_attach(Evas_Object *obj, Evas_Object *t)
 }
 
 EAPI void
-elm_gesture_layer_cb_set(Evas_Object *obj, Elm_Gesture_Types idx,
+elm_gesture_layer_cb_set(Evas_Object *obj, Elm_Gesture_Type idx,
       Elm_Gesture_State cb_type, Elm_Gesture_Event_Cb cb, void *data)
 {
    Widget_Data *wd = elm_widget_data_get(obj);

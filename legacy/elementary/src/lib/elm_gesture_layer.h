@@ -15,7 +15,7 @@
  * Now you need to tell gesture layer what gestures you follow.
  * This is done with @ref elm_gesture_layer_cb_set call.
  * By setting the callback you actually saying to gesture layer:
- * I would like to know when the gesture @ref Elm_Gesture_Types
+ * I would like to know when the gesture @ref Elm_Gesture_Type
  * switches to state @ref Elm_Gesture_State.
  *
  * Next, you need to implement the actual action that follows the input
@@ -26,7 +26,7 @@
  * (again with @ref elm_gesture_layer_cb_set)
  *
  * The information reported by gesture layer to your callback is depending
- * on @ref Elm_Gesture_Types:
+ * on @ref Elm_Gesture_Type:
  * @ref Elm_Gesture_Taps_Info is the info reported for tap gestures:
  * @ref ELM_GESTURE_N_TAPS, @ref ELM_GESTURE_N_LONG_TAPS,
  * @ref ELM_GESTURE_N_DOUBLE_TAPS, @ref ELM_GESTURE_N_TRIPLE_TAPS.
@@ -82,7 +82,7 @@ typedef enum
    ELM_GESTURE_ROTATE, /**< Rotate */
 
    ELM_GESTURE_LAST
-} Elm_Gesture_Types;
+} Elm_Gesture_Type;
 
 /**
  * @enum _Elm_Gesture_State
@@ -237,7 +237,7 @@ typedef Evas_Event_Flags (*Elm_Gesture_Event_Cb)(void *data, void *event_info);
  *
  * @ingroup Elm_Gesture_Layer
  */
-EAPI void         elm_gesture_layer_cb_set(Evas_Object *obj, Elm_Gesture_Types idx, Elm_Gesture_State cb_type, Elm_Gesture_Event_Cb cb, void *data);
+EAPI void         elm_gesture_layer_cb_set(Evas_Object *obj, Elm_Gesture_Type idx, Elm_Gesture_State cb_type, Elm_Gesture_Event_Cb cb, void *data);
 
 /**
  * Call this function to get repeat-events settings.
