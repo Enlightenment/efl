@@ -25,10 +25,10 @@ _item_label_get(void *data, Evas_Object *obj __UNUSED__, const char *part)
      snprintf(buf, sizeof(buf), "Item # %i", i);
    else
      {
-	int n;
-	snprintf(buf, sizeof(buf), "realized at %s", ctime(&t));
-	n = strlen(buf);
-	buf[n - 1] = '\0';
+        int n;
+        snprintf(buf, sizeof(buf), "realized at %s", ctime(&t));
+        n = strlen(buf);
+        buf[n - 1] = '\0';
      }
 
    return strdup(buf);
@@ -50,7 +50,7 @@ static void
 _item_sel_cb(void *data, Evas_Object *obj, void *event_info)
 {
    printf("sel item data [%p] on genlist obj [%p], item pointer [%p]\n",
-	  data, obj, event_info);
+          data, obj, event_info);
 }
 
 static char *
@@ -284,7 +284,7 @@ elm_main(int argc __UNUSED__, char **argv __UNUSED__)
 
    fbox = elm_box_add(win);
    elm_box_layout_set(fbox, evas_object_box_layout_flow_horizontal,
-		      NULL, NULL);
+                      NULL, NULL);
    evas_object_size_hint_weight_set(fbox, EVAS_HINT_EXPAND, 0);
    evas_object_size_hint_align_set(fbox, EVAS_HINT_FILL, EVAS_HINT_FILL);
    elm_box_pack_end(box, fbox);
@@ -308,45 +308,45 @@ elm_main(int argc __UNUSED__, char **argv __UNUSED__)
      {
         Elm_Object_Item *gli, *glg;
 
-	if (i % 7 == 0)
-	  {
-	     glg = gli = elm_genlist_item_append(list, &_itc_group,
-						 (void *)(long)nitems++, NULL,
-						 ELM_GENLIST_ITEM_GROUP,
-						 _item_sel_cb, NULL);
-	     elm_genlist_item_display_only_set(glg, EINA_TRUE);
-	  }
-	else
-	  {
-	     gli = elm_genlist_item_append(list, &_itc,
-					   (void *)(long)nitems++, glg,
-					   ELM_GENLIST_ITEM_NONE,
-					   _item_sel_cb, NULL);
-	  }
+        if (i % 7 == 0)
+          {
+             glg = gli = elm_genlist_item_append(list, &_itc_group,
+                                                 (void *)(long)nitems++, NULL,
+                                                 ELM_GENLIST_ITEM_GROUP,
+                                                 _item_sel_cb, NULL);
+             elm_genlist_item_display_only_set(glg, EINA_TRUE);
+          }
+        else
+          {
+             gli = elm_genlist_item_append(list, &_itc,
+                                           (void *)(long)nitems++, glg,
+                                           ELM_GENLIST_ITEM_NONE,
+                                           _item_sel_cb, NULL);
+          }
 
-	switch (i)
-	  {
-	   case 3:
+        switch (i)
+          {
+           case 3:
               elm_object_item_disabled_set(gli, EINA_TRUE);
-	      break;
-	   case 50:
-	      evas_object_smart_callback_add(
-		 bt_bring_in, "clicked", _bring_in_cb, gli);
-	      evas_object_smart_callback_add(
-		 bt_show, "clicked", _show_cb, gli);
-	      break;
-	   case 200:
-	      evas_object_smart_callback_add(
-		 bt_middle_in, "clicked", _middle_in_cb, gli);
-	      evas_object_smart_callback_add(
-		 bt_middle_show, "clicked", _middle_show_cb, gli);
-	      break;
-	   case 250:
-	      evas_object_smart_callback_add(
-		 bt_top_in, "clicked", _top_in_cb, gli);
-	      evas_object_smart_callback_add(
-		 bt_top_show, "clicked", _top_show_cb, gli);
-	  }
+              break;
+           case 50:
+              evas_object_smart_callback_add(
+                 bt_bring_in, "clicked", _bring_in_cb, gli);
+              evas_object_smart_callback_add(
+                 bt_show, "clicked", _show_cb, gli);
+              break;
+           case 200:
+              evas_object_smart_callback_add(
+                 bt_middle_in, "clicked", _middle_in_cb, gli);
+              evas_object_smart_callback_add(
+                 bt_middle_show, "clicked", _middle_show_cb, gli);
+              break;
+           case 250:
+              evas_object_smart_callback_add(
+                 bt_top_in, "clicked", _top_in_cb, gli);
+              evas_object_smart_callback_add(
+                 bt_top_show, "clicked", _top_show_cb, gli);
+          }
      }
 
    evas_object_size_hint_min_set(bg, 160, 160);
