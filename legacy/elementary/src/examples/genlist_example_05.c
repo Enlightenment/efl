@@ -180,7 +180,7 @@ _add_child_cb(void *data, Evas_Object *o __UNUSED__, void *event_info __UNUSED__
    // Changing leaf item to parent item
    if (change_item)
      {
-        elm_genlist_item_del(glit);
+        elm_object_item_del(glit);
 
         if (glit_prev != glit_parent)
           glit = elm_genlist_item_insert_after(list, &_itp, d, glit_parent,
@@ -226,7 +226,7 @@ _del_item_cb(void *data, Evas_Object *o __UNUSED__, void *event_info __UNUSED__)
    Node_Data *pdata, *d = elm_object_item_data_get(glit);
    glit_parent = elm_genlist_item_parent_get(glit);
    elm_genlist_item_subitems_clear(glit);
-   elm_genlist_item_del(glit);
+   elm_object_item_del(glit);
 
    _clear_list(d);
 

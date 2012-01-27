@@ -3202,7 +3202,11 @@ _item_select(Elm_Gen_Item *it)
      {
         if ((!it->walking) && (it->generation < it->wd->generation))
           {
-             if (!it->relcount) it->del_cb(it);
+             if (!it->relcount)
+               {
+                  it->del_cb(it);
+                  elm_widget_item_free(it);
+               }
           }
         else
           it->wd->last_selected_item = it;
@@ -3263,6 +3267,36 @@ _item_disable_hook(Elm_Object_Item *it)
      }
 }
 
+static Eina_Bool
+_item_del_pre_hook(Elm_Object_Item *it)
+{
+   ELM_OBJ_ITEM_CHECK_OR_RETURN(it, EINA_FALSE);
+   Elm_Gen_Item *_it = (Elm_Gen_Item *) it;
+
+   if ((_it->relcount > 0) || (_it->walking > 0))
+     {
+        elm_genlist_item_subitems_clear(it);
+        if (_it->wd->show_item == _it) _it->wd->show_item = NULL;
+        _elm_genlist_item_del_notserious(_it);
+        if (_it->item->block)
+          {
+             if (_it->realized) _elm_genlist_item_unrealize(_it, EINA_FALSE);
+             _it->item->block->changed = EINA_TRUE;
+             if (_it->wd->calc_job) ecore_job_del(_it->wd->calc_job);
+             _it->wd->calc_job = ecore_job_add(_calc_job, _it->wd);
+          }
+        if (_it->parent)
+          {
+             _it->parent->item->items =
+                eina_list_remove(_it->parent->item->items, it);
+             _it->parent = NULL;
+          }
+        return EINA_FALSE;
+     }
+   _item_del(_it);
+   return EINA_TRUE;
+}
+
 Elm_Gen_Item *
 _elm_genlist_item_new(Widget_Data              *wd,
                       const Elm_Gen_Item_Class *itc,
@@ -3286,6 +3320,7 @@ _elm_genlist_item_new(Widget_Data              *wd,
    elm_widget_item_content_set_hook_set(it, _item_content_set_hook);
    elm_widget_item_content_unset_hook_set(it, _item_content_unset_hook);
    elm_widget_item_disable_hook_set(it, _item_disable_hook);
+   elm_widget_item_del_pre_hook_set(it, _item_del_pre_hook);
    /* TEMPORARY */
    it->sel_cb = (Ecore_Cb)_item_select;
 
@@ -3504,7 +3539,10 @@ newblock:
      {
         it->item->rel->relcount--;
         if ((it->item->rel->generation < it->wd->generation) && (!it->item->rel->relcount))
-          _item_del(it->item->rel);
+          {
+             _item_del(it->item->rel);
+             elm_widget_item_free(it->item->rel);
+          }
         it->item->rel = NULL;
      }
    if (itb->count > itb->wd->max_items_per_block)
@@ -4065,6 +4103,7 @@ _elm_genlist_clear(Evas_Object *obj, Eina_Bool standby)
              if (next) itn = ELM_GEN_ITEM_FROM_INLIST(next);
              if (itn) itn->walking++; /* prevent early death of subitem */
              it->del_cb(it);
+             elm_widget_item_free(it);
              if (itn) itn->walking--;
           }
      }
@@ -4295,7 +4334,7 @@ elm_genlist_item_subitems_clear(Elm_Object_Item *it)
    EINA_LIST_FOREACH(_it->item->items, l, it2)
      tl = eina_list_append(tl, it2);
    EINA_LIST_FREE(tl, it2)
-     elm_genlist_item_del(it2);
+     elm_object_item_del(it2);
 }
 
 EAPI void
@@ -4613,30 +4652,7 @@ elm_genlist_item_middle_bring_in(Elm_Object_Item *it)
 EAPI void
 elm_genlist_item_del(Elm_Object_Item *it)
 {
-   ELM_OBJ_ITEM_CHECK_OR_RETURN(it);
-   Elm_Gen_Item *_it = (Elm_Gen_Item *) it;
-
-   if ((_it->relcount > 0) || (_it->walking > 0))
-     {
-        elm_genlist_item_subitems_clear(it);
-        if (_it->wd->show_item == _it) _it->wd->show_item = NULL;
-        _elm_genlist_item_del_notserious(_it);
-        if (_it->item->block)
-          {
-             if (_it->realized) _elm_genlist_item_unrealize(_it, EINA_FALSE);
-             _it->item->block->changed = EINA_TRUE;
-             if (_it->wd->calc_job) ecore_job_del(_it->wd->calc_job);
-             _it->wd->calc_job = ecore_job_add(_calc_job, _it->wd);
-          }
-        if (_it->parent)
-          {
-             _it->parent->item->items =
-                eina_list_remove(_it->parent->item->items, it);
-             _it->parent = NULL;
-          }
-        return;
-     }
-   _item_del(_it);
+   elm_object_item_del(it);
 }
 
 EAPI void
@@ -5473,5 +5489,4 @@ _elm_genlist_item_del_serious(Elm_Gen_Item *it)
    it->item = NULL;
    if (it->wd->last_selected_item == it)
      it->wd->last_selected_item = NULL;
-   elm_widget_item_del(it);
 }

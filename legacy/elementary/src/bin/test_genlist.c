@@ -126,7 +126,7 @@ test_genlist(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_inf
    evas_object_smart_callback_add(gl, "longpressed", _gl_longpress, NULL);
    // FIXME: This causes genlist to resize the horiz axis very slowly :(
    // Reenable this and resize the window horizontally, then try to resize it back
-   //elm_genlist_horizontal_mode_set(gl, ELM_LIST_LIMIT);
+   //elm_genlist_mode_set(gl, ELM_LIST_LIMIT);
    evas_object_size_hint_weight_set(gl, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(gl, EVAS_HINT_FILL, EVAS_HINT_FILL);
    elm_box_pack_end(bx, gl);
@@ -273,7 +273,7 @@ my_gl_del(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
         printf("no item selected\n");
         return;
      }
-   elm_genlist_item_del(gli);
+   elm_object_item_del(gli);
 }
 
 static void

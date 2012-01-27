@@ -1738,7 +1738,7 @@ EINA_DEPRECATED EAPI void                          elm_genlist_horizontal_set(Ev
  * @deprecated use elm_genlist_mode_get()
  * @ingroup Genlist
  */
-EAPI Elm_List_Mode                 elm_genlist_horizontal_get(const Evas_Object *obj);
+EINA_DEPRECATED EAPI Elm_List_Mode                 elm_genlist_horizontal_get(const Evas_Object *obj);
 
 /**
  * Return the data associated to a given genlist item
@@ -1806,6 +1806,20 @@ EINA_DEPRECATED EAPI void                          elm_genlist_item_disabled_set
  * @ingroup Genlist
  */
 EINA_DEPRECATED EAPI Eina_Bool                     elm_genlist_item_disabled_get(const Elm_Object_Item *it);
+
+/**
+ * Remove a genlist item from the its parent, deleting it.
+ *
+ * @param it The item to be removed.
+ * @return @c EINA_TRUE on success or @c EINA_FALSE, otherwise.
+ *
+ * @see elm_genlist_clear(), to remove all items in a genlist at
+ * once.
+ *
+ * @deprecated Use elm_object_item_del() instead
+ * @ingroup Genlist
+ */
+EINA_DEPRECATED EAPI void                          elm_genlist_item_del(Elm_Object_Item *it);
 
 #define ELM_IMAGE_ROTATE_90_CW 1
 #define ELM_IMAGE_ROTATE_180_CW 2

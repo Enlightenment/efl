@@ -131,7 +131,7 @@
  * the indicated item.
  *
  * The application can clear the list with elm_genlist_clear() which deletes
- * all the items in the list and elm_genlist_item_del() will delete a specific
+ * all the items in the list and elm_object_item_del() will delete a specific
  * item. elm_genlist_item_subitems_clear() will clear all items that are
  * children of the indicated parent item.
  *
@@ -420,7 +420,7 @@ struct _Elm_Genlist_Item_Class
  * This function inserts a new genlist widget on the canvas.
  *
  * @see elm_genlist_item_append()
- * @see elm_genlist_item_del()
+ * @see elm_object_item_del()
  * @see elm_genlist_clear()
  *
  * @ingroup Genlist
@@ -434,7 +434,7 @@ EAPI Evas_Object                  *elm_genlist_add(Evas_Object *parent);
  *
  * This removes (and deletes) all items in @p obj, leaving it empty.
  *
- * @see elm_genlist_item_del(), to remove just one item.
+ * @see elm_object_item_del(), to remove just one item.
  *
  * @ingroup Genlist
  */
@@ -782,7 +782,7 @@ EAPI double                        elm_genlist_longpress_timeout_get(const Evas_
  * @see elm_genlist_item_prepend()
  * @see elm_genlist_item_insert_before()
  * @see elm_genlist_item_insert_after()
- * @see elm_genlist_item_del()
+ * @see elm_object_item_del()
  *
  * @ingroup Genlist
  */
@@ -806,7 +806,7 @@ EAPI Elm_Object_Item             *elm_genlist_item_append(Evas_Object *obj, cons
  * @see elm_genlist_item_append()
  * @see elm_genlist_item_insert_before()
  * @see elm_genlist_item_insert_after()
- * @see elm_genlist_item_del()
+ * @see elm_object_item_del()
  *
  * @ingroup Genlist
  */
@@ -830,7 +830,7 @@ EAPI Elm_Object_Item             *elm_genlist_item_prepend(Evas_Object *obj, con
  * @see elm_genlist_item_append()
  * @see elm_genlist_item_prepend()
  * @see elm_genlist_item_insert_after()
- * @see elm_genlist_item_del()
+ * @see elm_object_item_del()
  *
  * @ingroup Genlist
  */
@@ -854,7 +854,7 @@ EAPI Elm_Object_Item             *elm_genlist_item_insert_before(Evas_Object *ob
  * @see elm_genlist_item_append()
  * @see elm_genlist_item_prepend()
  * @see elm_genlist_item_insert_before()
- * @see elm_genlist_item_del()
+ * @see elm_object_item_del()
  *
  * @ingroup Genlist
  */
@@ -1118,7 +1118,7 @@ EAPI Elm_Object_Item             *elm_genlist_item_parent_get(const Elm_Object_I
  * given item @p it.
  *
  * @see elm_genlist_clear()
- * @see elm_genlist_item_del()
+ * @see elm_object_item_del()
  *
  * @ingroup Genlist
  */
@@ -1343,19 +1343,6 @@ EAPI void                          elm_genlist_item_middle_show(Elm_Object_Item 
  * @ingroup Genlist
  */
 EAPI void                          elm_genlist_item_middle_bring_in(Elm_Object_Item *it);
-
-/**
- * Remove a genlist item from the its parent, deleting it.
- *
- * @param it The item to be removed.
- * @return @c EINA_TRUE on success or @c EINA_FALSE, otherwise.
- *
- * @see elm_genlist_clear(), to remove all items in a genlist at
- * once.
- *
- * @ingroup Genlist
- */
-EAPI void                          elm_genlist_item_del(Elm_Object_Item *it);
 
 /**
  * Tells genlist to "orphan" contents fetchs by the item class

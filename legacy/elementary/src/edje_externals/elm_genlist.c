@@ -53,7 +53,7 @@ external_genlist_state_set(void *data __UNUSED__, Evas_Object *obj, const void *
 	Elm_List_Mode set = _list_horizontal_setting_get(p->horizontal);
 
 	if (set != ELM_LIST_LAST)
-	   elm_genlist_horizontal_set(obj, set);
+	   elm_genlist_mode_set(obj, set);
      }
    if (p->multi_exists)
      elm_genlist_multi_select_set(obj, p->multi);
@@ -89,7 +89,7 @@ external_genlist_param_set(void *data __UNUSED__, Evas_Object *obj, const Edje_E
 	     Elm_List_Mode set = _list_horizontal_setting_get(param->s);
 
 	     if (set == ELM_LIST_LAST) return EINA_FALSE;
-	     elm_genlist_horizontal_set(obj, set);
+	     elm_genlist_mode_set(obj, set);
 	     return EINA_TRUE;
 	  }
      }
@@ -167,7 +167,7 @@ external_genlist_param_get(void *data __UNUSED__, const Evas_Object *obj, Edje_E
      {
 	if (param->type == EDJE_EXTERNAL_PARAM_TYPE_CHOICE)
 	  {
-	     Elm_List_Mode list_horizontal_set = elm_genlist_horizontal_get(obj);
+	     Elm_List_Mode list_horizontal_set = elm_genlist_mode_get(obj);
 
 	     if (list_horizontal_set == ELM_LIST_LAST)
 	       return EINA_FALSE;
