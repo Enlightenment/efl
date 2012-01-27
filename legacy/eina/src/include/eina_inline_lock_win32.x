@@ -325,7 +325,7 @@ static inline Eina_Bool
 eina_rwlock_new(Eina_RWLock *mutex)
 {
 #if _WIN32_WINNT >= 0x0600
-   InitializeSRWLock(mutex->mutex);
+   InitializeSRWLock(&mutex->mutex);
    return EINA_TRUE;
 #else
    if (!eina_lock_new(&(mutex->mutex))) return EINA_FALSE;
@@ -360,7 +360,7 @@ static inline Eina_Lock_Result
 eina_rwlock_take_read(Eina_RWLock *mutex)
 {
 #if _WIN32_WINNT >= 0x0600
-   AcquireSRWLockShared(mutex->mutex);
+   AcquireSRWLockShared(&mutex->mutex);
    mutex->is_read_mode = EINA_TRUE;
 #else
    DWORD res;
@@ -393,7 +393,7 @@ static inline Eina_Lock_Result
 eina_rwlock_take_write(Eina_RWLock *mutex)
 {
 #if _WIN32_WINNT >= 0x0600
-   AcquireSRWLockExclusive(mutex->mutex);
+   AcquireSRWLockExclusive(&mutex->mutex);
    mutex->is_read_mode = EINA_FALSE;
 #else
    DWORD res;
@@ -426,9 +426,9 @@ eina_rwlock_release(Eina_RWLock *mutex)
 {
 #if _WIN32_WINNT >= 0x0600
    if (mutex->is_read_mode)
-     ReleaseSRWLockShared(mutex->mutex);
+     ReleaseSRWLockShared(&mutex->mutex);
    else
-     ReleaseSRWLockExclusive(mutex->mutex);
+     ReleaseSRWLockExclusive(&mutex->mutex);
 #else
    if (eina_lock_take(&(mutex->mutex)) == EINA_LOCK_FAIL)
      return EINA_LOCK_FAIL;
