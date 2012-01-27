@@ -273,7 +273,7 @@ my_gl_del(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
         printf("no item selected\n");
         return;
      }
-   elm_object_item_del(gli);
+   elm_genlist_item_del(gli);
 }
 
 static void
