@@ -1978,8 +1978,8 @@ _edje_part_recalc_single(Edje *ed,
           }
         if (((Edje_Part_Description_Image *)chosen_desc)->image.max.limit)
           {
-             if (w < maxw) maxw = w;
-             if (h < maxh) maxh = h;
+             if ((maxw <= 0) || (w < maxw)) maxw = w;
+             if ((maxh <= 0) || (h < maxh)) maxh = h;
           }
      }
 
