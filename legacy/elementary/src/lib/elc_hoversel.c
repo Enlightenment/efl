@@ -309,19 +309,21 @@ _item_text_get_hook(const Elm_Object_Item *it, const char *part)
    return ((Elm_Hoversel_Item *) it)->label;
 }
 
-static void
+static Eina_Bool
 _item_del_pre_hook(Elm_Object_Item *it)
 {
-   ELM_OBJ_ITEM_CHECK_OR_RETURN(it);
+   ELM_OBJ_ITEM_CHECK_OR_RETURN(it, EINA_FALSE);
    Widget_Data *wd;
    Elm_Hoversel_Item *item = (Elm_Hoversel_Item *) it;
    wd = elm_widget_data_get(WIDGET(item));
-   if (!wd) return;
+   if (!wd) return EINA_FALSE;
    elm_hoversel_hover_end(WIDGET(item));
    wd->items = eina_list_remove(wd->items, item);
    eina_stringshare_del(item->label);
    eina_stringshare_del(item->icon_file);
    eina_stringshare_del(item->icon_group);
+
+   return EINA_TRUE;
 }
 
 EAPI Evas_Object *

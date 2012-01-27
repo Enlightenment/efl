@@ -690,10 +690,10 @@ _elm_menu_item_add_helper(Evas_Object *obj, Elm_Menu_Item *parent, Elm_Menu_Item
    _sizing_eval(obj);
 }
 
-static void
+static Eina_Bool
 _item_del_pre_hook(Elm_Object_Item *it)
 {
-   ELM_OBJ_ITEM_CHECK_OR_RETURN(it);
+   ELM_OBJ_ITEM_CHECK_OR_RETURN(it, EINA_FALSE);
    Elm_Menu_Item *item = (Elm_Menu_Item *) it;
    Elm_Object_Item *_item;
 
@@ -710,6 +710,8 @@ _item_del_pre_hook(Elm_Object_Item *it)
         Widget_Data *wd = elm_widget_data_get(WIDGET(item));
         wd->items = eina_list_remove(wd->items, item);
      }
+
+   return EINA_TRUE;
 }
 
 EAPI Elm_Object_Item *

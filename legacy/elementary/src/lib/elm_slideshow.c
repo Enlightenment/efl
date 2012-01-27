@@ -348,14 +348,15 @@ _timer_cb(void *data)
    return ECORE_CALLBACK_CANCEL;
 }
 
-static void
+static Eina_Bool
 _item_del_pre_hook(Elm_Object_Item *it)
 {
-   ELM_OBJ_ITEM_CHECK_OR_RETURN(it);
+   ELM_OBJ_ITEM_CHECK_OR_RETURN(it, EINA_FALSE);
 
    Elm_Slideshow_Item *item = (Elm_Slideshow_Item *) it;
    Widget_Data *wd = elm_widget_data_get(WIDGET(item));
-   if (!wd) return;
+   if (!wd) return EINA_FALSE;
+
    if (wd->previous == item) wd->previous = NULL;
    if (wd->current == item)
      {
@@ -378,6 +379,8 @@ _item_del_pre_hook(Elm_Object_Item *it)
 
    if ((VIEW(item)) && (item->itc->func.del))
      item->itc->func.del(elm_widget_item_data_get(item), VIEW(item));
+
+   return EINA_TRUE;
 }
 
 EAPI Evas_Object *

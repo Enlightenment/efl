@@ -1233,16 +1233,16 @@ _remove_items(Widget_Data *wd)
    wd->items = NULL;
 }
 
-static void
+static Eina_Bool
 _item_del_pre_hook(Elm_Object_Item *it)
 {
-   ELM_OBJ_ITEM_CHECK_OR_RETURN(it);
+   ELM_OBJ_ITEM_CHECK_OR_RETURN(it, EINA_FALSE);
 
    Widget_Data *wd;
    Elm_Ctxpopup_Item *ctxpopup_it = (Elm_Ctxpopup_Item *) it;
 
    wd = elm_widget_data_get(WIDGET(ctxpopup_it));
-   if (!wd) return;
+   if (!wd) return EINA_FALSE;
 
    if (ctxpopup_it->icon)
      evas_object_del(ctxpopup_it->icon);
@@ -1258,11 +1258,13 @@ _item_del_pre_hook(Elm_Object_Item *it)
    if (eina_list_count(wd->items) < 1)
      {
         evas_object_hide(WIDGET(ctxpopup_it));
-        return;
+        return EINA_TRUE;
      }
 
    if (wd->visible)
      _sizing_eval(WIDGET(ctxpopup_it));
+
+   return EINA_TRUE;
 }
 
 EAPI Evas_Object *

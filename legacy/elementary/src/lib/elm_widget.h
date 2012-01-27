@@ -207,7 +207,7 @@ typedef Evas_Object          *(*Elm_Widget_Content_Get_Cb)(const void *data, con
 typedef Evas_Object          *(*Elm_Widget_Content_Unset_Cb)(const void *data, const char *part);
 typedef void                  (*Elm_Widget_Signal_Emit_Cb)(void *data, const char *emission, const char *source);
 typedef void                  (*Elm_Widget_Disable_Cb)(void *data);
-typedef void                  (*Elm_Widget_Del_Pre_Cb)(void *data);
+typedef Eina_Bool             (*Elm_Widget_Del_Pre_Cb)(void *data);
 
 #define ELM_ACCESS_TYPE    0    // when reading out widget or item this is read first
 #define ELM_ACCESS_INFO    1    // next read is info - this is normally label

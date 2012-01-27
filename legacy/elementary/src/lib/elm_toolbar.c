@@ -764,10 +764,10 @@ _access_state_cb(void *data __UNUSED__, Evas_Object *obj __UNUSED__, Elm_Widget_
    return NULL;
 }
 
-static void
+static Eina_Bool
 _item_del_pre_hook(Elm_Object_Item *it)
 {
-   ELM_OBJ_ITEM_CHECK_OR_RETURN(it);
+   ELM_OBJ_ITEM_CHECK_OR_RETURN(it, EINA_FALSE);
 
    Widget_Data *wd;
    Evas_Object *obj2;
@@ -775,7 +775,8 @@ _item_del_pre_hook(Elm_Object_Item *it)
    item = (Elm_Toolbar_Item *) it;
 
    wd = elm_widget_data_get(WIDGET(item));
-   if (!wd) return;
+   if (!wd) return EINA_FALSE;
+
    obj2 = WIDGET(item);
    next = ELM_TOOLBAR_ITEM_FROM_INLIST(EINA_INLIST_GET(item)->next);
    wd->items = eina_inlist_remove(wd->items, EINA_INLIST_GET(item));
@@ -784,6 +785,8 @@ _item_del_pre_hook(Elm_Object_Item *it)
    if (wd->always_select && item->selected && next) _item_select(next);
    _item_del(item);
    _theme_hook(obj2);
+
+   return EINA_TRUE;
 }
 
 static Elm_Toolbar_Item *

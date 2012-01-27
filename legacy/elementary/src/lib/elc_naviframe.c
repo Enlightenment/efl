@@ -128,7 +128,7 @@ static Evas_Object * _title_icon_unset(Elm_Naviframe_Item *it);
 static Evas_Object * _title_content_unset(Elm_Naviframe_Item *it,
                                           const char *part);
 static void _item_del(Elm_Naviframe_Item *it);
-static void _item_del_pre_hook(Elm_Object_Item *it);
+static Eina_Bool _item_del_pre_hook(Elm_Object_Item *it);
 static void _pushed_finished(void *data,
                              Evas_Object *obj,
                              const char *emission,
@@ -779,16 +779,16 @@ _item_del(Elm_Naviframe_Item *it)
    eina_stringshare_del(it->style);
 }
 
-static void
+static Eina_Bool
 _item_del_pre_hook(Elm_Object_Item *it)
 {
-   ELM_OBJ_ITEM_CHECK_OR_RETURN(it);
+   ELM_OBJ_ITEM_CHECK_OR_RETURN(it, EINA_FALSE);
    Elm_Naviframe_Item *navi_it;
    Widget_Data *wd;
 
    navi_it =(Elm_Naviframe_Item *) it;
    wd = elm_widget_data_get(WIDGET(navi_it));
-   if (!wd) return;
+   if (!wd) return EINA_FALSE;
 
    if (it == elm_naviframe_top_item_get(WIDGET(navi_it)))
      {
@@ -796,7 +796,7 @@ _item_del_pre_hook(Elm_Object_Item *it)
         _item_del(navi_it);
         elm_widget_item_free(navi_it);
         //If the item is only one, the stack will be empty
-        if (!wd->stack) return;
+        if (!wd->stack) return EINA_TRUE;
         navi_it = EINA_INLIST_CONTAINER_GET(wd->stack->last,
                                             Elm_Naviframe_Item);
         evas_object_show(VIEW(navi_it));
@@ -809,6 +809,8 @@ _item_del_pre_hook(Elm_Object_Item *it)
         _item_del(navi_it);
         elm_widget_item_free(navi_it);
      }
+
+   return EINA_TRUE;
 }
 
 static void

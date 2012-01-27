@@ -503,18 +503,20 @@ _item_content_get_hook(const Elm_Object_Item *it, const char *part)
    return ((Elm_Segment_Item *) it)->icon;
 }
 
-static void
+static Eina_Bool
 _item_del_pre_hook(Elm_Object_Item *it)
 {
-   ELM_OBJ_ITEM_CHECK_OR_RETURN(it);
+   ELM_OBJ_ITEM_CHECK_OR_RETURN(it, EINA_FALSE);
    Widget_Data *wd;
    Elm_Segment_Item *item = (Elm_Segment_Item *) it;
 
    wd = elm_widget_item_data_get(item);
-   if (!wd) return;
+   if (!wd) return EINA_FALSE;
 
    _item_free(item);
    _update_list(wd);
+
+   return EINA_TRUE;
 }
 
 static Elm_Segment_Item*

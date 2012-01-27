@@ -189,14 +189,15 @@ _sizing_eval(Evas_Object *obj)
    evas_object_size_hint_max_set(obj, maxw, maxh);
 }
 
-static void
+static Eina_Bool
 _item_del_pre_hook(Elm_Object_Item *it)
 {
-   ELM_OBJ_ITEM_CHECK_OR_RETURN(it);
+   ELM_OBJ_ITEM_CHECK_OR_RETURN(it, EINA_FALSE);
    Widget_Data *wd = elm_widget_data_get(WIDGET(it));
-   if (!wd) return;
+   if (!wd) return EINA_FALSE;
    _item_free((Elm_Index_Item *) it);
    _index_box_clear(WIDGET(it), wd->bx[wd->level], wd->level);
+   return EINA_TRUE;
 }
 
 static Elm_Index_Item *

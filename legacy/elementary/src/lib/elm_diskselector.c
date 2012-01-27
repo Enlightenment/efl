@@ -226,17 +226,17 @@ _check_string(void *data)
    return EINA_FALSE;
 }
 
-static void
+static Eina_Bool
 _item_del_pre_hook(Elm_Object_Item *it)
 {
-   ELM_OBJ_ITEM_CHECK_OR_RETURN(it);
+   ELM_OBJ_ITEM_CHECK_OR_RETURN(it, EINA_FALSE);
    Elm_Diskselector_Item *item, *item2, *dit;
    Eina_List *l;
    int i = 0;
    Widget_Data *wd;
    item = (Elm_Diskselector_Item *) it;
    wd = elm_widget_data_get(WIDGET(item));
-   if (!wd) return;
+   if (!wd) return EINA_FALSE;
 
    elm_box_unpack(wd->main_box, VIEW(item));
 
@@ -327,6 +327,7 @@ _item_del_pre_hook(Elm_Object_Item *it)
    wd->check_idler = ecore_idle_enterer_before_add(_check_string, wd);
    _sizing_eval(wd->self);
 
+   return EINA_TRUE;
 }
 
 static Elm_Diskselector_Item *

@@ -57,7 +57,7 @@ static void _update_view(Evas_Object *obj);
 static void _callbacks_set(Evas_Object *obj);
 static void _flip_up(Widget_Data *wd);
 static void _flip_down(Widget_Data *wd);
-static void _item_del_pre_hook(Elm_Object_Item *it);
+static Eina_Bool _item_del_pre_hook(Elm_Object_Item *it);
 
 static const char SIG_SELECTED[] = "selected";
 static const char SIG_UNDERFLOWED[] = "underflowed";
@@ -576,22 +576,22 @@ _callbacks_set(Evas_Object *obj)
                                    "", _signal_val_change_stop, obj);
 }
 
-static void
+static Eina_Bool
 _item_del_pre_hook(Elm_Object_Item *it)
 {
-   ELM_OBJ_ITEM_CHECK_OR_RETURN(it);
+   ELM_OBJ_ITEM_CHECK_OR_RETURN(it, EINA_FALSE);
    Widget_Data *wd;
    Elm_Flipselector_Item *item, *item2;
    Eina_List *l;
 
    item = (Elm_Flipselector_Item *) it;
    wd = elm_widget_data_get(WIDGET(item));
-   if (!wd) return;
+   if (!wd) return EINA_FALSE;
 
    if (wd->walking > 0)
      {
         item->deleted = EINA_TRUE;
-        return;
+        return EINA_FALSE;
      }
 
    _flipselector_walk(wd);
@@ -619,6 +619,8 @@ _item_del_pre_hook(Elm_Object_Item *it)
    eina_stringshare_del(item->label);
    _sentinel_eval(wd);
    _flipselector_unwalk(wd);
+
+   return EINA_TRUE;
 }
 
 EAPI Evas_Object *

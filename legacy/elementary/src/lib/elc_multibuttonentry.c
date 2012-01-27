@@ -760,11 +760,12 @@ _resize_button(Evas_Object *btn, Evas_Coord *realw, Evas_Coord *vieww)
    if (vieww) *vieww = vw;
 }
 
-static void
+static Eina_Bool
 _item_del_pre_hook(Elm_Object_Item *it)
 {
-   ELM_OBJ_ITEM_CHECK_OR_RETURN(it);
+   ELM_OBJ_ITEM_CHECK_OR_RETURN(it, EINA_FALSE);
    _del_button_item((Elm_Multibuttonentry_Item *) it);
+   return EINA_TRUE;
 }
 
 static Elm_Multibuttonentry_Item*

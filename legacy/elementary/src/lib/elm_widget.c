@@ -2818,13 +2818,10 @@ _elm_widget_item_free(Elm_Widget_Item *item)
      {
         _elm_access_clear(item->access);
         free(item->access);
-        item->access = NULL;
      }
+
    if (item->access_info)
-     {
-        eina_stringshare_del(item->access_info);
-        item->access_info = NULL;
-     }
+     eina_stringshare_del(item->access_info);
 
    EINA_MAGIC_SET(item, EINA_MAGIC_NONE);
    free(item);
@@ -2853,11 +2850,12 @@ _elm_widget_item_del(Elm_Widget_Item *item)
 {
    ELM_WIDGET_ITEM_CHECK_OR_RETURN(item);
 
-   //Widget delete callback
+   //Widget item delete callback
    if (item->del_pre_func)
-     item->del_pre_func((Elm_Object_Item *) item);
-
-   _elm_widget_item_free(item);
+     {
+        if (item->del_pre_func((Elm_Object_Item *) item))
+          _elm_widget_item_free(item);
+     }
 }
 
 /**
