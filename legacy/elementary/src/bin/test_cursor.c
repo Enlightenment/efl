@@ -47,15 +47,15 @@ glt_exp(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info)
 {
    Elm_Object_Item *glit = event_info;
    Evas_Object *gl = elm_genlist_item_genlist_get(glit);
-   int val = (int) elm_object_item_data_get(glit);
+   ssize_t val = (ssize_t) elm_object_item_data_get(glit);
    Elm_Object_Item *glit1, *glit2, *glit3;
 
    val *= 10;
-   glit1 = elm_genlist_item_append(gl, &itct, (void *)(long)(val + 1), glit,
+   glit1 = elm_genlist_item_append(gl, &itct, (void *) (val + 1), glit,
                                    ELM_GENLIST_ITEM_NONE, NULL, NULL);
-   glit2 = elm_genlist_item_append(gl, &itct, (void *)(long)(val + 2), glit,
+   glit2 = elm_genlist_item_append(gl, &itct, (void *) (val + 2), glit,
                                    ELM_GENLIST_ITEM_NONE, NULL, NULL);
-   glit3 = elm_genlist_item_append(gl, &itct, (void *)(long)(val + 3), glit,
+   glit3 = elm_genlist_item_append(gl, &itct, (void *) (val + 3), glit,
                                    ELM_GENLIST_ITEM_SUBITEMS, NULL, NULL);
 
    elm_genlist_item_cursor_set(glit1, ELM_CURSOR_HAND2);
