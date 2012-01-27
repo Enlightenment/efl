@@ -286,8 +286,8 @@ my_gl_disable(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED
         printf("no item selected\n");
         return;
      }
-   elm_genlist_item_disabled_set(gli, 1);
-   elm_genlist_item_selected_set(gli, 0);
+   elm_object_item_disabled_set(gli, EINA_TRUE);
+   elm_genlist_item_selected_set(gli, EINA_FALSE);
    elm_genlist_item_update(gli);
 }
 

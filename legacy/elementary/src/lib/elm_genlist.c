@@ -649,8 +649,9 @@ static void
 _item_highlight(Elm_Gen_Item *it)
 {
    const char *selectraise;
-   if ((it->wd->no_select) || (it->generation < it->wd->generation) || (it->highlighted) ||
-       (it->disabled) || (it->display_only) || (it->item->mode_view))
+   if ((it->wd->no_select) || (it->generation < it->wd->generation) ||
+       (it->highlighted) || elm_widget_item_disabled_get(it) ||
+       (it->display_only) || (it->item->mode_view))
      return;
    edje_object_signal_emit(VIEW(it), "elm,state,selected", "elm");
    selectraise = edje_object_data_get(VIEW(it), "selectraise");
@@ -985,7 +986,7 @@ _long_press(void *data)
    Eina_List *list, *l;
 
    it->long_timer = NULL;
-   if ((it->disabled) || (it->dragging) || (it->display_only))
+   if (elm_widget_item_disabled_get(it) || (it->dragging) || (it->display_only))
      return ECORE_CALLBACK_CANCEL;
    it->wd->longpressed = EINA_TRUE;
    evas_object_smart_callback_call(WIDGET(it), SIG_LONGPRESSED, it);
@@ -1019,7 +1020,7 @@ _swipe(Elm_Gen_Item *it)
    int i, sum = 0;
 
    if (!it) return;
-   if ((it->display_only) || (it->disabled)) return;
+   if ((it->display_only) || elm_widget_item_disabled_get(it)) return;
    it->wd->swipe = EINA_FALSE;
    for (i = 0; i < it->wd->movements; i++)
      {
@@ -1227,7 +1228,7 @@ _mouse_down(void        *data,
    it->wd->wasselected = it->selected;
    _item_highlight(it);
    if (ev->flags & EVAS_BUTTON_DOUBLE_CLICK)
-     if ((!it->disabled) && (!it->display_only))
+     if ((!elm_widget_item_disabled_get(it)) && (!it->display_only))
        {
           evas_object_smart_callback_call(WIDGET(it), SIG_CLICKED_DOUBLE, it);
           evas_object_smart_callback_call(WIDGET(it), SIG_ACTIVATED, it);
@@ -1336,7 +1337,8 @@ _mouse_up(void        *data,
                _item_block_unrealize(it->item->block);
           }
      }
-   if ((it->disabled) || (dragged) || (it->display_only)) return;
+   if (elm_widget_item_disabled_get(it) || (dragged) || (it->display_only))
+     return;
    if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD) return;
    if (it->wd->multi)
      {
@@ -1517,7 +1519,7 @@ _item_cache_add(Elm_Gen_Item *it)
    if (it->item->flags & ELM_GENLIST_ITEM_SUBITEMS) itc->tree = 1;
    itc->compress = (it->wd->compress);
    itc->selected = it->selected;
-   itc->disabled = it->disabled;
+   itc->disabled = elm_widget_item_disabled_get(it);
    itc->expanded = it->item->expanded;
    if (it->long_timer)
      {
@@ -1617,9 +1619,9 @@ _elm_genlist_item_state_update(Elm_Gen_Item *it, Item_Cache *itc)
                edje_object_signal_emit(VIEW(it),
                                        "elm,state,selected", "elm");
           }
-        if (it->disabled != itc->disabled)
+        if (elm_widget_item_disabled_get(it) != itc->disabled)
           {
-             if (it->disabled)
+             if (elm_widget_item_disabled_get(it))
                edje_object_signal_emit(VIEW(it),
                                        "elm,state,disabled", "elm");
           }
@@ -1635,7 +1637,7 @@ _elm_genlist_item_state_update(Elm_Gen_Item *it, Item_Cache *itc)
         if (it->selected)
           edje_object_signal_emit(VIEW(it),
                                   "elm,state,selected", "elm");
-        if (it->disabled)
+        if (elm_widget_item_disabled_get(it))
           edje_object_signal_emit(VIEW(it),
                                   "elm,state,disabled", "elm");
         if (it->item->expanded)
@@ -1751,7 +1753,7 @@ _item_content_realize(Elm_Gen_Item *it,
                   edje_object_part_swallow(target, key, ic);
                   evas_object_show(ic);
                   elm_widget_sub_object_add(WIDGET(it), ic);
-                  if (it->disabled)
+                  if (elm_widget_item_disabled_get(it))
                     elm_widget_disabled_set(ic, EINA_TRUE);
                }
           }
@@ -3237,6 +3239,30 @@ _item_text_hook(Elm_Gen_Item *it, const char *part)
    return edje_object_part_text_get(VIEW(it), part);
 }
 
+static void
+_item_disable_hook(Elm_Object_Item *it)
+{
+   ELM_OBJ_ITEM_CHECK_OR_RETURN(it);
+   Eina_List *l;
+   Evas_Object *obj;
+   Elm_Gen_Item *_it = (Elm_Gen_Item *) it;
+
+   if (_it->generation < _it->wd->generation) return;
+
+   if (_it->selected)
+     elm_genlist_item_selected_set(it, EINA_FALSE);
+
+   if (_it->realized)
+     {
+        if (elm_widget_item_disabled_get(it))
+          edje_object_signal_emit(VIEW(_it), "elm,state,disabled", "elm");
+        else
+          edje_object_signal_emit(VIEW(_it), "elm,state,enabled", "elm");
+        EINA_LIST_FOREACH(_it->content_objs, l, obj)
+          elm_widget_disabled_set(obj, elm_widget_item_disabled_get(_it));
+     }
+}
+
 Elm_Gen_Item *
 _elm_genlist_item_new(Widget_Data              *wd,
                       const Elm_Gen_Item_Class *itc,
@@ -3259,6 +3285,7 @@ _elm_genlist_item_new(Widget_Data              *wd,
    elm_widget_item_content_get_hook_set(it, _item_content_get_hook);
    elm_widget_item_content_set_hook_set(it, _item_content_set_hook);
    elm_widget_item_content_unset_hook_set(it, _item_content_unset_hook);
+   elm_widget_item_disable_hook_set(it, _item_disable_hook);
    /* TEMPORARY */
    it->sel_cb = (Ecore_Cb)_item_select;
 
@@ -4279,7 +4306,8 @@ elm_genlist_item_selected_set(Elm_Object_Item *it,
    Elm_Gen_Item *_it = (Elm_Gen_Item *) it;
    Widget_Data *wd = _it->wd;
    if (!wd) return;
-   if ((_it->generation < wd->generation) || (_it->disabled)) return;
+   if ((_it->generation < wd->generation) || elm_widget_item_disabled_get(_it))
+     return;
    selected = !!selected;
    if (_it->selected == selected) return;
 
@@ -4351,33 +4379,13 @@ EAPI void
 elm_genlist_item_disabled_set(Elm_Object_Item  *it,
                               Eina_Bool         disabled)
 {
-   ELM_OBJ_ITEM_CHECK_OR_RETURN(it);
-   Eina_List *l;
-   Evas_Object *obj;
-   Elm_Gen_Item *_it = (Elm_Gen_Item *) it;
-   if (_it->disabled == disabled) return;
-   if (_it->generation < _it->wd->generation) return;
-   _it->disabled = !!disabled;
-   if (_it->selected)
-     elm_genlist_item_selected_set(it, EINA_FALSE);
-   if (_it->realized)
-     {
-        if (_it->disabled)
-          edje_object_signal_emit(VIEW(_it), "elm,state,disabled", "elm");
-        else
-          edje_object_signal_emit(VIEW(_it), "elm,state,enabled", "elm");
-        EINA_LIST_FOREACH(_it->content_objs, l, obj)
-          elm_widget_disabled_set(obj, disabled);
-     }
+   elm_object_item_disabled_set(it, disabled);
 }
 
 EAPI Eina_Bool
 elm_genlist_item_disabled_get(const Elm_Object_Item *it)
 {
-   ELM_OBJ_ITEM_CHECK_OR_RETURN(it, EINA_FALSE);
-   Elm_Gen_Item *_it = (Elm_Gen_Item *) it;
-   if (_it->generation < _it->wd->generation) return EINA_FALSE;
-   return _it->disabled;
+   return elm_object_item_disabled_get(it);
 }
 
 EAPI void
@@ -5196,7 +5204,8 @@ elm_genlist_item_mode_set(Elm_Object_Item  *it,
 
    if (!wd) return;
    if (!mode_type) return;
-   if ((_it->generation < _it->wd->generation) || (_it->disabled)) return;
+   if ((_it->generation < _it->wd->generation) ||
+       elm_widget_item_disabled_get(_it)) return;
 
    if ((wd->mode_item == _it) &&
        (!strcmp(mode_type, wd->mode_type)) &&

@@ -1776,6 +1776,37 @@ EINA_DEPRECATED EAPI void                         *elm_genlist_item_data_get(con
  */
 EINA_DEPRECATED EAPI void                          elm_genlist_item_data_set(Elm_Object_Item *it, const void *data);
 
+/**
+ * Set whether a given genlist item is disabled or not.
+ *
+ * @param it The item
+ * @param disabled Use @c EINA_TRUE, true disable it, @c EINA_FALSE
+ * to enable it back.
+ *
+ * A disabled item cannot be selected or unselected. It will also
+ * change its appearance, to signal the user it's disabled.
+ *
+ * @see elm_genlist_item_disabled_get()
+ * @deprecated Use elm_object_item_disabled_set() instead
+ *
+ * @ingroup Genlist
+ */
+EINA_DEPRECATED EAPI void                          elm_genlist_item_disabled_set(Elm_Object_Item *it, Eina_Bool disabled);
+
+/**
+ * Get whether a given genlist item is disabled or not.
+ *
+ * @param it The item
+ * @return @c EINA_TRUE, if it's disabled, @c EINA_FALSE otherwise
+ * (and on errors).
+ *
+ * @see elm_genlist_item_disabled_set() for more details
+ * @deprecated Use elm_object_item_disabled_get() instead
+ *
+ * @ingroup Genlist
+ */
+EINA_DEPRECATED EAPI Eina_Bool                     elm_genlist_item_disabled_get(const Elm_Object_Item *it);
+
 #define ELM_IMAGE_ROTATE_90_CW 1
 #define ELM_IMAGE_ROTATE_180_CW 2
 #define ELM_IMAGE_ROTATE_90_CCW 3

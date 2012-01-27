@@ -173,8 +173,8 @@
  * to expand/contract an item and get its expanded state, use
  * elm_genlist_item_expanded_set() and elm_genlist_item_expanded_get(). And
  * again to make an item disabled (unable to be selected and appear
- * differently) use elm_genlist_item_disabled_set() to set this and
- * elm_genlist_item_disabled_get() to get the disabled state.
+ * differently) use elm_object_item_disabled_set() to set this and
+ * elm_object_item_disabled_get() to get the disabled state.
  *
  * In general to indicate how the genlist should expand items horizontally to
  * fill the list area, use elm_genlist_horizontal_set(). Valid modes are
@@ -1201,34 +1201,6 @@ EAPI Eina_Bool                     elm_genlist_item_expanded_get(const Elm_Objec
  */
 EAPI int                           elm_genlist_item_expanded_depth_get(const Elm_Object_Item *it);
 
-/**
- * Set whether a given genlist item is disabled or not.
- *
- * @param it The item
- * @param disabled Use @c EINA_TRUE, true disable it, @c EINA_FALSE
- * to enable it back.
- *
- * A disabled item cannot be selected or unselected. It will also
- * change its appearance, to signal the user it's disabled.
- *
- * @see elm_genlist_item_disabled_get()
- *
- * @ingroup Genlist
- */
-EAPI void                          elm_genlist_item_disabled_set(Elm_Object_Item *it, Eina_Bool disabled);
-
-/**
- * Get whether a given genlist item is disabled or not.
- *
- * @param it The item
- * @return @c EINA_TRUE, if it's disabled, @c EINA_FALSE otherwise
- * (and on errors).
- *
- * @see elm_genlist_item_disabled_set() for more details
- *
- * @ingroup Genlist
- */
-EAPI Eina_Bool                     elm_genlist_item_disabled_get(const Elm_Object_Item *it);
 
 /**
  * Sets the display only state of an item.

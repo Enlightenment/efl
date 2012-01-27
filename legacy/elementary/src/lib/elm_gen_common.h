@@ -66,7 +66,6 @@ struct Elm_Gen_Item
    Eina_Bool                 realized : 1;
    Eina_Bool                 selected : 1;
    Eina_Bool                 highlighted : 1;
-   Eina_Bool                 disabled : 1;
    Eina_Bool                 dragging : 1;
    Eina_Bool                 down : 1;
    Eina_Bool                 group : 1;

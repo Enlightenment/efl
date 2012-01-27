@@ -327,7 +327,7 @@ elm_main(int argc __UNUSED__, char **argv __UNUSED__)
 	switch (i)
 	  {
 	   case 3:
-	      elm_genlist_item_disabled_set(gli, EINA_TRUE);
+              elm_object_item_disabled_set(gli, EINA_TRUE);
 	      break;
 	   case 50:
 	      evas_object_smart_callback_add(

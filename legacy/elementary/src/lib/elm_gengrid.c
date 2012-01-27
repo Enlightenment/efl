@@ -766,7 +766,8 @@ _long_press(void *data)
    Elm_Gen_Item *it = data;
 
    it->long_timer = NULL;
-   if ((it->disabled) || (it->dragging)) return ECORE_CALLBACK_CANCEL;
+   if (elm_widget_item_disabled_get(it)|| (it->dragging))
+     return ECORE_CALLBACK_CANCEL;
    it->wd->longpressed = EINA_TRUE;
    evas_object_smart_callback_call(WIDGET(it), SIG_LONGPRESSED, it);
    if (it->wd->reorder_mode)
@@ -870,7 +871,7 @@ _mouse_up(void            *data,
         if (it->want_unrealize)
           _elm_genlist_item_unrealize(it, EINA_FALSE);
      }
-   if ((it->disabled) || (dragged)) return;
+   if (elm_widget_item_disabled_get(it) || (dragged)) return;
    if (it->wd->multi)
      {
         if (!it->selected)
@@ -1029,7 +1030,7 @@ _item_realize(Elm_Gen_Item *it)
 
         if (it->selected)
           edje_object_signal_emit(VIEW(it), "elm,state,selected", "elm");
-        if (it->disabled)
+        if (elm_widget_item_disabled_get(it))
           edje_object_signal_emit(VIEW(it), "elm,state,disabled", "elm");
      }
    evas_object_show(VIEW(it));
@@ -2345,12 +2346,12 @@ elm_gengrid_item_disabled_set(Elm_Gen_Item *it,
                               Eina_Bool         disabled)
 {
    ELM_WIDGET_ITEM_WIDTYPE_CHECK_OR_RETURN(it);
-   if (it->disabled == disabled) return;
+   if (it->base.disabled == disabled) return;
    if (it->generation < it->wd->generation) return;
-   it->disabled = !!disabled;
+   it->base.disabled = !!disabled;
    if (it->realized)
      {
-        if (it->disabled)
+        if (elm_widget_item_disabled_get(it))
           edje_object_signal_emit(VIEW(it), "elm,state,disabled", "elm");
         else
           edje_object_signal_emit(VIEW(it), "elm,state,enabled", "elm");
@@ -2362,7 +2363,7 @@ elm_gengrid_item_disabled_get(const Elm_Gen_Item *it)
 {
    ELM_WIDGET_ITEM_WIDTYPE_CHECK_OR_RETURN(it, EINA_FALSE);
    if (it->generation < it->wd->generation) return EINA_FALSE;
-   return it->disabled;
+   return elm_widget_item_disabled_get(it);
 }
 
 static Evas_Object *
