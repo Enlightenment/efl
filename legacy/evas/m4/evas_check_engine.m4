@@ -174,7 +174,6 @@ else
             evas_engine_[]$1[]_libs="${x_libs} -lGLESv2 -lEGL -lm $gl_pt_lib"
             evas_engine_gl_common_libs="-lGLESv2 -lm $gl_pt_lib"
             have_dep="yes"
-            gl_flavor_gles="no"
             AC_DEFINE(GLES_VARIETY_SGX, 1, [Imagination SGX GLES2 support])
             gles_variety_sgx="yes"
          fi
@@ -344,7 +343,6 @@ else
             evas_engine_[]$1[]_libs="${XCB_GL_LIBS} ${x_libs} -lGLESv2 -lEGL -lm $gl_pt_lib"
             evas_engine_gl_common_libs="-lGLESv2 -lm $gl_pt_lib"
             have_dep="yes"
-            gl_flavor_gles="no"
             AC_DEFINE(GLES_VARIETY_SGX, 1, [Imagination SGX GLES2 support])
             gles_variety_sgx="yes"
          fi
@@ -645,7 +643,6 @@ else
          evas_engine_[]$1[]_libs="${SDL_LIBS} -lGLESv2 -lEGL -lm $gl_pt_lib"
          evas_engine_gl_common_libs="-lGLESv2 -lm $gl_pt_lib"
          have_dep="yes"
-         gl_flavor_gles="no"
          AC_DEFINE(GLES_VARIETY_SGX, 1, [Imagination SGX GLES2 support])
          gles_variety_sgx="yes"
       fi
@@ -919,15 +916,11 @@ PKG_CHECK_MODULES([WAYLAND_EGL],
 
 if test "x${have_dep}" = "xyes" ; then
    PKG_CHECK_MODULES([GL_EET], [eet >= 1.5.0], [have_dep="yes"], [have_dep="no"])
-   AC_CHECK_HEADER([GLES2/gl2.h],
-      [have_egl="yes"],
-      [have_egl="no"],
-      [
-      ])
-   if test "x${have_egl}" = "xyes" ; then
-      evas_engine_[]$1[]_cflags="${WAYLAND_EGL_CFLAGS}"
-      evas_engine_[]$1[]_libs="${WAYLAND_EGL_LIBS} -lGL -lGLESv2 -lEGL"
-   fi
+      AC_CHECK_LIB(GLESv2, glTexImage2D, [have_glesv2="yes"], , -lEGL -lm)
+      if test "x${have_glesv2}" = "xyes" ; then
+         evas_engine_[]$1[]_cflags="${WAYLAND_EGL_CFLAGS}"
+         evas_engine_[]$1[]_libs="${WAYLAND_EGL_LIBS} -lGL -lGLESv2 -lEGL"
+      fi
 fi
 
 AC_SUBST([evas_engine_$1_cflags])
