@@ -9,14 +9,6 @@
 #define BALL_SPEEDUP 0.1
 #define BALL_SIZE 10
 
-#if DEBUG_ENABLE
-#define DBG(...) { \
-   new _buf[128]; \
-   snprintf(_buf, sizeof(_buf), __VA_ARGS__); \
-   set_text(PART:"dbg", _buf); }
-#else
-#define DBG(...)
-#endif
 
 collections {
    group { name: "main";
@@ -148,8 +140,13 @@ collections {
             if (bx + BALL_SIZE > fw) player_wins();
 
             /* show debug info (if debug enabled) */
-            DBG("loop:%d  [speed %f  %f] [mouse: %d %d] [ball: %f %f]",
-                count, speedx, speedy, mx, my, bx, by)
+#if DEBUG_ENABLE
+            new _buf[128];
+            snprintf(_buf, sizeof(_buf),
+                     "loop:%d  [speed %f  %f] [mouse: %d %d] [ball: %f %f]",
+                     count, speedx, speedy, mx, my, bx, by);
+            set_text(PART:"dbg", _buf);
+#endif
 
             /* recall the loop in n seconds */
             timer(1.0 / FPS, "game_loop", count);
