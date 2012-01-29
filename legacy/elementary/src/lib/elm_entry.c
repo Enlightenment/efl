@@ -1116,6 +1116,7 @@ void
 _elm_entry_entry_paste(Evas_Object *obj, const char *entry)
 {
    Elm_Entry_Change_Info info;
+   info.merge = EINA_FALSE;
    info.insert = EINA_TRUE;
    info.change.insert.pos = elm_entry_cursor_pos_get(obj);
    info.change.insert.content = eina_stringshare_add(entry);
