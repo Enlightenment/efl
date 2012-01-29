@@ -748,13 +748,12 @@ START_TEST(eina_model_test_struct)
       char c;
    };
    const Eina_Value_Struct_Member myst_members[] = {
-     {"i", EINA_VALUE_TYPE_INT, offsetof(struct myst, i)},
-     {"c", EINA_VALUE_TYPE_CHAR, offsetof(struct myst, c)}
+        EINA_VALUE_STRUCT_MEMBER(EINA_VALUE_TYPE_INT, struct myst, i),
+        EINA_VALUE_STRUCT_MEMBER(EINA_VALUE_TYPE_CHAR, struct myst, c)
    };
    const Eina_Value_Struct_Desc myst_desc = {
      EINA_VALUE_STRUCT_DESC_VERSION,
-     NULL, myst_members, sizeof(myst_members) / sizeof(myst_members[0]),
-     sizeof(struct myst)
+     NULL, myst_members, EINA_C_ARRAY_LENGTH(myst_members), sizeof(struct myst)
    };
    Eina_Value inv, outv;
    int i;
