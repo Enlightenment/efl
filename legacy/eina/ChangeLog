@@ -206,3 +206,9 @@
 2011-12-30  Vincent Torri
 
 	* Fix Eina_RWLock code on Windows > XP.
+
+2012-01-29  Tom Hacohen
+
+	* Added EINA_C_ARRAY_LENGTH, a macro that returns  the length of a
+	standard C array.
+
