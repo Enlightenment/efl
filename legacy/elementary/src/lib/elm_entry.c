@@ -739,8 +739,8 @@ _sizing_eval(Evas_Object *obj)
 
              elm_smart_scroller_child_viewport_size_get(wd->scroller, &vw, &vh);
 
-             if ((minw > 0) && (vw < minw)) vw = minw;
-             if (minh > 0) vh = minh;
+             if (minw > vw) vw = minw;
+             if (minh > vh) vh = minh;
 
              evas_object_resize(wd->ent, vw, vh);
              edje_object_size_min_calc
