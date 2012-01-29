@@ -1096,7 +1096,7 @@ ecore_imf_context_event_callback_del(Ecore_IMF_Context *ctx, Ecore_IMF_Callback_
      {
         ECORE_MAGIC_FAIL(ctx, ECORE_MAGIC_CONTEXT,
                          "ecore_imf_context_event_callback_del");
-        return;
+        return NULL;
      }
 
    if (!func) return NULL;
@@ -1106,7 +1106,7 @@ ecore_imf_context_event_callback_del(Ecore_IMF_Context *ctx, Ecore_IMF_Callback_
      {
         if ((fn) && (fn->func == func) && (fn->type == type))
           {
-             void *tmp = fn->data;
+             void *tmp = (void *)fn->data;
              free(fn);
              ctx->callbacks = eina_list_remove_list(ctx->callbacks, l);
              return tmp;
