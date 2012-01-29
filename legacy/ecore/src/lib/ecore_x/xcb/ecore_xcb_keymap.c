@@ -279,6 +279,14 @@ ecore_x_keysym_string_get(int keysym)
    return _ecore_xcb_keymap_keysym_to_string(keysym);
 }
 
+EAPI int 
+ecore_x_keysym_keycode_get(const char *keyname)
+{
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+
+   return _ecore_xcb_keymap_string_to_keycode(keyname);
+}
+
 /* local functions */
 static int
 _ecore_xcb_keymap_mask_get(void        *reply,

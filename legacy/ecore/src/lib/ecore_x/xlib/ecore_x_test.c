@@ -153,3 +153,15 @@ ecore_x_keysym_string_get(int keysym)
    return XKeysymToString(keysym);
 }
 
+EAPI int 
+ecore_x_keysym_keycode_get(const char *keyname)
+{
+   int keycode = 0;
+
+   if (!strncmp(keyname, "Keycode-", 8))
+     keycode = atoi(keyname + 8);
+   else
+     keycode = XKeysymToKeycode(_ecore_x_disp, XStringToKeysym(keyname));
+
+   return keycode;
+}

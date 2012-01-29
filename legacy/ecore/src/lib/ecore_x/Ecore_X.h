@@ -3408,6 +3408,13 @@ EAPI Eina_Bool
 EAPI const char *
  ecore_x_keysym_string_get(int keysym);
 
+/**
+ * Given a keyname, return the keycode representing that key
+ *
+ * @since 1.2.0
+ */
+EAPI int ecore_x_keysym_keycode_get(const char *keyname);
+
 typedef struct _Ecore_X_Image Ecore_X_Image;
 
 EAPI Ecore_X_Image *
