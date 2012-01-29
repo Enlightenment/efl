@@ -2572,7 +2572,7 @@ elm_entry_textblock_get(Evas_Object *obj)
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return NULL;
 
-   return edje_object_part_object_get(wd->ent, "elm.text");
+   return (Evas_Object *) edje_object_part_object_get(wd->ent, "elm.text");
 }
 
 EAPI void
@@ -3057,7 +3057,6 @@ elm_entry_filter_limit_size(void *data, Evas_Object *entry, char **text)
    char *current, *utfstr;
    int len, newlen;
    const char *(*text_get)(const Evas_Object *);
-   const char *widget_type;
 
    EINA_SAFETY_ON_NULL_RETURN(data);
    EINA_SAFETY_ON_NULL_RETURN(entry);
@@ -3065,7 +3064,6 @@ elm_entry_filter_limit_size(void *data, Evas_Object *entry, char **text)
 
    /* hack. I don't want to copy the entire function to work with
     * scrolled_entry */
-   widget_type = elm_widget_type_get(entry);
    text_get = _text_get;
 
    current = elm_entry_markup_to_utf8(text_get(entry));
