@@ -7679,6 +7679,7 @@ evas_textblock_cursor_range_delete(Evas_Textblock_Cursor *cur1, Evas_Textblock_C
      }
    fnode = _evas_textblock_cursor_node_format_at_pos_get(cur1);
 
+   n1->dirty = n2->dirty = EINA_TRUE;
    if (should_merge)
      {
         /* We call this function instead of the cursor one because we already
@@ -7692,7 +7693,6 @@ evas_textblock_cursor_range_delete(Evas_Textblock_Cursor *cur1, Evas_Textblock_C
      evas_textblock_cursor_copy(cur1, o->cursor);
 
    _evas_textblock_changed(o, cur1->obj);
-   n1->dirty = n2->dirty = EINA_TRUE;
 }
 
 
