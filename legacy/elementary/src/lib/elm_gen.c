@@ -138,5 +138,5 @@ elm_gen_item_prev_get(const Elm_Gen_Item *it)
 EAPI Evas_Object *
 elm_gen_item_widget_get(const Elm_Gen_Item *it)
 {
-   return _elm_genlist_item_widget_get(it);
+   return WIDGET(it);
 }

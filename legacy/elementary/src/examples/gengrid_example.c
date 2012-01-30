@@ -106,10 +106,10 @@ _multi_change(void        *data,
 
    if (!multi)
      {
-        Elm_Gengrid_Item *it;
+        Elm_Object_Item *gg_it;
         const Eina_List *selected = elm_gengrid_selected_items_get(grid), *l;
-        EINA_LIST_FOREACH(selected, l, it)
-          elm_gengrid_item_selected_set(it, EINA_FALSE);
+        EINA_LIST_FOREACH(selected, l, gg_it)
+          elm_gengrid_item_selected_set(gg_it, EINA_FALSE);
      }
 }
 
@@ -163,7 +163,7 @@ _before_bt_clicked(void        *data,
 {
    Example_Item *it;
    Evas_Object *grid = data;
-   Elm_Gengrid_Item *sel;
+   Elm_Object_Item *sel;
 
    sel = elm_gengrid_selected_item_get(grid);
    if (!sel)
@@ -181,7 +181,7 @@ _after_bt_clicked(void        *data,
 {
    Example_Item *it;
    Evas_Object *grid = data;
-   Elm_Gengrid_Item *sel;
+   Elm_Object_Item *sel;
 
    sel = elm_gengrid_selected_item_get(grid);
    if (!sel)
@@ -233,11 +233,11 @@ _bring_1st_clicked(void        *data,
                    Evas_Object *obj __UNUSED__,
                    void        *event_info __UNUSED__)
 {
-   Elm_Gengrid_Item *it = elm_gengrid_first_item_get(data);
+   Elm_Object_Item *gg_it = elm_gengrid_first_item_get(data);
 
-   if (!it) return;
+   if (!gg_it) return;
 
-   elm_gengrid_item_bring_in(it);
+   elm_gengrid_item_bring_in(gg_it);
 }
 
 /* show last item */
@@ -246,11 +246,11 @@ _show_last_clicked(void        *data,
                    Evas_Object *obj __UNUSED__,
                    void        *event_info __UNUSED__)
 {
-   Elm_Gengrid_Item *it = elm_gengrid_last_item_get(data);
+   Elm_Object_Item *gg_it = elm_gengrid_last_item_get(data);
 
-   if (!it) return;
+   if (!gg_it) return;
 
-   elm_gengrid_item_show(it);
+   elm_gengrid_item_show(gg_it);
 }
 
 /* disable selected item */
@@ -259,12 +259,12 @@ _toggle_disabled_cb(void        *data,
                     Evas_Object *obj __UNUSED__,
                     void        *event_info __UNUSED__)
 {
-   Elm_Gengrid_Item *it = elm_gengrid_selected_item_get(data);
+   Elm_Object_Item *gg_it = elm_gengrid_selected_item_get(data);
 
-   if (!it) return;
+   if (!gg_it) return;
 
-   elm_gengrid_item_selected_set(it, EINA_FALSE);
-   elm_gengrid_item_disabled_set(it, EINA_TRUE);
+   elm_gengrid_item_selected_set(gg_it, EINA_FALSE);
+   elm_gengrid_item_disabled_set(gg_it, EINA_TRUE);
 }
 
 /* change items' size */

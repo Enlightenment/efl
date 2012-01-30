@@ -41,9 +41,9 @@ static void
 _it_sel_cb(void *data, Evas_Object *obj __UNUSED__, void *event)
 {
    App_Inwin_Data *aid = data;
-   Elm_Gengrid_Item *it = event;
+   Elm_Object_Item *gg_it = event;
 
-   aid->emo = elm_gengrid_item_data_get(it);
+   aid->emo = elm_gengrid_item_data_get(gg_it);
 
    elm_pager_content_promote(aid->pager, aid->settings);
 }

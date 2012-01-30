@@ -5412,13 +5412,6 @@ _elm_genlist_page_bring_in(const Evas_Object *obj,
      elm_smart_scroller_page_bring_in(wd->scr, h_pagenumber, v_pagenumber);
 }
 
-Evas_Object *
-_elm_genlist_item_widget_get(const Elm_Gen_Item *it)
-{
-   ELM_WIDGET_ITEM_WIDTYPE_CHECK_OR_RETURN(it, NULL);
-   return WIDGET(it);
-}
-
 void
 _elm_genlist_item_unrealize(Elm_Gen_Item *it,
                             Eina_Bool     calc)

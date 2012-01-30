@@ -5,7 +5,7 @@
 #ifndef ELM_LIB_QUICKLAUNCH
 typedef struct _Testitem
 {
-   Elm_Gengrid_Item *item;
+   Elm_Object_Item *item;
    const char *path;
    int mode;
    int onoff;
@@ -210,7 +210,7 @@ _before_bt_clicked(void *data, Evas_Object *obj __UNUSED__, void *event_info __U
 {
    Testitem *ti;
    Evas_Object *grid = data;
-   Elm_Gengrid_Item *sel;
+   Elm_Object_Item *sel;
    char buf[PATH_MAX];
 
    sel = elm_gengrid_selected_item_get(grid);
@@ -229,7 +229,7 @@ _after_bt_clicked(void *data, Evas_Object *obj __UNUSED__, void *event_info __UN
 {
    Testitem *ti;
    Evas_Object *grid = data;
-   Elm_Gengrid_Item *sel;
+   Elm_Object_Item *sel;
    char buf[PATH_MAX];
 
    sel = elm_gengrid_selected_item_get(grid);
@@ -248,12 +248,12 @@ _delete_bt_clicked(void *data, Evas_Object *obj __UNUSED__, void *event_info __U
 {
    Evas_Object *grid = data;
    Eina_List *l, *l2, *l3;
-   Elm_Gengrid_Item *it;
+   Elm_Object_Item *gg_it;
 
    l = (Eina_List*)elm_gengrid_selected_items_get(grid);
    if (!l) return;
-   EINA_LIST_FOREACH_SAFE(l, l2, l3, it)
-     elm_gengrid_item_del(it);
+   EINA_LIST_FOREACH_SAFE(l, l2, l3, gg_it)
+     elm_gengrid_item_del(gg_it);
 }
 
 static void

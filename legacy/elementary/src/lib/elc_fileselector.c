@@ -584,8 +584,8 @@ _filter_cb(void *data __UNUSED__, Eio_File *handler, const Eina_File_Direct_Info
 static int
 _file_grid_cmp(const void *a, const void *b)
 {
-   const Elm_Gengrid_Item *ga = a;
-   const Elm_Gengrid_Item *gb = b;
+   const Elm_Object_Item *ga = a;
+   const Elm_Object_Item *gb = b;
    const Elm_Gengrid_Item_Class *ca = elm_gengrid_item_item_class_get(ga);
    const Elm_Gengrid_Item_Class *cb = elm_gengrid_item_item_class_get(gb);
 
@@ -1154,15 +1154,13 @@ elm_fileselector_selected_get(const Evas_Object *obj)
 
    if (wd->mode == ELM_FILESELECTOR_LIST)
      {
-        Elm_Object_Item *it;
-        it = elm_genlist_selected_item_get(wd->files_list);
-        if (it) return elm_object_item_data_get(it);
+        Elm_Object_Item *gg_it = elm_genlist_selected_item_get(wd->files_list);
+        if (gg_it) return elm_object_item_data_get(gg_it);
      }
    else
      {
-        Elm_Gengrid_Item *it;
-        it = elm_gengrid_selected_item_get(wd->files_grid);
-        if (it) return elm_gengrid_item_data_get(it);
+        Elm_Object_Item *gg_it = elm_gengrid_selected_item_get(wd->files_grid);
+        if (gg_it) return elm_gengrid_item_data_get(gg_it);
      }
 
    return wd->path;

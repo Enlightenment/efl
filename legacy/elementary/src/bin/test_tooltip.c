@@ -6,7 +6,7 @@
 
 typedef struct _Testitem
 {
-   Elm_Gengrid_Item *item;
+   Elm_Object_Item  *item;
    const char       *path;
    int               mode;
    int               onoff;
