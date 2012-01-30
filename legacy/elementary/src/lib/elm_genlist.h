@@ -313,6 +313,18 @@
  * - @c "language,changed" - This is called when the program's language is
  *   changed.
  *
+ * Supported elm_object common APIs
+ * @li elm_object_signal_emit()
+ *
+ * Supported elm_object_item common APIs
+ * @li elm_object_item_part_content_get()
+ * @li elm_object_item_part_content_set()
+ * @li elm_object_item_part_content_unset()
+ * @li elm_object_item_part_text_set()
+ * @li elm_object_item_part_text_get()
+ * @li elm_object_item_disabled_set()
+ * @li elm_object_item_disabled_get()
+ *
  * @section Genlist_Examples Examples
  *
  * Here is a list of examples that use the genlist, trying to show some of
