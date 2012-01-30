@@ -357,13 +357,13 @@ _item_multi_select_left(Widget_Data *wd)
    if (!wd->selected) return EINA_FALSE;
 
    Elm_Object_Item *prev =
-      elm_gengrid_item_prev_get((Elm_Object_Item *) wd->last_selected_item);
+      elm_gengrid_item_prev_get(wd->last_selected_item);
    if (!prev) return EINA_TRUE;
    if (elm_gengrid_item_selected_get(prev))
      {
-        elm_gengrid_item_selected_set((Elm_Object_Item *) wd->last_selected_item, EINA_FALSE);
-        wd->last_selected_item = (Elm_Gen_Item *) prev;
-        elm_gengrid_item_show((Elm_Object_Item *) wd->last_selected_item);
+        elm_gengrid_item_selected_set(wd->last_selected_item, EINA_FALSE);
+        wd->last_selected_item = prev;
+        elm_gengrid_item_show(wd->last_selected_item);
      }
    else
      {
@@ -380,13 +380,13 @@ _item_multi_select_right(Widget_Data *wd)
    if (!wd->selected) return EINA_FALSE;
 
    Elm_Object_Item *next =
-      elm_gengrid_item_next_get((Elm_Object_Item *) wd->last_selected_item);
+      elm_gengrid_item_next_get(wd->last_selected_item);
    if (!next) return EINA_TRUE;
    if (elm_gengrid_item_selected_get(next))
      {
-        elm_gengrid_item_selected_set((Elm_Object_Item * ) wd->last_selected_item, EINA_FALSE);
-        wd->last_selected_item = (Elm_Gen_Item *) next;
-        elm_gengrid_item_show((Elm_Object_Item *) wd->last_selected_item);
+        elm_gengrid_item_selected_set(wd->last_selected_item, EINA_FALSE);
+        wd->last_selected_item = next;
+        elm_gengrid_item_show(wd->last_selected_item);
      }
    else
      {
@@ -442,7 +442,7 @@ _item_single_select_up(Widget_Data *wd)
         return EINA_TRUE;
      }
    else
-     prev = (Elm_Gen_Item *) elm_gengrid_item_prev_get((Elm_Object_Item *) wd->last_selected_item);
+     prev = (Elm_Gen_Item *) elm_gengrid_item_prev_get(wd->last_selected_item);
 
    if (!prev) return EINA_FALSE;
 
@@ -478,7 +478,7 @@ _item_single_select_down(Widget_Data *wd)
         return EINA_TRUE;
      }
    else
-     next = (Elm_Gen_Item *) elm_gengrid_item_next_get((Elm_Object_Item *) wd->last_selected_item);
+     next = (Elm_Gen_Item *) elm_gengrid_item_next_get(wd->last_selected_item);
 
    if (!next) return EINA_FALSE;
 
@@ -508,7 +508,7 @@ _item_single_select_left(Widget_Data *wd)
           prev = ELM_GEN_ITEM_FROM_INLIST(EINA_INLIST_GET(prev)->prev);
      }
    else
-     prev = (Elm_Gen_Item *) elm_gengrid_item_prev_get((Elm_Object_Item *) wd->last_selected_item);
+     prev = (Elm_Gen_Item *) elm_gengrid_item_prev_get(wd->last_selected_item);
 
    if (!prev) return EINA_FALSE;
 
@@ -530,7 +530,7 @@ _item_single_select_right(Widget_Data *wd)
           next = ELM_GEN_ITEM_FROM_INLIST(EINA_INLIST_GET(next)->next);
      }
    else
-     next = (Elm_Gen_Item *) elm_gengrid_item_next_get((Elm_Object_Item *) wd->last_selected_item);
+     next = (Elm_Gen_Item *) elm_gengrid_item_next_get(wd->last_selected_item);
 
    if (!next) return EINA_FALSE;
 

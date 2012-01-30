@@ -91,7 +91,7 @@ struct _Widget_Data
    Eina_List                     *group_items; /* list of groups index items */
    Eina_Inlist                   *items; /* inlist of all items */
    Elm_Gen_Item                  *reorder_it; /* item currently being repositioned */
-   Elm_Gen_Item                  *last_selected_item;
+   Elm_Object_Item               *last_selected_item;
    Pan                           *pan; /* pan_smart object's smart data */
    Ecore_Job                     *calc_job;
    int                            walking;
