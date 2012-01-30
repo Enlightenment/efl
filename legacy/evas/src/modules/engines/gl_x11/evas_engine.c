@@ -3286,16 +3286,6 @@ eng_gl_make_current(void *data __UNUSED__, void *surface, void *context)
    sfc = (Render_Engine_GL_Surface*)surface;
    ctx = (Render_Engine_GL_Context*)context;
 
-   // Check if direct rendering is possible:
-   //    It's possible when direct_fb_opt is on and either current image 
-   //    object is valid or gl_direct_override is on.  Override allows 
-   //    rendering outside of pixel getter but it doesn't guarantee 
-   //    correct rendering.
-   if ((sfc->direct_fb_opt) && (gl_direct_img_obj || gl_direct_override))
-      gl_direct_enabled = 1;
-   else
-      gl_direct_enabled = 0;
-
    // Unset surface/context
    if ((!sfc) || (!ctx))
      {
@@ -3316,6 +3306,16 @@ eng_gl_make_current(void *data __UNUSED__, void *surface, void *context)
         current_evgl_ctx = NULL;
         return 1;
      }
+
+   // Check if direct rendering is possible:
+   //    It's possible when direct_fb_opt is on and either current image 
+   //    object is valid or gl_direct_override is on.  Override allows 
+   //    rendering outside of pixel getter but it doesn't guarantee 
+   //    correct rendering.
+   if ((sfc->direct_fb_opt) && (gl_direct_img_obj || gl_direct_override))
+      gl_direct_enabled = 1;
+   else
+      gl_direct_enabled = 0;
 
    if (gl_direct_enabled)
      {
