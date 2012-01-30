@@ -625,7 +625,7 @@ elm_box_transition_free(void *data)
    free(data);
 }
 
-EAPI const Eina_List *
+EAPI Eina_List *
 elm_box_children_get(const Evas_Object *obj)
 {
    ELM_CHECK_WIDTYPE(obj, widtype) NULL;

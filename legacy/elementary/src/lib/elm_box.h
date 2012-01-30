@@ -271,7 +271,7 @@ EAPI void                elm_box_unpack_all(Evas_Object *obj);
  *
  * @param obj The box object
  */
-EAPI const Eina_List    *elm_box_children_get(const Evas_Object *obj);
+EAPI Eina_List    *elm_box_children_get(const Evas_Object *obj);
 
 /**
  * Set the space (padding) between the box's elements.
