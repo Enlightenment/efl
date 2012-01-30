@@ -346,8 +346,7 @@ EAPI void                         elm_list_scroller_policy_get(const Evas_Object
  * A new item will be created and appended to the list, i.e., will
  * be set as @b last item.
  *
- * Items created with this method can be deleted with
- * elm_list_item_del().
+ * Items created with this method can be deleted with elm_object_item_del().
  *
  * Associated @p data can be properly freed when item is deleted if a
  * callback function is set with elm_widget_item_del_cb_set().
@@ -371,7 +370,7 @@ EAPI void                         elm_list_scroller_policy_get(const Evas_Object
  * @endcode
  *
  * @see elm_list_always_select_mode_set()
- * @see elm_list_item_del()
+ * @see elm_object_item_del()
  * @see elm_widget_item_del_cb_set()
  * @see elm_list_clear()
  * @see elm_icon_add()
@@ -398,8 +397,7 @@ EAPI Elm_Object_Item               *elm_list_item_append(Evas_Object *obj, const
  * A new item will be created and prepended to the list, i.e., will
  * be set as @b first item.
  *
- * Items created with this method can be deleted with
- * elm_list_item_del().
+ * Items created with this method can be deleted with elm_object_item_del().
  *
  * Associated @p data can be properly freed when item is deleted if a
  * callback function is set with elm_widget_item_del_cb_set().
@@ -413,7 +411,7 @@ EAPI Elm_Object_Item               *elm_list_item_append(Evas_Object *obj, const
  *
  * @see elm_list_item_append() for a simple code example.
  * @see elm_list_always_select_mode_set()
- * @see elm_list_item_del()
+ * @see elm_object_item_del()
  * @see elm_widget_item_del_cb_set()
  * @see elm_list_clear()
  * @see elm_icon_add()
@@ -441,8 +439,7 @@ EAPI Elm_Object_Item               *elm_list_item_prepend(Evas_Object *obj, cons
  * A new item will be created and added to the list. Its position in
  * this list will be just before item @p before.
  *
- * Items created with this method can be deleted with
- * elm_list_item_del().
+ * Items created with this method can be deleted with elm_object_item_del().
  *
  * Associated @p data can be properly freed when item is deleted if a
  * callback function is set with elm_widget_item_del_cb_set().
@@ -456,7 +453,7 @@ EAPI Elm_Object_Item               *elm_list_item_prepend(Evas_Object *obj, cons
  *
  * @see elm_list_item_append() for a simple code example.
  * @see elm_list_always_select_mode_set()
- * @see elm_list_item_del()
+ * @see elm_object_item_del()
  * @see elm_widget_item_del_cb_set()
  * @see elm_list_clear()
  * @see elm_icon_add()
@@ -484,8 +481,7 @@ EAPI Elm_Object_Item               *elm_list_item_insert_before(Evas_Object *obj
  * A new item will be created and added to the list. Its position in
  * this list will be just after item @p after.
  *
- * Items created with this method can be deleted with
- * elm_list_item_del().
+ * Items created with this method can be deleted with elm_object_item_del().
  *
  * Associated @p data can be properly freed when item is deleted if a
  * callback function is set with elm_widget_item_del_cb_set().
@@ -499,7 +495,7 @@ EAPI Elm_Object_Item               *elm_list_item_insert_before(Evas_Object *obj
  *
  * @see elm_list_item_append() for a simple code example.
  * @see elm_list_always_select_mode_set()
- * @see elm_list_item_del()
+ * @see elm_object_item_del()
  * @see elm_widget_item_del_cb_set()
  * @see elm_list_clear()
  * @see elm_icon_add()
@@ -535,8 +531,7 @@ EAPI Elm_Object_Item               *elm_list_item_insert_after(Evas_Object *obj,
  * this list will be found comparing the new item with previously inserted
  * items using function @p cmp_func.
  *
- * Items created with this method can be deleted with
- * elm_list_item_del().
+ * Items created with this method can be deleted with elm_object_item_del().
  *
  * Associated @p data can be properly freed when item is deleted if a
  * callback function is set with elm_widget_item_del_cb_set().
@@ -550,7 +545,7 @@ EAPI Elm_Object_Item               *elm_list_item_insert_after(Evas_Object *obj,
  *
  * @see elm_list_item_append() for a simple code example.
  * @see elm_list_always_select_mode_set()
- * @see elm_list_item_del()
+ * @see elm_object_item_del()
  * @see elm_widget_item_del_cb_set()
  * @see elm_list_clear()
  * @see elm_icon_add()
@@ -564,7 +559,7 @@ EAPI Elm_Object_Item               *elm_list_item_sorted_insert(Evas_Object *obj
  *
  * @param obj The list object
  *
- * @see elm_list_item_del()
+ * @see elm_object_item_del()
  * @see elm_list_item_append()
  *
  * @ingroup List
@@ -579,7 +574,7 @@ EAPI void                         elm_list_clear(Evas_Object *obj);
  * or @c NULL on failure.
  *
  * @see elm_list_item_append()
- * @see elm_list_item_del()
+ * @see elm_object_item_del()
  * @see elm_list_clear()
  *
  * @ingroup List
@@ -716,22 +711,6 @@ EAPI void                         elm_list_item_show(Elm_Object_Item *it);
  * @ingroup List
  */
 EAPI void                         elm_list_item_bring_in(Elm_Object_Item *it);
-
-/**
- * Delete the item from the list.
- *
- * @param it The item of list to be deleted.
- *
- * If deleting all list items is required, elm_list_clear()
- * should be used instead of getting items list and deleting each one.
- *
- * @see elm_list_clear()
- * @see elm_list_item_append()
- * @see elm_widget_item_del_cb_set()
- *
- * @ingroup List
- */
-EAPI void                         elm_list_item_del(Elm_Object_Item *it);
 
 /**
  * Gets the base object of the item.

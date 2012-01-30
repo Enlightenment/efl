@@ -170,7 +170,7 @@ test_index2_it_del(void *data, Evas_Object *obj, void *event_info __UNUSED__)
      {
         iit = elm_index_item_find(gui->id, list_it);
         if (iit) elm_object_item_del(iit);
-        elm_list_item_del(list_it);
+        elm_object_item_del(list_it);
         return;
      }
 
@@ -183,7 +183,7 @@ test_index2_it_del(void *data, Evas_Object *obj, void *event_info __UNUSED__)
    else
      elm_object_item_del(iit);
 
-   elm_list_item_del(list_it);
+   elm_object_item_del(list_it);
 }
 
 void

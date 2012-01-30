@@ -135,8 +135,6 @@ _elm_list_item_free(Elm_List_Item *it)
    if (it->long_timer) ecore_timer_del(it->long_timer);
    if (it->icon) evas_object_del(it->icon);
    if (it->end) evas_object_del(it->end);
-
-   elm_widget_item_del(it);
 }
 
 static Eina_Bool
@@ -399,10 +397,9 @@ _elm_list_process_deletions(Widget_Data *wd)
 
    EINA_LIST_FREE(wd->to_delete, it)
      {
-        elm_widget_item_pre_notify_del(it);
-
         wd->items = eina_list_remove_list(wd->items, it->node);
         _elm_list_item_free(it);
+        elm_widget_item_free(it);
      }
 
    wd->walking--;
@@ -474,7 +471,11 @@ _del_hook(Evas_Object *obj)
    if (wd->to_delete)
      ERR("ERROR: leaking nodes!\n");
 
-   EINA_LIST_FREE(wd->items, it) _elm_list_item_free(it);
+   EINA_LIST_FREE(wd->items, it)
+     {
+        _elm_list_item_free(it);
+        elm_widget_item_free(it);
+     }
    eina_list_free(wd->selected);
    free(wd);
 }
@@ -1130,6 +1131,39 @@ _item_text_get(const Elm_Object_Item *it, const char *part)
    return ((Elm_List_Item *) it)->label;
 }
 
+static Eina_Bool
+_item_del_pre_hook(Elm_Object_Item *it)
+{
+  ELM_LIST_ITEM_CHECK_DELETED_RETURN(it, EINA_FALSE);
+
+   Evas_Object *obj = WIDGET(it);
+   Elm_List_Item *item = (Elm_List_Item *) it;
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return EINA_FALSE;
+
+   if (item->selected) _item_unselect(item);
+
+   if (wd->walking > 0)
+     {
+        if (item->deleted) return EINA_FALSE;
+        item->deleted = EINA_TRUE;
+        wd->to_delete = eina_list_append(wd->to_delete, item);
+        return EINA_FALSE;
+     }
+
+   wd->items = eina_list_remove_list(wd->items, item->node);
+
+   evas_object_ref(obj);
+   _elm_list_walk(wd);
+
+   _elm_list_item_free(item);
+
+   _elm_list_unwalk(wd);
+   evas_object_unref(obj);
+
+   return EINA_TRUE;
+}
+
 static Elm_List_Item *
 _item_new(Evas_Object *obj, const char *label, Evas_Object *icon, Evas_Object *end, Evas_Smart_Cb func, const void *data)
 {
@@ -1172,6 +1206,7 @@ _item_new(Evas_Object *obj, const char *label, Evas_Object *icon, Evas_Object *e
    elm_widget_item_content_unset_hook_set(it, _item_content_unset);
    elm_widget_item_text_set_hook_set(it, _item_text_set);
    elm_widget_item_text_get_hook_set(it, _item_text_get);
+   elm_widget_item_del_pre_hook_set(it, _item_del_pre_hook);
    return it;
 }
 
@@ -1684,8 +1719,8 @@ elm_list_clear(Evas_Object *obj)
 
    EINA_LIST_FREE(wd->items, it)
      {
-        elm_widget_item_pre_notify_del(it);
         _elm_list_item_free(it);
+        elm_widget_item_free(it);
      }
 
    _elm_list_unwalk(wd);
@@ -1903,37 +1938,6 @@ elm_list_item_bring_in(Elm_Object_Item *it)
    if (wd->scr) elm_smart_scroller_region_bring_in(wd->scr, x, y, w, h);
 }
 
-EAPI void
-elm_list_item_del(Elm_Object_Item *it)
-{
-   ELM_LIST_ITEM_CHECK_DELETED_RETURN(it);
-   Evas_Object *obj = WIDGET(it);
-   Elm_List_Item *item = (Elm_List_Item *) it;
-   Widget_Data *wd = elm_widget_data_get(obj);
-   if (!wd) return;
-
-   if (item->selected) _item_unselect(item);
-
-   if (wd->walking > 0)
-     {
-        if (item->deleted) return;
-        item->deleted = EINA_TRUE;
-        wd->to_delete = eina_list_append(wd->to_delete, item);
-        return;
-     }
-
-   wd->items = eina_list_remove_list(wd->items, item->node);
-
-   evas_object_ref(obj);
-   _elm_list_walk(wd);
-
-   elm_widget_item_pre_notify_del(item);
-   _elm_list_item_free(item);
-
-   _elm_list_unwalk(wd);
-   evas_object_unref(obj);
-}
-
 EAPI Evas_Object *
 elm_list_item_object_get(const Elm_Object_Item *it)
 {
@@ -1957,6 +1961,12 @@ elm_list_item_next(const Elm_Object_Item *it)
    Elm_List_Item *item = (Elm_List_Item *) it;
    if (item->node->next) return item->node->next->data;
    else return NULL;
+}
+
+EINA_DEPRECATED EAPI void
+elm_list_item_del(Elm_Object_Item *it)
+{
+   elm_object_item_del(it);
 }
 
 EINA_DEPRECATED EAPI Evas_Object *

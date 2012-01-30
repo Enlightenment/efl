@@ -740,7 +740,7 @@ test_list5_item_del(void        *data,
                     Evas_Object *obj __UNUSED__,
                     void        *event_info __UNUSED__)
 {
-   elm_list_item_del(data);
+   elm_object_item_del(data);
 }
 
 static void

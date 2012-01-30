@@ -119,7 +119,7 @@ _add_data_cb(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED_
      printf("Error adding item\n");
      return;
    }
-   elm_list_item_del_cb_set(list_it, _free_data);
+   elm_object_item_del_cb_set(list_it, _free_data);
 }
 
 static void
@@ -129,7 +129,7 @@ _del_cb(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
    Evas_Object *li = data;
 
    selected_item = elm_list_selected_item_get(li);
-   elm_list_item_del(selected_item);
+   elm_object_item_del(selected_item);
 }
 
 static void

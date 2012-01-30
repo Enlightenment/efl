@@ -40,7 +40,7 @@ _index_item_del(void        *data,
            data == elm_index_item_data_get(event_info) ? "OK" :
            "FAIL, something went wrong");
 
-   elm_list_item_del(data);
+   elm_object_item_del(data);
 }
 
 /* delete an index item */

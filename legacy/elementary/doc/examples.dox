@@ -2464,7 +2464,7 @@
  * @skipline _del_cb(
  * @until }
  *
- * To delete an item we simple need to call elm_list_item_del() with
+ * To delete an item we simple need to call elm_object_item_del() with
  * a pointer for such item.
  *
  * If you need, you can get selected item with

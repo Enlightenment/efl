@@ -3720,6 +3720,23 @@ EINA_DEPRECATED EAPI void                         elm_list_item_cursor_engine_on
 EINA_DEPRECATED EAPI Eina_Bool                    elm_list_item_cursor_engine_only_get(const Elm_Object_Item *it);
 
 /**
+ * Delete the item from the list.
+ *
+ * @param it The item of list to be deleted.
+ *
+ * If deleting all list items is required, elm_list_clear()
+ * should be used instead of getting items list and deleting each one.
+ *
+ * @see elm_list_clear()
+ * @see elm_list_item_append()
+ * @see elm_widget_item_del_cb_set()
+ * @deprecated Use elm_object_item_del() instead
+ *
+ * @ingroup List
+ */
+EINA_DEPRECATED EAPI void                         elm_list_item_del(Elm_Object_Item *it);
+
+/**
  * Set the shrink state of toolbar @p obj.
  *
  * @param obj The toolbar object.
