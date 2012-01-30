@@ -1050,7 +1050,7 @@ static void
 gl4_exp(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info)
 {
    Elm_Object_Item *glit = event_info;
-   Evas_Object *gl = elm_genlist_item_genlist_get(glit);
+   Evas_Object *gl = elm_object_item_widget_get(glit);
    int val = (int)(long) elm_object_item_data_get(glit);
    val *= 10;
    elm_genlist_item_append(gl, &itc4,
@@ -1535,7 +1535,7 @@ static void
 gl9_exp(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info)
 {
    Elm_Object_Item *glit = event_info;
-   Evas_Object *gl = elm_genlist_item_genlist_get(glit);
+   Evas_Object *gl = elm_object_item_widget_get(glit);
    int val = (int)(long) elm_object_item_data_get(glit);
    val *= 10;
    elm_genlist_item_append(gl, &itc1,

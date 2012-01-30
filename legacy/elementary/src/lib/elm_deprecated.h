@@ -1821,6 +1821,21 @@ EINA_DEPRECATED EAPI Eina_Bool                     elm_genlist_item_disabled_get
  */
 EINA_DEPRECATED EAPI void                          elm_genlist_item_del(Elm_Object_Item *it);
 
+/**
+ * Get the genlist object's handle which contains a given genlist
+ * item
+ *
+ * @param it The item to fetch the container from
+ * @return The genlist (parent) object
+ *
+ * This returns the genlist object itself that an item belongs to.
+ * @deprecated Use elm_object_item_widget_get() instead
+ *
+ * @ingroup Genlist
+ */
+EINA_DEPRECATED EAPI Evas_Object                  *elm_genlist_item_genlist_get(const Elm_Object_Item *it);
+
+
 #define ELM_IMAGE_ROTATE_90_CW 1
 #define ELM_IMAGE_ROTATE_180_CW 2
 #define ELM_IMAGE_ROTATE_90_CCW 3

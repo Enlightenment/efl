@@ -1084,19 +1084,6 @@ EAPI Elm_Object_Item             *elm_genlist_item_next_get(const Elm_Object_Ite
 EAPI Elm_Object_Item             *elm_genlist_item_prev_get(const Elm_Object_Item *it);
 
 /**
- * Get the genlist object's handle which contains a given genlist
- * item
- *
- * @param it The item to fetch the container from
- * @return The genlist (parent) object
- *
- * This returns the genlist object itself that an item belongs to.
- *
- * @ingroup Genlist
- */
-EAPI Evas_Object                  *elm_genlist_item_genlist_get(const Elm_Object_Item *it);
-
-/**
  * Get the parent item of the given item
  *
  * @param it The item

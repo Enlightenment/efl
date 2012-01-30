@@ -259,7 +259,7 @@ _expanded_cb(void *data __UNUSED__, Evas_Object *o __UNUSED__, void *event_info)
    Eina_List *l;
    Elm_Object_Item *glit = event_info;
    Node_Data *it_data, *d = elm_object_item_data_get(glit);
-   Evas_Object *list = elm_genlist_item_genlist_get(glit);
+   Evas_Object *list = elm_object_item_widget_get(glit);
 
    Elm_Genlist_Item_Class *ic;
 
