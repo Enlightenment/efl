@@ -429,7 +429,6 @@ EAPI Elm_Object_Item *elm_diskselector_item_prev_get(const Elm_Object_Item *it);
  */
 EAPI Elm_Object_Item *elm_diskselector_item_next_get(const Elm_Object_Item *it);
 
-
 /**
  * Set the cursor to be shown when mouse is over the diskselector item
  *

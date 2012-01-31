@@ -1397,85 +1397,73 @@ elm_diskselector_last_item_get(const Evas_Object *obj)
 EAPI void
 elm_diskselector_item_tooltip_text_set(Elm_Object_Item *it, const char *text)
 {
-   ELM_OBJ_ITEM_CHECK_OR_RETURN(it);
-   elm_widget_item_tooltip_text_set(it, text);
+   elm_object_item_tooltip_text_set(it, text);
 }
 
 EAPI void
 elm_diskselector_item_tooltip_content_cb_set(Elm_Object_Item *it, Elm_Tooltip_Item_Content_Cb func, const void *data, Evas_Smart_Cb del_cb)
 {
-   ELM_OBJ_ITEM_CHECK_OR_RETURN(it);
-   elm_widget_item_tooltip_content_cb_set(it, func, data, del_cb);
+   elm_object_item_tooltip_content_cb_set(it, func, data, del_cb);
 }
 
 EAPI void
 elm_diskselector_item_tooltip_unset(Elm_Object_Item *it)
 {
-   ELM_OBJ_ITEM_CHECK_OR_RETURN(it);
-   elm_widget_item_tooltip_unset(it);
+   elm_object_item_tooltip_unset(it);
 }
 
 EAPI void
 elm_diskselector_item_tooltip_style_set(Elm_Object_Item *it, const char *style)
 {
-   ELM_OBJ_ITEM_CHECK_OR_RETURN(it);
-   elm_widget_item_tooltip_style_set(it, style);
+   elm_object_item_tooltip_style_set(it, style);
 }
 
 EAPI const char *
 elm_diskselector_item_tooltip_style_get(const Elm_Object_Item *it)
 {
-   ELM_OBJ_ITEM_CHECK_OR_RETURN(it, NULL);
-   return elm_widget_item_tooltip_style_get(it);
+   return elm_object_item_tooltip_style_get(it);
 }
 
 EAPI void
 elm_diskselector_item_cursor_set(Elm_Object_Item *it, const char *cursor)
 {
-   ELM_OBJ_ITEM_CHECK_OR_RETURN(it);
-   elm_widget_item_cursor_set(it, cursor);
+   elm_object_item_cursor_set(it, cursor);
 }
 
 EAPI const char *
 elm_diskselector_item_cursor_get(const Elm_Object_Item *it)
 {
-   ELM_OBJ_ITEM_CHECK_OR_RETURN(it, NULL);
-   return elm_widget_item_cursor_get(it);
+   return elm_object_item_cursor_get(it);
 }
 
 EAPI void
 elm_diskselector_item_cursor_unset(Elm_Object_Item *it)
 {
-   ELM_OBJ_ITEM_CHECK_OR_RETURN(it);
-   elm_widget_item_cursor_unset(it);
+   elm_object_item_cursor_unset(it);
 }
 
 EAPI void
 elm_diskselector_item_cursor_style_set(Elm_Object_Item *it, const char *style)
 {
-   ELM_OBJ_ITEM_CHECK_OR_RETURN(it);
-   elm_widget_item_cursor_style_set(it, style);
+   elm_object_item_cursor_style_set(it, style);
 }
 
 EAPI const char *
 elm_diskselector_item_cursor_style_get(const Elm_Object_Item *it)
 {
-   ELM_OBJ_ITEM_CHECK_OR_RETURN(it, NULL);
-   return elm_widget_item_cursor_style_get(it);
+   return elm_object_item_cursor_style_get(it);
 }
 
 EAPI void
 elm_diskselector_item_cursor_engine_only_set(Elm_Object_Item *it, Eina_Bool engine_only)
 {
-   ELM_OBJ_ITEM_CHECK_OR_RETURN(it);
-   elm_widget_item_cursor_engine_only_set(it, engine_only);
+   elm_object_item_cursor_engine_only_set(it, engine_only);
 }
 
 EAPI Eina_Bool
 elm_diskselector_item_cursor_engine_only_get(const Elm_Object_Item *it)
 {
-   ELM_OBJ_ITEM_CHECK_OR_RETURN(it, EINA_FALSE);
-   return elm_widget_item_cursor_engine_only_get(it);
+   return elm_object_item_cursor_engine_only_get(it);
 }
 
 EAPI void

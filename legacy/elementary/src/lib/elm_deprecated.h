@@ -1573,6 +1573,114 @@ EINA_DEPRECATED EAPI void                   elm_diskselector_item_tooltip_style_
  */
 EINA_DEPRECATED EAPI const char            *elm_diskselector_item_tooltip_style_get(const Elm_Object_Item *it);
 
+/**
+ * Set the cursor to be shown when mouse is over the diskselector item
+ *
+ * @param it Target item
+ * @param cursor the cursor name to be used.
+ *
+ * @see elm_object_cursor_set() for more details.
+ * @deprecated Use elm_object_item_cursor_set() instead
+ *
+ * @ingroup Diskselector
+ */
+EINA_DEPRECATED EAPI void                   elm_diskselector_item_cursor_set(Elm_Object_Item *it, const char *cursor);
+
+/**
+ * Get the cursor to be shown when mouse is over the diskselector item
+ *
+ * @param it diskselector item with cursor already set.
+ * @return the cursor name.
+ *
+ * @see elm_object_cursor_get() for more details.
+ * @see elm_diskselector_cursor_set()
+ * @deprecated Use elm_object_item_cursor_get() instead
+ *
+ * @ingroup Diskselector
+ */
+EINA_DEPRECATED EAPI const char            *elm_diskselector_item_cursor_get(const Elm_Object_Item *it);
+
+/**
+ * Unset the cursor to be shown when mouse is over the diskselector item
+ *
+ * @param it Target item
+ *
+ * @see elm_object_cursor_unset() for more details.
+ * @see elm_diskselector_cursor_set()
+ * @deprecated use elm_object_item_cursor_unset() instead
+ *
+ * @ingroup Diskselector
+ */
+EINA_DEPRECATED EAPI void                   elm_diskselector_item_cursor_unset(Elm_Object_Item *it);
+
+/**
+ * Sets a different style for this item cursor.
+ *
+ * @note before you set a style you should define a cursor with
+ *       elm_diskselector_item_cursor_set()
+ *
+ * @param it diskselector item with cursor already set.
+ * @param style the theme style to use (default, transparent, ...)
+ *
+ * @see elm_object_cursor_style_set() for more details.
+ * @deprecated Use elm_object_item_cursor_style_set() instead
+ *
+ * @ingroup Diskselector
+ */
+EINA_DEPRECATED EAPI void                   elm_diskselector_item_cursor_style_set(Elm_Object_Item *it, const char *style);
+
+/**
+ * Get the style for this item cursor.
+ *
+ * @param it diskselector item with cursor already set.
+ * @return style the theme style in use, defaults to "default". If the
+ *         object does not have a cursor set, then @c NULL is returned.
+ *
+ * @see elm_object_cursor_style_get() for more details.
+ * @see elm_diskselector_item_cursor_style_set()
+ * @deprecated Use elm_object_item_cursor_style_get() instead
+ *
+ * @ingroup Diskselector
+ */
+EINA_DEPRECATED EAPI const char            *elm_diskselector_item_cursor_style_get(const Elm_Object_Item *it);
+
+/**
+ * Set if the cursor set should be searched on the theme or should use
+ * the provided by the engine, only.
+ *
+ * @note before you set if should look on theme you should define a cursor
+ * with elm_diskselector_item_cursor_set().
+ * By default it will only look for cursors provided by the engine.
+ *
+ * @param it widget item with cursor already set.
+ * @param engine_only boolean to define if cursors set with
+ * elm_diskselector_item_cursor_set() should be searched only
+ * between cursors provided by the engine or searched on widget's
+ * theme as well.
+ *
+ * @see elm_object_cursor_engine_only_set() for more details.
+ * @deprecated Use elm_object_item_cursor_engine_only_set() instead
+ *
+ * @ingroup Diskselector
+ */
+EINA_DEPRECATED EAPI void                   elm_diskselector_item_cursor_engine_only_set(Elm_Object_Item *it, Eina_Bool engine_only);
+
+/**
+ * Get the cursor engine only usage for this item cursor.
+ *
+ * @param it widget item with cursor already set.
+ * @return engine_only boolean to define it cursors should be looked only
+ * between the provided by the engine or searched on widget's theme as well.
+ * If the item does not have a cursor set, then @c EINA_FALSE is returned.
+ *
+ * @see elm_object_cursor_engine_only_get() for more details.
+ * @see elm_diskselector_item_cursor_engine_only_set()
+ * @deprecated Use elm_object_item_cursor_engine_only_get() instead
+ *
+ * @ingroup Diskselector
+ */
+EINA_DEPRECATED EAPI Eina_Bool              elm_diskselector_item_cursor_engine_only_get(const Elm_Object_Item *it);
+
 EINA_DEPRECATED EAPI void         elm_factory_content_set(Evas_Object *obj, Evas_Object *content);
 EINA_DEPRECATED EAPI Evas_Object *elm_factory_content_get(const Evas_Object *obj);
 
