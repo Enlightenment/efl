@@ -156,7 +156,7 @@
  *
  * @since 1.2.0
  */
-typedef const char * Eina_Stringshare;
+typedef const char Eina_Stringshare;
 
 /**
  * @brief Retrieve an instance of a string for use in a program.
@@ -177,7 +177,7 @@ typedef const char * Eina_Stringshare;
  *
  * @see eina_share_common_add()
  */
-EAPI Eina_Stringshare   eina_stringshare_add_length(const char *str, unsigned int slen) EINA_WARN_UNUSED_RESULT;
+EAPI Eina_Stringshare  *eina_stringshare_add_length(const char *str, unsigned int slen) EINA_WARN_UNUSED_RESULT;
 
 /**
  * @brief Retrieve an instance of a string for use in a program.
@@ -197,7 +197,7 @@ EAPI Eina_Stringshare   eina_stringshare_add_length(const char *str, unsigned in
  *
  * @see eina_stringshare_add_length()
  */
-EAPI Eina_Stringshare   eina_stringshare_add(const char *str) EINA_WARN_UNUSED_RESULT;
+EAPI Eina_Stringshare  *eina_stringshare_add(const char *str) EINA_WARN_UNUSED_RESULT;
 
 /**
  * @brief Retrieve an instance of a string for use in a program
@@ -218,7 +218,7 @@ EAPI Eina_Stringshare   eina_stringshare_add(const char *str) EINA_WARN_UNUSED_R
  *
  * @see eina_stringshare_nprintf()
  */
-EAPI Eina_Stringshare   eina_stringshare_printf(const char *fmt, ...) EINA_WARN_UNUSED_RESULT EINA_PRINTF(1, 2);
+EAPI Eina_Stringshare  *eina_stringshare_printf(const char *fmt, ...) EINA_WARN_UNUSED_RESULT EINA_PRINTF(1, 2);
 
 /**
  * @brief Retrieve an instance of a string for use in a program
@@ -240,7 +240,7 @@ EAPI Eina_Stringshare   eina_stringshare_printf(const char *fmt, ...) EINA_WARN_
  *
  * @see eina_stringshare_nprintf()
  */
-EAPI Eina_Stringshare   eina_stringshare_vprintf(const char *fmt, va_list args) EINA_WARN_UNUSED_RESULT;
+EAPI Eina_Stringshare  *eina_stringshare_vprintf(const char *fmt, va_list args) EINA_WARN_UNUSED_RESULT;
 
 /**
  * @brief Retrieve an instance of a string for use in a program
@@ -260,7 +260,7 @@ EAPI Eina_Stringshare   eina_stringshare_vprintf(const char *fmt, va_list args) 
  *
  * @see eina_stringshare_printf()
  */
-EAPI Eina_Stringshare   eina_stringshare_nprintf(unsigned int len, const char *fmt, ...) EINA_WARN_UNUSED_RESULT EINA_PRINTF(2, 3);
+EAPI Eina_Stringshare  *eina_stringshare_nprintf(unsigned int len, const char *fmt, ...) EINA_WARN_UNUSED_RESULT EINA_PRINTF(2, 3);
 
 /**
  * Increment references of the given shared string.
@@ -276,7 +276,7 @@ EAPI Eina_Stringshare   eina_stringshare_nprintf(unsigned int len, const char *f
  *
  * There is no unref since this is the work of eina_share_common_del().
  */
-EAPI Eina_Stringshare   eina_stringshare_ref(Eina_Stringshare str);
+EAPI Eina_Stringshare  *eina_stringshare_ref(Eina_Stringshare *str);
 
 /**
  * @brief Note that the given string has lost an instance.
@@ -291,7 +291,7 @@ EAPI Eina_Stringshare   eina_stringshare_ref(Eina_Stringshare str);
  * Note that if the given pointer is not shared or NULL, bad things
  * will happen, likely a segmentation fault.
  */
-EAPI void               eina_stringshare_del(Eina_Stringshare str);
+EAPI void               eina_stringshare_del(Eina_Stringshare *str);
 
 /**
  * @brief Note that the given string @b must be shared.
@@ -305,7 +305,7 @@ EAPI void               eina_stringshare_del(Eina_Stringshare str);
  * things will happen, likely a segmentation fault. If in doubt, try
  * strlen().
  */
-EAPI int                eina_stringshare_strlen(Eina_Stringshare str) EINA_PURE EINA_WARN_UNUSED_RESULT;
+EAPI int                eina_stringshare_strlen(Eina_Stringshare *str) EINA_PURE EINA_WARN_UNUSED_RESULT;
 
 /**
  * @brief Dump the contents of the share_common.
@@ -315,8 +315,8 @@ EAPI int                eina_stringshare_strlen(Eina_Stringshare str) EINA_PURE 
  */
 EAPI void               eina_stringshare_dump(void);
 
-static inline Eina_Bool eina_stringshare_replace(Eina_Stringshare *p_str, Eina_Stringshare news) EINA_ARG_NONNULL(1);
-static inline Eina_Bool eina_stringshare_replace_length(Eina_Stringshare *p_str, Eina_Stringshare news, unsigned int slen) EINA_ARG_NONNULL(1);
+static inline Eina_Bool eina_stringshare_replace(Eina_Stringshare **p_str, const char *news) EINA_ARG_NONNULL(1);
+static inline Eina_Bool eina_stringshare_replace_length(Eina_Stringshare **p_str, const char *news, unsigned int slen) EINA_ARG_NONNULL(1);
 
 #include "eina_inline_stringshare.x"
 

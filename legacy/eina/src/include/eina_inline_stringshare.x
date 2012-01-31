@@ -43,7 +43,7 @@
  *         #EINA_FALSE if the strings were the same after shared.
  */
 static inline Eina_Bool
-eina_stringshare_replace(Eina_Stringshare *p_str, Eina_Stringshare news)
+eina_stringshare_replace(Eina_Stringshare **p_str, const char *news)
 {
    if (*p_str == news) return EINA_FALSE;
 
@@ -72,7 +72,7 @@ eina_stringshare_replace(Eina_Stringshare *p_str, Eina_Stringshare news)
  *         #EINA_FALSE if the strings were the same after shared.
  */
 static inline Eina_Bool
-eina_stringshare_replace_length(Eina_Stringshare *p_str, Eina_Stringshare news, unsigned int slen)
+eina_stringshare_replace_length(Eina_Stringshare **p_str, const char *news, unsigned int slen)
 {
    if (*p_str == news) return EINA_FALSE;
 

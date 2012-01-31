@@ -214,7 +214,7 @@
 
 2012-01-31  Tom Hacohen
 
-	* Added an Eina_Stringshare type. It's just a typedef of "const char *"
+	* Added an Eina_Stringshare type. It's just a typedef of "const char"
 	this is a same kind of visual hint for the purpose of the pointer,
 	but again, the two types are interchangeable.
 
