@@ -125,8 +125,8 @@
  * elm_gengrid_item_selected_set(). To get its selected state use
  * elm_gengrid_item_selected_get(). To make an item disabled
  * (unable to be selected and appear differently) use
- * elm_gengrid_item_disabled_set() to set this and
- * elm_gengrid_item_disabled_get() to get the disabled state.
+ * elm_object_item_disabled_set() to set this and
+ * elm_object_item_disabled_get() to get the disabled state.
  *
  * Grid cells will only have their selection smart callbacks called
  * when firstly getting selected. Any further clicks will do
@@ -1132,35 +1132,6 @@ EAPI void                          elm_gengrid_item_show(Elm_Object_Item *it);
  * @ingroup Gengrid
  */
 EAPI void                          elm_gengrid_item_bring_in(Elm_Object_Item *it);
-
-/**
- * Set whether a given gengrid item is disabled or not.
- *
- * @param it The gengrid item
- * @param disabled Use @c EINA_TRUE, true disable it, @c EINA_FALSE
- * to enable it back.
- *
- * A disabled item cannot be selected or unselected. It will also
- * change its appearance, to signal the user it's disabled.
- *
- * @see elm_gengrid_item_disabled_get()
- *
- * @ingroup Gengrid
- */
-EAPI void                          elm_gengrid_item_disabled_set(Elm_Object_Item *it, Eina_Bool disabled);
-
-/**
- * Get whether a given gengrid item is disabled or not.
- *
- * @param it The gengrid item
- * @return @c EINA_TRUE, if it's disabled, @c EINA_FALSE otherwise
- * (and on errors).
- *
- * @see elm_gengrid_item_disabled_set() for more details
- *
- * @ingroup Gengrid
- */
-EAPI Eina_Bool                     elm_gengrid_item_disabled_get(const Elm_Object_Item *it);
 
 /**
  * Set the text to be shown in a given gengrid item's tooltips.

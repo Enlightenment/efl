@@ -3912,3 +3912,34 @@ EINA_DEPRECATED EAPI void                         *elm_gengrid_item_data_get(con
  */
 EINA_DEPRECATED EAPI void                          elm_gengrid_item_data_set(Elm_Object_Item *it, const void *data);
 
+/**
+ * Set whether a given gengrid item is disabled or not.
+ *
+ * @param it The gengrid item
+ * @param disabled Use @c EINA_TRUE, true disable it, @c EINA_FALSE
+ * to enable it back.
+ *
+ * A disabled item cannot be selected or unselected. It will also
+ * change its appearance, to signal the user it's disabled.
+ *
+ * @see elm_gengrid_item_disabled_get()
+ * @deprecated Use elm_object_item_disabled_set() instead
+ *
+ * @ingroup Gengrid
+ */
+EINA_DEPRECATED EAPI void                          elm_gengrid_item_disabled_set(Elm_Object_Item *it, Eina_Bool disabled);
+
+/**
+ * Get whether a given gengrid item is disabled or not.
+ *
+ * @param it The gengrid item
+ * @return @c EINA_TRUE, if it's disabled, @c EINA_FALSE otherwise
+ * (and on errors).
+ *
+ * @see elm_gengrid_item_disabled_set() for more details
+ * @deprecated Use elm_object_item_disabled_get() instead
+ *
+ * @ingroup Gengrid
+ */
+EINA_DEPRECATED EAPI Eina_Bool                     elm_gengrid_item_disabled_get(const Elm_Object_Item *it);
+

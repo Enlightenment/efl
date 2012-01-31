@@ -1852,6 +1852,23 @@ _elm_gengrid_item_compare(const void *data, const void *data1)
    return it->wd->item_compare_cb(it, item1);
 }
 
+static void
+_item_disable_hook(Elm_Object_Item *it)
+{
+   ELM_OBJ_ITEM_CHECK_OR_RETURN(it);
+   Elm_Gen_Item *_it = (Elm_Gen_Item *) it;
+
+   if (_it->generation < _it->wd->generation) return;
+
+   if (_it->realized)
+     {
+        if (elm_widget_item_disabled_get(_it))
+          edje_object_signal_emit(VIEW(_it), "elm,state,disabled", "elm");
+        else
+          edje_object_signal_emit(VIEW(_it), "elm,state,enabled", "elm");
+     }
+}
+
 static Elm_Gen_Item *
 _item_new(Widget_Data                  *wd,
           const Elm_Gengrid_Item_Class *itc,
@@ -1863,6 +1880,7 @@ _item_new(Widget_Data                  *wd,
 
    it = _elm_genlist_item_new(wd, itc, data, NULL, func, func_data);
    if (!it) return NULL;
+   elm_widget_item_disable_hook_set(it, _item_disable_hook);
    it->item = ELM_NEW(Elm_Gen_Item_Type);
    wd->count++;
    it->group = it->itc->item_style && (!strcmp(it->itc->item_style, "group_index"));
@@ -2357,29 +2375,13 @@ EAPI void
 elm_gengrid_item_disabled_set(Elm_Object_Item  *it,
                               Eina_Bool         disabled)
 {
-   ELM_OBJ_ITEM_CHECK_OR_RETURN(it);
-   Elm_Gen_Item *_it = (Elm_Gen_Item *) it;
-
-   if (_it->base.disabled == disabled) return;
-   if (_it->generation < _it->wd->generation) return;
-   _it->base.disabled = !!disabled;
-   if (_it->realized)
-     {
-        if (elm_widget_item_disabled_get(_it))
-          edje_object_signal_emit(VIEW(_it), "elm,state,disabled", "elm");
-        else
-          edje_object_signal_emit(VIEW(_it), "elm,state,enabled", "elm");
-     }
+   elm_object_item_disabled_set(it, disabled);
 }
 
 EAPI Eina_Bool
 elm_gengrid_item_disabled_get(const Elm_Object_Item *it)
 {
-   ELM_WIDGET_ITEM_WIDTYPE_CHECK_OR_RETURN(it, EINA_FALSE);
-   Elm_Gen_Item *_it = (Elm_Gen_Item *) it;
-
-   if (_it->generation < _it->wd->generation) return EINA_FALSE;
-   return elm_widget_item_disabled_get(_it);
+   return elm_object_item_disabled_get(it);
 }
 
 static Evas_Object *
