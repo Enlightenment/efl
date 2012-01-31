@@ -4629,6 +4629,20 @@ static const Eina_Value_Type _EINA_VALUE_TYPE_BASICS[] = {
     _eina_value_type_string_vset,
     _eina_value_type_string_pset,
     _eina_value_type_string_common_pget
+  },
+  {
+    EINA_VALUE_TYPE_VERSION,
+    sizeof(unsigned long),
+    "timestamp",
+    _eina_value_type_ulong_setup,
+    _eina_value_type_ulong_flush,
+    _eina_value_type_ulong_copy,
+    _eina_value_type_ulong_compare,
+    _eina_value_type_ulong_convert_to,
+    NULL, /* no convert from */
+    _eina_value_type_ulong_vset,
+    _eina_value_type_ulong_pset,
+    _eina_value_type_ulong_pget
   }
 };
 
