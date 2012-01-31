@@ -2140,45 +2140,45 @@ EAPI void elm_object_item_del(Elm_Object_Item *it)
 }
 
 EAPI void
-elm_object_item_tooltip_text_set(Elm_Object_Item *item, const char *text)
+elm_object_item_tooltip_text_set(Elm_Object_Item *it, const char *text)
 {
-   elm_widget_item_tooltip_text_set(item, text);
+   elm_widget_item_tooltip_text_set(it, text);
 }
 
 EAPI void
-elm_object_item_tooltip_content_cb_set(Elm_Object_Item *item, Elm_Tooltip_Item_Content_Cb func, const void *data, Evas_Smart_Cb del_cb)
+elm_object_item_tooltip_content_cb_set(Elm_Object_Item *it, Elm_Tooltip_Item_Content_Cb func, const void *data, Evas_Smart_Cb del_cb)
 {
-   elm_widget_item_tooltip_content_cb_set(item, func, data, del_cb);
+   elm_widget_item_tooltip_content_cb_set(it, func, data, del_cb);
 }
 
 EAPI void
-elm_object_item_tooltip_unset(Elm_Object_Item *item)
+elm_object_item_tooltip_unset(Elm_Object_Item *it)
 {
-   elm_widget_item_tooltip_unset(item);
+   elm_widget_item_tooltip_unset(it);
 }
 
 EAPI Eina_Bool
-elm_object_item_tooltip_window_mode_set(Elm_Object_Item *item, Eina_Bool disable)
+elm_object_item_tooltip_window_mode_set(Elm_Object_Item *it, Eina_Bool disable)
 {
-   return elm_widget_item_tooltip_window_mode_set(item, disable);
+   return elm_widget_item_tooltip_window_mode_set(it, disable);
 }
 
 EAPI Eina_Bool
-elm_object_item_tooltip_window_mode_get(const Elm_Object_Item *item)
+elm_object_item_tooltip_window_mode_get(const Elm_Object_Item *it)
 {
-   return elm_widget_item_tooltip_window_mode_get(item);
+   return elm_widget_item_tooltip_window_mode_get(it);
 }
 
 EAPI void
-elm_object_item_tooltip_style_set(Elm_Object_Item *item, const char *style)
+elm_object_item_tooltip_style_set(Elm_Object_Item *it, const char *style)
 {
-   elm_widget_item_tooltip_style_set(item, style);
+   elm_widget_item_tooltip_style_set(it, style);
 }
 
 EAPI const char *
-elm_object_item_tooltip_style_get(const Elm_Object_Item *item)
+elm_object_item_tooltip_style_get(const Elm_Object_Item *it)
 {
-   return elm_widget_item_tooltip_style_get(item);
+   return elm_widget_item_tooltip_style_get(it);
 }
 
 EINA_DEPRECATED EAPI Evas_Object *
@@ -2188,43 +2188,43 @@ elm_object_item_object_get(const Elm_Object_Item *it)
 }
 
 EAPI void
-elm_object_item_cursor_set(Elm_Object_Item *item, const char *cursor)
+elm_object_item_cursor_set(Elm_Object_Item *it, const char *cursor)
 {
-   elm_widget_item_tooltip_style_set(item, cursor);
+   elm_widget_item_tooltip_style_set(it, cursor);
 }
 
 EAPI const char *
-elm_object_item_cursor_get(const Elm_Object_Item *item)
+elm_object_item_cursor_get(const Elm_Object_Item *it)
 {
-   return elm_widget_item_cursor_get(item);
+   return elm_widget_item_cursor_get(it);
 }
 
 EAPI void
-elm_object_item_cursor_unset(Elm_Object_Item *item)
+elm_object_item_cursor_unset(Elm_Object_Item *it)
 {
-   elm_widget_item_cursor_unset(item);
+   elm_widget_item_cursor_unset(it);
 }
 
 EAPI void
-elm_object_item_cursor_style_set(Elm_Object_Item *item, const char *style)
+elm_object_item_cursor_style_set(Elm_Object_Item *it, const char *style)
 {
-   elm_widget_item_cursor_style_set(item, style);
+   elm_widget_item_cursor_style_set(it, style);
 }
 
 EAPI const char *
-elm_object_item_cursor_style_get(const Elm_Object_Item *item)
+elm_object_item_cursor_style_get(const Elm_Object_Item *it)
 {
-   return elm_widget_item_cursor_style_get(item);
+   return elm_widget_item_cursor_style_get(it);
 }
 
 EAPI void
-elm_object_item_cursor_engine_only_set(Elm_Object_Item *item, Eina_Bool engine_only)
+elm_object_item_cursor_engine_only_set(Elm_Object_Item *it, Eina_Bool engine_only)
 {
-   elm_widget_item_cursor_engine_only_set(item, engine_only);
+   elm_widget_item_cursor_engine_only_set(it, engine_only);
 }
 
 EAPI Eina_Bool
-elm_object_item_cursor_engine_only_get(const Elm_Object_Item *item)
+elm_object_item_cursor_engine_only_get(const Elm_Object_Item *it)
 {
-   return elm_widget_item_cursor_engine_only_get(item);
+   return elm_widget_item_cursor_engine_only_get(it);
 }
