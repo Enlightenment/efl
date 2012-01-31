@@ -97,7 +97,7 @@
  * "source" arguments, respectively, when the state is true (the
  * default is false), where @c XXX is the name of the (state) part.
  * See #Elm_Gengrid_Item_State_Get_Cb.
- * - @c func.del - This is called when elm_gengrid_item_del() is
+ * - @c func.del - This is called when elm_object_item_del() is
  * called on an item or elm_gengrid_clear() is called on the
  * gengrid. This is intended for use when gengrid items are
  * deleted, so any data attached to the item (e.g. its data
@@ -280,7 +280,7 @@ struct _Elm_Gengrid_Item_Class
  * @see elm_gengrid_group_item_size_set()
  * @see elm_gengrid_horizontal_set()
  * @see elm_gengrid_item_append()
- * @see elm_gengrid_item_del()
+ * @see elm_object_item_del()
  * @see elm_gengrid_clear()
  *
  * @ingroup Gengrid
@@ -452,7 +452,7 @@ EAPI Eina_Bool                     elm_gengrid_reorder_mode_get(const Evas_Objec
  * @see elm_gengrid_item_prepend()
  * @see elm_gengrid_item_insert_before()
  * @see elm_gengrid_item_insert_after()
- * @see elm_gengrid_item_del()
+ * @see elm_object_item_del()
  *
  * @ingroup Gengrid
  */
@@ -474,7 +474,7 @@ EAPI Elm_Object_Item             *elm_gengrid_item_append(Evas_Object *obj, cons
  * @see elm_gengrid_item_append()
  * @see elm_gengrid_item_insert_before()
  * @see elm_gengrid_item_insert_after()
- * @see elm_gengrid_item_del()
+ * @see elm_object_item_del()
  *
  * @ingroup Gengrid
  */
@@ -497,7 +497,7 @@ EAPI Elm_Object_Item             *elm_gengrid_item_prepend(Evas_Object *obj, con
  * @see elm_gengrid_item_append()
  * @see elm_gengrid_item_prepend()
  * @see elm_gengrid_item_insert_after()
- * @see elm_gengrid_item_del()
+ * @see elm_object_item_del()
  *
  * @ingroup Gengrid
  */
@@ -520,7 +520,7 @@ EAPI Elm_Object_Item             *elm_gengrid_item_insert_before(Evas_Object *ob
  * @see elm_gengrid_item_append()
  * @see elm_gengrid_item_prepend()
  * @see elm_gengrid_item_insert_after()
- * @see elm_gengrid_item_del()
+ * @see elm_object_item_del()
  *
  * @ingroup Gengrid
  */
@@ -543,7 +543,7 @@ EAPI Elm_Object_Item             *elm_gengrid_item_insert_after(Evas_Object *obj
  * @see elm_gengrid_item_append()
  * @see elm_gengrid_item_prepend()
  * @see elm_gengrid_item_insert_after()
- * @see elm_gengrid_item_del()
+ * @see elm_object_item_del()
  * @see elm_gengrid_item_direct_sorted_insert()
  *
  * @ingroup Gengrid
@@ -567,7 +567,7 @@ EAPI Elm_Object_Item             *elm_gengrid_item_sorted_insert(Evas_Object *ob
  * @see elm_gengrid_item_append()
  * @see elm_gengrid_item_prepend()
  * @see elm_gengrid_item_insert_after()
- * @see elm_gengrid_item_del()
+ * @see elm_object_item_del()
  * @see elm_gengrid_item_sorted_insert()
  *
  * @ingroup Gengrid
@@ -980,19 +980,6 @@ EAPI Elm_Object_Item             *elm_gengrid_item_next_get(const Elm_Object_Ite
 EAPI Elm_Object_Item             *elm_gengrid_item_prev_get(const Elm_Object_Item *it);
 
 /**
- * Remove a gengrid item from its parent, deleting it.
- *
- * @param it The item to be removed.
- * @return @c EINA_TRUE on success or @c EINA_FALSE, otherwise.
- *
- * @see elm_gengrid_clear(), to remove all items in a gengrid at
- * once.
- *
- * @ingroup Gengrid
- */
-EAPI void                          elm_gengrid_item_del(Elm_Object_Item *it);
-
-/**
  * Update the contents of a given gengrid item
  *
  * @param it The gengrid item
@@ -1390,7 +1377,7 @@ EAPI Eina_Bool                     elm_gengrid_item_cursor_engine_only_get(const
  * This removes (and deletes) all items in @p obj, leaving it
  * empty.
  *
- * @see elm_gengrid_item_del(), to remove just one item.
+ * @see elm_object_item_del(), to remove just one item.
  *
  * @ingroup Gengrid
  */

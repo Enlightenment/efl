@@ -3943,3 +3943,18 @@ EINA_DEPRECATED EAPI void                          elm_gengrid_item_disabled_set
  */
 EINA_DEPRECATED EAPI Eina_Bool                     elm_gengrid_item_disabled_get(const Elm_Object_Item *it);
 
+/**
+ * Remove a gengrid item from its parent, deleting it.
+ *
+ * @param it The item to be removed.
+ * @return @c EINA_TRUE on success or @c EINA_FALSE, otherwise.
+ *
+ * @see elm_gengrid_clear(), to remove all items in a gengrid at
+ * once.
+ * @deprecated use elm_object_item_de() instead
+ *
+ * @ingroup Gengrid
+ */
+EINA_DEPRECATED EAPI void                          elm_gengrid_item_del(Elm_Object_Item *it);
+
+

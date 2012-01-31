@@ -264,7 +264,7 @@ _toggle_disabled_cb(void        *data,
    if (!gg_it) return;
 
    elm_gengrid_item_selected_set(gg_it, EINA_FALSE);
-   elm_gengrid_item_disabled_set(gg_it, EINA_TRUE);
+   elm_object_item_disabled_set(gg_it, EINA_TRUE);
 }
 
 /* change items' size */

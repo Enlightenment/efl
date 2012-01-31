@@ -253,7 +253,7 @@ _delete_bt_clicked(void *data, Evas_Object *obj __UNUSED__, void *event_info __U
    l = (Eina_List*)elm_gengrid_selected_items_get(grid);
    if (!l) return;
    EINA_LIST_FOREACH_SAFE(l, l2, l3, gg_it)
-     elm_gengrid_item_del(gg_it);
+     elm_object_item_del(gg_it);
 }
 
 static void

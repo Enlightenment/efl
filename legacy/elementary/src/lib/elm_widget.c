@@ -2863,9 +2863,6 @@ _elm_widget_item_del(Elm_Widget_Item *item)
  *
  * Set the function to notify to widgets when item is being deleted by user.
  *
- * This function will complain if there was a callback set already,
- * however it will set the new one.
- *
  * @param item a valid #Elm_Widget_Item to be notified
  * @see elm_widget_item_del_pre_hook_set() convenience macro.
  * @ingroup Widget
@@ -2874,8 +2871,6 @@ EAPI void
 _elm_widget_item_del_pre_hook_set(Elm_Widget_Item *item, Elm_Widget_Del_Pre_Cb func)
 {
    ELM_WIDGET_ITEM_CHECK_OR_RETURN(item);
-   if ((item->del_pre_func) && (item->del_pre_func != func))
-     WRN("You're replacing a previously set del_pre_cb %p of item %p with %p", item->del_pre_func, item, func);
    item->del_pre_func = func;
 }
 

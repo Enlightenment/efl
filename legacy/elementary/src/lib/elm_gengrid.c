@@ -1869,6 +1869,20 @@ _item_disable_hook(Elm_Object_Item *it)
      }
 }
 
+static void
+_item_del_pre_hook(Elm_Object_Item *it)
+{
+   ELM_OBJ_ITEM_CHECK_OR_RETURN(it);
+   Elm_Gen_Item *_it = (Elm_Gen_Item *) it;
+   if ((_it->relcount > 0) || (_it->walking > 0))
+     {
+        _elm_genlist_item_del_notserious(_it);
+        return;
+     }
+
+   _item_del(_it);
+}
+
 static Elm_Gen_Item *
 _item_new(Widget_Data                  *wd,
           const Elm_Gengrid_Item_Class *itc,
@@ -1881,6 +1895,7 @@ _item_new(Widget_Data                  *wd,
    it = _elm_genlist_item_new(wd, itc, data, NULL, func, func_data);
    if (!it) return NULL;
    elm_widget_item_disable_hook_set(it, _item_disable_hook);
+   elm_widget_item_del_pre_hook_set(it, _item_del_pre_hook);
    it->item = ELM_NEW(Elm_Gen_Item_Type);
    wd->count++;
    it->group = it->itc->item_style && (!strcmp(it->itc->item_style, "group_index"));
@@ -2215,16 +2230,7 @@ elm_gengrid_item_sorted_insert(Evas_Object                  *obj,
 EAPI void
 elm_gengrid_item_del(Elm_Object_Item *it)
 {
-   ELM_OBJ_ITEM_CHECK_OR_RETURN(it);
-   Elm_Gen_Item *_it = (Elm_Gen_Item *) it;
-   if ((_it->relcount > 0) || (_it->walking > 0))
-     {
-        _elm_genlist_item_del_notserious(_it);
-        return;
-     }
-
-   _item_del(_it);
-   elm_widget_item_free(it);
+   elm_object_item_del(it);
 }
 
 EAPI void
