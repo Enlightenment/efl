@@ -3110,6 +3110,152 @@ EINA_DEPRECATED EAPI void                         elm_toolbar_item_tooltip_style
 EINA_DEPRECATED EAPI const char                  *elm_toolbar_item_tooltip_style_get(const Elm_Object_Item *it);
 
 /**
+ * Set the type of mouse pointer/cursor decoration to be shown,
+ * when the mouse pointer is over the given toolbar widget item
+ *
+ * @param it toolbar item to customize cursor on
+ * @param cursor the cursor type's name
+ *
+ * This function works analogously as elm_object_cursor_set(), but
+ * here the cursor's changing area is restricted to the item's
+ * area, and not the whole widget's. Note that that item cursors
+ * have precedence over widget cursors, so that a mouse over an
+ * item with custom cursor set will always show @b that cursor.
+ *
+ * If this function is called twice for an object, a previously set
+ * cursor will be unset on the second call.
+ *
+ * @see elm_object_cursor_set()
+ * @see elm_toolbar_item_cursor_get()
+ * @see elm_toolbar_item_cursor_unset()
+ *
+ * @deprecated use elm_object_item_cursor_set() instead
+ *
+ * @ingroup Toolbar
+ */
+EINA_DEPRECATED EAPI void                         elm_toolbar_item_cursor_set(Elm_Object_Item *it, const char *cursor);
+
+/*
+ * Get the type of mouse pointer/cursor decoration set to be shown,
+ * when the mouse pointer is over the given toolbar widget item
+ *
+ * @param it toolbar item with custom cursor set
+ * @return the cursor type's name or @c NULL, if no custom cursors
+ * were set to @p item (and on errors)
+ *
+ * @see elm_object_cursor_get()
+ * @see elm_toolbar_item_cursor_set()
+ * @see elm_toolbar_item_cursor_unset()
+ *
+ * @deprecated Use elm_object_item_cursor_get() instead
+ *
+ * @ingroup Toolbar
+ */
+EINA_DEPRECATED EAPI const char                  *elm_toolbar_item_cursor_get(const Elm_Object_Item *it);
+
+/**
+ * Unset any custom mouse pointer/cursor decoration set to be
+ * shown, when the mouse pointer is over the given toolbar widget
+ * item, thus making it show the @b default cursor again.
+ *
+ * @param it a toolbar item
+ *
+ * Use this call to undo any custom settings on this item's cursor
+ * decoration, bringing it back to defaults (no custom style set).
+ *
+ * @see elm_object_cursor_unset()
+ * @see elm_toolbar_item_cursor_set()
+ *
+ * @deprecated Use elm_object_item_cursor_unset() instead
+ *
+ * @ingroup Toolbar
+ */
+EINA_DEPRECATED EAPI void                         elm_toolbar_item_cursor_unset(Elm_Object_Item *it);
+
+/**
+ * Set a different @b style for a given custom cursor set for a
+ * toolbar item.
+ *
+ * @param it toolbar item with custom cursor set
+ * @param style the <b>theme style</b> to use (e.g. @c "default",
+ * @c "transparent", etc)
+ *
+ * This function only makes sense when one is using custom mouse
+ * cursor decorations <b>defined in a theme file</b>, which can have,
+ * given a cursor name/type, <b>alternate styles</b> on it. It
+ * works analogously as elm_object_cursor_style_set(), but here
+ * applyed only to toolbar item objects.
+ *
+ * @warning Before you set a cursor style you should have definen a
+ *       custom cursor previously on the item, with
+ *       elm_toolbar_item_cursor_set()
+ *
+ * @see elm_toolbar_item_cursor_engine_only_set()
+ * @see elm_toolbar_item_cursor_style_get()
+ *
+ * @deprecated Use elm_object_item_cursor_style_set() instead
+ *
+ * @ingroup Toolbar
+ */
+EINA_DEPRECATED EAPI void                         elm_toolbar_item_cursor_style_set(Elm_Object_Item *it, const char *style);
+
+/**
+ * Get the current @b style set for a given toolbar item's custom
+ * cursor
+ *
+ * @param it toolbar item with custom cursor set.
+ * @return style the cursor style in use. If the object does not
+ *         have a cursor set, then @c NULL is returned.
+ *
+ * @see elm_toolbar_item_cursor_style_set() for more details
+ *
+ * @deprecated Use elm_object_item_cursor_style_get() instead
+ *
+ * @ingroup Toolbar
+ */
+EINA_DEPRECATED EAPI const char                  *elm_toolbar_item_cursor_style_get(const Elm_Object_Item *it);
+
+/**
+ * Set if the (custom)cursor for a given toolbar item should be
+ * searched in its theme, also, or should only rely on the
+ * rendering engine.
+ *
+ * @param it item with custom (custom) cursor already set on
+ * @param engine_only Use @c EINA_TRUE to have cursors looked for
+ * only on those provided by the rendering engine, @c EINA_FALSE to
+ * have them searched on the widget's theme, as well.
+ *
+ * @note This call is of use only if you've set a custom cursor
+ * for toolbar items, with elm_toolbar_item_cursor_set().
+ *
+ * @note By default, cursors will only be looked for between those
+ * provided by the rendering engine.
+ *
+ * @deprecated Use elm_object_item_cursor_engine_only_set() instead
+ *
+ * @ingroup Toolbar
+ */
+EINA_DEPRECATED EAPI void                         elm_toolbar_item_cursor_engine_only_set(Elm_Object_Item *it, Eina_Bool engine_only);
+
+/**
+ * Get if the (custom) cursor for a given toolbar item is being
+ * searched in its theme, also, or is only relying on the rendering
+ * engine.
+ *
+ * @param it a toolbar item
+ * @return @c EINA_TRUE, if cursors are being looked for only on
+ * those provided by the rendering engine, @c EINA_FALSE if they
+ * are being searched on the widget's theme, as well.
+ *
+ * @see elm_toolbar_item_cursor_engine_only_set(), for more details
+ *
+ * @deprecated Use elm_object_item_cursor_engine_only_get() instead
+ *
+ * @ingroup Toolbar
+ */
+EINA_DEPRECATED EAPI Eina_Bool                    elm_toolbar_item_cursor_engine_only_get(const Elm_Object_Item *it);
+
+/**
  * @brief Link a Elm_Payer with an Elm_Video object.
  *
  * @param player the Elm_Player object.
