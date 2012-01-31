@@ -1154,8 +1154,8 @@ elm_fileselector_selected_get(const Evas_Object *obj)
 
    if (wd->mode == ELM_FILESELECTOR_LIST)
      {
-        Elm_Object_Item *gg_it = elm_genlist_selected_item_get(wd->files_list);
-        if (gg_it) return elm_object_item_data_get(gg_it);
+        Elm_Object_Item *gl_it = elm_genlist_selected_item_get(wd->files_list);
+        if (gl_it) return elm_object_item_data_get(gl_it);
      }
    else
      {
