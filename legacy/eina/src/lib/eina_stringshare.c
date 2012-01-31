@@ -577,7 +577,7 @@ eina_stringshare_shutdown(void)
 *============================================================================*/
 
 EAPI void
-eina_stringshare_del(const char *str)
+eina_stringshare_del(Eina_Stringshare str)
 {
    int slen;
 
@@ -611,13 +611,13 @@ eina_stringshare_del(const char *str)
      CRITICAL("EEEK trying to del non-shared stringshare \"%s\"", str);
 }
 
-EAPI const char *
+EAPI Eina_Stringshare
 eina_stringshare_add_length(const char *str, unsigned int slen)
 {
    if ((!str) || (slen <= 0))
       return "";
    else if (slen == 1)
-      return (const char *)_eina_stringshare_single + ((*str) << 1);
+      return (Eina_Stringshare) _eina_stringshare_single + ((*str) << 1);
    else if (slen < 4)
      {
         const char *s;
@@ -632,7 +632,7 @@ eina_stringshare_add_length(const char *str, unsigned int slen)
                                        sizeof(char), sizeof(char));
 }
 
-EAPI const char *
+EAPI Eina_Stringshare
 eina_stringshare_add(const char *str)
 {
    int slen;
@@ -653,7 +653,7 @@ eina_stringshare_add(const char *str)
    return eina_stringshare_add_length(str, slen);
 }
 
-EAPI const char *
+EAPI Eina_Stringshare
 eina_stringshare_printf(const char *fmt, ...)
 {
    va_list args;
@@ -677,7 +677,7 @@ eina_stringshare_printf(const char *fmt, ...)
    return ret;
 }
 
-EAPI const char *
+EAPI Eina_Stringshare
 eina_stringshare_vprintf(const char *fmt, va_list args)
 {
    char *tmp;
@@ -698,7 +698,7 @@ eina_stringshare_vprintf(const char *fmt, va_list args)
    return ret;
 }
 
-EAPI const char *
+EAPI Eina_Stringshare
 eina_stringshare_nprintf(unsigned int len, const char *fmt, ...)
 {
    va_list args;
@@ -723,8 +723,8 @@ eina_stringshare_nprintf(unsigned int len, const char *fmt, ...)
    return eina_stringshare_add_length(tmp, len);
 }
 
-EAPI const char *
-eina_stringshare_ref(const char *str)
+EAPI Eina_Stringshare
+eina_stringshare_ref(Eina_Stringshare str)
 {
    int slen;
 
@@ -765,7 +765,7 @@ eina_stringshare_ref(const char *str)
 }
 
 EAPI int
-eina_stringshare_strlen(const char *str)
+eina_stringshare_strlen(Eina_Stringshare str)
 {
    int len;
    /* special cases */
@@ -781,7 +781,7 @@ eina_stringshare_strlen(const char *str)
    if (str[3] == '\0')
       return 3;
 
-   len = eina_share_common_length(stringshare_share, (const char *)str);
+   len = eina_share_common_length(stringshare_share, (Eina_Stringshare) str);
    len = (len > 0) ? len / (int)sizeof(char) : -1;
    return len;
 }
