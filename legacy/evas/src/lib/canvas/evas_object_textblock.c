@@ -9062,12 +9062,22 @@ _size_native_calc_line_finalize(const Evas_Object *obj, Eina_List *items,
    Eina_List *i;
 
    it = eina_list_data_get(items);
-   /* If there are no text items yet, calc ascent/descent
-    * according to the current format. */
-   if (it && (*ascent + *descent == 0))
-      _layout_format_ascent_descent_adjust(obj, ascent, descent, it->format);
-
    *w = 0;
+
+   if (it)
+     {
+        /* If there are no text items yet, calc ascent/descent
+         * according to the current format. */
+        if (*ascent + *descent == 0)
+           _layout_format_ascent_descent_adjust(obj, ascent, descent,
+                 it->format);
+
+        /* Add margins. */
+        if (it->format)
+           *w = it->format->margin.l + it->format->margin.r;
+      }
+
+
    /* Adjust all the item sizes according to the final line size,
     * and update the x positions of all the items of the line. */
    EINA_LIST_FOREACH(items, i, it)

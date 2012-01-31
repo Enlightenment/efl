@@ -2090,6 +2090,29 @@ START_TEST(evas_textblock_size)
    fail_if((w != nw) || (h != nh));
    fail_if(w <= 0);
 
+   /* This time with margins. */
+     {
+        Evas_Textblock_Style *newst;
+        Evas_Coord oldw, oldh, oldnw, oldnh;
+
+        evas_object_textblock_text_markup_set(tb, buf);
+        evas_object_textblock_size_formatted_get(tb, &oldw, &oldh);
+        evas_object_textblock_size_native_get(tb, &oldnw, &oldnh);
+
+
+        newst = evas_textblock_style_new();
+        fail_if(!newst);
+        evas_textblock_style_set(newst,
+              "DEFAULT='left_margin=4 right_margin=4'");
+        evas_object_textblock_style_user_set(tb, newst);
+
+        evas_object_textblock_size_formatted_get(tb, &w, &h);
+        evas_object_textblock_size_native_get(tb, &nw, &nh);
+
+        fail_if((w != oldw + 8) || (h != oldh) ||
+              (nw != oldnw + 8) || (nh != oldnh));
+     }
+
    /* FIXME: There is a lot more to be done. */
    END_TB_TEST();
 }
