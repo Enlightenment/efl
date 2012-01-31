@@ -135,7 +135,7 @@ _grid_sel(void        *data,
           void        *event_info)
 {
    unsigned int x, y;
-   Example_Item *it = elm_gengrid_item_data_get(event_info);
+   Example_Item *it = elm_object_item_data_get(event_info);
 
    elm_gengrid_item_pos_get(event_info, &x, &y);
 

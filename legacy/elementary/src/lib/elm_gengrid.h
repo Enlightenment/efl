@@ -980,18 +980,6 @@ EAPI Elm_Object_Item             *elm_gengrid_item_next_get(const Elm_Object_Ite
 EAPI Elm_Object_Item             *elm_gengrid_item_prev_get(const Elm_Object_Item *it);
 
 /**
- * Get the gengrid object's handle which contains a given gengrid item
- *
- * @param it The item to fetch the container from
- * @return The gengrid (parent) object
- *
- * This returns the gengrid object itself that an item belongs to.
- *
- * @ingroup Gengrid
- */
-EAPI Evas_Object                  *elm_gengrid_item_gengrid_get(const Elm_Object_Item *it);
-
-/**
  * Remove a gengrid item from its parent, deleting it.
  *
  * @param it The item to be removed.
@@ -1042,41 +1030,6 @@ EAPI const Elm_Gengrid_Item_Class *elm_gengrid_item_item_class_get(const Elm_Obj
  * @ingroup Gengrid
  */
 EAPI void                          elm_gengrid_item_item_class_set(Elm_Object_Item *it, const Elm_Gengrid_Item_Class *gic);
-
-/**
- * Return the data associated to a given gengrid item
- *
- * @param it The gengrid item.
- * @return the data associated with this item.
- *
- * This returns the @c data value passed on the
- * elm_gengrid_item_append() and related item addition calls.
- *
- * @see elm_gengrid_item_append()
- * @see elm_gengrid_item_data_set()
- *
- * @ingroup Gengrid
- */
-EAPI void                         *elm_gengrid_item_data_get(const Elm_Object_Item *it);
-
-/**
- * Set the data associated with a given gengrid item
- *
- * @param it The gengrid item
- * @param data The data pointer to set on it
- *
- * This @b overrides the @c data value passed on the
- * elm_gengrid_item_append() and related item addition calls. This
- * function @b won't call elm_gengrid_item_update() automatically,
- * so you'd issue it afterwards if you want to have the item
- * updated to reflect the new data.
- *
- * @see elm_gengrid_item_data_get()
- * @see elm_gengrid_item_update()
- *
- * @ingroup Gengrid
- */
-EAPI void                          elm_gengrid_item_data_set(Elm_Object_Item *it, const void *data);
 
 /**
  * Get a given gengrid item's position, relative to the whole
@@ -1142,7 +1095,7 @@ EAPI Eina_Bool                     elm_gengrid_item_selected_get(const Elm_Objec
  * lower level callbacks for events on that object. Do not delete
  * this object under any circumstances.
  *
- * @see elm_gengrid_item_data_get()
+ * @see elm_object_item_data_get()
  *
  * @ingroup Gengrid
  */

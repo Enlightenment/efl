@@ -419,15 +419,14 @@ _sel(void            *data,
    Widget_Data *wd;
    void *old_sd;
    char *dir;
+   Elm_Object_Item *gg_it = event_info;
 
    wd = elm_widget_data_get(data);
    if (!wd) return;
 
    sd = malloc(sizeof(*sd));
    sd->fs = data;
-   sd->path = wd->mode == ELM_FILESELECTOR_LIST ?
-       elm_object_item_data_get(event_info) :
-       elm_gengrid_item_data_get(event_info);
+   sd->path = wd->mode == elm_object_item_data_get(gg_it);
 
    if (!sd->path)
      {
@@ -599,7 +598,7 @@ _file_grid_cmp(const void *a, const void *b)
         return 1;
      }
 
-   return strcoll(elm_gengrid_item_data_get(ga), elm_gengrid_item_data_get(gb));
+   return strcoll(elm_object_item_data_get(ga), elm_object_item_data_get(gb));
 }
 
 static int
@@ -1160,7 +1159,7 @@ elm_fileselector_selected_get(const Evas_Object *obj)
    else
      {
         Elm_Object_Item *gg_it = elm_gengrid_selected_item_get(wd->files_grid);
-        if (gg_it) return elm_gengrid_item_data_get(gg_it);
+        if (gg_it) return elm_object_item_data_get(gg_it);
      }
 
    return wd->path;

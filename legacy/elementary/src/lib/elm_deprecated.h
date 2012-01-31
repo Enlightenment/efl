@@ -3863,3 +3863,52 @@ EINA_DEPRECATED EAPI Evas_Object       *elm_entry_end_unset(Evas_Object *obj);
  */
 EINA_DEPRECATED EAPI void                  elm_map_utils_rotate_coord(const Evas_Object *obj, const Evas_Coord x, const Evas_Coord y, const Evas_Coord cx, const Evas_Coord cy, const double degree, Evas_Coord *xx, Evas_Coord *yy);
 
+/**
+ * Get the gengrid object's handle which contains a given gengrid item
+ *
+ * @param it The item to fetch the container from
+ * @return The gengrid (parent) object
+ *
+ * This returns the gengrid object itself that an item belongs to.
+ *
+ * @deprecated Use elm_object_item_widget_get() instead
+ * @ingroup Gengrid
+ */
+EINA_DEPRECATED EAPI Evas_Object                  *elm_gengrid_item_gengrid_get(const Elm_Object_Item *it);
+
+/**
+ * Return the data associated to a given gengrid item
+ *
+ * @param it The gengrid item.
+ * @return the data associated with this item.
+ *
+ * This returns the @c data value passed on the
+ * elm_gengrid_item_append() and related item addition calls.
+ *
+ * @see elm_gengrid_item_append()
+ * @see elm_gengrid_item_data_set()
+ * @deprecated Use elm_object_item_data_get() instead
+ * @ingroup Gengrid
+ */
+EINA_DEPRECATED EAPI void                         *elm_gengrid_item_data_get(const Elm_Object_Item *it);
+
+/**
+ * Set the data associated with a given gengrid item
+ *
+ * @param it The gengrid item
+ * @param data The data pointer to set on it
+ *
+ * This @b overrides the @c data value passed on the
+ * elm_gengrid_item_append() and related item addition calls. This
+ * function @b won't call elm_gengrid_item_update() automatically,
+ * so you'd issue it afterwards if you want to have the item
+ * updated to reflect the new data.
+ *
+ * @see elm_gengrid_item_data_get()
+ * @see elm_gengrid_item_update()
+ * @deprecated Use elm_object_item_data_set() instead
+ *
+ * @ingroup Gengrid
+ */
+EINA_DEPRECATED EAPI void                          elm_gengrid_item_data_set(Elm_Object_Item *it, const void *data);
+

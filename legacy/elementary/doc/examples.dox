@@ -4256,7 +4256,7 @@
  * selection of the items. There, we print the item handle's value,
  * along with the callback function data. The latter will be @c NULL,
  * always, because it's what we pass when adding all icons. By using
- * elm_gengrid_item_data_get(), we can have the item data back and,
+ * elm_object_item_data_get(), we can have the item data back and,
  * with that, we're priting the item's path string. Finally, we
  * exemplify elm_gengrid_item_pos_get(), printing the item's position
  * in the grid:
