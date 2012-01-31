@@ -335,6 +335,8 @@ EAPI extern const Eina_Value_Type *EINA_VALUE_TYPE_STRUCT;
  * eina_value_get() takes a pointer to pointer to #Eina_Model, it's an
  * exact copy of the current model, no copies are done, no references
  * are increased.
+ *
+ * @since 1.2
  */
 EAPI extern const Eina_Value_Type *EINA_VALUE_TYPE_MODEL;
 
