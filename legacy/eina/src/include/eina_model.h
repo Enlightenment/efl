@@ -495,6 +495,7 @@ struct _Eina_Model_Type
 #define EINA_MODEL_TYPE_VERSION (1)
    unsigned int version; /**< must be #EINA_MODEL_TYPE_VERSION */
    unsigned int private_size; /**< used to allocate type private data */
+   unsigned int type_size; /**< used to know sizeof(Eina_Model_Type) or subtypes (which may be bigger, by including Eina_Model_Type as a header */
    const char *name; /**< name for debug and introspection */
    const Eina_Model_Type *parent; /**< parent type, must be EINA_MODEL_TYPE_BASE or a child of */
    const Eina_Model_Interface **interfaces; /**< null terminated array of interfaces */
@@ -525,8 +526,131 @@ struct _Eina_Model_Type
    Eina_Iterator *(*child_sorted_iterator_get)(Eina_Model *model, unsigned int start, unsigned int count, Eina_Compare_Cb compare);
    Eina_Iterator *(*child_filtered_iterator_get)(Eina_Model *model, unsigned int start, unsigned int count, Eina_Each_Cb match, const void *data);
    char *(*to_string)(const Eina_Model *model); /**< used to represent model as string, usually for debug purposes or user convenience */
-   const void *value; /**< may hold extension methods */
+   void *__extension_ptr0; /**< not to be used */
+   void *__extension_ptr1; /**< not to be used */
+   void *__extension_ptr2; /**< not to be used */
+   void *__extension_ptr3; /**< not to be used */
 };
+
+#define EINA_MODEL_TYPE_INIT(name, type, private_type, parent, interfaces, events) \
+  {EINA_MODEL_TYPE_VERSION,                                         \
+   sizeof(private_type),                                            \
+   sizeof(type),                                                    \
+   name,                                                            \
+   parent,                                                          \
+   interfaces,                                                      \
+   events,                                                          \
+   NULL,                                                            \
+   NULL,                                                            \
+   NULL,                                                            \
+   NULL,                                                            \
+   NULL,                                                            \
+   NULL,                                                            \
+   NULL,                                                            \
+   NULL,                                                            \
+   NULL,                                                            \
+   NULL,                                                            \
+   NULL,                                                            \
+   NULL,                                                            \
+   NULL,                                                            \
+   NULL,                                                            \
+   NULL,                                                            \
+   NULL,                                                            \
+   NULL,                                                            \
+   NULL,                                                            \
+   NULL,                                                            \
+   NULL,                                                            \
+   NULL,                                                            \
+   NULL,                                                            \
+   NULL,                                                            \
+   NULL,                                                            \
+   NULL,                                                            \
+   NULL,                                                            \
+   NULL,                                                            \
+   NULL,                                                            \
+   NULL,                                                            \
+   NULL                                                             \
+   }
+
+#define EINA_MODEL_TYPE_INIT_NOPRIVATE(name, type, parent, interfaces, events) \
+  {EINA_MODEL_TYPE_VERSION,                                         \
+   0,                                                               \
+   sizeof(type),                                                    \
+   name,                                                            \
+   parent,                                                          \
+   interfaces,                                                      \
+   events,                                                          \
+   NULL,                                                            \
+   NULL,                                                            \
+   NULL,                                                            \
+   NULL,                                                            \
+   NULL,                                                            \
+   NULL,                                                            \
+   NULL,                                                            \
+   NULL,                                                            \
+   NULL,                                                            \
+   NULL,                                                            \
+   NULL,                                                            \
+   NULL,                                                            \
+   NULL,                                                            \
+   NULL,                                                            \
+   NULL,                                                            \
+   NULL,                                                            \
+   NULL,                                                            \
+   NULL,                                                            \
+   NULL,                                                            \
+   NULL,                                                            \
+   NULL,                                                            \
+   NULL,                                                            \
+   NULL,                                                            \
+   NULL,                                                            \
+   NULL,                                                            \
+   NULL,                                                            \
+   NULL,                                                            \
+   NULL,                                                            \
+   NULL,                                                            \
+   NULL                                                             \
+   }
+
+#define EINA_MODEL_TYPE_INIT_NULL                                   \
+  {0,                                                               \
+   0,                                                               \
+   0,                                                               \
+   NULL,                                                            \
+   NULL,                                                            \
+   NULL,                                                            \
+   NULL,                                                            \
+   NULL,                                                            \
+   NULL,                                                            \
+   NULL,                                                            \
+   NULL,                                                            \
+   NULL,                                                            \
+   NULL,                                                            \
+   NULL,                                                            \
+   NULL,                                                            \
+   NULL,                                                            \
+   NULL,                                                            \
+   NULL,                                                            \
+   NULL,                                                            \
+   NULL,                                                            \
+   NULL,                                                            \
+   NULL,                                                            \
+   NULL,                                                            \
+   NULL,                                                            \
+   NULL,                                                            \
+   NULL,                                                            \
+   NULL,                                                            \
+   NULL,                                                            \
+   NULL,                                                            \
+   NULL,                                                            \
+   NULL,                                                            \
+   NULL,                                                            \
+   NULL,                                                            \
+   NULL,                                                            \
+   NULL,                                                            \
+   NULL,                                                            \
+   NULL                                                             \
+   }
 
 EAPI Eina_Bool eina_model_type_constructor(const Eina_Model_Type *type,
                                            Eina_Model *model) EINA_ARG_NONNULL(1, 2) EINA_WARN_UNUSED_RESULT;
@@ -609,6 +733,61 @@ EAPI Eina_Iterator *eina_model_type_child_filtered_iterator_get(const Eina_Model
 EAPI char *eina_model_type_to_string(const Eina_Model_Type *type,
                                      const Eina_Model *model) EINA_ARG_NONNULL(1, 2) EINA_WARN_UNUSED_RESULT EINA_MALLOC;
 
+
+/**
+ * @brief Get resolved method from types that extend Eina_Model_Type given offset.
+ *
+ * @param model the model to query the method
+ * @param offset the byte offset in the structure given as type, it
+ *        must be bigger than Eina_Model_Type itself.
+ * @return address to resolved method, or @c NULL if method is not
+ *         implemented.
+ *
+ * When implementing new types that augments the basic methods from
+ * Eina_Model_Type, the recommended structure layout is as follow:
+ * @code
+ * typedef struct _My_Type My_Type;
+ * struct _My_Type {
+ *    Eina_Model_Type base;
+ *    int (*my_method)(Eina_Model *model);
+ * };
+ *
+ * int my_type_my_method(Eina_Model *model);
+ * @endcode
+ *
+ * Then the implementation of @c my_type_my_method() needs to get the
+ * most specific @c my_method that is not @c NULL from type hierarchy,
+ * also called "resolve the method".
+ *
+ * To do this in an efficient way, Eina_Model infrastructure
+ * pre-resolves all methods and provides this function for efficient
+ * query. The recommended implementation of my_type_my_method() would
+ * be:
+ * @code
+ * int my_type_my_method(Eina_Model *model)
+ * {
+ *   int (*meth)(Eina_Model *);
+ *
+ *   EINA_SAFETY_ON_FALSE_RETURN(eina_model_instance_check(model, MY_TYPE), -1);
+ *
+ *   meth = eina_model_method_resolve(model, offsetof(My_Type, my_method));
+ *   EINA_SAFETY_ON_NULL_RETURN(meth, -1);
+ *   return meth(model);
+ * }
+ * @endcode
+ *
+ * @note offset must be bigger than Eina_Model_Type, otherwise use
+ *       specific functions such as eina_model_property_get().
+ *
+ * @since 1.2
+ */
+EAPI const void *eina_model_method_resolve(const Eina_Model *model,
+                                           unsigned int offset) EINA_ARG_NONNULL(1) EINA_WARN_UNUSED_RESULT EINA_PURE;
+
+EAPI const void *eina_model_type_method_resolve(const Eina_Model_Type *type,
+                                                const Eina_Model *model,
+                                                unsigned int offset) EINA_ARG_NONNULL(1, 2) EINA_WARN_UNUSED_RESULT EINA_PURE;
+
 /**
  * @struct _Eina_Model_Interface
  *
@@ -628,6 +807,7 @@ struct _Eina_Model_Interface
 #define EINA_MODEL_INTERFACE_VERSION (1)
    unsigned int version; /**< must be #EINA_MODEL_INTERFACE_VERSION */
    unsigned int private_size; /**< used to allocate interface private data */
+   unsigned int interface_size; /**< used to know sizeof(Eina_Model_Interface) or subtypes (which may be bigger, by including Eina_Model_Interface as header */
    const char *name; /**< name for debug and introspection */
    const Eina_Model_Interface **interfaces; /**< null terminated array of parent interfaces */
    const Eina_Model_Event_Description *events; /**< null terminated array of events */
@@ -637,8 +817,68 @@ struct _Eina_Model_Interface
    Eina_Bool (*destructor)(Eina_Model *model); /**< destruct interface instance, flush will be called after it. Should call parent's destructor if needed. Release reference to other models here. */
    Eina_Bool (*copy)(const Eina_Model *src, Eina_Model *dst); /**< copy interface private data, do @b not call parent interface copy! */
    Eina_Bool (*deep_copy)(const Eina_Model *src, Eina_Model *dst); /**< deep copy interface private data, do @b not call parent interface deep copy! */
-   const void *value; /**< holds the actual interface methods */
+   void *__extension_ptr0; /**< not to be used */
+   void *__extension_ptr1; /**< not to be used */
+   void *__extension_ptr2; /**< not to be used */
+   void *__extension_ptr3; /**< not to be used */
 };
+
+#define EINA_MODEL_INTERFACE_INIT(name, iface, private_type, parent, events) \
+  {EINA_MODEL_INTERFACE_VERSION,                                        \
+   sizeof(private_type),                                                \
+   sizeof(iface),                                                       \
+   name,                                                                \
+   parent,                                                              \
+   events,                                                              \
+   NULL,                                                                \
+   NULL,                                                                \
+   NULL,                                                                \
+   NULL,                                                                \
+   NULL,                                                                \
+   NULL,                                                                \
+   NULL,                                                                \
+   NULL,                                                                \
+   NULL,                                                                \
+   NULL                                                                 \
+   }
+
+#define EINA_MODEL_INTERFACE_INIT_NOPRIVATE(name, iface, parent, events) \
+  {EINA_MODEL_INTERFACE_VERSION,                                        \
+   0,                                                                   \
+   sizeof(iface),                                                       \
+   name,                                                                \
+   parent,                                                              \
+   events,                                                              \
+   NULL,                                                                \
+   NULL,                                                                \
+   NULL,                                                                \
+   NULL,                                                                \
+   NULL,                                                                \
+   NULL,                                                                \
+   NULL,                                                                \
+   NULL,                                                                \
+   NULL,                                                                \
+   NULL                                                                 \
+   }
+
+#define EINA_MODEL_INTERFACE_INIT_NULL      \
+  {0,                                       \
+   0,                                       \
+   0,                                       \
+   NULL,                                    \
+   NULL,                                    \
+   NULL,                                    \
+   NULL,                                    \
+   NULL,                                    \
+   NULL,                                    \
+   NULL,                                    \
+   NULL,                                    \
+   NULL,                                    \
+   NULL,                                    \
+   NULL,                                    \
+   NULL,                                    \
+   NULL                                     \
+   }
 
 EAPI Eina_Bool eina_model_interface_constructor(const Eina_Model_Interface *iface,
                                                 Eina_Model *model) EINA_ARG_NONNULL(1, 2) EINA_WARN_UNUSED_RESULT;
@@ -650,6 +890,10 @@ EAPI Eina_Bool eina_model_interface_copy(const Eina_Model_Interface *iface,
 EAPI Eina_Bool eina_model_interface_deep_copy(const Eina_Model_Interface *iface,
                                               const Eina_Model *src,
                                               Eina_Model *dst) EINA_ARG_NONNULL(1, 2, 3);
+
+EAPI const void *eina_model_interface_method_resolve(const Eina_Model_Interface *iface,
+                                                     const Eina_Model *model,
+                                                     unsigned int offset) EINA_ARG_NONNULL(1, 2) EINA_WARN_UNUSED_RESULT EINA_PURE;
 
 
 struct _Eina_Model_Event_Description
@@ -752,6 +996,7 @@ EAPI extern const char *EINA_MODEL_INTERFACE_NAME_PROPERTIES;
 typedef struct _Eina_Model_Interface_Properties Eina_Model_Interface_Properties;
 struct _Eina_Model_Interface_Properties
 {
+   Eina_Model_Interface base;
 #define EINA_MODEL_INTERFACE_PROPERTIES_VERSION (1)
    unsigned int version;
    Eina_Bool (*compare)(const Eina_Model *a, const Eina_Model *b, int *cmp);
@@ -890,6 +1135,7 @@ typedef struct _Eina_Model_Interface_Children Eina_Model_Interface_Children;
  */
 struct _Eina_Model_Interface_Children
 {
+   Eina_Model_Interface base;
 #define EINA_MODEL_INTERFACE_CHILDREN_VERSION (1)
    unsigned int version;
    Eina_Bool (*compare)(const Eina_Model *a, const Eina_Model *b, int *cmp);
