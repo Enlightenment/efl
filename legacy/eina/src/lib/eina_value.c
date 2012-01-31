@@ -3957,6 +3957,13 @@ _eina_value_type_struct_setup(const Eina_Value_Type *type __UNUSED__, void *mem)
 }
 
 static Eina_Bool
+_eina_value_type_struct_setup_member(const Eina_Value_Struct_Member *member, Eina_Value_Struct *st)
+{
+   unsigned char *base = st->memory;
+   return eina_value_type_setup(member->type, base + member->offset);
+}
+
+static Eina_Bool
 _eina_value_type_struct_flush_member(const Eina_Value_Struct_Member *member, Eina_Value_Struct *st)
 {
    unsigned char *base = st->memory;
@@ -3970,6 +3977,9 @@ _eina_value_type_struct_flush(const Eina_Value_Type *type __UNUSED__, void *mem)
    const Eina_Value_Struct_Member *itr;
    Eina_Value_Struct *tmem = mem;
    Eina_Bool ret = EINA_TRUE;
+
+   if ((!tmem->desc) || (!tmem->memory))
+     return EINA_TRUE;
 
    itr = tmem->desc->members;
    if (tmem->desc->member_count > 0)
@@ -4014,6 +4024,9 @@ _eina_value_type_struct_copy(const Eina_Value_Type *type __UNUSED__, const void 
 
    *d = *s;
 
+   if ((!s->desc) || (!s->memory))
+     return EINA_TRUE;
+
    ops = _eina_value_type_struct_ops_get(src);
    if ((ops) && (ops->copy))
      {
@@ -4023,7 +4036,10 @@ _eina_value_type_struct_copy(const Eina_Value_Type *type __UNUSED__, const void 
         return EINA_TRUE;
      }
 
-   d->memory = malloc(s->desc->size);
+   if ((ops) && (ops->alloc))
+     d->memory = ops->alloc(ops, s->desc);
+   else
+     d->memory = malloc(s->desc->size);
    if (!d->memory)
      {
         eina_error_set(EINA_ERROR_OUT_OF_MEMORY);
@@ -4045,14 +4061,17 @@ _eina_value_type_struct_copy(const Eina_Value_Type *type __UNUSED__, const void 
             goto error;
      }
 
-
    return EINA_TRUE;
 
  error:
    itr--;
    for (; itr >= s->desc->members; itr--)
      _eina_value_type_struct_flush_member(itr, d);
-   free(d->memory);
+
+   if ((ops) && (ops->free))
+     ops->free(ops, s->desc, d->memory);
+   else
+     free(d->memory);
    return EINA_FALSE;
 }
 
@@ -4074,7 +4093,9 @@ _eina_value_type_struct_compare(const Eina_Value_Type *type __UNUSED__, const vo
    const Eina_Value_Struct_Member *itr;
    int cmp = 0;
 
-   if (ta->desc != tb->desc)
+   if ((!ta->desc) && (!tb->desc))
+     return 0;
+   else if (ta->desc != tb->desc)
      {
         eina_error_set(EINA_ERROR_VALUE_FAILED);
         return -1;
@@ -4238,11 +4259,12 @@ _eina_value_type_struct_desc_check(const Eina_Value_Struct_Desc *desc)
 }
 
 static Eina_Bool
-_eina_value_type_struct_pset(const Eina_Value_Type *type __UNUSED__, void *mem, const void *ptr)
+_eina_value_type_struct_pset(const Eina_Value_Type *type, void *mem, const void *ptr)
 {
-   const Eina_Value_Struct_Operations *ops = _eina_value_type_struct_ops_get(mem);
+   const Eina_Value_Struct_Operations *ops;
    Eina_Value_Struct *tmem = mem;
    const Eina_Value_Struct *desc = ptr;
+   const Eina_Value_Struct_Member *itr;
 
    if (!_eina_value_type_struct_desc_check(desc->desc))
      {
@@ -4250,30 +4272,56 @@ _eina_value_type_struct_pset(const Eina_Value_Type *type __UNUSED__, void *mem, 
         return EINA_FALSE;
      }
 
-   if ((ops) && (ops->free))
-     ops->free(ops, tmem->desc, tmem->memory);
-   else
-     free(tmem->memory);
+   _eina_value_type_struct_flush(type, mem);
 
    *tmem = *desc;
+   if (tmem->memory)
+     {
+        eina_error_set(0);
+        return EINA_TRUE;
+     }
 
    ops = _eina_value_type_struct_ops_get(desc);
+   if ((ops) && (ops->alloc))
+     tmem->memory = ops->alloc(ops, tmem->desc);
+   else
+     tmem->memory = malloc(tmem->desc->size);
+
    if (!tmem->memory)
      {
-        if ((ops) && (ops->alloc))
-          tmem->memory = ops->alloc(ops, tmem->desc);
-        else
-          tmem->memory = malloc(tmem->desc->size);
+        eina_error_set(EINA_ERROR_OUT_OF_MEMORY);
+        return EINA_FALSE;
+     }
 
-        if (!tmem->memory)
-          {
-             eina_error_set(EINA_ERROR_OUT_OF_MEMORY);
-             return EINA_FALSE;
-          }
+   itr = tmem->desc->members;
+   if (tmem->desc->member_count > 0)
+     {
+        const Eina_Value_Struct_Member *itr_end;
+        itr_end = itr + tmem->desc->member_count;
+        for (; itr < itr_end; itr++)
+          if (!_eina_value_type_struct_setup_member(itr, tmem))
+            goto error;
+     }
+   else
+     {
+        for (; itr->name != NULL; itr++)
+          if (!_eina_value_type_struct_setup_member(itr, tmem))
+            goto error;
      }
 
    eina_error_set(0);
    return EINA_TRUE;
+
+ error:
+   itr--;
+   for (; itr >= tmem->desc->members; itr--)
+     _eina_value_type_struct_flush_member(itr, tmem);
+
+   if ((ops) && (ops->free))
+     ops->free(ops, tmem->desc, tmem->memory);
+   else
+     free(tmem->memory);
+   return EINA_FALSE;
 }
 
 static Eina_Bool
