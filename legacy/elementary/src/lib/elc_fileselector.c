@@ -419,14 +419,15 @@ _sel(void            *data,
    Widget_Data *wd;
    void *old_sd;
    char *dir;
-   Elm_Object_Item *gg_it = event_info;
+   //This event_info could be a list or gengrid item
+   Elm_Object_Item *it = event_info;
 
    wd = elm_widget_data_get(data);
    if (!wd) return;
 
    sd = malloc(sizeof(*sd));
    sd->fs = data;
-   sd->path = wd->mode == elm_object_item_data_get(gg_it);
+   sd->path = elm_object_item_data_get(it);
 
    if (!sd->path)
      {
