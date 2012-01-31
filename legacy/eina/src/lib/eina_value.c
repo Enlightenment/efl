@@ -169,7 +169,7 @@ _eina_value_type_uchar_convert_to(const Eina_Value_Type *type __UNUSED__, const 
         unsigned int other_mem = v;
         return eina_value_type_pset(convert, convert_mem, &other_mem);
      }
-   else if (convert == EINA_VALUE_TYPE_ULONG)
+   else if ((convert == EINA_VALUE_TYPE_ULONG) || (convert == EINA_VALUE_TYPE_TIMESTAMP))
      {
         unsigned long other_mem = v;
         return eina_value_type_pset(convert, convert_mem, &other_mem);
@@ -318,7 +318,7 @@ _eina_value_type_ushort_convert_to(const Eina_Value_Type *type __UNUSED__, const
         unsigned int other_mem = v;
         return eina_value_type_pset(convert, convert_mem, &other_mem);
      }
-   else if (convert == EINA_VALUE_TYPE_ULONG)
+   else if ((convert == EINA_VALUE_TYPE_ULONG) || (convert == EINA_VALUE_TYPE_TIMESTAMP))
      {
         unsigned long other_mem = v;
         return eina_value_type_pset(convert, convert_mem, &other_mem);
@@ -471,7 +471,7 @@ _eina_value_type_uint_convert_to(const Eina_Value_Type *type __UNUSED__, const E
         unsigned int other_mem = v;
         return eina_value_type_pset(convert, convert_mem, &other_mem);
      }
-   else if (convert == EINA_VALUE_TYPE_ULONG)
+   else if ((convert == EINA_VALUE_TYPE_ULONG) || (convert == EINA_VALUE_TYPE_TIMESTAMP))
      {
         unsigned long other_mem = v;
         return eina_value_type_pset(convert, convert_mem, &other_mem);
@@ -628,7 +628,7 @@ _eina_value_type_ulong_convert_to(const Eina_Value_Type *type __UNUSED__, const 
           return EINA_FALSE;
         return eina_value_type_pset(convert, convert_mem, &other_mem);
      }
-   else if (convert == EINA_VALUE_TYPE_ULONG)
+   else if ((convert == EINA_VALUE_TYPE_ULONG) || (convert == EINA_VALUE_TYPE_TIMESTAMP))
      {
         unsigned long other_mem = v;
         return eina_value_type_pset(convert, convert_mem, &other_mem);
@@ -787,7 +787,7 @@ _eina_value_type_uint64_convert_to(const Eina_Value_Type *type __UNUSED__, const
           return EINA_FALSE;
         return eina_value_type_pset(convert, convert_mem, &other_mem);
      }
-   else if (convert == EINA_VALUE_TYPE_ULONG)
+   else if ((convert == EINA_VALUE_TYPE_ULONG) || (convert == EINA_VALUE_TYPE_TIMESTAMP))
      {
         unsigned long other_mem = v;
         if (EINA_UNLIKELY((sizeof(other_mem) != sizeof(v)) &&
@@ -951,7 +951,7 @@ _eina_value_type_char_convert_to(const Eina_Value_Type *type __UNUSED__, const E
           return EINA_FALSE;
         return eina_value_type_pset(convert, convert_mem, &other_mem);
      }
-   else if (convert == EINA_VALUE_TYPE_ULONG)
+   else if ((convert == EINA_VALUE_TYPE_ULONG) || (convert == EINA_VALUE_TYPE_TIMESTAMP))
      {
         unsigned long other_mem = v;
         if (EINA_UNLIKELY(v < 0))
@@ -1108,7 +1108,7 @@ _eina_value_type_short_convert_to(const Eina_Value_Type *type __UNUSED__, const 
           return EINA_FALSE;
         return eina_value_type_pset(convert, convert_mem, &other_mem);
      }
-   else if (convert == EINA_VALUE_TYPE_ULONG)
+   else if ((convert == EINA_VALUE_TYPE_ULONG) || (convert == EINA_VALUE_TYPE_TIMESTAMP))
      {
         unsigned long other_mem = v;
         if (EINA_UNLIKELY(v < 0))
@@ -1271,7 +1271,7 @@ _eina_value_type_int_convert_to(const Eina_Value_Type *type __UNUSED__, const Ei
           return EINA_FALSE;
         return eina_value_type_pset(convert, convert_mem, &other_mem);
      }
-   else if (convert == EINA_VALUE_TYPE_ULONG)
+   else if ((convert == EINA_VALUE_TYPE_ULONG) || (convert == EINA_VALUE_TYPE_TIMESTAMP))
      {
         unsigned long other_mem = v;
         if (EINA_UNLIKELY(v < 0))
@@ -1440,7 +1440,7 @@ _eina_value_type_long_convert_to(const Eina_Value_Type *type __UNUSED__, const E
           return EINA_FALSE;
         return eina_value_type_pset(convert, convert_mem, &other_mem);
      }
-   else if (convert == EINA_VALUE_TYPE_ULONG)
+   else if ((convert == EINA_VALUE_TYPE_ULONG) || (convert == EINA_VALUE_TYPE_TIMESTAMP))
      {
         unsigned long other_mem = v;
         if (EINA_UNLIKELY(v < 0))
@@ -1613,7 +1613,7 @@ _eina_value_type_int64_convert_to(const Eina_Value_Type *type __UNUSED__, const 
           return EINA_FALSE;
         return eina_value_type_pset(convert, convert_mem, &other_mem);
      }
-   else if (convert == EINA_VALUE_TYPE_ULONG)
+   else if ((convert == EINA_VALUE_TYPE_ULONG) || (convert == EINA_VALUE_TYPE_TIMESTAMP))
      {
         unsigned long other_mem = v;
         if (EINA_UNLIKELY(v < 0))
@@ -1793,7 +1793,7 @@ _eina_value_type_float_convert_to(const Eina_Value_Type *type __UNUSED__, const 
           return EINA_FALSE;
         return eina_value_type_pset(convert, convert_mem, &other_mem);
      }
-   else if (convert == EINA_VALUE_TYPE_ULONG)
+   else if ((convert == EINA_VALUE_TYPE_ULONG) || (convert == EINA_VALUE_TYPE_TIMESTAMP))
      {
         unsigned long other_mem = v;
         if (EINA_UNLIKELY(v < 0))
@@ -1979,7 +1979,7 @@ _eina_value_type_double_convert_to(const Eina_Value_Type *type __UNUSED__, const
           return EINA_FALSE;
         return eina_value_type_pset(convert, convert_mem, &other_mem);
      }
-   else if (convert == EINA_VALUE_TYPE_ULONG)
+   else if ((convert == EINA_VALUE_TYPE_ULONG) || (convert == EINA_VALUE_TYPE_TIMESTAMP))
      {
         unsigned long other_mem = v;
         if (EINA_UNLIKELY(v < 0))
@@ -2147,7 +2147,7 @@ _eina_value_type_string_common_convert_to(const Eina_Value_Type *type __UNUSED__
           return EINA_FALSE;
         return eina_value_type_pset(convert, convert_mem, &other_mem);
      }
-   else if (convert == EINA_VALUE_TYPE_ULONG)
+   else if ((convert == EINA_VALUE_TYPE_ULONG) || (convert == EINA_VALUE_TYPE_TIMESTAMP))
      {
         unsigned long other_mem;
         if ((sscanf(v, "%lu", &other_mem) != 1) &&
@@ -3425,7 +3425,7 @@ _eina_value_type_timeval_convert_to(const Eina_Value_Type *type __UNUSED__, cons
           return EINA_FALSE;
         return eina_value_type_pset(convert, convert_mem, &other_mem);
      }
-   else if (convert == EINA_VALUE_TYPE_ULONG)
+   else if ((convert == EINA_VALUE_TYPE_ULONG) || (convert == EINA_VALUE_TYPE_TIMESTAMP))
      {
         unsigned long other_mem = v.tv_sec;
         if (EINA_UNLIKELY(v.tv_sec < 0))
@@ -4845,11 +4845,12 @@ eina_value_init(void)
    EINA_VALUE_TYPE_DOUBLE      = _EINA_VALUE_TYPE_BASICS + 11;
    EINA_VALUE_TYPE_STRINGSHARE = _EINA_VALUE_TYPE_BASICS + 12;
    EINA_VALUE_TYPE_STRING      = _EINA_VALUE_TYPE_BASICS + 13;
+   EINA_VALUE_TYPE_TIMESTAMP   = _EINA_VALUE_TYPE_BASICS +  14;
 
    _EINA_VALUE_TYPE_BASICS_START = _EINA_VALUE_TYPE_BASICS +  0;
-   _EINA_VALUE_TYPE_BASICS_END   = _EINA_VALUE_TYPE_BASICS + 13;
+   _EINA_VALUE_TYPE_BASICS_END   = _EINA_VALUE_TYPE_BASICS + 14;
 
-   EINA_SAFETY_ON_FALSE_RETURN_VAL((sizeof(_EINA_VALUE_TYPE_BASICS)/sizeof(_EINA_VALUE_TYPE_BASICS[0])) == 14, EINA_FALSE);
+   EINA_SAFETY_ON_FALSE_RETURN_VAL((sizeof(_EINA_VALUE_TYPE_BASICS)/sizeof(_EINA_VALUE_TYPE_BASICS[0])) == 15, EINA_FALSE);
 
 
    EINA_VALUE_TYPE_ARRAY = &_EINA_VALUE_TYPE_ARRAY;
@@ -4924,6 +4925,7 @@ EAPI const Eina_Value_Type *EINA_VALUE_TYPE_UCHAR = NULL;
 EAPI const Eina_Value_Type *EINA_VALUE_TYPE_USHORT = NULL;
 EAPI const Eina_Value_Type *EINA_VALUE_TYPE_UINT = NULL;
 EAPI const Eina_Value_Type *EINA_VALUE_TYPE_ULONG = NULL;
+EAPI const Eina_Value_Type *EINA_VALUE_TYPE_TIMESTAMP = NULL;
 EAPI const Eina_Value_Type *EINA_VALUE_TYPE_UINT64 = NULL;
 EAPI const Eina_Value_Type *EINA_VALUE_TYPE_CHAR = NULL;
 EAPI const Eina_Value_Type *EINA_VALUE_TYPE_SHORT = NULL;

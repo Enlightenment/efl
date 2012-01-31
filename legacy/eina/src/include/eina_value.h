@@ -117,6 +117,15 @@ EAPI extern const Eina_Value_Type *EINA_VALUE_TYPE_UINT;
 EAPI extern const Eina_Value_Type *EINA_VALUE_TYPE_ULONG;
 
 /**
+ * @var EINA_VALUE_TYPE_TIMESTAMP
+ * manages unsigned long type used for timestamps.
+ * @note this is identical in function to EINA_VALUE_TYPE_ULONG
+ *
+ * @since 1.2
+ */
+EAPI extern const Eina_Value_Type *EINA_VALUE_TYPE_TIMESTAMP;
+
+/**
  * @var EINA_VALUE_TYPE_UINT64
  * manages unsigned integer of 64 bits type.
  *

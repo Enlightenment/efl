@@ -210,7 +210,7 @@ eina_value_compare(const Eina_Value *a, const Eina_Value *b)
           return 1;
         return 0;
      }
-   else if (type == EINA_VALUE_TYPE_ULONG)
+   else if ((type == EINA_VALUE_TYPE_ULONG) || (type == EINA_VALUE_TYPE_TIMESTAMP))
      {
         unsigned long *ta = (unsigned long *) pa, *tb = (unsigned long *) pb;
         if (*ta < *tb)
@@ -362,7 +362,7 @@ eina_value_vset(Eina_Value *value, va_list args)
         *tmem = va_arg(args, unsigned int);
         return EINA_TRUE;
      }
-   else if (type == EINA_VALUE_TYPE_ULONG)
+   else if ((type == EINA_VALUE_TYPE_ULONG) || (type == EINA_VALUE_TYPE_TIMESTAMP))
      {
         unsigned long *tmem = (unsigned long *) mem;
         *tmem = va_arg(args, unsigned long);
