@@ -580,6 +580,8 @@ _smart_reconfigure(Smart_Data *sd)
         parent = elm_widget_parent_widget_get(sd->obj);
         if (parent)
           evas_object_size_hint_align_get(parent, &alignh, &alignv);
+        if (alignh < 0.0) alignh = 0.5;
+        if (alignv < 0.0) alignv = 0.5;
         x = sd->x + ((sd->w - w) * alignh);
         y = sd->y + ((sd->h - h) * alignv);
         evas_object_move(sd->obj, x, y);
