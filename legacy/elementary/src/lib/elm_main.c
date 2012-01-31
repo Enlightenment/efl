@@ -2190,7 +2190,7 @@ elm_object_item_object_get(const Elm_Object_Item *it)
 EAPI void
 elm_object_item_cursor_set(Elm_Object_Item *it, const char *cursor)
 {
-   elm_widget_item_tooltip_style_set(it, cursor);
+   elm_widget_item_cursor_set(it, cursor);
 }
 
 EAPI const char *
