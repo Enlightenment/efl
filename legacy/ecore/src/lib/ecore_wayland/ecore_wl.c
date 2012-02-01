@@ -75,18 +75,18 @@ static int _ecore_wl_surface_y = 0;
 static int _ecore_wl_touch_x = 0;
 static int _ecore_wl_touch_y = 0;
 static int _ecore_wl_input_modifiers = 0;
-static struct xkb_desc *_ecore_wl_xkb;
+static struct xkb_desc *_ecore_wl_xkb = NULL;
 static uint32_t _ecore_wl_input_button = 0;
 
-static struct wl_compositor *_ecore_wl_comp;
-static struct wl_shm *_ecore_wl_shm;
-static struct wl_shell *_ecore_wl_shell;
-static struct wl_output *_ecore_wl_output;
-static struct wl_input_device *_ecore_wl_input_dev;
-static struct wl_surface *_ecore_wl_input_surface;
-static struct wl_surface *_ecore_wl_touch_surface;
-static struct wl_data_device_manager *_ecore_wl_data_manager;
-static struct wl_data_device *_ecore_wl_data_dev;
+static struct wl_compositor *_ecore_wl_comp = NULL;
+static struct wl_shm *_ecore_wl_shm = NULL;
+static struct wl_shell *_ecore_wl_shell = NULL;
+static struct wl_output *_ecore_wl_output = NULL;
+static struct wl_input_device *_ecore_wl_input_dev = NULL;
+static struct wl_surface *_ecore_wl_input_surface = NULL;
+static struct wl_surface *_ecore_wl_touch_surface = NULL;
+static struct wl_data_device_manager *_ecore_wl_data_manager = NULL;
+static struct wl_data_device *_ecore_wl_data_dev = NULL;
 
 static const struct wl_output_listener _ecore_wl_output_listener = 
 {
@@ -553,7 +553,8 @@ _ecore_wl_cb_handle_button(void *data __UNUSED__, struct wl_input_device *dev, u
         if (state)
           {
              _ecore_wl_input_button = btn;
-             _ecore_wl_mouse_down_send(_ecore_wl_input_surface, btn, t);
+             if (_ecore_wl_input_surface) 
+               _ecore_wl_mouse_down_send(_ecore_wl_input_surface, btn, t);
              /* NB: Ideally, this is not the place to check for drags.
               * IMO, drags should be handled by the client. EG: we raise the 
               * mouse_down to the client, and the client can 'request' a 
@@ -576,7 +577,8 @@ _ecore_wl_cb_handle_button(void *data __UNUSED__, struct wl_input_device *dev, u
                     }
                }
              _ecore_wl_input_button = 0;
-             _ecore_wl_mouse_up_send(_ecore_wl_input_surface, btn, t);
+             if (_ecore_wl_input_surface) 
+               _ecore_wl_mouse_up_send(_ecore_wl_input_surface, btn, t);
           }
      }
 }
@@ -1020,10 +1022,13 @@ _ecore_wl_mouse_move_send(uint32_t timestamp)
      {
         unsigned int id = 0;
 
-        if ((id = (unsigned int)wl_surface_get_user_data(_ecore_wl_input_surface)))
+        if (_ecore_wl_input_surface) 
           {
-             ev->window = id;
-             ev->event_window = id;
+             if ((id = (unsigned int)wl_surface_get_user_data(_ecore_wl_input_surface)))
+               {
+                  ev->window = id;
+                  ev->event_window = id;
+               }
           }
      }
 
