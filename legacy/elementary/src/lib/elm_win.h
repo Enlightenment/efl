@@ -423,15 +423,12 @@ EAPI Eina_Bool             elm_win_shaped_get(const Evas_Object *obj);
 EAPI void                  elm_win_alpha_set(Evas_Object *obj, Eina_Bool alpha);
 
 /**
- * Get the transparency state of a window.
+ * Get the alpha channel state of a window.
  *
  * @param obj The window object
- * @return If true, the window is transparent
- *
- * @see elm_win_transparent_set()
+ * @return If true, the window has an alpha channel
  */
-// XXX: deprecate this
-EAPI Eina_Bool             elm_win_transparent_get(const Evas_Object *obj);
+EAPI Eina_Bool             elm_win_alpha_get(const Evas_Object *obj);
 
 /**
  * Set the transparency state of a window.
@@ -447,12 +444,15 @@ EAPI Eina_Bool             elm_win_transparent_get(const Evas_Object *obj);
 EAPI void                  elm_win_transparent_set(Evas_Object *obj, Eina_Bool transparent);
 
 /**
- * Get the alpha channel state of a window.
+ * Get the transparency state of a window.
  *
  * @param obj The window object
- * @return If true, the window has an alpha channel
+ * @return If true, the window is transparent
+ *
+ * @see elm_win_transparent_set()
  */
-EAPI Eina_Bool             elm_win_alpha_get(const Evas_Object *obj);
+// XXX: deprecate this
+EAPI Eina_Bool             elm_win_transparent_get(const Evas_Object *obj);
 
 /**
  * Set the override state of a window.
