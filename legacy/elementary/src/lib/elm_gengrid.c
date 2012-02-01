@@ -1610,7 +1610,7 @@ _pan_min_get(Evas_Object *obj,
              Evas_Coord  *y)
 {
    Pan *sd = evas_object_smart_data_get(obj);
-   Evas_Coord mx, my;
+   Evas_Coord mx = 0, my = 0;
 
    if (!sd) return;
    _pan_max_get(obj, &mx, &my);
