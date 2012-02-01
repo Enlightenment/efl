@@ -1035,8 +1035,8 @@ _hide(Evas_Object *obj)
 
    _scroller_size_reset(wd);
 
-   evas_object_smart_callback_call(obj, SIG_DISMISSED, NULL);
    wd->visible = EINA_FALSE;
+   evas_object_smart_callback_call(obj, SIG_DISMISSED, NULL);
 }
 
 static void
