@@ -515,6 +515,8 @@ ecore_imf_context_cursor_position_set(Ecore_IMF_Context *ctx, int cursor_pos)
 /**
  * Notify the Input Method Context that a change in the cursor
  * location has been made. The location is relative to the canvas.
+ * The cursor location can be used to determine the position of 
+ * candidate word window in the immodule.
  *
  * @param ctx An #Ecore_IMF_Context.
  * @param x cursor x position.
