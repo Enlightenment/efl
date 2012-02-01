@@ -2637,6 +2637,32 @@ elm_widget_type_check(const Evas_Object *obj,
    return EINA_FALSE;
 }
 
+EAPI Eina_Bool
+elm_widget_item_type_check(const Evas_Object *obj,
+                           const char        *type,
+                           const char        *func)
+{
+   const char *provided, *expected = "(unknown)";
+   static int abort_on_warn = -1;
+   provided = elm_widget_type_get(obj);
+   if (EINA_LIKELY(provided == type)) return EINA_TRUE;
+   if (type) expected = type;
+   if ((!provided) || (!provided[0]))
+     {
+        provided = evas_object_type_get(obj);
+        if ((!provided) || (!provided[0]))
+          provided = "(unknown)";
+     }
+   ERR("Passing Object: %p in function: %s, of type: '%s' when expecting type: '%s'", obj, func, provided, expected);
+   if (abort_on_warn == -1)
+     {
+        if (getenv("ELM_ERROR_ABORT")) abort_on_warn = 1;
+        else abort_on_warn = 0;
+     }
+   if (abort_on_warn == 1) abort();
+   return EINA_FALSE;
+}
+
 static Evas_Object *
 _widget_name_find(const Evas_Object *obj, const char *name, int recurse)
 {

@@ -290,14 +290,6 @@ struct _Elm_Object_Item
 
 #define ELM_NEW(t) calloc(1, sizeof(t))
 
-#define ELM_OBJ_ITEM_CHECK_OR_RETURN(it, ...)                            \
-  ELM_WIDGET_ITEM_CHECK_OR_RETURN((Elm_Widget_Item *)(it), __VA_ARGS__); \
-  ELM_CHECK_WIDTYPE(WIDGET(it), widtype) __VA_ARGS__;
-
-#define ELM_OBJ_ITEM_CHECK_OR_GOTO(it, label) \
-  ELM_WIDGET_ITEM_CHECK_OR_GOTO((Elm_Widget_Item *)it, label); \
-  if (!elm_widget_type_check(WIDGET(it), (widtype), __func__)) goto label;
-
 EAPI Eina_Bool        elm_widget_api_check(int ver);
 EAPI Evas_Object     *elm_widget_add(Evas *evas);
 EAPI void             elm_widget_del_hook_set(Evas_Object *obj, void (*func)(Evas_Object *obj));
@@ -731,6 +723,12 @@ EAPI void             elm_widget_tree_dot_dump(const Evas_Object *top, FILE *out
        wdat = ELM_NEW(wdtype); if (!(wdat)) return (ret);                  \
        ob = elm_widget_add(evas); if (!(ob)) { free(wdat); return (ret); } \
     } while (0)
+
+#define ELM_OBJ_ITEM_CHECK_OR_RETURN(it, ...) \
+   ELM_WIDGET_ITEM_WIDTYPE_CHECK_OR_RETURN(it, __VA_ARGS__);
+
+#define ELM_OBJ_ITEM_CHECK_OR_GOTO(it, label)      \
+  ELM_WIDGET_ITEM_WIDTYPE_CHECK_OR_GOTO(it, label);
 
 /**
  * The drag and drop API.
