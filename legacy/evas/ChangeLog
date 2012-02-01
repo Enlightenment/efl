@@ -667,3 +667,7 @@
 	For example, this can be used to nicely change the font and size
 	in a text editor.
 
+2012-02-01  Cedric Bail
+
+	* Fix crash in Evas engine due to a direct free of an RGBA_Image
+	instead of properly droping it.
