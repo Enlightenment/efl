@@ -424,6 +424,7 @@ group { name: "elm/ctxpopup/bg/default";
          source: "elm";
          action: STATE_SET "default" 0.0;
          target: "ctxpopup_bg";
+         transition: LINEAR 0.25;
       }
    }
 }
@@ -620,23 +621,43 @@ group { name: "elm/ctxpopup/base/default";
             rel1 { to:"base"; relative: 0 0; }
             rel2 { to:"base"; relative: 0 1; }
          }
-         description { state: "up" 0.0;
+         description { state: "show_up" 0.0;
             color: 255 255 255 0;
             rel1 { to:"arrow_area_down"; relative: 0 1; }
             rel2 { to:"arrow_area_down"; relative: 1 1; }
          }
-         description { state: "left" 0.0;
+         description { state: "show_left" 0.0;
             color: 255 255 255 0;
             rel1 { to:"arrow_area_right"; relative: 1 0; }
             rel2 { to:"arrow_area_right"; relative: 1 1; }
          }
-         description { state: "right" 0.0;
+         description { state: "show_right" 0.0;
             color: 255 255 255 0;
             rel1 { to:"arrow_area_left"; relative: 0 0; }
             rel2 { to:"arrow_area_left"; relative: 0 1; }
          }
-         description { state: "down" 0.0;
+         description { state: "show_down" 0.0;
             color: 255 255 255 0;
+            rel1 { to:"arrow_area_up"; relative: 0 0; }
+            rel2 { to:"arrow_area_up"; relative: 1 0; }
+         }
+         description { state: "hide_up" 0.0;
+            color: 255 255 255 255;
+            rel1 { to:"arrow_area_down"; relative: 0 1; }
+            rel2 { to:"arrow_area_down"; relative: 1 1; }
+         }
+         description { state: "hide_left" 0.0;
+            color: 255 255 255 255;
+            rel1 { to:"arrow_area_right"; relative: 1 0; }
+            rel2 { to:"arrow_area_right"; relative: 1 1; }
+         }
+         description { state: "hide_right" 0.0;
+            color: 255 255 255 255;
+            rel1 { to:"arrow_area_left"; relative: 0 0; }
+            rel2 { to:"arrow_area_left"; relative: 0 1; }
+         }
+         description { state: "hide_down" 0.0;
+            color: 255 255 255 255;
             rel1 { to:"arrow_area_up"; relative: 0 0; }
             rel2 { to:"arrow_area_up"; relative: 1 0; }
          }
@@ -655,34 +676,70 @@ group { name: "elm/ctxpopup/base/default";
          transition: LINEAR 0.25;
          target: "ctxpopup_clip";
       }
-      program { name: "up";
+      program { name: "show_up";
          signal: "elm,state,show,up";
          source: "elm";
-         action: STATE_SET "up" 0.0;
+         action: STATE_SET "show_up" 0.0;
          transition: LINEAR 0.25;
          target: "ctxpopup_clip";
       }
-      program { name: "left";
+      program { name: "show_left";
          signal: "elm,state,show,left";
          source: "elm";
-         action: STATE_SET "left" 0.0;
+         action: STATE_SET "show_left" 0.0;
          transition: LINEAR 0.25;
          target: "ctxpopup_clip";
       }
-      program { name: "right";
+      program { name: "show_right";
          signal: "elm,state,show,right";
          source: "elm";
-         action: STATE_SET "right" 0.0;
+         action: STATE_SET "show_right" 0.0;
          transition: LINEAR 0.25;
          target: "ctxpopup_clip";
       }
-      program { name: "down";
+      program { name: "show_down";
          signal: "elm,state,show,down";
          source: "elm";
-         action: STATE_SET "down" 0.0;
+         action: STATE_SET "show_down" 0.0;
          transition: LINEAR 0.25;
          target: "ctxpopup_clip";
       }
+      program { name: "hide_up";
+         signal: "elm,state,hide,up";
+         source: "elm";
+         action: STATE_SET "hide_up" 0.0;
+         transition: LINEAR 0.25;
+         target: "ctxpopup_clip";
+         after: "hide_finished";
+      }
+      program { name: "hide_left";
+         signal: "elm,state,hide,left";
+         source: "elm";
+         action: STATE_SET "hide_left" 0.0;
+         transition: LINEAR 0.25;
+         target: "ctxpopup_clip";
+         after: "hide_finished";
+      }
+      program { name: "hide_right";
+         signal: "elm,state,hide,right";
+         source: "elm";
+         action: STATE_SET "hide_right" 0.0;
+         transition: LINEAR 0.25;
+         target: "ctxpopup_clip";
+         after: "hide_finished";
+      }
+      program { name: "hide_down";
+         signal: "elm,state,hide,down";
+         source: "elm";
+         action: STATE_SET "hide_down" 0.0;
+         transition: LINEAR 0.25;
+         target: "ctxpopup_clip";
+         after: "hide_finished";
+      }
+      program { name: "hide_finished";
+         action: SIGNAL_EMIT "elm,action,hide,finished" "";
+      }
+
    }
 }
 ///////////////////////////////////////////////////////////////////////////////

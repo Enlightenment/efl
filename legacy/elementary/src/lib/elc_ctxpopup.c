@@ -68,6 +68,10 @@ static void _update_arrow(Evas_Object *obj,
                           Elm_Ctxpopup_Direction dir,
                           Evas_Coord_Rectangle rect);
 static void _sizing_eval(Evas_Object *obj);
+static void _hide_signal_emit(Evas_Object *obj,
+                              Elm_Ctxpopup_Direction dir);
+static void _show_signal_emit(Evas_Object *obj,
+                              Elm_Ctxpopup_Direction dir);
 static void _shift_base_by_arrow(Evas_Object *arrow,
                                  Elm_Ctxpopup_Direction dir,
                                  Evas_Coord_Rectangle *rect);
@@ -102,6 +106,10 @@ static void _ctxpopup_show(void *data,
                            Evas *e,
                            Evas_Object *obj,
                            void *event_info);
+static void _hide_finished(void *data,
+                           Evas_Object *obj,
+                           const char *emission,
+                           const char *source __UNUSED__);
 static void _hide(Evas_Object *obj);
 static void _ctxpopup_hide(void *data,
                            Evas *e,
@@ -614,12 +622,41 @@ _update_arrow(Evas_Object *obj, Elm_Ctxpopup_Direction dir,
 }
 
 static void
+_hide_signal_emit(Evas_Object *obj, Elm_Ctxpopup_Direction dir)
+{
+   Widget_Data *wd;
+
+   wd = elm_widget_data_get(obj);
+   if (!wd->visible) return;
+
+   switch (dir)
+     {
+        case ELM_CTXPOPUP_DIRECTION_UP:
+           edje_object_signal_emit(wd->base, "elm,state,hide,up", "elm");
+           break;
+        case ELM_CTXPOPUP_DIRECTION_LEFT:
+           edje_object_signal_emit(wd->base, "elm,state,hide,left", "elm");
+           break;
+        case ELM_CTXPOPUP_DIRECTION_RIGHT:
+           edje_object_signal_emit(wd->base, "elm,state,hide,right", "elm");
+           break;
+        case ELM_CTXPOPUP_DIRECTION_DOWN:
+           edje_object_signal_emit(wd->base, "elm,state,hide,down", "elm");
+           break;
+        default:
+           break;
+     }
+
+   edje_object_signal_emit(wd->bg, "elm,state,hide", "elm");
+}
+
+static void
 _show_signal_emit(Evas_Object *obj, Elm_Ctxpopup_Direction dir)
 {
    Widget_Data *wd;
 
    wd = elm_widget_data_get(obj);
-   if (!wd || wd->visible) return;
+   if (wd->visible) return;
 
    switch (dir)
      {
@@ -1023,6 +1060,13 @@ _ctxpopup_show(void *data __UNUSED__, Evas *e __UNUSED__, Evas_Object *obj,
 }
 
 static void
+_hide_finished(void *data, Evas_Object *obj __UNUSED__,
+               const char *emission __UNUSED__, const char *source __UNUSED__)
+{
+   _hide(data);
+}
+
+static void
 _hide(Evas_Object *obj)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
@@ -1043,7 +1087,9 @@ static void
 _ctxpopup_hide(void *data __UNUSED__, Evas *e __UNUSED__, Evas_Object *obj,
                void *event_info __UNUSED__)
 {
-   _hide(obj);
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return;
+   _hide_signal_emit(obj, wd->dir);
 }
 
 static void
@@ -1302,6 +1348,8 @@ elm_ctxpopup_add(Evas_Object *parent)
    wd->base = edje_object_add(e);
    elm_widget_sub_object_add(obj, wd->base);
    _elm_theme_object_set(obj, wd->base, "ctxpopup", "base", "default");
+   edje_object_signal_callback_add(wd->base, "elm,action,hide,finished", "",
+                                   _hide_finished, obj);
 
    //Arrow
    wd->arrow = edje_object_add(e);
