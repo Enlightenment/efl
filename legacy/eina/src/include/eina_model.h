@@ -72,6 +72,7 @@
  *
  *       eina_model_event_callback_add(m, "deleted", _cb_on_deleted, NULL);
  *
+ *       //Adding properties to model
  *       for (i = 0; i < 5; i++)
  *         {
  *            Eina_Value val;
@@ -82,6 +83,7 @@
  *            eina_value_flush(&val);
  *         }
  *
+ *       //Adding children to model
  *       for (i = 0; i < 5; i++)
  *         {
  *            Eina_Value val;
@@ -93,6 +95,7 @@
  *            eina_model_event_callback_add(c, "deleted", _cb_on_deleted, NULL);
  *
  *            eina_model_child_append(m, c);
+ *            //Now that the child has been appended to a model, it's parent will manage it's lifecycle
  *            eina_model_unref(c);
  *            eina_value_flush(&val);
  *         }
@@ -106,6 +109,14 @@
  *       return 0;
  *    }
  * @endcode
+ * This code exemplifies the creation of a model with five properties, named:
+ * 'a', 'b', 'c', 'd' and 'e' with values 0, 1, 2, 3 and 4
+ * respectively. In addition to the 5 properties our model also get 5 children,
+ * And to each child we give a property named 'x' with a value of 1, 2, 3, 4 and
+ * 5.
+ *
+ * In other words this piece of code shows how to use eina_model to store a list
+ * of elements, given that the list itself has some properties.
  *
  * @{
  */
@@ -192,6 +203,14 @@ EAPI Eina_Bool eina_model_event_callback_del(Eina_Model *model,
 EAPI const Eina_Model_Event_Description *eina_model_event_description_get(const Eina_Model *model,
                                                                            const char *event_name) EINA_ARG_NONNULL(1, 2) EINA_WARN_UNUSED_RESULT EINA_PURE;
 
+/**
+ * @brief Returns list of events this model may emit.
+ * @param model The model whose events are to be listed.
+ * @return An Eina_List of stringshares with the name of every event. Free the
+ * list with eina_model_event_names_list_free.
+ *
+ * @since 1.2
+ */
 EAPI Eina_List *eina_model_event_names_list_get(const Eina_Model *model) EINA_ARG_NONNULL(1) EINA_WARN_UNUSED_RESULT;
 EAPI void eina_model_event_names_list_free(Eina_List *list);
 
@@ -208,6 +227,21 @@ EAPI int eina_model_event_callback_thaw(Eina_Model *model,
 EAPI Eina_Model *eina_model_copy(const Eina_Model *model) EINA_ARG_NONNULL(1) EINA_WARN_UNUSED_RESULT EINA_MALLOC;
 EAPI Eina_Model *eina_model_deep_copy(const Eina_Model *model) EINA_ARG_NONNULL(1) EINA_WARN_UNUSED_RESULT EINA_MALLOC;
 
+/**
+ * @brief Compares two models.
+ * @param a The first model to compare.
+ * @param b The second model to compare.
+ * @return Greater than zero if @a a > @a b, zero if @a a == @a b and less than
+ * zero if @a a < @a b
+ *
+ * The default comparison checks that the properties of @a a and @a b all have
+ * the same name and value, and then recursively compares all children.
+ *
+ * A model with less properties or children is considered smaller than one with
+ * more properties.
+ *
+ * @since 1.2
+ */
 EAPI int eina_model_compare(const Eina_Model *a, const Eina_Model *b) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1, 2);
 
 EAPI Eina_Bool eina_model_load(Eina_Model *model) EINA_ARG_NONNULL(1);
@@ -308,6 +342,8 @@ EAPI Eina_Bool eina_model_child_sort(Eina_Model *model,
  *    }
  *  eina_iterator_free(it);
  * @endcode
+ * This code shows how to use iterators to do something (in this example call
+ * use_child()) on every child element.
  *
  * @see eina_model_child_slice_iterator_get()
  * @see eina_model_child_reversed_iterator_get()
@@ -340,6 +376,8 @@ EAPI Eina_Iterator *eina_model_child_slice_iterator_get(Eina_Model *model,
  *    }
  *  eina_iterator_free(it);
  * @endcode
+ * This code shows how to use iterators to do something (in this example call
+ * use_child()) on every child element starting from last to first.
  *
  * @see eina_model_child_slice_iterator_get()
  * @see eina_model_child_reversed_iterator_get()
@@ -375,6 +413,9 @@ EAPI Eina_Iterator *eina_model_child_slice_reversed_iterator_get(Eina_Model *mod
  *    }
  *  eina_iterator_free(it);
  * @endcode
+ * This bit of code shows how to use iterators to do something (in this example
+ * call use_child()) on every child element in the order given by the @a compare
+ * function.
  *
  * @see eina_model_child_slice_iterator_get()
  * @see eina_model_child_reversed_iterator_get()
@@ -401,6 +442,9 @@ EAPI Eina_Iterator *eina_model_child_slice_sorted_iterator_get(Eina_Model *model
  * This is useful if you want to highlight the matching model
  * somewhere else.
  *
+ * If no child element matches a valid, and empty, iterator will be returned.
+ * Indexes returned by this iterator are guaranteed to exists.
+ *
  * @code
  *  unsigned int idx;
  *  Eina_Iterator *it = eina_model_child_filtered_iterator_get(model, filter, ctx);
@@ -412,6 +456,8 @@ EAPI Eina_Iterator *eina_model_child_slice_sorted_iterator_get(Eina_Model *model
  *    }
  *  eina_iterator_free(it);
  * @endcode
+ * This bit of code shows how to use iterators to do something (in this example
+ * print the address) on child elements that match the criteria given of @a match.
  *
  * @see eina_model_child_slice_iterator_get()
  * @see eina_model_child_reversed_iterator_get()
@@ -434,6 +480,16 @@ EAPI Eina_Iterator *eina_model_child_slice_filtered_iterator_get(Eina_Model *mod
  * @brief Convert model to string.
  * @param model the model instance.
  * @return newly allocated memory or @c NULL on failure.
+ *
+ * The default format of the ouput is:
+ * Type_Name({Property_Name: Property_Value, ...}, [Child0, Child1, ...])
+ *
+ * Where:
+ *  @li Type_Name: eina_model_type_name_get(eina_model_type_get(model))
+ *  @li Properties are sorted alphabetically.
+ *  @li Property_Value is created using eina_value_to_string().
+ *  @li Children are converted using eina_model_to_string()
+ *
  * @since 1.2
  */
 EAPI char *eina_model_to_string(const Eina_Model *model) EINA_ARG_NONNULL(1) EINA_WARN_UNUSED_RESULT EINA_MALLOC;
@@ -467,18 +523,19 @@ EAPI char *eina_model_to_string(const Eina_Model *model) EINA_ARG_NONNULL(1) EIN
  * After memory setup was done, @c constructor of the toplevel type
  * defining it is called. If desired it may call parent's constructor
  * in whatever order is desired. This may be used to create
- * properties, children and may use parent's data if needed. Just the
- * topmost type constructor is called, if interface constructors
- * should be called, do them in the desired order from the type
+ * properties, children and may use parent's data if needed. The only
+ * constructor caled is that of the most specialized type, if interface
+ * constructors should be called, do them in the desired order from the type
  * constructor.
  *
  * When the model is deleted, explicitly with eina_model_del() or
  * implicitly with eina_model_unref() on the last reference, the @c
  * destructor is called. It must release references to other
  * models. When the last reference is dropped, every @c flush is
- * called from child to parent, then memory is freed. Just the topmost
- * type destructor is called, if interface destructors should be
- * called, do them in the desired order from the type destructor.
+ * called from child to parent, then memory is freed. The only
+ * destructor caled is that of the most specialized type, if interface
+ * destructors should be called, do them in the desired order from the type
+ * destructor.
  *
  * @note a runtime check will enforce just types with ABI version
  *       #EINA_MODEL_TYPE_VERSION are used by comparing with the @c version
