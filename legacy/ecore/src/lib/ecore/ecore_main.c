@@ -848,6 +848,21 @@ _ecore_main_fd_handler_del(Ecore_Fd_Handler *fd_handler)
  * DO NOT use this function unless you are the person God comes to ask for
  * advice when He has trouble managing the Universe.
  */
+
+EAPI int
+ecore_main_loop_iterate_may_block(int may_block)
+{
+#ifndef USE_G_MAIN_LOOP
+   _ecore_lock();
+in_main_loop++;
+   _ecore_main_loop_iterate_internal(!may_block);
+in_main_loop--;
+   _ecore_unlock();
+   return _ecore_event_exist();
+#else
+   return g_main_context_iteration(NULL, may_block);
+#endif
+}
 EAPI void
 ecore_main_loop_iterate(void)
 {
@@ -1742,14 +1757,14 @@ _ecore_main_loop_iterate_internal(int once_only)
    if (_ecore_event_exist())
      {
         /* but first conceptually enter an idle state */
-         _ecore_idle_enterer_call();
-         _ecore_throttle();
-         /* now quickly poll to see which input fd's are active */
-         _ecore_main_select(0.0);
-         /* allow newly queued timers to expire from now on */
-         _ecore_timer_enable_new();
-         /* go straight to processing the events we had queued */
-         goto process_all;
+        _ecore_idle_enterer_call();
+        _ecore_throttle();
+        /* now quickly poll to see which input fd's are active */
+        _ecore_main_select(0.0);
+        /* allow newly queued timers to expire from now on */
+        _ecore_timer_enable_new();
+        /* go straight to processing the events we had queued */
+        goto process_all;
      }
 
    if (once_only)
@@ -1758,17 +1773,17 @@ _ecore_main_loop_iterate_internal(int once_only)
          * if we got any events or signals, allow new timers to process.
          * use bitwise or to force both conditions to be tested and
          * merged together */
-          if (_ecore_main_select(0.0) | _ecore_signal_count_get())
-            {
-               _ecore_timer_enable_new();
-               goto process_all;
-            }
+        if (_ecore_main_select(0.0) | _ecore_signal_count_get())
+          {
+             _ecore_timer_enable_new();
+             goto process_all;
+          }
      }
    else
      {
         /* call idle enterers ... */
-         _ecore_idle_enterer_call();
-         _ecore_throttle();
+        _ecore_idle_enterer_call();
+        _ecore_throttle();
      }
 
    /* if these calls caused any buffered events to appear - deal with them */
@@ -1787,10 +1802,10 @@ _ecore_main_loop_iterate_internal(int once_only)
    if (once_only)
      {
         /* in once_only mode enter idle here instead and then return */
-         _ecore_idle_enterer_call();
-         _ecore_throttle();
-         _ecore_timer_enable_new();
-         goto done;
+        _ecore_idle_enterer_call();
+        _ecore_throttle();
+        _ecore_timer_enable_new();
+        goto done;
      }
 
    _ecore_fps_marker_1();
@@ -1808,23 +1823,23 @@ start_loop: /***************************************************************/
    if (!_ecore_event_exist())
      {
         /* init flags */
-         next_time = _ecore_timer_next_get();
-         /* no idlers */
-         if (!_ecore_idler_exist())
-           {
-     /* sleep until timeout or forever (-1.0) waiting for on fds */
-               _ecore_main_select(next_time);
-           }
-         else
-           {
-              int action = LOOP_CONTINUE;
+        next_time = _ecore_timer_next_get();
+        /* no idlers */
+        if (!_ecore_idler_exist())
+          {
+             /* sleep until timeout or forever (-1.0) waiting for on fds */
+             _ecore_main_select(next_time);
+          }
+        else
+          {
+             int action = LOOP_CONTINUE;
 
-     /* no timers - spin */
-              if (next_time < 0) action = _ecore_main_loop_spin_no_timers();
-     /* timers - spin */
-              else action = _ecore_main_loop_spin_timers();
-              if (action == SPIN_RESTART) goto start_loop;
-           }
+             /* no timers - spin */
+             if (next_time < 0) action = _ecore_main_loop_spin_no_timers();
+             /* timers - spin */
+             else action = _ecore_main_loop_spin_timers();
+             if (action == SPIN_RESTART) goto start_loop;
+          }
      }
    _ecore_fps_marker_2();
 
@@ -1847,8 +1862,8 @@ process_all: /***********************************************************/
    if (once_only)
      {
         /* if in once_only mode handle idle exiting */
-         _ecore_idle_enterer_call();
-         _ecore_throttle();
+        _ecore_idle_enterer_call();
+        _ecore_throttle();
      }
 
 done: /*******************************************************************/
