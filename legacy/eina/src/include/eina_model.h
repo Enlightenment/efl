@@ -315,10 +315,10 @@ EAPI int eina_model_child_find(const Eina_Model *model,
                                unsigned int start_position,
                                const Eina_Model *other) EINA_ARG_NONNULL(1, 3) EINA_WARN_UNUSED_RESULT;
 
-EAPI int eina_model_child_search(const Eina_Model *model,
-                                 unsigned int start_position,
-                                 Eina_Each_Cb match,
-                                 const void *data) EINA_ARG_NONNULL(1, 3) EINA_WARN_UNUSED_RESULT;
+EAPI int eina_model_child_criteria_match(const Eina_Model *model,
+                                         unsigned int start_position,
+                                         Eina_Each_Cb match,
+                                         const void *data) EINA_ARG_NONNULL(1, 3) EINA_WARN_UNUSED_RESULT;
 
 EAPI Eina_Bool eina_model_child_sort(Eina_Model *model,
                                      Eina_Compare_Cb compare) EINA_ARG_NONNULL(1, 2);

@@ -1831,7 +1831,7 @@ _eina_model_type_base_child_filtered_iterator_next(Eina_Iterator *base, void **d
    it = (Eina_Iterator_Model_Base_Filtered *)base;
    if (it->count == 0) return EINA_FALSE;
 
-   i = eina_model_child_search(it->model, it->current, it->match, it->data);
+   i = eina_model_child_criteria_match(it->model, it->current, it->match, it->data);
    if (i < 0) return EINA_FALSE;
 
    it->current = i + 1;
@@ -4074,7 +4074,7 @@ eina_model_child_find(const Eina_Model *model, unsigned int start_position, cons
 }
 
 EAPI int
-eina_model_child_search(const Eina_Model *model, unsigned int start_position, Eina_Each_Cb match, const void *data)
+eina_model_child_criteria_match(const Eina_Model *model, unsigned int start_position, Eina_Each_Cb match, const void *data)
 {
    EINA_MODEL_INSTANCE_CHECK_VAL(model, -1);
    EINA_SAFETY_ON_NULL_RETURN_VAL(match, -1);
