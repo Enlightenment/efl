@@ -1649,12 +1649,14 @@ _signal_entry_paste_request(void *data, Evas_Object *obj __UNUSED__, const char 
 static void
 _signal_entry_copy_notify(void *data, Evas_Object *obj __UNUSED__, const char *emission __UNUSED__, const char *source __UNUSED__)
 {
+   evas_object_smart_callback_call(data, SIG_SELECTION_COPY, NULL);
    _copy(data, NULL, NULL);
 }
 
 static void
 _signal_entry_cut_notify(void *data, Evas_Object *obj __UNUSED__, const char *emission __UNUSED__, const char *source __UNUSED__)
 {
+   evas_object_smart_callback_call(data, SIG_SELECTION_CUT, NULL);
    _cut(data, NULL, NULL);
 }
 
