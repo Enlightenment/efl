@@ -2357,8 +2357,8 @@ elm_entry_add(Evas_Object *parent)
    _sizing_eval(obj);
 
    elm_entry_input_panel_layout_set(obj, ELM_INPUT_PANEL_LAYOUT_NORMAL);
+   elm_entry_input_panel_enabled_set(obj, EINA_TRUE);
 
-   wd->input_panel_enable = edje_object_part_text_input_panel_enabled_get(wd->ent, "elm.text");
    wd->autocapital_type = edje_object_part_text_autocapital_type_get(wd->ent, "elm.text");
 
 #ifdef HAVE_ELEMENTARY_X
