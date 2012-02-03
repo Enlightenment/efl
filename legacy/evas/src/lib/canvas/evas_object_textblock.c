@@ -5284,7 +5284,7 @@ evas_textblock_text_markup_to_utf8(const Evas_Object *obj, const char *text)
                   const char *escape;
 
                   escape = _escaped_char_get(esc_start, esc_end + 1);
-                  eina_strbuf_append(sbuf, escape);
+                  if (escape) eina_strbuf_append(sbuf, escape);
                   esc_start = esc_end = NULL;
                }
              else if (*p == 0)
