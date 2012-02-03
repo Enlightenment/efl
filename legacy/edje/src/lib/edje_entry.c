@@ -35,6 +35,7 @@ struct _Entry
    Eina_Bool select_mod_start : 1;
    Eina_Bool select_mod_end : 1;
    Eina_Bool had_sel : 1;
+   Eina_Bool input_panel_enable : 1;
 
 #ifdef HAVE_ECORE_IMF
    Eina_Bool have_preedit : 1;
@@ -2035,6 +2036,8 @@ _edje_entry_real_part_init(Edje_Real_Part *rp)
      {
         evas_object_show(en->cursor_bg);
         evas_object_show(en->cursor_fg);
+        en->input_panel_enable = EINA_TRUE;
+
 #ifdef HAVE_ECORE_IMF
         ecore_imf_init();
 
@@ -2504,11 +2507,10 @@ _edje_entry_input_panel_enabled_set(Edje_Real_Part *rp, Eina_Bool enabled)
    Entry *en = rp->entry_data;
 
    if (!en) return;
+   en->input_panel_enable = enabled;
 #ifdef HAVE_ECORE_IMF
    if (en->imf_context)
      ecore_imf_context_input_panel_enabled_set(en->imf_context, enabled);
-#else
-   (void) enabled;
 #endif
 }
 
@@ -2517,12 +2519,8 @@ _edje_entry_input_panel_enabled_get(Edje_Real_Part *rp)
 {
    Entry *en = rp->entry_data;
    if (!en) return EINA_FALSE;
-#ifdef HAVE_ECORE_IMF
-   if (en->imf_context)
-     return ecore_imf_context_input_panel_enabled_get(en->imf_context);
-#endif
 
-   return EINA_FALSE;
+   return en->input_panel_enable;
 }
 
 static Evas_Textblock_Cursor *
