@@ -10,7 +10,7 @@ These routines are used for Embryo.
 @version 1.0.0
 @author Carsten Haitzler <raster\@rasterman.com>
 @author Compuphase http://www.compuphase.com
-@date 2004-2011
+@date 2004-2012
 
 @section intro What is Embryo?
 

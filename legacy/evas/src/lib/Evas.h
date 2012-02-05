@@ -2,7 +2,7 @@
 @mainpage Evas
 
 @version 1.1
-@date 2000-2011
+@date 2000-2012
 
 Please see the @ref authors page for contact details.
 
