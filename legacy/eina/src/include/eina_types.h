@@ -98,13 +98,13 @@
 
 #ifdef __GNUC__
 # if __GNUC__ > 3 || (__GNUC__ == 3 && __GNUC_MINOR__ >= 4)
-#  define EINA_WARN_UNUSED_RESULT __attribute__ ((warn_unused_result))
+#  define EINA_WARN_UNUSED_RESULT __attribute__ ((__warn_unused_result__))
 # else
 #  define EINA_WARN_UNUSED_RESULT
 # endif
 
 # if (!defined(EINA_SAFETY_CHECKS)) && (__GNUC__ > 3 || (__GNUC__ == 3 && __GNUC_MINOR__ >= 3))
-#  define EINA_ARG_NONNULL(idx, ...) __attribute__ ((nonnull(idx, ## __VA_ARGS__)))
+#  define EINA_ARG_NONNULL(idx, ...) __attribute__ ((__nonnull__(idx, ## __VA_ARGS__)))
 # else
 #  define EINA_ARG_NONNULL(idx, ...)
 # endif
@@ -116,19 +116,19 @@
 # endif
 
 # if __GNUC__ > 2 || (__GNUC__ == 2 && __GNUC_MINOR__ >= 96)
-#  define EINA_MALLOC __attribute__ ((malloc))
-#  define EINA_PURE   __attribute__ ((pure))
+#  define EINA_MALLOC __attribute__ ((__malloc__))
+#  define EINA_PURE   __attribute__ ((__pure__))
 # else
 #  define EINA_MALLOC
 #  define EINA_PURE
 # endif
 
 # if __GNUC__ > 2 || (__GNUC__ == 2 && __GNUC_MINOR__ > 4)
-#  define EINA_PRINTF(fmt, arg) __attribute__((format (printf, fmt, arg)))
-#  define EINA_SCANF(fmt, arg)  __attribute__((format (scanf, fmt, arg)))
-#  define EINA_FORMAT(fmt)      __attribute__((format_arg(fmt)))
-#  define EINA_CONST        __attribute__((const))
-#  define EINA_NOINSTRUMENT __attribute__((no_instrument_function))
+#  define EINA_PRINTF(fmt, arg) __attribute__((__format__ (__printf__, fmt, arg)))
+#  define EINA_SCANF(fmt, arg)  __attribute__((__format__ (__scanf__, fmt, arg)))
+#  define EINA_FORMAT(fmt)      __attribute__((__format_arg__(fmt)))
+#  define EINA_CONST        __attribute__((__const__))
+#  define EINA_NOINSTRUMENT __attribute__((__no_instrument_function__))
 #  define EINA_UNLIKELY(exp)    __builtin_expect((exp), 0)
 #  define EINA_LIKELY(exp)      __builtin_expect((exp), 1)
 # else
