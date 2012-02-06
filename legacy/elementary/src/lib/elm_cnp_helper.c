@@ -147,22 +147,6 @@ static int vcard_receive(Cnp_Selection *sed, Ecore_X_Event_Selection_Notify *not
 
 static Eina_Bool pasteimage_append(char *file, Evas_Object *entry);
 
-#define _PARAGRAPH_SEPARATOR "\xE2\x80\xA9"
-
-/* Optimisation: Turn this into a 256 byte table:
- *	then can lookup in one index, not N checks */
-static const Escape escapes[] = {
-  { "<ps/>",  _PARAGRAPH_SEPARATOR },
-  { "<br/>",  "\n" },
-  { "<\t/>",  "\t" },
-  { "&gt;",   ">" },
-  { "&lt;",    "<" },
-  { "&amp;",   "&" },
-  { "&quot;",  "'" },
-  { "&dquot;", "\"" }
-};
-#define N_ESCAPES ((int)(sizeof(escapes) / sizeof(escapes[0])))
-
 static Cnp_Atom atoms[CNP_N_ATOMS] = {
      [CNP_ATOM_TARGETS] = {
           "TARGETS",
