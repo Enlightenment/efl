@@ -188,6 +188,10 @@ ecore_imf_context_add(const char *id)
     * set on the immodule */
    ecore_imf_context_input_panel_enabled_set(ctx, EINA_TRUE);
 
+   /* default input panel layout type is NORMAL type, so let's make sure it's
+    * set on the immodule */
+   ecore_imf_context_input_panel_layout_set(ctx, ECORE_IMF_INPUT_PANEL_LAYOUT_NORMAL);
+
    /* default input_mode is ECORE_IMF_INPUT_MODE_FULL, so let's make sure it's
     * set on the immodule */
    ecore_imf_context_input_mode_set(ctx, ECORE_IMF_INPUT_MODE_FULL);
