@@ -1378,3 +1378,55 @@ ecore_imf_context_input_panel_enabled_get (Ecore_IMF_Context *ctx)
    return ctx->input_panel_enabled;
 }
 
+/**
+ * Set the input panel-specific data to deliver to the input panel.
+ * this API is used by applications to deliver specific data to the input panel.
+ * the data format MUST be negotiated by both application and the input panel.
+ * The size and format of data are defined by the input panel.
+ *
+ * @param ctx An #Ecore_IMF_Context.
+ * @param data The specific data to be set to the input panel.
+ * @param len the length of data, in bytes, to send to the input panel
+ * @ingroup Ecore_IMF_Context_Group
+ * @since 1.2.0
+ */
+EAPI void
+ecore_imf_context_input_panel_imdata_set(Ecore_IMF_Context *ctx, const void *data, int len)
+{
+   if (!ECORE_MAGIC_CHECK(ctx, ECORE_MAGIC_CONTEXT))
+     {
+        ECORE_MAGIC_FAIL(ctx, ECORE_MAGIC_CONTEXT,
+                         "ecore_imf_context_input_panel_imdata_set");
+        return;
+     }
+
+   if (!data) return;
+
+   if (ctx->klass->input_panel_imdata_set)
+     ctx->klass->input_panel_imdata_set(ctx, data, len);
+}
+
+/**
+ * Get the specific data of the current active input panel.
+ *
+ * @param ctx An #Ecore_IMF_Context.
+ * @param data The specific data to be got from the input panel
+ * @param len The length of data
+ * @ingroup Ecore_IMF_Context_Group
+ * @since 1.2.0
+ */
+EAPI void
+ecore_imf_context_input_panel_imdata_get(Ecore_IMF_Context *ctx, void *data, int *len)
+{
+   if (!ECORE_MAGIC_CHECK(ctx, ECORE_MAGIC_CONTEXT))
+     {
+        ECORE_MAGIC_FAIL(ctx, ECORE_MAGIC_CONTEXT,
+                         "ecore_imf_context_input_panel_imdata_get");
+        return;
+     }
+
+   if (!data) return;
+
+   if (ctx->klass->input_panel_imdata_get)
+     ctx->klass->input_panel_imdata_get(ctx, data, len);
+}

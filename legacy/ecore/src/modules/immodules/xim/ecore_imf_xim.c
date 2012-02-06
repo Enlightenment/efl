@@ -759,6 +759,8 @@ static Ecore_IMF_Context_Class xim_class = {
    .input_panel_language_set = NULL,
    .input_panel_language_get = NULL,
    .cursor_location_set = _ecore_imf_context_xim_cursor_location_set,
+   .input_panel_imdata_set = NULL,
+   .input_panel_imdata_get = NULL,
 };
 
 static Ecore_IMF_Context *

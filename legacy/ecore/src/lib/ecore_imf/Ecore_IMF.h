@@ -345,6 +345,8 @@ struct _Ecore_IMF_Context_Class
    void (*input_panel_language_set) (Ecore_IMF_Context *ctx, Ecore_IMF_Input_Panel_Lang lang);
    Ecore_IMF_Input_Panel_Lang (*input_panel_language_get) (Ecore_IMF_Context *ctx);
    void (*cursor_location_set) (Ecore_IMF_Context *ctx, int x, int y, int w, int h);
+   void (*input_panel_imdata_set)(Ecore_IMF_Context *ctx, const void* data, int len);
+   void (*input_panel_imdata_get)(Ecore_IMF_Context *ctx, void* data, int *len);
 };
 
 struct _Ecore_IMF_Context_Info
@@ -418,6 +420,8 @@ EAPI void                          ecore_imf_context_input_panel_language_set(Ec
 EAPI Ecore_IMF_Input_Panel_Lang    ecore_imf_context_input_panel_language_get(Ecore_IMF_Context *ctx);
 EAPI void                          ecore_imf_context_input_panel_enabled_set(Ecore_IMF_Context *ctx, Eina_Bool enable);
 EAPI Eina_Bool                     ecore_imf_context_input_panel_enabled_get(Ecore_IMF_Context *ctx);
+EAPI void                          ecore_imf_context_input_panel_imdata_set(Ecore_IMF_Context *ctx, const void *data, int len);
+EAPI void                          ecore_imf_context_input_panel_imdata_get(Ecore_IMF_Context *ctx, void *data, int *len);
 
 /* The following entry points must be exported by each input method module
  */
