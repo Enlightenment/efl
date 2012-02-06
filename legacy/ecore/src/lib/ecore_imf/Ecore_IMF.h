@@ -68,11 +68,11 @@ typedef void (*Ecore_IMF_Event_Cb) (void *data, Ecore_IMF_Context *ctx, void *ev
 
 typedef enum
 {
-    ECORE_IMF_CALLBACK_PREEDIT_START,
-    ECORE_IMF_CALLBACK_PREEDIT_END,
-    ECORE_IMF_CALLBACK_PREEDIT_CHANGED,
-    ECORE_IMF_CALLBACK_COMMIT,
-    ECORE_IMF_CALLBACK_DELETE_SURROUNDING
+    ECORE_IMF_CALLBACK_PREEDIT_START,      /**< "PREEDIT_START" is called when a new preediting sequence starts. */
+    ECORE_IMF_CALLBACK_PREEDIT_END,        /**< "PREEDIT_END" is called when a preediting sequence has been completed or canceled. */
+    ECORE_IMF_CALLBACK_PREEDIT_CHANGED,    /**< "PREEDIT_CHANGED" is called whenever the preedit sequence currently being entered has changed. */
+    ECORE_IMF_CALLBACK_COMMIT,             /**< "COMMIT" is called when a complete input sequence has been entered by the user */
+    ECORE_IMF_CALLBACK_DELETE_SURROUNDING  /**< "DELETE_SURROUNDING" is called when the input method needs to delete all or part of the context surrounding the cursor */
 } Ecore_IMF_Callback_Type;
 
 typedef enum
@@ -133,10 +133,10 @@ typedef enum
 
 typedef enum
 {
-   ECORE_IMF_AUTOCAPITAL_TYPE_NONE,
-   ECORE_IMF_AUTOCAPITAL_TYPE_WORD,
-   ECORE_IMF_AUTOCAPITAL_TYPE_SENTENCE,
-   ECORE_IMF_AUTOCAPITAL_TYPE_ALLCHARACTER
+   ECORE_IMF_AUTOCAPITAL_TYPE_NONE,         /**< No auto-capitalization when typing */
+   ECORE_IMF_AUTOCAPITAL_TYPE_WORD,         /**< Autocapitalize each word typed */
+   ECORE_IMF_AUTOCAPITAL_TYPE_SENTENCE,     /**< Autocapitalize the start of each sentence */
+   ECORE_IMF_AUTOCAPITAL_TYPE_ALLCHARACTER, /**< Autocapitalize all letters */
 } Ecore_IMF_Autocapital_Type;
 
 typedef enum
@@ -314,9 +314,9 @@ union _Ecore_IMF_Event
 
 struct _Ecore_IMF_Preedit_Attr
 {
-   Ecore_IMF_Preedit_Type preedit_type;
-   unsigned int start_index;
-   unsigned int end_index;
+   Ecore_IMF_Preedit_Type preedit_type; /**< preedit style type */
+   unsigned int start_index;            /**< preedit start index in characters (NOT in bytes) */
+   unsigned int end_index;              /**< preedit end index in characters (NOT in bytes) */
 };
 
 struct _Ecore_IMF_Context_Class
