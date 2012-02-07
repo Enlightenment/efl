@@ -1,3 +1,9 @@
+2012-02-07  WooHyun Jung
+
+        * Added edje_object_markup_filter_callback_{add,del,del_full}.
+        These let you append(delete) markup filter functions for filtering
+        inserted text.
+
 2011-01-29  Carsten Haitzler (The Rasterman)
 
         1.0.0 release

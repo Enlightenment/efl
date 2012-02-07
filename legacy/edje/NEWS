@@ -10,6 +10,7 @@ Additions:
     * edje.version() Lua function.
     * minmul edc property.
     * add min: SOURCE and max: SOURCE.
+    * add edje_object_markup_filter_callback_add/del/delfull().
 
 Improvements:
     * speedup load time of Edje file.
