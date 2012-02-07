@@ -743,7 +743,6 @@ test_entry3(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info
    elm_entry_single_line_set(en, 1);
    elm_box_pack_end(bx, en);
    evas_object_show(en);
-   elm_entry_input_panel_enabled_set(en, EINA_FALSE);
 
    bx2 = elm_box_add(win);
    elm_box_horizontal_set(bx2, EINA_TRUE);
