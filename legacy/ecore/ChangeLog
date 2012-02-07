@@ -473,3 +473,7 @@
 
         * Set ECORE_IMF_INPUT_PANEL_LAYOUT_NORMAL as default layout in ecore_imf_context_add.
         * Add Ecore_IMF function to set or get the input panel-specific data.
+
+2012-02-07  Jihoon Kim (jihoon)
+
+        * Support ecore_imf_context_input_panel_show/hide in XIM module.

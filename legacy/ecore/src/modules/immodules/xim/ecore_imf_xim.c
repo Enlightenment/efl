@@ -294,6 +294,10 @@ _ecore_imf_context_xim_focus_in(Ecore_IMF_Context *ctx)
    imf_context_data = ecore_imf_context_data_get(ctx);
    ic = imf_context_data->ic;
    imf_context_data->has_focus = EINA_TRUE;
+
+   if (ecore_imf_context_input_panel_enabled_get(ctx))
+     ecore_imf_context_input_panel_show(ctx);
+
    if (ic)
      {
         char *str;
@@ -326,6 +330,9 @@ _ecore_imf_context_xim_focus_out(Ecore_IMF_Context *ctx)
         ic = imf_context_data->ic;
         if (ic)
           XUnsetICFocus(ic);
+
+        if (ecore_imf_context_input_panel_enabled_get(ctx))
+          ecore_imf_context_input_panel_hide(ctx);
      }
 #else
    (void)ctx;
@@ -499,6 +506,38 @@ _ecore_imf_context_xim_cursor_location_set(Ecore_IMF_Context *ctx,
    (void)h;
 #endif
    (void)(w); // yes w is unused, but only a bi-product of the algorithm
+}
+
+static void
+_ecore_imf_context_xim_input_panel_show(Ecore_IMF_Context *ctx)
+{
+   EINA_LOG_DBG("%s in", __FUNCTION__);
+
+#ifdef ENABLE_XIM
+   Ecore_IMF_Context_Data *imf_context_data;
+   imf_context_data = ecore_imf_context_data_get(ctx);
+
+   ecore_x_e_virtual_keyboard_state_set
+        (imf_context_data->win, ECORE_X_VIRTUAL_KEYBOARD_STATE_ON);
+#else
+   (void)ctx;
+#endif
+}
+
+static void
+_ecore_imf_context_xim_input_panel_hide(Ecore_IMF_Context *ctx)
+{
+   EINA_LOG_DBG("%s in", __FUNCTION__);
+
+#ifdef ENABLE_XIM
+   Ecore_IMF_Context_Data *imf_context_data;
+   imf_context_data = ecore_imf_context_data_get(ctx);
+
+   ecore_x_e_virtual_keyboard_state_set
+        (imf_context_data->win, ECORE_X_VIRTUAL_KEYBOARD_STATE_OFF);
+#else
+   (void)ctx;
+#endif
 }
 
 #ifdef ENABLE_XIM
@@ -739,8 +778,8 @@ static Ecore_IMF_Context_Class xim_class = {
    .del = _ecore_imf_context_xim_del,
    .client_window_set = _ecore_imf_context_xim_client_window_set,
    .client_canvas_set = NULL,
-   .show = NULL,
-   .hide = NULL,
+   .show = _ecore_imf_context_xim_input_panel_show,
+   .hide = _ecore_imf_context_xim_input_panel_hide,
    .preedit_string_get = _ecore_imf_context_xim_preedit_string_get,
    .focus_in = _ecore_imf_context_xim_focus_in,
    .focus_out = _ecore_imf_context_xim_focus_out,
