@@ -2765,6 +2765,25 @@ _elm_inwin_focus_next_hook(const Evas_Object *obj, Elm_Focus_Direction dir, Evas
 }
 
 static void
+_elm_inwin_text_set_hook(Evas_Object *obj, const char *item, const char *text)
+{
+   Widget_Data *wd = elm_widget_data_get(obj);
+
+   if (!wd || !item) return;
+   edje_object_part_text_set(wd->frm, item, text);
+   _sizing_eval(obj);
+}
+
+static const char *
+_elm_inwin_text_get_hook(const Evas_Object *obj, const char *item)
+{
+   Widget_Data *wd = elm_widget_data_get(obj);
+
+   if (!item || !wd || !wd->frm) return NULL;
+   return edje_object_part_text_get(wd->frm, item);
+}
+
+static void
 _sizing_eval(Evas_Object *obj)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
@@ -2819,6 +2838,8 @@ elm_win_inwin_add(Evas_Object *obj)
    elm_widget_del_hook_set(obj2, _del_hook);
    elm_widget_theme_hook_set(obj2, _theme_hook);
    elm_widget_focus_next_hook_set(obj2, _elm_inwin_focus_next_hook);
+   elm_widget_text_set_hook_set(obj2, _elm_inwin_text_set_hook);
+   elm_widget_text_get_hook_set(obj2, _elm_inwin_text_get_hook);
    elm_widget_can_focus_set(obj2, EINA_TRUE);
    elm_widget_highlight_ignore_set(obj2, EINA_TRUE);
 
