@@ -926,6 +926,9 @@ isf_imf_context_focus_in(Ecore_IMF_Context *ctx)
 
         _panel_client.send();
      }
+
+   if (ecore_imf_context_input_panel_enabled_get(ctx))
+     ecore_imf_context_input_panel_show(ctx);
 }
 
 /**
@@ -968,6 +971,9 @@ isf_imf_context_focus_out(Ecore_IMF_Context *ctx)
         _panel_client.send();
         _focused_ic = 0;
      }
+
+   if (ecore_imf_context_input_panel_enabled_get(ctx))
+     ecore_imf_context_input_panel_hide(ctx);
 }
 
 /**
@@ -1389,6 +1395,32 @@ isf_imf_context_filter_event(Ecore_IMF_Context *ctx, Ecore_IMF_Event_Type type, 
    _panel_client.send();
 
    return ret;
+}
+
+EAPI void
+isf_imf_context_input_panel_show(Ecore_IMF_Context *ctx)
+{
+   SCIM_DEBUG_FRONTEND(1) << __FUNCTION__ << "...\n";
+
+   EcoreIMFContextISF *ic = (EcoreIMFContextISF*)ecore_imf_context_data_get(ctx);
+   if (ic == NULL || ic->impl == NULL)
+     return;
+
+   ecore_x_e_virtual_keyboard_state_set
+        (ic->impl->client_window, ECORE_X_VIRTUAL_KEYBOARD_STATE_ON);
+}
+
+EAPI void
+isf_imf_context_input_panel_hide(Ecore_IMF_Context *ctx)
+{
+   SCIM_DEBUG_FRONTEND(1) << __FUNCTION__ << "...\n";
+
+   EcoreIMFContextISF *ic = (EcoreIMFContextISF*)ecore_imf_context_data_get(ctx);
+   if (ic == NULL || ic->impl == NULL)
+     return;
+
+   ecore_x_e_virtual_keyboard_state_set
+        (ic->impl->client_window, ECORE_X_VIRTUAL_KEYBOARD_STATE_OFF);
 }
 
 /* Panel Slot functions */

@@ -19,8 +19,8 @@ extern "C"
         isf_imf_context_del,                    /* del */
         isf_imf_context_client_window_set,      /* client_window_set */
         isf_imf_context_client_canvas_set,      /* client_canvas_set */
-        NULL,                                   /* isf_imf_context_input_panel_show, - show */
-        NULL,                                   /* isf_imf_context_input_panel_hide, - hide */
+        isf_imf_context_input_panel_show,       /* input_panel_show, - show */
+        isf_imf_context_input_panel_hide,       /* input_panel_hide, - hide */
         isf_imf_context_preedit_string_get,     /* get_preedit_string */
         isf_imf_context_focus_in,               /* focus_in */
         isf_imf_context_focus_out,              /* focus_out */
