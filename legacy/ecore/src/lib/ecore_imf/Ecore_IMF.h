@@ -315,8 +315,8 @@ union _Ecore_IMF_Event
 struct _Ecore_IMF_Preedit_Attr
 {
    Ecore_IMF_Preedit_Type preedit_type; /**< preedit style type */
-   unsigned int start_index;            /**< preedit start index in characters (NOT in bytes) */
-   unsigned int end_index;              /**< preedit end index in characters (NOT in bytes) */
+   unsigned int start_index;            /**< start index of the range (in bytes) */
+   unsigned int end_index;              /**< end index of the range (in bytes) */
 };
 
 struct _Ecore_IMF_Context_Class
