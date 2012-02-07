@@ -3012,6 +3012,7 @@ EAPI void            *edje_object_text_insert_filter_callback_del_full  (Evas_Ob
  * @param part The part name
  * @param func The callback function that will act as markup filter
  * @param data User provided data to pass to the filter function
+ * @since 1.2.0
  */
 EAPI void edje_object_markup_filter_callback_add(Evas_Object *obj, const char *part, Edje_Markup_Filter_Cb func, void *data);
 
@@ -3029,6 +3030,7 @@ EAPI void edje_object_markup_filter_callback_add(Evas_Object *obj, const char *p
  * @param func The function callback to remove
  *
  * @return The user data pointer if succesful, or NULL otherwise
+ * @since 1.2.0
  */
 EAPI void *edje_object_markup_filter_callback_del(Evas_Object *obj, const char *part, Edje_Markup_Filter_Cb func);
 
@@ -3048,6 +3050,7 @@ EAPI void *edje_object_markup_filter_callback_del(Evas_Object *obj, const char *
  * @param data The data passed to the callback function
  *
  * @return The same data pointer if succesful, or NULL otherwise
+ * @since 1.2.0
  */
 EAPI void *edje_object_markup_filter_callback_del_full(Evas_Object *obj, const char *part, Edje_Markup_Filter_Cb func, void *data);
 
