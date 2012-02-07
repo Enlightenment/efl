@@ -743,6 +743,7 @@ test_entry3(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info
    elm_entry_single_line_set(en, 1);
    elm_box_pack_end(bx, en);
    evas_object_show(en);
+   elm_entry_input_panel_enabled_set(en, EINA_FALSE);
 
    bx2 = elm_box_add(win);
    elm_box_horizontal_set(bx2, EINA_TRUE);
@@ -1636,6 +1637,56 @@ test_entry5(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info
    evas_object_show(bx2);
 
    evas_object_resize(win, 320, 480);
+
+   elm_object_focus_set(win, EINA_TRUE);
+   evas_object_show(win);
+}
+
+void
+test_entry6(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+{
+   Evas_Object *win, *bg, *bx, *en;
+
+   win = elm_win_add(NULL, "entry6", ELM_WIN_BASIC);
+   elm_win_title_set(win, "Entry 6");
+   elm_win_autodel_set(win, EINA_TRUE);
+
+   bg = elm_bg_add(win);
+   elm_win_resize_object_add(win, bg);
+   evas_object_size_hint_weight_set(bg, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_show(bg);
+
+   bx = elm_box_add(win);
+   evas_object_size_hint_weight_set(bx, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   elm_win_resize_object_add(win, bx);
+   evas_object_show(bx);
+
+   en = elm_entry_add(win);
+   elm_entry_scrollable_set(en, EINA_TRUE);
+   elm_entry_line_wrap_set(en, ELM_WRAP_CHAR);
+   evas_object_size_hint_weight_set(en, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_size_hint_align_set(en, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   elm_object_text_set(en,
+				"input_panel_enabled: TRUE.<br>"
+                "When this entry gets a focus, virtual keyboard will be shown "
+				"in illume environment.");
+   elm_box_pack_end(bx, en);
+   evas_object_show(en);
+
+   en = elm_entry_add(win);
+   elm_entry_scrollable_set(en, EINA_TRUE);
+   elm_entry_line_wrap_set(en, ELM_WRAP_CHAR);
+   evas_object_size_hint_weight_set(en, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_size_hint_align_set(en, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   elm_object_text_set(en,
+				"input_panel_enabled: FALSE.<br>"
+                "This entry doesn't allow to show virtual keyboard automatically.<br>"
+                "it is used in case that wants its own keypad such as calculator.");
+   elm_entry_input_panel_enabled_set(en, EINA_FALSE);
+   elm_box_pack_end(bx, en);
+   evas_object_show(en);
+
+   evas_object_resize(win, 320, 300);
 
    elm_object_focus_set(win, EINA_TRUE);
    evas_object_show(win);

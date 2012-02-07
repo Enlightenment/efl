@@ -39,6 +39,7 @@ void test_entry_scrolled(void *data, Evas_Object *obj, void *event_info);
 void test_entry3(void *data, Evas_Object *obj, void *event_info);
 void test_entry4(void *data, Evas_Object *obj, void *event_info);
 void test_entry5(void *data, Evas_Object *obj, void *event_info);
+void test_entry6(void *data, Evas_Object *obj, void *event_info);
 void test_entry_notepad(void *data, Evas_Object *obj, void *event_info);
 void test_multibuttonentry(void *data, Evas_Object *obj, void *event_info);
 void test_anchorview(void *data, Evas_Object *obj, void *event_info);
@@ -357,6 +358,7 @@ add_tests:
    ADD_TEST(NULL, "Entries", "Entry 3", test_entry3);
    ADD_TEST(NULL, "Entries", "Entry 4", test_entry4);
    ADD_TEST(NULL, "Entries", "Entry 5", test_entry5);
+   ADD_TEST(NULL, "Entries", "Entry 6", test_entry6);
    ADD_TEST(NULL, "Entries", "Entry Notepad", test_entry_notepad);
    ADD_TEST(NULL, "Entries", "Multibuttonentry", test_multibuttonentry);
 
