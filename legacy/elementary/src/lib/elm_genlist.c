@@ -3222,16 +3222,20 @@ _item_content_get_hook(Elm_Gen_Item *it, const char *part)
 static void
 _item_content_set_hook(Elm_Gen_Item *it, const char *part, Evas_Object *content)
 {
-   edje_object_part_swallow(VIEW(it), part, content);
+   if (content && part)
+     {
+        it->content_objs = eina_list_append(it->content_objs, content);
+        edje_object_part_swallow(VIEW(it), part, content);
+     }
 }
 
 static Evas_Object *
 _item_content_unset_hook(Elm_Gen_Item *it, const char *part)
 {
    Evas_Object *obj;
-
    obj = edje_object_part_swallow_get(VIEW(it), part);
    if (!obj) return NULL;
+   it->content_objs = eina_list_remove(it->content_objs, obj);
    edje_object_part_unswallow(VIEW(it), obj);
    return obj;
 }
