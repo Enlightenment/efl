@@ -4678,7 +4678,7 @@ eina_model_method_resolve(const Eina_Model *model, unsigned int offset)
    const Eina_Model_Description *desc;
 
    EINA_MODEL_INSTANCE_CHECK_VAL(model, NULL);
-   EINA_SAFETY_ON_FALSE_RETURN_VAL(offset > sizeof(Eina_Model_Type), NULL);
+   EINA_SAFETY_ON_FALSE_RETURN_VAL(offset >= sizeof(Eina_Model_Type), NULL);
    EINA_SAFETY_ON_FALSE_RETURN_VAL(offset % sizeof(void *) == 0, NULL);
 
    desc = model->desc;
@@ -4696,7 +4696,7 @@ eina_model_type_method_resolve(const Eina_Model_Type *type, const Eina_Model *mo
    const Eina_Model_Description *desc;
 
    EINA_MODEL_TYPE_INSTANCE_CHECK_VAL(type, model, NULL);
-   EINA_SAFETY_ON_FALSE_RETURN_VAL(offset > sizeof(Eina_Model_Type), NULL);
+   EINA_SAFETY_ON_FALSE_RETURN_VAL(offset >= sizeof(Eina_Model_Type), NULL);
    EINA_SAFETY_ON_FALSE_RETURN_VAL(offset % sizeof(void *) == 0, NULL);
 
    desc = model->desc;
@@ -4833,7 +4833,7 @@ EAPI const void *
 eina_model_interface_method_resolve(const Eina_Model_Interface *iface, const Eina_Model *model, unsigned int offset)
 {
    EINA_MODEL_INTERFACE_IMPLEMENTED_CHECK_VAL(iface, model, NULL);
-   EINA_SAFETY_ON_FALSE_RETURN_VAL(offset > sizeof(Eina_Model_Interface), NULL);
+   EINA_SAFETY_ON_FALSE_RETURN_VAL(offset >= sizeof(Eina_Model_Interface), NULL);
    EINA_SAFETY_ON_FALSE_RETURN_VAL(offset % sizeof(void *) == 0, NULL);
    return _eina_model_interface_find_offset(iface, offset);
 }
