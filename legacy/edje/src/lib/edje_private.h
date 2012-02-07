@@ -322,6 +322,7 @@ typedef struct _Edje_Var_Timer Edje_Var_Timer;
 typedef struct _Edje_Var_Pool Edje_Var_Pool;
 typedef struct _Edje_Signal_Source_Char Edje_Signal_Source_Char;
 typedef struct _Edje_Text_Insert_Filter_Callback Edje_Text_Insert_Filter_Callback;
+typedef struct _Edje_Markup_Filter_Callback Edje_Markup_Filter_Callback;
 
 #define EDJE_INF_MAX_W 100000
 #define EDJE_INF_MAX_H 100000
@@ -1077,6 +1078,7 @@ struct _Edje
    Edje_Real_Part       *focused_part;
    Eina_List            *subobjs;
    Eina_List            *text_insert_filter_callbacks;
+   Eina_List            *markup_filter_callbacks;
    void                 *script_only_data;
 
    int                   table_programs_size;
@@ -1334,6 +1336,13 @@ struct _Edje_Text_Insert_Filter_Callback
 {
    const char  *part;
    Edje_Text_Filter_Cb func;
+   void        *data;
+};
+
+struct _Edje_Markup_Filter_Callback
+{
+   const char  *part;
+   Edje_Markup_Filter_Cb func;
    void        *data;
 };
 

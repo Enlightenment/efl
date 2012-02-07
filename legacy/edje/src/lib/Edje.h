@@ -1054,6 +1054,7 @@ typedef void         (*Edje_Signal_Cb)          (void *data, Evas_Object *obj, c
 typedef void         (*Edje_Text_Change_Cb)     (void *data, Evas_Object *obj, const char *part);
 typedef void         (*Edje_Message_Handler_Cb) (void *data, Evas_Object *obj, Edje_Message_Type type, int id, void *msg); /**< Edje message handler callback functions's prototype definition. @c data will have the auxiliary data pointer set at the time the callback registration. @c obj will be a pointer the Edje object where the message comes from. @c type will identify the type of the given message and @c msg will be a pointer the message's contents, de facto, which depend on @c type. */
 typedef void         (*Edje_Text_Filter_Cb)     (void *data, Evas_Object *obj, const char *part, Edje_Text_Filter_Type type, char **text);
+typedef void         (*Edje_Markup_Filter_Cb)   (void *data, Evas_Object *obj, const char *part, char **text);
 typedef Evas_Object *(*Edje_Item_Provider_Cb)   (void *data, Evas_Object *obj, const char *part, const char *item);
 
 /**
@@ -2924,8 +2925,20 @@ EAPI Eina_Bool        edje_object_part_text_input_panel_enabled_get (const Evas_
  * will make Edje break out of the filter cycle and reject the inserted
  * text.
  *
+ * @warning This function will be deprecated because of difficulty in use.
+ *          The type(format, text, or makrup) of text should be always
+ *          checked in the filter function for correct filtering.
+ *          Please use edje_object_markup_filter_callback_add() instead. There
+ *          is no need to check the type of text in the filter function
+ *          because the text is always markup.
+ * @warning If you use this function with
+ *          edje_object_markup_filter_callback_add() togehter, all
+ *          Edje_Text_Filter_Cb functions and Edje_Markup_Filter_Cb functions
+ *          will be executed, and then filtered text will be inserted.
+ *
  * @see edje_object_text_insert_filter_callback_del
  * @see edje_object_text_insert_filter_callback_del_full
+ * @see edje_object_markup_filter_callback_add
  *
  * @param obj A valid Evas_Object handle
  * @param part The part name
@@ -2969,6 +2982,74 @@ EAPI void            *edje_object_text_insert_filter_callback_del       (Evas_Ob
  * @return The same data pointer if succesful, or NULL otherwise
  */
 EAPI void            *edje_object_text_insert_filter_callback_del_full  (Evas_Object *obj, const char *part, Edje_Text_Filter_Cb func, void *data);
+
+/**
+ * Add a markup filter function for newly inserted text.
+ *
+ * Whenever text is inserted (not the same as set) into the given @p part,
+ * the list of markup filter functions will be called to decide if and how 
+ * the new text will be accepted.
+ * The text parameter in the @p func filter is always markup. It can be 
+ * modified by the user and it's up to him to free the one passed if he's to
+ * change the pointer. If doing so, the newly set text should be malloc'ed,
+ * as once all the filters are called Edje will free it.
+ * If the text is to be rejected, freeing it and setting the pointer to NULL
+ * will make Edje break out of the filter cycle and reject the inserted
+ * text.
+ * This function is different from edje_object_text_insert_filter_callback_add()
+ * in that the text parameter in the @p fucn filter is always markup.
+ *
+ * @warning If you use this function with
+ *          edje_object_text_insert_filter_callback_add() togehter, all
+ *          Edje_Text_Filter_Cb functions and Edje_Markup_Filter_Cb functions
+ *          will be executed, and then filtered text will be inserted.
+ *
+ * @see edje_object_markup_filter_callback_del
+ * @see edje_object_markup_filter_callback_del_full
+ * @see edje_object_text_insert_filter_callback_add
+ *
+ * @param obj A valid Evas_Object handle
+ * @param part The part name
+ * @param func The callback function that will act as markup filter
+ * @param data User provided data to pass to the filter function
+ */
+EAPI void edje_object_markup_filter_callback_add(Evas_Object *obj, const char *part, Edje_Markup_Filter_Cb func, void *data);
+
+/**
+ * Delete a function from the markup filter list.
+ *
+ * Delete the given @p func filter from the list in @p part. Returns
+ * the user data pointer given when added.
+ *
+ * @see edje_object_markup_filter_callback_add
+ * @see edje_object_markup_filter_callback_del_full
+ *
+ * @param obj A valid Evas_Object handle
+ * @param part The part name
+ * @param func The function callback to remove
+ *
+ * @return The user data pointer if succesful, or NULL otherwise
+ */
+EAPI void *edje_object_markup_filter_callback_del(Evas_Object *obj, const char *part, Edje_Markup_Filter_Cb func);
+
+/**
+ * Delete a function and matching user data from the markup filter list.
+ *
+ * Delete the given @p func filter and @p data user data from the list
+ * in @p part.
+ * Returns the user data pointer given when added.
+ *
+ * @see edje_object_markup_filter_callback_add
+ * @see edje_object_markup_filter_callback_del
+ *
+ * @param obj A valid Evas_Object handle
+ * @param part The part name
+ * @param func The function callback to remove
+ * @param data The data passed to the callback function
+ *
+ * @return The same data pointer if succesful, or NULL otherwise
+ */
+EAPI void *edje_object_markup_filter_callback_del_full(Evas_Object *obj, const char *part, Edje_Markup_Filter_Cb func, void *data);
 
 /**
  * @brief Swallows an object into the edje.

@@ -1941,6 +1941,71 @@ edje_object_text_insert_filter_callback_del_full(Evas_Object *obj, const char *p
    return NULL;
 }
 
+EAPI void
+edje_object_markup_filter_callback_add(Evas_Object *obj, const char *part, Edje_Markup_Filter_Cb func, void *data)
+{
+   Edje *ed;
+   Edje_Markup_Filter_Callback *cb;
+
+   ed = _edje_fetch(obj);
+   if ((!ed) || (!part)) return;
+   cb = calloc(1, sizeof(Edje_Markup_Filter_Callback));
+   cb->part = eina_stringshare_add(part);
+   cb->func = func;
+   cb->data = (void *)data;
+   ed->markup_filter_callbacks =
+     eina_list_append(ed->markup_filter_callbacks, cb);
+}
+
+EAPI void *
+edje_object_markup_filter_callback_del(Evas_Object *obj, const char *part, Edje_Markup_Filter_Cb func)
+{
+   Edje *ed;
+   Edje_Markup_Filter_Callback *cb;
+   Eina_List *l;
+
+   ed = _edje_fetch(obj);
+   if ((!ed) || (!part)) return NULL;
+   EINA_LIST_FOREACH(ed->markup_filter_callbacks, l, cb)
+     {
+        if ((!strcmp(cb->part, part)) && (cb->func == func))
+          {
+             void *data = cb->data;
+             ed->markup_filter_callbacks =
+                eina_list_remove_list(ed->markup_filter_callbacks, l);
+             eina_stringshare_del(cb->part);
+             free(cb);
+             return data;
+          }
+     }
+   return NULL;
+}
+
+EAPI void *
+edje_object_markup_filter_callback_del_full(Evas_Object *obj, const char *part, Edje_Markup_Filter_Cb func, void *data)
+{
+   Edje *ed;
+   Edje_Markup_Filter_Callback *cb;
+   Eina_List *l;
+
+   ed = _edje_fetch(obj);
+   if ((!ed) || (!part)) return NULL;
+   EINA_LIST_FOREACH(ed->markup_filter_callbacks, l, cb)
+     {
+        if ((!strcmp(cb->part, part)) && (cb->func == func) &&
+            (cb->data == data))
+          {
+             void *tmp = cb->data;
+             ed->markup_filter_callbacks =
+                eina_list_remove_list(ed->markup_filter_callbacks, l);
+             eina_stringshare_del(cb->part);
+             free(cb);
+             return tmp;
+          }
+     }
+   return NULL;
+}
+
 EAPI Eina_Bool
 edje_object_part_swallow(Evas_Object *obj, const char *part, Evas_Object *obj_swallow)
 {

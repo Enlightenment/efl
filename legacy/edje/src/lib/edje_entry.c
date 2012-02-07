@@ -180,6 +180,27 @@ _edje_focus_out_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, 
 }
 
 static void
+_text_filter_markup_prepend_internal(Entry *en, Evas_Textblock_Cursor *c, char *text)
+{
+   Edje_Markup_Filter_Callback *cb;
+   Eina_List *l;
+
+   EINA_LIST_FOREACH(en->rp->edje->markup_filter_callbacks, l, cb)
+     {
+        if (!strcmp(cb->part, en->rp->part->name))
+          {
+             cb->func(cb->data, en->rp->edje->obj, cb->part, &text);
+             if (!text) break;
+          }
+     }
+   if (text)
+     {
+        evas_object_textblock_text_markup_prepend(c, text);
+        free(text);
+     }
+}
+
+static void
 _text_filter_text_prepend(Entry *en, Evas_Textblock_Cursor *c, const char *text)
 {
    char *text2;
@@ -197,8 +218,11 @@ _text_filter_text_prepend(Entry *en, Evas_Textblock_Cursor *c, const char *text)
      }
    if (text2)
      {
-        evas_textblock_cursor_text_prepend(c, text2);
+        char *markup_text;
+        markup_text = evas_textblock_text_utf8_to_markup(NULL, text2);
         free(text2);
+        if (markup_text)
+          _text_filter_markup_prepend_internal(en, c, markup_text);
      }
 }
 
@@ -220,8 +244,61 @@ _text_filter_format_prepend(Entry *en, Evas_Textblock_Cursor *c, const char *tex
      }
    if (text2)
      {
-        evas_textblock_cursor_format_prepend(c, text2);
+        char *s, *markup_text;
+
+        s = text2;
+        if (*s == '+')
+          {
+             s++;
+             while (*s == ' ') s++;
+             if (!s)
+               {
+                  free(text2);
+                  return;
+               }
+             markup_text = (char*) malloc(strlen(s) + 3);
+             if (markup_text)
+               {
+                  *(markup_text) = '<';
+                  strncpy((markup_text + 1), s, strlen(s));
+                  *(markup_text + strlen(s) + 1) = '>';
+                  *(markup_text + strlen(s) + 2) = '\0';
+               }
+          }
+        else if (s[0] == '-')
+          {
+             s++;
+             while (*s == ' ') s++;
+             if (!s)
+               {
+                  free(text2);
+                  return;
+               }
+             markup_text = (char*) malloc(strlen(s) + 4);
+             if (markup_text)
+               {
+                  *(markup_text) = '<';
+                  *(markup_text + 1) = '/';
+                  strncpy((markup_text + 2), s, strlen(s));
+                  *(markup_text + strlen(s) + 2) = '>';
+                  *(markup_text + strlen(s) + 3) = '\0';
+               }
+          }
+        else
+          {
+             markup_text = (char*) malloc(strlen(s) + 4);
+             if (markup_text)
+               {
+                  *(markup_text) = '<';
+                  strncpy((markup_text + 1), s, strlen(s));
+                  *(markup_text + strlen(s) + 1) = '/';
+                  *(markup_text + strlen(s) + 2) = '>';
+                  *(markup_text + strlen(s) + 3) = '\0';
+               }
+          }
         free(text2);
+        if (markup_text)
+          _text_filter_markup_prepend_internal(en, c, markup_text);
      }
 }
 
@@ -242,10 +319,7 @@ _text_filter_markup_prepend(Entry *en, Evas_Textblock_Cursor *c, const char *tex
           }
      }
    if (text2)
-     {
-        evas_object_textblock_text_markup_prepend(c, text2);
-        free(text2);
-     }
+     _text_filter_markup_prepend_internal(en, c, text2);
 }
 
 static void
