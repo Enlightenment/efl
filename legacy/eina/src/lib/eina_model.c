@@ -4683,7 +4683,7 @@ eina_model_method_resolve(const Eina_Model *model, unsigned int offset)
 
    desc = model->desc;
    EINA_SAFETY_ON_FALSE_RETURN_VAL
-     (offset + sizeof(void *) < desc->cache.types[0]->type_size, NULL);
+     (offset + sizeof(void *) <= desc->cache.types[0]->type_size, NULL);
 
    offset -= sizeof(Eina_Model_Type);
    offset /= sizeof(void *);
@@ -4701,7 +4701,7 @@ eina_model_type_method_resolve(const Eina_Model_Type *type, const Eina_Model *mo
 
    desc = model->desc;
    EINA_SAFETY_ON_FALSE_RETURN_VAL
-     (offset + sizeof(void *) < desc->cache.types[0]->type_size, NULL);
+     (offset + sizeof(void *) <= desc->cache.types[0]->type_size, NULL);
 
    return _eina_model_type_find_offset(type, offset);
 }
