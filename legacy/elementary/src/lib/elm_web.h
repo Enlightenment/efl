@@ -570,7 +570,7 @@ EAPI void              elm_web_bg_color_get(const Evas_Object *obj, int *r, int 
  * @return A newly allocated string, or NULL if nothing is selected or an
  * error occurred
  */
-EAPI char             *elm_view_selection_get(const Evas_Object *obj);
+EAPI char             *elm_web_selection_get(const Evas_Object *obj);
 
 /**
  * Tells the web object which index in the currently open popup was selected
