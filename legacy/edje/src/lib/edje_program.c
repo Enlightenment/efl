@@ -1037,9 +1037,7 @@ _edje_emit_full(Edje *ed, const char *sig, const char *src, void *data, void (*f
 
 struct _Edje_Program_Data
 {
-#ifdef EDJE_PROGRAM_CACHE
   Eina_List     *matches;
-#endif
   Edje          *ed;
   const char    *source;
 };
@@ -1059,9 +1057,7 @@ static Eina_Bool _edje_glob_callback(Edje_Program *pr, void *dt)
 
    pr->exec = exec;
 
-#ifdef EDJE_PROGRAM_CACHE
    data->matches = eina_list_append(data->matches, pr);
-#endif
 
    return EINA_FALSE;
 }
@@ -1189,9 +1185,8 @@ _edje_emit_handle(Edje *ed, const char *sig, const char *src,
 
              data.ed = ed;
              data.source = src;
-#ifdef EDJE_PROGRAM_CACHE
 	     data.matches = NULL;
-#endif
+
              if (ed->table_programs_size > 0)
                {
 		  const Eina_List *match;
@@ -1225,10 +1220,8 @@ _edje_emit_handle(Edje *ed, const char *sig, const char *src,
 
                        if (_edje_block_break(ed))
                          {
-#ifdef EDJE_PROGRAM_CACHE
                             eina_list_free(data.matches);
                             data.matches = NULL;
-#endif
                             goto break_prog;
                          }
                     }
