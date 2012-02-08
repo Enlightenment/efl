@@ -613,6 +613,8 @@ struct _Edje_Program /* a conditional program to be run */
       int src; /* part where parameter is being retrieved */
       int dst; /* part where parameter is being stored */
    } param;
+
+   Eina_Bool exec : 1;
 };
 
 struct _Edje_Program_Target /* the target of an action */

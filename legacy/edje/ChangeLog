@@ -327,4 +327,5 @@
 
 	* Fix bug when using EDJE_CALC_CACHE and using relative to x and y
 	on separate part.
+	* Fix bug with filter preventing any action to be triggered.
 
