@@ -800,6 +800,9 @@ EAPI char *eina_model_type_to_string(const Eina_Model_Type *type,
  * @return address to resolved method, or @c NULL if method is not
  *         implemented.
  *
+ * The use of this function is discouraged, you should use
+ * #eina_model_method_resolve instead.
+ *
  * When implementing new types that augments the basic methods from
  * Eina_Model_Type, the recommended structure layout is as follow:
  * @code
@@ -827,7 +830,7 @@ EAPI char *eina_model_type_to_string(const Eina_Model_Type *type,
  *
  *   EINA_SAFETY_ON_FALSE_RETURN(eina_model_instance_check(model, MY_TYPE), -1);
  *
- *   meth = eina_model_method_resolve(model, offsetof(My_Type, my_method));
+ *   meth = eina_model_method_offset_resolve(model, offsetof(My_Type, my_method));
  *   EINA_SAFETY_ON_NULL_RETURN(meth, -1);
  *   return meth(model);
  * }
@@ -836,14 +839,17 @@ EAPI char *eina_model_type_to_string(const Eina_Model_Type *type,
  * @note offset must be bigger than Eina_Model_Type, otherwise use
  *       specific functions such as eina_model_property_get().
  *
+ * @see eina_model_method_resolve
+ * @see eina_model_type_method_resolve
  * @since 1.2
  */
-EAPI const void *eina_model_method_resolve(const Eina_Model *model,
-                                           unsigned int offset) EINA_ARG_NONNULL(1) EINA_WARN_UNUSED_RESULT EINA_PURE;
+EAPI const void *eina_model_method_offset_resolve(const Eina_Model *model, unsigned int offset) EINA_ARG_NONNULL(1) EINA_WARN_UNUSED_RESULT EINA_PURE;
 
-EAPI const void *eina_model_type_method_resolve(const Eina_Model_Type *type,
-                                                const Eina_Model *model,
-                                                unsigned int offset) EINA_ARG_NONNULL(1, 2) EINA_WARN_UNUSED_RESULT EINA_PURE;
+EAPI const void *eina_model_type_method_offset_resolve(const Eina_Model_Type *type, const Eina_Model *model, unsigned int offset) EINA_ARG_NONNULL(1, 2) EINA_WARN_UNUSED_RESULT EINA_PURE;
+
+#define eina_model_method_resolve(model, struct_type, method) eina_model_method_offset_resolve((model), offsetof(struct_type, method))
+
+#define eina_model_type_method_resolve(type, model, struct_type, method) eina_model_type_method_offset_resolve((type), (model), offsetof(struct_type, method))
 
 /**
  * @struct _Eina_Model_Interface

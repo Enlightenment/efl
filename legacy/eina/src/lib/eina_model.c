@@ -4673,7 +4673,7 @@ eina_model_type_private_data_get(const Eina_Model *model, const Eina_Model_Type 
 }
 
 EAPI const void *
-eina_model_method_resolve(const Eina_Model *model, unsigned int offset)
+eina_model_method_offset_resolve(const Eina_Model *model, unsigned int offset)
 {
    const Eina_Model_Description *desc;
 
@@ -4691,7 +4691,7 @@ eina_model_method_resolve(const Eina_Model *model, unsigned int offset)
 }
 
 EAPI const void *
-eina_model_type_method_resolve(const Eina_Model_Type *type, const Eina_Model *model, unsigned int offset)
+eina_model_type_method_offset_resolve(const Eina_Model_Type *type, const Eina_Model *model, unsigned int offset)
 {
    const Eina_Model_Description *desc;
 
