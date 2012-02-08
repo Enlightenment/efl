@@ -753,7 +753,7 @@ _font_overlay_set_all(void            *data,
                       Evas_Object *obj __UNUSED__,
                       void *event_info __UNUSED__)
 {
-   Evas_Object *win, *fclasses, *fnames, *fstyles, *fsizes;
+   Evas_Object *win, *fclasses;
    Elm_Text_Class_Data *tc_data, *tc;
    Elm_Object_Item *list_it;
    Eina_List *l;
@@ -764,10 +764,6 @@ _font_overlay_set_all(void            *data,
    list_it = elm_list_selected_item_get(fclasses);
    if (!list_it) return;
    tc_data = elm_object_item_data_get(list_it);
-
-   fnames = evas_object_data_get(win, "font_names_list");
-   fstyles = evas_object_data_get(win, "font_styles_list");
-   fsizes = evas_object_data_get(win, "font_sizes_list");
 
    EINA_LIST_FOREACH(fdata.text_classes, l, tc)
      {
@@ -1124,16 +1120,13 @@ _theme_sel(void            *data __UNUSED__,
 {
    Evas_Object *win = elm_object_top_widget_get(obj);
    Evas_Object *sample = evas_object_data_get(win, "theme_preview");
-   Elm_Theme *th, *sth;
+   Elm_Theme *th;
    Elm_Object_Item *list_it;
-   const char *defth;
    Eina_Strbuf *newth;
    Eina_List *l;
 
    if (!sample) return;
    tsel = elm_list_selected_items_get(obj);
-   sth = elm_object_theme_get(sample);
-   defth = elm_theme_get(sth);
    newth = eina_strbuf_new();
    EINA_SAFETY_ON_NULL_RETURN(newth);
    th = elm_theme_new();
@@ -1545,7 +1538,7 @@ _font_names_list_sel(void *data   __UNUSED__,
                      Evas_Object *obj,
                      void        *event_info)
 {
-   Evas_Object *style_list, *cls_list, *sizes_list, *win;
+   Evas_Object *style_list, *cls_list, *win;
    const char *style, *sel_font;
    Elm_Text_Class_Data *tc_data;
    Elm_Object_Item *list_it, *fc_list_it;
@@ -1558,7 +1551,6 @@ _font_names_list_sel(void *data   __UNUSED__,
    win = elm_object_top_widget_get(obj);
    style_list = evas_object_data_get(win, "font_styles_list");
    cls_list = evas_object_data_get(win, "font_classes_list");
-   sizes_list = evas_object_data_get(win, "font_sizes_list");
 
    fc_list_it = elm_list_selected_item_get(cls_list);
    if (!fc_list_it) return;  /* should not happen, fonts list disabled in
