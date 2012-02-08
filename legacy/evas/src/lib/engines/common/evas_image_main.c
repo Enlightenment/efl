@@ -202,8 +202,7 @@ _evas_common_rgba_image_delete(Image_Entry *ie)
              }
           }
      }
-
-   evas_cache_image_drop(&(im->cache_entry));
+   free(im);
 }
 
 EAPI void
