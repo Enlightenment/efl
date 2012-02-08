@@ -15,7 +15,7 @@ typedef struct _Mod_Api Mod_Api;
 typedef struct _Widget_Data Widget_Data;
 typedef struct _Elm_Entry_Context_Menu_Item Elm_Entry_Context_Menu_Item;
 typedef struct _Elm_Entry_Item_Provider Elm_Entry_Item_Provider;
-typedef struct _Elm_Entry_Text_Filter Elm_Entry_Text_Filter;
+typedef struct _Elm_Entry_Markup_Filter Elm_Entry_Markup_Filter;
 
 struct _Widget_Data
 {
@@ -41,6 +41,7 @@ struct _Widget_Data
    Eina_List *items;
    Eina_List *item_providers;
    Eina_List *text_filters;
+   Eina_List *markup_filters;
    Ecore_Job *hovdeljob;
    Mod_Api *api; // module api if supplied
    int cursor_pos;
@@ -87,7 +88,7 @@ struct _Elm_Entry_Item_Provider
    void *data;
 };
 
-struct _Elm_Entry_Text_Filter
+struct _Elm_Entry_Markup_Filter
 {
    Elm_Entry_Filter_Cb func;
    void *data;
@@ -358,10 +359,10 @@ _delay_write(void *data)
    return ECORE_CALLBACK_CANCEL;
 }
 
-static Elm_Entry_Text_Filter *
+static Elm_Entry_Markup_Filter *
 _filter_new(Elm_Entry_Filter_Cb func, void *data)
 {
-   Elm_Entry_Text_Filter *tf = ELM_NEW(Elm_Entry_Text_Filter);
+   Elm_Entry_Markup_Filter *tf = ELM_NEW(Elm_Entry_Markup_Filter);
    if (!tf) return NULL;
 
    tf->func = func;
@@ -414,7 +415,7 @@ _filter_new(Elm_Entry_Filter_Cb func, void *data)
 }
 
 static void
-_filter_free(Elm_Entry_Text_Filter *tf)
+_filter_free(Elm_Entry_Markup_Filter *tf)
 {
    if (tf->func == elm_entry_filter_limit_size)
      {
@@ -453,7 +454,7 @@ _del_hook(Evas_Object *obj)
    Widget_Data *wd = elm_widget_data_get(obj);
    Elm_Entry_Context_Menu_Item *it;
    Elm_Entry_Item_Provider *ip;
-   Elm_Entry_Text_Filter *tf;
+   Elm_Entry_Markup_Filter *tf;
 
    evas_event_freeze(evas_object_evas_get(obj));
 
@@ -492,6 +493,10 @@ _del_hook(Evas_Object *obj)
         free(ip);
      }
    EINA_LIST_FREE(wd->text_filters, tf)
+     {
+        _filter_free(tf);
+     }
+   EINA_LIST_FREE(wd->markup_filters, tf)
      {
         _filter_free(tf);
      }
@@ -1978,12 +1983,27 @@ _text_filter(void *data, Evas_Object *edje __UNUSED__, const char *part __UNUSED
 {
    Widget_Data *wd = elm_widget_data_get(data);
    Eina_List *l;
-   Elm_Entry_Text_Filter *tf;
+   Elm_Entry_Markup_Filter *tf;
 
    if (type == EDJE_TEXT_FILTER_FORMAT)
      return;
 
    EINA_LIST_FOREACH(wd->text_filters, l, tf)
+     {
+        tf->func(tf->data, data, text);
+        if (!*text)
+          break;
+     }
+}
+
+static void
+_markup_filter(void *data, Evas_Object *edje __UNUSED__, const char *part __UNUSED__, char **text)
+{
+   Widget_Data *wd = elm_widget_data_get(data);
+   Eina_List *l;
+   Elm_Entry_Markup_Filter *tf;
+
+   EINA_LIST_FOREACH(wd->markup_filters, l, tf)
      {
         tf->func(tf->data, data, text);
         if (!*text)
@@ -2288,6 +2308,7 @@ elm_entry_add(Evas_Object *parent)
    wd->ent = edje_object_add(e);
    edje_object_item_provider_set(wd->ent, _get_item, obj);
    edje_object_text_insert_filter_callback_add(wd->ent,"elm.text", _text_filter, obj);
+   edje_object_markup_filter_callback_add(wd->ent,"elm.text", _markup_filter, obj);
    evas_object_event_callback_add(wd->ent, EVAS_CALLBACK_MOVE, _move, obj);
    evas_object_event_callback_add(wd->ent, EVAS_CALLBACK_MOUSE_DOWN,
                                   _mouse_down, obj);
@@ -2971,7 +2992,7 @@ EAPI void
 elm_entry_text_filter_append(Evas_Object *obj, Elm_Entry_Filter_Cb func, void *data)
 {
    Widget_Data *wd;
-   Elm_Entry_Text_Filter *tf;
+   Elm_Entry_Markup_Filter *tf;
    ELM_CHECK_WIDTYPE(obj, widtype);
 
    wd = elm_widget_data_get(obj);
@@ -2988,7 +3009,7 @@ EAPI void
 elm_entry_text_filter_prepend(Evas_Object *obj, Elm_Entry_Filter_Cb func, void *data)
 {
    Widget_Data *wd;
-   Elm_Entry_Text_Filter *tf;
+   Elm_Entry_Markup_Filter *tf;
    ELM_CHECK_WIDTYPE(obj, widtype);
 
    wd = elm_widget_data_get(obj);
@@ -3006,7 +3027,7 @@ elm_entry_text_filter_remove(Evas_Object *obj, Elm_Entry_Filter_Cb func, void *d
 {
    Widget_Data *wd;
    Eina_List *l;
-   Elm_Entry_Text_Filter *tf;
+   Elm_Entry_Markup_Filter *tf;
    ELM_CHECK_WIDTYPE(obj, widtype);
 
    wd = elm_widget_data_get(obj);
@@ -3018,6 +3039,63 @@ elm_entry_text_filter_remove(Evas_Object *obj, Elm_Entry_Filter_Cb func, void *d
         if ((tf->func == func) && ((!data) || (tf->data == data)))
           {
              wd->text_filters = eina_list_remove_list(wd->text_filters, l);
+             _filter_free(tf);
+             return;
+          }
+     }
+}
+
+EAPI void
+elm_entry_markup_filter_append(Evas_Object *obj, Elm_Entry_Filter_Cb func, void *data)
+{
+   Widget_Data *wd;
+   Elm_Entry_Markup_Filter *tf;
+   ELM_CHECK_WIDTYPE(obj, widtype);
+
+   wd = elm_widget_data_get(obj);
+
+   EINA_SAFETY_ON_NULL_RETURN(func);
+
+   tf = _filter_new(func, data);
+   if (!tf) return;
+
+   wd->markup_filters = eina_list_append(wd->markup_filters, tf);
+}
+
+EAPI void
+elm_entry_markup_filter_prepend(Evas_Object *obj, Elm_Entry_Filter_Cb func, void *data)
+{
+   Widget_Data *wd;
+   Elm_Entry_Markup_Filter *tf;
+   ELM_CHECK_WIDTYPE(obj, widtype);
+
+   wd = elm_widget_data_get(obj);
+
+   EINA_SAFETY_ON_NULL_RETURN(func);
+
+   tf = _filter_new(func, data);
+   if (!tf) return;
+
+   wd->markup_filters = eina_list_prepend(wd->markup_filters, tf);
+}
+
+EAPI void
+elm_entry_markup_filter_remove(Evas_Object *obj, Elm_Entry_Filter_Cb func, void *data)
+{
+   Widget_Data *wd;
+   Eina_List *l;
+   Elm_Entry_Markup_Filter *tf;
+   ELM_CHECK_WIDTYPE(obj, widtype);
+
+   wd = elm_widget_data_get(obj);
+
+   EINA_SAFETY_ON_NULL_RETURN(func);
+
+   EINA_LIST_FOREACH(wd->markup_filters, l, tf)
+     {
+        if ((tf->func == func) && ((!data) || (tf->data == data)))
+          {
+             wd->markup_filters = eina_list_remove_list(wd->markup_filters, l);
              _filter_free(tf);
              return;
           }
