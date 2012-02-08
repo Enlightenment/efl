@@ -1338,15 +1338,18 @@ typedef enum _Ecore_Con_Url_Time
  * @typedef Ecore_Con_Url_Http_Version
  * @enum _Ecore_Con_Url_Http_Version
  * The http version to use
+ * @since 1.2
  */
 typedef enum _Ecore_Con_Url_Http_Version
 {
    /**
     * HTTP version 1.0
+    * @since 1.2
     */
    ECORE_CON_URL_HTTP_VERSION_1_0,
    /**
     * HTTP version 1.1 (default)
+    * @since 1.2
     */
    ECORE_CON_URL_HTTP_VERSION_1_1
 } Ecore_Con_Url_Http_Version;
@@ -1355,7 +1358,7 @@ typedef enum _Ecore_Con_Url_Http_Version
  * Change the HTTP version used for the request
  * @param version The version to be used
  * @return EINA_TRUE on success, EINA_FALSE on failure to change version
- * 
+ * @since 1.2
  * @see ecore_con_url_pipeline_get()
  */
 EAPI Eina_Bool         ecore_con_url_http_version_set(Ecore_Con_Url *url_con, Ecore_Con_Url_Http_Version version);
