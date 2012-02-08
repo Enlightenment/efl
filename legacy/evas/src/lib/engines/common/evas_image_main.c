@@ -229,7 +229,10 @@ surf_debug(void)
    EINA_LIST_FOREACH(surfs, l, ie)
      {
         im = ie;
-        printf("%i - %p - %ix%i\n", i, im->image.data, ie->allocated.w, ie->allocated.h);
+        printf("%i - %p - %ix%i  [%s][%s]\n", 
+               i, im->image.data, ie->allocated.w, ie->allocated.h,
+               ie->file, ie->key
+              );
         i++;
      }
 }
