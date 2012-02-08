@@ -2544,7 +2544,7 @@ _eina_model_interface_properties_struct_private_get(const Eina_Model *model)
 {
    Eina_Value *val = eina_model_interface_private_data_get
      (model, EINA_MODEL_INTERFACE_PROPERTIES_STRUCT);
-   return val->value.ptr;
+   return eina_value_memory_get(val);
 }
 
 #define EINA_MODEL_INTERFACE_PROPERTIES_STRUCT_GET(model)         \
