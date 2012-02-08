@@ -24,6 +24,11 @@
 #include <stdarg.h>
 
 /**
+ * @page eina_model_01_c eina_model_01.c Eina_Model inheritance and function overriding
+ * @include eina_model_01.c
+ */
+
+/**
  * @addtogroup Eina_Data_Types_Group Data Types
  *
  * @since 1.2
@@ -117,6 +122,8 @@
  *
  * In other words this piece of code shows how to use eina_model to store a list
  * of elements, given that the list itself has some properties.
+ *
+ * An inheritance example: @ref eina_model_01_c
  *
  * @{
  */
