@@ -1099,8 +1099,13 @@ ecore_con_url_ssl_ca_set(Ecore_Con_Url *url_con, const char *ca_path)
 EAPI Eina_Bool
 ecore_con_url_http_version_set(Ecore_Con_Url *url_con, Ecore_Con_Url_Http_Version version)
 {
+#ifdef HAVE_CURL
    int res = -1;
-   
+   if (!ECORE_MAGIC_CHECK(url_con, ECORE_MAGIC_CON_URL))
+     {
+       ECORE_MAGIC_FAIL(url_con, ECORE_MAGIC_CON_URL, "ecore_con_url_http_version_set");
+	      return EINA_FALSE;
+     }
    switch (version)
      {
       case ECORE_CON_URL_HTTP_VERSION_1_0:
@@ -1122,6 +1127,11 @@ ecore_con_url_http_version_set(Ecore_Con_Url *url_con, Ecore_Con_Url_Http_Versio
         return EINA_FALSE;
      }
    return EINA_TRUE;
+#else
+   (void)url_con;
+   (void)version;
+   return EINA_FALSE;
+#endif
 }
 
 EAPI Eina_Bool
