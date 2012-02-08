@@ -163,13 +163,13 @@ elm_scrolled_entry_item_provider_remove(Evas_Object *obj, Evas_Object *(*func) (
 {elm_entry_item_provider_remove(obj, func, data);}
 EINA_DEPRECATED EAPI void
 elm_scrolled_entry_text_filter_append(Evas_Object *obj, void (*func) (void *data, Evas_Object *entry, char **text), void *data)
-{elm_entry_text_filter_append(obj, func, data);}
+{elm_entry_markup_filter_append(obj, func, data);}
 EINA_DEPRECATED EAPI void
 elm_scrolled_entry_text_filter_prepend(Evas_Object *obj, void (*func) (void *data, Evas_Object *entry, char **text), void *data)
-{elm_entry_text_filter_prepend(obj, func, data);}
+{elm_entry_markup_filter_prepend(obj, func, data);}
 EINA_DEPRECATED EAPI void
 elm_scrolled_entry_text_filter_remove(Evas_Object *obj, void (*func) (void *data, Evas_Object *entry, char **text), void *data)
-{elm_entry_text_filter_remove(obj, func, data);}
+{elm_entry_markup_filter_remove(obj, func, data);}
 EINA_DEPRECATED EAPI void
 elm_scrolled_entry_file_set(Evas_Object *obj, const char *file, Elm_Text_Format format)
 {elm_entry_file_set(obj, file, format);}

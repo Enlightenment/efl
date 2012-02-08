@@ -62,7 +62,7 @@ typedef enum
  * indicated by Elm_Wrap_Type.
  *
  * Other features include password mode, filtering of inserted text with
- * elm_entry_text_filter_append() and related functions, inline "items" and
+ * elm_entry_markup_filter_append() and related functions, inline "items" and
  * formatted markup text.
  *
  * @section entry-markup Formatted text
@@ -310,10 +310,10 @@ struct _Elm_Entry_Anchor_Info
  * This callback type is used by entry filters to modify text.
  * @param data The data specified as the last param when adding the filter
  * @param entry The entry object
- * @param text A pointer to the location of the text being filtered. This data can be modified,
+ * @param text A pointer to the location of the text being filtered. The type of text is always markup. This data can be modified,
  * but any additional allocations must be managed by the user.
- * @see elm_entry_text_filter_append
- * @see elm_entry_text_filter_prepend
+ * @see elm_entry_markup_filter_append
+ * @see elm_entry_markup_filter_prepend
  */
 typedef void (*Elm_Entry_Filter_Cb)(void *data, Evas_Object *entry, char **text);
 
@@ -418,7 +418,7 @@ EAPI const char        *elm_entry_entry_get(const Evas_Object *obj);
  * @param obj The entry object
  * @param entry The text to be displayed
  *
- * @see elm_entry_text_filter_append()
+ * @see elm_entry_markup_filter_append()
  */
 EAPI void               elm_entry_entry_append(Evas_Object *obj, const char *entry);
 
@@ -507,7 +507,7 @@ EAPI void               elm_entry_calc_force(Evas_Object *obj);
  * @param obj The entry object
  * @param entry The text to insert
  *
- * @see elm_entry_text_filter_append()
+ * @see elm_entry_markup_filter_append()
  */
 EAPI void               elm_entry_entry_insert(Evas_Object *obj, const char *entry);
 
@@ -844,12 +844,13 @@ EAPI void               elm_entry_item_provider_prepend(Evas_Object *obj, Evas_O
 EAPI void               elm_entry_item_provider_remove(Evas_Object *obj, Evas_Object * (*func)(void *data, Evas_Object * entry, const char *item), void *data);
 
 /**
- * Append a filter function for text inserted in the entry
+ * Append a markup filter function for text inserted in the entry
  *
  * Append the given callback to the list. This functions will be called
  * whenever any text is inserted into the entry, with the text to be inserted
- * as a parameter. The callback function is free to alter the text in any way
- * it wants, but it must remember to free the given pointer and update it.
+ * as a parameter. The type of given text is always markup.
+ * The callback function is free to alter the text in any way it wants, but 
+ * it must remember to free the given pointer and update it.
  * If the new text is to be discarded, the function can free it and set its
  * text parameter to NULL. This will also prevent any following filters from
  * being called.
@@ -858,31 +859,31 @@ EAPI void               elm_entry_item_provider_remove(Evas_Object *obj, Evas_Ob
  * @param func The function to use as text filter
  * @param data User data to pass to @p func
  */
-EAPI void               elm_entry_text_filter_append(Evas_Object *obj, Elm_Entry_Filter_Cb func, void *data);
+EAPI void               elm_entry_markup_filter_append(Evas_Object *obj, Elm_Entry_Filter_Cb func, void *data);
 
 /**
- * Prepend a filter function for text insdrted in the entry
+ * Prepend a markup filter function for text insdrted in the entry
  *
- * Prepend the given callback to the list. See elm_entry_text_filter_append()
+ * Prepend the given callback to the list. See elm_entry_markup_filter_append()
  * for more information
  *
  * @param obj The entry object
  * @param func The function to use as text filter
  * @param data User data to pass to @p func
  */
-EAPI void               elm_entry_text_filter_prepend(Evas_Object *obj, Elm_Entry_Filter_Cb func, void *data);
+EAPI void               elm_entry_markup_filter_prepend(Evas_Object *obj, Elm_Entry_Filter_Cb func, void *data);
 
 /**
- * Remove a filter from the list
+ * Remove a markup filter from the list
  *
  * Removes the given callback from the filter list. See
- * elm_entry_text_filter_append() for more information.
+ * elm_entry_markup_filter_append() for more information.
  *
  * @param obj The entry object
  * @param func The filter function to remove
  * @param data The user data passed when adding the function
  */
-EAPI void               elm_entry_text_filter_remove(Evas_Object *obj, Elm_Entry_Filter_Cb func, void *data);
+EAPI void               elm_entry_markup_filter_remove(Evas_Object *obj, Elm_Entry_Filter_Cb func, void *data);
 
 /**
  * This converts a markup (HTML-like) string into UTF-8.

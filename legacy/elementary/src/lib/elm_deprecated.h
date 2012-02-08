@@ -4211,4 +4211,49 @@ EINA_DEPRECATED EAPI Eina_Bool                     elm_gengrid_item_disabled_get
  */
 EINA_DEPRECATED EAPI void                          elm_gengrid_item_del(Elm_Object_Item *it);
 
+/**
+ * Append a filter function for text inserted in the entry
+ *
+ * Append the given callback to the list. This functions will be called
+ * whenever any text is inserted into the entry, with the text to be inserted
+ * as a parameter. The callback function is free to alter the text in any way
+ * it wants, but it must remember to free the given pointer and update it.
+ * If the new text is to be discarded, the function can free it and set its
+ * text parameter to NULL. This will also prevent any following filters from
+ * being called.
+ *
+ * @param obj The entry object
+ * @param func The function to use as text filter
+ * @param data User data to pass to @p func
+ * @deprecated use elm_entry_markup_filter_append() instead
+ * @ingroup Entry 
+ */
+EINA_DEPRECATED EAPI void               elm_entry_text_filter_append(Evas_Object *obj, Elm_Entry_Filter_Cb func, void *data);
 
+/**
+ * Prepend a filter function for text inserted in the entry
+ *
+ * Prepend the given callback to the list. See elm_entry_text_filter_append()
+ * for more information
+ *
+ * @param obj The entry object
+ * @param func The function to use as text filter
+ * @param data User data to pass to @p func
+ * @deprecated use elm_entry_markup_filter_prepend() instead
+ * @ingroup Entry
+ */
+EINA_DEPRECATED EAPI void               elm_entry_text_filter_prepend(Evas_Object *obj, Elm_Entry_Filter_Cb func, void *data);
+
+/**
+ * Remove a filter from the list
+ *
+ * Removes the given callback from the filter list. See
+ * elm_entry_text_filter_append() for more information.
+ *
+ * @param obj The entry object
+ * @param func The filter function to remove
+ * @param data The user data passed when adding the function
+ * @deprecated use elm_entry_markup_filter_remove() instead
+ * @ingroup Entry
+ */
+EINA_DEPRECATED EAPI void               elm_entry_text_filter_remove(Evas_Object *obj, Elm_Entry_Filter_Cb func, void *data);
