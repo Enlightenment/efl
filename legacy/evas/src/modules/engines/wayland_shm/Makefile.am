@@ -7,6 +7,7 @@ AM_CPPFLAGS = \
 -I$(top_srcdir)/src/lib/include \
 -I$(top_srcdir)/src/modules/engines \
 @FREETYPE_CFLAGS@ \
+@PIXMAN_CFLAGS@ \
 @EINA_CFLAGS@ \
 @evas_engine_wayland_shm_cflags@
 
@@ -16,7 +17,7 @@ WAYLAND_SHM_SOURCES = \
 evas_engine.c \
 evas_outbuf.c
 
-WAYLAND_SHM_LIBADD = @FREETYPE_LIBS@ @EINA_LIBS@ @evas_engine_wayland_shm_libs@
+WAYLAND_SHM_LIBADD = @FREETYPE_LIBS@ @PIXMAN_LIBS@ @EINA_LIBS@ @evas_engine_wayland_shm_libs@
 
 includes_HEADERS = Evas_Engine_Wayland_Shm.h
 includesdir = $(includedir)/evas-@VMAJ@
