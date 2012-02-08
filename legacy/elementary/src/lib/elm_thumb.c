@@ -628,6 +628,8 @@ elm_thumb_file_set(Evas_Object *obj, const char *file, const char *key)
 #ifdef HAVE_ELEMENTARY_ETHUMB
    if (((file_replaced) || (key_replaced)) && (evas_object_visible_get(obj)))
      _thumb_show(wd);
+#else
+   (void)key_replaced;
 #endif
 }
 
