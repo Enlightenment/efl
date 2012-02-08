@@ -477,3 +477,8 @@
 2012-02-07  Jihoon Kim (jihoon)
 
         * Support ecore_imf_context_input_panel_show/hide in XIM and SCIM module.
+
+2012-02-08 Carsten Haitzler (The Rasterman)
+
+        * Add ecore_con_url_http_version_set() to set url request version
+

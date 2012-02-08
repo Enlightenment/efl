@@ -1097,6 +1097,34 @@ ecore_con_url_ssl_ca_set(Ecore_Con_Url *url_con, const char *ca_path)
 }
 
 EAPI Eina_Bool
+ecore_con_url_http_version_set(Ecore_Con_Url *url_con, Ecore_Con_Url_Http_Version version)
+{
+   int res = -1;
+   
+   switch (version)
+     {
+      case ECORE_CON_URL_HTTP_VERSION_1_0:
+        res = curl_easy_setopt(url_con->curl_easy, 
+                               CURLOPT_HTTP_VERSION, 
+                               CURL_HTTP_VERSION_1_0);
+        break;
+      case ECORE_CON_URL_HTTP_VERSION_1_1:
+        res = curl_easy_setopt(url_con->curl_easy, 
+                               CURLOPT_HTTP_VERSION, 
+                               CURL_HTTP_VERSION_1_1);
+        break;
+      default:
+        break;
+     }
+   if (res != CURLE_OK)
+     {
+        ERR("curl http version setting failed: %s", curl_easy_strerror(res));
+        return EINA_FALSE;
+     }
+   return EINA_TRUE;
+}
+
+EAPI Eina_Bool
 ecore_con_url_proxy_set(Ecore_Con_Url *url_con, const char *proxy)
 {
 #ifdef HAVE_CURL
