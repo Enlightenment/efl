@@ -2449,7 +2449,8 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep, int flags, Edje_Calc_Params *sta
  				      p1, pos);
 
 #ifdef EDJE_CALC_CACHE
- 	     ep->param1.state = ed->state;
+	     if (flags == FLAG_XY)
+	       ep->param1.state = ed->state;
 #endif
  	  }
      }
@@ -2501,7 +2502,8 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep, int flags, Edje_Calc_Params *sta
  				      confine_to,
 				      p2, pos);
 #ifdef EDJE_CALC_CACHE
- 	     ep->param2->state = ed->state;
+	     if (flags == FLAG_XY)
+	       ep->param2->state = ed->state;
 #endif
  	  }
 

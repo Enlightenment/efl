@@ -322,3 +322,9 @@
         * Added edje_object_markup_filter_callback_{add,del,del_full}.
         These let you append(delete) markup filter functions for filtering
         inserted text.
+
+2012-02-08  Cedric Bail
+
+	* Fix bug when using EDJE_CALC_CACHE and using relative to x and y
+	on separate part.
+
