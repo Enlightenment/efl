@@ -74,10 +74,6 @@ static void _ecore_evas_wl_fullscreen_set(Ecore_Evas *ee, int full __UNUSED__);
 static int _ecore_evas_wl_render(Ecore_Evas *ee);
 static void _ecore_evas_wl_screen_geometry_get(const Ecore_Evas *ee __UNUSED__, int *x, int *y, int *w, int *h);
 
-static Eina_Bool _ecore_evas_wl_event_mouse_down(void *data __UNUSED__, int type __UNUSED__, void *event);
-static Eina_Bool _ecore_evas_wl_event_mouse_up(void *data __UNUSED__, int type __UNUSED__, void *event);
-static Eina_Bool _ecore_evas_wl_event_mouse_move(void *data __UNUSED__, int type __UNUSED__, void *event);
-static Eina_Bool _ecore_evas_wl_event_mouse_wheel(void *data __UNUSED__, int type __UNUSED__, void *event);
 static Eina_Bool _ecore_evas_wl_event_mouse_in(void *data __UNUSED__, int type __UNUSED__, void *event);
 static Eina_Bool _ecore_evas_wl_event_mouse_out(void *data __UNUSED__, int type __UNUSED__, void *event);
 static Eina_Bool _ecore_evas_wl_event_focus_in(void *data __UNUSED__, int type __UNUSED__, void *event);
@@ -100,8 +96,8 @@ static Evas_Object *_ecore_evas_wl_frame_add(Evas *evas);
 
 /* local variables */
 static int _ecore_evas_wl_init_count = 0;
-static Ecore_Event_Handler *_ecore_evas_wl_event_handlers[8];
-static uint32_t _ecore_evas_wl_btn_timestamp;
+static Ecore_Event_Handler *_ecore_evas_wl_event_handlers[4];
+
 static const struct wl_shell_surface_listener _ecore_evas_wl_shell_surface_listener = 
 {
    _ecore_evas_wl_handle_configure,
@@ -278,27 +274,15 @@ _ecore_evas_wl_init(void)
      return _ecore_evas_wl_init_count;
 
    _ecore_evas_wl_event_handlers[0] = 
-     ecore_event_handler_add(ECORE_EVENT_MOUSE_BUTTON_DOWN, 
-                             _ecore_evas_wl_event_mouse_down, NULL);
-   _ecore_evas_wl_event_handlers[1] = 
-     ecore_event_handler_add(ECORE_EVENT_MOUSE_BUTTON_UP, 
-                             _ecore_evas_wl_event_mouse_up, NULL);
-   _ecore_evas_wl_event_handlers[2] = 
-     ecore_event_handler_add(ECORE_EVENT_MOUSE_MOVE, 
-                             _ecore_evas_wl_event_mouse_move, NULL);
-   _ecore_evas_wl_event_handlers[3] = 
-     ecore_event_handler_add(ECORE_EVENT_MOUSE_WHEEL, 
-                             _ecore_evas_wl_event_mouse_wheel, NULL);
-   _ecore_evas_wl_event_handlers[4] = 
      ecore_event_handler_add(ECORE_WL_EVENT_MOUSE_IN, 
                              _ecore_evas_wl_event_mouse_in, NULL);
-   _ecore_evas_wl_event_handlers[5] = 
+   _ecore_evas_wl_event_handlers[1] = 
      ecore_event_handler_add(ECORE_WL_EVENT_MOUSE_OUT, 
                              _ecore_evas_wl_event_mouse_out, NULL);
-   _ecore_evas_wl_event_handlers[6] = 
+   _ecore_evas_wl_event_handlers[2] = 
      ecore_event_handler_add(ECORE_WL_EVENT_FOCUS_IN, 
                              _ecore_evas_wl_event_focus_in, NULL);
-   _ecore_evas_wl_event_handlers[7] = 
+   _ecore_evas_wl_event_handlers[3] = 
      ecore_event_handler_add(ECORE_WL_EVENT_FOCUS_OUT, 
                              _ecore_evas_wl_event_focus_out, NULL);
 
@@ -430,7 +414,7 @@ _ecore_evas_wl_move(Ecore_Evas *ee, int x, int y)
      {
         wl_shell_surface_move(ee->engine.wl.shell_surface, 
                               ecore_wl_input_device_get(), 
-                              _ecore_evas_wl_btn_timestamp);
+                              ecore_wl_input_timestamp_get());
      }
    if (ee->func.fn_move) ee->func.fn_move(ee);
 }
@@ -444,6 +428,12 @@ _ecore_evas_wl_resize(Ecore_Evas *ee, int w, int h)
    if (w < 1) w = 1;
    if (h < 1) h = 1;
    if ((ee->w == w) && (ee->h == h)) return;
+
+   if (ee->prop.min.w > w) w = ee->prop.min.w;
+   else if (w > ee->prop.max.w) w = ee->prop.max.w;
+
+   if (ee->prop.min.h > h) h = ee->prop.min.h;
+   else if (h > ee->prop.max.h) h = ee->prop.max.h;
 
    ee->req.w = w;
    ee->req.h = h;
@@ -751,7 +741,7 @@ _ecore_evas_wl_maximized_set(Ecore_Evas *ee, int max)
    if (!ee) return;
    if (ee->prop.maximized == max) return;
    ee->prop.maximized = max;
-   /* FIXME: Implement this in Wayland someshow */
+   /* FIXME: Implement this. Support is in Wayland now */
 }
 
 static void 
@@ -820,75 +810,6 @@ _ecore_evas_wl_screen_geometry_get(const Ecore_Evas *ee __UNUSED__, int *x, int 
    if (x) *x = 0;
    if (y) *y = 0;
    ecore_wl_screen_size_get(w, h);
-}
-
-static Eina_Bool 
-_ecore_evas_wl_event_mouse_down(void *data __UNUSED__, int type __UNUSED__, void *event)
-{
-   Ecore_Evas *ee;
-   Ecore_Event_Mouse_Button *ev;
-
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
-
-   ev = event;
-   _ecore_evas_wl_btn_timestamp = ev->timestamp;
-   ee = ecore_event_window_match(ev->window);
-   if ((!ee) || (ee->ignore_events)) return ECORE_CALLBACK_PASS_ON;
-   if (ev->window != ee->prop.window) return ECORE_CALLBACK_PASS_ON;
-   evas_event_feed_mouse_down(ee->evas, ev->buttons, ev->modifiers, 
-                              ev->timestamp, NULL);
-   return ECORE_CALLBACK_PASS_ON;
-}
-
-static Eina_Bool 
-_ecore_evas_wl_event_mouse_up(void *data __UNUSED__, int type __UNUSED__, void *event)
-{
-   Ecore_Evas *ee;
-   Ecore_Event_Mouse_Button *ev;
-
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
-
-   ev = event;
-   ee = ecore_event_window_match(ev->window);
-   if ((!ee) || (ee->ignore_events)) return ECORE_CALLBACK_PASS_ON;
-   if (ev->window != ee->prop.window) return ECORE_CALLBACK_PASS_ON;
-   evas_event_feed_mouse_up(ee->evas, ev->buttons, ev->modifiers, 
-                            ev->timestamp, NULL);
-   return ECORE_CALLBACK_PASS_ON;
-}
-
-static Eina_Bool 
-_ecore_evas_wl_event_mouse_move(void *data __UNUSED__, int type __UNUSED__, void *event)
-{
-   Ecore_Evas *ee;
-   Ecore_Event_Mouse_Move *ev;
-
-   ev = event;
-   ee = ecore_event_window_match(ev->window);
-   if ((!ee) || (ee->ignore_events)) return ECORE_CALLBACK_PASS_ON;
-   if (ev->window != ee->prop.window) return ECORE_CALLBACK_PASS_ON;
-   ee->mouse.x = ev->x;
-   ee->mouse.y = ev->y;
-   evas_event_feed_mouse_move(ee->evas, ev->x, ev->y, ev->timestamp, NULL);
-   _ecore_evas_mouse_move_process(ee, ev->x, ev->y, ev->timestamp);
-   return ECORE_CALLBACK_PASS_ON;
-}
-
-static Eina_Bool 
-_ecore_evas_wl_event_mouse_wheel(void *data __UNUSED__, int type __UNUSED__, void *event)
-{
-   Ecore_Evas *ee;
-   Ecore_Event_Mouse_Wheel *ev;
-
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
-
-   ev = event;
-   ee = ecore_event_window_match(ev->window);
-   if ((!ee) || (ee->ignore_events)) return ECORE_CALLBACK_PASS_ON;
-   if (ev->window != ee->prop.window) return ECORE_CALLBACK_PASS_ON;
-   evas_event_feed_mouse_wheel(ee->evas, ev->direction, ev->z, 
-                               ev->timestamp, NULL);
-   return ECORE_CALLBACK_PASS_ON;
 }
 
 static Eina_Bool 
@@ -976,7 +897,6 @@ _ecore_evas_wl_handle_configure(void *data, struct wl_shell_surface *shell_surfa
 
    if (!(ee = data)) return;
 
-   printf("EGL Handle Configure Message\n");
    if ((shell_surface) && (ee->engine.wl.shell_surface)) 
      {
         if (ee->engine.wl.shell_surface != shell_surface) return;
@@ -1109,7 +1029,7 @@ _ecore_evas_wayland_egl_resize(Ecore_Evas *ee, int location)
    if ((!ee) || (!ee->engine.wl.shell_surface)) return;
    wl_shell_surface_resize(ee->engine.wl.shell_surface, 
                            ecore_wl_input_device_get(), 
-                           _ecore_evas_wl_btn_timestamp, location);
+                           ecore_wl_input_timestamp_get(), location);
 }
 
 void 
