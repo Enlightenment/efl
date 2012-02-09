@@ -272,6 +272,9 @@ evas_image_load_file_head_jpeg_internal(Image_Entry *ie,
 	  *error = EVAS_LOAD_ERROR_UNKNOWN_FORMAT;
 	return EINA_FALSE;
      }
+
+   degree = 0;
+   change_wh = EINA_FALSE;
    jpeg_create_decompress(&cinfo);
 
    if (_evas_jpeg_membuf_src(&cinfo, map, length))
@@ -971,7 +974,7 @@ done:
    if (ie->flags.rotated)
      {
         DATA32             *data1, *data2,  *to, *from;
-        int                 x, y, w, h,  hw;
+        int                 lx, ly, lw, lh,  hw;
 
         if (change_wh)
           {
@@ -980,22 +983,22 @@ done:
              ie->h = tmp;
           }
 
-        w = ie->w;
-        h = ie->h;
-        hw =w * h;
+        lw = ie->w;
+        lh = ie->h;
+        hw =lw * lh;
 
         data1 = evas_cache_image_pixels(ie);
 
         if (degree == 180)
           {
-             DATA32 tmp;
+             DATA32 tmpd;
 
-             data2 = data1 + (h * w) -1;
-             for (x = (w * h) / 2; --x >= 0;)
+             data2 = data1 + (lh * lw) -1;
+             for (lx = (lw * lh) / 2; --lx >= 0;)
                {
-                  tmp = *data1;
+                  tmpd = *data1;
                   *data1 = *data2;
-                  *data2 = tmp;
+                  *data2 = tmpd;
                   data1++;
                   data2--;
                }
@@ -1008,26 +1011,26 @@ done:
 
              if (degree == 90)
                {
-                  to = data1 + w - 1;
+                  to = data1 + lw - 1;
                   hw = -hw - 1;
                }
              else if (degree == 270)
                {
-                  to = data1 + hw - w;
-                  w = -w;
+                  to = data1 + hw - lw;
+                  lw = -lw;
                   hw = hw + 1;
                }
 
              if (to)
                {
                   from = data2;
-                  for (x = ie->w; --x >= 0;)
+                  for (lx = ie->w; --lx >= 0;)
                     {
-                       for (y =ie->h; --y >= 0;)
+                       for (ly =ie->h; --ly >= 0;)
                          {
                             *to = *from;
                             from++;
-                            to += w;
+                            to += lw;
                          }
                        to += hw;
                     }
