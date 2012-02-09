@@ -4829,8 +4829,8 @@ eina_model_interface_deep_copy(const Eina_Model_Interface *iface, const Eina_Mod
    return deep_copy(src, dst);
 }
 
-EAPI const void *
-eina_model_interface_method_resolve(const Eina_Model_Interface *iface, const Eina_Model *model, unsigned int offset)
+EAPI const void
+*eina_model_interface_method_offset_resolve(const Eina_Model_Interface *iface, const Eina_Model *model, unsigned int offset)
 {
    EINA_MODEL_INTERFACE_IMPLEMENTED_CHECK_VAL(iface, model, NULL);
    EINA_SAFETY_ON_FALSE_RETURN_VAL(offset >= sizeof(Eina_Model_Interface), NULL);

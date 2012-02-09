@@ -961,9 +961,9 @@ EAPI Eina_Bool eina_model_interface_deep_copy(const Eina_Model_Interface *iface,
                                               const Eina_Model *src,
                                               Eina_Model *dst) EINA_ARG_NONNULL(1, 2, 3);
 
-EAPI const void *eina_model_interface_method_resolve(const Eina_Model_Interface *iface,
-                                                     const Eina_Model *model,
-                                                     unsigned int offset) EINA_ARG_NONNULL(1, 2) EINA_WARN_UNUSED_RESULT EINA_PURE;
+#define eina_model_interface_method_resolve(iface, model, struct_type, method) eina_model_interface_method_offset_resolve((iface), (model), offsetof(struct_type, method))
+
+EAPI const void *eina_model_interface_method_offset_resolve(const Eina_Model_Interface *iface, const Eina_Model *model, unsigned int offset) EINA_ARG_NONNULL(1, 2) EINA_WARN_UNUSED_RESULT EINA_PURE;
 
 
 struct _Eina_Model_Event_Description
