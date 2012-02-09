@@ -56,6 +56,9 @@ void *alloca(size_t);
 
 #ifdef HAVE_CIPHER
 # ifdef HAVE_GNUTLS
+#  if defined EET_USE_NEW_PUBKEY_VERIFY_HASH || defined EET_USE_NEW_PRIVKEY_SIGN_DATA
+#   include <gnutls/abstract.h>
+#  endif
 #  include <gnutls/x509.h>
 #  include <gcrypt.h>
 # else /* ifdef HAVE_GNUTLS */
@@ -497,6 +500,10 @@ eet_identity_sign(FILE    *fp,
    gnutls_datum_t datum = { NULL, 0 };
    size_t sign_len = 0;
    size_t cert_len = 0;
+#ifdef EET_USE_NEW_PRIVKEY_SIGN_DATA
+   gnutls_datum_t signum = { NULL, 0 };
+   gnutls_privkey_t privkey;
+#endif
 # else /* ifdef HAVE_GNUTLS */
    EVP_MD_CTX md_ctx;
    unsigned int sign_len = 0;
@@ -528,6 +535,28 @@ eet_identity_sign(FILE    *fp,
    datum.size = st_buf.st_size;
 
    /* Get the signature length */
+#ifdef EET_USE_NEW_PRIVKEY_SIGN_DATA
+   if (gnutls_privkey_init(&privkey) < 0)
+     {
+        err = EET_ERROR_SIGNATURE_FAILED;
+        goto on_error;
+     }
+
+   if (gnutls_privkey_import_x509(privkey, key->private_key, 0) < 0)
+     {
+        err = EET_ERROR_SIGNATURE_FAILED;
+        goto on_error;
+     }
+
+   if (gnutls_privkey_sign_data(privkey, GNUTLS_DIG_SHA1, 0, &datum, &signum) < 0)
+     {
+        err = EET_ERROR_SIGNATURE_FAILED;
+        goto on_error;
+     }
+
+   sign = signum.data;
+   sign_len = signum.size;
+#else
    if (gnutls_x509_privkey_sign_data(key->private_key, GNUTLS_DIG_SHA1, 0,
                                      &datum, sign, &sign_len) &&
        !sign_len)
@@ -550,6 +579,7 @@ eet_identity_sign(FILE    *fp,
 
         goto on_error;
      }
+#endif
 
    /* Get the certificate length */
    if (gnutls_x509_crt_export(key->certificate, GNUTLS_X509_FMT_DER, cert,
@@ -696,6 +726,10 @@ eet_identity_check(const void   *data_base,
    gnutls_datum_t datum;
    gnutls_datum_t signature;
 #  if EET_USE_NEW_GNUTLS_API
+#  if EET_USE_NEW_PUBKEY_VERIFY_HASH
+   gnutls_pubkey_t pubkey;
+   gnutls_digest_algorithm_t hash_algo;
+#  endif
    unsigned char *hash;
    gcry_md_hd_t md;
    int err;
@@ -724,28 +758,32 @@ eet_identity_check(const void   *data_base,
 
    hash = gcry_md_read(md, GCRY_MD_SHA1);
    if (!hash)
-     {
-        gcry_md_close(md);
-        return NULL;
-     }
+     goto on_error;
 
    datum.size = gcry_md_get_algo_dlen(GCRY_MD_SHA1);
    datum.data = hash;
 
+#  ifdef EET_USE_NEW_PUBKEY_VERIFY_HASH
+   if (gnutls_pubkey_init(&pubkey) < 0)
+     goto on_error;
+
+   if (gnutls_pubkey_import_x509(pubkey, cert, 0) < 0)
+     goto on_error;
+
+   if (gnutls_pubkey_get_verify_algorithm(pubkey, &signature, &hash_algo) < 0)
+     goto on_error;
+
+   if (gnutls_pubkey_verify_hash(pubkey, 0, &datum, &signature) < 0)
+     goto on_error;
+#  else
    if (!gnutls_x509_crt_verify_hash(cert, 0, &datum, &signature))
-     {
-        gcry_md_close(md);
-        return NULL;
-     }
+     goto on_error;
+#  endif
 
    if (sha1)
      {
         *sha1 = malloc(datum.size);
-        if (!*sha1)
-          {
-             gcry_md_close(md);
-             return NULL;
-          }
+        if (!*sha1) goto on_error;
 
         memcpy(*sha1, hash, datum.size);
         *sha1_length = datum.size;
@@ -818,6 +856,11 @@ eet_identity_check(const void   *data_base,
      *raw_signature_length = sign_len;
 
    return cert_der;
+# ifdef HAVE_GNUTLS
+ on_error:
+   gcry_md_close(md);
+   return NULL;
+# endif
 #else /* ifdef HAVE_SIGNATURE */
    data_base = NULL;
    data_length = 0;

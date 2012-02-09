@@ -547,21 +547,25 @@
         noticable quality losses in the chase for speed. It will use
         IFAST for quality less than 60 when encoding
 
-2011-12-02 Carsten Haitzler (The Rasterman)
+2011-12-02  Carsten Haitzler (The Rasterman)
 
         1.1.0 release
-        
+
 2011-12-02  Mike Blumenkrantz
 
         * added eet_file_get to return the filename of an Eet_File
         * Eet_File filenames are now stringshared
         * added mempool allocators
 
-2011-12-29 Carsten Haitzler (The Rasterman)
+2011-12-29  Carsten Haitzler (The Rasterman)
 
         * increase eet_connection packet size to 1Mb - more reasonable.
 
-2012-01-07 Boris Faure (billiob)
+2012-01-07  Boris Faure (billiob)
 
         * make eet tool write to standard output if no output file given.
-        
+
+2012-02-09  Cedric Bail
+
+	* add support for GNUTLS 3.x.
+
