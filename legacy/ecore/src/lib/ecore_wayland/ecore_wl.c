@@ -52,6 +52,7 @@ static void _ecore_wl_cb_data_leave(void *data __UNUSED__, struct wl_data_device
 static void _ecore_wl_cb_data_motion(void *data __UNUSED__, struct wl_data_device *data_dev, uint32_t timestamp, int32_t x, int32_t y);
 static void _ecore_wl_cb_data_drop(void *data __UNUSED__, struct wl_data_device *data_dev);
 static void _ecore_wl_cb_data_selection(void *data, struct wl_data_device *data_dev, struct wl_data_offer *offer);
+static void _ecore_wl_cb_mouse_move_free(void *data __UNUSED__, void *event);
 
 static void _ecore_wl_mouse_move_send(uint32_t timestamp);
 static void _ecore_wl_mouse_out_send(struct wl_surface *surface, uint32_t timestamp);
@@ -77,6 +78,7 @@ static int _ecore_wl_touch_y = 0;
 static int _ecore_wl_input_modifiers = 0;
 static struct xkb_desc *_ecore_wl_xkb = NULL;
 static uint32_t _ecore_wl_input_button = 0;
+static uint32_t _ecore_wl_input_timestamp = 0;
 
 static struct wl_compositor *_ecore_wl_comp = NULL;
 static struct wl_shm *_ecore_wl_shm = NULL;
@@ -205,6 +207,7 @@ ecore_wl_init(const char *name)
    /* connect to the wayland display */
    if (!(_ecore_wl_disp = wl_display_connect(name))) 
      {
+        ERR("Could not connect to display");
         eina_log_domain_unregister(_ecore_wl_log_dom);
         _ecore_wl_log_dom = -1;
         ecore_event_shutdown();
@@ -307,6 +310,12 @@ ecore_wl_pointer_xy_get(int *x, int *y)
 {
    if (x) *x = _ecore_wl_screen_x;
    if (y) *y = _ecore_wl_screen_y;
+}
+
+EAPI unsigned int 
+ecore_wl_input_timestamp_get(void)
+{
+   return _ecore_wl_input_timestamp;
 }
 
 EAPI Ecore_Wl_Drag_Source *
@@ -498,6 +507,8 @@ _ecore_wl_cb_fd_handle(void *data, Ecore_Fd_Handler *hdl __UNUSED__)
 static void 
 _ecore_wl_cb_handle_motion(void *data __UNUSED__, struct wl_input_device *dev, uint32_t t, int32_t x, int32_t y, int32_t sx, int32_t sy) 
 {
+//   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+
    if (dev != _ecore_wl_input_dev) return;
 
    _ecore_wl_screen_x = x;
@@ -511,6 +522,8 @@ _ecore_wl_cb_handle_motion(void *data __UNUSED__, struct wl_input_device *dev, u
 static void 
 _ecore_wl_cb_handle_button(void *data __UNUSED__, struct wl_input_device *dev, uint32_t t, uint32_t btn, uint32_t state) 
 {
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+
    if (dev != _ecore_wl_input_dev) return;
 
    if ((btn >= BTN_SIDE) && (btn <= BTN_BACK))
@@ -550,11 +563,14 @@ _ecore_wl_cb_handle_button(void *data __UNUSED__, struct wl_input_device *dev, u
      }
    else 
      {
+        _ecore_wl_mouse_move_send(t);
+
         if (state)
           {
              _ecore_wl_input_button = btn;
              if (_ecore_wl_input_surface) 
                _ecore_wl_mouse_down_send(_ecore_wl_input_surface, btn, t);
+
              /* NB: Ideally, this is not the place to check for drags.
               * IMO, drags should be handled by the client. EG: we raise the 
               * mouse_down to the client, and the client can 'request' a 
@@ -588,7 +604,7 @@ _ecore_wl_cb_handle_key(void *data __UNUSED__, struct wl_input_device *dev, uint
 {
    unsigned int keycode = 0;
 
-   if (dev != _ecore_wl_input_dev) return;
+   if ((!_ecore_wl_input_surface) || (dev != _ecore_wl_input_dev)) return;
 
    keycode = key + _ecore_wl_xkb->min_key_code;
 
@@ -610,6 +626,7 @@ _ecore_wl_cb_handle_pointer_focus(void *data __UNUSED__, struct wl_input_device 
     * by Wayland for the grab, so 'surface' here ends up being NULL. When a 
     * move or resize is finished, we get this event again, but this time 
     * with an active surface */
+
    _ecore_wl_screen_x = x;
    _ecore_wl_screen_y = y;
    _ecore_wl_surface_x = sx;
@@ -637,6 +654,8 @@ static void
 _ecore_wl_cb_handle_keyboard_focus(void *data __UNUSED__, struct wl_input_device *dev, uint32_t t, struct wl_surface *surface, struct wl_array *keys) 
 {
    unsigned int *keyend = 0, *i = 0;
+
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
    if (dev != _ecore_wl_input_dev) return;
 
@@ -993,15 +1012,25 @@ _ecore_wl_cb_data_selection(void *data, struct wl_data_device *data_dev, struct 
 }
 
 static void 
+_ecore_wl_cb_mouse_move_free(void *data __UNUSED__, void *event)
+{
+   Ecore_Event_Mouse_Move *ev;
+
+   if ((ev = event)) free(ev);
+}
+
+static void 
 _ecore_wl_mouse_move_send(uint32_t timestamp)
 {
    Ecore_Event_Mouse_Move *ev;
+   Ecore_Event *event;
 
 //   if (!_ecore_wl_input_surface) return;
 
    if (!(ev = malloc(sizeof(Ecore_Event_Mouse_Move)))) return;
 
    ev->timestamp = timestamp;
+
    ev->x = _ecore_wl_surface_x;
    ev->y = _ecore_wl_surface_y;
    ev->root.x = _ecore_wl_screen_x;
@@ -1024,6 +1053,8 @@ _ecore_wl_mouse_move_send(uint32_t timestamp)
 
         if (_ecore_wl_input_surface) 
           {
+             LOGFN(__FILE__, __LINE__, __FUNCTION__);
+
              if ((id = (unsigned int)wl_surface_get_user_data(_ecore_wl_input_surface)))
                {
                   ev->window = id;
@@ -1032,7 +1063,8 @@ _ecore_wl_mouse_move_send(uint32_t timestamp)
           }
      }
 
-   ecore_event_add(ECORE_EVENT_MOUSE_MOVE, ev, NULL, NULL);
+   event = ecore_event_add(ECORE_EVENT_MOUSE_MOVE, ev, 
+                           _ecore_wl_cb_mouse_move_free, NULL);
 }
 
 static void 
@@ -1090,6 +1122,8 @@ _ecore_wl_mouse_up_send(struct wl_surface *surface, uint32_t button, uint32_t ti
 {
    Ecore_Event_Mouse_Button *ev;
 
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+
    if (!(ev = malloc(sizeof(Ecore_Event_Mouse_Button)))) return;
 
    if (button == BTN_LEFT)
@@ -1139,6 +1173,8 @@ _ecore_wl_mouse_down_send(struct wl_surface *surface, uint32_t button, uint32_t 
 {
    Ecore_Event_Mouse_Button *ev;
 
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+
    if (!(ev = malloc(sizeof(Ecore_Event_Mouse_Button)))) return;
 
    if (button == BTN_LEFT)
@@ -1148,6 +1184,7 @@ _ecore_wl_mouse_down_send(struct wl_surface *surface, uint32_t button, uint32_t 
    else if (button == BTN_RIGHT)
      ev->buttons = 3;
 
+   _ecore_wl_input_timestamp = timestamp;
    ev->timestamp = timestamp;
    ev->x = _ecore_wl_surface_x;
    ev->y = _ecore_wl_surface_y;
