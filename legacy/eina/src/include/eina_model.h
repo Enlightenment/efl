@@ -979,6 +979,60 @@ EAPI Eina_Bool eina_model_type_check(const Eina_Model_Type *type) EINA_ARG_NONNU
 EAPI const char *eina_model_type_name_get(const Eina_Model_Type *type) EINA_ARG_NONNULL(1) EINA_WARN_UNUSED_RESULT EINA_PURE;
 EAPI const Eina_Model_Type *eina_model_type_parent_get(const Eina_Model_Type *type) EINA_ARG_NONNULL(1) EINA_WARN_UNUSED_RESULT EINA_PURE;
 
+/**
+ * @brief Setup the type to be a subclass of another parent type.
+ * @param type type to be modified
+ * @param parent type to be used as parent
+ * @return #EINA_TRUE on success, #EINA_FALSE otherwise.
+ *
+ * Although @a type is modified, the following properties are not
+ * touched or they are actually used for validation:
+ *
+ * @li @c type->version must be #EINA_MODEL_TYPE_VERSION;
+ * @li @c type->private_size unmodified, should be set to type's size;
+ * @li @c type->name unmodified, should be set to type's name.
+ *
+ *
+ * All other fields are modified as follow:
+ *
+ * @li @c type->type_size initiated to parent->type_size
+ * @li @c type->interfaces = NULL;
+ * @li @c type->events = NULL;
+ * @li @c type->setup = NULL;
+ * @li @c type->flush = NULL;
+ * @li @c type->constructor = NULL;
+ * @li @c type->destructor = NULL;
+ * @li @c type->copy = NULL;
+ * @li @c type->deep_copy = NULL;
+ * @li @c type->compare = NULL;
+ * @li @c type->load = NULL;
+ * @li @c type->unload = NULL;
+ * @li @c type->property_get = NULL;
+ * @li @c type->property_set = NULL;
+ * @li @c type->property_del = NULL;
+ * @li @c type->properties_names_list_get = NULL;
+ * @li @c type->child_count = NULL;
+ * @li @c type->child_get = NULL;
+ * @li @c type->child_set = NULL;
+ * @li @c type->child_del = NULL;
+ * @li @c type->child_insert_at = NULL;
+ * @li @c type->child_find = NULL;
+ * @li @c type->child_search = NULL;
+ * @li @c type->child_sort = NULL;
+ * @li @c type->child_iterator_get = NULL;
+ * @li @c type->child_reversed_iterator_get = NULL;
+ * @li @c type->child_sorted_iterator_get = NULL;
+ * @li @c type->child_filtered_iterator_get = NULL;
+ * @li @c type->to_string = NULL;
+ *
+ * If you have custom methods, overload them afterwards
+ * eina_model_type_subclass_setup() returns with #EINA_TRUE.
+ *
+ * @since 1.2
+ */
+EAPI Eina_Bool eina_model_type_subclass_setup(Eina_Model_Type *type,
+                                              const Eina_Model_Type *parent) EINA_ARG_NONNULL(1, 2);
+
 EAPI Eina_Bool eina_model_type_subclass_check(const Eina_Model_Type *type,
                                               const Eina_Model_Type *self_or_parent) EINA_ARG_NONNULL(1, 2) EINA_WARN_UNUSED_RESULT EINA_PURE;
 

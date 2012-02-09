@@ -4207,7 +4207,6 @@ eina_model_type_parent_get(const Eina_Model_Type *type)
    return type->parent;
 }
 
-
 #define EINA_MODEL_TYPE_INSTANCE_CHECK(type, model)                     \
   EINA_SAFETY_ON_NULL_RETURN(type);                                     \
   EINA_SAFETY_ON_FALSE_RETURN(_eina_model_type_check(type));            \
@@ -4575,6 +4574,61 @@ eina_model_type_to_string(const Eina_Model_Type *type, const Eina_Model *model)
    EINA_SAFETY_ON_NULL_RETURN_VAL(to_string, NULL);
 
    return to_string(model);
+}
+
+EAPI Eina_Bool
+eina_model_type_subclass_setup(Eina_Model_Type *type, const Eina_Model_Type *parent)
+{
+   EINA_SAFETY_ON_NULL_RETURN_VAL(type, EINA_FALSE);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(parent, EINA_FALSE);
+   EINA_SAFETY_ON_FALSE_RETURN_VAL(_eina_model_type_check(parent), EINA_FALSE);
+   EINA_SAFETY_ON_FALSE_RETURN_VAL(type->version == EINA_MODEL_TYPE_VERSION,
+                                   EINA_FALSE);
+
+   type->parent = parent;
+   type->type_size = parent->type_size;
+   type->interfaces = NULL;
+   type->events = NULL;
+
+   type->setup = NULL;
+   type->flush = NULL;
+   type->constructor = NULL;
+   type->destructor = NULL;
+   type->copy = NULL;
+   type->deep_copy = NULL;
+   type->compare = NULL;
+   type->load = NULL;
+   type->unload = NULL;
+   type->property_get = NULL;
+   type->property_set = NULL;
+   type->property_del = NULL;
+   type->properties_names_list_get = NULL;
+   type->child_count = NULL;
+   type->child_get = NULL;
+   type->child_set = NULL;
+   type->child_del = NULL;
+   type->child_insert_at = NULL;
+   type->child_find = NULL;
+   type->child_search = NULL;
+   type->child_sort = NULL;
+   type->child_iterator_get = NULL;
+   type->child_reversed_iterator_get = NULL;
+   type->child_sorted_iterator_get = NULL;
+   type->child_filtered_iterator_get = NULL;
+   type->to_string = NULL;
+   type->__extension_ptr0 = NULL;
+   type->__extension_ptr1 = NULL;
+   type->__extension_ptr2 = NULL;
+   type->__extension_ptr3 = NULL;
+
+   if (type->type_size > sizeof(Eina_Model_Type))
+     {
+        unsigned char *p = (unsigned char *)type;
+        p += sizeof(Eina_Model_Type);
+        memset(p, 0, type->type_size - sizeof(Eina_Model_Type));
+     }
+
+   return EINA_TRUE;
 }
 
 EAPI Eina_Bool
