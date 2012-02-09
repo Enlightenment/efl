@@ -332,7 +332,7 @@ struct _Eina_Model_Description
          Eina_Bool (*child_del)(Eina_Model *model, unsigned int position);
          Eina_Bool (*child_insert_at)(Eina_Model *model, unsigned int position, Eina_Model *child);
          int (*child_find)(const Eina_Model *model, unsigned int start_position, const Eina_Model *other);
-         int (*child_search)(const Eina_Model *model, unsigned int start_position, Eina_Each_Cb match, const void *data);
+         int (*child_criteria_match)(const Eina_Model *model, unsigned int start_position, Eina_Each_Cb match, const void *data);
          void (*child_sort)(Eina_Model *model, Eina_Compare_Cb compare);
          Eina_Iterator *(*child_iterator_get)(Eina_Model *model, unsigned int start, unsigned int count);
          Eina_Iterator *(*child_reversed_iterator_get)(Eina_Model *model, unsigned int start, unsigned int count);
@@ -407,7 +407,7 @@ _eina_model_description_type_fill(Eina_Model_Description *desc, const Eina_Model
         DEF_METH(child_del);
         DEF_METH(child_insert_at);
         DEF_METH(child_find);
-        DEF_METH(child_search);
+        DEF_METH(child_criteria_match);
         DEF_METH(child_sort);
         DEF_METH(child_iterator_get);
         DEF_METH(child_reversed_iterator_get);
@@ -965,10 +965,10 @@ static inline int
 _eina_model_description_event_id_find(const Eina_Model_Description *desc, const char *event_name)
 {
    const Eina_Model_Event_Description_Cache *cache;
-   Eina_Model_Event_Description_Cache search;
+   Eina_Model_Event_Description_Cache criteria_match;
 
-   search.name = event_name;
-   cache = bsearch(&search, desc->cache.events, desc->total.events,
+   criteria_match.name = event_name;
+   cache = bsearch(&criteria_match, desc->cache.events, desc->total.events,
                    sizeof(Eina_Model_Event_Description_Cache),
                    _eina_model_description_events_cmp);
    if (!cache)
@@ -1551,12 +1551,12 @@ _eina_model_type_base_child_find(const Eina_Model *model, unsigned int start_pos
 }
 
 static int
-_eina_model_type_base_child_search(const Eina_Model *model, unsigned int start_position, Eina_Each_Cb match, const void *user_data)
+_eina_model_type_base_child_criteria_match(const Eina_Model *model, unsigned int start_position, Eina_Each_Cb match, const void *user_data)
 {
    int x = eina_model_child_count(model);
    unsigned int i, count;
 
-   DBG("base child_search of %p, %d children", model, x);
+   DBG("base child_criteria_match of %p, %d children", model, x);
 
    if (x < 0)
      return -1;
@@ -2001,7 +2001,7 @@ static const Eina_Model_Type _EINA_MODEL_TYPE_BASE = {
   NULL, /* no child del */
   NULL, /* no child insert */
   _eina_model_type_base_child_find,
-  _eina_model_type_base_child_search,
+  _eina_model_type_base_child_criteria_match,
   NULL, /* no child sort */
   _eina_model_type_base_child_iterator_get,
   _eina_model_type_base_child_reversed_iterator_get,
@@ -2340,7 +2340,7 @@ static const Eina_Model_Type _EINA_MODEL_TYPE_MIXIN = {
   _eina_model_type_mixin_child_del,
   _eina_model_type_mixin_child_insert_at,
   NULL, /* use default find */
-  NULL, /* use default search */
+  NULL, /* use default criteria_match */
   _eina_model_type_mixin_child_sort,
   NULL, /* use default iterator get */
   NULL, /* use default reversed iterator get */
@@ -4078,7 +4078,7 @@ eina_model_child_criteria_match(const Eina_Model *model, unsigned int start_posi
 {
    EINA_MODEL_INSTANCE_CHECK_VAL(model, -1);
    EINA_SAFETY_ON_NULL_RETURN_VAL(match, -1);
-   EINA_MODEL_TYPE_CALL_RETURN(model, child_search, -1,
+   EINA_MODEL_TYPE_CALL_RETURN(model, child_criteria_match, -1,
                                start_position, match, data);
 }
 
@@ -4475,18 +4475,18 @@ eina_model_type_child_find(const Eina_Model_Type *type, const Eina_Model *model,
 }
 
 EAPI int
-eina_model_type_child_search(const Eina_Model_Type *type, const Eina_Model *model, unsigned int start_position, Eina_Each_Cb match, const void *data)
+eina_model_type_child_criteria_match(const Eina_Model_Type *type, const Eina_Model *model, unsigned int start_position, Eina_Each_Cb match, const void *data)
 {
-   int (*child_search)(const Eina_Model *, unsigned int, Eina_Each_Cb, const void *);
+   int (*child_criteria_match)(const Eina_Model *, unsigned int, Eina_Each_Cb, const void *);
 
    EINA_SAFETY_ON_NULL_RETURN_VAL(match, -1);
    EINA_MODEL_TYPE_INSTANCE_CHECK_VAL(type, model, -1);
 
-   child_search = _eina_model_type_find_offset
-     (type, offsetof(Eina_Model_Type, child_search));
-   EINA_SAFETY_ON_NULL_RETURN_VAL(child_search, -1);
+   child_criteria_match = _eina_model_type_find_offset
+     (type, offsetof(Eina_Model_Type, child_criteria_match));
+   EINA_SAFETY_ON_NULL_RETURN_VAL(child_criteria_match, -1);
 
-   return child_search(model, start_position, match, data);
+   return child_criteria_match(model, start_position, match, data);
 }
 
 EAPI void
@@ -4609,7 +4609,7 @@ eina_model_type_subclass_setup(Eina_Model_Type *type, const Eina_Model_Type *par
    type->child_del = NULL;
    type->child_insert_at = NULL;
    type->child_find = NULL;
-   type->child_search = NULL;
+   type->child_criteria_match = NULL;
    type->child_sort = NULL;
    type->child_iterator_get = NULL;
    type->child_reversed_iterator_get = NULL;

@@ -583,7 +583,7 @@ struct _Eina_Model_Type
    Eina_Bool (*child_del)(Eina_Model *model, unsigned int position);
    Eina_Bool (*child_insert_at)(Eina_Model *model, unsigned int position, Eina_Model *child);
    int (*child_find)(const Eina_Model *model, unsigned int start_position, const Eina_Model *other);
-   int (*child_search)(const Eina_Model *model, unsigned int start_position, Eina_Each_Cb match, const void *data);
+   int (*child_criteria_match)(const Eina_Model *model, unsigned int start_position, Eina_Each_Cb match, const void *data);
    void (*child_sort)(Eina_Model *model, Eina_Compare_Cb compare);
    Eina_Iterator *(*child_iterator_get)(Eina_Model *model, unsigned int start, unsigned int count);
    Eina_Iterator *(*child_reversed_iterator_get)(Eina_Model *model, unsigned int start, unsigned int count);
@@ -767,11 +767,11 @@ EAPI int eina_model_type_child_find(const Eina_Model_Type *type,
                                     const Eina_Model *model,
                                     unsigned int start_position,
                                     const Eina_Model *other) EINA_ARG_NONNULL(1, 2, 4);
-EAPI int eina_model_type_child_search(const Eina_Model_Type *type,
-                                      const Eina_Model *model,
-                                      unsigned int start_position,
-                                      Eina_Each_Cb match,
-                                      const void *data) EINA_ARG_NONNULL(1, 2, 4);
+EAPI int eina_model_type_child_criteria_match(const Eina_Model_Type *type,
+                                              const Eina_Model *model,
+                                              unsigned int start_position,
+                                              Eina_Each_Cb match,
+                                              const void *data) EINA_ARG_NONNULL(1, 2, 4);
 EAPI void eina_model_type_child_sort(const Eina_Model_Type *type,
                                      Eina_Model *model,
                                      Eina_Compare_Cb compare) EINA_ARG_NONNULL(1, 2, 3);
@@ -1017,7 +1017,7 @@ EAPI const Eina_Model_Type *eina_model_type_parent_get(const Eina_Model_Type *ty
  * @li @c type->child_del = NULL;
  * @li @c type->child_insert_at = NULL;
  * @li @c type->child_find = NULL;
- * @li @c type->child_search = NULL;
+ * @li @c type->child_criteria_match = NULL;
  * @li @c type->child_sort = NULL;
  * @li @c type->child_iterator_get = NULL;
  * @li @c type->child_reversed_iterator_get = NULL;
