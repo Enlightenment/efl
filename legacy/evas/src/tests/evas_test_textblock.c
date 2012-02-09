@@ -1283,6 +1283,15 @@ START_TEST(evas_textblock_various)
    evas_object_textblock_text_markup_set(tb, "a<ps/>a<ps/>a");
    fail_if(!_evas_textblock_check_item_node_link(tb));
 
+   /* These shouldn't crash (although the desired outcome is not yet defined) */
+   evas_object_textblock_text_markup_set(tb, "&#xfffc;");
+   evas_textblock_cursor_pos_set(cur, 0);
+   evas_textblock_cursor_char_delete(cur);
+
+   evas_object_textblock_text_markup_set(tb, "\xEF\xBF\xBC");
+   evas_textblock_cursor_pos_set(cur, 0);
+   evas_textblock_cursor_char_delete(cur);
+
    END_TB_TEST();
 }
 END_TEST

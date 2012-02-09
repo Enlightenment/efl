@@ -5690,7 +5690,6 @@ EAPI Eina_Bool
 evas_textblock_cursor_is_format(const Evas_Textblock_Cursor *cur)
 {
    if (!cur || !cur->node) return EINA_FALSE;
-   if (evas_textblock_cursor_format_is_visible_get(cur)) return EINA_TRUE;
    return (_evas_textblock_cursor_node_format_at_pos_get(cur)) ?
       EINA_TRUE : EINA_FALSE;
 }
@@ -8068,6 +8067,7 @@ evas_textblock_cursor_format_is_visible_get(const Evas_Textblock_Cursor *cur)
 
    if (!cur) return EINA_FALSE;
    if (!cur->node) return EINA_FALSE;
+   if (!evas_textblock_cursor_is_format(cur)) return EINA_FALSE;
    text = eina_ustrbuf_string_get(cur->node->unicode);
    return EVAS_TEXTBLOCK_IS_VISIBLE_FORMAT_CHAR(text[cur->pos]);
 }
