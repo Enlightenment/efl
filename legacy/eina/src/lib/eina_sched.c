@@ -41,7 +41,7 @@
 #include "eina_sched.h"
 #include "eina_log.h"
 
-#define RTNICENESS 5
+#define RTNICENESS 1
 #define NICENESS 5
 
 EAPI void
@@ -62,10 +62,14 @@ eina_sched_prio_drop(void)
 
    if (EINA_UNLIKELY(pol == SCHED_RR || pol == SCHED_FIFO))
      {
-        prio = sched_get_priority_max(pol);
-        param.sched_priority += RTNICENESS;
-        if (prio > 0 && param.sched_priority > prio)
-           param.sched_priority = prio;
+        param.sched_priority -= RTNICENESS;
+
+        /* We don't change the policy */
+        if (param.sched_priority < 1)
+          {
+             EINA_LOG_INFO("RT prio < 1, setting to 1 instead");
+             param.sched_priority = 1;
+          }
 
         pthread_setschedparam(pthread_id, pol, &param);
      }
@@ -78,7 +82,10 @@ eina_sched_prio_drop(void)
           {
              prio += NICENESS;
              if (prio > 19)
-                prio = 19;
+               {
+                  EINA_LOG_INFO("Max niceness reached; keeping max (19)");
+                  prio = 19;
+               }
 
              setpriority(PRIO_PROCESS, 0, prio);
           }
