@@ -16,7 +16,7 @@ char *gli_text_get(void *data, Evas_Object *obj __UNUSED__, const char *part __U
 }
 
 void
-index_changed2(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info)
+_index_delay_changed_cb(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info)
 {
    // called on a change but delayed in case multiple changes happen in a
    // short timespan
@@ -24,14 +24,14 @@ index_changed2(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_i
 }
 
 void
-index_changed(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+_index_changed_cb(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    // this is calld on every change, no matter how often
    // elm_genlist_item_bring_in(event_info);
 }
 
 void
-index_selected(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info)
+_index_selected_cb(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info)
 {
    // called on final select
    elm_genlist_item_top_bring_in(elm_object_item_data_get(event_info));
@@ -87,9 +87,9 @@ test_index(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info 
           }
         j += 2;
      }
-   evas_object_smart_callback_add(id, "delay,changed", index_changed2, NULL);
-   evas_object_smart_callback_add(id, "changed", index_changed, NULL);
-   evas_object_smart_callback_add(id, "selected", index_selected, NULL);
+   evas_object_smart_callback_add(id, "delay,changed", _index_delay_changed_cb, NULL);
+   evas_object_smart_callback_add(id, "changed", _index_changed_cb, NULL);
+   evas_object_smart_callback_add(id, "selected", _index_selected_cb, NULL);
    elm_index_item_go(id, 0);
 
    evas_object_resize(win, 320, 480);
