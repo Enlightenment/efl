@@ -108,6 +108,7 @@ EAPI unsigned int ecore_wl_format_get(void);
 EAPI void ecore_wl_flush(void);
 EAPI void ecore_wl_sync(void);
 EAPI void ecore_wl_pointer_xy_get(int *x, int *y);
+EAPI unsigned int ecore_wl_input_timestamp_get(void);
 
 EAPI Ecore_Wl_Drag_Source *ecore_wl_drag_source_create(int hotspot_x, int hotspot_y, int offset_x, int offset_y, const char *mimetype, unsigned int timestamp, void *data);
 EAPI void ecore_wl_drag_start(Ecore_Wl_Drag_Source *source, struct wl_surface *surface, struct wl_buffer *buffer);
