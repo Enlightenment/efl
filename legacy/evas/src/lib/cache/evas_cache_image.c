@@ -780,8 +780,6 @@ evas_cache_image_request(Evas_Cache_Image *cache, const char *file,
          * of an image at a given key. we wither find it and keep re-reffing
          * it or we dirty it and get it out */
         _evas_cache_image_dirty_add(im);
-        /* this image never used, so it have to be deleted */
-        _evas_cache_image_entry_delete(cache, im);
         im = NULL;
      }
 
