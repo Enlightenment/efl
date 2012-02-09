@@ -29,6 +29,91 @@
  */
 
 /**
+ * @page eina_model_02_example_page Creating a simple model
+ * @dontinclude eina_model_02.c
+ *
+ * This example shows the creation of a model with five properties, named:
+ * 'a', 'b', 'c', 'd' and 'e' with values 0, 1, 2, 3 and 4
+ * respectively. In addition to the 5 properties our model also add 5 children,
+ * and to each child we give a property named 'x' with a value of 1, 2, 3, 4 and
+ * 5.
+ *
+ * In other words this piece of code shows how to use eina_model to store a list
+ * of elements, given that the list itself has some properties.
+ *
+ * Now let's walk through the code and examine the interesting bits.
+ *
+ * This is some pretty standard initialization code.
+ * @until eina_init
+ *
+ * We now create our eina_model, the important detail here is the type of the
+ * model being created, for this example we use the generic type provided by
+ * eina:
+ * @until model_new
+ *
+ * Once our model has been created we can add callbacks to be notified of events
+ * that happen to our model, for this example we are just going to add a
+ * callback for the "delete" event. To get a list of events a given eina model
+ * can emit see @ref eina_model_event_names_list_get().
+ * @until callback_add
+ *
+ * Once we have a model, we need to populate it with information. There are two
+ * types of information we can store on an eina model: properties and eina
+ * models. We are going to start by looking at properties.
+ *
+ * Properties are, simply put, named values. They have a char* identifier and an
+ * Eina_Value value. This means you can store in a property almost any type of
+ * data. For this example we are going to add some very simple numeric
+ * properties which will have single letter identifiers.
+ * @until }
+ * @until }
+ *
+ * Despite being able to store almost any value properties the least flexible
+ * information unit we can put in an eina model. We can add eina models to our
+ * eina model, this allows us to represt complex information hierarchies. This
+ * example adds 5 models(with no children of their own) to our parent model @c
+ * m.
+ * @until }
+ * The code here should be pretty easy to understand, we create a model, much
+ * like we did before, and we then add a property to our model, again a task we
+ * have already done.
+ *
+ * The important issue to note here is that we could have given each of our @c c
+ * child models as complex an structure as we needed, they could each be a list
+ * or a tree on their own right.
+ *
+ * Now that we have a populated model we print a string representation of
+ * it(without forgetting to free the string):
+ * @until free
+ *
+ * And since we are done using our model we release our reference to it(and
+ * since no else holds references to it, it will be freed):
+ * @until }
+ *
+ * Note that we don't need to iterate over the children of @c m unrefing it,
+ * this is because we don't hold references to it, we freed our references right
+ * after we added them to their parent model, so when the parent model dies(and
+ * releases the references to it's children) they will be freed.
+ *
+ * The only thing we are going to look at is the callback we registered for
+ * whenever a model is deleted, since our models don't do anything fancy we are
+ * just going to print the memory address of the model being freed.
+ * @until }
+ *
+ * Note that this means the memory address is still valid, our callback is
+ * called just before the memory is freed so we could still access its
+ * information here.
+ *
+ * The full code can be seen in @ref eina_model_02_c
+ */
+
+/**
+ * @page eina_model_02_c eina_model_02.c
+ * @include eina_model_02.c
+ * @example eina_model_02.c
+ */
+
+/**
  * @addtogroup Eina_Data_Types_Group Data Types
  *
  * @since 1.2
@@ -58,70 +143,8 @@
  * use it during development, get the logic right and just then
  * optimize what is needed (properties or children management).
  *
- * @code
- *
- *    static void _cb_on_deleted(void *data, Eina_Model *model, const Eina_Model_Event_Description *desc, void *event_info)
- *    {
- *       printf("deleted %p\n", model);
- *    }
- *
- *    int main(void)
- *    {
- *       Eina_Model *m;
- *       char *s;
- *       int i;
- *
- *       eina_init();
- *
- *       m = eina_model_new(EINA_MODEL_TYPE_GENERIC);
- *
- *       eina_model_event_callback_add(m, "deleted", _cb_on_deleted, NULL);
- *
- *       //Adding properties to model
- *       for (i = 0; i < 5; i++)
- *         {
- *            Eina_Value val;
- *            char name[2] = {'a'+ i, 0};
- *            eina_value_setup(&val, EINA_VALUE_TYPE_INT);
- *            eina_value_set(&val, i);
- *            eina_model_property_set(m, name, &val);
- *            eina_value_flush(&val);
- *         }
- *
- *       //Adding children to model
- *       for (i = 0; i < 5; i++)
- *         {
- *            Eina_Value val;
- *            Eina_Model *c = eina_model_new(EINA_MODEL_TYPE_GENERIC);
- *            eina_value_setup(&val, EINA_VALUE_TYPE_INT);
- *            eina_value_set(&val, i);
- *            eina_model_property_set(c, "x", &val);
- *
- *            eina_model_event_callback_add(c, "deleted", _cb_on_deleted, NULL);
- *
- *            eina_model_child_append(m, c);
- *            //Now that the child has been appended to a model, it's parent will manage it's lifecycle
- *            eina_model_unref(c);
- *            eina_value_flush(&val);
- *         }
- *
- *       s = eina_model_to_string(m);
- *       printf("model as string:\n%s\n", s);
- *
- *       free(s);
- *       eina_model_unref(m);
- *
- *       return 0;
- *    }
- * @endcode
- * This code exemplifies the creation of a model with five properties, named:
- * 'a', 'b', 'c', 'd' and 'e' with values 0, 1, 2, 3 and 4
- * respectively. In addition to the 5 properties our model also get 5 children,
- * And to each child we give a property named 'x' with a value of 1, 2, 3, 4 and
- * 5.
- *
- * In other words this piece of code shows how to use eina_model to store a list
- * of elements, given that the list itself has some properties.
+ * @ref eina_model_02_example_page contains an easy to follow example that
+ * demonstrates several of the important features of eina_model.
  *
  * An inheritance example: @ref eina_model_01_c
  *
@@ -181,27 +204,103 @@ typedef struct _Eina_Model_Event_Description Eina_Model_Event_Description;
  */
 typedef void (*Eina_Model_Event_Cb)(void *data, Eina_Model *model, const Eina_Model_Event_Description *desc, void *event_info);
 
+/**
+ * @brief Creates a new model of type @a Type.
+ *
+ * @see _Eina_Model_Type
+ * @see eina_model_del()
+ * @since 1.2
+ */
 EAPI Eina_Model *eina_model_new(const Eina_Model_Type *type);
+/**
+ * @brief Frees the memory associated with @a model
+ *
+ * @see eina_model_new()
+ * @since 1.2
+ */
 EAPI void eina_model_del(Eina_Model *model) EINA_ARG_NONNULL(1);
 
+/**
+ * @brief Returns the type of @a model.
+ *
+ * @see eina_model_new()
+ * @see _Eina_Model_Type
+ * @since 1.2
+ */
 EAPI const Eina_Model_Type *eina_model_type_get(const Eina_Model *model) EINA_ARG_NONNULL(1) EINA_WARN_UNUSED_RESULT EINA_PURE;
 
+/**
+ * @brief Returns the interface named @a name of @a model.
+ *
+ * The name of every interface of @a model will be compared to @a name, the
+ * first one to match will be returned.
+ *
+ * @see eina_model_new()
+ * @see _Eina_Model_Interface
+ * @since 1.2
+ */
 EAPI const Eina_Model_Interface *eina_model_interface_get(const Eina_Model *model,
                                                           const char *name) EINA_ARG_NONNULL(1, 2) EINA_WARN_UNUSED_RESULT EINA_PURE;
 
+/**
+ * @brief Checks if @a model is an instance of @a type.
+ *
+ * @see eina_model_new()
+ * @see _Eina_Model_Type
+ * @since 1.2
+ */
 EAPI Eina_Bool eina_model_instance_check(const Eina_Model *model,
                                          const Eina_Model_Type *type) EINA_ARG_NONNULL(1, 2) EINA_WARN_UNUSED_RESULT EINA_PURE;
 
+/**
+ * @brief Checks if @a model implements @a iface.
+ *
+ * @see _Eina_Model_Interface
+ * @since 1.2
+ */
 EAPI Eina_Bool eina_model_interface_implemented(const Eina_Model *model, const Eina_Model_Interface *iface) EINA_ARG_NONNULL(1, 2) EINA_WARN_UNUSED_RESULT EINA_PURE;
 
+/**
+ * @brief Increases the refcount of @a model.
+ *
+ * @see eina_model_new()
+ * @see eina_model_unref()
+ * @since 1.2
+ */
 EAPI Eina_Model *eina_model_ref(Eina_Model *model) EINA_ARG_NONNULL(1);
+/**
+ * @brief Decreases the refcount of @a model.
+ *
+ * @see eina_model_ref()
+ * @see eina_model_del()
+ * @since 1.2
+ */
 EAPI void eina_model_unref(Eina_Model *model) EINA_ARG_NONNULL(1);
+/**
+ * @brief Returns the number of references to @a model.
+ *
+ * @see eina_model_ref()
+ * @see eina_model_unref()
+ * @since 1.2
+ */
 EAPI int eina_model_refcount(const Eina_Model *model) EINA_ARG_NONNULL(1);
 
+/**
+ * @brief Add a callback to be called when @a event_name is emited.
+ *
+ * @see eina_model_event_callback_del()
+ * @since 1.2
+ */
 EAPI Eina_Bool eina_model_event_callback_add(Eina_Model *model,
                                              const char *event_name,
                                              Eina_Model_Event_Cb cb,
                                              const void *data) EINA_ARG_NONNULL(1, 2, 3);
+/**
+ * @brief Remove a callback that was to be called when @a event_name was emited.
+ *
+ * @see eina_model_event_callback_add()
+ * @since 1.2
+ */
 EAPI Eina_Bool eina_model_event_callback_del(Eina_Model *model,
                                              const char *event_name,
                                              Eina_Model_Event_Cb cb,
@@ -214,7 +313,7 @@ EAPI const Eina_Model_Event_Description *eina_model_event_description_get(const 
  * @brief Returns list of events this model may emit.
  * @param model The model whose events are to be listed.
  * @return An Eina_List of stringshares with the name of every event. Free the
- * list with eina_model_event_names_list_free.
+ * list with eina_model_event_names_list_free().
  *
  * @since 1.2
  */
@@ -511,7 +610,7 @@ EAPI char *eina_model_to_string(const Eina_Model *model) EINA_ARG_NONNULL(1) EIN
  * @struct _Eina_Model_Type
  * API to access models.
  *
- * The methods @c setup, @c flush, @c constructor, @c destructor and
+ * @warning The methods @c setup, @c flush, @c constructor, @c destructor and
  * @c property_get are mandatory and must exist, otherwise type cannot
  * be used.
  *
@@ -860,6 +959,9 @@ EAPI const void *eina_model_type_method_offset_resolve(const Eina_Model_Type *ty
 
 /**
  * @struct _Eina_Model_Interface
+ *
+ * @warning The methods @c setup, @c flush, @c constructor and @c destructor are
+ * mandatory and must exist, otherwise type cannot be used.
  *
  * Interfaces are managed by name, then multiple Eina_Model_Interface
  * may have the same name meaning it implements that name.

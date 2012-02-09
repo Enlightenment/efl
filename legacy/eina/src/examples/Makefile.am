@@ -37,7 +37,9 @@ SRCS = \
 	eina_inlist_03.c \
 	eina_str_01.c \
 	eina_strbuf_01.c \
-	eina_tiler_01.c
+	eina_tiler_01.c \
+	eina_model_01.c \
+	eina_model_02.c
 
 examples_PROGRAMS =
 
@@ -73,7 +75,9 @@ examples_PROGRAMS += \
 	eina_inlist_02 \
 	eina_inlist_03 \
 	eina_str_01 \
-	eina_strbuf_01
+	eina_strbuf_01 \
+	eina_model_01 \
+	eina_model_02
 
 if BUILD_TILER_EXAMPLE
 AM_CPPFLAGS += @ECORE_EVAS_CFLAGS@
