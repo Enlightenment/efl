@@ -82,16 +82,16 @@ _bank_account_data_set(Eina_Model *mdl, const char *name, const char *number)
       printf("ERROR\n");
 
    if (name != NULL)
-   {
-      strncpy(bdata->name, name, sizeof(bdata->name));
-      bdata->name[sizeof(bdata->number) - 1] = '\0';
-   }
+     {
+        strncpy(bdata->name, name, sizeof(bdata->name));
+        bdata->name[sizeof(bdata->number) - 1] = '\0';
+     }
 
    if (number != NULL)
-   {
-       strncpy(bdata->number, number, sizeof(bdata->number));
-       bdata->number[sizeof(bdata->number) - 1] = '\0';
-   }
+     {
+        strncpy(bdata->number, number, sizeof(bdata->number));
+        bdata->number[sizeof(bdata->number) - 1] = '\0';
+     }
 
    printf("%s :: %s %p\n", eina_model_type_name_get(eina_model_type_get(mdl)) ,__func__, mdl);
 }
@@ -103,19 +103,19 @@ _credit_card_data_set(Eina_Model *mdl, const char *number, const char *expiry_da
    Credit_Card_Data *cdata = eina_model_type_private_data_get(mdl, CREDIT_CARD_TYPE);
 
    if (!cdata)
-         printf("ERROR\n");
+      printf("ERROR\n");
 
    if (number != NULL)
-   {
-      strncpy(cdata->number, number, sizeof(cdata->number));
-      cdata->number[sizeof(cdata->number) - 1] = '\0';
-   }
+     {
+        strncpy(cdata->number, number, sizeof(cdata->number));
+        cdata->number[sizeof(cdata->number) - 1] = '\0';
+     }
 
    if (expiry_date != NULL)
-   {
-      strncpy(cdata->expiry_date, expiry_date, sizeof(cdata->expiry_date));
-      cdata->expiry_date[sizeof(cdata->expiry_date) - 1] = '\0';
-   }
+     {
+        strncpy(cdata->expiry_date, expiry_date, sizeof(cdata->expiry_date));
+        cdata->expiry_date[sizeof(cdata->expiry_date) - 1] = '\0';
+     }
 
    cdata->pin = pin;
    printf("%s :: %s %p\n", eina_model_type_name_get(eina_model_type_get(mdl)) ,__func__, mdl);
@@ -127,7 +127,7 @@ _bank_account_data_print(Eina_Model *mdl)
    const Bank_Account_Data *bdata = eina_model_type_private_data_get(mdl, BANK_ACCOUNT_TYPE);
 
    printf("\n%s :: %s %p \n\tName: %s(%p)\n\tAccount: %s(%p)\n", eina_model_type_name_get(eina_model_type_get(mdl)) ,__func__, mdl
-          , bdata->name, bdata->name, bdata->number, bdata->number);
+         , bdata->name, bdata->name, bdata->number, bdata->number);
 }
 
 static void
@@ -144,7 +144,7 @@ _credit_card_data_print(Eina_Model *mdl)
       printf("ERROR: %d", __LINE__);
    const Credit_Card_Data *cdata = eina_model_type_private_data_get(mdl, CREDIT_CARD_TYPE);
    printf("%s :: %s %p \n\tNumber: %s(%p)\n\tCC Expiry Date: %s(%p)\n\tCC PIN: %d(%p)\n", eina_model_type_name_get(eina_model_type_get(mdl)) ,__func__, mdl
-          , cdata->number, cdata->number, cdata->expiry_date, cdata->expiry_date, cdata->pin, &cdata->pin);
+         , cdata->number, cdata->number, cdata->expiry_date, cdata->expiry_date, cdata->pin, &cdata->pin);
 }
 
 #define BANK_ACCOUNT(x) ((Bank_Account_Type *) x)
