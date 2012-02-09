@@ -6,7 +6,6 @@ AM_CPPFLAGS = \
 -I$(top_builddir)/src/include \
 -I$(top_srcdir)/src/lib \
 -I$(top_builddir)/src/lib \
-@EINA_CPPFLAGS@ \
 @EMEMOA_CFLAGS@ \
 @EFL_EINA_BUILD@
 
