@@ -1718,6 +1718,7 @@ START_TEST(eina_value_test_struct)
    fail_unless(strcmp(str, "{a: 1, b: 2, c: 3, d: 4, e: 5, f: 6, g: 7, h: 8, i: 9, j: 10, k: 12, l: 13, m: 14, n: 15, o: 16, p: 17, q: 18, r: 19, s: 20, t: 21, u: 22, v: 23, x: 24}") == 0);
    free(str);
 
+   eina_value_flush(&other);
    eina_value_free(value);
    eina_shutdown();
 }
@@ -1825,6 +1826,7 @@ START_TEST(eina_value_test_model)
    str = eina_value_to_string(value);
    fail_unless(str != NULL);
    fail_unless(strcmp(str, "Eina_Model_Type_Generic({i: 1234}, [])") == 0);
+   free(str);
 
    eina_value_free(value);
 
