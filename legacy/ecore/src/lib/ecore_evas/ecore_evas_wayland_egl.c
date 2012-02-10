@@ -1042,6 +1042,17 @@ _ecore_evas_wayland_egl_drag_start(Ecore_Evas *ee, Ecore_Evas *drag_ee, void *so
    ecore_wl_drag_start(source, ee->engine.wl.surface, drag_ee->engine.wl.buffer);
 }
 
+void 
+_ecore_evas_wayland_egl_pointer_set(Ecore_Evas *ee, int hot_x, int hot_y)
+{
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+
+   if ((!ee) || (!ee->engine.wl.surface)) return;
+   wl_input_device_attach(ecore_wl_input_device_get(), 
+                          ecore_wl_input_timestamp_get(), 
+                          ee->engine.wl.buffer, hot_x, hot_y);
+}
+
 #else
 EAPI Ecore_Evas *
 ecore_evas_wayland_egl_new(const char *disp_name __UNUSED__, int x __UNUSED__, int y __UNUSED__, int w __UNUSED__, int h __UNUSED__, int frame __UNUSED__) 

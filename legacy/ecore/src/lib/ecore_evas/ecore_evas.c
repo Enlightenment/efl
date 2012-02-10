@@ -2714,6 +2714,29 @@ ecore_evas_wayland_drag_start(Ecore_Evas *ee, Ecore_Evas *drag_ee, void *source)
 #endif
      }
 }
+
+EAPI void 
+ecore_evas_wayland_pointer_set(Ecore_Evas *ee, int hot_x, int hot_y)
+{
+   if (!ee) return;
+   if (!ee->engine.wl.surface) return;
+
+   if (!strcmp(ee->driver, "wayland_shm"))
+     {
+#ifdef BUILD_ECORE_EVAS_WAYLAND_SHM
+        _ecore_evas_wayland_shm_pointer_set(ee, hot_x, hot_y);
+//        _ecore_evas_wayland_shm_drag_start(ee, drag_ee, source);
+#endif
+     }
+   else if (!strcmp(ee->driver, "wayland_egl"))
+     {
+#ifdef BUILD_ECORE_EVAS_WAYLAND_EGL
+        _ecore_evas_wayland_egl_pointer_set(ee, hot_x, hot_y);
+//        _ecore_evas_wayland_egl_drag_start(ee, drag_ee, source);
+#endif
+     }
+}
+
 #else
 EAPI void 
 ecore_evas_wayland_resize(Ecore_Evas *ee __UNUSED__, int location __UNUSED__)
@@ -2723,6 +2746,12 @@ ecore_evas_wayland_resize(Ecore_Evas *ee __UNUSED__, int location __UNUSED__)
 
 EAPI void 
 ecore_evas_wayland_drag_start(Ecore_Evas *ee __UNUSED__, Ecore_Evas *drag_ee __UNUSED__, void *source __UNUSED__)
+{
+
+}
+
+EAPI void 
+ecore_evas_wayland_pointer_set(Ecore_Evas *ee __UNUSED__, int hot_x __UNUSED__, int hot_y __UNUSED__)
 {
 
 }
