@@ -439,7 +439,7 @@ LIBS="${LIBS} ${EINA_LIBS}"
 AC_HEADER_ASSERT
 AC_HEADER_TIME
 EFL_CHECK_PATH_MAX
-AC_CHECK_HEADERS([unistd.h libgen.h inttypes.h stdint.h sys/types.h siginfo.h strings.h sys/mman.h])
+AC_CHECK_HEADERS([unistd.h libgen.h inttypes.h stdint.h sys/types.h siginfo.h strings.h sys/mman.h execinfo.h])
 
 if test "x${ac_cv_header_inttypes_h}" = "xyes" ; then
    EINA_CONFIGURE_HAVE_INTTYPES_H="#define EINA_HAVE_INTTYPES_H"
@@ -481,8 +481,6 @@ AC_SUBST([EINA_CONFIGURE_HAVE_DIRENT_H])
 AC_ISC_POSIX
 AC_FUNC_ALLOCA
 AC_CHECK_FUNCS([strlcpy openat fstatat fpathconf execvp backtrace backtrace_symbols])
-
-AC_CHECK_HEADERS([execinfo.h], [AC_DEFINE([HAVE_EXECINFO_H], [1], [Have execinfo.h])])
 
 AC_MSG_CHECKING([for dirfd])
 AC_LINK_IFELSE(
