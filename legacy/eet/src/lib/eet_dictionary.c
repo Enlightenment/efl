@@ -169,6 +169,12 @@ eet_dictionary_string_get_size(const Eet_Dictionary *ed,
    return 0;
 }
 
+EAPI int
+eet_dictionary_count(const Eet_Dictionary *ed)
+{
+  return ed->count;
+}
+
 int
 eet_dictionary_string_get_hash(const Eet_Dictionary *ed,
                                int                   idx)

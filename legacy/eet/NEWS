@@ -10,6 +10,7 @@ Improvements:
 
     * most allocations moved to mempools
     * support GNUTLS 3.x
+    * add "eet -t FILE.EET" to get some stat out of an eet file
 
 Eet 1.5.0
 

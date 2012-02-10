@@ -569,3 +569,7 @@
 
 	* add support for GNUTLS 3.x.
 
+2012-02-10  Cedric Bail
+
+	* add eet_dictionary_count.
+	* add "eet -t FILE.EET".

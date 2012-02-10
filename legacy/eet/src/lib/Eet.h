@@ -645,6 +645,17 @@ eet_dictionary_string_check(Eet_Dictionary *ed,
                             const char *string);
 
 /**
+ * Return the number of strings inside a dictionary
+ * @param ed A valid dictionary handle
+ * @return the number of strings inside a dictionary
+ *
+ * @since 1.6.0
+ * @ingroup Eet_File_Group
+ */
+EAPI int
+eet_dictionary_count(const Eet_Dictionary *ed);
+
+/**
  * Read a specified entry from an eet file and return data
  * @param ef A valid eet file handle opened for reading.
  * @param name Name of the entry. eg: "/base/file_i_want".

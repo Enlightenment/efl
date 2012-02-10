@@ -69,6 +69,63 @@ do_eet_list(const char *file)
 } /* do_eet_list */
 
 static void
+do_eet_stats(const char *file)
+{
+   int i, num;
+   int count[2] = { 0, 0 };
+   int size[2] = { 0, 0 };
+   char **list;
+   Eet_File *ef;
+   Eet_Dictionary *ed;
+
+   ef = eet_open(file, EET_FILE_MODE_READ);
+   if (!ef)
+     {
+        ERR("cannot open for reading: %s", file);
+        exit(-1);
+     }
+
+   printf("*** sections stats ***\n");
+   list = eet_list(ef, "*", &num);
+   if (list)
+     {
+        for (i = 0; i < num; i++)
+          {
+             const void *ro = NULL;
+             void *rw = NULL;
+             int tsize;
+
+             ro = eet_read_direct(ef, list[i], &tsize);
+             if (!ro) rw = eet_read(ef, list[i], &tsize);
+             printf(rw ? "%s of size %i is compressed.\n" : "%s of size %i is not compressed.\n", list[i], tsize);
+             count[rw ? 0 : 1]++;
+             size[rw ? 0 : 1] += tsize;
+             free(rw);
+          }
+        free(list);
+     }
+
+   printf("*** dictionary ***\n");
+   ed = eet_dictionary_get(ef);
+   if (ed)
+     {
+        printf("%i strings inside the dictionary.\n", eet_dictionary_count(ed));
+     }
+   else
+     {
+        printf("no dictionary in this file.\n");
+     }
+   printf("*** global ***\n");
+   printf("%i sections\n", num);
+   printf("- %i of them are compressed (%02.2f%%) expanding in %i bytes.\n",
+          count[0], (float) count[0] * 100 / (float) num, size[0]);
+   printf("- %i of them are directly mappable in memory (%02.2f%%) representing %i bytes.\n",
+          count[1], (float) count[1] * 100 / (float) num, size[1]);
+
+   eet_close(ef);
+}
+
+static void
 do_eet_extract(const char *file,
                const char *key,
                const char *out,
@@ -366,6 +423,7 @@ help:
           "  eet -r FILE.EET KEY                                remove KEY in FILE.EET\n"
           "  eet -c FILE.EET                                    report and check the signature information of an eet file\n"
           "  eet -s FILE.EET PRIVATE_KEY PUBLIC_KEY             sign FILE.EET with PRIVATE_KEY and attach PUBLIC_KEY as it's certificate\n"
+          "  eet -t FILE.EET                                    give some statistic about a file\n"
           );
         eet_shutdown();
         return -1;
@@ -437,6 +495,8 @@ help:
      do_eet_check(argv[2]);
    else if ((!strcmp(argv[1], "-s")) && (argc > 4))
      do_eet_sign(argv[2], argv[3], argv[4]);
+   else if ((!strcmp(argv[1], "-t")) && (argc > 2))
+     do_eet_stats(argv[2]);
    else
      goto help;
 
