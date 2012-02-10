@@ -2996,6 +2996,7 @@ _eina_value_type_hash_flush_each(const Eina_Hash *hash __UNUSED__, const void *k
 {
    struct _eina_value_type_hash_flush_each_ctx *ctx = user_data;
    ctx->ret &= eina_value_type_flush(ctx->subtype, mem);
+   free(mem);
    return EINA_TRUE;
 }
 
