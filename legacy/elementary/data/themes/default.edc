@@ -367,5 +367,5 @@ collections {
 #include "widgets/naviframe.edc"
 #include "widgets/multibuttonentry.edc"
 #include "ews.edc"
-
+#include "widgets/pointer.edc"
 }
