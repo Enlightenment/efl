@@ -920,6 +920,12 @@ elm_widget_sub_object_add(Evas_Object *obj,
    Elm_Theme *th, *pth = elm_widget_theme_get(sobj);
    Eina_Bool mirrored, pmirrored = elm_widget_mirrored_get(obj);
 
+   if (sobj == sd->parent_obj)
+     {
+        elm_widget_sub_object_del(sobj, obj);
+        WRN("You passed a parent object of obj = %p as the sub object = %p!", obj, sobj);
+     }
+
    if (_elm_widget_is(sobj))
      {
         Smart_Data *sd2 = evas_object_smart_data_get(sobj);
