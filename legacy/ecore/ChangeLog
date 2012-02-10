@@ -485,3 +485,7 @@
 2012-02-09  Jihoon Kim (jihoon)
 
         * Provide compose, string in key down/up event in case of scim-input-pad.
+
+2012-02-10  Christopher Michael (devilhorns)
+
+        * Add Ecore_Evas function to allow setting a mouse pointer from efl/elm wayland clients.
