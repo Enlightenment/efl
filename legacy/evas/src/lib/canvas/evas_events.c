@@ -486,8 +486,9 @@ evas_event_feed_mouse_up(Evas *e, int b, Evas_Button_Flags flags, unsigned int t
                }
              if (!obj->delete_me)
                {
-                  if (e->events_frozen <= 0)
-                    evas_object_event_callback_call(obj, EVAS_CALLBACK_MOUSE_UP, &ev, event_id);
+                  if ((e->events_frozen <= 0) &&
+                      (!evas_event_freezes_through(obj)))
+                      evas_object_event_callback_call(obj, EVAS_CALLBACK_MOUSE_UP, &ev, event_id);
                }
              if (e->delete_me) break;
              if (obj->pointer_mode == EVAS_OBJECT_POINTER_MODE_NOGRAB_NO_REPEAT_UPDOWN)
@@ -1668,18 +1669,6 @@ evas_object_freeze_events_set(Evas_Object *obj, Eina_Bool freeze)
    if (obj->freeze_events == freeze) return;
    obj->freeze_events = freeze;
    evas_object_smart_member_cache_invalidate(obj, EINA_FALSE, EINA_TRUE);
-   if (evas_object_is_in_output_rect(obj,
-                                     obj->layer->evas->pointer.x,
-                                     obj->layer->evas->pointer.y, 1, 1) &&
-       ((!obj->precise_is_inside) ||
-        (evas_object_is_inside(obj,
-                               obj->layer->evas->pointer.x,
-                               obj->layer->evas->pointer.y))))
-     evas_event_feed_mouse_move(obj->layer->evas,
-                                obj->layer->evas->pointer.x,
-                                obj->layer->evas->pointer.y,
-                                obj->layer->evas->last_timestamp,
-                                NULL);
 }
 
 EAPI Eina_Bool
