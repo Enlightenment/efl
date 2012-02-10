@@ -2249,7 +2249,11 @@ static Eina_Bool
 _eina_value_type_stringshare_flush(const Eina_Value_Type *type __UNUSED__, void *mem)
 {
    const char **tmem = mem;
-   if (*tmem) eina_stringshare_del(*tmem);
+   if (*tmem)
+     {
+        eina_stringshare_del(*tmem);
+        *tmem = NULL;
+     }
    return EINA_TRUE;
 }
 
@@ -2281,7 +2285,11 @@ static Eina_Bool
 _eina_value_type_string_flush(const Eina_Value_Type *type __UNUSED__, void *mem)
 {
    char **tmem = mem;
-   if (*tmem) free(*tmem);
+   if (*tmem)
+     {
+        free(*tmem);
+        *tmem = NULL;
+     }
    return EINA_TRUE;
 }
 
@@ -3573,6 +3581,8 @@ _eina_value_type_blob_flush(const Eina_Value_Type *type __UNUSED__, void *mem)
    Eina_Value_Blob *tmem = mem;
    if ((ops) && (ops->free))
      ops->free(ops, (void *)tmem->memory, tmem->size);
+   tmem->memory = NULL;
+   tmem->size = 0;
    return EINA_TRUE;
 }
 
@@ -4002,6 +4012,9 @@ _eina_value_type_struct_flush(const Eina_Value_Type *type __UNUSED__, void *mem)
      ops->free(ops, tmem->desc, tmem->memory);
    else
      free(tmem->memory);
+
+   tmem->memory = NULL;
+   tmem->desc = NULL;
 
    return ret;
 }
