@@ -329,3 +329,7 @@
 	on separate part.
 	* Fix bug with filter preventing any action to be triggered.
 
+2012-02-10  Cedric Bail
+
+	* Prevent propagation of signal, when there is a matching target with edje GROUP.
+

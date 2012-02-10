@@ -873,6 +873,7 @@ _edje_emit_full(Edje *ed, const char *sig, const char *src, void *data, void (*f
 {
    Edje_Message_Signal emsg;
    const char *sep;
+   Eina_Bool broadcast = EINA_TRUE;
 
    if (ed->delete_me) return;
 
@@ -958,6 +959,7 @@ _edje_emit_full(Edje *ed, const char *sig, const char *src, void *data, void (*f
               if (!ed2) goto end;
 
               _edje_emit(ed2, newsig, src);
+	      broadcast = EINA_FALSE;
               break;
 
            case EDJE_PART_TYPE_EXTERNAL:
@@ -976,6 +978,7 @@ _edje_emit_full(Edje *ed, const char *sig, const char *src, void *data, void (*f
                    if (!ed2) goto end;
                    _edje_emit(ed2, newsig, src);
                 }
+	      broadcast = EINA_FALSE;
               break ;
 
            case EDJE_PART_TYPE_BOX:
@@ -988,6 +991,7 @@ _edje_emit_full(Edje *ed, const char *sig, const char *src, void *data, void (*f
                    ed2 = _edje_fetch(child);
                    if (!ed2) goto end;
                    _edje_emit(ed2, newsig, src);
+		   broadcast = EINA_FALSE;
                 }
               break ;
 
@@ -1012,7 +1016,10 @@ _edje_emit_full(Edje *ed, const char *sig, const char *src, void *data, void (*f
         emsg.data = NULL;
      }
 /* new sends code */
-   edje_object_message_send(ed->obj, EDJE_MESSAGE_SIGNAL, 0, &emsg);
+   if (broadcast)
+     edje_object_message_send(ed->obj, EDJE_MESSAGE_SIGNAL, 0, &emsg);
+   else
+     _edje_message_send(ed, EDJE_QUEUE_SCRIPT, EDJE_MESSAGE_SIGNAL, 0, &emsg);
 /* old send code - use api now
    _edje_message_send(ed, EDJE_QUEUE_SCRIPT, EDJE_MESSAGE_SIGNAL, 0, &emsg);
    EINA_LIST_FOREACH(ed->subobjs, l, obj)
