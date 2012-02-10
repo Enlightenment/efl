@@ -482,3 +482,6 @@
 
         * Add ecore_con_url_http_version_set() to set url request version
 
+2012-02-09  Jihoon Kim (jihoon)
+
+        * Provide compose, string in key down/up event in case of scim-input-pad.

@@ -1539,8 +1539,8 @@ panel_slot_process_key_event(int context, const KeyEvent &key)
    EcoreIMFContextISF *ic = find_ic(context);
    SCIM_DEBUG_FRONTEND(1) << __FUNCTION__ << " context=" << context << " key=" << key.get_key_string() << " ic=" << ic << "\n";
 
-   if (ic && ic->impl && ic->impl->client_canvas)
-     feed_key_event(ic->impl->client_canvas, key.get_key_string().c_str(), EINA_FALSE);
+   if (key.is_key_press())
+     ecore_x_test_fake_key_press(key.get_key_string().c_str());
 }
 
 static void
