@@ -33,7 +33,12 @@ struct _Elm_Win
    struct {
       int x, y;
    } screen;
-
+   struct 
+     {
+        Ecore_Evas *ee;
+        Evas *evas;
+        Evas_Object *obj, *hot_obj;
+     } pointer;
    struct {
       Evas_Object *top;
 
@@ -83,6 +88,8 @@ static void _elm_win_frame_cb_resize_start(void *data, Evas_Object *obj __UNUSED
 static void _elm_win_frame_cb_minimize(void *data, Evas_Object *obj __UNUSED__, const char *sig __UNUSED__, const char *source __UNUSED__);
 static void _elm_win_frame_cb_maximize(void *data, Evas_Object *obj __UNUSED__, const char *sig __UNUSED__, const char *source __UNUSED__);
 static void _elm_win_frame_cb_close(void *data, Evas_Object *obj __UNUSED__, const char *sig __UNUSED__, const char *source __UNUSED__);
+
+static void _elm_win_pointer_add(Elm_Win *win, const char *style);
 
 static const char SIG_DELETE_REQUEST[] = "delete,request";
 static const char SIG_FOCUS_OUT[] = "focus,out";
@@ -485,6 +492,11 @@ _elm_win_obj_callback_hide(void *data, Evas *e __UNUSED__, Evas_Object *obj __UN
      {
         evas_object_hide(win->img_obj);
      }
+   if (win->pointer.obj)
+     {
+        evas_object_hide(win->pointer.obj);
+        ecore_evas_hide(win->pointer.ee);
+     }
 }
 
 static void
@@ -616,6 +628,11 @@ _elm_win_obj_intercept_show(void *data, Evas_Object *obj)
    else if (win->img_obj)
      {
         evas_object_show(win->img_obj);
+     }
+   if (win->pointer.obj)
+     {
+        ecore_evas_show(win->pointer.ee);
+        evas_object_show(win->pointer.obj);
      }
    evas_object_show(obj);
 }
@@ -1380,7 +1397,6 @@ _elm_win_frame_cb_resize_start(void *data, Evas_Object *obj __UNUSED__, const ch
    else
      win->resize_location = 0;
 
-   /* FIXME: Change to more generic wayland resize function */
    if (win->resize_location > 0)
      ecore_evas_wayland_resize(win->ee, win->resize_location);
 }
@@ -1410,6 +1426,25 @@ _elm_win_frame_cb_close(void *data, Evas_Object *obj __UNUSED__, const char *sig
 
    if (!(win = data)) return;
    evas_object_del(win->win_obj);
+}
+
+static void 
+_elm_win_pointer_add(Elm_Win *win, const char *style)
+{
+   int mw, mh;
+
+   win->pointer.ee = ecore_evas_wayland_shm_new(NULL, 0, 0, 32, 32, 0);
+   ecore_evas_resize(win->pointer.ee, 32, 32);
+
+   win->pointer.evas = ecore_evas_get(win->ee);
+
+   win->pointer.obj = edje_object_add(win->pointer.evas);
+   _elm_theme_set(NULL, win->pointer.obj, "pointer", "base", style);
+   edje_object_size_min_calc(win->pointer.obj, &mw, &mh);
+   printf("ELM Win Pointer Size: %d %d\n", mw, mh);
+   evas_object_move(win->pointer.obj, 0, 0);
+   evas_object_resize(win->pointer.obj, 32, 32);
+   evas_object_show(win->pointer.obj);
 }
 
 #ifdef ELM_DEBUG
@@ -1670,6 +1705,7 @@ elm_win_add(Evas_Object *parent, const char *name, Elm_Win_Type type)
              win->evas = ecore_evas_get(win->ee);
 
              _elm_win_frame_add(win, "default");
+             _elm_win_pointer_add(win, "default");
           }
         else if (ENGINE_COMPARE(ELM_WAYLAND_EGL)) 
           {
@@ -1677,6 +1713,7 @@ elm_win_add(Evas_Object *parent, const char *name, Elm_Win_Type type)
              win->evas = ecore_evas_get(win->ee);
 
              _elm_win_frame_add(win, "default");
+             _elm_win_pointer_add(win, "default");
           }
         else if (!strncmp(_elm_config->engine, "shot:", 5))
           {
