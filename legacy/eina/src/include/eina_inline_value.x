@@ -607,16 +607,7 @@ eina_value_array_vset(Eina_Value *value, unsigned int position, va_list args)
    if (!mem)
      return EINA_FALSE;
 
-   eina_value_type_flush(desc.subtype, mem);
-
-   if (!eina_value_type_setup(desc.subtype, mem)) goto error_setup;
-   if (!eina_value_type_vset(desc.subtype, mem, args)) goto error_set;
-   return EINA_TRUE;
-
- error_set:
-   eina_value_type_flush(desc.subtype, mem);
- error_setup:
-   return EINA_FALSE;
+   return eina_value_type_vset(desc.subtype, mem, args);
 }
 
 static inline Eina_Bool
@@ -749,16 +740,7 @@ eina_value_array_pset(Eina_Value *value, unsigned int position, const void *ptr)
    if (!mem)
      return EINA_FALSE;
 
-   eina_value_type_flush(desc.subtype, mem);
-
-   if (!eina_value_type_setup(desc.subtype, mem)) goto error_setup;
-   if (!eina_value_type_pset(desc.subtype, mem, ptr)) goto error_set;
-   return EINA_TRUE;
-
- error_set:
-   eina_value_type_flush(desc.subtype, mem);
- error_setup:
-   return EINA_FALSE;
+   return eina_value_type_pset(desc.subtype, mem, ptr);
 }
 
 static inline Eina_Bool
@@ -929,16 +911,7 @@ eina_value_list_vset(Eina_Value *value, unsigned int position, va_list args)
    if (!mem)
      return EINA_FALSE;
 
-   eina_value_type_flush(desc->subtype, mem);
-
-   if (!eina_value_type_setup(desc->subtype, mem)) goto error_setup;
-   if (!eina_value_type_vset(desc->subtype, mem, args)) goto error_set;
-   return EINA_TRUE;
-
- error_set:
-   eina_value_type_flush(desc->subtype, mem);
- error_setup:
-   return EINA_FALSE;
+   return eina_value_type_vset(desc->subtype, mem, args);
 }
 
 static inline Eina_Bool
@@ -1105,16 +1078,7 @@ eina_value_list_pset(Eina_Value *value, unsigned int position, const void *ptr)
    if (!mem)
      return EINA_FALSE;
 
-   eina_value_type_flush(desc->subtype, mem);
-
-   if (!eina_value_type_setup(desc->subtype, mem)) goto error_setup;
-   if (!eina_value_type_pset(desc->subtype, mem, ptr)) goto error_set;
-   return EINA_TRUE;
-
- error_set:
-   eina_value_type_flush(desc->subtype, mem);
- error_setup:
-   return EINA_FALSE;
+   return eina_value_type_pset(desc->subtype, mem, ptr);
 }
 
 static inline Eina_Bool
@@ -1284,9 +1248,7 @@ eina_value_hash_vset(Eina_Value *value, const char *key, va_list args)
      return EINA_FALSE;
 
    mem = eina_hash_find(desc->hash, key);
-   if (mem)
-     eina_value_type_flush(desc->subtype, mem);
-   else
+   if (!mem)
      {
         mem = malloc(desc->subtype->value_size);
         if (!mem)
@@ -1299,18 +1261,15 @@ eina_value_hash_vset(Eina_Value *value, const char *key, va_list args)
              free(mem);
              return EINA_FALSE;
           }
+        if (!eina_value_type_setup(desc->subtype, mem))
+          {
+             eina_value_type_flush(desc->subtype, mem);
+             eina_hash_del_by_key(desc->hash, key);
+             free(mem);
+          }
      }
 
-   if (!eina_value_type_setup(desc->subtype, mem)) goto error_setup;
-   if (!eina_value_type_vset(desc->subtype, mem, args)) goto error_set;
-   return EINA_TRUE;
-
- error_set:
-   eina_value_type_flush(desc->subtype, mem);
- error_setup:
-   eina_hash_del_by_key(desc->hash, key);
-   free(mem);
-   return EINA_FALSE;
+   return eina_value_type_vset(desc->subtype, mem, args);
 }
 
 static inline Eina_Bool
@@ -1371,9 +1330,7 @@ eina_value_hash_pset(Eina_Value *value, const char *key, const void *ptr)
      return EINA_FALSE;
 
    mem = eina_hash_find(desc->hash, key);
-   if (mem)
-     eina_value_type_flush(desc->subtype, mem);
-   else
+   if (!mem)
      {
         mem = malloc(desc->subtype->value_size);
         if (!mem)
@@ -1386,18 +1343,15 @@ eina_value_hash_pset(Eina_Value *value, const char *key, const void *ptr)
              free(mem);
              return EINA_FALSE;
           }
+        if (!eina_value_type_setup(desc->subtype, mem))
+          {
+             eina_value_type_flush(desc->subtype, mem);
+             eina_hash_del_by_key(desc->hash, key);
+             free(mem);
+          }
      }
 
-   if (!eina_value_type_setup(desc->subtype, mem)) goto error_setup;
-   if (!eina_value_type_pset(desc->subtype, mem, ptr)) goto error_set;
-   return EINA_TRUE;
-
- error_set:
-   eina_value_type_flush(desc->subtype, mem);
- error_setup:
-   eina_hash_del_by_key(desc->hash, key);
-   free(mem);
-   return EINA_FALSE;
+   return eina_value_type_pset(desc->subtype, mem, ptr);
 }
 
 static inline Eina_Bool
@@ -1474,15 +1428,7 @@ eina_value_struct_vset(Eina_Value *value, const char *name, va_list args)
    if (!mem)
      return EINA_FALSE;
 
-   eina_value_type_flush(member->type, mem);
-   if (!eina_value_type_setup(member->type, mem)) goto error_setup;
-   if (!eina_value_type_vset(member->type, mem, args)) goto error_set;
-   return EINA_TRUE;
-
- error_set:
-   eina_value_type_flush(member->type, mem);
- error_setup:
-   return EINA_FALSE;
+   return eina_value_type_vset(member->type, mem, args);
 }
 
 static inline Eina_Bool
@@ -1553,15 +1499,7 @@ eina_value_struct_pset(Eina_Value *value, const char *name, const void *ptr)
    if (!mem)
      return EINA_FALSE;
 
-   eina_value_type_flush(member->type, mem);
-   if (!eina_value_type_setup(member->type, mem)) goto error_setup;
-   if (!eina_value_type_pset(member->type, mem, ptr)) goto error_set;
-   return EINA_TRUE;
-
- error_set:
-   eina_value_type_flush(member->type, mem);
- error_setup:
-   return EINA_FALSE;
+   return eina_value_type_pset(member->type, mem, ptr);
 }
 
 static inline Eina_Bool
@@ -1646,15 +1584,7 @@ eina_value_struct_value_set(Eina_Value *dst, const char *name, const Eina_Value 
    if (!ptr)
      return EINA_FALSE;
 
-   eina_value_type_flush(member->type, mem);
-   if (!eina_value_type_setup(member->type, mem)) goto error_setup;
-   if (!eina_value_type_pset(member->type, mem, ptr)) goto error_set;
-   return EINA_TRUE;
-
- error_set:
-   eina_value_type_flush(member->type, mem);
- error_setup:
-   return EINA_FALSE;
+   return eina_value_type_pset(member->type, mem, ptr);
 }
 
 static inline Eina_Bool
@@ -1706,15 +1636,7 @@ eina_value_struct_member_value_set(Eina_Value *dst, const Eina_Value_Struct_Memb
    if (!ptr)
      return EINA_FALSE;
 
-   eina_value_type_flush(member->type, mem);
-   if (!eina_value_type_setup(member->type, mem)) goto error_setup;
-   if (!eina_value_type_pset(member->type, mem, ptr)) goto error_set;
-   return EINA_TRUE;
-
- error_set:
-   eina_value_type_flush(member->type, mem);
- error_setup:
-   return EINA_FALSE;
+   return eina_value_type_pset(member->type, mem, ptr);
 }
 
 #undef EINA_VALUE_TYPE_STRUCT_CHECK_RETURN_VAL
