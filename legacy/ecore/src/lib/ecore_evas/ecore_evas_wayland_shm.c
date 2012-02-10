@@ -177,7 +177,7 @@ ecore_evas_wayland_shm_new(const char *disp_name, int x, int y, int w, int h, in
         return NULL;
      }
 
-   if (!(ecore_wl_init(disp_name))) 
+   if (!ecore_wl_init(disp_name))
      {
         ERR("Failed to initialize Ecore Wayland.");
         return NULL;

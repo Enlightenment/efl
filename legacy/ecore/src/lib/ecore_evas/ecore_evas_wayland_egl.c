@@ -2,7 +2,7 @@
 # include <config.h>
 #endif
 
-#define LOGFNS 1
+//#define LOGFNS 1
 
 #ifdef LOGFNS
 # include <stdio.h>
