@@ -2187,6 +2187,7 @@ st_collections_group_name(void)
    older = eina_hash_find(edje_file->collection, current_de->entry);
    if (older) eina_hash_del(edje_file->collection, current_de->entry, older);
    eina_hash_direct_add(edje_file->collection, current_de->entry, current_de);
+   if (!older) return;
 
    EINA_LIST_FOREACH(aliases, l, alias)
      if (strcmp(alias->entry, current_de->entry) == 0)
