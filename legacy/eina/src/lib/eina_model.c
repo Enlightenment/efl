@@ -37,6 +37,10 @@ extern "C"
 void *alloca (size_t);
 #endif
 
+#ifdef HAVE_EXECINFO_H
+#include <execinfo.h>
+#endif
+
 #include "eina_config.h"
 #include "eina_private.h"
 #include "eina_error.h"
@@ -66,6 +70,13 @@ static char *_eina_model_mp_choice = NULL;
 static Eina_Hash *_eina_model_descriptions = NULL;
 static Eina_Lock _eina_model_descriptions_lock;
 static int _eina_model_log_dom = -1;
+static enum {
+  EINA_MODEL_DEBUG_NONE = 0,
+  EINA_MODEL_DEBUG_CHECK = 1,
+  EINA_MODEL_DEBUG_BACKTRACE = 2,
+} _eina_model_debug = EINA_MODEL_DEBUG_NONE;
+static Eina_Lock _eina_model_debug_list_lock;
+static Eina_List *_eina_model_debug_list = NULL;
 
 static const char _eina_model_str_deleted[] = "deleted";
 static const char _eina_model_str_freed[] = "freed";
@@ -1003,6 +1014,7 @@ struct _Eina_Model
       int walking; /**< increased while walking entries lists */
    } listeners;
    void **privates; /**< private data per type and interface, each level gets its own stuff */
+   Eina_Inlist *xrefs; /**< if EINA_MODEL_DEBUG and eina_model_xref() is used */
    int refcount; /**< number of users of this model instance */
    Eina_Bool deleted:1; /**< if deleted but still have references */
    EINA_MAGIC
@@ -1616,7 +1628,7 @@ _eina_model_type_base_child_iterator_free(Eina_Iterator *base)
 {
    Eina_Iterator_Model_Base *it;
    it = (Eina_Iterator_Model_Base *)base;
-   _eina_model_unref(it->model);
+   eina_model_xunref(it->model, it);
    free(it);
 }
 
@@ -1632,7 +1644,7 @@ _eina_model_type_base_child_iterator_get(Eina_Model *model, unsigned int start, 
    it->base.get_container = _eina_model_type_base_child_iterator_get_container;
    it->base.free = _eina_model_type_base_child_iterator_free;
 
-   it->model = eina_model_ref(model);
+   it->model = eina_model_xref(model, it, "eina_model_child_slice_iterator_get");
    it->current = start;
    it->end = start + count;
 
@@ -1678,7 +1690,7 @@ _eina_model_type_base_child_reversed_iterator_free(Eina_Iterator *base)
 {
    Eina_Iterator_Model_Base_Reversed *it;
    it = (Eina_Iterator_Model_Base_Reversed *)base;
-   _eina_model_unref(it->model);
+   eina_model_xunref(it->model, it);
    free(it);
 }
 
@@ -1708,7 +1720,7 @@ _eina_model_type_base_child_reversed_iterator_get(Eina_Model *model, unsigned in
    it->base.get_container = _eina_model_type_base_child_reversed_iterator_get_container;
    it->base.free = _eina_model_type_base_child_reversed_iterator_free;
 
-   it->model = eina_model_ref(model);
+   it->model = eina_model_xref(model, it, "eina_model_child_slice_reversed_iterator_get");
    it->current = start + count;
    it->end = start;
 
@@ -1753,7 +1765,7 @@ _eina_model_type_base_child_sorted_iterator_free(Eina_Iterator *base)
    Eina_Iterator_Model_Base_Sorted *it;
    unsigned int i;
    it = (Eina_Iterator_Model_Base_Sorted *)base;
-   _eina_model_unref(it->model);
+   eina_model_xunref(it->model, it);
 
    for (i = 0; i < it->count; i++)
      _eina_model_unref(it->elements[i]);
@@ -1788,7 +1800,7 @@ _eina_model_type_base_child_sorted_iterator_get(Eina_Model *model, unsigned int 
    it->base.get_container = _eina_model_type_base_child_sorted_iterator_get_container;
    it->base.free = _eina_model_type_base_child_sorted_iterator_free;
 
-   it->model = eina_model_ref(model);
+   it->model = eina_model_xref(model, it, "eina_model_child_slice_sorted_iterator_get");
    it->current = 0;
    it->count = count;
 
@@ -1854,7 +1866,7 @@ _eina_model_type_base_child_filtered_iterator_free(Eina_Iterator *base)
 {
    Eina_Iterator_Model_Base_Filtered *it;
    it = (Eina_Iterator_Model_Base_Filtered *)base;
-   _eina_model_unref(it->model);
+   eina_model_xunref(it->model, it);
    free(it);
 }
 
@@ -1870,7 +1882,7 @@ _eina_model_type_base_child_filtered_iterator_get(Eina_Model *model, unsigned in
    it->base.get_container = _eina_model_type_base_child_filtered_iterator_get_container;
    it->base.free = _eina_model_type_base_child_filtered_iterator_free;
 
-   it->model = eina_model_ref(model);
+   it->model = eina_model_xref(model, it, "eina_model_child_slice_filtered_iterator_get");
    it->match = match;
    it->data = data;
    it->current = start;
@@ -2750,7 +2762,7 @@ _eina_model_interface_children_inarray_destructor(Eina_Model *model)
    itr = priv->members;
    itr_end = itr + count;
    for (; itr < itr_end; itr++)
-     _eina_model_unref(*itr);
+     eina_model_xunref(*itr, EINA_MODEL_INTERFACE_CHILDREN_INARRAY);
    eina_inarray_flush(priv);
 
    return EINA_TRUE;
@@ -2787,8 +2799,9 @@ _eina_model_interface_children_inarray_set(Eina_Model *model, unsigned int posit
    if (!eina_inarray_replace_at(priv, position, &child))
      return EINA_FALSE;
 
-   eina_model_ref(child);
-   _eina_model_unref(old);
+   eina_model_xref(child, EINA_MODEL_INTERFACE_CHILDREN_INARRAY,
+                   "eina_model_child_set");
+   eina_model_xunref(old, EINA_MODEL_INTERFACE_CHILDREN_INARRAY);
    return EINA_TRUE;
 }
 
@@ -2806,7 +2819,7 @@ _eina_model_interface_children_inarray_del(Eina_Model *model, unsigned int posit
    if (!eina_inarray_remove_at(priv, position))
      return EINA_FALSE;
 
-   _eina_model_unref(old);
+   eina_model_xunref(old, EINA_MODEL_INTERFACE_CHILDREN_INARRAY);
    return EINA_TRUE;
 }
 
@@ -2818,7 +2831,8 @@ _eina_model_interface_children_inarray_insert_at(Eina_Model *model, unsigned int
    if (!eina_inarray_insert_at(priv, position, &child))
      return EINA_FALSE;
 
-   eina_model_ref(child);
+   eina_model_xref(child, EINA_MODEL_INTERFACE_CHILDREN_INARRAY,
+                   "eina_model_child_insert_at");
    return EINA_TRUE;
 }
 
@@ -2922,6 +2936,15 @@ eina_model_init(void)
         return EINA_FALSE;
      }
 
+   choice = getenv("EINA_MODEL_DEBUG");
+   if (choice)
+     {
+        if (strcmp(choice, "1") == 0)
+          _eina_model_debug = EINA_MODEL_DEBUG_CHECK;
+        else if (strcmp(choice, "backtrace") == 0)
+          _eina_model_debug = EINA_MODEL_DEBUG_BACKTRACE;
+     }
+
 #ifdef EINA_DEFAULT_MEMPOOL
    choice = "pass_through";
 #else
@@ -2966,6 +2989,12 @@ eina_model_init(void)
         goto on_init_fail_hash_desc;
      }
 
+   if (!eina_lock_new(&_eina_model_debug_list_lock))
+     {
+        ERR("Cannot create model debug list lock in model init.");
+        goto on_init_fail_lock_debug;
+     }
+
    EINA_ERROR_MODEL_FAILED = eina_error_msg_static_register(
                                                             EINA_ERROR_MODEL_FAILED_STR);
    EINA_ERROR_MODEL_METHOD_MISSING = eina_error_msg_static_register(
@@ -2988,6 +3017,8 @@ eina_model_init(void)
 
    return EINA_TRUE;
 
+ on_init_fail_lock_debug:
+   eina_hash_free(_eina_model_descriptions);
  on_init_fail_hash_desc:
    eina_lock_free(&_eina_model_descriptions_lock);
  on_init_fail_lock_desc:
@@ -3019,6 +3050,12 @@ eina_model_init(void)
 Eina_Bool
 eina_model_shutdown(void)
 {
+   eina_lock_take(&_eina_model_debug_list_lock);
+   if (eina_list_count(_eina_model_debug_list) > 0)
+     ERR("%d models are still alive!", eina_list_count(_eina_model_debug_list));
+   eina_lock_release(&_eina_model_debug_list_lock);
+   eina_lock_free(&_eina_model_debug_list_lock);
+
    eina_lock_take(&_eina_model_inner_mps_lock);
    if (eina_hash_population(_eina_model_inner_mps) != 0)
      ERR("Cannot free eina_model internal memory pools -- still in use!");
@@ -3125,6 +3162,7 @@ eina_model_new(const Eina_Model_Type *type)
      }
 
    model->refcount = 1;
+   model->xrefs = NULL;
    model->deleted = EINA_FALSE;
    EINA_MAGIC_SET(model, EINA_MAGIC_MODEL);
 
@@ -3169,6 +3207,14 @@ eina_model_new(const Eina_Model_Type *type)
         goto failed_constructor;
      }
 
+   if (EINA_UNLIKELY(_eina_model_debug))
+     {
+        eina_lock_take(&_eina_model_debug_list_lock);
+        _eina_model_debug_list = eina_list_append
+          (_eina_model_debug_list, model);
+        eina_lock_release(&_eina_model_debug_list_lock);
+     }
+
    return model;
 
  failed_constructor:
@@ -3205,6 +3251,28 @@ _eina_model_free(Eina_Model *model)
    DBG("model %p (%s) refcount=%d deleted=" FMT_UCHAR,
        model, model->desc->cache.types[0]->name,
        model->refcount, model->deleted);
+
+   if (EINA_UNLIKELY(_eina_model_debug))
+     {
+        if (model->xrefs)
+          {
+             ERR("Model %p (%s) released with references pending:",
+                 model, model->desc->cache.types[0]->name);
+             while (model->xrefs)
+               {
+                  Eina_Model_XRef *ref = (Eina_Model_XRef *)model->xrefs;
+                  model->xrefs = eina_inlist_remove(model->xrefs, model->xrefs);
+
+                  ERR("xref: %p '%s'", ref->id, ref->label);
+                  free(ref);
+               }
+          }
+
+        eina_lock_take(&_eina_model_debug_list_lock);
+        _eina_model_debug_list = eina_list_remove
+          (_eina_model_debug_list, model);
+        eina_lock_release(&_eina_model_debug_list_lock);
+     }
 
    /* flush every interface, natural order */
    for (i = 0; i < desc->total.ifaces; i++)
@@ -3477,6 +3545,56 @@ eina_model_ref(Eina_Model *model)
    return model;
 }
 
+static Eina_Model *
+_eina_model_xref_add(Eina_Model *model, const void *id, const char *label)
+{
+   Eina_Model_XRef *ref;
+   void *bt[256];
+   int btlen, labellen;
+
+   labellen = label ? strlen(label): 0;
+   btlen = 0;
+
+#ifdef HAVE_BACKTRACE
+   if (_eina_model_debug == EINA_MODEL_DEBUG_BACKTRACE)
+     btlen = backtrace(bt, EINA_C_ARRAY_LENGTH(bt));
+#endif
+
+   ref = calloc(1, sizeof(*ref) + (btlen * sizeof(void *)) + (labellen + 1));
+   EINA_SAFETY_ON_NULL_RETURN_VAL(ref, NULL);
+
+   ref->id = id;
+   memcpy(ref->label, label, labellen);
+   ref->label[labellen] = '\0';
+   ref->backtrace.count = btlen;
+   if (btlen == 0) ref->backtrace.symbols = NULL;
+   else
+     {
+        void *ptr = (unsigned char *)ref + sizeof(*ref) + (labellen + 1);
+        ref->backtrace.symbols = ptr;
+        memcpy(ptr, bt, btlen * sizeof(void *));
+     }
+
+   model->xrefs = eina_inlist_append(model->xrefs, EINA_INLIST_GET(ref));
+   return model;
+}
+
+EAPI Eina_Model *
+eina_model_xref(Eina_Model *model, const void *id, const char *label)
+{
+   EINA_MODEL_INSTANCE_CHECK_VAL(model, NULL);
+   DBG("model %p (%s) refcount=%d deleted=" FMT_UCHAR" id=%p label=%s",
+       model, model->desc->cache.types[0]->name,
+       model->refcount, model->deleted, id, label ? label : "");
+
+   model->refcount++;
+
+   if (EINA_LIKELY(!_eina_model_debug))
+     return model;
+
+   return _eina_model_xref_add(model, id, label);
+}
+
 EAPI void
 eina_model_unref(Eina_Model *model)
 {
@@ -3484,11 +3602,43 @@ eina_model_unref(Eina_Model *model)
    _eina_model_unref(model);
 }
 
+EAPI void
+eina_model_xunref(Eina_Model *model, const void *id)
+{
+   Eina_Model_XRef *ref;
+   EINA_MODEL_INSTANCE_CHECK(model);
+
+   if (EINA_LIKELY(!_eina_model_debug))
+     {
+        _eina_model_unref(model);
+        return;
+     }
+
+   EINA_INLIST_FOREACH(model->xrefs, ref)
+     {
+        if (ref->id != id) continue;
+
+        model->xrefs = eina_inlist_remove(model->xrefs, EINA_INLIST_GET(ref));
+        free(ref);
+        _eina_model_unref(model);
+        return;
+     }
+
+   ERR("Could not find existing reference %p to model %p", id, model);
+}
+
 EAPI int
 eina_model_refcount(const Eina_Model *model)
 {
    EINA_MODEL_INSTANCE_CHECK_VAL(model, -1);
    return model->refcount;
+}
+
+EAPI const Eina_Inlist *
+eina_model_xrefs_get(const Eina_Model *model)
+{
+   EINA_MODEL_INSTANCE_CHECK_VAL(model, NULL);
+   return model->xrefs;
 }
 
 EAPI Eina_Bool
@@ -5186,4 +5336,83 @@ eina_model_struct_get(const Eina_Model *model, const Eina_Value_Struct_Desc **p_
    *p_desc = st.desc;
    if (p_memory) *p_memory = st.memory;
    return EINA_FALSE;
+}
+
+EAPI void
+eina_models_usage_dump(void)
+{
+   const Eina_List *l;
+   const Eina_Model *m;
+
+   eina_lock_take(&_eina_model_debug_list_lock);
+
+   puts("DDD: model          refs           info (type, holders, backtrace)");
+   puts("DDD: -------------- -------------- ---------------------------------");
+
+   EINA_LIST_FOREACH(_eina_model_debug_list, l, m)
+     {
+        Eina_Model_XRef *ref;
+
+        printf("DDD: %14p %14d %s\n",
+               m, m->refcount, m->desc->cache.types[0]->name);
+
+        EINA_INLIST_FOREACH(m->xrefs, ref)
+          {
+             printf("DDD:                               id: %p '%s'\n",
+                    ref->id, ref->label);
+             if (ref->backtrace.count)
+               {
+                  char **symbols;
+                  unsigned int i;
+
+#ifdef HAVE_BACKTRACE_SYMBOLS
+                  symbols = backtrace_symbols((void * const *)ref->backtrace.symbols,
+                                              ref->backtrace.count);
+#else
+                  symbols = NULL;
+#endif
+
+                  printf("DDD:            Backtrace: Address        Symbol\n");
+                  for (i = 0; i < ref->backtrace.count; i++)
+                    printf("DDD:                       %14p %s\n",
+                           ref->backtrace.symbols[i],
+                           symbols ? symbols[i] : "???");
+
+                  free(symbols);
+                  puts("DDD:");
+               }
+          }
+     }
+
+   eina_lock_release(&_eina_model_debug_list_lock);
+}
+
+EAPI Eina_List *
+eina_models_list_get(void)
+{
+   const Eina_List *l;
+   Eina_Model *m;
+   Eina_List *ret = NULL;
+
+   eina_lock_take(&_eina_model_debug_list_lock);
+
+   EINA_LIST_FOREACH(_eina_model_debug_list, l, m)
+     {
+        ret = eina_list_append
+          (ret, eina_model_xref
+           (m, eina_models_list_get, "eina_models_list_get"));
+     }
+
+   eina_lock_release(&_eina_model_debug_list_lock);
+
+   return ret;
+}
+
+EAPI void
+eina_models_list_free(Eina_List *list)
+{
+   Eina_Model *m;
+
+   EINA_LIST_FREE(list, m)
+     eina_model_xunref(m, eina_models_list_get);
 }

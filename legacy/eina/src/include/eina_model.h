@@ -21,6 +21,7 @@
 
 #include "eina_types.h"
 #include "eina_value.h"
+#include "eina_inlist.h"
 #include <stdarg.h>
 
 /**
@@ -262,28 +263,141 @@ EAPI Eina_Bool eina_model_interface_implemented(const Eina_Model *model, const E
 
 /**
  * @brief Increases the refcount of @a model.
+ * @param model The model to increase reference.
+ * @return The @a model with reference increased.
  *
  * @see eina_model_new()
  * @see eina_model_unref()
  * @since 1.2
  */
 EAPI Eina_Model *eina_model_ref(Eina_Model *model) EINA_ARG_NONNULL(1);
+
+/**
+ * @brief Increases the refcount of @a model, informs reference identifier.
+ * @param model The model to increase reference.
+ * @param id An identifier to mark this reference.
+ * @param label An optional label to help debug, may be @c NULL.
+ * @return The @a model with reference increased.
+ *
+ * This extended version of reference explicitly marks the origin of
+ * the reference and eina_model_xunref() should be used to check and
+ * remove it.
+ *
+ * Usually the @a id is another object, like a parent object, or some
+ * class/structure/file/function that is holding the reference for
+ * some reason.
+ *
+ * Its purpose is to help debuging if Eina was compiled with model
+ * usage debug enabled and environment variable @c EINA_MODEL_DEBUG=1
+ * is set.
+ *
+ * It is recommended to use eina_model_xref() and eina_model_xunref()
+ * pair whenever you want to be sure you released your
+ * references. Both at your own type, or using applications. As an
+ * example #EINA_MODEL_INTERFACE_CHILDREN_INARRAY will use this to
+ * make sure it deleted every managed children.
+ *
+ * In order to debug leaks, consider using eina_model_xrefs_get() or
+ * eina_models_usage_dump() for a global picture. However, some
+ * references are not tracked, namely:
+ *
+ * @li eina_model_new()
+ * @li eina_model_child_get()
+ * @li eina_model_child_iterator_get()
+ * @li eina_model_child_reversed_iterator_get()
+ * @li eina_model_child_sorted_iterator_get()
+ * @li eina_model_child_filtered_iterator_get()
+ * @li eina_model_child_slice_iterator_get()
+ * @li eina_model_child_slice_reversed_iterator_get()
+ * @li eina_model_child_slice_sorted_iterator_get()
+ * @li eina_model_child_slice_filtered_iterator_get()
+ *
+ * @note this function is slower than eina_model_ref() if
+ *       @c EINA_MODEL_DEBUG is set to "1" or "backtrace". Otherwise it
+ *       should have the same performance cost.
+ *
+ * @see eina_model_ref()
+ * @see eina_model_xunref()
+ * @since 1.2
+ */
+EAPI Eina_Model *eina_model_xref(Eina_Model *model,
+                                 const void *id,
+                                 const char *label) EINA_ARG_NONNULL(1, 2);
+
 /**
  * @brief Decreases the refcount of @a model.
+ * @param model The model to decrease reference.
+ *
+ * After this function returns, consider @a model pointer invalid.
  *
  * @see eina_model_ref()
  * @see eina_model_del()
  * @since 1.2
  */
 EAPI void eina_model_unref(Eina_Model *model) EINA_ARG_NONNULL(1);
+
+/**
+ * @brief Decreases the refcount of @a model, informs reference identifier.
+ * @param model The model to decrease reference.
+ * @param id An identifier to mark this reference.
+ *
+ * This function will match eina_model_xref() and the @a id must match
+ * a previously call, otherwise it will produce an error if @c
+ * EINA_MODEL_DEBUG is set to "1" or "backtrace", and the reference is
+ * not decreased!
+ *
+ * After this function returns, consider @a model pointer invalid.
+ *
+ * @note this function is slower than eina_model_unref() if
+ *       @c EINA_MODEL_DEBUG is set to "1" or "backtrace". Otherwise it
+ *       should have the same performance cost.
+ *
+ * @see eina_model_xref()
+ * @since 1.2
+ */
+EAPI void eina_model_xunref(Eina_Model *model,
+                            const void *id) EINA_ARG_NONNULL(1, 2);
+
 /**
  * @brief Returns the number of references to @a model.
+ * @param model The model to query number of references.
+ * @return number of references to model
  *
  * @see eina_model_ref()
  * @see eina_model_unref()
+ * @see eina_model_xref()
+ * @see eina_model_xunref()
+ * @see eina_model_xrefs_get()
  * @since 1.2
  */
 EAPI int eina_model_refcount(const Eina_Model *model) EINA_ARG_NONNULL(1);
+
+typedef struct _Eina_Model_XRef Eina_Model_XRef;
+struct _Eina_Model_XRef
+{
+   EINA_INLIST;
+   const void *id; /**< as given to eina_model_xref() */
+   struct {
+      const void * const *symbols; /**< only if @c EINA_MODEL_DEBUG=backtrace is set, otherwise is @c NULL */
+      unsigned int count; /**< only if @c EINA_MODEL_DEBUG=backtrace is set, otherwise is 0 */
+   } backtrace;
+   char label[];
+};
+
+/**
+ * @brief Returns the current references of this model.
+ * @param model The model to query references.
+ * @return List of reference holders as Eina_Model_XRef. This is the internal
+ *         list for speed purposes, do not modify or free it in anyway!
+ *
+ * @note This list only exist if environment variable
+ *       @c EINA_MODEL_DEBUG is set to "1" or "backtrace".
+ *
+ * @note The backtrace information is only available if environment
+ *       variable @c EINA_MODEL_DEBUG=backtrace is set.
+ * @since 1.2
+ */
+EAPI const Eina_Inlist *eina_model_xrefs_get(const Eina_Model *model) EINA_ARG_NONNULL(1) EINA_WARN_UNUSED_RESULT EINA_MALLOC;
 
 /**
  * @brief Add a callback to be called when @a event_name is emited.
@@ -1417,6 +1531,33 @@ EAPI void eina_model_interface_children_sort(const Eina_Model_Interface *iface,
  * @since 1.2
  */
 EAPI extern const Eina_Model_Interface *EINA_MODEL_INTERFACE_CHILDREN_INARRAY;
+
+/**
+ * @brief Dump usage of all existing modules.
+ * @since 1.2
+ */
+EAPI void eina_models_usage_dump(void);
+
+/**
+ * @brief Return a list of all live models.
+ * @return a newly allocated list of Eina_Model. Free using
+ *         eina_models_list_free()
+ *
+ * @note this is meant to debug purposes, do not modify the models in
+ *       any way!
+ *
+ * @note due performance reasons, this is only @b enabled when
+ *       @c EINA_MODEL_DEBUG is set to "1" or "backtrace".
+ *
+ * @since 1.2
+ */
+EAPI Eina_List *eina_models_list_get(void);
+
+/**
+ * @brief Release list returned by eina_models_list_get()
+ * @param list the list to release.
+ */
+EAPI void eina_models_list_free(Eina_List *list);
 
 /**
  * @}

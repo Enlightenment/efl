@@ -480,7 +480,9 @@ AC_SUBST([EINA_CONFIGURE_HAVE_DIRENT_H])
 ### Checks for library functions
 AC_ISC_POSIX
 AC_FUNC_ALLOCA
-AC_CHECK_FUNCS([strlcpy openat fstatat fpathconf execvp])
+AC_CHECK_FUNCS([strlcpy openat fstatat fpathconf execvp backtrace backtrace_symbols])
+
+AC_CHECK_HEADERS([execinfo.h], [AC_DEFINE([HAVE_EXECINFO_H], [1], [Have execinfo.h])])
 
 AC_MSG_CHECKING([for dirfd])
 AC_LINK_IFELSE(
