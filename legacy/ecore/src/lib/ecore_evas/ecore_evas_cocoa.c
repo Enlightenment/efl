@@ -9,7 +9,7 @@
 
 #ifdef BUILD_ECORE_EVAS_OPENGL_COCOA
 #include <Ecore_Cocoa.h>
-#include <Evas_Engine_Gl_Cocoa.h>
+#include <Evas_Engine_GL_Cocoa.h>
 #endif
 
 #include "ecore_evas_private.h"
