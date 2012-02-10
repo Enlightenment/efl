@@ -2506,12 +2506,13 @@ _eina_value_type_array_convert_to(const Eina_Value_Type *type __UNUSED__, const 
        (convert == EINA_VALUE_TYPE_STRINGSHARE))
      {
         Eina_Strbuf *str = eina_strbuf_new();
+        const char *ptr;
         if (!tmem->array) eina_strbuf_append(str, "[]");
         else
           {
              const Eina_Value_Type *subtype = tmem->subtype;
              unsigned char sz;
-             const char *ptr, *ptr_end;
+             const char *ptr_end;
              Eina_Value tmp;
              Eina_Bool first = EINA_TRUE;
 
@@ -2552,10 +2553,10 @@ _eina_value_type_array_convert_to(const Eina_Value_Type *type __UNUSED__, const 
                }
 
              eina_strbuf_append_char(str, ']');
-             ptr = eina_strbuf_string_get(str);
-             ret = eina_value_type_pset(convert, convert_mem, &ptr);
-             eina_strbuf_free(str);
           }
+        ptr = eina_strbuf_string_get(str);
+        ret = eina_value_type_pset(convert, convert_mem, &ptr);
+        eina_strbuf_free(str);
      }
    else if ((tmem->array) && (tmem->array->len == 1))
      {
@@ -2822,13 +2823,13 @@ _eina_value_type_list_convert_to(const Eina_Value_Type *type __UNUSED__, const E
        (convert == EINA_VALUE_TYPE_STRINGSHARE))
      {
         Eina_Strbuf *str = eina_strbuf_new();
+        const char *s;
         if (!tmem->list) eina_strbuf_append(str, "[]");
         else
           {
              const Eina_Value_Type *subtype = tmem->subtype;
              const Eina_List *node;
              Eina_Value tmp;
-             const char *s;
              Eina_Bool first = EINA_TRUE;
 
              eina_value_setup(&tmp, EINA_VALUE_TYPE_STRING);
@@ -2868,10 +2869,10 @@ _eina_value_type_list_convert_to(const Eina_Value_Type *type __UNUSED__, const E
                }
 
              eina_strbuf_append_char(str, ']');
-             s = eina_strbuf_string_get(str);
-             ret = eina_value_type_pset(convert, convert_mem, &s);
-             eina_strbuf_free(str);
           }
+        s = eina_strbuf_string_get(str);
+        ret = eina_value_type_pset(convert, convert_mem, &s);
+        eina_strbuf_free(str);
      }
    else if ((tmem->list) && (tmem->list->next == NULL))
      {
@@ -3241,11 +3242,11 @@ _eina_value_type_hash_convert_to(const Eina_Value_Type *type __UNUSED__, const E
        (convert == EINA_VALUE_TYPE_STRINGSHARE))
      {
         Eina_Strbuf *str = eina_strbuf_new();
+        const char *s;
         if (!tmem->hash) eina_strbuf_append(str, "{}");
         else
           {
              struct _eina_value_type_hash_convert_to_string_each_ctx ctx;
-             const char *s;
 
              ctx.subtype = tmem->subtype;
              ctx.str = str;
@@ -3259,10 +3260,10 @@ _eina_value_type_hash_convert_to(const Eina_Value_Type *type __UNUSED__, const E
                                &ctx);
 
              eina_strbuf_append_char(str, '}');
-             s = eina_strbuf_string_get(str);
-             ret = eina_value_type_pset(convert, convert_mem, &s);
-             eina_strbuf_free(str);
           }
+        s = eina_strbuf_string_get(str);
+        ret = eina_value_type_pset(convert, convert_mem, &s);
+        eina_strbuf_free(str);
      }
    else if ((tmem->hash) && (eina_hash_population(tmem->hash) == 1))
      {
