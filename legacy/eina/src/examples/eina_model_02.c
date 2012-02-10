@@ -47,6 +47,7 @@ int main(void)
 
    free(s);
    eina_model_unref(m);
+   eina_shutdown();
 
    return 0;
 }
