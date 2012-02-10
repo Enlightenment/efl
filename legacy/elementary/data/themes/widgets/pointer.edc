@@ -23,6 +23,7 @@
             description {
                state: "default" 0.0;
                aspect: 0.71875 0.71875;
+               min: 23 32;
                /* force a specific aspect ratio so
                 * when it gets scaled it wont squash
                 * or stretch */
