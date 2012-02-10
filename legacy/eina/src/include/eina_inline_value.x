@@ -424,17 +424,22 @@ eina_value_vset(Eina_Value *value, va_list args)
    else if (type == EINA_VALUE_TYPE_STRING)
      {
         const char *str = (const char *) va_arg(args, const char *);
-        free(value->value.ptr);
+        if (value->value.ptr == str) return EINA_TRUE;
         if (!str)
-          value->value.ptr = NULL;
+          {
+             free(value->value.ptr);
+             value->value.ptr = NULL;
+          }
         else
           {
-             value->value.ptr = strdup(str);
-             if (!value->value.ptr)
+             char *tmp = strdup(str);
+             if (!tmp)
                {
                   eina_error_set(EINA_ERROR_OUT_OF_MEMORY);
                   return EINA_FALSE;
                }
+             free(value->value.ptr);
+             value->value.ptr = tmp;
           }
         return EINA_TRUE;
      }
@@ -494,18 +499,22 @@ eina_value_pset(Eina_Value *value, const void *ptr)
           {
              const char * const * pstr = (const char * const *) ptr;
              const char *str = *pstr;
-
-             free(value->value.ptr);
+             if (value->value.ptr == str) return EINA_TRUE;
              if (!str)
-               value->value.ptr = NULL;
+               {
+                  free(value->value.ptr);
+                  value->value.ptr = NULL;
+               }
              else
                {
-                  value->value.ptr = strdup(str);
-                  if (!value->value.ptr)
+                  char *tmp = strdup(str);
+                  if (!tmp)
                     {
                        eina_error_set(EINA_ERROR_OUT_OF_MEMORY);
                        return EINA_FALSE;
                     }
+                  free(value->value.ptr);
+                  value->value.ptr = tmp;
                }
              return EINA_TRUE;
           }

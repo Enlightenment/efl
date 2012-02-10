@@ -2317,19 +2317,24 @@ _eina_value_type_string_vset(const Eina_Value_Type *type __UNUSED__, void *mem, 
 {
    char **tmem = mem;
    const char *str = va_arg(args, const char *);
-   free(*tmem);
-   if (str == NULL)
-     *tmem = NULL;
+   eina_error_set(0);
+   if (str == *tmem) return EINA_TRUE;
+   if (!str)
+     {
+        free(*tmem);
+        *tmem = NULL;
+     }
    else
      {
-        *tmem = strdup(str);
-        if (*tmem == NULL)
+        char *tmp = strdup(str);
+        if (!tmp)
           {
              eina_error_set(EINA_ERROR_OUT_OF_MEMORY);
              return EINA_FALSE;
           }
+        free(*tmem);
+        *tmem = tmp;
      }
-   eina_error_set(0);
    return EINA_TRUE;
 }
 
@@ -2338,19 +2343,24 @@ _eina_value_type_string_pset(const Eina_Value_Type *type __UNUSED__, void *mem, 
 {
    char **tmem = mem;
    const char * const *str = ptr;
-   free(*tmem);
-   if (*str == NULL)
-     *tmem = NULL;
+   eina_error_set(0);
+   if (*str == *tmem) return EINA_TRUE;
+   if (!*str)
+     {
+        free(*tmem);
+        *tmem = NULL;
+     }
    else
      {
-        *tmem = strdup(*str);
-        if (*tmem == NULL)
+        char *tmp = strdup(*str);
+        if (!tmp)
           {
              eina_error_set(EINA_ERROR_OUT_OF_MEMORY);
              return EINA_FALSE;
           }
+        free(*tmem);
+        *tmem = tmp;
      }
-   eina_error_set(0);
    return EINA_TRUE;
 }
 
@@ -2622,6 +2632,7 @@ _eina_value_type_array_pset(const Eina_Value_Type *type __UNUSED__, void *mem, c
    const Eina_Value_Array *desc = ptr;
    Eina_Inarray *desc_array;
 
+   eina_error_set(0);
    if ((!tmem->subtype) && (!desc->subtype))
      return EINA_TRUE;
 
@@ -2630,6 +2641,12 @@ _eina_value_type_array_pset(const Eina_Value_Type *type __UNUSED__, void *mem, c
      {
         EINA_SAFETY_ON_FALSE_RETURN_VAL
           (desc_array->member_size == desc->subtype->value_size, EINA_FALSE);
+
+        if (desc_array == tmem->array)
+          {
+             tmem->subtype = desc->subtype;
+             return EINA_TRUE;
+          }
      }
 
    if (tmem->array)
@@ -2947,8 +2964,15 @@ _eina_value_type_list_pset(const Eina_Value_Type *type __UNUSED__, void *mem, co
    Eina_Value_List *tmem = mem;
    const Eina_Value_List *desc = ptr;
 
+   eina_error_set(0);
    if ((!tmem->subtype) && (!desc->subtype))
      return EINA_TRUE;
+
+   if ((tmem->list) && (tmem->list == desc->list))
+     {
+        tmem->subtype = desc->subtype;
+        return EINA_TRUE;
+     }
 
    _eina_value_type_list_flush_elements(tmem);
    tmem->subtype = desc->subtype;
@@ -3304,8 +3328,15 @@ _eina_value_type_hash_pset(const Eina_Value_Type *type __UNUSED__, void *mem, co
    Eina_Value_Hash *tmem = mem;
    const Eina_Value_Hash *desc = ptr;
 
+   eina_error_set(0);
    if ((!tmem->subtype) && (!desc->subtype))
      return EINA_TRUE;
+
+   if ((tmem->hash) && (tmem->hash == desc->hash))
+     {
+        tmem->subtype = desc->subtype;
+        return EINA_TRUE;
+     }
 
    if (tmem->hash) _eina_value_type_hash_flush_elements(tmem);
 
@@ -3788,6 +3819,14 @@ _eina_value_type_blob_pset(const Eina_Value_Type *type __UNUSED__, void *mem, co
    const Eina_Value_Blob_Operations *ops = _eina_value_type_blob_ops_get(mem);
    Eina_Value_Blob *tmem = mem;
    const Eina_Value_Blob *desc = ptr;
+
+   eina_error_set(0);
+   if ((tmem->memory) && (tmem->memory == desc->memory))
+     {
+        tmem->ops = desc->ops;
+        tmem->size = desc->size;
+        return EINA_TRUE;
+     }
 
    if ((ops) && (ops->free))
      ops->free(ops, (void *)tmem->memory, tmem->size);
@@ -4287,14 +4326,17 @@ _eina_value_type_struct_pset(const Eina_Value_Type *type, void *mem, const void 
         return EINA_FALSE;
      }
 
+   eina_error_set(0);
+   if ((tmem->memory) && (tmem->memory == desc->memory))
+     {
+        tmem->desc = desc->desc;
+        return EINA_TRUE;
+     }
+
    _eina_value_type_struct_flush(type, mem);
 
    *tmem = *desc;
-   if (tmem->memory)
-     {
-        eina_error_set(0);
-        return EINA_TRUE;
-     }
+   if (tmem->memory) return EINA_TRUE;
 
    ops = _eina_value_type_struct_ops_get(desc);
    if ((ops) && (ops->alloc))
@@ -4324,7 +4366,6 @@ _eina_value_type_struct_pset(const Eina_Value_Type *type, void *mem, const void 
             goto error;
      }
 
-   eina_error_set(0);
    return EINA_TRUE;
 
  error:
@@ -4457,6 +4498,9 @@ _eina_value_type_model_pset(const Eina_Value_Type *type __UNUSED__, void *mem, c
 {
    Eina_Model **tmem = mem;
    Eina_Model **p = (Eina_Model **)ptr;
+
+   eina_error_set(0);
+   if (*tmem == *p) return EINA_TRUE;
 
    if (*p) eina_model_ref(*p);
    if (*tmem) eina_model_unref(*tmem);
