@@ -38,6 +38,7 @@ struct _Elm_Win
         Ecore_Evas *ee;
         Evas *evas;
         Evas_Object *obj, *hot_obj;
+        int hot_x, hot_y;
      } pointer;
    struct {
       Evas_Object *top;
@@ -633,6 +634,7 @@ _elm_win_obj_intercept_show(void *data, Evas_Object *obj)
      {
         ecore_evas_show(win->pointer.ee);
         evas_object_show(win->pointer.obj);
+        ecore_evas_wayland_pointer_set(win->pointer.ee, 10, 10);
      }
    evas_object_show(obj);
 }
