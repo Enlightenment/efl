@@ -115,6 +115,128 @@
  */
 
 /**
+ * @page eina_model_03_example_page Using Eina_Model and inheritance
+ * @dontinclude eina_model_03.c
+ *
+ * This example will use two custom defined eina model types: @c PERSON_TYPE to
+ * represent a person and @c ADDRESS_BOOK_TYPE to represent the an address book.
+ * Both our types inherit from EINA_MODEL_TYPE_STRUCT, and, therefore,
+ * store it's data on a struct. Our address book will be very simple it will
+ * only contain one property, the name of the file where we store our address
+ * book. The person type will contain two fields a name and en email. Let's look
+ * at the code.
+ *
+ * We'll start with declaring the variables and functions we'll need to define
+ * our custom type. This will all be explained when the variables get used.
+ * @until address_book_init
+ *
+ * We then jump into our @c main function, declare a couple of variables and
+ * initialize eina:
+ * @until eina_init
+ *
+ * After eina is initialized we'll @c address_book_init() which will initialize
+ * both our @c PERSON_TYPE and our @c ADDRESS_BOOK_TYPE. Details of this will be
+ * shown latter on:
+ * @until address_book_init
+ *
+ * Now that everything is correctly initialized we can create the model that
+ * will represent our address book's
+ * @until eina_model_new
+ *
+ * Before we can load data into our model we need to tell it where to load from,
+ * we do this by setting it's filename property:
+ * @until value_flush
+ *
+ * We then load data into our model and display it as a string:
+ * @until free
+ *
+ * While @c eina_model_to_string allows you to see the contents of the model,
+ * it's display format is not user friendly, it's best used for debugging. So
+ * let's now print our model in a user friendly way.
+ *
+ * First we see how many people are in our address book and print that:
+ * @until printf
+ *
+ * And now we iterate over every child of our address book model, which
+ * represents a person:
+ * @until person
+ *
+ * But again simply calling @c eina_model_to_string would result in not very
+ * user friendly output, so we'll need to get the properties of the person(name
+ * and email) and print them with some formatting:
+ * @until printf
+ *
+ * We then free the resources we allocated to print this person:
+ * @until }
+ *
+ * And that's it for our main function, now just freeing our resources:
+ * @until }
+ *
+ * This however obviously doesn't conclude our example we need to examine how
+ * the the loading of data works to really understand what is happening in the
+ * @c main function.
+ *
+ * Let's start with the constructors(and the variables they use). Both our
+ * constructors do two very important tasks:
+ * @li Calls our parent's constructor, and
+ * @li Sets the description of the struct on our model
+ *
+ * For these constructors that's all we need to do since most of our
+ * functionality is provided by @c EINA_MODEL_TYPE_STRUCT.
+ * @until }
+ * @until }
+ *
+ * And now we have our load function, it opens the file from which we'll
+ * read the address book:
+ * @until EINA_SAFETY_ON_NULL_RETURN_VAL
+ *
+ * Once the file has been opened we read from it line by line and for each
+ * non-blank line we get a name and an email:
+ * @until email
+ * @until email
+ *
+ * Once we have the name and email we create our person model, set it's
+ * properties and make our person a child of the address book:
+ * @until }
+ *
+ * And now that we're done reading the file we close it:
+ * @until }
+ *
+ * This next function is perphaps the most interesting one of our example, it's
+ * the one that creates the definition of our derived types.
+ *
+ * First thing we'll do is the description of the members of our person type.
+ * @until person_members[1].type
+ * Now the description of the struct itself(which uses the members):
+ * @until }
+ * And finally we define the person type itself:
+ * @until person_type.constructor
+ *
+ * With the person now described we'll do the same process for our address book
+ * type:
+ * @until address_book_type.load
+ *
+ * So far everything we created has been in the scope of our function to make
+ * this available outside(such as in the @c main function where we use @c
+ * ADDRESS_BOOK_TYPE and on @c _address_book_load function where we use @c
+ * PERSON_TYPE) we need to assign our descriptions and type to global variables:
+ * @until }
+ *
+ * This concludes this example. A good exercise for the reader is to extend this
+ * example to have the model save the addres book, for example once it's
+ * unloaded, this can be done by overriding the .unload property of @c
+ * ADDRESS_BOOK_TYPE.
+ *
+ * For the full code see: @ref eina_model_03_c
+ */
+
+/**
+ * @page eina_model_03_c eina_model_03.c
+ * @include eina_model_03.c
+ * @example eina_model_03.c
+ */
+
+/**
  * @addtogroup Eina_Data_Types_Group Data Types
  *
  * @since 1.2
@@ -148,6 +270,8 @@
  * demonstrates several of the important features of eina_model.
  *
  * An inheritance example: @ref eina_model_01_c
+ *
+ * And a explained inheritance example: @ref eina_model_03_example_page
  *
  * @{
  */
