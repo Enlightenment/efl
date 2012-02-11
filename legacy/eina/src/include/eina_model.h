@@ -1444,7 +1444,29 @@ EAPI extern const Eina_Model_Type *EINA_MODEL_TYPE_GENERIC;
  */
 EAPI extern const Eina_Model_Type *EINA_MODEL_TYPE_STRUCT;
 
+/**
+ * @brief Create and setup an instance of #EINA_MODEL_TYPE_STRUCT.
+ * @param desc struct description to use for properties.
+ * @return newly created and set model, or @c NULL on errors.
+ *
+ * @see eina_model_type_struct_new()
+ * @since 1.2
+ */
 EAPI Eina_Model *eina_model_struct_new(const Eina_Value_Struct_Desc *desc) EINA_ARG_NONNULL(1) EINA_WARN_UNUSED_RESULT EINA_MALLOC;
+
+/**
+ * @brief Create and setup an instance of type subclass of #EINA_MODEL_TYPE_STRUCT.
+ * @param type a type which is subclass of #EINA_MODEL_TYPE_STRUCT.
+ * @param desc struct description to use for properties.
+ * @return newly created and set model, or @c NULL on errors.
+ *
+ * @see eina_model_struct_new()
+ * @since 1.2
+ */
+EAPI Eina_Model *eina_model_type_struct_new(const Eina_Model_Type *type,
+                                            const Eina_Value_Struct_Desc *desc) EINA_ARG_NONNULL(1, 2) EINA_WARN_UNUSED_RESULT EINA_MALLOC;
+
+
 
 
 /**

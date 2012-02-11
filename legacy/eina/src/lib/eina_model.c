@@ -5302,6 +5302,28 @@ eina_model_struct_new(const Eina_Value_Struct_Desc *desc)
    return NULL;
 }
 
+EAPI Eina_Model *
+eina_model_type_struct_new(const Eina_Model_Type *type, const Eina_Value_Struct_Desc *desc)
+{
+   Eina_Model *m;
+
+   EINA_SAFETY_ON_FALSE_RETURN_VAL
+     (eina_model_type_subclass_check(type, EINA_MODEL_TYPE_STRUCT), NULL);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(desc, NULL);
+   EINA_SAFETY_ON_FALSE_RETURN_VAL
+     (desc->version == EINA_VALUE_STRUCT_DESC_VERSION, NULL);
+
+   m = eina_model_new(type);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(m, NULL);
+
+   EINA_SAFETY_ON_FALSE_GOTO(_eina_model_struct_set(m, desc, NULL), error);
+   return m;
+
+ error:
+   eina_model_del(m);
+   return NULL;
+}
+
 EAPI Eina_Bool
 eina_model_struct_set(Eina_Model *model, const Eina_Value_Struct_Desc *desc, void *memory)
 {
