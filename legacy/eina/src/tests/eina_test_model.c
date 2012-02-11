@@ -863,7 +863,7 @@ _struct_complex_members_constructor(Eina_Model *m)
       Eina_Value_List l;
       Eina_Value_Hash h;
       Eina_Value_Struct s;
-   } *st;
+   } st;
    struct subst {
       int i, j;
    };
@@ -904,23 +904,14 @@ _struct_complex_members_constructor(Eina_Model *m)
    if (!eina_model_type_constructor(EINA_MODEL_TYPE_STRUCT, m))
      return EINA_FALSE;
 
-   st = calloc(1, sizeof(*st));
-   if (!st)
-     {
-        eina_error_set(EINA_ERROR_OUT_OF_MEMORY);
-        return EINA_FALSE;
-     }
+   memset(&st, 0, sizeof(st));
 
-   st->a.subtype = EINA_VALUE_TYPE_STRING;
-   st->l.subtype = EINA_VALUE_TYPE_STRING;
-   st->h.subtype = EINA_VALUE_TYPE_STRING;
-   st->s.desc = &subst_desc;
-
-   if (!eina_model_struct_set(m, &myst_desc, st))
-     {
-        free(st);
-        return EINA_FALSE;
-     }
+   st.a.subtype = EINA_VALUE_TYPE_STRING;
+   st.l.subtype = EINA_VALUE_TYPE_STRING;
+   st.h.subtype = EINA_VALUE_TYPE_STRING;
+   st.s.desc = &subst_desc;
+   if (!eina_model_struct_set(m, &myst_desc, &st))
+     return EINA_FALSE;
 
    return EINA_TRUE;
 }
