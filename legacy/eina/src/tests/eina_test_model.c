@@ -855,6 +855,127 @@ START_TEST(eina_model_test_struct)
 }
 END_TEST
 
+static Eina_Bool
+_struct_complex_members_constructor(Eina_Model *m)
+{
+   struct myst {
+      Eina_Value_Array a;
+      Eina_Value_List l;
+      Eina_Value_Hash h;
+      Eina_Value_Struct s;
+   } *st;
+   struct subst {
+      int i, j;
+   };
+   static Eina_Value_Struct_Member myst_members[] = {
+        EINA_VALUE_STRUCT_MEMBER(NULL, struct myst, a),
+        EINA_VALUE_STRUCT_MEMBER(NULL, struct myst, l),
+        EINA_VALUE_STRUCT_MEMBER(NULL, struct myst, h),
+        EINA_VALUE_STRUCT_MEMBER(NULL, struct myst, s)
+   };
+   static Eina_Value_Struct_Desc myst_desc = {
+     EINA_VALUE_STRUCT_DESC_VERSION,
+     NULL, myst_members, EINA_C_ARRAY_LENGTH(myst_members), sizeof(struct myst)
+   };
+   static Eina_Value_Struct_Member subst_members[] = {
+        EINA_VALUE_STRUCT_MEMBER(NULL, struct subst, i),
+        EINA_VALUE_STRUCT_MEMBER(NULL, struct subst, j)
+   };
+   static Eina_Value_Struct_Desc subst_desc = {
+     EINA_VALUE_STRUCT_DESC_VERSION,
+     NULL, subst_members, EINA_C_ARRAY_LENGTH(subst_members),
+     sizeof(struct subst)
+   };
+
+   if (!myst_members[0].type)
+     {
+        myst_members[0].type = EINA_VALUE_TYPE_ARRAY;
+        myst_members[1].type = EINA_VALUE_TYPE_LIST;
+        myst_members[2].type = EINA_VALUE_TYPE_HASH;
+        myst_members[3].type = EINA_VALUE_TYPE_STRUCT;
+     }
+
+   if (!subst_members[0].type)
+     {
+        subst_members[0].type = EINA_VALUE_TYPE_INT;
+        subst_members[1].type = EINA_VALUE_TYPE_INT;
+     }
+
+   if (!eina_model_type_constructor(EINA_MODEL_TYPE_STRUCT, m))
+     return EINA_FALSE;
+
+   st = calloc(1, sizeof(*st));
+   if (!st)
+     {
+        eina_error_set(EINA_ERROR_OUT_OF_MEMORY);
+        return EINA_FALSE;
+     }
+
+   st->a.subtype = EINA_VALUE_TYPE_STRING;
+   st->l.subtype = EINA_VALUE_TYPE_STRING;
+   st->h.subtype = EINA_VALUE_TYPE_STRING;
+   st->s.desc = &subst_desc;
+
+   if (!eina_model_struct_set(m, &myst_desc, st))
+     {
+        free(st);
+        return EINA_FALSE;
+     }
+
+   return EINA_TRUE;
+}
+
+START_TEST(eina_model_test_struct_complex_members)
+{
+   Eina_Model *m;
+   Eina_Value outv;
+   char *s;
+   Eina_Model_Type type = EINA_MODEL_TYPE_INIT_NOPRIVATE
+     ("struct_complex_members", Eina_Model_Type, NULL, NULL, NULL);
+
+   eina_init();
+
+   type.constructor = _struct_complex_members_constructor;
+   type.parent = EINA_MODEL_TYPE_STRUCT;
+
+   m = eina_model_new(&type);
+   fail_unless(m != NULL);
+
+   fail_unless(eina_model_property_get(m, "a", &outv));
+   fail_unless(eina_value_array_append(&outv, "Hello"));
+   fail_unless(eina_value_array_append(&outv, "World"));
+   fail_unless(eina_model_property_set(m, "a", &outv));
+   eina_value_flush(&outv);
+
+   fail_unless(eina_model_property_get(m, "l", &outv));
+   fail_unless(eina_value_list_append(&outv, "Some"));
+   fail_unless(eina_value_list_append(&outv, "Thing"));
+   fail_unless(eina_model_property_set(m, "l", &outv));
+   eina_value_flush(&outv);
+
+   fail_unless(eina_model_property_get(m, "h", &outv));
+   fail_unless(eina_value_hash_set(&outv, "key", "value"));
+   fail_unless(eina_model_property_set(m, "h", &outv));
+   eina_value_flush(&outv);
+
+   fail_unless(eina_model_property_get(m, "s", &outv));
+   fail_unless(eina_value_struct_set(&outv, "i", 1234));
+   fail_unless(eina_value_struct_set(&outv, "j", 44));
+   fail_unless(eina_model_property_set(m, "s", &outv));
+   eina_value_flush(&outv);
+
+   s = eina_model_to_string(m);
+   fail_unless(s != NULL);
+   ck_assert_str_eq(s, "struct_complex_members({a: [Hello, World], h: {key: value}, l: [Some, Thing], s: {i: 1234, j: 44}}, [])");
+   free(s);
+
+   ck_assert_int_eq(eina_model_refcount(m), 1);
+
+   eina_model_unref(m);
+   eina_shutdown();
+}
+END_TEST
+
 void
 eina_test_model(TCase *tc)
 {
@@ -867,4 +988,5 @@ eina_test_model(TCase *tc)
    tcase_add_test(tc, eina_model_test_child_sorted_iterator);
    tcase_add_test(tc, eina_model_test_child_filtered_iterator);
    tcase_add_test(tc, eina_model_test_struct);
+   tcase_add_test(tc, eina_model_test_struct_complex_members);
 }

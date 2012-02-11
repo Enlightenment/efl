@@ -1533,14 +1533,14 @@ EAPI extern const Eina_Model_Interface *EINA_MODEL_INTERFACE_PROPERTIES_STRUCT;
  *
  * @param model The model instance to configure.
  * @param desc The structure description to use.
- * @param memory If not @c NULL, will be adopted by model.
+ * @param memory If not @c NULL, will be copied by model.
  * @return #EINA_TRUE on success, #EINA_FALSE on failure.
  *
  * This will setup the internal pointers so that the given @a desc is
  * used to manage the properties of this struct.
  *
- * If a given memory is provided, it will be adopted (not copied!),
- * being free'd when the model is gone.
+ * If a given memory is provided, it will be copied (including
+ * members) and no references are taken after this function returns.
  *
  * @see #EINA_VALUE_TYPE_STRUCT
  *

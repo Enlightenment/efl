@@ -1140,8 +1140,10 @@ START_TEST(eina_value_test_array)
    fail_unless(eina_inarray_append(inarray, &c) >= 0);
    desc.subtype = EINA_VALUE_TYPE_CHAR;
    desc.step = 0;
-   desc.array = inarray; /* will be adopted and freed by value */
+   desc.array = inarray;
    fail_unless(eina_value_set(value, desc)); /* manually configure */
+   eina_inarray_free(inarray);
+
    fail_unless(eina_value_array_get(value, 0, &c));
    fail_unless(c == 11);
    fail_unless(eina_value_array_get(value, 1, &c));
@@ -1242,11 +1244,13 @@ START_TEST(eina_value_test_list)
 
    desc.subtype = EINA_VALUE_TYPE_STRING;
    desc.list = NULL;
-   desc.list = eina_list_append(desc.list, strdup("hello"));
-   desc.list = eina_list_append(desc.list, strdup("world"));
-   desc.list = eina_list_append(desc.list, strdup("eina"));
+   desc.list = eina_list_append(desc.list, "hello");
+   desc.list = eina_list_append(desc.list, "world");
+   desc.list = eina_list_append(desc.list, "eina");
    fail_unless(eina_list_count(desc.list) == 3);
    fail_unless(eina_value_set(value, desc));
+   eina_list_free(desc.list);
+
    fail_unless(eina_value_list_get(value, 0, &s));
    fail_unless(s != NULL);
    fail_unless(strcmp(s, "hello") == 0);
@@ -1351,13 +1355,16 @@ START_TEST(eina_value_test_hash)
    fail_unless(desc.hash != NULL);
    /* watch out hash pointer is to a size of subtype->value_size! */
    ptr = malloc(sizeof(char *));
-   *ptr = strdup("there");
+   *ptr = "there";
    fail_unless(eina_hash_add(desc.hash, "hi", ptr));
    ptr = malloc(sizeof(char *));
-   *ptr = strdup("y");
+   *ptr = "y";
    fail_unless(eina_hash_add(desc.hash, "x", ptr));
-
    fail_unless(eina_value_set(value, desc));
+
+   free(eina_hash_find(desc.hash, "hi"));
+   free(eina_hash_find(desc.hash, "x"));
+   eina_hash_free(desc.hash);
 
    fail_unless(eina_value_hash_get(value, "hi", &s));
    fail_unless(s != NULL);
@@ -1755,20 +1762,17 @@ START_TEST(eina_value_test_array_of_struct)
    for (i = 0; i < 10; i++)
      {
         Eina_Value_Struct desc;
-        struct myst *st;
+        struct myst st;
         char buf[64];
 
         snprintf(buf, sizeof(buf), "item%02d", i);
-        st = malloc(sizeof(struct myst));
-        fail_unless(st != NULL);
-        st->a = i;
-        st->b = i * 10;
-        st->c = i * 100;
-        st->s = strdup(buf);
-        fail_unless(st->s != NULL);
+        st.a = i;
+        st.b = i * 10;
+        st.c = i * 100;
+        st.s = buf;
 
         desc.desc = &myst_desc;
-        desc.memory = st;
+        desc.memory = &st;
         fail_unless(eina_value_array_append(value, desc));
      }
 
