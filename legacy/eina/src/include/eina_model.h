@@ -251,7 +251,7 @@
  */
 
 /**
- * @defgroup Eina_Model_Group Data Model API.
+ * @defgroup Eina_Model_Group Data Model API
  *
  * Abstracts data access to hierarchical data in an efficient way,
  * extensible to different backing stores such as database or remote
@@ -266,12 +266,20 @@
  * use it during development, get the logic right and just then
  * optimize what is needed (properties or children management).
  *
- * @ref eina_model_02_example_page contains an easy to follow example that
- * demonstrates several of the important features of eina_model.
+ * Not as generic as #EINA_MODEL_TYPE_GENERIC, but way more efficient
+ * is #EINA_MODEL_TYPE_STRUCT that instead of a hash of properties of
+ * any type, it uses a struct to map properties. Its properties are
+ * fixed set of names and they have fixed type, as defined by the
+ * #Eina_Value_Struct_Desc description used internally.
  *
- * An inheritance example: @ref eina_model_01_c
- *
- * And a explained inheritance example: @ref eina_model_03_example_page
+ * Examples:
+ * @li @ref eina_model_01_c inheritance example, uses #EINA_MODEL_TYPE_GENERIC
+ * @li @ref eina_model_02_example_page contains an easy to follow
+ *     example that demonstrates several of the important features of
+ *     eina_model, uses #EINA_MODEL_TYPE_GENERIC.
+ * @li @ref eina_model_03_example_page walk-through example on how to
+ *     inherit types, a suggestion of eina_model_load() usage and uses
+ *     #EINA_MODEL_TYPE_STRUCT.
  *
  * @{
  */
@@ -292,15 +300,28 @@ EAPI extern Eina_Error EINA_ERROR_MODEL_METHOD_MISSING;
  * @typedef Eina_Model
  * Data Model Object.
  *
+ * This is an opaque handle that is created with eina_model_new() and
+ * released with eina_model_unref().
+ *
+ * It contains properties, children and may emit events. See
+ * respectively:
+ * @li eina_model_property_get() and eina_model_property_set()
+ * @li eina_model_child_get() and eina_model_child_set()
+ * @li eina_model_event_names_list_get(), eina_model_event_callback_add() and eina_model_event_callback_del()
+ *
+ * @see eina_model_new()
+ * @see eina_model_ref() and eina_model_xref()
+ * @see eina_model_unref(), eina_model_xunref() and eina_model_del()
+ * @see eina_model_type_get() and eina_model_interface_get()
  * @since 1.2
  */
 typedef struct _Eina_Model Eina_Model;
-
 
 /**
  * @typedef Eina_Model_Type
  * Data Model Type.
  *
+ * @see #_Eina_Model_Type explains fields.
  * @since 1.2
  */
 typedef struct _Eina_Model_Type Eina_Model_Type;
@@ -309,6 +330,7 @@ typedef struct _Eina_Model_Type Eina_Model_Type;
  * @typedef Eina_Model_Interface
  * Data Model Interface.
  *
+ * @see #_Eina_Model_Interface explains fields.
  * @since 1.2
  */
 typedef struct _Eina_Model_Interface Eina_Model_Interface;
@@ -317,17 +339,16 @@ typedef struct _Eina_Model_Interface Eina_Model_Interface;
  * @typedef Eina_Model_Event_Description
  * Data Model Event Description.
  *
+ * This is used to declare events supported by types and interfaces
+ * and also to provide introspection to receivers of signals so they
+ * can know which data they are receiving as @c event_info.
+ *
+ * @see EINA_MODEL_EVENT_DESCRIPTION()
+ * @see #EINA_MODEL_EVENT_DESCRIPTION_SENTINEL
+ * @see #_Eina_Model_Event_Description explains fields.
  * @since 1.2
  */
 typedef struct _Eina_Model_Event_Description Eina_Model_Event_Description;
-
-/**
- * @typedef Eina_Model_Event_Cb
- * Notifies of events in this model.
- *
- * @since 1.2
- */
-typedef void (*Eina_Model_Event_Cb)(void *data, Eina_Model *model, const Eina_Model_Event_Description *desc, void *event_info);
 
 /**
  * @brief Creates a new model of type @a Type.
@@ -366,24 +387,6 @@ EAPI const Eina_Model_Type *eina_model_type_get(const Eina_Model *model) EINA_AR
  */
 EAPI const Eina_Model_Interface *eina_model_interface_get(const Eina_Model *model,
                                                           const char *name) EINA_ARG_NONNULL(1, 2) EINA_WARN_UNUSED_RESULT EINA_PURE;
-
-/**
- * @brief Checks if @a model is an instance of @a type.
- *
- * @see eina_model_new()
- * @see _Eina_Model_Type
- * @since 1.2
- */
-EAPI Eina_Bool eina_model_instance_check(const Eina_Model *model,
-                                         const Eina_Model_Type *type) EINA_ARG_NONNULL(1, 2) EINA_WARN_UNUSED_RESULT EINA_PURE;
-
-/**
- * @brief Checks if @a model implements @a iface.
- *
- * @see _Eina_Model_Interface
- * @since 1.2
- */
-EAPI Eina_Bool eina_model_interface_implemented(const Eina_Model *model, const Eina_Model_Interface *iface) EINA_ARG_NONNULL(1, 2) EINA_WARN_UNUSED_RESULT EINA_PURE;
 
 /**
  * @brief Increases the refcount of @a model.
@@ -482,46 +485,45 @@ EAPI void eina_model_unref(Eina_Model *model) EINA_ARG_NONNULL(1);
 EAPI void eina_model_xunref(Eina_Model *model,
                             const void *id) EINA_ARG_NONNULL(1, 2);
 
-/**
- * @brief Returns the number of references to @a model.
- * @param model The model to query number of references.
- * @return number of references to model
- *
- * @see eina_model_ref()
- * @see eina_model_unref()
- * @see eina_model_xref()
- * @see eina_model_xunref()
- * @see eina_model_xrefs_get()
- * @since 1.2
- */
-EAPI int eina_model_refcount(const Eina_Model *model) EINA_ARG_NONNULL(1);
 
-typedef struct _Eina_Model_XRef Eina_Model_XRef;
-struct _Eina_Model_XRef
-{
-   EINA_INLIST;
-   const void *id; /**< as given to eina_model_xref() */
-   struct {
-      const void * const *symbols; /**< only if @c EINA_MODEL_DEBUG=backtrace is set, otherwise is @c NULL */
-      unsigned int count; /**< only if @c EINA_MODEL_DEBUG=backtrace is set, otherwise is 0 */
-   } backtrace;
-   char label[];
-};
 
 /**
- * @brief Returns the current references of this model.
- * @param model The model to query references.
- * @return List of reference holders as Eina_Model_XRef. This is the internal
- *         list for speed purposes, do not modify or free it in anyway!
+ * @defgroup Eina_Model_Event_Group Data Model Events
+ * Events and their usage with models.
  *
- * @note This list only exist if environment variable
- *       @c EINA_MODEL_DEBUG is set to "1" or "backtrace".
+ * Events are specified by each type and interface level using
+ * #Eina_Model_Event_Description. One can know all events supported by
+ * a model with eina_model_event_names_list_get() and then
+ * eina_model_event_description_get() to retrieve details.
  *
- * @note The backtrace information is only available if environment
- *       variable @c EINA_MODEL_DEBUG=backtrace is set.
+ * By default the following events are supported in every object:
+ * @li deleted: last reference was released or eina_model_del() was called.
+ * @li freed: memory was destroyed, destructors were called.
+ * @li property,set: eina_model_property_set() was done.
+ * @li property,deleted: eina_model_property_del() was done.
+ * @li children,changed: children was changed somehow (added, modified, deleted)
+ * @li child,inserted: new child was added (eina_model_child_append() or eina_model_child_insert_at())
+ * @li child,set: child was replaced (eina_model_child_set())
+ * @li child,deleted: eina_model_child_del() was done.
+ *
+ * One can be notified of events with eina_model_event_callback_add().
+ *
+ * Types emit these events with eina_model_event_callback_call(),
+ * these are handled asynchronously unless event is frozen with
+ * eina_model_event_callback_freeze() is blocking it. In this case the
+ * events are ignored. Usually this is used in some cases that want to
+ * avoid storm of events in batch operations.
+ *
+ * @{
+ */
+
+/**
+ * @typedef Eina_Model_Event_Cb
+ * Notifies of events in this model.
+ *
  * @since 1.2
  */
-EAPI const Eina_Inlist *eina_model_xrefs_get(const Eina_Model *model) EINA_ARG_NONNULL(1) EINA_WARN_UNUSED_RESULT EINA_MALLOC;
+typedef void (*Eina_Model_Event_Cb)(void *data, Eina_Model *model, const Eina_Model_Event_Description *desc, void *event_info);
 
 /**
  * @brief Add a callback to be called when @a event_name is emited.
@@ -567,6 +569,10 @@ EAPI int eina_model_event_callback_freeze(Eina_Model *model,
 EAPI int eina_model_event_callback_thaw(Eina_Model *model,
                                         const char *name) EINA_ARG_NONNULL(1, 2);
 
+/**
+ * @}
+ */
+
 
 EAPI Eina_Model *eina_model_copy(const Eina_Model *model) EINA_ARG_NONNULL(1) EINA_WARN_UNUSED_RESULT EINA_MALLOC;
 EAPI Eina_Model *eina_model_deep_copy(const Eina_Model *model) EINA_ARG_NONNULL(1) EINA_WARN_UNUSED_RESULT EINA_MALLOC;
@@ -592,6 +598,19 @@ EAPI Eina_Bool eina_model_load(Eina_Model *model) EINA_ARG_NONNULL(1);
 EAPI Eina_Bool eina_model_unload(Eina_Model *model) EINA_ARG_NONNULL(1);
 
 
+/**
+ * @defgroup Eina_Model_Properties_Group Data Model Properties
+ * Properties and their usage with models.
+ *
+ * Properties are attributes of model. They have a name and contain a
+ * data value (@ref Eina_Value_Group).
+ *
+ * The actual values and their types, if it is possible to read and
+ * write them and if new properties can be created or deleted it is up
+ * to the type.
+ *
+ * @{
+ */
 EAPI Eina_Bool eina_model_property_get(const Eina_Model *model,
                                        const char *name,
                                        Eina_Value *value) EINA_ARG_NONNULL(1, 2, 3);
@@ -603,6 +622,22 @@ EAPI Eina_Bool eina_model_property_del(Eina_Model *model,
 
 EAPI Eina_List *eina_model_properties_names_list_get(const Eina_Model *model) EINA_ARG_NONNULL(1) EINA_WARN_UNUSED_RESULT;
 EAPI void eina_model_properties_names_list_free(Eina_List *list);
+
+/**
+ * @}
+ */
+
+/**
+ * @defgroup Eina_Model_Children_Group Data Model Children
+ * Children and their usage with models.
+ *
+ * Children are other model instances that are kept sequentially in
+ * the model. They are accessed by their integer index within the
+ * model. Their index may change if child are inserted or deleted
+ * before them, as in an array.
+ *
+ * @{
+ */
 
 EAPI int eina_model_child_count(const Eina_Model *model) EINA_ARG_NONNULL(1) EINA_WARN_UNUSED_RESULT;
 
@@ -667,6 +702,20 @@ EAPI int eina_model_child_criteria_match(const Eina_Model *model,
 EAPI Eina_Bool eina_model_child_sort(Eina_Model *model,
                                      Eina_Compare_Cb compare) EINA_ARG_NONNULL(1, 2);
 
+/**
+ * @}
+ */
+
+/**
+ * @defgroup Eina_Model_Iterators_Group Data Model Iterators
+ * Iterators and their usage with models.
+ *
+ * One of the most common tasks of models is to iterate over their
+ * children, either forwards or backwards, filtering by some criteria
+ * or a different ordering function.
+ *
+ * @{
+ */
 
 /**
  * @brief create an iterator that outputs a child model on each iteration.
@@ -821,6 +870,10 @@ EAPI Eina_Iterator *eina_model_child_slice_filtered_iterator_get(Eina_Model *mod
 
 
 /**
+ * @}
+ */
+
+/**
  * @brief Convert model to string.
  * @param model the model instance.
  * @return newly allocated memory or @c NULL on failure.
@@ -841,16 +894,39 @@ EAPI char *eina_model_to_string(const Eina_Model *model) EINA_ARG_NONNULL(1) EIN
 /**
  * @defgroup Eina_Model_Type_Group Data Model Type management
  *
+ * Functions and structures related to implementing new types or
+ * extending existing ones.
+ *
+ * All eina_model_type functions takes an Eina_Model_Type or
+ * Eina_Model_Interface as parameter and may be used to validate or
+ * query information about them.
+ *
+ * The functions with prefix eina_model_type that matches eina_model
+ * counterparts, such as eina_model_type_compare() and
+ * eina_model_compare() are used as "super", that is, calls the @c
+ * compare() method of the given type (or its parent) instead of the
+ * most specific type of provided Eina_Model.
+ *
+ * Examples:
+ * @li @ref eina_model_02_example_page contains an easy to follow
+ *     example that demonstrates several of the important features of
+ *     eina_model, uses #EINA_MODEL_TYPE_GENERIC.
+ * @li @ref eina_model_03_example_page walk-through example on how to
+ *     inherit types, a suggestion of eina_model_load() usage and uses
+ *     #EINA_MODEL_TYPE_STRUCT.
+ *
  * @{
  */
 
 /**
+ * @def EINA_MODEL_TYPE_VERSION
+ * Current API version, used to validate #_Eina_Model_Type.
+ */
+#define EINA_MODEL_TYPE_VERSION (1)
+
+/**
  * @struct _Eina_Model_Type
  * API to access models.
- *
- * @warning The methods @c setup, @c flush, @c constructor, @c destructor and
- * @c property_get are mandatory and must exist, otherwise type cannot
- * be used.
  *
  * Each type of the hierarchy and each interface will get its own
  * private data of size @c private_size (defined at each subtype or
@@ -881,6 +957,13 @@ EAPI char *eina_model_to_string(const Eina_Model *model) EINA_ARG_NONNULL(1) EIN
  * destructors should be called, do them in the desired order from the type
  * destructor.
  *
+ *
+ * @note The methods @c setup and @c flush should exist if there is
+ *       private data, otherwise memory may be uninitialized or leaks.
+ * @note It is recommended that @c constructor and @c destructor exist
+ *       to correctly do their roles and call parents in the correct
+ *       order. Whenever they do not exist, their parent pointer is
+ *       called.
  * @note a runtime check will enforce just types with ABI version
  *       #EINA_MODEL_TYPE_VERSION are used by comparing with the @c version
  *       member.
@@ -889,11 +972,6 @@ EAPI char *eina_model_to_string(const Eina_Model *model) EINA_ARG_NONNULL(1) EIN
  */
 struct _Eina_Model_Type
 {
-   /**
-    * @def EINA_MODEL_TYPE_VERSION
-    * Current API version, used to validate type.
-    */
-#define EINA_MODEL_TYPE_VERSION (1)
    unsigned int version; /**< must be #EINA_MODEL_TYPE_VERSION */
    unsigned int private_size; /**< used to allocate type private data */
    unsigned int type_size; /**< used to know sizeof(Eina_Model_Type) or subtypes (which may be bigger, by including Eina_Model_Type as a header */
@@ -1145,7 +1223,7 @@ EAPI char *eina_model_type_to_string(const Eina_Model_Type *type,
  *         implemented.
  *
  * The use of this function is discouraged, you should use
- * #eina_model_method_resolve instead.
+ * eina_model_method_resolve() instead.
  *
  * When implementing new types that augments the basic methods from
  * Eina_Model_Type, the recommended structure layout is as follow:
@@ -1196,25 +1274,46 @@ EAPI const void *eina_model_type_method_offset_resolve(const Eina_Model_Type *ty
 #define eina_model_type_method_resolve(type, model, struct_type, method) eina_model_type_method_offset_resolve((type), (model), offsetof(struct_type, method))
 
 /**
+ * @def EINA_MODEL_INTERFACE_VERSION
+ * Current API version, used to validate #_Eina_Model_Interface.
+ */
+#define EINA_MODEL_INTERFACE_VERSION (1)
+
+/**
  * @struct _Eina_Model_Interface
- *
- * @warning The methods @c setup, @c flush, @c constructor and @c destructor are
- * mandatory and must exist, otherwise type cannot be used.
+ * API to access models.
  *
  * Interfaces are managed by name, then multiple Eina_Model_Interface
  * may have the same name meaning it implements that name.
  *
+ * Each interface will get its own private data of size @c
+ * private_size (defined at each sub interface), this can be retrieved
+ * with eina_model_interface_private_data_get().
+ *
+ * Private are created @b automatically and should be setup with @c
+ * setup and flushed with @c flush. All interfaces functions that
+ * exist are called! Don't call your parent's @c setup or @c flush!
+ * The setup is done from parent to child. Flush is done from child to
+ * parent (topological sort is applied to interface graph).
+ *
+ * @note The methods @c setup and @c flush should exist if there is
+ *       private data, otherwise memory may be uninitialized or leaks.
+ * @note It is recommended that @c constructor and @c destructor exist
+ *       to correctly do their roles and call parents in the correct
+ *       order. Whenever they do not exist, their parent pointer is
+ *       called.
+ * @note Interface's constructor and destructor are only called by
+ *       type counterparts. Unlike setup and flush, they are not
+ *       guaranteed to be called.
  * @note use the same name pointer on queries to speed up the lookups!
+ * @note a runtime check will enforce just types with ABI version
+ *       #EINA_MODEL_INTERFACE_VERSION are used by comparing with the
+ *       @c version member.
  *
  * @since 1.2
  */
 struct _Eina_Model_Interface
 {
-   /**
-    * @def EINA_MODEL_INTERFACE_VERSION
-    * Current API version, used to validate interface.
-    */
-#define EINA_MODEL_INTERFACE_VERSION (1)
    unsigned int version; /**< must be #EINA_MODEL_INTERFACE_VERSION */
    unsigned int private_size; /**< used to allocate interface private data */
    unsigned int interface_size; /**< used to know sizeof(Eina_Model_Interface) or subtypes (which may be bigger, by including Eina_Model_Interface as header */
@@ -1227,10 +1326,10 @@ struct _Eina_Model_Interface
    Eina_Bool (*destructor)(Eina_Model *model); /**< destruct interface instance, flush will be called after it. Should call parent's destructor if needed. Release reference to other models here. */
    Eina_Bool (*copy)(const Eina_Model *src, Eina_Model *dst); /**< copy interface private data, do @b not call parent interface copy! */
    Eina_Bool (*deep_copy)(const Eina_Model *src, Eina_Model *dst); /**< deep copy interface private data, do @b not call parent interface deep copy! */
-   void *__extension_ptr0; /**< not to be used */
-   void *__extension_ptr1; /**< not to be used */
-   void *__extension_ptr2; /**< not to be used */
-   void *__extension_ptr3; /**< not to be used */
+   void *__extension_ptr0; /**< not to be used @internal */
+   void *__extension_ptr1; /**< not to be used @internal */
+   void *__extension_ptr2; /**< not to be used @internal */
+   void *__extension_ptr3; /**< not to be used @internal */
 };
 
 #define EINA_MODEL_INTERFACE_INIT(name, iface, private_type, parent, events) \
@@ -1306,13 +1405,38 @@ EAPI Eina_Bool eina_model_interface_deep_copy(const Eina_Model_Interface *iface,
 EAPI const void *eina_model_interface_method_offset_resolve(const Eina_Model_Interface *iface, const Eina_Model *model, unsigned int offset) EINA_ARG_NONNULL(1, 2) EINA_WARN_UNUSED_RESULT EINA_PURE;
 
 
+/**
+ * @struct _Eina_Model_Event_Description
+ * Data Model Event Description.
+ *
+ * @see EINA_MODEL_EVENT_DESCRIPTION()
+ * @see #EINA_MODEL_EVENT_DESCRIPTION_SENTINEL
+ * @since 1.2
+ */
 struct _Eina_Model_Event_Description
 {
    const char *name; /**< name used for lookups */
    const char *type; /**< used for introspection purposes, documents what goes as callback event information (@c event_info) */
    const char *doc; /**< documentation for introspection purposes */
 };
+
+/**
+ * @def EINA_MODEL_EVENT_DESCRIPTION
+ *
+ * Helper to define Eina_Model_Event_Description fields.
+ *
+ * @since 1.2
+ */
 #define EINA_MODEL_EVENT_DESCRIPTION(name, type, doc) {name, type, doc}
+
+/**
+ * @def EINA_MODEL_EVENT_DESCRIPTION_SENTINEL
+ *
+ * Helper to define Eina_Model_Event_Description fields for sentinel (last
+ * item).
+ *
+ * @since 1.2
+ */
 #define EINA_MODEL_EVENT_DESCRIPTION_SENTINEL {NULL, NULL, NULL}
 
 EAPI Eina_Bool eina_model_type_check(const Eina_Model_Type *type) EINA_ARG_NONNULL(1) EINA_WARN_UNUSED_RESULT EINA_PURE;
@@ -1387,6 +1511,300 @@ EAPI Eina_Bool eina_model_interface_check(const Eina_Model_Interface *iface) EIN
 
 EAPI void *eina_model_interface_private_data_get(const Eina_Model *model,
                                                  const Eina_Model_Interface *iface) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1, 2) EINA_PURE;
+
+/**
+ * @def EINA_MODEL_INTERFACE_PROPERTIES_VERSION
+ * Current API version, used to validate #_Eina_Model_Interface_Properties.
+ */
+#define EINA_MODEL_INTERFACE_PROPERTIES_VERSION (1)
+
+/**
+ * @typedef Eina_Model_Interface_Properties
+ * Interface to manage model's properties.
+ *
+ * This extends #Eina_Model_Interface as expected by interface name
+ * #EINA_MODEL_INTERFACE_NAME_PROPERTIES.
+ *
+ * This interface is meant to help managing properties of a model, it
+ * is used by #EINA_MODEL_TYPE_MIXIN in order to configure methods for
+ * children independently from properties.
+ *
+ * @see #_Eina_Model_Interface_Properties explains fields.
+ * @since 1.2
+ */
+typedef struct _Eina_Model_Interface_Properties Eina_Model_Interface_Properties;
+
+/**
+ * @struct _Eina_Model_Interface_Properties
+ * Interface to manage model's properties.
+ *
+ * This extends #Eina_Model_Interface as expected by interface name
+ * #EINA_MODEL_INTERFACE_NAME_PROPERTIES.
+ *
+ * This interface is meant to help managing properties of a model, it
+ * is used by #EINA_MODEL_TYPE_MIXIN in order to configure methods for
+ * children independently from properties.
+ *
+ * @since 1.2
+ */
+struct _Eina_Model_Interface_Properties
+{
+   Eina_Model_Interface base; /**< common interface methods */
+   unsigned int version; /**< must be #EINA_MODEL_INTERFACE_PROPERTIES_VERSION */
+   Eina_Bool (*compare)(const Eina_Model *a, const Eina_Model *b, int *cmp); /**< How to compare properties of this model */
+   Eina_Bool (*load)(Eina_Model *model); /**< How to load properties of this model */
+   Eina_Bool (*unload)(Eina_Model *model); /**< How to unload properties of this model */
+   Eina_Bool (*get)(const Eina_Model *model, const char *name, Eina_Value *value); /**< Retrieve a property of this model given its name. The value will be returned as a copy and must be flushed with eina_value_flush(). The previous contents of value is ignored. */
+   Eina_Bool (*set)(Eina_Model *model, const char *name, const Eina_Value *value); /**< Set a property of this model given its name. The value is assumed to be valied and is copied internally, thus it can be safely cleared with eina_value_flush() after this function returns. */
+   Eina_Bool (*del)(Eina_Model *model, const char *name); /**< Delete a property given its name */
+   Eina_List *(*names_list_get)(const Eina_Model *model); /**< List of stringshare with known property names */
+};
+
+EAPI Eina_Bool eina_model_interface_properties_compare(const Eina_Model_Interface *iface,
+                                                       const Eina_Model *a,
+                                                       const Eina_Model *b,
+                                                       int *cmp) EINA_ARG_NONNULL(1, 2, 3, 4) EINA_WARN_UNUSED_RESULT;
+
+EAPI Eina_Bool eina_model_interface_properties_load(const Eina_Model_Interface *iface,
+                                                    Eina_Model *model) EINA_ARG_NONNULL(1, 2);
+EAPI Eina_Bool eina_model_interface_properties_unload(const Eina_Model_Interface *iface,
+                                                      Eina_Model *model) EINA_ARG_NONNULL(1, 2);
+EAPI Eina_Bool eina_model_interface_properties_get(const Eina_Model_Interface *iface,
+                                                   const Eina_Model *model,
+                                                   const char *name,
+                                                   Eina_Value *value) EINA_ARG_NONNULL(1, 2, 3, 4);
+EAPI Eina_Bool eina_model_interface_properties_set(const Eina_Model_Interface *iface,
+                                                   Eina_Model *model,
+                                                   const char *name,
+                                                   const Eina_Value *value) EINA_ARG_NONNULL(1, 2, 3, 4);
+EAPI Eina_Bool eina_model_interface_properties_del(const Eina_Model_Interface *iface,
+                                                   Eina_Model *model,
+                                                   const char *name) EINA_ARG_NONNULL(1, 2, 3);
+EAPI Eina_List *eina_model_interface_properties_names_list_get(const Eina_Model_Interface *iface,
+                                                               const Eina_Model *model) EINA_ARG_NONNULL(1, 2); /**< list of stringshare */
+
+/**
+ * @typedef Eina_Model_Interface_Children
+ * Interface to manage model's children.
+ *
+ * This extends #Eina_Model_Interface as expected by interface name
+ * #EINA_MODEL_INTERFACE_NAME_CHILDREN.
+ *
+ * This interface is meant to help managing properties of a model, it
+ * is used by #EINA_MODEL_TYPE_MIXIN in order to configure methods for
+ * children independently from properties.
+ *
+ * @see #_Eina_Model_Interface_Children explains fields.
+ * @since 1.2
+ */
+typedef struct _Eina_Model_Interface_Children Eina_Model_Interface_Children;
+
+/**
+ * @def EINA_MODEL_INTERFACE_CHILDREN_VERSION
+ * Current API version, used to validate #_Eina_Model_Interface_Children.
+ */
+#define EINA_MODEL_INTERFACE_CHILDREN_VERSION (1)
+
+/**
+ * @struct _Eina_Model_Interface_Children
+ * Interface to manage model's children.
+ *
+ * This extends #Eina_Model_Interface as expected by interface name
+ * #EINA_MODEL_INTERFACE_NAME_CHILDREN.
+ *
+ * This interface is meant to help managing properties of a model, it
+ * is used by #EINA_MODEL_TYPE_MIXIN in order to configure methods for
+ * children independently from properties.
+ *
+ * @since 1.2
+ */
+struct _Eina_Model_Interface_Children
+{
+   Eina_Model_Interface base; /**< common interface methods */
+   unsigned int version; /**< must be #EINA_MODEL_INTERFACE_CHILDREN_VERSION */
+   Eina_Bool (*compare)(const Eina_Model *a, const Eina_Model *b, int *cmp); /**< How to compare children of this model */
+   Eina_Bool (*load)(Eina_Model *model); /**< How to load children of this model */
+   Eina_Bool (*unload)(Eina_Model *model); /**< How to unload children of this model */
+   int (*count)(const Eina_Model *model); /**< How many children of this model */
+   Eina_Model *(*get)(const Eina_Model *model, unsigned int position); /**< Retrieve a child of this model, returned child must have reference increased! */
+   Eina_Bool (*set)(Eina_Model *model, unsigned int position, Eina_Model *child); /**< Set (replace) a child of this model, given child will have reference increased! */
+   Eina_Bool (*del)(Eina_Model *model, unsigned int position); /**< Delete a child of this model. Existing child will have reference decreased! */
+   Eina_Bool (*insert_at)(Eina_Model *model, unsigned int position, Eina_Model *child); /**< Insert a child into this model, given child will have reference increased! All elements towards the end of the internal list will be shifted to the end to make room for the new child. */
+   void (*sort)(Eina_Model *model, Eina_Compare_Cb compare); /**< Reorder children to be sorted respecting comparison function @c compare() */
+};
+
+EAPI Eina_Bool eina_model_interface_children_compare(const Eina_Model_Interface *iface,
+                                                     const Eina_Model *a,
+                                                     const Eina_Model *b,
+                                                     int *cmp) EINA_ARG_NONNULL(1, 2, 3, 4) EINA_WARN_UNUSED_RESULT;
+EAPI Eina_Bool eina_model_interface_children_load(const Eina_Model_Interface *iface,
+                                                  Eina_Model *model) EINA_ARG_NONNULL(1, 2);
+EAPI Eina_Bool eina_model_interface_children_unload(const Eina_Model_Interface *iface,
+                                                    Eina_Model *model) EINA_ARG_NONNULL(1, 2);
+EAPI int eina_model_interface_children_count(const Eina_Model_Interface *iface,
+                                             const Eina_Model *model) EINA_ARG_NONNULL(1, 2);
+EAPI Eina_Model *eina_model_interface_children_get(const Eina_Model_Interface *iface,
+                                                   const Eina_Model *model,
+                                                   unsigned int position) EINA_ARG_NONNULL(1, 2);
+EAPI Eina_Bool eina_model_interface_children_set(const Eina_Model_Interface *iface,
+                                                 Eina_Model *model,
+                                                 unsigned int position,
+                                                 Eina_Model *child) EINA_ARG_NONNULL(1, 2, 4);
+EAPI Eina_Bool eina_model_interface_children_del(const Eina_Model_Interface *iface,
+                                                 Eina_Model *model,
+                                                 unsigned int position) EINA_ARG_NONNULL(1, 2);
+EAPI Eina_Bool eina_model_interface_children_insert_at(const Eina_Model_Interface *iface,
+                                                       Eina_Model *model,
+                                                       unsigned int position,
+                                                       Eina_Model *child) EINA_ARG_NONNULL(1, 2, 4);
+EAPI void eina_model_interface_children_sort(const Eina_Model_Interface *iface,
+                                             Eina_Model *model,
+                                             Eina_Compare_Cb compare) EINA_ARG_NONNULL(1, 2, 3);
+
+
+/**
+ * @}
+ */
+
+/**
+ * @defgroup Eina_Model_Utils_Group Data Model Utilities
+ *
+ * Miscellaneous utilities to help usage or debug of @ref Eina_Model_Group.
+ *
+ * @{
+ */
+
+/**
+ * @brief Checks if @a model is an instance of @a type.
+ *
+ * @see eina_model_new()
+ * @see _Eina_Model_Type
+ * @since 1.2
+ */
+EAPI Eina_Bool eina_model_instance_check(const Eina_Model *model,
+                                         const Eina_Model_Type *type) EINA_ARG_NONNULL(1, 2) EINA_WARN_UNUSED_RESULT EINA_PURE;
+
+/**
+ * @brief Checks if @a model implements @a iface.
+ *
+ * @see _Eina_Model_Interface
+ * @since 1.2
+ */
+EAPI Eina_Bool eina_model_interface_implemented(const Eina_Model *model, const Eina_Model_Interface *iface) EINA_ARG_NONNULL(1, 2) EINA_WARN_UNUSED_RESULT EINA_PURE;
+
+/**
+ * @brief Returns the number of references to @a model.
+ * @param model The model to query number of references.
+ * @return number of references to model
+ *
+ * @see eina_model_ref()
+ * @see eina_model_unref()
+ * @see eina_model_xref()
+ * @see eina_model_xunref()
+ * @see eina_model_xrefs_get()
+ * @since 1.2
+ */
+EAPI int eina_model_refcount(const Eina_Model *model) EINA_ARG_NONNULL(1);
+
+/**
+ * @typedef Eina_Model_XRef
+ * Extended reference to model.
+ *
+ * This is returned by eina_model_xrefs_get() and should never be
+ * modified. It is managed by eina_model_xref() and
+ * eina_model_xunref() when @c EINA_MODEL_DEBUG is set to "1" or
+ * "backtrace".
+ *
+ * @see #_Eina_Model_XRef explains fields.
+ * @since 1.2
+ */
+typedef struct _Eina_Model_XRef Eina_Model_XRef;
+
+/**
+ * @struct _Eina_Model_XRef
+ * Extended reference to model.
+ *
+ * This is returned by eina_model_xrefs_get() and should never be
+ * modified. It is managed by eina_model_xref() and
+ * eina_model_xunref() when @c EINA_MODEL_DEBUG is set to "1" or
+ * "backtrace".
+ *
+ * @see eina_model_xrefs_get()
+ * @see eina_models_usage_dump()
+ * @since 1.2
+ */
+struct _Eina_Model_XRef
+{
+   EINA_INLIST;
+   const void *id; /**< as given to eina_model_xref() */
+   struct {
+      const void * const *symbols; /**< only if @c EINA_MODEL_DEBUG=backtrace is set, otherwise is @c NULL */
+      unsigned int count; /**< only if @c EINA_MODEL_DEBUG=backtrace is set, otherwise is 0 */
+   } backtrace;
+   char label[]; /**< Any given label given to eina_model_xref(). */
+};
+
+/**
+ * @brief Returns the current references of this model.
+ * @param model The model to query references.
+ * @return List of reference holders as Eina_Model_XRef. This is the internal
+ *         list for speed purposes, do not modify or free it in anyway!
+ *
+ * @note This list only exist if environment variable
+ *       @c EINA_MODEL_DEBUG is set to "1" or "backtrace".
+ *
+ * @note The backtrace information is only available if environment
+ *       variable @c EINA_MODEL_DEBUG=backtrace is set.
+ * @since 1.2
+ */
+EAPI const Eina_Inlist *eina_model_xrefs_get(const Eina_Model *model) EINA_ARG_NONNULL(1) EINA_WARN_UNUSED_RESULT EINA_MALLOC;
+
+/**
+ * @brief Dump usage of all existing modules.
+ * @since 1.2
+ */
+EAPI void eina_models_usage_dump(void);
+
+/**
+ * @brief Return a list of all live models.
+ * @return a newly allocated list of Eina_Model. Free using
+ *         eina_models_list_free()
+ *
+ * @note this is meant to debug purposes, do not modify the models in
+ *       any way!
+ *
+ * @note due performance reasons, this is only @b enabled when
+ *       @c EINA_MODEL_DEBUG is set to "1" or "backtrace".
+ *
+ * @since 1.2
+ */
+EAPI Eina_List *eina_models_list_get(void);
+
+/**
+ * @brief Release list returned by eina_models_list_get()
+ * @param list the list to release.
+ */
+EAPI void eina_models_list_free(Eina_List *list);
+
+/**
+ * @}
+ */
+
+/**
+ * @var EINA_MODEL_INTERFACE_CHILDREN_INARRAY
+ *
+ * Implements #Eina_Model_Interface_Children
+ * (#EINA_MODEL_INTERFACE_NAME_CHILDREN) using #Eina_Inarray. It
+ * should be efficient in space and time for most operations.
+ *
+ * @note it may become slow if eina_model_child_insert_at() is used at(or near)
+ *       the beginning of the array as the members from that position
+ *       to the end must be memmove()d.
+ *
+ * @since 1.2
+ */
+EAPI extern const Eina_Model_Interface *EINA_MODEL_INTERFACE_CHILDREN_INARRAY;
+
 
 /**
  * @var EINA_MODEL_TYPE_BASE
@@ -1467,89 +1885,6 @@ EAPI Eina_Model *eina_model_type_struct_new(const Eina_Model_Type *type,
                                             const Eina_Value_Struct_Desc *desc) EINA_ARG_NONNULL(1, 2) EINA_WARN_UNUSED_RESULT EINA_MALLOC;
 
 
-
-
-/**
- * @var EINA_MODEL_INTERFACE_NAME_PROPERTIES
- *
- * Interface that uses #Eina_Model_Interface_Properties as
- * Eina_Model_Interface::value and can manage the model properties.
- *
- * @since 1.2
- */
-EAPI extern const char *EINA_MODEL_INTERFACE_NAME_PROPERTIES;
-
-typedef struct _Eina_Model_Interface_Properties Eina_Model_Interface_Properties;
-struct _Eina_Model_Interface_Properties
-{
-   Eina_Model_Interface base;
-#define EINA_MODEL_INTERFACE_PROPERTIES_VERSION (1)
-   unsigned int version;
-   Eina_Bool (*compare)(const Eina_Model *a, const Eina_Model *b, int *cmp);
-   Eina_Bool (*load)(Eina_Model *model);
-   Eina_Bool (*unload)(Eina_Model *model);
-   Eina_Bool (*get)(const Eina_Model *model, const char *name, Eina_Value *value);
-   Eina_Bool (*set)(Eina_Model *model, const char *name, const Eina_Value *value);
-   Eina_Bool (*del)(Eina_Model *model, const char *name);
-   Eina_List *(*names_list_get)(const Eina_Model *model); /**< list of stringshare */
-};
-
-EAPI Eina_Bool eina_model_interface_properties_compare(const Eina_Model_Interface *iface,
-                                                       const Eina_Model *a,
-                                                       const Eina_Model *b,
-                                                       int *cmp) EINA_ARG_NONNULL(1, 2, 3, 4) EINA_WARN_UNUSED_RESULT;
-
-EAPI Eina_Bool eina_model_interface_properties_load(const Eina_Model_Interface *iface,
-                                                    Eina_Model *model) EINA_ARG_NONNULL(1, 2);
-EAPI Eina_Bool eina_model_interface_properties_unload(const Eina_Model_Interface *iface,
-                                                      Eina_Model *model) EINA_ARG_NONNULL(1, 2);
-EAPI Eina_Bool eina_model_interface_properties_get(const Eina_Model_Interface *iface,
-                                                   const Eina_Model *model,
-                                                   const char *name,
-                                                   Eina_Value *value) EINA_ARG_NONNULL(1, 2, 3, 4);
-EAPI Eina_Bool eina_model_interface_properties_set(const Eina_Model_Interface *iface,
-                                                   Eina_Model *model,
-                                                   const char *name,
-                                                   const Eina_Value *value) EINA_ARG_NONNULL(1, 2, 3, 4);
-EAPI Eina_Bool eina_model_interface_properties_del(const Eina_Model_Interface *iface,
-                                                   Eina_Model *model,
-                                                   const char *name) EINA_ARG_NONNULL(1, 2, 3);
-EAPI Eina_List *eina_model_interface_properties_names_list_get(const Eina_Model_Interface *iface,
-                                                               const Eina_Model *model) EINA_ARG_NONNULL(1, 2); /**< list of stringshare */
-
-/**
- * @var EINA_MODEL_INTERFACE_PROPERTIES_HASH
- *
- * Implements #Eina_Model_Interface_Properties
- * (#EINA_MODEL_INTERFACE_NAME_PROPERTIES) using #Eina_Hash.
- *
- * @note This function is generic but uses too much space given the
- *       hash data type. For huge number of elements it's better to
- *       use custom implementation instead.
- *
- * @see EINA_MODEL_INTERFACE_PROPERTIES_STRUCT
- *
- * @since 1.2
- */
-EAPI extern const Eina_Model_Interface *EINA_MODEL_INTERFACE_PROPERTIES_HASH;
-
-/**
- * @var EINA_MODEL_INTERFACE_PROPERTIES_STRUCT
- *
- * Implements #Eina_Model_Interface_Properties
- * (#EINA_MODEL_INTERFACE_NAME_PROPERTIES) using #Eina_Value_Struct.
- *
- * The interface private data is #Eina_Value of type
- * #EINA_VALUE_TYPE_STRUCT. Properties will be accessed using
- * #Eina_Value_Struct::desc information that can be set by types such
- * as #EINA_MODEL_TYPE_STRUCT
- *
- * @see EINA_MODEL_INTERFACE_PROPERTIES_HASH
- *
- * @since 1.2
- */
-EAPI extern const Eina_Model_Interface *EINA_MODEL_INTERFACE_PROPERTIES_STRUCT;
-
 /**
  * @brief Configure the internal properties of model implementing #EINA_MODEL_INTERFACE_PROPERTIES_STRUCT.
  *
@@ -1589,125 +1924,57 @@ EAPI Eina_Bool eina_model_struct_get(const Eina_Model *model,
                                      void **p_memory) EINA_ARG_NONNULL(1, 2);
 
 /**
+ * @var EINA_MODEL_INTERFACE_NAME_PROPERTIES
+ *
+ * Interface that uses #Eina_Model_Interface_Properties as
+ * #Eina_Model_Interface and can manage the model properties.
+ *
+ * @since 1.2
+ */
+EAPI extern const char *EINA_MODEL_INTERFACE_NAME_PROPERTIES;
+
+/**
+ * @var EINA_MODEL_INTERFACE_PROPERTIES_HASH
+ *
+ * Implements #Eina_Model_Interface_Properties
+ * (#EINA_MODEL_INTERFACE_NAME_PROPERTIES) using #Eina_Hash.
+ *
+ * @note This function is generic but uses too much space given the
+ *       hash data type. For huge number of elements it's better to
+ *       use custom implementation instead.
+ *
+ * @see EINA_MODEL_INTERFACE_PROPERTIES_STRUCT
+ *
+ * @since 1.2
+ */
+EAPI extern const Eina_Model_Interface *EINA_MODEL_INTERFACE_PROPERTIES_HASH;
+
+/**
+ * @var EINA_MODEL_INTERFACE_PROPERTIES_STRUCT
+ *
+ * Implements #Eina_Model_Interface_Properties
+ * (#EINA_MODEL_INTERFACE_NAME_PROPERTIES) using #Eina_Value_Struct.
+ *
+ * The interface private data is #Eina_Value of type
+ * #EINA_VALUE_TYPE_STRUCT. Properties will be accessed using
+ * Eina_Value_Struct::desc information that can be set by types such
+ * as #EINA_MODEL_TYPE_STRUCT
+ *
+ * @see EINA_MODEL_INTERFACE_PROPERTIES_HASH
+ *
+ * @since 1.2
+ */
+EAPI extern const Eina_Model_Interface *EINA_MODEL_INTERFACE_PROPERTIES_STRUCT;
+
+/**
  * @var EINA_MODEL_INTERFACE_NAME_CHILDREN
  *
  * Interface that uses #Eina_Model_Interface_Children as
- * Eina_Model_Interface::value and can manage the model children.
+ * #Eina_Model_Interface and can manage the model children.
  *
  * @since 1.2
  */
 EAPI extern const char *EINA_MODEL_INTERFACE_NAME_CHILDREN;
-
-/**
- * @typedef Eina_Model_Interface_Children
- *
- * The #Eina_Model_Interface::value when name is
- * #EINA_MODEL_INTERFACE_NAME_CHILDREN interface is implemented.
- *
- * @since 1.2
- */
-typedef struct _Eina_Model_Interface_Children Eina_Model_Interface_Children;
-
-/**
- * @struct _Eina_Model_Interface_Children
- *
- * The #Eina_Model_Interface::value when name is
- * #EINA_MODEL_INTERFACE_NAME_CHILDREN interface is implemented.
- *
- * The methods are called in the same way children methods from
- * #Eina_Model_Type.
- *
- * @since 1.2
- */
-struct _Eina_Model_Interface_Children
-{
-   Eina_Model_Interface base;
-#define EINA_MODEL_INTERFACE_CHILDREN_VERSION (1)
-   unsigned int version;
-   Eina_Bool (*compare)(const Eina_Model *a, const Eina_Model *b, int *cmp);
-   Eina_Bool (*load)(Eina_Model *model);
-   Eina_Bool (*unload)(Eina_Model *model);
-   int (*count)(const Eina_Model *model);
-   Eina_Model *(*get)(const Eina_Model *model, unsigned int position);
-   Eina_Bool (*set)(Eina_Model *model, unsigned int position, Eina_Model *child);
-   Eina_Bool (*del)(Eina_Model *model, unsigned int position);
-   Eina_Bool (*insert_at)(Eina_Model *model, unsigned int position, Eina_Model *child);
-   void (*sort)(Eina_Model *model, Eina_Compare_Cb compare);
-};
-
-EAPI Eina_Bool eina_model_interface_children_compare(const Eina_Model_Interface *iface,
-                                                     const Eina_Model *a,
-                                                     const Eina_Model *b,
-                                                     int *cmp) EINA_ARG_NONNULL(1, 2, 3, 4) EINA_WARN_UNUSED_RESULT;
-EAPI Eina_Bool eina_model_interface_children_load(const Eina_Model_Interface *iface,
-                                                  Eina_Model *model) EINA_ARG_NONNULL(1, 2);
-EAPI Eina_Bool eina_model_interface_children_unload(const Eina_Model_Interface *iface,
-                                                    Eina_Model *model) EINA_ARG_NONNULL(1, 2);
-EAPI int eina_model_interface_children_count(const Eina_Model_Interface *iface,
-                                             const Eina_Model *model) EINA_ARG_NONNULL(1, 2);
-EAPI Eina_Model *eina_model_interface_children_get(const Eina_Model_Interface *iface,
-                                                   const Eina_Model *model,
-                                                   unsigned int position) EINA_ARG_NONNULL(1, 2);
-EAPI Eina_Bool eina_model_interface_children_set(const Eina_Model_Interface *iface,
-                                                 Eina_Model *model,
-                                                 unsigned int position,
-                                                 Eina_Model *child) EINA_ARG_NONNULL(1, 2, 4);
-EAPI Eina_Bool eina_model_interface_children_del(const Eina_Model_Interface *iface,
-                                                 Eina_Model *model,
-                                                 unsigned int position) EINA_ARG_NONNULL(1, 2);
-EAPI Eina_Bool eina_model_interface_children_insert_at(const Eina_Model_Interface *iface,
-                                                       Eina_Model *model,
-                                                       unsigned int position,
-                                                       Eina_Model *child) EINA_ARG_NONNULL(1, 2, 4);
-EAPI void eina_model_interface_children_sort(const Eina_Model_Interface *iface,
-                                             Eina_Model *model,
-                                             Eina_Compare_Cb compare) EINA_ARG_NONNULL(1, 2, 3);
-
-/**
- * @var EINA_MODEL_INTERFACE_CHILDREN_INARRAY
- *
- * Implements #Eina_Model_Interface_Children
- * (#EINA_MODEL_INTERFACE_NAME_CHILDREN) using #Eina_Inarray. It
- * should be efficient in space and time for most operations.
- *
- * @note it may become slow if eina_model_child_insert_at() is used at(or near)
- *       the beginning of the array as the members from that position
- *       to the end must be memmove()d.
- *
- * @since 1.2
- */
-EAPI extern const Eina_Model_Interface *EINA_MODEL_INTERFACE_CHILDREN_INARRAY;
-
-/**
- * @brief Dump usage of all existing modules.
- * @since 1.2
- */
-EAPI void eina_models_usage_dump(void);
-
-/**
- * @brief Return a list of all live models.
- * @return a newly allocated list of Eina_Model. Free using
- *         eina_models_list_free()
- *
- * @note this is meant to debug purposes, do not modify the models in
- *       any way!
- *
- * @note due performance reasons, this is only @b enabled when
- *       @c EINA_MODEL_DEBUG is set to "1" or "backtrace".
- *
- * @since 1.2
- */
-EAPI Eina_List *eina_models_list_get(void);
-
-/**
- * @brief Release list returned by eina_models_list_get()
- * @param list the list to release.
- */
-EAPI void eina_models_list_free(Eina_List *list);
-
-/**
- * @}
- */
 
 /**
  * @}

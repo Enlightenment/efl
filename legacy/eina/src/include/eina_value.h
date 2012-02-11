@@ -43,6 +43,19 @@
 /**
  * @defgroup Eina_Value_Group Generic Value Storage
  *
+ * Abstracts generic data storage and access to it in an extensible
+ * and efficient way.
+ *
+ * It comes with pre-defined types for numbers, array, list, hash,
+ * blob and structs. It is able to convert between data types,
+ * including to string.
+ *
+ * It is meant for simple data types, providing uniform access and
+ * release functions, useful to exchange data preserving their
+ * types. For more complex hierarchical data, with properties and
+ * children, reference counting, inheritance and interfaces, see @ref
+ * Eina_Model_Group.
+ *
  * @{
  */
 
@@ -67,6 +80,9 @@ typedef struct _Eina_Value_Type Eina_Value_Type;
  * @typedef Eina_Value_Union
  * Union of all known value types.
  *
+ * This is only used to specify the minimum payload memory for #Eina_Value.
+ *
+ * @internal
  * @since 1.2
  */
 typedef union _Eina_Value_Union Eina_Value_Union;
@@ -75,6 +91,9 @@ typedef union _Eina_Value_Union Eina_Value_Union;
  * @union _Eina_Value_Union
  * All possible value types.
  *
+ * This is only used to specify the minimum payload memory for #Eina_Value.
+ *
+ * @internal
  * @since 1.2
  */
 union _Eina_Value_Union
@@ -841,8 +860,9 @@ static inline const Eina_Value_Type *eina_value_type_get(const Eina_Value *value
 
 /**
  * @typedef Eina_Value_Array
- * Value type for #EINA_VALUE_TYPE_ARRAY
+ * Value type for #EINA_VALUE_TYPE_ARRAY.
  *
+ * @see #_Eina_Value_Array explains fields.
  * @since 1.2
  */
 typedef struct _Eina_Value_Array Eina_Value_Array;
@@ -850,6 +870,7 @@ typedef struct _Eina_Value_Array Eina_Value_Array;
 /**
  * @struct _Eina_Value_Array
  * Used to store the array and its subtype.
+ * @since 1.2
  */
 struct _Eina_Value_Array
 {
@@ -1475,8 +1496,9 @@ static inline Eina_Bool eina_value_array_pappend(Eina_Value *value,
 
 /**
  * @typedef Eina_Value_List
- * Value type for #EINA_VALUE_TYPE_LIST
+ * Value type for #EINA_VALUE_TYPE_LIST.
  *
+ * @see #_Eina_Value_List explains fields.
  * @since 1.2
  */
 typedef struct _Eina_Value_List Eina_Value_List;
@@ -1484,6 +1506,7 @@ typedef struct _Eina_Value_List Eina_Value_List;
 /**
  * @struct _Eina_Value_List
  * Used to store the list and its subtype.
+ * @since 1.2
  */
 struct _Eina_Value_List
 {
@@ -2096,8 +2119,9 @@ static inline Eina_Bool eina_value_list_pappend(Eina_Value *value,
 
 /**
  * @typedef Eina_Value_Hash
- * Value type for #EINA_VALUE_TYPE_HASH
+ * Value type for #EINA_VALUE_TYPE_HASH.
  *
+ * @see #_Eina_Value_Hash explains fields.
  * @since 1.2
  */
 typedef struct _Eina_Value_Hash Eina_Value_Hash;
@@ -2105,6 +2129,7 @@ typedef struct _Eina_Value_Hash Eina_Value_Hash;
 /**
  * @struct _Eina_Value_Hash
  * Used to store the hash and its subtype.
+ * @since 1.2
  */
 struct _Eina_Value_Hash
 {
@@ -2438,9 +2463,16 @@ static inline Eina_Bool eina_value_hash_pget(const Eina_Value *value,
 /**
  * @typedef Eina_Value_Blob_Operations
  * How to manage blob. Any @c NULL callback is ignored.
+ * @see #_Eina_Value_Blob_Operations explains fields.
  * @since 1.2
  */
 typedef struct _Eina_Value_Blob_Operations Eina_Value_Blob_Operations;
+
+/**
+ * @def EINA_VALUE_BLOB_OPERATIONS_VERSION
+ * Current API version, used to validate #_Eina_Value_Blob_Operations.
+ */
+#define EINA_VALUE_BLOB_OPERATIONS_VERSION (1)
 
 /**
  * @struct _Eina_Value_Blob_Operations
@@ -2449,8 +2481,7 @@ typedef struct _Eina_Value_Blob_Operations Eina_Value_Blob_Operations;
  */
 struct _Eina_Value_Blob_Operations
 {
-#define EINA_VALUE_BLOB_OPERATIONS_VERSION (1)
-   unsigned int version; /**< must be EINA_VALUE_BLOB_OPERATIONS_VERSION */
+   unsigned int version; /**< must be #EINA_VALUE_BLOB_OPERATIONS_VERSION */
    void (*free)(const Eina_Value_Blob_Operations *ops, void *memory, size_t size);
    void *(*copy)(const Eina_Value_Blob_Operations *ops, const void *memory, size_t size);
    int (*compare)(const Eina_Value_Blob_Operations *ops, const void *data1, size_t size_data1, const void *data2, size_t size_data2);
@@ -2470,12 +2501,16 @@ EAPI extern const Eina_Value_Blob_Operations *EINA_VALUE_BLOB_OPERATIONS_MALLOC;
 
 /**
  * @typedef Eina_Value_Blob
+ * Value type for #EINA_VALUE_TYPE_BLOB.
+ *
+ * @see #_Eina_Value_Blob explains fields.
  * @since 1.2
  */
 typedef struct _Eina_Value_Blob Eina_Value_Blob;
 
 /**
  * @struct _Eina_Value_Blob
+ * Used to store the blob information and management operations.
  * @since 1.2
  */
 struct _Eina_Value_Blob
@@ -2498,6 +2533,11 @@ struct _Eina_Value_Blob
 /**
  * @typedef Eina_Value_Struct_Operations
  * How to manage struct. Any @c NULL callback is ignored.
+ *
+ * A structure can specify alternative methods to allocate, free and
+ * copy itself. See structure definition for all methods.
+ *
+ * @see #_Eina_Value_Struct_Operations explains fields.
  * @since 1.2
  */
 typedef struct _Eina_Value_Struct_Operations Eina_Value_Struct_Operations;
@@ -2505,6 +2545,12 @@ typedef struct _Eina_Value_Struct_Operations Eina_Value_Struct_Operations;
 /**
  * @typedef Eina_Value_Struct_Member
  * Describes a single member of struct.
+ *
+ * The member holds a name, type and its byte offset within the struct
+ * memory. Most Eina_Value_Struct functions takes the member name as
+ * parameter, as in eina_value_struct_set().
+ *
+ * @see #_Eina_Value_Struct_Member explains fields.
  * @since 1.2
  */
 typedef struct _Eina_Value_Struct_Member Eina_Value_Struct_Member;
@@ -2512,15 +2558,25 @@ typedef struct _Eina_Value_Struct_Member Eina_Value_Struct_Member;
 /**
  * @typedef Eina_Value_Struct_Desc
  * Describes the struct by listing its size, members and operations.
+ * @see #_Eina_Value_Struct_Desc explains fields.
  * @since 1.2
  */
 typedef struct _Eina_Value_Struct_Desc Eina_Value_Struct_Desc;
 
 /**
  * @typedef Eina_Value_Struct
+ * Value type for #EINA_VALUE_TYPE_STRUCT.
+ *
+ * @see #_Eina_Value_Struct explains fields.
  * @since 1.2
  */
 typedef struct _Eina_Value_Struct Eina_Value_Struct;
+
+/**
+ * @def EINA_VALUE_STRUCT_OPERATIONS_VERSION
+ * Current API version, used to validate #_Eina_Value_Struct_Operations.
+ */
+#define EINA_VALUE_STRUCT_OPERATIONS_VERSION (1)
 
 /**
  * @struct _Eina_Value_Struct_Operations
@@ -2529,13 +2585,12 @@ typedef struct _Eina_Value_Struct Eina_Value_Struct;
  */
 struct _Eina_Value_Struct_Operations
 {
-#define EINA_VALUE_STRUCT_OPERATIONS_VERSION (1)
-   unsigned int version; /**< must be EINA_VALUE_STRUCT_OPERATIONS_VERSION */
-   void *(*alloc)(const Eina_Value_Struct_Operations *ops, const Eina_Value_Struct_Desc *desc);
-   void (*free)(const Eina_Value_Struct_Operations *ops, const Eina_Value_Struct_Desc *desc, void *memory);
-   void *(*copy)(const Eina_Value_Struct_Operations *ops, const Eina_Value_Struct_Desc *desc, const void *memory);
-   int (*compare)(const Eina_Value_Struct_Operations *ops, const Eina_Value_Struct_Desc *desc, const void *data1, const void *data2);
-   const Eina_Value_Struct_Member *(*find_member)(const Eina_Value_Struct_Operations *ops, const Eina_Value_Struct_Desc *desc, const char *name); /**< replace the function to find description for member. For huge structures consider using binary search, stringshared, hash or gperf. The default function does linear search using strcmp(). */
+   unsigned int version; /**< must be #EINA_VALUE_STRUCT_OPERATIONS_VERSION */
+   void *(*alloc)(const Eina_Value_Struct_Operations *ops, const Eina_Value_Struct_Desc *desc); /**< How to allocate struct memory to be managed by the Eina_Value */
+   void (*free)(const Eina_Value_Struct_Operations *ops, const Eina_Value_Struct_Desc *desc, void *memory); /**< How to release memory managed by the Eina_Value */
+   void *(*copy)(const Eina_Value_Struct_Operations *ops, const Eina_Value_Struct_Desc *desc, const void *memory); /**< How to copy struct memory from an existing Eina_Value, if not provided alloc() will be used, then every member is copied using eina_value_type_copy() with member's type. */
+   int (*compare)(const Eina_Value_Struct_Operations *ops, const Eina_Value_Struct_Desc *desc, const void *data1, const void *data2); /**< How to compare two struct memories */
+   const Eina_Value_Struct_Member *(*find_member)(const Eina_Value_Struct_Operations *ops, const Eina_Value_Struct_Desc *desc, const char *name); /**< How to find description for member. For huge structures consider using binary search, stringshared, hash or gperf. The default function does linear search using strcmp(). */
 };
 
 /**
@@ -2568,23 +2623,48 @@ EAPI extern const Eina_Value_Struct_Operations *EINA_VALUE_STRUCT_OPERATIONS_STR
 
 /**
  * @struct _Eina_Value_Struct_Member
+ * Describes a single member of struct.
+ *
+ * The name is used to lookup the member description. This is done as
+ * specified as _Eina_Value_Struct_Operations::find_member(). For
+ * structures with huge number of members, consider using a better
+ * find_member function to quickly finding it! There are two helper
+ * operations provided to help this:
+ * #EINA_VALUE_STRUCT_OPERATIONS_BINSEARCH and
+ * #EINA_VALUE_STRUCT_OPERATIONS_STRINGSHARE, both depend on properly
+ * set #_Eina_Value_Struct_Desc and #_Eina_Value_Struct_Member.
+ *
+ * @see #EINA_VALUE_STRUCT_MEMBER
+ * @see #EINA_VALUE_STRUCT_MEMBER_SENTINEL
+ *
  * @since 1.2
  */
 struct _Eina_Value_Struct_Member
 {
-   const char *name;
-   const Eina_Value_Type *type;
-   unsigned int offset;
+   const char *name; /**< member name, used in lookups such as eina_value_struct_get() */
+   const Eina_Value_Type *type; /**< how to use this member */
+   unsigned int offset; /**< where this member is located within the structure memory */
 };
 
 /**
+ * @def EINA_VALUE_STRUCT_DESC_VERSION
+ * Current API version, used to validate #_Eina_Value_Struct_Desc.
+ */
+#define EINA_VALUE_STRUCT_DESC_VERSION (1)
+
+/**
  * @struct _Eina_Value_Struct_Desc
+ * Describes the struct by listing its size, members and operations.
+ *
+ * This is the root of Eina_Value knowledge about the memory it's
+ * handling as a structure. It adds introspection, saying the byte
+ * size of the structure, its members and how to manage such members.
+ *
  * @since 1.2
  */
 struct _Eina_Value_Struct_Desc
 {
-#define EINA_VALUE_STRUCT_DESC_VERSION (1)
-   unsigned int version; /**< must be EINA_VALUE_STRUCT_DESC_VERSION */
+   unsigned int version; /**< must be #EINA_VALUE_STRUCT_DESC_VERSION */
    const Eina_Value_Struct_Operations *ops; /**< operations, if @c NULL defaults will be used. You may use operations to optimize member lookup using binary search or gperf hash. */
    const Eina_Value_Struct_Member *members; /**< array of member descriptions, if @c member_count is zero, then it must be @c NULL terminated. */
    unsigned int member_count; /**< if > 0, specifies number of members. If zero then @c members must be NULL terminated. */
@@ -2615,12 +2695,13 @@ struct _Eina_Value_Struct_Desc
 
 /**
  * @struct _Eina_Value_Struct
+ * Used to store the memory and its description.
  * @since 1.2
  */
 struct _Eina_Value_Struct
 {
-   const Eina_Value_Struct_Desc *desc;
-   void *memory;
+   const Eina_Value_Struct_Desc *desc; /**< How to manage the structure */
+   void *memory; /**< The managed structure memory */
 };
 
 /**
@@ -3042,6 +3123,12 @@ static inline Eina_Bool eina_value_struct_member_value_set(Eina_Value *dst,
  */
 
 /**
+ * @def EINA_VALUE_TYPE_VERSION
+ * Current API version, used to validate type.
+ */
+#define EINA_VALUE_TYPE_VERSION (1)
+
+/**
  * @struct _Eina_Value_Type
  * API to access values.
  *
@@ -3049,11 +3136,6 @@ static inline Eina_Bool eina_value_struct_member_value_set(Eina_Value *dst,
  */
 struct _Eina_Value_Type
 {
-   /**
-    * @def EINA_VALUE_TYPE_VERSION
-    * Current API version, used to validate type.
-    */
-#define EINA_VALUE_TYPE_VERSION (1)
    unsigned int version; /**< must be #EINA_VALUE_TYPE_VERSION */
    unsigned int value_size; /**< byte size of value */
    const char *name; /**< name for debug and introspection */

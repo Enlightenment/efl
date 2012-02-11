@@ -180,7 +180,7 @@ EAPI const char *eina_error_msg_get(Eina_Error error) EINA_PURE;
 
 /**
  * @brief Find the #Eina_Error corresponding to a message string
- * @param msg The error message string to match (NOT #NULL)
+ * @param msg The error message string to match (NOT @c NULL)
  * @return The #Eina_Error matching @p msg, or 0 on failure
  * This function attempts to match @p msg with its corresponding #Eina_Error value.
  * If no such value is found, 0 is returned.

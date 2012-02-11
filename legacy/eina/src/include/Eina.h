@@ -16,6 +16,7 @@
  *           Tilman Sauerbeck <tilman@code-monkey.de>
  *           Vincent "caro" Torri  <vtorri at univ-evry dot fr>
  *           Tom Hacohen <tom@stosb.com>
+ *           Jonas M. Gastal <jgastal@profusion.mobi>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -72,6 +73,7 @@
  * @li @ref Eina_Stringshare_Group saves memory by sharing read-only string references.
  * @li @ref Eina_Tiler_Group split, merge and navigates into 2D tiled regions.
  * @li @ref Eina_Trash_Group container of unused but allocated data.
+ * @li @ref Eina_Value_Group container for generic value storage and access.
  * @li @ref Eina_Model_Group container for data with user defined hierarchy/structure.
  *
  * The tools that are available are (see @ref Eina_Tools_Group):
