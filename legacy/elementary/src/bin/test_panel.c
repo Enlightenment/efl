@@ -4,6 +4,8 @@
 #endif
 #ifndef ELM_LIB_QUICKLAUNCH
 
+#define LIST_ITEM_MAX 20
+
 static Elm_Genlist_Item_Class itc;
 
 static void _bstatus(void *data, Evas_Object *obj, void *event_info);
@@ -14,6 +16,8 @@ static Eina_Bool _state_get(void *data, Evas_Object *obj, const char *source);
 static void _item_del(void *data, Evas_Object *obj);
 static void _fill_list(Evas_Object *obj);
 static Eina_Bool _dir_has_subs(const char *path);
+
+static Eina_List *dirs = NULL;
 
 static void
 _tstatus(void *data, Evas_Object *obj, void *event_info __UNUSED__)
@@ -87,24 +91,26 @@ _fill_list(Evas_Object *obj)
 {
    DIR *d;
    struct dirent *de;
-   Eina_List *dirs = NULL, *l;
+   Eina_List *l;
    char *real;
+   unsigned int x = 0;
 
-   if (!(d = opendir(getenv("HOME")))) return;
-   while ((de = readdir(d)))
+   if (!dirs)
      {
-        char buff[PATH_MAX];
+        if (!(d = opendir(getenv("HOME")))) return;
+        while ((de = readdir(d)) && (x < LIST_ITEM_MAX))
+          {
+             char buff[PATH_MAX];
 
-        if (de->d_name[0] == '.') continue;
-        snprintf(buff, sizeof(buff), "%s/%s", getenv("HOME"), de->d_name);
-        if (!ecore_file_is_dir(buff)) continue;
-        real = ecore_file_realpath(buff);
-        dirs = eina_list_append(dirs, real);
+             if (de->d_name[0] == '.') continue;
+             snprintf(buff, sizeof(buff), "%s/%s", getenv("HOME"), de->d_name);
+             if (!ecore_file_is_dir(buff)) continue;
+             x++;
+             real = ecore_file_realpath(buff);
+             dirs = eina_list_sorted_insert(dirs, EINA_COMPARE_CB(strcoll), real);
+          }
+        closedir(d);
      }
-   closedir(d);
-
-   dirs = eina_list_sort(dirs, eina_list_count(dirs), EINA_COMPARE_CB(strcoll));
-
    EINA_LIST_FOREACH(dirs, l, real)
      {
         Eina_Bool result = EINA_FALSE;
@@ -117,9 +123,7 @@ _fill_list(Evas_Object *obj)
           elm_genlist_item_append(obj, &itc, eina_stringshare_add(real),
                                   NULL, ELM_GENLIST_ITEM_SUBITEMS,
                                   NULL, NULL);
-        free(real);
      }
-   eina_list_free(dirs);
 }
 
 static Eina_Bool
@@ -234,6 +238,11 @@ test_panel(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info 
    evas_object_show(panel);
 
    _fill_list(list);
+   {
+      char *dir;
+      EINA_LIST_FREE(dirs, dir)
+        free(dir);
+   }
 
    elm_box_pack_end(vbx, bx);
 
