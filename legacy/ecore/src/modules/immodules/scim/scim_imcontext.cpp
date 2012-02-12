@@ -507,6 +507,30 @@ feed_key_event(Evas *evas, const char *str, Eina_Bool fake)
      }
 }
 
+static void
+window_to_screen_geometry_get(Ecore_X_Window client_win, int *x, int *y)
+{
+   Ecore_X_Window root_window, win;
+   int win_x, win_y;
+   int sum_x = 0, sum_y = 0;
+
+   root_window = ecore_x_window_root_get(client_win);
+   win = client_win;
+
+   while (root_window != win)
+     {
+        ecore_x_window_geometry_get(win, &win_x, &win_y, NULL, NULL);
+        sum_x += win_x;
+        sum_y += win_y;
+        win = ecore_x_window_parent_get(win);
+     }
+
+   if (x) 
+     *x = sum_x;
+   if (y) 
+     *y = sum_y;
+}
+
 /* Public functions */
 /**
  * isf_imf_context_new
@@ -1006,13 +1030,20 @@ isf_imf_context_cursor_location_set(Ecore_IMF_Context *ctx, int cx, int cy, int 
         if (context_scim->impl->preedit_updating)
           return;
 
-        if (!context_scim->impl->client_canvas)
-          return;
+        if (context_scim->impl->client_canvas)
+          {
+             ee = ecore_evas_ecore_evas_get(context_scim->impl->client_canvas);
+             if (!ee) return;
 
-        ee = ecore_evas_ecore_evas_get(context_scim->impl->client_canvas);
-        if (!ee) return;
-
-        ecore_evas_geometry_get(ee, &canvas_x, &canvas_y, NULL, NULL);
+             ecore_evas_geometry_get(ee, &canvas_x, &canvas_y, NULL, NULL);
+          }
+        else
+          {
+             if (context_scim->impl->client_window)
+               window_to_screen_geometry_get(context_scim->impl->client_window, &canvas_x, &canvas_y);
+             else
+               return;
+          }
 
         if (context_scim->impl->cursor_x != canvas_x + cx || context_scim->impl->cursor_y != canvas_y + cy + ch)
           {
