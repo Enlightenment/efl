@@ -62,6 +62,7 @@ widgets/win.edc \
 widgets/entry.edc \
 widgets/map.edc \
 widgets/scroller.edc \
+widgets/pointer.edc \
 ews.edc \
 arrow_down.png \
 arrow_up.png \
