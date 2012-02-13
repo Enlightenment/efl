@@ -6,8 +6,6 @@ group {
       image: "bt_hilight.png" COMP;
       image: "bt_shine.png" COMP;
       image: "bt_glow.png" COMP;
-      image: "bt_dis_base.png" COMP;
-      image: "bt_dis_hilight.png" COMP;
       image: "arrow_right.png" COMP;
       image: "arrow_left.png" COMP;
    }
@@ -103,10 +101,7 @@ group {
          }
          description { state: "disabled" 0.0;
             inherit:  "default" 0.0;
-            image {
-               normal: "bt_dis_base.png";
-               border: 4 4 4 4;
-            }
+            visible: 0;
          }
       }
       part {          name: "over1";
@@ -122,10 +117,7 @@ group {
          }
          description { state: "disabled" 0.0;
             inherit:  "default" 0.0;
-            image {
-               normal: "bt_dis_hilight.png";
-               border: 4 4 4 0;
-            }
+            visible: 0;
          }
       }
       part { name: "over2";
@@ -162,6 +154,19 @@ group {
             inherit:  "default" 0.0;
             visible: 1;
             color: 255 255 255 255;
+         }
+      }
+      part { name:"bar_disabled";
+         type: RECT;
+         description { state:"default" 0.0;
+            rel1.to_x: "elm.bar";
+            rel2.to_x: "elm.bar";
+            color: 0 0 0 0;
+            visible: 0;
+         }
+         description { state: "disabled" 0.0;
+            inherit: "default" 0.0;
+            visible: 1;
          }
       }
 
@@ -463,6 +468,26 @@ group {
             }
          }
       }
+      //fix the pane
+      program {
+         name: "panes_fixed";
+         signal: "elm.panes.fixed";
+         source: "elm";
+         action: STATE_SET "disabled" 0.0;
+         target: "elm.bar";
+         target: "over1";
+         target: "bar_disabled";
+      }
+      //allow the movement by interaction
+      program {
+         name: "panes_unfixed";
+         signal: "elm.panes.unfixed";
+         source: "elm";
+         action: STATE_SET "default" 0.0;
+         target: "elm.bar";
+         target: "over1";
+         target: "bar_disabled";
+      }
    }
 }
 
@@ -474,8 +499,6 @@ group {
       image: "bt_hilight.png" COMP;
       image: "bt_shine.png" COMP;
       image: "bt_glow.png" COMP;
-      image: "bt_dis_base.png" COMP;
-      image: "bt_dis_hilight.png" COMP;
       image: "arrow_up.png" COMP;
       image: "arrow_down.png" COMP;
    }
@@ -571,10 +594,7 @@ group {
          }
          description { state: "disabled" 0.0;
             inherit:  "default" 0.0;
-            image {
-               normal: "bt_dis_base.png";
-               border: 4 4 4 4;
-            }
+            visible: 0;
          }
       }
       part {          name: "over1";
@@ -590,10 +610,7 @@ group {
          }
          description { state: "disabled" 0.0;
             inherit:  "default" 0.0;
-            image {
-               normal: "bt_dis_hilight.png";
-               border: 4 4 4 0;
-            }
+            visible: 0;
          }
       }
       part { name: "over2";
@@ -632,6 +649,19 @@ group {
             color: 255 255 255 255;
          }
       }
+         part { name:"bar_disabled";
+            type: RECT;
+            description { state:"default" 0.0;
+               rel1.to_y: "elm.bar";
+               rel2.to_y: "elm.bar";
+               color: 0 0 0 0;
+               visible: 0;
+            }
+            description { state: "disabled" 0.0;
+               inherit: "default" 0.0;
+               visible: 1;
+            }
+         }
 
       //Arrow
       part {
@@ -795,6 +825,26 @@ group {
          target: "arrow_right";
          target: "arrow_left";
          transition: DECELERATE 0.4;
+      }
+      //fix the pane
+      program {
+         name:   "panes_fixed";
+         signal: "elm.panes.fixed";
+         source: "elm";
+         action: STATE_SET "disabled" 0.0;
+         target: "elm.bar";
+         target: "over1";
+         target: "bar_disabled";
+      }
+      //allow the movement by interaction
+      program {
+         name:   "panes_unfixed";
+         signal: "elm.panes.unfixed";
+         source: "elm";
+         action: STATE_SET "default" 0.0;
+         target: "elm.bar";
+         target: "over1";
+         target: "bar_disabled";
       }
    }
 }
