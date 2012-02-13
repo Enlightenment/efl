@@ -1789,7 +1789,7 @@ edje_object_part_text_input_panel_layout_set(const Evas_Object *obj, const char 
    if (!rp) return;
    if (rp->part->entry_mode > EDJE_ENTRY_EDIT_MODE_NONE)
      {
-        return _edje_entry_input_panel_layout_set(rp, layout);
+        _edje_entry_input_panel_layout_set(rp, layout);
      }
 }
 
@@ -1855,7 +1855,7 @@ edje_object_part_text_input_panel_enabled_set(const Evas_Object *obj, const char
    if (!rp) return;
    if (rp->part->entry_mode > EDJE_ENTRY_EDIT_MODE_NONE)
      {
-        return _edje_entry_input_panel_enabled_set(rp, enabled);
+        _edje_entry_input_panel_enabled_set(rp, enabled);
      }
 }
 
