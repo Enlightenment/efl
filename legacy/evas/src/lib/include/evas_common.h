@@ -1005,12 +1005,12 @@ struct list
 
 struct rect
 {
-    short left;
-    short top;
-    short right;
-    short bottom;
-    short width;
-    short height;
+    int left;
+    int top;
+    int right;
+    int bottom;
+    int width;
+    int height;
     int area;
 };
 
