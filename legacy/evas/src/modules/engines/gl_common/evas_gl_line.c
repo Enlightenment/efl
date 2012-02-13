@@ -17,7 +17,10 @@ evas_gl_common_line_draw(Evas_Engine_GL_Context *gc, int x1, int y1, int x2, int
      }
    else
      {
-        r = g = b = a = 255;
+        a = (dc->col.col >> 24) & 0xff;
+        r = (dc->col.col >> 16) & 0xff;
+        g = (dc->col.col >> 8 ) & 0xff;
+        b = (dc->col.col      ) & 0xff;
      }
 
    glFlush();
