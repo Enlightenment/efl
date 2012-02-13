@@ -2841,6 +2841,17 @@ EAPI void             edje_object_part_text_cursor_pos_set              (Evas_Ob
 EAPI int              edje_object_part_text_cursor_pos_get              (const Evas_Object *obj, const char *part, Edje_Cursor cur);
 
 /**
+ * @brief Reset the input method context if needed.
+ *
+ * This can be necessary in the case where modifying the buffer would confuse on-going input method behavior
+ *
+ * @param obj A valid Evas_Object handle
+ * @param part The part name
+ * @since 1.2.0
+ */
+EAPI void             edje_object_part_text_imf_context_reset           (const Evas_Object *obj, const char *part);
+
+/**
  * @brief Set the layout of the input panel.
  * 
  * The layout of the input panel or virtual keyboard can make it easier or

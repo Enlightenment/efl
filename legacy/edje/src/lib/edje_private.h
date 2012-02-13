@@ -1939,6 +1939,7 @@ Eina_Bool _edje_entry_cursor_is_visible_format_get(Edje_Real_Part *rp, Edje_Curs
 char *_edje_entry_cursor_content_get(Edje_Real_Part *rp, Edje_Cursor cur);
 void _edje_entry_cursor_pos_set(Edje_Real_Part *rp, Edje_Cursor cur, int pos);
 int _edje_entry_cursor_pos_get(Edje_Real_Part *rp, Edje_Cursor cur);
+void _edje_entry_imf_context_reset(Edje_Real_Part *rp);
 void _edje_entry_input_panel_layout_set(Edje_Real_Part *rp, Edje_Input_Panel_Layout layout);
 Edje_Input_Panel_Layout _edje_entry_input_panel_layout_get(Edje_Real_Part *rp);
 void _edje_entry_autocapital_type_set(Edje_Real_Part *rp, Edje_Text_Autocapital_Type autocapital_type);

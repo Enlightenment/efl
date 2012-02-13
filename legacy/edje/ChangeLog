@@ -336,4 +336,6 @@
 2012-02-13  Jihoon Kim
 
 	* add edje_object_part_text_input_panel_show/hide.
-      These APIs can be used in input panel manual control mode
+      These APIs can be used in input panel manual control mode 
+	* add edje_object_part_text_imf_context_reset that will use
+      for reseting the input method context
