@@ -2121,7 +2121,6 @@ _profiles_list_selected_cb(void            *data,
 {
    const char *cur_profile = NULL;
    const char *sel_profile, *pdir;
-   Eina_Bool cur_selected;
    const char *prof_name;
    char buf[PATH_MAX];
    Evas_Object *en;
@@ -2134,7 +2133,6 @@ _profiles_list_selected_cb(void            *data,
      return;
 
    cur_profile = elm_profile_current_get();
-   cur_selected = !strcmp(cur_profile, sel_profile);
 
    pdir = elm_profile_dir_get(sel_profile, EINA_TRUE);
    if (!pdir) pdir = elm_profile_dir_get(sel_profile, EINA_FALSE);
