@@ -363,13 +363,14 @@ analyze_surrounding_text(Ecore_IMF_Context *ctx)
 {
    char *plain_str = NULL;
    char *markup_str = NULL;
-   const char *puncs[3] = {". ", "! ", "? "};
+   const char *puncs[] = {". ", "! ", "? "};
    Eina_Bool ret = EINA_FALSE;
    int cursor_pos = 0;
    int i = 0;
    Eina_Unicode *tail = NULL;
    Eina_Unicode *ustr = NULL;
-   Eina_Unicode *uni_puncs[3];
+   const int punc_num = sizeof(puncs) / sizeof(puncs[0]);
+   Eina_Unicode *uni_puncs[punc_num];
    EcoreIMFContextISF *context_scim;
 
    if (!ctx) return EINA_FALSE;
@@ -386,7 +387,7 @@ analyze_surrounding_text(Ecore_IMF_Context *ctx)
          break;
      }
 
-   for (i = 0; i < 3; i++)
+   for (i = 0; i < punc_num; i++)
      uni_puncs[i] = eina_unicode_utf8_to_unicode(puncs[i], NULL);
 
    ecore_imf_context_surrounding_get(ctx, &markup_str, &cursor_pos);
@@ -432,7 +433,7 @@ analyze_surrounding_text(Ecore_IMF_Context *ctx)
 
         if (tail)
           {
-             for (i = 0; i < 3; i++)
+             for (i = 0; i < punc_num; i++)
                {
                   if (!eina_unicode_strcmp(tail, uni_puncs[i]))
                     {
@@ -450,7 +451,7 @@ done:
    if (markup_str) free(markup_str);
    if (plain_str) free(plain_str);
 
-   for (i = 0; i < 3; i++)
+   for (i = 0; i < punc_num; i++)
      if (uni_puncs[i]) free(uni_puncs[i]);
 
    return ret;
