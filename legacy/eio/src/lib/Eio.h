@@ -229,7 +229,7 @@ EAPI Eio_File *eio_file_stat_ls(const char *dir,
  * @param data Data passed to callback and not modified at all by eio_dir_stat_find.
  * @return A reference to the IO operation.
  *
- * eio_dir_stat_find() run eina_file_stat_ls() recursivly in a separated thread using
+ * eio_dir_stat_ls() run eina_file_stat_ls() recursivly in a separated thread using
  * ecore_thread_feedback_run. This prevent any lock in your apps.
  */
 EAPI Eio_File *eio_dir_stat_ls(const char *dir,
