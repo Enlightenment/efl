@@ -1130,7 +1130,7 @@ EAPI void                   elm_entry_input_panel_show(Evas_Object *obj);
  *
  * @param obj The entry object
  */
-EAPI Eina_Bool              elm_entry_input_panel_hide(Evas_Object *obj);
+EAPI void                   elm_entry_input_panel_hide(Evas_Object *obj);
 
 /* pre-made filters for entries */
 

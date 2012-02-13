@@ -3585,7 +3585,7 @@ elm_entry_input_panel_show(Evas_Object *obj)
    edje_object_part_text_input_panel_show(wd->ent, "elm.text");
 }
 
-EAPI Eina_Bool
+EAPI void
 elm_entry_input_panel_hide(Evas_Object *obj)
 {
    ELM_CHECK_WIDTYPE(obj, widtype);
