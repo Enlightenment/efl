@@ -2390,7 +2390,7 @@ _calc_job(void *data)
 {
    Widget_Data *wd = data;
    Item_Block *itb, *chb = NULL;
-   Evas_Coord minw = -1, minh = 0, y = 0, ow, dy = 0;
+   Evas_Coord minw = -1, minh = 0, y = 0, ow, dy = 0, vw;
    Evas_Coord pan_w = 0, pan_h = 0;
    int in = 0;
    Eina_Bool minw_change = EINA_FALSE;
@@ -2398,6 +2398,8 @@ _calc_job(void *data)
    if (!wd) return;
 
    evas_object_geometry_get(wd->pan_smart, NULL, NULL, &ow, &wd->h);
+   elm_smart_scroller_child_viewport_size_get(wd->scr, &vw, NULL);
+
    if (wd->w != ow)
      wd->w = ow;
 
@@ -2436,6 +2438,11 @@ _calc_job(void *data)
         else if ((!itb->must_recalc) && (minw < itb->minw))
           {
              minw = itb->minw;
+             minw_change = EINA_TRUE;
+          }
+        if (minw > vw)
+          {
+             minw = vw;
              minw_change = EINA_TRUE;
           }
         itb->w = minw;
