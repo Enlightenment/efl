@@ -1112,6 +1112,26 @@ EAPI void                   elm_entry_input_panel_enabled_set(Evas_Object *obj, 
  */
 EAPI Eina_Bool              elm_entry_input_panel_enabled_get(Evas_Object *obj);
 
+/**
+ * Show the input panel (virtual keyboard) based on the input panel property of entry such as layout, autocapital types, and so on.
+ *
+ * Note that input panel is shown or hidden automatically according to the focus state of entry widget.
+ * This API can be used in the case of manually controling by using elm_entry_input_panel_enabled_set(en, EINA_FALSE)
+ *
+ * @param obj The entry object
+ */
+EAPI void                   elm_entry_input_panel_show(Evas_Object *obj);
+
+/**
+ * Hide the input panel (virtual keyboard).
+ *
+ * Note that input panel is shown or hidden automatically according to the focus state of entry widget.
+ * This API can be used in the case of manually controling by using elm_entry_input_panel_enabled_set(en, EINA_FALSE)
+ *
+ * @param obj The entry object
+ */
+EAPI Eina_Bool              elm_entry_input_panel_hide(Evas_Object *obj);
+
 /* pre-made filters for entries */
 
 /**

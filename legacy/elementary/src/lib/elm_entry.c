@@ -3575,3 +3575,23 @@ elm_entry_input_panel_enabled_get(Evas_Object *obj)
    return wd->input_panel_enable;
 }
 
+EAPI void
+elm_entry_input_panel_show(Evas_Object *obj)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype);
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return;
+
+   edje_object_part_text_input_panel_show(wd->ent, "elm.text");
+}
+
+EAPI Eina_Bool
+elm_entry_input_panel_hide(Evas_Object *obj)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype);
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return;
+
+   edje_object_part_text_input_panel_hide(wd->ent, "elm.text");
+}
+
