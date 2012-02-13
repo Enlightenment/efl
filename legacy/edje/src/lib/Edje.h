@@ -2910,6 +2910,31 @@ EAPI void             edje_object_part_text_input_panel_enabled_set (const Evas_
 EAPI Eina_Bool        edje_object_part_text_input_panel_enabled_get (const Evas_Object *obj, const char *part);
 
 /**
+ * @brief Show the input panel (virtual keyboard) based on the input panel property such as layout, autocapital types, and so on.
+ *
+ * Note that input panel is shown or hidden automatically according to the focus state.
+ * This API can be used in the case of manually controling by using edje_object_part_text_input_panel_enabled_set.
+ *
+ * @param obj A valid Evas_Object handle
+ * @param part The part name
+ * @since 1.2.0
+ */
+EAPI void             edje_object_part_text_input_panel_show(const Evas_Object *obj, const char *part);
+
+/**
+ * @brief Hide the input panel (virtual keyboard).
+ * @see edje_object_part_text_input_panel_show
+ *
+ * Note that input panel is shown or hidden automatically according to the focus state.
+ * This API can be used in the case of manually controling by using edje_object_part_text_input_panel_enabled_set.
+ *
+ * @param obj A valid Evas_Object handle
+ * @param part The part name
+ * @since 1.2.0
+ */
+EAPI void             edje_object_part_text_input_panel_hide(const Evas_Object *obj, const char *part);
+
+/**
  * Add a filter function for newly inserted text.
  *
  * Whenever text is inserted (not the same as set) into the given @p part,

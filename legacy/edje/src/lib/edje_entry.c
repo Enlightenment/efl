@@ -2600,6 +2600,30 @@ _edje_entry_input_panel_enabled_get(Edje_Real_Part *rp)
    return en->input_panel_enable;
 }
 
+void
+_edje_entry_input_panel_show(Edje_Real_Part *rp)
+{
+   Entry *en = rp->entry_data;
+
+   if (!en) return;
+#ifdef HAVE_ECORE_IMF
+   if (en->imf_context)
+     ecore_imf_context_input_panel_show(en->imf_context);
+#endif
+}
+
+void
+_edje_entry_input_panel_hide(Edje_Real_Part *rp)
+{
+   Entry *en = rp->entry_data;
+
+   if (!en) return;
+#ifdef HAVE_ECORE_IMF
+   if (en->imf_context)
+     ecore_imf_context_input_panel_hide(en->imf_context);
+#endif
+}
+
 static Evas_Textblock_Cursor *
 _cursor_get(Edje_Real_Part *rp, Edje_Cursor cur)
 {
