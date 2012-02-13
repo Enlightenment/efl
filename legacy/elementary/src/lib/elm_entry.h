@@ -1132,6 +1132,14 @@ EAPI void                   elm_entry_input_panel_show(Evas_Object *obj);
  */
 EAPI void                   elm_entry_input_panel_hide(Evas_Object *obj);
 
+/**
+ * Reset the input method context of the entry if needed. 
+ *
+ * This can be necessary in the case where modifying the buffer would confuse on-going input method behavior
+ * @param obj The entry object
+ */
+EAPI void                   elm_entry_imf_context_reset(Evas_Object *obj);
+
 /* pre-made filters for entries */
 
 /**
