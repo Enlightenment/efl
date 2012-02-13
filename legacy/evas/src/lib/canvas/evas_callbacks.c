@@ -172,6 +172,15 @@ evas_object_event_callback_call(Evas_Object *obj, Evas_Callback_Type type, void 
    if ((obj->delete_me) || (!obj->layer)) return;
    if ((obj->last_event == event_id) &&
        (obj->last_event_type == type)) return;
+   if (obj->last_event > event_id)
+     {
+        if ((obj->last_event_type == EVAS_CALLBACK_MOUSE_OUT) &&
+            ((type >= EVAS_CALLBACK_MOUSE_DOWN) &&
+             (type <= EVAS_CALLBACK_MULTI_MOVE)))
+          {
+             return;
+          }
+     }
    obj->last_event = event_id;
    obj->last_event_type = type;
    if (!(e = obj->layer->evas)) return;
