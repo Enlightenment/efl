@@ -2262,8 +2262,7 @@ _eina_value_type_stringshare_copy(const Eina_Value_Type *type __UNUSED__, const 
 {
    const char * const*s = src;
    const char **d = dst;
-   *d = *s;
-   eina_stringshare_ref(*d);
+   *d = eina_stringshare_add(*s);
    return EINA_TRUE;
 }
 
