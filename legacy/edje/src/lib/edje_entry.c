@@ -1150,7 +1150,7 @@ _edje_key_down_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, v
    if ((!en) || (rp->part->type != EDJE_PART_TYPE_TEXTBLOCK) ||
        (rp->part->entry_mode < EDJE_ENTRY_EDIT_MODE_EDITABLE))
      return;
-   if (!ev->key) return;
+   if (!ev->keyname) return;
 
 #ifdef HAVE_ECORE_IMF
    if (en->imf_context)
@@ -1164,9 +1164,9 @@ _edje_key_down_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, v
      }
 #endif
 
-   if ((!strcmp(ev->key, "Escape")) ||
-       (!strcmp(ev->key, "Return")) || (!strcmp(ev->key, "KP_Enter")))
-     _edje_entry_imf_context_reset(rp);
+   if ((!strcmp(ev->keyname, "Escape")) ||
+       (!strcmp(ev->keyname, "Return")) || (!strcmp(ev->keyname, "KP_Enter")))
+     _edje_entry_imf_context_reset(en);
 
    old_cur_pos = evas_textblock_cursor_pos_get(en->cursor);
 
@@ -1175,13 +1175,13 @@ _edje_key_down_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, v
    shift = evas_key_modifier_is_set(ev->modifiers, "Shift");
    multiline = rp->part->multiline;
    cursor_changed = EINA_FALSE;
-   if (!strcmp(ev->key, "Escape"))
+   if (!strcmp(ev->keyname, "Escape"))
      {
         // dead keys here. Escape for now (should emit these)
         _edje_emit(ed, "entry,key,escape", rp->part->name);
         ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
      }
-   else if (!strcmp(ev->key, "Up") || !strcmp(ev->key, "KP_Up"))
+   else if (!strcmp(ev->keyname, "Up") || !strcmp(ev->keyname, "KP_Up"))
      {
         if (multiline)
           {
@@ -1201,7 +1201,7 @@ _edje_key_down_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, v
         _edje_emit(ed, "entry,key,up", rp->part->name);
         _edje_emit(rp->edje, "cursor,changed,manual", rp->part->name);
      }
-   else if (!strcmp(ev->key, "Down") || !strcmp(ev->key, "KP_Down"))
+   else if (!strcmp(ev->keyname, "Down") || !strcmp(ev->keyname, "KP_Down"))
      {
         if (multiline)
           {
@@ -1221,7 +1221,7 @@ _edje_key_down_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, v
         _edje_emit(ed, "entry,key,down", rp->part->name);
         _edje_emit(rp->edje, "cursor,changed,manual", rp->part->name);
      }
-   else if (!strcmp(ev->key, "Left") || !strcmp(ev->key, "KP_Left"))
+   else if (!strcmp(ev->keyname, "Left") || !strcmp(ev->keyname, "KP_Left"))
      {
         if (en->select_allow)
           {
@@ -1240,7 +1240,7 @@ _edje_key_down_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, v
         _edje_emit(rp->edje, "cursor,changed,manual", rp->part->name);
         ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
      }
-   else if (!strcmp(ev->key, "Right") || !strcmp(ev->key, "KP_Right"))
+   else if (!strcmp(ev->keyname, "Right") || !strcmp(ev->keyname, "KP_Right"))
      {
         if (en->select_allow)
           {
@@ -1259,7 +1259,7 @@ _edje_key_down_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, v
         _edje_emit(rp->edje, "cursor,changed,manual", rp->part->name);
         ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
      }
-   else if (!strcmp(ev->key, "BackSpace"))
+   else if (!strcmp(ev->keyname, "BackSpace"))
      {
         if (control && !en->have_selection)
           {
@@ -1296,7 +1296,7 @@ _edje_key_down_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, v
         _edje_emit(ed, "entry,key,backspace", rp->part->name);
         ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
      }
-   else if (!strcmp(ev->key, "Delete") || !strcmp(ev->key, "KP_Delete"))
+   else if (!strcmp(ev->keyname, "Delete") || !strcmp(ev->keyname, "KP_Delete"))
      {
         if (control)
           {
@@ -1330,7 +1330,7 @@ _edje_key_down_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, v
         _edje_emit(ed, "entry,key,delete", rp->part->name);
         ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
      }
-   else if (!strcmp(ev->key, "Home") || !strcmp(ev->key, "KP_Home"))
+   else if (!strcmp(ev->keyname, "Home") || !strcmp(ev->keyname, "KP_Home"))
      {
         if (en->select_allow)
           {
@@ -1348,7 +1348,7 @@ _edje_key_down_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, v
         _edje_emit(ed, "entry,key,home", rp->part->name);
         ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
      }
-   else if (!strcmp(ev->key, "End") || !strcmp(ev->key, "KP_End"))
+   else if (!strcmp(ev->keyname, "End") || !strcmp(ev->keyname, "KP_End"))
      {
         if (en->select_allow)
           {
@@ -1366,33 +1366,36 @@ _edje_key_down_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, v
         _edje_emit(ed, "entry,key,end", rp->part->name);
         ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
      }
-   else if ((control) && (!strcmp(ev->key, "v")))
+   else if ((control) && (!shift) && (!strcmp(ev->keyname, "v")))
      {
         _edje_emit(ed, "entry,paste,request", rp->part->name);
         _edje_emit(ed, "entry,paste,request,3", rp->part->name);
         ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
      }
-   else if ((control) && (!strcmp(ev->key, "a")))
+   else if ((control) && (!strcmp(ev->keyname, "a")))
      {
-          _edje_emit(ed, "entry,selection,all,request", rp->part->name);
-        ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
+        if (shift)
+          {
+             _edje_emit(ed, "entry,selection,none,request", rp->part->name);
+             ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
+          }
+        else
+          {
+             _edje_emit(ed, "entry,selection,all,request", rp->part->name);
+             ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
+          }
      }
-   else if ((control) && (!strcmp(ev->key, "A")))
-     {
-          _edje_emit(ed, "entry,selection,none,request", rp->part->name);
-        ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
-     }
-   else if ((control) && ((!strcmp(ev->key, "c") || (!strcmp(ev->key, "Insert")))))
+   else if ((control) && (((!shift) && !strcmp(ev->keyname, "c")) || !strcmp(ev->keyname, "Insert")))
      {
         _edje_emit(ed, "entry,copy,notify", rp->part->name);
         ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
      }
-   else if ((control) && ((!strcmp(ev->key, "x") || (!strcmp(ev->key, "m")))))
+   else if ((control) && (!shift) && ((!strcmp(ev->keyname, "x") || (!strcmp(ev->keyname, "m")))))
      {
         _edje_emit(ed, "entry,cut,notify", rp->part->name);
         ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
      }
-   else if ((control) && (!strcmp(ev->key, "z")))
+   else if ((control) && (!strcmp(ev->keyname, "z")))
      {
         if (shift)
           {
@@ -1406,19 +1409,19 @@ _edje_key_down_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, v
           }
         ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
      }
-   else if ((control) && (!strcmp(ev->key, "y")))
+   else if ((control) && (!shift) && (!strcmp(ev->keyname, "y")))
      {
         // redo
         _edje_emit(ed, "entry,redo,request", rp->part->name);
         ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
      }
-   else if ((control) && (!strcmp(ev->key, "w")))
+   else if ((control) && (!shift) && (!strcmp(ev->keyname, "w")))
      {
         _sel_clear(en->cursor, rp->object, en);
         // select current word?
         ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
      }
-   else if (!strcmp(ev->key, "Tab"))
+   else if (!strcmp(ev->keyname, "Tab"))
      {
         if (multiline)
           {
@@ -1453,12 +1456,12 @@ _edje_key_down_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, v
           }
         _edje_emit(ed, "entry,key,tab", rp->part->name);
      }
-   else if ((!strcmp(ev->key, "ISO_Left_Tab")) && (multiline))
+   else if ((!strcmp(ev->keyname, "ISO_Left_Tab")) && (multiline))
      {
         // remove a tab
         ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
      }
-   else if (!strcmp(ev->key, "Prior") || !strcmp(ev->key, "KP_Prior"))
+   else if (!strcmp(ev->keyname, "Prior") || !strcmp(ev->keyname, "KP_Prior"))
      {
         if (en->select_allow)
           {
@@ -1474,7 +1477,7 @@ _edje_key_down_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, v
         _edje_emit(ed, "entry,key,pgup", rp->part->name);
         ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
      }
-   else if (!strcmp(ev->key, "Next") || !strcmp(ev->key, "KP_Next"))
+   else if (!strcmp(ev->keyname, "Next") || !strcmp(ev->keyname, "KP_Next"))
      {
         if (en->select_allow)
           {
@@ -1490,7 +1493,7 @@ _edje_key_down_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, v
         _edje_emit(ed, "entry,key,pgdn", rp->part->name);
         ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
      }
-   else if ((!strcmp(ev->key, "Return")) || (!strcmp(ev->key, "KP_Enter")))
+   else if ((!strcmp(ev->keyname, "Return")) || (!strcmp(ev->keyname, "KP_Enter")))
      {
         if (multiline)
           {
