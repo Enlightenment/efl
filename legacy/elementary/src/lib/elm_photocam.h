@@ -45,7 +45,7 @@ typedef enum
    ELM_PHOTOCAM_ZOOM_MODE_MANUAL = 0, /**< Zoom controlled normally by elm_photocam_zoom_set */
    ELM_PHOTOCAM_ZOOM_MODE_AUTO_FIT, /**< Zoom until photo fits in photocam */
    ELM_PHOTOCAM_ZOOM_MODE_AUTO_FILL, /**< Zoom until photo fills photocam */
-   ELM_PHOTOCAM_ZOOM_MODE_AUTO_FIT_IN, /**< Unzoom until photo fits in photocam */
+   ELM_PHOTOCAM_ZOOM_MODE_AUTO_FIT_IN, /**< Zoom in until photo fits in photocam */
    ELM_PHOTOCAM_ZOOM_MODE_LAST
 } Elm_Photocam_Zoom_Mode;
 
@@ -92,7 +92,7 @@ EAPI const char            *elm_photocam_file_get(const Evas_Object *obj);
  * This sets the zoom level. 1 will be 1:1 pixel for pixel. 2 will be 2:1
  * (that is 2x2 photo pixels will display as 1 on-screen pixel). 4:1 will be
  * 4x4 photo pixels as 1 screen pixel, and so on. The @p zoom parameter must
- * be greater than 0. It is usggested to stick to powers of 2. (1, 2, 4, 8,
+ * be greater than 0. It is suggested to stick to powers of 2. (1, 2, 4, 8,
  * 16, 32, etc.).
  */
 EAPI void                   elm_photocam_zoom_set(Evas_Object *obj, double zoom);
@@ -106,7 +106,7 @@ EAPI void                   elm_photocam_zoom_set(Evas_Object *obj, double zoom)
  * This returns the current zoom level of the photocam object. Note that if
  * you set the fill mode to other than ELM_PHOTOCAM_ZOOM_MODE_MANUAL
  * (which is the default), the zoom level may be changed at any time by the
- * photocam object itself to account for photo size and photocam viewpoer
+ * photocam object itself to account for photo size and photocam viewport
  * size.
  *
  * @see elm_photocam_zoom_set()

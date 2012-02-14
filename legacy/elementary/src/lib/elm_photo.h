@@ -74,7 +74,7 @@ EAPI void      elm_photo_fill_inside_set(Evas_Object *obj, Eina_Bool fill);
  * the image will delete the existing content.
  *
  * @param obj The photo object.
- * @param set To set of clear editablity.
+ * @param set To set of clear editability.
  */
 EAPI void      elm_photo_editable_set(Evas_Object *obj, Eina_Bool set);
 

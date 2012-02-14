@@ -27,14 +27,14 @@ EAPI Eina_Bool elm_password_show_last_get(void);
  *
  * This enables or disables show last setting of password mode.
  *
- * @param password_show_last If EINA_TRUE enable's last input show in password mode.
+ * @param password_show_last If EINA_TRUE enables last input show in password mode.
  * @see elm_password_show_last_timeout_set()
  * @ingroup Password_last_show
  */
 EAPI void      elm_password_show_last_set(Eina_Bool password_show_last);
 
 /**
- * Get's the timeout value in last show password mode.
+ * Gets the timeout value in last show password mode.
  *
  * This gets the time out value for which the last input entered in password
  * mode will be visible.

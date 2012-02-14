@@ -18,10 +18,10 @@
  * @li "scroll,drag,start" - dragging the contents around has started
  * @li "scroll,drag,stop" - dragging the contents around has stopped
  * @note The "scroll,anim,*" and "scroll,drag,*" signals are only emitted by
- * user intervetion.
+ * user intervention.
  *
- * @note When Elemementary is in embedded mode the scrollbars will not be
- * dragable, they appear merely as indicators of how much has been scrolled.
+ * @note When Elementary is in embedded mode the scrollbars will not be
+ * draggable, they appear merely as indicators of how much has been scrolled.
  * @note When Elementary is in desktop mode the thumbscroll(a.k.a.
  * fingerscroll) won't work.
  *
@@ -229,7 +229,7 @@ EAPI void                         elm_scroller_page_size_set(Evas_Object *obj, E
  *
  * @see elm_scroller_last_page_get()
  * @see elm_scroller_page_show()
- * @see elm_scroller_page_brint_in()
+ * @see elm_scroller_page_bring_in()
  */
 EAPI void                         elm_scroller_current_page_get(const Evas_Object *obj, int *h_pagenumber, int *v_pagenumber);
 
@@ -245,7 +245,7 @@ EAPI void                         elm_scroller_current_page_get(const Evas_Objec
  *
  * @see elm_scroller_current_page_get()
  * @see elm_scroller_page_show()
- * @see elm_scroller_page_brint_in()
+ * @see elm_scroller_page_bring_in()
  */
 EAPI void                         elm_scroller_last_page_get(const Evas_Object *obj, int *h_pagenumber, int *v_pagenumber);
 

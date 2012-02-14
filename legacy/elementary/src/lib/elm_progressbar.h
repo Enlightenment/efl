@@ -33,7 +33,7 @@
  *      "pulse" effect is available)
  *
  * Default text parts of the progressbar widget that you can use for are:
- * @li "default" - Label of the progressabar
+ * @li "default" - Label of the progressbar
  *
  * Default contents parts of the progressbar widget that you can use for are:
  * @li "icon" - An icon of the progressbar
@@ -195,7 +195,7 @@ EAPI Evas_Coord                   elm_progressbar_span_size_get(const Evas_Objec
  * area to be hidden completely. If not, it'll set the <b>format
  * string</b> for the units label's @b text. The units label is
  * provided a floating point value, so the units text is up display
- * at most one floating point falue. Note that the units label is
+ * at most one floating point value. Note that the units label is
  * optional. Use a format string such as "%1.2f meters" for
  * example.
  *

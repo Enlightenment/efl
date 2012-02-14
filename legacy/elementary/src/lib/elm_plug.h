@@ -34,7 +34,7 @@ EAPI Evas_Object    *elm_plug_add(Evas_Object *parent);
  * @param ee_target The Ecore_Evas containing the canvas in which the new image object will live.
  * @param svcname The service name to connect to set up by the socket.
  * @param svcnum The service number to connect to (set up by socket).
- * @param svcsys Booleain to set if the service is a system one or not (set up by socket).
+ * @param svcsys Boolean to set if the service is a system one or not (set up by socket).
  * @return (@c EINA_TRUE = success, @c EINA_FALSE = error)
  *
  *
