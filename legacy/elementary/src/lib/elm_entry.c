@@ -69,6 +69,7 @@ struct _Widget_Data
    Eina_Bool h_bounce : 1;
    Eina_Bool v_bounce : 1;
    Eina_Bool input_panel_enable : 1;
+   Eina_Bool prediction_allow : 1;
 };
 
 struct _Elm_Entry_Context_Menu_Item
@@ -534,7 +535,9 @@ _theme_hook(Evas_Object *obj)
      edje_object_signal_emit(wd->ent, "elm,state,disabled", "elm");
    edje_object_part_text_input_panel_layout_set(wd->ent, "elm.text", wd->input_panel_layout);
    edje_object_part_text_autocapital_type_set(wd->ent, "elm.text", wd->autocapital_type);
+   edje_object_part_text_prediction_allow_set(wd->ent, "elm.text", wd->prediction_allow);
    edje_object_part_text_input_panel_enabled_set(wd->ent, "elm.text", wd->input_panel_enable);
+
    if (wd->cursor_pos != 0)
      elm_entry_cursor_pos_set(obj, wd->cursor_pos);
    if (elm_widget_focus_get(obj))
@@ -2379,6 +2382,7 @@ elm_entry_add(Evas_Object *parent)
 
    elm_entry_input_panel_layout_set(obj, ELM_INPUT_PANEL_LAYOUT_NORMAL);
    elm_entry_input_panel_enabled_set(obj, EINA_TRUE);
+   elm_entry_prediction_allow_set(obj, EINA_TRUE);
 
    wd->autocapital_type = edje_object_part_text_autocapital_type_get(wd->ent, "elm.text");
 
@@ -3555,6 +3559,27 @@ elm_entry_autocapital_type_get(Evas_Object *obj)
 }
 
 EAPI void
+elm_entry_prediction_allow_set(Evas_Object *obj, Eina_Bool prediction)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype);
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return;
+
+   wd->prediction_allow = prediction;
+   edje_object_part_text_prediction_allow_set(wd->ent, "elm.text", prediction);
+}
+
+EAPI Eina_Bool
+elm_entry_prediction_allow_get(Evas_Object *obj)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype) EINA_TRUE;
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return EINA_TRUE;
+
+   return wd->prediction_allow;
+}
+
+EAPI void
 elm_entry_imf_context_reset(Evas_Object *obj)
 {
    ELM_CHECK_WIDTYPE(obj, widtype);
@@ -3604,6 +3629,5 @@ elm_entry_input_panel_hide(Evas_Object *obj)
 
    edje_object_part_text_input_panel_hide(wd->ent, "elm.text");
 }
-
 
 

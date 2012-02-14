@@ -1140,6 +1140,22 @@ EAPI void                   elm_entry_input_panel_hide(Evas_Object *obj);
  */
 EAPI void                   elm_entry_imf_context_reset(Evas_Object *obj);
 
+/**
+ * Set whether the entry should allow to use the text prediction.
+ *
+ * @param obj The entry object
+ * @param prediction Whether the entry should allow to use the text prediction.
+ */
+EAPI void                   elm_entry_prediction_allow_set(Evas_Object *obj, Eina_Bool prediction);
+
+/**
+ * Get whether the entry should allow to use the text prediction.
+ *
+ * @param obj The entry object
+ * @return EINA_TRUE if it allows to use the text prediction, otherwise EINA_FALSE.
+ */
+EAPI Eina_Bool              elm_entry_prediction_allow_get(Evas_Object *obj);
+
 /* pre-made filters for entries */
 
 /**
