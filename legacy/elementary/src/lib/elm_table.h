@@ -8,7 +8,7 @@
  * For a Table widget the row/column count is not fixed.
  * The table widget adjusts itself when subobjects are added to it dynamically.
  *
- * The followin are examples of how to use a table:
+ * The following are examples of how to use a table:
  * @li @ref tutorial_table_01
  * @li @ref tutorial_table_02
  *

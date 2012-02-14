@@ -451,7 +451,7 @@ EAPI const char           *elm_slideshow_layout_get(const Evas_Object *obj);
  *
  * The available layouts for slideshows on the default theme are:
  * - @c "fullscreen" - item images with original aspect, scaled to
- *   touch top and down slideshow borders or, if the image's heigh
+ *   touch top and down slideshow borders or, if the image's height
  *   is not enough, left and right slideshow borders.
  * - @c "not_fullscreen" - the same behavior as the @c "fullscreen"
  *   one, but always leaving 10% of the slideshow's dimensions of

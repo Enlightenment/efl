@@ -258,7 +258,7 @@ EAPI Eina_Bool   elm_spinner_wrap_get(const Evas_Object *obj);
  * Spinner objects can have edition @b disabled, in which state they will
  * be changed only by arrows.
  * Useful for contexts
- * where you don't want your users to interact with it writting the value.
+ * where you don't want your users to interact with it writing the value.
  * Specially
  * when using special values, the user can see real value instead
  * of special label on edition.

@@ -5,7 +5,7 @@
  * @image html img/widget/slider/preview-00.png
  * @image latex img/widget/slider/preview-00.eps width=\textwidth
  *
- * The slider adds a dragable “slider” widget for selecting the value of
+ * The slider adds a draggable “slider” widget for selecting the value of
  * something within a range.
  *
  * A slider can be horizontal or vertical. It can contain an Icon and has a
@@ -43,8 +43,8 @@
  * @li "icon" - An icon of the slider
  * @li "end" - A end part content of the slider
  *
- * Default text parts of the silder widget that you can use for are:
- * @li "default" - Label of the silder
+ * Default text parts of the slider widget that you can use for are:
+ * @li "default" - Label of the slider
  *
  * Supported elm_object common APIs.
  * @li elm_object_disabled_set
