@@ -4,7 +4,7 @@
  * @image html img/widget/ctxpopup/preview-00.png
  * @image latex img/widget/ctxpopup/preview-00.eps
  *
- * @brief Context popup widet.
+ * @brief Context popup widget.
  *
  * A ctxpopup is a widget that, when shown, pops up a list of items.
  * It automatically chooses an area inside its parent object's view
@@ -14,7 +14,7 @@
  * items have a label and/or an icon. It is intended for a small
  * number of items (hence the use of list, not genlist).
  *
- * @note Ctxpopup is a especialization of @ref Hover.
+ * @note Ctxpopup is a specialization of @ref Hover.
  *
  * Signals that you can add callbacks for are:
  * "dismissed" - the ctxpopup was dismissed

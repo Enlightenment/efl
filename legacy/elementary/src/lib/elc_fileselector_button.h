@@ -16,7 +16,7 @@
  *
  * This widget encapsulates operations on its internal file
  * selector on its own API. There is less control over its file
- * selector than that one would have instatiating one directly.
+ * selector than that one would have instantiating one directly.
  *
  * The following styles are available for this button:
  * @li @c "default"

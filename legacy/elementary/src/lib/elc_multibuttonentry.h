@@ -111,7 +111,7 @@ EAPI void                       elm_multibuttonentry_shrink_mode_set(Evas_Object
  *
  * @param obj The multibuttonentry object
  * @param label The label of new item
- * @param data The ponter to the data to be attached
+ * @param data The pointer to the data to be attached
  * @return A handle to the item added or NULL if not possible
  *
  * @ingroup Multibuttonentry
@@ -123,7 +123,7 @@ EAPI Elm_Object_Item *elm_multibuttonentry_item_prepend(Evas_Object *obj, const 
  *
  * @param obj The multibuttonentry object
  * @param label The label of new item
- * @param data The ponter to the data to be attached
+ * @param data The pointer to the data to be attached
  * @return A handle to the item added or NULL if not possible
  *
  * @ingroup Multibuttonentry
@@ -137,7 +137,7 @@ EAPI Elm_Object_Item *elm_multibuttonentry_item_append(Evas_Object *obj, const c
  * @param obj The multibuttonentry object
  * @param before The item before which to add it
  * @param label The label of new item
- * @param data The ponter to the data to be attached
+ * @param data The pointer to the data to be attached
  * @return A handle to the item added or NULL if not possible
  *
  * @ingroup Multibuttonentry
@@ -150,7 +150,7 @@ EAPI Elm_Object_Item *elm_multibuttonentry_item_insert_before(Evas_Object *obj, 
  * @param obj The multibuttonentry object
  * @param after The item after which to add it
  * @param label The label of new item
- * @param data The ponter to the data to be attached
+ * @param data The pointer to the data to be attached
  * @return A handle to the item added or NULL if not possible
  *
  * @ingroup Multibuttonentry
@@ -256,7 +256,7 @@ EAPI Elm_Object_Item *elm_multibuttonentry_item_next_get(const Elm_Object_Item *
  * parameter to NULL. This will also prevent any following filters from being
  * called.
  *
- * @param obj The multibuttonentryentry object
+ * @param obj The multibuttonentry object
  * @param func The function to use as item filter
  * @param data User data to pass to @p func
  *
@@ -265,7 +265,7 @@ EAPI Elm_Object_Item *elm_multibuttonentry_item_next_get(const Elm_Object_Item *
 EAPI void                       elm_multibuttonentry_item_filter_append(Evas_Object *obj, Elm_Multibuttonentry_Item_Filter_callback func, void *data);
 
 /**
- * Prepend a filter function for text inserted in the Multibuttentry
+ * Prepend a filter function for text inserted in the Multibuttonentry
  *
  * Prepend the given callback to the list. See elm_multibuttonentry_item_filter_append()
  * for more information

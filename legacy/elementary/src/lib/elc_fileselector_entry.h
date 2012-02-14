@@ -18,7 +18,7 @@
  *
  * This widget encapsulates operations on its internal file
  * selector on its own API. There is less control over its file
- * selector than that one would have instatiating one directly.
+ * selector than that one would have instantiating one directly.
  *
  * Smart callbacks one can register to:
  * - @c "changed" - The text within the entry was changed
