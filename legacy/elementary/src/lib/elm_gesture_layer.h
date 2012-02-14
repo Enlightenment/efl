@@ -73,7 +73,7 @@ typedef enum
    ELM_GESTURE_N_DOUBLE_TAPS, /**< N fingers double-single taps */
    ELM_GESTURE_N_TRIPLE_TAPS, /**< N fingers triple-single taps */
 
-   ELM_GESTURE_MOMENTUM, /**< Reports momentum in the dircetion of move */
+   ELM_GESTURE_MOMENTUM, /**< Reports momentum in the direction of move */
 
    ELM_GESTURE_N_LINES, /**< N fingers line gesture */
    ELM_GESTURE_N_FLICKS, /**< N fingers flick gesture */
@@ -95,7 +95,7 @@ typedef enum
    ELM_GESTURE_STATE_START, /**< Gesture STARTed     */
    ELM_GESTURE_STATE_MOVE, /**< Gesture is ongoing  */
    ELM_GESTURE_STATE_END, /**< Gesture completed   */
-   ELM_GESTURE_STATE_ABORT /**< Onging gesture was ABORTed */
+   ELM_GESTURE_STATE_ABORT /**< Ongoing gesture was ABORTed */
 } Elm_Gesture_State;
 
 /**
@@ -280,7 +280,7 @@ EAPI void         elm_gesture_layer_zoom_step_set(Evas_Object *obj, double s);
  * Cancel step setting by setting to 0.0
  *
  * @param obj Pointer to gesture-layer.
- * @param s new roatate step value.
+ * @param s new rotate step value.
  *
  * @ingroup Elm_Gesture_Layer
  */

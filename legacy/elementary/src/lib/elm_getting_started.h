@@ -66,7 +66,7 @@
  * ./autogen.sh
  * @endverbatim
  *
- * This will generate Makefile.in's, the confgure script and everything else.
+ * This will generate Makefile.in's, the configure script and everything else.
  * After this it works like all normal autotools projects:
  * @verbatim
  * ./configure
@@ -157,7 +157,7 @@
  *    // add a box object - default is vertical. a box holds children in a row,
  *    // either horizontally or vertically. nothing more.
  *    box = elm_box_add(win);
- *    // make the box hotizontal
+ *    // make the box horizontal
  *    elm_box_horizontal_set(box, EINA_TRUE);
  *    // add object as a resize object for the window (controls window minimum
  *    // size as well as gets resized if window is resized)

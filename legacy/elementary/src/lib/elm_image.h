@@ -134,7 +134,7 @@ EAPI Eina_Bool        elm_image_smooth_get(const Evas_Object *obj);
  *
  * This is the real size of the image, not the size of the object.
  *
- * On error, neither w and h will be fileld with 0.
+ * On error, neither w and h will be filled with 0.
  *
  * @ingroup Image
  */
@@ -173,12 +173,12 @@ EAPI void             elm_image_no_scale_set(Evas_Object *obj, Eina_Bool no_scal
 EAPI Eina_Bool        elm_image_no_scale_get(const Evas_Object *obj);
 
 /**
- * Set if the object is (up/down) resizable.
+ * Set if the object is (up/down) resizeable.
  *
  * @param obj The image object
- * @param scale_up A bool to set if the object is resizable up. Default is
+ * @param scale_up A bool to set if the object is resizeable up. Default is
  * @c EINA_TRUE.
- * @param scale_down A bool to set if the object is resizable down. Default
+ * @param scale_down A bool to set if the object is resizeable down. Default
  * is @c EINA_TRUE.
  *
  * This function limits the image resize ability. If @p scale_up is set to
@@ -192,11 +192,11 @@ EAPI Eina_Bool        elm_image_no_scale_get(const Evas_Object *obj);
 EAPI void             elm_image_scale_set(Evas_Object *obj, Eina_Bool scale_up, Eina_Bool scale_down);
 
 /**
- * Get if the object is (up/down) resizable.
+ * Get if the object is (up/down) resizeable.
  *
  * @param obj The image object
- * @param scale_up A bool to set if the object is resizable up
- * @param scale_down A bool to set if the object is resizable down
+ * @param scale_up A bool to set if the object is resizeable up
+ * @param scale_down A bool to set if the object is resizeable down
  *
  * @see elm_image_scale_set()
  *

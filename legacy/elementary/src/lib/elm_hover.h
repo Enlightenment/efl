@@ -57,7 +57,7 @@
  *
  * All directions may have contents at the same time, except for
  * "smart". This is a special placement hint and its use case
- * independs of the calculations coming from
+ * depends of the calculations coming from
  * elm_hover_best_content_location_get(). Its use is for cases when
  * one desires only one hover content, but with a dynamic special
  * placement within the hover area. The content's geometry, whenever
@@ -82,7 +82,7 @@
  */
 typedef enum
 {
-   ELM_HOVER_AXIS_NONE, /**< ELM_HOVER_AXIS_NONE -- no prefered orientation */
+   ELM_HOVER_AXIS_NONE, /**< ELM_HOVER_AXIS_NONE -- no preferred orientation */
    ELM_HOVER_AXIS_HORIZONTAL, /**< ELM_HOVER_AXIS_HORIZONTAL -- horizontal */
    ELM_HOVER_AXIS_VERTICAL, /**< ELM_HOVER_AXIS_VERTICAL -- vertical */
    ELM_HOVER_AXIS_BOTH /**< ELM_HOVER_AXIS_BOTH -- both */
@@ -149,15 +149,15 @@ EAPI Evas_Object *elm_hover_parent_get(const Evas_Object *obj);
  * space.
  *
  * @p pref_axis may be one of
- * - @c ELM_HOVER_AXIS_NONE -- no prefered orientation
+ * - @c ELM_HOVER_AXIS_NONE -- no preferred orientation
  * - @c ELM_HOVER_AXIS_HORIZONTAL -- horizontal
  * - @c ELM_HOVER_AXIS_VERTICAL -- vertical
  * - @c ELM_HOVER_AXIS_BOTH -- both
  *
- * If ELM_HOVER_AXIS_HORIZONTAL is choosen the returned position will
- * nescessarily be along the horizontal axis("left" or "right"). If
- * ELM_HOVER_AXIS_VERTICAL is choosen the returned position will nescessarily
- * be along the vertical axis("top" or "bottom"). Chossing
+ * If ELM_HOVER_AXIS_HORIZONTAL is chosen the returned position will
+ * necessarily be along the horizontal axis("left" or "right"). If
+ * ELM_HOVER_AXIS_VERTICAL is chosen the returned position will necessarily
+ * be along the vertical axis("top" or "bottom"). Choosing
  * ELM_HOVER_AXIS_BOTH or ELM_HOVER_AXIS_NONE has the same effect and the
  * returned position may be in either axis.
  *

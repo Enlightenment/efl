@@ -294,12 +294,12 @@ EAPI void                  elm_icon_no_scale_set(Evas_Object *obj, Eina_Bool no_
 EAPI Eina_Bool             elm_icon_no_scale_get(const Evas_Object *obj);
 
 /**
- * Set if the object is (up/down) resizable.
+ * Set if the object is (up/down) resizeable.
  *
  * @param obj The icon object
- * @param scale_up A bool to set if the object is resizable up. Default is
+ * @param scale_up A bool to set if the object is resizeable up. Default is
  * @c EINA_TRUE.
- * @param scale_down A bool to set if the object is resizable down. Default
+ * @param scale_down A bool to set if the object is resizeable down. Default
  * is @c EINA_TRUE.
  *
  * This function limits the icon object resize ability. If @p scale_up is set to
@@ -313,11 +313,11 @@ EAPI Eina_Bool             elm_icon_no_scale_get(const Evas_Object *obj);
 EAPI void                  elm_icon_scale_set(Evas_Object *obj, Eina_Bool scale_up, Eina_Bool scale_down);
 
 /**
- * Get if the object is (up/down) resizable.
+ * Get if the object is (up/down) resizeable.
  *
  * @param obj The icon object
- * @param scale_up A bool to set if the object is resizable up
- * @param scale_down A bool to set if the object is resizable down
+ * @param scale_up A bool to set if the object is resizeable up
+ * @param scale_down A bool to set if the object is resizeable down
  *
  * @see elm_icon_scale_set()
  *
@@ -504,7 +504,7 @@ EAPI Eina_Bool             elm_icon_animated_get(const Evas_Object *obj);
  * @param play @c EINA_TRUE the object play animation images,
  * @c EINA_FALSE otherwise. Default is @c EINA_FALSE.
  *
- * To play elm icon's animation, set play to EINA_TURE.
+ * To play elm icon's animation, set play to EINA_TRUE.
  * For example, you make gif player using this set/get API and click event.
  * This literally lets you control current play or paused state. To have
  * this work with animated GIF files for example, you first, before
@@ -512,7 +512,7 @@ EAPI Eina_Bool             elm_icon_animated_get(const Evas_Object *obj);
  * at all on the icon.
  *
  * 1. Click event occurs
- * 2. Check play flag using elm_icon_animaged_play_get
+ * 2. Check play flag using elm_icon_animated_play_get
  * 3. If elm icon was playing, set play to EINA_FALSE.
  *    Then animation will be stopped and vice versa
  * @ingroup Icon

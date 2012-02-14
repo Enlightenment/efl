@@ -27,7 +27,7 @@ typedef enum _Elm_GLView_Mode
 typedef enum
 {
    ELM_GLVIEW_RESIZE_POLICY_RECREATE = 1, /**< Resize the internal surface along with the image */
-   ELM_GLVIEW_RESIZE_POLICY_SCALE = 2 /**< Only reize the internal image and not the surface */
+   ELM_GLVIEW_RESIZE_POLICY_SCALE = 2 /**< Only resize the internal image and not the surface */
 } Elm_GLView_Resize_Policy;
 
 typedef enum
