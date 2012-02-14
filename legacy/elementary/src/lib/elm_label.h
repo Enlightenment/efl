@@ -12,7 +12,7 @@
  * @li default - No animation
  * @li marker - Centers the text in the label and make it bold by default
  * @li slide_long - The entire text appears from the right of the screen and
- * slides until it disappears in the left of the screen(reappering on the
+ * slides until it disappears in the left of the screen(reappearing on the
  * right again).
  * @li slide_short - The text appears in the left of the label and slides to
  * the right to show the overflow. When all of the text has been shown the
@@ -165,7 +165,7 @@ EAPI void                        elm_label_background_color_set(Evas_Object *obj
  * will be shown at the end of the widget.
  *
  * @warning This doesn't work with slide(elm_label_slide_set()) or if the
- * choosen wrap method was ELM_WRAP_WORD.
+ * chosen wrap method was ELM_WRAP_WORD.
  */
 EAPI void                        elm_label_ellipsis_set(Evas_Object *obj, Eina_Bool ellipsis);
 

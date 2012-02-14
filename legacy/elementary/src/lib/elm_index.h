@@ -64,7 +64,7 @@ EAPI Evas_Object          *elm_index_add(Evas_Object *parent);
 
 /**
  * Set whether a given index widget is or not visible,
- * programatically.
+ * programmatically.
  *
  * @param obj The index object
  * @param active @c EINA_TRUE to show it, @c EINA_FALSE to hide it

@@ -8,7 +8,7 @@
  * This holds one content object and uses an Evas Map of transformation
  * points to be later used with this content. So the content will be
  * moved, resized, etc as a single image. So it will improve performance
- * when you have a complex interafce, with a lot of elements, and will
+ * when you have a complex interface, with a lot of elements, and will
  * need to resize or move it frequently (the content object and its
  * children).
  *
@@ -56,7 +56,7 @@ EAPI Evas_Object                 *elm_mapbuf_add(Evas_Object *parent);
  *
  * Also, when enabled, alpha and smooth states will be used, so if the
  * content isn't solid, alpha should be enabled, for example, otherwise
- * a black retangle will fill the content.
+ * a black rectangle will fill the content.
  *
  * When disabled, the stored map will be freed and geometry prior to
  * enabling the map will be restored.

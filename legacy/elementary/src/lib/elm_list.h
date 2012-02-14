@@ -70,7 +70,7 @@
  *
  * @note Default value is #ELM_LIST_SCROLL.
  *
- * Values <b> don't </b> work as bitmask, only one can be choosen.
+ * Values <b> don't </b> work as bitmask, only one can be chosen.
  *
  * @see elm_list_mode_set()
  * @see elm_list_mode_get()
@@ -81,7 +81,7 @@ typedef enum
 {
    ELM_LIST_COMPRESS = 0, /**< Won't set any of its size hints to inform how a possible container should resize it. Then, if it's not created as a "resize object", it might end with zero dimensions. The list will respect the container's geometry and, if any of its items won't fit into its transverse axis, one won't be able to scroll it in that direction. */
    ELM_LIST_SCROLL, /**< Default value. Won't set any of its size hints to inform how a possible container should resize it. Then, if it's not created as a "resize object", it might end with zero dimensions. The list will respect the container's geometry and, if any of its items won't fit into its transverse axis, one will be able to scroll it in that direction (large items will get cropped). */
-   ELM_LIST_LIMIT, /**< Set a minimun size hint on the list object, so that containers may respect it (and resize itself to fit the child properly). More specifically, a minimum size hint will be set for its transverse axis, so that the @b largest item in that direction fits well. Can have effects bounded by setting the list object's maximum size hints. */
+   ELM_LIST_LIMIT, /**< Set a minimum size hint on the list object, so that containers may respect it (and resize itself to fit the child properly). More specifically, a minimum size hint will be set for its transverse axis, so that the @b largest item in that direction fits well. Can have effects bounded by setting the list object's maximum size hints. */
    ELM_LIST_EXPAND, /**< Besides setting a minimum size on the transverse axis, just like the previous mode, will set a minimum size on the longitudinal axis too, trying to reserve space to all its children to be visible at a time. Can have effects bounded by setting the list object's maximum size hints. */
    ELM_LIST_LAST /**< Indicates error if returned by elm_list_mode_get() */
 } Elm_List_Mode;
@@ -235,7 +235,7 @@ EAPI Eina_Bool                    elm_list_horizontal_get(const Evas_Object *obj
  * this function (if multi-select is enabled it will unselect the item).
  *
  * If always select is enabled, it will call the callback function
- * everytime a item is pressed, so it will call when the item is selected,
+ * every time a item is pressed, so it will call when the item is selected,
  * and again when a selected item is pressed.
  *
  * @see elm_list_always_select_mode_get()
@@ -351,7 +351,7 @@ EAPI void                         elm_list_scroller_policy_get(const Evas_Object
  * Associated @p data can be properly freed when item is deleted if a
  * callback function is set with elm_widget_item_del_cb_set().
  *
- * If a function is passed as argument, it will be called everytime this item
+ * If a function is passed as argument, it will be called every time this item
  * is selected, i.e., the user clicks over an unselected item.
  * If always select is enabled it will call this function every time
  * user clicks over an item (already selected or not).
@@ -402,7 +402,7 @@ EAPI Elm_Object_Item               *elm_list_item_append(Evas_Object *obj, const
  * Associated @p data can be properly freed when item is deleted if a
  * callback function is set with elm_widget_item_del_cb_set().
  *
- * If a function is passed as argument, it will be called everytime this item
+ * If a function is passed as argument, it will be called every time this item
  * is selected, i.e., the user clicks over an unselected item.
  * If always select is enabled it will call this function every time
  * user clicks over an item (already selected or not).
@@ -444,7 +444,7 @@ EAPI Elm_Object_Item               *elm_list_item_prepend(Evas_Object *obj, cons
  * Associated @p data can be properly freed when item is deleted if a
  * callback function is set with elm_widget_item_del_cb_set().
  *
- * If a function is passed as argument, it will be called everytime this item
+ * If a function is passed as argument, it will be called every time this item
  * is selected, i.e., the user clicks over an unselected item.
  * If always select is enabled it will call this function every time
  * user clicks over an item (already selected or not).
@@ -486,7 +486,7 @@ EAPI Elm_Object_Item               *elm_list_item_insert_before(Evas_Object *obj
  * Associated @p data can be properly freed when item is deleted if a
  * callback function is set with elm_widget_item_del_cb_set().
  *
- * If a function is passed as argument, it will be called everytime this item
+ * If a function is passed as argument, it will be called every time this item
  * is selected, i.e., the user clicks over an unselected item.
  * If always select is enabled it will call this function every time
  * user clicks over an item (already selected or not).
@@ -536,7 +536,7 @@ EAPI Elm_Object_Item               *elm_list_item_insert_after(Evas_Object *obj,
  * Associated @p data can be properly freed when item is deleted if a
  * callback function is set with elm_widget_item_del_cb_set().
  *
- * If a function is passed as argument, it will be called everytime this item
+ * If a function is passed as argument, it will be called every time this item
  * is selected, i.e., the user clicks over an unselected item.
  * If always select is enabled it will call this function every time
  * user clicks over an item (already selected or not).
@@ -624,9 +624,9 @@ EAPI const Eina_List             *elm_list_selected_items_get(const Evas_Object 
  * This sets the selected state of the given item @p it.
  * @c EINA_TRUE for selected, @c EINA_FALSE for not selected.
  *
- * If a new item is selected the previosly selected will be unselected,
+ * If a new item is selected the previously selected will be unselected,
  * unless multiple selection is enabled with elm_list_multi_select_set().
- * Previoulsy selected item can be get with function
+ * Previously selected item can be get with function
  * elm_list_selected_item_get().
  *
  * Selected items will be highlighted.
@@ -690,7 +690,7 @@ EAPI Eina_Bool                    elm_list_item_separator_get(const Elm_Object_I
  * @param it The list item to be shown.
  *
  * It won't animate list until item is visible. If such behavior is wanted,
- * use elm_list_bring_in() intead.
+ * use elm_list_bring_in() instead.
  *
  * @ingroup List
  */

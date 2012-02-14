@@ -69,7 +69,7 @@
  *
  * Default value is #ELM_MAP_ZOOM_MODE_MANUAL.
  *
- * Values <b> don't </b> work as bitmask, only one can be choosen.
+ * Values <b> don't </b> work as bitmask, only one can be chosen.
  *
  * @note Valid sizes are 2^zoom, consequently the map may be smaller
  * than the scroller view.
@@ -126,7 +126,7 @@ typedef enum
 } Elm_Map_Route_Type;
 
 /**
- * Set the routing method, what should be priorized, time or distance.
+ * Set the routing method, what should be prioritized, time or distance.
  *
  * @see elm_map_route_add()
  *
@@ -134,8 +134,8 @@ typedef enum
  */
 typedef enum
 {
-   ELM_MAP_ROUTE_METHOD_FASTEST, /**< Route should priorize time. */
-   ELM_MAP_ROUTE_METHOD_SHORTEST, /**< Route should priorize distance. */
+   ELM_MAP_ROUTE_METHOD_FASTEST, /**< Route should prioritize time. */
+   ELM_MAP_ROUTE_METHOD_SHORTEST, /**< Route should prioritized distance. */
    ELM_MAP_ROUTE_METHOD_LAST
 } Elm_Map_Route_Method;
 
@@ -309,7 +309,7 @@ EAPI void                  elm_map_geo_region_bring_in(Evas_Object *obj, double 
  * @param lat Latitude to center at.
  *
  * This causes map to @b redraw its viewport's contents to the
- * region contining the given @p lat and @p lon, that will be moved to the
+ * region containing the given @p lat and @p lon, that will be moved to the
  * center of the map.
  *
  * @see elm_map_geo_region_bring_in() for a function to move with animation.
@@ -500,7 +500,7 @@ EAPI Elm_Map_Name         *elm_map_utils_convert_name_into_coord(const Evas_Obje
  * @param obj The map object.
  * @param x   horizontal coordinate of the point to convert.
  * @param y   vertical coordinate of the point to convert.
- * @param lon A poniter to the longitude.
+ * @param lon A pointer to the longitude.
  * @param lat A pointer to the latitude.
  *
  * This gets longitude and latitude from canvas x, y coordinates. The canvas
@@ -521,8 +521,8 @@ EAPI void                  elm_map_canvas_to_geo_convert(const Evas_Object *obj,
  * @param obj The map object.
  * @param lon The longitude of the marker.
  * @param lat The latitude of the marker.
- * @param clas The class, to use when marker @b isn't grouped to others.
- * @param clas_group The class group, to use when marker is grouped to others
+ * @param class The class, to use when marker @b isn't grouped to others.
+ * @param class_group The class group, to use when marker is grouped to others
  * @param data The data passed to the callbacks.
  *
  * @return The created marker or @c NULL upon failure.
@@ -630,7 +630,7 @@ EAPI void                  elm_map_marker_bring_in(Elm_Map_Marker *marker);
  * @param marker The marker to center at.
  *
  * This causes map to @b redraw its viewport's contents to the
- * region contining the given @p marker's coordinates, that will be
+ * region containing the given @p marker's coordinates, that will be
  * moved to the center of the map.
  *
  * @see elm_map_marker_bring_in() for a function to move with animation.
@@ -663,7 +663,7 @@ EAPI void                  elm_map_markers_list_show(Eina_List *markers);
 /**
  * Get the Evas object returned by the ElmMapMarkerGetFunc callback
  *
- * @param marker The marker wich content should be returned.
+ * @param marker The marker which content should be returned.
  * @return Return the evas object if it exists, else @c NULL.
  *
  * To set callback function #ElmMapMarkerGetFunc for the marker class,
@@ -759,7 +759,7 @@ EAPI Elm_Map_Group_Class  *elm_map_group_class_new(Evas_Object *obj);
 /**
  * Set the marker's style of a group class.
  *
- * @param clas The group class.
+ * @param class The group class.
  * @param style The style to be used by markers.
  *
  * Each marker must be associated to a group class, and will use the style
@@ -780,7 +780,7 @@ EAPI void                  elm_map_group_class_style_set(Elm_Map_Group_Class *cl
 /**
  * Set the icon callback function of a group class.
  *
- * @param clas The group class.
+ * @param class The group class.
  * @param icon_get The callback function that will return the icon.
  *
  * Each marker must be associated to a group class, and it can display a
@@ -796,7 +796,7 @@ EAPI void                  elm_map_group_class_icon_cb_set(Elm_Map_Group_Class *
 /**
  * Set the data associated to the group class.
  *
- * @param clas The group class.
+ * @param class The group class.
  * @param data The new user data.
  *
  * This data will be passed for callback functions, like icon get callback,

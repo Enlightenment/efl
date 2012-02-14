@@ -72,7 +72,7 @@
  * sent to the Layout theme (with elm_object_signal_emit()) and the theme
  * handled the signal by changing the box padding, or align, or both. Using
  * the Elementary @ref Box widget is not necessarily harder or easier, it
- * just depends on the circunstances and requirements.
+ * just depends on the circumstances and requirements.
  *
  * The Layout Box can be used through the @c elm_layout_box_* set of
  * functions.
@@ -181,7 +181,7 @@ EAPI Eina_Bool                    elm_layout_file_set(Evas_Object *obj, const ch
  * Set the edje group from the elementary theme that will be used as layout
  *
  * @param obj The layout object
- * @param clas the clas of the group
+ * @param clas the class of the group
  * @param group the group
  * @param style the style to used
  *
@@ -586,7 +586,7 @@ EAPI Eina_Bool                    elm_layout_part_cursor_engine_only_get(const E
 
 /**
  * @def elm_layout_icon_get
- * Convienience macro to get the icon object from a layout that follows the
+ * Convenience macro to get the icon object from a layout that follows the
  * Elementary naming convention for its parts.
  *
  * @ingroup Layout
@@ -596,7 +596,7 @@ EAPI Eina_Bool                    elm_layout_part_cursor_engine_only_get(const E
 
 /**
  * @def elm_layout_end_set
- * Convienience macro to set the end object in a layout that follows the
+ * Convenience macro to set the end object in a layout that follows the
  * Elementary naming convention for its parts.
  *
  * @ingroup Layout
@@ -612,7 +612,7 @@ EAPI Eina_Bool                    elm_layout_part_cursor_engine_only_get(const E
 
 /**
  * @def elm_layout_end_get
- * Convienience macro to get the end object in a layout that follows the
+ * Convenience macro to get the end object in a layout that follows the
  * Elementary naming convention for its parts.
  *
  * @ingroup Layout
