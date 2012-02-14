@@ -71,7 +71,7 @@ EAPI void      elm_cache_flush_interval_all_set(int size);
  * or not. When cache flushing is enabled, elementary will regularly
  * (see elm_cache_flush_interval_get() ) flush caches and dump data out of
  * memory and allow usage to re-seed caches and data in memory where it
- * can do so. An idle application will thus minimise its memory usage as
+ * can do so. An idle application will thus minimize its memory usage as
  * data will be freed from memory and not be re-loaded as it is idle and
  * not rendering or doing anything graphically right now.
  *

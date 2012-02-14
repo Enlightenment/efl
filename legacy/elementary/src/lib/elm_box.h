@@ -299,7 +299,7 @@ EAPI void                elm_box_padding_set(Evas_Object *obj, Evas_Coord horizo
 EAPI void                elm_box_padding_get(const Evas_Object *obj, Evas_Coord *horizontal, Evas_Coord *vertical);
 
 /**
- * Set the alignment of the whole bouding box of contents.
+ * Set the alignment of the whole bounding box of contents.
  *
  * Sets how the bounding box containing all the elements of the box, after
  * their sizes and position has been calculated, will be aligned within
@@ -312,7 +312,7 @@ EAPI void                elm_box_padding_get(const Evas_Object *obj, Evas_Coord 
 EAPI void                elm_box_align_set(Evas_Object *obj, double horizontal, double vertical);
 
 /**
- * Get the alignment of the whole bouding box of contents.
+ * Get the alignment of the whole bounding box of contents.
  *
  * @param obj The box object
  * @param horizontal The horizontal alignment of elements

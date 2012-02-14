@@ -78,7 +78,7 @@ EAPI void        elm_app_info_set(void *mainfunc, const char *dom, const char *c
 
 /**
  * Provide information on the @b fallback application's binaries
- * directory, in scenarios where they get overriden by
+ * directory, in scenarios where they get overridden by
  * elm_app_info_set().
  *
  * @param dir The path to the default binaries directory (compile time
@@ -96,7 +96,7 @@ EAPI void        elm_app_compile_bin_dir_set(const char *dir);
 
 /**
  * Provide information on the @b fallback application's libraries
- * directory, on scenarios where they get overriden by
+ * directory, on scenarios where they get overridden by
  * elm_app_info_set().
  *
  * @param dir The path to the default libraries directory (compile
@@ -114,7 +114,7 @@ EAPI void        elm_app_compile_lib_dir_set(const char *dir);
 
 /**
  * Provide information on the @b fallback application's data
- * directory, on scenarios where they get overriden by
+ * directory, on scenarios where they get overridden by
  * elm_app_info_set().
  *
  * @param dir The path to the default data directory (compile time
@@ -132,7 +132,7 @@ EAPI void        elm_app_compile_data_dir_set(const char *dir);
 
 /**
  * Provide information on the @b fallback application's locale
- * directory, on scenarios where they get overriden by
+ * directory, on scenarios where they get overridden by
  * elm_app_info_set().
  *
  * @param dir The path to the default locale directory (compile time

@@ -18,7 +18,7 @@
  * corner is "top_left" or "bottom_left" and is right aligned to the frame
  * otherwise.
  * @li The @p info is a text which appears to the right of the label. Info's
- * font is of a ligther color than label.
+ * font is of a lighter color than label.
  * @li The @p content is an evas object that is shown inside the frame.
  *
  * The position of the arrow, icon, label and info depends on which corner is
@@ -46,7 +46,7 @@
  * @li elm_object_part_content_get
  * @li elm_object_part_content_unset
  *
- * For an example of using a buble see @ref bubble_01_example_page "this".
+ * For an example of using a bubble see @ref bubble_01_example_page "this".
  *
  * @{
  */
