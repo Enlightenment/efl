@@ -133,7 +133,7 @@ EAPI int         elm_cursor_engine_only_get(void);
  *
  * @param engine_only If 1 only engine cursors will be enabled, if 0 will
  * look for them on theme before.
- * @return EINA_TRUE if value is valid and setted (0 or 1)
+ * @return EINA_TRUE if value is valid and set (0 or 1)
  * @ingroup Cursors
  */
 EAPI Eina_Bool   elm_cursor_engine_only_set(int engine_only);

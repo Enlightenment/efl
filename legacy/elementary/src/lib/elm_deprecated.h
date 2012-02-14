@@ -371,7 +371,7 @@ EINA_DEPRECATED EAPI Evas_Object *elm_ctxpopup_item_icon_get(const Elm_Object_It
  *
  * Once the icon object is set, a previously set one will be deleted.
  * @warning Setting the same icon for two items will cause the icon to
- * dissapear from the first item.
+ * disappear from the first item.
  *
  * @see elm_ctxpopup_item_append()
  *
@@ -386,7 +386,7 @@ EINA_DEPRECATED EAPI void         elm_ctxpopup_item_icon_set(Elm_Object_Item *it
  *
  * @param it Ctxpopup item
  * @return label string or @c NULL, if the item does not have label or an
- * error occured
+ * error occurred
  *
  * @see elm_ctxpopup_item_append()
  * @see elm_ctxpopup_item_label_set()
@@ -415,7 +415,7 @@ EINA_DEPRECATED EAPI void         elm_ctxpopup_item_label_set(Elm_Object_Item *i
  * @param obj Ctxpopup object
  * @param content Content to be swallowed
  *
- * If the content object is already set, a previous one will bedeleted. If
+ * If the content object is already set, a previous one will be deleted. If
  * you want to keep that old content object, use the
  * elm_ctxpopup_content_unset() function.
  *
@@ -602,7 +602,7 @@ EINA_DEPRECATED EAPI Evas_Object                *elm_fileselector_entry_button_i
  *
  * All directions may have contents at the same time, except for
  * "smart". This is a special placement hint and its use case
- * independs of the calculations coming from
+ * depends of the calculations coming from
  * elm_hover_best_content_location_get(). Its use is for cases when
  * one desires only one hover content, but with a dynamic special
  * placement within the hover area. The content's geometry, whenever
@@ -1359,7 +1359,7 @@ EINA_DEPRECATED EAPI void                  *elm_diskselector_item_data_get(const
  *
  * Once the icon object is set, a previously set one will be deleted.
  * @warning Setting the same icon for two items will cause the icon to
- * dissapear from the first item.
+ * disappear from the first item.
  *
  * If an icon was passed as argument on item creation, with function
  * elm_diskselector_item_append(), it will be already
@@ -1406,7 +1406,7 @@ EAPI Evas_Object           *elm_diskselector_item_icon_get(const Elm_Object_Item
  *
  * An item with label "January" would be displayed on side position as
  * "Jan" if max length is set to 3 with function
- * elm_diskselector_side_label_lenght_set(), or "Janu", if this property
+ * elm_diskselector_side_label_length_set(), or "Janu", if this property
  * is set to 4.
  *
  * When this @p item is selected, the entire label will be displayed,
@@ -1419,7 +1419,7 @@ EAPI Evas_Object           *elm_diskselector_item_icon_get(const Elm_Object_Item
  * elm_diskselector_item_append(), it will be already
  * displayed by the item.
  *
- * @see elm_diskselector_side_label_lenght_set()
+ * @see elm_diskselector_side_label_length_set()
  * @see elm_diskselector_item_label_get()
  * @see elm_diskselector_item_append()
  *
@@ -1766,7 +1766,7 @@ EINA_DEPRECATED EAPI void         elm_frame_label_set(Evas_Object *obj, const ch
  *
  * @param obj The frame object
  *
- * @return The label of this frame objet or NULL if unable to get frame
+ * @return The label of this frame object or NULL if unable to get frame
  *
  * @deprecated use elm_object_text_get() instead.
  */
@@ -2108,7 +2108,7 @@ EINA_DEPRECATED EAPI const char  *elm_layout_text_get(const Evas_Object *obj, co
 
 /**
  * @def elm_layout_label_set
- * Convienience macro to set the label in a layout that follows the
+ * Convenience macro to set the label in a layout that follows the
  * Elementary naming convention for its parts.
  *
  * @ingroup Layout
@@ -2187,7 +2187,7 @@ EINA_DEPRECATED EAPI Evas_Object *elm_mapbuf_content_unset(Evas_Object *obj);
  * @param it The menu item object.
  * @param label The label to set for @p item
  *
- * @warning Don't use this funcion on items created with
+ * @warning Don't use this function on items created with
  * elm_menu_item_add_object() or elm_menu_item_separator_add().
  *
  * @deprecated Use elm_object_item_text_set() instead
@@ -3292,9 +3292,9 @@ EINA_DEPRECATED EAPI void                         elm_toolbar_item_cursor_unset(
  * cursor decorations <b>defined in a theme file</b>, which can have,
  * given a cursor name/type, <b>alternate styles</b> on it. It
  * works analogously as elm_object_cursor_style_set(), but here
- * applyed only to toolbar item objects.
+ * applies only to toolbar item objects.
  *
- * @warning Before you set a cursor style you should have definen a
+ * @warning Before you set a cursor style you should have defined a
  *       custom cursor previously on the item, with
  *       elm_toolbar_item_cursor_set()
  *
@@ -3415,7 +3415,7 @@ EINA_DEPRECATED EAPI void              elm_segment_control_item_label_set(Elm_Ob
  *
  * Once the icon object is set, a previously set one will be deleted.
  * @warning Setting the same icon for two items will cause the icon to
- * dissapear from the first item.
+ * disappear from the first item.
  *
  * If an icon was passed as argument on item creation, with function
  * elm_segment_control_item_add(), it will be already
@@ -3612,7 +3612,7 @@ EINA_DEPRECATED EAPI Evas_Object                 *elm_list_item_icon_get(const E
  *
  * Once the icon object is set, a previously set one will be deleted.
  * @warning Setting the same icon for two items will cause the icon to
- * dissapear from the first item.
+ * disappear from the first item.
  *
  * If an icon was passed as argument on item creation, with function
  * elm_list_item_append() or similar, it will be already
@@ -3658,7 +3658,7 @@ EINA_DEPRECATED EAPI Evas_Object                 *elm_list_item_end_get(const El
  *
  * Once the icon object is set, a previously set one will be deleted.
  * @warning Setting the same icon for two items will cause the icon to
- * dissapear from the first item.
+ * disappear from the first item.
  *
  * If an icon was passed as argument on item creation, with function
  * elm_list_item_append() or similar, it will be already
@@ -3735,7 +3735,7 @@ EINA_DEPRECATED EAPI void                         elm_list_item_tooltip_text_set
  * @param disable If EINA_TRUE, size restrictions are disabled
  * @return EINA_FALSE on failure, EINA_TRUE on success
  *
- * This function allows a tooltip to expand beyond its parant window's canvas.
+ * This function allows a tooltip to expand beyond its parent window's canvas.
  * It will instead be limited only by the size of the display.
  *
  * @deprecated Use elm_object_item_tooltip_window_mode_set() instead
@@ -3749,7 +3749,7 @@ EINA_DEPRECATED EAPI Eina_Bool                    elm_list_item_tooltip_window_m
  * @return If EINA_TRUE, size restrictions are disabled
  *
  * This function returns whether a tooltip is allowed to expand beyond
- * its parant window's canvas.
+ * its parent window's canvas.
  * It will instead be limited only by the size of the display.
  *
  * @deprecated Use elm_object_item_tooltip_window_mode_get() instead
@@ -3871,7 +3871,7 @@ EINA_DEPRECATED EAPI void                         elm_list_item_cursor_set(Elm_O
  * @see elm_list_item_cursor_set()
  * @see elm_list_item_cursor_unset()
  *
- * @deprecated Please use elm_object_item_cursor_get() insteas
+ * @deprecated Please use elm_object_item_cursor_get() instead
  * @ingroup List
  */
 EINA_DEPRECATED EAPI const char                  *elm_list_item_cursor_get(const Elm_Object_Item *it);
@@ -3906,9 +3906,9 @@ EINA_DEPRECATED EAPI void                         elm_list_item_cursor_unset(Elm
  * cursor decorations <b>defined in a theme file</b>, which can have,
  * given a cursor name/type, <b>alternate styles</b> on it. It
  * works analogously as elm_object_cursor_style_set(), but here
- * applyed only to list item objects.
+ * applies only to list item objects.
  *
- * @warning Before you set a cursor style you should have definen a
+ * @warning Before you set a cursor style you should have defined a
  *       custom cursor previously on the item, with
  *       elm_list_item_cursor_set()
  *
@@ -3997,7 +3997,7 @@ EINA_DEPRECATED EAPI void                         elm_list_item_del(Elm_Object_I
  * @param shrink_mode Toolbar's items display behavior.
  *
  * The toolbar won't scroll if #ELM_TOOLBAR_SHRINK_NONE,
- * but will enforce a minimun size so all the items will fit, won't scroll
+ * but will enforce a minimum size so all the items will fit, won't scroll
  * and won't show the items that don't fit if #ELM_TOOLBAR_SHRINK_HIDE,
  * will scroll if #ELM_TOOLBAR_SHRINK_SCROLL, and will create a button to
  * pop up excess elements with #ELM_TOOLBAR_SHRINK_MENU.
@@ -4108,7 +4108,7 @@ EINA_DEPRECATED EAPI Evas_Object       *elm_entry_end_unset(Evas_Object *obj);
  * @param y vertical coordinate of the point to rotate.
  * @param cx rotation's center horizontal position.
  * @param cy rotation's center vertical position.
- * @param degree amount of degrees from 0.0 to 360.0 to rotate arount Z axis.
+ * @param degree amount of degrees from 0.0 to 360.0 to rotate around Z axis.
  * @param xx Pointer where to store rotated x.
  * @param yy Pointer where to store rotated y.
  *

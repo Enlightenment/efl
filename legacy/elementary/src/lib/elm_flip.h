@@ -129,7 +129,7 @@ EAPI Evas_Object         *elm_flip_content_back_unset(Evas_Object *obj);
 /**
  * @brief Get flip front visibility state
  *
- * @param obj The flip objct
+ * @param obj The flip object
  * @return EINA_TRUE if front front is showing, EINA_FALSE if the back is
  * showing.
  */
@@ -154,7 +154,7 @@ EAPI void                 elm_flip_perspective_set(Evas_Object *obj, Evas_Coord 
  * @param mode The mode type
  *
  * Flips the front and back contents using the @p mode animation. This
- * efectively hides the currently visible content and shows the hidden one.
+ * effectively hides the currently visible content and shows the hidden one.
  *
  * There a number of possible animations to use for the flipping:
  * @li ELM_FLIP_ROTATE_X_CENTER_AXIS - Rotate the currently visible content
@@ -205,10 +205,10 @@ EAPI void                 elm_flip_go(Evas_Object *obj, Elm_Flip_Mode mode);
  * drag a side of the flip to reveal the back page and cause it to flip).
  * By default a flip is not interactive. You may also need to set which
  * sides of the flip are "active" for flipping and how much space they use
- * (a minimum of a finger size) with elm_flip_interacton_direction_enabled_set()
- * and elm_flip_interacton_direction_hitsize_set()
+ * (a minimum of a finger size) with elm_flip_interaction_direction_enabled_set()
+ * and elm_flip_interaction_direction_hitsize_set()
  *
- * The four avilable mode of interaction are:
+ * The four available mode of interaction are:
  * @li ELM_FLIP_INTERACTION_NONE - No interaction is allowed
  * @li ELM_FLIP_INTERACTION_ROTATE - Interaction will cause rotate animation
  * @li ELM_FLIP_INTERACTION_CUBE - Interaction will cause cube animation
@@ -216,7 +216,7 @@ EAPI void                 elm_flip_go(Evas_Object *obj, Elm_Flip_Mode mode);
  *
  * @note ELM_FLIP_INTERACTION_ROTATE won't cause
  * ELM_FLIP_ROTATE_XZ_CENTER_AXIS or ELM_FLIP_ROTATE_YZ_CENTER_AXIS to
- * happen, those can only be acheived with elm_flip_go();
+ * happen, those can only be achieved with elm_flip_go();
  */
 EAPI void                 elm_flip_interaction_set(Evas_Object *obj, Elm_Flip_Interaction mode);
 
@@ -252,7 +252,7 @@ EAPI void                 elm_flip_interacton_direction_enabled_set(Evas_Object 
  * @param dir The direction to check
  * @return If that direction is enabled or not
  *
- * Gets the enabled state set by elm_flip_interacton_direction_enabled_set()
+ * Gets the enabled state set by elm_flip_interaction_direction_enabled_set()
  *
  * @see elm_flip_interaction_set()
  */
@@ -281,8 +281,8 @@ EAPI void                 elm_flip_interacton_direction_hitsize_set(Evas_Object 
  * @param dir The direction to check
  * @return The size set for that direction
  *
- * Returns the amount os sensitive area set by
- * elm_flip_interacton_direction_hitsize_set().
+ * Returns the amount of sensitive area set by
+ * elm_flip_interaction_direction_hitsize_set().
  */
 EAPI double               elm_flip_interacton_direction_hitsize_get(Evas_Object *obj, Elm_Flip_Direction dir);
 

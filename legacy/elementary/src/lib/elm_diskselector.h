@@ -18,7 +18,7 @@
  * Available styles for it:
  * - @c "default"
  *
- * Default contents parts of the diskseletor items that you can use for are:
+ * Default contents parts of the diskselector items that you can use for are:
  * @li "icon" - An icon in the diskselector item
  *
  * Default text parts of the diskselector items that you can use for are:
@@ -116,7 +116,7 @@ EAPI int                    elm_diskselector_side_label_length_get(const Evas_Ob
  *
  * Default side label max length is 3.
  *
- * This property will be applyed over all items, included before or
+ * This property will be applied over all items, included before or
  * later this function call.
  *
  * @ingroup Diskselector
@@ -129,7 +129,7 @@ EAPI void                   elm_diskselector_side_label_length_set(Evas_Object *
  * @param obj The diskselector object.
  * @param num The number of items the diskselector will display.
  *
- * Default value is 3, and also it's the minimun. If @p num is less
+ * Default value is 3, and also it's the minimum. If @p num is less
  * than 3, it will be set to 3.
  *
  * Also, it can be set on theme, using data item @c display_item_num
@@ -276,7 +276,7 @@ EAPI const Eina_List       *elm_diskselector_items_get(const Evas_Object *obj);
  * Associated @p data can be properly freed when item is deleted if a
  * callback function is set with elm_object_item_del_cb_set().
  *
- * If a function is passed as argument, it will be called everytime this item
+ * If a function is passed as argument, it will be called every time this item
  * is selected, i.e., the user stops the diskselector with this
  * item on center position. If such function isn't needed, just passing
  * @c NULL as @p func is enough. The same should be done for @p data.
@@ -309,7 +309,7 @@ EAPI Elm_Object_Item *elm_diskselector_item_append(Evas_Object *obj, const char 
  * diskselector will be selected.
  *
  * The selected item always will be centered on diskselector, with
- * full label displayed, i.e., max lenght set to side labels won't
+ * full label displayed, i.e., max length set to side labels won't
  * apply on the selected item. More details on
  * elm_diskselector_side_label_length_set().
  *
@@ -326,8 +326,8 @@ EAPI Elm_Object_Item *elm_diskselector_selected_item_get(const Evas_Object *obj)
  * This sets the selected state of the given item @p it.
  * @c EINA_TRUE for selected, @c EINA_FALSE for not selected.
  *
- * If a new item is selected the previosly selected will be unselected.
- * Previoulsy selected item can be get with function
+ * If a new item is selected the previously selected will be unselected.
+ * Previously selected item can be get with function
  * elm_diskselector_selected_item_get().
  *
  * If the item @p it is unselected, the first item of diskselector will

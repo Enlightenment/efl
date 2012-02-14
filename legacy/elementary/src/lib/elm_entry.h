@@ -54,7 +54,7 @@ typedef enum
  *
  * An entry is a convenience widget which shows a box that the user can
  * enter text into. Entries by default don't scroll, so they grow to
- * accomodate the entire text, resizing the parent window as needed. This
+ * accommodate the entire text, resizing the parent window as needed. This
  * can be changed with the elm_entry_scrollable_set() function.
  *
  * They can also be single line or multi line (the default) and when set
@@ -79,12 +79,12 @@ typedef enum
  * enclosed text.
  * @li \<b\>...\</b\>: Sets the @b bold style for the enclosed text.
  * @li \<link\>...\</link\>: Underlines the enclosed text.
- * @li \<hilight\>...\</hilight\>: Hilights the enclosed text.
+ * @li \<hilight\>...\</hilight\>: Highlights the enclosed text.
  *
  * @section entry-special Special markups
  *
  * Besides those used to format text, entries support two special markup
- * tags used to insert clickable portions of text or items inlined within
+ * tags used to insert click-able portions of text or items inlined within
  * the text.
  *
  * @subsection entry-anchors Anchors
@@ -129,7 +129,7 @@ typedef enum
  * @li relsize: Size is adjusted for the item to fit within the current
  * line height.
  *
- * Besides their size, items are specificed a @c vsize value that affects
+ * Besides their size, items are specified a @c vsize value that affects
  * how their final size and position are calculated. The possible values
  * are:
  * @li ascent: Item will be placed within the line's baseline and its
@@ -211,7 +211,7 @@ typedef enum
  *
  * @section entry-files Loading and saving files
  *
- * Entries have convinience functions to load text from a file and save
+ * Entries have convenience functions to load text from a file and save
  * changes back to it after a short delay. The automatic saving is enabled
  * by default, but can be disabled with elm_entry_autosave_set() and files
  * can be loaded directly as plain text or have any markup in them
@@ -862,7 +862,7 @@ EAPI void               elm_entry_item_provider_remove(Evas_Object *obj, Evas_Ob
 EAPI void               elm_entry_markup_filter_append(Evas_Object *obj, Elm_Entry_Filter_Cb func, void *data);
 
 /**
- * Prepend a markup filter function for text insdrted in the entry
+ * Prepend a markup filter function for text inserted in the entry
  *
  * Prepend the given callback to the list. See elm_entry_markup_filter_append()
  * for more information
@@ -1028,7 +1028,7 @@ EAPI void               elm_entry_icon_visible_set(Evas_Object *obj, Eina_Bool s
 EAPI void               elm_entry_end_visible_set(Evas_Object *obj, Eina_Bool setting);
 
 /**
- * This sets the scrolled entry's scrollbar policy (ie. enabling/disabling
+ * This sets the scrolled entry's scrollbar policy (i.e. enabling/disabling
  * them).
  *
  * Setting an entry to single-line mode with elm_entry_single_line_set()
@@ -1116,7 +1116,7 @@ EAPI Eina_Bool              elm_entry_input_panel_enabled_get(Evas_Object *obj);
  * Show the input panel (virtual keyboard) based on the input panel property of entry such as layout, autocapital types, and so on.
  *
  * Note that input panel is shown or hidden automatically according to the focus state of entry widget.
- * This API can be used in the case of manually controling by using elm_entry_input_panel_enabled_set(en, EINA_FALSE)
+ * This API can be used in the case of manually controlling by using elm_entry_input_panel_enabled_set(en, EINA_FALSE)
  *
  * @param obj The entry object
  */
@@ -1126,7 +1126,7 @@ EAPI void                   elm_entry_input_panel_show(Evas_Object *obj);
  * Hide the input panel (virtual keyboard).
  *
  * Note that input panel is shown or hidden automatically according to the focus state of entry widget.
- * This API can be used in the case of manually controling by using elm_entry_input_panel_enabled_set(en, EINA_FALSE)
+ * This API can be used in the case of manually controlling by using elm_entry_input_panel_enabled_set(en, EINA_FALSE)
  *
  * @param obj The entry object
  */
@@ -1181,7 +1181,7 @@ struct _Elm_Entry_Filter_Limit_Size
  *
  * Add this filter to an entry to limit the characters that it will accept
  * based the the contents of the provided #Elm_Entry_Filter_Limit_Size.
- * The funtion works on the UTF-8 representation of the string, converting
+ * The function works on the UTF-8 representation of the string, converting
  * it from the set markup, thus not accounting for any format in it.
  *
  * The user must create an #Elm_Entry_Filter_Limit_Size structure and pass

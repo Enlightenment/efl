@@ -3,10 +3,10 @@
  *
  * Elementary configuration is formed by a set options bounded to a
  * given @ref Profile profile, like @ref Theme theme, @ref Fingers
- * "finger size", etc. These are functions with which one syncronizes
+ * "finger size", etc. These are functions with which one synchronizes
  * changes made to those values to the configuration storing files, de
  * facto. You most probably don't want to use the functions in this
- * group unlees you're writing an elementary configuration manager.
+ * group unless you're writing an elementary configuration manager.
  *
  * @{
  */
@@ -15,7 +15,7 @@
  * Save back Elementary's configuration, so that it will persist on
  * future sessions.
  *
- * @return @c EINA_TRUE, when sucessful. @c EINA_FALSE, otherwise.
+ * @return @c EINA_TRUE, when successful. @c EINA_FALSE, otherwise.
  * @ingroup Config
  *
  * This function will take effect -- thus, do I/O -- immediately. Use
@@ -30,7 +30,7 @@ EAPI Eina_Bool elm_config_save(void);
  * Reload Elementary's configuration, bounded to current selected
  * profile.
  *
- * @return @c EINA_TRUE, when sucessful. @c EINA_FALSE, otherwise.
+ * @return @c EINA_TRUE, when successful. @c EINA_FALSE, otherwise.
  * @ingroup Config
  *
  * Useful when you want to force reloading of configuration values for
@@ -51,7 +51,7 @@ EAPI void      elm_config_reload(void);
  * Elementary-based applications. There are, for example, profiles
  * aimed at desktop computer applications and others aimed at mobile,
  * touchscreen-based ones. You most probably don't want to use the
- * functions in this group unlees you're writing an elementary
+ * functions in this group unless you're writing an elementary
  * configuration manager.
  *
  * @{
@@ -361,7 +361,7 @@ EAPI void         elm_scroll_thumbscroll_enabled_all_set(Eina_Bool enabled);
  * Get the number of pixels one should travel while dragging a
  * scroller's view to actually trigger scrolling.
  *
- * @return the thumb scroll threshould
+ * @return the thumb scroll threshold
  *
  * One would use higher values for touch screens, in general, because
  * of their inherent imprecision.
@@ -373,9 +373,9 @@ EAPI unsigned int elm_scroll_thumbscroll_threshold_get(void);
  * Set the number of pixels one should travel while dragging a
  * scroller's view to actually trigger scrolling.
  *
- * @param threshold the thumb scroll threshould
+ * @param threshold the thumb scroll threshold
  *
- * @see elm_thumbscroll_threshould_get()
+ * @see elm_thumbscroll_threshold_get()
  * @ingroup Scrolling
  */
 EAPI void         elm_scroll_thumbscroll_threshold_set(unsigned int threshold);
@@ -385,9 +385,9 @@ EAPI void         elm_scroll_thumbscroll_threshold_set(unsigned int threshold);
  * scroller's view to actually trigger scrolling, for all Elementary
  * application windows.
  *
- * @param threshold the thumb scroll threshould
+ * @param threshold the thumb scroll threshold
  *
- * @see elm_thumbscroll_threshould_get()
+ * @see elm_thumbscroll_threshold_get()
  * @ingroup Scrolling
  */
 // XXX: deprecate and replace with elm_config_all_flush()
@@ -398,7 +398,7 @@ EAPI void         elm_scroll_thumbscroll_threshold_all_set(unsigned int threshol
  * list self scrolling animation after a mouse up event
  * (pixels/second).
  *
- * @return the thumb scroll momentum threshould
+ * @return the thumb scroll momentum threshold
  *
  * @ingroup Scrolling
  */
@@ -409,9 +409,9 @@ EAPI double       elm_scroll_thumbscroll_momentum_threshold_get(void);
  * list self scrolling animation after a mouse up event
  * (pixels/second).
  *
- * @param threshold the thumb scroll momentum threshould
+ * @param threshold the thumb scroll momentum threshold
  *
- * @see elm_thumbscroll_momentum_threshould_get()
+ * @see elm_thumbscroll_momentum_threshold_get()
  * @ingroup Scrolling
  */
 EAPI void         elm_scroll_thumbscroll_momentum_threshold_set(double threshold);
@@ -421,9 +421,9 @@ EAPI void         elm_scroll_thumbscroll_momentum_threshold_set(double threshold
  * list self scrolling animation after a mouse up event
  * (pixels/second), for all Elementary application windows.
  *
- * @param threshold the thumb scroll momentum threshould
+ * @param threshold the thumb scroll momentum threshold
  *
- * @see elm_thumbscroll_momentum_threshould_get()
+ * @see elm_thumbscroll_momentum_threshold_get()
  * @ingroup Scrolling
  */
 // XXX: deprecate and replace with elm_config_all_flush()
@@ -521,7 +521,7 @@ EAPI double       elm_scroll_thumbscroll_sensitivity_friction_get(void);
  * mouse dragging.
  *
  * @param friction the thumb scroll sensitivity friction. @c 0.1 for
- *        minimun sensitivity, @c 1.0 for maximum sensitivity. 0.25
+ *        minimum sensitivity, @c 1.0 for maximum sensitivity. 0.25
  *        is proper.
  *
  * @see elm_thumbscroll_sensitivity_friction_get()
@@ -536,7 +536,7 @@ EAPI void         elm_scroll_thumbscroll_sensitivity_friction_set(double frictio
  * mouse dragging, for all Elementary application windows.
  *
  * @param friction the thumb scroll sensitivity friction. @c 0.1 for
- *        minimun sensitivity, @c 1.0 for maximum sensitivity. 0.25
+ *        minimum sensitivity, @c 1.0 for maximum sensitivity. 0.25
  *        is proper.
  *
  * @see elm_thumbscroll_sensitivity_friction_get()
@@ -552,7 +552,7 @@ EAPI void         elm_scroll_thumbscroll_sensitivity_friction_all_set(double fri
  */
 
 /**
- * Get the duration for occuring long press event.
+ * Get the duration for occurring long press event.
  *
  * @return Timeout for long press event
  * @ingroup Longpress
@@ -560,7 +560,7 @@ EAPI void         elm_scroll_thumbscroll_sensitivity_friction_all_set(double fri
 EAPI double       elm_longpress_timeout_get(void);
 
 /**
- * Set the duration for occuring long press event.
+ * Set the duration for occurring long press event.
  *
  * @param lonpress_timeout Timeout for long press event
  * @ingroup Longpress
