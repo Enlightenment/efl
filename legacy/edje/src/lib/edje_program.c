@@ -873,7 +873,7 @@ _edje_emit_full(Edje *ed, const char *sig, const char *src, void *data, void (*f
 {
    Edje_Message_Signal emsg;
    const char *sep;
-   Eina_Bool broadcast = EINA_TRUE;
+   Eina_Bool broadcast = ed->collection->broadcast_signal;
 
    if (ed->delete_me) return;
 

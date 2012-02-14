@@ -106,6 +106,7 @@ static void st_collections_group_script_only(void);
 static void st_collections_group_alias(void);
 static void st_collections_group_min(void);
 static void st_collections_group_max(void);
+static void st_collections_group_broadcast_signal(void);
 static void st_collections_group_data_item(void);
 static void st_collections_group_orientation(void);
 
@@ -317,6 +318,7 @@ New_Statement_Handler statement_handlers[] =
      {"collections.group.alias", st_collections_group_alias},
      {"collections.group.min", st_collections_group_min},
      {"collections.group.max", st_collections_group_max},
+     {"collections.group.broadcast_signal", st_collections_group_broadcast_signal},
      {"collections.group.orientation", st_collections_group_orientation},
      {"collections.group.data.item", st_collections_group_data_item},
      {"collections.group.limits.horizontal", st_collections_group_limits_horizontal},
@@ -2151,6 +2153,7 @@ ob_collections_group(void)
    pc = mem_alloc(SZ(Edje_Part_Collection));
    edje_collections = eina_list_append(edje_collections, pc);
    pc->id = current_de->id;
+   pc->broadcast_signal = EINA_TRUE; /* This was the behaviour by default in Edje 1.1 */
 
    cd = mem_alloc(SZ(Code));
    codes = eina_list_append(codes, cd);
@@ -2569,6 +2572,28 @@ st_collections_group_max(void)
    pc = eina_list_data_get(eina_list_last(edje_collections));
    pc->prop.max.w = parse_int_range(0, 0, 0x7fffffff);
    pc->prop.max.h = parse_int_range(1, 0, 0x7fffffff);
+}
+
+/**
+   @page edcref
+   @property
+       broadcast_signal
+   @parameters
+       [broadcast]
+   @effect
+       Signal got automatically broadcasted to all sub group part. Default to
+       true since 1.1.
+   @endproperty
+*/
+static void
+st_collections_group_broadcast_signal(void)
+{
+   Edje_Part_Collection *pc;
+
+   check_arg_count(1);
+
+   pc = eina_list_data_get(eina_list_last(edje_collections));
+   pc->broadcast_signal = parse_bool(0);
 }
 
 /**

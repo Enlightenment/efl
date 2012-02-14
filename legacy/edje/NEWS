@@ -11,6 +11,7 @@ Additions:
     * minmul edc property.
     * add min: SOURCE and max: SOURCE.
     * add edje_object_markup_filter_callback_add/del/delfull().
+    * add broadcast_signal: bool.
 
 Improvements:
     * speedup load time of Edje file.

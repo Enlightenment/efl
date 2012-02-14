@@ -76,12 +76,16 @@ _edje_file_coll_open(Edje_File *edf, const char *coll)
    edc->references = 1;
    edc->part = ce->entry;
 
-   /* For Edje file build with Edje 1.0, people expect text.align to be 0.0 0.0 */
+   /* For Edje file build with Edje 1.0 */
    if (edf->version <= 3 && edf->minor <= 1)
      {
         /* This will preserve previous rendering */
         unsigned int i;
 
+	/* people expect signal to not be broadcasted */
+	edc->broadcast_signal = EINA_FALSE;
+
+	/* people expect text.align to be 0.0 0.0 */
         for (i = 0; i < edc->parts_count; ++i)
           {
              if (edc->parts[i]->type == EDJE_PART_TYPE_TEXTBLOCK)

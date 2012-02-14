@@ -173,7 +173,7 @@ struct _Edje_Smart_Api
 /* increment this when you add new feature to edje file format without
  * breaking backward compatibility.
  */
-#define EDJE_FILE_MINOR 2
+#define EDJE_FILE_MINOR 3
 
 /* FIXME:
  *
@@ -754,6 +754,8 @@ struct _Edje_Part_Collection
    unsigned char    script_only;
 
    unsigned char    lua_script_only;
+
+   unsigned char    broadcast_signal;
 
    unsigned char    checked : 1;
 };
