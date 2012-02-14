@@ -1167,40 +1167,84 @@ evas_common_tilebuf_get_render_rects(Tilebuf *tb)
 #elif defined(EVAS_RECT_SPLIT)
    list_node_t *n;
    Tilebuf_Rect *rects = NULL;
+   int bx1 = 0, bx2 = 0, by1 = 0, by2 = 0, num = 0;
 
-   if (tb->need_merge) {
-       list_t to_merge;
-       to_merge = tb->rects;
-       tb->rects = list_zeroed;
-       rect_list_merge_rects(&tb->rects, &to_merge, FUZZ * FUZZ);
-       tb->need_merge = 0;
-   }
+   if (tb->need_merge)
+     {
+        list_t to_merge;
+        to_merge = tb->rects;
+        tb->rects = list_zeroed;
+        rect_list_merge_rects(&tb->rects, &to_merge, FUZZ * FUZZ);
+        tb->need_merge = 0;
+     }
+   
+   n = tb->rects.head;
+   if (n)
+     {
+        bx1 = ((rect_node_t *)n)->rect.left;
+        bx2 = bx1 + ((rect_node_t *)n)->rect.width;
+        by1 = ((rect_node_t *)n)->rect.top;
+        by2 = by1 + ((rect_node_t *)n)->rect.height;
+        n = n->next;
+        for (; n; n = n->next)
+          {
+             
+             int x1, x2, y1, y2;
+             
+             x1 = ((rect_node_t *)n)->rect.left;
+             if (x1 < bx1) bx1 = x1;
+             x2 = x1 + ((rect_node_t *)n)->rect.width;
+             if (x2 > bx2) bx2 = x2;
+             
+             y1 = ((rect_node_t *)n)->rect.top;
+             if (y1 < by1) by1 = y1;
+             y2 = y1 + ((rect_node_t *)n)->rect.height;
+             if (y2 > by2) by2 = y2;
+             num++;
+          }
+     }
+#define MAXREG 24
+   /* magic number - but if we have > MAXREG regions to update, take bounding box */
+   if (num > MAXREG)
+     {
+        Tilebuf_Rect *r;
 
-   for (n = tb->rects.head; n; n = n->next) {
-       rect_t cur;
+        r = malloc(sizeof(Tilebuf_Rect));
+        r->x = bx1;
+        r->y = by1;
+        r->w = bx2 - bx1;
+        r->h = by2 - by1;
+        
+        rects = (Tilebuf_Rect *)eina_inlist_append(EINA_INLIST_GET(rects), EINA_INLIST_GET(r));
+        return rects;
+     }
 
-       cur = ((rect_node_t *)n)->rect;
+   for (n = tb->rects.head; n; n = n->next)
+     {
+        rect_t cur;
+        
+        cur = ((rect_node_t *)n)->rect;
 /* disable fuzz - created bugs.
        cur.left <<= 1;
        cur.top <<= 1;
        cur.width <<= 1;
        cur.height <<= 1;
  */
-       RECTS_CLIP_TO_RECT(cur.left, cur.top, cur.width, cur.height,
-			  0, 0, tb->outbuf_w, tb->outbuf_h);
-       if ((cur.width > 0) && (cur.height > 0))
-	 {
-	    Tilebuf_Rect *r;
-
-	    r = malloc(sizeof(Tilebuf_Rect));
-	    r->x = cur.left;
-	    r->y = cur.top;
-	    r->w = cur.width;
-	    r->h = cur.height;
-
-	    rects = (Tilebuf_Rect *)eina_inlist_append(EINA_INLIST_GET(rects), EINA_INLIST_GET(r));
-	 }
-   }
+        RECTS_CLIP_TO_RECT(cur.left, cur.top, cur.width, cur.height,
+                           0, 0, tb->outbuf_w, tb->outbuf_h);
+        if ((cur.width > 0) && (cur.height > 0))
+          {
+             Tilebuf_Rect *r;
+             
+             r = malloc(sizeof(Tilebuf_Rect));
+             r->x = cur.left;
+             r->y = cur.top;
+             r->w = cur.width;
+             r->h = cur.height;
+             
+             rects = (Tilebuf_Rect *)eina_inlist_append(EINA_INLIST_GET(rects), EINA_INLIST_GET(r));
+          }
+     }
    return rects;
 
 #else
