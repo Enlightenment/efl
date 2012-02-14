@@ -103,7 +103,7 @@ EAPI Evas_Object                 *elm_menu_item_object_get(const Elm_Object_Item
  *
  * @param obj The menu object.
  * @param parent The parent menu item (optional)
- * @param icon An icon display on the item. The icon will be destryed by the menu.
+ * @param icon An icon display on the item. The icon will be destroyed by the menu.
  * @param label The label of the item.
  * @param func Function called when the user select the item.
  * @param data Data sent by the callback.

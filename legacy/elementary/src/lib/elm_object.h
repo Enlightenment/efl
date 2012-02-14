@@ -87,7 +87,7 @@ EAPI void                         elm_object_access_info_set(Evas_Object *obj, c
  *
  * @param obj The parent object whose children to look at
  * @param name The name of the child to find
- * @param recurse Set to thge maximum number of levels to recurse (0 == none, 1 is only look at 1 level of children etc.)
+ * @param recurse Set to the maximum number of levels to recurse (0 == none, 1 is only look at 1 level of children etc.)
  * @return The found object of that name, or NULL if none is found
  *
  * This function searches the children (or recursively children of
@@ -138,7 +138,7 @@ EAPI void         elm_object_style_set(Evas_Object *obj, const char *style);
  * Get the style used by the widget
  *
  * This gets the style being used for that widget. Note that the string
- * pointer is only valid as longas the object is valid and the style doesn't
+ * pointer is only valid as long as the object is valid and the style doesn't
  * change.
  *
  * @param obj The Elementary widget to query for its style
@@ -284,7 +284,7 @@ EAPI void         elm_object_signal_callback_add(Evas_Object *obj, const char *e
 /**
  * Remove a signal-triggered callback from a widget edje object.
  *
- * This function removes a callback, previoulsy attached to a
+ * This function removes a callback, previously attached to a
  * signal emitted by the edje object of the obj.  The parameters
  * emission, source and func must match exactly those passed to a
  * previous call to elm_object_signal_callback_add(). The data
@@ -355,7 +355,7 @@ EAPI void         elm_object_event_callback_add(Evas_Object *obj, Elm_Event_Cb f
 /**
  * Remove an event callback from a widget.
  *
- * This function removes a callback, previoulsy attached to event emission
+ * This function removes a callback, previously attached to event emission
  * by the @p obj.
  * The parameters func and data must match exactly those passed to
  * a previous call to elm_object_event_callback_add(). The data pointer that

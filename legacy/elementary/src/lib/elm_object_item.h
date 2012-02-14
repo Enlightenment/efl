@@ -211,7 +211,7 @@ EAPI void                         elm_object_item_tooltip_text_set(Elm_Object_It
  * @param disable If EINA_TRUE, size restrictions are disabled
  * @return EINA_FALSE on failure, EINA_TRUE on success
  *
- * This function allows a tooltip to expand beyond its parant window's canvas.
+ * This function allows a tooltip to expand beyond its parent window's canvas.
  * It will instead be limited only by the size of the display.
  */
 EAPI Eina_Bool                    elm_object_item_tooltip_window_mode_set(Elm_Object_Item *it, Eina_Bool disable);
@@ -222,7 +222,7 @@ EAPI Eina_Bool                    elm_object_item_tooltip_window_mode_set(Elm_Ob
  * @return If EINA_TRUE, size restrictions are disabled
  *
  * This function returns whether a tooltip is allowed to expand beyond
- * its parant window's canvas.
+ * its parent window's canvas.
  * It will instead be limited only by the size of the display.
  */
 EAPI Eina_Bool                    elm_object_item_tooltip_window_mode_get(const Elm_Object_Item *it);
@@ -366,9 +366,9 @@ EAPI void                         elm_object_item_cursor_unset(Elm_Object_Item *
  * cursor decorations <b>defined in a theme file</b>, which can have,
  * given a cursor name/type, <b>alternate styles</b> on it. It
  * works analogously as elm_object_cursor_style_set(), but here
- * applyed only to item objects.
+ * applies only to item objects.
  *
- * @warning Before you set a cursor style you should have definen a
+ * @warning Before you set a cursor style you should have defined a
  *       custom cursor previously on the item, with
  *       elm_object_item_cursor_set()
  *

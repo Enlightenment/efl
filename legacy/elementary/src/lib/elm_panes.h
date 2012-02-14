@@ -8,7 +8,7 @@
  * @image html img/panes.png
  * @image latex img/panes.eps width=\textwidth
  *
- * The panes adds a dragable bar between two contents. When dragged
+ * The panes adds a draggable bar between two contents. When dragged
  * this bar will resize contents size.
  *
  * Panes can be displayed vertically or horizontally, and contents

@@ -1157,7 +1157,7 @@ EAPI const char           *elm_map_user_agent_get(const Evas_Object *obj);
  *
  * @param obj The map object.
  * @param type The type of transport to be considered when tracing a route.
- * @param method The routing method, what should be priorized.
+ * @param method The routing method, what should be prioritized.
  * @param flon The start longitude.
  * @param flat The start latitude.
  * @param tlon The destination longitude.
@@ -1174,7 +1174,7 @@ EAPI const char           *elm_map_user_agent_get(const Evas_Object *obj);
  * One of #ELM_MAP_ROUTE_TYPE_MOTOCAR, #ELM_MAP_ROUTE_TYPE_BICYCLE, or
  * #ELM_MAP_ROUTE_TYPE_FOOT need to be used.
  *
- * Another parameter is what the route should priorize, the minor distance
+ * Another parameter is what the route should prioritize, the minor distance
  * or the less time to be spend on the route. So @p method should be one
  * of #ELM_MAP_ROUTE_METHOD_SHORTEST or #ELM_MAP_ROUTE_METHOD_FASTEST.
  *
@@ -1213,7 +1213,7 @@ EAPI void                  elm_map_route_remove(Elm_Map_Route *route);
  *
  * It uses an additive color model, so each color channel represents
  * how much of each primary colors must to be used. 0 represents
- * ausence of this color, so if all of the three are set to 0,
+ * absence of this color, so if all of the three are set to 0,
  * the color will be black.
  *
  * These component values should be integers in the range 0 to 255,
@@ -1313,7 +1313,7 @@ EAPI void                  elm_map_name_region_get(const Elm_Map_Name *name, dou
  *
  * @param name The name to remove.
  *
- * Basically the struct handled by @p name will be freed, so convertions
+ * Basically the struct handled by @p name will be freed, so conversions
  * between address and coordinates will be lost.
  *
  * @see elm_map_utils_convert_name_into_coord()
@@ -1327,7 +1327,7 @@ EAPI void                  elm_map_name_remove(Elm_Map_Name *name);
  * Rotate the map.
  *
  * @param obj The map object.
- * @param degree Angle from 0.0 to 360.0 to rotate arount Z axis.
+ * @param degree Angle from 0.0 to 360.0 to rotate around Z axis.
  * @param cx Rotation's center horizontal position.
  * @param cy Rotation's center vertical position.
  *
@@ -1342,7 +1342,7 @@ EAPI void                  elm_map_rotate_set(Evas_Object *obj, double degree, E
  *
  * @param obj The map object
  * @param degree Pointer where to store degrees from 0.0 to 360.0
- * to rotate arount Z axis.
+ * to rotate around Z axis.
  * @param cx Pointer where to store rotation's center horizontal position.
  * @param cy Pointer where to store rotation's center vertical position.
  *
