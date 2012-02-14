@@ -3487,23 +3487,17 @@ EAPI const Eina_Model_Interface *
 eina_model_interface_get(const Eina_Model *model, const char *name)
 {
    const Eina_Model_Description *desc;
-   const Eina_Model_Interface **itr, **itr_end;
+   const Eina_Model_Interface **itr, **itr_first;
 
    EINA_MODEL_INSTANCE_CHECK_VAL(model, NULL);
    EINA_SAFETY_ON_NULL_RETURN_VAL(name, NULL);
 
    desc = model->desc;
-   itr = desc->cache.ifaces;
-   itr_end = itr + desc->total.ifaces;
-
-   /* try pointer comparison for the speed aware users */
-   for (; itr < itr_end; itr++)
-     if ((*itr)->name == name)
-       return *itr;
+   itr_first = desc->cache.ifaces;
+   itr = itr_first + desc->total.ifaces - 1;
 
    /* fallback to strcmp if user is lazy about speed */
-   itr = desc->cache.ifaces;
-   for (; itr < itr_end; itr++)
+   for (; itr >= itr_first; itr--)
      if (strcmp((*itr)->name, name) == 0)
        return *itr;
 
@@ -4798,7 +4792,7 @@ eina_model_type_subclass_check(const Eina_Model_Type *type, const Eina_Model_Typ
 }
 
 static inline const Eina_Model_Interface *
-_eina_model_type_interface_get(const Eina_Model_Type *type, const char *name, Eina_Bool ptr_cmp)
+_eina_model_type_interface_get(const Eina_Model_Type *type, const char *name, Eina_Bool ptr_cmp __UNUSED__)
 {
    const Eina_Model_Interface **itr;
 
@@ -4808,15 +4802,8 @@ _eina_model_type_interface_get(const Eina_Model_Type *type, const char *name, Ei
    if (!type->interfaces)
      return _eina_model_type_interface_get(type->parent, name, ptr_cmp);
 
-   if (ptr_cmp)
      {
-        for (itr = type->interfaces; itr != NULL; itr++)
-          if ((*itr)->name == name)
-            return *itr;
-     }
-   else
-     {
-        for (itr = type->interfaces; itr != NULL; itr++)
+        for (itr = type->interfaces ; itr != NULL ; itr++)
           if (strcmp((*itr)->name, name) == 0)
             return *itr;
      }

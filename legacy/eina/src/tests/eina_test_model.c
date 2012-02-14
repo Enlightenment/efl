@@ -967,6 +967,139 @@ START_TEST(eina_model_test_struct_complex_members)
 }
 END_TEST
 
+typedef struct _Animal_Type
+{
+   Eina_Model_Type parent_class;
+   void (*eat)(Eina_Model *mdl);
+} Animal_Type;
+
+typedef struct _Human_Type
+{
+   Animal_Type parent_class;
+   void (*talk)(Eina_Model *mdl);
+} Human_Type;
+
+typedef struct _Pooper_Interface
+{
+   Eina_Model_Interface base_interface;
+   void (*poop)(Eina_Model *mdl);
+} Pooper_Interface;
+
+#define ANIMAL_TYPE(x) ((Animal_Type *) x)
+#define HUMAN_TYPE(x) ((Human_Type *) x)
+#define POOPER_IFACE(x) ((Pooper_Interface *) x)
+#define POOPER_IFACE_NAME "Pooper_Interace"
+
+#define INHER_CB_COUNT(prefix) \
+static int prefix ## _count = 0; \
+static void \
+prefix (Eina_Model *mdl) \
+{ \
+   (void) mdl; \
+   (prefix ## _count)++; \
+}
+
+static void
+animal_eat(Eina_Model *mdl)
+{
+   void (*pf)(Eina_Model *mdl);
+   pf = eina_model_method_resolve(mdl, Animal_Type, eat);
+   EINA_SAFETY_ON_NULL_RETURN(pf);
+   pf(mdl);
+}
+
+static void
+pooper_poop(Eina_Model *mdl)
+{
+   const Eina_Model_Interface *iface = NULL;
+   iface = eina_model_interface_get(mdl, POOPER_IFACE_NAME);
+
+   EINA_SAFETY_ON_NULL_RETURN(iface);
+
+   void (*pf)(Eina_Model *);
+
+   pf = eina_model_interface_method_resolve(iface, mdl, Pooper_Interface, poop);
+   EINA_SAFETY_ON_NULL_RETURN(pf);
+   pf(mdl);
+}
+
+INHER_CB_COUNT(_animal_poop);
+INHER_CB_COUNT(_human_poop);
+INHER_CB_COUNT(_animal_eat);
+INHER_CB_COUNT(_human_eat);
+
+START_TEST(eina_model_test_inheritance)
+{
+   eina_init();
+
+   Pooper_Interface _ANIMAL_POOPER_IFACE;
+   Eina_Model_Interface *ANIMAL_POOPER_IFACE = (Eina_Model_Interface *) &_ANIMAL_POOPER_IFACE;
+   memset(&_ANIMAL_POOPER_IFACE, 0, sizeof(_ANIMAL_POOPER_IFACE));
+   ANIMAL_POOPER_IFACE->version = EINA_MODEL_INTERFACE_VERSION;
+   ANIMAL_POOPER_IFACE->interface_size = sizeof(Pooper_Interface);
+   ANIMAL_POOPER_IFACE->name = POOPER_IFACE_NAME;
+   POOPER_IFACE(ANIMAL_POOPER_IFACE)->poop = _animal_poop;
+
+   Pooper_Interface _HUMAN_POOPER_IFACE;
+   Eina_Model_Interface *HUMAN_POOPER_IFACE = (Eina_Model_Interface *) &_HUMAN_POOPER_IFACE;
+   memset(&_HUMAN_POOPER_IFACE, 0, sizeof(_HUMAN_POOPER_IFACE));
+   HUMAN_POOPER_IFACE->version = EINA_MODEL_INTERFACE_VERSION;
+   HUMAN_POOPER_IFACE->interface_size = sizeof(Pooper_Interface);
+   HUMAN_POOPER_IFACE->name = POOPER_IFACE_NAME;
+   POOPER_IFACE(HUMAN_POOPER_IFACE)->poop = _human_poop;
+
+   const Eina_Model_Interface *ANIMAL_IFACES[] = {ANIMAL_POOPER_IFACE, NULL};
+   const Eina_Model_Interface *HUMAN_IFACES[] = {HUMAN_POOPER_IFACE, NULL};
+
+   /* Init Animal Type */
+   Animal_Type _ANIMAL_TYPE;
+   Eina_Model_Type *ANIMAL_TYPE = (Eina_Model_Type *) &_ANIMAL_TYPE;
+
+   memset(&_ANIMAL_TYPE, 0, sizeof(_ANIMAL_TYPE));
+   Eina_Model_Type *type = (Eina_Model_Type *) &_ANIMAL_TYPE;
+   type->version = EINA_MODEL_TYPE_VERSION;
+   type->parent = EINA_MODEL_TYPE_BASE;
+   type->type_size = sizeof(Animal_Type);
+   type->name = "Animal_Type";
+   type->parent = EINA_MODEL_TYPE_GENERIC;
+   type->interfaces = ANIMAL_IFACES;
+
+   ANIMAL_TYPE(type)->eat = _animal_eat;
+
+   /* Init Human Type */
+   Animal_Type _HUMAN_TYPE;
+   Eina_Model_Type *HUMAN_TYPE = (Eina_Model_Type *) &_HUMAN_TYPE;
+   memset(&_HUMAN_TYPE, 0, sizeof(_HUMAN_TYPE));
+   type = (Eina_Model_Type *) &_HUMAN_TYPE;
+   type->version = EINA_MODEL_TYPE_VERSION;
+   type->parent = ANIMAL_TYPE;
+   type->type_size = sizeof(Human_Type);
+   type->name = "Human_Type";
+   type->interfaces = HUMAN_IFACES;
+
+   ANIMAL_TYPE(type)->eat = _human_eat;
+
+   Eina_Model *hm, *am;
+   am = eina_model_new(ANIMAL_TYPE);
+   hm = eina_model_new(HUMAN_TYPE);
+
+   animal_eat(am);
+   fail_if(_animal_eat_count != 1);
+   animal_eat(hm);
+   fail_if(_human_eat_count != 1);
+
+   pooper_poop(am);
+   fail_if(_animal_poop_count != 1);
+   pooper_poop(hm);
+   fail_if(_human_poop_count != 1);
+
+   fail_if(_animal_eat_count != 1);
+   fail_if(_human_eat_count != 1);
+   fail_if(_animal_poop_count != 1);
+   fail_if(_human_poop_count != 1);
+}
+END_TEST
+
 void
 eina_test_model(TCase *tc)
 {
@@ -980,4 +1113,5 @@ eina_test_model(TCase *tc)
    tcase_add_test(tc, eina_model_test_child_filtered_iterator);
    tcase_add_test(tc, eina_model_test_struct);
    tcase_add_test(tc, eina_model_test_struct_complex_members);
+   tcase_add_test(tc, eina_model_test_inheritance);
 }
