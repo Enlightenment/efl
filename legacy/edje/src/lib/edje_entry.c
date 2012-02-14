@@ -1166,7 +1166,7 @@ _edje_key_down_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, v
 
    if ((!strcmp(ev->keyname, "Escape")) ||
        (!strcmp(ev->keyname, "Return")) || (!strcmp(ev->keyname, "KP_Enter")))
-     _edje_entry_imf_context_reset(en);
+     _edje_entry_imf_context_reset(rp);
 
    old_cur_pos = evas_textblock_cursor_pos_get(en->cursor);
 
