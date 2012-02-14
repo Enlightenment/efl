@@ -1860,6 +1860,39 @@ edje_object_part_text_autocapital_type_get(const Evas_Object *obj, const char *p
 }
 
 EAPI void
+edje_object_part_text_prediction_allow_set(const Evas_Object *obj, const char *part, Eina_Bool prediction)
+{
+   Edje *ed;
+   Edje_Real_Part *rp;
+
+   ed = _edje_fetch(obj);
+   if ((!ed) || (!part)) return;
+   rp = _edje_real_part_recursive_get(ed, part);
+   if (!rp) return;
+   if (rp->part->entry_mode > EDJE_ENTRY_EDIT_MODE_NONE)
+     {
+        _edje_entry_prediction_allow_set(rp, prediction);
+     }
+}
+
+EAPI Eina_Bool
+edje_object_part_text_prediction_allow_get(const Evas_Object *obj, const char *part)
+{
+   Edje *ed;
+   Edje_Real_Part *rp;
+
+   ed = _edje_fetch(obj);
+   if ((!ed) || (!part)) return EINA_FALSE;
+   rp = _edje_real_part_recursive_get(ed, part);
+   if (!rp) return EINA_FALSE;
+   if (rp->part->entry_mode > EDJE_ENTRY_EDIT_MODE_NONE)
+     {
+        return _edje_entry_prediction_allow_get(rp);
+     }
+   return EINA_FALSE;
+}
+
+EAPI void
 edje_object_part_text_input_panel_enabled_set(const Evas_Object *obj, const char *part, Eina_Bool enabled)
 {
    Edje *ed;

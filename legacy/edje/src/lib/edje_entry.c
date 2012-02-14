@@ -35,6 +35,7 @@ struct _Entry
    Eina_Bool select_mod_end : 1;
    Eina_Bool had_sel : 1;
    Eina_Bool input_panel_enable : 1;
+   Eina_Bool prediction_allow : 1;
 
 #ifdef HAVE_ECORE_IMF
    Eina_Bool have_preedit : 1;
@@ -2575,6 +2576,28 @@ _edje_entry_autocapital_type_get(Edje_Real_Part *rp)
 #endif
 
    return EDJE_TEXT_AUTOCAPITAL_TYPE_NONE;
+}
+
+void
+_edje_entry_prediction_allow_set(Edje_Real_Part *rp, Eina_Bool prediction)
+{
+   Entry *en = rp->entry_data;
+
+   if (!en) return;
+   en->prediction_allow = prediction;
+#ifdef HAVE_ECORE_IMF
+   if (en->imf_context)
+     ecore_imf_context_prediction_allow_set(en->imf_context, prediction);
+#endif
+}
+
+Eina_Bool
+_edje_entry_prediction_allow_get(Edje_Real_Part *rp)
+{
+   Entry *en = rp->entry_data;
+   if (!en) return EINA_FALSE;
+
+   return en->prediction_allow;
 }
 
 void

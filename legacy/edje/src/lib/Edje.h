@@ -2900,6 +2900,26 @@ EAPI void         edje_object_part_text_autocapital_type_set        (const Evas_
 EAPI Edje_Text_Autocapital_Type edje_object_part_text_autocapital_type_get (const Evas_Object *obj, const char *part);
 
 /**
+ * @brief Set whether the prediction is allowed or not.
+ *
+ * @param obj A valid Evas_Object handle
+ * @param part The part name
+ * @param prediction If true, the prediction feature is allowed.
+ * @since 1.2.0
+ */
+EAPI void             edje_object_part_text_prediction_allow_set        (const Evas_Object *obj, const char *part, Eina_Bool prediction);
+
+/**
+ * @brief Get whether the prediction is allowed or not.
+ *
+ * @param obj A valid Evas_Object handle
+ * @param part The part name
+ * @return EINA_TRUE if prediction feature is allowed.
+ * @since 1.2.0
+ */
+EAPI Eina_Bool        edje_object_part_text_prediction_allow_get        (const Evas_Object *obj, const char *part);
+
+/**
  * @brief Sets the attribute to show the input panel automatically.
  *
  * @param obj A valid Evas_Object handle
