@@ -61,7 +61,7 @@ EAPI Evas_Object *                elm_check_add(Evas_Object *parent);
  *
  * This sets the state of the check. If set
  * with elm_check_state_pointer_set() the state of that variable is also
- * changed. Calling this @b doesn't cause the "changed" signal to be emited.
+ * changed. Calling this @b doesn't cause the "changed" signal to be emitted.
  */
 EAPI void                         elm_check_state_set(Evas_Object *obj, Eina_Bool state);
 

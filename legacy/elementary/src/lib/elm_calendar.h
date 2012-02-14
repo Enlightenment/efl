@@ -14,7 +14,7 @@
  * there will be marks every week after this date. Marks will be displayed
  * at 13th, 20th, 27th, 3rd June ...
  *
- * Values don't work as bitmask, only one can be choosen.
+ * Values don't work as bitmask, only one can be chosen.
  *
  * Supported elm_object common APIs.
  * @li elm_object_signal_emit
@@ -107,7 +107,7 @@ EAPI void                 elm_calendar_weekdays_names_set(Evas_Object *obj, cons
  * @param min The minimum year, greater than 1901;
  * @param max The maximum year;
  *
- * Maximum must be greater than minimum, except if you don't wan't to set
+ * Maximum must be greater than minimum, except if you don't want to set
  * maximum year.
  * Default values are 1902 and -1.
  *
@@ -199,7 +199,7 @@ EAPI void                 elm_calendar_selected_time_set(Evas_Object *obj, struc
  *
  * @param obj The calendar object
  * @param selected_time A @b tm struct to point to selected date
- * @return EINA_FALSE means an error ocurred and returned time shouldn't
+ * @return EINA_FALSE means an error occurred and returned time shouldn't
  * be considered.
  *
  * Get date selected by the user or set by function
@@ -351,7 +351,7 @@ EAPI const Eina_List     *elm_calendar_marks_get(const Evas_Object *obj);
  * this function.
  *
  * When the month is changed, i.e. user selects next or previous month,
- * marks will be drawed.
+ * marks will be drawn.
  *
  * @see elm_calendar_mark_add()
  * @see elm_calendar_mark_del()

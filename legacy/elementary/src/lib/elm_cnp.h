@@ -22,7 +22,7 @@ typedef enum
    ELM_SEL_FORMAT_TARGETS = -1,
    /** they come from outside of elm */
    ELM_SEL_FORMAT_NONE = 0x0,
-   /** Plain unformated text: Used for things that don't want rich markup */
+   /** Plain unformatted text: Used for things that don't want rich markup */
    ELM_SEL_FORMAT_TEXT = 0x01,
    /** Edje textblock markup, including inline images */
    ELM_SEL_FORMAT_MARKUP = 0x02,
@@ -30,7 +30,7 @@ typedef enum
    ELM_SEL_FORMAT_IMAGE = 0x04,
    /** Vcards */
    ELM_SEL_FORMAT_VCARD = 0x08,
-   /** Raw HTMLish things for widgets that want that stuff (hello webkit!) */
+   /** Raw HTML-like things for widgets that want that stuff (hello webkit!) */
    ELM_SEL_FORMAT_HTML = 0x10,
 
    ELM_SEL_FORMAT_MAX
@@ -63,11 +63,11 @@ struct _Elm_Selection_Data
 EAPI Eina_Bool elm_cnp_selection_set(Elm_Sel_Type selection, Evas_Object *widget, Elm_Sel_Format format, const void *buf, size_t buflen);
 
 /**
- * @brief Retrive the data from the widget which is set for copying and pasting.
+ * @brief Retrieve the data from the widget which is set for copying and pasting.
  *
  * Getting the data from the widget which is set for copying and pasting.
  * Mainly the widget is elm_entry. If then @p datacb and @p udata are
- * can be NULL. If not, @p datacb and @p udata are used for retriving data.
+ * can be NULL. If not, @p datacb and @p udata are used for retrieving data.
  *
  * @see also elm_cnp_selection_set()
  *

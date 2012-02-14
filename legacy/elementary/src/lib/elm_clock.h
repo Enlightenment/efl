@@ -10,7 +10,7 @@
  *
  * A newly created clock will fetch system's time (already
  * considering local time adjustments) to start with, and will tick
- * accondingly. It may or may not show seconds.
+ * accordingly. It may or may not show seconds.
  *
  * Clocks have an @b edition mode. When in it, the sheets will
  * display extra arrow indications on the top and bottom and the
@@ -20,7 +20,7 @@
  *
  * Also, when under edition mode, user clicks on the cited arrows
  * which are @b held for some time will make the clock to flip the
- * sheet, thus editing the time, continuosly and automatically for
+ * sheet, thus editing the time, continuously and automatically for
  * the user. The interval between sheet flips will keep growing in
  * time, so that it helps the user to reach a time which is distant
  * from the one set.
@@ -35,7 +35,7 @@
  * Supported elm_object common APIs.
  * @li elm_object_signal_emit
  * @li elm_object_signal_callback_add
- * @li elm_object_signal_callbacka_del
+ * @li elm_object_signal_callback_del
  *
  * Here is an example on its usage:
  * @li @ref clock_example
@@ -48,7 +48,7 @@
 
 /**
  * Identifiers for which clock digits should be editable, when a
- * clock widget is in edition mode. Values may be ORed together to
+ * clock widget is in edition mode. Values may be OR-ed together to
  * make a mask, naturally.
  *
  * @see elm_clock_edit_set()
@@ -85,7 +85,7 @@ EAPI Evas_Object      *elm_clock_add(Evas_Object *parent);
  * @param obj The clock widget object
  * @param hrs The hours to set
  * @param min The minutes to set
- * @param sec The secondes to set
+ * @param sec The seconds to set
  *
  * This function updates the time that is showed by the clock
  * widget.
