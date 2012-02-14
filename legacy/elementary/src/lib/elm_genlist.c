@@ -5323,6 +5323,14 @@ elm_genlist_reorder_mode_get(const Evas_Object *obj)
    return wd->reorder_mode;
 }
 
+EAPI Elm_Genlist_Item_Flags
+elm_genlist_item_flags_get(const Elm_Object_Item *it)
+{
+   ELM_OBJ_ITEM_CHECK_OR_RETURN(it, ELM_GENLIST_ITEM_MAX);
+   Elm_Gen_Item *_it = (Elm_Gen_Item *) it;
+   return _it->item->flags;
+}
+
 /* for gengrid as of now */
 void
 _elm_genlist_page_relative_set(Evas_Object *obj,

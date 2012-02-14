@@ -351,7 +351,9 @@ typedef enum
 {
    ELM_GENLIST_ITEM_NONE = 0, /**< simple item */
    ELM_GENLIST_ITEM_SUBITEMS = (1 << 0), /**< may expand and have child items */
-   ELM_GENLIST_ITEM_GROUP = (1 << 1) /**< index of a group of items */
+   ELM_GENLIST_ITEM_GROUP = (1 << 1), /**< index of a group of items */
+
+   ELM_GENLIST_ITEM_MAX = (1 << 2)
 } Elm_Genlist_Item_Flags;
 
 typedef enum
@@ -1830,6 +1832,19 @@ EAPI void                          elm_genlist_reorder_mode_set(Evas_Object *obj
  * @ingroup Genlist
  */
 EAPI Eina_Bool                     elm_genlist_reorder_mode_get(const Evas_Object *obj);
+
+/**
+ * Get the Item's Flags
+ *
+ * @param item The genlist item
+ * @return The item flags.
+ *
+ * This function returns the item's type. Normally the item's type.
+ * If it failed, return value is ELM_GENLIST_ITEM_MAX
+ *
+ * @ingroup Genlist
+ */
+EAPI Elm_Genlist_Item_Flags        elm_genlist_item_flags_get(const Elm_Object_Item *it);
 
 /**
  * @}
