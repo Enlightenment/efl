@@ -1,7 +1,7 @@
 /* This is the primary Elementary header file that includes all other useful
  * headers.
  * 
- * Elementary is distrubted under the LGPLv2 license. Please see the COPYING
+ * Elementary is distributed under the LGPLv2 license. Please see the COPYING
  * file that was distributed with this source.
  */
 #ifndef ELEMENTARY_H
