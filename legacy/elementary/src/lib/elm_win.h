@@ -52,7 +52,7 @@
  * window is shown before doing the virtual "in memory" rendering and then
  * save the output to the file specified by the file option (and then exit).
  * If no delay is given, the default is 0.5 seconds. If no file is given the
- * default output file is "out.png". Repeat option is for continous
+ * default output file is "out.png". Repeat option is for continuous
  * capturing screenshots. Repeat range is from 1 to 999 and filename is
  * fixed to "out001.png" Some examples of using the shot engine:
  *
@@ -99,7 +99,7 @@ typedef enum
                        similar. */
    ELM_WIN_MENU, /**< Similar to #ELM_WIN_TOOLBAR. */
    ELM_WIN_UTILITY, /**< A persistent utility window, like a toolbox or
-                       pallete. */
+                       palette. */
    ELM_WIN_SPLASH, /**< Splash window for a starting up application. */
    ELM_WIN_DROPDOWN_MENU, /**< The window is a dropdown menu, as when an
                              entry in a menubar is clicked. Typically used
@@ -135,7 +135,7 @@ typedef enum
                              Evas_Object. */
    ELM_WIN_SOCKET_IMAGE,/**< The window is rendered onto an image buffer
 			     and can be shown other process's plug image object.
-			     No actural window is created for this type, 
+			     No actual window is created for this type, 
 			     instead the window and all of its contents will be
 			     rendered to an image buffer and can be shown 
 			     other process's plug image object*/
@@ -190,7 +190,7 @@ typedef enum
  * @param name The name of the window
  * @param type The window type, one of #Elm_Win_Type.
  *
- * The @p parent paramter can be @c NULL for every window @p type except
+ * The @p parent parameter can be @c NULL for every window @p type except
  * #ELM_WIN_INLINED_IMAGE, which needs a parent to retrieve the canvas on
  * which the image object will be created.
  *
@@ -384,7 +384,7 @@ EAPI Eina_Bool             elm_win_borderless_get(const Evas_Object *obj);
  * Shaped windows, when supported, will render the parts of the window that
  * has no content, transparent.
  *
- * If @p shaped is EINA_FALSE, then it is strongly adviced to have some
+ * If @p shaped is EINA_FALSE, then it is strongly advised to have some
  * background object or cover the entire window in any other way, or the
  * parts of the canvas that have no data will show framebuffer artifacts.
  *
@@ -818,7 +818,7 @@ EAPI void                  elm_win_focus_highlight_style_set(Evas_Object *obj, c
 /**
  * Get the style set for the focus highlight object
  *
- * Gets the style set for this windows highilght object, or NULL if none
+ * Gets the style set for this windows highlight object, or NULL if none
  * is set.
  *
  * @param obj The window to retrieve the highlights style from
@@ -887,8 +887,8 @@ EAPI void                  elm_win_screen_position_get(const Evas_Object *obj, i
  *
  * @param obj The window object
  * @param svcname The name of the service to be advertised. ensure that it is unique (when combined with @p svcnum) otherwise creation may fail.
- * @param svcnum A number (any value, 0 beig the common default) to differentiate multiple instances of services with the same name.
- * @param svcsys A boolean that if true, specifies to create a system-wide service all users can connect to, otherwise the service is private to the user ide that created the service.
+ * @param svcnum A number (any value, 0 being the common default) to differentiate multiple instances of services with the same name.
+ * @param svcsys A boolean that if true, specifies to create a system-wide service all users can connect to, otherwise the service is private to the user id that created the service.
  * @return If socket creation is successful
  */
 EAPI Eina_Bool             elm_win_socket_listen(Evas_Object *obj, const char *svcname, int svcnum, Eina_Bool svcsys);

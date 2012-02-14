@@ -8,7 +8,7 @@
  * to display video. The main one, Elm_Video, display a video by using Emotion.
  * It does embedded the video inside an Edje object, so you can do some
  * animation depending on the video state change. It does also implement a
- * ressource management policy to remove this burden from the application writer.
+ * resource management policy to remove this burden from the application writer.
  *
  * The second one, Elm_Player is a video player that need to be linked with and Elm_Video.
  * It take care of updating its content according to Emotion event and provide a
@@ -194,7 +194,7 @@ EAPI void                 elm_video_audio_mute_set(Evas_Object *video, Eina_Bool
 EAPI double               elm_video_audio_level_get(const Evas_Object *video);
 
 /**
- * @brief Set the audio level of anElm_Video object.
+ * @brief Set the audio level of an Elm_Video object.
  *
  * @param video The video object to proceed the request on.
  * @param volume The new audio volume.

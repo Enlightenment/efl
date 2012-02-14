@@ -48,13 +48,13 @@
  * @enum _Elm_Toolbar_Shrink_Mode
  * @typedef Elm_Toolbar_Shrink_Mode
  *
- * Set toolbar's items display behavior, it can be scrollabel,
+ * Set toolbar's items display behavior, it can be scrollable,
  * show a menu with exceeding items, or simply hide them.
  *
  * @note Default value is #ELM_TOOLBAR_SHRINK_MENU. It reads value
  * from elm config.
  *
- * Values <b> don't </b> work as bitmask, only one can be choosen.
+ * Values <b> don't </b> work as bitmask, only one can be chosen.
  *
  * @see elm_toolbar_shrink_mode_set()
  * @see elm_toolbar_shrink_mode_get()
@@ -63,7 +63,7 @@
  */
 typedef enum
 {
-   ELM_TOOLBAR_SHRINK_NONE, /**< Set toolbar minimun size to fit all the items. */
+   ELM_TOOLBAR_SHRINK_NONE, /**< Set toolbar minimum size to fit all the items. */
    ELM_TOOLBAR_SHRINK_HIDE, /**< Hide exceeding items. */
    ELM_TOOLBAR_SHRINK_SCROLL, /**< Allow accessing exceeding items through a scroller. */
    ELM_TOOLBAR_SHRINK_MENU, /**< Inserts a button to pop up a menu with exceeding items. */
@@ -221,7 +221,7 @@ EAPI Eina_Bool                    elm_toolbar_no_select_mode_get(const Evas_Obje
  * Associated @p data can be properly freed when item is deleted if a
  * callback function is set with elm_object_item_del_cb_set().
  *
- * If a function is passed as argument, it will be called everytime this item
+ * If a function is passed as argument, it will be called every time this item
  * is selected, i.e., the user clicks over an unselected item.
  * If such function isn't needed, just passing
  * @c NULL as @p func is enough. The same should be done for @p data.
@@ -256,7 +256,7 @@ EAPI Elm_Object_Item             *elm_toolbar_item_append(Evas_Object *obj, cons
  * Associated @p data can be properly freed when item is deleted if a
  * callback function is set with elm_object_item_del_cb_set().
  *
- * If a function is passed as argument, it will be called everytime this item
+ * If a function is passed as argument, it will be called every time this item
  * is selected, i.e., the user clicks over an unselected item.
  * If such function isn't needed, just passing
  * @c NULL as @p func is enough. The same should be done for @p data.
@@ -292,7 +292,7 @@ EAPI Elm_Object_Item             *elm_toolbar_item_prepend(Evas_Object *obj, con
  * Associated @p data can be properly freed when item is deleted if a
  * callback function is set with elm_object_item_del_cb_set().
  *
- * If a function is passed as argument, it will be called everytime this item
+ * If a function is passed as argument, it will be called every time this item
  * is selected, i.e., the user clicks over an unselected item.
  * If such function isn't needed, just passing
  * @c NULL as @p func is enough. The same should be done for @p data.
@@ -328,7 +328,7 @@ EAPI Elm_Object_Item             *elm_toolbar_item_insert_before(Evas_Object *ob
  * Associated @p data can be properly freed when item is deleted if a
  * callback function is set with elm_object_item_del_cb_set().
  *
- * If a function is passed as argument, it will be called everytime this item
+ * If a function is passed as argument, it will be called every time this item
  * is selected, i.e., the user clicks over an unselected item.
  * If such function isn't needed, just passing
  * @c NULL as @p func is enough. The same should be done for @p data.
@@ -469,8 +469,8 @@ EAPI Eina_Bool                    elm_toolbar_item_selected_get(const Elm_Object
  * This sets the selected state of the given item @p it.
  * @c EINA_TRUE for selected, @c EINA_FALSE for not selected.
  *
- * If a new item is selected the previosly selected will be unselected.
- * Previoulsy selected item can be get with function
+ * If a new item is selected the previously selected will be unselected.
+ * Previously selected item can be get with function
  * elm_toolbar_selected_item_get().
  *
  * Selected items will be highlighted.
@@ -624,7 +624,7 @@ EAPI Eina_Bool                    elm_toolbar_item_separator_get(const Elm_Objec
  * @param shrink_mode Toolbar's items display behavior.
  *
  * The toolbar won't scroll if #ELM_TOOLBAR_SHRINK_NONE,
- * but will enforce a minimun size so all the items will fit, won't scroll
+ * but will enforce a minimum size so all the items will fit, won't scroll
  * and won't show the items that don't fit if #ELM_TOOLBAR_SHRINK_HIDE,
  * will scroll if #ELM_TOOLBAR_SHRINK_SCROLL, and will create a button to
  * pop up excess elements with #ELM_TOOLBAR_SHRINK_MENU.
@@ -810,7 +810,7 @@ EAPI Evas_Object                 *elm_toolbar_item_menu_get(const Elm_Object_Ite
 EAPI Elm_Toolbar_Item_State      *elm_toolbar_item_state_add(Elm_Object_Item *it, const char *icon, const char *label, Evas_Smart_Cb func, const void *data);
 
 /**
- * Delete a previoulsy added state to @p item.
+ * Delete a previously added state to @p item.
  *
  * @param it The toolbar item.
  * @param state The state to be deleted.
@@ -829,7 +829,7 @@ EAPI Eina_Bool                    elm_toolbar_item_state_del(Elm_Object_Item *it
  *
  * If @p state is @c NULL, it won't select any state and the default item's
  * icon and label will be used. It's the same behaviour than
- * elm_toolbar_item_state_unser().
+ * elm_toolbar_item_state_unset().
  *
  * @see elm_toolbar_item_state_unset()
  *

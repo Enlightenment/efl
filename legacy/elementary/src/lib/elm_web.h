@@ -109,7 +109,7 @@ typedef struct _Elm_Web_Frame_Load_Error Elm_Web_Frame_Load_Error;
 struct _Elm_Web_Frame_Load_Error
 {
    int          code; /**< Numeric error code */
-   Eina_Bool    is_cancellation; /**< Error produced by cancelling a request */
+   Eina_Bool    is_cancellation; /**< Error produced by canceling a request */
    const char  *domain; /**< Error domain name */
    const char  *description; /**< Error description (already localized) */
    const char  *failing_url; /**< The URL that failed to load */
@@ -280,7 +280,7 @@ typedef Evas_Object *(*Elm_Web_Dialog_Confirm)(void *data, Evas_Object *obj, con
  * @li @p message The message to show in the prompt dialog
  * @li @p def_value The default value to present the user in the entry
  * @li @p value Pointer where to store the value given by the user. Must
- * be a malloc'ed string or @c NULL if the user cancelled the popup.
+ * be a malloc'ed string or @c NULL if the user canceled the popup.
  * @li @p ret Pointer where to store the user selection. @c EINA_TRUE if
  * the user selected @c Ok, @c EINA_FALSE otherwise.
  *
@@ -305,7 +305,7 @@ typedef Evas_Object *(*Elm_Web_Dialog_Prompt)(void *data, Evas_Object *obj, cons
  * @li @p accept_types Mime types accepted
  * @li @p selected Pointer where to store the list of malloc'ed strings
  * containing the path to each file selected. Must be @c NULL if the file
- * dialog is cancelled
+ * dialog is canceled
  * @li @p ret Pointer where to store the user selection. @c EINA_TRUE if
  * the user selected @c Ok, @c EINA_FALSE otherwise.
  *

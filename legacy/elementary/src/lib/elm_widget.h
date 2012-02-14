@@ -371,8 +371,8 @@ EAPI void             elm_widget_focus_steal(Evas_Object *obj);
  *
  * Restore the focus state of the sub-tree.
  *
- * This API will restore the focus state of the sub-tree to the lastest
- * state. If a sub-tree is unfocused and wants to get back to the lastest
+ * This API will restore the focus state of the sub-tree to the latest
+ * state. If a sub-tree is unfocused and wants to get back to the latest
  * focus state, this API will be helpful.
  *
  * @param obj The widget root of sub-tree

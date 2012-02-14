@@ -35,7 +35,7 @@
  * object appear on its old place. These effects are:
  *
  * @li @ref elm_transit_effect_flip_add
- * @li @ref elm_transit_effect_resizable_flip_add
+ * @li @ref elm_transit_effect_resizeable_flip_add
  * @li @ref elm_transit_effect_fade_add
  * @li @ref elm_transit_effect_blend_add
  *
@@ -160,8 +160,8 @@ EAPI Elm_Transit           *elm_transit_add(void);
  * Call this function if you wants to stop the animation before the duration
  * time. Make sure the @p transit object is still alive with
  * elm_transit_del_cb_set() function.
- * All added effects will be deleted, calling its repective data_free_cb
- * functions. The function setted by elm_transit_del_cb_set() will be called.
+ * All added effects will be deleted, calling its respective data_free_cb
+ * functions. The function set by elm_transit_del_cb_set() will be called.
  *
  * @see elm_transit_del_cb_set()
  *
@@ -181,7 +181,7 @@ EAPI void                   elm_transit_del(Elm_Transit *transit);
  * effect list become empty again, the @p transit will be killed by
  * elm_transit_del(transit) function.
  *
- * Exemple:
+ * Example:
  * @code
  * Elm_Transit *transit = elm_transit_add();
  * elm_transit_effect_add(transit,
@@ -237,7 +237,7 @@ EAPI void                   elm_transit_effect_del(Elm_Transit *transit, Elm_Tra
  * transit stays without objects, it will die.
  * @note When you add an object into the @p transit, its state from
  * evas_object_pass_events_get(obj) is saved, and it is applied when the
- * transit ends, if you change this state whith evas_object_pass_events_set()
+ * transit ends, if you change this state with evas_object_pass_events_set()
  * after add the object, this state will change again when @p transit stops to
  * run.
  *
@@ -338,13 +338,13 @@ EAPI Eina_Bool              elm_transit_event_enabled_get(const Elm_Transit *tra
 /**
  * Set the user-callback function when the transit is deleted.
  *
- * @note Using this function twice will overwrite the first function setted.
+ * @note Using this function twice will overwrite the first function set.
  * @note the @p transit object will be deleted after call @p cb function.
  *
  * @param transit The transit object.
  * @param cb Callback function pointer. This function will be called before
  * the deletion of the transit.
- * @param data Callback funtion user data. It is the @p op parameter.
+ * @param data Callback function user data. It is the @p op parameter.
  *
  * @ingroup Transit
  */
@@ -353,10 +353,10 @@ EAPI void                   elm_transit_del_cb_set(Elm_Transit *transit, Elm_Tra
 /**
  * Set reverse effect automatically.
  *
- * If auto reverse is setted, after running the effects with the progress
- * parameter from 0 to 1, it will call the effecs again with the progress
- * from 1 to 0. The transit will last for a time iqual to (2 * duration * repeat),
- * where the duration was setted with the function elm_transit_add and
+ * If auto reverse is set, after running the effects with the progress
+ * parameter from 0 to 1, it will call the effects again with the progress
+ * from 1 to 0. The transit will last for a time equal to (2 * duration * repeat),
+ * where the duration was set with the function elm_transit_add and
  * the repeat with the function elm_transit_repeat_times_set().
  *
  * @param transit The transit object.
@@ -479,7 +479,7 @@ EAPI void                   elm_transit_go(Elm_Transit *transit);
  * Pause/Resume the transition.
  *
  * If you call elm_transit_go again, the transit will be started from the
- * beginning, and will be unpaused.
+ * beginning, and will be played.
  *
  * @note @p transit can not be NULL
  *
@@ -655,9 +655,9 @@ EAPI Elm_Transit_Effect    *elm_transit_effect_zoom_add(Elm_Transit *transit, fl
 EAPI Elm_Transit_Effect    *elm_transit_effect_flip_add(Elm_Transit *transit, Elm_Transit_Effect_Flip_Axis axis, Eina_Bool cw);
 
 /**
- * Add the Resizable Flip Effect to Elm_Transit.
+ * Add the Resizeable Flip Effect to Elm_Transit.
  *
- * @note This API is one of the facades. It creates resizable flip effect context
+ * @note This API is one of the facades. It creates resizeable flip effect context
  * and add it's required APIs to elm_transit_effect_add.
  * @note This effect is applied to each pair of objects in the order they are listed
  * in the transit list of objects. The first object in the pair will be the
@@ -668,7 +668,7 @@ EAPI Elm_Transit_Effect    *elm_transit_effect_flip_add(Elm_Transit *transit, El
  * @param transit Transit object.
  * @param axis Flipping Axis(X or Y).
  * @param cw Flipping Direction. EINA_TRUE is clock-wise.
- * @return Resizable flip effect context data.
+ * @return Resizeable flip effect context data.
  *
  * @ingroup Transit
  * @warning It is highly recommended just create a transit with this effect when
