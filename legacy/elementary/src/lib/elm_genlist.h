@@ -110,7 +110,7 @@
  * Items can be added by several calls. All of them return a @ref
  * Elm_Object_Item handle that is an internal member inside the genlist.
  * They all take a data parameter that is meant to be used for a handle to
- * the applications internal data (eg the struct with the original item
+ * the applications internal data (eg. the struct with the original item
  * data). The parent parameter is the parent genlist item this belongs to if
  * it is a tree or an indexed group, and NULL if there is no parent. The
  * flags can be a bitmask of #ELM_GENLIST_ITEM_NONE,
@@ -145,7 +145,7 @@
  * let you know which item is the parent (and thus know how to skip them if
  * wanted).
  *
- * @section Genlist_Muti_Selection Multi-selection
+ * @section Genlist_Multi_Selection Multi-selection
  *
  * If the application wants multiple items to be able to be selected,
  * elm_genlist_multi_select_set() can enable this. If the list is
@@ -896,7 +896,7 @@ EAPI Elm_Object_Item             *elm_genlist_item_direct_sorted_insert(Evas_Obj
 
 /* operations to retrieve existing items */
 /**
- * Get the selectd item in the genlist.
+ * Get the selected item in the genlist.
  *
  * @param obj The genlist object
  * @return The selected item, or NULL if none is selected.
@@ -986,7 +986,7 @@ EAPI Eina_List                    *elm_genlist_realized_items_get(const Evas_Obj
 /**
  * Get the item that is at the x, y canvas coords.
  *
- * @param obj The gelinst object.
+ * @param obj The genlist object.
  * @param x The input x coordinate
  * @param y The input y coordinate
  * @param posret The position relative to the item returned here
@@ -1169,7 +1169,7 @@ EAPI Eina_Bool                     elm_genlist_item_selected_get(const Elm_Objec
  * has been expanded/contracted.
  *
  * Calling this function won't show or hide any child of this item (if it is
- * a parent). You must manually delete and create them on the callbacks fo
+ * a parent). You must manually delete and create them on the callbacks of
  * the "expanded" or "contracted" signals.
  *
  * @see elm_genlist_item_expanded_get()
@@ -1346,7 +1346,7 @@ EAPI void                          elm_genlist_item_middle_show(Elm_Object_Item 
 EAPI void                          elm_genlist_item_middle_bring_in(Elm_Object_Item *it);
 
 /**
- * Tells genlist to "orphan" contents fetchs by the item class
+ * Tells genlist to "orphan" contents fetched by the item class
  *
  * @param it The item
  *
@@ -1445,7 +1445,7 @@ EAPI void                          elm_genlist_item_fields_update(Elm_Object_Ite
  * @param it The item
  * @param itc The item class for the item
  *
- * This sets another class fo the item, changing the way that it is
+ * This sets another class of the item, changing the way that it is
  * displayed. After changing the item class, elm_genlist_item_update() is
  * called on the item @p it.
  *
@@ -1561,7 +1561,7 @@ EAPI const char                   *elm_genlist_item_tooltip_style_get(const Elm_
  * @param disable If EINA_TRUE, size restrictions are disabled
  * @return EINA_FALSE on failure, EINA_TRUE on success
  *
- * This function allows a tooltip to expand beyond its parant window's canvas.
+ * This function allows a tooltip to expand beyond its parent window's canvas.
  * It will instead be limited only by the size of the display.
  */
 EAPI Eina_Bool                     elm_genlist_item_tooltip_window_mode_set(Elm_Object_Item *it, Eina_Bool disable);
@@ -1572,7 +1572,7 @@ EAPI Eina_Bool                     elm_genlist_item_tooltip_window_mode_set(Elm_
  * @return If EINA_TRUE, size restrictions are disabled
  *
  * This function returns whether a tooltip is allowed to expand beyond
- * its parant window's canvas.
+ * its parent window's canvas.
  * It will instead be limited only by the size of the display.
  */
 EAPI Eina_Bool                     elm_genlist_item_tooltip_window_mode_get(const Elm_Object_Item *it);

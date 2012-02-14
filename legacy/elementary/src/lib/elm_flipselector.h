@@ -10,7 +10,7 @@
  * (thus, the "flip" in the name).
  *
  * User clicks to flip sheets which are @b held for some time will
- * make the flip selector to flip continuosly and automatically for
+ * make the flip selector to flip continuously and automatically for
  * the user. The interval between flips will keep growing in time,
  * so that it helps the user to reach an item which is distant from
  * the current selection.
@@ -192,7 +192,7 @@ EAPI Elm_Object_Item            *elm_flipselector_last_item_get(const Evas_Objec
  *
  * @param obj The flipselector object
  * @return The selected item or @c NULL, if the widget has no items
- * (and on erros)
+ * (and on errors)
  *
  * @ingroup Flipselector
  */
@@ -269,7 +269,7 @@ EAPI Elm_Object_Item            *elm_flipselector_item_next_get(Elm_Object_Item 
  * @param interval The (first) interval value in seconds
  *
  * This interval value is @b decreased while the user holds the
- * mouse pointer either flipping up or flipping doww a given flip
+ * mouse pointer either flipping up or flipping down a given flip
  * selector.
  *
  * This helps the user to get to a given item distant from the

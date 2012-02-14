@@ -121,7 +121,7 @@ EAPI void             elm_font_overlay_all_apply(void);
  *
  * @ingroup Fonts
  *
- * @note The reverse translation can be achived with
+ * @note The reverse translation can be achieved with
  * elm_font_fontconfig_name_get(), for one style only (single font
  * instance, not family).
  */
@@ -147,7 +147,7 @@ EAPI void             elm_font_properties_free(Elm_Font_Properties *efp);
  *
  * @ingroup Fonts
  *
- * @note The reverse translation can be achived with
+ * @note The reverse translation can be achieved with
  * elm_font_properties_get(), for one style only (single font
  * instance, not family).
  */

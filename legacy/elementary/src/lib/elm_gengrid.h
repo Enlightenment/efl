@@ -415,12 +415,12 @@ EAPI void                          elm_gengrid_align_get(const Evas_Object *obj,
  * @b reordered
  *
  * @param obj The gengrid object
- * @param reorder_mode Use @c EINA_TRUE to turn reoderding on,
+ * @param reorder_mode Use @c EINA_TRUE to turn reordering on,
  * @c EINA_FALSE to turn it off
  *
  * If a gengrid is set to allow reordering, a click held for more
  * than 0.5 over a given item will highlight it specially,
- * signalling the gengrid has entered the reordering state. From
+ * signaling the gengrid has entered the reordering state. From
  * that time on, the user will be able to, while still holding the
  * mouse button down, move the item freely in the gengrid's
  * viewport, replacing to said item to the locations it goes to.
@@ -439,7 +439,7 @@ EAPI void                          elm_gengrid_reorder_mode_set(Evas_Object *obj
  * @b reordered
  *
  * @param obj The gengrid object
- * @return @c EINA_TRUE, if reoderding is on, @c EINA_FALSE if it's
+ * @return @c EINA_TRUE, if reordering is on, @c EINA_FALSE if it's
  * off
  *
  * @see elm_gengrid_reorder_mode_set() for more details
@@ -821,7 +821,7 @@ EAPI void                          elm_gengrid_page_size_set(Evas_Object *obj, E
  *
  * @see elm_gengrid_last_page_get()
  * @see elm_gengrid_page_show()
- * @see elm_gengrid_page_brint_in()
+ * @see elm_gengrid_page_bring_in()
  */
 EAPI void                          elm_gengrid_current_page_get(const Evas_Object *obj, int *h_pagenumber, int *v_pagenumber);
 
@@ -837,7 +837,7 @@ EAPI void                          elm_gengrid_current_page_get(const Evas_Objec
  *
  * @see elm_gengrid_current_page_get()
  * @see elm_gengrid_page_show()
- * @see elm_gengrid_page_brint_in()
+ * @see elm_gengrid_page_bring_in()
  */
 EAPI void                          elm_gengrid_last_page_get(const Evas_Object *obj, int *h_pagenumber, int *v_pagenumber);
 
@@ -919,7 +919,7 @@ EAPI void                          elm_gengrid_horizontal_set(Evas_Object *obj, 
  * @return @c EINA_TRUE, if @p obj is set to expand horizontally,
  * @c EINA_FALSE if it's set to expand vertically.
  *
- * @see elm_gengrid_horizontal_set() for more detais
+ * @see elm_gengrid_horizontal_set() for more details
  *
  * @ingroup Gengrid
  */
@@ -1107,7 +1107,7 @@ EAPI const Evas_Object            *elm_gengrid_item_object_get(const Elm_Object_
  * @param it The item to display
  *
  * This causes gengrid to @b redraw its viewport's contents to the
- * region contining the given @p item item, if it is not fully
+ * region containing the given @p item item, if it is not fully
  * visible.
  *
  * @see elm_gengrid_item_bring_in()
@@ -1233,7 +1233,7 @@ EAPI const char                   *elm_gengrid_item_tooltip_style_get(const Elm_
  * @param disable If EINA_TRUE, size restrictions are disabled
  * @return EINA_FALSE on failure, EINA_TRUE on success
  *
- * This function allows a tooltip to expand beyond its parant window's canvas.
+ * This function allows a tooltip to expand beyond its parent window's canvas.
  * It will instead be limited only by the size of the display.
  */
 EAPI Eina_Bool                     elm_gengrid_item_tooltip_window_mode_set(Elm_Object_Item *it, Eina_Bool disable);
@@ -1244,7 +1244,7 @@ EAPI Eina_Bool                     elm_gengrid_item_tooltip_window_mode_set(Elm_
  * @return If EINA_TRUE, size restrictions are disabled
  *
  * This function returns whether a tooltip is allowed to expand beyond
- * its parant window's canvas.
+ * its parent window's canvas.
  * It will instead be limited only by the size of the display.
  */
 EAPI Eina_Bool                     elm_gengrid_item_tooltip_window_mode_get(const Elm_Object_Item *it);
@@ -1399,7 +1399,7 @@ EAPI void                          elm_gengrid_clear(Evas_Object *obj);
  * Get the selected item in a given gengrid widget
  *
  * @param obj The gengrid object.
- * @return The selected item's handleor @c NULL, if none is
+ * @return The selected item's handle or @c NULL, if none is
  * selected at the moment (and on errors)
  *
  * This returns the selected item in @p obj. If multi selection is
@@ -1420,7 +1420,7 @@ EAPI Elm_Object_Item             *elm_gengrid_selected_item_get(const Evas_Objec
  *
  * This returns a list of the selected items, in the order that
  * they appear in the grid. This list is only valid as long as no
- * more items are selected or unselected (or unselected implictly
+ * more items are selected or unselected (or unselected implicitly
  * by deletion). The list contains #Gengrid item pointers as
  * data, naturally.
  *

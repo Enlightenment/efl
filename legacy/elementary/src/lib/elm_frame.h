@@ -6,7 +6,7 @@
  *
  * @brief Frame is a widget that holds some content and has a title.
  *
- * The default look is a frame with a title, but Frame supports multple
+ * The default look is a frame with a title, but Frame supports multiple
  * styles:
  * @li default
  * @li pad_small

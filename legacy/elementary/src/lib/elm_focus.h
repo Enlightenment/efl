@@ -12,7 +12,7 @@
  * objects by input (tab key) or programmatically. The default
  * focus chain for an application is the one define by the order in
  * which the widgets where added in code. One will cycle through
- * top level widgets, and, for each one containg sub-objects, cycle
+ * top level widgets, and, for each one containing sub-objects, cycle
  * through them all, before returning to the level
  * above. Elementary also allows one to set @b custom focus chains
  * for their applications.
@@ -53,7 +53,7 @@ EAPI void                 elm_focus_highlight_enabled_set(Eina_Bool enable);
 /**
  * Get the enable status of the highlight animation
  *
- * @return The focus hilight mode set
+ * @return The focus highlight mode set
  * 
  * Get whether the focus highlight, if enabled, will animate its switch from
  * one object to the next
