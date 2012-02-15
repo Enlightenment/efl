@@ -134,8 +134,6 @@ EAPI Eina_Bool        elm_image_smooth_get(const Evas_Object *obj);
  *
  * This is the real size of the image, not the size of the object.
  *
- * On error, neither w and h will be filled with 0.
- *
  * @ingroup Image
  */
 EAPI void             elm_image_object_size_get(const Evas_Object *obj, int *w, int *h);
@@ -189,6 +187,7 @@ EAPI Eina_Bool        elm_image_no_scale_get(const Evas_Object *obj);
  *
  * @ingroup Image
  */
+//XXX: elm_image_scale_up_set + elm_image_scale_down_set may be better. how do you think ? 
 EAPI void             elm_image_scale_set(Evas_Object *obj, Eina_Bool scale_up, Eina_Bool scale_down);
 
 /**
@@ -202,6 +201,7 @@ EAPI void             elm_image_scale_set(Evas_Object *obj, Eina_Bool scale_up, 
  *
  * @ingroup Image
  */
+//XXX: elm_image_scale_up_get + elm_image_scale_down_get may be better. how do you think ? 
 EAPI void             elm_image_scale_get(const Evas_Object *obj, Eina_Bool *scale_up, Eina_Bool *scale_down);
 
 /**
@@ -318,7 +318,7 @@ EAPI Elm_Image_Orient elm_image_orient_get(const Evas_Object *obj);
 EAPI void             elm_image_editable_set(Evas_Object *obj, Eina_Bool set);
 
 /**
- * Check if the image 'editable'.
+ * Check if the image is 'editable'.
  *
  * @param obj Image object.
  * @return Editability.
@@ -331,7 +331,7 @@ EAPI void             elm_image_editable_set(Evas_Object *obj, Eina_Bool set);
 EAPI Eina_Bool        elm_image_editable_get(const Evas_Object *obj);
 
 /**
- * Get the basic Evas_Image object from this object (widget).
+ * Get the inlined image object of the image widget.
  *
  * @param obj The image object to get the inlined image from
  * @return The inlined image object, or NULL if none exists
