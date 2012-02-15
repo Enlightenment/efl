@@ -29,7 +29,6 @@ widgets/notify.edc \
 widgets/slider.edc \
 widgets/button.edc \
 widgets/gengrid.edc \
-widgets/pager.edc \
 widgets/slideshow.edc \
 widgets/calendar.edc \
 widgets/genlist.edc \
