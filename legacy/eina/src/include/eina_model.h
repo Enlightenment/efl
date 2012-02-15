@@ -370,6 +370,8 @@ typedef struct _Eina_Model_Event_Description Eina_Model_Event_Description;
 
 /**
  * @brief Creates a new model of type @a Type.
+ * @param type The type of the model to create.
+ * @return If successfull pointer to model, NULL otherwise.
  *
  * @see _Eina_Model_Type
  * @see eina_model_del()
@@ -378,6 +380,7 @@ typedef struct _Eina_Model_Event_Description Eina_Model_Event_Description;
 EAPI Eina_Model *eina_model_new(const Eina_Model_Type *type);
 /**
  * @brief Frees the memory associated with @a model
+ * @param model The model instance.
  *
  * @see eina_model_new()
  * @since 1.2
@@ -386,6 +389,8 @@ EAPI void eina_model_del(Eina_Model *model) EINA_ARG_NONNULL(1);
 
 /**
  * @brief Returns the type of @a model.
+ * @param model The model instance.
+ * @return The type of @a model.
  *
  * @see eina_model_new()
  * @see _Eina_Model_Type
@@ -395,6 +400,9 @@ EAPI const Eina_Model_Type *eina_model_type_get(const Eina_Model *model) EINA_AR
 
 /**
  * @brief Returns the interface named @a name of @a model.
+ * @param model The model instance.
+ * @param name Name of interface to get.
+ * @return If successfull requested interface, NULL otherwise.
  *
  * The name of every interface of @a model will be compared to @a name, the
  * first one to match will be returned.
@@ -410,6 +418,7 @@ EAPI const Eina_Model_Interface *eina_model_interface_get(const Eina_Model *mode
  * @brief Increases the refcount of @a model.
  * @param model The model to increase reference.
  * @return The @a model with reference increased.
+ * @return If successfull pointer to model, NULL otherwise.
  *
  * @see eina_model_new()
  * @see eina_model_unref()
@@ -472,6 +481,7 @@ EAPI Eina_Model *eina_model_xref(Eina_Model *model,
 /**
  * @brief Decreases the refcount of @a model.
  * @param model The model to decrease reference.
+ * @return If successfull pointer to model, NULL otherwise.
  *
  * After this function returns, consider @a model pointer invalid.
  *
@@ -485,6 +495,7 @@ EAPI void eina_model_unref(Eina_Model *model) EINA_ARG_NONNULL(1);
  * @brief Decreases the refcount of @a model, informs reference identifier.
  * @param model The model to decrease reference.
  * @param id An identifier to mark this reference.
+ * @return If successfull pointer to model, NULL otherwise.
  *
  * This function will match eina_model_xref() and the @a id must match
  * a previously call, otherwise it will produce an error if @c
@@ -545,6 +556,11 @@ typedef void (*Eina_Model_Event_Cb)(void *data, Eina_Model *model, const Eina_Mo
 
 /**
  * @brief Add a callback to be called when @a event_name is emited.
+ * @param model The model instance.
+ * @param event_name The name of event for which @a cb will be called.
+ * @param cb The function to be called.
+ * @param data Data @a cb will be called with. May be NULL.
+ * @return #EINA_TRUE on success, #EINA_FALSE on failure.
  *
  * @see eina_model_event_callback_del()
  * @since 1.2
@@ -555,6 +571,12 @@ EAPI Eina_Bool eina_model_event_callback_add(Eina_Model *model,
                                              const void *data) EINA_ARG_NONNULL(1, 2, 3);
 /**
  * @brief Remove a callback that was to be called when @a event_name was emited.
+ * @param model The model instance.
+ * @param event_name The name of event for which to delete callback.
+ * @param cb The function given to eina_model_event_callback_add().
+ * @param data Data given to eina_model_event_callback_add(). A NULL value means
+ * every @a data will not be compared.
+ * @return #EINA_TRUE on success, #EINA_FALSE on failure.
  *
  * @see eina_model_event_callback_add()
  * @since 1.2
@@ -564,6 +586,15 @@ EAPI Eina_Bool eina_model_event_callback_del(Eina_Model *model,
                                              Eina_Model_Event_Cb cb,
                                              const void *data) EINA_ARG_NONNULL(1, 2, 3);
 
+/**
+ * @brief Returns a description of the event named @c event_name
+ * @param model The model instance.
+ * @param event_name Name of event whose description is wanted.
+ * @return Description of event.
+ *
+ * @see Eina_Model_Event_Description
+ * @since 1.2
+ */
 EAPI const Eina_Model_Event_Description *eina_model_event_description_get(const Eina_Model *model,
                                                                            const char *event_name) EINA_ARG_NONNULL(1, 2) EINA_WARN_UNUSED_RESULT EINA_PURE;
 
@@ -576,14 +607,56 @@ EAPI const Eina_Model_Event_Description *eina_model_event_description_get(const 
  * @since 1.2
  */
 EAPI Eina_List *eina_model_event_names_list_get(const Eina_Model *model) EINA_ARG_NONNULL(1) EINA_WARN_UNUSED_RESULT;
+/**
+ * @brief Frees the list of event's names gotten from
+ * eina_model_event_names_list_get().
+ * @param list The list to free.
+ *
+ * @see eina_model_event_names_list_get()
+ * @since 1.2
+ */
 EAPI void eina_model_event_names_list_free(Eina_List *list);
 
+/**
+ * @brief Calls every callback associated to @a name on model @a model with @a
+ * event_info.
+ * @param model The model instance.
+ * @param name The event whose callbacks will be called.
+ * @param event_info The data given to the callback as event_info. May be NULL.
+ * @return #EINA_TRUE on success, #EINA_FALSE on failure.
+ *
+ * @see eina_model_event_callback_add()
+ * @see eina_model_event_callback_del()
+ * @since 1.2
+ */
 EAPI Eina_Bool eina_model_event_callback_call(Eina_Model *model,
                                               const char *name,
                                               const void *event_info) EINA_ARG_NONNULL(1, 2);
 
+/**
+ * @brief Makes @a model not call the callbacks associated with @a name.
+ * @param model The model instance.
+ * @param name The event whose callbacks are to be frozen.
+ * @return Count of freezes called on this event.
+ *
+ * @see eina_model_event_callback_call()
+ * @see eina_model_event_callback_thaw()
+ * @since 1.2
+ */
 EAPI int eina_model_event_callback_freeze(Eina_Model *model,
                                           const char *name) EINA_ARG_NONNULL(1, 2);
+/**
+ * @brief Makes @a model able to call the callbacks associated with @a name.
+ * @param model The model instance.
+ * @param name The event whose callbacks are to be frozen.
+ * @return Count of freezes still valid in this event.
+ *
+ * @warning Behavior is undefined if called on a @a model, @a name not frozen.
+ *
+ * @see eina_model_event_callback_call()
+ * @see eina_model_event_callback_freeze()
+ * @since 1.2
+ */
 EAPI int eina_model_event_callback_thaw(Eina_Model *model,
                                         const char *name) EINA_ARG_NONNULL(1, 2);
 
@@ -592,7 +665,29 @@ EAPI int eina_model_event_callback_thaw(Eina_Model *model,
  */
 
 
+/**
+ * @brief Makes a shallow copy of @a model.
+ * @param model The model instance.
+ * @return Copied model.
+ *
+ * The returned model will have a copy of the properties of @a model and a
+ * reference to the children of @a model.
+ *
+ * @see eina_model_deep_copy()
+ * @since 1.2
+ */
 EAPI Eina_Model *eina_model_copy(const Eina_Model *model) EINA_ARG_NONNULL(1) EINA_WARN_UNUSED_RESULT EINA_MALLOC;
+/**
+ * @brief Makes a deep(complete) copy of @a model.
+ * @param model The model instance.
+ * @return Copied model.
+ *
+ * The returned model will have a copy of the properties of @a model, its
+ * children will be created by making a deep copy of the children of @a model.
+ *
+ * @see eina_model_copy()
+ * @since 1.2
+ */
 EAPI Eina_Model *eina_model_deep_copy(const Eina_Model *model) EINA_ARG_NONNULL(1) EINA_WARN_UNUSED_RESULT EINA_MALLOC;
 
 /**
@@ -612,7 +707,44 @@ EAPI Eina_Model *eina_model_deep_copy(const Eina_Model *model) EINA_ARG_NONNULL(
  */
 EAPI int eina_model_compare(const Eina_Model *a, const Eina_Model *b) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1, 2);
 
+/**
+ * @brief Loads the @a model's data.
+ * @param model The model instance.
+ * @return #EINA_TRUE on success, #EINA_FALSE on failure.
+ *
+ * By convention this means loading data from an external source and populating
+ * the models properties and children with it. For example in the case of file
+ * system backed model, this means opening the relevant files and reading the
+ * data from them(creating the properties and children from it).
+ * @warning This convention should be followed, but no guarantees of behaviour
+ * by user defined types can be given.
+ *
+ * @note The types provided by Eina_Model don't implement this method.
+ * @note Calling this function on a model that doesn't implement it returns @c
+ * EINA_TRUE without any effect on @a model.
+ *
+ * @see eina_model_unload()
+ * @since 1.2
+ */
 EAPI Eina_Bool eina_model_load(Eina_Model *model) EINA_ARG_NONNULL(1);
+/**
+ * @brief Unloads the @a model's data.
+ * @param model The model instance.
+ * @return #EINA_TRUE on success, #EINA_FALSE on failure.
+ *
+ * By convention this means releasing data gotten from an external source. For
+ * example of a database backed model this might mean releasing the iterator for
+ * the currently loaded data or deleting a temporary table.
+ * @warning This convention should be followed, but no guarantees of behaviour
+ * by user defined types can be given.
+ *
+ * @note The types provided by Eina_Model don't implement this method.
+ * @note Calling this function on a model that doesn't implement it returns @c
+ * EINA_TRUE without any effect on @a model.
+ *
+ * @see eina_model_load()
+ * @since 1.2
+ */
 EAPI Eina_Bool eina_model_unload(Eina_Model *model) EINA_ARG_NONNULL(1);
 
 
@@ -629,16 +761,76 @@ EAPI Eina_Bool eina_model_unload(Eina_Model *model) EINA_ARG_NONNULL(1);
  *
  * @{
  */
+/**
+ * @brief Gets the value of @a model's property named @a name.
+ * @param[in] model The model from which to get the property.
+ * @param[in] name The name of the property whose value is wanted.
+ * @param[out] value A pointer to an Eina_Value to receive the property's value.
+ * @return #EINA_TRUE on success, #EINA_FALSE on failure.
+ *
+ * @return EINA_TRUE if @a model has a property named @a name, EINA_FALSE
+ * otherwise.
+ *
+ * @see eina_model_property_set()
+ * @see eina_model_property_del()
+ * @since 1.2
+ */
 EAPI Eina_Bool eina_model_property_get(const Eina_Model *model,
                                        const char *name,
                                        Eina_Value *value) EINA_ARG_NONNULL(1, 2, 3);
+/**
+ * @brief Sets the value of @a model's property named @a name to @a value.
+ * @param model The model in which to set the property.
+ * @param name The name of the property whose value is to set.
+ * @param value A pointer to a const Eina_Value to containing the property's
+ * value.
+ * @return #EINA_TRUE on success, #EINA_FALSE on failure.
+ *
+ * @see eina_model_property_get()
+ * @see eina_model_property_del()
+ * @since 1.2
+ */
 EAPI Eina_Bool eina_model_property_set(Eina_Model *model,
                                        const char *name,
                                        const Eina_Value *value) EINA_ARG_NONNULL(1, 2, 3);
+/**
+ * @brief Deletes @a model's property named @a name.
+ * @param model The model from which to delete the property.
+ * @param name The name of the property to delete.
+ * @return #EINA_TRUE on success, #EINA_FALSE on failure.
+ *
+ * @see eina_model_property_set()
+ * @see eina_model_property_get()
+ * @since 1.2
+ */
 EAPI Eina_Bool eina_model_property_del(Eina_Model *model,
                                        const char *name) EINA_ARG_NONNULL(1, 2);
 
+/**
+ * @brief Gets a list of the names of every property of @a model.
+ * @param model The model instance.
+ * @return #Eina_List of names.
+ *
+ * @note The returned list should be freed with @c
+ * eina_model_properties_names_list_free().
+ *
+ * @see eina_model_properties_names_list_free()
+ * @see eina_model_property_get()
+ * @since 1.2
+ */
 EAPI Eina_List *eina_model_properties_names_list_get(const Eina_Model *model) EINA_ARG_NONNULL(1) EINA_WARN_UNUSED_RESULT;
+/**
+ * @brief Frees a list of names of properties gotten with @c
+ * eina_model_properties_names_list_get().
+ * @param list The list to free.
+ *
+ * @warning Behavior is undefined if called on a list not gotten from @c
+ * eina_model_properties_names_list_get().
+ *
+ * @see eina_model_properties_names_list_get()
+ * @see eina_model_property_get()
+ * @since 1.2
+ */
 EAPI void eina_model_properties_names_list_free(Eina_List *list);
 
 /**
@@ -657,6 +849,16 @@ EAPI void eina_model_properties_names_list_free(Eina_List *list);
  * @{
  */
 
+/**
+ * @brief Returns the number of child models in @a model.
+ * @param model The model instance.
+ * @return Number of children in @a model.
+ *
+ * @see eina_model_child_append()
+ * @see eina_model_child_get()
+ * @see eina_model_child_del()
+ * @since 1.2
+ */
 EAPI int eina_model_child_count(const Eina_Model *model) EINA_ARG_NONNULL(1) EINA_WARN_UNUSED_RESULT;
 
 /**
@@ -669,7 +871,7 @@ EAPI int eina_model_child_count(const Eina_Model *model) EINA_ARG_NONNULL(1) EIN
  * return @c NULL, one should check for a valid position with
  * eina_model_child_count().
  *
- * The returned model has its reference increased, you must release it
+ * @warning The returned model has its reference increased, you must release it
  * with eina_model_unref(). This convention is imposed to avoid the
  * object being removed before the caller function has time to use it.
  */
@@ -693,30 +895,111 @@ EAPI Eina_Model *eina_model_child_get(const Eina_Model *model,
  *
  * The given model will be adopted by @a model, that is, the @a child
  * will have its reference increased if this call succeeds.
+ *
+ * @see eina_model_child_append()
+ * @see eina_model_child_insert_at()
+ * @since 1.2
  */
 EAPI Eina_Bool eina_model_child_set(Eina_Model *model,
                                     unsigned int position,
                                     Eina_Model *child) EINA_ARG_NONNULL(1, 3);
 
+/**
+ * @brief Deletes the child model in @a position-th of @a model.
+ * @param model The model instance.
+ * @param position The position of the child to be deleted.
+ * @return #EINA_TRUE on success, #EINA_FALSE on failure.
+ *
+ * @warning This decrements the reference count of the child being deleted,
+ * which may, or not, cause it to be deconstructed and freed.
+ *
+ * @see eina_model_child_append()
+ * @see eina_model_child_get()
+ * @since 1.2
+ */
 EAPI Eina_Bool eina_model_child_del(Eina_Model *model,
                                     unsigned int position) EINA_ARG_NONNULL(1);
 
+/**
+ * @brief Insert @a child in the @a position-th of the list of children of @a
+ * model.
+ * @param model The model instance.
+ * @param position Position in which to insert child.
+ * @param child The child to be inserted.
+ * @return #EINA_TRUE on success, #EINA_FALSE on failure.
+ *
+ * @warning This increments the reference count of the child being inserted, if
+ * it will no longer be used by the inserting code it should call
+ * eina_model_unref() on it.
+ *
+ * @see eina_model_child_append()
+ * @see eina_model_child_set()
+ * @since 1.2
+ */
 EAPI Eina_Bool eina_model_child_insert_at(Eina_Model *model,
                                           unsigned int position,
                                           Eina_Model *child) EINA_ARG_NONNULL(1, 3);
 
+/**
+ * @brief Appends @a child in @a model.
+ * @param model The model instance.
+ * @param child The child to be appended.
+ * @return The position of the added child, or -1 on failure.
+ *
+ * @warning This increments the reference count of the child being inserted, if
+ * it will no longer be used by the inserting code it should call
+ * eina_model_unref() on it.
+ *
+ * @see eina_model_child_insert_at()
+ * @see eina_model_child_set()
+ * @since 1.2
+ */
 EAPI int eina_model_child_append(Eina_Model *model,
                                  Eina_Model *child) EINA_ARG_NONNULL(1, 2);
 
+/**
+ * @brief Returns the position of @a other amongst the children of @a model.
+ * @param model The parent model whose children will be searched.
+ * @param start_position The first children to be compared with @a other.
+ * @param other The model whose position is desired.
+ * @return The position of the searched for child, or -1 if not found.
+ *
+ * @since 1.2
+ */
 EAPI int eina_model_child_find(const Eina_Model *model,
                                unsigned int start_position,
                                const Eina_Model *other) EINA_ARG_NONNULL(1, 3) EINA_WARN_UNUSED_RESULT;
 
+/**
+ * @brief Returns the position of a child of @a model that mathes the criteria.
+ * @param model The model whose children will be searched.
+ * @param start_position The position of the first child to be checked.
+ * @param match The function used to check if a child matches the criteria.
+ * @param data Data given the to the @a match function.
+ * @return The position of the first child to match the criteria or -1 if no
+ * child matches it.
+ *
+ * Returns the position of the first(from @a start_position) child of @a model
+ * to which @a match returns EINA_TRUE.
+ *
+ * @since 1.2
+ */
 EAPI int eina_model_child_criteria_match(const Eina_Model *model,
                                          unsigned int start_position,
                                          Eina_Each_Cb match,
                                          const void *data) EINA_ARG_NONNULL(1, 3) EINA_WARN_UNUSED_RESULT;
 
+/**
+ * @brief Sorts the children of @a model according to @a compare.
+ * @param model The model instance.
+ * @param compare The function to be used in the comparison.
+ * @return #EINA_TRUE on success, #EINA_FALSE on failure.
+ *
+ * The @a compare function receives to const pointer to eina models(const
+ * *Eina_Model).
+ *
+ * @since 1.2
+ */
 EAPI Eina_Bool eina_model_child_sort(Eina_Model *model,
                                      Eina_Compare_Cb compare) EINA_ARG_NONNULL(1, 2);
 
@@ -738,10 +1021,7 @@ EAPI Eina_Bool eina_model_child_sort(Eina_Model *model,
 /**
  * @brief create an iterator that outputs a child model on each iteration.
  * @param model the model instance.
- * @return newly created iterator instance on success or @c NULL on failure.
- *
- * Each iteration output a child model with reference @b increased!
- * You must call eina_model_unref() after you're done with it.
+ * @return Newly created iterator instance on success or @c NULL on failure.
  *
  * @code
  *  Eina_Model *child;
@@ -756,6 +1036,10 @@ EAPI Eina_Bool eina_model_child_sort(Eina_Model *model,
  * This code shows how to use iterators to do something (in this example call
  * use_child()) on every child element.
  *
+ * @warning Each iteration(call to eina_iterator_next()) gives a child model
+ * with reference @b increased! You must call eina_model_unref() after you're
+ * done with it.
+ *
  * @see eina_model_child_slice_iterator_get()
  * @see eina_model_child_reversed_iterator_get()
  * @see eina_model_child_sorted_iterator_get()
@@ -763,6 +1047,21 @@ EAPI Eina_Bool eina_model_child_sort(Eina_Model *model,
  * @since 1.2
  */
 EAPI Eina_Iterator *eina_model_child_iterator_get(Eina_Model *model) EINA_ARG_NONNULL(1) EINA_WARN_UNUSED_RESULT;
+/**
+ * @brief Gets an iterator to a slice of @a model's children.
+ * @param model The model whose children to iterate over.
+ * @param start The first child included in the iterator.
+ * @param count The number of children included in the iterator.
+ * @return Newly created iterator instance on success or @c NULL on failure.
+ *
+ * @warning Each iteration(call to eina_iterator_next()) gives a child model
+ * with reference @b increased! You must call eina_model_unref() after you're
+ * done with it.
+ *
+ * @see eina_model_child_iterator_get()
+ * @see eina_model_child_slice_reversed_iterator_get()
+ * @since 1.2
+ */
 EAPI Eina_Iterator *eina_model_child_slice_iterator_get(Eina_Model *model,
                                                         unsigned int start,
                                                         unsigned int count) EINA_ARG_NONNULL(1) EINA_WARN_UNUSED_RESULT;
@@ -770,7 +1069,7 @@ EAPI Eina_Iterator *eina_model_child_slice_iterator_get(Eina_Model *model,
 /**
  * @brief create an iterator that outputs a child model in reversed order.
  * @param model the model instance.
- * @return newly created iterator instance on success or @c NULL on failure.
+ * @return Newly created iterator instance on success or @c NULL on failure.
  *
  * Each iteration output a child model with reference @b increased!
  * You must call eina_model_unref() after you're done with it.
@@ -790,6 +1089,10 @@ EAPI Eina_Iterator *eina_model_child_slice_iterator_get(Eina_Model *model,
  * This code shows how to use iterators to do something (in this example call
  * use_child()) on every child element starting from last to first.
  *
+ * @warning Each iteration(call to eina_iterator_next()) gives a child model
+ * with reference @b increased! You must call eina_model_unref() after you're
+ * done with it.
+ *
  * @see eina_model_child_slice_iterator_get()
  * @see eina_model_child_reversed_iterator_get()
  * @see eina_model_child_sorted_iterator_get()
@@ -798,6 +1101,21 @@ EAPI Eina_Iterator *eina_model_child_slice_iterator_get(Eina_Model *model,
  */
 EAPI Eina_Iterator *eina_model_child_reversed_iterator_get(Eina_Model *model) EINA_ARG_NONNULL(1) EINA_WARN_UNUSED_RESULT;
 
+/**
+ * @brief Gets a reversed iterator to a slice of @a model's children.
+ * @param model The model whose children to iterate over.
+ * @param start The first child included in the iterator.
+ * @param count The number of children included in the iterator.
+ * @return Newly created iterator instance on success or @c NULL on failure.
+ *
+ * @warning Each iteration(call to eina_iterator_next()) gives a child model
+ * with reference @b increased! You must call eina_model_unref() after you're
+ * done with it.
+ *
+ * @see eina_model_child_reversed_iterator_get()
+ * @see eina_model_child_slice_iterator_get()
+ * @since 1.2
+ */
 EAPI Eina_Iterator *eina_model_child_slice_reversed_iterator_get(Eina_Model *model,
                                                                  unsigned int start,
                                                                  unsigned int count) EINA_ARG_NONNULL(1) EINA_WARN_UNUSED_RESULT;
@@ -806,7 +1124,7 @@ EAPI Eina_Iterator *eina_model_child_slice_reversed_iterator_get(Eina_Model *mod
  * @brief create an iterator that outputs a child model using sort criteria.
  * @param model the model instance.
  * @param compare compare function to use as sort criteria.
- * @return newly created iterator instance on success or @c NULL on failure.
+ * @return Newly created iterator instance on success or @c NULL on failure.
  *
  * Each iteration output a child model with reference @b increased!
  * You must call eina_model_unref() after you're done with it.
@@ -828,6 +1146,10 @@ EAPI Eina_Iterator *eina_model_child_slice_reversed_iterator_get(Eina_Model *mod
  * call use_child()) on every child element in the order given by the @a compare
  * function.
  *
+ * @warning Each iteration(call to eina_iterator_next()) gives a child model
+ * with reference @b increased! You must call eina_model_unref() after you're
+ * done with it.
+ *
  * @see eina_model_child_slice_iterator_get()
  * @see eina_model_child_reversed_iterator_get()
  * @see eina_model_child_sorted_iterator_get()
@@ -837,6 +1159,25 @@ EAPI Eina_Iterator *eina_model_child_slice_reversed_iterator_get(Eina_Model *mod
 EAPI Eina_Iterator *eina_model_child_sorted_iterator_get(Eina_Model *model,
                                                          Eina_Compare_Cb compare) EINA_ARG_NONNULL(1, 2) EINA_WARN_UNUSED_RESULT;
 
+/**
+ * @brief Returns a sorted iterator to a slice of @a model's children.
+ * @param model The model whose children to iterate over.
+ * @param start The position(before sorting) of the first child included in
+ * the iterator.
+ * @param count The number of children included in the iterator.
+ * @param compare The function used to sort the children.
+ * @return Newly created iterator instance on success or @c NULL on failure.
+ *
+ * @warning Each iteration(call to eina_iterator_next()) gives a child model
+ * with reference @b increased! You must call eina_model_unref() after you're
+ * done with it.
+ *
+ * @see eina_model_child_slice_iterator_get()
+ * @see eina_model_child_reversed_iterator_get()
+ * @see eina_model_child_sorted_iterator_get()
+ * @see eina_model_child_filtered_iterator_get()
+ * @since 1.2
+ */
 EAPI Eina_Iterator *eina_model_child_slice_sorted_iterator_get(Eina_Model *model,
                                                                unsigned int start,
                                                                unsigned int count,
@@ -847,7 +1188,7 @@ EAPI Eina_Iterator *eina_model_child_slice_sorted_iterator_get(Eina_Model *model
  * @param model the model instance.
  * @param match function to select children.
  * @param data extra context given to @a match function.
- * @return newly created iterator instance on success or @c NULL on failure.
+ * @return Newly created iterator instance on success or @c NULL on failure.
  *
  * Unlike other iterators, each iteration output an integer index!
  * This is useful if you want to highlight the matching model
@@ -880,6 +1221,31 @@ EAPI Eina_Iterator *eina_model_child_filtered_iterator_get(Eina_Model *model,
                                                            Eina_Each_Cb match,
                                                            const void *data) EINA_ARG_NONNULL(1, 2) EINA_WARN_UNUSED_RESULT;
 
+/**
+ * @brief Returns a filtered slice of the @a model's children.
+ * @param model The model whose children to iterate over.
+ * @param start The position of the first child to be tested for inclusion in
+ * the iterator.
+ * @param count The number of children to be tested for inclusion in the
+ * iterator.
+ * @param match The function used to decide which children will be included in
+ * the iterator.
+ * @param data Data passed to the @a match function.
+ * @return Newly created iterator instance on success or @c NULL on failure.
+ *
+ * @note Only children for whom @a match returns EINA_TRUE will be included in
+ * the iterator.
+ *
+ * @note Each iteration(call to eina_iterator_next()) gives an integer index!
+ *
+ * @warning The iterator may have less than @a count children, but not more.
+ *
+ * @see eina_model_child_slice_iterator_get()
+ * @see eina_model_child_reversed_iterator_get()
+ * @see eina_model_child_sorted_iterator_get()
+ * @see eina_model_child_filtered_iterator_get()
+ * @since 1.2
+ */
 EAPI Eina_Iterator *eina_model_child_slice_filtered_iterator_get(Eina_Model *model,
                                                                  unsigned int start,
                                                                  unsigned int count,
@@ -894,7 +1260,7 @@ EAPI Eina_Iterator *eina_model_child_slice_filtered_iterator_get(Eina_Model *mod
 /**
  * @brief Convert model to string.
  * @param model the model instance.
- * @return newly allocated memory or @c NULL on failure.
+ * @return Newly allocated memory or @c NULL on failure.
  *
  * The default format of the ouput is:
  * Type_Name({Property_Name: Property_Value, ...}, [Child0, Child1, ...])
@@ -1149,96 +1515,467 @@ struct _Eina_Model_Type
    NULL                                                             \
    }
 
+/**
+ * @brief Calls the constructor of @a type for @a model.
+ * @param type The type whose constructor will be called.
+ * @param model The model instance.
+ * @return #EINA_TRUE on success, #EINA_FALSE on failure.
+ *
+ * This should be used to call the parent's type constructor, something like:
+ * @code
+ * static Eina_Bool my_type_constructor(Eina_Model *m)
+ * {
+ *     // call parents constructor:
+ *     if (!eina_model_type_constructor(MY_TYPE->parent, m))
+ *        return EINA_FALSE;
+ *     // do my stuff
+ *     return EINA_TRUE;
+ * }
+ * @endcode
+ * @note You should only do your type's initialization after the parent type has
+ * done his own(this is as to ensure you can call on your parent's methods).
+ *
+ * @warning If model doesn't inherit from(or is of) @a type does nothing and
+ * returns EINA_FALSE.
+ *
+ * @see eina_model_new()
+ * @see _Eina_Model_Type
+ * @since 1.2
+ */
 EAPI Eina_Bool eina_model_type_constructor(const Eina_Model_Type *type,
                                            Eina_Model *model) EINA_ARG_NONNULL(1, 2) EINA_WARN_UNUSED_RESULT;
+/**
+ * @brief Calls the destructor of @a type for @a model.
+ * @param type The type whose destructor will be called.
+ * @param model The model instance.
+ * @return #EINA_TRUE on success, #EINA_FALSE on failure.
+ *
+ * This should be used to call the parent's type destructor, something like:
+ * @code
+ * static Eina_Bool my_type_destructor(Eina_Model *m)
+ * {
+ *     // do my stuff
+ *     // call parents destructor:
+ *     if (!eina_model_type_destructor(MY_TYPE->parent, m))
+ *        return EINA_FALSE;
+ *     return EINA_TRUE;
+ * }
+ * @endcode
+ * @note It's considered good practice to free your type's resources before
+ * calling the parent's destructor.
+ *
+ * @warning If model doesn't inherit from(or is of) @a type does nothing and
+ * returns EINA_FALSE.
+ *
+ * @see eina_model_del()
+ * @see _Eina_Model_Type
+ * @since 1.2
+ */
 EAPI Eina_Bool eina_model_type_destructor(const Eina_Model_Type *type,
                                           Eina_Model *model) EINA_ARG_NONNULL(1, 2);
+/**
+ * @brief Calls the copy method of @a type for @a model.
+ * @param type The type whose copy method will be called.
+ * @param src Pointer to the model to be copied.
+ * @param dst Pointer to where copy will be put.
+ * @return #EINA_TRUE on success, #EINA_FALSE on failure.
+ *
+ * @warning If model doesn't inherit from(or is of) @a type does nothing and
+ * returns EINA_FALSE.
+ *
+ * @see eina_model_copy()
+ * @see _Eina_Model_Type
+ * @since 1.2
+ */
 EAPI Eina_Bool eina_model_type_copy(const Eina_Model_Type *type,
                                     const Eina_Model *src,
                                     Eina_Model *dst) EINA_ARG_NONNULL(1, 2, 3);
+/**
+ * @brief Calls the deep copy method of @a type for @a model.
+ * @param type The type whose copy method will be called.
+ * @param src Pointer to the model to be copied.
+ * @param dst Pointer to where copy will be put.
+ * @return #EINA_TRUE on success, #EINA_FALSE on failure.
+ *
+ * @warning If model doesn't inherit from(or is of) @a type does nothing and
+ * returns EINA_FALSE.
+ *
+ * @see eina_model_deep_copy()
+ * @see _Eina_Model_Type
+ * @since 1.2
+ */
 EAPI Eina_Bool eina_model_type_deep_copy(const Eina_Model_Type *type,
                                          const Eina_Model *src,
                                          Eina_Model *dst) EINA_ARG_NONNULL(1, 2, 3);
+/**
+ * @brief Calls the compare method of @a type for @a model.
+ * @param[in] type The type whose compare method will be called.
+ * @param[in] a Pointer to the first model to be compared.
+ * @param[in] b Pointer to the second model to be compared.
+ * @param[out] cmp The value of the comparison, 1 if @a b is greater than @a a,
+ * -1 if @a b is smaller than @a a, 0 if @a a and @a b are equal.
+ * @return #EINA_TRUE on success, #EINA_FALSE on failure.
+ *
+ * @warning If model doesn't inherit from(or is of) @a type does nothing and
+ * returns EINA_FALSE.
+ *
+ * @see eina_model_compare()
+ * @see _Eina_Model_Type
+ * @since 1.2
+ */
 EAPI Eina_Bool eina_model_type_compare(const Eina_Model_Type *type,
                                        const Eina_Model *a,
                                        const Eina_Model *b,
                                        int *cmp) EINA_ARG_NONNULL(1, 2, 3, 4);
+/**
+ * @brief Calls the load method of @a type for @a model.
+ * @param type The type whose load method will be called.
+ * @param model The model instance.
+ * @return #EINA_TRUE on success, #EINA_FALSE on failure.
+ *
+ * @warning If model doesn't inherit from(or is of) @a type does nothing and
+ * returns EINA_FALSE.
+ *
+ * @see eina_model_load()
+ * @see _Eina_Model_Type
+ * @since 1.2
+ */
 EAPI Eina_Bool eina_model_type_load(const Eina_Model_Type *type,
                                     Eina_Model *model) EINA_ARG_NONNULL(1, 2);
+/**
+ * @brief Calls the unload method of @a type for @a model.
+ * @param type The type whose unload method will be called.
+ * @param model The model instance.
+ * @return #EINA_TRUE on success, #EINA_FALSE on failure.
+ *
+ * @warning If model doesn't inherit from(or is of) @a type does nothing and
+ * returns EINA_FALSE.
+ *
+ * @see eina_model_unload()
+ * @see _Eina_Model_Type
+ * @since 1.2
+ */
 EAPI Eina_Bool eina_model_type_unload(const Eina_Model_Type *type,
                                       Eina_Model *model) EINA_ARG_NONNULL(1, 2);
+/**
+ * @brief Calls the property get method of @a type for @a model.
+ * @param[in] type The type whose property get method will be called.
+ * @param[in] model The model instance.
+ * @param[in] name Name of property to get.
+ * @param[out] value Pointer to where value of property will be placed.
+ * @return EINA_TRUE if able to get property, EINA_FALSE otherwise.
+ *
+ * @warning If model doesn't inherit from(or is of) @a type does nothing and
+ * returns EINA_FALSE.
+ *
+ * @see eina_model_property_get()
+ * @see _Eina_Model_Type
+ * @since 1.2
+ */
 EAPI Eina_Bool eina_model_type_property_get(const Eina_Model_Type *type,
                                             const Eina_Model *model,
                                             const char *name,
                                             Eina_Value *value) EINA_ARG_NONNULL(1, 2, 3, 4);
+/**
+ * @brief Calls the property set method of @a type for @a model.
+ * @param type The type whose property set method will be called.
+ * @param model The model instance.
+ * @param name Name of property whose value will be set.
+ * @param value The value to be set.
+ * @return #EINA_TRUE on success, #EINA_FALSE on failure.
+ *
+ * @warning If model doesn't inherit from(or is of) @a type does nothing and
+ * returns EINA_FALSE.
+ *
+ * @see eina_model_property_set()
+ * @see _Eina_Model_Type
+ * @since 1.2
+ */
 EAPI Eina_Bool eina_model_type_property_set(const Eina_Model_Type *type,
                                             Eina_Model *model,
                                             const char *name,
                                             const Eina_Value *value) EINA_ARG_NONNULL(1, 2, 3, 4);
+/**
+ * @brief Calls the property del method of @a type for @a model.
+ * @param type The type whose property delete method will be called.
+ * @param model The model instance.
+ * @param name The name of the property to be deleted.
+ * @return #EINA_TRUE on success, #EINA_FALSE on failure.
+ *
+ * @warning If model doesn't inherit from(or is of) @a type does nothing and
+ * returns EINA_FALSE.
+ *
+ * @see eina_model_property_del()
+ * @see _Eina_Model_Type
+ * @since 1.2
+ */
 EAPI Eina_Bool eina_model_type_property_del(const Eina_Model_Type *type,
                                             Eina_Model *model,
                                             const char *name) EINA_ARG_NONNULL(1, 2, 3);
+/**
+ * @brief Calls the properties name list method of @a type for @a model.
+ * @param type The type whose property name list get method will be called.
+ * @param model The model instance.
+ * @return #Eina_List of properties' names.
+ *
+ * @warning If model doesn't inherit from(or is of) @a type does nothing and
+ * returns EINA_FALSE.
+ *
+ * @see eina_model_properties_names_list_get()
+ * @see _Eina_Model_Type
+ * @since 1.2
+ */
 EAPI Eina_List *eina_model_type_properties_names_list_get(const Eina_Model_Type *type,
                                                           const Eina_Model *model) EINA_ARG_NONNULL(1, 2);
+/**
+ * @brief Calls the child count method of @a type for @a model.
+ * @param type The type whose child count method will be called.
+ * @param model The model instance.
+ * @return Number of children in @a model.
+ *
+ * @warning If model doesn't inherit from(or is of) @a type does nothing and
+ * returns EINA_FALSE.
+ *
+ * @see eina_model_child_count()
+ * @see _Eina_Model_Type
+ * @since 1.2
+ */
 EAPI int eina_model_type_child_count(const Eina_Model_Type *type,
                                      const Eina_Model *model) EINA_ARG_NONNULL(1, 2);
+/**
+ * @brief Calls the child get method of @a type for @a model.
+ * @param type The type whose child get method will be called.
+ * @param model The model instance.
+ * @param position The position of the child to get.
+ * @return The child model, or NULL on failure.
+ *
+ * @warning If model doesn't inherit from(or is of) @a type does nothing and
+ * returns EINA_FALSE.
+ *
+ * @see eina_model_child_get()
+ * @see _Eina_Model_Type
+ * @since 1.2
+ */
 EAPI Eina_Model *eina_model_type_child_get(const Eina_Model_Type *type,
                                            const Eina_Model *model,
                                            unsigned int position) EINA_ARG_NONNULL(1, 2);
+/**
+ * @brief Calls the child set method of @a type for @a model.
+ * @param type The type whose child set method will be called.
+ * @param model The model instance.
+ * @param position The position of the child to be set.
+ * @param child Pointer to value(child) to be set.
+ * @return #EINA_TRUE on success, #EINA_FALSE on failure.
+ *
+ * @warning If model doesn't inherit from(or is of) @a type does nothing and
+ * returns EINA_FALSE.
+ *
+ * @see eina_model_child_set()
+ * @see _Eina_Model_Type
+ * @since 1.2
+ */
 EAPI Eina_Bool eina_model_type_child_set(const Eina_Model_Type *type,
                                          Eina_Model *model,
                                          unsigned int position,
                                          Eina_Model *child) EINA_ARG_NONNULL(1, 2, 4);
+/**
+ * @brief Calls the child del method of @a type for @a model.
+ * @param type The type whose child delete method will be called.
+ * @param model The model instance.
+ * @param position Position of child to be deleted.
+ * @return #EINA_TRUE on success, #EINA_FALSE on failure.
+ *
+ * @warning If model doesn't inherit from(or is of) @a type does nothing and
+ * returns EINA_FALSE.
+ *
+ * @see eina_model_child_del()
+ * @see _Eina_Model_Type
+ * @since 1.2
+ */
 EAPI Eina_Bool eina_model_type_child_del(const Eina_Model_Type *type,
                                          Eina_Model *model,
                                          unsigned int position) EINA_ARG_NONNULL(1, 2);
+/**
+ * @brief Calls the child insert at method of @a type for @a model.
+ * @param type The type whose child insert method will be called.
+ * @param model The model instance.
+ * @param position Position in which @a child will be inserted.
+ * @param child The child to be inserted.
+ * @return #EINA_TRUE on success, #EINA_FALSE on failure.
+ *
+ * @warning If model doesn't inherit from(or is of) @a type does nothing and
+ * returns EINA_FALSE.
+ *
+ * @see eina_model_child_insert_at()
+ * @see _Eina_Model_Type
+ * @since 1.2
+ */
 EAPI Eina_Bool eina_model_type_child_insert_at(const Eina_Model_Type *type,
                                                Eina_Model *model,
                                                unsigned int position,
                                                Eina_Model *child) EINA_ARG_NONNULL(1, 2, 4);
+/**
+ * @brief Calls the child find method of @a type for @a model.
+ * @param type The type whose find method will be called.
+ * @param model The model instance.
+ * @param start_position The first position to search for.
+ * @param other The child being searched for.
+ * @return The index of the searched child, or -1 if not found.
+ *
+ * @warning If model doesn't inherit from(or is of) @a type does nothing and
+ * returns EINA_FALSE.
+ *
+ * @see eina_model_child_find()
+ * @see _Eina_Model_Type
+ * @since 1.2
+ */
 EAPI int eina_model_type_child_find(const Eina_Model_Type *type,
                                     const Eina_Model *model,
                                     unsigned int start_position,
                                     const Eina_Model *other) EINA_ARG_NONNULL(1, 2, 4);
+/**
+ * @brief Calls the child criteria match method of @a type for @a model.
+ * @param type The type whose child criteria match method will be called.
+ * @param model The model instance.
+ * @param start_position The first position to be checked.
+ * @param match The function used to determine if a child matches the criteria.
+ * @param data Data given to the @a match function. May be NULL.
+ * @return The position of the first child to match the criteria or -1 if no
+ * child matches it.
+ *
+ * @warning If model doesn't inherit from(or is of) @a type does nothing and
+ * returns EINA_FALSE.
+ *
+ * @see eina_model_child_criteria_match()
+ * @see _Eina_Model_Type
+ * @since 1.2
+ */
 EAPI int eina_model_type_child_criteria_match(const Eina_Model_Type *type,
                                               const Eina_Model *model,
                                               unsigned int start_position,
                                               Eina_Each_Cb match,
                                               const void *data) EINA_ARG_NONNULL(1, 2, 4);
+/**
+ * @brief Calls the child sort method of @a type for @a model.
+ * @param type The type whose child sort method will be called.
+ * @param model The model instance.
+ * @param compare Function used to compare children.
+ *
+ * @warning If model doesn't inherit from(or is of) @a type does nothing and
+ * returns EINA_FALSE.
+ *
+ * @see eina_model_child_sort()
+ * @see _Eina_Model_Type
+ * @since 1.2
+ */
 EAPI void eina_model_type_child_sort(const Eina_Model_Type *type,
                                      Eina_Model *model,
                                      Eina_Compare_Cb compare) EINA_ARG_NONNULL(1, 2, 3);
+/**
+ * @brief Calls the child iterator get method of @a type for @a model.
+ * @param type The type whose child iterator get method will be called.
+ * @param model The model instance.
+ * @param start The first child to be a part of the iterator.
+ * @param count The number of children included in the iterator.
+ * @return Newly created iterator instance on success or @c NULL on failure.
+ *
+ * @warning If model doesn't inherit from(or is of) @a type does nothing and
+ * returns EINA_FALSE.
+ *
+ * @see eina_model_child_iterator_get()
+ * @see _Eina_Model_Type
+ * @since 1.2
+ */
 EAPI Eina_Iterator *eina_model_type_child_iterator_get(const Eina_Model_Type *type,
                                                        Eina_Model *model,
                                                        unsigned int start,
                                                        unsigned int count) EINA_ARG_NONNULL(1, 2);
+/**
+ * @brief Calls the child reversed iterator get method of @a type for @a model.
+ * @param type The type whose child reversed iterator get method will be called.
+ * @param model The model instance.
+ * @param start The first child to be a part of the iterator.
+ * @param count The number of children included in the iterator.
+ * @return Newly created iterator instance on success or @c NULL on failure.
+ *
+ * @warning If model doesn't inherit from(or is of) @a type does nothing and
+ * returns EINA_FALSE.
+ *
+ * @see eina_model_child_reversed_iterator_get()
+ * @see _Eina_Model_Type
+ * @since 1.2
+ */
 EAPI Eina_Iterator *eina_model_type_child_reversed_iterator_get(const Eina_Model_Type *type,
                                                                 Eina_Model *model,
                                                                 unsigned int start,
                                                                 unsigned int count) EINA_ARG_NONNULL(1, 2);
+/**
+ * @brief Calls the child sorted iterator get method of @a type for @a model.
+ * @param type The type whose child sorted iterator get method will be called.
+ * @param model The model instance.
+ * @param start The first child to be a part of the iterator.
+ * @param count The number of children included in the iterator.
+ * @param compare Function used to compare children.
+ * @return Newly created iterator instance on success or @c NULL on failure.
+ *
+ * @warning If model doesn't inherit from(or is of) @a type does nothing and
+ * returns EINA_FALSE.
+ *
+ * @see eina_model_child_sorted_iterator_get()
+ * @see _Eina_Model_Type
+ * @since 1.2
+ */
 EAPI Eina_Iterator *eina_model_type_child_sorted_iterator_get(const Eina_Model_Type *type,
                                                               Eina_Model *model,
                                                               unsigned int start,
                                                               unsigned int count,
                                                               Eina_Compare_Cb compare) EINA_ARG_NONNULL(1, 2, 5);
+/**
+ * @brief Calls the child filtered get method of @a type for @a model.
+ * @param type The type whose child filtered iterator get method will be called.
+ * @param model The model instance.
+ * @param start The first child to be a part of the iterator.
+ * @param count Number of children to be checked for inclusion in the iterator.
+ * @param match Function used to check if child will be included in the iterator.
+ * @param data Data given to the @a match function. May be NULL.
+ * @return Newly created iterator instance on success or @c NULL on failure.
+ *
+ * @warning If model doesn't inherit from(or is of) @a type does nothing and
+ * returns EINA_FALSE.
+ *
+ * @see eina_model_child_filtered_iterator_get()
+ * @see _Eina_Model_Type
+ * @since 1.2
+ */
 EAPI Eina_Iterator *eina_model_type_child_filtered_iterator_get(const Eina_Model_Type *type,
                                                                 Eina_Model *model,
                                                                 unsigned int start,
                                                                 unsigned int count,
                                                                 Eina_Each_Cb match,
                                                                 const void *data) EINA_ARG_NONNULL(1, 2, 5);
+/**
+ * @brief Calls the to string method of @a type for @a model.
+ * @param type The type whose to string method will be called.
+ * @param model The model instance.
+ * @return String representationof @a model.
+ *
+ * @warning If model doesn't inherit from(or is of) @a type does nothing and
+ * returns EINA_FALSE.
+ *
+ * @see eina_model_to_string()
+ * @see _Eina_Model_Type
+ * @since 1.2
+ */
 EAPI char *eina_model_type_to_string(const Eina_Model_Type *type,
                                      const Eina_Model *model) EINA_ARG_NONNULL(1, 2) EINA_WARN_UNUSED_RESULT EINA_MALLOC;
 
 
 /**
- * @brief Get resolved method from types that extend Eina_Model_Type given offset.
- *
+ * @brief Get resolved method from types that extend Eina_Model_Type given @a offset.
  * @param model the model to query the method
  * @param offset the byte offset in the structure given as type, it
  *        must be bigger than Eina_Model_Type itself.
- * @return address to resolved method, or @c NULL if method is not
- *         implemented.
+ * @return Address to resolved method, or @c NULL if method is not implemented.
  *
  * The use of this function is discouraged, you should use
  * eina_model_method_resolve() instead.
@@ -1285,6 +2022,16 @@ EAPI char *eina_model_type_to_string(const Eina_Model_Type *type,
  */
 EAPI const void *eina_model_method_offset_resolve(const Eina_Model *model, unsigned int offset) EINA_ARG_NONNULL(1) EINA_WARN_UNUSED_RESULT EINA_PURE;
 
+/**
+ * @brief Gets resolved method from @a type of @a model given @a offset.
+ * @param type The type whose method offset resolve method will be called.
+ * @param model The model instance.
+ * @param offset The offset of the wanted method.
+ * @return Address to resolved method, or @c NULL if method is not implemented.
+ *
+ * @see eina_model_method_offset_resolve()
+ * @since 1.2
+ */
 EAPI const void *eina_model_type_method_offset_resolve(const Eina_Model_Type *type, const Eina_Model *model, unsigned int offset) EINA_ARG_NONNULL(1, 2) EINA_WARN_UNUSED_RESULT EINA_PURE;
 
 #define eina_model_method_resolve(model, struct_type, method) eina_model_method_offset_resolve((model), offsetof(struct_type, method))
@@ -1407,19 +2154,83 @@ struct _Eina_Model_Interface
    NULL                                     \
    }
 
+/**
+ * @brief Calls the constructor of @a iface on @a model.
+ * @param iface The interface whose constructor will be called.
+ * @param model The model instance.
+ * @return #EINA_TRUE on success, #EINA_FALSE on failure.
+ *
+ * @warning If @a model doesn't implement @a iface does nothing and returns
+ * EINA_FALSE.
+ *
+ * @see eina_model_new()
+ * @see _Eina_Model_Interface
+ * @since 1.2
+ */
 EAPI Eina_Bool eina_model_interface_constructor(const Eina_Model_Interface *iface,
                                                 Eina_Model *model) EINA_ARG_NONNULL(1, 2) EINA_WARN_UNUSED_RESULT;
+/**
+ * @brief Calls the destructor of @a iface on @a model.
+ * @param iface The interface whose destructor will be called.
+ * @param model The model instance.
+ * @return #EINA_TRUE on success, #EINA_FALSE on failure.
+ *
+ * @warning If @a model doesn't implement @a iface does nothing and returns
+ * EINA_FALSE.
+ *
+ * @see eina_model_del()
+ * @see _Eina_Model_Interface
+ * @since 1.2
+ */
 EAPI Eina_Bool eina_model_interface_destructor(const Eina_Model_Interface *iface,
                                                Eina_Model *model) EINA_ARG_NONNULL(1, 2);
+/**
+ * @brief Calls the copy method of @a iface on @a model.
+ * @param iface The interface whose copy method will be called.
+ * @param src Pointer to the model to be copied.
+ * @param dst Pointer to where copy will be put.
+ * @return #EINA_TRUE on success, #EINA_FALSE on failure.
+ *
+ * @warning If @a model doesn't implement @a iface does nothing and returns
+ * EINA_FALSE.
+ *
+ * @see eina_model_copy()
+ * @see _Eina_Model_Interface
+ * @since 1.2
+ */
 EAPI Eina_Bool eina_model_interface_copy(const Eina_Model_Interface *iface,
                                          const Eina_Model *src,
                                          Eina_Model *dst) EINA_ARG_NONNULL(1, 2, 3);
+/**
+ * @brief Calls the deep copy method of @a iface on @a model.
+ * @param iface The interface whose deep copy method will be called.
+ * @param src Pointer to the model to be copied.
+ * @param dst Pointer to where copy will be put.
+ * @return #EINA_TRUE on success, #EINA_FALSE on failure.
+ *
+ * @warning If @a model doesn't implement @a iface does nothing and returns
+ * EINA_FALSE.
+ *
+ * @see eina_model_deep_copy()
+ * @see _Eina_Model_Interface
+ * @since 1.2
+ */
 EAPI Eina_Bool eina_model_interface_deep_copy(const Eina_Model_Interface *iface,
                                               const Eina_Model *src,
                                               Eina_Model *dst) EINA_ARG_NONNULL(1, 2, 3);
 
 #define eina_model_interface_method_resolve(iface, model, struct_type, method) eina_model_interface_method_offset_resolve((iface), (model), offsetof(struct_type, method))
 
+/**
+ * @brief Gets the @a iface's method for @a model at @a offset.
+ * @param iface The interface whose method offset resolve method will be called.
+ * @param model The model instance.
+ * @param offset The offset of the wanted method.
+ * @return Address to resolved method, or @c NULL if method is not implemented.
+ *
+ * @see eina_model_method_offset_resolve()
+ * @since 1.2
+ */
 EAPI const void *eina_model_interface_method_offset_resolve(const Eina_Model_Interface *iface, const Eina_Model *model, unsigned int offset) EINA_ARG_NONNULL(1, 2) EINA_WARN_UNUSED_RESULT EINA_PURE;
 
 
@@ -1457,8 +2268,29 @@ struct _Eina_Model_Event_Description
  */
 #define EINA_MODEL_EVENT_DESCRIPTION_SENTINEL {NULL, NULL, NULL}
 
+/**
+ * @brief Check @a type is valid.
+ * @param type The type to be checked.
+ * @return #EINA_TRUE on success, #EINA_FALSE otherwise.
+ *
+ * @since 1.2
+ */
 EAPI Eina_Bool eina_model_type_check(const Eina_Model_Type *type) EINA_ARG_NONNULL(1) EINA_WARN_UNUSED_RESULT EINA_PURE;
+/**
+ * @brief Gets the name @a type.
+ * @param type The type whose name is wanted.
+ * @return Name of @a type.
+ *
+ * @since 1.2
+ */
 EAPI const char *eina_model_type_name_get(const Eina_Model_Type *type) EINA_ARG_NONNULL(1) EINA_WARN_UNUSED_RESULT EINA_PURE;
+/**
+ * @brief Gets the parent type of @a type.
+ * @param type The type whose parent is wanted.
+ * @return Type of parent.
+ *
+ * @since 1.2
+ */
 EAPI const Eina_Model_Type *eina_model_type_parent_get(const Eina_Model_Type *type) EINA_ARG_NONNULL(1) EINA_WARN_UNUSED_RESULT EINA_PURE;
 
 /**
@@ -1515,18 +2347,58 @@ EAPI const Eina_Model_Type *eina_model_type_parent_get(const Eina_Model_Type *ty
 EAPI Eina_Bool eina_model_type_subclass_setup(Eina_Model_Type *type,
                                               const Eina_Model_Type *parent) EINA_ARG_NONNULL(1, 2);
 
+/**
+ * @brief Checks if @a type is a subclass of(or the same as) @a self_or_parent.
+ * @param type The type to be checked.
+ * @param self_or_parent The type being checked for.
+ * @return #EINA_TRUE on success, #EINA_FALSE on failure.
+ *
+ * @since 1.2
+ */
 EAPI Eina_Bool eina_model_type_subclass_check(const Eina_Model_Type *type,
                                               const Eina_Model_Type *self_or_parent) EINA_ARG_NONNULL(1, 2) EINA_WARN_UNUSED_RESULT EINA_PURE;
 
 
+/**
+ * @brief Gets a interface with name @a name from @a type.
+ * @param type The type instance.
+ * @param name The name of the desired interface.
+ * @return The interface implemented by @a type with name @a name, or null if
+ * this type doesn't implement any interface with name @a name.
+ *
+ * @since 1.2
+ */
 EAPI const Eina_Model_Interface *eina_model_type_interface_get(const Eina_Model_Type *type,
                                                                const char *name) EINA_ARG_NONNULL(1, 2) EINA_WARN_UNUSED_RESULT EINA_PURE;
 
+/**
+ * @brief Gets the private date of @a model for type @a type.
+ * @param model The model instance.
+ * @param type The type whose private data will be gotten.
+ * @return Pointer to type's private data.
+ *
+ * @since 1.2
+ */
 EAPI void *eina_model_type_private_data_get(const Eina_Model *model,
                                             const Eina_Model_Type *type) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1, 2) EINA_PURE;
 
+/**
+ * @brief Checks if @a iface is a valid interface.
+ * @param iface The interface instance.
+ * @return #EINA_TRUE on success, #EINA_FALSE on failure.
+ *
+ * @since 1.2
+ */
 EAPI Eina_Bool eina_model_interface_check(const Eina_Model_Interface *iface) EINA_ARG_NONNULL(1) EINA_WARN_UNUSED_RESULT EINA_PURE;
 
+/**
+ * @brief Gets the private date of @a model for interface @a iface.
+ * @param model The model instance.
+ * @param iface The interface whose private data will be gotten.
+ * @return Pointer to interface's private data.
+ *
+ * @since 1.2
+ */
 EAPI void *eina_model_interface_private_data_get(const Eina_Model *model,
                                                  const Eina_Model_Interface *iface) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1, 2) EINA_PURE;
 
@@ -1578,26 +2450,121 @@ struct _Eina_Model_Interface_Properties
    Eina_List *(*names_list_get)(const Eina_Model *model); /**< List of stringshare with known property names */
 };
 
+/**
+ * @brief Compares properties using @a iface's comparing function.
+ *
+ * @param[in] iface The interface used to compare the properties.
+ * @param[in] a The first model whose properties will be compared.
+ * @param[in] b The second model whose properties will be compared.
+ * @param[out] cmp A pointer to an integer which will contain the result of the
+ * comparison.
+ * @return #EINA_TRUE on success, #EINA_FALSE on failure.
+ *
+ * @warning If either model doesn't implement @a iface will do nothing and
+ * return EINA_FALSE.
+ *
+ * @see eina_model_compare()
+ * @since 1.2
+ */
 EAPI Eina_Bool eina_model_interface_properties_compare(const Eina_Model_Interface *iface,
                                                        const Eina_Model *a,
                                                        const Eina_Model *b,
                                                        int *cmp) EINA_ARG_NONNULL(1, 2, 3, 4) EINA_WARN_UNUSED_RESULT;
 
+/**
+ * @brief Loads properties using @a iface's loading function.
+ * @param iface The properties interface whose load method will be called.
+ * @param model The model instance.
+ * @return #EINA_TRUE on success, #EINA_FALSE on failure.
+ *
+ * @warning If either model doesn't implement @a iface will do nothing and
+ * return EINA_FALSE.
+ *
+ * @see eina_model_load()
+ * @since 1.2
+ */
 EAPI Eina_Bool eina_model_interface_properties_load(const Eina_Model_Interface *iface,
                                                     Eina_Model *model) EINA_ARG_NONNULL(1, 2);
+/**
+ * @brief Unloads properties using @a iface's unloading function.
+ * @param iface The properties interface whose unload method will be called.
+ * @param model The model instance.
+ * @return #EINA_TRUE on success, #EINA_FALSE on failure.
+ *
+ * @warning If either model doesn't implement @a iface will do nothing and
+ * return EINA_FALSE.
+ *
+ * @see eina_model_unload()
+ * @since 1.2
+ */
 EAPI Eina_Bool eina_model_interface_properties_unload(const Eina_Model_Interface *iface,
                                                       Eina_Model *model) EINA_ARG_NONNULL(1, 2);
+/**
+ * @brief Gets property named @a name using @a iface's function to get properties.
+ * @param iface The properties interface whose property get method will be called.
+ * @param model The model instance.
+ * @param name The name of the property to get.
+ * @param value Pointer to where value will be stored.
+ * @return #EINA_TRUE on success, #EINA_FALSE on failure.
+ *
+ * @warning If either model doesn't implement @a iface will do nothing and
+ * return EINA_FALSE.
+ *
+ * @see eina_model_property_get()
+ * @since 1.2
+ */
 EAPI Eina_Bool eina_model_interface_properties_get(const Eina_Model_Interface *iface,
                                                    const Eina_Model *model,
                                                    const char *name,
                                                    Eina_Value *value) EINA_ARG_NONNULL(1, 2, 3, 4);
+/**
+ * @brief Sets property named @a name using @a iface's function to set properties.
+ * @param iface The properties interface whose property set method will be called.
+ * @param model The model instance.
+ * @param name The name of the property to set.
+ * @param value The value to be set.
+ * @return #EINA_TRUE on success, #EINA_FALSE on failure.
+ *
+ * @warning If either model doesn't implement @a iface will do nothing and
+ * return EINA_FALSE.
+ *
+ * @see eina_model_property_set()
+ * @since 1.2
+ */
 EAPI Eina_Bool eina_model_interface_properties_set(const Eina_Model_Interface *iface,
                                                    Eina_Model *model,
                                                    const char *name,
                                                    const Eina_Value *value) EINA_ARG_NONNULL(1, 2, 3, 4);
+/**
+ * @brief Deletes property named @a name using @a iface's function to delete properties.
+ * @param iface The properties interface whose property delete method will be called.
+ * @param model The model instance.
+ * @param name The name of the property to delete.
+ * @return #EINA_TRUE on success, #EINA_FALSE on failure.
+ *
+ * @warning If either model doesn't implement @a iface will do nothing and
+ * return EINA_FALSE.
+ *
+ * @see eina_model_property_del()
+ * @since 1.2
+ */
 EAPI Eina_Bool eina_model_interface_properties_del(const Eina_Model_Interface *iface,
                                                    Eina_Model *model,
                                                    const char *name) EINA_ARG_NONNULL(1, 2, 3);
+/**
+ * @brief Gets properties name list using @a iface's function to get properties
+ * name list.
+ * @param iface The properties interface whose property name list get method
+ * will be called.
+ * @param model The model instance.
+ * @return #Eina_List of properties' names.
+ *
+ * @warning If either model doesn't implement @a iface will do nothing and
+ * return EINA_FALSE.
+ *
+ * @see eina_model_properties_names_list_get()
+ * @since 1.2
+ */
 EAPI Eina_List *eina_model_interface_properties_names_list_get(const Eina_Model_Interface *iface,
                                                                const Eina_Model *model) EINA_ARG_NONNULL(1, 2); /**< list of stringshare */
 
@@ -1651,30 +2618,148 @@ struct _Eina_Model_Interface_Children
    void (*sort)(Eina_Model *model, Eina_Compare_Cb compare); /**< Reorder children to be sorted respecting comparison function @c compare() */
 };
 
+/**
+ * @brief Compares children using @a iface's comparing function.
+ *
+ * @param[in] iface The interface used to compare the properties.
+ * @param[in] a The first model whose properties will be compared.
+ * @param[in] b The second model whose properties will be compared.
+ * @param[out] cmp A pointer to an integer which will contain the result of the
+ * comparison.
+ * @return #EINA_TRUE on success, #EINA_FALSE on failure.
+ *
+ * @warning If either model doesn't implement @a iface will do nothing and
+ * return EINA_FALSE.
+ *
+ * @see eina_model_compare()
+ * @since 1.2
+ */
 EAPI Eina_Bool eina_model_interface_children_compare(const Eina_Model_Interface *iface,
                                                      const Eina_Model *a,
                                                      const Eina_Model *b,
                                                      int *cmp) EINA_ARG_NONNULL(1, 2, 3, 4) EINA_WARN_UNUSED_RESULT;
+/**
+ * @brief Loads children using @a iface's loading function.
+ * @param iface The children interface whose load method will be called.
+ * @param model The model instance.
+ * @return #EINA_TRUE on success, #EINA_FALSE on failure.
+ *
+ * @warning If either model doesn't implement @a iface will do nothing and
+ * return EINA_FALSE.
+ *
+ * @see eina_model_load()
+ * @since 1.2
+ */
 EAPI Eina_Bool eina_model_interface_children_load(const Eina_Model_Interface *iface,
                                                   Eina_Model *model) EINA_ARG_NONNULL(1, 2);
+/**
+ * @brief Unloads children using @a iface's unloading function.
+ * @param iface The children interface whose unload method will be called.
+ * @param model The model instance.
+ * @return #EINA_TRUE on success, #EINA_FALSE on failure.
+ *
+ * @warning If either model doesn't implement @a iface will do nothing and
+ * return EINA_FALSE.
+ *
+ * @see eina_model_unload()
+ * @since 1.2
+ */
 EAPI Eina_Bool eina_model_interface_children_unload(const Eina_Model_Interface *iface,
                                                     Eina_Model *model) EINA_ARG_NONNULL(1, 2);
+/**
+ * @brief Count children using @a iface's counting function.
+ * @param iface The children interface whose count method will be called.
+ * @param model The model instance.
+ * @return Number of children in @a model.
+ *
+ * @warning If either model doesn't implement @a iface will do nothing and
+ * return -1.
+ *
+ * @see eina_model_child_count()
+ * @since 1.2
+ */
 EAPI int eina_model_interface_children_count(const Eina_Model_Interface *iface,
                                              const Eina_Model *model) EINA_ARG_NONNULL(1, 2);
+/**
+ * @brief Get child using @a iface's function to get children.
+ * @param iface The children interface whose get method will be called.
+ * @param model The model instance.
+ * @param position Position of child to be retrieved.
+ * @return The requested child.
+ *
+ * @warning If either model doesn't implement @a iface will do nothing and
+ * return -1.
+ *
+ * @see eina_model_child_get()
+ * @since 1.2
+ */
 EAPI Eina_Model *eina_model_interface_children_get(const Eina_Model_Interface *iface,
                                                    const Eina_Model *model,
                                                    unsigned int position) EINA_ARG_NONNULL(1, 2);
+/**
+ * @brief Set child using @a iface's function to set children.
+ * @param iface The children interface whose set method will be called.
+ * @param model The model instance.
+ * @param position Position of child to be set.
+ * @param child Value(child) to be set.
+ * @return #EINA_TRUE on success, #EINA_FALSE on failure.
+ *
+ * @warning If either model doesn't implement @a iface will do nothing and
+ * return -1.
+ *
+ * @see eina_model_child_set()
+ * @since 1.2
+ */
 EAPI Eina_Bool eina_model_interface_children_set(const Eina_Model_Interface *iface,
                                                  Eina_Model *model,
                                                  unsigned int position,
                                                  Eina_Model *child) EINA_ARG_NONNULL(1, 2, 4);
+/**
+ * @brief Delete child using @a iface's function to delete children.
+ * @param iface The children interface whose delete method will be called.
+ * @param model The model instance.
+ * @param position Position of child to be deleted.
+ * @return #EINA_TRUE on success, #EINA_FALSE on failure.
+ *
+ * @warning If either model doesn't implement @a iface will do nothing and
+ * return -1.
+ *
+ * @see eina_model_child_del()
+ * @since 1.2
+ */
 EAPI Eina_Bool eina_model_interface_children_del(const Eina_Model_Interface *iface,
                                                  Eina_Model *model,
                                                  unsigned int position) EINA_ARG_NONNULL(1, 2);
+/**
+ * @brief Insert child using @a iface's function to insert children.
+ * @param iface The children interface whose insert method will be called.
+ * @param model The model instance.
+ * @param position Position in which to insert @a child.
+ * @param child Value(child) to be inserted.
+ * @return #EINA_TRUE on success, #EINA_FALSE on failure.
+ *
+ * @warning If either model doesn't implement @a iface will do nothing and
+ * return -1.
+ *
+ * @see eina_model_child_insert_at()
+ * @since 1.2
+ */
 EAPI Eina_Bool eina_model_interface_children_insert_at(const Eina_Model_Interface *iface,
                                                        Eina_Model *model,
                                                        unsigned int position,
                                                        Eina_Model *child) EINA_ARG_NONNULL(1, 2, 4);
+/**
+ * @brief Sort children using @a iface's function to sort children.
+ * @param iface The children interface whose sort method will be called.
+ * @param model The model instance.
+ * @param compare Function used to compare children.
+ *
+ * @warning If either model doesn't implement @a iface will do nothing and
+ * return -1.
+ *
+ * @see eina_model_child_sort().
+ * @since 1.2
+ */
 EAPI void eina_model_interface_children_sort(const Eina_Model_Interface *iface,
                                              Eina_Model *model,
                                              Eina_Compare_Cb compare) EINA_ARG_NONNULL(1, 2, 3);
@@ -1694,6 +2779,9 @@ EAPI void eina_model_interface_children_sort(const Eina_Model_Interface *iface,
 
 /**
  * @brief Checks if @a model is an instance of @a type.
+ * @param model The model instance.
+ * @param type The type being checked for.
+ * @return #EINA_TRUE on success, #EINA_FALSE on failure.
  *
  * @see eina_model_new()
  * @see _Eina_Model_Type
@@ -1704,6 +2792,9 @@ EAPI Eina_Bool eina_model_instance_check(const Eina_Model *model,
 
 /**
  * @brief Checks if @a model implements @a iface.
+ * @param model The model instance.
+ * @param iface The interface being checked for.
+ * @return #EINA_TRUE on success, #EINA_FALSE on failure.
  *
  * @see _Eina_Model_Interface
  * @since 1.2
@@ -1713,7 +2804,7 @@ EAPI Eina_Bool eina_model_interface_implemented(const Eina_Model *model, const E
 /**
  * @brief Returns the number of references to @a model.
  * @param model The model to query number of references.
- * @return number of references to model
+ * @return Number of references to model.
  *
  * @see eina_model_ref()
  * @see eina_model_unref()
@@ -1905,7 +2996,6 @@ EAPI Eina_Model *eina_model_type_struct_new(const Eina_Model_Type *type,
 
 /**
  * @brief Configure the internal properties of model implementing #EINA_MODEL_INTERFACE_PROPERTIES_STRUCT.
- *
  * @param model The model instance to configure.
  * @param desc The structure description to use.
  * @param memory If not @c NULL, will be copied by model.
@@ -1926,7 +3016,6 @@ EAPI Eina_Bool eina_model_struct_set(Eina_Model *model,
                                      void *memory) EINA_ARG_NONNULL(1, 2);
 /**
  * @brief Get the internal properties of model implementing #EINA_MODEL_INTERFACE_PROPERTIES_STRUCT.
- *
  * @param model the model instance.
  * @param p_desc where to return the structure description in use.
  * @param p_memory where to return the structure memory in use.
