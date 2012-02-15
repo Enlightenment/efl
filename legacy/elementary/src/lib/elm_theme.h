@@ -307,6 +307,7 @@ EAPI void             elm_theme_full_flush(void);
  * @param theme The name of the theme to use. Format same as the ELM_THEME
  * environment variable.
  */
+//XXX: how about changing to elm_theme_set & elm_theme_flush & elm_config_all_flush? 
 EAPI void             elm_theme_all_set(const char *theme);
 
 /**
