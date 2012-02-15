@@ -238,7 +238,7 @@ EAPI extern Elm_Version *elm_version;
 #include <elm_segment_control.h>
 
 // Carsten Haitzler
-#include <elm_separator.h>
+#include <elm_separator.h> // OK
 #include <elm_slider.h>
 #include <elm_slideshow.h>
 #include <elm_spinner.h>

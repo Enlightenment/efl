@@ -22,13 +22,15 @@ struct _Widget_Data
    const char *(*units_format_func)(double val);
    void (*units_format_free)(const char *str);
 
-   double val, val_min, val_max;
+   double val, val_min, val_max, val2;
    Evas_Coord size;
+   Evas_Coord downx, downy;
 
    Eina_Bool horizontal : 1;
    Eina_Bool inverted : 1;
    Eina_Bool indicator_show : 1;
    Eina_Bool spacer_down : 1;
+   Eina_Bool frozen : 1;
 };
 
 #define ELM_SLIDER_INVERTED_FACTOR (-1.0)
@@ -457,7 +459,10 @@ _spacer_down_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, voi
    double button_x = 0.0, button_y = 0.0;
 
    wd->spacer_down = EINA_TRUE;
+   wd->val2 = wd->val;
    evas_object_geometry_get(wd->spacer, &x, &y, &w, &h);
+   wd->downx = ev->canvas.x - x;
+   wd->downy = ev->canvas.y - y;
    if (wd->horizontal)
      {
         button_x = ((double)ev->canvas.x - (double)x) / (double)w;
@@ -475,7 +480,6 @@ _spacer_down_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, voi
    evas_object_smart_callback_call(data, SIG_DRAG_START, NULL);
    _units_set(data);
    _indicator_set(data);
-   elm_widget_scroll_freeze_push(data);
    edje_object_signal_emit(wd->slider, "elm,state,indicator,show", "elm");
 }
 
@@ -489,7 +493,37 @@ _spacer_move_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, voi
 
    if  (wd->spacer_down)
      {
+        Evas_Coord d = 0;
+        
         evas_object_geometry_get(wd->spacer, &x, &y, &w, &h);
+        if (wd->horizontal) d = abs(ev->cur.canvas.x - x - wd->downx);
+        else d = abs(ev->cur.canvas.y - y - wd->downy);
+        if (d > (_elm_config->thumbscroll_threshold - 1))
+          {
+             if (!wd->frozen)
+               {
+                  elm_widget_scroll_freeze_push(data);
+                  wd->frozen = 1;
+               }
+             ev->event_flags &= ~EVAS_EVENT_FLAG_ON_HOLD;
+          }
+             
+        if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD)
+          {
+             if (wd->spacer_down) wd->spacer_down = EINA_FALSE;
+             _val_fetch(data);
+             evas_object_smart_callback_call(data, SIG_DRAG_STOP, NULL);
+             _units_set(data);
+             _indicator_set(data);
+             if (wd->frozen)
+               {
+                  elm_widget_scroll_freeze_pop(data);
+                  wd->frozen = 0;
+               }
+             edje_object_signal_emit(wd->slider, "elm,state,indicator,hide", "elm");
+             elm_slider_value_set(data, wd->val2);
+             return;
+          }
         if (wd->horizontal)
           {
              button_x = ((double)ev->cur.canvas.x - (double)x) / (double)w;
@@ -514,12 +548,17 @@ _spacer_up_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void 
 {
    Widget_Data *wd = elm_widget_data_get(data);
 
+   if (!wd->spacer_down) return;
    if (wd->spacer_down) wd->spacer_down = EINA_FALSE;
    _val_fetch(data);
    evas_object_smart_callback_call(data, SIG_DRAG_STOP, NULL);
    _units_set(data);
    _indicator_set(data);
-   elm_widget_scroll_freeze_pop(data);
+   if (wd->frozen)
+     {
+        elm_widget_scroll_freeze_pop(data);
+        wd->frozen = 0;
+     }
    edje_object_signal_emit(wd->slider, "elm,state,indicator,hide", "elm");
 }
 
