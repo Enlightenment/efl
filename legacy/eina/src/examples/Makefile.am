@@ -79,7 +79,17 @@ examples_PROGRAMS += \
 	eina_strbuf_01 \
 	eina_model_01 \
 	eina_model_02 \
-	eina_model_03
+	eina_model_03 \
+	eina_model_04
+
+eina_model_04_SOURCES = \
+	eina_model_04_animal.c \
+	eina_model_04_child.c \
+	eina_model_04_human.c \
+	eina_model_04_main.c \
+	eina_model_04_parrot.c \
+	eina_model_04_whistler.c
+
 
 if BUILD_TILER_EXAMPLE
 AM_CPPFLAGS += @ECORE_EVAS_CFLAGS@
