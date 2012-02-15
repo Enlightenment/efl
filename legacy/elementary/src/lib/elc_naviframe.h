@@ -320,12 +320,12 @@ EAPI Eina_Bool        elm_naviframe_prev_btn_auto_pushed_get(const Evas_Object *
  * @brief Get a list of all the naviframe items.
  *
  * @param obj The naviframe object
- * @return An Eina_Inlist* of naviframe items, #Elm_Object_Item,
+ * @return An Eina_List of naviframe items, #Elm_Object_Item,
  * or @c NULL on failure.
  *
  * @ingroup Naviframe
  */
-EAPI Eina_Inlist     *elm_naviframe_items_get(const Evas_Object *obj);
+EAPI Eina_List *elm_naviframe_items_get(const Evas_Object *obj) EINA_MALLOC EINA_WARN_UNUSED_RESULT;
 
 /**
  * @brief Set the event enabled when pushing/popping items
@@ -359,6 +359,30 @@ EAPI void             elm_naviframe_event_enabled_set(Evas_Object *obj, Eina_Boo
  * @ingroup Naviframe
  */
 EAPI Eina_Bool        elm_naviframe_event_enabled_get(const Evas_Object *obj);
+
+/**
+ * @brief Set the default item style.
+ *
+ * Default item style will be used with items who's style is NULL
+ *
+ * @param obj The naviframe object
+ * @param style The style
+ *
+ * @ingroup Naviframe
+ */
+EAPI void             elm_naviframe_item_style_default_set(Evas_Object *obj, const char *style);
+
+/**
+ * @brief Get the default item style
+ *
+ * @param obj The naviframe object
+ * @return the default item style
+ *
+ * @see elm_naviframe_item_style_default_set()
+ *
+ * @ingroup Naviframe
+ */
+EAPI const char      *elm_naviframe_item_style_default_get(const Evas_Object *obj);
 
 /**
  * @}

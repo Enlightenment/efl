@@ -13,6 +13,7 @@ struct _Widget_Data
    Eina_Bool     preserve: 1;
    Eina_Bool     auto_pushed: 1;
    Eina_Bool     freeze_events: 1;
+   Eina_Stringshare *item_style;
 };
 
 struct _Elm_Naviframe_Content_Item_Pair
@@ -180,6 +181,7 @@ _del_hook(Evas_Object *obj)
              if (!wd->stack) break;
           }
      }
+   eina_stringshare_del(wd->item_style);
    free(wd);
 }
 
@@ -906,13 +908,14 @@ _item_style_set(Elm_Naviframe_Item *navi_it, const char *item_style)
    Elm_Naviframe_Content_Item_Pair *content_pair;
    Elm_Naviframe_Text_Item_Pair *text_pair;
    Widget_Data *wd;
+   wd = elm_widget_data_get(WIDGET(navi_it));
+   if (!wd) return;
 
    char buf[256];
 
    if (!item_style)
      {
-        strcpy(buf, "item/basic");
-        eina_stringshare_replace(&navi_it->style, "basic");
+        snprintf(buf, sizeof(buf), "item/%s", wd->item_style);
      }
    else
      {
@@ -949,9 +952,6 @@ _item_style_set(Elm_Naviframe_Item *navi_it, const char *item_style)
 
    navi_it->title_visible = EINA_TRUE;
    _sizing_eval(WIDGET(navi_it));
-
-   wd = elm_widget_data_get(WIDGET(navi_it));
-   if (!wd) return;
 
    if (wd->freeze_events)
      evas_object_freeze_events_set(VIEW(navi_it), EINA_FALSE);
@@ -1070,6 +1070,7 @@ elm_naviframe_add(Evas_Object *parent)
 
    wd->auto_pushed = EINA_TRUE;
    wd->freeze_events = EINA_TRUE;
+   wd->item_style = eina_stringshare_add("basic");
 
    return obj;
 }
@@ -1329,11 +1330,11 @@ elm_naviframe_item_style_set(Elm_Object_Item *it, const char *item_style)
    Elm_Naviframe_Item *navi_it = (Elm_Naviframe_Item *) it;
 
    //Return if new style is exsiting one.
-   if (item_style)
-     if (!strcmp(item_style, navi_it->style)) return;
+   if ((item_style && navi_it->style) && (!strcmp(item_style, navi_it->style)))
+      return;
 
-   if (!item_style)
-     if (!strcmp("basic", navi_it->style)) return;
+   if ((!item_style) && (!navi_it->style))
+      return;
 
    _item_style_set(navi_it, item_style);
 }
@@ -1385,13 +1386,19 @@ elm_naviframe_prev_btn_auto_pushed_get(const Evas_Object *obj)
    return wd->auto_pushed;
 }
 
-EAPI Eina_Inlist *
+EAPI Eina_List *
 elm_naviframe_items_get(const Evas_Object *obj)
 {
    ELM_CHECK_WIDTYPE(obj, widtype) NULL;
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return NULL;
-   return wd->stack;
+   Eina_List *ret = NULL;
+   Elm_Naviframe_Item *itr;
+   EINA_INLIST_FOREACH(wd->stack, itr)
+     {
+        ret = eina_list_append(ret, itr);
+     }
+   return ret;
 }
 
 EAPI void
@@ -1412,4 +1419,23 @@ elm_naviframe_event_enabled_get(const Evas_Object *obj)
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return EINA_FALSE;
    return !wd->freeze_events;
+}
+
+EAPI void
+elm_naviframe_item_style_default_set(Evas_Object *obj, const char *style)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype);
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return;
+   eina_stringshare_replace(&wd->item_style, style);
+   _theme_hook(obj);
+}
+
+EAPI const char *
+elm_naviframe_item_style_default_get(const Evas_Object *obj)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype) NULL;
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return NULL;
+   return wd->item_style;
 }
