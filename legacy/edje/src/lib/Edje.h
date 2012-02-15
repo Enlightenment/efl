@@ -2864,7 +2864,7 @@ EAPI void             edje_object_part_text_imf_context_reset           (const E
  * @param layout layout type
  * @since 1.1
  */
-EAPI void             edje_object_part_text_input_panel_layout_set (const Evas_Object *obj, const char *part, Edje_Input_Panel_Layout layout);
+EAPI void             edje_object_part_text_input_panel_layout_set      (Evas_Object *obj, const char *part, Edje_Input_Panel_Layout layout);
 
 /**
  * @brief Get the layout of the input panel.
@@ -2887,7 +2887,7 @@ EAPI Edje_Input_Panel_Layout edje_object_part_text_input_panel_layout_get (const
  * @param autocapital_type The type of autocapitalization
  * @since 1.1.0
  */
-EAPI void         edje_object_part_text_autocapital_type_set        (const Evas_Object *obj, const char *part, Edje_Text_Autocapital_Type autocapital_type);
+EAPI void         edje_object_part_text_autocapital_type_set            (Evas_Object *obj, const char *part, Edje_Text_Autocapital_Type autocapital_type);
 
 /**
  * @brief Retrieves the autocapitalization type
@@ -2907,7 +2907,7 @@ EAPI Edje_Text_Autocapital_Type edje_object_part_text_autocapital_type_get (cons
  * @param prediction If true, the prediction feature is allowed.
  * @since 1.2.0
  */
-EAPI void             edje_object_part_text_prediction_allow_set        (const Evas_Object *obj, const char *part, Eina_Bool prediction);
+EAPI void             edje_object_part_text_prediction_allow_set        (Evas_Object *obj, const char *part, Eina_Bool prediction);
 
 /**
  * @brief Get whether the prediction is allowed or not.
@@ -2927,7 +2927,7 @@ EAPI Eina_Bool        edje_object_part_text_prediction_allow_get        (const E
  * @param enabled If true, the input panel is appeared when entry is clicked or has a focus
  * @since 1.1.0
  */
-EAPI void             edje_object_part_text_input_panel_enabled_set (const Evas_Object *obj, const char *part, Eina_Bool enabled);
+EAPI void             edje_object_part_text_input_panel_enabled_set     (Evas_Object *obj, const char *part, Eina_Bool enabled);
 
 /**
  * @brief Retrieve the attribute to show the input panel automatically.
