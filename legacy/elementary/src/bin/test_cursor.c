@@ -5,6 +5,8 @@
 #endif
 #ifndef ELM_LIB_QUICKLAUNCH
 
+// XXX: show all type of cursors in the elementary_test. this needs to be the first test
+
 typedef struct _Testitem
 {
    Elm_Object_Item *item;

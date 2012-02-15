@@ -9,8 +9,9 @@
  * and Elementary provides functions to choose them (think of X11
  * cursors, as an example).
  *
+ * By default, Elementary searches cursors only from engine.
  * There's also the possibility of, besides using engine provided
- * cursors, also use ones coming from Edje theming files. Both
+ * cursors, also use ones coming from Edje theme files. Both
  * globally and per widget, Elementary makes it possible for one to
  * make the cursors lookup to be held on engines only or on
  * Elementary's theme file, too. To set cursor's hot spot,
@@ -90,16 +91,17 @@ EAPI const char *elm_object_cursor_style_get(const Evas_Object *obj);
  * Set if the cursor set should be searched on the theme or should use
  * the provided by the engine, only.
  *
- * @note before you set if should look on theme you should define a cursor
- * with elm_object_cursor_set(). By default it will only look for cursors
+ * @note before you set engine_only you should define a cursor with
+ * elm_object_cursor_set(). By default it will only look for cursors
  * provided by the engine.
  *
  * @param obj an object with cursor already set.
- * @param engine_only boolean to define it cursors should be looked only
+ * @param engine_only boolean to define if cursors should be looked only
  * between the provided by the engine or searched on widget's theme as well.
  *
  * @ingroup Cursors
  */
+// XXX: EAPI void elm_object_cursor_theme_search_enabled_set(Evas_Object *obj, Eina_Bool theme_search) or xxx_search_theme_xxx
 EAPI void        elm_object_cursor_engine_only_set(Evas_Object *obj, Eina_Bool engine_only);
 
 /**
@@ -113,6 +115,7 @@ EAPI void        elm_object_cursor_engine_only_set(Evas_Object *obj, Eina_Bool e
  *
  * @ingroup Cursors
  */
+// XXX: EAPI Eina_Bool elm_object_cursor_theme_search_enabled_get(const Evas_Object *obj) or xxx_search_theme_xxx
 EAPI Eina_Bool   elm_object_cursor_engine_only_get(const Evas_Object *obj);
 
 /**
@@ -123,6 +126,7 @@ EAPI Eina_Bool   elm_object_cursor_engine_only_get(const Evas_Object *obj);
  * @return 1 if only engine cursors should be used
  * @ingroup Cursors
  */
+// XXX: need to review
 EAPI int         elm_cursor_engine_only_get(void);
 
 /**
@@ -136,6 +140,7 @@ EAPI int         elm_cursor_engine_only_get(void);
  * @return EINA_TRUE if value is valid and set (0 or 1)
  * @ingroup Cursors
  */
+// XXX: need to review
 EAPI Eina_Bool   elm_cursor_engine_only_set(int engine_only);
 
 /**
