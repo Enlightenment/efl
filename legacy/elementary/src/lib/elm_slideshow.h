@@ -74,10 +74,10 @@ typedef void                                (*SlideshowItemDelFunc)(void *data, 
 struct _Elm_Slideshow_Item_Class
 {
    struct _Elm_Slideshow_Item_Class_Func
-   {
-      SlideshowItemGetFunc get;
-      SlideshowItemDelFunc del;
-   } func;
+     {
+        SlideshowItemGetFunc get;
+        SlideshowItemDelFunc del;
+     } func;
 };   /**< #Elm_Slideshow_Item_Class member definitions */
 
 /**
