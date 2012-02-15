@@ -344,7 +344,6 @@ collections {
 #include "widgets/genlist.edc"
 #include "widgets/check.edc"
 #include "widgets/radio.edc"
-#include "widgets/pager.edc"
 #include "widgets/progressbar.edc"
 #include "widgets/separator.edc"
 #include "widgets/spinner.edc"

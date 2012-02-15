@@ -34,9 +34,6 @@
  *
  * This widget has the following styles available:
  * - @c "default"
- * - @c "fade"
- * - @c "fade_translucide"
- * - @c "fade_invisible"
  *
  * @note These styles affect only the flipping animations on the
  * default theme; the appearance when not animating is unaffected
@@ -114,6 +111,27 @@ EAPI Evas_Object *elm_pager_content_bottom_get(const Evas_Object *obj);
  * @return The top object or NULL if none
  */
 EAPI Evas_Object *elm_pager_content_top_get(const Evas_Object *obj);
+
+/**
+ * @brief Set the default item style.
+ *
+ * Default item style will be used with items who's style is NULL
+ *
+ * @param obj The pager object
+ * @param style The style
+ */
+EAPI void             elm_pager_item_style_default_set(Evas_Object *obj, const char *style);
+
+/**
+ * @brief Get the default item style
+ *
+ * @param obj The pager object
+ * @return the default item style
+ *
+ * @see elm_pager_item_style_default_set()
+ */
+EAPI const char      *elm_pager_item_style_default_get(const Evas_Object *obj);
+
 
 /**
  * @}
