@@ -28,6 +28,7 @@ static void _child_change(void *data __UNUSED__, Evas *e __UNUSED__, Evas_Object
 static void _child_del(void *data, Evas *e __UNUSED__, Evas_Object *obj, void *event_info __UNUSED__);
 static void _content_set_hook(Evas_Object *obj, const char *part, Evas_Object *content);
 static Evas_Object *_content_get_hook(const Evas_Object *obj, const char *part);
+static Evas_Object *_content_unset_hook(Evas_Object *obj, const char *part);
 
 static const char SIG_REALIZE[] = "realize";
 static const char SIG_UNREALIZE[] = "unrealize";
@@ -211,45 +212,56 @@ _child_del(void *data, Evas *e __UNUSED__, Evas_Object *obj, void *event_info __
 //   printf("FAC-- = %i\n", fac);
 }
 
+static Evas_Object *
+_content_unset_hook(Evas_Object *obj, const char *part)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype) NULL;
+   Widget_Data *wd;
+   Evas_Object *content;
+
+   if (part && strcmp(part, "default")) return NULL;
+   wd = elm_widget_data_get(obj);
+   if (!wd || !wd->content) return NULL;
+
+   content = wd->content;
+   evas_object_event_callback_del_full(content,
+                                       EVAS_CALLBACK_CHANGED_SIZE_HINTS,
+                                       _child_change, obj);
+   evas_object_event_callback_del_full(content,
+                                       EVAS_CALLBACK_DEL,
+                                       _child_del, obj);
+   wd->content = NULL;
+   fac--;
+//         printf("FAC-- = %i\n", fac);
+   return content;
+}
+
 static void
 _content_set_hook(Evas_Object *obj, const char *part, Evas_Object *content)
 {
    ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd;
+   Evas_Object *prev_content;
 
    if (part && strcmp(part, "default")) return;
    wd = elm_widget_data_get(obj);
    if (!wd) return;
    if (wd->content == content) return;
-   if (wd->content)
-      {
-         Evas_Object *o = wd->content;
 
-         evas_object_event_callback_del_full(wd->content,
-                                             EVAS_CALLBACK_CHANGED_SIZE_HINTS,
-                                             _child_change, obj);
-         evas_object_event_callback_del_full(wd->content,
-                                             EVAS_CALLBACK_DEL,
-                                             _child_del, obj);
-         wd->content = NULL;
-         evas_object_del(o);
-         fac--;
-//         printf("FAC-- = %i\n", fac);
-      }
+   prev_content = _content_unset_hook(obj, part);
+   if (prev_content) evas_object_del(prev_content);
+
    wd->content = content;
-   if (wd->content)
-     {
-        fac++;
-//        printf("FAC++ = %i\n", fac);
-        elm_widget_resize_object_set(obj, wd->content);
-        evas_object_event_callback_add(wd->content, EVAS_CALLBACK_DEL,
-                                       _child_del, obj);
-        evas_object_event_callback_add(wd->content, EVAS_CALLBACK_CHANGED_SIZE_HINTS,
-                                       _child_change, obj);
-        wd->eval = EINA_TRUE;
-        wd->szeval = EINA_TRUE;
-        evas_object_smart_changed(obj);
-     }
+   if (!content) return;
+
+   elm_widget_resize_object_set(obj, content);
+   evas_object_event_callback_add(content, EVAS_CALLBACK_DEL, _child_del, obj);
+   evas_object_event_callback_add(content, EVAS_CALLBACK_CHANGED_SIZE_HINTS,
+                                  _child_change, obj);
+   wd->eval = EINA_TRUE;
+   wd->szeval = EINA_TRUE;
+   evas_object_smart_changed(obj);
+   fac++;
 }
 
 static Evas_Object *
@@ -280,6 +292,7 @@ elm_factory_add(Evas_Object *parent)
    elm_widget_focus_next_hook_set(obj, _focus_next_hook);
    elm_widget_content_set_hook_set(obj, _content_set_hook);
    elm_widget_content_get_hook_set(obj, _content_get_hook);
+   elm_widget_content_unset_hook_set(obj, _content_unset_hook);
    elm_widget_can_focus_set(obj, EINA_FALSE);
    elm_widget_changed_hook_set(obj, _changed);
 
