@@ -817,6 +817,24 @@ typedef enum _Edje_Input_Panel_Layout
    EDJE_INPUT_PANEL_LAYOUT_PASSWORD         /**< Like normal, but no auto-correct, no auto-capitalization etc. @since 1.2 */
 } Edje_Input_Panel_Layout;
 
+typedef enum _Edje_Input_Panel_Lang
+{
+   EDJE_INPUT_PANEL_LANG_AUTOMATIC,    /**< Automatic */
+   EDJE_INPUT_PANEL_LANG_ALPHABET      /**< Alphabet */
+} Edje_Input_Panel_Lang;
+
+typedef enum _Edje_Input_Panel_Return_Key_Type
+{
+   EDJE_INPUT_PANEL_RETURN_KEY_TYPE_DEFAULT,
+   EDJE_INPUT_PANEL_RETURN_KEY_TYPE_DONE,
+   EDJE_INPUT_PANEL_RETURN_KEY_TYPE_GO,
+   EDJE_INPUT_PANEL_RETURN_KEY_TYPE_JOIN,
+   EDJE_INPUT_PANEL_RETURN_KEY_TYPE_LOGIN,
+   EDJE_INPUT_PANEL_RETURN_KEY_TYPE_NEXT,
+   EDJE_INPUT_PANEL_RETURN_KEY_TYPE_SEARCH,
+   EDJE_INPUT_PANEL_RETURN_KEY_TYPE_SEND
+} Edje_Input_Panel_Return_Key_Type;
+
 /**
  * @brief Converts type identifier to string nicer representation.
  *
@@ -2964,6 +2982,100 @@ EAPI void             edje_object_part_text_input_panel_show(const Evas_Object *
  * @since 1.2.0
  */
 EAPI void             edje_object_part_text_input_panel_hide(const Evas_Object *obj, const char *part);
+
+/**
+ * Set the language mode of the input panel.
+ *
+ * This API can be used if you want to show the Alphabet keyboard.
+ *
+ * @param obj A valid Evas_Object handle
+ * @param part The part name
+ * @param lang the language to be set to the input panel.
+ * @since 1.2.0
+ */
+EAPI void             edje_object_part_text_input_panel_language_set(Evas_Object *obj, const char *part, Edje_Input_Panel_Lang lang);
+
+/**
+ * Get the language mode of the input panel.
+ *
+ * See @ref edje_object_part_text_input_panel_language_set for more details.
+ *
+ * @param obj A valid Evas_Object handle
+ * @param part The part name
+ * @return input panel language type
+ * @since 1.2.0
+ */
+EAPI Edje_Input_Panel_Lang edje_object_part_text_input_panel_language_get(const Evas_Object *obj, const char *part);
+
+/**
+ * Set the input panel-specific data to deliver to the input panel.
+ *
+ * This API is used by applications to deliver specific data to the input panel.
+ * The data format MUST be negotiated by both application and the input panel.
+ * The size and format of data are defined by the input panel.
+ *
+ * @param obj A valid Evas_Object handle
+ * @param part The part name
+ * @param data The specific data to be set to the input panel.
+ * @param len the length of data, in bytes, to send to the input panel
+ * @since 1.2.0
+ */
+EAPI void             edje_object_part_text_input_panel_imdata_set(Evas_Object *obj, const char *part, const void *data, int len);
+
+/**
+ * Get the specific data of the current active input panel.
+ *
+ * @param obj A valid Evas_Object handle
+ * @param part The part name
+ * @param data The specific data to be got from the input panel
+ * @param len The length of data
+ * @since 1.2.0
+ */
+EAPI void             edje_object_part_text_input_panel_imdata_get(const Evas_Object *obj, const char *part, void *data, int *len);
+
+/**
+ * Set the "return" key type. This type is used to set string or icon on the "return" key of the input panel.
+ *
+ * An input panel displays the string or icon associated with this type
+ *
+ * @param obj A valid Evas_Object handle
+ * @param part The part name
+ * @param return_key_type The type of "return" key on the input panel
+ * @since 1.2.0
+ */
+EAPI void             edje_object_part_text_input_panel_return_key_type_set(Evas_Object *obj, const char *part, Edje_Input_Panel_Return_Key_Type return_key_type);
+
+/**
+ * Get the "return" key type.
+ *
+ * @see edje_object_part_text_input_panel_return_key_type_set() for more details
+ *
+ * @param obj A valid Evas_Object handle
+ * @param part The part name
+ * @return The type of "return" key on the input panel
+ * @since 1.2.0
+ */
+EAPI Edje_Input_Panel_Return_Key_Type edje_object_part_text_input_panel_return_key_type_get(const Evas_Object *obj, const char *part);
+
+/**
+ * Set the return key on the input panel to be disabled.
+ *
+ * @param obj A valid Evas_Object handle
+ * @param part The part name
+ * @param disabled The state
+ * @since 1.2.0
+ */
+EAPI void             edje_object_part_text_input_panel_return_key_disabled_set(Evas_Object *obj, const char *part, Eina_Bool disabled);
+
+/**
+ * Get whether the return key on the input panel should be disabled or not.
+ *
+ * @param obj A valid Evas_Object handle
+ * @param part The part name
+ * @return EINA_TRUE if it should be disabled
+ * @since 1.2.0
+ */
+EAPI Eina_Bool        edje_object_part_text_input_panel_return_key_disabled_get(const Evas_Object *obj, const char *part);
 
 /**
  * Add a filter function for newly inserted text.

@@ -28,6 +28,7 @@ struct _Entry
    Eina_List *anchorlist;
    Eina_List *itemlist;
    char *selection;
+   Edje_Input_Panel_Lang input_panel_lang;
    Eina_Bool selecting : 1;
    Eina_Bool have_selection : 1;
    Eina_Bool select_allow : 1;
@@ -2647,6 +2648,96 @@ _edje_entry_input_panel_hide(Edje_Real_Part *rp)
    if (en->imf_context)
      ecore_imf_context_input_panel_hide(en->imf_context);
 #endif
+}
+
+void
+_edje_entry_input_panel_language_set(Edje_Real_Part *rp, Edje_Input_Panel_Lang lang)
+{
+   Entry *en = rp->entry_data;
+
+   if (!en) return;
+   en->input_panel_lang = lang;
+#ifdef HAVE_ECORE_IMF
+   if (en->imf_context)
+     ecore_imf_context_input_panel_language_set(en->imf_context, lang);
+#endif
+}
+
+Edje_Input_Panel_Lang
+_edje_entry_input_panel_language_get(Edje_Real_Part *rp)
+{
+   Entry *en = rp->entry_data;
+   if (!en) return EDJE_INPUT_PANEL_LANG_AUTOMATIC;
+
+   return en->input_panel_lang;
+}
+
+void
+_edje_entry_input_panel_imdata_set(Edje_Real_Part *rp, const void *data, int len)
+{
+   Entry *en = rp->entry_data;
+   if (!en) return;
+#ifdef HAVE_ECORE_IMF
+   if (en->imf_context)
+     ecore_imf_context_input_panel_imdata_set(en->imf_context, data, len);
+#endif
+}
+
+void
+_edje_entry_input_panel_imdata_get(Edje_Real_Part *rp, void *data, int *len)
+{
+   Entry *en = rp->entry_data;
+   if (!en) return;
+#ifdef HAVE_ECORE_IMF
+   if (en->imf_context)
+     ecore_imf_context_input_panel_imdata_get(en->imf_context, data, len);
+#endif
+}
+
+void 
+_edje_entry_input_panel_return_key_type_set(Edje_Real_Part *rp, Edje_Input_Panel_Return_Key_Type return_key_type)
+{
+   Entry *en = rp->entry_data;
+   if (!en) return;
+#ifdef HAVE_ECORE_IMF
+   if (en->imf_context)
+     ecore_imf_context_input_panel_return_key_type_set(en->imf_context, return_key_type);
+#endif
+}
+
+Edje_Input_Panel_Return_Key_Type 
+_edje_entry_input_panel_return_key_type_get(Edje_Real_Part *rp)
+{
+   Entry *en = rp->entry_data;
+   if (!en) return EDJE_INPUT_PANEL_RETURN_KEY_TYPE_DEFAULT;
+#ifdef HAVE_ECORE_IMF
+   if (en->imf_context)
+     return ecore_imf_context_input_panel_return_key_type_get(en->imf_context);
+#endif
+   return EDJE_INPUT_PANEL_RETURN_KEY_TYPE_DEFAULT;
+}
+
+void 
+_edje_entry_input_panel_return_key_disabled_set(Edje_Real_Part *rp, Eina_Bool disabled)
+{
+   Entry *en = rp->entry_data;
+   if (!en) return;
+#ifdef HAVE_ECORE_IMF
+   if (en->imf_context)
+     ecore_imf_context_input_panel_return_key_disabled_set(en->imf_context, disabled);
+#endif
+}
+
+Eina_Bool 
+_edje_entry_input_panel_return_key_disabled_get(Edje_Real_Part *rp)
+{
+   Entry *en = rp->entry_data;
+   if (!en) return EINA_FALSE;
+#ifdef HAVE_ECORE_IMF
+   if (en->imf_context)
+     return ecore_imf_context_input_panel_return_key_disabled_get(en->imf_context);
+#endif
+   return EINA_FALSE;
 }
 
 static Evas_Textblock_Cursor *

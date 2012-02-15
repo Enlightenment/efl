@@ -1954,6 +1954,137 @@ edje_object_part_text_input_panel_hide(const Evas_Object *obj, const char *part)
 }
 
 EAPI void
+edje_object_part_text_input_panel_language_set(Evas_Object *obj, const char *part, Edje_Input_Panel_Lang lang)
+{
+   Edje *ed;
+   Edje_Real_Part *rp;
+
+   ed = _edje_fetch(obj);
+   if ((!ed) || (!part)) return;
+   rp = _edje_real_part_recursive_get(ed, part);
+   if (!rp) return;
+   if (rp->part->entry_mode > EDJE_ENTRY_EDIT_MODE_NONE)
+     {
+        _edje_entry_input_panel_language_set(rp, lang);
+     }
+}
+
+EAPI Edje_Input_Panel_Lang
+edje_object_part_text_input_panel_language_get(const Evas_Object *obj, const char *part)
+{
+   Edje *ed;
+   Edje_Real_Part *rp;
+
+   ed = _edje_fetch(obj);
+   if ((!ed) || (!part)) return EDJE_INPUT_PANEL_LANG_AUTOMATIC;
+   rp = _edje_real_part_recursive_get(ed, part);
+   if (!rp) return EDJE_INPUT_PANEL_LANG_AUTOMATIC;
+   if (rp->part->entry_mode > EDJE_ENTRY_EDIT_MODE_NONE)
+     {
+        return _edje_entry_input_panel_language_get(rp);
+     }
+   return EDJE_INPUT_PANEL_LANG_AUTOMATIC;
+}
+
+EAPI void
+edje_object_part_text_input_panel_imdata_set(Evas_Object *obj, const char *part, const void *data, int len)
+{
+   Edje *ed;
+   Edje_Real_Part *rp;
+
+   ed = _edje_fetch(obj);
+   if ((!ed) || (!part)) return;
+   rp = _edje_real_part_recursive_get(ed, part);
+   if (!rp) return;
+   if (rp->part->entry_mode > EDJE_ENTRY_EDIT_MODE_NONE)
+     {
+        _edje_entry_input_panel_imdata_set(rp, data, len);
+     }
+}
+
+EAPI void
+edje_object_part_text_input_panel_imdata_get(const Evas_Object *obj, const char *part, void *data, int *len)
+{
+   Edje *ed;
+   Edje_Real_Part *rp;
+
+   ed = _edje_fetch(obj);
+   if ((!ed) || (!part)) return;
+   rp = _edje_real_part_recursive_get(ed, part);
+   if (!rp) return;
+   if (rp->part->entry_mode > EDJE_ENTRY_EDIT_MODE_NONE)
+     {
+        _edje_entry_input_panel_imdata_get(rp, data, len);
+     }
+}
+
+EAPI void
+edje_object_part_text_input_panel_return_key_type_set(Evas_Object *obj, const char *part, Edje_Input_Panel_Return_Key_Type return_key_type)
+{
+   Edje *ed;
+   Edje_Real_Part *rp;
+
+   ed = _edje_fetch(obj);
+   if ((!ed) || (!part)) return;
+   rp = _edje_real_part_recursive_get(ed, part);
+   if (!rp) return;
+   if (rp->part->entry_mode > EDJE_ENTRY_EDIT_MODE_NONE)
+     {
+        _edje_entry_input_panel_return_key_type_set(rp, return_key_type);
+     }
+}
+
+EAPI Edje_Input_Panel_Return_Key_Type
+edje_object_part_text_input_panel_return_key_type_get(const Evas_Object *obj, const char *part)
+{
+   Edje *ed;
+   Edje_Real_Part *rp;
+
+   ed = _edje_fetch(obj);
+   if ((!ed) || (!part)) return EDJE_INPUT_PANEL_RETURN_KEY_TYPE_DEFAULT;
+   rp = _edje_real_part_recursive_get(ed, part);
+   if (!rp) return EDJE_INPUT_PANEL_RETURN_KEY_TYPE_DEFAULT;
+   if (rp->part->entry_mode > EDJE_ENTRY_EDIT_MODE_NONE)
+     {
+        return _edje_entry_input_panel_return_key_type_get(rp);
+     }
+   return EDJE_INPUT_PANEL_RETURN_KEY_TYPE_DEFAULT;
+}
+
+EAPI void
+edje_object_part_text_input_panel_return_key_disabled_set(Evas_Object *obj, const char *part, Eina_Bool disabled)
+{
+   Edje *ed;
+   Edje_Real_Part *rp;
+
+   ed = _edje_fetch(obj);
+   if ((!ed) || (!part)) return;
+   rp = _edje_real_part_recursive_get(ed, part);
+   if (!rp) return;
+   if (rp->part->entry_mode > EDJE_ENTRY_EDIT_MODE_NONE)
+     {
+        _edje_entry_input_panel_return_key_disabled_set(rp, disabled);
+     }
+}
+
+EAPI Eina_Bool
+edje_object_part_text_input_panel_return_key_disabled_get(const Evas_Object *obj, const char *part)
+{
+   Edje *ed;
+   Edje_Real_Part *rp;
+
+   ed = _edje_fetch(obj);
+   if ((!ed) || (!part)) return EINA_FALSE;
+   rp = _edje_real_part_recursive_get(ed, part);
+   if (!rp) return EINA_FALSE;
+   if (rp->part->entry_mode > EDJE_ENTRY_EDIT_MODE_NONE)
+     {
+        return _edje_entry_input_panel_return_key_disabled_get(rp);
+     }
+   return EINA_FALSE;
+}
+
+EAPI void
 edje_object_text_insert_filter_callback_add(Evas_Object *obj, const char *part, Edje_Text_Filter_Cb func, void *data)
 {
    Edje *ed;

@@ -1952,6 +1952,14 @@ void _edje_entry_input_panel_enabled_set(Edje_Real_Part *rp, Eina_Bool enabled);
 Eina_Bool _edje_entry_input_panel_enabled_get(Edje_Real_Part *rp);
 void _edje_entry_input_panel_show(Edje_Real_Part *rp);
 void _edje_entry_input_panel_hide(Edje_Real_Part *rp);
+void _edje_entry_input_panel_language_set(Edje_Real_Part *rp, Edje_Input_Panel_Lang lang);
+Edje_Input_Panel_Lang _edje_entry_input_panel_language_get(Edje_Real_Part *rp);
+void _edje_entry_input_panel_imdata_set(Edje_Real_Part *rp, const void *data, int len);
+void _edje_entry_input_panel_imdata_get(Edje_Real_Part *rp, void *data, int *len);
+void _edje_entry_input_panel_return_key_type_set(Edje_Real_Part *rp, Edje_Input_Panel_Return_Key_Type return_key_type);
+Edje_Input_Panel_Return_Key_Type _edje_entry_input_panel_return_key_type_get(Edje_Real_Part *rp);
+void _edje_entry_input_panel_return_key_disabled_set(Edje_Real_Part *rp, Eina_Bool disabled);
+Eina_Bool _edje_entry_input_panel_return_key_disabled_get(Edje_Real_Part *rp);
 
 void _edje_external_init();
 void _edje_external_shutdown();
