@@ -68,7 +68,7 @@ EAPI Elm_Panel_Orient             elm_panel_orient_get(const Evas_Object *obj);
  * @brief Set the state of the panel.
  *
  * @param obj The panel object
- * @param hidden If true, the panel will run the animation to contract
+ * @param hidden If true, the panel will run the animation to disappear.
  */
 EAPI void                         elm_panel_hidden_set(Evas_Object *obj, Eina_Bool hidden);
 
