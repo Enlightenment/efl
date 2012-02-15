@@ -23,32 +23,30 @@ _animal_breathe(Eina_Model *mdl)
 }
 
 const char *ANIMAL_MODEL_TYPE_NAME = NULL;
-static Animal_Type _ANIMAL_TYPE = {
-  EINA_MODEL_TYPE_INIT_NOPRIVATE("Animal_Model_Type",
-                                 Animal_Type,
-                                 NULL,
-                                 NULL,
-                                 NULL),
-  NULL,
-  NULL
-};
+static Animal_Type _ANIMAL_TYPE;
 
 const Eina_Model_Type * const ANIMAL_TYPE = (Eina_Model_Type *) &_ANIMAL_TYPE;
 
 void
 animal_init(void)
 {
+   Eina_Model_Type *type;
+
    if (initialized) return;
    initialized = EINA_TRUE;
 
-   ANIMAL_MODEL_TYPE_NAME = _ANIMAL_TYPE.parent_class.name;
+   ANIMAL_MODEL_TYPE_NAME = "Animal_Model_Type";
 
-   eina_model_type_subclass_setup(&_ANIMAL_TYPE.parent_class,
-                                  EINA_MODEL_TYPE_GENERIC);
+   type = (Eina_Model_Type *)&_ANIMAL_TYPE;
+   type->version = EINA_MODEL_TYPE_VERSION;
+   type->name = ANIMAL_MODEL_TYPE_NAME;
+   type->private_size = 0;
+
+   eina_model_type_subclass_setup(type, EINA_MODEL_TYPE_GENERIC);
 
    /* define extra methods */
 
-   _ANIMAL_TYPE.parent_class.type_size = sizeof(Animal_Type);
+   type->type_size = sizeof(Animal_Type);
    _ANIMAL_TYPE.breathe = _animal_breathe;
    _ANIMAL_TYPE.eat = _animal_eat;
 }
