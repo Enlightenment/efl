@@ -6,12 +6,11 @@
 #define ANIMAL_H_
 
 #include <Eina.h>
-#include <eina_safety_checks.h>
 
-#define ANIMAL_MODEL_TYPE_NAME "Animal_Model_Type"
-
+extern const char *ANIMAL_MODEL_TYPE_NAME;
 extern const Eina_Model_Type * const ANIMAL_TYPE;
-#define ANIMAL_TYPE(x) ((Animal_Type *) x)
+
+#define ANIMAL_TYPE(x) ((Animal_Type *)(eina_model_type_subclass_check((x), ANIMAL_TYPE) ? (x) : NULL))
 
 typedef struct _Animal_Type
 {
@@ -20,7 +19,7 @@ typedef struct _Animal_Type
    void (*breathe)(Eina_Model *mdl);
 } Animal_Type;
 
-void animal_init();
+void animal_init(void);
 void animal_breathe(Eina_Model *mdl);
 void animal_eat(Eina_Model *mdl);
 

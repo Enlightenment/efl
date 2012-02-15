@@ -22,46 +22,57 @@ _animal_breathe(Eina_Model *mdl)
    printf("\t\t Breathe Animal\n");
 }
 
-static Animal_Type _ANIMAL_TYPE;
+const char *ANIMAL_MODEL_TYPE_NAME = NULL;
+static Animal_Type _ANIMAL_TYPE = {
+  EINA_MODEL_TYPE_INIT_NOPRIVATE("Animal_Model_Type",
+                                 Animal_Type,
+                                 NULL,
+                                 NULL,
+                                 NULL),
+  NULL,
+  NULL
+};
+
 const Eina_Model_Type * const ANIMAL_TYPE = (Eina_Model_Type *) &_ANIMAL_TYPE;
 
-void animal_init()
+void
+animal_init(void)
 {
    if (initialized) return;
    initialized = EINA_TRUE;
 
-   Eina_Model_Type *type = (Eina_Model_Type *) &_ANIMAL_TYPE;
-   type->version = EINA_MODEL_TYPE_VERSION;
-   type->parent = EINA_MODEL_TYPE_BASE;
-   type->type_size = sizeof(Animal_Type);
-   type->name = ANIMAL_MODEL_TYPE_NAME;
-   type->parent = EINA_MODEL_TYPE_GENERIC;
+   ANIMAL_MODEL_TYPE_NAME = _ANIMAL_TYPE.parent_class.name;
 
-   ANIMAL_TYPE(type)->breathe = _animal_breathe;
-   ANIMAL_TYPE(type)->eat = _animal_eat;
+   eina_model_type_subclass_setup(&_ANIMAL_TYPE.parent_class,
+                                  EINA_MODEL_TYPE_GENERIC);
+
+   /* define extra methods */
+
+   _ANIMAL_TYPE.parent_class.type_size = sizeof(Animal_Type);
+   _ANIMAL_TYPE.breathe = _animal_breathe;
+   _ANIMAL_TYPE.eat = _animal_eat;
 }
 
 void
-animal_breathe(Eina_Model *mdl)
+animal_breathe(Eina_Model *m)
 {
-   EINA_SAFETY_ON_FALSE_RETURN(eina_model_instance_check(mdl, ANIMAL_TYPE));
+   EINA_SAFETY_ON_FALSE_RETURN(eina_model_instance_check(m, ANIMAL_TYPE));
 
-   void (*pf)(Eina_Model *mdl);
-   pf = eina_model_method_resolve(mdl, Animal_Type, breathe);
+   void (*pf)(Eina_Model *m);
+   pf = eina_model_method_resolve(m, Animal_Type, breathe);
    EINA_SAFETY_ON_NULL_RETURN(pf);
    printf("%s()   \t", __func__);
-   pf(mdl);
+   pf(m);
 }
 
 void
-animal_eat(Eina_Model *mdl)
+animal_eat(Eina_Model *m)
 {
-   EINA_SAFETY_ON_FALSE_RETURN(eina_model_instance_check(mdl, ANIMAL_TYPE));
+   EINA_SAFETY_ON_FALSE_RETURN(eina_model_instance_check(m, ANIMAL_TYPE));
 
-   void (*pf)(Eina_Model *mdl);
-   pf = eina_model_method_resolve(mdl, Animal_Type, eat);
+   void (*pf)(Eina_Model *m);
+   pf = eina_model_method_resolve(m, Animal_Type, eat);
    EINA_SAFETY_ON_NULL_RETURN(pf);
    printf("%s()    \t", __func__);
-   pf(mdl);
+   pf(m);
 }
-
