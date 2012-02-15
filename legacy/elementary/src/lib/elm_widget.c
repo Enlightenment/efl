@@ -1044,18 +1044,23 @@ elm_widget_resize_object_set(Evas_Object *obj,
           {
              Smart_Data *sd2 = evas_object_smart_data_get(sd->resize_obj);
              if (sd2) sd2->parent_obj = NULL;
-             evas_object_event_callback_del_full(sd->resize_obj, EVAS_CALLBACK_HIDE,
+             evas_object_event_callback_del_full(sd->resize_obj,
+                                                 EVAS_CALLBACK_HIDE,
                                                  _sub_obj_hide, sd);
           }
         evas_object_event_callback_del_full(sd->resize_obj, EVAS_CALLBACK_DEL,
                                             _sub_obj_del, sd);
-        evas_object_event_callback_del_full(sd->resize_obj, EVAS_CALLBACK_MOUSE_DOWN,
+        evas_object_event_callback_del_full(sd->resize_obj,
+                                            EVAS_CALLBACK_MOUSE_DOWN,
                                             _sub_obj_mouse_down, sd);
-        evas_object_event_callback_del_full(sd->resize_obj, EVAS_CALLBACK_MOUSE_MOVE,
+        evas_object_event_callback_del_full(sd->resize_obj,
+                                            EVAS_CALLBACK_MOUSE_MOVE,
                                             _sub_obj_mouse_move, sd);
-        evas_object_event_callback_del_full(sd->resize_obj, EVAS_CALLBACK_MOUSE_UP,
+        evas_object_event_callback_del_full(sd->resize_obj,
+                                            EVAS_CALLBACK_MOUSE_UP,
                                             _sub_obj_mouse_up, sd);
         evas_object_smart_member_del(sd->resize_obj);
+
         if (_elm_widget_is(sd->resize_obj))
           {
              if (elm_widget_focus_get(sd->resize_obj)) _unfocus_parents(obj);
