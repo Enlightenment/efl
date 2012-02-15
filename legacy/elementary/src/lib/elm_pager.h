@@ -8,11 +8,11 @@
  * of objects.
  *
  * The flipping between pages of objects is animated. All content
- * in the pager is kept in a stack, being the last content added
+ * in the pager is kept in a stack, the top being the last content added
  * (visible one) on the top of that stack.
  *
  * Objects can be pushed or popped from the stack or deleted as
- * well. Pushes and pops will animate the widget accordingly to its
+ * well. Pushes and pops will animate the widget according to its
  * style (a pop will also delete the child object once the
  * animation is finished). Any object already in the pager can be
  * promoted to the top (from its current stacking position) through
@@ -20,9 +20,10 @@
  * to the top with elm_pager_content_push(). When the top item is
  * no longer wanted, simply pop it with elm_pager_content_pop() and
  * it will also be deleted. If an object is no longer needed and is
- * not the top item, just delete it as normal. You can query which
- * objects are the top and bottom with
- * elm_pager_content_bottom_get() and elm_pager_content_top_get().
+ * not the top item, just delete it as normal. You can get the objects 
+ * at the top and bottom with
+ * elm_pager_content_top_get() and elm_pager_content_bottom_get() 
+ * respectively.
  *
  * Signals that you can add callbacks for are:
  * - @c "show,finished" - when a new page is actually shown on the top
