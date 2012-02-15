@@ -25,8 +25,24 @@
 #include <stdarg.h>
 
 /**
- * @page eina_model_01_c eina_model_01.c Eina_Model inheritance and function overriding
+ * @page eina_model_01_c Eina_Model inheritance and function overriding
  * @include eina_model_01.c
+ */
+
+/**
+ * @page eina_model_04_c Eina_Model inheritance, interfaces, and function overriding
+ * @include eina_model_04_main.c
+ * @include eina_model_04_animal.c
+ * @include eina_model_04_human.c
+ * @include eina_model_04_parrot.c
+ * @include eina_model_04_child.c
+ * @include eina_model_04_main.c
+ * @include eina_model_04_whistler.c
+ * @include eina_model_04_animal.h
+ * @include eina_model_04_human.h
+ * @include eina_model_04_whistler.h
+ * @include eina_model_04_child.h
+ * @include eina_model_04_parrot.h
  */
 
 /**
@@ -280,6 +296,8 @@
  * @li @ref eina_model_03_example_page walk-through example on how to
  *     inherit types, a suggestion of eina_model_load() usage and uses
  *     #EINA_MODEL_TYPE_STRUCT.
+ * @li @ref eina_model_04_c Advanced inheritance, interfaces and interface
+ *     function overloading example.
  *
  * @{
  */
