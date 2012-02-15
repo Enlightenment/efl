@@ -41,6 +41,38 @@ EAPI Eina_Bool elm_config_save(void);
 EAPI void      elm_config_reload(void);
 
 /**
+ * Flush all config settings then apply those settings to all applications
+ * using elementary on the current display.
+ * Following functions will update the config settings
+ * @li elm_scale_set()
+ * @li elm_finger_size_set()
+ * @li elm_profile_set()
+ * @li elm_font_overlay_set()
+ * @li elm_cache_flush_interval_set()
+ * @li elm_cache_flush_enabled_set()
+ * @li elm_font_cache_set()
+ * @li elm_image_cache_set()
+ * @li elm_edje_file_cache_set()
+ * @li elm_edje_collection_cache_set()
+ * @li elm_scroll_bounce_enabled_set()
+ * @li elm_scroll_bounce_friction_set()
+ * @li elm_scroll_page_scroll_friction_set()
+ * @li elm_scroll_bring_in_scroll_friction_set()
+ * @li elm_scroll_zoom_friction_set()
+ * @li elm_scroll_thumbscroll_enabled_set()
+ * @li elm_scroll_thumbscroll_threshold_set()
+ * @li elm_scroll_thumbscroll_momentum_threshold_set()
+ * @li elm_scroll_thumbscroll_friction_set()
+ * @li elm_scroll_thumbscroll_border_friction_set()
+ * @li elm_scroll_thumbscroll_sensitivity_friction_set()
+ * @li elm_theme_set()
+ *  
+ * @ingroup Config
+ *
+ */
+EAPI void      elm_config_all_flush(void);
+
+/**
  * @}
  */
 

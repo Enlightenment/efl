@@ -1034,7 +1034,7 @@ EAPI void
 elm_scale_all_set(double scale)
 {
    elm_scale_set(scale);
-   _elm_config_all_update();
+   elm_config_all_flush();
 }
 
 EAPI Eina_Bool
@@ -1152,7 +1152,7 @@ EAPI void
 elm_profile_all_set(const char *profile)
 {
    _elm_config_profile_set(profile);
-   _elm_config_all_update();
+   elm_config_all_flush();
 }
 
 EAPI const char *
@@ -1217,7 +1217,7 @@ EAPI void
 elm_font_overlay_all_apply(void)
 {
    elm_font_overlay_apply();
-   _elm_config_all_update();
+   elm_config_all_flush();
 }
 
 EAPI Elm_Font_Properties *
@@ -1318,7 +1318,7 @@ EAPI void
 elm_finger_size_all_set(Evas_Coord size)
 {
    elm_finger_size_set(size);
-   _elm_config_all_update();
+   elm_config_all_flush();
 }
 
 EAPI void
@@ -1370,7 +1370,7 @@ EAPI void
 elm_cache_flush_interval_all_set(int size)
 {
    elm_cache_flush_interval_set(size);
-   _elm_config_all_update();
+   elm_config_all_flush();
 }
 
 EAPI Eina_Bool
@@ -1393,7 +1393,7 @@ EAPI void
 elm_cache_flush_enabled_all_set(Eina_Bool enabled)
 {
    elm_cache_flush_enabled_set(enabled);
-   _elm_config_all_update();
+   elm_config_all_flush();
 }
 
 EAPI int
@@ -1415,7 +1415,7 @@ EAPI void
 elm_font_cache_all_set(int size)
 {
    elm_font_cache_set(size);
-   _elm_config_all_update();
+   elm_config_all_flush();
 }
 
 EAPI int
@@ -1437,7 +1437,7 @@ EAPI void
 elm_image_cache_all_set(int size)
 {
    elm_image_cache_set(size);
-   _elm_config_all_update();
+   elm_config_all_flush();
 }
 
 EAPI int
@@ -1459,7 +1459,7 @@ EAPI void
 elm_edje_file_cache_all_set(int size)
 {
    elm_edje_file_cache_set(size);
-   _elm_config_all_update();
+   elm_config_all_flush();
 }
 
 EAPI int
@@ -1481,7 +1481,7 @@ EAPI void
 elm_edje_collection_cache_all_set(int size)
 {
    elm_edje_collection_cache_set(size);
-   _elm_config_all_update();
+   elm_config_all_flush();
 }
 
 EAPI Eina_Bool
@@ -1651,7 +1651,7 @@ EAPI void
 elm_scroll_bounce_enabled_all_set(Eina_Bool enabled)
 {
    elm_scroll_bounce_enabled_set(enabled);
-   _elm_config_all_update();
+   elm_config_all_flush();
 }
 
 EAPI double
@@ -1670,7 +1670,7 @@ EAPI void
 elm_scroll_bounce_friction_all_set(double friction)
 {
    elm_scroll_bounce_friction_set(friction);
-   _elm_config_all_update();
+   elm_config_all_flush();
 }
 
 EAPI double
@@ -1689,7 +1689,7 @@ EAPI void
 elm_scroll_page_scroll_friction_all_set(double friction)
 {
    elm_scroll_page_scroll_friction_set(friction);
-   _elm_config_all_update();
+   elm_config_all_flush();
 }
 
 EAPI double
@@ -1708,7 +1708,7 @@ EAPI void
 elm_scroll_bring_in_scroll_friction_all_set(double friction)
 {
    elm_scroll_bring_in_scroll_friction_set(friction);
-   _elm_config_all_update();
+   elm_config_all_flush();
 }
 
 EAPI double
@@ -1727,7 +1727,7 @@ EAPI void
 elm_scroll_zoom_friction_all_set(double friction)
 {
    elm_scroll_zoom_friction_set(friction);
-   _elm_config_all_update();
+   elm_config_all_flush();
 }
 
 EAPI Eina_Bool
@@ -1746,7 +1746,7 @@ EAPI void
 elm_scroll_thumbscroll_enabled_all_set(Eina_Bool enabled)
 {
    elm_scroll_thumbscroll_enabled_set(enabled);
-   _elm_config_all_update();
+   elm_config_all_flush();
 }
 
 EAPI unsigned int
@@ -1765,7 +1765,7 @@ EAPI void
 elm_scroll_thumbscroll_threshold_all_set(unsigned int threshold)
 {
    elm_scroll_thumbscroll_threshold_set(threshold);
-   _elm_config_all_update();
+   elm_config_all_flush();
 }
 
 EAPI double
@@ -1784,7 +1784,7 @@ EAPI void
 elm_scroll_thumbscroll_momentum_threshold_all_set(double threshold)
 {
    elm_scroll_thumbscroll_momentum_threshold_set(threshold);
-   _elm_config_all_update();
+   elm_config_all_flush();
 }
 
 EAPI double
@@ -1803,7 +1803,7 @@ EAPI void
 elm_scroll_thumbscroll_friction_all_set(double friction)
 {
    elm_scroll_thumbscroll_friction_set(friction);
-   _elm_config_all_update();
+   elm_config_all_flush();
 }
 
 EAPI double
@@ -1824,7 +1824,7 @@ EAPI void
 elm_scroll_thumbscroll_border_friction_all_set(double friction)
 {
    elm_scroll_thumbscroll_border_friction_set(friction);
-   _elm_config_all_update();
+   elm_config_all_flush();
 }
 
 EAPI double
@@ -1845,7 +1845,7 @@ EAPI void
 elm_scroll_thumbscroll_sensitivity_friction_all_set(double friction)
 {
    elm_scroll_thumbscroll_sensitivity_friction_set(friction);
-   _elm_config_all_update();
+   elm_config_all_flush();
 }
 
 EAPI void

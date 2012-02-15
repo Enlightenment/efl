@@ -599,7 +599,7 @@ elm_theme_all_set(const char *theme)
 {
    eina_stringshare_replace(&_elm_config->theme, theme);
    elm_theme_set(NULL, theme);
-   _elm_config_all_update();
+   elm_config_all_flush();
 }
 
 EAPI Eina_List *
