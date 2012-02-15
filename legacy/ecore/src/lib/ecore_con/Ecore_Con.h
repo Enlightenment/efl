@@ -723,10 +723,13 @@ EAPI Eina_Bool         ecore_con_ssl_client_upgrade(Ecore_Con_Client *cl, Ecore_
  */
 
 EAPI Ecore_Con_Socks *ecore_con_socks4_remote_add(const char *ip, int port, const char *username);
-EAPI void             ecore_con_socks4_lookup_set(Ecore_Con_Socks *ecs, Eina_Bool enable);
-EAPI Eina_Bool        ecore_con_socks4_lookup_get(Ecore_Con_Socks *ecs);
 EAPI Eina_Bool        ecore_con_socks4_remote_exists(const char *ip, int port, const char *username);
 EAPI void             ecore_con_socks4_remote_del(const char *ip, int port, const char *username);
+EAPI Ecore_Con_Socks *ecore_con_socks5_remote_add(const char *ip, int port, const char *username, const char *password);
+EAPI Eina_Bool        ecore_con_socks5_remote_exists(const char *ip, int port, const char *username, const char *password);
+EAPI void             ecore_con_socks5_remote_del(const char *ip, int port, const char *username, const char *password);
+EAPI void             ecore_con_socks_lookup_set(Ecore_Con_Socks *ecs, Eina_Bool enable);
+EAPI Eina_Bool        ecore_con_socks_lookup_get(Ecore_Con_Socks *ecs);
 EAPI void             ecore_con_socks_bind_set(Ecore_Con_Socks *ecs, Eina_Bool is_bind);
 EAPI Eina_Bool        ecore_con_socks_bind_get(Ecore_Con_Socks *ecs);
 EAPI unsigned int     ecore_con_socks_version_get(Ecore_Con_Socks *ecs);

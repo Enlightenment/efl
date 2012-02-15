@@ -461,7 +461,7 @@ ecore_con_server_connect(Ecore_Con_Type compl_type,
                  (!ecore_con_lookup(svr->name, (Ecore_Con_Dns_Cb)ecore_con_socks_dns_cb, svr)))
                goto error;
              if (svr->ecs->lookup)
-               svr->ecs_state = ECORE_CON_SOCKS_STATE_RESOLVED;
+               svr->ecs_state = ECORE_CON_PROXY_STATE_RESOLVED;
           }
      }
    if (ecore_con_ssl_server_prepare(svr, compl_type & ECORE_CON_SSL))
@@ -1031,7 +1031,7 @@ ecore_con_event_server_del(Ecore_Con_Server *svr)
     e->server = svr;
     if (svr->ecs)
       {
-         svr->ecs_state = svr->ecs->lookup ? ECORE_CON_SOCKS_STATE_RESOLVED : ECORE_CON_SOCKS_STATE_DONE;
+         svr->ecs_state = svr->ecs->lookup ? ECORE_CON_PROXY_STATE_RESOLVED : ECORE_CON_PROXY_STATE_DONE;
          eina_stringshare_replace(&svr->proxyip, NULL);
          svr->proxyport = 0;
       }
@@ -1971,9 +1971,9 @@ _ecore_con_cl_handler(void             *data,
           ecore_con_event_server_add(svr);
         return ECORE_CALLBACK_RENEW;
      }
-   if (svr->ecs && svr->ecs_state && (svr->ecs_state < ECORE_CON_SOCKS_STATE_READ) && (!svr->ecs_buf))
+   if (svr->ecs && svr->ecs_state && (svr->ecs_state < ECORE_CON_PROXY_STATE_READ) && (!svr->ecs_buf))
      {
-        if (svr->ecs_state < ECORE_CON_SOCKS_STATE_INIT)
+        if (svr->ecs_state < ECORE_CON_PROXY_STATE_INIT)
           {
              INF("PROXY STATE++");
              svr->ecs_state++;

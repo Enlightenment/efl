@@ -56,7 +56,7 @@ extern int _ecore_con_log_dom;
 
 typedef struct _Ecore_Con_Lookup Ecore_Con_Lookup;
 typedef struct _Ecore_Con_Info Ecore_Con_Info;
-typedef struct Ecore_Con_Socks_v4 Ecore_Con_Socks_v4;
+typedef struct Ecore_Con_Socks Ecore_Con_Socks_v4;
 typedef struct Ecore_Con_Socks_v5 Ecore_Con_Socks_v5;
 typedef void (*Ecore_Con_Info_Cb)(void *data, Ecore_Con_Info *infos);
 
@@ -83,13 +83,18 @@ typedef enum _Ecore_Con_Ssl_Handshake
    ECORE_CON_SSL_STATE_INIT
 } Ecore_Con_Ssl_State;
 
-typedef enum Ecore_Con_Socks_State
-{
-   ECORE_CON_SOCKS_STATE_DONE = 0,
-   ECORE_CON_SOCKS_STATE_RESOLVED,
-   ECORE_CON_SOCKS_STATE_INIT,
-   ECORE_CON_SOCKS_STATE_READ
-} Ecore_Con_Socks_State;
+typedef enum Ecore_Con_Proxy_State
+{  /* named PROXY instead of SOCKS in case some handsome and enterprising
+    * developer decides to add HTTP CONNECT support
+    */
+   ECORE_CON_PROXY_STATE_DONE = 0,
+   ECORE_CON_PROXY_STATE_RESOLVED,
+   ECORE_CON_PROXY_STATE_INIT,
+   ECORE_CON_PROXY_STATE_READ,
+   ECORE_CON_PROXY_STATE_AUTH,
+   ECORE_CON_PROXY_STATE_REQUEST,
+   ECORE_CON_PROXY_STATE_CONFIRM,
+} Ecore_Con_Proxy_State;
 
 struct _Ecore_Con_Client
 {
@@ -140,7 +145,7 @@ struct _Ecore_Con_Server
    pid_t ppid;
    /* socks */
    Ecore_Con_Socks *ecs;
-   Ecore_Con_Socks_State ecs_state;
+   Ecore_Con_Proxy_State ecs_state;
    int ecs_addrlen;
    unsigned char ecs_addr[16];
    unsigned int ecs_buf_offset;
@@ -239,24 +244,14 @@ struct _Ecore_Con_Lookup
      v5 = (Ecore_Con_Socks_v5*)(X); \
    else
 
-struct Ecore_Con_Socks
+struct Ecore_Con_Socks /* v4 */
 {
    unsigned char version;
 
    const char *ip;
    int port;
    const char *username;
-   Eina_Bool lookup : 1;
-   Eina_Bool bind : 1;
-};
-
-struct Ecore_Con_Socks_v4
-{
-   unsigned char version;
-
-   const char *ip;
-   int port;
-   const char *username;
+   unsigned int ulen;
    Eina_Bool lookup : 1;
    Eina_Bool bind : 1;
 };
@@ -268,8 +263,13 @@ struct Ecore_Con_Socks_v5
    const char *ip;
    int port;
    const char *username;
+   unsigned int ulen;
    Eina_Bool lookup : 1;
    Eina_Bool bind : 1;
+   /* v5 only */
+   unsigned char method;
+   const char *password;
+   unsigned int plen;
 };
 
 extern Ecore_Con_Socks *_ecore_con_proxy_once;
