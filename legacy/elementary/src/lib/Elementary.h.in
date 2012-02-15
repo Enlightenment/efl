@@ -162,7 +162,7 @@ EAPI extern Elm_Version *elm_version;
 #include <elm_deprecated_before.h>
 
 /* other includes */
-// grp 1
+// Tom Hacohen
 #include <elc_anchorblock.h> // <-- up to here (1.0 review)
 #include <elc_anchorview.h>
 #include <elc_ctxpopup.h>
@@ -177,8 +177,8 @@ EAPI extern Elm_Version *elm_version;
 #include <elm_bg.h>
 #include <elm_box.h>
 
-// grp 2
-#include <elm_bubble.h>
+// Daniel Juyung Seo
+#include <elm_bubble.h> // <-- up to here (1.0 review)
 #include <elm_button.h>
 #include <elm_cache.h>
 #include <elm_calendar.h>
@@ -192,7 +192,7 @@ EAPI extern Elm_Version *elm_version;
 #include <elm_debug.h>
 #include <elm_diskselector.h>
 
-// grp 3
+// Chuneon Park
 #include <elm_engine.h>
 #include <elm_factory.h>
 #include <elm_finger.h>
@@ -207,7 +207,7 @@ EAPI extern Elm_Version *elm_version;
 #include <elm_glview.h>
 #include <elm_grid.h>
 
-// grp 4
+// Woohyun Jung
 #include <elm_hover.h>
 #include <elm_image.h>
 #include <elm_index.h>
@@ -222,7 +222,7 @@ EAPI extern Elm_Version *elm_version;
 #include <elm_notify.h>
 #include <elm_object.h>
 
-// grp 5
+// SanjeevBA
 #include <elm_pager.h>
 #include <elm_panel.h>
 #include <elm_panes.h>
@@ -237,7 +237,7 @@ EAPI extern Elm_Version *elm_version;
 #include <elm_scroll.h>
 #include <elm_segment_control.h>
 
-// grp 6   
+// Carsten Haitzler
 #include <elm_separator.h>
 #include <elm_slider.h>
 #include <elm_slideshow.h>
