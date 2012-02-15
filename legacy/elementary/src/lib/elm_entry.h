@@ -34,11 +34,29 @@ typedef enum
 
 typedef enum
 {
+   ELM_INPUT_PANEL_LANG_AUTOMATIC,    /**< Automatic */
+   ELM_INPUT_PANEL_LANG_ALPHABET      /**< Alphabet */
+} Elm_Input_Panel_Lang;
+
+typedef enum
+{
    ELM_AUTOCAPITAL_TYPE_NONE, /**< No auto-capitalization when typing */
    ELM_AUTOCAPITAL_TYPE_WORD, /**< Autocapitalize each word typed */
    ELM_AUTOCAPITAL_TYPE_SENTENCE, /**< Autocapitalize the start of each sentence */
    ELM_AUTOCAPITAL_TYPE_ALLCHARACTER, /**< Autocapitalize all letters */
 } Elm_Autocapital_Type; /**< Choose method of auto-capitalization */
+
+typedef enum
+{
+   ELM_INPUT_PANEL_RETURN_KEY_TYPE_DEFAULT,
+   ELM_INPUT_PANEL_RETURN_KEY_TYPE_DONE,
+   ELM_INPUT_PANEL_RETURN_KEY_TYPE_GO,
+   ELM_INPUT_PANEL_RETURN_KEY_TYPE_JOIN,
+   ELM_INPUT_PANEL_RETURN_KEY_TYPE_LOGIN,
+   ELM_INPUT_PANEL_RETURN_KEY_TYPE_NEXT,
+   ELM_INPUT_PANEL_RETURN_KEY_TYPE_SEARCH,
+   ELM_INPUT_PANEL_RETURN_KEY_TYPE_SEND
+} Elm_Input_Panel_Return_Key_Type;
 
 /**
  * @defgroup Entry Entry
@@ -1131,6 +1149,87 @@ EAPI void                   elm_entry_input_panel_show(Evas_Object *obj);
  * @param obj The entry object
  */
 EAPI void                   elm_entry_input_panel_hide(Evas_Object *obj);
+
+/**
+ * Set the language mode of the input panel.
+ *
+ * This API can be used if you want to show the alphabet keyboard mode. 
+ *
+ * @param obj The entry object
+ * @param lang language to be set to the input panel.
+ */
+EAPI void                   elm_entry_input_panel_language_set(Evas_Object *obj, Elm_Input_Panel_Lang lang);
+
+/**
+ * Get the language mode of the input panel.
+ *
+ * See @ref elm_entry_input_panel_language_set for more details.
+ *
+ * @param obj The entry object
+ * @return input panel language type
+ */
+EAPI Elm_Input_Panel_Lang   elm_entry_input_panel_language_get(const Evas_Object *obj);
+
+/**
+ * Set the input panel-specific data to deliver to the input panel.
+ *
+ * This API is used by applications to deliver specific data to the input panel.
+ * The data format MUST be negotiated by both application and the input panel.
+ * The size and format of data are defined by the input panel.
+ *
+ * @param obj The entry object
+ * @param data The specific data to be set to the input panel.
+ * @param len the length of data, in bytes, to send to the input panel
+ */
+EAPI void                   elm_entry_input_panel_imdata_set(Evas_Object *obj, const void *data, int len);
+
+/**
+ * Get the specific data of the current input panel.
+ *
+ * See @ref elm_entry_input_panel_imdata_set for more details. 
+ *
+ * @param obj The entry object
+ * @param data The specific data to be got from the input panel
+ * @param len The length of data
+ */
+EAPI void                   elm_entry_input_panel_imdata_get(const Evas_Object *obj, void *data, int *len);
+
+/**
+ * Set the "return" key type. This type is used to set string or icon on the "return" key of the input panel.
+ *
+ * An input panel displays the string or icon associated with this type
+ *
+ * @param obj The entry object
+ * @param return_key_type The type of "return" key on the input panel
+ */
+EAPI void                   elm_text_input_panel_return_key_type_set(Evas_Object *obj, Elm_Input_Panel_Return_Key_Type return_key_type);
+
+/**
+ * Get the "return" key type.
+ *
+ * @see elm_entry_input_panel_return_key_type_set() for more details
+ *
+ * @param obj The entry object
+ * @return The type of "return" key on the input panel
+ */
+EAPI Elm_Input_Panel_Return_Key_Type elm_entry_input_panel_return_key_type_get(const Evas_Object *obj);
+
+/**
+ * Set the return key on the input panel to be disabled.
+ *
+ * @param obj The entry object
+ * @param disabled The state to put in in: @c EINA_TRUE for
+ *        disabled, @c EINA_FALSE for enabled 
+ */
+EAPI void                   elm_entry_input_panel_return_key_disabled_set(Evas_Object *obj, Eina_Bool disabled);
+
+/**
+ * Get whether the return key on the input panel should be disabled or not.
+ *
+ * @param obj The entry object
+ * @return EINA_TRUE if it should be disabled
+ */
+EAPI Eina_Bool              elm_entry_input_panel_return_key_disabled_get(const Evas_Object *obj);
 
 /**
  * Reset the input method context of the entry if needed. 
