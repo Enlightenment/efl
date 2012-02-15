@@ -1158,6 +1158,12 @@ elm_profile_all_set(const char *profile)
 EAPI const char *
 elm_engine_current_get(void)
 {
+   return elm_engine_get();
+}
+
+EAPI const char *
+elm_engine_get(void)
+{
    return _elm_config->engine;
 }
 

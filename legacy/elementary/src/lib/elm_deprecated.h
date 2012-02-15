@@ -1,3 +1,18 @@
+/**
+ * @brief Get Elementary's rendering engine in use.
+ *
+ * @return The rendering engine's name
+ * @note there's no need to free the returned string, here.
+ *
+ * This gets the global rendering engine that is applied to all Elementary
+ * applications.
+ *
+ * @see elm_engine_set()
+ * @deprecated Use elm_engine_get() instead.
+ */
+EINA_DEPRECATED EAPI const char *elm_engine_current_get(void);
+
+
 EINA_DEPRECATED EAPI void          elm_gen_clear(Evas_Object *obj);
 EINA_DEPRECATED EAPI void          elm_gen_item_selected_set(Elm_Gen_Item *it, Eina_Bool selected);
 EINA_DEPRECATED EAPI Eina_Bool     elm_gen_item_selected_get(const Elm_Gen_Item *it);

@@ -985,7 +985,7 @@ _config_display_update(Evas_Object *win)
    elm_theme_free(th);
    eina_stringshare_del(curr_theme);
 
-   curr_engine = elm_engine_current_get();
+   curr_engine = elm_engine_get();
    l_items = elm_list_items_get(evas_object_data_get(win, "engines_list"));
    EINA_LIST_FOREACH(l_items, l, list_it)
      {
@@ -1026,7 +1026,7 @@ _engine_use(void            *data,
    li = data;
    selection = elm_object_item_data_get(elm_list_selected_item_get(li));
 
-   if (!strcmp(elm_engine_current_get(), selection))
+   if (!strcmp(elm_engine_get(), selection))
      return;
 
    elm_engine_set(selection);
@@ -2732,7 +2732,7 @@ _engines_list_fill(Evas_Object *l_widget,
    if (!e_names)
      return;
 
-   cur_engine = elm_engine_current_get();
+   cur_engine = elm_engine_get();
 
    EINA_LIST_FOREACH(e_names, l, engine)
      {

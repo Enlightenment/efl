@@ -36,8 +36,7 @@
  *
  * @see elm_engine_set()
  */
-// XXX: rename to elm_engine_get()
-EAPI const char *elm_engine_current_get(void);
+EAPI const char *elm_engine_get(void);
 
 /**
  * @brief Set Elementary's rendering engine for use.
