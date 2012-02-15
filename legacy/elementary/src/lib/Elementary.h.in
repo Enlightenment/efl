@@ -208,7 +208,7 @@ EAPI extern Elm_Version *elm_version;
 #include <elm_grid.h>
 
 // Woohyun Jung
-#include <elm_hover.h>
+#include <elm_hover.h> // OK
 #include <elm_image.h>
 #include <elm_index.h>
 #include <elm_label.h>
