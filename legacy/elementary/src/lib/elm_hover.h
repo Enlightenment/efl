@@ -163,6 +163,7 @@ EAPI Evas_Object *elm_hover_parent_get(const Evas_Object *obj);
  *
  * @see elm_object_part_content_set()
  */
+//XXX : void elm_hover_content_best_location_set(obj, content, pref_axis); will be better.
 EAPI const char  *elm_hover_best_content_location_get(const Evas_Object *obj, Elm_Hover_Axis pref_axis);
 
 /**
