@@ -1,6 +1,6 @@
 /**
  * @defgroup Debug Debug
- * don't use it unless you are sure
+ * Don't use it unless you are sure.
  *
  * @{
  */

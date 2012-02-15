@@ -77,6 +77,7 @@ EAPI Evas_Object                 *elm_bubble_add(Evas_Object *parent);
  * @li "bottom_left"
  * @li "bottom_right"
  */
+// XXX: use enum for corner parameter instead of const char *
 EAPI void                         elm_bubble_corner_set(Evas_Object *obj, const char *corner);
 
 /**
@@ -87,6 +88,7 @@ EAPI void                         elm_bubble_corner_set(Evas_Object *obj, const 
  *
  * This function gets the selected corner of the bubble.
  */
+// XXX: use enum for return value instead of const char *
 EAPI const char                  *elm_bubble_corner_get(const Evas_Object *obj);
 
 /**

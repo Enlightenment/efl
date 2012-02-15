@@ -178,7 +178,7 @@ EAPI extern Elm_Version *elm_version;
 #include <elm_box.h>
 
 // Daniel Juyung Seo
-#include <elm_bubble.h> // <-- up to here (1.0 review)
+#include <elm_bubble.h> // comments in elm_bubble.h
 #include <elm_button.h>
 #include <elm_cache.h>
 #include <elm_calendar.h>
@@ -189,7 +189,7 @@ EAPI extern Elm_Version *elm_version;
 #include <elm_config.h>
 #include <elm_conform.h>
 #include <elm_cursor.h>
-#include <elm_debug.h>
+#include <elm_debug.h> // OK
 #include <elm_diskselector.h>
 
 // Chuneon Park
