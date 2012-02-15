@@ -52,19 +52,6 @@ EAPI int       elm_cache_flush_interval_get(void);
 EAPI void      elm_cache_flush_interval_set(int size);
 
 /**
- * Set the configured cache flush interval time for all applications on the
- * display
- *
- * This sets the globally configured cache flush interval time -- in ticks
- * -- for all applications on the display.
- *
- * @param size The cache flush interval time
- * @ingroup Caches
- */
-// XXX: deprecate and replace with elm_config_all_flush()
-EAPI void      elm_cache_flush_interval_all_set(int size);
-
-/**
  * Get the configured cache flush enabled state
  *
  * This gets the globally configured cache flush state - if it is enabled
@@ -95,19 +82,6 @@ EAPI Eina_Bool elm_cache_flush_enabled_get(void);
 EAPI void      elm_cache_flush_enabled_set(Eina_Bool enabled);
 
 /**
- * Set the configured cache flush enabled state for all applications on the
- * display
- *
- * This sets the globally configured cache flush enabled state for all
- * applications on the display.
- *
- * @param enabled The cache flush enabled state
- * @ingroup Caches
- */
-// XXX: deprecate and replace with elm_config_all_flush()
-EAPI void      elm_cache_flush_enabled_all_set(Eina_Bool enabled);
-
-/**
  * Get the configured font cache size
  *
  * This gets the globally configured font cache size, in bytes.
@@ -126,19 +100,6 @@ EAPI int       elm_font_cache_get(void);
  * @ingroup Caches
  */
 EAPI void      elm_font_cache_set(int size);
-
-/**
- * Set the configured font cache size for all applications on the
- * display
- *
- * This sets the globally configured font cache size -- in bytes
- * -- for all applications on the display.
- *
- * @param size The font cache size
- * @ingroup Caches
- */
-// XXX: deprecate and replace with elm_config_all_flush()
-EAPI void      elm_font_cache_all_set(int size);
 
 /**
  * Get the configured image cache size
@@ -160,18 +121,6 @@ EAPI int       elm_image_cache_get(void);
  */
 EAPI void      elm_image_cache_set(int size);
 
-/**
- * Set the configured image cache size for all applications on the
- * display
- *
- * This sets the globally configured image cache size -- in bytes
- * -- for all applications on the display.
- *
- * @param size The image cache size
- * @ingroup Caches
- */
-// XXX: deprecate and replace with elm_config_all_flush()
-EAPI void      elm_image_cache_all_set(int size);
 
 /**
  * Get the configured edje file cache size.
@@ -196,19 +145,6 @@ EAPI int       elm_edje_file_cache_get(void);
 EAPI void      elm_edje_file_cache_set(int size);
 
 /**
- * Set the configured edje file cache size for all applications on the
- * display
- *
- * This sets the globally configured edje file cache size -- in number
- * of files -- for all applications on the display.
- *
- * @param size The edje file cache size
- * @ingroup Caches
- */
-// XXX: deprecate and replace with elm_config_all_flush()
-EAPI void      elm_edje_file_cache_all_set(int size);
-
-/**
  * Get the configured edje collections (groups) cache size.
  *
  * This gets the globally configured edje collections cache size, in
@@ -229,19 +165,6 @@ EAPI int       elm_edje_collection_cache_get(void);
  * @ingroup Caches
  */
 EAPI void      elm_edje_collection_cache_set(int size);
-
-/**
- * Set the configured edje collections (groups) cache size for all
- * applications on the display
- *
- * This sets the globally configured edje collections cache size -- in
- * number of collections -- for all applications on the display.
- *
- * @param size The edje collections cache size
- * @ingroup Caches
- */
-// XXX: deprecate and replace with elm_config_all_flush()
-EAPI void      elm_edje_collection_cache_all_set(int size);
 
 /**
  * @}

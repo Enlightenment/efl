@@ -37,18 +37,6 @@ EAPI Evas_Coord elm_finger_size_get(void);
 EAPI void       elm_finger_size_set(Evas_Coord size);
 
 /**
- * Set the configured finger size for all applications on the display
- *
- * This sets the globally configured finger size in pixels for all
- * applications on the display
- *
- * @param size The finger size
- * @ingroup Fingers
- */
-// XXX: deprecate and replace with elm_config_all_flush()
-EAPI void       elm_finger_size_all_set(Evas_Coord size);
-
-/**
  * Adjust size of an element for finger usage.
  *
  * @param times_w How many fingers should fit horizontally

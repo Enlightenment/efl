@@ -152,7 +152,8 @@ sb_change(void *data       __UNUSED__,
    Eina_Bool sb = elm_scroll_bounce_enabled_get();
 
    if (val == sb) return;
-   elm_scroll_bounce_enabled_all_set(val);
+   elm_scroll_bounce_enabled_set(val);
+   elm_config_all_flush();
 
    /*TODO: enable/disable subordinate sliders (make 'em support it 1st)*/
 }
@@ -178,7 +179,8 @@ bf_change(void *data       __UNUSED__,
    double val = elm_slider_value_get(obj);
 
    if (bf == val) return;
-   elm_scroll_bounce_friction_all_set(val);
+   elm_scroll_bounce_friction_set(val);
+   elm_config_all_flush();
 }
 
 static void
@@ -202,7 +204,8 @@ ps_change(void *data       __UNUSED__,
    double val = elm_slider_value_get(obj);
 
    if (ps == val) return;
-   elm_scroll_page_scroll_friction_all_set(val);
+   elm_scroll_page_scroll_friction_set(val);
+   elm_config_all_flush();
 }
 
 static void
@@ -226,7 +229,8 @@ bis_change(void *data       __UNUSED__,
    double val = elm_slider_value_get(obj);
 
    if (bis == val) return;
-   elm_scroll_bring_in_scroll_friction_all_set(val);
+   elm_scroll_bring_in_scroll_friction_set(val);
+   elm_config_all_flush();
 }
 
 static void
@@ -250,7 +254,8 @@ zf_change(void *data       __UNUSED__,
    double val = elm_slider_value_get(obj);
 
    if (zf == val) return;
-   elm_scroll_zoom_friction_all_set(val);
+   elm_scroll_zoom_friction_set(val);
+   elm_config_all_flush();
 }
 
 static void
@@ -262,7 +267,8 @@ ts_change(void *data       __UNUSED__,
    Eina_Bool sb = elm_scroll_thumbscroll_enabled_get();
 
    if (val == sb) return;
-   elm_scroll_thumbscroll_enabled_all_set(val);
+   elm_scroll_thumbscroll_enabled_set(val);
+   elm_config_all_flush();
 
    /*TODO: enable/disable subordinate sliders (make 'em support it 1st)*/
 }
@@ -288,7 +294,8 @@ tst_change(void *data       __UNUSED__,
    double val = elm_slider_value_get(obj);
 
    if (tst == val) return;
-   elm_scroll_thumbscroll_threshold_all_set(val);
+   elm_scroll_thumbscroll_threshold_set(val);
+   elm_config_all_flush();
 }
 
 static void
@@ -312,7 +319,8 @@ tsmt_change(void *data       __UNUSED__,
    double val = elm_slider_value_get(obj);
 
    if (tsmt == val) return;
-   elm_scroll_thumbscroll_momentum_threshold_all_set(val);
+   elm_scroll_thumbscroll_momentum_threshold_set(val);
+   elm_config_all_flush();
 }
 
 static void
@@ -336,7 +344,8 @@ tsf_change(void *data       __UNUSED__,
    double val = elm_slider_value_get(obj);
 
    if (tsf == val) return;
-   elm_scroll_thumbscroll_friction_all_set(val);
+   elm_scroll_thumbscroll_friction_set(val);
+   elm_config_all_flush();
 }
 
 static void
@@ -360,7 +369,8 @@ tsbf_change(void *data       __UNUSED__,
    double val = elm_slider_value_get(obj);
 
    if (tsbf == val) return;
-   elm_scroll_thumbscroll_border_friction_all_set(val);
+   elm_scroll_thumbscroll_border_friction_set(val);
+   elm_config_all_flush();
 }
 
 static void
@@ -384,7 +394,8 @@ tssf_change(void *data       __UNUSED__,
    double val = elm_slider_value_get(obj);
 
    if (tssf == val) return;
-   elm_scroll_thumbscroll_sensitivity_friction_all_set(val);
+   elm_scroll_thumbscroll_sensitivity_friction_set(val);
+   elm_config_all_flush();
 }
 
 static void
@@ -397,7 +408,8 @@ cf_enable(void *data,
 
    if (cf == val) return;
    elm_object_disabled_set((Evas_Object *)data, !val);
-   elm_cache_flush_enabled_all_set(val);
+   elm_cache_flush_enabled_set(val);
+   elm_config_all_flush();
 }
 
 static void
@@ -421,7 +433,8 @@ cf_change(void *data       __UNUSED__,
    double val = elm_slider_value_get(obj);
 
    if (cf == val) return;
-   elm_cache_flush_interval_all_set(val);
+   elm_cache_flush_interval_set(val);
+   elm_config_all_flush();
 }
 
 static void
@@ -445,7 +458,8 @@ fc_change(void *data       __UNUSED__,
    double val = elm_slider_value_get(obj);
 
    if (font_cache == val) return;
-   elm_font_cache_all_set(val * 1024);
+   elm_font_cache_set(val * 1024);
+   elm_config_all_flush();
 }
 
 static void
@@ -469,7 +483,8 @@ ic_change(void *data       __UNUSED__,
    double val = elm_slider_value_get(obj);
 
    if (image_cache == val) return;
-   elm_image_cache_all_set(val * 1024);
+   elm_image_cache_set(val * 1024);
+   elm_config_all_flush();
 }
 
 static void
@@ -493,7 +508,8 @@ sc_change(void *data       __UNUSED__,
    double val = elm_slider_value_get(obj);
 
    if (scale == val) return;
-   elm_scale_all_set(val);
+   elm_scale_set(val);
+   elm_config_all_flush();
 }
 
 static void
@@ -517,7 +533,8 @@ fs_change(void *data       __UNUSED__,
    double val = elm_slider_value_get(obj);
 
    if (fs == val) return;
-   elm_finger_size_all_set(val);
+   elm_finger_size_set(val);
+   elm_config_all_flush();
 }
 
 static void
@@ -541,7 +558,8 @@ efc_change(void *data       __UNUSED__,
    double val = elm_slider_value_get(obj);
 
    if (efc == val) return;
-   elm_edje_file_cache_all_set(val);
+   elm_edje_file_cache_set(val);
+   elm_config_all_flush();
 }
 
 static void
@@ -565,7 +583,8 @@ ecc_change(void *data       __UNUSED__,
    double val = elm_slider_value_get(obj);
 
    if (ecc == val) return;
-   elm_edje_collection_cache_all_set(val);
+   elm_edje_collection_cache_set(val);
+   elm_config_all_flush();
 }
 
 static void
@@ -875,7 +894,8 @@ _font_overlay_change(void *data       __UNUSED__,
      }
 
    elm_config_save();
-   elm_font_overlay_all_apply();
+   elm_font_overlay_apply();
+   elm_config_all_flush();
 
    /* TODO: apply hinting */
 }
@@ -914,70 +934,51 @@ _config_display_update(Evas_Object *win)
    zoom_friction = elm_scroll_zoom_friction_get();
 
    /* gotta update root windows' atoms */
-//   elm_scale_all_set(scale);
    elm_slider_value_set(evas_object_data_get(win, "scale_slider"), scale);
-//   elm_finger_size_all_set(fs);
    elm_slider_value_set(evas_object_data_get(win, "fs_slider"), fs);
 
-//   elm_cache_flush_interval_all_set(flush_interval);
    elm_slider_value_set(evas_object_data_get(win,
                                              "cache_flush_interval_slider"),
                         flush_interval);
-//   elm_font_cache_all_set(font_c);
    elm_slider_value_set(evas_object_data_get(win, "font_cache_slider"),
                         font_c / 1024.0);
-//   elm_image_cache_all_set(image_c);
    elm_slider_value_set(evas_object_data_get(win, "image_cache_slider"),
                         image_c / 1024.0);
-//   elm_edje_file_cache_all_set(edje_file_c);
    elm_slider_value_set(evas_object_data_get(win, "edje_file_cache_slider"),
                         edje_file_c);
-//   elm_edje_collection_cache_all_set(edje_col_c);
    elm_slider_value_set(evas_object_data_get(win,
                                              "edje_collection_cache_slider"),
                         edje_col_c);
 
-//   elm_scroll_bounce_enabled_all_set(s_bounce);
    elm_check_state_set(evas_object_data_get(win, "scroll_bounce_check"),
                        s_bounce);
-//   elm_scroll_bounce_friction_all_set(s_bounce_friction);
    elm_slider_value_set(evas_object_data_get(win, "bounce_friction_slider"),
                         s_bounce_friction);
-//   elm_scroll_thumbscroll_enabled_all_set(ts);
    elm_check_state_set(evas_object_data_get(win, "thumbscroll_check"), ts);
-//   elm_scroll_thumbscroll_threshold_all_set(ts_threshould);
    elm_slider_value_set(evas_object_data_get(win,
                                              "thumbscroll_threshold_slider"),
                         ts_threshould);
-//   elm_scroll_thumbscroll_momentum_threshold_all_set(ts_momentum_threshold);
    elm_slider_value_set(evas_object_data_get(win,
                                              "ts_momentum_threshold_slider"),
                         ts_momentum_threshold);
-//   elm_scroll_thumbscroll_friction_all_set(ts_friction);
    elm_slider_value_set(evas_object_data_get(win,
                                              "thumbscroll_friction_slider"),
                         ts_friction);
-//   elm_scroll_thumbscroll_border_friction_all_set(ts_border_friction);
    elm_slider_value_set(evas_object_data_get(win, "ts_border_friction_slider"),
                         ts_border_friction);
-//   elm_scroll_thumbscroll_sensitivity_friction_all_set(ts_sensitivity_friction);
    elm_slider_value_set(evas_object_data_get(win, "ts_sensitivity_friction_slider"),
                         ts_sensitivity_friction);
-//   elm_scroll_page_scroll_friction_all_set(page_friction);
    elm_slider_value_set(evas_object_data_get(win,
                                              "page_scroll_friction_slider"),
                         page_friction);
-//   elm_scroll_bring_in_scroll_friction_all_set(bring_in_friction);
    elm_slider_value_set(evas_object_data_get(win,
                                              "bring_in_scroll_friction_slider"),
                         bring_in_friction);
-//   elm_scroll_zoom_friction_all_set(zoom_friction);
    elm_slider_value_set(evas_object_data_get(win,
                                              "zoom_scroll_friction_slider"),
                         zoom_friction);
 
    curr_theme = _elm_theme_current_get(elm_theme_get(NULL));
-//   elm_theme_all_set(curr_theme);
 
    th = elm_theme_new();
    elm_theme_set(th, curr_theme);
@@ -1001,7 +1002,8 @@ static void
 _profile_change_do(Evas_Object *win,
                    const char  *profile)
 {
-   elm_profile_all_set(profile);
+   elm_profile_set(profile);
+   elm_config_all_flush();
    _config_display_update(win);
 }
 
@@ -3109,22 +3111,13 @@ elm_main(int    argc,
      }
    if (!interactive)
      {
-        if (theme_set)
-          {
-             elm_theme_all_set(theme_set);
-          }
-        if (finger_size_set)
-          {
-             elm_finger_size_all_set(atoi(finger_size_set));
-          }
-        if (scale_set)
-          {
-             elm_scale_all_set(atof(scale_set));
-          }
-        if (quiet)
-          {
-             elm_exit();
-          }
+        if (theme_set) elm_theme_all_set(theme_set);
+        if (finger_size_set) elm_finger_size_set(atoi(finger_size_set));
+        if (scale_set)  elm_scale_set(atof(scale_set));
+
+        elm_config_all_flush();
+
+        if (quiet) elm_exit();
      }
    elm_run(); /* and run the program now and handle all events, etc. */
    /* if the mainloop that elm_run() runs exists, we exit the app */

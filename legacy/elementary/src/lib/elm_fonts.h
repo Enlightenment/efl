@@ -102,17 +102,6 @@ EAPI void             elm_font_overlay_unset(const char *text_class);
 EAPI void             elm_font_overlay_apply(void);
 
 /**
- * Apply the changes made with elm_font_overlay_set() and
- * elm_font_overlay_unset() on all Elementary application windows.
- *
- * @ingroup Fonts
- *
- * This applies all font overlays set to all objects in the UI.
- */
-// XXX: deprecate and replace with elm_config_all_flush()
-EAPI void             elm_font_overlay_all_apply(void);
-
-/**
  * Translate a font (family) name string in fontconfig's font names
  * syntax into an @c Elm_Font_Properties struct.
  *

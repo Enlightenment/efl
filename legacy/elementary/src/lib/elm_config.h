@@ -160,18 +160,6 @@ EAPI void        elm_profile_list_free(Eina_List *l);
 EAPI void        elm_profile_set(const char *profile);
 
 /**
- * Set Elementary's profile.
- *
- * This sets the global profile that is applied to all Elementary
- * applications. All running Elementary windows will be affected.
- *
- * @param profile The profile's name
- * @ingroup Profile
- *
- */
-EAPI void        elm_profile_all_set(const char *profile);
-
-/**
  * @}
  */
 
@@ -207,19 +195,6 @@ EAPI Eina_Bool    elm_scroll_bounce_enabled_get(void);
 EAPI void         elm_scroll_bounce_enabled_set(Eina_Bool enabled);
 
 /**
- * Set whether scrollers should bounce when they reach their
- * viewport's edge during a scroll, for all Elementary application
- * windows.
- *
- * @param enabled the thumb scroll bouncing state
- *
- * @see elm_thumbscroll_bounce_enabled_get()
- * @ingroup Scrolling
- */
-// XXX: deprecate and replace with elm_config_all_flush()
-EAPI void         elm_scroll_bounce_enabled_all_set(Eina_Bool enabled);
-
-/**
  * Get the amount of inertia a scroller will impose at bounce
  * animations.
  *
@@ -239,18 +214,6 @@ EAPI double       elm_scroll_bounce_friction_get(void);
  * @ingroup Scrolling
  */
 EAPI void         elm_scroll_bounce_friction_set(double friction);
-
-/**
- * Set the amount of inertia a scroller will impose at bounce
- * animations, for all Elementary application windows.
- *
- * @param friction the thumb scroll bounce friction
- *
- * @see elm_thumbscroll_bounce_friction_get()
- * @ingroup Scrolling
- */
-// XXX: deprecate and replace with elm_config_all_flush()
-EAPI void         elm_scroll_bounce_friction_all_set(double friction);
 
 /**
  * Get the amount of inertia a <b>paged</b> scroller will impose at
@@ -274,18 +237,6 @@ EAPI double       elm_scroll_page_scroll_friction_get(void);
 EAPI void         elm_scroll_page_scroll_friction_set(double friction);
 
 /**
- * Set the amount of inertia a <b>paged</b> scroller will impose at
- * page fitting animations, for all Elementary application windows.
- *
- * @param friction the page scroll friction
- *
- * @see elm_thumbscroll_page_scroll_friction_get()
- * @ingroup Scrolling
- */
-// XXX: deprecate and replace with elm_config_all_flush()
-EAPI void         elm_scroll_page_scroll_friction_all_set(double friction);
-
-/**
  * Get the amount of inertia a scroller will impose at region bring
  * animations.
  *
@@ -307,18 +258,6 @@ EAPI double       elm_scroll_bring_in_scroll_friction_get(void);
 EAPI void         elm_scroll_bring_in_scroll_friction_set(double friction);
 
 /**
- * Set the amount of inertia a scroller will impose at region bring
- * animations, for all Elementary application windows.
- *
- * @param friction the bring in scroll friction
- *
- * @see elm_thumbscroll_bring_in_scroll_friction_get()
- * @ingroup Scrolling
- */
-// XXX: deprecate and replace with elm_config_all_flush()
-EAPI void         elm_scroll_bring_in_scroll_friction_all_set(double friction);
-
-/**
  * Get the amount of inertia scrollers will impose at animations
  * triggered by Elementary widgets' zooming API.
  *
@@ -338,19 +277,6 @@ EAPI double       elm_scroll_zoom_friction_get(void);
  * @ingroup Scrolling
  */
 EAPI void         elm_scroll_zoom_friction_set(double friction);
-
-/**
- * Set the amount of inertia scrollers will impose at animations
- * triggered by Elementary widgets' zooming API, for all Elementary
- * application windows.
- *
- * @param friction the zoom friction
- *
- * @see elm_thumbscroll_zoom_friction_get()
- * @ingroup Scrolling
- */
-// XXX: deprecate and replace with elm_config_all_flush()
-EAPI void         elm_scroll_zoom_friction_all_set(double friction);
 
 /**
  * Get whether scrollers should be draggable from any point in their
@@ -378,18 +304,6 @@ EAPI Eina_Bool    elm_scroll_thumbscroll_enabled_get(void);
 EAPI void         elm_scroll_thumbscroll_enabled_set(Eina_Bool enabled);
 
 /**
- * Set whether scrollers should be draggable from any point in their
- * views, for all Elementary application windows.
- *
- * @param enabled the thumb scroll state
- *
- * @see elm_thumbscroll_enabled_get()
- * @ingroup Scrolling
- */
-// XXX: deprecate and replace with elm_config_all_flush()
-EAPI void         elm_scroll_thumbscroll_enabled_all_set(Eina_Bool enabled);
-
-/**
  * Get the number of pixels one should travel while dragging a
  * scroller's view to actually trigger scrolling.
  *
@@ -411,19 +325,6 @@ EAPI unsigned int elm_scroll_thumbscroll_threshold_get(void);
  * @ingroup Scrolling
  */
 EAPI void         elm_scroll_thumbscroll_threshold_set(unsigned int threshold);
-
-/**
- * Set the number of pixels one should travel while dragging a
- * scroller's view to actually trigger scrolling, for all Elementary
- * application windows.
- *
- * @param threshold the thumb scroll threshold
- *
- * @see elm_thumbscroll_threshold_get()
- * @ingroup Scrolling
- */
-// XXX: deprecate and replace with elm_config_all_flush()
-EAPI void         elm_scroll_thumbscroll_threshold_all_set(unsigned int threshold);
 
 /**
  * Get the minimum speed of mouse cursor movement which will trigger
@@ -449,19 +350,6 @@ EAPI double       elm_scroll_thumbscroll_momentum_threshold_get(void);
 EAPI void         elm_scroll_thumbscroll_momentum_threshold_set(double threshold);
 
 /**
- * Set the minimum speed of mouse cursor movement which will trigger
- * list self scrolling animation after a mouse up event
- * (pixels/second), for all Elementary application windows.
- *
- * @param threshold the thumb scroll momentum threshold
- *
- * @see elm_thumbscroll_momentum_threshold_get()
- * @ingroup Scrolling
- */
-// XXX: deprecate and replace with elm_config_all_flush()
-EAPI void         elm_scroll_thumbscroll_momentum_threshold_all_set(double threshold);
-
-/**
  * Get the amount of inertia a scroller will impose at self scrolling
  * animations.
  *
@@ -481,18 +369,6 @@ EAPI double       elm_scroll_thumbscroll_friction_get(void);
  * @ingroup Scrolling
  */
 EAPI void         elm_scroll_thumbscroll_friction_set(double friction);
-
-/**
- * Set the amount of inertia a scroller will impose at self scrolling
- * animations, for all Elementary application windows.
- *
- * @param friction the thumb scroll friction
- *
- * @see elm_thumbscroll_friction_get()
- * @ingroup Scrolling
- */
-// XXX: deprecate and replace with elm_config_all_flush()
-EAPI void         elm_scroll_thumbscroll_friction_all_set(double friction);
 
 /**
  * Get the amount of lag between your actual mouse cursor dragging
@@ -522,23 +398,6 @@ EAPI double       elm_scroll_thumbscroll_border_friction_get(void);
 EAPI void         elm_scroll_thumbscroll_border_friction_set(double friction);
 
 /**
- * Set the amount of lag between your actual mouse cursor dragging
- * movement and a scroller's view movement itself, while pushing it
- * into bounce state manually, for all Elementary application windows.
- *
- * @param friction the thumb scroll border friction. @c 0.0 for
- *        perfect synchrony between two movements, @c 1.0 for maximum
- *        lag.
- *
- * @see elm_thumbscroll_border_friction_get()
- * @note parameter value will get bound to 0.0 - 1.0 interval, always
- *
- * @ingroup Scrolling
- */
-// XXX: deprecate and replace with elm_config_all_flush()
-EAPI void         elm_scroll_thumbscroll_border_friction_all_set(double friction);
-
-/**
  * Get the sensitivity amount which is be multiplied by the length of
  * mouse dragging.
  *
@@ -562,22 +421,6 @@ EAPI double       elm_scroll_thumbscroll_sensitivity_friction_get(void);
  * @ingroup Scrolling
  */
 EAPI void         elm_scroll_thumbscroll_sensitivity_friction_set(double friction);
-
-/**
- * Set the sensitivity amount which is be multiplied by the length of
- * mouse dragging, for all Elementary application windows.
- *
- * @param friction the thumb scroll sensitivity friction. @c 0.1 for
- *        minimum sensitivity, @c 1.0 for maximum sensitivity. 0.25
- *        is proper.
- *
- * @see elm_thumbscroll_sensitivity_friction_get()
- * @note parameter value will get bound to 0.1 - 1.0 interval, always
- *
- * @ingroup Scrolling
- */
-// XXX: deprecate and replace with elm_config_all_flush()
-EAPI void         elm_scroll_thumbscroll_sensitivity_friction_all_set(double friction);
 
 /**
  * @}
