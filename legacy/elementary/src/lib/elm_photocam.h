@@ -127,7 +127,7 @@ EAPI double                 elm_photocam_zoom_get(const Evas_Object *obj);
  * modes will allow the photocam object to automatically adjust zoom mode
  * based on properties. ELM_PHOTOCAM_ZOOM_MODE_AUTO_FIT) will adjust zoom so
  * the photo fits EXACTLY inside the scroll frame with no pixels outside this
- * area. ELM_PHOTOCAM_ZOOM_MODE_AUTO_FILL will be similar but ensure no
+ * region. ELM_PHOTOCAM_ZOOM_MODE_AUTO_FILL will be similar but ensure no
  * pixels within the frame are left unfilled.
  */
 EAPI void                   elm_photocam_zoom_mode_set(Evas_Object *obj, Elm_Photocam_Zoom_Mode mode);
@@ -158,7 +158,7 @@ EAPI Elm_Photocam_Zoom_Mode elm_photocam_zoom_mode_get(const Evas_Object *obj);
 EAPI void                   elm_photocam_image_size_get(const Evas_Object *obj, int *w, int *h);
 
 /**
- * @brief Get the area of the image that is currently shown
+ * @brief Get the region of the image that is currently shown
  *
  * @param obj
  * @param x A pointer to the X-coordinate of region
@@ -172,7 +172,7 @@ EAPI void                   elm_photocam_image_size_get(const Evas_Object *obj, 
 EAPI void                   elm_photocam_region_get(const Evas_Object *obj, int *x, int *y, int *w, int *h);
 
 /**
- * @brief Set the viewed portion of the image
+ * @brief Set the viewed region of the image
  *
  * @param obj The photocam object
  * @param x X-coordinate of region in image original pixels
@@ -205,7 +205,7 @@ EAPI void                   elm_photocam_image_region_bring_in(Evas_Object *obj,
  *
  * This sets the paused state to on(EINA_TRUE) or off (EINA_FALSE) for
  * photocam. The default is off. This will stop zooming using animation on
- * zoom levels changes and change instantly. This will stop any existing
+ * zoom level changes and change instantly. This will stop any existing
  * animations that are running.
  */
 EAPI void                   elm_photocam_paused_set(Evas_Object *obj, Eina_Bool paused);
@@ -238,8 +238,8 @@ EAPI Evas_Object           *elm_photocam_internal_image_get(const Evas_Object *o
  * @brief Set the photocam scrolling bouncing.
  *
  * @param obj The photocam object
- * @param h_bounce bouncing for horizontal
- * @param v_bounce bouncing for vertical
+ * @param h_bounce set this to @c EINA_TRUE for horizontal bouncing
+ * @param v_bounce set this to @c EINA_TRUE for vertical bouncing
  */
 EAPI void                   elm_photocam_bounce_set(Evas_Object *obj, Eina_Bool h_bounce, Eina_Bool v_bounce);
 
@@ -247,8 +247,8 @@ EAPI void                   elm_photocam_bounce_set(Evas_Object *obj, Eina_Bool 
  * @brief Get the photocam scrolling bouncing.
  *
  * @param obj The photocam object
- * @param h_bounce bouncing for horizontal
- * @param v_bounce bouncing for vertical
+ * @param h_bounce horizontal bouncing
+ * @param v_bounce vertical bouncing
  *
  * @see elm_photocam_bounce_set()
  */
