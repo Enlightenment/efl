@@ -161,6 +161,18 @@ typedef enum
    ECORE_IMF_INPUT_PANEL_LANG_ALPHABET      /**< Alphabet */
 } Ecore_IMF_Input_Panel_Lang;
 
+typedef enum
+{
+   ECORE_IMF_INPUT_PANEL_RETURN_KEY_TYPE_DEFAULT,
+   ECORE_IMF_INPUT_PANEL_RETURN_KEY_TYPE_DONE,
+   ECORE_IMF_INPUT_PANEL_RETURN_KEY_TYPE_GO,
+   ECORE_IMF_INPUT_PANEL_RETURN_KEY_TYPE_JOIN,
+   ECORE_IMF_INPUT_PANEL_RETURN_KEY_TYPE_LOGIN,
+   ECORE_IMF_INPUT_PANEL_RETURN_KEY_TYPE_NEXT,
+   ECORE_IMF_INPUT_PANEL_RETURN_KEY_TYPE_SEARCH,
+   ECORE_IMF_INPUT_PANEL_RETURN_KEY_TYPE_SEND
+} Ecore_IMF_Input_Panel_Return_Key_Type;
+
 struct _Ecore_IMF_Event_Preedit_Start
 {
    Ecore_IMF_Context *ctx;
@@ -347,6 +359,8 @@ struct _Ecore_IMF_Context_Class
    void (*cursor_location_set) (Ecore_IMF_Context *ctx, int x, int y, int w, int h);
    void (*input_panel_imdata_set)(Ecore_IMF_Context *ctx, const void* data, int len);
    void (*input_panel_imdata_get)(Ecore_IMF_Context *ctx, void* data, int *len);
+   void (*input_panel_return_key_type_set) (Ecore_IMF_Context *ctx, Ecore_IMF_Input_Panel_Return_Key_Type return_key_type);
+   void (*input_panel_return_key_disabled_set) (Ecore_IMF_Context *ctx, Eina_Bool disabled);
 };
 
 struct _Ecore_IMF_Context_Info
@@ -422,6 +436,10 @@ EAPI void                          ecore_imf_context_input_panel_enabled_set(Eco
 EAPI Eina_Bool                     ecore_imf_context_input_panel_enabled_get(Ecore_IMF_Context *ctx);
 EAPI void                          ecore_imf_context_input_panel_imdata_set(Ecore_IMF_Context *ctx, const void *data, int len);
 EAPI void                          ecore_imf_context_input_panel_imdata_get(Ecore_IMF_Context *ctx, void *data, int *len);
+EAPI void                          ecore_imf_context_input_panel_return_key_type_set(Ecore_IMF_Context *ctx, Ecore_IMF_Input_Panel_Return_Key_Type actiontype);
+EAPI Ecore_IMF_Input_Panel_Return_Key_Type ecore_imf_context_input_panel_return_key_type_get(Ecore_IMF_Context *ctx);
+EAPI void                          ecore_imf_context_input_panel_return_key_disabled_set(Ecore_IMF_Context *ctx, Eina_Bool disabled);
+EAPI Eina_Bool                     ecore_imf_context_input_panel_return_key_disabled_get(Ecore_IMF_Context *ctx);
 
 /* The following entry points must be exported by each input method module
  */

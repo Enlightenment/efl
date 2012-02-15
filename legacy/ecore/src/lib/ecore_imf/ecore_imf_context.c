@@ -1428,3 +1428,93 @@ ecore_imf_context_input_panel_imdata_get(Ecore_IMF_Context *ctx, void *data, int
    if (ctx->klass->input_panel_imdata_get)
      ctx->klass->input_panel_imdata_get(ctx, data, len);
 }
+
+/**
+ * Set the "return" key type. This type is used to set string or icon on the "return" key of the input panel.
+ *
+ * An input panel displays the string or icon associated with this type
+ *
+ * @param ctx An #Ecore_IMF_Context.
+ * @param return_key_type The type of "return" key on the input panel
+ * @ingroup Ecore_IMF_Context_Group
+ * @since 1.2.0
+ */
+EAPI void
+ecore_imf_context_input_panel_return_key_type_set(Ecore_IMF_Context *ctx, Ecore_IMF_Input_Panel_Return_Key_Type return_key_type)
+{
+   if (!ECORE_MAGIC_CHECK(ctx, ECORE_MAGIC_CONTEXT))
+     {
+        ECORE_MAGIC_FAIL(ctx, ECORE_MAGIC_CONTEXT,
+                         "ecore_imf_context_input_panel_return_key_type_set");
+        return;
+     }
+
+   ctx->input_panel_return_key_type = return_key_type;
+   if (ctx->klass->input_panel_return_key_type_set) ctx->klass->input_panel_return_key_type_set(ctx, return_key_type);
+}
+
+/**
+ * Get the "return" key type.
+ *
+ * @see ecore_imf_context_input_panel_return_key_type_set() for more details
+ *
+ * @param ctx An #Ecore_IMF_Context.
+ * @return The type of "return" key on the input panel
+ * @ingroup Ecore_IMF_Context_Group
+ * @since 1.2.0
+ */
+EAPI Ecore_IMF_Input_Panel_Return_Key_Type
+ecore_imf_context_input_panel_return_key_type_get(Ecore_IMF_Context *ctx)
+{
+   if (!ECORE_MAGIC_CHECK(ctx, ECORE_MAGIC_CONTEXT))
+     {
+        ECORE_MAGIC_FAIL(ctx, ECORE_MAGIC_CONTEXT,
+                         "ecore_imf_context_input_panel_return_key_type_get");
+        return EINA_FALSE;
+     }
+
+   return ctx->input_panel_return_key_type;
+}
+
+/**
+ * Set the return key on the input panel to be disabled.
+ *
+ * @param ctx An #Ecore_IMF_Context.
+ * @param disabled The state
+ * @ingroup Ecore_IMF_Context_Group
+ * @since 1.2.0
+ */
+EAPI void
+ecore_imf_context_input_panel_return_key_disabled_set(Ecore_IMF_Context *ctx, Eina_Bool disabled)
+{
+   if (!ECORE_MAGIC_CHECK(ctx, ECORE_MAGIC_CONTEXT))
+     {
+        ECORE_MAGIC_FAIL(ctx, ECORE_MAGIC_CONTEXT,
+                         "ecore_imf_context_input_panel_return_key_disabled_set");
+        return;
+     }
+
+   ctx->input_panel_return_key_disabled = disabled;
+   if (ctx->klass->input_panel_return_key_disabled_set) ctx->klass->input_panel_return_key_disabled_set(ctx, disabled);
+}
+
+/**
+ * Get whether the return key on the input panel should be disabled or not.
+ *
+ * @param ctx An #Ecore_IMF_Context.
+ * @return EINA_TRUE if it should be disabled
+ * @ingroup Ecore_IMF_Context_Group
+ * @since 1.2.0
+ */
+EAPI Eina_Bool
+ecore_imf_context_input_panel_return_key_disabled_get(Ecore_IMF_Context *ctx)
+{
+   if (!ECORE_MAGIC_CHECK(ctx, ECORE_MAGIC_CONTEXT))
+     {
+        ECORE_MAGIC_FAIL(ctx, ECORE_MAGIC_CONTEXT,
+                         "ecore_imf_context_input_panel_return_key_disabled_get");
+        return EINA_FALSE;
+     }
+
+   return ctx->input_panel_return_key_disabled;
+}

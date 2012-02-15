@@ -52,8 +52,10 @@ struct _Ecore_IMF_Context
    Ecore_IMF_Autocapital_Type     autocapital_type;
    Ecore_IMF_Input_Panel_Layout   input_panel_layout;
    Ecore_IMF_Input_Panel_Lang     input_panel_lang;
+   Ecore_IMF_Input_Panel_Return_Key_Type input_panel_return_key_type;
    Eina_Bool                      allow_prediction : 1;
    Eina_Bool                      input_panel_enabled : 1;
+   Eina_Bool                      input_panel_return_key_disabled : 1;
 };
 
 struct _Ecore_IMF_Module

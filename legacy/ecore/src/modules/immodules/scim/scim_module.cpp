@@ -41,6 +41,8 @@ extern "C"
         isf_imf_context_cursor_location_set,    /* cursor_location_set */
         NULL,                                   /* input_panel_imdata_set */
         NULL,                                   /* input_panel_imdata_get */
+        NULL,                                   /* input_panel_return_key_type_set */
+        NULL                                    /* input_panel_return_key_disabled_set */
    };
 
    static Ecore_IMF_Context *imf_module_create (void);

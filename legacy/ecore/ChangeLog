@@ -489,3 +489,8 @@
 2012-02-10  Christopher Michael (devilhorns)
 
         * Add Ecore_Evas function to allow setting a mouse pointer from efl/elm wayland clients.
+
+2012-02-15  Jihoon Kim (jihoon)
+
+        * Add ecore_imf APIs to set return key type, disable return key.
+
