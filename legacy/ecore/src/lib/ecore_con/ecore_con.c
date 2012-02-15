@@ -1736,7 +1736,7 @@ svr_try_connect_plain(Ecore_Con_Server *svr)
    if (so_err)
      {
         /* we lost our server! */
-        ecore_con_event_server_error(svr, strerror(errno));
+        ecore_con_event_server_error(svr, strerror(so_err));
         ERR("Connection lost: %s", strerror(so_err));
         _ecore_con_server_kill(svr);
         return ECORE_CON_DISCONNECTED;
