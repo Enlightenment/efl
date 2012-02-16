@@ -819,20 +819,20 @@ typedef enum _Edje_Input_Panel_Layout
 
 typedef enum _Edje_Input_Panel_Lang
 {
-   EDJE_INPUT_PANEL_LANG_AUTOMATIC,    /**< Automatic */
-   EDJE_INPUT_PANEL_LANG_ALPHABET      /**< Alphabet */
+   EDJE_INPUT_PANEL_LANG_AUTOMATIC,    /**< Automatic @since 1.2 */
+   EDJE_INPUT_PANEL_LANG_ALPHABET      /**< Alphabet @since 1.2 */
 } Edje_Input_Panel_Lang;
 
 typedef enum _Edje_Input_Panel_Return_Key_Type
 {
-   EDJE_INPUT_PANEL_RETURN_KEY_TYPE_DEFAULT,
-   EDJE_INPUT_PANEL_RETURN_KEY_TYPE_DONE,
-   EDJE_INPUT_PANEL_RETURN_KEY_TYPE_GO,
-   EDJE_INPUT_PANEL_RETURN_KEY_TYPE_JOIN,
-   EDJE_INPUT_PANEL_RETURN_KEY_TYPE_LOGIN,
-   EDJE_INPUT_PANEL_RETURN_KEY_TYPE_NEXT,
-   EDJE_INPUT_PANEL_RETURN_KEY_TYPE_SEARCH,
-   EDJE_INPUT_PANEL_RETURN_KEY_TYPE_SEND
+   EDJE_INPUT_PANEL_RETURN_KEY_TYPE_DEFAULT, /**< Default @since 1.2 */
+   EDJE_INPUT_PANEL_RETURN_KEY_TYPE_DONE,    /**< Done @since 1.2 */
+   EDJE_INPUT_PANEL_RETURN_KEY_TYPE_GO,      /**< Go @since 1.2 */
+   EDJE_INPUT_PANEL_RETURN_KEY_TYPE_JOIN,    /**< Join @since 1.2 */
+   EDJE_INPUT_PANEL_RETURN_KEY_TYPE_LOGIN,   /**< Login @since 1.2 */
+   EDJE_INPUT_PANEL_RETURN_KEY_TYPE_NEXT,    /**< Next @since 1.2 */
+   EDJE_INPUT_PANEL_RETURN_KEY_TYPE_SEARCH,  /**< Search or magnifier icon @since 1.2 */
+   EDJE_INPUT_PANEL_RETURN_KEY_TYPE_SEND     /**< Send @since 1.2 */
 } Edje_Input_Panel_Return_Key_Type;
 
 /**
