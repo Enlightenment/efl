@@ -2,11 +2,21 @@
  * @defgroup Table Table
  *
  * A container widget to arrange other widgets in a table where items can
- * also span multiple columns or rows - even overlap (and then be raised or
+ * span multiple columns or rows - even overlap (and then be raised or
  * lowered accordingly to adjust stacking if they do overlap).
  *
- * For a Table widget the row/column count is not fixed.
- * The table widget adjusts itself when subobjects are added to it dynamically.
+ * The row and column count is not fixed. The table widget adjusts itself when
+ * subobjects are added to it dynamically.
+ *
+ * The most common way to use a table is:
+ * @code
+ * table = elm_table_add(win);
+ * evas_object_show(table);
+ * elm_table_padding_set(table, space_between_columns, space_between_rows);
+ * elm_table_pack(table, table_content_object, x_coord, y_coord, colspan, rowspan);
+ * elm_table_pack(table, table_content_object, next_x_coord, next_y_coord, colspan, rowspan);
+ * elm_table_pack(table, table_content_object, other_x_coord, other_y_coord, colspan, rowspan);
+ * @endcode
  *
  * The following are examples of how to use a table:
  * @li @ref tutorial_table_01
