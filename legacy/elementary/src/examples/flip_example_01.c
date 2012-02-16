@@ -39,14 +39,14 @@ elm_main(int argc, char **argv)
    evas_object_show(flip);
 
    elm_flip_interaction_set(flip, ELM_FLIP_INTERACTION_PAGE);
-   elm_flip_interacton_direction_enabled_set(flip, ELM_FLIP_DIRECTION_UP, EINA_TRUE);
-   elm_flip_interacton_direction_enabled_set(flip, ELM_FLIP_DIRECTION_DOWN, EINA_TRUE);
-   elm_flip_interacton_direction_enabled_set(flip, ELM_FLIP_DIRECTION_LEFT, EINA_TRUE);
-   elm_flip_interacton_direction_enabled_set(flip, ELM_FLIP_DIRECTION_RIGHT, EINA_TRUE);
-   elm_flip_interacton_direction_hitsize_set(flip, ELM_FLIP_DIRECTION_UP, 1);
-   elm_flip_interacton_direction_hitsize_set(flip, ELM_FLIP_DIRECTION_DOWN, 1);
-   elm_flip_interacton_direction_hitsize_set(flip, ELM_FLIP_DIRECTION_LEFT, 1);
-   elm_flip_interacton_direction_hitsize_set(flip, ELM_FLIP_DIRECTION_RIGHT, 1);
+   elm_flip_interaction_direction_enabled_set(flip, ELM_FLIP_DIRECTION_UP, EINA_TRUE);
+   elm_flip_interaction_direction_enabled_set(flip, ELM_FLIP_DIRECTION_DOWN, EINA_TRUE);
+   elm_flip_interaction_direction_enabled_set(flip, ELM_FLIP_DIRECTION_LEFT, EINA_TRUE);
+   elm_flip_interaction_direction_enabled_set(flip, ELM_FLIP_DIRECTION_RIGHT, EINA_TRUE);
+   elm_flip_interaction_direction_hitsize_set(flip, ELM_FLIP_DIRECTION_UP, 1);
+   elm_flip_interaction_direction_hitsize_set(flip, ELM_FLIP_DIRECTION_DOWN, 1);
+   elm_flip_interaction_direction_hitsize_set(flip, ELM_FLIP_DIRECTION_LEFT, 1);
+   elm_flip_interaction_direction_hitsize_set(flip, ELM_FLIP_DIRECTION_RIGHT, 1);
 
    radio = elm_radio_add(win);
    elm_object_text_set(radio, "page");

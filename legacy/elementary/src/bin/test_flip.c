@@ -535,14 +535,14 @@ test_flip4(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info 
    evas_object_data_set(win, "fl", fl);
 
    elm_flip_interaction_set(fl, ELM_FLIP_INTERACTION_NONE);
-   elm_flip_interacton_direction_enabled_set(fl, ELM_FLIP_DIRECTION_UP, EINA_TRUE);
-   elm_flip_interacton_direction_enabled_set(fl, ELM_FLIP_DIRECTION_DOWN, EINA_TRUE);
-   elm_flip_interacton_direction_enabled_set(fl, ELM_FLIP_DIRECTION_LEFT, EINA_TRUE);
-   elm_flip_interacton_direction_enabled_set(fl, ELM_FLIP_DIRECTION_RIGHT, EINA_TRUE);
-   elm_flip_interacton_direction_hitsize_set(fl, ELM_FLIP_DIRECTION_UP, 0.25);
-   elm_flip_interacton_direction_hitsize_set(fl, ELM_FLIP_DIRECTION_DOWN, 0.25);
-   elm_flip_interacton_direction_hitsize_set(fl, ELM_FLIP_DIRECTION_LEFT, 0.25);
-   elm_flip_interacton_direction_hitsize_set(fl, ELM_FLIP_DIRECTION_RIGHT, 0.25);
+   elm_flip_interaction_direction_enabled_set(fl, ELM_FLIP_DIRECTION_UP, EINA_TRUE);
+   elm_flip_interaction_direction_enabled_set(fl, ELM_FLIP_DIRECTION_DOWN, EINA_TRUE);
+   elm_flip_interaction_direction_enabled_set(fl, ELM_FLIP_DIRECTION_LEFT, EINA_TRUE);
+   elm_flip_interaction_direction_enabled_set(fl, ELM_FLIP_DIRECTION_RIGHT, EINA_TRUE);
+   elm_flip_interaction_direction_hitsize_set(fl, ELM_FLIP_DIRECTION_UP, 0.25);
+   elm_flip_interaction_direction_hitsize_set(fl, ELM_FLIP_DIRECTION_DOWN, 0.25);
+   elm_flip_interaction_direction_hitsize_set(fl, ELM_FLIP_DIRECTION_LEFT, 0.25);
+   elm_flip_interaction_direction_hitsize_set(fl, ELM_FLIP_DIRECTION_RIGHT, 0.25);
    evas_object_show(fl);
 
    im = evas_object_image_filled_add(evas_object_evas_get(win));
