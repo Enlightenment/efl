@@ -18,6 +18,15 @@
  * "animate,begin" - when a flip animation was started
  * "animate,done" - when a flip animation is finished
  *
+ * Default contents parts of the filp widget that you can use for are:
+ * @li "front" - A front content of the flip 
+ * @li "back" - A back content of the flip 
+ *
+ * Supported elm_object common APIs.
+ * @li elm_object_part_content_set
+ * @li elm_object_part_content_get
+ * @li elm_object_part_content_unset
+ * 
  * @ref tutorial_flip show how to use most of the API.
  *
  * @{
@@ -62,69 +71,6 @@ typedef enum
  */
 EAPI Evas_Object *elm_flip_add(Evas_Object *parent);
 
-/**
- * @brief Set the front content of the flip widget.
- *
- * @param obj The flip object
- * @param content The new front content object
- *
- * Once the content object is set, a previously set one will be deleted.
- * If you want to keep that old content object, use the
- * elm_flip_content_front_unset() function.
- */
-EAPI void                 elm_flip_content_front_set(Evas_Object *obj, Evas_Object *content);
-
-/**
- * @brief Set the back content of the flip widget.
- *
- * @param obj The flip object
- * @param content The new back content object
- *
- * Once the content object is set, a previously set one will be deleted.
- * If you want to keep that old content object, use the
- * elm_flip_content_back_unset() function.
- */
-EAPI void                 elm_flip_content_back_set(Evas_Object *obj, Evas_Object *content);
-
-/**
- * @brief Get the front content used for the flip
- *
- * @param obj The flip object
- * @return The front content object that is being used
- *
- * Return the front content object which is set for this widget.
- */
-EAPI Evas_Object         *elm_flip_content_front_get(const Evas_Object *obj);
-
-/**
- * @brief Get the back content used for the flip
- *
- * @param obj The flip object
- * @return The back content object that is being used
- *
- * Return the back content object which is set for this widget.
- */
-EAPI Evas_Object         *elm_flip_content_back_get(const Evas_Object *obj);
-
-/**
- * @brief Unset the front content used for the flip
- *
- * @param obj The flip object
- * @return The front content object that was being used
- *
- * Unparent and return the front content object which was set for this widget.
- */
-EAPI Evas_Object         *elm_flip_content_front_unset(Evas_Object *obj);
-
-/**
- * @brief Unset the back content used for the flip
- *
- * @param obj The flip object
- * @return The back content object that was being used
- *
- * Unparent and return the back content object which was set for this widget.
- */
-EAPI Evas_Object         *elm_flip_content_back_unset(Evas_Object *obj);
 
 /**
  * @brief Get flip front visibility state

@@ -91,7 +91,7 @@ test_weather(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_inf
    weather[0] = eweather_object_add(evas_object_evas_get(win));
    evas_object_size_hint_weight_set(weather[0], EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(weather[0], -1.0, -1.0);
-   elm_flip_content_front_set(fl, weather[0]);
+   elm_object_part_content_set(fl, "front", weather[0]);
    evas_object_show(weather[0]);
 
    module[1] = NULL;
@@ -99,7 +99,7 @@ test_weather(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_inf
    eweather = eweather_object_eweather_get(weather[1]);
    evas_object_size_hint_weight_set(weather[1], EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(weather[1], -1.0, -1.0);
-   elm_flip_content_back_set(fl, weather[1]);
+   elm_object_part_content_set(fl, "back", weather[1]);
    evas_object_show(weather[1]);
 
    evas_object_show(fl);

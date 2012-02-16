@@ -88,19 +88,17 @@ _theme_hook(Evas_Object *obj)
 }
 
 static Eina_Bool
-_elm_flip_focus_next_hook(const Evas_Object *obj, Elm_Focus_Direction dir, Evas_Object **next)
+_elm_flip_focus_next_hook(const Evas_Object *obj,
+                          Elm_Focus_Direction dir, Evas_Object **next)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
-
-   if (!wd)
-     return EINA_FALSE;
+   if (!wd) return EINA_FALSE;
 
    /* Try Focus cycle in subitem */
    if (wd->state)
      return elm_widget_focus_next_get(wd->front.content, dir, next);
    else
      return elm_widget_focus_next_get(wd->back.content, dir, next);
-
 }
 
 static void
@@ -1569,6 +1567,142 @@ _move_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *even
    wd->job = ecore_job_add(_update_job, wd);
 }
 
+static void
+_flip_content_front_set(Evas_Object *obj, Evas_Object *content)
+{
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return;
+
+   int i;
+
+   if (wd->front.content == content) return;
+   if (wd->front.content) evas_object_del(wd->front.content);
+   wd->front.content = content;
+   if (content)
+     {
+        elm_widget_sub_object_add(obj, content);
+        evas_object_smart_member_add(content, obj);
+        evas_object_clip_set(content, wd->front.clip);
+        evas_object_event_callback_add(content,
+                                       EVAS_CALLBACK_CHANGED_SIZE_HINTS,
+                                       _changed_size_hints, obj);
+        _sizing_eval(obj);
+     }
+
+   // force calc to contents are the right size before transition
+   evas_smart_objects_calculate(evas_object_evas_get(obj));
+   flip_show_hide(obj);
+   _configure(obj);
+   if (wd->intmode != ELM_FLIP_INTERACTION_NONE)
+     {
+        for (i = 0; i < 4; i++) evas_object_raise(wd->event[i]);
+     }
+}
+
+static void
+_flip_content_back_set(Evas_Object *obj, Evas_Object *content)
+{
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return;
+
+   int i;
+   if (wd->back.content == content) return;
+   if (wd->back.content) evas_object_del(wd->back.content);
+   wd->back.content = content;
+   if (content)
+     {
+        elm_widget_sub_object_add(obj, content);
+        evas_object_smart_member_add(content, obj);
+        evas_object_clip_set(content, wd->back.clip);
+        evas_object_event_callback_add(content,
+                                       EVAS_CALLBACK_CHANGED_SIZE_HINTS,
+                                       _changed_size_hints, obj);
+        _sizing_eval(obj);
+     }
+
+   // force calc to contents are the right size before transition
+   evas_smart_objects_calculate(evas_object_evas_get(obj));
+   flip_show_hide(obj);
+   _configure(obj);
+   if (wd->intmode != ELM_FLIP_INTERACTION_NONE)
+     {
+        for (i = 0; i < 4; i++) evas_object_raise(wd->event[i]);
+     }
+}
+
+static Evas_Object *
+_content_front_unset(Evas_Object *obj)
+{
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if ((!wd) || (!wd->front.content)) return NULL;
+
+   Evas_Object *content = wd->front.content;
+   evas_object_clip_unset(content);
+   elm_widget_sub_object_del(obj, content);
+   evas_object_event_callback_del_full(content,
+                                       EVAS_CALLBACK_CHANGED_SIZE_HINTS,
+                                       _changed_size_hints, obj);
+   evas_object_smart_member_del(content);
+   wd->front.content = NULL;
+   return content;
+}
+
+static Evas_Object *
+_content_back_unset(Evas_Object *obj)
+{
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if ((!wd) || (!wd->back.content)) return NULL;
+
+   Evas_Object *content = wd->back.content;
+   evas_object_clip_unset(content);
+   elm_widget_sub_object_del(obj, content);
+   evas_object_event_callback_del_full(content,
+                                       EVAS_CALLBACK_CHANGED_SIZE_HINTS,
+                                       _changed_size_hints, obj);
+   evas_object_smart_member_del(content);
+   wd->back.content = NULL;
+   return content;
+}
+
+static void
+_content_set_hook(Evas_Object *obj, const char *part, Evas_Object *content)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype);
+
+   if (!part || !strcmp(part, "front"))
+     _flip_content_front_set(obj, content);
+   else if (!strcmp(part, "back"))
+     _flip_content_back_set(obj, content);
+}
+
+static Evas_Object *
+_content_get_hook(const Evas_Object *obj, const char *part)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype) NULL;
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return NULL;
+
+   if (!part || !strcmp(part, "front"))
+     return wd->front.content;
+   else if (!strcmp(part, "back"))
+     return wd->back.content;
+
+   return NULL;
+}
+
+static Evas_Object *
+_content_unset_hook(Evas_Object *obj, const char *part)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype) NULL;
+
+   if (!part || !strcmp(part, "front"))
+     return _content_front_unset(obj);
+   else if (!strcmp(part, "back"))
+     return _content_back_unset(obj);
+
+   return NULL;
+}
+
 EAPI Evas_Object *
 elm_flip_add(Evas_Object *parent)
 {
@@ -1586,11 +1720,14 @@ elm_flip_add(Evas_Object *parent)
    elm_widget_theme_hook_set(obj, _theme_hook);
    elm_widget_focus_next_hook_set(obj, _elm_flip_focus_next_hook);
    elm_widget_can_focus_set(obj, EINA_FALSE);
+   elm_widget_content_set_hook_set(obj, _content_set_hook);
+   elm_widget_content_get_hook_set(obj, _content_get_hook);
+   elm_widget_content_unset_hook_set(obj, _content_unset_hook);
 
    wd->obj = obj;
 
    wd->clip = evas_object_rectangle_add(e);
-   evas_object_static_clip_set(wd->clip, 1);
+   evas_object_static_clip_set(wd->clip, EINA_TRUE);
    evas_object_color_set(wd->clip, 255, 255, 255, 255);
    evas_object_move(wd->clip, -49999, -49999);
    evas_object_resize(wd->clip, 99999, 99999);
@@ -1599,7 +1736,7 @@ elm_flip_add(Evas_Object *parent)
    evas_object_smart_member_add(wd->clip, obj);
 
    wd->front.clip = evas_object_rectangle_add(e);
-   evas_object_static_clip_set(wd->front.clip, 1);
+   evas_object_static_clip_set(wd->front.clip, EINA_TRUE);
    evas_object_data_set(wd->front.clip, "_elm_leaveme", obj);
    evas_object_color_set(wd->front.clip, 255, 255, 255, 255);
    evas_object_move(wd->front.clip, -49999, -49999);
@@ -1609,7 +1746,7 @@ elm_flip_add(Evas_Object *parent)
    evas_object_clip_set(wd->front.clip, wd->clip);
 
    wd->back.clip = evas_object_rectangle_add(e);
-   evas_object_static_clip_set(wd->back.clip, 1);
+   evas_object_static_clip_set(wd->back.clip, EINA_TRUE);
    evas_object_data_set(wd->back.clip, "_elm_leaveme", obj);
    evas_object_color_set(wd->back.clip, 255, 255, 255, 255);
    evas_object_move(wd->back.clip, -49999, -49999);
@@ -1626,7 +1763,7 @@ elm_flip_add(Evas_Object *parent)
 
    evas_object_smart_callbacks_descriptions_set(obj, _signals);
 
-   wd->state = 1;
+   wd->state = EINA_TRUE;
    wd->intmode = ELM_FLIP_INTERACTION_NONE;
 
    _sizing_eval(obj);
@@ -1637,114 +1774,37 @@ elm_flip_add(Evas_Object *parent)
 EAPI void
 elm_flip_content_front_set(Evas_Object *obj, Evas_Object *content)
 {
-   ELM_CHECK_WIDTYPE(obj, widtype);
-   Widget_Data *wd = elm_widget_data_get(obj);
-   int i;
-   if (!wd) return;
-   if (wd->front.content == content) return;
-   if (wd->front.content) evas_object_del(wd->front.content);
-   wd->front.content = content;
-   if (content)
-     {
-        elm_widget_sub_object_add(obj, content);
-        evas_object_smart_member_add(content, obj);
-        evas_object_clip_set(content, wd->front.clip);
-        evas_object_event_callback_add(content,
-                                       EVAS_CALLBACK_CHANGED_SIZE_HINTS,
-                                       _changed_size_hints, obj);
-        _sizing_eval(obj);
-     }
-   // force calc to contents are the right size before transition
-   evas_smart_objects_calculate(evas_object_evas_get(obj));
-   flip_show_hide(obj);
-   _configure(obj);
-   if (wd->intmode != ELM_FLIP_INTERACTION_NONE)
-     {
-        for (i = 0; i < 4; i++) evas_object_raise(wd->event[i]);
-     }
+   elm_object_part_content_set(obj, NULL, content);
 }
 
 EAPI void
 elm_flip_content_back_set(Evas_Object *obj, Evas_Object *content)
 {
-   ELM_CHECK_WIDTYPE(obj, widtype);
-   Widget_Data *wd = elm_widget_data_get(obj);
-   int i;
-   if (!wd) return;
-   if (wd->back.content == content) return;
-   if (wd->back.content) evas_object_del(wd->back.content);
-   wd->back.content = content;
-   if (content)
-     {
-        elm_widget_sub_object_add(obj, content);
-        evas_object_smart_member_add(content, obj);
-        evas_object_clip_set(content, wd->back.clip);
-        evas_object_event_callback_add(content,
-                                       EVAS_CALLBACK_CHANGED_SIZE_HINTS,
-                                       _changed_size_hints, obj);
-        _sizing_eval(obj);
-     }
-   // force calc to contents are the right size before transition
-   evas_smart_objects_calculate(evas_object_evas_get(obj));
-   flip_show_hide(obj);
-   _configure(obj);
-   if (wd->intmode != ELM_FLIP_INTERACTION_NONE)
-     {
-        for (i = 0; i < 4; i++) evas_object_raise(wd->event[i]);
-     }
+   elm_object_part_content_set(obj, "back", content);
 }
 
 EAPI Evas_Object *
 elm_flip_content_front_get(const Evas_Object *obj)
 {
-   ELM_CHECK_WIDTYPE(obj, widtype) NULL;
-   Widget_Data *wd = elm_widget_data_get(obj);
-   return wd->front.content;
+   return elm_object_part_content_get(obj, NULL);
 }
-
 
 EAPI Evas_Object *
 elm_flip_content_back_get(const Evas_Object *obj)
 {
-   ELM_CHECK_WIDTYPE(obj, widtype) NULL;
-   Widget_Data *wd = elm_widget_data_get(obj);
-   return wd->back.content;
+   return elm_object_part_content_get(obj, "back");
 }
 
 EAPI Evas_Object *
 elm_flip_content_front_unset(Evas_Object *obj)
 {
-   ELM_CHECK_WIDTYPE(obj, widtype) NULL;
-   Widget_Data *wd = elm_widget_data_get(obj);
-   if (!wd) return NULL;
-   if (!wd->front.content) return NULL;
-   Evas_Object *content = wd->front.content;
-   evas_object_clip_unset(content);
-   elm_widget_sub_object_del(obj, content);
-   evas_object_event_callback_del_full(content,
-                                       EVAS_CALLBACK_CHANGED_SIZE_HINTS,
-                                       _changed_size_hints, obj);
-   evas_object_smart_member_del(content);
-   wd->front.content = NULL;
-   return content;
+   return elm_object_part_content_unset(obj, NULL);
 }
 
 EAPI Evas_Object *
 elm_flip_content_back_unset(Evas_Object *obj)
 {
-   ELM_CHECK_WIDTYPE(obj, widtype) NULL;
-   Widget_Data *wd = elm_widget_data_get(obj);
-   if (!wd) return NULL;
-   if (!wd->back.content) return NULL;
-   Evas_Object *content = wd->back.content;
-   evas_object_clip_unset(content);
-   elm_widget_sub_object_del(obj, content);
-   evas_object_event_callback_del_full(content,
-                                       EVAS_CALLBACK_CHANGED_SIZE_HINTS,
-                                       _changed_size_hints, obj);
-   evas_object_smart_member_del(content);
-   wd->back.content = NULL;
-   return content;
+   return elm_object_part_content_unset(obj, "back");
 }
 
 EAPI Eina_Bool

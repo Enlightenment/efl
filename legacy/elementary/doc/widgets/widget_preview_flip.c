@@ -10,11 +10,11 @@ evas_object_show(o);
 Evas_Object *ic = elm_icon_add(win);
 elm_icon_standard_set(ic, "home");
 evas_object_show(ic);
-elm_flip_content_front_set(o, ic);
+elm_object_part_content_set(o, "front", ic);
 ic = elm_icon_add(win);
 elm_icon_standard_set(ic, "file");
 evas_object_show(ic);
-elm_flip_content_back_set(o, ic);
+elm_object_part_content_set(o, "back", ic);
 
 ecore_timer_add(0.35, _func, o);
 

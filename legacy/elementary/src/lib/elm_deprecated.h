@@ -4554,3 +4554,80 @@ EINA_DEPRECATED EAPI void               elm_entry_text_filter_prepend(Evas_Objec
  * @ingroup Entry
  */
 EINA_DEPRECATED EAPI void               elm_entry_text_filter_remove(Evas_Object *obj, Elm_Entry_Filter_Cb func, void *data);
+
+/**
+ * @brief Set the front content of the flip widget.
+ *
+ * @param obj The flip object
+ * @param content The new front content object
+ *
+ * Once the content object is set, a previously set one will be deleted.
+ * If you want to keep that old content object, use the
+ * elm_flip_content_front_unset() function.
+ *
+ * @deprecated Use elm_objecet_part_content_set(flip, "front") instead
+ */
+EINA_DEPRECATED EAPI void                 elm_flip_content_front_set(Evas_Object *obj, Evas_Object *content);
+
+/**
+ * @brief Set the back content of the flip widget.
+ *
+ * @param obj The flip object
+ * @param content The new back content object
+ *
+ * Once the content object is set, a previously set one will be deleted.
+ * If you want to keep that old content object, use the
+ * elm_flip_content_back_unset() function.
+ *
+ * @deprecated Use elm_objecet_part_content_set(flip, "back") instead
+ */
+EINA_DEPRECATED EAPI void                 elm_flip_content_back_set(Evas_Object *obj, Evas_Object *content);
+
+/**
+ * @brief Get the front content used for the flip
+ *
+ * @param obj The flip object
+ * @return The front content object that is being used
+ *
+ * Return the front content object which is set for this widget.
+ *
+ * @deprecated Use elm_objecet_part_content_get(flip, "front") instead
+ */
+EINA_DEPRECATED EAPI Evas_Object         *elm_flip_content_front_get(const Evas_Object *obj);
+
+/**
+ * @brief Get the back content used for the flip
+ *
+ * @param obj The flip object
+ * @return The back content object that is being used
+ *
+ * Return the back content object which is set for this widget.
+ *
+ * @deprecated Use elm_objecet_part_content_get(flip, "back") instead
+ */
+EINA_DEPRECATED EAPI Evas_Object         *elm_flip_content_back_get(const Evas_Object *obj);
+
+/**
+ * @brief Unset the front content used for the flip
+ *
+ * @param obj The flip object
+ * @return The front content object that was being used
+ *
+ * Unparent and return the front content object which was set for this widget.
+ *
+ * @deprecated Use elm_objecet_part_content_unset(flip, "front") instead
+ */
+EINA_DEPRECATED EAPI Evas_Object         *elm_flip_content_front_unset(Evas_Object *obj);
+
+/**
+ * @brief Unset the back content used for the flip
+ *
+ * @param obj The flip object
+ * @return The back content object that was being used
+ *
+ * Unparent and return the back content object which was set for this widget.
+ *
+ * @deprecated Use elm_objecet_part_content_unset(flip, "back") instead
+ */
+EINA_DEPRECATED EAPI Evas_Object         *elm_flip_content_back_unset(Evas_Object *obj);
+
