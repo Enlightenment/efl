@@ -1042,10 +1042,14 @@ START_TEST(eina_model_test_inheritance)
 
    Pooper_Interface _HUMAN_POOPER_IFACE;
    Eina_Model_Interface *HUMAN_POOPER_IFACE = (Eina_Model_Interface *) &_HUMAN_POOPER_IFACE;
+   const Eina_Model_Interface *HUMAN_POOPER_IFACES[] = {
+     ANIMAL_POOPER_IFACE, NULL
+   };
    memset(&_HUMAN_POOPER_IFACE, 0, sizeof(_HUMAN_POOPER_IFACE));
    HUMAN_POOPER_IFACE->version = EINA_MODEL_INTERFACE_VERSION;
    HUMAN_POOPER_IFACE->interface_size = sizeof(Pooper_Interface);
    HUMAN_POOPER_IFACE->name = POOPER_IFACE_NAME;
+   HUMAN_POOPER_IFACE->interfaces = HUMAN_POOPER_IFACES;
    POOPER_IFACE(HUMAN_POOPER_IFACE)->poop = _human_poop;
 
    const Eina_Model_Interface *ANIMAL_IFACES[] = {ANIMAL_POOPER_IFACE, NULL};
@@ -1084,19 +1088,27 @@ START_TEST(eina_model_test_inheritance)
    hm = eina_model_new(HUMAN_TYPE);
 
    animal_eat(am);
-   fail_if(_animal_eat_count != 1);
+   ck_assert_int_eq(_animal_eat_count, 1);
    animal_eat(hm);
-   fail_if(_human_eat_count != 1);
+   ck_assert_int_eq(_human_eat_count, 1);
 
    pooper_poop(am);
-   fail_if(_animal_poop_count != 1);
+   ck_assert_int_eq(_animal_poop_count, 1);
    pooper_poop(hm);
-   fail_if(_human_poop_count != 1);
+   ck_assert_int_eq(_human_poop_count, 1);
 
-   fail_if(_animal_eat_count != 1);
-   fail_if(_human_eat_count != 1);
-   fail_if(_animal_poop_count != 1);
-   fail_if(_human_poop_count != 1);
+   ck_assert_int_eq(_animal_eat_count, 1);
+   ck_assert_int_eq(_human_eat_count, 1);
+   ck_assert_int_eq(_animal_poop_count, 1);
+   ck_assert_int_eq(_human_poop_count, 1);
+
+   ck_assert_int_eq(eina_model_refcount(am), 1);
+   ck_assert_int_eq(eina_model_refcount(hm), 1);
+
+   eina_model_unref(am);
+   eina_model_unref(hm);
+
+   eina_shutdown();
 }
 END_TEST
 
