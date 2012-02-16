@@ -1441,7 +1441,7 @@ _status_config_themes(Evas_Object *win,
    evas_object_show(fr);
 
    sc = elm_scroller_add(win);
-   elm_scroller_bounce_set(sc, 0, 0);
+   elm_scroller_bounce_set(sc, EINA_FALSE, EINA_FALSE);
    evas_object_size_hint_weight_set(sc, 1.0, 1.0);
    evas_object_size_hint_align_set(sc, EVAS_HINT_FILL, EVAS_HINT_FILL);
    elm_object_content_set(fr, sc);

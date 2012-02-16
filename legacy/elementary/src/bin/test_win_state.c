@@ -173,7 +173,7 @@ test_win_state(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_i
    elm_slider_indicator_format_set(sl, "%3.0f");
    elm_slider_min_max_set(sl, 50, 150);
    elm_slider_value_set(sl, 50);
-   elm_slider_inverted_set(sl, 1);
+   elm_slider_inverted_set(sl, EINA_TRUE);
    elm_box_pack_end(bx2, sl);
    evas_object_show(sl);
 
@@ -241,7 +241,7 @@ test_win_state2(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_
    char buf[PATH_MAX];
 
    win = elm_win_add(NULL, "window-states2", ELM_WIN_BASIC);
-   elm_win_override_set(win, 1);
+   elm_win_override_set(win, EINA_TRUE);
    evas_object_smart_callback_add(win, "moved", my_win_move, NULL);
    evas_object_event_callback_add(win, EVAS_CALLBACK_RESIZE, _win_resize, NULL);
    elm_win_title_set(win, "Window States 2");
@@ -306,7 +306,7 @@ test_win_state2(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_
    elm_slider_indicator_format_set(sl, "%3.0f");
    elm_slider_min_max_set(sl, 50, 150);
    elm_slider_value_set(sl, 50);
-   elm_slider_inverted_set(sl, 1);
+   elm_slider_inverted_set(sl, EINA_TRUE);
    elm_box_pack_end(bx2, sl);
    evas_object_show(sl);
 
