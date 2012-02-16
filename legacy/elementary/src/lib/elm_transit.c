@@ -336,14 +336,24 @@ _transit_animate_cb(void *data)
    transit->progress = elapsed_time / duration;
    switch (transit->tween_mode)
      {
+      case ELM_TRANSIT_TWEEN_MODE_LINEAR:
+         transit->progress = ecore_animator_pos_map(transit->progress,
+                                                    ECORE_POS_MAP_LINEAR,
+                                                    0, 0);
       case ELM_TRANSIT_TWEEN_MODE_ACCELERATE:
-         transit->progress = 1.0 - sin((ELM_PI / 2.0) + (transit->progress * ELM_PI / 2.0));
+         transit->progress = ecore_animator_pos_map(transit->progress,
+                                                    ECORE_POS_MAP_ACCELERATE,
+                                                    0, 0);
          break;
       case ELM_TRANSIT_TWEEN_MODE_DECELERATE:
-         transit->progress = sin(transit->progress * ELM_PI / 2.0);
+         transit->progress = ecore_animator_pos_map(transit->progress,
+                                                    ECORE_POS_MAP_DECELERATE,
+                                                    0, 0);
          break;
       case ELM_TRANSIT_TWEEN_MODE_SINUSOIDAL:
-         transit->progress = (1.0 - cos(transit->progress * ELM_PI)) / 2.0;
+         transit->progress = ecore_animator_pos_map(transit->progress,
+                                                    ECORE_POS_MAP_SINUSOIDAL,
+                                                    0, 0);
          break;
       default:
          break;

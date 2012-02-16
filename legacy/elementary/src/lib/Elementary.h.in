@@ -245,8 +245,8 @@ EAPI extern Elm_Version *elm_version;
 #include <elm_table.h> // OK
 #include <elm_theme.h> // OK
 #include <elm_thumb.h> // OK
-#include <elm_toolbar.h>
-#include <elm_transit.h>
+#include <elm_toolbar.h> // OK
+#include <elm_transit.h> // OK
 #include <elm_video.h>
 #include <elm_web.h>
 #include <elm_win.h>
