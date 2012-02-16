@@ -1276,23 +1276,23 @@ _pos_get(Widget_Data *wd, int *rev, Elm_Flip_Mode *m)
              if (wd->dir == 0)
                {
                   if (wd->down_x > 0)
-                     t = 1.0 - ((double)wd->x / (double)wd->down_x);
+                    t = 1.0 - ((double)wd->x / (double)wd->down_x);
                   *rev = 1;
                }
              else if (wd->dir == 1)
                {
                   if (wd->down_x < w)
-                     t = 1.0 - ((double)(w - wd->x) / (double)(w - wd->down_x));
+                    t = 1.0 - ((double)(w - wd->x) / (double)(w - wd->down_x));
                }
              else if (wd->dir == 2)
                {
                   if (wd->down_y > 0)
-                     t = 1.0 - ((double)wd->y / (double)wd->down_y);
+                    t = 1.0 - ((double)wd->y / (double)wd->down_y);
                }
              else if (wd->dir == 3)
                {
                   if (wd->down_y < h)
-                     t = 1.0 - ((double)(h - wd->y) / (double)(h - wd->down_y));
+                    t = 1.0 - ((double)(h - wd->y) / (double)(h - wd->down_y));
                   *rev = 1;
                }
 
@@ -1920,7 +1920,7 @@ elm_flip_interaction_get(const Evas_Object *obj)
 }
 
 EAPI void
-elm_flip_interacton_direction_enabled_set(Evas_Object *obj, Elm_Flip_Direction dir, Eina_Bool enabled)
+elm_flip_interaction_direction_enabled_set(Evas_Object *obj, Elm_Flip_Direction dir, Eina_Bool enabled)
 {
    ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
@@ -1960,7 +1960,7 @@ elm_flip_interacton_direction_enabled_set(Evas_Object *obj, Elm_Flip_Direction d
 }
 
 EAPI Eina_Bool
-elm_flip_interacton_direction_enabled_get(Evas_Object *obj, Elm_Flip_Direction dir)
+elm_flip_interaction_direction_enabled_get(Evas_Object *obj, Elm_Flip_Direction dir)
 {
    ELM_CHECK_WIDTYPE(obj, widtype) EINA_FALSE;
    Widget_Data *wd = elm_widget_data_get(obj);
@@ -1975,7 +1975,7 @@ elm_flip_interacton_direction_enabled_get(Evas_Object *obj, Elm_Flip_Direction d
 }
 
 EAPI void
-elm_flip_interacton_direction_hitsize_set(Evas_Object *obj, Elm_Flip_Direction dir, double hitsize)
+elm_flip_interaction_direction_hitsize_set(Evas_Object *obj, Elm_Flip_Direction dir, double hitsize)
 {
    ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
@@ -1995,7 +1995,7 @@ elm_flip_interacton_direction_hitsize_set(Evas_Object *obj, Elm_Flip_Direction d
 }
 
 EAPI double
-elm_flip_interacton_direction_hitsize_get(Evas_Object *obj, Elm_Flip_Direction dir)
+elm_flip_interaction_direction_hitsize_get(Evas_Object *obj, Elm_Flip_Direction dir)
 {
    ELM_CHECK_WIDTYPE(obj, widtype) EINA_FALSE;
    Widget_Data *wd = elm_widget_data_get(obj);

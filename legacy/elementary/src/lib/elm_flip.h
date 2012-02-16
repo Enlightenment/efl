@@ -188,7 +188,7 @@ EAPI Elm_Flip_Interaction elm_flip_interaction_get(const Evas_Object *obj);
  *
  * @see elm_flip_interaction_set()
  */
-EAPI void                 elm_flip_interacton_direction_enabled_set(Evas_Object *obj, Elm_Flip_Direction dir, Eina_Bool enabled);
+EAPI void                 elm_flip_interaction_direction_enabled_set(Evas_Object *obj, Elm_Flip_Direction dir, Eina_Bool enabled);
 
 /**
  * @brief Get the enabled state of that flip direction
@@ -201,7 +201,7 @@ EAPI void                 elm_flip_interacton_direction_enabled_set(Evas_Object 
  *
  * @see elm_flip_interaction_set()
  */
-EAPI Eina_Bool            elm_flip_interacton_direction_enabled_get(Evas_Object *obj, Elm_Flip_Direction dir);
+EAPI Eina_Bool            elm_flip_interaction_direction_enabled_get(Evas_Object *obj, Elm_Flip_Direction dir);
 
 /**
  * @brief Set the amount of the flip that is sensitive to interactive flip
@@ -217,7 +217,7 @@ EAPI Eina_Bool            elm_flip_interacton_direction_enabled_get(Evas_Object 
  *
  * @see elm_flip_interaction_set()
  */
-EAPI void                 elm_flip_interacton_direction_hitsize_set(Evas_Object *obj, Elm_Flip_Direction dir, double hitsize);
+EAPI void                 elm_flip_interaction_direction_hitsize_set(Evas_Object *obj, Elm_Flip_Direction dir, double hitsize);
 
 /**
  * @brief Get the amount of the flip that is sensitive to interactive flip
@@ -229,7 +229,7 @@ EAPI void                 elm_flip_interacton_direction_hitsize_set(Evas_Object 
  * Returns the amount of sensitive area set by
  * elm_flip_interaction_direction_hitsize_set().
  */
-EAPI double               elm_flip_interacton_direction_hitsize_get(Evas_Object *obj, Elm_Flip_Direction dir);
+EAPI double               elm_flip_interaction_direction_hitsize_get(Evas_Object *obj, Elm_Flip_Direction dir);
 
 /**
  * @}
