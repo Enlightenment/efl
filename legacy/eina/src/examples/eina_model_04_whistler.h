@@ -38,8 +38,8 @@ typedef struct _Diver_Interface
 
 } Diver_Interface;
 
-void whistler_whistle(Eina_Model *mdl);
-void swimmer_swim(Eina_Model *mdl);
-void diver_dive(Eina_Model *mdl);
+void whistler_whistle(Eina_Model *m);
+void swimmer_swim(Eina_Model *m);
+void diver_dive(Eina_Model *m);
 
 #endif /* WHISTLER_H_ */

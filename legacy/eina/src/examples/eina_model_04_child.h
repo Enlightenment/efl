@@ -7,18 +7,17 @@
 
 #include "eina_model_04_human.h"
 
-#define CHILD_MODEL_TYPE_NAME "Child_Model_Type"
-
+extern const char *CHILD_MODEL_TYPE_NAME;
 extern const Eina_Model_Type * const CHILD_TYPE;
-#define CHILD_TYPE(x) ((Child_Type *) x)
+#define CHILD_TYPE(x) ((Child_Type *) (eina_model_type_subclass_check((x), CHILD_TYPE) ? (x) : NULL))
 
 typedef struct _Child_Type
 {
    Human_Type parent_class;
-   void (*cry)(Eina_Model *mdl);
+   void (*cry)(Eina_Model *m);
 } Child_Type;
 
 void child_init();
-void child_cry(Eina_Model *mdl);
+void child_cry(Eina_Model *m);
 
 #endif /* CHILD_H_ */

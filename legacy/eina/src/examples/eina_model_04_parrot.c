@@ -8,25 +8,25 @@
 static Eina_Bool initialized = EINA_FALSE;
 
 static void
-_parrot_fly(Eina_Model *mdl)
+_parrot_fly(Eina_Model *m)
 {
-   printf("%s\t%s", eina_model_type_name_get(eina_model_type_get(mdl)),
+   printf("%s\t%s", eina_model_type_name_get(eina_model_type_get(m)),
          __func__);
    printf("\t\t Fly Parrot\n");
 }
 
 static void
-_parrot_eat(Eina_Model *mdl)
+_parrot_eat(Eina_Model *m)
 {
-   printf("%s\t%s", eina_model_type_name_get(eina_model_type_get(mdl)),
+   printf("%s\t%s", eina_model_type_name_get(eina_model_type_get(m)),
          __func__);
    printf("\t\t Grain \n");
 }
 
 static void
-_parrot_whistle(Eina_Model *mdl)
+_parrot_whistle(Eina_Model *m)
 {
-   printf("%s\t%s", eina_model_type_name_get(eina_model_type_get(mdl)),
+   printf("%s\t%s", eina_model_type_name_get(eina_model_type_get(m)),
          __func__);
    printf("\t\t Whistle Parrot\n");
 }
@@ -35,6 +35,8 @@ _parrot_whistle(Eina_Model *mdl)
  * defining Parrot Model Instance
  * defining Whistler Interface instance
  */
+const char *PARROT_MODEL_TYPE_NAME = NULL;
+
 static Parrot_Type _PARROT_TYPE;
 const Eina_Model_Type * const PARROT_TYPE = (Eina_Model_Type *) &_PARROT_TYPE;
 
@@ -48,6 +50,7 @@ static const Eina_Model_Interface * MODEL_INTERFACES_ARRAY[] =
 void
 parrot_init()
 {
+   Eina_Model_Type *type;
    if (initialized) return;
    initialized = EINA_TRUE;
 
@@ -61,11 +64,16 @@ parrot_init()
    iface->name = WHISTLER_INTERFACE_NAME;
    WHISTLER_INTERFACE(iface)->whistle = _parrot_whistle;
 
-   Eina_Model_Type *type = (Eina_Model_Type *) &_PARROT_TYPE;
+   PARROT_MODEL_TYPE_NAME = "Parrot_Model_Type";
+   
+   type = (Eina_Model_Type *)&_PARROT_TYPE;
    type->version = EINA_MODEL_TYPE_VERSION;
-   type->parent = ANIMAL_TYPE;
-   type->type_size = sizeof(Parrot_Type);
    type->name = PARROT_MODEL_TYPE_NAME;
+   type->private_size = 0;
+   
+   eina_model_type_subclass_setup(type, ANIMAL_TYPE);
+
+   type->type_size = sizeof(Parrot_Type);
    type->interfaces = MODEL_INTERFACES_ARRAY;
 
    ANIMAL_TYPE(type)->eat = _parrot_eat;
@@ -74,14 +82,14 @@ parrot_init()
 
 
 void
-parrot_fly(Eina_Model *mdl)
+parrot_fly(Eina_Model *m)
 {
-   EINA_SAFETY_ON_FALSE_RETURN(eina_model_instance_check(mdl, PARROT_TYPE));
+   EINA_SAFETY_ON_FALSE_RETURN(eina_model_instance_check(m, PARROT_TYPE));
 
-   void (*pf)(Eina_Model *mdl);
-   pf = eina_model_method_resolve(mdl, Parrot_Type, fly);
+   void (*pf)(Eina_Model *m);
+   pf = eina_model_method_resolve(m, Parrot_Type, fly);
    EINA_SAFETY_ON_NULL_RETURN(pf);
    printf("%s()    \t", __func__);
-   pf(mdl);
+   pf(m);
 }
 

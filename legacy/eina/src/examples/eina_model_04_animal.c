@@ -7,17 +7,17 @@
 static Eina_Bool initialized = EINA_FALSE;
 
 static void
-_animal_eat(Eina_Model *mdl)
+_animal_eat(Eina_Model *m)
 {
-   printf("%s\t%s", eina_model_type_name_get(eina_model_type_get(mdl)),
+   printf("%s\t%s", eina_model_type_name_get(eina_model_type_get(m)),
          __func__);
    printf("\t\t Eat Animal\n");
 }
 
 static void
-_animal_breathe(Eina_Model *mdl)
+_animal_breathe(Eina_Model *m)
 {
-   printf("%s\t%s", eina_model_type_name_get(eina_model_type_get(mdl)),
+   printf("%s\t%s", eina_model_type_name_get(eina_model_type_get(m)),
          __func__);
    printf("\t\t Breathe Animal\n");
 }
@@ -47,8 +47,8 @@ animal_init(void)
    /* define extra methods */
 
    type->type_size = sizeof(Animal_Type);
-   _ANIMAL_TYPE.breathe = _animal_breathe;
-   _ANIMAL_TYPE.eat = _animal_eat;
+   ANIMAL_TYPE(type)->breathe = _animal_breathe;
+   ANIMAL_TYPE(type)->eat = _animal_eat;
 }
 
 void

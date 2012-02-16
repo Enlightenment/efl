@@ -9,41 +9,41 @@
 static Eina_Bool initialized = EINA_FALSE;
 
 static void
-_human_eat(Eina_Model *mdl)
+_human_eat(Eina_Model *m)
 {
-   printf("%s\t%s", eina_model_type_name_get(eina_model_type_get(mdl)),
+   printf("%s\t%s", eina_model_type_name_get(eina_model_type_get(m)),
          __func__);
    printf("\t\t Salad\n");
 }
 
 static void
-_human_walk(Eina_Model *mdl)
+_human_walk(Eina_Model *m)
 {
-   printf("%s\t%s", eina_model_type_name_get(eina_model_type_get(mdl)),
+   printf("%s\t%s", eina_model_type_name_get(eina_model_type_get(m)),
          __func__);
    printf("\t\t Walk\n");
 }
 
 static void
-_human_whistle(Eina_Model *mdl)
+_human_whistle(Eina_Model *m)
 {
-   printf("%s\t%s", eina_model_type_name_get(eina_model_type_get(mdl)),
+   printf("%s\t%s", eina_model_type_name_get(eina_model_type_get(m)),
          __func__);
    printf("\t\t Whistle Human\n");
 }
 
 static void
-_human_swim(Eina_Model *mdl)
+_human_swim(Eina_Model *m)
 {
-   printf("%s\t%s", eina_model_type_name_get(eina_model_type_get(mdl)),
+   printf("%s\t%s", eina_model_type_name_get(eina_model_type_get(m)),
          __func__);
    printf("\t\t Swim Human\n");
 }
 
 static void
-_human_dive(Eina_Model *mdl)
+_human_dive(Eina_Model *m)
 {
-   printf("%s\t%s", eina_model_type_name_get(eina_model_type_get(mdl)),
+   printf("%s\t%s", eina_model_type_name_get(eina_model_type_get(m)),
          __func__);
    printf("\t\t Dive Human\n");
 }
@@ -53,6 +53,9 @@ _human_dive(Eina_Model *mdl)
  * defining Swimmer Interface instance
  * defining Diver Interface instance
  */
+
+const char *HUMAN_MODEL_TYPE_NAME = NULL;
+
 static Human_Type _HUMAN_TYPE;
 const Eina_Model_Type * const HUMAN_TYPE = (Eina_Model_Type *) &_HUMAN_TYPE;
 
@@ -81,6 +84,8 @@ static const Eina_Model_Interface * MODEL_INTERFACES_ARRAY[] =
 void
 human_init()
 {
+   Eina_Model_Type *type;
+
    if (initialized) return;
    initialized = EINA_TRUE;
 
@@ -118,11 +123,17 @@ human_init()
    /*
     * Initializing instance of Human Model
     */
-   Eina_Model_Type *type = (Eina_Model_Type *) &_HUMAN_TYPE;
+
+   HUMAN_MODEL_TYPE_NAME = "Human_Model_Type";
+   
+   type = (Eina_Model_Type *) &_HUMAN_TYPE;
    type->version = EINA_MODEL_TYPE_VERSION;
-   type->parent = ANIMAL_TYPE;
-   type->type_size = sizeof(Human_Type);
    type->name = HUMAN_MODEL_TYPE_NAME;
+   type->private_size = 0;
+
+   eina_model_type_subclass_setup(type, ANIMAL_TYPE);
+
+   type->type_size = sizeof(Human_Type);
    type->interfaces = MODEL_INTERFACES_ARRAY;
 
    ANIMAL_TYPE(type)->eat = _human_eat;
@@ -134,13 +145,13 @@ human_init()
  * call for implemented Human Class function
  */
 void
-human_walk(Eina_Model *mdl)
+human_walk(Eina_Model *m)
 {
-   EINA_SAFETY_ON_FALSE_RETURN(eina_model_instance_check(mdl, HUMAN_TYPE));
+   EINA_SAFETY_ON_FALSE_RETURN(eina_model_instance_check(m, HUMAN_TYPE));
 
-   void (*pf)(Eina_Model *mdl);
-   pf = eina_model_method_resolve(mdl, Human_Type, walk);
+   void (*pf)(Eina_Model *m);
+   pf = eina_model_method_resolve(m, Human_Type, walk);
    EINA_SAFETY_ON_NULL_RETURN(pf);
    printf("%s()    \t", __func__);
-   pf(mdl);
+   pf(m);
 }
