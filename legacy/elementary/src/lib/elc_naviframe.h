@@ -395,7 +395,6 @@ EAPI const char      *elm_naviframe_item_style_default_get(const Evas_Object *ob
    Elm_Object_Item *__my_it; \
    __my_it = elm_naviframe_item_push(obj, NULL, NULL, NULL, content, NULL); \
    elm_naviframe_item_title_visible_set(__my_it, EINA_FALSE); \
-   (__my_it); \
 }
 
 /**
