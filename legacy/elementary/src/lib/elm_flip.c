@@ -793,7 +793,7 @@ static void
 flip_show_hide(Evas_Object *obj)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
-   if (elm_flip_front_get(obj))
+   if (elm_flip_front_visible_get(obj))
      {
         if (wd->pageflip)
           {
@@ -1808,12 +1808,18 @@ elm_flip_content_back_unset(Evas_Object *obj)
 }
 
 EAPI Eina_Bool
-elm_flip_front_get(const Evas_Object *obj)
+elm_flip_front_visible_get(const Evas_Object *obj)
 {
    ELM_CHECK_WIDTYPE(obj, widtype) EINA_FALSE;
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return EINA_FALSE;
    return wd->state;
+}
+
+EAPI Eina_Bool
+elm_flip_front_get(const Evas_Object *obj)
+{
+   return elm_flip_front_get(obj);
 }
 
 EAPI void

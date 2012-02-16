@@ -4631,3 +4631,15 @@ EINA_DEPRECATED EAPI Evas_Object         *elm_flip_content_front_unset(Evas_Obje
  */
 EINA_DEPRECATED EAPI Evas_Object         *elm_flip_content_back_unset(Evas_Object *obj);
 
+/**
+ * @brief Get flip front visibility state
+ *
+ * @param obj The flip object
+ * @return EINA_TRUE if front front is showing, EINA_FALSE if the back is
+ * showing.
+ *
+ * @deprecated Use elm_flip_front_visible_get() instead
+ */
+EINA_DEPRECATED EAPI Eina_Bool            elm_flip_front_get(const Evas_Object *obj);
+
+

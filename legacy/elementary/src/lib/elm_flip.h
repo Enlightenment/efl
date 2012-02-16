@@ -71,7 +71,6 @@ typedef enum
  */
 EAPI Evas_Object *elm_flip_add(Evas_Object *parent);
 
-
 /**
  * @brief Get flip front visibility state
  *
@@ -79,7 +78,7 @@ EAPI Evas_Object *elm_flip_add(Evas_Object *parent);
  * @return EINA_TRUE if front front is showing, EINA_FALSE if the back is
  * showing.
  */
-EAPI Eina_Bool            elm_flip_front_get(const Evas_Object *obj);
+Eina_Bool elm_flip_front_visible_get(const Evas_Object *obj);
 
 /**
  * @brief Set flip perspective
