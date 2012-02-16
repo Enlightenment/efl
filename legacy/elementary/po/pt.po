@@ -1,12 +1,12 @@
 # Portuguese translation for Elementary.
 # This file is put in the public domain.
 # Sérgio Marques <smarquespt@gmail.com>, 2011.
-#: src/lib/elm_config.c:1408
+#: src/lib/elm_config.c:1427
 msgid ""
 msgstr ""
 "Project-Id-Version: Elementary\n"
 "Report-Msgid-Bugs-To: enlightenment-devel@lists.sourceforge.net\n"
-"POT-Creation-Date: 2012-01-11 11:00+0900\n"
+"POT-Creation-Date: 2012-02-16 14:10+0900\n"
 "PO-Revision-Date: 2011-11-17 12:25-0000\n"
 "Last-Translator: Sérgio Marques <smarquespt@gmail.com>\n"
 "Language-Team: \n"
@@ -25,7 +25,7 @@ msgstr "Para cima"
 msgid "Home"
 msgstr "Pasta pessoal"
 
-#: src/lib/elc_fileselector.c:1002 src/lib/elm_entry.c:1267
+#: src/lib/elc_fileselector.c:1002 src/lib/elm_entry.c:1285
 msgid "Cancel"
 msgstr "Cancelar"
 
@@ -68,23 +68,23 @@ msgstr "Estado"
 msgid "Check"
 msgstr "Verificar"
 
-#: src/lib/elm_config.c:1345
+#: src/lib/elm_config.c:1350
 msgid "default:LTR"
 msgstr "omissão: LTR"
 
-#: src/lib/elm_entry.c:1261
+#: src/lib/elm_entry.c:1279
 msgid "Copy"
 msgstr "Copiar"
 
-#: src/lib/elm_entry.c:1264
+#: src/lib/elm_entry.c:1282
 msgid "Cut"
 msgstr "Cortar"
 
-#: src/lib/elm_entry.c:1278
+#: src/lib/elm_entry.c:1296
 msgid "Select"
 msgstr "Selecionar"
 
-#: src/lib/elm_entry.c:1284
+#: src/lib/elm_entry.c:1302
 msgid "Paste"
 msgstr "Colar"
 
@@ -116,6 +116,6 @@ msgstr "Estado: selecionado"
 msgid "Has menu"
 msgstr "Tem menu"
 
-#: src/lib/elm_toolbar.c:821
+#: src/lib/elm_toolbar.c:824
 msgid "Tool Item"
 msgstr "Ferramenta"

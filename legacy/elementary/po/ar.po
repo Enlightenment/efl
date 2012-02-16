@@ -2,12 +2,12 @@
 # This file is distributed under the same license as the Elementary package.
 # FIRST AUTHOR <tom.hacohen@partner.samsung.com>, 2010.
 #
-#: src/lib/elm_config.c:1408
+#: src/lib/elm_config.c:1427
 msgid ""
 msgstr ""
 "Project-Id-Version: elementary\n"
 "Report-Msgid-Bugs-To: enlightenment-devel@lists.sourceforge.net\n"
-"POT-Creation-Date: 2012-01-11 11:00+0900\n"
+"POT-Creation-Date: 2012-02-16 14:10+0900\n"
 "PO-Revision-Date: 2010-12-26 10:05+0200\n"
 "Last-Translator: Tom Hacohen <tom.hacohen@partner.samsung.com>\n"
 "Language-Team: General\n"
@@ -26,7 +26,7 @@ msgstr ""
 msgid "Home"
 msgstr ""
 
-#: src/lib/elc_fileselector.c:1002 src/lib/elm_entry.c:1267
+#: src/lib/elc_fileselector.c:1002 src/lib/elm_entry.c:1285
 msgid "Cancel"
 msgstr ""
 
@@ -69,23 +69,23 @@ msgstr ""
 msgid "Check"
 msgstr ""
 
-#: src/lib/elm_config.c:1345
+#: src/lib/elm_config.c:1350
 msgid "default:LTR"
 msgstr "default:RTL"
 
-#: src/lib/elm_entry.c:1261
+#: src/lib/elm_entry.c:1279
 msgid "Copy"
 msgstr ""
 
-#: src/lib/elm_entry.c:1264
+#: src/lib/elm_entry.c:1282
 msgid "Cut"
 msgstr ""
 
-#: src/lib/elm_entry.c:1278
+#: src/lib/elm_entry.c:1296
 msgid "Select"
 msgstr ""
 
-#: src/lib/elm_entry.c:1284
+#: src/lib/elm_entry.c:1302
 msgid "Paste"
 msgstr ""
 
@@ -117,6 +117,6 @@ msgstr ""
 msgid "Has menu"
 msgstr ""
 
-#: src/lib/elm_toolbar.c:821
+#: src/lib/elm_toolbar.c:824
 msgid "Tool Item"
 msgstr ""

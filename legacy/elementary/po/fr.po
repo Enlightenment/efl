@@ -3,12 +3,12 @@
 # batden <batden@orange.fr>, 2011.
 # dazibao <dazibao@sfr.fr>, 2011.
 #
-#: src/lib/elm_config.c:1408
+#: src/lib/elm_config.c:1427
 msgid ""
 msgstr ""
 "Project-Id-Version: Elementary\n"
 "Report-Msgid-Bugs-To: enlightenment-devel@lists.sourceforge.net\n"
-"POT-Creation-Date: 2012-01-11 11:00+0900\n"
+"POT-Creation-Date: 2012-02-16 14:10+0900\n"
 "PO-Revision-Date: 2011-11-08 07:57+0100\n"
 "Last-Translator: dazibao <dazibao@sfr.fr>\n"
 "Language-Team: French <sansgourou@gmail.com>\n"
@@ -29,7 +29,7 @@ msgstr "Monter"
 msgid "Home"
 msgstr "Home"
 
-#: src/lib/elc_fileselector.c:1002 src/lib/elm_entry.c:1267
+#: src/lib/elc_fileselector.c:1002 src/lib/elm_entry.c:1285
 msgid "Cancel"
 msgstr "Annuler"
 
@@ -72,23 +72,23 @@ msgstr "État"
 msgid "Check"
 msgstr "À cocher"
 
-#: src/lib/elm_config.c:1345
+#: src/lib/elm_config.c:1350
 msgid "default:LTR"
 msgstr "LTR par défaut"
 
-#: src/lib/elm_entry.c:1261
+#: src/lib/elm_entry.c:1279
 msgid "Copy"
 msgstr "Copier"
 
-#: src/lib/elm_entry.c:1264
+#: src/lib/elm_entry.c:1282
 msgid "Cut"
 msgstr "Couper"
 
-#: src/lib/elm_entry.c:1278
+#: src/lib/elm_entry.c:1296
 msgid "Select"
 msgstr "Sélectionner"
 
-#: src/lib/elm_entry.c:1284
+#: src/lib/elm_entry.c:1302
 msgid "Paste"
 msgstr "Coller"
 
@@ -120,6 +120,6 @@ msgstr "État : sélectionné"
 msgid "Has menu"
 msgstr "Possède un menu"
 
-#: src/lib/elm_toolbar.c:821
+#: src/lib/elm_toolbar.c:824
 msgid "Tool Item"
 msgstr "Élément outil"
