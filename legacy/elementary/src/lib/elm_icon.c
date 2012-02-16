@@ -700,7 +700,7 @@ elm_icon_thumb_set(Evas_Object *obj, const char *file, const char *group)
    eina_stringshare_replace(&wd->thumb.file.path, file);
    eina_stringshare_replace(&wd->thumb.file.key, group);
 
-   if (elm_thumb_ethumb_client_connected())
+   if (elm_thumb_ethumb_client_connected_get())
      {
         _icon_thumb_apply(wd);
         return ;

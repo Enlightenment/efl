@@ -409,7 +409,7 @@ _thumb_show(Widget_Data *wd)
 {
    evas_object_show(wd->frame);
 
-   if (elm_thumb_ethumb_client_connected())
+   if (elm_thumb_ethumb_client_connected_get())
      {
         _thumb_apply(wd);
         return;
@@ -690,7 +690,7 @@ elm_thumb_ethumb_client_get(void)
 }
 
 EAPI Eina_Bool
-elm_thumb_ethumb_client_connected(void)
+elm_thumb_ethumb_client_connected_get(void)
 {
    return _elm_ethumb_connected;
 }
