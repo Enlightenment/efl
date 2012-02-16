@@ -17,7 +17,7 @@ typedef struct
 {
    Evas_Object *win;
    Evas_Object *main_box;
-   Evas_Object *pager;
+   Evas_Object *naviframe;
    Evas_Object *url;
    Evas_Object *default_web;
    Evas_Object *tabs;
@@ -73,7 +73,7 @@ tab_current_set(Tab_Data *td)
    nav_button_update(td->app);
    elm_entry_icon_visible_set(td->app->url, EINA_TRUE);
 
-   elm_pager_content_promote(td->app->pager, td->web);
+   elm_naviframe_item_simple_promote(td->app->naviframe, td->web);
 }
 
 static void
@@ -151,7 +151,7 @@ tab_add(App_Data *ad)
    evas_object_size_hint_weight_set(td->web, EVAS_HINT_EXPAND,
                                     EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(td->web, EVAS_HINT_FILL, EVAS_HINT_FILL);
-   elm_pager_content_push(ad->pager, td->web);
+   elm_naviframe_item_simple_push(ad->naviframe, td->web);
 
    td->app = ad;
    td->tab = elm_toolbar_item_append(td->app->tabs, NULL, "New tab",
@@ -463,7 +463,7 @@ default_content_set(Evas_Object *web)
 int
 elm_main(int argc __UNUSED__, char *argv[] __UNUSED__)
 {
-   Evas_Object *win, *bg, *box, *box2, *btn, *ic, *url, *pager, *tabs, *web;
+   Evas_Object *win, *bg, *box, *box2, *btn, *ic, *url, *naviframe, *tabs, *web;
    Evas *e;
    Evas_Modifier_Mask ctrl_mask;
    App_Data *ad;
@@ -588,26 +588,26 @@ elm_main(int argc __UNUSED__, char *argv[] __UNUSED__)
    elm_icon_standard_set(ic, "close");
    elm_object_part_content_set(btn, "icon", ic);
 
-   pager = elm_pager_add(win);
-   evas_object_size_hint_weight_set(pager, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-   evas_object_size_hint_align_set(pager, EVAS_HINT_FILL, EVAS_HINT_FILL);
-   elm_box_pack_end(box, pager);
-   evas_object_show(pager);
+   naviframe = elm_naviframe_add(win);
+   evas_object_size_hint_weight_set(naviframe, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_size_hint_align_set(naviframe, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   elm_box_pack_end(box, naviframe);
+   evas_object_show(naviframe);
 
-   elm_toolbar_menu_parent_set(tabs, pager);
+   elm_toolbar_menu_parent_set(tabs, naviframe);
 
    web = elm_web_add(win);
    elm_web_window_create_hook_set(web, _web_create_window_cb, ad);
    elm_web_history_enable_set(web, EINA_FALSE);
    evas_object_size_hint_weight_set(web, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(web, EVAS_HINT_FILL, EVAS_HINT_FILL);
-   elm_pager_content_push(pager, web);
+   elm_naviframe_item_simple_push(naviframe, web);
 
    default_content_set(web);
 
    ad->win = win;
    ad->main_box = box;
-   ad->pager = pager;
+   ad->naviframe = naviframe;
    ad->url = url;
    ad->default_web = web;
    ad->tabs = tabs;

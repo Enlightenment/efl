@@ -90,7 +90,7 @@ test_conformant(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event 
 static void
 popobj(void *data, Evas_Object *obj __UNUSED__, void *event __UNUSED__)
 {
-   elm_pager_content_pop(data);
+   elm_naviframe_item_pop(data);
 }
 
 void
@@ -132,7 +132,7 @@ test_conformant2(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event
    elm_box_pack_end(bx, btn);
    evas_object_show(btn);
 
-   pg = elm_pager_add(win);
+   pg = elm_naviframe_add(win);
    evas_object_size_hint_weight_set(pg, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(pg, EVAS_HINT_FILL, EVAS_HINT_FILL);
    elm_box_pack_end(bx, pg);
@@ -143,7 +143,7 @@ test_conformant2(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event
    conform = elm_conformant_add(win);
    evas_object_size_hint_weight_set(conform, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(conform, EVAS_HINT_FILL, EVAS_HINT_FILL);
-   elm_pager_content_push(pg, conform);
+   elm_naviframe_item_simple_push(pg, conform);
    evas_object_show(conform);
 
    bx = elm_box_add(win);
@@ -175,7 +175,7 @@ test_conformant2(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event
    conform = elm_conformant_add(win);
    evas_object_size_hint_weight_set(conform, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(conform, EVAS_HINT_FILL, EVAS_HINT_FILL);
-   elm_pager_content_push(pg, conform);
+   elm_naviframe_item_simple_push(pg, conform);
    evas_object_show(conform);
 
    bx = elm_box_add(win);

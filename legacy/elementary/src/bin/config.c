@@ -674,10 +674,10 @@ static void
 _flip_to(Evas_Object *win,
          const char  *name)
 {
-   Evas_Object *wid, *pager;
+   Evas_Object *wid, *naviframe;
    wid = evas_object_data_get(win, name);
-   pager = evas_object_data_get(win, "pager");
-   elm_pager_content_promote(pager, wid);
+   naviframe = evas_object_data_get(win, "naviframe");
+   elm_naviframe_item_simple_promote(naviframe, wid);
 }
 
 static void
@@ -1159,7 +1159,7 @@ _theme_sel(void            *data __UNUSED__,
 
 static void
 _status_config_sizing(Evas_Object *win,
-                      Evas_Object *pager)
+                      Evas_Object *naviframe)
 {
    Evas_Object *lb, *pd, *bx, *sl, *sp;
 
@@ -1210,7 +1210,7 @@ _status_config_sizing(Evas_Object *win,
 
    evas_object_data_set(win, "sizing", bx);
 
-   elm_pager_content_push(pager, bx);
+   elm_naviframe_item_simple_push(naviframe, bx);
 }
 
 static Evas_Object *
@@ -1301,7 +1301,7 @@ _sample_theme_new(Evas_Object *win)
 
 static void
 _status_config_themes(Evas_Object *win,
-                      Evas_Object *pager)
+                      Evas_Object *naviframe)
 {
    Evas_Object *tb, *rc, *sc, *sp, *li, *pd, *fr, *bt, *sample;
    Eina_List *list, *l;
@@ -1476,7 +1476,7 @@ _status_config_themes(Evas_Object *win,
    evas_object_show(bt);
 
    evas_object_data_set(win, "themes", tb);
-   elm_pager_content_push(pager, tb);
+   elm_naviframe_item_simple_push(naviframe, tb);
 }
 
 static void
@@ -1928,7 +1928,7 @@ _font_names_list_load(Evas_Object *flist)
 
 static void
 _status_config_fonts(Evas_Object *win,
-                     Evas_Object *pager)
+                     Evas_Object *naviframe)
 {
    Evas_Object *base, *fr, *li, *rc, *preview, *sp, *pd, *bt, *bx;
    char buf[PATH_MAX];
@@ -2097,7 +2097,7 @@ _status_config_fonts(Evas_Object *win,
 
    evas_object_data_set(win, "fonts", base);
 
-   elm_pager_content_push(pager, base);
+   elm_naviframe_item_simple_push(naviframe, base);
 }
 
 static void
@@ -2281,7 +2281,7 @@ _profiles_list_unselect_cb(void *data       __UNUSED__,
 
 static void
 _status_config_profiles(Evas_Object *win,
-                        Evas_Object *pager)
+                        Evas_Object *naviframe)
 {
    Evas_Object *li, *bx, *fr_bx1, *fr_bx2, *btn_bx, *fr, *lb, *en, *sp, *pd,
    *bt;
@@ -2418,12 +2418,12 @@ _status_config_profiles(Evas_Object *win,
    evas_event_thaw(evas);
 
    evas_object_data_set(win, "profiles", bx);
-   elm_pager_content_push(pager, bx);
+   elm_naviframe_item_simple_push(naviframe, bx);
 }
 
 static void
 _status_config_scrolling(Evas_Object *win,
-                         Evas_Object *pager)
+                         Evas_Object *naviframe)
 {
    Evas_Object *lb, *pd, *bx, *sl, *sp, *ck, *sc;
 
@@ -2665,7 +2665,7 @@ _status_config_scrolling(Evas_Object *win,
 
    evas_object_data_set(win, "scrolling", sc);
 
-   elm_pager_content_push(pager, sc);
+   elm_naviframe_item_simple_push(naviframe, sc);
 }
 
 static char *
@@ -2761,7 +2761,7 @@ _engines_list_fill(Evas_Object *l_widget,
 
 static void
 _status_config_rendering(Evas_Object *win,
-                         Evas_Object *pager)
+                         Evas_Object *naviframe)
 {
    Evas_Object *li, *bx, *fr, *sp, *pd, *bt;
    Eina_List *engines;
@@ -2813,12 +2813,12 @@ _status_config_rendering(Evas_Object *win,
    evas_object_show(bt);
 
    evas_object_data_set(win, "rendering", bx);
-   elm_pager_content_push(pager, bx);
+   elm_naviframe_item_simple_push(naviframe, bx);
 }
 
 static void
 _status_config_caches(Evas_Object *win,
-                      Evas_Object *pager)
+                      Evas_Object *naviframe)
 {
    Evas_Object *lb, *pd, *bx, *sl, *sp, *ck;
 
@@ -2952,14 +2952,14 @@ _status_config_caches(Evas_Object *win,
 
    evas_object_data_set(win, "caches", bx);
 
-   elm_pager_content_push(pager, bx);
+   elm_naviframe_item_simple_push(naviframe, bx);
 }
 
 static void
 _status_config_full(Evas_Object *win,
                     Evas_Object *bx0)
 {
-   Evas_Object *tb, *pager;
+   Evas_Object *tb, *naviframe;
    Elm_Object_Item *tb_sizing, *tb_it;
 
    tb = elm_toolbar_add(win);
@@ -2991,24 +2991,24 @@ _status_config_full(Evas_Object *win,
    elm_box_pack_end(bx0, tb);
    evas_object_show(tb);
 
-   pager = elm_pager_add(win);
-   evas_object_size_hint_align_set(pager, EVAS_HINT_FILL, EVAS_HINT_FILL);
-   evas_object_size_hint_weight_set(pager, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-   evas_object_data_set(win, "pager", pager);
+   naviframe = elm_naviframe_add(win);
+   evas_object_size_hint_align_set(naviframe, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   evas_object_size_hint_weight_set(naviframe, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_data_set(win, "naviframe", naviframe);
 
-   _status_config_themes(win, pager);
-   _status_config_fonts(win, pager);
-   _status_config_profiles(win, pager);
-   _status_config_rendering(win, pager);
-   _status_config_scrolling(win, pager);
-   _status_config_caches(win, pager);
-   _status_config_sizing(win, pager);
+   _status_config_themes(win, naviframe);
+   _status_config_fonts(win, naviframe);
+   _status_config_profiles(win, naviframe);
+   _status_config_rendering(win, naviframe);
+   _status_config_scrolling(win, naviframe);
+   _status_config_caches(win, naviframe);
+   _status_config_sizing(win, naviframe);
 
    // FIXME uncomment after flip style fix, please
-   //elm_object_style_set(pager, "flip");
+   //elm_object_style_set(naviframe, "flip");
    elm_toolbar_item_selected_set(tb_sizing, EINA_TRUE);
-   elm_box_pack_end(bx0, pager);
-   evas_object_show(pager);
+   elm_box_pack_end(bx0, naviframe);
+   evas_object_show(naviframe);
 }
 
 static void

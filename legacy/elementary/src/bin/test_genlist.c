@@ -1214,7 +1214,7 @@ test_genlist6(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_in
 
 struct genlist7_data
 {
-   Evas_Object *win, *pager;
+   Evas_Object *win, *naviframe;
 };
 
 static Elm_Genlist_Item_Class itc7;
@@ -1232,7 +1232,7 @@ test_genlist7_back_cb(void *data, Evas_Object *obj __UNUSED__, void *event_info 
    struct genlist7_data *info = data;
    if (!info) return;
 
-   elm_pager_content_pop(info->pager);
+   elm_naviframe_item_pop(info->naviframe);
 }
 
 static void
@@ -1269,13 +1269,13 @@ test_genlist7_swipe(void *data, Evas_Object *obj __UNUSED__, void *event_info)
    elm_box_pack_start(box, entry);
    elm_box_pack_end(box, button);
 
-   elm_pager_content_push(info->pager, box);
+   elm_naviframe_item_simple_push(info->naviframe, box);
 }
 
 void
 test_genlist7(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
-   Evas_Object *win, *bg, *gl, *pager;
+   Evas_Object *win, *bg, *gl, *naviframe;
    static struct genlist7_data info;
    static Testitem tit[3];
 
@@ -1289,19 +1289,19 @@ test_genlist7(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_in
    evas_object_size_hint_weight_set(bg, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_show(bg);
 
-   pager = elm_pager_add(win);
-   elm_win_resize_object_add(win, pager);
-   evas_object_size_hint_weight_set(pager, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-   evas_object_size_hint_align_set(pager, EVAS_HINT_FILL, EVAS_HINT_FILL);
-   evas_object_show(pager);
-   info.pager = pager;
+   naviframe = elm_naviframe_add(win);
+   elm_win_resize_object_add(win, naviframe);
+   evas_object_size_hint_weight_set(naviframe, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_size_hint_align_set(naviframe, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   evas_object_show(naviframe);
+   info.naviframe = naviframe;
 
    gl = elm_genlist_add(win);
    evas_object_size_hint_align_set(gl, EVAS_HINT_FILL, EVAS_HINT_FILL);
    evas_object_size_hint_weight_set(gl, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_smart_callback_add(gl, "swipe", test_genlist7_swipe, &info);
    evas_object_show(gl);
-   elm_pager_content_push(pager, gl);
+   elm_naviframe_item_simple_push(naviframe, gl);
 
    itc2.item_style     = "default";
    itc2.func.text_get = gl2_text_get;

@@ -576,7 +576,7 @@ test_list3(void        *data __UNUSED__,
 
 struct Pginfo
 {
-   Evas_Object *pager, *win;
+   Evas_Object *naviframe, *win;
 };
 
 static void
@@ -587,7 +587,7 @@ test_list4_back_cb(void        *data,
    struct Pginfo *info = data;
    if (!info) return;
 
-   elm_pager_content_pop(info->pager);
+   elm_naviframe_item_pop(info->naviframe);
 }
 
 static void
@@ -627,7 +627,7 @@ test_list4_swipe(void        *data,
    elm_box_pack_start(box, entry);
    elm_box_pack_end(box, button);
 
-   elm_pager_content_push(info->pager, box);
+   elm_naviframe_item_simple_push(info->naviframe, box);
 }
 
 void
@@ -635,7 +635,7 @@ test_list4(void        *data __UNUSED__,
            Evas_Object *obj __UNUSED__,
            void        *event_info __UNUSED__)
 {
-   Evas_Object *win, *bg, *li, *ic, *ic2, *pager;
+   Evas_Object *win, *bg, *li, *ic, *ic2, *naviframe;
    static struct Pginfo info = {NULL, NULL};
    char buf[PATH_MAX];
 
@@ -649,18 +649,18 @@ test_list4(void        *data __UNUSED__,
    evas_object_size_hint_weight_set(bg, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_show(bg);
 
-   pager = elm_pager_add(win);
-   elm_win_resize_object_add(win, pager);
-   evas_object_size_hint_weight_set(pager, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-   evas_object_size_hint_align_set(pager, EVAS_HINT_FILL, EVAS_HINT_FILL);
-   evas_object_show(pager);
-   info.pager = pager;
+   naviframe = elm_naviframe_add(win);
+   elm_win_resize_object_add(win, naviframe);
+   evas_object_size_hint_weight_set(naviframe, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_size_hint_align_set(naviframe, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   evas_object_show(naviframe);
+   info.naviframe = naviframe;
 
    li = elm_list_add(win);
    evas_object_size_hint_weight_set(li, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    elm_list_mode_set(li, ELM_LIST_COMPRESS);
    evas_object_smart_callback_add(li, "swipe", test_list4_swipe, &info);
-   elm_pager_content_push(pager, li);
+   elm_naviframe_item_simple_push(naviframe, li);
 
    static char pf_data[] = "Pink Floyd were formed in 1965, and originally consisted of university"                       \
                            "students Roger Waters, Nick Mason, Richard Wright, and Syd Barrett. The group were a popular" \

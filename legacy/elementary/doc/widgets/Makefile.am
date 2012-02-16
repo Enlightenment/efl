@@ -68,7 +68,6 @@ widget_preview_hover \
 widget_preview_anchorview \
 widget_preview_anchorblock \
 widget_preview_flip \
-widget_preview_pager \
 widget_preview_separator \
 widget_preview_radio \
 widget_preview_toggle \
@@ -145,7 +144,6 @@ EXTRA_DIST = \
 	widget_preview_layout.c \
 	widget_preview_list.c \
 	widget_preview_segment_control.c \
-	widget_preview_pager.c \
 	widget_preview_separator.c \
 	widget_preview_radio.c \
 	widget_preview_toggle.c \

@@ -3925,51 +3925,6 @@
  */
 
 /**
- * @page tutorial_pager
- * @dontinclude pager_example_01.c
- *
- * In this example we'll have a pager with 3 rectangles on it, one blue, one
- * green and one blue, we'll also have 1 button for each rectangle. Pressing a
- * button will bring the associated rectangle to the front of the pager(promote
- * it).
- *
- * We start our example with some run of the mill code that you've seen in other
- * examples:
- * @until show
- *
- * And then we get right to creating our pager, setting a style and some basic
- * properties to it:
- * @until show
- *
- * Well a pager without any content is not of much use, so let's create the
- * first of our rectangles, add it to the pager and create the button for it:
- * @until smart_callback
- * @note The only line of above code that directly relates to our pager is the
- * call to elm_pager_content_push().
- *
- * And now we will do the same thing again twice for our next two rectangles:
- * @until smart_callback
- * @until smart_callback
- *
- * Now that we haver our widgets create we can get to running the main loop:
- * @until ELM_MAIN
- *
- * We also have the callback that is called when any of the buttons is pressed,
- * this callback is receiving the rectangle in it's @p data argument, so we
- * check if it's already on top and if not move it there:
- * @until }
- *
- * Our example will look like this:
- *
- * @image html screenshots/pager_example_01.png
- * @image latex screenshots/pager_example_01.eps width=\textwidth
- * @note Like all examples that involve animations the screenshot doesn't do it
- * justice, seeing it in action is a must.
- *
- * @example pager_example_01.c
- */
-
-/**
  * @page tutorial_separator Separator example
  * @dontinclude separator_example_01.c
  *
@@ -4492,7 +4447,7 @@
  * and the entry itself doesn't, yet, support all the needed capabilities to
  * make this simpler. We begin by getting the format we are using in our
  * function from the button pressed.
- * @skip aid->pager = pager;
+ * @skip aid->naviframe = naviframe;
  * @until sizeof(fmt_close)
  *
  * Next we need to find out if we need to insert an opening or a closing tag.
@@ -5987,7 +5942,7 @@
  * accordingly and the URL bar needs to show the right address.
  *
  * @skip static void
- * @until pager_content_promote
+ * @until naviframe_item_simple_promote
  * @until }
  *
  * Other updates happen based on events from the web object, like title change

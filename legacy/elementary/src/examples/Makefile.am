@@ -99,7 +99,6 @@ SRCS = \
 	slider_example.c \
 	panes_example.c \
 	ctxpopup_example_01.c \
-	pager_example_01.c \
 	separator_example_01.c \
 	radio_example_01.c \
 	panel_example_01.c \
@@ -202,7 +201,6 @@ examples_PROGRAMS += \
 	fileselector_entry_example \
 	index_example_01 \
 	index_example_02 \
-	pager_example_01 \
 	separator_example_01 \
 	radio_example_01 \
 	toggle_example_01 \
@@ -287,7 +285,6 @@ SCREENSHOTS = \
 	slider_example:slider_example.png:0.0 \
 	panes_example:panes_example.png:0.0 \
 	ctxpopup_example_01:ctxpopup_example_01.png:0.0 \
-	pager_example_01:pager_example_01.png:0.0 \
 	separator_example_01:separator_example_01.png:0.0 \
 	radio_example_01:radio_example_01.png:0.0 \
 	toggle_example_01:toggle_example_01.png:0.0 \
