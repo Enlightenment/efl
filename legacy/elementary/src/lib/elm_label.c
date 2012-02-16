@@ -639,7 +639,7 @@ elm_label_wrap_height_get(const Evas_Object *obj)
    return wd->wrap_h;
 }
 
-EAPI void
+EINA_DEPRECATED EAPI void
 elm_label_fontsize_set(Evas_Object *obj, int fontsize)
 {
    ELM_CHECK_WIDTYPE(obj, widtype);
@@ -667,7 +667,7 @@ elm_label_fontsize_set(Evas_Object *obj, int fontsize)
    eina_strbuf_free(fontbuf);
 }
 
-EAPI void
+EINA_DEPRECATED EAPI void
 elm_label_text_align_set(Evas_Object *obj, const char *alignmode)
 {
    ELM_CHECK_WIDTYPE(obj, widtype);
@@ -690,7 +690,7 @@ elm_label_text_align_set(Evas_Object *obj, const char *alignmode)
    _sizing_eval(obj);
 }
 
-EAPI void
+EINA_DEPRECATED EAPI void
 elm_label_text_color_set(Evas_Object *obj,
                          unsigned int r,
                          unsigned int g,
@@ -720,7 +720,7 @@ elm_label_text_color_set(Evas_Object *obj,
    eina_strbuf_free(colorbuf);
 }
 
-EAPI void
+EINA_DEPRECATED EAPI void
 elm_label_background_color_set(Evas_Object *obj,
                                unsigned int r,
                                unsigned int g,

@@ -4749,7 +4749,7 @@ EINA_DEPRECATED EAPI const char      *elm_pager_item_style_default_get(const Eva
  * instead. e.g. "default", "marker", "slide_long" etc.
  * @deprecated Use tag instead
  */
-EAPI void                        elm_label_fontsize_set(Evas_Object *obj, int fontsize);
+EINA_DEPRECATED EAPI void                        elm_label_fontsize_set(Evas_Object *obj, int fontsize);
 
 /**
  * @brief Set the text color on the label object
@@ -4764,7 +4764,7 @@ EAPI void                        elm_label_fontsize_set(Evas_Object *obj, int fo
  * instead. e.g. "default", "marker", "slide_long" etc.
  * @deprecated Use tag instead
  */
-EAPI void                        elm_label_text_color_set(Evas_Object *obj, unsigned int r, unsigned int g, unsigned int b, unsigned int a);
+EINA_DEPRECATED EAPI void                        elm_label_text_color_set(Evas_Object *obj, unsigned int r, unsigned int g, unsigned int b, unsigned int a);
 
 /**
  * @brief Set the text align on the label object
@@ -4776,7 +4776,7 @@ EAPI void                        elm_label_text_color_set(Evas_Object *obj, unsi
  * instead. e.g. "default", "marker", "slide_long" etc.
  * @deprecated Use tag instead
  */
-EAPI void                        elm_label_text_align_set(Evas_Object *obj, const char *alignmode);
+EINA_DEPRECATED EAPI void                        elm_label_text_align_set(Evas_Object *obj, const char *alignmode);
 
 /**
  * @brief Set background color of the label
@@ -4791,7 +4791,7 @@ EAPI void                        elm_label_text_align_set(Evas_Object *obj, cons
  * instead. e.g. "default", "marker", "slide_long" etc.
  * @deprecated Just make colored background by yourself. 
  */
-EAPI void                        elm_label_background_color_set(Evas_Object *obj, unsigned int r, unsigned int g, unsigned int b, unsigned int a);
+EINA_DEPRECATED EAPI void                        elm_label_background_color_set(Evas_Object *obj, unsigned int r, unsigned int g, unsigned int b, unsigned int a);
 
 /**
  * @}
