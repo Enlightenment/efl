@@ -43,7 +43,6 @@
 ./src/bin/test_menu.c
 ./src/bin/test_multi.c
 ./src/bin/test_notify.c
-./src/bin/test_pager.c
 ./src/bin/test_panel.c
 ./src/bin/test_panes.c
 ./src/bin/test_photo.c
@@ -134,7 +133,6 @@
 ./src/lib/elm_menu.c
 ./src/lib/elm_module.c
 ./src/lib/elm_notify.c
-./src/lib/elm_pager.c
 ./src/lib/elm_panel.c
 ./src/lib/elm_panes.c
 ./src/lib/elm_photo.c
