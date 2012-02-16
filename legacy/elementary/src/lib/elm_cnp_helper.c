@@ -389,27 +389,27 @@ elm_selection_selection_has_owner(void)
 #endif
 }
 
-Eina_Bool
-elm_cnp_selection_set(Elm_Sel_Type selection, Evas_Object *widget,
+EAPI Eina_Bool
+elm_cnp_selection_set(Elm_Sel_Type selection, Evas_Object *obj,
                       Elm_Sel_Format format, const void *selbuf, size_t buflen)
 {
 #ifdef HAVE_ELEMENTARY_X
-   Evas_Object *top = elm_widget_top_get(widget);
+   Evas_Object *top = elm_widget_top_get(obj);
    Ecore_X_Window xwin;
    Cnp_Selection *sel;
 
    if (top) xwin = elm_win_xwindow_get(top);
-   else xwin = elm_win_xwindow_get(widget);
+   else xwin = elm_win_xwindow_get(obj);
    if ((!xwin) || (selection >= ELM_SEL_TYPE_MAX))
      return EINA_FALSE;
    if (!_elm_cnp_init_count) _elm_cnp_init();
    if ((!selbuf) && (format != ELM_SEL_FORMAT_IMAGE))
-     return elm_cnp_selection_clear(selection, widget);
+     return elm_cnp_selection_clear(selection, obj);
 
    sel = selections + selection;
 
    sel->active = EINA_TRUE;
-   sel->widget = widget;
+   sel->widget = obj;
    sel->set(xwin, &selection, sizeof(Elm_Sel_Type));
    sel->format = format;
 
@@ -432,8 +432,8 @@ elm_cnp_selection_set(Elm_Sel_Type selection, Evas_Object *widget,
 #endif
 }
 
-Eina_Bool
-elm_cnp_selection_clear(Elm_Sel_Type selection, Evas_Object *widget)
+EAPI Eina_Bool
+elm_cnp_selection_clear(Elm_Sel_Type selection, Evas_Object *obj)
 {
 #ifdef HAVE_ELEMENTARY_X
    Cnp_Selection *sel;
@@ -445,7 +445,7 @@ elm_cnp_selection_clear(Elm_Sel_Type selection, Evas_Object *widget)
    sel = selections + selection;
 
    /* No longer this selection: Consider it gone! */
-   if ((!sel->active) || (sel->widget != widget)) return EINA_TRUE;
+   if ((!sel->active) || (sel->widget != obj)) return EINA_TRUE;
 
    sel->active = EINA_FALSE;
    sel->widget = NULL;
@@ -462,9 +462,9 @@ elm_cnp_selection_clear(Elm_Sel_Type selection, Evas_Object *widget)
 #endif
 }
 
-Eina_Bool
+EAPI Eina_Bool
 elm_cnp_selection_get(Elm_Sel_Type selection, Elm_Sel_Format format,
-                      Evas_Object *widget, Elm_Drop_Cb datacb, void *udata)
+                      Evas_Object *obj, Elm_Drop_Cb datacb, void *udata)
 {
 #ifdef HAVE_ELEMENTARY_X
    Evas_Object *top;
@@ -475,11 +475,11 @@ elm_cnp_selection_get(Elm_Sel_Type selection, Elm_Sel_Format format,
    if (!_elm_cnp_init_count) _elm_cnp_init();
 
    sel = selections + selection;
-   top = elm_widget_top_get(widget);
+   top = elm_widget_top_get(obj);
    if (!top) return EINA_FALSE;
 
    sel->requestformat = format;
-   sel->requestwidget = widget;
+   sel->requestwidget = obj;
    sel->request(elm_win_xwindow_get(top), ECORE_X_SELECTION_TARGET_TARGETS);
    sel->datacb = datacb;
    sel->udata = udata;

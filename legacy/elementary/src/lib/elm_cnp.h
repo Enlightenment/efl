@@ -45,13 +45,13 @@ struct _Elm_Selection_Data
 };
 
 /**
- * @brief Set a data of a widget to copy and paste.
+ * @brief Set copy and paste data to a widget.
  *
- * Append the given callback to the list. This functions will be called
- * called.
+ * XXX: need to be rewritten.
+ * Append the given callback to the list. This functions will be called.
  *
- * @param selection selection type for copying and pasting
- * @param widget The source widget pointer
+ * @param selection Selection type for copying and pasting
+ * @param obj The source widget pointer
  * @param format Type of selection format
  * @param buf The pointer of data source
  * @return If EINA_TRUE, setting data is success.
@@ -59,20 +59,24 @@ struct _Elm_Selection_Data
  * @ingroup CopyPaste
  *
  */
-
-EAPI Eina_Bool elm_cnp_selection_set(Elm_Sel_Type selection, Evas_Object *widget, Elm_Sel_Format format, const void *buf, size_t buflen);
+// XXX: EAPI void elm_object_cnp_selection_set(Evas_Object *obj, Elm_Sel_Type selection,
+//                                             Elm_Sel_Format format, const void *buf,
+//                                             size_t buflen);
+EAPI Eina_Bool elm_cnp_selection_set(Elm_Sel_Type selection, Evas_Object *obj,
+                                     Elm_Sel_Format format, const void *buf,
+                                     size_t buflen);
 
 /**
- * @brief Retrieve the data from the widget which is set for copying and pasting.
+ * @brief Retrieve the copy and paste data from the widget.
  *
- * Getting the data from the widget which is set for copying and pasting.
- * Mainly the widget is elm_entry. If then @p datacb and @p udata are
- * can be NULL. If not, @p datacb and @p udata are used for retrieving data.
+ * Gets the data from the widget which is set for copying and pasting.
+ * Mainly the widget is elm_entry. If then @p datacb and @p udata can be NULL.
+ * If not, @p datacb and @p udata are used for retrieving data.
  *
  * @see also elm_cnp_selection_set()
  *
- * @param selection selection type for copying and pasting
- * @param widget The source widget pointer
+ * @param selection Selection type for copying and pasting
+ * @param obj The source widget pointer
  * @param datacb The user data callback if the target widget isn't elm_entry
  * @param udata The user data pointer for @p datacb
  * @return If EINA_TRUE, getting data is success.
@@ -80,25 +84,37 @@ EAPI Eina_Bool elm_cnp_selection_set(Elm_Sel_Type selection, Evas_Object *widget
  * @ingroup CopyPaste
  *
  */
-
-EAPI Eina_Bool elm_cnp_selection_get(Elm_Sel_Type selection, Elm_Sel_Format format, Evas_Object *widget, Elm_Drop_Cb datacb, void *udata);
+// XXX: This api needs to be refined by cnp experts.
+//      I suggest:
+//         1. return copy and paste data.
+//         2. call cnp callback regardless of widget type.
+//         3. apps insert text data into entry manually.
+// XXX: EAPI void *elm_object_cnp_selection_get(Evas_Object *obj,
+//                                              Elm_Sel_Type selection,
+//                                              Elm_Sel_Format format,
+//                                              Elm_Cnp_Cb datacb);
+EAPI Eina_Bool elm_cnp_selection_get(Elm_Sel_Type selection,
+                                     Elm_Sel_Format format, Evas_Object *obj,
+                                     Elm_Drop_Cb datacb, void *udata);
 
 /**
- * @brief Clear the data in the widget which is set for copying and pasting.
+ * @brief Clear the copy and paste data in the widget.
  *
  * Clear the data in the widget. Normally this function isn't need to call.
  *
  * @see also elm_cnp_selection_set()
  *
- * @param selection selection type for copying and pasting
+ * @param selection Selection type for copying and pasting
  * @param widget The source widget pointer
  * @return If EINA_TRUE, clearing data is success.
  *
  * @ingroup CopyPaste
  *
  */
-
-EAPI Eina_Bool elm_cnp_selection_clear(Elm_Sel_Type selection, Evas_Object *widget);
+// XXX: EAPI void elm_object_cnp_selection_clear(Evas_Object *obj,
+//                                               Elm_Sel_Type selection);
+EAPI Eina_Bool elm_cnp_selection_clear(Elm_Sel_Type selection,
+                                       Evas_Object *obj);
 
 /**
  * @}
