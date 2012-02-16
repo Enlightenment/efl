@@ -90,7 +90,7 @@ test_conformant(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event 
 static void
 popobj(void *data, Evas_Object *obj __UNUSED__, void *event __UNUSED__)
 {
-  elm_pager_content_pop(data);
+   elm_pager_content_pop(data);
 }
 
 void

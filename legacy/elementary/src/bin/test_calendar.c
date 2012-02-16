@@ -46,12 +46,12 @@ _print_cal_info(Evas_Object *cal, Evas_Object *en)
    wds = elm_calendar_weekdays_names_get(cal);
 
    snprintf(info, sizeof(info),
-	 "  Day: %i, Mon: %i, Year %i, WeekDay: %i<br/>"
-	 "  Interval: %0.2f, Year_Min: %i, Year_Max %i, Sel Enabled : %i<br/>"
-	 "  Weekdays: %s, %s, %s, %s, %s, %s, %s<br/>",
-	 stime.tm_mday, stime.tm_mon, stime.tm_year + 1900, stime.tm_wday,
-	 interval, year_min, year_max, sel_enabled,
-	 wds[0], wds[1], wds[2], wds[3], wds[4], wds[5], wds[6]);
+            "  Day: %i, Mon: %i, Year %i, WeekDay: %i<br/>"
+            "  Interval: %0.2f, Year_Min: %i, Year_Max %i, Sel Enabled : %i<br/>"
+            "  Weekdays: %s, %s, %s, %s, %s, %s, %s<br/>",
+            stime.tm_mday, stime.tm_mon, stime.tm_year + 1900, stime.tm_wday,
+            interval, year_min, year_max, sel_enabled,
+            wds[0], wds[1], wds[2], wds[3], wds[4], wds[5], wds[6]);
 
    elm_object_text_set(en, info);
 }
@@ -167,7 +167,7 @@ test_calendar2(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_i
    current_time = time(NULL) - 5 * 84600;
    localtime_r(&current_time, &selected_time);
    mark = elm_calendar_mark_add(cal, "holiday", &selected_time,
-	 ELM_CALENDAR_WEEKLY);
+                                ELM_CALENDAR_WEEKLY);
 
    current_time = time(NULL) + 1 * 84600;
    localtime_r(&current_time, &selected_time);
