@@ -3487,17 +3487,17 @@ EAPI const Eina_Model_Interface *
 eina_model_interface_get(const Eina_Model *model, const char *name)
 {
    const Eina_Model_Description *desc;
-   const Eina_Model_Interface **itr, **itr_first;
+   const Eina_Model_Interface **itr, **itr_end;
 
    EINA_MODEL_INSTANCE_CHECK_VAL(model, NULL);
    EINA_SAFETY_ON_NULL_RETURN_VAL(name, NULL);
 
    desc = model->desc;
-   itr_first = desc->cache.ifaces;
-   itr = itr_first + desc->total.ifaces - 1;
+   itr = desc->cache.ifaces;
+   itr_end = itr + desc->total.ifaces;
 
    /* fallback to strcmp if user is lazy about speed */
-   for (; itr >= itr_first; itr--)
+   for (; itr < itr_end; itr++)
      if (strcmp((*itr)->name, name) == 0)
        return *itr;
 
