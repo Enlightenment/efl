@@ -983,3 +983,21 @@ elm_icon_preload_set(Evas_Object *obj, Eina_Bool disable)
    if (!wd) return;
    _els_smart_icon_preload_set(wd->img, disable);
 }
+
+EAPI void
+elm_icon_aspect_fixed_set(Evas_Object *obj, Eina_Bool fixed)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype);
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return;
+   _els_smart_icon_aspect_fixed_set(wd->img, fixed);
+}
+
+EAPI Eina_Bool
+elm_icon_aspect_fixed_get(const Evas_Object *obj)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype) EINA_FALSE;
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return EINA_FALSE;
+   return _els_smart_icon_aspect_fixed_get(wd->img);
+}

@@ -531,5 +531,35 @@ EAPI void                  elm_icon_animated_play_set(Evas_Object *obj, Eina_Boo
 EAPI Eina_Bool             elm_icon_animated_play_get(const Evas_Object *obj);
 
 /**
+ * Set whether the original aspect ratio of the icon should be kept on resize.
+ *
+ * @param obj The icon object.
+ * @param fixed @c EINA_TRUE if the icon should retain the aspect,
+ * @c EINA_FALSE otherwise.
+ *
+ * The original aspect ratio (width / height) of the icon is usually
+ * distorted to match the object's size. Enabling this option will retain
+ * this original aspect, and the way that the icon is fit into the object's
+ * area depends on the option set by elm_icon_fill_outside_set().
+ *
+ * @see elm_icon_aspect_fixed_get()
+ * @see elm_icon_fill_outside_set()
+ *
+ * @ingroup Icon
+ */
+EAPI void             elm_icon_aspect_fixed_set(Evas_Object *obj, Eina_Bool fixed);
+
+/**
+ * Get if the object retains the original aspect ratio.
+ *
+ * @param obj The icon object.
+ * @return @c EINA_TRUE if the object keeps the original aspect, @c EINA_FALSE
+ * otherwise.
+ *
+ * @ingroup Icon
+ */
+EAPI Eina_Bool        elm_icon_aspect_fixed_get(const Evas_Object *obj);
+
+/**
  * @}
  */
