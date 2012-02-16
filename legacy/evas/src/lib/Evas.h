@@ -9370,7 +9370,7 @@ struct _Evas_Smart_Cb_Description
        return;								\
      if (!prefix##_parent_sc)						\
        prefix##_parent_sc = parent_func();				\
-     evas_smart_class_inherit(sc, (const Evas_Smart_Class *)prefix##_parent_sc); \
+     evas_smart_class_inherit(sc, prefix##_parent_sc);                  \
      prefix##_smart_set_user(api);					\
   }									\
   static Evas_Smart * prefix##_smart_class_new(void)			\
@@ -9579,7 +9579,7 @@ EAPI int                              evas_smart_usage_get(const Evas_Smart *s);
    * @return 1 on success, 0 on failure.
    * @ingroup Evas_Smart_Group
    */
-#define evas_smart_class_inherit(sc, parent_sc) evas_smart_class_inherit_full(sc, parent_sc, sizeof(*parent_sc))
+#define evas_smart_class_inherit(sc, parent_sc) evas_smart_class_inherit_full(sc, (Evas_Smart_Class *)parent_sc, sizeof(*parent_sc))
 
 /**
  * @}
