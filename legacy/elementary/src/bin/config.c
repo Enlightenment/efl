@@ -641,7 +641,7 @@ _status_config(Evas_Object *win,
    evas_object_smart_callback_add(sl, "delay,changed", sc_change, NULL);
 
    sp = elm_separator_add(win);
-   elm_separator_horizontal_set(sp, 1);
+   elm_separator_horizontal_set(sp, EINA_TRUE);
    evas_object_size_hint_weight_set(sp, EVAS_HINT_EXPAND, 0.0);
    evas_object_size_hint_align_set(sp, EVAS_HINT_FILL, 0.5);
    elm_box_pack_end(bx, sp);
@@ -1185,7 +1185,7 @@ _status_config_sizing(Evas_Object *win,
    evas_object_smart_callback_add(sl, "delay,changed", sc_change, NULL);
 
    sp = elm_separator_add(win);
-   elm_separator_horizontal_set(sp, 1);
+   elm_separator_horizontal_set(sp, EINA_TRUE);
    evas_object_size_hint_weight_set(sp, EVAS_HINT_EXPAND, 0.0);
    evas_object_size_hint_align_set(sp, EVAS_HINT_FILL, 0.5);
    elm_box_pack_end(bx, sp);
@@ -1257,7 +1257,7 @@ _sample_theme_new(Evas_Object *win)
    evas_object_show(rd);
 
    sp = elm_separator_add(win);
-   elm_separator_horizontal_set(sp, 1);
+   elm_separator_horizontal_set(sp, EINA_TRUE);
    evas_object_size_hint_weight_set(sp, 1.0, 0.0);
    evas_object_size_hint_align_set(sp, EVAS_HINT_FILL, 0.5);
    elm_table_pack(base, sp, 0, 2, 2, 1);
@@ -1454,7 +1454,7 @@ _status_config_themes(Evas_Object *win,
 
    /////////////////////////////////////////////
    sp = elm_separator_add(win);
-   elm_separator_horizontal_set(sp, 1);
+   elm_separator_horizontal_set(sp, EINA_TRUE);
    evas_object_size_hint_weight_set(sp, 1.0, 0.0);
    evas_object_size_hint_align_set(sp, EVAS_HINT_FILL, 0.5);
    elm_table_pack(tb, sp, 0, 2, 1, 1);
@@ -2855,7 +2855,7 @@ _status_config_caches(Evas_Object *win,
    evas_object_smart_callback_add(sl, "delay,changed", cf_change, NULL);
 
    sp = elm_separator_add(win);
-   elm_separator_horizontal_set(sp, 1);
+   elm_separator_horizontal_set(sp, EINA_TRUE);
    evas_object_size_hint_weight_set(sp, EVAS_HINT_EXPAND, 0.0);
    evas_object_size_hint_align_set(sp, EVAS_HINT_FILL, 0.5);
    elm_box_pack_end(bx, sp);
@@ -2879,7 +2879,7 @@ _status_config_caches(Evas_Object *win,
    evas_object_smart_callback_add(sl, "delay,changed", fc_change, NULL);
 
    sp = elm_separator_add(win);
-   elm_separator_horizontal_set(sp, 1);
+   elm_separator_horizontal_set(sp, EINA_TRUE);
    evas_object_size_hint_weight_set(sp, EVAS_HINT_EXPAND, 0.0);
    evas_object_size_hint_align_set(sp, EVAS_HINT_FILL, 0.5);
    elm_box_pack_end(bx, sp);
@@ -2903,7 +2903,7 @@ _status_config_caches(Evas_Object *win,
    evas_object_smart_callback_add(sl, "delay,changed", ic_change, NULL);
 
    sp = elm_separator_add(win);
-   elm_separator_horizontal_set(sp, 1);
+   elm_separator_horizontal_set(sp, EINA_TRUE);
    evas_object_size_hint_weight_set(sp, EVAS_HINT_EXPAND, 0.0);
    evas_object_size_hint_align_set(sp, EVAS_HINT_FILL, 0.5);
    elm_box_pack_end(bx, sp);
@@ -2927,7 +2927,7 @@ _status_config_caches(Evas_Object *win,
    evas_object_smart_callback_add(sl, "delay,changed", efc_change, NULL);
 
    sp = elm_separator_add(win);
-   elm_separator_horizontal_set(sp, 1);
+   elm_separator_horizontal_set(sp, EINA_TRUE);
    evas_object_size_hint_weight_set(sp, EVAS_HINT_EXPAND, 0.0);
    evas_object_size_hint_align_set(sp, EVAS_HINT_FILL, 0.5);
    elm_box_pack_end(bx, sp);
@@ -2964,7 +2964,7 @@ _status_config_full(Evas_Object *win,
 
    tb = elm_toolbar_add(win);
    elm_toolbar_menu_parent_set(tb, win);
-   elm_toolbar_homogeneous_set(tb, 0);
+   elm_toolbar_homogeneous_set(tb, EINA_FALSE);
    evas_object_size_hint_weight_set(tb, 1.0, 0.0);
    evas_object_size_hint_align_set(tb, EVAS_HINT_FILL, EVAS_HINT_FILL);
 

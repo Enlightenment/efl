@@ -39,7 +39,7 @@ fill(Evas_Object *win, Eina_Bool do_bg)
    evas_object_size_hint_align_set(en, EVAS_HINT_FILL, 0.5);
    elm_object_text_set(en, "This is a single line");
    elm_entry_scrollbar_policy_set(en, ELM_SCROLLER_POLICY_OFF, ELM_SCROLLER_POLICY_OFF);
-   elm_entry_single_line_set(en, 1);
+   elm_entry_single_line_set(en, EINA_TRUE);
    evas_object_show(en);
    elm_box_pack_end(bx, en);
 
@@ -49,7 +49,7 @@ fill(Evas_Object *win, Eina_Bool do_bg)
    evas_object_size_hint_align_set(en, EVAS_HINT_FILL, 0.5);
    elm_object_text_set(en, "Entry 2");
    elm_entry_scrollbar_policy_set(en, ELM_SCROLLER_POLICY_OFF, ELM_SCROLLER_POLICY_OFF);
-   elm_entry_single_line_set(en, 1);
+   elm_entry_single_line_set(en, EINA_TRUE);
    evas_object_show(en);
    elm_box_pack_end(bx, en);
 

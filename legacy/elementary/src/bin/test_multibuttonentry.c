@@ -71,7 +71,7 @@ _mbe_unfocused_cb(void *data __UNUSED__,
                   void *event_info __UNUSED__ )
 {
    //Set the multibuttonentry to contracted mode of single line
-   elm_multibuttonentry_shrink_mode_set(obj, 1);
+   elm_multibuttonentry_shrink_mode_set(obj, EINA_TRUE);
    printf("multibuttonentry unfocused!\n");
 }
 

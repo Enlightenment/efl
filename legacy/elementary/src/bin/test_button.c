@@ -91,7 +91,7 @@ test_button(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info
    bt = elm_button_add(win);
    elm_object_text_set(bt, "Disabled Button");
    elm_object_part_content_set(bt, "icon", ic);
-   elm_object_disabled_set(bt, 1);
+   elm_object_disabled_set(bt, EINA_TRUE);
    evas_object_smart_callback_add(bt, "clicked", _bt_clicked, (void *)3);
    evas_object_smart_callback_add(bt, "unpressed", _bt_unpressed, (void *)3);
    elm_box_pack_end(bx, bt);
@@ -104,7 +104,7 @@ test_button(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info
    evas_object_size_hint_aspect_set(ic, EVAS_ASPECT_CONTROL_VERTICAL, 1, 1);
    bt = elm_button_add(win);
    elm_object_part_content_set(bt, "icon", ic);
-   elm_object_disabled_set(bt, 1);
+   elm_object_disabled_set(bt, EINA_TRUE);
    evas_object_smart_callback_add(bt, "clicked", _bt_clicked, (void *)4);
    evas_object_smart_callback_add(bt, "unpressed", _bt_unpressed, (void *)4);
    elm_box_pack_end(bx, bt);
@@ -117,7 +117,7 @@ test_button(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info
    evas_object_smart_callback_add(bt, "unpressed", _bt_unpressed, (void *)5);
    elm_box_pack_end(bx, bt);
    evas_object_smart_callback_add(bt, "repeated", _bt_repeated, NULL);
-   elm_button_autorepeat_set(bt, 1);
+   elm_button_autorepeat_set(bt, EINA_TRUE);
    elm_button_autorepeat_initial_timeout_set(bt, 2.0);
    elm_button_autorepeat_gap_timeout_set(bt, 0.5);
    evas_object_show(bt);
@@ -163,7 +163,7 @@ test_button(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info
    elm_object_access_info_set(bt, "This is some custom text describing this widget");
    elm_object_style_set(bt, "anchor");
    elm_object_part_content_set(bt, "icon", ic);
-   elm_object_disabled_set(bt, 1);
+   elm_object_disabled_set(bt, EINA_TRUE);
    evas_object_smart_callback_add(bt, "clicked", _bt_clicked, (void *)9);
    evas_object_smart_callback_add(bt, "unpressed", _bt_unpressed, (void *)9);
    elm_box_pack_end(bx, bt);

@@ -19,7 +19,7 @@ test_separator(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_i
 
    bx0 = elm_box_add(win);
    evas_object_size_hint_weight_set(bx0, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-   elm_box_horizontal_set(bx0, 1);
+   elm_box_horizontal_set(bx0, EINA_TRUE);
    elm_win_resize_object_add(win, bx0);
    evas_object_show(bx0);
 
@@ -34,13 +34,13 @@ test_separator(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_i
    evas_object_show(bt);
 
    sp = elm_separator_add(win);
-   elm_separator_horizontal_set(sp, 1); // by default, separator is vertical, we must set it horizontal
+   elm_separator_horizontal_set(sp, EINA_TRUE); // by default, separator is vertical, we must set it horizontal
    elm_box_pack_end(bx, sp);
    evas_object_show(sp);
 
    bt = elm_button_add(win);
    elm_object_text_set(bt, "Left lower corner");
-   elm_object_disabled_set(bt, 1);
+   elm_object_disabled_set(bt, EINA_TRUE);
    elm_box_pack_end(bx, bt);
    evas_object_show(bt);
 
@@ -55,12 +55,12 @@ test_separator(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_i
 
    bt = elm_button_add(win);
    elm_object_text_set(bt, "Right upper corner");
-   elm_object_disabled_set(bt, 1);
+   elm_object_disabled_set(bt, EINA_TRUE);
    elm_box_pack_end(bx, bt);
    evas_object_show(bt);
 
    sp = elm_separator_add(win);
-   elm_separator_horizontal_set(sp, 1);
+   elm_separator_horizontal_set(sp, EINA_TRUE);
    elm_box_pack_end(bx, sp);
    evas_object_show(sp);
 

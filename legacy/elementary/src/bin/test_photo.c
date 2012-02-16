@@ -57,7 +57,7 @@ test_photo(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info 
                elm_photo_thumb_set(ph, buf, NULL);
              else
                elm_photo_file_set(ph, buf);
-             elm_photo_editable_set(ph, 1);
+             elm_photo_editable_set(ph, EINA_TRUE);
              evas_object_size_hint_weight_set(ph, EVAS_HINT_EXPAND,
                                               EVAS_HINT_EXPAND);
              evas_object_size_hint_align_set(ph, EVAS_HINT_FILL,

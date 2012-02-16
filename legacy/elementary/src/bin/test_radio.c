@@ -64,7 +64,7 @@ test_radio(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info 
    elm_radio_state_value_set(rd, 3);
    elm_radio_group_add(rd, rdg);
    elm_object_text_set(rd, "Disabled");
-   elm_object_disabled_set(rd, 1);
+   elm_object_disabled_set(rd, EINA_TRUE);
    elm_box_pack_end(bx, rd);
    evas_object_show(rd);
 
@@ -90,7 +90,7 @@ test_radio(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info 
    elm_radio_state_value_set(rd, 5);
    elm_radio_group_add(rd, rdg);
    elm_object_part_content_set(rd, "icon", ic);
-   elm_object_disabled_set(rd, 1);
+   elm_object_disabled_set(rd, EINA_TRUE);
    elm_box_pack_end(bx, rd);
    evas_object_show(rd);
    evas_object_show(ic);

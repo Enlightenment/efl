@@ -55,7 +55,7 @@ test_spinner(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_inf
 
    sp = elm_spinner_add(win);
    elm_spinner_label_format_set(sp, "Disabled %.0f");
-   elm_object_disabled_set(sp, 1);
+   elm_object_disabled_set(sp, EINA_TRUE);
    elm_spinner_min_max_set(sp, -50.0, 250.0);
    evas_object_size_hint_align_set(sp, EVAS_HINT_FILL, 0.5);
    evas_object_size_hint_weight_set(sp, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);

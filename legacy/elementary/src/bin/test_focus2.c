@@ -40,7 +40,7 @@ _focus_layout_part(void *data, Evas_Object *o __UNUSED__, void *event_info __UNU
 
    Evas_Object *newfocus = (Evas_Object *)edje_object_part_object_get(ed, "sky");
    const char *type = evas_object_type_get(newfocus);
-   printf("evas_object_focus_set(%p, 1) %s\n", newfocus, type);
+   printf("evas_object_focus_set(%p, EINA_TRUE) %s\n", newfocus, type);
    evas_object_focus_set(newfocus, EINA_TRUE);;
 }
 
@@ -82,7 +82,7 @@ test_focus2(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info
    evas_object_size_hint_align_set(en, EVAS_HINT_FILL, 0.5);
    elm_entry_scrollbar_policy_set(en, ELM_SCROLLER_POLICY_OFF, ELM_SCROLLER_POLICY_OFF);
    elm_object_text_set(en, "Scrolled Entry that should get focus");
-   elm_entry_single_line_set(en, 1);
+   elm_entry_single_line_set(en, EINA_TRUE);
    evas_object_show(en);
    elm_box_pack_end(bx, en);
 
@@ -110,7 +110,7 @@ test_focus2(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info
    evas_object_size_hint_align_set(en, EVAS_HINT_FILL, 0.5);
    elm_entry_scrollbar_policy_set(en, ELM_SCROLLER_POLICY_OFF, ELM_SCROLLER_POLICY_OFF);
    elm_object_text_set(en, "Scrolled Entry that should get focus");
-   elm_entry_single_line_set(en, 1);
+   elm_entry_single_line_set(en, EINA_TRUE);
    elm_object_part_content_set(ly, "element2", en);
 
    bt = elm_button_add(ly);

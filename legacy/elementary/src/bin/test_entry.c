@@ -300,8 +300,8 @@ test_entry_scrolled(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *ev
    evas_object_size_hint_align_set(en, EVAS_HINT_FILL, 0.5);
    elm_entry_scrollbar_policy_set(en, ELM_SCROLLER_POLICY_OFF, ELM_SCROLLER_POLICY_OFF);
    elm_object_text_set(en, "Disabled entry");
-   elm_entry_single_line_set(en, 1);
-   elm_object_disabled_set(en, 1);
+   elm_entry_single_line_set(en, EINA_TRUE);
+   elm_object_disabled_set(en, EINA_TRUE);
    evas_object_show(en);
    elm_box_pack_end(bx, en);
 
@@ -311,10 +311,10 @@ test_entry_scrolled(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *ev
    evas_object_size_hint_weight_set(en, EVAS_HINT_EXPAND, 0.0);
    evas_object_size_hint_align_set(en, EVAS_HINT_FILL, 0.5);
    elm_entry_scrollbar_policy_set(en, ELM_SCROLLER_POLICY_OFF, ELM_SCROLLER_POLICY_OFF);
-   elm_entry_password_set(en, 1);
-   elm_entry_single_line_set(en, 1);
+   elm_entry_password_set(en, EINA_TRUE);
+   elm_entry_single_line_set(en, EINA_TRUE);
    elm_object_text_set(en, "Access denied, give up!");
-   elm_object_disabled_set(en, 1);
+   elm_object_disabled_set(en, EINA_TRUE);
    evas_object_show(en);
    elm_box_pack_end(bx, en);
 
@@ -324,7 +324,7 @@ test_entry_scrolled(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *ev
    evas_object_size_hint_weight_set(en, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(en, EVAS_HINT_FILL, EVAS_HINT_FILL);
    elm_entry_scrollbar_policy_set(en, ELM_SCROLLER_POLICY_ON, ELM_SCROLLER_POLICY_ON);
-   elm_object_disabled_set(en, 1);
+   elm_object_disabled_set(en, EINA_TRUE);
    elm_entry_context_menu_item_add(en, "Hello", NULL, ELM_ICON_NONE, NULL, NULL);
    elm_entry_context_menu_item_add(en, "World", NULL, ELM_ICON_NONE, NULL, NULL);
    elm_object_text_set(en,
@@ -337,7 +337,7 @@ test_entry_scrolled(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *ev
    elm_box_pack_end(bx, en);
 
    sp = elm_separator_add(win);
-   elm_separator_horizontal_set(sp, 1);
+   elm_separator_horizontal_set(sp, EINA_TRUE);
    elm_box_pack_end(bx, sp);
    evas_object_show(sp);
 
@@ -348,7 +348,7 @@ test_entry_scrolled(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *ev
    evas_object_size_hint_align_set(en, EVAS_HINT_FILL, 0.5);
    elm_object_text_set(en, "This is a single line");
    elm_entry_scrollbar_policy_set(en, ELM_SCROLLER_POLICY_OFF, ELM_SCROLLER_POLICY_OFF);
-   elm_entry_single_line_set(en, 1);
+   elm_entry_single_line_set(en, EINA_TRUE);
    elm_entry_select_all(en);
    evas_object_show(en);
    elm_box_pack_end(bx, en);
@@ -360,7 +360,7 @@ test_entry_scrolled(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *ev
    evas_object_size_hint_align_set(en, EVAS_HINT_FILL, 0.5);
    elm_object_text_set(en, "01234");
    elm_entry_scrollbar_policy_set(en, ELM_SCROLLER_POLICY_OFF, ELM_SCROLLER_POLICY_OFF);
-   elm_entry_single_line_set(en, 1);
+   elm_entry_single_line_set(en, EINA_TRUE);
    evas_object_show(en);
    elm_box_pack_end(bx, en);
 
@@ -375,7 +375,7 @@ test_entry_scrolled(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *ev
    evas_object_size_hint_align_set(en, EVAS_HINT_FILL, 0.5);
    elm_object_text_set(en, "No numbers here");
    elm_entry_scrollbar_policy_set(en, ELM_SCROLLER_POLICY_OFF, ELM_SCROLLER_POLICY_OFF);
-   elm_entry_single_line_set(en, 1);
+   elm_entry_single_line_set(en, EINA_TRUE);
    evas_object_show(en);
    elm_box_pack_end(bx, en);
 
@@ -390,7 +390,7 @@ test_entry_scrolled(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *ev
    evas_object_size_hint_align_set(en, EVAS_HINT_FILL, 0.5);
    elm_object_text_set(en, "Just 20 chars");
    elm_entry_scrollbar_policy_set(en, ELM_SCROLLER_POLICY_OFF, ELM_SCROLLER_POLICY_OFF);
-   elm_entry_single_line_set(en, 1);
+   elm_entry_single_line_set(en, EINA_TRUE);
    evas_object_show(en);
    elm_box_pack_end(bx, en);
 
@@ -405,7 +405,7 @@ test_entry_scrolled(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *ev
    evas_object_size_hint_align_set(en, EVAS_HINT_FILL, 0.5);
    elm_object_text_set(en, "And now only 30 bytes");
    elm_entry_scrollbar_policy_set(en, ELM_SCROLLER_POLICY_OFF, ELM_SCROLLER_POLICY_OFF);
-   elm_entry_single_line_set(en, 1);
+   elm_entry_single_line_set(en, EINA_TRUE);
    evas_object_show(en);
    elm_box_pack_end(bx, en);
 
@@ -420,8 +420,8 @@ test_entry_scrolled(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *ev
    evas_object_size_hint_align_set(en_p, EVAS_HINT_FILL, 0.5);
    elm_entry_scrollbar_policy_set(en_p, ELM_SCROLLER_POLICY_OFF, ELM_SCROLLER_POLICY_OFF);
    elm_object_text_set(en_p, "Password here");
-   elm_entry_single_line_set(en_p, 1);
-   elm_entry_password_set(en_p, 1);
+   elm_entry_single_line_set(en_p, EINA_TRUE);
+   elm_entry_password_set(en_p, EINA_TRUE);
    evas_object_show(en_p);
    elm_box_pack_end(bx, en_p);
 
@@ -429,7 +429,7 @@ test_entry_scrolled(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *ev
    en = elm_entry_add(win);
    elm_entry_scrollable_set(en, EINA_TRUE);
    elm_entry_scrollbar_policy_set(en, ELM_SCROLLER_POLICY_OFF, ELM_SCROLLER_POLICY_OFF);
-   elm_entry_single_line_set(en, 1);
+   elm_entry_single_line_set(en, EINA_TRUE);
    evas_object_size_hint_weight_set(en, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(en, EVAS_HINT_FILL, EVAS_HINT_FILL);
    bt = elm_icon_add(win);
@@ -740,7 +740,7 @@ test_entry3(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info
    evas_object_size_hint_align_set(en, EVAS_HINT_FILL, 0.5);
    elm_entry_scrollbar_policy_set(en, ELM_SCROLLER_POLICY_OFF, ELM_SCROLLER_POLICY_OFF);
    elm_object_text_set(en, "This is a single line");
-   elm_entry_single_line_set(en, 1);
+   elm_entry_single_line_set(en, EINA_TRUE);
    elm_box_pack_end(bx, en);
    evas_object_show(en);
 
@@ -1304,7 +1304,7 @@ test_entry4(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info
    evas_object_size_hint_align_set(en, EVAS_HINT_FILL, 0.5);
    elm_entry_scrollbar_policy_set(en, ELM_SCROLLER_POLICY_OFF, ELM_SCROLLER_POLICY_OFF);
    elm_object_text_set(en, "This is a single line");
-   elm_entry_single_line_set(en, 1);
+   elm_entry_single_line_set(en, EINA_TRUE);
    elm_object_part_content_set(ly, "element1", en);
    evas_object_show(en);
 
