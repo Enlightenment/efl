@@ -11,12 +11,12 @@
  * This is a push-button. Press it and run some function. It can contain
  * a simple label and icon object and it also has an autorepeat feature.
  *
- * This widgets emits the following signals:
+ * This widget emits the following signals:
  * @li "clicked": the user clicked the button (press/release).
  * @li "repeated": the user pressed the button without releasing it.
  * @li "pressed": button was pressed.
  * @li "unpressed": button was released after being pressed.
- * In all three cases, the @c event parameter of the callback will be
+ * In all cases, the @c event parameter of the callback will be
  * @c NULL.
  *
  * Also, defined in the default theme, the button has the following styles
@@ -27,6 +27,8 @@
  * @li hoversel_vertical: Internally used by @ref Hoversel to give a
  * continuous look across its options.
  * @li hoversel_vertical_entry: Another internal for @ref Hoversel.
+ *
+ * XXX: add more styles in default theme.
  *
  * Default contents parts of the button widget that you can use for are:
  * @li "icon" - An icon of the button
@@ -88,7 +90,7 @@ EAPI Eina_Bool                    elm_button_autorepeat_get(const Evas_Object *o
  *
  * Sets the timeout, in seconds, since the button is pressed until the
  * first @c repeated signal is emitted. If @p t is 0.0 or less, there
- * won't be any delay and the even will be fired the moment the button is
+ * won't be any delay and the event will be fired the moment the button is
  * pressed.
  *
  * @param obj The button object
