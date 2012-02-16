@@ -4739,6 +4739,59 @@ EINA_DEPRECATED EAPI void             elm_pager_item_style_default_set(Evas_Obje
  */
 EINA_DEPRECATED EAPI const char      *elm_pager_item_style_default_get(const Evas_Object *obj);
 
+/**
+ * @brief Set the font size on the label object.
+ *
+ * @param obj The label object
+ * @param size font size
+ *
+ * @warning NEVER use this. It is for hyper-special cases only. use styles
+ * instead. e.g. "default", "marker", "slide_long" etc.
+ * @deprecated Use tag instead
+ */
+EAPI void                        elm_label_fontsize_set(Evas_Object *obj, int fontsize);
+
+/**
+ * @brief Set the text color on the label object
+ *
+ * @param obj The label object
+ * @param r Red property background color of The label object
+ * @param g Green property background color of The label object
+ * @param b Blue property background color of The label object
+ * @param a Alpha property background color of The label object
+ *
+ * @warning NEVER use this. It is for hyper-special cases only. use styles
+ * instead. e.g. "default", "marker", "slide_long" etc.
+ * @deprecated Use tag instead
+ */
+EAPI void                        elm_label_text_color_set(Evas_Object *obj, unsigned int r, unsigned int g, unsigned int b, unsigned int a);
+
+/**
+ * @brief Set the text align on the label object
+ *
+ * @param obj The label object
+ * @param align align mode ("left", "center", "right")
+ *
+ * @warning NEVER use this. It is for hyper-special cases only. use styles
+ * instead. e.g. "default", "marker", "slide_long" etc.
+ * @deprecated Use tag instead
+ */
+EAPI void                        elm_label_text_align_set(Evas_Object *obj, const char *alignmode);
+
+/**
+ * @brief Set background color of the label
+ *
+ * @param obj The label object
+ * @param r Red property background color of The label object
+ * @param g Green property background color of The label object
+ * @param b Blue property background color of The label object
+ * @param a Alpha property background alpha of The label object
+ *
+ * @warning NEVER use this. It is for hyper-special cases only. use styles
+ * instead. e.g. "default", "marker", "slide_long" etc.
+ * @deprecated Just make colored background by yourself. 
+ */
+EAPI void                        elm_label_background_color_set(Evas_Object *obj, unsigned int r, unsigned int g, unsigned int b, unsigned int a);
 
 /**
  * @}

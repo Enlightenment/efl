@@ -773,6 +773,15 @@ elm_label_ellipsis_set(Evas_Object *obj, Eina_Bool ellipsis)
 
 }
 
+EAPI Eina_Bool
+elm_label_ellipsis_get(const Evas_Object *obj)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype) EINA_FALSE;
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return EINA_FALSE;
+   return wd->ellipsis;
+}
+
 EAPI void
 elm_label_slide_set(Evas_Object *obj,
                     Eina_Bool    slide)
@@ -789,7 +798,7 @@ elm_label_slide_set(Evas_Object *obj,
 }
 
 EAPI Eina_Bool
-elm_label_slide_get(Evas_Object *obj)
+elm_label_slide_get(const Evas_Object *obj)
 {
    ELM_CHECK_WIDTYPE(obj, widtype) EINA_FALSE;
    Widget_Data *wd = elm_widget_data_get(obj);
@@ -812,7 +821,7 @@ elm_label_slide_duration_set(Evas_Object *obj, double duration)
 }
 
 EAPI double
-elm_label_slide_duration_get(Evas_Object *obj)
+elm_label_slide_duration_get(const Evas_Object *obj)
 {
    ELM_CHECK_WIDTYPE(obj, widtype) 0.0;
    Widget_Data *wd = elm_widget_data_get(obj);

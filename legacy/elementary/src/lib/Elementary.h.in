@@ -211,7 +211,7 @@ EAPI extern Elm_Version *elm_version;
 #include <elm_hover.h> // OK
 #include <elm_image.h> // OK
 #include <elm_index.h> // OK
-#include <elm_label.h>
+#include <elm_label.h> // OK
 #include <elm_layout.h>
 #include <elm_macros.h>
 #include <elm_mapbuf.h>
