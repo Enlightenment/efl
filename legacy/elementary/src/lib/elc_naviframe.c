@@ -59,6 +59,8 @@ static const Evas_Smart_Cb_Description _signals[] = {
        {NULL, NULL}
 };
 
+static Evas_Object *_content_get_hook(const Evas_Object *obj,
+                                      const char *part);
 static void _del_hook(Evas_Object *obj);
 static void _theme_hook(Evas_Object *obj);
 static void _emit_hook(Evas_Object *obj,
@@ -461,6 +463,21 @@ _back_btn_new(Evas_Object *obj)
    snprintf(buf, sizeof(buf), "naviframe/back_btn/%s", elm_widget_style_get(obj));
    elm_object_style_set(btn, buf);
    return btn;
+}
+
+static Evas_Object *
+_content_get_hook(const Evas_Object *obj, const char *part)
+{
+   Widget_Data *wd;
+   Elm_Naviframe_Item *it;
+   ELM_CHECK_WIDTYPE(obj, widtype) NULL;
+
+   if (part && strcmp(part, "default")) return NULL;
+   wd = elm_widget_data_get(obj);
+   if ((!wd) || (!wd->stack)) return NULL;
+   it = (Elm_Naviframe_Item *) (EINA_INLIST_CONTAINER_GET(wd->stack->last,
+                                                         Elm_Naviframe_Item));
+   return it->content;
 }
 
 static void
@@ -1051,6 +1068,7 @@ elm_naviframe_add(Evas_Object *parent)
    elm_widget_del_hook_set(obj, _del_hook);
    elm_widget_disable_hook_set(obj, _disable_hook);
    elm_widget_theme_hook_set(obj, _theme_hook);
+   elm_widget_content_get_hook_set(obj, _content_get_hook);
    elm_widget_signal_emit_hook_set(obj, _emit_hook);
    elm_widget_can_focus_set(obj, EINA_FALSE);
    elm_widget_focus_next_hook_set(obj, _focus_next_hook);

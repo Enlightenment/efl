@@ -14,14 +14,17 @@
  * Since each item could keep the different styles, users could keep the
  * same look & feel for the pages or different styles for the items in it's
  * application.
- *
+ * 
+ * Default content parts of the naviframe that you can use content hooks for are:
+ * @li "default" - The main content of the current page
+ * 
  * Signals that you can add callback for are:
  * @li "transition,finished" - When the transition is finished in changing
  *     the item
  * @li "title,clicked" - User clicked title area
  *
- * Default contents parts of the naviframe items that you can use for are:
- * @li "default" - A main content of the page
+ * Default content parts of the naviframe items that you can use content hooks for are:
+ * @li "default" - The main content of the page
  * @li "icon" - An icon in the title area
  * @li "prev_btn" - A button to go to the previous page
  * @li "next_btn" - A button to go to the next page
