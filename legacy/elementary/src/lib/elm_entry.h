@@ -1202,7 +1202,7 @@ EAPI void                   elm_entry_input_panel_imdata_get(const Evas_Object *
  * @param obj The entry object
  * @param return_key_type The type of "return" key on the input panel
  */
-EAPI void                   elm_text_input_panel_return_key_type_set(Evas_Object *obj, Elm_Input_Panel_Return_Key_Type return_key_type);
+EAPI void                   elm_entry_input_panel_return_key_type_set(Evas_Object *obj, Elm_Input_Panel_Return_Key_Type return_key_type);
 
 /**
  * Get the "return" key type.

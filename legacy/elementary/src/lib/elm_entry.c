@@ -3689,7 +3689,7 @@ elm_entry_input_panel_imdata_get(const Evas_Object *obj, void *data, int *len)
 }
 
 EAPI void
-elm_text_input_panel_return_key_type_set(Evas_Object *obj, Elm_Input_Panel_Return_Key_Type return_key_type)
+elm_entry_input_panel_return_key_type_set(Evas_Object *obj, Elm_Input_Panel_Return_Key_Type return_key_type)
 {
    ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
