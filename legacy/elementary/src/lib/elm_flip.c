@@ -150,7 +150,8 @@ _sub_del(void *data __UNUSED__, Evas_Object *obj, void *event_info)
    if (!wd) return;
    if (sub == wd->front.content)
      {
-        evas_object_event_callback_del_full(sub, EVAS_CALLBACK_CHANGED_SIZE_HINTS,
+        evas_object_event_callback_del_full(sub,
+                                            EVAS_CALLBACK_CHANGED_SIZE_HINTS,
                                             _changed_size_hints, obj);
         wd->front.content = NULL;
         evas_object_hide(wd->front.clip);
@@ -158,7 +159,8 @@ _sub_del(void *data __UNUSED__, Evas_Object *obj, void *event_info)
      }
    else if (sub == wd->back.content)
      {
-        evas_object_event_callback_del_full(sub, EVAS_CALLBACK_CHANGED_SIZE_HINTS,
+        evas_object_event_callback_del_full(sub,
+                                            EVAS_CALLBACK_CHANGED_SIZE_HINTS,
                                             _changed_size_hints, obj);
         wd->back.content = NULL;
         evas_object_hide(wd->back.clip);
@@ -177,8 +179,8 @@ _slice_new(Widget_Data *st __UNUSED__, Evas_Object *obj)
    elm_widget_sub_object_add(st->obj, sl->obj);
    evas_object_clip_set(sl->obj, evas_object_clip_get(st->obj));
    evas_object_smart_member_add(sl->obj, st->obj);
-   evas_object_image_smooth_scale_set(sl->obj, 0);
-   evas_object_pass_events_set(sl->obj, 1);
+   evas_object_image_smooth_scale_set(sl->obj, EINA_FALSE);
+   evas_object_pass_events_set(sl->obj, EINA_TRUE);
    evas_object_image_source_set(sl->obj, obj);
    return sl;
 }
@@ -191,8 +193,8 @@ _slice_free(Slice *sl)
 }
 
 static void
-_slice_apply(Widget_Data *st, Slice *sl,
-             Evas_Coord x __UNUSED__, Evas_Coord y __UNUSED__, Evas_Coord w, Evas_Coord h __UNUSED__,
+_slice_apply(Widget_Data *st, Slice *sl, Evas_Coord x __UNUSED__,
+             Evas_Coord y __UNUSED__, Evas_Coord w, Evas_Coord h __UNUSED__,
              Evas_Coord ox, Evas_Coord oy, Evas_Coord ow, Evas_Coord oh)
 {
    Evas_Map *m;
@@ -200,32 +202,36 @@ _slice_apply(Widget_Data *st, Slice *sl,
 
    m = evas_map_new(4);
    if (!m) return;
-   evas_map_smooth_set(m, 0);
+   evas_map_smooth_set(m, EINA_FALSE);
    for (i = 0; i < 4; i++)
      {
         evas_map_point_color_set(m, i, 255, 255, 255, 255);
         if (st->dir == 0)
           {
              int p[4] = { 0, 1, 2, 3 };
-             evas_map_point_coord_set(m, i, ox + sl->x[p[i]], oy + sl->y[p[i]], sl->z[p[i]]);
+             evas_map_point_coord_set(m, i, ox + sl->x[p[i]], oy + sl->y[p[i]],
+                                      sl->z[p[i]]);
              evas_map_point_image_uv_set(m, i, sl->u[p[i]] , sl->v[p[i]]);
           }
         else if (st->dir == 1)
           {
              int p[4] = { 1, 0, 3, 2 };
-             evas_map_point_coord_set(m, i, ox + (w - sl->x[p[i]]), oy + sl->y[p[i]], sl->z[p[i]]);
-             evas_map_point_image_uv_set(m, i, ow - sl->u[p[i]] , sl->v[p[i]]);
+             evas_map_point_coord_set(m, i, ox + (w - sl->x[p[i]]),
+                                      oy + sl->y[p[i]], sl->z[p[i]]);
+             evas_map_point_image_uv_set(m, i, ow - sl->u[p[i]], sl->v[p[i]]);
           }
         else if (st->dir == 2)
           {
              int p[4] = { 1, 0, 3, 2 };
-             evas_map_point_coord_set(m, i, ox + sl->y[p[i]], oy + sl->x[p[i]], sl->z[p[i]]);
+             evas_map_point_coord_set(m, i, ox + sl->y[p[i]], oy + sl->x[p[i]],
+                                      sl->z[p[i]]);
              evas_map_point_image_uv_set(m, i, sl->v[p[i]] , sl->u[p[i]]);
           }
         else/* if (st->dir == 3) will be this anyway */
           {
              int p[4] = { 0, 1, 2, 3 };
-             evas_map_point_coord_set(m, i, ox + sl->y[p[i]], oy + (w - sl->x[p[i]]), sl->z[p[i]]);
+             evas_map_point_coord_set(m, i, ox + sl->y[p[i]],
+                                      oy + (w - sl->x[p[i]]), sl->z[p[i]]);
              evas_map_point_image_uv_set(m, i, sl->v[p[i]] , oh - sl->u[p[i]]);
           }
      }
@@ -236,7 +242,8 @@ _slice_apply(Widget_Data *st, Slice *sl,
 }
 
 static void
-_slice_3d(Widget_Data *st __UNUSED__, Slice *sl, Evas_Coord x, Evas_Coord y, Evas_Coord w, Evas_Coord h)
+_slice_3d(Widget_Data *st __UNUSED__, Slice *sl, Evas_Coord x, Evas_Coord y,
+          Evas_Coord w, Evas_Coord h)
 {
    Evas_Map *m = (Evas_Map *)evas_object_map_get(sl->obj);
    int i;
@@ -389,7 +396,7 @@ _slice_obj_color_set(Slice *s, int p, int r, int g, int b, int a)
    Evas_Map *m;
 
    if (!s) return;
-   m = (Evas_Map *)evas_object_map_get(s->obj);
+   m = (Evas_Map *) evas_object_map_get(s->obj);
    if (!m) return;
    evas_map_point_color_set(m, p, r, g, b, a);
    evas_object_map_set(s->obj, m);
@@ -428,7 +435,7 @@ _state_update(Widget_Data *st)
    Vertex3 *tvo, *tvol;
    Evas_Object *front, *back;
 
-   st->backflip = 1;
+   st->backflip = EINA_TRUE;
    if (st->state)
      {
         front = st->front.content;
@@ -656,15 +663,14 @@ _state_update(Widget_Data *st)
                         vo[2].x, vo[2].y, vo[2].z,
                         vo[3].x, vo[3].y, vo[3].z);
              if (b <= 0)
-                _slice_uv(st, sl,
-                          gx,       gy,       gx + gw,  gy,
-                          gx + gw,  gy + gh,  gx,       gy + gh);
+               _slice_uv(st, sl,
+                         gx, gy, gx + gw,  gy,  gx + gw,  gy + gh, gx, gy + gh);
              else
-                _slice_uv(st, sl,
-                          gx,       h - (gy + gh), gx + gw,  h - (gy + gh),
-                          gx + gw,  h - gy,        gx,       h - gy);
+               _slice_uv(st, sl,
+                         gx, h - (gy + gh), gx + gw, h - (gy + gh), gx + gw,
+                         h - gy, gx, h - gy);
 
-                          // BACK
+             // BACK
              sl = st->slices2[nn];
              if (!sl)
                {
@@ -680,24 +686,21 @@ _state_update(Widget_Data *st)
              if (st->backflip)
                {
                   if (b <= 0)
-                     _slice_uv(st, sl,
-                               gx + gw, gy,       gx,       gy,
-                               gx,      gy + gh,  gx + gw,  gy + gh);
+                    _slice_uv(st, sl, gx + gw, gy, gx, gy, gx, gy + gh, gx + gw,
+                              gy + gh);
                   else
-                     _slice_uv(st, sl,
-                               gx + gw, h - (gy + gh), gx,      h - (gy + gh),
-                               gx,      h - gy,        gx + gw, h - gy);
+                    _slice_uv(st, sl, gx + gw, h - (gy + gh), gx, h - (gy + gh),
+                              gx, h - gy, gx + gw, h - gy);
                }
              else
                {
                   if (b <= 0)
-                     _slice_uv(st, sl,
-                               w - (gx + gw), gy,       w - (gx),      gy,
-                               w - (gx),      gy + gh,  w - (gx + gw), gy + gh);
+                    _slice_uv(st, sl, w - (gx + gw), gy, w - (gx), gy, w - (gx),
+                              gy + gh, w - (gx + gw), gy + gh);
                   else
-                     _slice_uv(st, sl,
-                               w - (gx + gw), h - (gy + gh), w - (gx),      h - (gy + gh),
-                               w - (gx),      h - gy,        w - (gx + gw), h - gy);
+                    _slice_uv(st, sl, w - (gx + gw), h - (gy + gh), w - (gx),
+                              h - (gy + gh),  w - (gx), h - gy, w - (gx + gw),
+                              h - gy);
                }
           }
      }
@@ -723,47 +726,39 @@ _state_update(Widget_Data *st)
              Slice *s[4];
 
              s[0] = s[1] = s[2] = s[3] = NULL;
-             if ((i > 0)            && (j > 0))
+             if ((i > 0) && (j > 0))
                 s[0] = st->slices[num - 1 - st->slices_h];
              if ((i < st->slices_w) && (j > 0))
                 s[1] = st->slices[num - 1];
-             if ((i > 0)            && (j < st->slices_h))
+             if ((i > 0) && (j < st->slices_h))
                 s[2] = st->slices[num - st->slices_h];
              if ((i < st->slices_w) && (j < st->slices_h))
                 s[3] = st->slices[num];
              if (st->dir == 0)
-                _slice_obj_vert_color_merge(s[0], 2, s[1], 3,
-                                            s[2], 1, s[3], 0);
+                _slice_obj_vert_color_merge(s[0], 2, s[1], 3, s[2], 1, s[3], 0);
              else if (st->dir == 1)
-                _slice_obj_vert_color_merge(s[0], 3, s[1], 2,
-                                            s[2], 0, s[3], 1);
+                _slice_obj_vert_color_merge(s[0], 3, s[1], 2, s[2], 0, s[3], 1);
              else if (st->dir == 2)
-                _slice_obj_vert_color_merge(s[0], 3, s[1], 2,
-                                            s[2], 0, s[3], 1);
+                _slice_obj_vert_color_merge(s[0], 3, s[1], 2, s[2], 0, s[3], 1);
              else/* if (st->dir == 3) will be this anyway */
-                _slice_obj_vert_color_merge(s[0], 2, s[1], 3,
-                                            s[2], 1, s[3], 0);
+                _slice_obj_vert_color_merge(s[0], 2, s[1], 3, s[2], 1, s[3], 0);
              s[0] = s[1] = s[2] = s[3] = NULL;
-             if ((i > 0)            && (j > 0))
-                s[0] = st->slices2[num - 1 - st->slices_h];
+             if ((i > 0) && (j > 0))
+               s[0] = st->slices2[num - 1 - st->slices_h];
              if ((i < st->slices_w) && (j > 0))
-                s[1] = st->slices2[num - 1];
-             if ((i > 0)            && (j < st->slices_h))
-                s[2] = st->slices2[num - st->slices_h];
+               s[1] = st->slices2[num - 1];
+             if ((i > 0) && (j < st->slices_h))
+               s[2] = st->slices2[num - st->slices_h];
              if ((i < st->slices_w) && (j < st->slices_h))
                 s[3] = st->slices2[num];
              if (st->dir == 0)
-                _slice_obj_vert_color_merge(s[0], 3, s[1], 2,
-                                            s[2], 0, s[3], 1);
+                _slice_obj_vert_color_merge(s[0], 3, s[1], 2, s[2], 0, s[3], 1);
              else if (st->dir == 1)
-                _slice_obj_vert_color_merge(s[0], 2, s[1], 3,
-                                            s[2], 1, s[3], 0);
+                _slice_obj_vert_color_merge(s[0], 2, s[1], 3, s[2], 1, s[3], 0);
              else if (st->dir == 2)
-                _slice_obj_vert_color_merge(s[0], 2, s[1], 3,
-                                            s[2], 1, s[3], 0);
+                _slice_obj_vert_color_merge(s[0], 2, s[1], 3, s[2], 1, s[3], 0);
              else/* if (st->dir == 3) will be this anyway */
-                _slice_obj_vert_color_merge(s[0], 3, s[1], 2,
-                                            s[2], 0, s[3], 1);
+                _slice_obj_vert_color_merge(s[0], 3, s[1], 2, s[2], 0, s[3], 1);
              num++;
           }
      }
@@ -864,9 +859,9 @@ _flip_do(Evas_Object *obj, double t, Elm_Flip_Mode mode, int lin, int rev)
    if (!wd) return;
 
    mf = evas_map_new(4);
-   evas_map_smooth_set(mf, 0);
+   evas_map_smooth_set(mf, EINA_FALSE);
    mb = evas_map_new(4);
-   evas_map_smooth_set(mb, 0);
+   evas_map_smooth_set(mb, EINA_FALSE);
 
    if (wd->front.content)
      {
@@ -1536,22 +1531,29 @@ _move_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *even
 
         dx = wd->x - wd->down_x;
         dy = wd->y - wd->down_y;
-        if (((dx * dx) + (dy * dy)) > (_elm_config->finger_size * _elm_config->finger_size / 4))
+        if (((dx * dx) + (dy * dy)) >
+            (_elm_config->finger_size * _elm_config->finger_size / 4))
           {
              wd->dir = 0;
-             if      ((wd->x > (w / 2)) && (dx <  0) && (abs(dx) >  abs(dy))) wd->dir = 0; // left
-             else if ((wd->x < (w / 2)) && (dx >= 0) && (abs(dx) >  abs(dy))) wd->dir = 1; // right
-             else if ((wd->y > (h / 2)) && (dy <  0) && (abs(dy) >= abs(dx))) wd->dir = 2; // up
-             else if ((wd->y < (h / 2)) && (dy >= 0) && (abs(dy) >= abs(dx))) wd->dir = 3; // down
+             if ((wd->x > (w / 2)) &&
+                 (dx <  0) && (abs(dx) > abs(dy)))
+               wd->dir = 0; // left
+             else if ((wd->x < (w / 2)) && (dx >= 0) &&
+                      (abs(dx) > abs(dy)))
+               wd->dir = 1; // right
+             else if ((wd->y > (h / 2)) && (dy <  0) && (abs(dy) >= abs(dx)))
+               wd->dir = 2; // up
+             else if ((wd->y < (h / 2)) && (dy >= 0) && (abs(dy) >= abs(dx)))
+               wd->dir = 3; // down
              wd->started = EINA_TRUE;
              if (wd->intmode == ELM_FLIP_INTERACTION_PAGE)
-                wd->pageflip = EINA_TRUE;
+               wd->pageflip = EINA_TRUE;
              flip_show_hide(data);
              evas_smart_objects_calculate(evas_object_evas_get(data));
              _flip(data);
              // FIXME: hack around evas rendering bug (only fix makes evas bitch-slow)
-             evas_object_map_enable_set(wd->front.content, 0);
-             evas_object_map_enable_set(wd->back.content, 0);
+             evas_object_map_enable_set(wd->front.content, EINA_FALSE);
+             evas_object_map_enable_set(wd->back.content, EINA_FALSE);
 // FIXME: XXX why does this bork interactive flip??
 //             evas_object_resize(wd->front.content, 0, 0);
 //             evas_object_resize(wd->back.content, 0, 0);
@@ -1885,15 +1887,22 @@ elm_flip_interaction_set(Evas_Object *obj, Elm_Flip_Interaction mode)
           {
              if ((wd->dir_enabled[i]) && (!wd->event[i]))
                {
-                  wd->event[i] = evas_object_rectangle_add(evas_object_evas_get(obj));
+                  Evas *e = evas_object_evas_get(obj);
+                  wd->event[i] = evas_object_rectangle_add(e);
                   elm_widget_sub_object_add(obj, wd->event[i]);
                   evas_object_clip_set(wd->event[i], evas_object_clip_get(obj));
                   evas_object_color_set(wd->event[i], 0, 0, 0, 0);
                   evas_object_show(wd->event[i]);
                   evas_object_smart_member_add(wd->event[i], obj);
-                  evas_object_event_callback_add(wd->event[i], EVAS_CALLBACK_MOUSE_DOWN, _down_cb, obj);
-                  evas_object_event_callback_add(wd->event[i], EVAS_CALLBACK_MOUSE_UP, _up_cb, obj);
-                  evas_object_event_callback_add(wd->event[i], EVAS_CALLBACK_MOUSE_MOVE, _move_cb, obj);
+                  evas_object_event_callback_add(wd->event[i],
+                                                 EVAS_CALLBACK_MOUSE_DOWN,
+                                                 _down_cb, obj);
+                  evas_object_event_callback_add(wd->event[i],
+                                                 EVAS_CALLBACK_MOUSE_UP,
+                                                 _up_cb, obj);
+                  evas_object_event_callback_add(wd->event[i],
+                                                 EVAS_CALLBACK_MOUSE_MOVE,
+                                                 _move_cb, obj);
                }
           }
      }
@@ -1918,7 +1927,7 @@ elm_flip_interacton_direction_enabled_set(Evas_Object *obj, Elm_Flip_Direction d
    int i = -1;
    if (!wd) return;
    enabled = !!enabled;
-   if      (dir == ELM_FLIP_DIRECTION_UP)    i = 0;
+   if (dir == ELM_FLIP_DIRECTION_UP)    i = 0;
    else if (dir == ELM_FLIP_DIRECTION_DOWN)  i = 1;
    else if (dir == ELM_FLIP_DIRECTION_LEFT)  i = 2;
    else if (dir == ELM_FLIP_DIRECTION_RIGHT) i = 3;
@@ -1934,9 +1943,12 @@ elm_flip_interacton_direction_enabled_set(Evas_Object *obj, Elm_Flip_Direction d
         evas_object_color_set(wd->event[i], 0, 0, 0, 0);
         evas_object_show(wd->event[i]);
         evas_object_smart_member_add(wd->event[i], obj);
-        evas_object_event_callback_add(wd->event[i], EVAS_CALLBACK_MOUSE_DOWN, _down_cb, obj);
-        evas_object_event_callback_add(wd->event[i], EVAS_CALLBACK_MOUSE_UP, _up_cb, obj);
-        evas_object_event_callback_add(wd->event[i], EVAS_CALLBACK_MOUSE_MOVE, _move_cb, obj);
+        evas_object_event_callback_add(wd->event[i], EVAS_CALLBACK_MOUSE_DOWN,
+                                       _down_cb, obj);
+        evas_object_event_callback_add(wd->event[i], EVAS_CALLBACK_MOUSE_UP,
+                                       _up_cb, obj);
+        evas_object_event_callback_add(wd->event[i], EVAS_CALLBACK_MOUSE_MOVE,
+                                       _move_cb, obj);
      }
    else if (!(wd->dir_enabled[i]) && (wd->event[i]))
      {
@@ -1954,9 +1966,9 @@ elm_flip_interacton_direction_enabled_get(Evas_Object *obj, Elm_Flip_Direction d
    Widget_Data *wd = elm_widget_data_get(obj);
    int i = -1;
    if (!wd) return EINA_FALSE;
-   if      (dir == ELM_FLIP_DIRECTION_UP)    i = 0;
-   else if (dir == ELM_FLIP_DIRECTION_DOWN)  i = 1;
-   else if (dir == ELM_FLIP_DIRECTION_LEFT)  i = 2;
+   if (dir == ELM_FLIP_DIRECTION_UP) i = 0;
+   else if (dir == ELM_FLIP_DIRECTION_DOWN) i = 1;
+   else if (dir == ELM_FLIP_DIRECTION_LEFT) i = 2;
    else if (dir == ELM_FLIP_DIRECTION_RIGHT) i = 3;
    if (i < 0) return EINA_FALSE;
    return wd->dir_enabled[i];
@@ -1969,9 +1981,9 @@ elm_flip_interacton_direction_hitsize_set(Evas_Object *obj, Elm_Flip_Direction d
    Widget_Data *wd = elm_widget_data_get(obj);
    int i = -1;
    if (!wd) return;
-   if      (dir == ELM_FLIP_DIRECTION_UP)    i = 0;
-   else if (dir == ELM_FLIP_DIRECTION_DOWN)  i = 1;
-   else if (dir == ELM_FLIP_DIRECTION_LEFT)  i = 2;
+   if (dir == ELM_FLIP_DIRECTION_UP) i = 0;
+   else if (dir == ELM_FLIP_DIRECTION_DOWN) i = 1;
+   else if (dir == ELM_FLIP_DIRECTION_LEFT) i = 2;
    else if (dir == ELM_FLIP_DIRECTION_RIGHT) i = 3;
    if (i < 0) return;
    if (hitsize < 0.0) hitsize = 0.0;
@@ -1989,9 +2001,9 @@ elm_flip_interacton_direction_hitsize_get(Evas_Object *obj, Elm_Flip_Direction d
    Widget_Data *wd = elm_widget_data_get(obj);
    int i = -1;
    if (!wd) return 0.0;
-   if      (dir == ELM_FLIP_DIRECTION_UP)    i = 0;
-   else if (dir == ELM_FLIP_DIRECTION_DOWN)  i = 1;
-   else if (dir == ELM_FLIP_DIRECTION_LEFT)  i = 2;
+   if (dir == ELM_FLIP_DIRECTION_UP) i = 0;
+   else if (dir == ELM_FLIP_DIRECTION_DOWN) i = 1;
+   else if (dir == ELM_FLIP_DIRECTION_LEFT) i = 2;
    else if (dir == ELM_FLIP_DIRECTION_RIGHT) i = 3;
    if (i < 0) return 0.0;
    return wd->dir_hitsize[i];
