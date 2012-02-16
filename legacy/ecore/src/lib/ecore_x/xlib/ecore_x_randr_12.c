@@ -380,6 +380,48 @@ ecore_x_randr_modes_info_get(Ecore_X_Window root,
 }
 
 /*
+ * @brief add a mode to a display
+ * @param root window to which's screen's ressources are added
+ * @param mode_info
+ * @return Ecore_X_Randr_Mode of the added mode. Ecore_X_Randr_None if mode
+ * adding failed.
+ * @since 1.2.0
+ */
+EAPI Ecore_X_Randr_Mode
+ecore_x_randr_mode_info_add(Ecore_X_Window root,
+                            Ecore_X_Randr_Mode_Info *mode_info)
+{
+#ifdef ECORE_XRANDR
+   RANDR_CHECK_1_2_RET(EINA_FALSE);
+   Ecore_X_Randr_Mode mode = Ecore_X_Randr_None;
+
+   if (_ecore_x_randr_root_validate(root) && mode_info)
+     mode = XRRCreateMode(_ecore_x_disp, root, (XRRModeInfo*)mode_info);
+
+   return mode;
+#else
+   return Ecore_X_Randr_None;
+#endif
+}
+
+/*
+ * @brief delete a mode from the display
+ * @param mode_info
+ * @since 1.2.0
+ */
+EAPI void
+ecore_x_randr_mode_del(Ecore_X_Randr_Mode mode)
+{
+#ifdef ECORE_XRANDR
+   RANDR_CHECK_1_2_RET();
+
+   XRRDestroyMode(_ecore_x_disp, mode);
+#else
+   return;
+#endif
+}
+
+/*
  * @brief get detailed information for a given mode id
  * @param root window which's screen's ressources are queried
  * @param mode the XID which identifies the mode of interest
@@ -1361,6 +1403,54 @@ ecore_x_randr_crtc_pos_relative_set(Ecore_X_Window root,
    return ecore_x_randr_crtc_pos_set(root, crtc_r1, x_n, y_n);
 #else
    return EINA_FALSE;
+#endif
+}
+
+/*
+ * @brief add given mode to given output
+ * @param output the output the mode is added to
+ * @param mode the mode added to the output
+ * @return EINA_FALSE if output or mode equal Ecore_X_Randr_None, else EINA_TRUE
+ * Additionally, if xcb backend is used, the success of the addition is reported
+ * back directly.
+ * @since 1.2.0
+ */
+EAPI Eina_Bool
+ecore_x_randr_output_mode_add(Ecore_X_Randr_Output output,
+                              Ecore_X_Randr_Mode mode)
+{
+#ifdef ECORE_XRANDR
+   RANDR_CHECK_1_2_RET(EINA_FALSE);
+
+   if ((output == Ecore_X_Randr_None) || (mode == Ecore_X_Randr_None))
+     return EINA_FALSE;
+
+   XRRAddOutputMode(_ecore_x_disp, output, mode);
+   return EINA_TRUE;
+#else
+   return EINA_FALSE;
+#endif
+}
+
+/*
+ * @brief delete given mode from given output
+ * @param output the output the mode is removed from
+ * @param mode the mode removed from the output
+ * @since 1.2.0
+ */
+EAPI void
+ecore_x_randr_output_mode_del(Ecore_X_Randr_Output output,
+                              Ecore_X_Randr_Mode mode)
+{
+#ifdef ECORE_XRANDR
+   RANDR_CHECK_1_2_RET();
+
+   if ((output == Ecore_X_Randr_None) || (mode == Ecore_X_Randr_None))
+     return;
+
+   XRRDeleteOutputMode(_ecore_x_disp, output, mode);
+#else
+   return;
 #endif
 }
 

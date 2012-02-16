@@ -2749,6 +2749,11 @@ EAPI Eina_Bool
 EAPI Ecore_X_Randr_Mode_Info **
 ecore_x_randr_modes_info_get(Ecore_X_Window root,
                              int *num);
+EAPI Ecore_X_Randr_Mode
+ecore_x_randr_mode_info_add(Ecore_X_Window root,
+                            Ecore_X_Randr_Mode_Info *mode_info);
+EAPI void
+ecore_x_randr_mode_del(Ecore_X_Randr_Mode mode);
 EAPI Ecore_X_Randr_Mode_Info *
 ecore_x_randr_mode_info_get(Ecore_X_Window root,
                             Ecore_X_Randr_Mode mode);
@@ -2840,6 +2845,12 @@ ecore_x_randr_crtc_pos_relative_set(Ecore_X_Window root,
                                     Ecore_X_Randr_Crtc crtc_r2,
                                     Ecore_X_Randr_Output_Policy policy,
                                     Ecore_X_Randr_Relative_Alignment alignment);
+EAPI Eina_Bool
+ecore_x_randr_output_mode_add(Ecore_X_Randr_Output output,
+                              Ecore_X_Randr_Mode mode);
+EAPI void
+ecore_x_randr_output_mode_del(Ecore_X_Randr_Output output,
+                              Ecore_X_Randr_Mode mode);
 EAPI Ecore_X_Randr_Mode *
 ecore_x_randr_output_modes_get(Ecore_X_Window root,
                                Ecore_X_Randr_Output output,

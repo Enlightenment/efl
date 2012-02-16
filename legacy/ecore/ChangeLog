@@ -494,3 +494,9 @@
 
         * Add ecore_imf APIs to set return key type, disable return key.
 
+2012-02-16  Leif Middelschulte (T_UNIX)
+
+        * Add ecore_x_randr_mode_add to add a mode to a display
+        * Add ecore_x_randr_mode_del to remove a mode from the display
+        * Add ecore_x_randr_output_mode_add to add a mode to an output
+        * Add ecore_x_randr_output_mode_del to remove a mode from an output
