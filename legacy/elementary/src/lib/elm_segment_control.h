@@ -274,7 +274,7 @@ EAPI Elm_Object_Item *elm_segment_control_item_selected_get(const Evas_Object *o
  * @c EINA_TRUE for selected, @c EINA_FALSE for not selected.
  *
  * If a new item is selected the previously selected will be unselected.
- * Previously selected item can be get with function
+ * Selected item can be got with function
  * elm_segment_control_item_selected_get().
  *
  * The selected item always will be highlighted on segment control.

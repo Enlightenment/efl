@@ -9,8 +9,15 @@
  *
  * A radio object contains an indicator, an optional Label and an optional
  * icon object. While it's possible to have a group of only one radio they,
- * are normally used in groups of 2 or more. To add a radio to a group use
- * elm_radio_group_add(). The radio object(s) will select from one of a set
+ * are normally used in groups of 2 or more. 
+ *
+ * elm_radio objects are grouped in a slightly different, compared to other
+ * UI toolkits. There is no seperate group name/id to remember or manage.
+ * The members represent the group, there are the group. To make a group,
+ * use elm_radio_group_add() and pass existing radio object and the new radio 
+ * object. 
+ *
+ * The radio object(s) will select from one of a set
  * of integer values, so any value they are configuring needs to be mapped to
  * a set of integers. To configure what value that radio object represents,
  * use  elm_radio_state_value_set() to set the integer it represents. To set
@@ -89,9 +96,9 @@ EAPI void                         elm_radio_state_value_set(Evas_Object *obj, in
 EAPI int                          elm_radio_state_value_get(const Evas_Object *obj);
 
 /**
- * @brief Set the value of the radio.
+ * @brief Set the value of the radio group.
  *
- * @param obj The radio object
+ * @param obj The radio object (any radio object of the group).
  * @param value The value to use for the group
  *
  * This sets the value of the radio group and will also set the value if
@@ -100,17 +107,18 @@ EAPI int                          elm_radio_state_value_get(const Evas_Object *o
 EAPI void                         elm_radio_value_set(Evas_Object *obj, int value);
 
 /**
- * @brief Get the state of the radio object
+ * @brief Get the value of the radio group
  *
- * @param obj The radio object
+ * @param obj The radio object (any radio object of the group).
  * @return The integer state
  */
 EAPI int                          elm_radio_value_get(const Evas_Object *obj);
 
 /**
- * @brief Set a convenience pointer to a integer to change
+ * @brief Set a convenience pointer to a integer to change when radio group
+ * value changes.
  *
- * @param obj The radio object
+ * @param obj The radio object (any object of a group)
  * @param valuep Pointer to the integer to modify
  *
  * This sets a pointer to a integer, that, in addition to the radio objects

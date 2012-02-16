@@ -101,7 +101,7 @@ EAPI Eina_Bool elm_object_scroll_lock_x_get(const Evas_Object *obj);
 /**
  * Get the scrolling lock of the given widget
  *
- * This gets the lock for X axis scrolling.
+ * This gets the lock for Y axis scrolling.
  *
  * @param obj The object
  * @ingroup Scrollhints
