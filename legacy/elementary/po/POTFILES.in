@@ -108,7 +108,7 @@
 ./src/lib/elm_calendar.c
 ./src/lib/elm_check.c
 ./src/lib/elm_clock.c
-./src/lib/elm_cnp_helper.c
+./src/lib/elm_cnp.c
 ./src/lib/elm_colorselector.c
 ./src/lib/elm_config.c
 ./src/lib/elm_conform.c
