@@ -63,14 +63,10 @@
 EAPI Evas_Object          *elm_index_add(Evas_Object *parent);
 
 /**
- * Set whether a given index widget is or not visible,
- * programmatically.
+ * Enable or disable auto hiding feature for a given index widget.
  *
  * @param obj The index object
- * @param active @c EINA_TRUE to show it, @c EINA_FALSE to hide it
- *
- * Not to be confused with visible as in @c evas_object_show() --
- * visible with regard to the widget's auto hiding feature.
+ * @param active @c EINA_TRUE to enable auto hiding, @c EINA_FALSE to disable
  *
  * @see elm_index_active_get()
  *
@@ -79,10 +75,10 @@ EAPI Evas_Object          *elm_index_add(Evas_Object *parent);
 EAPI void                  elm_index_active_set(Evas_Object *obj, Eina_Bool active);
 
 /**
- * Get whether a given index widget is currently visible or not.
+ * Get whether auto hiding feature is enabled or not for a given index widget.
  *
  * @param obj The index object
- * @return @c EINA_TRUE, if it's shown, @c EINA_FALSE otherwise
+ * @return @c EINA_TRUE, if auto hiding is enabled, @c EINA_FALSE otherwise
  *
  * @see elm_index_active_set() for more details
  *
@@ -140,6 +136,7 @@ EAPI Elm_Object_Item      *elm_index_item_selected_get(const Evas_Object *obj, i
  *
  * @ingroup Index
  */
+//XXX: Should be changed like Elm_Object_Item *elm_index_item_append(Evas_Object *obj, const char* letter, const void *data);
 EAPI void                  elm_index_item_append(Evas_Object *obj, const char *letter, const void *item);
 
 /**
@@ -158,6 +155,7 @@ EAPI void                  elm_index_item_append(Evas_Object *obj, const char *l
  *
  * @ingroup Index
  */
+//XXX: Should be changed like Elm_Object_Item *elm_index_item_prepend(Evas_Object *obj, const char* letter, const void *data);
 EAPI void                  elm_index_item_prepend(Evas_Object *obj, const char *letter, const void *item);
 
 /**
@@ -181,6 +179,7 @@ EAPI void                  elm_index_item_prepend(Evas_Object *obj, const char *
  *
  * @ingroup Index
  */
+//XXX: Should be changed like Elm_Object_Item *elm_index_item_insert_after(Evas_Object *obj, const Elm_Object_Item *after, const char* letter, const void *data);
 EAPI void                  elm_index_item_append_relative(Evas_Object *obj, const char *letter, const void *item, const Elm_Object_Item *relative);
 
 /**
@@ -204,6 +203,7 @@ EAPI void                  elm_index_item_append_relative(Evas_Object *obj, cons
  *
  * @ingroup Index
  */
+//XXX: Should be changed like Elm_Object_Item *elm_index_item_insert_before(Evas_Object *obj, const Elm_Object_Item *before, const char* letter, const void *data);
 EAPI void                  elm_index_item_prepend_relative(Evas_Object *obj, const char *letter, const void *item, const Elm_Object_Item *relative);
 
 /**
@@ -237,6 +237,7 @@ EAPI void                  elm_index_item_prepend_relative(Evas_Object *obj, con
  *
  * @ingroup Index
  */
+//XXX: Should be changed like Elm_Object_Item *elm_index_item_sorted_insert(Evas_Object *obj, const char* letter, const void *data, Eina_Compare_Cb cmp_func, Eina_Compare_Cb cmp_data_func);
 EAPI void                  elm_index_item_sorted_insert(Evas_Object *obj, const char *letter, const void *item, Eina_Compare_Cb cmp_func, Eina_Compare_Cb cmp_data_func);
 
 /**
@@ -248,6 +249,7 @@ EAPI void                  elm_index_item_sorted_insert(Evas_Object *obj, const 
  *
  * @ingroup Index
  */
+//XXX: After changing above APIs, this should be deprecated.
 EAPI Elm_Object_Item      *elm_index_item_find(Evas_Object *obj, const void *item);
 
 /**
@@ -270,6 +272,7 @@ EAPI void                  elm_index_item_clear(Evas_Object *obj);
  *
  * @ingroup Index
  */
+//XXX: how about elm_index_level_go ??
 EAPI void                  elm_index_item_go(Evas_Object *obj, int level);
 
 /**
