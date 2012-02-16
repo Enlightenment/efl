@@ -766,7 +766,7 @@ ecore_con_socks5_remote_exists(const char *ip, int port, const char *username, c
 {
    if ((!ip) || (!ip[0]) || (port < -1) || (port > 65535) || (username && (!username[0])) || (password && (!password[0])))
      return EINA_FALSE;
-   return !!_ecore_con_socks_find(5, ip, port, username, username ? strlen(username) : 0, password, strlen(password));
+   return !!_ecore_con_socks_find(5, ip, port, username, username ? strlen(username) : 0, password, password ? strlen(password) : 0);
 }
 
 /**
@@ -790,7 +790,7 @@ ecore_con_socks5_remote_del(const char *ip, int port, const char *username, cons
      return;
    if (!ecore_con_socks_proxies) return;
 
-   v5 = (Ecore_Con_Socks_v5*)_ecore_con_socks_find(5, ip, port, username, username ? strlen(username) : 0, password, strlen(password));
+   v5 = (Ecore_Con_Socks_v5*)_ecore_con_socks_find(5, ip, port, username, username ? strlen(username) : 0, password, password ? strlen(password) : 0);
    if (!v5) return;
    ecore_con_socks_proxies = eina_list_remove(ecore_con_socks_proxies, v5);
    _ecore_con_socks_free((Ecore_Con_Socks*)v5);
