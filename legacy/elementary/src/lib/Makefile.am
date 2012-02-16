@@ -159,7 +159,7 @@ elm_button.c \
 elm_calendar.c \
 elm_check.c \
 elm_clock.c \
-elm_cnp_helper.c \
+elm_cnp.c \
 elm_colorselector.c \
 elm_config.c \
 elm_conform.c \
