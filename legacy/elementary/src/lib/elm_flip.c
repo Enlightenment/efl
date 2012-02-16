@@ -1819,7 +1819,7 @@ elm_flip_front_visible_get(const Evas_Object *obj)
 EAPI Eina_Bool
 elm_flip_front_get(const Evas_Object *obj)
 {
-   return elm_flip_front_get(obj);
+   return elm_flip_front_visible_get(obj);
 }
 
 EAPI void
