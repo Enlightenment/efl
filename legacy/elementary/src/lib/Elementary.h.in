@@ -223,7 +223,6 @@ EAPI extern Elm_Version *elm_version;
 #include <elm_object.h>
 
 // SanjeevBA
-#include <elm_pager.h>
 #include <elm_panel.h>
 #include <elm_panes.h>
 #include <elm_password.h>

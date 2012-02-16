@@ -4642,4 +4642,104 @@ EINA_DEPRECATED EAPI Evas_Object         *elm_flip_content_back_unset(Evas_Objec
  */
 EINA_DEPRECATED EAPI Eina_Bool            elm_flip_front_get(const Evas_Object *obj);
 
+/*
+ * Add a new pager to the parent
+ *
+ * @param parent The parent object
+ * @return The new object or NULL if it cannot be created
+ *
+ * @ingroup Pager
+ * @deprecated Use naviframe instead
+ */
+EINA_DEPRECATED EAPI Evas_Object *elm_pager_add(Evas_Object *parent);
 
+/**
+ * @brief Push an object to the top of the pager stack (and show it).
+ *
+ * @param obj The pager object
+ * @param content The object to push
+ *
+ * The object pushed becomes a child of the pager, it will be controlled and
+ * deleted when the pager is deleted.
+ *
+ * @note If the content is already in the stack use
+ * elm_pager_content_promote().
+ * @warning Using this function on @p content already in the stack results in
+ * undefined behavior.
+ * @deprecated Use naviframe instead
+ */
+EINA_DEPRECATED EAPI void         elm_pager_content_push(Evas_Object *obj, Evas_Object *content);
+
+/**
+ * @brief Pop the object that is on top of the stack
+ *
+ * @param obj The pager object
+ *
+ * This pops the object that is on the top(visible) of the pager, makes it
+ * disappear, then deletes the object. The object that was underneath it on
+ * the stack will become visible.
+ * @deprecated Use naviframe instead
+ */
+EINA_DEPRECATED EAPI void         elm_pager_content_pop(Evas_Object *obj);
+
+/**
+ * @brief Moves an object already in the pager stack to the top of the stack.
+ *
+ * @param obj The pager object
+ * @param content The object to promote
+ *
+ * This will take the @p content and move it to the top of the stack as
+ * if it had been pushed there.
+ *
+ * @note If the content isn't already in the stack use
+ * elm_pager_content_push().
+ * @warning Using this function on @p content not already in the stack
+ * results in undefined behavior.
+ * @deprecated Use naviframe instead
+ */
+EINA_DEPRECATED EAPI void         elm_pager_content_promote(Evas_Object *obj, Evas_Object *content);
+
+/**
+ * @brief Return the object at the bottom of the pager stack
+ *
+ * @param obj The pager object
+ * @return The bottom object or NULL if none
+ * @deprecated Use naviframe instead
+ */
+EINA_DEPRECATED EAPI Evas_Object *elm_pager_content_bottom_get(const Evas_Object *obj);
+
+/**
+ * @brief  Return the object at the top of the pager stack
+ *
+ * @param obj The pager object
+ * @return The top object or NULL if none
+ * @deprecated Use naviframe instead
+ */
+EINA_DEPRECATED EAPI Evas_Object *elm_pager_content_top_get(const Evas_Object *obj);
+
+/**
+ * @brief Set the default item style.
+ *
+ * Default item style will be used with items who's style is NULL
+ *
+ * @param obj The pager object
+ * @param style The style
+ * @deprecated Use naviframe instead
+ */
+EINA_DEPRECATED EAPI void             elm_pager_item_style_default_set(Evas_Object *obj, const char *style);
+
+/**
+ * @brief Get the default item style
+ *
+ * @param obj The pager object
+ * @return the default item style
+ *
+ * @see elm_pager_item_style_default_set()
+ * @deprecated Use naviframe instead
+ */
+EINA_DEPRECATED EAPI const char      *elm_pager_item_style_default_get(const Evas_Object *obj);
+
+
+/**
+ * @}
+ */

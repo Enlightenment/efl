@@ -385,5 +385,27 @@ EAPI void             elm_naviframe_item_style_default_set(Evas_Object *obj, con
 EAPI const char      *elm_naviframe_item_style_default_get(const Evas_Object *obj);
 
 /**
+ * @def elm_naviframe_item_simple_push
+ * @brief Simple version of item_push.
+ *
+ * @see elm_naviframe_item_push
+ */
+#define elm_naviframe_item_simple_push(obj, content) \
+{ \
+   Elm_Object_Item *__my_it; \
+   __my_it = elm_naviframe_item_push(obj, NULL, NULL, NULL, content, NULL); \
+   elm_naviframe_item_title_visible_set(__my_it, EINA_FALSE); \
+   (__my_it); \
+}
+
+/**
+ * @brief Simple version of item_promote.
+ *
+ * @see elm_naviframe_item_promote
+ */
+EAPI void             elm_naviframe_item_simple_promote(Evas_Object *obj, Evas_Object *content);
+
+
+/**
  * @}
  */

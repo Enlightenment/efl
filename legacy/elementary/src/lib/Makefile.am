@@ -108,7 +108,6 @@ elm_need.h \
 elm_notify.h \
 elm_object.h \
 elm_object_item.h \
-elm_pager.h \
 elm_panel.h \
 elm_panes.h \
 elm_password.h \

@@ -90,8 +90,6 @@ void test_table7(void *data, Evas_Object *obj, void *event_info);
 void test_gengrid(void *data, Evas_Object *obj, void *event_info);
 void test_gengrid2(void *data, Evas_Object *obj, void *event_info);
 void test_gengrid3(void *data, Evas_Object *obj, void *event_info);
-void test_pager(void *data, Evas_Object *obj, void *event_info);
-void test_pager_slide(void *data, Evas_Object *obj, void *event_info);
 void test_win_state(void *data, Evas_Object *obj, void *event_info);
 void test_win_state2(void *data, Evas_Object *obj, void *event_info);
 void test_progressbar(void *data, Evas_Object *obj, void *event_info);
@@ -511,8 +509,6 @@ add_tests:
 
    //------------------------------//
    ADD_TEST(NULL, "Storyboard", "Naviframe", test_naviframe);
-   ADD_TEST(NULL, "Storyboard", "Pager", test_pager);
-   ADD_TEST(NULL, "Storyboard", "Pager Slide", test_pager_slide);
 
    //------------------------------//
    ADD_TEST(NULL, "Geographic", "Map", test_map);

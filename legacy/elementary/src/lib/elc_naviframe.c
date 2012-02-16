@@ -1280,6 +1280,24 @@ elm_naviframe_item_promote(Elm_Object_Item *it)
 }
 
 EAPI void
+elm_naviframe_item_simple_promote(Evas_Object *obj, Evas_Object *content)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype);
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return;
+   Elm_Naviframe_Item *itr;
+   EINA_INLIST_FOREACH(wd->stack, itr)
+     {
+        if (elm_object_item_content_get((Elm_Object_Item *) itr) == content)
+          {
+             elm_naviframe_item_promote((Elm_Object_Item *) itr);
+             break;
+          }
+     }
+}
+
+
+EAPI void
 elm_naviframe_item_del(Elm_Object_Item *it)
 {
    elm_object_item_del(it);
