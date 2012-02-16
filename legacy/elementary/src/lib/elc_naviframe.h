@@ -388,16 +388,17 @@ EAPI void             elm_naviframe_item_style_default_set(Evas_Object *obj, con
 EAPI const char      *elm_naviframe_item_style_default_get(const Evas_Object *obj);
 
 /**
- * @def elm_naviframe_item_simple_push
  * @brief Simple version of item_push.
  *
  * @see elm_naviframe_item_push
  */
-#define elm_naviframe_item_simple_push(obj, content) \
-{ \
-   Elm_Object_Item *__my_it; \
-   __my_it = elm_naviframe_item_push(obj, NULL, NULL, NULL, content, NULL); \
-   elm_naviframe_item_title_visible_set(__my_it, EINA_FALSE); \
+static inline Elm_Object_Item *
+elm_naviframe_item_simple_push(Evas_Object *obj, Evas_Object *content)
+{
+   Elm_Object_Item *it;
+   it = elm_naviframe_item_push(obj, NULL, NULL, NULL, content, NULL);
+   elm_naviframe_item_title_visible_set(it, EINA_FALSE);
+   return it;
 }
 
 /**
