@@ -327,7 +327,7 @@ elm_image_aspect_fixed_set(Evas_Object *obj, Eina_Bool fixed)
    ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return;
-   return _els_smart_icon_aspect_fixed_set(wd->img, fixed);
+   _els_smart_icon_aspect_fixed_set(wd->img, fixed);
 }
 
 EAPI Eina_Bool
