@@ -1,14 +1,14 @@
 /**
  * @defgroup Photo Photo
  *
- * For displaying the photo of a person (contact). Simple, yet
+ * For displaying a photo, for ex., a person (contact). Simple, yet
  * with a very specific purpose.
  *
  * Signals that you can add callbacks for are:
  *
  * "clicked" - This is called when a user has clicked the photo
- * "drag,start" - Someone started dragging the image out of the object
- * "drag,end" - Dragged item was dropped (somewhere)
+ * "drag,start" - dragging the image out of the photo object
+ * "drag,end" - Drop the dragged item  
  *
  * @{
  */
@@ -39,7 +39,7 @@ EAPI Eina_Bool elm_photo_file_set(Evas_Object *obj, const char *file);
  * Set the file that will be used as thumbnail in the photo.
  *
  * @param obj The photo object.
- * @param file The path to file that will be used as thumb.
+ * @param file The path to file that will be used as thumbnail.
  * @param group The key used in case of an EET file.
  *
  * @ingroup Photo
@@ -50,7 +50,7 @@ EAPI void      elm_photo_thumb_set(const Evas_Object *obj, const char *file, con
  * Set the size that will be used on the photo
  *
  * @param obj The photo object
- * @param size The size that the photo will be
+ * @param size The size of the photo
  *
  * @ingroup Photo
  */
@@ -97,7 +97,7 @@ EAPI void      elm_photo_editable_set(Evas_Object *obj, Eina_Bool set);
 EAPI void             elm_photo_aspect_fixed_set(Evas_Object *obj, Eina_Bool fixed);
 
 /**
- * Get if the object fixes the original aspect ratio.
+ * Get if the object keeps the original aspect ratio.
  *
  * @param obj The photo object.
  * @return @c EINA_TRUE if the object keeps the original aspect, @c EINA_FALSE
