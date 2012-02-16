@@ -241,9 +241,9 @@ EAPI extern Elm_Version *elm_version;
 #include <elm_separator.h> // OK
 #include <elm_slider.h> // OK
 #include <elm_slideshow.h> // OK
-#include <elm_spinner.h>
-#include <elm_store.h>
-#include <elm_table.h>
+#include <elm_spinner.h> // OK
+#include <elm_store.h> // XXX: needs docs
+#include <elm_table.h> // OK
 #include <elm_theme.h>
 #include <elm_thumb.h>
 #include <elm_toolbar.h>
