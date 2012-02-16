@@ -1112,6 +1112,164 @@ START_TEST(eina_model_test_inheritance)
 }
 END_TEST
 
+static Eina_Bool
+_myproperties_load(Eina_Model *m)
+{
+   Eina_Value v;
+   Eina_Bool ret;
+   int count;
+
+   if (!eina_model_property_get(m, "load_count", &v))
+     return EINA_FALSE;
+
+   eina_value_get(&v, &count);
+   count++;
+   eina_value_set(&v, count);
+
+   ret = eina_model_property_set(m, "load_count", &v);
+   eina_value_flush(&v);
+
+   return ret;
+}
+
+static Eina_Bool
+_myproperties_unload(Eina_Model *m)
+{
+   Eina_Value v;
+   Eina_Bool ret;
+   int count;
+
+   if (!eina_model_property_get(m, "load_count", &v))
+     return EINA_FALSE;
+
+   eina_value_get(&v, &count);
+   count--;
+   eina_value_set(&v, count);
+
+   ret = eina_model_property_set(m, "load_count", &v);
+   eina_value_flush(&v);
+
+   return ret;
+}
+
+static Eina_Bool
+_mychildren_load(Eina_Model *m)
+{
+   Eina_Model *c = eina_model_new(EINA_MODEL_TYPE_GENERIC);
+   int ret = eina_model_child_append(m, c);
+   eina_model_unref(c);
+   return ret >= 0;
+}
+
+static Eina_Bool
+_mychildren_unload(Eina_Model *m)
+{
+   int count = eina_model_child_count(m);
+   EINA_SAFETY_ON_FALSE_RETURN_VAL(count > 0, EINA_FALSE);
+   return eina_model_child_del(m, count - 1);
+}
+
+START_TEST(eina_model_test_ifaces_load_unload)
+{
+   unsigned int count_loaded = 0, count_unloaded = 0;
+   unsigned int count_ploaded = 0, count_punloaded = 0;
+   unsigned int count_cloaded = 0, count_cunloaded = 0;
+   static Eina_Model_Interface_Properties piface;
+   static Eina_Model_Interface_Children ciface;
+   static const Eina_Model_Interface *piface_parents[2] = {NULL, NULL};
+   static const Eina_Model_Interface *ciface_parents[2] = {NULL, NULL};
+   static const Eina_Model_Interface *type_ifaces[3] = {
+     &piface.base, &ciface.base, NULL
+   };
+   static Eina_Model_Type type;
+   Eina_Model *m;
+   Eina_Value v;
+   int count;
+
+   eina_init();
+
+   /* do after eina_init() otherwise interfaces are not set */
+   piface_parents[0] = EINA_MODEL_INTERFACE_PROPERTIES_HASH;
+   ciface_parents[0] = EINA_MODEL_INTERFACE_CHILDREN_INARRAY;
+
+   memset(&piface, 0, sizeof(piface));
+   piface.base.version = EINA_MODEL_INTERFACE_VERSION;
+   piface.base.interface_size = sizeof(piface);
+   piface.base.name = EINA_MODEL_INTERFACE_NAME_PROPERTIES;
+   piface.base.interfaces = piface_parents;
+   piface.load = _myproperties_load;
+   piface.unload = _myproperties_unload;
+
+   memset(&ciface, 0, sizeof(ciface));
+   ciface.base.version = EINA_MODEL_INTERFACE_VERSION;
+   ciface.base.interface_size = sizeof(ciface);
+   ciface.base.name = EINA_MODEL_INTERFACE_NAME_CHILDREN;
+   ciface.base.interfaces = ciface_parents;
+   ciface.load = _mychildren_load;
+   ciface.unload = _mychildren_unload;
+
+   type.version = EINA_MODEL_TYPE_VERSION;
+   type.private_size = 0;
+   type.name = "MyType";
+   eina_model_type_subclass_setup(&type,  EINA_MODEL_TYPE_GENERIC);
+   type.interfaces = type_ifaces;
+
+   m = eina_model_new(&type);
+   fail_unless(m != NULL);
+
+   eina_model_event_callback_add
+     (m, "loaded", _eina_test_model_cb_count, &count_loaded);
+   eina_model_event_callback_add
+     (m, "unloaded", _eina_test_model_cb_count, &count_unloaded);
+
+   eina_model_event_callback_add
+     (m, "properties,loaded", _eina_test_model_cb_count, &count_ploaded);
+   eina_model_event_callback_add
+     (m, "properties,unloaded", _eina_test_model_cb_count, &count_punloaded);
+
+   eina_model_event_callback_add
+     (m, "children,loaded", _eina_test_model_cb_count, &count_cloaded);
+   eina_model_event_callback_add
+     (m, "children,unloaded", _eina_test_model_cb_count, &count_cunloaded);
+
+   fail_unless(eina_value_setup(&v, EINA_VALUE_TYPE_INT));
+   fail_unless(eina_value_set(&v, 0));
+   fail_unless(eina_model_property_set(m, "load_count", &v));
+   eina_value_flush(&v);
+
+   fail_unless(eina_model_load(m));
+   fail_unless(eina_model_load(m));
+   fail_unless(eina_model_load(m));
+
+   /* each load increments one for load_count property */
+   fail_unless(eina_model_property_get(m, "load_count", &v));
+   fail_unless(eina_value_pget(&v, &count));
+   ck_assert_int_eq(count, 3);
+   eina_value_flush(&v);
+
+   /* each load adds one child */
+   ck_assert_int_eq(eina_model_child_count(m), 3);
+
+   fail_unless(eina_model_unload(m));
+   fail_unless(eina_model_unload(m));
+   fail_unless(eina_model_unload(m));
+
+   ck_assert_int_eq(count_loaded, 3);
+   ck_assert_int_eq(count_unloaded, 3);
+
+   ck_assert_int_eq(count_ploaded, 3);
+   ck_assert_int_eq(count_punloaded, 3);
+
+   ck_assert_int_eq(count_cloaded, 3);
+   ck_assert_int_eq(count_cunloaded, 3);
+
+   ck_assert_int_eq(eina_model_refcount(m), 1);
+   eina_model_unref(m);
+
+   eina_shutdown();
+}
+END_TEST
+
 void
 eina_test_model(TCase *tc)
 {
@@ -1126,4 +1284,5 @@ eina_test_model(TCase *tc)
    tcase_add_test(tc, eina_model_test_struct);
    tcase_add_test(tc, eina_model_test_struct_complex_members);
    tcase_add_test(tc, eina_model_test_inheritance);
+   tcase_add_test(tc, eina_model_test_ifaces_load_unload);
 }

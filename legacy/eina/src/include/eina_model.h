@@ -534,6 +534,14 @@ EAPI void eina_model_xunref(Eina_Model *model,
  * @li child,inserted: new child was added (eina_model_child_append() or eina_model_child_insert_at())
  * @li child,set: child was replaced (eina_model_child_set())
  * @li child,deleted: eina_model_child_del() was done.
+ * @li loaded: eina_model_load() was done.
+ * @li unloaded: eina_model_unload() was done.
+ *
+ * Mix-in interfaces may emit these:
+ * @li properties,loaded
+ * @li properties,unloaded
+ * @li children,loaded
+ * @li children,unloaded
  *
  * One can be notified of events with eina_model_event_callback_add().
  *

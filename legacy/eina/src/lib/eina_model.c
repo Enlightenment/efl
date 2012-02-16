@@ -86,6 +86,12 @@ static const char _eina_model_str_children_changed[] =  "children,changed";
 static const char _eina_model_str_child_inserted[] =  "child,inserted";
 static const char _eina_model_str_child_set[] =  "child,set";
 static const char _eina_model_str_child_del[] =  "child,deleted";
+static const char _eina_model_str_loaded[] = "loaded";
+static const char _eina_model_str_unloaded[] = "unloaded";
+static const char _eina_model_str_properties_loaded[] = "properties,loaded";
+static const char _eina_model_str_properties_unloaded[] = "properties,unloaded";
+static const char _eina_model_str_children_loaded[] = "children,loaded";
+static const char _eina_model_str_children_unloaded[] = "children,unloaded";
 
 #ifdef CRITICAL
 #undef CRITICAL
@@ -1992,6 +1998,8 @@ static const Eina_Model_Event_Description _eina_model_type_base_events[] = {
   EINA_MODEL_EVENT_DESCRIPTION(_eina_model_str_child_inserted, "u", "model child was inserted, child position is given."),
   EINA_MODEL_EVENT_DESCRIPTION(_eina_model_str_child_set, "u", "model child was set, child position is given."),
   EINA_MODEL_EVENT_DESCRIPTION(_eina_model_str_child_del, "u", "model child was deleted, child position is given."),
+  EINA_MODEL_EVENT_DESCRIPTION(_eina_model_str_loaded, "", "model was loaded"),
+  EINA_MODEL_EVENT_DESCRIPTION(_eina_model_str_unloaded, "", "model was unloaded"),
   EINA_MODEL_EVENT_DESCRIPTION_SENTINEL
 };
 
@@ -2375,6 +2383,12 @@ static const Eina_Model_Type _EINA_MODEL_TYPE_MIXIN = {
 };
 #undef EINA_MODEL_TYPE_MIXIN_GET
 
+/* Events for all Properties interface */
+static const Eina_Model_Event_Description _eina_model_interface_properties_events[] = {
+  EINA_MODEL_EVENT_DESCRIPTION(_eina_model_str_properties_loaded, "", "model properties were loaded"),
+  EINA_MODEL_EVENT_DESCRIPTION(_eina_model_str_properties_unloaded, "", "model properties were unloaded"),
+  EINA_MODEL_EVENT_DESCRIPTION_SENTINEL
+};
 
 /* EINA_MODEL_INTERFACE_PROPERTIES_HASH ******************************/
 
@@ -2536,7 +2550,7 @@ static const Eina_Model_Interface_Properties _EINA_MODEL_INTERFACE_PROPERTIES_HA
     sizeof(Eina_Model_Interface_Properties),
     _EINA_MODEL_INTERFACE_NAME_PROPERTIES,
     NULL, /* no parent interfaces */
-    NULL, /* no extra events */
+    _eina_model_interface_properties_events,
     _eina_model_interface_properties_hash_setup,
     _eina_model_interface_properties_hash_flush,
     _eina_model_interface_properties_hash_constructor,
@@ -2686,7 +2700,7 @@ static const Eina_Model_Interface_Properties _EINA_MODEL_INTERFACE_PROPERTIES_ST
     sizeof(Eina_Model_Interface_Properties),
     _EINA_MODEL_INTERFACE_NAME_PROPERTIES,
     NULL, /* no parent interfaces */
-    NULL, /* no extra events */
+    _eina_model_interface_properties_events,
     _eina_model_interface_properties_struct_setup,
     _eina_model_interface_properties_struct_flush,
     _eina_model_interface_properties_struct_constructor,
@@ -2706,6 +2720,13 @@ static const Eina_Model_Interface_Properties _EINA_MODEL_INTERFACE_PROPERTIES_ST
   _eina_model_interface_properties_struct_set,
   _eina_model_interface_properties_struct_del,
   _eina_model_interface_properties_struct_names_list
+};
+
+/* Events for all Children interface */
+static const Eina_Model_Event_Description _eina_model_interface_children_events[] = {
+  EINA_MODEL_EVENT_DESCRIPTION(_eina_model_str_children_loaded, "", "model children were loaded"),
+  EINA_MODEL_EVENT_DESCRIPTION(_eina_model_str_children_unloaded, "", "model children were unloaded"),
+  EINA_MODEL_EVENT_DESCRIPTION_SENTINEL
 };
 
 /* EINA_MODEL_INTERFACE_CHILDREN_INARRAY ******************************/
@@ -2864,7 +2885,7 @@ static const Eina_Model_Interface_Children _EINA_MODEL_INTERFACE_CHILDREN_INARRA
     sizeof(Eina_Model_Interface_Children),
     _EINA_MODEL_INTERFACE_NAME_CHILDREN,
     NULL, /* no parent interfaces */
-    NULL, /* no extra events */
+    _eina_model_interface_children_events,
     _eina_model_interface_children_inarray_setup,
     _eina_model_interface_children_inarray_flush,
     _eina_model_interface_children_inarray_constructor,
@@ -3988,15 +4009,52 @@ eina_model_compare(const Eina_Model *a, const Eina_Model *b)
 EAPI Eina_Bool
 eina_model_load(Eina_Model *model)
 {
+   Eina_Bool ret;
+
    EINA_MODEL_INSTANCE_CHECK_VAL(model, EINA_FALSE);
-   EINA_MODEL_TYPE_CALL_OPTIONAL_RETURN(model, load, EINA_TRUE);
+
+   eina_error_set(0);
+   if (model->desc->ops.type.load)
+     {
+        ret = model->desc->ops.type.load(model);
+        if (ret)
+          _eina_model_event_callback_call(model, _eina_model_str_loaded, NULL);
+     }
+   else
+     {
+        eina_error_set(EINA_ERROR_MODEL_METHOD_MISSING);
+        ret = EINA_FALSE;
+        ERR("Method load() not implemented for model %p (%s)",
+            model, model->desc->cache.types[0]->name);
+     }
+
+   return ret;
 }
 
 EAPI Eina_Bool
 eina_model_unload(Eina_Model *model)
 {
+   Eina_Bool ret;
+
    EINA_MODEL_INSTANCE_CHECK_VAL(model, EINA_FALSE);
-   EINA_MODEL_TYPE_CALL_OPTIONAL_RETURN(model, unload, EINA_TRUE);
+
+   eina_error_set(0);
+   if (model->desc->ops.type.unload)
+     {
+        ret = model->desc->ops.type.unload(model);
+        if (ret)
+          _eina_model_event_callback_call
+            (model, _eina_model_str_unloaded, NULL);
+     }
+   else
+     {
+        eina_error_set(EINA_ERROR_MODEL_METHOD_MISSING);
+        ret = EINA_FALSE;
+        ERR("Method unload() not implemented for model %p (%s)",
+            model, model->desc->cache.types[0]->name);
+     }
+
+   return ret;
 }
 
 EAPI Eina_Bool
@@ -5062,26 +5120,40 @@ EAPI Eina_Bool
 eina_model_interface_properties_load(const Eina_Model_Interface *iface, Eina_Model *model)
 {
    Eina_Bool (*load)(Eina_Model *);
+   Eina_Bool ret;
 
    EINA_MODEL_INTERFACE_IMPLEMENTED_CHECK_VAL(iface, model, EINA_FALSE);
 
    load = _eina_model_interface_find_offset
      (iface, offsetof(Eina_Model_Interface_Properties, load));
    EINA_SAFETY_ON_NULL_RETURN_VAL(load, EINA_FALSE);
-   return load(model);
+   ret = load(model);
+
+   if (ret)
+     _eina_model_event_callback_call
+       (model, _eina_model_str_properties_loaded, NULL);
+
+   return ret;
 }
 
 EAPI Eina_Bool
 eina_model_interface_properties_unload(const Eina_Model_Interface *iface, Eina_Model *model)
 {
    Eina_Bool (*unload)(Eina_Model *);
+   Eina_Bool ret;
 
    EINA_MODEL_INTERFACE_IMPLEMENTED_CHECK_VAL(iface, model, EINA_FALSE);
 
    unload = _eina_model_interface_find_offset
      (iface, offsetof(Eina_Model_Interface_Properties, unload));
    EINA_SAFETY_ON_NULL_RETURN_VAL(unload, EINA_FALSE);
-   return unload(model);
+   ret = unload(model);
+
+   if (ret)
+     _eina_model_event_callback_call
+       (model, _eina_model_str_properties_unloaded, NULL);
+
+   return ret;
 }
 
 EAPI Eina_Bool
@@ -5166,26 +5238,40 @@ EAPI Eina_Bool
 eina_model_interface_children_load(const Eina_Model_Interface *iface, Eina_Model *model)
 {
    Eina_Bool (*load)(Eina_Model *);
+   Eina_Bool ret;
 
    EINA_MODEL_INTERFACE_IMPLEMENTED_CHECK_VAL(iface, model, EINA_FALSE);
 
    load = _eina_model_interface_find_offset
      (iface, offsetof(Eina_Model_Interface_Children, load));
    EINA_SAFETY_ON_NULL_RETURN_VAL(load, EINA_FALSE);
-   return load(model);
+   ret = load(model);
+
+   if (ret)
+     _eina_model_event_callback_call
+       (model, _eina_model_str_children_loaded, NULL);
+
+   return ret;
 }
 
 EAPI Eina_Bool
 eina_model_interface_children_unload(const Eina_Model_Interface *iface, Eina_Model *model)
 {
    Eina_Bool (*unload)(Eina_Model *);
+   Eina_Bool ret;
 
    EINA_MODEL_INTERFACE_IMPLEMENTED_CHECK_VAL(iface, model, EINA_FALSE);
 
    unload = _eina_model_interface_find_offset
      (iface, offsetof(Eina_Model_Interface_Children, unload));
    EINA_SAFETY_ON_NULL_RETURN_VAL(unload, EINA_FALSE);
-   return unload(model);
+   ret = unload(model);
+
+   if (ret)
+     _eina_model_event_callback_call
+       (model, _eina_model_str_children_unloaded, NULL);
+
+   return ret;
 }
 
 EAPI int
