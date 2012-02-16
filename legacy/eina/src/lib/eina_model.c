@@ -524,7 +524,7 @@ _eina_model_description_ifaces_fix(Eina_Model_Description *desc)
       unsigned int users;
       Eina_List *deps;
    } *nodes, **pending, **roots;
-   unsigned int n_nodes = desc->total.ifaces, n_pending = 0, n_roots = 0, i;
+   unsigned int n_nodes = desc->total.ifaces, n_pending = 0, n_roots = 0, i, j;
    Eina_Bool ret = EINA_TRUE;
 
    nodes = alloca(n_nodes * sizeof(struct node));
@@ -532,15 +532,26 @@ _eina_model_description_ifaces_fix(Eina_Model_Description *desc)
    roots = alloca(n_nodes * sizeof(struct node *));
 
    /* populate */
-   for (i = 0; i < n_nodes; i++)
+   for (i = 0, j = 0; i < n_nodes; i++)
      {
-        nodes[i].iface = desc->cache.ifaces[i];
-        nodes[i].users = 0;
-        nodes[i].deps = NULL;
+        unsigned int k;
+        for (k = 0; k < j; k++)
+          {
+             if (nodes[k].iface == desc->cache.ifaces[i])
+               break;
+          }
+        if (k < j)
+          continue; /* already exists */
+
+        nodes[j].iface = desc->cache.ifaces[i];
+        nodes[j].users = 0;
+        nodes[j].deps = NULL;
+        j++;
      }
+   n_nodes = j;
+
    for (i = 0; i < n_nodes; i++)
      {
-        unsigned int j;
         for (j = 0; j < n_nodes; j++)
           {
              if (i == j) continue;
@@ -580,8 +591,6 @@ _eina_model_description_ifaces_fix(Eina_Model_Description *desc)
 
         EINA_LIST_FREE(r->deps, d)
           {
-             unsigned int j;
-
              d->users--;
              if (d->users > 0) continue;
 
