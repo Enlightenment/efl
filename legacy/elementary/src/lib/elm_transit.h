@@ -309,8 +309,8 @@ EAPI Eina_Bool              elm_transit_objects_final_state_keep_get(const Elm_T
  * If @p enabled is EINA_TRUE, the objects of the transit will receives
  * events from mouse and keyboard during the animation.
  * @note When you add an object with elm_transit_object_add(), its state from
- * evas_object_pass_events_get(obj) is saved, and it is applied when the
- * transit ends, if you change this state with evas_object_pass_events_set()
+ * evas_object_freeze_events_get(obj) is saved, and it is applied when the
+ * transit ends, if you change this state with evas_object_freeze_events_set()
  * after adding the object, this state will change again when @p transit stops
  * to run.
  *
