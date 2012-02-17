@@ -6,11 +6,6 @@
 
 #define RASTER_FORGOT_WHY "this is here."
 
-#ifdef _WIN32
-# define FMT_SIZE_T "%Iu"
-#else
-# define FMT_SIZE_T "%zu"
-#endif
 
 //--------------------------------------------------------------------------//
 #define MAX_LUA_MEM (4 * (1024 * 1024))
@@ -216,7 +211,7 @@ _elua_alloc(void *ud, void *ptr, size_t osize, size_t nsize)
    ela->cur += nsize - osize;
    if (ela->cur > ela->max)
      {
-        ERR("Lua memory limit of " FMT_SIZE_T " bytes reached (" FMT_SIZE_T  " allocated)",
+        ERR("Lua memory limit of %zu bytes reached (%zu allocated)",
             ela->max, ela->cur);
         return NULL;
      }
@@ -228,7 +223,7 @@ _elua_alloc(void *ud, void *ptr, size_t osize, size_t nsize)
 
    ptr2 = realloc(ptr, nsize);
    if (ptr2) return ptr2;
-   ERR("Lua cannot re-allocate " FMT_SIZE_T " bytes", nsize);
+   ERR("Lua cannot re-allocate %zu bytes", nsize);
    return ptr2;
 }
 
