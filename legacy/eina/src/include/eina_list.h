@@ -881,13 +881,13 @@ EAPI Eina_List            *eina_list_clone(const Eina_List *list) EINA_WARN_UNUS
  * @brief Sort a list according to the ordering func will return.
  *
  * @param list The list handle to sort.
- * @param size The length of the list to sort.
+ * @param limit The maximum number of list elements to sort.
  * @param func A function pointer that can handle comparing the list data
  * nodes.
  * @return the new head of list.
  *
  * This function sorts @p list. @p size if the number of the first
- * element to sort. If @p size is 0 or greater than the number of
+ * element to sort. If @p limit is 0 or greater than the number of
  * elements in @p list, all the elements are sorted. @p func is used to
  * compare two elements of @p list. If @p list or @p func are @c NULL,
  * this function returns @c NULL.
@@ -920,7 +920,7 @@ EAPI Eina_List            *eina_list_clone(const Eina_List *list) EINA_WARN_UNUS
  *
  * @warning @p list must be a pointer to the first element of the list.
  */
-EAPI Eina_List            *eina_list_sort(Eina_List *list, unsigned int size, Eina_Compare_Cb func) EINA_ARG_NONNULL(3) EINA_WARN_UNUSED_RESULT;
+EAPI Eina_List            *eina_list_sort(Eina_List *list, unsigned int limit, Eina_Compare_Cb func) EINA_ARG_NONNULL(3) EINA_WARN_UNUSED_RESULT;
 
 
 /**
