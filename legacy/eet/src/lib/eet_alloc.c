@@ -3,6 +3,7 @@
 #endif
 
 #include <Eina.h>
+
 #include "Eet.h"
 #include "Eet_private.h"
 
@@ -90,4 +91,3 @@ eet_mempool_shutdown(void)
         mempool_array[i]->mp = NULL;
      }
 }
-
