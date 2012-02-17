@@ -1,3 +1,13 @@
+/**
+ * @enum _Elm_Text_Format
+ * @typedef Elm_Text_Format
+ *
+ * Text Format types.
+ * 
+ * @see elm_entry_file_set()
+ *
+ * @ingroup Entry
+ */
 typedef enum
 {
    ELM_TEXT_FORMAT_PLAIN_UTF8,
@@ -5,7 +15,14 @@ typedef enum
 } Elm_Text_Format;
 
 /**
+ * @enum _Elm_Wrap_Type
+ * @typedef Elm_Wrap_Type
+ *
  * Line wrapping types.
+ * 
+ * @see elm_entry_line_wrap_set()
+ *
+ * @ingroup Entry
  */
 typedef enum
 {
@@ -16,6 +33,16 @@ typedef enum
    ELM_WRAP_LAST
 } Elm_Wrap_Type; /**< Type of word or character wrapping to use */
 
+/**
+ * @enum _Elm_Input_Panel_Layout
+ * @typedef Elm_Input_Panel_Layout
+ *
+ * Input panel (virtual keyboard) layout types.
+ * 
+ * @see elm_entry_input_panel_layout_set()
+ *
+ * @ingroup Entry
+ */
 typedef enum
 {
    ELM_INPUT_PANEL_LAYOUT_NORMAL, /**< Default layout */
@@ -32,12 +59,32 @@ typedef enum
    ELM_INPUT_PANEL_LAYOUT_PASSWORD /**< Like normal, but no auto-correct, no auto-capitalization etc. */
 } Elm_Input_Panel_Layout; /**< Type of input panel (virtual keyboard) to use - this is a hint and may not provide exactly what is desired. */
 
+/**
+ * @enum _Elm_Input_Panel_Lang
+ * @typedef Elm_Input_Panel_Lang
+ *
+ * Input panel (virtual keyboard) language modes.
+ * 
+ * @see elm_entry_input_panel_language_set()
+ *
+ * @ingroup Entry
+ */
 typedef enum
 {
    ELM_INPUT_PANEL_LANG_AUTOMATIC,    /**< Automatic */
    ELM_INPUT_PANEL_LANG_ALPHABET      /**< Alphabet */
 } Elm_Input_Panel_Lang;
 
+/**
+ * @enum _Elm_Autocapital_Type
+ * @typedef Elm_Autocapital_Type
+ *
+ * Autocapitalization Types.
+ * 
+ * @see elm_entry_autocapital_type_set()
+ *
+ * @ingroup Entry
+ */
 typedef enum
 {
    ELM_AUTOCAPITAL_TYPE_NONE, /**< No auto-capitalization when typing */
@@ -46,16 +93,26 @@ typedef enum
    ELM_AUTOCAPITAL_TYPE_ALLCHARACTER, /**< Autocapitalize all letters */
 } Elm_Autocapital_Type; /**< Choose method of auto-capitalization */
 
+/**
+ * @enum _Elm_Input_Panel_Return_Key_Type
+ * @typedef Elm_Input_Panel_Return_Key_Type
+ *
+ * "Return" Key types on the input panel (virtual keyboard).
+ * 
+ * @see elm_entry_input_panel_return_key_type_set()
+ *
+ * @ingroup Entry
+ */
 typedef enum
 {
-   ELM_INPUT_PANEL_RETURN_KEY_TYPE_DEFAULT,
-   ELM_INPUT_PANEL_RETURN_KEY_TYPE_DONE,
-   ELM_INPUT_PANEL_RETURN_KEY_TYPE_GO,
-   ELM_INPUT_PANEL_RETURN_KEY_TYPE_JOIN,
-   ELM_INPUT_PANEL_RETURN_KEY_TYPE_LOGIN,
-   ELM_INPUT_PANEL_RETURN_KEY_TYPE_NEXT,
-   ELM_INPUT_PANEL_RETURN_KEY_TYPE_SEARCH,
-   ELM_INPUT_PANEL_RETURN_KEY_TYPE_SEND
+   ELM_INPUT_PANEL_RETURN_KEY_TYPE_DEFAULT, /**< Default */
+   ELM_INPUT_PANEL_RETURN_KEY_TYPE_DONE,    /**< Done */
+   ELM_INPUT_PANEL_RETURN_KEY_TYPE_GO,      /**< Go */
+   ELM_INPUT_PANEL_RETURN_KEY_TYPE_JOIN,    /**< Join */
+   ELM_INPUT_PANEL_RETURN_KEY_TYPE_LOGIN,   /**< Login */
+   ELM_INPUT_PANEL_RETURN_KEY_TYPE_NEXT,    /**< Next */
+   ELM_INPUT_PANEL_RETURN_KEY_TYPE_SEARCH,  /**< Search string or magnifier icon */
+   ELM_INPUT_PANEL_RETURN_KEY_TYPE_SEND     /**< Send */
 } Elm_Input_Panel_Return_Key_Type;
 
 /**
@@ -1134,7 +1191,7 @@ EAPI Eina_Bool              elm_entry_input_panel_enabled_get(const Evas_Object 
  * Show the input panel (virtual keyboard) based on the input panel property of entry such as layout, autocapital types, and so on.
  *
  * Note that input panel is shown or hidden automatically according to the focus state of entry widget.
- * This API can be used in the case of manually controlling by using elm_entry_input_panel_enabled_set(en, EINA_FALSE)
+ * This API can be used in the case of manually controlling by using elm_entry_input_panel_enabled_set(en, EINA_FALSE).
  *
  * @param obj The entry object
  */
