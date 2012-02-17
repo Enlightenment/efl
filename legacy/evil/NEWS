@@ -3,6 +3,7 @@ Evil NEWS - User visible changes.
 * Evil 1.1:
 
 ** Add evil_path_is_absolute() API
+** Add POSIX printf() family functions
 
 * Evil 1.0:
 
