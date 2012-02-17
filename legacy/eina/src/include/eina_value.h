@@ -27,6 +27,72 @@
 #include <stdarg.h>
 
 /**
+ * @page eina_value_example_01_page Eina_Value usage
+ * @dontinclude eina_value_01.c
+ *
+ * This very simple example shows how to use some of the basic features of eina
+ * value: setting and getting values, converting between types and printing a
+ * value as a string.
+ *
+ * Our main function starts out with the basic, declaring some variables and
+ * initializing eina:
+ * @until eina_init
+ *
+ * Now we can jump into using eina value. We set a value, get this value and
+ * then print it:
+ * @until printf
+ *
+ * In the above snippet of code we printed an @c int value, we can however print
+ * the value as a string:
+ * @until free
+ *
+ * And once done with a value it's good practice to destroy it:
+ * @until eina_value_flush
+ *
+ * We now reuse @c v to store a string, get its value and print it:
+ * @until printf
+ * @note Since @c s is the value and not returned by @c eina_value_to_string()
+ * we don't need to free it.
+ *
+ * Just because we stored a string doesn't mean we can't use the @c
+ * eina_value_to_string() function, we can and it's important to note that it
+ * will return not the stored string but rather a copy of it(one we have to
+ * free):
+ * @until eina_value_flush
+ *
+ * And now to explore conversions between two type we'll create another value:
+ * @until eina_value_setup
+ *
+ * And make sure @c v and @c otherv have different types:
+ * @until eina_value_setup
+ *
+ * We then set a value to @c v and have it converted, to do this we don't need
+ * to tell to which type we want to convert, we just say were we want to store
+ * the converted value and eina value will figure out what to convert to, and
+ * how:
+ * @until eina_value_convert
+ *
+ * And now let's check the conversion worked:
+ * @until printf
+ *
+ * But converting to strings is not particularly exciting, @c
+ * eina_value_to_string() already did that, so now let's make the conversion the
+ * other way around, from string to @c int:
+ * @until printf
+ *
+ * And once done, destroy the values:
+ * @until }
+ *
+ * Full source code: @ref eina_value_01_c
+ */
+
+/**
+ * @page eina_value_01_c eina_value_01.c
+ * @include eina_value_01.c
+ * @example eina_value_01.c
+ */
+
+/**
  * @addtogroup Eina_Data_Types_Group Data Types
  *
  * @since 1.2
@@ -55,6 +121,9 @@
  * types. For more complex hierarchical data, with properties and
  * children, reference counting, inheritance and interfaces, see @ref
  * Eina_Model_Group.
+ *
+ * Examples of usage of the Eina_Value API:
+ * @li @ref eina_value_example_01_page
  *
  * @{
  */
