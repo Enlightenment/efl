@@ -1172,6 +1172,7 @@ eina_list_split_list(Eina_List *list, Eina_List *relative, Eina_List **right)
    next->prev = NULL;
    next->accounting = _eina_list_mempool_accounting_new(next);
    next->accounting->last = list->accounting->last;
+   next->accounting->count = 0;
    *right = next;
 
    itr = next;

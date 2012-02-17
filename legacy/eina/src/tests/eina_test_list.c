@@ -338,10 +338,50 @@ START_TEST(eina_test_sorted_insert)
 }
 END_TEST
 
+START_TEST(eina_test_list_split)
+{
+  Eina_List *left = NULL, *right = NULL ;
+  Eina_List *list = NULL;
+  Eina_List *l;
+  void *list_data;
+  int i;
+
+  eina_init();
+
+  list = eina_list_append(list, "tigh");
+  list = eina_list_append(list, "adar");
+  list = eina_list_append(list, "baltar");
+  list = eina_list_append(list, "roslin");
+  list = eina_list_append(list, "baltar");
+  list = eina_list_append(list, "roslin");
+  list = eina_list_append(list, "baltar");
+  list = eina_list_append(list, "roslin");
+
+  fail_if(list == NULL);
+  fail_if(eina_list_count(list) != 8);
+
+  for ( i = 0; i <  200; i++)
+    {
+      left = eina_list_split_list(list, eina_list_nth_list(list, i % 2), &right);
+
+      if (i % 2 == 0)
+	fail_if(eina_list_count(left) == 1 && eina_list_count(right) + eina_list_count(left) == i + 7);
+      else
+	fail_if(eina_list_count(left) == 2 && eina_list_count(right) + eina_list_count(left) == i + 7);
+
+      list = eina_list_merge(left, right);
+      list = eina_list_append(list, "roslin");
+    }
+
+  eina_shutdown();
+}
+END_TEST
+
 void
 eina_test_list(TCase *tc)
 {
    tcase_add_test(tc, eina_test_simple);
    tcase_add_test(tc, eina_test_merge);
    tcase_add_test(tc, eina_test_sorted_insert);
+   tcase_add_test(tc, eina_test_list_split);
 }

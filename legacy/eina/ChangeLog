@@ -218,3 +218,7 @@
 	this is a same kind of visual hint for the purpose of the pointer,
 	but again, the two types are interchangeable.
 
+2012-02-17  Cedric Bail
+
+	* Fix forgotten initialization of eina list count during eina_list_split_list.
+
