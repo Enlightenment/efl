@@ -41,7 +41,8 @@ SRCS = \
 	eina_model_01.c \
 	eina_model_02.c \
 	eina_model_03.c \
-	eina_value_01.c
+	eina_value_01.c \
+	eina_value_02.c
 
 examples_PROGRAMS =
 
@@ -82,7 +83,8 @@ examples_PROGRAMS += \
 	eina_model_02 \
 	eina_model_03 \
 	eina_model_04 \
-	eina_value_01
+	eina_value_01 \
+	eina_value_02
 
 eina_model_04_SOURCES = \
 	eina_model_04_animal.c \

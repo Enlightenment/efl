@@ -93,6 +93,75 @@
  */
 
 /**
+ * @page eina_value_example_02_page Eina_Value struct usage
+ * @dontinclude eina_value_02.c
+ *
+ * This example will examine a hypothetical situation in which we had a
+ * structure(which represented parameters) with two fields, and then need to add
+ * a third field to our structure. If using structs directly we'd need to
+ * rewrite every piece of code that touches the struct, by using eina value, and
+ * thus having the compiler not even know the struct, we can reduce the amount
+ * of changes needed and retain interoperability between the old and new format.
+ *
+ * Our example will start with a function that creates descriptions of both of
+ * our structs for eina value usage. The first step is to create a struct and
+ * describe its members:
+ * @until v1_members[1]
+ * @note We can't pass the types of the members to EINA_VALUE_STRUCT_MEMBER
+ * macro because they are not constant initializers.
+ *
+ * So far it should be pretty easy to understand, we said @c My_Struct_V1 has
+ * two members, one of type @c int and another of type @c char. We now create
+ * the description of the actual struct, again nothing overly complex, we signal
+ * which version of EINA_VALUE_STRUCT we're using, we declare no special
+ * operations, our members and our size:
+ * @until V1_DESC
+ *
+ * We now repeat the process for the second version of our struct, the only
+ * difference is the addition of a third parameter of type @c int :
+ * @until V2_DESC
+ * @until }
+ *
+ * We'll now look at a function that sets the values of our structs. For
+ * simplicity's sake we initialize it we random values, a real world case would
+ * read these values from a file, a database or even from the network. The
+ * fundamental detail here is that this function works for both V1 and V2
+ * structs, this is because setting a parameter that a struct that doesn't have
+ * does nothing without throwing any errors:
+ * @until }
+ * @note While using eina_value_struct_set() with an in-existing parameter
+ * causes no error, it does return #EINA_FALSE, to notify it was not possible
+ * to set the value. This could be used to determine that we're handling a V1
+ * struct and take some action based on that.
+ *
+ * The next thing is to do is see what a function that uses the values of the
+ * struct looks like. We'll again be very simplistic in our usage, we'll just
+ * print the values, but a real world case, might send these values to another
+ * process use them to open a network/database connection or anything else.
+ * Since all versions of the struct have @c param1 and @c param2 we'll
+ * unconditionally use them:
+ * @until printf
+ *
+ * The next step is to conditionally use @c param3, which can fortunately be
+ * done in the same step in which we get it's value:
+ * @until }
+ *
+ * There we've now got functions that can both populate and use values from both
+ * our structs, so now let's actually use them in our main function by creating
+ * a struct of each type, initializing them and them using them:
+ * @until }
+ *
+ * This concludes our example. For the full source code see @ref
+ * eina_value_02_c.
+ */
+
+/**
+ * @page eina_value_02_c eina_value_02.c
+ * @include eina_value_02.c
+ * @example eina_value_02.c
+ */
+
+/**
  * @addtogroup Eina_Data_Types_Group Data Types
  *
  * @since 1.2
@@ -124,6 +193,7 @@
  *
  * Examples of usage of the Eina_Value API:
  * @li @ref eina_value_example_01_page
+ * @li @ref eina_value_example_02_page
  *
  * @{
  */
