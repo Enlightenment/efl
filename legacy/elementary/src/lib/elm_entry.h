@@ -1,121 +1,4 @@
 /**
- * @enum _Elm_Text_Format
- * @typedef Elm_Text_Format
- *
- * Text Format types.
- * 
- * @see elm_entry_file_set()
- *
- * @ingroup Entry
- */
-typedef enum
-{
-   ELM_TEXT_FORMAT_PLAIN_UTF8,
-   ELM_TEXT_FORMAT_MARKUP_UTF8
-} Elm_Text_Format;
-
-/**
- * @enum _Elm_Wrap_Type
- * @typedef Elm_Wrap_Type
- *
- * Line wrapping types.
- * 
- * @see elm_entry_line_wrap_set()
- *
- * @ingroup Entry
- */
-typedef enum
-{
-   ELM_WRAP_NONE = 0, /**< No wrap - value is zero */
-   ELM_WRAP_CHAR, /**< Char wrap - wrap between characters */
-   ELM_WRAP_WORD, /**< Word wrap - wrap in allowed wrapping points (as defined in the unicode standard) */
-   ELM_WRAP_MIXED, /**< Mixed wrap - Word wrap, and if that fails, char wrap. */
-   ELM_WRAP_LAST
-} Elm_Wrap_Type; /**< Type of word or character wrapping to use */
-
-/**
- * @enum _Elm_Input_Panel_Layout
- * @typedef Elm_Input_Panel_Layout
- *
- * Input panel (virtual keyboard) layout types.
- * 
- * @see elm_entry_input_panel_layout_set()
- *
- * @ingroup Entry
- */
-typedef enum
-{
-   ELM_INPUT_PANEL_LAYOUT_NORMAL, /**< Default layout */
-   ELM_INPUT_PANEL_LAYOUT_NUMBER, /**< Number layout */
-   ELM_INPUT_PANEL_LAYOUT_EMAIL, /**< Email layout */
-   ELM_INPUT_PANEL_LAYOUT_URL, /**< URL layout */
-   ELM_INPUT_PANEL_LAYOUT_PHONENUMBER, /**< Phone Number layout */
-   ELM_INPUT_PANEL_LAYOUT_IP, /**< IP layout */
-   ELM_INPUT_PANEL_LAYOUT_MONTH, /**< Month layout */
-   ELM_INPUT_PANEL_LAYOUT_NUMBERONLY, /**< Number Only layout */
-   ELM_INPUT_PANEL_LAYOUT_INVALID, /**< Never use this */
-   ELM_INPUT_PANEL_LAYOUT_HEX, /**< Hexadecimal layout */
-   ELM_INPUT_PANEL_LAYOUT_TERMINAL, /**< Command-line terminal layout */
-   ELM_INPUT_PANEL_LAYOUT_PASSWORD /**< Like normal, but no auto-correct, no auto-capitalization etc. */
-} Elm_Input_Panel_Layout; /**< Type of input panel (virtual keyboard) to use - this is a hint and may not provide exactly what is desired. */
-
-/**
- * @enum _Elm_Input_Panel_Lang
- * @typedef Elm_Input_Panel_Lang
- *
- * Input panel (virtual keyboard) language modes.
- * 
- * @see elm_entry_input_panel_language_set()
- *
- * @ingroup Entry
- */
-typedef enum
-{
-   ELM_INPUT_PANEL_LANG_AUTOMATIC,    /**< Automatic */
-   ELM_INPUT_PANEL_LANG_ALPHABET      /**< Alphabet */
-} Elm_Input_Panel_Lang;
-
-/**
- * @enum _Elm_Autocapital_Type
- * @typedef Elm_Autocapital_Type
- *
- * Autocapitalization Types.
- * 
- * @see elm_entry_autocapital_type_set()
- *
- * @ingroup Entry
- */
-typedef enum
-{
-   ELM_AUTOCAPITAL_TYPE_NONE, /**< No auto-capitalization when typing */
-   ELM_AUTOCAPITAL_TYPE_WORD, /**< Autocapitalize each word typed */
-   ELM_AUTOCAPITAL_TYPE_SENTENCE, /**< Autocapitalize the start of each sentence */
-   ELM_AUTOCAPITAL_TYPE_ALLCHARACTER, /**< Autocapitalize all letters */
-} Elm_Autocapital_Type; /**< Choose method of auto-capitalization */
-
-/**
- * @enum _Elm_Input_Panel_Return_Key_Type
- * @typedef Elm_Input_Panel_Return_Key_Type
- *
- * "Return" Key types on the input panel (virtual keyboard).
- * 
- * @see elm_entry_input_panel_return_key_type_set()
- *
- * @ingroup Entry
- */
-typedef enum
-{
-   ELM_INPUT_PANEL_RETURN_KEY_TYPE_DEFAULT, /**< Default */
-   ELM_INPUT_PANEL_RETURN_KEY_TYPE_DONE,    /**< Done */
-   ELM_INPUT_PANEL_RETURN_KEY_TYPE_GO,      /**< Go */
-   ELM_INPUT_PANEL_RETURN_KEY_TYPE_JOIN,    /**< Join */
-   ELM_INPUT_PANEL_RETURN_KEY_TYPE_LOGIN,   /**< Login */
-   ELM_INPUT_PANEL_RETURN_KEY_TYPE_NEXT,    /**< Next */
-   ELM_INPUT_PANEL_RETURN_KEY_TYPE_SEARCH,  /**< Search string or magnifier icon */
-   ELM_INPUT_PANEL_RETURN_KEY_TYPE_SEND     /**< Send */
-} Elm_Input_Panel_Return_Key_Type;
-
-/**
  * @defgroup Entry Entry
  *
  * @image html img/widget/entry/preview-00.png
@@ -355,6 +238,111 @@ typedef enum
  *
  * @{
  */
+
+/**
+ * @enum _Elm_Text_Format
+ * @typedef Elm_Text_Format
+ *
+ * Text Format types.
+ * 
+ * @see elm_entry_file_set()
+ */
+typedef enum
+{
+   ELM_TEXT_FORMAT_PLAIN_UTF8,  /**< Plain UTF8 type */
+   ELM_TEXT_FORMAT_MARKUP_UTF8  /**< Markup UTF8 type */
+} Elm_Text_Format;
+
+/**
+ * @enum _Elm_Wrap_Type
+ * @typedef Elm_Wrap_Type
+ *
+ * Line wrapping types.
+ * 
+ * @see elm_entry_line_wrap_set()
+ */
+typedef enum
+{
+   ELM_WRAP_NONE = 0, /**< No wrap - value is zero */
+   ELM_WRAP_CHAR,     /**< Char wrap - wrap between characters */
+   ELM_WRAP_WORD,     /**< Word wrap - wrap in allowed wrapping points (as defined in the unicode standard) */
+   ELM_WRAP_MIXED,    /**< Mixed wrap - Word wrap, and if that fails, char wrap. */
+   ELM_WRAP_LAST
+} Elm_Wrap_Type; /**< Type of word or character wrapping to use */
+
+/**
+ * @enum _Elm_Input_Panel_Layout
+ * @typedef Elm_Input_Panel_Layout
+ *
+ * Input panel (virtual keyboard) layout types.
+ * 
+ * @see elm_entry_input_panel_layout_set()
+ */
+typedef enum
+{
+   ELM_INPUT_PANEL_LAYOUT_NORMAL,      /**< Default layout */
+   ELM_INPUT_PANEL_LAYOUT_NUMBER,      /**< Number layout */
+   ELM_INPUT_PANEL_LAYOUT_EMAIL,       /**< Email layout */
+   ELM_INPUT_PANEL_LAYOUT_URL,         /**< URL layout */
+   ELM_INPUT_PANEL_LAYOUT_PHONENUMBER, /**< Phone Number layout */
+   ELM_INPUT_PANEL_LAYOUT_IP,          /**< IP layout */
+   ELM_INPUT_PANEL_LAYOUT_MONTH,       /**< Month layout */
+   ELM_INPUT_PANEL_LAYOUT_NUMBERONLY,  /**< Number Only layout */
+   ELM_INPUT_PANEL_LAYOUT_INVALID,     /**< Never use this */
+   ELM_INPUT_PANEL_LAYOUT_HEX,         /**< Hexadecimal layout */
+   ELM_INPUT_PANEL_LAYOUT_TERMINAL,    /**< Command-line terminal layout */
+   ELM_INPUT_PANEL_LAYOUT_PASSWORD     /**< Like normal, but no auto-correct, no auto-capitalization etc. */
+} Elm_Input_Panel_Layout; /**< Type of input panel (virtual keyboard) to use - this is a hint and may not provide exactly what is desired. */
+
+/**
+ * @enum _Elm_Input_Panel_Lang
+ * @typedef Elm_Input_Panel_Lang
+ *
+ * Input panel (virtual keyboard) language modes.
+ * 
+ * @see elm_entry_input_panel_language_set()
+ */
+typedef enum
+{
+   ELM_INPUT_PANEL_LANG_AUTOMATIC,    /**< Automatic */
+   ELM_INPUT_PANEL_LANG_ALPHABET      /**< Alphabet */
+} Elm_Input_Panel_Lang;
+
+/**
+ * @enum _Elm_Autocapital_Type
+ * @typedef Elm_Autocapital_Type
+ *
+ * Autocapitalization Types.
+ * 
+ * @see elm_entry_autocapital_type_set()
+ */
+typedef enum
+{
+   ELM_AUTOCAPITAL_TYPE_NONE,         /**< No auto-capitalization when typing */
+   ELM_AUTOCAPITAL_TYPE_WORD,         /**< Autocapitalize each word typed */
+   ELM_AUTOCAPITAL_TYPE_SENTENCE,     /**< Autocapitalize the start of each sentence */
+   ELM_AUTOCAPITAL_TYPE_ALLCHARACTER, /**< Autocapitalize all letters */
+} Elm_Autocapital_Type; /**< Choose method of auto-capitalization */
+
+/**
+ * @enum _Elm_Input_Panel_Return_Key_Type
+ * @typedef Elm_Input_Panel_Return_Key_Type
+ *
+ * "Return" Key types on the input panel (virtual keyboard).
+ * 
+ * @see elm_entry_input_panel_return_key_type_set()
+ */
+typedef enum
+{
+   ELM_INPUT_PANEL_RETURN_KEY_TYPE_DEFAULT, /**< Default */
+   ELM_INPUT_PANEL_RETURN_KEY_TYPE_DONE,    /**< Done */
+   ELM_INPUT_PANEL_RETURN_KEY_TYPE_GO,      /**< Go */
+   ELM_INPUT_PANEL_RETURN_KEY_TYPE_JOIN,    /**< Join */
+   ELM_INPUT_PANEL_RETURN_KEY_TYPE_LOGIN,   /**< Login */
+   ELM_INPUT_PANEL_RETURN_KEY_TYPE_NEXT,    /**< Next */
+   ELM_INPUT_PANEL_RETURN_KEY_TYPE_SEARCH,  /**< Search string or magnifier icon */
+   ELM_INPUT_PANEL_RETURN_KEY_TYPE_SEND     /**< Send */
+} Elm_Input_Panel_Return_Key_Type;
 
 /**
  * @typedef Elm_Entry_Anchor_Info
