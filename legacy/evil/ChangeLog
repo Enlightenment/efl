@@ -1,3 +1,62 @@
+2012-02-17  Vincent Torri  <doursse at users dot sf dot net>
+
+	* AUTHORS:
+	* src/lib/Evil.h:
+	* src/lib/Makefile.am:
+	* src/lib/evil_inet.c:
+	* src/lib/evil_mman.c:
+	* src/lib/evil_stdio.c:
+	* src/lib/evil_stdio.h:
+	* src/lib/evil_stdlib.c:
+	* src/lib/evil_util.c:
+	* src/lib/sys/mman.h:
+	* src/lib/evil_printa.c (added):
+	* src/lib/evil_pformatw.c (added):
+	* src/lib/evil_pformat.h (added):
+	* src/lib/evil_printw.c (added):
+	* src/lib/evil_print.h (added):
+	* src/lib/evil_macro.h (added):
+	* src/lib/evil_pformata.c (added):
+	Add POSIX printf family. Code taken from the MinGW-w64
+	project and modified to be integrated into Evil.
+
+	* src/bin/Makefile.am:
+	* src/bin/evil_suite.c:
+	* src/bin/evil_test_util.h (added):
+	* src/bin/evil_test_print.c (added):
+	* src/bin/evil_test_print.h (added):
+	* src/bin/evil_test_util.c (added):
+	Add util and printf unit tests
+
+	* src/lib/evil_errno.c:
+	* src/lib/errno.h (deleted):
+	* src/lib/mingw32ce (added):
+	* src/lib/mingw32ce/errno.h (added):
+	Move errno.h for Windows CE in its own directory to
+	suppress conflicts with standard errno.h when compiling
+	for Windows XP.
+
+	* src/lib/dlfcn/dlfcn.c:
+	* src/lib/evil_link_ce.c:
+	* src/lib/evil_main.c:
+	* src/lib/evil_unistd.c:
+	Define WIN32_LEAN_AND_MEAN only if it's not defined.
+
+	* src/lib/evil_fcntl.c:
+	Remove debug.
+
+	* src/bin/evil_test_dlfcn.c:
+	* src/bin/evil_test_environment.c:
+	* src/bin/evil_test_gettimeofday.c:
+	* src/bin/evil_test_link.c:
+	* src/bin/evil_test_mkstemp.c:
+	* src/bin/evil_test_pipe.c:
+	* src/bin/evil_test_realpath.c:
+	Remove warnings.
+
+	* src/lib/evil_link_xp.cpp:
+	Formatting.
+
 2012-01-20  Vincent Torri  <doursse at users dot sf dot net>
 
 	* Makefile.am:

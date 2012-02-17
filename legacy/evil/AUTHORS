@@ -5,3 +5,4 @@ Main Authors:
      Vincent Richomme <vrichomme at smartmobili dot com>
      Paul Vixie (ISC) (inet_pton and inet_ntop functions)
      Daniel Stenberg (inet_pton and inet_ntop functions)
+     The MinGW and MinGW-w64 teams (POSIX printf family functions)

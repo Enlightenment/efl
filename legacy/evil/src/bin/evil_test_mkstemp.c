@@ -36,7 +36,7 @@ test_mkstemp_test(void)
 }
 
 static int
-test_mkstemp_run(suite *s)
+test_mkstemp_run(suite *s __UNUSED__)
 {
    int res;
 

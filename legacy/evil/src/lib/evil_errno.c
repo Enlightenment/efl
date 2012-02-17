@@ -3,7 +3,7 @@
 #endif
 
 #include "Evil.h"
-#include "errno.h"
+#include "mingw32ce/errno.h"
 
 
 int errno = 0;

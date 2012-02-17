@@ -7,8 +7,8 @@
 #include <errno.h>
 #endif /* HAVE_ERRNO_H */
 
-# include <shlobj.h>
-# include <objidl.h>
+#include <shlobj.h>
+#include <objidl.h>
 #include <cstdio>
 
 #include "Evil.h"

@@ -75,11 +75,9 @@ test_pipe_test(void)
 
    if (ret < 0)
      goto free_d;
-
-   if (ret == 0)
+   else if (ret == 0)
      goto close_h;
-
-   if (ret > 0)
+   else /* ret > 0 */
      {
         void *buf[1];
         data *d2 = NULL;
@@ -102,7 +100,7 @@ test_pipe_test(void)
    CloseHandle(h);
    free(d);
 
-   return 1;
+   return ret;
 
  close_h:
    CloseHandle(h);
@@ -112,7 +110,7 @@ test_pipe_test(void)
 }
 
 static int
-test_pipe_run(suite *s)
+test_pipe_run(suite *s __UNUSED__)
 {
    int res;
 
@@ -124,6 +122,5 @@ test_pipe_run(suite *s)
 int
 test_pipe(suite *s)
 {
-
    return test_pipe_run(s);
 }

@@ -1,23 +1,6 @@
 #ifndef __EVIL_H__
 #define __EVIL_H__
 
-#ifdef EAPI
-# undef EAPI
-#endif /* EAPI */
-
-#ifdef _WIN32
-# ifdef EFL_EVIL_BUILD
-#  ifdef DLL_EXPORT
-#   define EAPI __declspec(dllexport)
-#  else
-#   define EAPI
-#  endif /* ! DLL_EXPORT */
-# else
-#  define EAPI __declspec(dllimport)
-# endif /* ! EFL_EVIL_BUILD */
-#endif /* _WIN32 */
-
-
 /**
  * @mainpage Evil
  * @image html  e_big.png
@@ -87,19 +70,11 @@ extern "C" {
 
 #include <stdlib.h>
 #include <stdio.h>
-#include <sys/time.h>
 #include <time.h>
 #include <limits.h>
 #include <sys/stat.h>
 #include <fcntl.h>
 #include <math.h>
-
-
-#ifdef PATH_MAX
-# undef PATH_MAX
-#endif /* PATH_MAX */
-
-#define PATH_MAX MAX_PATH
 
 
 #ifdef _MSC_VER
@@ -141,17 +116,38 @@ typedef unsigned long  uid_t;
 typedef unsigned long  gid_t;
 
 
+#include "evil_macro.h"
 #include "evil_fcntl.h"
 #include "evil_inet.h"
 #include "evil_langinfo.h"
 #include "evil_libgen.h"
 #include "evil_main.h"
+#include "evil_print.h"
 #include "evil_stdlib.h"
 #include "evil_stdio.h"
 #include "evil_string.h"
 #include "evil_time.h"
 #include "evil_unistd.h"
 #include "evil_util.h"
+
+#define fprintf   _evil_fprintfa
+#define printf    _evil_printfa
+#define snprintf  _evil_snprintfa
+#define sprintf   _evil_sprintfa
+#define vfprintf  _evil_vfprintfa
+#define vprintf   _evil_vprintfa
+#define vsnprintf _evil_vsnprintfa
+#define vsprintf  _evil_vsprintfa
+
+#define fscanf    _evil_fscanf
+#define scanf     _evil_scanf
+#define sscanf    _evil_sscanf
+#define vfscanf   _evil_vfscanf
+#define vscanf    _evil_vscanf
+#define vsscanf   _evil_vsscanf
+
+#define asprintf  _evil_asprintf
+#define vasprintf _evil_vasprintf
 
 
 #if (defined(_WIN32) && !defined(_UWIN) && !defined(__CYGWIN__))

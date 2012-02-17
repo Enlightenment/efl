@@ -10,7 +10,8 @@
 #include "evil_test_realpath.h"
 
 
-int test_realpath_test(void)
+static int
+test_realpath_test(void)
 {
    char  buf[PATH_MAX];
    char *filename;
@@ -27,7 +28,7 @@ int test_realpath_test(void)
 }
 
 static int
-test_realpath_run(suite *s)
+test_realpath_run(suite *s __UNUSED__)
 {
    int res;
 

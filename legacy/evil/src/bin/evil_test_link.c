@@ -140,7 +140,7 @@ test_link_test_readlink(void)
 }
 
 static int
-test_link_tests_run(suite *s)
+test_link_tests_run(suite *s __UNUSED__)
 {
    int res;
 

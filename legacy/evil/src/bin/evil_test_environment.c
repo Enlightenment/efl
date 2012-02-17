@@ -156,7 +156,7 @@ test_env_test_unsetenv(void)
 }
 
 static int
-test_env_tests_run(suite *s)
+test_env_tests_run(suite *s __UNUSED__)
 {
    int res;
 

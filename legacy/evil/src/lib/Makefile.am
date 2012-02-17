@@ -12,7 +12,9 @@ evil_fcntl.h \
 evil_inet.h \
 evil_langinfo.h \
 evil_libgen.h \
+evil_macro.h \
 evil_main.h \
+evil_print.h \
 evil_stdlib.h \
 evil_stdio.h \
 evil_string.h \
@@ -25,7 +27,7 @@ nobase_dist_stdheaders_DATA = pwd.h sys/mman.h fnmatch.h dirent.h
 
 if EVIL_HAVE_WINCE
 
-nobase_dist_stdheaders_DATA += errno.h
+nobase_dist_stdheaders_DATA += mingw32ce/errno.h
 
 endif
 
@@ -39,6 +41,10 @@ evil_langinfo.c \
 evil_libgen.c \
 evil_main.c \
 evil_mman.c \
+evil_pformata.c \
+evil_pformatw.c \
+evil_printa.c \
+evil_printw.c \
 evil_pwd.c \
 evil_stdlib.c \
 evil_stdio.c \
@@ -47,6 +53,7 @@ evil_time.c \
 evil_unistd.c \
 evil_util.c \
 evil_uuid.c \
+evil_pformat.h \
 evil_private.h \
 evil_fnmatch_private.h
 
@@ -64,7 +71,7 @@ libevil_la_CPPFLAGS = @win32_cppflags@
 libevil_la_CFLAGS = @win32_cflags@
 libevil_la_CXXFLAGS = @win32_cxxflags@
 libevil_la_LIBADD = @win32_libs@ $(EFL_MPATROL_LIBS)
-libevil_la_LDFLAGS = -no-undefined -Wl,--enable-auto-import -version-info @version_info@ 
+libevil_la_LDFLAGS = -no-undefined -Wl,--enable-auto-import -version-info @version_info@
 
 if EVIL_HAVE_WINCE
 

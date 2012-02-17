@@ -33,7 +33,7 @@ test_time_test_gettimeofday(void)
 }
 
 static int
-test_time_tests_run(suite *s)
+test_time_tests_run(suite *s __UNUSED__)
 {
    int res;
 

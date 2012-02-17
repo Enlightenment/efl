@@ -104,17 +104,14 @@ int fcntl(int fd, int cmd, ...)
         if (pos != -1L)
           res = 0;
 
-        printf ("Evil 1 %d %d %d\n", fl->l_type, F_RDLCK, F_WRLCK);
         if ((fl->l_type == F_RDLCK) || (fl->l_type == F_WRLCK))
           {
-        printf ("Evil 2\n");
              if (cmd == F_SETLK)
                res = _locking(fd, _LK_NBLCK, fl->l_len); /* if cannot be locked, we return immediatly */
              else /* F_SETLKW */
                res = _locking(fd, _LK_LOCK, fl->l_len); /* otherwise, we try several times */
           }
 
-        printf ("Evil 3\n");
         if (fl->l_type == F_UNLCK)
           res = _locking(fd, _LK_UNLCK, fl->l_len);
      }

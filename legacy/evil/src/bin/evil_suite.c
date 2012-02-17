@@ -18,6 +18,7 @@
 #include "evil_test_memcpy.h"
 #include "evil_test_mkstemp.h"
 #include "evil_test_pipe.h"
+#include "evil_test_print.h"
 #include "evil_test_realpath.h"
 #include "evil_test_util.h"
 
@@ -185,6 +186,7 @@ main(void)
      { "link        ",  test_link },
      { "mkstemp     ",  test_mkstemp },
      { "pipe        ",  test_pipe },
+     { "print       ",  test_print },
      { "realpath    ",  test_realpath },
      { "util        ",  test_util },
 /*      { "memcpy      ",  test_memcpy }, */

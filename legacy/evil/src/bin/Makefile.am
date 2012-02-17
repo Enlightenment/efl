@@ -21,6 +21,7 @@ evil_test_link.c \
 evil_test_memcpy.c \
 evil_test_mkstemp.c \
 evil_test_pipe.c \
+evil_test_print.c \
 evil_test_realpath.c \
 evil_test_util.c \
 evil_suite.h \
@@ -31,6 +32,7 @@ evil_test_link.h \
 evil_test_memcpy.h \
 evil_test_mkstemp.h \
 evil_test_pipe.h \
+evil_test_print.h \
 evil_test_realpath.h \
 evil_test_util.h
 

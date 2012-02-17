@@ -2,9 +2,11 @@
 # include <config.h>
 #endif
 
+#ifndef WIN32_LEAN_AND_MEAN
 # define WIN32_LEAN_AND_MEAN
-# include <winsock2.h>
-# undef WIN32_LEAN_AND_MEAN
+#endif
+#include <winsock2.h>
+#undef WIN32_LEAN_AND_MEAN
 
 #include "Evil.h"
 #include "evil_private.h"

@@ -2,17 +2,22 @@
 # include "config.h"
 #endif /* HAVE_CONFIG_H */
 
-#include "Evil.h"
-#include "evil_private.h"
-
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
 #include <wchar.h>
 
-#define WIN32_LEAN_AND_MEAN
+#ifndef WIN32_LEAN_AND_MEAN
+# define WIN32_LEAN_AND_MEAN
+#endif
 #include <windows.h>
 #undef WIN32_LEAN_AND_MEAN
+
+#include "evil_macro.h"
+#include "evil_util.h"
+#include "evil_private.h"
+#define APICHAR char
+#include "evil_print.h"
 
 
 wchar_t *

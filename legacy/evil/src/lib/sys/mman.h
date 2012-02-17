@@ -1,7 +1,7 @@
 #ifndef __EVIL_SYS_MMAN_H__
 #define __EVIL_SYS_MMAN_H__
 
-#include <Evil.h>
+#include <evil_macro.h>
 
 
 #ifdef __cplusplus

@@ -2,19 +2,27 @@
 # include "config.h"
 #endif /* HAVE_CONFIG_H */
 
+#include <stdlib.h>
 #include <stdio.h>
-# include <io.h>
+#include <io.h>
+#include <fcntl.h>
+#include <sys/stat.h>
 
 #ifdef HAVE_ERRNO_H
-#include <errno.h>
+# include <errno.h>
 #endif /* HAVE_ERRNO_H */
 
-#define WIN32_LEAN_AND_MEAN
+#ifndef WIN32_LEAN_AND_MEAN
+# define WIN32_LEAN_AND_MEAN
+#endif
 #include <windows.h>
 #undef WIN32_LEAN_AND_MEAN
 
-#include "Evil.h"
+#include "evil_macro.h"
+#include "evil_stdlib.h"
 #include "evil_private.h"
+#define APICHAR char
+#include "evil_print.h"
 
 /*
  * Environment variable related functions

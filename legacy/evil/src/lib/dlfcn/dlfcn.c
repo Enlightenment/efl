@@ -8,7 +8,12 @@
 # include <limits.h>
 #endif /* __MINGW32CE__ || _MSC_VER */
 
+#ifndef WIN32_LEAN_AND_MEAN
+# define WIN32_LEAN_AND_MEAN
+#endif
 #include <windows.h>
+#undef WIN32_LEAN_AND_MEAN
+
 #ifdef _WIN32_WCE
 # include <tlhelp32.h> /* CreateToolhelp32Snapshot */
 #else
