@@ -1300,7 +1300,7 @@ elm_coords_finger_size_adjust(int         times_w,
 }
 
 EAPI void
-elm_all_flush(void)
+elm_cache_all_flush(void)
 {
    const Eina_List *l;
    Evas_Object *obj;
@@ -1315,6 +1315,12 @@ elm_all_flush(void)
         evas_font_cache_flush(e);
         evas_render_dump(e);
      }
+}
+
+EINA_DEPRECATED EAPI void
+elm_all_flush(void)
+{
+   elm_cache_all_flush();
 }
 
 EAPI int

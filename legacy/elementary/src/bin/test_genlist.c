@@ -329,7 +329,7 @@ my_gl_last(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 static Eina_Bool
 my_gl_flush_delay(void *data __UNUSED__)
 {
-   elm_all_flush();
+   elm_cache_all_flush();
    return ECORE_CALLBACK_CANCEL;
 }
 

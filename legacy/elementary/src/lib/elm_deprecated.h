@@ -4514,5 +4514,22 @@ EINA_DEPRECATED EAPI void                        elm_label_text_align_set(Evas_O
 EINA_DEPRECATED EAPI void                        elm_label_background_color_set(Evas_Object *obj, unsigned int r, unsigned int g, unsigned int b, unsigned int a);
 
 /**
+ * @brief Flush all caches.
+ *
+ * Frees all data that was in cache and is not currently being used to reduce
+ * memory usage. This frees Edje's, Evas' and Eet's cache. This is equivalent
+ * to calling all of the following functions:
+ * @li edje_file_cache_flush()
+ * @li edje_collection_cache_flush()
+ * @li eet_clearcache()
+ * @li evas_image_cache_flush()
+ * @li evas_font_cache_flush()
+ * @li evas_render_dump()
+ * @note Evas caches are flushed for every canvas associated with a window.
+ * @deprecated Use elm_cache_all_flush() instead.
+ */
+EINA_DEPRECATED EAPI void      elm_all_flush(void);
+
+/**
  * @}
  */

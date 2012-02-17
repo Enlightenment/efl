@@ -742,7 +742,7 @@ _config_sub_apply(void)
 static Eina_Bool
 _elm_cache_flush_cb(void *data __UNUSED__)
 {
-   elm_all_flush();
+   elm_cache_all_flush();
    return ECORE_CALLBACK_RENEW;
 }
 
@@ -755,7 +755,7 @@ _elm_recache(void)
    Eina_List *l;
    Evas_Object *win;
 
-   elm_all_flush();
+   elm_cache_all_flush();
 
    EINA_LIST_FOREACH(_elm_win_list, l, win)
      {

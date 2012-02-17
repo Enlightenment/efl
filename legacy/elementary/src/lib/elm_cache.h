@@ -23,8 +23,7 @@
  *
  * @ingroup Caches
  */
-// XXX: rename: elm_cache_all_flush()
-EAPI void      elm_all_flush(void);
+EAPI void      elm_cache_all_flush(void);
 
 /**
  * Get the configured cache flush interval time
