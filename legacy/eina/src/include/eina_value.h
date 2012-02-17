@@ -162,6 +162,102 @@
  */
 
 /**
+ * @page eina_value_example_03_page Eina value custom type example
+ * @dontinclude eina_value_03.c
+ *
+ * For this example we'll be creating our own custom type of eina value. Eina
+ * value can already store struct timeval(man gettimeofday for more information)
+ * but it has no type to store struct timezone, so that's what this example will
+ * do.
+ * @note struct timezone is actually obsolete, so using it in real world
+ * programs is probably not a good idea, but this is an example so, bear with
+ * us.
+ *
+ * To create our own custom eina value type we need to define functions to
+ * do the following operations on it:
+ * @li Setup
+ * @li Flush
+ * @li Copy
+ * @li Compare
+ * @li Set
+ * @li Get
+ * @li Conversion
+ *
+ * Most of this functions are very simple, so let's look at them, starting with
+ * setup which only clear the memory so that we can be certain we won't be using
+ * stale data:
+ * @until }
+ *
+ * Now the flush function, which is even simpler, it does nothing, that's
+ * because there is nothing we need to do, all the necessary steps are taken by
+ * eina value itself:
+ * @until }
+ *
+ * Our next function, copy, is a bit more interesting, but not much, it just
+ * casts our void pointers to struct timezone pointers and does the copy:
+ * @until }
+ * @note By now you might be wondering why our functions receive void pointers
+ * instead of pointers to struct timezone, and this is a good point. The reason
+ * for this is that eina value doesn't know anything about our type so it must
+ * use a generic void pointer, casting that pointer into a proper value is the
+ * job of the implementor of the new type.
+ *
+ * Next we have the comparison function, which compares the @c tz_minuteswest
+ * field of struct timezone, we don't compare @c tz_dsttime because that field
+ * is not used in linux:
+ * @until }
+ *
+ * Next we have setting, this however requires not one but rather two functions,
+ * the reason for this is because to be able to receive arguments of any type
+ * eina value uses @ref https://wikipedia.org/wiki/Variadic_functions "variadic
+ * functions", so we need a function to get the argument from a va_list and
+ * another to actually to the setting.
+ *
+ * Lets first look at the pset function which sets the received value to a
+ * pointer:
+ * @until }
+ *
+ * Next we have the vset function which get the argument from the va_list and
+ * passes it to the pset function:
+ * @until }
+ *
+ * And now the function to get the value, a very simple copying of the value to
+ * the given pointer:
+ * @until }
+ *
+ * And finally our conversion function, this is our longest and most interesting
+ * one. For numeric type we simply assign the value of @c tz_minuteswest to the
+ * new type and call a set function using it:
+ * @until EINA_VALUE_TYPE_DOUBLE
+ * @until return
+ * @note It would be a good idea to add checks for over and underflow for these
+ * types and return #EINA_FALSE in thoses cases, we omit this here for brevity.
+ *
+ * For string types we use @c snprintf() to format our @c tz_minuteswest field
+ * and put it in a string(again @c tz_dsttime is ignored because it's not used):
+ * @until }
+ *
+ * Finally we handle any other types by returning an error in that case:
+ * @until }
+ *
+ * Now that we have all the functions, we can populate an @c Eina_Value_Type to
+ * later use it with @c eina_value_setup():
+ * @until }
+ *
+ * We can now finally use our new TZ_TYPE with eina value, so lets conclude our
+ * example by practicing that by setting its value and printing it:
+ * @until }
+ *
+ * For the full source code see @ref eina_value_03_c.
+ */
+
+/**
+ * @page eina_value_03_c eina_value_03.c
+ * @include eina_value_03.c
+ * @example eina_value_03.c
+ */
+
+/**
  * @addtogroup Eina_Data_Types_Group Data Types
  *
  * @since 1.2
@@ -194,6 +290,7 @@
  * Examples of usage of the Eina_Value API:
  * @li @ref eina_value_example_01_page
  * @li @ref eina_value_example_02_page
+ * @li @ref eina_value_example_03_page
  *
  * @{
  */
