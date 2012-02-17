@@ -19,12 +19,13 @@
 #ifndef EINA_VALUE_H_
 #define EINA_VALUE_H_
 
+#include <stdarg.h>
+
 #include "eina_types.h"
 #include "eina_fp.h" /* defines int64_t and uint64_t */
 #include "eina_inarray.h"
 #include "eina_list.h"
 #include "eina_hash.h"
-#include <stdarg.h>
 
 /**
  * @page eina_value_example_01_page Eina_Value usage
