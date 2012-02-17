@@ -1026,7 +1026,7 @@ eina_list_clone(const Eina_List *list)
 }
 
 EAPI Eina_List *
-eina_list_sort(Eina_List *list, unsigned int size, Eina_Compare_Cb func)
+eina_list_sort(Eina_List *list, unsigned int limit, Eina_Compare_Cb func)
 {
    unsigned int i = 0;
    unsigned int n = 0;
@@ -1040,14 +1040,14 @@ eina_list_sort(Eina_List *list, unsigned int size, Eina_Compare_Cb func)
 
    EINA_MAGIC_CHECK_LIST(list, NULL);
 
-   /* if the caller specified an invalid size, sort the whole list */
-   if ((size == 0) ||
-       (size > list->accounting->count))
-     size = list->accounting->count;
+   /* if the caller specified an invalid limit, sort the whole list */
+   if ((limit == 0) ||
+       (limit > list->accounting->count))
+     limit = list->accounting->count;
 
-   if (size != list->accounting->count)
+   if (limit != list->accounting->count)
      {
-        unsort = eina_list_nth_list(list, size);
+        unsort = eina_list_nth_list(list, limit);
         if (unsort)
           unsort->prev->next = NULL;
      }
