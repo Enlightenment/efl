@@ -49,6 +49,10 @@ void *alloca (size_t);
 #include <inttypes.h> /* PRId64 and PRIu64 */
 #include <sys/time.h> /* struct timeval */
 
+#ifdef HAVE_EVIL
+# include <Evil.h>
+#endif
+
 #include "eina_config.h"
 #include "eina_private.h"
 #include "eina_error.h"
@@ -221,7 +225,7 @@ _eina_value_type_uchar_convert_to(const Eina_Value_Type *type __UNUSED__, const 
      {
         const char *other_mem;
         char buf[64];
-        snprintf(buf, sizeof(buf), FMT_UCHAR , v);
+        snprintf(buf, sizeof(buf), "%hhu", v);
         other_mem = buf; /* required due &buf == buf */
         return eina_value_type_pset(convert, convert_mem, &other_mem);
      }
@@ -1005,7 +1009,7 @@ _eina_value_type_char_convert_to(const Eina_Value_Type *type __UNUSED__, const E
      {
         const char *other_mem;
         char buf[64];
-        snprintf(buf, sizeof(buf), FMT_CHAR, v);
+        snprintf(buf, sizeof(buf), "%hhd", v);
         other_mem = buf; /* required due &buf == buf */
         return eina_value_type_pset(convert, convert_mem, &other_mem);
      }
@@ -2123,9 +2127,9 @@ _eina_value_type_string_common_convert_to(const Eina_Value_Type *type __UNUSED__
    if (convert == EINA_VALUE_TYPE_UCHAR)
      {
         unsigned char other_mem;
-        if ((sscanf(v, FMT_UCHAR, &other_mem) != 1) &&
-            (sscanf(v, FMT_XCHAR, &other_mem) != 1) &&
-            (sscanf(v, FMT_OCHAR, &other_mem) != 1))
+        if ((sscanf(v, "%hhu", &other_mem) != 1) &&
+            (sscanf(v, "%hhx", &other_mem) != 1) &&
+            (sscanf(v, "%hho", &other_mem) != 1))
           return EINA_FALSE;
         return eina_value_type_pset(convert, convert_mem, &other_mem);
      }
@@ -2168,9 +2172,9 @@ _eina_value_type_string_common_convert_to(const Eina_Value_Type *type __UNUSED__
    else if (convert == EINA_VALUE_TYPE_CHAR)
      {
         char other_mem;
-        if ((sscanf(v, FMT_CHAR, &other_mem) != 1) &&
-            (sscanf(v, FMT_XCHAR, &other_mem) != 1) &&
-            (sscanf(v, FMT_OCHAR, &other_mem) != 1))
+        if ((sscanf(v, "%hhd", &other_mem) != 1) &&
+            (sscanf(v, "%hhx", &other_mem) != 1) &&
+            (sscanf(v, "%hho", &other_mem) != 1))
           return EINA_FALSE;
         return eina_value_type_pset(convert, convert_mem, &other_mem);
      }
@@ -3719,12 +3723,12 @@ _eina_value_type_blob_convert_to(const Eina_Value_Type *type __UNUSED__, const E
              if (first)
                {
                   first = EINA_FALSE;
-                  if (!eina_strbuf_append_printf(str, FMT_2XCHAR, *ptr))
+                  if (!eina_strbuf_append_printf(str, "%02hhx", *ptr))
                     goto error;
                }
              else
                {
-                  if (!eina_strbuf_append_printf(str, " " FMT_2XCHAR, *ptr))
+                  if (!eina_strbuf_append_printf(str, " %02hhx", *ptr))
                     goto error;
                }
           }

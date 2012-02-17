@@ -465,11 +465,8 @@ _eina_stringshare_small_bucket_dump(Eina_Stringshare_Small_Bucket *bucket,
    for (i = 0; i < bucket->count; i++, s++, l++, r++)
      {
         int dups;
-#ifdef _WIN32
-        printf("DDD: %5hu %5hu '%s'\n",  *l, *r, *s);
-#else
+
         printf("DDD: %5hhu %5hu '%s'\n", *l, *r, *s);
-#endif
 
         dups = (*r - 1);
 

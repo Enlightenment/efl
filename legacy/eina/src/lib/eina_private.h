@@ -42,20 +42,6 @@
                max) (((x) > (max)) ? (max) : (((x) < (min)) ? (min) : (x)))
 #endif
 
-#ifdef _WIN32
-# define FMT_CHAR  "%c"
-# define FMT_UCHAR "%c"
-# define FMT_XCHAR "%c"
-# define FMT_OCHAR "%c"
-# define FMT_2XCHAR "%2c"
-#else
-# define FMT_CHAR  "%hhd"
-# define FMT_UCHAR "%hhu"
-# define FMT_XCHAR "%hhx"
-# define FMT_OCHAR "%hho"
-# define FMT_2XCHAR "%02hhx"
-#endif
-
 #define EINA_INLIST_JUMP_SIZE 256
 
 #define READBUFSIZ 65536
