@@ -1030,13 +1030,6 @@ elm_scale_set(double scale)
    _elm_rescale();
 }
 
-EAPI void
-elm_scale_all_set(double scale)
-{
-   elm_scale_set(scale);
-   elm_config_all_flush();
-}
-
 EAPI Eina_Bool
 elm_password_show_last_get(void)
 {
@@ -1148,19 +1141,6 @@ elm_profile_set(const char *profile)
    _elm_config_profile_set(profile);
 }
 
-EAPI void
-elm_profile_all_set(const char *profile)
-{
-   _elm_config_profile_set(profile);
-   elm_config_all_flush();
-}
-
-EAPI const char *
-elm_engine_current_get(void)
-{
-   return elm_engine_get();
-}
-
 EAPI const char *
 elm_engine_get(void)
 {
@@ -1211,13 +1191,6 @@ EAPI void
 elm_font_overlay_apply(void)
 {
    _elm_config_font_overlay_apply();
-}
-
-EAPI void
-elm_font_overlay_all_apply(void)
-{
-   elm_font_overlay_apply();
-   elm_config_all_flush();
 }
 
 EAPI Elm_Font_Properties *
@@ -1315,13 +1288,6 @@ elm_finger_size_set(Evas_Coord size)
 }
 
 EAPI void
-elm_finger_size_all_set(Evas_Coord size)
-{
-   elm_finger_size_set(size);
-   elm_config_all_flush();
-}
-
-EAPI void
 elm_coords_finger_size_adjust(int         times_w,
                               Evas_Coord *w,
                               int         times_h,
@@ -1366,13 +1332,6 @@ elm_cache_flush_interval_set(int size)
    _elm_recache();
 }
 
-EAPI void
-elm_cache_flush_interval_all_set(int size)
-{
-   elm_cache_flush_interval_set(size);
-   elm_config_all_flush();
-}
-
 EAPI Eina_Bool
 elm_cache_flush_enabled_get(void)
 {
@@ -1387,13 +1346,6 @@ elm_cache_flush_enabled_set(Eina_Bool enabled)
    _elm_config->cache_flush_enable = enabled;
 
    _elm_recache();
-}
-
-EAPI void
-elm_cache_flush_enabled_all_set(Eina_Bool enabled)
-{
-   elm_cache_flush_enabled_set(enabled);
-   elm_config_all_flush();
 }
 
 EAPI int
@@ -1411,13 +1363,6 @@ elm_font_cache_set(int size)
    _elm_recache();
 }
 
-EAPI void
-elm_font_cache_all_set(int size)
-{
-   elm_font_cache_set(size);
-   elm_config_all_flush();
-}
-
 EAPI int
 elm_image_cache_get(void)
 {
@@ -1431,13 +1376,6 @@ elm_image_cache_set(int size)
    _elm_config->image_cache = size;
 
    _elm_recache();
-}
-
-EAPI void
-elm_image_cache_all_set(int size)
-{
-   elm_image_cache_set(size);
-   elm_config_all_flush();
 }
 
 EAPI int
@@ -1455,13 +1393,6 @@ elm_edje_file_cache_set(int size)
    _elm_recache();
 }
 
-EAPI void
-elm_edje_file_cache_all_set(int size)
-{
-   elm_edje_file_cache_set(size);
-   elm_config_all_flush();
-}
-
 EAPI int
 elm_edje_collection_cache_get(void)
 {
@@ -1475,13 +1406,6 @@ elm_edje_collection_cache_set(int size)
    _elm_config->edje_collection_cache = size;
 
    _elm_recache();
-}
-
-EAPI void
-elm_edje_collection_cache_all_set(int size)
-{
-   elm_edje_collection_cache_set(size);
-   elm_config_all_flush();
 }
 
 EAPI Eina_Bool
@@ -1647,13 +1571,6 @@ elm_scroll_bounce_enabled_set(Eina_Bool enabled)
    _elm_config->thumbscroll_bounce_enable = enabled;
 }
 
-EAPI void
-elm_scroll_bounce_enabled_all_set(Eina_Bool enabled)
-{
-   elm_scroll_bounce_enabled_set(enabled);
-   elm_config_all_flush();
-}
-
 EAPI double
 elm_scroll_bounce_friction_get(void)
 {
@@ -1664,13 +1581,6 @@ EAPI void
 elm_scroll_bounce_friction_set(double friction)
 {
    _elm_config->thumbscroll_bounce_friction = friction;
-}
-
-EAPI void
-elm_scroll_bounce_friction_all_set(double friction)
-{
-   elm_scroll_bounce_friction_set(friction);
-   elm_config_all_flush();
 }
 
 EAPI double
@@ -1685,13 +1595,6 @@ elm_scroll_page_scroll_friction_set(double friction)
    _elm_config->page_scroll_friction = friction;
 }
 
-EAPI void
-elm_scroll_page_scroll_friction_all_set(double friction)
-{
-   elm_scroll_page_scroll_friction_set(friction);
-   elm_config_all_flush();
-}
-
 EAPI double
 elm_scroll_bring_in_scroll_friction_get(void)
 {
@@ -1702,13 +1605,6 @@ EAPI void
 elm_scroll_bring_in_scroll_friction_set(double friction)
 {
    _elm_config->bring_in_scroll_friction = friction;
-}
-
-EAPI void
-elm_scroll_bring_in_scroll_friction_all_set(double friction)
-{
-   elm_scroll_bring_in_scroll_friction_set(friction);
-   elm_config_all_flush();
 }
 
 EAPI double
@@ -1723,13 +1619,6 @@ elm_scroll_zoom_friction_set(double friction)
    _elm_config->zoom_friction = friction;
 }
 
-EAPI void
-elm_scroll_zoom_friction_all_set(double friction)
-{
-   elm_scroll_zoom_friction_set(friction);
-   elm_config_all_flush();
-}
-
 EAPI Eina_Bool
 elm_scroll_thumbscroll_enabled_get(void)
 {
@@ -1740,13 +1629,6 @@ EAPI void
 elm_scroll_thumbscroll_enabled_set(Eina_Bool enabled)
 {
    _elm_config->thumbscroll_enable = enabled;
-}
-
-EAPI void
-elm_scroll_thumbscroll_enabled_all_set(Eina_Bool enabled)
-{
-   elm_scroll_thumbscroll_enabled_set(enabled);
-   elm_config_all_flush();
 }
 
 EAPI unsigned int
@@ -1761,13 +1643,6 @@ elm_scroll_thumbscroll_threshold_set(unsigned int threshold)
    _elm_config->thumbscroll_threshold = threshold;
 }
 
-EAPI void
-elm_scroll_thumbscroll_threshold_all_set(unsigned int threshold)
-{
-   elm_scroll_thumbscroll_threshold_set(threshold);
-   elm_config_all_flush();
-}
-
 EAPI double
 elm_scroll_thumbscroll_momentum_threshold_get(void)
 {
@@ -1778,13 +1653,6 @@ EAPI void
 elm_scroll_thumbscroll_momentum_threshold_set(double threshold)
 {
    _elm_config->thumbscroll_momentum_threshold = threshold;
-}
-
-EAPI void
-elm_scroll_thumbscroll_momentum_threshold_all_set(double threshold)
-{
-   elm_scroll_thumbscroll_momentum_threshold_set(threshold);
-   elm_config_all_flush();
 }
 
 EAPI double
@@ -1799,13 +1667,6 @@ elm_scroll_thumbscroll_friction_set(double friction)
    _elm_config->thumbscroll_friction = friction;
 }
 
-EAPI void
-elm_scroll_thumbscroll_friction_all_set(double friction)
-{
-   elm_scroll_thumbscroll_friction_set(friction);
-   elm_config_all_flush();
-}
-
 EAPI double
 elm_scroll_thumbscroll_border_friction_get(void)
 {
@@ -1818,13 +1679,6 @@ elm_scroll_thumbscroll_border_friction_set(double friction)
    if (friction < 0.0) friction = 0.0;
    if (friction > 1.0) friction = 1.0;
    _elm_config->thumbscroll_friction = friction;
-}
-
-EAPI void
-elm_scroll_thumbscroll_border_friction_all_set(double friction)
-{
-   elm_scroll_thumbscroll_border_friction_set(friction);
-   elm_config_all_flush();
 }
 
 EAPI double
