@@ -124,7 +124,7 @@
 # endif
 
 # if __GNUC__ > 2 || (__GNUC__ == 2 && __GNUC_MINOR__ > 4)
-#  define EINA_PRINTF(fmt, arg) __attribute__((__format__ (__printf__, fmt, arg)))
+#  define EINA_PRINTF(fmt, arg) __attribute__((__format__ (__gnu_printf__, fmt, arg)))
 #  define EINA_SCANF(fmt, arg)  __attribute__((__format__ (__scanf__, fmt, arg)))
 #  define EINA_FORMAT(fmt)      __attribute__((__format_arg__(fmt)))
 #  define EINA_CONST        __attribute__((__const__))
