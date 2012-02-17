@@ -59,8 +59,15 @@ static const Evas_Smart_Cb_Description _signals[] = {
        {NULL, NULL}
 };
 
-static Evas_Object *_content_get_hook(const Evas_Object *obj,
-                                      const char *part);
+static void _text_set_hook(Evas_Object *obj,
+                           const char *part,
+                           const char *label);
+static const char *_text_get_hook(const Evas_Object *obj, const char *part);
+static void _content_set_hook(Evas_Object *obj,
+                              const char *part,
+                              Evas_Object *content);
+static Evas_Object *_content_get_hook(const Evas_Object *obj, const char *part);
+static Evas_Object *_content_unset_hook(Evas_Object *obj, const char *part);
 static void _del_hook(Evas_Object *obj);
 static void _theme_hook(Evas_Object *obj);
 static void _emit_hook(Evas_Object *obj,
@@ -213,12 +220,9 @@ static void _emit_hook(Evas_Object *obj,
                        const char *emission,
                        const char *source)
 {
-   ELM_CHECK_WIDTYPE(obj, widtype);
-
-   Widget_Data *wd = elm_widget_data_get(obj);
-   if (!wd) return;
-
-   elm_object_signal_emit(wd->base, emission, source);
+   Elm_Object_Item *it = elm_naviframe_top_item_get(obj);
+   if (!it) return;
+   return elm_object_item_signal_emit(it, emission, source);
 }
 
 static void
@@ -460,9 +464,42 @@ _back_btn_new(Evas_Object *obj)
    btn = elm_button_add(obj);
    if (!btn) return NULL;
    evas_object_smart_callback_add(btn, "clicked", _back_btn_clicked, obj);
-   snprintf(buf, sizeof(buf), "naviframe/back_btn/%s", elm_widget_style_get(obj));
+   snprintf(buf, sizeof(buf), "naviframe/back_btn/%s",
+            elm_widget_style_get(obj));
    elm_object_style_set(btn, buf);
    return btn;
+}
+
+static void _text_set_hook(Evas_Object *obj,
+                           const char *part,
+                           const char *label)
+{
+   Elm_Object_Item *it = elm_naviframe_top_item_get(obj);
+   if (!it) return;
+   elm_object_item_part_text_set(it, part, label);
+}
+
+static const char *_text_get_hook(const Evas_Object *obj, const char *part)
+{
+   Elm_Object_Item *it = elm_naviframe_top_item_get(obj);
+   if (!it) return NULL;
+   return elm_object_item_part_text_get(it, part);
+}
+
+static void
+_content_set_hook(Evas_Object *obj, const char *part, Evas_Object *content)
+{
+   Elm_Object_Item *it = elm_naviframe_top_item_get(obj);
+   if (!it) return;
+   elm_object_item_part_content_set(it, part, content);
+}
+
+static Evas_Object *
+_content_unset_hook(Evas_Object *obj, const char *part)
+{
+   Elm_Object_Item *it = elm_naviframe_top_item_get(obj);
+   if (!it) return NULL;
+   return elm_object_item_part_content_unset(it, part);
 }
 
 static Evas_Object *
@@ -1061,12 +1098,17 @@ elm_naviframe_add(Evas_Object *parent)
    elm_widget_del_hook_set(obj, _del_hook);
    elm_widget_disable_hook_set(obj, _disable_hook);
    elm_widget_theme_hook_set(obj, _theme_hook);
+   elm_widget_text_set_hook_set(obj, _text_set_hook);
+   elm_widget_text_get_hook_set(obj, _text_get_hook);
+   elm_widget_content_set_hook_set(obj, _content_set_hook);
    elm_widget_content_get_hook_set(obj, _content_get_hook);
+   elm_widget_content_unset_hook_set(obj, _content_unset_hook);
    elm_widget_signal_emit_hook_set(obj, _emit_hook);
    elm_widget_can_focus_set(obj, EINA_FALSE);
    elm_widget_focus_next_hook_set(obj, _focus_next_hook);
 
    //base
+   //FIXME: Is this base layout really needed?
    wd->base = elm_layout_add(parent);
    evas_object_event_callback_add(wd->base,
                                   EVAS_CALLBACK_CHANGED_SIZE_HINTS,

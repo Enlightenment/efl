@@ -15,15 +15,24 @@
  * same look & feel for the pages or different styles for the items in it's
  * application.
  * 
- * Default content parts of the naviframe that you can use content hooks for are:
+ * Default content parts of the naviframe that you can use content hooks for
+ * are:
  * @li "default" - The main content of the current page
+ * @li "icon" - An icon in the title area of the current parge
+ * @li "prev_btn" - A button of the current page to go to the previous page
+ * @li "next_btn" - A button of the current page to go to the next page
  * 
+ * Default text parts of the naviframe that you can use for are:
+ * @li "default" - Title label in the title area of the current page
+ * @li "subtitle" - Sub-title label in the title area of the current page
+ *
  * Signals that you can add callback for are:
- * @li "transition,finished" - When the transition is finished in changing
- *     the item
+ * @li "transition,finished" - When the transition is finished in changing the
+ * item
  * @li "title,clicked" - User clicked title area
  *
- * Default content parts of the naviframe items that you can use content hooks for are:
+ * Default content parts of the naviframe items that you can use content hooks
+ * for are:
  * @li "default" - The main content of the page
  * @li "icon" - An icon in the title area
  * @li "prev_btn" - A button to go to the previous page
@@ -35,6 +44,11 @@
  *
  * Supported elm_object common APIs.
  * @li elm_object_signal_emit
+ * @li elm_object_part_text_set
+ * @li elm_object_part_text_get
+ * @li elm_object_part_content_set
+ * @li elm_object_part_content_get
+ * @li elm_object_part_content_unset
  *
  * Supported elm_object_item common APIs.
  * @li elm_object_item_part_text_set
@@ -407,7 +421,6 @@ elm_naviframe_item_simple_push(Evas_Object *obj, Evas_Object *content)
  * @see elm_naviframe_item_promote
  */
 EAPI void             elm_naviframe_item_simple_promote(Evas_Object *obj, Evas_Object *content);
-
 
 /**
  * @}
