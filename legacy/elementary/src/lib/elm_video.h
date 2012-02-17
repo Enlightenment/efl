@@ -95,6 +95,7 @@ EAPI void                 elm_video_file_set(Evas_Object *video, const char *fil
  *
  * @ingroup Video
  */
+/* XXX: remove this - just keep elm_video_file_set() */
 EAPI void                 elm_video_uri_set(Evas_Object *video, const char *uri);
 
 /**
@@ -151,6 +152,7 @@ EAPI void                 elm_video_stop(Evas_Object *video);
  *
  * @ingroup Video
  */
+/* XXX: elm_video_is_playing_get() */
 EAPI Eina_Bool            elm_video_is_playing(const Evas_Object *video);
 
 /**
@@ -161,6 +163,7 @@ EAPI Eina_Bool            elm_video_is_playing(const Evas_Object *video);
  *
  * @ingroup Video
  */
+/* XXX: elm_video_is_seekable_get() */
 EAPI Eina_Bool            elm_video_is_seekable(const Evas_Object *video);
 
 /**
@@ -203,6 +206,7 @@ EAPI double               elm_video_audio_level_get(const Evas_Object *video);
  */
 EAPI void                 elm_video_audio_level_set(Evas_Object *video, double volume);
 
+/* XXX: need docs for these */
 EAPI double               elm_video_play_position_get(const Evas_Object *video);
 EAPI void                 elm_video_play_position_set(Evas_Object *video, double position);
 EAPI double               elm_video_play_length_get(const Evas_Object *video);
