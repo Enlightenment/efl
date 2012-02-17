@@ -189,9 +189,6 @@ EAPI Eina_Bool    elm_object_disabled_get(const Evas_Object *obj);
  * How to check if an Evas Object is an Elementary widget? How to
  * get the first elementary widget that is parent of the given
  * object?  These are all covered in widget tree navigation.
- *
- * @ref general_functions_example_page "This" example contemplates
- * some of these functions.
  */
 
 /**
