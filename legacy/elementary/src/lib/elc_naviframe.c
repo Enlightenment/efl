@@ -468,16 +468,9 @@ _back_btn_new(Evas_Object *obj)
 static Evas_Object *
 _content_get_hook(const Evas_Object *obj, const char *part)
 {
-   Widget_Data *wd;
-   Elm_Naviframe_Item *it;
-   ELM_CHECK_WIDTYPE(obj, widtype) NULL;
-
-   if (part && strcmp(part, "default")) return NULL;
-   wd = elm_widget_data_get(obj);
-   if ((!wd) || (!wd->stack)) return NULL;
-   it = (Elm_Naviframe_Item *) (EINA_INLIST_CONTAINER_GET(wd->stack->last,
-                                                         Elm_Naviframe_Item));
-   return it->content;
+   Elm_Object_Item *it = elm_naviframe_top_item_get(obj);
+   if (!it) return NULL;
+   return elm_object_item_part_content_get(it, part);
 }
 
 static void
