@@ -1,6 +1,7 @@
 2012-02-17  Vincent Torri  <doursse at users dot sf dot net>
 
 	* AUTHORS:
+	* NEWS:
 	* src/lib/Evil.h:
 	* src/lib/Makefile.am:
 	* src/lib/evil_inet.c:
