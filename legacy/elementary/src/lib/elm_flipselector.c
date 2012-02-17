@@ -901,7 +901,7 @@ elm_flipselector_item_label_set(Elm_Object_Item *it, const char *label)
 }
 
 EAPI Elm_Object_Item *
-elm_flipselector_item_prev_get(Elm_Object_Item *it)
+elm_flipselector_item_prev_get(const Elm_Object_Item *it)
 {
    ELM_OBJ_ITEM_CHECK_OR_RETURN(it, NULL);
 
@@ -924,7 +924,7 @@ elm_flipselector_item_prev_get(Elm_Object_Item *it)
 }
 
 EAPI Elm_Object_Item *
-elm_flipselector_item_next_get(Elm_Object_Item *it)
+elm_flipselector_item_next_get(const Elm_Object_Item *it)
 {
    ELM_OBJ_ITEM_CHECK_OR_RETURN(it, NULL);
 

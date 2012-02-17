@@ -229,37 +229,35 @@ EAPI void                        elm_flipselector_item_selected_set(Elm_Object_I
  *
  * @ingroup Flipselector
  */
-EAPI Eina_Bool                   elm_flipselector_item_selected_get(const Elm_Object_Item *it);
+EAPI Eina_Bool  elm_flipselector_item_selected_get(const Elm_Object_Item *it);
 
 /**
- * Gets the item before @p item in a flip selector widget's
- * internal list of items.
+ * Gets the item before @p item in a flip selector widget's internal list of
+ * items.
  *
  * @param it The item to fetch previous from
- * @return The item before the @p item, in its parent's list. If
- *         there is no previous item for @p item or there's an
- *         error, @c NULL is returned.
+ * @return The item before the @p item, in its parent's list. If there is no
+ *         previous item for @p item or there's an error, @c NULL is returned.
  *
  * @see elm_flipselector_item_next_get()
  *
  * @ingroup Flipselector
  */
-EAPI Elm_Object_Item            *elm_flipselector_item_prev_get(Elm_Object_Item *it);
+EAPI Elm_Object_Item *elm_flipselector_item_prev_get(const Elm_Object_Item *it);
 
 /**
  * Gets the item after @p item in a flip selector widget's
  * internal list of items.
  *
  * @param it The item to fetch next from
- * @return The item after the @p item, in its parent's list. If
- *         there is no next item for @p item or there's an
- *         error, @c NULL is returned.
+ * @return The item after the @p item, in its parent's list. If there is no next
+ *         item for @p item or there's an error, @c NULL is returned.
  *
- * @see elm_flipselector_item_next_get()
+ * @see elm_flipselector_item_prev_get()
  *
  * @ingroup Flipselector
  */
-EAPI Elm_Object_Item            *elm_flipselector_item_next_get(Elm_Object_Item *it);
+EAPI Elm_Object_Item            *elm_flipselector_item_next_get(const Elm_Object_Item *it);
 
 /**
  * Set the interval on time updates for an user mouse button hold
@@ -287,6 +285,7 @@ EAPI Elm_Object_Item            *elm_flipselector_item_next_get(Elm_Object_Item 
  *
  * @ingroup Flipselector
  */
+//XXX: void elm_flipselector_first_interval_set()?
 EAPI void                        elm_flipselector_interval_set(Evas_Object *obj, double interval);
 
 /**
@@ -300,7 +299,9 @@ EAPI void                        elm_flipselector_interval_set(Evas_Object *obj,
  *
  * @ingroup Flipselector
  */
+//XXX: EAPI double elm_flipselector_first_interval_get()?
 EAPI double                      elm_flipselector_interval_get(const Evas_Object *obj);
+
 /**
  * @}
  */
