@@ -38,9 +38,7 @@ evas_file_path_is_full_path(const char *path)
 #if defined _WIN32_WCE
    if (path[0] == '\\') return 1;
 #elif defined _WIN32
-   if ((path[0] == '\0') || (path[1] == '\0'))
-     return 0;
-   if (path[1] == ':') return 1;
+   if (evil_path_is_absolute(path)) return 1;
 #else
    if (path[0] == '/') return 1;
 #endif
