@@ -1,3 +1,18 @@
+2012-02-18  Vincent Torri  <doursse at users dot sf dot net>
+
+	* src/lib/Evil.h:
+	* src/lib/Makefile.am:
+	* src/lib/evil_macro.h:
+	* src/lib/evil_print.h:
+	* src/lib/evil_macro_pop.h (added):
+	Undef __cdecl if it has been defined by Evil and
+	move some defined macro to evil_macro_pop.h
+
+	* src/lib/evil_unistd.c:
+	* src/lib/evil_unistd.h:
+	Define gettimeofday() only for vc++ as MinGW-w64
+	already defines it.
+
 2012-02-17  Vincent Torri  <doursse at users dot sf dot net>
 
 	* AUTHORS:

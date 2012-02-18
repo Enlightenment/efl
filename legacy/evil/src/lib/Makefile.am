@@ -13,6 +13,7 @@ evil_inet.h \
 evil_langinfo.h \
 evil_libgen.h \
 evil_macro.h \
+evil_macro_pop.h \
 evil_main.h \
 evil_print.h \
 evil_stdlib.h \

@@ -3,6 +3,7 @@
 
 
 #ifndef __cdecl
+# define EVIL_CDECL_IS_DEFINED
 # ifdef __GNUC__
 #  define __cdecl __attribute__((__cdecl__))
 # else

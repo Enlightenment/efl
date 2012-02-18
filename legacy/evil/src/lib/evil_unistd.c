@@ -66,6 +66,7 @@ evil_time_get(void)
    return (double)_evil_time_second + (double)(count.QuadPart - _evil_time_count)/ (double)_evil_time_freq;
 }
 
+#ifdef _MSC_VER
 int
 evil_gettimeofday(struct timeval *tp, void *tzp __UNUSED__)
 {
@@ -80,7 +81,6 @@ evil_gettimeofday(struct timeval *tp, void *tzp __UNUSED__)
    return 1;
 }
 
-#ifdef _MSC_VER
 int
 evil_usleep(unsigned long usec)
 {

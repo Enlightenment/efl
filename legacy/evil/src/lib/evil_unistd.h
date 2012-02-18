@@ -35,6 +35,8 @@
  */
 EAPI double evil_time_get(void);
 
+#ifdef _MSC_VER
+
 /**
  * @brief Retrieve the time since the Evil library has been
  * initialized.
@@ -61,8 +63,6 @@ EAPI int evil_gettimeofday(struct timeval * tp, void * tzp);
  * Wrapper around evil_gettimeofday().
  */
 #define gettimeofday(tp,tzp) evil_gettimeofday((tp),(tzp))
-
-#ifdef _MSC_VER
 
 /**
  * @brief Suspend the execution of the calling process for microsecond

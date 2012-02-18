@@ -129,25 +129,7 @@ typedef unsigned long  gid_t;
 #include "evil_time.h"
 #include "evil_unistd.h"
 #include "evil_util.h"
-
-#define fprintf   _evil_fprintfa
-#define printf    _evil_printfa
-#define snprintf  _evil_snprintfa
-#define sprintf   _evil_sprintfa
-#define vfprintf  _evil_vfprintfa
-#define vprintf   _evil_vprintfa
-#define vsnprintf _evil_vsnprintfa
-#define vsprintf  _evil_vsprintfa
-
-#define fscanf    _evil_fscanf
-#define scanf     _evil_scanf
-#define sscanf    _evil_sscanf
-#define vfscanf   _evil_vfscanf
-#define vscanf    _evil_vscanf
-#define vsscanf   _evil_vsscanf
-
-#define asprintf  _evil_asprintf
-#define vasprintf _evil_vasprintf
+#include "evil_macro_pop.h"
 
 
 #if (defined(_WIN32) && !defined(_UWIN) && !defined(__CYGWIN__))
