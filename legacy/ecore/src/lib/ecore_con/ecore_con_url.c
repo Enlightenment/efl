@@ -1456,40 +1456,38 @@ _ecore_con_url_info_read(void)
 
    while ((curlmsg = curl_multi_info_read(_curlm, &n_remaining)))
      {
-        if (curlmsg->msg == CURLMSG_DONE)
+        Eina_List *l;
+        Ecore_Con_Url *url_con = NULL;
+        CURLMcode ret;
+        Ecore_Con_Event_Url_Complete *e;
+
+        if (curlmsg->msg != CURLMSG_DONE) continue;
+
+        EINA_LIST_FOREACH(_url_con_list, l, url_con)
           {
-             Eina_List *l, *ll;
-             Ecore_Con_Url *url_con;
-
-             EINA_LIST_FOREACH_SAFE(_url_con_list, l, ll, url_con)
-               {
-                  if (curlmsg->easy_handle == url_con->curl_easy)
-                    {
-                       CURLMcode ret;
-                       Ecore_Con_Event_Url_Complete *e;
-
-                       e = calloc(1, sizeof(Ecore_Con_Event_Url_Complete));
-                       if (e)
-                         {
-                            e->url_con = url_con;
-                            e->status = 0;
-                            if (curlmsg->data.result == CURLE_OK)
-                              {
-                                 long status; /* curl API uses long, not int */
-                                 status = 0;
-                                 curl_easy_getinfo(curlmsg->easy_handle, CURLINFO_RESPONSE_CODE, &status);
-                                 e->status = status;
-                              }
-                            ecore_event_add(ECORE_CON_EVENT_URL_COMPLETE, e, _ecore_con_event_url_free, NULL);
-                         }
-
-                       ret = curl_multi_remove_handle(_curlm, url_con->curl_easy);
-                       if (ret != CURLM_OK) ERR("curl_multi_remove_handle failed: %s", curl_multi_strerror(ret));
-                       _url_con_list = eina_list_remove(_url_con_list, url_con);
-                       break;
-                    }
-               }
+             if (curlmsg->easy_handle == url_con->curl_easy)
+               break;
           }
+        if ((!url_con) || (curlmsg->easy_handle != url_con->curl_easy)) continue;
+
+        e = calloc(1, sizeof(Ecore_Con_Event_Url_Complete));
+        if (e)
+          {
+             e->url_con = url_con;
+             e->status = 0;
+             if (curlmsg->data.result == CURLE_OK)
+               {
+                  long status; /* curl API uses long, not int */
+                  status = 0;
+                  curl_easy_getinfo(curlmsg->easy_handle, CURLINFO_RESPONSE_CODE, &status);
+                  e->status = status;
+               }
+             ecore_event_add(ECORE_CON_EVENT_URL_COMPLETE, e, _ecore_con_event_url_free, NULL);
+          }
+
+        ret = curl_multi_remove_handle(_curlm, url_con->curl_easy);
+        if (ret != CURLM_OK) ERR("curl_multi_remove_handle failed: %s", curl_multi_strerror(ret));
+        _url_con_list = eina_list_remove_list(_url_con_list, l);
      }
 }
 
