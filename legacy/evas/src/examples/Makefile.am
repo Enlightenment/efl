@@ -26,8 +26,6 @@ AM_CPPFLAGS = \
 @FONTCONFIG_CFLAGS@ \
 @pthread_cflags@
 
-AM_CFLAGS = @WIN32_CFLAGS@
-
 examples_PROGRAMS =
 
 if BUILD_ENGINE_BUFFER
