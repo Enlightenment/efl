@@ -1333,6 +1333,7 @@ _ecore_con_url_data_cb(void  *buffer,
 
    url_con->received += real_size;
 
+   INF("reading from %s", url_con->url);
    if (url_con->write_fd < 0)
      {
         e =
