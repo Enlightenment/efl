@@ -524,7 +524,7 @@ ecore_imf_context_cursor_position_set(Ecore_IMF_Context *ctx, int cursor_pos)
  *
  * @param ctx An #Ecore_IMF_Context.
  * @param x cursor x position.
- * @param x cursor y position.
+ * @param y cursor y position.
  * @param w cursor width.
  * @param h cursor height.
  * @ingroup Ecore_IMF_Context_Group
@@ -1242,7 +1242,7 @@ ecore_imf_context_input_panel_hide(Ecore_IMF_Context *ctx)
  * Set the layout of the input panel.
  *
  * @param ctx An #Ecore_IMF_Context.
- * @param layout see #ECORE_IMF_INPUT_PANEL_LAYOUT
+ * @param layout see #Ecore_IMF_Input_Panel_Layout
  * @ingroup Ecore_IMF_Context_Group
  * @since 1.1.0
  */

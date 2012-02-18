@@ -33,6 +33,12 @@
 extern "C" {
 #endif
 
+/**
+ * @addtogroup Ecore_IMF_Context_Group 
+ *
+ * @{
+ */
+
 /* Events sent by the Input Method */
 typedef struct _Ecore_IMF_Event_Preedit_Start      Ecore_IMF_Event_Preedit_Start;
 typedef struct _Ecore_IMF_Event_Preedit_End        Ecore_IMF_Event_Preedit_End;
@@ -66,6 +72,14 @@ EAPI extern int ECORE_IMF_EVENT_DELETE_SURROUNDING;
 
 typedef void (*Ecore_IMF_Event_Cb) (void *data, Ecore_IMF_Context *ctx, void *event_info);
 
+/**
+ * @enum _Ecore_IMF_Callback_Type
+ * @typedef Ecore_IMF_Callback_Type
+ *
+ * Ecore IMF Event callback types.
+ *
+ * @see ecore_imf_context_event_callback_add()
+ */
 typedef enum
 {
     ECORE_IMF_CALLBACK_PREEDIT_START,      /**< "PREEDIT_START" is called when a new preediting sequence starts. */
@@ -75,16 +89,24 @@ typedef enum
     ECORE_IMF_CALLBACK_DELETE_SURROUNDING  /**< "DELETE_SURROUNDING" is called when the input method needs to delete all or part of the context surrounding the cursor */
 } Ecore_IMF_Callback_Type;
 
+/**
+ * @enum _Ecore_IMF_Event_Type
+ * @typedef Ecore_IMF_Event_Type
+ *
+ * Ecore IMF event types.
+ *
+ * @see ecore_imf_context_filter_event()
+ */
 typedef enum
 {
-   ECORE_IMF_EVENT_MOUSE_DOWN,
-   ECORE_IMF_EVENT_MOUSE_UP,
-   ECORE_IMF_EVENT_MOUSE_IN,
-   ECORE_IMF_EVENT_MOUSE_OUT,
-   ECORE_IMF_EVENT_MOUSE_MOVE,
-   ECORE_IMF_EVENT_MOUSE_WHEEL,
-   ECORE_IMF_EVENT_KEY_DOWN,
-   ECORE_IMF_EVENT_KEY_UP
+   ECORE_IMF_EVENT_MOUSE_DOWN,  /**< Mouse Down event */
+   ECORE_IMF_EVENT_MOUSE_UP,    /**< Mouse Up event */
+   ECORE_IMF_EVENT_MOUSE_IN,    /**< Mouse In event */
+   ECORE_IMF_EVENT_MOUSE_OUT,   /**< Mouse Out event */
+   ECORE_IMF_EVENT_MOUSE_MOVE,  /**< Mouse Move event */
+   ECORE_IMF_EVENT_MOUSE_WHEEL, /**< Mouse Wheel event */
+   ECORE_IMF_EVENT_KEY_DOWN,    /**< Key Down event */
+   ECORE_IMF_EVENT_KEY_UP       /**< Key Up event */
 } Ecore_IMF_Event_Type;
 
 typedef enum
@@ -123,14 +145,30 @@ typedef enum
    ECORE_IMF_INPUT_MODE_AUTOCAP      = 1 << 30
 } Ecore_IMF_Input_Mode;
 
+/**
+ * @enum _Ecore_IMF_Preedit_Type
+ * @typedef Ecore_IMF_Preedit_Type
+ *
+ * Ecore IMF Preedit style types
+ *
+ * @see ecore_imf_context_preedit_string_with_attributes_get()
+ */
 typedef enum
 {
-   ECORE_IMF_PREEDIT_TYPE_NONE,
-   ECORE_IMF_PREEDIT_TYPE_SUB1,
-   ECORE_IMF_PREEDIT_TYPE_SUB2,
-   ECORE_IMF_PREEDIT_TYPE_SUB3
+   ECORE_IMF_PREEDIT_TYPE_NONE, /**< None style */
+   ECORE_IMF_PREEDIT_TYPE_SUB1, /**< Substring style 1 */
+   ECORE_IMF_PREEDIT_TYPE_SUB2, /**< Substring style 2 */
+   ECORE_IMF_PREEDIT_TYPE_SUB3  /**< Substring style 3 */
 } Ecore_IMF_Preedit_Type;
 
+/**
+ * @enum _Ecore_IMF_Autocapital_Type
+ * @typedef Ecore_IMF_Autocapital_Type
+ *
+ * Autocapitalization Types.
+ *
+ * @see ecore_imf_context_autocapital_type_set()
+ */
 typedef enum
 {
    ECORE_IMF_AUTOCAPITAL_TYPE_NONE,         /**< No auto-capitalization when typing */
@@ -139,6 +177,14 @@ typedef enum
    ECORE_IMF_AUTOCAPITAL_TYPE_ALLCHARACTER, /**< Autocapitalize all letters */
 } Ecore_IMF_Autocapital_Type;
 
+/**
+ * @enum _Ecore_IMF_Input_Panel_Layout
+ * @typedef Ecore_IMF_Input_Panel_Layout
+ *
+ * Input panel (virtual keyboard) layout types.
+ * 
+ * @see ecore_imf_context_input_panel_layout_set()
+ */
 typedef enum
 {
    ECORE_IMF_INPUT_PANEL_LAYOUT_NORMAL,          /**< Default layout */
@@ -155,12 +201,28 @@ typedef enum
    ECORE_IMF_INPUT_PANEL_LAYOUT_PASSWORD         /**< Like normal, but no auto-correct, no auto-capitalization etc. @since 1.2 */
 } Ecore_IMF_Input_Panel_Layout;
 
+/**
+ * @enum _Ecore_IMF_Input_Panel_Lang
+ * @typedef Ecore_IMF_Input_Panel_Lang
+ *
+ * Input panel (virtual keyboard) language modes.
+ * 
+ * @see ecore_imf_context_input_panel_language_set()
+ */
 typedef enum
 {
    ECORE_IMF_INPUT_PANEL_LANG_AUTOMATIC,    /**< Automatic @since 1.2 */
    ECORE_IMF_INPUT_PANEL_LANG_ALPHABET      /**< Alphabet @since 1.2 */
 } Ecore_IMF_Input_Panel_Lang;
 
+/**
+ * @enum _Ecore_IMF_Input_Panel_Return_Key_Type
+ * @typedef Ecore_IMF_Input_Panel_Return_Key_Type
+ *
+ * "Return" Key types on the input panel (virtual keyboard).
+ * 
+ * @see ecore_imf_context_input_panel_return_key_type_set()
+ */
 typedef enum
 {
    ECORE_IMF_INPUT_PANEL_RETURN_KEY_TYPE_DEFAULT, /**< Default @since 1.2 */
@@ -455,3 +517,7 @@ EAPI Eina_Bool                     ecore_imf_context_input_panel_return_key_disa
 #endif
 
 #endif
+
+/**
+ * @}
+ */
