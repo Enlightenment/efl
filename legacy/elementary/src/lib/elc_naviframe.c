@@ -843,7 +843,6 @@ _item_del_pre_hook(Elm_Object_Item *it)
      {
         wd->stack = eina_inlist_remove(wd->stack, EINA_INLIST_GET(navi_it));
         _item_del(navi_it);
-        elm_widget_item_free(navi_it);
         //If the item is only one, the stack will be empty
         if (!wd->stack) return EINA_TRUE;
         navi_it = EINA_INLIST_CONTAINER_GET(wd->stack->last,
@@ -856,7 +855,6 @@ _item_del_pre_hook(Elm_Object_Item *it)
      {
         wd->stack = eina_inlist_remove(wd->stack, EINA_INLIST_GET(navi_it));
         _item_del(navi_it);
-        elm_widget_item_free(navi_it);
      }
 
    return EINA_TRUE;
