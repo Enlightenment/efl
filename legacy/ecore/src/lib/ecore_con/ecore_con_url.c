@@ -1532,14 +1532,14 @@ _ecore_con_url_fd_handler(void *data __UNUSED__, Ecore_Fd_Handler *fd_handler __
 {
    if (_fd_hd_list)
      {
-        Ecore_Fd_Handler *fd_handler;
-        EINA_LIST_FREE(_fd_hd_list, fd_handler)
+        Ecore_Fd_Handler *fdh;
+        EINA_LIST_FREE(_fd_hd_list, fdh)
           {
-             int fd = ecore_main_fd_handler_fd_get(fd_handler);
+             int fd = ecore_main_fd_handler_fd_get(fdh);
              FD_CLR(fd, &_current_fd_set);
              // FIXME: ecore_main_fd_handler_del() sometimes give errors
              // because curl do not make fd itself controlled by users, but it can be ignored.
-             ecore_main_fd_handler_del(fd_handler);
+             ecore_main_fd_handler_del(fdh);
           }
      }
    ecore_timer_thaw(_curl_timeout);
