@@ -73,9 +73,9 @@ AC_ARG_ENABLE(ecore-evas-$1,
 AC_MSG_CHECKING([whether ecore_evas $4 support is to be built])
 AC_MSG_RESULT([${want_module}])
 
-if test "x$5" = "xyes" -a \
-        "x$have_ecore_evas" = "xyes" -a \
-        "x$want_module" = "xyes" ; then
+if test "x$5" = "xyes" && \
+   test "x$have_ecore_evas" = "xyes" && \
+   test "x$want_module" = "xyes" ; then
    PKG_CHECK_EXISTS([evas-$2],
       [
        AC_DEFINE([BUILD_ECORE_EVAS_]m4_defn([UP]), [1], [Support for $4 Engine in Ecore_Evas])

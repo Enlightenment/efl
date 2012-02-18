@@ -174,6 +174,7 @@ want_ecore_evas_directfb="no"
 want_ecore_evas_fb="no"
 want_ecore_evas_software_16_wince="no"
 want_ecore_evas_ews="yes"
+want_ecore_evas_extn="yes"
 want_ecore_evas_wayland_shm="no"
 want_ecore_evas_wayland_egl="no"
 
@@ -182,11 +183,12 @@ want_ecore_imf_xim="no"
 want_ecore_imf_scim="no"
 
 case "$host_os" in
-   mingw32ce* | cegcc*)
+   mingw32ce*)
       want_ecore_con="no"
       want_ecore_ipc="no"
       want_ecore_wince="yes"
       want_ecore_evas_software_16_wince="yes"
+      want_ecore_evas_extn="no"
       ;;
    mingw*)
       want_notify_win32="yes"
@@ -1390,6 +1392,20 @@ if ! test "x${have_atfile_source}" = "xno" ; then
       ])
 fi
 
+AC_COMPILE_IFELSE(
+   [AC_LANG_PROGRAM(
+       [[
+#include <mman.h>
+       ]],
+       [[
+int i = shm_open(NULL, 0, 0);
+       ]])],
+   [have_shm_open="yes"],
+   [have_shm_open="no"])
+
+AC_MSG_CHECKING([shm_open])
+AC_MSG_RESULT([${have_shm_open}])
+
 ### Checks for optionnal feature
 AC_CHECK_FUNC([mallinfo],
    [
@@ -1648,7 +1664,7 @@ ECORE_CHECK_MODULE([wince], [${want_ecore_wince}], [WinCE], [${have_ecore_input}
 # ecore_evas
 
 ecore_evas_deps="no"
-if test "x${have_evas}" = "xyes" -a "x${have_ecore_input}" = "xyes" -a "x${have_ecore_input_evas}" = "xyes" ; then
+if test "x${have_evas}" = "xyes" && test "x${have_ecore_input}" = "xyes" && test "x${have_ecore_input_evas}" = "xyes" ; then
    ecore_evas_deps="yes"
 fi
 
@@ -1836,6 +1852,21 @@ ECORE_EVAS_CHECK_MODULE_FULL([ews], [software-buffer],
    [${want_ecore_evas_ews}],
    [Ecore Evas Single Process Windowing System],
    [yes], [])
+
+# ecore_evas_extn
+
+have_extn="yes"
+if test "x${have_ecore_ipc}" = "xno" || \
+   test "x${have_ecore_evas_software_buffer}" = "xno" || \
+   test "x${have_shm_open}" = "xno" ; then
+   have_extn="no"
+fi
+
+ECORE_EVAS_CHECK_MODULE([extn],
+   [${want_ecore_evas_extn}],
+   [Extension],
+   [${have_extn}],
+   [requirements_ecore_evas="ecore-evas-software-buffer >= 1.1.99 ecore-ipc >= 1.1.99 ${requirements_ecore_evas}"])
 
 # ecore_evas_psl1ght
 
