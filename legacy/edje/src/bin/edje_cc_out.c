@@ -32,6 +32,7 @@ void *alloca (size_t);
 #include <limits.h>
 #include <unistd.h>
 #include <sys/stat.h>
+#include <sys/time.h>
 
 #include <Ecore_Evas.h>
 
