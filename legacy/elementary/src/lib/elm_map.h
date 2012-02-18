@@ -522,7 +522,7 @@ EAPI void                  elm_map_canvas_to_geo_convert(const Evas_Object *obj,
  * @param lon The longitude of the marker.
  * @param lat The latitude of the marker.
  * @param clas The class, to use when marker @b isn't grouped to others.
- * @param class_group The class group, to use when marker is grouped to others
+ * @param clas_group The class group, to use when marker is grouped to others
  * @param data The data passed to the callbacks.
  *
  * @return The created marker or @c NULL upon failure.

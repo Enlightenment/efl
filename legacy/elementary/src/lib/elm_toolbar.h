@@ -391,7 +391,7 @@ EAPI Elm_Object_Item             *elm_toolbar_item_next_get(const Elm_Object_Ite
 /**
  * Get the item before @p item in toolbar.
  *
- * @param item The toolbar item.
+ * @param it The toolbar item.
  * @return The item before @p item, or @c NULL if none or on failure.
  *
  * @note If it is the first item, @c NULL will be returned.
@@ -589,7 +589,7 @@ EAPI Eina_Bool                    elm_toolbar_item_icon_file_set(Elm_Object_Item
  * Set or unset item as a separator.
  *
  * @param it The toolbar item.
- * @param setting @c EINA_TRUE to set item @p item as separator or
+ * @param separator @c EINA_TRUE to set item @p item as separator or
  * @c EINA_FALSE to unset, i.e., item will be used as a regular item.
  *
  * Items aren't set as separator by default.

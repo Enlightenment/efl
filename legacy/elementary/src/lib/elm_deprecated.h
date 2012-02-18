@@ -1353,7 +1353,7 @@ EINA_DEPRECATED EAPI void                   elm_diskselector_item_icon_set(Elm_O
 /**
  * Get the icon associated to the item.
  *
- * @param item The diskselector item
+ * @param it The diskselector item
  * @return The icon associated to @p it
  *
  * The return value is a pointer to the icon associated to @p item when it was
@@ -3362,7 +3362,7 @@ EINA_DEPRECATED EAPI void elm_player_video_set(Evas_Object *player, Evas_Object 
  * Set the label of item.
  *
  * @param it The item of segment control.
- * @param text The label of item.
+ * @param label The label of item.
  *
  * The label to be displayed by the item.
  * Label will be at right of the icon (if set).

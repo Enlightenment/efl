@@ -652,7 +652,7 @@ EAPI Eina_Bool         elm_web_text_matches_highlight_set(Evas_Object *obj, Eina
 /**
  * Gets whether highlighting marks is enabled
  *
- * @param The web object
+ * @param obj The web object
  *
  * @return EINA_TRUE is marks are set to be highlighted, EINA_FALSE
  * otherwise
