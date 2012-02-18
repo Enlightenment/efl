@@ -1,8 +1,3 @@
-#include "config.h"
-#include <string.h>
-#include <fcntl.h>
-#include <Eina.h>
-#include <Edje.h>
 #include "edje_private.h"
 
 typedef struct _Multisense_Data
