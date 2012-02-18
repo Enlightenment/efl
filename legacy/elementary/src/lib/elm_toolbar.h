@@ -142,7 +142,7 @@ EAPI Elm_Icon_Lookup_Order        elm_toolbar_icon_order_lookup_get(const Evas_O
  * Set whether the toolbar should always have an item selected.
  *
  * @param obj The toolbar object.
- * @param wrap @c EINA_TRUE to enable always-select mode or @c EINA_FALSE to
+ * @param always_select @c EINA_TRUE to enable always-select mode or @c EINA_FALSE to
  * disable it.
  *
  * This will cause the toolbar to always have an item selected, and clicking
@@ -174,7 +174,7 @@ EAPI Eina_Bool                    elm_toolbar_always_select_mode_get(const Evas_
  * Set whether the toolbar items' should be selected by the user or not.
  *
  * @param obj The toolbar object.
- * @param wrap @c EINA_TRUE to disable selection or @c EINA_FALSE to
+ * @param no_select @c EINA_TRUE to disable selection or @c EINA_FALSE to
  * enable it.
  *
  * This will turn off the ability to select items entirely and they will
@@ -502,7 +502,6 @@ EAPI Elm_Object_Item             *elm_toolbar_selected_item_get(const Evas_Objec
 /**
  * Set the icon associated with @p item.
  *
- * @param obj The parent of this item.
  * @param it The toolbar item.
  * @param icon A string with icon name or the absolute path of an image file.
  *

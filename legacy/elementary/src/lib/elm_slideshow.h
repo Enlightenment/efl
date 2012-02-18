@@ -376,7 +376,7 @@ EAPI Elm_Object_Item      *elm_slideshow_item_current_get(const Evas_Object *obj
  * Get the real Evas object created to implement the view of a
  * given slideshow item
  *
- * @param item The slideshow item.
+ * @param it The slideshow item.
  * @return the Evas object implementing this item's view.
  *
  * This returns the actual Evas object used to implement the

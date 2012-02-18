@@ -148,7 +148,7 @@ EAPI void                        elm_thumb_path_get(const Evas_Object *obj, cons
  * looping.
  *
  * @param obj The thumb object.
- * @param setting The animation setting.
+ * @param s The animation setting.
  *
  * @see elm_thumb_file_set()
  *
@@ -231,7 +231,7 @@ EAPI Eina_Bool                   elm_thumb_ethumb_client_connected_get(void);
  * Make the thumbnail 'editable'.
  *
  * @param obj Thumb object.
- * @param set Turn on or off editability. Default is @c EINA_FALSE.
+ * @param edit Turn on or off editability. Default is @c EINA_FALSE.
  *
  * This means the thumbnail is a valid drag target for drag and drop, and can be
  * cut or pasted too.

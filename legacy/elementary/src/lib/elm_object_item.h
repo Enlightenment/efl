@@ -131,7 +131,7 @@ EAPI void                         elm_object_item_signal_emit(Elm_Object_Item *i
 /**
  * Set the disabled state of an widget item.
  *
- * @param obj The Elementary object item
+ * @param it The Elementary object item
  * @param disabled The state to put in in: @c EINA_TRUE for
  *        disabled, @c EINA_FALSE for enabled
  *
@@ -151,7 +151,7 @@ EAPI void                         elm_object_item_disabled_set(Elm_Object_Item *
 /**
  * Get the disabled state of an widget item.
  *
- * @param obj The Elementary object
+ * @param it The Elementary object item
  * @return @c EINA_TRUE, if the widget item is disabled, @c EINA_FALSE
  *            if it's enabled (or on errors)
  *
@@ -166,7 +166,7 @@ EAPI Eina_Bool                    elm_object_item_disabled_get(const Elm_Object_
  * freed.
  *
  * @param it The item to set the callback on
- * @param func The function called
+ * @param del_cb The function called
  *
  * That function will receive these parameters:
  * @li void * item data

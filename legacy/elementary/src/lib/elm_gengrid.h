@@ -783,8 +783,8 @@ EAPI void                          elm_gengrid_page_relative_get(const Evas_Obje
  * Set a given gengrid widget's scrolling page size
  *
  * @param obj The gengrid object
- * @param h_pagerel The horizontal page size, in pixels
- * @param v_pagerel The vertical page size, in pixels
+ * @param h_pagesize The horizontal page size, in pixels
+ * @param v_pagesize The vertical page size, in pixels
  *
  * The gengrid's scroller is capable of binding scrolling by the
  * user to "pages". It means that, while scrolling and, specially

@@ -614,7 +614,7 @@ EAPI Eina_Bool                     elm_genlist_compress_mode_get(const Evas_Obje
  * Enable/disable height-for-width mode.
  *
  * @param obj The genlist object
- * @param setting The height-for-width mode (@c EINA_TRUE = on,
+ * @param height_for_width The height-for-width mode (@c EINA_TRUE = on,
  * @c EINA_FALSE = off). Default is @c EINA_FALSE.
  *
  * With height-for-width mode the item width will be fixed (restricted
@@ -1712,7 +1712,7 @@ EAPI Eina_Bool                     elm_genlist_item_cursor_engine_only_get(const
 /**
  * Get the index of the item. It is only valid once displayed.
  *
- * @param item a genlist item
+ * @param it a genlist item
  * @return the position inside the list of item.
  *
  * @ingroup Genlist
@@ -1740,8 +1740,8 @@ EAPI void                          elm_genlist_realized_items_update(Evas_Object
 /**
  * Activate a genlist mode on an item
  *
- * @param item The genlist item
- * @param mode Mode name
+ * @param it The genlist item
+ * @param mode_type Mode name
  * @param mode_set Boolean to define set or unset mode.
  *
  * A genlist mode is a different way of selecting an item. Once a mode is
@@ -1836,7 +1836,7 @@ EAPI Eina_Bool                     elm_genlist_reorder_mode_get(const Evas_Objec
 /**
  * Get the Item's Flags
  *
- * @param item The genlist item
+ * @param it The genlist item
  * @return The item flags.
  *
  * This function returns the item's type. Normally the item's type.

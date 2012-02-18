@@ -475,7 +475,7 @@ EAPI Eina_Bool             elm_icon_animated_available_get(const Evas_Object *ob
  * Set animation mode of the icon.
  *
  * @param obj The icon object
- * @param anim @c EINA_TRUE if the object do animation job,
+ * @param animated @c EINA_TRUE if the object do animation job,
  * @c EINA_FALSE otherwise. Default is @c EINA_FALSE.
  *
  * Since the default animation mode is set to EINA_FALSE,

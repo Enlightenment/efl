@@ -481,7 +481,7 @@ EAPI Elm_Map_Name         *elm_map_utils_convert_coord_into_name(const Evas_Obje
  * (longitude, latitude).
  *
  * @param obj The map object.
- * @param name The address.
+ * @param address The address.
  * @return name A #Elm_Map_Name handle for this address.
  *
  * To get the longitude and latitude, elm_map_name_region_get()
@@ -521,7 +521,7 @@ EAPI void                  elm_map_canvas_to_geo_convert(const Evas_Object *obj,
  * @param obj The map object.
  * @param lon The longitude of the marker.
  * @param lat The latitude of the marker.
- * @param class The class, to use when marker @b isn't grouped to others.
+ * @param clas The class, to use when marker @b isn't grouped to others.
  * @param class_group The class group, to use when marker is grouped to others
  * @param data The data passed to the callbacks.
  *
@@ -759,7 +759,7 @@ EAPI Elm_Map_Group_Class  *elm_map_group_class_new(Evas_Object *obj);
 /**
  * Set the marker's style of a group class.
  *
- * @param class The group class.
+ * @param clas The group class.
  * @param style The style to be used by markers.
  *
  * Each marker must be associated to a group class, and will use the style
@@ -780,7 +780,7 @@ EAPI void                  elm_map_group_class_style_set(Elm_Map_Group_Class *cl
 /**
  * Set the icon callback function of a group class.
  *
- * @param class The group class.
+ * @param clas The group class.
  * @param icon_get The callback function that will return the icon.
  *
  * Each marker must be associated to a group class, and it can display a
@@ -796,7 +796,7 @@ EAPI void                  elm_map_group_class_icon_cb_set(Elm_Map_Group_Class *
 /**
  * Set the data associated to the group class.
  *
- * @param class The group class.
+ * @param clas The group class.
  * @param data The new user data.
  *
  * This data will be passed for callback functions, like icon get callback,
@@ -1004,7 +1004,7 @@ EAPI const char          **elm_map_source_names_get(const Evas_Object *obj);
  * Set the source of the map.
  *
  * @param obj The map object.
- * @param source The source to be used.
+ * @param source_name The source to be used.
  *
  * Map widget retrieves images that composes the map from a web service.
  * This web service can be set with this method.

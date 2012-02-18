@@ -1928,7 +1928,7 @@ EINA_DEPRECATED EAPI Evas_Object                  *elm_genlist_item_genlist_get(
 /**
  * Return the data associated with a given index widget item
  *
- * @param it The index widget item handle
+ * @param item The index widget item handle
  * @return The data associated with @p it
  * @deprecated Use elm_object_item_data_get() instead
  *
@@ -2977,7 +2977,7 @@ EINA_DEPRECATED EAPI const char  *elm_toolbar_item_label_get(const Elm_Object_It
  * Set the label of item.
  *
  * @param it The item of toolbar.
- * @param text The label of item.
+ * @param label The label of item.
  *
  * The label to be displayed by the item.
  * Label will be placed at icons bottom (if set).
@@ -3798,7 +3798,7 @@ EINA_DEPRECATED EAPI void                         elm_list_item_tooltip_style_se
 /**
  * Get the style for this item tooltip.
  *
- * @param item list item with tooltip already set.
+ * @param it list item with tooltip already set.
  * @return style the theme style in use, defaults to "default". If the
  *         object does not have a tooltip set, then NULL is returned.
  *

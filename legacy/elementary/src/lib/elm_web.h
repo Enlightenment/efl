@@ -354,7 +354,7 @@ EAPI Evas_Object      *elm_web_add(Evas_Object *parent);
  * Change useragent of a elm_web object
  * 
  * @param obj The object
- * @param useragent String for useragent
+ * @param user_agent String for useragent
  *
  */
 EAPI void elm_web_useragent_set(Evas_Object *obj, const char *user_agent);
@@ -666,7 +666,7 @@ EAPI Eina_Bool         elm_web_text_matches_highlight_get(const Evas_Object *obj
  * 0.0 and 1.0. This is an estimated progress accounting for all the frames
  * included in the page.
  *
- * @param The web object
+ * @param obj The web object
  *
  * @return A value between 0.0 and 1.0 indicating the progress, or -1.0 on
  * failure

@@ -17,7 +17,7 @@
  *
  * They can also be single line or multi line (the default) and when set
  * to multi line mode they support text wrapping in any of the modes
- * indicated by Elm_Wrap_Type.
+ * indicated by #Elm_Wrap_Type.
  *
  * Other features include password mode, filtering of inserted text with
  * elm_entry_markup_filter_append() and related functions, inline "items" and

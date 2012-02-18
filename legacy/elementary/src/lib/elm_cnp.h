@@ -105,7 +105,7 @@ EAPI Eina_Bool elm_cnp_selection_get(Elm_Sel_Type selection,
  * @see also elm_cnp_selection_set()
  *
  * @param selection Selection type for copying and pasting
- * @param widget The source widget pointer
+ * @param obj The source widget pointer
  * @return If EINA_TRUE, clearing data is success.
  *
  * @ingroup CopyPaste

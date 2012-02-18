@@ -60,7 +60,7 @@ EAPI Evas_Object                 *elm_notify_add(Evas_Object *parent);
  * @brief Set the notify parent
  *
  * @param obj The notify object
- * @param content The new parent
+ * @param parent The new parent
  *
  * Once the parent object is set, a previously set one will be disconnected
  * and replaced.
@@ -104,7 +104,7 @@ EAPI Elm_Notify_Orient            elm_notify_orient_get(const Evas_Object *obj);
  * hidden.
  *
  * @param obj The notify object
- * @param time The timeout in seconds
+ * @param timeout The timeout in seconds
  *
  * This function sets a timeout and starts the timer controlling when the
  * notify is hidden. Since calling evas_object_show() on a notify restarts
@@ -132,7 +132,7 @@ EAPI double                       elm_notify_timeout_get(const Evas_Object *obj)
  * its area.
  *
  * @param obj The notify object
- * @param repeats EINA_TRUE Events are repeats, else no
+ * @param repeat EINA_TRUE Events are repeats, else no
  *
  * When true if the user clicks outside the window the events will be caught
  * by the others widgets, else the events are blocked.

@@ -278,7 +278,7 @@ EAPI void                  elm_index_item_go(Evas_Object *obj, int level);
 /**
  * Get the letter (string) set on a given index widget item.
  *
- * @param it The index item handle
+ * @param item The index item handle
  * @return The letter string set on @p it
  *
  * @ingroup Index

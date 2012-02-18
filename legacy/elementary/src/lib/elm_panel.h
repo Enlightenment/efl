@@ -46,7 +46,7 @@ EAPI Evas_Object                 *elm_panel_add(Evas_Object *parent);
 /**
  * @brief Sets the orientation of the panel
  *
- * @param parent The parent object
+ * @param obj The panel object
  * @param orient The panel orientation. Can be one of the following:
  * @li ELM_PANEL_ORIENT_TOP
  * @li ELM_PANEL_ORIENT_LEFT
@@ -76,7 +76,7 @@ EAPI void                         elm_panel_hidden_set(Evas_Object *obj, Eina_Bo
  * @brief Get the state of the panel.
  *
  * @param obj The panel object
- * @param hidden If true, the panel is in the "hide" state
+ * @return EINA_TRUE if it is hidden state
  */
 EAPI Eina_Bool                    elm_panel_hidden_get(const Evas_Object *obj);
 
