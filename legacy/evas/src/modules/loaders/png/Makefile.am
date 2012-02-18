@@ -9,8 +9,7 @@ AM_CPPFLAGS = \
 @PIXMAN_CFLAGS@ \
 @EINA_CFLAGS@ \
 @evas_image_loader_png_cflags@ \
-@EVIL_CFLAGS@ \
-@WIN32_CPPFLAGS@
+@EVIL_CFLAGS@
 
 if BUILD_LOADER_PNG
 if !EVAS_STATIC_BUILD_PNG

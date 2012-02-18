@@ -5,6 +5,45 @@
 #include "config.h"  /* so that EAPI in Evas.h is correctly defined */
 //#endif
 
+#ifdef STDC_HEADERS
+# include <stdlib.h>
+# include <stddef.h>
+#else
+# ifdef HAVE_STDLIB_H
+#  include <stdlib.h>
+# endif
+#endif
+#ifdef HAVE_ALLOCA_H
+# include <alloca.h>
+#elif !defined alloca
+# ifdef __GNUC__
+#  define alloca __builtin_alloca
+# elif defined _AIX
+#  define alloca __alloca
+# elif defined _MSC_VER
+#  include <malloc.h>
+#  define alloca _alloca
+# elif !defined HAVE_ALLOCA
+#  ifdef  __cplusplus
+extern "C"
+#  endif
+void *alloca (size_t);
+# endif
+#endif
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <time.h>
+#include <ctype.h>
+
+#ifndef _MSC_VER
+# include <stdint.h>
+#include <unistd.h>
+#endif
+
 #ifdef HAVE_EVIL
 # include <Evil.h>
 #endif
@@ -20,10 +59,6 @@
 #ifdef HAVE_PIXMAN
 #include <pixman.h>
 #endif
-
-#include <sys/types.h>
-#include <sys/stat.h>
-#include <unistd.h>
 
 #ifndef HAVE_LROUND
 /* right now i dont care about rendering bugs on platforms without lround
@@ -169,35 +204,6 @@ extern EAPI int _evas_log_dom_global;
 # define THI(x)
 # define TH_MAX 0
 
-#endif
-
-#ifdef HAVE_ALLOCA_H
-# include <alloca.h>
-#elif defined __GNUC__
-# define alloca __builtin_alloca
-#elif defined _AIX
-# define alloca __alloca
-#elif defined _MSC_VER
-# include <malloc.h>
-# define alloca _alloca
-#else
-# include <stddef.h>
-# ifdef  __cplusplus
-extern "C"
-# endif
-void *alloca (size_t);
-#endif
-
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <sys/types.h>
-#include <sys/stat.h>
-#include <time.h>
-#include <ctype.h>
-
-#ifndef _MSC_VER
-# include <stdint.h>
 #endif
 
 #include <ft2build.h>

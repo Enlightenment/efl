@@ -18,8 +18,6 @@ AM_CPPFLAGS = \
 @pthread_cflags@ \
 @PIXMAN_CFLAGS@
 
-AM_CFLAGS = @WIN32_CFLAGS@
-
 bin_PROGRAMS = evas_cserve evas_cserve_tool
 
 evas_cserve_SOURCES = \

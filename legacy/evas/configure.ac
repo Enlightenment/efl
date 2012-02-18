@@ -517,20 +517,6 @@ EFL_ATTRIBUTE_UNUSED
 EFL_ATTRIBUTE_VECTOR
 EFL_ATTRIBUTE_ALWAYS_INLINE
 
-WIN32_CPPFLAGS=""
-case "$host_os" in
-   mingw32ce*)
-      WIN32_CPPFLAGS="-D_WIN32_WCE=0x0420"
-      ;;
-   mingw*)
-      WIN32_CPPFLAGS="-D_WIN32_WINNT=0x0500"
-      ;;
-esac
-AC_SUBST(WIN32_CPPFLAGS)
-
-WIN32_CFLAGS=""
-AC_SUBST(WIN32_CFLAGS)
-
 
 ### Checks for linker characteristics
 lt_enable_auto_import=""

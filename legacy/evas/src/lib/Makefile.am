@@ -201,8 +201,6 @@ AM_CPPFLAGS = \
 @pthread_cflags@ \
 @PIXMAN_CFLAGS@
 
-AM_CFLAGS = @WIN32_CFLAGS@
-
 lib_LTLIBRARIES = libevas.la
 
 includes_HEADERS = Evas.h Evas_GL.h

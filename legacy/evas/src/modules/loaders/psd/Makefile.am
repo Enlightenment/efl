@@ -8,8 +8,7 @@ AM_CPPFLAGS = \
 @FREETYPE_CFLAGS@ \
 @PIXMAN_CFLAGS@ \
 @EINA_CFLAGS@ \
-@EVIL_CFLAGS@ \
-@WIN32_CPPFLAGS@
+@EVIL_CFLAGS@
 
 if BUILD_LOADER_PSD
 if !EVAS_STATIC_BUILD_PSD
@@ -27,7 +26,7 @@ else
 
 noinst_LTLIBRARIES = libevas_loader_psd.la
 libevas_loader_psd_la_SOURCES = evas_image_load_psd.c
-libevas_loader_psd_la_LIBADD = 
+libevas_loader_psd_la_LIBADD =
 
 endif
 endif

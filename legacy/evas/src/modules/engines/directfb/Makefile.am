@@ -11,8 +11,6 @@ AM_CPPFLAGS = \
 @EINA_CFLAGS@ \
 @evas_engine_directfb_cflags@
 
-AM_CFLAGS = @WIN32_CFLAGS@
-
 if BUILD_ENGINE_DIRECTFB
 
 DIRECTFB_SOURCES = evas_engine.c polygon.c

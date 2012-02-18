@@ -11,8 +11,6 @@ AM_CPPFLAGS = \
 @EINA_CFLAGS@ \
 @evas_engine_software_sdl_cflags@
 
-AM_CFLAGS = @WIN32_CFLAGS@
-
 if BUILD_ENGINE_SOFTWARE_SDL
 
 SOFTWARE_SDL_SOURCES = evas_engine.c

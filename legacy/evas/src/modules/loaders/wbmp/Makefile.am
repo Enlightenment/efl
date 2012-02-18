@@ -8,8 +8,7 @@ AM_CPPFLAGS = \
 @FREETYPE_CFLAGS@ \
 @PIXMAN_CFLAGS@ \
 @EINA_CFLAGS@ \
-@EVIL_CFLAGS@ \
-@WIN32_CPPFLAGS@
+@EVIL_CFLAGS@
 
 if BUILD_LOADER_WBMP
 if !EVAS_STATIC_BUILD_WBMP
@@ -27,7 +26,7 @@ else
 
 noinst_LTLIBRARIES = libevas_loader_wbmp.la
 libevas_loader_wbmp_la_SOURCES = evas_image_load_wbmp.c
-libevas_loader_wbmp_la_LIBADD = 
+libevas_loader_wbmp_la_LIBADD =
 
 endif
 endif

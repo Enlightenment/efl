@@ -33,7 +33,6 @@ pkgdir = $(libdir)/evas/modules/engines/software_16_wince/$(MODULE_ARCH)
 pkg_LTLIBRARIES	= module.la
 
 module_la_SOURCES = $(SOFTWARE_16_WINCE_SOURCE)
-module_la_CFLAGS = @WIN32_CFLAGS@
 module_la_CXXFLAGS = -fno-rtti -fno-exceptions
 module_la_LIBADD = @EINA_LIBS@ $(top_builddir)/src/lib/libevas.la $(SOFTWARE_16_WINCE_LIBADD)
 module_la_LDFLAGS = -no-undefined @lt_enable_auto_import@ -module -avoid-version

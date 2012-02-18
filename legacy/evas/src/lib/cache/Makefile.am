@@ -7,7 +7,6 @@ AM_CPPFLAGS	     = -I. \
 		       -DPACKAGE_BIN_DIR=\"$(bindir)\" \
 		       -DPACKAGE_LIB_DIR=\"$(libdir)\" \
 		       -DPACKAGE_DATA_DIR=\"$(datadir)/$(PACKAGE)\" \
-			@WIN32_CPPFLAGS@ \
 			@EVIL_CFLAGS@ \
 		       @FREETYPE_CFLAGS@ \
                        @PIXMAN_CFLAGS@ \

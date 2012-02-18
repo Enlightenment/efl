@@ -10,8 +10,6 @@ AM_CPPFLAGS = \
 @evas_image_loader_gif_cflags@ \
 @EINA_CFLAGS@
 
-AM_CFLAGS = @WIN32_CFLAGS@
-
 if BUILD_LOADER_GIF
 if !EVAS_STATIC_BUILD_GIF
 

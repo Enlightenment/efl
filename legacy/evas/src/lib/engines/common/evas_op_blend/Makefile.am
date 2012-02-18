@@ -40,11 +40,7 @@ libevas_engine_common_op_blend_master_sse3_la_CFLAGS = \
 @FREETYPE_CFLAGS@ @VALGRIND_CFLAGS@ \
 @PIXMAN_CFLAGS@ \
 @EET_CFLAGS@ @pthread_cflags@ \
-@WIN32_CFLAGS@ @EINA_CFLAGS@ \
+@EINA_CFLAGS@ \
 @FRIBIDI_CFLAGS@ @HARFBUZZ_CFLAGS@ \
 @PIXMAN_CFLAGS@ \
 @EVAS_SSE3_CFLAGS@
-                       
-libevas_engine_common_op_blend_master_sse3_la_DEPENENCIES = \
-$(top_builddir)/config.h
-

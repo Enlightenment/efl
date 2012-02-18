@@ -10,8 +10,6 @@ AM_CPPFLAGS = \
 @evas_image_loader_eet_cflags@ \
 @EINA_CFLAGS@
 
-AM_CFLAGS = @WIN32_CFLAGS@
-
 
 if BUILD_LOADER_EET
 if !EVAS_STATIC_BUILD_EET
