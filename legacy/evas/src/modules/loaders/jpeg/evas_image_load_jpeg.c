@@ -514,8 +514,8 @@ evas_image_load_file_data_jpeg_internal(Image_Entry *ie,
    unsigned int tmp;
    unsigned int load_region_x = 0, load_region_y = 0;
    unsigned int load_region_w = 0, load_region_h = 0;
-   int degree = 0;
-   Eina_Bool change_wh = EINA_FALSE;
+   volatile int degree = 0;
+   volatile Eina_Bool change_wh = EINA_FALSE;
    Eina_Bool line_done = EINA_FALSE;
 
    if (ie->flags.rotated)
