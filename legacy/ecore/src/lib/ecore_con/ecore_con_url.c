@@ -95,7 +95,7 @@ ecore_con_url_init(void)
    curl_multi_timeout(_curlm, &ms);
    if (ms <= 0) ms = 100;
 
-   _curl_timeout = ecore_timer_add((double)ms / 1000, _ecore_con_url_idler_handler, (void *)0xACE);
+   _curl_timeout = ecore_timer_add((double)ms / 1000, _ecore_con_url_idler_handler, NULL);
    ecore_timer_freeze(_curl_timeout);
 
    return _init_count;
