@@ -233,6 +233,11 @@ _edje_del(Edje *ed)
         eina_stringshare_del(cb->part);
         free(cb);
      }
+   EINA_LIST_FREE(ed->markup_filter_callbacks, cb)
+     {
+        eina_stringshare_del(cb->part);
+        free(cb);
+     }
 
    if (ed->members.text_class)
      {
