@@ -1468,8 +1468,7 @@ _ecore_con_url_curl_clear(void)
      }
 
    EINA_LIST_FREE(_url_con_list, url_con)
-     {
-     }
+     _ecore_con_url_multi_remove(url_con);
 }
 
 static Eina_Bool
