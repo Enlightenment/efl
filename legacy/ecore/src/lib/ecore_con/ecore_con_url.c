@@ -79,28 +79,24 @@ EAPI int
 ecore_con_url_init(void)
 {
 #ifdef HAVE_CURL
+   long ms;
    if (++_init_count > 1) return _init_count;
 
-   if (!ECORE_CON_EVENT_URL_DATA)     ECORE_CON_EVENT_URL_DATA = ecore_event_type_new();
-   if (!ECORE_CON_EVENT_URL_COMPLETE) ECORE_CON_EVENT_URL_COMPLETE = ecore_event_type_new();
-   if (!ECORE_CON_EVENT_URL_PROGRESS) ECORE_CON_EVENT_URL_PROGRESS = ecore_event_type_new();
+   ECORE_CON_EVENT_URL_DATA = ecore_event_type_new();
+   ECORE_CON_EVENT_URL_COMPLETE = ecore_event_type_new();
+   ECORE_CON_EVENT_URL_PROGRESS = ecore_event_type_new();
 
-   if (!_curlm)
-     {
-        long ms;
+   // curl_global_init() is not thread safe!
+   if (curl_global_init(CURL_GLOBAL_ALL)) return --_init_count;
 
-        // curl_global_init() is not thread safe!
-        if (curl_global_init(CURL_GLOBAL_ALL)) return --_init_count;
+   _curlm = curl_multi_init();
+   if (!_curlm)  return --_init_count;
 
-        _curlm = curl_multi_init();
-        if (!_curlm)  return --_init_count;
+   curl_multi_timeout(_curlm, &ms);
+   if (ms <= 0) ms = 100;
 
-        curl_multi_timeout(_curlm, &ms);
-        if (ms <= 0) ms = 100;
-
-        _curl_timeout = ecore_timer_add((double)ms / 1000, _ecore_con_url_idler_handler, (void *)0xACE);
-        ecore_timer_freeze(_curl_timeout);
-     }
+   _curl_timeout = ecore_timer_add((double)ms / 1000, _ecore_con_url_idler_handler, (void *)0xACE);
+   ecore_timer_freeze(_curl_timeout);
 
    return _init_count;
 #else
@@ -112,31 +108,30 @@ EAPI int
 ecore_con_url_shutdown(void)
 {
 #ifdef HAVE_CURL
+   Ecore_Con_Url *url_con;
+   Ecore_Fd_Handler *fd_handler;
    if (_init_count == 0) return 0;
+   --_init_count;
+   if (_init_count) return _init_count;
 
-   if (--_init_count == 0)
+
+   if (_curl_timeout)
      {
-        Ecore_Con_Url *con_url;
-        Ecore_Fd_Handler *fd_handler;
+        ecore_timer_del(_curl_timeout);
+        _curl_timeout = NULL;
+     }
 
-        if (_curl_timeout)
-          {
-             ecore_timer_del(_curl_timeout);
-             _curl_timeout = NULL;
-          }
+   FD_ZERO(&_current_fd_set);
+   EINA_LIST_FREE(_url_con_list, url_con) ecore_con_url_free(url_con);
+   EINA_LIST_FREE(_fd_hd_list, fd_handler) ecore_main_fd_handler_del(fd_handler);
 
-        FD_ZERO(&_current_fd_set);
-        EINA_LIST_FREE(_url_con_list, con_url) ecore_con_url_free(con_url);
-        EINA_LIST_FREE(_fd_hd_list, fd_handler) ecore_main_fd_handler_del(fd_handler);
-
-        if (_curlm)
-          {
-             curl_multi_cleanup(_curlm);
-             _curlm = NULL;
-          }
-        curl_global_cleanup();
-   }
-   return _init_count;
+   if (_curlm)
+     {
+        curl_multi_cleanup(_curlm);
+        _curlm = NULL;
+     }
+   curl_global_cleanup();
+   return 0;
 #endif
    return 1;
 }
