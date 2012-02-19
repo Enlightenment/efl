@@ -90,7 +90,11 @@ ecore_con_url_init(void)
    if (curl_global_init(CURL_GLOBAL_ALL)) return --_init_count;
 
    _curlm = curl_multi_init();
-   if (!_curlm)  return --_init_count;
+   if (!_curlm)
+     {
+        curl_global_cleanup();
+        return --_init_count;
+     }
 
    curl_multi_timeout(_curlm, &ms);
    if (ms <= 0) ms = 100;
