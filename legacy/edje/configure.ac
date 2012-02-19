@@ -96,6 +96,8 @@ AC_ARG_ENABLE([amalgamation],
 )
 AM_CONDITIONAL([EDJE_AMALGAMATION], [test "x${do_amalgamation}" = "xyes"])
 
+EFL_WITH_BIN([edje], [edje-cc], [edje_cc])
+
 EFL_ENABLE_BIN([edje-cc])
 EFL_ENABLE_BIN([edje-decc])
 EFL_ENABLE_BIN([edje-recc])
@@ -541,11 +543,6 @@ AC_ARG_ENABLE([build-examples],
    [
     if test "x${enableval}" = "xyes" ; then
        build_examples="yes"
-       edje_cc=$($PKG_CONFIG --variable=prefix edje)/bin/edje_cc
-      # put in here the dependencies for Edje' examples. They are
-       # meant to be 'real world' usage examples, thus one will be
-       # using higher level libraries on these programs
-       AC_SUBST(edje_cc)
     else
        build_examples="no"
     fi

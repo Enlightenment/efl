@@ -42,3 +42,30 @@ AM_CONDITIONAL(BUILD_[]UP, test "x$have_[]m4_defn([DOWN])" = "xyes")
 AS_IF([test "x$have_[]m4_defn([DOWN])" = "xyes"], [$2], [$3])
 
 ])
+
+
+dnl Macro that check if a binary is built or not
+
+dnl Usage: EFL_WITH_BIN(package, binary, default_value)
+dnl Call AC_SUBST(_binary) (_binary is the lowercase of binary, - being transformed into _ by default, or the value set by the user)
+
+AC_DEFUN([EFL_WITH_BIN],
+[
+
+m4_pushdef([DOWN], m4_translit([[$2]], [-A-Z], [_a-z]))dnl
+
+dnl configure option
+
+AC_ARG_WITH([$2],
+   [AC_HELP_STRING([--with-$2=PATH], [specify a specific path to ]DOWN[ @<:@default=$3@:>@])],
+   [_efl_with_binary=${withval}],
+   [_efl_with_binary=$(pkg-config --variable=prefix $1)/bin/$3])
+
+DOWN=${_efl_with_binary}
+AC_MSG_NOTICE(DOWN[ set to ${_efl_with_binary}])
+
+with_binary_[]m4_defn([DOWN])=${_efl_with_binary}
+
+AC_SUBST(DOWN)
+
+])

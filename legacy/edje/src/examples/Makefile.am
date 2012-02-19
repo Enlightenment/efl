@@ -1,5 +1,10 @@
 MAINTAINERCLEANFILES = Makefile.in
 
+EDJE_CC = @edje_cc@
+EDJE_CC_FLAGS_VERBOSE_0 =
+EDJE_CC_FLAGS_VERBOSE_1 = -v
+EDJE_CC_FLAGS = $(EDJE_CC_FLAGS_$(V)) -id $(srcdir) -fd $(srcdir)
+
 examplesdir = $(datadir)/$(PACKAGE)/examples
 
 if ENABLE_MULTISENSE
@@ -24,7 +29,8 @@ EDCS = \
 	$(MULTISENSE_EDC_FILE)
 
 .edc.edj:
-	$(edje_cc) -v -fd $(srcdir) -id $(srcdir) $(SND_DIR) $< $(builddir)/$(@F)
+	$(EDJE_CC) $(EDJE_CC_FLAGS) $(SND_DIR) $< $(builddir)/$(@F)
+
 
 EDJS = $(EDCS:%.edc=%.edj)
 
@@ -65,19 +71,22 @@ AM_CPPFLAGS = \
 files_DATA += $(EDJS)
 
 examples_PROGRAMS = \
+	edje-animations \
 	edje-basic \
-	edje-swallow \
-	edje-text \
-	edje-table \
 	edje-box \
 	edje-box2 \
-	edje-drag\
-	edje-signals-messages \
 	edje-color-class \
+	edje-drag\
 	edje-perspective \
-	edje-animations \
+	edje-signals-messages \
+	edje-swallow \
+	edje-table \
+	edje-text \
 	sigtest
 
 LDADD = $(top_builddir)/src/lib/libedje.la @EDJE_LIBS@
 
 endif
+
+clean-local:
+	rm -f *.edj
