@@ -218,6 +218,9 @@ struct _Ecore_Con_Url
 
    int received;
    int write_fd;
+
+   unsigned int event_count;
+   Eina_Bool dead : 1;
 };
 #endif
 
