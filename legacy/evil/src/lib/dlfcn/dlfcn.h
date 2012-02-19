@@ -94,7 +94,7 @@ struct Dl_info
 };
 
 /**
- * Map a specified executable module (either a .dll or .exe file)
+ * @brief Map a specified executable module (either a .dll or .exe file)
  * into the address space of the user process.
  *
  * @param path Name of the module.
@@ -155,7 +155,7 @@ struct Dl_info
 EAPI void *dlopen(const char* path, int mode);
 
 /**
- * Close a dynamic-link library.
+ * @brief Close a dynamic-link library.
  *
  * @param handle Handle that references a dynamic-link library.
  * @return O on sucess, -1 otherwise.
@@ -179,7 +179,7 @@ EAPI void *dlopen(const char* path, int mode);
 EAPI int   dlclose(void* handle);
 
 /**
- * Get the address of a symbol.
+ * @brief Get the address of a symbol.
  *
  * @param handle Handle that references a dynamic-link library.
  * @param symbol @c NULL-terminated string.
@@ -203,7 +203,7 @@ EAPI int   dlclose(void* handle);
 EAPI void *dlsym(void* handle, const char* symbol);
 
 /**
- * Get the location of the current process (.exe)
+ * @brief Get the location of the current process (.exe)
  *
  * @param addr Unused.
  * @param info Pointer to the Dl_info to fill.
@@ -227,7 +227,7 @@ EAPI void *dlsym(void* handle, const char* symbol);
 EAPI int dladdr (const void *addr, Dl_info *info);
 
 /**
- * Get diagnostic information
+ * @brief Get diagnostic information
  *
  * @return A @c NULL-terminated string if an error occured, @c NULL
  * otherwise.
