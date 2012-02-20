@@ -26,7 +26,9 @@ static void _del_hook(Evas_Object *obj);
 static void _mirrored_set(Evas_Object *obj, Eina_Bool rtl);
 static void _theme_hook(Evas_Object *obj);
 static void _sizing_eval(Evas_Object *obj);
-static void _changed_size_hints(void *data, Evas *e, Evas_Object *obj, void *event_info);
+static void _changed_size_hints(void *data,
+                                Evas *e, Evas_Object *obj,
+                                void *event_info);
 static void _sub_del(void *data, Evas_Object *obj, void *event_info);
 
 static void
@@ -53,11 +55,13 @@ _theme_hook(Evas_Object *obj)
    if (!wd) return;
    _elm_widget_mirrored_reload(obj);
    _mirrored_set(obj, elm_widget_mirrored_get(obj));
-   _elm_theme_object_set(obj, wd->frm, "frame", "base", elm_widget_style_get(obj));
+   _elm_theme_object_set(obj, wd->frm, "frame", "base",
+                         elm_widget_style_get(obj));
    edje_object_part_text_set(wd->frm, "elm.text", wd->label);
    if (wd->content)
      edje_object_part_swallow(wd->frm, "elm.swallow.content", wd->content);
-   edje_object_scale_set(wd->frm, elm_widget_scale_get(obj) * _elm_config->scale);
+   edje_object_scale_set(wd->frm,
+                         elm_widget_scale_get(obj) * _elm_config->scale);
    _sizing_eval(obj);
 }
 
@@ -65,15 +69,12 @@ static Eina_Bool
 _elm_frame_focus_next_hook(const Evas_Object *obj, Elm_Focus_Direction dir, Evas_Object **next)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
-   Evas_Object *cur;
 
    if ((!wd) || (!wd->content))
      return EINA_FALSE;
 
-   cur = wd->content;
-
    /* Try Focus cycle in subitem */
-   return elm_widget_focus_next_get(cur, dir, next);
+   return elm_widget_focus_next_get(wd->content, dir, next);
 }
 
 static void
@@ -94,10 +95,10 @@ static void
 _changed_size_hints(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    Widget_Data *wd = elm_widget_data_get(data);
-   // FIXME: why is this needed? how does edje get this unswallowed or
-   // lose its callbacks to edje
    if (!wd) return;
    if (wd->anim) return;
+   // FIXME: why is this needed? how does edje get this unswallowed or
+   // lose its callbacks to edje
    edje_object_part_swallow(wd->frm, "elm.swallow.content", wd->content);
    _sizing_eval(data);
 }
@@ -110,7 +111,8 @@ _sub_del(void *data __UNUSED__, Evas_Object *obj, void *event_info)
    if (!wd) return;
    if (sub == wd->content)
      {
-        evas_object_event_callback_del_full(sub, EVAS_CALLBACK_CHANGED_SIZE_HINTS,
+        evas_object_event_callback_del_full(sub,
+                                            EVAS_CALLBACK_CHANGED_SIZE_HINTS,
                                             _changed_size_hints, obj);
         wd->content = NULL;
         _sizing_eval(obj);
@@ -134,8 +136,8 @@ _elm_frame_label_get(const Evas_Object *obj, const char *item)
 {
    ELM_CHECK_WIDTYPE(obj, widtype) NULL;
    Widget_Data *wd = elm_widget_data_get(obj);
-   if (item && strcmp(item, "default")) return NULL;
    if (!wd) return NULL;
+   if (item && strcmp(item, "default")) return NULL;
    return wd->label;
 }
 
@@ -154,7 +156,8 @@ _content_set_hook(Evas_Object *obj, const char *part, Evas_Object *content)
    if (content)
      {
         elm_widget_sub_object_add(obj, content);
-        evas_object_event_callback_add(content, EVAS_CALLBACK_CHANGED_SIZE_HINTS,
+        evas_object_event_callback_add(content,
+                                       EVAS_CALLBACK_CHANGED_SIZE_HINTS,
                                        _changed_size_hints, obj);
         edje_object_part_swallow(wd->frm, "elm.swallow.content", content);
      }
@@ -170,6 +173,7 @@ _content_get_hook(const Evas_Object *obj, const char *part)
    if (part && strcmp(part, "default")) return NULL;
    wd = elm_widget_data_get(obj);
    if (!wd) return NULL;
+
    return wd->content;
 }
 
@@ -181,8 +185,7 @@ _content_unset_hook(Evas_Object *obj, const char *part)
    Evas_Object *content;
    if (part && strcmp(part, "default")) return NULL;
    wd = elm_widget_data_get(obj);
-   if (!wd) return NULL;
-   if (!wd->content) return NULL;
+   if (!wd || !wd->content) return NULL;
    content = wd->content;
    elm_widget_sub_object_del(obj, wd->content);
    evas_object_event_callback_del_full(wd->content,
@@ -310,7 +313,7 @@ elm_frame_collapse_go(Evas_Object *obj, Eina_Bool collapse)
    collapse = !!collapse;
    if (wd->collapsed == collapse) return;
    edje_object_signal_emit(wd->frm, "elm,action,toggle", "elm");
-   evas_object_smart_callback_add(wd->frm, "recalc", (Evas_Smart_Cb)_recalc, obj);
+   evas_object_smart_callback_add(wd->frm, "recalc", _recalc, obj);
    wd->collapsed = collapse;
    wd->anim = EINA_TRUE;
 }
