@@ -109,19 +109,9 @@ _item_text_get_hook(const Elm_Object_Item *it, const char *part)
 {
    ELM_OBJ_ITEM_CHECK_OR_RETURN(it, NULL);
 
-   Elm_Flipselector_Item *item, *_item;
-   Widget_Data *wd;
-   Eina_List *l;
-
    if (part && strcmp(part ,"default")) return NULL;
 
-   item = (Elm_Flipselector_Item *) it;
-   wd = elm_widget_data_get(WIDGET(item));
-   if ((!wd) || (!wd->items)) return NULL;
-
-   EINA_LIST_FOREACH(wd->items, l, _item)
-     if (_item == item) return item->label;
-   return NULL;
+   return ((Elm_Flipselector_Item *) it)->label;
 }
 
 static void
@@ -640,7 +630,6 @@ elm_flipselector_add(Evas_Object *parent)
    wd->self = obj;
    elm_widget_del_hook_set(obj, _del_hook);
    elm_widget_theme_hook_set(obj, _theme_hook);
-   /* TODO: elm_widget_disable_hook_set(obj, _disable_hook); */
 
    elm_widget_can_focus_set(obj, EINA_TRUE);
    elm_widget_on_focus_hook_set(obj, _on_focus_hook, NULL);
@@ -759,7 +748,6 @@ elm_flipselector_item_prepend(Evas_Object *obj, const char *label, void (*func)(
    return (Elm_Object_Item *) item;
 }
 
-/* TODO: account for deleted items?  */
 EAPI const Eina_List *
 elm_flipselector_items_get(const Evas_Object *obj)
 {
@@ -816,7 +804,7 @@ elm_flipselector_selected_item_get(const Evas_Object *obj)
    ELM_CHECK_WIDTYPE(obj, widtype) NULL;
 
    Widget_Data *wd = elm_widget_data_get(obj);
-   if (!wd || !wd->current) return NULL;
+   if (!wd) return NULL;
    return DATA_GET(wd->current);
 }
 
@@ -905,21 +893,16 @@ elm_flipselector_item_prev_get(const Elm_Object_Item *it)
 {
    ELM_OBJ_ITEM_CHECK_OR_RETURN(it, NULL);
 
-   Elm_Flipselector_Item *item, *_item;
    Widget_Data *wd;
    Eina_List *l;
+   Elm_Flipselector_Item *item = (Elm_Flipselector_Item *) it;
 
-   item = (Elm_Flipselector_Item *) it;
    wd = elm_widget_data_get(WIDGET(item));
    if ((!wd) || (!wd->items)) return NULL;
 
-   EINA_LIST_FOREACH(wd->items, l, _item)
-     if (_item == item)
-       {
-          l = eina_list_prev(l);
-          if (!l) return NULL;
-          return DATA_GET(l);
-       }
+   l = eina_list_data_find_list(wd->items, it);
+   if (l && l->prev) return DATA_GET(l->prev);
+
    return NULL;
 }
 
@@ -928,21 +911,16 @@ elm_flipselector_item_next_get(const Elm_Object_Item *it)
 {
    ELM_OBJ_ITEM_CHECK_OR_RETURN(it, NULL);
 
-   Elm_Flipselector_Item *item, *_item;
    Widget_Data *wd;
    Eina_List *l;
+   Elm_Flipselector_Item *item = (Elm_Flipselector_Item *) it;
 
-   item = (Elm_Flipselector_Item *) it;
    wd = elm_widget_data_get(WIDGET(item));
    if ((!wd) || (!wd->items)) return NULL;
 
-   EINA_LIST_FOREACH(wd->items, l, _item)
-     if (_item == item)
-       {
-          l = eina_list_next(l);
-          if (!l) return NULL;
-          return DATA_GET(l);
-       }
+   l = eina_list_data_find_list(wd->items, it);
+   if (l && l->next) return DATA_GET(l->next);
+
    return NULL;
 }
 
@@ -959,7 +937,7 @@ elm_flipselector_interval_set(Evas_Object *obj, double interval)
 EAPI double
 elm_flipselector_interval_get(const Evas_Object *obj)
 {
-   ELM_CHECK_WIDTYPE(obj, widtype) 0.0;
+   ELM_CHECK_WIDTYPE(obj, widtype) 0;
 
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return 0;
