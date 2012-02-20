@@ -45,8 +45,15 @@
 #define APICHAR char
 #include "evil_print.h"
 
+#ifndef EMSGSIZE
+# define EMSGSIZE WSAEMSGSIZE
+#endif
 
-# define SPRINTF(x) ((size_t)sprintf x)
+#ifndef EAFNOSUPPORT
+# define EAFNOSUPPORT WSAEAFNOSUPPORT
+#endif
+
+#define SPRINTF(x) ((size_t)sprintf x)
 
 #define ERRNO         ((int)GetLastError())
 #define SET_ERRNO(x)  (SetLastError((DWORD)(x)))

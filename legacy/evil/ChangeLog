@@ -1,3 +1,12 @@
+2012-02-21  Vincent Torri  <doursse at users dot sf dot net>
+
+	* src/bin/evil_test_gettimeofday.c:
+	Include sys/time.h
+
+	* src/lib/evil_inet.c:
+	EMSGSIZE and EAFNOSUPPORT could not be defined on
+	some MinGW compilers.
+
 2012-02-18  Vincent Torri  <doursse at users dot sf dot net>
 
 	* src/lib/Evil.h:
