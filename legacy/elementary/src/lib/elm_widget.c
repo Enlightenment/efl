@@ -2814,7 +2814,7 @@ _elm_widget_item_new(Evas_Object *widget,
    return item;
 }
 
-void
+EAPI void
 _elm_widget_item_free(Elm_Widget_Item *item)
 {
    ELM_WIDGET_ITEM_CHECK_OR_RETURN(item);
