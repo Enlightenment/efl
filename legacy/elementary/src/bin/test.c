@@ -11,7 +11,9 @@ void test_bg_options(void *data, Evas_Object *obj, void *event_info);
 void test_icon(void *data, Evas_Object *obj, void *event_info);
 void test_box_vert(void *data, Evas_Object *obj, void *event_info);
 void test_box_vert2(void *data, Evas_Object *obj, void *event_info);
+void test_box_pack(void *data, Evas_Object *obj, void *event_info);
 void test_box_horiz(void *data, Evas_Object *obj, void *event_info);
+void test_box_homo(void *data, Evas_Object *obj, void *event_info);
 void test_box_transition(void *data, Evas_Object *obj, void *event_info);
 void test_button(void *data, Evas_Object *obj, void *event_info);
 void test_cnp(void *data, Evas_Object *obj, void *event_info);
@@ -340,7 +342,9 @@ add_tests:
    //------------------------------//
    ADD_TEST(NULL, "Containers", "Box Vert", test_box_vert);
    ADD_TEST(NULL, "Containers", "Box Vert 2", test_box_vert2);
+   ADD_TEST(NULL, "Containers", "Box Pack", test_box_pack);
    ADD_TEST(NULL, "Containers", "Box Horiz", test_box_horiz);
+   ADD_TEST(NULL, "Containers", "Box Homogeneous", test_box_homo);
    ADD_TEST(NULL, "Containers", "Box Transition", test_box_transition);
    ADD_TEST(NULL, "Containers", "Table", test_table);
    ADD_TEST(NULL, "Containers", "Table Homogeneous", test_table2);

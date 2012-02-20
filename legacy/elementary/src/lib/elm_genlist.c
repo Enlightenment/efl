@@ -796,6 +796,7 @@ _item_del(Elm_Gen_Item *it)
      it->parent->item->items = eina_list_remove(it->parent->item->items, it);
    if (it->item->swipe_timer) ecore_timer_del(it->item->swipe_timer);
    _elm_genlist_item_del_serious(it);
+   elm_genlist_item_class_unref((Elm_Genlist_Item_Class *)it->itc);
    evas_event_thaw(evas_object_evas_get(obj));
    evas_event_thaw_eval(evas_object_evas_get(obj));
 }
@@ -3323,6 +3324,7 @@ _elm_genlist_item_new(Widget_Data              *wd,
    it->wd = wd;
    it->generation = wd->generation;
    it->itc = itc;
+   elm_genlist_item_class_ref((Elm_Genlist_Item_Class *)itc);
    it->base.data = data;
    it->parent = parent;
    it->func.func = func;
@@ -5329,6 +5331,57 @@ elm_genlist_item_flags_get(const Elm_Object_Item *it)
    ELM_OBJ_ITEM_CHECK_OR_RETURN(it, ELM_GENLIST_ITEM_MAX);
    Elm_Gen_Item *_it = (Elm_Gen_Item *) it;
    return _it->item->flags;
+}
+
+EAPI Elm_Genlist_Item_Class *
+elm_genlist_item_class_new(void)
+{
+   Elm_Genlist_Item_Class *itc;
+
+   itc = calloc(1, sizeof(Elm_Genlist_Item_Class));
+   if (!itc)
+     return NULL;
+   itc->version = ELM_GENLIST_ITEM_CLASS_VERSION;
+   itc->refcount = 1;
+   itc->delete_me = EINA_FALSE;
+
+   return itc;
+}
+
+EAPI void
+elm_genlist_item_class_free(Elm_Genlist_Item_Class *itc)
+{
+   if (itc && (itc->version == ELM_GENLIST_ITEM_CLASS_VERSION))
+     {
+        if (!itc->delete_me) itc->delete_me = EINA_TRUE;
+        if (itc->refcount > 0) elm_genlist_item_class_unref(itc);
+        else
+          {
+             itc->version = 0;
+             free(itc);
+          }
+     }
+}
+
+EAPI void
+elm_genlist_item_class_ref(Elm_Genlist_Item_Class *itc)
+{
+   if (itc && (itc->version == ELM_GENLIST_ITEM_CLASS_VERSION))
+     {
+        itc->refcount++;
+        if (itc->refcount == 0) itc->refcount--;
+     }
+}
+
+EAPI void
+elm_genlist_item_class_unref(Elm_Genlist_Item_Class *itc)
+{
+   if (itc && (itc->version == ELM_GENLIST_ITEM_CLASS_VERSION))
+     {
+        if (itc->refcount > 0) itc->refcount--;
+        if (itc->delete_me && (!itc->refcount))
+          elm_genlist_item_class_free(itc);
+     }
 }
 
 /* for gengrid as of now */

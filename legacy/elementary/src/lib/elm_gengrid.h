@@ -223,6 +223,8 @@
  */
 
 typedef struct _Elm_Gengrid_Item_Class      Elm_Gengrid_Item_Class; /**< Gengrid item class definition structs */
+#define ELM_GENGRID_ITEM_CLASS_HEADER       0, 0, 0
+
 #define Elm_Gengrid_Item_Class Elm_Gen_Item_Class
 typedef struct _Elm_Gengrid_Item_Class_Func Elm_Gengrid_Item_Class_Func;    /**< Class functions for gengrid item classes. */
 

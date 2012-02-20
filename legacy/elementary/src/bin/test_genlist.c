@@ -20,7 +20,7 @@ typedef struct _Testitem
 } Testitem;
 
 
-static Elm_Genlist_Item_Class itc1;
+static Elm_Genlist_Item_Class *itc1;
 char *gl_text_get(void *data, Evas_Object *obj __UNUSED__, const char *part __UNUSED__)
 {
    char buf[256];
@@ -140,11 +140,12 @@ test_genlist(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_inf
    evas_object_size_hint_weight_set(over, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    elm_win_resize_object_add(win, over);
 
-   itc1.item_style     = "default";
-   itc1.func.text_get = gl_text_get;
-   itc1.func.content_get  = gl_content_get;
-   itc1.func.state_get = gl_state_get;
-   itc1.func.del       = gl_del;
+   itc1 = elm_genlist_item_class_new();
+   itc1->item_style     = "default";
+   itc1->func.text_get = gl_text_get;
+   itc1->func.content_get  = gl_content_get;
+   itc1->func.state_get = gl_state_get;
+   itc1->func.del       = gl_del;
 
    bt_50 = elm_button_add(win);
    elm_object_text_set(bt_50, "Go to 50");
@@ -158,7 +159,7 @@ test_genlist(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_inf
 
    for (i = 0; i < 2000; i++)
      {
-        gli = elm_genlist_item_append(gl, &itc1,
+        gli = elm_genlist_item_append(gl, itc1,
                                       (void *)(long)i/* item data */,
                                       NULL/* parent */,
                                       ELM_GENLIST_ITEM_NONE,
@@ -169,6 +170,8 @@ test_genlist(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_inf
         else if (i == 1500)
           evas_object_smart_callback_add(bt_1500, "clicked", _bt1500_cb, gli);
      }
+   elm_genlist_item_class_free(itc1);
+
    evas_object_resize(win, 480, 800);
    evas_object_show(win);
 }
@@ -188,13 +191,13 @@ my_gl_add(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
    Evas_Object *gl = data;
    static int i = 0;
 
-   itc1.item_style     = "default";
-   itc1.func.text_get = gl_text_get;
-   itc1.func.content_get  = gl_content_get;
-   itc1.func.state_get = gl_state_get;
-   itc1.func.del       = gl_del;
+   itc1->item_style     = "default";
+   itc1->func.text_get = gl_text_get;
+   itc1->func.content_get  = gl_content_get;
+   itc1->func.state_get = gl_state_get;
+   itc1->func.del       = gl_del;
 
-   elm_genlist_item_append(gl, &itc1,
+   elm_genlist_item_append(gl, itc1,
                            (void *)(long)i/* item data */,
                            NULL/* parent */,
                            ELM_GENLIST_ITEM_NONE,
@@ -210,11 +213,11 @@ my_gl_insert_before(void *data, Evas_Object *obj __UNUSED__, void *event_info __
    static int i = 0;
    Elm_Object_Item *gli_selected;
 
-   itc1.item_style     = "default";
-   itc1.func.text_get = gl_text_get;
-   itc1.func.content_get  = gl_content_get;
-   itc1.func.state_get = gl_state_get;
-   itc1.func.del       = gl_del;
+   itc1->item_style     = "default";
+   itc1->func.text_get = gl_text_get;
+   itc1->func.content_get  = gl_content_get;
+   itc1->func.state_get = gl_state_get;
+   itc1->func.del       = gl_del;
 
    gli_selected = elm_genlist_selected_item_get(gl);
    if (!gli_selected)
@@ -223,7 +226,7 @@ my_gl_insert_before(void *data, Evas_Object *obj __UNUSED__, void *event_info __
         return ;
      }
 
-   elm_genlist_item_insert_before(gl, &itc1,
+   elm_genlist_item_insert_before(gl, itc1,
                                   (void *)(long)i/* item data */,
                                   NULL/* parent */,
                                   gli_selected /* item before */,
@@ -240,11 +243,11 @@ my_gl_insert_after(void *data, Evas_Object *obj __UNUSED__, void *event_info __U
    static int i = 0;
    Elm_Object_Item *gli_selected;
 
-   itc1.item_style     = "default";
-   itc1.func.text_get = gl_text_get;
-   itc1.func.content_get  = gl_content_get;
-   itc1.func.state_get = gl_state_get;
-   itc1.func.del       = gl_del;
+   itc1->item_style     = "default";
+   itc1->func.text_get = gl_text_get;
+   itc1->func.content_get  = gl_content_get;
+   itc1->func.state_get = gl_state_get;
+   itc1->func.del       = gl_del;
 
    gli_selected = elm_genlist_selected_item_get(gl);
    if (!gli_selected)
@@ -253,7 +256,7 @@ my_gl_insert_after(void *data, Evas_Object *obj __UNUSED__, void *event_info __U
         return ;
      }
 
-   elm_genlist_item_insert_after(gl, &itc1,
+   elm_genlist_item_insert_after(gl, itc1,
                                  (void *)(long)i/* item data */,
                                  NULL/* parent */,
                                  gli_selected /* item after */,
@@ -367,34 +370,34 @@ test_genlist2(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_in
    evas_object_size_hint_weight_set(gl, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_show(gl);
 
-   itc1.item_style     = "default";
-   itc1.func.text_get = gl_text_get;
-   itc1.func.content_get  = gl_content_get;
-   itc1.func.state_get = gl_state_get;
-   itc1.func.del       = gl_del;
+   itc1 = elm_genlist_item_class_new();
+   itc1->item_style     = "default";
+   itc1->func.text_get = gl_text_get;
+   itc1->func.content_get  = gl_content_get;
+   itc1->func.state_get = gl_state_get;
+   itc1->func.del       = gl_del;
 
-   gli[0] = elm_genlist_item_append(gl, &itc1,
+   gli[0] = elm_genlist_item_append(gl, itc1,
                                     (void *)1001/* item data */, NULL/* parent */, ELM_GENLIST_ITEM_NONE, gl_sel/* func */,
                                     (void *)1001/* func data */);
-   gli[1] = elm_genlist_item_append(gl, &itc1,
+   gli[1] = elm_genlist_item_append(gl, itc1,
                                     (void *)1002/* item data */, NULL/* parent */, ELM_GENLIST_ITEM_NONE, gl_sel/* func */,
                                     (void *)1002/* func data */);
-   gli[2] = elm_genlist_item_append(gl, &itc1,
+   gli[2] = elm_genlist_item_append(gl, itc1,
                                     (void *)1003/* item data */, NULL/* parent */, ELM_GENLIST_ITEM_NONE, gl_sel/* func */,
                                     (void *)1003/* func data */);
-   gli[3] = elm_genlist_item_prepend(gl, &itc1,
+   gli[3] = elm_genlist_item_prepend(gl, itc1,
                                      (void *)1004/* item data */, NULL/* parent */, ELM_GENLIST_ITEM_NONE, gl_sel/* func */,
                                      (void *)1004/* func data */);
-   gli[4] = elm_genlist_item_prepend(gl, &itc1,
+   gli[4] = elm_genlist_item_prepend(gl, itc1,
                                      (void *)1005/* item data */, NULL/* parent */, ELM_GENLIST_ITEM_NONE, gl_sel/* func */,
                                      (void *)1005/* func data */);
-   gli[5] = elm_genlist_item_insert_before(gl, &itc1,
+   gli[5] = elm_genlist_item_insert_before(gl, itc1,
                                            (void *)1006/* item data */, NULL/* parent */, gli[2]/* rel */, ELM_GENLIST_ITEM_NONE,
                                            gl_sel/* func */, (void *)1006/* func data */);
-   gli[6] = elm_genlist_item_insert_after(gl, &itc1,
+   gli[6] = elm_genlist_item_insert_after(gl, itc1,
                                           (void *)1007/* item data */, NULL/* parent */, gli[2]/* rel */, ELM_GENLIST_ITEM_NONE,
                                           gl_sel/* func */, (void *)1007/* func data */);
-
    elm_box_pack_end(bx, gl);
 
    bx2 = elm_box_add(win);
@@ -504,6 +507,9 @@ test_genlist2(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_in
    elm_box_pack_end(bx, bx3);
    evas_object_show(bx3);
 
+   /* item_class_ref is needed for itc1. some items can be added in callbacks */
+   elm_genlist_item_class_ref(itc1);
+   elm_genlist_item_class_free(itc1);
 
    evas_object_resize(win, 320, 320);
    evas_object_show(win);
@@ -1390,11 +1396,12 @@ test_genlist8(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_in
    elm_box_pack_end(bx, gl);
    evas_object_show(gl);
 
-   itc1.item_style     = "default";
-   itc1.func.text_get = gl_text_get;
-   itc1.func.content_get  = gl_content_get;
-   itc1.func.state_get = gl_state_get;
-   itc1.func.del       = gl_del;
+   itc1 = elm_genlist_item_class_new();
+   itc1->item_style     = "default";
+   itc1->func.text_get = gl_text_get;
+   itc1->func.content_get  = gl_content_get;
+   itc1->func.state_get = gl_state_get;
+   itc1->func.del       = gl_del;
 
    itc_group.item_style     = "group_index";
    itc_group.func.text_get = gl8_text_get;
@@ -1491,7 +1498,7 @@ test_genlist8(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_in
           }
         else if (git)
           {
-             gli = elm_genlist_item_append(gl, &itc1,
+             gli = elm_genlist_item_append(gl, itc1,
                                            (void *)(long)i/* item data */,
                                            git/* parent */,
                                            ELM_GENLIST_ITEM_NONE,
@@ -1524,6 +1531,7 @@ test_genlist8(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_in
               break;
           }
      }
+   elm_genlist_item_class_free(itc1);
 
    evas_object_resize(win, 480, 800);
    evas_object_show(win);
@@ -1538,17 +1546,17 @@ gl9_exp(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info)
    Evas_Object *gl = elm_object_item_widget_get(glit);
    int val = (int)(long) elm_object_item_data_get(glit);
    val *= 10;
-   elm_genlist_item_append(gl, &itc1,
+   elm_genlist_item_append(gl, itc1,
                            (void *)(long) (val + 1)/* item data */,
                            glit/* parent */,
                            ELM_GENLIST_ITEM_NONE, gl4_sel/* func */,
                            NULL/* func data */);
-   elm_genlist_item_append(gl, &itc1,
+   elm_genlist_item_append(gl, itc1,
                            (void *)(long) (val + 2)/* item data */,
                            glit/* parent */,
                            ELM_GENLIST_ITEM_NONE, gl4_sel/* func */,
                            NULL/* func data */);
-   elm_genlist_item_append(gl, &itc1,
+   elm_genlist_item_append(gl, itc1,
                            (void *)(long) (val + 3)/* item data */,
                            glit/* parent */,
                            ELM_GENLIST_ITEM_SUBITEMS, gl4_sel/* func */,
@@ -1603,11 +1611,12 @@ test_genlist9(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_in
    elm_box_pack_end(bx, gl);
    evas_object_show(gl);
 
-   itc1.item_style     = "default";
-   itc1.func.text_get = gl_text_get;
-   itc1.func.content_get  = gl_content_get;
-   itc1.func.state_get = gl_state_get;
-   itc1.func.del       = gl_del;
+   itc1 = elm_genlist_item_class_new();
+   itc1->item_style     = "default";
+   itc1->func.text_get = gl_text_get;
+   itc1->func.content_get  = gl_content_get;
+   itc1->func.state_get = gl_state_get;
+   itc1->func.del       = gl_del;
 
    itc_group.item_style     = "group_index";
    itc_group.func.text_get = gl8_text_get;
@@ -1619,28 +1628,29 @@ test_genlist9(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_in
                                  (void *)0/* item data */, NULL/* parent */, ELM_GENLIST_ITEM_GROUP, gl4_sel/* func */,
                                  NULL/* func data */);
    elm_genlist_item_display_only_set(git, EINA_TRUE);
-   elm_genlist_item_append(gl, &itc1,
+   elm_genlist_item_append(gl, itc1,
                            (void *)1/* item data */, git/* parent */, ELM_GENLIST_ITEM_SUBITEMS, gl4_sel/* func */,
                            NULL/* func data */);
-   elm_genlist_item_append(gl, &itc1,
+   elm_genlist_item_append(gl, itc1,
                            (void *)2/* item data */, git/* parent */, ELM_GENLIST_ITEM_NONE, gl4_sel/* func */,
                            NULL/* func data */);
-   elm_genlist_item_append(gl, &itc1,
+   elm_genlist_item_append(gl, itc1,
                            (void *)3/* item data */, git/* parent */, ELM_GENLIST_ITEM_SUBITEMS, gl4_sel/* func */,
                            NULL/* func data */);
    git = elm_genlist_item_append(gl, &itc_group,
                                  (void *)4/* item data */, NULL/* parent */, ELM_GENLIST_ITEM_GROUP, gl4_sel/* func */,
                                  NULL/* func data */);
    elm_genlist_item_display_only_set(git, EINA_TRUE);
-   elm_genlist_item_append(gl, &itc1,
+   elm_genlist_item_append(gl, itc1,
                            (void *)5/* item data */, git/* parent */, ELM_GENLIST_ITEM_SUBITEMS, gl4_sel/* func */,
                            NULL/* func data */);
-   elm_genlist_item_append(gl, &itc1,
+   elm_genlist_item_append(gl, itc1,
                            (void *)6/* item data */, git/* parent */, ELM_GENLIST_ITEM_NONE, gl4_sel/* func */,
                            NULL/* func data */);
-   elm_genlist_item_append(gl, &itc1,
+   elm_genlist_item_append(gl, itc1,
                            (void *)7/* item data */, git/* parent */, ELM_GENLIST_ITEM_SUBITEMS, gl4_sel/* func */,
                            NULL/* func data */);
+   elm_genlist_item_class_free(itc1);
 
    evas_object_smart_callback_add(gl, "expand,request", gl9_exp_req, gl);
    evas_object_smart_callback_add(gl, "contract,request", gl9_con_req, gl);
@@ -1875,21 +1885,24 @@ test_genlist11(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_i
    elm_box_pack_end(bx, tg);
    evas_object_show(tg);
 
-   itc1.item_style     = "default";
-   itc1.func.text_get = gl_text_get;
-   itc1.func.content_get  = gl_content_get;
-   itc1.func.state_get = gl_state_get;
-   itc1.func.del       = gl_del;
+   itc1 = elm_genlist_item_class_new();
+   itc1->item_style     = "default";
+   itc1->func.text_get = gl_text_get;
+   itc1->func.content_get  = gl_content_get;
+   itc1->func.state_get = gl_state_get;
+   itc1->func.del       = gl_del;
    evas_object_smart_callback_add(gl, "moved", (Evas_Smart_Cb)gl_moved, gl);
 
    for (i = 0; i < 50; i++)
      elm_genlist_item_append(gl,
-                             &itc1,
+                             itc1,
                              (void *)(1 + i)/* item data */,
                              NULL/* parent */,
                              ELM_GENLIST_ITEM_NONE/* flags */,
                              NULL/* func */,
                              NULL/* func data */);
+
+   elm_genlist_item_class_free(itc1);
 
    elm_box_pack_end(bx, gl);
 
@@ -1929,21 +1942,22 @@ test_genlist12(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_i
    elm_box_pack_end(bx, gl);
    evas_object_show(gl);
 
-   itc1.item_style     = "message";
-   itc1.func.text_get = gl12_text_get;
-   itc1.func.content_get  = gl_content_get;
-   itc1.func.state_get = gl_state_get;
-   itc1.func.del       = gl_del;
+   itc1->item_style     = "message";
+   itc1->func.text_get = gl12_text_get;
+   itc1->func.content_get  = gl_content_get;
+   itc1->func.state_get = gl_state_get;
+   itc1->func.del       = gl_del;
 
    for (i = 0; i < 1000; i++)
      {
-        elm_genlist_item_append(gl, &itc1,
+        elm_genlist_item_append(gl, itc1,
                                 (void *)(long)i/* item data */,
                                 NULL/* parent */,
                                 ELM_GENLIST_ITEM_NONE,
                                 gl_sel/* func */,
                                 (void *)(long)(i * 10)/* func data */);
      }
+   elm_genlist_item_class_free(itc1);
 
    evas_object_resize(win, 400, 500);
    evas_object_show(win);
@@ -2047,11 +2061,11 @@ my_gl_insert_before_rel(void *data, Evas_Object *obj __UNUSED__, void *event_inf
    static int i = 1000;
    Elm_Object_Item *gli_selected;
 
-   itc1.item_style = "default";
-   itc1.func.text_get = gl_text_get;
-   itc1.func.content_get = NULL;
-   itc1.func.state_get = NULL;
-   itc1.func.del = NULL;
+   itc1->item_style = "default";
+   itc1->func.text_get = gl_text_get;
+   itc1->func.content_get = NULL;
+   itc1->func.state_get = NULL;
+   itc1->func.del = NULL;
 
    gli_selected = elm_genlist_selected_item_get(gl);
    if (!gli_selected)
@@ -2060,7 +2074,7 @@ my_gl_insert_before_rel(void *data, Evas_Object *obj __UNUSED__, void *event_inf
         return;
      }
 
-   elm_genlist_item_insert_before(gl, &itc1,
+   elm_genlist_item_insert_before(gl, itc1,
                                   (void *)(long)i/* item data */,
                                   elm_genlist_item_parent_get(gli_selected),
                                   gli_selected/* item before */,
@@ -2076,11 +2090,11 @@ my_gl_insert_after_rel(void *data, Evas_Object *obj __UNUSED__, void *event_info
    static int i = 0;
    Elm_Object_Item *gli_selected;
 
-   itc1.item_style = "default";
-   itc1.func.text_get = gl_text_get;
-   itc1.func.content_get = NULL;
-   itc1.func.state_get = NULL;
-   itc1.func.del = NULL;
+   itc1->item_style = "default";
+   itc1->func.text_get = gl_text_get;
+   itc1->func.content_get = NULL;
+   itc1->func.state_get = NULL;
+   itc1->func.del = NULL;
 
    gli_selected = elm_genlist_selected_item_get(gl);
    if (!gli_selected)
@@ -2089,7 +2103,7 @@ my_gl_insert_after_rel(void *data, Evas_Object *obj __UNUSED__, void *event_info
         return;
      }
 
-   elm_genlist_item_insert_after(gl, &itc1,
+   elm_genlist_item_insert_after(gl, itc1,
                                   (void *)(long)i/* item data */,
                                   elm_genlist_item_parent_get(gli_selected),
                                   gli_selected/* item after */,
@@ -2136,6 +2150,8 @@ test_genlist14(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_i
    evas_object_size_hint_align_set(gl, EVAS_HINT_FILL, EVAS_HINT_FILL);
    evas_object_size_hint_weight_set(gl, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_show(gl);
+
+   itc1 = elm_genlist_item_class_new();
 
    itc4.item_style = "default";
    itc4.func.text_get = gl4_text_get;
@@ -2258,6 +2274,10 @@ test_genlist14(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_i
 
    elm_box_pack_end(bx, bx2);
    evas_object_show(bx2);
+
+   /* item_class_ref is needed for itc1. some items can be added in callbacks */
+   elm_genlist_item_class_ref(itc1);
+   elm_genlist_item_class_free(itc1);
 
    evas_object_resize(win, 320, 320);
    evas_object_show(win);

@@ -364,6 +364,7 @@ typedef enum
    ELM_GENLIST_ITEM_FIELD_STATE = (1 << 2)
 } Elm_Genlist_Item_Field_Flags;
 typedef struct _Elm_Genlist_Item_Class      Elm_Genlist_Item_Class; /**< Genlist item class definition structs */
+#define ELM_GENLIST_ITEM_CLASS_HEADER       0, 0, 0
 
 #define Elm_Genlist_Item_Class Elm_Gen_Item_Class
 typedef struct _Elm_Genlist_Item_Class_Func Elm_Genlist_Item_Class_Func;    /**< Class functions for genlist item class */
@@ -1845,6 +1846,71 @@ EAPI Eina_Bool                     elm_genlist_reorder_mode_get(const Evas_Objec
  * @ingroup Genlist
  */
 EAPI Elm_Genlist_Item_Flags        elm_genlist_item_flags_get(const Elm_Object_Item *it);
+
+#define ELM_GENLIST_ITEM_CLASS_VERSION 2 /* current version number */
+
+/**
+ * Add a new genlist item class in a given genlist widget.
+ *
+ * @return New allocated a genlist item class.
+ *
+ * This adds genlist item class for the genlist widget. When adding a item,
+ * genlist_item_{append, prepend, insert} function needs item class of the item.
+ * Given callback paramters are used at retrieving {text, content} of
+ * added item. Set as NULL if it's not used.
+ * If there's no available memory, return can be NULL.
+ *
+ * @see elm_genlist_item_class_free()
+ * @see elm_genlist_item_append()
+ *
+ * @ingroup Genlist
+ */
+EAPI Elm_Genlist_Item_Class *elm_genlist_item_class_new(void);
+
+/**
+ * Remove a item class in a given genlist widget.
+ *
+ * @param itc The itc to be removed.
+ *
+ * This removes item class from the genlist widget.
+ * Whenever it has no more references to it, item class is going to be freed.
+ * Otherwise it just decreases its reference count.
+ *
+ * @see elm_genlist_item_class_new()
+ * @see elm_genlist_item_class_ref()
+ * @see elm_genlist_item_class_unref()
+ *
+ * @ingroup Genlist
+ */
+EAPI void elm_genlist_item_class_free(Elm_Genlist_Item_Class *itc);
+
+/**
+ * Increments object reference count for the item class.
+ *
+ * @param itc The given item class object to reference
+ *
+ * This API just increases its reference count for item class management.
+ *
+ * @see elm_genlist_item_class_unref()
+ *
+ * @ingroup Genlist
+ */
+EAPI void elm_genlist_item_class_ref(Elm_Genlist_Item_Class *itc);
+
+/**
+ * Decrements object reference count for the item class.
+ *
+ * @param itc The given item class object to reference
+ *
+ * This API just decreases its reference count for item class management.
+ * Reference count can't be less than 0.
+ *
+ * @see elm_genlist_item_class_ref()
+ * @see elm_genlist_item_class_free()
+ *
+ * @ingroup Genlist
+ */
+EAPI void elm_genlist_item_class_unref(Elm_Genlist_Item_Class *itc);
 
 /**
  * @}

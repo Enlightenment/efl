@@ -39,10 +39,7 @@ _st_longpress(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_in
 }
 
 // store callbacks to handle loading/parsing/freeing of store items from src
-static Elm_Genlist_Item_Class itc1 =
-{
-  "message", { NULL, NULL, NULL, NULL}
-};
+static Elm_Genlist_Item_Class *itc1;
 
 static const Elm_Store_Item_Mapping it1_mapping[] =
 {
@@ -112,7 +109,7 @@ _st_store_list(void *data __UNUSED__, Elm_Store_Item_Info *item_info)
    // choose the item genlist item class to use (only item style should be
    // provided by the app, store will fill everything else in, so it also
    // has to be writable
-   info->base.item_class = &itc1; // based on item info - return the item class wanted (only style field used - rest reset to internal funcs store sets up to get label/icon etc)
+   info->base.item_class = itc1; // based on item info - return the item class wanted (only style field used - rest reset to internal funcs store sets up to get label/icon etc)
    info->base.mapping = it1_mapping;
    info->base.data = NULL; // if we can already parse and load all of item here and want to - set this
    return EINA_TRUE; // return true to include this, false not to
@@ -260,6 +257,9 @@ test_store(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info 
    elm_box_pack_end(bx, gl);
    evas_object_show(gl);
 
+   itc1 = elm_genlist_item_class_new();
+   itc1->item_style = "message";
+
    st = elm_store_filesystem_new();
    elm_store_list_func_set(st, _st_store_list, NULL);
    elm_store_fetch_func_set(st, _st_store_fetch, NULL);
@@ -268,6 +268,10 @@ test_store(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info 
    elm_store_sorted_set(st, EINA_TRUE);
    elm_store_target_genlist_set(st, gl);
    elm_store_filesystem_directory_set(st, "./store");
+
+   /* item_class_ref is needed for itc1. some items can be added in callbacks */
+   elm_genlist_item_class_ref(itc1);
+   elm_genlist_item_class_free(itc1);
 
    evas_object_resize(win, 480, 800);
    evas_object_show(win);
