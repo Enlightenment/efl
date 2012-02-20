@@ -217,14 +217,10 @@ struct _Ecore_Con_Url
    void *post_data;
 
    int received;
-   /* fd to read received data into */
-   int read_fd;
-   Ecore_Fd_Handler *fdh;
-   Ecore_Timer *starter;
+   int write_fd;
 
    unsigned int event_count;
    Eina_Bool dead : 1;
-   Eina_Bool init : 1;
 };
 #endif
 
