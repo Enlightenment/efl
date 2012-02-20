@@ -852,6 +852,7 @@ EAPI void                  elm_map_group_class_zoom_grouped_set(Elm_Map_Group_Cl
  * @param hide Use @c EINA_TRUE to hide markers or @c EINA_FALSE
  * to show them.
  *
+ * @param obj The map object.
  * If @p hide is @c EINA_TRUE the markers will be hidden, but default
  * is to show them.
  *

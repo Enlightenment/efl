@@ -268,7 +268,7 @@ EAPI Eina_Bool            elm_video_remember_position_get(const Evas_Object *vid
 /**
  * @brief Get the title (for ex. dvd title) from this emotion object.
  *
- * @param obj The Elm_Video object.
+ * @param video The Elm_Video object.
  * @return A string containing the title.
  *
  * This function is only useful when playing a DVD.

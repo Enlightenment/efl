@@ -76,6 +76,7 @@ EAPI Eina_Bool elm_cnp_selection_set(Elm_Sel_Type selection, Evas_Object *obj,
  * @see also elm_cnp_selection_set()
  *
  * @param selection Selection type for copying and pasting
+ * @param format Type of selection format
  * @param obj The source widget pointer
  * @param datacb The user data callback if the target widget isn't elm_entry
  * @param udata The user data pointer for @p datacb

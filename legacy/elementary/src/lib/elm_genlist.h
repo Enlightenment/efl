@@ -833,6 +833,7 @@ EAPI Elm_Object_Item             *elm_genlist_item_prepend(Evas_Object *obj, con
  * @param obj The genlist object
  * @param itc The item class for the item
  * @param data The item data
+ * @param parent The parent item, or NULL if none
  * @param before The item to place this new one before.
  * @param flags Item flags
  * @param func Convenience function called when the item is selected
@@ -857,6 +858,7 @@ EAPI Elm_Object_Item             *elm_genlist_item_insert_before(Evas_Object *ob
  * @param obj The genlist object
  * @param itc The item class for the item
  * @param data The item data
+ * @param parent The parent item, or NULL if none
  * @param after The item to place this new one after.
  * @param flags Item flags
  * @param func Convenience function called when the item is selected
