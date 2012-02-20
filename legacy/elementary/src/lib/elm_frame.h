@@ -91,7 +91,7 @@ EAPI void elm_frame_collapse_set(Evas_Object *obj, Eina_Bool collapse);
  * Use this to toggle the collapsed state of a frame, triggering animations.
  */
 //XXX: ... really need to provide this API?
-//XXX: How about elm_frame_collapse_transition_go()?
+//XXX: How about elm_frame_fold_transition_go()?
 EAPI void elm_frame_collapse_go(Evas_Object *obj, Eina_Bool collapse);
 
 /**
