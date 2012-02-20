@@ -67,7 +67,6 @@ _eio_file_recursiv_ls(Ecore_Thread *thread,
 {
    Eina_File_Direct_Info *info;
    Eina_Iterator *it = NULL;
-   Eina_List *l;
    Eina_List *dirs = NULL;
    const char *dir;
 
@@ -110,9 +109,15 @@ _eio_file_recursiv_ls(Ecore_Thread *thread,
    eina_iterator_free(it);
    it = NULL;
 
-   EINA_LIST_FOREACH(dirs, l, dir)
-     if (!_eio_file_recursiv_ls(thread, common, filter_cb, data, dir))
-       goto on_error;
+   EINA_LIST_FREE(dirs, dir)
+     {
+       Eina_Bool err;
+
+       err = !_eio_file_recursiv_ls(thread, common, filter_cb, data, dir);
+
+       eina_stringshare_del(dir);
+       if (err) goto on_error;
+     }
 
    return EINA_TRUE;
 
