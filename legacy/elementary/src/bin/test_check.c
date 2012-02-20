@@ -3,6 +3,9 @@
 # include "elementary_config.h"
 #endif
 #ifndef ELM_LIB_QUICKLAUNCH
+
+static Eina_Bool eb;
+
 static void
 changed_cb(void *data, Evas_Object *obj, void *event_info __UNUSED__)
 {
@@ -10,6 +13,12 @@ changed_cb(void *data, Evas_Object *obj, void *event_info __UNUSED__)
    printf("ck %p to %i\n", obj, elm_check_state_get(obj));
    elm_check_state_set(ck2, elm_check_state_get(obj));
    printf("ck2 %p is now %i\n", ck2, elm_check_state_get(ck2));
+}
+
+static void
+state_changed_cb(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+{
+   printf("State Pointer Value: %d\n", eb);
 }
 
 void
@@ -65,6 +74,18 @@ test_check(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info 
    elm_object_text_set(ck, "Label Only");
    elm_box_pack_end(bx, ck);
    evas_object_show(ck);
+
+   ck = elm_check_add(win);
+   elm_object_text_set(ck, "Using State Pointer");
+   elm_check_state_pointer_set(ck, &eb);
+   elm_box_pack_end(bx, ck);
+   evas_object_show(ck);
+
+   ck = elm_check_add(win);
+   elm_object_text_set(ck, "Check State Pointer Value");
+   elm_box_pack_end(bx, ck);
+   evas_object_show(ck);
+   evas_object_smart_callback_add(ck, "changed", state_changed_cb, NULL);
 
    ic = elm_icon_add(win);
    snprintf(buf, sizeof(buf), "%s/images/logo_small.png", elm_app_data_dir_get());

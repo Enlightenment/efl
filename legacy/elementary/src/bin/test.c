@@ -31,6 +31,7 @@ void test_fileselector_entry(void *data, Evas_Object *obj, void *event_info);
 void test_toggle(void *data, Evas_Object *obj, void *event_info);
 void test_clock(void *data, Evas_Object *obj, void *event_info);
 void test_clock2(void *data, Evas_Object *obj, void *event_info);
+void test_clock3(void *data, Evas_Object *obj, void *event_info);
 void test_check(void *data, Evas_Object *obj, void *event_info);
 void test_radio(void *data, Evas_Object *obj, void *event_info);
 void test_layout(void *data, Evas_Object *obj, void *event_info);
@@ -495,6 +496,7 @@ add_tests:
    ADD_TEST(NULL, "Times & Dates", "Calendar 2", test_calendar2);
    ADD_TEST(NULL, "Times & Dates", "Clock", test_clock);
    ADD_TEST(NULL, "Times & Dates", "Clock 2", test_clock2);
+   ADD_TEST(NULL, "Times & Dates", "Clock 3", test_clock3);
 
    //------------------------------//
    ADD_TEST(NULL, "Text", "Anchorview", test_anchorview);

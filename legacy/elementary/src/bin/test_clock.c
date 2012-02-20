@@ -145,4 +145,55 @@ test_clock2(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info
    evas_object_show(win);
 }
 
+void
+test_clock3(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+{
+   Evas_Object *win, *bg, *bx, *ck, *lb;
+
+   win = elm_win_add(NULL, "clock3", ELM_WIN_BASIC);
+   elm_win_title_set(win, "Clock 3");
+   elm_win_autodel_set(win, EINA_TRUE);
+
+   bg = elm_bg_add(win);
+   elm_win_resize_object_add(win, bg);
+   evas_object_size_hint_weight_set(bg, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_show(bg);
+
+   bx = elm_box_add(win);
+   evas_object_size_hint_weight_set(bx, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   elm_win_resize_object_add(win, bx);
+   evas_object_show(bx);
+
+   lb = elm_label_add(win);
+   elm_object_text_set(lb,
+                       "Check time updates for an user mouse button hold."
+                       );
+   evas_object_size_hint_weight_set(lb, 0.0, 0.0);
+   evas_object_size_hint_align_set(lb, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   elm_box_pack_end(bx, lb);
+   evas_object_show(lb);
+
+   ck = elm_clock_add(win);
+   elm_clock_show_seconds_set(ck, 1);
+   elm_clock_edit_set(ck, EINA_TRUE);
+   elm_clock_interval_set(ck, 0.4);
+   elm_box_pack_end(bx, ck);
+   evas_object_show(ck);
+
+   ck = elm_clock_add(win);
+   elm_clock_show_seconds_set(ck, 1);
+   elm_clock_edit_set(ck, EINA_TRUE);
+   elm_clock_interval_set(ck, 1.2);
+   elm_box_pack_end(bx, ck);
+   evas_object_show(ck);
+
+   ck = elm_clock_add(win);
+   elm_clock_show_seconds_set(ck, 1);
+   elm_clock_edit_set(ck, EINA_TRUE);
+   elm_clock_interval_set(ck, 2.0);
+   elm_box_pack_end(bx, ck);
+   evas_object_show(ck);
+
+   evas_object_show(win);
+}
 #endif
