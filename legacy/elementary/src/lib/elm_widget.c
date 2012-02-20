@@ -2109,11 +2109,12 @@ elm_widget_show_region_set(Evas_Object *obj,
    Evas_Object *parent_obj, *child_obj;
    Evas_Coord px, py, cx, cy;
 
-   evas_smart_objects_calculate(evas_object_evas_get(obj));
-
    API_ENTRY return;
-   if (!forceshow && (x == sd->rx) && (y == sd->ry)
-            && (w == sd->rw) && (h == sd->rh)) return;
+   
+   evas_smart_objects_calculate(evas_object_evas_get(obj));
+   
+   if (!forceshow && (x == sd->rx) && (y == sd->ry) && 
+       (w == sd->rw) && (h == sd->rh)) return;
    sd->rx = x;
    sd->ry = y;
    sd->rw = w;
@@ -2738,6 +2739,8 @@ elm_widget_stringlist_free(Eina_List *list)
 EAPI void
 elm_widget_focus_hide_handle(Evas_Object *obj)
 {
+   if (!_elm_widget_is(obj))
+     return;
    _if_focused_revert(obj, EINA_TRUE);
 }
 
@@ -3838,6 +3841,8 @@ EAPI void
 elm_widget_tree_dump(const Evas_Object *top)
 {
 #ifdef ELM_DEBUG
+   if (!_elm_widget_is(top))
+     return;
    _sub_obj_tree_dump(top, 0);
 #else
    return;
