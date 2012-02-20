@@ -50,13 +50,15 @@ EAPI Evas_Object                 *elm_frame_add(Evas_Object *parent);
 /**
  * @brief Toggle autocollapsing of a frame
  * @param obj The frame
- * @param enable Whether to enable autocollapse
+ * @param autocollapse Whether to enable autocollapse
  *
  * When @p enable is EINA_TRUE, clicking a frame's label will collapse the frame
  * vertically, shrinking it to the height of the label.
  * By default, this is DISABLED.
  */
-EAPI void elm_frame_autocollapse_set(Evas_Object *obj, Eina_Bool enable);
+//XXX: really need to provide this API?
+//XXX: How about elm_frame_autofold_set() ?
+EAPI void elm_frame_autocollapse_set(Evas_Object *obj, Eina_Bool autocollapse);
 
 /**
  * @brief Determine autocollapsing of a frame
@@ -67,7 +69,9 @@ EAPI void elm_frame_autocollapse_set(Evas_Object *obj, Eina_Bool enable);
  * vertically, shrinking it to the height of the label.
  * By default, this is DISABLED.
  */
-EAPI Eina_Bool elm_frame_autocollapse_get(Evas_Object *obj);
+//XXX: ... really need to provide this API?
+//XXX: How about elm_frame_autofold_get() ?
+EAPI Eina_Bool elm_frame_autocollapse_get(const Evas_Object *obj);
 
 /**
  * @brief Manually collapse a frame without animations
@@ -76,6 +80,7 @@ EAPI Eina_Bool elm_frame_autocollapse_get(Evas_Object *obj);
  *
  * Use this to toggle the collapsed state of a frame, bypassing animations.
  */
+//XXX: How about elm_frame_fold_set() ?
 EAPI void elm_frame_collapse_set(Evas_Object *obj, Eina_Bool collapse);
 
 /**
@@ -85,6 +90,8 @@ EAPI void elm_frame_collapse_set(Evas_Object *obj, Eina_Bool collapse);
  *
  * Use this to toggle the collapsed state of a frame, triggering animations.
  */
+//XXX: ... really need to provide this API?
+//XXX: How about elm_frame_collapse_transition_go()?
 EAPI void elm_frame_collapse_go(Evas_Object *obj, Eina_Bool collapse);
 
 /**
@@ -94,7 +101,8 @@ EAPI void elm_frame_collapse_go(Evas_Object *obj, Eina_Bool collapse);
  *
  * Use this to determine the collapse state of a frame.
  */
-EAPI Eina_Bool elm_frame_collapse_get(Evas_Object *obj);
+//XXX: ... How about elm_frame_fold_get() ?
+EAPI Eina_Bool elm_frame_collapse_get(const Evas_Object *obj);
 /**
  * @}
  */
