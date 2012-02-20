@@ -235,11 +235,11 @@ struct _Elm_Access_Info
 EAPI void             _elm_access_clear(Elm_Access_Info *ac);
 EAPI void             _elm_access_text_set(Elm_Access_Info *ac, int type, const char *text);
 EAPI void             _elm_access_callback_set(Elm_Access_Info *ac, int type, Elm_Access_Content_Cb func, const void *data);
-EAPI char            *_elm_access_text_get(Elm_Access_Info *ac, int type, Evas_Object *obj, Elm_Widget_Item *item);
+EAPI char            *_elm_access_text_get(const Elm_Access_Info *ac, int type, Evas_Object *obj, Elm_Widget_Item *item); /* this is ok it actually returns a strduped string - it's meant to! */
 EAPI void             _elm_access_read(Elm_Access_Info *ac, int type, Evas_Object *obj, Elm_Widget_Item *item);
 EAPI void             _elm_access_say(const char *txt);
-EAPI Elm_Access_Info *_elm_access_object_get(Evas_Object *obj);
-EAPI Elm_Access_Info *_elm_access_item_get(Elm_Widget_Item *it);
+EAPI Elm_Access_Info *_elm_access_object_get(const Evas_Object *obj);
+EAPI Elm_Access_Info *_elm_access_item_get(const Elm_Widget_Item *it);
 EAPI void             _elm_access_object_hilight(Evas_Object *obj);
 EAPI void             _elm_access_object_unhilight(Evas_Object *obj);
 EAPI void             _elm_access_object_hilight_disable(Evas *e);
@@ -436,7 +436,7 @@ EAPI void             elm_widget_content_part_set(Evas_Object *obj, const char *
 EAPI Evas_Object     *elm_widget_content_part_get(const Evas_Object *obj, const char *part);
 EAPI Evas_Object     *elm_widget_content_part_unset(Evas_Object *obj, const char *part);
 EAPI void             elm_widget_access_info_set(Evas_Object *obj, const char *txt);
-EAPI const char      *elm_widget_access_info_get(Evas_Object *obj);
+EAPI const char      *elm_widget_access_info_get(const Evas_Object *obj);
 EAPI Elm_Widget_Item *_elm_widget_item_new(Evas_Object *parent, size_t alloc_size);
 EAPI void             _elm_widget_item_free(Elm_Widget_Item *item);
 EAPI void             _elm_widget_item_del(Elm_Widget_Item *item);

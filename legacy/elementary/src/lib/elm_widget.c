@@ -2458,7 +2458,7 @@ elm_widget_access_info_set(Evas_Object *obj, const char *txt)
 }
 
 EAPI const char *
-elm_widget_access_info_get(Evas_Object *obj)
+elm_widget_access_info_get(const Evas_Object *obj)
 {
    API_ENTRY return NULL;
    return sd->access_info;
