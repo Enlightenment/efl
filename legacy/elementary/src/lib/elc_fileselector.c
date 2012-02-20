@@ -1067,10 +1067,13 @@ elm_fileselector_expandable_get(const Evas_Object *obj)
 
 EAPI void
 elm_fileselector_path_set(Evas_Object *obj,
-                          const char  *path)
+                          const char  *_path)
 {
    ELM_CHECK_WIDTYPE(obj, widtype);
+   char *path;
+   path = ecore_file_realpath(_path);
    _populate(obj, path, NULL);
+   free(path);
 }
 
 EAPI const char *
@@ -1173,18 +1176,25 @@ elm_fileselector_selected_get(const Evas_Object *obj)
 
 EAPI Eina_Bool
 elm_fileselector_selected_set(Evas_Object *obj,
-                              const char  *path)
+                              const char  *_path)
 {
    ELM_CHECK_WIDTYPE(obj, widtype) EINA_FALSE;
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return EINA_FALSE;
+
+   Eina_Bool ret = EINA_TRUE;
+   char *path;
+   path = ecore_file_realpath(_path);
 
    if (ecore_file_is_dir(path))
      _populate(obj, path, NULL);
    else
      {
         if (!ecore_file_exists(path))
-          return EINA_FALSE;
+          {
+             ret = EINA_FALSE;
+             goto clean_up;
+          }
 
         _populate(obj, ecore_file_dir_get(path), NULL);
         if (wd->filename_entry)
@@ -1195,6 +1205,8 @@ elm_fileselector_selected_set(Evas_Object *obj,
           }
      }
 
-   return EINA_TRUE;
+clean_up:
+   free(path);
+   return ret;
 }
 
