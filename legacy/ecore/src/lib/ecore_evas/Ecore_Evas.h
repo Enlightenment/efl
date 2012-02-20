@@ -151,7 +151,7 @@ typedef struct _Ecore_Cocoa_Window Ecore_Cocoa_Window;
 #ifndef _ECORE_EVAS_PRIVATE_H
 /* basic data types */
 typedef struct _Ecore_Evas Ecore_Evas;
-typedef void   (*Ecore_Evas_Event_Cb) (Ecore_Evas *ee);
+typedef void   (*Ecore_Evas_Event_Cb) (Ecore_Evas *ee); /**< Callback used for several ecore evas events @since 1.2 */
 #endif
 
 /* module setup/shutdown calls */
