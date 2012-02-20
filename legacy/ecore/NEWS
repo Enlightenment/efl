@@ -31,7 +31,9 @@ Improvements:
      - certificates can now be added for STARTTTLS
     * ecore_win32:
      - fix modifiers value on Windows XP
-
+    * ecore_thread:
+     - use eina_lock
+     - use Ecore thread safe async call
 
 Ecore 1.1.0
 

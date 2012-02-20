@@ -505,3 +505,6 @@
 
         * Improve callbacks in ecore_evas to use typedefs for readability.
 
+2012-02-20  Cedric Bail
+
+	* Rewrite internal of Ecore_Thread to use Eina_Lock and ecore_main_loop_thread_safe_call_async.
