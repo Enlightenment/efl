@@ -1908,7 +1908,7 @@ elm_win_title_set(Evas_Object *obj, const char *title)
    Elm_Win *win;
    ELM_CHECK_WIDTYPE(obj, widtype);
    win = elm_widget_data_get(obj);
-   if (!win) return;
+   if (!win || !title) return;
    ecore_evas_title_set(win->ee, title);
    if (win->frame_obj)
      edje_object_part_text_set(win->frame_obj, "elm.text.title", title);
