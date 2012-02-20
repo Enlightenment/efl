@@ -197,7 +197,7 @@ EAPI extern Elm_Version *elm_version;
 #include <elm_factory.h>  //Done
 #include <elm_finger.h> //Done
 #include <elm_flip.h> //Done. There are many TODOs in flip.c
-#include <elm_flipselector.h>
+#include <elm_flipselector.h> //Done.
 #include <elm_focus.h>
 #include <elm_fonts.h>
 #include <elm_frame.h>

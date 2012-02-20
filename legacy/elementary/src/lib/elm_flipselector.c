@@ -7,7 +7,6 @@
 /* TODO: if one ever wants to extend it to receiving generic widgets
    as items, be my guest. in this case, remember to implement the
    items tooltip infra. */
-/* TODO: implement disabled mode -- disable_hook() and stuff. */
 /* TODO: fix default theme image borders for looong strings as item
    labels. */
 /* TODO: set text elipsis on labels if one enforces mininum size on
@@ -174,6 +173,18 @@ _del_hook(Evas_Object *obj)
 
    if (wd->spin) ecore_timer_del(wd->spin);
    free(wd);
+}
+
+static void
+_disable_hook(Evas_Object *obj)
+{
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return;
+
+   if (elm_widget_disabled_get(obj))
+     edje_object_signal_emit(wd->base, "elm,state,disabled", "elm");
+   else
+     edje_object_signal_emit(wd->base, "elm,state,enabled", "elm");
 }
 
 static void
@@ -630,6 +641,7 @@ elm_flipselector_add(Evas_Object *parent)
    wd->self = obj;
    elm_widget_del_hook_set(obj, _del_hook);
    elm_widget_theme_hook_set(obj, _theme_hook);
+   elm_widget_disable_hook_set(obj, _disable_hook);
 
    elm_widget_can_focus_set(obj, EINA_TRUE);
    elm_widget_on_focus_hook_set(obj, _on_focus_hook, NULL);
