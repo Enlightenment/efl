@@ -500,3 +500,8 @@
         * Add ecore_x_randr_mode_del to remove a mode from the display
         * Add ecore_x_randr_output_mode_add to add a mode to an output
         * Add ecore_x_randr_output_mode_del to remove a mode from an output
+
+2012-02-10  Jérémy Zurcher
+
+        * Improve callbacks in ecore_evas to use typedefs for readability.
+

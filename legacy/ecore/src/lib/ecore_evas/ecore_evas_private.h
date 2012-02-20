@@ -123,6 +123,7 @@ extern int _ecore_evas_log_dom;
 #define IDLE_FLUSH_TIME 0.5
 #ifndef _ECORE_EVAS_H
 typedef struct _Ecore_Evas Ecore_Evas;
+typedef void   (*Ecore_Evas_Event_Cb) (Ecore_Evas *ee);
 #endif
 
 typedef struct _Ecore_Evas_Engine Ecore_Evas_Engine;
@@ -131,20 +132,20 @@ typedef struct _Ecore_Evas_Engine_Func Ecore_Evas_Engine_Func;
 struct _Ecore_Evas_Engine_Func
 {
    void (*fn_free) (Ecore_Evas *ee);
-   void (*fn_callback_resize_set) (Ecore_Evas *ee, void (*func) (Ecore_Evas *ee));
-   void (*fn_callback_move_set) (Ecore_Evas *ee, void (*func) (Ecore_Evas *ee));
-   void (*fn_callback_show_set) (Ecore_Evas *ee, void (*func) (Ecore_Evas *ee));
-   void (*fn_callback_hide_set) (Ecore_Evas *ee, void (*func) (Ecore_Evas *ee));
-   void (*fn_callback_delete_request_set) (Ecore_Evas *ee, void (*func) (Ecore_Evas *ee));
-   void (*fn_callback_destroy_set) (Ecore_Evas *ee, void (*func) (Ecore_Evas *ee));
-   void (*fn_callback_focus_in_set) (Ecore_Evas *ee, void (*func) (Ecore_Evas *ee));
-   void (*fn_callback_focus_out_set) (Ecore_Evas *ee, void (*func) (Ecore_Evas *ee));
-   void (*fn_callback_mouse_in_set) (Ecore_Evas *ee, void (*func) (Ecore_Evas *ee));
-   void (*fn_callback_mouse_out_set) (Ecore_Evas *ee, void (*func) (Ecore_Evas *ee));
-   void (*fn_callback_sticky_set) (Ecore_Evas *ee, void (*func) (Ecore_Evas *ee));
-   void (*fn_callback_unsticky_set) (Ecore_Evas *ee, void (*func) (Ecore_Evas *ee));
-   void (*fn_callback_pre_render_set) (Ecore_Evas *ee, void (*func) (Ecore_Evas *ee));
-   void (*fn_callback_post_render_set) (Ecore_Evas *ee, void (*func) (Ecore_Evas *ee));
+   void (*fn_callback_resize_set) (Ecore_Evas *ee, Ecore_Evas_Event_Cb func);
+   void (*fn_callback_move_set) (Ecore_Evas *ee, Ecore_Evas_Event_Cb func);
+   void (*fn_callback_show_set) (Ecore_Evas *ee, Ecore_Evas_Event_Cb func);
+   void (*fn_callback_hide_set) (Ecore_Evas *ee, Ecore_Evas_Event_Cb func);
+   void (*fn_callback_delete_request_set) (Ecore_Evas *ee, Ecore_Evas_Event_Cb func);
+   void (*fn_callback_destroy_set) (Ecore_Evas *ee, Ecore_Evas_Event_Cb func);
+   void (*fn_callback_focus_in_set) (Ecore_Evas *ee, Ecore_Evas_Event_Cb func);
+   void (*fn_callback_focus_out_set) (Ecore_Evas *ee, Ecore_Evas_Event_Cb func);
+   void (*fn_callback_mouse_in_set) (Ecore_Evas *ee, Ecore_Evas_Event_Cb func);
+   void (*fn_callback_mouse_out_set) (Ecore_Evas *ee, Ecore_Evas_Event_Cb func);
+   void (*fn_callback_sticky_set) (Ecore_Evas *ee, Ecore_Evas_Event_Cb func);
+   void (*fn_callback_unsticky_set) (Ecore_Evas *ee, Ecore_Evas_Event_Cb func);
+   void (*fn_callback_pre_render_set) (Ecore_Evas *ee, Ecore_Evas_Event_Cb func);
+   void (*fn_callback_post_render_set) (Ecore_Evas *ee, Ecore_Evas_Event_Cb func);
    void (*fn_move) (Ecore_Evas *ee, int x, int y);
    void (*fn_managed_move) (Ecore_Evas *ee, int x, int y);
    void (*fn_resize) (Ecore_Evas *ee, int w, int h);

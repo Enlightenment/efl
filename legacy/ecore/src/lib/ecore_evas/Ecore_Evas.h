@@ -151,6 +151,7 @@ typedef struct _Ecore_Cocoa_Window Ecore_Cocoa_Window;
 #ifndef _ECORE_EVAS_PRIVATE_H
 /* basic data types */
 typedef struct _Ecore_Evas Ecore_Evas;
+typedef void   (*Ecore_Evas_Event_Cb) (Ecore_Evas *ee);
 #endif
 
 /* module setup/shutdown calls */
@@ -1039,7 +1040,7 @@ EAPI void        ecore_evas_data_set(Ecore_Evas *ee, const char *key, const void
  * @warning If and when this function is called depends on the underlying
  * windowing system.
  */
-EAPI void        ecore_evas_callback_resize_set(Ecore_Evas *ee, void (*func) (Ecore_Evas *ee));
+EAPI void        ecore_evas_callback_resize_set(Ecore_Evas *ee, Ecore_Evas_Event_Cb func);
 /**
  * Set a callback for Ecore_Evas move events.
  * @param ee The Ecore_Evas to set callbacks on
@@ -1051,7 +1052,7 @@ EAPI void        ecore_evas_callback_resize_set(Ecore_Evas *ee, void (*func) (Ec
  * @warning If and when this function is called depends on the underlying
  * windowing system.
  */
-EAPI void        ecore_evas_callback_move_set(Ecore_Evas *ee, void (*func) (Ecore_Evas *ee));
+EAPI void        ecore_evas_callback_move_set(Ecore_Evas *ee, Ecore_Evas_Event_Cb func);
 /**
  * Set a callback for Ecore_Evas show events.
  * @param ee The Ecore_Evas to set callbacks on
@@ -1063,7 +1064,7 @@ EAPI void        ecore_evas_callback_move_set(Ecore_Evas *ee, void (*func) (Ecor
  * @warning If and when this function is called depends on the underlying
  * windowing system.
  */
-EAPI void        ecore_evas_callback_show_set(Ecore_Evas *ee, void (*func) (Ecore_Evas *ee));
+EAPI void        ecore_evas_callback_show_set(Ecore_Evas *ee, Ecore_Evas_Event_Cb func);
 /**
  * Set a callback for Ecore_Evas hide events.
  * @param ee The Ecore_Evas to set callbacks on
@@ -1075,7 +1076,7 @@ EAPI void        ecore_evas_callback_show_set(Ecore_Evas *ee, void (*func) (Ecor
  * @warning If and when this function is called depends on the underlying
  * windowing system.
  */
-EAPI void        ecore_evas_callback_hide_set(Ecore_Evas *ee, void (*func) (Ecore_Evas *ee));
+EAPI void        ecore_evas_callback_hide_set(Ecore_Evas *ee, Ecore_Evas_Event_Cb func);
 /**
  * Set a callback for Ecore_Evas delete request events.
  * @param ee The Ecore_Evas to set callbacks on
@@ -1087,7 +1088,7 @@ EAPI void        ecore_evas_callback_hide_set(Ecore_Evas *ee, void (*func) (Ecor
  * @warning If and when this function is called depends on the underlying
  * windowing system.
  */
-EAPI void        ecore_evas_callback_delete_request_set(Ecore_Evas *ee, void (*func) (Ecore_Evas *ee));
+EAPI void        ecore_evas_callback_delete_request_set(Ecore_Evas *ee, Ecore_Evas_Event_Cb func);
 /**
  * Set a callback for Ecore_Evas destroy events.
  * @param ee The Ecore_Evas to set callbacks on
@@ -1099,7 +1100,7 @@ EAPI void        ecore_evas_callback_delete_request_set(Ecore_Evas *ee, void (*f
  * @warning If and when this function is called depends on the underlying
  * windowing system.
  */
-EAPI void        ecore_evas_callback_destroy_set(Ecore_Evas *ee, void (*func) (Ecore_Evas *ee));
+EAPI void        ecore_evas_callback_destroy_set(Ecore_Evas *ee, Ecore_Evas_Event_Cb func);
 /**
  * Set a callback for Ecore_Evas focus in events.
  * @param ee The Ecore_Evas to set callbacks on
@@ -1111,7 +1112,7 @@ EAPI void        ecore_evas_callback_destroy_set(Ecore_Evas *ee, void (*func) (E
  * @warning If and when this function is called depends on the underlying
  * windowing system.
  */
-EAPI void        ecore_evas_callback_focus_in_set(Ecore_Evas *ee, void (*func) (Ecore_Evas *ee));
+EAPI void        ecore_evas_callback_focus_in_set(Ecore_Evas *ee, Ecore_Evas_Event_Cb func);
 /**
  * Set a callback for Ecore_Evas focus out events.
  * @param ee The Ecore_Evas to set callbacks on
@@ -1123,7 +1124,7 @@ EAPI void        ecore_evas_callback_focus_in_set(Ecore_Evas *ee, void (*func) (
  * @warning If and when this function is called depends on the underlying
  * windowing system.
  */
-EAPI void        ecore_evas_callback_focus_out_set(Ecore_Evas *ee, void (*func) (Ecore_Evas *ee));
+EAPI void        ecore_evas_callback_focus_out_set(Ecore_Evas *ee, Ecore_Evas_Event_Cb func);
 /**
  * Set a callback for Ecore_Evas sticky events.
  * @param ee The Ecore_Evas to set callbacks on
@@ -1135,7 +1136,7 @@ EAPI void        ecore_evas_callback_focus_out_set(Ecore_Evas *ee, void (*func) 
  * @warning If and when this function is called depends on the underlying
  * windowing system.
  */
-EAPI void        ecore_evas_callback_sticky_set(Ecore_Evas *ee, void (*func) (Ecore_Evas *ee));
+EAPI void        ecore_evas_callback_sticky_set(Ecore_Evas *ee, Ecore_Evas_Event_Cb func);
 /**
  * Set a callback for Ecore_Evas un-sticky events.
  * @param ee The Ecore_Evas to set callbacks on
@@ -1147,7 +1148,7 @@ EAPI void        ecore_evas_callback_sticky_set(Ecore_Evas *ee, void (*func) (Ec
  * @warning If and when this function is called depends on the underlying
  * windowing system.
  */
-EAPI void        ecore_evas_callback_unsticky_set(Ecore_Evas *ee, void (*func) (Ecore_Evas *ee));
+EAPI void        ecore_evas_callback_unsticky_set(Ecore_Evas *ee, Ecore_Evas_Event_Cb func);
 /**
  * Set a callback for Ecore_Evas mouse in events.
  * @param ee The Ecore_Evas to set callbacks on
@@ -1159,7 +1160,7 @@ EAPI void        ecore_evas_callback_unsticky_set(Ecore_Evas *ee, void (*func) (
  * @warning If and when this function is called depends on the underlying
  * windowing system.
  */
-EAPI void        ecore_evas_callback_mouse_in_set(Ecore_Evas *ee, void (*func) (Ecore_Evas *ee));
+EAPI void        ecore_evas_callback_mouse_in_set(Ecore_Evas *ee, Ecore_Evas_Event_Cb func);
 /**
  * Set a callback for Ecore_Evas mouse out events.
  * @param ee The Ecore_Evas to set callbacks on
@@ -1171,7 +1172,7 @@ EAPI void        ecore_evas_callback_mouse_in_set(Ecore_Evas *ee, void (*func) (
  * @warning If and when this function is called depends on the underlying
  * windowing system.
  */
-EAPI void        ecore_evas_callback_mouse_out_set(Ecore_Evas *ee, void (*func) (Ecore_Evas *ee));
+EAPI void        ecore_evas_callback_mouse_out_set(Ecore_Evas *ee, Ecore_Evas_Event_Cb func);
 /**
  * Set a callback for Ecore_Evas pre render events.
  * @param ee The Ecore_Evas to set callbacks on
@@ -1183,7 +1184,7 @@ EAPI void        ecore_evas_callback_mouse_out_set(Ecore_Evas *ee, void (*func) 
  * @warning If and when this function is called depends on the underlying
  * windowing system.
  */
-EAPI void        ecore_evas_callback_pre_render_set(Ecore_Evas *ee, void (*func) (Ecore_Evas *ee));
+EAPI void        ecore_evas_callback_pre_render_set(Ecore_Evas *ee, Ecore_Evas_Event_Cb func);
 /**
  * Set a callback for Ecore_Evas mouse post render events.
  * @param ee The Ecore_Evas to set callbacks on
@@ -1195,7 +1196,7 @@ EAPI void        ecore_evas_callback_pre_render_set(Ecore_Evas *ee, void (*func)
  * @warning If and when this function is called depends on the underlying
  * windowing system.
  */
-EAPI void        ecore_evas_callback_post_render_set(Ecore_Evas *ee, void (*func) (Ecore_Evas *ee));
+EAPI void        ecore_evas_callback_post_render_set(Ecore_Evas *ee, Ecore_Evas_Event_Cb func);
 /**
  * Set a callback for Ecore_Evas pre-free event.
  * @param ee The Ecore_Evas to set callbacks on
@@ -1207,7 +1208,7 @@ EAPI void        ecore_evas_callback_post_render_set(Ecore_Evas *ee, void (*func
  * @warning If and when this function is called depends on the underlying
  * windowing system.
  */
-EAPI void        ecore_evas_callback_pre_free_set(Ecore_Evas *ee, void (*func) (Ecore_Evas *ee));
+EAPI void        ecore_evas_callback_pre_free_set(Ecore_Evas *ee, Ecore_Evas_Event_Cb func);
 EAPI Evas       *ecore_evas_get(const Ecore_Evas *ee);
 EAPI void        ecore_evas_managed_move(Ecore_Evas *ee, int x, int y);
 EAPI void        ecore_evas_shaped_set(Ecore_Evas *ee, Eina_Bool shaped);

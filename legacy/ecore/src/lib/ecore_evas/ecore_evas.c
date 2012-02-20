@@ -944,7 +944,7 @@ ecore_evas_data_set(Ecore_Evas *ee, const char *key, const void *data)
 #define IFE            return;}
 
 EAPI void
-ecore_evas_callback_resize_set(Ecore_Evas *ee, void (*func) (Ecore_Evas *ee))
+ecore_evas_callback_resize_set(Ecore_Evas *ee, Ecore_Evas_Event_Cb func)
 {
    if (!ECORE_MAGIC_CHECK(ee, ECORE_MAGIC_EVAS))
      {
@@ -958,7 +958,7 @@ ecore_evas_callback_resize_set(Ecore_Evas *ee, void (*func) (Ecore_Evas *ee))
 }
 
 EAPI void
-ecore_evas_callback_move_set(Ecore_Evas *ee, void (*func) (Ecore_Evas *ee))
+ecore_evas_callback_move_set(Ecore_Evas *ee, Ecore_Evas_Event_Cb func)
 {
    if (!ECORE_MAGIC_CHECK(ee, ECORE_MAGIC_EVAS))
      {
@@ -972,7 +972,7 @@ ecore_evas_callback_move_set(Ecore_Evas *ee, void (*func) (Ecore_Evas *ee))
 }
 
 EAPI void
-ecore_evas_callback_show_set(Ecore_Evas *ee, void (*func) (Ecore_Evas *ee))
+ecore_evas_callback_show_set(Ecore_Evas *ee, Ecore_Evas_Event_Cb func)
 {
    if (!ECORE_MAGIC_CHECK(ee, ECORE_MAGIC_EVAS))
      {
@@ -986,7 +986,7 @@ ecore_evas_callback_show_set(Ecore_Evas *ee, void (*func) (Ecore_Evas *ee))
 }
 
 EAPI void
-ecore_evas_callback_hide_set(Ecore_Evas *ee, void (*func) (Ecore_Evas *ee))
+ecore_evas_callback_hide_set(Ecore_Evas *ee, Ecore_Evas_Event_Cb func)
 {
    if (!ECORE_MAGIC_CHECK(ee, ECORE_MAGIC_EVAS))
      {
@@ -1000,7 +1000,7 @@ ecore_evas_callback_hide_set(Ecore_Evas *ee, void (*func) (Ecore_Evas *ee))
 }
 
 EAPI void
-ecore_evas_callback_delete_request_set(Ecore_Evas *ee, void (*func) (Ecore_Evas *ee))
+ecore_evas_callback_delete_request_set(Ecore_Evas *ee, Ecore_Evas_Event_Cb func)
 {
    if (!ECORE_MAGIC_CHECK(ee, ECORE_MAGIC_EVAS))
      {
@@ -1014,7 +1014,7 @@ ecore_evas_callback_delete_request_set(Ecore_Evas *ee, void (*func) (Ecore_Evas 
 }
 
 EAPI void
-ecore_evas_callback_destroy_set(Ecore_Evas *ee, void (*func) (Ecore_Evas *ee))
+ecore_evas_callback_destroy_set(Ecore_Evas *ee, Ecore_Evas_Event_Cb func)
 {
    if (!ECORE_MAGIC_CHECK(ee, ECORE_MAGIC_EVAS))
      {
@@ -1028,7 +1028,7 @@ ecore_evas_callback_destroy_set(Ecore_Evas *ee, void (*func) (Ecore_Evas *ee))
 }
 
 EAPI void
-ecore_evas_callback_focus_in_set(Ecore_Evas *ee, void (*func) (Ecore_Evas *ee))
+ecore_evas_callback_focus_in_set(Ecore_Evas *ee, Ecore_Evas_Event_Cb func)
 {
    if (!ECORE_MAGIC_CHECK(ee, ECORE_MAGIC_EVAS))
      {
@@ -1042,7 +1042,7 @@ ecore_evas_callback_focus_in_set(Ecore_Evas *ee, void (*func) (Ecore_Evas *ee))
 }
 
 EAPI void
-ecore_evas_callback_focus_out_set(Ecore_Evas *ee, void (*func) (Ecore_Evas *ee))
+ecore_evas_callback_focus_out_set(Ecore_Evas *ee, Ecore_Evas_Event_Cb func)
 {
    if (!ECORE_MAGIC_CHECK(ee, ECORE_MAGIC_EVAS))
      {
@@ -1056,7 +1056,7 @@ ecore_evas_callback_focus_out_set(Ecore_Evas *ee, void (*func) (Ecore_Evas *ee))
 }
 
 EAPI void
-ecore_evas_callback_sticky_set(Ecore_Evas *ee, void (*func) (Ecore_Evas *ee))
+ecore_evas_callback_sticky_set(Ecore_Evas *ee, Ecore_Evas_Event_Cb func)
 {
    if (!ECORE_MAGIC_CHECK(ee, ECORE_MAGIC_EVAS))
      {
@@ -1070,7 +1070,7 @@ ecore_evas_callback_sticky_set(Ecore_Evas *ee, void (*func) (Ecore_Evas *ee))
 }
 
 EAPI void
-ecore_evas_callback_unsticky_set(Ecore_Evas *ee, void (*func) (Ecore_Evas *ee))
+ecore_evas_callback_unsticky_set(Ecore_Evas *ee, Ecore_Evas_Event_Cb func)
 {
    if (!ECORE_MAGIC_CHECK(ee, ECORE_MAGIC_EVAS))
      {
@@ -1084,7 +1084,7 @@ ecore_evas_callback_unsticky_set(Ecore_Evas *ee, void (*func) (Ecore_Evas *ee))
 }
 
 EAPI void
-ecore_evas_callback_mouse_in_set(Ecore_Evas *ee, void (*func) (Ecore_Evas *ee))
+ecore_evas_callback_mouse_in_set(Ecore_Evas *ee, Ecore_Evas_Event_Cb func)
 {
    if (!ECORE_MAGIC_CHECK(ee, ECORE_MAGIC_EVAS))
      {
@@ -1098,7 +1098,7 @@ ecore_evas_callback_mouse_in_set(Ecore_Evas *ee, void (*func) (Ecore_Evas *ee))
 }
 
 EAPI void
-ecore_evas_callback_mouse_out_set(Ecore_Evas *ee, void (*func) (Ecore_Evas *ee))
+ecore_evas_callback_mouse_out_set(Ecore_Evas *ee, Ecore_Evas_Event_Cb func)
 {
    if (!ECORE_MAGIC_CHECK(ee, ECORE_MAGIC_EVAS))
      {
@@ -1112,7 +1112,7 @@ ecore_evas_callback_mouse_out_set(Ecore_Evas *ee, void (*func) (Ecore_Evas *ee))
 }
 
 EAPI void
-ecore_evas_callback_pre_render_set(Ecore_Evas *ee, void (*func) (Ecore_Evas *ee))
+ecore_evas_callback_pre_render_set(Ecore_Evas *ee, Ecore_Evas_Event_Cb func)
 {
    if (!ECORE_MAGIC_CHECK(ee, ECORE_MAGIC_EVAS))
      {
@@ -1126,7 +1126,7 @@ ecore_evas_callback_pre_render_set(Ecore_Evas *ee, void (*func) (Ecore_Evas *ee)
 }
 
 EAPI void
-ecore_evas_callback_post_render_set(Ecore_Evas *ee, void (*func) (Ecore_Evas *ee))
+ecore_evas_callback_post_render_set(Ecore_Evas *ee, Ecore_Evas_Event_Cb func)
 {
    if (!ECORE_MAGIC_CHECK(ee, ECORE_MAGIC_EVAS))
      {
@@ -1140,7 +1140,7 @@ ecore_evas_callback_post_render_set(Ecore_Evas *ee, void (*func) (Ecore_Evas *ee
 }
 
 EAPI void
-ecore_evas_callback_pre_free_set(Ecore_Evas *ee, void (*func) (Ecore_Evas *ee))
+ecore_evas_callback_pre_free_set(Ecore_Evas *ee, Ecore_Evas_Event_Cb func)
 {
    if (!ECORE_MAGIC_CHECK(ee, ECORE_MAGIC_EVAS))
      {
