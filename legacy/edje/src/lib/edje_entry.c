@@ -958,7 +958,7 @@ _anchors_get(Evas_Textblock_Cursor *c, Evas_Object *o, Entry *en)
              char *p;
              an = calloc(1, sizeof(Anchor));
              if (!an)
-                break;
+               break;
 
              an->en = en;
              p = strstr(s, "href=");
@@ -979,7 +979,7 @@ _anchors_get(Evas_Textblock_Cursor *c, Evas_Object *o, Entry *en)
                {
                   s = evas_textblock_node_format_text_get(node);
                   if ((!strcmp(s, "- a")) || (!strcmp(s, "-a")))
-                     break;
+                    break;
                }
 
              if (node)
@@ -1008,7 +1008,7 @@ _anchors_get(Evas_Textblock_Cursor *c, Evas_Object *o, Entry *en)
              char *p;
              an = calloc(1, sizeof(Anchor));
              if (!an)
-                break;
+               break;
 
              an->en = en;
              an->item = 1;
@@ -1117,7 +1117,7 @@ _edje_entry_hide_visible_password(Edje_Real_Part *rp)
              if (!strcmp(text, "+ password=off"))
                {
                   evas_textblock_node_format_remove_pair(rp->object,
-                                                        (Evas_Object_Textblock_Node_Format *) node);
+                                                         (Evas_Object_Textblock_Node_Format *) node);
                   break;
                }
           }
@@ -1780,7 +1780,7 @@ _edje_part_mouse_down_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUS
         _edje_emit(rp->edje, "cursor,changed,manual", rp->part->name);
      }
    evas_textblock_cursor_free(tc);
-   
+
    _edje_entry_imf_cursor_info_set(en);
 
    _edje_entry_real_part_configure(rp);
@@ -2195,9 +2195,9 @@ _edje_entry_real_part_shutdown(Edje_Real_Part *rp)
      {
         if (en->imf_context)
           {
-              ecore_imf_context_event_callback_del(en->imf_context, ECORE_IMF_CALLBACK_COMMIT, _edje_entry_imf_event_commit_cb);
-              ecore_imf_context_event_callback_del(en->imf_context, ECORE_IMF_CALLBACK_DELETE_SURROUNDING, _edje_entry_imf_event_delete_surrounding_cb);
-              ecore_imf_context_event_callback_del(en->imf_context, ECORE_IMF_CALLBACK_PREEDIT_CHANGED, _edje_entry_imf_event_preedit_changed_cb);
+             ecore_imf_context_event_callback_del(en->imf_context, ECORE_IMF_CALLBACK_COMMIT, _edje_entry_imf_event_commit_cb);
+             ecore_imf_context_event_callback_del(en->imf_context, ECORE_IMF_CALLBACK_DELETE_SURROUNDING, _edje_entry_imf_event_delete_surrounding_cb);
+             ecore_imf_context_event_callback_del(en->imf_context, ECORE_IMF_CALLBACK_PREEDIT_CHANGED, _edje_entry_imf_event_preedit_changed_cb);
 
              ecore_imf_context_del(en->imf_context);
              en->imf_context = NULL;
@@ -3025,7 +3025,7 @@ _edje_entry_cursor_pos_set(Edje_Real_Part *rp, Edje_Cursor cur, int pos)
    if (!c) return;
    /* Abort if cursor position didn't really change */
    if (evas_textblock_cursor_pos_get(c) == pos)
-      return;
+     return;
 
    _edje_entry_imf_context_reset(rp);
    evas_textblock_cursor_pos_set(c, pos);
