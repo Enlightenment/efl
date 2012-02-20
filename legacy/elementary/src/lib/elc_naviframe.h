@@ -18,7 +18,7 @@
  * Default content parts of the naviframe that you can use content hooks for
  * are:
  * @li "default" - The main content of the current page
- * @li "icon" - An icon in the title area of the current parge
+ * @li "icon" - An icon in the title area of the current page
  * @li "prev_btn" - A button of the current page to go to the previous page
  * @li "next_btn" - A button of the current page to go to the next page
  * 

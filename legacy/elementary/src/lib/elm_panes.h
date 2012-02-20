@@ -127,17 +127,17 @@ EAPI Evas_Object * elm_panes_content_right_get(const Evas_Object *obj);
 EAPI Evas_Object * elm_panes_content_right_unset(Evas_Object *obj);
 
 /**
- * Set whether the left and right panes resize homogenously or not.
+ * Set whether the left and right panes resize homogeneously or not.
  *
  * @param obj The panes object.
  * @param fixed Use @c EINA_TRUE to make @p obj to be
- * resize the left and right panes @b homogenously.
+ * resize the left and right panes @b homogeneously.
  * Use @c EINA_FALSE to make use of the values specified in 
  * elm_panes_content_left_size_set() and
  * elm_panes_content_right_size_set()
  * to resize the left and right panes.
  *
- * By default panes are resized homogenously.
+ * By default panes are resized homogeneously.
  *
  * @see elm_panes_fixed_get()
  * @see elmpanes_content_left_size_set()
@@ -151,7 +151,7 @@ EAPI void                         elm_panes_fixed_set(Evas_Object *obj, Eina_Boo
  * Retrieve the resize mode for the panes of a given panes widget.
  *
  * @param obj The panes object.
- * @return @c EINA_TRUE, if @p obj is set to be resized @b homogenously,
+ * @return @c EINA_TRUE, if @p obj is set to be resized @b homogeneously,
  *
  * @see elm_panes_fixed_set() for more details.
  * @see elmpanes_content_left_size_get()

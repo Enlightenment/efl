@@ -95,7 +95,7 @@ EAPI Evas_Coord                  elm_label_wrap_width_get(const Evas_Object *obj
  *
  * @warning This is only relevant if the label is inside a container.
  */
-//XXX: Maybe added for supporting multi-line ellpisis. Evas textlock supports multi-line ellipsis by itself, no more needs for this API.
+//XXX: Maybe added for supporting multi-line ellipsis. Evas textblock supports multi-line ellipsis by itself, no more needs for this API.
 EAPI void                        elm_label_wrap_height_set(Evas_Object *obj, Evas_Coord h);
 
 /**
@@ -104,7 +104,7 @@ EAPI void                        elm_label_wrap_height_set(Evas_Object *obj, Eva
  * @param obj The label object
  * @return The wrap height in pixels at a minimum where words need to wrap
  */
-//XXX: Maybe added for supporting multi-line ellpisis. Evas textlock supports multi-line ellipsis by itself, no more needs for this API.
+//XXX: Maybe added for supporting multi-line ellipsis. Evas textblock supports multi-line ellipsis by itself, no more needs for this API.
 EAPI Evas_Coord                  elm_label_wrap_height_get(const Evas_Object *obj);
 
 /**

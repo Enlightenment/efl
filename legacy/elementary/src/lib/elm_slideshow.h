@@ -216,7 +216,7 @@ EAPI void                  elm_slideshow_previous(Evas_Object *obj);
  * exclusive to the user grabbing the list, here, so if you'd like
  * to use them out of this call's context, you'd better @c
  * eina_stringshare_ref() them. Also the list is an internal list and
- * so is only valid for as long as the slidehsow object is valid and
+ * so is only valid for as long as the slideshow object is valid and
  * has not internally changed its list for some reason, so make a
  * copy if you need it around.
  *
