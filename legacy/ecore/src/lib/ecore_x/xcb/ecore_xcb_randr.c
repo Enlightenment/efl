@@ -1,7 +1,6 @@
 /* TODO: List of missing functions
  *
  * ecore_x_randr_crtc_clone_set
- * ecore_x_randr_output_size_mm_get
  * ecore_x_randr_output_crtc_set
  * ecore_x_randr_edid_version_get
  * ecore_x_randr_edid_info_has_valid_checksum
@@ -776,6 +775,24 @@ ecore_x_randr_output_modes_get(Ecore_X_Window       root,
    return modes;
 }
 
+EAPI Eina_Bool 
+ecore_x_randr_output_mode_add(Ecore_X_Randr_Output output, Ecore_X_Randr_Mode mode)
+{
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   CHECK_XCB_CONN;
+
+#ifdef ECORE_XCB_RANDR
+   RANDR_CHECK_1_2_RET(EINA_FALSE);
+
+   if ((output == Ecore_X_Randr_None) || (mode == Ecore_X_Randr_None))
+     return EINA_FALSE;
+
+   xcb_randr_add_output_mode(_ecore_xcb_conn, output, mode);
+   return EINA_TRUE;
+#endif
+   return EINA_FALSE;
+}
+
 /*
  * @brief get detailed information for a given mode id
  * @param root window which's screen's ressources are queried
@@ -802,6 +819,63 @@ ecore_x_randr_mode_info_get(Ecore_X_Window     root,
      ret = _ecore_xcb_randr_12_mode_info_get(root, mode);
 #endif
    return ret;
+}
+
+/*
+ * @brief add a mode to a display
+ * @param root window to which's screen's ressources are added
+ * @param mode_info
+ * @return Ecore_X_Randr_Mode of the added mode. Ecore_X_Randr_None if mode
+ * adding failed.
+ * @since 1.2.0
+ */
+EAPI Ecore_X_Randr_Mode 
+ecore_x_randr_mode_info_add(Ecore_X_Window root, Ecore_X_Randr_Mode_Info *mode_info)
+{
+#ifdef ECORE_XCB_RANDR
+   Ecore_X_Randr_Mode mode = Ecore_X_Randr_None;
+   xcb_randr_create_mode_cookie_t cookie;
+   xcb_randr_create_mode_reply_t *reply;
+   xcb_randr_mode_info_t info;
+   int namelen = 0;
+#endif
+
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   CHECK_XCB_CONN;
+
+#ifdef ECORE_XCB_RANDR
+   RANDR_CHECK_1_2_RET(EINA_FALSE);
+
+   if (!mode_info) return Ecore_X_Randr_None;
+   if (!_ecore_xcb_randr_root_validate(root)) return Ecore_X_Randr_None;
+
+   namelen = strlen(mode_info->name);
+
+   memset(&info, 0, sizeof(info));
+   info.width = mode_info->width;
+   info.height = mode_info->height;
+   info.dot_clock = mode_info->dotClock;
+   info.hsync_start = mode_info->hSyncStart;
+   info.hsync_end = mode_info->hSyncEnd;
+   info.htotal = mode_info->hTotal;
+   info.hskew = mode_info->hSkew;
+   info.vsync_start = mode_info->vSyncStart;
+   info.vsync_end = mode_info->vSyncEnd;
+   info.vtotal = mode_info->vTotal;
+   info.mode_flags = mode_info->modeFlags;
+   info.name_len = namelen;
+
+   cookie = 
+     xcb_randr_create_mode_unchecked(_ecore_xcb_conn, root, info, 
+                                     namelen, mode_info->name);
+   reply = xcb_randr_create_mode_reply(_ecore_xcb_conn, cookie, NULL);
+   if (reply)
+     {
+        mode = mode_info->xid;
+        free(reply);
+     }
+#endif
+   return mode;
 }
 
 /*
@@ -1055,6 +1129,53 @@ ecore_x_randr_output_crtc_get(Ecore_X_Window       root,
 #endif
 
    return Ecore_X_Randr_None;
+}
+
+EAPI void 
+ecore_x_randr_output_size_mm_get(Ecore_X_Window root, Ecore_X_Randr_Output output, int *w_mm, int *h_mm)
+{
+#ifdef ECORE_XCB_RANDR
+   xcb_randr_get_output_info_cookie_t ocookie;
+   xcb_randr_get_output_info_reply_t *oreply;
+   xcb_timestamp_t timestamp = 0;
+#endif
+
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   CHECK_XCB_CONN;
+
+   if (w_mm) *w_mm = 0;
+   if (h_mm) *h_mm = 0;
+
+#ifdef ECORE_XCB_RANDR
+   RANDR_CHECK_1_2_RET();
+
+   if ((output != Ecore_X_Randr_None) && (_randr_version >= RANDR_1_3))
+     {
+        xcb_randr_get_screen_resources_current_reply_t *reply;
+
+        reply = _ecore_xcb_randr_13_get_resources(root);
+        timestamp = reply->config_timestamp;
+        free(reply);
+     }
+   else if ((output != Ecore_X_Randr_None) && (_randr_version == RANDR_1_2))
+     {
+        xcb_randr_get_screen_resources_reply_t *reply;
+
+        reply = _ecore_xcb_randr_12_get_resources(root);
+        timestamp = reply->config_timestamp;
+        free(reply);
+     }
+
+   ocookie =
+     xcb_randr_get_output_info_unchecked(_ecore_xcb_conn, output, timestamp);
+   oreply = xcb_randr_get_output_info_reply(_ecore_xcb_conn, ocookie, NULL);
+   if (oreply)
+     {
+        if (w_mm) *w_mm = oreply->mm_width;
+        if (h_mm) *h_mm = oreply->mm_height;
+        free(oreply);
+     }
+#endif
 }
 
 /**
