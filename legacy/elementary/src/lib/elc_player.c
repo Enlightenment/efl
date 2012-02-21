@@ -101,7 +101,7 @@ _event_hook(Evas_Object *obj, Evas_Object *src __UNUSED__, Evas_Callback_Type ty
      }
    if (!strcmp(ev->keyname, "space"))
      {
-        if (elm_video_is_playing(wd->video))
+        if (elm_video_is_playing_get(wd->video))
           elm_video_pause(wd->video);
         else
           elm_video_play(wd->video);
@@ -191,7 +191,7 @@ _update_slider(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSE
    Eina_Bool seekable;
 
    if (!wd) return ;
-   seekable = elm_video_is_seekable(wd->video);
+   seekable = elm_video_is_seekable_get(wd->video);
    length = elm_video_play_length_get(wd->video);
    pos = elm_video_play_position_get(wd->video);
 
@@ -489,7 +489,7 @@ _content_set_hook(Evas_Object *obj, const char *part, Evas_Object *content)
    evas_object_event_callback_add(wd->video, EVAS_CALLBACK_DEL,
                                   _track_video, wd);
 
-   seekable = elm_video_is_seekable(wd->video);
+   seekable = elm_video_is_seekable_get(wd->video);
    length = elm_video_play_length_get(wd->video);
    pos = elm_video_play_position_get(wd->video);
 
@@ -497,7 +497,7 @@ _content_set_hook(Evas_Object *obj, const char *part, Evas_Object *content)
    elm_slider_min_max_set(wd->slider, 0, length);
    elm_slider_value_set(wd->slider, pos);
 
-   if (elm_video_is_playing(wd->video)) edje_object_signal_emit(wd->layout, "elm,player,play", "elm");
+   if (elm_video_is_playing_get(wd->video)) edje_object_signal_emit(wd->layout, "elm,player,play", "elm");
    else edje_object_signal_emit(wd->layout, "elm,player,pause", "elm");
 
    evas_object_smart_callback_add(wd->emotion, "frame_decode",

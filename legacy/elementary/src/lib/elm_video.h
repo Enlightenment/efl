@@ -139,8 +139,7 @@ EAPI void                 elm_video_stop(Evas_Object *video);
  *
  * @ingroup Video
  */
-/* XXX: elm_video_is_playing_get() */
-EAPI Eina_Bool            elm_video_is_playing(const Evas_Object *video);
+EAPI Eina_Bool            elm_video_is_playing_get(const Evas_Object *video);
 
 /**
  * @brief Is it possible to seek inside the video.
@@ -150,8 +149,7 @@ EAPI Eina_Bool            elm_video_is_playing(const Evas_Object *video);
  *
  * @ingroup Video
  */
-/* XXX: elm_video_is_seekable_get() */
-EAPI Eina_Bool            elm_video_is_seekable(const Evas_Object *video);
+EAPI Eina_Bool            elm_video_is_seekable_get(const Evas_Object *video);
 
 /**
  * @brief Is the audio muted.

@@ -79,7 +79,7 @@ _event_hook(Evas_Object *obj, Evas_Object *src __UNUSED__, Evas_Callback_Type ty
      }
    if (!strcmp(ev->keyname, "space"))
      {
-        if (elm_video_is_playing(obj))
+        if (elm_video_is_playing_get(obj))
           elm_video_pause(obj);
         else
           elm_video_play(obj);
@@ -424,7 +424,7 @@ elm_video_stop(Evas_Object *video)
 }
 
 EAPI Eina_Bool
-elm_video_is_playing(const Evas_Object *video)
+elm_video_is_playing_get(const Evas_Object *video)
 {
 #ifdef HAVE_EMOTION
    ELM_CHECK_WIDTYPE(video, widtype) EINA_FALSE;
@@ -438,7 +438,7 @@ elm_video_is_playing(const Evas_Object *video)
 }
 
 EAPI Eina_Bool
-elm_video_is_seekable(const Evas_Object *video)
+elm_video_is_seekable_get(const Evas_Object *video)
 {
 #ifdef HAVE_EMOTION
    ELM_CHECK_WIDTYPE(video, widtype) EINA_FALSE;
