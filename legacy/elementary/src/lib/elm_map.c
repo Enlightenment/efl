@@ -24,28 +24,28 @@ typedef struct _Delayed_Data Delayed_Data;
 typedef struct _Map_Sources_Tab Map_Sources_Tab;
 
 #define ROUND(z) (((z) < 0) ? (int)ceil((z) - 0.005) : (int)floor((z) + 0.005))
-#define EVAS_MAP_POINT 4
-#define DEFAULT_TILE_SIZE 256
-#define MARER_MAX_NUMBER 30
-#define CACHE_ROOT_PATH   "/tmp/elm_map"
-#define CACHE_PATH        CACHE_ROOT_PATH"/%d/%d/%d"
-#define CACHE_FILE_PATH   "%s/%d.png"
+#define EVAS_MAP_POINT      4
+#define DEFAULT_TILE_SIZE   256
+#define MARER_MAX_NUMBER    30
+#define CACHE_ROOT_PATH     "/tmp/elm_map"
+#define CACHE_PATH          CACHE_ROOT_PATH"/%d/%d/%d"
+#define CACHE_FILE_PATH     "%s/%d.png"
 #define DEST_ROUTE_XML_FILE "/tmp/elm_map-route-XXXXXX"
-#define DEST_NAME_XML_FILE "/tmp/elm_map-name-XXXXXX"
+#define DEST_NAME_XML_FILE  "/tmp/elm_map-name-XXXXXX"
 
-#define ROUTE_YOURS_URL "http://www.yournavigation.org/api/dev/route.php"
+#define ROUTE_YOURS_URL     "http://www.yournavigation.org/api/dev/route.php"
 #define ROUTE_TYPE_MOTORCAR "motocar"
-#define ROUTE_TYPE_BICYCLE "bicycle"
-#define ROUTE_TYPE_FOOT "foot"
-#define YOURS_DISTANCE "distance"
-#define YOURS_DESCRIPTION "description"
-#define YOURS_COORDINATES "coordinates"
+#define ROUTE_TYPE_BICYCLE  "bicycle"
+#define ROUTE_TYPE_FOOT     "foot"
+#define YOURS_DISTANCE      "distance"
+#define YOURS_DESCRIPTION   "description"
+#define YOURS_COORDINATES   "coordinates"
 
-#define NAME_NOMINATIM_URL "http://nominatim.openstreetmap.org"
-#define NOMINATIM_RESULT "result"
-#define NOMINATIM_PLACE "place"
-#define NOMINATIM_ATTR_LON "lon"
-#define NOMINATIM_ATTR_LAT "lat"
+#define NAME_NOMINATIM_URL  "http://nominatim.openstreetmap.org"
+#define NOMINATIM_RESULT    "result"
+#define NOMINATIM_PLACE     "place"
+#define NOMINATIM_ATTR_LON  "lon"
+#define NOMINATIM_ATTR_LAT  "lat"
 
 #define MAX_CONCURRENT_DOWNLOAD 10
 
@@ -101,12 +101,12 @@ struct _Map_Sources_Tab
    const char *name;
    int zoom_min;
    int zoom_max;
-   ElmMapModuleUrlFunc url_cb;
+   Elm_Map_Module_Url_Func url_cb;
    Elm_Map_Route_Sources route_source;
-   ElmMapModuleRouteUrlFunc route_url_cb;
-   ElmMapModuleNameUrlFunc name_url_cb;
-   ElmMapModuleGeoIntoCoordFunc geo_into_coord;
-   ElmMapModuleCoordIntoGeoFunc coord_into_geo;
+   Elm_Map_Module_Route_Url_Func route_url_cb;
+   Elm_Map_Module_Name_Url_Func name_url_cb;
+   Elm_Map_Module_Geo_Into_Coord_Func geo_into_coord;
+   Elm_Map_Module_Coord_Into_Geo_Func coord_into_geo;
 };
 
 struct _Url_Data
@@ -122,9 +122,9 @@ struct _Elm_Map_Marker_Class
    const char *style;
    struct _Elm_Map_Marker_Class_Func
      {
-        ElmMapMarkerGetFunc get;
-        ElmMapMarkerDelFunc del; //if NULL the object will be destroyed with evas_object_del()
-        ElmMapMarkerIconGetFunc icon_get;
+        Elm_Map_Marker_Get_Func get;
+        Elm_Map_Marker_Del_Func del; //if NULL the object will be destroyed with evas_object_del()
+        Elm_Map_Marker_Icon_Get_Func icon_get;
      } func;
 };
 
@@ -139,7 +139,7 @@ struct _Elm_Map_Group_Class
    void *data;
    struct
      {
-        ElmMapGroupIconGetFunc icon_get;
+        Elm_Map_Group_Icon_Get_Func icon_get;
      } func;
 
    Eina_Bool hide : 1;
@@ -448,15 +448,15 @@ module_list_cb(Eina_Module *m, void *data)
    Widget_Data *wd = data;
 
    Map_Sources_Tab *s;
-   ElmMapModuleSourceFunc source;
-   ElmMapModuleZoomMinFunc zoom_min;
-   ElmMapModuleZoomMaxFunc zoom_max;
-   ElmMapModuleUrlFunc url;
-   ElmMapModuleRouteSourceFunc route_source;
-   ElmMapModuleRouteUrlFunc route_url;
-   ElmMapModuleNameUrlFunc name_url;
-   ElmMapModuleGeoIntoCoordFunc geo_into_coord;
-   ElmMapModuleCoordIntoGeoFunc coord_into_geo;
+   Elm_Map_Module_Source_Func source;
+   Elm_Map_Module_Zoom_Min_Func zoom_min;
+   Elm_Map_Module_Zoom_Max_Func zoom_max;
+   Elm_Map_Module_Url_Func url;
+   Elm_Map_Module_Route_Source_Func route_source;
+   Elm_Map_Module_Route_Url_Func route_url;
+   Elm_Map_Module_Name_Url_Func name_url;
+   Elm_Map_Module_Geo_Into_Coord_Func geo_into_coord;
+   Elm_Map_Module_Coord_Into_Geo_Func coord_into_geo;
    const char *file;
 
    file = eina_module_file_get(m);
@@ -3580,7 +3580,7 @@ elm_map_group_class_style_set(Elm_Map_Group_Class *clas, const char *style)
 }
 
 EAPI void
-elm_map_group_class_icon_cb_set(Elm_Map_Group_Class *clas, ElmMapGroupIconGetFunc icon_get)
+elm_map_group_class_icon_cb_set(Elm_Map_Group_Class *clas, Elm_Map_Group_Icon_Get_Func icon_get)
 {
 #ifdef HAVE_ELEMENTARY_ECORE_CON
    EINA_SAFETY_ON_NULL_RETURN(clas);
@@ -3677,7 +3677,7 @@ elm_map_marker_class_style_set(Elm_Map_Marker_Class *clas, const char *style)
 }
 
 EAPI void
-elm_map_marker_class_icon_cb_set(Elm_Map_Marker_Class *clas, ElmMapMarkerIconGetFunc icon_get)
+elm_map_marker_class_icon_cb_set(Elm_Map_Marker_Class *clas, Elm_Map_Marker_Icon_Get_Func icon_get)
 {
 #ifdef HAVE_ELEMENTARY_ECORE_CON
    EINA_SAFETY_ON_NULL_RETURN(clas);
@@ -3689,7 +3689,7 @@ elm_map_marker_class_icon_cb_set(Elm_Map_Marker_Class *clas, ElmMapMarkerIconGet
 }
 
 EAPI void
-elm_map_marker_class_get_cb_set(Elm_Map_Marker_Class *clas, ElmMapMarkerGetFunc get)
+elm_map_marker_class_get_cb_set(Elm_Map_Marker_Class *clas, Elm_Map_Marker_Get_Func get)
 {
 #ifdef HAVE_ELEMENTARY_ECORE_CON
    EINA_SAFETY_ON_NULL_RETURN(clas);
@@ -3701,7 +3701,7 @@ elm_map_marker_class_get_cb_set(Elm_Map_Marker_Class *clas, ElmMapMarkerGetFunc 
 }
 
 EAPI void
-elm_map_marker_class_del_cb_set(Elm_Map_Marker_Class *clas, ElmMapMarkerDelFunc del)
+elm_map_marker_class_del_cb_set(Elm_Map_Marker_Class *clas, Elm_Map_Marker_Del_Func del)
 {
 #ifdef HAVE_ELEMENTARY_ECORE_CON
    EINA_SAFETY_ON_NULL_RETURN(clas);
