@@ -53,7 +53,6 @@ elm_map.c \
 elm_multibuttonentry.c \
 elm_naviframe.c \
 elm_notify.c \
-elm_pager.c \
 elm_panes.c \
 elm_photocam.c \
 elm_progressbar.c \
