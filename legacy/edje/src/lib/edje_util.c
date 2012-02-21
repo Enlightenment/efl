@@ -2150,7 +2150,7 @@ edje_object_text_insert_filter_callback_del_full(Evas_Object *obj, const char *p
 }
 
 EAPI void
-edje_object_markup_filter_callback_add(Evas_Object *obj, const char *part, Edje_Markup_Filter_Cb func, void *data)
+edje_object_text_markup_filter_callback_add(Evas_Object *obj, const char *part, Edje_Markup_Filter_Cb func, void *data)
 {
    Edje *ed;
    Edje_Markup_Filter_Callback *cb;
@@ -2166,7 +2166,7 @@ edje_object_markup_filter_callback_add(Evas_Object *obj, const char *part, Edje_
 }
 
 EAPI void *
-edje_object_markup_filter_callback_del(Evas_Object *obj, const char *part, Edje_Markup_Filter_Cb func)
+edje_object_text_markup_filter_callback_del(Evas_Object *obj, const char *part, Edje_Markup_Filter_Cb func)
 {
    Edje *ed;
    Edje_Markup_Filter_Callback *cb;
@@ -2190,7 +2190,7 @@ edje_object_markup_filter_callback_del(Evas_Object *obj, const char *part, Edje_
 }
 
 EAPI void *
-edje_object_markup_filter_callback_del_full(Evas_Object *obj, const char *part, Edje_Markup_Filter_Cb func, void *data)
+edje_object_text_markup_filter_callback_del_full(Evas_Object *obj, const char *part, Edje_Markup_Filter_Cb func, void *data)
 {
    Edje *ed;
    Edje_Markup_Filter_Callback *cb;
