@@ -5,6 +5,7 @@
 #include <sys/stat.h>
 #include <unistd.h>
 #include <libgen.h>
+#include <errno.h>
 
 #include <Ecore_File.h>
 
