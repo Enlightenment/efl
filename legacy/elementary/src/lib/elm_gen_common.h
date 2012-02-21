@@ -98,7 +98,7 @@ struct _Widget_Data
    int                            item_width, item_height;
    int                            group_item_width, group_item_height;
    int                            minw, minh;
-   long                           count;
+   unsigned int                   item_count;
    Evas_Coord                     pan_x, pan_y;
    Eina_Bool                      reorder_mode : 1; /* a flag for reorder mode enable/disable */
    Eina_Bool                      on_hold : 1;

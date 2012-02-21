@@ -3372,6 +3372,7 @@ _item_new(Widget_Data                  *wd,
         if (!it2->parent->group) depth += 1;
      }
    it->item->expanded_depth = depth;
+   wd->item_count++;
    return it;
 }
 
@@ -3816,6 +3817,15 @@ _item_move_before(Elm_Gen_Item *it, Elm_Gen_Item *before)
    evas_object_smart_callback_call(WIDGET(it), SIG_MOVED, it);
 }
 
+EAPI unsigned int
+elm_genlist_item_count(const Evas_Object *obj)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype) 0;
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return 0;
+   return wd->item_count;
+}
+
 EAPI Elm_Object_Item *
 elm_genlist_item_append(Evas_Object                  *obj,
                         const Elm_Genlist_Item_Class *itc,
@@ -4133,7 +4143,6 @@ _elm_genlist_clear(Evas_Object *obj, Eina_Bool standby)
    wd->pan_y = 0;
    wd->minw = 0;
    wd->minh = 0;
-   wd->count = 0;
    if (wd->pan_smart)
      {
         evas_object_size_hint_min_set(wd->pan_smart, wd->minw, wd->minh);
@@ -5554,4 +5563,5 @@ _elm_genlist_item_del_serious(Elm_Gen_Item *it)
    it->item = NULL;
    if (it->wd->last_selected_item == (Elm_Object_Item *) it)
      it->wd->last_selected_item = NULL;
+   it->wd->item_count--;
 }

@@ -1073,18 +1073,18 @@ static Eina_Bool
 _reorder_item_moving_effect_timer_cb(void *data)
 {
    Elm_Gen_Item *it = data;
-   double time, t;
+   double tt, t;
    Evas_Coord dx, dy;
 
-   time = REORDER_EFFECT_TIME;
+   tt = REORDER_EFFECT_TIME;
    t = ((0.0 > (t = ecore_loop_time_get()-it->item->moving_effect_start_time)) ? 0.0 : t);
    dx = ((it->item->tx - it->item->ox) / 10) * _elm_config->scale;
    dy = ((it->item->ty - it->item->oy) / 10) * _elm_config->scale;
 
-   if (t <= time)
+   if (t <= tt)
      {
-        it->item->rx += (1 * sin((t / time) * (M_PI / 2)) * dx);
-        it->item->ry += (1 * sin((t / time) * (M_PI / 2)) * dy);
+        it->item->rx += (1 * sin((t / tt) * (M_PI / 2)) * dx);
+        it->item->ry += (1 * sin((t / tt) * (M_PI / 2)) * dy);
      }
    else
      {
@@ -1186,7 +1186,7 @@ _item_place(Elm_Gen_Item *it,
    alignh = 0;
    alignw = 0;
 
-   items_count = it->wd->count - eina_list_count(it->wd->group_items) + it->wd->items_lost;
+   items_count = it->wd->item_count - eina_list_count(it->wd->group_items) + it->wd->items_lost;
    if (it->wd->horizontal)
      {
         int columns, items_visible = 0, items_row;
@@ -1204,10 +1204,10 @@ _item_place(Elm_Gen_Item *it,
         alignw = (vw - tcw) * it->wd->align_x;
 
         items_row = items_visible;
-        if (items_row > it->wd->count)
-          items_row = it->wd->count;
+        if ((unsigned int)items_row > it->wd->item_count)
+          items_row = it->wd->item_count;
          if (it->wd->filled
-             && (unsigned int)it->wd->nmax > (unsigned int)it->wd->count)
+             && (unsigned int)it->wd->nmax > (unsigned int)it->wd->item_count)
            tch = it->wd->nmax * it->wd->item_height;
          else
            tch = items_row * it->wd->item_height;
@@ -1215,7 +1215,7 @@ _item_place(Elm_Gen_Item *it,
      }
    else
      {
-        int rows, items_visible = 0, items_col;
+        unsigned int rows, items_visible = 0, items_col;
 
         if (it->wd->item_width > 0)
           items_visible = vw / it->wd->item_width;
@@ -1230,10 +1230,10 @@ _item_place(Elm_Gen_Item *it,
         alignh = (vh - tch) * it->wd->align_y;
 
         items_col = items_visible;
-        if (items_col > it->wd->count)
-          items_col = it->wd->count;
+        if (items_col > it->wd->item_count)
+          items_col = it->wd->item_count;
          if (it->wd->filled
-             && (unsigned int)it->wd->nmax > (unsigned int)it->wd->count)
+             && (unsigned int)it->wd->nmax > (unsigned int)it->wd->item_count)
            tcw = it->wd->nmax * it->wd->item_width;
          else
            tcw = items_col * it->wd->item_width;
@@ -1445,7 +1445,7 @@ _item_del(Elm_Gen_Item *it)
    evas_event_freeze(evas_object_evas_get(obj));
    it->wd->selected = eina_list_remove(it->wd->selected, it);
    if (it->realized) _elm_genlist_item_unrealize(it, EINA_FALSE);
-   it->wd->count--;
+   it->wd->item_count--;
    _elm_genlist_item_del_serious(it);
    evas_event_thaw(evas_object_evas_get(obj));
    evas_event_thaw_eval(evas_object_evas_get(obj));
@@ -1507,7 +1507,7 @@ _calc_job(void *data)
                   count++;
                }
           }
-        count = wd->count + wd->items_lost - count_group;
+        count = wd->item_count + wd->items_lost - count_group;
         if (wd->horizontal)
           {
              minw = (ceil(count / (float)nmax) * wd->item_width) + (count_group * wd->group_item_width);
@@ -1897,7 +1897,7 @@ _item_new(Widget_Data                  *wd,
    elm_widget_item_disable_hook_set(it, _item_disable_hook);
    elm_widget_item_del_pre_hook_set(it, _item_del_pre_hook);
    it->item = ELM_NEW(Elm_Gen_Item_Type);
-   wd->count++;
+   wd->item_count++;
    it->group = it->itc->item_style && (!strcmp(it->itc->item_style, "group_index"));
    ELM_GEN_ITEM_SETUP(it);
 

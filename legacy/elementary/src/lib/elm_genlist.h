@@ -1915,5 +1915,16 @@ EAPI void elm_genlist_item_class_ref(Elm_Genlist_Item_Class *itc);
 EAPI void elm_genlist_item_class_unref(Elm_Genlist_Item_Class *itc);
 
 /**
+ * Return how many items are currently in a list
+ *
+ * @param obj The list
+ * @return The total number of list items in the list
+ *
+ * This behavior is O(1) and includes items which may or may not be realized.
+ *
+ * @ingroup Genlist
+ */
+EAPI unsigned int elm_genlist_item_count(const Evas_Object *obj);
+/**
  * @}
  */
