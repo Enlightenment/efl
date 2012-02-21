@@ -359,37 +359,37 @@ elm_panes_add(Evas_Object *parent)
    return obj;
 }
 
-EAPI void
+EINA_DEPRECATED EAPI void
 elm_panes_content_left_set(Evas_Object *obj, Evas_Object *content)
 {
    _content_set_hook(obj, "left", content);
 }
 
-EAPI void
+EINA_DEPRECATED EAPI void
 elm_panes_content_right_set(Evas_Object *obj, Evas_Object *content)
 {
    _content_set_hook(obj, "right", content);
 }
 
-EAPI Evas_Object *
+EINA_DEPRECATED EAPI Evas_Object *
 elm_panes_content_left_get(const Evas_Object *obj)
 {
    return _content_get_hook(obj, "left");
 }
 
-EAPI Evas_Object *
+EINA_DEPRECATED EAPI Evas_Object *
 elm_panes_content_right_get(const Evas_Object *obj)
 {
    return _content_get_hook(obj, "right");
 }
 
-EAPI Evas_Object *
+EINA_DEPRECATED EAPI Evas_Object *
 elm_panes_content_left_unset(Evas_Object *obj)
 {
    return _content_unset_hook(obj, "left");
 }
 
-EAPI Evas_Object *
+EINA_DEPRECATED EAPI Evas_Object *
 elm_panes_content_right_unset(Evas_Object *obj)
 {
    return _content_unset_hook(obj, "right");
