@@ -1729,6 +1729,21 @@ EINA_DEPRECATED EAPI void elm_object_focus(Evas_Object *obj);
 EINA_DEPRECATED EAPI void elm_object_unfocus(Evas_Object *obj);
 
 /**
+ * Give focus to near object in one direction.
+ *
+ * Give focus to near object in direction of one object.
+ * If none focusable object in given direction, the focus will not change.
+ *
+ * @param obj The reference object
+ * @param x Horizontal component of direction to focus
+ * @param y Vertical component of direction to focus
+ *
+ * @deprecated Support it later.
+ * @ingroup Focus
+ */
+EINA_DEPRECATED EAPI void                 elm_object_focus_direction_go(Evas_Object *obj, int x, int y);
+
+/**
  * @brief Set the frame label
  *
  * @param obj The frame object

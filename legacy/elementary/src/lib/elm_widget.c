@@ -1148,7 +1148,11 @@ elm_widget_can_focus_set(Evas_Object *obj,
                          Eina_Bool    can_focus)
 {
    API_ENTRY return;
-   sd->can_focus = can_focus;
+
+   can_focus = !!can_focus;
+
+   if (sd->can_focus == can_focus) return;
+
    if (can_focus)
      {
         evas_object_event_callback_add(obj, EVAS_CALLBACK_KEY_DOWN,
@@ -1207,8 +1211,9 @@ elm_widget_tree_unfocusable_set(Evas_Object *obj,
 {
    API_ENTRY return;
 
+   tree_unfocusable = !!tree_unfocusable;
    if (sd->tree_unfocusable == tree_unfocusable) return;
-   sd->tree_unfocusable = !!tree_unfocusable;
+   sd->tree_unfocusable = tree_unfocusable;
    elm_widget_focus_tree_unfocusable_handle(obj);
 }
 
@@ -1499,7 +1504,7 @@ EAPI const Eina_List *
 elm_widget_focus_custom_chain_get(const Evas_Object *obj)
 {
    API_ENTRY return NULL;
-   return (const Eina_List *)sd->focus_chain;
+   return (const Eina_List *) sd->focus_chain;
 }
 
 /**
@@ -1547,20 +1552,16 @@ elm_widget_focus_custom_chain_append(Evas_Object *obj,
 {
    API_ENTRY return;
    EINA_SAFETY_ON_NULL_RETURN(child);
-   if (!sd->focus_next_func)
-     return;
+   if (!sd->focus_next_func) return;
 
    evas_object_event_callback_del_full(child, EVAS_CALLBACK_DEL,
                                        _elm_object_focus_chain_del_cb, sd);
 
    if (!relative_child)
-     {
-        sd->focus_chain = eina_list_append(sd->focus_chain, child);
-        return;
-     }
-
-   sd->focus_chain = eina_list_append_relative(sd->focus_chain, child, relative_child);
-   return;
+     sd->focus_chain = eina_list_append(sd->focus_chain, child);
+   else
+     sd->focus_chain = eina_list_append_relative(sd->focus_chain,
+                                                 child, relative_child);
 }
 
 /**
@@ -1585,20 +1586,17 @@ elm_widget_focus_custom_chain_prepend(Evas_Object *obj,
 {
    API_ENTRY return;
    EINA_SAFETY_ON_NULL_RETURN(child);
-   if (!sd->focus_next_func)
-     return;
+
+   if (!sd->focus_next_func) return;
 
    evas_object_event_callback_del_full(child, EVAS_CALLBACK_DEL,
                                        _elm_object_focus_chain_del_cb, sd);
 
    if (!relative_child)
-     {
-        sd->focus_chain = eina_list_prepend(sd->focus_chain, child);
-        return;
-     }
-
-   sd->focus_chain = eina_list_prepend_relative(sd->focus_chain, child, relative_child);
-   return;
+     sd->focus_chain = eina_list_prepend(sd->focus_chain, child);
+   else
+     sd->focus_chain = eina_list_prepend_relative(sd->focus_chain,
+                                                  child, relative_child);
 }
 
 /**
@@ -1641,6 +1639,9 @@ elm_widget_focus_cycle(Evas_Object        *obj,
  *
  * @ingroup Widget
  */
+//XXX: If x, y indicates the elements of the directional vector,
+//It would be better if these values are the normalized value(float x, float y)
+//or degree.
 EAPI void
 elm_widget_focus_direction_go(Evas_Object *obj __UNUSED__,
                               int          x __UNUSED__,
@@ -2763,6 +2764,8 @@ EAPI void
 elm_widget_focus_tree_unfocusable_handle(Evas_Object *obj)
 {
    API_ENTRY return;
+
+   //FIXME: Need to check whether the object is unfocusable or not.
 
    if (!elm_widget_parent_get(obj))
      elm_widget_focused_object_clear(obj);

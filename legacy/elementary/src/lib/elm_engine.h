@@ -43,9 +43,8 @@ EAPI const char *elm_engine_get(void);
  *
  * @param engine The rendering engine's name
  *
- * This sets global rendering engine that is applied to all Elementary
- * applications. Note that it will take effect only to Elementary windows
- * created after this is called.
+ * Note that it will take effect only to Elementary windows created after
+ * this is called.
  *
  * @see elm_win_add()
  */

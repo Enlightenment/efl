@@ -36,6 +36,8 @@
  * Get the enable status of the focus highlight
  *
  * This gets whether the highlight on focused objects is enabled or not
+ *
+ * @see elm_focus_highlight_enabled_set()
  * @ingroup Focus
  */
 EAPI Eina_Bool            elm_focus_highlight_enabled_get(void);
@@ -46,6 +48,12 @@ EAPI Eina_Bool            elm_focus_highlight_enabled_get(void);
  * @param enable Enable highlight if EINA_TRUE, disable otherwise
  * 
  * Set whether to show or not the highlight on focused objects
+ *
+ * Note that it will take effect only to Elementary windows created after
+ * this is called.
+ *
+ * @see elm_win_add()
+ *
  * @ingroup Focus
  */
 EAPI void                 elm_focus_highlight_enabled_set(Eina_Bool enable);
@@ -70,6 +78,11 @@ EAPI Eina_Bool            elm_focus_highlight_animate_get(void);
  * Set whether the focus highlight, if enabled, will animate its switch from
  * one object to the next
  * 
+ * Note that it will take effect only to Elementary windows created after
+ * this is called.
+ *
+ * @see elm_win_add()
+ *
  * @ingroup Focus
  */
 EAPI void                 elm_focus_highlight_animate_set(Eina_Bool animate);
@@ -107,7 +120,7 @@ EAPI Eina_Bool            elm_object_focus_get(const Evas_Object *obj);
 EAPI void                 elm_object_focus_set(Evas_Object *obj, Eina_Bool focus);
 
 /**
- * Set the ability for an Element object to be focused
+ * Set the ability for an Elmentary object to be focused
  *
  * @param obj The Elementary object to operate on
  * @param enable @c EINA_TRUE if the object can be focused, @c
@@ -216,21 +229,8 @@ EAPI void                 elm_object_focus_custom_chain_prepend(Evas_Object *obj
  *
  * @ingroup Focus
  */
+//XXX: How about elm_object_focus_move()? focus_next() ?
 EAPI void                 elm_object_focus_cycle(Evas_Object *obj, Elm_Focus_Direction dir);
-
-/**
- * Give focus to near object in one direction.
- *
- * Give focus to near object in direction of one object.
- * If none focusable object in given direction, the focus will not change.
- *
- * @param obj The reference object
- * @param x Horizontal component of direction to focus
- * @param y Vertical component of direction to focus
- *
- * @ingroup Focus
- */
-EAPI void                 elm_object_focus_direction_go(Evas_Object *obj, int x, int y);
 
 /**
  * Make the elementary object and its children to be unfocusable
@@ -251,7 +251,9 @@ EAPI void                 elm_object_focus_direction_go(Evas_Object *obj, int x,
  * @see elm_object_tree_unfocusable_get()
  *
  * @ingroup Focus
+ *
  */
+ //XXX: How about elm_object_tree_focus_allow_set()?
 EAPI void                 elm_object_tree_unfocusable_set(Evas_Object *obj, Eina_Bool tree_unfocusable);
 
 /**
@@ -265,4 +267,5 @@ EAPI void                 elm_object_tree_unfocusable_set(Evas_Object *obj, Eina
  *
  * @ingroup Focus
  */
+//XXX: How about elm_object_tree_focus_allow_get()?
 EAPI Eina_Bool            elm_object_tree_unfocusable_get(const Evas_Object *obj);

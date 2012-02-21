@@ -1429,16 +1429,13 @@ elm_object_focus_set(Evas_Object *obj,
                      Eina_Bool    focus)
 {
    EINA_SAFETY_ON_NULL_RETURN(obj);
+
+   if (focus == elm_widget_focus_get(obj)) return;
+
    if (focus)
-     {
-        if (elm_widget_focus_get(obj)) return;
-        elm_widget_focus_cycle(obj, ELM_FOCUS_NEXT);
-     }
+     elm_widget_focus_cycle(obj, ELM_FOCUS_NEXT);
    else
-     {
-        if (!elm_widget_can_focus_get(obj)) return;
-        elm_widget_focused_object_clear(obj);
-     }
+     elm_widget_focused_object_clear(obj);
 }
 
 EAPI void
@@ -1461,6 +1458,8 @@ elm_object_focus_allow_set(Evas_Object *obj,
 {
    EINA_SAFETY_ON_NULL_RETURN(obj);
    elm_widget_can_focus_set(obj, enable);
+/*FIXME: According to the elm_object_focus_allow_get(), child_can_focus field
+of the parent should be updated. Otherwise, the checking of it's child focus allow states should not be in elm_object_focus_allow_get() */
 }
 
 EAPI Eina_Bool
@@ -1498,7 +1497,6 @@ elm_object_focus_custom_chain_append(Evas_Object *obj,
                                      Evas_Object *relative_child)
 {
    EINA_SAFETY_ON_NULL_RETURN(obj);
-   EINA_SAFETY_ON_NULL_RETURN(child);
    elm_widget_focus_custom_chain_append(obj, child, relative_child);
 }
 
@@ -1508,7 +1506,6 @@ elm_object_focus_custom_chain_prepend(Evas_Object *obj,
                                       Evas_Object *relative_child)
 {
    EINA_SAFETY_ON_NULL_RETURN(obj);
-   EINA_SAFETY_ON_NULL_RETURN(child);
    elm_widget_focus_custom_chain_prepend(obj, child, relative_child);
 }
 

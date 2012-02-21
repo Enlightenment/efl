@@ -198,7 +198,7 @@ EAPI extern Elm_Version *elm_version;
 #include <elm_finger.h> //Done
 #include <elm_flip.h> //Done. There are many TODOs in flip.c
 #include <elm_flipselector.h> //Done + XXX in header. There are many TODOs in flipselector.c
-#include <elm_focus.h>
+#include <elm_focus.h>  //Done + XXX in header
 #include <elm_fonts.h> //Done + XXX in header
 #include <elm_frame.h> //Done + XXX in header
 #include <elm_gengrid.h>
