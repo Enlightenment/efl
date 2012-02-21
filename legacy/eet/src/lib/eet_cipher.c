@@ -857,9 +857,11 @@ eet_identity_check(const void   *data_base,
 
    return cert_der;
 # ifdef HAVE_GNUTLS
+#  if EET_USE_NEW_GNUTLS_API
  on_error:
    gcry_md_close(md);
    return NULL;
+#  endif
 # endif
 #else /* ifdef HAVE_SIGNATURE */
    data_base = NULL;
