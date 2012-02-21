@@ -881,7 +881,7 @@ _font_overlay_change(void *data       __UNUSED__,
      {
         if (tc_data->font)
           {
-             const char *name;
+             char *name;
 
              name = elm_font_fontconfig_name_get(tc_data->font,
                                                  tc_data->style);
@@ -1483,7 +1483,7 @@ static void
 _font_preview_update(Evas_Object *win)
 {
    Evas_Font_Size sz;
-   const char *name;
+   char *name;
 
    if (!fdata.cur_font)
      return;
@@ -1733,7 +1733,8 @@ _font_classes_list_load(Evas_Object *li)
 static void
 _fonts_data_fill(Evas *evas)
 {
-   const Eina_List *fo_list, *text_classes, *l;
+   const Eina_List *fo_list, *l;
+   Eina_List *text_classes;
    Elm_Text_Class_Data *tc_data;
    Elm_Font_Size_Data *sd;
    Elm_Font_Overlay *efo;

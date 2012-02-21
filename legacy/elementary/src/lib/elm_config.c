@@ -537,6 +537,7 @@ _elm_config_text_classes_get(void)
      {
         Elm_Text_Class *tc;
         tc = malloc(sizeof(*tc));
+        if (!tc) continue;
 
         *tc = _elm_text_classes[i];
 

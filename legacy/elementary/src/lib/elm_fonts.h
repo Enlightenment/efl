@@ -36,7 +36,7 @@ typedef struct _Elm_Font_Properties
  *
  * Release the list with elm_text_classes_list_free().
  */
-EAPI const Eina_List *elm_text_classes_list_get(void);
+EAPI Eina_List *elm_text_classes_list_get(void);
 
 /**
  * Free Elementary's list of supported text classes.
@@ -45,7 +45,7 @@ EAPI const Eina_List *elm_text_classes_list_get(void);
  *
  * @see elm_text_classes_list_get().
  */
-EAPI void             elm_text_classes_list_free(const Eina_List *list);
+EAPI void elm_text_classes_list_free(Eina_List *list);
 
 /**
  * Get Elementary's list of font overlays, set with
@@ -140,7 +140,7 @@ EAPI void             elm_font_properties_free(Elm_Font_Properties *efp);
  * elm_font_properties_get(), for one style only (single font
  * instance, not family).
  */
-EAPI const char      *elm_font_fontconfig_name_get(const char *name, const char *style);
+EAPI char      *elm_font_fontconfig_name_get(const char *name, const char *style);
 
 /**
  * Free the font string return by elm_font_fontconfig_name_get().
@@ -149,7 +149,7 @@ EAPI const char      *elm_font_fontconfig_name_get(const char *name, const char 
  *
  * @ingroup Fonts
  */
-EAPI void             elm_font_fontconfig_name_free(const char *name);
+EAPI void             elm_font_fontconfig_name_free(char *name);
 
 /**
  * Create a font hash table of available system fonts.
@@ -168,15 +168,17 @@ EAPI void             elm_font_fontconfig_name_free(const char *name);
  * default font families (Sans, Serif, Monospace), which should be
  * present on most systems.
  */
+//XXX: How about elm_font_system_available_hash_add() ?
 EAPI Eina_Hash       *elm_font_available_hash_add(Eina_List *list);
 
 /**
- * Free the hash return by elm_font_available_hash_add().
+ * Free the hash returned by elm_font_available_hash_add().
  *
  * @param hash the hash to be freed.
  *
  * @ingroup Fonts
  */
+//XXX: How about elm_font_system_available_hash_del() ?
 EAPI void             elm_font_available_hash_del(Eina_Hash *hash);
 
 /**

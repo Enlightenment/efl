@@ -1155,16 +1155,16 @@ elm_engine_set(const char *engine)
    _elm_config_engine_set(engine);
 }
 
-EAPI const Eina_List *
+EAPI Eina_List *
 elm_text_classes_list_get(void)
 {
    return _elm_config_text_classes_get();
 }
 
 EAPI void
-elm_text_classes_list_free(const Eina_List *list)
+elm_text_classes_list_free(Eina_List *list)
 {
-   _elm_config_text_classes_free((Eina_List *)list);
+   _elm_config_text_classes_free(list);
 }
 
 EAPI const Eina_List *
@@ -1178,12 +1178,14 @@ elm_font_overlay_set(const char    *text_class,
                      const char    *font,
                      Evas_Font_Size size)
 {
+   EINA_SAFETY_ON_NULL_RETURN(text_class);
    _elm_config_font_overlay_set(text_class, font, size);
 }
 
 EAPI void
 elm_font_overlay_unset(const char *text_class)
 {
+   EINA_SAFETY_ON_NULL_RETURN(text_class);
    _elm_config_font_overlay_remove(text_class);
 }
 
@@ -1212,20 +1214,20 @@ elm_font_properties_free(Elm_Font_Properties *efp)
    free(efp);
 }
 
-EAPI const char *
+EAPI char *
 elm_font_fontconfig_name_get(const char *name,
                              const char *style)
 {
    char buf[256];
 
    EINA_SAFETY_ON_NULL_RETURN_VAL(name, NULL);
-   if (!style || style[0] == 0) return eina_stringshare_add(name);
+   if (!style || style[0] == 0) return (char *) eina_stringshare_add(name);
    snprintf(buf, 256, "%s" ELM_FONT_TOKEN_STYLE "%s", name, style);
-   return eina_stringshare_add(buf);
+   return (char *) eina_stringshare_add(buf);
 }
 
 EAPI void
-elm_font_fontconfig_name_free(const char *name)
+elm_font_fontconfig_name_free(char *name)
 {
    eina_stringshare_del(name);
 }
@@ -1240,6 +1242,7 @@ elm_font_available_hash_add(Eina_List *list)
    font_hash = NULL;
 
    /* populate with default font families */
+   //FIXME: Need to check whether fonts are being added multiple times.
    font_hash = _elm_font_available_hash_add(font_hash, "Sans:style=Regular");
    font_hash = _elm_font_available_hash_add(font_hash, "Sans:style=Bold");
    font_hash = _elm_font_available_hash_add(font_hash, "Sans:style=Oblique");
@@ -1262,7 +1265,7 @@ elm_font_available_hash_add(Eina_List *list)
                                             "Monospace:style=Bold Oblique");
 
    EINA_LIST_FOREACH(list, l, key)
-     font_hash = _elm_font_available_hash_add(font_hash, key);
+     if (key) _elm_font_available_hash_add(font_hash, key);
 
    return font_hash;
 }

@@ -24,6 +24,7 @@ _elm_font_properties_get(Eina_Hash **font_hash,
 
         len = s1 - font;
         name = calloc(sizeof(char), len + 1);
+        if (!name) return NULL;
         strncpy(name, font, len);
 
         /* get subname (should be english)  */
@@ -32,8 +33,11 @@ _elm_font_properties_get(Eina_Hash **font_hash,
           {
              len = s2 - name;
              name = realloc(name, sizeof(char) * len + 1);
-             memset(name, 0, sizeof(char) * len + 1);
-             strncpy(name, font, len);
+             if (!name)
+               {
+                  memset(name, 0, sizeof(char) * len + 1);
+                  strncpy(name, font, len);
+               }
           }
 
         if (!strncmp(s1, ELM_FONT_TOKEN_STYLE, strlen(ELM_FONT_TOKEN_STYLE)))
@@ -44,12 +48,15 @@ _elm_font_properties_get(Eina_Hash **font_hash,
              if (!efp)
                {
                   efp = calloc(1, sizeof(Elm_Font_Properties));
-                  efp->name = eina_stringshare_add(name);
-                  if (font_hash)
+                  if (efp)
                     {
-                       if (!*font_hash)
-                         *font_hash = eina_hash_string_superfast_new(NULL);
-                       eina_hash_add(*font_hash, name, efp);
+                       efp->name = eina_stringshare_add(name);
+                       if (font_hash)
+                         {
+                            if (!*font_hash)
+                              *font_hash = eina_hash_string_superfast_new(NULL);
+                            eina_hash_add(*font_hash, name, efp);
+                         }
                     }
                }
              s2 = strchr(style, ',');
@@ -60,10 +67,13 @@ _elm_font_properties_get(Eina_Hash **font_hash,
                   len = s2 - style;
                   style_old = style;
                   style = calloc(sizeof(char), len + 1);
-                  strncpy(style, style_old, len);
-                  efp->styles = eina_list_append(efp->styles,
-                                                 eina_stringshare_add(style));
-                  free(style);
+                  if (style)
+                    {
+                       strncpy(style, style_old, len);
+                       efp->styles = eina_list_append(efp->styles,
+                                                   eina_stringshare_add(style));
+                       free(style);
+                    }
                }
              else
                efp->styles = eina_list_append(efp->styles,
@@ -77,19 +87,21 @@ _elm_font_properties_get(Eina_Hash **font_hash,
         if (!efp)
           {
              efp = calloc(1, sizeof(Elm_Font_Properties));
-             efp->name = eina_stringshare_add(font);
-             if (font_hash)
+             if (efp)
                {
-                  if (!*font_hash)
-                    *font_hash = eina_hash_string_superfast_new(NULL);
-                  eina_hash_add(*font_hash, font, efp);
+                  efp->name = eina_stringshare_add(font);
+                  if (font_hash)
+                    {
+                       if (!*font_hash)
+                         *font_hash = eina_hash_string_superfast_new(NULL);
+                       eina_hash_add(*font_hash, font, efp);
+                    }
                }
           }
      }
    return efp;
 }
 
-/* FIXME: do we really need it? */
 Eina_Hash *
 _elm_font_available_hash_add(Eina_Hash  *font_hash,
                              const char *full_name)
@@ -123,7 +135,8 @@ _font_hash_free_cb(const Eina_Hash *hash __UNUSED__, const void *key __UNUSED__,
 void
 _elm_font_available_hash_del(Eina_Hash *hash)
 {
-   if (!hash) return ;
+   if (!hash) return;
 
    eina_hash_foreach(hash, _font_hash_free_cb, NULL);
+   eina_hash_free(hash);
 }
