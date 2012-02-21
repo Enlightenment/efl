@@ -31,6 +31,7 @@
 #include <unistd.h>
 
 #include <Eina.h>
+#include <Eet.h>
 
 #ifdef EAPI
 # undef EAPI
@@ -123,17 +124,21 @@ typedef void (*Eio_Main_Direct_Cb)(void *data, Eio_File *handler, const Eina_Fil
 typedef void (*Eio_Stat_Cb)(void *data, Eio_File *handler, const struct stat *stat);
 typedef void (*Eio_Progress_Cb)(void *data, Eio_File *handler, const Eio_Progress *info);
 
+typedef void (*Eio_Eet_Open_Cb)(void *data, Eio_File *handler, Eet_File *file);
 typedef void (*Eio_Open_Cb)(void *data, Eio_File *handler, Eina_File *file);
-  typedef Eina_Bool (*Eio_Filter_Map_Cb)(void *data, Eio_File *handler, void *map, size_t length);
-  typedef void (*Eio_Map_Cb)(void *data, Eio_File *handler, void *map, size_t length);
+typedef Eina_Bool (*Eio_Filter_Map_Cb)(void *data, Eio_File *handler, void *map, size_t length);
+typedef void (*Eio_Map_Cb)(void *data, Eio_File *handler, void *map, size_t length);
 
-typedef void (*Eio_Done_Data_Cb)(void *data, Eio_File *handler, const char *xattr_data, unsigned int xattr_size);
+typedef void (*Eio_Done_Data_Cb)(void *data, Eio_File *handler, const char *read_data, unsigned int size);
 typedef void (*Eio_Done_String_Cb)(void *data, Eio_File *handler, const char *xattr_string);
 typedef void (*Eio_Done_Double_Cb)(void *data, Eio_File *handler, double xattr_double);
-typedef void (*Eio_Done_Int_Cb)(void *data, Eio_File *handler, int xattr_int);
+typedef void (*Eio_Done_Int_Cb)(void *data, Eio_File *handler, int i);
 
+typedef void (*Eio_Done_ERead_Cb)(void *data, Eio_File *handler, void *decoded);
+typedef void (*Eio_Done_Read_Cb)(void *data, Eio_File *handler, void *read_data, unsigned int size);
 typedef void (*Eio_Done_Cb)(void *data, Eio_File *handler);
 typedef void (*Eio_Error_Cb)(void *data, Eio_File *handler, int error);
+typedef void (*Eio_Eet_Error_Cb)(void *data, Eio_File *handler, Eet_Error err);
 
 struct _Eio_Progress
 {
@@ -769,6 +774,89 @@ EAPI Eio_File *eio_file_map_new(Eina_File *f,
                                 Eio_Map_Cb map_cb,
                                 Eio_Error_Cb error_cb,
                                 const void *data);
+
+/**
+ * @}
+ */
+
+/**
+ * @defgroup Eio_Eet Eio asynchronous API for Eet file.
+ *
+ * @brief This set of functions help use Eet asynchronously
+ *
+ * @{
+ */
+
+EAPI Eio_File *eio_eet_open(const char *filename,
+                            Eet_File_Mode mode,
+			    Eio_Eet_Open_Cb eet_cb,
+			    Eio_Error_Cb error_cb,
+			    const void *data);
+
+EAPI Eio_File *eio_eet_close(Eet_File *ef,
+			     Eio_Done_Cb done_cb,
+			     Eio_Eet_Error_Cb error_cb,
+			     const void *data);
+
+EAPI Eio_File *eio_eet_sync(Eet_File *ef,
+                            Eio_Done_Cb done_cb,
+                            Eio_Eet_Error_Cb error_cb,
+                            const void *data);
+
+EAPI Eio_File *eio_eet_data_write_cipher(Eet_File *ef,
+					 Eet_Data_Descriptor *edd,
+					 const char *name,
+					 const char *cipher_key,
+					 void *write_data,
+					 int compress,
+					 Eio_Done_Int_Cb done_cb,
+					 Eio_Error_Cb error_cb,
+					 const void *user_data);
+
+EAPI Eio_File *eio_eet_data_read_cipher(Eet_File *ef,
+                                        Eet_Data_Descriptor *edd,
+                                        const char *name,
+                                        const char *cipher_key,
+                                        Eio_Done_ERead_Cb done_cb,
+                                        Eio_Error_Cb error_cb,
+                                        const void *data);
+
+EAPI Eio_File *eio_eet_data_image_write_cipher(Eet_File *ef,
+                                               const char *name,
+                                               const char *cipher_key,
+                                               void *write_data,
+                                               unsigned int w,
+                                               unsigned int h,
+                                               int alpha,
+                                               int compress,
+                                               int quality,
+                                               int lossy,
+                                               Eio_Done_Int_Cb done_cb,
+                                               Eio_Error_Cb error_cb,
+                                               const void *user_data);
+
+EAPI Eio_File *eio_eet_read_direct(Eet_File *ef,
+                                   const char *name,
+                                   Eio_Done_Data_Cb done_cb,
+                                   Eio_Error_Cb error_cb,
+                                   const void *data);
+
+EAPI Eio_File *eio_eet_read_cipher(Eet_File *ef,
+                                   const char *name,
+                                   const char *cipher_key,
+                                   Eio_Done_Read_Cb done_cb,
+                                   Eio_Error_Cb error_cb,
+                                   const void *data);
+
+EAPI Eio_File *eio_eet_write_cipher(Eet_File *ef,
+                                    const char *name,
+                                    void *write_data,
+                                    int size,
+                                    int compress,
+                                    const char *cipher_key,
+                                    Eio_Done_Int_Cb done_cb,
+                                    Eio_Error_Cb error_cb,
+                                    const void *user_data);
 
 /**
  * @}

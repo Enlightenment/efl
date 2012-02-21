@@ -51,6 +51,11 @@
 
 #define EIO_PACKED_TIME 0.003
 
+typedef struct _Eio_Eet_Open Eio_Eet_Open;
+typedef struct _Eio_Eet_Simple Eio_Eet_Simple;
+typedef struct _Eio_Eet_Write Eio_Eet_Write;
+typedef struct _Eio_Eet_Read Eio_Eet_Read;
+typedef struct _Eio_Eet_Image_Write Eio_Eet_Image_Write;
 typedef struct _Eio_File_Map Eio_File_Map;
 typedef struct _Eio_File_Map_Rule Eio_File_Map_Rule;
 typedef struct _Eio_File_Ls Eio_File_Ls;
@@ -109,6 +114,81 @@ struct _Eio_File
    struct {
       Eina_Hash *associated;
    } worker, main;
+};
+
+struct _Eio_Eet_Simple
+{
+   Eio_File common;
+
+   Eet_File *ef;
+   Eio_Eet_Error_Cb error_cb;
+   Eet_Error error;
+};
+
+struct _Eio_Eet_Write
+{
+   Eio_File common;
+
+   Eet_File *ef;
+   Eet_Data_Descriptor *edd;
+   const char *name;
+   const char *cipher_key;
+   void *write_data;
+   int compress;
+   int size;
+
+   int result;
+   Eio_Done_Int_Cb done_cb;
+};
+
+struct _Eio_Eet_Read
+{
+   Eio_File common;
+
+   Eet_File *ef;
+   Eet_Data_Descriptor *edd;
+   const char *name;
+   const char *cipher_key;
+
+   int size;
+
+   void *result;
+   union {
+      Eio_Done_ERead_Cb eread;
+      Eio_Done_Data_Cb data;
+      Eio_Done_Read_Cb read;
+   } done_cb;
+};
+
+struct _Eio_Eet_Image_Write
+{
+   Eio_File common;
+
+   Eet_File *ef;
+   const char *name;
+   const char *cipher_key;
+   void *write_data;
+
+   unsigned int w;
+   unsigned int h;
+   int alpha;
+   int compress;
+   int quality;
+   int lossy;
+
+   int result;
+   Eio_Done_Int_Cb done_cb;
+};
+
+struct _Eio_Eet_Open
+{
+   Eio_File common;
+
+   Eio_Eet_Open_Cb eet_cb;
+   const char *filename;
+   Eet_File_Mode mode;
+
+   Eet_File *result;
 };
 
 struct _Eio_File_Map

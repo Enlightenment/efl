@@ -43,7 +43,7 @@ _eio_file_open_job(void *data, Ecore_Thread *thread)
 static void
 _eio_file_open_free(Eio_File_Map *map)
 {
-   if (!map->name) eina_stringshare_del(map->name);
+   if (map->name) eina_stringshare_del(map->name);
    free(map);
 }
 

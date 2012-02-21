@@ -74,7 +74,6 @@ dnl we just have set the version info, then:
 AC_SUBST(version_info)
 
 AC_PROG_CC
-
 # pkg-config
 PKG_PROG_PKG_CONFIG
 
@@ -94,7 +93,7 @@ EFL_CHECK_DOXYGEN([build_doc="yes"], [build_doc="no"])
 
 ### Checks for libraries
 
-requirements_eio="eina >= 1.0.0 ecore >= 1.0.0"
+requirements_eio="eet >= 1.5.0 eina >= 1.0.0 ecore >= 1.0.0"
 
 PKG_CHECK_MODULES([EIO], [${requirements_eio}])
 
