@@ -1470,11 +1470,11 @@ _track_place(Widget_Data *wd)
            if( !(ymin < py && ymax < py) && !(ymin > py+oh && ymax > py+oh))
            {
               //display the route
-              evas_object_move(route, xmin - px + ox, ymin - py + oy);
+              evas_object_move(route, xmin - px, ymin - py);
               evas_object_resize(route, xmax - xmin, ymax - ymin);
 
               evas_object_raise(route);
-              _obj_rotate(wd->obj, route);
+              _obj_rotate(wd, route);
               evas_object_show(route);
 
               continue;
