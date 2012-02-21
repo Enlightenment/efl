@@ -845,7 +845,7 @@ EAPI void *ecore_imf_context_data_get(Ecore_IMF_Context *ctx)
  *             If the function returns EINA_TRUE, then you must free
  *             the result stored in this location with free().
  * @param cursor_pos Location to store the position in characters of
- *                   the insertion cursor within @text.
+ *                   the insertion cursor within @p text.
  * @return EINA_TRUE if surrounding text was provided; otherwise EINA_FALSE.
  * @ingroup Ecore_IMF_Context_Module_Group
  */

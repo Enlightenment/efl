@@ -777,6 +777,7 @@ ecore_con_socks5_remote_exists(const char *ip, int port, const char *username, c
  * @param ip The ip address of the proxy (NOT DOMAIN NAME. IP ADDRESS.)
  * @param port The port to connect to on the proxy, or -1 to match the first proxy with @p ip
  * @param username The username used for the proxy (OPTIONAL)
+ * @param password The password used for the proxy (OPTIONAL)
  * @note This function matches in the same way as ecore_con_socks4_remote_exists().
  * @warning Be aware that deleting a proxy which is being used WILL ruin your life.
  * @since 1.2

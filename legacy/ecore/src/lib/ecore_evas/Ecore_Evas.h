@@ -1764,6 +1764,7 @@ EAPI Ecore_Evas *ecore_evas_extn_socket_new(int w, int h);
 /**
  * @brief Create a socket to provide the service for external ecore evas socket. 
  *
+ * @param ee The Ecore_Evas
  * @param svcname The name of the service to be advertised. ensure that it is unique (when combined with @p svcnum) otherwise creation may fail.
  * @param svcnum A number (any value, 0 beig the common default) to differentiate multiple instances of services with the same name.
  * @param svcsys A boolean that if true, specifies to create a system-wide service all users can connect to, otherwise the service is private to the user ide that created the service.

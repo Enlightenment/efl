@@ -652,6 +652,7 @@ ecore_con_ssl_server_verify_name_get(Ecore_Con_Server *svr)
  * Use this function to add a SSL PEM certificate.
  * Simply specify the cert here to use it in the server object for connecting or listening.
  * If there is an error loading the certificate, an error will automatically be logged.
+ * @param svr The server object
  * @param cert The path to the certificate.
  * @return EINA_FALSE if the file cannot be loaded, otherwise EINA_TRUE.
  */
@@ -683,6 +684,7 @@ ecore_con_ssl_server_cert_add(Ecore_Con_Server *svr,
  * Use this function to add a SSL PEM CA file.
  * Simply specify the file here to use it in the server object for connecting or listening.
  * If there is an error loading the CAs, an error will automatically be logged.
+ * @param svr The server object
  * @param ca_file The path to the CA file.
  * @return EINA_FALSE if the file cannot be loaded, otherwise EINA_TRUE.
  * @note since 1.2, this function can load directores
@@ -747,6 +749,7 @@ ecore_con_ssl_server_privkey_add(Ecore_Con_Server *svr,
  * Use this function to add a SSL PEM CRL file
  * Simply specify the CRL file here to use it in the server object for connecting or listening.
  * If there is an error loading the CRL, an error will automatically be logged.
+ * @param svr The server object
  * @param crl_file The path to the CRL file.
  * @return EINA_FALSE if the file cannot be loaded,
  * otherwise EINA_TRUE.
