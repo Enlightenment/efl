@@ -2374,7 +2374,7 @@ get_finger_gap_length(Evas_Coord x1, Evas_Coord y1, Evas_Coord x2,
 #if defined(DEBUG_GESTURE_LAYER)
              printf("==== HORIZ ====\n");
 #endif
-             *x = (Evas_Coord) (xx / 2);
+             *x = (Evas_Coord) ((x2 > x1) ? (x1 + (xx / 2)) : (x2 + (xx / 2)));
              *y = (Evas_Coord) (y1);
           }
 
@@ -2384,7 +2384,7 @@ get_finger_gap_length(Evas_Coord x1, Evas_Coord y1, Evas_Coord x2,
              printf("==== VERT ====\n");
 #endif
              *x = (Evas_Coord) (x1);
-             *y = (Evas_Coord) (yy / 2);
+             *y = (Evas_Coord) ((y2 > y1) ? (y1 + (yy / 2)) : (y2 + (yy / 2)));
           }
      }
    /* END   - Compute zoom center point */
