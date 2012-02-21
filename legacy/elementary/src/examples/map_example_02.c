@@ -94,6 +94,13 @@ _group_country_content_get(Evas_Object *obj, void *data __UNUSED__)
 }
 
 static void
+_map_downloaded(void *data __UNUSED__, Evas_Object *obj, void *ev __UNUSED__)
+{
+   elm_map_zoom_set(obj, 3);
+   evas_object_smart_callback_del(obj, "downloaded", _map_downloaded);
+}
+
+static void
 _bt_zoom_in(void *data, Evas_Object *obj __UNUSED__, void *ev __UNUSED__)
 {
    Evas_Object *map = data;
@@ -234,6 +241,7 @@ elm_main(int argc __UNUSED__, char **argv __UNUSED__)
    markers = eina_list_append(markers, m);
 
    elm_map_markers_list_show(markers);
+   evas_object_smart_callback_add(map, "downloaded", _map_downloaded, NULL);
 
    evas_object_resize(win, 512, 512);
    evas_object_show(win);

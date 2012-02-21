@@ -153,20 +153,20 @@ typedef struct _Elm_Map_Route        Elm_Map_Route; /**< A route to be shown in 
 typedef struct _Elm_Map_Name         Elm_Map_Name; /**< A handle for specific coordinates. */
 typedef struct _Elm_Map_Track        Elm_Map_Track;
 
-typedef Evas_Object               *(*Elm_Map_Marker_Get_Func)(Evas_Object *obj, Elm_Map_Marker *marker, void *data); /**< Bubble content fetching class function for marker classes. When the user click on a marker, a bubble is displayed with a content. */
-typedef void                       (*Elm_Map_Marker_Del_Func)(Evas_Object *obj, Elm_Map_Marker *marker, void *data, Evas_Object *o); /**< Function to delete bubble content for marker classes. */
-typedef Evas_Object               *(*Elm_Map_Marker_Icon_Get_Func)(Evas_Object *obj, Elm_Map_Marker *marker, void *data); /**< Icon fetching class function for marker classes. */
-typedef Evas_Object               *(*Elm_Map_Group_Icon_Get_Func)(Evas_Object *obj, void *data); /**< Icon fetching class function for markers group classes. */
+typedef Evas_Object               *(*ElmMapMarkerGetFunc)(Evas_Object *obj, Elm_Map_Marker *marker, void *data); /**< Bubble content fetching class function for marker classes. When the user click on a marker, a bubble is displayed with a content. */
+typedef void                       (*ElmMapMarkerDelFunc)(Evas_Object *obj, Elm_Map_Marker *marker, void *data, Evas_Object *o); /**< Function to delete bubble content for marker classes. */
+typedef Evas_Object               *(*ElmMapMarkerIconGetFunc)(Evas_Object *obj, Elm_Map_Marker *marker, void *data); /**< Icon fetching class function for marker classes. */
+typedef Evas_Object               *(*ElmMapGroupIconGetFunc)(Evas_Object *obj, void *data); /**< Icon fetching class function for markers group classes. */
 
-typedef char                      *(*Elm_Map_Module_Source_Func)(void);
-typedef int                        (*Elm_Map_Module_Zoom_Min_Func)(void);
-typedef int                        (*Elm_Map_Module_Zoom_Max_Func)(void);
-typedef char                      *(*Elm_Map_Module_Url_Func)(Evas_Object *obj, int x, int y, int zoom);
-typedef int                        (*Elm_Map_Module_Route_Source_Func)(void);
-typedef char                      *(*Elm_Map_Module_Route_Url_Func)(Evas_Object *obj, char *type_name, int method, double flon, double flat, double tlon, double tlat);
-typedef char                      *(*Elm_Map_Module_Name_Url_Func)(Evas_Object *obj, int method, char *name, double lon, double lat);
-typedef Eina_Bool                  (*Elm_Map_Module_Geo_Into_Coord_Func)(const Evas_Object *obj, int zoom, double lon, double lat, int size, int *x, int *y);
-typedef Eina_Bool                  (*Elm_Map_Module_Coord_Into_Geo_Func)(const Evas_Object *obj, int zoom, int x, int y, int size, double *lon, double *lat);
+typedef char                      *(*ElmMapModuleSourceFunc)(void);
+typedef int                        (*ElmMapModuleZoomMinFunc)(void);
+typedef int                        (*ElmMapModuleZoomMaxFunc)(void);
+typedef char                      *(*ElmMapModuleUrlFunc)(Evas_Object *obj, int x, int y, int zoom);
+typedef int                        (*ElmMapModuleRouteSourceFunc)(void);
+typedef char                      *(*ElmMapModuleRouteUrlFunc)(Evas_Object *obj, char *type_name, int method, double flon, double flat, double tlon, double tlat);
+typedef char                      *(*ElmMapModuleNameUrlFunc)(Evas_Object *obj, int method, char *name, double lon, double lat);
+typedef Eina_Bool                  (*ElmMapModuleGeoIntoCoordFunc)(const Evas_Object *obj, int zoom, double lon, double lat, int size, int *x, int *y);
+typedef Eina_Bool                  (*ElmMapModuleCoordIntoGeoFunc)(const Evas_Object *obj, int zoom, int x, int y, int size, double *lon, double *lat);
 
 /**
  * Add a new map widget to the given parent Elementary (container) object.
@@ -661,12 +661,12 @@ EAPI void                  elm_map_marker_show(Elm_Map_Marker *marker);
 EAPI void                  elm_map_markers_list_show(Eina_List *markers);
 
 /**
- * Get the Evas object returned by the Elm_Map_Marker_Get_Func callback
+ * Get the Evas object returned by the ElmMapMarkerGetFunc callback
  *
  * @param marker The marker which content should be returned.
  * @return Return the evas object if it exists, else @c NULL.
  *
- * To set callback function #Elm_Map_Marker_Get_Func for the marker class,
+ * To set callback function #ElmMapMarkerGetFunc for the marker class,
  * elm_map_marker_class_get_cb_set() should be used.
  *
  * This content is what will be inside the bubble that will be displayed
@@ -691,8 +691,8 @@ EAPI Evas_Object          *elm_map_marker_object_get(const Elm_Map_Marker *marke
  * @param marker The marker to be updated.
  *
  * If a content is set to this marker, it will call function to delete it,
- * #Elm_Map_Marker_Del_Func, and then will fetch the content again with
- * #Elm_Map_Marker_Get_Func.
+ * #ElmMapMarkerDelFunc, and then will fetch the content again with
+ * #ElmMapMarkerGetFunc.
  *
  * These functions are set for the marker class with
  * elm_map_marker_class_get_cb_set() and elm_map_marker_class_del_cb_set().
@@ -706,7 +706,7 @@ EAPI void                  elm_map_marker_update(Elm_Map_Marker *marker);
  *
  * @param obj The map object.
  *
- * A bubble is displayed with a content fetched with #Elm_Map_Marker_Get_Func
+ * A bubble is displayed with a content fetched with #ElmMapMarkerGetFunc
  * when the user clicks on a marker.
  *
  * This functions is set for the marker class with
@@ -741,7 +741,7 @@ EAPI void                  elm_map_bubbles_close(Evas_Object *obj);
  *   elm_map_group_class_zoom_grouped_set().
  * - visibility - set if markers will be visible or not, set with
  *   elm_map_group_class_hide_set().
- * - #Elm_Map_Group_Icon_Get_Func - used to fetch icon for markers group classes.
+ * - #ElmMapGroupIconGetFunc - used to fetch icon for markers group classes.
  *   It can be set using elm_map_group_class_icon_cb_set().
  *
  * @see elm_map_marker_add()
@@ -791,7 +791,7 @@ EAPI void                  elm_map_group_class_style_set(Elm_Map_Group_Class *cl
  *
  * @ingroup Map
  */
-EAPI void                  elm_map_group_class_icon_cb_set(Elm_Map_Group_Class *clas, Elm_Map_Group_Icon_Get_Func icon_get);
+EAPI void                  elm_map_group_class_icon_cb_set(Elm_Map_Group_Class *clas, ElmMapGroupIconGetFunc icon_get);
 
 /**
  * Set the data associated to the group class.
@@ -877,11 +877,11 @@ EAPI void                  elm_map_group_class_hide_set(Evas_Object *obj, Elm_Ma
  *
  * Some properties and functions can be set by class, as:
  * - style, with elm_map_marker_class_style_set()
- * - #Elm_Map_Marker_Icon_Get_Func - used to fetch icon for markers classes.
+ * - #ElmMapMarkerIconGetFunc - used to fetch icon for markers classes.
  *   It can be set using elm_map_marker_class_icon_cb_set().
- * - #Elm_Map_Marker_Get_Func - used to fetch bubble content for marker classes.
+ * - #ElmMapMarkerGetFunc - used to fetch bubble content for marker classes.
  *   Set using elm_map_marker_class_get_cb_set().
- * - #Elm_Map_Marker_Del_Func - used to delete bubble content for marker classes.
+ * - #ElmMapMarkerDelFunc - used to delete bubble content for marker classes.
  *   Set using elm_map_marker_class_del_cb_set().
  *
  * @see elm_map_marker_add()
@@ -929,7 +929,7 @@ EAPI void                  elm_map_marker_class_style_set(Elm_Map_Marker_Class *
  *
  * @ingroup Map
  */
-EAPI void                  elm_map_marker_class_icon_cb_set(Elm_Map_Marker_Class *clas, Elm_Map_Marker_Icon_Get_Func icon_get);
+EAPI void                  elm_map_marker_class_icon_cb_set(Elm_Map_Marker_Class *clas, ElmMapMarkerIconGetFunc icon_get);
 
 /**
  * Set the bubble content callback function of a marker class.
@@ -950,7 +950,7 @@ EAPI void                  elm_map_marker_class_icon_cb_set(Elm_Map_Marker_Class
  *
  * @ingroup Map
  */
-EAPI void                  elm_map_marker_class_get_cb_set(Elm_Map_Marker_Class *clas, Elm_Map_Marker_Get_Func get);
+EAPI void                  elm_map_marker_class_get_cb_set(Elm_Map_Marker_Class *clas, ElmMapMarkerGetFunc get);
 
 /**
  * Set the callback function used to delete bubble content of a marker class.
@@ -976,7 +976,7 @@ EAPI void                  elm_map_marker_class_get_cb_set(Elm_Map_Marker_Class 
  *
  * @ingroup Map
  */
-EAPI void                  elm_map_marker_class_del_cb_set(Elm_Map_Marker_Class *clas, Elm_Map_Marker_Del_Func del);
+EAPI void                  elm_map_marker_class_del_cb_set(Elm_Map_Marker_Class *clas, ElmMapMarkerDelFunc del);
 
 /**
  * Get the list of available sources.
