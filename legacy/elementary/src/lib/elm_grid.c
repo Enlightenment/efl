@@ -51,7 +51,7 @@ _elm_grid_focus_next_hook(const Evas_Object *obj, Elm_Focus_Direction dir, Evas_
                                                   dir, next);
 
    if (list_free)
-      list_free((Eina_List *)items);
+     list_free((Eina_List *)items);
 
    return ret;
 }
