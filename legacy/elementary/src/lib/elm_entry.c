@@ -2321,7 +2321,7 @@ elm_entry_add(Evas_Object *parent)
    wd->ent = edje_object_add(e);
    edje_object_item_provider_set(wd->ent, _get_item, obj);
    edje_object_text_insert_filter_callback_add(wd->ent,"elm.text", _text_filter, obj);
-   edje_object_markup_filter_callback_add(wd->ent,"elm.text", _markup_filter, obj);
+   edje_object_text_markup_filter_callback_add(wd->ent,"elm.text", _markup_filter, obj);
    evas_object_event_callback_add(wd->ent, EVAS_CALLBACK_MOVE, _move, obj);
    evas_object_event_callback_add(wd->ent, EVAS_CALLBACK_MOUSE_DOWN,
                                   _mouse_down, obj);
