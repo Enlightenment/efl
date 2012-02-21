@@ -33,7 +33,7 @@ _elm_font_properties_get(Eina_Hash **font_hash,
           {
              len = s2 - name;
              name = realloc(name, sizeof(char) * len + 1);
-             if (!name)
+             if (name)
                {
                   memset(name, 0, sizeof(char) * len + 1);
                   strncpy(name, font, len);
@@ -51,10 +51,9 @@ _elm_font_properties_get(Eina_Hash **font_hash,
                   if (efp)
                     {
                        efp->name = eina_stringshare_add(name);
-                       if (font_hash)
+                       if ((font_hash && !*font_hash))
                          {
-                            if (!*font_hash)
-                              *font_hash = eina_hash_string_superfast_new(NULL);
+                            *font_hash = eina_hash_string_superfast_new(NULL);
                             eina_hash_add(*font_hash, name, efp);
                          }
                     }
@@ -90,10 +89,9 @@ _elm_font_properties_get(Eina_Hash **font_hash,
              if (efp)
                {
                   efp->name = eina_stringshare_add(font);
-                  if (font_hash)
+                  if (font_hash && !*font_hash)
                     {
-                       if (!*font_hash)
-                         *font_hash = eina_hash_string_superfast_new(NULL);
+                       *font_hash = eina_hash_string_superfast_new(NULL);
                        eina_hash_add(*font_hash, font, efp);
                     }
                }
