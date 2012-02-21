@@ -131,5 +131,13 @@ EAPI int                          elm_radio_value_get(const Evas_Object *obj);
 EAPI void                         elm_radio_value_pointer_set(Evas_Object *obj, int *valuep);
 
 /**
+ * @brief Get the selected radio object.
+ *
+ * @param obj Any radio object (any object of a group)
+ * @return The selected radio object
+ */
+EAPI Evas_Object                 *elm_radio_selected_object_get(Evas_Object *obj);
+
+/**
  * @}
  */

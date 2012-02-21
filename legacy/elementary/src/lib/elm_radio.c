@@ -528,3 +528,23 @@ elm_radio_value_pointer_set(Evas_Object *obj, int *valuep)
         wd->group->valuep = NULL;
      }
 }
+
+EAPI Evas_Object *
+elm_radio_selected_object_get(Evas_Object *obj)
+{
+   Eina_List *l;
+   Evas_Object *child;
+   Widget_Data *wd2;
+
+   ELM_CHECK_WIDTYPE(obj, widtype) NULL;
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return NULL;
+
+   EINA_LIST_FOREACH(wd->group->radios, l, child)
+     {
+        wd2  = elm_widget_data_get(child);
+        if (wd2->value == wd->group->value)
+           return child;
+     }
+   return NULL;
+}
