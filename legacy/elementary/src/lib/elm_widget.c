@@ -2778,6 +2778,13 @@ elm_widget_focus_disabled_handle(Evas_Object *obj)
    elm_widget_focus_tree_unfocusable_handle(obj);
 }
 
+EAPI unsigned int
+elm_widget_focus_order_get(const Evas_Object *obj)
+{
+   API_ENTRY return 0;
+   if (sd->focus_order) return sd->focus_order;
+}
+
 /**
  * @internal
  *
@@ -3477,7 +3484,6 @@ _elm_widget_item_access_info_set(Elm_Widget_Item *item, const char *txt)
    if (!txt) item->access_info = NULL;
    else item->access_info = eina_stringshare_add(txt);
 }
-
 
 static void
 _smart_add(Evas_Object *obj)

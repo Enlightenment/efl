@@ -337,7 +337,7 @@ _elm_win_focus_in(Ecore_Evas *ee)
    win = elm_widget_data_get(obj);
    if (!win) return;
    _elm_widget_top_win_focused_set(win->win_obj, EINA_TRUE);
-   if (win->show_count == 1)
+   if (!elm_widget_focus_order_get(obj))
      {
         elm_widget_focus_steal(win->win_obj);
         win->show_count++;
