@@ -4,13 +4,15 @@
 #endif
 #ifndef ELM_LIB_QUICKLAUNCH
 
+#define ICON_MAX 24
+
 typedef enum
 {
   BOX_PACK_POSITION_START,
   BOX_PACK_POSITION_BEFORE,
   BOX_PACK_POSITION_AFTER,
   BOX_PACK_POSITION_END
-} _Box_Pack_Position;
+} Box_Pack_Position;
 
 void
 test_box_vert(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
@@ -186,7 +188,7 @@ _unpack_btn_cb(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSE
    Eina_List *rl, *l;
    int value, svalue;
 
-   box = (Evas_Object *) data;
+   box = (Evas_Object *)data;
 
    rl = (Eina_List *) evas_object_data_get(box, "radio-list");
    EINA_LIST_FOREACH(rl, l, radio)
@@ -210,7 +212,7 @@ _unpack_all_btn_cb(void *data, Evas_Object *obj __UNUSED__, void *event_info __U
    Evas_Object *box, *radio;
    Eina_List *rl, *l;
 
-   box = (Evas_Object *) data;
+   box = (Evas_Object *)data;
    elm_box_unpack_all(box);
 
    rl = (Eina_List *) evas_object_data_get(box, "radio-list");
@@ -226,8 +228,10 @@ _radio_new(Evas_Object *obj, int index)
    Evas_Object *ic, *rd;
    char buf[PATH_MAX];
 
+   if (index >= ICON_MAX) return NULL;
+
    ic = elm_icon_add(obj);
-   snprintf(buf, sizeof(buf), "%s/images/icon_0%d.png",
+   snprintf(buf, sizeof(buf), "%s/images/icon_%02d.png",
             elm_app_data_dir_get(), index);
    elm_icon_file_set(ic, buf, NULL);
    evas_object_size_hint_aspect_set(ic, EVAS_ASPECT_CONTROL_VERTICAL, 1, 1);
@@ -245,7 +249,7 @@ _radio_new(Evas_Object *obj, int index)
 }
 
 static void
-_pack(Evas_Object *box, _Box_Pack_Position pos)
+_pack(Evas_Object *box, Box_Pack_Position pos)
 {
    Evas_Object *radio;
    Evas_Object *rd, *rdg = NULL;
@@ -253,7 +257,8 @@ _pack(Evas_Object *box, _Box_Pack_Position pos)
    int value, svalue, count;
 
    rl = (Eina_List *) evas_object_data_get(box, "radio-list");
-   if (!rl && (pos == BOX_PACK_POSITION_START || pos == BOX_PACK_POSITION_END))
+   if (!rl && ((pos == BOX_PACK_POSITION_START) ||
+               (pos == BOX_PACK_POSITION_END)))
      {
         rd = _radio_new(box, 0);
         if (pos == BOX_PACK_POSITION_START) elm_box_pack_start(box, rd);
@@ -266,7 +271,7 @@ _pack(Evas_Object *box, _Box_Pack_Position pos)
         evas_object_data_set(box, "radio-group", rdg);
 
         return;
-      }
+     }
 
    count = eina_list_count(rl);
    EINA_LIST_FOREACH(rl, l, radio)
@@ -277,22 +282,23 @@ _pack(Evas_Object *box, _Box_Pack_Position pos)
         if (value != svalue) continue;
 
         rd = _radio_new(box, count);
+        if (!rd) break;
 
-       switch(pos)
-         {
-            case BOX_PACK_POSITION_START:
-               elm_box_pack_start(box, rd);
-               break;
-            case BOX_PACK_POSITION_BEFORE:
-               elm_box_pack_before(box, rd, radio);
-               break;
-            case BOX_PACK_POSITION_AFTER:
-               elm_box_pack_after(box, rd, radio);
-               break;
-            case BOX_PACK_POSITION_END:
-               elm_box_pack_end(box, rd);
-               break;
-         }
+        switch (pos)
+          {
+           case BOX_PACK_POSITION_START:
+              elm_box_pack_start(box, rd);
+              break;
+           case BOX_PACK_POSITION_BEFORE:
+              elm_box_pack_before(box, rd, radio);
+              break;
+           case BOX_PACK_POSITION_AFTER:
+              elm_box_pack_after(box, rd, radio);
+              break;
+           case BOX_PACK_POSITION_END:
+              elm_box_pack_end(box, rd);
+              break;
+          }
 
         rdg = evas_object_data_get(box, "radio-group");
         elm_radio_group_add(rd, rdg);
@@ -308,7 +314,7 @@ _pack_start_btn_cb(void *data, Evas_Object *obj __UNUSED__, void *event_info __U
    Evas_Object *box;
    if (!data) return;
 
-   box = (Evas_Object *) data;
+   box = (Evas_Object *)data;
    _pack(box, BOX_PACK_POSITION_START);
 }
 
@@ -318,7 +324,7 @@ _pack_before_btn_cb(void *data, Evas_Object *obj __UNUSED__, void *event_info __
    Evas_Object *box;
    if (!data) return;
 
-   box = (Evas_Object *) data;
+   box = (Evas_Object *)data;
    _pack(box, BOX_PACK_POSITION_BEFORE);
 }
 
@@ -328,7 +334,7 @@ _pack_after_btn_cb(void *data, Evas_Object *obj __UNUSED__, void *event_info __U
    Evas_Object *box;
    if (!data) return;
 
-   box = (Evas_Object *) data;
+   box = (Evas_Object *)data;
    _pack(box, BOX_PACK_POSITION_AFTER);
 }
 
@@ -338,29 +344,21 @@ _pack_end_btn_cb(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNU
    Evas_Object *box;
    if (!data) return;
 
-   box = (Evas_Object *) data;
+   box = (Evas_Object *)data;
    _pack(box, BOX_PACK_POSITION_END);
 }
 
 void
 test_box_pack(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
-   Evas_Object *win, *bg;
+   Evas_Object *win, *sc, *bt;
    Evas_Object *box, *lbox, *rbox;
-   Evas_Object *sc;
-   Evas_Object *bt;
    Evas_Object *rd, *rdg = NULL;
    Eina_List *l = NULL;
    int i;
 
-   win = elm_win_add(NULL, "box-pack", ELM_WIN_BASIC);
-   elm_win_title_set(win, "Box Pack");
+   win = elm_win_util_standard_add("box-pack", "Box Pack");
    elm_win_autodel_set(win, EINA_TRUE);
-
-   bg = elm_bg_add(win);
-   evas_object_size_hint_weight_set(bg, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-   elm_win_resize_object_add(win, bg);
-   evas_object_show(bg);
 
    box = elm_box_add(win);
    elm_box_horizontal_set(box, EINA_TRUE);
@@ -375,18 +373,18 @@ test_box_pack(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_in
    evas_object_size_hint_align_set(lbox, EVAS_HINT_FILL, EVAS_HINT_FILL);
 
    sc = elm_scroller_add(win);
-   elm_scroller_bounce_set(sc, 0, 1);
+   elm_scroller_bounce_set(sc, EINA_FALSE, EINA_TRUE);
    evas_object_size_hint_weight_set(sc, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(sc, EVAS_HINT_FILL, EVAS_HINT_FILL);
 
    for(i = 0; i < 3; i++)
-   {
-      rd = _radio_new(win, i);
-      elm_box_pack_end(lbox, rd);
-      l = eina_list_append(l, rd);
-      if (i == 0) rdg = rd;
-      else elm_radio_group_add(rd, rdg);
-   }
+     {
+        rd = _radio_new(win, i);
+        elm_box_pack_end(lbox, rd);
+        l = eina_list_append(l, rd);
+        if (i == 0) rdg = rd;
+        else elm_radio_group_add(rd, rdg);
+     }
 
    evas_object_data_set(lbox, "radio-list", l);
    evas_object_data_set(lbox, "radio-group", rdg);
@@ -450,25 +448,18 @@ _cb_check_changed(void *data, Evas_Object *obj, void *event __UNUSED__)
 
    homo = elm_check_state_get(obj);
    elm_box_homogeneous_set(box, homo);
-
 }
 
 void
 test_box_homo(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
-   Evas_Object *win, *bg;
+   Evas_Object *win;
    Evas_Object *box, *o_bg;
    Evas_Object *rd;
    char buf[PATH_MAX];
 
-   win = elm_win_add(NULL, "box-homogeneous", ELM_WIN_BASIC);
-   elm_win_title_set(win, "Box Homogeneous");
+   win = elm_win_util_standard_add("box-homogeneous", "Box Homogeneous");
    elm_win_autodel_set(win, EINA_TRUE);
-
-   bg = elm_bg_add(win);
-   evas_object_size_hint_weight_set(bg, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-   elm_win_resize_object_add(win, bg);
-   evas_object_show(bg);
 
    box = elm_box_add(win);
    evas_object_size_hint_weight_set(box, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
@@ -488,10 +479,8 @@ test_box_homo(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_in
    evas_object_smart_callback_add(rd, "changed", _cb_check_changed, box);
    elm_box_pack_end(box, rd);
    evas_object_show(rd);
-
    evas_object_show(o_bg);
-   evas_object_size_hint_min_set(bg, 160, 160);
-   evas_object_size_hint_max_set(bg, 640, 640);
+
    evas_object_resize(win, 320, 320);
    evas_object_show(win);
 }
@@ -547,7 +536,6 @@ test_box_transition(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *ev
    bx = elm_box_add(win);
    elm_win_resize_object_add(win, bx);
    evas_object_size_hint_weight_set(bx, 1.0, 1.0);
-
    evas_object_show(bx);
 
    bt = elm_button_add(win);
