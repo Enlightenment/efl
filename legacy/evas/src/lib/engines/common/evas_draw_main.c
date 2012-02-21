@@ -559,7 +559,7 @@ evas_common_draw_context_cutout_split(Cutout_Rects* res, int idx, Cutout_Rect *s
 EAPI Cutout_Rects*
 evas_common_draw_context_apply_cutouts(RGBA_Draw_Context *dc)
 {
-   Cutout_Rects*        res;
+   Cutout_Rects*        res, *res2;
    int                  i;
    int                  j;
 
@@ -582,6 +582,69 @@ evas_common_draw_context_apply_cutouts(RGBA_Draw_Context *dc)
              else
                active--;
           }
+     }
+   /* merge rects */
+#define RI res->rects[i]
+#define RJ res->rects[j]
+   if (res->active > 1)
+     {
+        int found = 1;
+        
+        while (found)
+          {
+             found = 0;
+             for (i = 0; i < res->active; i++)
+               {
+                  for (j = i + 1; j < res->active; j++)
+                    {
+                       /* skip empty rects we are removing */
+                       if (RJ.w == 0) continue;
+                       /* check if its same width, immediately above or below */
+                       if ((RJ.w == RI.w) && (RJ.x == RI.x))
+                         {
+                            if ((RJ.y + RJ.h) == RI.y) /* above */
+                              {
+                                 RI.y = RJ.y;
+                                 RI.h += RJ.h;
+                                 RJ.w = 0;
+                                 found = 1;
+                              }
+                            else if ((RI.y + RI.h) == RJ.y) /* below */
+                              {
+                                 RI.h += RJ.h;
+                                 RJ.w = 0;
+                                 found = 1;
+                              }
+                         }
+                       /* check if its same height, immediately left or right */
+                       else if ((RJ.h == RI.h) && (RJ.y == RI.y))
+                         {
+                            if ((RJ.x + RJ.w) == RI.x) /* left */
+                              {
+                                 RI.x = RJ.x;
+                                 RI.w += RJ.w;
+                                 RJ.w = 0;
+                                 found = 1;
+                              }
+                            else if ((RI.x + RI.w) == RJ.x) /* right */
+                              {
+                                 RI.w += RJ.w;
+                                 RJ.w = 0;
+                                 found = 1;
+                              }
+                         }
+                    }
+               }
+          }
+        res2 = evas_common_draw_context_cutouts_new();
+        for (i = 0; i < res->active; i++)
+          {
+             if (RI.w == 0) continue;
+             evas_common_draw_context_cutouts_add(res2, RI.x, RI.y, RI.w, RI.h);
+          }
+        free(res->rects);
+        free(res);
+        return res2;
      }
    return res;
 }

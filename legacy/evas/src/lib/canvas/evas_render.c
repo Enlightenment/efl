@@ -1500,6 +1500,12 @@ evas_render_updates_internal(Evas *e,
              off_x = cx - ux;
              off_y = cy - uy;
              /* build obscuring objects list (in order from bottom to top) */
+             if (alpha)
+               {
+                  e->engine.func->context_clip_set(e->engine.data.output,
+                                                   e->engine.data.context,
+                                                   ux + off_x, uy + off_y, uw, uh);
+               }
              for (i = 0; i < e->obscuring_objects.count; ++i)
                {
                   obj = (Evas_Object *)eina_array_data_get
@@ -1515,9 +1521,6 @@ evas_render_updates_internal(Evas *e,
                }
              if (alpha)
                {
-                  e->engine.func->context_clip_set(e->engine.data.output,
-                                                   e->engine.data.context,
-                                                   ux + off_x, uy + off_y, uw, uh);
                   e->engine.func->context_color_set(e->engine.data.output,
                                                     e->engine.data.context,
                                                     0, 0, 0, 0);
@@ -1548,7 +1551,7 @@ evas_render_updates_internal(Evas *e,
                       (obj->cur.visible) &&
                       (!obj->delete_me) &&
                       (obj->cur.cache.clip.visible) &&
-                      //		      (!obj->smart.smart) &&
+//		      (!obj->smart.smart) &&
                       ((obj->cur.color.a > 0 || obj->cur.render_op != EVAS_RENDER_BLEND)))
                     {
                        int x, y, w, h;
@@ -1579,6 +1582,9 @@ evas_render_updates_internal(Evas *e,
                             else
                               e->engine.func->context_mask_unset(e->engine.data.output,
                                                                  e->engine.data.context);
+                            e->engine.func->context_clip_set(e->engine.data.output,
+                                                             e->engine.data.context,
+                                                             x, y, w, h);
 #if 1 /* FIXME: this can slow things down... figure out optimum... coverage */
                             for (j = offset; j < e->temporary_objects.count; ++j)
                               {
@@ -1589,9 +1595,6 @@ evas_render_updates_internal(Evas *e,
                                  _evas_render_cutout_add(e, obj2, off_x, off_y);
                               }
 #endif
-                            e->engine.func->context_clip_set(e->engine.data.output,
-                                                             e->engine.data.context,
-                                                             x, y, w, h);
                             clean_them |= evas_render_mapped(e, obj, e->engine.data.context,
                                                              surface, off_x, off_y, 0,
                                                              cx, cy, cw, ch
