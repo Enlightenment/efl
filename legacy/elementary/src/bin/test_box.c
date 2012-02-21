@@ -181,54 +181,49 @@ test_box_horiz(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_i
    evas_object_show(win);
 }
 
-static void
-_unpack_btn_cb(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+static Eina_Bool radio_index[ICON_MAX];
+
+static int
+_index_get(void)
 {
-   Evas_Object *box, *radio;
-   Eina_List *rl, *l;
-   int value, svalue;
-
-   box = (Evas_Object *)data;
-
-   rl = (Eina_List *) evas_object_data_get(box, "radio-list");
-   EINA_LIST_FOREACH(rl, l, radio)
+   int i;
+   for (i = 0; i < ICON_MAX; i++)
      {
-        value = elm_radio_value_get(radio);
-        svalue = elm_radio_state_value_get(radio);
+        if (!radio_index[i])
+          {
+             radio_index[i] = EINA_TRUE;
+             return i;
+          }
 
-        if (value != svalue) continue;
-
-        elm_radio_value_set(radio, -1);
-        elm_box_unpack(box, radio);
-        rl = eina_list_remove(rl, radio);
-        evas_object_data_set(box, "radio-list", rl);
-        evas_object_del(radio);
      }
+   return -1;
 }
 
 static void
-_unpack_all_btn_cb(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+_index_remove(int index)
 {
-   Evas_Object *box, *radio;
-   Eina_List *rl, *l;
+   if (index >= ICON_MAX) return;
+   radio_index[index] = EINA_FALSE;
+}
 
-   box = (Evas_Object *)data;
-   elm_box_unpack_all(box);
-
-   rl = (Eina_List *) evas_object_data_get(box, "radio-list");
-   EINA_LIST_FOREACH(rl, l, radio) evas_object_del(radio);
-
-   evas_object_data_del(box, "radio-list");
-   eina_list_free(rl);
+static void
+_index_clear()
+{
+   int i;
+   for (i = 0; i < ICON_MAX; i++)
+     radio_index[i] = EINA_FALSE;
 }
 
 static Evas_Object *
-_radio_new(Evas_Object *obj, int index)
+_radio_new(Evas_Object *obj)
 {
    Evas_Object *ic, *rd;
+   int index;
    char buf[PATH_MAX];
+   Evas_Object *rdg;
 
-   if (index >= ICON_MAX) return NULL;
+   index = _index_get();
+   if (index == -1) return NULL;
 
    ic = elm_icon_add(obj);
    snprintf(buf, sizeof(buf), "%s/images/icon_%02d.png",
@@ -242,6 +237,9 @@ _radio_new(Evas_Object *obj, int index)
    evas_object_size_hint_align_set(rd, EVAS_HINT_FILL, 0.5);
    elm_object_part_content_set(rd, "icon", ic);
 
+   rdg = evas_object_data_get(obj, "radio-group");
+   if (rdg) elm_radio_group_add(rd, rdg);
+
    evas_object_show(rd);
    evas_object_show(ic);
 
@@ -249,103 +247,98 @@ _radio_new(Evas_Object *obj, int index)
 }
 
 static void
-_pack(Evas_Object *box, Box_Pack_Position pos)
-{
-   Evas_Object *radio;
-   Evas_Object *rd, *rdg = NULL;
-   Eina_List *rl, *l = NULL;
-   int value, svalue, count;
-
-   rl = (Eina_List *) evas_object_data_get(box, "radio-list");
-   if (!rl && ((pos == BOX_PACK_POSITION_START) ||
-               (pos == BOX_PACK_POSITION_END)))
-     {
-        rd = _radio_new(box, 0);
-        if (pos == BOX_PACK_POSITION_START) elm_box_pack_start(box, rd);
-        else elm_box_pack_end(box, rd);
-
-        l = eina_list_append(l, rd);
-        evas_object_data_set(box, "radio-list", l);
-
-        rdg = rd;
-        evas_object_data_set(box, "radio-group", rdg);
-
-        return;
-     }
-
-   count = eina_list_count(rl);
-   EINA_LIST_FOREACH(rl, l, radio)
-     {
-        value = elm_radio_value_get(radio);
-        svalue = elm_radio_state_value_get(radio);
-
-        if (value != svalue) continue;
-
-        rd = _radio_new(box, count);
-        if (!rd) break;
-
-        switch (pos)
-          {
-           case BOX_PACK_POSITION_START:
-              elm_box_pack_start(box, rd);
-              break;
-           case BOX_PACK_POSITION_BEFORE:
-              elm_box_pack_before(box, rd, radio);
-              break;
-           case BOX_PACK_POSITION_AFTER:
-              elm_box_pack_after(box, rd, radio);
-              break;
-           case BOX_PACK_POSITION_END:
-              elm_box_pack_end(box, rd);
-              break;
-          }
-
-        rdg = evas_object_data_get(box, "radio-group");
-        elm_radio_group_add(rd, rdg);
-
-        rl = eina_list_append(rl, rd);
-        evas_object_data_set(box, "radio-list", rl);
-     }
-}
-
-static void
 _pack_start_btn_cb(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
-   Evas_Object *box;
+   Evas_Object *rd;
    if (!data) return;
 
-   box = (Evas_Object *)data;
-   _pack(box, BOX_PACK_POSITION_START);
+   rd = _radio_new(data);
+   if (!rd) return;
+   elm_box_pack_start(data, rd);
 }
 
 static void
 _pack_before_btn_cb(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
-   Evas_Object *box;
+   Evas_Object *rd, *selected_rd, *rdg;
    if (!data) return;
 
-   box = (Evas_Object *)data;
-   _pack(box, BOX_PACK_POSITION_BEFORE);
+   rdg = evas_object_data_get(data, "radio-group");
+   if (!rdg) return;
+
+   selected_rd = elm_radio_selected_object_get(rdg);
+   if (!selected_rd || (selected_rd == rdg)) return;
+
+   rd = _radio_new(data);
+   if (!rd) return;
+   elm_box_pack_before(data, rd, selected_rd);
 }
 
 static void
 _pack_after_btn_cb(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
-   Evas_Object *box;
+   Evas_Object *rd, *selected_rd, *rdg;
    if (!data) return;
 
-   box = (Evas_Object *)data;
-   _pack(box, BOX_PACK_POSITION_AFTER);
+   rdg = evas_object_data_get(data, "radio-group");
+   if (!rdg) return;
+
+   selected_rd = elm_radio_selected_object_get(rdg);
+   if (!selected_rd || (selected_rd == rdg)) return;
+
+   rd = _radio_new(data);
+   if (!rd) return;
+   elm_box_pack_after(data, rd, selected_rd);
 }
 
 static void
 _pack_end_btn_cb(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
-   Evas_Object *box;
+   Evas_Object *rd;
    if (!data) return;
 
-   box = (Evas_Object *)data;
-   _pack(box, BOX_PACK_POSITION_END);
+   rd = _radio_new(data);
+   if (!rd) return;
+   elm_box_pack_end(data, rd);
+}
+
+static void
+_unpack_btn_cb(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+{
+   Evas_Object *rdg, *selected_rd;
+   if (!data) return;
+
+   rdg = evas_object_data_get(data, "radio-group");
+   if (!rdg) return;
+
+   selected_rd = elm_radio_selected_object_get(rdg);
+   if (selected_rd == rdg) return;
+
+   _index_remove(elm_radio_value_get(selected_rd));
+   elm_box_unpack(data, selected_rd);
+   evas_object_del(selected_rd);
+   elm_radio_value_set(rdg, -1);
+}
+
+static void
+_unpack_all_btn_cb(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+{
+   Evas_Object *radio, *rdg;
+   Eina_List *rl, *l;
+   if (!data) return;
+
+   rdg = evas_object_data_get(data, "radio-group");
+   if (!rdg) return;
+
+   _index_clear();
+   rl = elm_box_children_get(data);
+   EINA_LIST_FOREACH(rl, l, radio)
+     {
+        if (radio != rdg)
+          evas_object_del(radio);
+     }
+   elm_box_unpack_all(data);
+   elm_radio_value_set(rdg, -1);
 }
 
 void
@@ -354,7 +347,6 @@ test_box_pack(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_in
    Evas_Object *win, *sc, *bt;
    Evas_Object *box, *lbox, *rbox;
    Evas_Object *rd, *rdg = NULL;
-   Eina_List *l = NULL;
    int i;
 
    win = elm_win_util_standard_add("box-pack", "Box Pack");
@@ -377,17 +369,16 @@ test_box_pack(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_in
    evas_object_size_hint_weight_set(sc, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(sc, EVAS_HINT_FILL, EVAS_HINT_FILL);
 
-   for(i = 0; i < 3; i++)
+   rdg = elm_radio_add(win); /* a radio for easy group handling */
+   elm_radio_state_value_set(rdg, -1);
+   evas_object_data_set(lbox, "radio-group", rdg);
+
+   for (i = 0; i < 3; i++)
      {
-        rd = _radio_new(win, i);
+        rd = _radio_new(lbox);
         elm_box_pack_end(lbox, rd);
-        l = eina_list_append(l, rd);
-        if (i == 0) rdg = rd;
-        else elm_radio_group_add(rd, rdg);
      }
 
-   evas_object_data_set(lbox, "radio-list", l);
-   evas_object_data_set(lbox, "radio-group", rdg);
    elm_object_content_set(sc, lbox);
    evas_object_show(lbox);
    elm_box_pack_end(box, sc);
