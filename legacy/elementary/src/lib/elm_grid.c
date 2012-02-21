@@ -99,7 +99,7 @@ elm_grid_add(Evas_Object *parent)
 }
 
 EAPI void
-elm_grid_size_set(Evas_Object *obj, int w, int h)
+elm_grid_size_set(Evas_Object *obj, Evas_Coord w, Evas_Coord h)
 {
    ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
@@ -108,7 +108,7 @@ elm_grid_size_set(Evas_Object *obj, int w, int h)
 }
 
 EAPI void
-elm_grid_size_get(Evas_Object *obj, int *w, int *h)
+elm_grid_size_get(const Evas_Object *obj, Evas_Coord *w, Evas_Coord *h)
 {
    ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
@@ -117,7 +117,7 @@ elm_grid_size_get(Evas_Object *obj, int *w, int *h)
 }
 
 EAPI void
-elm_grid_pack(Evas_Object *obj, Evas_Object *subobj, int x, int y, int w, int h)
+elm_grid_pack(Evas_Object *obj, Evas_Object *subobj, Evas_Coord x, Evas_Coord y, Evas_Coord w, Evas_Coord h)
 {
    ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
@@ -150,7 +150,7 @@ elm_grid_clear(Evas_Object *obj, Eina_Bool clear)
 }
 
 EAPI void
-elm_grid_pack_set(Evas_Object *subobj, int x, int y, int w, int h)
+elm_grid_pack_set(Evas_Object *subobj, Evas_Coord x, Evas_Coord y, Evas_Coord w, Evas_Coord h)
 {
    Evas_Object *obj = elm_widget_parent_widget_get(subobj);
    ELM_CHECK_WIDTYPE(obj, widtype);
