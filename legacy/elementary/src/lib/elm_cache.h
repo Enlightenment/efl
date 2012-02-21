@@ -34,7 +34,7 @@ EAPI void      elm_cache_all_flush(void);
  * @return The cache flush interval time
  * @ingroup Caches
  *
- * @see elm_all_flush()
+ * @see elm_cache_all_flush()
  */
 EAPI int       elm_cache_flush_interval_get(void);
 
@@ -46,7 +46,7 @@ EAPI int       elm_cache_flush_interval_get(void);
  * @param size The cache flush interval time
  * @ingroup Caches
  *
- * @see elm_all_flush()
+ * @see elm_cache_all_flush()
  */
 EAPI void      elm_cache_flush_interval_set(int size);
 
@@ -64,7 +64,7 @@ EAPI void      elm_cache_flush_interval_set(int size);
  * @return The cache flush state
  * @ingroup Caches
  *
- * @see elm_all_flush()
+ * @see elm_cache_all_flush()
  */
 EAPI Eina_Bool elm_cache_flush_enabled_get(void);
 
@@ -76,7 +76,7 @@ EAPI Eina_Bool elm_cache_flush_enabled_get(void);
  * @param enabled The cache flush enabled state
  * @ingroup Caches
  *
- * @see elm_all_flush()
+ * @see elm_cache_all_flush()
  */
 EAPI void      elm_cache_flush_enabled_set(Eina_Bool enabled);
 
@@ -88,6 +88,7 @@ EAPI void      elm_cache_flush_enabled_set(Eina_Bool enabled);
  * @return The font cache size
  * @ingroup Caches
  */
+// XXX: how about using elm_cache prefix for all following APIs???
 EAPI int       elm_font_cache_get(void);
 
 /**
