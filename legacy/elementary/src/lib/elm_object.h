@@ -282,7 +282,7 @@ EAPI void         elm_object_signal_callback_add(Evas_Object *obj, const char *e
  * Remove a signal-triggered callback from a widget edje object.
  *
  * This function removes a callback, previously attached to a
- * signal emitted by the edje object of the obj.  The parameters
+ * signal emitted by the edje object of the obj. The parameters
  * emission, source and func must match exactly those passed to a
  * previous call to elm_object_signal_callback_add(). The data
  * pointer that was passed to this call will be returned.
