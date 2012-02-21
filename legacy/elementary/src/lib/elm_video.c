@@ -320,7 +320,10 @@ elm_video_file_set(Evas_Object *video, const char *filename)
    if (wd->remember) emotion_object_last_position_save(wd->emotion);
    wd->stop = EINA_FALSE;
    emotion_object_file_set(wd->emotion, filename);
-   emotion_object_last_position_load(wd->emotion);
+
+   if ((!strncmp(filename, "file://", 7)) || (!strstr(filename, "://")))
+     emotion_object_last_position_load(wd->emotion);
+
    edje_object_signal_emit(wd->layout, "elm,video,load", "elm");
 #else
    (void) video;
@@ -328,7 +331,7 @@ elm_video_file_set(Evas_Object *video, const char *filename)
 #endif
 }
 
-EAPI void
+EINA_DEPRECATED EAPI void
 elm_video_uri_set(Evas_Object *video, const char *uri)
 {
 #ifdef HAVE_EMOTION

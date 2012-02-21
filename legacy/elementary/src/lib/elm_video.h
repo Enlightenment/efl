@@ -58,48 +58,32 @@ EAPI Evas_Object         *elm_player_add(Evas_Object *parent);
  * This function inserts a new video widget on the canvas.
  *
  * @see elm_video_file_set()
- * @see elm_video_uri_set()
  *
  * @ingroup Video
  */
 EAPI Evas_Object         *elm_video_add(Evas_Object *parent);
 
 /**
- * @brief Define the file that will be the video source.
+ * @brief Define the file or URI that will be the video source.
  *
- * @param video The video object to define the file for.
- * @param filename The file to target.
+ * @param video The video object to define the file or URI for the video
+ * of the Elm_Video object. 
  *
- * This function will explicitly define a filename as a source
+ * @param filename The file or URI to target.
+ * Local files can be specified using file:// or by using full file paths.
+ * URI could be remote source of video, like http:// or local source like 
+ * WebCam (v4l2://). (You can use Emotion API to request and list 
+ * the available Webcam on your system).
+ *
+ * This function will explicitly define a file or URI as a source
  * for the video of the Elm_Video object.
  *
- * @see elm_video_uri_set()
  * @see elm_video_add()
  * @see elm_player_add()
  *
  * @ingroup Video
  */
 EAPI void                 elm_video_file_set(Evas_Object *video, const char *filename);
-
-/**
- * @brief Define the uri that will be the video source.
- *
- * @param video The video object to define the file for.
- * @param uri The uri to target.
- *
- * This function will define an uri as a source for the video of the
- * Elm_Video object. URI could be remote source of video, like http:// or local source
- * like for example WebCam who are most of the time v4l2:// (but that depend and
- * you should use Emotion API to request and list the available Webcam on your system).
- *
- * @see elm_video_file_set()
- * @see elm_video_add()
- * @see elm_player_add()
- *
- * @ingroup Video
- */
-/* XXX: remove this - just keep elm_video_file_set() */
-EAPI void                 elm_video_uri_set(Evas_Object *video, const char *uri);
 
 /**
  * @brief Get the underlying Emotion object.

@@ -31,7 +31,7 @@ external_video_state_set(void *data __UNUSED__, Evas_Object *obj, const void *fr
    else return;
 
    if (p->file) elm_video_file_set(obj, p->file);
-   if (p->uri) elm_video_uri_set(obj, p->uri);
+   if (p->uri) elm_video_file_set(obj, p->uri);
    if (p->play_exists && p->play) elm_video_play(obj);
    if (p->pause_exists && p->pause) elm_video_pause(obj);
    if (p->stop_exists && p->stop) elm_video_stop(obj);
@@ -55,7 +55,7 @@ external_video_param_set(void *data __UNUSED__, Evas_Object *obj, const Edje_Ext
    else if ((param->type == EDJE_EXTERNAL_PARAM_TYPE_STRING)
        && (!strcmp(param->name, "uri")))
      {
-        elm_video_uri_set(obj, param->s);
+        elm_video_file_set(obj, param->s);
         return EINA_TRUE;
      }
    else if ((param->type == EDJE_EXTERNAL_PARAM_TYPE_BOOL)

@@ -4490,6 +4490,23 @@ EINA_DEPRECATED EAPI void                        elm_label_background_color_set(
  */
 EINA_DEPRECATED EAPI void      elm_all_flush(void);
 
+
+/**
+ * @brief Define the uri that will be the video source.
+ * 
+ * @param video The video object to define the file for.
+ * @param uri The uri to target.
+ * 
+ * This function will define an uri as a source for the video of the
+ * Elm_Video object. URI could be remote source of video, like http:// or local
+ * like for example WebCam who are most of the time v4l2:// (but that depend an
+ * you should use Emotion API to request and list the available Webcam on your 
+ * 
+ * @deprecated Use elm_video_file_set() instead.
+ * 
+ */
+EINA_DEPRECATED EAPI void                 elm_video_uri_set(Evas_Object *video, const char *uri);
+
 /**
  * @}
  */
