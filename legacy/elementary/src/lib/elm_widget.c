@@ -2782,7 +2782,7 @@ EAPI unsigned int
 elm_widget_focus_order_get(const Evas_Object *obj)
 {
    API_ENTRY return 0;
-   if (sd->focus_order) return sd->focus_order;
+   return sd->focus_order;
 }
 
 /**
