@@ -3818,7 +3818,7 @@ _item_move_before(Elm_Gen_Item *it, Elm_Gen_Item *before)
 }
 
 EAPI unsigned int
-elm_genlist_item_count(const Evas_Object *obj)
+elm_genlist_items_count(const Evas_Object *obj)
 {
    ELM_CHECK_WIDTYPE(obj, widtype) 0;
    Widget_Data *wd = elm_widget_data_get(obj);

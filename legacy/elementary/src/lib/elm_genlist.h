@@ -1924,7 +1924,7 @@ EAPI void elm_genlist_item_class_unref(Elm_Genlist_Item_Class *itc);
  *
  * @ingroup Genlist
  */
-EAPI unsigned int elm_genlist_item_count(const Evas_Object *obj);
+EAPI unsigned int elm_genlist_items_count(const Evas_Object *obj);
 /**
  * @}
  */
