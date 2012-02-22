@@ -24,6 +24,101 @@
 #include "eina_accessor.h"
 
 /**
+ * @page eina_inarray_example_01 Eina inline array usage
+ * @dontinclude eina_inarray_01.c
+ *
+ * This example will create an inline array of chars, add some elements, print
+ * it, re-purpose the array to store ints, add some elements and print that.
+ *
+ * We'll start with a function to compare ints we need this because the '>'
+ * operator is not a function and can't be used where Eina_Compare_Cb is needed.
+ * @skip int
+ * @until }
+ *
+ * And then move on to the code we actually care about, starting with variable
+ * declarations and eina initialization:
+ * @until eina_init
+ *
+ * Creating an inline array is very simple, we just need to know what type we
+ * want to store:
+ * @until inarray_new
+ * @note The second parameter(the step) is left at zero which means that eina
+ * will choose an appropriate value, this should @b only be changed if it's
+ * known, beforehand, how many elements the array will have.
+ *
+ * Once we have an array we can start adding elements to it. Because the
+ * insertion function expect a memory address we have to put the value we want
+ * to store in a variable(this should be no problem since in real world usage
+ * that's usually where the value will be anyways):
+ * @until append
+ * @note Because the inline array copies the value given to it we can later
+ * change @c ch, which we do, without affecting the contents of the array.
+ *
+ * So let's add some more elements:
+ * @until append
+ * @until append
+ * @until append
+ *
+ * We will then iterate over our array and print every position of it. The thing
+ * to note here is not so much the values which will be the expected 'a', 'b',
+ * 'c' and 'd', but rather the memory address of these values, they are
+ * sequential:
+ * @until printf
+ * @until printf
+ *
+ * We'll now use our array to store ints, so we need to first erase every member
+ * currently on the array:
+ * @until _flush
+ *
+ * And then to be able to store a different type on the same array we use the
+ * eina_array_setup() function, which is just like the eina_inarray_new()
+ * function except it receives already allocated memory. This time we're going
+ * to ask eina to use a step of size 4 because that's how many elements we'll be
+ * putting on the array:
+ * @until _setup
+ * @note Strictly speaking the reason to call eina_inarray_setup() is not
+ * because we're storing different type, but rather because our types have
+ * different sizes. Eina inline arrays don't actually know anything about types,
+ * they only deal in blocks of memory of a given size.
+ * @note Since eina_array_setup() receives already allocated memory you can(and
+ * it is in fact good practice) use inline arrays not declared as pointers:
+ * @code
+ * Eina_Inarray arr;
+ * eina_inarray_setup(&arr, sizeof(int), 4);
+ * @endcode
+ *
+ * And now to add our integer values to the array:
+ * @until append
+ * @until append
+ * @until append
+ *
+ * Just to change things up a bit we've left out the 99 value, but will still
+ * add it in such a way to keep the array ordered. There are many ways to do
+ * this, we could use eina_inarray_insert_at(), or we could change the value
+ * of the last member using eina_inarray_replace_at() and then append the values
+ * in the right order, but for no particular reason we're going to use
+ * eina_inarray_insert_sorted() instead:
+ * @until insert_sorted
+ *
+ * We then print the size of our array, and the array itself, much like last
+ * time the values are not surprising, and neither should it be that the memory
+ * addresses are contiguous:
+ * @until printf
+ * @until printf
+ *
+ * Once done we free our array and shutdown eina:
+ * @until }
+ *
+ * The source for this example: @ref eina_inarray_01_c
+ */
+
+/**
+ * @page eina_inarray_01_c eina_inarray_01.c
+ * @include eina_inarray_01.c
+ * @example eina_inarray_01.c
+ */
+
+/**
  * @addtogroup Eina_Data_Types_Group Data Types
  *
  * @since 1.2
@@ -39,6 +134,18 @@
 
 /**
  * @defgroup Eina_Inline_Array_Group Inline Array
+ *
+ * Inline array is a container that stores the data itself not pointers to data,
+ * this means there is no memory fragmentation, also for small data types(such
+ * as char, short, int, etc.) it's more memory efficient.
+ *
+ * Usage of the inline array is very similar to that of other
+ * @ref Eina_Containers_Group, like all arrays adding elements to the beginning
+ * of the array is a lot more costly than appending, so those operations should
+ * be minimized.
+ *
+ * Example:
+ * @ref eina_inarray_example_01
  *
  * @{
  */
