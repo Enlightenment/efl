@@ -221,6 +221,7 @@ struct _Ecore_Con_Url
 
    unsigned int event_count;
    Eina_Bool dead : 1;
+   Eina_Bool multi : 1;
 };
 #endif
 
