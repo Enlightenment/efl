@@ -261,6 +261,10 @@ static PH(get_main_loop_thread) (void)
 static void
 _ecore_thread_worker_free(Ecore_Pthread_Worker *worker)
 {
+   LKD(worker->cancel_mutex);
+   CDD(worker->cond);
+   LKD(worker->mutex);
+
    if (_ecore_thread_worker_count > (_ecore_thread_count_max + 1) * 16)
      {
         free(worker);
@@ -339,8 +343,6 @@ _ecore_thread_kill(Ecore_Pthread_Worker *work)
         if (work->u.feedback_run.direct_worker)
           _ecore_thread_worker_free(work->u.feedback_run.direct_worker);
      }
-   CDD(work->cond);
-   LKD(work->mutex);
    if (work->hash)
      eina_hash_free(work->hash);
    _ecore_thread_worker_free(work);
@@ -566,7 +568,6 @@ _ecore_direct_worker(Ecore_Pthread_Worker *work)
    work->no_queue = EINA_FALSE;
    work->kill = EINA_FALSE;
    work->hash = NULL;
-   LKI(work->cancel_mutex);
    LKI(work->mutex);
    CDI(work->cond, work->mutex);
 
@@ -629,9 +630,6 @@ restart:
    work->kill = EINA_FALSE;
    work->no_queue = EINA_FALSE;
    work->hash = NULL;
-   LKI(work->cancel_mutex);
-   LKI(work->mutex);
-   CDI(work->cond, work->mutex);
 
    ecore_main_loop_thread_safe_call_async(_ecore_thread_handler, work);
 
@@ -650,6 +648,10 @@ _ecore_thread_worker_new(void)
 
    if (!result) result = malloc(sizeof (Ecore_Pthread_Worker));
    else _ecore_thread_worker_count--;
+
+   LKI(result->cancel_mutex);
+   LKI(result->mutex);
+   CDI(result->cond, result->mutex);
 
    return result;
 #else
@@ -769,12 +771,8 @@ ecore_thread_run(Ecore_Thread_Cb func_blocking,
    work->data = data;
 
 #ifdef EFL_HAVE_THREADS
-   LKI(work->cancel_mutex);
-
    work->self = 0;
    work->hash = NULL;
-   LKI(work->mutex);
-   CDI(work->cond, work->mutex);
 
    LKL(_ecore_pending_job_threads_mutex);
    _ecore_pending_job_threads = eina_list_append(_ecore_pending_job_threads, work);
@@ -972,12 +970,9 @@ ecore_thread_feedback_run(Ecore_Thread_Cb        func_heavy,
    worker->u.feedback_run.func_heavy = func_heavy;
    worker->u.feedback_run.func_notify = func_notify;
    worker->hash = NULL;
-   LKI(worker->mutex);
-   CDI(worker->cond, worker->mutex);
    worker->func_cancel = func_cancel;
    worker->func_end = func_end;
    worker->data = data;
-   LKI(worker->cancel_mutex);
    worker->cancel = EINA_FALSE;
    worker->message_run = EINA_FALSE;
    worker->feedback_run = EINA_TRUE;
@@ -1191,11 +1186,8 @@ ecore_thread_message_run(Ecore_Thread_Cb func_main,
   worker->func_cancel = func_cancel;
   worker->func_end = func_end;
   worker->hash = NULL;
-  LKI(worker->mutex);
-  CDI(worker->cond, worker->mutex);
   worker->data = data;
 
-  LKI(worker->cancel_mutex);
   worker->cancel = EINA_FALSE;
   worker->message_run = EINA_TRUE;
   worker->feedback_run = EINA_FALSE;
