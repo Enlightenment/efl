@@ -708,7 +708,7 @@ _eio_dir_stat_find_forward(Eio_File_Dir_Ls *async,
         async->pack = NULL;
      }
 
-   return EINA_TRUE;
+   return filter;
 }
 
 static void
