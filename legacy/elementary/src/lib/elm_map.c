@@ -411,6 +411,8 @@ static const char SIG_PRESS[] = "press";
 static const char SIG_SCROLL[] = "scroll";
 static const char SIG_SCROLL_DRAG_START[] = "scroll,drag,start";
 static const char SIG_SCROLL_DRAG_STOP[] = "scroll,drag,stop";
+static const char SIG_SCROLL_ANIM_START[] = "scroll,anim,start";
+static const char SIG_SCROLL_ANIM_STOP[] = "scroll,anim,stop";
 static const char SIG_ZOOM_CHANGE[] = "zoom,change";
 static const char SIG_ZOOM_START[] = "zoom,start";
 static const char SIG_ZOOM_STOP[] = "zoom,stop";
@@ -430,6 +432,8 @@ static const Evas_Smart_Cb_Description _signals[] = {
        {SIG_SCROLL, ""},
        {SIG_SCROLL_DRAG_START, ""},
        {SIG_SCROLL_DRAG_STOP, ""},
+       {SIG_SCROLL_ANIM_START, ""},
+       {SIG_SCROLL_ANIM_STOP, ""},
        {SIG_ZOOM_CHANGE, ""},
        {SIG_ZOOM_START, ""},
        {SIG_ZOOM_STOP, ""},
@@ -1749,7 +1753,7 @@ _scr_anim_start(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUS
 {
    EINA_SAFETY_ON_NULL_RETURN(data);
    Widget_Data *wd = data;
-   evas_object_smart_callback_call(wd->obj, "scroll,anim,start", NULL);
+   evas_object_smart_callback_call(wd->obj, SIG_SCROLL_ANIM_START, NULL);
 }
 
 static void
@@ -1757,7 +1761,7 @@ _scr_anim_stop(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSE
 {
    EINA_SAFETY_ON_NULL_RETURN(data);
    Widget_Data *wd = data;
-   evas_object_smart_callback_call(wd->obj, "scroll,anim,stop", NULL);
+   evas_object_smart_callback_call(wd->obj, SIG_SCROLL_ANIM_STOP, NULL);
 }
 
 static Eina_Bool
