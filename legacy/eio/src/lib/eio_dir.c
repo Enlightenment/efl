@@ -62,6 +62,7 @@ static Eina_Bool
 _eio_file_recursiv_ls(Ecore_Thread *thread,
                       Eio_File *common,
                       Eio_Filter_Direct_Cb filter_cb,
+		      Eina_Iterator *(*Eina_File_Ls)(const char *target),
                       void *data,
                       const char *target)
 {
@@ -70,7 +71,7 @@ _eio_file_recursiv_ls(Ecore_Thread *thread,
    Eina_List *dirs = NULL;
    const char *dir;
 
-   it = eina_file_stat_ls(target);
+   it = Eina_File_Ls(target);
    if (!it)
      {
         eio_file_thread_error(common, thread);
@@ -113,7 +114,7 @@ _eio_file_recursiv_ls(Ecore_Thread *thread,
      {
        Eina_Bool err;
 
-       err = !_eio_file_recursiv_ls(thread, common, filter_cb, data, dir);
+       err = !_eio_file_recursiv_ls(thread, common, filter_cb, Eina_File_Ls, data, dir);
 
        eina_stringshare_del(dir);
        if (err) goto on_error;
@@ -136,6 +137,7 @@ _eio_dir_recursiv_ls(Ecore_Thread *thread, Eio_Dir_Copy *copy, const char *targe
 {
    if (!_eio_file_recursiv_ls(thread, &copy->progress.common,
                               (Eio_Filter_Direct_Cb) _eio_dir_recursive_progress,
+			      eina_file_stat_ls,
                               copy, target))
      return EINA_FALSE;
 
@@ -720,6 +722,25 @@ _eio_dir_stat_find_heavy(void *data, Ecore_Thread *thread)
 
    _eio_file_recursiv_ls(thread, &async->ls.common,
                          (Eio_Filter_Direct_Cb) _eio_dir_stat_find_forward,
+			 eina_file_stat_ls,
+                         async, async->ls.directory);
+
+   if (async->pack) ecore_thread_feedback(thread, async->pack);
+   async->pack = NULL;
+}
+
+static void
+_eio_dir_direct_find_heavy(void *data, Ecore_Thread *thread)
+{
+   Eio_File_Direct_Ls *async = data;
+
+   async->ls.common.thread = thread;
+   async->pack = NULL;
+   async->start = ecore_time_get();
+
+   _eio_file_recursiv_ls(thread, &async->ls.common,
+                         (Eio_Filter_Direct_Cb) _eio_dir_stat_find_forward,
+			 eina_file_direct_ls,
                          async, async->ls.directory);
 
    if (async->pack) ecore_thread_feedback(thread, async->pack);
@@ -933,6 +954,41 @@ eio_dir_stat_ls(const char *dir,
                           error_cb,
                           data,
                           _eio_dir_stat_find_heavy,
+                          _eio_dir_stat_find_notify,
+                          _eio_dir_stat_done,
+                          _eio_dir_stat_error))
+     return NULL;
+
+   return &async->ls.common;
+}
+
+EAPI Eio_File *
+eio_dir_direct_ls(const char *dir,
+		  Eio_Filter_Direct_Cb filter_cb,
+		  Eio_Main_Direct_Cb main_cb,
+		  Eio_Done_Cb done_cb,
+		  Eio_Error_Cb error_cb,
+		  const void *data)
+{
+   Eio_File_Direct_Ls *async;
+
+   EINA_SAFETY_ON_NULL_RETURN_VAL(dir, NULL);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(main_cb, NULL);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(done_cb, NULL);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(error_cb, NULL);
+
+   async = malloc(sizeof(Eio_File_Direct_Ls));
+   EINA_SAFETY_ON_NULL_RETURN_VAL(async, NULL);
+
+   async->filter_cb = filter_cb;
+   async->main_cb = main_cb;
+   async->ls.directory = eina_stringshare_add(dir);
+
+   if (!eio_long_file_set(&async->ls.common,
+                          done_cb,
+                          error_cb,
+                          data,
+                          _eio_dir_direct_find_heavy,
                           _eio_dir_stat_find_notify,
                           _eio_dir_stat_done,
                           _eio_dir_stat_error))
