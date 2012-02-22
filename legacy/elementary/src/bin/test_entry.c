@@ -1692,6 +1692,242 @@ test_entry6(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info
 }
 
 static void
+changed_cb(void *data, Evas_Object *obj, void *event_info __UNUSED__)
+{
+	Evas_Object *en;
+	en = (Evas_Object*)data;
+
+	elm_entry_editable_set(en, elm_check_state_get(obj));
+}
+
+static void
+en_changed_cb(void *data, Evas_Object *obj, void *event_info __UNUSED__)
+{
+   Evas_Object *sp, *en;
+   sp = (Evas_Object *)data;
+   en = (Evas_Object *)obj;
+   elm_spinner_min_max_set(sp, 0, strlen(elm_object_text_get(en)));
+}
+
+static void
+sp_changed_cb(void *data, Evas_Object *obj, void *event_info __UNUSED__)
+{
+   Evas_Object *en, *sp;
+   en = (Evas_Object *)data;
+   sp = (Evas_Object *)obj;
+   elm_entry_cursor_pos_set(en, elm_spinner_value_get(sp));
+   elm_object_focus_set(en, EINA_TRUE);
+}
+
+static void
+add_bt_clicked(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+{
+   Evas_Object *en;
+   en = (Evas_Object *)data;
+
+   elm_entry_context_menu_item_add(en, "item", NULL, ELM_ICON_NONE, NULL, NULL);
+}
+
+static void
+clear_bt_clicked(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+{
+   Evas_Object *en;
+   en = (Evas_Object *)data;
+
+   elm_entry_context_menu_clear(en);
+}
+
+static Evas_Object *
+item_provider(void *images __UNUSED__, Evas_Object *en, const char *item)
+{
+   Evas_Object *o = NULL;;
+   char buf[1024];
+
+   if(!strcmp(item, "itemprovider"))
+     {
+        snprintf(buf, sizeof(buf), "%s/images/icon_00.png",
+                 elm_app_data_dir_get());
+        o = evas_object_image_filled_add(evas_object_evas_get(en));
+        evas_object_image_file_set(o, buf, NULL);
+     }
+
+   return o;
+}
+
+static Evas_Object *
+prepend_item_provider(void *images __UNUSED__, Evas_Object *en, const char *item)
+{
+   Evas_Object *o = NULL;;
+   char buf[1024];
+
+   if(!strcmp(item, "itemprovider"))
+     {
+        snprintf(buf, sizeof(buf), "%s/images/icon_10.png",
+                 elm_app_data_dir_get());
+        o = evas_object_image_filled_add(evas_object_evas_get(en));
+        evas_object_image_file_set(o, buf, NULL);
+     }
+
+   return o;
+}
+
+static void
+prepend_bt_clicked(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+{
+   Evas_Object *en;
+   en = (Evas_Object *)data;
+
+   elm_entry_item_provider_prepend(en, prepend_item_provider, NULL);
+   elm_object_text_set(en,
+                       "Item Provider"
+                       "<item size=50x50 vsize=full href=itemprovider></item>"
+                      );
+}
+
+static void
+remove_bt_clicked(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+{
+   Evas_Object *en;
+   en = (Evas_Object *)data;
+
+   elm_entry_item_provider_remove(en, item_provider, NULL);
+   elm_entry_item_provider_remove(en, prepend_item_provider, NULL);
+   elm_object_text_set(en,
+                       "Item Provider"
+                       "<item size=50x50 vsize=full href=itemprovider></item>"
+                      );
+}
+
+static void
+enable_changed_cb(void *data, Evas_Object *obj, void *event_info __UNUSED__)
+{
+	Evas_Object *en;
+	en = (Evas_Object*)data;
+
+	elm_entry_context_menu_disabled_set(en, elm_check_state_get(obj));
+}
+
+void
+test_entry7(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+{
+   Evas_Object *win, *gd, *rect, *en, *sc, *tg, *lb, *sp;
+   Evas_Object *bt, *en2, *sc2;
+   win = elm_win_util_standard_add("entry7", "Entry 7");
+   elm_win_autodel_set(win, EINA_TRUE);
+
+   gd = elm_grid_add(win);
+   elm_grid_size_set(gd, 100, 100);
+   elm_win_resize_object_add(win, gd);
+   evas_object_size_hint_weight_set(gd, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_show(gd);
+
+   rect = evas_object_rectangle_add(evas_object_evas_get(win));
+   elm_grid_pack(gd, rect, 10, 10, 60, 30);
+   evas_object_color_set(rect, 255, 0, 0, 255);
+   evas_object_show(rect);
+
+   en = elm_entry_add(win);
+   evas_object_size_hint_weight_set(en, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_size_hint_align_set(en, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   elm_object_text_set(en, "Editable, Cursor Positioin");
+
+   sc = elm_scroller_add(win);
+   evas_object_size_hint_weight_set(sc, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   elm_win_resize_object_add(win, sc);
+   elm_object_content_set(sc, en);
+   evas_object_show(en);
+   elm_grid_pack(gd, sc, 10, 10, 60, 30);
+   evas_object_show(sc);
+
+   tg = elm_check_add(win);
+   evas_object_size_hint_weight_set(tg, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_size_hint_align_set(tg, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   elm_object_text_set(tg, "Editable");
+   elm_check_state_set(tg, EINA_TRUE);
+   evas_object_smart_callback_add(tg, "changed", changed_cb, en);
+   elm_grid_pack(gd, tg, 70, 10, 22, 10);
+   evas_object_show(tg);
+
+   lb = elm_label_add(win);
+   elm_object_text_set(lb, "Cursor position:");
+   evas_object_size_hint_weight_set(lb, 0.0, 0.0);
+   evas_object_size_hint_align_set(lb, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   elm_grid_pack(gd, lb, 70, 25, 25, 5);
+   evas_object_show(lb);
+
+   sp = elm_spinner_add(win);
+   elm_spinner_label_format_set(sp, "%1.0f");
+   elm_spinner_step_set(sp, 1);
+   elm_spinner_wrap_set(sp, ELM_WRAP_CHAR);
+   elm_spinner_min_max_set(sp, 0, strlen(elm_object_text_get(en)));
+   evas_object_size_hint_align_set(sp, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   evas_object_size_hint_weight_set(sp, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   elm_grid_pack(gd, sp, 70, 30, 25, 10);
+   evas_object_smart_callback_add(en, "changed", en_changed_cb, sp);
+   evas_object_smart_callback_add(sp, "delay,changed", sp_changed_cb, en);
+   evas_object_show(sp);
+
+   rect = evas_object_rectangle_add(evas_object_evas_get(win));
+   elm_grid_pack(gd, rect, 10, 50, 45, 30);
+   evas_object_color_set(rect, 0, 255, 0, 255);
+   evas_object_show(rect);
+
+   en2 = elm_entry_add(win);
+   evas_object_size_hint_weight_set(en2, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_size_hint_align_set(en2, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   elm_object_text_set(en2,
+                       "Item Provider"
+                       "<item size=50x50 vsize=full href=itemprovider></item>"
+                      );
+   elm_entry_item_provider_append(en2, item_provider, NULL);
+   elm_entry_context_menu_disabled_set(en, EINA_TRUE);
+
+   sc2 = elm_scroller_add(win);
+   evas_object_size_hint_weight_set(sc2, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   elm_win_resize_object_add(win, sc2);
+   elm_object_content_set(sc2, en2);
+   evas_object_show(en2);
+   elm_grid_pack(gd, sc2, 10, 50, 45, 30);
+   evas_object_show(sc2);
+
+   tg = elm_check_add(win);
+   evas_object_size_hint_weight_set(tg, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_size_hint_align_set(tg, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   elm_object_text_set(tg, "Disable Context Menu");
+   elm_check_state_set(tg, EINA_TRUE);
+   evas_object_smart_callback_add(tg, "changed", enable_changed_cb, en2);
+   elm_grid_pack(gd, tg, 55, 50, 40, 10);
+   evas_object_show(tg);
+
+   bt = elm_button_add(win);
+   elm_object_text_set(bt, "Add Context Menu");
+   elm_grid_pack(gd, bt, 55, 60, 40, 10);
+   evas_object_smart_callback_add(bt, "clicked", add_bt_clicked, en2);
+   evas_object_show(bt);
+
+   bt = elm_button_add(win);
+   elm_object_text_set(bt, "Clear Context Menu");
+   elm_grid_pack(gd, bt, 55, 70, 40, 10);
+   evas_object_smart_callback_add(bt, "clicked", clear_bt_clicked, en2);
+   evas_object_show(bt);
+
+   bt = elm_button_add(win);
+   elm_object_text_set(bt, "Prepend Item Provider");
+   elm_grid_pack(gd, bt, 10, 80, 45, 10);
+   evas_object_smart_callback_add(bt, "clicked", prepend_bt_clicked, en2);
+   evas_object_show(bt);
+
+   bt = elm_button_add(win);
+   elm_object_text_set(bt, "Remove Item Provider");
+   elm_grid_pack(gd, bt, 55, 80, 40, 10);
+   evas_object_smart_callback_add(bt, "clicked", remove_bt_clicked, en2);
+   evas_object_show(bt);
+
+   evas_object_resize(win, 320, 320);
+   evas_object_show(win);
+}
+
+static void
 _scrolled_entry_clear(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    Evas_Object *en = data;
