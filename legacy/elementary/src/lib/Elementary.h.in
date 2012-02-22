@@ -223,18 +223,18 @@ EAPI extern Elm_Version *elm_version;
 #include <elm_object.h> // OK
 
 // SanjeevBA
-#include <elm_panel.h>
-#include <elm_panes.h>
-#include <elm_password.h>
-#include <elm_photocam.h>
-#include <elm_photo.h>
-#include <elm_plug.h>
-#include <elm_progressbar.h>
-#include <elm_radio.h>
-#include <elm_route.h>
-#include <elm_scale.h>
-#include <elm_scroll.h>
-#include <elm_segment_control.h>
+#include <elm_panel.h> // OK
+#include <elm_panes.h> // OK
+#include <elm_password.h> // OK
+#include <elm_photocam.h> // OK
+#include <elm_photo.h> // OK
+#include <elm_plug.h> // OK
+#include <elm_progressbar.h> // OK
+#include <elm_radio.h> // OK
+#include <elm_route.h> // OK
+#include <elm_scale.h> // OK
+#include <elm_scroll.h> // OK
+#include <elm_segment_control.h> // OK
 
 // Carsten Haitzler
 #include <elm_separator.h> // OK
