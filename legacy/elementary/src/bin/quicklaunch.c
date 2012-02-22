@@ -266,10 +266,11 @@ main(int argc, char **argv)
 	struct sockaddr_un client;
 	socklen_t len;
 
-	elm_quicklaunch_sub_init(argc, argv);
-	elm_quicklaunch_seed();
 	len = sizeof(struct sockaddr_un);
 	fd = accept(sock, (struct sockaddr *)&client, &len);
+	elm_quicklaunch_sub_init(argc, argv);
+// don't seed since we are doing this AFTER launch request        
+//	elm_quicklaunch_seed();
 	if (fd >= 0)
 	  {
 	     unsigned long bytes;

@@ -401,7 +401,6 @@ elm_quicklaunch_init(int    argc,
    if (!_elm_data_dir) _elm_data_dir = eina_stringshare_add("/");
    if (!_elm_lib_dir) _elm_lib_dir = eina_stringshare_add("/");
 
-   _elm_config_init();
    return _elm_ql_init_count;
 }
 
@@ -413,6 +412,7 @@ elm_quicklaunch_sub_init(int    argc,
    if (_elm_sub_init_count > 1) return _elm_sub_init_count;
    if (quicklaunch_on)
      {
+        _elm_config_init();
 #ifdef SEMI_BROKEN_QUICKLAUNCH
         return _elm_sub_init_count;
 #endif
@@ -423,6 +423,7 @@ elm_quicklaunch_sub_init(int    argc,
         evas_init();
         edje_init();
         _elm_module_init();
+        _elm_config_init();
         _elm_config_sub_init();
         ecore_evas_init(); // FIXME: check errors
 #ifdef HAVE_ELEMENTARY_ECORE_IMF
