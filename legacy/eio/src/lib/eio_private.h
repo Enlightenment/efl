@@ -60,6 +60,7 @@ typedef struct _Eio_File_Map Eio_File_Map;
 typedef struct _Eio_File_Map_Rule Eio_File_Map_Rule;
 typedef struct _Eio_File_Ls Eio_File_Ls;
 typedef struct _Eio_File_Direct_Ls Eio_File_Direct_Ls;
+typedef struct _Eio_File_Dir_Ls Eio_File_Dir_Ls;
 typedef struct _Eio_File_Char_Ls Eio_File_Char_Ls;
 typedef struct _Eio_File_Mkdir Eio_File_Mkdir;
 typedef struct _Eio_File_Mkdir Eio_File_Chmod;
@@ -228,6 +229,17 @@ struct _Eio_File_Direct_Ls
    Eio_File_Ls ls;
 
    Eio_Filter_Direct_Cb filter_cb;
+   Eio_Main_Direct_Cb main_cb;
+
+   Eina_List *pack;
+   double start;
+};
+
+struct _Eio_File_Dir_Ls
+{
+   Eio_File_Ls ls;
+
+   Eio_Filter_Dir_Cb filter_cb;
    Eio_Main_Direct_Cb main_cb;
 
    Eina_List *pack;

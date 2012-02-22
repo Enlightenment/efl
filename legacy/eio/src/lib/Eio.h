@@ -119,6 +119,7 @@ typedef Eina_Bool (*Eio_Filter_Cb)(void *data, Eio_File *handler, const char *fi
 typedef void (*Eio_Main_Cb)(void *data, Eio_File *handler, const char *file);
 
 typedef Eina_Bool (*Eio_Filter_Direct_Cb)(void *data, Eio_File *handler, const Eina_File_Direct_Info *info);
+typedef Eina_Bool (*Eio_Filter_Dir_Cb)(void *data, Eio_File *handler, Eina_File_Direct_Info *info);
 typedef void (*Eio_Main_Direct_Cb)(void *data, Eio_File *handler, const Eina_File_Direct_Info *info);
 
 typedef void (*Eio_Stat_Cb)(void *data, Eio_File *handler, const struct stat *stat);
@@ -238,7 +239,7 @@ EAPI Eio_File *eio_file_stat_ls(const char *dir,
  * ecore_thread_feedback_run. This prevent any lock in your apps.
  */
 EAPI Eio_File *eio_dir_stat_ls(const char *dir,
-                               Eio_Filter_Direct_Cb filter_cb,
+                               Eio_Filter_Dir_Cb filter_cb,
                                Eio_Main_Direct_Cb main_cb,
                                Eio_Done_Cb done_cb,
                                Eio_Error_Cb error_cb,
@@ -258,7 +259,7 @@ EAPI Eio_File *eio_dir_stat_ls(const char *dir,
  * ecore_thread_feedback_run. This prevent any lock in your apps.
  */
 EAPI Eio_File *eio_dir_direct_ls(const char *dir,
-				 Eio_Filter_Direct_Cb filter_cb,
+				 Eio_Filter_Dir_Cb filter_cb,
 				 Eio_Main_Direct_Cb main_cb,
 				 Eio_Done_Cb done_cb,
 				 Eio_Error_Cb error_cb,

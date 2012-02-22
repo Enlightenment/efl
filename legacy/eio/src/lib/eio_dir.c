@@ -669,9 +669,9 @@ _eio_dir_rmrf_heavy(void *data, Ecore_Thread *thread)
 }
 
 static Eina_Bool
-_eio_dir_stat_find_forward(Eio_File_Direct_Ls *async,
+_eio_dir_stat_find_forward(Eio_File_Dir_Ls *async,
                            Eio_File *handler,
-                           const Eina_File_Direct_Info *info)
+                           Eina_File_Direct_Info *info)
 {
    Eina_Bool filter = EINA_TRUE;
    double current;
@@ -714,7 +714,7 @@ _eio_dir_stat_find_forward(Eio_File_Direct_Ls *async,
 static void
 _eio_dir_stat_find_heavy(void *data, Ecore_Thread *thread)
 {
-   Eio_File_Direct_Ls *async = data;
+   Eio_File_Dir_Ls *async = data;
 
    async->ls.common.thread = thread;
    async->pack = NULL;
@@ -732,7 +732,7 @@ _eio_dir_stat_find_heavy(void *data, Ecore_Thread *thread)
 static void
 _eio_dir_direct_find_heavy(void *data, Ecore_Thread *thread)
 {
-   Eio_File_Direct_Ls *async = data;
+   Eio_File_Dir_Ls *async = data;
 
    async->ls.common.thread = thread;
    async->pack = NULL;
@@ -750,7 +750,7 @@ _eio_dir_direct_find_heavy(void *data, Ecore_Thread *thread)
 static void
 _eio_dir_stat_find_notify(void *data, Ecore_Thread *thread __UNUSED__, void *msg_data)
 {
-   Eio_File_Direct_Ls *async = data;
+   Eio_File_Dir_Ls *async = data;
    Eina_List *pack = msg_data;
    Eio_File_Direct_Info *info;
 
@@ -929,20 +929,20 @@ eio_dir_unlink(const char *path,
 
 EAPI Eio_File *
 eio_dir_stat_ls(const char *dir,
-                Eio_Filter_Direct_Cb filter_cb,
+                Eio_Filter_Dir_Cb filter_cb,
                 Eio_Main_Direct_Cb main_cb,
                 Eio_Done_Cb done_cb,
                 Eio_Error_Cb error_cb,
                 const void *data)
 {
-   Eio_File_Direct_Ls *async;
+   Eio_File_Dir_Ls *async;
 
    EINA_SAFETY_ON_NULL_RETURN_VAL(dir, NULL);
    EINA_SAFETY_ON_NULL_RETURN_VAL(main_cb, NULL);
    EINA_SAFETY_ON_NULL_RETURN_VAL(done_cb, NULL);
    EINA_SAFETY_ON_NULL_RETURN_VAL(error_cb, NULL);
 
-   async = malloc(sizeof(Eio_File_Direct_Ls));
+   async = malloc(sizeof(Eio_File_Dir_Ls));
    EINA_SAFETY_ON_NULL_RETURN_VAL(async, NULL);
 
    async->filter_cb = filter_cb;
@@ -964,20 +964,20 @@ eio_dir_stat_ls(const char *dir,
 
 EAPI Eio_File *
 eio_dir_direct_ls(const char *dir,
-		  Eio_Filter_Direct_Cb filter_cb,
+		  Eio_Filter_Dir_Cb filter_cb,
 		  Eio_Main_Direct_Cb main_cb,
 		  Eio_Done_Cb done_cb,
 		  Eio_Error_Cb error_cb,
 		  const void *data)
 {
-   Eio_File_Direct_Ls *async;
+   Eio_File_Dir_Ls *async;
 
    EINA_SAFETY_ON_NULL_RETURN_VAL(dir, NULL);
    EINA_SAFETY_ON_NULL_RETURN_VAL(main_cb, NULL);
    EINA_SAFETY_ON_NULL_RETURN_VAL(done_cb, NULL);
    EINA_SAFETY_ON_NULL_RETURN_VAL(error_cb, NULL);
 
-   async = malloc(sizeof(Eio_File_Direct_Ls));
+   async = malloc(sizeof(Eio_File_Dir_Ls));
    EINA_SAFETY_ON_NULL_RETURN_VAL(async, NULL);
 
    async->filter_cb = filter_cb;
