@@ -369,27 +369,8 @@ _eina_file_stat_ls_iterator_next(Eina_File_Direct_Iterator *it, void **data)
 
    if (it->info.type == EINA_FILE_UNKNOWN)
      {
-        if (eina_file_stat(it->dirp, &it->info, &st))
+        if (eina_file_stat(it->dirp, &it->info, &st) != 0)
           it->info.type = EINA_FILE_UNKNOWN;
-        else
-          {
-             if (S_ISREG(st.st_mode))
-               it->info.type = EINA_FILE_REG;
-             else if (S_ISDIR(st.st_mode))
-               it->info.type = EINA_FILE_DIR;
-             else if (S_ISCHR(st.st_mode))
-               it->info.type = EINA_FILE_CHR;
-             else if (S_ISBLK(st.st_mode))
-               it->info.type = EINA_FILE_BLK;
-             else if (S_ISFIFO(st.st_mode))
-               it->info.type = EINA_FILE_FIFO;
-             else if (S_ISLNK(st.st_mode))
-               it->info.type = EINA_FILE_LNK;
-             else if (S_ISSOCK(st.st_mode))
-               it->info.type = EINA_FILE_SOCK;
-             else
-               it->info.type = EINA_FILE_UNKNOWN;
-          }
      }
 
    return EINA_TRUE;
@@ -1306,8 +1287,35 @@ eina_file_stat(void *container, Eina_File_Direct_Info *info, struct stat *buf)
 
 #ifdef HAVE_FSTATAT
    fd = dirfd(container);
-   return fstatat(fd, info->path + info->name_start, buf, 0);
+   if (fstatat(fd, info->path + info->name_start, buf, 0))
 #else
-   return stat(it->info.path, buf);
+   if (stat(info->path, buf))
 #endif
+     {
+        if (info->type != EINA_FILE_LNK)
+          info->type = EINA_FILE_UNKNOWN;
+        return -1;
+     }
+
+   if (info->type == EINA_FILE_UNKNOWN)
+     {
+        if (S_ISREG(buf->st_mode))
+          info->type = EINA_FILE_REG;
+        else if (S_ISDIR(buf->st_mode))
+          info->type = EINA_FILE_DIR;
+        else if (S_ISCHR(buf->st_mode))
+          info->type = EINA_FILE_CHR;
+        else if (S_ISBLK(buf->st_mode))
+          info->type = EINA_FILE_BLK;
+        else if (S_ISFIFO(buf->st_mode))
+          info->type = EINA_FILE_FIFO;
+        else if (S_ISLNK(buf->st_mode))
+          info->type = EINA_FILE_LNK;
+        else if (S_ISSOCK(buf->st_mode))
+          info->type = EINA_FILE_SOCK;
+        else
+          info->type = EINA_FILE_UNKNOWN;
+     }
+
+   return 0;
 }
