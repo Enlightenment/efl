@@ -455,8 +455,6 @@ _eina_file_real_close(Eina_File *file)
    CloseHandle(file->fm);
    CloseHandle(file->handle);
 
-   eina_stringshare_del(file->filename);
-
    free(file);
 }
 
