@@ -170,7 +170,6 @@ evas_image_load_file_xpm(Image_Entry *ie, const char *file, const char *key __UN
 
    if (strncmp("/* XPM */", map, 9))
      {
-        ERR("XPM ERROR: header not found");
 	*error = EVAS_LOAD_ERROR_UNKNOWN_FORMAT;
         goto on_error;
      }
