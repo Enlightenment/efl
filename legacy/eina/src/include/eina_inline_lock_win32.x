@@ -334,6 +334,11 @@ eina_rwlock_new(Eina_RWLock *mutex)
    if (!eina_condition_new(&(mutex->cond_write), &(mutex->mutex)))
      goto on_error2;
 
+   mutex->readers_count = 0;
+   mutex->writers_count = 0;
+   mutex->readers = 0;
+   mutex->writers = 0;
+
    return EINA_TRUE;
 
  on_error2:
@@ -363,7 +368,7 @@ eina_rwlock_take_read(Eina_RWLock *mutex)
    AcquireSRWLockShared(&mutex->mutex);
    mutex->is_read_mode = EINA_TRUE;
 #else
-   DWORD res;
+   DWORD res = 0;
 
    if (eina_lock_take(&(mutex->mutex)) == EINA_LOCK_FAIL)
      return EINA_LOCK_FAIL;
@@ -396,7 +401,7 @@ eina_rwlock_take_write(Eina_RWLock *mutex)
    AcquireSRWLockExclusive(&mutex->mutex);
    mutex->is_read_mode = EINA_FALSE;
 #else
-   DWORD res;
+   DWORD res = 0;
 
    if (eina_lock_take(&(mutex->mutex)) == EINA_LOCK_FAIL)
      return EINA_LOCK_FAIL;
@@ -414,7 +419,7 @@ eina_rwlock_take_write(Eina_RWLock *mutex)
           }
         mutex->writers_count--;
      }
-   if (res == 0) mutex->writers_count = 1;
+   if (res == 0) mutex->writers = 1;
    eina_lock_release(&(mutex->mutex));
 #endif
 
