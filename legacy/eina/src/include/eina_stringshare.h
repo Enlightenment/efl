@@ -126,6 +126,20 @@
  * string creation/destruction speed, reduces memory use and decreases
  * memory fragmentation, so a win all-around.
  *
+ * Using eina stringshares usually boils down to:
+ * @code
+ * const char *str = eina_stringshare_add("My string");
+ * ...
+ * //Use str
+ * ...
+ * eina_stringshare_del(str);
+ * @endcode
+ * @note It's very important to note that string shares are @b @c const,
+ * changing them will result in undefined behavior.
+ * @note eina_stringshare_del() @b doesn't guarantee the string share will be
+ * freed, it releases a reference to it, but if other references to it still
+ * exist the string share will live until those are released.
+ *
  * The following diagram gives an idea of what happens as you create strings
  * with eina_stringshare_add():
  *
