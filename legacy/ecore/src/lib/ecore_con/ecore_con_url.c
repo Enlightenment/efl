@@ -1439,9 +1439,9 @@ _ecore_con_url_info_read(void)
                {
                   if (curlmsg->easy_handle == url_con->curl_easy)
                     {
+                       _ecore_con_url_event_url_complete(url_con, curlmsg);
                        _ecore_con_url_multi_remove(url_con);
                        _url_con_list = eina_list_remove_list(_url_con_list, l);
-                       _ecore_con_url_event_url_complete(url_con, curlmsg);
                     }
                }
         }
