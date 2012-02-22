@@ -577,7 +577,7 @@ EAPI Eet_File_Mode
 eet_mode_get(Eet_File *ef);
 
 /**
- * Close an eet file handle and flush and writes pending.
+ * Close an eet file handle and flush pending writes.
  * @param ef A valid eet file handle.
  *
  * This function will flush any pending writes to disk if the eet file
