@@ -853,7 +853,7 @@ EAPI void *ecore_main_win32_handler_del(Ecore_Win32_Handler *win32_handler);
  * These functions are for the need to poll information, but provide
  * a shared abstracted API to pool such polling to minimise wakeup
  * and ensure all the polling happens in as few spots as possible
- * areound a core poll interval.  For now only 1 core poller type is
+ * around a core poll interval.  For now only 1 core poller type is
  * supprted: ECORE_POLLER_CORE
  *
  * Example of @ref Ecore_Poller :
