@@ -110,7 +110,10 @@ _ecore_con_client_kill(Ecore_Con_Client *cl)
    if (cl->delete_me)
      DBG("Multi kill request for client %p", cl);
    else
-     ecore_con_event_client_del(cl);
+     {
+        ecore_con_event_client_del(cl);
+        if (cl->buf) return;
+     }
    INF("Lost client %s", (cl->ip) ? cl->ip : "");
    if (cl->fd_handler)
      ecore_main_fd_handler_del(cl->fd_handler);
@@ -1320,7 +1323,7 @@ _ecore_con_client_free(Ecore_Con_Client *cl)
    if (cl->event_count) return;
    ECORE_MAGIC_SET(cl, ECORE_MAGIC_NONE);
 
-   free(cl->buf);
+   eina_binbuf_free(cl->buf);
 
    if (cl->host_server->type & ECORE_CON_SSL)
      ecore_con_ssl_client_shutdown(cl);
