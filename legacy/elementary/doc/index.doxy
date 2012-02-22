@@ -115,16 +115,6 @@
  *
  * @image html img/widget/frame/preview-00.png
  * @image latex img/widget/frame/preview-00.eps
- * @li @ref Gengrid
- *
- * @image html img/widget/gengrid/preview-00.png
- * @image latex img/widget/gengrid/preview-00.eps
- * 
- * @li @ref Genlist
- * @image html img/widget/genlist/preview-00.png
- * @image latex img/widget/genlist/preview-00.eps
- * @image html img/genlist.png
- * @image latex img/genlist.eps
  *
  * @li @ref GLView
  * @li @ref Hover
@@ -253,6 +243,16 @@
  * it provides a number of containers. It's important to note that as containers
  * widgets don't have their own visual identity, so here we show one use for
  * them and a diagram showing their component parts:
+ * @li @ref Gengrid
+ *
+ * @image html img/widget/gengrid/preview-00.png
+ * @image latex img/widget/gengrid/preview-00.eps
+ * @li @ref Genlist
+ *
+ * @image html img/widget/genlist/preview-00.png
+ * @image latex img/widget/genlist/preview-00.eps
+ * @image html img/genlist.png
+ * @image latex img/genlist.eps
  * @li @ref Box
  *
  * @image html img/widget/box/preview-00.png
