@@ -342,3 +342,110 @@
  * @verbatim echo "test" >> /tmp/eio_notify_testfile
  */
 
+/**
+ * @page tutorial_dir_direct_ls eio_dir_direct_ls() tutorial
+ *
+ * @li The filter callback, which allow or not a file to be seen
+ * by the main loop handler. This callback run in a separated thread.
+ * It also take care of getting a stat buffer needed by the main callback
+ * to display the file size.
+ * @li The main callback, which receive in the main loop all the file
+ * that are allowed by the filter. If you are updating a user interface
+ * it make sense to delay the insertion a little, so you get a chance
+ * to update the canvas for a bunch of file instead of one by one.
+ * @li The end callback, which is called in the main loop when the
+ * content of the directory has been correctly scanned and all the
+ * file notified to the main loop.
+ * @li The error callback, which is called if an error occured or
+ * if the listing was cancelled during it's run. You can then retrieve
+ * the error type as an errno error.
+ *
+ * Here is a simple example that implement a stupidly simple recursive ls that display file size:
+ *
+ * @code
+ * #include <Eina.h>
+ * #include <Ecore.h>
+ * #include <Eio.h>
+ *
+ * static Eina_Bool
+ * _test_filter_cb(void *data, Eio_File *handler, Eina_File_Direct_Info *info)
+ * {
+ *    struct stat *buffer;
+ *    Eina_Bool isdir;
+ *
+ *    isdir = info->type == EINA_FILE_DIR;
+ *
+ *    buffer = malloc(sizeof (struct stat));
+ *    if (eina_file_stat(eio_file_container_get(handler), info, buffer))
+ *      {
+ *         free(buffer);
+ *         return EINA_FALSE;
+ *      }
+ *
+ *    if (!isdir && info->type == EINA_FILE_DIR)
+ *      {
+ *         if (lstat(info->path, buffer) == 0)
+ *           {
+ *              if (S_ISLNK(buffer->st_mode))
+ *                info->type = EINA_FILE_LNK;
+ *           }
+ *      }
+ *
+ *    eio_file_associate_direct_add(handler, "stat", buffer, free);
+ *    fprintf(stdout, "ACCEPTING: %s\n", info->path);
+ *    return EINA_TRUE;
+ * }
+ *
+ * static void
+ * _test_main_cb(void *data, Eio_File *handler, const Eina_File_Direct_Info *info)
+ * {
+ *    struct stat *buffer;
+ *
+ *    buffer = eio_file_associate_find(handler, "stat");
+ *    fprintf(stdout, "PROCESS: %s of size %li\n", info->path, buffer->st_size);
+ * }
+ *
+ * static void
+ * _test_done_cb(void *data, Eio_File *handler)
+ * {
+ *    printf("ls done\n");
+ *    ecore_main_loop_quit();
+ * }
+ *
+ * static void
+ * _test_error_cb(void *data, Eio_File *handler, int error)
+ * {
+ *    fprintf(stdout, "error: [%s]\n", strerror(error));
+ *    ecore_main_loop_quit();
+ * }
+ *
+ * int
+ * main(int argc, char **argv)
+ * {
+ *    Eio_File *cp;
+ *
+ *    if (argc != 2)
+ *      {
+ * 	fprintf(stdout, "eio_ls directory\n");
+ * 	return -1;
+ *      }
+ *
+ *    ecore_init();
+ *    eio_init();
+ *
+ *    cp = eio_dir_direct_ls(argv[1],
+ * 			  _test_filter_cb,
+ * 			  _test_main_cb,
+ * 			  _test_done_cb,
+ * 			  _test_error_cb,
+ * 			  NULL);
+ *
+ *    ecore_main_loop_begin();
+ *
+ *    eio_shutdown();
+ *    ecore_shutdown();
+ *
+ *    return 0;
+ * }
+ * @endcode
+ */
