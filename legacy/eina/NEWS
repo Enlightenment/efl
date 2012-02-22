@@ -15,6 +15,7 @@ Additions:
     * Added eina_inarray data type
     * Added eina_value data type (generic value storage)
     * Added eina_model data type (generic hierarchy data access)
+    * Add eina_file_stat.
 
 Fixes:
 

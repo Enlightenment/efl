@@ -369,14 +369,7 @@ _eina_file_stat_ls_iterator_next(Eina_File_Direct_Iterator *it, void **data)
 
    if (it->info.type == EINA_FILE_UNKNOWN)
      {
-#ifdef HAVE_FSTATAT
-        int fd;
-
-        fd = dirfd(it->dirp);
-        if (fstatat(fd, it->info.path + it->info.name_start, &st, 0))
-#else
-        if (stat(it->info.path, &st))
-#endif
+        if (eina_file_stat(it->dirp, &it->info, &st))
           it->info.type = EINA_FILE_UNKNOWN;
         else
           {
@@ -1301,3 +1294,20 @@ eina_file_mmap_faulty(void *addr, long page_size)
    eina_lock_release(&_eina_file_lock_cache);
 }
 
+EAPI int
+eina_file_stat(void *container, Eina_File_Direct_Info *info, struct stat *buf)
+{
+#ifdef HAVE_FSTATAT
+   int fd;
+#endif
+
+   EINA_SAFETY_ON_NULL_RETURN_VAL(info, -1);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(buf, -1);
+
+#ifdef HAVE_FSTATAT
+   fd = dirfd(container);
+   return fstatat(fd, info->path + info->name_start, buf, 0);
+#else
+   return stat(it->info.path, buf);
+#endif
+}

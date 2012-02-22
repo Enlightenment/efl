@@ -222,3 +222,6 @@
 
 	* Fix forgotten initialization of eina list count during eina_list_split_list.
 
+2012-02-22  Cedric Bail
+
+	* Add eina_file_stat.
