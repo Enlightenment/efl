@@ -23,7 +23,7 @@
 # define BTN_BACK 0x116
 #endif
 
-#include <X11/extensions/XKBcommon.h>
+#include <xkbcommon/xkbcommon.h>
 
 /* local function prototypes */
 static Eina_Bool _ecore_wl_shutdown(Eina_Bool close_display);
@@ -32,10 +32,10 @@ static int _ecore_wl_cb_disp_event_mask_update(uint32_t mask, void *data __UNUSE
 static void _ecore_wl_cb_disp_handle_geometry(void *data __UNUSED__, struct wl_output *output __UNUSED__, int x, int y, int pw __UNUSED__, int ph __UNUSED__, int subpixel __UNUSED__, const char *make __UNUSED__, const char *model __UNUSED__);
 static void _ecore_wl_cb_disp_handle_mode(void *data __UNUSED__, struct wl_output *output __UNUSED__, uint32_t flags, int w, int h, int refresh __UNUSED__);
 static Eina_Bool _ecore_wl_cb_fd_handle(void *data, Ecore_Fd_Handler *hdl __UNUSED__);
-static void _ecore_wl_cb_handle_motion(void *data __UNUSED__, struct wl_input_device *dev, uint32_t t, int32_t x, int32_t y, int32_t sx, int32_t sy);
+static void _ecore_wl_cb_handle_motion(void *data __UNUSED__, struct wl_input_device *dev, uint32_t t, int32_t sx, int32_t sy);
 static void _ecore_wl_cb_handle_button(void *data __UNUSED__, struct wl_input_device *dev, uint32_t t, uint32_t btn, uint32_t state);
 static void _ecore_wl_cb_handle_key(void *data __UNUSED__, struct wl_input_device *dev, uint32_t t __UNUSED__, uint32_t key, uint32_t state);
-static void _ecore_wl_cb_handle_pointer_focus(void *data __UNUSED__, struct wl_input_device *dev, uint32_t t, struct wl_surface *surface, int32_t x, int32_t y, int32_t sx, int32_t sy);
+static void _ecore_wl_cb_handle_pointer_focus(void *data __UNUSED__, struct wl_input_device *dev, uint32_t t, struct wl_surface *surface, int32_t sx, int32_t sy);
 static void _ecore_wl_cb_handle_keyboard_focus(void *data __UNUSED__, struct wl_input_device *dev, uint32_t t __UNUSED__, struct wl_surface *surface, struct wl_array *keys);
 static void _ecore_wl_cb_handle_touch_down(void *data __UNUSED__, struct wl_input_device *dev __UNUSED__, uint32_t timestamp, struct wl_surface *surface, int32_t id, int32_t x, int32_t y);
 static void _ecore_wl_cb_handle_touch_up(void *data __UNUSED__, struct wl_input_device *dev __UNUSED__, uint32_t timestamp, int32_t id);
@@ -354,7 +354,7 @@ ecore_wl_drag_start(Ecore_Wl_Drag_Source *source, struct wl_surface *surface, st
    source->buffer = buffer;
 
    wl_data_device_start_drag(source->data_dev, source->data_source, 
-                             surface, source->timestamp);
+                             surface, surface, source->timestamp);
 }
 
 EAPI void 
@@ -505,14 +505,14 @@ _ecore_wl_cb_fd_handle(void *data, Ecore_Fd_Handler *hdl __UNUSED__)
 }
 
 static void 
-_ecore_wl_cb_handle_motion(void *data __UNUSED__, struct wl_input_device *dev, uint32_t t, int32_t x, int32_t y, int32_t sx, int32_t sy) 
+_ecore_wl_cb_handle_motion(void *data __UNUSED__, struct wl_input_device *dev, uint32_t t, int32_t sx, int32_t sy) 
 {
 //   LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
    if (dev != _ecore_wl_input_dev) return;
 
-   _ecore_wl_screen_x = x;
-   _ecore_wl_screen_y = y;
+   /* _ecore_wl_screen_x = x; */
+   /* _ecore_wl_screen_y = y; */
    _ecore_wl_surface_x = sx;
    _ecore_wl_surface_y = sy;
 
@@ -535,8 +535,8 @@ _ecore_wl_cb_handle_button(void *data __UNUSED__, struct wl_input_device *dev, u
         ev->timestamp = t;
         ev->x = _ecore_wl_surface_x;
         ev->y = _ecore_wl_surface_y;
-        ev->root.x = _ecore_wl_screen_x;
-        ev->root.y = _ecore_wl_screen_y;
+        /* ev->root.x = _ecore_wl_screen_x; */
+        /* ev->root.y = _ecore_wl_screen_y; */
         ev->modifiers = _ecore_wl_input_modifiers;
         ev->direction = 0;
 
@@ -615,7 +615,7 @@ _ecore_wl_cb_handle_key(void *data __UNUSED__, struct wl_input_device *dev, uint
 }
 
 static void 
-_ecore_wl_cb_handle_pointer_focus(void *data __UNUSED__, struct wl_input_device *dev, uint32_t t, struct wl_surface *surface, int32_t x, int32_t y, int32_t sx, int32_t sy) 
+_ecore_wl_cb_handle_pointer_focus(void *data __UNUSED__, struct wl_input_device *dev, uint32_t t, struct wl_surface *surface, int32_t sx, int32_t sy) 
 {
    if (dev != _ecore_wl_input_dev) return;
 
@@ -627,8 +627,8 @@ _ecore_wl_cb_handle_pointer_focus(void *data __UNUSED__, struct wl_input_device 
     * move or resize is finished, we get this event again, but this time 
     * with an active surface */
 
-   _ecore_wl_screen_x = x;
-   _ecore_wl_screen_y = y;
+   /* _ecore_wl_screen_x = x; */
+   /* _ecore_wl_screen_y = y; */
    _ecore_wl_surface_x = sx;
    _ecore_wl_surface_y = sy;
 
@@ -863,8 +863,8 @@ _ecore_wl_cb_source_target(void *data, struct wl_data_source *source __UNUSED__,
    printf("\tHave Drag Source\n");
 
    /* FIXME: buffer here should really be the mouse cursor buffer */
-   wl_data_device_attach(s->data_dev, s->timestamp, s->buffer, 
-                         s->hotspot_x, s->hotspot_y);
+   /* wl_data_device_attach(s->data_dev, s->timestamp, s->buffer,  */
+   /*                       s->hotspot_x, s->hotspot_y); */
 }
 
 static void 
@@ -1033,8 +1033,8 @@ _ecore_wl_mouse_move_send(uint32_t timestamp)
 
    ev->x = _ecore_wl_surface_x;
    ev->y = _ecore_wl_surface_y;
-   ev->root.x = _ecore_wl_screen_x;
-   ev->root.y = _ecore_wl_screen_y;
+   /* ev->root.x = _ecore_wl_screen_x; */
+   /* ev->root.y = _ecore_wl_screen_y; */
    ev->modifiers = _ecore_wl_input_modifiers;
 
    ev->multi.device = 0;
@@ -1045,8 +1045,8 @@ _ecore_wl_mouse_move_send(uint32_t timestamp)
    ev->multi.angle = 0.0;
    ev->multi.x = _ecore_wl_surface_x;
    ev->multi.y = _ecore_wl_surface_y;
-   ev->multi.root.x = _ecore_wl_screen_x;
-   ev->multi.root.y = _ecore_wl_screen_y;
+   /* ev->multi.root.x = _ecore_wl_screen_x; */
+   /* ev->multi.root.y = _ecore_wl_screen_y; */
 
      {
         unsigned int id = 0;
@@ -1076,8 +1076,8 @@ _ecore_wl_mouse_out_send(struct wl_surface *surface, uint32_t timestamp)
 
    ev->x = _ecore_wl_surface_x;
    ev->y = _ecore_wl_surface_y;
-   ev->root.x = _ecore_wl_screen_x;
-   ev->root.y = _ecore_wl_screen_y;
+   /* ev->root.x = _ecore_wl_screen_x; */
+   /* ev->root.y = _ecore_wl_screen_y; */
    ev->modifiers = _ecore_wl_input_modifiers;
    ev->time = timestamp;
 
@@ -1101,8 +1101,8 @@ _ecore_wl_mouse_in_send(struct wl_surface *surface, uint32_t timestamp)
 
    ev->x = _ecore_wl_surface_x;
    ev->y = _ecore_wl_surface_y;
-   ev->root.x = _ecore_wl_screen_x;
-   ev->root.y = _ecore_wl_screen_y;
+   /* ev->root.x = _ecore_wl_screen_x; */
+   /* ev->root.y = _ecore_wl_screen_y; */
    ev->modifiers = _ecore_wl_input_modifiers;
    ev->time = timestamp;
 
@@ -1136,8 +1136,8 @@ _ecore_wl_mouse_up_send(struct wl_surface *surface, uint32_t button, uint32_t ti
    ev->timestamp = timestamp;
    ev->x = _ecore_wl_surface_x;
    ev->y = _ecore_wl_surface_y;
-   ev->root.x = _ecore_wl_screen_x;
-   ev->root.y = _ecore_wl_screen_y;
+   /* ev->root.x = _ecore_wl_screen_x; */
+   /* ev->root.y = _ecore_wl_screen_y; */
    ev->modifiers = _ecore_wl_input_modifiers;
 
    /* FIXME: Need to get these from Wayland somehow */
@@ -1152,8 +1152,8 @@ _ecore_wl_mouse_up_send(struct wl_surface *surface, uint32_t button, uint32_t ti
    ev->multi.angle = 0.0;
    ev->multi.x = _ecore_wl_surface_x;
    ev->multi.y = _ecore_wl_surface_y;
-   ev->multi.root.x = _ecore_wl_screen_x;
-   ev->multi.root.y = _ecore_wl_screen_y;
+   /* ev->multi.root.x = _ecore_wl_screen_x; */
+   /* ev->multi.root.y = _ecore_wl_screen_y; */
 
      {
         unsigned int id = 0;
@@ -1188,8 +1188,8 @@ _ecore_wl_mouse_down_send(struct wl_surface *surface, uint32_t button, uint32_t 
    ev->timestamp = timestamp;
    ev->x = _ecore_wl_surface_x;
    ev->y = _ecore_wl_surface_y;
-   ev->root.x = _ecore_wl_screen_x;
-   ev->root.y = _ecore_wl_screen_y;
+   /* ev->root.x = _ecore_wl_screen_x; */
+   /* ev->root.y = _ecore_wl_screen_y; */
    ev->modifiers = _ecore_wl_input_modifiers;
 
    /* FIXME: Need to get these from Wayland somehow */
@@ -1204,8 +1204,8 @@ _ecore_wl_mouse_down_send(struct wl_surface *surface, uint32_t button, uint32_t 
    ev->multi.angle = 0.0;
    ev->multi.x = _ecore_wl_surface_x;
    ev->multi.y = _ecore_wl_surface_y;
-   ev->multi.root.x = _ecore_wl_screen_x;
-   ev->multi.root.y = _ecore_wl_screen_y;
+   /* ev->multi.root.x = _ecore_wl_screen_x; */
+   /* ev->multi.root.y = _ecore_wl_screen_y; */
 
      {
         unsigned int id = 0;
