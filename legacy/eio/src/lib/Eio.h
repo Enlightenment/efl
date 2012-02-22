@@ -245,6 +245,26 @@ EAPI Eio_File *eio_dir_stat_ls(const char *dir,
                                const void *data);
 
 /**
+ * @brief List the content of a directory and all it's sub-content asynchronously
+ * @param dir The directory to list.
+ * @param filter_cb Callback called from another thread.
+ * @param main_cb Callback called from the main loop for each accepted file.
+ * @param done_cb Callback called from the main loop when the content of the directory has been listed.
+ * @param error_cb Callback called from the main loop when the directory could not be opened or listing content has been canceled.
+ * @param data Data passed to callback and not modified at all by eio_dir_stat_find.
+ * @return A reference to the IO operation.
+ *
+ * eio_dir_direct_ls() run eina_file_direct_ls() recursivly in a separated thread using
+ * ecore_thread_feedback_run. This prevent any lock in your apps.
+ */
+EAPI Eio_File *eio_dir_direct_ls(const char *dir,
+				 Eio_Filter_Direct_Cb filter_cb,
+				 Eio_Main_Direct_Cb main_cb,
+				 Eio_Done_Cb done_cb,
+				 Eio_Error_Cb error_cb,
+				 const void *data);
+
+/**
  * @brief Stat a file/directory.
  * @param path The path to stat.
  * @param done_cb Callback called from the main loop when stat was successfully called..
