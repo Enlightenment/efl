@@ -77,12 +77,6 @@ extern "C" {
  */
 
 /**
- * @addtogroup Eio_Group Eio Reference API
- *
- * @{
- */
-
-/**
  * @enum _Eio_File_Op
  * Input/Output operations on files.
  */
@@ -116,19 +110,19 @@ typedef struct _Eio_File Eio_File;
 typedef struct _Eio_Progress Eio_Progress;
 
 typedef Eina_Bool (*Eio_Filter_Cb)(void *data, Eio_File *handler, const char *file);
-typedef void (*Eio_Main_Cb)(void *data, Eio_File *handler, const char *file);
+typedef void      (*Eio_Main_Cb)(void *data, Eio_File *handler, const char *file);
 
 typedef Eina_Bool (*Eio_Filter_Direct_Cb)(void *data, Eio_File *handler, const Eina_File_Direct_Info *info);
 typedef Eina_Bool (*Eio_Filter_Dir_Cb)(void *data, Eio_File *handler, Eina_File_Direct_Info *info);
-typedef void (*Eio_Main_Direct_Cb)(void *data, Eio_File *handler, const Eina_File_Direct_Info *info);
+typedef void      (*Eio_Main_Direct_Cb)(void *data, Eio_File *handler, const Eina_File_Direct_Info *info);
 
 typedef void (*Eio_Stat_Cb)(void *data, Eio_File *handler, const struct stat *stat);
 typedef void (*Eio_Progress_Cb)(void *data, Eio_File *handler, const Eio_Progress *info);
 
-typedef void (*Eio_Eet_Open_Cb)(void *data, Eio_File *handler, Eet_File *file);
-typedef void (*Eio_Open_Cb)(void *data, Eio_File *handler, Eina_File *file);
+typedef void      (*Eio_Eet_Open_Cb)(void *data, Eio_File *handler, Eet_File *file);
+typedef void      (*Eio_Open_Cb)(void *data, Eio_File *handler, Eina_File *file);
 typedef Eina_Bool (*Eio_Filter_Map_Cb)(void *data, Eio_File *handler, void *map, size_t length);
-typedef void (*Eio_Map_Cb)(void *data, Eio_File *handler, void *map, size_t length);
+typedef void      (*Eio_Map_Cb)(void *data, Eio_File *handler, void *map, size_t length);
 
 typedef void (*Eio_Done_Data_Cb)(void *data, Eio_File *handler, const char *read_data, unsigned int size);
 typedef void (*Eio_Done_String_Cb)(void *data, Eio_File *handler, const char *xattr_string);
@@ -152,18 +146,6 @@ struct _Eio_Progress
    const char *source; /**< source of the IO operation */
    const char *dest; /**< target of the IO operation */
 };
-
-/**
- * @brief Initialize eio and all it's required submodule.
- * @return the current number of eio users.
- */
-EAPI int eio_init(void);
-
-/**
- * @brief Shutdown eio and all it's submodule if possible.
- * @return the number of pending users of eio.
- */
-EAPI int eio_shutdown(void);
 
 /**
  * @brief List content of a directory without locking your app.
@@ -393,6 +375,7 @@ EAPI Eio_File *eio_file_copy(const char *source,
  * @brief Move a directory and it's content asynchronously
  * @param source Should be the name of the directory to copy the data from.
  * @param dest Should be the name of the directory to copy the data to.
+ * @param filter_cb Possible to deny the move of some files/directories.
  * @param progress_cb Callback called to know the progress of the copy.
  * @param done_cb Callback called when the copy is done.
  * @param error_cb Callback called when something goes wrong.
@@ -402,6 +385,8 @@ EAPI Eio_File *eio_file_copy(const char *source,
  * It will try first to rename the directory, if not it will try to use splice
  * if possible, if not it will fallback to mmap/write.
  * It will try to preserve access right, but not user/group identity.
+ *
+ * @note if a rename occur, the filter callback will not be called.
  */
 EAPI Eio_File *eio_dir_move(const char *source,
 			    const char *dest,
@@ -415,6 +400,7 @@ EAPI Eio_File *eio_dir_move(const char *source,
  * @brief Copy a directory and it's content asynchronously
  * @param source Should be the name of the directory to copy the data from.
  * @param dest Should be the name of the directory to copy the data to.
+ * @param filter_cb Possible to deny the move of some files/directories.
  * @param progress_cb Callback called to know the progress of the copy.
  * @param done_cb Callback called when the copy is done.
  * @param error_cb Callback called when something goes wrong.
@@ -435,15 +421,13 @@ EAPI Eio_File *eio_dir_copy(const char *source,
 /**
  * @brief Remove a directory and it's content asynchronously
  * @param path Should be the name of the directory to destroy.
+ * @param filter_cb Possible to deny the move of some files/directories.
  * @param progress_cb Callback called to know the progress of the copy.
  * @param done_cb Callback called when the copy is done.
  * @param error_cb Callback called when something goes wrong.
  * @param data Private data given to callback.
  *
- * This function will move a directory and all it's content from source to dest.
- * It will try first to rename the directory, if not it will try to use splice
- * if possible, if not it will fallback to mmap/write.
- * It will try to preserve access right, but not user/group identity.
+ * This function will remove a directory and all it's content.
  */
 EAPI Eio_File *eio_dir_unlink(const char *path,
                               Eio_Filter_Direct_Cb filter_cb,
@@ -451,6 +435,18 @@ EAPI Eio_File *eio_dir_unlink(const char *path,
 			      Eio_Done_Cb done_cb,
 			      Eio_Error_Cb error_cb,
 			      const void *data);
+/**
+ * @}
+ */
+
+
+/**
+ * @defgroup Eio_Xattr Eio manipulation of eXtended attribute.
+ *
+ * @brief A set of function to manipulate data associated with a specific file
+ *
+ * @{
+ */
 
 /**
  * @brief Assynchronously list all eXtended attribute
@@ -474,6 +470,7 @@ EAPI Eio_File *eio_file_xattr(const char *path,
  * @param path The path to set the attribute on.
  * @param attribute The name of the attribute to define.
  * @param xattr_int The value to link the attribute with.
+ * @param flags Wether to insert, replace or create the attribute.
  * @param done_cb The callback called from the main loop when setxattr succeeded.
  * @param error_cb The callback called from the main loop when setxattr failed.
  * @param data Private data given to callback.
@@ -495,6 +492,7 @@ EAPI Eio_File *eio_file_xattr_int_set(const char *path,
  * @param path The path to set the attribute on.
  * @param attribute The name of the attribute to define.
  * @param xattr_double The value to link the attribute with.
+ * @param flags Wether to insert, replace or create the attribute.
  * @param done_cb The callback called from the main loop when setxattr succeeded.
  * @param error_cb The callback called from the main loop when setxattr failed.
  * @param data Private data given to callback.
@@ -515,6 +513,7 @@ EAPI Eio_File *eio_file_xattr_double_set(const char *path,
  * @param path The path to set the attribute on.
  * @param attribute The name of the attribute to define.
  * @param xattr_string The string to link the attribute with.
+ * @param flags Wether to insert, replace or create the attribute.
  * @param done_cb The callback called from the main loop when setxattr succeeded.
  * @param error_cb The callback called from the main loop when setxattr failed.
  * @param data Private data given to callback.
@@ -536,6 +535,7 @@ EAPI Eio_File *eio_file_xattr_string_set(const char *path,
  * @param attribute The name of the attribute to define.
  * @param xattr_data The data to link the attribute with.
  * @param xattr_size The size of the data to set.
+ * @param flags Wether to insert, replace or create the attribute.
  * @param done_cb The callback called from the main loop when setxattr succeeded.
  * @param error_cb The callback called from the main loop when setxattr failed.
  * @param data Private data given to callback.
@@ -619,6 +619,34 @@ EAPI Eio_File *eio_file_xattr_string_get(const char *path,
 					 const void *data);
 
 /**
+ * @}
+ */
+
+/**
+ * @defgroup Eio_Helper Eio Reference helper API
+ *
+ * @brief This are helper provided around core Eio API.
+ *
+ * This set of functions do provide helper to work around data
+ * provided by Eio without the need to look at system header.
+ *
+ * @{
+ */
+
+
+/**
+ * @brief Initialize eio and all it's required submodule.
+ * @return the current number of eio users.
+ */
+EAPI int eio_init(void);
+
+/**
+ * @brief Shutdown eio and all it's submodule if possible.
+ * @return the number of pending users of eio.
+ */
+EAPI int eio_shutdown(void);
+
+/**
  * @brief Return the container during EIO operation
  * @param ls The asynchronous IO operation to retrieve container from.
  * @return NULL if not available, a DIRP if it is.
@@ -687,28 +715,43 @@ EAPI Eina_Bool eio_file_associate_direct_add(Eio_File *ls,
 EAPI void *eio_file_associate_find(Eio_File *ls, const char *key);
 
 /**
- * @}
- */
-
-/**
- * @}
- */
-
-/**
- * @defgroup Eio_Helper Eio Reference helper API
+ * @brief get access time from a struct stat
+ * @param stat the structure to get the atime from
+ * @return the last accessed time
  *
- * @brief This are helper provided around core Eio API.
- *
- * This set of functions do provide helper to work around data
- * provided by Eio without the need to look at system header.
- *
- * @{
+ * This take care of doing type conversion to match rest of EFL time API.
+ * @note some filesystem don't update that information.
  */
-
 static inline double eio_file_atime(const struct stat *stat);
+
+/**
+ * @brief get modification time from a struct stat
+ * @param stat the structure to get the mtime from
+ * @return the last modification time
+ *
+ * This take care of doing type conversion to match rest of EFL time API.
+ */
 static inline double eio_file_mtime(const struct stat *stat);
+
+/**
+ * @brief get the size of the file described in struct stat
+ * @param stat the structure to get the size from
+ * @return the size of the file
+ */
 static inline long long eio_file_size(const struct stat *stat);
+
+/**
+ * @brief tell if the stated path was a directory or not.
+ * @param stat the structure to get the size from
+ * @return EINA_TRUE, if it was.
+ */
 static inline Eina_Bool eio_file_is_dir(const struct stat *stat);
+
+/**
+ * @brief tell if the stated path was a link or not.
+ * @param stat the structure to get the size from
+ * @return EINA_TRUE, if it was.
+ */
 static inline Eina_Bool eio_file_is_lnk(const struct stat *stat);
 
 /**
@@ -724,6 +767,8 @@ static inline Eina_Bool eio_file_is_lnk(const struct stat *stat);
  *
  * @brief This function help manipulating file assynchronously.
  *
+ * This set of function work on top of Eina_File and Ecore_Thread to
+ * never block when reading the content of a file.
  * @{
  */
 
@@ -808,22 +853,70 @@ EAPI Eio_File *eio_file_map_new(Eina_File *f,
  * @{
  */
 
+/**
+ * Open an eet file on disk, and returns a handle to it assynchronously.
+ * @param filename The file path to the eet file. eg: @c "/tmp/file.eet".
+ * @param mode The mode for opening. Either EET_FILE_MODE_READ,
+ *        EET_FILE_MODE_WRITE or EET_FILE_MODE_READ_WRITE.
+ * @param eet_cb The callback to call when the file has been successfully opened.
+ * @param error_cb Callback called in the main loop when the file can't be opened.
+ * @param data Private data given to each callback.
+ * @return NULL in case of a failure.
+ *
+ * This function call eet_open() from another thread using Ecore_Thread.
+ */
 EAPI Eio_File *eio_eet_open(const char *filename,
                             Eet_File_Mode mode,
 			    Eio_Eet_Open_Cb eet_cb,
 			    Eio_Error_Cb error_cb,
 			    const void *data);
-
+/**
+ * Close an eet file handle and flush pending writes assynchronously.
+ * @param ef A valid eet file handle.
+ * @param done_cb Callback called from the main loop when the file has been closed.
+ * @param error_cb Callback called in the main loop when the file can't be closed.
+ * @param data Private data given to each callback.
+ * @return NULL in case of a failure.
+ *
+ * This function will call eet_close() from another thread by
+ * using Ecore_Thread. You should assume that the Eet_File is dead after this
+ * function call.
+ */
 EAPI Eio_File *eio_eet_close(Eet_File *ef,
 			     Eio_Done_Cb done_cb,
 			     Eio_Eet_Error_Cb error_cb,
 			     const void *data);
 
+/**
+ * Sync content of an eet file handle, flushing pending writes assynchronously.
+ * @param ef A valid eet file handle.
+ * @param done_cb Callback called from the main loop when the file has been synced.
+ * @param error_cb Callback called in the main loop when the file can't be synced.
+ * @param data Private data given to each callback.
+ * @return NULL in case of a failure.
+ *
+ * This function will call eet_flush() from another thread. As long as done_cb or
+ * error_cb, haven't be called, you must keep ef open.
+ */
 EAPI Eio_File *eio_eet_sync(Eet_File *ef,
                             Eio_Done_Cb done_cb,
                             Eio_Eet_Error_Cb error_cb,
                             const void *data);
 
+/**
+ * Write a data structure from memory and store in an eet file
+ * using a cipher assynchronously.
+ * @param ef The eet file handle to write to.
+ * @param edd The data descriptor to use when encoding.
+ * @param name The key to store the data under in the eet file.
+ * @param cipher_key The key to use as cipher.
+ * @param write_data A pointer to the data structure to ssave and encode.
+ * @param compress Compression flags for storage.
+ * @param done_cb Callback called from the main loop when the data has been put in the Eet_File.
+ * @param error_cb Callback called in the main loop when the file can't be written.
+ * @param user_data Private data given to each callback.
+ * @return NULL in case of a failure.
+ */
 EAPI Eio_File *eio_eet_data_write_cipher(Eet_File *ef,
 					 Eet_Data_Descriptor *edd,
 					 const char *name,
@@ -834,6 +927,17 @@ EAPI Eio_File *eio_eet_data_write_cipher(Eet_File *ef,
 					 Eio_Error_Cb error_cb,
 					 const void *user_data);
 
+/**
+ * Read a data structure from an eet file and decodes it using a cipher assynchronously.
+ * @param ef The eet file handle to read from.
+ * @param edd The data descriptor handle to use when decoding.
+ * @param name The key the data is stored under in the eet file.
+ * @param cipher_key The key to use as cipher.
+ * @param done_cb Callback called from the main loop when the data has been read and decoded.
+ * @param error_cb Callback called in the main loop when the data can't be read.
+ * @param data Private data given to each callback.
+ * @return NULL in case of a failure.
+ */
 EAPI Eio_File *eio_eet_data_read_cipher(Eet_File *ef,
                                         Eet_Data_Descriptor *edd,
                                         const char *name,
@@ -842,6 +946,23 @@ EAPI Eio_File *eio_eet_data_read_cipher(Eet_File *ef,
                                         Eio_Error_Cb error_cb,
                                         const void *data);
 
+/**
+ * Write image data to the named key in an eet file assynchronously.
+ * @param ef A valid eet file handle opened for writing.
+ * @param name Name of the entry. eg: "/base/file_i_want".
+ * @param cipher_key The key to use as cipher.
+ * @param write_data A pointer to the image pixel data.
+ * @param w The width of the image in pixels.
+ * @param h The height of the image in pixels.
+ * @param alpha The alpha channel flag.
+ * @param compress The compression amount.
+ * @param quality The quality encoding amount.
+ * @param lossy The lossiness flag.
+ * @param done_cb Callback called from the main loop when the data has been put in the Eet_File.
+ * @param error_cb Callback called in the main loop when the file can't be written.
+ * @param user_data Private data given to each callback.
+ * @return NULL in case of a failure.
+ */
 EAPI Eio_File *eio_eet_data_image_write_cipher(Eet_File *ef,
                                                const char *name,
                                                const char *cipher_key,
@@ -856,12 +977,31 @@ EAPI Eio_File *eio_eet_data_image_write_cipher(Eet_File *ef,
                                                Eio_Error_Cb error_cb,
                                                const void *user_data);
 
+/**
+ * Read a specified entry from an eet file and return data
+ * @param ef A valid eet file handle opened for reading.
+ * @param name Name of the entry. eg: "/base/file_i_want".
+ * @param done_cb Callback called from the main loop when the data has been read.
+ * @param error_cb Callback called in the main loop when the data can't be read.
+ * @param data Private data given to each callback.
+ * @return NULL in case of a failure.
+ */
 EAPI Eio_File *eio_eet_read_direct(Eet_File *ef,
                                    const char *name,
                                    Eio_Done_Data_Cb done_cb,
                                    Eio_Error_Cb error_cb,
                                    const void *data);
 
+/**
+ * Read a specified entry from an eet file and return data
+ * @param ef A valid eet file handle opened for reading.
+ * @param name Name of the entry. eg: "/base/file_i_want".
+ * @param cipher_key The key to use as cipher.
+ * @param done_cb Callback called from the main loop when the data has been read.
+ * @param error_cb Callback called in the main loop when the data can't be read.
+ * @param data Private data given to each callback.
+ * @return NULL in case of a failure.
+ */
 EAPI Eio_File *eio_eet_read_cipher(Eet_File *ef,
                                    const char *name,
                                    const char *cipher_key,
@@ -869,6 +1009,19 @@ EAPI Eio_File *eio_eet_read_cipher(Eet_File *ef,
                                    Eio_Error_Cb error_cb,
                                    const void *data);
 
+/**
+ * Write a specified entry to an eet file handle using a cipher.
+ * @param ef A valid eet file handle opened for writing.
+ * @param name Name of the entry. eg: "/base/file_i_want".
+ * @param write_data Pointer to the data to be stored.
+ * @param size Length in bytes in the data to be stored.
+ * @param compress Compression flags (1 == compress, 0 = don't compress).
+ * @param cipher_key The key to use as cipher.
+ * @param done_cb Callback called from the main loop when the data has been put in the Eet_File.
+ * @param error_cb Callback called in the main loop when the file can't be written.
+ * @param user_data Private data given to each callback.
+ * @return NULL in case of a failure.
+ */
 EAPI Eio_File *eio_eet_write_cipher(Eet_File *ef,
                                     const char *name,
                                     void *write_data,

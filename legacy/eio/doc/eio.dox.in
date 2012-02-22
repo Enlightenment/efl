@@ -36,6 +36,9 @@
  * input/output operation. Most operation are done in a separated thread
  * to prevent lock. See @ref Eio_Group. Some helper to work on data
  * received in Eio callback are also provided see @ref Eio_Helper.
+ * It is also possible to work asynchronously on Eina_File with @ref Eio_Map
+ * or on Eet_File with @ref Eio_Eet. It come with way to manipulate
+ * eXtended attribute assynchronously with @ref Eio_Xattr.
  *
  * This library is cross-platform and can be compiled and used on
  * Linux, BSD, Opensolaris and Windows (XP and CE).
@@ -337,9 +340,10 @@
  * Build the example doing :
  * @verbatim gcc -o tutorial_monitor_add tutorial_monitor_add.c `pkg-config --libs --cflags eio ecore ecore-file eina`
  * then create the file /tmp/eio_notify_testfile :
- * @verbatim touch /tmp/eio_notify_testfile
+ * touch /tmp/eio_notify_testfile
  * and launch tutorial_monitor_add, and in another terminal, write into /tmp/eio_notify_testfile, doing for example :
- * @verbatim echo "test" >> /tmp/eio_notify_testfile
+ * echo "test" >> /tmp/eio_notify_testfile
+ * @endverbatim
  */
 
 /**
