@@ -4,7 +4,7 @@
  * @image html img/widget/web/preview-00.png
  * @image latex img/widget/web/preview-00.eps
  *
- * A web object is used for displaying web pages (HTML/CSS/JS)
+ * A web widget is used for displaying web pages (HTML/CSS/JS)
  * using WebKit-EFL. You must have compiled Elementary with
  * ewebkit support.
  *

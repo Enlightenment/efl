@@ -8,8 +8,8 @@
  * effects, create an @ref Elm_Transit and add the desired transition effects.
  *
  * Once the effects are added into transit, they will be automatically
- * managed (their callback will be called until the duration is ended, and
- * they will be deleted on completion).
+ * managed (their callback will be called for the set duration and
+ * they will be deleted upon completion).
  *
  * Example:
  * @code
@@ -32,7 +32,7 @@
  * @li @ref elm_transit_effect_resizing_add
  *
  * Other transition effects are used to make one object disappear and another
- * object appear on its old place. These effects are:
+ * object appear on its place. These effects are:
  *
  * @li @ref elm_transit_effect_flip_add
  * @li @ref elm_transit_effect_resizeable_flip_add
@@ -43,8 +43,8 @@
  * elm_transit_chain_transit_add.
  *
  * @warning We strongly recommend to use elm_transit just when edje can not do
- * the trick. Edje has more advantage than Elm_Transit, it has more flexibility and
- * animations can be manipulated inside the theme.
+ * the trick. Edje is better at handling transitions than Elm_Transit.
+ * Edje has more flexibility and animations can be manipulated inside the theme.
  *
  * List of examples:
  * @li @ref transit_example_01_explained
@@ -75,7 +75,7 @@ typedef enum
 /**
  * @enum Elm_Transit_Effect_Flip_Axis
  *
- * The axis where flip effect should be applied.
+ * The axis along which flip effect should be applied.
  */
 typedef enum
 {
@@ -86,7 +86,7 @@ typedef enum
 /**
  * @enum Elm_Transit_Effect_Wipe_Dir
  *
- * The direction where the wipe effect should occur.
+ * The direction in which the wipe effect should occur.
  */
 typedef enum
 {
@@ -141,12 +141,11 @@ typedef void (*Elm_Transit_Effect_End_Cb)(Elm_Transit_Effect *effect, Elm_Transi
 typedef void (*Elm_Transit_Del_Cb)(void *data, Elm_Transit *transit);
 
 /**
- * Add new transit.
+ * Create new transit.
  *
- * @note Is not necessary to delete the transit object, it will be deleted at
+ * @note It is not necessary to delete the transit object, it will be deleted at
  * the end of its operation.
- * @note The transit will start playing when the program enter in the main loop, is not
- * necessary to give a start to the transit.
+ * @note The transit will start playing when the program enters the main loop.
  *
  * @return The transit object.
  *
@@ -157,8 +156,8 @@ EAPI Elm_Transit           *elm_transit_add(void);
 /**
  * Stops the animation and delete the @p transit object.
  *
- * Call this function if you wants to stop the animation before the duration
- * time. Make sure the @p transit object is still alive with
+ * Call this function if you want to stop the animation before the 
+ * transit time. Make sure the @p transit object is still alive with
  * elm_transit_del_cb_set() function.
  * All added effects will be deleted, calling its respective data_free_cb
  * functions. The function set by elm_transit_del_cb_set() will be called.
@@ -168,16 +167,15 @@ EAPI Elm_Transit           *elm_transit_add(void);
  * @param transit The transit object to be deleted.
  *
  * @ingroup Transit
- * @warning Just call this function if you are sure the transit is alive.
  */
 EAPI void                   elm_transit_del(Elm_Transit *transit);
 
 /**
  * Add a new effect to the transit.
  *
- * @note The cb function and the data are the key to the effect. If you try to
- * add an already added effect, nothing is done.
- * @note After the first addition of an effect in @p transit, if its
+ * @note The cb function and the data are the key to the effect. 
+ * If you try to add an existing effect, nothing is done.
+ * @note After the first addition of an effect to @p transit, if its
  * effect list become empty again, the @p transit will be killed by
  * elm_transit_del(transit) function.
  *
@@ -201,8 +199,9 @@ EAPI void                   elm_transit_del(Elm_Transit *transit);
  * @p data.
  *
  * @ingroup Transit
- * @warning The transit free the context data at the and of the transition with
- * the data_free_cb function, do not use the context data in another transit.
+ * @warning The transit will free the context data at the and of the 
+ * transition with the data_free_cb function. 
+ * Do not share the context data in between different transit objects.
  */
 EAPI void                   elm_transit_effect_add(Elm_Transit *transit, Elm_Transit_Effect_Transition_Cb transition_cb, Elm_Transit_Effect *effect, Elm_Transit_Effect_End_Cb end_cb);
 
@@ -216,7 +215,7 @@ EAPI void                   elm_transit_effect_add(Elm_Transit *transit, Elm_Tra
  *
  * @note If the effect is not found, nothing is done.
  * @note If the effect list become empty, this function will call
- * elm_transit_del(transit), that is, it will kill the @p transit.
+ * elm_transit_del(transit), i.e., it will kill the @p transit.
  *
  * @param transit The transit object.
  * @param transition_cb The operation function.
@@ -229,23 +228,22 @@ EAPI void                   elm_transit_effect_del(Elm_Transit *transit, Elm_Tra
 /**
  * Add new object to apply the effects.
  *
- * @note After the first addition of an object in @p transit, if its
+ * @note After the first addition of an object to @p transit, if its
  * object list become empty again, the @p transit will be killed by
  * elm_transit_del(transit) function.
  * @note If the @p obj belongs to another transit, the @p obj will be
- * removed from it and it will only belong to the @p transit. If the old
- * transit stays without objects, it will die.
+ * removed from it and it will only belong to the other @p transit. 
+ * If the old transit stays without objects, it will die.
  * @note When you add an object into the @p transit, its state from
  * evas_object_pass_events_get(obj) is saved, and it is applied when the
  * transit ends, if you change this state with evas_object_pass_events_set()
- * after add the object, this state will change again when @p transit stops to
- * run.
+ * after add the object, this state will change again when @p transit stops.
  *
  * @param transit The transit object.
  * @param obj Object to be animated.
  *
  * @ingroup Transit
- * @warning It is not allowed to add a new object after transit begins to go.
+ * @warning It is not allowed to add a new object after transit begins.
  */
 EAPI void                   elm_transit_object_add(Elm_Transit *transit, Evas_Object *obj);
 
@@ -254,13 +252,13 @@ EAPI void                   elm_transit_object_add(Elm_Transit *transit, Evas_Ob
  *
  * @note If the @p obj is not in the @p transit, nothing is done.
  * @note If the list become empty, this function will call
- * elm_transit_del(transit), that is, it will kill the @p transit.
+ * elm_transit_del(transit), i.e., it will kill the @p transit.
  *
  * @param transit The transit object.
  * @param obj Object to be removed from @p transit.
  *
  * @ingroup Transit
- * @warning It is not allowed to remove objects after transit begins to go.
+ * @warning It is not allowed to remove objects after transit begins.
  */
 EAPI void                   elm_transit_object_remove(Elm_Transit *transit, Evas_Object *obj);
 
@@ -282,7 +280,7 @@ EAPI const Eina_List       *elm_transit_objects_get(const Elm_Transit *transit);
  * @note One state includes geometry, color, map data.
  *
  * @param transit The transit object.
- * @param state_keep Keeping or Non Keeping.
+ * @param state_keep retain the state or not.
  *
  * @ingroup Transit
  */
@@ -306,11 +304,11 @@ EAPI Eina_Bool              elm_transit_objects_final_state_keep_get(const Elm_T
 /**
  * Set the event enabled when transit is operating.
  *
- * If @p enabled is EINA_TRUE, the objects of the transit will receives
+ * If @p enabled is EINA_TRUE, the objects of the transit will receive
  * events from mouse and keyboard during the animation.
  * @note When you add an object with elm_transit_object_add(), its state from
  * evas_object_freeze_events_get(obj) is saved, and it is applied when the
- * transit ends, if you change this state with evas_object_freeze_events_set()
+ * transit ends. If you change this state with evas_object_freeze_events_set()
  * after adding the object, this state will change again when @p transit stops
  * to run.
  *
@@ -383,7 +381,7 @@ EAPI Eina_Bool              elm_transit_auto_reverse_get(const Elm_Transit *tran
  * Set the transit repeat count. Effect will be repeated by repeat count.
  *
  * This function sets the number of repetition the transit will run after
- * the first one, that is, if @p repeat is 1, the transit will run 2 times.
+ * the first one, i.e., if @p repeat is 1, the transit will run 2 times.
  * If the @p repeat is a negative number, it will repeat infinite times.
  *
  * @note If this function is called during the transit execution, the transit
