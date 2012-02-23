@@ -1,9 +1,88 @@
 #include <Elementary.h>
+#include "test.h"
 #ifdef HAVE_CONFIG_H
 # include "elementary_config.h"
 #endif
 
 #ifndef ELM_LIB_QUICKLAUNCH
+struct _api_data
+{
+   unsigned int state;  /* What state we are testing       */
+   void *box;           /* Use this to get box content     */
+};
+typedef struct _api_data api_data;
+
+enum _api_state
+{
+   ICON_UNSET,
+   WINDOW_TITLE_SET,
+   API_STATE_LAST
+};
+typedef enum _api_state api_state;
+
+static void
+set_api_state(api_data *api)
+{
+   const Eina_List *items = elm_box_children_get(api->box);
+   if(!eina_list_count(items))
+     return;
+
+   /* Get first item of list of vbox children */
+   Evas_Object *fs_bt = eina_list_nth(items, 0);
+
+   /* use elm_box_children_get() to get list of children */
+   switch(api->state)
+     { /* Put all api-changes under switch */
+      case ICON_UNSET:
+         elm_fileselector_entry_button_icon_unset(fs_bt);
+         break;
+
+      case WINDOW_TITLE_SET:
+         elm_fileselector_entry_window_title_set(fs_bt, "Custom title from API");
+         break;
+
+      case API_STATE_LAST:
+
+         break;
+      default:
+         return;
+     }
+}
+
+static void
+_api_bt_clicked(void *data, Evas_Object *obj, void *event_info __UNUSED__)
+{  /* Will add here a SWITCH command containing code to modify test-object */
+   /* in accordance a->state value. */
+   api_data *a = data;
+   char str[128];
+
+   printf("clicked event on API Button: api_state=<%d>\n", a->state);
+   set_api_state(a);
+   a->state++;
+   sprintf(str, "Next API function (%u)", a->state);
+   elm_object_text_set(obj, str);
+   elm_object_disabled_set(obj, a->state == API_STATE_LAST);
+}
+
+static void
+create_dir_struct(void)
+{
+   FILE *fp;
+   mkdir("/tmp/test_fs_bt", S_IRWXU);
+   fp = fopen("/tmp/test_fs_bt/a_file.txt", "w");
+   if (fp) fclose(fp);
+   fp = fopen("/tmp/test_fs_bt/k_file.txt", "w");
+   if (fp) fclose(fp);
+   fp = fopen("/tmp/test_fs_bt/m_file.txt", "w");
+   if (fp) fclose(fp);
+
+   mkdir("/tmp/test_fs_bt/a_subdir", S_IRWXU);
+   fp = fopen("/tmp/test_fs_bt/a_subdir/d_sub_file.txt", "w");
+   if (fp) fclose(fp);
+   fp = fopen("/tmp/test_fs_bt/a_subdir/j_sub_file.txt", "w");
+   if (fp) fclose(fp);
+}
+
 static void
 _file_chosen(void            *data,
              Evas_Object *obj __UNUSED__,
@@ -70,32 +149,57 @@ _disabled_toggle(void            *data,
    printf("Disabled flag set to: %s\n", value ? "false" : "true");
 }
 
+static void
+_cleanup_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+{
+   free(data);
+}
+
 void
 test_fileselector_entry(void *data       __UNUSED__,
                         Evas_Object *obj __UNUSED__,
                         void *event_info __UNUSED__)
 {
-   Evas_Object *win, *bg, *vbox, *hbox, *ic, *bt, *fs_en, *en, *lb;
+   Evas_Object *win, *bg, *vbox, *hbox, *ic, *bt, *fs_en, *en, *lb, *bxx;
+   api_data *api = calloc(1, sizeof(api_data));
 
    win = elm_win_add(NULL, "fileselector-entry", ELM_WIN_BASIC);
    elm_win_title_set(win, "File Selector Entry");
    elm_win_autodel_set(win, EINA_TRUE);
+   evas_object_event_callback_add(win, EVAS_CALLBACK_FREE, _cleanup_cb, api);
 
    bg = elm_bg_add(win);
    elm_win_resize_object_add(win, bg);
    evas_object_size_hint_weight_set(bg, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_show(bg);
 
+   bxx = elm_box_add(win);
+   elm_win_resize_object_add(win, bxx);
+   evas_object_size_hint_weight_set(bxx, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_show(bxx);
+
    vbox = elm_box_add(win);
    evas_object_size_hint_weight_set(vbox, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-   elm_win_resize_object_add(win, vbox);
+   api->box = vbox;
    evas_object_show(vbox);
+
+   bt = elm_button_add(win);
+   elm_object_text_set(bt, "Next API function");
+   evas_object_smart_callback_add(bt, "clicked", _api_bt_clicked, (void *) api);
+   elm_box_pack_end(bxx, bt);
+   elm_object_disabled_set(bt, api->state == API_STATE_LAST);
+   evas_object_show(bt);
+
+   elm_box_pack_end(bxx, vbox);
+
+   create_dir_struct(); /* Create a dir struct in /tmp */
 
    /* file selector entry */
    ic = elm_icon_add(win);
    elm_icon_standard_set(ic, "file");
    evas_object_size_hint_aspect_set(ic, EVAS_ASPECT_CONTROL_VERTICAL, 1, 1);
    fs_en = elm_fileselector_entry_add(win);
+   elm_fileselector_entry_path_set(fs_en, "/tmp/test_fs_bt");
    elm_object_text_set(fs_en, "Select a file");
    elm_object_part_content_set(fs_en, "button icon", ic);
    evas_object_size_hint_weight_set(fs_en, EVAS_HINT_EXPAND, 0.0);
