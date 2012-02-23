@@ -534,6 +534,21 @@ ecore_x_randr_crtcs_get(Ecore_X_Window root,
 }
 
 /*
+ * @depricated bad naming. Use ecore_x_randr_window_outputs_get instead.
+ * @brief get the CRTCs, which display a certain window
+ * @param window window the displaying crtcs shall be found for
+ * @param num the number of crtcs displaying the window
+ * @return array of crtcs that display a certain window. NULL if no crtcs
+ * was found that displays the specified window.
+ */
+EINA_DEPRECATED EAPI Ecore_X_Randr_Crtc *
+ecore_x_randr_current_crtc_get(Ecore_X_Window window,
+                               int *num)
+{
+   return ecore_x_randr_window_crtcs_get(window, num);
+}
+
+/*
  * @brief get the CRTCs, which display a certain window
  * @param window window the displaying crtcs shall be found for
  * @param num the number of crtcs displaying the window
@@ -541,7 +556,7 @@ ecore_x_randr_crtcs_get(Ecore_X_Window root,
  * was found that displays the specified window.
  */
 EAPI Ecore_X_Randr_Crtc *
-ecore_x_randr_current_crtc_get(Ecore_X_Window window,
+ecore_x_randr_window_crtcs_get(Ecore_X_Window window,
                                int *num)
 {
 #ifdef ECORE_XRANDR
@@ -553,7 +568,7 @@ ecore_x_randr_current_crtc_get(Ecore_X_Window window,
    Window tw;
    int ncrtcs, i, nret = 0, rx = 0, ry = 0;
 
-   if (_randr_version < RANDR_1_2) goto _ecore_x_randr_current_crtc_get_fail;
+   if (_randr_version < RANDR_1_2) goto _ecore_x_randr_window_crtcs_get_fail;
 
    ecore_x_window_geometry_get(window,
                                &w_geo.x, &w_geo.y,
@@ -561,7 +576,7 @@ ecore_x_randr_current_crtc_get(Ecore_X_Window window,
 
    root = ecore_x_window_root_get(window);
    crtcs = ecore_x_randr_crtcs_get(root, &ncrtcs);
-   if (!crtcs) goto _ecore_x_randr_current_crtc_get_fail;
+   if (!crtcs) goto _ecore_x_randr_window_crtcs_get_fail;
 
    /* now get window RELATIVE to root window - thats what matters. */
    XTranslateCoordinates(_ecore_x_disp, window, root, 0, 0, &rx, &ry, &tw);
@@ -588,7 +603,7 @@ ecore_x_randr_current_crtc_get(Ecore_X_Window window,
    if (num) *num = nret;
    return ret;
 
-_ecore_x_randr_current_crtc_get_fail:
+_ecore_x_randr_window_crtcs_get_fail:
 #endif
    if (num) *num = 0;
    return NULL;
