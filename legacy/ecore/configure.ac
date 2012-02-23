@@ -1392,16 +1392,26 @@ if ! test "x${have_atfile_source}" = "xno" ; then
       ])
 fi
 
+SHM_OPEN_LIBS=""
 AC_COMPILE_IFELSE(
    [AC_LANG_PROGRAM(
        [[
-#include <mman.h>
+#include <sys/mman.h>
+#include <sys/stat.h>
+#include <fcntl.h>
        ]],
        [[
-int i = shm_open(NULL, 0, 0);
+int fd;
+fd = shm_open("/", O_RDWR | O_CREAT, S_IRUSR | S_IWUSR);
+shm_unlink("/");
        ]])],
-   [have_shm_open="yes"],
+   [
+    have_shm_open="yes"
+    AC_DEFINE(HAVE_SHM_OPEN, 1, [Have shm_open() call])
+    SHM_OPEN_LIBS="-lrt"
+   ],
    [have_shm_open="no"])
+AC_SUBST(SHM_OPEN_LIBS)
 
 AC_MSG_CHECKING([shm_open])
 AC_MSG_RESULT([${have_shm_open}])
@@ -1862,11 +1872,13 @@ if test "x${have_ecore_ipc}" = "xno" || \
    have_extn="no"
 fi
 
-ECORE_EVAS_CHECK_MODULE([extn],
-   [${want_ecore_evas_extn}],
-   [Extension],
-   [${have_extn}],
-   [requirements_ecore_evas="ecore-evas-software-buffer >= 1.1.99 ecore-ipc >= 1.1.99 ${requirements_ecore_evas}"])
+dnl THIS IS SPECIAL - dont use normal ECORE_EVAS_CHECK_MODULE
+have_ecore_evas_extn="no"
+if test "x${want_ecore_evas_extn}" = "xyes" && \
+   test "x${have_ecore_evas}" = "xyes"; then
+   AC_DEFINE([BUILD_ECORE_EVAS_EXTN], [1], [Support for Extn Engine in Ecore_Evas])
+   have_ecore_evas_extn="yes"
+fi
 
 # ecore_evas_psl1ght
 
@@ -2143,6 +2155,7 @@ if test "x${have_ecore_evas}" = "xyes" ; then
   echo "    Sing.Proc. Windowing System: $have_ecore_evas_ews"
   echo "    Wayland Shm................: $have_ecore_evas_wayland_shm"
   echo "    Wayland Egl................: $have_ecore_evas_wayland_egl"
+  echo "    Extn (Plug/socket Extn)....: $have_ecore_evas_extn"
 fi
 echo
 echo "  Tests................: ${enable_tests}"
