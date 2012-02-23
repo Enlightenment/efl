@@ -1,8 +1,240 @@
 #include <Elementary.h>
+#include "test.h"
+#include <Elementary_Cursor.h>
 #ifdef HAVE_CONFIG_H
 # include "elementary_config.h"
 #endif
 #ifndef ELM_LIB_QUICKLAUNCH
+struct _api_data
+{
+   unsigned int state;  /* What state we are testing       */
+   void *list;
+};
+typedef struct _api_data api_data;
+
+enum _api_state
+{
+   ITEM_PREPEND,        /* 0 */
+   ITEM_INSERT_BEFORE,  /* 1 */
+   ITEM_INSERT_AFTER,   /* 2 */
+   ITEM_SEPARATOR_SET,  /* 3 */
+   LIST_ITEM_DEL,       /* 4 */
+   SCROLLER_POLICY_SET_ON,
+   SCROLLER_POLICY_SET_OFF, /* Back to AUTO next */
+   TOOLTIP_TEXT_SET,    /* 7 */
+   TOOLTIP_UNSET,       /* 8 */
+   ITEM_CURSOR_SET,     /* 9 */
+   ITEM_CURSOR_STYLE_SET,
+   DISABLED_SET,        /* 11 */
+   MODE_SET_COMPRESS,   /* 12 */
+   MODE_SET_LIMIT,      /* 13 */
+   MODE_SET_EXPAND,     /* 14 */
+   HORIZONTAL_SET,      /* 15 */
+   BOUNCE_SET,          /* 16 */
+   LIST_CLEAR,          /* 17 */
+   API_STATE_LAST
+};
+typedef enum _api_state api_state;
+
+static void
+set_api_state(api_data *api)
+{
+/** HOW TO TEST ************************
+0 ITEM PREPEND
+Scroll to end
+1 INSERT BEFORE
+Scroll to end
+2 INSERT AFTER
+3 INSERT SEPERATOR
+Scroll to end
+4 ITEM DEL
+5 POLICY ON, BOUNCE_SET(TRUE, TRUE)
+6 POLICY OFF
+Scroll to end
+7 TOOLTIP last-item
+8 Cancel tootip
+9 Curosr set on last item
+10 Cursor style set last item
+11 DISABLE last item
+12 MODE COMPRESS
+13 MODE LIMIT
+14 MODE EXPAND
+15 HORIZ SET
+16 VERT MODE, BOUNCE(TRUE, FALSE) try to bounce on Y-axis
+17 List clear
+*** HOW TO TEST ***********************/
+   Evas_Object *li = api->list;
+
+   switch(api->state)
+     { /* Put all api-changes under switch */
+      case ITEM_PREPEND: /* 0 */
+           {
+              const Eina_List *items = elm_list_items_get(li);
+              elm_list_item_prepend(li, "PREPEND", NULL, NULL, NULL, NULL);
+              elm_list_go(li);
+              elm_list_item_bring_in(eina_list_nth(items, 0));
+           }
+         break;
+
+      case ITEM_INSERT_BEFORE: /* 1 */
+           {
+              const Eina_List *items = elm_list_items_get(li);
+              if(eina_list_count(items))
+                {
+                  elm_list_item_insert_before(li,
+                        eina_list_nth(items, eina_list_count(items)-1),
+                        "1-before-last", NULL, NULL, NULL, NULL);
+                  elm_list_go(li);
+                  elm_list_item_bring_in(eina_list_data_get(eina_list_last(items)));
+                }
+           }
+         break;
+
+      case ITEM_INSERT_AFTER: /* 2 */
+           {
+              const Eina_List *items = elm_list_items_get(li);
+              if(eina_list_count(items))
+                {
+                  elm_list_item_insert_after(li,
+                        eina_list_nth(items, eina_list_count(items)-2),
+                        "insert-after", NULL, NULL, NULL, NULL);
+                  elm_list_go(li);
+                  elm_list_item_bring_in(eina_list_data_get(eina_list_last(items)));
+                }
+           }
+         break;
+
+      case ITEM_SEPARATOR_SET: /* 3 */
+           {
+              const Eina_List *items = elm_list_items_get(li);
+              if(eina_list_count(items))
+                {
+                  elm_list_item_separator_set(eina_list_nth(items, eina_list_count(items)-3), EINA_TRUE);
+                  elm_list_item_bring_in(eina_list_nth(items, eina_list_count(items)-3));
+                  elm_list_go(li);
+                }
+           }
+         break;
+
+      case LIST_ITEM_DEL: /* 4 */
+           {
+              const Eina_List *items = elm_list_items_get(li);
+              if(eina_list_count(items))
+                {
+                  elm_list_item_del(eina_list_data_get(eina_list_last(items)));
+                }
+           }
+         break;
+
+      case SCROLLER_POLICY_SET_ON: /* 5 */
+         elm_list_bounce_set(li, EINA_TRUE, EINA_TRUE);
+         elm_list_scroller_policy_set(li, ELM_SCROLLER_POLICY_ON, ELM_SCROLLER_POLICY_ON);
+         break;
+
+      case SCROLLER_POLICY_SET_OFF: /* Back to AUTO next (6) */
+         elm_list_scroller_policy_set(li, ELM_SCROLLER_POLICY_OFF, ELM_SCROLLER_POLICY_OFF);
+         break;
+
+      case TOOLTIP_TEXT_SET: /* 7 */
+           {
+              const Eina_List *items = elm_list_items_get(li);
+              if(eina_list_count(items))
+                {
+                  elm_list_item_tooltip_text_set(eina_list_data_get(eina_list_last(items)), "Tooltip set from API");
+                }
+              elm_list_scroller_policy_set(li, ELM_SCROLLER_POLICY_AUTO, ELM_SCROLLER_POLICY_AUTO);
+           }
+         break;
+
+      case TOOLTIP_UNSET: /* 8 */
+           {
+              const Eina_List *items = elm_list_items_get(li);
+              if(eina_list_count(items))
+                {
+                  elm_list_item_tooltip_unset(eina_list_data_get(eina_list_last(items)));
+                }
+           }
+         break;
+
+      case ITEM_CURSOR_SET: /* 9 */
+           {
+              const Eina_List *items = elm_list_items_get(li);
+              if(eina_list_count(items))
+                {
+                  elm_list_item_cursor_set(eina_list_data_get(eina_list_last(items)), ELM_CURSOR_HAND2);
+                }
+           }
+         break;
+
+      case ITEM_CURSOR_STYLE_SET: /* 10 */
+           {
+              const Eina_List *items = elm_list_items_get(li);
+              if(eina_list_count(items))
+                {
+                  elm_list_item_cursor_style_set(eina_list_data_get(eina_list_last(items)), "transparent");
+                }
+           }
+         break;
+
+      case DISABLED_SET: /* 11 */
+           {
+              const Eina_List *items = elm_list_items_get(li);
+              if(eina_list_count(items))
+                {
+                  elm_list_item_disabled_set(eina_list_data_get(eina_list_last(items)), EINA_TRUE);
+                }
+           }
+         break;
+
+      case MODE_SET_COMPRESS: /* 12 */
+         elm_list_mode_set(li, ELM_LIST_COMPRESS);
+         break;
+
+      case MODE_SET_LIMIT: /* 13 */
+         elm_list_mode_set(li, ELM_LIST_LIMIT);
+         break;
+
+      case MODE_SET_EXPAND: /* 14 */
+         elm_list_mode_set(li, ELM_LIST_EXPAND);
+         break;
+
+      case HORIZONTAL_SET: /* 15 */
+         elm_list_mode_set(li, ELM_LIST_SCROLL); /* return to default mode */
+         elm_list_horizontal_set(li, EINA_TRUE);
+         break;
+
+      case BOUNCE_SET: /* 16 */
+         elm_list_horizontal_set(li, EINA_FALSE);
+         elm_list_bounce_set(li, EINA_TRUE, EINA_FALSE);
+         break;
+
+      case LIST_CLEAR: /* 17 */
+         elm_list_clear(li);
+         break;
+
+      case API_STATE_LAST:
+         break;
+
+      default:
+         return;
+     }
+}
+
+static void
+_api_bt_clicked(void *data, Evas_Object *obj, void *event_info __UNUSED__)
+{  /* Will add here a SWITCH command containing code to modify test-object */
+   /* in accordance a->state value. */
+   api_data *a = data;
+   char str[128];
+
+   printf("clicked event on API Button: api_state=<%d>\n", a->state);
+   set_api_state(a);
+   a->state++;
+   sprintf(str, "Next API function (%u)", a->state);
+   elm_object_text_set(obj, str);
+   elm_object_disabled_set(obj, a->state == API_STATE_LAST);
+}
+
 static void
 my_show_it(void        *data,
            Evas_Object *obj __UNUSED__,
@@ -43,28 +275,51 @@ scroll_right(void        *data __UNUSED__,
    printf("Right edge!\n");
 }
 
+static void
+_cleanup_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+{
+   free(data);
+}
+
 void
 test_list(void        *data __UNUSED__,
           Evas_Object *obj __UNUSED__,
           void        *event_info __UNUSED__)
 {
-   Evas_Object *win, *bg, *li, *ic, *ic2, *bx, *tb2, *bt;
+   Evas_Object *win, *bg, *li, *ic, *ic2, *bx, *tb2, *bt, *bxx;
    char buf[PATH_MAX];
    Elm_Object_Item *list_it1, *list_it2, *list_it3, *list_it4, *list_it5;
+   api_data *api = calloc(1, sizeof(api_data));
 
    win = elm_win_add(NULL, "list", ELM_WIN_BASIC);
    elm_win_title_set(win, "List");
    elm_win_autodel_set(win, EINA_TRUE);
+   evas_object_event_callback_add(win, EVAS_CALLBACK_FREE, _cleanup_cb, api);
 
    bg = elm_bg_add(win);
    elm_win_resize_object_add(win, bg);
    evas_object_size_hint_weight_set(bg, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_show(bg);
 
+   bxx = elm_box_add(win);
+   elm_win_resize_object_add(win, bxx);
+   evas_object_size_hint_weight_set(bxx, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_show(bxx);
+
    li = elm_list_add(win);
-   elm_win_resize_object_add(win, li);
    elm_list_mode_set(li, ELM_LIST_LIMIT);
    evas_object_size_hint_weight_set(li, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_size_hint_align_set(li, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   api->list = li;
+
+   bt = elm_button_add(win);
+   elm_object_text_set(bt, "Next API function");
+   evas_object_smart_callback_add(bt, "clicked", _api_bt_clicked, (void *) api);
+   elm_box_pack_end(bxx, bt);
+   elm_object_disabled_set(bt, api->state == API_STATE_LAST);
+   evas_object_show(bt);
+
+   elm_box_pack_end(bxx, li);
 
    ic = elm_icon_add(win);
    snprintf(buf, sizeof(buf), "%s/images/logo_small.png", elm_app_data_dir_get());
