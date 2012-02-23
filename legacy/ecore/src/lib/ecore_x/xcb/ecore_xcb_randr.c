@@ -1589,9 +1589,9 @@ ecore_x_randr_window_crtcs_get(Ecore_X_Window window,
 #ifdef ECORE_XCB_RANDR
    Ecore_X_Window root;
    Eina_Rectangle w_geo, c_geo;
-   Ecore_X_Randr_Crtc *crtcs, *ret;
+   Ecore_X_Randr_Crtc *crtcs, *ret = NULL;
    Ecore_X_Randr_Mode mode;
-   int ncrtcs, noutputs, i, nret = 0;
+   int ncrtcs, i, nret = 0;
    xcb_translate_coordinates_cookie_t cookie;
    xcb_translate_coordinates_reply_t *trans;
 #endif
