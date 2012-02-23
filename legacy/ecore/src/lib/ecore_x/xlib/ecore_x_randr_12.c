@@ -533,6 +533,67 @@ ecore_x_randr_crtcs_get(Ecore_X_Window root,
 #endif
 }
 
+/*
+ * @brief get the CRTCs, which display a certain window
+ * @param window window the displaying crtcs shall be found for
+ * @param num the number of crtcs displaying the window
+ * @return array of crtcs that display a certain window. NULL if no crtcs
+ * was found that displays the specified window.
+ */
+EAPI Ecore_X_Randr_Crtc *
+ecore_x_randr_current_crtc_get(Ecore_X_Window window,
+                               int *num)
+{
+#ifdef ECORE_XRANDR
+   Ecore_X_Window root;
+   Eina_Rectangle w_geo, c_geo;
+   Ecore_X_Randr_Crtc *crtcs;
+   Ecore_X_Randr_Mode mode;
+   Ecore_X_Randr_Output *ret = NULL;
+   Window tw;
+   int ncrtcs, i, nret = 0, rx = 0, ry = 0;
+
+   if (_randr_version < RANDR_1_2) goto _ecore_x_randr_current_crtc_get_fail;
+
+   ecore_x_window_geometry_get(window,
+                               &w_geo.x, &w_geo.y,
+                               &w_geo.w, &w_geo.h);
+
+   root = ecore_x_window_root_get(window);
+   crtcs = ecore_x_randr_crtcs_get(root, &ncrtcs);
+   if (!crtcs) goto _ecore_x_randr_current_crtc_get_fail;
+
+   /* now get window RELATIVE to root window - thats what matters. */
+   XTranslateCoordinates(_ecore_x_disp, window, root, 0, 0, &rx, &ry, &tw);
+   w_geo.x = rx;
+   w_geo.y = ry;
+
+   for (i = 0, nret = 0; i < ncrtcs; i++)
+     {
+        /* if crtc is not enabled, don't bother about it any further */
+        mode = ecore_x_randr_crtc_mode_get(root, crtcs[i]);
+        if (mode == Ecore_X_Randr_None) continue;
+
+        ecore_x_randr_crtc_geometry_get(root, crtcs[i],
+                                        &c_geo.x, &c_geo.y,
+                                        &c_geo.w, &c_geo.h);
+        if (eina_rectangles_intersect(&w_geo, &c_geo))
+          {
+             ret = realloc(ret, (sizeof(Ecore_X_Randr_Crtc) * ++nret));
+             ret[nret] = crtcs[i];
+          }
+     }
+   free(crtcs);
+
+   if (num) *num = nret;
+   return ret;
+
+_ecore_x_randr_current_crtc_get_fail:
+#endif
+   if (num) *num = 0;
+   return NULL;
+}
+
 EAPI Ecore_X_Randr_Output *
 ecore_x_randr_outputs_get(Ecore_X_Window root,
                           int *num)
