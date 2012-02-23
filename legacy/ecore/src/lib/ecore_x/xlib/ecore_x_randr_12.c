@@ -2302,13 +2302,15 @@ ecore_x_randr_window_outputs_get(Ecore_X_Window window,
                                  int *num)
 {
 #ifdef ECORE_XRANDR
+   Ecore_X_Window root;
    Ecore_X_Randr_Crtc *crtcs;
    Ecore_X_Randr_Output *outputs, *ret = NULL;
    int ncrtcs, noutputs, i, nret = 0;
 
    if (_randr_version < RANDR_1_2) goto _ecore_x_randr_current_output_get_fail;
 
-   if (!(crtcs = ecore_x_randr_window_crtcs_get(window, num)))
+   root = ecore_x_window_root_get(window);
+   if (!(crtcs = ecore_x_randr_window_crtcs_get(window, &ncrtcs)))
      goto _ecore_x_randr_current_output_get_fail;
 
    for (i = 0, nret = 0; i < ncrtcs; i++)
