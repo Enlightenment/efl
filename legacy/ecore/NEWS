@@ -34,6 +34,8 @@ Improvements:
     * ecore_thread:
      - use eina_lock
      - use Ecore thread safe async call
+    * ecore_evas:
+     - use Evas buffer backend for SDL software engine
 
 Ecore 1.1.0
 

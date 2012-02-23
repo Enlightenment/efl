@@ -364,7 +364,7 @@
 2011-12-02 Carsten Haitzler (The Rasterman)
 
         1.1.0 release
-        
+
 2011-12-02 Mike Blumenkrantz
 
         * Use mempools for allocations
@@ -508,3 +508,7 @@
 2012-02-20  Cedric Bail
 
 	* Rewrite internal of Ecore_Thread to use Eina_Lock and ecore_main_loop_thread_safe_call_async.
+
+2012-02-23  Cedric Bail
+
+	* Move to Evas buffer engine for Ecore_Evas SDL software backend.
