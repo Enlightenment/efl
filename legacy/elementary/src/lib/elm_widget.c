@@ -1504,7 +1504,7 @@ EAPI const Eina_List *
 elm_widget_focus_custom_chain_get(const Evas_Object *obj)
 {
    API_ENTRY return NULL;
-   return (const Eina_List *) sd->focus_chain;
+   return (const Eina_List *)sd->focus_chain;
 }
 
 /**
