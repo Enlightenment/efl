@@ -3497,9 +3497,9 @@ _smart_add(Evas_Object *obj)
    if (!sd) return;
    sd->obj = obj;
    sd->x = sd->y = sd->w = sd->h = 0;
-   sd->can_focus = 1;
    sd->mirrored_auto_mode = EINA_TRUE; /* will follow system locale settings */
    evas_object_smart_data_set(obj, sd);
+   elm_widget_can_focus_set(obj, EINA_TRUE);
 }
 
 static Evas_Object *
