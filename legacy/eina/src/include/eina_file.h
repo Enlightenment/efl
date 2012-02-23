@@ -92,6 +92,12 @@
 typedef struct _Eina_File_Direct_Info Eina_File_Direct_Info;
 
 /**
+ * @typedef Eina_Stat
+ * A typedef to #_Eina_Stat.
+ */
+typedef struct _Eina_Stat Eina_Stat;
+
+/**
  * @typedef Eina_File_Dir_List_Cb
  * Type for a callback to be called when iterating over the files of a
  * directory.
@@ -147,6 +153,30 @@ struct _Eina_File_Direct_Info
    size_t               name_start; /**< where the filename/basename component starts */
    Eina_File_Type       type; /**< file type */
    char                 path[EINA_PATH_MAX]; /**< the path */
+};
+
+/**
+ * @struct _Eina_Stat
+ * A structure to store informations of a path.
+ */
+struct _Eina_Stat
+{
+   unsigned long int    dev;
+   unsigned long int    ino;
+   unsigned int         mode;
+   unsigned int         nlink;
+   unsigned int         uid;
+   unsigned int         gid;
+   unsigned long int    rdev;
+   unsigned long int    size;
+   unsigned long int    blksize;
+   unsigned long int    blocks;
+   unsigned long int    atime;
+   unsigned long int    atimensec;
+   unsigned long int    mtime;
+   unsigned long int    mtimensec;
+   unsigned long int    ctime;
+   unsigned long int    ctimensec;
 };
 
 /**
@@ -262,7 +292,7 @@ EAPI Eina_Iterator *eina_file_stat_ls(const char *dir) EINA_WARN_UNUSED_RESULT E
  * @see eina_file_direct_ls()
  * @see eina_file_stat_ls()
  */
-EAPI int eina_file_stat(void *container, Eina_File_Direct_Info *info, struct stat *buf) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1, 2, 3);
+EAPI int eina_file_statat(void *container, Eina_File_Direct_Info *info, Eina_Stat *buf) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1, 2, 3);
 
 /**
  * @brief Get an iterator to list the content of a directory, with direct
