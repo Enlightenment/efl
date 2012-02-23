@@ -365,7 +365,6 @@ typedef enum
    ELM_GENLIST_ITEM_FIELD_STATE = (1 << 2)
 } Elm_Genlist_Item_Field_Flags;
 typedef struct _Elm_Genlist_Item_Class      Elm_Genlist_Item_Class; /**< Genlist item class definition structs */
-#define ELM_GENLIST_ITEM_CLASS_HEADER       0, 0, 0
 
 #define Elm_Genlist_Item_Class Elm_Gen_Item_Class
 typedef struct _Elm_Genlist_Item_Class_Func Elm_Genlist_Item_Class_Func;    /**< Class functions for genlist item class */

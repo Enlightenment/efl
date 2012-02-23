@@ -223,7 +223,6 @@
  */
 
 typedef struct _Elm_Gengrid_Item_Class      Elm_Gengrid_Item_Class; /**< Gengrid item class definition structs */
-#define ELM_GENGRID_ITEM_CLASS_HEADER       0, 0, 0
 
 #define Elm_Gengrid_Item_Class Elm_Gen_Item_Class
 typedef struct _Elm_Gengrid_Item_Class_Func Elm_Gengrid_Item_Class_Func;    /**< Class functions for gengrid item classes. */
@@ -1470,6 +1469,71 @@ EAPI void                          elm_gengrid_filled_set(Evas_Object *obj, Eina
  * @ingroup Gengrid
  */
 EAPI Eina_Bool                     elm_gengrid_filled_get(const Evas_Object *obj);
+
+#define ELM_GENGRID_ITEM_CLASS_VERSION 2 /* current version number */
+
+/**
+ * Add a new gengrid item class in a given gengrid widget.
+ *
+ * @return New allocated a gengrid item class.
+ *
+ * This adds gengrid item class for the gengrid widget. When adding a item,
+ * gengrid_item_{append, prepend, insert} function needs item class of the item.
+ * Given callback paramters are used at retrieving {text, content} of
+ * added item. Set as NULL if it's not used.
+ * If there's no available memory, return can be NULL.
+ *
+ * @see elm_gengrid_item_class_free()
+ * @see elm_gengrid_item_append()
+ *
+ * @ingroup Gengrid
+ */
+EAPI Elm_Gengrid_Item_Class *elm_gengrid_item_class_new(void);
+
+/**
+ * Remove a item class in a given gengrid widget.
+ *
+ * @param itc The itc to be removed.
+ *
+ * This removes item class from the gengrid widget.
+ * Whenever it has no more references to it, item class is going to be freed.
+ * Otherwise it just decreases its reference count.
+ *
+ * @see elm_gengrid_item_class_new()
+ * @see elm_gengrid_item_class_ref()
+ * @see elm_gengrid_item_class_unref()
+ *
+ * @ingroup Gengrid
+ */
+EAPI void elm_gengrid_item_class_free(Elm_Gengrid_Item_Class *itc);
+
+/**
+ * Increments object reference count for the item class.
+ *
+ * @param itc The given item class object to reference
+ *
+ * This API just increases its reference count for item class management.
+ *
+ * @see elm_gengrid_item_class_unref()
+ *
+ * @ingroup Gengrid
+ */
+EAPI void elm_gengrid_item_class_ref(Elm_Gengrid_Item_Class *itc);
+
+/**
+ * Decrements object reference count for the item class.
+ *
+ * @param itc The given item class object to reference
+ *
+ * This API just decreases its reference count for item class management.
+ * Reference count can't be less than 0.
+ *
+ * @see elm_gengrid_item_class_ref()
+ * @see elm_gengrid_item_class_free()
+ *
+ * @ingroup Gengrid
+ */
+EAPI void elm_gengrid_item_class_unref(Elm_Gengrid_Item_Class *itc);
 
 /**
  * @}

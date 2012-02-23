@@ -1447,6 +1447,7 @@ _item_del(Elm_Gen_Item *it)
    if (it->realized) _elm_genlist_item_unrealize(it, EINA_FALSE);
    it->wd->item_count--;
    _elm_genlist_item_del_serious(it);
+   elm_gengrid_item_class_unref((Elm_Gengrid_Item_Class *)it->itc);
    evas_event_thaw(evas_object_evas_get(obj));
    evas_event_thaw_eval(evas_object_evas_get(obj));
 }
@@ -1896,6 +1897,7 @@ _item_new(Widget_Data                  *wd,
    if (!it) return NULL;
    elm_widget_item_disable_hook_set(it, _item_disable_hook);
    elm_widget_item_del_pre_hook_set(it, _item_del_pre_hook);
+   elm_gengrid_item_class_ref((Elm_Gengrid_Item_Class *)itc);
    it->item = ELM_NEW(Elm_Gen_Item_Type);
    wd->item_count++;
    it->group = it->itc->item_style && (!strcmp(it->itc->item_style, "group_index"));
@@ -2773,5 +2775,56 @@ elm_gengrid_filled_get(const Evas_Object *obj)
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return EINA_FALSE;
    return wd->filled;
+}
+
+EAPI Elm_Gengrid_Item_Class *
+elm_gengrid_item_class_new(void)
+{
+   Elm_Gengrid_Item_Class *itc;
+
+   itc = calloc(1, sizeof(Elm_Gengrid_Item_Class));
+   if (!itc)
+     return NULL;
+   itc->version = ELM_GENGRID_ITEM_CLASS_VERSION;
+   itc->refcount = 1;
+   itc->delete_me = EINA_FALSE;
+
+   return itc;
+}
+
+EAPI void
+elm_gengrid_item_class_free(Elm_Gengrid_Item_Class *itc)
+{
+   if (itc && (itc->version == ELM_GENGRID_ITEM_CLASS_VERSION))
+     {
+        if (!itc->delete_me) itc->delete_me = EINA_TRUE;
+        if (itc->refcount > 0) elm_gengrid_item_class_unref(itc);
+        else
+          {
+             itc->version = 0;
+             free(itc);
+          }
+     }
+}
+
+EAPI void
+elm_gengrid_item_class_ref(Elm_Gengrid_Item_Class *itc)
+{
+   if (itc && (itc->version == ELM_GENGRID_ITEM_CLASS_VERSION))
+     {
+        itc->refcount++;
+        if (itc->refcount == 0) itc->refcount--;
+     }
+}
+
+EAPI void
+elm_gengrid_item_class_unref(Elm_Gengrid_Item_Class *itc)
+{
+   if (itc && (itc->version == ELM_GENGRID_ITEM_CLASS_VERSION))
+     {
+        if (itc->refcount > 0) itc->refcount--;
+        if (itc->delete_me && (!itc->refcount))
+          elm_gengrid_item_class_free(itc);
+     }
 }
 
