@@ -112,7 +112,8 @@ test_web.c \
 test_win_inline.c \
 test_win_socket.c \
 test_win_plug.c \
-test_win_state.c
+test_win_state.c \
+test.h
 
 if HAVE_EIO
 elementary_test_SOURCES += test_eio.c

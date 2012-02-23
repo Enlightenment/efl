@@ -1,4 +1,5 @@
 #include <Elementary.h>
+#include "test.h"
 #ifdef HAVE_CONFIG_H
 # include "elementary_config.h"
 #endif
@@ -198,10 +199,9 @@ elm_test_add(Eina_List **p_list, const char *icon, const char *category, const c
    *p_list = eina_list_sorted_insert(*p_list, elm_test_sort, t);
 }
 
-static void
+void
 my_win_del(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
-   /* called when my_win_main is requested to be deleted */
    elm_exit(); /* exit the program's main loop that runs in elm_run() */
 }
 
