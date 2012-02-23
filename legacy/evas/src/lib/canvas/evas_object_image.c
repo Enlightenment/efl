@@ -3401,10 +3401,10 @@ evas_object_image_render_pre(Evas_Object *obj)
                                  y = idy;
                                  h = ((int)(idy + idh)) - y;
                                  
-                                 r.x = ((rr->x - 1) * w) / o->cur.image.w;
-                                 r.y = ((rr->y - 1) * h) / o->cur.image.h;
-                                 r.w = ((rr->w + 2) * w) / o->cur.image.w;
-                                 r.h = ((rr->h + 2) * h) / o->cur.image.h;
+                                 r.x = (rr->x * w) / o->cur.image.w;
+                                 r.y = (rr->y * h) / o->cur.image.h;
+                                 r.w = ((rr->w * w) + (o->cur.image.w * 2) - 1) / o->cur.image.w;
+                                 r.h = ((rr->h * h) + (o->cur.image.h * 2) - 1) / o->cur.image.h;
                                  r.x += obj->cur.geometry.x + x;
                                  r.y += obj->cur.geometry.y + y;
                                  RECTS_CLIP_TO_RECT(r.x, r.y, r.w, r.h,

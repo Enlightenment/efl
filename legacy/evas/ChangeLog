@@ -667,3 +667,7 @@
 	For example, this can be used to nicely change the font and size
 	in a text editor.
 
+2012-02-23  Carsten Haitzler (The Rasterman)
+
+        * Fix rouding of update regions for image objects when scaled
+        (leaves trails without this).
