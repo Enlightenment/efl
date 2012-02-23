@@ -126,7 +126,6 @@ struct _Widget_Data
    Ecore_Timer                   *multi_timer, *scr_hold_timer;
    Ecore_Animator                *reorder_move_animator;
    const char                    *mode_type;
-   const char                    *mode_item_style;
    unsigned int                   start_time;
    Evas_Coord                     prev_x, prev_y, prev_mx, prev_my;
    Evas_Coord                     cur_x, cur_y, cur_mx, cur_my;

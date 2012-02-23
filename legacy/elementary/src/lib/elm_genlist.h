@@ -942,34 +942,6 @@ EAPI Elm_Object_Item             *elm_genlist_selected_item_get(const Evas_Objec
 EAPI const Eina_List              *elm_genlist_selected_items_get(const Evas_Object *obj);
 
 /**
- * Get the mode item style of items in the genlist
- * @param obj The genlist object
- * @return The mode item style string, or NULL if none is specified
- *
- * This is a constant string and simply defines the name of the
- * style that will be used for mode animations. It can be
- * @c NULL if you don't plan to use Genlist mode. See
- * elm_genlist_item_mode_set() for more info.
- *
- * @ingroup Genlist
- */
-EAPI const char                   *elm_genlist_mode_item_style_get(const Evas_Object *obj);
-
-/**
- * Set the mode item style of items in the genlist
- * @param obj The genlist object
- * @param style The mode item style string, or NULL if none is desired
- *
- * This is a constant string and simply defines the name of the
- * style that will be used for mode animations. It can be
- * @c NULL if you don't plan to use Genlist mode. See
- * elm_genlist_item_mode_set() for more info.
- *
- * @ingroup Genlist
- */
-EAPI void                          elm_genlist_mode_item_style_set(Evas_Object *obj, const char *style);
-
-/**
  * Get a list of realized items in genlist
  *
  * @param obj The genlist object

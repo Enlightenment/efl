@@ -1746,11 +1746,11 @@ test_genlist10(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_i
    evas_object_show(gl);
 
    itc10.item_style     = "default";
+   itc10.mode_item_style = "mode";
    itc10.func.text_get = gl10_text_get;
    itc10.func.content_get  = gl10_content_get;
    itc10.func.state_get = gl_state_get;
    itc10.func.del       = NULL;
-   elm_genlist_mode_item_style_set(gl, "mode");
 
    for (i = 0; i < 50; i++)
      elm_genlist_item_append(gl,

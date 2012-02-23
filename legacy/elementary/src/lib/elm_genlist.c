@@ -2957,7 +2957,7 @@ _mode_item_realize(Elm_Gen_Item *it)
 
    if (it->item->order_num_in & 0x1) strncat(buf, "_odd", sizeof(buf) - strlen(buf));
    strncat(buf, "/", sizeof(buf) - strlen(buf));
-   strncat(buf, it->wd->mode_item_style, sizeof(buf) - strlen(buf));
+   strncat(buf, it->itc->mode_item_style, sizeof(buf) - strlen(buf));
 
    _elm_theme_object_set(WIDGET(it), it->item->mode_view, "genlist", buf,
                          elm_widget_style_get(WIDGET(it)));
@@ -5249,7 +5249,7 @@ elm_genlist_item_mode_set(Elm_Object_Item  *it,
        (!strcmp(mode_type, wd->mode_type)) &&
        (mode_set))
       return;
-   if (!wd->mode_item_style) return;
+   if (!_it->itc->mode_item_style) return;
    _it->mode_set = mode_set;
 
    if (wd->multi)
@@ -5274,14 +5274,13 @@ elm_genlist_item_mode_set(Elm_Object_Item  *it,
    if (mode_set) _item_mode_set(_it);
 }
 
-
 EAPI const char *
 elm_genlist_mode_item_style_get(const Evas_Object *obj)
 {
    ELM_CHECK_WIDTYPE(obj, widtype) NULL;
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return NULL;
-   return wd->mode_item_style;
+   return wd->mode_item->itc->mode_item_style;
 }
 
 EAPI void
@@ -5290,10 +5289,11 @@ elm_genlist_mode_item_style_set(Evas_Object *obj, const char *style)
    ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return;
-   if ((style == wd->mode_item_style) || (style && wd->mode_item_style &&
-       (!strcmp(style, wd->mode_item_style))))
+   if ((style == wd->mode_item->itc->mode_item_style) ||
+       (style && wd->mode_item->itc->mode_item_style &&
+       (!strcmp(style, wd->mode_item->itc->mode_item_style))))
      return;
-   eina_stringshare_replace(&wd->mode_item_style, style);
+   eina_stringshare_replace((const char**)&wd->mode_item->itc->mode_item_style, style);
    elm_genlist_realized_items_update(obj);
 }
 

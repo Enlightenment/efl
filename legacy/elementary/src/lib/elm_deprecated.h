@@ -1935,6 +1935,34 @@ EINA_DEPRECATED EAPI void                          elm_genlist_item_del(Elm_Obje
  */
 EINA_DEPRECATED EAPI Evas_Object                  *elm_genlist_item_genlist_get(const Elm_Object_Item *it);
 
+/**
+ * Get the mode item style of items in the genlist
+ * @param obj The genlist object
+ * @return The mode item style string, or NULL if none is specified
+ *
+ * This is a constant string and simply defines the name of the
+ * style that will be used for mode animations. It can be
+ * @c NULL if you don't plan to use Genlist mode. See
+ * elm_genlist_item_mode_set() for more info.
+ *
+ * @ingroup Genlist
+ */
+EINA_DEPRECATED EAPI const char                   *elm_genlist_mode_item_style_get(const Evas_Object *obj);
+
+/**
+ * Set the mode item style of items in the genlist
+ * @param obj The genlist object
+ * @param style The mode item style string, or NULL if none is desired
+ *
+ * This is a constant string and simply defines the name of the
+ * style that will be used for mode animations. It can be
+ * @c NULL if you don't plan to use Genlist mode. See
+ * elm_genlist_item_mode_set() for more info.
+ *
+ * @ingroup Genlist
+ */
+EINA_DEPRECATED EAPI void                          elm_genlist_mode_item_style_set(Evas_Object *obj, const char *style);
+
 
 #define ELM_IMAGE_ROTATE_90_CW 1
 #define ELM_IMAGE_ROTATE_180_CW 2

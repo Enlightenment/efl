@@ -13,6 +13,7 @@ struct _Elm_Gen_Item_Class
    unsigned int refcount;
    Eina_Bool delete_me : 1;
    const char *item_style;
+   const char *mode_item_style;
    struct _Elm_Gen_Item_Class_Func
    {
       Elm_Gen_Item_Text_Get_Cb    text_get;
