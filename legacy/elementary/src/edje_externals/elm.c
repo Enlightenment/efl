@@ -36,9 +36,9 @@ _external_obj_del(void *data __UNUSED__, Evas *evas __UNUSED__, Evas_Object *obj
 }
 
 void
-external_signal(void *data __UNUSED__, Evas_Object *obj, const char *signal, const char *source)
+external_signal(void *data __UNUSED__, Evas_Object *obj, const char *sig, const char *source)
 {
-	char *_signal = strdup(signal);
+	char *_signal = strdup(sig);
 	char *p = _signal;
 	Evas_Object *content;
 
@@ -48,7 +48,7 @@ external_signal(void *data __UNUSED__, Evas_Object *obj, const char *signal, con
 
 	if((*p=='\0') || (*(p+1)!=':'))
 	{
-		ERR("Invalid External Signal received: '%s' '%s'\n", signal, source);
+		ERR("Invalid External Signal received: '%s' '%s'\n", sig, source);
 		free(_signal);
 		return ;
 	}
@@ -68,7 +68,7 @@ external_signal(void *data __UNUSED__, Evas_Object *obj, const char *signal, con
 	content = type->content_get(type->data, obj, _signal);
 	free(_signal);
 	if(content)
-		edje_object_signal_emit(content, signal + (p - _signal), source);
+		edje_object_signal_emit(content, sig + (p - _signal), source);
 }
 
 const char *

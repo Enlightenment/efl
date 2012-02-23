@@ -7,7 +7,7 @@
 struct _Idx_Data_Type
 {
    Evas_Object *id;  /* Pointer to Index */
-   Elm_Genlist_Item *item; /* Item we use for search */
+   Elm_Object_Item *item; /* Item we use for search */
 };
 typedef struct _Idx_Data_Type Idx_Data_Type;
 
@@ -55,16 +55,16 @@ set_api_state(api_data *api)
          break;
 
       case INDEX_ITEM_DEL: /* 4 */
-         elm_index_item_del(d->id, elm_index_item_find(d->id, d->item));
+         elm_object_item_del(elm_index_item_find(d->id, d->item));
          break;
 
       case INDEX_ITEM_FIND: /* 5 */
            {
-              Elm_Index_Item *i = elm_index_item_find(d->id, d->item);
+              Elm_Object_Item *i = elm_index_item_find(d->id, d->item);
               if(i)
                 {
                    printf("Item Find - Found Item.\n");
-                   elm_index_item_del(d->id, i);
+                   elm_object_item_del(i);
                 }
            }
          break;
@@ -202,7 +202,7 @@ test_index(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info 
              elm_index_item_append(id, buf, glit);
 
              if (*buf == 'G')  /* Just init dt->item later used in API test */
-               api->dt.item = it;
+               api->dt.item = glit;
           }
         j += 2;
      }

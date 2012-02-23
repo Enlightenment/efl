@@ -60,14 +60,14 @@ set_api_state(api_data *api)
 
       case GRID_TOOLTIP_SET_TEXT: /* 6 */
            {
-              Elm_Gengrid_Item *item = elm_gengrid_first_item_get(grid);
+              Elm_Object_Item *item = elm_gengrid_first_item_get(grid);
               elm_gengrid_item_tooltip_text_set(item, "This is the first item");
            }
          break;
 
       case GRID_TOOLTIP_UNSET: /* 7 */
            {
-              Elm_Gengrid_Item *item = elm_gengrid_first_item_get(grid);
+              Elm_Object_Item *item = elm_gengrid_first_item_get(grid);
               elm_gengrid_item_tooltip_unset(item);
            }
          break;

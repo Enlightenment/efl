@@ -343,10 +343,10 @@ _index_get(void)
 }
 
 static void
-_index_remove(int index)
+_index_remove(int i)
 {
-   if (index >= ICON_MAX) return;
-   radio_index[index] = EINA_FALSE;
+   if (i >= ICON_MAX) return;
+   radio_index[i] = EINA_FALSE;
 }
 
 static void
@@ -361,21 +361,21 @@ static Evas_Object *
 _radio_new(Evas_Object *obj)
 {
    Evas_Object *ic, *rd;
-   int index;
+   int idx;
    char buf[PATH_MAX];
    Evas_Object *rdg;
 
-   index = _index_get();
-   if (index == -1) return NULL;
+   idx = _index_get();
+   if (idx == -1) return NULL;
 
    ic = elm_icon_add(obj);
    snprintf(buf, sizeof(buf), "%s/images/icon_%02d.png",
-            elm_app_data_dir_get(), index);
+            elm_app_data_dir_get(), idx);
    elm_icon_file_set(ic, buf, NULL);
    evas_object_size_hint_aspect_set(ic, EVAS_ASPECT_CONTROL_VERTICAL, 1, 1);
 
    rd = elm_radio_add(obj);
-   elm_radio_state_value_set(rd, index);
+   elm_radio_state_value_set(rd, idx);
    evas_object_size_hint_weight_set(rd, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(rd, EVAS_HINT_FILL, 0.5);
    elm_object_part_content_set(rd, "icon", ic);

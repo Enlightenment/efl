@@ -172,9 +172,9 @@ _print_cal_info(Evas_Object *cal, Evas_Object *en)
    int year_min, year_max;
    Eina_Bool sel_enabled;
    const char **wds;
-   struct tm stime;
+   struct tm stm;
 
-   if (!elm_calendar_selected_time_get(cal, &stime))
+   if (!elm_calendar_selected_time_get(cal, &stm))
      return;
 
    interval = elm_calendar_interval_get(cal);
@@ -186,7 +186,7 @@ _print_cal_info(Evas_Object *cal, Evas_Object *en)
             "  Day: %i, Mon: %i, Year %i, WeekDay: %i<br/>"
             "  Interval: %0.2f, Year_Min: %i, Year_Max %i, Sel Enabled : %i<br/>"
             "  Weekdays: %s, %s, %s, %s, %s, %s, %s<br/>",
-            stime.tm_mday, stime.tm_mon, stime.tm_year + 1900, stime.tm_wday,
+            stm.tm_mday, stm.tm_mon, stm.tm_year + 1900, stm.tm_wday,
             interval, year_min, year_max, sel_enabled,
             wds[0], wds[1], wds[2], wds[3], wds[4], wds[5], wds[6]);
 
@@ -200,10 +200,10 @@ _print_cal_info_cb(void *data, Evas_Object *obj, void *event_info __UNUSED__)
 }
 
 static char *
-_format_month_year(struct tm *stime)
+_format_month_year(struct tm *stm)
 {
    char buf[32];
-   if (!strftime(buf, sizeof(buf), "%b %y", stime)) return NULL;
+   if (!strftime(buf, sizeof(buf), "%b %y", stm)) return NULL;
    return strdup(buf);
 }
 

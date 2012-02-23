@@ -38,12 +38,12 @@ set_api_state(api_data *api)
    switch(api->state)
      {/* Put all api-changes under switch */
       case HORIZONTAL_SET: /* 0 */
-         elm_genlist_horizontal_set(gl, ELM_LIST_LIMIT);
+         elm_genlist_mode_set(gl, ELM_LIST_LIMIT);
          break;
 
       case NO_SELECT_MODE_SET: /* 1 */
          elm_genlist_no_select_mode_set(gl, EINA_TRUE);
-         elm_genlist_horizontal_set(gl, ELM_LIST_SCROLL); /* Back to default */
+         elm_genlist_mode_set(gl, ELM_LIST_SCROLL); /* Back to default */
          break;
 
       case COMPRESS_MODE_SET: /* 2 */
@@ -2373,13 +2373,13 @@ Evas_Object *gl15_content_get(void *data, Evas_Object *obj, const char *part)
      }
    else if (!strcmp(part, "elm.edit.icon.2"))
      {
-        Evas_Object *ic = elm_icon_add(obj);
+        Evas_Object *icn = elm_icon_add(obj);
         snprintf(buf, sizeof(buf), "%s/images/icon_06.png", PACKAGE_DATA_DIR);
-        elm_icon_file_set(ic, buf, NULL);
-        evas_object_propagate_events_set(ic, EINA_FALSE);
-        evas_object_size_hint_aspect_set(ic, EVAS_ASPECT_CONTROL_VERTICAL, 1, 1);
-        evas_object_smart_callback_add(ic, "clicked", _edit_icon_clicked_cb, (void *)tit->item);
-        return ic;
+        elm_icon_file_set(icn, buf, NULL);
+        evas_object_propagate_events_set(icn, EINA_FALSE);
+        evas_object_size_hint_aspect_set(icn, EVAS_ASPECT_CONTROL_VERTICAL, 1, 1);
+        evas_object_smart_callback_add(icn, "clicked", _edit_icon_clicked_cb, (void *)tit->item);
+        return icn;
      }
    else return NULL;
 }
