@@ -495,7 +495,7 @@ add_tests:
    ADD_TEST(NULL, "Popups", "Hover 2", test_hover2);
    ADD_TEST(NULL, "Popups", "Notify", test_notify);
    ADD_TEST(NULL, "Popups", "Tooltip", test_tooltip);
-   ADD_TEST(NULL, "Popups", "Tooltip2", test_tooltip2);
+   ADD_TEST(NULL, "Popups", "Tooltip 2", test_tooltip2);
 
    //------------------------------//
    ADD_TEST(NULL, "Times & Dates", "Calendar", test_calendar);
