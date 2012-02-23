@@ -11,8 +11,6 @@
  *
  * @{
  */
-typedef struct _Elm_Selection_Data Elm_Selection_Data;
-typedef Eina_Bool                (*Elm_Drop_Cb)(void *d, Evas_Object *o, Elm_Selection_Data *data);
 
 /**
  * Defines the types of selection property names.
@@ -21,12 +19,15 @@ typedef Eina_Bool                (*Elm_Drop_Cb)(void *d, Evas_Object *o, Elm_Sel
  */
 typedef enum
 {
-   ELM_SEL_TYPE_PRIMARY, //primary text selection
+   ELM_SEL_TYPE_PRIMARY, // refers to primary text selection
    ELM_SEL_TYPE_SECONDARY, // used when primary selection is in use.
-   ELM_SEL_TYPE_XDND, //drag and drop
-   ELM_SEL_TYPE_CLIPBOARD, // highlighted text 
+   ELM_SEL_TYPE_XDND, // drag and drop
+   ELM_SEL_TYPE_CLIPBOARD, // selected text 
 } Elm_Sel_Type;
 
+/**
+ * Defines the types of target.
+ */
 typedef enum
 {
    /** Targets: for matching every atom requesting */
@@ -45,13 +46,27 @@ typedef enum
    ELM_SEL_FORMAT_HTML = 0x10,
 } Elm_Sel_Format;
 
+/**
+ * Structure holding the info about selected data.
+ */
 struct _Elm_Selection_Data
 {
-   int            x, y;
+   Evas_Coord     x, y;
    Elm_Sel_Format format;
    void          *data;
    size_t         len;
 };
+typedef struct _Elm_Selection_Data Elm_Selection_Data;
+
+/**
+ * Callback invoked in when the selected data is 'dropped' at its destination.
+ *
+ * @param d Application specific data
+ * @param o The evas object where selected data is 'dropped'.
+ * @param data struct holding information about selected data
+ */
+typedef Eina_Bool (*Elm_Drop_Cb)(void *d, Evas_Object *o, Elm_Selection_Data *data);
+
 
 /**
  * @brief Set copy and paste data to a widget.
@@ -108,23 +123,19 @@ EAPI Eina_Bool elm_cnp_selection_get(Elm_Sel_Type selection,
                                      Elm_Drop_Cb datacb, void *udata);
 
 /**
- * @brief Clear the copy and paste data in the widget.
- *
- * Clear the data in the widget. Normally this function isn't need to call.
+ * @brief Clear the selected/copied data in the widget.
  *
  * @see also elm_cnp_selection_set()
  *
- * @param selection Selection type for copying and pasting
  * @param obj The source widget pointer
+ * @param selection Selection type for copying and pasting
  * @return If EINA_TRUE, clearing data is success.
  *
  * @ingroup CopyPaste
  *
  */
-// XXX: EAPI void elm_object_cnp_selection_clear(Evas_Object *obj,
-//                                               Elm_Sel_Type selection);
-EAPI Eina_Bool elm_cnp_selection_clear(Elm_Sel_Type selection,
-                                       Evas_Object *obj);
+EAPI Eina_Bool elm_object_cnp_selection_clear(Evas_Object *obj, 
+                                               Elm_Sel_Type selection);
 
 /**
  * @}

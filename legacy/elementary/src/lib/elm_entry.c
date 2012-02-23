@@ -1633,7 +1633,7 @@ _signal_selection_cleared(void *data, Evas_Object *obj __UNUSED__, const char *e
 
              top = elm_widget_top_get(data);
              if ((top) && (elm_win_xwindow_get(top)))
-               elm_cnp_selection_clear(ELM_SEL_TYPE_PRIMARY, data);
+               elm_object_cnp_selection_clear(data, ELM_SEL_TYPE_PRIMARY);
 #endif
           }
      }

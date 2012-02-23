@@ -404,7 +404,7 @@ elm_cnp_selection_set(Elm_Sel_Type selection, Evas_Object *obj,
      return EINA_FALSE;
    if (!_elm_cnp_init_count) _elm_cnp_init();
    if ((!selbuf) && (format != ELM_SEL_FORMAT_IMAGE))
-     return elm_cnp_selection_clear(selection, obj);
+     return elm_object_cnp_selection_clear(obj, selection);
 
    sel = selections + selection;
 
@@ -433,7 +433,7 @@ elm_cnp_selection_set(Elm_Sel_Type selection, Evas_Object *obj,
 }
 
 EAPI Eina_Bool
-elm_cnp_selection_clear(Elm_Sel_Type selection, Evas_Object *obj)
+elm_object_cnp_selection_clear(Evas_Object *obj, Elm_Sel_Type selection)
 {
 #ifdef HAVE_ELEMENTARY_X
    Cnp_Selection *sel;

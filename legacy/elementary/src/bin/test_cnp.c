@@ -32,7 +32,7 @@ _bt_clear_clicked(void *data, Evas_Object *obj __UNUSED__, void *event_info __UN
    Evas_Object *en = (Evas_Object*)(data);
 
    elm_object_text_set(glb, "");
-   elm_cnp_selection_clear(ELM_SEL_TYPE_CLIPBOARD, elm_object_parent_widget_get(en));
+   elm_object_cnp_selection_clear(elm_object_parent_widget_get(en), ELM_SEL_TYPE_CLIPBOARD);
 }
 
 void
