@@ -377,7 +377,7 @@ momentum_move(void *_po, void *event_info)
 {
    Photo_Object *po = (Photo_Object *) _po;
    Elm_Gesture_Momentum_Info *p = (Elm_Gesture_Momentum_Info *) event_info;
-   printf("momentum move <%d,%d>\n", p->x2, p->y2);
+   printf("momentum move <%d,%d> fingers=<%d> mx,my=<%d,%d>\n", p->x2, p->y2, p->n, p->mx, p->my);
 
    po->bx = p->x2 - po->dx;
    po->by = p->y2 - po->dy;
