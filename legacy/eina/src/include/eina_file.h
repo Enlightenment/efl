@@ -94,6 +94,7 @@ typedef struct _Eina_File_Direct_Info Eina_File_Direct_Info;
 /**
  * @typedef Eina_Stat
  * A typedef to #_Eina_Stat.
+ * @since 1.2
  */
 typedef struct _Eina_Stat Eina_Stat;
 
@@ -158,6 +159,7 @@ struct _Eina_File_Direct_Info
 /**
  * @struct _Eina_Stat
  * A structure to store informations of a path.
+ * @since 1.2
  */
 struct _Eina_Stat
 {
@@ -291,6 +293,7 @@ EAPI Eina_Iterator *eina_file_stat_ls(const char *dir) EINA_WARN_UNUSED_RESULT E
  *
  * @see eina_file_direct_ls()
  * @see eina_file_stat_ls()
+ * @since 1.2
  */
 EAPI int eina_file_statat(void *container, Eina_File_Direct_Info *info, Eina_Stat *buf) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1, 2, 3);
 
