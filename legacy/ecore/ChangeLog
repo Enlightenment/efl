@@ -512,3 +512,10 @@
 2012-02-23  Cedric Bail
 
 	* Move to Evas buffer engine for Ecore_Evas SDL software backend.
+
+2012-02-23  Leif Middelschulte (T_UNIX)
+
+        * Add ecore_x_randr_window_crtcs_get to get the crtcs that display a
+		window.
+        * Deprecate ecore_x_randr_current_output_get. Use
+		ecore_x_randr_window_crtcs_get instead.

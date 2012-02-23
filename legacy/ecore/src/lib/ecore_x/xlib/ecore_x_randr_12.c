@@ -554,6 +554,7 @@ ecore_x_randr_current_crtc_get(Ecore_X_Window window,
  * @param num the number of crtcs displaying the window
  * @return array of crtcs that display a certain window. NULL if no crtcs
  * was found that displays the specified window.
+ * @since 1.2.0
  */
 EAPI Ecore_X_Randr_Crtc *
 ecore_x_randr_window_crtcs_get(Ecore_X_Window window,

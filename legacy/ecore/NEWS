@@ -18,6 +18,7 @@ Additions:
      - ecore_con_url_http_version_set()
     * ecore_x:
      - ecore_x_randr_output_backlight_available()
+     - ecore_x_randr_window_crtcs_get()
     * ecore_evas:
      - Add Shm and Egl engines for ecore_evas to draw in Wayland.
      - Add Socket and Plug to draw other process area.
@@ -36,6 +37,10 @@ Improvements:
      - use Ecore thread safe async call
     * ecore_evas:
      - use Evas buffer backend for SDL software engine
+
+Deprecations:
+    * ecore_x:
+     - ecore_x_randr_crtc_current_get()
 
 Ecore 1.1.0
 
