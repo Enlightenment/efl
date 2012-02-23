@@ -17,9 +17,11 @@ typedef struct _Testitem
    Elm_Object_Item *item;
    int mode;
    int onoff;
+   Eina_Bool checked;
 } Testitem;
 
 static Elm_Genlist_Item_Class *itc1;
+static Elm_Genlist_Item_Class *itc15;
 char *gl_text_get(void *data, Evas_Object *obj __UNUSED__, const char *part __UNUSED__)
 {
    char buf[256];
@@ -2210,6 +2212,162 @@ test_genlist14(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_i
    elm_genlist_item_class_free(itc1);
 
    evas_object_resize(win, 320, 320);
+   evas_object_show(win);
+}
+
+static void _edit_icon_clicked_cb(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+{
+   Elm_Object_Item *item = (Elm_Object_Item *)data;
+   elm_object_item_del(item);
+}
+
+char *gl15_text_get(void *data, Evas_Object *obj __UNUSED__, const char *part __UNUSED__)
+{
+   const Testitem *tit = data;
+   char buf[256];
+   snprintf(buf, sizeof(buf), "Item #%i", tit->mode);
+   return strdup(buf);
+}
+
+Evas_Object *gl15_content_get(void *data, Evas_Object *obj, const char *part)
+{
+   Testitem *tit = data;
+   char buf[PATH_MAX];
+   Evas_Object *ic = elm_icon_add(obj);
+
+   // "edit_default" EDC layout is like below. each part is swallow part.
+   // the existing item is swllowed to elm.swallow.edit.content part.
+   // ----------------------------------------------------------------
+   // | elm.edit.icon.1 | elm.swallow.edit.content | elm.edit.icon,2 |
+   // ----------------------------------------------------------------
+
+   if (!strcmp(part, "elm.swallow.end"))
+     {
+        snprintf(buf, sizeof(buf), "%s/images/bubble.png", PACKAGE_DATA_DIR);
+        elm_icon_file_set(ic, buf, NULL);
+        evas_object_size_hint_aspect_set(ic, EVAS_ASPECT_CONTROL_VERTICAL, 1, 1);
+        return ic;
+     }
+   else if (!strcmp(part, "elm.edit.icon.1"))
+     {
+        Evas_Object *ck;
+        ck = elm_check_add(obj);
+        elm_check_state_pointer_set(ck, &tit->checked);
+        evas_object_propagate_events_set(ck, EINA_FALSE);
+        evas_object_show(ck);
+        return ck;
+     }
+   else if (!strcmp(part, "elm.edit.icon.2"))
+     {
+        Evas_Object *ic = elm_icon_add(obj);
+        snprintf(buf, sizeof(buf), "%s/images/icon_06.png", PACKAGE_DATA_DIR);
+        elm_icon_file_set(ic, buf, NULL);
+        evas_object_propagate_events_set(ic, EINA_FALSE);
+        evas_object_size_hint_aspect_set(ic, EVAS_ASPECT_CONTROL_VERTICAL, 1, 1);
+        evas_object_smart_callback_add(ic, "clicked", _edit_icon_clicked_cb, (void *)tit->item);
+        return ic;
+     }
+   else return NULL;
+}
+
+static void
+gl15_sel(void *data, Evas_Object *obj, void *event_info __UNUSED__)
+{
+   Testitem *tit = data;
+   if (elm_genlist_edit_mode_get(obj))
+     {
+        if (!tit->checked) tit->checked = EINA_TRUE;
+        else tit->checked = EINA_FALSE;
+     }
+   elm_genlist_item_update(tit->item);
+}
+
+static void
+gl15_edit_mode(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+{
+   elm_genlist_edit_mode_set(data, EINA_TRUE);
+   elm_genlist_always_select_mode_set(data, EINA_TRUE);
+}
+
+static void
+gl15_normal_mode(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+{
+   elm_genlist_edit_mode_set(data, EINA_FALSE);
+   elm_genlist_always_select_mode_set(data, EINA_FALSE);
+}
+
+void
+test_genlist15(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+{
+   Evas_Object *win, *bg, *bx, *bx2, *bt, *gl;
+   int i;
+   static Testitem tit[100];
+
+   win = elm_win_add(NULL, "genlist15", ELM_WIN_BASIC);
+   elm_win_title_set(win, "Genlist Edit Mode");
+   elm_win_autodel_set(win, EINA_TRUE);
+
+   bg = elm_bg_add(win);
+   elm_win_resize_object_add(win, bg);
+   evas_object_size_hint_weight_set(bg, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_show(bg);
+
+   bx = elm_box_add(win);
+   evas_object_size_hint_weight_set(bx, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   elm_win_resize_object_add(win, bx);
+   evas_object_show(bx);
+
+   gl = elm_genlist_add(win);
+   evas_object_size_hint_align_set(gl, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   evas_object_size_hint_weight_set(gl, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_show(gl);
+
+   itc15.item_style     = "default";
+   itc15.func.text_get = gl15_text_get;
+   itc15.func.content_get  = gl15_content_get;
+   itc15.func.state_get = gl_state_get;
+   itc15.func.del       = gl_del;
+   itc15.edit_item_style = "edit";
+
+   for (i = 0; i < 100; i++)
+     {
+        tit[i].mode = i;
+        tit[i].item = elm_genlist_item_append(gl, &itc15,
+                                              &(tit[i])/* item data */,
+                                              NULL/* parent */,
+                                              ELM_GENLIST_ITEM_NONE/* flags */,
+                                              gl15_sel/* func */,
+                                              &(tit[i])/* func data */);
+     }
+   elm_box_pack_end(bx, gl);
+   evas_object_show(bx);
+
+   bx2 = elm_box_add(win);
+   elm_box_horizontal_set(bx2, EINA_TRUE);
+   elm_box_homogeneous_set(bx2, EINA_TRUE);
+   evas_object_size_hint_weight_set(bx2, EVAS_HINT_EXPAND, 0.0);
+   evas_object_size_hint_align_set(bx2, EVAS_HINT_FILL, EVAS_HINT_FILL);
+
+   bt = elm_button_add(win);
+   elm_object_text_set(bt, "Edit mode");
+   evas_object_smart_callback_add(bt, "clicked", gl15_edit_mode, gl);
+   evas_object_size_hint_align_set(bt, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   evas_object_size_hint_weight_set(bt, EVAS_HINT_EXPAND, 0.0);
+   elm_box_pack_end(bx2, bt);
+   evas_object_show(bt);
+
+   bt = elm_button_add(win);
+   elm_object_text_set(bt, "Normal mode");
+   evas_object_smart_callback_add(bt, "clicked", gl15_normal_mode,gl);
+   evas_object_size_hint_align_set(bt, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   evas_object_size_hint_weight_set(bt, EVAS_HINT_EXPAND, 0.0);
+   elm_box_pack_end(bx2, bt);
+   evas_object_show(bt);
+
+   elm_box_pack_end(bx, bx2);
+   evas_object_show(bx2);
+
+   evas_object_resize(win, 520, 520);
    evas_object_show(win);
 }
 #endif

@@ -1898,5 +1898,29 @@ EAPI void elm_genlist_item_class_unref(Elm_Genlist_Item_Class *itc);
  */
 EAPI unsigned int elm_genlist_items_count(const Evas_Object *obj);
 /**
+ * Set Genlist edit mode
+ *
+ * This sets Genlist edit mode.
+ *
+ * @param obj The Genlist object
+ * @param The edit mode status
+ * (EINA_TRUE = edit mode, EINA_FALSE = normal mode
+ *
+ * @ingroup Genlist
+ */
+EAPI void               elm_genlist_edit_mode_set(Evas_Object *obj, Eina_Bool edit_mode);
+
+/**
+ * Get Genlist edit mode
+ *
+ * @param obj The genlist object
+ * @return The edit mode status
+ * (EINA_TRUE = edit mode, EINA_FALSE = normal mode
+ *
+ * @ingroup Genlist
+ */
+EAPI Eina_Bool          elm_genlist_edit_mode_get(const Evas_Object *obj);
+
+/**
  * @}
  */
