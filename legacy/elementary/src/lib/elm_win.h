@@ -352,7 +352,7 @@ EAPI void                  elm_win_raise(Evas_Object *obj);
  * Center a window on its screen
  *
  * This function centers window @p obj horizontally and/or vertically based on the values
- * of @p h and @v.
+ * of @p h and @p v.
  * @param obj The window object
  * @param h If true, center horizontally. If false, do not change horizontal location.
  * @param v If true, center vertically. If false, do not change vertical location.

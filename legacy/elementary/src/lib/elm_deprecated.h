@@ -1418,7 +1418,7 @@ EINA_DEPRECATED EAPI void                   elm_diskselector_item_label_set(Elm_
  *
  * @see elm_diskselector_item_label_set() for more details.
  * @see elm_diskselector_item_append()
- * @use elm_object_item_text_get()
+ * @deprecated Use elm_object_item_text_get() instead
  *
  * @ingroup Diskselector
  */
