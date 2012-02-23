@@ -567,27 +567,85 @@ group { name: "elm/toolbar/item/default";
 }
 
 group { name: "elm/toolbar/item/item_horizontal";
-    inherit: "elm/toolbar/item/default";
-    parts.part { name: "elm.swallow.icon";
-            description { state: "default" 0.0;
-                align: 0.0 0.5;
-                rel1.offset: 3 3;
-                rel1.relative: 0 0;
-                rel2.offset: -4 -4;
-                rel2.relative: 1 1;
-                color: 0 0 0 0;
-            }
-        }
-    parts.part { name: "elm.text";
-            description { state: "default" 0.0;
-               align: 1 0.5;
-               min: 0 1;
-               rel1.offset: 1 0;
-               rel1.relative: 1 0.5;
-               rel1.to_x: "elm.swallow.icon";
-               text.align: 0 0.5;
-            }
-        }
+   inherit: "elm/toolbar/item/default";
+   parts {
+      part { name: "elm.swallow.icon";
+         description { state: "default" 0.0;
+            aspect: 1 1;
+            aspect_preference: VERTICAL;
+            align: 0.0 0.5;
+            rel1.offset: 3 3;
+            rel1.relative: 0 0;
+            rel2.offset: 3 -4;
+            rel2.relative: 0 1;
+            color: 0 0 0 0;
+         }
+      }
+      part { name: "elm.text";
+         description { state: "default" 0.0;
+            align: 1 0.5;
+            min: 0 1;
+            rel1.offset: 1 0;
+            rel1.relative: 1.0 0.0;
+            rel1.to_x: "elm.swallow.icon";
+            rel2.relative: 1.0 1.0;
+            text.align: 0 0.5;
+         }
+         description { state: "selected" 0.0;
+            inherit: "default" 0.0;
+            visible: 1;
+         }
+         description { state: "visible" 0.0;
+            inherit: "default" 0.0;
+            visible: 1;
+            text.min: 1 1;
+         }
+         description { state: "disabled" 0.0;
+            inherit: "default" 0.0;
+            color: 0 0 0 128;
+            color3: 0 0 0 0;
+         }
+         description { state: "disabled_visible" 0.0;
+            inherit: "default" 0.0;
+            color: 0 0 0 128;
+            color3: 0 0 0 0;
+            visible: 1;
+            text.min: 1 1;
+         }
+      }
+      part { name: "elm.text_new";
+         description { state: "default" 0.0;
+            align: 1 0.5;
+            min: 0 1;
+            rel1.offset: 1 0;
+            rel1.relative: 1.0 0.0;
+            rel1.to_x: "elm.swallow.icon";
+            rel2.relative: 1.0 1.0;
+            text.align: 0 0.5;
+         }
+         description { state: "selected" 0.0;
+            inherit: "default" 0.0;
+            visible: 1;
+         }
+         description { state: "visible" 0.0;
+            inherit: "default" 0.0;
+            visible: 1;
+            text.min: 1 1;
+         }
+         description { state: "disabled" 0.0;
+            inherit: "default" 0.0;
+            color: 0 0 0 128;
+            color3: 0 0 0 0;
+         }
+         description { state: "disabled_visible" 0.0;
+            inherit: "default" 0.0;
+            color: 0 0 0 128;
+            color3: 0 0 0 0;
+            visible: 1;
+            text.min: 1 1;
+         }
+      }
+   }
 }
 
 group { name: "elm/toolbar/separator/default";
