@@ -534,7 +534,7 @@ ecore_x_randr_crtcs_get(Ecore_X_Window root,
 }
 
 /*
- * @depricated bad naming. Use ecore_x_randr_window_outputs_get instead.
+ * @depricated bad naming. Use ecore_x_randr_window_crtcs_get instead.
  * @brief get the CRTCs, which display a certain window
  * @param window window the displaying crtcs shall be found for
  * @param num the number of crtcs displaying the window
