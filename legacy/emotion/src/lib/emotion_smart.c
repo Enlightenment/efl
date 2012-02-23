@@ -163,6 +163,11 @@ static const char SIG_REF_CHANGE[] = "ref_change";
 static const char SIG_BUTTON_NUM_CHANGE[] = "button_num_change";
 static const char SIG_BUTTON_CHANGE[] = "button_change";
 static const char SIG_OPEN_DONE[] = "open_done";
+static const char SIG_POSITION_SAVE_SUCCEED[] = "position_save,succeed";
+static const char SIG_POSITION_SAVE_FAILED[] = "position_save,failed";
+static const char SIG_POSITION_LOAD_SUCCEED[] = "position_load,succeed";
+static const char SIG_POSITION_LOAD_FAILED[] = "position_load,failed";
+
 static const Evas_Smart_Cb_Description _smart_callbacks[] = {
   {SIG_FRAME_DECODE, ""},
   {SIG_POSITION_UPDATE, ""},
@@ -1332,6 +1337,7 @@ _eio_load_xattr_done(void *data, Eio_File *handler, double xattr_double)
    Smart_Data *sd = data;
 
    emotion_object_position_set(evas_object_smart_parent_get(sd->obj), xattr_double);
+   evas_object_smart_callback_call(sd->obj, SIG_POSITION_LOAD_SUCCEED, NULL);
    _eio_load_xattr_cleanup(sd, handler);
 }
 
@@ -1340,6 +1346,7 @@ _eio_load_xattr_error(void *data, Eio_File *handler, int err __UNUSED__)
 {
    Smart_Data *sd = data;
 
+   evas_object_smart_callback_call(sd->obj, SIG_POSITION_LOAD_FAILED, NULL);
    _eio_load_xattr_cleanup(sd, handler);
 }
 #endif
@@ -1377,19 +1384,30 @@ emotion_object_last_position_load(Evas_Object *obj)
    if (eina_xattr_double_get(tmp, "user.e.time_seek", &xattr))
      {
         emotion_object_position_set(obj, xattr);
+        evas_object_smart_callback_call(obj, SIG_POSITION_LOAD_SUCCEED, NULL);
+     }
+   else
+     {
+        evas_object_smart_callback_call(obj, SIG_POSITION_LOAD_FAILED, NULL);
      }
 #endif
 }
 
 #ifdef HAVE_EIO
 static void
-_eio_save_xattr_done(void *data __UNUSED__, Eio_File *handler __UNUSED__)
+_eio_save_xattr_done(void *data, Eio_File *handler __UNUSED__)
 {
+   Smart_Data *sd = data;
+
+   evas_object_smart_callback_call(sd->obj, SIG_POSITION_SAVE_SUCCEED, NULL);
 }
 
 static void
-_eio_save_xattr_error(void *data __UNUSED__, Eio_File *handler __UNUSED__, int err __UNUSED__)
+_eio_save_xattr_error(void *data, Eio_File *handler __UNUSED__, int err __UNUSED__)
 {
+   Smart_Data *sd = data;
+
+   evas_object_smart_callback_call(sd->obj, SIG_POSITION_SAVE_FAILED, NULL);
 }
 #endif
 
@@ -1413,7 +1431,10 @@ emotion_object_last_position_save(Evas_Object *obj)
    eio_file_xattr_double_set(tmp, "user.e.time_seek", emotion_object_position_get(obj), 0,
 			     _eio_save_xattr_done, _eio_save_xattr_error, sd);
 #else
-   eina_xattr_double_set(tmp, "user.e.time_seek", emotion_object_position_get(obj), 0);
+   if (eina_xattr_double_set(tmp, "user.e.time_seek", emotion_object_position_get(obj), 0))
+     evas_object_smart_callback_call(obj, SIG_POSITION_SAVE_SUCCEED, NULL);
+   else
+     evas_object_smart_callback_call(obj, SIG_POSITION_SAVE_FAILED, NULL);
 #endif
 }
 
