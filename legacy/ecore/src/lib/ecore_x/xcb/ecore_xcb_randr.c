@@ -2374,6 +2374,22 @@ ecore_x_randr_screen_current_size_set(Ecore_X_Window root,
 }
 
 /*
+ * @depricated bad naming. Use ecore_x_randr_window_outputs_get instead.
+ * @brief get the outputs, which display a certain window
+ * @param window window the displaying outputs shall be found for
+ * @param num the number of outputs displaying the window
+ * @return array of outputs that display a certain window. NULL if no outputs
+ * was found that displays the specified window.
+ */
+
+EINA_DEPRECATED EAPI Ecore_X_Randr_Output *
+ecore_x_randr_current_output_get(Ecore_X_Window window,
+                                 int *num)
+{
+   return ecore_x_randr_window_outputs_get(window, num);
+}
+
+/*
  * @brief get the outputs, which display a certain window
  * @param window window the displaying outputs shall be found for
  * @param num the number of outputs displaying the window
