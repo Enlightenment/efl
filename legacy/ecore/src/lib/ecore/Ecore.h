@@ -794,7 +794,7 @@ EAPI void ecore_exe_hup(Ecore_Exe *exe);
  *
  * An @ref Ecore_Fd_Handler can be used to watch on a file
  * descriptor without blocking, still being able to receive events,
- * expire timers, and other watch for other things that happen in
+ * expire timers, and watch for other things that happen in
  * the Ecore main loop.
  *
  * Example of use of a file descriptor handler:
