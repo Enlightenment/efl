@@ -5,6 +5,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
+#include <limits.h>
 #include <wchar.h>
 
 #ifndef WIN32_LEAN_AND_MEAN

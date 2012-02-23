@@ -1,3 +1,45 @@
+2012-02-23  Vincent Torri  <doursse at users dot sf dot net>
+
+	* configure.ac:
+	* src/lib/Makefile.am:
+	* src/lib/evil_pformata.c:
+	* src/lib/evil_printa.c:
+	* src/lib/gdtoa (added):
+	* src/lib/gdtoa/gdtoa.c (added):
+	* src/lib/gdtoa/dmisc.c (added):
+	* src/lib/gdtoa/gdtoa_fltrnds.h (added):
+	* src/lib/gdtoa/ulp.c (added):
+	* src/lib/gdtoa/g_dfmt.c (added):
+	* src/lib/gdtoa/gmisc.c (added):
+	* src/lib/gdtoa/g_ffmt.c (added):
+	* src/lib/gdtoa/gdtoa.h (added):
+	* src/lib/gdtoa/sum.c (added):
+	* src/lib/gdtoa/gdtoaimp.h (added):
+	* src/lib/gdtoa/README (added):
+	* src/lib/gdtoa/gd_qnan.h (added):
+	* src/lib/gdtoa/hd_init.c (added):
+	* src/lib/gdtoa/smisc.c (added):
+	* src/lib/gdtoa/strtof.c (added):
+	* src/lib/gdtoa/hexnan.c (added):
+	* src/lib/gdtoa/strtopx.c (added):
+	* src/lib/gdtoa/gethex.c (added):
+	* src/lib/gdtoa/g_xfmt.c (added):
+	* src/lib/gdtoa/gd_arith.h (added):
+	* src/lib/gdtoa/strtodg.c (added):
+	* src/lib/gdtoa/dtoa.c (added):
+	* src/lib/gdtoa/Makefile.am (added):
+	* src/lib/gdtoa/misc.c (added):
+	* src/lib/gdtoa/g__fmt.c (added):
+	* src/lib/gdtoa/README.mingw (added):
+	* src/lib/gdtoa/qnan.c (added):
+	* src/lib/gdtoa/arithchk.c (added):
+	Define some missing functions, so that Evil also
+	compile with MinGW, vc++ and later with Cedric
+	compatibility layer
+
+	* src/lib/evil_util.c:
+	Include limits.h for ULONG_MAX definition
+
 2012-02-21  Vincent Torri  <doursse at users dot sf dot net>
 
 	* src/bin/evil_test_gettimeofday.c:

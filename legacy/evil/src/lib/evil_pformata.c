@@ -82,6 +82,7 @@
 #endif /* !defined _VALUES_H -- end of file */
 
 #include "evil_pformat.h"
+#include "gdtoa/gdtoa.h"
 
 /* Bit-map constants, defining the internal format control
  * states, which propagate through the flags.
@@ -760,52 +761,6 @@ typedef union
   unsigned short         __pformat_fpreg_bitmap[5];
   unsigned long          __pformat_fpreg_bits;
 } __pformat_fpreg_t;
-
-/* gdtoa.h relevant declarations */
-
-enum {	/* return values from strtodg */
-	STRTOG_Zero	= 0,
-	STRTOG_Normal	= 1,
-	STRTOG_Denormal	= 2,
-	STRTOG_Infinite	= 3,
-	STRTOG_NaN	= 4,
-	STRTOG_NaNbits	= 5,
-	STRTOG_NoNumber	= 6,
-	STRTOG_Retmask	= 7,
-
-	/* The following may be or-ed into one of the above values. */
-
-	STRTOG_Neg	= 0x08, /* does not affect STRTOG_Inexlo or STRTOG_Inexhi */
-	STRTOG_Inexlo	= 0x10,	/* returned result rounded toward zero */
-	STRTOG_Inexhi	= 0x20, /* returned result rounded away from zero */
-	STRTOG_Inexact	= 0x30,
-	STRTOG_Underflow= 0x40,
-	STRTOG_Overflow	= 0x80
-};
-
-typedef struct
-FPI {
-	int nbits;
-	int emin;
-	int emax;
-	int rounding;
-	int sudden_underflow;
-	int int_max;
-} FPI;
-
-enum {	/* FPI.rounding values: same as FLT_ROUNDS */
-	FPI_Round_zero = 0,
-	FPI_Round_near = 1,
-	FPI_Round_up = 2,
-	FPI_Round_down = 3
-};
-
-extern char* __gdtoa (FPI *fpi, int be, unsigned long *bits, int *kindp,
-		     int mode, int ndigits, int *decpt, char **rve);
-extern void __freedtoa (char *);
-
-
-/* end of gdtoa.h relevant declarations */
 
 
 static

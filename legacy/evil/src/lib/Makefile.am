@@ -1,7 +1,7 @@
 
 MAINTAINERCLEANFILES = Makefile.in
 
-SUBDIRS = . dlfcn
+SUBDIRS = gdtoa . dlfcn
 
 lib_LTLIBRARIES = libevil.la
 
@@ -71,7 +71,7 @@ endif
 libevil_la_CPPFLAGS = @win32_cppflags@
 libevil_la_CFLAGS = @win32_cflags@
 libevil_la_CXXFLAGS = @win32_cxxflags@
-libevil_la_LIBADD = @win32_libs@ $(EFL_MPATROL_LIBS)
+libevil_la_LIBADD = gdtoa/libgdtoa.la @win32_libs@ $(EFL_MPATROL_LIBS)
 libevil_la_LDFLAGS = -no-undefined -Wl,--enable-auto-import -version-info @version_info@
 
 if EVIL_HAVE_WINCE
