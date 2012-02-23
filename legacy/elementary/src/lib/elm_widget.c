@@ -1642,7 +1642,7 @@ elm_widget_focus_cycle(Evas_Object        *obj,
 //XXX: If x, y indicates the elements of the directional vector,
 //It would be better if these values are the normalized value(float x, float y)
 //or degree.
-EAPI void
+EINA_DEPRECATED EAPI void
 elm_widget_focus_direction_go(Evas_Object *obj __UNUSED__,
                               int          x __UNUSED__,
                               int          y __UNUSED__)
