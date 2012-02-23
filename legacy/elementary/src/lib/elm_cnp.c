@@ -324,7 +324,7 @@ static Cnp_Atom atoms[CNP_N_ATOMS] = {
      },
 };
 
-static Cnp_Selection selections[ELM_SEL_TYPE_MAX] = {
+static Cnp_Selection selections[ELM_SEL_TYPE_CLIPBOARD + 1] = {
      ARRAYINIT(ELM_SEL_TYPE_PRIMARY) {
           .debug = "Primary",
           .ecore_sel = ECORE_X_SELECTION_PRIMARY,
@@ -339,17 +339,17 @@ static Cnp_Selection selections[ELM_SEL_TYPE_MAX] = {
           .clear = ecore_x_selection_secondary_clear,
           .request = ecore_x_selection_secondary_request,
      },
+     ARRAYINIT(ELM_SEL_TYPE_XDND) {
+          .debug = "XDnD",
+          .ecore_sel = ECORE_X_SELECTION_XDND,
+          .request = ecore_x_selection_xdnd_request,
+     },
      ARRAYINIT(ELM_SEL_TYPE_CLIPBOARD) {
           .debug = "Clipboard",
           .ecore_sel = ECORE_X_SELECTION_CLIPBOARD,
           .set = ecore_x_selection_clipboard_set,
           .clear = ecore_x_selection_clipboard_clear,
           .request = ecore_x_selection_clipboard_request,
-     },
-     ARRAYINIT(ELM_SEL_TYPE_XDND) {
-          .debug = "XDnD",
-          .ecore_sel = ECORE_X_SELECTION_XDND,
-          .request = ecore_x_selection_xdnd_request,
      },
 };
 
@@ -400,7 +400,7 @@ elm_cnp_selection_set(Elm_Sel_Type selection, Evas_Object *obj,
 
    if (top) xwin = elm_win_xwindow_get(top);
    else xwin = elm_win_xwindow_get(obj);
-   if ((!xwin) || (selection >= ELM_SEL_TYPE_MAX))
+   if ((!xwin) || (selection > ELM_SEL_TYPE_CLIPBOARD))
      return EINA_FALSE;
    if (!_elm_cnp_init_count) _elm_cnp_init();
    if ((!selbuf) && (format != ELM_SEL_FORMAT_IMAGE))
@@ -438,7 +438,7 @@ elm_cnp_selection_clear(Elm_Sel_Type selection, Evas_Object *obj)
 #ifdef HAVE_ELEMENTARY_X
    Cnp_Selection *sel;
 
-   if ((unsigned int)selection >= (unsigned int)ELM_SEL_TYPE_MAX)
+   if ((unsigned int)selection > (unsigned int)ELM_SEL_TYPE_CLIPBOARD)
      return EINA_FALSE;
    if (!_elm_cnp_init_count) _elm_cnp_init();
 
@@ -470,7 +470,7 @@ elm_cnp_selection_get(Elm_Sel_Type selection, Elm_Sel_Format format,
    Evas_Object *top;
    Cnp_Selection *sel;
 
-   if (selection >= ELM_SEL_TYPE_MAX)
+   if (selection > ELM_SEL_TYPE_CLIPBOARD)
      return EINA_FALSE;
    if (!_elm_cnp_init_count) _elm_cnp_init();
 
@@ -519,13 +519,13 @@ selection_clear(void *udata __UNUSED__, int type __UNUSED__, void *event)
    Cnp_Selection *sel;
    int i;
 
-   for (i = 0; i < ELM_SEL_TYPE_MAX; i++)
+   for (i = 0; i <= ELM_SEL_TYPE_CLIPBOARD; i++)
      {
         if (selections[i].ecore_sel == ev->selection) break;
      }
    cnp_debug("selection %d clear\n", i);
    /* Not me... Don't care */
-   if (i == ELM_SEL_TYPE_MAX) return ECORE_CALLBACK_PASS_ON;
+   if (i > ELM_SEL_TYPE_CLIPBOARD) return ECORE_CALLBACK_PASS_ON;
 
    sel = selections + i;
    sel->active = EINA_FALSE;
@@ -556,9 +556,6 @@ selection_notify(void *udata __UNUSED__, int type __UNUSED__, void *event)
    cnp_debug("selection notify callback: %d\n",ev->selection);
    switch (ev->selection)
      {
-      case ECORE_X_SELECTION_CLIPBOARD:
-         sel = selections + ELM_SEL_TYPE_CLIPBOARD;
-         break;
       case ECORE_X_SELECTION_PRIMARY:
          sel = selections + ELM_SEL_TYPE_PRIMARY;
          break;
@@ -567,6 +564,9 @@ selection_notify(void *udata __UNUSED__, int type __UNUSED__, void *event)
          break;
       case ECORE_X_SELECTION_XDND:
          sel = selections + ELM_SEL_TYPE_XDND;
+         break;
+      case ECORE_X_SELECTION_CLIPBOARD:
+         sel = selections + ELM_SEL_TYPE_CLIPBOARD;
          break;
       default:
          return ECORE_CALLBACK_PASS_ON;
@@ -600,7 +600,7 @@ _get_selection_type(void *data, int size)
         Cnp_Selection *sel = selections + *((int *)data);
         if (sel->active &&
             (sel->format >= ELM_SEL_FORMAT_TARGETS) &&
-            (sel->format < ELM_SEL_FORMAT_MAX))
+            (sel->format <= ELM_SEL_FORMAT_HTML))
           return sel->format;
      }
    return ELM_SEL_FORMAT_NONE;

@@ -1,24 +1,30 @@
 /**
- * @addtogroup CopyPaste
+ * @defgroup CopyPaste
+ *
+ * Implement the copy and paste + clipboard functionality, in order to 
+ * share data across application windows.
+ *
+ * Contains functions to select a portion of text, stick it to a clipboard
+ * and to paste the selection to an appropriate place.
+ *
+ *
+ *
  * @{
  */
-
 typedef struct _Elm_Selection_Data Elm_Selection_Data;
 typedef Eina_Bool                (*Elm_Drop_Cb)(void *d, Evas_Object *o, Elm_Selection_Data *data);
 
 /**
- * Types of X window selection property names.
+ * Defines the types of selection property names.
  * Kindly refer to http://www.x.org/docs/X11/xlib.pdf
  * for more details.
  */
 typedef enum
 {
    ELM_SEL_TYPE_PRIMARY, //primary text selection
-   ELM_SEL_TYPE_SECONDARY,
+   ELM_SEL_TYPE_SECONDARY, // used when primary selection is in use.
    ELM_SEL_TYPE_XDND, //drag and drop
-   ELM_SEL_TYPE_CLIPBOARD, 
-
-   ELM_SEL_TYPE_MAX,
+   ELM_SEL_TYPE_CLIPBOARD, // highlighted text 
 } Elm_Sel_Type;
 
 typedef enum
@@ -37,8 +43,6 @@ typedef enum
    ELM_SEL_FORMAT_VCARD = 0x08,
    /** Raw HTML-like things for widgets that want that stuff (hello webkit!) */
    ELM_SEL_FORMAT_HTML = 0x10,
-
-   ELM_SEL_FORMAT_MAX
 } Elm_Sel_Format;
 
 struct _Elm_Selection_Data
