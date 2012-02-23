@@ -43,7 +43,6 @@ evas-software-ddraw.pc.in \
 evas-software-16-ddraw.pc.in \
 evas-direct3d.pc.in \
 evas-software-16-wince.pc.in \
-evas-software-sdl.pc.in \
 evas-psl1ght.pc.in \
 evas-wayland-shm.pc.in \
 evas-wayland-egl.pc.in \
@@ -121,7 +120,7 @@ if BUILD_ENGINE_SOFTWARE_16_WINCE
 pkgconfig_DATA += evas-software-16-wince.pc
 endif
 
-if BUILD_ENGINE_SOFTWARE_SDL
+if BUILD_ENGINE_SOFTWARE_16_SDL
 pkgconfig_DATA += evas-software-sdl.pc
 endif
 

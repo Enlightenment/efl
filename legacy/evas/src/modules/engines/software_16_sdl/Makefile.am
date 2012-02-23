@@ -4,7 +4,7 @@ MAINTAINERCLEANFILES = Makefile.in
 
 INCLUDES = -I. -I$(top_srcdir)/src/lib -I$(top_srcdir)/src/lib/include @FREETYPE_CFLAGS@ @PIXMAN_CFLAGS@ @SDL_CFLAGS@ @EINA_CFLAGS@
 
-if BUILD_ENGINE_SOFTWARE_SDL
+if BUILD_ENGINE_SOFTWARE_16_SDL
 
 SOFTWARE_SDL_SOURCES = \
 evas_engine.c \
@@ -14,7 +14,7 @@ evas_engine.h
 includes_HEADERS = Evas_Engine_SDL_16.h
 includesdir = $(includedir)/evas-@VMAJ@
 
-if !EVAS_STATIC_BUILD_SOFTWARE_SDL
+if !EVAS_STATIC_BUILD_SOFTWARE_16_SDL
 
 pkgdir = $(libdir)/evas/modules/engines/software_16_sdl/$(MODULE_ARCH)
 pkg_LTLIBRARIES = module.la

@@ -76,13 +76,11 @@ SUBDIRS += ../modules/engines/software_8_x11/
 EVAS_STATIC_MODULE += ../modules/engines/software_8_x11/libevas_engine_software_8_x11.la
 EVAS_STATIC_LIBADD += @evas_engine_software_8_x11_libs@
 endif
-if EVAS_STATIC_BUILD_SOFTWARE_SDL
+if EVAS_STATIC_BUILD_SOFTWARE_16_SDL
 SUBDIRS += \
-	../modules/engines/software_16_sdl/ \
-	../modules/engines/software_sdl/
+	../modules/engines/software_16_sdl/
 EVAS_STATIC_MODULE += \
-	../modules/engines/software_16_sdl/libevas_engine_software_16_sdl.la \
-	../modules/engines/software_sdl/libevas_engine_software_sdl.la
+	../modules/engines/software_16_sdl/libevas_engine_software_16_sdl.la
 EVAS_STATIC_LIBADD += @SDL_LIBS@
 endif
 if EVAS_STATIC_BUILD_SOFTWARE_DDRAW

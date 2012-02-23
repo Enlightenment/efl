@@ -14,6 +14,10 @@ Improvements:
 
    * Use Eina_File mmap infrastructure for bmp, ico, pmaps, psd, wbmp and xpm file access.
 
+Removal:
+
+   * Software_SDL engine is gone, use buffer engine directly.
+
 Evas 1.1.0
 
 Changes since Evas 1.0.0:

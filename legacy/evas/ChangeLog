@@ -671,3 +671,7 @@
 
         * Fix rouding of update regions for image objects when scaled
         (leaves trails without this).
+
+2012-02-23  Cedric Bail
+
+	* Remove Software SDL engine.

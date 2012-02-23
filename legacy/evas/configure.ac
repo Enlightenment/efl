@@ -98,7 +98,6 @@ want_evas_engine_software_xlib="no"
 want_evas_engine_software_xcb="no"
 want_evas_engine_software_gdi="no"
 want_evas_engine_software_ddraw="no"
-want_evas_engine_software_sdl="no"
 want_evas_engine_software_8_x11="no"
 want_evas_engine_software_16_x11="no"
 want_evas_engine_software_16_ddraw="no"
@@ -733,8 +732,6 @@ EVAS_CHECK_ENGINE([software-gdi], [${want_evas_engine_software_gdi}], [no], [Sof
 EVAS_CHECK_ENGINE([software-ddraw], [${want_evas_engine_software_ddraw}], [no], [Software DirectDraw])
 
 EVAS_CHECK_ENGINE([direct3d], [${want_evas_engine_direct3d}], [no], [Direct3D])
-
-EVAS_CHECK_ENGINE([software-sdl], [${want_evas_engine_software_sdl}], [no], [Software SDL])
 
 EVAS_CHECK_ENGINE([psl1ght], [${want_evas_engine_psl1ght}], [no], [PSL1GHT])
 
@@ -1918,7 +1915,6 @@ src/modules/engines/gl_x11/Makefile
 src/modules/engines/gl_sdl/Makefile
 src/modules/engines/gl_cocoa/Makefile
 src/modules/engines/psl1ght/Makefile
-src/modules/engines/software_sdl/Makefile
 src/modules/engines/software_8/Makefile
 src/modules/engines/software_8_x11/Makefile
 src/modules/engines/software_16/Makefile
@@ -2005,8 +2001,7 @@ fi
 echo "  Software GDI...............: $have_evas_engine_software_gdi"
 echo "  Software DirectDraw........: $have_evas_engine_software_ddraw"
 echo "  Direct3d...................: $have_evas_engine_direct3d"
-echo "  Software SDL...............: $have_evas_engine_software_sdl (primitive: $sdl_primitive)"
-echo $ECHO_N "  OpenGL SDL.................: $have_evas_engine_gl_sdl $ECHO_C"
+echo "  OpenGL SDL.................: $have_evas_engine_gl_sdl $ECHO_C"
 if test "x$have_evas_engine_gl_sdl" = "xyes"; then
   echo "(GLES: $gl_flavor_gles) (SGX: $gles_variety_sgx) (s3c6410: $gles_variety_s3c6410)"
 else
