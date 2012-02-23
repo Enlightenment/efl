@@ -275,30 +275,6 @@ requirements_ecore_imf_xim=""
 requirements_ecore_imf_scim=""
 requirements_ecore_wayland=""
 
-AC_CHECK_DECL([MAXHOSTNAMELEN],[FOUND_MAXHOSTNAMELEN=yes])
-
-if test x$FOUND_MAXHOSTNAMELEN != xyes ; then
-  AC_MSG_CHECKING([for header that defines MAXHOSTNAMELEN])
-
-  FOUND_MAXHOSTNAMELEN='not found'
-
-  AC_COMPILE_IFELSE(
-	AC_LANG_PROGRAM([#include <sys/param.h>],
-		[int h = MAXHOSTNAMELEN;]),
-	[FOUND_MAXHOSTNAMELEN='sys/param.h'
-	   AC_DEFINE(NEED_SYS_PARAM_H,1,
-	     [Define to 1 if you need <sys/param.h> to define MAXHOSTNAMELEN])])
-
-	AC_COMPILE_IFELSE(
-	    AC_LANG_PROGRAM([#include <netdb.h>],
-			    [int h = MAXHOSTNAMELEN;]),
-	    [FOUND_MAXHOSTNAMELEN='netdb.h'
-	     AC_DEFINE(NEED_NETDB_H,1,
-	       [Define to 1 if you need <netdb.h> to define MAXHOSTNAMELEN])])
-
-  AC_MSG_RESULT([$FOUND_MAXHOSTNAMELEN])
-fi
-
 ### Additional options to configure
 
 want_glib_integration_always=no
@@ -378,10 +354,6 @@ AC_ARG_ENABLE([xim],
 if test "x${want_xim}" = "xyes" ; then
    AC_DEFINE([ENABLE_XIM], [1], [Enable X Input Method])
 fi
-
-# Unit tests
-
-EFL_CHECK_TESTS([enable_tests="yes"], [enable_tests="no"])
 
 ### Checks for programs
 
@@ -638,6 +610,45 @@ PKG_CHECK_MODULES([DIRECTFB],
 
 
 # Xlib and XCB (ecore_x)
+
+AC_CHECK_DECL([MAXHOSTNAMELEN], [FOUND_MAXHOSTNAMELEN=yes])
+
+if test "x${FOUND_MAXHOSTNAMELEN}" != "xyes" ; then
+   AC_MSG_CHECKING([for header that defines MAXHOSTNAMELEN])
+   FOUND_MAXHOSTNAMELEN="not found"
+
+   AC_COMPILE_IFELSE(
+      [
+       AC_LANG_PROGRAM(
+          [[
+#include <sys/param.h>
+          ]],
+          [[
+int h = MAXHOSTNAMELEN;
+          ]])
+      ],
+      [
+       FOUND_MAXHOSTNAMELEN="sys/param.h"
+       AC_DEFINE([NEED_SYS_PARAM_H], [1], [Define to 1 if you need <sys/param.h> to define MAXHOSTNAMELEN])
+      ])
+
+   AC_COMPILE_IFELSE(
+      [
+       AC_LANG_PROGRAM(
+          [[
+#include <netdb.h>
+          ]],
+          [[
+int h = MAXHOSTNAMELEN;
+          ]])
+      ],
+      [
+       FOUND_MAXHOSTNAMELEN="netdb.h"
+       AC_DEFINE([NEED_NETDB_H], [1], [Define to 1 if you need <netdb.h> to define MAXHOSTNAMELEN])
+      ])
+
+   AC_MSG_RESULT([$FOUND_MAXHOSTNAMELEN])
+fi
 
 have_x="no"
 have_ecore_x="no"
@@ -1875,6 +1886,7 @@ fi
 dnl THIS IS SPECIAL - dont use normal ECORE_EVAS_CHECK_MODULE
 have_ecore_evas_extn="no"
 if test "x${want_ecore_evas_extn}" = "xyes" && \
+   test "x${have_extn}" = "xyes" && \
    test "x${have_ecore_evas}" = "xyes"; then
    AC_DEFINE([BUILD_ECORE_EVAS_EXTN], [1], [Support for Extn Engine in Ecore_Evas])
    have_ecore_evas_extn="yes"
@@ -1920,6 +1932,10 @@ ECORE_EVAS_CHECK_MODULE_FULL([wayland-egl], [wayland-egl],
          requirements_ecore_evas="wayland-egl egl ${requirements_ecore_wayland} ${requirements_ecore_evas}"
       fi
    ])
+
+### Unit tests
+
+EFL_CHECK_TESTS([enable_tests="yes"], [enable_tests="no"])
 
 ### install and build examples
 
