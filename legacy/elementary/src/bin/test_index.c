@@ -1,8 +1,101 @@
 #include <Elementary.h>
+#include "test.h"
 #ifdef HAVE_CONFIG_H
 # include "elementary_config.h"
 #endif
 #ifndef ELM_LIB_QUICKLAUNCH
+struct _Idx_Data_Type
+{
+   Evas_Object *id;  /* Pointer to Index */
+   Elm_Genlist_Item *item; /* Item we use for search */
+};
+typedef struct _Idx_Data_Type Idx_Data_Type;
+
+struct _api_data
+{
+   unsigned int state;  /* What state we are testing       */
+   Idx_Data_Type dt;
+};
+typedef struct _api_data api_data;
+
+enum _api_state
+{
+   INDEX_LEVEL_SET,
+   INDEX_ACTIVE_SET,
+   INDEX_APPEND_RELATIVE,
+   INDEX_PREPEND,
+   INDEX_ITEM_DEL,
+   INDEX_ITEM_FIND,
+   INDEX_CLEAR,
+   API_STATE_LAST
+};
+typedef enum _api_state api_state;
+
+static void
+set_api_state(api_data *api)
+{
+   Idx_Data_Type *d = &api->dt;
+   switch(api->state)
+     { /* Put all api-changes under switch */
+      case INDEX_LEVEL_SET: /* 0 */
+         elm_index_active_set(d->id, EINA_TRUE);
+         elm_index_item_level_set(d->id, (elm_index_item_level_get(d->id) ? 0 : 1));
+         break;
+
+      case INDEX_ACTIVE_SET: /* 1 */
+         elm_index_active_set(d->id, EINA_FALSE);
+         break;
+
+      case INDEX_APPEND_RELATIVE: /* 2 */
+             elm_index_item_append_relative(d->id, "W", d->item, elm_index_item_find(d->id, d->item));
+         break;
+
+      case INDEX_PREPEND: /* 3 */
+             elm_index_item_prepend(d->id, "D", d->item);
+         break;
+
+      case INDEX_ITEM_DEL: /* 4 */
+         elm_index_item_del(d->id, elm_index_item_find(d->id, d->item));
+         break;
+
+      case INDEX_ITEM_FIND: /* 5 */
+           {
+              Elm_Index_Item *i = elm_index_item_find(d->id, d->item);
+              if(i)
+                {
+                   printf("Item Find - Found Item.\n");
+                   elm_index_item_del(d->id, i);
+                }
+           }
+         break;
+
+      case INDEX_CLEAR: /* 6 */
+         elm_index_item_clear(d->id);
+         break;
+
+      case API_STATE_LAST:
+         break;
+
+      default:
+         return;
+     }
+}
+
+static void
+_api_bt_clicked(void *data, Evas_Object *obj, void *event_info __UNUSED__)
+{  /* Will add here a SWITCH command containing code to modify test-object */
+   /* in accordance a->state value. */
+   api_data *a = data;
+   char str[128];
+
+   printf("clicked event on API Button: api_state=<%d>\n", a->state);
+   set_api_state(a);
+   a->state++;
+   sprintf(str, "Next API function (%u)", a->state);
+   elm_object_text_set(obj, str);
+   elm_object_disabled_set(obj, a->state == API_STATE_LAST);
+}
+
 static Elm_Genlist_Item_Class itci;
 char *gli_text_get(void *data, Evas_Object *obj __UNUSED__, const char *part __UNUSED__)
 {
@@ -37,30 +130,53 @@ _index_selected_cb(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *eve
    elm_genlist_item_top_bring_in(elm_object_item_data_get(event_info));
 }
 
+static void
+_cleanup_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+{
+   free(data);
+}
+
 void
 test_index(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
-   Evas_Object *win, *bg, *gl, *id;
+   Evas_Object *win, *bg, *bxx, *gl, *id, *bt;
    Elm_Object_Item *glit;
    int i, j;
+   api_data *api = calloc(1, sizeof(api_data));
 
    win = elm_win_add(NULL, "index", ELM_WIN_BASIC);
    elm_win_title_set(win, "Index");
    elm_win_autodel_set(win, EINA_TRUE);
+   evas_object_event_callback_add(win, EVAS_CALLBACK_FREE, _cleanup_cb, api);
 
    bg = elm_bg_add(win);
    elm_win_resize_object_add(win, bg);
    evas_object_size_hint_weight_set(bg, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_show(bg);
 
+   bxx = elm_box_add(win);
+   elm_win_resize_object_add(win, bxx);
+   evas_object_size_hint_weight_set(bxx, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_show(bxx);
+
    gl = elm_genlist_add(win);
    evas_object_size_hint_weight_set(gl, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-   elm_win_resize_object_add(win, gl);
+   evas_object_size_hint_align_set(gl, EVAS_HINT_FILL, EVAS_HINT_FILL);
    evas_object_show(gl);
 
-   id = elm_index_add(win);
+   api->dt.id = id = elm_index_add(win);
    evas_object_size_hint_weight_set(id, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_size_hint_align_set(id, EVAS_HINT_FILL, EVAS_HINT_FILL);
    elm_win_resize_object_add(win, id);
+
+   bt = elm_button_add(win);
+   elm_object_text_set(bt, "Next API function");
+   evas_object_smart_callback_add(bt, "clicked", _api_bt_clicked, (void *) api);
+   elm_box_pack_end(bxx, bt);
+   elm_object_disabled_set(bt, api->state == API_STATE_LAST);
+   evas_object_show(bt);
+
+   elm_box_pack_end(bxx, gl);
 
    evas_object_show(id);
 
@@ -84,6 +200,9 @@ test_index(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info 
 
              snprintf(buf, sizeof(buf), "%c", 'A' + ((j >> 4) & 0xf));
              elm_index_item_append(id, buf, glit);
+
+             if (*buf == 'G')  /* Just init dt->item later used in API test */
+               api->dt.item = it;
           }
         j += 2;
      }
