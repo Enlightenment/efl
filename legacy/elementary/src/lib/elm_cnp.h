@@ -78,6 +78,7 @@ typedef Eina_Bool (*Elm_Drop_Cb)(void *d, Evas_Object *o, Elm_Selection_Data *da
  * @param obj The source widget pointer
  * @param format Type of selection format
  * @param buf The pointer of data source
+ * @param buflen The size of @c buf
  * @return If EINA_TRUE, setting data is success.
  *
  * @ingroup CopyPaste
