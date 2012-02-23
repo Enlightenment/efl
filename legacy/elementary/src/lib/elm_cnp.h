@@ -6,12 +6,17 @@
 typedef struct _Elm_Selection_Data Elm_Selection_Data;
 typedef Eina_Bool                (*Elm_Drop_Cb)(void *d, Evas_Object *o, Elm_Selection_Data *data);
 
+/**
+ * Types of X window selection property names.
+ * Kindly refer to http://www.x.org/docs/X11/xlib.pdf
+ * for more details.
+ */
 typedef enum
 {
-   ELM_SEL_TYPE_PRIMARY,
+   ELM_SEL_TYPE_PRIMARY, //primary text selection
    ELM_SEL_TYPE_SECONDARY,
-   ELM_SEL_TYPE_CLIPBOARD,
-   ELM_SEL_TYPE_XDND,
+   ELM_SEL_TYPE_XDND, //drag and drop
+   ELM_SEL_TYPE_CLIPBOARD, 
 
    ELM_SEL_TYPE_MAX,
 } Elm_Sel_Type;
