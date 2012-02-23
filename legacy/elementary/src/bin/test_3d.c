@@ -1,4 +1,5 @@
 #include <Elementary.h>
+#include "test.h"
 #ifdef HAVE_CONFIG_H
 # include "elementary_config.h"
 #endif
@@ -241,8 +242,8 @@ test_3d(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __U
 {
    Evas_Object *win, *bg, *bx, *sl;
 
-   win = elm_win_add(NULL, "3d", ELM_WIN_BASIC);
-   elm_win_title_set(win, "3D");
+   win = elm_win_add(NULL, "box-vert", ELM_WIN_BASIC);
+   elm_win_title_set(win, "Box Vert");
    elm_win_autodel_set(win, EINA_TRUE);
 
    bg = elm_bg_add(win);
