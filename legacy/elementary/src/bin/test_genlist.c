@@ -2296,6 +2296,11 @@ gl15_normal_mode(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNU
    elm_genlist_always_select_mode_set(data, EINA_FALSE);
 }
 
+void gl15_del(void *data __UNUSED__, Evas_Object *obj __UNUSED__)
+{
+   printf("item deleted.\n");
+}
+
 void
 test_genlist15(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
@@ -2322,12 +2327,13 @@ test_genlist15(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_i
    evas_object_size_hint_weight_set(gl, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_show(gl);
 
-   itc15.item_style     = "default";
-   itc15.func.text_get = gl15_text_get;
-   itc15.func.content_get  = gl15_content_get;
-   itc15.func.state_get = gl_state_get;
-   itc15.func.del       = gl_del;
-   itc15.edit_item_style = "edit";
+   itc15 = elm_genlist_item_class_new();
+   itc15->item_style     = "default";
+   itc15->func.text_get = gl15_text_get;
+   itc15->func.content_get  = gl15_content_get;
+   itc15->func.state_get = gl_state_get;
+   itc15->func.del       = gl15_del;
+   itc15->edit_item_style = "edit";
 
    for (i = 0; i < 100; i++)
      {
@@ -2339,6 +2345,7 @@ test_genlist15(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_i
                                               gl15_sel/* func */,
                                               &(tit[i])/* func data */);
      }
+   elm_genlist_item_class_free(itc15);
    elm_box_pack_end(bx, gl);
    evas_object_show(bx);
 
