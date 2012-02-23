@@ -2338,12 +2338,12 @@ test_genlist15(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_i
    for (i = 0; i < 100; i++)
      {
         tit[i].mode = i;
-        tit[i].item = elm_genlist_item_append(gl, &itc15,
+        tit[i].item = elm_genlist_item_append(gl, itc15,
                                               &(tit[i])/* item data */,
                                               NULL/* parent */,
                                               ELM_GENLIST_ITEM_NONE/* flags */,
                                               gl15_sel/* func */,
-                                              &(tit[i])/* func data */);
+                                              (void *)(long)&(tit[i])/* func data */);
      }
    elm_genlist_item_class_free(itc15);
    elm_box_pack_end(bx, gl);
