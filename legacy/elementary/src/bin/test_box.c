@@ -1,9 +1,9 @@
 #include <Elementary.h>
+#include "test.h"
 #ifdef HAVE_CONFIG_H
 # include "elementary_config.h"
 #endif
 #ifndef ELM_LIB_QUICKLAUNCH
-
 #define ICON_MAX 24
 
 typedef enum
@@ -14,28 +14,156 @@ typedef enum
   BOX_PACK_POSITION_END
 } Box_Pack_Position;
 
+struct _api_data
+{
+   unsigned int state;  /* What state we are testing       */
+   void *box;           /* Use this to get box content     */
+};
+typedef struct _api_data api_data;
+
+enum _api_state
+{
+   BOX_PACK_START,
+   BOX_PACK_BEFORE,
+   BOX_PACK_AFTER,
+   BOX_PADDING_SET,
+   BOX_ALIGN_SET,
+   BOX_HOMOGENEOUS_SET,
+   BOX_UNPACK_ALL,
+   BOX_CLEAR,
+   API_STATE_LAST
+};
+typedef enum _api_state api_state;
+
+static void
+set_api_state(api_data *api)
+{
+   const Eina_List *items = elm_box_children_get(api->box);
+   if(!eina_list_count(items))
+     return;
+
+   /* use elm_box_children_get() to get list of children */
+   switch(api->state)
+     { /* Put all api-changes under switch */
+      case BOX_PACK_START:  /* Move last item to begining */
+         elm_box_unpack(api->box, eina_list_data_get(eina_list_last(items)));
+         elm_box_pack_start(api->box, eina_list_data_get(eina_list_last(items)));
+         break;
+
+      case BOX_PACK_BEFORE:
+         if(eina_list_count(items) > 1)
+               {  /* Put last item before the one preceeding it */
+                  elm_box_unpack(api->box, eina_list_data_get(eina_list_last(items)));
+                  elm_box_pack_before(api->box,
+                        eina_list_data_get(eina_list_last(items)),
+                        eina_list_nth(items, eina_list_count(items)-2));
+               }
+         break;
+
+      case BOX_PACK_AFTER:
+         if(eina_list_count(items) > 1)
+               {  /* Put item before last to last */
+                  elm_box_unpack(api->box, eina_list_nth(items,
+                           eina_list_count(items)-2));
+                  elm_box_pack_after(api->box,
+                        eina_list_nth(items, eina_list_count(items)-2),
+                        eina_list_data_get(eina_list_last(items)));
+               }
+         break;
+
+      case BOX_PADDING_SET:
+         elm_box_padding_set(api->box, 30, 15);
+         break;
+
+      case BOX_ALIGN_SET:
+         elm_box_align_set(api->box, 0.25, 0.75);
+         break;
+
+      case BOX_HOMOGENEOUS_SET:
+         elm_box_homogeneous_set(api->box, EINA_TRUE);
+         break;
+
+      case BOX_UNPACK_ALL:
+           {
+              Eina_List *l;
+              Evas_Object *data;
+              elm_box_unpack_all(api->box);
+              EINA_LIST_REVERSE_FOREACH(items, l, data)
+                 elm_box_pack_end(api->box, data);
+           }
+         break;
+
+      case BOX_CLEAR:
+         elm_box_clear(api->box);
+         break;
+
+      case API_STATE_LAST:
+
+         break;
+      default:
+         return;
+     }
+}
+
+static void
+_api_bt_clicked(void *data, Evas_Object *obj, void *event_info __UNUSED__)
+{  /* Will add here a SWITCH command containing code to modify test-object */
+   /* in accordance a->state value. */
+   api_data *a = data;
+   char str[128];
+
+   printf("clicked event on API Button: api_state=<%d>\n", a->state);
+   set_api_state(a);
+   a->state++;
+   sprintf(str, "Next API function (%u)", a->state);
+   elm_object_text_set(obj, str);
+   elm_object_disabled_set(obj, a->state == API_STATE_LAST);
+}
+
+static void
+_cleanup_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+{
+   free(data);
+}
+
 void
 test_box_vert(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
-   Evas_Object *win, *bg, *bx, *ic;
+   Evas_Object *win, *bg, *bx, *ic, *bxx, *bt;
    char buf[PATH_MAX];
+   api_data *api = calloc(1, sizeof(api_data));
 
    win = elm_win_add(NULL, "box-vert", ELM_WIN_BASIC);
    elm_win_title_set(win, "Box Vert");
    elm_win_autodel_set(win, EINA_TRUE);
+   evas_object_event_callback_add(win, EVAS_CALLBACK_FREE, _cleanup_cb, api);
 
    bg = elm_bg_add(win);
    elm_win_resize_object_add(win, bg);
    evas_object_size_hint_weight_set(bg, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_show(bg);
 
+   bxx = elm_box_add(win);
+   elm_win_resize_object_add(win, bxx);
+   evas_object_size_hint_weight_set(bxx, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_show(bxx);
+
    bx = elm_box_add(win);
-   elm_win_resize_object_add(win, bx);
+   api->box = bx;
    evas_object_size_hint_weight_set(bx, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_show(bx);
 
+   bt = elm_button_add(win);
+   elm_object_text_set(bt, "Next API function");
+   evas_object_smart_callback_add(bt, "clicked", _api_bt_clicked, (void *) api);
+   elm_box_pack_end(bxx, bt);
+   elm_object_disabled_set(bt, api->state == API_STATE_LAST);
+   evas_object_show(bt);
+
+   elm_box_pack_end(bxx, bx);
+
    ic = elm_icon_add(win);
-   snprintf(buf, sizeof(buf), "%s/images/logo_small.png", elm_app_data_dir_get());
+   snprintf(buf, sizeof(buf), "%s/images/icon_01.png", elm_app_data_dir_get());
    elm_icon_file_set(ic, buf, NULL);
    elm_icon_scale_set(ic, 0, 0);
    evas_object_size_hint_align_set(ic, 0.5, 0.5);
@@ -43,7 +171,7 @@ test_box_vert(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_in
    evas_object_show(ic);
 
    ic = elm_icon_add(win);
-   snprintf(buf, sizeof(buf), "%s/images/logo_small.png", elm_app_data_dir_get());
+   snprintf(buf, sizeof(buf), "%s/images/icon_02.png", elm_app_data_dir_get());
    elm_icon_file_set(ic, buf, NULL);
    elm_icon_scale_set(ic, 0, 0);
    evas_object_size_hint_align_set(ic, 0.0, 0.5);
@@ -51,7 +179,7 @@ test_box_vert(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_in
    evas_object_show(ic);
 
    ic = elm_icon_add(win);
-   snprintf(buf, sizeof(buf), "%s/images/logo_small.png", elm_app_data_dir_get());
+   snprintf(buf, sizeof(buf), "%s/images/icon_03.png", elm_app_data_dir_get());
    elm_icon_file_set(ic, buf, NULL);
    elm_icon_scale_set(ic, 0, 0);
    evas_object_size_hint_align_set(ic, EVAS_HINT_EXPAND, 0.5);
@@ -136,26 +264,41 @@ test_box_vert2(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_i
 void
 test_box_horiz(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
-   Evas_Object *win, *bg, *bx, *ic;
+   Evas_Object *win, *bg, *bx, *ic, *bxx, *bt;
    char buf[PATH_MAX];
+   api_data *api = calloc(1, sizeof(api_data));
 
    win = elm_win_add(NULL, "box-horiz", ELM_WIN_BASIC);
    elm_win_title_set(win, "Box Horiz");
    elm_win_autodel_set(win, EINA_TRUE);
-
+   evas_object_event_callback_add(win, EVAS_CALLBACK_FREE, _cleanup_cb, api);
    bg = elm_bg_add(win);
    elm_win_resize_object_add(win, bg);
    evas_object_size_hint_weight_set(bg, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_show(bg);
 
+   bxx = elm_box_add(win);
+   elm_win_resize_object_add(win, bxx);
+   evas_object_size_hint_weight_set(bxx, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_show(bxx);
+
    bx = elm_box_add(win);
    elm_box_horizontal_set(bx, EINA_TRUE);
-   elm_win_resize_object_add(win, bx);
    evas_object_size_hint_weight_set(bx, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   api->box = bx;
    evas_object_show(bx);
 
+   bt = elm_button_add(win);
+   elm_object_text_set(bt, "Next API function");
+   evas_object_smart_callback_add(bt, "clicked", _api_bt_clicked, (void *) api);
+   elm_box_pack_end(bxx, bt);
+   elm_object_disabled_set(bt, api->state == API_STATE_LAST);
+   evas_object_show(bt);
+
+   elm_box_pack_end(bxx, bx);
+
    ic = elm_icon_add(win);
-   snprintf(buf, sizeof(buf), "%s/images/logo_small.png", elm_app_data_dir_get());
+   snprintf(buf, sizeof(buf), "%s/images/icon_01.png", elm_app_data_dir_get());
    elm_icon_file_set(ic, buf, NULL);
    elm_icon_scale_set(ic, 0, 0);
    evas_object_size_hint_align_set(ic, 0.5, 0.5);
@@ -163,7 +306,7 @@ test_box_horiz(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_i
    evas_object_show(ic);
 
    ic = elm_icon_add(win);
-   snprintf(buf, sizeof(buf), "%s/images/logo_small.png", elm_app_data_dir_get());
+   snprintf(buf, sizeof(buf), "%s/images/icon_02.png", elm_app_data_dir_get());
    elm_icon_file_set(ic, buf, NULL);
    elm_icon_scale_set(ic, 0, 0);
    evas_object_size_hint_align_set(ic, 0.5, 0.0);
@@ -171,7 +314,7 @@ test_box_horiz(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_i
    evas_object_show(ic);
 
    ic = elm_icon_add(win);
-   snprintf(buf, sizeof(buf), "%s/images/logo_small.png", elm_app_data_dir_get());
+   snprintf(buf, sizeof(buf), "%s/images/icon_03.png", elm_app_data_dir_get());
    elm_icon_file_set(ic, buf, NULL);
    elm_icon_scale_set(ic, 0, 0);
    evas_object_size_hint_align_set(ic, 0.0, EVAS_HINT_EXPAND);
