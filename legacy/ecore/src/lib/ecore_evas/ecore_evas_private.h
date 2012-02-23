@@ -344,6 +344,7 @@ struct _Ecore_Evas
       char            sticky       : 1;
       char            request_pos  : 1;
       char            draw_frame   : 1;
+      char            hwsurface    : 1;
    } prop;
 
    struct {
