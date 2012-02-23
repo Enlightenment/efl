@@ -2873,18 +2873,6 @@ EAPI int              edje_object_part_text_cursor_pos_get              (const E
  */
 EAPI void             edje_object_part_text_imf_context_reset           (const Evas_Object *obj, const char *part);
 
-#ifdef HAVE_ECORE_IMF
-/**
- * @brief Get the input method context in entry.
- *
- * @param obj A valid Evas_Object handle
- * @param part The part name
- *
- * @return The input method context in entry
- */
-EAPI Ecore_IMF_Context *edje_object_part_text_imf_context_get           (const Evas_Object *obj, const char *part);
-#endif
-
 /**
  * @brief Set the layout of the input panel.
  *
