@@ -1152,8 +1152,8 @@ elm_widget_can_focus_set(Evas_Object *obj,
    can_focus = !!can_focus;
 
    if (sd->can_focus == can_focus) return;
-
-   if (can_focus)
+   sd->can_focus = can_focus;
+   if (sd->can_focus)
      {
         evas_object_event_callback_add(obj, EVAS_CALLBACK_KEY_DOWN,
                                        _propagate_event,
