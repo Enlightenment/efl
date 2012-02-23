@@ -1,9 +1,100 @@
 #include <Elementary.h>
+#include <Elementary_Cursor.h>
+#include "test.h"
 #ifdef HAVE_CONFIG_H
-# include "elementary_config.h"
+#include "elementary_config.h"
 #endif
 #ifndef ELM_LIB_QUICKLAUNCH
+struct _api_data
+{
+   unsigned int state;  /* What state we are testing       */
+   void *box;           /* Use this to get box content     */
+};
+typedef struct _api_data api_data;
 
+enum _api_state
+{
+   HORIZONTAL_SET,
+   NO_SELECT_MODE_SET,
+   COMPRESS_MODE_SET,
+   BOUNCE_SET,
+   HOMOGENEOUS_SET,
+   SCROLLER_POLICY_SET,
+   TOOLTIP_TEXT_SET,
+   ITEM_CURSOR_SET,
+   API_STATE_LAST
+};
+typedef enum _api_state api_state;
+
+static void
+set_api_state(api_data *api)
+{
+   const Eina_List *items = elm_box_children_get(api->box);
+   if(!eina_list_count(items))
+     return;
+
+   Evas_Object *gl = eina_list_nth(items, 0); /* Genlist is the first item */
+   /* use elm_box_children_get() to get list of children */
+   switch(api->state)
+     {/* Put all api-changes under switch */
+      case HORIZONTAL_SET: /* 0 */
+         elm_genlist_horizontal_set(gl, ELM_LIST_LIMIT);
+         break;
+
+      case NO_SELECT_MODE_SET: /* 1 */
+         elm_genlist_no_select_mode_set(gl, EINA_TRUE);
+         elm_genlist_horizontal_set(gl, ELM_LIST_SCROLL); /* Back to default */
+         break;
+
+      case COMPRESS_MODE_SET: /* 2 */
+         elm_genlist_no_select_mode_set(gl, EINA_FALSE); /* Back to default */
+         elm_genlist_compress_mode_set(gl, EINA_TRUE);
+         break;
+
+      case BOUNCE_SET: /* 3 */
+         elm_genlist_bounce_set(gl, EINA_FALSE, EINA_FALSE);
+         break;
+
+      case HOMOGENEOUS_SET: /* 4 */
+         elm_genlist_bounce_set(gl, EINA_TRUE, EINA_TRUE); /* Back to default */
+         elm_genlist_homogeneous_set(gl, EINA_TRUE);
+         break;
+
+      case SCROLLER_POLICY_SET: /* 5 */
+         elm_genlist_homogeneous_set(gl, EINA_FALSE); /* Back to default */
+         elm_genlist_scroller_policy_set(gl, ELM_SCROLLER_POLICY_ON, ELM_SCROLLER_POLICY_ON);
+         break;
+
+      case TOOLTIP_TEXT_SET: /* 6 */
+           {
+              elm_genlist_item_tooltip_text_set(elm_genlist_first_item_get(gl), "Tooltip text from API");
+              elm_genlist_item_bring_in(elm_genlist_first_item_get(gl));
+           }
+         break;
+
+      case ITEM_CURSOR_SET: /* 7 */
+         elm_genlist_item_cursor_set(elm_genlist_first_item_get(gl), ELM_CURSOR_HAND2);
+         break;
+
+      default:
+         return;
+     }
+}
+
+static void
+_api_bt_clicked(void *data, Evas_Object *obj, void *event_info __UNUSED__)
+{  /* Will add here a SWITCH command containing code to modify test-object */
+   /* in accordance a->state value. */
+   api_data *a = data;
+   char str[128];
+
+   printf("clicked event on API Button: api_state=<%d>\n", a->state);
+   set_api_state(a);
+   a->state++;
+   sprintf(str, "Next API function (%u)", a->state);
+   elm_object_text_set(obj, str);
+   elm_object_disabled_set(obj, a->state == API_STATE_LAST);
+}
 /* Hint:
  * In this example some calls to elm_genlist_item_append() are used which give the
  * value of an int as 'item data' and 'func data' after casting into (void*). For
@@ -97,21 +188,44 @@ _gl_longpress(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_in
    printf("longpress %p\n", event_info);
 }
 
+static void
+_cleanup_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+{
+   free(data);
+}
+
 void
 test_genlist(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
-   Evas_Object *win, *gl, *bt_50, *bt_1500, *bx;
+   Evas_Object *win, *gl, *bt_50, *bt_1500, *bx, *bxx, *bt;
    Evas_Object *over;
    Elm_Object_Item *gli;
    int i;
+   api_data *api = calloc(1, sizeof(api_data));
 
    win = elm_win_util_standard_add("genlist", "Genlist");
    elm_win_autodel_set(win, EINA_TRUE);
+   evas_object_event_callback_add(win, EVAS_CALLBACK_FREE, _cleanup_cb, api);
+
+   bxx = elm_box_add(win);
+   elm_win_resize_object_add(win, bxx);
+   evas_object_size_hint_weight_set(bxx, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_show(bxx);
 
    bx = elm_box_add(win);
    evas_object_size_hint_weight_set(bx, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-   elm_win_resize_object_add(win, bx);
+   evas_object_size_hint_align_set(bx, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   api->box = bx;
    evas_object_show(bx);
+
+   bt = elm_button_add(win);
+   elm_object_text_set(bt, "Next API function");
+   evas_object_smart_callback_add(bt, "clicked", _api_bt_clicked, (void *) api);
+   elm_box_pack_end(bxx, bt);
+   elm_object_disabled_set(bt, api->state == API_STATE_LAST);
+   evas_object_show(bt);
+
+   elm_box_pack_end(bxx, bx);
 
    gl = elm_genlist_add(win);
    evas_object_smart_callback_add(gl, "selected", _gl_selected, NULL);
