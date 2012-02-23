@@ -452,6 +452,10 @@ param in edje programs
 # undef EAPI
 #endif
 
+#ifdef HAVE_ECORE_IMF
+#include <Ecore_IMF.h>
+#endif
+
 #ifdef _WIN32
 # ifdef EFL_EDJE_BUILD
 #  ifdef DLL_EXPORT
@@ -2869,9 +2873,21 @@ EAPI int              edje_object_part_text_cursor_pos_get              (const E
  */
 EAPI void             edje_object_part_text_imf_context_reset           (const Evas_Object *obj, const char *part);
 
+#ifdef HAVE_ECORE_IMF
+/**
+ * @brief Get the input method context in entry.
+ *
+ * @param obj A valid Evas_Object handle
+ * @param part The part name
+ *
+ * @return The input method context in entry
+ */
+EAPI Ecore_IMF_Context *edje_object_part_text_imf_context_get           (const Evas_Object *obj, const char *part);
+#endif
+
 /**
  * @brief Set the layout of the input panel.
- * 
+ *
  * The layout of the input panel or virtual keyboard can make it easier or
  * harder to enter content. This allows you to hint what kind of input you
  * are expecting to enter and thus have the input panel automatically
