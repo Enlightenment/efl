@@ -560,7 +560,13 @@ add_tests:
      }
    tt = t;
 
-   if (test_win_only) return;
+   if (test_win_only)
+     {
+        EINA_LIST_FREE(tests, t)
+           free (t);
+
+        return;
+     }
 
    if (tests)
      {
