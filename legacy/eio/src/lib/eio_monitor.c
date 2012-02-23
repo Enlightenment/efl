@@ -76,7 +76,7 @@ _eio_monitor_event_cleanup_cb(__UNUSED__ void *user_data, void *func_data)
 }
 
 static void
-_eio_monitor_stat_cb(void *data, __UNUSED__ Eio_File *handler, __UNUSED__ const struct stat *st)
+_eio_monitor_stat_cb(void *data, __UNUSED__ Eio_File *handler, __UNUSED__ const Eina_Stat *st)
 {
    Eio_Monitor *monitor = data;
 

@@ -275,7 +275,7 @@ struct _Eio_File_Stat
 
    Eio_Stat_Cb done_cb;
 
-   struct stat buffer;
+   Eina_Stat buffer;
    const char *path;
 };
 

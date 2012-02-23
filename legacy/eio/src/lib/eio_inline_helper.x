@@ -36,10 +36,10 @@
  * This function return the st_atime field, last acces time, as double like all EFL time call.
  */
 static inline double
-eio_file_atime(const struct stat *st)
+eio_file_atime(const Eina_Stat *st)
 {
    if (!st) return 0.0;
-   return (double) st->st_atime;
+   return (double) st->atime;
 }
 
 /**
@@ -50,10 +50,10 @@ eio_file_atime(const struct stat *st)
  * This function return the st_mtime field, last modification time, as double like all EFL time call.
  */
 static inline double
-eio_file_mtime(const struct stat *st)
+eio_file_mtime(const Eina_Stat *st)
 {
    if (!st) return 0.0;
-   return (double) st->st_mtime;
+   return (double) st->mtime;
 }
 
 /**
@@ -64,10 +64,10 @@ eio_file_mtime(const struct stat *st)
  * This function is just an accessor to st_size and return the file length.
  */
 static inline long long
-eio_file_size(const struct stat *st)
+eio_file_size(const Eina_Stat *st)
 {
    if (!st) return 0;
-   return st->st_size;
+   return st->size;
 }
 
 /**
@@ -78,10 +78,10 @@ eio_file_size(const struct stat *st)
  * This function tell you if the stated path is a directory or not.
  */
 static inline Eina_Bool
-eio_file_is_dir(const struct stat *st)
+eio_file_is_dir(const Eina_Stat *st)
 {
    if (!st) return EINA_FALSE;
-   return (S_ISDIR(st->st_mode)) ? EINA_TRUE : EINA_FALSE;
+   return (S_ISDIR(st->mode)) ? EINA_TRUE : EINA_FALSE;
 }
 
 /**
@@ -92,10 +92,10 @@ eio_file_is_dir(const struct stat *st)
  * This function tell you if the stated path is a length or not.
  */
 static inline Eina_Bool
-eio_file_is_lnk(const struct stat *st)
+eio_file_is_lnk(const Eina_Stat *st)
 {
    if (!st) return EINA_FALSE;
-   return (S_ISLNK(st->st_mode)) ? EINA_TRUE : EINA_FALSE;
+   return (S_ISLNK(st->mode)) ? EINA_TRUE : EINA_FALSE;
 }
 
 /**

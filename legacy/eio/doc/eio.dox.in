@@ -374,13 +374,13 @@
  * static Eina_Bool
  * _test_filter_cb(void *data, Eio_File *handler, Eina_File_Direct_Info *info)
  * {
- *    struct stat *buffer;
+ *    Eina_Stat *buffer;
  *    Eina_Bool isdir;
  *
  *    isdir = info->type == EINA_FILE_DIR;
  *
- *    buffer = malloc(sizeof (struct stat));
- *    if (eina_file_stat(eio_file_container_get(handler), info, buffer))
+ *    buffer = malloc(sizeof (Eina_Stat));
+ *    if (eina_file_statat(eio_file_container_get(handler), info, buffer))
  *      {
  *         free(buffer);
  *         return EINA_FALSE;
@@ -388,9 +388,10 @@
  *
  *    if (!isdir && info->type == EINA_FILE_DIR)
  *      {
- *         if (lstat(info->path, buffer) == 0)
+ *         struct stat st;
+ *         if (lstat(info->path, &st) == 0)
  *           {
- *              if (S_ISLNK(buffer->st_mode))
+ *              if (S_ISLNK(st.st_mode))
  *                info->type = EINA_FILE_LNK;
  *           }
  *      }

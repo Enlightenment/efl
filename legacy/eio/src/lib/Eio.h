@@ -116,7 +116,7 @@ typedef Eina_Bool (*Eio_Filter_Direct_Cb)(void *data, Eio_File *handler, const E
 typedef Eina_Bool (*Eio_Filter_Dir_Cb)(void *data, Eio_File *handler, Eina_File_Direct_Info *info);
 typedef void      (*Eio_Main_Direct_Cb)(void *data, Eio_File *handler, const Eina_File_Direct_Info *info);
 
-typedef void (*Eio_Stat_Cb)(void *data, Eio_File *handler, const struct stat *stat);
+typedef void (*Eio_Stat_Cb)(void *data, Eio_File *handler, const Eina_Stat *stat);
 typedef void (*Eio_Progress_Cb)(void *data, Eio_File *handler, const Eio_Progress *info);
 
 typedef void      (*Eio_Eet_Open_Cb)(void *data, Eio_File *handler, Eet_File *file);
@@ -715,44 +715,44 @@ EAPI Eina_Bool eio_file_associate_direct_add(Eio_File *ls,
 EAPI void *eio_file_associate_find(Eio_File *ls, const char *key);
 
 /**
- * @brief get access time from a struct stat
+ * @brief get access time from a Eina_Stat
  * @param stat the structure to get the atime from
  * @return the last accessed time
  *
  * This take care of doing type conversion to match rest of EFL time API.
  * @note some filesystem don't update that information.
  */
-static inline double eio_file_atime(const struct stat *stat);
+static inline double eio_file_atime(const Eina_Stat *stat);
 
 /**
- * @brief get modification time from a struct stat
+ * @brief get modification time from a Eina_Stat
  * @param stat the structure to get the mtime from
  * @return the last modification time
  *
  * This take care of doing type conversion to match rest of EFL time API.
  */
-static inline double eio_file_mtime(const struct stat *stat);
+static inline double eio_file_mtime(const Eina_Stat *stat);
 
 /**
- * @brief get the size of the file described in struct stat
+ * @brief get the size of the file described in Eina_Stat
  * @param stat the structure to get the size from
  * @return the size of the file
  */
-static inline long long eio_file_size(const struct stat *stat);
+static inline long long eio_file_size(const Eina_Stat *stat);
 
 /**
  * @brief tell if the stated path was a directory or not.
  * @param stat the structure to get the size from
  * @return EINA_TRUE, if it was.
  */
-static inline Eina_Bool eio_file_is_dir(const struct stat *stat);
+static inline Eina_Bool eio_file_is_dir(const Eina_Stat *stat);
 
 /**
  * @brief tell if the stated path was a link or not.
  * @param stat the structure to get the size from
  * @return EINA_TRUE, if it was.
  */
-static inline Eina_Bool eio_file_is_lnk(const struct stat *stat);
+static inline Eina_Bool eio_file_is_lnk(const Eina_Stat *stat);
 
 /**
  * @}

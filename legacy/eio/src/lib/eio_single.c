@@ -105,9 +105,40 @@ static void
 _eio_file_stat(void *data, Ecore_Thread *thread)
 {
    Eio_File_Stat *s = data;
+   struct stat buf;
 
-   if (stat(s->path, &s->buffer) != 0)
+   if (stat(s->path, &buf) != 0)
      eio_file_thread_error(&s->common, thread);
+
+   s->buffer.dev = buf.st_dev;
+   s->buffer.ino = buf.st_ino;
+   s->buffer.mode = buf.st_mode;
+   s->buffer.nlink = buf.st_nlink;
+   s->buffer.uid = buf.st_uid;
+   s->buffer.gid = buf.st_gid;
+   s->buffer.rdev = buf.st_rdev;
+   s->buffer.size = buf.st_size;
+   s->buffer.blksize = buf.st_blksize;
+   s->buffer.blocks = buf.st_blocks;
+   s->buffer.atime = buf.st_atime;
+   s->buffer.mtime = buf.st_mtime;
+   s->buffer.ctime = buf.st_ctime;
+#ifdef _STAT_VER_LINUX
+# if (defined __USE_MISC && defined st_mtime)
+   s->buffer.atimensec = buf.st_atim.tv_nsec;
+   s->buffer.mtimensec = buf.st_mtim.tv_nsec;
+   s->buffer.ctimensec = buf.st_ctim.tv_nsec;
+# else
+   s->buffer.atimensec = buf.st_atimensec;
+   s->buffer.mtimensec = buf.st_mtimensec;
+   s->buffer.ctimensec = buf.st_ctimensec;
+# endif
+#else
+   s->buffer.atimensec = 0;
+   s->buffer.mtimensec = 0;
+   s->buffer.ctimensec = 0;
+#endif
+
 }
 
 static void
