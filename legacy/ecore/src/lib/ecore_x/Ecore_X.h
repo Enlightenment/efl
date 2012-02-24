@@ -2767,13 +2767,13 @@ EAPI Ecore_X_Randr_Output *ecore_x_randr_outputs_get(Ecore_X_Window root,
 EAPI Ecore_X_Randr_Output *
 ecore_x_randr_window_outputs_get(Ecore_X_Window window,
                                  int *num);
-EINA_DEPRECATED EAPI Ecore_X_Randr_Output *
+EAPI Ecore_X_Randr_Output *
 ecore_x_randr_current_output_get(Ecore_X_Window window,
                                  int *num);
 EAPI Ecore_X_Randr_Crtc *
 ecore_x_randr_window_crtcs_get(Ecore_X_Window window,
                                int *num);
-EINA_DEPRECATED EAPI Ecore_X_Randr_Crtc *
+EAPI Ecore_X_Randr_Crtc *
 ecore_x_randr_current_crtc_get(Ecore_X_Window window,
                                int *num);
 EAPI Ecore_X_Randr_Output *

@@ -541,7 +541,7 @@ ecore_x_randr_crtcs_get(Ecore_X_Window root,
  * @return array of crtcs that display a certain window. NULL if no crtcs
  * was found that displays the specified window.
  */
-EINA_DEPRECATED EAPI Ecore_X_Randr_Crtc *
+EAPI Ecore_X_Randr_Crtc *
 ecore_x_randr_current_crtc_get(Ecore_X_Window window,
                                int *num)
 {
@@ -2351,7 +2351,7 @@ _ecore_x_randr_current_output_get_fail:
  * was found that displays the specified window.
  */
 
-EINA_DEPRECATED EAPI Ecore_X_Randr_Output *
+EAPI Ecore_X_Randr_Output *
 ecore_x_randr_current_output_get(Ecore_X_Window window,
                                  int *num)
 {

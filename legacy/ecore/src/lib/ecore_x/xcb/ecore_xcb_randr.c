@@ -1567,7 +1567,7 @@ ecore_x_randr_crtcs_get(Ecore_X_Window root,
  * @return array of CRTCs that display a certain window. NULL if no CRTCs
  * was found that displays the specified window.
  */
-EINA_DEPRECATED EAPI Ecore_X_Randr_Crtc *
+EAPI Ecore_X_Randr_Crtc *
 ecore_x_randr_current_crtc_get(Ecore_X_Window window,
                                  int           *num)
 {
@@ -2382,7 +2382,7 @@ ecore_x_randr_screen_current_size_set(Ecore_X_Window root,
  * was found that displays the specified window.
  */
 
-EINA_DEPRECATED EAPI Ecore_X_Randr_Output *
+Ecore_X_Randr_Output *
 ecore_x_randr_current_output_get(Ecore_X_Window window,
                                  int *num)
 {
