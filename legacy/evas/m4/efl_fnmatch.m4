@@ -13,7 +13,7 @@ AC_CHECK_HEADER([fnmatch.h], [_efl_have_fnmatch="yes"], [_efl_have_fnmatch="no"]
 
 if test "x${_efl_have_fnmatch}" = "xyes" ; then
    AC_SEARCH_LIBS([fnmatch],
-      [fnmatch evil iberty],
+      [fnmatch evil exotic iberty],
       [_efl_have_fnmatch="yes"],
       [_efl_have_fnmatch="no"])
 fi

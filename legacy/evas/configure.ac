@@ -243,6 +243,20 @@ case "$host_os" in
    ;;
 esac
 
+### Checks for portability layer
+
+PKG_CHECK_MODULES([EXOTIC],
+   [exotic],
+   [enable_exotic="yes"],
+   [enable_exotic="no"])
+
+if test "x${enable_exotic}" = "xyes"; then
+    requirement_eina="exotic ${requirement_eina}"
+
+    AC_DEFINE([HAVE_EXOTIC], [1], [Define to 1 if you have Exotic.])
+fi
+AM_CONDITIONAL([EVAS_HAVE_EXOTIC], [test "x${enable_exotic}" = "xyes"])
+
 ## strong dependencies
 
 # Eina
@@ -1837,8 +1851,8 @@ AM_CONDITIONAL([BUILD_EXAMPLES], [test "x${build_examples}" = "xyes"])
 EFL_CHECK_TESTS([enable_tests="yes"], [enable_tests="no"])
 
 EFL_CHECK_COVERAGE([${enable_tests}], [enable_coverage="yes"], [enable_coverage="no"])
-EVAS_CFLAGS="${EVAS_CFLAGS} ${EFL_COVERAGE_CFLAGS}"
-EVAS_LIBS="${EVAS_LIBS} ${EFL_COVERAGE_LIBS}"
+EVAS_CFLAGS="${EVAS_CFLAGS} ${EFL_COVERAGE_CFLAGS} ${EXOTIC_CFLAGS}"
+EVAS_LIBS="${EVAS_LIBS} ${EFL_COVERAGE_LIBS} ${EXOTIC_LIBS}"
 if test "x$enable_coverage" = "xyes" ; then
    EVAS_CFLAGS="${EVAS_CFLAGS} ${EFL_DEBUG_CFLAGS}"
 fi

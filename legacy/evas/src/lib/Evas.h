@@ -5,6 +5,7 @@
 @date 2000-2012
 
 Please see the @ref authors page for contact details.
+@link Evas.h Evas API @endlink
 
 @link Evas.h Evas API @endlink
 

@@ -52,13 +52,21 @@ void *alloca (size_t);
 # include <Escape.h>
 #endif
 
-#include <Eina.h>
-#include "Evas.h"
-//#include "Evas_GL.h"
-
 #ifdef HAVE_PIXMAN
 #include <pixman.h>
 #endif
+
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <unistd.h>
+
+#ifdef HAVE_EXOTIC
+# include <Exotic.h>
+#endif
+
+#include <Eina.h>
+#include "Evas.h"
+//#include "Evas_GL.h"
 
 #ifndef HAVE_LROUND
 /* right now i dont care about rendering bugs on platforms without lround
