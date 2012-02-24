@@ -169,7 +169,7 @@ EAPI void                   elm_photocam_image_size_get(const Evas_Object *obj, 
  * @see elm_photocam_image_region_show()
  * @see elm_photocam_image_region_bring_in()
  */
-EAPI void                   elm_photocam_region_get(const Evas_Object *obj, int *x, int *y, int *w, int *h);
+EAPI void                   elm_photocam_image_region_get(const Evas_Object *obj, int *x, int *y, int *w, int *h);
 
 /**
  * @brief Set the viewed region of the image

@@ -1,13 +1,14 @@
 /**
- * @defgroup CopyPaste
+ * @defgroup CopyPaste CopyPaste
  *
- * Implement the copy and paste + clipboard functionality, in order to 
- * share data across application windows.
+ * Implement the following functionality
+ *    a. select, copy/cut and paste 
+ *    b. clipboard
+ *    c. drag and drop 
+ * in order to share data across application windows.
  *
  * Contains functions to select a portion of text, stick it to a clipboard
  * and to paste the selection to an appropriate place.
- *
- *
  *
  * @{
  */
@@ -42,7 +43,7 @@ typedef enum
    ELM_SEL_FORMAT_IMAGE = 0x04,
    /** Vcards */
    ELM_SEL_FORMAT_VCARD = 0x08,
-   /** Raw HTML-like things for widgets that want that stuff (hello webkit!) */
+   /** Raw HTML-like data (ex., webkit) */
    ELM_SEL_FORMAT_HTML = 0x10,
 } Elm_Sel_Format;
 
@@ -72,7 +73,7 @@ typedef Eina_Bool (*Elm_Drop_Cb)(void *d, Evas_Object *o, Elm_Selection_Data *da
  * @brief Set copy and paste data to a widget.
  *
  * XXX: need to be rewritten.
- * Append the given callback to the list. This functions will be called.
+ * Append the given callback to the list.
  *
  * @param selection Selection type for copying and pasting
  * @param obj The source widget pointer

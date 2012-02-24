@@ -1468,8 +1468,14 @@ elm_photocam_image_size_get(const Evas_Object *obj, int *w, int *h)
    if (h) *h = wd->size.imh;
 }
 
-EAPI void
+EINA_DEPRECATED EAPI void
 elm_photocam_region_get(const Evas_Object *obj, int *x, int *y, int *w, int *h)
+{
+   return elm_photocam_image_region_get(obj, x, y, w, h);
+}
+
+EAPI void
+elm_photocam_image_region_get(const Evas_Object *obj, int *x, int *y, int *w, int *h)
 {
    ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);

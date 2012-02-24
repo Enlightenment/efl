@@ -4551,5 +4551,18 @@ EINA_DEPRECATED EAPI void      elm_all_flush(void);
 EINA_DEPRECATED EAPI void                 elm_video_uri_set(Evas_Object *video, const char *uri);
 
 /**
+ * @brief Get the region of the image that is currently shown
+ *
+ * @param obj
+ * @param x A pointer to the X-coordinate of region
+ * @param y A pointer to the Y-coordinate of region
+ * @param w A pointer to the width
+ * @param h A pointer to the height
+ *
+ * @deprecated Use elm_photocam_image_region_get() instead.
+ */
+EINA_DEPRECATED EAPI void                   elm_photocam_region_get(const Evas_Object *obj, int *x, int *y, int *w, int *h);
+
+/**
  * @}
  */

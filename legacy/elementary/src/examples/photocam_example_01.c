@@ -74,7 +74,7 @@ static void
 _fit(void *data, Evas_Object *obj, void *event_info)
 {
    int x, y, w, h;
-   elm_photocam_region_get(data, &x, &y, &w, &h);
+   elm_photocam_image_region_get(data, &x, &y, &w, &h);
    printf("region: {%d, %d, %d, %d}\n", x, y, w, h);
    elm_photocam_zoom_mode_set(data, ELM_PHOTOCAM_ZOOM_MODE_AUTO_FIT);
 }
