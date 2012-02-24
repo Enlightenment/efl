@@ -117,7 +117,7 @@ PKG_CHECK_MODULES([EXOTIC],
    [enable_exotic="no"])
 
 if test "x${enable_exotic}" = "xyes"; then
-    requirement_eina="exotic ${requirement_eina}"
+    requirement_embryo="exotic ${requirement_embryo}"
     EINA_CFLAGS="${EINA_CFLAGS} ${EXOTIC_CFLAGS}"
     EINA_LIBS="${EXOTIC_LIBS}"
 

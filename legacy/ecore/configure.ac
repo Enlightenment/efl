@@ -482,7 +482,7 @@ PKG_CHECK_MODULES([EXOTIC],
    [enable_exotic="no"])
 
 if test "x${enable_exotic}" = "xyes"; then
-    requirement_exotic="exotic ${requirement_exotic}"
+    requirements_ecore="exotic ${requirements_ecore}"
 
     AC_DEFINE([HAVE_EXOTIC], [1], [Define to 1 if you have Exotic.])
 fi
