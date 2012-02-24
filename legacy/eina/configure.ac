@@ -434,7 +434,7 @@ case "${host_os}" in
       EINA_LIBS="${EINA_LIBS} -ldl -lm"
    ;;
    *)
-      EINA_LIBS="${EINA_LIBS} -lm"
+      EINA_LIBS="${EINA_LIBS} -lrt -ldl -lm"
    ;;
 esac
 case "$host_vendor" in
