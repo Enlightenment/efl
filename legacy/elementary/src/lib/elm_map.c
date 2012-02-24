@@ -1466,8 +1466,12 @@ _track_place(Widget_Data *wd)
 
    EINA_LIST_FOREACH(wd->track, l, route)
      {
-        elm_map_utils_convert_geo_into_coord(wd->obj, elm_route_lon_min_get(route), elm_route_lat_max_get(route), size, &xmin, &ymin);
-        elm_map_utils_convert_geo_into_coord(wd->obj, elm_route_lon_max_get(route), elm_route_lat_min_get(route), size, &xmax, &ymax);
+        double lon_min, lon_max;
+        double lat_min, lat_max;
+        elm_route_longitude_min_max_get(route, &lon_min, &lon_max);
+        elm_route_latitude_min_max_get(route, &lat_min, &lat_max);
+        elm_map_utils_convert_geo_into_coord(wd->obj, lon_min, lat_max, size, &xmin, &ymin);
+        elm_map_utils_convert_geo_into_coord(wd->obj, lon_max, lat_min, size, &xmax, &ymax);
 
         if( !(xmin < px && xmax < px) && !(xmin > px+ow && xmax > px+ow))
         {

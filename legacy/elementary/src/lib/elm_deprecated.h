@@ -4563,6 +4563,17 @@ EINA_DEPRECATED EAPI void                 elm_video_uri_set(Evas_Object *video, 
  */
 EINA_DEPRECATED EAPI void                   elm_photocam_region_get(const Evas_Object *obj, int *x, int *y, int *w, int *h);
 
+/* No documentation for these API before.
+ *
+ * @deprecated Use elm_route_latitude_min_max_get()
+ *             elm_route_longitude_min_max_get()
+ *             instead.
+ */
+EINA_DEPRECATED EAPI double       elm_route_lon_min_get(Evas_Object *obj);
+EINA_DEPRECATED EAPI double       elm_route_lat_min_get(Evas_Object *obj);
+EINA_DEPRECATED EAPI double       elm_route_lon_max_get(Evas_Object *obj);
+EINA_DEPRECATED EAPI double       elm_route_lat_max_get(Evas_Object *obj);
+
 /**
  * @}
  */
