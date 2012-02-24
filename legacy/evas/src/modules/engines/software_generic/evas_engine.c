@@ -2561,6 +2561,8 @@ override_gl_apis(Evas_GL_API *api)
    ORD(glAttachShader);
    ORD(glBindAttribLocation);
    ORD(glBindBuffer);
+   ORD(glBindFramebuffer);
+   ORD(glBindRenderbuffer);
    ORD(glBindTexture);
    ORD(glBlendColor);
    ORD(glBlendEquation);
