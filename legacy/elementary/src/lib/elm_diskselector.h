@@ -177,9 +177,9 @@ EAPI void                   elm_diskselector_bounce_set(Evas_Object *obj, Eina_B
  * axis is reached scrolling.
  *
  * @param obj The diskselector object.
- * @param h_bounce Pointer where to store the bounce state of the horizontal
+ * @param h_bounce Pointer to store the bounce state of the horizontal
  * axis.
- * @param v_bounce Pointer where to store the bounce state of the vertical
+ * @param v_bounce Pointer to store the bounce state of the vertical
  * axis.
  *
  * @see elm_scroller_bounce_get()
@@ -195,8 +195,8 @@ EAPI void                   elm_diskselector_bounce_get(const Evas_Object *obj, 
  * @see elm_diskselector_scroller_policy_get() for details.
  *
  * @param obj The diskselector object.
- * @param policy_h Pointer where to store horizontal scrollbar policy.
- * @param policy_v Pointer where to store vertical scrollbar policy.
+ * @param policy_h Pointer to store horizontal scrollbar policy.
+ * @param policy_v Pointer to store vertical scrollbar policy.
  *
  * @ingroup Diskselector
  */

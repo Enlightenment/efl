@@ -121,8 +121,8 @@ EAPI void        elm_spinner_min_max_set(Evas_Object *obj, double min, double ma
  * Get the minimum and maximum values of the spinner.
  *
  * @param obj The spinner object.
- * @param min Pointer where to store the minimum value.
- * @param max Pointer where to store the maximum value.
+ * @param min Pointer to store the minimum value.
+ * @param max Pointer to store the maximum value.
  *
  * @note If only one value is needed, the other pointer can be passed
  * as @c NULL.

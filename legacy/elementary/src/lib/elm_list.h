@@ -283,9 +283,9 @@ EAPI void                         elm_list_bounce_set(Evas_Object *obj, Eina_Boo
  * axis is reached scrolling.
  *
  * @param obj The list object.
- * @param h_bounce Pointer where to store the bounce state of the horizontal
+ * @param h_bounce Pointer to store the bounce state of the horizontal
  * axis.
- * @param v_bounce Pointer where to store the bounce state of the vertical
+ * @param v_bounce Pointer to store the bounce state of the vertical
  * axis.
  *
  * @see elm_scroller_bounce_get()
@@ -321,8 +321,8 @@ EAPI void                         elm_list_scroller_policy_set(Evas_Object *obj,
  * @see elm_list_scroller_policy_get() for details.
  *
  * @param obj The list object.
- * @param policy_h Pointer where to store horizontal scrollbar policy.
- * @param policy_v Pointer where to store vertical scrollbar policy.
+ * @param policy_h Pointer to store horizontal scrollbar policy.
+ * @param policy_v Pointer to store vertical scrollbar policy.
  *
  * @ingroup List
  */

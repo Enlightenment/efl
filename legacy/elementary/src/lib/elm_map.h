@@ -269,8 +269,8 @@ EAPI Elm_Map_Zoom_Mode     elm_map_zoom_mode_get(const Evas_Object *obj);
  * Get the current geographic coordinates of the map.
  *
  * @param obj The map object.
- * @param lon Pointer where to store longitude.
- * @param lat Pointer where to store latitude.
+ * @param lon Pointer to store longitude.
+ * @param lat Pointer to store latitude.
  *
  * This gets the current center coordinates of the map object. It can be
  * set by elm_map_geo_region_bring_in() and elm_map_geo_region_show().
@@ -403,8 +403,8 @@ EAPI Eina_Bool             elm_map_paused_markers_get(const Evas_Object *obj);
  * Get the information of downloading status.
  *
  * @param obj The map object.
- * @param try_num Pointer where to store number of tiles being downloaded.
- * @param finish_num Pointer where to store number of tiles successfully
+ * @param try_num Pointer to store number of tiles being downloaded.
+ * @param finish_num Pointer to store number of tiles successfully
  * downloaded.
  *
  * This gets the current downloading status for the map object, the number
@@ -423,8 +423,8 @@ EAPI void                  elm_map_utils_downloading_status_get(const Evas_Objec
  * @param y the coordinate.
  * @param size the size in pixels of the map.
  * The map is a square and generally his size is : pow(2.0, zoom)*256.
- * @param lon Pointer where to store the longitude that correspond to x.
- * @param lat Pointer where to store the latitude that correspond to y.
+ * @param lon Pointer to store the longitude that correspond to x.
+ * @param lat Pointer to store the latitude that correspond to y.
  *
  * @note Origin pixel point is the top left corner of the viewport.
  * Map zoom and size are taken on account.
@@ -444,9 +444,9 @@ EAPI void                  elm_map_utils_convert_coord_into_geo(const Evas_Objec
  * @param lat the latitude.
  * @param size the size in pixels of the map. The map is a square
  * and generally his size is : pow(2.0, zoom)*256.
- * @param x Pointer where to store the horizontal pixel coordinate that
+ * @param x Pointer to store the horizontal pixel coordinate that
  * correspond to the longitude.
- * @param y Pointer where to store the vertical pixel coordinate that
+ * @param y Pointer to store the vertical pixel coordinate that
  * correspond to the latitude.
  *
  * @note Origin pixel point is the top left corner of the viewport.
@@ -595,8 +595,8 @@ EAPI void                  elm_map_marker_remove(Elm_Map_Marker *marker);
  * Get the current coordinates of the marker.
  *
  * @param marker marker.
- * @param lat Pointer where to store the marker's latitude.
- * @param lon Pointer where to store the marker's longitude.
+ * @param lat Pointer to store the marker's latitude.
+ * @param lon Pointer to store the marker's longitude.
  *
  * These values are set when adding markers, with function
  * elm_map_marker_add().
@@ -1235,10 +1235,10 @@ EAPI void                  elm_map_route_color_set(Elm_Map_Route *route, int r, 
  * Get the route color.
  *
  * @param route The route object.
- * @param r Pointer where to store the red channel value.
- * @param g Pointer where to store the green channel value.
- * @param b Pointer where to store the blue channel value.
- * @param a Pointer where to store the alpha channel value.
+ * @param r Pointer to store the red channel value.
+ * @param g Pointer to store the green channel value.
+ * @param b Pointer to store the blue channel value.
+ * @param a Pointer to store the alpha channel value.
  *
  * @see elm_map_route_color_set() for details.
  *
@@ -1296,8 +1296,8 @@ EAPI const char           *elm_map_name_address_get(const Elm_Map_Name *name);
  * Get the current coordinates of the name.
  *
  * @param name The name handle.
- * @param lat Pointer where to store the latitude.
- * @param lon Pointer where to store The longitude.
+ * @param lat Pointer to store the latitude.
+ * @param lon Pointer to store The longitude.
  *
  * This gets the coordinates of the @p name, created with one of the
  * conversion functions.
@@ -1342,10 +1342,10 @@ EAPI void                  elm_map_rotate_set(Evas_Object *obj, double degree, E
  * Get the rotate degree of the map
  *
  * @param obj The map object
- * @param degree Pointer where to store degrees from 0.0 to 360.0
+ * @param degree Pointer to store degrees from 0.0 to 360.0
  * to rotate around Z axis.
- * @param cx Pointer where to store rotation's center horizontal position.
- * @param cy Pointer where to store rotation's center vertical position.
+ * @param cx Pointer to store rotation's center horizontal position.
+ * @param cy Pointer to store rotation's center vertical position.
  *
  * @see elm_map_rotate_set() to set map rotation.
  *

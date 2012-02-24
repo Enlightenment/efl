@@ -167,9 +167,9 @@ EAPI void                        elm_anchorview_bounce_set(Evas_Object *obj, Ein
  * axis is reached scrolling.
  *
  * @param obj The anchorview object
- * @param h_bounce Pointer where to store the bounce state of the horizontal
+ * @param h_bounce Pointer to store the bounce state of the horizontal
  *                 axis
- * @param v_bounce Pointer where to store the bounce state of the vertical
+ * @param v_bounce Pointer to store the bounce state of the vertical
  *                 axis
  *
  * @see elm_scroller_bounce_get()

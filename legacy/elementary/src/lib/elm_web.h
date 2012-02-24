@@ -257,7 +257,7 @@ typedef Evas_Object *(*Elm_Web_Dialog_Alert)(void *data, Evas_Object *obj, const
  * @li @p data User data pointer set when setting the hook function
  * @li @p obj The elm_web object requesting the new window
  * @li @p message The message to show in the confirm dialog
- * @li @p ret Pointer where to store the user selection. @c EINA_TRUE if
+ * @li @p ret Pointer to store the user selection. @c EINA_TRUE if
  * the user selected @c Ok, @c EINA_FALSE otherwise.
  *
  * The function should return the object representing the confirm dialog.
@@ -279,9 +279,9 @@ typedef Evas_Object *(*Elm_Web_Dialog_Confirm)(void *data, Evas_Object *obj, con
  * @li @p obj The elm_web object requesting the new window
  * @li @p message The message to show in the prompt dialog
  * @li @p def_value The default value to present the user in the entry
- * @li @p value Pointer where to store the value given by the user. Must
+ * @li @p value Pointer to store the value given by the user. Must
  * be a malloc'ed string or @c NULL if the user canceled the popup.
- * @li @p ret Pointer where to store the user selection. @c EINA_TRUE if
+ * @li @p ret Pointer to store the user selection. @c EINA_TRUE if
  * the user selected @c Ok, @c EINA_FALSE otherwise.
  *
  * The function should return the object representing the prompt dialog.
@@ -303,10 +303,10 @@ typedef Evas_Object *(*Elm_Web_Dialog_Prompt)(void *data, Evas_Object *obj, cons
  * @li @p obj The elm_web object requesting the new window
  * @li @p allows_multiple @c EINA_TRUE if multiple files can be selected.
  * @li @p accept_types Mime types accepted
- * @li @p selected Pointer where to store the list of malloc'ed strings
+ * @li @p selected Pointer to store the list of malloc'ed strings
  * containing the path to each file selected. Must be @c NULL if the file
  * dialog is canceled
- * @li @p ret Pointer where to store the user selection. @c EINA_TRUE if
+ * @li @p ret Pointer to store the user selection. @c EINA_TRUE if
  * the user selected @c Ok, @c EINA_FALSE otherwise.
  *
  * The function should return the object representing the file selector

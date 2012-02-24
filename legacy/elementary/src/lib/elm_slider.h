@@ -287,8 +287,8 @@ EAPI void                         elm_slider_min_max_set(Evas_Object *obj, doubl
  * Get the minimum and maximum values of the slider.
  *
  * @param obj The slider object.
- * @param min Pointer where to store the minimum value.
- * @param max Pointer where to store the maximum value.
+ * @param min Pointer to store the minimum value.
+ * @param max Pointer to store the maximum value.
  *
  * @note If only one value is needed, the other pointer can be passed
  * as @c NULL.
