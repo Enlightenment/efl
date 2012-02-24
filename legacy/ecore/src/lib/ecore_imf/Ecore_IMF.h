@@ -82,11 +82,11 @@ typedef void (*Ecore_IMF_Event_Cb) (void *data, Ecore_IMF_Context *ctx, void *ev
  */
 typedef enum
 {
-    ECORE_IMF_CALLBACK_PREEDIT_START,      /**< "PREEDIT_START" is called when a new preediting sequence starts. */
-    ECORE_IMF_CALLBACK_PREEDIT_END,        /**< "PREEDIT_END" is called when a preediting sequence has been completed or canceled. */
-    ECORE_IMF_CALLBACK_PREEDIT_CHANGED,    /**< "PREEDIT_CHANGED" is called whenever the preedit sequence currently being entered has changed. */
-    ECORE_IMF_CALLBACK_COMMIT,             /**< "COMMIT" is called when a complete input sequence has been entered by the user */
-    ECORE_IMF_CALLBACK_DELETE_SURROUNDING  /**< "DELETE_SURROUNDING" is called when the input method needs to delete all or part of the context surrounding the cursor */
+   ECORE_IMF_CALLBACK_PREEDIT_START,      /**< "PREEDIT_START" is called when a new preediting sequence starts. */
+   ECORE_IMF_CALLBACK_PREEDIT_END,        /**< "PREEDIT_END" is called when a preediting sequence has been completed or canceled. */
+   ECORE_IMF_CALLBACK_PREEDIT_CHANGED,    /**< "PREEDIT_CHANGED" is called whenever the preedit sequence currently being entered has changed. */
+   ECORE_IMF_CALLBACK_COMMIT,             /**< "COMMIT" is called when a complete input sequence has been entered by the user */
+   ECORE_IMF_CALLBACK_DELETE_SURROUNDING  /**< "DELETE_SURROUNDING" is called when the input method needs to delete all or part of the context surrounding the cursor */
 } Ecore_IMF_Callback_Type;
 
 /**
