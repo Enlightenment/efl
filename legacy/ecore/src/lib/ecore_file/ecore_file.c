@@ -821,6 +821,8 @@ ecore_file_ls(const char *dir)
    Eina_List *list = NULL;
 
    ls = eina_file_direct_ls(dir);
+   if (!ls) return NULL;
+
    EINA_ITERATOR_FOREACH(ls, info)
      {
         char *f;
