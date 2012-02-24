@@ -519,3 +519,8 @@
 		window.
         * Deprecate ecore_x_randr_current_output_get. Use
 		ecore_x_randr_window_crtcs_get instead.
+
+2012-02-24  Doyun Kang
+
+	* Add indicator controls to ecore_x
+
