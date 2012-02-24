@@ -2,7 +2,7 @@
 # include "config.h"
 #endif
 
-#ifndef HAVE_GETTIMEOFDAY
+#ifndef EFL_HAVE_GETTIMEOFDAY
 # error "Your platform isn't supported yet"
 #endif
 
@@ -15,6 +15,10 @@
 
 #ifdef HAVE_EVIL
 # include <Evil.h>
+#endif
+
+#ifdef HAVE_EXOTIC
+# include <Exotic.h>
 #endif
 
 #include "Embryo.h"
