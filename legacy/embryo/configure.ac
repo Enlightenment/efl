@@ -118,8 +118,6 @@ PKG_CHECK_MODULES([EXOTIC],
 
 if test "x${enable_exotic}" = "xyes"; then
     requirement_embryo="exotic ${requirement_embryo}"
-    EINA_CFLAGS="${EINA_CFLAGS} ${EXOTIC_CFLAGS}"
-    EINA_LIBS="${EXOTIC_LIBS}"
 
     AC_DEFINE([HAVE_EXOTIC], [1], [Define to 1 if you have Exotic.])
 fi
