@@ -234,6 +234,19 @@ AC_SUBST(EET_LIBS)
 PKG_CHECK_MODULES(EINA, [eina >= 1.1.0])
 requirement_eet="eina >= 1.1.0 ${requirement_eet}"
 
+### Checks for portability layer
+
+PKG_CHECK_MODULES([EXOTIC],
+   [exotic],
+   [enable_exotic="yes"],
+   [enable_exotic="no"])
+
+if test "x${enable_exotic}" = "xyes"; then
+    requirement_eet="exotic ${requirement_eet}"
+
+    AC_DEFINE([HAVE_EXOTIC_H], [1], [Define to 1 if you have Exotic.])
+fi
+
 # Gnutls support
 
 AC_ARG_ENABLE([gnutls],

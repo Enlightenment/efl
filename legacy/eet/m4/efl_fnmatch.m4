@@ -24,6 +24,18 @@ if (! test "x${ac_cv_search_fnmatch}" = "xnone required") && (! test "x${ac_cv_s
    EFL_FNMATCH_LIBS=${ac_cv_search_fnmatch}
 fi
 
+if test "x${_efl_have_fnmatch}" != "xyes" -a "x${enable_exotic}" = "xyes"; then
+   LDFLAGS_SAVE="$LDFLAGS"
+   LDFLAGS="$LDFLAGS $EXOTIC_LIBS"
+   AC_CHECK_LIB([exotic], [fnmatch],
+		[_efl_have_fnmatch="yes"],
+		[_efl_have_fnmatch="no"])
+
+   if test "x${_efl_have_fnmatch}" = "xyes"; then
+      EFL_FNMATCH_LIBS="exotic"
+   fi
+fi
+
 AC_SUBST(EFL_FNMATCH_LIBS)
 
 AS_IF([test "x$_efl_have_fnmatch" = "xyes"], [$1], [$2])
