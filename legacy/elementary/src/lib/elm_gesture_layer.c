@@ -1070,7 +1070,7 @@ _del_hook(Evas_Object *obj)
 
    Pointer_Event *data;
    EINA_LIST_FREE(wd->touched, data)
-      free(data);
+     free(data);
 
    if (!elm_widget_disabled_get(obj))
      _unregister_callbacks(obj);
@@ -3109,7 +3109,8 @@ _make_pointer_event(void *data, void *event_info,
  *
  * @ingroup Elm_Gesture_Layer
  */
-void continues_gestures_restart(void *data, Eina_Bool states_reset)
+static void
+continues_gestures_restart(void *data, Eina_Bool states_reset)
 {
    Widget_Data *wd = elm_widget_data_get(data);
    if (!wd) return;
@@ -3385,6 +3386,8 @@ _multi_up(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__,
 EAPI Eina_Bool
 elm_gesture_layer_hold_events_get(Evas_Object *obj)
 {
+   ELM_CHECK_WIDTYPE(obj, widtype) EINA_FALSE;
+
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return EINA_FALSE;
 
@@ -3394,6 +3397,8 @@ elm_gesture_layer_hold_events_get(Evas_Object *obj)
 EAPI void
 elm_gesture_layer_hold_events_set(Evas_Object *obj, Eina_Bool r)
 {
+   ELM_CHECK_WIDTYPE(obj, widtype);
+
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return;
 
@@ -3403,6 +3408,8 @@ elm_gesture_layer_hold_events_set(Evas_Object *obj, Eina_Bool r)
 EAPI void
 elm_gesture_layer_zoom_step_set(Evas_Object *obj, double s)
 {
+   ELM_CHECK_WIDTYPE(obj, widtype);
+
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return;
 
@@ -3415,6 +3422,8 @@ elm_gesture_layer_zoom_step_set(Evas_Object *obj, double s)
 EAPI void
 elm_gesture_layer_rotate_step_set(Evas_Object *obj, double s)
 {
+   ELM_CHECK_WIDTYPE(obj, widtype);
+
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return;
 
@@ -3427,6 +3436,8 @@ elm_gesture_layer_rotate_step_set(Evas_Object *obj, double s)
 EAPI Eina_Bool
 elm_gesture_layer_attach(Evas_Object *obj, Evas_Object *t)
 {
+   ELM_CHECK_WIDTYPE(obj, widtype) EINA_FALSE;
+
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return EINA_FALSE;
 
@@ -3447,6 +3458,8 @@ EAPI void
 elm_gesture_layer_cb_set(Evas_Object *obj, Elm_Gesture_Type idx,
       Elm_Gesture_State cb_type, Elm_Gesture_Event_Cb cb, void *data)
 {
+   ELM_CHECK_WIDTYPE(obj, widtype);
+
    Widget_Data *wd = elm_widget_data_get(obj);
    Gesture_Info *p;
    if (!wd) return;
