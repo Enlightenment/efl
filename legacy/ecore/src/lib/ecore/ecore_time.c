@@ -21,7 +21,7 @@
 
 #include <time.h>
 
-#ifdef HAVE_CLOCK_GETTIME
+#if defined (HAVE_CLOCK_GETTIME) || defined (EXOTIC_PROVIDE_CLOCK_GETTIME)
 static clockid_t _ecore_time_clock_id = -1;
 #elif defined(__APPLE__) && defined(__MACH__)
 static double _ecore_time_clock_conversion = 1e-9;
@@ -52,7 +52,7 @@ double _ecore_time_loop_time = -1.0;
 EAPI double
 ecore_time_get(void)
 {
-#ifdef HAVE_CLOCK_GETTIME
+#if defined (HAVE_CLOCK_GETTIME) || defined (EXOTIC_PROVIDE_CLOCK_GETTIME) 
    struct timespec t;
 
    if (EINA_UNLIKELY(_ecore_time_clock_id < 0))
@@ -86,7 +86,7 @@ ecore_time_get(void)
 EAPI double
 ecore_time_unix_get(void)
 {
-#ifdef HAVE_GETTIMEOFDAY
+#ifdef EFL_HAVE_GETTIMEOFDAY
    struct timeval timev;
 
    gettimeofday(&timev, NULL);
@@ -136,7 +136,7 @@ ecore_loop_time_get(void)
 void
 _ecore_time_init(void)
 {
-#ifdef HAVE_CLOCK_GETTIME
+#if defined (HAVE_CLOCK_GETTIME) || defined (EXOTIC_PROVIDE_CLOCK_GETTIME)
    struct timespec t;
 
    if (_ecore_time_clock_id != -1) return;

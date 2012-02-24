@@ -473,6 +473,21 @@ case "$host_vendor" in
       ;;
 esac
 
+
+### Checks for portability layer
+
+PKG_CHECK_MODULES([EXOTIC],
+   [exotic],
+   [enable_exotic="yes"],
+   [enable_exotic="no"])
+
+if test "x${enable_exotic}" = "xyes"; then
+    requirement_exotic="exotic ${requirement_exotic}"
+
+    AC_DEFINE([HAVE_EXOTIC], [1], [Define to 1 if you have Exotic.])
+fi
+AM_CONDITIONAL([ECORE_HAVE_EXOTIC], [test "x${enable_exotic}" = "xyes"])
+
 AC_SUBST(EFL_ECORE_BUILD)
 AC_SUBST(EFL_ECORE_CON_BUILD)
 AC_SUBST(EFL_ECORE_EVAS_BUILD)

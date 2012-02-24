@@ -174,7 +174,7 @@ void      *_ecore_main_fd_handler_del(Ecore_Fd_Handler *fd_handler);
 
 void       _ecore_main_shutdown(void);
 
-#if defined (_WIN32) || defined (__lv2ppu__)
+#if defined (_WIN32) || defined (__lv2ppu__) || defined (HAVE_EXOTIC)
 static inline void _ecore_signal_shutdown(void) { }
 
 static inline void _ecore_signal_init(void) { }

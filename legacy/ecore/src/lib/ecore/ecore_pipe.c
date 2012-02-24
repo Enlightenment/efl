@@ -74,6 +74,9 @@
 
 #endif /* ! _WIN32 */
 
+#include <Ecore.h>
+#include "ecore_private.h"
+
 struct _Ecore_Pipe
 {
                      ECORE_MAGIC;

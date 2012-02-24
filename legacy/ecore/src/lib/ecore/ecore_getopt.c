@@ -38,6 +38,10 @@ void *alloca(size_t);
 # include <Evil.h>
 #endif
 
+#ifdef HAVE_EXOTIC
+# include <Exotic.h>
+#endif
+
 #include "Ecore.h"
 #include "Ecore_Getopt.h"
 

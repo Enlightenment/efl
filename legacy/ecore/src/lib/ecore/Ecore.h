@@ -320,7 +320,9 @@ sudo make install
 # include <signal.h>
 #else
 # include <sys/time.h>
-# include <signal.h>
+# if !defined (EXOTIC_NO_SIGNAL)
+#  include <signal.h>
+# endif
 #endif
 
 #include <sys/types.h>
@@ -592,7 +594,7 @@ struct _Ecore_Event_Signal_User    /** User signal event */
    int       number;  /**< The signal number. Either 1 or 2 */
    void     *ext_data;  /**< Extension data - not used */
 
-#if !defined (_WIN32) && !defined (__lv2ppu__)
+#if !defined (_WIN32) && !defined (__lv2ppu__) && !defined (EXOTIC_NO_SIGNAL)
    siginfo_t data; /**< Signal info */
 #endif
 };
@@ -601,7 +603,7 @@ struct _Ecore_Event_Signal_Hup    /** Hup signal event */
 {
    void     *ext_data;  /**< Extension data - not used */
 
-#if !defined (_WIN32) && !defined (__lv2ppu__)
+#if !defined (_WIN32) && !defined (__lv2ppu__) && !defined (EXOTIC_NO_SIGNAL)
    siginfo_t data; /**< Signal info */
 #endif
 };
@@ -613,7 +615,7 @@ struct _Ecore_Event_Signal_Exit    /** Exit request event */
    Eina_Bool terminate : 1; /**< Set if the exit request was a terminate singal */
    void     *ext_data; /**< Extension data - not used */
 
-#if !defined (_WIN32) && !defined (__lv2ppu__)
+#if !defined (_WIN32) && !defined (__lv2ppu__) && !defined (EXOTIC_NO_SIGNAL)
    siginfo_t data; /**< Signal info */
 #endif
 };
@@ -622,7 +624,7 @@ struct _Ecore_Event_Signal_Power    /** Power event */
 {
    void     *ext_data;  /**< Extension data - not used */
 
-#if !defined (_WIN32) && !defined (__lv2ppu__)
+#if !defined (_WIN32) && !defined (__lv2ppu__) && !defined (EXOTIC_NO_SIGNAL)
    siginfo_t data; /**< Signal info */
 #endif
 };
@@ -631,7 +633,7 @@ struct _Ecore_Event_Signal_Realtime    /** Realtime event */
 {
    int       num; /**< The realtime signal's number */
 
-#if !defined (_WIN32) && !defined (__lv2ppu__)
+#if !defined (_WIN32) && !defined (__lv2ppu__) && !defined (EXOTIC_NO_SIGNAL)
    siginfo_t data; /**< Signal info */
 #endif
 };
@@ -725,7 +727,7 @@ struct _Ecore_Exe_Event_Del    /** Process exit event */
    Eina_Bool  exited    : 1; /** < set to 1 if the process exited of its own accord */
    Eina_Bool  signalled : 1; /** < set to 1 id the process exited due to uncaught signal */
    void      *ext_data; /**< Extension data - not used */
-#if !defined (_WIN32) && !defined (__lv2ppu__)
+#if !defined (_WIN32) && !defined (__lv2ppu__) && !defined (EXOTIC_NO_SIGNAL)
    siginfo_t  data; /**< Signal info */
 #endif
 };
