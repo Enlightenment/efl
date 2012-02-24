@@ -229,7 +229,7 @@ typedef Evas_Event_Flags (*Elm_Gesture_Event_Cb)(void *data, void *event_info);
  * it means user isn't interested in gesture-state
  * and it will not be tested.
  *
- * @param obj Pointer to gesture-layer.
+ * @param obj gesture-layer.
  * @param idx The gesture you would like to track its state.
  * @param cb callback function pointer.
  * @param cb_type what event this callback tracks: START, MOVE, END, ABORT.
@@ -242,60 +242,83 @@ EAPI void         elm_gesture_layer_cb_set(Evas_Object *obj, Elm_Gesture_Type id
 /**
  * Call this function to get repeat-events settings.
  *
- * @param obj Pointer to gesture-layer.
+ * @param obj gesture-layer.
  *
  * @return repeat events settings.
  * @see elm_gesture_layer_hold_events_set()
  * @ingroup Elm_Gesture_Layer
  */
-EAPI Eina_Bool    elm_gesture_layer_hold_events_get(Evas_Object *obj);
+EAPI Eina_Bool    elm_gesture_layer_hold_events_get(const Evas_Object *obj);
 
 /**
- * This function called in order to make gesture-layer repeat events.
- * Set this of you like to get the raw events only if gestures were not detected.
- * Clear this if you like gesture layer to fwd events as testing gestures.
+ * This function is to make gesture-layer repeat events.
+ * Set this if you like to get the raw events only if gestures were not
+ * detected.
+ * Clear this if you like gesture layer to forward events as testing gestures.
  *
- * @param obj Pointer to gesture-layer.
- * @param r Repeat: TRUE/FALSE
+ * @param obj gesture layer.
+ * @param hold_events hold events or not.
  *
  * @ingroup Elm_Gesture_Layer
  */
-EAPI void         elm_gesture_layer_hold_events_set(Evas_Object *obj, Eina_Bool r);
+EAPI void         elm_gesture_layer_hold_events_set(Evas_Object *obj, Eina_Bool hold_events);
 
 /**
  * This function sets step-value for zoom action.
  * Set step to any positive value.
- * Cancel step setting by setting to 0.0
+ * Cancel step setting by setting to 0
  *
- * @param obj Pointer to gesture-layer.
- * @param s new zoom step value.
+ * @param obj gesture-layer.
+ * @param step new zoom step value.
  *
+ * @see elm_gesture_layer_zoom_step_get()
  * @ingroup Elm_Gesture_Layer
  */
-EAPI void         elm_gesture_layer_zoom_step_set(Evas_Object *obj, double s);
+EAPI void         elm_gesture_layer_zoom_step_set(Evas_Object *obj, double step);
+
+/**
+ * This function returns step-value for zoom action.
+ *
+ * @param obj gesture-layer.
+ * @return zoom step value.
+ *
+ * @see elm_gesture_layer_zoom_step_set()
+ * @ingroup Elm_Gesture_Layer
+ */
+EAPI double       elm_gesture_layer_zoom_step_get(const Evas_Object *obj);
 
 /**
  * This function sets step-value for rotate action.
  * Set step to any positive value.
- * Cancel step setting by setting to 0.0
+ * Cancel step setting by setting to 0
  *
- * @param obj Pointer to gesture-layer.
- * @param s new rotate step value.
+ * @param obj gesture-layer.
+ * @param step new rotate step value.
  *
  * @ingroup Elm_Gesture_Layer
  */
-EAPI void         elm_gesture_layer_rotate_step_set(Evas_Object *obj, double s);
+EAPI void         elm_gesture_layer_rotate_step_set(Evas_Object *obj, double step);
+
+/**
+ * This function returns step-value for rotate action.
+ *
+ * @param obj gesture-layer.
+ * @return rotate step value.
+ *
+ * @ingroup Elm_Gesture_Layer
+ */
+EAPI double       elm_gesture_layer_rotate_step_get(const Evas_Object *obj);
 
 /**
  * This function called to attach gesture-layer to an Evas_Object.
- * @param obj Pointer to gesture-layer.
- * @param t Pointer to underlying object (AKA Target)
+ * @param obj gesture-layer.
+ * @param target Pointer to underlying object (AKA Target)
  *
  * @return TRUE, FALSE on success, failure.
  *
  * @ingroup Elm_Gesture_Layer
  */
-EAPI Eina_Bool    elm_gesture_layer_attach(Evas_Object *obj, Evas_Object *t);
+EAPI Eina_Bool    elm_gesture_layer_attach(Evas_Object *obj, Evas_Object *target);
 
 /**
  * Call this function to construct a new gesture-layer object.
@@ -304,7 +327,7 @@ EAPI Eina_Bool    elm_gesture_layer_attach(Evas_Object *obj, Evas_Object *t);
  *
  * @param parent the parent object.
  *
- * @return Pointer to new gesture-layer object.
+ * @return new gesture-layer object.
  *
  * @ingroup Elm_Gesture_Layer
  */

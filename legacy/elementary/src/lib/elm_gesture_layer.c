@@ -646,10 +646,14 @@ _n_long_tap_test_reset(Gesture_Info *gesture)
    Eina_List *l;
    Pointer_Event *p;
    EINA_LIST_FOREACH(st->touched, l, p)
-      free(p);
+     free(p);
 
    eina_list_free(st->touched);
-   if (st->timeout) ecore_timer_del(st->timeout);
+   if (st->timeout)
+     {
+        ecore_timer_del(st->timeout);
+        st->timeout = NULL;
+     }
    memset(gesture->data, 0, sizeof(Long_Tap_Type));
 }
 
@@ -913,7 +917,7 @@ _event_history_clear(Evas_Object *obj)
    Gesture_Info *p;
    Evas *e = evas_object_evas_get(obj);
    Eina_Bool gesture_found = EINA_FALSE;
-   for (i = ELM_GESTURE_FIRST ; i < ELM_GESTURE_LAST; i++)
+   for (i = ELM_GESTURE_FIRST; i < ELM_GESTURE_LAST; i++)
      {
         p = wd->gesture[i];
         if (p)
@@ -1118,7 +1122,6 @@ compare_pe_device(const void *data1, const void *data2)
    if ((pe1->event_type != EVAS_CALLBACK_MULTI_DOWN) &&
          (pe1->event_type != EVAS_CALLBACK_MOUSE_DOWN))
      return 1;
-
 
    if (pe1->device == pe2->device)
      return 0;
@@ -2973,7 +2976,7 @@ _rotate_test(Evas_Object *obj, Pointer_Event *pe, void *event_info,
               if (rotation_broke_tolerance(st))
                 {  /* Rotation broke tolerance, report move */
                    double d = st->info.angle - st->next_step;
-                   if (d < 0.0)
+                   if (d < 0)
                      d = (-d);
 
                    if (d >= wd->rotate_step)
@@ -3200,7 +3203,6 @@ _event_process(void *data, Evas_Object *obj __UNUSED__,
    Pointer_Event _pe;
    Pointer_Event *pe = NULL;
    Widget_Data *wd = elm_widget_data_get(data);
-   if (!wd) return;
 
 #if defined(DEBUG_GESTURE_LAYER)
    int i;
@@ -3384,7 +3386,7 @@ _multi_up(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__,
 }
 
 EAPI Eina_Bool
-elm_gesture_layer_hold_events_get(Evas_Object *obj)
+elm_gesture_layer_hold_events_get(const Evas_Object *obj)
 {
    ELM_CHECK_WIDTYPE(obj, widtype) EINA_FALSE;
 
@@ -3395,60 +3397,79 @@ elm_gesture_layer_hold_events_get(Evas_Object *obj)
 }
 
 EAPI void
-elm_gesture_layer_hold_events_set(Evas_Object *obj, Eina_Bool r)
+elm_gesture_layer_hold_events_set(Evas_Object *obj, Eina_Bool hold_events)
 {
    ELM_CHECK_WIDTYPE(obj, widtype);
 
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return;
 
-   wd->repeat_events = !r;
+   wd->repeat_events = !(!!hold_events);
+}
+
+EAPI double
+elm_gesture_layer_zoom_step_get(const Evas_Object *obj)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype) 0;
+
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return 0;
+
+   return wd->zoom_step;
 }
 
 EAPI void
-elm_gesture_layer_zoom_step_set(Evas_Object *obj, double s)
+elm_gesture_layer_zoom_step_set(Evas_Object *obj, double step)
 {
    ELM_CHECK_WIDTYPE(obj, widtype);
 
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return;
 
-   if (s < 0.0)
-     return;
+   if (step < 0) return;
 
-   wd->zoom_step = s;
+   wd->zoom_step = step;
+}
+
+EAPI double
+elm_gesture_layer_rotate_step_get(const Evas_Object *obj)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype) 0;
+
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return 0;
+
+   return wd->rotate_step;
 }
 
 EAPI void
-elm_gesture_layer_rotate_step_set(Evas_Object *obj, double s)
+elm_gesture_layer_rotate_step_set(Evas_Object *obj, double step)
 {
    ELM_CHECK_WIDTYPE(obj, widtype);
 
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return;
 
-   if (s < 0.0)
-     return;
+   if (step < 0) return;
 
-   wd->rotate_step = s;
+   wd->rotate_step = step;
 }
 
 EAPI Eina_Bool
-elm_gesture_layer_attach(Evas_Object *obj, Evas_Object *t)
+elm_gesture_layer_attach(Evas_Object *obj, Evas_Object *target)
 {
    ELM_CHECK_WIDTYPE(obj, widtype) EINA_FALSE;
 
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return EINA_FALSE;
 
-   if (!t)
-     return EINA_FALSE;
+   if (!target) return EINA_FALSE;
 
    /* if was attached before, unregister callbacks first */
    if (wd->target)
      _unregister_callbacks(obj);
 
-   wd->target = t;
+   wd->target = target;
 
    _register_callbacks(obj);
    return EINA_TRUE;
