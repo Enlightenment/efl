@@ -239,7 +239,6 @@ group { name: "elm/toolbar/item/default";
          clip_to: "elm.icon.clipper";
          description { state: "default" 0.0;
             align: 0.5 0.5;
-            fixed: 1 1;
             rel1 {
                relative: 0.0 0.0;
                offset: 2 2;
@@ -257,7 +256,6 @@ group { name: "elm/toolbar/item/default";
          clip_to: "elm.icon_new.clipper";
          description { state: "default" 0.0;
             align: 0.5 0.5;
-            fixed: 1 1;
             rel1 {
                relative: 0.0 0.0;
                offset: 2 2;
@@ -571,6 +569,7 @@ group { name: "elm/toolbar/item/item_horizontal";
    parts {
       part { name: "elm.swallow.icon";
          description { state: "default" 0.0;
+            fixed: 1 1;
             aspect: 1 1;
             aspect_preference: VERTICAL;
             align: 0.0 0.5;
@@ -579,6 +578,11 @@ group { name: "elm/toolbar/item/item_horizontal";
             rel2.offset: 3 -4;
             rel2.relative: 0 1;
             color: 0 0 0 0;
+         }
+      }
+      part { name: "elm.swallow.icon_new";
+         description { state: "default" 0.0;
+            fixed: 1 1;
          }
       }
       part { name: "elm.text";
