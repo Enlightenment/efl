@@ -239,7 +239,7 @@ group { name: "elm/toolbar/item/default";
          clip_to: "elm.icon.clipper";
          description { state: "default" 0.0;
             align: 0.5 0.5;
-            fixed: 0 0;
+            fixed: 1 1;
             rel1 {
                relative: 0.0 0.0;
                offset: 2 2;
@@ -257,7 +257,7 @@ group { name: "elm/toolbar/item/default";
          clip_to: "elm.icon_new.clipper";
          description { state: "default" 0.0;
             align: 0.5 0.5;
-            fixed: 0 0;
+            fixed: 1 1;
             rel1 {
                relative: 0.0 0.0;
                offset: 2 2;
