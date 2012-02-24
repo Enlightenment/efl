@@ -44,11 +44,27 @@ struct _Widget_Data
    Evas_Object *obj;
    Evas_Object *scr;
    Evas_Object *pan_smart;
+   Evas_Object *gest;
+   double       gest_start;
+
    Pan *pan;
    Evas_Coord pan_x, pan_y, minw, minh;
 
    double zoom;
    Elm_Photocam_Zoom_Mode mode;
+   Evas_Coord pvx, pvy, px, py, zoom_point_x, zoom_point_y;
+   struct
+   {
+      int imx, imy;
+      struct
+      {
+         int x_start, y_start;
+         int x_end, y_end;
+         double t_start;
+         double t_end;
+         Ecore_Animator *animator;
+      } bounce;
+   } gzoom;
    const char *file;
 
    Ecore_Job *calc_job;
@@ -82,6 +98,7 @@ struct _Widget_Data
    Eina_Bool on_hold : 1;
    Eina_Bool paused : 1;
    Eina_Bool do_region : 1;
+   Eina_Bool zoom_gest : 1;
 };
 
 struct _Pan
@@ -164,8 +181,11 @@ img_place(Evas_Object *obj, Evas_Coord px, Evas_Coord py, Evas_Coord ox, Evas_Co
    ay = 0;
    gw = wd->size.w;
    gh = wd->size.h;
-   if (ow > gw) ax = (ow - gw) / 2;
-   if (oh > gh) ay = (oh - gh) / 2;
+   if (!wd->zoom_gest)
+     {
+        if (ow > gw) ax = (ow - gw) / 2;
+        if (oh > gh) ay = (oh - gh) / 2;
+     }
    evas_object_move(wd->img, ox + 0 - px + ax, oy + 0 - py + ay);
    evas_object_resize(wd->img, gw, gh);
 
@@ -187,8 +207,11 @@ grid_place(Evas_Object *obj, Grid *g, Evas_Coord px, Evas_Coord py, Evas_Coord o
    ay = 0;
    gw = wd->size.w;
    gh = wd->size.h;
-   if (ow > gw) ax = (ow - gw) / 2;
-   if (oh > gh) ay = (oh - gh) / 2;
+   if (!wd->zoom_gest)
+     {
+        if (ow > gw) ax = (ow - gw) / 2;
+        if (oh > gh) ay = (oh - gh) / 2;
+     }
    for (y = 0; y < g->gh; y++)
      {
         for (x = 0; x < g->gw; x++)
@@ -703,6 +726,7 @@ _del_hook(Evas_Object *obj)
    if (wd->calc_job) ecore_job_del(wd->calc_job);
    if (wd->scr_timer) ecore_timer_del(wd->scr_timer);
    if (wd->zoom_animator) ecore_animator_del(wd->zoom_animator);
+   if (wd->gzoom.bounce.animator) ecore_animator_del(wd->gzoom.bounce.animator);
    if (wd->long_timer) ecore_timer_del(wd->long_timer);
    free(wd);
 }
@@ -886,11 +910,13 @@ _pan_calculate(Evas_Object *obj)
    Grid *g;
    if (!sd) return;
    evas_object_geometry_get(obj, &ox, &oy, &ow, &oh);
-   img_place(sd->wd->obj, sd->wd->pan_x, sd->wd->pan_y, ox, oy, ow, oh);
+   img_place(sd->wd->obj, sd->wd->pan_x, sd->wd->pan_y,
+             ox - sd->wd->gzoom.imx, oy - sd->wd->gzoom.imy, ow, oh);
    EINA_LIST_FOREACH(sd->wd->grids, l, g)
      {
         grid_load(sd->wd->obj, g);
-        grid_place(sd->wd->obj, g, sd->wd->pan_x, sd->wd->pan_y, ox, oy, ow, oh);
+        grid_place(sd->wd->obj, g, sd->wd->pan_x, sd->wd->pan_y,
+                   ox - sd->wd->gzoom.imx, oy - sd->wd->gzoom.imy, ow, oh);
      }
 }
 
@@ -1050,6 +1076,245 @@ _event_hook(Evas_Object *obj, Evas_Object *src __UNUSED__,
    return EINA_TRUE;
 }
 
+Eina_Bool
+_bounce_eval(void *_wd)
+{
+   Widget_Data *wd = (Widget_Data *)_wd;
+   double t, tt;
+
+   if (!wd) return ECORE_CALLBACK_CANCEL;
+   if ((wd->gzoom.imx == wd->gzoom.bounce.x_end) &&
+       (wd->gzoom.imy == wd->gzoom.bounce.y_end))
+     {
+        wd->gzoom.imx = 0;
+        wd->gzoom.imy = 0;
+        wd->zoom_gest = EINA_FALSE;
+        wd->gzoom.bounce.animator = NULL;
+        _freeze_off(NULL, wd->obj, NULL);
+        return ECORE_CALLBACK_CANCEL;
+     }
+
+   t = ecore_loop_time_get();
+   tt = (t - wd->gzoom.bounce.t_start) / (wd->gzoom.bounce.t_end - wd->gzoom.bounce.t_start);
+   tt = 1.0 - tt;
+   tt = 1.0 - (tt * tt);
+
+   if (t > wd->gzoom.bounce.t_end)
+     {
+        wd->gzoom.imx = 0;
+        wd->gzoom.imy = 0;
+        wd->zoom_gest = EINA_FALSE;
+        _freeze_off(NULL, wd->obj, NULL);
+        zoom_do(wd->obj, 1.0);
+        wd->gzoom.bounce.animator = NULL;
+        return ECORE_CALLBACK_CANCEL;
+     }
+
+   if (wd->gzoom.imx != wd->gzoom.bounce.x_end)
+     wd->gzoom.imx = wd->gzoom.bounce.x_start * (1.0 - tt) + wd->gzoom.bounce.x_end * tt;
+
+   if (wd->gzoom.imy != wd->gzoom.bounce.y_end)
+     wd->gzoom.imy = wd->gzoom.bounce.y_start * (1.0 - tt) + wd->gzoom.bounce.y_end * tt;
+
+   zoom_do(wd->obj, 1.0 - (1.0 - tt));
+   return ECORE_CALLBACK_RENEW;
+}
+
+static void
+_gzoom(Widget_Data *_wd, Evas_Coord px, Evas_Coord py, Elm_Gesture_Zoom_Info* gest)
+{
+   Widget_Data *wd = (Widget_Data *)_wd;
+   Evas_Coord rx, ry, rw, rh;
+   int regx, regy, regw, regh, ix, iy, iw, ih;
+   int xx, yy;
+
+   if (!wd) return;
+   wd->mode = ELM_PHOTOCAM_ZOOM_MODE_MANUAL;
+   wd->zoom = wd->gest_start / gest->zoom;
+   wd->size.ow = wd->size.w;
+   wd->size.oh = wd->size.h;
+   elm_smart_scroller_child_pos_get(wd->scr, &rx, &ry);
+   elm_smart_scroller_child_viewport_size_get(wd->scr, &rw, &rh);
+   if ((rw <= 0) || (rh <= 0)) return;
+
+   wd->size.nw = (double)wd->size.imw / wd->zoom;
+   wd->size.nh = (double)wd->size.imh / wd->zoom;
+
+   elm_photocam_image_region_get(wd->obj, &regx, &regy, &regw, &regh);
+   evas_object_geometry_get(wd->img, &ix, &iy, &iw, &ih);
+
+   wd->pvx = gest->x;
+   wd->pvy = gest->y;
+
+   xx = (px / wd->zoom) - wd->pvx;
+   yy = (py / wd->zoom) - wd->pvy;
+   wd->gzoom.imx = 0;
+   wd->gzoom.imy = 0;
+
+   if ((xx < 0) || (rw > wd->size.nw))
+     {
+        wd->gzoom.imx = xx;
+        xx = 0;
+     }
+   else if ((xx + rw) > wd->size.nw)
+     {
+        wd->gzoom.imx = xx + rw - wd->size.nw;
+        xx = wd->size.nw - rw;
+     }
+
+   if ((yy < 0) || (rh > wd->size.nh))
+     {
+        wd->gzoom.imy = yy;
+        yy = 0;
+     }
+   else if ((yy + rh) > wd->size.nh)
+     {
+        wd->gzoom.imy = yy + rh - wd->size.nh;
+        yy = wd->size.nh - rh;
+     }
+
+   wd->size.spos.x = (double)(xx + (rw / 2)) / (double)(wd->size.nw);
+   wd->size.spos.y = (double)(yy + (rh / 2)) / (double)(wd->size.nh);
+
+   zoom_do(wd->obj, 1.0);
+}
+
+static Evas_Event_Flags
+_gzoom_start(void *_wd, void *event_info)
+{
+   Widget_Data *wd = (Widget_Data *)_wd;
+   Elm_Gesture_Zoom_Info *p = (Elm_Gesture_Zoom_Info *) event_info;
+   Evas_Coord rw, rh;
+   int x,y,w,h;
+   double marginx = 0, marginy = 0;
+
+   if (wd->gzoom.bounce.animator)
+     {
+        ecore_animator_del(wd->gzoom.bounce.animator);
+        wd->gzoom.bounce.animator = NULL;
+     }
+   wd->zoom_gest = EINA_TRUE;
+   _freeze_on(NULL, wd->obj, NULL);
+
+   elm_photocam_image_region_get(wd->obj, &x, &y, &w, &h);
+   elm_smart_scroller_child_viewport_size_get(wd->scr, &rw, &rh);
+
+   if (rw > wd->size.nw)
+     marginx = (rw - wd->size.nw) / 2;
+   if (rh > wd->size.nh)
+     marginy = (rh - wd->size.nh) / 2;
+
+   wd->gest_start = wd->zoom;
+
+   wd->zoom_point_x = x + ((p->x - marginx) * wd->zoom) + wd->gzoom.imx;
+   wd->zoom_point_y = y + ((p->y - marginy) * wd->zoom) + wd->gzoom.imy;
+
+   return EVAS_EVENT_FLAG_NONE;
+}
+
+static Evas_Event_Flags
+_gzoom_move(void *_wd, void *event_info)
+{
+   Widget_Data *wd = (Widget_Data *)_wd;
+   Elm_Gesture_Zoom_Info *p = (Elm_Gesture_Zoom_Info *) event_info;
+
+   _gzoom(wd, wd->zoom_point_x, wd->zoom_point_y, p);
+   return EVAS_EVENT_FLAG_NONE;
+}
+
+static Evas_Event_Flags
+_gzoom_end(void *_wd, void *event_info __UNUSED__)
+{
+   Widget_Data *wd = (Widget_Data *)_wd;
+   Evas_Coord rw, rh;
+
+   elm_smart_scroller_child_viewport_size_get(wd->scr, &rw, &rh);
+   wd->gest_start = 1.0;
+
+   if (wd->gzoom.imx || wd->gzoom.imy)
+     {
+        double t;
+
+        t = ecore_loop_time_get();
+        wd->gzoom.bounce.x_start = wd->gzoom.imx;
+        wd->gzoom.bounce.y_start = wd->gzoom.imy;
+        wd->gzoom.bounce.x_end = 0;
+        wd->gzoom.bounce.y_end = 0;
+
+        if (rw > wd->size.nw &&
+            rh > wd->size.nh)
+          {
+             Evas_Coord pw, ph;
+             double z;
+
+             if ((wd->size.imw < rw) && (wd->size.imh < rh))
+               {
+                  wd->zoom = 1;
+                  wd->size.nw = wd->size.imw;
+                  wd->size.nh = wd->size.imh;
+               }
+             else
+               {
+                  ph = (wd->size.imh * rw) / wd->size.imw;
+                  if (ph > rh)
+                    {
+                       pw = (wd->size.imw * rh) / wd->size.imh;
+                       ph = rh;
+                    }
+                  else
+                    {
+                       pw = rw;
+                    }
+                  if (wd->size.imw > wd->size.imh)
+                    z = (double)wd->size.imw / pw;
+                  else
+                    z = (double)wd->size.imh / ph;
+
+                  wd->zoom = z;
+                  wd->size.nw = pw;
+                  wd->size.nh = ph;
+               }
+             wd->gzoom.bounce.x_end = (wd->size.nw - rw) / 2;
+             wd->gzoom.bounce.y_end = (wd->size.nh - rh) / 2;
+          }
+        else
+          {
+             int xx, yy;
+
+             xx = (wd->zoom_point_x / wd->zoom) - wd->pvx;
+             yy = (wd->zoom_point_y / wd->zoom) - wd->pvy;
+
+             if (xx < 0) xx = 0;
+             if (yy < 0) yy = 0;
+
+             if (rw > wd->size.nw)
+               wd->gzoom.bounce.x_end = (wd->size.nw -rw) / 2;
+             if ((xx + rw) > wd->size.nw)
+               xx = wd->size.nw - rw;
+
+             if (rh > wd->size.nh)
+               wd->gzoom.bounce.y_end = (wd->size.nh - rh) / 2;
+             if ((yy + rh) > wd->size.nh)
+               yy = wd->size.nh - rh;
+
+             wd->size.spos.x = (double)(xx + (rw / 2)) / (double)(wd->size.nw);
+             wd->size.spos.y = (double)(yy + (rh / 2)) / (double)(wd->size.nh);
+          }
+
+        wd->gzoom.bounce.t_start = t;
+        wd->gzoom.bounce.t_end = t + _elm_config->page_scroll_friction;
+
+        wd->gzoom.bounce.animator = ecore_animator_add(_bounce_eval, wd);
+     }
+   else
+     {
+        _freeze_off(NULL, wd->obj, NULL);
+        wd->zoom_gest = EINA_FALSE;
+     }
+
+   return EVAS_EVENT_FLAG_NONE;
+}
+
 EAPI Evas_Object *
 elm_photocam_add(Evas_Object *parent)
 {
@@ -1120,9 +1385,10 @@ elm_photocam_add(Evas_Object *parent)
                                      _pan_set, _pan_get, _pan_max_get,
                                      _pan_min_get, _pan_child_size_get);
 
+   wd->zoom_gest = EINA_FALSE;
+   wd->gest_start = 1.0;
    wd->zoom = 1;
    wd->mode = ELM_PHOTOCAM_ZOOM_MODE_MANUAL;
-
    wd->tsize = 512;
 
    wd->img = evas_object_image_add(e);
@@ -1172,6 +1438,11 @@ elm_photocam_file_set(Evas_Object *obj, const char *file)
    wd->size.imh = h;
    wd->size.w = wd->size.imw / wd->zoom;
    wd->size.h = wd->size.imh / wd->zoom;
+   if (wd->gzoom.bounce.animator)
+     {
+        ecore_animator_del(wd->gzoom.bounce.animator);
+        wd->gzoom.bounce.animator = NULL;
+     }
    if (wd->zoom_animator)
      {
         wd->nosmooth--;
@@ -1194,11 +1465,11 @@ elm_photocam_file_set(Evas_Object *obj, const char *file)
                                 "elm,state,busy,start", "elm");
         evas_object_smart_callback_call(obj, SIG_LOAD_DETAIL, NULL);
      }
-     {
-        double tz = wd->zoom;
-        wd->zoom = 0.0;
-        elm_photocam_zoom_set(wd->obj, tz);
-     }
+   {
+      double tz = wd->zoom;
+      wd->zoom = 0.0;
+      elm_photocam_zoom_set(wd->obj, tz);
+   }
    return evas_object_image_load_error_get(wd->img);
 }
 
@@ -1372,7 +1643,7 @@ elm_photocam_zoom_set(Evas_Object *obj, double zoom)
              free(g);
           }
      }
-done:
+ done:
    wd->t_start = ecore_loop_time_get();
    wd->t_end = wd->t_start + _elm_config->zoom_friction;
    if ((wd->size.w > 0) && (wd->size.h > 0))
@@ -1442,11 +1713,11 @@ elm_photocam_zoom_mode_set(Evas_Object *obj, Elm_Photocam_Zoom_Mode mode)
    if (!wd) return;
    if (wd->mode == mode) return;
    wd->mode = mode;
-     {
-        double tz = wd->zoom;
-        wd->zoom = 0.0;
-        elm_photocam_zoom_set(wd->obj, tz);
-     }
+   {
+      double tz = wd->zoom;
+      wd->zoom = 0.0;
+      elm_photocam_zoom_set(wd->obj, tz);
+   }
 }
 
 EAPI Elm_Photocam_Zoom_Mode
@@ -1540,6 +1811,12 @@ elm_photocam_image_region_show(Evas_Object *obj, int x, int y, int w, int h __UN
    if (rh < 1) rh = 1;
    if ((rx + rw) > wd->size.w) rx = wd->size.w - rw;
    if ((ry + rh) > wd->size.h) ry = wd->size.h - rh;
+   if (wd->gzoom.bounce.animator)
+     {
+        ecore_animator_del(wd->gzoom.bounce.animator);
+        wd->gzoom.bounce.animator = NULL;
+        zoom_do(obj, 1.0);
+     }
    if (wd->zoom_animator)
      {
         wd->nosmooth--;
@@ -1567,6 +1844,12 @@ elm_photocam_image_region_bring_in(Evas_Object *obj, int x, int y, int w, int h 
    if (rh < 1) rh = 1;
    if ((rx + rw) > wd->size.w) rx = wd->size.w - rw;
    if ((ry + rh) > wd->size.h) ry = wd->size.h - rh;
+   if (wd->gzoom.bounce.animator)
+     {
+        ecore_animator_del(wd->gzoom.bounce.animator);
+        wd->gzoom.bounce.animator = NULL;
+        zoom_do(obj, 1.0);
+     }
    if (wd->zoom_animator)
      {
         wd->nosmooth--;
@@ -1589,6 +1872,12 @@ elm_photocam_paused_set(Evas_Object *obj, Eina_Bool paused)
    wd->paused = paused;
    if (wd->paused)
      {
+        if (wd->gzoom.bounce.animator)
+          {
+             ecore_animator_del(wd->gzoom.bounce.animator);
+             wd->gzoom.bounce.animator = NULL;
+             zoom_do(obj, 1.0);
+          }
         if (wd->zoom_animator)
           {
              ecore_animator_del(wd->zoom_animator);
@@ -1635,3 +1924,43 @@ elm_photocam_bounce_get(const Evas_Object *obj, Eina_Bool *h_bounce, Eina_Bool *
    elm_smart_scroller_bounce_allow_get(wd->scr, h_bounce, v_bounce);
 }
 
+EAPI void
+elm_photocam_gesture_set(Evas_Object *obj, Eina_Bool gesture)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype);
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return;
+   if ((wd->gest && !!gesture) || (!wd->gest && !gesture)) return;
+
+   if (wd->gest)
+     {
+        evas_object_del(wd->gest);
+        wd->gest = NULL;
+     }
+
+   if (gesture)
+     {
+        wd->gest = elm_gesture_layer_add(wd->obj);
+        elm_gesture_layer_attach(wd->gest, wd->obj);
+        elm_gesture_layer_cb_set(wd->gest, ELM_GESTURE_ZOOM, ELM_GESTURE_STATE_START,
+                                 _gzoom_start, wd);
+        elm_gesture_layer_cb_set(wd->gest, ELM_GESTURE_ZOOM, ELM_GESTURE_STATE_MOVE,
+                                 _gzoom_move, wd);
+        elm_gesture_layer_cb_set(wd->gest, ELM_GESTURE_ZOOM, ELM_GESTURE_STATE_END,
+                                 _gzoom_end, wd);
+        elm_gesture_layer_cb_set(wd->gest, ELM_GESTURE_ZOOM, ELM_GESTURE_STATE_ABORT,
+                                 _gzoom_end, wd);
+     }
+}
+
+EAPI Eina_Bool
+elm_photocam_gesture_get(const Evas_Object *obj)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype) EINA_FALSE;
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return EINA_FALSE;
+
+   if (wd->gest)
+     return EINA_TRUE;
+   return EINA_FALSE;
+}
