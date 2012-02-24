@@ -3474,7 +3474,6 @@ _item_text_hook(Elm_Gen_Item *it, const char *part)
 static void
 _item_disable_hook(Elm_Object_Item *it)
 {
-   ELM_OBJ_ITEM_CHECK_OR_RETURN(it);
    Eina_List *l;
    Evas_Object *obj;
    Elm_Gen_Item *_it = (Elm_Gen_Item *) it;
@@ -3506,7 +3505,6 @@ _item_disable_hook(Elm_Object_Item *it)
 static Eina_Bool
 _item_del_pre_hook(Elm_Object_Item *it)
 {
-   ELM_OBJ_ITEM_CHECK_OR_RETURN(it, EINA_FALSE);
    Elm_Gen_Item *_it = (Elm_Gen_Item *) it;
 
    if ((_it->relcount > 0) || (_it->walking > 0))
@@ -5138,7 +5136,6 @@ elm_genlist_item_cursor_set(Elm_Object_Item  *it,
 EAPI const char *
 elm_genlist_item_cursor_get(const Elm_Object_Item *it)
 {
-   ELM_OBJ_ITEM_CHECK_OR_RETURN(it, NULL);
    return elm_widget_item_cursor_get(it);
 }
 
@@ -5160,14 +5157,12 @@ EAPI void
 elm_genlist_item_cursor_style_set(Elm_Object_Item  *it,
                                   const char       *style)
 {
-   ELM_OBJ_ITEM_CHECK_OR_RETURN(it);
    elm_widget_item_cursor_style_set(it, style);
 }
 
 EAPI const char *
 elm_genlist_item_cursor_style_get(const Elm_Object_Item *it)
 {
-   ELM_OBJ_ITEM_CHECK_OR_RETURN(it, NULL);
    return elm_widget_item_cursor_style_get(it);
 }
 
@@ -5175,14 +5170,12 @@ EAPI void
 elm_genlist_item_cursor_engine_only_set(Elm_Object_Item *it,
                                         Eina_Bool        engine_only)
 {
-   ELM_OBJ_ITEM_CHECK_OR_RETURN(it);
    elm_widget_item_cursor_engine_only_set(it, engine_only);
 }
 
 EAPI Eina_Bool
 elm_genlist_item_cursor_engine_only_get(const Elm_Object_Item *it)
 {
-   ELM_OBJ_ITEM_CHECK_OR_RETURN(it, EINA_FALSE);
    return elm_widget_item_cursor_engine_only_get(it);
 }
 
@@ -5199,7 +5192,7 @@ elm_genlist_item_index_get(Elm_Object_Item *it)
 
 EAPI void
 elm_genlist_mode_set(Evas_Object  *obj,
-		     Elm_List_Mode mode)
+                     Elm_List_Mode mode)
 {
    ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);

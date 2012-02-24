@@ -933,8 +933,6 @@ _content_get_hook(const Evas_Object *obj, const char *part)
 static void
 _item_text_set_hook(Elm_Object_Item *it, const char *part, const char *label)
 {
-   ELM_OBJ_ITEM_CHECK_OR_RETURN(it);
-
    Widget_Data *wd;
    Elm_Ctxpopup_Item *ctxpopup_it;
 
@@ -958,7 +956,6 @@ _item_text_set_hook(Elm_Object_Item *it, const char *part, const char *label)
 static const char *
 _item_text_get_hook(const Elm_Object_Item *it, const char *part)
 {
-   ELM_OBJ_ITEM_CHECK_OR_RETURN(it, NULL);
    Elm_Ctxpopup_Item *ctxpopup_it;
    if (part && strcmp(part, "default")) return NULL;
    ctxpopup_it = (Elm_Ctxpopup_Item *) it;
@@ -970,7 +967,6 @@ _item_content_set_hook(Elm_Object_Item *it,
                        const char *part,
                        Evas_Object *content)
 {
-   ELM_OBJ_ITEM_CHECK_OR_RETURN(it);
    Widget_Data *wd;
    Elm_Ctxpopup_Item *ctxpopup_it;
 
@@ -994,7 +990,6 @@ _item_content_set_hook(Elm_Object_Item *it,
 static Evas_Object *
 _item_content_get_hook(const Elm_Object_Item *it, const char *part)
 {
-   ELM_OBJ_ITEM_CHECK_OR_RETURN(it, NULL);
    Elm_Ctxpopup_Item *ctxpopup_it;
    if (part && strcmp(part, "icon")) return NULL;
    ctxpopup_it  = (Elm_Ctxpopup_Item *) it;
@@ -1004,8 +999,6 @@ _item_content_get_hook(const Elm_Object_Item *it, const char *part)
 static void
 _item_disable_hook(Elm_Object_Item *it)
 {
-   ELM_OBJ_ITEM_CHECK_OR_RETURN(it);
-
    Widget_Data *wd;
    Elm_Ctxpopup_Item *ctxpopup_it = (Elm_Ctxpopup_Item *) it;
 
@@ -1022,7 +1015,6 @@ static void
 _item_signal_emit_hook(Elm_Object_Item *it, const char *emission,
                        const char *source)
 {
-   ELM_OBJ_ITEM_CHECK_OR_RETURN(it);
    Elm_Ctxpopup_Item *ctxpopup_it = (Elm_Ctxpopup_Item *) it;
    edje_object_signal_emit(VIEW(ctxpopup_it), emission, source);
 }
@@ -1282,8 +1274,6 @@ _remove_items(Widget_Data *wd)
 static Eina_Bool
 _item_del_pre_hook(Elm_Object_Item *it)
 {
-   ELM_OBJ_ITEM_CHECK_OR_RETURN(it, EINA_FALSE);
-
    Widget_Data *wd;
    Elm_Ctxpopup_Item *ctxpopup_it = (Elm_Ctxpopup_Item *) it;
 

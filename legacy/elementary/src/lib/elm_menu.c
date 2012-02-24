@@ -142,7 +142,6 @@ _item_text_set_hook(Elm_Object_Item *it,
                     const char *part,
                     const char *label)
 {
-   ELM_OBJ_ITEM_CHECK_OR_RETURN(it);
    Elm_Menu_Item *item;
 
    if (part && strcmp(part, "default")) return;
@@ -164,7 +163,6 @@ _item_text_set_hook(Elm_Object_Item *it,
 static const char *
 _item_text_get_hook(const Elm_Object_Item *it, const char *part)
 {
-   ELM_OBJ_ITEM_CHECK_OR_RETURN(it, NULL);
    if (part && strcmp(part, "default")) return NULL;
    return ((Elm_Menu_Item *) it)->label;
 }
@@ -174,7 +172,6 @@ _item_content_set_hook(Elm_Object_Item *it,
                        const char *part,
                        Evas_Object *content)
 {
-   ELM_OBJ_ITEM_CHECK_OR_RETURN(it);
    Elm_Menu_Item *item;
 
    if (part && strcmp(part, "default")) return;
@@ -197,7 +194,6 @@ _item_content_set_hook(Elm_Object_Item *it,
 static Evas_Object *
 _item_content_get_hook(const Elm_Object_Item *it, const char *part)
 {
-   ELM_OBJ_ITEM_CHECK_OR_RETURN(it, NULL);
    if (part && strcmp(part, "default")) return NULL;
    return ((Elm_Menu_Item *) it)->content;
 }
@@ -205,7 +201,6 @@ _item_content_get_hook(const Elm_Object_Item *it, const char *part)
 static void
 _item_disable_hook(Elm_Object_Item *it)
 {
-   ELM_OBJ_ITEM_CHECK_OR_RETURN(it);
    Elm_Menu_Item *item = (Elm_Menu_Item *) it;
 
    if (elm_widget_item_disabled_get(item))
@@ -693,7 +688,6 @@ _elm_menu_item_add_helper(Evas_Object *obj, Elm_Menu_Item *parent, Elm_Menu_Item
 static Eina_Bool
 _item_del_pre_hook(Elm_Object_Item *it)
 {
-   ELM_OBJ_ITEM_CHECK_OR_RETURN(it, EINA_FALSE);
    Elm_Menu_Item *item = (Elm_Menu_Item *) it;
    Elm_Object_Item *_item;
 

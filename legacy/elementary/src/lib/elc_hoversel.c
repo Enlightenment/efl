@@ -304,7 +304,6 @@ _content_unset_hook(Evas_Object *obj, const char *part)
 static const char *
 _item_text_get_hook(const Elm_Object_Item *it, const char *part)
 {
-   ELM_OBJ_ITEM_CHECK_OR_RETURN(it, NULL);
    if (part && strcmp(part, "default")) return NULL;
    return ((Elm_Hoversel_Item *) it)->label;
 }
@@ -312,7 +311,6 @@ _item_text_get_hook(const Elm_Object_Item *it, const char *part)
 static Eina_Bool
 _item_del_pre_hook(Elm_Object_Item *it)
 {
-   ELM_OBJ_ITEM_CHECK_OR_RETURN(it, EINA_FALSE);
    Widget_Data *wd;
    Elm_Hoversel_Item *item = (Elm_Hoversel_Item *) it;
    wd = elm_widget_data_get(WIDGET(item));

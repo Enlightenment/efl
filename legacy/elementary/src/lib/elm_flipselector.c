@@ -73,8 +73,6 @@ _item_text_set_hook(Elm_Object_Item *it,
                     const char *part,
                     const char *label)
 {
-   ELM_OBJ_ITEM_CHECK_OR_RETURN(it);
-
    Widget_Data *wd;
    Eina_List *l;
    Elm_Flipselector_Item *item;
@@ -106,8 +104,6 @@ _item_text_set_hook(Elm_Object_Item *it,
 static const char *
 _item_text_get_hook(const Elm_Object_Item *it, const char *part)
 {
-   ELM_OBJ_ITEM_CHECK_OR_RETURN(it, NULL);
-
    if (part && strcmp(part ,"default")) return NULL;
 
    return ((Elm_Flipselector_Item *) it)->label;
@@ -118,7 +114,6 @@ _item_signal_emit_hook(Elm_Object_Item *it,
                        const char *emission,
                        const char *source)
 {
-   ELM_OBJ_ITEM_CHECK_OR_RETURN(it);
    Elm_Flipselector_Item *item = (Elm_Flipselector_Item *) it;
    edje_object_signal_emit(VIEW(item), emission, source);
 }
@@ -580,7 +575,6 @@ _callbacks_set(Evas_Object *obj)
 static Eina_Bool
 _item_del_pre_hook(Elm_Object_Item *it)
 {
-   ELM_OBJ_ITEM_CHECK_OR_RETURN(it, EINA_FALSE);
    Widget_Data *wd;
    Elm_Flipselector_Item *item, *item2;
    Eina_List *l;

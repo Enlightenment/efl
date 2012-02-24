@@ -351,8 +351,6 @@ _timer_cb(void *data)
 static Eina_Bool
 _item_del_pre_hook(Elm_Object_Item *it)
 {
-   ELM_OBJ_ITEM_CHECK_OR_RETURN(it, EINA_FALSE);
-
    Elm_Slideshow_Item *item = (Elm_Slideshow_Item *) it;
    Widget_Data *wd = elm_widget_data_get(WIDGET(item));
    if (!wd) return EINA_FALSE;

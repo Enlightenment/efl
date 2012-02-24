@@ -229,7 +229,6 @@ _check_string(void *data)
 static Eina_Bool
 _item_del_pre_hook(Elm_Object_Item *it)
 {
-   ELM_OBJ_ITEM_CHECK_OR_RETURN(it, EINA_FALSE);
    Elm_Diskselector_Item *item, *item2, *dit;
    Eina_List *l;
    int i = 0;
@@ -945,7 +944,6 @@ _check_identical_item(Elm_Diskselector_Item *it, Evas_Object *icon)
 static void
 _item_text_set_hook(Elm_Object_Item *it, const char *part, const char *label)
 {
-   ELM_OBJ_ITEM_CHECK_OR_RETURN(it);
    Elm_Diskselector_Item *item;
    if (part && strcmp(part, "default")) return;
    item = (Elm_Diskselector_Item *) it;
@@ -956,7 +954,6 @@ _item_text_set_hook(Elm_Object_Item *it, const char *part, const char *label)
 static const char *
 _item_text_get_hook(const Elm_Object_Item *it, const char *part)
 {
-   ELM_OBJ_ITEM_CHECK_OR_RETURN(it, NULL);
    if (part && strcmp(part, "default")) return NULL;
    return ((Elm_Diskselector_Item *) it)->label;
 }
@@ -966,7 +963,6 @@ _item_content_set_hook(Elm_Object_Item *it,
                        const char *part,
                        Evas_Object *content)
 {
-   ELM_OBJ_ITEM_CHECK_OR_RETURN(it);
    if (part && strcmp(part, "icon")) return;
    _item_icon_set((Elm_Diskselector_Item *) it, content);
    _check_identical_item((Elm_Diskselector_Item *) it, content);
@@ -975,7 +971,6 @@ _item_content_set_hook(Elm_Object_Item *it,
 static Evas_Object *
 _item_content_get_hook(const Elm_Object_Item *it, const char *part)
 {
-   ELM_OBJ_ITEM_CHECK_OR_RETURN(it, NULL);
    if (part && strcmp(part, "icon")) return NULL;
    return ((Elm_Diskselector_Item *) it)->icon;
 }

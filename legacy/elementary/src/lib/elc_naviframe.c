@@ -241,8 +241,6 @@ _item_text_set_hook(Elm_Object_Item *it,
                     const char *part,
                     const char *label)
 {
-   ELM_OBJ_ITEM_CHECK_OR_RETURN(it);
-
    Elm_Naviframe_Text_Item_Pair *pair = NULL;
    Elm_Naviframe_Item *navi_it = (Elm_Naviframe_Item *) it;
    char buf[1024];
@@ -289,7 +287,6 @@ _item_text_set_hook(Elm_Object_Item *it,
 static const char *
 _item_text_get_hook(const Elm_Object_Item *it, const char *part)
 {
-   ELM_OBJ_ITEM_CHECK_OR_RETURN(it, NULL);
    char buf[1024];
 
    if (!part || !strcmp(part, "default"))
@@ -307,8 +304,6 @@ _item_content_set_hook(Elm_Object_Item *it,
                        const char *part,
                        Evas_Object *content)
 {
-   ELM_OBJ_ITEM_CHECK_OR_RETURN(it);
-
    Elm_Naviframe_Item *navi_it = (Elm_Naviframe_Item *) it;
 
    //specified parts
@@ -340,7 +335,6 @@ _item_content_set_hook(Elm_Object_Item *it,
 static Evas_Object *
 _item_content_get_hook(const Elm_Object_Item *it, const char *part)
 {
-   ELM_OBJ_ITEM_CHECK_OR_RETURN(it, NULL);
    Elm_Naviframe_Item *navi_it = (Elm_Naviframe_Item *) it;
 
    //specified parts
@@ -360,7 +354,6 @@ _item_content_get_hook(const Elm_Object_Item *it, const char *part)
 static Evas_Object *
 _item_content_unset_hook(Elm_Object_Item *it, const char *part)
 {
-   ELM_OBJ_ITEM_CHECK_OR_RETURN(it, NULL);
    Elm_Naviframe_Item *navi_it = (Elm_Naviframe_Item *) it;
 
    //specified parts
@@ -381,7 +374,6 @@ _item_signal_emit_hook(Elm_Object_Item *it,
                        const char *emission,
                        const char *source)
 {
-   ELM_OBJ_ITEM_CHECK_OR_RETURN(it);
    elm_object_signal_emit(VIEW(it), emission, source);
 }
 
@@ -836,7 +828,6 @@ _item_del(Elm_Naviframe_Item *it)
 static Eina_Bool
 _item_del_pre_hook(Elm_Object_Item *it)
 {
-   ELM_OBJ_ITEM_CHECK_OR_RETURN(it, EINA_FALSE);
    Elm_Naviframe_Item *navi_it;
    Widget_Data *wd;
 

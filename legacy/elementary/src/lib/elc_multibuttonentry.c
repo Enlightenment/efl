@@ -763,7 +763,6 @@ _resize_button(Evas_Object *btn, Evas_Coord *realw, Evas_Coord *vieww)
 static Eina_Bool
 _item_del_pre_hook(Elm_Object_Item *it)
 {
-   ELM_OBJ_ITEM_CHECK_OR_RETURN(it, EINA_FALSE);
    _del_button_item((Elm_Multibuttonentry_Item *) it);
    return EINA_TRUE;
 }
@@ -1326,8 +1325,6 @@ _box_layout_cb(Evas_Object *o, Evas_Object_Box_Data *priv, void *data __UNUSED__
 static void
 _item_text_set_hook(Elm_Object_Item *it, const char *part, const char *label)
 {
-   ELM_OBJ_ITEM_CHECK_OR_RETURN(it);
-
    Elm_Multibuttonentry_Item *item;
    if (part && strcmp(part, "default")) return;
    if (!label) return;
@@ -1339,7 +1336,6 @@ _item_text_set_hook(Elm_Object_Item *it, const char *part, const char *label)
 static const char *
 _item_text_get_hook(const Elm_Object_Item *it, const char *part)
 {
-   ELM_OBJ_ITEM_CHECK_OR_RETURN(it, NULL);
    Elm_Multibuttonentry_Item *item;
    if (part && strcmp(part, "default")) return NULL;
    item = (Elm_Multibuttonentry_Item *) it;
@@ -1660,14 +1656,12 @@ elm_multibuttonentry_item_next_get(const Elm_Object_Item *it)
 EAPI void *
 elm_multibuttonentry_item_data_get(const Elm_Object_Item *it)
 {
-   ELM_OBJ_ITEM_CHECK_OR_RETURN(it, NULL);
    return elm_widget_item_data_get(it);
 }
 
 EAPI void
 elm_multibuttonentry_item_data_set(Elm_Object_Item *it, void *data)
 {
-   ELM_OBJ_ITEM_CHECK_OR_RETURN(it);
    return elm_widget_item_data_set(it, data);
 }
 

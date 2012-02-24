@@ -1033,7 +1033,6 @@ _item_disable(Elm_Object_Item *it)
 static void
 _item_content_set(Elm_Object_Item *it, const char *part, Evas_Object *content)
 {
-   ELM_OBJ_ITEM_CHECK_OR_RETURN(it);
    Elm_List_Item *item = (Elm_List_Item *) it;
    Evas_Object **icon_p = NULL;
    Eina_Bool dummy = EINA_FALSE;
@@ -1076,7 +1075,6 @@ _item_content_set(Elm_Object_Item *it, const char *part, Evas_Object *content)
 static Evas_Object *
 _item_content_get(const Elm_Object_Item *it, const char *part)
 {
-   ELM_OBJ_ITEM_CHECK_OR_RETURN(it, NULL);
    Elm_List_Item *item = (Elm_List_Item *) it;
 
    if ((!part) || (!strcmp(part, "start")))
@@ -1115,7 +1113,6 @@ _item_content_unset(const Elm_Object_Item *it, const char *part)
 static void
 _item_text_set(Elm_Object_Item *it, const char *part, const char *text)
 {
-   ELM_OBJ_ITEM_CHECK_OR_RETURN(it);
    Elm_List_Item *list_it = (Elm_List_Item *) it;
    if (part && strcmp(part, "default")) return;
    if (!eina_stringshare_replace(&list_it->label, text)) return;
@@ -1126,7 +1123,6 @@ _item_text_set(Elm_Object_Item *it, const char *part, const char *text)
 static const char *
 _item_text_get(const Elm_Object_Item *it, const char *part)
 {
-   ELM_OBJ_ITEM_CHECK_OR_RETURN(it, NULL);
    if (part && strcmp(part, "default")) return NULL;
    return ((Elm_List_Item *) it)->label;
 }
@@ -1134,8 +1130,6 @@ _item_text_get(const Elm_Object_Item *it, const char *part)
 static Eina_Bool
 _item_del_pre_hook(Elm_Object_Item *it)
 {
-  ELM_LIST_ITEM_CHECK_DELETED_RETURN(it, EINA_FALSE);
-
    Evas_Object *obj = WIDGET(it);
    Elm_List_Item *item = (Elm_List_Item *) it;
    Widget_Data *wd = elm_widget_data_get(obj);

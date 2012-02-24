@@ -90,8 +90,6 @@ static const Evas_Smart_Cb_Description _signals[] = {
 static void
 _item_disable_hook(Elm_Object_Item *it)
 {
-   ELM_OBJ_ITEM_CHECK_OR_RETURN(it);
-
    Widget_Data *wd;
    Elm_Toolbar_Item *toolbar_it = (Elm_Toolbar_Item *) it;
 
@@ -387,7 +385,6 @@ _item_text_set_hook(Elm_Object_Item *it,
                     const char *part,
                     const char *label)
 {
-   ELM_OBJ_ITEM_CHECK_OR_RETURN(it);
    if (part && strcmp(part, "default")) return;
    _item_label_set(((Elm_Toolbar_Item *) it), label, "elm,state,label_set");
 }
@@ -395,7 +392,6 @@ _item_text_set_hook(Elm_Object_Item *it,
 static const char *
 _item_text_get_hook(const Elm_Object_Item *it, const char *part)
 {
-   ELM_OBJ_ITEM_CHECK_OR_RETURN(it, NULL);
    if (part && strcmp(part, "default")) return NULL;
    return ((Elm_Toolbar_Item *) it)->label;
 }
@@ -815,8 +811,6 @@ _access_state_cb(void *data __UNUSED__, Evas_Object *obj __UNUSED__, Elm_Widget_
 static Eina_Bool
 _item_del_pre_hook(Elm_Object_Item *it)
 {
-   ELM_OBJ_ITEM_CHECK_OR_RETURN(it, EINA_FALSE);
-
    Widget_Data *wd;
    Evas_Object *obj2;
    Elm_Toolbar_Item *item, *next;
