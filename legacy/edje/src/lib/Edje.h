@@ -2874,6 +2874,20 @@ EAPI int              edje_object_part_text_cursor_pos_get              (const E
 EAPI void             edje_object_part_text_imf_context_reset           (const Evas_Object *obj, const char *part);
 
 /**
+ * @brief Get the input method context in entry.
+ *
+ * If ecore_imf was not available when edje was compiled, this function returns NULL
+ * otherwise, the returned pointer is an Ecore_IMF *
+ *
+ * @param obj A valid Evas_Object handle
+ * @param part The part name
+ *
+ * @return The input method context (Ecore_IMF_Context *) in entry 
+ * @since 1.2.0
+ */
+EAPI void              *edje_object_part_text_imf_context_get           (const Evas_Object *obj, const char *part);
+
+/**
  * @brief Set the layout of the input panel.
  *
  * The layout of the input panel or virtual keyboard can make it easier or

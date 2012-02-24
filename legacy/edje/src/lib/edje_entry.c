@@ -2553,6 +2553,19 @@ _edje_entry_select_abort(Edje_Real_Part *rp)
      }
 }
 
+void *
+_edje_entry_imf_context_get(Edje_Real_Part *rp)
+{
+   Entry *en = rp->entry_data;
+   if (!en) return NULL;
+
+#ifdef HAVE_ECORE_IMF
+   return en->imf_context;
+#else
+   return NULL;
+#endif
+}
+
 void
 _edje_entry_autocapital_type_set(Edje_Real_Part *rp, Edje_Text_Autocapital_Type autocapital_type)
 {

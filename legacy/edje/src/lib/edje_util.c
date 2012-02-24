@@ -1527,6 +1527,24 @@ edje_object_part_text_select_extend(const Evas_Object *obj, const char *part)
      _edje_entry_select_extend(rp);
 }
 
+EAPI void *
+edje_object_part_text_imf_context_get(const Evas_Object *obj, const char *part)
+{
+   Edje *ed;
+   Edje_Real_Part *rp;
+
+   ed = _edje_fetch(obj);
+   if ((!ed) || (!part)) return NULL;
+
+   rp = _edje_real_part_recursive_get(ed, (char *)part);
+   if (!rp) return NULL;
+
+   if (rp->part->entry_mode > EDJE_ENTRY_EDIT_MODE_NONE)
+     return _edje_entry_imf_context_get(rp);
+   else
+     return NULL;
+}
+
 EAPI Eina_Bool
 edje_object_part_text_cursor_next(Evas_Object *obj, const char *part, Edje_Cursor cur)
 {
