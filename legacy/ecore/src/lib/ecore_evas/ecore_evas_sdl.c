@@ -18,7 +18,9 @@
 #include <stdlib.h>
 #include <string.h>
 
+#if defined(BUILD_ECORE_EVAS_SOFTWARE_SDL) || defined(BUILD_ECORE_EVAS_OPENGL_SDL)
 #include <SDL/SDL.h>
+#endif
 
 #include "ecore_evas_private.h"
 #include "Ecore_Evas.h"
