@@ -1073,7 +1073,6 @@ on_error:
     */
    worker.u.feedback_run.func_heavy = func_heavy;
    worker.u.feedback_run.func_notify = func_notify;
-   worker.u.feedback_run.notify = NULL;
    worker.u.feedback_run.send = 0;
    worker.u.feedback_run.received = 0;
    worker.func_cancel = func_cancel;

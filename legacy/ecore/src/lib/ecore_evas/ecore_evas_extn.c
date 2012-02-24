@@ -8,7 +8,9 @@
 #include <unistd.h>
 #include <math.h>
 #include <time.h>
-#include <sys/mman.h>
+#ifdef HAVE_SYS_MMAN_H
+# include <sys/mman.h>
+#endif
 #include <sys/stat.h>
 #include <fcntl.h>
 #include <string.h>
