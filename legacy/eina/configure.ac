@@ -384,6 +384,24 @@ m4_ifdef([v_mic],
 
 EFL_COMPILER_FLAG([-Wshadow])
 
+### Checks for portability layer
+
+PKG_CHECK_MODULES([EXOTIC],
+   [exotic],
+   [enable_exotic="yes"],
+   [enable_exotic="no"])
+
+if test "x${enable_exotic}" = "xyes"; then
+    requirement_eina="exotic ${requirement_eina}"
+    EINA_CFLAGS="${EINA_CFLAGS} ${EXOTIC_CFLAGS}"
+    EINA_LIBS="${EXOTIC_LIBS}"
+
+    EINA_CONFIGURE_HAVE_EXOTIC="#define EINA_HAVE_EXOTIC"
+    AC_DEFINE([HAVE_EXOTIC_H], [1], [Define to 1 if you have Exotic.])
+fi
+AM_CONDITIONAL([EINA_HAVE_EXOTIC], [test "x${enable_exotic}" = "xyes"])
+AC_SUBST([EINA_CONFIGURE_HAVE_EXOTIC])
+
 case "$host_vendor" in
   ps3*)
       PKG_CHECK_MODULES([ESCAPE], [escape])
@@ -395,29 +413,28 @@ esac
 
 AC_SUBST([EINA_CFLAGS])
 
-
 ### Checks for linker characteristics
 EINA_LIBS=
 lt_enable_auto_import=""
 case "${host_os}" in
    mingw*)
-      EINA_LIBS="-ldl ${EVIL_LIBS} -lm"
+      EINA_LIBS="${EINA_LIBS} -ldl ${EVIL_LIBS} -lm"
       lt_enable_auto_import="-Wl,--enable-auto-import"
    ;;
    dragonfly*|openbsd*)
-      EINA_LIBS="-lm"
+      EINA_LIBS="${EINA_LIBS} -lm"
    ;;
    freebsd*|netbsd*)
-      EINA_LIBS="-lrt -lm"
+      EINA_LIBS="${EINA_LIBS} -lrt -lm"
    ;;
    darwin*)
-      EINA_LIBS="-lm"
+      EINA_LIBS="${EINA_LIBS} -lm"
    ;;
    cygwin*)
-      EINA_LIBS="-ldl -lm"
+      EINA_LIBS="${EINA_LIBS} -ldl -lm"
    ;;
    *)
-      EINA_LIBS="-ldl -lrt -lm"
+      EINA_LIBS="${EINA_LIBS} -lm"
    ;;
 esac
 case "$host_vendor" in

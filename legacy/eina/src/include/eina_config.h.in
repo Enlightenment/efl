@@ -19,6 +19,15 @@
 #ifndef EINA_CONFIG_H_
 #define EINA_CONFIG_H_
 
+#ifdef EINA_HAVE_EXOTIC_H
+# undef EINA_HAVE_EXOTIC_H
+#endif
+@EINA_CONFIGURE_HAVE_EXOTIC@
+
+#ifdef EINA_HAVE_EXOTIC
+# include <Exotic.h>
+#endif
+
 #ifdef EINA_MAGIC_DEBUG
 # undef EINA_MAGIC_DEBUG
 #endif

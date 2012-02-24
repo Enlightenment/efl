@@ -58,6 +58,10 @@ void *alloca (size_t);
 # include <Escape.h>
 #endif
 
+#ifdef HAVE_EXOTIC_H
+# include <Exotic.h>
+#endif
+
 #include "eina_config.h"
 #include "eina_private.h"
 #include "eina_error.h"
