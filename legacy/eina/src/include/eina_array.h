@@ -351,7 +351,7 @@ static inline void     *eina_array_data_get(const Eina_Array *array,
 static inline void      eina_array_data_set(const Eina_Array *array,
                                             unsigned int      idx,
                                             const void       *data) EINA_ARG_NONNULL(1);
-static inline unsigned int eina_array_count_get(const Eina_Array *array) EINA_ARG_NONNULL(1) EINA_WARN_UNUSED_RESULT EINA_DEPRECATED;
+static inline unsigned int eina_array_count_get(const Eina_Array *array) EINA_ARG_NONNULL(1) EINA_WARN_UNUSED_RESULT;
 static inline unsigned int eina_array_count(const Eina_Array *array) EINA_ARG_NONNULL(1) EINA_WARN_UNUSED_RESULT;
 
 /**
