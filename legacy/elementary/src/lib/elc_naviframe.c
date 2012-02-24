@@ -215,9 +215,7 @@ _theme_hook(Evas_Object *obj)
                          elm_widget_style_get(obj));
 
    EINA_INLIST_FOREACH(wd->stack, it)
-     {
-        _item_style_set(it, it->style);
-     }
+     _item_style_set(it, it->style);
    if (it)
      _item_title_visible_update(it);
 }
@@ -1464,9 +1462,7 @@ elm_naviframe_items_get(const Evas_Object *obj)
    Eina_List *ret = NULL;
    Elm_Naviframe_Item *itr;
    EINA_INLIST_FOREACH(wd->stack, itr)
-     {
-        ret = eina_list_append(ret, itr);
-     }
+     ret = eina_list_append(ret, itr);
    return ret;
 }
 
