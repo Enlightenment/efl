@@ -1801,43 +1801,40 @@ remove_bt_clicked(void *data, Evas_Object *obj __UNUSED__, void *event_info __UN
 static void
 enable_changed_cb(void *data, Evas_Object *obj, void *event_info __UNUSED__)
 {
-	Evas_Object *en;
-	en = (Evas_Object*)data;
+   Evas_Object *en;
+   en = (Evas_Object*)data;
 
-	elm_entry_context_menu_disabled_set(en, elm_check_state_get(obj));
+   elm_entry_context_menu_disabled_set(en, elm_check_state_get(obj));
 }
 
 void
 test_entry7(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
-   Evas_Object *win, *gd, *rect, *en, *sc, *tg, *lb, *sp;
+   Evas_Object *win, *gd, *bg, *en, *tg, *lb, *sp;
    Evas_Object *bt, *en2, *sc2;
+
    win = elm_win_util_standard_add("entry7", "Entry 7");
    elm_win_autodel_set(win, EINA_TRUE);
 
    gd = elm_grid_add(win);
    elm_grid_size_set(gd, 100, 100);
-   elm_win_resize_object_add(win, gd);
    evas_object_size_hint_weight_set(gd, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   elm_win_resize_object_add(win, gd);
    evas_object_show(gd);
 
-   rect = evas_object_rectangle_add(evas_object_evas_get(win));
-   elm_grid_pack(gd, rect, 10, 10, 60, 30);
-   evas_object_color_set(rect, 255, 0, 0, 255);
-   evas_object_show(rect);
+   /* upper entry group */
+   bg = elm_bg_add(win);
+   elm_bg_color_set(bg, 255, 0, 0);
+   elm_grid_pack(gd, bg, 10, 10, 60, 30);
+   evas_object_show(bg);
 
    en = elm_entry_add(win);
+   elm_entry_scrollable_set(en, EINA_TRUE);
    evas_object_size_hint_weight_set(en, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(en, EVAS_HINT_FILL, EVAS_HINT_FILL);
    elm_object_text_set(en, "Editable, Cursor Positioin");
-
-   sc = elm_scroller_add(win);
-   evas_object_size_hint_weight_set(sc, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-   elm_win_resize_object_add(win, sc);
-   elm_object_content_set(sc, en);
    evas_object_show(en);
-   elm_grid_pack(gd, sc, 10, 10, 60, 30);
-   evas_object_show(sc);
+   elm_grid_pack(gd, en, 10, 10, 60, 30);
 
    tg = elm_check_add(win);
    evas_object_size_hint_weight_set(tg, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
@@ -1867,12 +1864,14 @@ test_entry7(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info
    evas_object_smart_callback_add(sp, "delay,changed", sp_changed_cb, en);
    evas_object_show(sp);
 
-   rect = evas_object_rectangle_add(evas_object_evas_get(win));
-   elm_grid_pack(gd, rect, 10, 50, 45, 30);
-   evas_object_color_set(rect, 0, 255, 0, 255);
-   evas_object_show(rect);
+   /* bottom entry group */
+   bg = elm_bg_add(win);
+   elm_bg_color_set(bg, 0, 255, 0);
+   elm_grid_pack(gd, bg, 10, 50, 45, 30);
+   evas_object_show(bg);
 
    en2 = elm_entry_add(win);
+   elm_entry_scrollable_set(en2, EINA_TRUE);
    evas_object_size_hint_weight_set(en2, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(en2, EVAS_HINT_FILL, EVAS_HINT_FILL);
    elm_object_text_set(en2,
@@ -1881,14 +1880,8 @@ test_entry7(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info
                       );
    elm_entry_item_provider_append(en2, item_provider, NULL);
    elm_entry_context_menu_disabled_set(en, EINA_TRUE);
-
-   sc2 = elm_scroller_add(win);
-   evas_object_size_hint_weight_set(sc2, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-   elm_win_resize_object_add(win, sc2);
-   elm_object_content_set(sc2, en2);
+   elm_grid_pack(gd, en2, 10, 50, 45, 30);
    evas_object_show(en2);
-   elm_grid_pack(gd, sc2, 10, 50, 45, 30);
-   evas_object_show(sc2);
 
    tg = elm_check_add(win);
    evas_object_size_hint_weight_set(tg, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
