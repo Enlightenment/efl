@@ -1104,6 +1104,13 @@ typedef enum _Ecore_X_Illume_Quickpanel_State
    ECORE_X_ILLUME_QUICKPANEL_STATE_ON
 } Ecore_X_Illume_Quickpanel_State;
 
+typedef enum _Ecore_X_Illume_Indicator_State
+{
+   ECORE_X_ILLUME_INDICATOR_STATE_UNKNOWN = 0,
+   ECORE_X_ILLUME_INDICATOR_STATE_OFF,
+   ECORE_X_ILLUME_INDICATOR_STATE_ON
+} Ecore_X_Illume_Indicator_State;
+
 /* Window layer constants */
 #define ECORE_X_WINDOW_LAYER_BELOW  2
 #define ECORE_X_WINDOW_LAYER_NORMAL 4
@@ -3638,6 +3645,14 @@ ecore_x_gesture_event_ungrab(Ecore_X_Window win,
                              Ecore_X_Gesture_Event_Type type,
                              int num_fingers);
 
+EAPI void
+ecore_x_e_illume_indicator_state_set(Ecore_X_Window win,
+                                     Ecore_X_Illume_Indicator_State state);
+EAPI Ecore_X_Illume_Indicator_State
+ecore_x_e_illume_indicator_state_get(Ecore_X_Window win);
+EAPI void
+ecore_x_e_illume_indicator_state_send(Ecore_X_Window win,
+                                      Ecore_X_Illume_Indicator_State state);
 #ifdef __cplusplus
 }
 #endif // ifdef __cplusplus

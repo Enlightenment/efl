@@ -7,6 +7,8 @@ static Ecore_X_Atom                    _ecore_xcb_e_quickpanel_atom_get(Ecore_X_
 static Ecore_X_Illume_Quickpanel_State _ecore_xcb_e_quickpanel_state_get(Ecore_X_Atom atom);
 static Ecore_X_Atom                    _ecore_xcb_e_illume_atom_get(Ecore_X_Illume_Mode mode);
 static Ecore_X_Illume_Mode             _ecore_xcb_e_illume_mode_get(Ecore_X_Atom atom);
+static Ecore_X_Atom                    _ecore_xcb_e_indicator_atom_get(Ecore_X_Illume_Indicator_State state);
+static Ecore_X_Illume_Indicator_State  _ecore_xcb_e_indicator_state_get(Ecore_X_Atom atom);
 
 EAPI void
 ecore_x_e_init(void)
@@ -1067,5 +1069,72 @@ _ecore_xcb_e_illume_mode_get(Ecore_X_Atom atom)
      return ECORE_X_ILLUME_MODE_DUAL_LEFT;
 
    return ECORE_X_ILLUME_MODE_UNKNOWN;
+}
+
+static Ecore_X_Atom
+_ecore_xcb_e_indicator_atom_get(Ecore_X_Illume_Indicator_State state)
+{
+   switch (state)
+     {
+      case ECORE_X_ILLUME_INDICATOR_STATE_ON:
+        return ECORE_X_ATOM_E_ILLUME_INDICATOR_ON;
+
+      case ECORE_X_ILLUME_INDICATOR_STATE_OFF:
+        return ECORE_X_ATOM_E_ILLUME_INDICATOR_OFF;
+
+      default:
+        break;
+     }
+   return 0;
+}
+
+static Ecore_X_Illume_Indicator_State
+_ecore_xcb_e_indicator_state_get(Ecore_X_Atom atom)
+{
+   if (atom == ECORE_X_ATOM_E_ILLUME_INDICATOR_ON)
+     return ECORE_X_ILLUME_INDICATOR_STATE_ON;
+   if (atom == ECORE_X_ATOM_E_ILLUME_INDICATOR_OFF)
+     return ECORE_X_ILLUME_INDICATOR_STATE_OFF;
+
+   return ECORE_X_ILLUME_INDICATOR_STATE_UNKNOWN;
+}
+
+EAPI void
+ecore_x_e_illume_indicator_state_set(Ecore_X_Window                 win,
+                                     Ecore_X_Illume_Indicator_State state)
+{
+   Ecore_X_Atom atom = 0;
+
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+
+   atom = _ecore_xcb_e_indicator_atom_get(state);
+   ecore_x_window_prop_atom_set(win, ECORE_X_ATOM_E_ILLUME_INDICATOR_STATE,
+                                &atom, 1);
+}
+
+EAPI Ecore_X_Illume_Indicator_State
+ecore_x_e_illume_indicator_state_get(Ecore_X_Window win)
+{
+   Ecore_X_Atom atom = 0;
+
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+
+   if (!ecore_x_window_prop_atom_get(win,
+                                     ECORE_X_ATOM_E_ILLUME_INDICATOR_STATE,
+                                     &atom, 1))
+     return ECORE_X_ILLUME_INDICATOR_STATE_UNKNOWN;
+
+   return _ecore_xcb_e_indicator_state_get(atom);
+}
+
+EAPI void
+ecore_x_e_illume_indicator_state_send(Ecore_X_Window                 win,
+                                      Ecore_X_Illume_Indicator_State state)
+{
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   ecore_x_client_message32_send(win, ECORE_X_ATOM_E_ILLUME_INDICATOR_STATE,
+                                 ECORE_X_EVENT_MASK_WINDOW_CONFIGURE,
+                                 _ecore_xcb_e_indicator_atom_get(state),
+                                 0, 0, 0, 0);
 }
 
