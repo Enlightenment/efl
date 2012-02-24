@@ -670,12 +670,6 @@ _ecore_con_url_send(Ecore_Con_Url *url_con, int mode, const void *data, long len
 #endif
 }
 
-EINA_DEPRECATED EAPI Eina_Bool
-ecore_con_url_send(Ecore_Con_Url *url_con, const void *data, long length, const char *content_type)
-{
-   return _ecore_con_url_send(url_con, MODE_AUTO, data, length, content_type);
-}
-
 EAPI Eina_Bool
 ecore_con_url_get(Ecore_Con_Url *url_con)
 {

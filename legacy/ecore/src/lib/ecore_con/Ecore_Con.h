@@ -1586,33 +1586,6 @@ EAPI Eina_Bool         ecore_con_url_httpauth_set(Ecore_Con_Url *url_con,
                                                   const char *password,
                                                   Eina_Bool safe);
 /**
- * Sends a request.
- *
- * @param url_con Connection object to perform a request on, previously created
- *                with ecore_con_url_new() or ecore_con_url_custom_new().
- * @param data    Payload (data sent on the request)
- * @param length  Payload length. If @c -1, rely on automatic length
- *                calculation via @c strlen() on @p data.
- * @param content_type Content type of the payload (e.g. text/xml)
- *
- * @return #EINA_TRUE on success, #EINA_FALSE on error.
- *
- * @see ecore_con_url_custom_new()
- * @see ecore_con_url_additional_headers_clear()
- * @see ecore_con_url_additional_header_add()
- * @see ecore_con_url_data_set()
- * @see ecore_con_url_data_get()
- * @see ecore_con_url_response_headers_get()
- * @see ecore_con_url_time()
- * @see ecore_con_url_get()
- * @see ecore_con_url_post()
- *
- * @deprecated Use ecore_con_url_post() instead of this.
- */
-EINA_DEPRECATED EAPI Eina_Bool         ecore_con_url_send(Ecore_Con_Url *url_con,
-                                                          const void *data, long length,
-                                                          const char *content_type);
-/**
  * Sends a get request.
  *
  * @param url_con Connection object to perform a request on, previously created
