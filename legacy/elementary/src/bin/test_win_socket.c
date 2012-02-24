@@ -181,8 +181,6 @@ test_win_socket(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_
    elm_box_pack_end(bx, lb);
    evas_object_show(lb);
 
-   
-
    evas_object_resize(win, 320, 300);
 
    evas_object_show(bx);
@@ -193,12 +191,12 @@ test_win_socket(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_
    win_socket = elm_win_add(NULL, "Window Socket", ELM_WIN_SOCKET_IMAGE);
 
    if (!elm_win_socket_listen(win_socket, "ello", 0, EINA_FALSE))
-   	{
-   	   printf("Fail to elm win socket listen \n");
-	   evas_object_del(win_socket);
-	   evas_object_del(win);
-	   return; 
-   	}
+     {
+        printf("Fail to elm win socket listen \n");
+        evas_object_del(win_socket);
+        evas_object_del(win);
+        return;
+     }
    elm_win_title_set(win_socket, "Window Socket");
    elm_win_autodel_set(win_socket, EINA_TRUE);
 
@@ -208,6 +206,6 @@ test_win_socket(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_
    evas_object_show(win_socket);
 
    evas_object_event_callback_add(win, EVAS_CALLBACK_DEL, _win_del,
-                                  win_socket);   
+                                  win_socket);
 }
 #endif
