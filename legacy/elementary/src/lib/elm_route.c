@@ -300,7 +300,7 @@ elm_route_lat_max_get(Evas_Object *obj)
 EAPI void
 elm_route_longitude_min_max_get(const Evas_Object *obj, double *min, double *max)
 {
-   ELM_CHECK_WIDTYPE(obj, widtype) EINA_FALSE;
+   ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return;
    if (min) *min = wd->lon_min;
@@ -310,7 +310,7 @@ elm_route_longitude_min_max_get(const Evas_Object *obj, double *min, double *max
 EAPI void
 elm_route_latitude_min_max_get(const Evas_Object *obj, double *min, double *max)
 {
-   ELM_CHECK_WIDTYPE(obj, widtype) EINA_FALSE;
+   ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return;
    if (min) *min = wd->lat_min;
