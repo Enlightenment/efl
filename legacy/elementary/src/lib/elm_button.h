@@ -27,8 +27,9 @@
  * @li hoversel_vertical: Internally used by @ref Hoversel to give a
  * continuous look across its options.
  * @li hoversel_vertical_entry: Another internal for @ref Hoversel.
- *
- * XXX: add more styles in default theme.
+ * @li naviframe: Internally used by @ref Naviframe for its back button.
+ * @li colorselector: Internally used by @ref Colorselector 
+ * for its left and right buttons.
  *
  * Default contents parts of the button widget that you can use for are:
  * @li "icon" - An icon of the button
