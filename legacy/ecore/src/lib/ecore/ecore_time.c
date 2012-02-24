@@ -86,7 +86,7 @@ ecore_time_get(void)
 EAPI double
 ecore_time_unix_get(void)
 {
-#ifdef EFL_HAVE_GETTIMEOFDAY
+#ifdef HAVE_GETTIMEOFDAY
    struct timeval timev;
 
    gettimeofday(&timev, NULL);
