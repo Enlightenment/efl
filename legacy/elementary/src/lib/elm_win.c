@@ -1558,7 +1558,7 @@ elm_win_add(Evas_Object *parent, const char *name, Elm_Win_Type type)
          if (win->ee)                                                   \
             elm_engine_set(ecore_evas_engine_name_get(win->ee));        \
    } while (0)
-#define ENGINE_COMPARE(name) (!strcmp(_elm_config->engine, name))
+#define ENGINE_COMPARE(name) (_elm_config->engine && !strcmp(_elm_config->engine, name))
 
    switch (type)
      {
@@ -1704,7 +1704,6 @@ elm_win_add(Evas_Object *parent, const char *name, Elm_Win_Type type)
         else if (ENGINE_COMPARE(ELM_WAYLAND_SHM)) 
           {
              win->ee = ecore_evas_wayland_shm_new(NULL, 0, 0, 1, 1, 0);
-             win->evas = ecore_evas_get(win->ee);
 
              _elm_win_frame_add(win, "default");
              _elm_win_pointer_add(win, "default");
@@ -1712,7 +1711,6 @@ elm_win_add(Evas_Object *parent, const char *name, Elm_Win_Type type)
         else if (ENGINE_COMPARE(ELM_WAYLAND_EGL)) 
           {
              win->ee = ecore_evas_wayland_egl_new(NULL, 0, 0, 1, 1, 0);
-             win->evas = ecore_evas_get(win->ee);
 
              _elm_win_frame_add(win, "default");
              _elm_win_pointer_add(win, "default");
