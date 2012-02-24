@@ -1323,7 +1323,7 @@ _ecore_con_client_free(Ecore_Con_Client *cl)
    if (cl->event_count) return;
    ECORE_MAGIC_SET(cl, ECORE_MAGIC_NONE);
 
-   eina_binbuf_free(cl->buf);
+   if (cl->buf) eina_binbuf_free(cl->buf);
 
    if (cl->host_server->type & ECORE_CON_SSL)
      ecore_con_ssl_client_shutdown(cl);
