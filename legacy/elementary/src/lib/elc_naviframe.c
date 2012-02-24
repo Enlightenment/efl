@@ -217,8 +217,9 @@ _theme_hook(Evas_Object *obj)
    EINA_INLIST_FOREACH(wd->stack, it)
      {
         _item_style_set(it, it->style);
-        _item_title_visible_update(it);
      }
+   if (it)
+     _item_title_visible_update(it);
 }
 
 static void _emit_hook(Evas_Object *obj,
