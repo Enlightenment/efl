@@ -1811,7 +1811,7 @@ void
 test_entry7(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    Evas_Object *win, *gd, *bg, *en, *tg, *lb, *sp;
-   Evas_Object *bt, *en2, *sc2;
+   Evas_Object *bt, *en2;
 
    win = elm_win_util_standard_add("entry7", "Entry 7");
    elm_win_autodel_set(win, EINA_TRUE);
@@ -1921,16 +1921,252 @@ test_entry7(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info
 }
 
 static void
+filter_prepend_bt_clicked(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+{
+   Evas_Object *en, *en2;
+   static Elm_Entry_Filter_Accept_Set digits_filter_data;
+
+   en = (Evas_Object *)data;
+   en2 = evas_object_data_get(en, "filter-entry");
+   digits_filter_data.accepted = elm_object_text_get(en2);
+   digits_filter_data.rejected = NULL;
+
+   elm_entry_markup_filter_append(en, elm_entry_filter_accept_set,
+                                  &digits_filter_data);
+   elm_object_text_set(en, "Markup Filter Prepend Test:");
+}
+
+static void
+filter_remove_bt_clicked(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+{
+   Evas_Object *en;
+   en = (Evas_Object *)data;
+
+   elm_entry_markup_filter_remove(en, elm_entry_filter_accept_set, NULL);
+   elm_object_text_set(en, "Markup Filter Prepend Test:");
+}
+
+static void
+icon_visible_changed_cb(void *data, Evas_Object *obj, void *event_info __UNUSED__)
+{
+   Evas_Object *en;
+   en = (Evas_Object*)data;
+
+   elm_entry_icon_visible_set(en, elm_check_state_get(obj));
+}
+
+static void
+end_visible_changed_cb(void *data, Evas_Object *obj, void *event_info __UNUSED__)
+{
+   Evas_Object *en;
+   en = (Evas_Object*)data;
+
+   elm_entry_end_visible_set(en, elm_check_state_get(obj));
+}
+
+static void
+horizontal_bounce_changed_cb(void *data, Evas_Object *obj, void *event_info __UNUSED__)
+{
+   Evas_Object *en;
+   Eina_Bool vb;
+   Eina_Bool bounce = elm_check_state_get(obj);
+   en = (Evas_Object*)data;
+
+   elm_entry_bounce_get(en, NULL, &vb);
+   elm_entry_bounce_set(en, bounce, bounce);
+}
+
+static void
+vertical_bounce_changed_cb(void *data, Evas_Object *obj, void *event_info __UNUSED__)
+{
+	Evas_Object *en;
+	Eina_Bool hb;
+	Eina_Bool bounce = elm_check_state_get(obj);
+	en = (Evas_Object*)data;
+
+	elm_entry_bounce_get(en, &hb, NULL);
+	elm_entry_bounce_set(en, hb, bounce);
+}
+
+void
+test_entry8(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+{
+   Evas_Object *win, *gd, *rect, *en, *lb;
+   Evas_Object *bt, *en2;
+   Evas_Object *ch, *en3, *bx;
+   Evas_Object *en4;
+   static Elm_Entry_Filter_Limit_Size limit_filter_data;
+
+   win = elm_win_util_standard_add("entry8", "Entry 8");
+   elm_win_autodel_set(win, EINA_TRUE);
+
+   gd = elm_grid_add(win);
+   elm_grid_size_set(gd, 100, 100);
+   elm_win_resize_object_add(win, gd);
+   evas_object_size_hint_weight_set(gd, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_show(gd);
+
+   rect = evas_object_rectangle_add(evas_object_evas_get(win));
+   elm_grid_pack(gd, rect, 5, 5, 90, 10);
+   evas_object_color_set(rect, 125, 125, 255, 255);
+   evas_object_show(rect);
+
+   en = elm_entry_add(win);
+   elm_entry_scrollable_set(en, EINA_TRUE);
+   elm_entry_scrollbar_policy_set(en, ELM_SCROLLER_POLICY_OFF, ELM_SCROLLER_POLICY_OFF);
+   evas_object_size_hint_weight_set(en, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_size_hint_align_set(en, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   elm_object_text_set(en, "Markup Filter Prepend Test");
+   elm_grid_pack(gd, en, 5, 5, 90, 10);
+   evas_object_show(en);
+
+   lb = elm_label_add(win);
+   elm_object_text_set(lb, "Markup Filter (20 Characters):");
+   evas_object_size_hint_weight_set(lb, 0.0, 0.0);
+   evas_object_size_hint_align_set(lb, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   elm_grid_pack(gd, lb, 5, 15, 50, 10);
+   evas_object_show(lb);
+
+   rect = evas_object_rectangle_add(evas_object_evas_get(win));
+   elm_grid_pack(gd, rect, 55, 15, 40, 10);
+   evas_object_color_set(rect, 0, 125, 255, 255);
+   evas_object_show(rect);
+
+   en2 = elm_entry_add(win);
+   elm_entry_scrollable_set(en2, EINA_TRUE);
+   elm_entry_scrollbar_policy_set(en2, ELM_SCROLLER_POLICY_OFF, ELM_SCROLLER_POLICY_OFF);
+   evas_object_size_hint_weight_set(en2, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_size_hint_align_set(en2, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   limit_filter_data.max_char_count = 20;
+   limit_filter_data.max_byte_count = 0;
+   elm_entry_markup_filter_append(en2, elm_entry_filter_limit_size, &limit_filter_data);
+   evas_object_data_set(en, "filter-entry", en2);
+   evas_object_show(en2);
+   elm_grid_pack(gd, en2, 55, 15, 40, 10);
+
+   bt = elm_button_add(win);
+   elm_object_text_set(bt, "Markup Filter Prepend");
+   elm_grid_pack(gd, bt, 5, 25, 45, 10);
+   evas_object_smart_callback_add(bt, "clicked", filter_prepend_bt_clicked, en);
+   evas_object_show(bt);
+
+   bt = elm_button_add(win);
+   elm_object_text_set(bt, "Markup Filter Remove");
+   elm_grid_pack(gd, bt, 50, 25, 45, 10);
+   evas_object_smart_callback_add(bt, "clicked", filter_remove_bt_clicked, en);
+   evas_object_show(bt);
+
+   bx = elm_box_add(win);
+   evas_object_size_hint_weight_set(bx, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   elm_win_resize_object_add(win, bx);
+   evas_object_show(bx);
+
+   en3 = elm_entry_add(win);
+   elm_entry_scrollable_set(en3, EINA_TRUE);
+   elm_entry_scrollbar_policy_set(en3, ELM_SCROLLER_POLICY_OFF, ELM_SCROLLER_POLICY_OFF);
+   elm_entry_single_line_set(en3, EINA_TRUE);
+   evas_object_size_hint_weight_set(en3, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_size_hint_align_set(en3, EVAS_HINT_FILL, EVAS_HINT_FILL);
+
+   elm_box_pack_end(bx, en3);
+   evas_object_show(en3);
+   elm_grid_pack(gd, bx, 5, 35, 90, 20);
+
+   bt = elm_icon_add(win);
+   elm_icon_standard_set(bt, "home");
+   evas_object_size_hint_min_set(bt, 48, 48);
+   evas_object_color_set(bt, 255, 0, 0, 128);
+   evas_object_show(bt);
+   elm_object_part_content_set(en3, "icon", bt);
+
+   bt = elm_icon_add(win);
+   elm_icon_standard_set(bt, "delete");
+   evas_object_color_set(bt, 255, 0, 0, 128);
+   evas_object_size_hint_min_set(bt, 48, 48);
+   evas_object_show(bt);
+   elm_object_part_content_set(en3, "end", bt);
+
+   ch = elm_check_add(win);
+   evas_object_size_hint_weight_set(ch, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_size_hint_align_set(ch, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   elm_object_text_set(ch, "Icon Visible");
+   elm_check_state_set(ch, EINA_TRUE);
+   evas_object_smart_callback_add(ch, "changed", icon_visible_changed_cb, en3);
+   elm_grid_pack(gd, ch, 5, 55, 30, 10);
+   evas_object_show(ch);
+
+   ch = elm_check_add(win);
+   evas_object_size_hint_weight_set(ch, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_size_hint_align_set(ch, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   elm_object_text_set(ch, "End Visible");
+   elm_check_state_set(ch, EINA_TRUE);
+   evas_object_smart_callback_add(ch, "changed", end_visible_changed_cb, en3);
+   elm_grid_pack(gd, ch, 70, 55, 25, 10);
+   evas_object_show(ch);
+
+   rect = evas_object_rectangle_add(evas_object_evas_get(win));
+   elm_grid_pack(gd, rect, 5, 65, 90, 20);
+   evas_object_color_set(rect, 255, 125, 125, 255);
+   evas_object_show(rect);
+
+   en4 = elm_entry_add(win);
+   elm_entry_scrollable_set(en4, EINA_TRUE);
+   elm_entry_bounce_set(en4, EINA_TRUE, EINA_TRUE);
+   elm_entry_autocapital_type_set(en4, EINA_TRUE);
+   evas_object_size_hint_weight_set(en4, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_size_hint_align_set(en4, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   elm_grid_pack(gd, en4, 5, 65, 90, 20);
+   evas_object_show(en4);
+
+   ch = elm_check_add(win);
+   evas_object_size_hint_weight_set(ch, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_size_hint_align_set(ch, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   elm_object_text_set(ch, "Horizontal Bounce Set");
+   elm_check_state_set(ch, EINA_TRUE);
+   evas_object_smart_callback_add(ch, "changed", horizontal_bounce_changed_cb, en4);
+   elm_grid_pack(gd, ch, 5, 85, 45, 10);
+   evas_object_show(ch);
+
+   ch = elm_check_add(win);
+   evas_object_size_hint_weight_set(ch, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_size_hint_align_set(ch, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   elm_object_text_set(ch, "Vertical Bounce Set");
+   elm_check_state_set(ch, EINA_TRUE);
+   evas_object_smart_callback_add(ch, "changed", vertical_bounce_changed_cb, en4);
+   elm_grid_pack(gd, ch, 50, 85, 45, 10);
+   evas_object_show(ch);
+
+   evas_object_resize(win, 320, 320);
+   evas_object_show(win);
+}
+
+static void
 _scrolled_entry_clear(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    Evas_Object *en = data;
    elm_object_text_set(en, "");
 }
 
+static void
+_scrolled_entry_save(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+{
+   Evas_Object *en = data;
+   elm_entry_file_save(en);
+}
+
+static void
+auto_save_changed_cb(void *data, Evas_Object *obj, void *event_info __UNUSED__)
+{
+	Evas_Object *en;
+	en = (Evas_Object*)data;
+
+	elm_entry_autosave_set(en, elm_check_state_get(obj));
+}
+
 void
 test_entry_notepad(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
-   Evas_Object *win, *bg, *bx, *bx2, *bt, *np;
+   Evas_Object *win, *bg, *bx, *bx2, *bt, *np, *ch;
 
    win = elm_win_add(NULL, "entry-notepad", ELM_WIN_BASIC);
    elm_win_title_set(win, "Entry Notepad");
@@ -1967,6 +2203,23 @@ test_entry_notepad(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *eve
    evas_object_size_hint_weight_set(bt, EVAS_HINT_EXPAND, 0.0);
    elm_box_pack_end(bx2, bt);
    evas_object_show(bt);
+
+   bt = elm_button_add(win);
+   elm_object_text_set(bt, "Save");
+   evas_object_smart_callback_add(bt, "clicked", _scrolled_entry_save, np);
+   evas_object_size_hint_align_set(bt, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   evas_object_size_hint_weight_set(bt, EVAS_HINT_EXPAND, 0.0);
+   elm_box_pack_end(bx2, bt);
+   evas_object_show(bt);
+
+   ch = elm_check_add(win);
+   evas_object_size_hint_weight_set(ch, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_size_hint_align_set(ch, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   elm_object_text_set(ch, "Auto Save");
+   elm_check_state_set(ch, EINA_FALSE);
+   evas_object_smart_callback_add(ch, "changed", auto_save_changed_cb, np);
+   elm_box_pack_end(bx2, ch);
+   evas_object_show(ch);
 
    elm_box_pack_end(bx, bx2);
    evas_object_show(bx2);
