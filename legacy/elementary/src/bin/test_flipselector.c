@@ -23,13 +23,22 @@ _unsel_cb(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 }
 
 void
-_third_cb(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+_last_cb(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    Elm_Object_Item *it;
    Evas_Object *fp = data;
-   it = elm_flipselector_first_item_get(fp);
-   it = elm_flipselector_item_next_get(it);
-   it = elm_flipselector_item_next_get(it);
+   it = elm_flipselector_last_item_get(fp);
+   elm_flipselector_item_selected_set(it, EINA_TRUE);
+}
+
+void
+_third_from_end_cb(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+{
+   Elm_Object_Item *it;
+   Evas_Object *fp = data;
+   it = elm_flipselector_last_item_get(fp);
+   it = elm_flipselector_item_prev_get(it);
+   it = elm_flipselector_item_prev_get(it);
    elm_flipselector_item_selected_set(it, EINA_TRUE);
 }
 
@@ -46,11 +55,35 @@ _overflow_cb(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_inf
 }
 
 void
+slider_change_cb(void *data, Evas_Object *obj, void *event_info __UNUSED__)
+{
+    Evas_Object *fl;
+	fl = (Evas_Object *)data;
+
+    double val = elm_slider_value_get(obj);
+    elm_flipselector_interval_set(fl, val);
+}
+
+void
+flip_next_cb(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+{
+   Evas_Object *fp = data;
+   elm_flipselector_flip_next(fp);
+}
+
+void
+flip_prev_cb(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+{
+   Evas_Object *fp = data;
+   elm_flipselector_flip_prev(fp);
+}
+
+void
 test_flipselector(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    char buf[8];
    unsigned int i;
-   Evas_Object *win, *bg, *bx, *fp, *bt;
+   Evas_Object *win, *bg, *bx, *fp, *bt, *bx2, *sl;
    static const char *lbl[] = {
      "Elementary",
      "Evas",
@@ -86,21 +119,58 @@ test_flipselector(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *even
    elm_box_pack_end(bx, fp);
    evas_object_show(fp);
 
+   bx2 = elm_box_add(win);
+   evas_object_size_hint_weight_set(bx2, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   elm_box_horizontal_set(bx2, EINA_TRUE);
+   elm_box_pack_end(bx, bx2);
+   evas_object_show(bx2);
+
    fp = elm_flipselector_add(win);
    evas_object_smart_callback_add(fp, "underflowed", _overflow_cb, NULL);
    evas_object_smart_callback_add(fp, "overflowed", _underflow_cb, NULL);
    evas_object_size_hint_weight_set(fp, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-   for (i = 2099; i >= 1990; i--)
+   for (i = 1990; i <= 2099; i++)
      {
 	snprintf(buf, 8, "%d", i);
 	elm_flipselector_item_append(fp, buf, _sel_cb, NULL);
      }
-   elm_box_pack_end(bx, fp);
+
+   bt = elm_button_add(win);
+   elm_object_text_set(bt, "Flip Prev");
+   evas_object_smart_callback_add(bt, "clicked", flip_prev_cb, fp);
+
+   elm_box_pack_end(bx2, bt);
+   evas_object_show(bt);
+
+   elm_box_pack_end(bx2, fp);
    evas_object_show(fp);
 
    bt = elm_button_add(win);
+   elm_object_text_set(bt, "Flip Next");
+   evas_object_smart_callback_add(bt, "clicked", flip_next_cb, fp);
+   elm_box_pack_end(bx2, bt);
+   evas_object_show(bt);
+
+   sl = elm_slider_add(win);
+   elm_object_text_set(sl, "Flip Iterval:");
+   elm_slider_unit_format_set(sl, "%1.2f");
+   elm_slider_min_max_set(sl, 0, 3.0);
+   elm_slider_value_set(sl, 0.85);
+   evas_object_size_hint_align_set(sl, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   evas_object_size_hint_weight_set(sl, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   elm_box_pack_end(bx, sl);
+   evas_object_show(sl);
+   evas_object_smart_callback_add(sl, "changed", slider_change_cb, fp);
+
+   bt = elm_button_add(win);
+   elm_object_text_set(bt, "Select Last");
+   evas_object_smart_callback_add(bt, "clicked", _last_cb, fp);
+   elm_box_pack_end(bx, bt);
+   evas_object_show(bt);
+
+   bt = elm_button_add(win);
    elm_object_text_set(bt, "Select 2097");
-   evas_object_smart_callback_add(bt, "clicked", _third_cb, fp);
+   evas_object_smart_callback_add(bt, "clicked", _third_from_end_cb, fp);
    elm_box_pack_end(bx, bt);
    evas_object_show(bt);
 
