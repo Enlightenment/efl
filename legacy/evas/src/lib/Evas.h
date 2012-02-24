@@ -8632,7 +8632,7 @@ EAPI void                         evas_textblock_node_format_remove_pair(Evas_Ob
  * @param n the format node to update according.
  * @deprecated duplicate of evas_textblock_cursor_at_format_set
  */
-EINA_DEPRECATED EAPI void                         evas_textblock_cursor_set_at_format(Evas_Textblock_Cursor *cur, const Evas_Object_Textblock_Node_Format *n) EINA_ARG_NONNULL(1, 2);
+EAPI void                         evas_textblock_cursor_set_at_format(Evas_Textblock_Cursor *cur, const Evas_Object_Textblock_Node_Format *n) EINA_ARG_NONNULL(1, 2);
 
 /**
  * Return the format node at the position pointed by cur.
