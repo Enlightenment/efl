@@ -682,29 +682,31 @@ EAPI void             elm_widget_tree_dot_dump(const Evas_Object *top, FILE *out
 #define elm_widget_item_smart_callback_call(item, event, event_info) \
   _elm_widget_item_smart_callback_call((Elm_Widget_Item *) item, event, event_info)
 
-#define ELM_WIDGET_ITEM_CHECK_OR_RETURN(item, ...)           \
-  do {                                                       \
-       if (!item) {                                          \
-            CRITICAL("Elm_Widget_Item " # item " is NULL!"); \
-            return __VA_ARGS__;                              \
-         }                                                   \
-       if (!EINA_MAGIC_CHECK(item, ELM_WIDGET_ITEM_MAGIC)) { \
-            EINA_MAGIC_FAIL(item, ELM_WIDGET_ITEM_MAGIC);    \
-            return __VA_ARGS__;                              \
-         }                                                   \
-    } while (0)
+#define ELM_WIDGET_ITEM_CHECK_OR_RETURN(item, ...)              \
+  ELM_WIDGET_ITEM_FREE_OR_RETURN(item, __VA_ARGS__);            \
+  do {                                                          \
+       if (((Elm_Widget_Item *)item)->delete_me) {              \
+            CRITICAL("Elm_Widget_Item " # item " is deleted!"); \
+            return __VA_ARGS__;                                 \
+         }                                                      \
+  } while (0)
 
-#define ELM_WIDGET_ITEM_CHECK_OR_GOTO(item, label)           \
-  do {                                                       \
-       if (!item) {                                          \
-            CRITICAL("Elm_Widget_Item " # item " is NULL!"); \
-            goto label;                                      \
-         }                                                   \
-       if (!EINA_MAGIC_CHECK(item, ELM_WIDGET_ITEM_MAGIC)) { \
-            EINA_MAGIC_FAIL(item, ELM_WIDGET_ITEM_MAGIC);    \
-            goto label;                                      \
-         }                                                   \
-    } while (0)
+#define ELM_WIDGET_ITEM_CHECK_OR_GOTO(item, label)              \
+  ELM_WIDGET_ITEM_FREE_OR_RETURN(item);                         \
+  do {                                                          \
+       if (((Elm_Widget_Item *)item)->delete_me) {              \
+            CRITICAL("Elm_Widget_Item " # item " is deleted!"); \
+            goto label;                                         \
+         }                                                      \
+  } while (0)
+
+#define ELM_WIDGET_ITEM_FREE_OR_RETURN(item, ...)               \
+  do {                                                          \
+       if (!EINA_MAGIC_CHECK(item, ELM_WIDGET_ITEM_MAGIC)) {    \
+            EINA_MAGIC_FAIL(item, ELM_WIDGET_ITEM_MAGIC);       \
+            return __VA_ARGS__;                                 \
+         }                                                      \
+  } while (0)
 
 #define ELM_SET_WIDTYPE(widtype, type)            \
   do {                                            \

@@ -2841,8 +2841,7 @@ _elm_widget_item_new(Evas_Object *widget,
 EAPI void
 _elm_widget_item_free(Elm_Widget_Item *item)
 {
-   ELM_WIDGET_ITEM_CHECK_OR_RETURN(item);
-
+   ELM_WIDGET_ITEM_FREE_OR_RETURN(item);
    Elm_Object_Item_Smart_Cb cb;
 
    if (item->walking > 0)
