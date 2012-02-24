@@ -1831,7 +1831,7 @@ _ipc_client_data(void *data, int type __UNUSED__, void *event)
 
 #define STRGET(val) \
          do { \
-              if ((ipc->val) && (ipc->val < (char *)(e->size - 1))) \
+              if ((ipc->val) && (ipc->val < (char *)(long)(e->size - 1))) \
               ipc->val = ((char *)ipc) + (long)ipc->val; \
               else \
               ipc->val = NULL; \
