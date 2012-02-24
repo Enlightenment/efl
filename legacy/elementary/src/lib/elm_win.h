@@ -179,7 +179,9 @@ typedef enum
    ELM_ILLUME_COMMAND_FOCUS_BACK, /**< Reverts focus to the previous window */
    ELM_ILLUME_COMMAND_FOCUS_FORWARD, /**< Sends focus to the next window in the list */
    ELM_ILLUME_COMMAND_FOCUS_HOME, /**< Hides all windows to show the Home screen */
-   ELM_ILLUME_COMMAND_CLOSE /**< Closes the currently active window */
+   ELM_ILLUME_COMMAND_CLOSE, /**< Closes the currently active window */
+   ELM_ILLUME_COMMAND_INDICATOR_SHOW, /**< Shows the indicator */
+   ELM_ILLUME_COMMAND_INDICATOR_HIDE /**< Hides the indicator */
 } Elm_Illume_Command;
 
 /**

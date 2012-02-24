@@ -2673,6 +2673,14 @@ elm_win_illume_command_send(Evas_Object *obj, Elm_Illume_Command command, void *
            case ELM_ILLUME_COMMAND_CLOSE:
               ecore_x_e_illume_close_send(win->xwin);
               break;
+           case ELM_ILLUME_COMMAND_INDICATOR_SHOW:
+              ecore_x_e_illume_indicator_state_set
+                 (win->xwin, ECORE_X_ILLUME_INDICATOR_STATE_ON);
+              break;
+           case ELM_ILLUME_COMMAND_INDICATOR_HIDE:
+              ecore_x_e_illume_indicator_state_set
+                 (win->xwin, ECORE_X_ILLUME_INDICATOR_STATE_OFF);
+              break;
            default:
               break;
           }
