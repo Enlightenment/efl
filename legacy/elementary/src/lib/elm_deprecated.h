@@ -1570,7 +1570,7 @@ EINA_DEPRECATED EAPI void                   elm_diskselector_item_cursor_set(Elm
  * @return the cursor name.
  *
  * @see elm_object_cursor_get() for more details.
- * @see elm_diskselector_cursor_set()
+ * @see elm_diskselector_item_cursor_set()
  * @deprecated Use elm_object_item_cursor_get() instead
  *
  * @ingroup Diskselector
@@ -1583,7 +1583,7 @@ EINA_DEPRECATED EAPI const char            *elm_diskselector_item_cursor_get(con
  * @param it Target item
  *
  * @see elm_object_cursor_unset() for more details.
- * @see elm_diskselector_cursor_set()
+ * @see elm_diskselector_item_cursor_set()
  * @deprecated use elm_object_item_cursor_unset() instead
  *
  * @ingroup Diskselector
