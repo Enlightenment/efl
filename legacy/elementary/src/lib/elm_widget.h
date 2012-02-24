@@ -268,6 +268,7 @@ struct _Elm_Widget_Item
    Evas_Smart_Cb                  del_func;
    /**< widget delete callback function. don't expose this callback call */
    Elm_Widget_Del_Pre_Cb          del_pre_func;
+   Eina_List                     *callbacks;
 
    Elm_Widget_Content_Set_Cb      content_set_func;
    Elm_Widget_Content_Get_Cb      content_get_func;
@@ -278,9 +279,10 @@ struct _Elm_Widget_Item
    Elm_Widget_Disable_Cb          disable_func;
    Elm_Access_Info               *access;
    const char                    *access_info;
+
    Eina_Bool                      disabled : 1;
-   /* widget variations should have data from here and on */
-   /* @todo: TODO check if this is enough for 1.0 release, maybe add padding! */
+   Eina_Bool                      walking : 1;
+   Eina_Bool                      delete_me : 1;
 };
 
 struct _Elm_Object_Item
@@ -477,6 +479,9 @@ EAPI void             _elm_widget_item_disabled_set(Elm_Widget_Item *item, Eina_
 EAPI Eina_Bool        _elm_widget_item_disabled_get(const Elm_Widget_Item *item);
 EAPI void             _elm_widget_item_disable_hook_set(Elm_Widget_Item *item, Elm_Widget_Disable_Cb func);
 EAPI void             _elm_widget_item_del_pre_hook_set(Elm_Widget_Item *item, Elm_Widget_Del_Pre_Cb func);
+EAPI void             elm_widget_item_smart_callback_add(Elm_Widget_Item *item, const char *event, Elm_Object_Item_Smart_Cb func, const void *data);
+EAPI void            *elm_widget_item_smart_callback_del(Elm_Widget_Item *item, const char *event, Elm_Object_Item_Smart_Cb func);
+EAPI void             _elm_widget_item_smart_callback_call(Elm_Widget_Item *item, const char *event, void *event_info);
 
 /* debug function. don't use it unless you are tracking parenting issues */
 EAPI void             elm_widget_tree_dump(const Evas_Object *top);
@@ -670,6 +675,12 @@ EAPI void             elm_widget_tree_dot_dump(const Evas_Object *top, FILE *out
  */
 #define elm_widget_item_del_pre_hook_set(item, func) \
   _elm_widget_item_del_pre_hook_set((Elm_Widget_Item *)item, (Elm_Widget_Del_Pre_Cb)func)
+/**
+ * Convenience function to query callback call hook
+ * @see _elm_widget_item_smart_callback_call()
+ */
+#define elm_widget_item_smart_callback_call(item, event, event_info) \
+  _elm_widget_item_smart_callback_call((Elm_Widget_Item *) item, event, event_info)
 
 #define ELM_WIDGET_ITEM_CHECK_OR_RETURN(item, ...)           \
   do {                                                       \

@@ -1,3 +1,5 @@
+typedef void (*Elm_Object_Item_Smart_Cb) (void *data, Elm_Object_Item *it, void *event_info);
+
 /**
  * Get the widget object's handle which contains a given item
  *
@@ -418,7 +420,7 @@ EAPI void                         elm_object_item_cursor_engine_only_set(Elm_Obj
  * searched in its theme, also, or is only relying on the rendering
  * engine.
  *
- * @param item an item
+ * @param it an object item
  * @return @c EINA_TRUE, if cursors are being looked for only on
  * those provided by the rendering engine, @c EINA_FALSE if they
  * are being searched on the widget's theme, as well.
@@ -427,4 +429,54 @@ EAPI void                         elm_object_item_cursor_engine_only_set(Elm_Obj
  *
  * @ingroup General
  */
-EAPI Eina_Bool                    elm_object_item_cursor_engine_only_get(const Elm_Object_Item *item);
+EAPI Eina_Bool                    elm_object_item_cursor_engine_only_get(const Elm_Object_Item *it);
+
+/**
+ * Add (register) a callback function to the smart event specified by @p event
+ * on the elm_object_item @p it.
+ *
+ * @param it an object item
+ * @param event the event's name string
+ * @param func the callback function
+ * @param data user data to be passed to the callback function
+ *
+ * Smart callbacks look very similar to Evas Smart callbacks, but are
+ * implemented as elementary object item's custom ones.
+ *
+ * This function adds a function callback to an elementary object item  when the
+ * event named @p event occurs in it. The function is @p func.
+ *
+ * A smart callback function must have the Elm_Object_Item_Smart_Cb prototype
+ * definition. The first parameter (@p data) in this definition will be a user
+ * specific data. The second parameter @p it is a handle to the object item on 
+ * which event occurred. The third parameter, @p event_info, is a pointer to
+ * data which is totally dependent on the elementary object item's
+ * implementation and semantic for the given event.
+ *
+ * @see elm_object_item_smart_callback_del()
+ *
+ * @ingroup General
+ */
+EAPI void                         elm_object_item_smart_callback_add(Elm_Object_Item *it, const char *event, Elm_Object_Item_Smart_Cb func, const void *data);
+
+/**
+ * Delete (unregister) a callback function from the smart event specified by @p
+ * event on the elementary object item @p it.
+ *
+ * @param it an object item
+ * @param event the event's name string
+ * @param func the callback function
+ * @return data user data.
+ *
+ * This function removes <b>the first</b> added smart callback on the item @p it
+ * matching the event name @p event and the registered function pointer @p func.
+ * If the removal is successful it will also return the data pointer that was
+ * passed to elm_object_item_smart_callback_add() (that will be the same as the
+ * parameter) when the callback(s) was(were) added to the item. If not
+ * successful @c NULL will be returned.
+ *
+ * @see elm_object_item_smart_callback_add()
+ *
+ * @ingroup General
+ */
+EAPI void                        *elm_object_item_smart_callback_del(Elm_Object_Item *it, const char *event, Elm_Object_Item_Smart_Cb func);
