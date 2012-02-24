@@ -2317,6 +2317,17 @@ EINA_DEPRECATED EAPI void         elm_menu_item_data_set(Elm_Object_Item *it, co
 EINA_DEPRECATED EAPI void                         elm_menu_item_del(Elm_Object_Item *it);
 
 /**
+ * @brief @brief Return a menu item's owner menu
+ *
+ * @param it The menu item
+ * @return The menu object owning @p item, or NULL on failure
+ *
+ * Use this function to get the menu object owning an item.
+ * @deprecated Use elm_object_item_widget_get() instead
+ */
+EINA_DEPRECATED EAPI Evas_Object                 *elm_menu_item_menu_get(const Elm_Object_Item *it);
+
+/**
  * @brief Set the content of the notify widget
  *
  * @param obj The notify object

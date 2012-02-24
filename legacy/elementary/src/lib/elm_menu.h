@@ -210,16 +210,6 @@ EAPI const Eina_List             *elm_menu_item_subitems_get(const Elm_Object_It
 EAPI unsigned int                 elm_menu_item_index_get(const Elm_Object_Item *it);
 
 /**
- * @brief @brief Return a menu item's owner menu
- *
- * @param it The menu item
- * @return The menu object owning @p item, or NULL on failure
- *
- * Use this function to get the menu object owning an item.
- */
-EAPI Evas_Object                 *elm_menu_item_menu_get(const Elm_Object_Item *it);
-
-/**
  * @brief Get the selected item in the menu
  *
  * @param obj The menu object
