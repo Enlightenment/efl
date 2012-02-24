@@ -174,6 +174,12 @@ my_bt_zoom_fill(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUS
 }
 
 static void
+my_bt_gesture(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+{
+  elm_photocam_gesture_set(data, !elm_photocam_gesture_get(data));
+}
+
+static void
 _photocam_mouse_wheel_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info)
 {
    Evas_Object *photocam = data;
@@ -316,12 +322,25 @@ test_photocam(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_in
    elm_table_pack(tb2, bt, 2, 1, 1, 1);
    evas_object_show(bt);
 
+   box = elm_box_add(win);
+   elm_box_horizontal_set(box, EINA_TRUE);
+   evas_object_size_hint_weight_set(box, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_size_hint_align_set(box, 0.0, 0.9);
+   elm_table_pack(tb2, box, 0, 2, 1, 1);
+   evas_object_show(box);
+
    bt = elm_button_add(win);
    elm_object_text_set(bt, "Pause On/Off");
    evas_object_smart_callback_add(bt, "clicked", my_bt_pause, ph);
    evas_object_size_hint_weight_set(bt, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-   evas_object_size_hint_align_set(bt, 0.1, 0.9);
-   elm_table_pack(tb2, bt, 0, 2, 1, 1);
+   elm_box_pack_end(box, bt);
+   evas_object_show(bt);
+
+   bt = elm_button_add(win);
+   elm_object_text_set(bt, "Gesture On/Off");
+   evas_object_smart_callback_add(bt, "clicked", my_bt_gesture, ph);
+   evas_object_size_hint_weight_set(bt, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   elm_box_pack_end(box, bt);
    evas_object_show(bt);
 
    box = elm_box_add(win);
