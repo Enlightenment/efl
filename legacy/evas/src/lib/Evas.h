@@ -2940,14 +2940,21 @@ EAPI const Eina_List  *evas_font_path_list               (const Evas *e) EINA_WA
 /**
  * @defgroup Evas_Object_Group_Basic Basic Object Manipulation
  *
- * Methods that are broadly used, like those that change the color,
- * clippers and geometry of an Evas object.
+ * Almost every evas object created will have some generic function used to
+ * manipulate it. That's because there are a number of basic actions to be done
+ * to objects that are irrespective of the object's type, things like:
+ * @li Showing/Hiding
+ * @li Setting(and getting) geometry
+ * @li Bring up or down a layer
+ * @li Color management
+ * @li Handling focus
+ * @li Clipping
+ * @li Reference counting
  *
- * An example on the most used functions in this group can be seen @ref
- * Example_Evas_Object_Manipulation "here".
- *
- * For function dealing with stacking, the examples are gathered  @ref
- * Example_Evas_Stacking "here".
+ * All of this issues are handled through the functions here grouped. Examples
+ * of these function can be seen in @ref Example_Evas_Object_Manipulation(which
+ * deals with the most common ones) and in @ref Example_Evas_Stacking(which
+ * deals with stacking functions).
  *
  * @ingroup Evas_Object_Group
  */
