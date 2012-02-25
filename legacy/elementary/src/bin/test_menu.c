@@ -109,6 +109,7 @@ test_menu(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info _
 
    rect = evas_object_rectangle_add(evas_object_evas_get(win));
    elm_win_resize_object_add(win, rect);
+   evas_object_size_hint_weight_set(rect, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_color_set(rect, 0, 0, 0, 0);
    evas_object_show(rect);
 
