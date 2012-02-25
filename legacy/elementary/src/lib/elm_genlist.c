@@ -329,6 +329,7 @@ _event_hook(Evas_Object       *obj,
      {
         it = elm_genlist_first_item_get(obj);
         elm_genlist_item_bring_in(it);
+        elm_genlist_item_selected_set(it, EINA_TRUE);
         ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
         return EINA_TRUE;
      }
@@ -336,6 +337,7 @@ _event_hook(Evas_Object       *obj,
      {
         it = elm_genlist_last_item_get(obj);
         elm_genlist_item_bring_in(it);
+        elm_genlist_item_selected_set(it, EINA_TRUE);
         ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
         return EINA_TRUE;
      }
