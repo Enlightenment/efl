@@ -18,6 +18,7 @@ struct _Elm_Win
 
    Elm_Win_Type type;
    Elm_Win_Keyboard_Mode kbdmode;
+   Elm_Win_Indicator_Mode indmode;
    struct {
       const char *info;
       Ecore_Timer *timer;
@@ -863,6 +864,12 @@ _elm_win_xwin_update(Elm_Win *win)
      }
    ecore_x_e_virtual_keyboard_state_set
       (win->xwin, (Ecore_X_Virtual_Keyboard_State)win->kbdmode);
+   if (win->indmode == ELM_WIN_INDICATOR_SHOW)
+     ecore_x_e_illume_indicator_state_set
+     (win->xwin, ECORE_X_ILLUME_INDICATOR_STATE_ON);
+   else if (win->indmode == ELM_WIN_INDICATOR_HIDE)
+     ecore_x_e_illume_indicator_state_set
+     (win->xwin, ECORE_X_ILLUME_INDICATOR_STATE_OFF);
 }
 #endif
 
@@ -1560,6 +1567,9 @@ elm_win_add(Evas_Object *parent, const char *name, Elm_Win_Type type)
    } while (0)
 #define ENGINE_COMPARE(name) (_elm_config->engine && !strcmp(_elm_config->engine, name))
 
+   win->kbdmode = ELM_WIN_KEYBOARD_UNKNOWN;
+   win->indmode = ELM_WIN_INDICATOR_UNKNOWN;
+   
    switch (type)
      {
       case ELM_WIN_INLINED_IMAGE:
@@ -2406,6 +2416,41 @@ elm_win_keyboard_win_get(const Evas_Object *obj)
 }
 
 EAPI void
+elm_win_indicator_mode_set(Evas_Object *obj, Elm_Win_Indicator_Mode mode)
+{
+   Elm_Win *win;
+   ELM_CHECK_WIDTYPE(obj, widtype);
+   win = elm_widget_data_get(obj);
+   if (!win) return;
+   if (mode == win->indmode) return;
+#ifdef HAVE_ELEMENTARY_X
+   _elm_win_xwindow_get(win);
+#endif
+   win->indmode = mode;
+#ifdef HAVE_ELEMENTARY_X
+   if (win->xwin)
+     {
+        if (win->indmode == ELM_WIN_INDICATOR_SHOW)
+          ecore_x_e_illume_indicator_state_set
+          (win->xwin, ECORE_X_ILLUME_INDICATOR_STATE_ON);
+        else if (win->indmode == ELM_WIN_INDICATOR_HIDE)
+          ecore_x_e_illume_indicator_state_set
+          (win->xwin, ECORE_X_ILLUME_INDICATOR_STATE_OFF);
+     }
+#endif
+}
+
+EAPI Elm_Win_Indicator_Mode
+elm_win_indicator_mode_get(const Evas_Object *obj)
+{
+   Elm_Win *win;
+   ELM_CHECK_WIDTYPE(obj, widtype) ELM_WIN_INDICATOR_UNKNOWN;
+   win = elm_widget_data_get(obj);
+   if (!win) return ELM_WIN_INDICATOR_UNKNOWN;
+   return win->indmode;
+}
+
+EAPI void
 elm_win_screen_position_get(const Evas_Object *obj, int *x, int *y)
 {
    Elm_Win *win;
@@ -2672,14 +2717,6 @@ elm_win_illume_command_send(Evas_Object *obj, Elm_Illume_Command command, void *
               break;
            case ELM_ILLUME_COMMAND_CLOSE:
               ecore_x_e_illume_close_send(win->xwin);
-              break;
-           case ELM_ILLUME_COMMAND_INDICATOR_SHOW:
-              ecore_x_e_illume_indicator_state_set
-                 (win->xwin, ECORE_X_ILLUME_INDICATOR_STATE_ON);
-              break;
-           case ELM_ILLUME_COMMAND_INDICATOR_HIDE:
-              ecore_x_e_illume_indicator_state_set
-                 (win->xwin, ECORE_X_ILLUME_INDICATOR_STATE_OFF);
               break;
            default:
               break;

@@ -169,6 +169,22 @@ typedef enum
 } Elm_Win_Keyboard_Mode;
 
 /**
+ * In some environments, like phones, you may have an indicator that
+ * shows battery status, reception, time etc. This is the indicator.
+ * 
+ * Sometimes you don't want it because you provide the same functionality
+ * inside your app, so this will request that the indicator is hidden in
+ * this circumstance if you use ELM_ILLUME_INDICATOR_HIDE. The default
+ * is to have the indicator shown.
+ */
+typedef enum
+{
+   ELM_WIN_INDICATOR_UNKNOWN, /**< Unknown indicator state */
+   ELM_WIN_INDICATOR_HIDE, /**< Hides the indicator */
+   ELM_WIN_INDICATOR_SHOW /**< Shows the indicator */
+} Elm_Win_Indicator_Mode;
+
+/**
  * Available commands that can be sent to the Illume manager.
  *
  * When running under an Illume session, a window may send commands to the
@@ -180,8 +196,6 @@ typedef enum
    ELM_ILLUME_COMMAND_FOCUS_FORWARD, /**< Sends focus to the next window in the list */
    ELM_ILLUME_COMMAND_FOCUS_HOME, /**< Hides all windows to show the Home screen */
    ELM_ILLUME_COMMAND_CLOSE, /**< Closes the currently active window */
-   ELM_ILLUME_COMMAND_INDICATOR_SHOW, /**< Shows the indicator */
-   ELM_ILLUME_COMMAND_INDICATOR_HIDE /**< Hides the indicator */
 } Elm_Illume_Command;
 
 /**
@@ -874,6 +888,22 @@ EAPI void                  elm_win_keyboard_win_set(Evas_Object *obj, Eina_Bool 
  * @return If the window is a virtual keyboard
  */
 EAPI Eina_Bool             elm_win_keyboard_win_get(const Evas_Object *obj);
+
+/**
+ * Sets the indicator mode of the window.
+ *
+ * @param obj The window object
+ * @param mode The mode to set, one of #Elm_Win_Indicator_Mode
+ */
+EAPI void                  elm_win_indicator_mode_set(Evas_Object *obj, Elm_Win_Indicator_Mode mode);
+
+/**
+ * Gets the indicator mode of the window.
+ *
+ * @param obj The window object
+ * @return The mode, one of #Elm_Win_Indicator_Mode
+ */
+EAPI Elm_Win_Indicator_Mode elm_win_indicator_mode_get(const Evas_Object *obj);
 
 /**
  * Get the screen position of a window.
