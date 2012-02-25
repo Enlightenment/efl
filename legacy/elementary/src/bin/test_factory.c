@@ -28,7 +28,7 @@ fac_realize_end(void *data, Evas_Object *obj, void *event_info __UNUSED__)
    int i;
 
    bx = elm_box_add(win);
-   printf("   ADD lv 3 = %p [%i]\n", bx, (BLOK * (int)evas_object_data_get(obj, "num")));
+   printf("   ADD lv 3 = %p [%i]\n", bx, (BLOK * (int)(long)evas_object_data_get(obj, "num")));
 #ifdef HOMOG
    elm_box_homogeneous_set(bx, EINA_TRUE);
 #endif
@@ -41,7 +41,7 @@ fac_realize_end(void *data, Evas_Object *obj, void *event_info __UNUSED__)
         char buf[32];
 
         snprintf(buf, sizeof(buf), "%i",
-                 (i + (BLOK * (int)evas_object_data_get(obj, "num"))));
+                 (i + (BLOK * (int)(long)evas_object_data_get(obj, "num"))));
 
         bt = elm_button_add(win);
         evas_object_size_hint_weight_set(bt, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
@@ -63,7 +63,7 @@ fac_realize2(void *data, Evas_Object *obj, void *event_info __UNUSED__)
    int i;
 
    bx = elm_box_add(win);
-   printf("  ADD lv 2 = %p [%i]\n", bx, (BLOK * (int)evas_object_data_get(obj, "num")));
+   printf("  ADD lv 2 = %p [%i]\n", bx, (BLOK * (int)(long)evas_object_data_get(obj, "num")));
 #ifdef HOMOG
    elm_box_homogeneous_set(bx, EINA_TRUE);
 #endif
@@ -79,7 +79,7 @@ fac_realize2(void *data, Evas_Object *obj, void *event_info __UNUSED__)
         // scrollbar will be wrong until enough
         // children have been realized and the
         // real size is known
-        evas_object_data_set(fc, "num", (void *)(i + (BLOK * (int)evas_object_data_get(obj, "num"))));
+        evas_object_data_set(fc, "num", (void *)(long)(i + (BLOK * (int)(long)evas_object_data_get(obj, "num"))));
         evas_object_size_hint_min_set(fc, 0, DEFSZ);
         evas_object_size_hint_weight_set(fc, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
         evas_object_size_hint_align_set(fc, EVAS_HINT_FILL, EVAS_HINT_FILL);
@@ -101,7 +101,7 @@ fac_realize1(void *data, Evas_Object *obj, void *event_info __UNUSED__)
    int i;
 
    bx = elm_box_add(win);
-   printf(" ADD lv 1 = %p [%i]\n", bx, (BLOK * (int)evas_object_data_get(obj, "num")));
+   printf(" ADD lv 1 = %p [%i]\n", bx, (BLOK * (int)(long)evas_object_data_get(obj, "num")));
 #ifdef HOMOG
    elm_box_homogeneous_set(bx, EINA_TRUE);
 #endif
@@ -117,7 +117,7 @@ fac_realize1(void *data, Evas_Object *obj, void *event_info __UNUSED__)
         // scrollbar will be wrong until enough
         // children have been realized and the
         // real size is known
-        evas_object_data_set(fc, "num", (void *)(i + (BLOK * (int)evas_object_data_get(obj, "num"))));
+        evas_object_data_set(fc, "num", (void *)(long)(i + (BLOK * (int)(long)evas_object_data_get(obj, "num"))));
         evas_object_size_hint_min_set(fc, 0, DEFSZ);
         evas_object_size_hint_weight_set(fc, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
         evas_object_size_hint_align_set(fc, EVAS_HINT_FILL, EVAS_HINT_FILL);
@@ -163,7 +163,7 @@ test_factory(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_inf
         // scrollbar will be wrong until enough
         // children have been realized and the
         // real size is known
-        evas_object_data_set(fc, "num", (void *)i);
+        evas_object_data_set(fc, "num", (void *)(long)i);
         evas_object_size_hint_min_set(fc, 0, DEFSZ);
         evas_object_size_hint_weight_set(fc, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
         evas_object_size_hint_align_set(fc, EVAS_HINT_FILL, EVAS_HINT_FILL);

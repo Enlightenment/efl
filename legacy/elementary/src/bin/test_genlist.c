@@ -1871,7 +1871,7 @@ test_genlist10(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_i
    for (i = 0; i < 50; i++)
      elm_genlist_item_append(gl,
                              &itc10,
-                             (void *)(1000 + i)/* item data */,
+                             (void *)(long)(1000 + i)/* item data */,
                              NULL/* parent */,
                              ELM_GENLIST_ITEM_NONE/* flags */,
                              _gl_sel10/* func */,
@@ -1961,7 +1961,7 @@ test_genlist11(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_i
    for (i = 0; i < 50; i++)
      elm_genlist_item_append(gl,
                              itc1,
-                             (void *)(1 + i)/* item data */,
+                             (void *)(long)(1 + i)/* item data */,
                              NULL/* parent */,
                              ELM_GENLIST_ITEM_NONE/* flags */,
                              NULL/* func */,
@@ -2061,7 +2061,7 @@ test_genlist13(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_i
    for (i = 0; i < 3; i++)
      {
         pi[i] = elm_genlist_item_direct_sorted_insert
-          (gl, &itc4, (void *)idx[i]/* item data */, NULL/* parent */,
+          (gl, &itc4, (void *)(long)idx[i]/* item data */, NULL/* parent */,
            ELM_GENLIST_ITEM_SUBITEMS, gl13_cmp/* cmp */,
            NULL/* func */, NULL/* func data */);
      }
@@ -2072,7 +2072,7 @@ test_genlist13(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_i
         for (j = 0; j < 3; j++)
           {
              elm_genlist_item_direct_sorted_insert
-               (gl, &itc4, (void *)(idx[j] + base)/* item data */,
+               (gl, &itc4, (void *)(long)(idx[j] + base)/* item data */,
                 pi[i]/* parent */, ELM_GENLIST_ITEM_NONE,
                 gl13_cmp/* cmp */, NULL/* func */, NULL/* func data */);
           }
@@ -2081,7 +2081,7 @@ test_genlist13(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_i
    for (i = 0; i < 3; i++)
      {
         pi[i + 3] = elm_genlist_item_direct_sorted_insert
-          (gl, &itc4, (void *)(idx[i] * 2)/* item data */, NULL/* parent */,
+          (gl, &itc4, (void *)(long)(idx[i] * 2)/* item data */, NULL/* parent */,
            ELM_GENLIST_ITEM_SUBITEMS, gl13_cmp/* cmp */, NULL/* func */,
            NULL/* func data */);
      }
@@ -2093,7 +2093,7 @@ test_genlist13(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_i
         for (j = 0; j < 3; j++)
           {
              elm_genlist_item_direct_sorted_insert
-               (gl, &itc4, (void *)(idx[j] + base)/* item data */,
+               (gl, &itc4, (void *)(long)(idx[j] + base)/* item data */,
                 pi[i + 3]/* parent */, ELM_GENLIST_ITEM_NONE,
                 gl13_cmp/* cmp */, NULL/* func */, NULL/* func data */);
           }
@@ -2211,7 +2211,7 @@ test_genlist14(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_i
    // BUG2: should be able to insert after=NULL, append
 
    pi[0] = elm_genlist_item_append
-     (gl, &itc4, (void *)idx[0]/* item data */,
+     (gl, &itc4, (void *)(long)idx[0]/* item data */,
       NULL/* parent */,
       ELM_GENLIST_ITEM_SUBITEMS, NULL/* func */, NULL/* func data */);
 
@@ -2219,12 +2219,12 @@ test_genlist14(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_i
      {
         if (relative[i] < 0)
           pi[i] = elm_genlist_item_insert_before
-            (gl, &itc4, (void *)idx[i]/* item data */,
+            (gl, &itc4, (void *)(long)idx[i]/* item data */,
              NULL/* parent */, pi[-relative[i]],
              ELM_GENLIST_ITEM_SUBITEMS, NULL/* func */, NULL/* func data */);
         else
           pi[i] = elm_genlist_item_insert_after
-            (gl, &itc4, (void *)idx[i]/* item data */,
+            (gl, &itc4, (void *)(long)idx[i]/* item data */,
              NULL/* parent */, pi[relative[i]],
              ELM_GENLIST_ITEM_SUBITEMS, NULL/* func */, NULL/* func data */);
      }
