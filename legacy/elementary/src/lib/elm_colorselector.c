@@ -757,7 +757,7 @@ elm_colorselector_color_set(Evas_Object *obj, int r, int g, int b, int a)
 }
 
 EAPI void
-elm_colorselector_color_get(const Evas_Object *obj, int *r, int *g, int *b, int*a)
+elm_colorselector_color_get(const Evas_Object *obj, int *r, int *g, int *b, int *a)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
    ELM_CHECK_WIDTYPE(obj, widtype);
