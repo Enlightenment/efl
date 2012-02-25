@@ -365,10 +365,12 @@ _ecore_thread_handler(void *data)
    _ecore_thread_kill(work);
 }
 
+#if 0
 static void
 _ecore_nothing_handler(void *data __UNUSED__, void *buffer __UNUSED__, unsigned int nbyte __UNUSED__)
 {
 }
+#endif
 
 static void
 _ecore_notify_handler(void *data)
