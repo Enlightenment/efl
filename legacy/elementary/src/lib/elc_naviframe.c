@@ -1150,6 +1150,7 @@ elm_naviframe_item_push(Evas_Object *obj,
         elm_object_signal_emit(VIEW(prev_it), "elm,state,cur,pushed", "elm");
         elm_object_signal_emit(VIEW(it), "elm,state,new,pushed", "elm");
         edje_object_message_signal_process(elm_layout_edje_get(VIEW(prev_it)));
+        elm_widget_tree_unfocusable_set(it->content, EINA_TRUE);
         edje_object_message_signal_process(elm_layout_edje_get(VIEW(it)));
      }
    wd->stack = eina_inlist_append(wd->stack, EINA_INLIST_GET(it));
@@ -1229,7 +1230,6 @@ elm_naviframe_item_pop(Evas_Object *obj)
 
    it = (Elm_Naviframe_Item *) elm_naviframe_top_item_get(obj);
    if (!it) return NULL;
-   elm_widget_tree_unfocusable_set(it->content, EINA_TRUE);
    if (wd->preserve)
      content = it->content;
 
@@ -1308,9 +1308,11 @@ elm_naviframe_item_promote(Elm_Object_Item *it)
    if (!wd) return;
 
    if (it == elm_naviframe_top_item_get(navi_it->base.widget)) return;
+   elm_widget_tree_unfocusable_set(navi_it->content, EINA_FALSE);
    wd->stack = eina_inlist_demote(wd->stack, EINA_INLIST_GET(navi_it));
    prev_it = EINA_INLIST_CONTAINER_GET(wd->stack->last->prev,
                                          Elm_Naviframe_Item);
+   elm_widget_tree_unfocusable_set(prev_it->content, EINA_FALSE);
    if (wd->freeze_events)
      {
         evas_object_freeze_events_set(VIEW(it), EINA_TRUE);
