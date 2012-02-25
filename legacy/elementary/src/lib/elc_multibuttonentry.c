@@ -493,7 +493,7 @@ _shrink_mode_set(Evas_Object *obj, int shrink)
           }
 
         wd->view_state = MULTIBUTTONENTRY_VIEW_NONE;
-        evas_object_smart_callback_call(obj, "shrink,state,changed", (void *)wd->shrink);
+        evas_object_smart_callback_call(obj, "shrink,state,changed", (void *)(long)wd->shrink);
      }
    if (wd->view_state != MULTIBUTTONENTRY_VIEW_SHRINK)
      {
