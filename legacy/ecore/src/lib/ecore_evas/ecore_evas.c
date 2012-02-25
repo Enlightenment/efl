@@ -509,24 +509,6 @@ _ecore_evas_constructor_sdl(int x __UNUSED__, int y __UNUSED__, int w, int h, co
 
    return ee;
 }
-
-static Ecore_Evas *
-_ecore_evas_constructor_sdl16(int x __UNUSED__, int y __UNUSED__, int w, int h, const char *extra_options)
-{
-   Ecore_Evas *ee;
-   unsigned int fullscreen = 0, hwsurface = 0, noframe = 0, alpha = 0;
-   char *name = NULL;
-
-   _ecore_evas_parse_extra_options_str(extra_options, "name=", &name);
-   _ecore_evas_parse_extra_options_uint(extra_options, "fullscreen=", &fullscreen);
-   _ecore_evas_parse_extra_options_uint(extra_options, "hwsurface=", &hwsurface);
-   _ecore_evas_parse_extra_options_uint(extra_options, "alpha=", &alpha);
-
-   ee = ecore_evas_sdl16_new(name, w, h, fullscreen, hwsurface, noframe, alpha);
-   free(name);
-
-   return ee;
-}
 #endif
 
 #ifdef BUILD_ECORE_EVAS_OPENGL_SDL
@@ -788,7 +770,6 @@ static const struct ecore_evas_engine _engines[] = {
 
 #ifdef BUILD_ECORE_EVAS_SOFTWARE_SDL
   {"sdl", _ecore_evas_constructor_sdl},
-  {"software_16_sdl", _ecore_evas_constructor_sdl16},
 #endif
 
   /* independent */

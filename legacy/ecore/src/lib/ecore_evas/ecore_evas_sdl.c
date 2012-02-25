@@ -486,35 +486,7 @@ _ecore_evas_internal_sdl_new(int rmethod, const char* name, int w, int h, int fu
    evas_output_size_set(ee->evas, w, h);
    evas_output_viewport_set(ee->evas, 0, 0, w, h);
 
-   if (rmethod == evas_render_method_lookup("software_16_sdl"))
-     {
-#ifdef BUILD_ECORE_EVAS_SOFTWARE_SDL
-        Evas_Engine_Info_SDL *einfo;
-
-        einfo = (Evas_Engine_Info_SDL *) evas_engine_info_get(ee->evas);
-        if (einfo)
-          {
-             einfo->info.rotation = 0;
-             einfo->info.fullscreen = fullscreen;
-             einfo->info.hwsurface = hwsurface;
-             einfo->info.noframe = noframe;
-             einfo->info.alpha = alpha;
-             if (!evas_engine_info_set(ee->evas, (Evas_Engine_Info *)einfo))
-               {
-                  ERR("evas_engine_info_set() for engine '%s' failed.", ee->driver);
-                  ecore_evas_free(ee);
-                  return NULL;
-               }
-          }
-        else
-          {
-             ERR("evas_engine_info_set() init engine '%s' failed.", ee->driver);
-             ecore_evas_free(ee);
-             return NULL;
-          }
-#endif
-     }
-   else if (rmethod == evas_render_method_lookup("buffer"))
+   if (rmethod == evas_render_method_lookup("buffer"))
      {
         Evas_Engine_Info_Buffer *einfo;
 
@@ -648,28 +620,12 @@ ecore_evas_sdl_new(const char* name __UNUSED__, int w __UNUSED__, int h __UNUSED
 }
 #endif
 
-#ifdef BUILD_ECORE_EVAS_SOFTWARE_SDL
-EAPI Ecore_Evas*
-ecore_evas_sdl16_new(const char* name, int w, int h, int fullscreen, int hwsurface, int noframe, int alpha)
-{
-   Ecore_Evas          *ee;
-   int                  rmethod;
-
-   rmethod = evas_render_method_lookup("software_16_sdl");
-   if (!rmethod) return NULL;
-
-   ee = _ecore_evas_internal_sdl_new(rmethod, name, w, h, fullscreen, hwsurface, noframe, alpha);
-   ee->driver = "software_16_sdl";
-   return ee;
-}
-#else
 EAPI Ecore_Evas*
 ecore_evas_sdl16_new(const char* name __UNUSED__, int w __UNUSED__, int h __UNUSED__, int fullscreen __UNUSED__, int hwsurface __UNUSED__, int noframe __UNUSED__, int alpha __UNUSED__)
 {
    ERR("OUTCH !");
    return NULL;
 }
-#endif
 
 #ifdef BUILD_ECORE_EVAS_OPENGL_SDL
 EAPI Ecore_Evas*

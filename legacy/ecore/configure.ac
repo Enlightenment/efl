@@ -1836,11 +1836,13 @@ fi
 
 # ecore_evas_software_sdl
 
-ECORE_EVAS_CHECK_MODULE([software-sdl],
-   [${want_ecore_evas_software_sdl}],
-   [Software SDL],
-   [${have_ecore_sdl}],
-   [requirements_ecore_evas="ecore-sdl >= 1.1.99 ${requirements_ecore_evas}"])
+have_ecore_evas_software_sdl="no"
+if test "x${have_ecore_sdl}" = "xyes"; then
+   requirements_ecore_evas="ecore-sdl >= 1.1.99 ${requirements_ecore_evas}"
+   have_ecore_evas_software_sdl="yes"
+   AC_DEFINE(BUILD_ECORE_EVAS_SOFTWARE_SDL, 1, [Support for Software SDL Engine in Ecore_Evas])
+   requirements_ecore_evas="ecore-sdl >= 1.1.99 ${requirements_ecore_evas}"
+fi
 
 # ecore_evas_gl_sdl
 
