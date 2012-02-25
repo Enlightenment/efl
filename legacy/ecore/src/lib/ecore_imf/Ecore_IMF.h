@@ -34,7 +34,7 @@ extern "C" {
 #endif
 
 /**
- * @addtogroup Ecore_IMF_Context_Group 
+ * @addtogroup Ecore_IMF_Context_Group
  *
  * @{
  */
@@ -182,7 +182,7 @@ typedef enum
  * @typedef Ecore_IMF_Input_Panel_Layout
  *
  * Input panel (virtual keyboard) layout types.
- * 
+ *
  * @see ecore_imf_context_input_panel_layout_set()
  */
 typedef enum
@@ -206,7 +206,7 @@ typedef enum
  * @typedef Ecore_IMF_Input_Panel_Lang
  *
  * Input panel (virtual keyboard) language modes.
- * 
+ *
  * @see ecore_imf_context_input_panel_language_set()
  */
 typedef enum
@@ -220,7 +220,7 @@ typedef enum
  * @typedef Ecore_IMF_Input_Panel_Return_Key_Type
  *
  * "Return" Key types on the input panel (virtual keyboard).
- * 
+ *
  * @see ecore_imf_context_input_panel_return_key_type_set()
  */
 typedef enum

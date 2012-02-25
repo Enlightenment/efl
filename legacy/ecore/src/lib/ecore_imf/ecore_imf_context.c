@@ -611,7 +611,7 @@ ecore_imf_context_prediction_allow_get(Ecore_IMF_Context *ctx)
 }
 
 /**
- * Set the autocapitalization type on the immodule. 
+ * Set the autocapitalization type on the immodule.
  *
  * @param ctx An #Ecore_IMF_Context.
  * @param autocapital_type the autocapitalization type.
