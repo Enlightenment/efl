@@ -121,7 +121,7 @@ Scroll to end
               const Eina_List *items = elm_list_items_get(li);
               if(eina_list_count(items))
                 {
-                  elm_list_item_del(eina_list_data_get(eina_list_last(items)));
+                  elm_object_item_del(eina_list_data_get(eina_list_last(items)));
                 }
            }
          break;
@@ -140,7 +140,7 @@ Scroll to end
               const Eina_List *items = elm_list_items_get(li);
               if(eina_list_count(items))
                 {
-                  elm_list_item_tooltip_text_set(eina_list_data_get(eina_list_last(items)), "Tooltip set from API");
+                  elm_object_item_tooltip_text_set(eina_list_data_get(eina_list_last(items)), "Tooltip set from API");
                 }
               elm_list_scroller_policy_set(li, ELM_SCROLLER_POLICY_AUTO, ELM_SCROLLER_POLICY_AUTO);
            }
@@ -151,7 +151,7 @@ Scroll to end
               const Eina_List *items = elm_list_items_get(li);
               if(eina_list_count(items))
                 {
-                  elm_list_item_tooltip_unset(eina_list_data_get(eina_list_last(items)));
+                  elm_object_item_tooltip_unset(eina_list_data_get(eina_list_last(items)));
                 }
            }
          break;
@@ -161,7 +161,7 @@ Scroll to end
               const Eina_List *items = elm_list_items_get(li);
               if(eina_list_count(items))
                 {
-                  elm_list_item_cursor_set(eina_list_data_get(eina_list_last(items)), ELM_CURSOR_HAND2);
+                  elm_object_item_cursor_set(eina_list_data_get(eina_list_last(items)), ELM_CURSOR_HAND2);
                 }
            }
          break;
@@ -171,7 +171,7 @@ Scroll to end
               const Eina_List *items = elm_list_items_get(li);
               if(eina_list_count(items))
                 {
-                  elm_list_item_cursor_style_set(eina_list_data_get(eina_list_last(items)), "transparent");
+                  elm_object_item_cursor_style_set(eina_list_data_get(eina_list_last(items)), "transparent");
                 }
            }
          break;
@@ -181,7 +181,7 @@ Scroll to end
               const Eina_List *items = elm_list_items_get(li);
               if(eina_list_count(items))
                 {
-                  elm_list_item_disabled_set(eina_list_data_get(eina_list_last(items)), EINA_TRUE);
+                  elm_object_item_disabled_set(eina_list_data_get(eina_list_last(items)), EINA_TRUE);
                 }
            }
          break;

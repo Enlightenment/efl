@@ -34,7 +34,7 @@ set_api_state(api_data *api)
    switch(api->state)
      { /* Put all api-changes under switch */
       case ICON_UNSET:
-         elm_fileselector_button_icon_unset(fs_bt);
+         elm_object_part_content_unset(fs_bt, NULL);
          break;
 
       case WINDOW_TITLE_SET:

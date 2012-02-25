@@ -100,7 +100,7 @@ static void
 my_ph_scroll(void *data __UNUSED__, Evas_Object *obj, void *event_info __UNUSED__)
 {
    int x, y, w, h;
-   elm_photocam_region_get(obj, &x, &y, &w, &h);
+   elm_photocam_image_region_get(obj, &x, &y, &w, &h);
    printf("scroll %i %i %ix%i\n", x, y, w, h);
 }
 

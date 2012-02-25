@@ -63,23 +63,23 @@ set_api_state(api_data *api)
          break;
 
       case ITEM_LABEL_SET: /* 3 */
-         elm_diskselector_item_label_set(elm_diskselector_selected_item_get(eina_list_nth(disks, 0)), "Label from API");
+         elm_object_item_text_set(elm_diskselector_selected_item_get(eina_list_nth(disks, 0)), "Label from API");
          break;
 
       case TOOLTIP_TEXT_SET: /* 4 */
-         elm_diskselector_item_tooltip_text_set(elm_diskselector_selected_item_get(eina_list_nth(disks, 0)), "Tooltip from API");
+         elm_object_item_tooltip_text_set(elm_diskselector_selected_item_get(eina_list_nth(disks, 0)), "Tooltip from API");
          break;
 
       case ITEM_TOOLTIP_UNSET: /* 5 */
-         elm_diskselector_item_tooltip_unset(elm_diskselector_selected_item_get(eina_list_nth(disks, 0)));
+         elm_object_item_tooltip_unset(elm_diskselector_selected_item_get(eina_list_nth(disks, 0)));
          break;
 
       case ITEM_CURSOR_SET: /* 6 */
-         elm_diskselector_item_cursor_set(elm_diskselector_selected_item_get(eina_list_nth(disks, 0)), ELM_CURSOR_HAND2);
+         elm_object_item_cursor_set(elm_diskselector_selected_item_get(eina_list_nth(disks, 0)), ELM_CURSOR_HAND2);
          break;
 
       case ITEM_CURSOR_UNSET: /* 7 */
-         elm_diskselector_item_cursor_unset(elm_diskselector_selected_item_get(eina_list_nth(disks, 0)));
+         elm_object_item_cursor_unset(elm_diskselector_selected_item_get(eina_list_nth(disks, 0)));
          break;
 
       case ITEM_ICON_SET: /* 8 */
@@ -88,7 +88,7 @@ set_api_state(api_data *api)
               Evas_Object *ic = elm_icon_add(elm_object_parent_widget_get(eina_list_nth(disks, 0)));
               snprintf(buf, sizeof(buf), "%s/images/logo_small.png", elm_app_data_dir_get());
               elm_icon_file_set(ic, buf, NULL);
-              elm_diskselector_item_icon_set(elm_diskselector_selected_item_get(eina_list_nth(disks, 0)), ic);
+              elm_object_item_part_content_set(elm_diskselector_selected_item_get(eina_list_nth(disks, 0)), NULL, ic);
               evas_object_show(ic);
            }
          break;
@@ -108,13 +108,13 @@ set_api_state(api_data *api)
 
       case ITEM_DEL_NOT_SELECTED: /* 11 */
            {  /* Remove selected item of third disk */
-              elm_diskselector_item_del(elm_diskselector_item_prev_get(elm_diskselector_selected_item_get(eina_list_nth(disks, 2))));
+              elm_object_item_del(elm_diskselector_item_prev_get(elm_diskselector_selected_item_get(eina_list_nth(disks, 2))));
            }
          break;
 
       case ITEM_DEL: /* 12 */
            {  /* Remove selected item of first disk */
-              elm_diskselector_item_del(elm_diskselector_selected_item_get(eina_list_nth(disks, 1)));
+              elm_object_item_del(elm_diskselector_selected_item_get(eina_list_nth(disks, 1)));
            }
          break;
 
