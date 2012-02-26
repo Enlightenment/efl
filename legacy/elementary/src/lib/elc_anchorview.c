@@ -248,18 +248,6 @@ elm_anchorview_add(Evas_Object *parent)
 }
 
 EAPI void
-elm_anchorview_text_set(Evas_Object *obj, const char *text)
-{
-   _elm_anchorview_text_set(obj, NULL, text);
-}
-
-EAPI const char*
-elm_anchorview_text_get(const Evas_Object *obj)
-{
-   return _elm_anchorview_text_get(obj, NULL);
-}
-
-EAPI void
 elm_anchorview_hover_parent_set(Evas_Object *obj, Evas_Object *parent)
 {
    ELM_CHECK_WIDTYPE(obj, widtype);

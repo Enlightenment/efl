@@ -1,17 +1,4 @@
 /**
- * Get the widget object's handle which contains a given item
- *
- * @param it The Elementary object item
- * @return The widget object
- *
- * @note This returns the widget object itself that an item belongs to.
- * @note Every elm_object_item supports this API
- * @deprecated Use elm_object_item_widget_get() instead
- * @ingroup General
- */
-EINA_DEPRECATED EAPI Evas_Object                 *elm_object_item_object_get(const Elm_Object_Item *it);
-
-/**
  * @defgroup Toggle Toggle
  *
  * @image html img/widget/toggle/preview-00.png
@@ -237,66 +224,6 @@ EINA_DEPRECATED EAPI void         elm_scrolled_entry_autosave_set(Evas_Object *o
 EINA_DEPRECATED EAPI Eina_Bool    elm_scrolled_entry_autosave_get(const Evas_Object *obj);
 EINA_DEPRECATED EAPI void         elm_scrolled_entry_cnp_textonly_set(Evas_Object *obj, Eina_Bool textonly);
 EINA_DEPRECATED EAPI Eina_Bool    elm_scrolled_entry_cnp_textonly_get(Evas_Object *obj);
-
-/**
- * Set the text to show in the anchorblock
- *
- * Sets the text of the anchorblock to @p text. This text can include markup
- * format tags, including <c>\<a href=anchorname\></a></c> to begin a segment
- * of text that will be specially styled and react to click events, ended
- * with either of \</a\> or \</\>. When clicked, the anchor will emit an
- * "anchor,clicked" signal that you can attach a callback to with
- * evas_object_smart_callback_add(). The name of the anchor given in the
- * event info struct will be the one set in the href attribute, in this
- * case, anchorname.
- *
- * Other markup can be used to style the text in different ways, but it's
- * up to the style defined in the theme which tags do what.
- * @deprecated use elm_object_text_set() instead.
- */
-EINA_DEPRECATED EAPI void        elm_anchorblock_text_set(Evas_Object *obj, const char *text);
-
-/**
- * Get the markup text set for the anchorblock
- *
- * Retrieves the text set on the anchorblock, with markup tags included.
- *
- * @param obj The anchorblock object
- * @return The markup text set or @c NULL if nothing was set or an error
- * occurred
- * @deprecated use elm_object_text_set() instead.
- */
-EINA_DEPRECATED EAPI const char *elm_anchorblock_text_get(const Evas_Object *obj);
-
-/**
- * Set the text to show in the anchorview
- *
- * Sets the text of the anchorview to @p text. This text can include markup
- * format tags, including <c>\<a href=anchorname\></c> to begin a segment of
- * text that will be specially styled and react to click events, ended with
- * either of \</a\> or \</\>. When clicked, the anchor will emit an
- * "anchor,clicked" signal that you can attach a callback to with
- * evas_object_smart_callback_add(). The name of the anchor given in the
- * event info struct will be the one set in the href attribute, in this
- * case, anchorname.
- *
- * Other markup can be used to style the text in different ways, but it's
- * up to the style defined in the theme which tags do what.
- * @deprecated use elm_object_text_set() instead.
- */
-EINA_DEPRECATED EAPI void        elm_anchorview_text_set(Evas_Object *obj, const char *text);
-
-/**
- * Get the markup text set for the anchorview
- *
- * Retrieves the text set on the anchorview, with markup tags included.
- *
- * @param obj The anchorview object
- * @return The markup text set or @c NULL if nothing was set or an error
- * occurred
- * @deprecated use elm_object_text_set() instead.
- */
-EINA_DEPRECATED EAPI const char *elm_anchorview_text_get(const Evas_Object *obj);
 
 /**
  * @brief Get the ctxpopup item's disabled/enabled state.

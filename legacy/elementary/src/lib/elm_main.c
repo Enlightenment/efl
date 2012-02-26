@@ -2048,12 +2048,6 @@ elm_object_item_tooltip_style_get(const Elm_Object_Item *it)
    return elm_widget_item_tooltip_style_get(it);
 }
 
-EINA_DEPRECATED EAPI Evas_Object *
-elm_object_item_object_get(const Elm_Object_Item *it)
-{
-   return elm_object_item_widget_get(it);
-}
-
 EAPI void
 elm_object_item_cursor_set(Elm_Object_Item *it, const char *cursor)
 {
