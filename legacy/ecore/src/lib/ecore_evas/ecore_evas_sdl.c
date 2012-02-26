@@ -7,9 +7,6 @@
 #include <Ecore_Input_Evas.h>
 #if defined(BUILD_ECORE_EVAS_SOFTWARE_SDL) || defined(BUILD_ECORE_EVAS_OPENGL_SDL)
 # include <Ecore_Sdl.h>
-# ifdef BUILD_ECORE_EVAS_SOFTWARE_SDL
-#  include <Evas_Engine_SDL.h>
-# endif
 # ifdef BUILD_ECORE_EVAS_OPENGL_SDL
 #  include <Evas_Engine_GL_SDL.h>
 # endif
