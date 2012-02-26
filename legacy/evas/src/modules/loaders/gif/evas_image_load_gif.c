@@ -483,10 +483,17 @@ _evas_image_load_frame_image_data(Image_Entry *ie, GifFileType *gif, Image_Entry
                          }
                        else
                          {
-                            r = cmap->Colors[rows[i1][j1]].Red;
-                            g = cmap->Colors[rows[i1][j1]].Green;
-                            b = cmap->Colors[rows[i1][j1]].Blue;
-                            *ptr++ = ARGB_JOIN(0xff, r, g, b);
+                            if (rows[i1][j1] == alpha)
+                              {
+                                 ptr++ ;
+                              }
+                            else
+                              {
+                                 r = cmap->Colors[rows[i1][j1]].Red;
+                                 g = cmap->Colors[rows[i1][j1]].Green;
+                                 b = cmap->Colors[rows[i1][j1]].Blue;
+                                 *ptr++ = ARGB_JOIN(0xff, r, g, b);
+                              }
                          }
                     }
                }
