@@ -1372,30 +1372,6 @@ elm_ctxpopup_add(Evas_Object *parent)
    return obj;
 }
 
-EAPI Evas_Object *
-elm_ctxpopup_item_icon_get(const Elm_Object_Item *it)
-{
-   return _item_content_get_hook(it, "icon");
-}
-
-EAPI void
-elm_ctxpopup_item_icon_set(Elm_Object_Item *it, Evas_Object *icon)
-{
-   _item_content_set_hook(it, "icon", icon);
-}
-
-EAPI const char *
-elm_ctxpopup_item_label_get(const Elm_Object_Item *it)
-{
-   return _item_text_get_hook(it, NULL);
-}
-
-EAPI void
-elm_ctxpopup_item_label_set(Elm_Object_Item *it, const char *label)
-{
-   _item_text_set_hook(it, NULL, label);
-}
-
 EAPI void
 elm_ctxpopup_hover_parent_set(Evas_Object *obj, Evas_Object *parent)
 {
@@ -1562,36 +1538,6 @@ elm_ctxpopup_item_append(Evas_Object *obj, const char *label,
      }
 
    return (Elm_Object_Item *) item;
-}
-
-EAPI void
-elm_ctxpopup_item_del(Elm_Object_Item *it)
-{
-   elm_object_item_del(it);
-}
-
-EAPI void
-elm_ctxpopup_item_disabled_set(Elm_Object_Item *it, Eina_Bool disabled)
-{
-   elm_object_item_disabled_set(it, disabled);
-}
-
-EAPI Eina_Bool
-elm_ctxpopup_item_disabled_get(const Elm_Object_Item *it)
-{
-   return elm_object_item_disabled_get(it);
-}
-
-EAPI void
-elm_ctxpopup_content_set(Evas_Object *obj, Evas_Object *content)
-{
-   elm_object_content_set(obj, content);
-}
-
-EAPI Evas_Object *
-elm_ctxpopup_content_unset(Evas_Object *obj)
-{
-   return elm_object_content_unset(obj);
 }
 
 EAPI void

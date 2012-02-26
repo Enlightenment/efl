@@ -138,7 +138,7 @@ EAPI Eina_Bool                    elm_ctxpopup_horizontal_get(const Evas_Object 
  * @warning Ctxpopup can't hold both an item list and a content at the same
  * time. When an item is added, any previous content will be removed.
  *
- * @see elm_ctxpopup_content_set()
+ * @see elm_object_content_set()
  *
  * @ingroup Ctxpopup
  */
