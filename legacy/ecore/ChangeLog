@@ -524,3 +524,7 @@
 
 	* Add indicator controls to ecore_x
 
+2012-02-26 Carsten Haitzler (The Rasterman)
+
+        * Fix ecore_file_download to not limit downloads to 30sec.
+
