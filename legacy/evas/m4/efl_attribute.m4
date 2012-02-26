@@ -67,7 +67,7 @@ AC_COMPILE_IFELSE(
    [AC_LANG_PROGRAM(
        [[
 #include <windows.h>
-__forceinline void foo(void) {}
+static __forceinline void foo(void) {}
        ]],
        [[
        ]])],
@@ -84,7 +84,7 @@ if test "x${have_attribute_always_inline}" = "xno" ; then
    AC_COMPILE_IFELSE(
       [AC_LANG_PROGRAM(
           [[
-__attribute__((__always_inline__)) inline void foo(void) {}
+static __attribute__((__always_inline__)) inline void foo(void) {}
           ]],
           [[
           ]])],
