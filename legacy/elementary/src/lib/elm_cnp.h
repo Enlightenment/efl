@@ -23,7 +23,7 @@ typedef enum
    ELM_SEL_TYPE_PRIMARY, /**< Primary text selection (middle mouse) */
    ELM_SEL_TYPE_SECONDARY, /**< Used when primary selection is in use */
    ELM_SEL_TYPE_XDND, /**< Drag 'n' Drop */
-   ELM_SEL_TYPE_CLIPBOARD, /**< Clipboard selection (ctrl+C)
+   ELM_SEL_TYPE_CLIPBOARD, /**< Clipboard selection (ctrl+C) */
 } Elm_Sel_Type;
 
 /**
