@@ -214,10 +214,12 @@ _theme_hook(Evas_Object *obj)
                          "base",
                          elm_widget_style_get(obj));
 
+   printf("=======\n");
    EINA_INLIST_FOREACH(wd->stack, it)
-     _item_style_set(it, it->style);
-   if (it)
-     _item_title_visible_update(it);
+     {
+        _item_style_set(it, it->style);
+        _item_title_visible_update(it);
+     }
 }
 
 static void _emit_hook(Evas_Object *obj,
@@ -379,6 +381,7 @@ _item_signal_emit_hook(Elm_Object_Item *it,
 static void
 _item_title_visible_update(Elm_Naviframe_Item *navi_it)
 {
+   printf("%p: vis: %i\n", navi_it, navi_it->title_visible);
    if (navi_it->title_visible)
      elm_object_signal_emit(VIEW(navi_it), "elm,state,title,show", "elm");
    else
@@ -988,7 +991,8 @@ _item_style_set(Elm_Naviframe_Item *navi_it, const char *item_style)
    if (navi_it->title_next_btn)
      elm_object_signal_emit(VIEW(navi_it), "elm,state,next_btn,show", "elm");
 
-   navi_it->title_visible = EINA_TRUE;
+// why does this forcibly enable title? isnt that separate to style?   
+//   navi_it->title_visible = EINA_TRUE;
    _sizing_eval(WIDGET(navi_it));
 
    if (wd->freeze_events)
