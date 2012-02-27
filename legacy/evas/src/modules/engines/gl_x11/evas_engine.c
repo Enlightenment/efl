@@ -3554,9 +3554,6 @@ compute_gl_coordinates(Evas_Object *obj, int rot, int clip,
                        int x, int y, int width, int height, 
                        int imgc[4], int objc[4])
 {
-   int nx1, ny1, nx2, ny2;
-   int ox1, oy1, ox2, oy2;
-
    if (rot == 0)
      {
         // oringinal image object coordinate in gl coordinate
