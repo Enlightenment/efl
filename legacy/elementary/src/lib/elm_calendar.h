@@ -1,4 +1,20 @@
 /**
+ * @defgroup Calendar Calendar
+ *
+ * This is a Calendar widget.
+ * XXX: add more documentation.
+ *
+ * Signals that you can add callbacks for are:
+ * - @c "changed" - XXX: add docs
+ *
+ * Supported elm_object common APIs.
+ * @li elm_object_signal_emit
+ * @li elm_object_signal_callback_add
+ * @li elm_object_signal_callback_del
+ *
+ */
+
+/**
  * @addtogroup Calendar
  * @{
  */
@@ -16,11 +32,6 @@
  *
  * Values don't work as bitmask, only one can be chosen.
  *
- * Supported elm_object common APIs.
- * @li elm_object_signal_emit
- * @li elm_object_signal_callback_add
- * @li elm_object_signal_callback_del
- *
  * @see elm_calendar_mark_add()
  *
  * @ingroup Calendar
@@ -33,6 +44,7 @@ typedef enum
    ELM_CALENDAR_MONTHLY, /**< Marks will be displayed every month day that coincides to event day. E.g.: if an event is set to 30th Jan, no marks will be displayed on Feb, but will be displayed on 30th Mar*/
    ELM_CALENDAR_ANNUALLY /**< Marks will be displayed every year that coincides to event day (and month). E.g. an event added to 30th Jan 2012 will be repeated on 30th Jan 2013. */
 } Elm_Calendar_Mark_Repeat;
+// XXX: Elm_Calendar_Mark_Repeat_Type
 
 typedef struct _Elm_Calendar_Mark Elm_Calendar_Mark;    /**< Item handle for a calendar mark. Created with elm_calendar_mark_add() and deleted with elm_calendar_mark_del(). */
 
@@ -159,6 +171,8 @@ EAPI void                 elm_calendar_min_max_year_get(const Evas_Object *obj, 
  *
  * @ingroup Calendar
  */
+// XXX: use disabled_set. it's enabled by default.
+//      EAPI void                 elm_calendar_day_selection_disabled_set(Evas_Object *obj, Eina_Bool disabled);
 EAPI void                 elm_calendar_day_selection_enabled_set(Evas_Object *obj, Eina_Bool enabled);
 
 /**
@@ -174,6 +188,8 @@ EAPI void                 elm_calendar_day_selection_enabled_set(Evas_Object *ob
  *
  * @ingroup Calendar
  */
+// XXX: use disabled_get. it's enabled by default.
+// EAPI Eina_Bool            elm_calendar_day_selection_disabled_get(const Evas_Object *obj);
 EAPI Eina_Bool            elm_calendar_day_selection_enabled_get(const Evas_Object *obj);
 
 /**
