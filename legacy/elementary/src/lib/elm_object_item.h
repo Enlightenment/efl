@@ -457,7 +457,8 @@ EAPI Eina_Bool                    elm_object_item_cursor_engine_only_get(const E
  *
  * @ingroup General
  */
-EAPI void                         elm_object_item_smart_callback_add(Elm_Object_Item *it, const char *event, Elm_Object_Item_Smart_Cb func, const void *data);
+//Dont use this APIs
+//EAPI void                         elm_object_item_smart_callback_add(Elm_Object_Item *it, const char *event, Elm_Object_Item_Smart_Cb func, const void *data);
 
 /**
  * Delete (unregister) a callback function from the smart event specified by @p
@@ -479,4 +480,5 @@ EAPI void                         elm_object_item_smart_callback_add(Elm_Object_
  *
  * @ingroup General
  */
-EAPI void                        *elm_object_item_smart_callback_del(Elm_Object_Item *it, const char *event, Elm_Object_Item_Smart_Cb func);
+//Dont use this APIs
+//EAPI void                        *elm_object_item_smart_callback_del(Elm_Object_Item *it, const char *event, Elm_Object_Item_Smart_Cb func);
