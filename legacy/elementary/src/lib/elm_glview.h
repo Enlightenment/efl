@@ -50,19 +50,19 @@ EAPI Evas_Object *elm_glview_add(Evas_Object *parent);
  * Sets the size of the glview
  *
  * @param obj The glview object
- * @param width width of the glview object
- * @param height height of the glview object
+ * @param w width of the glview object
+ * @param h height of the glview object
  *
  * @ingroup GLView
  */
-EAPI void         elm_glview_size_set(Evas_Object *obj, Evas_Coord width, Evas_Coord height);
+EAPI void         elm_glview_size_set(Evas_Object *obj, Evas_Coord w, Evas_Coord h);
 
 /**
  * Gets the size of the glview.
  *
  * @param obj The glview object
- * @param width width of the glview object
- * @param height height of the glview object
+ * @param w width of the glview object
+ * @param h height of the glview object
  *
  * Note that this function returns the actual image size of the
  * glview.  This means that when the scale policy is set to
@@ -71,7 +71,7 @@ EAPI void         elm_glview_size_set(Evas_Object *obj, Evas_Coord width, Evas_C
  *
  * @ingroup GLView
  */
-EAPI void         elm_glview_size_get(const Evas_Object *obj, Evas_Coord *width, Evas_Coord *height);
+EAPI void         elm_glview_size_get(const Evas_Object *obj, Evas_Coord *w, Evas_Coord *h);
 
 /**
  * Gets the gl api struct for gl rendering
@@ -84,7 +84,7 @@ EAPI void         elm_glview_size_get(const Evas_Object *obj, Evas_Coord *width,
 EAPI Evas_GL_API *elm_glview_gl_api_get(const Evas_Object *obj);
 
 /**
- * Set the mode of the GLView. Supports Three simple modes.
+ * Set the mode of the GLView. Supports alpha, depth, dencil, direct.
  *
  * @param obj The glview object
  * @param mode The mode Options OR'ed enabling Alpha, Depth, Stencil.
@@ -138,6 +138,7 @@ EAPI Eina_Bool    elm_glview_render_policy_set(Evas_Object *obj, Elm_GLView_Rend
  *
  * @ingroup GLView
  */
+//XXX: need more description why this API is provided. i.e) You can set the gl rendering options when this init function is called...
 EAPI void         elm_glview_init_func_set(Evas_Object *obj, Elm_GLView_Func_Cb func);
 
 /**
@@ -150,6 +151,7 @@ EAPI void         elm_glview_init_func_set(Evas_Object *obj, Elm_GLView_Func_Cb 
  *
  * @ingroup GLView
  */
+//XXX: is it problem if it uses evas_object_event_callback_add(.. , EVAS_CALLBACK_DEL, )
 EAPI void         elm_glview_del_func_set(Evas_Object *obj, Elm_GLView_Func_Cb func);
 
 /**
@@ -160,6 +162,7 @@ EAPI void         elm_glview_del_func_set(Evas_Object *obj, Elm_GLView_Func_Cb f
  *
  * @ingroup GLView
  */
+//XXX: is it problem if it uses evas_object_event_callback_add(.. , EVAS_CALLBACK_RESIZE, )
 EAPI void         elm_glview_resize_func_set(Evas_Object *obj, Elm_GLView_Func_Cb func);
 
 /**
