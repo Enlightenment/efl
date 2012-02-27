@@ -214,7 +214,6 @@ _theme_hook(Evas_Object *obj)
                          "base",
                          elm_widget_style_get(obj));
 
-   printf("=======\n");
    EINA_INLIST_FOREACH(wd->stack, it)
      {
         _item_style_set(it, it->style);
@@ -381,7 +380,6 @@ _item_signal_emit_hook(Elm_Object_Item *it,
 static void
 _item_title_visible_update(Elm_Naviframe_Item *navi_it)
 {
-   printf("%p: vis: %i\n", navi_it, navi_it->title_visible);
    if (navi_it->title_visible)
      elm_object_signal_emit(VIEW(navi_it), "elm,state,title,show", "elm");
    else
