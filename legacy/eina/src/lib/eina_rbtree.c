@@ -1,5 +1,6 @@
 /* EINA - EFL data type library
  * Copyright (C) 2008 Cedric Bail
+ * Copyright (C) 2011 Alexandre Becoulet
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -23,6 +24,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
+#include <stdint.h>
 
 #include "eina_config.h"
 #include "eina_private.h"
@@ -244,9 +246,9 @@ static inline Eina_Rbtree *
 _eina_rbtree_inline_single_rotation(Eina_Rbtree *node,
                                     Eina_Rbtree_Direction dir)
 {
-   Eina_Rbtree *save = node->son[!dir];
+   Eina_Rbtree *save = node->son[dir ^ 1];
 
-   node->son[!dir] = save->son[dir];
+   node->son[dir ^ 1] = save->son[dir];
    save->son[dir] = node;
 
    node->color = EINA_RBTREE_RED;
@@ -259,7 +261,7 @@ static inline Eina_Rbtree *
 _eina_rbtree_inline_double_rotation(Eina_Rbtree *node,
                                     Eina_Rbtree_Direction dir)
 {
-   node->son[!dir] = _eina_rbtree_inline_single_rotation(node->son[!dir], !dir);
+   node->son[dir ^ 1] = _eina_rbtree_inline_single_rotation(node->son[dir ^ 1], dir ^ 1);
    return _eina_rbtree_inline_single_rotation(node, dir);
 }
 
@@ -277,87 +279,64 @@ eina_rbtree_inline_insert(Eina_Rbtree *root,
                           Eina_Rbtree_Cmp_Node_Cb cmp,
                           const void *data)
 {
-   Eina_Rbtree head;
-   Eina_Rbtree *g, *t; /* Grandparent & parent */
-   Eina_Rbtree *p, *q; /* Iterator & parent */
-   /* WARNING:
-      Compiler is not able to understand the underlying algorithm and don't know that
-      first top node is always black, so it will never use last before running the loop
-      one time.
-    */
-   Eina_Rbtree_Direction dir, last;
+   Eina_Rbtree **r = &root;
+   Eina_Rbtree *q = root;
+   uintptr_t stack[48];
+   unsigned int s = 0;
 
    EINA_SAFETY_ON_NULL_RETURN_VAL(node, root);
    EINA_SAFETY_ON_NULL_RETURN_VAL( cmp, root);
 
-   if (!node)
-      return root;
+   /* Find insertion leaf */
+   while (q != NULL)
+      {
+	 Eina_Rbtree_Direction dir = cmp(q, node, (void *)data);
 
+	 /* Keep path in stack */
+	 stack[s++] = (uintptr_t)r | dir;
+
+	 r = q->son + dir;
+	 q = *r;
+      }
+
+   /* Insert */
+   *r = node;
    _eina_rbtree_node_init(node);
 
-   if (!root)
-     {
-        root = node;
-        goto end_add;
-     }
+   /* Rebalance */
+   while (s > 0)
+      {
+	 Eina_Rbtree *a, *b;
+	 uintptr_t top = stack[--s]; 	 /* Pop link pointer and direction */
+	 Eina_Rbtree_Direction dir = top & 1;
 
-   memset(&head, 0, sizeof (Eina_Rbtree));
-   last = dir = EINA_RBTREE_LEFT;
+	 r = (Eina_Rbtree **)(top & ~1ULL);
+	 q = *r;
 
-   /* Set up helpers */
-   t = &head;
-   g = p = NULL;
-   q = t->son[1] = root;
+	 a = q->son[dir];
+	 /* Rebalance done ? */
+	 if (a == NULL || a->color == EINA_RBTREE_BLACK)
+	    break;
 
-   /* Search down the tree */
-   for (;; )
-     {
-        if (!q)
-           /* Insert new node at the bottom */
-           p->son[dir] = q = node;
-        else if (_eina_rbtree_is_red(q->son[0])
-                 && _eina_rbtree_is_red(q->son[1]))
-          {
-             /* Color flip */
-             q->color = EINA_RBTREE_RED;
-             q->son[0]->color = EINA_RBTREE_BLACK;
-             q->son[1]->color = EINA_RBTREE_BLACK;
-          }
+	 b = q->son[dir ^ 1];
+	 if (b != NULL && b->color == EINA_RBTREE_RED)
+	    {
+	       q->color = EINA_RBTREE_RED;
+	       b->color = a->color = EINA_RBTREE_BLACK;
+	    }
+	 else
+	    {
+	       Eina_Rbtree *c = a->son[dir];
+	       Eina_Rbtree *d = a->son[dir ^ 1];
 
-        /* Fix red violation */
-        if (_eina_rbtree_is_red(q) && _eina_rbtree_is_red(p))
-          {
-             Eina_Rbtree_Direction dir2;
+	       if (c != NULL && c->color == EINA_RBTREE_RED)
+	 	  *r = _eina_rbtree_inline_single_rotation(*r, dir ^ 1);
+	       else if (d != NULL && d->color == EINA_RBTREE_RED)
+	 	  *r = _eina_rbtree_inline_double_rotation(*r, dir ^ 1);
+	    }
+      }
 
-             dir2 = (t->son[1] == g) ? EINA_RBTREE_RIGHT : EINA_RBTREE_LEFT;
-
-             if (q == p->son[last])
-                t->son[dir2] = _eina_rbtree_inline_single_rotation(g, !last);
-             else
-                t->son[dir2] = _eina_rbtree_inline_double_rotation(g, !last);
-          }
-
-        /* Stop if found */
-        if (q == node)
-           break;
-
-        last = dir;
-        dir = cmp(q, node, (void *)data);
-
-        /* Update helpers */
-        if ( g )
-           t = g;
-
-        g = p, p = q;
-        q = q->son[dir];
-     }
-
-   root = head.son[1];
-
-end_add:
-   /* Make root black */
    root->color = EINA_RBTREE_BLACK;
-
    return root;
 }
 
@@ -367,122 +346,144 @@ eina_rbtree_inline_remove(Eina_Rbtree *root,
                           Eina_Rbtree_Cmp_Node_Cb cmp,
                           const void *data)
 {
-   Eina_Rbtree head;
-   Eina_Rbtree *q, *p;
-   Eina_Rbtree *f = NULL;
+   Eina_Rbtree *l0, *l1, *r, **rt = &root;
    Eina_Rbtree_Direction dir;
+   uintptr_t stack[48];
+   unsigned int s = 0;
 
    EINA_SAFETY_ON_NULL_RETURN_VAL(node, root);
    EINA_SAFETY_ON_NULL_RETURN_VAL( cmp, root);
 
-   if (!root || !node)
-      return root;
+   /* Item search loop */
+   for (r = *rt; r != NULL; r = *rt)
+      {
+	 if (r == node)
+	    goto found;
 
-   memset(&head, 0, sizeof(Eina_Rbtree));
+	 dir = cmp(r, node, (void*)data);
+	 stack[s++] = (uintptr_t)rt | dir;
+	 rt = r->son + dir;
+      }
+   return root;
 
-   dir = EINA_RBTREE_RIGHT;
-   q = &head;
-   p = NULL;
-   q->son[EINA_RBTREE_RIGHT] = root;
+ found:
+   /* remove entry */
+   l0 = node->son[0];
+   l1 = node->son[1];
 
-   /* Search and push a red down */
-   while (q->son[dir])
-     {
-        Eina_Rbtree_Direction last = dir;
-        Eina_Rbtree *g;
+   if (l0 != NULL && l1 != NULL)      /* two links case */
+      {
+	 Eina_Rbtree *q, **t, **p;
+	 uintptr_t ss;
 
-        /* Update helpers */
-        g = p; p = q;
-        q = q->son[dir];
-        dir = cmp(q, node, (void *)data);
+	 stack[s++] = (uintptr_t)rt | 1;
+	 ss = s;	 /* keep predecessor right link stack index */
 
-        /* Save parent node found */
-        if (q == node)
-           f = p;
+	 /* find predecessor */
+	 p = node->son + 1;
+	 q = *p;
 
-        /* Push the red node down */
-        if (!_eina_rbtree_is_red(q)
-            && !_eina_rbtree_is_red(q->son[dir]))
-          {
-             if (_eina_rbtree_is_red(q->son[!dir]))
-                q = p->son[last] = _eina_rbtree_inline_single_rotation(q, dir);
-             else if (!_eina_rbtree_is_red(q->son[!dir]))
-               {
-                  Eina_Rbtree *s = p->son[!last];
+	 while (1)
+	    {
+	       t = q->son;
+	       q = *t;
+	       if (q == NULL)
+		  break;
+	       stack[s++] = (uintptr_t)p | 0;
+	       p = t;
+	    }
 
-                  if (s)
-                    {
-                       if (!_eina_rbtree_is_red(s->son[EINA_RBTREE_LEFT])
-                           && !_eina_rbtree_is_red(s->son[EINA_RBTREE_RIGHT]))
-                         {
-/* Color flip */
-                            p->color = EINA_RBTREE_BLACK;
-                            p->son[EINA_RBTREE_LEFT]->color = EINA_RBTREE_RED;
-                            p->son[EINA_RBTREE_RIGHT]->color = EINA_RBTREE_RED;
-                         }
-                       else
-                         {
-                            Eina_Rbtree_Direction dir2;
+	 /* detach predecessor */
+	 q = *p;
+	 *p = q->son[1];
 
-                            dir2 = g->son[1] ==
-                               p ? EINA_RBTREE_RIGHT : EINA_RBTREE_LEFT;
+	 int c = q->color;
 
-                            if (_eina_rbtree_is_red(s->son[last]))
-                              {
-                                 g->son[dir2] =
-                                    _eina_rbtree_inline_double_rotation(p, last);
-                                 if (f == g)
-                                   {
-                                      p = g->son[dir2]->son[last];
-                                      f = g->son[dir2];
-                                   }
-                              }
-                            else if (_eina_rbtree_is_red(s->son[!last]))
-                              {
-                                 g->son[dir2] =
-                                    _eina_rbtree_inline_single_rotation(p, last);
-                                 if (f == g)
-                                   {
-                                      p = g->son[dir2]->son[last];
-                                      f = g->son[dir2];
-                                   }
-                              }
+	 /* replace entry by predecessor */
+	 memcpy(q, node, sizeof(Eina_Rbtree));
+	 *rt = q;
 
-/* Ensure correct coloring */
-                            q->color = g->son[dir2]->color = EINA_RBTREE_RED;
-                            g->son[dir2]->son[EINA_RBTREE_LEFT]->color =
-                               EINA_RBTREE_BLACK;
-                            g->son[dir2]->son[EINA_RBTREE_RIGHT]->color =
-                               EINA_RBTREE_BLACK;
-                         }
-                    }
-               }
-          }
-     }
+	 if (c == EINA_RBTREE_RED)
+	    goto end;
 
-   /* Replace and remove if found */
-   if (f)
-     {
-        /* 'q' should take the place of 'node' parent */
-        f->son[f->son[1] == node] = q;
+	 /* fix stack for replaced entry */
+	 if (s > ss)
+	    stack[ss] = (uintptr_t)(q->son + 1) | 0;
+      }
+   else 	 /* single link case */
+      {
+	 if (l0 == NULL)
+	    l0 = l1;
 
-        /* Switch the link from the parent to q's son */
-        p->son[p->son[1] == q] = q->son[!q->son[0]];
+	 *rt = l0;
 
-        /* Put q at the place of node */
-        q->son[0] = node->son[0];
-        q->son[1] = node->son[1];
-        q->color = node->color;
+	 if (node->color == EINA_RBTREE_RED)
+	    goto end; /* removed red */
 
-        /* Reset node link */
-        node->son[0] = NULL;
-        node->son[1] = NULL;
-     }
+	 if (l0 != NULL && l0->color == EINA_RBTREE_RED)
+	    {
+	       /* red child replace removed black */
+	       l0->color = EINA_RBTREE_BLACK;
+	       goto end;
+	    }
+      }
 
-   root = head.son[1];
-   if (root)
+   /* rebalance */
+   while (s > 0)
+      {
+	 Eina_Rbtree *q;
+	 uintptr_t st = stack[--s];
+
+	 rt = (Eina_Rbtree**)(st & ~1ULL);
+	 dir = st & 1;
+	 r = *rt;
+	 q = r->son[dir ^ 1];
+
+	 if (q != NULL && q->color == EINA_RBTREE_RED)
+	    {
+	       *rt = _eina_rbtree_inline_single_rotation(*rt, dir);
+	       q = r->son[dir ^ 1];
+	       rt = (*rt)->son + dir;
+	    }
+
+	 if (q != NULL) 
+	    {
+	       int r_color = r->color;
+	       Eina_Rbtree *nd = q->son[dir ^ 1];
+
+	       if (nd != NULL && nd->color == EINA_RBTREE_RED)
+		  {
+		     *rt = _eina_rbtree_inline_single_rotation(*rt, dir);
+		  }
+	       else
+		  {
+		     Eina_Rbtree *d = q->son[dir];
+
+		     if (d != NULL && d->color == EINA_RBTREE_RED)
+			{
+			   *rt = _eina_rbtree_inline_double_rotation(*rt, dir);
+			}
+		     else
+			{
+			   r->color = EINA_RBTREE_BLACK;
+			   q->color = EINA_RBTREE_RED;
+			   if (r_color == EINA_RBTREE_RED)
+			      break;
+			   continue;
+			}
+		  }
+
+	       r = *rt;
+	       r->color = r_color;
+	       r->son[1]->color = r->son[0]->color = EINA_RBTREE_BLACK;
+
+	       break;
+	    }
+      }
+
+ end:
+   if (root != NULL)
       root->color = EINA_RBTREE_BLACK;
-
    return root;
 }
 

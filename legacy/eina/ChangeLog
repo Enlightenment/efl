@@ -225,3 +225,7 @@
 2012-02-22  Cedric Bail
 
 	* Add eina_file_stat.
+
+2012-02-27  Alexandre Becoulet
+
+	* Add faster implementation of Eina_Rbtree.
