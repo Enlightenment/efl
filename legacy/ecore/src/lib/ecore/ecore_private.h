@@ -237,7 +237,7 @@ _ecore_lock(void)
    EINA_MAIN_LOOP_CHECK_RETURN;
 #endif
    _ecore_main_lock_count++;
-   assert(_ecore_main_lock_count == 1);
+   /* assert(_ecore_main_lock_count == 1); */
 }
 
 static inline void
