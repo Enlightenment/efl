@@ -68,5 +68,5 @@ elm_toolbar.c \
 elm_video.c \
 elm_web.c
 
-module_la_LIBADD = $(top_builddir)/src/lib/libelementary.la
+module_la_LIBADD = @ELEMENTARY_LIBS@ $(top_builddir)/src/lib/libelementary.la
 module_la_LDFLAGS = -no-undefined -module -avoid-version -shared -fPIC

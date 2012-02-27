@@ -28,6 +28,6 @@ pkg_LTLIBRARIES = module.la
 
 module_la_SOURCES = mod.c
 
-module_la_LIBADD = $(top_builddir)/src/lib/libelementary.la
+module_la_LIBADD = @ELEMENTARY_LIBS@ $(top_builddir)/src/lib/libelementary.la
 module_la_LDFLAGS = -no-undefined @lt_enable_auto_import@ -module -avoid-version
 module_la_LIBTOOLFLAGS = --tag=disable-static

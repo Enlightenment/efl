@@ -169,8 +169,13 @@ elementary_testql_LTLIBRARIES = elementary_testql.la
 elementary_testql_la_SOURCES = $(elementary_test_SOURCES)
 elementary_testql_la_LIBADD = $(top_builddir)/src/lib/libelementary.la \
 	@ELEMENTARY_EWEATHER_LIBS@ \
+	@ELEMENTARY_EDBUS_LIBS@ \
+	@ELEMENTARY_EFREET_LIBS@ \
+	@ELEMENTARY_EMAP_LIBS@ \
+	@ELEMENTARY_LIBS@ \
 	@EIO_LIBS@ \
-	@ELEMENTARY_WEB_LIBS@
+	@ELEMENTARY_WEB_LIBS@ \
+	@my_libs@
 
 elementary_testql_la_CFLAGS =
 elementary_testql_la_LDFLAGS = -module -avoid-version -no-undefined
