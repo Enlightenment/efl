@@ -903,8 +903,13 @@ elm_object_tooltip_style_get(const Evas_Object *obj)
  * @return The tooltip delay
  * @ingroup Tooltips
  */
-EAPI double
+EINA_DEPRECATED EAPI double
 elm_tooltip_delay_get(void)
+{
+   return elm_config_tooltip_delay_get();
+}
+
+EAPI double elm_config_tooltip_delay_get(void)
 {
    return _elm_config->tooltip_delay;
 }
@@ -918,8 +923,13 @@ elm_tooltip_delay_get(void)
  * @return EINA_TRUE if value is valid and setted
  * @ingroup Tooltips
  */
-EAPI Eina_Bool
+EINA_DEPRECATED EAPI Eina_Bool
 elm_tooltip_delay_set(double delay)
+{
+   return elm_config_tooltip_delay_set(delay);
+}
+
+EAPI Eina_Bool elm_config_tooltip_delay_set(double delay)
 {
    if (delay < 0.0) return EINA_FALSE;
    _elm_config->tooltip_delay = delay;

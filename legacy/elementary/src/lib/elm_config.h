@@ -443,3 +443,17 @@ EAPI double       elm_longpress_timeout_get(void);
  * @ingroup Longpress
  */
 EAPI void         elm_longpress_timeout_set(double longpress_timeout);
+
+/**
+ * Get the duration after which tooltip will be shown.
+ *
+ * @return Duration after which tooltip will be shown.
+ */
+EAPI double      elm_config_tooltip_delay_get(void);
+
+/**
+ * Set the duration after which tooltip will be shown.
+ *
+ * @return EINA_TRUE if value is set.  
+ */
+EAPI Eina_Bool   elm_config_tooltip_delay_set(double delay);

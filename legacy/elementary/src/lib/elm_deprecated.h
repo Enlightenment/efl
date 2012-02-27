@@ -4249,6 +4249,23 @@ EINA_DEPRECATED EAPI double       elm_route_lat_min_get(Evas_Object *obj);
 EINA_DEPRECATED EAPI double       elm_route_lon_max_get(Evas_Object *obj);
 EINA_DEPRECATED EAPI double       elm_route_lat_max_get(Evas_Object *obj);
 
+
+/**
+ * Get the duration after which tooltip will be shown.
+ *
+ * @return Duration after which tooltip will be shown.
+ * @deprecated Use elm_config_tooltip_delay_get(void);
+ */
+EINA_DEPRECATED EAPI double      elm_tooltip_delay_get(void);
+
+/**
+ * Set the duration after which tooltip will be shown.
+ *
+ * @return EINA_TRUE if value is set.  
+ * @deprecated Use elm_config_tooltip_delay_set(double delay);
+ */
+EINA_DEPRECATED EAPI Eina_Bool   elm_tooltip_delay_set(double delay);
+
 /**
  * @}
  */

@@ -26,10 +26,8 @@ typedef Evas_Object *(*Elm_Tooltip_Content_Cb)(void *data, Evas_Object *obj, Eva
  */
 typedef Evas_Object *(*Elm_Tooltip_Item_Content_Cb)(void *data, Evas_Object *obj, Evas_Object *tooltip, void *item);
 
-// XXX: move to config, rename all config things elm_config_*
-EAPI double      elm_tooltip_delay_get(void);
-// XXX: move to config, rename all config things elm_config_*
-EAPI Eina_Bool   elm_tooltip_delay_set(double delay);
+EINA_DEPRECATED EAPI double      elm_tooltip_delay_get(void);
+EINA_DEPRECATED EAPI Eina_Bool   elm_tooltip_delay_set(double delay);
 
 EAPI void        elm_object_tooltip_show(Evas_Object *obj);
 EAPI void        elm_object_tooltip_hide(Evas_Object *obj);
