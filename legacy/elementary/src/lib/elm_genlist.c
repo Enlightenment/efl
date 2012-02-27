@@ -4630,13 +4630,13 @@ elm_genlist_item_expanded_set(Elm_Object_Item  *it,
    Elm_Gen_Item *_it = (Elm_Gen_Item *) it;
    if (_it->item->expanded == expanded) return;
    _it->item->expanded = expanded;
-   _it->wd->expanded_item = _it;
    if (_it->item->expanded)
      {
         if (_it->realized)
           edje_object_signal_emit(VIEW(_it), "elm,state,expanded", "elm");
         evas_object_smart_callback_call(WIDGET(_it), SIG_EXPANDED, _it);
         _it->wd->auto_scroll_enabled = EINA_TRUE;
+        _it->wd->expanded_item = _it;
      }
    else
      {
@@ -4644,6 +4644,7 @@ elm_genlist_item_expanded_set(Elm_Object_Item  *it,
           edje_object_signal_emit(VIEW(_it), "elm,state,contracted", "elm");
         evas_object_smart_callback_call(WIDGET(_it), SIG_CONTRACTED, _it);
         _it->wd->auto_scroll_enabled = EINA_FALSE;
+        _it->wd->expanded_item = NULL;
      }
 }
 
