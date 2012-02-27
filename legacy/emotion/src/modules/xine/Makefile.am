@@ -23,7 +23,7 @@ xine_la_SOURCES = \
 emotion_xine.c \
 emotion_xine.h \
 emotion_xine_vo_out.c
-xine_la_LIBADD = @XINE_LIBS@ $(top_builddir)/src/lib/libemotion.la -lpthread
+xine_la_LIBADD = @EMOTION_LIBS@ @XINE_LIBS@ $(top_builddir)/src/lib/libemotion.la -lpthread
 xine_la_LDFLAGS = -no-undefined @lt_enable_auto_import@ -module -avoid-version
 xine_la_LIBTOOLFLAGS = --tag=disable-static
 

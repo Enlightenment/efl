@@ -5,6 +5,7 @@ AM_CPPFLAGS = \
 -I$(top_builddir) \
 -I$(top_srcdir)/src/lib \
 @EFL_ETHUMB_CLIENT_BUILD@ \
+@ECORE_CFLAGS@ \
 @EDBUS_CFLAGS@ \
 @EINA_CFLAGS@
 
@@ -16,6 +17,7 @@ lib_LTLIBRARIES = libethumb_client.la
 libethumb_client_la_SOURCES = ethumb_client.c
 libethumb_client_la_LIBADD = \
 $(top_builddir)/src/lib/libethumb.la \
+@ECORE_LIBS@ \
 @EDBUS_LIBS@ \
 @EINA_LIBS@
 libethumb_client_la_LDFLAGS = -no-undefined @lt_enable_auto_import@ -version-info @version_info@

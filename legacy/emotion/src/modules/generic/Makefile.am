@@ -22,7 +22,7 @@ includesdir = $(includedir)/emotion-@VMAJ@
 noinst_HEADERS = emotion_generic.h
 
 em_generic_la_SOURCES = emotion_generic.c
-em_generic_la_LIBADD = $(top_builddir)/src/lib/libemotion.la
+em_generic_la_LIBADD = @EMOTION_LIBS@ @SHM_OPEN_LIBS@ $(top_builddir)/src/lib/libemotion.la
 em_generic_la_LDFLAGS = -no-undefined @lt_enable_auto_import@ -module -avoid-version
 em_generic_la_LIBTOOLFLAGS = --tag=disable-static
 em_generic_la_DEPENDENCIES = emotion_generic.h Emotion_Generic_Plugin.h

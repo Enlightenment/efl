@@ -26,7 +26,7 @@ emotion_alloc.c \
 emotion_fakeeos.c \
 emotion_convert.c
 
-gstreamer_la_LIBADD  = @ECORE_X_LIBS@ @GSTREAMER_LIBS@ @GSTREAMER_INTERFACE_LIBS@ $(top_builddir)/src/lib/libemotion.la
+gstreamer_la_LIBADD  = @EMOTION_LIBS@ @ECORE_X_LIBS@ @GSTREAMER_LIBS@ @GSTREAMER_INTERFACE_LIBS@ $(top_builddir)/src/lib/libemotion.la
 gstreamer_la_LDFLAGS = -no-undefined @lt_enable_auto_import@ -module -avoid-version
 gstreamer_la_LIBTOOLFLAGS = --tag=disable-static
 gstreamer_la_DEPENDENCIES = $(top_builddir)/config.h

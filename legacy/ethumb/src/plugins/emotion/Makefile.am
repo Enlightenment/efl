@@ -15,6 +15,8 @@ AM_CPPFLAGS = \
 -I$(top_srcdir)/src/lib \
 -I$(top_srcdir)/src/plugins/emotion \
 -DPLUGINSDIR=\"$(pluginsdir)\" \
+@ECORE_EVAS_CFLAGS@ \
+@EET_CFLAGS@ \
 @EFL_ETHUMB_BUILD@ \
 @EVAS_CFLAGS@ \
 @EINA_CFLAGS@ \
@@ -27,6 +29,8 @@ pkg_LTLIBRARIES = emotion.la
 emotion_la_SOURCES = emotion.c
 emotion_la_LIBADD = \
 $(top_builddir)/src/lib/libethumb.la \
+@ECORE_EVAS_LIBS@ \
+@EET_LIBS@ \
 @EMOTION_LIBS@ \
 @EDJE_LIBS@ \
 @ECORE_FILE_LIBS@ \

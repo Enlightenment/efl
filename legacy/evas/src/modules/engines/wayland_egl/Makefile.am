@@ -18,7 +18,7 @@ WAYLAND_EGL_SOURCES  = \
 evas_engine.c \
 evas_wl_main.c
 
-WAYLAND_EGL_LIBADD = @FREETYPE_LIBS@ @GL_EET_LIBS@ @EINA_LIBS@ @evas_engine_wayland_egl_libs@ $(top_builddir)/src/modules/engines/gl_common/libevas_engine_gl_common.la
+WAYLAND_EGL_LIBADD = @FREETYPE_LIBS@ @GL_EET_LIBS@ @EINA_LIBS@ @evas_engine_wayland_egl_libs@ @dlopen_libs@ $(top_builddir)/src/modules/engines/gl_common/libevas_engine_gl_common.la
 
 includes_HEADERS = Evas_Engine_Wayland_Egl.h
 includesdir = $(includedir)/evas-@VMAJ@

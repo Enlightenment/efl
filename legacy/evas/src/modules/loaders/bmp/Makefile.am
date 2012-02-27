@@ -18,7 +18,7 @@ pkg_LTLIBRARIES = module.la
 
 module_la_SOURCES = evas_image_load_bmp.c
 
-module_la_LIBADD = @EINA_LIBS@ @EVIL_LIBS@ $(top_builddir)/src/lib/libevas.la
+module_la_LIBADD = @EINA_LIBS@ @EVIL_LIBS@ -lm $(top_builddir)/src/lib/libevas.la
 module_la_LDFLAGS = -no-undefined @lt_enable_auto_import@ -module -avoid-version
 module_la_LIBTOOLFLAGS = --tag=disable-static
 
