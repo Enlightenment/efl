@@ -563,21 +563,61 @@ _ecore_evas_x_event_property_change(void *data __UNUSED__, int type __UNUSED__, 
      {
         unsigned int i, num;
         Ecore_X_Window_State *state;
+        struct {
+           struct {
+              unsigned char modal : 1;
+              unsigned char sticky : 1;
+              unsigned char maximized_v : 1;
+              unsigned char maximized_h : 1;
+              unsigned char shaded : 1;
+              unsigned char skip_taskbar : 1;
+              unsigned char skip_pager : 1;
+              unsigned char fullscreen : 1;
+              unsigned char above : 1;
+              unsigned char below : 1;
+           } x;
+           struct {
+              char modal : 1;
+              char maximized : 1;
+              char sticky : 1;
+              char fullscreen : 1;
+              char focus_skip : 1;
+           } prop;
+        } prev;
+        
+        prev.x.modal = ee->engine.x.state.modal;
+        prev.x.sticky = ee->engine.x.state.sticky;
+        prev.x.maximized_v = ee->engine.x.state.maximized_v;
+        prev.x.maximized_h = ee->engine.x.state.maximized_h;
+        prev.x.shaded = ee->engine.x.state.shaded;
+        prev.x.skip_taskbar = ee->engine.x.state.skip_taskbar;
+        prev.x.skip_pager = ee->engine.x.state.skip_pager;
+        prev.x.fullscreen = ee->engine.x.state.fullscreen;
+        prev.x.above = ee->engine.x.state.above;
+        prev.x.below = ee->engine.x.state.below;
+        
+        prev.prop.modal = ee->prop.modal;
+        prev.prop.maximized = ee->prop.maximized;
+        prev.prop.sticky = ee->prop.sticky;
+        prev.prop.fullscreen = ee->prop.fullscreen;
+        prev.prop.focus_skip = ee->prop.focus_skip;
 
-        /* TODO: we need to move those to the end, with if statements */
-        ee->engine.x.state.modal = 0;
-        ee->engine.x.state.maximized_v = 0;
-        ee->engine.x.state.maximized_h = 0;
-        ee->engine.x.state.shaded = 0;
+        ee->engine.x.state.modal        = 0;
+        ee->engine.x.state.sticky       = 0;
+        ee->engine.x.state.maximized_v  = 0;
+        ee->engine.x.state.maximized_h  = 0;
+        ee->engine.x.state.shaded       = 0;
         ee->engine.x.state.skip_taskbar = 0;
-        ee->engine.x.state.skip_pager = 0;
-        ee->prop.fullscreen = 0;
-        ee->engine.x.state.fullscreen = 0;
-        ee->engine.x.state.above = 0;
-        ee->engine.x.state.below = 0;
+        ee->engine.x.state.skip_pager   = 0;
+        ee->engine.x.state.fullscreen   = 0;
+        ee->engine.x.state.above        = 0;
+        ee->engine.x.state.below        = 0;
 
-        // XXXXXXXXXXXXXXXXXx fixme... handle state change flag properly
-        state_change = 1;
+        ee->prop.modal      = 0;
+        ee->prop.maximized  = 0;
+        ee->prop.sticky     = 0;
+        ee->prop.fullscreen = 0;
+        ee->prop.focus_skip = 0;
         
         ecore_x_netwm_window_state_get(e->win, &state, &num);
         if (state)
@@ -588,6 +628,7 @@ _ecore_evas_x_event_property_change(void *data __UNUSED__, int type __UNUSED__, 
                     {
                      case ECORE_X_WINDOW_STATE_MODAL:
                        ee->engine.x.state.modal = 1;
+                       ee->prop.modal = 1;
                        break;
                      case ECORE_X_WINDOW_STATE_STICKY:
                        ee->prop.sticky = 1;
@@ -595,18 +636,22 @@ _ecore_evas_x_event_property_change(void *data __UNUSED__, int type __UNUSED__, 
                        break;
                      case ECORE_X_WINDOW_STATE_MAXIMIZED_VERT:
                        ee->engine.x.state.maximized_v = 1;
+                       ee->prop.maximized = 1;
                        break;
                      case ECORE_X_WINDOW_STATE_MAXIMIZED_HORZ:
                        ee->engine.x.state.maximized_h = 1;
+                       ee->prop.maximized = 1;
                        break;
                      case ECORE_X_WINDOW_STATE_SHADED:
                        ee->engine.x.state.shaded = 1;
                        break;
                      case ECORE_X_WINDOW_STATE_SKIP_TASKBAR:
                        ee->engine.x.state.skip_taskbar = 1;
+                       ee->prop.focus_skip = 1;
                        break;
                      case ECORE_X_WINDOW_STATE_SKIP_PAGER:
                        ee->engine.x.state.skip_pager = 1;
+                       ee->prop.focus_skip = 1;
                        break;
                      case ECORE_X_WINDOW_STATE_FULLSCREEN:
                        ee->prop.fullscreen = 1;
@@ -624,6 +669,23 @@ _ecore_evas_x_event_property_change(void *data __UNUSED__, int type __UNUSED__, 
                }
              free(state);
           }
+        if (
+//                 (prev.x.modal != ee->engine.x.state.modal) ||
+            (prev.x.sticky != ee->engine.x.state.sticky) ||
+            (prev.x.maximized_v != ee->engine.x.state.maximized_v) ||
+            (prev.x.maximized_h != ee->engine.x.state.maximized_h) ||
+//                 (prev.x.shaded != ee->engine.x.state.shaded) ||
+//                 (prev.x.skip_taskbar != ee->engine.x.state.skip_taskbar) ||
+//                 (prev.x.skip_pager != ee->engine.x.state.skip_pager) ||
+            (prev.x.fullscreen != ee->engine.x.state.fullscreen) ||
+//                 (prev.x.above != ee->engine.x.state.above) ||
+//                 (prev.x.below != ee->engine.x.state.below) ||
+//                 (prev.prop.modal != ee->prop.modal) ||
+            (prev.prop.maximized != ee->prop.maximized) ||
+            (prev.prop.sticky != ee->prop.sticky) ||
+            (prev.prop.fullscreen != ee->prop.fullscreen) ||
+            (prev.prop.focus_skip != ee->prop.focus_skip))
+          state_change = 1;
      }
    else if (e->atom == ECORE_X_ATOM_WM_STATE)
      {
@@ -634,18 +696,27 @@ _ecore_evas_x_event_property_change(void *data __UNUSED__, int type __UNUSED__, 
         switch (state)
           {
            case ECORE_X_WINDOW_STATE_HINT_WITHDRAWN:
+             if ((!ee->prop.withdrawn) || (ee->prop.iconified))
+               {
+                  state_change = 1;
+                  ee->prop.withdrawn = 1;
+                  ee->prop.iconified = 0;
+               }
+             break;
            case ECORE_X_WINDOW_STATE_HINT_ICONIC:
-             if (!ee->prop.iconified)
+             if ((!ee->prop.iconified) || (ee->prop.withdrawn))
                {
                   state_change = 1;
                   ee->prop.iconified = 1;
+                  ee->prop.withdrawn = 0;
                }
              break;
            case ECORE_X_WINDOW_STATE_HINT_NORMAL:
-             if (ee->prop.iconified)
+             if ((ee->prop.iconified) || (ee->prop.withdrawn))
                {
                   state_change = 1;
                   ee->prop.iconified = 0;
+                  ee->prop.withdrawn = 0;
                }
              break;
            default:
@@ -2263,9 +2334,9 @@ _ecore_evas_x_focus_skip_set(Ecore_Evas *ee, int skip)
    if (ee->should_be_visible)
      {
         ecore_x_netwm_state_request_send(ee->prop.window, ee->engine.x.win_root,
-                                         ECORE_X_WINDOW_STATE_SKIP_TASKBAR, -1, !skip);
+                                         ECORE_X_WINDOW_STATE_SKIP_TASKBAR, -1, skip);
         ecore_x_netwm_state_request_send(ee->prop.window, ee->engine.x.win_root,
-                                         ECORE_X_WINDOW_STATE_SKIP_PAGER, -1, !skip);
+                                         ECORE_X_WINDOW_STATE_SKIP_PAGER, -1, skip);
      }
    else
      _ecore_evas_x_state_update(ee);
