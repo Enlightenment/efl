@@ -3751,7 +3751,7 @@ elm_entry_input_panel_return_key_disabled_get(const Evas_Object *obj)
 }
 
 EAPI void
-elm_entry_input_panel_return_key_autoenable_set(Evas_Object *obj, Eina_Bool on)
+elm_entry_input_panel_return_key_autoenabled_set(Evas_Object *obj, Eina_Bool on)
 {
    ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);

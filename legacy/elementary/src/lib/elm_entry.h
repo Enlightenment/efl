@@ -1286,7 +1286,7 @@ EAPI Eina_Bool              elm_entry_input_panel_return_key_disabled_get(const 
  * @param obj The entry object
  * @param on If @p on is EINA_TRUE, the return key is automatically disabled when the entry has no text.
  */
-EAPI void                   elm_entry_input_panel_return_key_autoenable_set(Evas_Object *obj, Eina_Bool on);
+EAPI void                   elm_entry_input_panel_return_key_autoenabled_set(Evas_Object *obj, Eina_Bool on);
 
 /**
  * Reset the input method context of the entry if needed. 
