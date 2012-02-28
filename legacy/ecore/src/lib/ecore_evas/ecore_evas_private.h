@@ -279,11 +279,20 @@ struct _Ecore_Evas_Engine
 #if defined(BUILD_ECORE_EVAS_WAYLAND_SHM) || defined(BUILD_ECORE_EVAS_WAYLAND_EGL)
    struct 
      {
+        Ecore_Wl_Window *parent, *win;
         Evas_Object *frame;
 
-        struct wl_shell_surface *shell_surface;
-        struct wl_surface *surface;
+# if defined(BUILD_ECORE_EVAS_WAYLAND_SHM)
         struct wl_buffer *buffer;
+# endif
+# if defined(BUILD_ECORE_EVAS_WAYLAND_EGL)
+        struct wl_egl_window *egl_window;
+        EGLSurface egl_surface;
+# endif
+        /* struct wl_shell_surface *shell_surface; */
+        /* struct wl_surface *surface; */
+        /* struct wl_buffer *buffer; */
+        /* int type; */
      } wl;
 #endif
 
@@ -424,12 +433,14 @@ int _ecore_evas_ews_shutdown(void);
 void _ecore_evas_wayland_shm_resize(Ecore_Evas *ee, int location);
 void _ecore_evas_wayland_shm_drag_start(Ecore_Evas *ee, Ecore_Evas *drag_ee, void *source);
 void _ecore_evas_wayland_shm_pointer_set(Ecore_Evas *ee, int hot_x, int hot_y);
+void _ecore_evas_wayland_shm_type_set(Ecore_Evas *ee, int type);
 #endif
 
 #ifdef BUILD_ECORE_EVAS_WAYLAND_EGL
 void _ecore_evas_wayland_egl_resize(Ecore_Evas *ee, int location);
 void _ecore_evas_wayland_egl_drag_start(Ecore_Evas *ee, Ecore_Evas *drag_ee, void *source);
 void _ecore_evas_wayland_egl_pointer_set(Ecore_Evas *ee, int hot_x, int hot_y);
+void _ecore_evas_wayland_egl_type_set(Ecore_Evas *ee, int type);
 #endif
 
 void _ecore_evas_fps_debug_init(void);
