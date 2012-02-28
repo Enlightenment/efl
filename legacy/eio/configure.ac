@@ -176,6 +176,32 @@ if test "x${have_splice}" = "xyes" ; then
    AC_DEFINE([EFL_HAVE_SPLICE], [1], [Define to mention that splice syscall is supported])
 fi
 
+### Check for lstat
+
+have_lstat="no"
+AC_TRY_LINK(
+   [
+#include <sys/types.h>
+#include <sys/stat.h>
+#if defined(HAVE_UNISTD_H)
+# include <unistd.h>
+#endif
+   ],
+   [
+   struct stat st;
+   lstat("/tmp", &st);
+   ],
+   [have_lstat="yes"],
+   [have_lstat="no"])
+AC_MSG_CHECKING([whether lstat is available])
+AC_MSG_RESULT([${have_lstat}])
+
+if test "x${have_lstat}" = "xyes" ; then
+   AC_DEFINE([EFL_HAVE_LSTAT], [1], [Define to mention that lstat syscall is supported])
+fi
+
+
+
 ### Check for inotify specificity
 have_inotify="no"
 have_notify_win32="no"

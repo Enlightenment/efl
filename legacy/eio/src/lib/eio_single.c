@@ -102,6 +102,39 @@ _eio_file_unlink_error(void *data, Ecore_Thread *thread __UNUSED__)
 }
 
 static void
+_eio_file_struct_2_eina(Eina_Stat *es, struct stat *st)
+{
+   es->dev = st->st_dev;
+   es->ino = st->st_ino;
+   es->mode = st->st_mode;
+   es->nlink = st->st_nlink;
+   es->uid = st->st_uid;
+   es->gid = st->st_gid;
+   es->rdev = st->st_rdev;
+   es->size = st->st_size;
+   es->blksize = st->st_blksize;
+   es->blocks = st->st_blocks;
+   es->atime = st->st_atime;
+   es->mtime = st->st_mtime;
+   es->ctime = st->st_ctime;
+#ifdef _STAT_VER_LINUX
+# if (defined __USE_MISC && defined st_mtime)
+   es->atimensec = st->st_atim.tv_nsec;
+   es->mtimensec = st->st_mtim.tv_nsec;
+   es->ctimensec = st->st_ctim.tv_nsec;
+# else
+   es->atimensec = st->st_atimensec;
+   es->mtimensec = st->st_mtimensec;
+   es->ctimensec = st->st_ctimensec;
+# endif
+#else
+   es->atimensec = 0;
+   es->mtimensec = 0;
+   es->ctimensec = 0;
+#endif
+}
+
+static void
 _eio_file_stat(void *data, Ecore_Thread *thread)
 {
    Eio_File_Stat *s = data;
@@ -110,36 +143,22 @@ _eio_file_stat(void *data, Ecore_Thread *thread)
    if (stat(s->path, &buf) != 0)
      eio_file_thread_error(&s->common, thread);
 
-   s->buffer.dev = buf.st_dev;
-   s->buffer.ino = buf.st_ino;
-   s->buffer.mode = buf.st_mode;
-   s->buffer.nlink = buf.st_nlink;
-   s->buffer.uid = buf.st_uid;
-   s->buffer.gid = buf.st_gid;
-   s->buffer.rdev = buf.st_rdev;
-   s->buffer.size = buf.st_size;
-   s->buffer.blksize = buf.st_blksize;
-   s->buffer.blocks = buf.st_blocks;
-   s->buffer.atime = buf.st_atime;
-   s->buffer.mtime = buf.st_mtime;
-   s->buffer.ctime = buf.st_ctime;
-#ifdef _STAT_VER_LINUX
-# if (defined __USE_MISC && defined st_mtime)
-   s->buffer.atimensec = buf.st_atim.tv_nsec;
-   s->buffer.mtimensec = buf.st_mtim.tv_nsec;
-   s->buffer.ctimensec = buf.st_ctim.tv_nsec;
-# else
-   s->buffer.atimensec = buf.st_atimensec;
-   s->buffer.mtimensec = buf.st_mtimensec;
-   s->buffer.ctimensec = buf.st_ctimensec;
-# endif
-#else
-   s->buffer.atimensec = 0;
-   s->buffer.mtimensec = 0;
-   s->buffer.ctimensec = 0;
-#endif
-
+   _eio_file_struct_2_eina(&s->buffer, &buf);
 }
+
+#ifdef EFL_HAVE_LSTAT
+static void
+_eio_file_lstat(void *data, Ecore_Thread *thread)
+{
+   Eio_File_Stat *s = data;
+   struct stat buf;
+
+   if (lstat(s->path, &buf) != 0)
+     eio_file_thread_error(&s->common, thread);
+
+   _eio_file_struct_2_eina(&s->buffer, &buf);
+}
+#endif
 
 static void
 _eio_stat_free(Eio_File_Stat *s)
@@ -392,6 +411,39 @@ eio_file_direct_stat(const char *path,
      return NULL;
 
    return &s->common;
+}
+
+EAPI Eio_File *
+eio_file_direct_lstat(const char *path,
+		      Eio_Stat_Cb done_cb,
+		      Eio_Error_Cb error_cb,
+		      const void *data)
+{
+#ifdef EFL_HAVE_LSTAT
+   Eio_File_Stat *s = NULL;
+
+   if (!path || !done_cb || !error_cb)
+     return NULL;
+
+   s = malloc(sizeof (Eio_File_Stat));
+   if (!s) return NULL;
+
+   s->path = eina_stringshare_add(path);
+   s->done_cb = done_cb;
+
+   if (!eio_file_set(&s->common,
+		      NULL,
+		      error_cb,
+		      data,
+		      _eio_file_lstat,
+		      _eio_file_stat_done,
+		      _eio_file_stat_error))
+     return NULL;
+
+   return &s->common;
+#else
+   return eio_file_direct_stat(path, done_cb, error_cb, data);
+#endif
 }
 
 EAPI Eio_File *
