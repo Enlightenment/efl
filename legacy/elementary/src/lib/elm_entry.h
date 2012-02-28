@@ -1277,6 +1277,18 @@ EAPI void                   elm_entry_input_panel_return_key_disabled_set(Evas_O
 EAPI Eina_Bool              elm_entry_input_panel_return_key_disabled_get(const Evas_Object *obj);
 
 /**
+ * Set whether the return key on the input panel is disabled automatically when entry has no text.
+ *
+ * If @p on is EINA_TRUE, The return key on input panel is disabled when the entry has no text.
+ * The return Key on the input panel is automatically enabled when the entry has text.
+ * The default value is EINA_FALSE.
+ *
+ * @param obj The entry object
+ * @param on If @p on is EINA_TRUE, the return key is automatically disabled when the entry has no text.
+ */
+EAPI void                   elm_entry_input_panel_return_key_autoenable_set(Evas_Object *obj, Eina_Bool on);
+
+/**
  * Reset the input method context of the entry if needed. 
  *
  * This can be necessary in the case where modifying the buffer would confuse on-going input method behavior
