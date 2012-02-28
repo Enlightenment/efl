@@ -217,6 +217,19 @@ ecore_wl_shutdown(void)
    return _ecore_wl_shutdown(EINA_TRUE);
 }
 
+/**
+ * @defgroup Ecore_Wl_Flush_Group Wayland Synchronization Functions
+ * 
+ * Functions that ensure that all commands which have been issued by the 
+ * Ecore Wayland library have been sent to the server.
+ */
+
+/**
+ * Sends all Wayland commands to the Wayland Display.
+ * 
+ * @ingroup Ecore_Wl_Flush_Group
+ * @since 1.2
+ */
 EAPI void 
 ecore_wl_flush(void)
 {
@@ -224,10 +237,16 @@ ecore_wl_flush(void)
 
    while (_ecore_wl_disp->mask & WL_DISPLAY_WRITABLE)
      wl_display_iterate(_ecore_wl_disp->wl.display, WL_DISPLAY_WRITABLE);
-
 //   wl_display_flush(_ecore_wl_disp->wl.display); // old flush code
 }
 
+/**
+ * Flushes the command buffer and waits until all requests have been 
+ * processed by the server.
+ * 
+ * @ingroup Ecore_Wl_Flush_Group
+ * @since 1.2
+ */
 EAPI void 
 ecore_wl_sync(void)
 {
@@ -238,18 +257,49 @@ ecore_wl_sync(void)
 //   wl_display_iterate(_ecore_wl_disp->wl.display, WL_DISPLAY_READABLE);
 }
 
+/**
+ * @defgroup Ecore_Wl_Display_Group Wayland Display Functions
+ * 
+ * Functions that set and retrieve various information about the Wayland Display.
+ */
+
+/**
+ * Retrieves the Wayland Shm Interface used for the current Wayland connection.
+ * 
+ * @return The current wayland shm interface
+ * 
+ * @ingroup Ecore_Wl_Display_Group
+ * @since 1.2
+ */
 EAPI struct wl_shm *
 ecore_wl_shm_get(void)
 {
    return _ecore_wl_disp->wl.shm;
 }
 
+/**
+ * Retrieves the Wayland Display Interface used for the current Wayland connection.
+ * 
+ * @return The current wayland display interface
+ * 
+ * @ingroup Ecore_Wl_Display_Group
+ * @since 1.2
+ */
 EAPI struct wl_display *
 ecore_wl_display_get(void)
 {
    return _ecore_wl_disp->wl.display;
 }
 
+/**
+ * Retrieves the size of the current screen.
+ * 
+ * @param w where to return the width. May be NULL. Returns 0 on error.
+ * @param h where to return the height. May be NULL. Returns 0 on error.
+ * 
+ * @ingroup Ecore_Wl_Display_Group
+ * @since 1.2
+ */
 EAPI void 
 ecore_wl_screen_size_get(int *w, int *h)
 {

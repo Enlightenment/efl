@@ -251,7 +251,11 @@ struct _Ecore_Wl_Event_Dnd_Drop
  * Ecore_Wl provides a wrapper and convenience functions for using the 
  * Wayland window system. Function groups for this part of the library 
  * include the following:
+ * 
  * @li @ref Ecore_Wl_Init_Group
+ * @li @ref Ecore_Wl_Display_Group
+ * @li @ref Ecore_Wl_Flush_Group
+ * @li @ref Ecore_Wl_Window_Group
  */
 
 EAPI extern int ECORE_WL_EVENT_MOUSE_IN;

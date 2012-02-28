@@ -36,6 +36,27 @@ _ecore_wl_window_shutdown(void)
    _windows = NULL;
 }
 
+/**
+ * @defgroup Ecore_Wl_Window_Group Wayland Library Init and Shutdown Functions
+ * 
+ * Functions that can be used to create a Wayland window.
+ */
+
+/**
+ * Creates a new window
+ * 
+ * @param parent The parent window to use. If @p parent is @c 0, the root window 
+ *               of the default display is used.
+ * @param x      X Position
+ * @param y      Y position
+ * @param w      Width
+ * @param h      Height
+ * 
+ * @return The new window
+ * 
+ * @ingroup Ecore_Wl_Window_Group
+ * @since 1.2
+ */
 EAPI Ecore_Wl_Window *
 ecore_wl_window_new(Ecore_Wl_Window *parent, int x, int y, int w, int h, int buffer_type)
 {
@@ -68,6 +89,14 @@ ecore_wl_window_new(Ecore_Wl_Window *parent, int x, int y, int w, int h, int buf
    return win;
 }
 
+/**
+ * Deletes the given window
+ * 
+ * @param win The given window
+ * 
+ * @ingroup Ecore_Wl_Window_Group
+ * @since 1.2
+ */
 EAPI void 
 ecore_wl_window_free(Ecore_Wl_Window *win)
 {
@@ -96,6 +125,19 @@ ecore_wl_window_free(Ecore_Wl_Window *win)
 //   free(win);
 }
 
+/**
+ * Signals for Wayland to initiate a window move.
+ * 
+ * The position requested (@p x, @p y) is not honored by Wayland because 
+ * Wayland does not allow specific window placement to be set.
+ * 
+ * @param win The window to move.
+ * @param x   X Position
+ * @param y   Y Position
+ * 
+ * @ingroup Ecore_Wl_Window_Group
+ * @since 1.2
+ */
 EAPI void 
 ecore_wl_window_move(Ecore_Wl_Window *win, int x, int y)
 {
@@ -114,6 +156,20 @@ ecore_wl_window_move(Ecore_Wl_Window *win, int x, int y)
      }
 }
 
+/**
+ * Signals for Wayland to initiate a window resize.
+ * 
+ * The size requested (@p w, @p h) is not honored by Wayland because 
+ * Wayland does not allow specific window sizes to be set.
+ * 
+ * @param win      The window to resize.
+ * @param w        Width
+ * @param h        Height
+ * @param location The edge of the window from where the resize should start.
+ * 
+ * @ingroup Ecore_Wl_Window_Group
+ * @since 1.2
+ */
 EAPI void 
 ecore_wl_window_resize(Ecore_Wl_Window *win, int w, int h, int location)
 {
@@ -152,6 +208,16 @@ ecore_wl_window_buffer_attach(Ecore_Wl_Window *win, struct wl_buffer *buffer, in
      wl_surface_attach(win->surface, buffer, x, y);
 }
 
+/**
+ * Shows a window
+ * 
+ * Synonymous to "mapping" a window in Wayland System terminology.
+ * 
+ * @param win The window to show.
+ * 
+ * @ingroup Ecore_Wl_Window_Group
+ * @since 1.2
+ */
 EAPI void 
 ecore_wl_window_show(Ecore_Wl_Window *win)
 {
@@ -197,6 +263,16 @@ ecore_wl_window_show(Ecore_Wl_Window *win)
      }
 }
 
+/**
+ * Hides a window
+ * 
+ * Synonymous to "unmapping" a window in Wayland System terminology.
+ * 
+ * @param win The window to hide.
+ * 
+ * @ingroup Ecore_Wl_Window_Group
+ * @since 1.2
+ */
 EAPI void 
 ecore_wl_window_hide(Ecore_Wl_Window *win)
 {
@@ -209,6 +285,14 @@ ecore_wl_window_hide(Ecore_Wl_Window *win)
    win->surface = NULL;
 }
 
+/**
+ * Raises a window
+ * 
+ * @param win The window to raise.
+ * 
+ * @ingroup Ecore_Wl_Window_Group
+ * @since 1.2
+ */
 EAPI void 
 ecore_wl_window_raise(Ecore_Wl_Window *win)
 {
