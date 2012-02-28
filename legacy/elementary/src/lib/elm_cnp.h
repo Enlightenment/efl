@@ -113,12 +113,9 @@ typedef Eina_Bool (*Elm_Drop_Cb)(void *data, Evas_Object *obj, Elm_Selection_Dat
  * @ingroup CopyPaste
  *
  */
-// XXX: EAPI void elm_object_cnp_selection_set(Evas_Object *obj, Elm_Sel_Type selection,
-//                                             Elm_Sel_Format format, const void *buf,
-//                                             size_t buflen);
-EAPI Eina_Bool elm_cnp_selection_set(Elm_Sel_Type selection, Evas_Object *obj,
-                                     Elm_Sel_Format format, const void *buf,
-                                     size_t buflen);
+EAPI Eina_Bool elm_cnp_selection_set(Evas_Object *obj, Elm_Sel_Type selection,
+                                     Elm_Sel_Format format,
+                                     const void *buf, size_t buflen);
 
 /**
  * @brief Retrieve data from a widget that has a selection.
@@ -142,15 +139,10 @@ EAPI Eina_Bool elm_cnp_selection_set(Elm_Sel_Type selection, Evas_Object *obj,
  */
 // XXX: This api needs to be refined by cnp experts.
 //      I suggest:
-//         1. return copy and paste data.
-//         2. call cnp callback regardless of widget type.
-//         3. apps insert text data into entry manually.
-// XXX: EAPI void *elm_object_cnp_selection_get(Evas_Object *obj,
-//                                              Elm_Sel_Type selection,
-//                                              Elm_Sel_Format format,
-//                                              Elm_Cnp_Cb datacb);
-EAPI Eina_Bool elm_cnp_selection_get(Elm_Sel_Type selection,
-                                     Elm_Sel_Format format, Evas_Object *obj,
+//         1. call cnp callback regardless of widget type.
+//         2. apps insert text data into entry manually.
+EAPI Eina_Bool elm_cnp_selection_get(Evas_Object *obj, Elm_Sel_Type selection,
+                                     Elm_Sel_Format format,
                                      Elm_Drop_Cb datacb, void *udata);
 
 /**
@@ -167,8 +159,8 @@ EAPI Eina_Bool elm_cnp_selection_get(Elm_Sel_Type selection,
  * @ingroup CopyPaste
  *
  */
-EAPI Eina_Bool elm_object_cnp_selection_clear(Evas_Object *obj, 
-                                               Elm_Sel_Type selection);
+EAPI Eina_Bool elm_object_cnp_selection_clear(Evas_Object *obj,
+                                              Elm_Sel_Type selection);
 
 /**
  * @}

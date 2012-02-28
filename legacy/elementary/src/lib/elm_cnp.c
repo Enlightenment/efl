@@ -390,7 +390,7 @@ elm_selection_selection_has_owner(void)
 }
 
 EAPI Eina_Bool
-elm_cnp_selection_set(Elm_Sel_Type selection, Evas_Object *obj,
+elm_cnp_selection_set(Evas_Object *obj, Elm_Sel_Type selection,
                       Elm_Sel_Format format, const void *selbuf, size_t buflen)
 {
 #ifdef HAVE_ELEMENTARY_X
@@ -463,8 +463,8 @@ elm_object_cnp_selection_clear(Evas_Object *obj, Elm_Sel_Type selection)
 }
 
 EAPI Eina_Bool
-elm_cnp_selection_get(Elm_Sel_Type selection, Elm_Sel_Format format,
-                      Evas_Object *obj, Elm_Drop_Cb datacb, void *udata)
+elm_cnp_selection_get(Evas_Object *obj, Elm_Sel_Type selection,
+                      Elm_Sel_Format format, Elm_Drop_Cb datacb, void *udata)
 {
 #ifdef HAVE_ELEMENTARY_X
    Evas_Object *top;

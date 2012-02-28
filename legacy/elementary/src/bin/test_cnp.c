@@ -13,7 +13,7 @@ _bt_copy_clicked(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNU
    const char *txt = elm_object_text_get(en);
 
    elm_object_text_set(glb, txt);
-   elm_cnp_selection_set(ELM_SEL_TYPE_CLIPBOARD, elm_object_parent_widget_get(en),
+   elm_cnp_selection_set(elm_object_parent_widget_get(en), ELM_SEL_TYPE_CLIPBOARD,
                          ELM_SEL_FORMAT_TEXT, txt, strlen(txt));
 }
 
@@ -22,8 +22,8 @@ _bt_paste_clicked(void *data, Evas_Object *obj __UNUSED__, void *event_info __UN
 {
    Evas_Object *en = (Evas_Object*)(data);
 
-   elm_cnp_selection_get(ELM_SEL_TYPE_CLIPBOARD, ELM_SEL_FORMAT_TEXT,
-                         en, NULL, NULL);
+   elm_cnp_selection_get(en, ELM_SEL_TYPE_CLIPBOARD, ELM_SEL_FORMAT_TEXT,
+                         NULL, NULL);
 }
 
 static void
