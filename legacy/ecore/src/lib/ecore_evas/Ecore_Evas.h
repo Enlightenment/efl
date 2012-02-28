@@ -402,17 +402,29 @@ EAPI void        ecore_evas_fullscreen_set(Ecore_Evas *ee, Eina_Bool on);
  */
 EAPI Eina_Bool   ecore_evas_fullscreen_get(const Ecore_Evas *ee);
 
+/** @since 1.2 */
 EAPI void        ecore_evas_window_group_set(Ecore_Evas *ee, const Ecore_Evas *ee_group);
+/** @since 1.2 */
 EAPI const Ecore_Evas *ecore_evas_window_group_get(const Ecore_Evas *ee);
+/** @since 1.2 */
 EAPI void        ecore_evas_aspect_set(Ecore_Evas *ee, double aspect);
+/** @since 1.2 */
 EAPI double      ecore_evas_aspect_get(const Ecore_Evas *ee);
+/** @since 1.2 */
 EAPI void        ecore_evas_urgent_set(Ecore_Evas *ee, Eina_Bool urgent);
+/** @since 1.2 */
 EAPI Eina_Bool   ecore_evas_urgent_get(const Ecore_Evas *ee);
+/** @since 1.2 */
 EAPI void        ecore_evas_modal_set(Ecore_Evas *ee, Eina_Bool modal);
+/** @since 1.2 */
 EAPI Eina_Bool   ecore_evas_modal_get(const Ecore_Evas *ee);
+/** @since 1.2 */
 EAPI void        ecore_evas_demand_attention_set(Ecore_Evas *ee, Eina_Bool demand);
+/** @since 1.2 */
 EAPI Eina_Bool   ecore_evas_demand_attention_get(const Ecore_Evas *ee);
+/** @since 1.2 */
 EAPI void        ecore_evas_focus_skip_set(Ecore_Evas *ee, Eina_Bool skip);
+/** @since 1.2 */
 EAPI Eina_Bool   ecore_evas_focus_skip_get(const Ecore_Evas *ee);
    
 /**
@@ -1231,6 +1243,7 @@ EAPI void        ecore_evas_callback_pre_free_set(Ecore_Evas *ee, Ecore_Evas_Eve
  * A call to this function will set a callback on an Ecore_Evas, causing
  * @p func to be called whenever @p ee changes state.
  *
+ * @since 1.2
  * @warning If and when this function is called depends on the underlying
  * windowing system.
  */
