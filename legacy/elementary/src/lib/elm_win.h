@@ -69,6 +69,15 @@
  * @li "focus,in": window got focus
  * @li "focus,out": window lost focus
  * @li "moved": window that holds the canvas was moved
+ * @li "withdrawn": window is still managed normally but removed from view
+ * @li "iconified": window is minimized (perhaps into an icon or taskbar)
+ * @li "normal": window is in a normal state (not withdrawn or iconified)
+ * @li "stick": window has become sticky (shows on all desktops)
+ * @li "unstick": window has stopped being sticky
+ * @li "fullscreen": window has become fullscreen
+ * @li "unfullscreen": window has stopped being fullscreen
+ * @li "maximized": window has been maximized
+ * @li "unmaximized": window has stopped being maximized
  *
  * Examples:
  * @li @ref win_example_01
@@ -545,6 +554,87 @@ EAPI void                  elm_win_iconified_set(Evas_Object *obj, Eina_Bool ico
  * @return If true, the window is iconified
  */
 EAPI Eina_Bool             elm_win_iconified_get(const Evas_Object *obj);
+
+/**
+ * Set the withdrawn state of a window.
+ *
+ * @param obj The window object
+ * @param withdrawn If true, the window is withdrawn
+ */
+EAPI void                  elm_win_withdrawn_set(Evas_Object *obj, Eina_Bool withdrawn);
+
+/**
+ * Get the withdrawn state of a window.
+ *
+ * @param obj The window object
+ * @return If true, the window is withdrawn
+ */
+EAPI Eina_Bool             elm_win_withdrawn_get(const Evas_Object *obj);
+
+/**
+ * Set the urgent state of a window.
+ *
+ * @param obj The window object
+ * @param urgent If true, the window is urgent
+ */
+EAPI void                  elm_win_urgent_set(Evas_Object *obj, Eina_Bool urgent);
+
+/**
+ * Get the urgent state of a window.
+ *
+ * @param obj The window object
+ * @return If true, the window is urgent
+ */
+EAPI Eina_Bool             elm_win_urgent_get(const Evas_Object *obj);
+
+/**
+ * Set the demand_attention state of a window.
+ *
+ * @param obj The window object
+ * @param demand_attention If true, the window is demand_attention
+ */
+EAPI void                  elm_win_demand_attention_set(Evas_Object *obj, Eina_Bool demand_attention);
+
+/**
+ * Get the demand_attention state of a window.
+ *
+ * @param obj The window object
+ * @return If true, the window is demand_attention
+ */
+EAPI Eina_Bool             elm_win_demand_attention_get(const Evas_Object *obj);
+
+/**
+ * Set the modal state of a window.
+ *
+ * @param obj The window object
+ * @param modal If true, the window is modal
+ */
+EAPI void                  elm_win_modal_set(Evas_Object *obj, Eina_Bool modal);
+
+/**
+ * Get the modal state of a window.
+ *
+ * @param obj The window object
+ * @return If true, the window is modal
+ */
+EAPI Eina_Bool             elm_win_modal_get(const Evas_Object *obj);
+
+/**
+ * Set the aspect ratio of a window.
+ *
+ * @param obj The window object
+ * @param aspect If 0, the window has no aspect limits, otherwise it is
+ * width divided by height
+ */
+EAPI void                  elm_win_aspect_set(Evas_Object *obj, double aspect);
+
+/**
+ * Get the aspect ratio of a window.
+ *
+ * @param obj The window object
+ * @return The aspect ratio set (0 by default)
+ */
+EAPI double                elm_win_aspect_get(const Evas_Object *obj);
 
 /**
  * Set the layer of the window.
