@@ -932,10 +932,8 @@ _item_new(Evas_Object *obj, const char *icon, const char *label, Evas_Smart_Cb f
 }
 
 static void
-_item_label_set(Elm_Toolbar_Item *item, const char *label, const char *signal)
+_item_label_set(Elm_Toolbar_Item *item, const char *label, const char *signal __UNUSED__)
 {
-   const char *s;
-
    if ((label) && (item->label) && (!strcmp(label, item->label))) return;
 
    eina_stringshare_replace(&item->label, label);
@@ -945,11 +943,9 @@ _item_label_set(Elm_Toolbar_Item *item, const char *label, const char *signal)
 }
 
 static void
-_elm_toolbar_item_icon_obj_set(Evas_Object *obj, Elm_Toolbar_Item *item, Evas_Object *icon_obj, const char *icon_str, double icon_size, const char *signal)
+_elm_toolbar_item_icon_obj_set(Evas_Object *obj, Elm_Toolbar_Item *item, Evas_Object *icon_obj, const char *icon_str, double icon_size, const char *signal __UNUSED__)
 {
-   Evas_Object *old_icon;
    int ms = 0;
-   const char *s;
 
    if (icon_str)
      eina_stringshare_replace(&item->icon_str, icon_str);
