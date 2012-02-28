@@ -217,7 +217,9 @@ eng_window_free(Evas_GL_Wl_Window *gw)
      {
         if (context) eglDestroyContext(gw->egl_disp, context);
         context = EGL_NO_CONTEXT;
-        eglTerminate(gw->egl_disp);
+        /* NB: This is causing an unknown hang when we run elm apps as 
+         * wayland clients inside the weston compositor */
+        /* eglTerminate(gw->egl_disp); */
         eglReleaseThread();
      }
    free(gw);

@@ -25,7 +25,6 @@ struct _Render_Engine
    int                      end;
    int w, h;
    int vsync;
-
 };
 
 struct _Render_Engine_GL_Surface
