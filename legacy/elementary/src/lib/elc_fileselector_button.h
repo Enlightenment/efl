@@ -33,7 +33,7 @@
  * are:
  * @li "default" - Label of the fileselector_button
  *
- * Default contents parts of the fileselector_button widget that you can use for
+ * Default content parts of the fileselector_button widget that you can use for
  * are:
  * @li "icon" - Icon of the fileselector_button
  *

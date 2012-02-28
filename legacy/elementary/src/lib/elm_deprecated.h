@@ -22,7 +22,7 @@
  *                 until the toggle is released by the cursor (assuming it
  *                 has been triggered by the cursor in the first place).
  *
- * Default contents parts of the toggle widget that you can use for are:
+ * Default content parts of the toggle widget that you can use for are:
  * @li "icon" - An icon of the toggle
  *
  * Default text parts of the toggle widget that you can use for are:

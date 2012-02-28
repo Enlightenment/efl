@@ -18,7 +18,7 @@
  * "animate,begin" - when a flip animation was started
  * "animate,done" - when a flip animation is finished
  *
- * Default contents parts of the flip widget that you can use for are:
+ * Default content parts of the flip widget that you can use for are:
  * @li "front" - A front content of the flip 
  * @li "back" - A back content of the flip 
  *

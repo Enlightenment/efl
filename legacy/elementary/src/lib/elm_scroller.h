@@ -25,7 +25,7 @@
  * @note When Elementary is in desktop mode the thumbscroll(a.k.a.
  * fingerscroll) won't work.
  *
- * Default contents parts of the scroller widget that you can use for are:
+ * Default content parts of the scroller widget that you can use for are:
  * @li "default" - A content of the scroller
  *
  * Supported elm_object common APIs.

@@ -23,7 +23,7 @@
  * Available styles for it:
  * - @c "default"
  *
- * Default contents parts of the panes widget that you can use are:
+ * Default content parts of the panes widget that you can use are:
  * @li "left" - A leftside content of the panes
  * @li "right" - A rightside content of the panes
  *

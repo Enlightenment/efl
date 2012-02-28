@@ -13,7 +13,7 @@
  * @li "timeout" - when timeout happens on notify and it's hidden
  * @li "block,clicked" - when a click outside of the notify happens
  *
- * Default contents parts of the notify widget that you can use for are:
+ * Default content parts of the notify widget that you can use for are:
  * @li "default" - A content of the notify
  *
  * Supported elm_object common APIs.

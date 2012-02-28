@@ -39,7 +39,7 @@
  * Available styles for it:
  * - @c "default"
  *
- * Default contents parts of the slider widget that you can use for are:
+ * Default content parts of the slider widget that you can use for are:
  * @li "icon" - An icon of the slider
  * @li "end" - A end part content of the slider
  *

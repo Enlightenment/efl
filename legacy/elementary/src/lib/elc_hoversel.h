@@ -16,7 +16,7 @@
  * "selected" - an item in the hoversel list is selected. event_info is the item
  * "dismissed" - the hover is dismissed
  *
- * Default contents parts of the hoversel widget that you can use for are:
+ * Default content parts of the hoversel widget that you can use for are:
  * @li "icon" - An icon of the hoversel
  *
  * Default text parts of the hoversel widget that you can use for are:

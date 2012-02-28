@@ -19,7 +19,7 @@
  * Available styles for it:
  * - @c "default"
  *
- * Default contents parts of the conformant widget that you can use for are:
+ * Default content parts of the conformant widget that you can use for are:
  * @li "default" - A content of the conformant
  *
  * See how to use this widget in this example:

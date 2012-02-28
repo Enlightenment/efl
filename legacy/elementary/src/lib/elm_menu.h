@@ -12,7 +12,7 @@
  * Signals that you can add callbacks for are:
  * @li "clicked" - the user clicked the empty space in the menu to dismiss.
  *
- * Default contents parts of the menu items that you can use for are:
+ * Default content parts of the menu items that you can use for are:
  * @li "default" - A main content of the menu item
  *
  * Default text parts of the menu items that you can use for are:

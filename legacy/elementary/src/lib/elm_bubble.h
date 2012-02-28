@@ -31,7 +31,7 @@
  * Signals that you can add callbacks for are:
  * @li "clicked" - This is called when a user has clicked the bubble.
  *
- * Default contents parts of the bubble that you can use for are:
+ * Default content parts of the bubble that you can use for are:
  * @li "default" - A content of the bubble
  * @li "icon" - An icon of the bubble
  *

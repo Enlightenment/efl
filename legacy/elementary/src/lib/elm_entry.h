@@ -213,7 +213,7 @@
  * @li "preedit,changed": The preedit string has changed.
  * @li "language,changed": Program language changed.
  *
- * Default contents parts of the entry items that you can use for are:
+ * Default content parts of the entry items that you can use for are:
  * @li "icon" - An icon in the entry
  * @li "end" - A content in the end of the entry
  *

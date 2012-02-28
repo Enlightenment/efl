@@ -23,7 +23,7 @@
  * "changed" - This is called whenever the user changes the state of one of
  *             the check object(event_info is NULL).
  *
- * Default contents parts of the check widget that you can use for are:
+ * Default content parts of the check widget that you can use for are:
  * @li "icon" - An icon of the check
  *
  * Default text parts of the check widget that you can use for are:

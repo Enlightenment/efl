@@ -40,7 +40,7 @@
  * @li "smart,changed" - a content object placed under the "smart"
  *                   policy was replaced to a new slot direction.
  *
- * Default contents parts of the hover widget that you can use for are:
+ * Default content parts of the hover widget that you can use for are:
  * @li "left"
  * @li "top-left"
  * @li "top"
@@ -52,7 +52,7 @@
  * @li "middle"
  * @li "smart"
  *
- * @note These contents parts indicates the direction that the content will be
+ * @note These content parts indicates the direction that the content will be
  * displayed
  *
  * All directions may have contents at the same time, except for

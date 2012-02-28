@@ -36,7 +36,7 @@
  * Default text parts of the radio widget that you can use for are:
  * @li "default" - Label of the radio
  *
- * Default contents parts of the radio widget that you can use for are:
+ * Default content parts of the radio widget that you can use for are:
  * @li "icon" - An icon of the radio
  *
  * Supported elm_object common APIs.

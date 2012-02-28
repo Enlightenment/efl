@@ -12,7 +12,7 @@
  * @li ELM_PANEL_ORIENT_LEFT
  * @li ELM_PANEL_ORIENT_RIGHT
  *
- * Default contents parts of the panel widget that you can use for are:
+ * Default content parts of the panel widget that you can use for are:
  * @li "default" - A content of the panel
  *
  * Supported elm_object common APIs.

@@ -26,7 +26,7 @@
  * Available styles for it:
  * - @c "default"
  *
- * Default contents parts of the segment control items that you can use for are:
+ * Default content parts of the segment control items that you can use for are:
  * @li "icon" - An icon in a segment control item
  *
  * Default text parts of the segment control items that you can use for are:

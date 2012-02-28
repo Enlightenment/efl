@@ -12,7 +12,7 @@
  * need to resize or move it frequently (the content object and its
  * children).
  *
- * Default contents parts of the mapbuf widget that you can use for are:
+ * Default content parts of the mapbuf widget that you can use for are:
  * @li "default" - A content of the mapbuf
  *
  * Supported elm_object common APIs.

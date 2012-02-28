@@ -18,7 +18,7 @@
  * Available styles for it:
  * - @c "default"
  *
- * Default contents parts of the diskselector items that you can use for are:
+ * Default content parts of the diskselector items that you can use for are:
  * @li "icon" - An icon in the diskselector item
  *
  * Default text parts of the diskselector items that you can use for are:

@@ -19,10 +19,10 @@
  * Signals that you can add callbacks for are:
  * "dismissed" - the ctxpopup was dismissed
  *
- * Default contents parts of the ctxpopup widget that you can use for are:
+ * Default content parts of the ctxpopup widget that you can use for are:
  * @li "default" - A content of the ctxpopup
  *
- * Default contents parts of the ctxpopup items that you can use for are:
+ * Default content parts of the ctxpopup items that you can use for are:
  * @li "icon" - An icon in the title area
  *
  * Default text parts of the ctxpopup items that you can use for are:

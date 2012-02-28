@@ -12,7 +12,7 @@
  * some properties useful to a background, like setting it to tiled,
  * centered, scaled or stretched.
  *
- * Default contents parts of the bg widget that you can use for are:
+ * Default content parts of the bg widget that you can use for are:
  * @li "overlay" - overlay of the bg
  *
  * Supported elm_object common APIs.

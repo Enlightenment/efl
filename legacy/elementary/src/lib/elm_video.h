@@ -30,7 +30,7 @@
  * "rewind,clicked" - the user clicked the rewind button.
  * "stop,clicked" - the user clicked the stop button.
  *
- * Default contents parts of the player widget that you can use for are:
+ * Default content parts of the player widget that you can use for are:
  * @li "video" - A video of the player
  *
  */

@@ -45,7 +45,7 @@
  * are:
  * @li "default" - Label of the fileselector_button
  *
- * Default contents parts of the fileselector_entry widget that you can use for
+ * Default content parts of the fileselector_entry widget that you can use for
  * are:
  * @li "button icon" - Button icon of the fileselector_entry
  *

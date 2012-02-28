@@ -31,7 +31,7 @@
  * @li colorselector: Internally used by @ref Colorselector 
  * for its left and right buttons.
  *
- * Default contents parts of the button widget that you can use for are:
+ * Default content parts of the button widget that you can use for are:
  * @li "icon" - An icon of the button
  *
  * Default text parts of the button widget that you can use for are:
