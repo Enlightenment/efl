@@ -528,3 +528,7 @@
 
         * Fix ecore_file_download to not limit downloads to 30sec.
 
+2012-02-28 Carsten Haitzler (The Rasterman)
+
+        * Add ecore_x_netwm_icons_set()
+

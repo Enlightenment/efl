@@ -2166,6 +2166,11 @@ ecore_x_netwm_strut_partial_get(Ecore_X_Window win,
                                 int *bottom_start_x,
                                 int *bottom_end_x);
 
+EAPI void
+ecore_x_netwm_icons_set(Ecore_X_Window win,
+                        Ecore_X_Icon *icon,
+                        int num);
+       
 EAPI Eina_Bool
 ecore_x_netwm_icons_get(Ecore_X_Window win,
                         Ecore_X_Icon **icon,

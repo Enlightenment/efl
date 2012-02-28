@@ -838,6 +838,54 @@ ecore_x_netwm_icon_name_set(Ecore_X_Window win,
    ecore_x_window_prop_string_set(win, ECORE_X_ATOM_NET_WM_ICON_NAME, name);
 }
 
+EAPI void
+ecore_x_netwm_icons_set(Ecore_X_Window win,
+                        Ecore_X_Icon *icon,
+                        int num)
+{
+   unsigned int *data, *p, *p2;
+   unsigned int i, size, x, y;
+   
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   size = 0;
+   for (i = 0; i < (unsigned int)num; i++)
+     {
+        size += 2 + (icon[i].width * icon[i].height);
+     }
+   data = alloca(size * sizeof(unsigned int));
+   p = data;
+   for (i = 0; i < (unsigned int)num; i++)
+     {
+        p[0] = icon[i].width;
+        p[1] = icon[i].height;
+        p += 2;
+        p2 = icon[i].data;
+        for (y = 0; y < icon[i].height; y++)
+          {
+             for (x = 0; x < icon[i].width; x++)
+               {
+                  unsigned int r, g, b, a;
+                  
+                  a = (*p2 >> 24) & 0xff;
+                  r = (*p2 >> 16) & 0xff;
+                  g = (*p2 >> 8 ) & 0xff;
+                  b = (*p2      ) & 0xff;
+                  if ((a > 0) && (a < 255))
+                    {
+                       r = (r * 255) / a;
+                       g = (g * 255) / a;
+                       b = (b * 255) / a;
+                    }
+                  *p = (a << 24) | (r << 16) | (g << 8) | b;
+                  p++;
+                  p2++;
+               }
+          }
+     }
+   ecore_x_window_prop_card32_set(win, ECORE_X_ATOM_NET_WM_ICON,
+                                  data, size);
+}
+
 EAPI Eina_Bool
 ecore_x_netwm_icons_get(Ecore_X_Window win,
                         Ecore_X_Icon **icon,
