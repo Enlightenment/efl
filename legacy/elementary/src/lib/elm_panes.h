@@ -141,6 +141,7 @@ EAPI void                         elm_panes_content_left_size_set(Evas_Object *o
  *
  * @ingroup Panes
  */
+// XXX: no implementation for this api?
 EAPI double                       elm_panes_content_right_size_get(const Evas_Object *obj);
 
 /**
@@ -166,6 +167,7 @@ EAPI double                       elm_panes_content_right_size_get(const Evas_Ob
  *
  * @ingroup Panes
  */
+// XXX: no implementation for this api?
 EAPI void                         elm_panes_content_right_size_set(Evas_Object *obj, double size);
 
 
