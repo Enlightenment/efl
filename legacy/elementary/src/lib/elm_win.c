@@ -1533,8 +1533,9 @@ _elm_win_frame_cb_maximize(void *data, Evas_Object *obj __UNUSED__, const char *
    Elm_Win *win;
 
    if (!(win = data)) return;
-   win->maximized = EINA_TRUE;
-   ecore_evas_maximized_set(win->ee, EINA_TRUE);
+   if (win->maximized) win->maximized = EINA_FALSE;
+   else win->maximized = EINA_TRUE;
+   ecore_evas_maximized_set(win->ee, win->maximized);
 }
 
 static void 
@@ -1887,7 +1888,7 @@ elm_win_add(Evas_Object *parent, const char *name, Elm_Win_Type type)
 
    if (win->frame_obj) 
      {
-//        evas_object_clip_set(win->win_obj, win->frame_obj);
+        evas_object_clip_set(win->win_obj, win->frame_obj);
         evas_object_stack_below(win->frame_obj, win->win_obj);
      }
 
