@@ -683,6 +683,14 @@ static const Ecore_Evas_Engine_Func _ecore_ews_engine_func =
      _ecore_evas_ews_ignore_events_set,
      _ecore_evas_ews_alpha_set,
      _ecore_evas_ews_transparent_set,
+   
+     NULL,
+     NULL,
+     NULL,
+     NULL,
+     NULL,
+     NULL,
+
      _ecore_evas_ews_render,
      _ecore_evas_ews_screen_geometry_get
 };

@@ -401,6 +401,20 @@ EAPI void        ecore_evas_fullscreen_set(Ecore_Evas *ee, Eina_Bool on);
  * @see ecore_evas_fullscreen_set()
  */
 EAPI Eina_Bool   ecore_evas_fullscreen_get(const Ecore_Evas *ee);
+
+EAPI void        ecore_evas_window_group_set(Ecore_Evas *ee, const Ecore_Evas *ee_group);
+EAPI const Ecore_Evas *ecore_evas_window_group_get(const Ecore_Evas *ee);
+EAPI void        ecore_evas_aspect_set(Ecore_Evas *ee, double aspect);
+EAPI double      ecore_evas_aspect_get(const Ecore_Evas *ee);
+EAPI void        ecore_evas_urgent_set(Ecore_Evas *ee, Eina_Bool urgent);
+EAPI Eina_Bool   ecore_evas_urgent_get(const Ecore_Evas *ee);
+EAPI void        ecore_evas_modal_set(Ecore_Evas *ee, Eina_Bool modal);
+EAPI Eina_Bool   ecore_evas_modal_get(const Ecore_Evas *ee);
+EAPI void        ecore_evas_demand_attention_set(Ecore_Evas *ee, Eina_Bool demand);
+EAPI Eina_Bool   ecore_evas_demand_attention_get(const Ecore_Evas *ee);
+EAPI void        ecore_evas_focus_skip_set(Ecore_Evas *ee, Eina_Bool skip);
+EAPI Eina_Bool   ecore_evas_focus_skip_get(const Ecore_Evas *ee);
+   
 /**
  * @brief Set if this evas should ignore @b all events.
  *
@@ -1209,6 +1223,19 @@ EAPI void        ecore_evas_callback_post_render_set(Ecore_Evas *ee, Ecore_Evas_
  * windowing system.
  */
 EAPI void        ecore_evas_callback_pre_free_set(Ecore_Evas *ee, Ecore_Evas_Event_Cb func);
+/**
+ * Set a callback for Ecore_Evas state changes.
+ * @param ee The Ecore_Evas to set callbacks on
+ * @param func The function to call
+
+ * A call to this function will set a callback on an Ecore_Evas, causing
+ * @p func to be called whenever @p ee changes state.
+ *
+ * @warning If and when this function is called depends on the underlying
+ * windowing system.
+ */
+EAPI void        ecore_evas_callback_state_change_set(Ecore_Evas *ee, Ecore_Evas_Event_Cb func);
+
 EAPI Evas       *ecore_evas_get(const Ecore_Evas *ee);
 EAPI void        ecore_evas_managed_move(Ecore_Evas *ee, int x, int y);
 EAPI void        ecore_evas_shaped_set(Ecore_Evas *ee, Eina_Bool shaped);

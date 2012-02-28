@@ -531,4 +531,11 @@
 2012-02-28 Carsten Haitzler (The Rasterman)
 
         * Add ecore_x_netwm_icons_set()
-
+        * Add ecore_evas_window_group_set() ecore_evas_window_group_get()
+          ecore_evas_aspect_set() ecore_evas_aspect_get()
+          ecore_evas_urgent_set() ecore_evas_urgent_get()
+          ecore_evas_modal_set() ecore_evas_modal_get()
+          ecore_evas_demand_attention_set()
+          ecore_evas_demand_attention_get()
+          ecore_evas_focus_skip_set() ecore_evas_focus_skip_get()
+          ecore_evas_callback_state_change_set()

@@ -1132,6 +1132,18 @@ ecore_evas_callback_pre_free_set(Ecore_Evas *ee, Ecore_Evas_Event_Cb func)
    ee->func.fn_pre_free = func;
 }
 
+EAPI void
+ecore_evas_callback_state_change_set(Ecore_Evas *ee, Ecore_Evas_Event_Cb func)
+{
+   if (!ECORE_MAGIC_CHECK(ee, ECORE_MAGIC_EVAS))
+     {
+        ECORE_MAGIC_FAIL(ee, ECORE_MAGIC_EVAS,
+                         "ecore_evas_callback_state_change_set");
+        return;
+     }
+   ee->func.fn_state_change = func;
+}
+
 /**
  * Get an Ecore_Evas's Evas
  * @param ee The Ecore_Evas whose Evas you wish to get
@@ -2098,6 +2110,162 @@ ecore_evas_sticky_get(const Ecore_Evas *ee)
         return EINA_FALSE;
      }
    return ee->prop.sticky ? EINA_TRUE : EINA_FALSE;
+}
+
+EAPI void
+ecore_evas_window_group_set(Ecore_Evas *ee, const Ecore_Evas *ee_group)
+{
+   if (!ECORE_MAGIC_CHECK(ee, ECORE_MAGIC_EVAS))
+     {
+        ECORE_MAGIC_FAIL(ee, ECORE_MAGIC_EVAS,
+                         "XXX");
+        return;
+     }
+
+   IFC(ee, fn_window_group_set) (ee, ee_group);
+   IFE;
+}
+
+EAPI const Ecore_Evas *
+ecore_evas_window_group_get(const Ecore_Evas *ee)
+{
+   if (!ECORE_MAGIC_CHECK(ee, ECORE_MAGIC_EVAS))
+     {
+        ECORE_MAGIC_FAIL(ee, ECORE_MAGIC_EVAS,
+                         "XXX");
+        return EINA_FALSE;
+     }
+   return ee->prop.group_ee;
+}
+
+EAPI void
+ecore_evas_aspect_set(Ecore_Evas *ee, double aspect)
+{
+   if (!ECORE_MAGIC_CHECK(ee, ECORE_MAGIC_EVAS))
+     {
+        ECORE_MAGIC_FAIL(ee, ECORE_MAGIC_EVAS,
+                         "XXX");
+        return;
+     }
+
+   IFC(ee, fn_aspect_set) (ee, aspect);
+   IFE;
+}
+
+EAPI double
+ecore_evas_aspect_get(const Ecore_Evas *ee)
+{
+   if (!ECORE_MAGIC_CHECK(ee, ECORE_MAGIC_EVAS))
+     {
+        ECORE_MAGIC_FAIL(ee, ECORE_MAGIC_EVAS,
+                         "XXX");
+        return EINA_FALSE;
+     }
+   return ee->prop.aspect;
+}
+
+EAPI void
+ecore_evas_urgent_set(Ecore_Evas *ee, Eina_Bool urgent)
+{
+   if (!ECORE_MAGIC_CHECK(ee, ECORE_MAGIC_EVAS))
+     {
+        ECORE_MAGIC_FAIL(ee, ECORE_MAGIC_EVAS,
+                         "XXX");
+        return;
+     }
+
+   IFC(ee, fn_urgent_set) (ee, urgent);
+   IFE;
+}
+
+EAPI Eina_Bool
+ecore_evas_urgent_get(const Ecore_Evas *ee)
+{
+   if (!ECORE_MAGIC_CHECK(ee, ECORE_MAGIC_EVAS))
+     {
+        ECORE_MAGIC_FAIL(ee, ECORE_MAGIC_EVAS,
+                         "XXX");
+        return EINA_FALSE;
+     }
+   return ee->prop.urgent ? EINA_TRUE : EINA_FALSE;
+}
+
+EAPI void
+ecore_evas_modal_set(Ecore_Evas *ee, Eina_Bool modal)
+{
+   if (!ECORE_MAGIC_CHECK(ee, ECORE_MAGIC_EVAS))
+     {
+        ECORE_MAGIC_FAIL(ee, ECORE_MAGIC_EVAS,
+                         "XXX");
+        return;
+     }
+
+   IFC(ee, fn_modal_set) (ee, modal);
+   IFE;
+}
+
+EAPI Eina_Bool
+ecore_evas_modal_get(const Ecore_Evas *ee)
+{
+   if (!ECORE_MAGIC_CHECK(ee, ECORE_MAGIC_EVAS))
+     {
+        ECORE_MAGIC_FAIL(ee, ECORE_MAGIC_EVAS,
+                         "XXX");
+        return EINA_FALSE;
+     }
+   return ee->prop.modal ? EINA_TRUE : EINA_FALSE;
+}
+
+EAPI void
+ecore_evas_demand_attention_set(Ecore_Evas *ee, Eina_Bool demand)
+{
+   if (!ECORE_MAGIC_CHECK(ee, ECORE_MAGIC_EVAS))
+     {
+        ECORE_MAGIC_FAIL(ee, ECORE_MAGIC_EVAS,
+                         "XXX");
+        return;
+     }
+
+   IFC(ee, fn_demands_attention_set) (ee, demand);
+   IFE;
+}
+
+EAPI Eina_Bool
+ecore_evas_demand_attention_get(const Ecore_Evas *ee)
+{
+   if (!ECORE_MAGIC_CHECK(ee, ECORE_MAGIC_EVAS))
+     {
+        ECORE_MAGIC_FAIL(ee, ECORE_MAGIC_EVAS,
+                         "XXX");
+        return EINA_FALSE;
+     }
+   return ee->prop.demand_attention ? EINA_TRUE : EINA_FALSE;
+}
+
+EAPI void
+ecore_evas_focus_skip_set(Ecore_Evas *ee, Eina_Bool skip)
+{
+   if (!ECORE_MAGIC_CHECK(ee, ECORE_MAGIC_EVAS))
+     {
+        ECORE_MAGIC_FAIL(ee, ECORE_MAGIC_EVAS,
+                         "XXX");
+        return;
+     }
+
+   IFC(ee, fn_focus_skip_set) (ee, skip);
+   IFE;
+}
+
+EAPI Eina_Bool
+ecore_evas_focus_skip_get(const Ecore_Evas *ee)
+{
+   if (!ECORE_MAGIC_CHECK(ee, ECORE_MAGIC_EVAS))
+     {
+        ECORE_MAGIC_FAIL(ee, ECORE_MAGIC_EVAS,
+                         "XXX");
+        return EINA_FALSE;
+     }
+   return ee->prop.focus_skip ? EINA_TRUE : EINA_FALSE;
 }
 
 EAPI void

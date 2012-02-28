@@ -152,6 +152,14 @@ static Ecore_Evas_Engine_Func _ecore_wl_engine_func =
    NULL, // func ignore events set
    NULL, // func alpha set
    NULL, // func transparent set
+   
+   NULL,
+   NULL,
+   NULL,
+   NULL,
+   NULL,
+   NULL,
+
    _ecore_evas_wl_render, 
    _ecore_evas_wl_screen_geometry_get
 };

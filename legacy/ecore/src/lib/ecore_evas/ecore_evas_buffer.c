@@ -513,6 +513,13 @@ static Ecore_Evas_Engine_Func _ecore_buffer_engine_func =
      _ecore_evas_buffer_alpha_set,
      NULL, //transparent
 
+     NULL,
+     NULL,
+     NULL,
+     NULL,
+     NULL,
+     NULL,
+
      _ecore_evas_buffer_render,
      NULL  // screen_geometry_get
 };

@@ -463,6 +463,14 @@ static Ecore_Evas_Engine_Func _ecore_cocoa_engine_func =
     NULL,
     NULL,
     NULL, //transparent    
+     
+     NULL,
+     NULL,
+     NULL,
+     NULL,
+     NULL,
+     NULL,
+
     NULL, // render
     NULL
   };

@@ -1104,6 +1104,13 @@ static const Ecore_Evas_Engine_Func _ecore_extn_plug_engine_func =
    NULL,
    NULL, //transparent
 
+   NULL,
+   NULL,
+   NULL,
+   NULL,
+   NULL,
+   NULL,
+
    NULL, // render
    NULL  // screen_geometry_get
 };
@@ -1981,6 +1988,14 @@ static const Ecore_Evas_Engine_Func _ecore_extn_socket_engine_func =
    _ecore_evas_extn_socket_alpha_set,
    NULL, //transparent
 
+   NULL,
+   NULL,
+   NULL,
+   NULL,
+   NULL,
+   NULL,
+   NULL,
+   
    _ecore_evas_extn_socket_render, // render
    NULL  // screen_geometry_get
 };

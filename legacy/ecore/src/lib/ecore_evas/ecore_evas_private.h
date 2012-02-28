@@ -178,6 +178,13 @@ struct _Ecore_Evas_Engine_Func
    void (*fn_alpha_set) (Ecore_Evas *ee, int alpha);
    void (*fn_transparent_set) (Ecore_Evas *ee, int transparent);
 
+   void (*fn_window_group_set) (Ecore_Evas *ee, const Ecore_Evas *ee_group);
+   void (*fn_aspect_set) (Ecore_Evas *ee, double aspect);
+   void (*fn_urgent_set) (Ecore_Evas *ee, int urgent);
+   void (*fn_modal_set) (Ecore_Evas *ee, int modal);
+   void (*fn_demands_attention_set) (Ecore_Evas *ee, int demand);
+   void (*fn_focus_skip_set) (Ecore_Evas *ee, int skip);
+
    int (*fn_render) (Ecore_Evas *ee);
    void (*fn_screen_geometry_get) (const Ecore_Evas *ee, int *x, int *y, int *w, int *h);
 };
@@ -334,6 +341,9 @@ struct _Ecore_Evas
       int             layer;
       Ecore_Window    window;
       unsigned char   avoid_damage;
+      Ecore_Evas     *group_ee;
+      Ecore_Window    group_ee_win;
+      double          aspect;
       char            focused      : 1;
       char            iconified    : 1;
       char            borderless   : 1;
@@ -345,7 +355,11 @@ struct _Ecore_Evas
       char            request_pos  : 1;
       char            draw_frame   : 1;
       char            hwsurface    : 1;
-   } prop;
+      char            urgent           : 1;
+      char            modal            : 1;
+      char            demand_attention : 1;
+      char            focus_skip       : 1;
+  } prop;
 
    struct {
       void          (*fn_resize) (Ecore_Evas *ee);
@@ -363,6 +377,7 @@ struct _Ecore_Evas
       void          (*fn_pre_render) (Ecore_Evas *ee);
       void          (*fn_post_render) (Ecore_Evas *ee);
       void          (*fn_pre_free) (Ecore_Evas *ee);
+      void          (*fn_state_change) (Ecore_Evas *ee);
    } func;
 
    Ecore_Evas_Engine engine;
