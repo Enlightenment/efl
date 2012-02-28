@@ -948,7 +948,7 @@ _ecore_evas_wl_frame_add(Evas *evas)
 
 #else
 EAPI Ecore_Evas *
-ecore_evas_wayland_egl_new(const char *disp_name __UNUSED__, Ecore_Wl_Window *parent __UNUSED__, int x __UNUSED__, int y __UNUSED__, int w __UNUSED__, int h __UNUSED__, Eina_Bool frame __UNUSED__)
+ecore_evas_wayland_egl_new(const char *disp_name __UNUSED__, unsigned int parent __UNUSED__, int x __UNUSED__, int y __UNUSED__, int w __UNUSED__, int h __UNUSED__, Eina_Bool frame __UNUSED__)
 {
    return NULL;
 }
