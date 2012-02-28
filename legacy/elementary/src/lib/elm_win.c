@@ -736,7 +736,7 @@ _elm_win_obj_intercept_show(void *data, Evas_Object *obj)
      {
         ecore_evas_show(win->pointer.ee);
         evas_object_show(win->pointer.obj);
-        ecore_evas_wayland_pointer_set(win->pointer.ee, 10, 10);
+        /* ecore_evas_wayland_pointer_set(win->pointer.ee, 10, 10); */
      }
    evas_object_show(obj);
 }
@@ -1551,7 +1551,9 @@ _elm_win_pointer_add(Elm_Win *win, const char *style)
 {
    int mw, mh;
 
-   win->pointer.ee = ecore_evas_wayland_shm_new(NULL, 0, 0, 32, 32, 0);
+   return;
+
+   win->pointer.ee = ecore_evas_wayland_shm_new(NULL, 0, 0, 0, 32, 32, 0);
    ecore_evas_resize(win->pointer.ee, 32, 32);
 
    win->pointer.evas = ecore_evas_get(win->ee);
@@ -1559,7 +1561,6 @@ _elm_win_pointer_add(Elm_Win *win, const char *style)
    win->pointer.obj = edje_object_add(win->pointer.evas);
    _elm_theme_set(NULL, win->pointer.obj, "pointer", "base", style);
    edje_object_size_min_calc(win->pointer.obj, &mw, &mh);
-   printf("ELM Win Pointer Size: %d %d\n", mw, mh);
    evas_object_move(win->pointer.obj, 0, 0);
    evas_object_resize(win->pointer.obj, 32, 32);
    evas_object_show(win->pointer.obj);
@@ -1822,19 +1823,19 @@ elm_win_add(Evas_Object *parent, const char *name, Elm_Win_Type type)
           }
         else if (ENGINE_COMPARE(ELM_WAYLAND_SHM)) 
           {
-             win->ee = ecore_evas_wayland_shm_new(NULL, 0, 0, 1, 1, 0);
+             win->ee = ecore_evas_wayland_shm_new(NULL, 0, 0, 0, 1, 1, 0);
 	     win->evas = ecore_evas_get(win->ee);
 
              _elm_win_frame_add(win, "default");
-             _elm_win_pointer_add(win, "default");
+//             _elm_win_pointer_add(win, "default");
           }
         else if (ENGINE_COMPARE(ELM_WAYLAND_EGL)) 
           {
-             win->ee = ecore_evas_wayland_egl_new(NULL, 0, 0, 1, 1, 0);
+             win->ee = ecore_evas_wayland_egl_new(NULL, 0, 0, 0, 1, 1, 0);
 	     win->evas = ecore_evas_get(win->ee);
 
              _elm_win_frame_add(win, "default");
-             _elm_win_pointer_add(win, "default");
+//             _elm_win_pointer_add(win, "default");
           }
         else if (!strncmp(_elm_config->engine, "shot:", 5))
           {
