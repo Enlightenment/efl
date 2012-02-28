@@ -221,7 +221,10 @@ _ecore_wl_input_cb_pointer_focus(void *data, struct wl_input_device *input_devic
 
    win = input->pointer_focus;
    if ((win) && (win->surface != surface))
-     _ecore_wl_input_pointer_focus_remove(input, timestamp);
+     {
+        if (!input->button)
+          _ecore_wl_input_pointer_focus_remove(input, timestamp);
+     }
 
    if (surface)
      {
@@ -235,9 +238,9 @@ _ecore_wl_input_cb_pointer_focus(void *data, struct wl_input_device *input_devic
              _ecore_wl_input_mouse_up_send(input, timestamp);
              input->button = 0;
           }
+        else
+          _ecore_wl_input_mouse_in_send(input, timestamp);
      }
-   else
-     _ecore_wl_input_mouse_in_send(input, timestamp);
 }
 
 static void 
