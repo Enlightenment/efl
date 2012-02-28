@@ -539,3 +539,11 @@
           ecore_evas_demand_attention_get()
           ecore_evas_focus_skip_set() ecore_evas_focus_skip_get()
           ecore_evas_callback_state_change_set()
+
+2012-02-28 Christopher Michael (devilhorns)
+
+        * Refactor Ecore_Wayland code to improve running EFL
+          applications as Wayland Clients.
+        * Refactor Ecore_Evas Wayland code to match changes in 
+          Ecore_Wayland
+

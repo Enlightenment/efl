@@ -1922,7 +1922,7 @@ ECORE_EVAS_CHECK_MODULE([psl1ght],
 ecore_wayland_deps="no"
 have_wayland="no"
 if test "x${want_ecore_wayland}" = "xyes" ; then
-  PKG_CHECK_MODULES([WAYLAND], [wayland-client xkbcommon], [have_wayland="yes"], [have_wayland="no"])
+  PKG_CHECK_MODULES([WAYLAND], [egl wayland-egl wayland-client xkbcommon], [have_wayland="yes"], [have_wayland="no"])
 fi
 if test "x${have_ecore_input}" = "xyes" -a "x${have_wayland}" = "xyes" ; then
   ecore_wayland_deps="yes"
@@ -1930,7 +1930,7 @@ fi
 
 ECORE_CHECK_MODULE([wayland], [${want_ecore_wayland}], [Wayland], [${ecore_wayland_deps}])
 if test "x${have_ecore_wayland}" = "xyes" ; then
-  requirements_ecore_wayland="ecore-input >= 1.1.0 wayland-client xkbcommon ${requirements_ecore_wayland}"
+  requirements_ecore_wayland="ecore-input >= 1.1.0 egl wayland-egl wayland-client xkbcommon ${requirements_ecore_wayland}"
 fi
 
 ECORE_EVAS_CHECK_MODULE_FULL([wayland-shm], [wayland-shm], 
@@ -1939,7 +1939,7 @@ ECORE_EVAS_CHECK_MODULE_FULL([wayland-shm], [wayland-shm],
    [${have_ecore_wayland}],
    [requirements_ecore_evas="${requirements_ecore_wayland} ${requirements_ecore_evas}"])
 
-ECORE_EVAS_CHECK_MODULE_FULL([wayland-egl], [wayland-egl], 
+ECORE_EVAS_CHECK_MODULE_FULL([wayland-egl], [wayland-egl egl], 
    [${want_ecore_evas_wayland_egl}],
    [Wayland Egl],
    [${have_ecore_wayland}],
