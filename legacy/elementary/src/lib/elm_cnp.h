@@ -2,13 +2,40 @@
  * @defgroup CopyPaste CopyPaste
  *
  * Implements the following functionality
- *    a. select, copy/cut and paste 
+ *    a. select, copy/cut and paste
  *    b. clipboard
- *    c. drag and drop 
+ *    c. drag and drop
  * in order to share data across application windows.
  *
- * Contains functions to select a portion of text, send it to a buffer,
- * and paste the selection into a target.
+ * Contains functions to select text or a portion of data,
+ * send it to a buffer, and paste the data into a target.
+ *
+ * elm_cnp provides generic copy and paste facility based on its windowing system.
+ * It is not necessary to know the details of each windowing system,
+ * but some terms and behavior are common.
+ * Currently the X11 window system is widely used, and only X11 functionality is implemented.
+ *
+ * In X11R6 window sytem, CopyPaste works like a peer-to-peer communication.
+ * Copying is an operation on an object in an X server.
+ * X11 calls those objects 'selections' which have names.
+ * Generally, two selection types are needed for copy and paste:
+ * The Primary selection and the Clipboard selection.
+ * Primary selection is for selecting text (that means highlighted text).
+ * Clipboard selection is for explicit copying behavior
+ * (such as ctrl+c, or 'copy' in a menu).
+ * Thus, in applications most cases only use the clipboard selection.
+ * As stated before, taking ownership of a selection doesn't move any actual data.
+ * Copying and Pasting is described as follows:
+ *  1. Copy text in Program A : Program A takes ownership of the selection
+ *  2. Paste text in Program B : Program B notes that Program A owns the selection
+ *  3. Program B asks A for the text
+ *  4. Program A responds and sends the text to program B
+ *  5. Program B pastes the response
+ * More information is on
+ *  - http://www.jwz.org/doc/x-cut-and-paste.html
+ *  - X11R6 Inter-Client Communication Conventions Manual, section 2
+ *
+ * TODO: add for other window system.
  *
  * @{
  */
@@ -20,7 +47,7 @@
  */
 typedef enum
 {
-   ELM_SEL_TYPE_PRIMARY, /**< Primary text selection (middle mouse) */
+   ELM_SEL_TYPE_PRIMARY, /**< Primary text selection (highlighted or selected text) */
    ELM_SEL_TYPE_SECONDARY, /**< Used when primary selection is in use */
    ELM_SEL_TYPE_XDND, /**< Drag 'n' Drop */
    ELM_SEL_TYPE_CLIPBOARD, /**< Clipboard selection (ctrl+C) */
@@ -32,19 +59,19 @@ typedef enum
 typedef enum
 {
    /** For matching every possible atom */
-   ELM_SEL_FORMAT_TARGETS = -1,
+   ELM_SEL_FORMAT_TARGETS =   -1,
    /** Content is from outside of Elementary */
-   ELM_SEL_FORMAT_NONE = 0x0,
+   ELM_SEL_FORMAT_NONE    =  0x0,
    /** Plain unformatted text: Used for things that don't want rich markup */
-   ELM_SEL_FORMAT_TEXT = 0x01,
+   ELM_SEL_FORMAT_TEXT    = 0x01,
    /** Edje textblock markup, including inline images */
-   ELM_SEL_FORMAT_MARKUP = 0x02,
+   ELM_SEL_FORMAT_MARKUP  = 0x02,
    /** Images */
-   ELM_SEL_FORMAT_IMAGE = 0x04,
+   ELM_SEL_FORMAT_IMAGE   = 0x04,
    /** Vcards */
-   ELM_SEL_FORMAT_VCARD = 0x08,
+   ELM_SEL_FORMAT_VCARD   = 0x08,
    /** Raw HTML-like data (eg. webkit) */
-   ELM_SEL_FORMAT_HTML = 0x10,
+   ELM_SEL_FORMAT_HTML    = 0x10,
 } Elm_Sel_Format;
 
 /**
@@ -71,10 +98,10 @@ typedef Eina_Bool (*Elm_Drop_Cb)(void *data, Evas_Object *obj, Elm_Selection_Dat
 
 
 /**
- * @brief Set copy and paste data for a widget.
+ * @brief Set copy data for a widget.
  *
- * XXX: need to be rewritten.
- * Append the given callback to the list.
+ * Set copy data and take ownership of selection. Format is used for specifying the selection type,
+ * and this is used during pasting.
  *
  * @param selection Selection type for copying and pasting
  * @param obj The source widget pointer
@@ -94,7 +121,7 @@ EAPI Eina_Bool elm_cnp_selection_set(Elm_Sel_Type selection, Evas_Object *obj,
                                      size_t buflen);
 
 /**
- * @brief Retrieve selection data from a widget.
+ * @brief Retrieve data from a widget that has a selection.
  *
  * Gets the current selection data from a widget.
  * The widget input here will usually be elm_entry,
@@ -128,6 +155,8 @@ EAPI Eina_Bool elm_cnp_selection_get(Elm_Sel_Type selection,
 
 /**
  * @brief Clear the selection data of a widget.
+ *
+ * Clear all data from the selection which is owned by a widget.
  *
  * @see also elm_cnp_selection_set()
  *
