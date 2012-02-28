@@ -401,30 +401,159 @@ EAPI void        ecore_evas_fullscreen_set(Ecore_Evas *ee, Eina_Bool on);
  * @see ecore_evas_fullscreen_set()
  */
 EAPI Eina_Bool   ecore_evas_fullscreen_get(const Ecore_Evas *ee);
-
-/** @since 1.2 */
+/**
+ * @brief Set another window that this window is a group member of
+ *
+ * @param ee The Ecore_Evas
+ * @param ee_group The other group member
+ *
+ * If @p ee_group is NULL, @p ee is removed from the group, otherwise it is
+ * added. Note that if you free the @p ee_group canvas before @p ee, then
+ * getting the group canvas with ecore_evas_window_group_get() will return
+ * an invalid handle.
+ *
+ * @warning Support for this depends on the underlying windowing system.
+ * @since 1.2
+ */
 EAPI void        ecore_evas_window_group_set(Ecore_Evas *ee, const Ecore_Evas *ee_group);
-/** @since 1.2 */
+/**
+ * @brief Get the canvas group set.
+ * 
+ * This returns the handle set by ecore_evas_window_group_set().
+ * 
+ * @param ee The Ecore_Evas to set
+ * @return The Canavs group handle
+ *
+ * @see ecore_evas_window_group_set()
+ * @since 1.2
+ */
 EAPI const Ecore_Evas *ecore_evas_window_group_get(const Ecore_Evas *ee);
-/** @since 1.2 */
+/**
+ * @brief Set the aspect ratio of a canvas window
+ *
+ * @param ee The Ecore_Evas
+ * @param aspect The aspect ratio (width divided by height), or 0 to disable
+ *
+ * This sets the desired aspect ratio of a canvas window
+ * 
+ * @warning Support for this depends on the underlying windowing system.
+ * @since 1.2
+ */
 EAPI void        ecore_evas_aspect_set(Ecore_Evas *ee, double aspect);
-/** @since 1.2 */
+/**
+ * @brief Get the aspect ratio of a canvas window
+ * 
+ * This returns the value set by ecore_evas_aspect_set().
+ * 
+ * @param ee The Ecore_Evas to set
+ * @return The aspect ratio
+ *
+ * @see ecore_evas_aspect_set()
+ * @since 1.2
+ */
 EAPI double      ecore_evas_aspect_get(const Ecore_Evas *ee);
-/** @since 1.2 */
+/**
+ * @brief Set The urgent hint flag
+ *
+ * @param ee The Ecore_Evas
+ * @param urgent The urgent state flag
+ *
+ * This sets the "urgent" state hint on a window so the desktop environment
+ * can highlight it somehow.
+ * 
+ * @warning Support for this depends on the underlying windowing system.
+ * @since 1.2
+ */
 EAPI void        ecore_evas_urgent_set(Ecore_Evas *ee, Eina_Bool urgent);
-/** @since 1.2 */
+/**
+ * @brief Get the urgent state on the cavas window
+ * 
+ * This returns the value set by ecore_evas_urgent_set()
+ * 
+ * @param ee The Ecore_Evas to set
+ * @return The urgent state set
+ *
+ * @see ecore_evas_urgent_set()
+ * @since 1.2
+ */
 EAPI Eina_Bool   ecore_evas_urgent_get(const Ecore_Evas *ee);
-/** @since 1.2 */
+/**
+ * @brief Set the modal state flag on the canvas window
+ *
+ * @param ee The Ecore_Evas
+ * @param modal The modal hint flag
+ *
+ * This hints if the window should be modal (eg if it is also transient
+ * for another window, the other window will maybe be denied focus by
+ * the desktop window manager).
+ * 
+ * @warning Support for this depends on the underlying windowing system.
+ * @since 1.2
+ */
 EAPI void        ecore_evas_modal_set(Ecore_Evas *ee, Eina_Bool modal);
-/** @since 1.2 */
+/**
+ * @brief Get The modal flag
+ * 
+ * This returns the value set by ecore_evas_modal_set().
+ * 
+ * @param ee The Ecore_Evas to set
+ * @return The modal flag
+ *
+ * @see ecore_evas_modal_set()
+ * @since 1.2
+ */
 EAPI Eina_Bool   ecore_evas_modal_get(const Ecore_Evas *ee);
-/** @since 1.2 */
+/**
+ * @brief Set the "i demand attention" flag on a canvas window
+ *
+ * @param ee The Ecore_Evas
+ * @param demand_attention The flag state to set
+ *
+ * A window may demand attention now (eg you must enter a password before
+ * continuing), and so it may flag a window with this.
+ * 
+ * @warning Support for this depends on the underlying windowing system.
+ * @since 1.2
+ */
 EAPI void        ecore_evas_demand_attention_set(Ecore_Evas *ee, Eina_Bool demand);
-/** @since 1.2 */
+/**
+ * @brief Get the "i demand attention" flag
+ * 
+ * This returns the value set by ecore_evas_demand_attention_set().
+ * 
+ * @param ee The Ecore_Evas to set
+ * @return The "i demand attention" flag.
+ *
+ * @see ecore_evas_demand_attention_set()
+ * @since 1.2
+ */
 EAPI Eina_Bool   ecore_evas_demand_attention_get(const Ecore_Evas *ee);
-/** @since 1.2 */
+/**
+ * @brief Set the "focus skip" flag
+ *
+ * @param ee The Ecore_Evas
+ * @param skip The "focus skip" state to set.
+ *
+ * A window may not want to accept focus, be in the taskbar, pager etc.
+ * sometimes (example for a small notification window that hovers around
+ * a taskbar or panel, or hovers around a window until some activity
+ * dismisses it).
+ * 
+ * @warning Support for this depends on the underlying windowing system.
+ * @since 1.2
+ */
 EAPI void        ecore_evas_focus_skip_set(Ecore_Evas *ee, Eina_Bool skip);
-/** @since 1.2 */
+/**
+ * @brief Get the "focus skip" flag
+ * 
+ * This returns the value set by ecore_evas_focus_skip_set().
+ * 
+ * @param ee The Ecore_Evas to set
+ * @return The "focus skip" flag.
+ *
+ * @see ecore_evas_focus_skip_set()
+ * @since 1.2
+ */
 EAPI Eina_Bool   ecore_evas_focus_skip_get(const Ecore_Evas *ee);
    
 /**

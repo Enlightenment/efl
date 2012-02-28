@@ -1994,7 +1994,6 @@ static const Ecore_Evas_Engine_Func _ecore_extn_socket_engine_func =
    NULL,
    NULL,
    NULL,
-   NULL,
    
    _ecore_evas_extn_socket_render, // render
    NULL  // screen_geometry_get
