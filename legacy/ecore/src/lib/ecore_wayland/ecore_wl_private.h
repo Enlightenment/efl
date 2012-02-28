@@ -2,8 +2,11 @@
 # define _ECORE_WAYLAND_PRIVATE_H
 
 # include <limits.h>
+# include <xkbcommon/xkbcommon.h>
 
-//# define LOGFNS 1
+# include "Ecore_Wayland.h"
+
+# define LOGFNS 1
 
 # ifdef LOGFNS
 #  include <stdio.h>
@@ -13,6 +16,7 @@
 # endif
 
 extern int _ecore_wl_log_dom;
+extern Ecore_Wl_Display *_ecore_wl_disp;
 
 # ifdef ECORE_WL_DEFAULT_LOG_COLOR
 #  undef ECORE_WL_DEFAULT_LOG_COLOR
@@ -44,42 +48,39 @@ extern int _ecore_wl_log_dom;
 # endif
 # define CRIT(...) EINA_LOG_DOM_CRIT(_ecore_wl_log_dom, __VA_ARGS__)
 
-typedef struct _Ecore_Wl_Dnd_Source
+struct _Ecore_Wl_Dnd_Source
 {
    struct wl_data_offer *offer;
-   int refs;
+   Ecore_Wl_Input *input;
+   struct wl_array types;
+   int refcount;
+   int fd;
+   int x, y;
 
-   Eina_Array *types;
-
-   uint32_t timestamp;
+   /* TODO: task & data_func */
    void *data;
-} Ecore_Wl_Dnd_Source;
-
-typedef struct _Ecore_Wl_Dnd_Target
-{
-   /* NB: These are not the real fields for this structure, 
-    * and it is Bound to change....soon */
-   struct wl_data_offer *offer;
-   int refs;
-
-   Eina_Array *types;
-
-   uint32_t timestamp;
-   void *data;
-} Ecore_Wl_Dnd_Target;
-
-struct _Ecore_Wl_Drag_Source
-{
-   struct wl_data_device *data_dev;
-   struct wl_buffer *buffer;
-
-   int32_t hotspot_x, hotspot_y;
-   int32_t offset_x, offset_y;
-   const char *mimetype;
-   uint32_t timestamp;
-   void *data;
-
-   struct wl_data_source *data_source;
 };
+
+struct _Ecore_Wl_Dnd_Target
+{
+   Ecore_Wl_Dnd_Source *source;
+};
+
+void _ecore_wl_window_init(void);
+void _ecore_wl_window_shutdown(void);
+
+void _ecore_wl_output_add(Ecore_Wl_Display *ewd, unsigned int id);
+void _ecore_wl_output_del(Ecore_Wl_Output *output);
+
+void _ecore_wl_input_add(Ecore_Wl_Display *ewd, unsigned int id);
+void _ecore_wl_input_del(Ecore_Wl_Input *input);
+
+void _ecore_wl_dnd_add(Ecore_Wl_Input *input, struct wl_data_device *data_device, unsigned int id);
+void _ecore_wl_dnd_enter(void *data, struct wl_data_device *data_device __UNUSED__, unsigned int timestamp __UNUSED__, struct wl_surface *surface, int x, int y, struct wl_data_offer *offer);
+void _ecore_wl_dnd_leave(void *data, struct wl_data_device *data_device __UNUSED__);
+void _ecore_wl_dnd_motion(void *data, struct wl_data_device *data_device __UNUSED__, unsigned int timestamp __UNUSED__, int x, int y);
+void _ecore_wl_dnd_drop(void *data, struct wl_data_device *data_device __UNUSED__);
+void _ecore_wl_dnd_selection(void *data, struct wl_data_device *data_device __UNUSED__, struct wl_data_offer *offer);
+void _ecore_wl_dnd_del(Ecore_Wl_Dnd_Source *source);
 
 #endif

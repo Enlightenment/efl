@@ -14,9 +14,11 @@ includes_HEADERS = Ecore_Wayland.h
 includesdir = $(includedir)/ecore-@VMAJ@
 
 libecore_wayland_la_SOURCES = \
-ecore_wl.c
-
-## ecore_wl_window.c
+ecore_wl.c \
+ecore_wl_output.c \
+ecore_wl_input.c \
+ecore_wl_window.c \
+ecore_wl_dnd.c
 
 libecore_wayland_la_LIBADD = \
 $(top_builddir)/src/lib/ecore/libecore.la \
