@@ -659,10 +659,10 @@ _main_cb(void *data, Eio_File *handler, const Eina_File_Direct_Info *info __UNUS
      {
         Eina_Bool is_dir = (eio_file_associate_find(handler, "type/list") == list_itc[ELM_DIRECTORY]);
 
-        elm_genlist_item_direct_sorted_insert(wr->wd->files_list, eio_file_associate_find(handler, "type/list"),
-                                              eina_stringshare_ref(eio_file_associate_find(handler, "filename")),
-                                              wr->parent, wr->wd->expand && is_dir ? ELM_GENLIST_ITEM_SUBITEMS : ELM_GENLIST_ITEM_NONE,
-                                              _file_list_cmp, NULL, NULL);
+        elm_genlist_item_sorted_insert(wr->wd->files_list, eio_file_associate_find(handler, "type/list"),
+                                       eina_stringshare_ref(eio_file_associate_find(handler, "filename")),
+                                       wr->parent, wr->wd->expand && is_dir ? ELM_GENLIST_ITEM_SUBITEMS : ELM_GENLIST_ITEM_NONE,
+                                       _file_list_cmp, NULL, NULL);
      }
    else if (wr->wd->mode == ELM_FILESELECTOR_GRID)
      elm_gengrid_item_direct_sorted_insert(wr->wd->files_grid, eio_file_associate_find(handler, "type/grid"),

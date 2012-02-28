@@ -903,11 +903,7 @@ EAPI Elm_Object_Item             *elm_genlist_item_insert_after(Evas_Object *obj
  *
  * @ingroup Genlist
  */
-// XXX: deprecate elm_genlist_item_sorted_insert() and rename
-// elm_genlist_item_direct_sorted_insert()
-// XXX: direct_sorted?? how about deprecating elm_genlist_item_direct_sorted_insert insetead?
 EAPI Elm_Object_Item             *elm_genlist_item_sorted_insert(Evas_Object *obj, const Elm_Genlist_Item_Class *itc, const void *data, Elm_Object_Item *parent, Elm_Genlist_Item_Flags flags, Eina_Compare_Cb comp, Evas_Smart_Cb func, const void *func_data);
-EAPI Elm_Object_Item             *elm_genlist_item_direct_sorted_insert(Evas_Object *obj, const Elm_Genlist_Item_Class *itc, const void *data, Elm_Object_Item *parent, Elm_Genlist_Item_Flags flags, Eina_Compare_Cb comp, Evas_Smart_Cb func, const void *func_data);
 
 /* operations to retrieve existing items */
 /**

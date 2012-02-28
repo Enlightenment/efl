@@ -3980,15 +3980,6 @@ _item_queue(Widget_Data *wd,
 }
 
 static int
-_elm_genlist_item_compare_data(const void *data, const void *data1)
-{
-   const Elm_Gen_Item *it = data;
-   const Elm_Gen_Item *item1 = data1;
-
-   return it->wd->item_compare_data_cb(it->base.data, item1->base.data);
-}
-
-static int
 _elm_genlist_item_compare(const void *data, const void *data1)
 {
    const Elm_Gen_Item *it, *item1;
@@ -4214,14 +4205,14 @@ elm_genlist_item_insert_before(Evas_Object                  *obj,
 }
 
 EAPI Elm_Object_Item *
-elm_genlist_item_direct_sorted_insert(Evas_Object                  *obj,
-                                      const Elm_Genlist_Item_Class *itc,
-                                      const void                   *data,
-                                      Elm_Object_Item              *parent,
-                                      Elm_Genlist_Item_Flags        flags,
-                                      Eina_Compare_Cb               comp,
-                                      Evas_Smart_Cb                 func,
-                                      const void                   *func_data)
+elm_genlist_item_sorted_insert(Evas_Object                  *obj,
+                               const Elm_Genlist_Item_Class *itc,
+                               const void                   *data,
+                               Elm_Object_Item              *parent,
+                               Elm_Genlist_Item_Flags        flags,
+                               Eina_Compare_Cb               comp,
+                               Evas_Smart_Cb                 func,
+                               const void                   *func_data)
 {
    ELM_CHECK_WIDTYPE(obj, widtype) NULL;
    Widget_Data *wd = elm_widget_data_get(obj);
@@ -4296,24 +4287,6 @@ elm_genlist_item_direct_sorted_insert(Evas_Object                  *obj,
    _item_queue(wd, it, _elm_genlist_item_list_compare);
 
    return (Elm_Object_Item *) it;
-}
-
-EAPI Elm_Object_Item *
-elm_genlist_item_sorted_insert(Evas_Object                  *obj,
-                               const Elm_Genlist_Item_Class *itc,
-                               const void                   *data,
-                               Elm_Object_Item              *parent,
-                               Elm_Genlist_Item_Flags        flags,
-                               Eina_Compare_Cb               comp,
-                               Evas_Smart_Cb                 func,
-                               const void                   *func_data)
-{
-   ELM_CHECK_WIDTYPE(obj, widtype) NULL;
-   Widget_Data *wd = elm_widget_data_get(obj);
-   wd->item_compare_data_cb = comp;
-   return elm_genlist_item_direct_sorted_insert(obj, itc, data, parent, flags,
-                                                _elm_genlist_item_compare_data,
-                                                func, func_data);
 }
 
 static void

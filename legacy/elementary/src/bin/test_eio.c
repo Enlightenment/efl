@@ -37,6 +37,15 @@ _ls_filter_cb(void *data __UNUSED__, Eio_File *handler __UNUSED__, const char *f
   return EINA_TRUE;
 }
 
+static int
+_compare_cb(const void *data1, const void *data2)
+{
+   Elm_Object_Item *it = (Elm_Object_Item *)data1;
+   Elm_Object_Item *it2 = (Elm_Object_Item *)data2;
+   return strcoll(elm_object_item_data_get(it),
+                  elm_object_item_data_get(it2));
+}
+
 static void
 _ls_main_cb(void *data, Eio_File *handler __UNUSED__, const char *file)
 {
@@ -45,7 +54,7 @@ _ls_main_cb(void *data, Eio_File *handler __UNUSED__, const char *file)
                                   eina_stringshare_add(file),
                                   NULL,
                                   ELM_GENLIST_ITEM_NONE,
-                                  (Eina_Compare_Cb) strcoll,
+                                  _compare_cb,
                                   _sel_file,
                                   NULL);
 }
