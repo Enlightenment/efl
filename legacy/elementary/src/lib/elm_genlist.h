@@ -157,7 +157,7 @@
  *
  * @section Genlist_Usage_Hints Usage hints
  *
- * There are also convenience functions. elm_genlist_item_genlist_get() will
+ * There are also convenience functions. elm_object_item_widget_get() will
  * return the genlist object the item belongs to. elm_genlist_item_show()
  * will make the scroller scroll to show that specific item so its visible.
  * elm_object_item_data_get() returns the data pointer set by the item
@@ -262,9 +262,7 @@
  *   event_info parameter is the genlist item that was indicated to contract.
  * - @c "realized" - This is called when the item in the list is created as a
  *   real evas object. event_info parameter is the genlist item that was
- *   created. The object may be deleted at any time, so it is up to the
- *   caller to not use the object pointer from elm_genlist_item_object_get()
- *   in a way where it may point to freed objects.
+ *   created.
  * - @c "unrealized" - This is called just before an item is unrealized.
  *   After this call content objects provided will be deleted and the item
  *   object itself delete or be put into a floating cache.
@@ -1356,29 +1354,6 @@ EAPI void                          elm_genlist_item_middle_bring_in(Elm_Object_I
  */
 //XXX: elm_genlist_item_all_contents_unset() ??
 EAPI void                          elm_genlist_item_contents_orphan(Elm_Object_Item *it);
-
-/**
- * Get the real Evas object created to implement the view of a
- * given genlist item
- *
- * @param it The genlist item.
- * @return the Evas object implementing this item's view.
- *
- * This returns the actual Evas object used to implement the
- * specified genlist item's view. This may be @c NULL, as it may
- * not have been created or may have been deleted, at any time, by
- * the genlist. <b>Do not modify this object</b> (move, resize,
- * show, hide, etc.), as the genlist is controlling it. This
- * function is for querying, emitting custom signals or hooking
- * lower level callbacks for events on that object. Do not delete
- * this object under any circumstances.
- *
- * @see elm_object_item_data_get()
- *
- * @ingroup Genlist
- */
-//XXX: Should be deprecated
-EAPI const Evas_Object            *elm_genlist_item_object_get(const Elm_Object_Item *it);
 
 /**
  * Update the contents of an item

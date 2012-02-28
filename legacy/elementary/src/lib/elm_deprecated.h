@@ -1627,6 +1627,28 @@ EINA_DEPRECATED EAPI const char                   *elm_genlist_mode_item_style_g
  */
 EINA_DEPRECATED EAPI void                          elm_genlist_mode_item_style_set(Evas_Object *obj, const char *style);
 
+/**
+ * Get the real Evas object created to implement the view of a
+ * given genlist item
+ *
+ * @param it The genlist item.
+ * @return the Evas object implementing this item's view.
+ *
+ * This returns the actual Evas object used to implement the
+ * specified genlist item's view. This may be @c NULL, as it may
+ * not have been created or may have been deleted, at any time, by
+ * the genlist. <b>Do not modify this object</b> (move, resize,
+ * show, hide, etc.), as the genlist is controlling it. This
+ * function is for querying, emitting custom signals or hooking
+ * lower level callbacks for events on that object. Do not delete
+ * this object under any circumstances.
+ *
+ * @see elm_object_item_data_get()
+ * @deprecated No more support
+ *
+ * @ingroup Genlist
+ */
+EINA_DEPRECATED EAPI const Evas_Object            *elm_genlist_item_object_get(const Elm_Object_Item *it);
 
 #define ELM_IMAGE_ROTATE_90_CW 1
 #define ELM_IMAGE_ROTATE_180_CW 2

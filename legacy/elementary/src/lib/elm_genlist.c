@@ -4557,7 +4557,7 @@ elm_genlist_item_prev_get(const Elm_Object_Item *it)
    return (Elm_Object_Item *) _it;
 }
 
-EAPI Evas_Object *
+EINA_DEPRECATED EAPI Evas_Object *
 elm_genlist_item_genlist_get(const Elm_Object_Item *it)
 {
    return elm_object_item_widget_get(it);
@@ -4938,7 +4938,7 @@ elm_genlist_item_contents_orphan(Elm_Object_Item *it)
      }
 }
 
-EAPI const Evas_Object *
+EINA_DEPRECATED EAPI const Evas_Object *
 elm_genlist_item_object_get(const Elm_Object_Item *it)
 {
    ELM_OBJ_ITEM_CHECK_OR_RETURN(it, NULL);
