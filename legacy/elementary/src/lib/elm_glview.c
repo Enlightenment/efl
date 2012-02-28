@@ -5,7 +5,7 @@ typedef struct _Widget_Data Widget_Data;
 
 struct _Widget_Data
 {
-   Evas_Object	            *glview_image;
+   Evas_Object              *glview_image;
 
    Elm_GLView_Mode           mode;
    Elm_GLView_Resize_Policy  scale_policy;

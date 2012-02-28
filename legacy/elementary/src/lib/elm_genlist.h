@@ -348,7 +348,8 @@
  *
  * @ingroup Genlist
  */
-typedef enum
+//XXX: Elm_Genlist_Item_Type
+ typedef enum
 {
    ELM_GENLIST_ITEM_NONE = 0, /**< simple item */
    ELM_GENLIST_ITEM_SUBITEMS = (1 << 0), /**< may expand and have child items */
@@ -357,9 +358,11 @@ typedef enum
    ELM_GENLIST_ITEM_MAX = (1 << 2)
 } Elm_Genlist_Item_Flags;
 
+//XXX: Elm_Genlist_Item_Field_Type
 typedef enum
 {
    ELM_GENLIST_ITEM_FIELD_ALL = 0,
+   //XXX:ELM_GENLSIT_ITEM_FIELD_TEXT
    ELM_GENLIST_ITEM_FIELD_LABEL = (1 << 0),
    ELM_GENLIST_ITEM_FIELD_CONTENT = (1 << 1),
    ELM_GENLIST_ITEM_FIELD_STATE = (1 << 2)
@@ -535,6 +538,7 @@ EAPI Elm_List_Mode                 elm_genlist_mode_get(const Evas_Object *obj);
  *
  * @ingroup Genlist
  */
+//XXX: How about elm_genlist_select_mode_set() ? 
 EAPI void                          elm_genlist_always_select_mode_set(Evas_Object *obj, Eina_Bool always_select);
 
 /**
@@ -548,6 +552,7 @@ EAPI void                          elm_genlist_always_select_mode_set(Evas_Objec
  *
  * @ingroup Genlist
  */
+//XXX: How about elm_genlist_select_mode_get() ? 
 EAPI Eina_Bool                     elm_genlist_always_select_mode_get(const Evas_Object *obj);
 
 /**
@@ -564,6 +569,7 @@ EAPI Eina_Bool                     elm_genlist_always_select_mode_get(const Evas
  *
  * @ingroup Genlist
  */
+//XXX: elm_genlist_always_select_mode_set and elm_genlist_no_select_mode_set API could be merged to elm_genlist_select_mode_set() 
 EAPI void                          elm_genlist_no_select_mode_set(Evas_Object *obj, Eina_Bool no_select);
 
 /**
@@ -577,6 +583,7 @@ EAPI void                          elm_genlist_no_select_mode_set(Evas_Object *o
  *
  * @ingroup Genlist
  */
+//XXX: elm_genlist_always_select_mode_get and elm_genlist_no_select_mode_get API could be merged to elm_genlist_select_mode_get() 
 EAPI Eina_Bool                     elm_genlist_no_select_mode_get(const Evas_Object *obj);
 
 /**
@@ -634,6 +641,7 @@ EAPI Eina_Bool                     elm_genlist_compress_mode_get(const Evas_Obje
  *
  * @ingroup Genlist
  */
+//XXX: API name is ambiguous.. How about elm_genlist_mode_fixed_width_set? 
 EAPI void                          elm_genlist_height_for_width_mode_set(Evas_Object *obj, Eina_Bool height_for_width);
 
 /**
@@ -645,6 +653,7 @@ EAPI void                          elm_genlist_height_for_width_mode_set(Evas_Ob
  *
  * @ingroup Genlist
  */
+//XXX: API name is ambigious elm_genlist_mode_fixed_width_get() ?????
 EAPI Eina_Bool                     elm_genlist_height_for_width_mode_get(const Evas_Object *obj);
 
 /**
@@ -718,10 +727,10 @@ EAPI Eina_Bool                     elm_genlist_homogeneous_get(const Evas_Object
  * Set the maximum number of items within an item block
  *
  * @param obj The genlist object
- * @param n   Maximum number of items within an item block. Default is 32.
+ * @param count Maximum number of items within an item block. Default is 32.
  *
- * This will configure the block count to tune to the target with
- * particular performance matrix.
+ * This will configure the block count to tune to the target with particular
+ * performance matrix.
  *
  * A block of objects will be used to reduce the number of operations due to
  * many objects in the screen. It can determine the visibility, or if the
@@ -737,7 +746,7 @@ EAPI Eina_Bool                     elm_genlist_homogeneous_get(const Evas_Object
  *
  * @ingroup Genlist
  */
-EAPI void                          elm_genlist_block_count_set(Evas_Object *obj, int n);
+EAPI void                          elm_genlist_block_count_set(Evas_Object *obj, int count);
 
 /**
  * Get the maximum number of items within an item block
@@ -755,11 +764,15 @@ EAPI int                           elm_genlist_block_count_get(const Evas_Object
  * Set the timeout in seconds for the longpress event.
  *
  * @param obj The genlist object
- * @param timeout timeout in seconds. Default is 1.
+ * @param timeout timeout in seconds. Default is elm config value(1.0)
  *
  * This option will change how long it takes to send an event "longpressed"
  * after the mouse down signal is sent to the list. If this event occurs, no
  * "clicked" event will be sent.
+ *
+ * @warning If you set the longpress timeout value with this API, your genlist
+ * will not be affected by the longpress value of elementary config value
+ * later.
  *
  * @see elm_genlist_longpress_timeout_set()
  *
@@ -893,7 +906,8 @@ EAPI Elm_Object_Item             *elm_genlist_item_insert_after(Evas_Object *obj
  * @ingroup Genlist
  */
 // XXX: deprecate elm_genlist_item_sorted_insert() and rename
-// elm_genlist_item_direct_sorted_insert() 
+// elm_genlist_item_direct_sorted_insert()
+// XXX: direct_sorted?? how about deprecating elm_genlist_item_direct_sorted_insert insetead?
 EAPI Elm_Object_Item             *elm_genlist_item_sorted_insert(Evas_Object *obj, const Elm_Genlist_Item_Class *itc, const void *data, Elm_Object_Item *parent, Elm_Genlist_Item_Flags flags, Eina_Compare_Cb comp, Evas_Smart_Cb func, const void *func_data);
 EAPI Elm_Object_Item             *elm_genlist_item_direct_sorted_insert(Evas_Object *obj, const Elm_Genlist_Item_Class *itc, const void *data, Elm_Object_Item *parent, Elm_Genlist_Item_Flags flags, Eina_Compare_Cb comp, Evas_Smart_Cb func, const void *func_data);
 
@@ -1196,6 +1210,7 @@ EAPI int                           elm_genlist_item_expanded_depth_get(const Elm
  *
  * @ingroup Genlist
  */
+//XXX: elm_genlist_item_event_freeze_set()?
 EAPI void                          elm_genlist_item_display_only_set(Elm_Object_Item *it, Eina_Bool display_only);
 
 /**
@@ -1209,6 +1224,7 @@ EAPI void                          elm_genlist_item_display_only_set(Elm_Object_
  *
  * @ingroup Genlist
  */
+//XXX: elm_genlist_item_event_freeze_get()?
 EAPI Eina_Bool                     elm_genlist_item_display_only_get(const Elm_Object_Item *it);
 
 /**
@@ -1218,7 +1234,7 @@ EAPI Eina_Bool                     elm_genlist_item_display_only_get(const Elm_O
  * @param it The item to display
  *
  * This causes genlist to jump to the given item @p it and show it (by
- * immediately scrolling to that position), if it is not fully visible.
+ * jumping to that position), if it is not fully visible.
  *
  * @see elm_genlist_item_bring_in()
  * @see elm_genlist_item_top_show()
@@ -1226,6 +1242,7 @@ EAPI Eina_Bool                     elm_genlist_item_display_only_get(const Elm_O
  *
  * @ingroup Genlist
  */
+//XXX: elm_genlist_item_show(it, TOP/MIDDLE/BOTTOM/...); this kind of API would cover all similar APIs - item_show, item_top_show...
 EAPI void                          elm_genlist_item_show(Elm_Object_Item *it);
 
 /**
@@ -1244,6 +1261,7 @@ EAPI void                          elm_genlist_item_show(Elm_Object_Item *it);
  *
  * @ingroup Genlist
  */
+//XXX: elm_genlist_item_bring_in(it, TOP/MIDDLE/BOTTOM/...); this kind of API would cover all similar APIs - bring_in, top_bring_in ...
 EAPI void                          elm_genlist_item_bring_in(Elm_Object_Item *it);
 
 /**
@@ -1253,7 +1271,7 @@ EAPI void                          elm_genlist_item_bring_in(Elm_Object_Item *it
  * @param it The item to display
  *
  * This causes genlist to jump to the given item @p it and show it (by
- * immediately scrolling to that position), if it is not fully visible.
+ * jumping to the top position), if it is not fully visible.
  *
  * The item will be positioned at the top of the genlist viewport.
  *
@@ -1262,6 +1280,7 @@ EAPI void                          elm_genlist_item_bring_in(Elm_Object_Item *it
  *
  * @ingroup Genlist
  */
+//XXX: elm_genlist_item_show(it, TOP/MIDDLE/BOTTOM/...); this kind of API would cover all similar APIs - item_show, item_top_show...
 EAPI void                          elm_genlist_item_top_show(Elm_Object_Item *it);
 
 /**
@@ -1281,6 +1300,7 @@ EAPI void                          elm_genlist_item_top_show(Elm_Object_Item *it
  *
  * @ingroup Genlist
  */
+//XXX: elm_genlist_item_bring_in(it, TOP/MIDDLE/BOTTOM/...); this kind of API would cover all similar APIs - bring_in, top_bring_in ...
 EAPI void                          elm_genlist_item_top_bring_in(Elm_Object_Item *it);
 
 /**
@@ -1299,6 +1319,7 @@ EAPI void                          elm_genlist_item_top_bring_in(Elm_Object_Item
  *
  * @ingroup Genlist
  */
+//XXX: elm_genlist_item_show(it, TOP/MIDDLE/BOTTOM/...); this kind of API would cover all similar APIs - item_show, item_top_show...
 EAPI void                          elm_genlist_item_middle_show(Elm_Object_Item *it);
 
 /**
@@ -1318,6 +1339,7 @@ EAPI void                          elm_genlist_item_middle_show(Elm_Object_Item 
  *
  * @ingroup Genlist
  */
+//XXX: elm_genlist_item_bring_in(it, TOP/MIDDLE/BOTTOM/...); this kind of API would cover all similar APIs - bring_in, top_bring_in ...
 EAPI void                          elm_genlist_item_middle_bring_in(Elm_Object_Item *it);
 
 /**
@@ -1332,6 +1354,7 @@ EAPI void                          elm_genlist_item_middle_bring_in(Elm_Object_I
  *
  * @ingroup Genlist
  */
+//XXX: elm_genlist_item_all_contents_unset() ??
 EAPI void                          elm_genlist_item_contents_orphan(Elm_Object_Item *it);
 
 /**
@@ -1354,6 +1377,7 @@ EAPI void                          elm_genlist_item_contents_orphan(Elm_Object_I
  *
  * @ingroup Genlist
  */
+//XXX: Should be deprecated
 EAPI const Evas_Object            *elm_genlist_item_object_get(const Elm_Object_Item *it);
 
 /**
@@ -1474,6 +1498,7 @@ EAPI void                          elm_genlist_item_tooltip_text_set(Elm_Object_
  *
  * @ingroup Genlist
  */
+//XXX: Need to review tooltip & cursor APIs
 EAPI void                          elm_genlist_item_tooltip_content_cb_set(Elm_Object_Item *it, Elm_Tooltip_Item_Content_Cb func, const void *data, Evas_Smart_Cb del_cb);
 
 /**
@@ -1692,7 +1717,7 @@ EAPI Eina_Bool                     elm_genlist_item_cursor_engine_only_get(const
  *
  * @ingroup Genlist
  */
-EAPI int                           elm_genlist_item_index_get(Elm_Object_Item *it);
+EAPI int                           elm_genlist_item_index_get(const Elm_Object_Item *it);
 
 /**
  * Update the contents of all realized items.
@@ -1752,6 +1777,7 @@ EAPI void                          elm_genlist_realized_items_update(Evas_Object
  *
  * @ingroup Genlist
  */
+//XXX: How bout elm_genlist_mode_item_set
 EAPI void                          elm_genlist_item_mode_set(Elm_Object_Item *it, const char *mode_type, Eina_Bool mode_set);
 
 /**
@@ -1767,6 +1793,7 @@ EAPI void                          elm_genlist_item_mode_set(Elm_Object_Item *it
  *
  * @ingroup Genlist
  */
+//XXX: looks weird... set the mode type to item and get the mode type from object...
 EAPI const char                   *elm_genlist_mode_type_get(const Evas_Object *obj);
 
 /**
@@ -1819,6 +1846,7 @@ EAPI Eina_Bool                     elm_genlist_reorder_mode_get(const Evas_Objec
  *
  * @ingroup Genlist
  */
+//XXX: type would be more intuitive...
 EAPI Elm_Genlist_Item_Flags        elm_genlist_item_flags_get(const Elm_Object_Item *it);
 
 #define ELM_GENLIST_ITEM_CLASS_VERSION 2 /* current version number */

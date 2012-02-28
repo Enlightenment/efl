@@ -204,7 +204,7 @@ EAPI extern Elm_Version *elm_version;
 #include <elm_gengrid.h>
 #include <elm_genlist.h>
 #include <elm_gesture_layer.h> //Done
-#include <elm_glview.h>
+#include <elm_glview.h> //Done + XXX in header, insufficient doc.
 #include <elm_grid.h> //Done
 
 // Woohyun Jung
