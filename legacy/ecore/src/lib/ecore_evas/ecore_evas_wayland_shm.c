@@ -67,6 +67,9 @@ static void _ecore_evas_wl_layer_set(Ecore_Evas *ee, int layer);
 static void _ecore_evas_wl_iconified_set(Ecore_Evas *ee, int iconify);
 static void _ecore_evas_wl_maximized_set(Ecore_Evas *ee, int max);
 static void _ecore_evas_wl_fullscreen_set(Ecore_Evas *ee, int full);
+static void _ecore_evas_wl_ignore_events_set(Ecore_Evas *ee, int ignore);
+static void _ecore_evas_wl_alpha_set(Ecore_Evas *ee, int alpha);
+static void _ecore_evas_wl_transparent_set(Ecore_Evas *ee, int transparent);
 static int _ecore_evas_wl_render(Ecore_Evas *ee);
 static void _ecore_evas_wl_screen_geometry_get(const Ecore_Evas *ee __UNUSED__, int *x, int *y, int *w, int *h);
 static void _ecore_evas_wl_buffer_new(Ecore_Evas *ee, void **dest);
@@ -138,9 +141,9 @@ static Ecore_Evas_Engine_Func _ecore_wl_engine_func =
    NULL, // func avoid_damage set
    NULL, // func withdrawn set
    NULL, // func sticky set
-   NULL, // func ignore_events set
-   NULL, // func alpha set
-   NULL, // func transparent set
+   _ecore_evas_wl_ignore_events_set,
+   _ecore_evas_wl_alpha_set,
+   _ecore_evas_wl_transparent_set,
    NULL,
    NULL,
    NULL,
@@ -223,6 +226,8 @@ ecore_evas_wayland_shm_new(const char *disp_name, unsigned int parent, int x, in
 
    if (parent)
      p = ecore_wl_window_find(parent);
+
+   /* FIXME: Get if parent is alpha, and set */
 
    ee->engine.wl.parent = p;
    ee->engine.wl.win = 
@@ -710,6 +715,54 @@ _ecore_evas_wl_fullscreen_set(Ecore_Evas *ee, int full)
    if (ee->prop.fullscreen == full) return;
    ee->prop.fullscreen = full;
    ecore_wl_window_fullscreen_set(ee->engine.wl.win, full);
+}
+
+static void 
+_ecore_evas_wl_ignore_events_set(Ecore_Evas *ee, int ignore)
+{
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+
+   if (!ee) return;
+   ee->ignore_events = ignore;
+   /* NB: Hmmm, may need to pass this to ecore_wl_window in the future */
+}
+
+static void 
+_ecore_evas_wl_alpha_set(Ecore_Evas *ee, int alpha)
+{
+   Evas_Engine_Info_Wayland_Shm *einfo;
+
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+
+   if (!ee) return;
+   if ((ee->alpha == alpha)) return;
+   ee->alpha = alpha;
+   if ((einfo = (Evas_Engine_Info_Wayland_Shm *)evas_engine_info_get(ee->evas)))
+     {
+        einfo->info.destination_alpha = alpha;
+        if (!evas_engine_info_set(ee->evas, (Evas_Engine_Info *)einfo))
+          ERR("evas_engine_info_set() for engine '%s' failed.", ee->driver);
+        evas_damage_rectangle_add(ee->evas, 0, 0, ee->w, ee->h);
+     }
+}
+
+static void 
+_ecore_evas_wl_transparent_set(Ecore_Evas *ee, int transparent)
+{
+   Evas_Engine_Info_Wayland_Shm *einfo;
+
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+
+   if (!ee) return;
+   if ((ee->transparent == transparent)) return;
+   ee->transparent = transparent;
+   if ((einfo = (Evas_Engine_Info_Wayland_Shm *)evas_engine_info_get(ee->evas)))
+     {
+        einfo->info.destination_alpha = transparent;
+        if (!evas_engine_info_set(ee->evas, (Evas_Engine_Info *)einfo))
+          ERR("evas_engine_info_set() for engine '%s' failed.", ee->driver);
+        evas_damage_rectangle_add(ee->evas, 0, 0, ee->w, ee->h);
+     }
 }
 
 static int 
