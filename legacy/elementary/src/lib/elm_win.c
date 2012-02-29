@@ -2393,7 +2393,7 @@ elm_win_withdrawn_set(Evas_Object *obj, Eina_Bool withdrawn)
 }
 
 EAPI Eina_Bool
-elm_win_widthdrawn_get(const Evas_Object *obj)
+elm_win_withdrawn_get(const Evas_Object *obj)
 {
    Elm_Win *win;
    ELM_CHECK_WIDTYPE(obj, widtype) EINA_FALSE;
