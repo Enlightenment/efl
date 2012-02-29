@@ -1025,17 +1025,18 @@ EAPI void                          elm_gengrid_item_update(Elm_Object_Item *it);
 EAPI const Elm_Gengrid_Item_Class *elm_gengrid_item_item_class_get(const Elm_Object_Item *it);
 
 /**
- * Get the Gengrid Item class for the given Gengrid Item.
+ * Update the item class of a gengrid item.
  *
- * This sets the Gengrid_Item_Class for the given item. It can be used to examine
- * the function pointers and item_style.
+ * This sets another class of the item, changing the way that it is
+ * displayed. After changing the item class, elm_gengrid_item_update() is
+ * called on the item @p it.
  *
  * @param it The gengrid item
  * @param gic The gengrid item class describing the function pointers and the item style.
  *
  * @ingroup Gengrid
  */
-EAPI void                          elm_gengrid_item_item_class_set(Elm_Object_Item *it, const Elm_Gengrid_Item_Class *gic);
+EAPI void                          elm_gengrid_item_item_class_update(Elm_Object_Item *it, const Elm_Gengrid_Item_Class *gic);
 
 /**
  * Get a given gengrid item's position, relative to the whole
@@ -1166,6 +1167,9 @@ EAPI void                          elm_gengrid_item_bring_in(Elm_Object_Item *it
  * have only one tooltip at a time, so any previous tooltip data
  * will get removed.
  *
+ * In order to set a content or something else as a tooltip, look at
+ * elm_gengrid_item_tooltip_content_cb_set().
+ *
  * @ingroup Gengrid
  */
 EAPI void                          elm_gengrid_item_tooltip_text_set(Elm_Object_Item *it, const char *text);
@@ -1190,6 +1194,9 @@ EAPI void                          elm_gengrid_item_tooltip_text_set(Elm_Object_
  * every time Elementary needs to show the tooltip and it should
  * return a valid Evas object, which will be fully managed by the
  * tooltip system, getting deleted when the tooltip is gone.
+ *
+ * In order to set just a text as a tooltip, look at
+ * elm_gengrid_item_tooltip_text_set().
  *
  * @ingroup Gengrid
  */

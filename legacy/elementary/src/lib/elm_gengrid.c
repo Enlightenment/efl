@@ -2321,9 +2321,16 @@ elm_gengrid_item_item_class_get(const Elm_Object_Item *it)
    return (Elm_Gengrid_Item_Class *) elm_genlist_item_item_class_get(it);
 }
 
-EAPI void
+EINA_DEPRECATED EAPI void
 elm_gengrid_item_item_class_set(Elm_Object_Item *it,
                                 const Elm_Gengrid_Item_Class *itc)
+{
+   elm_gengrid_item_item_class_update(it, itc);
+}
+
+EAPI void
+elm_gengrid_item_item_class_update(Elm_Object_Item *it,
+                                   const Elm_Gengrid_Item_Class *itc)
 {
    ELM_OBJ_ITEM_CHECK_OR_RETURN(it);
    EINA_SAFETY_ON_NULL_RETURN(itc);

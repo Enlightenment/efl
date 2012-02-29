@@ -3951,6 +3951,22 @@ EINA_DEPRECATED EAPI void                          elm_gengrid_item_del(Elm_Obje
 EINA_DEPRECATED EAPI const Evas_Object            *elm_gengrid_item_object_get(const Elm_Object_Item *it);
 
 /**
+ * Update the item class of a gengrid item.
+ *
+ * This sets another class of the item, changing the way that it is
+ * displayed. After changing the item class, elm_gengrid_item_update() is
+ * called on the item @p it.
+ *
+ * @param it The gengrid item
+ * @param gic The gengrid item class describing the function pointers and the item style.
+ *
+ * @deprecated Use elm_gengrid_item_item_class_update instead
+ * @ingroup Gengrid
+ */
+EINA_DEPRECATED EAPI void                          elm_gengrid_item_item_class_set(Elm_Object_Item *it, const Elm_Gengrid_Item_Class *gic);
+
+
+/**
  * Append a filter function for text inserted in the entry
  *
  * Append the given callback to the list. This functions will be called
