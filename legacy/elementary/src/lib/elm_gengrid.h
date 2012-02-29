@@ -301,153 +301,201 @@ struct _Elm_Gengrid_Item_Class
 EAPI Evas_Object                  *elm_gengrid_add(Evas_Object *parent);
 
 /**
- * Set the size for the items of a given gengrid widget
+ * Remove all items from a given gengrid widget
  *
  * @param obj The gengrid object.
- * @param w The items' width.
- * @param h The items' height;
  *
- * A gengrid, after creation, has still no information on the size
- * to give to each of its cells. So, you most probably will end up
- * with squares one @ref Fingers "finger" wide, the default
- * size. Use this function to force a custom size for you items,
- * making them as big as you wish.
+ * This removes (and deletes) all items in @p obj, leaving it
+ * empty.
  *
- * @see elm_gengrid_item_size_get()
+ * @see elm_object_item_del(), to remove just one item.
  *
  * @ingroup Gengrid
  */
-EAPI void                          elm_gengrid_item_size_set(Evas_Object *obj, Evas_Coord w, Evas_Coord h);
+EAPI void                          elm_gengrid_clear(Evas_Object *obj);
 
 /**
- * Get the size set for the items of a given gengrid widget
+ * Enable or disable multi-selection in a given gengrid widget
  *
  * @param obj The gengrid object.
- * @param w Pointer to a variable where to store the items' width.
- * @param h Pointer to a variable where to store the items' height.
+ * @param multi @c EINA_TRUE, to enable multi-selection,
+ * @c EINA_FALSE to disable it.
  *
- * @note Use @c NULL pointers on the size values you're not
- * interested in: they'll be ignored by the function.
+ * Multi-selection is the ability to have @b more than one
+ * item selected, on a given gengrid, simultaneously. When it is
+ * enabled, a sequence of clicks on different items will make them
+ * all selected, progressively. A click on an already selected item
+ * will unselect it. If interacting via the keyboard,
+ * multi-selection is enabled while holding the "Shift" key.
  *
- * @see elm_gengrid_item_size_get() for more details
+ * @note By default, multi-selection is @b disabled on gengrids
+ *
+ * @see elm_gengrid_multi_select_get()
  *
  * @ingroup Gengrid
  */
-EAPI void                          elm_gengrid_item_size_get(const Evas_Object *obj, Evas_Coord *w, Evas_Coord *h);
+EAPI void                          elm_gengrid_multi_select_set(Evas_Object *obj, Eina_Bool multi);
 
 /**
- * Set the size for the group items of a given gengrid widget
+ * Get whether multi-selection is enabled or disabled for a given
+ * gengrid widget
  *
  * @param obj The gengrid object.
- * @param w The group items' width.
- * @param h The group items' height;
+ * @return @c EINA_TRUE, if multi-selection is enabled, @c
+ * EINA_FALSE otherwise
  *
- * A gengrid, after creation, has still no information on the size
- * to give to each of its cells. So, you most probably will end up
- * with squares one @ref Fingers "finger" wide, the default
- * size. Use this function to force a custom size for you group items,
- * making them as big as you wish.
- *
- * @see elm_gengrid_group_item_size_get()
+ * @see elm_gengrid_multi_select_set() for more details
  *
  * @ingroup Gengrid
  */
-EAPI void                          elm_gengrid_group_item_size_set(Evas_Object *obj, Evas_Coord w, Evas_Coord h);
+EAPI Eina_Bool                     elm_gengrid_multi_select_get(const Evas_Object *obj);
 
 /**
- * Get the size set for the group items of a given gengrid widget
+ * Set the direction in which a given gengrid widget will expand while
+ * placing its items.
  *
  * @param obj The gengrid object.
- * @param w Pointer to a variable where to store the group items' width.
- * @param h Pointer to a variable where to store the group items' height.
+ * @param horizontal @c EINA_TRUE to make the gengrid expand
+ * horizontally, @c EINA_FALSE to expand vertically.
  *
- * @note Use @c NULL pointers on the size values you're not
- * interested in: they'll be ignored by the function.
+ * When in "horizontal mode" (@c EINA_TRUE), items will be placed
+ * in @b columns, from top to bottom and, when the space for a
+ * column is filled, another one is started on the right, thus
+ * expanding the grid horizontally. When in "vertical mode"
+ * (@c EINA_FALSE), though, items will be placed in @b rows, from left
+ * to right and, when the space for a row is filled, another one is
+ * started below, thus expanding the grid vertically.
  *
- * @see elm_gengrid_group_item_size_get() for more details
+ * @see elm_gengrid_horizontal_get()
  *
  * @ingroup Gengrid
  */
-EAPI void                          elm_gengrid_group_item_size_get(const Evas_Object *obj, Evas_Coord *w, Evas_Coord *h);
+EAPI void                          elm_gengrid_horizontal_set(Evas_Object *obj, Eina_Bool horizontal);
 
 /**
- * Set the items grid's alignment within a given gengrid widget
+ * Get for what direction a given gengrid widget will expand while
+ * placing its items.
  *
  * @param obj The gengrid object.
- * @param align_x Alignment in the horizontal axis (0 <= align_x <= 1).
- * @param align_y Alignment in the vertical axis (0 <= align_y <= 1).
+ * @return @c EINA_TRUE, if @p obj is set to expand horizontally,
+ * @c EINA_FALSE if it's set to expand vertically.
  *
- * This sets the alignment of the whole grid of items of a gengrid
- * within its given viewport. By default, those values are both
- * 0.5, meaning that the gengrid will have its items grid placed
- * exactly in the middle of its viewport.
- *
- * @note If given alignment values are out of the cited ranges,
- * they'll be changed to the nearest boundary values on the valid
- * ranges.
- *
- * @see elm_gengrid_align_get()
+ * @see elm_gengrid_horizontal_set() for more details
  *
  * @ingroup Gengrid
  */
-EAPI void                          elm_gengrid_align_set(Evas_Object *obj, double align_x, double align_y);
+EAPI Eina_Bool                     elm_gengrid_horizontal_get(const Evas_Object *obj);
 
 /**
- * Get the items grid's alignment values within a given gengrid
- * widget
- *
- * @param obj The gengrid object.
- * @param align_x Pointer to a variable where to store the
- * horizontal alignment.
- * @param align_y Pointer to a variable where to store the vertical
- * alignment.
- *
- * @note Use @c NULL pointers on the alignment values you're not
- * interested in: they'll be ignored by the function.
- *
- * @see elm_gengrid_align_set() for more details
- *
- * @ingroup Gengrid
- */
-EAPI void                          elm_gengrid_align_get(const Evas_Object *obj, double *align_x, double *align_y);
-
-/**
- * Set whether a given gengrid widget is or not able have items
- * @b reordered
+ * Set whether items on a given gengrid widget are to get their
+ * selection callbacks issued for @b every subsequent selection
+ * click on them or just for the first click.
  *
  * @param obj The gengrid object
- * @param reorder_mode Use @c EINA_TRUE to turn reordering on,
- * @c EINA_FALSE to turn it off
+ * @param always_select @c EINA_TRUE to make items "always
+ * selected", @c EINA_FALSE, otherwise
  *
- * If a gengrid is set to allow reordering, a click held for more
- * than 0.5 over a given item will highlight it specially,
- * signaling the gengrid has entered the reordering state. From
- * that time on, the user will be able to, while still holding the
- * mouse button down, move the item freely in the gengrid's
- * viewport, replacing to said item to the locations it goes to.
- * The replacements will be animated and, whenever the user
- * releases the mouse button, the item being replaced gets a new
- * definitive place in the grid.
+ * By default, grid items will only call their selection callback
+ * function when firstly getting selected, any subsequent further
+ * clicks will do nothing. With this call, you make those
+ * subsequent clicks also to issue the selection callbacks.
  *
- * @see elm_gengrid_reorder_mode_get()
+ * @note <b>Double clicks</b> will @b always be reported on items.
+ *
+ * @see elm_gengrid_always_select_mode_get()
  *
  * @ingroup Gengrid
  */
-EAPI void                          elm_gengrid_reorder_mode_set(Evas_Object *obj, Eina_Bool reorder_mode);
+//XXX: How about elm_gengrid_select_mode_set() ? 
+EAPI void                          elm_gengrid_always_select_mode_set(Evas_Object *obj, Eina_Bool always_select);
 
 /**
- * Get whether a given gengrid widget is or not able have items
- * @b reordered
+ * Get whether items on a given gengrid widget have their selection
+ * callbacks issued for @b every subsequent selection click on them
+ * or just for the first click.
  *
- * @param obj The gengrid object
- * @return @c EINA_TRUE, if reordering is on, @c EINA_FALSE if it's
- * off
+ * @param obj The gengrid object.
+ * @return @c EINA_TRUE if the gengrid items are "always selected",
+ * @c EINA_FALSE, otherwise
  *
- * @see elm_gengrid_reorder_mode_set() for more details
+ * @see elm_gengrid_always_select_mode_set() for more details
  *
  * @ingroup Gengrid
  */
-EAPI Eina_Bool                     elm_gengrid_reorder_mode_get(const Evas_Object *obj);
+//XXX: How about elm_gengrid_select_mode_get() ? 
+EAPI Eina_Bool                     elm_gengrid_always_select_mode_get(const Evas_Object *obj);
+
+/**
+ * Set whether items on a given gengrid widget can be selected or not.
+ *
+ * @param obj The gengrid object
+ * @param no_select @c EINA_TRUE to make items selectable,
+ * @c EINA_FALSE otherwise
+ *
+ * This will make items in @p obj selectable or not. In the latter
+ * case, any user interaction on the gengrid items will neither make
+ * them appear selected nor them call their selection callback
+ * functions.
+ *
+ * @see elm_gengrid_no_select_mode_get()
+ *
+ * @ingroup Gengrid
+ */
+//XXX: elm_gengrid_always_select_mode_set and elm_gengrid_no_select_mode_set API could be merged to elm_genlist_select_mode_set() 
+EAPI void                          elm_gengrid_no_select_mode_set(Evas_Object *obj, Eina_Bool no_select);
+
+/**
+ * Get whether items on a given gengrid widget can be selected or
+ * not.
+ *
+ * @param obj The gengrid object
+ * @return @c EINA_TRUE, if items are selectable, @c EINA_FALSE
+ * otherwise
+ *
+ * @see elm_gengrid_no_select_mode_set() for more details
+ *
+ * @ingroup Gengrid
+ */
+//XXX: elm_gengrid_always_select_mode_get and elm_gengrid_no_select_mode_get API could be merged to elm_genlist_select_mode_get() 
+EAPI Eina_Bool                     elm_gengrid_no_select_mode_get(const Evas_Object *obj);
+
+/**
+ * Enable or disable bouncing effect for a given gengrid widget
+ *
+ * @param obj The gengrid object
+ * @param h_bounce @c EINA_TRUE, to enable @b horizontal bouncing,
+ * @c EINA_FALSE to disable it
+ * @param v_bounce @c EINA_TRUE, to enable @b vertical bouncing,
+ * @c EINA_FALSE to disable it
+ *
+ * The bouncing effect occurs whenever one reaches the gengrid's
+ * edge's while panning it -- it will scroll past its limits a
+ * little bit and return to the edge again, in a animated for,
+ * automatically.
+ *
+ * @note By default, gengrids have bouncing enabled on both axis
+ *
+ * @see elm_gengrid_bounce_get()
+ *
+ * @ingroup Gengrid
+ */
+EAPI void                          elm_gengrid_bounce_set(Evas_Object *obj, Eina_Bool h_bounce, Eina_Bool v_bounce);
+
+/**
+ * Get whether bouncing effects are enabled or disabled, for a
+ * given gengrid widget, on each axis
+ *
+ * @param obj The gengrid object
+ * @param h_bounce Pointer to a variable where to store the
+ * horizontal bouncing flag.
+ * @param v_bounce Pointer to a variable where to store the
+ * vertical bouncing flag.
+ *
+ * @see elm_gengrid_bounce_set() for more details
+ *
+ * @ingroup Gengrid
+ */
+EAPI void                          elm_gengrid_bounce_get(const Evas_Object *obj, Eina_Bool *h_bounce, Eina_Bool *v_bounce);
 
 /**
  * Append a new item in a given gengrid widget.
@@ -565,348 +613,42 @@ EAPI Elm_Object_Item             *elm_gengrid_item_insert_after(Evas_Object *obj
 EAPI Elm_Object_Item             *elm_gengrid_item_sorted_insert(Evas_Object *obj, const Elm_Gengrid_Item_Class *gic, const void *data, Eina_Compare_Cb comp, Evas_Smart_Cb func, const void *func_data);
 
 /**
- * Set whether items on a given gengrid widget are to get their
- * selection callbacks issued for @b every subsequent selection
- * click on them or just for the first click.
- *
- * @param obj The gengrid object
- * @param always_select @c EINA_TRUE to make items "always
- * selected", @c EINA_FALSE, otherwise
- *
- * By default, grid items will only call their selection callback
- * function when firstly getting selected, any subsequent further
- * clicks will do nothing. With this call, you make those
- * subsequent clicks also to issue the selection callbacks.
- *
- * @note <b>Double clicks</b> will @b always be reported on items.
- *
- * @see elm_gengrid_always_select_mode_get()
- *
- * @ingroup Gengrid
- */
-//XXX: How about elm_gengrid_select_mode_set() ? 
-EAPI void                          elm_gengrid_always_select_mode_set(Evas_Object *obj, Eina_Bool always_select);
-
-/**
- * Get whether items on a given gengrid widget have their selection
- * callbacks issued for @b every subsequent selection click on them
- * or just for the first click.
+ * Get the selected item in a given gengrid widget
  *
  * @param obj The gengrid object.
- * @return @c EINA_TRUE if the gengrid items are "always selected",
- * @c EINA_FALSE, otherwise
+ * @return The selected item's handle or @c NULL, if none is
+ * selected at the moment (and on errors)
  *
- * @see elm_gengrid_always_select_mode_set() for more details
- *
- * @ingroup Gengrid
- */
-//XXX: How about elm_gengrid_select_mode_get() ? 
-EAPI Eina_Bool                     elm_gengrid_always_select_mode_get(const Evas_Object *obj);
-
-/**
- * Set whether items on a given gengrid widget can be selected or not.
- *
- * @param obj The gengrid object
- * @param no_select @c EINA_TRUE to make items selectable,
- * @c EINA_FALSE otherwise
- *
- * This will make items in @p obj selectable or not. In the latter
- * case, any user interaction on the gengrid items will neither make
- * them appear selected nor them call their selection callback
- * functions.
- *
- * @see elm_gengrid_no_select_mode_get()
+ * This returns the selected item in @p obj. If multi selection is
+ * enabled on @p obj (@see elm_gengrid_multi_select_set()), only
+ * the first item in the list is selected, which might not be very
+ * useful. For that case, see elm_gengrid_selected_items_get().
  *
  * @ingroup Gengrid
  */
-//XXX: elm_gengrid_always_select_mode_set and elm_gengrid_no_select_mode_set API could be merged to elm_genlist_select_mode_set() 
-EAPI void                          elm_gengrid_no_select_mode_set(Evas_Object *obj, Eina_Bool no_select);
+EAPI Elm_Object_Item             *elm_gengrid_selected_item_get(const Evas_Object *obj);
 
 /**
- * Get whether items on a given gengrid widget can be selected or
- * not.
- *
- * @param obj The gengrid object
- * @return @c EINA_TRUE, if items are selectable, @c EINA_FALSE
- * otherwise
- *
- * @see elm_gengrid_no_select_mode_set() for more details
- *
- * @ingroup Gengrid
- */
-//XXX: elm_gengrid_always_select_mode_get and elm_gengrid_no_select_mode_get API could be merged to elm_genlist_select_mode_get() 
-EAPI Eina_Bool                     elm_gengrid_no_select_mode_get(const Evas_Object *obj);
-
-/**
- * Enable or disable multi-selection in a given gengrid widget
+ * Get <b>a list</b> of selected items in a given gengrid
  *
  * @param obj The gengrid object.
- * @param multi @c EINA_TRUE, to enable multi-selection,
- * @c EINA_FALSE to disable it.
+ * @return The list of selected items or @c NULL, if none is
+ * selected at the moment (and on errors)
  *
- * Multi-selection is the ability to have @b more than one
- * item selected, on a given gengrid, simultaneously. When it is
- * enabled, a sequence of clicks on different items will make them
- * all selected, progressively. A click on an already selected item
- * will unselect it. If interacting via the keyboard,
- * multi-selection is enabled while holding the "Shift" key.
+ * This returns a list of the selected items, in the order that
+ * they appear in the grid. This list is only valid as long as no
+ * more items are selected or unselected (or unselected implicitly
+ * by deletion). The list contains #Gengrid item pointers as
+ * data, naturally.
  *
- * @note By default, multi-selection is @b disabled on gengrids
- *
- * @see elm_gengrid_multi_select_get()
+ * @see elm_gengrid_selected_item_get()
  *
  * @ingroup Gengrid
  */
-EAPI void                          elm_gengrid_multi_select_set(Evas_Object *obj, Eina_Bool multi);
+EAPI const Eina_List              *elm_gengrid_selected_items_get(const Evas_Object *obj);
 
-/**
- * Get whether multi-selection is enabled or disabled for a given
- * gengrid widget
- *
- * @param obj The gengrid object.
- * @return @c EINA_TRUE, if multi-selection is enabled, @c
- * EINA_FALSE otherwise
- *
- * @see elm_gengrid_multi_select_set() for more details
- *
- * @ingroup Gengrid
- */
-EAPI Eina_Bool                     elm_gengrid_multi_select_get(const Evas_Object *obj);
-
-/**
- * Enable or disable bouncing effect for a given gengrid widget
- *
- * @param obj The gengrid object
- * @param h_bounce @c EINA_TRUE, to enable @b horizontal bouncing,
- * @c EINA_FALSE to disable it
- * @param v_bounce @c EINA_TRUE, to enable @b vertical bouncing,
- * @c EINA_FALSE to disable it
- *
- * The bouncing effect occurs whenever one reaches the gengrid's
- * edge's while panning it -- it will scroll past its limits a
- * little bit and return to the edge again, in a animated for,
- * automatically.
- *
- * @note By default, gengrids have bouncing enabled on both axis
- *
- * @see elm_gengrid_bounce_get()
- *
- * @ingroup Gengrid
- */
-EAPI void                          elm_gengrid_bounce_set(Evas_Object *obj, Eina_Bool h_bounce, Eina_Bool v_bounce);
-
-/**
- * Get whether bouncing effects are enabled or disabled, for a
- * given gengrid widget, on each axis
- *
- * @param obj The gengrid object
- * @param h_bounce Pointer to a variable where to store the
- * horizontal bouncing flag.
- * @param v_bounce Pointer to a variable where to store the
- * vertical bouncing flag.
- *
- * @see elm_gengrid_bounce_set() for more details
- *
- * @ingroup Gengrid
- */
-EAPI void                          elm_gengrid_bounce_get(const Evas_Object *obj, Eina_Bool *h_bounce, Eina_Bool *v_bounce);
-
-/**
- * Set a given gengrid widget's scrolling page size, relative to
- * its viewport size.
- *
- * @param obj The gengrid object
- * @param h_pagerel The horizontal page (relative) size
- * @param v_pagerel The vertical page (relative) size
- *
- * The gengrid's scroller is capable of binding scrolling by the
- * user to "pages". It means that, while scrolling and, specially
- * after releasing the mouse button, the grid will @b snap to the
- * nearest displaying page's area. When page sizes are set, the
- * grid's continuous content area is split into (equal) page sized
- * pieces.
- *
- * This function sets the size of a page <b>relatively to the
- * viewport dimensions</b> of the gengrid, for each axis. A value
- * @c 1.0 means "the exact viewport's size", in that axis, while @c
- * 0.0 turns paging off in that axis. Likewise, @c 0.5 means "half
- * a viewport". Sane usable values are, than, between @c 0.0 and @c
- * 1.0. Values beyond those will make it behave behave
- * inconsistently. If you only want one axis to snap to pages, use
- * the value @c 0.0 for the other one.
- *
- * There is a function setting page size values in @b absolute
- * values, too -- elm_gengrid_page_size_set(). Naturally, its use
- * is mutually exclusive to this one.
- *
- * @see elm_gengrid_page_relative_get()
- *
- * @ingroup Gengrid
- */
-EAPI void                          elm_gengrid_page_relative_set(Evas_Object *obj, double h_pagerel, double v_pagerel);
-
-/**
- * Get a given gengrid widget's scrolling page size, relative to
- * its viewport size.
- *
- * @param obj The gengrid object
- * @param h_pagerel Pointer to a variable where to store the
- * horizontal page (relative) size
- * @param v_pagerel Pointer to a variable where to store the
- * vertical page (relative) size
- *
- * @see elm_gengrid_page_relative_set() for more details
- *
- * @ingroup Gengrid
- */
-EAPI void                          elm_gengrid_page_relative_get(const Evas_Object *obj, double *h_pagerel, double *v_pagerel);
-
-/**
- * Set a given gengrid widget's scrolling page size
- *
- * @param obj The gengrid object
- * @param h_pagesize The horizontal page size, in pixels
- * @param v_pagesize The vertical page size, in pixels
- *
- * The gengrid's scroller is capable of binding scrolling by the
- * user to "pages". It means that, while scrolling and, specially
- * after releasing the mouse button, the grid will @b snap to the
- * nearest displaying page's area. When page sizes are set, the
- * grid's continuous content area is split into (equal) page sized
- * pieces.
- *
- * This function sets the size of a page of the gengrid, in pixels,
- * for each axis. Sane usable values are, between @c 0 and the
- * dimensions of @p obj, for each axis. Values beyond those will
- * make it behave behave inconsistently. If you only want one axis
- * to snap to pages, use the value @c 0 for the other one.
- *
- * There is a function setting page size values in @b relative
- * values, too -- elm_gengrid_page_relative_set(). Naturally, its
- * use is mutually exclusive to this one.
- *
- * @ingroup Gengrid
- */
-EAPI void                          elm_gengrid_page_size_set(Evas_Object *obj, Evas_Coord h_pagesize, Evas_Coord v_pagesize);
-
-/**
- * @brief Get gengrid current page number.
- *
- * @param obj The gengrid object
- * @param h_pagenumber The horizontal page number
- * @param v_pagenumber The vertical page number
- *
- * The page number starts from 0. 0 is the first page.
- * Current page means the page which meet the top-left of the viewport.
- * If there are two or more pages in the viewport, it returns the number of page
- * which meet the top-left of the viewport.
- *
- * @see elm_gengrid_last_page_get()
- * @see elm_gengrid_page_show()
- * @see elm_gengrid_page_bring_in()
- */
-EAPI void                          elm_gengrid_current_page_get(const Evas_Object *obj, int *h_pagenumber, int *v_pagenumber);
-
-/**
- * @brief Get gengrid last page number.
- *
- * @param obj The gengrid object
- * @param h_pagenumber The horizontal page number
- * @param v_pagenumber The vertical page number
- *
- * The page number starts from 0. 0 is the first page.
- * This returns the last page number among the pages.
- *
- * @see elm_gengrid_current_page_get()
- * @see elm_gengrid_page_show()
- * @see elm_gengrid_page_bring_in()
- */
-EAPI void                          elm_gengrid_last_page_get(const Evas_Object *obj, int *h_pagenumber, int *v_pagenumber);
-
-/**
- * Show a specific virtual region within the gengrid content object by page number.
- *
- * @param obj The gengrid object
- * @param h_pagenumber The horizontal page number
- * @param v_pagenumber The vertical page number
- *
- * 0, 0 of the indicated page is located at the top-left of the viewport.
- * This will jump to the page directly without animation.
- *
- * Example of usage:
- *
- * @code
- * sc = elm_gengrid_add(win);
- * elm_gengrid_content_set(sc, content);
- * elm_gengrid_page_relative_set(sc, 1, 0);
- * elm_gengrid_current_page_get(sc, &h_page, &v_page);
- * elm_gengrid_page_show(sc, h_page + 1, v_page);
- * @endcode
- *
- * @see elm_gengrid_page_bring_in()
- */
-EAPI void                          elm_gengrid_page_show(const Evas_Object *obj, int h_pagenumber, int v_pagenumber);
-
-/**
- * Show a specific virtual region within the gengrid content object by page number.
- *
- * @param obj The gengrid object
- * @param h_pagenumber The horizontal page number
- * @param v_pagenumber The vertical page number
- *
- * 0, 0 of the indicated page is located at the top-left of the viewport.
- * This will slide to the page with animation.
- *
- * Example of usage:
- *
- * @code
- * sc = elm_gengrid_add(win);
- * elm_gengrid_content_set(sc, content);
- * elm_gengrid_page_relative_set(sc, 1, 0);
- * elm_gengrid_last_page_get(sc, &h_page, &v_page);
- * elm_gengrid_page_bring_in(sc, h_page, v_page);
- * @endcode
- *
- * @see elm_gengrid_page_show()
- */
-EAPI void                          elm_gengrid_page_bring_in(const Evas_Object *obj, int h_pagenumber, int v_pagenumber);
-
-/**
- * Set the direction in which a given gengrid widget will expand while
- * placing its items.
- *
- * @param obj The gengrid object.
- * @param horizontal @c EINA_TRUE to make the gengrid expand
- * horizontally, @c EINA_FALSE to expand vertically.
- *
- * When in "horizontal mode" (@c EINA_TRUE), items will be placed
- * in @b columns, from top to bottom and, when the space for a
- * column is filled, another one is started on the right, thus
- * expanding the grid horizontally. When in "vertical mode"
- * (@c EINA_FALSE), though, items will be placed in @b rows, from left
- * to right and, when the space for a row is filled, another one is
- * started below, thus expanding the grid vertically.
- *
- * @see elm_gengrid_horizontal_get()
- *
- * @ingroup Gengrid
- */
-//XXX: elm_gengrid_mode_set()
-EAPI void                          elm_gengrid_horizontal_set(Evas_Object *obj, Eina_Bool horizontal);
-
-/**
- * Get for what direction a given gengrid widget will expand while
- * placing its items.
- *
- * @param obj The gengrid object.
- * @return @c EINA_TRUE, if @p obj is set to expand horizontally,
- * @c EINA_FALSE if it's set to expand vertically.
- *
- * @see elm_gengrid_horizontal_set() for more details
- *
- * @ingroup Gengrid
- */
-EAPI Eina_Bool                     elm_gengrid_horizontal_get(const Evas_Object *obj);
+//XXX: let's add
+//EAPI Eina_List                  *elm_gengrid_realized_items_get(const Evas_Object *obj);
 
 /**
  * Get the first item in a given gengrid widget
@@ -939,6 +681,12 @@ EAPI Elm_Object_Item             *elm_gengrid_first_item_get(const Evas_Object *
  * @ingroup Gengrid
  */
 EAPI Elm_Object_Item             *elm_gengrid_last_item_get(const Evas_Object *obj);
+
+//XXX: let's add
+//EAPI void                          elm_gengrid_scroller_policy_set(Evas_Object *obj, Elm_Scroller_Policy policy_h, Elm_Scroller_Policy policy_v);
+
+//XXX: lets' add
+//EAPI void                          elm_gengrid_scroller_policy_get(const Evas_Object *obj, Elm_Scroller_Policy *policy_h, Elm_Scroller_Policy *policy_v);
 
 /**
  * Get the @b next item in a gengrid widget's internal list of items,
@@ -975,62 +723,6 @@ EAPI Elm_Object_Item             *elm_gengrid_item_next_get(const Elm_Object_Ite
 EAPI Elm_Object_Item             *elm_gengrid_item_prev_get(const Elm_Object_Item *it);
 
 /**
- * Update the contents of a given gengrid item
- *
- * @param it The gengrid item
- *
- * This updates an item by calling all the item class functions
- * again to get the contents, texts and states. Use this when the
- * original item data has changed and you want the changes to be
- * reflected.
- *
- * @ingroup Gengrid
- */
-EAPI void                          elm_gengrid_item_update(Elm_Object_Item *it);
-
-/**
- * Get the Gengrid Item class for the given Gengrid Item.
- *
- * @param it The gengrid item
- *
- * This returns the Gengrid_Item_Class for the given item. It can be used to examine
- * the function pointers and item_style.
- *
- * @ingroup Gengrid
- */
-EAPI const Elm_Gengrid_Item_Class *elm_gengrid_item_item_class_get(const Elm_Object_Item *it);
-
-/**
- * Update the item class of a gengrid item.
- *
- * This sets another class of the item, changing the way that it is
- * displayed. After changing the item class, elm_gengrid_item_update() is
- * called on the item @p it.
- *
- * @param it The gengrid item
- * @param gic The gengrid item class describing the function pointers and the item style.
- *
- * @ingroup Gengrid
- */
-EAPI void                          elm_gengrid_item_item_class_update(Elm_Object_Item *it, const Elm_Gengrid_Item_Class *gic);
-
-/**
- * Get a given gengrid item's position, relative to the whole
- * gengrid's grid area.
- *
- * @param it The Gengrid item.
- * @param x Pointer to variable to store the item's <b>row number</b>.
- * @param y Pointer to variable to store the item's <b>column number</b>.
- *
- * This returns the "logical" position of the item within the
- * gengrid. For example, @c (0, 1) would stand for first row,
- * second column.
- *
- * @ingroup Gengrid
- */
-EAPI void                          elm_gengrid_item_pos_get(const Elm_Object_Item *it, unsigned int *x, unsigned int *y);
-
-/**
  * Set whether a given gengrid item is selected or not
  *
  * @param it The gengrid item
@@ -1047,41 +739,6 @@ EAPI void                          elm_gengrid_item_pos_get(const Elm_Object_Ite
  * @ingroup Gengrid
  */
 EAPI void                          elm_gengrid_item_selected_set(Elm_Object_Item *it, Eina_Bool selected);
-
-/**
- * Get the selected item in a given gengrid widget
- *
- * @param obj The gengrid object.
- * @return The selected item's handle or @c NULL, if none is
- * selected at the moment (and on errors)
- *
- * This returns the selected item in @p obj. If multi selection is
- * enabled on @p obj (@see elm_gengrid_multi_select_set()), only
- * the first item in the list is selected, which might not be very
- * useful. For that case, see elm_gengrid_selected_items_get().
- *
- * @ingroup Gengrid
- */
-EAPI Elm_Object_Item             *elm_gengrid_selected_item_get(const Evas_Object *obj);
-
-/**
- * Get <b>a list</b> of selected items in a given gengrid
- *
- * @param obj The gengrid object.
- * @return The list of selected items or @c NULL, if none is
- * selected at the moment (and on errors)
- *
- * This returns a list of the selected items, in the order that
- * they appear in the grid. This list is only valid as long as no
- * more items are selected or unselected (or unselected implicitly
- * by deletion). The list contains #Gengrid item pointers as
- * data, naturally.
- *
- * @see elm_gengrid_selected_item_get()
- *
- * @ingroup Gengrid
- */
-EAPI const Eina_List              *elm_gengrid_selected_items_get(const Evas_Object *obj);
 
 /**
  * Get whether a given gengrid item is selected or not
@@ -1128,6 +785,122 @@ EAPI void                          elm_gengrid_item_show(Elm_Object_Item *it);
  * @ingroup Gengrid
  */
 EAPI void                          elm_gengrid_item_bring_in(Elm_Object_Item *it);
+
+//XXX: Let's add as possible
+//EAPI void                          elm_gengrid_item_top_show(Elm_Object_Item *it);
+//EAPI void                          elm_gengrid_item_top_bring_in(Elm_Object_Item *it);
+//EAPI void                          elm_gengrid_item_middle_show(Elm_Object_Item *it);
+//EAPI void                          elm_gengrid_item_middle_bring_in(Elm_Object_Item *it);
+
+/**
+ * Update the contents of a given gengrid item
+ *
+ * @param it The gengrid item
+ *
+ * This updates an item by calling all the item class functions
+ * again to get the contents, texts and states. Use this when the
+ * original item data has changed and you want the changes to be
+ * reflected.
+ *
+ * @ingroup Gengrid
+ */
+EAPI void                          elm_gengrid_item_update(Elm_Object_Item *it);
+
+/**
+ * Update the item class of a gengrid item.
+ *
+ * This sets another class of the item, changing the way that it is
+ * displayed. After changing the item class, elm_gengrid_item_update() is
+ * called on the item @p it.
+ *
+ * @param it The gengrid item
+ * @param gic The gengrid item class describing the function pointers and the item style.
+ *
+ * @ingroup Gengrid
+ */
+EAPI void                          elm_gengrid_item_item_class_update(Elm_Object_Item *it, const Elm_Gengrid_Item_Class *gic);
+
+/**
+ * Get the Gengrid Item class for the given Gengrid Item.
+ *
+ * @param it The gengrid item
+ *
+ * This returns the Gengrid_Item_Class for the given item. It can be used to examine
+ * the function pointers and item_style.
+ *
+ * @ingroup Gengrid
+ */
+EAPI const Elm_Gengrid_Item_Class *elm_gengrid_item_item_class_get(const Elm_Object_Item *it);
+
+//XXX: Let's add
+//EAPI int                           elm_gengrid_item_index_get(const Elm_Object_Item *it);
+//EAPI void                          elm_gengrid_realized_items_update(Evas_Object *obj);
+//EAPI unsigned iint elm_gengrid_items_count(const Evas_Object *obj);
+
+#define ELM_GENGRID_ITEM_CLASS_VERSION 2 /* current version number */
+
+/**
+ * Add a new gengrid item class in a given gengrid widget.
+ *
+ * @return New allocated a gengrid item class.
+ *
+ * This adds gengrid item class for the gengrid widget. When adding a item,
+ * gengrid_item_{append, prepend, insert} function needs item class of the item.
+ * Given callback paramters are used at retrieving {text, content} of
+ * added item. Set as NULL if it's not used.
+ * If there's no available memory, return can be NULL.
+ *
+ * @see elm_gengrid_item_class_free()
+ * @see elm_gengrid_item_append()
+ *
+ * @ingroup Gengrid
+ */
+EAPI Elm_Gengrid_Item_Class *elm_gengrid_item_class_new(void);
+
+/**
+ * Remove a item class in a given gengrid widget.
+ *
+ * @param itc The itc to be removed.
+ *
+ * This removes item class from the gengrid widget.
+ * Whenever it has no more references to it, item class is going to be freed.
+ * Otherwise it just decreases its reference count.
+ *
+ * @see elm_gengrid_item_class_new()
+ * @see elm_gengrid_item_class_ref()
+ * @see elm_gengrid_item_class_unref()
+ *
+ * @ingroup Gengrid
+ */
+EAPI void elm_gengrid_item_class_free(Elm_Gengrid_Item_Class *itc);
+
+/**
+ * Increments object reference count for the item class.
+ *
+ * @param itc The given item class object to reference
+ *
+ * This API just increases its reference count for item class management.
+ *
+ * @see elm_gengrid_item_class_unref()
+ *
+ * @ingroup Gengrid
+ */
+EAPI void elm_gengrid_item_class_ref(Elm_Gengrid_Item_Class *itc);
+
+/**
+ * Decrements object reference count for the item class.
+ *
+ * @param itc The given item class object to reference
+ *
+ * This API just decreases its reference count for item class management.
+ * Reference count can't be less than 0.
+ *
+ * @see elm_gengrid_item_class_ref()
+ * @see elm_gengrid_item_class_free()
+ *
+ * @ingroup Gengrid
+ */
+EAPI void elm_gengrid_item_class_unref(Elm_Gengrid_Item_Class *itc);
 
 //XXX: Need to review tooltip & cursor APIs
 
@@ -1387,18 +1160,330 @@ EAPI void                          elm_gengrid_item_cursor_engine_only_set(Elm_O
 EAPI Eina_Bool                     elm_gengrid_item_cursor_engine_only_get(const Elm_Object_Item *it);
 
 /**
- * Remove all items from a given gengrid widget
+ * Set the size for the items of a given gengrid widget
  *
  * @param obj The gengrid object.
+ * @param w The items' width.
+ * @param h The items' height;
  *
- * This removes (and deletes) all items in @p obj, leaving it
- * empty.
+ * A gengrid, after creation, has still no information on the size
+ * to give to each of its cells. So, you most probably will end up
+ * with squares one @ref Fingers "finger" wide, the default
+ * size. Use this function to force a custom size for you items,
+ * making them as big as you wish.
  *
- * @see elm_object_item_del(), to remove just one item.
+ * @see elm_gengrid_item_size_get()
  *
  * @ingroup Gengrid
  */
-EAPI void                          elm_gengrid_clear(Evas_Object *obj);
+EAPI void                          elm_gengrid_item_size_set(Evas_Object *obj, Evas_Coord w, Evas_Coord h);
+
+/**
+ * Get the size set for the items of a given gengrid widget
+ *
+ * @param obj The gengrid object.
+ * @param w Pointer to a variable where to store the items' width.
+ * @param h Pointer to a variable where to store the items' height.
+ *
+ * @note Use @c NULL pointers on the size values you're not
+ * interested in: they'll be ignored by the function.
+ *
+ * @see elm_gengrid_item_size_get() for more details
+ *
+ * @ingroup Gengrid
+ */
+EAPI void                          elm_gengrid_item_size_get(const Evas_Object *obj, Evas_Coord *w, Evas_Coord *h);
+
+/**
+ * Set the size for the group items of a given gengrid widget
+ *
+ * @param obj The gengrid object.
+ * @param w The group items' width.
+ * @param h The group items' height;
+ *
+ * A gengrid, after creation, has still no information on the size
+ * to give to each of its cells. So, you most probably will end up
+ * with squares one @ref Fingers "finger" wide, the default
+ * size. Use this function to force a custom size for you group items,
+ * making them as big as you wish.
+ *
+ * @see elm_gengrid_group_item_size_get()
+ *
+ * @ingroup Gengrid
+ */
+EAPI void                          elm_gengrid_group_item_size_set(Evas_Object *obj, Evas_Coord w, Evas_Coord h);
+
+/**
+ * Get the size set for the group items of a given gengrid widget
+ *
+ * @param obj The gengrid object.
+ * @param w Pointer to a variable where to store the group items' width.
+ * @param h Pointer to a variable where to store the group items' height.
+ *
+ * @note Use @c NULL pointers on the size values you're not
+ * interested in: they'll be ignored by the function.
+ *
+ * @see elm_gengrid_group_item_size_get() for more details
+ *
+ * @ingroup Gengrid
+ */
+EAPI void                          elm_gengrid_group_item_size_get(const Evas_Object *obj, Evas_Coord *w, Evas_Coord *h);
+
+/**
+ * Set the items grid's alignment within a given gengrid widget
+ *
+ * @param obj The gengrid object.
+ * @param align_x Alignment in the horizontal axis (0 <= align_x <= 1).
+ * @param align_y Alignment in the vertical axis (0 <= align_y <= 1).
+ *
+ * This sets the alignment of the whole grid of items of a gengrid
+ * within its given viewport. By default, those values are both
+ * 0.5, meaning that the gengrid will have its items grid placed
+ * exactly in the middle of its viewport.
+ *
+ * @note If given alignment values are out of the cited ranges,
+ * they'll be changed to the nearest boundary values on the valid
+ * ranges.
+ *
+ * @see elm_gengrid_align_get()
+ *
+ * @ingroup Gengrid
+ */
+EAPI void                          elm_gengrid_align_set(Evas_Object *obj, double align_x, double align_y);
+
+/**
+ * Get the items grid's alignment values within a given gengrid
+ * widget
+ *
+ * @param obj The gengrid object.
+ * @param align_x Pointer to a variable where to store the
+ * horizontal alignment.
+ * @param align_y Pointer to a variable where to store the vertical
+ * alignment.
+ *
+ * @note Use @c NULL pointers on the alignment values you're not
+ * interested in: they'll be ignored by the function.
+ *
+ * @see elm_gengrid_align_set() for more details
+ *
+ * @ingroup Gengrid
+ */
+EAPI void                          elm_gengrid_align_get(const Evas_Object *obj, double *align_x, double *align_y);
+
+/**
+ * Set whether a given gengrid widget is or not able have items
+ * @b reordered
+ *
+ * @param obj The gengrid object
+ * @param reorder_mode Use @c EINA_TRUE to turn reordering on,
+ * @c EINA_FALSE to turn it off
+ *
+ * If a gengrid is set to allow reordering, a click held for more
+ * than 0.5 over a given item will highlight it specially,
+ * signaling the gengrid has entered the reordering state. From
+ * that time on, the user will be able to, while still holding the
+ * mouse button down, move the item freely in the gengrid's
+ * viewport, replacing to said item to the locations it goes to.
+ * The replacements will be animated and, whenever the user
+ * releases the mouse button, the item being replaced gets a new
+ * definitive place in the grid.
+ *
+ * @see elm_gengrid_reorder_mode_get()
+ *
+ * @ingroup Gengrid
+ */
+EAPI void                          elm_gengrid_reorder_mode_set(Evas_Object *obj, Eina_Bool reorder_mode);
+
+/**
+ * Get whether a given gengrid widget is or not able have items
+ * @b reordered
+ *
+ * @param obj The gengrid object
+ * @return @c EINA_TRUE, if reordering is on, @c EINA_FALSE if it's
+ * off
+ *
+ * @see elm_gengrid_reorder_mode_set() for more details
+ *
+ * @ingroup Gengrid
+ */
+EAPI Eina_Bool                     elm_gengrid_reorder_mode_get(const Evas_Object *obj);
+
+
+/**
+ * Set a given gengrid widget's scrolling page size, relative to
+ * its viewport size.
+ *
+ * @param obj The gengrid object
+ * @param h_pagerel The horizontal page (relative) size
+ * @param v_pagerel The vertical page (relative) size
+ *
+ * The gengrid's scroller is capable of binding scrolling by the
+ * user to "pages". It means that, while scrolling and, specially
+ * after releasing the mouse button, the grid will @b snap to the
+ * nearest displaying page's area. When page sizes are set, the
+ * grid's continuous content area is split into (equal) page sized
+ * pieces.
+ *
+ * This function sets the size of a page <b>relatively to the
+ * viewport dimensions</b> of the gengrid, for each axis. A value
+ * @c 1.0 means "the exact viewport's size", in that axis, while @c
+ * 0.0 turns paging off in that axis. Likewise, @c 0.5 means "half
+ * a viewport". Sane usable values are, than, between @c 0.0 and @c
+ * 1.0. Values beyond those will make it behave behave
+ * inconsistently. If you only want one axis to snap to pages, use
+ * the value @c 0.0 for the other one.
+ *
+ * There is a function setting page size values in @b absolute
+ * values, too -- elm_gengrid_page_size_set(). Naturally, its use
+ * is mutually exclusive to this one.
+ *
+ * @see elm_gengrid_page_relative_get()
+ *
+ * @ingroup Gengrid
+ */
+EAPI void                          elm_gengrid_page_relative_set(Evas_Object *obj, double h_pagerel, double v_pagerel);
+
+/**
+ * Get a given gengrid widget's scrolling page size, relative to
+ * its viewport size.
+ *
+ * @param obj The gengrid object
+ * @param h_pagerel Pointer to a variable where to store the
+ * horizontal page (relative) size
+ * @param v_pagerel Pointer to a variable where to store the
+ * vertical page (relative) size
+ *
+ * @see elm_gengrid_page_relative_set() for more details
+ *
+ * @ingroup Gengrid
+ */
+EAPI void                          elm_gengrid_page_relative_get(const Evas_Object *obj, double *h_pagerel, double *v_pagerel);
+
+/**
+ * Set a given gengrid widget's scrolling page size
+ *
+ * @param obj The gengrid object
+ * @param h_pagesize The horizontal page size, in pixels
+ * @param v_pagesize The vertical page size, in pixels
+ *
+ * The gengrid's scroller is capable of binding scrolling by the
+ * user to "pages". It means that, while scrolling and, specially
+ * after releasing the mouse button, the grid will @b snap to the
+ * nearest displaying page's area. When page sizes are set, the
+ * grid's continuous content area is split into (equal) page sized
+ * pieces.
+ *
+ * This function sets the size of a page of the gengrid, in pixels,
+ * for each axis. Sane usable values are, between @c 0 and the
+ * dimensions of @p obj, for each axis. Values beyond those will
+ * make it behave behave inconsistently. If you only want one axis
+ * to snap to pages, use the value @c 0 for the other one.
+ *
+ * There is a function setting page size values in @b relative
+ * values, too -- elm_gengrid_page_relative_set(). Naturally, its
+ * use is mutually exclusive to this one.
+ *
+ * @ingroup Gengrid
+ */
+EAPI void                          elm_gengrid_page_size_set(Evas_Object *obj, Evas_Coord h_pagesize, Evas_Coord v_pagesize);
+
+/**
+ * @brief Get gengrid current page number.
+ *
+ * @param obj The gengrid object
+ * @param h_pagenumber The horizontal page number
+ * @param v_pagenumber The vertical page number
+ *
+ * The page number starts from 0. 0 is the first page.
+ * Current page means the page which meet the top-left of the viewport.
+ * If there are two or more pages in the viewport, it returns the number of page
+ * which meet the top-left of the viewport.
+ *
+ * @see elm_gengrid_last_page_get()
+ * @see elm_gengrid_page_show()
+ * @see elm_gengrid_page_bring_in()
+ */
+EAPI void                          elm_gengrid_current_page_get(const Evas_Object *obj, int *h_pagenumber, int *v_pagenumber);
+
+/**
+ * @brief Get gengrid last page number.
+ *
+ * @param obj The gengrid object
+ * @param h_pagenumber The horizontal page number
+ * @param v_pagenumber The vertical page number
+ *
+ * The page number starts from 0. 0 is the first page.
+ * This returns the last page number among the pages.
+ *
+ * @see elm_gengrid_current_page_get()
+ * @see elm_gengrid_page_show()
+ * @see elm_gengrid_page_bring_in()
+ */
+EAPI void                          elm_gengrid_last_page_get(const Evas_Object *obj, int *h_pagenumber, int *v_pagenumber);
+
+/**
+ * Show a specific virtual region within the gengrid content object by page number.
+ *
+ * @param obj The gengrid object
+ * @param h_pagenumber The horizontal page number
+ * @param v_pagenumber The vertical page number
+ *
+ * 0, 0 of the indicated page is located at the top-left of the viewport.
+ * This will jump to the page directly without animation.
+ *
+ * Example of usage:
+ *
+ * @code
+ * sc = elm_gengrid_add(win);
+ * elm_gengrid_content_set(sc, content);
+ * elm_gengrid_page_relative_set(sc, 1, 0);
+ * elm_gengrid_current_page_get(sc, &h_page, &v_page);
+ * elm_gengrid_page_show(sc, h_page + 1, v_page);
+ * @endcode
+ *
+ * @see elm_gengrid_page_bring_in()
+ */
+EAPI void                          elm_gengrid_page_show(const Evas_Object *obj, int h_pagenumber, int v_pagenumber);
+
+/**
+ * Show a specific virtual region within the gengrid content object by page number.
+ *
+ * @param obj The gengrid object
+ * @param h_pagenumber The horizontal page number
+ * @param v_pagenumber The vertical page number
+ *
+ * 0, 0 of the indicated page is located at the top-left of the viewport.
+ * This will slide to the page with animation.
+ *
+ * Example of usage:
+ *
+ * @code
+ * sc = elm_gengrid_add(win);
+ * elm_gengrid_content_set(sc, content);
+ * elm_gengrid_page_relative_set(sc, 1, 0);
+ * elm_gengrid_last_page_get(sc, &h_page, &v_page);
+ * elm_gengrid_page_bring_in(sc, h_page, v_page);
+ * @endcode
+ *
+ * @see elm_gengrid_page_show()
+ */
+EAPI void                          elm_gengrid_page_bring_in(const Evas_Object *obj, int h_pagenumber, int v_pagenumber);
+
+/**
+ * Get a given gengrid item's position, relative to the whole
+ * gengrid's grid area.
+ *
+ * @param it The Gengrid item.
+ * @param x Pointer to variable to store the item's <b>row number</b>.
+ * @param y Pointer to variable to store the item's <b>column number</b>.
+ *
+ * This returns the "logical" position of the item within the
+ * gengrid. For example, @c (0, 1) would stand for first row,
+ * second column.
+ *
+ * @ingroup Gengrid
+ */
+EAPI void                          elm_gengrid_item_pos_get(const Elm_Object_Item *it, unsigned int *x, unsigned int *y);
 
 /**
  * Set how the items grid's filled within a given gengrid widget
@@ -1435,71 +1520,6 @@ EAPI void                          elm_gengrid_filled_set(Evas_Object *obj, Eina
  */
 //XXX: Does this API working well?
 EAPI Eina_Bool                     elm_gengrid_filled_get(const Evas_Object *obj);
-
-#define ELM_GENGRID_ITEM_CLASS_VERSION 2 /* current version number */
-
-/**
- * Add a new gengrid item class in a given gengrid widget.
- *
- * @return New allocated a gengrid item class.
- *
- * This adds gengrid item class for the gengrid widget. When adding a item,
- * gengrid_item_{append, prepend, insert} function needs item class of the item.
- * Given callback paramters are used at retrieving {text, content} of
- * added item. Set as NULL if it's not used.
- * If there's no available memory, return can be NULL.
- *
- * @see elm_gengrid_item_class_free()
- * @see elm_gengrid_item_append()
- *
- * @ingroup Gengrid
- */
-EAPI Elm_Gengrid_Item_Class *elm_gengrid_item_class_new(void);
-
-/**
- * Remove a item class in a given gengrid widget.
- *
- * @param itc The itc to be removed.
- *
- * This removes item class from the gengrid widget.
- * Whenever it has no more references to it, item class is going to be freed.
- * Otherwise it just decreases its reference count.
- *
- * @see elm_gengrid_item_class_new()
- * @see elm_gengrid_item_class_ref()
- * @see elm_gengrid_item_class_unref()
- *
- * @ingroup Gengrid
- */
-EAPI void elm_gengrid_item_class_free(Elm_Gengrid_Item_Class *itc);
-
-/**
- * Increments object reference count for the item class.
- *
- * @param itc The given item class object to reference
- *
- * This API just increases its reference count for item class management.
- *
- * @see elm_gengrid_item_class_unref()
- *
- * @ingroup Gengrid
- */
-EAPI void elm_gengrid_item_class_ref(Elm_Gengrid_Item_Class *itc);
-
-/**
- * Decrements object reference count for the item class.
- *
- * @param itc The given item class object to reference
- *
- * This API just decreases its reference count for item class management.
- * Reference count can't be less than 0.
- *
- * @see elm_gengrid_item_class_ref()
- * @see elm_gengrid_item_class_free()
- *
- * @ingroup Gengrid
- */
-EAPI void elm_gengrid_item_class_unref(Elm_Gengrid_Item_Class *itc);
 
 /**
  * @}

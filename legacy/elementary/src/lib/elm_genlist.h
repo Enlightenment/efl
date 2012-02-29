@@ -584,76 +584,6 @@ EAPI void                          elm_genlist_no_select_mode_set(Evas_Object *o
 EAPI Eina_Bool                     elm_genlist_no_select_mode_get(const Evas_Object *obj);
 
 /**
- * Enable/disable compress mode.
- *
- * @param obj The genlist object
- * @param compress The compress mode
- * (@c EINA_TRUE = on, @c EINA_FALSE = off). Default is @c EINA_FALSE.
- *
- * This will enable the compress mode where items are "compressed"
- * horizontally to fit the genlist scrollable viewport width. This is
- * special for genlist.  Do not rely on
- * elm_genlist_horizontal_set() being set to @c ELM_LIST_COMPRESS to
- * work as genlist needs to handle it specially.
- *
- * @see elm_genlist_compress_mode_get()
- *
- * @ingroup Genlist
- */
-EAPI void                          elm_genlist_compress_mode_set(Evas_Object *obj, Eina_Bool compress);
-
-/**
- * Get whether the compress mode is enabled.
- *
- * @param obj The genlist object
- * @return The compress mode
- * (@c EINA_TRUE = on, @c EINA_FALSE = off)
- *
- * @see elm_genlist_compress_mode_set()
- *
- * @ingroup Genlist
- */
-EAPI Eina_Bool                     elm_genlist_compress_mode_get(const Evas_Object *obj);
-
-/**
- * Enable/disable height-for-width mode.
- *
- * @param obj The genlist object
- * @param height_for_width The height-for-width mode (@c EINA_TRUE = on,
- * @c EINA_FALSE = off). Default is @c EINA_FALSE.
- *
- * With height-for-width mode the item width will be fixed (restricted
- * to a minimum of) to the list width when calculating its size in
- * order to allow the height to be calculated based on it. This allows,
- * for instance, text block to wrap lines if the Edje part is
- * configured with "text.min: 0 1".
- *
- * @note This mode will make list resize slower as it will have to
- *       recalculate every item height again whenever the list width
- *       changes!
- *
- * @note When height-for-width mode is enabled, it also enables
- *       compress mode (see elm_genlist_compress_mode_set()) and
- *       disables homogeneous (see elm_genlist_homogeneous_set()).
- *
- * @ingroup Genlist
- */
-//XXX: API name is ambiguous.. How about elm_genlist_mode_fixed_width_set? 
-EAPI void                          elm_genlist_height_for_width_mode_set(Evas_Object *obj, Eina_Bool height_for_width);
-
-/**
- * Get whether the height-for-width mode is enabled.
- *
- * @param obj The genlist object
- * @return The height-for-width mode (@c EINA_TRUE = on, @c EINA_FALSE =
- * off)
- *
- * @ingroup Genlist
- */
-//XXX: API name is ambigious elm_genlist_mode_fixed_width_get() ?????
-EAPI Eina_Bool                     elm_genlist_height_for_width_mode_get(const Evas_Object *obj);
-
-/**
  * Enable/disable horizontal and vertical bouncing effect.
  *
  * @param obj The genlist object
@@ -686,108 +616,6 @@ EAPI void                          elm_genlist_bounce_set(Evas_Object *obj, Eina
  * @ingroup Genlist
  */
 EAPI void                          elm_genlist_bounce_get(const Evas_Object *obj, Eina_Bool *h_bounce, Eina_Bool *v_bounce);
-
-/**
- * Enable/disable homogeneous mode.
- *
- * @param obj The genlist object
- * @param homogeneous Assume the items within the genlist are of the
- * same height and width (EINA_TRUE = on, EINA_FALSE = off). Default is @c
- * EINA_FALSE.
- *
- * This will enable the homogeneous mode where items are of the same
- * height and width so that genlist may do the lazy-loading at its
- * maximum (which increases the performance for scrolling the list). This
- * implies 'compressed' mode.
- *
- * @see elm_genlist_compress_mode_set()
- * @see elm_genlist_homogeneous_get()
- *
- * @ingroup Genlist
- */
-EAPI void                          elm_genlist_homogeneous_set(Evas_Object *obj, Eina_Bool homogeneous);
-
-/**
- * Get whether the homogeneous mode is enabled.
- *
- * @param obj The genlist object
- * @return Assume the items within the genlist are of the same height
- * and width (EINA_TRUE = on, EINA_FALSE = off)
- *
- * @see elm_genlist_homogeneous_set()
- *
- * @ingroup Genlist
- */
-EAPI Eina_Bool                     elm_genlist_homogeneous_get(const Evas_Object *obj);
-
-/**
- * Set the maximum number of items within an item block
- *
- * @param obj The genlist object
- * @param count Maximum number of items within an item block. Default is 32.
- *
- * This will configure the block count to tune to the target with particular
- * performance matrix.
- *
- * A block of objects will be used to reduce the number of operations due to
- * many objects in the screen. It can determine the visibility, or if the
- * object has changed, it theme needs to be updated, etc. doing this kind of
- * calculation to the entire block, instead of per object.
- *
- * The default value for the block count is enough for most lists, so unless
- * you know you will have a lot of objects visible in the screen at the same
- * time, don't try to change this.
- *
- * @see elm_genlist_block_count_get()
- * @see @ref Genlist_Implementation
- *
- * @ingroup Genlist
- */
-EAPI void                          elm_genlist_block_count_set(Evas_Object *obj, int count);
-
-/**
- * Get the maximum number of items within an item block
- *
- * @param obj The genlist object
- * @return Maximum number of items within an item block
- *
- * @see elm_genlist_block_count_set()
- *
- * @ingroup Genlist
- */
-EAPI int                           elm_genlist_block_count_get(const Evas_Object *obj);
-
-/**
- * Set the timeout in seconds for the longpress event.
- *
- * @param obj The genlist object
- * @param timeout timeout in seconds. Default is elm config value(1.0)
- *
- * This option will change how long it takes to send an event "longpressed"
- * after the mouse down signal is sent to the list. If this event occurs, no
- * "clicked" event will be sent.
- *
- * @warning If you set the longpress timeout value with this API, your genlist
- * will not be affected by the longpress value of elementary config value
- * later.
- *
- * @see elm_genlist_longpress_timeout_set()
- *
- * @ingroup Genlist
- */
-EAPI void                          elm_genlist_longpress_timeout_set(Evas_Object *obj, double timeout);
-
-/**
- * Get the timeout in seconds for the longpress event.
- *
- * @param obj The genlist object
- * @return timeout in seconds
- *
- * @see elm_genlist_longpress_timeout_get()
- *
- * @ingroup Genlist
- */
-EAPI double                        elm_genlist_longpress_timeout_get(const Evas_Object *obj);
 
 /**
  * Append a new item in a given genlist widget.
@@ -975,29 +803,6 @@ EAPI const Eina_List              *elm_genlist_selected_items_get(const Evas_Obj
 EAPI Eina_List                    *elm_genlist_realized_items_get(const Evas_Object *obj);
 
 /**
- * Get the item that is at the x, y canvas coords.
- *
- * @param obj The genlist object.
- * @param x The input x coordinate
- * @param y The input y coordinate
- * @param posret The position relative to the item returned here
- * @return The item at the coordinates or NULL if none
- *
- * This returns the item at the given coordinates (which are canvas
- * relative, not object-relative). If an item is at that coordinate,
- * that item handle is returned, and if @p posret is not NULL, the
- * integer pointed to is set to a value of -1, 0 or 1, depending if
- * the coordinate is on the upper portion of that item (-1), on the
- * middle section (0) or on the lower part (1). If NULL is returned as
- * an item (no item found there), then posret may indicate -1 or 1
- * based if the coordinate is above or below all items respectively in
- * the genlist.
- *
- * @ingroup Genlist
- */
-EAPI Elm_Object_Item             *elm_genlist_at_xy_item_get(const Evas_Object *obj, Evas_Coord x, Evas_Coord y, int *posret);
-
-/**
  * Get the first item in the genlist
  *
  * This returns the first item in the list.
@@ -1089,34 +894,6 @@ EAPI Elm_Object_Item             *elm_genlist_item_next_get(const Elm_Object_Ite
 EAPI Elm_Object_Item             *elm_genlist_item_prev_get(const Elm_Object_Item *it);
 
 /**
- * Get the parent item of the given item
- *
- * @param it The item
- * @return The parent of the item or @c NULL if it has no parent.
- *
- * This returns the item that was specified as parent of the item @p it on
- * elm_genlist_item_append() and insertion related functions.
- *
- * @ingroup Genlist
- */
-EAPI Elm_Object_Item             *elm_genlist_item_parent_get(const Elm_Object_Item *it);
-
-/**
- * Remove all sub-items (children) of the given item
- *
- * @param it The item
- *
- * This removes all items that are children (and their descendants) of the
- * given item @p it.
- *
- * @see elm_genlist_clear()
- * @see elm_object_item_del()
- *
- * @ingroup Genlist
- */
-EAPI void                          elm_genlist_item_subitems_clear(Elm_Object_Item *it);
-
-/**
  * Set whether a given genlist item is selected or not
  *
  * @param it The item
@@ -1145,89 +922,6 @@ EAPI void                          elm_genlist_item_selected_set(Elm_Object_Item
  * @ingroup Genlist
  */
 EAPI Eina_Bool                     elm_genlist_item_selected_get(const Elm_Object_Item *it);
-
-/**
- * Sets the expanded state of an item.
- *
- * @param it The item
- * @param expanded The expanded state (@c EINA_TRUE expanded, @c EINA_FALSE not expanded).
- *
- * This function flags the item of type #ELM_GENLIST_ITEM_SUBITEMS as
- * expanded or not.
- *
- * The theme will respond to this change visually, and a signal "expanded" or
- * "contracted" will be sent from the genlist with a pointer to the item that
- * has been expanded/contracted.
- *
- * Calling this function won't show or hide any child of this item (if it is
- * a parent). You must manually delete and create them on the callbacks of
- * the "expanded" or "contracted" signals.
- *
- * @see elm_genlist_item_expanded_get()
- *
- * @ingroup Genlist
- */
-EAPI void                          elm_genlist_item_expanded_set(Elm_Object_Item *it, Eina_Bool expanded);
-
-/**
- * Get the expanded state of an item
- *
- * @param it The item
- * @return The expanded state
- *
- * This gets the expanded state of an item.
- *
- * @see elm_genlist_item_expanded_set()
- *
- * @ingroup Genlist
- */
-EAPI Eina_Bool                     elm_genlist_item_expanded_get(const Elm_Object_Item *it);
-
-/**
- * Get the depth of expanded item
- *
- * @param it The genlist item object
- * @return The depth of expanded item
- *
- * @ingroup Genlist
- */
-EAPI int                           elm_genlist_item_expanded_depth_get(const Elm_Object_Item *it);
-
-
-/**
- * Sets the display only state of an item.
- *
- * @param it The item
- * @param display_only @c EINA_TRUE if the item is display only, @c
- * EINA_FALSE otherwise.
- *
- * A display only item cannot be selected or unselected. It is for
- * display only and not selecting or otherwise clicking, dragging
- * etc. by the user, thus finger size rules will not be applied to
- * this item.
- *
- * It's good to set group index items to display only state.
- *
- * @see elm_genlist_item_display_only_get()
- *
- * @ingroup Genlist
- */
-//XXX: elm_genlist_item_event_freeze_set()?
-EAPI void                          elm_genlist_item_display_only_set(Elm_Object_Item *it, Eina_Bool display_only);
-
-/**
- * Get the display only state of an item
- *
- * @param it The item
- * @return @c EINA_TRUE if the item is display only, @c
- * EINA_FALSE otherwise.
- *
- * @see elm_genlist_item_display_only_set()
- *
- * @ingroup Genlist
- */
-//XXX: elm_genlist_item_event_freeze_get()?
-EAPI Eina_Bool                     elm_genlist_item_display_only_get(const Elm_Object_Item *it);
 
 /**
  * Show the portion of a genlist's internal list containing a given
@@ -1345,21 +1039,6 @@ EAPI void                          elm_genlist_item_middle_show(Elm_Object_Item 
 EAPI void                          elm_genlist_item_middle_bring_in(Elm_Object_Item *it);
 
 /**
- * Tells genlist to "orphan" contents fetched by the item class
- *
- * @param it The item
- *
- * This instructs genlist to release references to contents in the item,
- * meaning that they will no longer be managed by genlist and are
- * floating "orphans" that can be re-used elsewhere if the user wants
- * to.
- *
- * @ingroup Genlist
- */
-//XXX: elm_genlist_item_all_contents_unset() ??
-EAPI void                          elm_genlist_item_contents_orphan(Elm_Object_Item *it);
-
-/**
  * Update the contents of an item
  *
  * @param it The item
@@ -1376,46 +1055,6 @@ EAPI void                          elm_genlist_item_contents_orphan(Elm_Object_I
  * @ingroup Genlist
  */
 EAPI void                          elm_genlist_item_update(Elm_Object_Item *it);
-
-/**
- * Promote an item to the top of the list
- *
- * @param it The item
- *
- * @ingroup Genlist
- */
-EAPI void                          elm_genlist_item_promote(Elm_Object_Item *it);
-
-/**
- * Demote an item to the end of the list
- *
- * @param it The item
- *
- * @ingroup Genlist
- */
-EAPI void                          elm_genlist_item_demote(Elm_Object_Item *it);
-
-/**
- * Update the part of an item
- *
- * @param it The item
- * @param parts The name of item's part
- * @param itf The flags of item's part type
- *
- * This updates an item's part by calling item's fetching functions again
- * to get the contents, texts and states. Use this when the original
- * item data has changed and the changes are desired to be reflected.
- * Second parts argument is used for globbing to match '*', '?', and '.'
- * It can be used at updating multi fields.
- *
- * Use elm_genlist_realized_items_update() to update an item's all
- * property.
- *
- * @see elm_genlist_item_update()
- *
- * @ingroup Genlist
- */
-EAPI void                          elm_genlist_item_fields_update(Elm_Object_Item *it, const char *parts, Elm_Genlist_Item_Field_Flags itf);
 
 /**
  * Update the item class of an item
@@ -1443,7 +1082,113 @@ EAPI void                          elm_genlist_item_item_class_update(Elm_Object
  */
 EAPI const Elm_Genlist_Item_Class *elm_genlist_item_item_class_get(const Elm_Object_Item *it);
 
-//XXX: elm_genlist_item_item_class_set() ?
+/**
+ * Get the index of the item. It is only valid once displayed.
+ *
+ * @param it a genlist item
+ * @return the position inside the list of item.
+ *
+ * @ingroup Genlist
+ */
+EAPI int                           elm_genlist_item_index_get(const Elm_Object_Item *it);
+
+/**
+ * Update the contents of all realized items.
+ *
+ * @param obj The genlist object.
+ *
+ * This updates all realized items by calling all the item class functions again
+ * to get the contents, texts and states. Use this when the original
+ * item data has changed and the changes are desired to be reflected.
+ *
+ * To update just one item, use elm_genlist_item_update().
+ *
+ * @see elm_genlist_realized_items_get()
+ * @see elm_genlist_item_update()
+ *
+ * @ingroup Genlist
+ */
+EAPI void                          elm_genlist_realized_items_update(Evas_Object *obj);
+
+/**
+ * Return how many items are currently in a list
+ *
+ * @param obj The list
+ * @return The total number of list items in the list
+ *
+ * This behavior is O(1) and includes items which may or may not be realized.
+ *
+ * @ingroup Genlist
+ */
+EAPI unsigned int elm_genlist_items_count(const Evas_Object *obj);
+
+#define ELM_GENLIST_ITEM_CLASS_VERSION 2 /* current version number */
+
+/**
+ * Add a new genlist item class in a given genlist widget.
+ *
+ * @return New allocated a genlist item class.
+ *
+ * This adds genlist item class for the genlist widget. When adding a item,
+ * genlist_item_{append, prepend, insert} function needs item class of the item.
+ * Given callback paramters are used at retrieving {text, content} of
+ * added item. Set as NULL if it's not used.
+ * If there's no available memory, return can be NULL.
+ *
+ * @see elm_genlist_item_class_free()
+ * @see elm_genlist_item_append()
+ *
+ * @ingroup Genlist
+ */
+EAPI Elm_Genlist_Item_Class *elm_genlist_item_class_new(void);
+
+/**
+ * Remove a item class in a given genlist widget.
+ *
+ * @param itc The itc to be removed.
+ *
+ * This removes item class from the genlist widget.
+ * Whenever it has no more references to it, item class is going to be freed.
+ * Otherwise it just decreases its reference count.
+ *
+ * @see elm_genlist_item_class_new()
+ * @see elm_genlist_item_class_ref()
+ * @see elm_genlist_item_class_unref()
+ *
+ * @ingroup Genlist
+ */
+EAPI void elm_genlist_item_class_free(Elm_Genlist_Item_Class *itc);
+
+/**
+ * Increments object reference count for the item class.
+ *
+ * @param itc The given item class object to reference
+ *
+ * This API just increases its reference count for item class management.
+ *
+ * @see elm_genlist_item_class_unref()
+ *
+ * @ingroup Genlist
+ */
+EAPI void elm_genlist_item_class_ref(Elm_Genlist_Item_Class *itc);
+
+/**
+ * Decrements object reference count for the item class.
+ *
+ * @param itc The given item class object to reference
+ *
+ * This API just decreases its reference count for item class management.
+ * Reference count can't be less than 0.
+ *
+ * @see elm_genlist_item_class_ref()
+ * @see elm_genlist_item_class_free()
+ *
+ * @ingroup Genlist
+ */
+EAPI void elm_genlist_item_class_unref(Elm_Genlist_Item_Class *itc);
+
+
+
 //XXX: Need to review tooltip & cursor APIs
 
 /**
@@ -1491,7 +1236,6 @@ EAPI void                          elm_genlist_item_tooltip_text_set(Elm_Object_
  *
  * @ingroup Genlist
  */
-//XXX: Need to review tooltip & cursor APIs
 EAPI void                          elm_genlist_item_tooltip_content_cb_set(Elm_Object_Item *it, Elm_Tooltip_Item_Content_Cb func, const void *data, Evas_Smart_Cb del_cb);
 
 /**
@@ -1703,32 +1447,364 @@ EAPI void                          elm_genlist_item_cursor_engine_only_set(Elm_O
 EAPI Eina_Bool                     elm_genlist_item_cursor_engine_only_get(const Elm_Object_Item *it);
 
 /**
- * Get the index of the item. It is only valid once displayed.
+ * Enable/disable compress mode.
  *
- * @param it a genlist item
- * @return the position inside the list of item.
+ * @param obj The genlist object
+ * @param compress The compress mode
+ * (@c EINA_TRUE = on, @c EINA_FALSE = off). Default is @c EINA_FALSE.
+ *
+ * This will enable the compress mode where items are "compressed"
+ * horizontally to fit the genlist scrollable viewport width. This is
+ * special for genlist.  Do not rely on
+ * elm_genlist_horizontal_set() being set to @c ELM_LIST_COMPRESS to
+ * work as genlist needs to handle it specially.
+ *
+ * @see elm_genlist_compress_mode_get()
  *
  * @ingroup Genlist
  */
-EAPI int                           elm_genlist_item_index_get(const Elm_Object_Item *it);
+EAPI void                          elm_genlist_compress_mode_set(Evas_Object *obj, Eina_Bool compress);
 
 /**
- * Update the contents of all realized items.
+ * Get whether the compress mode is enabled.
+ *
+ * @param obj The genlist object
+ * @return The compress mode
+ * (@c EINA_TRUE = on, @c EINA_FALSE = off)
+ *
+ * @see elm_genlist_compress_mode_set()
+ *
+ * @ingroup Genlist
+ */
+EAPI Eina_Bool                     elm_genlist_compress_mode_get(const Evas_Object *obj);
+
+/**
+ * Enable/disable height-for-width mode.
+ *
+ * @param obj The genlist object
+ * @param height_for_width The height-for-width mode (@c EINA_TRUE = on,
+ * @c EINA_FALSE = off). Default is @c EINA_FALSE.
+ *
+ * With height-for-width mode the item width will be fixed (restricted
+ * to a minimum of) to the list width when calculating its size in
+ * order to allow the height to be calculated based on it. This allows,
+ * for instance, text block to wrap lines if the Edje part is
+ * configured with "text.min: 0 1".
+ *
+ * @note This mode will make list resize slower as it will have to
+ *       recalculate every item height again whenever the list width
+ *       changes!
+ *
+ * @note When height-for-width mode is enabled, it also enables
+ *       compress mode (see elm_genlist_compress_mode_set()) and
+ *       disables homogeneous (see elm_genlist_homogeneous_set()).
+ *
+ * @ingroup Genlist
+ */
+//XXX: API name is ambiguous.. How about elm_genlist_mode_fixed_width_set? 
+EAPI void                          elm_genlist_height_for_width_mode_set(Evas_Object *obj, Eina_Bool height_for_width);
+
+/**
+ * Get whether the height-for-width mode is enabled.
+ *
+ * @param obj The genlist object
+ * @return The height-for-width mode (@c EINA_TRUE = on, @c EINA_FALSE =
+ * off)
+ *
+ * @ingroup Genlist
+ */
+//XXX: API name is ambigious elm_genlist_mode_fixed_width_get() ?????
+EAPI Eina_Bool                     elm_genlist_height_for_width_mode_get(const Evas_Object *obj);
+
+/**
+ * Enable/disable homogeneous mode.
+ *
+ * @param obj The genlist object
+ * @param homogeneous Assume the items within the genlist are of the
+ * same height and width (EINA_TRUE = on, EINA_FALSE = off). Default is @c
+ * EINA_FALSE.
+ *
+ * This will enable the homogeneous mode where items are of the same
+ * height and width so that genlist may do the lazy-loading at its
+ * maximum (which increases the performance for scrolling the list). This
+ * implies 'compressed' mode.
+ *
+ * @see elm_genlist_compress_mode_set()
+ * @see elm_genlist_homogeneous_get()
+ *
+ * @ingroup Genlist
+ */
+EAPI void                          elm_genlist_homogeneous_set(Evas_Object *obj, Eina_Bool homogeneous);
+
+/**
+ * Get whether the homogeneous mode is enabled.
+ *
+ * @param obj The genlist object
+ * @return Assume the items within the genlist are of the same height
+ * and width (EINA_TRUE = on, EINA_FALSE = off)
+ *
+ * @see elm_genlist_homogeneous_set()
+ *
+ * @ingroup Genlist
+ */
+EAPI Eina_Bool                     elm_genlist_homogeneous_get(const Evas_Object *obj);
+
+/**
+ * Set the maximum number of items within an item block
+ *
+ * @param obj The genlist object
+ * @param count Maximum number of items within an item block. Default is 32.
+ *
+ * This will configure the block count to tune to the target with particular
+ * performance matrix.
+ *
+ * A block of objects will be used to reduce the number of operations due to
+ * many objects in the screen. It can determine the visibility, or if the
+ * object has changed, it theme needs to be updated, etc. doing this kind of
+ * calculation to the entire block, instead of per object.
+ *
+ * The default value for the block count is enough for most lists, so unless
+ * you know you will have a lot of objects visible in the screen at the same
+ * time, don't try to change this.
+ *
+ * @see elm_genlist_block_count_get()
+ * @see @ref Genlist_Implementation
+ *
+ * @ingroup Genlist
+ */
+EAPI void                          elm_genlist_block_count_set(Evas_Object *obj, int count);
+
+/**
+ * Get the maximum number of items within an item block
+ *
+ * @param obj The genlist object
+ * @return Maximum number of items within an item block
+ *
+ * @see elm_genlist_block_count_set()
+ *
+ * @ingroup Genlist
+ */
+EAPI int                           elm_genlist_block_count_get(const Evas_Object *obj);
+
+/**
+ * Set the timeout in seconds for the longpress event.
+ *
+ * @param obj The genlist object
+ * @param timeout timeout in seconds. Default is elm config value(1.0)
+ *
+ * This option will change how long it takes to send an event "longpressed"
+ * after the mouse down signal is sent to the list. If this event occurs, no
+ * "clicked" event will be sent.
+ *
+ * @warning If you set the longpress timeout value with this API, your genlist
+ * will not be affected by the longpress value of elementary config value
+ * later.
+ *
+ * @see elm_genlist_longpress_timeout_set()
+ *
+ * @ingroup Genlist
+ */
+EAPI void                          elm_genlist_longpress_timeout_set(Evas_Object *obj, double timeout);
+
+/**
+ * Get the timeout in seconds for the longpress event.
+ *
+ * @param obj The genlist object
+ * @return timeout in seconds
+ *
+ * @see elm_genlist_longpress_timeout_get()
+ *
+ * @ingroup Genlist
+ */
+EAPI double                        elm_genlist_longpress_timeout_get(const Evas_Object *obj);
+
+/**
+ * Get the item that is at the x, y canvas coords.
  *
  * @param obj The genlist object.
+ * @param x The input x coordinate
+ * @param y The input y coordinate
+ * @param posret The position relative to the item returned here
+ * @return The item at the coordinates or NULL if none
  *
- * This updates all realized items by calling all the item class functions again
+ * This returns the item at the given coordinates (which are canvas
+ * relative, not object-relative). If an item is at that coordinate,
+ * that item handle is returned, and if @p posret is not NULL, the
+ * integer pointed to is set to a value of -1, 0 or 1, depending if
+ * the coordinate is on the upper portion of that item (-1), on the
+ * middle section (0) or on the lower part (1). If NULL is returned as
+ * an item (no item found there), then posret may indicate -1 or 1
+ * based if the coordinate is above or below all items respectively in
+ * the genlist.
+ *
+ * @ingroup Genlist
+ */
+EAPI Elm_Object_Item             *elm_genlist_at_xy_item_get(const Evas_Object *obj, Evas_Coord x, Evas_Coord y, int *posret);
+
+/**
+ * Get the parent item of the given item
+ *
+ * @param it The item
+ * @return The parent of the item or @c NULL if it has no parent.
+ *
+ * This returns the item that was specified as parent of the item @p it on
+ * elm_genlist_item_append() and insertion related functions.
+ *
+ * @ingroup Genlist
+ */
+EAPI Elm_Object_Item             *elm_genlist_item_parent_get(const Elm_Object_Item *it);
+
+/**
+ * Remove all sub-items (children) of the given item
+ *
+ * @param it The item
+ *
+ * This removes all items that are children (and their descendants) of the
+ * given item @p it.
+ *
+ * @see elm_genlist_clear()
+ * @see elm_object_item_del()
+ *
+ * @ingroup Genlist
+ */
+EAPI void                          elm_genlist_item_subitems_clear(Elm_Object_Item *it);
+
+/**
+ * Sets the expanded state of an item.
+ *
+ * @param it The item
+ * @param expanded The expanded state (@c EINA_TRUE expanded, @c EINA_FALSE not expanded).
+ *
+ * This function flags the item of type #ELM_GENLIST_ITEM_SUBITEMS as
+ * expanded or not.
+ *
+ * The theme will respond to this change visually, and a signal "expanded" or
+ * "contracted" will be sent from the genlist with a pointer to the item that
+ * has been expanded/contracted.
+ *
+ * Calling this function won't show or hide any child of this item (if it is
+ * a parent). You must manually delete and create them on the callbacks of
+ * the "expanded" or "contracted" signals.
+ *
+ * @see elm_genlist_item_expanded_get()
+ *
+ * @ingroup Genlist
+ */
+EAPI void                          elm_genlist_item_expanded_set(Elm_Object_Item *it, Eina_Bool expanded);
+
+/**
+ * Get the expanded state of an item
+ *
+ * @param it The item
+ * @return The expanded state
+ *
+ * This gets the expanded state of an item.
+ *
+ * @see elm_genlist_item_expanded_set()
+ *
+ * @ingroup Genlist
+ */
+EAPI Eina_Bool                     elm_genlist_item_expanded_get(const Elm_Object_Item *it);
+
+/**
+ * Get the depth of expanded item
+ *
+ * @param it The genlist item object
+ * @return The depth of expanded item
+ *
+ * @ingroup Genlist
+ */
+EAPI int                           elm_genlist_item_expanded_depth_get(const Elm_Object_Item *it);
+
+/**
+ * Sets the display only state of an item.
+ *
+ * @param it The item
+ * @param display_only @c EINA_TRUE if the item is display only, @c
+ * EINA_FALSE otherwise.
+ *
+ * A display only item cannot be selected or unselected. It is for
+ * display only and not selecting or otherwise clicking, dragging
+ * etc. by the user, thus finger size rules will not be applied to
+ * this item.
+ *
+ * It's good to set group index items to display only state.
+ *
+ * @see elm_genlist_item_display_only_get()
+ *
+ * @ingroup Genlist
+ */
+//XXX: elm_genlist_item_event_freeze_set()?
+EAPI void                          elm_genlist_item_display_only_set(Elm_Object_Item *it, Eina_Bool display_only);
+
+/**
+ * Get the display only state of an item
+ *
+ * @param it The item
+ * @return @c EINA_TRUE if the item is display only, @c
+ * EINA_FALSE otherwise.
+ *
+ * @see elm_genlist_item_display_only_set()
+ *
+ * @ingroup Genlist
+ */
+//XXX: elm_genlist_item_event_freeze_get()?
+EAPI Eina_Bool                     elm_genlist_item_display_only_get(const Elm_Object_Item *it);
+
+/**
+ * Tells genlist to "orphan" contents fetched by the item class
+ *
+ * @param it The item
+ *
+ * This instructs genlist to release references to contents in the item,
+ * meaning that they will no longer be managed by genlist and are
+ * floating "orphans" that can be re-used elsewhere if the user wants
+ * to.
+ *
+ * @ingroup Genlist
+ */
+//XXX: elm_genlist_item_all_contents_unset() ??
+EAPI void                          elm_genlist_item_contents_orphan(Elm_Object_Item *it);
+
+/**
+ * Promote an item to the top of the list
+ *
+ * @param it The item
+ *
+ * @ingroup Genlist
+ */
+EAPI void                          elm_genlist_item_promote(Elm_Object_Item *it);
+
+/**
+ * Demote an item to the end of the list
+ *
+ * @param it The item
+ *
+ * @ingroup Genlist
+ */
+EAPI void                          elm_genlist_item_demote(Elm_Object_Item *it);
+
+/**
+ * Update the part of an item
+ *
+ * @param it The item
+ * @param parts The name of item's part
+ * @param itf The flags of item's part type
+ *
+ * This updates an item's part by calling item's fetching functions again
  * to get the contents, texts and states. Use this when the original
  * item data has changed and the changes are desired to be reflected.
+ * Second parts argument is used for globbing to match '*', '?', and '.'
+ * It can be used at updating multi fields.
  *
- * To update just one item, use elm_genlist_item_update().
+ * Use elm_genlist_realized_items_update() to update an item's all
+ * property.
  *
- * @see elm_genlist_realized_items_get()
  * @see elm_genlist_item_update()
  *
  * @ingroup Genlist
  */
-EAPI void                          elm_genlist_realized_items_update(Evas_Object *obj);
+EAPI void                          elm_genlist_item_fields_update(Elm_Object_Item *it, const char *parts, Elm_Genlist_Item_Field_Flags itf);
 
 /**
  * Activate a genlist mode on an item
@@ -1842,82 +1918,6 @@ EAPI Eina_Bool                     elm_genlist_reorder_mode_get(const Evas_Objec
 //XXX: type would be more intuitive...
 EAPI Elm_Genlist_Item_Flags        elm_genlist_item_flags_get(const Elm_Object_Item *it);
 
-#define ELM_GENLIST_ITEM_CLASS_VERSION 2 /* current version number */
-
-/**
- * Add a new genlist item class in a given genlist widget.
- *
- * @return New allocated a genlist item class.
- *
- * This adds genlist item class for the genlist widget. When adding a item,
- * genlist_item_{append, prepend, insert} function needs item class of the item.
- * Given callback paramters are used at retrieving {text, content} of
- * added item. Set as NULL if it's not used.
- * If there's no available memory, return can be NULL.
- *
- * @see elm_genlist_item_class_free()
- * @see elm_genlist_item_append()
- *
- * @ingroup Genlist
- */
-EAPI Elm_Genlist_Item_Class *elm_genlist_item_class_new(void);
-
-/**
- * Remove a item class in a given genlist widget.
- *
- * @param itc The itc to be removed.
- *
- * This removes item class from the genlist widget.
- * Whenever it has no more references to it, item class is going to be freed.
- * Otherwise it just decreases its reference count.
- *
- * @see elm_genlist_item_class_new()
- * @see elm_genlist_item_class_ref()
- * @see elm_genlist_item_class_unref()
- *
- * @ingroup Genlist
- */
-EAPI void elm_genlist_item_class_free(Elm_Genlist_Item_Class *itc);
-
-/**
- * Increments object reference count for the item class.
- *
- * @param itc The given item class object to reference
- *
- * This API just increases its reference count for item class management.
- *
- * @see elm_genlist_item_class_unref()
- *
- * @ingroup Genlist
- */
-EAPI void elm_genlist_item_class_ref(Elm_Genlist_Item_Class *itc);
-
-/**
- * Decrements object reference count for the item class.
- *
- * @param itc The given item class object to reference
- *
- * This API just decreases its reference count for item class management.
- * Reference count can't be less than 0.
- *
- * @see elm_genlist_item_class_ref()
- * @see elm_genlist_item_class_free()
- *
- * @ingroup Genlist
- */
-EAPI void elm_genlist_item_class_unref(Elm_Genlist_Item_Class *itc);
-
-/**
- * Return how many items are currently in a list
- *
- * @param obj The list
- * @return The total number of list items in the list
- *
- * This behavior is O(1) and includes items which may or may not be realized.
- *
- * @ingroup Genlist
- */
-EAPI unsigned int elm_genlist_items_count(const Evas_Object *obj);
 /**
  * Set Genlist edit mode
  *
