@@ -1149,23 +1149,8 @@ _select(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 void
 _elm_entry_entry_paste(Evas_Object *obj, const char *entry)
 {
-   Elm_Entry_Change_Info info;
-   info.merge = EINA_FALSE;
-   info.insert = EINA_TRUE;
-   info.change.insert.pos = elm_entry_cursor_pos_get(obj);
-   info.change.insert.content = eina_stringshare_add(entry);
-     {
-        char *tmp;
-        tmp = evas_textblock_text_markup_to_utf8(elm_entry_textblock_get(obj),
-              info.change.insert.content);
-        info.change.insert.plain_length = eina_unicode_utf8_get_len(tmp);
-        free(tmp);
-     }
-
-   elm_entry_entry_insert(obj, entry);
-   evas_object_smart_callback_call(obj, SIG_CHANGED_USER, &info);
-
-   eina_stringshare_del(info.change.insert.content);
+   Widget_Data *wd = elm_widget_data_get(obj);
+   edje_object_part_text_user_insert(wd->ent, "elm.text", entry);
 }
 
 static void
@@ -1214,8 +1199,7 @@ _cut(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
    if (!_elm_config->desktop_entry)
      elm_widget_scroll_hold_pop(data);
    _store_selection(ELM_SEL_TYPE_CLIPBOARD, data);
-   edje_object_part_text_insert(wd->ent, "elm.text", "");
-   edje_object_part_text_select_none(wd->ent, "elm.text");
+   edje_object_part_text_user_insert(wd->ent, "elm.text", "");
    _sizing_eval(data);
 }
 
