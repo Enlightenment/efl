@@ -585,6 +585,7 @@ EAPI Elm_Object_Item             *elm_gengrid_item_sorted_insert(Evas_Object *ob
  *
  * @ingroup Gengrid
  */
+//XXX: should be removed.
 EAPI Elm_Object_Item             *elm_gengrid_item_direct_sorted_insert(Evas_Object *obj, const Elm_Gengrid_Item_Class *gic, const void *data, Eina_Compare_Cb comp, Evas_Smart_Cb func, const void *func_data);
 
 /**
@@ -607,6 +608,7 @@ EAPI Elm_Object_Item             *elm_gengrid_item_direct_sorted_insert(Evas_Obj
  *
  * @ingroup Gengrid
  */
+//XXX: How about elm_gengrid_select_mode_set() ? 
 EAPI void                          elm_gengrid_always_select_mode_set(Evas_Object *obj, Eina_Bool always_select);
 
 /**
@@ -622,6 +624,7 @@ EAPI void                          elm_gengrid_always_select_mode_set(Evas_Objec
  *
  * @ingroup Gengrid
  */
+//XXX: How about elm_gengrid_select_mode_get() ? 
 EAPI Eina_Bool                     elm_gengrid_always_select_mode_get(const Evas_Object *obj);
 
 /**
@@ -640,6 +643,7 @@ EAPI Eina_Bool                     elm_gengrid_always_select_mode_get(const Evas
  *
  * @ingroup Gengrid
  */
+//XXX: elm_gengrid_always_select_mode_set and elm_gengrid_no_select_mode_set API could be merged to elm_genlist_select_mode_set() 
 EAPI void                          elm_gengrid_no_select_mode_set(Evas_Object *obj, Eina_Bool no_select);
 
 /**
@@ -654,6 +658,7 @@ EAPI void                          elm_gengrid_no_select_mode_set(Evas_Object *o
  *
  * @ingroup Gengrid
  */
+//XXX: elm_gengrid_always_select_mode_get and elm_gengrid_no_select_mode_get API could be merged to elm_genlist_select_mode_get() 
 EAPI Eina_Bool                     elm_gengrid_no_select_mode_get(const Evas_Object *obj);
 
 /**
@@ -827,7 +832,7 @@ EAPI void                          elm_gengrid_page_size_set(Evas_Object *obj, E
 EAPI void                          elm_gengrid_current_page_get(const Evas_Object *obj, int *h_pagenumber, int *v_pagenumber);
 
 /**
- * @brief Get scroll last page number.
+ * @brief Get gengrid last page number.
  *
  * @param obj The gengrid object
  * @param h_pagenumber The horizontal page number
@@ -895,7 +900,7 @@ EAPI void                          elm_gengrid_page_bring_in(const Evas_Object *
  * placing its items.
  *
  * @param obj The gengrid object.
- * @param setting @c EINA_TRUE to make the gengrid expand
+ * @param horizontal @c EINA_TRUE to make the gengrid expand
  * horizontally, @c EINA_FALSE to expand vertically.
  *
  * When in "horizontal mode" (@c EINA_TRUE), items will be placed
@@ -910,7 +915,8 @@ EAPI void                          elm_gengrid_page_bring_in(const Evas_Object *
  *
  * @ingroup Gengrid
  */
-EAPI void                          elm_gengrid_horizontal_set(Evas_Object *obj, Eina_Bool setting);
+//XXX: elm_gengrid_mode_set()
+EAPI void                          elm_gengrid_horizontal_set(Evas_Object *obj, Eina_Bool horizontal);
 
 /**
  * Get for what direction a given gengrid widget will expand while
@@ -1066,6 +1072,41 @@ EAPI void                          elm_gengrid_item_pos_get(const Elm_Object_Ite
 EAPI void                          elm_gengrid_item_selected_set(Elm_Object_Item *it, Eina_Bool selected);
 
 /**
+ * Get the selected item in a given gengrid widget
+ *
+ * @param obj The gengrid object.
+ * @return The selected item's handle or @c NULL, if none is
+ * selected at the moment (and on errors)
+ *
+ * This returns the selected item in @p obj. If multi selection is
+ * enabled on @p obj (@see elm_gengrid_multi_select_set()), only
+ * the first item in the list is selected, which might not be very
+ * useful. For that case, see elm_gengrid_selected_items_get().
+ *
+ * @ingroup Gengrid
+ */
+EAPI Elm_Object_Item             *elm_gengrid_selected_item_get(const Evas_Object *obj);
+
+/**
+ * Get <b>a list</b> of selected items in a given gengrid
+ *
+ * @param obj The gengrid object.
+ * @return The list of selected items or @c NULL, if none is
+ * selected at the moment (and on errors)
+ *
+ * This returns a list of the selected items, in the order that
+ * they appear in the grid. This list is only valid as long as no
+ * more items are selected or unselected (or unselected implicitly
+ * by deletion). The list contains #Gengrid item pointers as
+ * data, naturally.
+ *
+ * @see elm_gengrid_selected_item_get()
+ *
+ * @ingroup Gengrid
+ */
+EAPI const Eina_List              *elm_gengrid_selected_items_get(const Evas_Object *obj);
+
+/**
  * Get whether a given gengrid item is selected or not
  *
  * @param it The gengrid item
@@ -1099,6 +1140,7 @@ EAPI Eina_Bool                     elm_gengrid_item_selected_get(const Elm_Objec
  *
  * @ingroup Gengrid
  */
+//XXX: Should be dead.
 EAPI const Evas_Object            *elm_gengrid_item_object_get(const Elm_Object_Item *it);
 
 /**
@@ -1132,6 +1174,8 @@ EAPI void                          elm_gengrid_item_show(Elm_Object_Item *it);
  * @ingroup Gengrid
  */
 EAPI void                          elm_gengrid_item_bring_in(Elm_Object_Item *it);
+
+//XXX: Need to review tooltip & cursor APIs
 
 /**
  * Set the text to be shown in a given gengrid item's tooltips.
@@ -1397,51 +1441,11 @@ EAPI Eina_Bool                     elm_gengrid_item_cursor_engine_only_get(const
 EAPI void                          elm_gengrid_clear(Evas_Object *obj);
 
 /**
- * Get the selected item in a given gengrid widget
- *
- * @param obj The gengrid object.
- * @return The selected item's handle or @c NULL, if none is
- * selected at the moment (and on errors)
- *
- * This returns the selected item in @p obj. If multi selection is
- * enabled on @p obj (@see elm_gengrid_multi_select_set()), only
- * the first item in the list is selected, which might not be very
- * useful. For that case, see elm_gengrid_selected_items_get().
- *
- * @ingroup Gengrid
- */
-EAPI Elm_Object_Item             *elm_gengrid_selected_item_get(const Evas_Object *obj);
-
-/**
- * Get <b>a list</b> of selected items in a given gengrid
- *
- * @param obj The gengrid object.
- * @return The list of selected items or @c NULL, if none is
- * selected at the moment (and on errors)
- *
- * This returns a list of the selected items, in the order that
- * they appear in the grid. This list is only valid as long as no
- * more items are selected or unselected (or unselected implicitly
- * by deletion). The list contains #Gengrid item pointers as
- * data, naturally.
- *
- * @see elm_gengrid_selected_item_get()
- *
- * @ingroup Gengrid
- */
-EAPI const Eina_List              *elm_gengrid_selected_items_get(const Evas_Object *obj);
-
-/**
  * Set how the items grid's filled within a given gengrid widget
  *
  * @param obj The gengrid object.
  * @param fill Filled if True
  *
- * This sets the fill state of the whole grid of items of a gengrid
- * within its given viewport. By default, this value is False, meaning
- * that if the first line of items grid's aren't filled
- *
- * Set how the items grid's filled within a given gengrid widget.
  * This sets the fill state of the whole grid of items of a gengrid
  * within its given viewport. By default, this value is false, meaning
  * that if the first line of items grid's isn't filled, the items are
@@ -1450,9 +1454,10 @@ EAPI const Eina_List              *elm_gengrid_selected_items_get(const Evas_Obj
  * @see elm_gengrid_filled_get()
  *
  * @ingroup Gengrid
+ *
  */
+//XXX: Does this API working well?
 EAPI void                          elm_gengrid_filled_set(Evas_Object *obj, Eina_Bool fill);
-
 
 /**
  * Get how the items grid's filled within a given gengrid widget
@@ -1468,6 +1473,7 @@ EAPI void                          elm_gengrid_filled_set(Evas_Object *obj, Eina
  *
  * @ingroup Gengrid
  */
+//XXX: Does this API working well?
 EAPI Eina_Bool                     elm_gengrid_filled_get(const Evas_Object *obj);
 
 #define ELM_GENGRID_ITEM_CLASS_VERSION 2 /* current version number */

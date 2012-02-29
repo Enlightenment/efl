@@ -1422,7 +1422,21 @@ EAPI void                          elm_genlist_item_fields_update(Elm_Object_Ite
  * @ingroup Genlist
  */
 EAPI void                          elm_genlist_item_item_class_update(Elm_Object_Item *it, const Elm_Genlist_Item_Class *itc);
+
+/**
+ * Get the Genlist Item class for the given Genlist Item.
+ *
+ * @param it The genlist item
+ *
+ * This returns the Genlist_Item_Class for the given item. It can be used to 
+ * examine the function pointers and item_style.
+ *
+ * @ingroup Genlist
+ */
 EAPI const Elm_Genlist_Item_Class *elm_genlist_item_item_class_get(const Elm_Object_Item *it);
+
+//XXX: elm_genlist_item_item_class_set() ?
+//XXX: Need to review tooltip & cursor APIs
 
 /**
  * Set the text to be shown in a given genlist item's tooltips.

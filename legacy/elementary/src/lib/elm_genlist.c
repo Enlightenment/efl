@@ -5602,6 +5602,7 @@ elm_genlist_item_class_new(void)
    return itc;
 }
 
+//XXX: notify the class version if it is mismatched
 EAPI void
 elm_genlist_item_class_free(Elm_Genlist_Item_Class *itc)
 {
@@ -5617,6 +5618,7 @@ elm_genlist_item_class_free(Elm_Genlist_Item_Class *itc)
      }
 }
 
+//XXX: notify the class version if it is mismatched
 EAPI void
 elm_genlist_item_class_ref(Elm_Genlist_Item_Class *itc)
 {
@@ -5627,6 +5629,7 @@ elm_genlist_item_class_ref(Elm_Genlist_Item_Class *itc)
      }
 }
 
+//XXX: notify the class version if it is mismatched
 EAPI void
 elm_genlist_item_class_unref(Elm_Genlist_Item_Class *itc)
 {
@@ -5695,8 +5698,7 @@ _elm_genlist_current_page_get(const Evas_Object *obj,
    ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return;
-   if (wd->scr)
-     elm_smart_scroller_current_page_get(wd->scr, h_pagenumber, v_pagenumber);
+   elm_smart_scroller_current_page_get(wd->scr, h_pagenumber, v_pagenumber);
 }
 
 /* for gengrid as of now */
@@ -5708,8 +5710,7 @@ _elm_genlist_last_page_get(const Evas_Object *obj,
    ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return;
-   if (wd->scr)
-     elm_smart_scroller_last_page_get(wd->scr, h_pagenumber, v_pagenumber);
+   elm_smart_scroller_last_page_get(wd->scr, h_pagenumber, v_pagenumber);
 }
 
 /* for gengrid as of now */
@@ -5721,8 +5722,7 @@ _elm_genlist_page_show(const Evas_Object *obj,
    ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return;
-   if (wd->scr)
-     elm_smart_scroller_page_show(wd->scr, h_pagenumber, v_pagenumber);
+   elm_smart_scroller_page_show(wd->scr, h_pagenumber, v_pagenumber);
 }
 
 /* for gengrid as of now */
@@ -5734,8 +5734,7 @@ _elm_genlist_page_bring_in(const Evas_Object *obj,
    ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return;
-   if (wd->scr)
-     elm_smart_scroller_page_bring_in(wd->scr, h_pagenumber, v_pagenumber);
+   elm_smart_scroller_page_bring_in(wd->scr, h_pagenumber, v_pagenumber);
 }
 
 void

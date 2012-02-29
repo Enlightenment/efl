@@ -1954,7 +1954,7 @@ elm_gengrid_add(Evas_Object *parent)
    elm_smart_scroller_object_theme_set(obj, wd->scr, "gengrid", "base",
                                        "default");
    elm_smart_scroller_bounce_allow_set(wd->scr, bounce,
-				       _elm_config->thumbscroll_bounce_enable);
+                                       _elm_config->thumbscroll_bounce_enable);
    elm_widget_resize_object_set(obj, wd->scr);
 
    evas_object_smart_callback_add(wd->scr, "animate,start", _scr_anim_start, obj);
@@ -2237,13 +2237,14 @@ elm_gengrid_item_del(Elm_Object_Item *it)
 
 EAPI void
 elm_gengrid_horizontal_set(Evas_Object *obj,
-                           Eina_Bool    setting)
+                           Eina_Bool    horizontal)
 {
    ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return;
-   if (setting == wd->horizontal) return;
-   wd->horizontal = setting;
+   horizontal = !!horizontal;
+   if (horizontal == wd->horizontal) return;
+   wd->horizontal = horizontal;
 
    /* Update the items to conform to the new layout */
    if (wd->calc_job) ecore_job_del(wd->calc_job);
@@ -2300,10 +2301,7 @@ elm_gengrid_item_data_set(Elm_Object_Item  *it,
 EAPI const Elm_Gengrid_Item_Class *
 elm_gengrid_item_item_class_get(const Elm_Object_Item *it)
 {
-   ELM_OBJ_ITEM_CHECK_OR_RETURN(it, NULL);
-   Elm_Gen_Item *_it = (Elm_Gen_Item *) it;
-   if (_it->generation < _it->wd->generation) return NULL;
-   return _it->itc;
+   return (Elm_Gengrid_Item_Class *) elm_genlist_item_item_class_get(it);
 }
 
 EAPI void
@@ -2335,7 +2333,7 @@ elm_gengrid_multi_select_set(Evas_Object *obj,
    ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return;
-   wd->multi = multi;
+   wd->multi = !!multi;
 }
 
 EAPI Eina_Bool
@@ -2360,10 +2358,7 @@ elm_gengrid_selected_item_get(const Evas_Object *obj)
 EAPI const Eina_List *
 elm_gengrid_selected_items_get(const Evas_Object *obj)
 {
-   ELM_CHECK_WIDTYPE(obj, widtype) NULL;
-   Widget_Data *wd = elm_widget_data_get(obj);
-   if (!wd) return NULL;
-   return wd->selected;
+   return elm_gengrid_selected_items_get(obj);
 }
 
 EAPI void
@@ -2571,7 +2566,7 @@ elm_gengrid_reorder_mode_set(Evas_Object *obj,
    ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return;
-   wd->reorder_mode = reorder_mode;
+   wd->reorder_mode = !!reorder_mode;
 }
 
 EAPI Eina_Bool
@@ -2787,6 +2782,7 @@ elm_gengrid_item_class_new(void)
    return itc;
 }
 
+//XXX: notify class version to user if it is mismatched
 EAPI void
 elm_gengrid_item_class_free(Elm_Gengrid_Item_Class *itc)
 {
@@ -2802,6 +2798,7 @@ elm_gengrid_item_class_free(Elm_Gengrid_Item_Class *itc)
      }
 }
 
+//XXX: notify class version to user if it is mismatched
 EAPI void
 elm_gengrid_item_class_ref(Elm_Gengrid_Item_Class *itc)
 {
@@ -2812,6 +2809,7 @@ elm_gengrid_item_class_ref(Elm_Gengrid_Item_Class *itc)
      }
 }
 
+//XXX: notify class version to user if it is mismatched
 EAPI void
 elm_gengrid_item_class_unref(Elm_Gengrid_Item_Class *itc)
 {
