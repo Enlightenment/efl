@@ -852,7 +852,8 @@ ecore_x_netwm_icons_set(Ecore_X_Window win,
      {
         size += 2 + (icon[i].width * icon[i].height);
      }
-   data = alloca(size * sizeof(unsigned int));
+   data = malloc(size * sizeof(unsigned int));
+   if (!data) return;
    p = data;
    for (i = 0; i < (unsigned int)num; i++)
      {
@@ -884,6 +885,7 @@ ecore_x_netwm_icons_set(Ecore_X_Window win,
      }
    ecore_x_window_prop_card32_set(win, ECORE_X_ATOM_NET_WM_ICON,
                                   data, size);
+   free(data);
 }
 
 EAPI Eina_Bool
