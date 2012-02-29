@@ -11,7 +11,6 @@ struct _Elm_Gen_Item_Class
 {
    int version;
    unsigned int refcount;
-   Eina_Bool delete_me : 1;
    const char *item_style;
    const char *mode_item_style;
    const char *edit_item_style;
@@ -22,4 +21,5 @@ struct _Elm_Gen_Item_Class
       Elm_Gen_Item_State_Get_Cb   state_get;
       Elm_Gen_Item_Del_Cb         del;
    } func;
+   Eina_Bool delete_me : 1;
 };

@@ -21,6 +21,24 @@
    (it)->unhighlight_cb = (Ecore_Cb)_item_unhighlight; \
    (it)->unrealize_cb = (Ecore_Cb)_item_unrealize_cb
 
+#define ELM_GENLIST_CHECK_ITC_VER(itc) \
+   do \
+     { \
+        if (!itc) \
+          { \
+             ERR("Genlist_Item_Class(itc) is NULL"); \
+             return; \
+          } \
+        if (itc->version != ELM_GENLIST_ITEM_CLASS_VERSION) \
+          { \
+             ERR("Genlist_Item_Class version mismatched! required = (%d), current  = (%d)", itc->version, ELM_GENLIST_ITEM_CLASS_VERSION); \
+             return; \
+          } \
+     } \
+   while(0)
+
+
+
 typedef struct _Item_Block  Item_Block;
 typedef struct _Item_Cache  Item_Cache;
 
@@ -5603,43 +5621,36 @@ elm_genlist_item_class_new(void)
    return itc;
 }
 
-//XXX: notify the class version if it is mismatched
 EAPI void
 elm_genlist_item_class_free(Elm_Genlist_Item_Class *itc)
 {
-   if (itc && (itc->version == ELM_GENLIST_ITEM_CLASS_VERSION))
+   ELM_GENLIST_CHECK_ITC_VER(itc);
+   if (!itc->delete_me) itc->delete_me = EINA_TRUE;
+   if (itc->refcount > 0) elm_genlist_item_class_unref(itc);
+   else
      {
-        if (!itc->delete_me) itc->delete_me = EINA_TRUE;
-        if (itc->refcount > 0) elm_genlist_item_class_unref(itc);
-        else
-          {
-             itc->version = 0;
-             free(itc);
-          }
+        itc->version = 0;
+        free(itc);
      }
 }
 
-//XXX: notify the class version if it is mismatched
 EAPI void
 elm_genlist_item_class_ref(Elm_Genlist_Item_Class *itc)
 {
-   if (itc && (itc->version == ELM_GENLIST_ITEM_CLASS_VERSION))
-     {
-        itc->refcount++;
-        if (itc->refcount == 0) itc->refcount--;
-     }
+   ELM_GENLIST_CHECK_ITC_VER(itc);
+
+   itc->refcount++;
+   if (itc->refcount == 0) itc->refcount--;
 }
 
-//XXX: notify the class version if it is mismatched
 EAPI void
 elm_genlist_item_class_unref(Elm_Genlist_Item_Class *itc)
 {
-   if (itc && (itc->version == ELM_GENLIST_ITEM_CLASS_VERSION))
-     {
-        if (itc->refcount > 0) itc->refcount--;
-        if (itc->delete_me && (!itc->refcount))
-          elm_genlist_item_class_free(itc);
-     }
+   ELM_GENLIST_CHECK_ITC_VER(itc);
+
+   if (itc->refcount > 0) itc->refcount--;
+   if (itc->delete_me && (!itc->refcount))
+     elm_genlist_item_class_free(itc);
 }
 
 /* for gengrid as of now */
