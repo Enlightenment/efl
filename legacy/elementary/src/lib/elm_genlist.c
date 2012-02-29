@@ -5533,6 +5533,7 @@ elm_genlist_edit_mode_set(Evas_Object *obj, Eina_Bool edit_mode)
    if (!wd) return;
    edit_mode = !!edit_mode;
    if (wd->edit_mode == edit_mode) return;
+   wd->edit_mode = edit_mode;
 
    list = elm_genlist_realized_items_get(obj);
    if (!wd->edit_mode)
