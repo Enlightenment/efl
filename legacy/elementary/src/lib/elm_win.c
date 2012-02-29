@@ -867,7 +867,7 @@ _elm_win_xwindow_get(Elm_Win *win)
 {
    win->xwin = 0;
 
-#define ENGINE_COMPARE(name) (!strcmp(_elm_config->engine, name))
+#define ENGINE_COMPARE(name) (!strcmp(_elm_preferred_engine, name))
    if (ENGINE_COMPARE(ELM_SOFTWARE_X11))
      {
        if (win->ee) win->xwin = ecore_evas_software_x11_window_get(win->ee);
@@ -1745,7 +1745,7 @@ elm_win_add(Evas_Object *parent, const char *name, Elm_Win_Type type)
          if (win->ee)                                                   \
             elm_engine_set(ecore_evas_engine_name_get(win->ee));        \
    } while (0)
-#define ENGINE_COMPARE(name) (_elm_config->engine && !strcmp(_elm_config->engine, name))
+#define ENGINE_COMPARE(name) (_elm_preferred_engine && !strcmp(_elm_preferred_engine, name))
 
    win->kbdmode = ELM_WIN_KEYBOARD_UNKNOWN;
    win->indmode = ELM_WIN_INDICATOR_UNKNOWN;
@@ -1907,11 +1907,11 @@ elm_win_add(Evas_Object *parent, const char *name, Elm_Win_Type type)
              _elm_win_frame_add(win, "default");
 //             _elm_win_pointer_add(win, "default");
           }
-        else if (!strncmp(_elm_config->engine, "shot:", 5))
+        else if (!strncmp(_elm_preferred_engine, "shot:", 5))
           {
              win->ee = ecore_evas_buffer_new(1, 1);
              ecore_evas_manual_render_set(win->ee, EINA_TRUE);
-             win->shot.info = eina_stringshare_add(_elm_config->engine + 5);
+             win->shot.info = eina_stringshare_add(_elm_preferred_engine + 5);
              _shot_init(win);
           }
 #undef FALLBACK_TRY
@@ -2433,7 +2433,7 @@ elm_win_fullscreen_set(Evas_Object *obj, Eina_Bool fullscreen)
    win = elm_widget_data_get(obj);
    if (!win) return;
    // YYY: handle if win->img_obj
-#define ENGINE_COMPARE(name) (!strcmp(_elm_config->engine, name))
+#define ENGINE_COMPARE(name) (!strcmp(_elm_preferred_engine, name))
    if (ENGINE_COMPARE(ELM_SOFTWARE_FB) ||
        ENGINE_COMPARE(ELM_SOFTWARE_16_WINCE))
      {
@@ -2458,7 +2458,7 @@ elm_win_fullscreen_get(const Evas_Object *obj)
    ELM_CHECK_WIDTYPE(obj, widtype) EINA_FALSE;
    win = elm_widget_data_get(obj);
    if (!win) return EINA_FALSE;
-#define ENGINE_COMPARE(name) (!strcmp(_elm_config->engine, name))
+#define ENGINE_COMPARE(name) (!strcmp(_elm_preferred_engine, name))
    if (ENGINE_COMPARE(ELM_SOFTWARE_FB) ||
        ENGINE_COMPARE(ELM_SOFTWARE_16_WINCE))
      {

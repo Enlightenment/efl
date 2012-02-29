@@ -51,5 +51,32 @@ EAPI const char *elm_engine_get(void);
 EAPI void        elm_engine_set(const char *engine);
 
 /**
+ * @brief Get Elementary's preferred engine to use.
+ *
+ * @return The rendering engine's name
+ * @note there's no need to free the returned string, here.
+ *
+ * This gets the global rendering engine that is applied to all Elementary
+ * applications and is PREFERRED by the application. This can (and will)
+ * override the engine configured for all applications which.
+ *
+ * @see elm_preferred_engine_set()
+ */
+EAPI const char *elm_preferred_engine_get(void);
+
+/**
+ * @brief Set Elementary's preferred rendering engine for use.
+ *
+ * @param engine The rendering engine's name
+ *
+ * Note that it will take effect only to Elementary windows created after
+ * this is called. This overrides the engine set by configuration at
+ * application startup. Note that it is a hint and may not be honored.
+ *
+ * @see elm_win_add()
+ */
+EAPI void        elm_preferred_engine_set(const char *engine);
+
+/**
  * @}
  */

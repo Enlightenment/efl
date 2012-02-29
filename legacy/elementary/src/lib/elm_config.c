@@ -15,6 +15,7 @@ Elm_Config *_elm_config = NULL;
 char *_elm_profile = NULL;
 static Eet_Data_Descriptor *_config_edd = NULL;
 static Eet_Data_Descriptor *_config_font_overlay_edd = NULL;
+const char *_elm_preferred_engine = NULL;
 
 static Ecore_Poller *_elm_cache_flush_poller = NULL;
 
@@ -1419,7 +1420,6 @@ elm_config_all_flush(void)
 #endif
 }
 
-
 static void
 _translation_init()
 {
@@ -1448,6 +1448,11 @@ _elm_config_init(void)
    _desc_init();
    _profile_fetch_from_conf();
    _config_load();
+   if (_elm_preferred_engine) eina_stringshare_del(_elm_preferred_engine);
+   if (_elm_config->engine)
+     _elm_preferred_engine = eina_stringshare_add(_elm_config->engine);
+   else
+     _elm_preferred_engine = NULL;
    _translation_init();
    _env_get();
    _config_apply();
@@ -1543,6 +1548,18 @@ _elm_config_engine_set(const char *engine)
    _elm_config->engine = eina_stringshare_add(engine);
 }
 
+EAPI const char *
+elm_preferred_engine_get(void)
+{
+   return _elm_preferred_engine;
+}
+
+EAPI void
+elm_preferred_engine_set(const char *engine)
+{
+   eina_stringshare_replace(&(_elm_preferred_engine), engine);
+}
+
 void
 _elm_config_profile_set(const char *profile)
 {
@@ -1595,6 +1612,11 @@ _elm_config_shutdown(void)
 #endif
      }
    _config_free();
+   if (_elm_preferred_engine)
+     {
+        eina_stringshare_del(_elm_preferred_engine);
+        _elm_preferred_engine = NULL;
+     }
    if (_elm_profile)
      {
         free(_elm_profile);
