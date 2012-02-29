@@ -4944,7 +4944,7 @@ elm_genlist_item_fields_update(Elm_Object_Item *it,
    if (!_it->item->block) return;
    if (_it->generation < _it->wd->generation) return;
 
-   if ((!itf) || (itf & ELM_GENLIST_ITEM_FIELD_LABEL))
+   if ((!itf) || (itf & ELM_GENLIST_ITEM_FIELD_TEXT))
      _item_text_realize(_it, VIEW(_it), &_it->texts, parts);
    if ((!itf) || (itf & ELM_GENLIST_ITEM_FIELD_CONTENT))
      {

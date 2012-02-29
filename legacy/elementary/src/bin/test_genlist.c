@@ -685,7 +685,7 @@ my_gl_labels_update(void *data, Evas_Object *obj __UNUSED__, void *event_info __
 {
    Testitem *tit = data;
    tit->mode++;
-   elm_genlist_item_fields_update(tit->item, "*", ELM_GENLIST_ITEM_FIELD_LABEL);
+   elm_genlist_item_fields_update(tit->item, "*", ELM_GENLIST_ITEM_FIELD_TEXT);
 }
 
 static void
