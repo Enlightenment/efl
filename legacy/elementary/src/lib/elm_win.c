@@ -102,7 +102,7 @@ static void _elm_win_frame_cb_minimize(void *data, Evas_Object *obj __UNUSED__, 
 static void _elm_win_frame_cb_maximize(void *data, Evas_Object *obj __UNUSED__, const char *sig __UNUSED__, const char *source __UNUSED__);
 static void _elm_win_frame_cb_close(void *data, Evas_Object *obj __UNUSED__, const char *sig __UNUSED__, const char *source __UNUSED__);
 
-static void _elm_win_pointer_add(Elm_Win *win, const char *style);
+//static void _elm_win_pointer_add(Elm_Win *win, const char *style);
 
 static const char SIG_DELETE_REQUEST[] = "delete,request";
 static const char SIG_FOCUS_OUT[] = "focus,out";
@@ -1547,6 +1547,7 @@ _elm_win_frame_cb_close(void *data, Evas_Object *obj __UNUSED__, const char *sig
    evas_object_del(win->win_obj);
 }
 
+/*
 static void 
 _elm_win_pointer_add(Elm_Win *win, const char *style)
 {
@@ -1566,6 +1567,7 @@ _elm_win_pointer_add(Elm_Win *win, const char *style)
    evas_object_resize(win->pointer.obj, 32, 32);
    evas_object_show(win->pointer.obj);
 }
+*/
 
 #ifdef ELM_DEBUG
 static void
