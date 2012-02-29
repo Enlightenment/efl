@@ -56,6 +56,11 @@ struct _Elm_Win
       Eina_Bool geometry_changed : 1;
    } focus_highlight;
 
+   Evas_Object *icon;
+   const char *title;
+   const char *icon_name;
+   const char *role;
+   
    double aspect;
    Eina_Bool urgent : 1;
    Eina_Bool modal : 1;
@@ -666,6 +671,11 @@ _elm_win_obj_callback_del(void *data, Evas *e, Evas_Object *obj, void *event_inf
    _elm_win_focus_highlight_shutdown(win);
    eina_stringshare_del(win->focus_highlight.style);
 
+   if (win->title) eina_stringshare_del(win->title);
+   if (win->icon_name) eina_stringshare_del(win->icon_name);
+   if (win->role) eina_stringshare_del(win->role);
+   if (win->icon) evas_object_del(win->icon);
+   
    free(win);
 
    if ((!_elm_win_list) &&
@@ -901,12 +911,8 @@ _elm_win_xwindow_get(Elm_Win *win)
 static void
 _elm_win_xwin_update(Elm_Win *win)
 {
-   // ecore_x_icccm_icon_name_set
-   // ecore_x_icccm_window_role_set
-   // ecore_x_netwm_visible_name_set
-   // ecore_x_netwm_icon_name_set
-   // ecore_x_netwm_visible_icon_name_set
-   // ecore_x_netwm_icons_set
+   const char *s;
+   
    _elm_win_xwindow_get(win);
    if (win->parent)
      {
@@ -922,6 +928,60 @@ _elm_win_xwin_update(Elm_Win *win)
 
    if (!win->xwin) return; /* nothing more to do */
 
+   s = win->title;
+   if (!s) s = _elm_appname;
+   if (!s) s = "";
+   if (win->icon_name) s = win->icon_name;
+   ecore_x_icccm_icon_name_set(win->xwin, s);
+   ecore_x_netwm_icon_name_set(win->xwin, s);
+
+   s = win->role;
+   if (s) ecore_x_icccm_window_role_set(win->xwin, s);
+   
+   // set window icon
+   if (win->icon)
+     {
+        void *data;
+
+        data = evas_object_image_data_get(win->icon, EINA_FALSE);
+        if (data)
+          {
+             Ecore_X_Icon ic;
+             int w = 0, h = 0, stride, x, y;
+             unsigned char *p;
+             unsigned int *p2;
+             
+             evas_object_image_size_get(win->icon, &w, &h);
+             stride = evas_object_image_stride_get(win->icon);
+             if ((w > 0) && (h > 0) && 
+                 (stride >= (int)(w * sizeof(unsigned int))))
+               {
+                  ic.width = w;
+                  ic.height = h;
+                  ic.data = malloc(w * h * sizeof(unsigned int));
+                  
+                  if (ic.data)
+                    {
+                       p = (unsigned char *)data;
+                       p2 = (unsigned int *)ic.data;
+                       for (y = 0; y < h; y++)
+                         {
+                            for (x = 0; x < w; x++)
+                              {
+                                 *p2 = *((unsigned int *)p);
+                                 p += sizeof(unsigned int);
+                                 p2++;
+                              }
+                            p += (stride - (w * sizeof(unsigned int))); 
+                         }
+                       ecore_x_netwm_icons_set(win->xwin, &ic, 1);
+                       free(ic.data);
+                    }
+               }
+             evas_object_image_data_set(win->icon, data);
+          }
+     }
+   
    switch (win->type)
      {
       case ELM_WIN_BASIC:
@@ -1661,6 +1721,13 @@ _subobj_del(Elm_Win *win, Evas_Object *obj, Evas_Object *subobj)
    _elm_win_eval_subobjs(obj);
 }
 
+static void
+_elm_win_obj_icon_callback_del(void *data, Evas *e __UNUSED__, Evas_Object *obj, void *event_info __UNUSED__)
+{
+   Elm_Win *win = data;
+   if (win->icon == obj) win->icon = NULL;
+}
+
 EAPI Evas_Object *
 elm_win_add(Evas_Object *parent, const char *name, Elm_Win_Type type)
 {
@@ -2033,9 +2100,10 @@ elm_win_title_set(Evas_Object *obj, const char *title)
    ELM_CHECK_WIDTYPE(obj, widtype);
    win = elm_widget_data_get(obj);
    if (!win || !title) return;
-   ecore_evas_title_set(win->ee, title);
+   eina_stringshare_replace(&(win->title), title);
+   ecore_evas_title_set(win->ee, win->title);
    if (win->frame_obj)
-     edje_object_part_text_set(win->frame_obj, "elm.text.title", title);
+     edje_object_part_text_set(win->frame_obj, "elm.text.title", win->title);
 }
 
 EAPI const char *
@@ -2045,7 +2113,82 @@ elm_win_title_get(const Evas_Object *obj)
    ELM_CHECK_WIDTYPE(obj, widtype) NULL;
    win = elm_widget_data_get(obj);
    if (!win) return NULL;
-   return ecore_evas_title_get(win->ee);
+   return win->title;
+}
+
+EAPI void
+elm_win_icon_name_set(Evas_Object *obj, const char *icon_name)
+{
+   Elm_Win *win;
+   ELM_CHECK_WIDTYPE(obj, widtype);
+   win = elm_widget_data_get(obj);
+   if (!win || !icon_name) return;
+   eina_stringshare_replace(&(win->icon_name), icon_name);
+#ifdef HAVE_ELEMENTARY_X
+   _elm_win_xwin_update(win);
+#endif
+}
+
+EAPI const char *
+elm_win_icon_name_get(const Evas_Object *obj)
+{
+   Elm_Win *win;
+   ELM_CHECK_WIDTYPE(obj, widtype) NULL;
+   win = elm_widget_data_get(obj);
+   if (!win) return NULL;
+   return win->icon_name;
+}
+
+EAPI void
+elm_win_role_set(Evas_Object *obj, const char *role)
+{
+   Elm_Win *win;
+   ELM_CHECK_WIDTYPE(obj, widtype);
+   win = elm_widget_data_get(obj);
+   if (!win || !role) return;
+   eina_stringshare_replace(&(win->role), role);
+#ifdef HAVE_ELEMENTARY_X
+   _elm_win_xwin_update(win);
+#endif
+}
+
+EAPI const char *
+elm_win_role_get(const Evas_Object *obj)
+{
+   Elm_Win *win;
+   ELM_CHECK_WIDTYPE(obj, widtype) NULL;
+   win = elm_widget_data_get(obj);
+   if (!win) return NULL;
+   return win->role;
+}
+
+EAPI void
+elm_win_icon_object_set(Evas_Object *obj, Evas_Object *icon)
+{
+   Elm_Win *win;
+   ELM_CHECK_WIDTYPE(obj, widtype);
+   win = elm_widget_data_get(obj);
+   if (!win) return;
+   if (win->icon)
+     evas_object_event_callback_del_full(win->icon, EVAS_CALLBACK_DEL,
+                                         _elm_win_obj_icon_callback_del, win);
+   win->icon = icon;
+   if (win->icon)
+     evas_object_event_callback_add(win->icon, EVAS_CALLBACK_DEL,
+                                    _elm_win_obj_icon_callback_del, win);
+#ifdef HAVE_ELEMENTARY_X
+   _elm_win_xwin_update(win);
+#endif
+}
+
+EAPI const Evas_Object *
+elm_win_icon_object_get(const Evas_Object *obj)
+{
+   Elm_Win *win;
+   ELM_CHECK_WIDTYPE(obj, widtype) NULL;
+   win = elm_widget_data_get(obj);
+   if (!win) return NULL;
+   return win->icon;
 }
 
 EAPI void

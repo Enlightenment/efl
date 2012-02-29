@@ -303,6 +303,72 @@ EAPI void                  elm_win_title_set(Evas_Object *obj, const char *title
 EAPI const char           *elm_win_title_get(const Evas_Object *obj);
 
 /**
+ * Set the icon name of the window
+ *
+ * @param obj The window object
+ * @param icon_name The icon name to set
+ */
+EAPI void                  elm_win_icon_name_set(Evas_Object *obj, const char *icon_name);
+
+/**
+ * Get the icon name of the window
+ *
+ * The returned string is an internal one and should not be freed or
+ * modified. It will also be rendered invalid if a new icon name is set or if
+ * the window is destroyed.
+ *
+ * @param obj The window object
+ * @return The icon name
+ */
+EAPI const char           *elm_win_icon_name_get(const Evas_Object *obj);
+
+/**
+ * Set the role of the window
+ *
+ * @param obj The window object
+ * @param role The role to set
+ */
+EAPI void                  elm_win_role_set(Evas_Object *obj, const char *role);
+
+/**
+ * Get the role of the window
+ *
+ * The returned string is an internal one and should not be freed or
+ * modified. It will also be rendered invalid if a new role is set or if
+ * the window is destroyed.
+ *
+ * @param obj The window object
+ * @return The role
+ */
+EAPI const char           *elm_win_role_get(const Evas_Object *obj);
+
+/**
+ * Set the object to represent the window icon
+ * 
+ * This sets an object that will be used as the icon for the window. The exact
+ * pixel dimensions of the object (not object size) will be used, and the
+ * image pixels will be used as-is when this function is called. If the
+ * image object has been updated, then call this function again to source
+ * the image pixels and put them on the window's icon. This has limitations
+ * as only image objects allowed at this stage. This may be lifted in future.
+ * 
+ * @param obj The window object
+ * @param icon The object to use for an icon
+ */
+EAPI void                  elm_win_icon_object_set(Evas_Object *obj, Evas_Object *icon);
+
+/**
+ * Get the icon object used for the window
+ *
+ * The object returns is the one marked by elm_win_icon_object_set() as the
+ * object to use for the window icon.
+ *
+ * @param obj The window object
+ * @return The icon object set
+ */
+EAPI const Evas_Object    *elm_win_icon_object_get(const Evas_Object *obj);
+
+/**
  * Set the window's autodel state.
  *
  * When closing the window in any way outside of the program control, like
