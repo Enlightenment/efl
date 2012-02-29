@@ -1855,15 +1855,6 @@ _scr_scroll(void            *data,
 }
 
 static int
-_elm_gengrid_item_compare_data(const void *data, const void *data1)
-{
-   const Elm_Gen_Item *it = data;
-   const Elm_Gen_Item *item1 = data1;
-
-   return it->wd->item_compare_data_cb(it->base.data, item1->base.data);
-}
-
-static int
 _elm_gengrid_item_compare(const void *data, const void *data1)
 {
    Elm_Gen_Item *it, *item1;
@@ -2205,12 +2196,12 @@ elm_gengrid_item_insert_after(Evas_Object                  *obj,
 }
 
 EAPI Elm_Object_Item *
-elm_gengrid_item_direct_sorted_insert(Evas_Object                  *obj,
-                                      const Elm_Gengrid_Item_Class *itc,
-                                      const void                   *data,
-                                      Eina_Compare_Cb               comp,
-                                      Evas_Smart_Cb                 func,
-                                      const void                   *func_data)
+elm_gengrid_item_sorted_insert(Evas_Object                  *obj,
+                               const Elm_Gengrid_Item_Class *itc,
+                               const void                   *data,
+                               Eina_Compare_Cb               comp,
+                               Evas_Smart_Cb                 func,
+                               const void                   *func_data)
 {
    Elm_Gen_Item *it;
    ELM_CHECK_WIDTYPE(obj, widtype) NULL;
@@ -2232,18 +2223,15 @@ elm_gengrid_item_direct_sorted_insert(Evas_Object                  *obj,
    return (Elm_Object_Item *) it;
 }
 
-EAPI Elm_Object_Item *
-elm_gengrid_item_sorted_insert(Evas_Object                  *obj,
-                               const Elm_Gengrid_Item_Class *itc,
-                               const void                   *data,
-                               Eina_Compare_Cb               comp,
-                               Evas_Smart_Cb                 func,
-                               const void                   *func_data)
+EINA_DEPRECATED Elm_Object_Item *
+elm_gengrid_item_direct_sorted_insert(Evas_Object                  *obj,
+                                      const Elm_Gengrid_Item_Class *itc,
+                                      const void                   *data,
+                                      Eina_Compare_Cb               comp,
+                                      Evas_Smart_Cb                 func,
+                                      const void                   *func_data)
 {
-   Widget_Data *wd = elm_widget_data_get(obj);
-   wd->item_compare_data_cb = comp;
-
-   return elm_gengrid_item_direct_sorted_insert(obj, itc, data, _elm_gengrid_item_compare_data, func, func_data);
+   return elm_gengrid_item_sorted_insert(obj, itc, data, comp, func, func_data);
 }
 
 EAPI void

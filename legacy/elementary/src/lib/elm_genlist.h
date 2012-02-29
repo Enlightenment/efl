@@ -900,6 +900,15 @@ EAPI Elm_Object_Item             *elm_genlist_item_insert_after(Evas_Object *obj
  * @param func_data Data passed to @p func above.
  * @return A handle to the item added or NULL if not possible
  *
+ * This inserts an item in the genlist based on user defined comparison
+ * function. The two arguments passed to the function @p func are genlist item
+ * handles to compare.
+ *
+ * @see elm_genlist_item_append()
+ * @see elm_genlist_item_prepend()
+ * @see elm_genlist_item_insert_after()
+ * @see elm_object_item_del()
+
  * @ingroup Genlist
  */
 EAPI Elm_Object_Item             *elm_genlist_item_sorted_insert(Evas_Object *obj, const Elm_Genlist_Item_Class *itc, const void *data, Elm_Object_Item *parent, Elm_Genlist_Item_Flags flags, Eina_Compare_Cb comp, Evas_Smart_Cb func, const void *func_data);

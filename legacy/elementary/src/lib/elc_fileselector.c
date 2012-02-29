@@ -665,7 +665,7 @@ _main_cb(void *data, Eio_File *handler, const Eina_File_Direct_Info *info __UNUS
                                        _file_list_cmp, NULL, NULL);
      }
    else if (wr->wd->mode == ELM_FILESELECTOR_GRID)
-     elm_gengrid_item_direct_sorted_insert(wr->wd->files_grid, eio_file_associate_find(handler, "type/grid"),
+     elm_gengrid_item_sorted_insert(wr->wd->files_grid, eio_file_associate_find(handler, "type/grid"),
                                            eina_stringshare_ref(eio_file_associate_find(handler, "filename")),
                                            _file_grid_cmp, NULL, NULL);
 }
