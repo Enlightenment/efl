@@ -13,26 +13,29 @@ struct _Widget_Data
 };
 
 static const char *widtype = NULL;
+static Eina_Bool _event_hook(Evas_Object *obj, Evas_Object *src,
+                             Evas_Callback_Type type, void *event_info);
 static void _del_hook(Evas_Object *obj);
 static void _mirrored_set(Evas_Object *obj, Eina_Bool rtl);
 static void _theme_hook(Evas_Object *obj);
 static void _disable_hook(Evas_Object *obj);
 static void _sizing_eval(Evas_Object *obj);
-static void _changed_size_hints(void *data, Evas *e, Evas_Object *obj, void *event_info);
+static void _changed_size_hints(void *data, Evas *e, Evas_Object *obj,
+                                void *event_info);
 static void _sub_del(void *data, Evas_Object *obj, void *event_info);
-static void _signal_check_off(void *data, Evas_Object *obj, const char *emission, const char *source);
-static void _signal_check_on(void *data, Evas_Object *obj, const char *emission, const char *source);
-static void _signal_check_toggle(void *data, Evas_Object *obj, const char *emission, const char *source);
+static void _signal_check_off(void *data, Evas_Object *obj,
+                              const char *emission, const char *source);
+static void _signal_check_on(void *data, Evas_Object *obj,
+                             const char *emission, const char *source);
+static void _signal_check_toggle(void *data, Evas_Object *obj,
+                                 const char *emission, const char *source);
 static void _on_focus_hook(void *data, Evas_Object *obj);
 static void _activate_hook(Evas_Object *obj);
-static void _content_set_hook(Evas_Object *obj, const char *part, Evas_Object *content);
+static void _content_set_hook(Evas_Object *obj, const char *part,
+                              Evas_Object *content);
 static Evas_Object *_content_get_hook(const Evas_Object *obj, const char *part);
 static Evas_Object *_content_unset_hook(Evas_Object *obj, const char *part);
-
 static void _activate(Evas_Object *obj);
-static Eina_Bool _event_hook(Evas_Object *obj, Evas_Object *src,
-                             Evas_Callback_Type type, void *event_info);
-
 static const char SIG_CHANGED[] = "changed";
 static const Evas_Smart_Cb_Description _signals[] = {
        {SIG_CHANGED, ""},
@@ -40,7 +43,8 @@ static const Evas_Smart_Cb_Description _signals[] = {
 };
 
 static Eina_Bool
-_event_hook(Evas_Object *obj, Evas_Object *src __UNUSED__, Evas_Callback_Type type, void *event_info)
+_event_hook(Evas_Object *obj, Evas_Object *src __UNUSED__,
+            Evas_Callback_Type type, void *event_info)
 {
    if (type != EVAS_CALLBACK_KEY_DOWN) return EINA_FALSE;
    Evas_Event_Key_Down *ev = event_info;
@@ -54,7 +58,6 @@ _event_hook(Evas_Object *obj, Evas_Object *src __UNUSED__, Evas_Callback_Type ty
    ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
    return EINA_TRUE;
 }
-
 
 static void
 _del_hook(Evas_Object *obj)

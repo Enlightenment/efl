@@ -181,8 +181,8 @@ EAPI extern Elm_Version *elm_version;
 #include <elm_bubble.h> // XXX: comments in elm_bubble.h
 #include <elm_button.h> // OK
 #include <elm_cache.h> // XXX: comments in elm_cache.h
-#include <elm_calendar.h>
-#include <elm_check.h>
+#include <elm_calendar.h> // XXX: comments in elm_calendar.h. review was not finished.
+#include <elm_check.h> // OK
 #include <elm_clock.h>
 #include <elm_cnp.h> // XXX: comments in elm_cnp.h
 #include <elm_colorselector.h>
