@@ -4332,5 +4332,27 @@ EINA_DEPRECATED EAPI void elm_bubble_corner_set(Evas_Object *obj, const char *co
 EINA_DEPRECATED EAPI const char *elm_bubble_corner_get(const Evas_Object *obj);
 
 /**
+ * Enable or disable day selection
+ *
+ * @param obj The calendar object.
+ * @param enabled @c EINA_TRUE to enable selection or @c EINA_FALSE to
+ * disable it.
+ *
+ * @deprecated Use elm_calendar_day_selection_disabled_set()
+ */
+EINA_DEPRECATED EAPI void                 elm_calendar_day_selection_enabled_set(Evas_Object *obj, Eina_Bool enabled);
+
+/**
+ * Get a value whether day selection is enabled or not.
+ *
+ * @param obj The calendar object.
+ * @return EINA_TRUE means day selection is enabled. EINA_FALSE indicates
+ * it's disabled. If @p obj is NULL, EINA_FALSE is returned.
+ *
+ * @deprecated elm_calendar_day_selection_disabled_get()
+ */
+EINA_DEPRECATED EAPI Eina_Bool            elm_calendar_day_selection_enabled_get(const Evas_Object *obj);
+
+/**
  * @}
  */

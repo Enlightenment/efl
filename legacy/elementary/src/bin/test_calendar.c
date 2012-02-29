@@ -70,7 +70,7 @@ set_api_state(api_data *api)
               time_t sec_per_day = (60*60*24);
               time_t sec_per_year = sec_per_day * 365;
               time_t the_time = (sec_per_year * 41) + (sec_per_day * 10); /* Set date to JAN 01, 2011 */
-              elm_calendar_day_selection_enabled_set(cal, EINA_FALSE);
+              elm_calendar_day_selection_disabled_set(cal, EINA_TRUE);
               elm_calendar_selected_time_set(cal, gmtime(&the_time));
            }
          break;
@@ -81,7 +81,7 @@ set_api_state(api_data *api)
               time_t sec_per_year = sec_per_day * 365;
               time_t the_time = (sec_per_year * 41) + (sec_per_day * 40); /* Set date to FEB 01, 2011 */
               elm_calendar_marks_clear(cal);
-              elm_calendar_day_selection_enabled_set(cal, EINA_FALSE);
+              elm_calendar_day_selection_disabled_set(cal, EINA_TRUE);
               elm_calendar_selected_time_set(cal, gmtime(&the_time));
            }
          break;
@@ -179,7 +179,7 @@ _print_cal_info(Evas_Object *cal, Evas_Object *en)
 
    interval = elm_calendar_interval_get(cal);
    elm_calendar_min_max_year_get(cal, &year_min, &year_max);
-   sel_enabled = elm_calendar_day_selection_enabled_get(cal);
+   sel_enabled = !elm_calendar_day_selection_disabled_get(cal);
    wds = elm_calendar_weekdays_names_get(cal);
 
    snprintf(info, sizeof(info),
@@ -252,7 +252,7 @@ test_calendar2(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_i
    cal2 = elm_calendar_add(win);
    evas_object_size_hint_weight_set(cal2, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(cal2, EVAS_HINT_FILL, EVAS_HINT_FILL);
-   elm_calendar_day_selection_enabled_set(cal2, EINA_FALSE);
+   elm_calendar_day_selection_disabled_set(cal2, EINA_TRUE);
    evas_object_show(cal2);
    elm_box_pack_end(bxh, cal2);
 

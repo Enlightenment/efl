@@ -32,7 +32,7 @@ external_calendar_state_set(void *data __UNUSED__, Evas_Object *obj,
         elm_calendar_min_max_year_set(obj, min, p->year_max);
      }
    if (p->sel_exists)
-     elm_calendar_day_selection_enabled_set(obj, p->sel_enable);
+     elm_calendar_day_selection_disabled_set(obj, !p->sel_enable);
 }
 
 static Eina_Bool
@@ -63,7 +63,7 @@ external_calendar_param_set(void *data __UNUSED__, Evas_Object *obj,
      {
 	if (param->type == EDJE_EXTERNAL_PARAM_TYPE_BOOL)
 	  {
-	     elm_calendar_day_selection_enabled_set(obj,param->i );
+	     elm_calendar_day_selection_disabled_set(obj,!param->i );
 	     return EINA_TRUE;
 	  }
      }
@@ -100,7 +100,7 @@ external_calendar_param_get(void *data __UNUSED__, const Evas_Object *obj,
      {
 	if (param->type == EDJE_EXTERNAL_PARAM_TYPE_BOOL)
 	  {
-	     param->i = elm_calendar_day_selection_enabled_get(obj);
+	     param->i = !elm_calendar_day_selection_disabled_get(obj);
 	     return EINA_TRUE;
 	  }
      }

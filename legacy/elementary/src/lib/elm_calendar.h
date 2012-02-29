@@ -1,11 +1,18 @@
 /**
  * @defgroup Calendar Calendar
  *
- * This is a Calendar widget.
- * XXX: add more documentation.
+ * This is a Calendar widget. Calender widget helps applications to flexibly
+ * display a calender with day of the week, day, year and month. Applications will be
+ * able to choose a specific date that will be reported in the smart_callbacks for
+ * the calendar widget. The APIs of calendar widget let the applications perform 
+ * other functions like,
+ * placing marks on specific dates
+ * Setting the bounds for the calendar (minimum and maximum years)
+ * Setting the day names of the week. ( for ex. Thu. or Thursday)
+ * Setting the year and month format.
  *
  * Signals that you can add callbacks for are:
- * - @c "changed" - XXX: add docs
+ * - @c "changed" - emitted when the date in the calendar is changed.
  *
  * Supported elm_object common APIs.
  * @li elm_object_signal_emit
@@ -155,8 +162,8 @@ EAPI void                 elm_calendar_min_max_year_get(const Evas_Object *obj, 
  * Enable or disable day selection
  *
  * @param obj The calendar object.
- * @param enabled @c EINA_TRUE to enable selection or @c EINA_FALSE to
- * disable it.
+ * @param disabled @c EINA_TRUE to disable selection or @c EINA_FALSE to
+ * enable it.
  *
  * Enabled by default. If disabled, the user still can select months,
  * but not days. Selected days are highlighted on calendar.
@@ -165,32 +172,28 @@ EAPI void                 elm_calendar_min_max_year_get(const Evas_Object *obj, 
  * When a day is selected, or month is changed, smart callbacks for
  * signal "changed" will be called.
  *
- * @see elm_calendar_day_selection_enable_get()
+ * @see elm_calendar_day_selection_disabled_get()
  *
  * @ref calendar_example_04
  *
  * @ingroup Calendar
  */
-// XXX: use disabled_set. it's enabled by default.
-//      EAPI void                 elm_calendar_day_selection_disabled_set(Evas_Object *obj, Eina_Bool disabled);
-EAPI void                 elm_calendar_day_selection_enabled_set(Evas_Object *obj, Eina_Bool enabled);
+EAPI void                 elm_calendar_day_selection_disabled_set(Evas_Object *obj, Eina_Bool disabled);
 
 /**
- * Get a value whether day selection is enabled or not.
- *
- * @see elm_calendar_day_selection_enable_set() for details.
+ * Get a value whether day selection is disabled or not.
  *
  * @param obj The calendar object.
- * @return EINA_TRUE means day selection is enabled. EINA_FALSE indicates
- * it's disabled. If @p obj is NULL, EINA_FALSE is returned.
+ * @return EINA_TRUE means day selection is disabled. EINA_FALSE indicates
+ * it's enabled. If @p obj is NULL, EINA_FALSE is returned.
+ *
+ * @see elm_calendar_day_selection_disabled_set() for details.
  *
  * @ref calendar_example_05
  *
  * @ingroup Calendar
  */
-// XXX: use disabled_get. it's enabled by default.
-// EAPI Eina_Bool            elm_calendar_day_selection_disabled_get(const Evas_Object *obj);
-EAPI Eina_Bool            elm_calendar_day_selection_enabled_get(const Evas_Object *obj);
+EAPI Eina_Bool            elm_calendar_day_selection_disabled_get(const Evas_Object *obj);
 
 /**
  * Set selected date to be highlighted on calendar.
