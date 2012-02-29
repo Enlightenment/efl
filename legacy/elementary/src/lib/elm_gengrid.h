@@ -1121,29 +1121,6 @@ EAPI const Eina_List              *elm_gengrid_selected_items_get(const Evas_Obj
 EAPI Eina_Bool                     elm_gengrid_item_selected_get(const Elm_Object_Item *it);
 
 /**
- * Get the real Evas object created to implement the view of a
- * given gengrid item
- *
- * @param it The gengrid item.
- * @return the Evas object implementing this item's view.
- *
- * This returns the actual Evas object used to implement the
- * specified gengrid item's view. This may be @c NULL, as it may
- * not have been created or may have been deleted, at any time, by
- * the gengrid. <b>Do not modify this object</b> (move, resize,
- * show, hide, etc.), as the gengrid is controlling it. This
- * function is for querying, emitting custom signals or hooking
- * lower level callbacks for events on that object. Do not delete
- * this object under any circumstances.
- *
- * @see elm_object_item_data_get()
- *
- * @ingroup Gengrid
- */
-//XXX: Should be dead.
-EAPI const Evas_Object            *elm_gengrid_item_object_get(const Elm_Object_Item *it);
-
-/**
  * Show the portion of a gengrid's internal grid containing a given
  * item, @b immediately.
  *

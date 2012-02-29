@@ -3922,11 +3922,33 @@ EINA_DEPRECATED EAPI Eina_Bool                     elm_gengrid_item_disabled_get
  *
  * @see elm_gengrid_clear(), to remove all items in a gengrid at
  * once.
- * @deprecated use elm_object_item_de() instead
+ * @deprecated use elm_object_item_del() instead
  *
  * @ingroup Gengrid
  */
 EINA_DEPRECATED EAPI void                          elm_gengrid_item_del(Elm_Object_Item *it);
+
+/**
+ * Get the real Evas object created to implement the view of a
+ * given gengrid item
+ *
+ * @param it The gengrid item.
+ * @return the Evas object implementing this item's view.
+ *
+ * This returns the actual Evas object used to implement the
+ * specified gengrid item's view. This may be @c NULL, as it may
+ * not have been created or may have been deleted, at any time, by
+ * the gengrid. <b>Do not modify this object</b> (move, resize,
+ * show, hide, etc.), as the gengrid is controlling it. This
+ * function is for querying, emitting custom signals or hooking
+ * lower level callbacks for events on that object. Do not delete
+ * this object under any circumstances.
+ *
+ * @see elm_object_item_data_get()
+ *
+ * @ingroup Gengrid
+ */
+EINA_DEPRECATED EAPI const Evas_Object            *elm_gengrid_item_object_get(const Elm_Object_Item *it);
 
 /**
  * Append a filter function for text inserted in the entry

@@ -2266,7 +2266,7 @@ elm_gengrid_clear(Evas_Object *obj)
    elm_genlist_clear(obj);
 }
 
-EAPI const Evas_Object *
+EINA_DEPRECATED EAPI const Evas_Object *
 elm_gengrid_item_object_get(const Elm_Object_Item *it)
 {
    ELM_OBJ_ITEM_CHECK_OR_RETURN(it, NULL);
