@@ -63,7 +63,7 @@ EAPI Evas_Object                 *elm_panes_add(Evas_Object *parent);
  * @param obj The panes object.
  * @param fixed Use @c EINA_TRUE to make @p obj to be
  * resize the left and right panes @b homogeneously.
- * Use @c EINA_FALSE to make use of the values specified in 
+ * Use @c EINA_FALSE to make use of the values specified in
  * elm_panes_content_left_size_set() and
  * elm_panes_content_right_size_set()
  * to resize the left and right panes.
@@ -71,7 +71,7 @@ EAPI Evas_Object                 *elm_panes_add(Evas_Object *parent);
  * By default panes are resized homogeneously.
  *
  * @see elm_panes_fixed_get()
- * @see elmpanes_content_left_size_set()
+ * @see elm_panes_content_left_size_set()
  * @see elm_panes_content_right_size_set()
  *
  * @ingroup Panes
@@ -85,7 +85,7 @@ EAPI void                         elm_panes_fixed_set(Evas_Object *obj, Eina_Boo
  * @return @c EINA_TRUE, if @p obj is set to be resized @b homogeneously,
  *
  * @see elm_panes_fixed_set() for more details.
- * @see elmpanes_content_left_size_get()
+ * @see elm_panes_content_left_size_get()
  * @see elm_panes_content_right_size_get()
  *
  * @ingroup Panes
@@ -141,7 +141,6 @@ EAPI void                         elm_panes_content_left_size_set(Evas_Object *o
  *
  * @ingroup Panes
  */
-// XXX: no implementation for this api?
 EAPI double                       elm_panes_content_right_size_get(const Evas_Object *obj);
 
 /**
@@ -156,9 +155,9 @@ EAPI double                       elm_panes_content_right_size_get(const Evas_Ob
  * If something different is required, it can be set with this function.
  * For example, if the right content should be displayed over
  * 75% of the panes size, @p size should be passed as @c 0.75.
- * This way, right content will be resized to 25% of panes size.
+ * This way, left content will be resized to 25% of panes size.
  *
- * If displayed vertically, right content is displayed at top, and
+ * If displayed vertically, left content is displayed at top, and
  * right content at bottom.
  *
  * @note This proportion will change when user drags the panes bar.
@@ -167,7 +166,6 @@ EAPI double                       elm_panes_content_right_size_get(const Evas_Ob
  *
  * @ingroup Panes
  */
-// XXX: no implementation for this api?
 EAPI void                         elm_panes_content_right_size_set(Evas_Object *obj, double size);
 
 

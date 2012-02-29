@@ -422,6 +422,18 @@ elm_panes_content_left_size_set(Evas_Object *obj, double size)
      edje_object_part_drag_value_set(wd->panes, "elm.bar", size, 0.0);
 }
 
+EAPI double
+elm_panes_content_right_size_get(const Evas_Object *obj)
+{
+   return (1.0 - elm_panes_content_left_size_get(obj));
+}
+
+EAPI void
+elm_panes_content_right_size_set(Evas_Object *obj, double size)
+{
+   elm_panes_content_left_size_set(obj, (1.0 - size));
+}
+
 EAPI void
 elm_panes_horizontal_set(Evas_Object *obj, Eina_Bool horizontal)
 {
