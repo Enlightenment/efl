@@ -2495,6 +2495,11 @@ EAPI void              evas_event_thaw_eval              (Evas *e) EINA_ARG_NONN
  * Functions to tell Evas that input events happened and should be
  * processed.
  *
+ * @warning Most of the time these functions are @b not what you're looking for.
+ * These functions should only be used if you're not working with ecore evas(or
+ * another input handling system). If you're not using ecore evas please
+ * consider using it, in most situation it will make life a lot easier.
+ *
  * As explained in @ref intro_not_evas, Evas does not know how to poll
  * for input events, so the developer should do it and then feed such
  * events to the canvas to be processed. This is only required if
