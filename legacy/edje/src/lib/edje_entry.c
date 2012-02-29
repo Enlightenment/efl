@@ -1062,12 +1062,14 @@ _range_del_emit(Edje *ed, Evas_Textblock_Cursor *c __UNUSED__, Evas_Object *o __
    _edje_emit(ed, "entry,changed", en->rp->part->name);
    _edje_emit_full(ed, "entry,changed,user", en->rp->part->name, info,
                    _free_entry_change_info);
+   _sel_clear(en->cursor, en->rp->object, en);
 }
 
 static void
 _range_del(Evas_Textblock_Cursor *c __UNUSED__, Evas_Object *o __UNUSED__, Entry *en)
 {
    evas_textblock_cursor_range_delete(en->sel_start, en->sel_end);
+   _sel_clear(en->cursor, en->rp->object, en);
 }
 
 static void
@@ -1441,7 +1443,6 @@ _edje_key_down_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, v
                        _range_del_emit(ed, en->cursor, rp->object, en);
                        info->merge = EINA_TRUE;
                     }
-                  _sel_clear(en->cursor, rp->object, en);
                   info->change.insert.pos =
                      evas_textblock_cursor_pos_get(en->cursor);
                   info->change.insert.content = eina_stringshare_add("<tab/>");
@@ -1506,7 +1507,6 @@ _edje_key_down_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, v
                   _range_del_emit(ed, en->cursor, rp->object, en);
                   info->merge = EINA_TRUE;
                }
-             _sel_clear(en->cursor, rp->object, en);
 
              info->change.insert.pos =
                 evas_textblock_cursor_pos_get(en->cursor);
@@ -1549,7 +1549,6 @@ _edje_key_down_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, v
                   _range_del_emit(ed, en->cursor, rp->object, en);
                   info->merge = EINA_TRUE;
                }
-             _sel_clear(en->cursor, rp->object, en);
 
              info->change.insert.pos =
                 evas_textblock_cursor_pos_get(en->cursor);
@@ -2320,7 +2319,6 @@ _edje_entry_text_markup_insert(Edje_Real_Part *rp, const char *text)
    // prepend markup @ cursor pos
    if (en->have_selection)
      _range_del(en->cursor, rp->object, en);
-   _sel_clear(en->cursor, rp->object, en);
    //xx
 //   evas_object_textblock_text_markup_prepend(en->cursor, text);
    _text_filter_markup_prepend(en, en->cursor, text);
@@ -2521,6 +2519,35 @@ _edje_entry_cursor_geometry_get(Edje_Real_Part *rp, Evas_Coord *cx, Evas_Coord *
    if (cy) *cy = y + yy;
    if (cw) *cw = ww;
    if (ch) *ch = hh;
+}
+
+void
+_edje_entry_user_insert(Edje_Real_Part *rp, const char *text)
+{
+   Entry *en = rp->entry_data;
+   Edje_Entry_Change_Info *info = calloc(1, sizeof(*info));
+   info->insert = EINA_TRUE;
+   info->change.insert.plain_length = 1;
+   info->change.insert.content = eina_stringshare_add(text);
+     {
+        char *tmp;
+        tmp = evas_textblock_text_markup_to_utf8(rp->object,
+                                                 info->change.insert.content);
+        info->change.insert.plain_length = eina_unicode_utf8_get_len(tmp);
+        free(tmp);
+     }
+
+   if (en->have_selection)
+     {
+        _range_del_emit(rp->edje, en->cursor, rp->object, en);
+        info->merge = EINA_TRUE;
+     }
+   info->change.insert.pos = evas_textblock_cursor_pos_get(en->cursor);
+   _text_filter_text_prepend(en, en->cursor, text);
+   _edje_emit(rp->edje, "entry,changed", rp->part->name);
+   _edje_emit_full(rp->edje, "entry,changed,user", rp->part->name,
+                   info, _free_entry_change_info);
+   _edje_emit(rp->edje, "cursor,changed", rp->part->name);
 }
 
 void
@@ -3247,7 +3274,6 @@ _edje_entry_imf_event_preedit_changed_cb(void *data, Ecore_IMF_Context *ctx __UN
      {
         /* delete selected characters */
         _range_del_emit(ed, en->cursor, rp->object, en);
-        _sel_clear(en->cursor, rp->object, en);
      }
 
    /* delete preedit characters */

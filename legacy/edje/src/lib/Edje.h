@@ -2665,6 +2665,15 @@ EAPI Eina_Bool        edje_object_part_text_item_geometry_get       (const Evas_
 EAPI void             edje_object_part_text_cursor_geometry_get     (const Evas_Object *obj, const char *part, Evas_Coord *x, Evas_Coord *y, Evas_Coord *w, Evas_Coord *h);
 
 /**
+ * @brief Deletes the selection and emits a change event.
+ *
+ * @param obj A valid Evas_Object handle
+ * @param part The part name
+ * @since 1.2.0
+ */
+EAPI void             edje_object_part_text_user_insert        (const Evas_Object *obj, const char *part, const char *text);
+
+/**
  * @brief Enables selection if the entry is an EXPLICIT selection mode
  * type.
  *
