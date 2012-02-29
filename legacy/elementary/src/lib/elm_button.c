@@ -182,13 +182,11 @@ _content_set_update(void *data)
    if (wd->icon)
      {
         elm_widget_sub_object_add(data, wd->icon);
-        evas_object_event_callback_add(wd->icon,
-                                       EVAS_CALLBACK_CHANGED_SIZE_HINTS,
-                                       _changed_size_hints, data);
         edje_object_part_swallow(wd->btn, "elm.swallow.content", wd->icon);
         edje_object_signal_emit(wd->btn, "elm,state,icon,visible", "elm");
         edje_object_message_signal_process(wd->btn);
      }
+   _sizing_eval(data);
 }
 
 static void
@@ -196,7 +194,7 @@ _content_set_cb(void *data, Evas_Object *obj, const char *emission, const char *
 {
    Widget_Data *wd = elm_widget_data_get(data);
    Evas_Object *old_icon = edje_object_part_swallow_get(wd->btn, "elm.swallow.content");
-   if (wd->icon != old_icon)
+   if ((old_icon) && (wd->icon != old_icon))
      {
         evas_object_event_callback_del_full(old_icon, EVAS_CALLBACK_CHANGED_SIZE_HINTS,
                                             _changed_size_hints, obj);
@@ -220,6 +218,11 @@ _content_set_hook(Evas_Object *obj, const char *part, Evas_Object *content)
    if (wd->icon == content) return;
    wd->icon = content;
 
+   if(wd->icon)
+     evas_object_event_callback_add(wd->icon,
+                                       EVAS_CALLBACK_CHANGED_SIZE_HINTS,
+                                       _changed_size_hints, obj);
+
    s = edje_object_data_get(wd->btn, "transition_animation_on");
    if ((s) && (atoi(s)))
      {
@@ -231,8 +234,6 @@ _content_set_hook(Evas_Object *obj, const char *part, Evas_Object *content)
      }
    else
      _content_set_update(obj);
-
-   _sizing_eval(obj);
 }
 
 static Evas_Object *
