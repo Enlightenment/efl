@@ -14,6 +14,7 @@ struct _Elm_Gen_Item_Class
    const char *item_style;
    const char *mode_item_style;
    const char *edit_item_style;
+   Eina_Bool delete_me : 1;
    struct _Elm_Gen_Item_Class_Func
    {
       Elm_Gen_Item_Text_Get_Cb    text_get;
@@ -21,5 +22,4 @@ struct _Elm_Gen_Item_Class
       Elm_Gen_Item_State_Get_Cb   state_get;
       Elm_Gen_Item_Del_Cb         del;
    } func;
-   Eina_Bool delete_me : 1;
 };
