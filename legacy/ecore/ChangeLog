@@ -547,3 +547,7 @@
         * Refactor Ecore_Evas Wayland code to match changes in 
           Ecore_Wayland
 
+2012-02-29  Jihoon Kim (jihoon)
+
+        * Add ecore_imf_context_input_panel_caps_lock_mode_set/get to set the caps lock mode on the input panel
+

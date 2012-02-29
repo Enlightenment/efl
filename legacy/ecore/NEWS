@@ -24,6 +24,18 @@ Additions:
      - Add Socket and Plug to draw other process area.
     * ecore_wayland
      - Add Ecore_Wayland (backend to support Wayland).
+    * ecore_imf
+     - ecore_imf_context_event_callback_add()
+     - ecore_imf_context_event_callback_del()
+     - ecore_imf_context_event_callback_call()
+     - ecore_imf_context_input_panel_imdata_set()
+     - ecore_imf_context_input_panel_imdata_get()
+     - ecore_imf_context_input_panel_return_key_type_set()
+     - ecore_imf_context_input_panel_return_key_type_get()
+     - ecore_imf_context_input_panel_return_key_disabled_set()
+     - ecore_imf_context_input_panel_return_key_disabled_get()
+     - ecore_imf_context_input_panel_caps_lock_mode_set()
+     - ecore_imf_context_input_panel_caps_lock_mode_get()
 
 Improvements:
     * ecore:

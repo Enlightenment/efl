@@ -56,6 +56,7 @@ struct _Ecore_IMF_Context
    Eina_Bool                      allow_prediction : 1;
    Eina_Bool                      input_panel_enabled : 1;
    Eina_Bool                      input_panel_return_key_disabled : 1;
+   Eina_Bool                      input_panel_caps_lock_mode : 1;
 };
 
 struct _Ecore_IMF_Module

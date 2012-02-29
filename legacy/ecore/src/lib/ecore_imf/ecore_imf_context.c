@@ -1518,3 +1518,49 @@ ecore_imf_context_input_panel_return_key_disabled_get(Ecore_IMF_Context *ctx)
 
    return ctx->input_panel_return_key_disabled;
 }
+
+/**
+ * Set the caps lock mode on the input panel.
+ *
+ * @param ctx An #Ecore_IMF_Context.
+ * @param mode Turn on caps lock on the input panel if EINA_TRUE
+ * @ingroup Ecore_IMF_Context_Group
+ * @since 1.2.0
+ */
+EAPI void
+ecore_imf_context_input_panel_caps_lock_mode_set(Ecore_IMF_Context *ctx, Eina_Bool mode)
+{
+   if (!ECORE_MAGIC_CHECK(ctx, ECORE_MAGIC_CONTEXT))
+     {
+        ECORE_MAGIC_FAIL(ctx, ECORE_MAGIC_CONTEXT,
+                         "ecore_imf_context_input_panel_caps_lock_mode_set");
+        return;
+     }
+
+   if (ctx->klass->input_panel_caps_lock_mode_set)
+     ctx->klass->input_panel_caps_lock_mode_set(ctx, mode);
+
+   ctx->input_panel_caps_lock_mode = mode;
+}
+
+/**
+ * Get the caps lock mode on the input panel.
+ *
+ * @param ctx An #Ecore_IMF_Context.
+ * @return EINA_TRUE if the caps lock is turned on.
+ * @ingroup Ecore_IMF_Context_Group
+ * @since 1.2.0
+ */
+EAPI Eina_Bool
+ecore_imf_context_input_panel_caps_lock_mode_get(Ecore_IMF_Context *ctx)
+{
+   if (!ECORE_MAGIC_CHECK(ctx, ECORE_MAGIC_CONTEXT))
+     {
+        ECORE_MAGIC_FAIL(ctx, ECORE_MAGIC_CONTEXT,
+                         "ecore_imf_context_input_panel_caps_lock_mode_get");
+        return EINA_FALSE;
+     }
+
+   return ctx->input_panel_caps_lock_mode;
+}
+
