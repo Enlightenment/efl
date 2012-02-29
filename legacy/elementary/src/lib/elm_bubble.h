@@ -52,6 +52,21 @@
  */
 
 /**
+ * Defines the corner values for a bubble.
+ *
+ * The corner will be used to determine where the arrow of the 
+ * bubble points to.
+ */
+typedef enum
+{
+  ELM_BUBBLE_POS_INVALID = -1,
+  ELM_BUBBLE_POS_TOP_LEFT,
+  ELM_BUBBLE_POS_TOP_RIGHT,
+  ELM_BUBBLE_POS_BOTTOM_LEFT,
+  ELM_BUBBLE_POS_BOTTOM_RIGHT,
+} Elm_Bubble_Pos;
+
+/**
  * Add a new bubble to the parent
  *
  * @param parent The parent object
@@ -71,14 +86,8 @@ EAPI Evas_Object                 *elm_bubble_add(Evas_Object *parent);
  * determine where the arrow in the frame points to and where label, icon and
  * info are shown.
  *
- * Possible values for corner are:
- * @li "top_left" - Default
- * @li "top_right"
- * @li "bottom_left"
- * @li "bottom_right"
  */
-// XXX: use enum for corner parameter instead of const char *
-EAPI void                         elm_bubble_corner_set(Evas_Object *obj, const char *corner);
+EAPI void  elm_bubble_pos_set(Evas_Object *obj, Elm_Bubble_Pos pos);
 
 /**
  * Get the corner of the bubble
@@ -88,8 +97,7 @@ EAPI void                         elm_bubble_corner_set(Evas_Object *obj, const 
  *
  * This function gets the selected corner of the bubble.
  */
-// XXX: use enum for return value instead of const char *
-EAPI const char                  *elm_bubble_corner_get(const Evas_Object *obj);
+EAPI Elm_Bubble_Pos elm_bubble_pos_get(const Evas_Object *obj);
 
 /**
  * @}

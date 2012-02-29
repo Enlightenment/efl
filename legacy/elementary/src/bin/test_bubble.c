@@ -38,19 +38,19 @@ set_api_state(api_data *api)
    switch(api->state)
      { /* Put all api-changes under switch */
       case BUBBLE_SET_CORNER_1:
-         elm_bubble_corner_set(eina_list_nth(items, 0), "bottom_left");
+         elm_bubble_pos_set(eina_list_nth(items, 0), ELM_BUBBLE_POS_BOTTOM_LEFT);
          elm_object_text_set(elm_object_content_get(eina_list_nth(items, 0)),
                   "Corner: base (bottom-left) - with icon");
-         elm_bubble_corner_set(eina_list_nth(items, 1), "top_right");
+         elm_bubble_pos_set(eina_list_nth(items, 1), ELM_BUBBLE_POS_TOP_RIGHT);
          elm_object_text_set(elm_object_content_get(eina_list_nth(items, 1)),
                   "Corner: base (top-right) - no icon");
          break;
 
       case BUBBLE_SET_CORNER_2:
-         elm_bubble_corner_set(eina_list_nth(items, 0), "top_right");
+         elm_bubble_pos_set(eina_list_nth(items, 0), ELM_BUBBLE_POS_TOP_RIGHT);
          elm_object_text_set(elm_object_content_get(eina_list_nth(items, 0)),
                   "Corner: base (top-right) - with icon");
-         elm_bubble_corner_set(eina_list_nth(items, 1), "bottom_left");
+         elm_bubble_pos_set(eina_list_nth(items, 1), ELM_BUBBLE_POS_BOTTOM_LEFT);
          elm_object_text_set(elm_object_content_get(eina_list_nth(items, 1)),
                   "Corner: base (bottom-left) - no icon");
          break;
@@ -149,7 +149,7 @@ test_bubble(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info
    elm_object_text_set(bb, "Message 1");
    elm_object_part_text_set(bb, "info", "Corner: bottom_right");
    elm_object_part_content_set(bb, "icon", ic);
-   elm_bubble_corner_set(bb, "bottom_right");
+   elm_bubble_pos_set(bb, ELM_BUBBLE_POS_BOTTOM_RIGHT);
    evas_object_smart_callback_add(bb, "clicked", _print_clicked, NULL);
    evas_object_show(ic);
    evas_object_size_hint_weight_set(bb, EVAS_HINT_EXPAND, 0.0);

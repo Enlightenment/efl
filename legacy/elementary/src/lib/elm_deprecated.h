@@ -4289,5 +4289,26 @@ EINA_DEPRECATED EAPI double      elm_tooltip_delay_get(void);
 EINA_DEPRECATED EAPI Eina_Bool   elm_tooltip_delay_set(double delay);
 
 /**
+ * Set the corner of the bubble
+ *
+ * @param obj The bubble object.
+ * @param corner The given corner for the bubble.
+ *
+ * @deprecated Use elm_bubble_pos_set()
+ *
+ */
+EINA_DEPRECATED EAPI void elm_bubble_corner_set(Evas_Object *obj, const char *corner);
+
+/**
+ * Get the corner of the bubble
+ *
+ * @param obj The bubble object.
+ * @return The given corner for the bubble.
+ *
+ * @deprecated Use elm_bubble_pos_get()
+ */
+EINA_DEPRECATED EAPI const char *elm_bubble_corner_get(const Evas_Object *obj);
+
+/**
  * @}
  */
