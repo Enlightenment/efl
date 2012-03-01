@@ -135,7 +135,7 @@ EAPI Elm_Object_Item             *elm_menu_item_add_object(Evas_Object *obj, Elm
  *
  * Once this icon is set, any previously set icon will be deleted.
  */
-EAPI void                         elm_menu_item_object_icon_name_set(Elm_Object_Item *it, const char *icon);
+EAPI void                         elm_menu_item_icon_name_set(Elm_Object_Item *it, const char *icon);
 
 /**
  * @brief Get the string representation from the icon of a menu item
@@ -143,9 +143,9 @@ EAPI void                         elm_menu_item_object_icon_name_set(Elm_Object_
  * @param it The menu item object.
  * @return The string representation of @p item's icon or NULL
  *
- * @see elm_menu_item_object_icon_name_set()
+ * @see elm_menu_item_icon_name_set()
  */
-EAPI const char                  *elm_menu_item_object_icon_name_get(const Elm_Object_Item *it);
+EAPI const char                  *elm_menu_item_icon_name_get(const Elm_Object_Item *it);
 
 /**
  * @brief Set the selected state of @p item.

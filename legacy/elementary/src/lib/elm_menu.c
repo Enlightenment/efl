@@ -117,7 +117,7 @@ _theme_hook(Evas_Object *obj)
                       elm_widget_style_get(obj));
                   elm_object_item_text_set((Elm_Object_Item *) item,
                                            item->label);
-                  elm_menu_item_object_icon_name_set((Elm_Object_Item *) item,
+                  elm_menu_item_icon_name_set((Elm_Object_Item *) item,
                                                      item->icon_str);
                }
              else
@@ -126,7 +126,7 @@ _theme_hook(Evas_Object *obj)
                                         elm_widget_style_get(obj));
                   elm_object_item_text_set((Elm_Object_Item *) item,
                                            item->label);
-                  elm_menu_item_object_icon_name_set((Elm_Object_Item *) item,
+                  elm_menu_item_icon_name_set((Elm_Object_Item *) item,
                                                      item->icon_str);
                }
              _item_disable_hook((Elm_Object_Item *) item);
@@ -498,7 +498,7 @@ _item_submenu_obj_create(Elm_Menu_Item *item)
    elm_object_item_text_set((Elm_Object_Item *) item,
                             item->label);
    if (item->icon_str)
-     elm_menu_item_object_icon_name_set((Elm_Object_Item *) item,
+     elm_menu_item_icon_name_set((Elm_Object_Item *) item,
                                         item->icon_str);
    edje_object_signal_callback_add(VIEW(item), "elm,action,open", "",
                                    _submenu_open, item);
@@ -744,7 +744,7 @@ elm_menu_item_add(Evas_Object *obj, Elm_Object_Item *parent, const char *icon, c
    elm_widget_sub_object_add(WIDGET(subitem), subitem->content);
    edje_object_part_swallow(VIEW(subitem), "elm.swallow.content", subitem->content);
    if (icon)
-     elm_menu_item_object_icon_name_set((Elm_Object_Item *) subitem, icon);
+     elm_menu_item_icon_name_set((Elm_Object_Item *) subitem, icon);
 
    _elm_menu_item_add_helper(obj, (Elm_Menu_Item *) parent, subitem, wd);
 
@@ -805,8 +805,14 @@ elm_menu_item_label_get(const Elm_Object_Item *it)
    return _item_text_get_hook(it, NULL);
 }
 
-EAPI void
+EINA_DEPRECATED EAPI void
 elm_menu_item_object_icon_name_set(Elm_Object_Item *it, const char *icon)
+{
+   elm_menu_item_icon_name_set(it, icon);
+}
+
+EAPI void
+elm_menu_item_icon_name_set(Elm_Object_Item *it, const char *icon)
 {
    ELM_OBJ_ITEM_CHECK_OR_RETURN(it);
    EINA_SAFETY_ON_NULL_RETURN(icon);
@@ -896,8 +902,14 @@ elm_menu_item_object_content_get(const Elm_Object_Item *it)
    return _item_content_get_hook(it, NULL);
 }
 
-EAPI const char *
+EINA_DEPRECATED EAPI const char *
 elm_menu_item_object_icon_name_get(const Elm_Object_Item *it)
+{
+   return elm_menu_item_icon_name_get(it);
+}
+
+EAPI const char *
+elm_menu_item_icon_name_get(const Elm_Object_Item *it)
 {
    ELM_OBJ_ITEM_CHECK_OR_RETURN(it, NULL);
    return ((Elm_Menu_Item *) it)->icon_str;

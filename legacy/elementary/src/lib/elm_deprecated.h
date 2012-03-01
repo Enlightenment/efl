@@ -2014,6 +2014,28 @@ EINA_DEPRECATED EAPI void                         elm_menu_item_del(Elm_Object_I
 EINA_DEPRECATED EAPI Evas_Object                 *elm_menu_item_menu_get(const Elm_Object_Item *it);
 
 /**
+ * @brief Set the icon of a menu item to the standard icon with name @p icon
+ *
+ * @param it The menu item object.
+ * @param icon The icon object to set for the content of @p item
+ *
+ * @deprecated elm_menu_item_icon_name_set() instead
+ * Once this icon is set, any previously set icon will be deleted.
+ */
+EINA_DEPRECATED EAPI void                         elm_menu_item_object_icon_name_set(Elm_Object_Item *it, const char *icon);
+
+/**
+ * @brief Get the string representation from the icon of a menu item
+ *
+ * @param it The menu item object.
+ * @return The string representation of @p item's icon or NULL
+ *
+ * @deprecated elm_menu_item_icon_name_get() instead
+ * @see elm_menu_item_icon_name_set()
+ */
+EINA_DEPRECATED EAPI const char                  *elm_menu_item_object_icon_name_get(const Elm_Object_Item *it);
+
+/**
  * @brief Set the content of the notify widget
  *
  * @param obj The notify object
