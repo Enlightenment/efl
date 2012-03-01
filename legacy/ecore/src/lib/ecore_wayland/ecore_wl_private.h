@@ -6,7 +6,7 @@
 
 # include "Ecore_Wayland.h"
 
-# define LOGFNS 1
+//# define LOGFNS 1
 
 # ifdef LOGFNS
 #  include <stdio.h>
