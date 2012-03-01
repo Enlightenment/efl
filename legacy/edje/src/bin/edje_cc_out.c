@@ -1633,7 +1633,7 @@ data_process_lookups(void)
    Eina_List *l;
    Eina_Hash *images_in_use;
    void *data;
-   Eina_Bool is_lua = FALSE;
+   Eina_Bool is_lua = EINA_FALSE;
 
    /* remove all unreferenced Edje_Part_Collection */
    EINA_LIST_FOREACH_SAFE(edje_collections, l, l2, pc)
@@ -1686,7 +1686,7 @@ data_process_lookups(void)
 	unsigned int i;
 
         if (pc->lua_script_only)
-           is_lua = TRUE;
+           is_lua = EINA_TRUE;
 #define PROGRAM_ID_SET(Type, Pc, It, Count)				\
 	for (It = 0; It < Pc->programs.Type ## _count; ++It)		\
 	  {								\
