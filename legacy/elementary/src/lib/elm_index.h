@@ -286,5 +286,31 @@ EAPI void                  elm_index_item_go(Evas_Object *obj, int level);
 EAPI const char           *elm_index_item_letter_get(const Elm_Object_Item *item);
 
 /**
+ * Set the indicator as to be disabled.
+ *
+ * @param obj The index object
+ * @param disabled  @c EINA_TRUE to disable it, @c EINA_FALSE to enable it
+ *
+ * In Index widget, Indicator notes popup text, which shows a letter has been selecting.
+ *
+ * @see elm_index_indicator_disabled_get()
+ *
+ * @ingroup Index
+ */
+EAPI void                 elm_index_indicator_disabled_set(Evas_Object *obj, Eina_Bool disabled);
+
+/**
+ * Get the value of indicator's disabled status.
+ *
+ * @param obj The index object
+ * @return EINA_TRUE if the indicator is disabled.
+ *
+ * @see elm_index_indicator_disabled_set()
+ *
+ * @ingroup Index
+ */
+EAPI Eina_Bool                 elm_index_indicator_disabled_get(const Evas_Object *obj);
+
+/**
  * @}
  */

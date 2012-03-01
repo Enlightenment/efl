@@ -18,6 +18,7 @@ struct _Widget_Data
    Eina_Bool horizontal : 1;
    Eina_Bool active : 1;
    Eina_Bool down : 1;
+   Eina_Bool indicator_disabled : 1;
 };
 
 struct _Elm_Index_Item
@@ -459,8 +460,8 @@ _mouse_down(void *data, Evas *e __UNUSED__, Evas_Object *o __UNUSED__, void *eve
    _sel_eval(data, ev->canvas.x, ev->canvas.y);
    edje_object_part_drag_value_set(wd->base, "elm.dragable.pointer",
                                    (!edje_object_mirrored_get(wd->base)) ? wd->dx : (wd->dx - w), wd->dy);
-   if (wd->items)
-      edje_object_signal_emit(wd->base, "elm,indicator,state,active", "elm");
+   if (wd->items && !wd->indicator_disabled)
+     edje_object_signal_emit(wd->base, "elm,indicator,state,active", "elm");
 }
 
 static void
@@ -476,7 +477,8 @@ _mouse_up(void *data, Evas *e __UNUSED__, Evas_Object *o __UNUSED__, void *event
    if (item) evas_object_smart_callback_call(data, SIG_SELECTED, item);
    elm_index_active_set(data, 0);
    edje_object_signal_emit(wd->base, "elm,state,level,0", "elm");
-   edje_object_signal_emit(wd->base, "elm,indicator,state,inactive", "elm");
+   if (wd->items && !wd->indicator_disabled)
+     edje_object_signal_emit(wd->base, "elm,indicator,state,inactive", "elm");
 }
 
 static void
@@ -546,6 +548,7 @@ elm_index_add(Evas_Object *parent)
    elm_widget_signal_callback_del_hook_set(obj, _signal_callback_del_hook);
    elm_widget_can_focus_set(obj, EINA_FALSE);
 
+   wd->indicator_disabled = EINA_FALSE;
    wd->horizontal = EINA_FALSE;
 
    wd->base = edje_object_add(e);
@@ -821,6 +824,33 @@ EAPI void
 elm_index_item_data_set(Elm_Object_Item *it, const void *data)
 {
    elm_object_item_data_set(it, (void *) data);
+}
+
+EAPI void
+elm_index_indicator_disabled_set(Evas_Object *obj, Eina_Bool disabled)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype);
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return;
+
+   disabled = !!disabled;
+   if (wd->indicator_disabled == disabled) return;
+   wd->indicator_disabled = disabled;
+   if (!wd->items) return;
+   if (disabled)
+     edje_object_signal_emit(wd->base, "elm,indicator,state,inactive", "elm");
+   else
+     edje_object_signal_emit(wd->base, "elm,indicator,state,active", "elm");
+}
+
+EAPI Eina_Bool
+elm_index_indicator_disabled_get(const Evas_Object *obj)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype) EINA_FALSE;
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return EINA_FALSE;
+
+   return wd->indicator_disabled;
 }
 
 EAPI void
