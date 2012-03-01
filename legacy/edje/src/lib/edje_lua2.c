@@ -693,7 +693,7 @@ static int
 _elua_echo(lua_State *L)                         // Stack usage [-0, +0, v]
 {
    const char *string = luaL_checkstring(L, 1);  // Stack usage [-0, +0, v]
-   LD("%s\n", string);
+   LD("%s", string);
    return 0;
 }
 
@@ -2652,16 +2652,16 @@ _elua_edje_file(lua_State *L)                                   // Stack usage [
 
              switch (err)
                {
-                  case EDJE_LOAD_ERROR_NONE :                         LE("Edje file loading errer %s %s - no error happened, but you should not see this.\n", obj->ed->file->path, group);  break;
-                  case EDJE_LOAD_ERROR_GENERIC :                      LE("Edje file loading errer %s %s - generic error.\n", obj->ed->file->path, group);  break;
-                  case EDJE_LOAD_ERROR_DOES_NOT_EXIST :               LE("Edje file loading errer %s %s - file does not exist.\n", obj->ed->file->path, group);  break;
-                  case EDJE_LOAD_ERROR_PERMISSION_DENIED :            LE("Edje file loading errer %s %s - permission denied reading the file.\n", obj->ed->file->path, group);  break;
-                  case EDJE_LOAD_ERROR_RESOURCE_ALLOCATION_FAILED :   LE("Edje file loading errer %s %s - resource allocation failed.\n", obj->ed->file->path, group);  break;
-                  case EDJE_LOAD_ERROR_CORRUPT_FILE :                 LE("Edje file loading errer %s %s - corrupt file.\n", obj->ed->file->path, group);  break;
-                  case EDJE_LOAD_ERROR_UNKNOWN_FORMAT :               LE("Edje file loading errer %s %s - unknown file format.\n", obj->ed->file->path, group);  break;
-                  case EDJE_LOAD_ERROR_INCOMPATIBLE_FILE :            LE("Edje file loading errer %s %s - incompatible file.\n", obj->ed->file->path, group);  break;
-                  case EDJE_LOAD_ERROR_UNKNOWN_COLLECTION :           LE("Edje file loading errer %s %s - unknown group.\n", obj->ed->file->path, group);  break;
-                  case EDJE_LOAD_ERROR_RECURSIVE_REFERENCE :          LE("Edje file loading errer %s %s - recursive reference in group.\n", obj->ed->file->path, group);  break;
+                  case EDJE_LOAD_ERROR_NONE :                         LE("Edje file loading errer %s %s - no error happened, but you should not see this.", obj->ed->file->path, group);  break;
+                  case EDJE_LOAD_ERROR_GENERIC :                      LE("Edje file loading errer %s %s - generic error.", obj->ed->file->path, group);  break;
+                  case EDJE_LOAD_ERROR_DOES_NOT_EXIST :               LE("Edje file loading errer %s %s - file does not exist.", obj->ed->file->path, group);  break;
+                  case EDJE_LOAD_ERROR_PERMISSION_DENIED :            LE("Edje file loading errer %s %s - permission denied reading the file.", obj->ed->file->path, group);  break;
+                  case EDJE_LOAD_ERROR_RESOURCE_ALLOCATION_FAILED :   LE("Edje file loading errer %s %s - resource allocation failed.", obj->ed->file->path, group);  break;
+                  case EDJE_LOAD_ERROR_CORRUPT_FILE :                 LE("Edje file loading errer %s %s - corrupt file.", obj->ed->file->path, group);  break;
+                  case EDJE_LOAD_ERROR_UNKNOWN_FORMAT :               LE("Edje file loading errer %s %s - unknown file format.", obj->ed->file->path, group);  break;
+                  case EDJE_LOAD_ERROR_INCOMPATIBLE_FILE :            LE("Edje file loading errer %s %s - incompatible file.", obj->ed->file->path, group);  break;
+                  case EDJE_LOAD_ERROR_UNKNOWN_COLLECTION :           LE("Edje file loading errer %s %s - unknown group.", obj->ed->file->path, group);  break;
+                  case EDJE_LOAD_ERROR_RECURSIVE_REFERENCE :          LE("Edje file loading errer %s %s - recursive reference in group.", obj->ed->file->path, group);  break;
                }
           }
      }
@@ -2860,13 +2860,14 @@ _elua_image_image(lua_State *L)                                 // Stack usage [
              }
         }
 
-        /* Sandbox lua - Only allow access to images within the same edje file.  I'm not so sure we need this level of sandboxing though.  So leaving it here, just in case.
         if (-1 == id)
           {
-             LI("Image %s not found in our edje file, trying external image file %s.\n", key, file);
+             LE("Image %s not found in our edje file.", key);
+             /* Sandbox lua - Only allow access to images within the same edje file.  I'm not so sure we need this level of sandboxing though.  So leaving it here, just in case.
+             LI("Image %s not found in our edje file, trying external image file %s.", key, file);
              evas_object_image_file_set(elo->evas_obj, file, key);
+             */
           }
-        */
      }
    evas_object_image_file_get(elo->evas_obj, &file, &key);
    _elua_ret(L, "$file $key", file, key);
