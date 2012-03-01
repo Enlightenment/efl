@@ -77,10 +77,7 @@ main(void)
    evas_object_show(bg);
    ecore_evas_object_associate(ee, bg, ECORE_EVAS_OBJECT_ASSOCIATE_BASE);
 
-   ecore_main_fd_handler_add(STDIN_FILENO,
-              ECORE_FD_READ | ECORE_FD_ERROR,
-              _stdin_cb,
-              NULL, NULL, NULL);
+   ecore_main_fd_handler_add(STDIN_FILENO, ECORE_FD_READ, _stdin_cb, NULL, NULL, NULL);
 
    ecore_main_loop_begin();
 

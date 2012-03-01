@@ -1348,7 +1348,8 @@
  * @until ecore_evas_engines_free
  *
  * We then create an Ecore_Evas(window) with the first available engine, on
- * position 0,0 with size 200,200 and no especial flags:
+ * position 0,0 with size 200,200 and no especial flags, set it's title and show
+ * it:
  * @until evas_show
  *
  * We now add some important data to our Ecore_Evas:
@@ -1365,16 +1366,34 @@
  * We now print which Evas engine is being used for our example:
  * @until printf
  *
- * Next we are going to add a background to our window, for which we'll need to
- * get the canvas(Evas) on which to draw it:
+ * We are going to add a background to our window but before we can do that
+ * we'll need to get the canvas(Evas) on which to draw it:
  * @until canvas
  *
  * We then do a sanity check, verifying if the Ecore_Evas of the Evas is the
  * Ecore_Evas from which we got the Evas:
  * @until printf
  *
- * Once all else is done we run our main loop, and when that is done(application
- * is exiting) we free our Ecore_Evas and shutdown the ecore_evas subsystem:
+ * Now we can actually add the background:
+ * @until ecore_evas_object_associate
+ *
+ * To hide and show the windows of this process when the user presses 'h' and
+ * 's' respectively we need to know when the user types something, so we
+ * register a callback for when we can read something from @c stdin:
+ * @until )
+ *
+ * The callback that actually does the hiding and showing is pretty simple, it
+ * does a @c scanf(which we know won't block since there is something to read on
+ * @c stdin) and if the character is an 'h' we iterate over all windows calling
+ * @c ecore_evas_hide on them, if the character is an 's' we call @c
+ * ecore_evas_show instead:
+ * @dontinclude ecore_evas_basics_example.c
+ * @skip static Eina_Bool
+ * @until }
+ * @skip ecore_main_loop_begin
+ *
+ * Once all is done we run our main loop, and when that is done(application is
+ * exiting) we free our Ecore_Evas and shutdown the ecore_evas subsystem:
  * @until shutdown
  *
  * Here you have the full-source of the code:
