@@ -4502,9 +4502,9 @@ evas_textblock_style_set(Evas_Textblock_Style *ts, const char *text)
      {
         // format MUST be KEY='VALUE'[KEY='VALUE']...
         const char *p;
-        const char *key_start, *key_stop, *val_start, *val_stop;
+        const char *key_start, *key_stop, *val_start;
 
-        key_start = key_stop = val_start = val_stop = NULL;
+        key_start = key_stop = val_start = NULL;
         p = ts->style_text;
         while (*p)
           {
@@ -4521,19 +4521,54 @@ evas_textblock_style_set(Evas_Textblock_Style *ts, const char *text)
              else if (!val_start)
                {
                   if (((*p) == '\'') && (*(p + 1)))
-                    val_start = p + 1;
+                    {
+                       val_start = ++p;
+                    }
                }
-             else if (!val_stop)
+             if ((key_start) && (key_stop) && (val_start))
                {
-                  if (((*p) == '\'') && (p > ts->style_text) && (p[-1] != '\\'))
-                    val_stop = p;
-               }
-             if ((key_start) && (key_stop) && (val_start) && (val_stop))
-               {
-                  char *tags, *replaces;
+                  char *tags, *replaces = NULL;
                   Evas_Object_Style_Tag *tag;
-                  size_t tag_len = key_stop - key_start;
-                  size_t replace_len = val_stop - val_start;
+                  const char *val_stop = NULL;
+                  size_t tag_len;
+                  size_t replace_len;
+
+                    {
+                       Eina_Strbuf *buf = eina_strbuf_new();
+                       val_stop = val_start;
+                       while(*p)
+                         {
+                            if (*p == '\'')
+                              {
+                                 /* Break if we found the tag end */
+                                 if (p[-1] != '\\')
+                                   {
+                                      eina_strbuf_append_length(buf, val_stop,
+                                            p - val_stop);
+                                      break;
+                                   }
+                                 else
+                                   {
+                                      eina_strbuf_append_length(buf, val_stop,
+                                            p - val_stop - 1);
+                                      eina_strbuf_append_char(buf, '\'');
+                                      val_stop = p + 1;
+                                   }
+                              }
+                            p++;
+                         }
+                       replaces = eina_strbuf_string_steal(buf);
+                       eina_strbuf_free(buf);
+                    }
+                  /* If we didn't find an end, just aboart. */
+                  if (!*p)
+                    {
+                       if (replaces) free(replaces);
+                       break;
+                    }
+
+                  tag_len = key_stop - key_start;
+                  replace_len = val_stop - val_start;
 
                   tags = malloc(tag_len + 1);
                   if (tags)
@@ -4542,12 +4577,6 @@ evas_textblock_style_set(Evas_Textblock_Style *ts, const char *text)
                        tags[tag_len] = 0;
                     }
 
-                  replaces = malloc(replace_len + 1);
-                  if (replaces)
-                    {
-                       memcpy(replaces, val_start, replace_len);
-                       replaces[replace_len] = 0;
-                    }
                   if ((tags) && (replaces))
                     {
                        if (!strcmp(tags, "DEFAULT"))
@@ -4578,7 +4607,7 @@ evas_textblock_style_set(Evas_Textblock_Style *ts, const char *text)
                        if (tags) free(tags);
                        if (replaces) free(replaces);
                     }
-                  key_start = key_stop = val_start = val_stop = NULL;
+                  key_start = key_stop = val_start;
                }
              p++;
           }
