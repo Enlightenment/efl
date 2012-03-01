@@ -1,10 +1,11 @@
 #ifndef _ECORE_WAYLAND_H_
 # define _ECORE_WAYLAND_H_
 
+# define GL_GLEXT_PROTOTYPES
+
 # include <Eina.h>
 # include <wayland-client.h>
 # include <wayland-egl.h> // NB: already includes wayland-client.h
-# include <GL/gl.h>
 # include <EGL/egl.h>
 # include <EGL/eglext.h>
 
@@ -92,7 +93,6 @@ struct _Ecore_Wl_Display
 
    Ecore_Wl_Output *output;
 
-   PFNGLEGLIMAGETARGETTEXTURE2DOESPROC image_target_texture_2d;
    PFNEGLCREATEIMAGEKHRPROC create_image;
    PFNEGLDESTROYIMAGEKHRPROC destroy_image;
 

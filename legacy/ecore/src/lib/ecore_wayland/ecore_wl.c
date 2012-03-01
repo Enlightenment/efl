@@ -171,8 +171,6 @@ ecore_wl_init(const char *name)
         return --_ecore_wl_init_count;
      }
 
-   _ecore_wl_disp->image_target_texture_2d = 
-     (void *)eglGetProcAddress("glEGLImageTargetTexture2DOES");
    _ecore_wl_disp->create_image = 
      (void *)eglGetProcAddress("eglCreateImageKHR");
    _ecore_wl_disp->destroy_image = 
