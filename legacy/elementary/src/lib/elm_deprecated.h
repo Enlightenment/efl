@@ -4229,7 +4229,7 @@ EINA_DEPRECATED EAPI const char      *elm_pager_item_style_default_get(const Eva
  *
  * @warning NEVER use this. It is for hyper-special cases only. use styles
  * instead. e.g. "default", "marker", "slide_long" etc.
- * @deprecated Use tag instead
+ * @deprecated Use <font_size> tag instead. eg) <font_size=40>abc</font_size>
  */
 EINA_DEPRECATED EAPI void                        elm_label_fontsize_set(Evas_Object *obj, int fontsize);
 
@@ -4244,7 +4244,7 @@ EINA_DEPRECATED EAPI void                        elm_label_fontsize_set(Evas_Obj
  *
  * @warning NEVER use this. It is for hyper-special cases only. use styles
  * instead. e.g. "default", "marker", "slide_long" etc.
- * @deprecated Use tag instead
+ * @deprecated Use <color> tag instead. about <color> tag - Text color in one of the following formats: "#RRGGBB", "#RRGGBBAA", "#RGB", and "#RGBA"  
  */
 EINA_DEPRECATED EAPI void                        elm_label_text_color_set(Evas_Object *obj, unsigned int r, unsigned int g, unsigned int b, unsigned int a);
 
@@ -4256,7 +4256,7 @@ EINA_DEPRECATED EAPI void                        elm_label_text_color_set(Evas_O
  *
  * @warning NEVER use this. It is for hyper-special cases only. use styles
  * instead. e.g. "default", "marker", "slide_long" etc.
- * @deprecated Use tag instead
+ * @deprecated Use <align> tag instead. about <align> tag - Either "auto" (meaning according to text direction), "left", "right", "center", "middle", a value between 0.0 and 1.0, or a value between 0% to 100%.
  */
 EINA_DEPRECATED EAPI void                        elm_label_text_align_set(Evas_Object *obj, const char *alignmode);
 
@@ -4274,6 +4274,28 @@ EINA_DEPRECATED EAPI void                        elm_label_text_align_set(Evas_O
  * @deprecated Just make colored background by yourself. 
  */
 EINA_DEPRECATED EAPI void                        elm_label_background_color_set(Evas_Object *obj, unsigned int r, unsigned int g, unsigned int b, unsigned int a);
+
+/**
+ * @brief Set wrap height of the label
+ *
+ * @param obj The label object
+ * @param h The wrap height in pixels at a minimum where words need to wrap
+ *
+ * This function sets the maximum height size hint of the label.
+ *
+ * @warning This is only relevant if the label is inside a container.
+ * @deprecated This function should not be used because of wrong concept. 
+ */
+EAPI void                        elm_label_wrap_height_set(Evas_Object *obj, Evas_Coord h);
+
+/**
+ * @brief get wrap width of the label
+ *
+ * @param obj The label object
+ * @return The wrap height in pixels at a minimum where words need to wrap
+ * @deprecated This function should not be used because of wrong concept. 
+ */
+EAPI Evas_Coord                  elm_label_wrap_height_get(const Evas_Object *obj);
 
 /**
  * @brief Flush all caches.

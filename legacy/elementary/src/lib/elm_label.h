@@ -86,28 +86,6 @@ EAPI void                        elm_label_wrap_width_set(Evas_Object *obj, Evas
 EAPI Evas_Coord                  elm_label_wrap_width_get(const Evas_Object *obj);
 
 /**
- * @brief Set wrap height of the label
- *
- * @param obj The label object
- * @param h The wrap height in pixels at a minimum where words need to wrap
- *
- * This function sets the maximum height size hint of the label.
- *
- * @warning This is only relevant if the label is inside a container.
- */
-//XXX: Maybe added for supporting multi-line ellipsis. Evas textblock supports multi-line ellipsis by itself, no more needs for this API.
-EAPI void                        elm_label_wrap_height_set(Evas_Object *obj, Evas_Coord h);
-
-/**
- * @brief get wrap width of the label
- *
- * @param obj The label object
- * @return The wrap height in pixels at a minimum where words need to wrap
- */
-//XXX: Maybe added for supporting multi-line ellipsis. Evas textblock supports multi-line ellipsis by itself, no more needs for this API.
-EAPI Evas_Coord                  elm_label_wrap_height_get(const Evas_Object *obj);
-
-/**
  * @brief Set the ellipsis behavior of the label
  *
  * @param obj The label object
