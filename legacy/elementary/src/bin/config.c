@@ -454,11 +454,11 @@ fc_change(void *data       __UNUSED__,
           Evas_Object     *obj,
           void *event_info __UNUSED__)
 {
-   double font_cache = elm_font_cache_get();
+   double font_cache = elm_cache_font_cache_size_get();
    double val = elm_slider_value_get(obj);
 
    if (font_cache == val) return;
-   elm_font_cache_set(val * 1024);
+   elm_cache_font_cache_size_set(val * 1024);
    elm_config_all_flush();
 }
 
@@ -479,11 +479,11 @@ ic_change(void *data       __UNUSED__,
           Evas_Object     *obj,
           void *event_info __UNUSED__)
 {
-   double image_cache = elm_image_cache_get();
+   double image_cache = elm_cache_image_cache_size_get();
    double val = elm_slider_value_get(obj);
 
    if (image_cache == val) return;
-   elm_image_cache_set(val * 1024);
+   elm_cache_image_cache_size_set(val * 1024);
    elm_config_all_flush();
 }
 
@@ -554,11 +554,11 @@ efc_change(void *data       __UNUSED__,
            Evas_Object     *obj,
            void *event_info __UNUSED__)
 {
-   double efc = elm_edje_file_cache_get();
+   double efc = elm_cache_edje_file_cache_size_get();
    double val = elm_slider_value_get(obj);
 
    if (efc == val) return;
-   elm_edje_file_cache_set(val);
+   elm_cache_edje_file_cache_size_set(val);
    elm_config_all_flush();
 }
 
@@ -579,11 +579,11 @@ ecc_change(void *data       __UNUSED__,
            Evas_Object     *obj,
            void *event_info __UNUSED__)
 {
-   double ecc = elm_edje_collection_cache_get();
+   double ecc = elm_cache_edje_collection_cache_size_get();
    double val = elm_slider_value_get(obj);
 
    if (ecc == val) return;
-   elm_edje_collection_cache_set(val);
+   elm_cache_edje_collection_cache_size_set(val);
    elm_config_all_flush();
 }
 
@@ -916,10 +916,10 @@ _config_display_update(Evas_Object *win)
    scale = elm_scale_get();
    fs = elm_finger_size_get();
    flush_interval = elm_cache_flush_interval_get();
-   font_c = elm_font_cache_get();
-   image_c = elm_image_cache_get();
-   edje_file_c = elm_edje_file_cache_get();
-   edje_col_c = elm_edje_collection_cache_get();
+   font_c = elm_cache_font_cache_size_get();
+   image_c = elm_cache_image_cache_size_get();
+   edje_file_c = elm_cache_edje_file_cache_size_get();
+   edje_col_c = elm_cache_edje_collection_cache_size_get();
 
    s_bounce = elm_scroll_bounce_enabled_get();
    s_bounce_friction = elm_scroll_bounce_friction_get();
@@ -2872,7 +2872,7 @@ _status_config_caches(Evas_Object *win,
    elm_slider_unit_format_set(sl, "%1.1f MB");
    elm_slider_indicator_format_set(sl, "%1.1f");
    elm_slider_min_max_set(sl, 0.0, 4.0);
-   elm_slider_value_set(sl, (double)elm_font_cache_get() / 1024.0);
+   elm_slider_value_set(sl, (double)elm_cache_font_cache_size_get() / 1024.0);
    elm_box_pack_end(bx, sl);
    evas_object_show(sl);
 
@@ -2896,7 +2896,7 @@ _status_config_caches(Evas_Object *win,
    elm_slider_unit_format_set(sl, "%1.0f MB");
    elm_slider_indicator_format_set(sl, "%1.0f");
    elm_slider_min_max_set(sl, 0, 32);
-   elm_slider_value_set(sl, (double)elm_image_cache_get() / 1024.0);
+   elm_slider_value_set(sl, (double)elm_cache_image_cache_size_get() / 1024.0);
    elm_box_pack_end(bx, sl);
    evas_object_show(sl);
 
@@ -2920,7 +2920,7 @@ _status_config_caches(Evas_Object *win,
    elm_slider_unit_format_set(sl, "%1.0f files");
    elm_slider_indicator_format_set(sl, "%1.0f");
    elm_slider_min_max_set(sl, 0, 32);
-   elm_slider_value_set(sl, elm_edje_file_cache_get());
+   elm_slider_value_set(sl, elm_cache_edje_file_cache_size_get());
    elm_box_pack_end(bx, sl);
    evas_object_show(sl);
 
@@ -2944,7 +2944,7 @@ _status_config_caches(Evas_Object *win,
    elm_slider_unit_format_set(sl, "%1.0f collections");
    elm_slider_indicator_format_set(sl, "%1.0f");
    elm_slider_min_max_set(sl, 0, 128);
-   elm_slider_value_set(sl, elm_edje_collection_cache_get());
+   elm_slider_value_set(sl, elm_cache_edje_collection_cache_size_get());
    elm_box_pack_end(bx, sl);
    evas_object_show(sl);
 

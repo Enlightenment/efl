@@ -1358,14 +1358,26 @@ elm_cache_flush_enabled_set(Eina_Bool enabled)
    _elm_recache();
 }
 
-EAPI int
+EINA_DEPRECATED EAPI int
 elm_font_cache_get(void)
+{
+   return elm_cache_font_cache_size_get();
+}
+
+EAPI int
+elm_cache_font_cache_size_get(void)
 {
    return _elm_config->font_cache;
 }
 
-EAPI void
+EINA_DEPRECATED EAPI void
 elm_font_cache_set(int size)
+{
+   elm_cache_font_cache_size_set(size);
+}
+
+EAPI void 
+elm_cache_font_cache_size_set(int size)
 {
    if (_elm_config->font_cache == size) return;
    _elm_config->font_cache = size;
@@ -1373,14 +1385,26 @@ elm_font_cache_set(int size)
    _elm_recache();
 }
 
-EAPI int
+EINA_DEPRECATED EAPI int
 elm_image_cache_get(void)
+{
+   return elm_cache_image_cache_size_get();
+}
+
+EAPI int
+elm_cache_image_cache_size_get(void)
 {
    return _elm_config->image_cache;
 }
 
-EAPI void
+EINA_DEPRECATED EAPI void
 elm_image_cache_set(int size)
+{
+   elm_cache_image_cache_size_set(size);
+}
+
+EAPI void
+elm_cache_image_cache_size_set(int size)
 {
    if (_elm_config->image_cache == size) return;
    _elm_config->image_cache = size;
@@ -1388,14 +1412,26 @@ elm_image_cache_set(int size)
    _elm_recache();
 }
 
-EAPI int
+EINA_DEPRECATED EAPI int
 elm_edje_file_cache_get(void)
+{
+   return elm_cache_edje_file_cache_size_get();
+}
+
+EAPI int
+elm_cache_edje_file_cache_size_get()
 {
    return _elm_config->edje_cache;
 }
 
-EAPI void
+EINA_DEPRECATED EAPI void
 elm_edje_file_cache_set(int size)
+{
+   elm_cache_edje_file_cache_size_set(size);
+}
+
+EAPI void
+elm_cache_edje_file_cache_size_set(int size)
 {
    if (_elm_config->edje_cache == size) return;
    _elm_config->edje_cache = size;
@@ -1403,14 +1439,26 @@ elm_edje_file_cache_set(int size)
    _elm_recache();
 }
 
-EAPI int
+EINA_DEPRECATED EAPI int
 elm_edje_collection_cache_get(void)
+{
+   return elm_cache_edje_collection_cache_size_get();
+}
+
+EAPI int
+elm_cache_edje_collection_cache_size_get(void)
 {
    return _elm_config->edje_collection_cache;
 }
 
-EAPI void
+EINA_DEPRECATED EAPI void
 elm_edje_collection_cache_set(int size)
+{
+   elm_cache_edje_collection_cache_size_set(size);
+}
+
+EAPI void
+elm_cache_edje_collection_cache_size_set(int size)
 {
    if (_elm_config->edje_collection_cache == size) return;
    _elm_config->edje_collection_cache = size;

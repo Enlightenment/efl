@@ -88,8 +88,7 @@ EAPI void      elm_cache_flush_enabled_set(Eina_Bool enabled);
  * @return The font cache size
  * @ingroup Caches
  */
-// XXX: how about using elm_cache prefix for all following APIs???
-EAPI int       elm_font_cache_get(void);
+EAPI int       elm_cache_font_cache_size_get(void);
 
 /**
  * Set the configured font cache size
@@ -99,7 +98,7 @@ EAPI int       elm_font_cache_get(void);
  * @param size The font cache size
  * @ingroup Caches
  */
-EAPI void      elm_font_cache_set(int size);
+EAPI void      elm_cache_font_cache_size_set(int size);
 
 /**
  * Get the configured image cache size
@@ -109,7 +108,7 @@ EAPI void      elm_font_cache_set(int size);
  * @return The image cache size
  * @ingroup Caches
  */
-EAPI int       elm_image_cache_get(void);
+EAPI int       elm_cache_image_cache_size_get(void);
 
 /**
  * Set the configured image cache size
@@ -119,7 +118,7 @@ EAPI int       elm_image_cache_get(void);
  * @param size The image cache size
  * @ingroup Caches
  */
-EAPI void      elm_image_cache_set(int size);
+EAPI void       elm_cache_image_cache_size_set(int size);
 
 
 /**
@@ -131,7 +130,7 @@ EAPI void      elm_image_cache_set(int size);
  * @return The edje file cache size
  * @ingroup Caches
  */
-EAPI int       elm_edje_file_cache_get(void);
+EAPI int       elm_cache_edje_file_cache_size_get(void);
 
 /**
  * Set the configured edje file cache size
@@ -142,7 +141,7 @@ EAPI int       elm_edje_file_cache_get(void);
  * @param size The edje file cache size
  * @ingroup Caches
  */
-EAPI void      elm_edje_file_cache_set(int size);
+EAPI void       elm_cache_edje_file_cache_size_set(int size);
 
 /**
  * Get the configured edje collections (groups) cache size.
@@ -153,7 +152,7 @@ EAPI void      elm_edje_file_cache_set(int size);
  * @return The edje collections cache size
  * @ingroup Caches
  */
-EAPI int       elm_edje_collection_cache_get(void);
+EAPI int       elm_cache_edje_collection_cache_size_get(void);
 
 /**
  * Set the configured edje collections (groups) cache size
@@ -164,7 +163,7 @@ EAPI int       elm_edje_collection_cache_get(void);
  * @param size The edje collections cache size
  * @ingroup Caches
  */
-EAPI void      elm_edje_collection_cache_set(int size);
+EAPI void       elm_cache_edje_collection_cache_size_set(int size);
 
 /**
  * @}

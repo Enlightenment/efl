@@ -4421,5 +4421,91 @@ EINA_DEPRECATED EAPI Eina_Bool            elm_calendar_day_selection_enabled_get
 typedef _Elm_Calendar_Mark_Repeat_Type Elm_Calendar_Mark_Repeat EINA_DEPRECATED;
 
 /**
+ * Get the configured font cache size
+ *
+ * This gets the globally configured font cache size, in bytes.
+ *
+ * @return The font cache size
+ * @deprecated elm_cache_font_cache_size_get(void);
+ */
+EINA_DEPRECATED EAPI int       elm_font_cache_get(void);
+
+/**
+ * Set the configured font cache size
+ *
+ * This sets the globally configured font cache size, in bytes
+ *
+ * @param size The font cache size
+ * @deprecated elm_cache_font_cache_size_set(int size);
+ */
+EINA_DEPRECATED EAPI void      elm_font_cache_set(int size);
+
+/**
+ * Get the configured image cache size
+ *
+ * This gets the globally configured image cache size, in bytes
+ *
+ * @return The image cache size
+ * @ingroup Caches
+ */
+EINA_DEPRECATED EAPI int       elm_image_cache_get(void);
+EAPI int       elm_cache_image_cache_size_get(void);
+
+/**
+ * Set the configured image cache size
+ *
+ * This sets the globally configured image cache size, in bytes
+ *
+ * @param size The image cache size
+ * @deprecated Use elm_cache_image_cache_size_set(int size);
+ */
+EINA_DEPRECATED EAPI void      elm_image_cache_set(int size);
+
+
+/**
+ * Get the configured edje file cache size.
+ *
+ * This gets the globally configured edje file cache size, in number
+ * of files.
+ *
+ * @return The edje file cache size
+ * @deprecated Use elm_cache_edje_file_cache_size_get(void);
+ */
+EINA_DEPRECATED EAPI int       elm_edje_file_cache_get(void);
+
+/**
+ * Set the configured edje file cache size
+ *
+ * This sets the globally configured edje file cache size, in number
+ * of files.
+ *
+ * @param size The edje file cache size
+ * @deprecated Use elm_cache_edje_file_cache_size_get(int size);
+ */
+EINA_DEPRECATED EAPI void      elm_edje_file_cache_set(int size);
+
+/**
+ * Get the configured edje collections (groups) cache size.
+ *
+ * This gets the globally configured edje collections cache size, in
+ * number of collections.
+ *
+ * @return The edje collections cache size
+ * @deprecated Use elm_cache_edje_collection_cache_size_get(void);
+ */
+EINA_DEPRECATED EAPI int       elm_edje_collection_cache_get(void);
+
+/**
+ * Set the configured edje collections (groups) cache size
+ *
+ * This sets the globally configured edje collections cache size, in
+ * number of collections.
+ *
+ * @param size The edje collections cache size
+ * @deprecated elm_cache_edje_collection_cache_size_set(int size);
+ */
+EINA_DEPRECATED EAPI void      elm_edje_collection_cache_set(int size);
+
+/**
  * @}
  */
