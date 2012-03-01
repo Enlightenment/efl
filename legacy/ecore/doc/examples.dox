@@ -1220,7 +1220,10 @@
  * @note Make sure you minimize, resize, give and remove focus to see more
  * callbacks called.
  *
- * Here you have the full-source of the code:
+ * The example is constituted of two main parts, first is the implementation of
+ * callbacks that will be called for each event(all our callbacks do is print
+ * their own name) and the second is the main function where we register the
+ * event callbacks and run the main loop:
  * @include ecore_evas_callbacks.c
  * @example ecore_evas_callbacks.c
  */
