@@ -1229,7 +1229,7 @@
  */
 
 /**
- * @page Ecore_Evas_Window_Sizes_Example_c Ecore_Evas window sizes
+ * @page Ecore_Evas_Window_Sizes_Example_c Ecore_Evas window size hints
  *
  * On this example, we show you how to deal with @c Ecore_Evas window
  * size hints, which are implemented <b>per Evas engine</b>.

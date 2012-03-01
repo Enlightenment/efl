@@ -39,6 +39,9 @@
  * @li @ref ecore_evas_callbacks_example_c
  * @li @ref ecore_evas_object_example_c
  * @li @ref ecore_evas_basics_example_c
+ * @li @ref Ecore_Evas_Window_Sizes_Example_c
+ * @li @ref Ecore_Evas_Buffer_Example_01_c
+ * @li @ref Ecore_Evas_Buffer_Example_02_c
  */
 
 /* FIXME:
@@ -60,10 +63,26 @@ extern "C" {
 /**
  * @defgroup Ecore_Evas_Group Ecore_Evas wrapper/helper set of functions
  *
+ * Ecore evas is a set functions that make it easy to tie together ecore's main
+ * loop and input handling to evas. As such it's a natural base for EFL
+ * applications. While this combination makes it easy to create the basic
+ * aspects all applications need, for normal applications(ones with buttons,
+ * checkboxes and layouts) one should consider using Elementary.
+ *
+ * Ecore evas is extremely well suited for applications that are not based on
+ * widgets. It has a main loop that delivers events, does basic window handling
+ * and leaves all of the drawing up to the user. This works very well if used
+ * in conjunction with Edje or if doing custom drawing as, for example, is done
+ * in games.
+ *
  * This is a list of examples of these functions:
- * - @ref Ecore_Evas_Window_Sizes_Example_c
- * - @ref Ecore_Evas_Buffer_Example_01_c
- * - @ref Ecore_Evas_Buffer_Example_02_c
+ * @li @ref ecore_evas_basics_example_c
+ * @li @ref ecore_evas_object_example_c
+ * @li @ref ecore_evas_callbacks_example_c
+ * @li @ref Ecore_Evas_Window_Sizes_Example_c
+ * @li @ref Ecore_Evas_Buffer_Example_01_c
+ * @li @ref Ecore_Evas_Buffer_Example_02_c
+ *
  * @{
  */
 

@@ -22,7 +22,7 @@
    @li @ref Ecore_Main_Loop_Group
    @li @ref Ecore_File_Group
    @li @ref Ecore_Con_Group
-   @li @link Ecore_Evas.h   Ecore_Evas - Evas convenience functions. @endlink
+   @li @ref Ecore_Evas_Group
    @li @ref Ecore_FB_Group
    @li @link Ecore_Ipc.h    Ecore_IPC - Inter Process Communication functions. @endlink
    @li @link Ecore_X.h      Ecore_X - X Windows System wrapper. @endlink
