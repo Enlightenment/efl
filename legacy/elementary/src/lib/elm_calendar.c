@@ -39,7 +39,7 @@ struct _Elm_Calendar_Mark
    Eina_List *node;
    struct tm mark_time;
    const char *mark_type;
-   Elm_Calendar_Mark_Repeat repeat;
+   Elm_Calendar_Mark_Repeat_Type repeat;
 };
 
 static const char *widtype = NULL;
@@ -69,7 +69,7 @@ static int _days_in_month[2][12] =
 };
 
 static Elm_Calendar_Mark *
-_mark_new(Evas_Object *obj, const char *mark_type, struct tm *mark_time, Elm_Calendar_Mark_Repeat repeat)
+_mark_new(Evas_Object *obj, const char *mark_type, struct tm *mark_time, Elm_Calendar_Mark_Repeat_Type repeat)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
    Elm_Calendar_Mark *mark;
@@ -937,7 +937,7 @@ elm_calendar_format_function_set(Evas_Object *obj, char * (*format_function) (st
 }
 
 EAPI Elm_Calendar_Mark *
-elm_calendar_mark_add(Evas_Object *obj, const char *mark_type, struct tm *mark_time, Elm_Calendar_Mark_Repeat repeat)
+elm_calendar_mark_add(Evas_Object *obj, const char *mark_type, struct tm *mark_time, Elm_Calendar_Mark_Repeat_Type repeat)
 {
    ELM_CHECK_WIDTYPE(obj, widtype) NULL;
    Widget_Data *wd = elm_widget_data_get(obj);

@@ -4394,5 +4394,10 @@ EINA_DEPRECATED EAPI void                 elm_calendar_day_selection_enabled_set
 EINA_DEPRECATED EAPI Eina_Bool            elm_calendar_day_selection_enabled_get(const Evas_Object *obj);
 
 /**
+ * @deprecated Use Elm_Calendar_Mark_Repeat_Type instead.
+ */
+typedef _Elm_Calendar_Mark_Repeat_Type Elm_Calendar_Mark_Repeat EINA_DEPRECATED;
+
+/**
  * @}
  */

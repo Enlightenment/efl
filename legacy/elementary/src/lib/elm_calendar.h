@@ -26,9 +26,18 @@
  * @{
  */
 
+typedef enum
+{
+   ELM_CALENDAR_UNIQUE, /**< Default value. Marks will be displayed only on event day. */
+   ELM_CALENDAR_DAILY, /**< Marks will be displayed everyday after event day (inclusive). */
+   ELM_CALENDAR_WEEKLY, /**< Marks will be displayed every week after event day (inclusive) - i.e. each seven days. */
+   ELM_CALENDAR_MONTHLY, /**< Marks will be displayed every month day that coincides to event day. E.g.: if an event is set to 30th Jan, no marks will be displayed on Feb, but will be displayed on 30th Mar*/
+   ELM_CALENDAR_ANNUALLY /**< Marks will be displayed every year that coincides to event day (and month). E.g. an event added to 30th Jan 2012 will be repeated on 30th Jan 2013. */
+} _Elm_Calendar_Mark_Repeat_Type;
+
 /**
- * @enum _Elm_Calendar_Mark_Repeat
- * @typedef Elm_Calendar_Mark_Repeat
+ * @enum _Elm_Calendar_Mark_Repeat_Type
+ * @typedef Elm_Calendar_Mark_Repeat_Type
  *
  * Event periodicity, used to define if a mark should be repeated
  * @b beyond event's day. It's set when a mark is added.
@@ -43,15 +52,7 @@
  *
  * @ingroup Calendar
  */
-typedef enum
-{
-   ELM_CALENDAR_UNIQUE, /**< Default value. Marks will be displayed only on event day. */
-   ELM_CALENDAR_DAILY, /**< Marks will be displayed everyday after event day (inclusive). */
-   ELM_CALENDAR_WEEKLY, /**< Marks will be displayed every week after event day (inclusive) - i.e. each seven days. */
-   ELM_CALENDAR_MONTHLY, /**< Marks will be displayed every month day that coincides to event day. E.g.: if an event is set to 30th Jan, no marks will be displayed on Feb, but will be displayed on 30th Mar*/
-   ELM_CALENDAR_ANNUALLY /**< Marks will be displayed every year that coincides to event day (and month). E.g. an event added to 30th Jan 2012 will be repeated on 30th Jan 2013. */
-} Elm_Calendar_Mark_Repeat;
-// XXX: Elm_Calendar_Mark_Repeat_Type
+typedef _Elm_Calendar_Mark_Repeat_Type Elm_Calendar_Mark_Repeat_Type;
 
 typedef struct _Elm_Calendar_Mark Elm_Calendar_Mark;    /**< Item handle for a calendar mark. Created with elm_calendar_mark_add() and deleted with elm_calendar_mark_del(). */
 
@@ -315,7 +316,7 @@ EAPI void                 elm_calendar_format_function_set(Evas_Object *obj, cha
  *
  * @ingroup Calendar
  */
-EAPI Elm_Calendar_Mark   *elm_calendar_mark_add(Evas_Object *obj, const char *mark_type, struct tm *mark_time, Elm_Calendar_Mark_Repeat repeat);
+EAPI Elm_Calendar_Mark   *elm_calendar_mark_add(Evas_Object *obj, const char *mark_type, struct tm *mark_time, Elm_Calendar_Mark_Repeat_Type repeat);
 
 /**
  * Delete mark from the calendar.
