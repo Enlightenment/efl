@@ -69,7 +69,7 @@ _first(void        *data,
        Evas_Object *obj __UNUSED__,
        void        *event_info __UNUSED__)
 {
-   elm_slideshow_show(data);
+   elm_slideshow_item_show(data);
 }
 
 static void
@@ -77,7 +77,7 @@ _last(void        *data,
       Evas_Object *obj __UNUSED__,
       void        *event_info __UNUSED__)
 {
-   elm_slideshow_show(data);
+   elm_slideshow_item_show(data);
 }
 
 static void

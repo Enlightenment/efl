@@ -153,7 +153,7 @@ EAPI Elm_Object_Item      *elm_slideshow_item_sorted_insert(Evas_Object *obj, co
  *
  * @ingroup Slideshow
  */
-EAPI void                  elm_slideshow_show(Elm_Object_Item *it);
+EAPI void                  elm_slideshow_item_show(Elm_Object_Item *it);
 
 /**
  * Slide to the @b next item, in a given slideshow widget

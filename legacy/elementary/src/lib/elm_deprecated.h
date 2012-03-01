@@ -2681,6 +2681,20 @@ EINA_DEPRECATED EAPI void *elm_slideshow_item_data_get(const Elm_Object_Item *it
 EINA_DEPRECATED EAPI void                  elm_slideshow_item_del(Elm_Object_Item *it);
 
 /**
+ * Display a given slideshow widget's item, programmatically.
+ *
+ * @param it The item to display on @p obj's viewport
+ *
+ * The change between the current item and @p item will use the
+ * transition @p obj is set to use (@see
+ * elm_slideshow_transition_set()).
+ *
+ * @deprecated use elm_slideshow_item_show() instead
+ * @ingroup Slideshow
+ */
+EINA_DEPRECATED EAPI void                  elm_slideshow_show(Elm_Object_Item *it);
+
+/**
  * Get the toolbar object from an item.
  *
  * @param it The item.
