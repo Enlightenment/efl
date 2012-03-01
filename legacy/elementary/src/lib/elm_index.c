@@ -30,6 +30,8 @@ struct _Elm_Index_Item
 };
 
 static const char *widtype = NULL;
+
+static void _del_hook(Evas_Object *obj);
 static void _mirrored_set(Evas_Object *obj, Eina_Bool rtl);
 static void _theme_hook(Evas_Object *obj);
 static void _sizing_eval(Evas_Object *obj);
@@ -209,7 +211,7 @@ _item_new(Evas_Object *obj, const char *letter, const void *item)
    it = elm_widget_item_new(obj, Elm_Index_Item);
    if (!it) return NULL;
    elm_widget_item_del_pre_hook_set(it, _item_del_pre_hook);
-   it->letter = eina_stringshare_add(letter);
+   if (letter) it->letter = eina_stringshare_add(letter);
    it->base.data = item;
    it->level = wd->level;
    return it;
@@ -233,7 +235,7 @@ _item_free(Elm_Index_Item *it)
    Widget_Data *wd = elm_widget_data_get(WIDGET(it));
    if (!wd) return;
    wd->items = eina_list_remove(wd->items, it);
-   eina_stringshare_del(it->letter);
+   if (it->letter) eina_stringshare_del(it->letter);
 }
 
 // FIXME: always have index filled
@@ -374,7 +376,7 @@ _sel_eval(Evas_Object *obj, Evas_Coord evx, Evas_Coord evy)
                   dist = x;
                }
           }
-        if ((!i) && (!wd->level))
+        if ((i == 0) && (wd->level == 0))
           edje_object_part_drag_value_set(wd->base, "elm.dragable.index.1",
                                           cdv, cdv);
         if (it_closest) it_closest->selected = 1;
@@ -805,7 +807,7 @@ elm_index_item_clear(Evas_Object *obj)
 }
 
 EAPI void
-elm_index_item_go(Evas_Object *obj, int level __UNUSED__)
+elm_index_item_go(Evas_Object *obj, int level)
 {
    ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
