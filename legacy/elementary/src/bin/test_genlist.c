@@ -2347,7 +2347,6 @@ Evas_Object *gl15_content_get(void *data, Evas_Object *obj, const char *part)
 {
    Testitem *tit = data;
    char buf[PATH_MAX];
-   Evas_Object *ic = elm_icon_add(obj);
 
    // "edit_default" EDC layout is like below. each part is swallow part.
    // the existing item is swllowed to elm.swallow.edit.content part.
@@ -2357,6 +2356,7 @@ Evas_Object *gl15_content_get(void *data, Evas_Object *obj, const char *part)
 
    if (!strcmp(part, "elm.swallow.end"))
      {
+        Evas_Object *ic = elm_icon_add(obj);
         snprintf(buf, sizeof(buf), "%s/images/bubble.png", PACKAGE_DATA_DIR);
         elm_icon_file_set(ic, buf, NULL);
         evas_object_size_hint_aspect_set(ic, EVAS_ASPECT_CONTROL_VERTICAL, 1, 1);
