@@ -1750,7 +1750,7 @@ START_TEST(eina_value_test_array_of_struct)
      EINA_VALUE_STRUCT_OPERATIONS_BINSEARCH,
      myst_members, 4, sizeof(struct myst)
    };
-   Eina_Value *value;
+   Eina_Value *value, array_item;
    char *str;
    int i;
 
@@ -1791,6 +1791,17 @@ START_TEST(eina_value_test_array_of_struct)
                       "{a: 9, b: 90, c: 900, s: item09}"
                       "]") == 0);
    free(str);
+
+   eina_value_array_value_get(value, 2, &array_item);
+   eina_value_struct_get(&array_item, "a", &i);
+   ck_assert_int_eq(i, 2);
+   eina_value_struct_get(&array_item, "b", &i);
+   ck_assert_int_eq(i, 20);
+   eina_value_struct_get(&array_item, "c", &i);
+   ck_assert_int_eq(i, 200);
+   eina_value_struct_get(&array_item, "s", &str);
+   ck_assert_str_eq(str, "item02");
+   eina_value_flush(&array_item);
 
    eina_value_free(value);
    eina_shutdown();

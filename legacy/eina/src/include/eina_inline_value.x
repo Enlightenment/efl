@@ -823,6 +823,29 @@ eina_value_array_pappend(Eina_Value *value, const void *ptr)
    return EINA_FALSE;
 }
 
+static inline Eina_Bool
+eina_value_array_value_get(const Eina_Value *src, unsigned int position, Eina_Value *dst)
+{
+   Eina_Value_Array desc;
+
+   EINA_VALUE_TYPE_ARRAY_CHECK_RETURN_VAL(src, EINA_FALSE);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(dst, EINA_FALSE);
+
+   if (!eina_value_pget(src, &desc))
+     return EINA_FALSE;
+   if (position >= eina_inarray_count(desc.array))
+     return EINA_FALSE;
+   if (!eina_value_setup(dst, desc.subtype))
+     return EINA_FALSE;
+   if (!eina_value_pset(dst, eina_inarray_nth(desc.array, position)))
+     {
+        eina_value_flush(dst);
+        return EINA_FALSE;
+     }
+
+   return EINA_TRUE;
+}
+
 #undef EINA_VALUE_TYPE_ARRAY_CHECK_RETURN_VAL
 
 #define EINA_VALUE_TYPE_LIST_CHECK_RETURN_VAL(value, retval)   \

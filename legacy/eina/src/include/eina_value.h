@@ -1720,6 +1720,22 @@ static inline Eina_Bool eina_value_array_pappend(Eina_Value *value,
                                                  const void *ptr) EINA_ARG_NONNULL(1);
 
 /**
+ * @brief Retrieves a value from the array as an Eina_Value copy.
+ * @param value source value object
+ * @param position index of the member
+ * @param dst where to return the array member
+ * @return #EINA_TRUE on success, #EINA_FALSE otherwise.
+ *
+ * The argument @a dst is considered uninitialized and it's setup to
+ * the type of the member.
+ *
+ * @since 1.2
+ */
+static inline Eina_Bool eina_value_array_value_get(const Eina_Value *src,
+                                                   unsigned int position,
+                                                   Eina_Value *dst) EINA_ARG_NONNULL(1, 3);
+
+/**
  * @}
  */
 
