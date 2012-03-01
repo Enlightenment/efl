@@ -883,6 +883,8 @@ _ecore_imf_event_free_preedit(void *data __UNUSED__, void *event)
  * Adds ECORE_IMF_EVENT_PREEDIT_START to the event queue.
  *
  * ECORE_IMF_EVENT_PREEDIT_START should be added when a new preedit sequence starts.
+ * It's asynchronous method to put event to the event queue.
+ * ecore_imf_context_event_callback_call() can be used as synchronous method.
  *
  * @param ctx An #Ecore_IMF_Context.
  * @ingroup Ecore_IMF_Context_Module_Group
@@ -909,6 +911,8 @@ ecore_imf_context_preedit_start_event_add(Ecore_IMF_Context *ctx)
  * Adds ECORE_IMF_EVENT_PREEDIT_END to the event queue.
  *
  * ECORE_IMF_EVENT_PREEDIT_END should be added when a new preedit sequence has been completed or canceled.
+ * It's asynchronous method to put event to the event queue.
+ * ecore_imf_context_event_callback_call() can be used as synchronous method.
  *
  * @param ctx An #Ecore_IMF_Context.
  * @ingroup Ecore_IMF_Context_Module_Group
@@ -933,6 +937,9 @@ ecore_imf_context_preedit_end_event_add(Ecore_IMF_Context *ctx)
 
 /**
  * Adds ECORE_IMF_EVENT_PREEDIT_CHANGED to the event queue.
+ *
+ * It's asynchronous method to put event to the event queue.
+ * ecore_imf_context_event_callback_call() can be used as synchronous method.
  *
  * @param ctx An #Ecore_IMF_Context.
  * @ingroup Ecore_IMF_Context_Module_Group
@@ -967,6 +974,9 @@ _ecore_imf_event_free_commit(void *data __UNUSED__, void *event)
 
 /**
  * Adds ECORE_IMF_EVENT_COMMIT to the event queue.
+ *
+ * It's asynchronous method to put event to the event queue.
+ * ecore_imf_context_event_callback_call() can be used as synchronous method.
  *
  * @param ctx An #Ecore_IMF_Context.
  * @param str The committed string.
@@ -1004,6 +1014,9 @@ _ecore_imf_event_free_delete_surrounding(void *data __UNUSED__, void *event)
  * Asks the widget that the input context is attached to to delete characters around the cursor position
  * by adding the ECORE_IMF_EVENT_DELETE_SURROUNDING to the event queue.
  * Note that offset and n_chars are in characters not in bytes.
+ *
+ * It's asynchronous method to put ECORE_IMF_EVENT_DELETE_SURROUNDING event to the event queue.
+ * ecore_imf_context_event_callback_call() can be used as synchronous method.
  *
  * @param ctx An #Ecore_IMF_Context.
  * @param offset The start offset of surrounding to be deleted.
