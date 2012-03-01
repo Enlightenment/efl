@@ -33,7 +33,7 @@
  * displaying the time, it sleeps for 1 second, then call display the time
  * again using the 3 functions.
  *
- * Since everything occurs inside the same mainloop iteration, the internal
+ * Since everything occurs inside the same main loop iteration, the internal
  * ecore time variable will not be updated, and calling ecore_loop_time_get()
  * before and after the sleep() call will return the same result.
  *
@@ -58,7 +58,7 @@
  *
  * This example shows how to setup timer callbacks. It starts a timer that will
  * tick (expire) every 1 second, and then setup other timers that will expire
- * only once, but each of them will affect the firts timer still executing with
+ * only once, but each of them will affect the first timer still executing with
  * a different API, to demonstrate its usage. To see the full code for this
  * example, click @ref ecore_timer_example.c "here".
  *
@@ -357,7 +357,7 @@
  * the fd handler returned by the ecore_main_fd_handler_add() call. It can be
  * used, for example, to retrieve which file descriptor triggered this callback,
  * since it could be added to more than one file descriptor, or to check what
- * tipe of activity there's in the file descriptor.
+ * type of activity there's in the file descriptor.
  *
  * The code is very simple: we first check if the type of activity was an error.
  * It probably won't happen with the default input, but could be the case of a
@@ -491,7 +491,7 @@
  * lookup, by looking at the return code of the ecore_con_lookup() function.
  *
  * The callback @c _lookup_done_cb passed as argument to ecore_con_lookup() just
- * prints the resolved canonical name, ip, address of the sockaddr structure,
+ * prints the resolved canonical name, IP, address of the sockaddr structure,
  * and the length of the socket address (in bytes).
  *
  * Finally, we start the main loop, and after that we finalize the libraries and
@@ -740,8 +740,8 @@
  * This callback will associate a data structure to this client, that will be
  * used to count how many bytes were received from it. It also prints some info
  * about the client, and send a welcome string to it. ecore_con_client_flush()
- * is used to ensure that the string is sent immediately, instead of be
- * bufferized.
+ * is used to ensure that the string is sent immediately, instead of being
+ * buffered.
  *
  * A timeout for idle specific for this client is also set, to demonstrate that
  * it is independent of the general timeout of the server.
@@ -959,7 +959,7 @@
  * @dontinclude ecore_pipe_simple_example.c
  *
  * This example shows some simple usage of ecore_pipe. We are going to create a
- * pipe, fork our process, and then the child is going to comunicate to the
+ * pipe, fork our process, and then the child is going to communicate to the
  * parent the result of its processing through the pipe.
  *
  * As always we start with our includes, nothing special:
@@ -976,7 +976,7 @@
  *
  * Next up is our function for handling data arriving in the pipe. It copies the
  * data to another buffer, adds a terminating NULL and prints it. Also if it
- * receives a certain string it stops the main loop(efectvely ending the
+ * receives a certain string it stops the main loop(effectively ending the
  * program):
  * @until }
  * @until }
@@ -1016,7 +1016,7 @@
  * For this example we are going to animate a rectangle growing, moving and
  * changing color, and then move it back to it's initial state with a
  * different animation. We are also going to have a second rectangle moving
- * along the bootom of the screen. To do this we are going to use ecore_evas,
+ * along the bottom of the screen. To do this we are going to use ecore_evas,
  * but since that is not the focus here we won't going into detail about it.
  *
  * @skip #include
@@ -1049,7 +1049,7 @@
  *
  * Here we have the callback function for our first animation, which first
  * takes @p pos(where in the timeline we are), maps it to a SPRING curve that
- * which will wooble 15 times and will decay by a factor of 1.2:
+ * which will wobble 15 times and will decay by a factor of 1.2:
  * @until pos_map
  *
  * Now that we have the frame we can adjust the rectangle to its appropriate
@@ -1063,7 +1063,7 @@
  * @note For this animation we made the frametime much larger which means our
  * animation might get "jerky".
  *
- * The callback for our second animation, our savy reader no doubt noted that
+ * The callback for our second animation, our savvy reader no doubt noted that
  * it's very similar to the callback for the first animation. What we change for
  * this one is the type of animation to BOUNCE and the number of times it will
  * bounce to 50:
@@ -1106,7 +1106,7 @@
  * thread's storage, we create it and save it there for future jobs to find
  * it. If creation fails, we cancel ourselves, so the main loop knows that
  * we didn't just exit normally, meaning the job could not be done. The main
- * part of the function checks in each iteration if it was cancelled by the
+ * part of the function checks in each iteration if it was canceled by the
  * main loop, and if it was, it stops processing and clears the data from the
  * storage (we assume @c cancel means no one else will need this, but this is
  * really application dependent).
@@ -1158,11 +1158,11 @@
  * value changed.
  * @until }
  *
- * When a thread finishes its job or gets cancelled, the main loop is notified
+ * When a thread finishes its job or gets canceled, the main loop is notified
  * through the callbacks set when creating the task. In this case, we just
- * print what happen and keep track of one of them used to exemplify cancelling.
+ * print what happen and keep track of one of them used to exemplify canceling.
  * Here we are pretending one of our short jobs has a timeout, so if it doesn't
- * finish before a timer is triggered, it will be cancelled.
+ * finish before a timer is triggered, it will be canceled.
  * @skip static void
  * @until _cancel_timer_cb
  * @until }
@@ -1181,7 +1181,7 @@
  * @until appdata.max_msgs
  *
  * If any paths for the feedback jobs were given, we use them, otherwise we
- * fallback to some defaults. Always initting the proper mutexes used by the
+ * fallback to some defaults. Always initializing the proper mutexes used by the
  * threaded job.
  * @skip path_list
  * @until EINA_LIST_FREE
@@ -1333,14 +1333,14 @@
  * @page ecore_evas_basics_example_c Ecore Evas basics example
  * @dontinclude ecore_evas_basics_example.c
  *
- * This example will ilustrate the usage of some basic Ecore_Evas functions.
+ * This example will illustrates the usage of some basic Ecore_Evas functions.
  * This example will list the available evas engines, check which one we used to
  * create our window and set some data on our Ecore_Evas. It also allows you to
  * hide/show all windows in this process(we only have one, but if there were
  * more they would be hidden), to hide the windows type 'h' and hit return, to
  * show them, type 's' and hit return.
  *
- * The very first thing we'll do is init ecore_evas:
+ * The very first thing we'll do is initialize ecore_evas:
  * @skipline evas_init
  * @until return 1
  *
@@ -1354,7 +1354,7 @@
  * We now add some important data to our Ecore_Evas:
  * @until data_set
  *
- * And since our data is dinamically allocated we'll need to free it when the
+ * And since our data is dynamically allocated we'll need to free it when the
  * Ecore_Evas dies:
  * @until delete_request
  * @dontinclude ecore_evas_basics_example.c
@@ -1369,7 +1369,7 @@
  * get the canvas(Evas) on which to draw it:
  * @until canvas
  *
- * We then do a sanity check, veryfing if the Ecore_Evas of the Evas is the
+ * We then do a sanity check, verifying if the Ecore_Evas of the Evas is the
  * Ecore_Evas from which we got the Evas:
  * @until printf
  *
@@ -1407,7 +1407,7 @@
  *
  * Since it's a buffer canvas and we're using it to only save its
  * contents on a file, we even needn't ecore_evas_show() it. We make
- * it render itself, forcefully, without the aid of Ecore's mainloop,
+ * it render itself, forcefully, without the aid of Ecore's main loop,
  * with ecore_evas_manual_render():
  * @dontinclude ecore_evas_buffer_example_01.c
  * @skip manual_render
