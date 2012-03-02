@@ -807,7 +807,7 @@ elm_index_item_clear(Evas_Object *obj)
 }
 
 EAPI void
-elm_index_item_go(Evas_Object *obj, int level)
+elm_index_item_go(Evas_Object *obj, int level __UNUSED__)
 {
    ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
