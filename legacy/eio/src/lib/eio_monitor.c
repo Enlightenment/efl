@@ -204,6 +204,11 @@ eio_monitor_stringshared_add(const char *path)
                                          _eio_monitor_stat_cb,
                                          _eio_monitor_error_cb,
                                          monitor);
+   if (!monitor->exist)
+     {
+        _eio_monitor_free(monitor);
+        return NULL;
+     }
 
    eina_hash_direct_add(_eio_monitors, path, monitor);
 
