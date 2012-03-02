@@ -28,7 +28,7 @@ EAPI_MAIN int
 elm_main(int argc, char **argv)
 {
    Evas_Object *win, *bg, *menu, *button, *rect;
-   Elm_Object_Item *menu_it;
+   Elm_Object_Item *menu_it, *menu_it1;
 
    win = elm_win_add(NULL, "menu", ELM_WIN_BASIC);
    elm_win_title_set(win, "Menu");
@@ -51,7 +51,8 @@ elm_main(int argc, char **argv)
    elm_menu_item_add(menu, menu_it, "object-rotate-left", "menu 1", NULL, NULL);
    button = elm_button_add(win);
    elm_object_text_set(button, "button - delete items");
-   elm_menu_item_add_object(menu, menu_it, button, NULL, NULL);
+   menu_it1 = elm_menu_item_add(menu, menu_it, NULL, NULL, NULL, NULL);
+   elm_object_item_content_set(menu_it1, button);
    evas_object_smart_callback_add(button, "clicked", _del_it, menu);
    elm_menu_item_separator_add(menu, menu_it);
    elm_menu_item_add(menu, menu_it, NULL, "third item", NULL, NULL);

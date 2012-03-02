@@ -751,7 +751,7 @@ elm_menu_item_add(Evas_Object *obj, Elm_Object_Item *parent, const char *icon, c
    return (Elm_Object_Item *) subitem;
 }
 
-EAPI Elm_Object_Item *
+EINA_DEPRECATED EAPI Elm_Object_Item *
 elm_menu_item_add_object(Evas_Object *obj, Elm_Object_Item *parent, Evas_Object *subobj, Evas_Smart_Cb func, const void *data)
 {
    Elm_Menu_Item *subitem;

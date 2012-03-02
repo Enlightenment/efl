@@ -4565,5 +4565,21 @@ EINA_DEPRECATED EAPI Eina_Bool         elm_web_history_enable_get(const Evas_Obj
 EINA_DEPRECATED EAPI void              elm_web_history_enable_set(Evas_Object *obj, Eina_Bool enable);
 
 /**
+ * @brief Add an object swallowed in an item at the end of the given menu
+ * widget
+ *
+ * @param obj The menu object.
+ * @param parent The parent menu item (optional)
+ * @param subobj The object to swallow
+ * @param func Function called when the user select the item.
+ * @param data Data sent by the callback.
+ * @return Returns the new item.
+ *
+ * Add an evas object as an item to the menu.
+ * @deprecated please use "elm_menu_item_add" + "elm_object_item_content_set" instead.
+ */
+EINA_DEPRECATED EAPI Elm_Object_Item             *elm_menu_item_add_object(Evas_Object *obj, Elm_Object_Item *parent, Evas_Object *subobj, Evas_Smart_Cb func, const void *data);
+
+/**
  * @}
  */

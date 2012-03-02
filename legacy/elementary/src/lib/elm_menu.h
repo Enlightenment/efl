@@ -112,26 +112,10 @@ EAPI Evas_Object                 *elm_menu_item_object_get(const Elm_Object_Item
 EAPI Elm_Object_Item             *elm_menu_item_add(Evas_Object *obj, Elm_Object_Item *parent, const char *icon, const char *label, Evas_Smart_Cb func, const void *data);
 
 /**
- * @brief Add an object swallowed in an item at the end of the given menu
- * widget
- *
- * @param obj The menu object.
- * @param parent The parent menu item (optional)
- * @param subobj The object to swallow
- * @param func Function called when the user select the item.
- * @param data Data sent by the callback.
- * @return Returns the new item.
- *
- * Add an evas object as an item to the menu.
- */
-//XXX: Any better API name? "_item_add_object" looks not good enough.
-EAPI Elm_Object_Item             *elm_menu_item_add_object(Evas_Object *obj, Elm_Object_Item *parent, Evas_Object *subobj, Evas_Smart_Cb func, const void *data);
-
-/**
  * @brief Set the icon of a menu item to the standard icon with name @p icon
  *
  * @param it The menu item object.
- * @param icon The icon object to set for the content of @p item
+ * @param icon The name of icon object to set for the content of @p item
  *
  * Once this icon is set, any previously set icon will be deleted.
  */
