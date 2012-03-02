@@ -165,6 +165,7 @@ eio_monitor_add(const char *path)
    tmp = eina_stringshare_add(path);
    ret = eio_monitor_stringshared_add(tmp);
    eina_stringshare_del(tmp);
+   return ret;
 }
 
 EAPI Eio_Monitor *
