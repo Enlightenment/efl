@@ -67,11 +67,11 @@ extern "C" {
 /**
  * @defgroup Eio_Group Eio Reference API
  *
- * @brief This are the core asynchronous input/output operation
+ * @brief This is the core asynchronous input/output operation
  *
- * All the function in this group do perform input/output operation
- * in a separated thread and use the infrastructure provided by
- * Ecore_Thread and Eina to work.
+ * All the functions in this group perform input/output operations
+ * in a separate thread using the infrastructure provided by
+ * Ecore_Thread and Eina.
  *
  * @{
  */
@@ -82,13 +82,17 @@ extern "C" {
  */
 enum _Eio_File_Op
 {
-  EIO_FILE_COPY, /**< IO operation is about a specific file copy */
-  EIO_FILE_MOVE, /**< IO operation is about a specific file move */
-  EIO_DIR_COPY, /**< IO operation is about a specific directory copy */
-  EIO_DIR_MOVE, /**< IO operation is about a specific directory move */
-  EIO_UNLINK, /**< IO operation is about a destroying a path (source will point to base path to be destroyed and dest to path destroyed by this IO */
-  EIO_FILE_GETPWNAM, /**< IO operation is trying to get uid from user name */
-  EIO_FILE_GETGRNAM /**< IO operation is trying to get gid from user name */
+  EIO_FILE_COPY, /**< I/O operation is about a specific file copy */
+  EIO_FILE_MOVE, /**< I/O operation is about a specific file move */
+  EIO_DIR_COPY, /**< I/O operation is about a specific directory copy */
+  EIO_DIR_MOVE, /**< I/O operation is about a specific directory move */
+  /** I/O operation is about destroying a path:
+   * source will point to base path to be destroyed,
+   * and dest will point to to path destroyed by this I/O
+   */
+  EIO_UNLINK,
+  EIO_FILE_GETPWNAM, /**< I/O operation is trying to get uid from user name */
+  EIO_FILE_GETGRNAM /**< I/O operation is trying to get gid from user name */
 };
 
 /**
@@ -99,7 +103,7 @@ typedef enum _Eio_File_Op Eio_File_Op;
 
 /**
  * @typedef Eio_File
- * Generic asynchronous IO reference.
+ * Generic asynchronous I/O reference.
  */
 typedef struct _Eio_File Eio_File;
 
@@ -137,28 +141,28 @@ typedef void (*Eio_Eet_Error_Cb)(void *data, Eio_File *handler, Eet_Error err);
 
 struct _Eio_Progress
 {
-   Eio_File_Op op; /**< IO type */
+   Eio_File_Op op; /**< I/O type */
 
-   long long current; /**< Current step in the IO operation */
-   long long max; /**< Number of step to do to complete this IO */
-   float percent; /**< Percent done of the IO operation */
+   long long current; /**< Current step in the I/O operation */
+   long long max; /**< Number of total steps to complete this I/O */
+   float percent; /**< Percent done for the I/O operation */
 
-   const char *source; /**< source of the IO operation */
-   const char *dest; /**< target of the IO operation */
+   const char *source; /**< source of the I/O operation */
+   const char *dest; /**< target of the I/O operation */
 };
 
 /**
- * @brief List content of a directory without locking your app.
+ * @brief List contents of a directory without locking your app.
  * @param dir The directory to list.
  * @param filter_cb Callback called from another thread.
  * @param main_cb Callback called from the main loop for each accepted file.
- * @param done_cb Callback called from the main loop when the content of the directory has been listed.
- * @param error_cb Callback called from the main loop when the directory could not be opened or listing content has been canceled.
- * @param data Data passed to callback and not modified at all by eio_file_ls.
- * @return A reference to the IO operation.
+ * @param done_cb Callback called from the main loop after the contents of the directory has been listed.
+ * @param error_cb Callback called from the main loop when either the directory could not be opened or the operation has been canceled.
+ * @param data Unmodified user data passed to callbacks
+ * @return A reference to the I/O operation.
  *
- * eio_file_ls run eina_file_ls in a separated thread using ecore_thread_feedback_run. This prevent
- * any lock in your apps.
+ * eio_file_ls runs eina_file_ls in a separate thread using ecore_thread_feedback_run. This prevents
+ * any blocking in your apps.
  */
 EAPI Eio_File *eio_file_ls(const char *dir,
 			   Eio_Filter_Cb filter_cb,
@@ -168,17 +172,17 @@ EAPI Eio_File *eio_file_ls(const char *dir,
 			   const void *data);
 
 /**
- * @brief List content of a directory without locking your app.
+ * @brief List contents of a directory without locking your app.
  * @param dir The directory to list.
  * @param filter_cb Callback called from another thread.
  * @param main_cb Callback called from the main loop for each accepted file.
- * @param done_cb Callback called from the main loop when the content of the directory has been listed.
- * @param error_cb Callback called from the main loop when the directory could not be opened or listing content has been canceled.
- * @param data Data passed to callback and not modified at all by eio_file_direct_ls.
- * @return A reference to the IO operation.
+ * @param done_cb Callback called from the main loop after the contents of the directory has been listed.
+ * @param error_cb Callback called from the main loop when either the directory could not be opened or the operation has been canceled.
+ * @param data Unmodified user data passed to callbacks
+ * @return A reference to the I/O operation.
  *
- * eio_file_direct_ls run eina_file_direct_ls in a separated thread using
- * ecore_thread_feedback_run. This prevent any lock in your apps.
+ * eio_file_direct_ls runs eina_file_direct_ls in a separate thread using
+ * ecore_thread_feedback_run. This prevents any blocking in your apps.
  */
 EAPI Eio_File *eio_file_direct_ls(const char *dir,
 				  Eio_Filter_Direct_Cb filter_cb,
@@ -192,13 +196,13 @@ EAPI Eio_File *eio_file_direct_ls(const char *dir,
  * @param dir The directory to list.
  * @param filter_cb Callback called from another thread.
  * @param main_cb Callback called from the main loop for each accepted file.
- * @param done_cb Callback called from the main loop when the content of the directory has been listed.
- * @param error_cb Callback called from the main loop when the directory could not be opened or listing content has been canceled.
- * @param data Data passed to callback and not modified at all by eio_file_stat_ls.
- * @return A reference to the IO operation.
+ * @param done_cb Callback called from the main loop after the contents of the directory has been listed.
+ * @param error_cb Callback called from the main loop when either the directory could not be opened or the operation has been canceled.
+ * @param data Unmodified user data passed to callbacks
+ * @return A reference to the I/O operation.
  *
- * eio_file_stat_ls() run eina_file_stat_ls() in a separated thread using
- * ecore_thread_feedback_run. This prevent any lock in your apps.
+ * eio_file_stat_ls() runs eina_file_stat_ls() in a separate thread using
+ * ecore_thread_feedback_run. This prevents any blocking in your apps.
  */
 EAPI Eio_File *eio_file_stat_ls(const char *dir,
                                 Eio_Filter_Direct_Cb filter_cb,
@@ -212,13 +216,13 @@ EAPI Eio_File *eio_file_stat_ls(const char *dir,
  * @param dir The directory to list.
  * @param filter_cb Callback called from another thread.
  * @param main_cb Callback called from the main loop for each accepted file.
- * @param done_cb Callback called from the main loop when the content of the directory has been listed.
- * @param error_cb Callback called from the main loop when the directory could not be opened or listing content has been canceled.
- * @param data Data passed to callback and not modified at all by eio_dir_stat_find.
- * @return A reference to the IO operation.
+ * @param done_cb Callback called from the main loop after the contents of the directory has been listed.
+ * @param error_cb Callback called from the main loop when either the directory could not be opened or the operation has been canceled.
+ * @param data Unmodified user data passed to callbacks
+ * @return A reference to the I/O operation.
  *
- * eio_dir_stat_ls() run eina_file_stat_ls() recursivly in a separated thread using
- * ecore_thread_feedback_run. This prevent any lock in your apps.
+ * eio_dir_stat_ls() runs eina_file_stat_ls() recursively in a separate thread using
+ * ecore_thread_feedback_run. This prevents any blocking in your apps.
  */
 EAPI Eio_File *eio_dir_stat_ls(const char *dir,
                                Eio_Filter_Dir_Cb filter_cb,
@@ -232,13 +236,13 @@ EAPI Eio_File *eio_dir_stat_ls(const char *dir,
  * @param dir The directory to list.
  * @param filter_cb Callback called from another thread.
  * @param main_cb Callback called from the main loop for each accepted file.
- * @param done_cb Callback called from the main loop when the content of the directory has been listed.
- * @param error_cb Callback called from the main loop when the directory could not be opened or listing content has been canceled.
- * @param data Data passed to callback and not modified at all by eio_dir_stat_find.
- * @return A reference to the IO operation.
+ * @param done_cb Callback called from the main loop after the contents of the directory has been listed.
+ * @param error_cb Callback called from the main loop when either the directory could not be opened or the operation has been canceled.
+ * @param data Unmodified user data passed to callbacks
+ * @return A reference to the I/O operation.
  *
- * eio_dir_direct_ls() run eina_file_direct_ls() recursivly in a separated thread using
- * ecore_thread_feedback_run. This prevent any lock in your apps.
+ * eio_dir_direct_ls() runs eina_file_direct_ls() recursively in a separate thread using
+ * ecore_thread_feedback_run. This prevents any blocking in your apps.
  */
 EAPI Eio_File *eio_dir_direct_ls(const char *dir,
 				 Eio_Filter_Dir_Cb filter_cb,
@@ -250,12 +254,12 @@ EAPI Eio_File *eio_dir_direct_ls(const char *dir,
 /**
  * @brief Stat a file/directory.
  * @param path The path to stat.
- * @param done_cb Callback called from the main loop when stat was successfully called..
+ * @param done_cb Callback called from the main loop when stat was successfully called.
  * @param error_cb Callback called from the main loop when stat failed or has been canceled.
- * @param data Private data given to callback.
- * @return A reference to the IO operation.
+ * @param data Unmodified user data passed to callbacks
+ * @return A reference to the I/O operation.
  *
- * eio_file_direct_stat basically call stat in another thread. This prevent any lock in your apps.
+ * eio_file_direct_stat calls stat in another thread. This prevents any blocking in your apps.
  */
 EAPI Eio_File *eio_file_direct_stat(const char *path,
 				    Eio_Stat_Cb done_cb,
@@ -268,10 +272,10 @@ EAPI Eio_File *eio_file_direct_stat(const char *path,
  * @param mode The permission to set, follow (mode & ~umask & 0777).
  * @param done_cb Callback called from the main loop when the directory has been created.
  * @param error_cb Callback called from the main loop when the directory failed to be created or has been canceled.
- * @param data Private data given to callback.
- * @return A reference to the IO operation.
+ * @param data Unmodified user data passed to callbacks
+ * @return A reference to the I/O operation.
  *
- * eio_file_chmod basically call chmod in another thread. This prevent any lock in your apps.
+ * eio_file_chmod calls chmod in another thread. This prevents any blocking in your apps.
  */
 EAPI Eio_File *eio_file_chmod(const char *path,
                               mode_t mode,
@@ -282,15 +286,15 @@ EAPI Eio_File *eio_file_chmod(const char *path,
 /**
  * @brief Change owner of a path.
  * @param path The directory path to change owner.
- * @param user The new user to set (could be NULL).
- * @param group The new group to set (could be NULL).
+ * @param user The new user to set (can be NULL).
+ * @param group The new group to set (can be NULL).
  * @param done_cb Callback called from the main loop when the directory has been created.
  * @param error_cb Callback called from the main loop when the directory failed to be created or has been canceled.
- * @param data Private data given to callback.
- * @return A reference to the IO operation.
+ * @param data Unmodified user data passed to callbacks
+ * @return A reference to the I/O operation.
  *
- * eio_file_chown determine the uid/gid that correspond to both user and group string and then call chown. This prevent any lock in your apps by calling
- * this function from another thread. The string could be the name of the user or the name of the group or directly their numerical value.
+ * eio_file_chown determines the uid/gid that correspond to both user and group string and then calls chown. This prevents any blocking in your apps by running
+ * the operation from another thread. The string can be the name of a user, the name of a group, or a UID.
  */
 EAPI Eio_File *eio_file_chown(const char *path,
                               const char *user,
@@ -304,10 +308,10 @@ EAPI Eio_File *eio_file_chown(const char *path,
  * @param path The path to unlink.
  * @param done_cb Callback called from the main loop when the directory has been created.
  * @param error_cb Callback called from the main loop when the directory failed to be created or has been canceled.
- * @param data Private data given to callback.
- * @return A reference to the IO operation.
+ * @param data Unmodified user data passed to callbacks
+ * @return A reference to the I/O operation.
  *
- * eio_file_unlink basically call unlink in another thread. This prevent any lock in your apps.
+ * eio_file_unlink calls unlink in another thread. This prevents any blocking in your apps.
  */
 EAPI Eio_File *eio_file_unlink(const char *path,
 			       Eio_Done_Cb done_cb,
@@ -320,10 +324,10 @@ EAPI Eio_File *eio_file_unlink(const char *path,
  * @param mode The permission to set, follow (mode & ~umask & 0777).
  * @param done_cb Callback called from the main loop when the directory has been created.
  * @param error_cb Callback called from the main loop when the directory failed to be created or has been canceled.
- * @param data Private data given to callback.
- * @return A reference to the IO operation.
+ * @param data Unmodified user data passed to callbacks
+ * @return A reference to the I/O operation.
  *
- * eio_file_mkdir basically call mkdir in another thread. This prevent any lock in your apps.
+ * eio_file_mkdir calls mkdir in another thread. This prevents any blocking in your apps.
  */
 EAPI Eio_File *eio_file_mkdir(const char *path,
 			      mode_t mode,
@@ -338,7 +342,7 @@ EAPI Eio_File *eio_file_mkdir(const char *path,
  * @param progress_cb Callback called to know the progress of the move.
  * @param done_cb Callback called when the move is done.
  * @param error_cb Callback called when something goes wrong.
- * @param data Private data given to callback.
+ * @param data Unmodified user data passed to callbacks
  *
  * This function will copy a file from source to dest. It will try to use splice
  * if possible, if not it will fallback to mmap/write. It will try to preserve
@@ -358,7 +362,7 @@ EAPI Eio_File *eio_file_move(const char *source,
  * @param progress_cb Callback called to know the progress of the copy.
  * @param done_cb Callback called when the copy is done.
  * @param error_cb Callback called when something goes wrong.
- * @param data Private data given to callback.
+ * @param data Unmodified user data passed to callbacks
  *
  * This function will copy a file from source to dest. It will try to use splice
  * if possible, if not it will fallback to mmap/write. It will try to preserve
@@ -379,7 +383,7 @@ EAPI Eio_File *eio_file_copy(const char *source,
  * @param progress_cb Callback called to know the progress of the copy.
  * @param done_cb Callback called when the copy is done.
  * @param error_cb Callback called when something goes wrong.
- * @param data Private data given to callback.
+ * @param data Unmodified user data passed to callbacks
  *
  * This function will move a directory and all it's content from source to dest.
  * It will try first to rename the directory, if not it will try to use splice
@@ -404,7 +408,7 @@ EAPI Eio_File *eio_dir_move(const char *source,
  * @param progress_cb Callback called to know the progress of the copy.
  * @param done_cb Callback called when the copy is done.
  * @param error_cb Callback called when something goes wrong.
- * @param data Private data given to callback.
+ * @param data Unmodified user data passed to callbacks
  *
  * This function will copy a directory and all it's content from source to dest.
  * It will try to use splice if possible, if not it will fallback to mmap/write.
@@ -425,7 +429,7 @@ EAPI Eio_File *eio_dir_copy(const char *source,
  * @param progress_cb Callback called to know the progress of the copy.
  * @param done_cb Callback called when the copy is done.
  * @param error_cb Callback called when something goes wrong.
- * @param data Private data given to callback.
+ * @param data Unmodified user data passed to callbacks
  *
  * This function will remove a directory and all it's content.
  */
@@ -455,8 +459,8 @@ EAPI Eio_File *eio_dir_unlink(const char *path,
  * @param main_cb Callback called in the main loop for each accepted eXtended attribute.
  * @param done_cb Callback called in the main loop when the all the eXtended attribute have been listed.
  * @param error_cb Callback called in the main loop when something goes wrong during the listing of the eXtended attribute.
- * @param data Data passed to callback and not modified at all by eio_file_ls.
- * @return A reference to the IO operation.
+ * @param data Unmodified user data passed to callbacks
+ * @return A reference to the I/O operation.
  */
 EAPI Eio_File *eio_file_xattr(const char *path,
 			      Eio_Filter_Cb filter_cb,
@@ -473,10 +477,10 @@ EAPI Eio_File *eio_file_xattr(const char *path,
  * @param flags Wether to insert, replace or create the attribute.
  * @param done_cb The callback called from the main loop when setxattr succeeded.
  * @param error_cb The callback called from the main loop when setxattr failed.
- * @param data Private data given to callback.
- * @return A reference to the IO operation.
+ * @param data Unmodified user data passed to callbacks
+ * @return A reference to the I/O operation.
  *
- * eio_file_xattr_int_set call eina_xattr_int_set from another thread. This prevent lock in your apps. If
+ * eio_file_xattr_int_set calls eina_xattr_int_set from another thread. This prevents blocking in your apps. If
  * the writing succeeded, the done_cb will be called even if a cancel was requested, but came to late.
  */
 EAPI Eio_File *eio_file_xattr_int_set(const char *path,
@@ -495,10 +499,10 @@ EAPI Eio_File *eio_file_xattr_int_set(const char *path,
  * @param flags Wether to insert, replace or create the attribute.
  * @param done_cb The callback called from the main loop when setxattr succeeded.
  * @param error_cb The callback called from the main loop when setxattr failed.
- * @param data Private data given to callback.
- * @return A reference to the IO operation.
+ * @param data Unmodified user data passed to callbacks
+ * @return A reference to the I/O operation.
  *
- * eio_file_xattr_double_set call eina_xattr_double_set from another thread. This prevent lock in your apps. If
+ * eio_file_xattr_double_set calls eina_xattr_double_set from another thread. This prevents blocking in your apps. If
  * the writing succeeded, the done_cb will be called even if a cancel was requested, but came to late.
  */
 EAPI Eio_File *eio_file_xattr_double_set(const char *path,
@@ -516,10 +520,10 @@ EAPI Eio_File *eio_file_xattr_double_set(const char *path,
  * @param flags Wether to insert, replace or create the attribute.
  * @param done_cb The callback called from the main loop when setxattr succeeded.
  * @param error_cb The callback called from the main loop when setxattr failed.
- * @param data Private data given to callback.
- * @return A reference to the IO operation.
+ * @param data Unmodified user data passed to callbacks
+ * @return A reference to the I/O operation.
  *
- * eio_file_xattr_string_set call eina_xattr_string_set from another thread. This prevent lock in your apps. If
+ * eio_file_xattr_string_set calls eina_xattr_string_set from another thread. This prevents blocking in your apps. If
  * the writing succeeded, the done_cb will be called even if a cancel was requested, but came to late.
  */
 EAPI Eio_File *eio_file_xattr_string_set(const char *path,
@@ -538,10 +542,10 @@ EAPI Eio_File *eio_file_xattr_string_set(const char *path,
  * @param flags Wether to insert, replace or create the attribute.
  * @param done_cb The callback called from the main loop when setxattr succeeded.
  * @param error_cb The callback called from the main loop when setxattr failed.
- * @param data Private data given to callback.
- * @return A reference to the IO operation.
+ * @param data Unmodified user data passed to callbacks
+ * @return A reference to the I/O operation.
  *
- * eio_file_xattr_set call setxattr from another thread. This prevent lock in your apps. If
+ * eio_file_xattr_set calls setxattr from another thread. This prevents blocking in your apps. If
  * the writing succeeded, the done_cb will be called even if a cancel was requested, but came to late.
  */
 EAPI Eio_File *eio_file_xattr_set(const char *path,
@@ -559,10 +563,10 @@ EAPI Eio_File *eio_file_xattr_set(const char *path,
  * @param attribute The name of the attribute to retrieve.
  * @param done_cb Callback called from the main loop when getxattr succeeded.
  * @param error_cb Callback called from the main loop when getxattr failed or has been canceled.
- * @param data Private data given to callback.
- * @return A reference to the IO operation.
+ * @param data Unmodified user data passed to callbacks
+ * @return A reference to the I/O operation.
  *
- * eio_file_xattr_get call getxattr from another thread. This prevent lock in your apps.
+ * eio_file_xattr_get calls getxattr from another thread. This prevents blocking in your apps.
  */
 EAPI Eio_File *eio_file_xattr_get(const char *path,
 				  const char *attribute,
@@ -575,10 +579,10 @@ EAPI Eio_File *eio_file_xattr_get(const char *path,
  * @param attribute The name of the attribute to retrieve.
  * @param done_cb Callback called from the main loop when getxattr succeeded.
  * @param error_cb Callback called from the main loop when getxattr failed or has been canceled.
- * @param data Private data given to callback.
- * @return A reference to the IO operation.
+ * @param data Unmodified user data passed to callbacks
+ * @return A reference to the I/O operation.
  *
- * eio_file_xattr_int_get call eina_xattr_int_get from another thread. This prevent lock in your apps.
+ * eio_file_xattr_int_get calls eina_xattr_int_get from another thread. This prevents blocking in your apps.
  */
 EAPI Eio_File *eio_file_xattr_int_get(const char *path,
 				      const char *attribute,
@@ -591,10 +595,10 @@ EAPI Eio_File *eio_file_xattr_int_get(const char *path,
  * @param attribute The name of the attribute to retrieve.
  * @param done_cb Callback called from the main loop when getxattr succeeded.
  * @param error_cb Callback called from the main loop when getxattr failed or has been canceled.
- * @param data Private data given to callback.
- * @return A reference to the IO operation.
+ * @param data Unmodified user data passed to callbacks
+ * @return A reference to the I/O operation.
  *
- * eio_file_xattr_double_get call eina_xattr_double_get from another thread. This prevent lock in your apps.
+ * eio_file_xattr_double_get calls eina_xattr_double_get from another thread. This prevents blocking in your apps.
  */
 EAPI Eio_File *eio_file_xattr_double_get(const char *path,
 					 const char *attribute,
@@ -607,10 +611,10 @@ EAPI Eio_File *eio_file_xattr_double_get(const char *path,
  * @param attribute The name of the attribute to retrieve.
  * @param done_cb Callback called from the main loop when getxattr succeeded.
  * @param error_cb Callback called from the main loop when getxattr failed or has been canceled.
- * @param data Private data given to callback.
- * @return A reference to the IO operation.
+ * @param data Unmodified user data passed to callbacks
+ * @return A reference to the I/O operation.
  *
- * eio_file_xattr_string_get call eina_xattr_string_get from another thread. This prevent lock in your apps.
+ * eio_file_xattr_string_get calls eina_xattr_string_get from another thread. This prevents blocking in your apps.
  */
 EAPI Eio_File *eio_file_xattr_string_get(const char *path,
 					 const char *attribute,
@@ -648,7 +652,7 @@ EAPI int eio_shutdown(void);
 
 /**
  * @brief Return the container during EIO operation
- * @param ls The asynchronous IO operation to retrieve container from.
+ * @param ls The asynchronous I/O operation to retrieve container from.
  * @return NULL if not available, a DIRP if it is.
  *
  * This is only available and make sense in the thread callback, not in
@@ -658,17 +662,17 @@ EAPI void *eio_file_container_get(Eio_File *ls);
 
 /**
  * @brief Cancel any Eio_File.
- * @param ls The asynchronous IO operation to cancel.
+ * @param ls The asynchronous I/O operation to cancel.
  * @return EINA_FALSE if the destruction is delayed, EINA_TRUE if it's done.
  *
- * This will cancel any kind of IO operation and cleanup the mess. This means
- * that it could take time to cancel an IO.
+ * This will cancel any kind of I/O operation and cleanup the mess. This means
+ * that it could take time to cancel an I/O.
  */
 EAPI Eina_Bool eio_file_cancel(Eio_File *ls);
 
 /**
  * @brief Check if an Eio_File operation has been cancelled.
- * @param ls The asynchronous IO operation to check.
+ * @param ls The asynchronous I/O operation to check.
  * @return EINA_TRUE if it was canceled, EINA_FALSE other wise.
  *
  * In case of an error it also return EINA_TRUE.
@@ -683,7 +687,7 @@ EAPI Eina_Bool eio_file_check(Eio_File *ls);
  * @param free_cb The function to call to free the associated data, @p free will be called if not specified.
  * @return EINA_TRUE if insertion was fine.
  *
- * This function could only be safely called from within the filter callback.
+ * This function can only be safely called from within the filter callback.
  * If you don't need to copy the key around you can use @ref eio_file_associate_direct_add
  */
 EAPI Eina_Bool eio_file_associate_add(Eio_File *ls,
@@ -693,12 +697,12 @@ EAPI Eina_Bool eio_file_associate_add(Eio_File *ls,
 /**
  * @brief Associate data with the current filtered file.
  * @param ls The Eio_File ls request currently calling the filter callback.
- * @param key The key to associate data to (will not be copied, and the pointer will be used as long as the file is not notified).
+ * @param key The key to associate data to (will not be copied, and the pointer will not be used as long as the file is not notified).
  * @param data The data to associate the data to.
  * @param free_cb The function to call to free the associated data, @p free will be called if not specified.
  * @return EINA_TRUE if insertion was fine.
  *
- * This function could only be safely called from within the filter callback.
+ * This function can only be safely called from within the filter callback.
  * If you need eio to make a proper copy of the @p key to be safe use
  * @ref eio_file_associate_add instead.
  */
@@ -763,9 +767,9 @@ static inline Eina_Bool eio_file_is_lnk(const Eina_Stat *stat);
  */
 
 /**
- * @defgroup Eio_Map Manipulate an Eina_File assynchronously
+ * @defgroup Eio_Map Manipulate an Eina_File asynchronously
  *
- * @brief This function help manipulating file assynchronously.
+ * @brief This function help manipulating file asynchronously.
  *
  * This set of function work on top of Eina_File and Ecore_Thread to
  * never block when reading the content of a file.
@@ -778,7 +782,7 @@ static inline Eina_Bool eio_file_is_lnk(const Eina_Stat *stat);
  * @param shared If it's an shm file.
  * @param open_cb Callback called in the main loop when the file has been successfully opened.
  * @param error_cb Callback called in the main loop when the file couldn't be opened.
- * @param data Private data given to each callback.
+ * @param data Unmodified user data passed to callbacks
  * @return NULL in case of a failure.
  */
 EAPI Eio_File *eio_file_open(const char *name, Eina_Bool shared,
@@ -791,7 +795,7 @@ EAPI Eio_File *eio_file_open(const char *name, Eina_Bool shared,
  * @param f The file to close.
  * @param done_cb Callback called in the main loop when the file has been successfully closed.
  * @param error_cb Callback called in the main loop when the file couldn't be closed.
- * @param data Private data given to each callback.
+ * @param data Unmodified user data passed to callbacks
  * @return NULL in case of a failure.
  */
 EAPI Eio_File *eio_file_close(Eina_File *f,
@@ -806,7 +810,7 @@ EAPI Eio_File *eio_file_close(Eina_File *f,
  * @param filter_cb Callback called in the thread to validate the content of the map.
  * @param map_cb Callback called in the main loop when the file has been successfully mapped.
  * @param error_cb Callback called in the main loop when the file can't be mapped.
- * @param data Private data given to each callback.
+ * @param data Unmodified user data passed to callbacks
  * @return NULL in case of a failure.
  *
  * The container of the Eio_File is the Eina_File.
@@ -827,7 +831,7 @@ EAPI Eio_File *eio_file_map_all(Eina_File *f,
  * @param filter_cb Callback called in the thread to validate the content of the map.
  * @param map_cb Callback called in the main loop when the file has been successfully mapped.
  * @param error_cb Callback called in the main loop when the file can't be mapped.
- * @param data Private data given to each callback.
+ * @param data Unmodified user data passed to callbacks
  * @return NULL in case of a failure.
  *
  * The container of the Eio_File is the Eina_File.
@@ -854,16 +858,16 @@ EAPI Eio_File *eio_file_map_new(Eina_File *f,
  */
 
 /**
- * Open an eet file on disk, and returns a handle to it assynchronously.
+ * Open an eet file on disk, and returns a handle to it asynchronously.
  * @param filename The file path to the eet file. eg: @c "/tmp/file.eet".
  * @param mode The mode for opening. Either EET_FILE_MODE_READ,
  *        EET_FILE_MODE_WRITE or EET_FILE_MODE_READ_WRITE.
  * @param eet_cb The callback to call when the file has been successfully opened.
  * @param error_cb Callback called in the main loop when the file can't be opened.
- * @param data Private data given to each callback.
+ * @param data Unmodified user data passed to callbacks
  * @return NULL in case of a failure.
  *
- * This function call eet_open() from another thread using Ecore_Thread.
+ * This function calls eet_open() from another thread using Ecore_Thread.
  */
 EAPI Eio_File *eio_eet_open(const char *filename,
                             Eet_File_Mode mode,
@@ -871,16 +875,16 @@ EAPI Eio_File *eio_eet_open(const char *filename,
 			    Eio_Error_Cb error_cb,
 			    const void *data);
 /**
- * Close an eet file handle and flush pending writes assynchronously.
+ * Close an eet file handle and flush pending writes asynchronously.
  * @param ef A valid eet file handle.
  * @param done_cb Callback called from the main loop when the file has been closed.
  * @param error_cb Callback called in the main loop when the file can't be closed.
- * @param data Private data given to each callback.
+ * @param data Unmodified user data passed to callbacks
  * @return NULL in case of a failure.
  *
  * This function will call eet_close() from another thread by
  * using Ecore_Thread. You should assume that the Eet_File is dead after this
- * function call.
+ * function is called.
  */
 EAPI Eio_File *eio_eet_close(Eet_File *ef,
 			     Eio_Done_Cb done_cb,
@@ -888,15 +892,15 @@ EAPI Eio_File *eio_eet_close(Eet_File *ef,
 			     const void *data);
 
 /**
- * Sync content of an eet file handle, flushing pending writes assynchronously.
+ * Sync content of an eet file handle, flushing pending writes asynchronously.
  * @param ef A valid eet file handle.
  * @param done_cb Callback called from the main loop when the file has been synced.
  * @param error_cb Callback called in the main loop when the file can't be synced.
- * @param data Private data given to each callback.
+ * @param data Unmodified user data passed to callbacks
  * @return NULL in case of a failure.
  *
- * This function will call eet_flush() from another thread. As long as done_cb or
- * error_cb, haven't be called, you must keep ef open.
+ * This function will call eet_flush() from another thread. As long as the done_cb or
+ * error_cb haven't be called, you must keep @p ef open.
  */
 EAPI Eio_File *eio_eet_sync(Eet_File *ef,
                             Eio_Done_Cb done_cb,
@@ -905,12 +909,12 @@ EAPI Eio_File *eio_eet_sync(Eet_File *ef,
 
 /**
  * Write a data structure from memory and store in an eet file
- * using a cipher assynchronously.
+ * using a cipher asynchronously.
  * @param ef The eet file handle to write to.
  * @param edd The data descriptor to use when encoding.
  * @param name The key to store the data under in the eet file.
  * @param cipher_key The key to use as cipher.
- * @param write_data A pointer to the data structure to ssave and encode.
+ * @param write_data A pointer to the data structure to save and encode.
  * @param compress Compression flags for storage.
  * @param done_cb Callback called from the main loop when the data has been put in the Eet_File.
  * @param error_cb Callback called in the main loop when the file can't be written.
@@ -928,14 +932,14 @@ EAPI Eio_File *eio_eet_data_write_cipher(Eet_File *ef,
 					 const void *user_data);
 
 /**
- * Read a data structure from an eet file and decodes it using a cipher assynchronously.
+ * Read a data structure from an eet file and decodes it using a cipher asynchronously.
  * @param ef The eet file handle to read from.
  * @param edd The data descriptor handle to use when decoding.
  * @param name The key the data is stored under in the eet file.
  * @param cipher_key The key to use as cipher.
  * @param done_cb Callback called from the main loop when the data has been read and decoded.
  * @param error_cb Callback called in the main loop when the data can't be read.
- * @param data Private data given to each callback.
+ * @param data Unmodified user data passed to callbacks
  * @return NULL in case of a failure.
  */
 EAPI Eio_File *eio_eet_data_read_cipher(Eet_File *ef,
@@ -947,7 +951,7 @@ EAPI Eio_File *eio_eet_data_read_cipher(Eet_File *ef,
                                         const void *data);
 
 /**
- * Write image data to the named key in an eet file assynchronously.
+ * Write image data to the named key in an eet file asynchronously.
  * @param ef A valid eet file handle opened for writing.
  * @param name Name of the entry. eg: "/base/file_i_want".
  * @param cipher_key The key to use as cipher.
@@ -983,7 +987,7 @@ EAPI Eio_File *eio_eet_data_image_write_cipher(Eet_File *ef,
  * @param name Name of the entry. eg: "/base/file_i_want".
  * @param done_cb Callback called from the main loop when the data has been read.
  * @param error_cb Callback called in the main loop when the data can't be read.
- * @param data Private data given to each callback.
+ * @param data Unmodified user data passed to callbacks
  * @return NULL in case of a failure.
  */
 EAPI Eio_File *eio_eet_read_direct(Eet_File *ef,
@@ -999,7 +1003,7 @@ EAPI Eio_File *eio_eet_read_direct(Eet_File *ef,
  * @param cipher_key The key to use as cipher.
  * @param done_cb Callback called from the main loop when the data has been read.
  * @param error_cb Callback called in the main loop when the data can't be read.
- * @param data Private data given to each callback.
+ * @param data Unmodified user data passed to callbacks
  * @return NULL in case of a failure.
  */
 EAPI Eio_File *eio_eet_read_cipher(Eet_File *ef,
@@ -1039,26 +1043,26 @@ EAPI Eio_File *eio_eet_write_cipher(Eet_File *ef,
 /**
  * @defgroup Eio_Monitor Eio file and directory monitoring API
  *
- * @brief This function help monitoring change in a directory or on a file.
+ * @brief These function monitor changes in directories and files
  *
- * This function use the best available method to monitor change on a directory
- * or file. It send ecore event when needed and does refcount of all monitored
- * path to avoid heavy ressource consuption.
+ * These functions use the best available method to monitor changes on a specified directory
+ * or file. They send ecore events when changes occur, and they maintain internal refcounts to
+ * reduce resource consumption on duplicate monitor targets.
  *
  * @{
  */
 
-EAPI extern int EIO_MONITOR_FILE_CREATED; /**< Notify creation of a new file in a watched directory */
-EAPI extern int EIO_MONITOR_FILE_DELETED; /**< Notify destruction of a watched file or in a watched directory */
-EAPI extern int EIO_MONITOR_FILE_MODIFIED; /**< Notify modification of a file in a watched directory */
-EAPI extern int EIO_MONITOR_FILE_CLOSED; /**< Notify closing of a file in a watched directory */
-EAPI extern int EIO_MONITOR_DIRECTORY_CREATED; /**< Notify creation of a new directory in a watched directory */
-EAPI extern int EIO_MONITOR_DIRECTORY_DELETED; /**< Notify destruction of a watched directory or in a watched directory */
-EAPI extern int EIO_MONITOR_DIRECTORY_MODIFIED; /**< Notify modification of a directory in a watched directory */
-EAPI extern int EIO_MONITOR_DIRECTORY_CLOSED; /**< Notify closing of a directory in a watched directory */
-EAPI extern int EIO_MONITOR_SELF_RENAME; /**< Notify that Eio monitored path has been renamed, an error could happen just after if the renamed path doesn't exist */
-EAPI extern int EIO_MONITOR_SELF_DELETED; /**< Notify that Eio monitored path has been removed */
-EAPI extern int EIO_MONITOR_ERROR; /**< Notify that during operation the pointed monitor failed and will no longer work. eio_monitor_del is required on it. */
+EAPI extern int EIO_MONITOR_FILE_CREATED; /**< A new file was created in a watched directory */
+EAPI extern int EIO_MONITOR_FILE_DELETED; /**< A watched file was modified, or a file in a watched directory was modified */
+EAPI extern int EIO_MONITOR_FILE_MODIFIED; /**< A file was modified in a watched directory */
+EAPI extern int EIO_MONITOR_FILE_CLOSED; /**< A file was closed in a watched directory */
+EAPI extern int EIO_MONITOR_DIRECTORY_CREATED; /**< A new directory was created in a watched directory */
+EAPI extern int EIO_MONITOR_DIRECTORY_DELETED; /**< A directory has been deleted: this can be either a watched directory or one of its subdirectories */
+EAPI extern int EIO_MONITOR_DIRECTORY_MODIFIED; /**< A directory has been modified in a watched directory */
+EAPI extern int EIO_MONITOR_DIRECTORY_CLOSED; /**< A directory has been closed in a watched directory */
+EAPI extern int EIO_MONITOR_SELF_RENAME; /**< The monitored path has been renamed, an error could happen just after if the renamed path doesn't exist */
+EAPI extern int EIO_MONITOR_SELF_DELETED; /**< The monitored path has been removed */
+EAPI extern int EIO_MONITOR_ERROR; /**< During operation the monitor failed and will no longer work. eio_monitor_del must be called on it. */
 
 typedef struct _Eio_Monitor Eio_Monitor;
 
@@ -1083,25 +1087,25 @@ struct _Eio_Monitor_Event
  * @return NULL in case of a failure.
  *
  * This function will add the given path to its internal
- * list of files to monitor. Its using inotify mechanism
- * introduced in kernel 2.6.13 to get non active monitoring.
+ * list of files to monitor. It utilizes the inotify mechanism
+ * introduced in kernel 2.6.13 for passive monitoring.
  */
 EAPI Eio_Monitor *eio_monitor_add(const char *path);
 
 /**
  * @param path file/directory to monitor
  * @return NULL in case of a failure.
- * Does the same thing than eio_monitor_add() but
- * expects an eina_stringshared buffer.
- * @warning dont give anything else than a stringshared buffer!
- *  if you dont know what you do, use eio_monitor_add().
+ * Does the same thing as eio_monitor_add() but
+ * expects a stringshared string.
+ * @warning Do NOT pass non-stringshared strings to this function!
+ *  If you don't know what this means, use eio_monitor_add().
  */
 EAPI Eio_Monitor *eio_monitor_stringshared_add(const char *path);
 
 /**
  * @brief Deletes a path from the “watched” list
- * @param monitor Eio_Monitor you want to stop watching.
- *  it can only be an Eio_Monitor given to you when calling
+ * @param monitor The Eio_Monitor you want to stop watching.
+ *  It can only be an Eio_Monitor returned to you from calling
  *  eio_monitor_add() or eio_monitor_stringshared_add()
  */
 EAPI void eio_monitor_del(Eio_Monitor *monitor);
@@ -1109,8 +1113,8 @@ EAPI void eio_monitor_del(Eio_Monitor *monitor);
 /**
  * @brief returns the path being watched by the given
  *  Eio_Monitor.
- * @param monitor Eio_Monitor that you want to get path
- * @return returns a stringshared buffer, do not free it!
+ * @param monitor Eio_Monitor to return the path of
+ * @return The stringshared path belonging to @p monitor
  */
 EAPI const char *eio_monitor_path_get(Eio_Monitor *monitor);
 
