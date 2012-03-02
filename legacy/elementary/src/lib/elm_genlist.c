@@ -1521,7 +1521,7 @@ _item_cache_clean(Widget_Data *wd)
         wd->item_cache_count--;
         if (itc->spacer) evas_object_del(itc->spacer);
         if (itc->base_view) evas_object_del(itc->base_view);
-        if (itc->item_style) eina_stringshare_del(itc->item_style);
+        eina_stringshare_del(itc->item_style);
         free(itc);
      }
    evas_event_thaw(evas_object_evas_get(wd->obj));
@@ -1626,7 +1626,9 @@ _item_cache_find(Elm_Gen_Item *it)
           continue;
         if ((itc->tree == tree) &&
             (itc->compress == it->wd->compress) &&
-            (!strcmp(it->itc->item_style, itc->item_style)))
+            (((!it->itc->item_style) && (!itc->item_style)) ||
+             (it->itc->item_style && itc->item_style && 
+            (!strcmp(it->itc->item_style, itc->item_style)))))
           {
              it->wd->item_cache = eina_inlist_remove(it->wd->item_cache,
                                                      EINA_INLIST_GET(itc));
@@ -1745,7 +1747,7 @@ _item_cache_free(Item_Cache *itc)
 {
    if (itc->spacer) evas_object_del(itc->spacer);
    if (itc->base_view) evas_object_del(itc->base_view);
-   if (itc->item_style) eina_stringshare_del(itc->item_style);
+   eina_stringshare_del(itc->item_style);
    free(itc);
 }
 
@@ -1942,9 +1944,9 @@ _item_realize(Elm_Gen_Item *it,
         elm_widget_sub_object_add(WIDGET(it), VIEW(it));
 
         if (it->item->flags & ELM_GENLIST_ITEM_SUBITEMS)
-          snprintf(buf, sizeof(buf), "tree%s/%s", it->wd->compress ? "_compress" : "", it->itc->item_style);
+          snprintf(buf, sizeof(buf), "tree%s/%s", it->wd->compress ? "_compress" : "", it->itc->item_style ?: "default");
         else
-          snprintf(buf, sizeof(buf), "item%s/%s", it->wd->compress ? "_compress" : "", it->itc->item_style);
+          snprintf(buf, sizeof(buf), "item%s/%s", it->wd->compress ? "_compress" : "", it->itc->item_style ?: "default");
 
         _elm_theme_object_set(WIDGET(it), VIEW(it), "genlist", buf,
                               elm_widget_style_get(WIDGET(it)));
