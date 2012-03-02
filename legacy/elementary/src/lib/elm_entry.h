@@ -1395,5 +1395,18 @@ struct _Elm_Entry_Filter_Accept_Set
 EAPI void                   elm_entry_filter_accept_set(void *data, Evas_Object *entry, char **text);
 
 /**
+ * Returns the input method context of the entry.
+ *
+ * This function exposes the internal input method context.
+ *
+ * IMPORTANT: Many functions may change (i.e delete and create a new one)
+ * the internal input method context. Do NOT cache the returned object.
+ *
+ * @param obj The entry object
+ * @return The input method context (Ecore_IMF_Context *) in entry.
+ */
+EAPI void                  *elm_entry_imf_context_get(Evas_Object *obj);
+
+/**
  * @}
  */

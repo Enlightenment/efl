@@ -3745,3 +3745,12 @@ elm_entry_input_panel_return_key_autoenabled_set(Evas_Object *obj, Eina_Bool ena
    _check_enable_return_key(obj);
 }
 
+EAPI void*
+elm_entry_imf_context_get(Evas_Object *obj)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype) NULL;
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return NULL;
+
+   return edje_object_part_text_imf_context_get(wd->ent, "elm.text");
+}
