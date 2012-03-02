@@ -85,11 +85,11 @@ external_gengrid_state_set(void *data __UNUSED__, Evas_Object *obj, const void *
    else if (p->align_x_exists || p->align_y_exists)
      {
         double x, y;
-	elm_gengrid_align_get(obj, &x, &y);
-	if (p->align_x_exists)
-	  elm_gengrid_align_set(obj, p->align_x, y);
-	else
-	  elm_gengrid_align_set(obj, x, p->align_y);
+        elm_gengrid_align_get(obj, &x, &y);
+        if (p->align_x_exists)
+          elm_gengrid_align_set(obj, p->align_x, y);
+        else
+          elm_gengrid_align_set(obj, x, p->align_y);
      }
    if (p->horizontal_exists)
      {
@@ -193,20 +193,20 @@ external_gengrid_param_set(void *data __UNUSED__, Evas_Object *obj, const Edje_E
           }
      }
    else if (!strcmp(param->name, "align x")
-		   && param->type == EDJE_EXTERNAL_PARAM_TYPE_DOUBLE)
+            && param->type == EDJE_EXTERNAL_PARAM_TYPE_DOUBLE)
      {
-	double x, y;
-	elm_gengrid_align_get(obj, &x, &y);
-	elm_gengrid_align_set(obj, param->d, y);
-	return EINA_TRUE;
+        double x, y;
+        elm_gengrid_align_get(obj, &x, &y);
+        elm_gengrid_align_set(obj, param->d, y);
+        return EINA_TRUE;
      }
    else if (!strcmp(param->name, "align y")
-		   && param->type == EDJE_EXTERNAL_PARAM_TYPE_DOUBLE)
+            && param->type == EDJE_EXTERNAL_PARAM_TYPE_DOUBLE)
      {
-	double x, y;
-	elm_gengrid_align_get(obj, &x, &y);
-	elm_gengrid_align_set(obj, x, param->d);
-	return EINA_TRUE;
+        double x, y;
+        elm_gengrid_align_get(obj, &x, &y);
+        elm_gengrid_align_set(obj, x, param->d);
+        return EINA_TRUE;
      }
    ERR("unknown parameter '%s' of type '%s'",
        param->name, edje_external_param_type_str(param->type));
@@ -310,20 +310,20 @@ external_gengrid_param_get(void *data __UNUSED__, const Evas_Object *obj, Edje_E
           }
      }
    else if (!strcmp(param->name, "align x")
-		   && param->type == EDJE_EXTERNAL_PARAM_TYPE_DOUBLE)
+            && param->type == EDJE_EXTERNAL_PARAM_TYPE_DOUBLE)
      {
-	double x, y;
-	elm_gengrid_align_get(obj, &x, &y);
-	param->d = x;
-	return EINA_TRUE;
+        double x, y;
+        elm_gengrid_align_get(obj, &x, &y);
+        param->d = x;
+        return EINA_TRUE;
      }
    else if (!strcmp(param->name, "align y")
-		   && param->type == EDJE_EXTERNAL_PARAM_TYPE_DOUBLE)
+            && param->type == EDJE_EXTERNAL_PARAM_TYPE_DOUBLE)
      {
-	double x, y;
-	elm_gengrid_align_get(obj, &x, &y);
-	param->d = y;
-	return EINA_TRUE;
+        double x, y;
+        elm_gengrid_align_get(obj, &x, &y);
+        param->d = y;
+        return EINA_TRUE;
      }
    ERR("unknown parameter '%s' of type '%s'",
        param->name, edje_external_param_type_str(param->type));
@@ -394,16 +394,16 @@ external_gengrid_params_parse(void *data __UNUSED__, Evas_Object *obj __UNUSED__
              mem->horizontal = !!param->i;
              mem->horizontal_exists = EINA_TRUE;
           }
-	else if (!strcmp(param->name, "align x"))
-	  {
-	     mem->align_x = param->d;
-	     mem->align_x_exists = EINA_TRUE;
-	  }
-	else if (!strcmp(param->name, "align y"))
-	  {
-	     mem->align_y = param->d;
-	     mem->align_y_exists = EINA_TRUE;
-	  }
+        else if (!strcmp(param->name, "align x"))
+          {
+             mem->align_x = param->d;
+             mem->align_x_exists = EINA_TRUE;
+          }
+        else if (!strcmp(param->name, "align y"))
+          {
+             mem->align_y = param->d;
+             mem->align_y_exists = EINA_TRUE;
+          }
      }
 
    return mem;
