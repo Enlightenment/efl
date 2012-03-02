@@ -140,6 +140,8 @@ eio_monitor_init(void)
    eio_monitor_fallback_init();
 
    _eio_monitors = eina_hash_stringshared_new(NULL);
+   /* FIXME: this check is optional, but if it is kept then failure should be handled more gracefully */
+   if (!_eio_monitors) abort();
 
    _monitor_pid = getpid();
 }
@@ -282,6 +284,8 @@ _eio_monitor_rename(Eio_Monitor *monitor, const char *newpath)
                                         _eio_monitor_error_cb,
                                         monitor);
 
+  /* FIXME: probably should handle this more gracefully */
+  if (!monitor->exist) abort();
   /* and notify the app */
   _eio_monitor_send(monitor, newpath, EIO_MONITOR_SELF_RENAME);
 }
