@@ -160,9 +160,11 @@ EAPI Eio_Monitor *
 eio_monitor_add(const char *path)
 {
    const char *tmp;
+   Eio_Monitor *ret;
 
    tmp = eina_stringshare_add(path);
-   return eio_monitor_stringshared_add(tmp);
+   ret = eio_monitor_stringshared_add(tmp);
+   eina_stringshare_del(tmp);
 }
 
 EAPI Eio_Monitor *
