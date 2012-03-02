@@ -713,7 +713,7 @@ EAPI Eina_Bool         elm_web_reload_full(Evas_Object *obj);
  *
  * @return EINA_TRUE on success, EINA_FALSE otherwise
  *
- * @see elm_web_history_enable_set()
+ * @see elm_web_history_enabled_set()
  * @see elm_web_back_possible()
  * @see elm_web_forward()
  * @see elm_web_navigate()
@@ -729,7 +729,7 @@ EAPI Eina_Bool         elm_web_back(Evas_Object *obj);
  *
  * @return EINA_TRUE on success, EINA_FALSE otherwise
  *
- * @see elm_web_history_enable_set()
+ * @see elm_web_history_enabled_set()
  * @see elm_web_forward_possible()
  * @see elm_web_back()
  * @see elm_web_navigate()
@@ -748,7 +748,7 @@ EAPI Eina_Bool         elm_web_forward(Evas_Object *obj);
  * @return EINA_TRUE on success, EINA_FALSE on error or if not enough
  * history exists to jump the given number of steps
  *
- * @see elm_web_history_enable_set()
+ * @see elm_web_history_enabled_set()
  * @see elm_web_navigate_possible()
  * @see elm_web_back()
  * @see elm_web_forward()
@@ -796,19 +796,15 @@ EAPI Eina_Bool         elm_web_navigate_possible(Evas_Object *obj, int steps);
  *
  * @return EINA_TRUE if history is enabled, EINA_FALSE otherwise
  */
-// XXX: use _enabled_get instead of _enable_get
-// EAPI Eina_Bool         elm_web_history_enabled_get(const Evas_Object *obj);
-EAPI Eina_Bool         elm_web_history_enable_get(const Evas_Object *obj);
+EAPI Eina_Bool         elm_web_history_enabled_get(const Evas_Object *obj);
 
 /**
  * Enables or disables the browsing history
  *
  * @param obj The web object
- * @param enable Whether to enable or disable the browsing history
+ * @param enabled Whether to enable or disable the browsing history
  */
-// XXX: use _enabled_set instead of _enable_set
-// EAPI void              elm_web_history_enabled_set(Evas_Object *obj, Eina_Bool enabled);
-EAPI void              elm_web_history_enable_set(Evas_Object *obj, Eina_Bool enable);
+EAPI void              elm_web_history_enabled_set(Evas_Object *obj, Eina_Bool enabled);
 
 /**
  * Sets the zoom level of the web object

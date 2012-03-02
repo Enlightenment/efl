@@ -598,7 +598,7 @@ elm_main(int argc __UNUSED__, char *argv[] __UNUSED__)
 
    web = elm_web_add(win);
    elm_web_window_create_hook_set(web, _web_create_window_cb, ad);
-   elm_web_history_enable_set(web, EINA_FALSE);
+   elm_web_history_enabled_set(web, EINA_FALSE);
    evas_object_size_hint_weight_set(web, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(web, EVAS_HINT_FILL, EVAS_HINT_FILL);
    elm_naviframe_item_simple_push(naviframe, web);

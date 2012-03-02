@@ -1572,8 +1572,14 @@ elm_web_navigate_possible(Evas_Object *obj, int steps)
 #endif
 }
 
-EAPI Eina_Bool
+EINA_DEPRECATED EAPI Eina_Bool
 elm_web_history_enable_get(const Evas_Object *obj)
+{
+   return elm_web_history_enabled_get(obj);
+}
+
+EAPI Eina_Bool
+elm_web_history_enabled_get(const Evas_Object *obj)
 {
    ELM_CHECK_WIDTYPE(obj, widtype) EINA_FALSE;
 #ifdef HAVE_ELEMENTARY_WEB
@@ -1585,8 +1591,14 @@ elm_web_history_enable_get(const Evas_Object *obj)
 #endif
 }
 
-EAPI void
+EINA_DEPRECATED EAPI void
 elm_web_history_enable_set(Evas_Object *obj, Eina_Bool enable)
+{
+   elm_web_history_enabled_set(obj, enable);
+}
+
+EAPI void
+elm_web_history_enabled_set(Evas_Object *obj, Eina_Bool enable)
 {
    ELM_CHECK_WIDTYPE(obj, widtype);
 #ifdef HAVE_ELEMENTARY_WEB

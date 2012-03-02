@@ -4543,5 +4543,27 @@ EINA_DEPRECATED EAPI int       elm_edje_collection_cache_get(void);
 EINA_DEPRECATED EAPI void      elm_edje_collection_cache_set(int size);
 
 /**
+ * Gets whether browsing history is enabled for the given object
+ *
+ * @param obj The web object
+ *
+ * @return EINA_TRUE if history is enabled, EINA_FALSE otherwise
+ *
+ * @deprecated Use elm_web_history_enabled_get()
+ */
+EINA_DEPRECATED EAPI Eina_Bool         elm_web_history_enable_get(const Evas_Object *obj);
+
+/**
+ * Enables or disables the browsing history
+ *
+ * @param obj The web object
+ * @param enable Whether to enable or disable the browsing history
+ *
+ * @deprecated Use elm_web_history_enabled_set()
+ *
+ */
+EINA_DEPRECATED EAPI void              elm_web_history_enable_set(Evas_Object *obj, Eina_Bool enable);
+
+/**
  * @}
  */
