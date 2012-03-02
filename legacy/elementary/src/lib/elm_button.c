@@ -176,64 +176,26 @@ _signal_callback_del_hook(Evas_Object *obj, const char *emission, const char *so
 }
 
 static void
-_content_set_update(void *data)
-{
-   Widget_Data *wd = elm_widget_data_get(data);
-   if (wd->icon)
-     {
-        elm_widget_sub_object_add(data, wd->icon);
-        edje_object_part_swallow(wd->btn, "elm.swallow.content", wd->icon);
-        edje_object_signal_emit(wd->btn, "elm,state,icon,visible", "elm");
-        edje_object_message_signal_process(wd->btn);
-     }
-   _sizing_eval(data);
-}
-
-static void
-_content_set_cb(void *data, Evas_Object *obj, const char *emission, const char *source)
-{
-   Widget_Data *wd = elm_widget_data_get(data);
-   Evas_Object *old_icon = edje_object_part_swallow_get(wd->btn, "elm.swallow.content");
-   if ((old_icon) && (wd->icon != old_icon))
-     {
-        evas_object_event_callback_del_full(old_icon, EVAS_CALLBACK_CHANGED_SIZE_HINTS,
-                                            _changed_size_hints, obj);
-        edje_object_part_unswallow(wd->btn, old_icon);
-        elm_widget_sub_object_del(data, old_icon);
-        evas_object_del(old_icon);
-     }
-   _content_set_update(data);
-   edje_object_signal_callback_del(obj, emission, source, _content_set_cb);
-   edje_object_signal_emit(wd->btn, "elm,state,icon,reset", "elm");
-}
-
-static void
 _content_set_hook(Evas_Object *obj, const char *part, Evas_Object *content)
 {
-   const char *s;
    ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return;
    if (part && strcmp(part, "icon")) return;
    if (wd->icon == content) return;
+   if (wd->icon) evas_object_del(wd->icon);
    wd->icon = content;
-
-   if(wd->icon)
-     evas_object_event_callback_add(wd->icon,
+   if (content)
+     {
+        elm_widget_sub_object_add(obj, content);
+        evas_object_event_callback_add(content,
                                        EVAS_CALLBACK_CHANGED_SIZE_HINTS,
                                        _changed_size_hints, obj);
-
-   s = edje_object_data_get(wd->btn, "transition_animation_on");
-   if ((s) && (atoi(s)))
-     {
-        edje_object_part_swallow(wd->btn, "elm.swallow.content_new", wd->icon);
-        edje_object_signal_emit(wd->btn, "elm,state,icon_set", "elm");
-        edje_object_signal_callback_add(wd->btn,
-                                        "elm,state,icon_set,done", "elm",
-                                        _content_set_cb, obj);
+        edje_object_part_swallow(wd->btn, "elm.swallow.content", content);
+        edje_object_signal_emit(wd->btn, "elm,state,icon,visible", "elm");
+        edje_object_message_signal_process(wd->btn);
      }
-   else
-     _content_set_update(obj);
+   _sizing_eval(obj);
 }
 
 static Evas_Object *
@@ -404,50 +366,20 @@ _signal_unpressed(void *data, Evas_Object *obj __UNUSED__, const char *emission 
 }
 
 static void
-_elm_button_label_update(void *data)
-{
-   Widget_Data *wd = elm_widget_data_get(data);
-
-   if (wd->label)
-     edje_object_signal_emit(wd->btn, "elm,state,text,visible", "elm");
-   else
-     edje_object_signal_emit(wd->btn, "elm,state,text,hidden", "elm");
-   edje_object_message_signal_process(wd->btn);
-   edje_object_part_text_set(wd->btn, "elm.text", wd->label);
-   _sizing_eval(data);
-}
-
-static void
-_elm_button_label_set_cb(void *data, Evas_Object *obj, const char *emission, const char *source)
-{
-   Widget_Data *wd = elm_widget_data_get(data);
-   _elm_button_label_update(data);
-   edje_object_signal_callback_del(obj, emission, source,
-                                   _elm_button_label_set_cb);
-   edje_object_signal_emit(wd->btn, "elm,state,label,reset", "elm");
-}
-
-static void
 _elm_button_label_set(Evas_Object *obj, const char *item, const char *label)
 {
-   const char *s;
    ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
    if (item && strcmp(item, "default")) return;
    if (!wd) return;
-   if ((label) && ((wd->label) && (!strcmp(label, wd->label)))) return;
    eina_stringshare_replace(&wd->label, label);
-   s = edje_object_data_get(wd->btn, "transition_animation_on");
-   if ((s) && (atoi(s)))
-     {
-        edje_object_part_text_set(wd->btn, "elm.text_new", wd->label);
-        edje_object_signal_emit(wd->btn, "elm,state,label_set", "elm");
-        edje_object_signal_callback_add(wd->btn,
-                                        "elm,state,label_set,done", "elm",
-                                        _elm_button_label_set_cb, obj);
-     }
+   if (label)
+     edje_object_signal_emit(wd->btn, "elm,state,text,visible", "elm");
    else
-     _elm_button_label_update(obj);
+     edje_object_signal_emit(wd->btn, "elm,state,text,hidden", "elm");
+   edje_object_message_signal_process(wd->btn);
+   edje_object_part_text_set(wd->btn, "elm.text", label);
+   _sizing_eval(obj);
 }
 
 static const char *
