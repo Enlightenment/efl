@@ -310,7 +310,7 @@ eina_rbtree_inline_insert(Eina_Rbtree *root,
 	 uintptr_t top = stack[--s]; 	 /* Pop link pointer and direction */
 	 Eina_Rbtree_Direction dir = top & 1;
 
-	 r = (Eina_Rbtree **)(top & ~1ULL);
+	 r = (Eina_Rbtree **)(top & ~(uintptr_t)1);
 	 q = *r;
 
 	 a = q->son[dir];
@@ -434,7 +434,7 @@ eina_rbtree_inline_remove(Eina_Rbtree *root,
 	 Eina_Rbtree *q;
 	 uintptr_t st = stack[--s];
 
-	 rt = (Eina_Rbtree**)(st & ~1ULL);
+	 rt = (Eina_Rbtree**)(st & ~(uintptr_t)1);
 	 dir = st & 1;
 	 r = *rt;
 	 q = r->son[dir ^ 1];
