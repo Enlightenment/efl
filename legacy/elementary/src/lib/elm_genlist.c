@@ -1942,13 +1942,9 @@ _item_realize(Elm_Gen_Item *it,
         elm_widget_sub_object_add(WIDGET(it), VIEW(it));
 
         if (it->item->flags & ELM_GENLIST_ITEM_SUBITEMS)
-          strncpy(buf, "tree", sizeof(buf));
-        else strncpy(buf, "item", sizeof(buf));
-        if (it->wd->compress)
-          strncat(buf, "_compress", sizeof(buf) - strlen(buf));
-
-        strncat(buf, "/", sizeof(buf) - strlen(buf));
-        strncat(buf, it->itc->item_style, sizeof(buf) - strlen(buf));
+          snprintf(buf, sizeof(buf), "tree%s/%s", it->wd->compress ? "_compress" : "", it->itc->item_style);
+        else
+          snprintf(buf, sizeof(buf), "item%s/%s", it->wd->compress ? "_compress" : "", it->itc->item_style);
 
         _elm_theme_object_set(WIDGET(it), VIEW(it), "genlist", buf,
                               elm_widget_style_get(WIDGET(it)));
