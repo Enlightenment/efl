@@ -225,6 +225,7 @@ eio_monitor_del(Eio_Monitor *monitor)
 EAPI const char *
 eio_monitor_path_get(Eio_Monitor *monitor)
 {
+   EINA_SAFETY_ON_NULL_RETURN_VAL(monitor, NULL);
    return monitor->path;
 }
 
