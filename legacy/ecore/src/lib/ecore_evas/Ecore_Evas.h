@@ -63,8 +63,8 @@ extern "C" {
 /**
  * @defgroup Ecore_Evas_Group Ecore_Evas wrapper/helper set of functions
  *
- * Ecore evas is a set functions that make it easy to tie together ecore's main
- * loop and input handling to evas. As such it's a natural base for EFL
+ * Ecore evas is a set of functions that makes it easy to tie together ecore's
+ * main loop and input handling to evas. As such it's a natural base for EFL
  * applications. While this combination makes it easy to create the basic
  * aspects all applications need, for normal applications(ones with buttons,
  * checkboxes and layouts) one should consider using Elementary.
