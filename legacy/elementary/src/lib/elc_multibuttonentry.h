@@ -16,6 +16,7 @@
  * - @c "focused" - when multibuttonentry is focused.
  * - @c "unfocused" - when multibuttonentry is unfocused.
  * - @c "expanded" - when multibuttonentry is expanded.
+ * XXX: shrank -> contracted
  * - @c "shrank" - when multibuttonentry is shrank.
  * - @c "shrank,state,changed" - when shrink mode state of multibuttonentry is
  *                               changed.
