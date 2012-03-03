@@ -151,6 +151,8 @@ ecore_con_url_pipeline_get(void)
    return EINA_FALSE;
 }
 
+extern Ecore_Con_Socks *_ecore_con_proxy_global;
+
 EAPI Ecore_Con_Url *
 ecore_con_url_new(const char *url)
 {
@@ -182,22 +184,41 @@ ecore_con_url_new(const char *url)
         return NULL;
      }
 
+   // Read socks proxy
    url_con->proxy_type = -1;
-   if (_ecore_con_proxy_global)
+   if (_ecore_con_proxy_global && _ecore_con_proxy_global->ip &&
+       (_ecore_con_proxy_global->version == 4 ||
+        _ecore_con_proxy_global->version == 5))
      {
-        if (_ecore_con_proxy_global->ip)
+        char proxy[256];
+        char host[256];
+
+        if (_ecore_con_proxy_global->version == 5)
           {
-             char host[128];
-             if (_ecore_con_proxy_global->port > 0 &&
-                 _ecore_con_proxy_global->port <= 65535)
-               snprintf(host, sizeof(host), "socks4://%s:%d",
-                        _ecore_con_proxy_global->ip,
-                        _ecore_con_proxy_global->port);
-             else
-               snprintf(host, sizeof(host), "socks4://%s",
-                        _ecore_con_proxy_global->ip);
-             ecore_con_url_proxy_set(url_con, host);
+             if (_ecore_con_proxy_global->lookup)
+                snprintf(host, sizeof(host), "socks5h://%s",
+                         _ecore_con_proxy_global->ip);
+             else snprintf(host, sizeof(host), "socks5://%s",
+                           _ecore_con_proxy_global->ip);
           }
+        else if (_ecore_con_proxy_global->version == 4)
+          {
+             if (_ecore_con_proxy_global->lookup)
+                snprintf(host, sizeof(host), "socks4a://%s",
+                         _ecore_con_proxy_global->ip);
+             else snprintf(host, sizeof(host), "socks4://%s",
+                           _ecore_con_proxy_global->ip);
+          }
+
+        if (_ecore_con_proxy_global->port > 0 &&
+            _ecore_con_proxy_global->port <= 65535)
+           snprintf(proxy, sizeof(proxy), "%s:%d", host,
+                    _ecore_con_proxy_global->port);
+        else snprintf(proxy, sizeof(proxy), "%s", host);
+
+        ecore_con_url_proxy_set(url_con, proxy);
+        ecore_con_url_proxy_username_set(url_con,
+                                         _ecore_con_proxy_global->username);
      }
 
    ret = curl_easy_setopt(url_con->curl_easy, CURLOPT_ENCODING, "gzip,deflate");
@@ -1118,17 +1139,20 @@ ecore_con_url_proxy_set(Ecore_Con_Url *url_con, const char *proxy)
         if (vers->version_num < 0x71507)
           {
              url_con->proxy_type = CURLPROXY_HTTP;
-             if (strstr(proxy, "socks4")) url_con->proxy_type = CURLPROXY_SOCKS4;
-             else if (strstr(proxy, "socks4a"))
+             if (strstr(proxy, "socks4a"))
                url_con->proxy_type = CURLPROXY_SOCKS4A;
-             else if (strstr(proxy, "socks5"))
-               url_con->proxy_type = CURLPROXY_SOCKS5;
+             else if (strstr(proxy, "socks4"))
+               url_con->proxy_type = CURLPROXY_SOCKS4;
              else if (strstr(proxy, "socks5h"))
                url_con->proxy_type = CURLPROXY_SOCKS5_HOSTNAME;
-             res = curl_easy_setopt(url_con->curl_easy, CURLOPT_PROXYTYPE, url_con->proxy_type);
+             else if (strstr(proxy, "socks5"))
+               url_con->proxy_type = CURLPROXY_SOCKS5;
+             res = curl_easy_setopt(url_con->curl_easy, CURLOPT_PROXYTYPE,
+                                    url_con->proxy_type);
              if (res != CURLE_OK)
                {
-                  ERR("curl proxy type setting failed: %s", curl_easy_strerror(res));
+                  ERR("curl proxy type setting failed: %s",
+                      curl_easy_strerror(res));
                   url_con->proxy_type = -1;
                   return EINA_FALSE;
                }
@@ -1253,6 +1277,7 @@ _ecore_con_url_event_url_complete(Ecore_Con_Url *url_con, CURLMsg *curlmsg)
 
    if (curlmsg && (curlmsg->data.result == CURLE_OK))
       curl_easy_getinfo(curlmsg->easy_handle, CURLINFO_RESPONSE_CODE, &status);
+   else ERR("Curl message have errors: %d", curlmsg->data.result);
 
    e->status = status;
    e->url_con = url_con;
