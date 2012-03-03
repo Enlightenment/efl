@@ -651,7 +651,7 @@ ecore_x_window_depth_get(Ecore_X_Window win)
  * @c _NET_WM_PID.
  *
  * @param   win The given window.
- * @ingroup Ecore_X_Window_Properties_Groups
+ * @ingroup Ecore_X_Window_Properties_Group
  */
 EAPI void
 ecore_x_window_defaults_set(Ecore_X_Window win)
