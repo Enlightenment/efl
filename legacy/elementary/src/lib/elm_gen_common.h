@@ -66,7 +66,7 @@ struct Elm_Gen_Item
    Eina_Bool                 realized : 1;
    Eina_Bool                 selected : 1;
    Eina_Bool                 highlighted : 1;
-   Eina_Bool                 dragging : 1;
+   Eina_Bool                 dragging : 1; /* this is set true when an item is being dragged. this is set false on multidown/mouseup/mousedown. when this is true, the item should not be unrealized. or evas mouse down/up event will be corrupted. */
    Eina_Bool                 down : 1;
    Eina_Bool                 group : 1;
    Eina_Bool                 reorder : 1;
