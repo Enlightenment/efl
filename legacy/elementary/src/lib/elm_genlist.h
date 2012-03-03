@@ -1463,6 +1463,7 @@ EAPI Eina_Bool                     elm_genlist_item_cursor_engine_only_get(const
  *
  * @ingroup Genlist
  */
+// XXX: kill this. elm_genlist_height_for_width_mode_set() covers this.
 EAPI void                          elm_genlist_compress_mode_set(Evas_Object *obj, Eina_Bool compress);
 
 /**

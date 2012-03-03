@@ -128,6 +128,8 @@ EAPI Elm_Object_Item *elm_multibuttonentry_item_prepend(Evas_Object *obj, const 
  *
  * @ingroup Multibuttonentry
  */
+// XXX: use support selected callback like other item_append apis.
+// EAPI Elm_Object_Item *elm_multibuttonentry_item_append(Evas_Object *obj, const char *label, Evas_Smart_Cb func, void *data);
 EAPI Elm_Object_Item *elm_multibuttonentry_item_append(Evas_Object *obj, const char *label, void *data);
 
 /**
