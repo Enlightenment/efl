@@ -113,10 +113,10 @@ static void _calculate_box_min_size(Evas_Object *box, Evas_Object_Box_Data *priv
 static Evas_Coord _calculate_item_max_height(Evas_Object *box, Evas_Object_Box_Data *priv, int obj_index);
 static void _box_layout_cb(Evas_Object *o, Evas_Object_Box_Data *priv, void *data);
 static void _item_text_set_hook(Elm_Object_Item *it,
-                               const char *part,
-                               const char *label);
-static const char * _item_text_get_hook(const Elm_Object_Item *it,
-                                        const char *part);
+                                const char *part,
+                                const char *label);
+static const char *_item_text_get_hook(const Elm_Object_Item *it,
+                                       const char *part);
 
 // XXX: use evas_object_smart_callback_descriptions_set for smart callbacks.
 
@@ -254,7 +254,7 @@ _resize_cb(void *data, Evas *evas __UNUSED__, Evas_Object *obj __UNUSED__, void 
    evas_object_geometry_get(wd->box, NULL, NULL, &w, &h);
 
    if (wd->h_box < h) evas_object_smart_callback_call (data, "expanded", NULL);
-   else if (wd->h_box > h) evas_object_smart_callback_call (data, "shrank", NULL);
+   else if (wd->h_box > h) evas_object_smart_callback_call (data, "contracted", NULL);
 
    wd->w_box = w;
    wd->h_box = h;
@@ -534,7 +534,7 @@ _view_update(Evas_Object *obj)
 }
 
 static void
-_set_label(Evas_Object *obj, const char* str)
+_set_label(Evas_Object *obj, const char *str)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
 
@@ -573,7 +573,7 @@ _set_label(Evas_Object *obj, const char* str)
 }
 
 static void
-_set_guidetext(Evas_Object *obj, const char* str)
+_set_guidetext(Evas_Object *obj, const char *str)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
 

@@ -94,11 +94,11 @@ _expanded_cb(void *data __UNUSED__,
 
 // "contracted" smart callback
 static void
-_shrank_cb(void *data __UNUSED__,
+_contracted_cb(void *data __UNUSED__,
            Evas_Object *obj __UNUSED__,
            void *event_info __UNUSED__)
 {
-   printf("shrank!\n");
+   printf("contracted!\n");
 }
 
 // "contracted,state,changed" smart callback
@@ -164,7 +164,7 @@ _add_multibuttonentry(Evas_Object *parent)
    evas_object_smart_callback_add(mbe, "unfocused", _mbe_unfocused_cb, NULL);
 
    evas_object_smart_callback_add(mbe, "expanded", _expanded_cb, NULL);
-   evas_object_smart_callback_add(mbe, "shrank", _shrank_cb, NULL);
+   evas_object_smart_callback_add(mbe, "contracted", _contracted_cb, NULL);
    evas_object_smart_callback_add(mbe, "shrink,state,changed", _shrink_state_changed_cb, NULL);
 
    evas_object_resize(mbe, 220, 300);

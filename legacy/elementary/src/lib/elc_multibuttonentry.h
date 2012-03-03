@@ -16,9 +16,8 @@
  * - @c "focused" - when multibuttonentry is focused.
  * - @c "unfocused" - when multibuttonentry is unfocused.
  * - @c "expanded" - when multibuttonentry is expanded.
- * XXX: shrank -> contracted
- * - @c "shrank" - when multibuttonentry is shrank.
- * - @c "shrank,state,changed" - when shrink mode state of multibuttonentry is
+ * - @c "contracted" - when multibuttonentry is contracted.
+ * - @c "shrink,state,changed" - when shrink mode state of multibuttonentry is
  *                               changed.
  * 
  * Default text parts of the multibuttonentry widget that you can use for are:
