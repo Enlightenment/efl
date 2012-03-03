@@ -185,7 +185,7 @@ EAPI extern Elm_Version *elm_version;
 #include <elm_check.h> // OK
 #include <elm_clock.h>
 #include <elm_cnp.h> // XXX: comments in elm_cnp.h
-#include <elm_colorselector.h>
+#include <elm_colorselector.h> // OK
 #include <elm_config.h>
 #include <elm_conform.h>
 #include <elm_cursor.h> // XXX: comments in elm_cursor.h. review was not finished.
