@@ -1119,7 +1119,7 @@ ecore_x_window_save_set_del(Ecore_X_Window win)
 }
 
 /**
- * gets the focus to the window @p win.
+ * gets the window that has focus.
  * @return  The window that has focus.
  * @ingroup Ecore_X_Window_Focus_Functions
  */
