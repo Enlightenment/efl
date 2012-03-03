@@ -2385,12 +2385,12 @@ EAPI Eina_Bool    edje_object_part_exists             (const Evas_Object *obj, c
  * @return A pointer to the Evas object implementing the given part,
  * or @c NULL on failure (e.g. the given part doesn't exist)
  *
- * This function gets a pointer the Evas object corresponding to a
+ * This function gets a pointer of the Evas object corresponding to a
  * given part in the @p obj object's group.
  *
  * You should @b never modify the state of the returned object (with
  * @c evas_object_move() or @c evas_object_hide() for example),
- * because it's meant to be managed be Edje, solely. You are safe to
+ * because it's meant to be managed by Edje, solely. You are safe to
  * query information about its current state (with @c
  * evas_object_visible_get() or @c evas_object_color_get() for
  * example), though.
