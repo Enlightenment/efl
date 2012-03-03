@@ -605,6 +605,7 @@ elm_conformant_add(Evas_Object *parent)
    elm_widget_resize_object_set(obj, wd->base);
 
    _swallow_conformant_parts(obj);
+
 #ifdef HAVE_ELEMENTARY_X
    Evas_Object *top = elm_widget_top_get(obj);
    Ecore_X_Window xwin = elm_win_xwindow_get(top);
@@ -616,8 +617,8 @@ elm_conformant_add(Evas_Object *parent)
         wd->vkb_state = ECORE_X_VIRTUAL_KEYBOARD_STATE_OFF;
      }
    // FIXME: get kbd region prop
-
 #endif
+
    evas_object_event_callback_add(obj, EVAS_CALLBACK_RESIZE,
                                        _conformant_move_resize_event_cb, obj);
    evas_object_event_callback_add(obj, EVAS_CALLBACK_MOVE,
@@ -630,19 +631,19 @@ elm_conformant_add(Evas_Object *parent)
    return obj;
 }
 
-EAPI void
+EINA_DEPRECATED EAPI void
 elm_conformant_content_set(Evas_Object *obj, Evas_Object *content)
 {
    _content_set_hook(obj, NULL, content);
 }
 
-EAPI Evas_Object *
+EINA_DEPRECATED EAPI Evas_Object *
 elm_conformant_content_get(const Evas_Object *obj)
 {
    return _content_get_hook(obj, NULL);
 }
 
-EAPI Evas_Object *
+EINA_DEPRECATED EAPI Evas_Object *
 elm_conformant_content_unset(Evas_Object *obj)
 {
    return _content_unset_hook(obj, NULL);
