@@ -49,10 +49,10 @@ struct Elm_Gen_Item
    const char               *mouse_cursor;
 
    struct
-   {
-      Evas_Smart_Cb func;
-      const void   *data;
-   } func;
+     {
+        Evas_Smart_Cb func;
+        const void   *data;
+     } func;
 
    Elm_Gen_Item_Tooltip      tooltip;
    Ecore_Cb                  del_cb, sel_cb, highlight_cb;
@@ -87,9 +87,9 @@ struct _Widget_Data
    Evas_Object                   *obj; /* the genlist object */
    Evas_Object                   *scr; /* a smart scroller object which is used internally in genlist */
    Evas_Object                   *pan_smart; /* "elm_genlist_pan" evas smart object. this is an extern pan of smart scroller(scr). */
-   Eina_List                     *selected;
-   Eina_List                     *group_items; /* list of groups index items */
-   Eina_Inlist                   *items; /* inlist of all items */
+   Eina_List                     *selected; /* a list of selected items */
+   Eina_List                     *group_items; /* a list of groups index items */
+   Eina_Inlist                   *items; /* an inlist of all items */
    Elm_Gen_Item                  *reorder_it; /* item currently being repositioned */
    Elm_Object_Item               *last_selected_item;
    Pan                           *pan; /* pan_smart object's smart data */
@@ -112,7 +112,7 @@ struct _Widget_Data
    Ecore_Cb                       del_cb, calc_cb, sizing_cb;
    Ecore_Cb                       clear_cb;
    ////////////////////////////////////
-   Eina_Inlist                   *blocks; /* inlist of all blocks. a block consists of a certain number of items. maximum number of items in a block is 'max_items_per_block'. */
+   Eina_Inlist                   *blocks; /* an inlist of all blocks. a block consists of a certain number of items. maximum number of items in a block is 'max_items_per_block'. */
    Evas_Coord                     reorder_old_pan_y, w, h, realminw, prev_viewport_w;
    Ecore_Job                     *update_job;
    Ecore_Idle_Enterer            *queue_idle_enterer;
@@ -146,9 +146,9 @@ struct _Widget_Data
    Eina_Bool                      requeued : 1; /* this is set to EINA_TRUE when the item is re-queued. this happens when the item is un-queued but the rel item is still in the queue. this item will be processed later. */
    Eina_Bool                      check_scroll : 1; /* this flag means genlist is supposed to be scrolled. if this flag is set to EINA_TRUE, genlist checks whether it's ok to scroll genlist now or not. */
    struct
-   {
-      Evas_Coord x, y;
-   } history[SWIPE_MOVES];
+     {
+        Evas_Coord x, y;
+     } history[SWIPE_MOVES];
    int                            multi_device;
    int                            item_cache_count;
    int                            item_cache_max; /* maximum number of cached items */
