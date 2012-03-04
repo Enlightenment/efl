@@ -126,6 +126,7 @@ EAPI Elm_Object_Item      *elm_index_item_selected_get(const Evas_Object *obj, i
  * @param obj The index object.
  * @param letter Letter under which the item should be indexed
  * @param item The item data to set for the index's item
+ * @return A handle to the item added or @c NULL, on errors 
  *
  * Despite the most common usage of the @p letter argument is for
  * single char strings, one could use arbitrary strings as index
@@ -136,8 +137,7 @@ EAPI Elm_Object_Item      *elm_index_item_selected_get(const Evas_Object *obj, i
  *
  * @ingroup Index
  */
-//XXX: Should be changed like Elm_Object_Item *elm_index_item_append(Evas_Object *obj, const char* letter, const void *data);
-EAPI void                  elm_index_item_append(Evas_Object *obj, const char *letter, const void *item);
+EAPI Elm_Object_Item      *elm_index_item_append(Evas_Object *obj, const char *letter, const void *item);
 
 /**
  * Prepend a new item on a given index widget.
@@ -145,6 +145,7 @@ EAPI void                  elm_index_item_append(Evas_Object *obj, const char *l
  * @param obj The index object.
  * @param letter Letter under which the item should be indexed
  * @param item The item data to set for the index's item
+ * @return A handle to the item added or @c NULL, on errors 
  *
  * Despite the most common usage of the @p letter argument is for
  * single char strings, one could use arbitrary strings as index
@@ -155,8 +156,7 @@ EAPI void                  elm_index_item_append(Evas_Object *obj, const char *l
  *
  * @ingroup Index
  */
-//XXX: Should be changed like Elm_Object_Item *elm_index_item_prepend(Evas_Object *obj, const char* letter, const void *data);
-EAPI void                  elm_index_item_prepend(Evas_Object *obj, const char *letter, const void *item);
+EAPI Elm_Object_Item      *elm_index_item_prepend(Evas_Object *obj, const char *letter, const void *item);
 
 /**
  * Append a new item, on a given index widget, <b>after the item
@@ -166,6 +166,7 @@ EAPI void                  elm_index_item_prepend(Evas_Object *obj, const char *
  * @param letter Letter under which the item should be indexed
  * @param item The item data to set for the index's item
  * @param relative The index item to be the predecessor of this new one
+ * @return A handle to the item added or @c NULL, on errors 
  *
  * Despite the most common usage of the @p letter argument is for
  * single char strings, one could use arbitrary strings as index
@@ -179,8 +180,7 @@ EAPI void                  elm_index_item_prepend(Evas_Object *obj, const char *
  *
  * @ingroup Index
  */
-//XXX: Should be changed like Elm_Object_Item *elm_index_item_insert_after(Evas_Object *obj, const Elm_Object_Item *after, const char* letter, const void *data);
-EAPI void                  elm_index_item_append_relative(Evas_Object *obj, const char *letter, const void *item, const Elm_Object_Item *relative);
+EAPI Elm_Object_Item      *elm_index_item_append_relative(Evas_Object *obj, const char *letter, const void *item, const Elm_Object_Item *relative);
 
 /**
  * Prepend a new item, on a given index widget, <b>after the item
@@ -190,6 +190,7 @@ EAPI void                  elm_index_item_append_relative(Evas_Object *obj, cons
  * @param letter Letter under which the item should be indexed
  * @param item The item data to set for the index's item
  * @param relative The index item to be the successor of this new one
+ * @return A handle to the item added or @c NULL, on errors 
  *
  * Despite the most common usage of the @p letter argument is for
  * single char strings, one could use arbitrary strings as index
@@ -203,8 +204,7 @@ EAPI void                  elm_index_item_append_relative(Evas_Object *obj, cons
  *
  * @ingroup Index
  */
-//XXX: Should be changed like Elm_Object_Item *elm_index_item_insert_before(Evas_Object *obj, const Elm_Object_Item *before, const char* letter, const void *data);
-EAPI void                  elm_index_item_prepend_relative(Evas_Object *obj, const char *letter, const void *item, const Elm_Object_Item *relative);
+EAPI Elm_Object_Item      *elm_index_item_prepend_relative(Evas_Object *obj, const char *letter, const void *item, const Elm_Object_Item *relative);
 
 /**
  * Insert a new item into the given index widget, using @p cmp_func
@@ -227,6 +227,7 @@ EAPI void                  elm_index_item_prepend_relative(Evas_Object *obj, con
  * because all references to it will be lost. If this function is
  * not provided (@c NULL is given), index items will be @b
  * duplicated, if @p cmp_func returns @c 0.
+ * @return A handle to the item added or @c NULL, on errors 
  *
  * Despite the most common usage of the @p letter argument is for
  * single char strings, one could use arbitrary strings as index
@@ -237,8 +238,7 @@ EAPI void                  elm_index_item_prepend_relative(Evas_Object *obj, con
  *
  * @ingroup Index
  */
-//XXX: Should be changed like Elm_Object_Item *elm_index_item_sorted_insert(Evas_Object *obj, const char* letter, const void *data, Eina_Compare_Cb cmp_func, Eina_Compare_Cb cmp_data_func);
-EAPI void                  elm_index_item_sorted_insert(Evas_Object *obj, const char *letter, const void *item, Eina_Compare_Cb cmp_func, Eina_Compare_Cb cmp_data_func);
+EAPI Elm_Object_Item      *elm_index_item_sorted_insert(Evas_Object *obj, const char *letter, const void *item, Eina_Compare_Cb cmp_func, Eina_Compare_Cb cmp_data_func);
 
 /**
  * Find a given index widget's item, <b>using item data</b>.

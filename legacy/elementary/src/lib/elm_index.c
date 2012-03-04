@@ -665,87 +665,83 @@ elm_index_item_selected_get(const Evas_Object *obj, int level)
    return NULL;
 }
 
-EAPI void
+EAPI Elm_Object_Item *
 elm_index_item_append(Evas_Object *obj, const char *letter, const void *item)
 {
-   ELM_CHECK_WIDTYPE(obj, widtype);
+   ELM_CHECK_WIDTYPE(obj, widtype) NULL;
    Widget_Data *wd = elm_widget_data_get(obj);
    Elm_Index_Item *it;
-   if (!wd) return;
+   if (!wd) return NULL;
    it = _item_new(obj, letter, item);
-   if (!it) return;
+   if (!it) return NULL;
    wd->items = eina_list_append(wd->items, it);
    _index_box_clear(obj, wd->bx[wd->level], wd->level);
+   return (Elm_Object_Item *) it;
 }
 
-EAPI void
+EAPI Elm_Object_Item *
 elm_index_item_prepend(Evas_Object *obj, const char *letter, const void *item)
 {
-   ELM_CHECK_WIDTYPE(obj, widtype);
+   ELM_CHECK_WIDTYPE(obj, widtype) NULL;
    Widget_Data *wd = elm_widget_data_get(obj);
    Elm_Index_Item *it;
 
-   if (!wd) return;
+   if (!wd) return NULL;
    it = _item_new(obj, letter, item);
-   if (!it) return;
+   if (!it) return NULL;
    wd->items = eina_list_prepend(wd->items, it);
    _index_box_clear(obj, wd->bx[wd->level], wd->level);
+   return (Elm_Object_Item *) it;
 }
 
-EAPI void
+EAPI Elm_Object_Item *
 elm_index_item_append_relative(Evas_Object *obj, const char *letter, const void *item, const Elm_Object_Item *relative)
 {
-   ELM_CHECK_WIDTYPE(obj, widtype);
+   ELM_CHECK_WIDTYPE(obj, widtype) NULL;
    Widget_Data *wd = elm_widget_data_get(obj);
    Elm_Index_Item *it;
-   if (!wd) return;
+   if (!wd) return NULL;
    if (!relative)
-     {
-        elm_index_item_append(obj, letter, item);
-        return;
-     }
+     return elm_index_item_append(obj, letter, item);
    it = _item_new(obj, letter, item);
-   if (!it) return;
+   if (!it) return NULL;
    wd->items = eina_list_append_relative(wd->items, it, relative);
    _index_box_clear(obj, wd->bx[wd->level], wd->level);
+   return (Elm_Object_Item *) it;
+
 }
 
-EAPI void
+EAPI Elm_Object_Item *
 elm_index_item_prepend_relative(Evas_Object *obj, const char *letter, const void *item, const Elm_Object_Item *relative)
 {
-   ELM_CHECK_WIDTYPE(obj, widtype);
+   ELM_CHECK_WIDTYPE(obj, widtype) NULL;
    Widget_Data *wd = elm_widget_data_get(obj);
    Elm_Index_Item *it;
-   if (!wd) return;
+   if (!wd) return NULL;
    if (!relative)
-     {
-        elm_index_item_prepend(obj, letter, item);
-        return;
-     }
+     return elm_index_item_prepend(obj, letter, item);
    it = _item_new(obj, letter, item);
-   if (!it) return;
+   if (!it) return NULL;
    wd->items = eina_list_prepend_relative(wd->items, it, relative);
    _index_box_clear(obj, wd->bx[wd->level], wd->level);
+   return (Elm_Object_Item *) it;
 }
 
-EAPI void
+EAPI Elm_Object_Item *
 elm_index_item_sorted_insert(Evas_Object *obj, const char *letter, const void *item, Eina_Compare_Cb cmp_func, Eina_Compare_Cb cmp_data_func)
 {
-   ELM_CHECK_WIDTYPE(obj, widtype);
+   ELM_CHECK_WIDTYPE(obj, widtype) NULL;
    Widget_Data *wd = elm_widget_data_get(obj);
    Eina_List *lnear;
    Elm_Index_Item *it;
    int cmp;
 
-   if (!wd) return;
+   if (!wd) return NULL;
    if (!(wd->items))
-     {
-        elm_index_item_append(obj, letter, item);
-        return;
-     }
+     return elm_index_item_append(obj, letter, item);
 
    it = _item_new(obj, letter, item);
-   if (!it) return;
+   if (!it) return NULL;
 
    lnear = eina_list_search_sorted_near_list(wd->items, cmp_func, it, &cmp);
    if (cmp < 0)
@@ -768,6 +764,8 @@ elm_index_item_sorted_insert(Evas_Object *obj, const char *letter, const void *i
      }
 
    _index_box_clear(obj, wd->bx[wd->level], wd->level);
+
+   return (Elm_Object_Item *) it;
 }
 
 EAPI void
