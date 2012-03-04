@@ -305,6 +305,7 @@ _mirrored_set_item(Evas_Object *obj __UNUSED__, Elm_Toolbar_Item *it, Eina_Bool 
 static void
 _theme_hook_item(Evas_Object *obj, Elm_Toolbar_Item *it, double scale, int icon_size)
 {
+   Widget_Data *wd = elm_widget_data_get(obj);
    Evas_Object *view = VIEW(it);
    Evas_Coord mw, mh;
    const char *style = elm_widget_style_get(obj);
@@ -336,7 +337,19 @@ _theme_hook_item(Evas_Object *obj, Elm_Toolbar_Item *it, double scale, int icon_
         edje_object_part_text_set(view, "elm.text", it->label);
      }
    else
-     _elm_theme_object_set(obj, view, "toolbar", "separator", style);
+     {
+        _elm_theme_object_set(obj, view, "toolbar", "separator", style);
+        if (wd->vertical)
+          {
+             evas_object_size_hint_weight_set(view, EVAS_HINT_EXPAND, -1.0);
+             evas_object_size_hint_align_set(view, EVAS_HINT_FILL, 0.5);
+          }
+        else
+          {
+             evas_object_size_hint_weight_set(view, -1.0, EVAS_HINT_EXPAND);
+             evas_object_size_hint_align_set(view, 0.5, EVAS_HINT_FILL);
+          }
+     }
 
    mw = mh = -1;
    if (!it->separator)
@@ -423,7 +436,6 @@ _sizing_eval(Evas_Object *obj)
    evas_object_size_hint_min_get(wd->bx, &minw_bx, &minh_bx);
 //   if (wd->vertical && (h > minh)) minh = h;
 //   if ((!wd->vertical) && (w > minw)) minw = w;
-   evas_object_resize(wd->bx, minw_bx, minh_bx);
    elm_smart_scroller_child_viewport_size_get(wd->scr, &vw, &vh);
    if (wd->shrink_mode == ELM_TOOLBAR_SHRINK_NONE)
      {
@@ -437,6 +449,13 @@ _sizing_eval(Evas_Object *obj)
              minw = minw_bx + (w - vw);
              minh = minh_bx + (h - vh);
           }
+     }
+   else if (wd->shrink_mode == ELM_TOOLBAR_SHRINK_EXPAND)
+     {
+        minw = minw_bx + (w - vw);
+        minh = minh_bx + (h - vh);
+        if (minw_bx < vw) minw_bx = vw;
+        if (minh_bx < vh) minh_bx = vh;
      }
    else
      {
@@ -454,6 +473,7 @@ _sizing_eval(Evas_Object *obj)
 //        else minw = w - vw;
 //        minh = minh + (h - vh);
      }
+   evas_object_resize(wd->bx, minw_bx, minh_bx);
    evas_object_size_hint_min_set(obj, minw, minh);
    evas_object_size_hint_max_set(obj, -1, -1);
 }
@@ -656,6 +676,15 @@ _resize_job(void *data)
                   evas_object_box_append(wd->bx, VIEW(it));
                }
           }
+     }
+   else if (wd->shrink_mode == ELM_TOOLBAR_SHRINK_EXPAND)
+     {
+        if ((vw >= mw) && (vh >= mh))
+          evas_object_resize(wd->bx, vw, vh);
+        else if (vw < mw)
+          evas_object_resize(wd->bx, mw, vh);
+        else if (vh < mh)
+          evas_object_resize(wd->bx, vw, mh);
      }
    else
      {
@@ -912,15 +941,23 @@ _item_new(Evas_Object *obj, const char *icon, const char *label, Evas_Smart_Cb f
    elm_coords_finger_size_adjust(1, &mw, 1, &mh);
    edje_object_size_min_restricted_calc(VIEW(it), &mw, &mh, mw, mh);
    elm_coords_finger_size_adjust(1, &mw, 1, &mh);
-   if (wd->vertical)
+    if (wd->shrink_mode != ELM_TOOLBAR_SHRINK_EXPAND)
      {
-        evas_object_size_hint_weight_set(VIEW(it), EVAS_HINT_EXPAND, -1.0);
-        evas_object_size_hint_align_set(VIEW(it), EVAS_HINT_FILL, 0.5);
+        if (wd->vertical)
+          {
+             evas_object_size_hint_weight_set(VIEW(it), EVAS_HINT_EXPAND, -1.0);
+             evas_object_size_hint_align_set(VIEW(it), EVAS_HINT_FILL, 0.5);
+          }
+        else
+          {
+             evas_object_size_hint_weight_set(VIEW(it), -1.0, EVAS_HINT_EXPAND);
+             evas_object_size_hint_align_set(VIEW(it), 0.5, EVAS_HINT_FILL);
+          }
      }
    else
      {
-        evas_object_size_hint_weight_set(VIEW(it), -1.0, EVAS_HINT_EXPAND);
-        evas_object_size_hint_align_set(VIEW(it), 0.5, EVAS_HINT_FILL);
+        evas_object_size_hint_weight_set(VIEW(it), EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+        evas_object_size_hint_align_set(VIEW(it), EVAS_HINT_FILL, EVAS_HINT_FILL);
      }
    evas_object_size_hint_min_set(VIEW(it), mw, mh);
    evas_object_size_hint_max_set(VIEW(it), -1, -1);
@@ -941,15 +978,23 @@ _elm_toolbar_item_label_update(Elm_Toolbar_Item *item)
    elm_coords_finger_size_adjust(1, &mw, 1, &mh);
    edje_object_size_min_restricted_calc(VIEW(item), &mw, &mh, mw, mh);
    elm_coords_finger_size_adjust(1, &mw, 1, &mh);
-   if (wd->vertical)
+   if (wd->shrink_mode != ELM_TOOLBAR_SHRINK_EXPAND)
      {
-        evas_object_size_hint_weight_set(VIEW(item), EVAS_HINT_EXPAND, -1.0);
-        evas_object_size_hint_align_set(VIEW(item), EVAS_HINT_FILL, 0.5);
+        if (wd->vertical)
+          {
+             evas_object_size_hint_weight_set(VIEW(item), EVAS_HINT_EXPAND, -1.0);
+             evas_object_size_hint_align_set(VIEW(item), EVAS_HINT_FILL, 0.5);
+          }
+        else
+          {
+             evas_object_size_hint_weight_set(VIEW(item), -1.0, EVAS_HINT_EXPAND);
+             evas_object_size_hint_align_set(VIEW(item), 0.5, EVAS_HINT_FILL);
+          }
      }
    else
      {
-        evas_object_size_hint_weight_set(VIEW(item), -1.0, EVAS_HINT_EXPAND);
-        evas_object_size_hint_align_set(VIEW(item), 0.5, EVAS_HINT_FILL);
+        evas_object_size_hint_weight_set(VIEW(item), EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+        evas_object_size_hint_align_set(VIEW(item), EVAS_HINT_FILL, EVAS_HINT_FILL);
      }
    evas_object_size_hint_min_set(VIEW(item), mw, mh);
 }
@@ -1001,15 +1046,23 @@ _elm_toolbar_item_icon_update(Elm_Toolbar_Item *item)
    elm_coords_finger_size_adjust(1, &mw, 1, &mh);
    edje_object_size_min_restricted_calc(VIEW(item), &mw, &mh, mw, mh);
    elm_coords_finger_size_adjust(1, &mw, 1, &mh);
-   if (wd->vertical)
+   if (wd->shrink_mode != ELM_TOOLBAR_SHRINK_EXPAND)
      {
-        evas_object_size_hint_weight_set(VIEW(item), EVAS_HINT_EXPAND, -1.0);
-        evas_object_size_hint_align_set(VIEW(item), EVAS_HINT_FILL, 0.5);
+        if (wd->vertical)
+          {
+             evas_object_size_hint_weight_set(VIEW(item), EVAS_HINT_EXPAND, -1.0);
+             evas_object_size_hint_align_set(VIEW(item), EVAS_HINT_FILL, 0.5);
+          }
+        else
+          {
+             evas_object_size_hint_weight_set(VIEW(item), -1.0, EVAS_HINT_EXPAND);
+             evas_object_size_hint_align_set(VIEW(item), 0.5, EVAS_HINT_FILL);
+          }
      }
    else
      {
-        evas_object_size_hint_weight_set(VIEW(item), -1.0, EVAS_HINT_EXPAND);
-        evas_object_size_hint_align_set(VIEW(item), 0.5, EVAS_HINT_FILL);
+        evas_object_size_hint_weight_set(VIEW(item), EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+        evas_object_size_hint_align_set(VIEW(item), EVAS_HINT_FILL, EVAS_HINT_FILL);
      }
    evas_object_size_hint_min_set(VIEW(item), mw, mh);
 

@@ -67,6 +67,7 @@ typedef enum
    ELM_TOOLBAR_SHRINK_HIDE, /**< Hide exceeding items. */
    ELM_TOOLBAR_SHRINK_SCROLL, /**< Allow accessing exceeding items through a scroller. */
    ELM_TOOLBAR_SHRINK_MENU, /**< Inserts a button to pop up a menu with exceeding items. */
+   ELM_TOOLBAR_SHRINK_EXPAND, /**< Expand all items according the size of the toolbar. */
    ELM_TOOLBAR_SHRINK_LAST /**< Indicates error if returned by elm_toolbar_shrink_mode_get() */
 } Elm_Toolbar_Shrink_Mode;
 
