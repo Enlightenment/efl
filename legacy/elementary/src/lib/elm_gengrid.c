@@ -2370,7 +2370,7 @@ elm_gengrid_selected_item_get(const Evas_Object *obj)
 EAPI const Eina_List *
 elm_gengrid_selected_items_get(const Evas_Object *obj)
 {
-   return elm_gengrid_selected_items_get(obj);
+   return elm_genlist_selected_items_get(obj);
 }
 
 EAPI void
