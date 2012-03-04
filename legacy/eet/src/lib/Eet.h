@@ -30,7 +30,7 @@
    Eet is extremely fast, small and simple. Eet files can be very small and
    highly compressed, making them very optimal for just sending across the
    internet without having to archive, compress or decompress and install them.
-   They allow for lightning-fast random-acess reads once created, making them
+   They allow for lightning-fast random-access reads once created, making them
    perfect for storing data that is written once (or rarely) and read many
    times, but the program does not want to have to read it all in at once.
 
