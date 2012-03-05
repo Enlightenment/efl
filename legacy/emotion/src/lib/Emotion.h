@@ -645,7 +645,7 @@ EAPI double       emotion_object_position_get          (const Evas_Object *obj);
  * the backend don't support buffering) 1.0 is returned, thus you can always
  * check for buffer_size < 1.0 to know if buffering is in progress.
  *
- * @warning xine backends don't implement this (will return 1.0).
+ * @warning Generic backend don't implement this (will return 1.0).
  */
 EAPI double       emotion_object_buffer_size_get       (const Evas_Object *obj);
 
