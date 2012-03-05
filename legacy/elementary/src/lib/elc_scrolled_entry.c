@@ -187,7 +187,7 @@ elm_scrolled_entry_autosave_get(const Evas_Object *obj)
 {return elm_entry_autosave_get(obj);}
 EINA_DEPRECATED EAPI void
 elm_scrolled_entry_cnp_textonly_set(Evas_Object *obj, Eina_Bool textonly)
-{elm_entry_cnp_textonly_set(obj, textonly);}
+{Elm_CNP_Mode cnp_mode = ELM_CNP_MODE_MARKUP;if (textonly) cnp_mode = ELM_CNP_MODE_NO_IMAGE;elm_entry_cnp_mode_set(obj, cnp_mode);}
 EINA_DEPRECATED EAPI Eina_Bool
 elm_scrolled_entry_cnp_textonly_get(Evas_Object *obj)
-{return elm_entry_cnp_textonly_get(obj);}
+{return elm_entry_cnp_mode_get(obj) != ELM_CNP_MODE_MARKUP;}

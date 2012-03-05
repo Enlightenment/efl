@@ -1191,22 +1191,19 @@ void
 _elm_entry_entry_paste(Evas_Object *obj, const char *entry)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
-   
    char *str = NULL;
+   
    if (wd->cnp_mode == ELM_CNP_MODE_NO_IMAGE)
      {
         str = _remove_item_tags(entry);
-        if (!str)
-          str = strdup(entry);
+        if (!str) str = strdup(entry);
      }
    else
      str = strdup(entry);
-   if (!str)
-     str = entry;
+   if (!str) str = (char *)entry;
 
    edje_object_part_text_user_insert(wd->ent, "elm.text", str);
-   if ( str != entry)
-     free(str);
+   if (str != entry) free(str);
 }
 
 static void
@@ -3374,7 +3371,7 @@ elm_entry_autosave_get(const Evas_Object *obj)
    return wd->autosave;
 }
 
-EAPI void
+EINA_DEPRECATED EAPI void
 elm_entry_cnp_textonly_set(Evas_Object *obj, Eina_Bool textonly)
 {
    ELM_CHECK_WIDTYPE(obj, widtype);
@@ -3384,7 +3381,7 @@ elm_entry_cnp_textonly_set(Evas_Object *obj, Eina_Bool textonly)
    elm_entry_cnp_mode_set(obj, cnp_mode);
 }
 
-EAPI Eina_Bool
+EINA_DEPRECATED EAPI Eina_Bool
 elm_entry_cnp_textonly_get(const Evas_Object *obj)
 {
    ELM_CHECK_WIDTYPE(obj, widtype) EINA_FALSE;
