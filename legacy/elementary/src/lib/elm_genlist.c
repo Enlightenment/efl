@@ -5620,33 +5620,37 @@ elm_genlist_item_class_new(void)
 EAPI void
 elm_genlist_item_class_free(Elm_Genlist_Item_Class *itc)
 {
-   ELM_GENLIST_CHECK_ITC_VER(itc);
-   if (!itc->delete_me) itc->delete_me = EINA_TRUE;
-   if (itc->refcount > 0) elm_genlist_item_class_unref(itc);
-   else
+   if (itc && (itc->version == ELM_GENLIST_ITEM_CLASS_VERSION))
      {
-        itc->version = 0;
-        free(itc);
+        if (!itc->delete_me) itc->delete_me = EINA_TRUE;
+        if (itc->refcount > 0) elm_genlist_item_class_unref(itc);
+        else
+          {
+             itc->version = 0;
+             free(itc);
+          }
      }
 }
 
 EAPI void
 elm_genlist_item_class_ref(Elm_Genlist_Item_Class *itc)
 {
-   ELM_GENLIST_CHECK_ITC_VER(itc);
-
-   itc->refcount++;
-   if (itc->refcount == 0) itc->refcount--;
+   if (itc && (itc->version == ELM_GENLIST_ITEM_CLASS_VERSION))
+     {
+        itc->refcount++;
+        if (itc->refcount == 0) itc->refcount--;
+     }
 }
 
 EAPI void
 elm_genlist_item_class_unref(Elm_Genlist_Item_Class *itc)
 {
-   ELM_GENLIST_CHECK_ITC_VER(itc);
-
-   if (itc->refcount > 0) itc->refcount--;
-   if (itc->delete_me && (!itc->refcount))
-     elm_genlist_item_class_free(itc);
+   if (itc && (itc->version == ELM_GENLIST_ITEM_CLASS_VERSION))
+     {
+        if (itc->refcount > 0) itc->refcount--;
+        if (itc->delete_me && (!itc->refcount))
+          elm_genlist_item_class_free(itc);
+     }
 }
 
 /* for gengrid as of now */

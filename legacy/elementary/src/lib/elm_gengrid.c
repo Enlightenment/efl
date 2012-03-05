@@ -21,23 +21,6 @@
    (it)->unsel_cb = (Ecore_Cb)_item_unselect; \
    (it)->unrealize_cb = (Ecore_Cb)_item_unrealize_cb
 
-#define ELM_GENGRID_CHECK_ITC_VER(itc) \
-   do \
-     { \
-        if (!itc) \
-          { \
-             ERR("Gengrid_Item_Class(itc) is NULL"); \
-             return; \
-          } \
-        if (itc->version != ELM_GENGRID_ITEM_CLASS_VERSION) \
-          { \
-             ERR("Gengrid_Item_Class version mismatched! required = (%d), current  = (%d)", itc->version, ELM_GENGRID_ITEM_CLASS_VERSION); \
-             return; \
-          } \
-     } \
-   while(0)
-
-
 struct Elm_Gen_Item_Type
 {
    Elm_Gen_Item   *it;
@@ -2797,32 +2780,36 @@ elm_gengrid_item_class_new(void)
 EAPI void
 elm_gengrid_item_class_free(Elm_Gengrid_Item_Class *itc)
 {
-   ELM_GENGRID_CHECK_ITC_VER(itc);
-   if (!itc->delete_me) itc->delete_me = EINA_TRUE;
-   if (itc->refcount > 0) elm_gengrid_item_class_unref(itc);
-   else
+   if (itc && (itc->version == ELM_GENGRID_ITEM_CLASS_VERSION))
      {
-        itc->version = 0;
-        free(itc);
+        if (!itc->delete_me) itc->delete_me = EINA_TRUE;
+        if (itc->refcount > 0) elm_gengrid_item_class_unref(itc);
+        else
+          {
+             itc->version = 0;
+             free(itc);
+          }
      }
 }
 
 EAPI void
 elm_gengrid_item_class_ref(Elm_Gengrid_Item_Class *itc)
 {
-   ELM_GENGRID_CHECK_ITC_VER(itc);
-
-   itc->refcount++;
-   if (itc->refcount == 0) itc->refcount--;
+   if (itc && (itc->version == ELM_GENGRID_ITEM_CLASS_VERSION))
+     {
+        itc->refcount++;
+        if (itc->refcount == 0) itc->refcount--;
+     }
 }
 
 EAPI void
 elm_gengrid_item_class_unref(Elm_Gengrid_Item_Class *itc)
 {
-   ELM_GENGRID_CHECK_ITC_VER(itc);
-
-   if (itc->refcount > 0) itc->refcount--;
-   if (itc->delete_me && (!itc->refcount))
-     elm_gengrid_item_class_free(itc);
+   if (itc && (itc->version == ELM_GENGRID_ITEM_CLASS_VERSION))
+     {
+        if (itc->refcount > 0) itc->refcount--;
+        if (itc->delete_me && (!itc->refcount))
+          elm_gengrid_item_class_free(itc);
+     }
 }
 
