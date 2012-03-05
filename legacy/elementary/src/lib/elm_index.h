@@ -118,7 +118,7 @@ EAPI int                   elm_index_item_level_get(const Evas_Object *obj);
  *
  * @ingroup Index
  */
-EAPI Elm_Object_Item      *elm_index_item_selected_get(const Evas_Object *obj, int level);
+EAPI Elm_Object_Item      *elm_index_selected_item_get(const Evas_Object *obj, int level);
 
 /**
  * Append a new item on a given index widget.

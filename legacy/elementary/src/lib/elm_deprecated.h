@@ -4851,6 +4851,18 @@ EINA_DEPRECATED EAPI void                  elm_icon_scale_set(Evas_Object *obj, 
  * @ingroup Icon
  */
 EINA_DEPRECATED EAPI void                  elm_icon_scale_get(const Evas_Object *obj, Eina_Bool *scale_up, Eina_Bool *scale_down);
+
+/**
+ * Returns the last selected item, for a given index widget.
+ *
+ * @param obj The index object.
+ * @return The last item @b selected on @p obj (or @c NULL, on errors).
+ * @deprecated Please use elm_index_selected_item_get() instead.
+ *
+ *
+ * @ingroup Index
+ */
+EINA_DEPRECATED EAPI Elm_Object_Item      *elm_index_item_selected_get(const Evas_Object *obj, int level);
 /**
  * @}
  */

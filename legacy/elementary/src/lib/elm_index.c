@@ -322,7 +322,7 @@ _delay_change(void *data)
    Elm_Object_Item *item;
    if (!wd) return ECORE_CALLBACK_CANCEL;
    wd->delay = NULL;
-   item = elm_index_item_selected_get(data, wd->level);
+   item = elm_index_selected_item_get(data, wd->level);
    if (item) evas_object_smart_callback_call(data, SIG_DELAY_CHANGED, item);
    return ECORE_CALLBACK_CANCEL;
 }
@@ -483,7 +483,7 @@ _mouse_up(void *data, Evas *e __UNUSED__, Evas_Object *o __UNUSED__, void *event
    if (!wd) return;
    if (ev->button != 1) return;
    wd->down = 0;
-   item = elm_index_item_selected_get(data, wd->level);
+   item = elm_index_selected_item_get(data, wd->level);
    if (item)
      {
         evas_object_smart_callback_call(data, SIG_SELECTED, item);
@@ -678,8 +678,14 @@ elm_index_item_level_get(const Evas_Object *obj)
    return wd->level;
 }
 
-EAPI Elm_Object_Item *
+EINA_DEPRECATED EAPI Elm_Object_Item *
 elm_index_item_selected_get(const Evas_Object *obj, int level)
+{
+   return elm_index_selected_item_get(obj, level);
+}
+
+EAPI Elm_Object_Item *
+elm_index_selected_item_get(const Evas_Object *obj, int level)
 {
    ELM_CHECK_WIDTYPE(obj, widtype) NULL;
    Widget_Data *wd = elm_widget_data_get(obj);
