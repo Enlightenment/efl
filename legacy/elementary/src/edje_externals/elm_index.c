@@ -18,7 +18,7 @@ external_index_state_set(void *data __UNUSED__, Evas_Object *obj, const void *fr
    else return;
 
    if (p->active_exists)
-     elm_index_active_set(obj, p->active_exists);
+     elm_index_autohide_disabled_set(obj, p->active_exists);
 }
 
 static Eina_Bool
@@ -28,7 +28,7 @@ external_index_param_set(void *data __UNUSED__, Evas_Object *obj, const Edje_Ext
      {
         if (param->type == EDJE_EXTERNAL_PARAM_TYPE_BOOL)
           {
-             elm_index_active_set(obj, param->i);
+             elm_index_autohide_disabled_set(obj, param->i);
              return EINA_TRUE;
           }
      }
@@ -45,7 +45,7 @@ external_index_param_get(void *data __UNUSED__, const Evas_Object *obj, Edje_Ext
      {
         if (param->type == EDJE_EXTERNAL_PARAM_TYPE_BOOL)
           {
-             param->i = elm_index_active_get(obj);
+             param->i = elm_index_autohide_disabled_get(obj);
              return EINA_TRUE;
           }
      }
