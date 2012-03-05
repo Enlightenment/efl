@@ -1098,7 +1098,6 @@ EAPI Eina_Bool             elm_win_socket_listen(Evas_Object *obj, const char *s
  * @param parent The parent object
  * @return The new object or NULL if it cannot be created
  */
-// XXX: deprecate this
 EAPI Evas_Object *elm_win_inwin_add(Evas_Object *parent);
 
 /**
@@ -1114,7 +1113,6 @@ EAPI Evas_Object *elm_win_inwin_add(Evas_Object *parent);
  *
  * @param obj The inwin to activate
  */
-// XXX: deprecate this
 EAPI void         elm_win_inwin_activate(Evas_Object *obj);
 
 /**
@@ -1127,7 +1125,6 @@ EAPI void         elm_win_inwin_activate(Evas_Object *obj);
  * @param obj The inwin object
  * @param content The object to set as content
  */
-// XXX: deprecate this
 EAPI void         elm_win_inwin_content_set(Evas_Object *obj, Evas_Object *content);
 
 /**
@@ -1145,7 +1142,6 @@ EAPI void         elm_win_inwin_content_set(Evas_Object *obj, Evas_Object *conte
  * @param obj The inwin object
  * @return The content that is being used
  */
-// XXX: deprecate this
 EAPI Evas_Object *elm_win_inwin_content_get(const Evas_Object *obj);
 
 /**
@@ -1156,7 +1152,6 @@ EAPI Evas_Object *elm_win_inwin_content_get(const Evas_Object *obj);
  * @param obj The inwin object
  * @return The content that was being used
  */
-// XXX: deprecate this
 EAPI Evas_Object *elm_win_inwin_content_unset(Evas_Object *obj);
 
 /**
