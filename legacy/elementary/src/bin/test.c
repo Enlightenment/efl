@@ -162,7 +162,7 @@ void test_glview_simple(void *data, Evas_Object *obj, void *event_info);
 void test_glview(void *data, Evas_Object *obj, void *event_info);
 void test_3d(void *data, Evas_Object *obj, void *event_info);
 void test_naviframe(void *data, Evas_Object *obj, void *event_info);
-void test_factory(void *data, Evas_Object *obj, void *event_info);
+//void test_factory(void *data, Evas_Object *obj, void *event_info);
 void test_datetime(void *data, Evas_Object *obj, void *event_info);
 #ifdef HAVE_EMOTION
 void test_video(void *data, Evas_Object *obj, void *event_info);
@@ -543,7 +543,7 @@ add_tests:
 
    //------------------------------//
    ADD_TEST(NULL, "Helpers", "Store", test_store);
-   ADD_TEST(NULL, "Helpers", "Factory", test_factory);
+//   ADD_TEST(NULL, "Helpers", "Factory", test_factory);
 
    //------------------------------//
    ADD_TEST(NULL, "Micellaneous", "Copy And Paste", test_cnp);

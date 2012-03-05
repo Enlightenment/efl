@@ -77,7 +77,6 @@ elm_deprecated_before.h \
 elm_diskselector.h \
 elm_engine.h \
 elm_entry.h \
-elm_factory.h \
 elm_finger.h \
 elm_flip.h \
 elm_flipselector.h \
@@ -166,7 +165,6 @@ elm_conform.c \
 elm_datetime.c \
 elm_diskselector.c \
 elm_entry.c \
-elm_factory.c \
 elm_flip.c \
 elm_flipselector.c \
 elm_font.c \
@@ -253,3 +251,7 @@ libelementary_la_LIBADD = \
 libelementary_la_LDFLAGS = \
 -no-undefined @lt_enable_auto_import@ \
 -version-info @version_info@ @release_info@
+
+EXTRA_DIST = \
+elm_factory.h \
+elm_factory.c

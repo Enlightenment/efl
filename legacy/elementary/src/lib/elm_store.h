@@ -1,3 +1,4 @@
+// XXX: need docs!
 typedef struct _Elm_Store                      Elm_Store;
 typedef struct _Elm_Store_Filesystem           Elm_Store_Filesystem;
 typedef struct _Elm_Store_Item                 Elm_Store_Item;

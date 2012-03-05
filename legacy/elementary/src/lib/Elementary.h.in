@@ -163,7 +163,7 @@ EAPI extern Elm_Version *elm_version;
 
 /* other includes */
 // Tom Hacohen
-#include <elc_anchorblock.h> // <-- up to here (1.0 review)
+#include <elc_anchorblock.h>
 #include <elc_anchorview.h>
 #include <elc_ctxpopup.h>
 #include <elc_fileselector_button.h>
@@ -178,39 +178,39 @@ EAPI extern Elm_Version *elm_version;
 #include <elm_box.h>
 
 // Daniel Juyung Seo
-#include <elm_bubble.h> // XXX: comments in elm_bubble.h
+#include <elm_bubble.h> // OK
 #include <elm_button.h> // OK
-#include <elm_cache.h> // XXX: comments in elm_cache.h
-#include <elm_calendar.h> // XXX: comments in elm_calendar.h. review was not finished.
+#include <elm_cache.h> // OK
+#include <elm_calendar.h> // OK
 #include <elm_check.h> // OK
 #include <elm_clock.h>
-#include <elm_cnp.h> // XXX: comments in elm_cnp.h
+#include <elm_cnp.h> // OK
 #include <elm_colorselector.h> // OK
 #include <elm_config.h>
-#include <elm_conform.h> // XXX: comments in elm_conform.h
-#include <elm_cursor.h> // XXX: comments in elm_cursor.h. review was not finished.
-#include <elm_datetime.h>
+#include <elm_conform.h> // OK
+#include <elm_cursor.h> // OK
+#include <elm_datetime.h> // OK
 #include <elm_debug.h> // OK
 #include <elm_diskselector.h>
 
 // Chuneon Park
-#include <elm_engine.h>  //Done
-#include <elm_factory.h>  //Done + XXX in header
-#include <elm_finger.h> //Done
-#include <elm_flip.h> //Done. There are many TODOs in flip.c
-#include <elm_flipselector.h> //Done + XXX in header. There are many TODOs in flipselector.c
-#include <elm_focus.h>  //Done + XXX in header
-#include <elm_fonts.h> //Done + XXX in header
-#include <elm_frame.h> //Done + XXX in header
-#include <elm_gengrid.h> //Done + XXX in header
-#include <elm_genlist.h> //Done + XXX in headers. 
-#include <elm_gesture_layer.h> //Done
-#include <elm_glview.h> //Done + XXX in header, insufficient doc.
-#include <elm_grid.h> //Done
+#include <elm_engine.h>  // OK
+//#include <elm_factory.h>  // OK
+#include <elm_finger.h> // OK
+#include <elm_flip.h> // OK
+#include <elm_flipselector.h> // OK
+#include <elm_focus.h>  // OK
+#include <elm_fonts.h> // OK
+#include <elm_frame.h> // OK
+#include <elm_gengrid.h> // OK
+#include <elm_genlist.h> // OK
+#include <elm_gesture_layer.h> // OK
+#include <elm_glview.h> // OK
+#include <elm_grid.h> // OK
 
 // Woohyun Jung
-#include <elm_hover.h> // XXX: needs to change one API 
-#include <elm_image.h> // XXX: some API names are ambiguous
+#include <elm_hover.h>
+#include <elm_image.h>
 #include <elm_index.h> // OK
 #include <elm_label.h> // OK
 #include <elm_layout.h> // OK
@@ -242,13 +242,13 @@ EAPI extern Elm_Version *elm_version;
 #include <elm_slider.h> // OK
 #include <elm_slideshow.h> // OK
 #include <elm_spinner.h> // OK
-#include <elm_store.h> // XXX: needs docs
+#include <elm_store.h> // OK
 #include <elm_table.h> // OK
 #include <elm_theme.h> // OK
 #include <elm_thumb.h> // OK
 #include <elm_toolbar.h> // OK
 #include <elm_transit.h> // OK
-#include <elm_video.h> // XXX: needs work. see elm_video.h
+#include <elm_video.h> // OK
 #include <elm_web.h>
 #include <elm_win.h> // OK
 
