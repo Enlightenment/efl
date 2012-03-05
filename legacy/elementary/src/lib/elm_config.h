@@ -104,11 +104,11 @@ EAPI const char *elm_profile_current_get(void);
 
 /**
  * Get an Elementary's profile directory path in the filesystem. One
- * may want to fetch a system profile's dir or an user one (fetched
+ * may want to fetch a system profile's dir or a user one (fetched
  * inside $HOME).
  *
  * @param profile The profile's name
- * @param is_user Whether to lookup for an user profile (@c EINA_TRUE)
+ * @param is_user Whether to lookup for a user profile (@c EINA_TRUE)
  *                or a system one (@c EINA_FALSE)
  * @return The profile's directory path.
  * @ingroup Profile

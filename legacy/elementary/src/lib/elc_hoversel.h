@@ -151,10 +151,10 @@ EAPI const Eina_List             *elm_hoversel_items_get(const Evas_Object *obj)
  *
  * This adds an item to the hoversel to show when it is clicked. Note: if you
  * need to use an icon from an edje file then use
- * elm_hoversel_item_icon_set() right after the this function, and set
+ * elm_hoversel_item_icon_set() right after this function, and set
  * icon_file to NULL here.
  *
- * For more information on what @p icon_file and @p icon_type are see the
+ * For more information on what @p icon_file and @p icon_type are, see the
  * @ref Icon "icon documentation".
  */
 EAPI Elm_Object_Item             *elm_hoversel_item_add(Evas_Object *obj, const char *label, const char *icon_file, Elm_Icon_Type icon_type, Evas_Smart_Cb func, const void *data);

@@ -69,11 +69,11 @@ EAPI Evas_Object                *elm_fileselector_button_add(Evas_Object *parent
  * @param obj The file selector button widget
  * @param title The title string
  *
- * This will change the window's title, when the file selector pops
+ * This will change the popup window's title, when the file selector pops
  * out after a click on the button. Those windows have the default
  * (unlocalized) value of @c "Select a file" as titles.
  *
- * @note It will only take any effect if the file selector
+ * @note It will only take effect if the file selector
  * button widget is @b not under "inwin mode".
  *
  * @see elm_fileselector_button_window_title_get()
@@ -81,7 +81,7 @@ EAPI Evas_Object                *elm_fileselector_button_add(Evas_Object *parent
 EAPI void                        elm_fileselector_button_window_title_set(Evas_Object *obj, const char *title);
 
 /**
- * Get the title set for a given file selector button widget's
+ * Get the title for a given file selector button widget's
  * window
  *
  * @param obj The file selector button widget

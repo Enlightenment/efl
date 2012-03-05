@@ -1171,7 +1171,7 @@ EAPI void         elm_win_inwin_content_set(Evas_Object *obj, Evas_Object *conte
 /**
  * Get the content of an inwin object.
  *
- * Return the content object which is set for this widget.
+ * Return the content object for this widget.
  *
  * The returned object is valid as long as the inwin is still alive and no
  * other content is set on it. Deleting the object will notify the inwin

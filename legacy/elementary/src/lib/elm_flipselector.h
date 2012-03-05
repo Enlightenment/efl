@@ -210,7 +210,7 @@ EAPI Elm_Object_Item            *elm_flipselector_selected_item_get(const Evas_O
  * @param selected @c EINA_TRUE to select it, @c EINA_FALSE to unselect.
  *
  * This sets whether @p item is or not the selected (thus, under
- * display) one. If @p item is different than one under display,
+ * display) one. If @p item is different than the one under display,
  * the latter will be unselected. If the @p item is set to be
  * unselected, on the other hand, the @b first item in the widget's
  * internal members list will be the new selected one.
@@ -264,7 +264,7 @@ EAPI Elm_Object_Item *elm_flipselector_item_prev_get(const Elm_Object_Item *it);
 EAPI Elm_Object_Item            *elm_flipselector_item_next_get(const Elm_Object_Item *it);
 
 /**
- * Set the interval on time updates for an user mouse button hold
+ * Set the interval on time updates for a user mouse button hold
  * on a flip selector widget.
  *
  * @param obj The flip selector object

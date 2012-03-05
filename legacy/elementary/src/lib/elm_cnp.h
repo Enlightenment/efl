@@ -10,7 +10,7 @@
  * Contains functions to select text or a portion of data,
  * send it to a buffer, and paste the data into a target.
  *
- * elm_cnp provides generic copy and paste facility based on its windowing system.
+ * elm_cnp provides a generic copy and paste facility based on its windowing system.
  * It is not necessary to know the details of each windowing system,
  * but some terms and behavior are common.
  * Currently the X11 window system is widely used, and only X11 functionality is implemented.

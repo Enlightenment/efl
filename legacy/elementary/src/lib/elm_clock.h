@@ -12,7 +12,7 @@
  * considering local time adjustments) to start with, and will tick
  * accordingly. It may or may not show seconds.
  *
- * Clocks have an @b edition mode. When in it, the sheets will
+ * Clocks have an @b edition  mode. When in it, the sheets will
  * display extra arrow indications on the top and bottom and the
  * user may click on them to raise or lower the time values. After
  * it's told to exit edition mode, it will keep ticking with that
@@ -262,7 +262,7 @@ EAPI void              elm_clock_show_seconds_set(Evas_Object *obj, Eina_Bool se
 EAPI Eina_Bool         elm_clock_show_seconds_get(const Evas_Object *obj);
 
 /**
- * Set the interval on time updates for an user mouse button hold
+ * Set the interval on time updates for a user mouse button hold
  * on clock widgets' time edition.
  *
  * @param obj The clock object
@@ -290,7 +290,7 @@ EAPI Eina_Bool         elm_clock_show_seconds_get(const Evas_Object *obj);
 EAPI void              elm_clock_interval_set(Evas_Object *obj, double interval);
 
 /**
- * Get the interval on time updates for an user mouse button hold
+ * Get the interval on time updates for a user mouse button hold
  * on clock widgets' time edition.
  *
  * @param obj The clock object

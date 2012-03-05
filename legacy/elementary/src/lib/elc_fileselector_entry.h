@@ -14,7 +14,7 @@
  * This file selector may appear in an Elementary window or in an
  * inner window. When a file is chosen from it, the (inner) window
  * is closed and the selected file's path string is exposed both as
- * an smart event and as the new text on the entry.
+ * a smart event and as the new text on the entry.
  *
  * This widget encapsulates operations on its internal file
  * selector on its own API. There is less control over its file

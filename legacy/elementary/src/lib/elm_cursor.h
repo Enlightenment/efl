@@ -11,7 +11,7 @@
  *
  * By default, Elementary searches cursors only from engine.
  * There's also the possibility of, besides using engine provided
- * cursors, also use ones coming from Edje theme files. Both
+ * cursors, also use the ones coming from Edje theme files. Both
  * globally and per widget, Elementary makes it possible for one to
  * make the cursors lookup to be held on engines only or on
  * Elementary's theme file, too. To set cursor's hot spot,

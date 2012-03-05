@@ -6,7 +6,7 @@
  *
  * Naviframe provides functions to switch different pages with stack
  * mechanism. It means if one page(item) needs to be changed to the new one,
- * then naviframe would push the new page to it's internal stack. Of course,
+ * then naviframe would push the new page to its internal stack. Of course,
  * it can be back to the previous page by popping the top page. Naviframe
  * provides some transition effect while the pages are switching (same as
  * pager).
@@ -26,12 +26,12 @@
  * @li "default" - Title label in the title area of the current page
  * @li "subtitle" - Sub-title label in the title area of the current page
  *
- * Signals that you can add callback for are:
+ * Signals that you can add callbacks for are:
  * @li "transition,finished" - When the transition is finished in changing the
  * item
  * @li "title,clicked" - User clicked title area
  *
- * Item Signals that you can add callback for are:
+ * Item Signals that you can add callbacks for are:
  * @li "show,begin" - When the item is started to be top item.
  * @li "hide,finished" - When a new top item is finished to push onto the
  * item.

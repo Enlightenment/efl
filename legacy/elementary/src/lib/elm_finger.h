@@ -52,7 +52,7 @@ EAPI void       elm_finger_size_set(Evas_Coord size);
  * accommodate it. On return the @p w and @p h sizes pointed to by
  * these parameters will be modified, on those conditions.
  *
- * @note This is kind of a low level Elementary call, most useful
+ * @note This is kind of low level Elementary call, most useful
  * on size evaluation times for widgets. An external user wouldn't
  * be calling, most of the time.
  *

@@ -100,7 +100,7 @@ EAPI int                        elm_multibuttonentry_shrink_mode_get(const Evas_
  * Set/Unset the multibuttonentry to shrink mode state of single line
  *
  * @param obj The multibuttonentry object
- * @param shrink the value of shrink_mode state. set this to 1 to set the multibuttonentry to shrink state of single line. set this to 0 to unset the contracted state.
+ * @param shrink the value of shrink_mode state. Set this to 1 to set the multibuttonentry to shrink state of single line. Set this to 0 to unset the contracted state.
  *
  * @ingroup Multibuttonentry
  */
@@ -248,7 +248,7 @@ EAPI Elm_Object_Item *elm_multibuttonentry_item_prev_get(const Elm_Object_Item *
 EAPI Elm_Object_Item *elm_multibuttonentry_item_next_get(const Elm_Object_Item *it);
 
 /**
- * Append a item filter function for text inserted in the Multibuttonentry
+ * Append an item filter function for text inserted in the Multibuttonentry
  *
  * Append the given callback to the list. This functions will be called
  * whenever any text is inserted into the Multibuttonentry, with the text to be inserted

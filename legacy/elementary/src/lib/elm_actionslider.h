@@ -28,7 +28,7 @@
  *                 "right" or "center").
  *
  * Default text parts of the actionslider widget that you can use for are:
- * @li "indicator" - A indicator label of the actionslider
+ * @li "indicator" - An indicator label of the actionslider
  * @li "left" - A left label of the actionslider
  * @li "right" - A right label of the actionslider
  * @li "center" - A center label of the actionslider
