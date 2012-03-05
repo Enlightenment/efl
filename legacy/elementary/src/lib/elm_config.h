@@ -19,7 +19,7 @@
  * @ingroup Config
  *
  * This function will take effect -- thus, do I/O -- immediately. Use
- * it when you want to apply all configuration changes at once. The
+ * it when you want to save all configuration changes at once. The
  * current configuration set will get saved onto the current profile
  * configuration file.
  *
