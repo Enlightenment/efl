@@ -174,19 +174,30 @@ _on_focus_hook(void *data __UNUSED__, Evas_Object *obj)
    Widget_Data *wd = elm_widget_data_get(obj);
 
    if (!wd) return;
+
    if (elm_widget_focus_get(obj))
      {
+        if ((wd->current))
+          {
+             elm_entry_input_panel_show(wd->entry);
+          }
+        else if (((!wd->current) || (!eina_list_count(wd->items))))
+          {
+             if (wd->entry) elm_entry_cursor_end_set(wd->entry);
+             _view_update(obj);
+             elm_entry_input_panel_show(wd->entry);
+          }
         wd->focused = EINA_TRUE;
-        if (wd->entry) elm_entry_cursor_end_set(wd->entry);
         evas_object_smart_callback_call(obj, "focused", NULL);
      }
    else
      {
         wd->focused = EINA_FALSE;
+        _view_update(obj);
+
+        elm_entry_input_panel_hide(wd->entry);
         evas_object_smart_callback_call(obj, "unfocused", NULL);
      }
-
-   _view_update(obj);
 }
 
 static Eina_Bool
@@ -230,6 +241,8 @@ _signal_mouse_clicked(void *data, Evas_Object *obj __UNUSED__, const char *emiss
    if (!wd || !wd->base) return;
    wd->focused = EINA_TRUE;
    _view_update(data);
+
+   elm_entry_input_panel_show(wd->entry);
 
    evas_object_smart_callback_call(data, "clicked", NULL);
 }
@@ -1110,6 +1123,7 @@ _view_init(Evas_Object *obj)
         if (!wd->entry) return;
         elm_entry_single_line_set(wd->entry, EINA_TRUE);
         elm_object_text_set(wd->entry, "");
+        elm_entry_input_panel_enabled_set(wd->entry, EINA_FALSE);
         evas_object_size_hint_min_set(wd->entry, MIN_W_ENTRY, 0);
         evas_object_size_hint_weight_set(wd->entry, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
         evas_object_size_hint_align_set(wd->entry, EVAS_HINT_FILL, EVAS_HINT_FILL);
