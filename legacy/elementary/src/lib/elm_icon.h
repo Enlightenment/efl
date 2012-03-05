@@ -294,12 +294,12 @@ EAPI void                  elm_icon_no_scale_set(Evas_Object *obj, Eina_Bool no_
 EAPI Eina_Bool             elm_icon_no_scale_get(const Evas_Object *obj);
 
 /**
- * Set if the object is (up/down) resizeable.
+ * Set if the object is (up/down) resizable.
  *
  * @param obj The icon object
- * @param size_up A bool to set if the object is resizeable up. Default is
+ * @param size_up A bool to set if the object is resizable up. Default is
  * @c EINA_TRUE.
- * @param size_down A bool to set if the object is resizeable down. Default
+ * @param size_down A bool to set if the object is resizable down. Default
  * is @c EINA_TRUE.
  *
  * This function limits the icon object resize ability. If @p size_up is set to
@@ -313,11 +313,11 @@ EAPI Eina_Bool             elm_icon_no_scale_get(const Evas_Object *obj);
 EAPI void                  elm_icon_resizable_set(Evas_Object *obj, Eina_Bool size_up, Eina_Bool size_down);
 
 /**
- * Get if the object is (up/down) resizeable.
+ * Get if the object is (up/down) resizable.
  *
  * @param obj The icon object
- * @param size_up A bool to set if the object is resizeable up
- * @param size_down A bool to set if the object is resizeable down
+ * @param size_up A bool to set if the object is resizable up
+ * @param size_down A bool to set if the object is resizable down
  *
  * @see elm_icon_resizable_set()
  *

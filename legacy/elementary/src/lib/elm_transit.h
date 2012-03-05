@@ -35,7 +35,7 @@
  * object appear on its place. These effects are:
  *
  * @li @ref elm_transit_effect_flip_add
- * @li @ref elm_transit_effect_resizeable_flip_add
+ * @li @ref elm_transit_effect_resizable_flip_add
  * @li @ref elm_transit_effect_fade_add
  * @li @ref elm_transit_effect_blend_add
  *
@@ -655,7 +655,7 @@ EAPI Elm_Transit_Effect    *elm_transit_effect_flip_add(Elm_Transit *transit, El
 /**
  * Add the Resizeable Flip Effect to Elm_Transit.
  *
- * @note This API is one of the facades. It creates resizeable flip effect context
+ * @note This API is one of the facades. It creates resizable flip effect context
  * and add it's required APIs to elm_transit_effect_add.
  * @note This effect is applied to each pair of objects in the order they are listed
  * in the transit list of objects. The first object in the pair will be the
