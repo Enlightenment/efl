@@ -130,9 +130,9 @@ extern "C"
 #endif
 
 /* docs */
-#include <elm_intro.h>
-#include <elm_getting_started.h>
-#include <elm_authors.h>
+#include <elm_intro.h> // OK
+#include <elm_getting_started.h> // OK
+#include <elm_authors.h> // OK
 
 #define ELM_VERSION_MAJOR @VMAJ@
 #define ELM_VERSION_MINOR @VMIN@
@@ -148,18 +148,18 @@ typedef struct _Elm_Version
 EAPI extern Elm_Version *elm_version;
 
 /* include these first for general used definitions */
-#include <elm_general.h>
-#include <elm_tooltip.h>
-#include <elm_object_item.h>
+#include <elm_general.h> // OK
+#include <elm_tooltip.h> // OK
+#include <elm_object_item.h> // OK
 
 /* special widgets - types used elsewhere */
-#include <elm_icon.h>
-#include <elm_scroller.h>
-#include <elm_entry.h>
-#include <elm_list.h>
+#include <elm_icon.h> // OK
+#include <elm_scroller.h> // OK
+#include <elm_entry.h> // OK
+#include <elm_list.h> // OK
 
 /* include deprecated before headers - things may still rely on definitions */
-#include <elm_deprecated_before.h>
+#include <elm_deprecated_before.h> // OK
 
 /* other includes */
 // Tom Hacohen
@@ -253,7 +253,7 @@ EAPI extern Elm_Version *elm_version;
 #include <elm_win.h> // OK
 
 /* include deprecated calls last of all */
-#include <elm_deprecated.h>
+#include <elm_deprecated.h> // OK
 
 #ifdef __cplusplus
 }
