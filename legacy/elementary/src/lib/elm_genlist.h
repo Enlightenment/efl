@@ -1948,5 +1948,38 @@ EAPI void               elm_genlist_edit_mode_set(Evas_Object *obj, Eina_Bool ed
 EAPI Eina_Bool          elm_genlist_edit_mode_get(const Evas_Object *obj);
 
 /**
+ * Set the flip state of a given genlist item.
+ *
+ * @param it The genlist item object
+ * @param flip The flip mode
+ * (EINA_TRUE = on, EINA_FALSE = off)
+ *
+ * This function sets the flip state of a given genlist item.
+ * Flip mode overrides current item object.
+ * It can be used for on-the-fly item replace.
+ *
+ * @see elm_genlist_item_flip_get()
+ *
+ * @ingroup Genlist
+ */
+
+EAPI void elm_genlist_item_flip_set(Elm_Object_Item *it, Eina_Bool flip);
+
+/**
+ * Get the flip state of a given genlist item.
+ *
+ * @param it The genlist item object
+ *
+ * This function returns the flip state of a given genlist item.
+ * If the parameter is invalid, it returns EINA_FALSE.
+ *
+ * @see elm_genlist_item_flip_set()
+ *
+ * @ingroup Genlist
+ */
+
+EAPI Eina_Bool elm_genlist_item_flip_get(const Elm_Object_Item *it);
+
+/**
  * @}
  */

@@ -896,7 +896,7 @@ _mouse_move(void        *data,
         if (!it->wd->on_hold)
           {
              it->wd->on_hold = EINA_TRUE;
-             if (!it->wd->wasselected)
+             if ((!it->wd->wasselected) && (!it->flipped))
                {
                   _item_unhighlight(it);
                   _item_unselect(it);
@@ -1367,7 +1367,7 @@ _mouse_up(void        *data,
    if (it->wd->longpressed)
      {
         it->wd->longpressed = EINA_FALSE;
-        if (!it->wd->wasselected)
+        if ((!it->wd->wasselected) && (!it->flipped))
           {
              _item_unhighlight(it);
              _item_unselect(it);
@@ -1625,7 +1625,7 @@ _item_cache_find(Elm_Gen_Item *it)
         if ((itc->tree == tree) &&
             (itc->compress == it->wd->compress) &&
             (((!it->itc->item_style) && (!itc->item_style)) ||
-             (it->itc->item_style && itc->item_style && 
+             (it->itc->item_style && itc->item_style &&
             (!strcmp(it->itc->item_style, itc->item_style)))))
           {
              it->wd->item_cache = eina_inlist_remove(it->wd->item_cache,
@@ -1891,6 +1891,41 @@ _item_state_realize(Elm_Gen_Item *it,
      }
 }
 
+static Eina_List *
+_item_flips_realize(Elm_Gen_Item *it,
+                    Evas_Object *target,
+                    Eina_List **source)
+{
+   Eina_List *res = NULL;
+
+   if (it->itc->func.content_get)
+     {
+        const Eina_List *l;
+        const char *key;
+        Evas_Object *ic = NULL;
+
+        *source = elm_widget_stringlist_get(edje_object_data_get(target, "flips"));
+
+        EINA_LIST_FOREACH(*source, l, key)
+          {
+             if (it->itc->func.content_get)
+               ic = it->itc->func.content_get
+                  ((void *)it->base.data, WIDGET(it), key);
+             if (ic)
+               {
+                  res = eina_list_append(res, ic);
+                  edje_object_part_swallow(target, key, ic);
+                  evas_object_show(ic);
+                  elm_widget_sub_object_add(WIDGET(it), ic);
+                  if (elm_widget_item_disabled_get(it))
+                    elm_widget_disabled_set(ic, EINA_TRUE);
+               }
+          }
+     }
+
+   return res;
+}
+
 static void
 _item_realize(Elm_Gen_Item *it,
               int               in,
@@ -2031,6 +2066,11 @@ _item_realize(Elm_Gen_Item *it,
         _item_text_realize(it, VIEW(it), &it->texts, NULL);
         it->content_objs = _item_content_realize(it, VIEW(it), &it->contents, NULL);
         _item_state_realize(it, VIEW(it), &it->states, NULL);
+        if (it->flipped)
+          {
+             edje_object_signal_emit(VIEW(it), "elm,state,flip,enabled", "elm");
+             it->content_objs = _item_flips_realize(it, VIEW(it), &it->contents);
+          }
 
         if (!it->item->mincalcd)
           {
@@ -3253,6 +3293,7 @@ _edit_mode_item_realize(Elm_Gen_Item *it, Eina_Bool effect_on)
                                   _multi_move, it);
 
    _item_text_realize(it, it->edit_obj, &it->item->edit_texts, NULL);
+   if (it->flipped)  edje_object_signal_emit(it->edit_obj, "elm,state,flip,enabled", "elm");
    it->item->edit_content_objs =
      _item_content_realize(it, it->edit_obj, &it->item->edit_contents, NULL);
    _item_state_realize(it, it->edit_obj, &it->item->edit_states, NULL);
@@ -3286,7 +3327,7 @@ _edit_mode_item_unrealize(Elm_Gen_Item *it)
    elm_widget_stringlist_free(it->item->edit_states);
    it->item->edit_states = NULL;
    EINA_LIST_FREE(it->item->edit_content_objs, icon)
-      evas_object_del(icon);
+     evas_object_del(icon);
    edje_object_message_signal_process(it->edit_obj);
 
    evas_object_event_callback_del_full(it->edit_obj, EVAS_CALLBACK_MOUSE_DOWN,
@@ -5651,6 +5692,48 @@ elm_genlist_item_class_unref(Elm_Genlist_Item_Class *itc)
         if (itc->delete_me && (!itc->refcount))
           elm_genlist_item_class_free(itc);
      }
+}
+
+void _flip_job(void *data)
+{
+   Elm_Gen_Item *it = (Elm_Gen_Item *) data;
+   _elm_genlist_item_unrealize(it, EINA_FALSE);
+   if (it->selected) _item_unselect(it);
+   it->flipped = EINA_TRUE;
+   it->item->nocache = EINA_TRUE;
+}
+
+EAPI void
+elm_genlist_item_flip_set(Elm_Object_Item *it,
+                          Eina_Bool flip)
+{
+   ELM_OBJ_ITEM_CHECK_OR_RETURN(it);
+   Elm_Gen_Item *_it = (Elm_Gen_Item *)it;
+
+   flip = !!flip;
+   if (_it->flipped == flip) return;
+
+   if (flip)
+     {
+        ecore_job_add(_flip_job, _it);
+        if (_it->wd->calc_job) ecore_job_del(_it->wd->calc_job);
+        _it->wd->calc_job = ecore_job_add(_calc_job, _it->wd);
+     }
+   else
+     {
+        _it->flipped = flip;
+        _it->item->nocache = EINA_TRUE;
+        _item_cache_zero(_it->wd);
+        elm_genlist_item_update(it);
+     }
+}
+
+EAPI Eina_Bool
+elm_genlist_item_flip_get(const Elm_Object_Item *it)
+{
+   ELM_OBJ_ITEM_CHECK_OR_RETURN(it, EINA_FALSE);
+   Elm_Gen_Item *_it = (Elm_Gen_Item *)it;
+   return _it->flipped;
 }
 
 /* for gengrid as of now */

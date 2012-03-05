@@ -2485,4 +2485,108 @@ test_genlist15(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_i
    evas_object_resize(win, 520, 520);
    evas_object_show(win);
 }
+
+static void _flip_icon_clicked_cb(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+{
+   const Testitem *tit = data;
+
+   if (elm_genlist_item_flip_get(tit->item))
+     elm_genlist_item_flip_set(tit->item, EINA_FALSE);
+   else
+     elm_genlist_item_flip_set(tit->item, EINA_TRUE);
+}
+
+char *gl16_text_get(void *data, Evas_Object *obj __UNUSED__, const char *part __UNUSED__)
+{
+   const Testitem *tit = data;
+   char buf[256];
+   snprintf(buf, sizeof(buf), "Item #%i", tit->mode);
+   return strdup(buf);
+}
+
+Evas_Object *gl16_content_get(void *data, Evas_Object *obj, const char *part)
+{
+   Testitem *tit = data;
+   char buf[PATH_MAX];
+
+   if (!strcmp(part, "elm.text.flip"))
+     {
+        Evas_Object *btn = elm_button_add(obj);
+        elm_object_text_set(btn, "flipped content placement");
+        evas_object_size_hint_align_set(btn, EVAS_HINT_FILL, EVAS_HINT_FILL);
+        evas_object_size_hint_weight_set(btn, EVAS_HINT_EXPAND, 0.0);
+        evas_object_smart_callback_add(btn, "clicked", _flip_icon_clicked_cb, (void *)tit);
+        evas_object_show(btn);
+        return btn;
+     }
+   else if (!strcmp(part, "elm.edit.icon.1"))
+     {
+        Evas_Object *icn = elm_icon_add(obj);
+        snprintf(buf, sizeof(buf), "%s/images/icon_04.png", PACKAGE_DATA_DIR);
+        elm_icon_file_set(icn, buf, NULL);
+        evas_object_propagate_events_set(icn, EINA_FALSE);
+        evas_object_size_hint_aspect_set(icn, EVAS_ASPECT_CONTROL_VERTICAL, 1, 1);
+        return icn;
+     }
+   else if (!strcmp(part, "elm.edit.icon.2"))
+     {
+        Evas_Object *icn = elm_icon_add(obj);
+        snprintf(buf, sizeof(buf), "%s/images/icon_09.png", PACKAGE_DATA_DIR);
+        elm_icon_file_set(icn, buf, NULL);
+        evas_object_propagate_events_set(icn, EINA_FALSE);
+        evas_object_size_hint_aspect_set(icn, EVAS_ASPECT_CONTROL_VERTICAL, 1, 1);
+        evas_object_smart_callback_add(icn, "clicked", _flip_icon_clicked_cb, (void *)tit);
+        return icn;
+     }
+   else return NULL;
+}
+
+void
+test_genlist16(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+{
+   Evas_Object *win, *bx, *gl;
+   int i;
+   static Testitem tit[100];
+
+   win = elm_win_util_standard_add("genlist-flip-mode", "Genlist Flip Mode");
+   elm_win_autodel_set(win, EINA_TRUE);
+
+   bx = elm_box_add(win);
+   evas_object_size_hint_weight_set(bx, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   elm_win_resize_object_add(win, bx);
+   evas_object_show(bx);
+
+   gl = elm_genlist_add(win);
+   evas_object_size_hint_align_set(gl, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   evas_object_size_hint_weight_set(gl, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_show(gl);
+
+   elm_genlist_edit_mode_set(gl, EINA_TRUE);
+   elm_genlist_always_select_mode_set(gl, EINA_TRUE);
+
+   itc15 = elm_genlist_item_class_new();
+   itc15->item_style     = "default";
+   itc15->func.text_get = gl16_text_get;
+   itc15->func.content_get = gl16_content_get;
+   itc15->func.state_get = gl_state_get;
+   itc15->func.del       = NULL;
+   itc15->edit_item_style = "edit";
+
+   for (i = 0; i < 100; i++)
+     {
+        tit[i].mode = i;
+        tit[i].item = elm_genlist_item_append(gl, itc15,
+                                              &(tit[i])/* item data */,
+                                              NULL/* parent */,
+                                              ELM_GENLIST_ITEM_NONE/* flags */,
+                                              gl_sel/* func */,
+                                              (void *)(long)&(tit[i])/* func data */);
+     }
+   elm_genlist_item_class_free(itc15);
+   elm_box_pack_end(bx, gl);
+   evas_object_show(bx);
+
+   evas_object_resize(win, 520, 520);
+   evas_object_show(win);
+}
 #endif
