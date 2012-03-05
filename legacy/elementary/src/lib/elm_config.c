@@ -843,8 +843,8 @@ _config_load(void)
     * profile. Fallback to default before moving on */
 
    // config load fail - defaults
-   /* XXX: do these make sense? Only if it's valid to install the lib
-    * without the config, but do we want that? */
+   // why are these here? well if they are, it means you can make a gui
+   // config recovery app i guess...
    _elm_config = ELM_NEW(Elm_Config);
    _elm_config->config_version = ELM_CONFIG_VERSION;
    _elm_config->engine = eina_stringshare_add("software_x11");
