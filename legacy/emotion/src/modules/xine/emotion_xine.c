@@ -21,6 +21,7 @@ static void           em_play                    (void *ef, double pos);
 static void           em_stop                    (void *ef);
 static void           em_size_get                (void *ef, int *w, int *h);
 static void           em_pos_set                 (void *ef, double pos);
+static double         em_buffer_size_get         (void *ef);
 static double         em_len_get                 (void *ef);
 static int            em_fps_num_get             (void *ef);
 static int            em_fps_den_get             (void *ef);
@@ -425,6 +426,8 @@ em_init(Evas_Object *obj, void **emotion_video, Emotion_Module_Options *opt)
    pthread_create(&ev->slave_th, NULL, _em_slave, ev);
    pthread_detach(ev->slave_th);
    _em_slave_event(ev, 1, NULL);
+
+   ev->buffer = 1.0;
    
    *emotion_video = ev;
    return 1;
@@ -530,6 +533,15 @@ em_len_get(void *ef)
    
    ev = (Emotion_Xine_Video *)ef;
    return ev->len;
+}
+
+static double
+em_buffer_size_get(void *ef)
+{
+   Emotion_Xine_Video *ev;
+   
+   ev = (Emotion_Xine_Video *)ef;
+   return ev->buffer;
 }
 
 static int
@@ -1251,7 +1263,7 @@ _em_fd_ev_active(void *data __UNUSED__, Ecore_Fd_Handler *fdh)
 {
    int fd, len;
    void *buf[2];
-   
+
    fd = ecore_main_fd_handler_fd_get(fdh);
    while ((len = read(fd, buf, sizeof(buf))) > 0)
      {
@@ -1399,6 +1411,7 @@ _em_fd_ev_active(void *data __UNUSED__, Ecore_Fd_Handler *fdh)
 			    
 			    e = (xine_progress_data_t *)eev->xine_event;
 			    DBG("PROGRESS: %i", e->percent);
+                            ev->buffer = e->percent;
 			    _emotion_progress_set(ev->obj, (char *)e->description, (double)e->percent / 100.0);
 			 }
 		       break;
@@ -1518,6 +1531,7 @@ static Emotion_Video_Module em_module =
      em_size_get, /* size_get */
      em_pos_set, /* pos_set */
      em_len_get, /* len_get */
+     em_buffer_size_get, /* buffer_size_get */
      em_fps_num_get, /* fps_num_get */
      em_fps_den_get, /* fps_den_get */
      em_fps_get, /* fps_get */

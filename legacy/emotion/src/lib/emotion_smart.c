@@ -761,6 +761,18 @@ emotion_object_position_get(const Evas_Object *obj)
    return sd->pos;
 }
 
+EAPI double
+emotion_object_buffer_size_get(const Evas_Object *obj)
+{
+   Smart_Data *sd;
+
+   E_SMART_OBJ_GET_RETURN(sd, obj, E_OBJ_NAME, 1.0);
+   if (!sd->module) return 1.0;
+   if (!sd->video_data) return 1.0;
+   if (!sd->module->buffer_size_get) return 1.0;
+   return sd->module->buffer_size_get(sd->video_data);
+}
+
 EAPI Eina_Bool
 emotion_object_seekable_get(const Evas_Object *obj)
 {

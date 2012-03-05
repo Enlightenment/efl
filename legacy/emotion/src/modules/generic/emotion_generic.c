@@ -332,7 +332,7 @@ _player_position_changed(Emotion_Generic_Video *ev)
 
    ev->pos = position;
    _emotion_video_pos_update(ev->obj, ev->pos, ev->len);
-
+/* hmmm. no _emotion_progress_set() is for "buffering" progress.
    if (ev->len == 0)
      return;
 
@@ -341,6 +341,7 @@ _player_position_changed(Emotion_Generic_Video *ev)
    snprintf(buf, sizeof(buf), "%0.1f%%", progress * 100);
 
    _emotion_progress_set(ev->obj, buf, progress);
+ */
 }
 
 static void
@@ -1162,6 +1163,14 @@ em_len_get(void *data)
    return ev->len;
 }
 
+static double
+em_buffer_size_get(void *data)
+{
+   Emotion_Generic_Video *ev = data;
+   return 1.0;
+   ev = NULL;
+}
+
 static int
 em_fps_num_get(void *data)
 {
@@ -1597,6 +1606,7 @@ static Emotion_Video_Module em_module =
    em_size_get, /* size_get */
    em_pos_set, /* pos_set */
    em_len_get, /* len_get */
+   em_buffer_size_get, /* buffer_size_get */
    em_fps_num_get, /* fps_num_get */
    em_fps_den_get, /* fps_den_get */
    em_fps_get, /* fps_get */

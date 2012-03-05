@@ -51,6 +51,7 @@ struct _Emotion_Video_Module
    void           (*size_get) (void *ef, int *w, int *h);
    void           (*pos_set) (void *ef, double pos);
    double         (*len_get) (void *ef);
+   double         (*buffer_size_get) (void *ef);
    int            (*fps_num_get) (void *ef);
    int            (*fps_den_get) (void *ef);
    double         (*fps_get) (void *ef);

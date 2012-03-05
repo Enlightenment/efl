@@ -67,6 +67,8 @@ static void           em_pos_set                  (void            *video,
 
 static double         em_len_get                  (void            *video);
 
+static double         em_buffer_size_get          (void            *video);
+
 static int            em_fps_num_get              (void            *video);
 
 static int            em_fps_den_get              (void            *video);
@@ -212,6 +214,7 @@ static Emotion_Video_Module em_module =
    em_size_get, /* size_get */
    em_pos_set, /* pos_set */
    em_len_get, /* len_get */
+   em_buffer_size_get, /* buffer_size_get */
    em_fps_num_get, /* fps_num_get */
    em_fps_den_get, /* fps_den_get */
    em_fps_get, /* fps_get */
@@ -683,6 +686,29 @@ em_len_get(void *video)
        return vstream->length_time;
 
    return 0.0;
+}
+
+static double
+em_buffer_size_get(void *video)
+{
+   Emotion_Gstreamer_Video *ev;
+
+   GstQuery *query;
+   gboolean busy;
+   gint percent;
+
+   ev = video;
+
+   if (!ev->pipeline) return 0.0;
+
+   query = gst_query_new_buffering(GST_FORMAT_DEFAULT);
+   if (gst_element_query(ev->pipeline, query))
+     gst_query_parse_buffering_percent(query, &busy, &percent);
+   else
+     percent = 100;
+
+   gst_query_unref(query);
+   return ((float)(percent)) / 100.0;
 }
 
 static int

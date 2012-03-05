@@ -632,6 +632,23 @@ EAPI void         emotion_object_position_set          (Evas_Object *obj, double
  * media file.
  */
 EAPI double       emotion_object_position_get          (const Evas_Object *obj);
+
+/**
+ * @brief Get the percentual size of the buffering cache.
+ *
+ * @param obj The emotion object from which the buffer size will be retrieved.
+ * @return The buffer percent size, ranging from 0.0 to 1.0
+ *
+ * The buffer size is returned as a number between 0.0 and 1.0, 0.0 means
+ * the buffer if empty, 1.0 means full.
+ * If no buffering is in progress 1.0 is returned. In all other cases (maybe
+ * the backend don't support buffering) 1.0 is returned, thus you can always
+ * check for buffer_size < 1.0 to know if buffering is in progress.
+ *
+ * @warning xine backends don't implement this (will return 1.0).
+ */
+EAPI double       emotion_object_buffer_size_get       (const Evas_Object *obj);
+
 /**
  * @brief Get whether the media file is seekable.
  *

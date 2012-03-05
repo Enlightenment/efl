@@ -22,6 +22,7 @@ struct _Emotion_Xine_Video
    volatile double           pos;
    volatile double           last_pos;
    volatile double           volume;
+   volatile double           buffer;
    double                    fps;
    double                    ratio;
    int                       w, h;
