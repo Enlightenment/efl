@@ -1384,18 +1384,18 @@ EAPI void                   elm_entry_filter_accept_set(void *data, Evas_Object 
 EAPI void                  *elm_entry_imf_context_get(Evas_Object *obj);
 
 /**
- * @enum _Elm_CNP_Mode
- * @typedef Elm_CNP_Mode
+ * @enum _Elm_Cnp_Mode
+ * @typedef Elm_Cnp_Mode
  * Enum of entry's copy & paste policy.
  *
  * @see elm_entry_cnp_mode_set()
  * @see elm_entry_cnp_mode_get()
  */
-typedef enum _Elm_CNP_Mode {
-   ELM_CNP_MODE_MARKUP = 0,       /**< copy & paste text with markup tag */
-   ELM_CNP_MODE_NO_IMAGE = 1,     /**< copy & paste text without item(image) tag */
-   ELM_CNP_MODE_PLAINTEXT = 2     /**< copy & paste text without markup tag */
-} Elm_CNP_Mode;
+typedef enum _Elm_Cnp_Mode {
+   ELM_CNP_MODE_MARKUP,   /**< copy & paste text with markup tag */
+   ELM_CNP_MODE_NO_IMAGE, /**< copy & paste text without item(image) tag */
+   ELM_CNP_MODE_PLAINTEXT /**< copy & paste text without markup tag */
+} Elm_Cnp_Mode;
 
 /**
  * Control pasting of text and images for the widget.
@@ -1407,10 +1407,10 @@ typedef enum _Elm_CNP_Mode {
  * @note this only changes the behaviour of text.
  *
  * @param obj The entry object
- * @param mode One of #Elm_CNP_Mode: #ELM_CNP_MODE_MARKUP,
+ * @param mode One of #Elm_Cnp_Mode: #ELM_CNP_MODE_MARKUP,
  * #ELM_CNP_MODE_NO_IMAGE, #ELM_CNP_MODE_PLAINTEXT.
  */
-EAPI void         elm_entry_cnp_mode_set(Evas_Object *obj, Elm_CNP_Mode cnp_mode);
+EAPI void         elm_entry_cnp_mode_set(Evas_Object *obj, Elm_Cnp_Mode cnp_mode);
 
 /**
  * Getting elm_entry text paste/drop mode.
@@ -1419,10 +1419,10 @@ EAPI void         elm_entry_cnp_mode_set(Evas_Object *obj, Elm_CNP_Mode cnp_mode
  * This gets the copy & paste mode of the entry.
  *
  * @param obj The entry object
- * @return mode One of #Elm_CNP_Mode: #ELM_CNP_MODE_MARKUP,
+ * @return mode One of #Elm_Cnp_Mode: #ELM_CNP_MODE_MARKUP,
  * #ELM_CNP_MODE_NO_IMAGE, #ELM_CNP_MODE_PLAINTEXT.
  */
-EAPI Elm_CNP_Mode elm_entry_cnp_mode_get(const Evas_Object *obj);
+EAPI Elm_Cnp_Mode elm_entry_cnp_mode_get(const Evas_Object *obj);
 
 
 /**

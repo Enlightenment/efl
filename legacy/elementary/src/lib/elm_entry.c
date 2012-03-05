@@ -67,7 +67,6 @@ struct _Widget_Data
    Eina_Bool drag_selection_asked : 1;
    Eina_Bool can_write : 1;
    Eina_Bool autosave : 1;
-   Elm_CNP_Mode cnp_mode : 2;
    Eina_Bool usedown : 1;
    Eina_Bool scroll : 1;
    Eina_Bool h_bounce : 1;
@@ -76,6 +75,7 @@ struct _Widget_Data
    Eina_Bool prediction_allow : 1;
    Eina_Bool input_panel_return_key_disabled : 1;
    Eina_Bool autoreturnkey : 1;
+   Elm_Cnp_Mode cnp_mode : 2;
 };
 
 struct _Elm_Entry_Context_Menu_Item
@@ -3375,7 +3375,7 @@ EINA_DEPRECATED EAPI void
 elm_entry_cnp_textonly_set(Evas_Object *obj, Eina_Bool textonly)
 {
    ELM_CHECK_WIDTYPE(obj, widtype);
-   Elm_CNP_Mode cnp_mode = ELM_CNP_MODE_MARKUP;
+   Elm_Cnp_Mode cnp_mode = ELM_CNP_MODE_MARKUP;
    if (textonly)
      cnp_mode = ELM_CNP_MODE_NO_IMAGE;
    elm_entry_cnp_mode_set(obj, cnp_mode);
@@ -3389,7 +3389,7 @@ elm_entry_cnp_textonly_get(const Evas_Object *obj)
 }
 
 EAPI void
-elm_entry_cnp_mode_set(Evas_Object *obj, Elm_CNP_Mode cnp_mode)
+elm_entry_cnp_mode_set(Evas_Object *obj, Elm_Cnp_Mode cnp_mode)
 {
    Elm_Sel_Format format = ELM_SEL_FORMAT_MARKUP;
    ELM_CHECK_WIDTYPE(obj, widtype);
@@ -3405,7 +3405,7 @@ elm_entry_cnp_mode_set(Evas_Object *obj, Elm_CNP_Mode cnp_mode)
 #endif
 }
 
-EAPI Elm_CNP_Mode
+EAPI Elm_Cnp_Mode
 elm_entry_cnp_mode_get(const Evas_Object *obj)
 {
    ELM_CHECK_WIDTYPE(obj, widtype) ELM_CNP_MODE_MARKUP;
