@@ -1,5 +1,5 @@
 /**
- * Simple Elementary's <b>map widget</b> example, illustrating markers
+ * Simple Elementary's <b>map widget</b> example, illustrating overlays
  * usage.
  *
  * See stdout/stderr for output. Compile with:
@@ -16,81 +16,93 @@
 # define __UNUSED__
 #endif
 
-typedef struct _Marker_Data
+typedef struct _Overlay_Data
 {
    const char *name;
    const char *file;
-} Marker_Data;
+} Overlay_Data;
 
-Marker_Data data_argentina = {"Argentina",
+Overlay_Data data_argentina = {"Argentina",
      PACKAGE_DATA_DIR"/images/rock_01.jpg"};
-Marker_Data data_chile = {"Chile",
+Overlay_Data data_chile = {"Chile",
      PACKAGE_DATA_DIR"/images/rock_02.jpg"};
-Marker_Data data_sampa = {"São Paulo",
+Overlay_Data data_sampa = {"São Paulo",
      PACKAGE_DATA_DIR"/images/sky_01.jpg"};
-Marker_Data data_rio = {"Rio de Janeiro",
+Overlay_Data data_rio = {"Rio de Janeiro",
      PACKAGE_DATA_DIR"/images/sky_02.jpg"};
-Marker_Data data_brasilia = {"Brasília",
+Overlay_Data data_brasilia = {"Brasília",
      PACKAGE_DATA_DIR"/images/sky_03.jpg"};
 
-static Evas_Object *
-_marker_get(Evas_Object *obj, Elm_Map_Marker *marker __UNUSED__, void *data)
-{
-   Evas_Object *bx, *im, *lbl;
-   Marker_Data *md = data;
+static Elm_Map_Overlay *bubble;
 
+static Evas_Object *
+_icon_get(Evas_Object *obj, const char *file)
+{
+   Evas_Object *icon = elm_icon_add(obj);
+   elm_icon_file_set(icon, file, NULL);
+   evas_object_show(icon);
+   return icon;
+}
+
+static Evas_Object *
+_city_icon_get(Evas_Object *obj)
+{
+   return _icon_get(obj, PACKAGE_DATA_DIR"/images/icon_07.png");
+}
+
+static Evas_Object *
+_clas_city_icon_get(Evas_Object *obj)
+{
+   return _icon_get(obj, PACKAGE_DATA_DIR"/images/icon_05.png");
+}
+
+static Evas_Object *
+_country_icon_get(Evas_Object *obj)
+{
+   return _icon_get(obj, PACKAGE_DATA_DIR"/images/icon_06.png");
+}
+
+static Evas_Object *
+_clas_country_icon_get(Evas_Object *obj)
+{
+   return _icon_get(obj, PACKAGE_DATA_DIR"/images/icon_04.png");
+}
+
+static Evas_Object *
+_box_get(Evas_Object *obj, Overlay_Data *data)
+{
+   Evas_Object *bx, *img, *label;
    bx = elm_box_add(obj);
    evas_object_show(bx);
 
-   im = elm_image_add(obj);
-   elm_image_file_set(im, md->file, NULL);
-   evas_object_size_hint_min_set(im, 64, 64);
-   evas_object_show(im);
-   elm_box_pack_end(bx, im);
+   img = evas_object_image_add(evas_object_evas_get(obj));
+   evas_object_image_file_set(img, data->file, NULL);
+   evas_object_image_filled_set(img, EINA_TRUE);
+   evas_object_size_hint_min_set(img, 64, 64);
+   evas_object_show(img);
+   elm_box_pack_end(bx, img);
 
-   lbl = elm_label_add(obj);
-   elm_object_text_set(lbl, md->name);
-   evas_object_show(lbl);
-   elm_box_pack_end(bx, lbl);
-
+   label = elm_label_add(obj);
+   elm_object_text_set(label, data->name);
+   evas_object_show(label);
+   elm_box_pack_end(bx, label);
    return bx;
 }
 
-static Evas_Object *
-_marker_city_content_get(Evas_Object *obj, Elm_Map_Marker *marker __UNUSED__, void *data __UNUSED__)
+static void
+_overlay_cb(void *data __UNUSED__, Evas_Object *map, void *ev)
 {
-   Evas_Object *icon = elm_icon_add(obj);
-   elm_icon_file_set(icon, PACKAGE_DATA_DIR"/images/icon_07.png", NULL);
-   evas_object_show(icon);
+   printf("Overlay clicked\n");
+   Elm_Map_Overlay *overlay = ev;
+   Evas_Object *bx;
 
-   return icon;
-}
+   // prevent duplication
+   if (!bubble)  bubble = elm_map_overlay_bubble_add(map);
 
-static Evas_Object *
-_group_city_content_get(Evas_Object *obj, void *data __UNUSED__)
-{
-   Evas_Object *icon = elm_icon_add(obj);
-   elm_icon_file_set(icon, PACKAGE_DATA_DIR"/images/icon_05.png", NULL);
-   evas_object_show(icon);
-   return icon;
-}
-
-static Evas_Object *
-_marker_country_content_get(Evas_Object *obj, Elm_Map_Marker *marker __UNUSED__, void *data __UNUSED__)
-{
-   Evas_Object *icon = elm_icon_add(obj);
-   elm_icon_file_set(icon, PACKAGE_DATA_DIR"/images/icon_06.png", NULL);
-   evas_object_show(icon);
-   return icon;
-}
-
-static Evas_Object *
-_group_country_content_get(Evas_Object *obj, void *data __UNUSED__)
-{
-   Evas_Object *icon = elm_icon_add(obj);
-   elm_icon_file_set(icon, PACKAGE_DATA_DIR"/images/icon_04.png", NULL);
-   evas_object_show(icon);
-   return icon;
+   elm_map_overlay_bubble_follow(bubble, overlay);
+   elm_map_overlay_bubble_content_clear(bubble);
+   bx = _box_get(map, elm_map_overlay_data_get(overlay));
+   elm_map_overlay_bubble_content_append(bubble, bx);
 }
 
 static void
@@ -152,13 +164,11 @@ EAPI_MAIN int
 elm_main(int argc __UNUSED__, char **argv __UNUSED__)
 {
    Evas_Object *win, *bg, *map, *box, *bt;
-   static Elm_Map_Marker_Class *mc_city, *mc_country;
-   static Elm_Map_Group_Class *gc_city, *gc_country;
-   Eina_List *markers = NULL;
-   Elm_Map_Marker *m;
+   Eina_List *ovls = NULL;
+   Elm_Map_Overlay *ovl, *city_clas, *country_clas;
 
    win = elm_win_add(NULL, "map", ELM_WIN_BASIC);
-   elm_win_title_set(win, "Map Markers Example");
+   elm_win_title_set(win, "Map Overlay Example");
    evas_object_smart_callback_add(win, "delete,request", _on_done, NULL);
 
    bg = elm_bg_add(win);
@@ -198,42 +208,47 @@ elm_main(int argc __UNUSED__, char **argv __UNUSED__)
    evas_object_show(bt);
    evas_object_smart_callback_add(bt, "clicked", _bt_zoom_fill, map);
 
-   mc_city = elm_map_marker_class_new(map);
-   elm_map_marker_class_get_cb_set(mc_city, _marker_get);
-   elm_map_marker_class_icon_cb_set(mc_city, _marker_city_content_get);
-   elm_map_marker_class_style_set(mc_city, "radio");
+   evas_object_smart_callback_add(map, "overlay,clicked", _overlay_cb, NULL);
 
-   gc_city = elm_map_group_class_new(map);
-   elm_map_group_class_style_set(gc_city, "radio2");
-   elm_map_group_class_icon_cb_set(gc_city, _group_city_content_get);
-   elm_map_group_class_zoom_displayed_set(gc_city, 3);
+   city_clas = elm_map_overlay_class_add(map);
+   elm_map_overlay_displayed_zoom_min_set(city_clas, 3);
+   elm_map_overlay_icon_set(city_clas, _clas_city_icon_get(map));
 
-   mc_country = elm_map_marker_class_new(map);
-   elm_map_marker_class_get_cb_set(mc_country, _marker_get);
-   elm_map_marker_class_icon_cb_set(mc_country, _marker_country_content_get);
-   elm_map_marker_class_style_set(mc_country, "empty");
+   country_clas = elm_map_overlay_class_add(map);
+   elm_map_overlay_displayed_zoom_min_set(country_clas, 1);
+   elm_map_overlay_icon_set(country_clas, _clas_country_icon_get(map));
 
-   gc_country = elm_map_group_class_new(map);
-   elm_map_group_class_style_set(gc_country, "empty");
-   elm_map_group_class_icon_cb_set(gc_country, _group_country_content_get);
-   elm_map_group_class_zoom_displayed_set(gc_country, 1);
+   ovl = elm_map_overlay_add(map, -43.2, -22.9);
+   elm_map_overlay_icon_set(ovl, _city_icon_get(map));
+   elm_map_overlay_data_set(ovl, &data_rio);
+   elm_map_overlay_class_append(city_clas, ovl);
+   ovls = eina_list_append(ovls, ovl);
 
-   m = elm_map_marker_add(map, -43.2, -22.9, mc_city, gc_city, &data_rio);
-   markers = eina_list_append(markers, m);
-   m = elm_map_marker_add(map, -46.63, -23.55, mc_city, gc_city, &data_sampa);
-   markers = eina_list_append(markers, m);
-   m = elm_map_marker_add(map, -47.88, -15.78, mc_city, gc_city,
-                          &data_brasilia);
-   markers = eina_list_append(markers, m);
+   ovl = elm_map_overlay_add(map, -46.63, -23.55);
+   elm_map_overlay_icon_set(ovl, _city_icon_get(map));
+   elm_map_overlay_data_set(ovl, &data_sampa);
+   elm_map_overlay_class_append(city_clas, ovl);
+   ovls = eina_list_append(ovls, ovl);
 
-   m = elm_map_marker_add(map, -65.23, -35.1, mc_country, gc_country,
-                      &data_argentina);
-   markers = eina_list_append(markers, m);
-   m = elm_map_marker_add(map, -71.3, -31.75, mc_country, gc_country,
-                      &data_chile);
-   markers = eina_list_append(markers, m);
+   ovl = elm_map_overlay_add(map, -47.88, -15.78);
+   elm_map_overlay_icon_set(ovl, _city_icon_get(map));
+   elm_map_overlay_data_set(ovl, &data_brasilia);
+   elm_map_overlay_class_append(city_clas, ovl);
+   ovls = eina_list_append(ovls, ovl);
 
-   elm_map_markers_list_show(markers);
+   ovl = elm_map_overlay_add(map, -65.23, -35.1);
+   elm_map_overlay_icon_set(ovl, _country_icon_get(map));
+   elm_map_overlay_data_set(ovl, &data_argentina);
+   elm_map_overlay_class_append(country_clas, ovl);
+   ovls = eina_list_append(ovls, ovl);
+
+   ovl = elm_map_overlay_add(map, -71.3, -31.75);
+   elm_map_overlay_icon_set(ovl, _country_icon_get(map));
+   elm_map_overlay_data_set(ovl, &data_chile);
+   elm_map_overlay_class_append(country_clas, ovl);
+   ovls = eina_list_append(ovls, ovl);
+
+   elm_map_overlays_show(ovls);
 
    evas_object_resize(win, 512, 512);
    evas_object_show(win);

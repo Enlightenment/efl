@@ -81,9 +81,9 @@
  */
 typedef enum
 {
-   ELM_MAP_ZOOM_MODE_MANUAL, /**< Zoom controlled manually by elm_map_zoom_set(). It's set by default. */
-   ELM_MAP_ZOOM_MODE_AUTO_FIT, /**< Zoom until map fits inside the scroll frame with no pixels outside this area. */
-   ELM_MAP_ZOOM_MODE_AUTO_FILL, /**< Zoom until map fills scroll, ensuring no pixels are left unfilled. */
+   ELM_MAP_ZOOM_MODE_MANUAL,      /**< Zoom controlled manually by elm_map_zoom_set(). It's set by default. */
+   ELM_MAP_ZOOM_MODE_AUTO_FIT,    /**< Zoom until map fits inside the scroll frame with no pixels outside this area. */
+   ELM_MAP_ZOOM_MODE_AUTO_FILL,   /**< Zoom until map fills scroll, ensuring no pixels are left unfilled. */
    ELM_MAP_ZOOM_MODE_LAST
 } Elm_Map_Zoom_Mode;
 
@@ -98,9 +98,9 @@ typedef enum
  */
 typedef enum
 {
-   ELM_MAP_ROUTE_SOURCE_YOURS, /**< Routing service http://www.yournavigation.org/ . Set by default.*/
-   ELM_MAP_ROUTE_SOURCE_MONAV, /**< MoNav offers exact routing without heuristic assumptions. Its routing core is based on Contraction Hierarchies. It's not working with Map yet. */
-   ELM_MAP_ROUTE_SOURCE_ORS, /**< Open Route Service: http://www.openrouteservice.org/ . It's not working with Map yet. */
+   ELM_MAP_ROUTE_SOURCE_YOURS,   /**< Routing service http://www.yournavigation.org/ . Set by default.*/
+   ELM_MAP_ROUTE_SOURCE_MONAV,   /**< MoNav offers exact routing without heuristic assumptions. Its routing core is based on Contraction Hierarchies. It's not working with Map yet. */
+   ELM_MAP_ROUTE_SOURCE_ORS,     /**< Open Route Service: http://www.openrouteservice.org/ . It's not working with Map yet. */
    ELM_MAP_ROUTE_SOURCE_LAST
 } Elm_Map_Route_Sources;
 
@@ -119,9 +119,9 @@ typedef enum
  */
 typedef enum
 {
-   ELM_MAP_ROUTE_TYPE_MOTOCAR, /**< Route should consider an automobile will be used. */
-   ELM_MAP_ROUTE_TYPE_BICYCLE, /**< Route should consider a bicycle will be used by the user. */
-   ELM_MAP_ROUTE_TYPE_FOOT, /**< Route should consider user will be walking. */
+   ELM_MAP_ROUTE_TYPE_MOTOCAR,   /**< Route should consider an automobile will be used. */
+   ELM_MAP_ROUTE_TYPE_BICYCLE,   /**< Route should consider a bicycle will be used by the user. */
+   ELM_MAP_ROUTE_TYPE_FOOT,      /**< Route should consider user will be walking. */
    ELM_MAP_ROUTE_TYPE_LAST
 } Elm_Map_Route_Type;
 
@@ -134,10 +134,30 @@ typedef enum
  */
 typedef enum
 {
-   ELM_MAP_ROUTE_METHOD_FASTEST, /**< Route should prioritize time. */
+   ELM_MAP_ROUTE_METHOD_FASTEST,  /**< Route should prioritize time. */
    ELM_MAP_ROUTE_METHOD_SHORTEST, /**< Route should prioritized distance. */
    ELM_MAP_ROUTE_METHOD_LAST
 } Elm_Map_Route_Method;
+
+/**
+ * Set overlay type to be used. This type is resolved
+ * when the overlay is created.
+ * You can get this value by elm_map_overlay_type_get().
+ *
+ * @see elm_map_overlay_type_get()
+ * @see elm_map_overlay_add()
+ * @see elm_map_overlay_class_add()
+ * @see elm_map_overlay_bubble_add()
+ *
+ * @ingroup Map
+ */
+typedef enum _Elm_Map_Overlay_Type
+{
+   ELM_MAP_OVERLAY_TYPE_NONE = 0,
+   ELM_MAP_OVERLAY_TYPE_DEFAULT,
+   ELM_MAP_OVERLAY_TYPE_CLASS,
+   ELM_MAP_OVERLAY_TYPE_BUBBLE
+} Elm_Map_Overlay_Type;
 
 typedef enum
 {
@@ -146,27 +166,29 @@ typedef enum
    ELM_MAP_NAME_METHOD_LAST
 } Elm_Map_Name_Method;
 
-typedef struct _Elm_Map_Marker       Elm_Map_Marker; /**< A marker to be shown in a specific point of the map. Can be created with elm_map_marker_add() and deleted with elm_map_marker_remove(). */
+typedef struct _Elm_Map_Marker       Elm_Map_Marker;       /**< A marker to be shown in a specific point of the map. Can be created with elm_map_marker_add() and deleted with elm_map_marker_remove(). */
 typedef struct _Elm_Map_Marker_Class Elm_Map_Marker_Class; /**< Each marker must be associated to a class. It's required to add a mark. The class defines the style of the marker when a marker is displayed alone (not grouped). A new class can be created with elm_map_marker_class_new(). */
-typedef struct _Elm_Map_Group_Class  Elm_Map_Group_Class; /**< Each marker must be associated to a group class. It's required to add a mark. The group class defines the style of the marker when a marker is grouped to other markers. Markers with the same group are grouped if they are close. A new group class can be created with elm_map_marker_group_class_new(). */
-typedef struct _Elm_Map_Route        Elm_Map_Route; /**< A route to be shown in the map. Can be created with elm_map_route_add() and deleted with elm_map_route_remove(). */
-typedef struct _Elm_Map_Name         Elm_Map_Name; /**< A handle for specific coordinates. */
-typedef struct _Elm_Map_Track        Elm_Map_Track;
+typedef struct _Elm_Map_Group_Class  Elm_Map_Group_Class;  /**< Each marker must be associated to a group class. It's required to add a mark. The group class defines the style of the marker when a marker is grouped to other markers. Markers with the same group are grouped if they are close. A new group class can be created with elm_map_marker_group_class_new(). */
+typedef struct _Elm_Map_Route        Elm_Map_Route;        /**< A route to be shown in the map. Can be created with elm_map_route_add() and deleted with elm_map_route_remove(). */
+typedef struct _Elm_Map_Name         Elm_Map_Name;         /**< A handle for specific coordinates. */
+typedef struct _Elm_Map_Overlay      Elm_Map_Overlay;      /**< A overlay to be shown in a specific point of the map. This can be created by elm_map_overlay_add() and similar functions and deleted by elm_map_overlay_del(). */
 
-typedef Evas_Object               *(*ElmMapMarkerGetFunc)(Evas_Object *obj, Elm_Map_Marker *marker, void *data); /**< Bubble content fetching class function for marker classes. When the user click on a marker, a bubble is displayed with a content. */
-typedef void                       (*ElmMapMarkerDelFunc)(Evas_Object *obj, Elm_Map_Marker *marker, void *data, Evas_Object *o); /**< Function to delete bubble content for marker classes. */
-typedef Evas_Object               *(*ElmMapMarkerIconGetFunc)(Evas_Object *obj, Elm_Map_Marker *marker, void *data); /**< Icon fetching class function for marker classes. */
-typedef Evas_Object               *(*ElmMapGroupIconGetFunc)(Evas_Object *obj, void *data); /**< Icon fetching class function for markers group classes. */
+typedef Evas_Object               *(*Elm_Map_Marker_Get_Func)(Evas_Object *obj, Elm_Map_Marker *marker, void *data); /**< Bubble content fetching class function for marker classes. When the user click on a marker, a bubble is displayed with a content. */
+typedef void                       (*Elm_Map_Marker_Del_Func)(Evas_Object *obj, Elm_Map_Marker *marker, void *data, Evas_Object *o); /**< Function to delete bubble content for marker classes. */
+typedef Evas_Object               *(*Elm_Map_Marker_Icon_Get_Func)(Evas_Object *obj, Elm_Map_Marker *marker, void *data); /**< Icon fetching class function for marker classes. */
+typedef Evas_Object               *(*Elm_Map_Group_Icon_Get_Func)(Evas_Object *obj, void *data); /**< Icon fetching class function for markers group classes. */
 
-typedef char                      *(*ElmMapModuleSourceFunc)(void);
-typedef int                        (*ElmMapModuleZoomMinFunc)(void);
-typedef int                        (*ElmMapModuleZoomMaxFunc)(void);
-typedef char                      *(*ElmMapModuleUrlFunc)(Evas_Object *obj, int x, int y, int zoom);
-typedef int                        (*ElmMapModuleRouteSourceFunc)(void);
-typedef char                      *(*ElmMapModuleRouteUrlFunc)(Evas_Object *obj, char *type_name, int method, double flon, double flat, double tlon, double tlat);
-typedef char                      *(*ElmMapModuleNameUrlFunc)(Evas_Object *obj, int method, char *name, double lon, double lat);
-typedef Eina_Bool                  (*ElmMapModuleGeoIntoCoordFunc)(const Evas_Object *obj, int zoom, double lon, double lat, int size, int *x, int *y);
-typedef Eina_Bool                  (*ElmMapModuleCoordIntoGeoFunc)(const Evas_Object *obj, int zoom, int x, int y, int size, double *lon, double *lat);
+typedef void                       (*Elm_Map_Overlay_Get_Cb)(void *data, Evas_Object *map, Elm_Map_Overlay *overlay);   /**< Get callback function for the overlay. */
+
+typedef char                      *(*Elm_Map_Module_Source_Func)(void);
+typedef int                        (*Elm_Map_Module_Zoom_Min_Func)(void);
+typedef int                        (*Elm_Map_Module_Zoom_Max_Func)(void);
+typedef char                      *(*Elm_Map_Module_Url_Func)(Evas_Object *obj, int x, int y, int zoom);
+typedef int                        (*Elm_Map_Module_Route_Source_Func)(void);
+typedef char                      *(*Elm_Map_Module_Route_Url_Func)(Evas_Object *obj, char *type_name, int method, double flon, double flat, double tlon, double tlat);
+typedef char                      *(*Elm_Map_Module_Name_Url_Func)(Evas_Object *obj, int method, char *name, double lon, double lat);
+typedef Eina_Bool                  (*Elm_Map_Module_Geo_Into_Coord_Func)(const Evas_Object *obj, int zoom, double lon, double lat, int size, int *x, int *y);
+typedef Eina_Bool                  (*Elm_Map_Module_Coord_Into_Geo_Func)(const Evas_Object *obj, int zoom, int x, int y, int size, double *lon, double *lat);
 
 /**
  * Add a new map widget to the given parent Elementary (container) object.
@@ -345,7 +367,7 @@ EAPI void                  elm_map_paused_set(Evas_Object *obj, Eina_Bool paused
  *
  * @param obj The map object.
  * @return @c EINA_TRUE means map is pause. @c EINA_FALSE indicates
- * it is not. If @p obj is @c NULL, @c EINA_FALSE is returned.
+ * it is not.
  *
  * This gets the current paused state for the map object.
  *
@@ -389,7 +411,7 @@ EAPI void                  elm_map_paused_markers_set(Evas_Object *obj, Eina_Boo
  *
  * @param obj The map object.
  * @return @c EINA_TRUE means map @b won't display markers or @c EINA_FALSE
- * indicates it will. If @p obj is @c NULL, @c EINA_FALSE is returned.
+ * indicates it will.
  *
  * This gets the current markers paused state for the map object.
  *
@@ -661,12 +683,12 @@ EAPI void                  elm_map_marker_show(Elm_Map_Marker *marker);
 EAPI void                  elm_map_markers_list_show(Eina_List *markers);
 
 /**
- * Get the Evas object returned by the ElmMapMarkerGetFunc callback
+ * Get the Evas object returned by the Elm_Map_Marker_Get_Func callback
  *
  * @param marker The marker which content should be returned.
  * @return Return the evas object if it exists, else @c NULL.
  *
- * To set callback function #ElmMapMarkerGetFunc for the marker class,
+ * To set callback function #Elm_Map_Marker_Get_Func for the marker class,
  * elm_map_marker_class_get_cb_set() should be used.
  *
  * This content is what will be inside the bubble that will be displayed
@@ -691,8 +713,8 @@ EAPI Evas_Object          *elm_map_marker_object_get(const Elm_Map_Marker *marke
  * @param marker The marker to be updated.
  *
  * If a content is set to this marker, it will call function to delete it,
- * #ElmMapMarkerDelFunc, and then will fetch the content again with
- * #ElmMapMarkerGetFunc.
+ * #Elm_Map_Marker_Del_Func, and then will fetch the content again with
+ * #Elm_Map_Marker_Get_Func.
  *
  * These functions are set for the marker class with
  * elm_map_marker_class_get_cb_set() and elm_map_marker_class_del_cb_set().
@@ -706,7 +728,7 @@ EAPI void                  elm_map_marker_update(Elm_Map_Marker *marker);
  *
  * @param obj The map object.
  *
- * A bubble is displayed with a content fetched with #ElmMapMarkerGetFunc
+ * A bubble is displayed with a content fetched with #Elm_Map_Marker_Get_Func
  * when the user clicks on a marker.
  *
  * This functions is set for the marker class with
@@ -741,7 +763,7 @@ EAPI void                  elm_map_bubbles_close(Evas_Object *obj);
  *   elm_map_group_class_zoom_grouped_set().
  * - visibility - set if markers will be visible or not, set with
  *   elm_map_group_class_hide_set().
- * - #ElmMapGroupIconGetFunc - used to fetch icon for markers group classes.
+ * - #Elm_Map_Group_Icon_Get_Func - used to fetch icon for markers group classes.
  *   It can be set using elm_map_group_class_icon_cb_set().
  *
  * @see elm_map_marker_add()
@@ -791,7 +813,7 @@ EAPI void                  elm_map_group_class_style_set(Elm_Map_Group_Class *cl
  *
  * @ingroup Map
  */
-EAPI void                  elm_map_group_class_icon_cb_set(Elm_Map_Group_Class *clas, ElmMapGroupIconGetFunc icon_get);
+EAPI void                  elm_map_group_class_icon_cb_set(Elm_Map_Group_Class *clas, Elm_Map_Group_Icon_Get_Func icon_get);
 
 /**
  * Set the data associated to the group class.
@@ -877,11 +899,11 @@ EAPI void                  elm_map_group_class_hide_set(Evas_Object *obj, Elm_Ma
  *
  * Some properties and functions can be set by class, as:
  * - style, with elm_map_marker_class_style_set()
- * - #ElmMapMarkerIconGetFunc - used to fetch icon for markers classes.
+ * - #Elm_Map_Marker_Icon_Get_Func - used to fetch icon for markers classes.
  *   It can be set using elm_map_marker_class_icon_cb_set().
- * - #ElmMapMarkerGetFunc - used to fetch bubble content for marker classes.
+ * - #Elm_Map_Marker_Get_Func - used to fetch bubble content for marker classes.
  *   Set using elm_map_marker_class_get_cb_set().
- * - #ElmMapMarkerDelFunc - used to delete bubble content for marker classes.
+ * - #Elm_Map_Marker_Del_Func - used to delete bubble content for marker classes.
  *   Set using elm_map_marker_class_del_cb_set().
  *
  * @see elm_map_marker_add()
@@ -929,7 +951,7 @@ EAPI void                  elm_map_marker_class_style_set(Elm_Map_Marker_Class *
  *
  * @ingroup Map
  */
-EAPI void                  elm_map_marker_class_icon_cb_set(Elm_Map_Marker_Class *clas, ElmMapMarkerIconGetFunc icon_get);
+EAPI void                  elm_map_marker_class_icon_cb_set(Elm_Map_Marker_Class *clas, Elm_Map_Marker_Icon_Get_Func icon_get);
 
 /**
  * Set the bubble content callback function of a marker class.
@@ -950,7 +972,7 @@ EAPI void                  elm_map_marker_class_icon_cb_set(Elm_Map_Marker_Class
  *
  * @ingroup Map
  */
-EAPI void                  elm_map_marker_class_get_cb_set(Elm_Map_Marker_Class *clas, ElmMapMarkerGetFunc get);
+EAPI void                  elm_map_marker_class_get_cb_set(Elm_Map_Marker_Class *clas, Elm_Map_Marker_Get_Func get);
 
 /**
  * Set the callback function used to delete bubble content of a marker class.
@@ -976,7 +998,7 @@ EAPI void                  elm_map_marker_class_get_cb_set(Elm_Map_Marker_Class 
  *
  * @ingroup Map
  */
-EAPI void                  elm_map_marker_class_del_cb_set(Elm_Map_Marker_Class *clas, ElmMapMarkerDelFunc del);
+EAPI void                  elm_map_marker_class_del_cb_set(Elm_Map_Marker_Class *clas, Elm_Map_Marker_Del_Func del);
 
 /**
  * Get the list of available sources.
@@ -1375,7 +1397,7 @@ EAPI void                  elm_map_wheel_disabled_set(Evas_Object *obj, Eina_Boo
  *
  * @param obj The map object.
  * @return @c EINA_TRUE means map is disabled. @c EINA_FALSE indicates
- * it is enabled. If @p obj is @c NULL, @c EINA_FALSE is returned.
+ * it is enabled.
  *
  * Mouse wheel can be used for the user to zoom in or zoom out the map.
  *
@@ -1409,6 +1431,496 @@ EAPI Evas_Object          *elm_map_track_add(Evas_Object *obj, EMap_Route *emap)
  * @ingroup Map
  */
 EAPI void                  elm_map_track_remove(Evas_Object *obj, Evas_Object *route);
+
+/**
+ * Add a new overlay to the map object. This overlay has a default type.
+ *
+ * @param obj The map object to add a new overlay.
+ * @param lon The longitude of the overlay.
+ * @param lat The latitude of the overlay.
+ * @return The created overlay or @c NULL upon failure.
+ *
+ * A overlay will be created and shown in a specific point of the map, defined
+ * by @p lon and @p lat.
+ *
+ * The created overlay has a default style layout before content or
+ * icon is set.
+ * If content or icon is set, those are displayed instead of default style
+ * layout.
+ * You can set by using elm_map_overlay_content_set() or
+ * elm_map_overlay_icon_set(). If NULL is set, default style
+ * is shown again.
+ *
+ * Overlay created with this method can be deleted by elm_map_overlay_del().
+ *
+ * @see elm_map_overlay_del()
+ * @see elm_map_overlay_class_add()
+ * @see elm_map_overlay_bubble_add()
+ * @see elm_map_overlay_content_set()
+ * @see elm_map_overlay_icon_set()
+ *
+ * @ingroup Map
+ */
+EAPI Elm_Map_Overlay *     elm_map_overlay_add(Evas_Object *obj, double lon, double lat);
+
+/**
+ * Delete a overlay from the map. This function can delete all types
+ * of overlays.
+ *
+ * @param overlay The overlay to be deleted.
+ *
+ * @see elm_map_overlay_add()
+ * @see elm_map_overlay_class_add()
+ * @see elm_map_overlay_bubble_add()
+ *
+ * @ingroup Map
+ */
+EAPI void                  elm_map_overlay_del(Elm_Map_Overlay *overlay);
+
+/**
+ * Get the overlay type.
+ *
+ * @param overlay The overlay to return type.
+ * @return Return the overlay type.
+ *
+ * This type is resolved when the overlay is created.
+ *
+ * @see elm_map_overlay_add()
+ * @see elm_map_overlay_class_add()
+ * @see elm_map_overlay_bubble_add()
+ *
+ * @ingroup Map
+ */
+EAPI Elm_Map_Overlay_Type  elm_map_overlay_type_get(Elm_Map_Overlay *overlay);
+
+ /**
+ * Set a pointer of user data for a overlay.
+ *
+ * @param overlay The overlay to own the user data.
+ * @param data A pointer of user data
+ *
+ * @see elm_map_overlay_data_get()
+ *
+ * @ingroup Map
+ */
+EAPI void                  elm_map_overlay_data_set(Elm_Map_Overlay *overlay, void *data);
+
+/**
+ * Get the user data stored on a overlay.
+ *
+ * @param overlay The overlay to return the user data.
+ * @return A pointer to data stored using elm_map_overlay_data_set(),
+ *         or @c NULL, if none has been set.
+ *
+ * @see elm_map_overlay_data_set()
+ *
+ * @ingroup Map
+ */
+EAPI void *                elm_map_overlay_data_get(const Elm_Map_Overlay *overlay);
+
+/**
+ * Set if the overlay is hidden or not.
+ *
+ * @param overlay The overlay to be hidden.
+ * @param hide Use @c EINA_TRUE to hide the overlay or @c EINA_FALSE to show.
+ *
+ * @see elm_map_overlay_hide_get().
+ *
+ * @ingroup Map
+ */
+EAPI void                  elm_map_overlay_hide_set(Elm_Map_Overlay *overlay, Eina_Bool hide);
+
+/**
+ * Get a value whether the overlay is hidden or not.
+ *
+ * @param overlay The overlay to return the hidden state.
+ * @return @c EINA_TRUE means the overlay is hidden. @c EINA_FALSE indicates
+ * it is not.
+ *
+ * This gets the current hidden state for the overlay.
+ *
+ * @see elm_map_overlay_hide_set().
+ *
+ * @ingroup Map
+ */
+EAPI Eina_Bool             elm_map_overlay_hide_get(const Elm_Map_Overlay *overlay);
+
+/**
+ * Set the minimum zoom from where the overlay is displayed.
+ *
+ * @param overlay The overlay to be set the minimum zoom.
+ * @param zoom The minimum zoom.
+ *
+ * The overlay only will be displayed when the map is displayed at @p zoom
+ * or bigger.
+ *
+ * @see elm_map_overlay_displayed_zoom_min_get().
+ *
+ * @ingroup Map
+ */
+EAPI void                  elm_map_overlay_displayed_zoom_min_set(Elm_Map_Overlay *overlay, int zoom);
+
+/**
+ * Get the minimum zoom from where the overlay is displayed.
+ *
+ * @param overlay The overlay to return the minimum zoom.
+ * @return zoom The minimum zoom.
+ *
+ * @see elm_map_overlay_displayed_zoom_min_set().
+ *
+ * @ingroup Map
+ */
+EAPI int                   elm_map_overlay_displayed_zoom_min_get(const Elm_Map_Overlay *overlay);
+
+/**
+ * Pause or unpause the overlay.
+ *
+ * @param overlay The overlay to be paused.
+ * @param paused Use @c EINA_TRUE to pause the @p overlay or @c EINA_FALSE
+ * to unpause it.
+ *
+ * This sets the paused state to on (@c EINA_TRUE) or off (@c EINA_FALSE)
+ * for the overlay.
+ *
+ * The default is off.
+ *
+ * This will stop moving the overlay coordinates instantly.
+ * even if map being scrolled or zoomed.
+ *
+ * @see elm_map_overlay_paused_get()
+ *
+ * @ingroup Map
+ */
+EAPI void                  elm_map_overlay_paused_set(Elm_Map_Overlay *overlay, Eina_Bool paused);
+
+/**
+ * Get a value whether the overlay is paused or not.
+ *
+ * @param overlay The overlay to return paused state.
+ * @return @c EINA_TRUE means overlay is paused. @c EINA_FALSE indicates
+ * it is not.
+ *
+ * This gets the current paused state for the overlay.
+ *
+ * @see elm_map_overlay_paused_set().
+ *
+ * @ingroup Map
+ */
+EAPI Eina_Bool             elm_map_overlay_paused_get(const Elm_Map_Overlay *overlay);
+
+/**
+ * Set the content object of the overlay.
+ *
+ * @param overlay The overlay to be set the content.
+ * @param obj The evas object will be used to display the overlay.
+ *
+ * Only default and class type overlay support this function.
+ *
+ * The content should be resized or set size hints before set to the overlay.
+ * <b> Do not modify this object</b> (move, show, hide, del, etc.),
+ * after set.
+ * You can only resize this.
+ *
+ * This content is what will be inside the overlay that will be displayed.
+ * If a content is set, icon and default style layout are no more used before
+ * the content is deleted.
+ *
+ * If @p obj is @c NULL, content inside the overlay is deleted.
+ *
+ * @see elm_map_overlay_content_get().
+ *
+ * @ingroup Map
+ */
+EAPI void                  elm_map_overlay_content_set(Elm_Map_Overlay *overlay, Evas_Object *obj);
+
+/**
+ * Get the content object.
+ *
+ * @param overlay The overlay to return the content.
+ * @return Return the evas object if it exists, else @c NULL.
+ *
+ * Only default and class type overlay support this function.
+ *
+ * Returned content is what being inside the overlay that being displayed.
+ *
+ * <b> Do not modify this object</b> (move, show, hide, del, etc.).
+ * You can only resize this.
+ *
+ * The content can be set by elm_map_overlay_content_set().
+ *
+ * @see elm_map_overlay_content_set().
+ *
+ * @ingroup Map
+ */
+EAPI const Evas_Object *   elm_map_overlay_content_get(const Elm_Map_Overlay *overlay);
+
+/**
+ * Set a icon of the overlay.
+ *
+ * @param overlay The overlay to be set the icon.
+ * @param icon The icon will be used to display the overlay.
+ *
+ * Only default and class type overlay support this function.
+ *
+ * <b> Do not modify this object</b> (move, show, hide, resize, del, etc.),
+ * after set.
+ *
+ * If icon is set, default style layout will not be used.
+ *
+ * If @p icon is @c NULL, icon inside the overlay will be deleted.
+ *
+ * @see elm_map_overlay_icon_get().
+ *
+ * @ingroup Map
+ */
+EAPI void                  elm_map_overlay_icon_set(Elm_Map_Overlay *overlay, Evas_Object *icon);
+
+/**
+ * Get the icon object.
+ *
+ * @param overlay The overlay to return the icon.
+ * @return Return the icon object if it exists, else @c NULL.
+ *
+ * Only default and class type overlay support this function.
+ *
+ * Returned icon is what being inside the overlay that being displayed.
+ *
+ * <b> Do not modify this icon </b> (move, show, hide, resize, del, etc.).
+ *
+ * The icon can be set by elm_map_overlay_icon_set().
+ *
+ * @see elm_map_overlay_icon_set().
+ *
+ * @ingroup Map
+ */
+EAPI const Evas_Object *   elm_map_overlay_icon_get(const Elm_Map_Overlay *overlay);
+
+/**
+ * Set the geographic coordinates of the overlay.
+ *
+ * @param overlay The overlay to be set geographic coordinates.
+ * @param lon Longitude to be set.
+ * @param lat Latitude to be set.
+ *
+ * Only default and bubble type overlay support this function.
+ *
+ * This sets the center coordinates of the overlay. It can be
+ * get by elm_map_overlay_geo_get().
+ *
+ * @see elm_map_overlay_geo_get()
+ *
+ * @ingroup Map
+ */
+EAPI void                  elm_map_overlay_geo_set(Elm_Map_Overlay *overlay, double lon, double lat);
+
+/**
+ * Get the geographic coordinates of the overlay.
+ *
+ * @param overlay The overlay to return geographic coordinates.
+ * @param lon Pointer to store longitude.
+ * @param lat Pointer to store latitude.
+ *
+ * Only default and bubble type overlay support this function.
+ *
+ * This returns the center coordinates of the overlay. It can be
+ * set by elm_map_overlay_geo_set().
+ *
+ * @see elm_map_overlay_geo_set()
+ *
+ * @ingroup Map
+ */
+EAPI void                  elm_map_overlay_geo_get(const Elm_Map_Overlay *overlay, double *lon, double *lat);
+
+/**
+ * Show the given overlay at the center of the map, immediately.
+ *
+ * @param overlay The overlay to be center at.
+ *
+ * This causes map to @b redraw its viewport's contents to the
+ * region containing the given @p overlay's coordinates, that will be
+ * moved to the center of the map.
+ *
+ * @see elm_map_overlays_show() if more than one overlay need to be displayed.
+ *
+ * @ingroup Map
+ */
+EAPI void                  elm_map_overlay_show(Elm_Map_Overlay *overlay);
+
+/**
+ * Move and zoom the map to display a list of overlays.
+ *
+ * @param overlays A list of #Elm_Map_Overlay handles.
+ *
+ * The map will be centered on the center point of the overlays in the list.
+ * Then the map will be zoomed in order to fit the overlays using the maximum
+ * zoom which allows display of all the overlays.
+ *
+ * @warning All the overlays should belong to the same map object.
+ *
+ * @see elm_map_overlay_show() to show a single overlay.
+ *
+ * @ingroup Map
+ */
+EAPI void                  elm_map_overlays_show(Eina_List *overlays);
+
+/**
+ * Set the get callback function of the overlay.
+ *
+ * @param overlay The overlay to own the get callback function.
+ * @param get_cb The callback function.
+ *
+ * You can delete this callback function by setting @c NULL.
+ *
+ * @ingroup Map
+ */
+EAPI void elm_map_overlay_get_cb_set(Elm_Map_Overlay *overlay, Elm_Map_Overlay_Get_Cb get_cb, void *data);
+
+
+/**
+ * Add a new class overlay to the map object.
+ * This overlay has a class type.
+ *
+ * @param obj The map object to add a new overlay.
+ * @return The created overlay or @c NULL upon failure.
+ *
+ * This overlay is not shown before overlay members are appended.
+ * if overlay members in the same class are close, group overlays
+ * are created. If they are far away, group overlays are hidden.
+ * When group overlays are shown, they have default style layouts at first.
+ *
+ * You can changed the state (hidden, paused, etc.) or set the content
+ * or icon of the group overlays.
+ * Also these changes have a influence on the overlays in the same class
+ * even if each overlay is alone and is not grouped.
+ *
+ * @see elm_map_overlay_del()
+ * @see elm_map_overlay_add()
+ * @see elm_map_overlay_bubble_add()
+ *
+ * @ingroup Map
+ */
+EAPI Elm_Map_Overlay *     elm_map_overlay_class_add(Evas_Object *obj);
+
+/**
+ * Add a new overlay member to the class overlay.
+ *
+ * @param clas The class overlay to add a new overlay.
+ * @param overlay The overlay to be added to the class overlay.
+ *
+ * @see elm_map_overlay_class_remove()
+ *
+ * @ingroup Map
+ */
+EAPI void                  elm_map_overlay_class_append(Elm_Map_Overlay *clas, Elm_Map_Overlay *overlay);
+
+/**
+ * Remove a overlay from the class.
+ *
+ * @param clas The class overlay to delete the overlay.
+ * @param overlay The overlay to be deleted from the class overlay.
+ *
+ * @see elm_map_overlay_class_append()
+ *
+ * @ingroup Map
+ */
+EAPI void                  elm_map_overlay_class_remove(Elm_Map_Overlay *clas, Elm_Map_Overlay *overlay);
+
+/**
+ * Set the maximum zoom from where the overlay members in the class can be
+ * grouped.
+ *
+ * @param clas The overlay class has overlay members.
+ * @param zoom The maximum zoom.
+ *
+ * Overlay members in the class only will be grouped when the map
+ * is displayed at less than @p zoom.
+ *
+ * @see elm_map_overlay_class_zoom_max_get().
+ *
+ * @ingroup Map
+ */
+EAPI
+EAPI void                  elm_map_overlay_class_zoom_max_set(Elm_Map_Overlay *clas, int zoom);
+
+/**
+ * Get the zoom from where the overlay members in the class are no more grouped.
+ *
+ * @param clas The overlay class has overlay members.
+ *
+ * @return The maximum zoom.
+ *
+ * @see elm_map_overlay_class_zoom_max_set().
+ *
+ * @ingroup Map
+ */
+EAPI int                   elm_map_overlay_class_zoom_max_get(const Elm_Map_Overlay *clas);
+
+/**
+ * Add a new bubble overlay to the map object.
+ * This overlay has a bubble type.
+ *
+ * @param obj The map object to add a new overlay.
+ * @return The created overlay or @c NULL upon failure.
+ *
+ * A bubble will not be displayed before geogrphic coordinates are set or
+ * any other overlays are followed.
+ *
+ * This overlay has a bubble style layout and icon or content can not
+ * be set.
+ *
+ * Overlay created with this method can be deleted with elm_map_overlay_del().
+ *
+ * @see elm_map_overlay_del()
+ * @see elm_map_overlay_add()
+ * @see elm_map_overlay_class_add()
+ * @see elm_map_overlay_geo_set()
+ * @see elm_map_overlay_bubble_follow()
+ *
+ * @ingroup Map
+ */
+EAPI Elm_Map_Overlay *     elm_map_overlay_bubble_add(Evas_Object *obj);
+
+/**
+ * Follow a other overlay.
+ *
+ * @param bubble The bubble overlay to follow a parent overlay.
+ * @param parent The parent overlay to be followed by the bubble overlay.
+ *
+ * Bubble overlay will follow the parent overlay's movement (hide, show, move).
+ *
+ * @see elm_map_overlay_bubble_add()
+ *
+ * @ingroup Map
+ */
+EAPI void                  elm_map_overlay_bubble_follow(Elm_Map_Overlay *bubble, Elm_Map_Overlay *parent);
+
+/**
+ * Add a content object to the bubble overlay.
+ *
+ * @param bubble The bubble overlay to add a content.
+ * @param content The content to be added to the bubble overlay.
+ *
+ * Added contents will be displayed inside the bubble overlay.
+ *
+ * @see elm_map_overlay_bubble_content_clear()
+ *
+ * @ingroup Map
+ */
+EAPI void                  elm_map_overlay_bubble_content_append(Elm_Map_Overlay *bubble, Evas_Object *content);
+
+/**
+ * Clear all contents inside the bubble overlay.
+ *
+ * @param bubble The bubble overlay to clear the contents.
+ *
+ * This will delete all contents inside the bubble overlay.
+ *
+ * @see elm_map_overlay_bubble_content_append()
+ *
+ * @ingroup Map
+ */
+
+EAPI void                  elm_map_overlay_bubble_content_clear(Elm_Map_Overlay *bubble);
 
 /**
  * @}

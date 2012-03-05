@@ -63,37 +63,31 @@ _bt_route(void *data, Evas_Object *obj __UNUSED__, void *ev __UNUSED__)
 static void
 _bt_zoom_in(void *data, Evas_Object *obj __UNUSED__, void *ev __UNUSED__)
 {
-   Evas_Object *map = data;
    int zoom;
-
-   elm_map_zoom_mode_set(map, ELM_MAP_ZOOM_MODE_MANUAL);
-   zoom = elm_map_zoom_get(map);
-   elm_map_zoom_set(map, zoom + 1);
+   elm_map_zoom_mode_set(data, ELM_MAP_ZOOM_MODE_MANUAL);
+   zoom = elm_map_zoom_get(data);
+   elm_map_zoom_set(data, zoom + 1);
 }
 
 static void
 _bt_zoom_out(void *data, Evas_Object *obj __UNUSED__, void *ev __UNUSED__)
 {
-   Evas_Object *map = data;
    int zoom;
-
-   elm_map_zoom_mode_set(map, ELM_MAP_ZOOM_MODE_MANUAL);
-   zoom = elm_map_zoom_get(map);
-   elm_map_zoom_set(map, zoom - 1);
+   elm_map_zoom_mode_set(data, ELM_MAP_ZOOM_MODE_MANUAL);
+   zoom = elm_map_zoom_get(data);
+   elm_map_zoom_set(data, zoom - 1);
 }
 
 static void
 _bt_zoom_fit(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
-   Evas_Object *map = data;
-   elm_map_zoom_mode_set(map, ELM_MAP_ZOOM_MODE_AUTO_FIT);
+   elm_map_zoom_mode_set(data, ELM_MAP_ZOOM_MODE_AUTO_FIT);
 }
 
 static void
 _bt_zoom_fill(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
-   Evas_Object *map = data;
-   elm_map_zoom_mode_set(map, ELM_MAP_ZOOM_MODE_AUTO_FILL);
+   elm_map_zoom_mode_set(data, ELM_MAP_ZOOM_MODE_AUTO_FILL);
 }
 
 static void
@@ -192,8 +186,8 @@ elm_main(int argc __UNUSED__, char **argv __UNUSED__)
    example_data.start_lon = -43.175;
    example_data.start_lat = -22.97;
 
-   elm_map_geo_region_show(map, example_data.start_lon, example_data.start_lat);
    elm_map_zoom_set(map, 12);
+   elm_map_geo_region_show(map, example_data.start_lon, example_data.start_lat);
 
    evas_object_resize(win, 512, 512);
    evas_object_show(win);

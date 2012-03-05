@@ -8,10 +8,10 @@
 #define MARKER_MAX 1000
 #define NAME_ENTRY_TEXT "Enter freeform address"
 
-typedef struct Marker_Data
+typedef struct Overlay_Data
 {
    const char *file;
-} Marker_Data;
+} Overlay_Data;
 
 typedef struct Map_Source
 {
@@ -19,12 +19,11 @@ typedef struct Map_Source
    char *source_name;
 } Map_Source;
 
-static Elm_Map_Marker_Class *itc1, *itc2, *itc_parking;
-static Elm_Map_Group_Class *itc_group1, *itc_group2, *itc_group_parking, *route_group;
+static Elm_Map_Overlay *route_start, *route_end, *route_clas;
+static Elm_Map_Overlay *bubble_img;
+static Elm_Map_Overlay *bubble_parking;
 
 static Evas_Object *menu, *fs_win;
-/*static Elm_Map_Marker *markers[MARKER_MAX];*/
-static Elm_Map_Marker *route_from, *route_to;
 static Elm_Map_Route *route;
 static Elm_Map_Name *name;
 static Evas_Object *track;
@@ -33,22 +32,19 @@ static Evas_Coord old_x, old_y;
 static Evas_Coord old_d;
 static Map_Source ms[SOURCE_MAX];
 
-Marker_Data data1 = {PACKAGE_DATA_DIR"/images/logo.png"};
-Marker_Data data2 = {PACKAGE_DATA_DIR"/images/logo_small.png"};
-Marker_Data data3 = {PACKAGE_DATA_DIR"/images/panel_01.jpg"};
-Marker_Data data4 = {PACKAGE_DATA_DIR"/images/plant_01.jpg"};
-Marker_Data data5 = {PACKAGE_DATA_DIR"/images/rock_01.jpg"};
-Marker_Data data6 = {PACKAGE_DATA_DIR"/images/rock_02.jpg"};
-Marker_Data data7 = {PACKAGE_DATA_DIR"/images/sky_01.jpg"};
-Marker_Data data8 = {PACKAGE_DATA_DIR"/images/sky_02.jpg"};
-Marker_Data data9 = {PACKAGE_DATA_DIR"/images/sky_03.jpg"};
-Marker_Data data10 = {PACKAGE_DATA_DIR"/images/sky_03.jpg"};
-Marker_Data data11= {PACKAGE_DATA_DIR"/images/wood_01.jpg"};
-
-Marker_Data data_parking= {PACKAGE_DATA_DIR"/images/parking.png"};
-
-static Evas_Object * _marker_get(Evas_Object *obj, Elm_Map_Marker *marker __UNUSED__, void *data);
-static Evas_Object * _group_icon_get(Evas_Object *obj, void *data);
+Overlay_Data data1 = {PACKAGE_DATA_DIR"/images/logo.png"};
+Overlay_Data data2 = {PACKAGE_DATA_DIR"/images/logo_small.png"};
+Overlay_Data data3 = {PACKAGE_DATA_DIR"/images/panel_01.jpg"};
+Overlay_Data data4 = {PACKAGE_DATA_DIR"/images/plant_01.jpg"};
+Overlay_Data data5 = {PACKAGE_DATA_DIR"/images/rock_01.jpg"};
+Overlay_Data data6 = {PACKAGE_DATA_DIR"/images/rock_02.jpg"};
+Overlay_Data data7 = {PACKAGE_DATA_DIR"/images/sky_01.jpg"};
+Overlay_Data data8 = {PACKAGE_DATA_DIR"/images/sky_02.jpg"};
+Overlay_Data data9 = {PACKAGE_DATA_DIR"/images/sky_03.jpg"};
+Overlay_Data data10 = {PACKAGE_DATA_DIR"/images/sky_03.jpg"};
+Overlay_Data data11= {PACKAGE_DATA_DIR"/images/wood_01.jpg"};
+Overlay_Data parking= {PACKAGE_DATA_DIR"/images/parking.png"};
+Overlay_Data icon_data = {PACKAGE_DATA_DIR"/images/icon_14.png"};
 
 static void
 #ifdef ELM_EMAP
@@ -98,48 +94,60 @@ my_map_longpressed(void *data __UNUSED__, Evas_Object *obj, void *event_info)
    name = elm_map_utils_convert_coord_into_name(obj, lon, lat);
 }
 
+static Evas_Object *
+_route_icon_get(Evas_Object *obj)
+{
+   Evas_Object *icon = elm_icon_add(obj);
+   elm_icon_file_set(icon, PACKAGE_DATA_DIR"/images/bubble.png", NULL);
+   evas_object_show(icon);
+
+   return icon;
+}
+
 static void
 my_map_clicked_double(void *data __UNUSED__, Evas_Object *obj, void *event_info)
 {
    printf("clicked,double\n");
    double lon, lat;
-   double flon, flat, tlon, tlat;
    Evas_Event_Mouse_Down *down = (Evas_Event_Mouse_Down *)event_info;
    if (!down) return;
    if (elm_map_zoom_get(obj) < 5) return;
 
    elm_map_canvas_to_geo_convert(obj, down->canvas.x, down->canvas.y, &lon, &lat);
    printf("x:%d, y:%d, lon:%lf, lat:%lf\n", down->canvas.x, down->canvas.y, lon, lat);
-   if (!itc1) itc1 = elm_map_marker_class_new(obj);
 
-   elm_map_marker_class_del_cb_set(itc1, NULL);
 
-   if (!route_group)
+   if (!route_clas)
      {
-        route_group = elm_map_group_class_new(obj);
-        elm_map_group_class_icon_cb_set(route_group, _group_icon_get);
-        elm_map_group_class_data_set(route_group, (void *)PACKAGE_DATA_DIR"/images/bubble.png");
-        elm_map_group_class_style_set(route_group, "empty");
-        elm_map_group_class_zoom_displayed_set(route_group, 5);
+        route_clas = elm_map_overlay_class_add(obj);
+        elm_map_overlay_icon_set(route_clas, _route_icon_get(obj));
+        elm_map_overlay_displayed_zoom_min_set(route_clas, 5);
      }
 
-   if (route_from && route_to)
+   if (route_start && route_end)
      {
-        elm_map_marker_remove(route_from);
-        route_from = NULL;
-        elm_map_marker_remove(route_to);
-        route_to = NULL;
+        printf("11\n");
+        elm_map_overlay_del(route_start);
+        elm_map_overlay_del(route_end);
         elm_map_route_remove(route);
+        route_start = NULL;
+        route_end = NULL;
+        //route = NULL;
      }
 
-   if (!route_from) route_from = elm_map_marker_add(obj, lon, lat, itc1, route_group, NULL);
-   else route_to = elm_map_marker_add(obj, lon, lat, itc1, route_group, NULL);
+   if (!route_start) route_start = elm_map_overlay_add(obj, lon, lat);
+   else route_end = elm_map_overlay_add(obj, lon, lat);
 
-   if (route_from && route_to)
+   if (route_start && route_end)
      {
-        elm_map_marker_region_get(route_from, &flon, &flat);
-        elm_map_marker_region_get(route_to, &tlon, &tlat);
-        route = elm_map_route_add(obj, ELM_MAP_ROUTE_TYPE_MOTOCAR, ELM_MAP_ROUTE_METHOD_FASTEST, flon, flat, tlon, tlat);
+        double start_lon, start_lat, end_lon, end_lat;
+        elm_map_overlay_class_append(route_clas, route_start);
+        elm_map_overlay_class_append(route_clas, route_end);
+        elm_map_overlay_geo_get(route_start, &start_lon, &start_lat);
+        elm_map_overlay_geo_get(route_end, &end_lon, &end_lat);
+        route = elm_map_route_add(obj, ELM_MAP_ROUTE_TYPE_MOTOCAR,
+                                  ELM_MAP_ROUTE_METHOD_FASTEST,
+                                  start_lon, start_lat, end_lon, end_lat);
         elm_map_route_color_set(route, 255, 0, 0, 255);
      }
 }
@@ -455,7 +463,7 @@ map_marker_add(void *data)
    int i;
    Elm_Map_Group_Class *g_clas;
    Elm_Map_Marker_Class *m_clas;
-   Marker_Data *d = &data7;
+   Overlay_Data *d = &data7;
 
    if (*markers) return;
    for (i =0; i<MARKER_MAX; i++)
@@ -476,7 +484,7 @@ map_marker_add(void *data)
         else
           {
              m_clas = itc_parking;
-             d = &data_parking;
+             d = &parking;
           }
 
         style = rand() % 2;
@@ -522,61 +530,31 @@ my_map_entry_activated(void *data, Evas_Object *obj, void *event_info __UNUSED__
 */
 
 static Evas_Object *
-_marker_get(Evas_Object *obj, Elm_Map_Marker *marker __UNUSED__, void *data)
+_box_get(Evas_Object *obj, Overlay_Data *data)
 {
-   Marker_Data *d = data;
-
-   Evas_Object *bx = elm_box_add(obj);
+   Evas_Object *bx, *img, *label;
+   bx = elm_box_add(obj);
    evas_object_show(bx);
 
-   if (d == &data3)
-     {
-        Evas_Object *icon = elm_icon_add(obj);
-        elm_icon_file_set(icon, d->file, NULL);
-        evas_object_show(icon);
+   img = evas_object_image_add(evas_object_evas_get(obj));
+   evas_object_image_file_set(img, data->file, NULL);
+   evas_object_image_filled_set(img, EINA_TRUE);
+   evas_object_size_hint_min_set(img, 64, 64);
+   evas_object_show(img);
+   elm_box_pack_end(bx, img);
 
-        Evas_Object *o = elm_button_add(obj);
-        elm_object_part_content_set(o, "icon", icon);
-        evas_object_show(o);
-        elm_box_pack_end(bx, o);
-     }
-   else
-     {
-        Evas_Object *o = evas_object_image_add(evas_object_evas_get(obj));
-        evas_object_image_file_set(o, d->file, NULL);
-        evas_object_image_filled_set(o, EINA_TRUE);
-        evas_object_size_hint_min_set(o, 64, 64);
-        evas_object_show(o);
-        elm_box_pack_end(bx, o);
-
-        Evas_Object *lbl = elm_label_add(obj);
-        elm_object_text_set(lbl, "Wolves Go !");
-        evas_object_show(lbl);
-        elm_box_pack_end(bx, lbl);
-     }
-
+   label = elm_label_add(obj);
+   elm_object_text_set(label, "Wolves go!!");
+   evas_object_show(label);
+   elm_box_pack_end(bx, label);
    return bx;
 }
 
 static Evas_Object *
-_icon_get(Evas_Object *obj, Elm_Map_Marker *marker __UNUSED__, void *data)
+_icon_get(Evas_Object *obj, Overlay_Data *data)
 {
-   Marker_Data *d = data;
-
    Evas_Object *icon = elm_icon_add(obj);
-   elm_icon_file_set(icon, d->file, NULL);
-   evas_object_show(icon);
-
-   return icon;
-}
-
-static Evas_Object *
-_group_icon_get(Evas_Object *obj, void *data)
-{
-   char *file = data;
-
-   Evas_Object *icon = elm_icon_add(obj);
-   elm_icon_file_set(icon, file, NULL);
+   elm_icon_file_set(icon, data->file, NULL);
    evas_object_show(icon);
 
    return icon;
@@ -689,6 +667,62 @@ _map_mouse_up(void *data __UNUSED__, Evas *evas __UNUSED__, Evas_Object *obj __U
      }
 }
 
+static void
+_overlay_cb(void *data __UNUSED__, Evas_Object *map, void *ev)
+{
+   printf("Overlay clicked: ");
+   Elm_Map_Overlay *overlay = ev;
+   Evas_Object *bx;
+
+   Overlay_Data *od = elm_map_overlay_data_get(overlay);
+   if (!od)
+     {
+        printf("No overlay data\n");
+     }
+   else if (elm_map_overlay_type_get(overlay) == ELM_MAP_OVERLAY_TYPE_DEFAULT)
+     {
+        // prevent duplication
+        if (!bubble_img)  bubble_img = elm_map_overlay_bubble_add(map);
+
+        elm_map_overlay_bubble_follow(bubble_img, overlay);
+        bx = _box_get(map, od);
+        elm_map_overlay_bubble_content_clear(bubble_img);
+        elm_map_overlay_bubble_content_append(bubble_img, bx);
+        printf("overlay rendered\n");
+     }
+   else printf("not default type\n");
+}
+
+static void
+_parking_cb(void *data __UNUSED__, Evas_Object *map, Elm_Map_Overlay *ovl)
+{
+   printf("Parking clicked\n");
+   if (elm_map_overlay_type_get(ovl) != ELM_MAP_OVERLAY_TYPE_DEFAULT) return;
+
+   double lon, lat;
+   elm_map_overlay_geo_get(ovl, &lon, &lat);
+   if (!bubble_parking)
+     {
+        Evas_Object *bubble, *label;
+        bubble = elm_bubble_add(map);
+        elm_bubble_corner_set(bubble, "bottom_left");
+        elm_object_text_set(bubble, "Overlay object");
+        elm_object_part_text_set(bubble, "info", "Bubble is overlayed");
+
+        label = elm_label_add(bubble);
+        elm_object_text_set(label, "Parking Here !!");
+        evas_object_show(label);
+        elm_object_content_set(bubble, label);
+
+        evas_object_resize(bubble, 125, 50);
+        evas_object_show(bubble);
+
+        bubble_parking = elm_map_overlay_add(map, lon + 0.0006, lat + 0.0006);
+        elm_map_overlay_content_set(bubble_parking, bubble);
+     }
+   elm_map_overlay_geo_set(bubble_parking, lon + 0.0006, lat + 0.0006);
+}
+
 void
 test_map(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
@@ -707,6 +741,11 @@ test_map(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __
    map = elm_map_add(win);
    if (map)
      {
+        Elm_Map_Overlay *ovl_1, *ovl_2, *ovl_3, *ovl_4, *ovl_5, *ovl6;
+        Elm_Map_Overlay *ovl_7, *ovl_8, *ovl_9, *ovl_10, *ovl_11;
+        Elm_Map_Overlay *parking1, *parking2, *parking3, *parking4, *parking5;
+        Elm_Map_Overlay *grp1, *grp2, *grp_parking;
+
         srand(time(NULL));
 
         source_names = elm_map_source_names_get(map);
@@ -720,55 +759,12 @@ test_map(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __
         elm_win_resize_object_add(win, map);
         evas_object_data_set(map, "window", win);
 
-        itc1 = elm_map_marker_class_new(map);
-        elm_map_marker_class_get_cb_set(itc1, _marker_get);
-        elm_map_marker_class_del_cb_set(itc1, NULL);
-
-        itc2 = elm_map_marker_class_new(map);
-        elm_map_marker_class_get_cb_set(itc2, _marker_get);
-        elm_map_marker_class_del_cb_set(itc2, NULL);
-        elm_map_marker_class_style_set(itc2, "radio2");
-
-        itc_parking = elm_map_marker_class_new(map);
-        elm_map_marker_class_get_cb_set(itc_parking, _marker_get);
-        elm_map_marker_class_del_cb_set(itc_parking, NULL);
-        elm_map_marker_class_icon_cb_set(itc_parking, _icon_get);
-        elm_map_marker_class_style_set(itc_parking, "empty");
-
-        itc_group1 = elm_map_group_class_new(map);
-        elm_map_group_class_data_set(itc_group1, (void *)PACKAGE_DATA_DIR"/images/plant_01.jpg");
-
-        itc_group2 = elm_map_group_class_new(map);
-        elm_map_group_class_style_set(itc_group2, "radio2");
-        elm_map_group_class_zoom_displayed_set(itc_group1, 3);
-
-        itc_group_parking = elm_map_group_class_new(map);
-        elm_map_group_class_icon_cb_set(itc_group_parking, _group_icon_get);
-        elm_map_group_class_data_set(itc_group_parking, (void *)PACKAGE_DATA_DIR"/images/parking.png");
-        elm_map_group_class_style_set(itc_group_parking, "empty");
-        elm_map_group_class_zoom_displayed_set(itc_group_parking, 5);
-
         evas_object_event_callback_add(map, EVAS_CALLBACK_MOUSE_DOWN,
                                        _map_mouse_down, map);
         evas_object_event_callback_add(map, EVAS_CALLBACK_MOUSE_MOVE,
                                        _map_mouse_move, map);
         evas_object_event_callback_add(map, EVAS_CALLBACK_MOUSE_UP,
                                        _map_mouse_up, map);
-
-        elm_map_marker_add(map, 2.352, 48.857, itc1, itc_group1, &data1);
-        elm_map_marker_add(map, 2.355, 48.857, itc1, itc_group1, &data3);
-        elm_map_marker_add(map, 3, 48.857, itc2, itc_group1, &data2);
-        elm_map_marker_add(map, 2.352, 49, itc2, itc_group1, &data1);
-
-        elm_map_marker_add(map, 7.31451, 48.857127, itc1, itc_group1, &data10);
-        elm_map_marker_add(map, 7.314704, 48.857119, itc1, itc_group1, &data4);
-        elm_map_marker_add(map, 7.314704, 48.857119, itc2, itc_group1, &data5);
-        elm_map_marker_add(map, 7.31432, 48.856785, itc2, itc_group1, &data6);
-        elm_map_marker_add(map, 7.3148, 48.85725, itc1, itc_group2, &data7);
-        elm_map_marker_add(map, 7.316445, 48.8572210000694, itc1, itc_group1, &data8);
-        elm_map_marker_add(map, 7.316527000125, 48.85609, itc2, itc_group2, &data9);
-        elm_map_marker_add(map, 7.3165409990833, 48.856078, itc2, itc_group1, &data11);
-        elm_map_marker_add(map, 7.319812, 48.856561, itc2, itc_group2, &data10);
 
         evas_object_smart_callback_add(map, "clicked", my_map_clicked, map);
         evas_object_smart_callback_add(map, "press", my_map_press, map);
@@ -789,6 +785,71 @@ test_map(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __
         evas_object_smart_callback_add(map, "route,loaded", my_map_route_loaded, map);
         evas_object_smart_callback_add(map, "name,load", my_map_name_load, map);
         evas_object_smart_callback_add(map, "name,loaded", my_map_name_loaded, map);
+        evas_object_smart_callback_add(map, "overlay,clicked", _overlay_cb, map);
+
+        // Create Overlays
+        ovl_1 = elm_map_overlay_add(map, 2.352, 48.857);
+        ovl_2 = elm_map_overlay_add(map, 3, 48.857);
+        ovl_3 = elm_map_overlay_add(map, 2.352, 49);
+        ovl_4 = elm_map_overlay_add(map, 7.31451, 48.857127);
+        ovl_5 = elm_map_overlay_add(map, 7.314704, 48.857119);
+        ovl6 = elm_map_overlay_add(map, 7.31432, 48.856785);
+        ovl_7 = elm_map_overlay_add(map, 7.3148, 48.85725);
+        ovl_8 = elm_map_overlay_add(map, 7.316445, 48.8572210000694);
+        ovl_9 = elm_map_overlay_add(map, 7.316527000125, 48.85609);
+        ovl_10 = elm_map_overlay_add(map, 7.3165409990833, 48.856078);
+        ovl_11 = elm_map_overlay_add(map, 7.319812, 48.856561);
+        elm_map_overlay_data_set(ovl_1, &data1);
+        elm_map_overlay_data_set(ovl_2, &data2);
+        elm_map_overlay_data_set(ovl_3, &data3);
+        elm_map_overlay_data_set(ovl_4, &data4);
+        elm_map_overlay_data_set(ovl_5, &data5);
+        elm_map_overlay_data_set(ovl6, &data6);
+        elm_map_overlay_data_set(ovl_7, &data7);
+        elm_map_overlay_data_set(ovl_8, &data8);
+        elm_map_overlay_data_set(ovl_9, &data9);
+        elm_map_overlay_data_set(ovl_10, &data10);
+        elm_map_overlay_data_set(ovl_11, &data11);
+
+        // Append overlays to groups
+        grp1 = elm_map_overlay_class_add(map);
+        elm_map_overlay_displayed_zoom_min_set(grp1, 3);
+        elm_map_overlay_class_append(grp1, ovl_1);
+        elm_map_overlay_class_append(grp1, ovl_2);
+        elm_map_overlay_class_append(grp1, ovl_3);
+        elm_map_overlay_class_append(grp1, ovl_4);
+        elm_map_overlay_class_append(grp1, ovl_5);
+        elm_map_overlay_class_append(grp1, ovl6);
+
+        // Append overlays to groups
+        grp2 = elm_map_overlay_class_add(map);
+        elm_map_overlay_class_append(grp2, ovl_7);
+        elm_map_overlay_class_append(grp2, ovl_8);
+        elm_map_overlay_class_append(grp2, ovl_9);
+        elm_map_overlay_class_append(grp2, ovl_10);
+        elm_map_overlay_class_append(grp2, ovl_11);
+
+        // Create overlays
+        parking1 = elm_map_overlay_add(map, 127.04871, 37.25730);
+        parking2 = elm_map_overlay_add(map, 127.05578, 37.25545);
+        parking3 = elm_map_overlay_add(map, 127.05515, 37.25439);
+        parking4 = elm_map_overlay_add(map, 127.05328, 37.25721);
+        parking5 = elm_map_overlay_add(map, 127.05431, 37.25873);
+        elm_map_overlay_icon_set(parking4, _icon_get(map, &icon_data));
+        elm_map_overlay_get_cb_set(parking1, _parking_cb, NULL);
+        elm_map_overlay_get_cb_set(parking2, _parking_cb, NULL);
+        elm_map_overlay_get_cb_set(parking3, _parking_cb, NULL);
+        elm_map_overlay_get_cb_set(parking4, _parking_cb, NULL);
+        elm_map_overlay_get_cb_set(parking5, _parking_cb, NULL);
+
+        // Append overlays to groups
+        grp_parking = elm_map_overlay_class_add(map);
+        elm_map_overlay_icon_set(grp_parking, _icon_get(map, &parking));
+        elm_map_overlay_class_append(grp_parking, parking1);
+        elm_map_overlay_class_append(grp_parking, parking2);
+        elm_map_overlay_class_append(grp_parking, parking3);
+        elm_map_overlay_class_append(grp_parking, parking4);
+        elm_map_overlay_class_append(grp_parking, parking5);
 
         evas_object_show(map);
      }
