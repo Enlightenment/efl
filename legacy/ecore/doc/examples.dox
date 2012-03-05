@@ -17,9 +17,9 @@
  * @li @ref ecore_evas_callbacks_example_c
  * @li @ref ecore_evas_object_example_c
  * @li @ref ecore_evas_basics_example_c
- * @li Ecore_Evas_Window_Sizes_Example_c
- * @li Ecore_Evas_Buffer_Example_01_c
- * @li Ecore_Evas_Buffer_Example_02_c
+ * @li @ref Ecore_Evas_Window_Sizes_Example_c
+ * @li @ref Ecore_Evas_Buffer_Example_01_c
+ * @li @ref Ecore_Evas_Buffer_Example_02_c
  */
 
 /**
