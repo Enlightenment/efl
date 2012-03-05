@@ -13,7 +13,6 @@ Requirements:
 Must:
   eina
   libc
-  libm
 
 WARNING: gcc compatibility!!!
 There seems to be some bug (or disagreement) between embryo and gcc 3.2.x

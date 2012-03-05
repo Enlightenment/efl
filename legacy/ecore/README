@@ -12,7 +12,6 @@ Requirements:
 
 Must:
   libc
-  libm
   eina (1.1.0 or better)
   (For windows you also need: evil)
   

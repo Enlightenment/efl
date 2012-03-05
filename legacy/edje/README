@@ -12,7 +12,6 @@ Requirements:
 
 Must:
   libc
-  libm
   eet (at least 1.5.0)
   ecore (at least 1.1.0)
   ecore-evas (at least 1.1.0)
