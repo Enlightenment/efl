@@ -1035,7 +1035,7 @@ _elm_config_save(void)
    ok = ecore_file_mkpath(buf);
    if (!ok)
      {
-        ERR("Problem acessing Elementary's user configuration directory: %s",
+        ERR("Problem accessing Elementary's user configuration directory: %s",
             buf);
         return EINA_FALSE;
      }
