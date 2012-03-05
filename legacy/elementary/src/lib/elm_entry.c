@@ -67,7 +67,7 @@ struct _Widget_Data
    Eina_Bool drag_selection_asked : 1;
    Eina_Bool can_write : 1;
    Eina_Bool autosave : 1;
-   Eina_Bool textonly : 1;
+   Elm_CNP_Mode cnp_mode : 2;
    Eina_Bool usedown : 1;
    Eina_Bool scroll : 1;
    Eina_Bool h_bounce : 1;
@@ -1146,11 +1146,67 @@ _select(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
      elm_widget_scroll_hold_push(data);
 }
 
+static char *
+_remove_item_tags(const char *str)
+{
+   char *ret;
+   if (!str)
+     return NULL;
+
+   Eina_Strbuf *buf = eina_strbuf_new();
+   if (!buf)
+     return NULL;
+
+   if (!eina_strbuf_append(buf, str))
+     return NULL;
+
+   while (EINA_TRUE)
+     {
+        const char *temp = eina_strbuf_string_get(buf);
+        
+        char *startTag = NULL;
+        char *endTag = NULL;
+
+        startTag = strstr(temp, "<item");
+        if (!startTag)
+          startTag = strstr(temp, "</item");
+        if (startTag)
+          endTag = strstr(startTag, ">");
+        else
+          break;
+        if (!endTag || startTag > endTag)
+          break;
+
+        size_t sindex = startTag - temp;
+        size_t eindex = endTag - temp + 1;
+        if (!eina_strbuf_remove(buf, sindex, eindex))
+          break;
+     }
+   ret = eina_strbuf_string_steal(buf);
+   eina_strbuf_free(buf);
+   return ret;
+}
+
 void
 _elm_entry_entry_paste(Evas_Object *obj, const char *entry)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
-   edje_object_part_text_user_insert(wd->ent, "elm.text", entry);
+   
+   char *str = NULL;
+   if (wd->cnp_mode == ELM_CNP_MODE_NO_IMAGE)
+     {
+        str = _remove_item_tags(entry);
+        if (!str)
+          str = strdup(entry);
+     }
+   else
+     str = strdup(entry);
+   if (!str)
+     str = entry;
+
+   edje_object_part_text_user_insert(wd->ent, "elm.text", str);
+   if ( str != entry)
+     free(str);
 }
 
 static void
@@ -1162,10 +1218,11 @@ _paste(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
    if (wd->sel_notify_handler)
      {
 #ifdef HAVE_ELEMENTARY_X
-        Elm_Sel_Format formats;
+        Elm_Sel_Format formats = ELM_SEL_FORMAT_MARKUP;
         wd->selection_asked = EINA_TRUE;
-        formats = ELM_SEL_FORMAT_MARKUP;
-        if (!wd->textonly)
+        if (wd->cnp_mode == ELM_CNP_MODE_PLAINTEXT)
+          formats = ELM_SEL_FORMAT_TEXT;
+        else if (wd->cnp_mode != ELM_CNP_MODE_NO_IMAGE)
           formats |= ELM_SEL_FORMAT_IMAGE;
         elm_cnp_selection_get(data, ELM_SEL_TYPE_CLIPBOARD, formats, NULL, NULL);
 #endif
@@ -1658,8 +1715,13 @@ _signal_entry_paste_request(void *data, Evas_Object *obj __UNUSED__, const char 
         if ((top) && (elm_win_xwindow_get(top)))
           {
              wd->selection_asked = EINA_TRUE;
-             elm_cnp_selection_get(data, type, ELM_SEL_FORMAT_MARKUP,
-                               NULL, NULL);
+             Elm_Sel_Format formats = ELM_SEL_FORMAT_MARKUP;
+             if (wd->cnp_mode == ELM_CNP_MODE_PLAINTEXT)
+               formats = ELM_SEL_FORMAT_TEXT;
+             else if (wd->cnp_mode != ELM_CNP_MODE_NO_IMAGE)
+               formats |= ELM_SEL_FORMAT_IMAGE;
+             elm_cnp_selection_get(data, type, formats,
+                                   NULL, NULL);
           }
 #endif
      }
@@ -2316,7 +2378,7 @@ elm_entry_add(Evas_Object *parent)
    wd->disabled     = EINA_FALSE;
    wd->context_menu = EINA_TRUE;
    wd->autosave     = EINA_TRUE;
-   wd->textonly     = EINA_FALSE;
+   wd->cnp_mode     = ELM_CNP_MODE_MARKUP;
    wd->scroll       = EINA_FALSE;
    wd->input_panel_imdata = NULL;
 
@@ -2437,7 +2499,7 @@ elm_entry_single_line_set(Evas_Object *obj, Eina_Bool single_line)
    if (wd->single_line == single_line) return;
    wd->single_line = single_line;
    wd->linewrap = ELM_WRAP_NONE;
-   elm_entry_cnp_textonly_set(obj, EINA_TRUE);
+   elm_entry_cnp_mode_set(obj, ELM_CNP_MODE_NO_IMAGE);
    _theme_hook(obj);
    if (wd->scroller)
      {
@@ -3315,26 +3377,44 @@ elm_entry_autosave_get(const Evas_Object *obj)
 EAPI void
 elm_entry_cnp_textonly_set(Evas_Object *obj, Eina_Bool textonly)
 {
-   Elm_Sel_Format format = ELM_SEL_FORMAT_MARKUP;
    ELM_CHECK_WIDTYPE(obj, widtype);
-   Widget_Data *wd = elm_widget_data_get(obj);
-   if (!wd) return;
-   textonly = !!textonly;
-   if (wd->textonly == textonly) return;
-   wd->textonly = !!textonly;
-   if (!textonly) format |= ELM_SEL_FORMAT_IMAGE;
-#ifdef HAVE_ELEMENTARY_X
-   elm_drop_target_add(obj, format, _drag_drop_cb, NULL);
-#endif
+   Elm_CNP_Mode cnp_mode = ELM_CNP_MODE_MARKUP;
+   if (textonly)
+     cnp_mode = ELM_CNP_MODE_NO_IMAGE;
+   elm_entry_cnp_mode_set(obj, cnp_mode);
 }
 
 EAPI Eina_Bool
 elm_entry_cnp_textonly_get(const Evas_Object *obj)
 {
    ELM_CHECK_WIDTYPE(obj, widtype) EINA_FALSE;
+   return elm_entry_cnp_mode_get(obj) != ELM_CNP_MODE_MARKUP;
+}
+
+EAPI void
+elm_entry_cnp_mode_set(Evas_Object *obj, Elm_CNP_Mode cnp_mode)
+{
+   Elm_Sel_Format format = ELM_SEL_FORMAT_MARKUP;
+   ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
-   if (!wd) return EINA_FALSE;
-   return wd->textonly;
+   if (!wd) return;
+   if (wd->cnp_mode == cnp_mode) return;
+   wd->cnp_mode = cnp_mode;
+   if (wd->cnp_mode == ELM_CNP_MODE_PLAINTEXT)
+     format = ELM_SEL_FORMAT_TEXT;
+   else if (cnp_mode == ELM_CNP_MODE_MARKUP) format |= ELM_SEL_FORMAT_IMAGE;
+#ifdef HAVE_ELEMENTARY_X
+   elm_drop_target_add(obj, format, _drag_drop_cb, NULL);
+#endif
+}
+
+EAPI Elm_CNP_Mode
+elm_entry_cnp_mode_get(const Evas_Object *obj)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype) ELM_CNP_MODE_MARKUP;
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return ELM_CNP_MODE_MARKUP;
+   return wd->cnp_mode;
 }
 
 EAPI void

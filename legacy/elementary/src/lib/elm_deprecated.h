@@ -4393,6 +4393,33 @@ EINA_DEPRECATED EAPI double       elm_route_lat_max_get(Evas_Object *obj);
 
 
 /**
+ * Control pasting of text and images for the widget.
+ *
+ * Normally the entry allows both text and images to be pasted.  By setting
+ * textonly to be true, this prevents images from being pasted.
+ *
+ * Note this only changes the behaviour of text.
+ *
+ * @param obj The entry object
+ * @param textonly paste mode - EINA_TRUE is text only, EINA_FALSE is
+ * text+image+other.
+ * @deprecated Use elm_entry_cnp_mode_set() instead.
+ */
+EINA_DEPRECATED EAPI void               elm_entry_cnp_textonly_set(Evas_Object *obj, Eina_Bool textonly);
+
+/**
+ * Getting elm_entry text paste/drop mode.
+ *
+ * In textonly mode, only text may be pasted or dropped into the widget.
+ *
+ * @param obj The entry object
+ * @return If the widget only accepts text from pastes.
+ * @deprecated Use elm_entry_cnp_mode_get() instead.
+ */
+EINA_DEPRECATED EAPI Eina_Bool          elm_entry_cnp_textonly_get(const Evas_Object *obj);
+
+
+/**
  * Get the duration after which tooltip will be shown.
  *
  * @return Duration after which tooltip will be shown.

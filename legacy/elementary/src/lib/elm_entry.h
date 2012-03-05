@@ -1026,30 +1026,6 @@ EAPI void               elm_entry_autosave_set(Evas_Object *obj, Eina_Bool autos
 EAPI Eina_Bool          elm_entry_autosave_get(const Evas_Object *obj);
 
 /**
- * Control pasting of text and images for the widget.
- *
- * Normally the entry allows both text and images to be pasted.  By setting
- * textonly to be true, this prevents images from being pasted.
- *
- * Note this only changes the behaviour of text.
- *
- * @param obj The entry object
- * @param textonly paste mode - EINA_TRUE is text only, EINA_FALSE is
- * text+image+other.
- */
-EAPI void               elm_entry_cnp_textonly_set(Evas_Object *obj, Eina_Bool textonly);
-
-/**
- * Getting elm_entry text paste/drop mode.
- *
- * In textonly mode, only text may be pasted or dropped into the widget.
- *
- * @param obj The entry object
- * @return If the widget only accepts text from pastes.
- */
-EAPI Eina_Bool          elm_entry_cnp_textonly_get(const Evas_Object *obj);
-
-/**
  * Enable or disable scrolling in entry
  *
  * Normally the entry is not scrollable unless you enable it with this call.
@@ -1406,6 +1382,48 @@ EAPI void                   elm_entry_filter_accept_set(void *data, Evas_Object 
  * @return The input method context (Ecore_IMF_Context *) in entry.
  */
 EAPI void                  *elm_entry_imf_context_get(Evas_Object *obj);
+
+/**
+ * @enum _Elm_CNP_Mode
+ * @typedef Elm_CNP_Mode
+ * Enum of entry's copy & paste policy.
+ *
+ * @see elm_entry_cnp_mode_set()
+ * @see elm_entry_cnp_mode_get()
+ */
+typedef enum _Elm_CNP_Mode {
+   ELM_CNP_MODE_MARKUP = 0,       /**< copy & paste text with markup tag */
+   ELM_CNP_MODE_NO_IMAGE = 1,     /**< copy & paste text without item(image) tag */
+   ELM_CNP_MODE_PLAINTEXT = 2     /**< copy & paste text without markup tag */
+} Elm_CNP_Mode;
+
+/**
+ * Control pasting of text and images for the widget.
+ *
+ * Normally the entry allows both text and images to be pasted.
+ * By setting cnp_mode to be ELM_CNP_MODE_NO_IMAGE, this prevents images from being copy or past.
+ * By setting cnp_mode to be ELM_CNP_MODE_PLAINTEXT, this remove all tags in text .
+ *
+ * @note this only changes the behaviour of text.
+ *
+ * @param obj The entry object
+ * @param mode One of #Elm_CNP_Mode: #ELM_CNP_MODE_MARKUP,
+ * #ELM_CNP_MODE_NO_IMAGE, #ELM_CNP_MODE_PLAINTEXT.
+ */
+EAPI void         elm_entry_cnp_mode_set(Evas_Object *obj, Elm_CNP_Mode cnp_mode);
+
+/**
+ * Getting elm_entry text paste/drop mode.
+ *
+ * Normally the entry allows both text and images to be pasted.
+ * This gets the copy & paste mode of the entry.
+ *
+ * @param obj The entry object
+ * @return mode One of #Elm_CNP_Mode: #ELM_CNP_MODE_MARKUP,
+ * #ELM_CNP_MODE_NO_IMAGE, #ELM_CNP_MODE_PLAINTEXT.
+ */
+EAPI Elm_CNP_Mode elm_entry_cnp_mode_get(const Evas_Object *obj);
+
 
 /**
  * @}
