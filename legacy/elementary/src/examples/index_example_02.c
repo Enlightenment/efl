@@ -138,7 +138,7 @@ elm_main(int    argc __UNUSED__,
 
         /* indexing by first letters */
         snprintf(buf, sizeof(buf), "%c", items[i][0]);
-        elm_index_item_sorted_insert(index, buf, gg_it, _index_icmp, NULL);
+        elm_index_item_sorted_insert(index, buf, NULL, gg_it, _index_icmp, NULL);
      }
 
    evas_object_smart_callback_add(index, "delay,changed", _index_changed, NULL);

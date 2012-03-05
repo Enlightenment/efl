@@ -210,13 +210,13 @@ EAPI extern Elm_Version *elm_version;
 // Woohyun Jung
 #include <elm_hover.h> // XXX: needs to change one API 
 #include <elm_image.h> // XXX: some API names are ambiguous
-#include <elm_index.h> // XXX: all elm_index_item_xxx functions should be modifield
-#include <elm_label.h> // XXX: some APIs should be checked again for deprecating
+#include <elm_index.h> // OK
+#include <elm_label.h> // OK
 #include <elm_layout.h> // OK
 #include <elm_macros.h> // OK
 #include <elm_mapbuf.h> // OK
 #include <elm_map.h>
-#include <elm_menu.h> // XXX: one API's name is ambiguous
+#include <elm_menu.h> // OK
 #include <elm_mirroring.h> // OK
 #include <elm_need.h> // OK
 #include <elm_notify.h> // OK

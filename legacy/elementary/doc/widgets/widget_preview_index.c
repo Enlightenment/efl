@@ -33,9 +33,9 @@ for (i = 0; i < (sizeof(dict) / sizeof(dict[0])); i++)
 
      list_it = elm_list_item_append(o, dict[i], NULL, NULL, NULL, NULL);
      snprintf(buf, sizeof(buf), "%c", dict[i][0]);
-     elm_index_item_append(id, buf, list_it);
+     elm_index_item_append(id, buf, NULL, list_it);
   }
 
-elm_index_active_set(id, EINA_TRUE);
+elm_index_autohide_disabled_set(id, EINA_FALSE);
 
 #include "widget_preview_tmpl_foot.c"

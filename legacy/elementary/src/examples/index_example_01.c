@@ -161,7 +161,7 @@ elm_main(int    argc __UNUSED__,
              /* indexing by first letters */
 
              snprintf(buf, sizeof(buf), "%c", curr);
-             elm_index_item_append(d.index, buf, lit);
+             elm_index_item_append(d.index, buf, NULL, lit);
              index_it = elm_index_item_find(d.index, lit);
 
              elm_object_item_del_cb_set(index_it, _index_item_del);

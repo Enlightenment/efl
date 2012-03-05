@@ -4655,5 +4655,92 @@ EINA_DEPRECATED EAPI void        elm_object_cursor_engine_only_set(Evas_Object *
 EINA_DEPRECATED EAPI Eina_Bool   elm_object_cursor_engine_only_get(const Evas_Object *obj);
 
 /**
+ * Go to a given items level on a index widget
+ *
+ * @param obj The index object
+ * @param level The index level (one of @c 0 or @c 1)
+ *
+ * @deprecated please use "elm_index_level_go" instead.
+ * @ingroup Index
+ */
+EINA_DEPRECATED EAPI void                  elm_index_item_go(Evas_Object *obj, int level);
+
+/**
+ * Enable or disable auto hiding feature for a given index widget.
+ *
+ * @param obj The index object
+ * @param active @c EINA_TRUE to enable auto hiding, @c EINA_FALSE to disable
+ *
+ * @see elm_index_active_get()
+ *
+ * @deprecated please use "elm_index_autohide_disabled_set" instead.
+ * @ingroup Index
+ */
+EINA_DEPRECATED EAPI void                  elm_index_active_set(Evas_Object *obj, Eina_Bool active);
+
+/**
+ * Get whether auto hiding feature is enabled or not for a given index widget.
+ *
+ * @param obj The index object
+ * @return @c EINA_TRUE, if auto hiding is enabled, @c EINA_FALSE otherwise
+ *
+ * @see elm_index_active_set() for more details
+ *
+ * @deprecated please use "elm_index_autohide_disabled_get" instead.
+ * @ingroup Index
+ */
+EINA_DEPRECATED EAPI Eina_Bool             elm_index_active_get(const Evas_Object *obj);
+
+/**
+ * Append a new item, on a given index widget, <b>after the item
+ * having @p relative as data</b>.
+ *
+ * @param obj The index object.
+ * @param letter Letter under which the item should be indexed
+ * @param item The item data to set for the index's item
+ * @param relative The index item to be the predecessor of this new one
+ * @return A handle to the item added or @c NULL, on errors 
+ *
+ * Despite the most common usage of the @p letter argument is for
+ * single char strings, one could use arbitrary strings as index
+ * entries.
+ *
+ * @c item will be the pointer returned back on @c "changed", @c
+ * "delay,changed" and @c "selected" smart events.
+ *
+ * @note If @p relative is @c NULL this function will behave as
+ * elm_index_item_append().
+ *
+ * @deprecated please use "elm_index_item_insert_after" instead.
+ * @ingroup Index
+ */
+EAPI Elm_Object_Item      *elm_index_item_append_relative(Evas_Object *obj, const char *letter, const void *item, const Elm_Object_Item *relative);
+
+/**
+ * Prepend a new item, on a given index widget, <b>after the item
+ * having @p relative as data</b>.
+ *
+ * @param obj The index object.
+ * @param letter Letter under which the item should be indexed
+ * @param item The item data to set for the index's item
+ * @param relative The index item to be the successor of this new one
+ * @return A handle to the item added or @c NULL, on errors 
+ *
+ * Despite the most common usage of the @p letter argument is for
+ * single char strings, one could use arbitrary strings as index
+ * entries.
+ *
+ * @c item will be the pointer returned back on @c "changed", @c
+ * "delay,changed" and @c "selected" smart events.
+ *
+ * @note If @p relative is @c NULL this function will behave as
+ * elm_index_item_prepend().
+ *
+ * @deprecated please use "elm_index_item_insert_before" instead.
+ * @ingroup Index
+ */
+EAPI Elm_Object_Item      *elm_index_item_prepend_relative(Evas_Object *obj, const char *letter, const void *item, const Elm_Object_Item *relative);
+
+/**
  * @}
  */

@@ -38,20 +38,20 @@ set_api_state(api_data *api)
    switch(api->state)
      { /* Put all api-changes under switch */
       case INDEX_LEVEL_SET: /* 0 */
-         elm_index_active_set(d->id, EINA_TRUE);
+         elm_index_autohide_disabled_set(d->id, EINA_TRUE);
          elm_index_item_level_set(d->id, (elm_index_item_level_get(d->id) ? 0 : 1));
          break;
 
       case INDEX_ACTIVE_SET: /* 1 */
-         elm_index_active_set(d->id, EINA_FALSE);
+         elm_index_autohide_disabled_set(d->id, EINA_FALSE);
          break;
 
       case INDEX_APPEND_RELATIVE: /* 2 */
-             elm_index_item_append_relative(d->id, "W", d->item, elm_index_item_find(d->id, d->item));
+             elm_index_item_insert_after(d->id, elm_index_item_find(d->id, d->item), "W", NULL, d->item);
          break;
 
       case INDEX_PREPEND: /* 3 */
-             elm_index_item_prepend(d->id, "D", d->item);
+         elm_index_item_prepend(d->id, "D", NULL, d->item);
          break;
 
       case INDEX_ITEM_DEL: /* 4 */
@@ -136,6 +136,12 @@ _cleanup_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *e
    free(data);
 }
 
+static void
+id_cb(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info)
+{
+   printf("Current Index : %s\n", elm_index_item_letter_get((const Elm_Object_Item *)event_info));
+}
+
 void
 test_index(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
@@ -199,7 +205,7 @@ test_index(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info 
              char buf[32];
 
              snprintf(buf, sizeof(buf), "%c", 'A' + ((j >> 4) & 0xf));
-             elm_index_item_append(id, buf, glit);
+             elm_index_item_append(id, buf, id_cb, glit);
 
              if (*buf == 'G')  /* Just init dt->item later used in API test */
                api->dt.item = glit;
@@ -209,7 +215,7 @@ test_index(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info 
    evas_object_smart_callback_add(id, "delay,changed", _index_delay_changed_cb, NULL);
    evas_object_smart_callback_add(id, "changed", _index_changed_cb, NULL);
    evas_object_smart_callback_add(id, "selected", _index_selected_cb, NULL);
-   elm_index_item_go(id, 0);
+   elm_index_level_go(id, 0);
 
    evas_object_resize(win, 320, 480);
    evas_object_show(win);
@@ -267,7 +273,7 @@ test_index2_it_add(void *data, Evas_Object *obj __UNUSED__, void *event_info __U
    snprintf(letter, sizeof(letter), "%c", label[0]);
    list_it = elm_list_item_sorted_insert(gui->lst, label, NULL, NULL, NULL,
                                          NULL, test_index2_cmp);
-   elm_index_item_sorted_insert(gui->id, letter, list_it, test_index2_icmp,
+   elm_index_item_sorted_insert(gui->id, letter, NULL, list_it, test_index2_icmp,
                                 test_index2_cmp);
    elm_list_go(gui->lst);
    /* FIXME it's not showing the recently added item */
