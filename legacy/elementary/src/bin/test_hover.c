@@ -9,6 +9,14 @@ my_hover_bt(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__
    evas_object_show(hv);
 }
 
+static void
+_top_bt_clicked(void *data, Evas_Object *obj __UNUSED__,
+                void *event_info __UNUSED__)
+{
+   Evas_Object *hv = (Evas_Object *)data;
+   elm_hover_dismiss(hv);
+}
+
 void
 test_hover(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
@@ -55,6 +63,7 @@ test_hover(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info 
 
    bt = elm_button_add(win);
    elm_object_text_set(bt, "Top 1");
+   evas_object_smart_callback_add(bt, "clicked", _top_bt_clicked, hv);
    elm_box_pack_end(bx, bt);
    evas_object_show(bt);
    bt = elm_button_add(win);
