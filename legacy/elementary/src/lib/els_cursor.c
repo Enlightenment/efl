@@ -483,11 +483,16 @@ elm_cursor_theme(Elm_Cursor *cur)
      _elm_cursor_set_hot_spots(cur);
 }
 
-EAPI void
+EINA_DEPRECATED EAPI void
 elm_object_cursor_engine_only_set(Evas_Object *obj, Eina_Bool engine_only)
 {
+   elm_object_cursor_theme_search_enabled_set(obj, engine_only);
+}
+
+EAPI void elm_object_cursor_theme_search_enabled_set(Evas_Object *obj, Eina_Bool theme_search)
+{
    ELM_CURSOR_GET_OR_RETURN(cur, obj);
-   cur->engine_only = engine_only;
+   cur->engine_only = theme_search;
    if (cur->obj)
      {
         evas_object_del(cur->obj);
@@ -496,8 +501,15 @@ elm_object_cursor_engine_only_set(Evas_Object *obj, Eina_Bool engine_only)
    _elm_cursor_cur_set(cur);
 }
 
-EAPI Eina_Bool
+
+EINA_DEPRECATED EAPI Eina_Bool
 elm_object_cursor_engine_only_get(const Evas_Object *obj)
+{
+   return elm_object_cursor_theme_search_enabled_get(obj);
+}
+
+EAPI Eina_Bool
+elm_object_cursor_theme_search_enabled_get(const Evas_Object *obj)
 {
    ELM_CURSOR_GET_OR_RETURN(cur, obj, EINA_FALSE);
    return cur->engine_only;

@@ -1299,7 +1299,6 @@ EINA_DEPRECATED EAPI const char            *elm_diskselector_item_cursor_style_g
  * between cursors provided by the engine or searched on widget's
  * theme as well.
  *
- * @see elm_object_cursor_engine_only_set() for more details.
  * @deprecated Use elm_object_item_cursor_engine_only_set() instead
  *
  * @ingroup Diskselector
@@ -1314,7 +1313,6 @@ EINA_DEPRECATED EAPI void                   elm_diskselector_item_cursor_engine_
  * between the provided by the engine or searched on widget's theme as well.
  * If the item does not have a cursor set, then @c EINA_FALSE is returned.
  *
- * @see elm_object_cursor_engine_only_get() for more details.
  * @see elm_diskselector_item_cursor_engine_only_set()
  * @deprecated Use elm_object_item_cursor_engine_only_get() instead
  *
@@ -4606,6 +4604,31 @@ EINA_DEPRECATED EAPI void              elm_web_history_enable_set(Evas_Object *o
  * @deprecated please use "elm_menu_item_add" + "elm_object_item_content_set" instead.
  */
 EINA_DEPRECATED EAPI Elm_Object_Item             *elm_menu_item_add_object(Evas_Object *obj, Elm_Object_Item *parent, Evas_Object *subobj, Evas_Smart_Cb func, const void *data);
+
+/**
+ * Set if the cursor set should be searched on the theme or should use
+ * the provided by the engine, only.
+ *
+ * @param obj an object with cursor already set.
+ * @param engine_only boolean to define if cursors should be looked only
+ * between the provided by the engine or searched on widget's theme as well.
+ *
+ * @deprecated Use elm_object_cursor_theme_search_enabled_set()
+ */
+EINA_DEPRECATED EAPI void        elm_object_cursor_engine_only_set(Evas_Object *obj, Eina_Bool engine_only);
+
+/**
+ * Get the cursor engine only usage for this object cursor.
+ *
+ * @param obj an object with cursor already set.
+ * @return engine_only boolean to define it cursors should be
+ * looked only between the provided by the engine or searched on
+ * widget's theme as well. If the object does not have a cursor
+ * set, then EINA_FALSE is returned.
+ *
+ * @deprecated Use elm_object_cursor_theme_search_enabled_get();
+ */
+EINA_DEPRECATED EAPI Eina_Bool   elm_object_cursor_engine_only_get(const Evas_Object *obj);
 
 /**
  * @}

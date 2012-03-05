@@ -206,7 +206,7 @@ _part_cursor_part_apply(const Part_Cursor *pc)
 {
    elm_object_cursor_set(pc->obj, pc->cursor);
    elm_object_cursor_style_set(pc->obj, pc->style);
-   elm_object_cursor_engine_only_set(pc->obj, pc->engine_only);
+   elm_object_cursor_theme_search_enabled_set(pc->obj, pc->engine_only);
 }
 
 static Part_Cursor *
@@ -958,7 +958,7 @@ elm_layout_part_cursor_engine_only_set(Evas_Object *obj, const char *part_name, 
    EINA_SAFETY_ON_NULL_RETURN_VAL(pc->obj, EINA_FALSE);
 
    pc->engine_only = !!engine_only;
-   elm_object_cursor_engine_only_set(pc->obj, pc->engine_only);
+   elm_object_cursor_theme_search_enabled_set(pc->obj, pc->engine_only);
    return EINA_TRUE;
 }
 
@@ -972,5 +972,5 @@ elm_layout_part_cursor_engine_only_get(const Evas_Object *obj, const char *part_
    Part_Cursor *pc = _parts_cursors_find(wd, part_name);
    EINA_SAFETY_ON_NULL_RETURN_VAL(pc, EINA_FALSE);
    EINA_SAFETY_ON_NULL_RETURN_VAL(pc->obj, EINA_FALSE);
-   return elm_object_cursor_engine_only_get(pc->obj);
+   return elm_object_cursor_theme_search_enabled_get(pc->obj);
 }

@@ -101,8 +101,7 @@ EAPI const char *elm_object_cursor_style_get(const Evas_Object *obj);
  *
  * @ingroup Cursors
  */
-// XXX: EAPI void elm_object_cursor_theme_search_enabled_set(Evas_Object *obj, Eina_Bool theme_search) or xxx_search_theme_xxx
-EAPI void        elm_object_cursor_engine_only_set(Evas_Object *obj, Eina_Bool engine_only);
+EAPI void elm_object_cursor_theme_search_enabled_set(Evas_Object *obj, Eina_Bool theme_search);
 
 /**
  * Get the cursor engine only usage for this object cursor.
@@ -115,8 +114,7 @@ EAPI void        elm_object_cursor_engine_only_set(Evas_Object *obj, Eina_Bool e
  *
  * @ingroup Cursors
  */
-// XXX: EAPI Eina_Bool elm_object_cursor_theme_search_enabled_get(const Evas_Object *obj) or xxx_search_theme_xxx
-EAPI Eina_Bool   elm_object_cursor_engine_only_get(const Evas_Object *obj);
+EAPI Eina_Bool elm_object_cursor_theme_search_enabled_get(const Evas_Object *obj);
 
 /**
  * Get the configured cursor engine only usage
