@@ -975,20 +975,6 @@ EAPI void                  elm_win_focus_highlight_style_set(Evas_Object *obj, c
  */
 EAPI const char           *elm_win_focus_highlight_style_get(const Evas_Object *obj);
 
-/*...
- * ecore_x_icccm_hints_set -> accepts_focus (add to ecore_evas)
- * ecore_x_icccm_hints_set -> window_group (add to ecore_evas)
- * ecore_x_icccm_size_pos_hints_set -> request_pos (add to ecore_evas)
- * ecore_x_icccm_client_leader_set -> l (add to ecore_evas)
- * ecore_x_icccm_window_role_set -> role (add to ecore_evas)
- * ecore_x_icccm_transient_for_set -> forwin (add to ecore_evas)
- * ecore_x_netwm_window_type_set -> type (add to ecore_evas)
- *
- * (add to ecore_x) set netwm argb icon! (add to ecore_evas)
- * (blank mouse, private mouse obj, defaultmouse)
- *
- */
-
 /**
  * Sets the keyboard mode of the window.
  *
