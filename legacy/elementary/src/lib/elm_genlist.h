@@ -350,6 +350,7 @@
  typedef enum
 {
    ELM_GENLIST_ITEM_NONE = 0, /**< simple item */
+   //XXX: ELM_GENLIST_ITEM_TREE
    ELM_GENLIST_ITEM_SUBITEMS = (1 << 0), /**< may expand and have child items */
    ELM_GENLIST_ITEM_GROUP = (1 << 1), /**< index of a group of items */
 
@@ -1502,6 +1503,7 @@ EAPI Eina_Bool                     elm_genlist_compress_mode_get(const Evas_Obje
  *
  * @ingroup Genlist
  */
+//aspect 
 //XXX: API name is ambiguous.. How about elm_genlist_mode_fixed_width_set? 
 EAPI void                          elm_genlist_height_for_width_mode_set(Evas_Object *obj, Eina_Bool height_for_width);
 
@@ -1735,7 +1737,7 @@ EAPI int                           elm_genlist_item_expanded_depth_get(const Elm
  *
  * @ingroup Genlist
  */
-//XXX: elm_genlist_item_event_freeze_set()?
+//XXX: elm_genlist_item_no_select_mode_set()?
 EAPI void                          elm_genlist_item_display_only_set(Elm_Object_Item *it, Eina_Bool display_only);
 
 /**
@@ -1749,7 +1751,7 @@ EAPI void                          elm_genlist_item_display_only_set(Elm_Object_
  *
  * @ingroup Genlist
  */
-//XXX: elm_genlist_item_event_freeze_get()?
+//XXX: elm_genlist_item_no_select_mode_get()?
 EAPI Eina_Bool                     elm_genlist_item_display_only_get(const Elm_Object_Item *it);
 
 /**
@@ -1764,7 +1766,7 @@ EAPI Eina_Bool                     elm_genlist_item_display_only_get(const Elm_O
  *
  * @ingroup Genlist
  */
-//XXX: elm_genlist_item_all_contents_unset() ??
+//XXX: Eina_List *elm_genlist_item_all_contents_unset() ??
 EAPI void                          elm_genlist_item_contents_orphan(Elm_Object_Item *it);
 
 /**
@@ -1847,7 +1849,7 @@ EAPI void                          elm_genlist_item_fields_update(Elm_Object_Ite
  *
  * @ingroup Genlist
  */
-//XXX: How bout elm_genlist_mode_item_set
+//XXX: How bout elm_genlist_effect_mode_set 
 EAPI void                          elm_genlist_item_mode_set(Elm_Object_Item *it, const char *mode_type, Eina_Bool mode_set);
 
 /**
@@ -1930,6 +1932,7 @@ EAPI Elm_Genlist_Item_Flags        elm_genlist_item_flags_get(const Elm_Object_I
  *
  * @ingroup Genlist
  */
+//XXX: elm_genlist_effect_mode_set();
 EAPI void               elm_genlist_edit_mode_set(Evas_Object *obj, Eina_Bool edit_mode);
 
 /**
@@ -1941,6 +1944,7 @@ EAPI void               elm_genlist_edit_mode_set(Evas_Object *obj, Eina_Bool ed
  *
  * @ingroup Genlist
  */
+//XXX: elm_genlist_all_items_effect_mode_get();
 EAPI Eina_Bool          elm_genlist_edit_mode_get(const Evas_Object *obj);
 
 /**

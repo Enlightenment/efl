@@ -56,8 +56,7 @@ EAPI Evas_Object                 *elm_frame_add(Evas_Object *parent);
  * vertically, shrinking it to the height of the label.
  * By default, this is DISABLED.
  */
-//XXX: really need to provide this API?
-//XXX: How about elm_frame_autofold_set() ?
+//XXX: How about elm_frame_minimize_enabled_set() ?
 EAPI void elm_frame_autocollapse_set(Evas_Object *obj, Eina_Bool autocollapse);
 
 /**
@@ -69,8 +68,7 @@ EAPI void elm_frame_autocollapse_set(Evas_Object *obj, Eina_Bool autocollapse);
  * vertically, shrinking it to the height of the label.
  * By default, this is DISABLED.
  */
-//XXX: ... really need to provide this API?
-//XXX: How about elm_frame_autofold_get() ?
+//XXX: How about elm_frame_minimize_enabled_get() ?
 EAPI Eina_Bool elm_frame_autocollapse_get(const Evas_Object *obj);
 
 /**
@@ -80,19 +78,8 @@ EAPI Eina_Bool elm_frame_autocollapse_get(const Evas_Object *obj);
  *
  * Use this to toggle the collapsed state of a frame, bypassing animations.
  */
-//XXX: How about elm_frame_fold_set() ?
-EAPI void elm_frame_collapse_set(Evas_Object *obj, Eina_Bool collapse);
-
-/**
- * @brief Manually collapse a frame with animations
- * @param obj The frame
- * @param collapse true to collapse, false to expand
- *
- * Use this to toggle the collapsed state of a frame, triggering animations.
- */
-//XXX: ... really need to provide this API?
-//XXX: How about elm_frame_fold_transition_go()?
-EAPI void elm_frame_collapse_go(Evas_Object *obj, Eina_Bool collapse);
+//XXX: How about elm_frame_minimized_set() ?
+EAPI void elm_frame_collapse_set(Evas_Object *obj, Eina_Bool minimize);
 
 /**
  * @brief Determine the collapse state of a frame
@@ -101,8 +88,19 @@ EAPI void elm_frame_collapse_go(Evas_Object *obj, Eina_Bool collapse);
  *
  * Use this to determine the collapse state of a frame.
  */
-//XXX: ... How about elm_frame_fold_get() ?
+//XXX: ... How about elm_frame_minimized_get() ?
 EAPI Eina_Bool elm_frame_collapse_get(const Evas_Object *obj);
+
 /**
+ * @brief Manually collapse a frame with animations
+ * @param obj The frame
+ * @param collapse true to collapse, false to expand
+ *
+ * Use this to toggle the collapsed state of a frame, triggering animations.
+ */
+//XXX: How about elm_frame_minimize_effect_disabled_set()?
+EAPI void elm_frame_collapse_go(Evas_Object *obj, Eina_Bool collapse);
+
+/*
  * @}
  */

@@ -187,7 +187,7 @@ EAPI Eina_Bool        elm_image_no_scale_get(const Evas_Object *obj);
  *
  * @ingroup Image
  */
-//XXX: elm_image_scale_up_set + elm_image_scale_down_set may be better. how do you think ? 
+//XXX: elm_image_resizable_set
 EAPI void             elm_image_scale_set(Evas_Object *obj, Eina_Bool scale_up, Eina_Bool scale_down);
 
 /**
@@ -201,7 +201,7 @@ EAPI void             elm_image_scale_set(Evas_Object *obj, Eina_Bool scale_up, 
  *
  * @ingroup Image
  */
-//XXX: elm_image_scale_up_get + elm_image_scale_down_get may be better. how do you think ? 
+//XXX: elm_image_resizable_get
 EAPI void             elm_image_scale_get(const Evas_Object *obj, Eina_Bool *scale_up, Eina_Bool *scale_down);
 
 /**

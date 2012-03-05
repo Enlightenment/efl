@@ -168,7 +168,6 @@ EAPI void             elm_font_fontconfig_name_free(char *name);
  * default font families (Sans, Serif, Monospace), which should be
  * present on most systems.
  */
-//XXX: How about elm_font_system_available_hash_add() ?
 EAPI Eina_Hash       *elm_font_available_hash_add(Eina_List *list);
 
 /**
@@ -178,7 +177,6 @@ EAPI Eina_Hash       *elm_font_available_hash_add(Eina_List *list);
  *
  * @ingroup Fonts
  */
-//XXX: How about elm_font_system_available_hash_del() ?
 EAPI void             elm_font_available_hash_del(Eina_Hash *hash);
 
 /**
