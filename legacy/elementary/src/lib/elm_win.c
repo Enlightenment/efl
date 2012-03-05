@@ -2362,7 +2362,7 @@ elm_win_alpha_get(const Evas_Object *obj)
    return ecore_evas_alpha_get(win->ee);
 }
 
-EAPI void
+EINA_DEPRECATED EAPI void
 elm_win_transparent_set(Evas_Object *obj, Eina_Bool transparent)
 {
    Elm_Win *win;
@@ -2391,7 +2391,7 @@ elm_win_transparent_set(Evas_Object *obj, Eina_Bool transparent)
      }
 }
 
-EAPI Eina_Bool
+EINA_DEPRECATED EAPI Eina_Bool
 elm_win_transparent_get(const Evas_Object *obj)
 {
    Elm_Win *win;

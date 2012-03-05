@@ -282,12 +282,10 @@ _elm_tooltip_reconfigure(Elm_Tooltip *tt)
              if (str && (!strcmp(str, "enabled")))
                {
                   elm_win_alpha_set(tt->tt_win, EINA_TRUE);
-                  elm_win_transparent_set(tt->tt_win, EINA_TRUE);
                }
              else
                {
                   elm_win_alpha_set(tt->tt_win, EINA_FALSE);
-                  elm_win_transparent_set(tt->tt_win, EINA_FALSE);
                }
           }
 

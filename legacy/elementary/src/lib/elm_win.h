@@ -522,30 +522,6 @@ EAPI void                  elm_win_alpha_set(Evas_Object *obj, Eina_Bool alpha);
 EAPI Eina_Bool             elm_win_alpha_get(const Evas_Object *obj);
 
 /**
- * Set the transparency state of a window.
- *
- * Use elm_win_alpha_set() instead.
- *
- * @param obj The window object
- * @param transparent If true, the window is transparent
- *
- * @see elm_win_alpha_set()
- */
-// XXX: deprecate this
-EAPI void                  elm_win_transparent_set(Evas_Object *obj, Eina_Bool transparent);
-
-/**
- * Get the transparency state of a window.
- *
- * @param obj The window object
- * @return If true, the window is transparent
- *
- * @see elm_win_transparent_set()
- */
-// XXX: deprecate this
-EAPI Eina_Bool             elm_win_transparent_get(const Evas_Object *obj);
-
-/**
  * Set the override state of a window.
  *
  * A window with @p override set to EINA_TRUE will not be managed by the

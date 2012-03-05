@@ -4742,5 +4742,29 @@ EAPI Elm_Object_Item      *elm_index_item_append_relative(Evas_Object *obj, cons
 EAPI Elm_Object_Item      *elm_index_item_prepend_relative(Evas_Object *obj, const char *letter, const void *item, const Elm_Object_Item *relative);
 
 /**
+ * Set the transparency state of a window.
+ *
+ * Use elm_win_alpha_set() instead.
+ *
+ * @param obj The window object
+ * @param transparent If true, the window is transparent
+ *
+ * @see elm_win_alpha_set()
+ * @deprecated Please use elm_win_alpha_set()
+ */
+EINA_DEPRECATED EAPI void                  elm_win_transparent_set(Evas_Object *obj, Eina_Bool transparent);
+
+/**
+ * Get the transparency state of a window.
+ *
+ * @param obj The window object
+ * @return If true, the window is transparent
+ *
+ * @see elm_win_transparent_set()
+ * @deprecated Please use elm_win_alpha_get()
+ */
+EINA_DEPRECATED EAPI Eina_Bool             elm_win_transparent_get(const Evas_Object *obj);
+
+/**
  * @}
  */
