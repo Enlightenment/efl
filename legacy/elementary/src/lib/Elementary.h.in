@@ -172,10 +172,10 @@ EAPI extern Elm_Version *elm_version;
 #include <elc_hoversel.h>
 #include <elc_multibuttonentry.h>
 #include <elc_naviframe.h>
-#include <elm_actionslider.h>
-#include <elm_app.h>
+#include <elm_actionslider.h> //ok
+#include <elm_app.h> //ok
 #include <elm_bg.h>
-#include <elm_box.h>
+#include <elm_box.h> //ok
 
 // Daniel Juyung Seo
 #include <elm_bubble.h> // OK

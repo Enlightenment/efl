@@ -253,6 +253,8 @@ typedef enum
    ELM_TEXT_FORMAT_MARKUP_UTF8  /**< Markup UTF8 type */
 } Elm_Text_Format;
 
+/* XXX: Filter_Limit_Size and Filter_Accept_Set are awful in my pov. The API looks bad. */
+
 /**
  * @enum _Elm_Wrap_Type
  * @typedef Elm_Wrap_Type

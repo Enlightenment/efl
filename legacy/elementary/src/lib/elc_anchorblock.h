@@ -37,6 +37,8 @@
  * @{
  */
 
+/* XXX: Remove this awful widget. */
+
 /**
  * @typedef Elm_Entry_Anchorblock_Info
  *

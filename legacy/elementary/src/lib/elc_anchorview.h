@@ -41,6 +41,8 @@
  */
 typedef struct _Elm_Entry_Anchorview_Info Elm_Entry_Anchorview_Info;
 
+/* XXX: Merge into entry. */
+
 /**
  * @struct _Elm_Entry_Anchorview_Info
  *

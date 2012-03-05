@@ -46,6 +46,8 @@
  * @{
  */
 
+/* XXX: Kinda internal, but relevant for the theme: use elm_scroller and not els_scroller. */
+
 typedef enum
 {
    ELM_CTXPOPUP_DIRECTION_DOWN, /**< ctxpopup show appear below clicked area */

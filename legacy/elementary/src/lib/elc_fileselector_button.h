@@ -63,6 +63,7 @@
  */
 EAPI Evas_Object                *elm_fileselector_button_add(Evas_Object *parent);
 
+/* XXX: fileselector/fs_button/fs_entry: elm_fileselector_expandable_set should probably be called: tree_view or something. */
 /**
  * Set the title for a given file selector button widget's window
  *
