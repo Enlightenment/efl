@@ -4775,5 +4775,15 @@ EINA_DEPRECATED EAPI Eina_Bool             elm_win_transparent_get(const Evas_Ob
 EINA_DEPRECATED EAPI void             elm_theme_all_set(const char *theme);
 
 /**
+ * Returns the Evas_Object that represents the content area.
+ *
+ * @param obj The conformant object.
+ * @return The content area of the widget.
+ *
+ * @ingroup Conformant
+ */
+EINA_DEPRECATED EAPI Evas_Object                 *elm_conformant_content_area_get(const Evas_Object *obj);
+
+/**
  * @}
  */

@@ -649,7 +649,7 @@ elm_conformant_content_unset(Evas_Object *obj)
    return _content_unset_hook(obj, NULL);
 }
 
-EAPI Evas_Object *
+EINA_DEPRECATED EAPI Evas_Object *
 elm_conformant_content_area_get(const Evas_Object *obj)
 {
    ELM_CHECK_WIDTYPE(obj, widtype) NULL;
