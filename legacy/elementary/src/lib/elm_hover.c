@@ -677,18 +677,6 @@ _elm_hover_sub_obj_placement_eval_cb(void *data, Evas *e __UNUSED__, Evas_Object
    _elm_hover_sub_obj_placement_eval(data);
 }
 
-EAPI void
-elm_hover_content_set(Evas_Object *obj, const char *swallow, Evas_Object *content)
-{
-   _content_set_hook(obj, swallow, content);
-}
-
-EAPI Evas_Object *
-elm_hover_content_get(const Evas_Object *obj, const char *swallow)
-{
-   return _content_get_hook(obj, swallow);
-}
-
 static void
 _elm_hover_sub_obj_unparent(Evas_Object *obj)
 {
@@ -703,12 +691,6 @@ _elm_hover_sub_obj_unparent(Evas_Object *obj)
                                        obj);
    edje_object_part_unswallow(wd->cov, wd->smt_sub);
    wd->smt_sub = NULL;
-}
-
-EAPI Evas_Object *
-elm_hover_content_unset(Evas_Object *obj, const char *swallow)
-{
-   return _content_unset_hook(obj, swallow);
 }
 
 EAPI const char *
