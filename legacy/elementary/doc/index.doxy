@@ -83,6 +83,10 @@
  *
  * @image html img/widget/ctxpopup/preview-00.png
  * @image latex img/widget/ctxpopup/preview-00.eps
+ * @li @ref Datetime
+ *
+ * @image html img/widget/datetime/preview-00.png
+ * @image latex img/widget/datetime/preview-00.eps
  * @li @ref Diskselector
  *
  * @image html img/widget/diskselector/preview-00.png

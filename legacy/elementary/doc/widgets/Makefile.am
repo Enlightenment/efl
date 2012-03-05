@@ -32,6 +32,9 @@ widget_preview_spinner \
 widget_preview_bubble1 \
 widget_preview_bubble2 \
 widget_preview_bubble3 \
+widget_preview_datetime1 \
+widget_preview_datetime2 \
+widget_preview_datetime3 \
 widget_preview_fileselector_button1 \
 widget_preview_fileselector_button2 \
 widget_preview_fileselector_button3 \
@@ -122,6 +125,9 @@ EXTRA_DIST = \
 	widget_preview_mapbuf.c \
 	widget_preview_map.c \
 	widget_preview_ctxpopup.c \
+	widget_preview_datetime1.c \
+	widget_preview_datetime2.c \
+	widget_preview_datetime3.c \
 	widget_preview_diskselector.c \
 	widget_preview_entry1.c \
 	widget_preview_entry2.c \

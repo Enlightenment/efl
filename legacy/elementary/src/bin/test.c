@@ -163,6 +163,7 @@ void test_glview(void *data, Evas_Object *obj, void *event_info);
 void test_3d(void *data, Evas_Object *obj, void *event_info);
 void test_naviframe(void *data, Evas_Object *obj, void *event_info);
 void test_factory(void *data, Evas_Object *obj, void *event_info);
+void test_datetime(void *data, Evas_Object *obj, void *event_info);
 #ifdef HAVE_EMOTION
 void test_video(void *data, Evas_Object *obj, void *event_info);
 #endif
@@ -508,6 +509,7 @@ add_tests:
    ADD_TEST(NULL, "Times & Dates", "Clock", test_clock);
    ADD_TEST(NULL, "Times & Dates", "Clock 2", test_clock2);
    ADD_TEST(NULL, "Times & Dates", "Clock 3", test_clock3);
+   ADD_TEST(NULL, "Times & Dates", "Datetime", test_datetime);
 
    //------------------------------//
    ADD_TEST(NULL, "Text", "Anchorview", test_anchorview);

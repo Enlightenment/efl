@@ -37,6 +37,8 @@
  *
  * @ref clock_example
  *
+ * @ref datetime_example
+ *
  * @ref mapbuf_example
 
  * @ref map_example_01
@@ -1695,6 +1697,51 @@
  * See the full @ref clock_example_c "source code" for this example.
  *
  * @example clock_example.c
+ */
+
+/**
+ * @page datetime_example Datetime widget example
+ *
+ * This code places three Elementary Datetime widgets on a window, each of
+ * them exemplifying the widget's different usage.
+ *
+ * The first of them is <b>"only Date display"</b>:
+ * @dontinclude datetime_example.c
+ * @skip only DATE
+ * @until evas_object_show
+ *
+ * For <b>"only Time display"</b>, see the second datetime:
+ * @dontinclude datetime_example.c
+ * @skip only TIME
+ * @until evas_object_show
+ *
+ * The third one will display datetime shows both <b>Date and Time</b>, corresponding format will be
+ * taken from system @b locale. Note, besides, that the strings are different
+ *  for different language settings.
+ *
+ * <b>Datetime format</b> can be programmatically set by using 
+ * elm_datetime_format_set():
+ * @dontinclude datetime_example.c
+ * @skip DATE and TIME
+ * @until evas_object_show
+ * The default format of any locale consists:
+ * - Year Field
+ * - Month Field
+ * - Date Field
+ * - Hour Field(12hr/24hr format)
+ * - Minute Field
+ * - AM/PM (if exists).
+ *
+ * This is how the example program's window looks like with the datetime widget
+ * showing only date, only time and both date & time:
+ *
+ * @image html screenshots/datetime_example.png
+ * @image latex screenshots/datetime_example.eps width=\textwidth
+ *
+ * See the full @ref datetime_example_c "source code" for
+ * this example.
+ *
+ * @example datetime_example.c
  */
 
 /**
@@ -6162,6 +6209,12 @@
  * @page clock_example_c Clock example
  * @include clock_example.c
  * @example clock_example.c
+ */
+
+ /**
+ * @page datetime_example_c Datetime example
+ * @include datetime_example.c
+ * @example datetime_example.c
  */
 
 /**

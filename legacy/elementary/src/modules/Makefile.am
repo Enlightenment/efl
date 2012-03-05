@@ -4,4 +4,5 @@ MAINTAINERCLEANFILES = Makefile.in
 SUBDIRS = \
 test_entry \
 test_map \
-access_output
+access_output \
+datetime_input_ctxpopup

@@ -43,6 +43,7 @@
 
 typedef struct _Elm_Config Elm_Config;
 typedef struct _Elm_Module Elm_Module;
+typedef struct _Elm_Datetime_Module_Data Elm_Datetime_Module_Data;
 
 struct _Elm_Theme
 {
@@ -184,6 +185,13 @@ struct _Elm_Module
    int          (*init_func)(Elm_Module *m);
    int          (*shutdown_func)(Elm_Module *m);
    int          references;
+};
+
+struct _Elm_Datetime_Module_Data
+{
+   Evas_Object *base;
+   void (*field_limit_get)(Evas_Object *obj, Elm_Datetime_Field_Type  field_type, int *range_min, int *range_max);
+   const char *(*field_format_get)(Evas_Object * obj, Elm_Datetime_Field_Type  field_type);
 };
 
 int                  _elm_ews_wm_init(void);

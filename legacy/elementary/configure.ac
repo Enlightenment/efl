@@ -711,6 +711,7 @@ src/lib/Elementary.h
 src/bin/Makefile
 src/modules/Makefile
 src/modules/access_output/Makefile
+src/modules/datetime_input_ctxpopup/Makefile
 src/modules/test_entry/Makefile
 src/modules/test_map/Makefile
 src/edje_externals/Makefile

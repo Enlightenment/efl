@@ -48,6 +48,7 @@ test_colorselector.c \
 test_conform.c \
 test_ctxpopup.c \
 test_cursor.c \
+test_datetime.c \
 test_diskselector.c \
 test_entry.c \
 test_factory.c \
