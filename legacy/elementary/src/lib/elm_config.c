@@ -1413,10 +1413,6 @@ elm_config_all_flush(void)
 #ifdef HAVE_ELEMENTARY_X
    if (_prop_all_update_timer) ecore_timer_del(_prop_all_update_timer);
    _prop_all_update_timer = ecore_timer_add(0.1, _prop_all_update_cb, NULL);
-   //FIXME: below two lines looks unnecessary.
-   _prop_config_set();
-   ecore_x_window_prop_string_set(_root_1st, _atom[ATOM_E_PROFILE],
-                                  _elm_profile);
 #endif
 }
 
@@ -1592,9 +1588,9 @@ _elm_config_shutdown(void)
    if (_prop_all_update_timer)
      {
         ecore_timer_del(_prop_all_update_timer);
+        _prop_all_update_timer = NULL;
         _prop_all_update_cb(NULL);
      }
-   _prop_all_update_timer = NULL;
    if (_prop_change_delay_timer) ecore_timer_del(_prop_change_delay_timer);
    _prop_change_delay_timer = NULL;
 #endif
