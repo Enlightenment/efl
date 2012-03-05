@@ -167,7 +167,7 @@ typedef enum
    ELM_WIN_KEYBOARD_PIN, /**< PIN keyboard layout */
    ELM_WIN_KEYBOARD_PHONE_NUMBER, /**< Phone keyboard layout */
    ELM_WIN_KEYBOARD_HEX, /**< Hexadecimal numeric keyboard layout */
-   ELM_WIN_KEYBOARD_TERMINAL, /**< Full (QUERTY) keyboard layout */
+   ELM_WIN_KEYBOARD_TERMINAL, /**< Full (QWERTY) keyboard layout */
    ELM_WIN_KEYBOARD_PASSWORD, /**< Password keyboard layout */
    ELM_WIN_KEYBOARD_IP, /**< IP keyboard layout */
    ELM_WIN_KEYBOARD_HOST, /**< Host keyboard layout */
