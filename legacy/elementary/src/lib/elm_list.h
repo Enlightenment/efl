@@ -363,7 +363,7 @@ EAPI void                         elm_list_scroller_policy_get(const Evas_Object
  * li = elm_list_add(win);
  * ic = elm_icon_add(win);
  * elm_icon_file_set(ic, "path/to/image", NULL);
- * elm_icon_scale_set(ic, EINA_TRUE, EINA_TRUE);
+ * elm_icon_resizable_set(ic, EINA_TRUE, EINA_TRUE);
  * elm_list_item_append(li, "label", ic, NULL, NULL, NULL);
  * elm_list_go(li);
  * evas_object_show(li);

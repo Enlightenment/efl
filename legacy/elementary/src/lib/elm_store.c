@@ -315,7 +315,7 @@ _store_item_content_get(void *data, Evas_Object *obj, const char *part)
                                                     m->details.icon.h);
                    elm_icon_smooth_set(ic, m->details.icon.smooth);
                    elm_icon_no_scale_set(ic, m->details.icon.no_scale);
-                   elm_icon_scale_set(ic,
+                   elm_icon_resizable_set(ic,
                                       m->details.icon.scale_up,
                                       m->details.icon.scale_down);
                    if (s)

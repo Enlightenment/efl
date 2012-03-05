@@ -271,10 +271,10 @@ EAPI Eina_Bool             elm_icon_smooth_get(const Evas_Object *obj);
  * This function disables scaling of the icon object through the function
  * elm_object_scale_set(). However, this does not affect the object
  * size/resize in any way. For that effect, take a look at
- * elm_icon_scale_set().
+ * elm_icon_resizable_set().
  *
  * @see elm_icon_no_scale_get()
- * @see elm_icon_scale_set()
+ * @see elm_icon_resizable_set()
  * @see elm_object_scale_set()
  *
  * @ingroup Icon
@@ -297,33 +297,33 @@ EAPI Eina_Bool             elm_icon_no_scale_get(const Evas_Object *obj);
  * Set if the object is (up/down) resizeable.
  *
  * @param obj The icon object
- * @param scale_up A bool to set if the object is resizeable up. Default is
+ * @param size_up A bool to set if the object is resizeable up. Default is
  * @c EINA_TRUE.
- * @param scale_down A bool to set if the object is resizeable down. Default
+ * @param size_down A bool to set if the object is resizeable down. Default
  * is @c EINA_TRUE.
  *
- * This function limits the icon object resize ability. If @p scale_up is set to
+ * This function limits the icon object resize ability. If @p size_up is set to
  * @c EINA_FALSE, the object can't have its height or width resized to a value
- * higher than the original icon size. Same is valid for @p scale_down.
+ * higher than the original icon size. Same is valid for @p size_down.
  *
- * @see elm_icon_scale_get()
+ * @see elm_icon_resizable_get()
  *
  * @ingroup Icon
  */
-EAPI void                  elm_icon_scale_set(Evas_Object *obj, Eina_Bool scale_up, Eina_Bool scale_down);
+EAPI void                  elm_icon_resizable_set(Evas_Object *obj, Eina_Bool size_up, Eina_Bool size_down);
 
 /**
  * Get if the object is (up/down) resizeable.
  *
  * @param obj The icon object
- * @param scale_up A bool to set if the object is resizeable up
- * @param scale_down A bool to set if the object is resizeable down
+ * @param size_up A bool to set if the object is resizeable up
+ * @param size_down A bool to set if the object is resizeable down
  *
- * @see elm_icon_scale_set()
+ * @see elm_icon_resizable_set()
  *
  * @ingroup Icon
  */
-EAPI void                  elm_icon_scale_get(const Evas_Object *obj, Eina_Bool *scale_up, Eina_Bool *scale_down);
+EAPI void                  elm_icon_resizable_get(const Evas_Object *obj, Eina_Bool *size_up, Eina_Bool *size_down);
 
 /**
  * Get the object's image size

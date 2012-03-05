@@ -1974,7 +1974,7 @@ _icon_dup(Evas_Object *icon, Evas_Object *parent)
    if (!icon || !parent) return NULL;
    // Evas_Object do not support object duplication??
    const char *file = NULL, *group = NULL;
-   Eina_Bool scale_up, scale_down;
+   Eina_Bool size_up, size_down;
 
    Evas_Object *dup = elm_icon_add(parent);
    elm_icon_file_get(icon, &file, &group);
@@ -1984,8 +1984,8 @@ _icon_dup(Evas_Object *icon, Evas_Object *parent)
    elm_icon_standard_set(dup, elm_icon_standard_get(icon));
    elm_icon_order_lookup_set(dup, elm_icon_order_lookup_get(icon));
    elm_icon_no_scale_set(dup, elm_icon_no_scale_get(icon));
-   elm_icon_scale_get(icon, &scale_up, &scale_down);
-   elm_icon_scale_set(dup, scale_up, scale_down);
+   elm_icon_resizable_get(icon, &size_up, &size_down);
+   elm_icon_resizable_set(dup, size_up, size_down);
    elm_icon_fill_outside_set(dup, elm_icon_fill_outside_get(icon));
    elm_icon_prescale_set(dup, elm_icon_prescale_get(icon));
    elm_icon_aspect_fixed_set(dup, elm_icon_aspect_fixed_get(icon));

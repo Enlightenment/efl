@@ -4785,5 +4785,72 @@ EINA_DEPRECATED EAPI void             elm_theme_all_set(const char *theme);
 EINA_DEPRECATED EAPI Evas_Object                 *elm_conformant_content_area_get(const Evas_Object *obj);
 
 /**
+ * Set if the object is (up/down) resizeable.
+ *
+ * @param obj The image object
+ * @param scale_up A bool to set if the object is resizeable up. Default is
+ * @c EINA_TRUE.
+ * @param scale_down A bool to set if the object is resizeable down. Default
+ * is @c EINA_TRUE.
+ *
+ * This function limits the image resize ability. If @p scale_up is set to
+ * @c EINA_FALSE, the object can't have its height or width resized to a value
+ * higher than the original image size. Same is valid for @p scale_down.
+ *
+ * @see elm_image_scale_get()
+ * @deprecated Please use elm_image_resizable_set()
+ *
+ * @ingroup Image
+ */
+EINA_DEPRECATED EAPI void             elm_image_scale_set(Evas_Object *obj, Eina_Bool scale_up, Eina_Bool scale_down);
+
+/**
+ * Get if the object is (up/down) resizeable.
+ *
+ * @param obj The image object
+ * @param scale_up A bool to set if the object is resizeable up
+ * @param scale_down A bool to set if the object is resizeable down
+ *
+ * @see elm_image_scale_set()
+ * @deprecated Please use elm_image_resizable_get()
+ *
+ * @ingroup Image
+ */
+EINA_DEPRECATED EAPI void             elm_image_scale_get(const Evas_Object *obj, Eina_Bool *scale_up, Eina_Bool *scale_down);
+
+/**
+ * Set if the object is (up/down) resizeable.
+ *
+ * @param obj The icon object
+ * @param scale_up A bool to set if the object is resizeable up. Default is
+ * @c EINA_TRUE.
+ * @param scale_down A bool to set if the object is resizeable down. Default
+ * is @c EINA_TRUE.
+ *
+ * This function limits the icon object resize ability. If @p scale_up is set to
+ * @c EINA_FALSE, the object can't have its height or width resized to a value
+ * higher than the original icon size. Same is valid for @p scale_down.
+ *
+ * @see elm_icon_scale_get()
+ * @deprecated Please use elm_icon_resizable_set()
+ *
+ * @ingroup Icon
+ */
+EINA_DEPRECATED EAPI void                  elm_icon_scale_set(Evas_Object *obj, Eina_Bool scale_up, Eina_Bool scale_down);
+
+/**
+ * Get if the object is (up/down) resizeable.
+ *
+ * @param obj The icon object
+ * @param scale_up A bool to set if the object is resizeable up
+ * @param scale_down A bool to set if the object is resizeable down
+ *
+ * @see elm_icon_scale_set()
+ * @deprecated Please use elm_icon_resizable_get()
+ *
+ * @ingroup Icon
+ */
+EINA_DEPRECATED EAPI void                  elm_icon_scale_get(const Evas_Object *obj, Eina_Bool *scale_up, Eina_Bool *scale_down);
+/**
  * @}
  */
