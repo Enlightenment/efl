@@ -705,7 +705,7 @@ _parking_cb(void *data __UNUSED__, Evas_Object *map, Elm_Map_Overlay *ovl)
      {
         Evas_Object *bubble, *label;
         bubble = elm_bubble_add(map);
-        elm_bubble_corner_set(bubble, "bottom_left");
+        elm_bubble_pos_set(bubble, ELM_BUBBLE_POS_BOTTOM_LEFT);
         elm_object_text_set(bubble, "Overlay object");
         elm_object_part_text_set(bubble, "info", "Bubble is overlayed");
 
