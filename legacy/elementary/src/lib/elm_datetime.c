@@ -194,7 +194,7 @@ static Eina_List *
 _datetime_items_get(const Evas_Object *obj)
 {
    Widget_Data *wd;
-   Eina_List *items;
+   Eina_List *items = NULL;
    Datetime_Field *field;
    int loc, count = 0;
    unsigned int idx;
@@ -208,12 +208,14 @@ _datetime_items_get(const Evas_Object *obj)
         if (field->fmt_exist && field->visible) count++;
      }
    for (loc = 0; loc < count; loc++)
-     for (idx = 0; idx < DATETIME_TYPE_COUNT; idx++)
-       {
-          field = wd->field_list + idx;
-          if (field->location == loc)
-            items = eina_list_append(items, field->item_obj);
-       }
+     {
+        for (idx = 0; idx < DATETIME_TYPE_COUNT; idx++)
+          {
+             field = wd->field_list + idx;
+             if (field->location == loc)
+               items = eina_list_append(items, field->item_obj);
+          }
+     }
 
    return items;
 }
