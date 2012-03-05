@@ -747,8 +747,8 @@ EAPI void             ecore_con_socks_apply_always(Ecore_Con_Socks *ecs);
  *
  * Setting up a server is very simple: you just need to start it with
  * ecore_con_server_add() and setup some callbacks to the events
- * #ECORE_CON_EVENT_CLIENT_ADD, #ECORE_CON_EVENT_CLIENT_DEL and
- * #ECORE_CON_EVENT_CLIENT_DATA, that will be called when a client is
+ * @ref ECORE_CON_EVENT_CLIENT_ADD, @ref ECORE_CON_EVENT_CLIENT_DEL and
+ * @ref ECORE_CON_EVENT_CLIENT_DATA, that will be called when a client is
  * communicating with the server:
  *
  * @code
@@ -870,8 +870,8 @@ EAPI Ecore_Con_Server *ecore_con_server_add(Ecore_Con_Type type,
  *
  * However, even if this call returns a valid @ref Ecore_Con_Server, the
  * connection will only be successfully completed if an event of type
- * #ECORE_CON_EVENT_SERVER_ADD is received. If it fails to complete, an
- * #ECORE_CON_EVENT_SERVER_DEL will be received.
+ * @ref ECORE_CON_EVENT_SERVER_ADD is received. If it fails to complete, an
+ * @ref ECORE_CON_EVENT_SERVER_DEL will be received.
  *
  * The @p data parameter can be fetched later using ecore_con_server_data_get()
  * or changed with ecore_con_server_data_set().
