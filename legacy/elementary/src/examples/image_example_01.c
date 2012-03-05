@@ -36,7 +36,7 @@ elm_main(int argc __UNUSED__, char **argv __UNUSED__)
      }
 
    elm_image_no_scale_set(image, EINA_TRUE);
-   elm_image_scale_set(image, EINA_FALSE, EINA_TRUE);
+   elm_image_resizable_set(image, EINA_FALSE, EINA_TRUE);
    elm_image_smooth_set(image, EINA_FALSE);
    elm_image_orient_set(image, ELM_IMAGE_FLIP_HORIZONTAL);
    elm_image_aspect_fixed_set(image, EINA_TRUE);

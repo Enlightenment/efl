@@ -16,7 +16,7 @@ Elm_Object_Item *item_new(Evas_Object *ctxpopup, const char * label, const char 
 {
    Evas_Object *ic = elm_icon_add(ctxpopup);
    elm_icon_standard_set(ic, icon);
-   elm_icon_scale_set(ic, EINA_FALSE, EINA_FALSE);
+   elm_icon_resizable_set(ic, EINA_FALSE, EINA_FALSE);
    return elm_ctxpopup_item_append(ctxpopup, label, ic, _ctxpopup_item_cb, NULL);
 }
 

@@ -279,7 +279,7 @@ test_diskselector(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *even
    ic = elm_icon_add(win);
    snprintf(buf, sizeof(buf), "%s/images/logo_small.png", elm_app_data_dir_get());
    elm_icon_file_set(ic, buf, NULL);
-   elm_icon_scale_set(ic, 1, 1);
+   elm_icon_resizable_set(ic, 1, 1);
    elm_diskselector_item_append(disk, "Sunday", ic, NULL, NULL);
    elm_diskselector_item_append(disk, "Monday", NULL, NULL, NULL);
    elm_diskselector_item_append(disk, "Tuesday", NULL, NULL, NULL);
@@ -298,7 +298,7 @@ test_diskselector(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *even
    ic = elm_icon_add(win);
    snprintf(buf, sizeof(buf), "%s/images/logo_small.png", elm_app_data_dir_get());
    elm_icon_file_set(ic, buf, NULL);
-   elm_icon_scale_set(ic, 1, 1);
+   elm_icon_resizable_set(ic, 1, 1);
    elm_diskselector_item_append(disk, "머리스타일", ic, NULL, NULL);
    elm_diskselector_item_append(disk, "プロが伝授する", NULL, NULL, NULL);
    elm_diskselector_item_append(disk, "生上访要求政府", NULL, NULL, NULL);

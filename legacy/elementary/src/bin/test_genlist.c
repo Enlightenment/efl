@@ -943,12 +943,12 @@ Evas_Object *gl5_content_get(void *data, Evas_Object *obj, const char *part)
         ic = elm_icon_add(obj);
         snprintf(buf, sizeof(buf), "%s/images/logo_small.png", elm_app_data_dir_get());
         elm_icon_file_set(ic, buf, NULL);
-        elm_icon_scale_set(ic, 0, 0);
+        elm_icon_resizable_set(ic, 0, 0);
         evas_object_show(ic);
         elm_box_pack_end(bx, ic);
         ic = elm_icon_add(obj);
         elm_icon_file_set(ic, buf, NULL);
-        elm_icon_scale_set(ic, 0, 0);
+        elm_icon_resizable_set(ic, 0, 0);
         evas_object_show(ic);
         elm_box_pack_end(bx, ic);
         elm_box_horizontal_set(bx, EINA_TRUE);

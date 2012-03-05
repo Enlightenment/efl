@@ -52,7 +52,7 @@ external_icon_state_set(void *data __UNUSED__, Evas_Object *obj,
      }
    if (p->scale_up_exists && p->scale_down_exists)
      {
-        elm_icon_scale_set(obj, p->scale_up, p->scale_down);
+        elm_icon_resizable_set(obj, p->scale_up, p->scale_down);
         param_icon->scale_up = p->scale_up;
         param_icon->scale_down = p->scale_down;
      }
@@ -60,12 +60,12 @@ external_icon_state_set(void *data __UNUSED__, Evas_Object *obj,
      {
         if (p->scale_up_exists)
           {
-             elm_icon_scale_set(obj, p->scale_up, param_icon->scale_down);
+             elm_icon_resizable_set(obj, p->scale_up, param_icon->scale_down);
              param_icon->scale_up = p->scale_up;
           }
         else
           {
-             elm_icon_scale_set(obj, param_icon->scale_up, p->scale_down);
+             elm_icon_resizable_set(obj, param_icon->scale_up, p->scale_down);
              param_icon->scale_down = p->scale_down;
           }
      }
@@ -121,14 +121,14 @@ external_icon_param_set(void *data __UNUSED__, Evas_Object *obj,
    else if (!strcmp(param->name, "scale up")
             && param->type == EDJE_EXTERNAL_PARAM_TYPE_BOOL)
      {
-        elm_icon_scale_set(obj, param->i, param_icon->scale_down);
+        elm_icon_resizable_set(obj, param->i, param_icon->scale_down);
         param_icon->scale_up = param->i;
         return EINA_TRUE;
      }
    else if (!strcmp(param->name, "scale down")
             && param->type == EDJE_EXTERNAL_PARAM_TYPE_BOOL)
      {
-        elm_icon_scale_set(obj, param_icon->scale_up, param->i);
+        elm_icon_resizable_set(obj, param_icon->scale_up, param->i);
         param_icon->scale_down = param->i;
         return EINA_TRUE;
      }

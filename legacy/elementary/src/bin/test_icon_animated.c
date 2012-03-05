@@ -35,7 +35,7 @@ test_icon_animated(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *eve
         elm_icon_animated_set(ic, EINA_TRUE);
         elm_icon_animated_play_set(ic, EINA_TRUE);
      }
-   elm_icon_scale_set(ic, 0, 0);
+   elm_icon_resizable_set(ic, 0, 0);
    elm_icon_no_scale_set(ic, 1);
    evas_object_size_hint_weight_set(ic, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_fill_set(ic, 0.5, 0.5);

@@ -44,7 +44,7 @@ test_toggle(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info
    ic = elm_icon_add(win);
    snprintf(buf, sizeof(buf), "%s/images/logo_small.png", elm_app_data_dir_get());
    elm_icon_file_set(ic, buf, NULL);
-   elm_icon_scale_set(ic, 0, 0);
+   elm_icon_resizable_set(ic, 0, 0);
 
    tg = elm_check_add(win);
    elm_object_style_set(tg, "toggle");
@@ -57,7 +57,7 @@ test_toggle(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info
    ic = elm_icon_add(win);
    snprintf(buf, sizeof(buf), "%s/images/logo_small.png", elm_app_data_dir_get());
    elm_icon_file_set(ic, buf, NULL);
-   elm_icon_scale_set(ic, 0, 0);
+   elm_icon_resizable_set(ic, 0, 0);
 
    tg = elm_check_add(win);
    elm_object_style_set(tg, "toggle");
@@ -79,7 +79,7 @@ test_toggle(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info
    ic = elm_icon_add(win);
    snprintf(buf, sizeof(buf), "%s/images/logo_small.png", elm_app_data_dir_get());
    elm_icon_file_set(ic, buf, NULL);
-   elm_icon_scale_set(ic, 0, 0);
+   elm_icon_resizable_set(ic, 0, 0);
 
    tg = elm_check_add(win);
    elm_object_style_set(tg, "toggle");

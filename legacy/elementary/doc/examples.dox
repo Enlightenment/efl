@@ -3486,7 +3486,7 @@
   * elm_image_no_scale_set() is used just to set this value to true (we
   * don't want to scale our image anyway, just resize it).
   *
-  * elm_image_scale_set() is used to allow the image to be resized to a size
+  * elm_image_resizable_set() is used to allow the image to be resized to a size
   * smaller than the original one, but not to a size bigger than it.
   *
   * elm_elm_image_smooth_set() will disable the smooth scaling, so the scale
@@ -3555,7 +3555,7 @@
   * elm_icon_no_scale_set() is used just to set this value to true (we
   * don't want to scale our icon anyway, just resize it).
   *
-  * elm_icon_scale_set() is used to allow the icon to be resized to a size
+  * elm_icon_resizable_set() is used to allow the icon to be resized to a size
   * smaller than the original one, but not to a size bigger than it.
   *
   * elm_elm_icon_smooth_set() will disable the smooth scaling, so the scale

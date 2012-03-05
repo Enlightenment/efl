@@ -38,7 +38,7 @@ elm_main(int argc __UNUSED__, char **argv __UNUSED__)
    printf("path = %s, group = %s, name = %s\n", path, group, name);
 
    elm_icon_no_scale_set(icon, EINA_TRUE);
-   elm_icon_scale_set(icon, EINA_FALSE, EINA_TRUE);
+   elm_icon_resizable_set(icon, EINA_FALSE, EINA_TRUE);
    elm_icon_smooth_set(icon, EINA_FALSE);
    elm_icon_fill_outside_set(icon, EINA_TRUE);
 
