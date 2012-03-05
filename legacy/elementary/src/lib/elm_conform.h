@@ -45,16 +45,5 @@
 EAPI Evas_Object                 *elm_conformant_add(Evas_Object *parent);
 
 /**
- * Returns the Evas_Object that represents the content area.
- *
- * @param obj The conformant object.
- * @return The content area of the widget.
- *
- * @ingroup Conformant
- */
-// XXX: why is this API needed? use elm_object_content_get() instead??
-EAPI Evas_Object                 *elm_conformant_content_area_get(const Evas_Object *obj);
-
-/**
  * @}
  */
