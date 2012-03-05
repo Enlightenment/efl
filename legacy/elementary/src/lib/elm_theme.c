@@ -475,6 +475,8 @@ elm_theme_set(Elm_Theme *th, const char *theme)
         th->theme = NULL;
      }
    elm_theme_flush(th);
+   if (th == &(theme_default))
+     eina_stringshare_replace(&_elm_config->theme, theme);
 }
 
 EAPI const char *
@@ -597,7 +599,6 @@ elm_theme_full_flush(void)
 EINA_DEPRECATED EAPI void
 elm_theme_all_set(const char *theme)
 {
-   eina_stringshare_replace(&_elm_config->theme, theme);
    elm_theme_set(NULL, theme);
    elm_config_all_flush();
 }
