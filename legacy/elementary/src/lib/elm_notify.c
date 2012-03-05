@@ -8,7 +8,7 @@ struct _Widget_Data
    Evas_Object *notify, *content, *parent;
 
    Elm_Notify_Orient orient;
-   Eina_Bool repeat_events;
+   Eina_Bool allow_events;
    Evas_Object *block_events;
 
    double timeout;
@@ -57,7 +57,7 @@ _del_hook(Evas_Object *obj)
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return;
    elm_notify_parent_set(obj, NULL);
-   elm_notify_repeat_events_set(obj, EINA_TRUE);
+   elm_notify_allow_events_set(obj, EINA_TRUE);
    if (wd->timer)
      {
         ecore_timer_del(wd->timer);
@@ -360,8 +360,7 @@ _show(void *data __UNUSED__, Evas *e __UNUSED__, Evas_Object *obj, void *event_i
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return;
    evas_object_show(wd->notify);
-   if (!wd->repeat_events)
-     evas_object_show(wd->block_events);
+   if (!wd->allow_events) evas_object_show(wd->block_events);
    _timer_init(obj, wd);
    elm_object_focus_set(obj, EINA_TRUE);
 }
@@ -372,8 +371,7 @@ _hide(void *data __UNUSED__, Evas *e __UNUSED__, Evas_Object *obj, void *event_i
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return;
    evas_object_hide(wd->notify);
-   if (!wd->repeat_events)
-     evas_object_hide(wd->block_events);
+   if (!wd->allow_events) evas_object_hide(wd->block_events);
    if (wd->timer)
      {
         ecore_timer_del(wd->timer);
@@ -493,7 +491,7 @@ elm_notify_add(Evas_Object *parent)
    elm_widget_content_get_hook_set(obj, _content_get_hook);
    elm_widget_content_unset_hook_set(obj, _content_unset_hook);
 
-   wd->repeat_events = EINA_TRUE;
+   wd->allow_events = EINA_TRUE;
 
    wd->notify = edje_object_add(e);
    wd->orient = -1;
@@ -622,15 +620,27 @@ elm_notify_timeout_get(const Evas_Object *obj)
    return wd->timeout;
 }
 
+EINA_DEPRECATED EAPI void
+elm_repeat_repeat_events_set(Evas_Object *obj, Eina_Bool repeat)
+{
+   elm_notify_allow_events_set(obj, repeat);
+}
+
+EINA_DEPRECATED EAPI Eina_Bool
+elm_repeat_allow_events_get(const Evas_Object *obj)
+{
+   return elm_notify_allow_events_get(obj);
+}
+
 EAPI void
-elm_notify_repeat_events_set(Evas_Object *obj, Eina_Bool repeat)
+elm_notify_allow_events_set(Evas_Object *obj, Eina_Bool allow)
 {
    ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return;
-   if (repeat == wd->repeat_events) return;
-   wd->repeat_events = repeat;
-   if (!repeat)
+   if (allow == wd->allow_events) return;
+   wd->allow_events = allow;
+   if (!allow)
      {
         wd->block_events = edje_object_add(evas_object_evas_get(obj));
         _block_events_theme_apply(obj);
@@ -643,10 +653,10 @@ elm_notify_repeat_events_set(Evas_Object *obj, Eina_Bool repeat)
 }
 
 EAPI Eina_Bool
-elm_notify_repeat_events_get(const Evas_Object *obj)
+elm_notify_allow_events_get(const Evas_Object *obj)
 {
    ELM_CHECK_WIDTYPE(obj, widtype) EINA_FALSE;
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return EINA_FALSE;
-   return wd->repeat_events;
+   return wd->allow_events;
 }

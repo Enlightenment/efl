@@ -133,7 +133,7 @@ _alert_hook(void *data __UNUSED__, Evas_Object *obj, const char *message)
    elm_notify_orient_set(popup, ELM_NOTIFY_ORIENT_CENTER);
    // Using the timeout doesn't seem to go well with the second main loop
    //elm_notify_timeout_set(popup, 2.0);
-   elm_notify_repeat_events_set(popup, EINA_FALSE);
+   elm_notify_allow_events_set(popup, EINA_FALSE);
    evas_object_show(popup);
 
    evas_object_smart_callback_add(popup, "block,clicked", _alert_del, NULL);
@@ -173,7 +173,7 @@ _confirm_hook(void *data __UNUSED__, Evas_Object *obj, const char *message, Eina
 
    popup = elm_notify_add(obj);
    elm_notify_orient_set(popup, ELM_NOTIFY_ORIENT_CENTER);
-   elm_notify_repeat_events_set(popup, EINA_FALSE);
+   elm_notify_allow_events_set(popup, EINA_FALSE);
    evas_object_show(popup);
 
    box = elm_box_add(obj);

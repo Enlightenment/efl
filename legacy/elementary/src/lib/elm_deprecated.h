@@ -4606,6 +4606,30 @@ EINA_DEPRECATED EAPI void              elm_web_history_enable_set(Evas_Object *o
 EINA_DEPRECATED EAPI Elm_Object_Item             *elm_menu_item_add_object(Evas_Object *obj, Elm_Object_Item *parent, Evas_Object *subobj, Evas_Smart_Cb func, const void *data);
 
 /**
+ * @brief Sets whether events should be passed to by a click outside
+ * its area.
+ *
+ * @param obj The notify object
+ * @param repeat EINA_TRUE Events are repeats, else no
+ *
+ * When true if the user clicks outside the window the events will be caught
+ * by the others widgets, else the events are blocked.
+ *
+ * @note The default value is EINA_TRUE.
+ * @deprecated Please use elm_notify_allow_events_set() instead
+ */
+EINA_DEPRECATED EAPI void                         elm_notify_repeat_events_set(Evas_Object *obj, Eina_Bool repeat);
+
+/**
+ * @brief Return true if events are repeat below the notify object
+ * @param obj the notify object
+ *
+ * @see elm_notify_repeat_events_set()
+ * @deprecated Please use elm_notify_allow_events_get() instead
+ */
+EINA_DEPRECATED EAPI Eina_Bool                    elm_notify_repeat_events_get(const Evas_Object *obj);
+
+/**
  * Set if the cursor set should be searched on the theme or should use
  * the provided by the engine, only.
  *

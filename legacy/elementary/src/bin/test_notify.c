@@ -82,7 +82,7 @@ test_notify(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info
    evas_object_show(bt);
 
    notify = elm_notify_add(win);
-   elm_notify_repeat_events_set(notify, EINA_FALSE);
+   elm_notify_allow_events_set(notify, EINA_FALSE);
    evas_object_size_hint_weight_set(notify, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    elm_notify_orient_set(notify, ELM_NOTIFY_ORIENT_BOTTOM);
    elm_notify_timeout_set(notify, 5.0);
