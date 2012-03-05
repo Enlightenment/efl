@@ -673,7 +673,8 @@ EAPI void *ecore_event_current_event_get(void);
  * @{
  */
 
- #define ECORE_EXE_PRIORITY_INHERIT 9999
+/** Inherit priority from parent process */
+#define ECORE_EXE_PRIORITY_INHERIT 9999
 
 EAPI extern int ECORE_EXE_EVENT_ADD;     /**< A child process has been added */
 EAPI extern int ECORE_EXE_EVENT_DEL;     /**< A child process has been deleted (it exited, naming consistent with the rest of ecore). */
