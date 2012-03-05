@@ -9,8 +9,6 @@ typedef Eina_Bool                     (*Elm_Gen_Item_State_Get_Cb)(void *data, E
 typedef void                          (*Elm_Gen_Item_Del_Cb)(void *data, Evas_Object *obj); /**< Deletion class function for gen item classes. */
 struct _Elm_Gen_Item_Class
 {
-   //XXX: version name is not intuitive. 
-   //How about  Eina_Bool allocated_by_gen : 1 ?
    int version;
    unsigned int refcount;
    Eina_Bool delete_me : 1;
