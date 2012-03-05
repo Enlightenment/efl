@@ -344,6 +344,7 @@ EAPI Eina_Bool        elm_naviframe_prev_btn_auto_pushed_get(const Evas_Object *
  * @param obj The naviframe object
  * @return An Eina_List of naviframe items, #Elm_Object_Item,
  * or @c NULL on failure.
+ * @note The returned list MUST be freed.
  *
  * @ingroup Naviframe
  */
