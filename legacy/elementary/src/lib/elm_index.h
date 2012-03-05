@@ -118,6 +118,7 @@ EAPI int                   elm_index_item_level_get(const Evas_Object *obj);
  *
  * @ingroup Index
  */
+//XXX: elm_index_selected_item_get.
 EAPI Elm_Object_Item      *elm_index_item_selected_get(const Evas_Object *obj, int level);
 
 /**
