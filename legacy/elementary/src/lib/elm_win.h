@@ -156,7 +156,6 @@ typedef enum
  * When the application window is being managed by Illume, it may request
  * any of the following layouts for the virtual keyboard.
  */
-// XXX: remove this as it conflicts with input panel
 typedef enum
 {
    ELM_WIN_KEYBOARD_UNKNOWN, /**< Unknown keyboard state */
