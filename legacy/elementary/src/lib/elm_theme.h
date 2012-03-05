@@ -180,6 +180,16 @@ EAPI void             elm_theme_overlay_add(Elm_Theme *th, const char *item);
 EAPI void             elm_theme_overlay_del(Elm_Theme *th, const char *item);
 
 /**
+ * Get the list of registered overlays for the given theme
+ *
+ * @param th The theme from which to get the overlays
+ * @return List of theme overlays. Do not free it.
+ *
+ * @see elm_theme_overlay_add()
+ */
+EAPI const Eina_List *elm_theme_overlay_list_get(Elm_Theme *th);
+
+/**
  * Appends a theme extension to the list of extensions.
  *
  * @param th The theme to add to, or if NULL, the default theme
@@ -209,6 +219,16 @@ EAPI void             elm_theme_extension_add(Elm_Theme *th, const char *item);
  * @see elm_theme_extension_add()
  */
 EAPI void             elm_theme_extension_del(Elm_Theme *th, const char *item);
+
+/**
+ * Get the list of registered extensions for the given theme
+ *
+ * @param th The theme from which to get the extensions
+ * @return List of theme extensions. Do not free it.
+ *
+ * @see elm_theme_extension_add()
+ */
+EAPI const Eina_List *elm_theme_extension_list_get(Elm_Theme *th);
 
 /**
  * Set the theme search order for the given theme

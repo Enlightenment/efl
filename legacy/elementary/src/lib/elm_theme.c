@@ -435,6 +435,13 @@ elm_theme_overlay_del(Elm_Theme *th, const char *item)
    elm_theme_flush(th);
 }
 
+EAPI const Eina_List *
+elm_theme_overlay_list_get(Elm_Theme *th)
+{
+   if (!th) th = &(theme_default);
+   return th->overlay;
+}
+
 EAPI void
 elm_theme_extension_add(Elm_Theme *th, const char *item)
 {
@@ -462,6 +469,13 @@ elm_theme_extension_del(Elm_Theme *th, const char *item)
         }
    eina_stringshare_del(s);
    elm_theme_flush(th);
+}
+
+EAPI const Eina_List *
+elm_theme_extension_list_get(Elm_Theme *th)
+{
+   if (!th) th = &(theme_default);
+   return th->extension;
 }
 
 EAPI void

@@ -138,29 +138,45 @@ static const Evas_Smart_Cb_Description _elm_web_callback_names[] = {
    { NULL, NULL }
 };
 
+static char *
+_webkit_theme_find(const Eina_List *list)
+{
+   const Eina_List *l;
+   const char *th;
+
+   EINA_LIST_FOREACH(list, l, th)
+     {
+        char *path = elm_theme_list_item_path_get(th, NULL);
+        if (!path) continue;
+        if (edje_file_group_exists(path, "webkit/base"))
+          return path;
+        free(path);
+     }
+
+   return NULL;
+}
+
 static void
 _theme_hook(Evas_Object *obj)
 {
 #ifdef HAVE_ELEMENTARY_WEB
    Elm_Theme *theme = elm_object_theme_get(obj);
    Widget_Data *wd = elm_widget_data_get(obj);
-   const Eina_List *themes, *l;
-   const char *th;
+   const Eina_List *themes;
    char *view_theme = NULL;
 
-   themes = elm_theme_list_get(theme);
-   EINA_LIST_FOREACH(themes, l, th)
-     {
-        char *path = elm_theme_list_item_path_get(th, NULL);
-        if (!path) continue;
-        if (edje_file_group_exists(path, "webkit/base"))
-          {
-             view_theme = path;
-             break;
-          }
-        free(path);
-     }
+   themes = elm_theme_overlay_list_get(theme);
+   view_theme = _webkit_theme_find(themes);
+   if (view_theme) goto set;
 
+   themes = elm_theme_list_get(theme);
+   view_theme = _webkit_theme_find(themes);
+   if (view_theme) goto set;
+
+   themes = elm_theme_extension_list_get(theme);
+   view_theme = _webkit_theme_find(themes);
+
+set:
    if (view_theme)
      {
         ewk_view_theme_set(wd->ewk_view, view_theme);
