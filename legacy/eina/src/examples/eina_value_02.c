@@ -1,3 +1,6 @@
+//Compile with:
+//gcc eina_value_02.c -o eina_value_02 `pkg-config --cflags --libs eina`
+
 #include <Eina.h>
 
 static Eina_Value_Struct_Desc *V1_DESC = NULL;

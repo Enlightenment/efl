@@ -1,5 +1,6 @@
 // Compile with:
-// gcc -g `pkg-config --cflags --libs eina` eina_inlist_01.c -o eina_inlist_01
+// gcc -g eina_inlist_03.c -o eina_inlist_03 `pkg-config --cflags --libs eina`
+
 #include <Eina.h>
 #include <stdio.h>
 

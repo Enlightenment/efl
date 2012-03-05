@@ -1,3 +1,6 @@
+//Compile with:
+//gcc eina_value_01.c -o eina_value_01 `pkg-config --cflags --libs eina`
+
 #include <Eina.h>
 
 int main(int argc, char **argv)

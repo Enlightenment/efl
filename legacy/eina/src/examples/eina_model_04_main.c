@@ -1,6 +1,6 @@
 /*
  * main_animal.c
- * compile with: gcc `pkg-config --cflags --libs eina` eina_model_04_*.c -o eina_model_04
+ * compile with: gcc eina_model_04_*.c -o eina_model_04 `pkg-config --cflags --libs eina`
  */
 
 /*

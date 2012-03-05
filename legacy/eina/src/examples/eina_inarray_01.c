@@ -1,3 +1,6 @@
+//Compile with:
+//gcc -g eina_inarray_01.c -o eina_inarray_01 `pkg-config --cflags --libs eina`
+
 #include <Eina.h>
 
 int

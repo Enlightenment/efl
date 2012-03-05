@@ -1,6 +1,6 @@
 /*
  * Compile with:
- * gcc -o eina_model_example eina_model_example.c `pkg-config --cflags --libs eina`
+ * gcc -o eina_model_01 eina_model_01.c `pkg-config --cflags --libs eina`
  */
 
 /*

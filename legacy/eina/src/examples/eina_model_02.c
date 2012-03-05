@@ -1,3 +1,6 @@
+//Compile with:
+//gcc -g eina_model_02.c -o eina_model_02 `pkg-config --cflags --libs eina`
+
 #include <Eina.h>
 
 static void _cb_on_deleted(void *data, Eina_Model *model, const Eina_Model_Event_Description *desc, void *event_info);

@@ -1,5 +1,5 @@
 //Compile with:
-//gcc `pkg-config --cflags --libs ecore-evas ecore evas` eina_tiler_01.c -o eina_tiler_01 
+//gcc eina_tiler_01.c -o eina_tiler_01 `pkg-config --cflags --libs ecore-evas ecore evas eina`
 
 #include <Ecore_Evas.h>
 #include <Ecore.h>

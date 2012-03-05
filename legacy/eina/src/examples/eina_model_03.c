@@ -1,3 +1,6 @@
+//Compile with:
+//gcc -g eina_model_03.c -o eina_model_03 `pkg-config --cflags --libs eina`
+
 #include <Eina.h>
 #include <string.h>
 #include <stdio.h>

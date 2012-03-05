@@ -1,5 +1,5 @@
 //Compile with:
-//gcc -g `pkg-config --cflags --libs eina` eina_magic_01.c -o eina_magic_01
+//gcc -g eina_magic_01.c -o eina_magic_01 `pkg-config --cflags --libs eina`
 
 #include <Eina.h>
 

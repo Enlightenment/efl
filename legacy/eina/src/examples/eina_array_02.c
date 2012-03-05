@@ -1,5 +1,5 @@
 //Compile with:
-//gcc -g `pkg-config --cflags --libs eina` eina_array_02.c -o eina_array_02
+//gcc -g eina_array_02.c -o eina_array_02 `pkg-config --cflags --libs eina`
 
 #include <stdio.h>
 #include <string.h>
