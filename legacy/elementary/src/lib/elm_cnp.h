@@ -15,7 +15,7 @@
  * but some terms and behavior are common.
  * Currently the X11 window system is widely used, and only X11 functionality is implemented.
  *
- * In X11R6 window sytem, CopyPaste works like a peer-to-peer communication.
+ * In X11R6 window system, CopyPaste works like a peer-to-peer communication.
  * Copying is an operation on an object in an X server.
  * X11 calls those objects 'selections' which have names.
  * Generally, two selection types are needed for copy and paste:

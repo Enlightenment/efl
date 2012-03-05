@@ -457,7 +457,7 @@ EAPI Eina_Bool                    elm_object_item_cursor_engine_only_get(const E
  *
  * @ingroup General
  */
-//Dont use this APIs
+//Don't use this APIs
 //EAPI void                         elm_object_item_smart_callback_add(Elm_Object_Item *it, const char *event, Elm_Object_Item_Smart_Cb func, const void *data);
 
 /**
@@ -480,5 +480,5 @@ EAPI Eina_Bool                    elm_object_item_cursor_engine_only_get(const E
  *
  * @ingroup General
  */
-//Dont use this APIs
+//Don't use this APIs
 //EAPI void                        *elm_object_item_smart_callback_del(Elm_Object_Item *it, const char *event, Elm_Object_Item_Smart_Cb func);

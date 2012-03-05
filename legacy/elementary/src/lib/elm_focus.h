@@ -120,7 +120,7 @@ EAPI Eina_Bool            elm_object_focus_get(const Evas_Object *obj);
 EAPI void                 elm_object_focus_set(Evas_Object *obj, Eina_Bool focus);
 
 /**
- * Set the ability for an Elmentary object to be focused
+ * Set the ability for an Elementary object to be focused
  *
  * @param obj The Elementary object to operate on
  * @param enable @c EINA_TRUE if the object can be focused, @c

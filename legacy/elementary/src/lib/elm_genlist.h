@@ -1131,7 +1131,7 @@ EAPI unsigned int elm_genlist_items_count(const Evas_Object *obj);
  *
  * This adds genlist item class for the genlist widget. When adding a item,
  * genlist_item_{append, prepend, insert} function needs item class of the item.
- * Given callback paramters are used at retrieving {text, content} of
+ * Given callback parameters are used at retrieving {text, content} of
  * added item. Set as NULL if it's not used.
  * If there's no available memory, return can be NULL.
  *
@@ -1514,7 +1514,7 @@ EAPI void                          elm_genlist_height_for_width_mode_set(Evas_Ob
  *
  * @ingroup Genlist
  */
-//XXX: API name is ambigious elm_genlist_mode_fixed_width_get() ?????
+//XXX: API name is ambiguous elm_genlist_mode_fixed_width_get() ?????
 EAPI Eina_Bool                     elm_genlist_height_for_width_mode_get(const Evas_Object *obj);
 
 /**

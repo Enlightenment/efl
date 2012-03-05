@@ -80,7 +80,7 @@ struct _Elm_Entry_Anchorview_Info
 };
 
 /**
- * Add a new Anchorview object
+ * Add a new Anchorview object to the parent.
  *
  * @param parent The parent object
  * @return The new object or NULL if it cannot be created
@@ -113,7 +113,7 @@ EAPI Evas_Object                *elm_anchorview_hover_parent_get(const Evas_Obje
 /**
  * Set the style that the hover should use
  *
- * When creating the popup hover, anchorview will request that it's
+ * When creating the popup hover, anchorview will request that it is
  * themed according to @p style.
  *
  * @param obj The anchorview object
@@ -124,7 +124,7 @@ EAPI Evas_Object                *elm_anchorview_hover_parent_get(const Evas_Obje
 EAPI void                        elm_anchorview_hover_style_set(Evas_Object *obj, const char *style);
 
 /**
- * Get the style that the hover should use
+ * Get the style that the hover uses.
  *
  * Get the style the hover created by anchorview will use.
  *
@@ -161,9 +161,9 @@ EAPI void                        elm_anchorview_hover_end(Evas_Object *obj);
 EAPI void                        elm_anchorview_bounce_set(Evas_Object *obj, Eina_Bool h_bounce, Eina_Bool v_bounce);
 
 /**
- * Get the set bouncing behaviour of the internal scroller
+ * Get the bouncing behaviour of the internal scroller
  *
- * Get whether the internal scroller should bounce when the edge of each
+ * Get whether the internal scroller will bounce when the edge of each
  * axis is reached scrolling.
  *
  * @param obj The anchorview object

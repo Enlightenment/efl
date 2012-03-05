@@ -196,7 +196,7 @@ EAPI void                 elm_video_audio_level_set(Evas_Object *video, double v
  * Elm_Video object.
  *
  * @param video The video object.
- * @return the time(in seconds) since the beginnig of the media file.
+ * @return the time(in seconds) since the beginning of the media file.
  *
  * @ingroup Video
  */
@@ -207,7 +207,7 @@ EAPI double               elm_video_play_position_get(const Evas_Object *video);
  * Elm_Video object.
  *
  * @param video The video object.
- * @param position the time(in seconds) since the beginnig of the media file.
+ * @param position the time(in seconds) since the beginning of the media file.
  *
  * @ingroup Video
  */
@@ -248,7 +248,7 @@ EAPI void                 elm_video_remember_position_set(Evas_Object *video, Ei
 EAPI Eina_Bool            elm_video_remember_position_get(const Evas_Object *video);
 
 /**
- * @brief Get the title (for ex. dvd title) from this emotion object.
+ * @brief Get the title (for ex. DVD title) from this emotion object.
  *
  * @param video The Elm_Video object.
  * @return A string containing the title.

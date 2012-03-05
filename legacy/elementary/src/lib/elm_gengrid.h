@@ -835,7 +835,7 @@ EAPI const Elm_Gengrid_Item_Class *elm_gengrid_item_item_class_get(const Elm_Obj
 //XXX: Let's add
 //EAPI int                           elm_gengrid_item_index_get(const Elm_Object_Item *it);
 //EAPI void                          elm_gengrid_realized_items_update(Evas_Object *obj);
-//EAPI unsigned iint elm_gengrid_items_count(const Evas_Object *obj);
+//EAPI unsigned int elm_gengrid_items_count(const Evas_Object *obj);
 
 #define ELM_GENGRID_ITEM_CLASS_VERSION 2 /* current version number */
 
@@ -846,7 +846,7 @@ EAPI const Elm_Gengrid_Item_Class *elm_gengrid_item_item_class_get(const Elm_Obj
  *
  * This adds gengrid item class for the gengrid widget. When adding a item,
  * gengrid_item_{append, prepend, insert} function needs item class of the item.
- * Given callback paramters are used at retrieving {text, content} of
+ * Given callback parameters are used at retrieving {text, content} of
  * added item. Set as NULL if it's not used.
  * If there's no available memory, return can be NULL.
  *
