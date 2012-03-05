@@ -122,134 +122,169 @@ sudo make install
  */
 
 /**
-   @page Ecore_Main_Loop_Page The Ecore Main Loop
-
-   @section intro What is Ecore?
-
-   Ecore is a clean and tiny event loop library with many modules to do lots of
-   convenient things for a programmer, to save time and effort.
-
-   It's small and lean, designed to work on embedded systems all the way to
-   large and powerful multi-cpu workstations. It serialises all system signals,
-   events etc. into a single event queue, that is easily processed without
-   needing to worry about concurrency. A properly written, event-driven program
-   using this kind of programming doesn't need threads, nor has to worry about
-   concurrency. It turns a program into a state machine, and makes it very
-   robust and easy to follow.
-
-   Ecore gives you other handy primitives, such as timers to tick over for you
-   and call specified functions at particular times so the programmer can use
-   this to do things, like animate, or time out on connections or tasks that take
-   too long etc.
-
-   Idle handlers are provided too, as well as calls on entering an idle state
-   (often a very good time to update the state of the program). All events that
-   enter the system are passed to specific callback functions that the program
-   sets up to handle those events. Handling them is simple and other Ecore
-   modules produce more events on the queue, coming from other sources such as
-   file descriptors etc.
-
-   Ecore also lets you have functions called when file descriptors become active
-   for reading or writing, allowing for streamlined, non-blocking IO.
-
-   Here is an example of a simple program and its basic event loop flow:
-
-   @image html  prog_flow.png
-   @image latex prog_flow.eps width=\textwidth
-
-
-
-   @section work How does Ecore work?
-
-   Ecore is very easy to learn and use. All the function calls are designed to
-   be easy to remember, explicit in describing what they do, and heavily
-   name-spaced. Ecore programs can start and be very simple.
-
-   For example:
-
-   @code
-   #include <Ecore.h>
-
-   int
-   main(int argc, const char **argv)
-   {
-   ecore_init();
-   ecore_app_args_set(argc, argv);
-   ecore_main_loop_begin();
-   ecore_shutdown();
-   return 0;
-   }
-   @endcode
-
-   This program is very simple and doesn't check for errors, but it does start up
-   and begin a main loop waiting for events or timers to tick off. This program
-   doesn't set up any, but now we can expand on this simple program a little
-   more by adding some event handlers and timers.
-
-   @code
-   #include <Ecore.h>
-
-   Ecore_Timer         *timer1     = NULL;
-   Ecore_Event_Handler *handler1   = NULL;
-   double               start_time = 0.0;
-
-   int
-   timer_func(void *data)
-   {
-   printf("Tick timer. Sec: %3.2f\n", ecore_time_get() - start_time);
-   return 1;
-   }
-
-   int
-   exit_func(void *data, int ev_type, void *ev)
-   {
-   Ecore_Event_Signal_Exit *e;
-
-   e = (Ecore_Event_Signal_Exit *)ev;
-   if (e->interrupt)      printf("Exit: interrupt\n");
-   else if (e->quit)      printf("Exit: quit\n");
-   else if (e->terminate) printf("Exit: terminate\n");
-   ecore_main_loop_quit();
-   return 1;
-   }
-
-   int
-   main(int argc, const char **argv)
-   {
-   ecore_init();
-   ecore_app_args_set(argc, argv);
-   start_time = ecore_time_get();
-   handler1 = ecore_event_handler_add(ECORE_EVENT_SIGNAL_EXIT, exit_func, NULL);
-   timer1 = ecore_timer_add(0.5, timer_func, NULL);
-   ecore_main_loop_begin();
-   ecore_shutdown();
-   return 0;
-   }
-   @endcode
-
-   In the previous example, we initialize our application and get the time at
-   which our program has started so we can calculate an offset. We set
-   up a timer to tick off in 0.5 seconds, and since it returns 1, will
-   keep ticking off every 0.5 seconds until it returns 0, or is deleted
-   by hand. An event handler is set up to call a function -
-   exit_func(),
-   whenever an event of type ECORE_EVENT_SIGNAL_EXIT is received (CTRL-C
-   on the command line will cause such an event to happen). If this event
-   occurs it tells you what kind of exit signal was received, and asks
-   the main loop to quit when it is finished by calling
-   ecore_main_loop_quit().
-
-   The handles returned by ecore_timer_add() and
-   ecore_event_handler_add() are
-   only stored here as an example. If you don't need to address the timer or
-   event handler again you don't need to store the result, so just call the
-   function, and don't assign the result to any variable.
-
-   This program looks slightly more complex than needed to do these simple
-   things, but in principle, programs don't get any more complex. You add more
-   event handlers, for more events, will have more timers and such, BUT it all
-   follows the same principles as shown in this example.
-
+ * @page Ecore_Main_Loop_Page The Ecore Main Loop
+ *
+ * @section intro What is Ecore?
+ *
+ * Ecore is a clean and tiny event loop library with many modules to do lots of
+ * convenient things for a programmer, to save time and effort. It's small and
+ * lean, designed to work from embedded systems all the way up to large and
+ * powerful multi-cpu workstations. The main loop has a number of primitives to
+ * be used with its main loop. It serializes all the primitives and allows for
+ * great responsiveness without the need for threads(or any other concurrency).
+ *
+ * @subsection timers Timers
+ *
+ * Timers serve two main purposes: doing something at a specified time and
+ * repeatedly doing something with a set interval.
+ * @see Ecore_Time_Group
+ *
+ * @subsection poolers Poolers
+ *
+ * Poolers allow for pooling to be centralized into a single place therefore
+ * alleviating the need for different parts of the program to wake up at
+ * different times to do pooling, thereby making the code simpler and more
+ * efficient.
+ * @see Ecore_Poller_Group
+ *
+ * @subsection idler Idlers
+ *
+ * There are three types of idlers, enterers, idlers(proper) and exiters, they
+ * are called, respectively, when the program is about to enter an idle state,
+ * when the program is idle and when the program is leaving an idle state. Idler
+ * enterers are usually a good place to update the program state. Proper idlers
+ * are the appropriate place to do heavy computational tasks thereby using what
+ * would otherwise be wasted CPU cycles. Exiters are the perfect place to do
+ * anything your program should do just before processing events(also timers,
+ * poolers, file descriptor handlers and animators)
+ * @see Ecore_Idle_Group
+ *
+ * @subsection fd_handler File descriptor handlers
+ *
+ * File descriptor handlers allow you to monitor when there is data available to
+ * read on file descriptors, when writing will not block or if there was an
+ * error. Any valid file descriptor can be used with this API, regardless of if
+ * was gotten with an OS specific API or from ecore.
+ * @see Ecore_FD_Handler_Group
+ *
+ * @subsection animators Animators
+ *
+ * Ecore provides a facility called animators, so named since the intended use
+ * was in animations, that facilitates knowing what percentage of a given
+ * interval has elapsed. This is perfect for performing animations, but is not
+ * limited to that use, it can, for example, also be used to create a progress
+ * bar.
+ * @see Ecore_Animator_Group
+ *
+ * @subsection ev_handlers Event handlers
+ *
+ * Event handlers are, arguably, the most important feature of the ecore main
+ * loop, they are what allows the programmer to easily handle user interaction.
+ * Events however are not only things the user does, events can represent
+ * anything for which a type is created.
+ * @see Ecore_Event_Group
+ *
+ * All of these primitives are discussed in more detail in their respective
+ * pages linked above.
+ *
+ * Here is a diagram of the main loop flow of a simple program:
+ *
+ * @image html  prog_flow.png
+ * @image latex prog_flow.eps width=\textwidth
+ *
+ *
+ *
+ * @section work How does Ecore work?
+ *
+ * Ecore is very easy to learn and use. All the function calls are designed to
+ * be easy to remember, explicit in describing what they do, and heavily
+ * name-spaced. Ecore programs can start and be very simple.
+ *
+ * For example:
+ *
+ * @code
+ * #include <Ecore.h>
+ *
+ * int
+ * main(int argc, const char **argv)
+ * {
+ *    ecore_init();
+ *    ecore_app_args_set(argc, argv);
+ *    ecore_main_loop_begin();
+ *    ecore_shutdown();
+ *    return 0;
+ * }
+ * @endcode
+ *
+ * This program is very simple and doesn't check for errors, but it does start up
+ * and begin a main loop waiting for events or timers to tick off. This program
+ * doesn't set up any, but now we can expand on this simple program a little
+ * more by adding some event handlers and timers.
+ *
+ * @code
+ * #include <Ecore.h>
+ *
+ * Ecore_Timer         *timer1     = NULL;
+ * Ecore_Event_Handler *handler1   = NULL;
+ * double               start_time = 0.0;
+ *
+ * int
+ * timer_func(void *data)
+ * {
+ *    printf("Tick timer. Sec: %3.2f\n", ecore_time_get() - start_time);
+ *    return 1;
+ * }
+ *
+ * int
+ * exit_func(void *data, int ev_type, void *ev)
+ * {
+ *    Ecore_Event_Signal_Exit *e;
+ *
+ *    e = (Ecore_Event_Signal_Exit *)ev;
+ *    if (e->interrupt)      printf("Exit: interrupt\n");
+ *    else if (e->quit)      printf("Exit: quit\n");
+ *    else if (e->terminate) printf("Exit: terminate\n");
+ *    ecore_main_loop_quit();
+ *    return 1;
+ * }
+ *
+ * int
+ * main(int argc, const char **argv)
+ * {
+ *    ecore_init();
+ *    ecore_app_args_set(argc, argv);
+ *    start_time = ecore_time_get();
+ *    handler1 = ecore_event_handler_add(ECORE_EVENT_SIGNAL_EXIT, exit_func, NULL);
+ *    timer1 = ecore_timer_add(0.5, timer_func, NULL);
+ *    ecore_main_loop_begin();
+ *    ecore_shutdown();
+ *    return 0;
+ * }
+ * @endcode
+ *
+ * In the previous example, we initialize our application and get the time at
+ * which our program has started so we can calculate an offset. We set
+ * up a timer to tick off in 0.5 seconds, and since it returns 1, will
+ * keep ticking off every 0.5 seconds until it returns 0, or is deleted
+ * by hand. An event handler is set up to call a function -
+ * exit_func(),
+ * whenever an event of type ECORE_EVENT_SIGNAL_EXIT is received (CTRL-C
+ * on the command line will cause such an event to happen). If this event
+ * occurs it tells you what kind of exit signal was received, and asks
+ * the main loop to quit when it is finished by calling
+ * ecore_main_loop_quit().
+ *
+ * The handles returned by ecore_timer_add() and
+ * ecore_event_handler_add() are
+ * only stored here as an example. If you don't need to address the timer or
+ * event handler again you don't need to store the result, so just call the
+ * function, and don't assign the result to any variable.
+ *
+ * This program looks slightly more complex than needed to do these simple
+ * things, but in principle, programs don't get any more complex. You add more
+ * event handlers, for more events, will have more timers and such, BUT it all
+ * follows the same principles as shown in this example.
+ *
  */
 
 /*
@@ -345,41 +380,15 @@ EAPI int ecore_shutdown(void);
  */
 
 /**
+ * @defgroup Ecore_Main_Loop_Group Ecore main loop
  *
- * @defgroup Ecore_Main_Loop_Group Ecore main loop functions
+ * This group discusses functions that are acting on Ecore's main loop itself or
+ * on events and infrastructure directly linked to it. Most programs only need
+ * to start and end the main loop, the rest of the function discussed here are
+ * meant to be used in special situations, and with great care.
  *
- * These are functions acting on Ecore's main loop itself or on
- * events and infrastructure directly linked to it. This loop is
- * designed to work on embedded systems all the way to large and
- * powerful multi-cpu workstations.
- *
- * It serialises all system signals and events into a single event
- * queue, that can be easily processed without needing to worry
- * about concurrency. A properly written, event-driven program
- * using this kind of programming does not need threads. It makes
- * the program very robust and easy to follow.
- *
- * For example, for the main loop to be of any use, you need to be
- * able to add @b events and event handlers on it. Events for file
- * descriptor events are covered in @ref Ecore_FD_Handler_Group.
- *
- * Timer functions are covered in @ref Ecore_Time_Group.
- *
- * There is also provision for callbacks for when the loop enters or
- * exits an @b idle state. See @ref Ecore_Idle_Group for more
- * information on it.
- *
- * Functions are also provided for spawning child processes using
- * @c fork(). See @ref Ecore_Exe_Group for more details on it.
- *
- * Here is an example of simple program and its basic event loop
- * flow:
- *
- * @image html prog_flow.png
- * @image latex prog_flow.eps width=\textwidth
- *
- * For examples of setting up and using a main loop, see
- * @ref Ecore_Main_Loop_Page.
+ * For details on the usage of ecore's main loop and how it interacts with other
+ * ecore facilities see: @ref Ecore_Main_Loop_Page.
  *
  * @{
  */
