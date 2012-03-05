@@ -1751,13 +1751,6 @@ elm_scroll_thumbscroll_sensitivity_friction_set(double friction)
 }
 
 EAPI void
-elm_scroll_thumbscroll_sensitivity_friction_all_set(double friction)
-{
-   elm_scroll_thumbscroll_sensitivity_friction_set(friction);
-   elm_config_all_flush();
-}
-
-EAPI void
 elm_object_scroll_hold_push(Evas_Object *obj)
 {
    EINA_SAFETY_ON_NULL_RETURN(obj);
