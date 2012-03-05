@@ -76,6 +76,9 @@ static const struct wl_data_device_listener _ecore_wl_data_listener =
    _ecore_wl_input_cb_data_selection
 };
 
+/* local variables */
+static int _pointer_x, _pointer_y;
+
 void 
 _ecore_wl_input_add(Ecore_Wl_Display *ewd, unsigned int id)
 {
@@ -125,6 +128,13 @@ _ecore_wl_input_del(Ecore_Wl_Input *input)
    free(input);
 }
 
+void 
+_ecore_wl_input_pointer_xy_get(int *x, int *y)
+{
+   if (x) *x = _pointer_x;
+   if (y) *y = _pointer_y;
+}
+
 /* local functions */
 static void 
 _ecore_wl_input_cb_motion(void *data, struct wl_input_device *input_device __UNUSED__, unsigned int timestamp, int sx, int sy)
@@ -134,6 +144,9 @@ _ecore_wl_input_cb_motion(void *data, struct wl_input_device *input_device __UNU
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
    if (!(input = data)) return;
+
+   _pointer_x = sx;
+   _pointer_y = sy;
 
    input->sx = sx;
    input->sy = sy;

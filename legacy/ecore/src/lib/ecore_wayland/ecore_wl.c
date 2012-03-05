@@ -309,15 +309,11 @@ ecore_wl_screen_size_get(int *w, int *h)
 
 /* @since 1.2 */
 EAPI void 
-ecore_wl_pointer_xy_get(Ecore_Wl_Window *win, int *x, int *y)
+ecore_wl_pointer_xy_get(int *x, int *y)
 {
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
-   if (x) *x = 0;
-   if (y) *y = 0;
-   if ((!win) || (!win->pointer_device)) return;
-   if (x) *x = win->pointer_device->sx;
-   if (y) *y = win->pointer_device->sy;
+   _ecore_wl_input_pointer_xy_get(x, y);
 }
 
 /* local functions */

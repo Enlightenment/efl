@@ -275,7 +275,7 @@ EAPI void ecore_wl_sync(void);
 EAPI struct wl_shm *ecore_wl_shm_get(void);
 EAPI struct wl_display *ecore_wl_display_get(void);
 EAPI void ecore_wl_screen_size_get(int *w, int *h);
-EAPI void ecore_wl_pointer_xy_get(Ecore_Wl_Window *win, int *x, int *y);
+EAPI void ecore_wl_pointer_xy_get(int *x, int *y);
 
 EAPI Ecore_Wl_Window *ecore_wl_window_new(Ecore_Wl_Window *parent, int x, int y, int w, int h, int buffer_type);
 EAPI void ecore_wl_window_free(Ecore_Wl_Window *win);
