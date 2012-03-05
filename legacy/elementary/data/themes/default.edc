@@ -366,6 +366,7 @@ collections {
 #include "widgets/video.edc"
 #include "widgets/naviframe.edc"
 #include "widgets/multibuttonentry.edc"
+#include "widgets/popup.edc"
 #include "ews.edc"
 #include "widgets/pointer.edc"
 }

@@ -54,6 +54,7 @@ elc_fileselector.h \
 elc_hoversel.h \
 elc_multibuttonentry.h \
 elc_naviframe.h \
+elc_popup.h \
 elm_actionslider.h \
 elm_app.h \
 elm_authors.h \
@@ -141,6 +142,7 @@ elm_priv.h \
 elc_anchorblock.c \
 elc_anchorview.c \
 elc_ctxpopup.c \
+elc_popup.c \
 elc_fileselector_button.c \
 elc_fileselector.c \
 elc_fileselector_entry.c \

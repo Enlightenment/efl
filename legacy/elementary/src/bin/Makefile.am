@@ -90,6 +90,7 @@ test_panel.c \
 test_panes.c \
 test_photo.c \
 test_photocam.c \
+test_popup.c \
 test_progressbar.c \
 test_radio.c \
 test_scaling.c \

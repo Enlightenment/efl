@@ -165,6 +165,7 @@ void test_3d(void *data, Evas_Object *obj, void *event_info);
 void test_naviframe(void *data, Evas_Object *obj, void *event_info);
 //void test_factory(void *data, Evas_Object *obj, void *event_info);
 void test_datetime(void *data, Evas_Object *obj, void *event_info);
+void test_popup(void *data, Evas_Object *obj, void *event_info);
 #ifdef HAVE_EMOTION
 void test_video(void *data, Evas_Object *obj, void *event_info);
 #endif
@@ -504,6 +505,7 @@ add_tests:
    ADD_TEST(NULL, "Popups", "Notify", test_notify);
    ADD_TEST(NULL, "Popups", "Tooltip", test_tooltip);
    ADD_TEST(NULL, "Popups", "Tooltip 2", test_tooltip2);
+   ADD_TEST(NULL, "Popups", "Popup", test_popup);
 
    //------------------------------//
    ADD_TEST(NULL, "Times & Dates", "Calendar", test_calendar);

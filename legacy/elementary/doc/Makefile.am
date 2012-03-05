@@ -73,6 +73,7 @@ WGT_PREVIEW = \
 	progressbar:preview-00.png:widget_preview_progressbar:150:50 \
 	box:preview-00.png:widget_preview_box:200:160 \
 	notify:preview-00.png:widget_preview_notify:60:30 \
+	popup:preview-00.png:widget_preview_popup:480:400 \
 	slideshow:preview-00.png:widget_preview_slideshow:50:50 \
 	photocam:preview-00.png:widget_preview_photocam:243:162 \
 	inwin:preview-00.png:widget_preview_inwin1:200:160 \

@@ -5187,6 +5187,46 @@
  */
 
 /**
+ * @page popup_example_01_c popup_example_01.c
+ * @include popup_example_01.c
+ *
+ * This example will initially look like this:
+ *
+ * @image html screenshots/popup_example_01.png
+ * @image latex screenshots/popup_example_01.eps width=\textwidth
+ *
+ * Once the popup is hidden after timeout:
+ *
+ * @image html screenshots/popup_example_01_a.png
+ * @image latex screenshots/popup_example_01_a.eps width=\textwidth
+ *
+ * @example popup_example_01.c
+ */
+
+ /** @page popup_example_02_c popup_example_02.c
+ * @include popup_example_02.c
+ *
+ * This example will look like this:
+ *
+ * @image html screenshots/popup_example_02.png
+ * @image latex screenshots/popup_example_02.eps width=\textwidth
+ *
+ * @example popup_example_02.c
+ */
+
+/**
+ * @page popup_example_03_c popup_example_03.c
+ * @include popup_example_03.c
+ *
+ * This example will look like this:
+ *
+ * @image html screenshots/popup_example_03.png
+ * @image latex screenshots/popup_example_03.eps width=\textwidth
+ *
+ * @example popup_example_03.c
+ */
+
+/**
  * @page tutorial_frame Frame example
  * @dontinclude frame_example_01.c
  *

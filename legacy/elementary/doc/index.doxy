@@ -180,6 +180,10 @@
  *
  * @image html img/widget/photocam/preview-00.png
  * @image latex img/widget/photocam/preview-00.eps
+ * @li @ref Popup
+ *
+ * @image html img/widget/popup/preview-00.png
+ * @image latex img/widget/popup/preview-00.eps
  * @li @ref Progressbar
  *
  * @image html img/widget/progressbar/preview-00.png

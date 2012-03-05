@@ -109,6 +109,9 @@ SRCS = \
 	progressbar_example.c \
 	notify_example_01.c \
 	photocam_example_01.c \
+	popup_example_01.c \
+	popup_example_02.c \
+	popup_example_03.c \
 	inwin_example.c \
 	scroller_example_01.c \
 	table_example_01.c \
@@ -218,6 +221,9 @@ examples_PROGRAMS += \
 	progressbar_example \
 	notify_example_01 \
 	photocam_example_01 \
+	popup_example_01 \
+	popup_example_02 \
+	popup_example_03 \
 	inwin_example \
 	scroller_example_01 \
 	table_example_01 \
@@ -303,6 +309,10 @@ SCREENSHOTS = \
 	progressbar_example:progressbar_example.png:0.0 \
 	notify_example_01:notify_example_01.png:0.0 \
 	notify_example_01:notify_example_01_a.png:6.0 \
+	popup_example_01:popup_example_01.png:1.0 \
+	popup_example_01:popup_example_01_a.png:6.0 \
+	popup_example_02:popup_example_02.png:0.2 \
+	popup_example_03:popup_example_03.png:0.2 \
 	slideshow_example:slideshow_example.png:1.0 \
 	photocam_example_01:photocam_example_01.png:3 \
 	scroller_example_01:scroller_example_01.png:0.0 \

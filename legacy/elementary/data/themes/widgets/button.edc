@@ -1,4 +1,5 @@
 group { name: "elm/button/base/default";
+   alias: "elm/button/base/popup_button/default";
    images {
       image: "bt_base1.png" COMP;
       image: "bt_base2.png" COMP;

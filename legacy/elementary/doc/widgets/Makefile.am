@@ -84,6 +84,7 @@ widget_preview_genlist5 \
 widget_preview_progressbar \
 widget_preview_box \
 widget_preview_notify \
+widget_preview_popup \
 widget_preview_slideshow \
 widget_preview_photocam \
 widget_preview_inwin1 \
@@ -150,6 +151,7 @@ EXTRA_DIST = \
 	widget_preview_layout.c \
 	widget_preview_list.c \
 	widget_preview_segment_control.c \
+	widget_preview_popup.c \
 	widget_preview_separator.c \
 	widget_preview_radio.c \
 	widget_preview_toggle.c \
