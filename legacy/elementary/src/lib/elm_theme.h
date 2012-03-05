@@ -302,15 +302,6 @@ EAPI void             elm_theme_flush(Elm_Theme *th);
 EAPI void             elm_theme_full_flush(void);
 
 /**
- * Set the theme for all elementary using applications on the current display
- *
- * @param theme The name of the theme to use. Format same as the ELM_THEME
- * environment variable.
- */
-//XXX: how about changing to elm_theme_set & elm_theme_flush & elm_config_all_flush? 
-EAPI void             elm_theme_all_set(const char *theme);
-
-/**
  * Return a list of theme elements in the theme search path
  *
  * @return A list of strings that are the theme element names.

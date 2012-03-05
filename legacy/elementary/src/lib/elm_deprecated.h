@@ -4766,5 +4766,14 @@ EINA_DEPRECATED EAPI void                  elm_win_transparent_set(Evas_Object *
 EINA_DEPRECATED EAPI Eina_Bool             elm_win_transparent_get(const Evas_Object *obj);
 
 /**
+ * Set the theme for all elementary using applications on the current display
+ *
+ * @param theme The name of the theme to use. Format same as the ELM_THEME
+ * environment variable.
+ * @deprecated Use elm_theme_set(NULL, theme); elm_config_all_flush(); instead.
+ */
+EINA_DEPRECATED EAPI void             elm_theme_all_set(const char *theme);
+
+/**
  * @}
  */

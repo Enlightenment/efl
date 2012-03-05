@@ -594,7 +594,7 @@ elm_theme_full_flush(void)
    elm_theme_flush(&(theme_default));
 }
 
-EAPI void
+EINA_DEPRECATED EAPI void
 elm_theme_all_set(const char *theme)
 {
    eina_stringshare_replace(&_elm_config->theme, theme);

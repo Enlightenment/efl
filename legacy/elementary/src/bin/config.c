@@ -1111,8 +1111,9 @@ _theme_use(void *data       __UNUSED__,
 
    th = elm_object_theme_get(sample);
    defth = elm_theme_get(th);
-   elm_theme_all_set(defth);
+   elm_theme_set(NULL, defth);
    elm_config_save();
+   elm_config_all_flush();
 }
 
 static void
@@ -3112,7 +3113,7 @@ elm_main(int    argc,
      }
    if (!interactive)
      {
-        if (theme_set) elm_theme_all_set(theme_set);
+        if (theme_set) elm_theme_set(NULL, theme_set);
         if (finger_size_set) elm_finger_size_set(atoi(finger_size_set));
         if (scale_set)  elm_scale_set(atof(scale_set));
 
