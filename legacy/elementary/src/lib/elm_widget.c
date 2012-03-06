@@ -670,7 +670,7 @@ elm_widget_theme(Evas_Object *obj)
    if (sd->hover_obj) ret &= elm_widget_theme(sd->hover_obj);
    EINA_LIST_FOREACH(sd->tooltips, l, tt) elm_tooltip_theme(tt);
    EINA_LIST_FOREACH(sd->cursors, l, cur) elm_cursor_theme(cur);
-   if (sd->theme_func) ret &= sd->theme_func(obj);
+   if (sd->theme_func) sd->theme_func(obj);
 
    return ret;
 }
