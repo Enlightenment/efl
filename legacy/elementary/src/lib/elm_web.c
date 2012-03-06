@@ -137,7 +137,8 @@ static const Evas_Smart_Cb_Description _elm_web_callback_names[] = {
    { "zoom,animated,end", "" },
    { NULL, NULL }
 };
-/* unused - disable to reduce warnings 
+
+#ifdef HAVE_ELEMENTARY_WEB
 static char *
 _webkit_theme_find(const Eina_List *list)
 {
@@ -155,7 +156,8 @@ _webkit_theme_find(const Eina_List *list)
 
    return NULL;
 }
-*/
+#endif
+
 static void
 _theme_hook(Evas_Object *obj)
 {
