@@ -97,7 +97,6 @@ static void _del_button_obj(Evas_Object *obj, Evas_Object *btn);
 static void _del_button_item(Elm_Multibuttonentry_Item *item);
 static void _select_button(Evas_Object *obj, Evas_Object *btn);
 static Elm_Object_Item *_add_button_item(Evas_Object *obj, const char *str, Multibuttonentry_Pos pos, const void *ref, void *data);
-static void _add_button(Evas_Object *obj, const char *str);
 static void _evas_mbe_key_up_cb(void *data, Evas *e, Evas_Object *obj, void *event_info);
 static void _entry_changed_cb(void *data, Evas_Object *obj, void *event_info);
 static void _entry_key_up_cb(void *data, Evas *e, Evas_Object *obj, void *event_info);
@@ -936,17 +935,6 @@ _add_button_item(Evas_Object *obj, const char *str, Multibuttonentry_Pos pos, co
    return (Elm_Object_Item *)item;
 }
 
-static void
-_add_button(Evas_Object *obj, const char *str)
-{
-   Widget_Data *wd = elm_widget_data_get(obj);
-   if (!wd) return;
-
-   //TODO This function either has a return or does not.
-   //WHICH ONE IS IT?
-   _add_button_item(obj, str, MULTIBUTTONENTRY_POS_END, NULL, NULL);
-}
-
 static Elm_Multibuttonentry_Item_Filter*
 _filter_new(Elm_Multibuttonentry_Item_Filter_callback func, void *data)
 {
@@ -1027,7 +1015,7 @@ _entry_key_up_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, vo
 
    if ((strcmp(str, "") != 0) && (strcmp(ev->keyname, "KP_Enter") == 0 || strcmp(ev->keyname, "Return") == 0 ))
      {
-        _add_button(data, str);
+        _add_button_item(data, str, MULTIBUTTONENTRY_POS_END, NULL, NULL);
         wd->n_str = 0;
      }
 }
@@ -1068,7 +1056,7 @@ _entry_focus_out_cb(void *data, Evas_Object *obj __UNUSED__, void *event_info __
 
    str = elm_object_text_get(wd->entry);
    if (strlen(str))
-     _add_button(data, str);
+     _add_button_item(data, str, MULTIBUTTONENTRY_POS_END, NULL, NULL);
 }
 
 static void
