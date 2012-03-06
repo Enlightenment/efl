@@ -182,7 +182,7 @@ EAPI extern Elm_Version *elm_version;
 #include <elm_clock.h>
 #include <elm_cnp.h> // OK
 #include <elm_colorselector.h> // OK
-#include <elm_config.h>
+#include <elm_config.h> // OK
 #include <elm_conform.h> // OK
 #include <elm_cursor.h> // OK
 #include <elm_datetime.h> // OK
