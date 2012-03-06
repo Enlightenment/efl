@@ -4964,6 +4964,29 @@ EINA_DEPRECATED EAPI int                        elm_multibuttonentry_shrink_mode
  * @deprecated elm_multibuttonentry_expanded_set()
  */
 EINA_DEPRECATED EAPI void                       elm_multibuttonentry_shrink_mode_set(Evas_Object *obj, int shrink_mode);
+
+/**
+ * Get the guide text
+ *
+ * @param obj The multibuttonentry object
+ * @return The guide text, or NULL if none
+ *
+ * @ingroup Multibuttonentry
+ * @deprecated Please use elm_object_part_text_get(obj, "guide");
+ */
+EINA_DEPRECATED EAPI const char                *elm_multibuttonentry_guide_text_get(const Evas_Object *obj);
+
+/**
+ * Set the guide text
+ *
+ * @param obj The multibuttonentry object
+ * @param guidetext The guide text string
+ *
+ * @ingroup Multibuttonentry
+ * @deprecated Please use elm_object_part_text_set(obj, "guide", guidetext);
+ */
+EINA_DEPRECATED EAPI void                       elm_multibuttonentry_guide_text_set(Evas_Object *obj, const char *guidetext);
+
 /**
  * @}
  */

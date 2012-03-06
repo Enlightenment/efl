@@ -42,11 +42,6 @@
  *
  */
 
-/* XXX:
- * 2. name sucks
- * 3. should use the elm_object_part_text_set to set guide text.
- * 5. bugs: offset bug with the "tap to add recipient" */
-
 /**
  * @addtogroup Multibuttonentry
  * @{
@@ -75,26 +70,6 @@ EAPI Evas_Object               *elm_multibuttonentry_add(Evas_Object *parent);
  * @ingroup Multibuttonentry
  */
 EAPI Evas_Object               *elm_multibuttonentry_entry_get(const Evas_Object *obj);
-
-/**
- * Get the guide text
- *
- * @param obj The multibuttonentry object
- * @return The guide text, or NULL if none
- *
- * @ingroup Multibuttonentry
- */
-EAPI const char                *elm_multibuttonentry_guide_text_get(const Evas_Object *obj);
-
-/**
- * Set the guide text
- *
- * @param obj The multibuttonentry object
- * @param guidetext The guide text string
- *
- * @ingroup Multibuttonentry
- */
-EAPI void                       elm_multibuttonentry_guide_text_set(Evas_Object *obj, const char *guidetext);
 
 /**
  * Get the value of expanded state.

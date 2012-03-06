@@ -66,6 +66,8 @@ struct _Widget_Data
      Eina_List *items;
      Eina_List *current;
      Eina_List *filter_list;
+     
+     const char *labeltxt, *guidetexttxt;
 
      int n_str;
      Multibuttonentry_View_State view_state;
@@ -136,10 +138,12 @@ _del_hook(Evas_Object *obj)
      }
    wd->current = NULL;
 
-   if (wd->entry) evas_object_del (wd->entry);
-   if (wd->label) evas_object_del (wd->label);
-   if (wd->guidetext) evas_object_del (wd->guidetext);
-   if (wd->end) evas_object_del (wd->end);
+   if (wd->labeltxt) eina_stringshare_del(wd->labeltxt);
+   if (wd->guidetexttxt) eina_stringshare_del(wd->guidetexttxt);
+   if (wd->entry) evas_object_del(wd->entry);
+   if (wd->label) evas_object_del(wd->label);
+   if (wd->guidetext) evas_object_del(wd->guidetext);
+   if (wd->end) evas_object_del(wd->end);
    if (wd->rect_for_end) evas_object_del(wd->rect_for_end);
 }
 
@@ -153,13 +157,13 @@ _theme_hook(Evas_Object *obj)
    if (!wd) return;
 
    _elm_theme_object_set(obj, wd->base, "multibuttonentry", "base", elm_widget_style_get(obj));
-   if (wd->box) edje_object_part_swallow (wd->base, "box.swallow", wd->box);
+   if (wd->box) edje_object_part_swallow(wd->base, "box.swallow", wd->box);
    edje_object_scale_set(wd->base, elm_widget_scale_get(obj) * _elm_config->scale);
 
    EINA_LIST_FOREACH(wd->items, l, item)
      {
         if (item->button)
-          _elm_theme_object_set(obj, item->button, "multibuttonentry", "btn", elm_widget_style_get (obj));
+          _elm_theme_object_set(obj, item->button, "multibuttonentry", "btn", elm_widget_style_get(obj));
         edje_object_scale_set(item->button, elm_widget_scale_get(obj) * _elm_config->scale);
      }
 
@@ -264,8 +268,8 @@ _resize_cb(void *data, Evas *evas __UNUSED__, Evas_Object *obj __UNUSED__, void 
    if (!wd) return;
    evas_object_geometry_get(wd->box, NULL, NULL, &w, &h);
 
-   if (wd->h_box < h) evas_object_smart_callback_call (data, "expanded", NULL);
-   else if (wd->h_box > h) evas_object_smart_callback_call (data, "contracted", NULL);
+   if (wd->h_box < h) evas_object_smart_callback_call(data, "expanded", NULL);
+   else if (wd->h_box > h) evas_object_smart_callback_call(data, "contracted", NULL);
 
    wd->w_box = w;
    wd->h_box = h;
@@ -550,6 +554,7 @@ _set_label(Evas_Object *obj, const char *str)
    Widget_Data *wd = elm_widget_data_get(obj);
 
    if (!wd || !str) return;
+   eina_stringshare_replace(&wd->labeltxt, str);
    if (wd->label)
    {
       Evas_Coord width, height, sum_width = 0;
@@ -590,8 +595,9 @@ _set_guidetext(Evas_Object *obj, const char *str)
 
    if (!wd || !str) return;
 
-   if (wd->guidetext==NULL)
-     wd->guidetext = edje_object_add(evas_object_evas_get (obj));
+   eina_stringshare_replace(&wd->guidetexttxt, str);
+   if (wd->guidetext == NULL)
+     wd->guidetext = edje_object_add(evas_object_evas_get(obj));
 
    if (wd->guidetext)
      {
@@ -1097,7 +1103,7 @@ _view_init(Evas_Object *obj)
 
    if (!wd->box)
      {
-        wd->box = elm_box_add (obj);
+        wd->box = elm_box_add(obj);
         if (!wd->box) return;
         elm_widget_sub_object_add(obj, wd->box);
         elm_box_layout_set(wd->box, _box_layout_cb, NULL, NULL);
@@ -1115,7 +1121,7 @@ _view_init(Evas_Object *obj)
 
    if (!wd->entry)
      {
-        wd->entry = elm_entry_add (obj);
+        wd->entry = elm_entry_add(obj);
         if (!wd->entry) return;
         elm_entry_single_line_set(wd->entry, EINA_TRUE);
         elm_object_text_set(wd->entry, "");
@@ -1123,7 +1129,7 @@ _view_init(Evas_Object *obj)
         evas_object_size_hint_min_set(wd->entry, MIN_W_ENTRY, 0);
         evas_object_size_hint_weight_set(wd->entry, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
         evas_object_size_hint_align_set(wd->entry, EVAS_HINT_FILL, EVAS_HINT_FILL);
-        if (wd->box) elm_box_pack_end (wd->box, wd->entry);
+        if (wd->box) elm_box_pack_end(wd->box, wd->entry);
         evas_object_show(wd->entry);
         wd->view_state = MULTIBUTTONENTRY_VIEW_ENTRY;
      }
@@ -1135,7 +1141,7 @@ _view_init(Evas_Object *obj)
         end_type = edje_object_data_get(wd->base, "closed_button_type");
         if (!end_type || !strcmp(end_type, "label"))
           {
-             wd->end = elm_label_add (obj);
+             wd->end = elm_label_add(obj);
              if (!wd->end) return;
              elm_object_style_set(wd->end, "extended/multibuttonentry_default");
              wd->end_type = MULTIBUTTONENTRY_CLOSED_LABEL;
@@ -1358,9 +1364,16 @@ static void
 _text_set_hook(Evas_Object *obj, const char *part, const char *label)
 {
    ELM_CHECK_WIDTYPE(obj, widtype);
-   if (part && strcmp(part, "default")) return;
-   if (label) _set_label(obj, label);
-   else  _set_label(obj, "");
+   if (!part || !strcmp(part, "default"))
+     {
+        if (label) _set_label(obj, label);
+        else _set_label(obj, "");
+     }
+   else if (!strcmp(part, "guide"))
+     {
+        if (label) _set_guidetext(obj, label);
+        else _set_guidetext(obj, "");
+     }
 }
 
 static const char *
@@ -1368,10 +1381,14 @@ _text_get_hook(const Evas_Object *obj, const char *part)
 {
    ELM_CHECK_WIDTYPE(obj, widtype) NULL;
    Widget_Data *wd;
-   if (part && strcmp(part, "default")) return NULL;
-   wd = elm_widget_data_get(obj);
-   if (!wd) return NULL;
-   if (wd->label) return edje_object_part_text_get(wd->label, "mbe.label");
+   if (!part || !strcmp(part, "default"))
+     {
+        return wd->labeltxt;
+     }
+   else if (!strcmp(part, "guide"))
+     {
+        return wd->guidetexttxt;
+     }
    return NULL;
 }
 
@@ -1427,19 +1444,19 @@ elm_multibuttonentry_entry_get(const Evas_Object *obj)
    return wd->entry;
 }
 
-EAPI const char *
+EINA_DEPRECATED EAPI const char *
 elm_multibuttonentry_label_get(const Evas_Object *obj)
 {
    return _text_get_hook(obj, NULL);
 }
 
-EAPI void
+EINA_DEPRECATED EAPI void
 elm_multibuttonentry_label_set(Evas_Object *obj, const char *label)
 {
    _text_set_hook(obj, NULL, label);
 }
 
-EAPI const char *
+EINA_DEPRECATED EAPI const char *
 elm_multibuttonentry_guide_text_get(const Evas_Object *obj)
 {
    ELM_CHECK_WIDTYPE(obj, widtype) NULL;
@@ -1450,7 +1467,7 @@ elm_multibuttonentry_guide_text_get(const Evas_Object *obj)
    return NULL;
 }
 
-EAPI void
+EINA_DEPRECATED EAPI void
 elm_multibuttonentry_guide_text_set(Evas_Object *obj, const char *guidetext)
 {
    ELM_CHECK_WIDTYPE(obj, widtype);
@@ -1700,7 +1717,7 @@ elm_multibuttonentry_item_filter_append(Evas_Object *obj, Elm_Multibuttonentry_I
 
    EINA_LIST_FOREACH(wd->filter_list, l, _item_filter)
      {
-        if ( _item_filter && ((_item_filter->callback_func == func) && (_item_filter->data == data)))
+        if (_item_filter && ((_item_filter->callback_func == func) && (_item_filter->data == data)))
           {
              printf("Already Registered this item filter!!!!\n");
              return;
