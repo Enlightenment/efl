@@ -43,7 +43,6 @@
  */
 
 /* XXX:
- * 1. docs are lacking.
  * 2. name sucks
  * 3. should use the elm_object_part_text_set to set guide text.
  * 5. bugs: offset bug with the "tap to add recipient" */
