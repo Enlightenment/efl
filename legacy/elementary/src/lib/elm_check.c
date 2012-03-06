@@ -445,38 +445,6 @@ elm_check_add(Evas_Object *parent)
 }
 
 EAPI void
-elm_check_states_labels_set(Evas_Object *obj, const char *ontext, const char *offtext)
-{
-   _elm_check_label_set(obj, "on", ontext);
-   _elm_check_label_set(obj, "off", offtext);
-}
-
-EAPI void
-elm_check_states_labels_get(const Evas_Object *obj, const char **ontext, const char **offtext)
-{
-   if (ontext) *ontext = _elm_check_label_get(obj, "on");
-   if (offtext) *offtext = _elm_check_label_get(obj, "off");
-}
-
-EAPI void
-elm_check_icon_set(Evas_Object *obj, Evas_Object *icon)
-{
-   _content_set_hook(obj, "icon", icon);
-}
-
-EAPI Evas_Object *
-elm_check_icon_get(const Evas_Object *obj)
-{
-   return _content_get_hook(obj, "icon");
-}
-
-EAPI Evas_Object *
-elm_check_icon_unset(Evas_Object *obj)
-{
-   return _content_unset_hook(obj, "icon");
-}
-
-EAPI void
 elm_check_state_set(Evas_Object *obj, Eina_Bool state)
 {
    ELM_CHECK_WIDTYPE(obj, widtype);
