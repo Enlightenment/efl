@@ -1017,12 +1017,12 @@ elm_object_content_part_unset(Evas_Object *obj, const char *part)
    return elm_widget_content_part_unset(obj, part);
 }
 
-EAPI void
+EAPI Eina_Bool
 elm_object_style_set(Evas_Object *obj,
                      const char  *style)
 {
-   EINA_SAFETY_ON_NULL_RETURN(obj);
-   elm_widget_style_set(obj, style);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(obj, EINA_FALSE);
+   return elm_widget_style_set(obj, style);
 }
 
 EAPI const char *

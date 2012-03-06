@@ -655,7 +655,7 @@ elm_widget_signal_callback_del_hook_set(Evas_Object *obj,
    sd->callback_del_func = func;
 }
 
-EAPI void
+EAPI Eina_Bool
 elm_widget_theme(Evas_Object *obj)
 {
    const Eina_List *l;
@@ -663,13 +663,15 @@ elm_widget_theme(Evas_Object *obj)
    Elm_Tooltip *tt;
    Elm_Cursor *cur;
 
-   API_ENTRY return;
+   API_ENTRY return EINA_FALSE;
    EINA_LIST_FOREACH(sd->subobjs, l, child) elm_widget_theme(child);
    if (sd->resize_obj) elm_widget_theme(sd->resize_obj);
    if (sd->hover_obj) elm_widget_theme(sd->hover_obj);
    EINA_LIST_FOREACH(sd->tooltips, l, tt) elm_tooltip_theme(tt);
    EINA_LIST_FOREACH(sd->cursors, l, cur) elm_cursor_theme(cur);
    if (sd->theme_func) sd->theme_func(obj);
+
+   return EINA_TRUE;
 }
 
 EAPI void
@@ -2491,14 +2493,16 @@ elm_widget_theme_get(const Evas_Object *obj)
    return sd->theme;
 }
 
-EAPI void
+EAPI Eina_Bool
 elm_widget_style_set(Evas_Object *obj,
                      const char  *style)
 {
-   API_ENTRY return;
+   API_ENTRY return EINA_FALSE;
 
    if (eina_stringshare_replace(&sd->style, style))
-     elm_widget_theme(obj);
+     return elm_widget_theme(obj);
+
+   return EINA_TRUE;
 }
 
 EAPI const char *

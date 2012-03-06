@@ -306,7 +306,7 @@ EAPI void             elm_widget_changed_hook_set(Evas_Object *obj, void (*func)
 EAPI void             elm_widget_signal_emit_hook_set(Evas_Object *obj, void (*func)(Evas_Object *obj, const char *emission, const char *source));
 EAPI void             elm_widget_signal_callback_add_hook_set(Evas_Object *obj, void (*func)(Evas_Object *obj, const char *emission, const char *source, Edje_Signal_Cb func_cb, void *data));
 EAPI void             elm_widget_signal_callback_del_hook_set(Evas_Object *obj, void (*func)(Evas_Object *obj, const char *emission, const char *source, Edje_Signal_Cb func_cb, void *data));
-EAPI void             elm_widget_theme(Evas_Object *obj);
+EAPI Eina_Bool        elm_widget_theme(Evas_Object *obj);
 EAPI void             elm_widget_theme_specific(Evas_Object *obj, Elm_Theme *th, Eina_Bool force);
 EAPI void             elm_widget_translate(Evas_Object *obj);
 EAPI void             elm_widget_focus_next_hook_set(Evas_Object *obj, Eina_Bool (*func)(const Evas_Object *obj, Elm_Focus_Direction dir, Evas_Object **next));
@@ -404,7 +404,7 @@ EAPI Eina_Bool        elm_widget_mirrored_automatic_get(const Evas_Object *obj);
 EAPI void             elm_widget_mirrored_automatic_set(Evas_Object *obj, Eina_Bool automatic);
 EAPI void             elm_widget_theme_set(Evas_Object *obj, Elm_Theme *th);
 EAPI Elm_Theme       *elm_widget_theme_get(const Evas_Object *obj);
-EAPI void             elm_widget_style_set(Evas_Object *obj, const char *style);
+EAPI Eina_Bool        elm_widget_style_set(Evas_Object *obj, const char *style);
 EAPI const char      *elm_widget_style_get(const Evas_Object *obj);
 EAPI void             elm_widget_type_set(Evas_Object *obj, const char *type);
 EAPI const char      *elm_widget_type_get(const Evas_Object *obj);

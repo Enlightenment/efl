@@ -116,14 +116,15 @@ EAPI Evas_Object                 *elm_object_name_find(const Evas_Object *obj, c
  */
 
 /**
- * Set the style to use by a widget
- *
- * Sets the style name that will define the appearance of a widget. Styles
- * vary from widget to widget and may also be defined by other themes
- * by means of extensions and overlays.
+ * Set the style to used by a given widget
  *
  * @param obj The Elementary widget to style
- * @param style The style name to use
+ * @param style The name of the style to use on it
+ * @return @c EINA_TRUE on success, @c EINA_FALSE otherwise
+ *
+ * This sets the style (by name) that will define the appearance of a
+ * widget. Styles vary from widget to widget and may also be defined
+ * by other themes by means of extensions and overlays.
  *
  * @see elm_theme_extension_add()
  * @see elm_theme_extension_del()
@@ -132,7 +133,7 @@ EAPI Evas_Object                 *elm_object_name_find(const Evas_Object *obj, c
  *
  * @ingroup Styles
  */
-EAPI void         elm_object_style_set(Evas_Object *obj, const char *style);
+EAPI Eina_Bool    elm_object_style_set(Evas_Object *obj, const char *style);
 
 /**
  * Get the style used by the widget
