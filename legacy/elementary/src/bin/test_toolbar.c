@@ -840,7 +840,7 @@ test_toolbar7(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_in
 void
 test_toolbar8(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
-   Evas_Object *win, *bg, *bx, *tb, *ph, *menu;
+   Evas_Object *win, *bg, *bx, *tb, *ph, *sl, *menu;
    Evas_Object *ph1, *ph2, *ph3, *ph4;
    Elm_Object_Item *item;
    Elm_Object_Item *menu_it;
@@ -861,7 +861,7 @@ test_toolbar8(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_in
    evas_object_show(bx);
 
    tb = elm_toolbar_add(win);
-   elm_toolbar_homogeneous_set(tb, EINA_TRUE);
+   elm_toolbar_homogeneous_set(tb, EINA_FALSE);
    elm_toolbar_shrink_mode_set(tb, ELM_TOOLBAR_SHRINK_EXPAND);
    evas_object_size_hint_weight_set(tb, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(tb, EVAS_HINT_FILL, EVAS_HINT_FILL);
@@ -880,6 +880,11 @@ test_toolbar8(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_in
 
    item = elm_toolbar_item_append(tb, "object-rotate-right", "H", tb_3, ph4);
    elm_toolbar_item_priority_set(item, -150);
+
+   sl = elm_slider_add(win);
+   evas_object_size_hint_min_set(sl, 100, 50);
+   item = elm_toolbar_item_append(tb, NULL, NULL, NULL, NULL);
+   elm_object_item_part_content_set(item, "object", sl);
 
    item = elm_toolbar_item_append(tb, "mail-send", "Comes", tb_4, ph4);
    elm_toolbar_item_priority_set(item, -200);

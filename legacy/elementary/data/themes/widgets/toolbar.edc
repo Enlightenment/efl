@@ -674,3 +674,14 @@ group { name: "elm/toolbar/separator/default";
    }
 }
 
+group { name: "elm/toolbar/object/default";
+   parts {
+      part { name: "elm.swallow.object"; // object group
+	     type: SWALLOW;
+         description {
+			 state: "default" 0.0;
+         }
+      }
+   }
+}
+
