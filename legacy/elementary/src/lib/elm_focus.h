@@ -181,7 +181,7 @@ EAPI void                 elm_object_focus_next(Evas_Object *obj, Elm_Focus_Dire
  * (or focusable).
  *
  * @param obj The Elementary object to operate on
- * @param tree_unfocusable @c EINA_TRUE for unfocusable,
+ * @param unfocusable @c EINA_TRUE for unfocusable,
  *        @c EINA_FALSE for focusable.
  *
  * This sets whether the object @p obj and its children objects
@@ -192,24 +192,22 @@ EAPI void                 elm_object_focus_next(Evas_Object *obj, Elm_Focus_Dire
  * want to get focus (by focus reverting or by other focus controls).
  * Then, just use this API before deleting.
  *
- * @see elm_object_tree_unfocusable_get()
+ * @see elm_object_tree_focus_allow_get()
  *
  * @ingroup Focus
  *
  */
- //XXX: How about elm_object_tree_focus_allow_set()?
-EAPI void                 elm_object_tree_unfocusable_set(Evas_Object *obj, Eina_Bool tree_unfocusable);
+EAPI void                 elm_object_tree_focus_allow_set(Evas_Object *obj, Eina_Bool unfocusable);
 
 /**
  * Get whether an Elementary object and its children are unfocusable or not.
  *
  * @param obj The Elementary object to get the information from
- * @return @c EINA_TRUE, if the tree is unfocussable,
+ * @return @c EINA_TRUE, if the tree is unfocusable,
  *         @c EINA_FALSE if not (and on errors).
  *
- * @see elm_object_tree_unfocusable_set()
+ * @see elm_object_tree_focus_allow_set()
  *
  * @ingroup Focus
  */
-//XXX: How about elm_object_tree_focus_allow_get()?
-EAPI Eina_Bool            elm_object_tree_unfocusable_get(const Evas_Object *obj);
+EAPI Eina_Bool            elm_object_tree_focus_allow_get(const Evas_Object *obj);

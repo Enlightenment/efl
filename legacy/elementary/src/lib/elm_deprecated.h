@@ -4998,5 +4998,41 @@ EINA_DEPRECATED EAPI const char                *elm_multibuttonentry_guide_text_
 EINA_DEPRECATED EAPI void                       elm_multibuttonentry_guide_text_set(Evas_Object *obj, const char *guidetext);
 
 /**
+ * Make the elementary object and its children to be unfocusable
+ * (or focusable).
+ *
+ * @param obj The Elementary object to operate on
+ * @param tree_unfocusable @c EINA_TRUE for unfocusable,
+ *        @c EINA_FALSE for focusable.
+ *
+ * This sets whether the object @p obj and its children objects
+ * are able to take focus or not. If the tree is set as unfocusable,
+ * newest focused object which is not in this tree will get focus.
+ * This API can be helpful for an object to be deleted.
+ * When an object will be deleted soon, it and its children may not
+ * want to get focus (by focus reverting or by other focus controls).
+ * Then, just use this API before deleting.
+ *
+ * @see elm_object_tree_unfocusable_get()
+ *
+ * @ingroup Focus
+ * @deprecated Please use elm_object_tree_unfocusable_set()
+ */
+EINA_DEPRECATED EAPI void                 elm_object_tree_unfocusable_set(Evas_Object *obj, Eina_Bool tree_unfocusable);
+
+/**
+ * Get whether an Elementary object and its children are unfocusable or not.
+ *
+ * @param obj The Elementary object to get the information from
+ * @return @c EINA_TRUE, if the tree is unfocussable,
+ *         @c EINA_FALSE if not (and on errors).
+ *
+ * @see elm_object_tree_unfocusable_set()
+ *
+ * @ingroup Focus
+ * @deprecated Please use elm_object_tree_unfocusable_get()
+ */
+EINA_DEPRECATED EAPI Eina_Bool            elm_object_tree_unfocusable_get(const Evas_Object *obj);
+/**
  * @}
  */
