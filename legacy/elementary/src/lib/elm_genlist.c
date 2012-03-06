@@ -66,7 +66,8 @@ struct Elm_Gen_Item_Type
    Eina_Bool                     queued : 1;
    Eina_Bool                     showme : 1;
    Eina_Bool                     updateme : 1;
-   Eina_Bool                     nocache : 1;
+   Eina_Bool                     nocache : 1; /* do not use cache for this item */
+   Eina_Bool                     nocache_once : 1; /* do not use cache for this item only once */
    Eina_Bool                     stacking_even : 1;
    Eina_Bool                     nostacking : 1;
    Eina_Bool                     move_effect_enabled : 1;
@@ -1495,7 +1496,7 @@ _mode_finished_signal_cb(void        *data,
    Evas *te = evas_object_evas_get(obj);
 
    evas_event_freeze(te);
-   it->item->nocache = EINA_FALSE;
+   it->item->nocache_once = EINA_FALSE;
    _mode_item_unrealize(it);
    if (it->item->group_item)
      evas_object_raise(it->item->VIEW(group_item));
@@ -1953,9 +1954,9 @@ _item_realize(Elm_Gen_Item *it,
      }
    it->item->order_num_in = in;
 
-   if (it->item->nocache)
-     it->item->nocache = EINA_FALSE;
-   else
+   if (it->item->nocache_once)
+     it->item->nocache_once = EINA_FALSE;
+   else if (!it->item->nocache)
      itc = _item_cache_find(it);
    if (itc)
      {
@@ -2136,7 +2137,7 @@ _item_realize(Elm_Gen_Item *it,
 static void
 _item_unrealize_cb(Elm_Gen_Item *it)
 {
-   if (it->item->nocache)
+   if (it->item->nocache_once || it->item->nocache)
      {
         evas_object_del(VIEW(it));
         VIEW(it) = NULL;
@@ -3183,7 +3184,7 @@ _item_mode_set(Elm_Gen_Item *it)
    char buf[1024];
 
    wd->mode_item = it;
-   it->item->nocache = EINA_TRUE;
+   it->item->nocache_once = EINA_TRUE;
 
    if (wd->scr_hold_timer)
      {
@@ -3214,7 +3215,7 @@ _item_mode_unset(Widget_Data *wd)
    Elm_Gen_Item *it;
 
    it = wd->mode_item;
-   it->item->nocache = EINA_TRUE;
+   it->item->nocache_once = EINA_TRUE;
 
    snprintf(buf, sizeof(buf), "elm,state,%s,passive", wd->mode_type);
    snprintf(buf2, sizeof(buf2), "elm,state,%s,passive,finished", wd->mode_type);
@@ -5023,7 +5024,7 @@ elm_genlist_item_item_class_update(Elm_Object_Item *it,
    EINA_SAFETY_ON_NULL_RETURN(itc);
    if (_it->generation < _it->wd->generation) return;
    _it->itc = itc;
-   _it->item->nocache = EINA_TRUE;
+   _it->item->nocache_once = EINA_TRUE;
    elm_genlist_item_update(it);
 }
 
@@ -5728,9 +5729,9 @@ elm_genlist_item_flip_set(Elm_Object_Item *it,
    else
      {
         _it->flipped = flip;
-        _it->item->nocache = EINA_TRUE;
         _item_cache_zero(_it->wd);
         elm_genlist_item_update(it);
+        _it->item->nocache = EINA_FALSE;
      }
 }
 
