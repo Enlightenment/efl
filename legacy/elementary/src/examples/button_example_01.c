@@ -77,7 +77,7 @@ _btn_options_cb(void *data, Evas_Object *btn, void *ev __UNUSED__)
    char *ptr;
    double t;
    App_Data *app = data;
-   const char *lbl = elm_button_label_get(btn);
+   const char *lbl = elm_object_text_get(btn);
 
    ptr = strchr(lbl, ':');
    ptr += 2;

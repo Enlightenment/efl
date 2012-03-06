@@ -468,19 +468,6 @@ elm_button_add(Evas_Object *parent)
 }
 
 EAPI void
-elm_button_label_set(Evas_Object *obj, const char *label)
-{
-   _elm_button_label_set(obj, NULL, label);
-}
-
-EAPI const char *
-elm_button_label_get(const Evas_Object *obj)
-{
-   return _elm_button_label_get(obj, NULL);
-}
-
-
-EAPI void
 elm_button_icon_set(Evas_Object *obj, Evas_Object *icon)
 {
    _content_set_hook(obj, "icon", icon);

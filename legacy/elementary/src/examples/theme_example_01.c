@@ -11,7 +11,7 @@
 static void
 btn_extension_click_cb(void *data __UNUSED__, Evas_Object *btn, void *ev __UNUSED__)
 {
-   const char *lbl = elm_button_label_get(btn);
+   const char *lbl = elm_object_text_get(btn);
 
    if (!strncmp(lbl, "Load", 4))
      {

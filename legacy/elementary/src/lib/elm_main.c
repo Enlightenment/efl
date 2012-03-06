@@ -542,7 +542,7 @@ elm_quicklaunch_seed(void)
         elm_win_resize_object_add(win, bg);
         evas_object_show(bg);
         bt = elm_button_add(win);
-        elm_button_label_set(bt, " abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789~-_=+\\|]}[{;:'\",<.>/?");
+        elm_object_text_set(bt, " abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789~-_=+\\|]}[{;:'\",<.>/?");
         elm_win_resize_object_add(win, bt);
         ecore_main_loop_iterate();
         evas_object_del(win);

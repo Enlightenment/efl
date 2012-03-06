@@ -118,7 +118,7 @@ _anchorview_clicked_cb(void *data __UNUSED__, Evas_Object *obj, void *event_info
 static void
 _btn_clicked_cb(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
-   const char *lbl = elm_button_label_get(obj);
+   const char *lbl = elm_object_text_get(obj);
    printf("%s: %s\n", lbl, (char *)data);
    eina_stringshare_del(data);
 }
