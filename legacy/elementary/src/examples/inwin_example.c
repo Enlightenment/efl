@@ -146,7 +146,7 @@ elm_main(int argc __UNUSED__, char *argv[] __UNUSED__)
 
    evas_object_smart_callback_add(o, "clicked", _btn_click_cb, NULL);
 
-   if (!strncmp(elm_engine_get(), "shot", 4))
+   if (!strncmp(elm_config_engine_get(), "shot", 4))
      ecore_timer_add(0.1, _screenshot_hack_cb, o);
 
    elm_run();

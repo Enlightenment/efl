@@ -120,7 +120,7 @@ elm_main(int    argc __UNUSED__,
    elm_object_content_set(frame, d.btn);
 
    fprintf(stdout, "Elementary's finger size is set to %d pixels\n.",
-           elm_finger_size_get());
+           elm_config_finger_size_get());
    elm_coords_finger_size_adjust(0, NULL, 3, &h);
    /* so, button will be 3 fingers tall */
    evas_object_size_hint_min_set(d.btn, 0, h);
