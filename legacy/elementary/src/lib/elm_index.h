@@ -313,5 +313,38 @@ EAPI void                 elm_index_indicator_disabled_set(Evas_Object *obj, Ein
 EAPI Eina_Bool            elm_index_indicator_disabled_get(const Evas_Object *obj);
 
 /**
+ * Enable or disable horizontal mode on the index object
+ *
+ * @param obj The index object.
+ * @param horizontal @c EINA_TRUE to enable horizontal or @c EINA_FALSE to
+ * disable it, i.e., to enable vertical mode. it's an area one @ref Fingers
+ * "finger" wide on the bottom side of the index widget's container.
+ *
+ * @note Vertical mode is set by default.
+ *
+ * On horizontal mode items are displayed on index from left to right,
+ * instead of from top to bottom. Also, the index will scroll horizontally.
+ *
+ * @see elm_index_horizontal_get()
+ *
+ * @ingroup Index
+ */
+EAPI void                      elm_index_horizontal_set(Evas_Object *obj, Eina_Bool horizontal);
+
+/**
+ * Get a value whether horizontal mode is enabled or not.
+ *
+ * @param obj The index object.
+ * @return @c EINA_TRUE means horizontal mode selection is enabled.
+ * @c EINA_FALSE indicates it's disabled. If @p obj is @c NULL,
+ * @c EINA_FALSE is returned.
+ *
+ * @see elm_index_horizontal_set() for details.
+ *
+ * @ingroup Index
+ */
+EAPI Eina_Bool                 elm_index_horizontal_get(const Evas_Object *obj);
+
+/**
  * @}
  */
