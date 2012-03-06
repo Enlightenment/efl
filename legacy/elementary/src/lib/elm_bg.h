@@ -141,7 +141,6 @@ EAPI void                         elm_bg_color_get(const Evas_Object *obj, int *
  *
  * @ingroup Bg
  */
-/* XXX: Sounds awfully hackish - there must be a better way than hardcoding pixel sizes. Do they at least scale with the config? */
 EAPI void                         elm_bg_load_size_set(Evas_Object *obj, Evas_Coord w, Evas_Coord h);
 
 /**
