@@ -10,8 +10,8 @@
 
 #define N_ITEMS 300
 
-static Elm_Genlist_Item_Class _itc;
-static Elm_Genlist_Item_Class _itc_group;
+static Elm_Genlist_Item_Class *_itc = NULL;
+static Elm_Genlist_Item_Class *_itc_group = NULL;
 static int nitems = 0;
 
 static char *
@@ -81,7 +81,7 @@ _append_cb(void *data, Evas_Object *o __UNUSED__, void *event_info __UNUSED__)
 {
    Evas_Object *list = data;
 
-   elm_genlist_item_append(list, &_itc,
+   elm_genlist_item_append(list, _itc,
                            (void *)(long)nitems++, NULL,
                            ELM_GENLIST_ITEM_NONE,
                            _item_sel_cb, NULL);
@@ -93,7 +93,7 @@ _prepend_cb(void *data, Evas_Object *o __UNUSED__, void *event_info __UNUSED__)
 {
    Evas_Object *list = data;
 
-   elm_genlist_item_prepend(list, &_itc,
+   elm_genlist_item_prepend(list, _itc,
                             (void *)(long)nitems++, NULL,
                             ELM_GENLIST_ITEM_NONE,
                             _item_sel_cb, NULL);
@@ -108,7 +108,7 @@ _insert_before_cb(void *data, Evas_Object *o __UNUSED__, void *event_info __UNUS
 
    if (!glit) return;
 
-   elm_genlist_item_insert_before(list, &_itc,
+   elm_genlist_item_insert_before(list, _itc,
                                   (void *)(long)nitems++, NULL,
                                   glit, ELM_GENLIST_ITEM_NONE,
                                   _item_sel_cb, NULL);
@@ -123,7 +123,7 @@ _insert_after_cb(void *data, Evas_Object *o __UNUSED__, void *event_info __UNUSE
 
    if (!glit) return;
 
-   elm_genlist_item_insert_after(list, &_itc,
+   elm_genlist_item_insert_after(list, _itc,
                                  (void *)(long)nitems++, NULL,
                                  glit, ELM_GENLIST_ITEM_NONE,
                                  _item_sel_cb, NULL);
@@ -263,18 +263,26 @@ elm_main(int argc __UNUSED__, char **argv __UNUSED__)
    elm_win_resize_object_add(win, box);
    evas_object_show(box);
 
-   _itc.item_style = "double_label";
-   _itc.func.text_get = _item_label_get;
-   _itc.func.content_get = _item_content_get;
-   _itc.func.state_get = NULL;
-   _itc.func.del = NULL;
+   if (!_itc)
+     {
+        _itc = elm_genlist_item_class_new();
+        _itc->item_style = "default";
+        _itc->func.text_get = _item_label_get;
+        _itc->func.content_get = _item_content_get;
+        _itc->func.state_get = NULL;
+        _itc->func.del = NULL;
+     }
 
-   _itc_group.item_style = "group_index";
-   _itc_group.func.text_get = _group_label_get;
-   _itc_group.func.content_get = _group_content_get;
-   _itc_group.func.state_get = NULL;
-   _itc_group.func.del = NULL;
-
+   if (!_itc_group)
+     {
+        _itc_group = elm_genlist_item_class_new();
+        _itc_group->item_style = "default";
+        _itc_group->func.text_get = _item_label_get;
+        _itc_group->func.content_get = _item_content_get;
+        _itc_group->func.state_get = NULL;
+        _itc_group->func.del = NULL;
+     }
+   
    list = elm_genlist_add(win);
 
    evas_object_size_hint_weight_set(list, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
@@ -310,7 +318,7 @@ elm_main(int argc __UNUSED__, char **argv __UNUSED__)
 
         if (i % 7 == 0)
           {
-             glg = gli = elm_genlist_item_append(list, &_itc_group,
+             glg = gli = elm_genlist_item_append(list, _itc_group,
                                                  (void *)(long)nitems++, NULL,
                                                  ELM_GENLIST_ITEM_GROUP,
                                                  _item_sel_cb, NULL);
@@ -318,7 +326,7 @@ elm_main(int argc __UNUSED__, char **argv __UNUSED__)
           }
         else
           {
-             gli = elm_genlist_item_append(list, &_itc,
+             gli = elm_genlist_item_append(list, _itc,
                                            (void *)(long)nitems++, glg,
                                            ELM_GENLIST_ITEM_NONE,
                                            _item_sel_cb, NULL);
