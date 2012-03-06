@@ -79,7 +79,7 @@ EAPI Eina_Bool elm_frame_autocollapse_get(const Evas_Object *obj);
  * Use this to toggle the collapsed state of a frame, bypassing animations.
  */
 //XXX: How about elm_frame_minimized_set() ?
-EAPI void elm_frame_collapse_set(Evas_Object *obj, Eina_Bool minimize);
+EAPI void elm_frame_collapse_set(Evas_Object *obj, Eina_Bool collapse);
 
 /**
  * @brief Determine the collapse state of a frame
