@@ -4,12 +4,12 @@
 # This file is distributed under the same license as the elementary package.
 # Fabian Nowak <timystery@arcor.de>, 2011.
 #
-#: src/lib/elm_config.c:1427
+#: src/lib/elm_config.c:1428
 msgid ""
 msgstr ""
 "Project-Id-Version: elementary 0.7.0.57309\n"
 "Report-Msgid-Bugs-To: enlightenment-devel@lists.sourceforge.net\n"
-"POT-Creation-Date: 2012-02-16 14:10+0900\n"
+"POT-Creation-Date: 2012-03-02 15:39+0900\n"
 "PO-Revision-Date: 2011-06-19 16:41+0100\n"
 "Last-Translator: Heimen Stoffels <vistausss@gmail.com>\n"
 "Language-Team: Dutch <vistausss@gmail.com>\n"
@@ -21,19 +21,19 @@ msgstr ""
 "X-Poedit-Language: Dutch\n"
 "X-Poedit-Country: NETHERLANDS\n"
 
-#: src/lib/elc_fileselector.c:843
+#: src/lib/elc_fileselector.c:842
 msgid "Up"
 msgstr "Omhoog"
 
-#: src/lib/elc_fileselector.c:858
+#: src/lib/elc_fileselector.c:857
 msgid "Home"
 msgstr "Persoonlijke map"
 
-#: src/lib/elc_fileselector.c:1002 src/lib/elm_entry.c:1285
+#: src/lib/elc_fileselector.c:1008 src/lib/elm_entry.c:1286
 msgid "Cancel"
 msgstr "Annuleren"
 
-#: src/lib/elc_fileselector.c:1012
+#: src/lib/elc_fileselector.c:1018
 msgid "OK"
 msgstr "OK"
 
@@ -41,8 +41,8 @@ msgstr "OK"
 msgid "Clicked"
 msgstr ""
 
-#: src/lib/elm_button.c:408 src/lib/elm_check.c:366 src/lib/elm_radio.c:295
-#: src/lib/elm_toolbar.c:759
+#: src/lib/elm_button.c:408 src/lib/elm_check.c:369 src/lib/elm_radio.c:295
+#: src/lib/elm_toolbar.c:803
 msgid "State: Disabled"
 msgstr ""
 
@@ -54,41 +54,41 @@ msgstr ""
 msgid "%B %Y"
 msgstr ""
 
-#: src/lib/elm_check.c:283 src/lib/elm_check.c:286 src/lib/elm_check.c:377
+#: src/lib/elm_check.c:286 src/lib/elm_check.c:289 src/lib/elm_check.c:380
 #: src/lib/elm_radio.c:231 src/lib/elm_radio.c:297
 msgid "State: On"
 msgstr ""
 
-#: src/lib/elm_check.c:296 src/lib/elm_check.c:299 src/lib/elm_check.c:386
+#: src/lib/elm_check.c:299 src/lib/elm_check.c:302 src/lib/elm_check.c:389
 #: src/lib/elm_radio.c:298
 msgid "State: Off"
 msgstr ""
 
-#: src/lib/elm_check.c:373 src/lib/elm_check.c:383
+#: src/lib/elm_check.c:376 src/lib/elm_check.c:386
 msgid "State"
 msgstr ""
 
-#: src/lib/elm_check.c:436
+#: src/lib/elm_check.c:439
 msgid "Check"
 msgstr ""
 
-#: src/lib/elm_config.c:1350
+#: src/lib/elm_config.c:1352
 msgid "default:LTR"
 msgstr "Standaard: LTR"
 
-#: src/lib/elm_entry.c:1279
+#: src/lib/elm_entry.c:1280
 msgid "Copy"
 msgstr "Kopiëren"
 
-#: src/lib/elm_entry.c:1282
+#: src/lib/elm_entry.c:1283
 msgid "Cut"
 msgstr "Knippen"
 
-#: src/lib/elm_entry.c:1296
+#: src/lib/elm_entry.c:1297
 msgid "Select"
 msgstr "Selecteren"
 
-#: src/lib/elm_entry.c:1302
+#: src/lib/elm_entry.c:1303
 msgid "Paste"
 msgstr "Plakken"
 
@@ -104,23 +104,23 @@ msgstr ""
 msgid "OFF"
 msgstr ""
 
-#: src/lib/elm_toolbar.c:676
+#: src/lib/elm_toolbar.c:719
 #, fuzzy
 msgid "Selected"
 msgstr "Selecteren"
 
-#: src/lib/elm_toolbar.c:757
+#: src/lib/elm_toolbar.c:801
 msgid "Separator"
 msgstr ""
 
-#: src/lib/elm_toolbar.c:761
+#: src/lib/elm_toolbar.c:805
 msgid "State: Selected"
 msgstr ""
 
-#: src/lib/elm_toolbar.c:763
+#: src/lib/elm_toolbar.c:807
 msgid "Has menu"
 msgstr ""
 
-#: src/lib/elm_toolbar.c:824
+#: src/lib/elm_toolbar.c:866
 msgid "Tool Item"
 msgstr ""
