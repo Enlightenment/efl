@@ -13,16 +13,18 @@
  * of addresses, each of which is an item that can be clicked for further actions.
  *
  * Smart callbacks one can register:
+ * XXX: remove "item,selected". use callback from item_append/prepend instead. (discussed with MBE contributor)
  * - @c "item,selected" - when item is selected. May be called on backspace key.
  * - @c "item,added" - when a new multibuttonentry item is added.
  * - @c "item,deleted" - when a multibuttonentry item is deleted.
- * XXX: it looks like "item,clicked" is not needed. use "item,selected"
+ * XXX: remove "item,clicked". use callback from item_append/prepend instead. (discussed with MBE contributor)
  * - @c "item,clicked" - selected item of multibuttonentry is clicked.
  * - @c "clicked" - when multibuttonentry is clicked.
  * - @c "focused" - when multibuttonentry is focused.
  * - @c "unfocused" - when multibuttonentry is unfocused.
  * - @c "expanded" - when multibuttonentry is expanded.
  * - @c "contracted" - when multibuttonentry is contracted.
+ * XXX: change "shrink,state,changed" to "expand,state,changed"
  * - @c "shrink,state,changed" - when shrink mode state of multibuttonentry is
  *                               changed.
  * 
