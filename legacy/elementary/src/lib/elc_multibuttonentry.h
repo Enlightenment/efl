@@ -16,6 +16,7 @@
  * - @c "item,selected" - when item is selected. May be called on backspace key.
  * - @c "item,added" - when a new multibuttonentry item is added.
  * - @c "item,deleted" - when a multibuttonentry item is deleted.
+ * XXX: it looks like "item,clicked" is not needed. use "item,selected"
  * - @c "item,clicked" - selected item of multibuttonentry is clicked.
  * - @c "clicked" - when multibuttonentry is clicked.
  * - @c "focused" - when multibuttonentry is focused.
@@ -47,6 +48,8 @@
  * @{
  */
 
+// XXX: typedef Eina_Bool                   (*Elm_Multibuttonentry_Item_Filter_Cb)(Evas_Object *obj, const char *item_label, void *item_data, void *data);
+// XXX: need documentation.
 typedef Eina_Bool                   (*Elm_Multibuttonentry_Item_Filter_callback)(Evas_Object *obj, const char *item_label, void *item_data, void *data);
 
 /**
@@ -200,7 +203,10 @@ EAPI Elm_Object_Item *elm_multibuttonentry_selected_item_get(const Evas_Object *
  *
  * @ingroup Multibuttonentry
  */
+// XXX: EAPI void                       elm_multibuttonentry_item_selected_set(Elm_Object_Item *it, Eina_Bool selected);
 EAPI void                       elm_multibuttonentry_item_select(Elm_Object_Item *it, Eina_Bool selected);
+
+// XXX: Add EAPI Eina_Bool elm_multibuttonentry_item_selected_get(const Elm_Object_Item *it);
 
 /**
  * unselect all items.
@@ -209,6 +215,7 @@ EAPI void                       elm_multibuttonentry_item_select(Elm_Object_Item
  *
  * @ingroup Multibuttonentry
  */
+// XXX: deprecated this. only one item can be selected but why this does unselect all?
 EAPI void                       elm_multibuttonentry_item_unselect_all(Evas_Object *obj);
 
 /**
@@ -257,6 +264,7 @@ EAPI Elm_Object_Item *elm_multibuttonentry_item_next_get(const Elm_Object_Item *
  *
  * @ingroup Multibuttonentry
  */
+// XXX: EAPI void                       elm_multibuttonentry_item_filter_append(Evas_Object *obj, Elm_Multibuttonentry_Item_Filter_CB func, void *data);
 EAPI void                       elm_multibuttonentry_item_filter_append(Evas_Object *obj, Elm_Multibuttonentry_Item_Filter_callback func, void *data);
 
 /**
@@ -271,6 +279,7 @@ EAPI void                       elm_multibuttonentry_item_filter_append(Evas_Obj
  *
  * @ingroup Multibuttonentry
  */
+// XXX: EAPI void                       elm_multibuttonentry_item_filter_prepend(Evas_Object *obj, Elm_Multibuttonentry_Item_Filter_Cb func, void *data);
 EAPI void                       elm_multibuttonentry_item_filter_prepend(Evas_Object *obj, Elm_Multibuttonentry_Item_Filter_callback func, void *data);
 
 /**
@@ -285,6 +294,7 @@ EAPI void                       elm_multibuttonentry_item_filter_prepend(Evas_Ob
  *
  * @ingroup Multibuttonentry
  */
+// XXX: EAPI void                       elm_multibuttonentry_item_filter_del(Evas_Object *obj, Elm_Multibuttonentry_Item_Filter_Cb func, void *data); --> api name and callback changes.
 EAPI void                       elm_multibuttonentry_item_filter_remove(Evas_Object *obj, Elm_Multibuttonentry_Item_Filter_callback func, void *data);
 
 /**
