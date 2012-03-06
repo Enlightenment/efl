@@ -1179,10 +1179,10 @@ elm_object_tree_unfocusable_get(const Evas_Object *obj)
 
 EAPI void
 elm_object_tree_focus_allow_set(Evas_Object *obj,
-                                Eina_Bool    tree_unfocusable)
+                                Eina_Bool    tree_focusable)
 {
    EINA_SAFETY_ON_NULL_RETURN(obj);
-   elm_widget_tree_unfocusable_set(obj, tree_unfocusable);
+   elm_widget_tree_unfocusable_set(obj, !tree_focusable);
 }
 
 EAPI Eina_Bool

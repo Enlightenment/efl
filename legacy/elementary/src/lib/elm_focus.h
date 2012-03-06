@@ -177,12 +177,12 @@ EAPI void                 elm_object_focus_custom_chain_prepend(Evas_Object *obj
 EAPI void                 elm_object_focus_next(Evas_Object *obj, Elm_Focus_Direction dir);
 
 /**
- * Make the elementary object and its children to be unfocusable
- * (or focusable).
+ * Make the elementary object and its children to be focusable
+ * (or unfocusable).
  *
  * @param obj The Elementary object to operate on
- * @param unfocusable @c EINA_TRUE for unfocusable,
- *        @c EINA_FALSE for focusable.
+ * @param focusable @c EINA_TRUE for focusable,
+ *        @c EINA_FALSE for unfocusable.
  *
  * This sets whether the object @p obj and its children objects
  * are able to take focus or not. If the tree is set as unfocusable,
@@ -197,13 +197,13 @@ EAPI void                 elm_object_focus_next(Evas_Object *obj, Elm_Focus_Dire
  * @ingroup Focus
  *
  */
-EAPI void                 elm_object_tree_focus_allow_set(Evas_Object *obj, Eina_Bool unfocusable);
+EAPI void                 elm_object_tree_focus_allow_set(Evas_Object *obj, Eina_Bool focusable);
 
 /**
- * Get whether an Elementary object and its children are unfocusable or not.
+ * Get whether an Elementary object and its children are focusable or not.
  *
  * @param obj The Elementary object to get the information from
- * @return @c EINA_TRUE, if the tree is unfocusable,
+ * @return @c EINA_TRUE, if the tree is focusable,
  *         @c EINA_FALSE if not (and on errors).
  *
  * @see elm_object_tree_focus_allow_set()
