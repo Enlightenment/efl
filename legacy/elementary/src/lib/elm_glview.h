@@ -151,7 +151,6 @@ EAPI void         elm_glview_init_func_set(Evas_Object *obj, Elm_GLView_Func_Cb 
  *
  * @ingroup GLView
  */
-//XXX: is it problem if it uses evas_object_event_callback_add(.. , EVAS_CALLBACK_DEL, )
 EAPI void         elm_glview_del_func_set(Evas_Object *obj, Elm_GLView_Func_Cb func);
 
 /**
@@ -162,7 +161,6 @@ EAPI void         elm_glview_del_func_set(Evas_Object *obj, Elm_GLView_Func_Cb f
  *
  * @ingroup GLView
  */
-//XXX: is it problem if it uses evas_object_event_callback_add(.. , EVAS_CALLBACK_RESIZE, )
 EAPI void         elm_glview_resize_func_set(Evas_Object *obj, Elm_GLView_Func_Cb func);
 
 /**
