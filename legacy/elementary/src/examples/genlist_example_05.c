@@ -266,20 +266,20 @@ _expanded_cb(void *data __UNUSED__, Evas_Object *o __UNUSED__, void *event_info)
    EINA_LIST_FOREACH(d->children, l, it_data)
      {
         Elm_Object_Item *nitem;
-        Elm_Genlist_Item_Flags flags = ELM_GENLIST_ITEM_NONE;
+        Elm_Genlist_Item_Type type = ELM_GENLIST_ITEM_NONE;
         printf("expanding item: #%d from parent #%d\n", it_data->value, d->value);
         if (it_data->favorite)
           ic = &_itfav;
         else if (it_data->children)
           {
              ic = &_itp;
-             flags = ELM_GENLIST_ITEM_SUBITEMS;
+             type = ELM_GENLIST_ITEM_SUBITEMS;
           }
         else
           ic = &_itc;
 
         nitem = elm_genlist_item_append(list, ic, it_data, glit,
-                                        flags, _item_sel_cb, NULL);
+                                        type, _item_sel_cb, NULL);
         elm_genlist_item_expanded_set(nitem, EINA_FALSE);
      }
 }
