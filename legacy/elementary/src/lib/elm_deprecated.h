@@ -4940,6 +4940,16 @@ EINA_DEPRECATED EAPI void                  elm_icon_scale_set(Evas_Object *obj, 
 EINA_DEPRECATED EAPI void                  elm_icon_scale_get(const Evas_Object *obj, Eina_Bool *scale_up, Eina_Bool *scale_down);
 
 /**
+ * Enable or disable preloading of the icon
+ *
+ * @param obj The icon object
+ * @param disable If EINA_TRUE, preloading will be disabled
+ * @deprecated Use elm_icon_preload_disabled_set() instead
+ * @ingroup Icon
+ */
+EINA_DEPRECATED EAPI void                  elm_icon_preload_set(Evas_Object *obj, Eina_Bool disable);
+
+/**
  * Returns the last selected item, for a given index widget.
  *
  * @param obj The index object.

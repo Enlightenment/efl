@@ -455,7 +455,7 @@ EAPI Elm_Icon_Lookup_Order elm_icon_order_lookup_get(const Evas_Object *obj);
  * @param disable If EINA_TRUE, preloading will be disabled
  * @ingroup Icon
  */
-EAPI void                  elm_icon_preload_set(Evas_Object *obj, Eina_Bool disable);
+EAPI void                  elm_icon_preload_disabled_set(Evas_Object *obj, Eina_Bool disable);
 
 /**
  * Get if the icon supports animation or not.
