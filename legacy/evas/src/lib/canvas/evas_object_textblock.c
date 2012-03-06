@@ -4607,7 +4607,7 @@ evas_textblock_style_set(Evas_Textblock_Style *ts, const char *text)
                        if (tags) free(tags);
                        if (replaces) free(replaces);
                     }
-                  key_start = key_stop = val_start;
+                  key_start = key_stop = val_start = NULL;
                }
              p++;
           }
