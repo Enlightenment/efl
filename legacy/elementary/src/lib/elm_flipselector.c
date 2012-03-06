@@ -876,24 +876,6 @@ elm_flipselector_item_selected_get(const Elm_Object_Item *it)
    return (eina_list_data_get(wd->current) == item);
 }
 
-EAPI void
-elm_flipselector_item_del(Elm_Object_Item *it)
-{
-   elm_object_item_del(it);
-}
-
-EAPI const char *
-elm_flipselector_item_label_get(const Elm_Object_Item *it)
-{
-   return _item_text_get_hook(it, NULL);
-}
-
-EAPI void
-elm_flipselector_item_label_set(Elm_Object_Item *it, const char *label)
-{
-   _item_text_set_hook(it, NULL, label);
-}
-
 EAPI Elm_Object_Item *
 elm_flipselector_item_prev_get(const Elm_Object_Item *it)
 {
