@@ -1360,6 +1360,49 @@ EINA_DEPRECATED EAPI void        elm_flipselector_item_label_set(Elm_Object_Item
 EINA_DEPRECATED EAPI void       elm_flipselector_item_del(Elm_Object_Item *it);
 
 /**
+ * Set the interval on time updates for a user mouse button hold
+ * on a flip selector widget.
+ *
+ * @param obj The flip selector object
+ * @param interval The (first) interval value in seconds
+ *
+ * This interval value is @b decreased while the user holds the
+ * mouse pointer either flipping up or flipping down a given flip
+ * selector.
+ *
+ * This helps the user to get to a given item distant from the
+ * current one easier/faster, as it will start to flip quicker and
+ * quicker on mouse button holds.
+ *
+ * The calculation for the next flip interval value, starting from
+ * the one set with this call, is the previous interval divided by
+ * 1.05, so it decreases a little bit.
+ *
+ * The default starting interval value for automatic flips is
+ * @b 0.85 seconds.
+ *
+ * @see elm_flipselector_interval_get()
+ * @deprecated Use elm_flipselector_first_interval_set()
+ *
+ * @ingroup Flipselector
+ */
+EINA_DEPRECATED EAPI void                        elm_flipselector_interval_set(Evas_Object *obj, double interval);
+
+/**
+ * Get the interval on time updates for an user mouse button hold
+ * on a flip selector widget.
+ *
+ * @param obj The flip selector object
+ * @return The (first) interval value, in seconds, set on it
+ *
+ * @see elm_flipselector_interval_set() for more details
+ * @deprecated Use elm_flipselector_first_interval_get()
+ *
+ * @ingroup Flipselector
+ */
+EINA_DEPRECATED EAPI double                      elm_flipselector_interval_get(const Evas_Object *obj);
+
+/**
  * Make a given Elementary object the focused one.
  *
  * @param obj The Elementary object to make focused.

@@ -285,12 +285,11 @@ EAPI Elm_Object_Item            *elm_flipselector_item_next_get(const Elm_Object
  * The default starting interval value for automatic flips is
  * @b 0.85 seconds.
  *
- * @see elm_flipselector_interval_get()
+ * @see elm_flipselector_first_interval_get()
  *
  * @ingroup Flipselector
  */
-//XXX: void elm_flipselector_first_interval_set()?
-EAPI void                        elm_flipselector_interval_set(Evas_Object *obj, double interval);
+EAPI void                        elm_flipselector_first_interval_set(Evas_Object *obj, double interval);
 
 /**
  * Get the interval on time updates for an user mouse button hold
@@ -299,12 +298,11 @@ EAPI void                        elm_flipselector_interval_set(Evas_Object *obj,
  * @param obj The flip selector object
  * @return The (first) interval value, in seconds, set on it
  *
- * @see elm_flipselector_interval_set() for more details
+ * @see elm_flipselector_first_interval_set() for more details
  *
  * @ingroup Flipselector
  */
-//XXX: EAPI double elm_flipselector_first_interval_get()?
-EAPI double                      elm_flipselector_interval_get(const Evas_Object *obj);
+EAPI double                      elm_flipselector_first_interval_get(const Evas_Object *obj);
 
 /**
  * @}

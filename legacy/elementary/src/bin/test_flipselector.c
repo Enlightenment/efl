@@ -57,11 +57,10 @@ _overflow_cb(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_inf
 void
 slider_change_cb(void *data, Evas_Object *obj, void *event_info __UNUSED__)
 {
-    Evas_Object *fl;
-	fl = (Evas_Object *)data;
+    Evas_Object *fl = (Evas_Object *)data;
 
     double val = elm_slider_value_get(obj);
-    elm_flipselector_interval_set(fl, val);
+    elm_flipselector_first_interval_set(fl, val);
 }
 
 void

@@ -931,7 +931,7 @@ elm_flipselector_item_next_get(const Elm_Object_Item *it)
 }
 
 EAPI void
-elm_flipselector_interval_set(Evas_Object *obj, double interval)
+elm_flipselector_first_interval_set(Evas_Object *obj, double interval)
 {
    ELM_CHECK_WIDTYPE(obj, widtype);
 
@@ -941,7 +941,7 @@ elm_flipselector_interval_set(Evas_Object *obj, double interval)
 }
 
 EAPI double
-elm_flipselector_interval_get(const Evas_Object *obj)
+elm_flipselector_first_interval_get(const Evas_Object *obj)
 {
    ELM_CHECK_WIDTYPE(obj, widtype) 0;
 
@@ -949,3 +949,16 @@ elm_flipselector_interval_get(const Evas_Object *obj)
    if (!wd) return 0;
    return wd->first_interval;
 }
+
+EINA_DEPRECATED EAPI void
+elm_flipselector_interval_set(Evas_Object *obj, double interval)
+{
+   elm_flipselector_first_interval_set(obj, interval);
+}
+
+EINA_DEPRECATED EAPI double
+elm_flipselector_interval_get(const Evas_Object *obj)
+{
+   return elm_flipselector_first_interval_get(obj);
+}
+
