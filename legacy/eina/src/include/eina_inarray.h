@@ -119,6 +119,36 @@
  */
 
 /**
+ * @page eina_inarray_example_02 Eina inline array of strings
+ * @dontinclude eina_inarray_02.c
+ *
+ * This example will create an inline array of strings, add some elements and
+ * then print them. This example is based on @ref eina_array_01_example_page and
+ * @ref eina_inarray_example_01.
+ *
+ * We start with some variable declarations and eina initialization:
+ * @skip int
+ * @until eina_init
+ *
+ * We then create the array much like we did on @ref eina_inarray_example_01:
+ * @until inarray_new
+ *
+ * The point were this example significantly differs from the first eina inline
+ * array example. We'll not be adding the strings themselves to the array since
+ * their size varies, we'll store pointer to the strings instead. We therefore
+ * use @c char** to populate our inline array:
+ * @until }
+ *
+ * The source for this example: @ref eina_inarray_02_c
+ */
+
+/**
+ * @page eina_inarray_02_c eina_inarray_02.c
+ * @include eina_inarray_02.c
+ * @example eina_inarray_02.c
+ */
+
+/**
  * @addtogroup Eina_Data_Types_Group Data Types
  *
  * @since 1.2
@@ -144,8 +174,9 @@
  * of the array is a lot more costly than appending, so those operations should
  * be minimized.
  *
- * Example:
- * @ref eina_inarray_example_01
+ * Examples:
+ * @li @ref eina_inarray_example_01
+ * @li @ref eina_inarray_example_02
  *
  * @{
  */
