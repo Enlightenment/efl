@@ -445,18 +445,6 @@ elm_check_add(Evas_Object *parent)
 }
 
 EAPI void
-elm_check_label_set(Evas_Object *obj, const char *label)
-{
-   _elm_check_label_set(obj, NULL, label);
-}
-
-EAPI const char *
-elm_check_label_get(const Evas_Object *obj)
-{
-   return _elm_check_label_get(obj, NULL);
-}
-
-EAPI void
 elm_check_states_labels_set(Evas_Object *obj, const char *ontext, const char *offtext)
 {
    _elm_check_label_set(obj, "on", ontext);
