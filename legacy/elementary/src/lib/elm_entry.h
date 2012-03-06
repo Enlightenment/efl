@@ -253,8 +253,6 @@ typedef enum
    ELM_TEXT_FORMAT_MARKUP_UTF8  /**< Markup UTF8 type */
 } Elm_Text_Format;
 
-/* XXX: Filter_Limit_Size and Filter_Accept_Set are awful in my pov. The API looks bad. */
-
 /**
  * @enum _Elm_Wrap_Type
  * @typedef Elm_Wrap_Type
@@ -1365,7 +1363,9 @@ struct _Elm_Entry_Filter_Limit_Size
  * it as data when setting the filter. In it, it's possible to set limits
  * by character count or bytes (any of them is disabled if 0), and both can
  * be set at the same time. In that case, it first checks for characters,
- * then bytes.
+ * then bytes. The #Elm_Entry_Filter_Limit_Size structure must be alive and
+ * valid for as long as the entyr is alive AND the elm_entry_filter_limit_size
+ * filter is set.
  *
  * The function will cut the inserted text in order to allow only the first
  * number of characters that are still allowed. The cut is made in
@@ -1401,7 +1401,8 @@ struct _Elm_Entry_Filter_Accept_Set
  * Add this filter to an entry to restrict the set of accepted characters
  * based on the sets in the provided #Elm_Entry_Filter_Accept_Set.
  * This structure contains both accepted and rejected sets, but they are
- * mutually exclusive.
+ * mutually exclusive. This structure must be available for as long as
+ * the entry is alive AND the elm_entry_filter_accept_set is being used.
  *
  * The @c accepted set takes preference, so if it is set, the filter will
  * only work based on the accepted characters, ignoring anything in the
