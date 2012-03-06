@@ -4947,10 +4947,10 @@ elm_genlist_item_data_get(const Elm_Object_Item *it)
    return elm_object_item_data_get(it);
 }
 
-EAPI void
+EINA_DEPRECATED EAPI void
 elm_genlist_item_icons_orphan(Elm_Object_Item *it)
 {
-   elm_genlist_item_contents_orphan(it);
+   elm_genlist_item_all_contents_unset(it, NULL);
 }
 
 EINA_DEPRECATED EAPI void
