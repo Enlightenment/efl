@@ -96,8 +96,7 @@ static void _button_clicked(void *data, Evas_Object *obj, const char *emission, 
 static void _del_button_obj(Evas_Object *obj, Evas_Object *btn);
 static void _del_button_item(Elm_Multibuttonentry_Item *item);
 static void _select_button(Evas_Object *obj, Evas_Object *btn);
-static Elm_Multibuttonentry_Item *_add_button_item(Evas_Object *obj, const char *str, Multibuttonentry_Pos pos,
-                                                   const Elm_Multibuttonentry_Item *reference, void *data);
+static Elm_Multibuttonentry_Item *_add_button_item(Evas_Object *obj, const char *str, Multibuttonentry_Pos pos, const Elm_Multibuttonentry_Item *reference, void *data);
 static void _add_button(Evas_Object *obj, const char *str);
 static void _evas_mbe_key_up_cb(void *data, Evas *e, Evas_Object *obj, void *event_info);
 static void _entry_changed_cb(void *data, Evas_Object *obj, void *event_info);
@@ -1461,10 +1460,8 @@ elm_multibuttonentry_guide_text_set(Evas_Object *obj, const char *guidetext)
    Widget_Data *wd = elm_widget_data_get(obj);
 
    if (!wd) return;
-   if (guidetext)
-     _set_guidetext(obj, guidetext);
-   else
-     _set_guidetext(obj, "");
+
+   _set_guidetext(obj, guidetext);
 }
 
 EINA_DEPRECATED EAPI int
