@@ -2389,7 +2389,7 @@ _item_block_position(Item_Block *itb,
                }
              if (it->realized)
                {
-                  if (vis)
+                  if (vis || it->dragging)
                     {
                        if (it->wd->reorder_mode)
                          y += _get_space_for_reorder_item(it);
@@ -2432,7 +2432,7 @@ _item_block_position(Item_Block *itb,
                     }
                   else
                     {
-                       if (!it->dragging) _elm_genlist_item_unrealize(it, EINA_FALSE);
+                       _elm_genlist_item_unrealize(it, EINA_FALSE);
                     }
                }
              in++;
