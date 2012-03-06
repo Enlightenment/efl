@@ -971,7 +971,7 @@ _evas_mbe_key_up_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__,
      {
         if (wd->current &&
             ((strcmp(ev->keyname, "BackSpace") == 0) ||
-             (strcmp(ev->keyname, "BackSpace (") == 0)))
+             (strcmp(ev->keyname, "Delete") == 0)))
           {
              item = eina_list_data_get(wd->current);
              if (item)
@@ -983,7 +983,7 @@ _evas_mbe_key_up_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__,
           }
         else if (((!wd->current && (wd->n_str == 0) &&
                    (strcmp(ev->keyname, "BackSpace") == 0)) ||
-                  (strcmp(ev->keyname, "BackSpace (") == 0)))
+                   (strcmp(ev->keyname, "Delete") == 0)))
           {
              item = eina_list_data_get(eina_list_last(wd->items));
              if (item)
@@ -1002,7 +1002,7 @@ _entry_key_down_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, 
 
    if (!wd) return;
 
-   if ((wd->n_str == 1) && (strcmp(ev->keyname, "BackSpace") == 0 || (strcmp(ev->keyname, "BackSpace (") == 0 )))
+   if ((wd->n_str == 1) && (strcmp(ev->keyname, "BackSpace") == 0 || (strcmp(ev->keyname, "Delete") == 0 )))
      wd->last_btn_select = EINA_FALSE;
 }
 
