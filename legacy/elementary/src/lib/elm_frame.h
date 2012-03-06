@@ -56,7 +56,6 @@ EAPI Evas_Object                 *elm_frame_add(Evas_Object *parent);
  * vertically, shrinking it to the height of the label.
  * By default, this is DISABLED.
  */
-//XXX: How about elm_frame_minimize_enabled_set() ?
 EAPI void elm_frame_autocollapse_set(Evas_Object *obj, Eina_Bool autocollapse);
 
 /**
@@ -68,7 +67,6 @@ EAPI void elm_frame_autocollapse_set(Evas_Object *obj, Eina_Bool autocollapse);
  * vertically, shrinking it to the height of the label.
  * By default, this is DISABLED.
  */
-//XXX: How about elm_frame_minimize_enabled_get() ?
 EAPI Eina_Bool elm_frame_autocollapse_get(const Evas_Object *obj);
 
 /**
@@ -78,7 +76,6 @@ EAPI Eina_Bool elm_frame_autocollapse_get(const Evas_Object *obj);
  *
  * Use this to toggle the collapsed state of a frame, bypassing animations.
  */
-//XXX: How about elm_frame_minimized_set() ?
 EAPI void elm_frame_collapse_set(Evas_Object *obj, Eina_Bool collapse);
 
 /**
@@ -88,7 +85,6 @@ EAPI void elm_frame_collapse_set(Evas_Object *obj, Eina_Bool collapse);
  *
  * Use this to determine the collapse state of a frame.
  */
-//XXX: ... How about elm_frame_minimized_get() ?
 EAPI Eina_Bool elm_frame_collapse_get(const Evas_Object *obj);
 
 /**
@@ -98,7 +94,6 @@ EAPI Eina_Bool elm_frame_collapse_get(const Evas_Object *obj);
  *
  * Use this to toggle the collapsed state of a frame, triggering animations.
  */
-//XXX: How about elm_frame_minimize_effect_disabled_set()?
 EAPI void elm_frame_collapse_go(Evas_Object *obj, Eina_Bool collapse);
 
 /*
