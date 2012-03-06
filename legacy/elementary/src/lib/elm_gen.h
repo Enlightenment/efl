@@ -44,12 +44,12 @@ typedef void                          (*Elm_Gen_Item_Del_Cb)(void *data, Evas_Ob
 
 struct _Elm_Gen_Item_Class
 {
-   int           version; /**< Set by elementary if you alloc an item class via elm_gengrid_item_class_new() or elm_genlist_item_class_new(), or if you sety your own class (must be const) then set it to ELM_GENGRID_ITEM_CLASS_VERSION */
+   int           version;  /**< Set by elementary if you alloc an item class using elm_gengrid_item_class_new() or elm_genlist_item_class_new(), or if you set your own class (must be const) then set it to ELM_GENGRID_ITEM_CLASS_VERSION */
    unsigned int  refcount; /**< Set it to 0 if you use your own const class, or its managed for you by class ref/unref calls */
    Eina_Bool     delete_me : 1; /**< Leave this alone - set it to 0 if you have a const class of your own */
    const char   *item_style; /**< Name of the visual style to use for this item. If you don't know use "default" */
-   const char   *mode_item_style; /**< Style used if item is set to a specific mode. @see elm_genlist_item_mode_set() or NULL if you don't care */
-   const char   *edit_item_style; /**< Style to use when in edit mode, or NULL if you dont care */
+   const char   *mode_item_style; /**< Style used if item is set to a specific mode. @see elm_genlist_item_mode_set() or NULL if you don't care. currenly it's used only in genlist. */
+   const char   *edit_item_style; /**< Style to use when in edit mode, or NULL if you don't care. currenly it's used only in genlist. */
    struct {
       Elm_Gen_Item_Text_Get_Cb    text_get; /**< Text fetching class function for gengrid/list item classes.*/
       Elm_Gen_Item_Content_Get_Cb content_get; /**< Content fetching class function for gengrid/list item classes. */

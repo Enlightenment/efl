@@ -31,7 +31,12 @@
  * - @c item_style - This is a constant string and simply defines the name
  *   of the item style. It @b must be specified and the default should be @c
  *   "default".
- *
+ * - @c mode_item_style - This is a constant string and simply defines the name
+ *   of the mode item style. It is used to specify mode item style. It can be
+ *   used to set sweep mode.
+ * - @c edit_item_style - This is a constant string and simply defines the name
+ *   of the edit item style. It is used to specify edit item style. It can be
+ *   used to set selection, checking and deletion mode.
  * - @c func - A struct with pointers to functions that will be called when
  *   an item is going to be actually created. All of them receive a @c data
  *   parameter that will point to the same data passed to
