@@ -1145,18 +1145,6 @@ elm_diskselector_side_label_length_set(Evas_Object *obj, int len)
 }
 
 EAPI void
-elm_diskselector_side_label_lenght_set(Evas_Object *obj, int len)
-{
-   return elm_diskselector_side_label_length_set(obj, len);
-}
-
-EAPI int
-elm_diskselector_side_label_lenght_get(const Evas_Object *obj)
-{
-   return elm_diskselector_side_label_length_get(obj);
-}
-
-EAPI void
 elm_diskselector_bounce_set(Evas_Object *obj, Eina_Bool h_bounce, Eina_Bool v_bounce)
 {
    ELM_CHECK_WIDTYPE(obj, widtype);
@@ -1269,24 +1257,6 @@ elm_diskselector_item_append(Evas_Object *obj, const char *label, Evas_Object *i
    return (Elm_Object_Item *) it;
 }
 
-EAPI void
-elm_diskselector_item_del(Elm_Object_Item * it)
-{
-   elm_object_item_del(it);
-}
-
-EAPI const char *
-elm_diskselector_item_label_get(const Elm_Object_Item * it)
-{
-   return _item_text_get_hook(it, NULL);
-}
-
-EAPI void
-elm_diskselector_item_label_set(Elm_Object_Item * it, const char *label)
-{
-   _item_text_set_hook(it, NULL, label);
-}
-
 EAPI Elm_Object_Item *
 elm_diskselector_selected_item_get(const Evas_Object *obj)
 {
@@ -1329,30 +1299,6 @@ elm_diskselector_item_selected_get(const Elm_Object_Item *it)
    return (wd->selected_item == ((Elm_Diskselector_Item *) it));
 }
 
-EAPI void
-elm_diskselector_item_del_cb_set(Elm_Object_Item *it, Evas_Smart_Cb func)
-{
-   elm_object_item_del_cb_set(it, func);
-}
-
-EAPI void *
-elm_diskselector_item_data_get(const Elm_Object_Item *it)
-{
-   return elm_object_item_data_get(it);
-}
-
-EAPI Evas_Object *
-elm_diskselector_item_icon_get(const Elm_Object_Item *it)
-{
-   return _item_content_get_hook(it, NULL);
-}
-
-EAPI void
-elm_diskselector_item_icon_set(Elm_Object_Item *it, Evas_Object *icon)
-{
-   _item_content_set_hook(it, NULL, icon);
-}
-
 EAPI Elm_Object_Item *
 elm_diskselector_item_prev_get(const Elm_Object_Item *it)
 {
@@ -1387,78 +1333,6 @@ elm_diskselector_last_item_get(const Evas_Object *obj)
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd || !wd->items) return NULL;
    return eina_list_data_get(eina_list_last(wd->items));
-}
-
-EAPI void
-elm_diskselector_item_tooltip_text_set(Elm_Object_Item *it, const char *text)
-{
-   elm_object_item_tooltip_text_set(it, text);
-}
-
-EAPI void
-elm_diskselector_item_tooltip_content_cb_set(Elm_Object_Item *it, Elm_Tooltip_Item_Content_Cb func, const void *data, Evas_Smart_Cb del_cb)
-{
-   elm_object_item_tooltip_content_cb_set(it, func, data, del_cb);
-}
-
-EAPI void
-elm_diskselector_item_tooltip_unset(Elm_Object_Item *it)
-{
-   elm_object_item_tooltip_unset(it);
-}
-
-EAPI void
-elm_diskselector_item_tooltip_style_set(Elm_Object_Item *it, const char *style)
-{
-   elm_object_item_tooltip_style_set(it, style);
-}
-
-EAPI const char *
-elm_diskselector_item_tooltip_style_get(const Elm_Object_Item *it)
-{
-   return elm_object_item_tooltip_style_get(it);
-}
-
-EAPI void
-elm_diskselector_item_cursor_set(Elm_Object_Item *it, const char *cursor)
-{
-   elm_object_item_cursor_set(it, cursor);
-}
-
-EAPI const char *
-elm_diskselector_item_cursor_get(const Elm_Object_Item *it)
-{
-   return elm_object_item_cursor_get(it);
-}
-
-EAPI void
-elm_diskselector_item_cursor_unset(Elm_Object_Item *it)
-{
-   elm_object_item_cursor_unset(it);
-}
-
-EAPI void
-elm_diskselector_item_cursor_style_set(Elm_Object_Item *it, const char *style)
-{
-   elm_object_item_cursor_style_set(it, style);
-}
-
-EAPI const char *
-elm_diskselector_item_cursor_style_get(const Elm_Object_Item *it)
-{
-   return elm_object_item_cursor_style_get(it);
-}
-
-EAPI void
-elm_diskselector_item_cursor_engine_only_set(Elm_Object_Item *it, Eina_Bool engine_only)
-{
-   elm_object_item_cursor_engine_only_set(it, engine_only);
-}
-
-EAPI Eina_Bool
-elm_diskselector_item_cursor_engine_only_get(const Elm_Object_Item *it)
-{
-   return elm_object_item_cursor_engine_only_get(it);
 }
 
 EAPI void
