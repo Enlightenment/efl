@@ -1395,26 +1395,26 @@ _env_get(void)
 }
 
 EAPI Eina_Bool
-elm_mirrored_get(void)
+elm_config_mirrored_get(void)
 {
    return _elm_config->is_mirrored;
 }
 
 EAPI void
-elm_mirrored_set(Eina_Bool mirrored)
+elm_config_mirrored_set(Eina_Bool mirrored)
 {
    _elm_config->is_mirrored = mirrored;
    _elm_rescale();
 }
 
 EAPI Eina_Bool
-elm_cursor_engine_only_get(void)
+elm_config_cursor_engine_only_get(void)
 {
    return _elm_config->cursor_engine_only;
 }
 
 EAPI void
-elm_cursor_engine_only_set(Eina_Bool engine_only)
+elm_config_cursor_engine_only_set(Eina_Bool engine_only)
 {
    engine_only = !!engine_only;
    _elm_config->cursor_engine_only = engine_only;
@@ -1433,25 +1433,27 @@ elm_tooltip_delay_set(double delay)
    return EINA_TRUE;
 }
 
-EAPI double elm_config_tooltip_delay_get(void)
+EAPI double
+elm_config_tooltip_delay_get(void)
 {
    return _elm_config->tooltip_delay;
 }
 
-EAPI void elm_config_tooltip_delay_set(double delay)
+EAPI void
+elm_config_tooltip_delay_set(double delay)
 {
    if (delay < 0.0) return;
    _elm_config->tooltip_delay = delay;
 }
 
 EAPI double
-elm_scale_get(void)
+elm_config_scale_get(void)
 {
    return _elm_config->scale;
 }
 
 EAPI void
-elm_scale_set(double scale)
+elm_config_scale_set(double scale)
 {
    if (_elm_config->scale == scale) return;
    _elm_config->scale = scale;
@@ -1459,13 +1461,13 @@ elm_scale_set(double scale)
 }
 
 EAPI Eina_Bool
-elm_password_show_last_get(void)
+elm_config_password_show_last_get(void)
 {
    return _elm_config->password_show_last;
 }
 
 EAPI void
-elm_password_show_last_set(Eina_Bool password_show_last)
+elm_config_password_show_last_set(Eina_Bool password_show_last)
 {
    if (_elm_config->password_show_last == password_show_last) return;
    _elm_config->password_show_last = password_show_last;
@@ -1473,13 +1475,13 @@ elm_password_show_last_set(Eina_Bool password_show_last)
 }
 
 EAPI double
-elm_password_show_last_timeout_get(void)
+elm_config_password_show_last_timeout_get(void)
 {
    return _elm_config->password_show_last_timeout;
 }
 
 EAPI void
-elm_password_show_last_timeout_set(double password_show_last_timeout)
+elm_config_password_show_last_timeout_set(double password_show_last_timeout)
 {
    if (_elm_config->password_show_last_timeout == password_show_last_timeout) return;
    _elm_config->password_show_last_timeout = password_show_last_timeout;
@@ -1499,32 +1501,32 @@ elm_config_reload(void)
 }
 
 EAPI const char *
-elm_profile_current_get(void)
+elm_config_profile_get(void)
 {
    return _elm_config_current_profile_get();
 }
 
 EAPI const char *
-elm_profile_dir_get(const char *profile,
+elm_config_profile_dir_get(const char *profile,
                     Eina_Bool   is_user)
 {
    return _elm_config_profile_dir_get(profile, is_user);
 }
 
 EAPI void
-elm_profile_dir_free(const char *p_dir)
+elm_config_profile_dir_free(const char *p_dir)
 {
    free((void *)p_dir);
 }
 
 EAPI Eina_List *
-elm_profile_list_get(void)
+elm_config_profile_list_get(void)
 {
    return _elm_config_profiles_list();
 }
 
 EAPI void
-elm_profile_list_free(Eina_List *l)
+elm_config_profile_list_free(Eina_List *l)
 {
    const char *dir;
 
@@ -1533,20 +1535,20 @@ elm_profile_list_free(Eina_List *l)
 }
 
 EAPI void
-elm_profile_set(const char *profile)
+elm_config_profile_set(const char *profile)
 {
    EINA_SAFETY_ON_NULL_RETURN(profile);
    _elm_config_profile_set(profile);
 }
 
 EAPI const char *
-elm_engine_get(void)
+elm_config_engine_get(void)
 {
    return _elm_config->engine;
 }
 
 EAPI void
-elm_engine_set(const char *engine)
+elm_config_engine_set(const char *engine)
 {
    EINA_SAFETY_ON_NULL_RETURN(engine);
 
@@ -1554,25 +1556,25 @@ elm_engine_set(const char *engine)
 }
 
 EAPI Eina_List *
-elm_text_classes_list_get(void)
+elm_config_text_classes_list_get(void)
 {
    return _elm_config_text_classes_get();
 }
 
 EAPI void
-elm_text_classes_list_free(Eina_List *list)
+elm_config_text_classes_list_free(Eina_List *list)
 {
    _elm_config_text_classes_free(list);
 }
 
 EAPI const Eina_List *
-elm_font_overlay_list_get(void)
+elm_config_font_overlay_list_get(void)
 {
    return _elm_config_font_overlays_list();
 }
 
 EAPI void
-elm_font_overlay_set(const char    *text_class,
+elm_config_font_overlay_set(const char    *text_class,
                      const char    *font,
                      Evas_Font_Size size)
 {
@@ -1581,26 +1583,26 @@ elm_font_overlay_set(const char    *text_class,
 }
 
 EAPI void
-elm_font_overlay_unset(const char *text_class)
+elm_config_font_overlay_unset(const char *text_class)
 {
    EINA_SAFETY_ON_NULL_RETURN(text_class);
    _elm_config_font_overlay_remove(text_class);
 }
 
 EAPI void
-elm_font_overlay_apply(void)
+elm_config_font_overlay_apply(void)
 {
    _elm_config_font_overlay_apply();
 }
 
 EAPI Evas_Coord
-elm_finger_size_get(void)
+elm_config_finger_size_get(void)
 {
    return _elm_config->finger_size;
 }
 
 EAPI void
-elm_finger_size_set(Evas_Coord size)
+elm_config_finger_size_set(Evas_Coord size)
 {
    if (_elm_config->finger_size == size) return;
    _elm_config->finger_size = size;
@@ -1608,13 +1610,13 @@ elm_finger_size_set(Evas_Coord size)
 }
 
 EAPI int
-elm_cache_flush_interval_get(void)
+elm_config_cache_flush_interval_get(void)
 {
    return _elm_config->cache_flush_poll_interval;
 }
 
 EAPI void
-elm_cache_flush_interval_set(int size)
+elm_config_cache_flush_interval_set(int size)
 {
    if (_elm_config->cache_flush_poll_interval == size) return;
    _elm_config->cache_flush_poll_interval = size;
@@ -1623,13 +1625,13 @@ elm_cache_flush_interval_set(int size)
 }
 
 EAPI Eina_Bool
-elm_cache_flush_enabled_get(void)
+elm_config_cache_flush_enabled_get(void)
 {
    return _elm_config->cache_flush_enable;
 }
 
 EAPI void
-elm_cache_flush_enabled_set(Eina_Bool enabled)
+elm_config_cache_flush_enabled_set(Eina_Bool enabled)
 {
    enabled = !!enabled;
    if (_elm_config->cache_flush_enable == enabled) return;
@@ -1641,11 +1643,11 @@ elm_cache_flush_enabled_set(Eina_Bool enabled)
 EINA_DEPRECATED EAPI int
 elm_font_cache_get(void)
 {
-   return elm_cache_font_cache_size_get();
+   return elm_config_cache_font_cache_size_get();
 }
 
 EAPI int
-elm_cache_font_cache_size_get(void)
+elm_config_cache_font_cache_size_get(void)
 {
    return _elm_config->font_cache;
 }
@@ -1653,11 +1655,11 @@ elm_cache_font_cache_size_get(void)
 EINA_DEPRECATED EAPI void
 elm_font_cache_set(int size)
 {
-   elm_cache_font_cache_size_set(size);
+   elm_config_cache_font_cache_size_set(size);
 }
 
 EAPI void 
-elm_cache_font_cache_size_set(int size)
+elm_config_cache_font_cache_size_set(int size)
 {
    if (_elm_config->font_cache == size) return;
    _elm_config->font_cache = size;
@@ -1668,11 +1670,11 @@ elm_cache_font_cache_size_set(int size)
 EINA_DEPRECATED EAPI int
 elm_image_cache_get(void)
 {
-   return elm_cache_image_cache_size_get();
+   return elm_config_cache_image_cache_size_get();
 }
 
 EAPI int
-elm_cache_image_cache_size_get(void)
+elm_config_cache_image_cache_size_get(void)
 {
    return _elm_config->image_cache;
 }
@@ -1680,11 +1682,11 @@ elm_cache_image_cache_size_get(void)
 EINA_DEPRECATED EAPI void
 elm_image_cache_set(int size)
 {
-   elm_cache_image_cache_size_set(size);
+   elm_config_cache_image_cache_size_set(size);
 }
 
 EAPI void
-elm_cache_image_cache_size_set(int size)
+elm_config_cache_image_cache_size_set(int size)
 {
    if (_elm_config->image_cache == size) return;
    _elm_config->image_cache = size;
@@ -1695,11 +1697,11 @@ elm_cache_image_cache_size_set(int size)
 EINA_DEPRECATED EAPI int
 elm_edje_file_cache_get(void)
 {
-   return elm_cache_edje_file_cache_size_get();
+   return elm_config_cache_edje_file_cache_size_get();
 }
 
 EAPI int
-elm_cache_edje_file_cache_size_get()
+elm_config_cache_edje_file_cache_size_get()
 {
    return _elm_config->edje_cache;
 }
@@ -1707,11 +1709,11 @@ elm_cache_edje_file_cache_size_get()
 EINA_DEPRECATED EAPI void
 elm_edje_file_cache_set(int size)
 {
-   elm_cache_edje_file_cache_size_set(size);
+   elm_config_cache_edje_file_cache_size_set(size);
 }
 
 EAPI void
-elm_cache_edje_file_cache_size_set(int size)
+elm_config_cache_edje_file_cache_size_set(int size)
 {
    if (_elm_config->edje_cache == size) return;
    _elm_config->edje_cache = size;
@@ -1722,11 +1724,11 @@ elm_cache_edje_file_cache_size_set(int size)
 EINA_DEPRECATED EAPI int
 elm_edje_collection_cache_get(void)
 {
-   return elm_cache_edje_collection_cache_size_get();
+   return elm_config_cache_edje_collection_cache_size_get();
 }
 
 EAPI int
-elm_cache_edje_collection_cache_size_get(void)
+elm_config_cache_edje_collection_cache_size_get(void)
 {
    return _elm_config->edje_collection_cache;
 }
@@ -1734,11 +1736,11 @@ elm_cache_edje_collection_cache_size_get(void)
 EINA_DEPRECATED EAPI void
 elm_edje_collection_cache_set(int size)
 {
-   elm_cache_edje_collection_cache_size_set(size);
+   elm_config_cache_edje_collection_cache_size_set(size);
 }
 
 EAPI void
-elm_cache_edje_collection_cache_size_set(int size)
+elm_config_cache_edje_collection_cache_size_set(int size)
 {
    if (_elm_config->edje_collection_cache == size) return;
    _elm_config->edje_collection_cache = size;
@@ -1747,145 +1749,145 @@ elm_cache_edje_collection_cache_size_set(int size)
 }
 
 EAPI Eina_Bool
-elm_focus_highlight_enabled_get(void)
+elm_config_focus_highlight_enabled_get(void)
 {
    return _elm_config->focus_highlight_enable;
 }
 
 EAPI void
-elm_focus_highlight_enabled_set(Eina_Bool enable)
+elm_config_focus_highlight_enabled_set(Eina_Bool enable)
 {
    _elm_config->focus_highlight_enable = !!enable;
 }
 
 EAPI Eina_Bool
-elm_focus_highlight_animate_get(void)
+elm_config_focus_highlight_animate_get(void)
 {
    return _elm_config->focus_highlight_animate;
 }
 
 EAPI void
-elm_focus_highlight_animate_set(Eina_Bool animate)
+elm_config_focus_highlight_animate_set(Eina_Bool animate)
 {
    _elm_config->focus_highlight_animate = !!animate;
 }
 
 EAPI Eina_Bool
-elm_scroll_bounce_enabled_get(void)
+elm_config_scroll_bounce_enabled_get(void)
 {
    return _elm_config->thumbscroll_bounce_enable;
 }
 
 EAPI void
-elm_scroll_bounce_enabled_set(Eina_Bool enabled)
+elm_config_scroll_bounce_enabled_set(Eina_Bool enabled)
 {
    _elm_config->thumbscroll_bounce_enable = enabled;
 }
 
 EAPI double
-elm_scroll_bounce_friction_get(void)
+elm_config_scroll_bounce_friction_get(void)
 {
    return _elm_config->thumbscroll_bounce_friction;
 }
 
 EAPI void
-elm_scroll_bounce_friction_set(double friction)
+elm_config_scroll_bounce_friction_set(double friction)
 {
    _elm_config->thumbscroll_bounce_friction = friction;
 }
 
 EAPI double
-elm_scroll_page_scroll_friction_get(void)
+elm_config_scroll_page_scroll_friction_get(void)
 {
    return _elm_config->page_scroll_friction;
 }
 
 EAPI void
-elm_scroll_page_scroll_friction_set(double friction)
+elm_config_scroll_page_scroll_friction_set(double friction)
 {
    _elm_config->page_scroll_friction = friction;
 }
 
 EAPI double
-elm_scroll_bring_in_scroll_friction_get(void)
+elm_config_scroll_bring_in_scroll_friction_get(void)
 {
    return _elm_config->bring_in_scroll_friction;
 }
 
 EAPI void
-elm_scroll_bring_in_scroll_friction_set(double friction)
+elm_config_scroll_bring_in_scroll_friction_set(double friction)
 {
    _elm_config->bring_in_scroll_friction = friction;
 }
 
 EAPI double
-elm_scroll_zoom_friction_get(void)
+elm_config_scroll_zoom_friction_get(void)
 {
    return _elm_config->zoom_friction;
 }
 
 EAPI void
-elm_scroll_zoom_friction_set(double friction)
+elm_config_scroll_zoom_friction_set(double friction)
 {
    _elm_config->zoom_friction = friction;
 }
 
 EAPI Eina_Bool
-elm_scroll_thumbscroll_enabled_get(void)
+elm_config_scroll_thumbscroll_enabled_get(void)
 {
    return _elm_config->thumbscroll_enable;
 }
 
 EAPI void
-elm_scroll_thumbscroll_enabled_set(Eina_Bool enabled)
+elm_config_scroll_thumbscroll_enabled_set(Eina_Bool enabled)
 {
    _elm_config->thumbscroll_enable = enabled;
 }
 
 EAPI unsigned int
-elm_scroll_thumbscroll_threshold_get(void)
+elm_config_scroll_thumbscroll_threshold_get(void)
 {
    return _elm_config->thumbscroll_threshold;
 }
 
 EAPI void
-elm_scroll_thumbscroll_threshold_set(unsigned int threshold)
+elm_config_scroll_thumbscroll_threshold_set(unsigned int threshold)
 {
    _elm_config->thumbscroll_threshold = threshold;
 }
 
 EAPI double
-elm_scroll_thumbscroll_momentum_threshold_get(void)
+elm_config_scroll_thumbscroll_momentum_threshold_get(void)
 {
    return _elm_config->thumbscroll_momentum_threshold;
 }
 
 EAPI void
-elm_scroll_thumbscroll_momentum_threshold_set(double threshold)
+elm_config_scroll_thumbscroll_momentum_threshold_set(double threshold)
 {
    _elm_config->thumbscroll_momentum_threshold = threshold;
 }
 
 EAPI double
-elm_scroll_thumbscroll_friction_get(void)
+elm_config_scroll_thumbscroll_friction_get(void)
 {
    return _elm_config->thumbscroll_friction;
 }
 
 EAPI void
-elm_scroll_thumbscroll_friction_set(double friction)
+elm_config_scroll_thumbscroll_friction_set(double friction)
 {
    _elm_config->thumbscroll_friction = friction;
 }
 
 EAPI double
-elm_scroll_thumbscroll_border_friction_get(void)
+elm_config_scroll_thumbscroll_border_friction_get(void)
 {
    return _elm_config->thumbscroll_border_friction;
 }
 
 EAPI void
-elm_scroll_thumbscroll_border_friction_set(double friction)
+elm_config_scroll_thumbscroll_border_friction_set(double friction)
 {
    if (friction < 0.0) friction = 0.0;
    if (friction > 1.0) friction = 1.0;
@@ -1893,13 +1895,13 @@ elm_scroll_thumbscroll_border_friction_set(double friction)
 }
 
 EAPI double
-elm_scroll_thumbscroll_sensitivity_friction_get(void)
+elm_config_scroll_thumbscroll_sensitivity_friction_get(void)
 {
    return _elm_config->thumbscroll_sensitivity_friction;
 }
 
 EAPI void
-elm_scroll_thumbscroll_sensitivity_friction_set(double friction)
+elm_config_scroll_thumbscroll_sensitivity_friction_set(double friction)
 {
    if (friction < 0.1) friction = 0.1;
    if (friction > 1.0) friction = 1.0;
@@ -1907,13 +1909,13 @@ elm_scroll_thumbscroll_sensitivity_friction_set(double friction)
 }
 
 EAPI void
-elm_longpress_timeout_set(double longpress_timeout)
+elm_config_longpress_timeout_set(double longpress_timeout)
 {
    _elm_config->longpress_timeout = longpress_timeout;
 }
 
 EAPI double
-elm_longpress_timeout_get(void)
+elm_config_longpress_timeout_get(void)
 {
    return _elm_config->longpress_timeout;
 }
@@ -2056,15 +2058,21 @@ _elm_config_engine_set(const char *engine)
 }
 
 EAPI const char *
-elm_preferred_engine_get(void)
+elm_config_preferred_engine_get(void)
 {
    return _elm_preferred_engine;
 }
 
 EAPI void
-elm_preferred_engine_set(const char *engine)
+elm_config_preferred_engine_set(const char *engine)
 {
-   eina_stringshare_replace(&(_elm_preferred_engine), engine);
+   if (engine)
+     eina_stringshare_replace(&(_elm_preferred_engine), engine);
+   else
+     {
+        if (_elm_preferred_engine) eina_stringshare_del(_elm_preferred_engine);
+        _elm_preferred_engine = eina_stringshare_add(_elm_config->engine);
+     }
 }
 
 void

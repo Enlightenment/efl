@@ -588,7 +588,7 @@ _clear_if_finished(Evas_Object *obj)
 static Eina_Bool
 _inside(Evas_Coord x1, Evas_Coord y1, Evas_Coord x2, Evas_Coord y2)
 {
-   int w = elm_finger_size_get() >> 1; /* Finger size devided by 2 */
+   int w = _elm_config->finger_size >> 1; /* Finger size devided by 2 */
    if (x1 < (x2 - w))
      return EINA_FALSE;
 
@@ -2198,7 +2198,7 @@ _n_line_test(Evas_Object *obj, Pointer_Event *pe, void *event_info,
 
 
    /* We report ABORT if lines length are NOT matching when fingers are up */
-   if ((longest_line_len - shortest_line_len) > (elm_finger_size_get()*2))
+   if ((longest_line_len - shortest_line_len) > (_elm_config->finger_size * 2))
      {
         ev_flag = _set_state(gesture, ELM_GESTURE_STATE_ABORT, &st->info,
               EINA_FALSE);
@@ -3524,9 +3524,9 @@ elm_gesture_layer_add(Evas_Object *parent)
    elm_widget_disable_hook_set(obj, _disable_hook);
 
    wd->target = NULL;
-   wd->line_min_length =_elm_config->glayer_line_min_length * elm_finger_size_get();
-   wd->zoom_distance_tolerance = _elm_config->glayer_zoom_distance_tolerance * elm_finger_size_get();
-   wd->line_distance_tolerance = _elm_config->glayer_line_distance_tolerance * elm_finger_size_get();
+   wd->line_min_length =_elm_config->glayer_line_min_length * _elm_config->finger_size;
+   wd->zoom_distance_tolerance = _elm_config->glayer_zoom_distance_tolerance * _elm_config->finger_size;
+   wd->line_distance_tolerance = _elm_config->glayer_line_distance_tolerance * _elm_config->finger_size;
    wd->zoom_finger_factor = _elm_config->glayer_zoom_finger_factor;
    wd->zoom_wheel_factor = _elm_config->glayer_zoom_wheel_factor; /* mouse wheel zoom steps */
    wd->rotate_angular_tolerance = _elm_config->glayer_rotate_angular_tolerance;

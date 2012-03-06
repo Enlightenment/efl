@@ -215,7 +215,7 @@ static void
 _ui_tg_changed(void *data, Evas_Object *obj, void *event_info)
 {
    (void) data; (void) event_info;
-   elm_mirrored_set(elm_check_state_get(obj));
+   elm_config_mirrored_set(elm_check_state_get(obj));
 }
 
 static void
@@ -304,7 +304,7 @@ my_win_main(char *autorun, Eina_Bool test_win_only)
    tg = elm_check_add(win);
    elm_object_style_set(tg, "toggle");
    elm_object_text_set(tg, "UI-Mirroring:");
-   elm_check_state_set(tg, elm_mirrored_get());
+   elm_check_state_set(tg, elm_config_mirrored_get());
    evas_object_smart_callback_add(tg, "changed", _ui_tg_changed, NULL);
    elm_box_pack_end(bx0, tg);
    evas_object_show(tg);

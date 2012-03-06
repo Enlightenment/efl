@@ -149,10 +149,10 @@ sb_change(void *data       __UNUSED__,
           void *event_info __UNUSED__)
 {
    Eina_Bool val = elm_check_state_get(obj);
-   Eina_Bool sb = elm_scroll_bounce_enabled_get();
+   Eina_Bool sb = elm_config_scroll_bounce_enabled_get();
 
    if (val == sb) return;
-   elm_scroll_bounce_enabled_set(val);
+   elm_config_scroll_bounce_enabled_set(val);
    elm_config_all_flush();
 
    /*TODO: enable/disable subordinate sliders (make 'em support it 1st)*/
@@ -175,11 +175,11 @@ bf_change(void *data       __UNUSED__,
           Evas_Object     *obj,
           void *event_info __UNUSED__)
 {
-   double bf = elm_scroll_bounce_friction_get();
+   double bf = elm_config_scroll_bounce_friction_get();
    double val = elm_slider_value_get(obj);
 
    if (bf == val) return;
-   elm_scroll_bounce_friction_set(val);
+   elm_config_scroll_bounce_friction_set(val);
    elm_config_all_flush();
 }
 
@@ -200,11 +200,11 @@ ps_change(void *data       __UNUSED__,
           Evas_Object     *obj,
           void *event_info __UNUSED__)
 {
-   double ps = elm_scroll_page_scroll_friction_get();
+   double ps = elm_config_scroll_page_scroll_friction_get();
    double val = elm_slider_value_get(obj);
 
    if (ps == val) return;
-   elm_scroll_page_scroll_friction_set(val);
+   elm_config_scroll_page_scroll_friction_set(val);
    elm_config_all_flush();
 }
 
@@ -225,11 +225,11 @@ bis_change(void *data       __UNUSED__,
            Evas_Object     *obj,
            void *event_info __UNUSED__)
 {
-   double bis = elm_scroll_bring_in_scroll_friction_get();
+   double bis = elm_config_scroll_bring_in_scroll_friction_get();
    double val = elm_slider_value_get(obj);
 
    if (bis == val) return;
-   elm_scroll_bring_in_scroll_friction_set(val);
+   elm_config_scroll_bring_in_scroll_friction_set(val);
    elm_config_all_flush();
 }
 
@@ -250,11 +250,11 @@ zf_change(void *data       __UNUSED__,
           Evas_Object     *obj,
           void *event_info __UNUSED__)
 {
-   double zf = elm_scroll_zoom_friction_get();
+   double zf = elm_config_scroll_zoom_friction_get();
    double val = elm_slider_value_get(obj);
 
    if (zf == val) return;
-   elm_scroll_zoom_friction_set(val);
+   elm_config_scroll_zoom_friction_set(val);
    elm_config_all_flush();
 }
 
@@ -264,10 +264,10 @@ ts_change(void *data       __UNUSED__,
           void *event_info __UNUSED__)
 {
    Eina_Bool val = elm_check_state_get(obj);
-   Eina_Bool sb = elm_scroll_thumbscroll_enabled_get();
+   Eina_Bool sb = elm_config_scroll_thumbscroll_enabled_get();
 
    if (val == sb) return;
-   elm_scroll_thumbscroll_enabled_set(val);
+   elm_config_scroll_thumbscroll_enabled_set(val);
    elm_config_all_flush();
 
    /*TODO: enable/disable subordinate sliders (make 'em support it 1st)*/
@@ -290,11 +290,11 @@ tst_change(void *data       __UNUSED__,
            Evas_Object     *obj,
            void *event_info __UNUSED__)
 {
-   double tst = elm_scroll_thumbscroll_threshold_get();
+   double tst = elm_config_scroll_thumbscroll_threshold_get();
    double val = elm_slider_value_get(obj);
 
    if (tst == val) return;
-   elm_scroll_thumbscroll_threshold_set(val);
+   elm_config_scroll_thumbscroll_threshold_set(val);
    elm_config_all_flush();
 }
 
@@ -315,11 +315,11 @@ tsmt_change(void *data       __UNUSED__,
             Evas_Object     *obj,
             void *event_info __UNUSED__)
 {
-   double tsmt = elm_scroll_thumbscroll_momentum_threshold_get();
+   double tsmt = elm_config_scroll_thumbscroll_momentum_threshold_get();
    double val = elm_slider_value_get(obj);
 
    if (tsmt == val) return;
-   elm_scroll_thumbscroll_momentum_threshold_set(val);
+   elm_config_scroll_thumbscroll_momentum_threshold_set(val);
    elm_config_all_flush();
 }
 
@@ -340,11 +340,11 @@ tsf_change(void *data       __UNUSED__,
            Evas_Object     *obj,
            void *event_info __UNUSED__)
 {
-   double tsf = elm_scroll_thumbscroll_friction_get();
+   double tsf = elm_config_scroll_thumbscroll_friction_get();
    double val = elm_slider_value_get(obj);
 
    if (tsf == val) return;
-   elm_scroll_thumbscroll_friction_set(val);
+   elm_config_scroll_thumbscroll_friction_set(val);
    elm_config_all_flush();
 }
 
@@ -365,11 +365,11 @@ tsbf_change(void *data       __UNUSED__,
             Evas_Object     *obj,
             void *event_info __UNUSED__)
 {
-   double tsbf = elm_scroll_thumbscroll_border_friction_get();
+   double tsbf = elm_config_scroll_thumbscroll_border_friction_get();
    double val = elm_slider_value_get(obj);
 
    if (tsbf == val) return;
-   elm_scroll_thumbscroll_border_friction_set(val);
+   elm_config_scroll_thumbscroll_border_friction_set(val);
    elm_config_all_flush();
 }
 
@@ -390,11 +390,11 @@ tssf_change(void *data       __UNUSED__,
             Evas_Object     *obj,
             void *event_info __UNUSED__)
 {
-   double tssf = elm_scroll_thumbscroll_sensitivity_friction_get();
+   double tssf = elm_config_scroll_thumbscroll_sensitivity_friction_get();
    double val = elm_slider_value_get(obj);
 
    if (tssf == val) return;
-   elm_scroll_thumbscroll_sensitivity_friction_set(val);
+   elm_config_scroll_thumbscroll_sensitivity_friction_set(val);
    elm_config_all_flush();
 }
 
@@ -403,12 +403,12 @@ cf_enable(void *data,
           Evas_Object     *obj,
           void *event_info __UNUSED__)
 {
-   Eina_Bool cf = elm_cache_flush_enabled_get();
+   Eina_Bool cf = elm_config_cache_flush_enabled_get();
    Eina_Bool val = elm_check_state_get(obj);
 
    if (cf == val) return;
    elm_object_disabled_set((Evas_Object *)data, !val);
-   elm_cache_flush_enabled_set(val);
+   elm_config_cache_flush_enabled_set(val);
    elm_config_all_flush();
 }
 
@@ -429,11 +429,11 @@ cf_change(void *data       __UNUSED__,
           Evas_Object     *obj,
           void *event_info __UNUSED__)
 {
-   double cf = elm_cache_flush_interval_get();
+   double cf = elm_config_cache_flush_interval_get();
    double val = elm_slider_value_get(obj);
 
    if (cf == val) return;
-   elm_cache_flush_interval_set(val);
+   elm_config_cache_flush_interval_set(val);
    elm_config_all_flush();
 }
 
@@ -454,11 +454,11 @@ fc_change(void *data       __UNUSED__,
           Evas_Object     *obj,
           void *event_info __UNUSED__)
 {
-   double font_cache = elm_cache_font_cache_size_get();
+   double font_cache = elm_config_cache_font_cache_size_get();
    double val = elm_slider_value_get(obj);
 
    if (font_cache == val) return;
-   elm_cache_font_cache_size_set(val * 1024);
+   elm_config_cache_font_cache_size_set(val * 1024);
    elm_config_all_flush();
 }
 
@@ -479,11 +479,11 @@ ic_change(void *data       __UNUSED__,
           Evas_Object     *obj,
           void *event_info __UNUSED__)
 {
-   double image_cache = elm_cache_image_cache_size_get();
+   double image_cache = elm_config_cache_image_cache_size_get();
    double val = elm_slider_value_get(obj);
 
    if (image_cache == val) return;
-   elm_cache_image_cache_size_set(val * 1024);
+   elm_config_cache_image_cache_size_set(val * 1024);
    elm_config_all_flush();
 }
 
@@ -504,11 +504,11 @@ sc_change(void *data       __UNUSED__,
           Evas_Object     *obj,
           void *event_info __UNUSED__)
 {
-   double scale = elm_scale_get();
+   double scale = elm_config_scale_get();
    double val = elm_slider_value_get(obj);
 
    if (scale == val) return;
-   elm_scale_set(val);
+   elm_config_scale_set(val);
    elm_config_all_flush();
 }
 
@@ -529,11 +529,11 @@ fs_change(void *data       __UNUSED__,
           Evas_Object     *obj,
           void *event_info __UNUSED__)
 {
-   double fs = elm_finger_size_get();
+   double fs = elm_config_finger_size_get();
    double val = elm_slider_value_get(obj);
 
    if (fs == val) return;
-   elm_finger_size_set(val);
+   elm_config_finger_size_set(val);
    elm_config_all_flush();
 }
 
@@ -554,11 +554,11 @@ efc_change(void *data       __UNUSED__,
            Evas_Object     *obj,
            void *event_info __UNUSED__)
 {
-   double efc = elm_cache_edje_file_cache_size_get();
+   double efc = elm_config_cache_edje_file_cache_size_get();
    double val = elm_slider_value_get(obj);
 
    if (efc == val) return;
-   elm_cache_edje_file_cache_size_set(val);
+   elm_config_cache_edje_file_cache_size_set(val);
    elm_config_all_flush();
 }
 
@@ -579,11 +579,11 @@ ecc_change(void *data       __UNUSED__,
            Evas_Object     *obj,
            void *event_info __UNUSED__)
 {
-   double ecc = elm_cache_edje_collection_cache_size_get();
+   double ecc = elm_config_cache_edje_collection_cache_size_get();
    double val = elm_slider_value_get(obj);
 
    if (ecc == val) return;
-   elm_cache_edje_collection_cache_size_set(val);
+   elm_config_cache_edje_collection_cache_size_set(val);
    elm_config_all_flush();
 }
 
@@ -633,7 +633,7 @@ _status_config(Evas_Object *win,
    elm_slider_unit_format_set(sl, "%1.2f");
    elm_slider_indicator_format_set(sl, "%1.2f");
    elm_slider_min_max_set(sl, 0.25, 5.0);
-   elm_slider_value_set(sl, elm_scale_get());
+   elm_slider_value_set(sl, elm_config_scale_get());
    elm_box_pack_end(bx, sl);
    evas_object_show(sl);
 
@@ -656,7 +656,7 @@ _status_config(Evas_Object *win,
    elm_slider_unit_format_set(sl, "%1.0f");
    elm_slider_indicator_format_set(sl, "%1.0f");
    elm_slider_min_max_set(sl, 5, 200);
-   elm_slider_value_set(sl, elm_finger_size_get());
+   elm_slider_value_set(sl, elm_config_finger_size_get());
    elm_box_pack_end(bx, sl);
    evas_object_show(sl);
 
@@ -814,7 +814,7 @@ _font_overlay_reset(void            *data,
    fstyles = evas_object_data_get(win, "font_styles_list");
    fsizes = evas_object_data_get(win, "font_sizes_list");
 
-   elm_font_overlay_unset(tc_data->name);
+   elm_config_font_overlay_unset(tc_data->name);
 
    eina_stringshare_replace(&fdata.cur_font, NULL);
    eina_stringshare_replace(&tc_data->font, NULL);
@@ -847,7 +847,7 @@ _font_overlay_reset_all(void            *data,
 
    EINA_LIST_FOREACH(fdata.text_classes, l, tc_data)
      {
-        elm_font_overlay_unset(tc_data->name);
+        elm_config_font_overlay_unset(tc_data->name);
 
         eina_stringshare_replace(&tc_data->font, NULL);
         eina_stringshare_replace(&tc_data->style, NULL);
@@ -885,16 +885,16 @@ _font_overlay_change(void *data       __UNUSED__,
 
              name = elm_font_fontconfig_name_get(tc_data->font,
                                                  tc_data->style);
-             elm_font_overlay_set(tc_data->name, name,
-                                  tc_data->size ? tc_data->size : -100);
+             elm_config_font_overlay_set(tc_data->name, name,
+                                         tc_data->size ? tc_data->size : -100);
              elm_font_fontconfig_name_free(name);
           }
         else
-          elm_font_overlay_unset(tc_data->name);
+          elm_config_font_overlay_unset(tc_data->name);
      }
 
    elm_config_save();
-   elm_font_overlay_apply();
+   elm_config_font_overlay_apply();
    elm_config_all_flush();
 
    /* TODO: apply hinting */
@@ -913,25 +913,25 @@ _config_display_update(Evas_Object *win)
    Elm_Theme *th;
    int fs;
 
-   scale = elm_scale_get();
-   fs = elm_finger_size_get();
-   flush_interval = elm_cache_flush_interval_get();
-   font_c = elm_cache_font_cache_size_get();
-   image_c = elm_cache_image_cache_size_get();
-   edje_file_c = elm_cache_edje_file_cache_size_get();
-   edje_col_c = elm_cache_edje_collection_cache_size_get();
+   scale = elm_config_scale_get();
+   fs = elm_config_finger_size_get();
+   flush_interval = elm_config_cache_flush_interval_get();
+   font_c = elm_config_cache_font_cache_size_get();
+   image_c = elm_config_cache_image_cache_size_get();
+   edje_file_c = elm_config_cache_edje_file_cache_size_get();
+   edje_col_c = elm_config_cache_edje_collection_cache_size_get();
 
-   s_bounce = elm_scroll_bounce_enabled_get();
-   s_bounce_friction = elm_scroll_bounce_friction_get();
-   ts = elm_scroll_thumbscroll_enabled_get();
-   ts_threshould = elm_scroll_thumbscroll_threshold_get();
-   ts_momentum_threshold = elm_scroll_thumbscroll_momentum_threshold_get();
-   ts_friction = elm_scroll_thumbscroll_friction_get();
-   ts_border_friction = elm_scroll_thumbscroll_border_friction_get();
-   ts_sensitivity_friction = elm_scroll_thumbscroll_sensitivity_friction_get();
-   page_friction = elm_scroll_page_scroll_friction_get();
-   bring_in_friction = elm_scroll_bring_in_scroll_friction_get();
-   zoom_friction = elm_scroll_zoom_friction_get();
+   s_bounce = elm_config_scroll_bounce_enabled_get();
+   s_bounce_friction = elm_config_scroll_bounce_friction_get();
+   ts = elm_config_scroll_thumbscroll_enabled_get();
+   ts_threshould = elm_config_scroll_thumbscroll_threshold_get();
+   ts_momentum_threshold = elm_config_scroll_thumbscroll_momentum_threshold_get();
+   ts_friction = elm_config_scroll_thumbscroll_friction_get();
+   ts_border_friction = elm_config_scroll_thumbscroll_border_friction_get();
+   ts_sensitivity_friction = elm_config_scroll_thumbscroll_sensitivity_friction_get();
+   page_friction = elm_config_scroll_page_scroll_friction_get();
+   bring_in_friction = elm_config_scroll_bring_in_scroll_friction_get();
+   zoom_friction = elm_config_scroll_zoom_friction_get();
 
    /* gotta update root windows' atoms */
    elm_slider_value_set(evas_object_data_get(win, "scale_slider"), scale);
@@ -986,7 +986,7 @@ _config_display_update(Evas_Object *win)
    elm_theme_free(th);
    eina_stringshare_del(curr_theme);
 
-   curr_engine = elm_engine_get();
+   curr_engine = elm_config_engine_get();
    l_items = elm_list_items_get(evas_object_data_get(win, "engines_list"));
    EINA_LIST_FOREACH(l_items, l, list_it)
      {
@@ -1002,7 +1002,7 @@ static void
 _profile_change_do(Evas_Object *win,
                    const char  *profile)
 {
-   elm_profile_set(profile);
+   elm_config_profile_set(profile);
    elm_config_all_flush();
    _config_display_update(win);
 }
@@ -1028,10 +1028,10 @@ _engine_use(void            *data,
    li = data;
    selection = elm_object_item_data_get(elm_list_selected_item_get(li));
 
-   if (!strcmp(elm_engine_get(), selection))
+   if (!strcmp(elm_config_engine_get(), selection))
      return;
 
-   elm_engine_set(selection);
+   elm_config_engine_set(selection);
    elm_config_save(); /* make sure new engine has its data dir */
 }
 
@@ -1046,7 +1046,7 @@ _profile_use(void            *data,
 
    li = data;
    selection = elm_object_item_data_get(elm_list_selected_item_get(li));
-   profile = elm_profile_current_get();
+   profile = elm_config_profile_get();
 
    if (!profile)
      {
@@ -1057,7 +1057,7 @@ _profile_use(void            *data,
    if (!strcmp(profile, selection))
      return;
 
-   elm_profile_set(selection); /* just here to update info for getters below */
+   elm_config_profile_set(selection); /* just here to update info for getters below */
 
    _profile_change_do(elm_object_top_widget_get(li), selection);
    elm_config_save(); /* make sure new profile has its data dir */
@@ -1082,16 +1082,16 @@ _profile_reset(void            *data,
 
    li = data;
    selection = elm_object_item_data_get(elm_list_selected_item_get(li));
-   curr = elm_profile_current_get();
+   curr = elm_config_profile_get();
 
    elm_config_save(); /* dump config into old profile's data dir */
 
-   pdir = elm_profile_dir_get(selection, EINA_TRUE);
+   pdir = elm_config_profile_dir_get(selection, EINA_TRUE);
    if (!pdir)
      return;
 
    ecore_file_recursive_rm(pdir);
-   elm_profile_dir_free(pdir);
+   elm_config_profile_dir_free(pdir);
 
    elm_config_reload();
 
@@ -1178,7 +1178,7 @@ _status_config_sizing(Evas_Object *win,
    elm_slider_unit_format_set(sl, "%1.2f");
    elm_slider_indicator_format_set(sl, "%1.2f");
    elm_slider_min_max_set(sl, 0.25, 5.0);
-   elm_slider_value_set(sl, elm_scale_get());
+   elm_slider_value_set(sl, elm_config_scale_get());
    elm_box_pack_end(bx, sl);
    evas_object_show(sl);
 
@@ -1202,7 +1202,7 @@ _status_config_sizing(Evas_Object *win,
    elm_slider_unit_format_set(sl, "%1.0f");
    elm_slider_indicator_format_set(sl, "%1.0f");
    elm_slider_min_max_set(sl, 5, 200);
-   elm_slider_value_set(sl, elm_finger_size_get());
+   elm_slider_value_set(sl, elm_config_finger_size_get());
    elm_box_pack_end(bx, sl);
    evas_object_show(sl);
 
@@ -1747,8 +1747,8 @@ _fonts_data_fill(Evas *evas)
    fdata.font_hash = elm_font_available_hash_add(evas_fonts);
    evas_font_available_list_free(evas, evas_fonts);
 
-   text_classes = elm_text_classes_list_get();
-   fo_list = elm_font_overlay_list_get();
+   text_classes = elm_config_text_classes_list_get();
+   fo_list = elm_config_font_overlay_list_get();
 
    EINA_LIST_FOREACH(text_classes, l, etc)
      {
@@ -1782,7 +1782,7 @@ _fonts_data_fill(Evas *evas)
         fdata.text_classes = eina_list_append(fdata.text_classes, tc_data);
      }
 
-   elm_text_classes_list_free(text_classes);
+   elm_config_text_classes_list_free(text_classes);
 
    /* FIXME: hinting later */
    /* fdata.hinting = e_config->font_hinting; */
@@ -2136,10 +2136,10 @@ _profiles_list_selected_cb(void            *data,
    if (!sel_profile)
      return;
 
-   cur_profile = elm_profile_current_get();
+   cur_profile = elm_config_profile_get();
 
-   pdir = elm_profile_dir_get(sel_profile, EINA_TRUE);
-   if (!pdir) pdir = elm_profile_dir_get(sel_profile, EINA_FALSE);
+   pdir = elm_config_profile_dir_get(sel_profile, EINA_TRUE);
+   if (!pdir) pdir = elm_config_profile_dir_get(sel_profile, EINA_FALSE);
 #ifdef ELM_EFREET
    snprintf(buf, sizeof(buf), "%s/profile.desktop", pdir);
    desk = efreet_desktop_new(buf);
@@ -2147,7 +2147,7 @@ _profiles_list_selected_cb(void            *data,
    else
      {
         if (desk) efreet_desktop_free(desk);
-        pdir = elm_profile_dir_get(sel_profile, EINA_FALSE);
+        pdir = elm_config_profile_dir_get(sel_profile, EINA_FALSE);
         snprintf(buf, sizeof(buf), "%s/profile.desktop", pdir);
         desk = efreet_desktop_new(buf);
         if ((desk) && (desk->name)) prof_name = desk->name;
@@ -2167,7 +2167,7 @@ _profiles_list_selected_cb(void            *data,
                                 EINA_FALSE);
         elm_object_disabled_set(evas_object_data_get(obj, "prof_use_btn"),
                                 EINA_FALSE);
-        elm_profile_dir_free(pdir);
+        elm_config_profile_dir_free(pdir);
      }
 
    snprintf(buf, sizeof(buf), "<hilight>Selected profile: %s</><br/>",
@@ -2200,7 +2200,7 @@ _profiles_list_fill(Evas_Object *l_widget,
 
    elm_list_clear(l_widget);
 
-   cur_profile = elm_profile_current_get();
+   cur_profile = elm_config_profile_get();
 
    EINA_LIST_FOREACH(p_names, l, profile)
      {
@@ -2212,8 +2212,8 @@ _profiles_list_fill(Evas_Object *l_widget,
         Elm_Object_Item *list_it;
         Evas_Object *ic;
 
-        pdir = elm_profile_dir_get(profile, EINA_TRUE);
-        if (!pdir) pdir = elm_profile_dir_get(profile, EINA_FALSE);
+        pdir = elm_config_profile_dir_get(profile, EINA_TRUE);
+        if (!pdir) pdir = elm_config_profile_dir_get(profile, EINA_FALSE);
         label = profile;
 
 #ifdef ELM_EFREET
@@ -2223,7 +2223,7 @@ _profiles_list_fill(Evas_Object *l_widget,
         else
           {
              if (desk) efreet_desktop_free(desk);
-             pdir = elm_profile_dir_get(profile, EINA_FALSE);
+             pdir = elm_config_profile_dir_get(profile, EINA_FALSE);
              snprintf(buf, sizeof(buf), "%s/profile.desktop", pdir);
              desk = efreet_desktop_new(buf);
              if ((desk) && (desk->name)) label = desk->name;
@@ -2256,7 +2256,7 @@ _profiles_list_fill(Evas_Object *l_widget,
         if (cur_profile && !strcmp(profile, cur_profile))
           sel_it = list_it;
 
-        elm_profile_dir_free(pdir);
+        elm_config_profile_dir_free(pdir);
 
 #ifdef ELM_EFREET
         if (desk) efreet_desktop_free(desk);
@@ -2321,7 +2321,7 @@ _status_config_profiles(Evas_Object *win,
    evas_object_smart_callback_add(li, "unselected", _profiles_list_unselect_cb,
                                   NULL);
 
-   profs = elm_profile_list_get();
+   profs = elm_config_profile_list_get();
 
    evas_object_show(li);
    elm_box_pack_end(fr_bx2, li);
@@ -2414,7 +2414,7 @@ _status_config_profiles(Evas_Object *win,
 
    _profiles_list_fill(li, profs);
 
-   elm_profile_list_free(profs);
+   elm_config_profile_list_free(profs);
 
    edje_thaw();
    evas_event_thaw(evas);
@@ -2448,7 +2448,7 @@ _status_config_scrolling(Evas_Object *win,
    evas_object_data_set(win, "scroll_bounce_check", ck);
    evas_object_size_hint_weight_set(ck, EVAS_HINT_EXPAND, 0.0);
    evas_object_size_hint_align_set(ck, EVAS_HINT_FILL, 0.5);
-   elm_check_state_set(ck, elm_scroll_bounce_enabled_get());
+   elm_check_state_set(ck, elm_config_scroll_bounce_enabled_get());
    elm_box_pack_end(bx, ck);
    evas_object_show(ck);
 
@@ -2466,7 +2466,7 @@ _status_config_scrolling(Evas_Object *win,
    elm_slider_unit_format_set(sl, "%1.2f");
    elm_slider_indicator_format_set(sl, "%1.2f");
    elm_slider_min_max_set(sl, 0.0, 4.0);
-   elm_slider_value_set(sl, elm_scroll_bounce_friction_get());
+   elm_slider_value_set(sl, elm_config_scroll_bounce_friction_get());
    elm_box_pack_end(bx, sl);
    evas_object_show(sl);
 
@@ -2487,7 +2487,7 @@ _status_config_scrolling(Evas_Object *win,
    evas_object_data_set(win, "thumbscroll_check", ck);
    evas_object_size_hint_weight_set(ck, EVAS_HINT_EXPAND, 0.0);
    evas_object_size_hint_align_set(ck, EVAS_HINT_FILL, 0.5);
-   elm_check_state_set(ck, elm_scroll_thumbscroll_enabled_get());
+   elm_check_state_set(ck, elm_config_scroll_thumbscroll_enabled_get());
    elm_box_pack_end(bx, ck);
    evas_object_show(ck);
 
@@ -2506,7 +2506,7 @@ _status_config_scrolling(Evas_Object *win,
    elm_slider_unit_format_set(sl, "%1.0f pixels");
    elm_slider_indicator_format_set(sl, "%1.0f");
    elm_slider_min_max_set(sl, 8.0, 50.0);
-   elm_slider_value_set(sl, elm_scroll_thumbscroll_threshold_get());
+   elm_slider_value_set(sl, elm_config_scroll_thumbscroll_threshold_get());
    elm_box_pack_end(bx, sl);
    evas_object_show(sl);
 
@@ -2527,7 +2527,7 @@ _status_config_scrolling(Evas_Object *win,
    elm_slider_unit_format_set(sl, "%1.0f pixels/s");
    elm_slider_indicator_format_set(sl, "%1.0f");
    elm_slider_min_max_set(sl, 10.0, 200.0);
-   elm_slider_value_set(sl, elm_scroll_thumbscroll_momentum_threshold_get());
+   elm_slider_value_set(sl, elm_config_scroll_thumbscroll_momentum_threshold_get());
    elm_box_pack_end(bx, sl);
    evas_object_show(sl);
 
@@ -2548,7 +2548,7 @@ _status_config_scrolling(Evas_Object *win,
    elm_slider_unit_format_set(sl, "%1.1f");
    elm_slider_indicator_format_set(sl, "%1.1f");
    elm_slider_min_max_set(sl, 0.0, 15.0);
-   elm_slider_value_set(sl, elm_scroll_thumbscroll_friction_get());
+   elm_slider_value_set(sl, elm_config_scroll_thumbscroll_friction_get());
    elm_box_pack_end(bx, sl);
    evas_object_show(sl);
 
@@ -2570,7 +2570,7 @@ _status_config_scrolling(Evas_Object *win,
    elm_slider_unit_format_set(sl, "%1.2f");
    elm_slider_indicator_format_set(sl, "%1.2f");
    elm_slider_min_max_set(sl, 0.0, 1.0);
-   elm_slider_value_set(sl, elm_scroll_thumbscroll_border_friction_get());
+   elm_slider_value_set(sl, elm_config_scroll_thumbscroll_border_friction_get());
    elm_box_pack_end(bx, sl);
    evas_object_show(sl);
 
@@ -2590,7 +2590,7 @@ _status_config_scrolling(Evas_Object *win,
    elm_slider_unit_format_set(sl, "%1.2f");
    elm_slider_indicator_format_set(sl, "%1.2f");
    elm_slider_min_max_set(sl, 0.1, 1.0);
-   elm_slider_value_set(sl, elm_scroll_thumbscroll_sensitivity_friction_get());
+   elm_slider_value_set(sl, elm_config_scroll_thumbscroll_sensitivity_friction_get());
    elm_box_pack_end(bx, sl);
    evas_object_show(sl);
 
@@ -2617,7 +2617,7 @@ _status_config_scrolling(Evas_Object *win,
    elm_slider_unit_format_set(sl, "%1.1f");
    elm_slider_indicator_format_set(sl, "%1.1f");
    elm_slider_min_max_set(sl, 0.0, 5.0);
-   elm_slider_value_set(sl, elm_scroll_page_scroll_friction_get());
+   elm_slider_value_set(sl, elm_config_scroll_page_scroll_friction_get());
    elm_box_pack_end(bx, sl);
    evas_object_show(sl);
 
@@ -2637,7 +2637,7 @@ _status_config_scrolling(Evas_Object *win,
    elm_slider_unit_format_set(sl, "%1.1f");
    elm_slider_indicator_format_set(sl, "%1.1f");
    elm_slider_min_max_set(sl, 0.0, 5.0);
-   elm_slider_value_set(sl, elm_scroll_bring_in_scroll_friction_get());
+   elm_slider_value_set(sl, elm_config_scroll_bring_in_scroll_friction_get());
    elm_box_pack_end(bx, sl);
    evas_object_show(sl);
 
@@ -2658,7 +2658,7 @@ _status_config_scrolling(Evas_Object *win,
    elm_slider_unit_format_set(sl, "%1.1f");
    elm_slider_indicator_format_set(sl, "%1.1f");
    elm_slider_min_max_set(sl, 0.0, 5.0);
-   elm_slider_value_set(sl, elm_scroll_zoom_friction_get());
+   elm_slider_value_set(sl, elm_config_scroll_zoom_friction_get());
    elm_box_pack_end(bx, sl);
    evas_object_show(sl);
 
@@ -2736,7 +2736,7 @@ _engines_list_fill(Evas_Object *l_widget,
    if (!e_names)
      return;
 
-   cur_engine = elm_engine_get();
+   cur_engine = elm_config_engine_get();
 
    EINA_LIST_FOREACH(e_names, l, engine)
      {
@@ -2838,14 +2838,14 @@ _status_config_caches(Evas_Object *win,
    elm_slider_unit_format_set(sl, "%1.0f ticks");
    elm_slider_indicator_format_set(sl, "%1.0f");
    elm_slider_min_max_set(sl, 8.0, 4096.0);
-   elm_slider_value_set(sl, elm_cache_flush_interval_get());
-   elm_object_disabled_set(sl, !elm_cache_flush_enabled_get());
+   elm_slider_value_set(sl, elm_config_cache_flush_interval_get());
+   elm_object_disabled_set(sl, !elm_config_cache_flush_enabled_get());
 
    ck = elm_check_add(win);
    evas_object_size_hint_weight_set(ck, EVAS_HINT_EXPAND, 0.0);
    evas_object_size_hint_align_set(ck, EVAS_HINT_FILL, 0.5);
    elm_object_text_set(ck, "Enable Flushing");
-   elm_check_state_set(ck, elm_cache_flush_enabled_get());
+   elm_check_state_set(ck, elm_config_cache_flush_enabled_get());
    evas_object_smart_callback_add(ck, "changed", cf_enable, sl);
    elm_box_pack_end(bx, ck);
    evas_object_show(ck);
@@ -2873,7 +2873,7 @@ _status_config_caches(Evas_Object *win,
    elm_slider_unit_format_set(sl, "%1.1f MB");
    elm_slider_indicator_format_set(sl, "%1.1f");
    elm_slider_min_max_set(sl, 0.0, 4.0);
-   elm_slider_value_set(sl, (double)elm_cache_font_cache_size_get() / 1024.0);
+   elm_slider_value_set(sl, (double)elm_config_cache_font_cache_size_get() / 1024.0);
    elm_box_pack_end(bx, sl);
    evas_object_show(sl);
 
@@ -2897,7 +2897,7 @@ _status_config_caches(Evas_Object *win,
    elm_slider_unit_format_set(sl, "%1.0f MB");
    elm_slider_indicator_format_set(sl, "%1.0f");
    elm_slider_min_max_set(sl, 0, 32);
-   elm_slider_value_set(sl, (double)elm_cache_image_cache_size_get() / 1024.0);
+   elm_slider_value_set(sl, (double)elm_config_cache_image_cache_size_get() / 1024.0);
    elm_box_pack_end(bx, sl);
    evas_object_show(sl);
 
@@ -2921,7 +2921,7 @@ _status_config_caches(Evas_Object *win,
    elm_slider_unit_format_set(sl, "%1.0f files");
    elm_slider_indicator_format_set(sl, "%1.0f");
    elm_slider_min_max_set(sl, 0, 32);
-   elm_slider_value_set(sl, elm_cache_edje_file_cache_size_get());
+   elm_slider_value_set(sl, elm_config_cache_edje_file_cache_size_get());
    elm_box_pack_end(bx, sl);
    evas_object_show(sl);
 
@@ -2945,7 +2945,7 @@ _status_config_caches(Evas_Object *win,
    elm_slider_unit_format_set(sl, "%1.0f collections");
    elm_slider_indicator_format_set(sl, "%1.0f");
    elm_slider_min_max_set(sl, 0, 128);
-   elm_slider_value_set(sl, elm_cache_edje_collection_cache_size_get());
+   elm_slider_value_set(sl, elm_config_cache_edje_collection_cache_size_get());
    elm_box_pack_end(bx, sl);
    evas_object_show(sl);
 
@@ -3114,8 +3114,8 @@ elm_main(int    argc,
    if (!interactive)
      {
         if (theme_set) elm_theme_set(NULL, theme_set);
-        if (finger_size_set) elm_finger_size_set(atoi(finger_size_set));
-        if (scale_set)  elm_scale_set(atof(scale_set));
+        if (finger_size_set) elm_config_finger_size_set(atoi(finger_size_set));
+        if (scale_set)  elm_config_scale_set(atof(scale_set));
 
         elm_config_all_flush();
 

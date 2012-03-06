@@ -497,7 +497,7 @@ _scroller_size_calc(Evas_Object *obj)
         action_area_height = edje_object_data_get(
                  elm_layout_edje_get(wd->action_area), "action_area_height");
         if (action_area_height) h_action_area = (int)(atoi(action_area_height)
-                 * elm_scale_get()* elm_object_scale_get(obj));
+                 * _elm_config->scale * elm_object_scale_get(obj));
      }
    h_content = h - (h_title + h_action_area);
    wd->max_sc_h = h_content;

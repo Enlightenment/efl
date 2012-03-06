@@ -1743,7 +1743,7 @@ elm_win_add(Evas_Object *parent, const char *name, Elm_Win_Type type)
          CRITICAL(engine " engine creation failed. Trying default.");   \
          win->ee = ecore_evas_new(NULL, 0, 0, 1, 1, NULL);              \
          if (win->ee)                                                   \
-            elm_engine_set(ecore_evas_engine_name_get(win->ee));        \
+            elm_config_preferred_engine_set(ecore_evas_engine_name_get(win->ee)); \
    } while (0)
 #define ENGINE_COMPARE(name) (_elm_preferred_engine && !strcmp(_elm_preferred_engine, name))
 

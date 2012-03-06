@@ -891,7 +891,8 @@ elm_fileselector_add(Evas_Object *parent)
    evas_object_size_hint_align_set(grid, EVAS_HINT_FILL, EVAS_HINT_FILL);
    evas_object_size_hint_weight_set(grid, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
 
-   s = elm_finger_size_get() * 2;
+   // XXX: will fail for dynamic finger size changing
+   s = _elm_config->finger_size * 2;
    elm_gengrid_item_size_set(grid, s, s);
    elm_gengrid_align_set(grid, 0.0, 0.0);
 

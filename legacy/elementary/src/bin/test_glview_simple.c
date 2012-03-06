@@ -239,9 +239,11 @@ test_glview_simple(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *eve
    if (!(gld = calloc(1, sizeof(GLData)))) return;
 
    // Set the engine to opengl_x11
-   elm_engine_set("opengl_x11");
-
+   elm_config_preferred_engine_set("opengl_x11");
    win = elm_win_add(NULL, "glview simple", ELM_WIN_BASIC);
+   // Set preferred engine back to default from config
+   elm_config_preferred_engine_set(NULL);
+   
    elm_win_title_set(win, "GLView Simple");
    elm_win_autodel_set(win, EINA_TRUE);
 

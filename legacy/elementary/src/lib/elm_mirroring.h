@@ -13,22 +13,6 @@
  */
 
 /**
- * Get the system mirrored mode. This determines the default mirrored mode
- * of widgets.
- *
- * @return EINA_TRUE if mirrored is set, EINA_FALSE otherwise
- */
-EAPI Eina_Bool elm_mirrored_get(void);
-
-/**
- * Set the system mirrored mode. This determines the default mirrored mode
- * of widgets.
- *
- * @param mirrored EINA_TRUE to set mirrored mode, EINA_FALSE to unset it.
- */
-EAPI void      elm_mirrored_set(Eina_Bool mirrored);
-
-/**
  * Get the widget's mirrored mode.
  *
  * @param obj The widget.

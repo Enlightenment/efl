@@ -115,13 +115,13 @@ test_focus3(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info
 static void
 highlight_enabled_cb(void *data __UNUSED__, Evas_Object *obj, void *event_info __UNUSED__)
 {
-   elm_focus_highlight_enabled_set(elm_check_state_get(obj));
+   elm_config_focus_highlight_enabled_set(elm_check_state_get(obj));
 }
 
 static void
 highlight_animate_cb(void *data __UNUSED__, Evas_Object *obj, void *event_info __UNUSED__)
 {
-   elm_focus_highlight_animate_set(elm_check_state_get(obj));
+   elm_config_focus_highlight_animate_set(elm_check_state_get(obj));
 }
 
 static void
@@ -208,8 +208,8 @@ test_focus4(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info
    win = elm_win_util_standard_add("focus4", "Focus 4");
    elm_win_autodel_set(win, EINA_TRUE);
    elm_win_focus_highlight_enabled_set(win, EINA_TRUE);
-   elm_focus_highlight_enabled_set(EINA_TRUE);
-   elm_focus_highlight_animate_set(EINA_TRUE);
+   elm_config_focus_highlight_enabled_set(EINA_TRUE);
+   elm_config_focus_highlight_animate_set(EINA_TRUE);
 
    /* First Example - Using Focus Highlight */
    gd = elm_grid_add(win);

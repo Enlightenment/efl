@@ -502,7 +502,7 @@ elm_widget_add(Evas *evas)
    Evas_Object *obj;
    _smart_init();
    obj = evas_object_smart_add(evas, _e_smart);
-   elm_widget_mirrored_set(obj, elm_mirrored_get());
+   elm_widget_mirrored_set(obj, elm_config_mirrored_get());
    return obj;
 }
 
@@ -776,7 +776,7 @@ void
 _elm_widget_mirrored_reload(Evas_Object *obj)
 {
    API_ENTRY return;
-   Eina_Bool mirrored = elm_mirrored_get();
+   Eina_Bool mirrored = elm_config_mirrored_get();
    if (elm_widget_mirrored_automatic_get(obj) && (sd->is_mirrored != mirrored))
      {
         sd->is_mirrored = mirrored;
@@ -815,7 +815,7 @@ elm_widget_mirrored_automatic_set(Evas_Object *obj,
 
         if (automatic)
           {
-             elm_widget_mirrored_set(obj, elm_mirrored_get());
+             elm_widget_mirrored_set(obj, elm_config_mirrored_get());
           }
      }
 }
