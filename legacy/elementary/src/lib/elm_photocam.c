@@ -98,6 +98,7 @@ struct _Widget_Data
    Eina_Bool on_hold : 1;
    Eina_Bool paused : 1;
    Eina_Bool do_region : 1;
+   Eina_Bool do_gesture : 1;
    Eina_Bool zoom_gest : 1;
 };
 
@@ -1925,12 +1926,12 @@ elm_photocam_bounce_get(const Evas_Object *obj, Eina_Bool *h_bounce, Eina_Bool *
 }
 
 EAPI void
-elm_photocam_gesture_set(Evas_Object *obj, Eina_Bool gesture)
+elm_photocam_gesture_enabled_set(Evas_Object *obj, Eina_Bool gesture)
 {
    ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return;
-   if ((wd->gest && !!gesture) || (!wd->gest && !gesture)) return;
+   if (wd->do_gesture == !!gesture) return;
 
    if (wd->gest)
      {
@@ -1941,6 +1942,7 @@ elm_photocam_gesture_set(Evas_Object *obj, Eina_Bool gesture)
    if (gesture)
      {
         wd->gest = elm_gesture_layer_add(wd->obj);
+        if (!wd->gest) return;
         elm_gesture_layer_attach(wd->gest, wd->obj);
         elm_gesture_layer_cb_set(wd->gest, ELM_GESTURE_ZOOM, ELM_GESTURE_STATE_START,
                                  _gzoom_start, wd);
@@ -1951,16 +1953,16 @@ elm_photocam_gesture_set(Evas_Object *obj, Eina_Bool gesture)
         elm_gesture_layer_cb_set(wd->gest, ELM_GESTURE_ZOOM, ELM_GESTURE_STATE_ABORT,
                                  _gzoom_end, wd);
      }
+
+   wd->do_gesture = !!gesture;
 }
 
 EAPI Eina_Bool
-elm_photocam_gesture_get(const Evas_Object *obj)
+elm_photocam_gesture_enabled_get(const Evas_Object *obj)
 {
    ELM_CHECK_WIDTYPE(obj, widtype) EINA_FALSE;
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return EINA_FALSE;
 
-   if (wd->gest)
-     return EINA_TRUE;
-   return EINA_FALSE;
+   return wd->do_gesture;
 }

@@ -263,7 +263,7 @@ EAPI void                   elm_photocam_bounce_get(const Evas_Object *obj, Eina
  * This sets the gesture state to on(EINA_TRUE) or off (EINA_FALSE) for
  * photocam. The default is off. This will start multi touch zooming.
  */
-EAPI void		    elm_photocam_gesture_set(Evas_Object *obj, Eina_Bool gesture);
+EAPI void		    elm_photocam_gesture_enabled_set(Evas_Object *obj, Eina_Bool gesture);
 
 /**
  * @brief Get the gesture state for photocam.
@@ -273,9 +273,9 @@ EAPI void		    elm_photocam_gesture_set(Evas_Object *obj, Eina_Bool gesture);
  *
  * This gets the current gesture state for the photocam object.
  *
- * @see elm_photocam_gesture_set()
+ * @see elm_photocam_gesture_enabled_set()
  */
-EAPI Eina_Bool		    elm_photocam_gesture_get(const Evas_Object *obj);
+EAPI Eina_Bool		    elm_photocam_gesture_enabled_get(const Evas_Object *obj);
 /**
  * @}
  */

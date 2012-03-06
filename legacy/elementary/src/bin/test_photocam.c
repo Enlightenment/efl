@@ -176,7 +176,7 @@ my_bt_zoom_fill(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUS
 static void
 my_bt_gesture(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
-  elm_photocam_gesture_set(data, !elm_photocam_gesture_get(data));
+  elm_photocam_gesture_enabled_set(data, !elm_photocam_gesture_enabled_get(data));
 }
 
 static void
