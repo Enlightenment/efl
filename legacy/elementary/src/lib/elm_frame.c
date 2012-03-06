@@ -327,33 +327,3 @@ elm_frame_collapse_get(const Evas_Object *obj)
    if (!wd) return EINA_FALSE;
    return wd->collapsed;
 }
-
-EAPI void
-elm_frame_label_set(Evas_Object *obj, const char *label)
-{
-   _elm_frame_label_set(obj, NULL, label);
-}
-
-EAPI const char *
-elm_frame_label_get(const Evas_Object *obj)
-{
-   return _elm_frame_label_get(obj, NULL);
-}
-
-EAPI void
-elm_frame_content_set(Evas_Object *obj, Evas_Object *content)
-{
-   _content_set_hook(obj, NULL, content);
-}
-
-EAPI Evas_Object *
-elm_frame_content_get(const Evas_Object *obj)
-{
-   return _content_get_hook(obj, NULL);
-}
-
-EAPI Evas_Object *
-elm_frame_content_unset(Evas_Object *obj)
-{
-   return _content_unset_hook(obj, NULL);
-}
