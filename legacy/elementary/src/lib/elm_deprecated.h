@@ -1823,6 +1823,7 @@ EINA_DEPRECATED EAPI const char *elm_label_label_get(const Evas_Object *obj);
  * @param obj The layout object
  * @param swallow The swallow part name in the edje file
  * @param content The child that will be added in this layout object
+ * @return @c EINA_TRUE on success, @c EINA_FALSE otherwise
  *
  * Once the content object is set, a previously set one will be deleted.
  * If you want to keep that old content object, use the
@@ -1841,7 +1842,7 @@ EINA_DEPRECATED EAPI const char *elm_label_label_get(const Evas_Object *obj);
  *
  * @ingroup Layout
  */
-EINA_DEPRECATED EAPI void         elm_layout_content_set(Evas_Object *obj, const char *swallow, Evas_Object *content);
+EINA_DEPRECATED EAPI Eina_Bool    elm_layout_content_set(Evas_Object *obj, const char *swallow, Evas_Object *content);
 
 /**
  * Get the child object in the given content part.
@@ -1878,11 +1879,12 @@ EINA_DEPRECATED EAPI Evas_Object *elm_layout_content_unset(Evas_Object *obj, con
  * @param obj The layout object
  * @param part The TEXT part where to set the text
  * @param text The text to set
+ * @return @c EINA_TRUE on success, @c EINA_FALSE otherwise
  *
  * @ingroup Layout
  * @deprecated use elm_object_part_text_set() instead.
  */
-EINA_DEPRECATED EAPI void         elm_layout_text_set(Evas_Object *obj, const char *part, const char *text);
+EINA_DEPRECATED EAPI Eina_Bool    elm_layout_text_set(Evas_Object *obj, const char *part, const char *text);
 
 /**
  * Get the text set in the given part
