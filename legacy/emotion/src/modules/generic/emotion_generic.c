@@ -1164,11 +1164,9 @@ em_len_get(void *data)
 }
 
 static double
-em_buffer_size_get(void *data)
+em_buffer_size_get(void *data __UNUSED__)
 {
-   Emotion_Generic_Video *ev = data;
    return 1.0;
-   ev = NULL;
 }
 
 static int
