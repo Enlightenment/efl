@@ -4950,6 +4950,20 @@ EINA_DEPRECATED EAPI void                  elm_icon_scale_get(const Evas_Object 
  * @ingroup Index
  */
 EINA_DEPRECATED EAPI Elm_Object_Item      *elm_index_item_selected_get(const Evas_Object *obj, int level);
+
+/**
+ * Get the value of shrink_mode state.
+ *
+ * @deprecated elm_multibuttonentry_expanded_get()
+ */
+EINA_DEPRECATED EAPI int                        elm_multibuttonentry_shrink_mode_get(const Evas_Object *obj);
+
+/**
+ * Set/Unset the multibuttonentry to shrink mode state of single line
+ *
+ * @deprecated elm_multibuttonentry_expanded_set()
+ */
+EINA_DEPRECATED EAPI void                       elm_multibuttonentry_shrink_mode_set(Evas_Object *obj, int shrink_mode);
 /**
  * @}
  */

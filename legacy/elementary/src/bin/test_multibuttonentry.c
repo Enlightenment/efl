@@ -48,7 +48,7 @@ _mbe_clicked_cb(void *data __UNUSED__,
                 void *event_info __UNUSED__ )
 {
    //Unset the multibuttonentry to contracted mode of single line
-   elm_multibuttonentry_shrink_mode_set(obj, 0);
+   elm_multibuttonentry_expanded_set(obj, EINA_TRUE);
    printf("A multibuttonentry is clicked!\n");
    Evas_Object *entry;
    entry = elm_multibuttonentry_entry_get(obj);
@@ -71,7 +71,7 @@ _mbe_unfocused_cb(void *data __UNUSED__,
                   void *event_info __UNUSED__ )
 {
    //Set the multibuttonentry to contracted mode of single line
-   elm_multibuttonentry_shrink_mode_set(obj, EINA_TRUE);
+   elm_multibuttonentry_expanded_set(obj, EINA_FALSE);
    printf("multibuttonentry unfocused!\n");
 }
 

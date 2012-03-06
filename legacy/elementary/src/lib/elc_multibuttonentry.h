@@ -1,11 +1,16 @@
 /**
  * @defgroup Multibuttonentry Multibuttonentry
  *
- * A Multibuttonentry is a widget to allow a user enter text and manage it as a number of buttons
- * Each text button is inserted by pressing the "return" key. If there is no space in the current row,
- * a new button is added to the next row. When a text button is pressed, it will become focused.
+ * A Multibuttonentry is a widget to allow a user enter text and manage it as a number 
+ * of buttons. Each text button is inserted by pressing the "return" key. 
+ * If there is no space in the current row, a new button is added to the next row. 
+ * When a text button is pressed, it will become focused.
  * Backspace removes the focus.
- * When the Multibuttonentry loses focus items longer than 1 lines are shrunk to one line.
+ * When the Multibuttonentry loses focus items longer than one line are shrunk 
+ * to one line.
+ *
+ * Typical use case of multibuttonentry is, composing emails/messages to a group
+ * of addresses, each of which is an item that can be clicked for further actions.
  *
  * Smart callbacks one can register:
  * - @c "item,selected" - when item is selected. May be called on backspace key.
@@ -41,7 +46,6 @@
  * 1. docs are lacking.
  * 2. name sucks
  * 3. should use the elm_object_part_text_set to set guide text.
- * 4. shrink_mode is an awful name.
  * 5. bugs: offset bug with the "tap to add recipient" + delete doesn't delete items but backspace does. */
 
 /**
@@ -94,24 +98,30 @@ EAPI const char                *elm_multibuttonentry_guide_text_get(const Evas_O
 EAPI void                       elm_multibuttonentry_guide_text_set(Evas_Object *obj, const char *guidetext);
 
 /**
- * Get the value of shrink_mode state.
+ * Get the value of expanded state.
+ * In expanded state, the complete entry will be displayed.
+ * Otherwise, only single line of the entry will be displayed.
  *
  * @param obj The multibuttonentry object
- * @return the value of shrink mode state.
+ * @return EINA_TRUE if the widget is in expanded state. EINA_FALSE if not.
  *
  * @ingroup Multibuttonentry
  */
-EAPI int                        elm_multibuttonentry_shrink_mode_get(const Evas_Object *obj);
+EAPI Eina_Bool                  elm_multibuttonentry_expanded_get(const Evas_Object *obj);
 
 /**
- * Set/Unset the multibuttonentry to shrink mode state of single line
+ * Set/Unset the multibuttonentry to expanded state.
+ * In expanded state, the complete entry will be displayed.
+ * Otherwise, only single line of the entry will be displayed.
  *
  * @param obj The multibuttonentry object
- * @param shrink the value of shrink_mode state. Set this to 1 to set the multibuttonentry to shrink state of single line. Set this to 0 to unset the contracted state.
+ * @param expanded the value of expanded state.
+ *        Set this to EINA_TRUE for expanded state. 
+ *        Set this to EINA_FALSE for single line state.
  *
  * @ingroup Multibuttonentry
  */
-EAPI void                       elm_multibuttonentry_shrink_mode_set(Evas_Object *obj, int shrink);
+EAPI void                       elm_multibuttonentry_expanded_set(Evas_Object *obj, Eina_Bool expanded);
 
 /**
  * Prepend a new item to the multibuttonentry
