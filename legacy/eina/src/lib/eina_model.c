@@ -522,6 +522,27 @@ _eina_model_interface_implements(const Eina_Model_Interface *iface, const Eina_M
 }
 
 /* apply topological sort and remove duplicates */
+/*
+ * TODO: Topological sort will only work for linked interfaces, but
+ *       will ignore original ordering provided by types. Consider the
+ *       following:
+ *
+ *         - A_Type -> X_Iface (name: "MyIface")
+ *         - B_Type -> Y_Iface (name: "MyIface")
+ *
+ *       Both X_Iface and Y_Iface are different implementations of the
+ *       "MyIface".
+ *
+ *       B_Type inherits from A_Type, then Y_Iface must be looked up
+ *       first, even though there is no link between Y_Iface and
+ *       X_Iface.
+ *
+ *       However, the way the current topological sort behaves, the
+ *       roots may come out in any order. We need a stable version
+ *       that sorts roots before removing them from graph.
+ *
+ * Thanks to Tasn to report it :-)
+ */
 static Eina_Bool
 _eina_model_description_ifaces_fix(Eina_Model_Description *desc)
 {
@@ -589,6 +610,11 @@ _eina_model_description_ifaces_fix(Eina_Model_Description *desc)
      {
         struct node *r, *d;
 
+        /* TODO: sort roots using input order?  Or at least study if
+         * it's enough to change roots append to prepend.
+         *
+         * See comments above.
+         */
         n_roots--;
         r = roots[n_roots];
 
