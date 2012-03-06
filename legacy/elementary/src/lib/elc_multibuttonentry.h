@@ -127,26 +127,26 @@ EAPI void                       elm_multibuttonentry_expanded_set(Evas_Object *o
  *
  * @param obj The multibuttonentry object
  * @param label The label of new item
+ * @param func The callback function to be invoked when this item is pressed.
  * @param data The pointer to the data to be attached
  * @return A handle to the item added or NULL if not possible
  *
  * @ingroup Multibuttonentry
  */
-EAPI Elm_Object_Item *elm_multibuttonentry_item_prepend(Evas_Object *obj, const char *label, void *data);
+EAPI Elm_Object_Item *elm_multibuttonentry_item_prepend(Evas_Object *obj, const char *label, Evas_Smart_Cb func, void *data);
 
 /**
  * Append a new item to the multibuttonentry
  *
  * @param obj The multibuttonentry object
  * @param label The label of new item
+ * @param func The callback function to be invoked when this item is pressed.
  * @param data The pointer to the data to be attached
  * @return A handle to the item added or NULL if not possible
  *
  * @ingroup Multibuttonentry
  */
-// XXX: use support selected callback like other item_append APIs.
-// EAPI Elm_Object_Item *elm_multibuttonentry_item_append(Evas_Object *obj, const char *label, Evas_Smart_Cb func, void *data);
-EAPI Elm_Object_Item *elm_multibuttonentry_item_append(Evas_Object *obj, const char *label, void *data);
+EAPI Elm_Object_Item *elm_multibuttonentry_item_append(Evas_Object *obj, const char *label, Evas_Smart_Cb func, void *data);
 
 /**
  * Add a new item to the multibuttonentry before the indicated object
@@ -155,12 +155,13 @@ EAPI Elm_Object_Item *elm_multibuttonentry_item_append(Evas_Object *obj, const c
  * @param obj The multibuttonentry object
  * @param before The item before which to add it
  * @param label The label of new item
+ * @param func The callback function to be invoked when this item is pressed.
  * @param data The pointer to the data to be attached
  * @return A handle to the item added or NULL if not possible
  *
  * @ingroup Multibuttonentry
  */
-EAPI Elm_Object_Item *elm_multibuttonentry_item_insert_before(Evas_Object *obj, Elm_Object_Item *before, const char *label, void *data);
+EAPI Elm_Object_Item *elm_multibuttonentry_item_insert_before(Evas_Object *obj, Elm_Object_Item *before, const char *label, Evas_Smart_Cb func, void *data);
 
 /**
  * Add a new item to the multibuttonentry after the indicated object
@@ -168,12 +169,13 @@ EAPI Elm_Object_Item *elm_multibuttonentry_item_insert_before(Evas_Object *obj, 
  * @param obj The multibuttonentry object
  * @param after The item after which to add it
  * @param label The label of new item
+ * @param func The callback function to be invoked when this item is pressed.
  * @param data The pointer to the data to be attached
  * @return A handle to the item added or NULL if not possible
  *
  * @ingroup Multibuttonentry
  */
-EAPI Elm_Object_Item *elm_multibuttonentry_item_insert_after(Evas_Object *obj, Elm_Object_Item *after, const char *label, void *data);
+EAPI Elm_Object_Item *elm_multibuttonentry_item_insert_after(Evas_Object *obj, Elm_Object_Item *after, const char *label, Evas_Smart_Cb func, void *data);
 
 /**
  * Get a list of items in the multibuttonentry
