@@ -197,16 +197,6 @@ _text_day_color_update(Widget_Data *wd, int pos)
    edje_object_signal_emit(wd->calendar, emission, "elm");
 }
 
-// EINA_DEPRECATED
-static void
-_text_day_color_set(Widget_Data *wd, Day_Color col, int pos)
-{
-   if ((pos < 0) || (pos >= 42)) return;
-   if (wd->day_color[pos] == col) return;
-   wd->day_color[pos] = col;
-   _text_day_color_update(wd, pos);
-}
-
 static void
 _set_month_year(Widget_Data *wd)
 {
