@@ -4953,8 +4953,14 @@ elm_genlist_item_icons_orphan(Elm_Object_Item *it)
    elm_genlist_item_contents_orphan(it);
 }
 
-EAPI void
+EINA_DEPRECATED EAPI void
 elm_genlist_item_contents_orphan(Elm_Object_Item *it)
+{
+   elm_genlist_item_all_contents_unset(it, NULL);
+}
+
+EAPI void
+elm_genlist_item_all_contents_unset(Elm_Object_Item *it, Eina_List **l)
 {
    ELM_OBJ_ITEM_CHECK_OR_RETURN(it);
 
@@ -4964,6 +4970,8 @@ elm_genlist_item_contents_orphan(Elm_Object_Item *it)
         elm_widget_sub_object_del(WIDGET(it), content);
         evas_object_smart_member_del(content);
         evas_object_hide(content);
+        if (l)
+          *l = eina_list_append(*l, content);
      }
 }
 

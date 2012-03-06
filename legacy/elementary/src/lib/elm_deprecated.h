@@ -1720,6 +1720,20 @@ EINA_DEPRECATED EAPI const Evas_Object            *elm_genlist_item_object_get(c
  */
 EINA_DEPRECATED EAPI Elm_Genlist_Item_Type        elm_genlist_item_flags_get(const Elm_Object_Item *it);
 
+/**
+ * Tells genlist to "orphan" contents fetched by the item class
+ *
+ * @param it The item
+ *
+ * This instructs genlist to release references to contents in the item,
+ * meaning that they will no longer be managed by genlist and are
+ * floating "orphans" that can be re-used elsewhere if the user wants
+ * to.
+ *
+ * @deprecated Use elm_genlist_item_all_contents_unset() instead
+ * @ingroup Genlist
+ */
+EAPI void                          elm_genlist_item_contents_orphan(Elm_Object_Item *it);
 
 #define ELM_IMAGE_ROTATE_90_CW 1
 #define ELM_IMAGE_ROTATE_180_CW 2

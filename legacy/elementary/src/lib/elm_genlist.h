@@ -1753,9 +1753,10 @@ EAPI void                          elm_genlist_item_display_only_set(Elm_Object_
 EAPI Eina_Bool                     elm_genlist_item_display_only_get(const Elm_Object_Item *it);
 
 /**
- * Tells genlist to "orphan" contents fetched by the item class
+ * Unset all contents fetched by the item class
  *
  * @param it The item
+ * @param l The contents list to return
  *
  * This instructs genlist to release references to contents in the item,
  * meaning that they will no longer be managed by genlist and are
@@ -1764,8 +1765,7 @@ EAPI Eina_Bool                     elm_genlist_item_display_only_get(const Elm_O
  *
  * @ingroup Genlist
  */
-//XXX: Eina_List *elm_genlist_item_all_contents_unset() ??
-EAPI void                          elm_genlist_item_contents_orphan(Elm_Object_Item *it);
+EAPI void                          elm_genlist_item_all_contents_unset(Elm_Object_Item *it, Eina_List **l);
 
 /**
  * Promote an item to the top of the list
