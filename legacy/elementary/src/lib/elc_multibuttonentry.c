@@ -786,7 +786,7 @@ _resize_button(Evas_Object *btn, Evas_Coord *realw, Evas_Coord *vieww)
 static Eina_Bool
 _item_del_pre_hook(Elm_Object_Item *it)
 {
-   _del_button_item((Elm_Multibuttonentry_Item *) it);
+   _del_button_item((Elm_Multibuttonentry_Item *)it);
    return EINA_TRUE;
 }
 
@@ -1346,7 +1346,7 @@ _item_text_set_hook(Elm_Object_Item *it, const char *part, const char *label)
    Elm_Multibuttonentry_Item *item;
    if (part && strcmp(part, "default")) return;
    if (!label) return;
-   item = (Elm_Multibuttonentry_Item *) it;
+   item = (Elm_Multibuttonentry_Item *)it;
    edje_object_part_text_set(item->button, "elm.btn.text", label);
    _resize_button(item->button, &item->rw, &item->vw);
 }
@@ -1356,7 +1356,7 @@ _item_text_get_hook(const Elm_Object_Item *it, const char *part)
 {
    Elm_Multibuttonentry_Item *item;
    if (part && strcmp(part, "default")) return NULL;
-   item = (Elm_Multibuttonentry_Item *) it;
+   item = (Elm_Multibuttonentry_Item *)it;
    return edje_object_part_text_get(item->button, "elm.btn.text");
 }
 
@@ -1588,7 +1588,7 @@ EAPI void
 elm_multibuttonentry_item_select(Elm_Object_Item *it, Eina_Bool selected)
 {
    ELM_OBJ_ITEM_CHECK_OR_RETURN(it);
-   Elm_Multibuttonentry_Item *item = (Elm_Multibuttonentry_Item *) it;
+   Elm_Multibuttonentry_Item *item = (Elm_Multibuttonentry_Item *)it;
    if (selected) _select_button(WIDGET(item), item->button);
    else _select_button(WIDGET(item), NULL);
 }
@@ -1655,7 +1655,7 @@ elm_multibuttonentry_item_prev_get(const Elm_Object_Item *it)
 
    EINA_LIST_FOREACH(wd->items, l, _item)
      {
-        if (_item == (Elm_Multibuttonentry_Item *) it)
+        if (_item == (Elm_Multibuttonentry_Item *)it)
           {
              l = eina_list_prev(l);
              if (!l) return NULL;
@@ -1677,7 +1677,7 @@ elm_multibuttonentry_item_next_get(const Elm_Object_Item *it)
 
    EINA_LIST_FOREACH(wd->items, l, _item)
      {
-        if (_item == (Elm_Multibuttonentry_Item *) it)
+        if (_item == (Elm_Multibuttonentry_Item *)it)
           {
              l = eina_list_next(l);
              if (!l) return NULL;

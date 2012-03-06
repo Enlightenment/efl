@@ -115,21 +115,21 @@ _theme_hook(Evas_Object *obj)
                   _elm_theme_object_set
                      (obj, VIEW(item), "menu", "item_with_submenu",
                       elm_widget_style_get(obj));
-                  elm_object_item_text_set((Elm_Object_Item *) item,
+                  elm_object_item_text_set((Elm_Object_Item *)item,
                                            item->label);
-                  elm_menu_item_icon_name_set((Elm_Object_Item *) item,
+                  elm_menu_item_icon_name_set((Elm_Object_Item *)item,
                                                      item->icon_str);
                }
              else
                {
                   _elm_theme_object_set(obj, VIEW(item), "menu", "item",
                                         elm_widget_style_get(obj));
-                  elm_object_item_text_set((Elm_Object_Item *) item,
+                  elm_object_item_text_set((Elm_Object_Item *)item,
                                            item->label);
-                  elm_menu_item_icon_name_set((Elm_Object_Item *) item,
+                  elm_menu_item_icon_name_set((Elm_Object_Item *)item,
                                                      item->icon_str);
                }
-             _item_disable_hook((Elm_Object_Item *) item);
+             _item_disable_hook((Elm_Object_Item *)item);
              edje_object_scale_set(VIEW(item), elm_widget_scale_get(obj) *
                                    _elm_config->scale);
           }
@@ -146,7 +146,7 @@ _item_text_set_hook(Elm_Object_Item *it,
 
    if (part && strcmp(part, "default")) return;
 
-   item = (Elm_Menu_Item *) it;
+   item = (Elm_Menu_Item *)it;
 
    eina_stringshare_replace(&item->label, label);
 
@@ -164,7 +164,7 @@ static const char *
 _item_text_get_hook(const Elm_Object_Item *it, const char *part)
 {
    if (part && strcmp(part, "default")) return NULL;
-   return ((Elm_Menu_Item *) it)->label;
+   return ((Elm_Menu_Item *)it)->label;
 }
 
 static void
@@ -176,7 +176,7 @@ _item_content_set_hook(Elm_Object_Item *it,
 
    if (part && strcmp(part, "default")) return;
 
-   item = (Elm_Menu_Item *) it;
+   item = (Elm_Menu_Item *)it;
 
    if (item->content)
      {
@@ -195,13 +195,13 @@ static Evas_Object *
 _item_content_get_hook(const Elm_Object_Item *it, const char *part)
 {
    if (part && strcmp(part, "default")) return NULL;
-   return ((Elm_Menu_Item *) it)->content;
+   return ((Elm_Menu_Item *)it)->content;
 }
 
 static void
 _item_disable_hook(Elm_Object_Item *it)
 {
-   Elm_Menu_Item *item = (Elm_Menu_Item *) it;
+   Elm_Menu_Item *item = (Elm_Menu_Item *)it;
 
    if (elm_widget_item_disabled_get(item))
      {
@@ -403,7 +403,7 @@ _menu_item_activate(void *data, Evas_Object *obj __UNUSED__, const char *emissio
         EINA_LIST_FOREACH(item->parent->submenu.items, l, item2)
           {
              if (item2 != item)
-               elm_menu_item_selected_set((Elm_Object_Item *) item2, 0);
+               elm_menu_item_selected_set((Elm_Object_Item *)item2, 0);
           }
      }
    else
@@ -412,7 +412,7 @@ _menu_item_activate(void *data, Evas_Object *obj __UNUSED__, const char *emissio
         EINA_LIST_FOREACH(wd->items, l, item2)
           {
              if (item2 != item)
-               elm_menu_item_selected_set((Elm_Object_Item *) item2, 0);
+               elm_menu_item_selected_set((Elm_Object_Item *)item2, 0);
           }
      }
 }
@@ -495,10 +495,10 @@ _item_submenu_obj_create(Elm_Menu_Item *item)
 
    edje_object_mirrored_set(VIEW(item), elm_widget_mirrored_get(WIDGET(item)));
    _elm_theme_object_set(WIDGET(item), VIEW(item), "menu", "item_with_submenu",  elm_widget_style_get(WIDGET(item)));
-   elm_object_item_text_set((Elm_Object_Item *) item,
+   elm_object_item_text_set((Elm_Object_Item *)item,
                             item->label);
    if (item->icon_str)
-     elm_menu_item_icon_name_set((Elm_Object_Item *) item,
+     elm_menu_item_icon_name_set((Elm_Object_Item *)item,
                                         item->icon_str);
    edje_object_signal_callback_add(VIEW(item), "elm,action,open", "",
                                    _submenu_open, item);
@@ -625,7 +625,7 @@ elm_menu_close(Evas_Object *obj)
 EAPI Evas_Object *
 elm_menu_item_object_get(const Elm_Object_Item *it)
 {
-   return VIEW(((Elm_Menu_Item *) it));
+   return VIEW(((Elm_Menu_Item *)it));
 }
 
 static void
@@ -688,7 +688,7 @@ _elm_menu_item_add_helper(Evas_Object *obj, Elm_Menu_Item *parent, Elm_Menu_Item
 static Eina_Bool
 _item_del_pre_hook(Elm_Object_Item *it)
 {
-   Elm_Menu_Item *item = (Elm_Menu_Item *) it;
+   Elm_Menu_Item *item = (Elm_Menu_Item *)it;
    Elm_Object_Item *_item;
 
    EINA_LIST_FREE(item->submenu.items, _item) elm_object_item_del(_item);
@@ -790,7 +790,7 @@ EAPI unsigned int
 elm_menu_item_index_get(const Elm_Object_Item *it)
 {
    ELM_OBJ_ITEM_CHECK_OR_RETURN(it, 0);
-   return ((Elm_Menu_Item *) it)->idx;
+   return ((Elm_Menu_Item *)it)->idx;
 }
 
 EAPI void
@@ -817,7 +817,7 @@ elm_menu_item_icon_name_set(Elm_Object_Item *it, const char *icon)
    ELM_OBJ_ITEM_CHECK_OR_RETURN(it);
    EINA_SAFETY_ON_NULL_RETURN(icon);
    char icon_tmp[512];
-   Elm_Menu_Item *item = (Elm_Menu_Item *) it;
+   Elm_Menu_Item *item = (Elm_Menu_Item *)it;
 
    if (!*icon) return;
    if ((item->icon_str) && (!strcmp(item->icon_str, icon))) return;
@@ -912,14 +912,14 @@ EAPI const char *
 elm_menu_item_icon_name_get(const Elm_Object_Item *it)
 {
    ELM_OBJ_ITEM_CHECK_OR_RETURN(it, NULL);
-   return ((Elm_Menu_Item *) it)->icon_str;
+   return ((Elm_Menu_Item *)it)->icon_str;
 }
 
 EAPI Eina_Bool
 elm_menu_item_is_separator(Elm_Object_Item *it)
 {
    ELM_OBJ_ITEM_CHECK_OR_RETURN(it, EINA_FALSE);
-   return ((Elm_Menu_Item *) it)->separator;
+   return ((Elm_Menu_Item *)it)->separator;
 }
 
 EAPI void
@@ -950,7 +950,7 @@ EAPI const Eina_List *
 elm_menu_item_subitems_get(const Elm_Object_Item *it)
 {
    ELM_OBJ_ITEM_CHECK_OR_RETURN(it, NULL);
-   return ((Elm_Menu_Item *) it)->submenu.items;
+   return ((Elm_Menu_Item *)it)->submenu.items;
 }
 
 EAPI const Eina_List *
@@ -965,7 +965,7 @@ EAPI void
 elm_menu_item_selected_set(Elm_Object_Item *it, Eina_Bool selected)
 {
    ELM_OBJ_ITEM_CHECK_OR_RETURN(it);
-   Elm_Menu_Item *item = (Elm_Menu_Item *) it;
+   Elm_Menu_Item *item = (Elm_Menu_Item *)it;
 
    if (selected == item->selected) return;
    item->selected = selected;
@@ -986,14 +986,14 @@ EAPI Eina_Bool
 elm_menu_item_selected_get(const Elm_Object_Item *it)
 {
    ELM_OBJ_ITEM_CHECK_OR_RETURN(it, EINA_FALSE);
-   return ((Elm_Menu_Item *) it)->selected;
+   return ((Elm_Menu_Item *)it)->selected;
 }
 
 EAPI Elm_Object_Item *
 elm_menu_item_prev_get(const Elm_Object_Item *it)
 {
    ELM_OBJ_ITEM_CHECK_OR_RETURN(it, NULL);
-   Elm_Menu_Item *item = (Elm_Menu_Item *) it;
+   Elm_Menu_Item *item = (Elm_Menu_Item *)it;
 
    if (item->parent)
      {
@@ -1019,7 +1019,7 @@ EAPI Elm_Object_Item *
 elm_menu_item_next_get(const Elm_Object_Item *it)
 {
    ELM_OBJ_ITEM_CHECK_OR_RETURN(it, NULL);
-   Elm_Menu_Item *item = (Elm_Menu_Item *) it;
+   Elm_Menu_Item *item = (Elm_Menu_Item *)it;
 
    if (item->parent)
      {
@@ -1078,7 +1078,7 @@ elm_menu_selected_item_get(const Evas_Object * obj)
    Elm_Menu_Item *item;
    EINA_LIST_FOREACH(wd->items, l, item)
      {
-        if (item->selected) return ((Elm_Object_Item *) item);
+        if (item->selected) return ((Elm_Object_Item *)item);
      }
    return NULL;
 }

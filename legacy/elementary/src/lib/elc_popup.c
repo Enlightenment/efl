@@ -511,7 +511,7 @@ _item_select_cb(void *data, Evas_Object *obj __UNUSED__,
 
    if (!item || item->disabled) return;
    if (item->func)
-     item->func((void*) item->base.data, WIDGET(item), data);
+     item->func((void*)item->base.data, WIDGET(item), data);
 }
 
 static void
@@ -1052,7 +1052,7 @@ static void
 _item_text_set_hook(Elm_Object_Item *it, const char *part, const char *label)
 {
    ELM_OBJ_ITEM_CHECK_OR_RETURN(it);
-   Elm_Popup_Content_Item *item = (Elm_Popup_Content_Item *) it;
+   Elm_Popup_Content_Item *item = (Elm_Popup_Content_Item *)it;
 
    if ((!part) || (!strcmp(part, "default")))
      {
@@ -1066,7 +1066,7 @@ static const char *
 _item_text_get_hook(const Elm_Object_Item *it, const char *part)
 {
    ELM_OBJ_ITEM_CHECK_OR_RETURN(it, NULL);
-   Elm_Popup_Content_Item *item = (Elm_Popup_Content_Item *) it;
+   Elm_Popup_Content_Item *item = (Elm_Popup_Content_Item *)it;
 
    if ((!part) || (!strcmp(part, "default")))
      return item->label;
@@ -1105,7 +1105,7 @@ _item_content_set_hook(Elm_Object_Item *it, const char *part,
                        Evas_Object *content)
 {
    ELM_OBJ_ITEM_CHECK_OR_RETURN(it);
-   Elm_Popup_Content_Item *item = (Elm_Popup_Content_Item *) it;
+   Elm_Popup_Content_Item *item = (Elm_Popup_Content_Item *)it;
 
    if ((!(part)) || (!strcmp(part, "default")))
      _item_icon_set(item, content);
@@ -1118,7 +1118,7 @@ _item_content_get_hook(const Elm_Object_Item *it,
                        const char *part)
 {
    ELM_OBJ_ITEM_CHECK_OR_RETURN(it, NULL);
-   Elm_Popup_Content_Item *item = (Elm_Popup_Content_Item *) it;
+   Elm_Popup_Content_Item *item = (Elm_Popup_Content_Item *)it;
 
    if ((!(part)) || (!strcmp(part, "default")))
      return item->icon;
@@ -1147,7 +1147,7 @@ _item_content_unset_hook(const Elm_Object_Item *it,
 {
    ELM_OBJ_ITEM_CHECK_OR_RETURN(it, NULL);
    Evas_Object *content = NULL;
-   Elm_Popup_Content_Item *item = (Elm_Popup_Content_Item *) it;
+   Elm_Popup_Content_Item *item = (Elm_Popup_Content_Item *)it;
 
    if ((!(part)) || (!strcmp(part, "default")))
      content = _item_icon_unset(item);
@@ -1160,7 +1160,7 @@ static void
 _item_disable_hook(Elm_Object_Item *it)
 {
    ELM_OBJ_ITEM_CHECK_OR_RETURN(it);
-   Elm_Popup_Content_Item *item = (Elm_Popup_Content_Item *) it;
+   Elm_Popup_Content_Item *item = (Elm_Popup_Content_Item *)it;
    Widget_Data *wd = elm_widget_data_get(WIDGET(item));
 
    if (!wd) return;
@@ -1174,7 +1174,7 @@ static void
 _item_del_pre_hook(Elm_Object_Item *it)
 {
    ELM_OBJ_ITEM_CHECK_OR_RETURN(it);
-   Elm_Popup_Content_Item *item = (Elm_Popup_Content_Item *) it;
+   Elm_Popup_Content_Item *item = (Elm_Popup_Content_Item *)it;
    Widget_Data *wd = elm_widget_data_get(WIDGET(item));
 
    if (!wd) return;
@@ -1194,7 +1194,7 @@ _item_signal_emit_hook(Elm_Object_Item *it, const char *emission,
                        const char *source)
 {
    ELM_OBJ_ITEM_CHECK_OR_RETURN(it);
-   Elm_Popup_Content_Item *item = (Elm_Popup_Content_Item *) it;
+   Elm_Popup_Content_Item *item = (Elm_Popup_Content_Item *)it;
 
    edje_object_signal_emit(VIEW(item), emission, source);
 }
@@ -1413,5 +1413,5 @@ elm_popup_item_append(Evas_Object *obj, const char *label,
 
    _scroller_size_calc(obj);
    _sizing_eval(obj);
-   return (Elm_Object_Item *) item;
+   return (Elm_Object_Item *)item;
 }

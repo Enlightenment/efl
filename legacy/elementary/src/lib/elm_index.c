@@ -203,7 +203,7 @@ _item_del_pre_hook(Elm_Object_Item *it)
 {
    Widget_Data *wd = elm_widget_data_get(WIDGET(it));
    if (!wd) return EINA_FALSE;
-   _item_free((Elm_Index_Item *) it);
+   _item_free((Elm_Index_Item *)it);
    _index_box_clear(WIDGET(it), wd->bx[wd->level], wd->level);
    return EINA_TRUE;
 }
@@ -492,7 +492,7 @@ _mouse_up(void *data, Evas *e __UNUSED__, Evas_Object *o __UNUSED__, void *event
    if (item)
      {
         evas_object_smart_callback_call(data, SIG_SELECTED, item);
-        id_item = (Elm_Index_Item *) item;
+        id_item = (Elm_Index_Item *)item;
         if (id_item->func)
           id_item->func((void *)id_item->base.data, WIDGET(id_item), id_item);
      }
@@ -700,7 +700,7 @@ elm_index_selected_item_get(const Evas_Object *obj, int level)
    EINA_LIST_FOREACH(wd->items, l, it)
      {
         if ((it->selected) && (it->level == level))
-          return (Elm_Object_Item *) it;
+          return (Elm_Object_Item *)it;
      }
    return NULL;
 }
@@ -716,7 +716,7 @@ elm_index_item_append(Evas_Object *obj, const char *letter, Evas_Smart_Cb func, 
    if (!it) return NULL;
    wd->items = eina_list_append(wd->items, it);
    _index_box_clear(obj, wd->bx[wd->level], wd->level);
-   return (Elm_Object_Item *) it;
+   return (Elm_Object_Item *)it;
 }
 
 EAPI Elm_Object_Item *
@@ -731,7 +731,7 @@ elm_index_item_prepend(Evas_Object *obj, const char *letter, Evas_Smart_Cb func,
    if (!it) return NULL;
    wd->items = eina_list_prepend(wd->items, it);
    _index_box_clear(obj, wd->bx[wd->level], wd->level);
-   return (Elm_Object_Item *) it;
+   return (Elm_Object_Item *)it;
 }
 
 EINA_DEPRECATED EAPI Elm_Object_Item *
@@ -758,7 +758,7 @@ elm_index_item_insert_after(Evas_Object *obj, Elm_Object_Item *after, const char
    if (!it) return NULL;
    wd->items = eina_list_append_relative(wd->items, it, after);
    _index_box_clear(obj, wd->bx[wd->level], wd->level);
-   return (Elm_Object_Item *) it;
+   return (Elm_Object_Item *)it;
 }
 
 EAPI Elm_Object_Item *
@@ -773,7 +773,7 @@ elm_index_item_insert_before(Evas_Object *obj, Elm_Object_Item *before, const ch
    if (!it) return NULL;
    wd->items = eina_list_prepend_relative(wd->items, it, before);
    _index_box_clear(obj, wd->bx[wd->level], wd->level);
-   return (Elm_Object_Item *) it;
+   return (Elm_Object_Item *)it;
 }
 
 EAPI Elm_Object_Item *
@@ -812,7 +812,7 @@ elm_index_item_sorted_insert(Evas_Object *obj, const char *letter, Evas_Smart_Cb
           }
      }
    _index_box_clear(obj, wd->bx[wd->level], wd->level);
-   return (Elm_Object_Item *) it;
+   return (Elm_Object_Item *)it;
 }
 
 EAPI void
@@ -916,6 +916,6 @@ EAPI const char *
 elm_index_item_letter_get(const Elm_Object_Item *it)
 {
    ELM_OBJ_ITEM_CHECK_OR_RETURN(it, NULL);
-   return ((Elm_Index_Item *) it)->letter;
+   return ((Elm_Index_Item *)it)->letter;
 }
 

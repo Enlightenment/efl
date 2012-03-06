@@ -938,7 +938,7 @@ _item_text_set_hook(Elm_Object_Item *it, const char *part, const char *label)
 
    if (part && strcmp(part, "default")) return;
 
-   ctxpopup_it = (Elm_Ctxpopup_Item *) it;
+   ctxpopup_it = (Elm_Ctxpopup_Item *)it;
 
    wd = elm_widget_data_get(WIDGET(ctxpopup_it));
    if (!wd) return;
@@ -958,7 +958,7 @@ _item_text_get_hook(const Elm_Object_Item *it, const char *part)
 {
    Elm_Ctxpopup_Item *ctxpopup_it;
    if (part && strcmp(part, "default")) return NULL;
-   ctxpopup_it = (Elm_Ctxpopup_Item *) it;
+   ctxpopup_it = (Elm_Ctxpopup_Item *)it;
    return ctxpopup_it->label;
 }
 
@@ -972,7 +972,7 @@ _item_content_set_hook(Elm_Object_Item *it,
 
    if (part && strcmp(part, "icon")) return;
 
-   ctxpopup_it = (Elm_Ctxpopup_Item *) it;
+   ctxpopup_it = (Elm_Ctxpopup_Item *)it;
 
    wd = elm_widget_data_get(WIDGET(ctxpopup_it));
    if (!wd) return;
@@ -992,7 +992,7 @@ _item_content_get_hook(const Elm_Object_Item *it, const char *part)
 {
    Elm_Ctxpopup_Item *ctxpopup_it;
    if (part && strcmp(part, "icon")) return NULL;
-   ctxpopup_it  = (Elm_Ctxpopup_Item *) it;
+   ctxpopup_it  = (Elm_Ctxpopup_Item *)it;
    return ctxpopup_it->icon;
 }
 
@@ -1000,7 +1000,7 @@ static void
 _item_disable_hook(Elm_Object_Item *it)
 {
    Widget_Data *wd;
-   Elm_Ctxpopup_Item *ctxpopup_it = (Elm_Ctxpopup_Item *) it;
+   Elm_Ctxpopup_Item *ctxpopup_it = (Elm_Ctxpopup_Item *)it;
 
    wd = elm_widget_data_get(WIDGET(ctxpopup_it));
    if (!wd) return;
@@ -1015,7 +1015,7 @@ static void
 _item_signal_emit_hook(Elm_Object_Item *it, const char *emission,
                        const char *source)
 {
-   Elm_Ctxpopup_Item *ctxpopup_it = (Elm_Ctxpopup_Item *) it;
+   Elm_Ctxpopup_Item *ctxpopup_it = (Elm_Ctxpopup_Item *)it;
    edje_object_signal_emit(VIEW(ctxpopup_it), emission, source);
 }
 
@@ -1164,7 +1164,7 @@ _item_select_cb(void *data, Evas_Object *obj __UNUSED__,
    if (elm_widget_item_disabled_get(item)) return;
 
    if (item->func)
-     item->func((void*) item->base.data, WIDGET(item), data);
+     item->func((void*)item->base.data, WIDGET(item), data);
 }
 
 static void
@@ -1275,7 +1275,7 @@ static Eina_Bool
 _item_del_pre_hook(Elm_Object_Item *it)
 {
    Widget_Data *wd;
-   Elm_Ctxpopup_Item *ctxpopup_it = (Elm_Ctxpopup_Item *) it;
+   Elm_Ctxpopup_Item *ctxpopup_it = (Elm_Ctxpopup_Item *)it;
 
    wd = elm_widget_data_get(WIDGET(ctxpopup_it));
    if (!wd) return EINA_FALSE;
@@ -1537,7 +1537,7 @@ elm_ctxpopup_item_append(Evas_Object *obj, const char *label,
         _sizing_eval(obj);
      }
 
-   return (Elm_Object_Item *) item;
+   return (Elm_Object_Item *)item;
 }
 
 EAPI void

@@ -242,7 +242,7 @@ _item_text_set_hook(Elm_Object_Item *it,
                     const char *label)
 {
    Elm_Naviframe_Text_Item_Pair *pair = NULL;
-   Elm_Naviframe_Item *navi_it = (Elm_Naviframe_Item *) it;
+   Elm_Naviframe_Item *navi_it = (Elm_Naviframe_Item *)it;
    char buf[1024];
 
    if (!part || !strcmp(part, "default"))
@@ -304,7 +304,7 @@ _item_content_set_hook(Elm_Object_Item *it,
                        const char *part,
                        Evas_Object *content)
 {
-   Elm_Naviframe_Item *navi_it = (Elm_Naviframe_Item *) it;
+   Elm_Naviframe_Item *navi_it = (Elm_Naviframe_Item *)it;
 
    //specified parts
    if (!part || !strcmp("default", part))
@@ -335,7 +335,7 @@ _item_content_set_hook(Elm_Object_Item *it,
 static Evas_Object *
 _item_content_get_hook(const Elm_Object_Item *it, const char *part)
 {
-   Elm_Naviframe_Item *navi_it = (Elm_Naviframe_Item *) it;
+   Elm_Naviframe_Item *navi_it = (Elm_Naviframe_Item *)it;
 
    //specified parts
    if (!part || !strcmp("default", part))
@@ -354,7 +354,7 @@ _item_content_get_hook(const Elm_Object_Item *it, const char *part)
 static Evas_Object *
 _item_content_unset_hook(Elm_Object_Item *it, const char *part)
 {
-   Elm_Naviframe_Item *navi_it = (Elm_Naviframe_Item *) it;
+   Elm_Naviframe_Item *navi_it = (Elm_Naviframe_Item *)it;
 
    //specified parts
    if (!part || !strcmp("default", part))
@@ -831,7 +831,7 @@ _item_del_pre_hook(Elm_Object_Item *it)
    Elm_Naviframe_Item *navi_it;
    Widget_Data *wd;
 
-   navi_it =(Elm_Naviframe_Item *) it;
+   navi_it =(Elm_Naviframe_Item *)it;
    wd = elm_widget_data_get(WIDGET(navi_it));
    if (!wd) return EINA_FALSE;
 
@@ -1049,7 +1049,7 @@ _item_new(Evas_Object *obj,
                                    _title_clicked, it);
 
    _item_style_set(it, item_style);
-   _item_text_set_hook((Elm_Object_Item *) it, "elm.text.title", title_label);
+   _item_text_set_hook((Elm_Object_Item *)it, "elm.text.title", title_label);
 
    //title buttons
    if ((!prev_btn) && wd->auto_pushed && eina_inlist_count(wd->stack))
@@ -1157,7 +1157,7 @@ elm_naviframe_item_push(Evas_Object *obj,
      }
    wd->stack = eina_inlist_append(wd->stack, EINA_INLIST_GET(it));
    _sizing_eval(obj);
-   return (Elm_Object_Item *) it;
+   return (Elm_Object_Item *)it;
 }
 
 EAPI Elm_Object_Item *
@@ -1184,7 +1184,7 @@ elm_naviframe_item_insert_before(Elm_Object_Item *before,
                                    EINA_INLIST_GET(it),
                                    EINA_INLIST_GET(((Elm_Naviframe_Item *) before)));
    _sizing_eval(WIDGET(before));
-   return (Elm_Object_Item *) it;
+   return (Elm_Object_Item *)it;
 }
 
 EAPI Elm_Object_Item *
@@ -1216,7 +1216,7 @@ elm_naviframe_item_insert_after(Elm_Object_Item *after,
                                   EINA_INLIST_GET(it),
                                   EINA_INLIST_GET(((Elm_Naviframe_Item *) after)));
    _sizing_eval(WIDGET(after));
-   return (Elm_Object_Item *) it;
+   return (Elm_Object_Item *)it;
 }
 
 EAPI Evas_Object *
@@ -1275,7 +1275,7 @@ elm_naviframe_item_pop_to(Elm_Object_Item *it)
    Widget_Data *wd;
    Eina_Inlist *l, *prev_l;
 
-   navi_it = (Elm_Naviframe_Item *) it;
+   navi_it = (Elm_Naviframe_Item *)it;
    wd = elm_widget_data_get(WIDGET(navi_it));
    if (!wd) return;
 
@@ -1286,7 +1286,7 @@ elm_naviframe_item_pop_to(Elm_Object_Item *it)
    while(l)
      {
         if (EINA_INLIST_CONTAINER_GET(l, Elm_Naviframe_Item) ==
-            ((Elm_Naviframe_Item *) it)) break;
+            ((Elm_Naviframe_Item *)it)) break;
         prev_l = l->prev;
         wd->stack = eina_inlist_remove(wd->stack, l);
         _item_del(EINA_INLIST_CONTAINER_GET(l, Elm_Naviframe_Item));
@@ -1305,7 +1305,7 @@ elm_naviframe_item_promote(Elm_Object_Item *it)
    Elm_Naviframe_Item *prev_it;
    Widget_Data *wd;
 
-   navi_it = (Elm_Naviframe_Item *) it;
+   navi_it = (Elm_Naviframe_Item *)it;
    wd = elm_widget_data_get(navi_it->base.widget);
    if (!wd) return;
 
@@ -1341,9 +1341,9 @@ elm_naviframe_item_simple_promote(Evas_Object *obj, Evas_Object *content)
    Elm_Naviframe_Item *itr;
    EINA_INLIST_FOREACH(wd->stack, itr)
      {
-        if (elm_object_item_content_get((Elm_Object_Item *) itr) == content)
+        if (elm_object_item_content_get((Elm_Object_Item *)itr) == content)
           {
-             elm_naviframe_item_promote((Elm_Object_Item *) itr);
+             elm_naviframe_item_promote((Elm_Object_Item *)itr);
              break;
           }
      }
@@ -1398,7 +1398,7 @@ EAPI void
 elm_naviframe_item_style_set(Elm_Object_Item *it, const char *item_style)
 {
    ELM_OBJ_ITEM_CHECK_OR_RETURN(it);
-   Elm_Naviframe_Item *navi_it = (Elm_Naviframe_Item *) it;
+   Elm_Naviframe_Item *navi_it = (Elm_Naviframe_Item *)it;
 
    //Return if new style is exsiting one.
    if ((item_style && navi_it->style) && (!strcmp(item_style, navi_it->style)))
@@ -1414,7 +1414,7 @@ EAPI const char *
 elm_naviframe_item_style_get(const Elm_Object_Item *it)
 {
    ELM_OBJ_ITEM_CHECK_OR_RETURN(it, NULL);
-   Elm_Naviframe_Item *navi_it = (Elm_Naviframe_Item *) it;
+   Elm_Naviframe_Item *navi_it = (Elm_Naviframe_Item *)it;
    return navi_it->style;
 }
 
@@ -1422,7 +1422,7 @@ EAPI void
 elm_naviframe_item_title_visible_set(Elm_Object_Item *it, Eina_Bool visible)
 {
    ELM_OBJ_ITEM_CHECK_OR_RETURN(it);
-   Elm_Naviframe_Item *navi_it = (Elm_Naviframe_Item *) it;
+   Elm_Naviframe_Item *navi_it = (Elm_Naviframe_Item *)it;
 
    visible = !!visible;
    if (navi_it->title_visible == visible) return;
@@ -1435,7 +1435,7 @@ EAPI Eina_Bool
 elm_naviframe_item_title_visible_get(const Elm_Object_Item *it)
 {
    ELM_OBJ_ITEM_CHECK_OR_RETURN(it, EINA_FALSE);
-   Elm_Naviframe_Item *navi_it = (Elm_Naviframe_Item *) it;
+   Elm_Naviframe_Item *navi_it = (Elm_Naviframe_Item *)it;
    return navi_it->title_visible;
 }
 

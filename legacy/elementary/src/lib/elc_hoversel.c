@@ -305,14 +305,14 @@ static const char *
 _item_text_get_hook(const Elm_Object_Item *it, const char *part)
 {
    if (part && strcmp(part, "default")) return NULL;
-   return ((Elm_Hoversel_Item *) it)->label;
+   return ((Elm_Hoversel_Item *)it)->label;
 }
 
 static Eina_Bool
 _item_del_pre_hook(Elm_Object_Item *it)
 {
    Widget_Data *wd;
-   Elm_Hoversel_Item *item = (Elm_Hoversel_Item *) it;
+   Elm_Hoversel_Item *item = (Elm_Hoversel_Item *)it;
    wd = elm_widget_data_get(WIDGET(item));
    if (!wd) return EINA_FALSE;
    elm_hoversel_hover_end(WIDGET(item));
@@ -481,14 +481,14 @@ elm_hoversel_item_add(Evas_Object *obj, const char *label, const char *icon_file
    item->icon_type = icon_type;
    item->func = func;
    item->base.data = data;
-   return (Elm_Object_Item *) item;
+   return (Elm_Object_Item *)item;
 }
 
 EAPI void
 elm_hoversel_item_icon_set(Elm_Object_Item *it, const char *icon_file, const char *icon_group, Elm_Icon_Type icon_type)
 {
    ELM_OBJ_ITEM_CHECK_OR_RETURN(it);
-   Elm_Hoversel_Item *item = (Elm_Hoversel_Item *) it;
+   Elm_Hoversel_Item *item = (Elm_Hoversel_Item *)it;
    eina_stringshare_replace(&item->icon_file, icon_file);
    eina_stringshare_replace(&item->icon_group, icon_group);
    item->icon_type = icon_type;
@@ -498,7 +498,7 @@ EAPI void
 elm_hoversel_item_icon_get(const Elm_Object_Item *it, const char **icon_file, const char **icon_group, Elm_Icon_Type *icon_type)
 {
    ELM_OBJ_ITEM_CHECK_OR_RETURN(it);
-   Elm_Hoversel_Item *item = (Elm_Hoversel_Item *) it;
+   Elm_Hoversel_Item *item = (Elm_Hoversel_Item *)it;
    if (icon_file) *icon_file = item->icon_file;
    if (icon_group) *icon_group = item->icon_group;
    if (icon_type) *icon_type = item->icon_type;

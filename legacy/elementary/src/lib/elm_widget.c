@@ -2897,7 +2897,7 @@ _elm_widget_item_del(Elm_Widget_Item *item)
    //Widget item delete callback
    if (item->del_pre_func)
      {
-        if (item->del_pre_func((Elm_Object_Item *) item))
+        if (item->del_pre_func((Elm_Object_Item *)item))
           _elm_widget_item_free(item);
      }
    else
@@ -3403,7 +3403,7 @@ _elm_widget_item_content_part_set(Elm_Widget_Item *item,
 {
    ELM_WIDGET_ITEM_CHECK_OR_RETURN(item);
    if (!item->content_set_func) return;
-   item->content_set_func((Elm_Object_Item *) item, part, content);
+   item->content_set_func((Elm_Object_Item *)item, part, content);
 }
 
 EAPI Evas_Object *
@@ -3412,7 +3412,7 @@ _elm_widget_item_content_part_get(const Elm_Widget_Item *item,
 {
    ELM_WIDGET_ITEM_CHECK_OR_RETURN(item, NULL);
    if (!item->content_get_func) return NULL;
-   return item->content_get_func((Elm_Object_Item *) item, part);
+   return item->content_get_func((Elm_Object_Item *)item, part);
 }
 
 EAPI Evas_Object *
@@ -3421,7 +3421,7 @@ _elm_widget_item_content_part_unset(Elm_Widget_Item *item,
 {
    ELM_WIDGET_ITEM_CHECK_OR_RETURN(item, NULL);
    if (!item->content_unset_func) return NULL;
-   return item->content_unset_func((Elm_Object_Item *) item, part);
+   return item->content_unset_func((Elm_Object_Item *)item, part);
 }
 
 EAPI void
@@ -3431,7 +3431,7 @@ _elm_widget_item_text_part_set(Elm_Widget_Item *item,
 {
    ELM_WIDGET_ITEM_CHECK_OR_RETURN(item);
    if (!item->text_set_func) return;
-   item->text_set_func((Elm_Object_Item *) item, part, label);
+   item->text_set_func((Elm_Object_Item *)item, part, label);
 }
 
 EAPI void
@@ -3441,7 +3441,7 @@ _elm_widget_item_signal_emit(Elm_Widget_Item *item,
 {
    ELM_WIDGET_ITEM_CHECK_OR_RETURN(item);
    if (item->signal_emit_func)
-     item->signal_emit_func((Elm_Object_Item *) item, emission, source);
+     item->signal_emit_func((Elm_Object_Item *)item, emission, source);
 }
 
 EAPI const char *
@@ -3450,7 +3450,7 @@ _elm_widget_item_text_part_get(const Elm_Widget_Item *item,
 {
    ELM_WIDGET_ITEM_CHECK_OR_RETURN(item, NULL);
    if (!item->text_get_func) return NULL;
-   return item->text_get_func((Elm_Object_Item *) item, part);
+   return item->text_get_func((Elm_Object_Item *)item, part);
 }
 
 EAPI void
@@ -3573,7 +3573,7 @@ _elm_widget_item_smart_callback_call(Elm_Widget_Item *item, const char *event, v
         if (cb->delete_me) continue;
         cb->walking++;
         item->walking++;
-        cb->func(cb->data, (Elm_Object_Item *) item, event_info);
+        cb->func(cb->data, (Elm_Object_Item *)item, event_info);
         item->walking--;
         cb->walking--;
         if (item->delete_me) break;
