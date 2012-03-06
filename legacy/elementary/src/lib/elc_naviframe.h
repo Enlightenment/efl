@@ -69,10 +69,6 @@
  * @{
  */
 
-/* XXX:     docs are incomplete. for example: pop_to + elm_naviframe_content_preserve_on_pop_set sounds like the hackiest thing ever.
- *     all the api looks like it was created as workarounds for issues instead of designed from the start. - really, everything should be rewritten. 
- */
-
 /**
  * @brief Add a new Naviframe object to the parent.
  *
