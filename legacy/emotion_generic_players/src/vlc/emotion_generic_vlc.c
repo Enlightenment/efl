@@ -172,7 +172,7 @@ _send_cmd_start(struct _App *app, int cmd)
 }
 
 static void
-_send_cmd_finish(struct _App *app)
+_send_cmd_finish(struct _App *app __UNUSED__)
 {
    pthread_mutex_unlock(&_mutex_fd);
 }
@@ -255,12 +255,12 @@ _lock(void *data, void **pixels)
 }
 
 static void
-_unlock(void *data, void *id, void *const *pixels)
+_unlock(void *data __UNUSED__, void *id __UNUSED__, void *const *pixels __UNUSED__)
 {
 }
 
 static void
-_display(void *data, void *id)
+_display(void *data, void *id __UNUSED__)
 {
    struct _App *app = data;
    if (!app->playing)
@@ -284,12 +284,12 @@ _tmp_lock(void *data, void **pixels)
 }
 
 static void
-_tmp_unlock(void *data, void *id, void *const *pixels)
+_tmp_unlock(void *data __UNUSED__, void *id __UNUSED__, void *const *pixels __UNUSED__)
 {
 }
 
 static void
-_tmp_display(void *data, void *id)
+_tmp_display(void *data __UNUSED__, void *id __UNUSED__)
 {
 }
 
