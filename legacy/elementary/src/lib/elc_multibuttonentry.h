@@ -50,9 +50,20 @@
  * @{
  */
 
-// XXX: typedef Eina_Bool                   (*Elm_Multibuttonentry_Item_Filter_Cb)(Evas_Object *obj, const char *item_label, void *item_data, void *data);
-// XXX: need documentation.
-typedef Eina_Bool                   (*Elm_Multibuttonentry_Item_Filter_callback)(Evas_Object *obj, const char *item_label, void *item_data, void *data);
+/**
+ * @brief Callback to be invoked when an item is added to the multibuttonentry.
+ *
+ * @param obj The parent object
+ * @param item_label The label corresponding to the added item.
+ * @param item_data data specific to this item. 
+ * @param data data specific to the multibuttonentry.
+ *
+ * @return EINA_TRUE
+ *         EINA_FALSE otherwise.
+ *
+ * @ingroup Multibuttonentry
+ */
+typedef Eina_Bool                   (*Elm_Multibuttonentry_Item_Filter_Cb)(Evas_Object *obj, const char *item_label, void *item_data, void *data);
 
 /**
  * @brief Add a new multibuttonentry to the parent
@@ -267,7 +278,7 @@ EAPI Elm_Object_Item *elm_multibuttonentry_item_next_get(const Elm_Object_Item *
  * @ingroup Multibuttonentry
  */
 // XXX: EAPI void                       elm_multibuttonentry_item_filter_append(Evas_Object *obj, Elm_Multibuttonentry_Item_Filter_CB func, void *data);
-EAPI void                       elm_multibuttonentry_item_filter_append(Evas_Object *obj, Elm_Multibuttonentry_Item_Filter_callback func, void *data);
+EAPI void                       elm_multibuttonentry_item_filter_append(Evas_Object *obj, Elm_Multibuttonentry_Item_Filter_Cb func, void *data);
 
 /**
  * Prepend a filter function for text inserted in the Multibuttonentry
@@ -282,7 +293,7 @@ EAPI void                       elm_multibuttonentry_item_filter_append(Evas_Obj
  * @ingroup Multibuttonentry
  */
 // XXX: EAPI void                       elm_multibuttonentry_item_filter_prepend(Evas_Object *obj, Elm_Multibuttonentry_Item_Filter_Cb func, void *data);
-EAPI void                       elm_multibuttonentry_item_filter_prepend(Evas_Object *obj, Elm_Multibuttonentry_Item_Filter_callback func, void *data);
+EAPI void                       elm_multibuttonentry_item_filter_prepend(Evas_Object *obj, Elm_Multibuttonentry_Item_Filter_Cb func, void *data);
 
 /**
  * Remove a filter from the list
@@ -297,7 +308,7 @@ EAPI void                       elm_multibuttonentry_item_filter_prepend(Evas_Ob
  * @ingroup Multibuttonentry
  */
 // XXX: EAPI void                       elm_multibuttonentry_item_filter_del(Evas_Object *obj, Elm_Multibuttonentry_Item_Filter_Cb func, void *data); --> api name and callback changes.
-EAPI void                       elm_multibuttonentry_item_filter_remove(Evas_Object *obj, Elm_Multibuttonentry_Item_Filter_callback func, void *data);
+EAPI void                       elm_multibuttonentry_item_filter_remove(Evas_Object *obj, Elm_Multibuttonentry_Item_Filter_Cb func, void *data);
 
 /**
  * @}

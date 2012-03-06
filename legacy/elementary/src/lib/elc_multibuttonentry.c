@@ -47,7 +47,7 @@ struct _Multibuttonentry_Item
 
 typedef struct _Elm_Multibuttonentry_Item_Filter
   {
-     Elm_Multibuttonentry_Item_Filter_callback callback_func;
+     Elm_Multibuttonentry_Item_Filter_Cb callback_func;
      void *data;
   } Elm_Multibuttonentry_Item_Filter;
 
@@ -76,7 +76,7 @@ struct _Widget_Data
      int  shrink;
      Eina_Bool focused: 1;
      Eina_Bool last_btn_select: 1;
-     Elm_Multibuttonentry_Item_Filter_callback add_callback;
+     Elm_Multibuttonentry_Item_Filter_Cb add_callback;
      void *add_callback_data;
   };
 
@@ -942,7 +942,7 @@ _add_button_item(Evas_Object *obj, const char *str, Multibuttonentry_Pos pos, co
 }
 
 static Elm_Multibuttonentry_Item_Filter*
-_filter_new(Elm_Multibuttonentry_Item_Filter_callback func, void *data)
+_filter_new(Elm_Multibuttonentry_Item_Filter_Cb func, void *data)
 {
    Elm_Multibuttonentry_Item_Filter *item_filter = ELM_NEW(Elm_Multibuttonentry_Item_Filter);
    if (!item_filter) return NULL;
@@ -1704,7 +1704,7 @@ elm_multibuttonentry_item_data_set(Elm_Object_Item *it, void *data)
 }
 
 EAPI void
-elm_multibuttonentry_item_filter_append(Evas_Object *obj, Elm_Multibuttonentry_Item_Filter_callback func, void *data)
+elm_multibuttonentry_item_filter_append(Evas_Object *obj, Elm_Multibuttonentry_Item_Filter_Cb func, void *data)
 {
    Elm_Multibuttonentry_Item_Filter *new_item_filter = NULL;
    Elm_Multibuttonentry_Item_Filter *_item_filter = NULL;
@@ -1731,7 +1731,7 @@ elm_multibuttonentry_item_filter_append(Evas_Object *obj, Elm_Multibuttonentry_I
 }
 
 EAPI void
-elm_multibuttonentry_item_filter_prepend(Evas_Object *obj, Elm_Multibuttonentry_Item_Filter_callback func, void *data)
+elm_multibuttonentry_item_filter_prepend(Evas_Object *obj, Elm_Multibuttonentry_Item_Filter_Cb func, void *data)
 {
    Elm_Multibuttonentry_Item_Filter *new_item_filter = NULL;
    Elm_Multibuttonentry_Item_Filter *_item_filter = NULL;
@@ -1757,7 +1757,7 @@ elm_multibuttonentry_item_filter_prepend(Evas_Object *obj, Elm_Multibuttonentry_
 }
 
 EAPI void
-elm_multibuttonentry_item_filter_remove(Evas_Object *obj, Elm_Multibuttonentry_Item_Filter_callback func, void *data)
+elm_multibuttonentry_item_filter_remove(Evas_Object *obj, Elm_Multibuttonentry_Item_Filter_Cb func, void *data)
 {
    Widget_Data *wd;
    Eina_List *l;
