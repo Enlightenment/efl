@@ -216,20 +216,18 @@ EAPI Elm_Object_Item *elm_multibuttonentry_selected_item_get(const Evas_Object *
  *
  * @ingroup Multibuttonentry
  */
-// XXX: EAPI void                       elm_multibuttonentry_item_selected_set(Elm_Object_Item *it, Eina_Bool selected);
-EAPI void                       elm_multibuttonentry_item_select(Elm_Object_Item *it, Eina_Bool selected);
+EAPI void                       elm_multibuttonentry_item_selected_set(Elm_Object_Item *it, Eina_Bool selected);
 
-// XXX: Add EAPI Eina_Bool elm_multibuttonentry_item_selected_get(const Elm_Object_Item *it);
 
 /**
- * unselect all items.
+ * Get the selected state of an item
  *
- * @param obj The multibuttonentry object
+ * @param it The item
+ * @return EINA_TRUE if the item is selected, EINA_FALSE otherwise.
  *
  * @ingroup Multibuttonentry
  */
-// XXX: deprecated this. only one item can be selected but why this does unselect all?
-EAPI void                       elm_multibuttonentry_item_unselect_all(Evas_Object *obj);
+EAPI Eina_Bool elm_multibuttonentry_item_selected_get(const Elm_Object_Item *it);
 
 /**
  * Remove all items in the multibuttonentry.

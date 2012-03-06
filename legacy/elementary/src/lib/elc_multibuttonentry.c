@@ -1589,7 +1589,7 @@ elm_multibuttonentry_selected_item_get(const Evas_Object *obj)
 }
 
 EAPI void
-elm_multibuttonentry_item_select(Elm_Object_Item *it, Eina_Bool selected)
+elm_multibuttonentry_item_selected_set(Elm_Object_Item *it, Eina_Bool selected)
 {
    ELM_OBJ_ITEM_CHECK_OR_RETURN(it);
    Elm_Multibuttonentry_Item *item = (Elm_Multibuttonentry_Item *)it;
@@ -1597,13 +1597,12 @@ elm_multibuttonentry_item_select(Elm_Object_Item *it, Eina_Bool selected)
    else _select_button(WIDGET(item), NULL);
 }
 
-EAPI void
-elm_multibuttonentry_item_unselect_all(Evas_Object *obj)
+EAPI Eina_Bool
+elm_multibuttonentry_item_selected_get(const Elm_Object_Item *it)
 {
-   ELM_CHECK_WIDTYPE(obj, widtype);
-   Widget_Data *wd = elm_widget_data_get(obj);
-   if (!wd) return;
-   _select_button(obj, NULL);
+   //TODO : To be implemented.
+   if (!it) return EINA_FALSE;
+   return EINA_TRUE;
 }
 
 EAPI void
