@@ -34,7 +34,6 @@ EDJE_FLAGS = $(EDJE_FLAGS_$(V))
 
 SRCS = \
 	actionslider_example_01.c \
-	anchorblock_example_01.c \
 	bubble_example_01.c \
 	button_example_01.c \
 	check_example_01.c \
@@ -147,7 +146,6 @@ clean-local:
 
 examples_PROGRAMS += \
 	actionslider_example_01 \
-	anchorblock_example_01 \
 	bubble_example_01 \
 	button_example_01 \
 	check_example_01 \
