@@ -631,24 +631,6 @@ elm_conformant_add(Evas_Object *parent)
    return obj;
 }
 
-EINA_DEPRECATED EAPI void
-elm_conformant_content_set(Evas_Object *obj, Evas_Object *content)
-{
-   _content_set_hook(obj, NULL, content);
-}
-
-EINA_DEPRECATED EAPI Evas_Object *
-elm_conformant_content_get(const Evas_Object *obj)
-{
-   return _content_get_hook(obj, NULL);
-}
-
-EINA_DEPRECATED EAPI Evas_Object *
-elm_conformant_content_unset(Evas_Object *obj)
-{
-   return _content_unset_hook(obj, NULL);
-}
-
 EINA_DEPRECATED EAPI Evas_Object *
 elm_conformant_content_area_get(const Evas_Object *obj)
 {
