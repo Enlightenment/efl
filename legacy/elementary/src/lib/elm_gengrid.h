@@ -222,63 +222,33 @@
  * @{
  */
 
-typedef struct _Elm_Gengrid_Item_Class      Elm_Gengrid_Item_Class; /**< Gengrid item class definition structs */
-
-#define Elm_Gengrid_Item_Class Elm_Gen_Item_Class
-typedef struct _Elm_Gengrid_Item_Class_Func Elm_Gengrid_Item_Class_Func;    /**< Class functions for gengrid item classes. */
+#define ELM_GENGRID_ITEM_CLASS_VERSION ELM_GEN_ITEM_CLASS_VERSION
+#define ELM_GENGRID_ITEM_CLASS_HEADER ELM_GEN_ITEM_CLASS_HEADER
 
 /**
- * Text fetching class function for Elm_Gen_Item_Class.
- * @param data The data passed in the item creation function
- * @param obj The base widget object
- * @param part The part name of the swallow
- * @return The allocated (NOT stringshared) string to set as the text
+ * @see Elm_Gen_Item_Class
  */
-typedef char *(*Elm_Gengrid_Item_Text_Get_Cb)(void *data, Evas_Object *obj, const char *part);
+typedef Elm_Gen_Item_Class Elm_Gengrid_Item_Class;
 
 /**
- * Content (swallowed object) fetching class function for Elm_Gen_Item_Class.
- * @param data The data passed in the item creation function
- * @param obj The base widget object
- * @param part The part name of the swallow
- * @return The content object to swallow
+ * @see Elm_Gen_Item_Text_Get_Cb
  */
-typedef Evas_Object *(*Elm_Gengrid_Item_Content_Get_Cb)(void *data, Evas_Object *obj, const char *part);
+typedef Elm_Gen_Item_Text_Get_Cb Elm_Gengrid_Item_Text_Get_Cb;
 
 /**
- * State fetching class function for Elm_Gen_Item_Class.
- * @param data The data passed in the item creation function
- * @param obj The base widget object
- * @param part The part name of the swallow
- * @return The hell if I know
+ * @see Elm_Gen_Item_Content_Get_Cb
  */
-typedef Eina_Bool (*Elm_Gengrid_Item_State_Get_Cb)(void *data, Evas_Object *obj, const char *part);
+typedef Elm_Gen_Item_Content_Get_Cb Elm_Gengrid_Item_Content_Get_Cb;
 
 /**
- * Deletion class function for Elm_Gen_Item_Class.
- * @param data The data passed in the item creation function
- * @param obj The base widget object
+ * @see Elm_Gen_Item_State_Get_Cb
  */
-typedef void (*Elm_Gengrid_Item_Del_Cb)(void *data, Evas_Object *obj);
+typedef Elm_Gen_Item_State_Get_Cb Elm_Gengrid_Item_State_Get_Cb;
 
 /**
- * @struct _Elm_Gengrid_Item_Class
- *
- * Gengrid item class definition. See @ref Gengrid_Item_Class for
- * field details.
+ * @see Elm_Gen_Item_Del_Cb
  */
-struct _Elm_Gengrid_Item_Class
-{
-   const char *item_style;
-   struct _Elm_Gengrid_Item_Class_Func
-   {
-      Elm_Gengrid_Item_Text_Get_Cb    text_get; /**< Text fetching class function for gengrid item classes.*/
-      Elm_Gengrid_Item_Content_Get_Cb content_get; /**< Content fetching class function for gengrid item classes. */
-      Elm_Gengrid_Item_State_Get_Cb   state_get; /**< State fetching class function for gengrid item classes. */
-      Elm_Gengrid_Item_Del_Cb         del; /**< Deletion class function for gengrid item classes. */
-   } func;
-};   /**< #Elm_Gengrid_Item_Class member definitions */
-#define Elm_Gengrid_Item_Class_Func Elm_Gen_Item_Class_Func
+typedef Elm_Gen_Item_Del_Cb Elm_Gengrid_Item_Del_Cb;
 
 /**
  * Add a new gengrid widget to the given parent Elementary
@@ -836,9 +806,6 @@ EAPI const Elm_Gengrid_Item_Class *elm_gengrid_item_item_class_get(const Elm_Obj
 //EAPI int                           elm_gengrid_item_index_get(const Elm_Object_Item *it);
 //EAPI void                          elm_gengrid_realized_items_update(Evas_Object *obj);
 //EAPI unsigned int elm_gengrid_items_count(const Evas_Object *obj);
-
-#define ELM_GENGRID_ITEM_CLASS_VERSION 2 /* current version number */
-#define ELM_GENGRID_ITEM_CLASS_HEADER ELM_GENGRID_ITEM_CLASS_VERSION, 0, 0
 
 /**
  * Add a new gengrid item class in a given gengrid widget.

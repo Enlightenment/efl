@@ -340,6 +340,9 @@
  * @{
  */
 
+#define ELM_GENLIST_ITEM_CLASS_VERSION ELM_GEN_ITEM_CLASS_VERSION
+#define ELM_GENLIST_ITEM_CLASS_HEADER ELM_GEN_ITEM_CLASS_HEADER
+
 /**
  * Defines if the item is of any special type (has subitems or it's the
  * index of a group), or is just a simple item.
@@ -363,67 +366,32 @@ typedef enum
    ELM_GENLIST_ITEM_FIELD_CONTENT = (1 << 1),
    ELM_GENLIST_ITEM_FIELD_STATE = (1 << 2)
 } Elm_Genlist_Item_Field_Type;
-typedef struct _Elm_Genlist_Item_Class      Elm_Genlist_Item_Class; /**< Genlist item class definition structs */
-
-#define Elm_Genlist_Item_Class Elm_Gen_Item_Class
-typedef struct _Elm_Genlist_Item_Class_Func Elm_Genlist_Item_Class_Func;    /**< Class functions for genlist item class */
 
 /**
- * Text fetching class function for Elm_Gen_Item_Class.
- * @param data The data passed in the item creation function
- * @param obj The base widget object
- * @param part The part name of the swallow
- * @return The allocated (NOT stringshared) string to set as the text
+ * @see Elm_Gen_Item_Class
  */
-typedef char *(*Elm_Genlist_Item_Text_Get_Cb)(void *data, Evas_Object *obj, const char *part);
+typedef Elm_Gen_Item_Class Elm_Genlist_Item_Class; 
 
 /**
- * Content (swallowed object) fetching class function for Elm_Gen_Item_Class.
- * @param data The data passed in the item creation function
- * @param obj The base widget object
- * @param part The part name of the swallow
- * @return The content object to swallow
+ * @see Elm_Gen_Item_Text_Get_Cb
  */
-typedef Evas_Object *(*Elm_Genlist_Item_Content_Get_Cb)(void *data, Evas_Object *obj, const char *part);
+typedef Elm_Gen_Item_Text_Get_Cb Elm_Genlist_Item_Text_Get_Cb;
 
 /**
- * State fetching class function for Elm_Gen_Item_Class.
- * @param data The data passed in the item creation function
- * @param obj The base widget object
- * @param part The part name of the swallow
- * @return The hell if I know
+ * @see Elm_Gen_Item_Content_Get_Cb
  */
-typedef Eina_Bool (*Elm_Genlist_Item_State_Get_Cb)(void *data, Evas_Object *obj, const char *part);
+typedef Elm_Gen_Item_Content_Get_Cb Elm_Genlist_Item_Content_Get_Cb;
 
 /**
- * Deletion class function for Elm_Gen_Item_Class.
- * @param data The data passed in the item creation function
- * @param obj The base widget object
+ * @see Elm_Gen_Item_State_Get_Cb
  */
-typedef void (*Elm_Genlist_Item_Del_Cb)(void *data, Evas_Object *obj);
+typedef Elm_Gen_Item_State_Get_Cb Elm_Genlist_Item_State_Get_Cb;
 
 /**
- * @struct _Elm_Genlist_Item_Class
- *
- * Genlist item class definition structs.
- *
- * This struct contains the style and fetching functions that will define the
- * contents of each item.
- *
- * @see @ref Genlist_Item_Class
+ * @see Elm_Gen_Item_Del_Cb
  */
-struct _Elm_Genlist_Item_Class
-{
-   const char *item_style; /**< style of this class. */
-   struct Elm_Genlist_Item_Class_Func
-   {
-      Elm_Genlist_Item_Text_Get_Cb    text_get; /**< Text fetching class function for genlist item classes.*/
-      Elm_Genlist_Item_Content_Get_Cb content_get; /**< Content fetching class function for genlist item classes. */
-      Elm_Genlist_Item_State_Get_Cb   state_get; /**< State fetching class function for genlist item classes. */
-      Elm_Genlist_Item_Del_Cb         del; /**< Deletion class function for genlist item classes. */
-   } func;
-};
-#define Elm_Genlist_Item_Class_Func Elm_Gen_Item_Class_Func
+typedef Elm_Gen_Item_Del_Cb Elm_Genlist_Item_Del_Cb;
+
 /**
  * Add a new genlist widget to the given parent Elementary
  * (container) object
@@ -1120,9 +1088,6 @@ EAPI void                          elm_genlist_realized_items_update(Evas_Object
  * @ingroup Genlist
  */
 EAPI unsigned int elm_genlist_items_count(const Evas_Object *obj);
-
-#define ELM_GENLIST_ITEM_CLASS_VERSION 2 /* current version number */
-#define ELM_GENLIST_ITEM_CLASS_HEADER ELM_GENLIST_ITEM_CLASS_VERSION, 0, 0
 
 /**
  * Add a new genlist item class in a given genlist widget.
