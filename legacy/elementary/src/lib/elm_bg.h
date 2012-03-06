@@ -90,21 +90,19 @@ EAPI Eina_Bool                    elm_bg_file_set(Evas_Object *obj, const char *
  * @param file Where to store the requested file's path
  * @param group Where to store the optional key within @a file, @b if
  * it's an Edje file
- * @return @c EINA_TRUE on success, @c EINA_FALSE otherwise
  *
  * @note Use @c NULL pointers on the file components you're not
  * interested in: they'll be ignored by the function.
  *
  * @ingroup Bg
  */
-EAPI Eina_Bool                    elm_bg_file_get(const Evas_Object *obj, const char **file, const char **group);
+EAPI void                         elm_bg_file_get(const Evas_Object *obj, const char **file, const char **group);
 
 /**
  * Set the mode of display for a given background widget's image
  *
  * @param obj The background object handle
  * @param option The desired background option (see #Elm_Bg_Option)
- * @return @c EINA_TRUE on success, @c EINA_FALSE otherwise
  *
  * This sets how the background widget will display its image. This
  * will only work if the elm_bg_file_set() was previously called with
@@ -115,7 +113,7 @@ EAPI Eina_Bool                    elm_bg_file_get(const Evas_Object *obj, const 
  *
  * @ingroup Bg
  */
-EAPI Eina_Bool                    elm_bg_option_set(Evas_Object *obj, Elm_Bg_Option option);
+EAPI void                         elm_bg_option_set(Evas_Object *obj, Elm_Bg_Option option);
 
 /**
  * Get the mode of display for a given background widget's image
@@ -137,7 +135,6 @@ EAPI Elm_Bg_Option                elm_bg_option_get(const Evas_Object *obj);
  * @param r The red color component's value
  * @param g The green color component's value
  * @param b The blue color component's value
- * @return @c EINA_TRUE on success, @c EINA_FALSE otherwise
  *
  * This sets the color used for the background rectangle, in RGB
  * format. Each color component's range is from 0 to 255.
@@ -150,7 +147,7 @@ EAPI Elm_Bg_Option                elm_bg_option_get(const Evas_Object *obj);
  *
  * @ingroup Bg
  */
-EAPI Eina_Bool                    elm_bg_color_set(Evas_Object *obj, int r, int g, int b);
+EAPI void                         elm_bg_color_set(Evas_Object *obj, int r, int g, int b);
 
 /**
  * Get the color set on a given background widget
@@ -159,7 +156,6 @@ EAPI Eina_Bool                    elm_bg_color_set(Evas_Object *obj, int r, int 
  * @param r Where to store the red color component's value
  * @param g Where to store the green color component's value
  * @param b Where to store the blue color component's value
- * @return @c EINA_TRUE on success, @c EINA_FALSE otherwise
  *
  * @note Use @c NULL pointers on the file components you're not
  * interested in: they'll be ignored by the function.
@@ -168,7 +164,7 @@ EAPI Eina_Bool                    elm_bg_color_set(Evas_Object *obj, int r, int 
  *
  * @ingroup Bg
  */
-EAPI Eina_Bool                    elm_bg_color_get(const Evas_Object *obj, int *r, int *g, int *b);
+EAPI void                         elm_bg_color_get(const Evas_Object *obj, int *r, int *g, int *b);
 
 /**
  * Set the size of the pixmap representation of the image set on a
@@ -193,7 +189,7 @@ EAPI Eina_Bool                    elm_bg_color_get(const Evas_Object *obj, int *
  *
  * @ingroup Bg
  */
-EAPI Eina_Bool                    elm_bg_load_size_set(Evas_Object *obj, Evas_Coord w, Evas_Coord h);
+EAPI void                         elm_bg_load_size_set(Evas_Object *obj, Evas_Coord w, Evas_Coord h);
 
 /**
  * @}

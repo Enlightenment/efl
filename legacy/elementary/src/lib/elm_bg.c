@@ -243,28 +243,28 @@ elm_bg_file_set(Evas_Object *obj, const char *file, const char *group)
    return EINA_TRUE;
 }
 
-EAPI Eina_Bool
+EAPI void
 elm_bg_file_get(const Evas_Object *obj, const char **file, const char **group)
 {
-   ELM_CHECK_WIDTYPE(obj, widtype) EINA_FALSE;
+   ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
    if (file) *file = wd->file;
    if (group) *group = wd->group;
 
-   return EINA_TRUE;
+   return;
 }
 
-EAPI Eina_Bool
+EAPI void
 elm_bg_option_set(Evas_Object *obj, Elm_Bg_Option option)
 {
-   ELM_CHECK_WIDTYPE(obj, widtype) EINA_FALSE;
+   ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd;
 
    wd = elm_widget_data_get(obj);
    wd->option = option;
    _custom_resize(wd, NULL, NULL, NULL);
 
-   return EINA_TRUE;
+   return;
 }
 
 EAPI Elm_Bg_Option
@@ -277,10 +277,10 @@ elm_bg_option_get(const Evas_Object *obj)
    return wd->option;
 }
 
-EAPI Eina_Bool
+EAPI void
 elm_bg_color_set(Evas_Object *obj, int r, int g, int b)
 {
-   ELM_CHECK_WIDTYPE(obj, widtype) EINA_FALSE;
+   ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd;
 
    wd = elm_widget_data_get(obj);
@@ -293,34 +293,34 @@ elm_bg_color_set(Evas_Object *obj, int r, int g, int b)
      }
    evas_object_color_set(wd->rect, r, g, b, 255);
 
-   return EINA_TRUE;
+   return;
 }
 
-EAPI Eina_Bool
+EAPI void
 elm_bg_color_get(const Evas_Object *obj, int *r, int *g, int *b)
 {
-   ELM_CHECK_WIDTYPE(obj, widtype) EINA_FALSE;
+   ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd;
 
    wd = elm_widget_data_get(obj);
    evas_object_color_get(wd->rect, r, g, b, NULL);
 
-   return EINA_TRUE;
+   return;
 }
 
-EAPI Eina_Bool
+EAPI void
 elm_bg_load_size_set(Evas_Object *obj, Evas_Coord w, Evas_Coord h)
 {
-   ELM_CHECK_WIDTYPE(obj, widtype) EINA_FALSE;
+   ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
    const char *p;
-   if (!wd) return EINA_FALSE;
+   if (!wd) return;
    wd->load_opts.w = w;
    wd->load_opts.h = h;
-   if (!wd->img) return EINA_FALSE;
+   if (!wd->img) return;
    if (!(((p = strrchr(wd->file, '.'))) && (!strcasecmp(p, ".edj"))))
      evas_object_image_load_size_set(wd->img, w, h);
 
-   return EINA_TRUE;
+   return;
 }
 
