@@ -347,66 +347,6 @@ elm_bubble_add(Evas_Object *parent)
    return obj;
 }
 
-EAPI void
-elm_bubble_label_set(Evas_Object *obj, const char *label)
-{
-   _elm_bubble_label_set(obj, NULL, label);
-}
-
-EAPI const char*
-elm_bubble_label_get(const Evas_Object *obj)
-{
-   return _elm_bubble_label_get(obj, NULL);
-}
-
-EAPI void
-elm_bubble_info_set(Evas_Object *obj, const char *info)
-{
-   _elm_bubble_label_set(obj, "info", info);
-}
-
-EAPI const char *
-elm_bubble_info_get(const Evas_Object *obj)
-{
-   return _elm_bubble_label_get(obj, "info");
-}
-
-EAPI void
-elm_bubble_content_set(Evas_Object *obj, Evas_Object *content)
-{
-   _content_set_hook(obj, NULL, content);
-}
-
-EAPI Evas_Object *
-elm_bubble_content_get(const Evas_Object *obj)
-{
-   return _content_get_hook(obj, NULL);
-}
-
-EAPI Evas_Object *
-elm_bubble_content_unset(Evas_Object *obj)
-{
-   return _content_unset_hook(obj, NULL);
-}
-
-EAPI void
-elm_bubble_icon_set(Evas_Object *obj, Evas_Object *icon)
-{
-   _content_set_hook(obj, "icon", icon);
-}
-
-EAPI Evas_Object *
-elm_bubble_icon_get(const Evas_Object *obj)
-{
-   return _content_get_hook(obj, "icon");
-}
-
-EAPI Evas_Object *
-elm_bubble_icon_unset(Evas_Object *obj)
-{
-   return _content_unset_hook(obj, "icon");
-}
-
 EINA_DEPRECATED EAPI void
 elm_bubble_corner_set(Evas_Object *obj, const char *corner)
 {

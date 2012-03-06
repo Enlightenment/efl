@@ -482,34 +482,6 @@ elm_actionslider_enabled_pos_get(const Evas_Object *obj)
    return wd->enabled_position;
 }
 
-EAPI void
-elm_actionslider_labels_set(Evas_Object *obj, const char *left_label, const char *center_label, const char *right_label)
-{
-   ELM_CHECK_WIDTYPE(obj, widtype);
-   Widget_Data *wd = elm_widget_data_get(obj);
-   if (!wd) return;
-
-   _elm_actionslider_label_set(obj, "left", left_label);
-   _elm_actionslider_label_set(obj, "center", center_label);
-   _elm_actionslider_label_set(obj, "right", right_label);
-}
-
-EAPI void
-elm_actionslider_labels_get(const Evas_Object *obj, const char **left_label, const char **center_label, const char **right_label)
-{
-   if (left_label) *left_label= NULL;
-   if (center_label) *center_label= NULL;
-   if (right_label) *right_label= NULL;
-   ELM_CHECK_WIDTYPE(obj, widtype);
-   Widget_Data *wd = elm_widget_data_get(obj);
-   if (!wd) return;
-   if (left_label) *left_label = _elm_actionslider_label_get(obj, "left");
-   if (center_label) *center_label = _elm_actionslider_label_get(obj, "center");
-
-   if (right_label) *right_label = _elm_actionslider_label_get(obj, "right");
-
-}
-
 EAPI const char *
 elm_actionslider_selected_label_get(const Evas_Object *obj)
 {
@@ -530,16 +502,4 @@ elm_actionslider_selected_label_get(const Evas_Object *obj)
      return wd->text_right;
 
    return NULL;
-}
-
-EAPI void
-elm_actionslider_indicator_label_set(Evas_Object *obj, const char *label)
-{
-   _elm_actionslider_label_set(obj, NULL, label);
-}
-
-EAPI const char *
-elm_actionslider_indicator_label_get(Evas_Object *obj)
-{
-   return _elm_actionslider_label_get(obj, NULL);
 }

@@ -299,24 +299,6 @@ elm_bg_color_get(const Evas_Object *obj, int *r, int *g, int *b)
 }
 
 EAPI void
-elm_bg_overlay_set(Evas_Object *obj, Evas_Object *overlay)
-{
-   _content_set_hook(obj, "overlay", overlay);
-}
-
-EAPI Evas_Object *
-elm_bg_overlay_get(const Evas_Object *obj)
-{
-   return _content_get_hook(obj, "overlay");
-}
-
-EAPI Evas_Object *
-elm_bg_overlay_unset(Evas_Object *obj)
-{
-   return _content_unset_hook(obj, "overlay");
-}
-
-EAPI void
 elm_bg_load_size_set(Evas_Object *obj, Evas_Coord w, Evas_Coord h)
 {
    ELM_CHECK_WIDTYPE(obj, widtype);
