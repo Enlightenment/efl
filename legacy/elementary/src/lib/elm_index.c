@@ -177,9 +177,14 @@ _theme_hook(Evas_Object *obj)
    edje_object_scale_set(wd->base, elm_widget_scale_get(obj) * _elm_config->scale);
    _sizing_eval(obj);
    _index_box_auto_fill(obj, wd->bx[0], 0);
+
    if (wd->autohide_disabled)
-     if (wd->level == 1)
-       _index_box_auto_fill(obj, wd->bx[1], 1);
+     {
+        if (wd->level == 1) _index_box_auto_fill(obj, wd->bx[1], 1);
+        edje_object_signal_emit(wd->base, "elm,state,active", "elm");
+     }
+   else
+     edje_object_signal_emit(wd->base, "elm,state,inactive", "elm");
 }
 
 static void
