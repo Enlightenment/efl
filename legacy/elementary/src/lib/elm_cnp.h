@@ -135,12 +135,7 @@ EAPI Eina_Bool elm_cnp_selection_set(Evas_Object *obj, Elm_Sel_Type selection,
  * @return If EINA_TRUE, getting selection data was successful.
  *
  * @ingroup CopyPaste
- *
  */
-// XXX: This api needs to be refined by cnp experts.
-//      I suggest:
-//         1. call cnp callback regardless of widget type.
-//         2. apps insert text data into entry manually.
 EAPI Eina_Bool elm_cnp_selection_get(Evas_Object *obj, Elm_Sel_Type selection,
                                      Elm_Sel_Format format,
                                      Elm_Drop_Cb datacb, void *udata);
