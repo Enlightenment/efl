@@ -181,8 +181,7 @@ AC_COMPILE_IFELSE(
 #include <fcntl.h>
        ]],
        [[
-int fd;
-fd = shm_open("/", O_RDWR | O_CREAT, S_IRUSR | S_IWUSR);
+shm_open("/", O_RDWR | O_CREAT, S_IRUSR | S_IWUSR);
 shm_unlink("/");
        ]])],
    [
@@ -196,7 +195,7 @@ AC_SUBST(SHM_OPEN_LIBS)
 AC_MSG_CHECKING([shm_open])
 AC_MSG_RESULT([${have_shm_open}])
 
-if test "x{have_shm_open)" != "xyes"; then
+if test "x${have_shm_open}" != "xyes"; then
   enable_generic="no"
 fi
 
