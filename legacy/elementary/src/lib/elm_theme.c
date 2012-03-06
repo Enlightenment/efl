@@ -436,7 +436,7 @@ elm_theme_overlay_del(Elm_Theme *th, const char *item)
 }
 
 EAPI const Eina_List *
-elm_theme_overlay_list_get(Elm_Theme *th)
+elm_theme_overlay_list_get(const Elm_Theme *th)
 {
    if (!th) th = &(theme_default);
    return th->overlay;
@@ -472,7 +472,7 @@ elm_theme_extension_del(Elm_Theme *th, const char *item)
 }
 
 EAPI const Eina_List *
-elm_theme_extension_list_get(Elm_Theme *th)
+elm_theme_extension_list_get(const Elm_Theme *th)
 {
    if (!th) th = &(theme_default);
    return th->extension;

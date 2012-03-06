@@ -187,7 +187,7 @@ EAPI void             elm_theme_overlay_del(Elm_Theme *th, const char *item);
  *
  * @see elm_theme_overlay_add()
  */
-EAPI const Eina_List *elm_theme_overlay_list_get(Elm_Theme *th);
+EAPI const Eina_List *elm_theme_overlay_list_get(const Elm_Theme *th);
 
 /**
  * Appends a theme extension to the list of extensions.
@@ -228,7 +228,7 @@ EAPI void             elm_theme_extension_del(Elm_Theme *th, const char *item);
  *
  * @see elm_theme_extension_add()
  */
-EAPI const Eina_List *elm_theme_extension_list_get(Elm_Theme *th);
+EAPI const Eina_List *elm_theme_extension_list_get(const Elm_Theme *th);
 
 /**
  * Set the theme search order for the given theme
