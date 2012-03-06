@@ -1025,8 +1025,9 @@ EAPI char              *elm_entry_utf8_to_markup(const char *s);
  * @param obj The entry object
  * @param file The path to the file to load and save
  * @param format The file format
+ * @return @c EINA_TRUE on success, @c EINA_FALSE otherwise
  */
-EAPI void               elm_entry_file_set(Evas_Object *obj, const char *file, Elm_Text_Format format);
+EAPI Eina_Bool          elm_entry_file_set(Evas_Object *obj, const char *file, Elm_Text_Format format);
 
 /**
  * Gets the file being edited by the entry.

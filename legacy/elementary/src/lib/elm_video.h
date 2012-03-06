@@ -75,6 +75,8 @@ EAPI Evas_Object         *elm_video_add(Evas_Object *parent);
  * WebCam (v4l2://). (You can use Emotion API to request and list 
  * the available Webcam on your system).
  *
+ * @return @c EINA_TRUE on success, @c EINA_FALSE otherwise
+ *
  * This function will explicitly define a file or URI as a source
  * for the video of the Elm_Video object.
  *
@@ -83,7 +85,7 @@ EAPI Evas_Object         *elm_video_add(Evas_Object *parent);
  *
  * @ingroup Video
  */
-EAPI void                 elm_video_file_set(Evas_Object *video, const char *filename);
+EAPI Eina_Bool            elm_video_file_set(Evas_Object *video, const char *filename);
 
 /**
  * @brief Get the underlying Emotion object.

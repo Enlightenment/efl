@@ -310,24 +310,28 @@ elm_video_add(Evas_Object *parent)
 #endif
 }
 
-EAPI void
+EAPI Eina_Bool
 elm_video_file_set(Evas_Object *video, const char *filename)
 {
 #ifdef HAVE_EMOTION
-   ELM_CHECK_WIDTYPE(video, widtype);
+   ELM_CHECK_WIDTYPE(video, widtype) EINA_FALSE;
    Widget_Data *wd = elm_widget_data_get(video);
 
    if (wd->remember) emotion_object_last_position_save(wd->emotion);
    wd->stop = EINA_FALSE;
-   emotion_object_file_set(wd->emotion, filename);
+   if (!emotion_object_file_set(wd->emotion, filename)) return EINA_FALSE;
 
    if ((!strncmp(filename, "file://", 7)) || (!strstr(filename, "://")))
      emotion_object_last_position_load(wd->emotion);
 
    edje_object_signal_emit(wd->layout, "elm,video,load", "elm");
+
+   return EINA_TRUE;
 #else
    (void) video;
    (void) filename;
+
+   return EINA_FALSE;
 #endif
 }
 

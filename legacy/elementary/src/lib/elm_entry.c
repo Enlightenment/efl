@@ -281,16 +281,16 @@ _load_plain(const char *file)
    return NULL;
 }
 
-static void
+static Eina_Bool
 _load(Evas_Object *obj)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
    char *text;
-   if (!wd) return;
+   if (!wd) return EINA_FALSE;
    if (!wd->file)
      {
         elm_object_text_set(obj, "");
-        return;
+        return EINA_TRUE;
      }
    switch (wd->format)
      {
@@ -308,9 +308,13 @@ _load(Evas_Object *obj)
      {
         elm_object_text_set(obj, text);
         free(text);
+        return EINA_TRUE;
      }
    else
-     elm_object_text_set(obj, "");
+     {
+        elm_object_text_set(obj, "");
+        return EINA_FALSE;
+     }
 }
 
 static void
@@ -3328,12 +3332,12 @@ elm_entry_filter_accept_set(void *data, Evas_Object *entry __UNUSED__, char **te
    *insert = 0;
 }
 
-EAPI void
+EAPI Eina_Bool
 elm_entry_file_set(Evas_Object *obj, const char *file, Elm_Text_Format format)
 {
-   ELM_CHECK_WIDTYPE(obj, widtype);
+   ELM_CHECK_WIDTYPE(obj, widtype) EINA_FALSE;
    Widget_Data *wd = elm_widget_data_get(obj);
-   if (!wd) return;
+   if (!wd) return EINA_FALSE;
    if (wd->delay_write)
      {
         ecore_timer_del(wd->delay_write);
@@ -3342,7 +3346,7 @@ elm_entry_file_set(Evas_Object *obj, const char *file, Elm_Text_Format format)
    if (wd->autosave) _save(obj);
    eina_stringshare_replace(&wd->file, file);
    wd->format = format;
-   _load(obj);
+   return _load(obj);
 }
 
 EAPI void
