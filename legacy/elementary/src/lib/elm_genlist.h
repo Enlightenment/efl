@@ -346,7 +346,6 @@
  *
  * @ingroup Genlist
  */
-//XXX: Elm_Genlist_Item_Type
  typedef enum
 {
    ELM_GENLIST_ITEM_NONE = 0, /**< simple item */
@@ -355,16 +354,15 @@
    ELM_GENLIST_ITEM_GROUP = (1 << 1), /**< index of a group of items */
 
    ELM_GENLIST_ITEM_MAX = (1 << 2)
-} Elm_Genlist_Item_Flags;
+} Elm_Genlist_Item_Type;
 
-//XXX: Elm_Genlist_Item_Field_Type
 typedef enum
 {
    ELM_GENLIST_ITEM_FIELD_ALL = 0,
    ELM_GENLIST_ITEM_FIELD_TEXT = (1 << 0),
    ELM_GENLIST_ITEM_FIELD_CONTENT = (1 << 1),
    ELM_GENLIST_ITEM_FIELD_STATE = (1 << 2)
-} Elm_Genlist_Item_Field_Flags;
+} Elm_Genlist_Item_Field_Type;
 typedef struct _Elm_Genlist_Item_Class      Elm_Genlist_Item_Class; /**< Genlist item class definition structs */
 
 #define Elm_Genlist_Item_Class Elm_Gen_Item_Class
@@ -625,7 +623,7 @@ EAPI void                          elm_genlist_bounce_get(const Evas_Object *obj
  * @param itc The item class for the item
  * @param data The item data
  * @param parent The parent item, or NULL if none
- * @param flags Item flags
+ * @param type Item type
  * @param func Convenience function called when the item is selected
  * @param func_data Data passed to @p func above.
  * @return A handle to the item added or @c NULL if not possible
@@ -640,7 +638,7 @@ EAPI void                          elm_genlist_bounce_get(const Evas_Object *obj
  *
  * @ingroup Genlist
  */
-EAPI Elm_Object_Item             *elm_genlist_item_append(Evas_Object *obj, const Elm_Genlist_Item_Class *itc, const void *data, Elm_Object_Item *parent, Elm_Genlist_Item_Flags flags, Evas_Smart_Cb func, const void *func_data);
+EAPI Elm_Object_Item             *elm_genlist_item_append(Evas_Object *obj, const Elm_Genlist_Item_Class *itc, const void *data, Elm_Object_Item *parent, Elm_Genlist_Item_Type type, Evas_Smart_Cb func, const void *func_data);
 
 /**
  * Prepend a new item in a given genlist widget.
@@ -649,7 +647,7 @@ EAPI Elm_Object_Item             *elm_genlist_item_append(Evas_Object *obj, cons
  * @param itc The item class for the item
  * @param data The item data
  * @param parent The parent item, or NULL if none
- * @param flags Item flags
+ * @param type Item type
  * @param func Convenience function called when the item is selected
  * @param func_data Data passed to @p func above.
  * @return A handle to the item added or NULL if not possible
@@ -664,7 +662,7 @@ EAPI Elm_Object_Item             *elm_genlist_item_append(Evas_Object *obj, cons
  *
  * @ingroup Genlist
  */
-EAPI Elm_Object_Item             *elm_genlist_item_prepend(Evas_Object *obj, const Elm_Genlist_Item_Class *itc, const void *data, Elm_Object_Item *parent, Elm_Genlist_Item_Flags flags, Evas_Smart_Cb func, const void *func_data);
+EAPI Elm_Object_Item             *elm_genlist_item_prepend(Evas_Object *obj, const Elm_Genlist_Item_Class *itc, const void *data, Elm_Object_Item *parent, Elm_Genlist_Item_Type type, Evas_Smart_Cb func, const void *func_data);
 
 /**
  * Insert an item before another in a genlist widget
@@ -674,7 +672,7 @@ EAPI Elm_Object_Item             *elm_genlist_item_prepend(Evas_Object *obj, con
  * @param data The item data
  * @param parent The parent item, or NULL if none
  * @param before The item to place this new one before.
- * @param flags Item flags
+ * @param type Item type
  * @param func Convenience function called when the item is selected
  * @param func_data Data passed to @p func above.
  * @return A handle to the item added or @c NULL if not possible
@@ -689,7 +687,7 @@ EAPI Elm_Object_Item             *elm_genlist_item_prepend(Evas_Object *obj, con
  *
  * @ingroup Genlist
  */
-EAPI Elm_Object_Item             *elm_genlist_item_insert_before(Evas_Object *obj, const Elm_Genlist_Item_Class *itc, const void *data, Elm_Object_Item *parent, Elm_Object_Item *before, Elm_Genlist_Item_Flags flags, Evas_Smart_Cb func, const void *func_data);
+EAPI Elm_Object_Item             *elm_genlist_item_insert_before(Evas_Object *obj, const Elm_Genlist_Item_Class *itc, const void *data, Elm_Object_Item *parent, Elm_Object_Item *before, Elm_Genlist_Item_Type type, Evas_Smart_Cb func, const void *func_data);
 
 /**
  * Insert an item after another in a genlist widget
@@ -699,7 +697,7 @@ EAPI Elm_Object_Item             *elm_genlist_item_insert_before(Evas_Object *ob
  * @param data The item data
  * @param parent The parent item, or NULL if none
  * @param after The item to place this new one after.
- * @param flags Item flags
+ * @param type Item type
  * @param func Convenience function called when the item is selected
  * @param func_data Data passed to @p func above.
  * @return A handle to the item added or @c NULL if not possible
@@ -714,7 +712,7 @@ EAPI Elm_Object_Item             *elm_genlist_item_insert_before(Evas_Object *ob
  *
  * @ingroup Genlist
  */
-EAPI Elm_Object_Item             *elm_genlist_item_insert_after(Evas_Object *obj, const Elm_Genlist_Item_Class *itc, const void *data, Elm_Object_Item *parent, Elm_Object_Item *after, Elm_Genlist_Item_Flags flags, Evas_Smart_Cb func, const void *func_data);
+EAPI Elm_Object_Item             *elm_genlist_item_insert_after(Evas_Object *obj, const Elm_Genlist_Item_Class *itc, const void *data, Elm_Object_Item *parent, Elm_Object_Item *after, Elm_Genlist_Item_Type type, Evas_Smart_Cb func, const void *func_data);
 
 /**
  * Insert a new item into the sorted genlist object
@@ -723,7 +721,7 @@ EAPI Elm_Object_Item             *elm_genlist_item_insert_after(Evas_Object *obj
  * @param itc The item class for the item
  * @param data The item data
  * @param parent The parent item, or NULL if none
- * @param flags Item flags
+ * @param type Item type
  * @param comp The function called for the sort
  * @param func Convenience function called when item selected
  * @param func_data Data passed to @p func above.
@@ -740,7 +738,7 @@ EAPI Elm_Object_Item             *elm_genlist_item_insert_after(Evas_Object *obj
 
  * @ingroup Genlist
  */
-EAPI Elm_Object_Item             *elm_genlist_item_sorted_insert(Evas_Object *obj, const Elm_Genlist_Item_Class *itc, const void *data, Elm_Object_Item *parent, Elm_Genlist_Item_Flags flags, Eina_Compare_Cb comp, Evas_Smart_Cb func, const void *func_data);
+EAPI Elm_Object_Item             *elm_genlist_item_sorted_insert(Evas_Object *obj, const Elm_Genlist_Item_Class *itc, const void *data, Elm_Object_Item *parent, Elm_Genlist_Item_Type type, Eina_Compare_Cb comp, Evas_Smart_Cb func, const void *func_data);
 
 /* operations to retrieve existing items */
 /**
@@ -1792,7 +1790,7 @@ EAPI void                          elm_genlist_item_demote(Elm_Object_Item *it);
  *
  * @param it The item
  * @param parts The name of item's part
- * @param itf The flags of item's part type
+ * @param itf The type of item's part type
  *
  * This updates an item's part by calling item's fetching functions again
  * to get the contents, texts and states. Use this when the original
@@ -1807,7 +1805,7 @@ EAPI void                          elm_genlist_item_demote(Elm_Object_Item *it);
  *
  * @ingroup Genlist
  */
-EAPI void                          elm_genlist_item_fields_update(Elm_Object_Item *it, const char *parts, Elm_Genlist_Item_Field_Flags itf);
+EAPI void                          elm_genlist_item_fields_update(Elm_Object_Item *it, const char *parts, Elm_Genlist_Item_Field_Type itf);
 
 /**
  * Activate a genlist mode on an item
@@ -1908,18 +1906,17 @@ EAPI void                          elm_genlist_reorder_mode_set(Evas_Object *obj
 EAPI Eina_Bool                     elm_genlist_reorder_mode_get(const Evas_Object *obj);
 
 /**
- * Get the Item's Flags
+ * Get the Item's Type 
  *
  * @param it The genlist item
- * @return The item flags.
+ * @return The item type.
  *
  * This function returns the item's type. Normally the item's type.
  * If it failed, return value is ELM_GENLIST_ITEM_MAX
  *
  * @ingroup Genlist
  */
-//XXX: type would be more intuitive...
-EAPI Elm_Genlist_Item_Flags        elm_genlist_item_flags_get(const Elm_Object_Item *it);
+EAPI Elm_Genlist_Item_Type        elm_genlist_item_type_get(const Elm_Object_Item *it);
 
 /**
  * Set Genlist edit mode

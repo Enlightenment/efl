@@ -47,7 +47,7 @@ struct Elm_Gen_Item_Type
    Eina_List                    *items;
    Evas_Coord                    w, h, minw, minh;
    Elm_Gen_Item                 *group_item;
-   Elm_Genlist_Item_Flags        flags;
+   Elm_Genlist_Item_Type        type;
    Eina_List                    *mode_texts, *mode_contents, *mode_states, *mode_content_objs;
    Eina_List                    *edit_texts, *edit_contents, *edit_states, *edit_content_objs;
    Ecore_Timer                  *swipe_timer;
@@ -1570,7 +1570,7 @@ _item_cache_add(Elm_Gen_Item *it)
    evas_object_hide(itc->base_view);
    evas_object_move(itc->base_view, -9999, -9999);
    itc->item_style = eina_stringshare_add(it->itc->item_style);
-   if (it->item->flags & ELM_GENLIST_ITEM_SUBITEMS) itc->tree = 1;
+   if (it->item->type & ELM_GENLIST_ITEM_SUBITEMS) itc->tree = 1;
    itc->compress = (it->wd->compress);
    itc->selected = it->selected;
    itc->disabled = elm_widget_item_disabled_get(it);
@@ -1617,7 +1617,7 @@ _item_cache_find(Elm_Gen_Item *it)
    Item_Cache *itc;
    Eina_Bool tree = 0;
 
-   if (it->item->flags & ELM_GENLIST_ITEM_SUBITEMS) tree = 1;
+   if (it->item->type & ELM_GENLIST_ITEM_SUBITEMS) tree = 1;
    EINA_INLIST_FOREACH(it->wd->item_cache, itc)
      {
         if ((itc->selected) || (itc->disabled) || (itc->expanded))
@@ -1976,7 +1976,7 @@ _item_realize(Elm_Gen_Item *it,
         evas_object_smart_member_add(VIEW(it), it->wd->pan_smart);
         elm_widget_sub_object_add(WIDGET(it), VIEW(it));
 
-        if (it->item->flags & ELM_GENLIST_ITEM_SUBITEMS)
+        if (it->item->type & ELM_GENLIST_ITEM_SUBITEMS)
           snprintf(buf, sizeof(buf), "tree%s/%s", it->wd->compress ? "_compress" : "", it->itc->item_style ?: "default");
         else
           snprintf(buf, sizeof(buf), "item%s/%s", it->wd->compress ? "_compress" : "", it->itc->item_style ?: "default");
@@ -2030,7 +2030,7 @@ _item_realize(Elm_Gen_Item *it,
                                        _multi_move, it);
 
         if ((it->wd->edit_mode) && (!it->edit_obj) &&
-            (it->item->flags != ELM_GENLIST_ITEM_GROUP) && (it->itc->edit_item_style))
+            (it->item->type != ELM_GENLIST_ITEM_GROUP) && (it->itc->edit_item_style))
           _edit_mode_item_realize(it, EINA_FALSE);
 
         _elm_genlist_item_state_update(it, itc);
@@ -2092,7 +2092,7 @@ _item_realize(Elm_Gen_Item *it,
                   it->wd->group_item_width = mw;
                   it->wd->group_item_height = mh;
                }
-             else if ((!it->wd->item_width) && (it->item->flags == ELM_GENLIST_ITEM_NONE))
+             else if ((!it->wd->item_width) && (it->item->type == ELM_GENLIST_ITEM_NONE))
                {
                   it->wd->item_width = mw;
                   it->wd->item_height = mh;
@@ -2122,7 +2122,7 @@ _item_realize(Elm_Gen_Item *it,
    if (!calc)
      evas_object_smart_callback_call(WIDGET(it), SIG_REALIZED, it);
 
-   if ((!calc) && (it->wd->edit_mode) && (it->item->flags != ELM_GENLIST_ITEM_GROUP))
+   if ((!calc) && (it->wd->edit_mode) && (it->item->type != ELM_GENLIST_ITEM_GROUP))
      {
         if (it->itc->edit_item_style)
           {
@@ -3250,7 +3250,7 @@ _edit_mode_item_realize(Elm_Gen_Item *it, Eina_Bool effect_on)
    evas_object_smart_member_add(it->edit_obj, it->wd->pan_smart);
    elm_widget_sub_object_add(WIDGET(it), it->edit_obj);
 
-   if (it->item->flags & ELM_GENLIST_ITEM_SUBITEMS)
+   if (it->item->type & ELM_GENLIST_ITEM_SUBITEMS)
       strncpy(buf, "tree", sizeof(buf));
    else strncpy(buf, "item", sizeof(buf));
    if (it->wd->compress)
@@ -3626,7 +3626,7 @@ _item_new(Widget_Data                  *wd,
           const Elm_Genlist_Item_Class *itc,
           const void                   *data,
           Elm_Gen_Item                 *parent,
-          Elm_Genlist_Item_Flags        flags,
+          Elm_Genlist_Item_Type         type,
           Evas_Smart_Cb                 func,
           const void                   *func_data)
 {
@@ -3636,8 +3636,8 @@ _item_new(Widget_Data                  *wd,
    it = _elm_genlist_item_new(wd, itc, data, parent, func, func_data);
    if (!it) return NULL;
    it->item = ELM_NEW(Elm_Gen_Item_Type);
-   it->item->flags = flags;
-   if (flags & ELM_GENLIST_ITEM_GROUP) it->group++;
+   it->item->type = type;
+   if (type & ELM_GENLIST_ITEM_GROUP) it->group++;
    it->item->expanded_depth = 0;
    ELM_GEN_ITEM_SETUP(it);
    if (it->parent)
@@ -4102,14 +4102,14 @@ elm_genlist_item_append(Evas_Object                  *obj,
                         const Elm_Genlist_Item_Class *itc,
                         const void                   *data,
                         Elm_Object_Item              *parent,
-                        Elm_Genlist_Item_Flags        flags,
+                        Elm_Genlist_Item_Type         type,
                         Evas_Smart_Cb                 func,
                         const void                   *func_data)
 {
    ELM_CHECK_WIDTYPE(obj, widtype) NULL;
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return NULL;
-   Elm_Gen_Item *it = _item_new(wd, itc, data, (Elm_Gen_Item *) parent, flags,
+   Elm_Gen_Item *it = _item_new(wd, itc, data, (Elm_Gen_Item *) parent, type,
                                 func, func_data);
    if (!it) return NULL;
    if (!it->parent)
@@ -4142,14 +4142,14 @@ elm_genlist_item_prepend(Evas_Object                  *obj,
                          const Elm_Genlist_Item_Class *itc,
                          const void                   *data,
                          Elm_Object_Item              *parent,
-                         Elm_Genlist_Item_Flags        flags,
+                         Elm_Genlist_Item_Type         type,
                          Evas_Smart_Cb                 func,
                          const void                   *func_data)
 {
    ELM_CHECK_WIDTYPE(obj, widtype) NULL;
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return NULL;
-   Elm_Gen_Item *it = _item_new(wd, itc, data, (Elm_Gen_Item *) parent, flags,
+   Elm_Gen_Item *it = _item_new(wd, itc, data, (Elm_Gen_Item *) parent, type,
                                 func, func_data);
    if (!it) return NULL;
    if (!it->parent)
@@ -4183,7 +4183,7 @@ elm_genlist_item_insert_after(Evas_Object                  *obj,
                               const void                   *data,
                               Elm_Object_Item              *parent,
                               Elm_Object_Item              *after,
-                              Elm_Genlist_Item_Flags        flags,
+                              Elm_Genlist_Item_Type         type,
                               Evas_Smart_Cb                 func,
                               const void                   *func_data)
 {
@@ -4195,7 +4195,7 @@ elm_genlist_item_insert_after(Evas_Object                  *obj,
    /* It makes no sense to insert after in an empty list with after != NULL, something really bad is happening in your app. */
    EINA_SAFETY_ON_NULL_RETURN_VAL(wd->items, NULL);
 
-   Elm_Gen_Item *it = _item_new(wd, itc, data, (Elm_Gen_Item *) parent, flags,
+   Elm_Gen_Item *it = _item_new(wd, itc, data, (Elm_Gen_Item *) parent, type,
                                 func, func_data);
    if (!it) return NULL;
    if (!it->parent)
@@ -4224,7 +4224,7 @@ elm_genlist_item_insert_before(Evas_Object                  *obj,
                                const void                   *data,
                                Elm_Object_Item              *parent,
                                Elm_Object_Item              *before,
-                               Elm_Genlist_Item_Flags        flags,
+                               Elm_Genlist_Item_Type         type,
                                Evas_Smart_Cb                 func,
                                const void                   *func_data)
 {
@@ -4236,7 +4236,7 @@ elm_genlist_item_insert_before(Evas_Object                  *obj,
    /* It makes no sense to insert before in an empty list with before != NULL, something really bad is happening in your app. */
    EINA_SAFETY_ON_NULL_RETURN_VAL(wd->items, NULL);
 
-   Elm_Gen_Item *it = _item_new(wd, itc, data, (Elm_Gen_Item *) parent, flags,
+   Elm_Gen_Item *it = _item_new(wd, itc, data, (Elm_Gen_Item *) parent, type,
                                 func, func_data);
    if (!it) return NULL;
    if (!it->parent)
@@ -4264,7 +4264,7 @@ elm_genlist_item_sorted_insert(Evas_Object                  *obj,
                                const Elm_Genlist_Item_Class *itc,
                                const void                   *data,
                                Elm_Object_Item              *parent,
-                               Elm_Genlist_Item_Flags        flags,
+                               Elm_Genlist_Item_Type         type,
                                Eina_Compare_Cb               comp,
                                Evas_Smart_Cb                 func,
                                const void                   *func_data)
@@ -4273,7 +4273,7 @@ elm_genlist_item_sorted_insert(Evas_Object                  *obj,
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return NULL;
    Elm_Gen_Item *rel = NULL;
-   Elm_Gen_Item *it = _item_new(wd, itc, data, (Elm_Gen_Item *) parent, flags,
+   Elm_Gen_Item *it = _item_new(wd, itc, data, (Elm_Gen_Item *) parent, type,
                                 func, func_data);
    if (!it) return NULL;
 
@@ -4991,7 +4991,7 @@ elm_genlist_item_update(Elm_Object_Item *it)
 EAPI void
 elm_genlist_item_fields_update(Elm_Object_Item *it,
                                const char *parts,
-                               Elm_Genlist_Item_Field_Flags itf)
+                               Elm_Genlist_Item_Field_Type itf)
 {
    ELM_OBJ_ITEM_CHECK_OR_RETURN(it);
    Elm_Gen_Item *_it = (Elm_Gen_Item *)it;
@@ -5595,7 +5595,7 @@ elm_genlist_edit_mode_set(Evas_Object *obj, Eina_Bool edit_mode)
      {
         EINA_LIST_FOREACH(list, l, it)
           {
-             if (it->item->flags != ELM_GENLIST_ITEM_GROUP)
+             if (it->item->type != ELM_GENLIST_ITEM_GROUP)
                _edit_mode_item_unrealize(it);
           }
         _item_cache_zero(wd);
@@ -5604,7 +5604,7 @@ elm_genlist_edit_mode_set(Evas_Object *obj, Eina_Bool edit_mode)
      {
         EINA_LIST_FOREACH(list, l, it)
           {
-             if (it->item->flags != ELM_GENLIST_ITEM_GROUP)
+             if (it->item->type != ELM_GENLIST_ITEM_GROUP)
                {
                   if (it->selected) _item_unselect(it);
                   if (it->itc->edit_item_style)
@@ -5635,12 +5635,18 @@ elm_genlist_reorder_mode_get(const Evas_Object *obj)
    return wd->reorder_mode;
 }
 
-EAPI Elm_Genlist_Item_Flags
-elm_genlist_item_flags_get(const Elm_Object_Item *it)
+EAPI Elm_Genlist_Item_Type
+elm_genlist_item_type_get(const Elm_Object_Item *it)
 {
    ELM_OBJ_ITEM_CHECK_OR_RETURN(it, ELM_GENLIST_ITEM_MAX);
    Elm_Gen_Item *_it = (Elm_Gen_Item *)it;
-   return _it->item->flags;
+   return _it->item->type;
+}
+
+EINA_DEPRECATED EAPI Elm_Genlist_Item_Type
+elm_genlist_item_flags_get(const Elm_Object_Item *it)
+{
+   return elm_genlist_item_type_get(it);
 }
 
 EAPI Elm_Genlist_Item_Class *

@@ -1691,6 +1691,21 @@ EINA_DEPRECATED EAPI void                          elm_genlist_mode_item_style_s
  */
 EINA_DEPRECATED EAPI const Evas_Object            *elm_genlist_item_object_get(const Elm_Object_Item *it);
 
+/**
+ * Get the Item's Flags
+ *
+ * @param it The genlist item
+ * @return The item type.
+ *
+ * This function returns the item's type. Normally the item's type.
+ * If it failed, return value is ELM_GENLIST_ITEM_MAX
+ *
+ * @deprecated Use elm_genlist_item_type_get() instead
+ * @ingroup Genlist
+ */
+EINA_DEPRECATED EAPI Elm_Genlist_Item_Type        elm_genlist_item_flags_get(const Elm_Object_Item *it);
+
+
 #define ELM_IMAGE_ROTATE_90_CW 1
 #define ELM_IMAGE_ROTATE_180_CW 2
 #define ELM_IMAGE_ROTATE_90_CCW 3
