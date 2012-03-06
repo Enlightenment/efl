@@ -590,7 +590,3 @@
    /**
     * @}
     */
-
-#ifdef __cplusplus
-}
-#endif
