@@ -445,16 +445,20 @@ _item_content_get_hook(const Elm_Object_Item *it, const char *part)
 static Evas_Object *
 _item_content_unset_hook(Elm_Object_Item *it, const char *part)
 {
-   if (part && strcmp(part, "object")) return;
+   Evas_Object *o;
+   double scale;
+   
+   if (part && strcmp(part, "object")) return NULL;
    Elm_Toolbar_Item *item = (Elm_Toolbar_Item *) it;
    Evas_Object *obj = WIDGET(item);
    Widget_Data *wd = elm_widget_data_get(obj);
-   double scale;
    edje_object_part_unswallow(VIEW(it), item->object);
    elm_widget_sub_object_del(obj, item->object);
+   o = item->object;
    item->object = NULL;
    scale = (elm_widget_scale_get(obj) * _elm_config->scale);
    _theme_hook_item(obj, item, scale, wd->icon_size);
+   return o;
 }
 
 static void
