@@ -4,6 +4,9 @@
 #include "els_scroller.h"
 #include "elm_gen_common.h"
 
+// internally allocated
+#define CLASS_ALLOCATED 0x3a70f00f
+
 /* --
  * TODO:
  * Handle non-homogeneous objects too.
@@ -2770,7 +2773,7 @@ elm_gengrid_item_class_new(void)
    itc = calloc(1, sizeof(Elm_Gengrid_Item_Class));
    if (!itc)
      return NULL;
-   itc->version = ELM_GENGRID_ITEM_CLASS_VERSION;
+   itc->version = CLASS_ALLOCATED;
    itc->refcount = 1;
    itc->delete_me = EINA_FALSE;
 
@@ -2780,7 +2783,7 @@ elm_gengrid_item_class_new(void)
 EAPI void
 elm_gengrid_item_class_free(Elm_Gengrid_Item_Class *itc)
 {
-   if (itc && (itc->version == ELM_GENGRID_ITEM_CLASS_VERSION))
+   if (itc && (itc->version == CLASS_ALLOCATED))
      {
         if (!itc->delete_me) itc->delete_me = EINA_TRUE;
         if (itc->refcount > 0) elm_gengrid_item_class_unref(itc);
@@ -2795,7 +2798,7 @@ elm_gengrid_item_class_free(Elm_Gengrid_Item_Class *itc)
 EAPI void
 elm_gengrid_item_class_ref(Elm_Gengrid_Item_Class *itc)
 {
-   if (itc && (itc->version == ELM_GENGRID_ITEM_CLASS_VERSION))
+   if (itc && (itc->version == CLASS_ALLOCATED))
      {
         itc->refcount++;
         if (itc->refcount == 0) itc->refcount--;
@@ -2805,7 +2808,7 @@ elm_gengrid_item_class_ref(Elm_Gengrid_Item_Class *itc)
 EAPI void
 elm_gengrid_item_class_unref(Elm_Gengrid_Item_Class *itc)
 {
-   if (itc && (itc->version == ELM_GENGRID_ITEM_CLASS_VERSION))
+   if (itc && (itc->version == CLASS_ALLOCATED))
      {
         if (itc->refcount > 0) itc->refcount--;
         if (itc->delete_me && (!itc->refcount))

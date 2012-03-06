@@ -838,6 +838,7 @@ EAPI const Elm_Gengrid_Item_Class *elm_gengrid_item_item_class_get(const Elm_Obj
 //EAPI unsigned int elm_gengrid_items_count(const Evas_Object *obj);
 
 #define ELM_GENGRID_ITEM_CLASS_VERSION 2 /* current version number */
+#define ELM_GENGRID_ITEM_CLASS_HEADER ELM_GENGRID_ITEM_CLASS_VERSION, 0, 0
 
 /**
  * Add a new gengrid item class in a given gengrid widget.

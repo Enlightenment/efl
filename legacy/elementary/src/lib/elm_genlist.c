@@ -6,6 +6,9 @@
 #include "els_scroller.h"
 #include "elm_gen_common.h"
 
+// internally allocated
+#define CLASS_ALLOCATED 0x3a70f11f
+
 #define MAX_ITEMS_PER_BLOCK 32
 #define REORDER_EFFECT_TIME 0.5
 
@@ -29,9 +32,10 @@
              ERR("Genlist_Item_Class(itc) is NULL"); \
              return; \
           } \
-        if (itc->version != ELM_GENLIST_ITEM_CLASS_VERSION) \
+        if ((itc->version != ELM_GENLIST_ITEM_CLASS_VERSION) && \
+            (itc->version != CLASS_ALLOCATED)) \
           { \
-             ERR("Genlist_Item_Class version mismatched! required = (%d), current  = (%d)", itc->version, ELM_GENLIST_ITEM_CLASS_VERSION); \
+             ERR("Genlist_Item_Class version mismatched! current = (%d), required = (%d) or (%d)", itc->version, ELM_GENLIST_ITEM_CLASS_VERSION, CLASS_ALLOCATED); \
              return; \
           } \
      } \
@@ -5666,7 +5670,7 @@ elm_genlist_item_class_new(void)
    itc = calloc(1, sizeof(Elm_Genlist_Item_Class));
    if (!itc)
      return NULL;
-   itc->version = ELM_GENLIST_ITEM_CLASS_VERSION;
+   itc->version = CLASS_ALLOCATED;
    itc->refcount = 1;
    itc->delete_me = EINA_FALSE;
 
@@ -5676,7 +5680,7 @@ elm_genlist_item_class_new(void)
 EAPI void
 elm_genlist_item_class_free(Elm_Genlist_Item_Class *itc)
 {
-   if (itc && (itc->version == ELM_GENLIST_ITEM_CLASS_VERSION))
+   if (itc && (itc->version == CLASS_ALLOCATED))
      {
         if (!itc->delete_me) itc->delete_me = EINA_TRUE;
         if (itc->refcount > 0) elm_genlist_item_class_unref(itc);
@@ -5691,7 +5695,7 @@ elm_genlist_item_class_free(Elm_Genlist_Item_Class *itc)
 EAPI void
 elm_genlist_item_class_ref(Elm_Genlist_Item_Class *itc)
 {
-   if (itc && (itc->version == ELM_GENLIST_ITEM_CLASS_VERSION))
+   if (itc && (itc->version == CLASS_ALLOCATED))
      {
         itc->refcount++;
         if (itc->refcount == 0) itc->refcount--;
@@ -5701,7 +5705,7 @@ elm_genlist_item_class_ref(Elm_Genlist_Item_Class *itc)
 EAPI void
 elm_genlist_item_class_unref(Elm_Genlist_Item_Class *itc)
 {
-   if (itc && (itc->version == ELM_GENLIST_ITEM_CLASS_VERSION))
+   if (itc && (itc->version == CLASS_ALLOCATED))
      {
         if (itc->refcount > 0) itc->refcount--;
         if (itc->delete_me && (!itc->refcount))

@@ -1122,6 +1122,7 @@ EAPI void                          elm_genlist_realized_items_update(Evas_Object
 EAPI unsigned int elm_genlist_items_count(const Evas_Object *obj);
 
 #define ELM_GENLIST_ITEM_CLASS_VERSION 2 /* current version number */
+#define ELM_GENLIST_ITEM_CLASS_HEADER ELM_GENLIST_ITEM_CLASS_VERSION, 0, 0
 
 /**
  * Add a new genlist item class in a given genlist widget.
