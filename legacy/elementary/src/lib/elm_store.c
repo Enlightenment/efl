@@ -2,6 +2,9 @@
 #include <Elementary_Cursor.h>
 #include "elm_priv.h"
 
+typedef struct _Elm_Store_Filesystem           Elm_Store_Filesystem;
+typedef struct _Elm_Store_Item_Filesystem      Elm_Store_Item_Filesystem;
+
 #define ELM_STORE_MAGIC            0x3f89ea56
 #define ELM_STORE_FILESYSTEM_MAGIC 0x3f89ea57
 #define ELM_STORE_ITEM_MAGIC       0x5afe8c1d
