@@ -662,16 +662,17 @@ elm_widget_theme(Evas_Object *obj)
    Evas_Object *child;
    Elm_Tooltip *tt;
    Elm_Cursor *cur;
+   Eina_Bool ret = EINA_TRUE;
 
    API_ENTRY return EINA_FALSE;
-   EINA_LIST_FOREACH(sd->subobjs, l, child) elm_widget_theme(child);
-   if (sd->resize_obj) elm_widget_theme(sd->resize_obj);
-   if (sd->hover_obj) elm_widget_theme(sd->hover_obj);
+   EINA_LIST_FOREACH(sd->subobjs, l, child) ret &= elm_widget_theme(child);
+   if (sd->resize_obj) ret &= elm_widget_theme(sd->resize_obj);
+   if (sd->hover_obj) ret &= elm_widget_theme(sd->hover_obj);
    EINA_LIST_FOREACH(sd->tooltips, l, tt) elm_tooltip_theme(tt);
    EINA_LIST_FOREACH(sd->cursors, l, cur) elm_cursor_theme(cur);
    if (sd->theme_func) sd->theme_func(obj);
 
-   return EINA_TRUE;
+   return ret;
 }
 
 EAPI void
