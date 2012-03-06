@@ -1733,7 +1733,7 @@ EINA_DEPRECATED EAPI Elm_Genlist_Item_Type        elm_genlist_item_flags_get(con
  * @deprecated Use elm_genlist_item_all_contents_unset() instead
  * @ingroup Genlist
  */
-EAPI void                          elm_genlist_item_contents_orphan(Elm_Object_Item *it);
+EINA_DEPRECATED EAPI void                          elm_genlist_item_contents_orphan(Elm_Object_Item *it);
 
 #define ELM_IMAGE_ROTATE_90_CW 1
 #define ELM_IMAGE_ROTATE_180_CW 2
