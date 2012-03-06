@@ -894,47 +894,6 @@ elm_object_tooltip_style_get(const Evas_Object *obj)
 }
 
 /**
- * Get the configured tooltip delay
- *
- * This gets the globally configured tooltip delay in seconds
- *
- * @return The tooltip delay
- * @ingroup Tooltips
- */
-EINA_DEPRECATED EAPI double
-elm_tooltip_delay_get(void)
-{
-   return elm_config_tooltip_delay_get();
-}
-
-EAPI double elm_config_tooltip_delay_get(void)
-{
-   return _elm_config->tooltip_delay;
-}
-
-/**
- * Set the configured tooltip delay
- *
- * This sets the globally configured delay to tooltip
- *
- * @param delay The delay to show the tooltip
- * @return EINA_TRUE if value is valid and setted
- * @ingroup Tooltips
- */
-EINA_DEPRECATED EAPI Eina_Bool
-elm_tooltip_delay_set(double delay)
-{
-   return elm_config_tooltip_delay_set(delay);
-}
-
-EAPI Eina_Bool elm_config_tooltip_delay_set(double delay)
-{
-   if (delay < 0.0) return EINA_FALSE;
-   _elm_config->tooltip_delay = delay;
-   return EINA_TRUE;
-}
-
-/**
  * @brief Disable size restrictions on an object's tooltip
  * @param obj The tooltip's anchor object
  * @param disable If EINA_TRUE, size restrictions are disabled

@@ -514,17 +514,3 @@ elm_object_cursor_theme_search_enabled_get(const Evas_Object *obj)
    ELM_CURSOR_GET_OR_RETURN(cur, obj, EINA_FALSE);
    return cur->engine_only;
 }
-
-EAPI int
-elm_cursor_engine_only_get(void)
-{
-   return _elm_config->cursor_engine_only;
-}
-
-EAPI Eina_Bool
-elm_cursor_engine_only_set(int engine_only)
-{
-   if ((engine_only < 0) || (engine_only > 1)) return EINA_FALSE;
-   _elm_config->cursor_engine_only = engine_only;
-   return EINA_TRUE;
-}

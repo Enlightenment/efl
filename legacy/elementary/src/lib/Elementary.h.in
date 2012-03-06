@@ -225,7 +225,6 @@ EAPI extern Elm_Version *elm_version;
 // SanjeevBA
 #include <elm_panel.h> // OK
 #include <elm_panes.h> // OK
-#include <elm_password.h> // OK
 #include <elm_photocam.h> // OK
 #include <elm_photo.h> // OK
 #include <elm_plug.h> // OK

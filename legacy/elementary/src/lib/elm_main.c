@@ -1017,48 +1017,6 @@ elm_object_content_part_unset(Evas_Object *obj, const char *part)
    return elm_widget_content_part_unset(obj, part);
 }
 
-EAPI double
-elm_scale_get(void)
-{
-   return _elm_config->scale;
-}
-
-EAPI void
-elm_scale_set(double scale)
-{
-   if (_elm_config->scale == scale) return;
-   _elm_config->scale = scale;
-   _elm_rescale();
-}
-
-EAPI Eina_Bool
-elm_password_show_last_get(void)
-{
-   return _elm_config->password_show_last;
-}
-
-EAPI void
-elm_password_show_last_set(Eina_Bool password_show_last)
-{
-   if (_elm_config->password_show_last == password_show_last) return;
-   _elm_config->password_show_last = password_show_last;
-   edje_password_show_last_set(_elm_config->password_show_last);
-}
-
-EAPI double
-elm_password_show_last_timeout_get(void)
-{
-   return _elm_config->password_show_last_timeout;
-}
-
-EAPI void
-elm_password_show_last_timeout_set(double password_show_last_timeout)
-{
-   if (_elm_config->password_show_last_timeout == password_show_last_timeout) return;
-   _elm_config->password_show_last_timeout = password_show_last_timeout;
-   edje_password_show_last_timeout_set(_elm_config->password_show_last_timeout);
-}
-
 EAPI void
 elm_object_style_set(Evas_Object *obj,
                      const char  *style)

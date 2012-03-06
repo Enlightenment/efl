@@ -1407,6 +1407,85 @@ elm_mirrored_set(Eina_Bool mirrored)
    _elm_rescale();
 }
 
+EAPI Eina_Bool
+elm_cursor_engine_only_get(void)
+{
+   return _elm_config->cursor_engine_only;
+}
+
+EAPI void
+elm_cursor_engine_only_set(Eina_Bool engine_only)
+{
+   engine_only = !!engine_only;
+   _elm_config->cursor_engine_only = engine_only;
+}
+
+EINA_DEPRECATED EAPI double
+elm_tooltip_delay_get(void)
+{
+   return elm_config_tooltip_delay_get();
+}
+
+EINA_DEPRECATED EAPI Eina_Bool
+elm_tooltip_delay_set(double delay)
+{
+   elm_config_tooltip_delay_set(delay);
+   return EINA_TRUE;
+}
+
+EAPI double elm_config_tooltip_delay_get(void)
+{
+   return _elm_config->tooltip_delay;
+}
+
+EAPI void elm_config_tooltip_delay_set(double delay)
+{
+   if (delay < 0.0) return;
+   _elm_config->tooltip_delay = delay;
+}
+
+EAPI double
+elm_scale_get(void)
+{
+   return _elm_config->scale;
+}
+
+EAPI void
+elm_scale_set(double scale)
+{
+   if (_elm_config->scale == scale) return;
+   _elm_config->scale = scale;
+   _elm_rescale();
+}
+
+EAPI Eina_Bool
+elm_password_show_last_get(void)
+{
+   return _elm_config->password_show_last;
+}
+
+EAPI void
+elm_password_show_last_set(Eina_Bool password_show_last)
+{
+   if (_elm_config->password_show_last == password_show_last) return;
+   _elm_config->password_show_last = password_show_last;
+   edje_password_show_last_set(_elm_config->password_show_last);
+}
+
+EAPI double
+elm_password_show_last_timeout_get(void)
+{
+   return _elm_config->password_show_last_timeout;
+}
+
+EAPI void
+elm_password_show_last_timeout_set(double password_show_last_timeout)
+{
+   if (_elm_config->password_show_last_timeout == password_show_last_timeout) return;
+   _elm_config->password_show_last_timeout = password_show_last_timeout;
+   edje_password_show_last_timeout_set(_elm_config->password_show_last_timeout);
+}
+
 EAPI void
 elm_config_all_flush(void)
 {

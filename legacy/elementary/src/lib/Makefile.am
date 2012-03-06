@@ -111,7 +111,6 @@ elm_object.h \
 elm_object_item.h \
 elm_panel.h \
 elm_panes.h \
-elm_password.h \
 elm_photocam.h \
 elm_photo.h \
 elm_progressbar.h \
