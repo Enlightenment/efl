@@ -275,7 +275,6 @@ EAPI Elm_Object_Item *elm_multibuttonentry_item_next_get(const Elm_Object_Item *
  *
  * @ingroup Multibuttonentry
  */
-// XXX: EAPI void                       elm_multibuttonentry_item_filter_append(Evas_Object *obj, Elm_Multibuttonentry_Item_Filter_CB func, void *data);
 EAPI void                       elm_multibuttonentry_item_filter_append(Evas_Object *obj, Elm_Multibuttonentry_Item_Filter_Cb func, void *data);
 
 /**
@@ -290,7 +289,6 @@ EAPI void                       elm_multibuttonentry_item_filter_append(Evas_Obj
  *
  * @ingroup Multibuttonentry
  */
-// XXX: EAPI void                       elm_multibuttonentry_item_filter_prepend(Evas_Object *obj, Elm_Multibuttonentry_Item_Filter_Cb func, void *data);
 EAPI void                       elm_multibuttonentry_item_filter_prepend(Evas_Object *obj, Elm_Multibuttonentry_Item_Filter_Cb func, void *data);
 
 /**
@@ -305,8 +303,7 @@ EAPI void                       elm_multibuttonentry_item_filter_prepend(Evas_Ob
  *
  * @ingroup Multibuttonentry
  */
-// XXX: EAPI void                       elm_multibuttonentry_item_filter_del(Evas_Object *obj, Elm_Multibuttonentry_Item_Filter_Cb func, void *data); --> api name and callback changes.
-EAPI void                       elm_multibuttonentry_item_filter_remove(Evas_Object *obj, Elm_Multibuttonentry_Item_Filter_Cb func, void *data);
+EAPI void                       elm_multibuttonentry_item_filter_del(Evas_Object *obj, Elm_Multibuttonentry_Item_Filter_Cb func, void *data);
 
 /**
  * @}
