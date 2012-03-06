@@ -485,30 +485,6 @@ elm_hoversel_item_add(Evas_Object *obj, const char *label, const char *icon_file
 }
 
 EAPI void
-elm_hoversel_item_del(Elm_Object_Item *it)
-{
-   elm_object_item_del(it);
-}
-
-EAPI void
-elm_hoversel_item_del_cb_set(Elm_Object_Item *it, Evas_Smart_Cb func)
-{
-   elm_object_item_del_cb_set(it, func);
-}
-
-EAPI void *
-elm_hoversel_item_data_get(const Elm_Object_Item *it)
-{
-   return elm_object_item_data_get(it);
-}
-
-EAPI const char *
-elm_hoversel_item_label_get(const Elm_Object_Item *it)
-{
-   return _item_text_get_hook(it, NULL);
-}
-
-EAPI void
 elm_hoversel_item_icon_set(Elm_Object_Item *it, const char *icon_file, const char *icon_group, Elm_Icon_Type icon_type)
 {
    ELM_OBJ_ITEM_CHECK_OR_RETURN(it);
