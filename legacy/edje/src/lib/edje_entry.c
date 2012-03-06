@@ -1671,8 +1671,35 @@ _edje_part_mouse_down_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUS
    if (ev->button == 2) dosel = EINA_FALSE;
    if (dosel)
      {
-        // double click -> select word
-        // triple click -> select line
+        if (ev->flags & EVAS_BUTTON_TRIPLE_CLICK)
+          {
+             en->have_selection = EINA_FALSE;
+             en->selecting = EINA_FALSE;
+             _sel_clear(en->cursor, rp->object, en);
+             tc = evas_object_textblock_cursor_new(rp->object);
+             evas_textblock_cursor_copy(en->cursor, tc);
+             evas_textblock_cursor_line_char_first(en->cursor);
+             _sel_start(en->cursor, rp->object, en);
+             evas_textblock_cursor_line_char_last(en->cursor);
+             _sel_extend(en->cursor, rp->object, en);
+
+             goto end;
+          }
+        else if (ev->flags & EVAS_BUTTON_DOUBLE_CLICK)
+          {
+             en->have_selection = EINA_FALSE;
+             en->selecting = EINA_FALSE;
+             _sel_clear(en->cursor, rp->object, en);
+             tc = evas_object_textblock_cursor_new(rp->object);
+             evas_textblock_cursor_copy(en->cursor, tc);
+             evas_textblock_cursor_word_start(en->cursor);
+             _sel_start(en->cursor, rp->object, en);
+             evas_textblock_cursor_word_end(en->cursor);
+             evas_textblock_cursor_char_next(en->cursor);
+             _sel_extend(en->cursor, rp->object, en);
+
+             goto end;
+          }
      }
    tc = evas_object_textblock_cursor_new(rp->object);
    evas_textblock_cursor_copy(en->cursor, tc);
@@ -1773,6 +1800,7 @@ _edje_part_mouse_down_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUS
                }
           }
      }
+ end:
    if (evas_textblock_cursor_compare(tc, en->cursor))
      {
         _edje_emit(rp->edje, "cursor,changed", rp->part->name);
@@ -1802,6 +1830,8 @@ _edje_part_mouse_up_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED
    if (ev->button != 1) return;
    if (!rp) return;
    if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD) return;
+   if (ev->flags & EVAS_BUTTON_TRIPLE_CLICK) return;
+   if (ev->flags & EVAS_BUTTON_DOUBLE_CLICK) return;
    en = rp->entry_data;
    if ((!en) || (rp->part->type != EDJE_PART_TYPE_TEXTBLOCK) ||
        (rp->part->entry_mode < EDJE_ENTRY_EDIT_MODE_SELECTABLE))
