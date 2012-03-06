@@ -126,13 +126,6 @@ _glview_resize(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void
         wd->w = w;
         wd->h = h;
         _glview_update_surface(data);
-        /*
-        if (wd->render_func)
-          {
-             evas_gl_make_current(wd->evasgl, wd->surface, wd->context);
-             wd->render_func(data);
-          }
-          */
      }
 }
 
