@@ -995,30 +995,3 @@ elm_calendar_marks_draw(Evas_Object *obj)
    if (!wd) return;
    _populate(obj);
 }
-
-EINA_DEPRECATED EAPI void
-elm_calendar_text_saturday_color_set(Evas_Object *obj, int pos)
-{
-   ELM_CHECK_WIDTYPE(obj, widtype);
-   Widget_Data *wd = elm_widget_data_get(obj);
-   if (!wd) return;
-   _text_day_color_set(wd, DAY_SATURDAY, pos);
-}
-
-EINA_DEPRECATED EAPI void
-elm_calendar_text_sunday_color_set(Evas_Object *obj, int pos)
-{
-   ELM_CHECK_WIDTYPE(obj, widtype);
-   Widget_Data *wd = elm_widget_data_get(obj);
-   if (!wd) return;
-   _text_day_color_set(wd, DAY_SUNDAY, pos);
-}
-
-EINA_DEPRECATED EAPI void
-elm_calendar_text_weekday_color_set(Evas_Object *obj, int pos)
-{
-   ELM_CHECK_WIDTYPE(obj, widtype);
-   Widget_Data *wd = elm_widget_data_get(obj);
-   if (!wd) return;
-   _text_day_color_set(wd, DAY_WEEKDAY, pos);
-}
