@@ -2561,6 +2561,7 @@ test_genlist16(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_i
    evas_object_size_hint_weight_set(gl, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_show(gl);
 
+   /* note: flip mode can be used with/without edit mode */
    elm_genlist_edit_mode_set(gl, EINA_TRUE);
    elm_genlist_always_select_mode_set(gl, EINA_TRUE);
 

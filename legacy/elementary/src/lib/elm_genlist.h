@@ -1954,6 +1954,7 @@ EAPI Eina_Bool          elm_genlist_edit_mode_get(const Evas_Object *obj);
  * This function sets the flip state of a given genlist item.
  * Flip mode overrides current item object.
  * It can be used for on-the-fly item replace.
+ * Flip mode can be used with/without edit mode.
  *
  * @see elm_genlist_item_flip_get()
  *
