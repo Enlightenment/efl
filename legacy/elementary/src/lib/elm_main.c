@@ -1558,9 +1558,16 @@ elm_object_focus_custom_chain_prepend(Evas_Object *obj,
    elm_widget_focus_custom_chain_prepend(obj, child, relative_child);
 }
 
-EAPI void
+EINA_DEPRECATED EAPI void
 elm_object_focus_cycle(Evas_Object        *obj,
                        Elm_Focus_Direction dir)
+{
+   elm_object_focus_next(obj, dir);
+}
+
+EAPI void
+elm_object_focus_next(Evas_Object        *obj,
+                      Elm_Focus_Direction dir)
 {
    EINA_SAFETY_ON_NULL_RETURN(obj);
    elm_widget_focus_cycle(obj, dir);

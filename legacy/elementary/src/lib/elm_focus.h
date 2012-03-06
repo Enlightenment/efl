@@ -225,12 +225,11 @@ EAPI void                 elm_object_focus_custom_chain_prepend(Evas_Object *obj
  * first object of chain.
  *
  * @param obj The object root of sub-tree
- * @param dir Direction to cycle the focus
+ * @param dir Direction to move the focus
  *
  * @ingroup Focus
  */
-//XXX: How about elm_object_focus_move()? focus_next() ?
-EAPI void                 elm_object_focus_cycle(Evas_Object *obj, Elm_Focus_Direction dir);
+EAPI void                 elm_object_focus_next(Evas_Object *obj, Elm_Focus_Direction dir);
 
 /**
  * Make the elementary object and its children to be unfocusable

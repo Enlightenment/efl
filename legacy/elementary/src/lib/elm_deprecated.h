@@ -1419,6 +1419,21 @@ EINA_DEPRECATED EAPI double                      elm_flipselector_interval_get(c
 EINA_DEPRECATED EAPI void elm_object_focus(Evas_Object *obj);
 
 /**
+ * Give focus to next object in object tree.
+ *
+ * Give focus to next object in focus chain of one object sub-tree.
+ * If the last object of chain already have focus, the focus will go to the
+ * first object of chain.
+ *
+ * @param obj The object root of sub-tree
+ * @param dir Direction to cycle the focus
+ *
+ * @deprecated Use elm_object_focus_next() instead
+ * @ingroup Focus
+ */
+EINA_DEPRECATED EAPI void                 elm_object_focus_cycle(Evas_Object *obj, Elm_Focus_Direction dir);
+
+/**
  * Remove the focus from an Elementary object
  *
  * @param obj The Elementary to take focus from
