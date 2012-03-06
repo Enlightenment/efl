@@ -420,14 +420,16 @@ _item_text_get_hook(const Elm_Object_Item *it, const char *part)
 
 static void
 _item_content_set_hook(Elm_Object_Item *it,
-                    const char *part,
-                    Evas_Object *content)
+                       const char *part,
+                       Evas_Object *content)
 {
+   double scale;
+
    if (part && strcmp(part, "object")) return;
    Elm_Toolbar_Item *item = (Elm_Toolbar_Item *) it;
    Evas_Object *obj = WIDGET(item);
    Widget_Data *wd = elm_widget_data_get(obj);
-   double scale;
+
    if (item->object == content) return;
    item->object = content;
    elm_widget_sub_object_add(obj, item->object);
@@ -447,11 +449,12 @@ _item_content_unset_hook(Elm_Object_Item *it, const char *part)
 {
    Evas_Object *o;
    double scale;
-   
+
    if (part && strcmp(part, "object")) return NULL;
    Elm_Toolbar_Item *item = (Elm_Toolbar_Item *) it;
    Evas_Object *obj = WIDGET(item);
    Widget_Data *wd = elm_widget_data_get(obj);
+
    edje_object_part_unswallow(VIEW(it), item->object);
    elm_widget_sub_object_del(obj, item->object);
    o = item->object;
@@ -642,7 +645,7 @@ _resize_job(void *data)
         /* All items are removed from the box object, since removing individual
          * items won't trigger a resize. Items are be readded below. */
         evas_object_box_remove_all(wd->bx, EINA_FALSE);
-        if (((wd->vertical)  && (ih > vh)) || 
+        if (((wd->vertical)  && (ih > vh)) ||
             ((!wd->vertical) && (iw > vw)))
           {
              Evas_Object *menu;
@@ -705,7 +708,7 @@ _resize_job(void *data)
              _fix_items_visibility(wd, &iw, vw);
           }
         evas_object_box_remove_all(wd->bx, EINA_FALSE);
-        if (((wd->vertical)  && (ih > vh)) || 
+        if (((wd->vertical)  && (ih > vh)) ||
             ((!wd->vertical) && (iw > vw)))
           {
              EINA_INLIST_FOREACH(wd->items, it)
@@ -860,7 +863,7 @@ _layout(Evas_Object *o, Evas_Object_Box_Data *priv, void *data)
    Evas_Object *obj = (Evas_Object *) data;
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return;
-   _els_box_layout(o, priv, !wd->vertical, wd->homogeneous, 
+   _els_box_layout(o, priv, !wd->vertical, wd->homogeneous,
                    elm_widget_mirrored_get(obj));
 }
 
@@ -1695,7 +1698,7 @@ elm_toolbar_shrink_mode_set(Evas_Object *obj, Elm_Toolbar_Shrink_Mode shrink_mod
 
    if (shrink_mode == ELM_TOOLBAR_SHRINK_MENU)
      {
-        elm_smart_scroller_policy_set(wd->scr, ELM_SMART_SCROLLER_POLICY_OFF, 
+        elm_smart_scroller_policy_set(wd->scr, ELM_SMART_SCROLLER_POLICY_OFF,
                                       ELM_SMART_SCROLLER_POLICY_OFF);
         wd->more_item = _item_new(obj, "more_menu", "More", NULL, NULL);
      }
