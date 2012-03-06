@@ -182,7 +182,7 @@
  * elm_object_item_disabled_get() to get the disabled state.
  *
  * In general to indicate how the genlist should expand items horizontally to
- * fill the list area, use elm_genlist_horizontal_set(). Valid modes are
+ * fill the list area, use elm_genlist_mode_set(). Valid modes are
  * ELM_LIST_LIMIT and ELM_LIST_SCROLL. The default is ELM_LIST_SCROLL. This
  * mode means that if items are too wide to fit, the scroller will scroll
  * horizontally. Otherwise items are expanded to fill the width of the
@@ -484,7 +484,7 @@ EAPI void                          elm_genlist_mode_set(Evas_Object *obj, Elm_Li
  * @return The mode to use
  * (#ELM_LIST_LIMIT, #ELM_LIST_SCROLL)
  *
- * @see elm_genlist_horizontal_set()
+ * @see elm_genlist_mode_set()
  *
  * @ingroup Genlist
  */
@@ -1426,7 +1426,7 @@ EAPI Eina_Bool                     elm_genlist_item_cursor_engine_only_get(const
  * This will enable the compress mode where items are "compressed"
  * horizontally to fit the genlist scrollable viewport width. This is
  * special for genlist.  Do not rely on
- * elm_genlist_horizontal_set() being set to @c ELM_LIST_COMPRESS to
+ * elm_genlist_mode_set() being set to @c ELM_LIST_COMPRESS to
  * work as genlist needs to handle it specially.
  *
  * @see elm_genlist_compress_mode_get()

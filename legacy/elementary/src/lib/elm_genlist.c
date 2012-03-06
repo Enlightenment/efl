@@ -4590,12 +4590,6 @@ elm_genlist_item_prev_get(const Elm_Object_Item *it)
    return (Elm_Object_Item *) _it;
 }
 
-EINA_DEPRECATED EAPI Evas_Object *
-elm_genlist_item_genlist_get(const Elm_Object_Item *it)
-{
-   return elm_object_item_widget_get(it);
-}
-
 EAPI Elm_Object_Item *
 elm_genlist_item_parent_get(const Elm_Object_Item *it)
 {
@@ -4695,19 +4689,6 @@ elm_genlist_item_expanded_depth_get(const Elm_Object_Item *it)
 {
    ELM_OBJ_ITEM_CHECK_OR_RETURN(it, 0);
    return ((Elm_Gen_Item *)it)->item->expanded_depth;
-}
-
-EINA_DEPRECATED EAPI void
-elm_genlist_item_disabled_set(Elm_Object_Item  *it,
-                              Eina_Bool         disabled)
-{
-   elm_object_item_disabled_set(it, disabled);
-}
-
-EINA_DEPRECATED EAPI Eina_Bool
-elm_genlist_item_disabled_get(const Elm_Object_Item *it)
-{
-   return elm_object_item_disabled_get(it);
 }
 
 EAPI void
@@ -4930,31 +4911,6 @@ elm_genlist_item_middle_bring_in(Elm_Object_Item *it)
                                       _it->y + _it->item->block->y - oh / 2 +
                                       _it->item->h / 2, _it->item->block->w,
                                       oh);
-}
-
-EAPI void
-elm_genlist_item_del(Elm_Object_Item *it)
-{
-   elm_object_item_del(it);
-}
-
-EAPI void
-elm_genlist_item_data_set(Elm_Object_Item  *it,
-                          const void       *data)
-{
-   elm_object_item_data_set(it, (void *) data);
-}
-
-EAPI void *
-elm_genlist_item_data_get(const Elm_Object_Item *it)
-{
-   return elm_object_item_data_get(it);
-}
-
-EINA_DEPRECATED EAPI void
-elm_genlist_item_icons_orphan(Elm_Object_Item *it)
-{
-   elm_genlist_item_all_contents_unset(it, NULL);
 }
 
 EINA_DEPRECATED EAPI void
@@ -5249,19 +5205,6 @@ elm_genlist_mode_set(Evas_Object  *obj,
    _sizing_eval(obj);
 }
 
-EAPI void
-elm_genlist_horizontal_set(Evas_Object  *obj,
-                           Elm_List_Mode mode)
-{
-   elm_genlist_mode_set(obj, mode);
-}
-
-EAPI void
-elm_genlist_horizontal_mode_set(Evas_Object  *obj,
-                                Elm_List_Mode mode)
-{
-   elm_genlist_mode_set(obj, mode);
-}
 
 EAPI Elm_List_Mode
 elm_genlist_mode_get(const Evas_Object *obj)
@@ -5270,18 +5213,6 @@ elm_genlist_mode_get(const Evas_Object *obj)
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return ELM_LIST_LAST;
    return wd->mode;
-}
-
-EINA_DEPRECATED EAPI Elm_List_Mode
-elm_genlist_horizontal_get(const Evas_Object *obj)
-{
-   return elm_genlist_mode_get(obj);
-}
-
-EINA_DEPRECATED EAPI Elm_List_Mode
-elm_genlist_horizontal_mode_get(const Evas_Object *obj)
-{
-   return elm_genlist_mode_get(obj);
 }
 
 EAPI void
@@ -5537,29 +5468,6 @@ elm_genlist_item_mode_set(Elm_Object_Item  *it,
 
    eina_stringshare_replace(&wd->mode_type, mode_type);
    if (mode_set) _item_mode_set(_it);
-}
-
-EAPI const char *
-elm_genlist_mode_item_style_get(const Evas_Object *obj)
-{
-   ELM_CHECK_WIDTYPE(obj, widtype) NULL;
-   Widget_Data *wd = elm_widget_data_get(obj);
-   if (!wd) return NULL;
-   return wd->mode_item->itc->mode_item_style;
-}
-
-EAPI void
-elm_genlist_mode_item_style_set(Evas_Object *obj, const char *style)
-{
-   ELM_CHECK_WIDTYPE(obj, widtype);
-   Widget_Data *wd = elm_widget_data_get(obj);
-   if (!wd) return;
-   if ((style == wd->mode_item->itc->mode_item_style) ||
-       (style && wd->mode_item->itc->mode_item_style &&
-       (!strcmp(style, wd->mode_item->itc->mode_item_style))))
-     return;
-   eina_stringshare_replace((const char**)&wd->mode_item->itc->mode_item_style, style);
-   elm_genlist_realized_items_update(obj);
 }
 
 EAPI const char *
