@@ -74,7 +74,6 @@ elm_cursor.h \
 elm_datetime.h \
 elm_debug.h \
 elm_deprecated.h \
-elm_deprecated_before.h \
 elm_diskselector.h \
 elm_engine.h \
 elm_entry.h \
@@ -84,6 +83,7 @@ elm_flipselector.h \
 elm_focus.h \
 elm_fonts.h \
 elm_frame.h \
+elm_gen.h \
 elm_general.h \
 elm_gengrid.h \
 elm_genlist.h \

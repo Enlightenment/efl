@@ -158,9 +158,6 @@ EAPI extern Elm_Version *elm_version;
 #include <elm_entry.h> // OK
 #include <elm_list.h> // OK
 
-/* include deprecated before headers - things may still rely on definitions */
-#include <elm_deprecated_before.h> // OK
-
 /* other includes */
 // Tom Hacohen
 #include <elc_anchorblock.h>
@@ -203,6 +200,7 @@ EAPI extern Elm_Version *elm_version;
 #include <elm_focus.h>  // OK
 #include <elm_fonts.h> // OK
 #include <elm_frame.h> // OK
+#include <elm_gen.h> // OK
 #include <elm_gengrid.h> // OK
 #include <elm_genlist.h> // OK
 #include <elm_gesture_layer.h> // OK
