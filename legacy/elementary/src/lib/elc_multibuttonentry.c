@@ -1529,25 +1529,25 @@ elm_multibuttonentry_expanded_set(Evas_Object *obj, Eina_Bool expanded)
 }
 
 EAPI Elm_Object_Item *
-elm_multibuttonentry_item_prepend(Evas_Object *obj, const char *label, Evas_Smart_Cb func, void *data)
+elm_multibuttonentry_item_prepend(Evas_Object *obj, const char *label, void *data)
 {
    return _add_button_item(obj, label, MULTIBUTTONENTRY_POS_START, NULL, data);
 }
 
 EAPI Elm_Object_Item *
-elm_multibuttonentry_item_append(Evas_Object *obj, const char *label, Evas_Smart_Cb func, void *data)
+elm_multibuttonentry_item_append(Evas_Object *obj, const char *label, void *data)
 {
    return _add_button_item(obj, label, MULTIBUTTONENTRY_POS_END, NULL, data);
 }
 
 EAPI Elm_Object_Item *
-elm_multibuttonentry_item_insert_before(Evas_Object *obj, Elm_Object_Item *before, const char *label, Evas_Smart_Cb func, void *data)
+elm_multibuttonentry_item_insert_before(Evas_Object *obj, Elm_Object_Item *before, const char *label, void *data)
 {
    return _add_button_item(obj, label, MULTIBUTTONENTRY_POS_BEFORE, before, data);
 }
 
 EAPI Elm_Object_Item *
-elm_multibuttonentry_item_insert_after(Evas_Object *obj, Elm_Object_Item *after, const char *label, Evas_Smart_Cb func, void *data)
+elm_multibuttonentry_item_insert_after(Evas_Object *obj, Elm_Object_Item *after, const char *label, void *data)
 {
    return _add_button_item(obj, label, MULTIBUTTONENTRY_POS_AFTER, after, data);
 }
