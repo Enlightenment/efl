@@ -1093,20 +1093,6 @@ elm_object_focus_set(Evas_Object *obj,
 }
 
 EAPI void
-elm_object_focus(Evas_Object *obj)
-{
-   EINA_SAFETY_ON_NULL_RETURN(obj);
-   elm_object_focus_set(obj, EINA_TRUE);
-}
-
-EAPI void
-elm_object_unfocus(Evas_Object *obj)
-{
-   EINA_SAFETY_ON_NULL_RETURN(obj);
-   elm_object_focus_set(obj, EINA_FALSE);
-}
-
-EAPI void
 elm_object_focus_allow_set(Evas_Object *obj,
                            Eina_Bool    enable)
 {
@@ -1176,15 +1162,6 @@ elm_object_focus_next(Evas_Object        *obj,
 {
    EINA_SAFETY_ON_NULL_RETURN(obj);
    elm_widget_focus_cycle(obj, dir);
-}
-
-EAPI void
-elm_object_focus_direction_go(Evas_Object *obj,
-                              int          x,
-                              int          y)
-{
-   EINA_SAFETY_ON_NULL_RETURN(obj);
-   elm_widget_focus_direction_go(obj, x, y);
 }
 
 EINA_DEPRECATED EAPI void

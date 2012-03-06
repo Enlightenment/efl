@@ -34,7 +34,7 @@ static void
 _edit_buffer_insert(Evas_Object *e, const char *text)
 {
    elm_entry_entry_insert(e, text);
-   elm_object_focus(e);
+   elm_object_focus_set(e, EINA_TRUE);
 }
 
 static void
@@ -575,7 +575,7 @@ elm_main(int argc __UNUSED__, char *argv[] __UNUSED__)
 
    evas_object_smart_callback_add(win, "delete,request", _win_del_cb, &app);
 
-   elm_object_focus(app.edit_buffer);
+   elm_object_focus_set(app.edit_buffer, EINA_TRUE);
 
    evas_object_resize(win, 300, 780);
 
