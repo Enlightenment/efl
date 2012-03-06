@@ -590,16 +590,20 @@ _set_guidetext(Evas_Object *obj, const char *str)
    Widget_Data *wd = elm_widget_data_get(obj);
 
    if (!wd || !str) return;
-   if (!wd->guidetext)
-     {
-        if (! (wd->guidetext = edje_object_add (evas_object_evas_get (obj)))) return;
-        _elm_theme_object_set(obj, wd->guidetext, "multibuttonentry", "guidetext", elm_widget_style_get(obj));
-        evas_object_size_hint_weight_set(wd->guidetext, 0.0, EVAS_HINT_EXPAND);
-        evas_object_size_hint_align_set(wd->guidetext, EVAS_HINT_FILL, EVAS_HINT_FILL);
-     }
 
-   if (wd->guidetext) edje_object_part_text_set (wd->guidetext, "elm.text", str);
-   _view_update(obj);
+   if (wd->guidetext==NULL)
+     wd->guidetext = edje_object_add (evas_object_evas_get (obj));
+
+   if (wd->guidetext)
+     {
+        _elm_theme_object_set(obj, wd->guidetext, "multibuttonentry", \
+                       "guidetext", elm_widget_style_get(obj));
+        evas_object_size_hint_weight_set(wd->guidetext, 0.0, EVAS_HINT_EXPAND);
+        evas_object_size_hint_align_set(wd->guidetext, EVAS_HINT_FILL, \
+                                                           EVAS_HINT_FILL);
+        edje_object_part_text_set (wd->guidetext, "elm.text", str);
+        _view_update(obj);
+     }
 }
 
 static void
