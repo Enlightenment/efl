@@ -68,8 +68,6 @@ widget_preview_fileselector_entry \
 widget_preview_flipselector \
 widget_preview_hoversel \
 widget_preview_hover \
-widget_preview_anchorview \
-widget_preview_anchorblock \
 widget_preview_flip \
 widget_preview_separator \
 widget_preview_radio \

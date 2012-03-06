@@ -45,8 +45,6 @@ elm_widget.h
 includesunstabledir = $(includedir)/elementary-@VMAJ@
 
 includesub_HEADERS = \
-elc_anchorblock.h \
-elc_anchorview.h \
 elc_ctxpopup.h \
 elc_fileselector_button.h \
 elc_fileselector_entry.h \
@@ -137,8 +135,6 @@ includesubdir = $(includedir)/elementary-@VMAJ@/
 
 libelementary_la_SOURCES = \
 elm_priv.h \
-elc_anchorblock.c \
-elc_anchorview.c \
 elc_ctxpopup.c \
 elc_popup.c \
 elc_fileselector_button.c \

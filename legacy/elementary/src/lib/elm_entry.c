@@ -53,6 +53,11 @@ struct _Widget_Data
    Elm_Input_Panel_Return_Key_Type input_panel_return_key_type;
    void *input_panel_imdata;
    int input_panel_imdata_len;
+   struct {
+        Evas_Object *hover_parent;
+        Evas_Object *pop, *hover;
+        const char *hover_style;
+   } anchor_hover;
    Eina_Bool changed : 1;
    Eina_Bool single_line : 1;
    Eina_Bool password : 1;
@@ -133,6 +138,7 @@ static void _signal_entry_copy_notify(void *data, Evas_Object *obj, const char *
 static void _signal_entry_cut_notify(void *data, Evas_Object *obj, const char *emission, const char *source);
 static void _signal_cursor_changed(void *data, Evas_Object *obj, const char *emission, const char *source);
 static void _add_chars_till_limit(Evas_Object *obj, char **text, int can_add, Length_Unit unit);
+static void _entry_hover_anchor_clicked(void *data, Evas_Object *obj, void *event_info);
 
 static const char SIG_CHANGED[] = "changed";
 static const char SIG_CHANGED_USER[] = "changed,user";
@@ -153,6 +159,7 @@ static const char SIG_SELECTION_CLEARED[] = "selection,cleared";
 static const char SIG_CURSOR_CHANGED[] = "cursor,changed";
 static const char SIG_CURSOR_CHANGED_MANUAL[] = "cursor,changed,manual";
 static const char SIG_ANCHOR_CLICKED[] = "anchor,clicked";
+static const char SIG_ANCHOR_HOVER_OPENED[] = "anchor,hover,opened";
 static const char SIG_ANCHOR_DOWN[] = "anchor,down";
 static const char SIG_ANCHOR_UP[] = "anchor,up";
 static const char SIG_ANCHOR_IN[] = "anchor,in";
@@ -179,6 +186,7 @@ static const Evas_Smart_Cb_Description _signals[] = {
        {SIG_CURSOR_CHANGED, ""},
        {SIG_CURSOR_CHANGED_MANUAL, ""},
        {SIG_ANCHOR_CLICKED, ""},
+       {SIG_ANCHOR_HOVER_OPENED, ""},
        {SIG_ANCHOR_DOWN, ""},
        {SIG_ANCHOR_UP, ""},
        {SIG_ANCHOR_IN, ""},
@@ -453,6 +461,8 @@ _del_pre_hook(Evas_Object *obj)
         wd->delay_write = NULL;
         if (wd->autosave) _save(obj);
      }
+   elm_entry_anchor_hover_end(obj);
+   elm_entry_anchor_hover_parent_set(obj, NULL);
 }
 
 static void
@@ -511,6 +521,7 @@ _del_hook(Evas_Object *obj)
    if (wd->input_panel_imdata) free(wd->input_panel_imdata);
    free(wd);
 
+   if (wd->anchor_hover.hover_style) eina_stringshare_del(wd->anchor_hover.hover_style);
    evas_event_thaw(evas_object_evas_get(obj));
    evas_event_thaw_eval(evas_object_evas_get(obj));
 }
@@ -520,6 +531,8 @@ _mirrored_set(Evas_Object *obj, Eina_Bool rtl)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
    edje_object_mirrored_set(wd->ent, rtl);
+   if (wd->anchor_hover.hover)
+      elm_widget_mirrored_set(wd->anchor_hover.hover, rtl);
 }
 
 static void
@@ -1836,7 +1849,11 @@ _signal_anchor_clicked(void *data, Evas_Object *obj __UNUSED__, const char *emis
    _signal_anchor_geoms_do_things_with(wd, &ei);
 
    if (!wd->disabled)
-     evas_object_smart_callback_call(data, SIG_ANCHOR_CLICKED, &ei);
+     {
+        evas_object_smart_callback_call(data, SIG_ANCHOR_CLICKED, &ei);
+
+        _entry_hover_anchor_clicked(data, data, &ei);
+     }
 }
 
 static void
@@ -3831,3 +3848,123 @@ elm_entry_imf_context_get(Evas_Object *obj)
 
    return edje_object_part_text_imf_context_get(wd->ent, "elm.text");
 }
+
+/* START - ANCHOR HOVER */
+static void
+_parent_del(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+{
+   Widget_Data *wd = elm_widget_data_get(data);
+   if (!wd) return;
+   wd->anchor_hover.hover_parent = NULL;
+}
+
+EAPI void
+elm_entry_anchor_hover_parent_set(Evas_Object *obj, Evas_Object *parent)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype);
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return;
+   if (wd->anchor_hover.hover_parent)
+     evas_object_event_callback_del_full(wd->anchor_hover.hover_parent, EVAS_CALLBACK_DEL, _parent_del, obj);
+   wd->anchor_hover.hover_parent = parent;
+   if (wd->anchor_hover.hover_parent)
+     evas_object_event_callback_add(wd->anchor_hover.hover_parent, EVAS_CALLBACK_DEL, _parent_del, obj);
+}
+
+EAPI Evas_Object *
+elm_entry_anchor_hover_parent_get(const Evas_Object *obj)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype) NULL;
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return NULL;
+   return wd->anchor_hover.hover_parent;
+}
+
+EAPI void
+elm_entry_anchor_hover_style_set(Evas_Object *obj, const char *style)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype);
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return;
+   eina_stringshare_replace(&wd->anchor_hover.hover_style, style);
+}
+
+EAPI const char *
+elm_entry_anchor_hover_style_get(const Evas_Object *obj)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype) NULL;
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return NULL;
+   return wd->anchor_hover.hover_style;
+}
+
+EAPI void
+elm_entry_anchor_hover_end(Evas_Object *obj)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype);
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return;
+   if (wd->anchor_hover.hover) evas_object_del(wd->anchor_hover.hover);
+   if (wd->anchor_hover.pop) evas_object_del(wd->anchor_hover.pop);
+   wd->anchor_hover.hover = NULL;
+   wd->anchor_hover.pop = NULL;
+}
+
+
+static void
+_anchor_hover_clicked(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+{
+   elm_entry_anchor_hover_end(data);
+}
+
+static void
+_entry_hover_anchor_clicked(void *data, Evas_Object *obj, void *event_info)
+{
+   Widget_Data *wd = elm_widget_data_get(obj);
+   Elm_Entry_Anchor_Info *info = event_info;
+   Evas_Object *hover_parent;
+   Elm_Entry_Anchor_Hover_Info ei;
+   Evas_Coord x, w, y, h, px, py;
+   if (!wd) return;
+   ei.anchor_info = event_info;
+   wd->anchor_hover.pop = elm_icon_add(obj);
+   evas_object_move(wd->anchor_hover.pop, info->x, info->y);
+   evas_object_resize(wd->anchor_hover.pop, info->w, info->h);
+   wd->anchor_hover.hover = elm_hover_add(obj);
+   elm_widget_mirrored_set(wd->anchor_hover.hover, elm_widget_mirrored_get(obj));
+   if (wd->anchor_hover.hover_style)
+     elm_object_style_set(wd->anchor_hover.hover, wd->anchor_hover.hover_style);
+   hover_parent = wd->anchor_hover.hover_parent;
+   if (!hover_parent) hover_parent = obj;
+   elm_hover_parent_set(wd->anchor_hover.hover, hover_parent);
+   elm_hover_target_set(wd->anchor_hover.hover, wd->anchor_hover.pop);
+   ei.hover = wd->anchor_hover.hover;
+   evas_object_geometry_get(hover_parent, &x, &y, &w, &h);
+   ei.hover_parent.x = x;
+   ei.hover_parent.y = y;
+   ei.hover_parent.w = w;
+   ei.hover_parent.h = h;
+   px = info->x + (info->w / 2);
+   py = info->y + (info->h / 2);
+   ei.hover_left = 1;
+   if (px < (x + (w / 3))) ei.hover_left = 0;
+   ei.hover_right = 1;
+   if (px > (x + ((w * 2) / 3))) ei.hover_right = 0;
+   ei.hover_top = 1;
+   if (py < (y + (h / 3))) ei.hover_top = 0;
+   ei.hover_bottom = 1;
+   if (py > (y + ((h * 2) / 3))) ei.hover_bottom = 0;
+
+   if (elm_widget_mirrored_get(wd->anchor_hover.hover))
+     {  /* Swap right and left because they switch sides in RTL */
+        Eina_Bool tmp = ei.hover_left;
+        ei.hover_left = ei.hover_right;
+        ei.hover_right = tmp;
+     }
+
+   evas_object_smart_callback_call(data, SIG_ANCHOR_HOVER_OPENED, &ei);
+   evas_object_smart_callback_add(wd->anchor_hover.hover, "clicked", _anchor_hover_clicked, data);
+   evas_object_show(wd->anchor_hover.hover);
+}
+/* END - ANCHOR HOVER */
+

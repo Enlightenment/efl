@@ -160,8 +160,6 @@ EAPI extern Elm_Version *elm_version;
 
 /* other includes */
 // Tom Hacohen
-#include <elc_anchorblock.h>
-#include <elc_anchorview.h>
 #include <elc_ctxpopup.h>
 #include <elc_fileselector_button.h>
 #include <elc_fileselector_entry.h>

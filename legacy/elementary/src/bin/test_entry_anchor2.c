@@ -4,21 +4,21 @@
 #endif
 #ifndef ELM_LIB_QUICKLAUNCH
 static void
-my_anchorview_bt(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+my_entry_anchor_bt(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    Evas_Object *av = data;
-   elm_anchorview_hover_end(av);
+   elm_entry_anchor_hover_end(av);
 }
 
 static void
 my_anchorview_anchor(void *data, Evas_Object *obj, void *event_info)
 {
    Evas_Object *av = data;
-   Elm_Entry_Anchorview_Info *ei = event_info;
+   Elm_Entry_Anchor_Hover_Info *ei = event_info;
    Evas_Object *bt, *bx;
 
    bt = elm_button_add(obj);
-   elm_object_text_set(bt, ei->name);
+   elm_object_text_set(bt, ei->anchor_info->name);
    elm_object_part_content_set(ei->hover, "middle", bt);
    evas_object_show(bt);
 
@@ -29,17 +29,17 @@ my_anchorview_anchor(void *data, Evas_Object *obj, void *event_info)
 	bt = elm_button_add(obj);
 	elm_object_text_set(bt, "Top 1");
 	elm_box_pack_end(bx, bt);
-	evas_object_smart_callback_add(bt, "clicked", my_anchorview_bt, av);
+	evas_object_smart_callback_add(bt, "clicked", my_entry_anchor_bt, av);
 	evas_object_show(bt);
 	bt = elm_button_add(obj);
 	elm_object_text_set(bt, "Top 2");
 	elm_box_pack_end(bx, bt);
-	evas_object_smart_callback_add(bt, "clicked", my_anchorview_bt, av);
+	evas_object_smart_callback_add(bt, "clicked", my_entry_anchor_bt, av);
 	evas_object_show(bt);
 	bt = elm_button_add(obj);
 	elm_object_text_set(bt, "Top 3");
 	elm_box_pack_end(bx, bt);
-	evas_object_smart_callback_add(bt, "clicked", my_anchorview_bt, av);
+	evas_object_smart_callback_add(bt, "clicked", my_entry_anchor_bt, av);
 	evas_object_show(bt);
 	elm_object_part_content_set(ei->hover, "top", bx);
 	evas_object_show(bx);
@@ -49,7 +49,7 @@ my_anchorview_anchor(void *data, Evas_Object *obj, void *event_info)
 	bt = elm_button_add(obj);
 	elm_object_text_set(bt, "Bot");
 	elm_object_part_content_set(ei->hover, "bottom", bt);
-	evas_object_smart_callback_add(bt, "clicked", my_anchorview_bt, av);
+	evas_object_smart_callback_add(bt, "clicked", my_entry_anchor_bt, av);
 	evas_object_show(bt);
      }
    if (ei->hover_left)
@@ -57,7 +57,7 @@ my_anchorview_anchor(void *data, Evas_Object *obj, void *event_info)
 	bt = elm_button_add(obj);
 	elm_object_text_set(bt, "Left");
 	elm_object_part_content_set(ei->hover, "left", bt);
-	evas_object_smart_callback_add(bt, "clicked", my_anchorview_bt, av);
+	evas_object_smart_callback_add(bt, "clicked", my_entry_anchor_bt, av);
 	evas_object_show(bt);
      }
    if (ei->hover_right)
@@ -65,17 +65,17 @@ my_anchorview_anchor(void *data, Evas_Object *obj, void *event_info)
 	bt = elm_button_add(obj);
 	elm_object_text_set(bt, "Right");
 	elm_object_part_content_set(ei->hover, "right", bt);
-	evas_object_smart_callback_add(bt, "clicked", my_anchorview_bt, av);
+	evas_object_smart_callback_add(bt, "clicked", my_entry_anchor_bt, av);
 	evas_object_show(bt);
      }
 }
 
 void
-test_anchorview(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+test_entry_anchor2(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    Evas_Object *win, *bg, *av;
 
-   win = elm_win_add(NULL, "anchorview", ELM_WIN_BASIC);
+   win = elm_win_add(NULL, "entry_anchor", ELM_WIN_BASIC);
    elm_win_title_set(win, "Anchorview");
    elm_win_autodel_set(win, EINA_TRUE);
 
@@ -84,9 +84,9 @@ test_anchorview(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_
    evas_object_size_hint_weight_set(bg, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_show(bg);
 
-   av = elm_anchorview_add(win);
-   elm_anchorview_hover_style_set(av, "popout");
-   elm_anchorview_hover_parent_set(av, win);
+   av = elm_entry_add(win);
+   elm_entry_anchor_hover_style_set(av, "popout");
+   elm_entry_anchor_hover_parent_set(av, win);
    elm_object_text_set(av,
 		       "This is an entry widget in this window that<br/>"
 		       "uses markup <b>like this</> for styling and<br/>"
@@ -96,7 +96,7 @@ test_anchorview(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_
 		       "called <a href=anc-02>Anchors</a> so you will need<br/>"
 		       "to refer to them this way. <item relsize=16x16 vsize=full href=emoticon/guilty-smile></item>");
    evas_object_size_hint_weight_set(av, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-   evas_object_smart_callback_add(av, "anchor,clicked", my_anchorview_anchor, av);
+   evas_object_smart_callback_add(av, "anchor,hover,opened", my_anchorview_anchor, av);
    elm_win_resize_object_add(win, av);
    evas_object_show(av);
 

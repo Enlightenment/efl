@@ -33,8 +33,6 @@ elementary_test_SOURCES = \
 test.c \
 test_3d.c \
 test_actionslider.c \
-test_anchorblock.c \
-test_anchorview.c \
 test_anim.c \
 test_bg.c \
 test_box.c \
@@ -51,6 +49,8 @@ test_cursor.c \
 test_datetime.c \
 test_diskselector.c \
 test_entry.c \
+test_entry_anchor.c \
+test_entry_anchor2.c \
 test_fileselector_button.c \
 test_fileselector.c \
 test_fileselector_entry.c \

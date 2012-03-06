@@ -371,6 +371,49 @@ struct _Elm_Entry_Anchor_Info
 };
 
 /**
+ * @typedef Elm_Entry_Anchor_Hover_Info
+ *
+ * The info sent in the callback for "anchor,clicked" signals emitted by
+ * the Anchor_Hover widget.
+ */
+typedef struct _Elm_Entry_Anchor_Hover_Info Elm_Entry_Anchor_Hover_Info;
+
+/**
+ * @struct _Elm_Entry_Anchor_Hover_Info
+ *
+ * The info sent in the callback for "anchor,clicked" signals emitted by
+ * the Anchor_Hover widget.
+ */
+struct _Elm_Entry_Anchor_Hover_Info
+{
+   const Elm_Entry_Anchor_Info *anchor_info; /**< The actual anchor info. */
+   Evas_Object *hover; /**< The hover object to use for the popup */
+   struct
+   {
+      Evas_Coord x, y, w, h;
+   } hover_parent; /**< Geometry of the object used as parent by the
+                        hover */
+   Eina_Bool    hover_left : 1; /**< Hint indicating if there's space
+                                     for content on the left side of
+                                     the hover. Before calling the
+                                     callback, the widget will make the
+                                     necessary calculations to check
+                                     which sides are fit to be set with
+                                     content, based on the position the
+                                     hover is activated and its distance
+                                     to the edges of its parent object
+                                 */
+   Eina_Bool    hover_right : 1; /**< Hint indicating content fits on
+                                      the right side of the hover.
+                                      See @ref hover_left */
+   Eina_Bool    hover_top : 1; /**< Hint indicating content fits on top
+                                    of the hover. See @ref hover_left */
+   Eina_Bool    hover_bottom : 1; /**< Hint indicating content fits
+                                       below the hover. See @ref
+                                       hover_left */
+};
+
+/**
  * @typedef Elm_Entry_Filter_Cb
  * This callback type is used by entry filters to modify text.
  * @param data The data specified as the last param when adding the filter
@@ -1426,6 +1469,66 @@ EAPI void         elm_entry_cnp_mode_set(Evas_Object *obj, Elm_Cnp_Mode cnp_mode
  */
 EAPI Elm_Cnp_Mode elm_entry_cnp_mode_get(const Evas_Object *obj);
 
+/**
+ * Set the parent of the hover popup
+ *
+ * Sets the parent object to use by the hover created by the entry
+ * when an anchor is clicked. See @ref Hover for more details on this.
+ *
+ * @param obj The entry object
+ * @param parent The object to use as parent for the hover
+ */
+EAPI void                        elm_entry_anchor_hover_parent_set(Evas_Object *obj, Evas_Object *parent);
+
+/**
+ * Get the parent of the hover popup
+ *
+ * Get the object used as parent for the hover created by the entry
+ * widget. See @ref Hover for more details on this.
+ * If no parent is set, the same entry object will be used.
+ *
+ * @param obj The entry object
+ * @return The object used as parent for the hover, NULL if none is set.
+ */
+EAPI Evas_Object                *elm_entry_anchor_hover_parent_get(const Evas_Object *obj);
+
+/**
+ * Set the style that the hover should use
+ *
+ * When creating the popup hover, entry will request that it's
+ * themed according to @p style.
+ *
+ * Setting style no NULL means disabling automatic hover.
+ *
+ * @param obj The entry object
+ * @param style The style to use for the underlying hover
+ *
+ * @see elm_object_style_set()
+ */
+EAPI void                        elm_entry_anchor_hover_style_set(Evas_Object *obj, const char *style);
+
+/**
+ * Get the style that the hover should use
+ *
+ * Get the style, the hover created by entry will use.
+ *
+ * @param obj The entry object
+ * @return The style to use by the hover. NULL means the default is used.
+ *
+ * @see elm_object_style_set()
+ */
+EAPI const char                 *elm_entry_anchor_hover_style_get(const Evas_Object *obj);
+
+/**
+ * Ends the hover popup in the entry
+ *
+ * When an anchor is clicked, the entry widget will create a hover
+ * object to use as a popup with user provided content. This function
+ * terminates this popup, returning the entry to its normal state.
+ *
+ * @param obj The entry object
+ */
+EAPI void                        elm_entry_anchor_hover_end(Evas_Object *obj);
 
 /**
  * @}

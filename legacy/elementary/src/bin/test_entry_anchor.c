@@ -11,21 +11,21 @@ _print_clicked(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_i
 }
 
 static void
-my_anchorblock_bt(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+my_entry_anchor_bt(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    Evas_Object *av = data;
-   elm_anchorblock_hover_end(av);
+   elm_entry_anchor_hover_end(av);
 }
 
 static void
-my_anchorblock_anchor(void *data, Evas_Object *obj, void *event_info)
+my_entry_anchor(void *data, Evas_Object *obj, void *event_info)
 {
    Evas_Object *av = data;
-   Elm_Entry_Anchorblock_Info *ei = event_info;
+   Elm_Entry_Anchor_Hover_Info *ei = event_info;
    Evas_Object *bt, *bx;
 
    bt = elm_button_add(obj);
-   elm_object_text_set(bt, ei->name);
+   elm_object_text_set(bt, ei->anchor_info->name);
    elm_object_part_content_set(ei->hover, "middle", bt);
    evas_object_show(bt);
 
@@ -36,17 +36,17 @@ my_anchorblock_anchor(void *data, Evas_Object *obj, void *event_info)
 	bt = elm_button_add(obj);
 	elm_object_text_set(bt, "Top 1");
 	elm_box_pack_end(bx, bt);
-	evas_object_smart_callback_add(bt, "clicked", my_anchorblock_bt, av);
+	evas_object_smart_callback_add(bt, "clicked", my_entry_anchor_bt, av);
 	evas_object_show(bt);
 	bt = elm_button_add(obj);
 	elm_object_text_set(bt, "Top 2");
 	elm_box_pack_end(bx, bt);
-	evas_object_smart_callback_add(bt, "clicked", my_anchorblock_bt, av);
+	evas_object_smart_callback_add(bt, "clicked", my_entry_anchor_bt, av);
 	evas_object_show(bt);
 	bt = elm_button_add(obj);
 	elm_object_text_set(bt, "Top 3");
 	elm_box_pack_end(bx, bt);
-	evas_object_smart_callback_add(bt, "clicked", my_anchorblock_bt, av);
+	evas_object_smart_callback_add(bt, "clicked", my_entry_anchor_bt, av);
 	evas_object_show(bt);
 	elm_object_part_content_set(ei->hover, "top", bx);
 	evas_object_show(bx);
@@ -56,7 +56,7 @@ my_anchorblock_anchor(void *data, Evas_Object *obj, void *event_info)
 	bt = elm_button_add(obj);
 	elm_object_text_set(bt, "Bot");
 	elm_object_part_content_set(ei->hover, "bottom", bt);
-	evas_object_smart_callback_add(bt, "clicked", my_anchorblock_bt, av);
+	evas_object_smart_callback_add(bt, "clicked", my_entry_anchor_bt, av);
 	evas_object_show(bt);
      }
    if (ei->hover_left)
@@ -64,7 +64,7 @@ my_anchorblock_anchor(void *data, Evas_Object *obj, void *event_info)
 	bt = elm_button_add(obj);
 	elm_object_text_set(bt, "Left");
 	elm_object_part_content_set(ei->hover, "left", bt);
-	evas_object_smart_callback_add(bt, "clicked", my_anchorblock_bt, av);
+	evas_object_smart_callback_add(bt, "clicked", my_entry_anchor_bt, av);
 	evas_object_show(bt);
      }
    if (ei->hover_right)
@@ -72,37 +72,37 @@ my_anchorblock_anchor(void *data, Evas_Object *obj, void *event_info)
 	bt = elm_button_add(obj);
 	elm_object_text_set(bt, "Right");
 	elm_object_part_content_set(ei->hover, "right", bt);
-	evas_object_smart_callback_add(bt, "clicked", my_anchorblock_bt, av);
+	evas_object_smart_callback_add(bt, "clicked", my_entry_anchor_bt, av);
 	evas_object_show(bt);
      }
 }
 
 static void
-my_anchorblock_edge_left(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+my_entry_anchor_edge_left(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    printf("left\n");
 }
 
 static void
-my_anchorblock_edge_right(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+my_entry_anchor_edge_right(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    printf("right\n");
 }
 
 static void
-my_anchorblock_edge_top(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+my_entry_anchor_edge_top(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    printf("top\n");
 }
 
 static void
-my_anchorblock_edge_bottom(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+my_entry_anchor_edge_bottom(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    printf("bottom\n");
 }
 
 static void
-my_anchorblock_scroll(void *data __UNUSED__, Evas_Object *obj, void *event_info __UNUSED__)
+my_entry_anchor_scroll(void *data __UNUSED__, Evas_Object *obj, void *event_info __UNUSED__)
 {
    Evas_Coord x, y, w, h, vw, vh;
 
@@ -112,12 +112,12 @@ my_anchorblock_scroll(void *data __UNUSED__, Evas_Object *obj, void *event_info 
 }
 
 void
-test_anchorblock(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+test_entry_anchor(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    Evas_Object *win, *bg, *av, *sc, *bx, *bb, *ic;
    char buf[PATH_MAX];
 
-   win = elm_win_add(NULL, "anchorblock", ELM_WIN_BASIC);
+   win = elm_win_add(NULL, "entry_anchor", ELM_WIN_BASIC);
    elm_win_title_set(win, "Anchorblock");
    elm_win_autodel_set(win, EINA_TRUE);
 
@@ -130,11 +130,11 @@ test_anchorblock(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event
    evas_object_size_hint_weight_set(sc, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    elm_win_resize_object_add(win, sc);
 
-   evas_object_smart_callback_add(sc, "edge_left", my_anchorblock_edge_left, NULL);
-   evas_object_smart_callback_add(sc, "edge_right", my_anchorblock_edge_right, NULL);
-   evas_object_smart_callback_add(sc, "edge_top", my_anchorblock_edge_top, NULL);
-   evas_object_smart_callback_add(sc, "edge_bottom", my_anchorblock_edge_bottom, NULL);
-   evas_object_smart_callback_add(sc, "scroll", my_anchorblock_scroll, NULL);
+   evas_object_smart_callback_add(sc, "edge_left", my_entry_anchor_edge_left, NULL);
+   evas_object_smart_callback_add(sc, "edge_right", my_entry_anchor_edge_right, NULL);
+   evas_object_smart_callback_add(sc, "edge_top", my_entry_anchor_edge_top, NULL);
+   evas_object_smart_callback_add(sc, "edge_bottom", my_entry_anchor_edge_bottom, NULL);
+   evas_object_smart_callback_add(sc, "scroll", my_entry_anchor_scroll, NULL);
 
    bx = elm_box_add(win);
    evas_object_size_hint_weight_set(bx, EVAS_HINT_EXPAND, 0.0);
@@ -154,15 +154,15 @@ test_anchorblock(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event
    evas_object_show(ic);
    evas_object_size_hint_weight_set(bb, EVAS_HINT_EXPAND, 0.0);
    evas_object_size_hint_align_set(bb, EVAS_HINT_FILL, EVAS_HINT_FILL);
-   av = elm_anchorblock_add(win);
-   elm_anchorblock_hover_style_set(av, "popout");
-   elm_anchorblock_hover_parent_set(av, win);
+   av = elm_entry_add(win);
+   elm_entry_anchor_hover_style_set(av, "popout");
+   elm_entry_anchor_hover_parent_set(av, win);
    elm_object_text_set(av,
 			   "Hi there. This is the most recent message in the "
 			   "list of messages. It has one <a href=tel:+614321234>+61 432 1234</a> "
 			   "(phone number) to click on.");
-   evas_object_smart_callback_add(av, "anchor,clicked",
-                                  my_anchorblock_anchor, av);
+   evas_object_smart_callback_add(av, "anchor,hover,opened",
+                                  my_entry_anchor, av);
    elm_object_content_set(bb, av);
    evas_object_show(av);
    elm_box_pack_end(bx, bb);
@@ -181,9 +181,9 @@ test_anchorblock(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event
    evas_object_show(ic);
    evas_object_size_hint_weight_set(bb, EVAS_HINT_EXPAND, 0.0);
    evas_object_size_hint_align_set(bb, EVAS_HINT_FILL, EVAS_HINT_FILL);
-   av = elm_anchorblock_add(win);
-   elm_anchorblock_hover_style_set(av, "popout");
-   elm_anchorblock_hover_parent_set(av, win);
+   av = elm_entry_add(win);
+   elm_entry_anchor_hover_style_set(av, "popout");
+   elm_entry_anchor_hover_parent_set(av, win);
    elm_object_text_set(av,
 			   "Hey what are you doing? This is the second last message "
 			   "Hi there. This is the most recent message in the "
@@ -198,7 +198,7 @@ test_anchorblock(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event
 			   "done by links maybe running local apps or even being "
 			   "web URL's too that launch the web browser and point it "
 			   "to that URL. <item relsize=16x16 vsize=full href=emoticon/omg></item>");
-   evas_object_smart_callback_add(av, "anchor,clicked", my_anchorblock_anchor, av);
+   evas_object_smart_callback_add(av, "anchor,hover,opened", my_entry_anchor, av);
    elm_object_content_set(bb, av);
    evas_object_show(av);
    elm_box_pack_end(bx, bb);
@@ -219,12 +219,12 @@ test_anchorblock(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event
    evas_object_size_hint_weight_set(bb, EVAS_HINT_EXPAND, 0.0);
    evas_object_size_hint_align_set(bb, EVAS_HINT_FILL, EVAS_HINT_FILL);
 
-   av = elm_anchorblock_add(win);
-   elm_anchorblock_hover_style_set(av, "popout");
-   elm_anchorblock_hover_parent_set(av, win);
+   av = elm_entry_add(win);
+   elm_entry_anchor_hover_style_set(av, "popout");
+   elm_entry_anchor_hover_parent_set(av, win);
    elm_object_text_set(av, "This is a short message. <item relsize=16x16 vsize=full href=emoticon/haha></item>");
-   evas_object_smart_callback_add(av, "anchor,clicked",
-                                  my_anchorblock_anchor, av);
+   evas_object_smart_callback_add(av, "anchor,hover,opened",
+                                  my_entry_anchor, av);
    elm_object_content_set(bb, av);
    evas_object_show(av);
    elm_box_pack_end(bx, bb);

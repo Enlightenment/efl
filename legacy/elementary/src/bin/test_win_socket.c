@@ -66,9 +66,9 @@ fill(Evas_Object *win, Eina_Bool do_bg)
    evas_object_show(ic);
    evas_object_size_hint_weight_set(bb, EVAS_HINT_EXPAND, 0.0);
    evas_object_size_hint_align_set(bb, EVAS_HINT_FILL, EVAS_HINT_FILL);
-   av = elm_anchorblock_add(win);
-   elm_anchorblock_hover_style_set(av, "popout");
-   elm_anchorblock_hover_parent_set(av, win);
+   av = elm_entry_add(win);
+   elm_entry_anchor_hover_style_set(av, "popout");
+   elm_entry_anchor_hover_parent_set(av, win);
    elm_object_text_set(av,
 			   "Hi there. This is the most recent message in the "
 			   "list of messages. It has one <a href=tel:+614321234>+61 432 1234</a> "
@@ -90,9 +90,9 @@ fill(Evas_Object *win, Eina_Bool do_bg)
    evas_object_show(ic);
    evas_object_size_hint_weight_set(bb, EVAS_HINT_EXPAND, 0.0);
    evas_object_size_hint_align_set(bb, EVAS_HINT_FILL, EVAS_HINT_FILL);
-   av = elm_anchorblock_add(win);
-   elm_anchorblock_hover_style_set(av, "popout");
-   elm_anchorblock_hover_parent_set(av, win);
+   av = elm_entry_add(win);
+   elm_entry_anchor_hover_style_set(av, "popout");
+   elm_entry_anchor_hover_parent_set(av, win);
    elm_object_text_set(av,
 			   "Hey what are you doing? This is the second last message "
 			   "Hi there. This is the most recent message in the "
@@ -126,9 +126,9 @@ fill(Evas_Object *win, Eina_Bool do_bg)
    evas_object_size_hint_weight_set(bb, EVAS_HINT_EXPAND, 0.0);
    evas_object_size_hint_align_set(bb, EVAS_HINT_FILL, EVAS_HINT_FILL);
 
-   av = elm_anchorblock_add(win);
-   elm_anchorblock_hover_style_set(av, "popout");
-   elm_anchorblock_hover_parent_set(av, win);
+   av = elm_entry_add(win);
+   elm_entry_anchor_hover_style_set(av, "popout");
+   elm_entry_anchor_hover_parent_set(av, win);
    elm_object_text_set(av, "This is a short message. <item relsize=16x16 vsize=full href=emoticon/haha></item>");
    elm_object_content_set(bb, av);
    evas_object_show(av);
