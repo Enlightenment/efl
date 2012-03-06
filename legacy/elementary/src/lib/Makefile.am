@@ -75,7 +75,6 @@ elm_datetime.h \
 elm_debug.h \
 elm_deprecated.h \
 elm_diskselector.h \
-elm_engine.h \
 elm_entry.h \
 elm_finger.h \
 elm_flip.h \

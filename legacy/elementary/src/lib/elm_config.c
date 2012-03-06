@@ -1486,6 +1486,438 @@ elm_password_show_last_timeout_set(double password_show_last_timeout)
    edje_password_show_last_timeout_set(_elm_config->password_show_last_timeout);
 }
 
+EAPI Eina_Bool
+elm_config_save(void)
+{
+   return _elm_config_save();
+}
+
+EAPI void
+elm_config_reload(void)
+{
+   _elm_config_reload();
+}
+
+EAPI const char *
+elm_profile_current_get(void)
+{
+   return _elm_config_current_profile_get();
+}
+
+EAPI const char *
+elm_profile_dir_get(const char *profile,
+                    Eina_Bool   is_user)
+{
+   return _elm_config_profile_dir_get(profile, is_user);
+}
+
+EAPI void
+elm_profile_dir_free(const char *p_dir)
+{
+   free((void *)p_dir);
+}
+
+EAPI Eina_List *
+elm_profile_list_get(void)
+{
+   return _elm_config_profiles_list();
+}
+
+EAPI void
+elm_profile_list_free(Eina_List *l)
+{
+   const char *dir;
+
+   EINA_LIST_FREE(l, dir)
+     eina_stringshare_del(dir);
+}
+
+EAPI void
+elm_profile_set(const char *profile)
+{
+   EINA_SAFETY_ON_NULL_RETURN(profile);
+   _elm_config_profile_set(profile);
+}
+
+EAPI const char *
+elm_engine_get(void)
+{
+   return _elm_config->engine;
+}
+
+EAPI void
+elm_engine_set(const char *engine)
+{
+   EINA_SAFETY_ON_NULL_RETURN(engine);
+
+   _elm_config_engine_set(engine);
+}
+
+EAPI Eina_List *
+elm_text_classes_list_get(void)
+{
+   return _elm_config_text_classes_get();
+}
+
+EAPI void
+elm_text_classes_list_free(Eina_List *list)
+{
+   _elm_config_text_classes_free(list);
+}
+
+EAPI const Eina_List *
+elm_font_overlay_list_get(void)
+{
+   return _elm_config_font_overlays_list();
+}
+
+EAPI void
+elm_font_overlay_set(const char    *text_class,
+                     const char    *font,
+                     Evas_Font_Size size)
+{
+   EINA_SAFETY_ON_NULL_RETURN(text_class);
+   _elm_config_font_overlay_set(text_class, font, size);
+}
+
+EAPI void
+elm_font_overlay_unset(const char *text_class)
+{
+   EINA_SAFETY_ON_NULL_RETURN(text_class);
+   _elm_config_font_overlay_remove(text_class);
+}
+
+EAPI void
+elm_font_overlay_apply(void)
+{
+   _elm_config_font_overlay_apply();
+}
+
+EAPI Evas_Coord
+elm_finger_size_get(void)
+{
+   return _elm_config->finger_size;
+}
+
+EAPI void
+elm_finger_size_set(Evas_Coord size)
+{
+   if (_elm_config->finger_size == size) return;
+   _elm_config->finger_size = size;
+   _elm_rescale();
+}
+
+EAPI int
+elm_cache_flush_interval_get(void)
+{
+   return _elm_config->cache_flush_poll_interval;
+}
+
+EAPI void
+elm_cache_flush_interval_set(int size)
+{
+   if (_elm_config->cache_flush_poll_interval == size) return;
+   _elm_config->cache_flush_poll_interval = size;
+
+   _elm_recache();
+}
+
+EAPI Eina_Bool
+elm_cache_flush_enabled_get(void)
+{
+   return _elm_config->cache_flush_enable;
+}
+
+EAPI void
+elm_cache_flush_enabled_set(Eina_Bool enabled)
+{
+   enabled = !!enabled;
+   if (_elm_config->cache_flush_enable == enabled) return;
+   _elm_config->cache_flush_enable = enabled;
+
+   _elm_recache();
+}
+
+EINA_DEPRECATED EAPI int
+elm_font_cache_get(void)
+{
+   return elm_cache_font_cache_size_get();
+}
+
+EAPI int
+elm_cache_font_cache_size_get(void)
+{
+   return _elm_config->font_cache;
+}
+
+EINA_DEPRECATED EAPI void
+elm_font_cache_set(int size)
+{
+   elm_cache_font_cache_size_set(size);
+}
+
+EAPI void 
+elm_cache_font_cache_size_set(int size)
+{
+   if (_elm_config->font_cache == size) return;
+   _elm_config->font_cache = size;
+
+   _elm_recache();
+}
+
+EINA_DEPRECATED EAPI int
+elm_image_cache_get(void)
+{
+   return elm_cache_image_cache_size_get();
+}
+
+EAPI int
+elm_cache_image_cache_size_get(void)
+{
+   return _elm_config->image_cache;
+}
+
+EINA_DEPRECATED EAPI void
+elm_image_cache_set(int size)
+{
+   elm_cache_image_cache_size_set(size);
+}
+
+EAPI void
+elm_cache_image_cache_size_set(int size)
+{
+   if (_elm_config->image_cache == size) return;
+   _elm_config->image_cache = size;
+
+   _elm_recache();
+}
+
+EINA_DEPRECATED EAPI int
+elm_edje_file_cache_get(void)
+{
+   return elm_cache_edje_file_cache_size_get();
+}
+
+EAPI int
+elm_cache_edje_file_cache_size_get()
+{
+   return _elm_config->edje_cache;
+}
+
+EINA_DEPRECATED EAPI void
+elm_edje_file_cache_set(int size)
+{
+   elm_cache_edje_file_cache_size_set(size);
+}
+
+EAPI void
+elm_cache_edje_file_cache_size_set(int size)
+{
+   if (_elm_config->edje_cache == size) return;
+   _elm_config->edje_cache = size;
+
+   _elm_recache();
+}
+
+EINA_DEPRECATED EAPI int
+elm_edje_collection_cache_get(void)
+{
+   return elm_cache_edje_collection_cache_size_get();
+}
+
+EAPI int
+elm_cache_edje_collection_cache_size_get(void)
+{
+   return _elm_config->edje_collection_cache;
+}
+
+EINA_DEPRECATED EAPI void
+elm_edje_collection_cache_set(int size)
+{
+   elm_cache_edje_collection_cache_size_set(size);
+}
+
+EAPI void
+elm_cache_edje_collection_cache_size_set(int size)
+{
+   if (_elm_config->edje_collection_cache == size) return;
+   _elm_config->edje_collection_cache = size;
+
+   _elm_recache();
+}
+
+EAPI Eina_Bool
+elm_focus_highlight_enabled_get(void)
+{
+   return _elm_config->focus_highlight_enable;
+}
+
+EAPI void
+elm_focus_highlight_enabled_set(Eina_Bool enable)
+{
+   _elm_config->focus_highlight_enable = !!enable;
+}
+
+EAPI Eina_Bool
+elm_focus_highlight_animate_get(void)
+{
+   return _elm_config->focus_highlight_animate;
+}
+
+EAPI void
+elm_focus_highlight_animate_set(Eina_Bool animate)
+{
+   _elm_config->focus_highlight_animate = !!animate;
+}
+
+EAPI Eina_Bool
+elm_scroll_bounce_enabled_get(void)
+{
+   return _elm_config->thumbscroll_bounce_enable;
+}
+
+EAPI void
+elm_scroll_bounce_enabled_set(Eina_Bool enabled)
+{
+   _elm_config->thumbscroll_bounce_enable = enabled;
+}
+
+EAPI double
+elm_scroll_bounce_friction_get(void)
+{
+   return _elm_config->thumbscroll_bounce_friction;
+}
+
+EAPI void
+elm_scroll_bounce_friction_set(double friction)
+{
+   _elm_config->thumbscroll_bounce_friction = friction;
+}
+
+EAPI double
+elm_scroll_page_scroll_friction_get(void)
+{
+   return _elm_config->page_scroll_friction;
+}
+
+EAPI void
+elm_scroll_page_scroll_friction_set(double friction)
+{
+   _elm_config->page_scroll_friction = friction;
+}
+
+EAPI double
+elm_scroll_bring_in_scroll_friction_get(void)
+{
+   return _elm_config->bring_in_scroll_friction;
+}
+
+EAPI void
+elm_scroll_bring_in_scroll_friction_set(double friction)
+{
+   _elm_config->bring_in_scroll_friction = friction;
+}
+
+EAPI double
+elm_scroll_zoom_friction_get(void)
+{
+   return _elm_config->zoom_friction;
+}
+
+EAPI void
+elm_scroll_zoom_friction_set(double friction)
+{
+   _elm_config->zoom_friction = friction;
+}
+
+EAPI Eina_Bool
+elm_scroll_thumbscroll_enabled_get(void)
+{
+   return _elm_config->thumbscroll_enable;
+}
+
+EAPI void
+elm_scroll_thumbscroll_enabled_set(Eina_Bool enabled)
+{
+   _elm_config->thumbscroll_enable = enabled;
+}
+
+EAPI unsigned int
+elm_scroll_thumbscroll_threshold_get(void)
+{
+   return _elm_config->thumbscroll_threshold;
+}
+
+EAPI void
+elm_scroll_thumbscroll_threshold_set(unsigned int threshold)
+{
+   _elm_config->thumbscroll_threshold = threshold;
+}
+
+EAPI double
+elm_scroll_thumbscroll_momentum_threshold_get(void)
+{
+   return _elm_config->thumbscroll_momentum_threshold;
+}
+
+EAPI void
+elm_scroll_thumbscroll_momentum_threshold_set(double threshold)
+{
+   _elm_config->thumbscroll_momentum_threshold = threshold;
+}
+
+EAPI double
+elm_scroll_thumbscroll_friction_get(void)
+{
+   return _elm_config->thumbscroll_friction;
+}
+
+EAPI void
+elm_scroll_thumbscroll_friction_set(double friction)
+{
+   _elm_config->thumbscroll_friction = friction;
+}
+
+EAPI double
+elm_scroll_thumbscroll_border_friction_get(void)
+{
+   return _elm_config->thumbscroll_border_friction;
+}
+
+EAPI void
+elm_scroll_thumbscroll_border_friction_set(double friction)
+{
+   if (friction < 0.0) friction = 0.0;
+   if (friction > 1.0) friction = 1.0;
+   _elm_config->thumbscroll_friction = friction;
+}
+
+EAPI double
+elm_scroll_thumbscroll_sensitivity_friction_get(void)
+{
+   return _elm_config->thumbscroll_sensitivity_friction;
+}
+
+EAPI void
+elm_scroll_thumbscroll_sensitivity_friction_set(double friction)
+{
+   if (friction < 0.1) friction = 0.1;
+   if (friction > 1.0) friction = 1.0;
+   _elm_config->thumbscroll_friction = friction;
+}
+
+EAPI void
+elm_longpress_timeout_set(double longpress_timeout)
+{
+   _elm_config->longpress_timeout = longpress_timeout;
+}
+
+EAPI double
+elm_longpress_timeout_get(void)
+{
+   return _elm_config->longpress_timeout;
+}
+
 EAPI void
 elm_config_all_flush(void)
 {

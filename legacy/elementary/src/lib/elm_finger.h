@@ -16,27 +16,6 @@
  */
 
 /**
- * Get the configured "finger size"
- *
- * @return The finger size
- *
- * This gets the globally configured finger size, <b>in pixels</b>
- *
- * @ingroup Fingers
- */
-EAPI Evas_Coord elm_finger_size_get(void);
-
-/**
- * Set the configured finger size
- *
- * This sets the globally configured finger size in pixels
- *
- * @param size The finger size
- * @ingroup Fingers
- */
-EAPI void       elm_finger_size_set(Evas_Coord size);
-
-/**
  * Adjust size of an element for finger usage.
  *
  * @param times_w How many fingers should fit horizontally

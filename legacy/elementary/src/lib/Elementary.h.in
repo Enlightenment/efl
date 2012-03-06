@@ -192,7 +192,6 @@ EAPI extern Elm_Version *elm_version;
 #include <elm_diskselector.h>
 
 // Chuneon Park
-#include <elm_engine.h>  // OK
 //#include <elm_factory.h>  // OK
 #include <elm_finger.h> // OK
 #include <elm_flip.h> // OK

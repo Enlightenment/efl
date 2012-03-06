@@ -565,3 +565,389 @@ EAPI void      elm_password_show_last_timeout_set(double password_show_last_time
  * @}
  */
 
+/**
+ * @defgroup Engine Elementary Engine
+ *
+ * These are functions setting and querying which rendering engine
+ * Elementary will use for drawing its windows' pixels.
+ *
+ * The following are the available engines:
+ * @li "software_x11"
+ * @li "fb"
+ * @li "directfb"
+ * @li "software_16_x11"
+ * @li "software_8_x11"
+ * @li "xrender_x11"
+ * @li "opengl_x11"
+ * @li "software_gdi"
+ * @li "software_16_wince_gdi"
+ * @li "sdl"
+ * @li "software_16_sdl"
+ * @li "opengl_sdl"
+ * @li "buffer"
+ * @li "ews"
+ * @li "opengl_cocoa"
+ * @li "psl1ght"
+ *
+ * @{
+ */
+
+/**
+ * @brief Get Elementary's rendering engine in use.
+ *
+ * @return The rendering engine's name
+ * @note there's no need to free the returned string, here.
+ *
+ * This gets the global rendering engine that is applied to all Elementary
+ * applications.
+ *
+ * @see elm_engine_set()
+ */
+EAPI const char *elm_engine_get(void);
+
+/**
+ * @brief Set Elementary's rendering engine for use.
+ *
+ * @param engine The rendering engine's name
+ *
+ * Note that it will take effect only to Elementary windows created after
+ * this is called.
+ *
+ * @see elm_win_add()
+ */
+EAPI void        elm_engine_set(const char *engine);
+
+/**
+ * @brief Get Elementary's preferred engine to use.
+ *
+ * @return The rendering engine's name
+ * @note there's no need to free the returned string, here.
+ *
+ * This gets the global rendering engine that is applied to all Elementary
+ * applications and is PREFERRED by the application. This can (and will)
+ * override the engine configured for all applications which.
+ *
+ * @see elm_preferred_engine_set()
+ */
+EAPI const char *elm_preferred_engine_get(void);
+
+/**
+ * @brief Set Elementary's preferred rendering engine for use.
+ *
+ * @param engine The rendering engine's name
+ *
+ * Note that it will take effect only to Elementary windows created after
+ * this is called. This overrides the engine set by configuration at
+ * application startup. Note that it is a hint and may not be honored.
+ *
+ * @see elm_win_add()
+ */
+EAPI void        elm_preferred_engine_set(const char *engine);
+
+typedef struct _Elm_Text_Class
+{
+   const char *name;
+   const char *desc;
+} Elm_Text_Class;
+
+typedef struct _Elm_Font_Overlay
+{
+   const char    *text_class;
+   const char    *font;
+   Evas_Font_Size size;
+} Elm_Font_Overlay;
+
+/**
+ * Get Elementary's list of supported text classes.
+ *
+ * @return The text classes list, with @c Elm_Text_Class blobs as data.
+ * @ingroup Fonts
+ *
+ * Release the list with elm_text_classes_list_free().
+ */
+EAPI Eina_List *elm_text_classes_list_get(void);
+
+/**
+ * Free Elementary's list of supported text classes.
+ *
+ * @ingroup Fonts
+ *
+ * @see elm_text_classes_list_get().
+ */
+EAPI void elm_text_classes_list_free(Eina_List *list);
+
+/**
+ * Get Elementary's list of font overlays, set with
+ * elm_font_overlay_set().
+ *
+ * @return The font overlays list, with @c Elm_Font_Overlay blobs as
+ * data.
+ *
+ * @ingroup Fonts
+ *
+ * For each text class, one can set a <b>font overlay</b> for it,
+ * overriding the default font properties for that class coming from
+ * the theme in use. There is no need to free this list.
+ *
+ * @see elm_font_overlay_set() and elm_font_overlay_unset().
+ */
+EAPI const Eina_List *elm_font_overlay_list_get(void);
+
+/**
+ * Set a font overlay for a given Elementary text class.
+ *
+ * @param text_class Text class name
+ * @param font Font name and style string
+ * @param size Font size
+ *
+ * @ingroup Fonts
+ *
+ * @p font has to be in the format returned by
+ * elm_font_fontconfig_name_get(). @see elm_font_overlay_list_get()
+ * and elm_font_overlay_unset().
+ */
+EAPI void             elm_font_overlay_set(const char *text_class, const char *font, Evas_Font_Size size);
+
+/**
+ * Unset a font overlay for a given Elementary text class.
+ *
+ * @param text_class Text class name
+ *
+ * @ingroup Fonts
+ *
+ * This will bring back text elements belonging to text class
+ * @p text_class back to their default font settings.
+ */
+EAPI void             elm_font_overlay_unset(const char *text_class);
+
+/**
+ * Apply the changes made with elm_font_overlay_set() and
+ * elm_font_overlay_unset() on the current Elementary window.
+ *
+ * @ingroup Fonts
+ *
+ * This applies all font overlays set to all objects in the UI.
+ */
+EAPI void             elm_font_overlay_apply(void);
+
+/**
+ * Get the configured "finger size"
+ *
+ * @return The finger size
+ *
+ * This gets the globally configured finger size, <b>in pixels</b>
+ *
+ * @ingroup Fingers
+ */
+EAPI Evas_Coord elm_finger_size_get(void);
+
+/**
+ * Set the configured finger size
+ *
+ * This sets the globally configured finger size in pixels
+ *
+ * @param size The finger size
+ * @ingroup Fingers
+ */
+EAPI void       elm_finger_size_set(Evas_Coord size);
+
+
+/**
+ * Get the configured cache flush interval time
+ *
+ * This gets the globally configured cache flush interval time, in
+ * ticks
+ *
+ * @return The cache flush interval time
+ * @ingroup Caches
+ *
+ * @see elm_cache_all_flush()
+ */
+EAPI int       elm_cache_flush_interval_get(void);
+
+/**
+ * Set the configured cache flush interval time
+ *
+ * This sets the globally configured cache flush interval time, in ticks
+ *
+ * @param size The cache flush interval time
+ * @ingroup Caches
+ *
+ * @see elm_cache_all_flush()
+ */
+EAPI void      elm_cache_flush_interval_set(int size);
+
+/**
+ * Get the configured cache flush enabled state
+ *
+ * This gets the globally configured cache flush state - if it is enabled
+ * or not. When cache flushing is enabled, elementary will regularly
+ * (see elm_cache_flush_interval_get() ) flush caches and dump data out of
+ * memory and allow usage to re-seed caches and data in memory where it
+ * can do so. An idle application will thus minimize its memory usage as
+ * data will be freed from memory and not be re-loaded as it is idle and
+ * not rendering or doing anything graphically right now.
+ *
+ * @return The cache flush state
+ * @ingroup Caches
+ *
+ * @see elm_cache_all_flush()
+ */
+EAPI Eina_Bool elm_cache_flush_enabled_get(void);
+
+/**
+ * Set the configured cache flush enabled state
+ *
+ * This sets the globally configured cache flush enabled state.
+ *
+ * @param enabled The cache flush enabled state
+ * @ingroup Caches
+ *
+ * @see elm_cache_all_flush()
+ */
+EAPI void      elm_cache_flush_enabled_set(Eina_Bool enabled);
+
+/**
+ * Get the configured font cache size
+ *
+ * This gets the globally configured font cache size, in bytes.
+ *
+ * @return The font cache size
+ * @ingroup Caches
+ */
+EAPI int       elm_cache_font_cache_size_get(void);
+
+/**
+ * Set the configured font cache size
+ *
+ * This sets the globally configured font cache size, in bytes
+ *
+ * @param size The font cache size
+ * @ingroup Caches
+ */
+EAPI void      elm_cache_font_cache_size_set(int size);
+
+/**
+ * Get the configured image cache size
+ *
+ * This gets the globally configured image cache size, in bytes
+ *
+ * @return The image cache size
+ * @ingroup Caches
+ */
+EAPI int       elm_cache_image_cache_size_get(void);
+
+/**
+ * Set the configured image cache size
+ *
+ * This sets the globally configured image cache size, in bytes
+ *
+ * @param size The image cache size
+ * @ingroup Caches
+ */
+EAPI void       elm_cache_image_cache_size_set(int size);
+
+
+/**
+ * Get the configured edje file cache size.
+ *
+ * This gets the globally configured edje file cache size, in number
+ * of files.
+ *
+ * @return The edje file cache size
+ * @ingroup Caches
+ */
+EAPI int       elm_cache_edje_file_cache_size_get(void);
+
+/**
+ * Set the configured edje file cache size
+ *
+ * This sets the globally configured edje file cache size, in number
+ * of files.
+ *
+ * @param size The edje file cache size
+ * @ingroup Caches
+ */
+EAPI void       elm_cache_edje_file_cache_size_set(int size);
+
+/**
+ * Get the configured edje collections (groups) cache size.
+ *
+ * This gets the globally configured edje collections cache size, in
+ * number of collections.
+ *
+ * @return The edje collections cache size
+ * @ingroup Caches
+ */
+EAPI int       elm_cache_edje_collection_cache_size_get(void);
+
+/**
+ * Set the configured edje collections (groups) cache size
+ *
+ * This sets the globally configured edje collections cache size, in
+ * number of collections.
+ *
+ * @param size The edje collections cache size
+ * @ingroup Caches
+ */
+EAPI void       elm_cache_edje_collection_cache_size_set(int size);
+
+/**
+ * Get the enable status of the focus highlight
+ *
+ * This gets whether the highlight on focused objects is enabled or not
+ *
+ * @see elm_focus_highlight_enabled_set()
+ * @ingroup Focus
+ */
+EAPI Eina_Bool            elm_focus_highlight_enabled_get(void);
+
+/**
+ * Set the enable status of the focus highlight
+ *
+ * @param enable Enable highlight if EINA_TRUE, disable otherwise
+ * 
+ * Set whether to show or not the highlight on focused objects
+ *
+ * Note that it will take effect only to Elementary windows created after
+ * this is called.
+ *
+ * @see elm_win_add()
+ *
+ * @ingroup Focus
+ */
+EAPI void                 elm_focus_highlight_enabled_set(Eina_Bool enable);
+
+/**
+ * Get the enable status of the highlight animation
+ *
+ * @return The focus highlight mode set
+ * 
+ * Get whether the focus highlight, if enabled, will animate its switch from
+ * one object to the next
+ * 
+ * @ingroup Focus
+ */
+EAPI Eina_Bool            elm_focus_highlight_animate_get(void);
+
+/**
+ * Set the enable status of the highlight animation
+ *
+ * @param animate Enable animation if EINA_TRUE, disable otherwise
+ * 
+ * Set whether the focus highlight, if enabled, will animate its switch from
+ * one object to the next
+ * 
+ * Note that it will take effect only to Elementary windows created after
+ * this is called.
+ *
+ * @see elm_win_add()
+ *
+ * @ingroup Focus
+ */
+EAPI void                 elm_focus_highlight_animate_set(Eina_Bool animate);
+
+/**
+ * @}
+ */
+

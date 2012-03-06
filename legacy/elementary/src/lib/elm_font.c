@@ -138,3 +138,84 @@ _elm_font_available_hash_del(Eina_Hash *hash)
    eina_hash_foreach(hash, _font_hash_free_cb, NULL);
    eina_hash_free(hash);
 }
+
+EAPI Elm_Font_Properties *
+elm_font_properties_get(const char *font)
+{
+   EINA_SAFETY_ON_NULL_RETURN_VAL(font, NULL);
+   return _elm_font_properties_get(NULL, font);
+}
+
+EAPI void
+elm_font_properties_free(Elm_Font_Properties *efp)
+{
+   const char *str;
+
+   EINA_SAFETY_ON_NULL_RETURN(efp);
+   EINA_LIST_FREE(efp->styles, str)
+     if (str) eina_stringshare_del(str);
+   if (efp->name) eina_stringshare_del(efp->name);
+   free(efp);
+}
+
+EAPI char *
+elm_font_fontconfig_name_get(const char *name,
+                             const char *style)
+{
+   char buf[256];
+
+   EINA_SAFETY_ON_NULL_RETURN_VAL(name, NULL);
+   if (!style || style[0] == 0) return (char *) eina_stringshare_add(name);
+   snprintf(buf, 256, "%s" ELM_FONT_TOKEN_STYLE "%s", name, style);
+   return (char *) eina_stringshare_add(buf);
+}
+
+EAPI void
+elm_font_fontconfig_name_free(char *name)
+{
+   eina_stringshare_del(name);
+}
+
+EAPI Eina_Hash *
+elm_font_available_hash_add(Eina_List *list)
+{
+   Eina_Hash *font_hash;
+   Eina_List *l;
+   void *key;
+
+   font_hash = NULL;
+
+   /* populate with default font families */
+   //FIXME: Need to check whether fonts are being added multiple times.
+   font_hash = _elm_font_available_hash_add(font_hash, "Sans:style=Regular");
+   font_hash = _elm_font_available_hash_add(font_hash, "Sans:style=Bold");
+   font_hash = _elm_font_available_hash_add(font_hash, "Sans:style=Oblique");
+   font_hash = _elm_font_available_hash_add(font_hash,
+                                            "Sans:style=Bold Oblique");
+
+   font_hash = _elm_font_available_hash_add(font_hash, "Serif:style=Regular");
+   font_hash = _elm_font_available_hash_add(font_hash, "Serif:style=Bold");
+   font_hash = _elm_font_available_hash_add(font_hash, "Serif:style=Oblique");
+   font_hash = _elm_font_available_hash_add(font_hash,
+                                            "Serif:style=Bold Oblique");
+
+   font_hash = _elm_font_available_hash_add(font_hash,
+                                            "Monospace:style=Regular");
+   font_hash = _elm_font_available_hash_add(font_hash,
+                                            "Monospace:style=Bold");
+   font_hash = _elm_font_available_hash_add(font_hash,
+                                            "Monospace:style=Oblique");
+   font_hash = _elm_font_available_hash_add(font_hash,
+                                            "Monospace:style=Bold Oblique");
+
+   EINA_LIST_FOREACH(list, l, key)
+     if (key) _elm_font_available_hash_add(font_hash, key);
+
+   return font_hash;
+}
+
+EAPI void
+elm_font_available_hash_del(Eina_Hash *hash)
+{
+   _elm_font_available_hash_del(hash);
+}

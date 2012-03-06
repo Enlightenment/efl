@@ -9,97 +9,11 @@
  * @{
  */
 
-typedef struct _Elm_Text_Class
-{
-   const char *name;
-   const char *desc;
-} Elm_Text_Class;
-
-typedef struct _Elm_Font_Overlay
-{
-   const char    *text_class;
-   const char    *font;
-   Evas_Font_Size size;
-} Elm_Font_Overlay;
-
 typedef struct _Elm_Font_Properties
 {
    const char *name;
    Eina_List  *styles;
 } Elm_Font_Properties;
-
-/**
- * Get Elementary's list of supported text classes.
- *
- * @return The text classes list, with @c Elm_Text_Class blobs as data.
- * @ingroup Fonts
- *
- * Release the list with elm_text_classes_list_free().
- */
-EAPI Eina_List *elm_text_classes_list_get(void);
-
-/**
- * Free Elementary's list of supported text classes.
- *
- * @ingroup Fonts
- *
- * @see elm_text_classes_list_get().
- */
-EAPI void elm_text_classes_list_free(Eina_List *list);
-
-/**
- * Get Elementary's list of font overlays, set with
- * elm_font_overlay_set().
- *
- * @return The font overlays list, with @c Elm_Font_Overlay blobs as
- * data.
- *
- * @ingroup Fonts
- *
- * For each text class, one can set a <b>font overlay</b> for it,
- * overriding the default font properties for that class coming from
- * the theme in use. There is no need to free this list.
- *
- * @see elm_font_overlay_set() and elm_font_overlay_unset().
- */
-EAPI const Eina_List *elm_font_overlay_list_get(void);
-
-/**
- * Set a font overlay for a given Elementary text class.
- *
- * @param text_class Text class name
- * @param font Font name and style string
- * @param size Font size
- *
- * @ingroup Fonts
- *
- * @p font has to be in the format returned by
- * elm_font_fontconfig_name_get(). @see elm_font_overlay_list_get()
- * and elm_font_overlay_unset().
- */
-EAPI void             elm_font_overlay_set(const char *text_class, const char *font, Evas_Font_Size size);
-
-/**
- * Unset a font overlay for a given Elementary text class.
- *
- * @param text_class Text class name
- *
- * @ingroup Fonts
- *
- * This will bring back text elements belonging to text class
- * @p text_class back to their default font settings.
- */
-EAPI void             elm_font_overlay_unset(const char *text_class);
-
-/**
- * Apply the changes made with elm_font_overlay_set() and
- * elm_font_overlay_unset() on the current Elementary window.
- *
- * @ingroup Fonts
- *
- * This applies all font overlays set to all objects in the UI.
- */
-EAPI void             elm_font_overlay_apply(void);
 
 /**
  * Translate a font (family) name string in fontconfig's font names

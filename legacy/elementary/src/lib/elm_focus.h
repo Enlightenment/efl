@@ -33,61 +33,6 @@
  */
 
 /**
- * Get the enable status of the focus highlight
- *
- * This gets whether the highlight on focused objects is enabled or not
- *
- * @see elm_focus_highlight_enabled_set()
- * @ingroup Focus
- */
-EAPI Eina_Bool            elm_focus_highlight_enabled_get(void);
-
-/**
- * Set the enable status of the focus highlight
- *
- * @param enable Enable highlight if EINA_TRUE, disable otherwise
- * 
- * Set whether to show or not the highlight on focused objects
- *
- * Note that it will take effect only to Elementary windows created after
- * this is called.
- *
- * @see elm_win_add()
- *
- * @ingroup Focus
- */
-EAPI void                 elm_focus_highlight_enabled_set(Eina_Bool enable);
-
-/**
- * Get the enable status of the highlight animation
- *
- * @return The focus highlight mode set
- * 
- * Get whether the focus highlight, if enabled, will animate its switch from
- * one object to the next
- * 
- * @ingroup Focus
- */
-EAPI Eina_Bool            elm_focus_highlight_animate_get(void);
-
-/**
- * Set the enable status of the highlight animation
- *
- * @param animate Enable animation if EINA_TRUE, disable otherwise
- * 
- * Set whether the focus highlight, if enabled, will animate its switch from
- * one object to the next
- * 
- * Note that it will take effect only to Elementary windows created after
- * this is called.
- *
- * @see elm_win_add()
- *
- * @ingroup Focus
- */
-EAPI void                 elm_focus_highlight_animate_set(Eina_Bool animate);
-
-/**
  * Get the whether an Elementary object has the focus or not.
  *
  * @param obj The Elementary object to get the information from
