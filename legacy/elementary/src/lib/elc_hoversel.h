@@ -77,8 +77,8 @@ EAPI Eina_Bool                    elm_hoversel_horizontal_get(const Evas_Object 
  * hoversel is clicked. Should probably be the window that the hoversel is
  * in. See @ref Hover objects for more information.
  */
-/* XXX: Not the best name in my pov. Maybe call it tree_view or something. */
 EAPI void                         elm_hoversel_hover_parent_set(Evas_Object *obj, Evas_Object *parent);
+
 /**
  * @brief Get the Hover parent
  *
