@@ -2,8 +2,6 @@
 ./src/bin/quicklaunch.c
 ./src/bin/run.c
 ./src/bin/test_actionslider.c
-./src/bin/test_anchorblock.c
-./src/bin/test_anchorview.c
 ./src/bin/test_anim.c
 ./src/bin/test_bg.c
 ./src/bin/test_box.c
@@ -64,8 +62,6 @@
 ./src/bin/test_transit.c
 ./src/bin/test_weather.c
 ./src/bin/test_win_state.c
-./src/edje_externals/elm_anchorblock.c
-./src/edje_externals/elm_anchorview.c
 ./src/edje_externals/elm_bubble.c
 ./src/edje_externals/elm_button.c
 ./src/edje_externals/elm.c
@@ -93,8 +89,6 @@
 ./src/edje_externals/elm_thumb.c
 ./src/edje_externals/elm_toggle.c
 ./src/edje_externals/elm_toolbar.c
-./src/lib/elc_anchorblock.c
-./src/lib/elc_anchorview.c
 ./src/lib/elc_ctxpopup.c
 ./src/lib/elc_fileselector_button.c
 ./src/lib/elc_fileselector.c
