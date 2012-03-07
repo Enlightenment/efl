@@ -1,13 +1,35 @@
 #include <Elementary.h>
+#include <Elementary_Cursor.h>
 #include "test.h"
 #ifdef HAVE_CONFIG_H
 # include "elementary_config.h"
 #endif
 #ifndef ELM_LIB_QUICKLAUNCH
+
+static Elm_Gengrid_Item_Class *gic;
+static Elm_Gengrid_Item_Class ggic;
+
+Evas_Object *grid_content_get(void *data, Evas_Object *obj, const char *part);
+char *grid_text_get(void *data, Evas_Object *obj __UNUSED__,
+                    const char *part __UNUSED__);
+Eina_Bool grid_state_get(void *data __UNUSED__, Evas_Object *obj __UNUSED__,
+                         const char *part __UNUSED__);
+void grid_del(void *data __UNUSED__, Evas_Object *obj __UNUSED__);
+static Evas_Object *gtt_item_icon(void *data   __UNUSED__, Evas_Object *obj __UNUSED__, Evas_Object *tt, void *item   __UNUSED__);
+
+typedef struct _Testitem
+{
+   Elm_Object_Item *item;
+   const char *path;
+   int mode;
+   int onoff;
+} Testitem;
+
 struct _api_data
 {
    unsigned int state;  /* What state we are testing       */
-   void *box;           /* Use this to get box content     */
+   Evas_Object *box;           /* Use this to get box content     */
+   Evas_Object *grid;
 };
 typedef struct _api_data api_data;
 
@@ -21,6 +43,13 @@ enum _api_state
    GRID_PAGE_SIZE,
    GRID_TOOLTIP_SET_TEXT,
    GRID_TOOLTIP_UNSET,
+   GRID_ITEM_CLASS_SET,
+   GRID_ITEM_UPDATE_SET,
+   GRID_PAGE_BRING_IN,
+   GRID_PAGE_SHOW,
+   GRID_TOOLTIP_CONTENT_CB,
+   GRID_TOOLTIP_STYLE_SET,
+   GRID_TOOLTIP_WINDOW_MODE_SET,
    API_STATE_LAST
 };
 typedef enum _api_state api_state;
@@ -95,14 +124,6 @@ _api_bt_clicked(void *data, Evas_Object *obj, void *event_info __UNUSED__)
    elm_object_disabled_set(obj, a->state == API_STATE_LAST);
 }
 
-typedef struct _Testitem
-{
-   Elm_Object_Item *item;
-   const char *path;
-   int mode;
-   int onoff;
-} Testitem;
-
 static const char *img[9] =
 {
    "panel_01.jpg",
@@ -116,8 +137,27 @@ static const char *img[9] =
    "wood_01.jpg",
 };
 
-static Elm_Gengrid_Item_Class *gic;
-static Elm_Gengrid_Item_Class ggic;
+static const char *cur[4] =
+{
+   ELM_CURSOR_CIRCLE,
+   ELM_CURSOR_CLOCK,
+   ELM_CURSOR_COFFEE_MUG,
+   ELM_CURSOR_CROSS,
+};
+
+static Evas_Object *
+gtt_item_icon(void *data   __UNUSED__,
+              Evas_Object *obj __UNUSED__,
+              Evas_Object *tt,
+              void *item   __UNUSED__)
+{
+   Evas_Object *ic = elm_icon_add(tt);
+   char buf[PATH_MAX];
+   snprintf(buf, sizeof(buf), "%s/images/logo.png", elm_app_data_dir_get());
+   elm_icon_file_set(ic, buf, NULL);
+   elm_icon_scale_set(ic, 0, 0);
+   return ic;
+}
 
 static int n_current_pic = 0;
 static void
@@ -246,31 +286,36 @@ _cleanup_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *e
    free(data);
 }
 
-void
-test_gengrid(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+static void
+always_select_mode_cb(void *data, Evas_Object *obj, void *event_info __UNUSED__)
 {
-   Evas_Object *win, *bg, *grid, *bt, *bxx;
+   api_data *api = data;
+   elm_gengrid_always_select_mode_set(api->grid, elm_check_state_get(obj));
+}
+
+static void
+multi_select_cb(void *data, Evas_Object *obj, void *event_info __UNUSED__)
+{
+   api_data *api = data;
+   elm_gengrid_multi_select_set(api->grid, elm_check_state_get(obj));
+}
+
+static void
+clear_bt_clicked(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+{
+   api_data *api = data;
+   elm_gengrid_clear(api->grid);
+}
+
+static Evas_Object *
+create_gengrid(Evas_Object *obj, int items)
+{
+   Evas_Object *grid = NULL;
    static Testitem ti[144];
    int i, n;
    char buf[PATH_MAX];
-   api_data *api = calloc(1, sizeof(api_data));
 
-   win = elm_win_add(NULL, "gengrid", ELM_WIN_BASIC);
-   elm_win_title_set(win, "GenGrid");
-   elm_win_autodel_set(win, EINA_TRUE);
-   evas_object_event_callback_add(win, EVAS_CALLBACK_FREE, _cleanup_cb, api);
-
-   bg = elm_bg_add(win);
-   evas_object_size_hint_weight_set(bg, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-   elm_win_resize_object_add(win, bg);
-   evas_object_show(bg);
-
-   bxx = elm_box_add(win);
-   elm_win_resize_object_add(win, bxx);
-   evas_object_size_hint_weight_set(bxx, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-   evas_object_show(bxx);
-
-   grid = elm_gengrid_add(win);
+   grid = elm_gengrid_add(obj);
    elm_gengrid_item_size_set(grid, 150, 150);
    elm_gengrid_horizontal_set(grid, EINA_FALSE);
    elm_gengrid_multi_select_set(grid, EINA_TRUE);
@@ -287,16 +332,6 @@ test_gengrid(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_inf
    evas_object_size_hint_weight_set(grid, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(grid, EVAS_HINT_FILL, EVAS_HINT_FILL);
 
-   api->box = grid;
-   bt = elm_button_add(win);
-   elm_object_text_set(bt, "Next API function");
-   evas_object_smart_callback_add(bt, "clicked", _api_bt_clicked, (void *) api);
-   elm_box_pack_end(bxx, bt);
-   elm_object_disabled_set(bt, api->state == API_STATE_LAST);
-   evas_object_show(bt);
-
-   elm_box_pack_end(bxx, grid);
-
    gic = elm_gengrid_item_class_new();
    gic->item_style = "default";
    gic->func.text_get = grid_text_get;
@@ -305,7 +340,7 @@ test_gengrid(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_inf
    gic->func.del = grid_del;
 
    n = 0;
-   for (i = 0; i < 12 * 12; i++)
+   for (i = 0; i < items; i++)
      {
         snprintf(buf, sizeof(buf), "%s/images/%s", elm_app_data_dir_get(), img[n]);
         n = (n + 1) % 9;
@@ -315,10 +350,231 @@ test_gengrid(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_inf
         if (!(i % 5))
           elm_gengrid_item_selected_set(ti[i].item, EINA_TRUE);
      }
-
    elm_gengrid_item_class_free(gic);
 
+   return grid;
+}
+
+static void
+restore_bt_clicked(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+{
+   api_data *api = data;
+   elm_box_clear(api->box);
+   api->grid = create_gengrid(obj, (12 * 12));
+   elm_box_pack_end(api->box, api->grid);
+   evas_object_show(api->grid);
+}
+
+static void
+filled_cb(void *data, Evas_Object *obj, void *event_info __UNUSED__)
+{
+   Evas_Object *box = (Evas_Object *)data;
+   Evas_Object *grid;
+
+   elm_box_clear(box);
+   grid = create_gengrid(box, 1);
+   elm_gengrid_filled_set(grid, elm_check_state_get(obj));
+   elm_box_pack_end(box, grid);
    evas_object_show(grid);
+}
+
+static void
+filled_bt_clicked(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+{
+   Evas_Object *win, *box, *content_box, *grid, *tg;
+
+   win = elm_win_util_standard_add("test filled", "Test Filled");
+   elm_win_autodel_set(win, EINA_TRUE);
+
+   box = elm_box_add(win);
+   elm_win_resize_object_add(win, box);
+   evas_object_size_hint_weight_set(box, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_show(box);
+
+   content_box = elm_box_add(win);
+   elm_win_resize_object_add(win, content_box);
+   evas_object_size_hint_weight_set(content_box, EVAS_HINT_EXPAND,
+                                    EVAS_HINT_EXPAND);
+   evas_object_size_hint_align_set(content_box, EVAS_HINT_FILL,
+                                   EVAS_HINT_FILL);
+   elm_box_pack_end(box, content_box);
+   evas_object_show(content_box);
+
+   grid = create_gengrid(win, 1);
+   elm_box_pack_end(content_box, grid);
+   evas_object_show(grid);
+
+   tg = elm_check_add(win);
+   elm_object_text_set(tg, "Filled");
+   evas_object_smart_callback_add(tg, "changed", filled_cb, content_box);
+   elm_box_pack_end(box, tg);
+   evas_object_show(tg);
+
+   evas_object_resize(win, 450, 200);
+   evas_object_show(win);
+}
+
+static void
+cursor_cb(void *data, Evas_Object *obj, void *event_info __UNUSED__)
+{
+   Evas_Object *grid = (Evas_Object *)data;
+   Elm_Object_Item *item = NULL;
+   int i = 0;
+
+   for ((item = elm_gengrid_first_item_get(grid)); item;
+        (item = elm_gengrid_item_next_get(item)))
+     {
+        if(!elm_check_state_get(obj))
+          {
+             elm_gengrid_item_cursor_unset(item);
+             continue;
+          }
+
+        elm_gengrid_item_cursor_set(item, cur[i]);
+        elm_gengrid_item_cursor_engine_only_set(item, EINA_FALSE);
+        i++;
+     }
+}
+
+static void
+cursor_bt_clicked(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+{
+   Evas_Object *win, *box, *content_box, *hbox, *grid, *tg;
+
+   win = elm_win_util_standard_add("test cursor", "Test Cursor");
+   elm_win_autodel_set(win, EINA_TRUE);
+
+   box = elm_box_add(win);
+   elm_win_resize_object_add(win, box);
+   evas_object_size_hint_weight_set(box, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_show(box);
+
+   content_box = elm_box_add(win);
+   elm_win_resize_object_add(win, content_box);
+   evas_object_size_hint_weight_set(content_box, EVAS_HINT_EXPAND,
+                                    EVAS_HINT_EXPAND);
+   evas_object_size_hint_align_set(content_box, EVAS_HINT_FILL,
+                                   EVAS_HINT_FILL);
+   elm_box_pack_end(box, content_box);
+   evas_object_show(content_box);
+
+   grid = create_gengrid(win, 4);
+   elm_box_pack_end(content_box, grid);
+   evas_object_show(grid);
+
+   hbox = elm_box_add(win);
+   elm_box_horizontal_set(hbox, EINA_TRUE);
+
+   tg = elm_check_add(win);
+   elm_object_text_set(tg, "Cursor");
+   evas_object_smart_callback_add(tg, "changed", cursor_cb, grid);
+   elm_box_pack_end(hbox, tg);
+   evas_object_show(tg);
+
+   elm_box_pack_end(box, hbox);
+   evas_object_show(hbox);
+
+   evas_object_resize(win, 450, 450);
+   evas_object_show(win);
+}
+
+void
+test_gengrid(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+{
+   Evas_Object *win, *bg, *bt, *content_box, *bxx, *bx, *tg;
+   api_data *api = calloc(1, sizeof(api_data));
+
+   win = elm_win_add(NULL, "gengrid", ELM_WIN_BASIC);
+   elm_win_title_set(win, "GenGrid");
+   elm_win_autodel_set(win, EINA_TRUE);
+   evas_object_event_callback_add(win, EVAS_CALLBACK_FREE, _cleanup_cb, api);
+
+   bg = elm_bg_add(win);
+   evas_object_size_hint_weight_set(bg, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   elm_win_resize_object_add(win, bg);
+   evas_object_show(bg);
+
+   bxx = elm_box_add(win);
+   api->box = bxx;
+   elm_win_resize_object_add(win, bxx);
+   evas_object_size_hint_weight_set(bxx, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_show(bxx);
+
+   content_box = elm_box_add(win);
+   api->box = content_box;
+   evas_object_size_hint_weight_set(content_box, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_size_hint_align_set(content_box, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   evas_object_show(content_box);
+
+   /* Create GenGrid */
+   api->grid = create_gengrid(win, (12 * 12));
+
+   bt = elm_button_add(win);
+   elm_object_text_set(bt, "Next API function");
+   evas_object_smart_callback_add(bt, "clicked", _api_bt_clicked,
+                                  (void *)api);
+   elm_box_pack_end(bxx, bt);
+   elm_object_disabled_set(bt, api->state == API_STATE_LAST);
+   evas_object_show(bt);
+
+   elm_box_pack_end(content_box, api->grid);
+   elm_box_pack_end(bxx, content_box);
+   evas_object_show(api->grid);
+
+   bx = elm_box_add(win);
+   elm_box_horizontal_set(bx, EINA_TRUE);
+   elm_box_pack_end(bxx, bx);
+   evas_object_show(bx);
+
+   /* Gengrid Always Select Mode Test */
+   tg = elm_check_add(win);
+   evas_object_size_hint_weight_set(tg, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_size_hint_align_set(tg, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   elm_object_text_set(tg, "Always Select Mode");
+   evas_object_smart_callback_add(tg, "changed", always_select_mode_cb,
+                                  (void *)api);
+   elm_box_pack_end(bx, tg);
+   evas_object_show(tg);
+
+   tg = elm_check_add(win);
+   evas_object_size_hint_weight_set(tg, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_size_hint_align_set(tg, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   elm_object_text_set(tg, "Multi Select Mode");
+   elm_check_state_set(tg, EINA_TRUE);
+   evas_object_smart_callback_add(tg, "changed", multi_select_cb,
+                                  (void *)api);
+   elm_box_pack_end(bx, tg);
+   evas_object_show(tg);
+
+   /* Gengrid Clear Test */
+   bt = elm_button_add(win);
+   elm_object_text_set(bt, "Clear");
+   evas_object_smart_callback_add(bt, "clicked", clear_bt_clicked,
+                                  (void *)api);
+   elm_box_pack_end(bx, bt);
+   evas_object_show(bt);
+
+   bt = elm_button_add(win);
+   elm_object_text_set(bt, "Restore");
+   evas_object_smart_callback_add(bt, "clicked", restore_bt_clicked,
+                                  (void *) api);
+   elm_box_pack_end(bx, bt);
+   evas_object_show(bt);
+
+   /* Gengrid Filled Test */
+   bt = elm_button_add(win);
+   elm_object_text_set(bt, "Check Filled");
+   evas_object_smart_callback_add(bt, "clicked", filled_bt_clicked, NULL);
+   elm_box_pack_end(bx, bt);
+   evas_object_show(bt);
+
+   /* Item Cursor Test */
+   bt = elm_button_add(win);
+   elm_object_text_set(bt, "Check Cursor");
+   evas_object_smart_callback_add(bt, "clicked", cursor_bt_clicked,
+                                  (void *) api);
+   elm_box_pack_end(bx, bt);
+   evas_object_show(bt);
 
    evas_object_resize(win, 600, 600);
    evas_object_show(win);
@@ -341,6 +597,30 @@ _before_bt_clicked(void *data, Evas_Object *obj __UNUSED__, void *event_info __U
    ti->mode = 0;
    ti->path = eina_stringshare_add(buf);
    ti->item = elm_gengrid_item_insert_before(grid, gic, ti, sel, grid_sel,
+                                             NULL);
+}
+
+static int
+compare_cb(const void *data1, const void *data2)
+{
+   Testitem *ti1 = (Testitem *)data1;
+   Testitem *ti2 = (Testitem *)data2;
+   return strlen(ti1->path) - strlen(ti2->path);
+}
+
+static void
+_sorted_bt_clicked(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+{
+   Testitem *ti;
+   Evas_Object *grid = data;
+   char buf[PATH_MAX];
+
+   snprintf(buf, sizeof(buf), "%s/images/%s", elm_app_data_dir_get(), img[n_current_pic]);
+   n_current_pic = ((n_current_pic +1) % 9);
+   ti = calloc(1, sizeof(*ti));
+   ti->mode = 0;
+   ti->path = eina_stringshare_add(buf);
+   ti->item = elm_gengrid_item_sorted_insert(grid, gic, ti, compare_cb, grid_sel,
                                              NULL);
 }
 
@@ -471,6 +751,12 @@ test_gengrid2(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_in
    bt = elm_button_add(win);
    elm_object_text_set(bt, "Insert after");
    evas_object_smart_callback_add(bt, "clicked", _after_bt_clicked, grid);
+   elm_box_pack_end(hbx, bt);
+   evas_object_show(bt);
+
+   bt = elm_button_add(win);
+   elm_object_text_set(bt, "Sorted insert");
+   evas_object_smart_callback_add(bt, "clicked", _sorted_bt_clicked, grid);
    elm_box_pack_end(hbx, bt);
    evas_object_show(bt);
 

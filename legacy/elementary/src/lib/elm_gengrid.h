@@ -800,8 +800,15 @@ EAPI void                          elm_gengrid_item_item_class_update(Elm_Object
  */
 EAPI const Elm_Gengrid_Item_Class *elm_gengrid_item_item_class_get(const Elm_Object_Item *it);
 
-//XXX: Let's add
-//EAPI int                           elm_gengrid_item_index_get(const Elm_Object_Item *it);
+/**
+ * Get the index of the item. It is only valid once displayed.
+ *
+ * @param it a gengrid item
+ * @return the position inside the list of item.
+ *
+ * @ingroup Gengrid
+ */
+EAPI int                           elm_gengrid_item_index_get(const Elm_Object_Item *it);
 
 /**
  * Return how many items are currently in a list

@@ -130,6 +130,7 @@ static const char SIG_EDGE_BOTTOM[] = "edge,bottom";
 static const char SIG_EDGE_LEFT[] = "edge,left";
 static const char SIG_EDGE_RIGHT[] = "edge,right";
 static const char SIG_MOVED[] = "moved";
+static const char SIG_INDEX_UPDATE[] = "index,update";
 
 static const Evas_Smart_Cb_Description _signals[] = {
    {SIG_ACTIVATED, ""},
@@ -924,6 +925,16 @@ _item_highlight(Elm_Gen_Item *it)
 }
 
 static void
+_elm_gengrid_item_index_update(Elm_Gen_Item *it)
+{
+   if (it->position_update)
+     {
+        evas_object_smart_callback_call(WIDGET(it), SIG_INDEX_UPDATE, it);
+        it->position_update = EINA_FALSE;
+     }
+}
+
+static void
 _item_realize(Elm_Gen_Item *it)
 {
    char buf[1024];
@@ -1041,6 +1052,8 @@ _item_realize(Elm_Gen_Item *it)
                                        _mouse_up, it);
         evas_object_event_callback_add(VIEW(it), EVAS_CALLBACK_MOUSE_MOVE,
                                        _mouse_move, it);
+
+        _elm_gengrid_item_index_update(it);
 
         if (it->selected)
           edje_object_signal_emit(VIEW(it), "elm,state,selected", "elm");
@@ -1439,6 +1452,18 @@ _item_place(Elm_Gen_Item *it,
           _elm_genlist_item_unrealize(it, EINA_FALSE);
         else
           it->item->group_realized = EINA_FALSE;
+     }
+}
+
+static void
+_item_position_update(Eina_Inlist *list, int idx)
+{
+   Elm_Gen_Item *it;
+
+   EINA_INLIST_FOREACH(list, it)
+     {
+        it->position = idx++;
+        it->position_update = EINA_TRUE;
      }
 }
 
@@ -2093,6 +2118,8 @@ elm_gengrid_item_append(Evas_Object                  *obj,
    it = _item_new(wd, itc, data, func, func_data);
    if (!it) return NULL;
    wd->items = eina_inlist_append(wd->items, EINA_INLIST_GET(it));
+   it->position = eina_inlist_count(wd->items);
+   it->position_update = EINA_TRUE;
 
    if (it->group)
      wd->group_items = eina_list_prepend(wd->group_items, it);
@@ -2118,6 +2145,8 @@ elm_gengrid_item_prepend(Evas_Object                  *obj,
    it = _item_new(wd, itc, data, func, func_data);
    if (!it) return NULL;
    wd->items = eina_inlist_prepend(wd->items, EINA_INLIST_GET(it));
+   _item_position_update(wd->items, 0);
+
    if (it->group)
      wd->group_items = eina_list_append(wd->group_items, it);
 
@@ -2145,6 +2174,9 @@ elm_gengrid_item_insert_before(Evas_Object                  *obj,
    if (!it) return NULL;
    wd->items = eina_inlist_prepend_relative
       (wd->items, EINA_INLIST_GET(it), EINA_INLIST_GET((Elm_Gen_Item *) relative));
+   Eina_Inlist *tmp = eina_inlist_find(wd->items, EINA_INLIST_GET(it));
+   _item_position_update(tmp, ((Elm_Gen_Item *)relative)->position);
+
    if (it->group)
      wd->group_items = eina_list_append_relative(wd->group_items, it, ((Elm_Gen_Item *) relative)->parent);
 
@@ -2172,6 +2204,9 @@ elm_gengrid_item_insert_after(Evas_Object                  *obj,
    if (!it) return NULL;
    wd->items = eina_inlist_append_relative
       (wd->items, EINA_INLIST_GET(it), EINA_INLIST_GET((Elm_Gen_Item *) relative));
+   Eina_Inlist *tmp = eina_inlist_find(wd->items, EINA_INLIST_GET(it));
+   _item_position_update(tmp, ((Elm_Gen_Item *)relative)->position+1);
+
    if (it->group)
      wd->group_items = eina_list_prepend_relative(wd->group_items, it, ((Elm_Gen_Item *) relative)->parent);
 
@@ -2203,6 +2238,8 @@ elm_gengrid_item_sorted_insert(Evas_Object                  *obj,
    wd->item_compare_cb = comp;
    wd->items = eina_inlist_sorted_state_insert(wd->items, EINA_INLIST_GET(it),
                                          _elm_gengrid_item_compare, wd->state);
+   _item_position_update(wd->items, 0);
+
    if (wd->calc_job) ecore_job_del(wd->calc_job);
    wd->calc_job = ecore_job_add(_calc_job, wd);
 
@@ -2938,3 +2975,11 @@ elm_gengrid_hilight_mode_get(const Evas_Object *obj)
    return elm_genlist_hilight_mode_get(obj);
 }
 
+EAPI int
+elm_gengrid_item_index_get(const Elm_Object_Item *it)
+{
+   ELM_OBJ_ITEM_CHECK_OR_RETURN(it, -1);
+   Elm_Gen_Item *_it = (Elm_Gen_Item *)it;
+
+   return _it->position;
+}
