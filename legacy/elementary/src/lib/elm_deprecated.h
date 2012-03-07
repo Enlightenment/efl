@@ -1611,8 +1611,7 @@ EINA_DEPRECATED EAPI Evas_Object                  *elm_genlist_item_genlist_get(
  *
  * This is a constant string and simply defines the name of the
  * style that will be used for mode animations. It can be
- * @c NULL if you don't plan to use Genlist mode. See
- * elm_genlist_item_mode_set() for more info.
+ * @c NULL if you don't plan to use Genlist mode.
  *
  */
 EINA_DEPRECATED EAPI const char                   *elm_genlist_mode_item_style_get(const Evas_Object *obj);
@@ -1624,8 +1623,7 @@ EINA_DEPRECATED EAPI const char                   *elm_genlist_mode_item_style_g
  *
  * This is a constant string and simply defines the name of the
  * style that will be used for mode animations. It can be
- * @c NULL if you don't plan to use Genlist mode. See
- * elm_genlist_item_mode_set() for more info.
+ * @c NULL if you don't plan to use Genlist mode.
  *
  */
 EINA_DEPRECATED EAPI void                          elm_genlist_mode_item_style_set(Evas_Object *obj, const char *style);
@@ -6209,6 +6207,71 @@ EINA_DEPRECATED EAPI void                          elm_genlist_height_for_width_
  * @deprecated elm_genlist_mode_set(obj, ELM_LIST_COMPRESS)
  */
 EINA_DEPRECATED EAPI Eina_Bool                     elm_genlist_height_for_width_mode_get(const Evas_Object *obj);
+
+/**
+ * Activate a genlist mode on an item
+ *
+ * @param it The genlist item
+ * @param mode_type Mode name
+ * @param mode_set Boolean to define set or unset mode.
+ *
+ * A genlist mode is a different way of selecting an item. Once a mode is
+ * activated on an item, any other selected item is immediately unselected.
+ * This feature provides an easy way of implementing a new kind of animation
+ * for selecting an item, without having to entirely rewrite the item style
+ * theme. However, the elm_genlist_selected_* API can't be used to get what
+ * item is activate for a mode.
+ *
+ * The current item style will still be used, but applying a genlist mode to
+ * an item will select it using a different kind of animation.
+ *
+ * The current active item for a mode can be found by
+ * elm_genlist_decorated_item_get().
+ *
+ * The characteristics of genlist mode are:
+ * - Only one mode can be active at any time, and for only one item.
+ * - Genlist handles deactivating other items when one item is activated.
+ * - A mode is defined in the genlist theme (edc), and more modes can easily
+ *   be added.
+ * - A mode style and the genlist item style are different things. They
+ *   can be combined to provide a default style to the item, with some kind
+ *   of animation for that item when the mode is activated.
+ *
+ * When a mode is activated on an item, a new view for that item is created.
+ * The theme of this mode defines the animation that will be used to transit
+ * the item from the old view to the new view. This second (new) view will be
+ * active for that item while the mode is active on the item, and will be
+ * destroyed after the mode is totally deactivated from that item.
+ *
+ * @deprecated elm_genlist_item_decorate_mode_set()
+ */
+EINA_DEPRECATED EAPI void                          elm_genlist_item_mode_set(Elm_Object_Item *it, const char *mode_type, Eina_Bool mode_set);
+
+/**
+ * Get the last (or current) genlist mode used.
+ *
+ * @param obj The genlist object
+ *
+ * This function just returns the name of the last used genlist mode. It will
+ * be the current mode if it's still active.
+ *
+ * @deprecated elm_genlist_decorate_type_get()
+ */
+EINA_DEPRECATED EAPI const char                   *elm_genlist_mode_type_get(const Evas_Object *obj);
+
+/**
+ * Get active genlist mode item
+ *
+ * @param obj The genlist object
+ * @return The active item for that current mode. Or @c NULL if no item is
+ * activated with any mode.
+ *
+ * This function returns the item that was activated with a mode, by the
+ * function elm_genlist_item_decorate_mode_set().
+ *
+ * @deprecated elm_genlist_decorated_item_get()
+ */
+EINA_DEPRECATED EAPI const Elm_Object_Item       *elm_genlist_mode_item_get(const Evas_Object *obj);
 
 /**
  * @}

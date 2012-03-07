@@ -1612,7 +1612,7 @@ EAPI void                          elm_genlist_item_fields_update(Elm_Object_Ite
  * an item will select it using a different kind of animation.
  *
  * The current active item for a mode can be found by
- * elm_genlist_mode_item_get().
+ * elm_genlist_decorated_item_get().
  *
  * The characteristics of genlist mode are:
  * - Only one mode can be active at any time, and for only one item.
@@ -1630,12 +1630,11 @@ EAPI void                          elm_genlist_item_fields_update(Elm_Object_Ite
  * destroyed after the mode is totally deactivated from that item.
  *
  * @see elm_genlist_mode_get()
- * @see elm_genlist_mode_item_get()
+ * @see elm_genlist_decorated_item_get()
  *
  * @ingroup Genlist
  */
-//XXX: How bout elm_genlist_effect_mode_set 
-EAPI void                          elm_genlist_item_mode_set(Elm_Object_Item *it, const char *mode_type, Eina_Bool mode_set);
+EAPI void                          elm_genlist_item_decorate_mode_set(Elm_Object_Item *it, const char *mode_type, Eina_Bool mode_set);
 
 /**
  * Get the last (or current) genlist mode used.
@@ -1645,13 +1644,12 @@ EAPI void                          elm_genlist_item_mode_set(Elm_Object_Item *it
  * This function just returns the name of the last used genlist mode. It will
  * be the current mode if it's still active.
  *
- * @see elm_genlist_item_mode_set()
- * @see elm_genlist_mode_item_get()
+ * @see elm_genlist_item_decorate_mode_set()
+ * @see elm_genlist_decorated_item_get()
  *
  * @ingroup Genlist
  */
-//XXX: looks weird... set the mode type to item and get the mode type from object...
-EAPI const char                   *elm_genlist_mode_type_get(const Evas_Object *obj);
+EAPI const char                   *elm_genlist_decorate_type_get(const Evas_Object *obj);
 
 /**
  * Get active genlist mode item
@@ -1661,14 +1659,14 @@ EAPI const char                   *elm_genlist_mode_type_get(const Evas_Object *
  * activated with any mode.
  *
  * This function returns the item that was activated with a mode, by the
- * function elm_genlist_item_mode_set().
+ * function elm_genlist_item_decorate_mode_set().
  *
- * @see elm_genlist_item_mode_set()
+ * @see elm_genlist_item_decorate_mode_set()
  * @see elm_genlist_mode_get()
  *
  * @ingroup Genlist
  */
-EAPI const Elm_Object_Item       *elm_genlist_mode_item_get(const Evas_Object *obj);
+EAPI const Elm_Object_Item       *elm_genlist_decorated_item_get(const Evas_Object *obj);
 
 /**
  * Set reorder mode

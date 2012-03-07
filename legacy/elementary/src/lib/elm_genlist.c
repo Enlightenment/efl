@@ -5434,9 +5434,9 @@ elm_genlist_realized_items_update(Evas_Object *obj)
 }
 
 EAPI void
-elm_genlist_item_mode_set(Elm_Object_Item  *it,
-                          const char       *mode_type,
-                          Eina_Bool         mode_set)
+elm_genlist_item_decorate_mode_set(Elm_Object_Item  *it,
+                                   const char       *mode_type,
+                                   Eina_Bool         mode_set)
 {
    ELM_OBJ_ITEM_CHECK_OR_RETURN(it);
    Elm_Gen_Item *_it = (Elm_Gen_Item *)it;
@@ -5481,7 +5481,7 @@ elm_genlist_item_mode_set(Elm_Object_Item  *it,
 }
 
 EAPI const char *
-elm_genlist_mode_type_get(const Evas_Object *obj)
+elm_genlist_decorate_type_get(const Evas_Object *obj)
 {
    ELM_CHECK_WIDTYPE(obj, widtype) NULL;
    Widget_Data *wd = elm_widget_data_get(obj);
@@ -5490,7 +5490,7 @@ elm_genlist_mode_type_get(const Evas_Object *obj)
 }
 
 EAPI const Elm_Object_Item *
-elm_genlist_mode_item_get(const Evas_Object *obj)
+elm_genlist_decorated_item_get(const Evas_Object *obj)
 {
    ELM_CHECK_WIDTYPE(obj, widtype) NULL;
    Widget_Data *wd = elm_widget_data_get(obj);
