@@ -12,7 +12,6 @@ typedef struct _Elm_Params_Genlist
    Eina_Bool always_select_exists:1;
    Eina_Bool no_select:1;
    Eina_Bool no_select_exists:1;
-   Eina_Bool compress:1;
    Eina_Bool compress_exists:1;
    Eina_Bool homogeneous:1;
    Eina_Bool homogeneous_exists:1;
@@ -71,8 +70,6 @@ external_genlist_state_set(void *data __UNUSED__, Evas_Object *obj, const void *
         else
           elm_genlist_select_mode_set (obj, ELM_OBJECT_SELECT_MODE_DEFAULT);
      }
-   if (p->compress_exists)
-     elm_genlist_compress_mode_set(obj, p->compress);
    if (p->homogeneous_exists)
      elm_genlist_homogeneous_set(obj, p->homogeneous);
    if ((p->h_bounce_exists) && (p->v_bounce_exists))
@@ -130,14 +127,6 @@ external_genlist_param_set(void *data __UNUSED__, Evas_Object *obj, const Edje_E
                elm_genlist_select_mode_set (obj, ELM_OBJECT_SELECT_MODE_NONE);
              else
                elm_genlist_select_mode_set (obj, ELM_OBJECT_SELECT_MODE_DEFAULT);
-	     return EINA_TRUE;
-	  }
-     }
-   else if (!strcmp(param->name, "compress"))
-     {
-	if (param->type == EDJE_EXTERNAL_PARAM_TYPE_BOOL)
-	  {
-	     elm_genlist_compress_mode_set(obj, param->i);
 	     return EINA_TRUE;
 	  }
      }
@@ -224,14 +213,6 @@ external_genlist_param_get(void *data __UNUSED__, const Evas_Object *obj, Edje_E
 	     return EINA_TRUE;
 	  }
      }
-   else if (!strcmp(param->name, "compress"))
-     {
-	if (param->type == EDJE_EXTERNAL_PARAM_TYPE_BOOL)
-	  {
-	     param->i = elm_genlist_compress_mode_get(obj);
-	     return EINA_TRUE;
-	  }
-     }
    else if (!strcmp(param->name, "homogeneous"))
      {
 	if (param->type == EDJE_EXTERNAL_PARAM_TYPE_BOOL)
@@ -297,11 +278,6 @@ external_genlist_params_parse(void *data __UNUSED__, Evas_Object *obj __UNUSED__
 	     mem->no_select = !!param->i;
 	     mem->no_select_exists = EINA_TRUE;
 	  }
-	else if (!strcmp(param->name, "compress"))
-	  {
-	     mem->compress = !!param->i;
-	     mem->compress_exists = EINA_TRUE;
-	  }
 	else if (!strcmp(param->name, "homogeneous"))
 	  {
 	     mem->homogeneous = !!param->i;
@@ -346,7 +322,6 @@ static Edje_External_Param_Info external_genlist_params[] = {
    EDJE_EXTERNAL_PARAM_INFO_BOOL("multi select"),
    EDJE_EXTERNAL_PARAM_INFO_BOOL("always select"),
    EDJE_EXTERNAL_PARAM_INFO_BOOL("no select"),
-   EDJE_EXTERNAL_PARAM_INFO_BOOL("compress"),
    EDJE_EXTERNAL_PARAM_INFO_BOOL("homogeneous"),
    EDJE_EXTERNAL_PARAM_INFO_BOOL("height bounce"),
    EDJE_EXTERNAL_PARAM_INFO_BOOL("width bounce"),

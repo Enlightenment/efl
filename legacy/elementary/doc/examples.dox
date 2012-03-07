@@ -4698,7 +4698,7 @@
  * elm_genlist_bounce_set().
  *
  * We also want our list to compress items if they are wider than the list
- * width (thus we call elm_genlist_compress_mode_set().
+ * width (thus we call elm_genlist_mode_set(obj, ELM_LIST_COMPRESS).
  *
  * The items have different width, so they are not homogeneous:
  * elm_genlist_homogeneous_set() is set to false.
