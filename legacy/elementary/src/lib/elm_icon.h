@@ -466,7 +466,7 @@ EAPI void                  elm_icon_preload_disabled_set(Evas_Object *obj, Eina_
  *
  * Return if this elm icon's image can be animated. Currently Evas only
  * supports gif animation. If the return value is EINA_FALSE, other
- * elm_icon_animated_XXX APIs won't work.
+ * elm_icon_animated_xxx APIs won't work.
  * @ingroup Icon
  */
 EAPI Eina_Bool             elm_icon_animated_available_get(const Evas_Object *obj);

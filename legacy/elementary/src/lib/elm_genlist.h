@@ -60,9 +60,9 @@
  * - @c func.state_get - The @c part parameter is the name string of one of
  *   the state parts in the Edje group implementing the item's theme. Return
  *   @c EINA_FALSE for false/off or @c EINA_TRUE for true/on. Genlists will
- *   emit a signal to its theming Edje object with @c "elm,state,XXX,active"
+ *   emit a signal to its theming Edje object with @c "elm,state,xxx,active"
  *   and @c "elm" as "emission" and "source" arguments, respectively, when
- *   the state is true (the default is false), where @c XXX is the name of
+ *   the state is true (the default is false), where @c xxx is the name of
  *   the (state) part.  See #Elm_Genlist_Item_State_Get_Cb.
  * - @c func.del - This is intended for use when genlist items are deleted,
  *   so any data attached to the item (e.g. its data parameter on creation)
