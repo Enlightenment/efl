@@ -1576,7 +1576,7 @@ elm_web_forward_possible(Evas_Object *obj)
 }
 
 EAPI Eina_Bool
-elm_web_forward_possible_get(const Evas_Object *obj)
+elm_web_forward_possible_get(Evas_Object *obj)
 {
    ELM_CHECK_WIDTYPE(obj, widtype) EINA_FALSE;
 #ifdef HAVE_ELEMENTARY_WEB
@@ -1871,8 +1871,8 @@ elm_web_window_features_unref(Elm_Web_Window_Features *wf)
 #endif
 }
 
-EAPI void
-elm_web_window_features_bool_property_get(const Elm_Web_Window_Features *wf, Elm_Web_Window_Feature_Flag flag)
+EAPI Eina_Bool
+elm_web_window_features_property_get(const Elm_Web_Window_Features *wf, Elm_Web_Window_Feature_Flag flag)
 {
 #ifdef HAVE_ELEMENTARY_WEB
    Eina_Bool toolbar_visible, statusbar_visible;
@@ -1906,6 +1906,7 @@ elm_web_window_features_bool_property_get(const Elm_Web_Window_Features *wf, Elm
         case ELM_WEB_WINDOW_FEATURE_FULLSCREEN:
             return fullscreen;
             break;
+     }
 #else
    /* What to do with these ?
     
