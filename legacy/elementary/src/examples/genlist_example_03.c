@@ -111,7 +111,7 @@ elm_main(int argc __UNUSED__, char **argv __UNUSED__)
         _itc->func.state_get = NULL;
         _itc->func.del = NULL;
      }
-   
+
    list = _genlist_add(box);
    _genlist_fill(list);
 
@@ -120,11 +120,7 @@ elm_main(int argc __UNUSED__, char **argv __UNUSED__)
    _genlist_fill(list);
 
    list = _genlist_add(box);
-   elm_genlist_compress_mode_set(list, EINA_TRUE);
-   _genlist_fill(list);
-
-   list = _genlist_add(box);
-   elm_genlist_height_for_width_mode_set(list, EINA_TRUE);
+   elm_genlist_mode_set(list, ELM_LIST_COMPRESS);
    _genlist_fill(list);
 
    evas_object_size_hint_min_set(bg, 800, 160);

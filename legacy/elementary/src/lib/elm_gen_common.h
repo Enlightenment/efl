@@ -128,7 +128,6 @@ struct _Widget_Data
    Eina_Bool                      multitouched : 1;
    Eina_Bool                      longpressed : 1;
    Eina_Bool                      bring_in : 1; /**< a flag to describe the scroll animation. (show, bring in) */
-   Eina_Bool                      compress : 1;
    Eina_Bool                      height_for_width : 1;
    Eina_Bool                      homogeneous : 1;
    Eina_Bool                      swipe : 1;

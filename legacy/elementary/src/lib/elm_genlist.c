@@ -108,7 +108,6 @@ struct _Item_Cache
 
    const char  *item_style; // it->itc->item_style
    Eina_Bool    tree : 1; // it->group
-   Eina_Bool    compress : 1; // it->wd->compress
 
    Eina_Bool    selected : 1; // it->selected
    Eina_Bool    disabled : 1; // it->disabled
@@ -632,7 +631,7 @@ _sizing_eval(Evas_Object *obj)
    evas_object_size_hint_min_get(wd->scr, &minw, &minh);
    evas_object_size_hint_max_get(wd->scr, &maxw, &maxh);
    minh = -1;
-   if (wd->height_for_width)
+   if (wd->mode == ELM_LIST_COMPRESS)
      {
         Evas_Coord vw, vh;
 
@@ -650,7 +649,7 @@ _sizing_eval(Evas_Object *obj)
              wd->calc_job = ecore_job_add(_calc_job, wd);
           }
      }
-   if (wd->mode == ELM_LIST_LIMIT)
+   else if (wd->mode == ELM_LIST_LIMIT)
      {
         Evas_Coord vmw, vmh;
 
@@ -1600,7 +1599,6 @@ _item_cache_add(Elm_Gen_Item *it)
    evas_object_move(itc->base_view, -9999, -9999);
    itc->item_style = eina_stringshare_add(it->itc->item_style);
    if (it->item->type & ELM_GENLIST_ITEM_TREE) itc->tree = 1;
-   itc->compress = (it->wd->compress);
    itc->selected = it->selected;
    itc->disabled = elm_widget_item_disabled_get(it);
    itc->expanded = it->item->expanded;
@@ -1652,7 +1650,6 @@ _item_cache_find(Elm_Gen_Item *it)
         if ((itc->selected) || (itc->disabled) || (itc->expanded))
           continue;
         if ((itc->tree == tree) &&
-            (itc->compress == it->wd->compress) &&
             (((!it->itc->item_style) && (!itc->item_style)) ||
              (it->itc->item_style && itc->item_style &&
             (!strcmp(it->itc->item_style, itc->item_style)))))
@@ -2006,9 +2003,9 @@ _item_realize(Elm_Gen_Item *it,
         elm_widget_sub_object_add(WIDGET(it), VIEW(it));
 
         if (it->item->type & ELM_GENLIST_ITEM_TREE)
-          snprintf(buf, sizeof(buf), "tree%s/%s", it->wd->compress ? "_compress" : "", it->itc->item_style ?: "default");
+          snprintf(buf, sizeof(buf), "tree%s/%s", it->wd->mode == ELM_LIST_COMPRESS ? "_compress" : "", it->itc->item_style ?: "default");
         else
-          snprintf(buf, sizeof(buf), "item%s/%s", it->wd->compress ? "_compress" : "", it->itc->item_style ?: "default");
+          snprintf(buf, sizeof(buf), "item%s/%s", it->wd->mode == ELM_LIST_COMPRESS ? "_compress" : "", it->itc->item_style ?: "default");
 
         _elm_theme_object_set(WIDGET(it), VIEW(it), "genlist", buf,
                               elm_widget_style_get(WIDGET(it)));
@@ -2107,7 +2104,7 @@ _item_realize(Elm_Gen_Item *it,
 
              if (!it->display_only)
                elm_coords_finger_size_adjust(1, &mw, 1, &mh);
-             if (it->wd->height_for_width) mw = it->wd->prev_viewport_w;
+             if (it->wd->mode == ELM_LIST_COMPRESS) mw = it->wd->prev_viewport_w;
              edje_object_size_min_restricted_calc(VIEW(it), &mw, &mh, mw,
                                                   mh);
              if (!it->display_only)
@@ -2922,7 +2919,7 @@ _pan_resize(Evas_Object *obj,
    if (!sd) return;
    evas_object_geometry_get(obj, NULL, NULL, &ow, &oh);
    if ((ow == w) && (oh == h)) return;
-   if ((sd->wd->height_for_width) && (ow != w))
+   if ((sd->wd->mode == ELM_LIST_COMPRESS) && (ow != w))
      {
         /* fix me later */
         if (sd->resize_job) ecore_job_del(sd->resize_job);
@@ -3150,7 +3147,7 @@ _mode_item_realize(Elm_Gen_Item *it)
    elm_widget_sub_object_add(WIDGET(it), it->item->mode_view);
 
    strncpy(buf, "item", sizeof(buf));
-   if (it->wd->compress)
+   if (it->wd->mode == ELM_LIST_COMPRESS)
      strncat(buf, "_compress", sizeof(buf) - strlen(buf));
 
    if (it->item->order_num_in & 0x1) strncat(buf, "_odd", sizeof(buf) - strlen(buf));
@@ -3297,7 +3294,7 @@ _edit_mode_item_realize(Elm_Gen_Item *it, Eina_Bool effect_on)
    if (it->item->type & ELM_GENLIST_ITEM_TREE)
       strncpy(buf, "tree", sizeof(buf));
    else strncpy(buf, "item", sizeof(buf));
-   if (it->wd->compress)
+   if (it->wd->mode == ELM_LIST_COMPRESS)
       strncat(buf, "_compress", sizeof(buf) - strlen(buf));
 
    strncat(buf, "/", sizeof(buf) - strlen(buf));
@@ -5238,6 +5235,8 @@ elm_genlist_mode_set(Evas_Object  *obj,
    if (!wd) return;
    if (wd->mode == mode) return;
    wd->mode = mode;
+   if (wd->mode == ELM_LIST_COMPRESS)
+     elm_genlist_homogeneous_set(obj, EINA_FALSE);
    _sizing_eval(obj);
 }
 
@@ -5310,50 +5309,6 @@ elm_genlist_no_select_mode_get(const Evas_Object *obj)
 }
 
 EAPI void
-elm_genlist_compress_mode_set(Evas_Object *obj,
-                              Eina_Bool    compress)
-{
-   ELM_CHECK_WIDTYPE(obj, widtype);
-   Widget_Data *wd = elm_widget_data_get(obj);
-   if (!wd) return;
-   wd->compress = !!compress;
-   if (!compress) elm_genlist_homogeneous_set(obj, EINA_FALSE);
-}
-
-EAPI Eina_Bool
-elm_genlist_compress_mode_get(const Evas_Object *obj)
-{
-   ELM_CHECK_WIDTYPE(obj, widtype) EINA_FALSE;
-   Widget_Data *wd = elm_widget_data_get(obj);
-   if (!wd) return EINA_FALSE;
-   return wd->compress;
-}
-
-EAPI void
-elm_genlist_height_for_width_mode_set(Evas_Object *obj,
-                                      Eina_Bool    height_for_width)
-{
-   ELM_CHECK_WIDTYPE(obj, widtype);
-   Widget_Data *wd = elm_widget_data_get(obj);
-   if (!wd) return;
-   wd->height_for_width = !!height_for_width;
-   if (wd->height_for_width)
-     {
-        elm_genlist_homogeneous_set(obj, EINA_FALSE);
-        elm_genlist_compress_mode_set(obj, EINA_TRUE);
-     }
-}
-
-EAPI Eina_Bool
-elm_genlist_height_for_width_mode_get(const Evas_Object *obj)
-{
-   ELM_CHECK_WIDTYPE(obj, widtype) EINA_FALSE;
-   Widget_Data *wd = elm_widget_data_get(obj);
-   if (!wd) return EINA_FALSE;
-   return wd->height_for_width;
-}
-
-EAPI void
 elm_genlist_bounce_set(Evas_Object *obj,
                        Eina_Bool    h_bounce,
                        Eina_Bool    v_bounce)
@@ -5385,7 +5340,6 @@ elm_genlist_homogeneous_set(Evas_Object *obj,
    ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return;
-   if (homogeneous) elm_genlist_compress_mode_set(obj, EINA_TRUE);
    wd->homogeneous = !!homogeneous;
 }
 

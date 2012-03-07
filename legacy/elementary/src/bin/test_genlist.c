@@ -48,7 +48,7 @@ set_api_state(api_data *api)
 
       case COMPRESS_MODE_SET: /* 2 */
          elm_genlist_select_mode_set(gl, ELM_OBJECT_SELECT_MODE_DEFAULT);
-         elm_genlist_compress_mode_set(gl, EINA_TRUE);
+         elm_genlist_mode_set(gl, ELM_LIST_COMPRESS);
          break;
 
       case BOUNCE_SET: /* 3 */
@@ -840,7 +840,7 @@ test_genlist4(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_in
    evas_object_show(bx);
 
    gl = elm_genlist_add(win);
-   elm_genlist_height_for_width_mode_set(gl, EINA_TRUE);
+   elm_genlist_mode_set(gl, ELM_LIST_COMPRESS);
    elm_genlist_multi_select_set(gl, 1);
    evas_object_size_hint_align_set(gl, EVAS_HINT_FILL, EVAS_HINT_FILL);
    evas_object_size_hint_weight_set(gl, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
@@ -1996,7 +1996,7 @@ test_genlist12(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_i
    evas_object_show(bx);
 
    gl = elm_genlist_add(win);
-   elm_genlist_height_for_width_mode_set(gl, EINA_TRUE);
+   elm_genlist_mode_set(gl, ELM_LIST_COMPRESS);
    evas_object_size_hint_weight_set(gl, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(gl, EVAS_HINT_FILL, EVAS_HINT_FILL);
    elm_box_pack_end(bx, gl);

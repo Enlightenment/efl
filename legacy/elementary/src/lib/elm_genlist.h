@@ -491,12 +491,22 @@ EAPI Eina_Bool                     elm_genlist_multi_select_get(const Evas_Objec
  * @param mode The mode to use (one of #ELM_LIST_SCROLL or #ELM_LIST_LIMIT).
  *
  * This sets the mode used for sizing items horizontally. Valid modes
- * are #ELM_LIST_LIMIT and #ELM_LIST_SCROLL. The default is
+ * are #ELM_LIST_LIMIT, #ELM_LIST_SCROLL, and #ELM_LIST_COMPRESS. The default is
  * ELM_LIST_SCROLL. This mode means that if items are too wide to fit,
  * the scroller will scroll horizontally. Otherwise items are expanded
  * to fill the width of the viewport of the scroller. If it is
  * ELM_LIST_LIMIT, items will be expanded to the viewport width and
- * limited to that size.
+ * limited to that size. If it is ELM_LIST_COMPRESS, the item width will be
+ * fixed (restricted to a minimum of) to the list width when calculating its
+ * size in order to allow the height to be calculated based on it. This allows,
+ * for instance, text block to wrap lines if the Edje part is configured with
+ * "text.min: 0 1".  
+ * @note ELM_LIST_COMPRESS will make list resize slower as it will have to
+ *       recalculate every item height again whenever the list width
+ *       changes!
+ * @note When ELM_LIST_COMPRESS mode is enabled, it also enables
+ *       compress mode (see elm_genlist_compress_mode_set()) and
+ *       disables homogeneous (see elm_genlist_homogeneous_set()).
  *
  * @see elm_genlist_mode_get()
  *
@@ -1293,78 +1303,6 @@ EAPI void                          elm_genlist_item_cursor_engine_only_set(Elm_O
  * @ingroup Genlist
  */
 EAPI Eina_Bool                     elm_genlist_item_cursor_engine_only_get(const Elm_Object_Item *it);
-
-/**
- * Enable/disable compress mode.
- *
- * @param obj The genlist object
- * @param compress The compress mode
- * (@c EINA_TRUE = on, @c EINA_FALSE = off). Default is @c EINA_FALSE.
- *
- * This will enable the compress mode where items are "compressed"
- * horizontally to fit the genlist scrollable viewport width. This is
- * special for genlist.  Do not rely on
- * elm_genlist_mode_set() being set to @c ELM_LIST_COMPRESS to
- * work as genlist needs to handle it specially.
- *
- * @see elm_genlist_compress_mode_get()
- *
- * @ingroup Genlist
- */
-// XXX: kill this. elm_genlist_height_for_width_mode_set() covers this.
-EAPI void                          elm_genlist_compress_mode_set(Evas_Object *obj, Eina_Bool compress);
-
-/**
- * Get whether the compress mode is enabled.
- *
- * @param obj The genlist object
- * @return The compress mode
- * (@c EINA_TRUE = on, @c EINA_FALSE = off)
- *
- * @see elm_genlist_compress_mode_set()
- *
- * @ingroup Genlist
- */
-EAPI Eina_Bool                     elm_genlist_compress_mode_get(const Evas_Object *obj);
-
-/**
- * Enable/disable height-for-width mode.
- *
- * @param obj The genlist object
- * @param height_for_width The height-for-width mode (@c EINA_TRUE = on,
- * @c EINA_FALSE = off). Default is @c EINA_FALSE.
- *
- * With height-for-width mode the item width will be fixed (restricted
- * to a minimum of) to the list width when calculating its size in
- * order to allow the height to be calculated based on it. This allows,
- * for instance, text block to wrap lines if the Edje part is
- * configured with "text.min: 0 1".
- *
- * @note This mode will make list resize slower as it will have to
- *       recalculate every item height again whenever the list width
- *       changes!
- *
- * @note When height-for-width mode is enabled, it also enables
- *       compress mode (see elm_genlist_compress_mode_set()) and
- *       disables homogeneous (see elm_genlist_homogeneous_set()).
- *
- * @ingroup Genlist
- */
-//aspect 
-//XXX: API name is ambiguous.. How about elm_genlist_mode_fixed_width_set? 
-EAPI void                          elm_genlist_height_for_width_mode_set(Evas_Object *obj, Eina_Bool height_for_width);
-
-/**
- * Get whether the height-for-width mode is enabled.
- *
- * @param obj The genlist object
- * @return The height-for-width mode (@c EINA_TRUE = on, @c EINA_FALSE =
- * off)
- *
- * @ingroup Genlist
- */
-//XXX: API name is ambiguous elm_genlist_mode_fixed_width_get() ?????
-EAPI Eina_Bool                     elm_genlist_height_for_width_mode_get(const Evas_Object *obj);
 
 /**
  * Enable/disable homogeneous mode.

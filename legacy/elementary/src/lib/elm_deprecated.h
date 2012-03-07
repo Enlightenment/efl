@@ -6146,6 +6146,70 @@ EINA_DEPRECATED EAPI Eina_Bool         elm_web_forward_possible(Evas_Object *obj
  */
 EINA_DEPRECATED EAPI Eina_Bool         elm_web_navigate_possible(Evas_Object *obj, int steps);
 
+/*
+ * Enable/disable compress mode.
+ *
+ * @param obj The genlist object
+ * @param compress The compress mode
+ * (@c EINA_TRUE = on, @c EINA_FALSE = off). Default is @c EINA_FALSE.
+ *
+ * This will enable the compress mode where items are "compressed"
+ * horizontally to fit the genlist scrollable viewport width. This is
+ * special for genlist.  Do not rely on
+ * elm_genlist_mode_set() being set to @c ELM_LIST_COMPRESS to
+ * work as genlist needs to handle it specially.
+ *
+ * @deprecated elm_genlist_mode_set(obj, ELM_LIST_COMPRESS)
+ */
+EINA_DEPRECATED EAPI void                          elm_genlist_compress_mode_set(Evas_Object *obj, Eina_Bool compress);
+
+/**
+ * Get whether the compress mode is enabled.
+ *
+ * @param obj The genlist object
+ * @return The compress mode
+ * (@c EINA_TRUE = on, @c EINA_FALSE = off)
+ *
+ * @deprecated elm_genlsit_mode_get()
+ */
+EINA_DEPRECATED EAPI Eina_Bool                     elm_genlist_compress_mode_get(const Evas_Object *obj);
+
+/**
+ * Enable/disable height-for-width mode.
+ *
+ * @param obj The genlist object
+ * @param height_for_width The height-for-width mode (@c EINA_TRUE = on,
+ * @c EINA_FALSE = off). Default is @c EINA_FALSE.
+ *
+ * With height-for-width mode the item width will be fixed (restricted
+ * to a minimum of) to the list width when calculating its size in
+ * order to allow the height to be calculated based on it. This allows,
+ * for instance, text block to wrap lines if the Edje part is
+ * configured with "text.min: 0 1".
+ *
+ * @note This mode will make list resize slower as it will have to
+ *       recalculate every item height again whenever the list width
+ *       changes!
+ *
+ * @note When height-for-width mode is enabled, it also enables
+ *       compress mode (see elm_genlist_compress_mode_set()) and
+ *       disables homogeneous (see elm_genlist_homogeneous_set()).
+ *
+ * @deprecated elm_genlist_mode_set(obj, ELM_LIST_COMPRESS)
+ */
+EINA_DEPRECATED EAPI void                          elm_genlist_height_for_width_mode_set(Evas_Object *obj, Eina_Bool height_for_width);
+
+/**
+ * Get whether the height-for-width mode is enabled.
+ *
+ * @param obj The genlist object
+ * @return The height-for-width mode (@c EINA_TRUE = on, @c EINA_FALSE =
+ * off)
+ *
+ * @deprecated elm_genlist_mode_set(obj, ELM_LIST_COMPRESS)
+ */
+EINA_DEPRECATED EAPI Eina_Bool                     elm_genlist_height_for_width_mode_get(const Evas_Object *obj);
+
 /**
  * @}
  */

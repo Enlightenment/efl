@@ -247,7 +247,7 @@ test_store(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info 
    evas_object_show(bx);
 
    gl = elm_genlist_add(win);
-   elm_genlist_height_for_width_mode_set(gl, EINA_TRUE);
+   elm_genlist_mode_set(gl, ELM_LIST_COMPRESS);
    evas_object_smart_callback_add(gl, "selected", _st_selected, NULL);
    evas_object_smart_callback_add(gl, "clicked,double", _st_double_clicked, NULL);
    evas_object_smart_callback_add(gl, "longpressed", _st_longpress, NULL);
