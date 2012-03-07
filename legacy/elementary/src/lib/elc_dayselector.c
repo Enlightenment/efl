@@ -36,19 +36,25 @@ static void _dayselector_resize(void *data, Evas *e __UNUSED__,
             Evas_Object *obj __UNUSED__, void *event_info __UNUSED__);
 static void _disable_hook(Evas_Object *obj);
 static Eina_Bool _focus_next_hook(const Evas_Object *obj,
-                 Elm_Focus_Direction dir __UNUSED__, Evas_Object **next __UNUSED__);
+                                  Elm_Focus_Direction dir __UNUSED__,
+                                  Evas_Object **next __UNUSED__);
 static void _mirrored_set(Evas_Object *obj, Eina_Bool rtl);
 static void _translate_hook(Evas_Object *obj);
 static void _theme_hook(Evas_Object *obj);
-static void _item_text_set_hook(Evas_Object *obj, const char *item, const char *label);
-static const char *_item_text_get_hook(const Evas_Object *obj, const char *item);
-static void _content_set_hook(Evas_Object *obj, const char *item, Evas_Object *content);
+static void _item_text_set_hook(Evas_Object *obj, const char *item,
+                                const char *label);
+static const char *_item_text_get_hook(const Evas_Object *obj,
+                                       const char *item);
+static void _content_set_hook(Evas_Object *obj, const char *item,
+                              Evas_Object *content);
 static Evas_Object *_content_get_hook(const Evas_Object *obj, const char *item);
 static Evas_Object *_content_unset_hook(Evas_Object *obj, const char *item);
 static void _signal_emit_cb(void *data, Evas_Object *obj, const char *emission,
-            const char *source __UNUSED__);
-static void _item_clicked_cb(void *data, Evas_Object *obj, void *event_info __UNUSED__);
-static Elm_Dayselector_Item * _item_find(const Evas_Object *obj, Elm_Dayselector_Day day);
+                            const char *source __UNUSED__);
+static void _item_clicked_cb(void *data, Evas_Object *obj,
+                             void *event_info __UNUSED__);
+static Elm_Dayselector_Item * _item_find(const Evas_Object *obj,
+                                         Elm_Dayselector_Day day);
 static void _items_style_set(Evas_Object *obj);
 static void _update_items(Evas_Object *obj);
 static void _create_items(Evas_Object *obj);
@@ -74,7 +80,6 @@ _del_hook(Evas_Object *obj)
         eina_stringshare_del(it->day_style);
         elm_widget_item_free(it);
      }
-
    free(wd);
 }
 
@@ -164,7 +169,8 @@ _theme_hook(Evas_Object *obj)
 
    _elm_widget_mirrored_reload(obj);
    _mirrored_set(obj, elm_widget_mirrored_get(obj));
-   _elm_theme_object_set(obj, wd->base, "dayselector", "base", elm_widget_style_get(obj));
+   _elm_theme_object_set(obj, wd->base, "dayselector", "base",
+                         elm_widget_style_get(obj));
 
    EINA_LIST_FOREACH(wd->items, l, it)
      {
@@ -385,11 +391,9 @@ _item_clicked_cb(void *data, Evas_Object *obj, void *event_info __UNUSED__)
 
    EINA_LIST_FOREACH(wd->items, l, it)
      {
-        if (obj == VIEW(it))
-          {
-             evas_object_smart_callback_call(data, SIG_CHANGED, (void *)it->day);
-             return ;
-          }
+        if (obj != VIEW(it)) continue;
+        evas_object_smart_callback_call(data, SIG_CHANGED, (void *)it->day);
+        return;
      }
 }
 
@@ -426,16 +430,20 @@ _items_style_set(Evas_Object *obj)
         if (weekend_last >= wd->weekend_start)
           {
              if ((it->day >= wd->weekend_start) && (it->day <= weekend_last))
-               eina_stringshare_replace(&it->day_style, ITEM_TYPE_WEEKEND_DEFAULT);
+               eina_stringshare_replace(&it->day_style,
+                                        ITEM_TYPE_WEEKEND_DEFAULT);
              else
-               eina_stringshare_replace(&it->day_style, ITEM_TYPE_WEEKDAY_DEFAULT);
+               eina_stringshare_replace(&it->day_style,
+                                        ITEM_TYPE_WEEKDAY_DEFAULT);
           }
         else
           {
              if ((it->day >= wd->weekend_start) || (it->day <= weekend_last))
-               eina_stringshare_replace(&it->day_style, ITEM_TYPE_WEEKEND_DEFAULT);
+               eina_stringshare_replace(&it->day_style,
+                                        ITEM_TYPE_WEEKEND_DEFAULT);
              else
-               eina_stringshare_replace(&it->day_style, ITEM_TYPE_WEEKDAY_DEFAULT);
+               eina_stringshare_replace(&it->day_style,
+                                        ITEM_TYPE_WEEKDAY_DEFAULT);
           }
      }
 }
@@ -486,6 +494,7 @@ _create_items(Evas_Object *obj)
 
    t = time(NULL);
    localtime_r(&t, &time_daysel);
+
    for (idx = 0; idx < ELM_DAYSELECTOR_MAX; idx++)
      {
         it = elm_widget_item_new(obj, Elm_Dayselector_Item);
@@ -503,12 +512,18 @@ _create_items(Evas_Object *obj)
         edje_object_part_swallow(wd->base, buf, VIEW(it));
         snprintf(buf, sizeof(buf), "day%d,visible", idx);
         edje_object_signal_emit(wd->base, buf, "elm");
-        evas_object_smart_callback_add(VIEW(it), "changed", _item_clicked_cb, obj);
-        evas_object_event_callback_add(VIEW(it), EVAS_CALLBACK_DEL, _item_del_cb, obj);
-        elm_object_signal_callback_add(VIEW(it), ITEM_TYPE_WEEKDAY_DEFAULT, "", _signal_emit_cb, obj);
-        elm_object_signal_callback_add(VIEW(it), ITEM_TYPE_WEEKDAY_STYLE1, "", _signal_emit_cb, obj);
-        elm_object_signal_callback_add(VIEW(it), ITEM_TYPE_WEEKEND_DEFAULT, "", _signal_emit_cb, obj);
-        elm_object_signal_callback_add(VIEW(it), ITEM_TYPE_WEEKEND_STYLE1, "", _signal_emit_cb, obj);
+        evas_object_smart_callback_add(VIEW(it), "changed", _item_clicked_cb,
+                                       obj);
+        evas_object_event_callback_add(VIEW(it), EVAS_CALLBACK_DEL,
+                                       _item_del_cb, obj);
+        elm_object_signal_callback_add(VIEW(it), ITEM_TYPE_WEEKDAY_DEFAULT, "",
+                                       _signal_emit_cb, obj);
+        elm_object_signal_callback_add(VIEW(it), ITEM_TYPE_WEEKDAY_STYLE1, "",
+                                       _signal_emit_cb, obj);
+        elm_object_signal_callback_add(VIEW(it), ITEM_TYPE_WEEKEND_DEFAULT, "",
+                                       _signal_emit_cb, obj);
+        elm_object_signal_callback_add(VIEW(it), ITEM_TYPE_WEEKEND_STYLE1, "",
+                                       _signal_emit_cb, obj);
      }
    _items_style_set(obj);
    _update_items(obj);
@@ -537,6 +552,7 @@ elm_dayselector_add(Evas_Object *parent)
    elm_widget_content_set_hook_set(obj, _content_set_hook);
    elm_widget_content_get_hook_set(obj, _content_get_hook);
    elm_widget_content_unset_hook_set(obj, _content_unset_hook);
+
    wd->base = edje_object_add(e);
    _elm_theme_object_set(obj, wd->base, "dayselector", "base", "default");
    elm_object_style_set(wd->base, "dayselector");
@@ -545,9 +561,11 @@ elm_dayselector_add(Evas_Object *parent)
    wd->week_start = _elm_config->week_start;
    wd->weekend_start = _elm_config->weekend_start;
    wd->weekend_len = _elm_config->weekend_len;
+   printf("%d %d %d\n", wd->week_start, wd->weekend_start, wd->weekend_len);
    _create_items(obj);
 
-   evas_object_event_callback_add(obj, EVAS_CALLBACK_RESIZE, _dayselector_resize, obj);
+   evas_object_event_callback_add(obj, EVAS_CALLBACK_RESIZE,
+                                  _dayselector_resize, obj);
    evas_object_smart_callbacks_descriptions_set(obj, _signals);
    _mirrored_set(obj, elm_widget_mirrored_get(obj));
    _sizing_eval(obj);
@@ -589,6 +607,7 @@ elm_dayselector_week_start_set(Evas_Object *obj, Elm_Dayselector_Day day)
    EINA_LIST_FOREACH(wd->items, l, it)
      {
         loc = (ELM_DAYSELECTOR_MAX - wd->week_start + it->day) % ELM_DAYSELECTOR_MAX;
+        printf("%d\n", loc);
         snprintf(buf, sizeof(buf), "day%d", loc);
         edje_object_part_swallow(wd->base, buf, VIEW(it));
      }

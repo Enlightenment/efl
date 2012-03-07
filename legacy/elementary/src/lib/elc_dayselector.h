@@ -51,12 +51,11 @@
  * the different check styles for individual days.
  *
  * The widget emits the following signals:
- *
- * <b>"dayselector,changed"</b> - This signal is emitted when the user changes 
- * the state of a day.
+ * @li "dayselector,changed" - when the user changes the state of a day.
+ * @li "language,changed" - the program's launguage changed
  *
  * Available styles for dayselector are:
- * - <b>@c default </b>
+ * @li default
  *
  * This example shows the usage of the widget.
  * @li @ref dayselector_example
