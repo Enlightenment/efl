@@ -191,5 +191,15 @@ EAPI void                         elm_ctxpopup_direction_priority_get(Evas_Objec
 EAPI Elm_Ctxpopup_Direction       elm_ctxpopup_direction_get(const Evas_Object *obj);
 
 /**
+ * @brief Dismiss a ctxpopup object
+ *
+ * @param obj The ctxpopup object
+ * Use this function to simulate clicking outside the ctxpopup to dismiss it.
+ * In this way, the ctxpopup will be hidden and the "clicked" signal will be
+ * emitted.
+ */
+EAPI void                         elm_ctxpopup_dismiss(Evas_Object *obj);
+
+/**
  * @}
  */

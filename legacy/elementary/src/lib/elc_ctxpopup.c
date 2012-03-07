@@ -1023,7 +1023,9 @@ static void
 _bg_clicked_cb(void *data, Evas_Object *obj __UNUSED__,
                const char *emission __UNUSED__, const char *source __UNUSED__)
 {
-   evas_object_hide(data);
+   Widget_Data *wd = elm_widget_data_get(data);
+   if (!wd) return;
+   _hide_signal_emit(data, wd->dir);
 }
 
 static void
@@ -1061,8 +1063,15 @@ _hide_finished(void *data, Evas_Object *obj __UNUSED__,
 static void
 _hide(Evas_Object *obj)
 {
-   Widget_Data *wd = elm_widget_data_get(obj);
+   _ctxpopup_hide(NULL, NULL, obj, NULL);
+   evas_object_smart_callback_call(obj, SIG_DISMISSED, NULL);
+}
 
+static void
+_ctxpopup_hide(void *data __UNUSED__, Evas *e __UNUSED__, Evas_Object *obj,
+               void *event_info __UNUSED__)
+{
+   Widget_Data *wd = elm_widget_data_get(obj);
    if ((!wd) || (!wd->visible)) return;
 
    evas_object_hide(wd->bg);
@@ -1072,16 +1081,6 @@ _hide(Evas_Object *obj)
    _scroller_size_reset(wd);
 
    wd->visible = EINA_FALSE;
-   evas_object_smart_callback_call(obj, SIG_DISMISSED, NULL);
-}
-
-static void
-_ctxpopup_hide(void *data __UNUSED__, Evas *e __UNUSED__, Evas_Object *obj,
-               void *event_info __UNUSED__)
-{
-   Widget_Data *wd = elm_widget_data_get(obj);
-   if (!wd) return;
-   _hide_signal_emit(obj, wd->dir);
 }
 
 static void
@@ -1590,4 +1589,13 @@ elm_ctxpopup_direction_get(const Evas_Object *obj)
    wd = elm_widget_data_get(obj);
    if (!wd) return ELM_CTXPOPUP_DIRECTION_UNKNOWN;
    return wd->dir;
+}
+
+EAPI void
+elm_ctxpopup_dismiss(Evas_Object *obj)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype);
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return;
+   _hide_signal_emit(obj, wd->dir);
 }
