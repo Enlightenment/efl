@@ -883,8 +883,6 @@ EAPI void elm_gengrid_item_class_ref(Elm_Gengrid_Item_Class *itc);
  */
 EAPI void elm_gengrid_item_class_unref(Elm_Gengrid_Item_Class *itc);
 
-//XXX: Need to review tooltip & cursor APIs
-
 /**
  * Set the text to be shown in a given gengrid item's tooltips.
  *

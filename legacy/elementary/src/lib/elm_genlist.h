@@ -1039,10 +1039,6 @@ EAPI void elm_genlist_item_class_ref(Elm_Genlist_Item_Class *itc);
  */
 EAPI void elm_genlist_item_class_unref(Elm_Genlist_Item_Class *itc);
 
-
-
-//XXX: Need to review tooltip & cursor APIs
-
 /**
  * Set the text to be shown in a given genlist item's tooltips.
  *
