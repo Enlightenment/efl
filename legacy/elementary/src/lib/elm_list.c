@@ -15,7 +15,7 @@ struct _Widget_Data
    Elm_List_Mode mode;
    Elm_List_Mode h_mode;
    Evas_Coord minw[2], minh[2];
-   Elm_Object_Select_Mode_Type select_mode;
+   Elm_Object_Select_Mode select_mode;
    int walking;
    int movements;
    struct {
@@ -1623,7 +1623,7 @@ elm_list_horizontal_get(const Evas_Object *obj)
 }
 
 EAPI void
-elm_list_select_mode_set(Evas_Object *obj, Elm_Object_Select_Mode_Type mode)
+elm_list_select_mode_set(Evas_Object *obj, Elm_Object_Select_Mode mode)
 {
    ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
@@ -1634,7 +1634,7 @@ elm_list_select_mode_set(Evas_Object *obj, Elm_Object_Select_Mode_Type mode)
      wd->select_mode = mode;
 }
 
-EAPI Elm_Object_Select_Mode_Type
+EAPI Elm_Object_Select_Mode
 elm_list_select_mode_get(const Evas_Object *obj)
 {
    ELM_CHECK_WIDTYPE(obj, widtype) ELM_OBJECT_SELECT_MODE_MAX;
@@ -1654,7 +1654,7 @@ elm_list_always_select_mode_set(Evas_Object *obj,
      elm_list_select_mode_set(obj, ELM_OBJECT_ALWAYS_SELECT);
    else
      {
-        Elm_Object_Select_Mode_Type oldmode = elm_list_select_mode_get(obj);
+        Elm_Object_Select_Mode oldmode = elm_list_select_mode_get(obj);
         if (oldmode == ELM_OBJECT_ALWAYS_SELECT)
           elm_list_select_mode_set(obj, ELM_OBJECT_NORMAL_SELECT);
      }
@@ -1666,7 +1666,7 @@ elm_list_always_select_mode_get(const Evas_Object *obj)
    ELM_CHECK_WIDTYPE(obj, widtype) EINA_FALSE;
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return EINA_FALSE;
-   Elm_Object_Select_Mode_Type oldmode = elm_list_select_mode_get(obj);
+   Elm_Object_Select_Mode oldmode = elm_list_select_mode_get(obj);
    if (oldmode == ELM_OBJECT_ALWAYS_SELECT)
      return EINA_TRUE;
    return EINA_FALSE;

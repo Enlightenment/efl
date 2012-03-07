@@ -126,7 +126,7 @@ elm_main(int argc __UNUSED__, char **argv __UNUSED__)
 
    Eina_Bool hbounce, vbounce, always, no_sel;
    Elm_Scroller_Policy hp, vp;
-   Elm_Object_Select_Mode_Type sel_mode;
+   Elm_Object_Select_Mode sel_mode;
 
    always = no_sel = EINA_FALSE;
    sel_mode = elm_genlist_select_mode_get(list);

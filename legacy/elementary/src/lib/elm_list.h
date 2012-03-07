@@ -241,7 +241,7 @@ EAPI Eina_Bool                    elm_list_horizontal_get(const Evas_Object *obj
  * @ingroup List
  */
 EAPI void
-elm_list_select_mode_set(Evas_Object *obj, Elm_Object_Select_Mode_Type mode);
+elm_list_select_mode_set(Evas_Object *obj, Elm_Object_Select_Mode mode);
 
 /**
  * Get the list select mode.
@@ -254,7 +254,7 @@ elm_list_select_mode_set(Evas_Object *obj, Elm_Object_Select_Mode_Type mode);
  *
  * @ingroup List
  */
-EAPI Elm_Object_Select_Mode_Type
+EAPI Elm_Object_Select_Mode
 elm_list_select_mode_get(const Evas_Object *obj);
 
 /**
