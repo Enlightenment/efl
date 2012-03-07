@@ -5398,6 +5398,30 @@ EINA_DEPRECATED EAPI void                 elm_video_uri_set(Evas_Object *video, 
  */
 EINA_DEPRECATED EAPI void                   elm_photocam_region_get(const Evas_Object *obj, int *x, int *y, int *w, int *h);
 
+/**
+ * @brief Set the gesture state for photocam.
+ *
+ * @param obj The photocam object
+ * @param gesture The gesture state to set
+ *
+ * This sets the gesture state to on(EINA_TRUE) or off (EINA_FALSE) for
+ * photocam. The default is off. This will start multi touch zooming.
+ *
+ * @deprecated Use elm_photocam_gesture_enabled_set() instead.
+ */
+EINA_DEPRECATED EAPI void		    elm_photocam_gesture_set(Evas_Object *obj, Eina_Bool gesture);
+
+/**
+ * @brief Get the gesture state for photocam.
+ *
+ * @param obj The photocam object
+ * @return The current gesture state
+ *
+ * This gets the current gesture state for the photocam object.
+ *
+ * @deprecated Use elm_photocam_gesture_enabled_get() instead.
+ */
+EINA_DEPRECATED EAPI Eina_Bool		    elm_photocam_gesture_get(const Evas_Object *obj);
 /* No documentation for these API before.
  *
  * @deprecated Use elm_route_latitude_min_max_get()
