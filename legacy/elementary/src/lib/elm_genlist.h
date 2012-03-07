@@ -1614,7 +1614,7 @@ EAPI void                          elm_genlist_item_decorate_mode_set(Elm_Object
  *
  * @ingroup Genlist
  */
-EAPI const char                   *elm_genlist_decorate_type_get(const Evas_Object *obj);
+EAPI const char                   *elm_genlist_decorate_mode_get(const Evas_Object *obj);
 
 /**
  * Get active genlist mode item

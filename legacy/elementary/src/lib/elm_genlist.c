@@ -5489,7 +5489,7 @@ elm_genlist_item_decorate_mode_set(Elm_Object_Item  *it,
 }
 
 EAPI const char *
-elm_genlist_decorate_type_get(const Evas_Object *obj)
+elm_genlist_decorate_mode_get(const Evas_Object *obj)
 {
    ELM_CHECK_WIDTYPE(obj, widtype) NULL;
    Widget_Data *wd = elm_widget_data_get(obj);
