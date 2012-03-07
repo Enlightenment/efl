@@ -267,6 +267,16 @@ elm_image_fill_outside_get(const Evas_Object *obj)
 }
 
 EAPI void
+elm_image_preload_disabled_set(Evas_Object *obj, Eina_Bool disabled)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype);
+   Widget_Data *wd = elm_widget_data_get(obj);
+
+   if (!wd) return;
+   _els_smart_icon_preload_set(wd->img, !!disable);
+}
+
+EAPI void
 elm_image_prescale_set(Evas_Object *obj, int size)
 {
    ELM_CHECK_WIDTYPE(obj, widtype);
