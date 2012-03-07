@@ -922,7 +922,7 @@ eina_file_open(const char *path, Eina_Bool shared)
 
    file = eina_hash_find(_eina_file_cache, filename);
    if (file &&
-       (file->mtime != mtime.QuadPart && file->length != length.QuadPart))
+       (file->mtime != mtime.QuadPart || file->length != length.QuadPart))
      {
         file->delete_me = EINA_TRUE;
         eina_hash_del(_eina_file_cache, file->filename, file);
