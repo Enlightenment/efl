@@ -153,7 +153,7 @@ _prev_cb(void *data, Evas_Object *o __UNUSED__, void *event_info __UNUSED__)
    if (!glit) glit = elm_genlist_last_item_get(list);
 
    elm_genlist_item_selected_set(glit, EINA_TRUE);
-   elm_genlist_item_show(glit);
+   elm_genlist_item_show(glit, ELM_GENLIST_ITEM_SCROLLTO_IN);
 }
 
 static void
@@ -162,7 +162,7 @@ _bring_in_cb(void *data, Evas_Object *o __UNUSED__, void *event_info __UNUSED__)
    Elm_Object_Item *glit = data;
    if (!glit) return;
 
-   elm_genlist_item_bring_in(glit);
+   elm_genlist_item_bring_in(glit, ELM_GENLIST_ITEM_SCROLLTO_IN);
 }
 
 static void
@@ -171,7 +171,7 @@ _show_cb(void *data, Evas_Object *o __UNUSED__, void *event_info __UNUSED__)
    Elm_Object_Item *glit = data;
    if (!glit) return;
 
-   elm_genlist_item_show(glit);
+   elm_genlist_item_show(glit, ELM_GENLIST_ITEM_SCROLLTO_IN);
 }
 
 static void
