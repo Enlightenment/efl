@@ -165,6 +165,9 @@ struct _Elm_Config
    double        glayer_long_tap_start_timeout;
    int           access_mode;
    Eina_Bool     glayer_continues_enable;
+   int           week_start;
+   int           weekend_start;
+   int           weekend_len;
 
    /* Not part of the EET file */
    Eina_Bool     is_mirrored : 1;

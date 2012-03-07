@@ -45,6 +45,7 @@ widget_preview_segment_control \
 widget_preview_conformant \
 widget_preview_index \
 widget_preview_clock \
+widget_preview_dayselector \
 widget_preview_label \
 widget_preview_frame \
 widget_preview_slider \
@@ -127,6 +128,7 @@ EXTRA_DIST = \
 	widget_preview_datetime1.c \
 	widget_preview_datetime2.c \
 	widget_preview_datetime3.c \
+	widget_preview_dayselector.c \
 	widget_preview_diskselector.c \
 	widget_preview_entry1.c \
 	widget_preview_entry2.c \

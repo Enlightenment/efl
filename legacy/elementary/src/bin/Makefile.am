@@ -47,6 +47,7 @@ test_conform.c \
 test_ctxpopup.c \
 test_cursor.c \
 test_datetime.c \
+test_dayselector.c \
 test_diskselector.c \
 test_entry.c \
 test_entry_anchor.c \

@@ -334,6 +334,9 @@ _desc_init(void)
    ELM_CONFIG_VAL(D, T, glayer_long_tap_start_timeout, T_DOUBLE);
    ELM_CONFIG_VAL(D, T, access_mode, T_INT);
    ELM_CONFIG_VAL(D, T, glayer_continues_enable, T_UCHAR);
+   ELM_CONFIG_VAL(D, T, week_start, T_INT);
+   ELM_CONFIG_VAL(D, T, weekend_start, T_INT);
+   ELM_CONFIG_VAL(D, T, weekend_len, T_INT);
 #undef T
 #undef D
 #undef T_INT
@@ -905,6 +908,9 @@ _config_load(void)
    _elm_config->glayer_flick_time_limit_ms = 120;              /* ms to finish flick */
    _elm_config->glayer_long_tap_start_timeout = 1.2;   /* 1.2 second to start long-tap */
    _elm_config->glayer_continues_enable = EINA_TRUE;      /* Continue gestures default */
+   _elm_config->week_start = 0;
+   _elm_config->weekend_start = 6;
+   _elm_config->weekend_len = 2;
 }
 
 static const char *

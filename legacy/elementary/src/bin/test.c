@@ -110,6 +110,7 @@ void test_scroller2(void *data, Evas_Object *obj, void *event_info);
 void test_spinner(void *data, Evas_Object *obj, void *event_info);
 void test_index(void *data, Evas_Object *obj, void *event_info);
 void test_index2(void *data, Evas_Object *obj, void *event_info);
+void test_index3(void *data, Evas_Object *obj, void *event_info);
 void test_photocam(void *data, Evas_Object *obj, void *event_info);
 void test_photo(void *data, Evas_Object *obj, void *event_info);
 void test_thumb(void *data, Evas_Object *obj, void *event_info);
@@ -166,6 +167,7 @@ void test_naviframe(void *data, Evas_Object *obj, void *event_info);
 //void test_factory(void *data, Evas_Object *obj, void *event_info);
 void test_datetime(void *data, Evas_Object *obj, void *event_info);
 void test_popup(void *data, Evas_Object *obj, void *event_info);
+void test_dayselector(void *data, Evas_Object *obj, void *event_info);
 #ifdef HAVE_EMOTION
 void test_video(void *data, Evas_Object *obj, void *event_info);
 #endif
@@ -464,6 +466,7 @@ add_tests:
    //------------------------------//
    ADD_TEST(NULL, "Selectors", "Index", test_index);
    ADD_TEST(NULL, "Selectors", "Index 2", test_index2);
+   ADD_TEST(NULL, "Selectors", "Index 3", test_index3);
    ADD_TEST(NULL, "Selectors", "File Selector", test_fileselector);
    ADD_TEST(NULL, "Selectors", "File Selector Entry", test_fileselector_entry);
    ADD_TEST(NULL, "Selectors", "File Selector Button", test_fileselector_button);
@@ -475,6 +478,7 @@ add_tests:
    ADD_TEST(NULL, "Selectors", "Hoversel", test_hoversel);
    ADD_TEST(NULL, "Selectors", "Radios", test_radio);
    ADD_TEST(NULL, "Selectors", "Flip Selector", test_flipselector);
+   ADD_TEST(NULL, "Selectors", "Dayselector", test_dayselector);
 
    //------------------------------//
    ADD_TEST(NULL, "Cursors", "Cursor", test_cursor);

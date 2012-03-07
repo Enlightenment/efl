@@ -36,6 +36,7 @@ WGT_PREVIEW = \
 	datetime:preview-00.png:widget_preview_datetime1:360:60 \
 	datetime:preview-01.png:widget_preview_datetime2:200:60 \
 	datetime:preview-02.png:widget_preview_datetime3:200:60 \
+	dayselector:preview-00.png:widget_preview_dayselector:350:50 \
 	slider:preview-00.png:widget_preview_slider:200:100 \
 	panes:preview-00.png:widget_preview_panes:200:100 \
 	toolbar:preview-00.png:widget_preview_toolbar:300:100 \

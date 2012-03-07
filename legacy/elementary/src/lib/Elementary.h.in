@@ -161,6 +161,7 @@ EAPI extern Elm_Version *elm_version;
 /* other includes */
 // Tom Hacohen
 #include <elc_ctxpopup.h>
+#include <elc_dayselector.h>
 #include <elc_fileselector_button.h>
 #include <elc_fileselector_entry.h>
 #include <elc_fileselector.h>

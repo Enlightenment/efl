@@ -87,6 +87,10 @@
  *
  * @image html img/widget/datetime/preview-00.png
  * @image latex img/widget/datetime/preview-00.eps
+ * @li @ref Dayselector
+ *
+ * @image html img/widget/dayselector/preview-00.png
+ * @image latex img/widget/dayselector/preview-00.eps
  * @li @ref Diskselector
  *
  * @image html img/widget/diskselector/preview-00.png

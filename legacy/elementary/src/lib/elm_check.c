@@ -210,6 +210,31 @@ _activate_hook(Evas_Object *obj)
 }
 
 static void
+_signal_emit_hook(Evas_Object *obj, const char *emission, const char *source)
+{
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return;
+
+   edje_object_signal_emit(wd->chk, emission, source);
+}
+
+static void
+_signal_callback_add_hook(Evas_Object *obj, const char *emission, const char *source, Edje_Signal_Cb func_cb, void *data)
+{
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return;
+   edje_object_signal_callback_add(wd->chk, emission, source, func_cb, data);
+}
+
+static void
+_signal_callback_del_hook(Evas_Object *obj, const char *emission, const char *source, Edje_Signal_Cb func_cb, void *data)
+{
+   Widget_Data *wd = elm_widget_data_get(obj);
+   edje_object_signal_callback_del_full(wd->chk, emission, source, func_cb,
+                                        data);
+}
+
+static void
 _content_set_hook(Evas_Object *obj, const char *part, Evas_Object *content)
 {
    ELM_CHECK_WIDTYPE(obj, widtype);
@@ -409,6 +434,9 @@ elm_check_add(Evas_Object *parent)
    elm_widget_can_focus_set(obj, EINA_TRUE);
    elm_widget_activate_hook_set(obj, _activate_hook);
    elm_widget_event_hook_set(obj, _event_hook);
+   elm_widget_signal_emit_hook_set(obj, _signal_emit_hook);
+   elm_widget_signal_callback_add_hook_set(obj, _signal_callback_add_hook);
+   elm_widget_signal_callback_del_hook_set(obj, _signal_callback_del_hook);
    elm_widget_text_set_hook_set(obj, _elm_check_label_set);
    elm_widget_text_get_hook_set(obj, _elm_check_label_get);
    elm_widget_content_set_hook_set(obj, _content_set_hook);

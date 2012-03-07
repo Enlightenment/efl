@@ -39,6 +39,8 @@
  *
  * @ref datetime_example
  *
+ * @ref dayselector_example
+ *
  * @ref mapbuf_example
 
  * @ref map_example_01
@@ -1742,6 +1744,46 @@
  * this example.
  *
  * @example datetime_example.c
+ */
+
+/**
+ * @page dayselector_example Dayselector widget example
+ *
+ * This code places two Elementary dayselector widgets on a window, each of
+ * them exemplifying the different widget styles.
+ *
+ * The first of them is the dayselector in default style:
+ * @dontinclude dayselector_example.c
+ * @skip weekdays starting from Sunday
+ * @until evas_object_show
+ *
+ * As you see, the default style displays the weekdays starting from Sunday.
+ *
+ * One can select/unselect a day just by clicking on the day object.
+ * The selection toggles once it is being pressed.
+ *
+ *
+ * For showing weekdays starting from Monday, see the second dayselector:
+ * @dontinclude dayselector_example.c
+ * @skip weekdays starting from Monday
+ * @until evas_object_show
+ *
+ *
+ * The following code exemplifies the selection APIs of Dayselector:
+ * @dontinclude dayselector_example.c
+ * @skip Callback function
+ * @until End of clicked callback
+ *
+ *
+ * See the full @ref dayselector_example.c "example", whose window should
+ * look like this picture:
+ *
+ * @image html screenshots/dayselector_example.png
+ * @image latex screenshots/dayselector_example.eps width=\textwidth
+ *
+ * See the full @ref dayselector_example_c "source code" for this example.
+ *
+ * @example dayselector_example.c
  */
 
 /**
@@ -6255,6 +6297,12 @@
  * @page datetime_example_c Datetime example
  * @include datetime_example.c
  * @example datetime_example.c
+ */
+
+/**
+ * @page dayselector_example_c Dayselector example
+ * @include dayselector_example.c
+ * @example dayselector_example.c
  */
 
 /**
