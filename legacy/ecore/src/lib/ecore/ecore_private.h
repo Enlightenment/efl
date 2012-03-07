@@ -244,7 +244,7 @@ static inline void
 _ecore_unlock(void)
 {
    _ecore_main_lock_count--;
-   assert(_ecore_main_lock_count == 0);
+   /* assert(_ecore_main_lock_count == 0); */
 #ifdef HAVE_THREAD_SAFETY
    eina_lock_release(&_ecore_main_loop_lock);
 #endif
