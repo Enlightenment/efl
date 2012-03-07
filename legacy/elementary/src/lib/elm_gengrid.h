@@ -1524,8 +1524,7 @@ EAPI Eina_Bool                     elm_gengrid_filled_get(const Evas_Object *obj
  *
  * @ingroup Gengrid
  */
-EAPI void
-elm_gengrid_select_mode_set(Evas_Object *obj, Elm_Object_Select_Mode_Type mode);
+EAPI void                          elm_gengrid_select_mode_set(Evas_Object *obj, Elm_Object_Select_Mode_Type mode);
 
 /**
  * Get the gengrid select mode.
@@ -1538,8 +1537,7 @@ elm_gengrid_select_mode_set(Evas_Object *obj, Elm_Object_Select_Mode_Type mode);
  *
  * @ingroup Gengrid
  */
-EAPI Elm_Object_Select_Mode_Type
-elm_gengrid_select_mode_get(const Evas_Object *obj);
+EAPI Elm_Object_Select_Mode_Type   elm_gengrid_select_mode_get(const Evas_Object *obj);
 
 /**
  * Set whether the gengrid items' should be highlighted when item selected.
@@ -1559,9 +1557,7 @@ elm_gengrid_select_mode_get(const Evas_Object *obj);
  * @ingroup Gengrid
  */
 
-EAPI void
-elm_gengrid_highlight_mode_set(Evas_Object *obj,
-                             Eina_Bool    highlight);
+EAPI void                          elm_gengrid_highlight_mode_set(Evas_Object *obj, Eina_Bool highlight);
 
 /**
  * Get whether the gengrid items' should be highlighted when item selected.
@@ -1575,8 +1571,7 @@ elm_gengrid_highlight_mode_set(Evas_Object *obj,
  * @ingroup Gengrid
  */
 
-EAPI Eina_Bool
-elm_gengrid_highlight_mode_get(const Evas_Object *obj);
+EAPI Eina_Bool                     elm_gengrid_highlight_mode_get(const Evas_Object *obj);
 
 /**
  * @}
