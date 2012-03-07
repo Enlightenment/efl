@@ -10,6 +10,7 @@ void test_bg_plain(void *data, Evas_Object *obj, void *event_info);
 void test_bg_image(void *data, Evas_Object *obj, void *event_info);
 void test_bg_options(void *data, Evas_Object *obj, void *event_info);
 void test_icon(void *data, Evas_Object *obj, void *event_info);
+void test_icon_transparent(void *data, Evas_Object *obj, void *event_info);
 void test_box_vert(void *data, Evas_Object *obj, void *event_info);
 void test_box_vert2(void *data, Evas_Object *obj, void *event_info);
 void test_box_pack(void *data, Evas_Object *obj, void *event_info);
@@ -342,7 +343,8 @@ add_tests:
    ADD_TEST(NULL, "Window / Background", "Window Plug", test_win_plug);
 
    //------------------------------//
-   ADD_TEST(NULL, "Images", "Icon Transparent", test_icon);
+   ADD_TEST(NULL, "Images", "Icon", test_icon);
+   ADD_TEST(NULL, "Images", "Icon Transparent", test_icon_transparent);
    ADD_TEST(NULL, "Images", "Icon Animation", test_icon_animated);
    ADD_TEST(NULL, "Images", "Photocam", test_photocam);
    ADD_TEST(NULL, "Images", "Photo", test_photo);
