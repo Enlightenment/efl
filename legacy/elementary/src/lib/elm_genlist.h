@@ -193,9 +193,9 @@
  *
  * Items will only call their selection func and callback when first becoming
  * selected. Any further clicks will do nothing, unless you enable always
- * select with elm_genlist_select_mode_set() as ELM_OBJECT_ALWAYS_SELECT.
+ * select with elm_genlist_select_mode_set() as ELM_OBJECT_SELECT_MODE_ALWAYS.
  * This means even if selected, every click will make the selected callbacks
- * be called. elm_genlist_select_mode_set() as ELM_OBJECT_NO_SELECT will
+ * be called. elm_genlist_select_mode_set() as ELM_OBJECT_SELECT_MODE_NONE will
  * turn off the ability to select items entirely and they will neither
  * appear selected nor call selected callback functions.
  *
@@ -1822,16 +1822,16 @@ EAPI Eina_Bool          elm_genlist_highlight_mode_get(const Evas_Object *obj);
  * @param mode The select mode
  *
  * elm_genlist_select_mode_set() changes item's select mode.
- * - ELM_OBJECT_NORMAL_SELECT : The item will only call their selection func and
+ * - ELM_OBJECT_SELECT_MODE_DEFAULT : The item will only call their selection func and
  *      callback when first becoming selected. Any further clicks will
  *      do nothing, unless you set always select mode.
- * - ELM_OBJECT_ALWAYS_SELECT : This means that, even if selected,
+ * - ELM_OBJECT_SELECT_MODE_ALWAYS : This means that, even if selected,
  *      every click will make the selected callbacks be called.
- * - ELM_OBJECT_NO_SELECT : This will turn off the ability to select the item
+ * - ELM_OBJECT_SELECT_MODE_NONE : This will turn off the ability to select the item
  *      entirely and they will neither appear selected nor call selected
  *      callback functions.
- * - ELM_OBJECT_DISPLAY_ONLY_SELECT : This will apply no-finger-size rule
- *      with ELM_OBJECT_NO_SELECT. No-finger-size rule makes an item can be
+ * - ELM_OBJECT_SELECT_MODE_DISPLAY_ONLY : This will apply no-finger-size rule
+ *      with ELM_OBJECT_SELECT_MODE_NONE. No-finger-size rule makes an item can be
  *      smaller than lower limit. Clickable objects should be bigger than
  *      human touch point device (your finger) for some touch or
  *      small screen devices. So it is enabled, the item can be shrink than

@@ -129,9 +129,9 @@
  * Grid cells will only have their selection smart callbacks called
  * when firstly getting selected. Any further clicks will do
  * nothing, unless you enable the "always select mode", with
- * elm_gengrid_select_mode_set() as ELM_OBJECT_ALWAYS_SELECT,
+ * elm_gengrid_select_mode_set() as ELM_OBJECT_SELECT_MODE_ALWAYS,
  * thus making every click to issue selection callbacks.
- * elm_gengrid_select_mode_set() as ELM_OBJECT_NO_SELECT will
+ * elm_gengrid_select_mode_set() as ELM_OBJECT_SELECT_MODE_NONE will
  * turn off the ability to select items entirely in the widget and
  * they will neither appear selected nor call the selection smart
  * callbacks.
