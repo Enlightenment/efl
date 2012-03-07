@@ -394,9 +394,9 @@ typedef enum
 
 typedef enum
 {
-   ELM_GENLIST_ITEM_MOVE_EFFECT_NONE         = 0,
-   ELM_GENLIST_ITEM_MOVE_EFFECT_EXPAND       = 1,
-   ELM_GENLIST_ITEM_MOVE_EFFECT_CONTRACT     = 2
+   ELM_GENLIST_TREE_EFFECT_NONE         = 0,
+   ELM_GENLIST_TREE_EFFECT_EXPAND       = 1,
+   ELM_GENLIST_TREE_EFFECT_CONTRACT     = 2
 } Elm_Genlist_Item_Move_Effect_Mode;
 
 /**

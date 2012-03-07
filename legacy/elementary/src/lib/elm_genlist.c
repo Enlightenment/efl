@@ -2993,7 +2993,7 @@ _pan_calculate(Evas_Object *obj)
         sd->wd->start_time = ecore_loop_time_get();
      }
 
-   if (sd->wd->tree_effect_enabled && (sd->wd->move_effect_mode != ELM_GENLIST_ITEM_MOVE_EFFECT_NONE))
+   if (sd->wd->tree_effect_enabled && (sd->wd->move_effect_mode != ELM_GENLIST_TREE_EFFECT_NONE))
      {
         if (!sd->wd->item_moving_effect_timer)
           {
@@ -4774,7 +4774,7 @@ elm_genlist_item_expanded_set(Elm_Object_Item  *it,
 
    if (_it->item->expanded)
      {
-        _it->wd->move_effect_mode = ELM_GENLIST_ITEM_MOVE_EFFECT_EXPAND;
+        _it->wd->move_effect_mode = ELM_GENLIST_TREE_EFFECT_EXPAND;
         if (_it->realized)
           edje_object_signal_emit(VIEW(_it), "elm,state,expanded", "elm");
         evas_object_smart_callback_call(WIDGET(_it), SIG_EXPANDED, _it);
@@ -4782,7 +4782,7 @@ elm_genlist_item_expanded_set(Elm_Object_Item  *it,
      }
    else
      {
-        _it->wd->move_effect_mode = ELM_GENLIST_ITEM_MOVE_EFFECT_CONTRACT;
+        _it->wd->move_effect_mode = ELM_GENLIST_TREE_EFFECT_CONTRACT;
         if (_it->realized)
           edje_object_signal_emit(VIEW(_it), "elm,state,contracted", "elm");
         evas_object_smart_callback_call(WIDGET(_it), SIG_CONTRACTED, _it);
@@ -5989,9 +5989,9 @@ _item_tree_effect_before(Elm_Gen_Item *it)
      {
         if (it2->parent && (it == it2->parent))
           {
-             if (it->wd->move_effect_mode == ELM_GENLIST_ITEM_MOVE_EFFECT_EXPAND)
+             if (it->wd->move_effect_mode == ELM_GENLIST_TREE_EFFECT_EXPAND)
                edje_object_signal_emit(VIEW(it2), "elm,state,hide", "");
-             else if (it->wd->move_effect_mode == ELM_GENLIST_ITEM_MOVE_EFFECT_CONTRACT)
+             else if (it->wd->move_effect_mode == ELM_GENLIST_TREE_EFFECT_CONTRACT)
                _item_contract_emit(it2);
           }
      }
@@ -6005,7 +6005,7 @@ _item_tree_effect(Widget_Data *wd, int y)
 
    expanded_next_it = wd->expanded_next_item;
 
-   if (wd->move_effect_mode == ELM_GENLIST_ITEM_MOVE_EFFECT_EXPAND)
+   if (wd->move_effect_mode == ELM_GENLIST_TREE_EFFECT_EXPAND)
      {
         it = (Elm_Gen_Item *) elm_genlist_item_prev_get((Elm_Object_Item *) expanded_next_it);
         while (it)
@@ -6024,7 +6024,7 @@ _item_tree_effect(Widget_Data *wd, int y)
              it = (Elm_Gen_Item *) elm_genlist_item_prev_get((Elm_Object_Item *) it);
           }
      }
-   else if (wd->move_effect_mode == ELM_GENLIST_ITEM_MOVE_EFFECT_CONTRACT)
+   else if (wd->move_effect_mode == ELM_GENLIST_TREE_EFFECT_CONTRACT)
      {
         it = (Elm_Gen_Item *) elm_genlist_item_prev_get((Elm_Object_Item *) expanded_next_it);
         while (it)
@@ -6054,7 +6054,7 @@ _item_tree_effect_finish(Widget_Data *wd)
 
    if (wd->item_moving_effect_timer)
      {
-        if (wd->move_effect_mode == ELM_GENLIST_ITEM_MOVE_EFFECT_CONTRACT)
+        if (wd->move_effect_mode == ELM_GENLIST_TREE_EFFECT_CONTRACT)
            _item_subitems_clear(wd->expanded_item);
         EINA_INLIST_FOREACH(wd->blocks, itb)
           {
@@ -6068,7 +6068,7 @@ _item_tree_effect_finish(Widget_Data *wd)
    _item_auto_scroll(wd);
    evas_object_lower(wd->alpha_bg);
    evas_object_hide(wd->alpha_bg);
-   wd->move_effect_mode = ELM_GENLIST_ITEM_MOVE_EFFECT_NONE;
+   wd->move_effect_mode = ELM_GENLIST_TREE_EFFECT_NONE;
    if (wd->move_items) wd->move_items = eina_list_free(wd->move_items);
 
    evas_object_smart_callback_call(wd->pan_smart, "changed", NULL);
@@ -6113,7 +6113,7 @@ _item_moving_effect_timer_cb(void *data)
         /* move items */
         EINA_LIST_FOREACH(wd->move_items, l, it)
           {
-             if (wd->move_effect_mode == ELM_GENLIST_ITEM_MOVE_EFFECT_EXPAND)
+             if (wd->move_effect_mode == ELM_GENLIST_TREE_EFFECT_EXPAND)
                {
                   expanded_next_it->item->old_scrl_y = wd->expanded_item->item->old_scrl_y + wd->expanded_item->item->h;
                   if (expanded_next_it->item->scrl_y < expanded_next_it->item->old_scrl_y) //did not calculate next item position
@@ -6123,7 +6123,7 @@ _item_moving_effect_timer_cb(void *data)
                          cvy + cvh : expanded_next_it->item->scrl_y) -
                          expanded_next_it->item->old_scrl_y;
                }
-             else if (wd->move_effect_mode == ELM_GENLIST_ITEM_MOVE_EFFECT_CONTRACT)
+             else if (wd->move_effect_mode == ELM_GENLIST_TREE_EFFECT_CONTRACT)
                {
                   if (expanded_next_it->item->scrl_y > expanded_next_it->item->old_scrl_y) //did not calculate next item position
                      expanded_next_it->item->old_scrl_y = cvy + cvh;
@@ -6131,7 +6131,7 @@ _item_moving_effect_timer_cb(void *data)
                   if (expanded_next_it->item->old_scrl_y > (cvy + cvh))
                     {
                        dy = (wd->expanded_item->item->scrl_y + wd->expanded_item->item->h) -
-		       	     cvy + cvh;
+                       cvy + cvh;
                        expanded_next_it->item->old_scrl_y = cvy + cvh;
                     }
                   else
@@ -6188,7 +6188,7 @@ _item_moving_effect_timer_cb(void *data)
           {
              num++;
              if (wd->expanded_item->item->expanded_depth >= it->item->expanded_depth) break;
-             if (wd->move_effect_mode == ELM_GENLIST_ITEM_MOVE_EFFECT_EXPAND)
+             if (wd->move_effect_mode == ELM_GENLIST_TREE_EFFECT_EXPAND)
                {
                   if (!it->item->tree_effect_finished)
                     {
