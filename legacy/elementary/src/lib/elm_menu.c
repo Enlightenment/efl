@@ -431,7 +431,7 @@ _submenu_open(void *data, Evas_Object *obj __UNUSED__, const char *emission __UN
    Elm_Menu_Item *item = data;
    item->submenu.open = EINA_TRUE;
    evas_object_show(item->submenu.hv);
-   _sizing_eval(WIDGET(item));
+   _submenu_sizing_eval(item);
 }
 
 static void
