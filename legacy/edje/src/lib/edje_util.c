@@ -3917,9 +3917,21 @@ edje_object_preload(Evas_Object *obj, Eina_Bool cancel)
 	     else if (ep->type == EDJE_PART_TYPE_GROUP)
 	       {
 		  if (rp->swallowed_object) {
-		     edje_object_signal_callback_del(rp->swallowed_object, EDJE_PRELOAD_EMISSION, EDJE_PRELOAD_SOURCE, _edje_object_signal_preload_cb);
-		     edje_object_signal_callback_add(rp->swallowed_object, EDJE_PRELOAD_EMISSION, EDJE_PRELOAD_SOURCE, _edje_object_signal_preload_cb, ed);
-		     edje_object_preload(rp->swallowed_object, cancel);
+                     char *tmp;
+
+                     if (rp->part->name)
+                       {
+                          tmp = alloca(strlen(rp->part->name) + 2);
+                          sprintf(tmp, "%s:", rp->part->name);
+
+                          edje_object_signal_callback_del(obj, EDJE_PRELOAD_EMISSION, tmp, _edje_object_signal_preload_cb);
+                          edje_object_signal_callback_add(obj, EDJE_PRELOAD_EMISSION, tmp, _edje_object_signal_preload_cb, ed);
+                          edje_object_preload(rp->swallowed_object, cancel);
+                       }
+                     else
+                       {
+                          ed->preload_count--;
+                       }
 
 		     count--;
 		  }

@@ -22,6 +22,9 @@ Improvements:
     * Lua scripts now more resilient against API changes.
     * edje_cc only store the image activelly used in an edje file.
 
+Fixes:
+    * Correctly count and propagate preload signal with GROUP.
+
 Changes since Edje 1.0.0:
 -------------------------
 
