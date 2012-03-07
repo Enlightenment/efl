@@ -44,6 +44,7 @@ typedef struct _Ecore_Wl_Event_Dnd_Enter Ecore_Wl_Event_Dnd_Enter;
 typedef struct _Ecore_Wl_Event_Dnd_Position Ecore_Wl_Event_Dnd_Position;
 typedef struct _Ecore_Wl_Event_Dnd_Leave Ecore_Wl_Event_Dnd_Leave;
 typedef struct _Ecore_Wl_Event_Dnd_Drop Ecore_Wl_Event_Dnd_Drop;
+typedef struct _Ecore_Wl_Event_Interfaces_Bound Ecore_Wl_Event_Interfaces_Bound;
 
 enum _Ecore_Wl_Window_Type
 {
@@ -244,6 +245,13 @@ struct _Ecore_Wl_Event_Dnd_Drop
      } position;
 };
 
+struct _Ecore_Wl_Event_Interfaces_Bound
+{
+   Eina_Bool compositor : 1;
+   Eina_Bool shm : 1;
+   Eina_Bool shell : 1;
+};
+
 /**
  * @file
  * @brief Ecore functions for dealing with the Wayland window system
@@ -267,6 +275,7 @@ EAPI extern int ECORE_WL_EVENT_DND_ENTER;
 EAPI extern int ECORE_WL_EVENT_DND_POSITION;
 EAPI extern int ECORE_WL_EVENT_DND_LEAVE;
 EAPI extern int ECORE_WL_EVENT_DND_DROP;
+EAPI extern int ECORE_WL_EVENT_INTERFACES_BOUND;
 
 EAPI int ecore_wl_init(const char *name);
 EAPI int ecore_wl_shutdown(void);
