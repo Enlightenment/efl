@@ -1108,34 +1108,34 @@ EAPI void               elm_entry_scrollable_set(Evas_Object *obj, Eina_Bool scr
 EAPI Eina_Bool          elm_entry_scrollable_get(const Evas_Object *obj);
 
 /**
- * Sets the visibility of the left-side widget of the scrolled entry,
+ * Sets the visibility of the left-side widget of the entry,
  * set by elm_entry_icon_set().
  *
- * @param obj The scrolled entry object
+ * @param obj The entry object
  * @param setting EINA_TRUE if the object should be displayed,
  * EINA_FALSE if not.
  */
 EAPI void               elm_entry_icon_visible_set(Evas_Object *obj, Eina_Bool setting);
 
 /**
- * Sets the visibility of the end widget of the scrolled entry, set by
+ * Sets the visibility of the end widget of the entry, set by
  * elm_object_part_content_set(ent, "end", content).
  *
- * @param obj The scrolled entry object
+ * @param obj The entry object
  * @param setting EINA_TRUE if the object should be displayed,
  * EINA_FALSE if not.
  */
 EAPI void               elm_entry_end_visible_set(Evas_Object *obj, Eina_Bool setting);
 
 /**
- * This sets the scrolled entry's scrollbar policy (i.e. enabling/disabling
+ * This sets the entry's scrollbar policy (i.e. enabling/disabling
  * them).
  *
  * Setting an entry to single-line mode with elm_entry_single_line_set()
  * will automatically disable the display of scrollbars when the entry
  * moves inside its scroller.
  *
- * @param obj The scrolled entry object
+ * @param obj The entry object
  * @param h The horizontal scrollbar policy to apply
  * @param v The vertical scrollbar policy to apply
  */
@@ -1147,7 +1147,7 @@ EAPI void               elm_entry_scrollbar_policy_set(Evas_Object *obj, Elm_Scr
  * This function sets whether the entry will bounce when scrolling reaches
  * the end of the contained entry.
  *
- * @param obj The scrolled entry object
+ * @param obj The entry object
  * @param h_bounce The horizontal bounce state
  * @param v_bounce The vertical bounce state
  */
