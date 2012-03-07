@@ -1,7 +1,13 @@
-#include <locale.h>
-#include <langinfo.h>
 #include <Elementary.h>
 #include "elm_priv.h"
+
+#ifdef HAVE_LOCALE_H
+# include <locale.h>
+#endif
+
+#ifdef HAVE_LANGINFO_H
+# include <langinfo.h>
+#endif
 
 typedef struct _Widget_Data Widget_Data;
 typedef struct _Datetime_Field Datetime_Field;
@@ -545,6 +551,7 @@ _field_list_arrange(Evas_Object *obj)
    _field_list_display(obj);
 }
 
+// FIXME: provide nl_langinfo on Windows if possible
 // returns expanded format string for corresponding multi-field format character
 static char *
 _expanded_fmt_str_get(char ch)
@@ -553,16 +560,32 @@ _expanded_fmt_str_get(char ch)
    switch (ch)
      {
       case 'c':
+#ifdef HAVE_LANGINFO_H
          exp_fmt = nl_langinfo(D_T_FMT);
+#else
+         exp_fmt = "";
+#endif
          break;
       case 'x':
+#ifdef HAVE_LANGINFO_H
          exp_fmt = nl_langinfo(D_FMT);
+#else
+         exp_fmt = "";
+#endif
          break;
       case 'X':
+#ifdef HAVE_LANGINFO_H
          exp_fmt = nl_langinfo(T_FMT);
+#else
+         exp_fmt = "";
+#endif
          break;
       case 'r':
+#ifdef HAVE_LANGINFO_H
          exp_fmt = nl_langinfo(T_FMT_AMPM);
+#else
+         exp_fmt = "";
+#endif
          break;
       case 'R':
          exp_fmt =  "%H:%M";
@@ -680,9 +703,14 @@ _reload_format(Evas_Object *obj)
    wd = elm_widget_data_get(obj);
    if (!wd) return;
 
+   // FIXME: provide nl_langinfo on Windows if possible
    // fetch the default format from Libc.
    if (!wd->user_format)
+#ifdef HAVE_LANGINFO_H
      strncpy(wd->format, nl_langinfo(D_T_FMT), MAX_FORMAT_LEN);
+#else
+     strncpy(wd->format, "", MAX_FORMAT_LEN);
+#endif
 
    dt_fmt = (char *)malloc(MAX_FORMAT_LEN);
    strncpy(dt_fmt, wd->format, MAX_FORMAT_LEN);

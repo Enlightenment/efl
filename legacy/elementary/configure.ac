@@ -124,7 +124,7 @@ ELM_WINCE_DEF="#undef"
 have_windows="no"
 have_dlopen="no"
 case "$host_os" in
-   mingw32ce* | cegcc*)
+   mingw32ce*)
       PKG_CHECK_MODULES([EVIL], [evil])
       AC_DEFINE(HAVE_EVIL, 1, [Set to 1 if evil package is installed.])
       lt_enable_auto_import="-Wl,--enable-auto-import"
@@ -651,6 +651,8 @@ AC_CHECK_HEADER(sys/mman.h, [have_mman="yes"], [have_mman="no"])
 if test "x${have_mman}" = "xyes"; then
    AC_DEFINE(HAVE_MMAN_H, 1, [Have sys/mman.h header file])
 fi
+
+AC_CHECK_HEADERS([locale.h langinfo.h])
 
 my_libs="-lm"
 AC_SUBST(my_libs)
