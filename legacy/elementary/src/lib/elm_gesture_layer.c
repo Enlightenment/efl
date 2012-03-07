@@ -2439,15 +2439,17 @@ _zoom_momentum_get(Zoom_Type *st, unsigned int tm_end, double zoom_val)
  * @ingroup Elm_Gesture_Layer
  */
 static double
-compute_zoom(Zoom_Type *st, Evas_Coord x1, Evas_Coord y1,
-      Evas_Coord x2, Evas_Coord y2, double zoom_finger_factor)
+compute_zoom(Zoom_Type *st,
+             Evas_Coord xx1, Evas_Coord yy1,
+             Evas_Coord xx2, Evas_Coord yy2,
+             double zoom_finger_factor)
 {
    double rt = 1.0;
    unsigned int tm_end = (st->zoom_mv.timestamp > st->zoom_mv1.timestamp) ?
-      st->zoom_mv.timestamp : st->zoom_mv1.timestamp;
+     st->zoom_mv.timestamp : st->zoom_mv1.timestamp;
 
-   Evas_Coord diam = get_finger_gap_length(x1, y1, x2, y2,
-         &st->info.x, &st->info.y);
+   Evas_Coord diam = get_finger_gap_length(xx1, yy1, xx2, yy2,
+                                           &st->info.x, &st->info.y);
 
    st->info.radius = diam / 2;
 
@@ -2477,7 +2479,7 @@ compute_zoom(Zoom_Type *st, Evas_Coord x1, Evas_Coord y1,
    /* We use factor only on the difference between gap-base   */
    /* if gap=120, base=100, we get ((120-100)/100)=0.2*factor */
    rt = ((1.0) + ((((float) diam - (float) st->zoom_base) /
-               (float) st->zoom_base) * zoom_finger_factor));
+                   (float) st->zoom_base) * zoom_finger_factor));
 
    /* Momentum: zoom per second: */
    st->info.momentum = _zoom_momentum_get(st, tm_end, rt);
@@ -2780,16 +2782,16 @@ _zoom_test(Evas_Object *obj, Pointer_Event *pe, void *event_info,
 
 static void
 _get_rotate_properties(Rotate_Type *st,
-      Evas_Coord x1, Evas_Coord y1,
-      Evas_Coord x2, Evas_Coord y2,
-      double *angle)
+                       Evas_Coord xx1, Evas_Coord yy1,
+                       Evas_Coord xx2, Evas_Coord yy2,
+                       double *angle)
 {  /* FIXME: Fix momentum computation, it's wrong */
    double prev_angle = *angle;
-   st->info.radius = get_finger_gap_length(x1, y1, x2, y2,
-         &st->info.x, &st->info.y) / 2;
+   st->info.radius = get_finger_gap_length(xx1, yy1, xx2, yy2,
+                                           &st->info.x, &st->info.y) / 2;
 
-   *angle = get_angle(x1, y1, x2, y2);
-
+   *angle = get_angle(xx1, yy1, xx2, yy2);
+   
    if (angle == &st->info.angle)
      {  /* Fingers are moving, compute momentum */
         unsigned int tm_start =
