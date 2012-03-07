@@ -227,12 +227,12 @@ EAPI Eina_Bool                    elm_list_horizontal_get(const Evas_Object *obj
  * @param mode The select mode
  *
  * elm_list_select_mode_set() changes item select mode in the list widget.
- * - ELM_OBJECT_NORMAL_SELECT : Items will only call their selection func and
+ * - ELM_OBJECT_SELECT_MODE_DEFAULT : Items will only call their selection func and
  *      callback when first becoming selected. Any further clicks will
  *      do nothing, unless you set always select mode.
- * - ELM_OBJECT_ALWAYS_SELECT :  This means that, even if selected,
+ * - ELM_OBJECT_SELECT_MODE_ALWAYS :  This means that, even if selected,
  *      every click will make the selected callbacks be called.
- * - ELM_OBJECT_NO_SELECT : This will turn off the ability to select items
+ * - ELM_OBJECT_SELECT_MODE_NONE : This will turn off the ability to select items
  *      entirely and they will neither appear selected nor call selected
  *      callback functions.
  *

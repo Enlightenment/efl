@@ -703,7 +703,7 @@ _item_highlight(Elm_List_Item *it)
    if (!wd) return;
    ELM_LIST_ITEM_CHECK_DELETED_RETURN(it);
    if ((it->highlighted) || (it->base.disabled) ||
-       (wd->select_mode == ELM_OBJECT_NO_SELECT)) return;
+       (wd->select_mode == ELM_OBJECT_SELECT_MODE_NONE)) return;
 
    evas_object_ref(obj);
    _elm_list_walk(wd);
@@ -726,10 +726,10 @@ _item_select(Elm_List_Item *it)
 
    if (!wd) return;
    ELM_LIST_ITEM_CHECK_DELETED_RETURN(it);
-   if (it->base.disabled || (wd->select_mode == ELM_OBJECT_NO_SELECT)) return;
+   if (it->base.disabled || (wd->select_mode == ELM_OBJECT_SELECT_MODE_NONE)) return;
    if (it->selected)
      {
-        if (wd->select_mode == ELM_OBJECT_ALWAYS_SELECT) goto call;
+        if (wd->select_mode == ELM_OBJECT_SELECT_MODE_ALWAYS) goto call;
         return;
      }
    it->selected = EINA_TRUE;
@@ -1651,12 +1651,12 @@ elm_list_always_select_mode_set(Evas_Object *obj,
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return;
    if (always_select)
-     elm_list_select_mode_set(obj, ELM_OBJECT_ALWAYS_SELECT);
+     elm_list_select_mode_set(obj, ELM_OBJECT_SELECT_MODE_ALWAYS);
    else
      {
         Elm_Object_Select_Mode oldmode = elm_list_select_mode_get(obj);
-        if (oldmode == ELM_OBJECT_ALWAYS_SELECT)
-          elm_list_select_mode_set(obj, ELM_OBJECT_NORMAL_SELECT);
+        if (oldmode == ELM_OBJECT_SELECT_MODE_ALWAYS)
+          elm_list_select_mode_set(obj, ELM_OBJECT_SELECT_MODE_DEFAULT);
      }
 }
 
@@ -1667,7 +1667,7 @@ elm_list_always_select_mode_get(const Evas_Object *obj)
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return EINA_FALSE;
    Elm_Object_Select_Mode oldmode = elm_list_select_mode_get(obj);
-   if (oldmode == ELM_OBJECT_ALWAYS_SELECT)
+   if (oldmode == ELM_OBJECT_SELECT_MODE_ALWAYS)
      return EINA_TRUE;
    return EINA_FALSE;
 }

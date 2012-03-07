@@ -69,7 +69,7 @@ elm_main(int argc __UNUSED__, char **argv __UNUSED__)
 
    /* enable multiple selection and always select */
    elm_list_multi_select_set(li, EINA_TRUE);
-   elm_list_select_mode_set(li, ELM_OBJECT_ALWAYS_SELECT);
+   elm_list_select_mode_set(li, ELM_OBJECT_SELECT_MODE_ALWAYS);
 
    /* set bounce and scroller policy */
    elm_list_bounce_set(li, EINA_TRUE, EINA_TRUE);

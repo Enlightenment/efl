@@ -130,9 +130,9 @@ elm_main(int argc __UNUSED__, char **argv __UNUSED__)
 
    always = no_sel = EINA_FALSE;
    sel_mode = elm_genlist_select_mode_get(list);
-   if (sel_mode = ELM_OBJECT_ALWAYS_SELECT)
+   if (sel_mode = ELM_OBJECT_SELECT_MODE_ALWAYS)
      always = EINA_TRUE;
-   else if (sel_mode = ELM_OBJECT_NO_SELECT)
+   else if (sel_mode = ELM_OBJECT_SELECT_MODE_NONE)
      no_sel = EINA_TRUE;
 
    printf("default values:\n");
@@ -154,7 +154,7 @@ elm_main(int argc __UNUSED__, char **argv __UNUSED__)
    elm_genlist_homogeneous_set(list, EINA_FALSE);
    elm_genlist_mode_set(list, ELM_LIST_LIMIT);
    elm_genlist_multi_select_set(list, EINA_TRUE);
-   elm_genlist_select_mode_set(list, ELM_OBJECT_NORMAL_SELECT);
+   elm_genlist_select_mode_set(list, ELM_OBJECT_SELECT_MODE_DEFAULT);
    elm_genlist_scroller_policy_set(list, ELM_SCROLLER_POLICY_OFF, ELM_SCROLLER_POLICY_ON);
    elm_genlist_longpress_timeout_set(list, 0.5);
    elm_genlist_block_count_set(list, 16);

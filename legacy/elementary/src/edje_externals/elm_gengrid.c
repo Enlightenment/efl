@@ -45,16 +45,16 @@ external_gengrid_state_set(void *data __UNUSED__, Evas_Object *obj, const void *
    if (p->no_select_exists)
      {
         if (p->no_select)
-          elm_gengrid_select_mode_set (obj, ELM_OBJECT_NO_SELECT);
+          elm_gengrid_select_mode_set (obj, ELM_OBJECT_SELECT_MODE_NONE);
         else
-          elm_gengrid_select_mode_set (obj, ELM_OBJECT_NORMAL_SELECT);
+          elm_gengrid_select_mode_set (obj, ELM_OBJECT_SELECT_MODE_DEFAULT);
      }
    if (p->always_select_exists)
      {
         if (p->always_select)
-          elm_gengrid_select_mode_set (obj, ELM_OBJECT_ALWAYS_SELECT);
+          elm_gengrid_select_mode_set (obj, ELM_OBJECT_SELECT_MODE_ALWAYS);
         else
-          elm_gengrid_select_mode_set (obj, ELM_OBJECT_NORMAL_SELECT);
+          elm_gengrid_select_mode_set (obj, ELM_OBJECT_SELECT_MODE_DEFAULT);
      }
    if (p->h_bounce_exists)
      {
@@ -123,9 +123,9 @@ external_gengrid_param_set(void *data __UNUSED__, Evas_Object *obj, const Edje_E
         if (param->type == EDJE_EXTERNAL_PARAM_TYPE_BOOL)
           {
              if (param->i)
-               elm_gengrid_select_mode_set (obj, ELM_OBJECT_NO_SELECT);
+               elm_gengrid_select_mode_set (obj, ELM_OBJECT_SELECT_MODE_NONE);
              else
-               elm_gengrid_select_mode_set (obj, ELM_OBJECT_NORMAL_SELECT);
+               elm_gengrid_select_mode_set (obj, ELM_OBJECT_SELECT_MODE_DEFAULT);
              return EINA_TRUE;
           }
      }
@@ -134,9 +134,9 @@ external_gengrid_param_set(void *data __UNUSED__, Evas_Object *obj, const Edje_E
         if (param->type == EDJE_EXTERNAL_PARAM_TYPE_BOOL)
           {
              if (param->i)
-               elm_gengrid_select_mode_set (obj, ELM_OBJECT_ALWAYS_SELECT);
+               elm_gengrid_select_mode_set (obj, ELM_OBJECT_SELECT_MODE_ALWAYS);
              else
-               elm_gengrid_select_mode_set (obj, ELM_OBJECT_NORMAL_SELECT);
+               elm_gengrid_select_mode_set (obj, ELM_OBJECT_SELECT_MODE_DEFAULT);
              return EINA_TRUE;
           }
      }
@@ -246,7 +246,7 @@ external_gengrid_param_get(void *data __UNUSED__, const Evas_Object *obj, Edje_E
         if (param->type == EDJE_EXTERNAL_PARAM_TYPE_BOOL)
           {
              if (elm_gengrid_select_mode_get (obj) ==
-                 ELM_OBJECT_NO_SELECT)
+                 ELM_OBJECT_SELECT_MODE_NONE)
                param->i = EINA_TRUE;
              else
                param->i = EINA_FALSE;
@@ -258,7 +258,7 @@ external_gengrid_param_get(void *data __UNUSED__, const Evas_Object *obj, Edje_E
         if (param->type == EDJE_EXTERNAL_PARAM_TYPE_BOOL)
           {
              if (elm_gengrid_select_mode_get (obj) ==
-                 ELM_OBJECT_ALWAYS_SELECT)
+                 ELM_OBJECT_SELECT_MODE_ALWAYS)
                param->i = EINA_TRUE;
              else
                param->i = EINA_FALSE;

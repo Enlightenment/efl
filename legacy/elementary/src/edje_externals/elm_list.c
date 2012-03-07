@@ -90,9 +90,9 @@ external_list_state_set(void *data __UNUSED__, Evas_Object *obj, const void *fro
    if (p->always_select_exists)
      {
         if (p->always_select)
-          elm_list_select_mode_set (obj, ELM_OBJECT_ALWAYS_SELECT);
+          elm_list_select_mode_set (obj, ELM_OBJECT_SELECT_MODE_ALWAYS);
         else
-          elm_list_select_mode_set (obj, ELM_OBJECT_NORMAL_SELECT);
+          elm_list_select_mode_set (obj, ELM_OBJECT_SELECT_MODE_DEFAULT);
      }
 }
 
@@ -154,9 +154,9 @@ external_list_param_set(void *data __UNUSED__, Evas_Object *obj, const Edje_Exte
         if (param->type == EDJE_EXTERNAL_PARAM_TYPE_BOOL)
           {
              if (param->i)
-               elm_list_select_mode_set (obj, ELM_OBJECT_ALWAYS_SELECT);
+               elm_list_select_mode_set (obj, ELM_OBJECT_SELECT_MODE_ALWAYS);
              else
-               elm_list_select_mode_set (obj, ELM_OBJECT_NORMAL_SELECT);
+               elm_list_select_mode_set (obj, ELM_OBJECT_SELECT_MODE_DEFAULT);
              return EINA_TRUE;
           }
      }
@@ -191,7 +191,7 @@ external_list_param_get(void *data __UNUSED__, const Evas_Object *obj, Edje_Exte
         if (param->type == EDJE_EXTERNAL_PARAM_TYPE_BOOL)
           {
              if (elm_list_select_mode_get (obj) ==
-                 ELM_OBJECT_ALWAYS_SELECT)
+                 ELM_OBJECT_SELECT_MODE_ALWAYS)
                param->i = EINA_TRUE;
              else
                param->i = EINA_FALSE;
