@@ -349,7 +349,7 @@ _event_hook(Evas_Object       *obj,
    else if ((!strcmp(ev->keyname, "Home")) || (!strcmp(ev->keyname, "KP_Home")))
      {
         it = elm_genlist_first_item_get(obj);
-        elm_genlist_item_bring_in(it);
+        elm_genlist_item_bring_in(it, ELM_GENLIST_ITEM_SCROLLTO_IN);
         elm_genlist_item_selected_set(it, EINA_TRUE);
         ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
         return EINA_TRUE;
@@ -357,7 +357,7 @@ _event_hook(Evas_Object       *obj,
    else if ((!strcmp(ev->keyname, "End")) || (!strcmp(ev->keyname, "KP_End")))
      {
         it = elm_genlist_last_item_get(obj);
-        elm_genlist_item_bring_in(it);
+        elm_genlist_item_bring_in(it, ELM_GENLIST_ITEM_SCROLLTO_IN);
         elm_genlist_item_selected_set(it, EINA_TRUE);
         ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
         return EINA_TRUE;
@@ -4767,17 +4767,19 @@ elm_genlist_item_demote(Elm_Object_Item *it)
 }
 
 EAPI void
-elm_genlist_item_bring_in(Elm_Object_Item *it)
+elm_genlist_item_bring_in(Elm_Object_Item *it, Elm_Genlist_Item_Scrollto_Type type)
 {
+
    ELM_OBJ_ITEM_CHECK_OR_RETURN(it);
    Elm_Gen_Item *_it = (Elm_Gen_Item *)it;
+   Evas_Coord x, y, w, h;
    Evas_Coord gith = 0;
    if (_it->generation < _it->wd->generation) return;
    if ((_it->item->queued) || (!_it->item->mincalcd))
      {
         _it->wd->show_item = _it;
         _it->wd->bring_in = EINA_TRUE;
-        _it->wd->scrollto_type = ELM_GENLIST_ITEM_SCROLLTO_IN;
+        _it->wd->scrollto_type = type;
         _it->item->showme = EINA_TRUE;
         return;
      }
@@ -4786,13 +4788,34 @@ elm_genlist_item_bring_in(Elm_Object_Item *it)
         _it->wd->show_item->item->showme = EINA_FALSE;
         _it->wd->show_item = NULL;
      }
-   if ((_it->item->group_item) &&
-       (_it->wd->pan_y > (_it->y + _it->item->block->y)))
-     gith = _it->item->group_item->item->h;
-   elm_smart_scroller_region_bring_in(_it->wd->scr,
-                                      _it->x + _it->item->block->x,
-                                      _it->y + _it->item->block->y - gith,
-                                      _it->item->block->w, _it->item->h);
+
+   x = _it->x + _it->item->block->x;
+   if (type==ELM_GENLIST_ITEM_SCROLLTO_IN)
+     {
+        if ((_it->item->group_item) &&
+           (_it->wd->pan_y > (_it->y + _it->item->block->y)))
+            gith = _it->item->group_item->item->h;
+
+        w = _it->item->block->w;
+        h = _it->item->h;
+        y = _it->y + _it->item->block->y - gith;
+     }
+   else if (type==ELM_GENLIST_ITEM_SCROLLTO_TOP)
+     {
+        evas_object_geometry_get(_it->wd->pan_smart, NULL, NULL, &w, &h);
+        if (_it->item->group_item) gith = _it->item->group_item->item->h;
+        y = _it->y + _it->item->block->y - gith;
+     }
+   else if (type==ELM_GENLIST_ITEM_SCROLLTO_MIDDLE)
+     {
+        evas_object_geometry_get(_it->wd->pan_smart, NULL, NULL, &w, &h);
+        w = _it->item->block->w;
+        y = _it->y + _it->item->block->y - h / 2 + _it->item->h / 2;
+     }
+   else
+     return;
+
+   elm_smart_scroller_region_bring_in(_it->wd->scr,x, y, w, h);
 }
 
 EAPI void
@@ -4828,31 +4851,7 @@ elm_genlist_item_top_show(Elm_Object_Item *it)
 EAPI void
 elm_genlist_item_top_bring_in(Elm_Object_Item *it)
 {
-   ELM_OBJ_ITEM_CHECK_OR_RETURN(it);
-   Elm_Gen_Item *_it = (Elm_Gen_Item *)it;
-   Evas_Coord ow, oh;
-   Evas_Coord gith = 0;
-
-   if (_it->generation < _it->wd->generation) return;
-   if ((_it->item->queued) || (!_it->item->mincalcd))
-     {
-        _it->wd->show_item = _it;
-        _it->wd->bring_in = EINA_TRUE;
-        _it->wd->scrollto_type = ELM_GENLIST_ITEM_SCROLLTO_TOP;
-        _it->item->showme = EINA_TRUE;
-        return;
-     }
-   if (_it->wd->show_item)
-     {
-        _it->wd->show_item->item->showme = EINA_FALSE;
-        _it->wd->show_item = NULL;
-     }
-   evas_object_geometry_get(_it->wd->pan_smart, NULL, NULL, &ow, &oh);
-   if (_it->item->group_item) gith = _it->item->group_item->item->h;
-   elm_smart_scroller_region_bring_in(_it->wd->scr,
-                                      _it->x + _it->item->block->x,
-                                      _it->y + _it->item->block->y - gith,
-                                      _it->item->block->w, oh);
+   elm_genlist_item_bring_in(it, ELM_GENLIST_ITEM_SCROLLTO_TOP);
 }
 
 EAPI void
@@ -4887,30 +4886,7 @@ elm_genlist_item_middle_show(Elm_Object_Item *it)
 EAPI void
 elm_genlist_item_middle_bring_in(Elm_Object_Item *it)
 {
-   ELM_OBJ_ITEM_CHECK_OR_RETURN(it);
-   Elm_Gen_Item *_it = (Elm_Gen_Item *)it;
-   Evas_Coord ow, oh;
-
-   if (_it->generation < _it->wd->generation) return;
-   if ((_it->item->queued) || (!_it->item->mincalcd))
-     {
-        _it->wd->show_item = _it;
-        _it->wd->bring_in = EINA_TRUE;
-        _it->wd->scrollto_type = ELM_GENLIST_ITEM_SCROLLTO_MIDDLE;
-        _it->item->showme = EINA_TRUE;
-        return;
-     }
-   if (_it->wd->show_item)
-     {
-        _it->wd->show_item->item->showme = EINA_FALSE;
-        _it->wd->show_item = NULL;
-     }
-   evas_object_geometry_get(_it->wd->pan_smart, NULL, NULL, &ow, &oh);
-   elm_smart_scroller_region_bring_in(_it->wd->scr,
-                                      _it->x + _it->item->block->x,
-                                      _it->y + _it->item->block->y - oh / 2 +
-                                      _it->item->h / 2, _it->item->block->w,
-                                      oh);
+   elm_genlist_item_bring_in(it, ELM_GENLIST_ITEM_SCROLLTO_MIDDLE);
 }
 
 EINA_DEPRECATED EAPI void

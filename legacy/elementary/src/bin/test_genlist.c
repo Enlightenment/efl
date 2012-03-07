@@ -68,7 +68,8 @@ set_api_state(api_data *api)
       case TOOLTIP_TEXT_SET: /* 6 */
            {
               elm_genlist_item_tooltip_text_set(elm_genlist_first_item_get(gl), "Tooltip text from API");
-              elm_genlist_item_bring_in(elm_genlist_first_item_get(gl));
+              elm_genlist_item_bring_in(elm_genlist_first_item_get(gl),
+                                         ELM_GENLIST_ITEM_SCROLLTO_IN);
            }
          break;
 
@@ -161,7 +162,7 @@ _move(void *data, Evas *evas __UNUSED__, Evas_Object *obj __UNUSED__, void *even
 static void
 _bt50_cb(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
-   elm_genlist_item_bring_in(data);
+   elm_genlist_item_bring_in(data, ELM_GENLIST_ITEM_SCROLLTO_IN);
 }
 
 static void

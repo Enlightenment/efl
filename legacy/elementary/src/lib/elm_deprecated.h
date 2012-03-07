@@ -5031,10 +5031,26 @@ EINA_DEPRECATED EAPI void                 elm_object_tree_unfocusable_set(Evas_O
  *
  * @see elm_object_tree_unfocusable_set()
  *
- * @ingroup Focus
  * @deprecated Please use elm_object_tree_unfocusable_get()
  */
 EINA_DEPRECATED EAPI Eina_Bool            elm_object_tree_unfocusable_get(const Evas_Object *obj);
+
+/**
+ * Animatedly bring in, to the visible are of a genlist, a given
+ * item on it.
+ *
+ * @deprecated elm_genlist_item_bring_in()
+ */
+EINA_DEPRECATED EAPI void elm_genlist_item_top_bring_in(Elm_Object_Item *it);
+
+/**
+ * Animatedly bring in, to the visible are of a genlist, a given
+ * item on it.
+ *
+ * @deprecated elm_genlist_item_bring_in()
+ */
+EINA_DEPRECATED EAPI void elm_genlist_item_middle_bring_in(Elm_Object_Item *it);
+
 /**
  * @}
  */

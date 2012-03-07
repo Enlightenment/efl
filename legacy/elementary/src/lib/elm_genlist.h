@@ -354,7 +354,7 @@
  *
  * @ingroup Genlist
  */
- typedef enum
+typedef enum
 {
    ELM_GENLIST_ITEM_NONE = 0, /**< simple item */
    //XXX: ELM_GENLIST_ITEM_TREE
@@ -371,6 +371,14 @@ typedef enum
    ELM_GENLIST_ITEM_FIELD_CONTENT = (1 << 1),
    ELM_GENLIST_ITEM_FIELD_STATE = (1 << 2)
 } Elm_Genlist_Item_Field_Type;
+
+typedef enum
+{
+   ELM_GENLIST_ITEM_SCROLLTO_NONE = 0,   /**< no scrollto */
+   ELM_GENLIST_ITEM_SCROLLTO_IN = (1 << 0),   /**< show, bring in */
+   ELM_GENLIST_ITEM_SCROLLTO_TOP = (1 << 1),   /**< top show, top bring in */
+   ELM_GENLIST_ITEM_SCROLLTO_MIDDLE = (1 << 2)   /**< middle show, middle bring in */
+} Elm_Genlist_Item_Scrollto_Type;
 
 /**
  * @see Elm_Gen_Item_Class
@@ -918,19 +926,18 @@ EAPI void                          elm_genlist_item_show(Elm_Object_Item *it);
  * item on it.
  *
  * @param it The item to display
+ * @param type The position to bring in, the given item to.
+ *             @ref Elm_Genlist_Item_Scrollto_Type
  *
  * This causes genlist to jump to the given item @p it and show it (by
- * animatedly scrolling), if it is not fully visible. This may use animation
- * to do so and take a period of time
+ * animatedly scrolling), if it is not fully visible. 
+ * This may use animation and take a some time to do so.
  *
  * @see elm_genlist_item_show()
- * @see elm_genlist_item_top_bring_in()
- * @see elm_genlist_item_middle_bring_in()
  *
  * @ingroup Genlist
  */
-//XXX: elm_genlist_item_bring_in(it, TOP/MIDDLE/BOTTOM/...); this kind of API would cover all similar APIs - bring_in, top_bring_in ...
-EAPI void                          elm_genlist_item_bring_in(Elm_Object_Item *it);
+EAPI void                          elm_genlist_item_bring_in(Elm_Object_Item *it, Elm_Genlist_Item_Scrollto_Type type);
 
 /**
  * Show the portion of a genlist's internal list containing a given
@@ -944,32 +951,12 @@ EAPI void                          elm_genlist_item_bring_in(Elm_Object_Item *it
  * The item will be positioned at the top of the genlist viewport.
  *
  * @see elm_genlist_item_show()
- * @see elm_genlist_item_top_bring_in()
+ * @see elm_genlist_item_bring_in()
  *
  * @ingroup Genlist
  */
 //XXX: elm_genlist_item_show(it, TOP/MIDDLE/BOTTOM/...); this kind of API would cover all similar APIs - item_show, item_top_show...
 EAPI void                          elm_genlist_item_top_show(Elm_Object_Item *it);
-
-/**
- * Animatedly bring in, to the visible are of a genlist, a given
- * item on it.
- *
- * @param it The item
- *
- * This causes genlist to jump to the given item @p it and show it (by
- * animatedly scrolling), if it is not fully visible. This may use animation
- * to do so and take a period of time
- *
- * The item will be positioned at the top of the genlist viewport.
- *
- * @see elm_genlist_item_bring_in()
- * @see elm_genlist_item_top_show()
- *
- * @ingroup Genlist
- */
-//XXX: elm_genlist_item_bring_in(it, TOP/MIDDLE/BOTTOM/...); this kind of API would cover all similar APIs - bring_in, top_bring_in ...
-EAPI void                          elm_genlist_item_top_bring_in(Elm_Object_Item *it);
 
 /**
  * Show the portion of a genlist's internal list containing a given
@@ -983,32 +970,12 @@ EAPI void                          elm_genlist_item_top_bring_in(Elm_Object_Item
  * The item will be positioned at the middle of the genlist viewport.
  *
  * @see elm_genlist_item_show()
- * @see elm_genlist_item_middle_bring_in()
+ * @see elm_genlist_item_bring_in()
  *
  * @ingroup Genlist
  */
 //XXX: elm_genlist_item_show(it, TOP/MIDDLE/BOTTOM/...); this kind of API would cover all similar APIs - item_show, item_top_show...
 EAPI void                          elm_genlist_item_middle_show(Elm_Object_Item *it);
-
-/**
- * Animatedly bring in, to the visible are of a genlist, a given
- * item on it.
- *
- * @param it The item
- *
- * This causes genlist to jump to the given item @p it and show it (by
- * animatedly scrolling), if it is not fully visible. This may use animation
- * to do so and take a period of time
- *
- * The item will be positioned at the middle of the genlist viewport.
- *
- * @see elm_genlist_item_bring_in()
- * @see elm_genlist_item_middle_show()
- *
- * @ingroup Genlist
- */
-//XXX: elm_genlist_item_bring_in(it, TOP/MIDDLE/BOTTOM/...); this kind of API would cover all similar APIs - bring_in, top_bring_in ...
-EAPI void                          elm_genlist_item_middle_bring_in(Elm_Object_Item *it);
 
 /**
  * Update the contents of an item

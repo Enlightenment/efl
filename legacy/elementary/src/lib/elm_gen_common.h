@@ -14,14 +14,6 @@ typedef struct Elm_Gen_Item_Type    Elm_Gen_Item_Type;
 typedef struct Elm_Gen_Item_Tooltip Elm_Gen_Item_Tooltip;
 typedef struct _Widget_Data         Widget_Data;
 
-typedef enum
-{
-   ELM_GENLIST_ITEM_SCROLLTO_NONE = 0,   /**< no scrollto */
-   ELM_GENLIST_ITEM_SCROLLTO_IN = (1 << 0),   /**< show, bring in */
-   ELM_GENLIST_ITEM_SCROLLTO_TOP = (1 << 1),   /**< top show, top bring in */
-   ELM_GENLIST_ITEM_SCROLLTO_MIDDLE = (1 << 2)   /**< middle show, middle bring in */
-} Elm_Genlist_Item_Scrollto_Type;
-
 struct Elm_Gen_Item_Tooltip
 {
    const void                 *data;
