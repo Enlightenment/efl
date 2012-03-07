@@ -5949,5 +5949,69 @@ EINA_DEPRECATED EAPI int                    elm_diskselector_side_label_length_g
 EINA_DEPRECATED EAPI void                   elm_diskselector_side_label_length_set(Evas_Object *obj, int len);
 
 /**
+ * Set whether the toolbar should always have an item selected.
+ *
+ * @param obj The toolbar object.
+ * @param always_select @c EINA_TRUE to enable always-select mode or @c EINA_FALSE to
+ * disable it.
+ *
+ * This will cause the toolbar to always have an item selected, and clicking
+ * the selected item will not cause a selected event to be emitted. Enabling this mode
+ * will immediately select the first toolbar item.
+ *
+ * Always-selected is disabled by default.
+ *
+ * @see elm_toolbar_always_select_mode_get().
+ *
+ * @ingroup Toolbar
+ */
+EINA_DEPRECATED EAPI void                         elm_toolbar_always_select_mode_set(Evas_Object *obj, Eina_Bool always_select);
+
+/**
+ * Get whether the toolbar should always have an item selected.
+ *
+ * @param obj The toolbar object.
+ * @return @c EINA_TRUE means an item will always be selected, @c EINA_FALSE indicates
+ * that it is possible to have no items selected. If @p obj is @c NULL, @c EINA_FALSE is returned.
+ *
+ * @see elm_toolbar_always_select_mode_set() for details.
+ *
+ * @ingroup Toolbar
+ */
+EINA_DEPRECATED EAPI Eina_Bool                    elm_toolbar_always_select_mode_get(const Evas_Object *obj);
+
+/**
+ * Set whether the toolbar items' should be selected by the user or not.
+ *
+ * @param obj The toolbar object.
+ * @param no_select @c EINA_TRUE to disable selection or @c EINA_FALSE to
+ * enable it.
+ *
+ * This will turn off the ability to select items entirely and they will
+ * neither appear selected nor emit selected signals. The clicked
+ * callback function will still be called.
+ *
+ * Selection is enabled by default.
+ *
+ * @see elm_toolbar_no_select_mode_get().
+ *
+ * @ingroup Toolbar
+ */
+EINA_DEPRECATED EAPI void                         elm_toolbar_no_select_mode_set(Evas_Object *obj, Eina_Bool no_select);
+
+/**
+ * Set whether the toolbar items' should be selected by the user or not.
+ *
+ * @param obj The toolbar object.
+ * @return @c EINA_TRUE means items can be selected. @c EINA_FALSE indicates
+ * they can't. If @p obj is @c NULL, @c EINA_FALSE is returned.
+ *
+ * @see elm_toolbar_no_select_mode_set() for details.
+ *
+ * @ingroup Toolbar
+ */
+EINA_DEPRECATED EAPI Eina_Bool                    elm_toolbar_no_select_mode_get(const Evas_Object *obj);
+
+/**
  * @}
  */

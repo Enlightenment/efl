@@ -140,70 +140,6 @@ EAPI void                         elm_toolbar_icon_order_lookup_set(Evas_Object 
 EAPI Elm_Icon_Lookup_Order        elm_toolbar_icon_order_lookup_get(const Evas_Object *obj);
 
 /**
- * Set whether the toolbar should always have an item selected.
- *
- * @param obj The toolbar object.
- * @param always_select @c EINA_TRUE to enable always-select mode or @c EINA_FALSE to
- * disable it.
- *
- * This will cause the toolbar to always have an item selected, and clicking
- * the selected item will not cause a selected event to be emitted. Enabling this mode
- * will immediately select the first toolbar item.
- *
- * Always-selected is disabled by default.
- *
- * @see elm_toolbar_always_select_mode_get().
- *
- * @ingroup Toolbar
- */
-EAPI void                         elm_toolbar_always_select_mode_set(Evas_Object *obj, Eina_Bool always_select);
-
-/**
- * Get whether the toolbar should always have an item selected.
- *
- * @param obj The toolbar object.
- * @return @c EINA_TRUE means an item will always be selected, @c EINA_FALSE indicates
- * that it is possible to have no items selected. If @p obj is @c NULL, @c EINA_FALSE is returned.
- *
- * @see elm_toolbar_always_select_mode_set() for details.
- *
- * @ingroup Toolbar
- */
-EAPI Eina_Bool                    elm_toolbar_always_select_mode_get(const Evas_Object *obj);
-
-/**
- * Set whether the toolbar items' should be selected by the user or not.
- *
- * @param obj The toolbar object.
- * @param no_select @c EINA_TRUE to disable selection or @c EINA_FALSE to
- * enable it.
- *
- * This will turn off the ability to select items entirely and they will
- * neither appear selected nor emit selected signals. The clicked
- * callback function will still be called.
- *
- * Selection is enabled by default.
- *
- * @see elm_toolbar_no_select_mode_get().
- *
- * @ingroup Toolbar
- */
-EAPI void                         elm_toolbar_no_select_mode_set(Evas_Object *obj, Eina_Bool no_select);
-
-/**
- * Set whether the toolbar items' should be selected by the user or not.
- *
- * @param obj The toolbar object.
- * @return @c EINA_TRUE means items can be selected. @c EINA_FALSE indicates
- * they can't. If @p obj is @c NULL, @c EINA_FALSE is returned.
- *
- * @see elm_toolbar_no_select_mode_set() for details.
- *
- * @ingroup Toolbar
- */
-EAPI Eina_Bool                    elm_toolbar_no_select_mode_get(const Evas_Object *obj);
-
-/**
  * Append item to the toolbar.
  *
  * @param obj The toolbar object.
@@ -920,6 +856,44 @@ EAPI Eina_Bool                    elm_toolbar_horizontal_get(const Evas_Object *
  * @ingroup Toolbar
  */
 EAPI unsigned int                 elm_toolbar_items_count(const Evas_Object *obj);
+
+/**
+ * Set the toolbar select mode.
+ *
+ * @param obj The toolbar object
+ * @param mode The select mode
+ *
+ * elm_toolbar_select_mode_set() changes item select mode in the toolbar widget.
+ * - ELM_OBJECT_NORMAL_SELECT : Items will only call their selection func and
+ *      callback when first becoming selected. Any further clicks will
+ *      do nothing, unless you set always select mode.
+ * - ELM_OBJECT_ALWAYS_SELECT :  This means that, even if selected,
+ *      every click will make the selected callbacks be called.
+ * - ELM_OBJECT_NO_SELECT : This will turn off the ability to select items
+ *      entirely and they will neither appear selected nor call selected
+ *      callback functions.
+ *
+ * @see elm_toolbar_select_mode_get()
+ *
+ * @ingroup Toolbar
+ */
+EAPI void
+elm_toolbar_select_mode_set(Evas_Object *obj, Elm_Object_Select_Mode_Type mode);
+
+/**
+ * Get the toolbar select mode.
+ *
+ * @param obj The toolbar object
+ * @return The select mode
+ * (If getting mode is failed, it returns ELM_OBJECT_SELECT_MODE_MAX)
+ *
+ * @see elm_toolbar_select_mode_set()
+ *
+ * @ingroup Toolbar
+ */
+EAPI Elm_Object_Select_Mode_Type
+elm_toolbar_select_mode_get(const Evas_Object *obj);
+
 /**
  * @}
  */
