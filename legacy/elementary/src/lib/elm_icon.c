@@ -987,13 +987,13 @@ elm_icon_object_get(Evas_Object *obj)
 }
 
 EAPI void
-elm_icon_preload_disabled_set(Evas_Object *obj, Eina_Bool disable)
+elm_icon_preload_disabled_set(Evas_Object *obj, Eina_Bool disabled)
 {
    ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
 
    if (!wd) return;
-   _els_smart_icon_preload_set(wd->img, disable);
+   _els_smart_icon_preload_set(wd->img, !!disable);
 }
 
 EINA_DEPRECATED EAPI void
