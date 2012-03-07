@@ -19,19 +19,6 @@ typedef struct Map_Source
    char *source_name;
 } Map_Source;
 
-static Elm_Map_Overlay *route_start, *route_end, *route_clas;
-static Elm_Map_Overlay *bubble_img;
-static Elm_Map_Overlay *bubble_parking;
-
-static Evas_Object *menu, *fs_win;
-static Elm_Map_Route *route;
-static Elm_Map_Name *name;
-static Evas_Object *track;
-static const char **source_names = NULL;
-static Evas_Coord old_x, old_y;
-static Evas_Coord old_d;
-static Map_Source ms[SOURCE_MAX];
-
 Overlay_Data data1 = {PACKAGE_DATA_DIR"/images/logo.png"};
 Overlay_Data data2 = {PACKAGE_DATA_DIR"/images/logo_small.png"};
 Overlay_Data data3 = {PACKAGE_DATA_DIR"/images/panel_01.jpg"};
@@ -45,6 +32,20 @@ Overlay_Data data10 = {PACKAGE_DATA_DIR"/images/sky_03.jpg"};
 Overlay_Data data11= {PACKAGE_DATA_DIR"/images/wood_01.jpg"};
 Overlay_Data parking= {PACKAGE_DATA_DIR"/images/parking.png"};
 Overlay_Data icon_data = {PACKAGE_DATA_DIR"/images/icon_14.png"};
+
+static Elm_Map_Overlay *route_start, *route_end, *route_clas;
+static Elm_Map_Overlay *bubble_img;
+static Elm_Map_Overlay *bubble_parking;
+static Elm_Map_Overlay *route_ovl;
+
+static Evas_Object *menu, *fs_win;
+static Elm_Map_Route *route;
+static Elm_Map_Name *name;
+static Evas_Object *track;
+static const char **source_names = NULL;
+static Evas_Coord old_x, old_y;
+static Evas_Coord old_d;
+static Map_Source ms[SOURCE_MAX];
 
 static void
 #ifdef ELM_EMAP
@@ -68,32 +69,6 @@ my_map_gpx_fileselector_done(void *data __UNUSED__, Evas_Object *obj __UNUSED__,
    evas_object_del(fs_win);
 }
 
-static void
-my_map_clicked(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
-{
-   printf("clicked\n");
-}
-
-static void
-my_map_press(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
-{
-   printf("press\n");
-}
-
-static void
-my_map_longpressed(void *data __UNUSED__, Evas_Object *obj, void *event_info)
-{
-   if (!event_info) return;
-   double lon, lat;
-   Evas_Event_Mouse_Down *down = (Evas_Event_Mouse_Down *)event_info;
-   elm_map_canvas_to_geo_convert(obj, down->canvas.x, down->canvas.y, &lon, &lat);
-   printf("longpressed, x:%d, y:%d, lon:%lf, lat:%lf\n", down->canvas.x, down->canvas.y, lon, lat);
-
-   if (elm_map_zoom_get(obj) < 5) return;
-   if (name) elm_map_name_remove(name);
-   name = elm_map_utils_convert_coord_into_name(obj, lon, lat);
-}
-
 static Evas_Object *
 _route_icon_get(Evas_Object *obj)
 {
@@ -105,7 +80,13 @@ _route_icon_get(Evas_Object *obj)
 }
 
 static void
-my_map_clicked_double(void *data __UNUSED__, Evas_Object *obj, void *event_info)
+_map_clicked(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+{
+   printf("clicked\n");
+}
+
+static void
+_map_clicked_double(void *data __UNUSED__, Evas_Object *obj, void *event_info)
 {
    printf("clicked,double\n");
    double lon, lat;
@@ -113,9 +94,8 @@ my_map_clicked_double(void *data __UNUSED__, Evas_Object *obj, void *event_info)
    if (!down) return;
    if (elm_map_zoom_get(obj) < 5) return;
 
-   elm_map_canvas_to_geo_convert(obj, down->canvas.x, down->canvas.y, &lon, &lat);
+   elm_map_canvas_to_region_convert(obj, down->canvas.x, down->canvas.y, &lon, &lat);
    printf("x:%d, y:%d, lon:%lf, lat:%lf\n", down->canvas.x, down->canvas.y, lon, lat);
-
 
    if (!route_clas)
      {
@@ -126,13 +106,13 @@ my_map_clicked_double(void *data __UNUSED__, Evas_Object *obj, void *event_info)
 
    if (route_start && route_end)
      {
-        printf("11\n");
         elm_map_overlay_del(route_start);
         elm_map_overlay_del(route_end);
-        elm_map_route_remove(route);
+// FIXME: deprecated        
+//        elm_map_route_remove(route);
         route_start = NULL;
         route_end = NULL;
-        //route = NULL;
+        route = NULL;
      }
 
    if (!route_start) route_start = elm_map_overlay_add(obj, lon, lat);
@@ -143,99 +123,123 @@ my_map_clicked_double(void *data __UNUSED__, Evas_Object *obj, void *event_info)
         double start_lon, start_lat, end_lon, end_lat;
         elm_map_overlay_class_append(route_clas, route_start);
         elm_map_overlay_class_append(route_clas, route_end);
-        elm_map_overlay_geo_get(route_start, &start_lon, &start_lat);
-        elm_map_overlay_geo_get(route_end, &end_lon, &end_lat);
+        elm_map_overlay_region_get(route_start, &start_lon, &start_lat);
+        elm_map_overlay_region_get(route_end, &end_lon, &end_lat);
         route = elm_map_route_add(obj, ELM_MAP_ROUTE_TYPE_MOTOCAR,
-                                  ELM_MAP_ROUTE_METHOD_FASTEST,
-                                  start_lon, start_lat, end_lon, end_lat);
-        elm_map_route_color_set(route, 255, 0, 0, 255);
+                                     ELM_MAP_ROUTE_METHOD_FASTEST,
+                                     start_lon, start_lat, end_lon, end_lat,
+                                     NULL, NULL);
      }
 }
 
 static void
-my_map_load_detail(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+_map_press(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
-   printf("load,detail\n");
+   printf("press\n");
 }
 
 static void
-my_map_loaded_detail(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+_map_longpressed(void *data __UNUSED__, Evas_Object *obj, void *event_info)
 {
-   printf("loaded,detail\n");
+   if (!event_info) return;
+   double lon, lat;
+   Evas_Event_Mouse_Down *down = (Evas_Event_Mouse_Down *)event_info;
+   elm_map_canvas_to_region_convert(obj, down->canvas.x, down->canvas.y, &lon, &lat);
+   printf("longpressed, x:%d, y:%d, lon:%lf, lat:%lf\n", down->canvas.x, down->canvas.y, lon, lat);
+
+   if (elm_map_zoom_get(obj) < 8) return;
+// FIXME: deprecated        
+//   if (name) elm_map_name_remove(name);
+   name = elm_map_name_add(obj, NULL, lon, lat, NULL, NULL);
 }
 
 static void
-my_map_zoom_start(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+_map_scroll(void *data __UNUSED__, Evas_Object *obj, void *event_info __UNUSED__)
 {
-   printf("zoom,start\n");
+   double lon, lat;
+   elm_map_region_get(obj, &lon, &lat);
+   printf("scroll, longitude: %f latitude: %f\n", lon, lat);
 }
 
 static void
-my_map_zoom_stop(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+_map_drag_start(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
-   printf("zoom,stop\n");
+   printf("scroll,drag,start\n");
+   evas_object_smart_callback_del(data, "longpressed", _map_longpressed);
 }
 
 static void
-my_map_zoom_change(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+_map_drag_stop(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
-   printf("zoom,change\n");
+   printf("scroll,drag,stop\n");
+   evas_object_smart_callback_add(data, "longpressed", _map_longpressed, data);
 }
 
 static void
-my_map_anim_start(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+_map_anim_start(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    printf("scroll,anim,start\n");
 }
 
 static void
-my_map_anim_stop(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+_map_anim_stop(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    printf("scroll,anim,stop\n");
 }
 
 static void
-my_map_drag_start(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+_map_zoom_start(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
-   printf("scroll,drag,start\n");
-   evas_object_smart_callback_del(data, "longpressed", my_map_longpressed);
+   printf("zoom,start\n");
 }
 
 static void
-my_map_drag_stop(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+_map_zoom_stop(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
-   printf("scroll,drag,stop\n");
-   evas_object_smart_callback_add(data, "longpressed", my_map_longpressed, data);
+   printf("zoom,stop\n");
 }
 
 static void
-my_map_scroll(void *data __UNUSED__, Evas_Object *obj, void *event_info __UNUSED__)
+_map_zoom_change(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
-   double lon, lat;
-   elm_map_geo_region_get(obj, &lon, &lat);
-   printf("scroll, longitude: %f latitude: %f\n", lon, lat);
+   printf("zoom,change\n");
 }
 
 static void
-my_map_downloaded(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+_map_tile_load(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+{
+   printf("tile,load\n");
+}
+
+static void
+_map_tile_loaded(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    int try_num, finish_num;
-   elm_map_utils_downloading_status_get(data, &try_num, &finish_num);
-   printf("downloaded : %d / %d\n", finish_num, try_num);
+   elm_map_tile_load_status_get(data, &try_num, &finish_num);
+   printf("tile,loaded: %d / %d\n", finish_num, try_num);
 }
 
 static void
-my_map_route_load(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+_map_tile_loaded_fail(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+{
+   int try_num, finish_num;
+   elm_map_tile_load_status_get(data, &try_num, &finish_num);
+   printf("tile,loaded,fail: %d / %d\n", finish_num, try_num);
+}
+
+static void
+_map_route_load(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    printf("route,load\n");
 }
 
 static void
-my_map_route_loaded(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+_map_route_loaded(void *data __UNUSED__, Evas_Object *obj, void *event_info __UNUSED__)
 {
    printf("route,loaded\n");
    double d;
    const char *w, *n;
+
    d = elm_map_route_distance_get(route);
    printf("route distance = %lf km\n", d);
 
@@ -244,16 +248,26 @@ my_map_route_loaded(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *ev
 
    n = elm_map_route_node_get(route);
    if (n) printf("[nodes]\n%s\n", n);
+
+   if (route_ovl) elm_map_overlay_del(route_ovl);
+   route_ovl = elm_map_overlay_route_add(obj, route);
+   elm_map_overlay_color_set(route_ovl, 255, 0, 0, 255);
 }
 
 static void
-my_map_name_load(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+_map_route_loaded_fail(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+{
+   printf("route,loaded,fail\n");
+}
+
+static void
+_map_name_load(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    printf("name,load\n");
 }
 
 static void
-my_map_name_loaded(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+_map_name_loaded(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    printf("name,loaded\n");
    if (!name) return;
@@ -268,12 +282,20 @@ my_map_name_loaded(void *data, Evas_Object *obj __UNUSED__, void *event_info __U
              Eina_Bool b = elm_map_paused_get(data);
              elm_map_paused_set(data, EINA_TRUE);
              elm_map_zoom_mode_set(data, ELM_MAP_ZOOM_MODE_MANUAL);
-             elm_map_geo_region_show(data, lon, lat);
-             elm_map_zoom_set(data, elm_map_source_zoom_max_get(data));
+             elm_map_region_show(data, lon, lat);
+             elm_map_zoom_set(data, elm_map_zoom_max_get(data));
              elm_map_paused_set(data, b);
           }
      }
-   elm_map_name_remove(name);
+// FIXME: deprecated        
+//   elm_map_name_remove(name);
+   name = NULL;
+}
+
+static void
+_map_name_loaded_fail(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+{
+   printf("name,loaded,fail\n");
 }
 
 static void
@@ -282,7 +304,7 @@ map_show_urmatt(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUS
    Eina_Bool b = elm_map_paused_get(data);
    elm_map_paused_set(data, EINA_TRUE);
    elm_map_zoom_mode_set(data, ELM_MAP_ZOOM_MODE_MANUAL);
-   elm_map_geo_region_show(data,7.325201, 48.526813);
+   elm_map_region_show(data,7.325201, 48.526813);
    elm_map_zoom_set(data, 12);
    elm_map_paused_set(data, b);
 }
@@ -290,7 +312,7 @@ map_show_urmatt(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUS
 static void
 map_bring_seoul(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
-   elm_map_geo_region_bring_in(data, 126.977969, 37.566535);
+   elm_map_region_bring_in(data, 126.977969, 37.566535);
 }
 
 static void
@@ -438,13 +460,13 @@ map_rotate_reset(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNU
 static void
 map_zoom_min_set(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
-   elm_map_source_zoom_min_set(data, 1);
+   elm_map_zoom_min_set(data, 1);
 }
 
 static void
 map_zoom_max_set(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
-   elm_map_source_zoom_max_set(data, 10);
+   elm_map_zoom_max_set(data, 10);
 }
 
 static void
@@ -453,7 +475,7 @@ map_source(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
    Map_Source *s = data;
 
    if (!s) return;
-   elm_map_source_name_set(s->map, s->source_name);
+   elm_map_source_set(s->map, ELM_MAP_SOURCE_TYPE_TILE, s->source_name);
 }
 
 /*
@@ -694,13 +716,13 @@ _overlay_cb(void *data __UNUSED__, Evas_Object *map, void *ev)
 }
 
 static void
-_parking_cb(void *data __UNUSED__, Evas_Object *map, Elm_Map_Overlay *ovl)
+_parking_cb(void *data __UNUSED__, Evas_Object *map, const Elm_Map_Overlay *ovl)
 {
    printf("Parking clicked\n");
    if (elm_map_overlay_type_get(ovl) != ELM_MAP_OVERLAY_TYPE_DEFAULT) return;
 
    double lon, lat;
-   elm_map_overlay_geo_get(ovl, &lon, &lat);
+   elm_map_overlay_region_get(ovl, &lon, &lat);
    if (!bubble_parking)
      {
         Evas_Object *bubble, *label;
@@ -720,7 +742,31 @@ _parking_cb(void *data __UNUSED__, Evas_Object *map, Elm_Map_Overlay *ovl)
         bubble_parking = elm_map_overlay_add(map, lon + 0.0006, lat + 0.0006);
         elm_map_overlay_content_set(bubble_parking, bubble);
      }
-   elm_map_overlay_geo_set(bubble_parking, lon + 0.0006, lat + 0.0006);
+   elm_map_overlay_region_set(bubble_parking, lon + 0.0006, lat + 0.0006);
+}
+
+static void
+_del_map(void *data __UNUSED__, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *ei __UNUSED__)
+{
+   if (route_start)    elm_map_overlay_del(route_start);
+   if (route_end)      elm_map_overlay_del(route_end);
+   if (route_clas)     elm_map_overlay_del(route_clas);
+   if (bubble_img)     elm_map_overlay_del(bubble_img);
+   if (bubble_parking) elm_map_overlay_del(bubble_parking);
+   if (route_ovl)      elm_map_overlay_del(route_ovl);
+   route_start = NULL;
+   route_end = NULL;
+   route_clas = NULL;
+   bubble_img = NULL;
+   bubble_parking = NULL;
+   route_ovl = NULL;
+
+// FIXME: deprecated        
+//   if (route) elm_map_route_remove(route);
+// FIXME: deprecated        
+//   if (name) elm_map_name_remove(name);
+   route = NULL;
+   name = NULL;
 }
 
 void
@@ -746,13 +792,15 @@ test_map(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __
         Elm_Map_Overlay *parking1, *parking2, *parking3, *parking4, *parking5;
         Elm_Map_Overlay *grp1, *grp2, *grp_parking;
 
+        evas_object_event_callback_add(map, EVAS_CALLBACK_DEL, _del_map, NULL);
+
         srand(time(NULL));
 
-        source_names = elm_map_source_names_get(map);
+        source_names = elm_map_sources_get(map, ELM_MAP_SOURCE_TYPE_TILE);
 
         if (!source_names) return;
         printf("map sources [ ");
-        for (idx = 0; source_names[idx] ; idx++) printf("%s ", source_names[idx]);
+        for (idx = 0; source_names[idx] ; idx++) printf("%s, ", source_names[idx]);
         printf("]\n");
 
         evas_object_size_hint_weight_set(map, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
@@ -766,25 +814,27 @@ test_map(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __
         evas_object_event_callback_add(map, EVAS_CALLBACK_MOUSE_UP,
                                        _map_mouse_up, map);
 
-        evas_object_smart_callback_add(map, "clicked", my_map_clicked, map);
-        evas_object_smart_callback_add(map, "press", my_map_press, map);
-        evas_object_smart_callback_add(map, "longpressed", my_map_longpressed, map);
-        evas_object_smart_callback_add(map, "clicked,double", my_map_clicked_double, map);
-        evas_object_smart_callback_add(map, "load,detail", my_map_load_detail, map);
-        evas_object_smart_callback_add(map, "loaded,detail", my_map_loaded_detail, map);
-        evas_object_smart_callback_add(map, "zoom,start", my_map_zoom_start, map);
-        evas_object_smart_callback_add(map, "zoom,stop", my_map_zoom_stop, map);
-        evas_object_smart_callback_add(map, "zoom,change", my_map_zoom_change, map);
-        evas_object_smart_callback_add(map, "scroll,anim,start", my_map_anim_start, map);
-        evas_object_smart_callback_add(map, "scroll,anim,stop", my_map_anim_stop, map);
-        evas_object_smart_callback_add(map, "scroll,drag,start", my_map_drag_start, map);
-        evas_object_smart_callback_add(map, "scroll,drag,stop", my_map_drag_stop, map);
-        evas_object_smart_callback_add(map, "scroll", my_map_scroll, map);
-        evas_object_smart_callback_add(map, "downloaded", my_map_downloaded, map);
-        evas_object_smart_callback_add(map, "route,load", my_map_route_load, map);
-        evas_object_smart_callback_add(map, "route,loaded", my_map_route_loaded, map);
-        evas_object_smart_callback_add(map, "name,load", my_map_name_load, map);
-        evas_object_smart_callback_add(map, "name,loaded", my_map_name_loaded, map);
+        evas_object_smart_callback_add(map, "clicked", _map_clicked, map);
+        evas_object_smart_callback_add(map, "clicked,double", _map_clicked_double, map);
+        evas_object_smart_callback_add(map, "press", _map_press, map);
+        evas_object_smart_callback_add(map, "longpressed", _map_longpressed, map);
+        evas_object_smart_callback_add(map, "scroll", _map_scroll, map);
+        evas_object_smart_callback_add(map, "scroll,drag,start", _map_drag_start, map);
+        evas_object_smart_callback_add(map, "scroll,drag,stop", _map_drag_stop, map);
+        evas_object_smart_callback_add(map, "scroll,anim,start", _map_anim_start, map);
+        evas_object_smart_callback_add(map, "scroll,anim,stop", _map_anim_stop, map);
+        evas_object_smart_callback_add(map, "zoom,start", _map_zoom_start, map);
+        evas_object_smart_callback_add(map, "zoom,stop", _map_zoom_stop, map);
+        evas_object_smart_callback_add(map, "zoom,change", _map_zoom_change, map);
+        evas_object_smart_callback_add(map, "tile,load", _map_tile_load, map);
+        evas_object_smart_callback_add(map, "tile,loaded", _map_tile_loaded, map);
+        evas_object_smart_callback_add(map, "tile,loaded,fail", _map_tile_loaded_fail, map);
+        evas_object_smart_callback_add(map, "route,load", _map_route_load, map);
+        evas_object_smart_callback_add(map, "route,loaded", _map_route_loaded, map);
+        evas_object_smart_callback_add(map, "route,loaded,fail", _map_route_loaded_fail, map);
+        evas_object_smart_callback_add(map, "name,load", _map_name_load, map);
+        evas_object_smart_callback_add(map, "name,loaded", _map_name_loaded, map);
+        evas_object_smart_callback_add(map, "name,loaded,fail", _map_name_loaded_fail, map);
         evas_object_smart_callback_add(map, "overlay,clicked", _overlay_cb, map);
 
         // Create Overlays
@@ -820,6 +870,7 @@ test_map(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __
         elm_map_overlay_class_append(grp1, ovl_4);
         elm_map_overlay_class_append(grp1, ovl_5);
         elm_map_overlay_class_append(grp1, ovl6);
+        evas_object_smart_callback_add(map, "overlay,clicked", _overlay_cb, map);
 
         // Append overlays to groups
         grp2 = elm_map_overlay_class_add(map);

@@ -22,9 +22,19 @@ typedef struct _Example_Data
    Elm_Map_Route *route;
    double start_lon, start_lat, dest_lon, dest_lat;
    Elm_Map_Name *name;
+   Elm_Map_Overlay *route_ovl;
 } Example_Data;
 
 static Example_Data example_data;
+
+static void
+_route_loaded(void *data, Evas_Object *obj, void *ev __UNUSED__)
+{
+   Example_Data *example_data = data;
+
+   example_data->route_ovl = elm_map_overlay_route_add(obj, example_data->route);
+   elm_map_overlay_color_set(example_data->route_ovl, 0, 255, 0, 255);
+}
 
 static void
 _name_loaded(void *data, Evas_Object *obj, void *ev __UNUSED__)
@@ -41,8 +51,8 @@ _name_loaded(void *data, Evas_Object *obj, void *ev __UNUSED__)
    example_data->route = elm_map_route_add(map, ELM_MAP_ROUTE_TYPE_FOOT,
                      ELM_MAP_ROUTE_METHOD_SHORTEST,
                      example_data->start_lon, example_data->start_lat,
-                     example_data->dest_lon, example_data->dest_lat);
-   elm_map_route_color_set(example_data->route, 0, 255, 0, 255);
+                     example_data->dest_lon, example_data->dest_lat,
+                     NULL, NULL);
 }
 
 static void
@@ -55,9 +65,10 @@ _bt_route(void *data, Evas_Object *obj __UNUSED__, void *ev __UNUSED__)
    map = example_data->map;
    address = (char *)elm_object_text_get(example_data->entry);
 
-   example_data->name = elm_map_utils_convert_name_into_coord(map, address);
+   example_data->name = elm_map_name_add(map, address, 0, 0, NULL, NULL);
 
    evas_object_smart_callback_add(map, "name,loaded", _name_loaded, data);
+   evas_object_smart_callback_add(map, "route,loaded", _route_loaded, data);
 }
 
 static void
@@ -187,7 +198,7 @@ elm_main(int argc __UNUSED__, char **argv __UNUSED__)
    example_data.start_lat = -22.97;
 
    elm_map_zoom_set(map, 12);
-   elm_map_geo_region_show(map, example_data.start_lon, example_data.start_lat);
+   elm_map_region_show(map, example_data.start_lon, example_data.start_lat);
 
    evas_object_resize(win, 512, 512);
    evas_object_show(win);

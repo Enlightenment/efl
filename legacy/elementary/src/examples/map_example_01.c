@@ -112,8 +112,7 @@ elm_main(int argc __UNUSED__, char **argv __UNUSED__)
    evas_object_smart_callback_add(bt, "clicked", _bt_zoom_fill, map);
 
    elm_map_zoom_set(map, 12);
-   elm_map_geo_region_show(map, -43.2, -22.9);
-
+   elm_map_region_show(map, -43.2, -22.9);
    evas_object_resize(win, 512, 512);
    evas_object_show(win);
 
