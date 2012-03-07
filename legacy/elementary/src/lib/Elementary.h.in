@@ -160,19 +160,19 @@ EAPI extern Elm_Version *elm_version;
 
 /* other includes */
 // Tom Hacohen
-#include <elc_ctxpopup.h>
-#include <elc_dayselector.h> // Ok
+#include <elc_ctxpopup.h> // OK
+#include <elc_dayselector.h> // OK
 #include <elc_fileselector_button.h>
 #include <elc_fileselector_entry.h>
 #include <elc_fileselector.h>
-#include <elc_hoversel.h>
+#include <elc_hoversel.h> // OK
 #include <elc_multibuttonentry.h> // OK
-#include <elc_naviframe.h>
-#include <elc_popup.h>
-#include <elm_actionslider.h> //ok
-#include <elm_app.h> //ok
-#include <elm_bg.h>
-#include <elm_box.h> //ok
+#include <elc_naviframe.h> // OK
+#include <elc_popup.h> // OK
+#include <elm_actionslider.h> // OK
+#include <elm_app.h> // OK
+#include <elm_bg.h> // OK
+#include <elm_box.h> // OK
 
 // Daniel Juyung Seo
 #include <elm_bubble.h> // OK
@@ -180,7 +180,7 @@ EAPI extern Elm_Version *elm_version;
 #include <elm_cache.h> // OK
 #include <elm_calendar.h> // OK
 #include <elm_check.h> // OK
-#include <elm_clock.h>
+#include <elm_clock.h> // OK
 #include <elm_cnp.h> // OK
 #include <elm_colorselector.h> // OK
 #include <elm_config.h> // OK
@@ -213,7 +213,7 @@ EAPI extern Elm_Version *elm_version;
 #include <elm_layout.h> // OK
 #include <elm_macros.h> // OK
 #include <elm_mapbuf.h> // OK
-#include <elm_map.h>
+#include <elm_map.h> // OK
 #include <elm_menu.h> // OK
 #include <elm_mirroring.h> // OK
 #include <elm_need.h> // OK
