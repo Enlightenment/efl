@@ -879,18 +879,12 @@ _ecore_evas_win32_fullscreen_set(Ecore_Evas *ee, int on)
 
    if (on != 0)
    {
-      ecore_win32_window_shape_set((struct _Ecore_Win32_Window *)ee->prop.window,
-                                   0, 0, NULL);
       ecore_win32_window_fullscreen_set((struct _Ecore_Win32_Window *)ee->prop.window,
                                         on);
    }
    else
    {
       ecore_win32_window_fullscreen_set(window, on);
-      ecore_win32_window_shape_set(window,
-                                   window->shape.width,
-                                   window->shape.height,
-                                   window->shape.mask);
    }
 
    /* Nothing to be done for the GDI backend at the evas level */
