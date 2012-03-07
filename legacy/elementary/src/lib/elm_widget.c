@@ -1653,7 +1653,7 @@ elm_widget_focus_cycle(Evas_Object        *obj,
  *
  * @ingroup Widget
  */
-//XXX: If x, y indicates the elements of the directional vector,
+//FIXME: If x, y indicates the elements of the directional vector,
 //It would be better if these values are the normalized value(float x, float y)
 //or degree.
 EINA_DEPRECATED EAPI void

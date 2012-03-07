@@ -79,7 +79,7 @@ elm_finger.h \
 elm_flip.h \
 elm_flipselector.h \
 elm_focus.h \
-elm_fonts.h \
+elm_font.h \
 elm_frame.h \
 elm_gen.h \
 elm_general.h \

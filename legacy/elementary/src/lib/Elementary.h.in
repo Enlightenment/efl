@@ -196,7 +196,7 @@ EAPI extern Elm_Version *elm_version;
 #include <elm_flip.h> // OK
 #include <elm_flipselector.h> // OK
 #include <elm_focus.h>  // OK
-#include <elm_fonts.h> // OK
+#include <elm_font.h> // OK
 #include <elm_frame.h> // OK
 #include <elm_gen.h> // OK
 #include <elm_gengrid.h> // OK
