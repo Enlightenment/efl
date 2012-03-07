@@ -411,7 +411,7 @@ EAPI void                  elm_map_canvas_to_region_convert(const Evas_Object *o
  * @param lon The longitude to convert.
  * @param lat The latitude to convert.
  * @param x   A pointer to horizontal coordinate.
- * @param y   A pointer to vertical coordinatet.
+ * @param y   A pointer to vertical coordinate.
  *
  * This gets canvas x, y coordinates from longitude and latitude. The canvas
  * coordinates mean x, y coordinate from current viewport.
@@ -1025,7 +1025,7 @@ EAPI int                   elm_map_overlay_class_zoom_max_get(const Elm_Map_Over
  * @param obj The map object to add a new overlay.
  * @return The created overlay or @c NULL upon failure.
  *
- * A bubble will not be displayed before geogrphic coordinates are set or
+ * A bubble will not be displayed before geographic coordinates are set or
  * any other overlays are followed.
  *
  * This overlay has a bubble style layout and icon or content can not

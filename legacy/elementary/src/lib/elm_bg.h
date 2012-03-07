@@ -107,7 +107,7 @@ EAPI void                         elm_bg_file_get(const Evas_Object *obj, const 
  * This sets how the background widget will display its image. This
  * will only work if the elm_bg_file_set() was previously called with
  * an image file on @a obj. The image can be display tiled, scaled,
- * centered or streched.
+ * centered or stretched.
  *
  * @see elm_bg_option_get()
  *

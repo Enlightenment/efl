@@ -63,7 +63,7 @@ typedef struct _Elm_Calendar_Mark Elm_Calendar_Mark;    /**< Item handle for a c
  * to display month and year.
  *
  * @param stime Struct representing time.
- * @return String represeting time that will be set to calendar's text.
+ * @return String representing time that will be set to calendar's text.
  *
  * @see elm_calendar_format_function_set()
  */

@@ -100,7 +100,7 @@ EAPI void elm_colorselector_palette_item_color_get(const Elm_Object_Item *it, in
 /**
  * Set the palette item's color.
  *
- * @param item The color paltte item.
+ * @param item The color palette item.
  * @param r r-value of color
  * @param g g-value of color
  * @param b b-value of color

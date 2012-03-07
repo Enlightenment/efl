@@ -4,7 +4,7 @@
  * @image html img/widget/dayselector/preview-00.png
  * @image latex img/widget/dayselector/preview-00.eps
  *
- * @brief <b>Dayselector widet:</b>
+ * @brief <b>Dayselector widget:</b>
  *
  *"elm_dayselector" is a day selection widget. It displays all seven days of
  * the week and allows the user to select multiple days.
@@ -52,7 +52,7 @@
  *
  * The widget emits the following signals:
  * @li "dayselector,changed" - when the user changes the state of a day.
- * @li "language,changed" - the program's launguage changed
+ * @li "language,changed" - the program's language changed
  *
  * Available styles for dayselector are:
  * @li default

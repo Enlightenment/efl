@@ -16,7 +16,7 @@
  *
  * Following figures shows the textual layouts of popup in which Title Area and
  * Action area area are optional ones.
- * Action area can have upto 3 buttons handled using elm_object common APIs
+ * Action area can have up to 3 buttons handled using elm_object common APIs
  * mentioned below. If user wants to have more than 3 buttons then these buttons
  * can be put inside the items of a list as content.
  * User needs to handle the clicked signal of these action buttons if required.
@@ -248,7 +248,7 @@ EAPI double elm_popup_timeout_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
  * @param allow EINA_TRUE Events are passed to lower objects, else not
  *
  * Enabling allow event will remove the Blocked event area and events will
- * pass to the lowever layer objects otherwise they are blocked.
+ * pass to the lower layer objects otherwise they are blocked.
  *
  * @ingroup Popup
  * @see elm_popup_allow_events_get()

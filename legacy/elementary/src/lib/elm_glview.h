@@ -31,7 +31,7 @@ struct _GLData
 static float red = 1.0;
 
 //--------------------------------//
-// a helper funtion to load shaders from a shader source
+// a helper function to load shaders from a shader source
 static GLuint
 load_shader( GLData *gld, GLenum type, const char *shader_src )
 {
@@ -281,10 +281,10 @@ elm_main(int argc, char **argv)
    // buffering.
    elm_glview_mode_set(gl, ELM_GLVIEW_ALPHA | ELM_GLVIEW_DEPTH);
    // resize policy tells glview what to do with the surface when it
-   // reisizes.  ELM_GLVIEW_RESIZE_POLICY_RECREATE will tell it to 
+   // resizes.  ELM_GLVIEW_RESIZE_POLICY_RECREATE will tell it to 
    // destroy the current surface and recreate it to the new size
    elm_glview_resize_policy_set(gl, ELM_GLVIEW_RESIZE_POLICY_RECREATE);
-   // render poicy tells glview how it would like glview to render
+   // render policy tells glview how it would like glview to render
    // gl code. ELM_GLVIEW_RENDER_POLICY_ON_DEMAND will have the gl
    // calls called in the pixel_get callback, which only gets called 
    // if the object is visible, hence ON_DEMAND.  ALWAYS mode renders
@@ -489,7 +489,7 @@ EAPI Eina_Bool    elm_glview_render_policy_set(Evas_Object *obj, Elm_GLView_Rend
  * @param func The init function to be registered.
  *
  * The registered init function gets called once during the render loop. 
- * This function allows glview to hide all the redering context/surface
+ * This function allows glview to hide all the rendering context/surface
  * details and have the user just call GL calls that they desire
  * for initialization GL calls.
  *
@@ -504,9 +504,9 @@ EAPI void         elm_glview_init_func_set(Evas_Object *obj, Elm_GLView_Func_Cb 
  * @param func The delete function to be registered.
  *
  * The registered del function gets called when GLView object is deleted.
- * This function allows glview to hide all the redering context/surface
+ * This function allows glview to hide all the rendering context/surface
  * details and have the user just call GL calls that they desire
- * when delete happends.
+ * when delete happens.
  *
  * @ingroup GLView
  */
@@ -518,10 +518,10 @@ EAPI void         elm_glview_del_func_set(Evas_Object *obj, Elm_GLView_Func_Cb f
  * @param obj The glview object.
  * @param func The resize function to be registered.
  *
- * The resize function getes called during the render loop. 
- * This function allows glview to hide all the redering context/surface
+ * The resize function gets called during the render loop. 
+ * This function allows glview to hide all the rendering context/surface
  * details and have the user just call GL calls that they desire
- * when resize happends.
+ * when resize happens.
  *
  * @ingroup GLView
  */
