@@ -61,6 +61,14 @@ test_dayselector(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event
    evas_object_size_hint_align_set(bx, EVAS_HINT_FILL, EVAS_HINT_FILL);
    evas_object_show(bx);
 
+   // Default
+   dayselector = elm_dayselector_add(win);
+   evas_object_size_hint_weight_set(dayselector, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_size_hint_align_set(dayselector, EVAS_HINT_FILL, 0.5);
+   elm_box_pack_end(bx, dayselector);
+   evas_object_show(dayselector);
+   evas_object_smart_callback_add(dayselector, "dayselector,changed", _changed_cb, NULL);
+
    //Sunday first
    dayselector = elm_dayselector_add(win);
    evas_object_size_hint_weight_set(dayselector, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
