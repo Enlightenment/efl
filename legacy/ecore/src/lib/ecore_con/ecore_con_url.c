@@ -1267,19 +1267,29 @@ ecore_con_url_proxy_password_set(Ecore_Con_Url *url_con, const char *password)
 
 #ifdef HAVE_CURL
 static void
+_ecore_con_url_status_get(Ecore_Con_Url *url_con)
+{
+   long status = 0;
+   if (curl_easy_getinfo(url_con->curl_easy, CURLINFO_RESPONSE_CODE, &status))
+     url_con->status = status;
+}
+
+static void
 _ecore_con_url_event_url_complete(Ecore_Con_Url *url_con, CURLMsg *curlmsg)
 {
    Ecore_Con_Event_Url_Complete *e;
-   long status = 0;
 
    e = calloc(1, sizeof(Ecore_Con_Event_Url_Complete));
    if (!e) return;
 
    if (curlmsg && (curlmsg->data.result == CURLE_OK))
-      curl_easy_getinfo(curlmsg->easy_handle, CURLINFO_RESPONSE_CODE, &status);
+     {
+        if (!url_con->status)
+          _ecore_con_url_status_get(url_con);
+     }
    else ERR("Curl message have errors: %d", curlmsg->data.result);
 
-   e->status = status;
+   e->status = url_con->status;
    e->url_con = url_con;
    url_con->event_count++;
    ecore_event_add(ECORE_CON_EVENT_URL_COMPLETE, e, (Ecore_End_Cb)_ecore_con_event_url_free, url_con);
