@@ -57,7 +57,7 @@ EAPI Evas_Object           *elm_diskselector_add(Evas_Object *parent);
  * Enable or disable round mode.
  *
  * @param obj The diskselector object.
- * @param round @c EINA_TRUE to enable round mode or @c EINA_FALSE to
+ * @param rnd @c EINA_TRUE to enable round mode or @c EINA_FALSE to
  * disable it.
  *
  * Disabled by default. If round mode is enabled the items list will
@@ -68,7 +68,7 @@ EAPI Evas_Object           *elm_diskselector_add(Evas_Object *parent);
  *
  * @ingroup Diskselector
  */
-EAPI void                   elm_diskselector_round_set(Evas_Object *obj, Eina_Bool round);
+EAPI void                   elm_diskselector_round_set(Evas_Object *obj, Eina_Bool rnd);
 
 /**
  * Get a value whether round mode is enabled or not.

@@ -1070,7 +1070,7 @@ elm_diskselector_round_get(const Evas_Object *obj)
 }
 
 EAPI void
-elm_diskselector_round_set(Evas_Object * obj, Eina_Bool round)
+elm_diskselector_round_set(Evas_Object * obj, Eina_Bool rnd)
 {
    Eina_List *elist;
    Elm_Diskselector_Item *it;
@@ -1079,11 +1079,11 @@ elm_diskselector_round_set(Evas_Object * obj, Eina_Bool round)
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return;
 
-   if (wd->round == round)
+   if (wd->round == rnd)
      return;
 
-   wd->round = round;
-   if (round)
+   wd->round = rnd;
+   if (rnd)
      {
         wd->r_items = eina_list_clone(wd->items);
         elm_box_unpack(wd->main_box, wd->left_blank);
