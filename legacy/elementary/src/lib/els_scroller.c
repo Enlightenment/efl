@@ -2027,13 +2027,13 @@ _smart_event_mouse_up(void *data, Evas *e, Evas_Object *obj __UNUSED__, void *ev
                                      ((sd->down.dy > 0) && (sd->down.pdy > 0)) ||
                                      ((sd->down.dy < 0) && (sd->down.pdy < 0)))
                                    {
-                                      double t = ecore_loop_time_get();
-                                      double dt = t - sd->down.anim_start;
+                                      double tt = ecore_loop_time_get();
+                                      double dtt = tt - sd->down.anim_start;
 
-                                      if (dt < 0.0) dt = 0.0;
-                                      else if (dt > _elm_config->thumbscroll_friction)
-                                        dt = _elm_config->thumbscroll_friction;
-                                      sd->down.extra_time = _elm_config->thumbscroll_friction - dt;
+                                      if (dtt < 0.0) dtt = 0.0;
+                                      else if (dtt > _elm_config->thumbscroll_friction)
+                                        dtt = _elm_config->thumbscroll_friction;
+                                      sd->down.extra_time = _elm_config->thumbscroll_friction - dtt;
                                    }
                                  else
                                    sd->down.extra_time = 0.0;
