@@ -175,14 +175,8 @@ AC_FUNC_ALLOCA
 # fnmatch
 EFL_CHECK_FNMATCH([], [AC_MSG_ERROR([Cannot find fnmatch()])])
 
-case "$host_os" in
-   mingw*)
-      AC_DEFINE(HAVE_GETTIMEOFDAY, 1, [Defined to 1 (MinGW platform)])
-      ;;
-   *)
-      EFL_CHECK_GETTIMEOFDAY([], [AC_MSG_ERROR([Cannot find gettimeofday()])])
-      ;;
-esac
+# gettimeofday
+EFL_CHECK_GETTIMEOFDAY([], [AC_MSG_ERROR([Cannot find gettimeofday()])])
 
 
 AC_SUBST(requirement_embryo)
