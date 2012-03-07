@@ -76,11 +76,11 @@ elm_pager_content_top_get(const Evas_Object *obj)
 EINA_DEPRECATED EAPI void
 elm_pager_item_style_default_set(Evas_Object *obj, const char *style)
 {
-   elm_naviframe_item_style_default_set(obj, style);
+   elm_object_style_set(obj, style);
 }
 
 EINA_DEPRECATED EAPI const char *
 elm_pager_item_style_default_get(const Evas_Object *obj)
 {
-   return elm_naviframe_item_style_default_get(obj);
+   return elm_object_style_get(obj);
 }

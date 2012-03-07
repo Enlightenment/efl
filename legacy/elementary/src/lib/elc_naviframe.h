@@ -384,30 +384,6 @@ EAPI void             elm_naviframe_event_enabled_set(Evas_Object *obj, Eina_Boo
 EAPI Eina_Bool        elm_naviframe_event_enabled_get(const Evas_Object *obj);
 
 /**
- * @brief Set the default item style.
- *
- * Default item style will be used with items who's style is NULL
- *
- * @param obj The naviframe object
- * @param style The style
- *
- * @ingroup Naviframe
- */
-EAPI void             elm_naviframe_item_style_default_set(Evas_Object *obj, const char *style);
-
-/**
- * @brief Get the default item style
- *
- * @param obj The naviframe object
- * @return the default item style
- *
- * @see elm_naviframe_item_style_default_set()
- *
- * @ingroup Naviframe
- */
-EAPI const char      *elm_naviframe_item_style_default_get(const Evas_Object *obj);
-
-/**
  * @brief Simple version of item_push.
  *
  * @see elm_naviframe_item_push
