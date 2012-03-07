@@ -121,6 +121,8 @@ EAPI void                       elm_multibuttonentry_expanded_set(Evas_Object *o
  * @param data The pointer to the data to be attached
  * @return A handle to the item added or NULL if not possible
  *
+ * @see Use elm_object_item_del() to delete the item.
+ *
  * @ingroup Multibuttonentry
  */
 EAPI Elm_Object_Item *elm_multibuttonentry_item_prepend(Evas_Object *obj, const char *label, Evas_Smart_Cb func, void *data);
@@ -133,6 +135,8 @@ EAPI Elm_Object_Item *elm_multibuttonentry_item_prepend(Evas_Object *obj, const 
  * @param func The callback function to be invoked when this item is pressed.
  * @param data The pointer to the data to be attached
  * @return A handle to the item added or NULL if not possible
+ *
+ * @see Use elm_object_item_del() to delete the item.
  *
  * @ingroup Multibuttonentry
  */
@@ -149,6 +153,8 @@ EAPI Elm_Object_Item *elm_multibuttonentry_item_append(Evas_Object *obj, const c
  * @param data The pointer to the data to be attached
  * @return A handle to the item added or NULL if not possible
  *
+ * @see Use elm_object_item_del() to delete the item.
+ *
  * @ingroup Multibuttonentry
  */
 EAPI Elm_Object_Item *elm_multibuttonentry_item_insert_before(Evas_Object *obj, Elm_Object_Item *before, const char *label, Evas_Smart_Cb func, void *data);
@@ -162,6 +168,8 @@ EAPI Elm_Object_Item *elm_multibuttonentry_item_insert_before(Evas_Object *obj, 
  * @param func The callback function to be invoked when this item is pressed.
  * @param data The pointer to the data to be attached
  * @return A handle to the item added or NULL if not possible
+ *
+ * @see Use elm_object_item_del() to delete the item.
  *
  * @ingroup Multibuttonentry
  */
