@@ -322,7 +322,7 @@ elm_main(int argc __UNUSED__, char **argv __UNUSED__)
                                                  (void *)(long)nitems++, NULL,
                                                  ELM_GENLIST_ITEM_GROUP,
                                                  _item_sel_cb, NULL);
-             elm_genlist_item_select_mode_set(git, ELM_OBJECT_DISPLAY_ONLY_SELECT);
+             elm_genlist_item_select_mode_set(gli, ELM_OBJECT_SELECT_MODE_DISPLAY_ONLY);
           }
         else
           {
