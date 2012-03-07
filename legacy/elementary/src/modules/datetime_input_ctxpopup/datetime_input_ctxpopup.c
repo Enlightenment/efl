@@ -76,20 +76,20 @@ _datetime_move_cb(void *data, Evas *e __UNUSED__,Evas_Object *obj __UNUSED__,
 }
 
 static void
-_field_value_set(struct tm *time, Elm_Datetime_Field_Type  field_type, int val)
+_field_value_set(struct tm *tim, Elm_Datetime_Field_Type  field_type, int val)
 {
    if (field_type >= DATETIME_FIELD_COUNT - 1) return;
 
-   int *timearr[]= { &time->tm_year, &time->tm_mon, &time->tm_mday, &time->tm_hour, &time->tm_min };
+   int *timearr[]= { &tim->tm_year, &tim->tm_mon, &tim->tm_mday, &tim->tm_hour, &tim->tm_min };
    *timearr[field_type] = val;
 }
 
 static int
-_field_value_get(struct tm *time, Elm_Datetime_Field_Type  field_type)
+_field_value_get(struct tm *tim, Elm_Datetime_Field_Type  field_type)
 {
    if (field_type >= DATETIME_FIELD_COUNT - 1) return -1;
 
-   int *timearr[]= { &time->tm_year, &time->tm_mon, &time->tm_mday, &time->tm_hour, &time->tm_min };
+   int *timearr[]= { &tim->tm_year, &tim->tm_mon, &tim->tm_mday, &tim->tm_hour, &tim->tm_min };
    return (*timearr[field_type]);
 }
 
@@ -224,17 +224,17 @@ field_value_display(Elm_Datetime_Module_Data *module_data, Evas_Object *obj)
 {
    Ctxpopup_Module_Data *ctx_mod;
    Elm_Datetime_Field_Type  field_type;
-   struct tm time;
+   struct tm tim;
    char buf[BUFF_SIZE];
    const char *fmt;
 
    ctx_mod = (Ctxpopup_Module_Data *)module_data;
    if (!ctx_mod || !obj) return;
 
-   elm_datetime_value_get(ctx_mod->mod_data.base, &time);
+   elm_datetime_value_get(ctx_mod->mod_data.base, &tim);
    field_type = (Elm_Datetime_Field_Type )evas_object_data_get(obj, "_field_type");
    fmt = ctx_mod->mod_data.field_format_get(ctx_mod->mod_data.base, field_type);
-   strftime(buf, sizeof(buf), fmt, &time);
+   strftime(buf, sizeof(buf), fmt, &tim);
    elm_object_text_set(obj, buf);
 }
 
