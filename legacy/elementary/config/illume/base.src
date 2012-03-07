@@ -57,6 +57,6 @@ group "Elm_Config" struct {
   value "glayer_long_tap_start_timeout" double: 1.2; /* sec to start long-tap */
   value "glayer_continues_enable" uchar: 1;          /* Continues gesture enabled */
   value "week_start" int: 0;
-  value "weekend_start" int: 6;
+  value "weekend_start" int: 5;
   value "weekend_len" int: 2;
 }

@@ -30,7 +30,7 @@ group "Elm_Config" struct {
   value "finger_size" int: 5;
   value "fps" double: 60.0;
   value "theme" string: "default-desktop";
-  value "modules" string: "";
+  value "modules" string: "datetime_input_ctxpopup>datetime/api";
   value "tooltip_delay" double: 1.0;
   value "cursor_engine_only" uchar: 1;
   value "focus_highlight_enable" uchar: 0;
@@ -56,4 +56,7 @@ group "Elm_Config" struct {
   value "glayer_flick_time_limit_ms" uint: 120; /* ms to finish flick */
   value "glayer_long_tap_start_timeout" double: 1.2; /* sec to start long-tap */
   value "glayer_continues_enable" uchar: 1;          /* Continues gesture enabled */
+  value "week_start" int: 0;
+  value "weekend_start" int: 6;
+  value "weekend_len" int: 2;
 }
