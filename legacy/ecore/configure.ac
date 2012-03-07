@@ -1228,7 +1228,23 @@ esac
 
 # ecore_con
 
-AC_CHECK_HEADERS([arpa/inet.h arpa/nameser.h netinet/tcp.h net/if.h netinet/in.h sys/socket.h sys/un.h ws2tcpip.h netdb.h])
+AC_CHECK_HEADERS([sys/socket.h])
+AC_CHECK_HEADERS([net/if.h], [], [],
+[
+#include <stdio.h>
+#ifdef STDC_HEADERS
+# include <stdlib.h>
+# include <stddef.h>
+#else
+# ifdef HAVE_STDLIB_H
+#  include <stdlib.h>
+# endif
+#endif
+#ifdef HAVE_SYS_SOCKET_H
+# include <sys/socket.h>
+#endif
+])
+AC_CHECK_HEADERS([sys/un.h arpa/inet.h arpa/nameser.h netinet/tcp.h netinet/in.h ws2tcpip.h netdb.h])
 
 if test "x${ac_cv_header_netdb_h}" = "xyes" ; then
    have_addrinfo="yes"
@@ -1419,7 +1435,9 @@ if ! test "x${have_atfile_source}" = "xno" ; then
 fi
 
 SHM_OPEN_LIBS=""
-AC_COMPILE_IFELSE(
+
+AC_MSG_CHECKING([whether shm_open is in libc])
+AC_LINK_IFELSE(
    [AC_LANG_PROGRAM(
        [[
 #include <sys/mman.h>
@@ -1434,12 +1452,40 @@ shm_unlink("/");
    [
     have_shm_open="yes"
     AC_DEFINE(HAVE_SHM_OPEN, 1, [Have shm_open() call])
-    SHM_OPEN_LIBS="-lrt"
    ],
    [have_shm_open="no"])
-AC_SUBST(SHM_OPEN_LIBS)
+LIBS="${LIBS_save}"
+AC_MSG_RESULT([${have_shm_open}])
 
-AC_MSG_CHECKING([shm_open])
+if ! test "x${have_shm_open}" = "xyes" ; then
+   AC_MSG_CHECKING([whether shm_open is in librt])
+   LIBS_save="${LIBS}"
+   LIBS="${LIBS} -lrt"
+   AC_LINK_IFELSE(
+      [AC_LANG_PROGRAM(
+          [[
+#include <sys/mman.h>
+#include <sys/stat.h>
+#include <fcntl.h>
+          ]],
+          [[
+int fd;
+fd = shm_open("/", O_RDWR | O_CREAT, S_IRUSR | S_IWUSR);
+shm_unlink("/");
+          ]])],
+      [
+       have_shm_open="yes"
+       AC_DEFINE(HAVE_SHM_OPEN, 1, [Have shm_open() call])
+       SHM_OPEN_LIBS="-lrt"
+      ],
+      [have_shm_open="no"])
+   LIBS="${LIBS_save}"
+   AC_MSG_RESULT([${have_shm_open}])
+fi
+
+AC_SUBST([SHM_OPEN_LIBS])
+
+AC_MSG_CHECKING([whether shm_open is available])
 AC_MSG_RESULT([${have_shm_open}])
 
 ### Checks for optionnal feature
