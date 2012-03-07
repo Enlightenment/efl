@@ -13,10 +13,13 @@
  * of addresses, each of which is an item that can be clicked for further actions.
  *
  * Smart callbacks one can register:
- * - @c "item,selected" - when item is selected. May be called on backspace key.
+ * - @c "item,selected" - this is called when an item is selected by api, user
+ *       interaction, and etc. this is also called when a user press back space
+ *       while cursor is on the first field of entry.
  * - @c "item,added" - when a new multibuttonentry item is added.
  * - @c "item,deleted" - when a multibuttonentry item is deleted.
- * - @c "item,clicked" - selected item of multibuttonentry is clicked.
+ * - @c "item,clicked" - this is called when an item is clicked by user
+ *       interaction. Both "item,selected" and "item,clicked" are needed.
  * - @c "clicked" - when multibuttonentry is clicked.
  * - @c "focused" - when multibuttonentry is focused.
  * - @c "unfocused" - when multibuttonentry is unfocused.
