@@ -558,8 +558,41 @@ EAPI Elm_Object_Item             *elm_gengrid_selected_item_get(const Evas_Objec
  */
 EAPI const Eina_List              *elm_gengrid_selected_items_get(const Evas_Object *obj);
 
-//XXX: let's add
-//EAPI Eina_List                  *elm_gengrid_realized_items_get(const Evas_Object *obj);
+/**
+ * Get a list of realized items in gengrid
+ *
+ * @param obj The gengrid object
+ * @return The list of realized items, nor NULL if none are realized.
+ *
+ * This returns a list of the realized items in the gengrid. The list
+ * contains gengrid item pointers. The list must be freed by the
+ * caller when done with eina_list_free(). The item pointers in the
+ * list are only valid so long as those items are not deleted or the
+ * gengrid is not deleted.
+ *
+ * @see elm_gengrid_realized_items_update()
+ *
+ * @ingroup Gengrid
+ */
+EAPI Eina_List                    *elm_gengrid_realized_items_get(const Evas_Object *obj);
+
+/**
+ * Update the contents of all realized items.
+ *
+ * @param obj The gengrid object.
+ *
+ * This updates all realized items by calling all the item class functions again
+ * to get the contents, texts and states. Use this when the original
+ * item data has changed and the changes are desired to be reflected.
+ *
+ * To update just one item, use elm_gengrid_item_update().
+ *
+ * @see elm_gengrid_realized_items_get()
+ * @see elm_gengrid_item_update()
+ *
+ * @ingroup Gengrid
+ */
+EAPI void                          elm_gengrid_realized_items_update(Evas_Object *obj);
 
 /**
  * Get the first item in a given gengrid widget
@@ -593,11 +626,39 @@ EAPI Elm_Object_Item             *elm_gengrid_first_item_get(const Evas_Object *
  */
 EAPI Elm_Object_Item             *elm_gengrid_last_item_get(const Evas_Object *obj);
 
-//XXX: let's add
-//EAPI void                          elm_gengrid_scroller_policy_set(Evas_Object *obj, Elm_Scroller_Policy policy_h, Elm_Scroller_Policy policy_v);
+/**
+ * Set the scrollbar policy
+ *
+ * @param obj The gengrid object
+ * @param policy_h Horizontal scrollbar policy.
+ * @param policy_v Vertical scrollbar policy.
+ *
+ * This sets the scrollbar visibility policy for the given gengrid
+ * scroller. #ELM_SMART_SCROLLER_POLICY_AUTO means the scrollbar is
+ * made visible if it is needed, and otherwise kept hidden.
+ * #ELM_SMART_SCROLLER_POLICY_ON turns it on all the time, and
+ * #ELM_SMART_SCROLLER_POLICY_OFF always keeps it off. This applies
+ * respectively for the horizontal and vertical scrollbars. Default is
+ * #ELM_SMART_SCROLLER_POLICY_AUTO
+ *
+ * @see elm_gengrid_scroller_policy_get()
+ *
+ * @ingroup Gengrid
+ */
+EAPI void                          elm_gengrid_scroller_policy_set(Evas_Object *obj, Elm_Scroller_Policy policy_h, Elm_Scroller_Policy policy_v);
 
-//XXX: lets' add
-//EAPI void                          elm_gengrid_scroller_policy_get(const Evas_Object *obj, Elm_Scroller_Policy *policy_h, Elm_Scroller_Policy *policy_v);
+/**
+ * Get the scrollbar policy
+ *
+ * @param obj The gengrid object
+ * @param policy_h Pointer to store the horizontal scrollbar policy.
+ * @param policy_v Pointer to store the vertical scrollbar policy.
+ *
+ * @see elm_gengrid_scroller_policy_set()
+ *
+ * @ingroup Gengrid
+ */
+EAPI void                          elm_gengrid_scroller_policy_get(const Evas_Object *obj, Elm_Scroller_Policy *policy_h, Elm_Scroller_Policy *policy_v);
 
 /**
  * Get the @b next item in a gengrid widget's internal list of items,
@@ -741,8 +802,18 @@ EAPI const Elm_Gengrid_Item_Class *elm_gengrid_item_item_class_get(const Elm_Obj
 
 //XXX: Let's add
 //EAPI int                           elm_gengrid_item_index_get(const Elm_Object_Item *it);
-//EAPI void                          elm_gengrid_realized_items_update(Evas_Object *obj);
-//EAPI unsigned int elm_gengrid_items_count(const Evas_Object *obj);
+
+/**
+ * Return how many items are currently in a list
+ *
+ * @param obj The list
+ * @return The total number of list items in the list
+ *
+ * This behavior is O(1) and includes items which may or may not be realized.
+ *
+ * @ingroup Gengrid
+ */
+EAPI unsigned int elm_gengrid_items_count(const Evas_Object *obj);
 
 /**
  * Add a new gengrid item class in a given gengrid widget.

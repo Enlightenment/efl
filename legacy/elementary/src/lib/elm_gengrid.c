@@ -2372,6 +2372,34 @@ elm_gengrid_item_selected_get(const Elm_Object_Item *it)
    return elm_genlist_item_selected_get(it);
 }
 
+EAPI Eina_List *
+elm_gengrid_realized_items_get(const Evas_Object *obj)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype) NULL;
+   Widget_Data *wd = elm_widget_data_get(obj);
+   Eina_List *list = NULL;
+   Elm_Gen_Item *it;
+
+   EINA_INLIST_FOREACH(wd->items, it)
+     {
+        if (it->realized) list = eina_list_append(list, (Elm_Object_Item *)it);
+     }
+   return list;
+}
+
+EAPI void
+elm_gengrid_realized_items_update(Evas_Object *obj)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype);
+
+   Eina_List *list, *l;
+   Elm_Object_Item *it;
+
+   list = elm_gengrid_realized_items_get(obj);
+   EINA_LIST_FOREACH(list, l, it)
+     elm_gengrid_item_update(it);
+}
+
 EAPI void
 elm_gengrid_item_disabled_set(Elm_Object_Item  *it,
                               Eina_Bool         disabled)
@@ -2686,6 +2714,34 @@ elm_gengrid_page_bring_in(const Evas_Object *obj, int h_pagenumber, int v_pagenu
    _elm_genlist_page_bring_in(obj, h_pagenumber, v_pagenumber);
 }
 
+EAPI void
+elm_gengrid_scroller_policy_set(Evas_Object        *obj,
+                                Elm_Scroller_Policy policy_h,
+                                Elm_Scroller_Policy policy_v)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype);
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if ((!wd) || (!wd->scr)) return;
+   if ((policy_h >= ELM_SCROLLER_POLICY_LAST) ||
+       (policy_v >= ELM_SCROLLER_POLICY_LAST))
+     return;
+   elm_smart_scroller_policy_set(wd->scr, policy_h, policy_v);
+}
+
+EAPI void
+elm_gengrid_scroller_policy_get(const Evas_Object   *obj,
+                                Elm_Scroller_Policy *policy_h,
+                                Elm_Scroller_Policy *policy_v)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype);
+   Widget_Data *wd = elm_widget_data_get(obj);
+   Elm_Smart_Scroller_Policy s_policy_h, s_policy_v;
+   if ((!wd) || (!wd->scr)) return;
+   elm_smart_scroller_policy_get(wd->scr, &s_policy_h, &s_policy_v);
+   if (policy_h) *policy_h = (Elm_Scroller_Policy)s_policy_h;
+   if (policy_v) *policy_v = (Elm_Scroller_Policy)s_policy_v;
+}
+
 EAPI Elm_Object_Item *
 elm_gengrid_first_item_get(const Evas_Object *obj)
 {
@@ -2795,6 +2851,15 @@ elm_gengrid_filled_get(const Evas_Object *obj)
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return EINA_FALSE;
    return wd->filled;
+}
+
+EAPI unsigned int
+elm_gengrid_items_count(const Evas_Object *obj)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype) 0;
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return 0;
+   return wd->item_count;
 }
 
 EAPI Elm_Gengrid_Item_Class *
