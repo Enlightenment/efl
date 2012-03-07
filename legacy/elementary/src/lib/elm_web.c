@@ -1550,8 +1550,14 @@ elm_web_navigate(Evas_Object *obj, int steps)
 #endif
 }
 
-EAPI Eina_Bool
+EINA_DEPRECATED EAPI Eina_Bool
 elm_web_back_possible(Evas_Object *obj)
+{
+   return elm_web_back_possible_get(obj);
+}
+
+EAPI Eina_Bool
+elm_web_back_possible_get(Evas_Object *obj)
 {
    ELM_CHECK_WIDTYPE(obj, widtype) EINA_FALSE;
 #ifdef HAVE_ELEMENTARY_WEB
@@ -1561,6 +1567,12 @@ elm_web_back_possible(Evas_Object *obj)
 #else
    return EINA_FALSE;
 #endif
+}
+
+EINA_DEPRECATED EAPI Eina_Bool
+elm_web_forward_possible(Evas_Object *obj)
+{
+   return elm_web_forward_possible_get(obj);
 }
 
 EAPI Eina_Bool
@@ -1860,14 +1872,43 @@ elm_web_window_features_unref(Elm_Web_Window_Features *wf)
 }
 
 EAPI void
-elm_web_window_features_bool_property_get(const Elm_Web_Window_Features *wf, Eina_Bool *toolbar_visible, Eina_Bool *statusbar_visible, Eina_Bool *scrollbars_visible, Eina_Bool *menubar_visible, Eina_Bool *locationbar_visible, Eina_Bool *fullscreen)
+elm_web_window_features_bool_property_get(const Elm_Web_Window_Features *wf, Elm_Web_Window_Feature_Flag flag)
 {
 #ifdef HAVE_ELEMENTARY_WEB
+   Eina_Bool toolbar_visible, statusbar_visible;
+   Eina_Bool scrollbars_visible, menubar_visible;
+   Eina_Bool locationbar_visible, fullscreen;
+
    ewk_window_features_bool_property_get((const Ewk_Window_Features *)wf,
-                                         toolbar_visible, statusbar_visible,
-                                         scrollbars_visible, menubar_visible,
-                                         locationbar_visible, fullscreen);
+                                         &toolbar_visible, &statusbar_visible,
+                                         &scrollbars_visible, &menubar_visible,
+                                         &locationbar_visible, &fullscreen);
+
+   //TODO : Improve ewk API usage to get one value.
+   //
+   switch(flag)
+     {
+        case ELM_WEB_WINDOW_FEATURE_TOOLBAR:
+            return toolbar_visible;
+            break;
+        case ELM_WEB_WINDOW_FEATURE_STATUSBAR:
+            return statusbar_visible;
+            break;
+        case ELM_WEB_WINDOW_FEATURE_SCROLLBARS:
+            return scrollbars_visible;
+            break;
+        case ELM_WEB_WINDOW_FEATURE_MENUBAR:
+            return menubar_visible;
+            break;
+        case ELM_WEB_WINDOW_FEATURE_LOCATIONBAR:
+            return locationbar_visible;
+            break;
+        case ELM_WEB_WINDOW_FEATURE_FULLSCREEN:
+            return fullscreen;
+            break;
 #else
+   /* What to do with these ?
+    
    (void)wf;
    (void)toolbar_visible;
    (void)statusbar_visible;
@@ -1875,21 +1916,30 @@ elm_web_window_features_bool_property_get(const Elm_Web_Window_Features *wf, Ein
    (void)menubar_visible;
    (void)locationbar_visible;
    (void)fullscreen;
+
+   */
+
 #endif
 }
 
 EAPI void
-elm_web_window_features_int_property_get(const Elm_Web_Window_Features *wf, int *x, int *y, int *w, int *h)
+elm_web_window_features_region_get(const Elm_Web_Window_Features *wf, Evas_Coord *x, Evas_Coord *y, Evas_Coord *w, Evas_Coord *h)
 {
 #ifdef HAVE_ELEMENTARY_WEB
    ewk_window_features_int_property_get((const Ewk_Window_Features *)wf,
                                         x, y, w, h);
 #else
+
+   /* What to do with these ?
+    
    (void)wf;
    (void)x;
    (void)y;
    (void)w;
    (void)h;
+
+   */
+
 #endif
 }
 

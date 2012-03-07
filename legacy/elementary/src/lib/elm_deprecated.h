@@ -6115,6 +6115,37 @@ EINA_DEPRECATED EAPI void                         elm_list_always_select_mode_se
  */
 EINA_DEPRECATED EAPI Eina_Bool                    elm_list_always_select_mode_get(const Evas_Object *obj);
 
+/*
+ * Queries whether it's possible to go back in history
+ *
+ * @param obj The web object
+ *
+ * @return EINA_TRUE if it's possible to back in history, EINA_FALSE
+ * otherwise
+ * @deprecated elm_web_back_possible_get();
+ */
+EINA_DEPRECATED EAPI Eina_Bool         elm_web_backward_possible(Evas_Object *obj);
+
+/**
+ * Queries whether it's possible to go forward in history
+ *
+ * @param obj The web object
+ *
+ * @return EINA_TRUE if it's possible to forward in history, EINA_FALSE
+ * otherwise
+ *
+ * @deprecated elm_web_forward_possible_get();
+ */
+EINA_DEPRECATED EAPI Eina_Bool         elm_web_forward_possible(Evas_Object *obj);
+
+/**
+ * Queries whether it's possible to jump the given number of steps
+ *
+ * @deprecated elm_web_navigate_possible_get();
+ *
+ */
+EINA_DEPRECATED EAPI Eina_Bool         elm_web_navigate_possible(Evas_Object *obj, int steps);
+
 /**
  * @}
  */
