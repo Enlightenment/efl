@@ -804,12 +804,12 @@ elm_spinner_base_get(const Evas_Object *obj)
 }
 
 EAPI void
-elm_spinner_round_set(Evas_Object *obj, int round)
+elm_spinner_round_set(Evas_Object *obj, int rnd)
 {
    ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return;
-   wd->round = round;
+   wd->round = rnd;
 }
 
 EAPI int

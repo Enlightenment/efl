@@ -404,7 +404,7 @@ EAPI double elm_spinner_base_get(const Evas_Object *obj);
  *
  * @ingroup Spinner
  */
-EAPI void elm_spinner_round_set(Evas_Object *obj, int round);
+EAPI void elm_spinner_round_set(Evas_Object *obj, int rnd);
 
 /**
  * Get the round value for rounding

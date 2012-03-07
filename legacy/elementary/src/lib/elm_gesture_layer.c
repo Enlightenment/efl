@@ -1570,13 +1570,14 @@ _n_long_tap_test(Evas_Object *obj, Pointer_Event *pe,
  * @ingroup Elm_Gesture_Layer
  */
 static void
-_set_momentum(Elm_Gesture_Momentum_Info *momentum, Evas_Coord x1, Evas_Coord y1,
-      Evas_Coord x2, Evas_Coord y2, unsigned int t1x, unsigned int t1y,
-      unsigned int t2)
+_set_momentum(Elm_Gesture_Momentum_Info *momentum, 
+              Evas_Coord xx1, Evas_Coord yy1,
+              Evas_Coord xx2, Evas_Coord yy2, 
+              unsigned int t1x, unsigned int t1y, unsigned int t2)
 {
    Evas_Coord velx = 0, vely = 0, vel;
-   Evas_Coord dx = x2 - x1;
-   Evas_Coord dy = y2 - y1;
+   Evas_Coord dx = xx2 - xx1;
+   Evas_Coord dy = yy2 - yy1;
    int dtx = t2 - t1x;
    int dty = t2 - t1y;
    if (dtx > 0)
