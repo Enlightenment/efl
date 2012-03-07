@@ -138,28 +138,224 @@ struct _Elm_Store_Item_Info_Filesystem
 #define ELM_STORE_ITEM_MAPPING_END { ELM_STORE_ITEM_MAPPING_NONE, NULL, 0, { .empty = { EINA_TRUE } } } /**< Use this to end a list of mappings */
 #define ELM_STORE_ITEM_MAPPING_OFFSET(st, it) offsetof(st, it) /**< Use this to get the offset in bytes in memory for where the data for the mapping lives relative to the item data (a private struct pointed to owned by the user */
 
+/**
+ * Create a new store object
+ * 
+ * This creates a new store object to then configure so it works.
+ * 
+ * @return A new store object, or NULL if creation fails
+ */
 EAPI Elm_Store              *elm_store_filesystem_new(void);
+/**
+ * Free the store object and all items it manages
+ * 
+ * This frees the given @p st store and all the items it manages. It will
+ * clear the List that it populated, but otherwise leave it alone. It will
+ * cancel background threads (and may have to wait for them to complete a
+ * pending operation to do this).
+ * 
+ * @param st The store to free
+ */
 EAPI void                    elm_store_free(Elm_Store *st);
 
+/**
+ * Set the path to the directory to scan for a filesystem store
+ * 
+ * This sets the directory (@p dir) to scan and begins scanning in the
+ * the background in threads (or not if threading is disabled with
+ * elm_store_fetch_thread_set()). Note that Listing is always done in a thread
+ * but fetching may not be if disabled here. This should be the last thing
+ * called after fetch, list and unfetch functions are set, as well as target
+ * genlist etc. You also should not change the directory once set. If you
+ * need a new directory scanned, create a new store.
+ * 
+ * @param st The store to modify
+ * @param dir A string giving hte path to the directory to scan
+ */
 EAPI void                    elm_store_filesystem_directory_set(Elm_Store *st, const char *dir);
+
+/**
+ * Get the directory set on a filesystem store
+ * 
+ * This gets the directory set by elm_store_filesystem_directory_set(). This
+ * string returned will be valid until elm_store_filesystem_directory_set()
+ * changes it or until the store is freed with elm_store_free().
+ * 
+ * @return A string with the path set, or NULL if none set.
+ */
 EAPI const char             *elm_store_filesystem_directory_get(const Elm_Store *st);
+
+/** 
+ * Get the path of a specific store item
+ * 
+ * This returns the full path of a store item. This string is valid only
+ * during the list function set by elm_store_list_func_set() or during the
+ * fetch function set by elm_store_fetch_func_set() or during the unfetch
+ * function set by elm_store_unfetch_func_set().
+ * 
+ * @param sti The store item to get the path from
+ * @return A full path in a string or NULL if none available
+ */
 EAPI const char             *elm_store_item_filesystem_path_get(const Elm_Store_Item *sti);
 
+/**
+ * Set the target genlist to fill in from the store
+ * 
+ * This tells the store the target genlist to use to fill in content from
+ * the store. Once a store starts "going" via elm_store_filesystem_directory_set()
+ * The target should never be changed again.
+ * 
+ * @param st The store to do the filling.
+ * @param obj The genlist object to fill in and control the content of from the store.
+ */
 EAPI void                    elm_store_target_genlist_set(Elm_Store *st, Evas_Object *obj);
 
+/**
+ * Set the maximum number of items that are not visible to keep cached
+ * 
+ * Store may keep some items around for cachng purposes that cannot be seen,
+ * so this controls the maximum number. The default is 128, but may change
+ * at any point in time in the future.
+ * 
+ * @param st The store to modify
+ * @param max The number of items to keep (should be greater than or equal to 0)
+ */
 EAPI void                    elm_store_cache_set(Elm_Store *st, int max);
+
+/**
+ * Get the maximum number if items to cache
+ * 
+ * This returns the number of items at most to cache.
+ * 
+ * @param st The store to query
+ * @return The maximum number of items to cache (>= 0)
+ * @see elm_store_cache_set()
+ */
 EAPI int                     elm_store_cache_get(const Elm_Store *st);
+
+/**
+ * Set the function used to deal with listing of items
+ * 
+ * This function is called per item that is found so it can examine the item
+ * and discard it (return EINA_FALSE to discard, or EINA_TRUE to accept), and
+ * work out some sorting ID (that may be filename or anything else based on
+ * content). This function is always called from a thread.
+ * 
+ * @param st The store to set the function of
+ * @param func The function to be called
+ * @param data the data pointer to be passed to the @p func function when called
+ */
 EAPI void                    elm_store_list_func_set(Elm_Store *st, Elm_Store_Item_List_Cb func, const void *data);
+
+/**
+ * Set the function used to deal with fetching of items
+ * 
+ * This function is called per item that needs data to be fetched when it
+ * becomes visible and such data is needed. This function is normally run
+ * from a thread (unless elm_store_fetch_thread_set() disables this). The
+ * fetch function is to read data from the source and fill a structure
+ * allocated for this item with fields and then rely on the mapping setup
+ * to tell Store how to take a field inthe structure and apply it to a
+ * genlist item.
+ * 
+ * @param st The store to set the function of
+ * @param func The function to be called
+ * @param data the data pointer to be passed to the @p func function when called
+ */
 EAPI void                    elm_store_fetch_func_set(Elm_Store *st, Elm_Store_Item_Fetch_Cb func, const void *data);
+
+/**
+ * Set the function used to free the structure allocated for the item
+ * 
+ * This function is called per item when it is not needed in memory anymore
+ * and should free the structure allocaed in and filled in the function set
+ * by elm_store_fetch_func_set().
+ * 
+ * @param st The store to set the function of
+ * @param func The function to be called
+ * @param data the data pointer to be passed to the @p func function when called
+ */
+EAPI void                    elm_store_unfetch_func_set(Elm_Store *st, Elm_Store_Item_Unfetch_Cb func, const void *data);
+
+/**
+ * Enable or disable fetching in a thread for Store
+ * 
+ * @param st The store to modify
+ * @param use_thread EINA_TRUE to use a thread to fetch, EINA_FALSE don't use a thread.
+ */
 EAPI void                    elm_store_fetch_thread_set(Elm_Store *st, Eina_Bool use_thread);
+
+/**
+ * Get the thread enabled fetching option for Store
+ * 
+ * @return The state set currently for the store.
+ * @see elm_store_fetch_thread_set()
+ */
 EAPI Eina_Bool               elm_store_fetch_thread_get(const Elm_Store *st);
 
-EAPI void                    elm_store_unfetch_func_set(Elm_Store *st, Elm_Store_Item_Unfetch_Cb func, const void *data);
+/**
+ * Set if items are to be sorted or not.
+ * 
+ * By default items are not sorted, but read "in order" as they are found. If
+ * you want to sort, your list function set by elm_store_list_func_set() must
+ * provide a sort ID to sort by, and then Store will take care of sorting when
+ * it inserts items. You should set this up before you begin listing items
+ * in the store and then never change it again.
+ * 
+ * @param st The store to modify
+ * @param sorted EINA_TRUE if we are to sort, EINA_FALSE if not.
+ */
 EAPI void                    elm_store_sorted_set(Elm_Store *st, Eina_Bool sorted);
+
+/**
+ * Get the sorting flag
+ * 
+ * Get the sorted flag as set by elm_store_sorted_set().
+ * 
+ * @param st The store to query
+ * @return EINA_TRUE if sorted, EINA_FALE if not.
+ */
 EAPI Eina_Bool               elm_store_sorted_get(const Elm_Store *st);
+
+/**
+ * Set the item data holding item fields to map to item values in genlist
+ * 
+ * Once you decode an item, allocate a structure for it and fill the structure,
+ * you should set the item data with this function (eg in the fetch function).
+ * This item pointer is the base offset to use when mapping fields to item
+ * values. Once you unfetch, store will handle NULLing the data pointer for you.
+ * 
+ * @param sti The store item to set the data pointer of
+ * @param data The data pointer to set.
+ */
 EAPI void                    elm_store_item_data_set(Elm_Store_Item *sti, void *data);
+
+/**
+ * Get the item data
+ * 
+ * This gets the data pointer set by elm_store_item_data_set().
+ * 
+ * @param sti The store item to query
+ * @return The data pointer set on the item
+ */
 EAPI void                   *elm_store_item_data_get(Elm_Store_Item *sti);
+
+/**
+ * Fetch the sotre than a store item belongs to
+ * 
+ * This fetches the store object that owns the store item.
+ * 
+ * @param sti The store item to query
+ * @return The store the item belongs to
+ */
 EAPI const Elm_Store        *elm_store_item_store_get(const Elm_Store_Item *sti);
+
+/**
+ * Fetch the genlist item that this store item controls
+ * 
+ * @param sti The store item to query
+ * @return The genlist object item handle controlled by this store item
+ */
 EAPI const Elm_Object_Item *elm_store_item_genlist_item_get(const Elm_Store_Item *sti);
 
 /**

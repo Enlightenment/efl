@@ -97,10 +97,10 @@ _store_cache_trim(Elm_Store *st)
              eina_lock_take(&sti->lock);
           }
         sti->fetched = EINA_FALSE;
-        eina_lock_release(&sti->lock);
+//        eina_lock_release(&sti->lock);
         if (st->cb.unfetch.func)
           st->cb.unfetch.func(st->cb.unfetch.data, sti);
-        eina_lock_take(&sti->lock);
+//        eina_lock_take(&sti->lock);
         sti->data = NULL;
         eina_lock_release(&sti->lock);
      }
@@ -127,12 +127,14 @@ _store_genlist_del(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, 
              sti->fetch_th = NULL;
           }
         if (sti->store->item.free) sti->store->item.free(sti);
+        eina_lock_take(&sti->lock);
         if (sti->data)
           {
              if (st->cb.unfetch.func)
                st->cb.unfetch.func(st->cb.unfetch.data, sti);
              sti->data = NULL;
           }
+        eina_lock_release(&sti->lock);
         eina_lock_free(&sti->lock);
 	st->items = NULL;
         free(sti);
@@ -156,10 +158,10 @@ _store_filesystem_fetch_do(void *data, Ecore_Thread *th __UNUSED__)
      }
    if (!sti->fetched)
      {
-        eina_lock_release(&sti->lock);
+//        eina_lock_release(&sti->lock);
         if (sti->store->cb.fetch.func)
           sti->store->cb.fetch.func(sti->store->cb.fetch.data, sti);
-        eina_lock_take(&sti->lock);
+//        eina_lock_take(&sti->lock);
         sti->fetched = EINA_TRUE;
      }
    eina_lock_release(&sti->lock);
@@ -550,12 +552,14 @@ elm_store_free(Elm_Store *st)
              sti->fetch_th = NULL;
           }
         if (item_free) item_free(sti);
+        eina_lock_take(&sti->lock);
         if (sti->data)
           {
              if (st->cb.unfetch.func)
                st->cb.unfetch.func(st->cb.unfetch.data, sti);
              sti->data = NULL;
           }
+        eina_lock_release(&sti->lock);
         eina_lock_free(&sti->lock);
         free(sti);
      }
@@ -691,9 +695,9 @@ EAPI void
 elm_store_item_data_set(Elm_Store_Item *sti, void *data)
 {
    if (!EINA_MAGIC_CHECK(sti, ELM_STORE_ITEM_MAGIC)) return;
-   eina_lock_take(&sti->lock);
+//   eina_lock_take(&sti->lock);
    sti->data = data;
-   eina_lock_release(&sti->lock);
+//   eina_lock_release(&sti->lock);
 }
 
 EAPI void *
@@ -701,9 +705,9 @@ elm_store_item_data_get(Elm_Store_Item *sti)
 {
    if (!EINA_MAGIC_CHECK(sti, ELM_STORE_ITEM_MAGIC)) return NULL;
    void *d;
-   eina_lock_take(&sti->lock);
+//   eina_lock_take(&sti->lock);
    d = sti->data;
-   eina_lock_release(&sti->lock);
+//   eina_lock_release(&sti->lock);
    return d;
 }
 

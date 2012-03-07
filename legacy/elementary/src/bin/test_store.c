@@ -223,7 +223,6 @@ _st_store_unfetch(void *data __UNUSED__, Elm_Store_Item *sti)
    if (myit->date) free(myit->date);
    if (myit->head_content) free(myit->head_content);
    free(myit);
-   elm_store_item_data_set(sti, NULL);
 }
 
 void
