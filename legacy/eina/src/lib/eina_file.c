@@ -979,7 +979,7 @@ eina_file_open(const char *path, Eina_Bool shared)
    eina_lock_take(&_eina_file_lock_cache);
 
    file = eina_hash_find(_eina_file_cache, filename);
-   if ((file) && _eina_file_timestamp_compare(file, &file_stat))
+   if ((file) && !_eina_file_timestamp_compare(file, &file_stat))
      {
         file->delete_me = EINA_TRUE;
         eina_hash_del(_eina_file_cache, file->filename, file);
