@@ -1809,9 +1809,9 @@ _edje_part_recalc_single_map(Edje *ed,
      }
    params->map.center.z = 0;
 
-   params->map.rotation.x = TO_DOUBLE(desc->map.rot.x);
-   params->map.rotation.y = TO_DOUBLE(desc->map.rot.y);
-   params->map.rotation.z = TO_DOUBLE(desc->map.rot.z);
+   params->map.rotation.x = desc->map.rot.x;
+   params->map.rotation.y = desc->map.rot.y;
+   params->map.rotation.z = desc->map.rot.z;
 
    if (light)
      {
@@ -2831,7 +2831,7 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep, int flags, Edje_Calc_Params *sta
                }
 
              evas_map_util_3d_rotate(map,
-                                     pf->map.rotation.x, pf->map.rotation.y, pf->map.rotation.z,
+                                     TO_DOUBLE(pf->map.rotation.x), TO_DOUBLE(pf->map.rotation.y), TO_DOUBLE(pf->map.rotation.z),
                                      pf->map.center.x, pf->map.center.y, pf->map.center.z);
 
              // calculate light color & position etc. if there is one

@@ -1202,7 +1202,7 @@ struct _Edje_Calc_Params
          int x, y, z;
       } center; // 12
       struct {
-         double x, y, z;
+         FLOAT_T x, y, z;
       } rotation; // 24
       struct {
          int x, y, z;

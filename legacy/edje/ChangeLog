@@ -386,3 +386,5 @@
 2012-03-07  Cedric Bail
 
 	* Correctly count and propagate preload signal with GROUP.
+	* Fix rotation with fixed point.
+
