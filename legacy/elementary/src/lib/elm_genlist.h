@@ -1873,8 +1873,7 @@ EAPI Eina_Bool          elm_genlist_tree_effect_enabled_get(const Evas_Object *o
  *
  * @ingroup Genlist
  */
-EAPI void
-elm_genlist_select_mode_set(Evas_Object *obj, Elm_Object_Select_Mode_Type mode);
+EAPI void               elm_genlist_select_mode_set(Evas_Object *obj, Elm_Object_Select_Mode_Type mode);
 
 /**
  * Get the genlist select mode.
@@ -1887,8 +1886,7 @@ elm_genlist_select_mode_set(Evas_Object *obj, Elm_Object_Select_Mode_Type mode);
  *
  * @ingroup Genlist
  */
-EAPI Elm_Object_Select_Mode_Type
-elm_genlist_select_mode_get(const Evas_Object *obj);
+EAPI Elm_Object_Select_Mode_Type elm_genlist_select_mode_get(const Evas_Object *obj);
 
 /**
  * Set whether the genlist items' should be highlighted when item selected.
@@ -1907,10 +1905,7 @@ elm_genlist_select_mode_get(const Evas_Object *obj);
  *
  * @ingroup Genlist
  */
-
-EAPI void
-elm_genlist_highlight_mode_set(Evas_Object *obj,
-                              Eina_Bool    highlight);
+EAPI void               elm_genlist_highlight_mode_set(Evas_Object *obj, Eina_Bool highlight);
 
 /**
  * Get whether the genlist items' should be highlighted when item selected.
@@ -1923,9 +1918,7 @@ elm_genlist_highlight_mode_set(Evas_Object *obj,
  *
  * @ingroup Genlist
  */
-
-EAPI Eina_Bool
-elm_genlist_highlight_mode_get(const Evas_Object *obj);
+EAPI Eina_Bool          elm_genlist_highlight_mode_get(const Evas_Object *obj);
 
 /**
  * @}
