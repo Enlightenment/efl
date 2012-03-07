@@ -541,7 +541,8 @@ _ecore_evas_wl_show(Ecore_Evas *ee)
 
    ecore_wl_flush();
 
-   ecore_wl_window_buffer_attach(ee->engine.wl.win, ee->engine.wl.buffer, 0, 0);
+   if (ee->engine.wl.win)
+     ecore_wl_window_buffer_attach(ee->engine.wl.win, ee->engine.wl.buffer, 0, 0);
 
    ee->visible = 1;
    if (ee->func.fn_show) ee->func.fn_show(ee);
