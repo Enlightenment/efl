@@ -77,12 +77,12 @@ _populate_2(Elm_Object_Item *menu_it)
 }
 
 static void
-_populate_1(Evas_Object *win, Elm_Object_Item *menu_it)
+_populate_1(Evas_Object *obj, Elm_Object_Item *menu_it)
 {
    Elm_Object_Item *menu_it2, *menu_it3;
    Evas_Object *radio;
 
-   radio = elm_radio_add(win);
+   radio = elm_radio_add(obj);
    elm_radio_state_value_set(radio, 0);
    elm_radio_value_set(radio, 0);
    elm_object_text_set(radio, "radio in menu");

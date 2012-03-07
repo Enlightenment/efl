@@ -139,9 +139,9 @@ _slice_3d(State *st __UNUSED__, Slice *sl, Evas_Coord x, Evas_Coord y, Evas_Coor
    evas_map_util_3d_perspective(m, x + (w / 2), y + (h / 2), 0, 1024);
    for (i = 0; i < 4; i++)
      {
-        Evas_Coord x, y, z;
-        evas_map_point_coord_get(m, i, &x, &y, &z);
-        evas_map_point_coord_set(m, i, x, y, 0);
+        Evas_Coord xx, yy, zz;
+        evas_map_point_coord_get(m, i, &xx, &yy, &zz);
+        evas_map_point_coord_set(m, i, xx, yy, 0);
      }
    if (evas_map_util_clockwise_get(m)) evas_object_show(sl->obj);
    else evas_object_hide(sl->obj);
@@ -178,15 +178,15 @@ _slice_light(State *st __UNUSED__, Slice *sl, Evas_Coord x, Evas_Coord y, Evas_C
 
 static void
 _slice_xyz(State *st __UNUSED__, Slice *sl,
-           double x1, double y1, double z1,
-           double x2, double y2, double z2,
-           double x3, double y3, double z3,
-           double x4, double y4, double z4)
+           double xx1, double yy1, double zz1,
+           double xx2, double yy2, double zz2,
+           double xx3, double yy3, double zz3,
+           double xx4, double yy4, double zz4)
 {
-   sl->x[0] = x1; sl->y[0] = y1; sl->z[0] = z1;
-   sl->x[1] = x2; sl->y[1] = y2; sl->z[1] = z2;
-   sl->x[2] = x3; sl->y[2] = y3; sl->z[2] = z3;
-   sl->x[3] = x4; sl->y[3] = y4; sl->z[3] = z4;
+   sl->x[0] = xx1; sl->y[0] = yy1; sl->z[0] = zz1;
+   sl->x[1] = xx2; sl->y[1] = yy2; sl->z[1] = zz2;
+   sl->x[2] = xx3; sl->y[2] = yy3; sl->z[2] = zz3;
+   sl->x[3] = xx4; sl->y[3] = yy4; sl->z[3] = zz4;
 }
 
 static void
@@ -311,7 +311,7 @@ _slice_obj_vert_color_merge(Slice *s1, int p1, Slice *s2, int p2,
 static int
 _state_update(State *st)
 {
-   Evas_Coord x1, y1, x2, y2, mx, my, dst, dx, dy;
+   Evas_Coord xx1, yy1, xx2, yy2, mx, my, dst, dx, dy;
    Evas_Coord x, y, w, h, ox, oy, ow, oh;
    int i, j, num, nn, jump, num2;
    Slice *sl;
@@ -324,13 +324,13 @@ _state_update(State *st)
 
    evas_object_geometry_get(st->front, &x, &y, &w, &h);
    ox = x; oy = y; ow = w; oh = h;
-   x1 = st->down_x;
-   y1 = st->down_y;
-   x2 = st->x;
-   y2 = st->y;
+   xx1 = st->down_x;
+   yy1 = st->down_y;
+   xx2 = st->x;
+   yy2 = st->y;
 
-   dx = x2 - x1;
-   dy = y2 - y1;
+   dx = xx2 - xx1;
+   dy = yy2 - yy1;
    dst = sqrt((dx * dx) + (dy * dy));
    if (st->dir == -1)
      {
@@ -339,10 +339,10 @@ _state_update(State *st)
      }
    if (st->dir == -1)
      {
-        if      ((x1 > (w / 2)) && (dx <  0) && (abs(dx) >  abs(dy))) st->dir = 0; // left
-        else if ((x1 < (w / 2)) && (dx >= 0) && (abs(dx) >  abs(dy))) st->dir = 1; // right
-        else if ((y1 > (h / 2)) && (dy <  0) && (abs(dy) >= abs(dx))) st->dir = 2; // up
-        else if ((y1 < (h / 2)) && (dy >= 0) && (abs(dy) >= abs(dx))) st->dir = 3; // down
+        if      ((xx1 > (w / 2)) && (dx <  0) && (abs(dx) >  abs(dy))) st->dir = 0; // left
+        else if ((xx1 < (w / 2)) && (dx >= 0) && (abs(dx) >  abs(dy))) st->dir = 1; // right
+        else if ((yy1 > (h / 2)) && (dy <  0) && (abs(dy) >= abs(dx))) st->dir = 2; // up
+        else if ((yy1 < (h / 2)) && (dy >= 0) && (abs(dy) >= abs(dx))) st->dir = 3; // down
         if (st->dir == -1) return 0;
      }
    if (st->dir == 0)
@@ -351,38 +351,38 @@ _state_update(State *st)
      }
    else if (st->dir == 1)
      {
-        x1 = (w - 1) - x1;
-        x2 = (w - 1) - x2;
+        xx1 = (w - 1) - xx1;
+        xx2 = (w - 1) - xx2;
      }
    else if (st->dir == 2)
      {
         Evas_Coord tmp;
 
-        tmp = x1; x1 = y1; y1 = tmp;
-        tmp = x2; x2 = y2; y2 = tmp;
+        tmp = xx1; xx1 = yy1; yy1 = tmp;
+        tmp = xx2; xx2 = yy2; yy2 = tmp;
         tmp = w; w = h; h = tmp;
      }
    else if (st->dir == 3)
      {
         Evas_Coord tmp;
 
-        tmp = x1; x1 = y1; y1 = tmp;
-        tmp = x2; x2 = y2; y2 = tmp;
+        tmp = xx1; xx1 = yy1; yy1 = tmp;
+        tmp = xx2; xx2 = yy2; yy2 = tmp;
         tmp = w; w = h; h = tmp;
-        x1 = (w - 1) - x1;
-        x2 = (w - 1) - x2;
+        xx1 = (w - 1) - xx1;
+        xx2 = (w - 1) - xx2;
      }
 
-   if (x2 >= x1) x2 = x1 - 1;
-   mx = (x1 + x2) / 2;
-   my = (y1 + y2) / 2;
+   if (xx2 >= xx1) xx2 = xx1 - 1;
+   mx = (xx1 + xx2) / 2;
+   my = (yy1 + yy2) / 2;
 
    if (mx < 0) mx = 0;
    else if (mx >= w) mx = w - 1;
    if (my < 0) my = 0;
    else if (my >= h) my = h - 1;
 
-   mgrad = (double)(y1 - y2) / (double)(x1 - x2);
+   mgrad = (double)(yy1 - yy2) / (double)(xx1 - xx2);
 
    if (mx < 1) mx = 1; // quick hack to keep curl line visible
 
@@ -408,8 +408,8 @@ _state_update(State *st)
           }
      }
 
-   perc = (double)x2 / (double)x1;
-   percm = (double)mx / (double)x1;
+   perc = (double)xx2 / (double)xx1;
+   percm = (double)mx / (double)xx1;
    if (perc < 0.0) perc = 0.0;
    else if (perc > 1.0) perc = 1.0;
    if (percm < 0.0) percm = 0.0;

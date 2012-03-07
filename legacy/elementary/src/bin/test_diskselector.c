@@ -167,7 +167,7 @@ _print_disk_info_cb(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *ev
 }
 
 static Evas_Object *
-_disk_create(Evas_Object *win, Eina_Bool round)
+_disk_create(Evas_Object *win, Eina_Bool rnd)
 {
    Elm_Object_Item *ds_it;
    Evas_Object *di;
@@ -188,7 +188,7 @@ _disk_create(Evas_Object *win, Eina_Bool round)
    elm_diskselector_item_append(di, "December", NULL, NULL, NULL);
 
    elm_diskselector_item_selected_set(ds_it, EINA_TRUE);
-   elm_diskselector_round_set(di, round);
+   elm_diskselector_round_set(di, rnd);
 
    return di;
 }
