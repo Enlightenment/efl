@@ -395,7 +395,7 @@ EAPI double elm_spinner_base_get(const Evas_Object *obj);
  * Set the round value for rounding
  *
  * @param obj The spinner object
- * @param round The rounding value
+ * @param rnd The rounding value
  *
  * Sets the rounding value used for value rounding in the spinner.
  * 
