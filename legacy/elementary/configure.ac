@@ -185,6 +185,7 @@ AM_CONDITIONAL([BUILD_MODULES], [test "x$have_dlopen" = "xyes"])
 
 m4_ifdef([v_mic],
    [
+    EFL_COMPILER_FLAG([-Wshadow])
     EFL_COMPILER_FLAG([-Wall])
     EFL_COMPILER_FLAG([-W])
    ])
