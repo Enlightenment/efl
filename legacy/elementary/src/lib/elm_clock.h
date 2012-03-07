@@ -52,19 +52,19 @@
  * make a mask, naturally.
  *
  * @see elm_clock_edit_set()
- * @see elm_clock_digit_edit_set()
+ * @see elm_clock_edit_mode_set()
  */
 typedef enum
 {
-   ELM_CLOCK_NONE = 0, /**< Default value. Means that all digits are editable, when in edition mode. */
-   ELM_CLOCK_HOUR_DECIMAL = 1 << 0, /**< Decimal algarism of hours value should be editable */
-   ELM_CLOCK_HOUR_UNIT = 1 << 1, /**< Unit algarism of hours value should be editable */
-   ELM_CLOCK_MIN_DECIMAL = 1 << 2, /**< Decimal algarism of minutes value should be editable */
-   ELM_CLOCK_MIN_UNIT = 1 << 3, /**< Unit algarism of minutes value should be editable */
-   ELM_CLOCK_SEC_DECIMAL = 1 << 4, /**< Decimal algarism of seconds value should be editable */
-   ELM_CLOCK_SEC_UNIT = 1 << 5, /**< Unit algarism of seconds value should be editable */
-   ELM_CLOCK_ALL = (1 << 6) - 1 /**< All digits should be editable */
-} Elm_Clock_Digedit;
+   ELM_CLOCK_EDIT_DEFAULT = 0, /**< Default value. Means that all digits are editable, when in edition mode. */
+   ELM_CLOCK_EDIT_HOUR_DECIMAL = 1 << 0, /**< Decimal algarism of hours value should be editable */
+   ELM_CLOCK_EDIT_HOUR_UNIT = 1 << 1, /**< Unit algarism of hours value should be editable */
+   ELM_CLOCK_EDIT_MIN_DECIMAL = 1 << 2, /**< Decimal algarism of minutes value should be editable */
+   ELM_CLOCK_EDIT_MIN_UNIT = 1 << 3, /**< Unit algarism of minutes value should be editable */
+   ELM_CLOCK_EDIT_SEC_DECIMAL = 1 << 4, /**< Decimal algarism of seconds value should be editable */
+   ELM_CLOCK_EDIT_SEC_UNIT = 1 << 5, /**< Unit algarism of seconds value should be editable */
+   ELM_CLOCK_EDIT_ALL = (1 << 6) - 1 /**< All digits should be editable */
+} Elm_Clock_Edit_Mode;
 
 /**
  * Add a new clock widget to the given parent Elementary
@@ -133,7 +133,7 @@ EAPI void              elm_clock_time_get(const Evas_Object *obj, int *hrs, int 
  * This function makes a clock's time to be editable or not <b>by
  * user interaction</b>. When in edition mode, clocks @b stop
  * ticking, until one brings them back to canonical mode. The
- * elm_clock_digit_edit_set() function will influence which digits
+ * elm_clock_edit_mode_set() function will influence which digits
  * of the clock will be editable. By default, all of them will be
  * (#ELM_CLOCK_NONE).
  *
@@ -168,17 +168,17 @@ EAPI Eina_Bool         elm_clock_edit_get(const Evas_Object *obj);
  *
  * @param obj The clock object
  * @param digedit Bit mask indicating the digits to be editable
- * (values in #Elm_Clock_Digedit).
+ * (values in #Elm_Clock_Edit_Mode).
  *
  * If the @p digedit param is #ELM_CLOCK_NONE, editing will be
  * disabled on @p obj (same effect as elm_clock_edit_set(), with @c
  * EINA_FALSE).
  *
- * @see elm_clock_digit_edit_get()
+ * @see elm_clock_edit_mode_get()
  *
  * @ingroup Clock
  */
-EAPI void              elm_clock_digit_edit_set(Evas_Object *obj, Elm_Clock_Digedit digedit);
+EAPI void              elm_clock_edit_mode_set(Evas_Object *obj, Elm_Clock_Edit_Mode digedit);
 
 /**
  * Retrieve what digits of the given clock widget should be
@@ -186,13 +186,13 @@ EAPI void              elm_clock_digit_edit_set(Evas_Object *obj, Elm_Clock_Dige
  *
  * @param obj The clock object
  * @return Bit mask indicating the digits to be editable
- * (values in #Elm_Clock_Digedit).
+ * (values in #Elm_Clock_Edit_Mode).
  *
- * @see elm_clock_digit_edit_set() for more details
+ * @see elm_clock_edit_mode_set() for more details
  *
  * @ingroup Clock
  */
-EAPI Elm_Clock_Digedit elm_clock_digit_edit_get(const Evas_Object *obj);
+EAPI Elm_Clock_Edit_Mode elm_clock_edit_mode_get(const Evas_Object *obj);
 
 /**
  * Set if the given clock widget must show hours in military or
@@ -262,11 +262,11 @@ EAPI void              elm_clock_show_seconds_set(Evas_Object *obj, Eina_Bool se
 EAPI Eina_Bool         elm_clock_show_seconds_get(const Evas_Object *obj);
 
 /**
- * Set the interval on time updates for a user mouse button hold
+ * Set the first interval on time updates for a user mouse button hold
  * on clock widgets' time edition.
  *
  * @param obj The clock object
- * @param interval The (first) interval value in seconds
+ * @param interval The first interval value in seconds
  *
  * This interval value is @b decreased while the user holds the
  * mouse pointer either incrementing or decrementing a given the
@@ -283,24 +283,24 @@ EAPI Eina_Bool         elm_clock_show_seconds_get(const Evas_Object *obj);
  * The default starting interval value for automatic flips is
  * @b 0.85 seconds.
  *
- * @see elm_clock_interval_get()
+ * @see elm_clock_first_interval_get()
  *
  * @ingroup Clock
  */
-EAPI void              elm_clock_interval_set(Evas_Object *obj, double interval);
+EAPI void              elm_clock_first_interval_set(Evas_Object *obj, double interval);
 
 /**
- * Get the interval on time updates for a user mouse button hold
+ * Get the first interval on time updates for a user mouse button hold
  * on clock widgets' time edition.
  *
  * @param obj The clock object
- * @return The (first) interval value, in seconds, set on it
+ * @return The first interval value, in seconds, set on it
  *
- * @see elm_clock_interval_set() for more details
+ * @see elm_clock_first_interval_set() for more details
  *
  * @ingroup Clock
  */
-EAPI double            elm_clock_interval_get(const Evas_Object *obj);
+EAPI double            elm_clock_first_interval_get(const Evas_Object *obj);
 
 /**
  * @}

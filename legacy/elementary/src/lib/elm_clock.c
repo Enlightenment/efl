@@ -1,6 +1,7 @@
 #include <Elementary.h>
 #include "elm_priv.h"
 
+#define DEFAULT_FIRST_INTERVAL 0.85
 typedef struct _Widget_Data Widget_Data;
 
 struct _Widget_Data
@@ -10,7 +11,7 @@ struct _Widget_Data
    Eina_Bool seconds : 1;
    Eina_Bool am_pm : 1;
    Eina_Bool edit : 1;
-   Elm_Clock_Digedit digedit;
+   Elm_Clock_Edit_Mode digedit;
    int hrs, min, sec, timediff;
    Evas_Object *digit[6];
    Evas_Object *ampm;
@@ -23,7 +24,7 @@ struct _Widget_Data
       Eina_Bool seconds : 1;
       Eina_Bool am_pm : 1;
       Eina_Bool edit : 1;
-      Elm_Clock_Digedit digedit;
+      Elm_Clock_Edit_Mode digedit;
    } cur;
 };
 
@@ -541,8 +542,8 @@ elm_clock_add(Evas_Object *parent)
    wd->cur.seconds = EINA_TRUE;
    wd->cur.am_pm = EINA_TRUE;
    wd->cur.edit = EINA_TRUE;
-   wd->cur.digedit = ELM_CLOCK_NONE;
-   wd->first_interval = 0.85;
+   wd->cur.digedit = ELM_CLOCK_EDIT_DEFAULT;
+   wd->first_interval = DEFAULT_FIRST_INTERVAL;
    wd->timediff = 0;
 
    _time_update(obj);
@@ -586,8 +587,8 @@ elm_clock_edit_set(Evas_Object *obj, Eina_Bool edit)
    wd->edit = edit;
    if (!edit)
      _timediff_set(wd);
-   if ((edit) && (wd->digedit == ELM_CLOCK_NONE))
-     elm_clock_digit_edit_set(obj, ELM_CLOCK_ALL);
+   if ((edit) && (wd->digedit == ELM_CLOCK_EDIT_DEFAULT))
+     elm_clock_edit_mode_set(obj, ELM_CLOCK_EDIT_ALL);
    else
      _time_update(obj);
 }
@@ -602,20 +603,20 @@ elm_clock_edit_get(const Evas_Object *obj)
 }
 
 EAPI void
-elm_clock_digit_edit_set(Evas_Object *obj, Elm_Clock_Digedit digedit)
+elm_clock_edit_mode_set(Evas_Object *obj, Elm_Clock_Edit_Mode digedit)
 {
    ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return;
    wd->digedit = digedit;
-   if (digedit == ELM_CLOCK_NONE)
+   if (digedit == ELM_CLOCK_EDIT_DEFAULT)
      elm_clock_edit_set(obj, EINA_FALSE);
    else
      _time_update(obj);
 }
 
-EAPI Elm_Clock_Digedit
-elm_clock_digit_edit_get(const Evas_Object *obj)
+EAPI Elm_Clock_Edit_Mode
+elm_clock_edit_mode_get(const Evas_Object *obj)
 {
    ELM_CHECK_WIDTYPE(obj, widtype) 0;
    Widget_Data *wd = elm_widget_data_get(obj);
@@ -629,7 +630,7 @@ elm_clock_show_am_pm_set(Evas_Object *obj, Eina_Bool am_pm)
    ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return;
-   wd->am_pm = am_pm;
+   wd->am_pm = !!am_pm;
    _time_update(obj);
 }
 
@@ -648,7 +649,7 @@ elm_clock_show_seconds_set(Evas_Object *obj, Eina_Bool seconds)
    ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return;
-   wd->seconds = seconds;
+   wd->seconds = !!seconds;
    _time_update(obj);
 }
 
@@ -662,16 +663,16 @@ elm_clock_show_seconds_get(const Evas_Object *obj)
 }
 
 EAPI void
-elm_clock_interval_set(Evas_Object *obj, double interval)
+elm_clock_first_interval_set(Evas_Object *obj, double interval)
 {
    ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return;
-   wd->first_interval = interval;
+   wd->first_interval = !!interval;
 }
 
 EAPI double
-elm_clock_interval_get(const Evas_Object *obj)
+elm_clock_first_interval_get(const Evas_Object *obj)
 {
    ELM_CHECK_WIDTYPE(obj, widtype) 0.0;
    Widget_Data *wd = elm_widget_data_get(obj);

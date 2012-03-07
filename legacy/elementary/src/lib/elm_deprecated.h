@@ -6012,6 +6012,72 @@ EINA_DEPRECATED EAPI void                         elm_toolbar_no_select_mode_set
  */
 EINA_DEPRECATED EAPI Eina_Bool                    elm_toolbar_no_select_mode_get(const Evas_Object *obj);
 
+/*
+ * Set the interval on time updates for a user mouse button hold
+ * on clock widgets' time edition.
+ *
+ * @param obj The clock object
+ * @param interval The (first) interval value in seconds
+ *
+ * This interval value is @b decreased while the user holds the
+ * mouse pointer either incrementing or decrementing a given the
+ * clock digit's value.
+ *
+ * This helps the user to get to a given time distant from the
+ * current one easier/faster, as it will start to flip quicker and
+ * quicker on mouse button holds.
+ *
+ * The calculation for the next flip interval value, starting from
+ * the one set with this call, is the previous interval divided by
+ * 1.05, so it decreases a little bit.
+ *
+ * The default starting interval value for automatic flips is
+ * @b 0.85 seconds.
+ *
+ * @deprecated elm_clock_first_interval_set()
+ *
+ */
+EINA_DEPRECATED EAPI void              elm_clock_interval_set(Evas_Object *obj, double interval);
+
+/**
+ * Get the interval on time updates for a user mouse button hold
+ * on clock widgets' time edition.
+ *
+ * @param obj The clock object
+ * @return The (first) interval value, in seconds, set on it
+ *
+ * @elm_clock_first_interval_get()
+ */
+EINA_DEPRECATED EAPI double            elm_clock_interval_get(const Evas_Object *obj);
+
+/**
+ * Set what digits of the given clock widget should be editable
+ * when in edition mode.
+ *
+ * @param obj The clock object
+ * @param digedit Bit mask indicating the digits to be editable
+ * (values in #Elm_Clock_Edit_Mode).
+ *
+ * If the @p digedit param is #ELM_CLOCK_NONE, editing will be
+ * disabled on @p obj (same effect as elm_clock_edit_set(), with @c
+ * EINA_FALSE).
+ *
+ * @deprecated elm_clock_edit_mode_set()
+ */
+EINA_DEPRECATED EAPI void              elm_clock_digit_edit_set(Evas_Object *obj, Elm_Clock_Edit_Mode digedit);
+
+/**
+ * Retrieve what digits of the given clock widget should be
+ * editable when in edition mode.
+ *
+ * @param obj The clock object
+ * @return Bit mask indicating the digits to be editable
+ * (values in #Elm_Clock_Edit_Mode).
+ *
+ * @deprecated elm_clock_edit_mode_get()
+ */
+EINA_DEPRECATED EAPI Elm_Clock_Edit_Mode elm_clock_digit_edit_get(const Evas_Object *obj);
+
 /**
  * @}
  */

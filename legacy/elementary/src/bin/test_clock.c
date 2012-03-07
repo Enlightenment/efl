@@ -48,16 +48,16 @@ set_api_state(api_data *api)
            break;
 
           case CLOCK_EDIT_MIN:
-           elm_clock_edit_set(ck, ELM_CLOCK_MIN_DECIMAL | ELM_CLOCK_MIN_UNIT);
+           elm_clock_edit_set(ck, ELM_CLOCK_EDIT_MIN_DECIMAL | ELM_CLOCK_EDIT_MIN_UNIT);
            break;
 
           case CLOCK_EDIT_HOUR:
-           elm_clock_edit_set(ck, ELM_CLOCK_NONE);
-           elm_clock_edit_set(ck, ELM_CLOCK_HOUR_DECIMAL | ELM_CLOCK_HOUR_UNIT);
+           elm_clock_edit_set(ck, ELM_CLOCK_EDIT_DEFAULT);
+           elm_clock_edit_set(ck, ELM_CLOCK_EDIT_HOUR_DECIMAL | ELM_CLOCK_EDIT_HOUR_UNIT);
            break;
 
           case CLOCK_EDIT_ALL:
-           elm_clock_edit_set(ck, ELM_CLOCK_ALL);
+           elm_clock_edit_set(ck, ELM_CLOCK_EDIT_ALL);
            break;
 
           case CLOCK_EDIT_ALL_ARMY:
@@ -169,8 +169,8 @@ test_clock(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info 
    ck = elm_clock_add(win);
    elm_clock_show_seconds_set(ck, EINA_TRUE);
    elm_clock_edit_set(ck, EINA_TRUE);
-   digedit = ELM_CLOCK_HOUR_UNIT | ELM_CLOCK_MIN_UNIT | ELM_CLOCK_SEC_UNIT;
-   elm_clock_digit_edit_set(ck, digedit);
+   digedit = ELM_CLOCK_EDIT_HOUR_UNIT | ELM_CLOCK_EDIT_MIN_UNIT | ELM_CLOCK_EDIT_SEC_UNIT;
+   elm_clock_edit_mode_set(ck, digedit);
    elm_box_pack_end(bx, ck);
    elm_clock_time_set(ck, 0, 0, 0);
    evas_object_show(ck);
@@ -246,7 +246,7 @@ test_clock2(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info
 
    ck = elm_clock_add(win);
    elm_clock_time_set(ck, 0, 15, 3);
-   elm_clock_digit_edit_set(ck, ELM_CLOCK_NONE);
+   elm_clock_edit_mode_set(ck, ELM_CLOCK_EDIT_DEFAULT);
    elm_clock_show_seconds_set(ck, EINA_TRUE);
    elm_clock_show_am_pm_set(ck, EINA_TRUE);
    elm_box_pack_end(bx, ck);
@@ -304,21 +304,21 @@ test_clock3(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info
    ck = elm_clock_add(win);
    elm_clock_show_seconds_set(ck, 1);
    elm_clock_edit_set(ck, EINA_TRUE);
-   elm_clock_interval_set(ck, 0.4);
+   elm_clock_first_interval_set(ck, 0.4);
    elm_box_pack_end(bx, ck);
    evas_object_show(ck);
 
    ck = elm_clock_add(win);
    elm_clock_show_seconds_set(ck, 1);
    elm_clock_edit_set(ck, EINA_TRUE);
-   elm_clock_interval_set(ck, 1.2);
+   elm_clock_first_interval_set(ck, 1.2);
    elm_box_pack_end(bx, ck);
    evas_object_show(ck);
 
    ck = elm_clock_add(win);
    elm_clock_show_seconds_set(ck, 1);
    elm_clock_edit_set(ck, EINA_TRUE);
-   elm_clock_interval_set(ck, 2.0);
+   elm_clock_first_interval_set(ck, 2.0);
    elm_box_pack_end(bx, ck);
    evas_object_show(ck);
 

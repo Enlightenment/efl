@@ -75,8 +75,8 @@ elm_main(int argc __UNUSED__, char **argv __UNUSED__)
    ck = elm_clock_add(win);
    elm_clock_show_seconds_set(ck, EINA_TRUE);
    elm_clock_edit_set(ck, EINA_TRUE);
-   digedit = ELM_CLOCK_HOUR_UNIT | ELM_CLOCK_MIN_UNIT | ELM_CLOCK_SEC_UNIT;
-   elm_clock_digit_edit_set(ck, digedit);
+   digedit = ELM_CLOCK_EDIT_HOUR_UNIT | ELM_CLOCK_EDIT_MIN_UNIT | ELM_CLOCK_EDIT_SEC_UNIT;
+   elm_clock_edit_mode_set(ck, digedit);
    elm_box_pack_end(bx, ck);
    evas_object_show(ck);
 
