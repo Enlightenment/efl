@@ -1830,11 +1830,11 @@ EAPI Eina_Bool          elm_genlist_highlight_mode_get(const Evas_Object *obj);
  * - ELM_OBJECT_NO_SELECT : This will turn off the ability to select the item
  *      entirely and they will neither appear selected nor call selected
  *      callback functions.
- * - ELM_OBJECT_DISPLAY_ONLY_SELECT : This will apply no-finger-size rule with
+ * - ELM_OBJECT_DISPLAY_ONLY_SELECT : This will apply no-finger-size rule
  *      with ELM_OBJECT_NO_SELECT. No-finger-size rule makes an item can be
- *      smaller than lower limit. In some touch or small screen devices,
- *      clickable objects should be bigger than human touch point device
- *      (your finger). So it is enabled, the item can be smaller than
+ *      smaller than lower limit. Clickable objects should be bigger than
+ *      human touch point device (your finger) for some touch or
+ *      small screen devices. So it is enabled, the item can be shrink than
  *      predefined finger-size value. And the item will be updated.
  *
  * @see elm_genlist_item_select_mode_get()
