@@ -916,7 +916,9 @@ _mouse_up(void            *data,
 static void
 _item_highlight(Elm_Gen_Item *it)
 {
-   if ((it->wd->select_mode == ELM_OBJECT_NO_SELECT) || (it->generation < it->wd->generation) || (it->highlighted)) return;
+   if ((it->wd->select_mode == ELM_OBJECT_NO_SELECT) ||
+       (it->wd->no_highlight) || (it->highlighted) ||
+       (it->generation < it->wd->generation)) return;
    edje_object_signal_emit(VIEW(it), "elm,state,selected", "elm");
    it->highlighted = EINA_TRUE;
 }
@@ -2857,3 +2859,17 @@ elm_gengrid_select_mode_get(const Evas_Object *obj)
 {
    return elm_genlist_select_mode_get(obj);
 }
+
+EAPI void
+elm_gengrid_hilight_mode_set(Evas_Object *obj,
+                             Eina_Bool    hilight)
+{
+   elm_genlist_hilight_mode_set(obj, hilight);
+}
+
+EAPI Eina_Bool
+elm_gengrid_hilight_mode_get(const Evas_Object *obj)
+{
+   return elm_genlist_hilight_mode_get(obj);
+}
+

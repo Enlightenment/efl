@@ -689,6 +689,7 @@ _item_highlight(Elm_Gen_Item *it)
 {
    const char *selectraise;
    if ((it->wd->select_mode == ELM_OBJECT_NO_SELECT) ||
+       (it->wd->no_highlight) ||
        (it->generation < it->wd->generation) ||
        (it->highlighted) || elm_widget_item_disabled_get(it) ||
        (it->display_only) || (it->item->mode_view))
@@ -5737,6 +5738,26 @@ elm_genlist_select_mode_get(const Evas_Object *obj)
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return ELM_OBJECT_SELECT_MODE_MAX;
    return wd->select_mode;
+}
+
+EAPI void
+elm_genlist_hilight_mode_set(Evas_Object *obj,
+                             Eina_Bool    hilight)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype);
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return;
+   hilight = !!hilight;
+   wd->no_highlight = !hilight;
+}
+
+EAPI Eina_Bool
+elm_genlist_hilight_mode_get(const Evas_Object *obj)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype) EINA_FALSE;
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return EINA_FALSE;
+   return !wd->no_highlight;
 }
 
 /* for gengrid as of now */

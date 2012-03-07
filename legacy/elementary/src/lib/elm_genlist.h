@@ -1891,5 +1891,42 @@ EAPI Elm_Object_Select_Mode_Type
 elm_genlist_select_mode_get(const Evas_Object *obj);
 
 /**
+ * Set whether the genlist items' should be highlighted when item selected.
+ *
+ * @param obj The genlist object.
+ * @param hilight @c EINA_TRUE to enable hilighting or @c EINA_FALSE to
+ * disable it.
+ *
+ * This will turn on/off the highlight effect when item selection and
+ * they will, or will not highlighted. The selected and clicked
+ * callback functions will still be called.
+ *
+ * Highlight is enabled by default.
+ *
+ * @see elm_genlist_hilight_mode_get().
+ *
+ * @ingroup Genlist
+ */
+
+EAPI void
+elm_genlist_hilight_mode_set(Evas_Object *obj,
+                              Eina_Bool    hilight);
+
+/**
+ * Get whether the genlist items' should be hilighted when item selected.
+ *
+ * @param obj The genlist object.
+ * @return @c EINA_TRUE means items can be hilighted. @c EINA_FALSE indicates
+ * they can't. If @p obj is @c NULL, @c EINA_FALSE is returned.
+ *
+ * @see elm_genlist_hilight_mode_set() for details.
+ *
+ * @ingroup Genlist
+ */
+
+EAPI Eina_Bool
+elm_genlist_hilight_mode_get(const Evas_Object *obj);
+
+/**
  * @}
  */
