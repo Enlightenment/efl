@@ -36,6 +36,10 @@
 # include <Escape.h>
 #endif
 
+#ifdef HAVE_EXOTIC
+# include <Exotic.h>
+#endif
+
 #include "Ecore.h"
 #include "ecore_private.h"
 
