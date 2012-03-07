@@ -38,7 +38,7 @@ set_api_state(api_data *api)
          break;
 
       case GRID_BRING_IN: /* 1 */
-         elm_gengrid_item_bring_in(elm_gengrid_first_item_get(grid));
+         elm_gengrid_item_bring_in(elm_gengrid_first_item_get(grid), ELM_GENGRID_ITEM_SCROLLTO_IN);
          break;
 
       case GRID_NO_SELECT_MODE: /* 2 */

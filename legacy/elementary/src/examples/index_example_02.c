@@ -34,7 +34,7 @@ _index_changed(void        *data __UNUSED__,
                Evas_Object *obj __UNUSED__,
                void        *event_info)
 {
-   elm_gengrid_item_bring_in(event_info);
+   elm_gengrid_item_bring_in(event_info, ELM_GENGRID_ITEM_SCROLLTO_IN);
 }
 
 static void

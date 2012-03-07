@@ -237,7 +237,7 @@ _bring_1st_clicked(void        *data,
 
    if (!gg_it) return;
 
-   elm_gengrid_item_bring_in(gg_it);
+   elm_gengrid_item_bring_in(gg_it, ELM_GENGRID_ITEM_SCROLLTO_IN);
 }
 
 /* show last item */
@@ -250,7 +250,7 @@ _show_last_clicked(void        *data,
 
    if (!gg_it) return;
 
-   elm_gengrid_item_show(gg_it);
+   elm_gengrid_item_show(gg_it, ELM_GENGRID_ITEM_SCROLLTO_IN);
 }
 
 /* disable selected item */

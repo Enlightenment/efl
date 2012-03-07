@@ -226,6 +226,20 @@
 #define ELM_GENGRID_ITEM_CLASS_HEADER ELM_GEN_ITEM_CLASS_HEADER
 
 /**
+ * Defines where to position the item in the genlist.
+ *
+ * @ingroup Genlist
+ */
+typedef enum
+{
+   ELM_GENGRID_ITEM_SCROLLTO_NONE = 0,   /**< no scrollto */
+   ELM_GENGRID_ITEM_SCROLLTO_IN = (1 << 0),   /**< to the nearest viewport */
+   ELM_GENGRID_ITEM_SCROLLTO_TOP = (1 << 1),   /**< to the top of viewport */
+   ELM_GENGRID_ITEM_SCROLLTO_MIDDLE = (1 << 2)   /**< to the middle of viewport */
+} Elm_Gengrid_Item_Scrollto_Type;
+
+
+/**
  * @see Elm_Gen_Item_Class
  */
 typedef Elm_Gen_Item_Class Elm_Gengrid_Item_Class;
@@ -656,6 +670,7 @@ EAPI Eina_Bool                     elm_gengrid_item_selected_get(const Elm_Objec
  * item, @b immediately.
  *
  * @param it The item to display
+ * @param type Where to position the item in the viewport.
  *
  * This causes gengrid to @b redraw its viewport's contents to the
  * region containing the given @p item item, if it is not fully
@@ -665,13 +680,14 @@ EAPI Eina_Bool                     elm_gengrid_item_selected_get(const Elm_Objec
  *
  * @ingroup Gengrid
  */
-EAPI void                          elm_gengrid_item_show(Elm_Object_Item *it);
+EAPI void                          elm_gengrid_item_show(Elm_Object_Item *it, Elm_Gengrid_Item_Scrollto_Type type);
 
 /**
  * Animatedly bring in, to the visible area of a gengrid, a given
  * item on it.
  *
  * @param it The gengrid item to display
+ * @param type Where to position the item in the viewport.
  *
  * This causes gengrid to jump to the given @p item and show
  * it (by scrolling), if it is not fully visible. This will use
@@ -681,13 +697,7 @@ EAPI void                          elm_gengrid_item_show(Elm_Object_Item *it);
  *
  * @ingroup Gengrid
  */
-EAPI void                          elm_gengrid_item_bring_in(Elm_Object_Item *it);
-
-//XXX: Let's add as possible
-//EAPI void                          elm_gengrid_item_top_show(Elm_Object_Item *it);
-//EAPI void                          elm_gengrid_item_top_bring_in(Elm_Object_Item *it);
-//EAPI void                          elm_gengrid_item_middle_show(Elm_Object_Item *it);
-//EAPI void                          elm_gengrid_item_middle_bring_in(Elm_Object_Item *it);
+EAPI void                          elm_gengrid_item_bring_in(Elm_Object_Item *it, Elm_Gengrid_Item_Scrollto_Type type);
 
 /**
  * Update the contents of a given gengrid item

@@ -275,7 +275,7 @@ _event_hook(Evas_Object        *obj,
    else if ((!strcmp(ev->keyname, "Home")) || (!strcmp(ev->keyname, "KP_Home")))
      {
         it = elm_gengrid_first_item_get(obj);
-        elm_gengrid_item_bring_in(it);
+        elm_gengrid_item_bring_in(it, ELM_GENGRID_ITEM_SCROLLTO_IN);
         elm_gengrid_item_selected_set(it, EINA_TRUE);
         ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
         return EINA_TRUE;
@@ -283,7 +283,7 @@ _event_hook(Evas_Object        *obj,
    else if ((!strcmp(ev->keyname, "End")) || (!strcmp(ev->keyname, "KP_End")))
      {
         it = elm_gengrid_last_item_get(obj);
-        elm_gengrid_item_bring_in(it);
+        elm_gengrid_item_bring_in(it, ELM_GENGRID_ITEM_SCROLLTO_IN);
         elm_gengrid_item_selected_set(it, EINA_TRUE);
         ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
         return EINA_TRUE;
@@ -366,12 +366,12 @@ _item_multi_select_left(Widget_Data *wd)
      {
         elm_gengrid_item_selected_set(wd->last_selected_item, EINA_FALSE);
         wd->last_selected_item = prev;
-        elm_gengrid_item_show(wd->last_selected_item);
+        elm_gengrid_item_show(wd->last_selected_item, ELM_GENGRID_ITEM_SCROLLTO_IN);
      }
    else
      {
         elm_gengrid_item_selected_set(prev, EINA_TRUE);
-        elm_gengrid_item_show(prev);
+        elm_gengrid_item_show(prev, ELM_GENGRID_ITEM_SCROLLTO_IN);
      }
 
    return EINA_TRUE;
@@ -389,12 +389,12 @@ _item_multi_select_right(Widget_Data *wd)
      {
         elm_gengrid_item_selected_set(wd->last_selected_item, EINA_FALSE);
         wd->last_selected_item = next;
-        elm_gengrid_item_show(wd->last_selected_item);
+        elm_gengrid_item_show(wd->last_selected_item, ELM_GENGRID_ITEM_SCROLLTO_IN);
      }
    else
      {
         elm_gengrid_item_selected_set(next, EINA_TRUE);
-        elm_gengrid_item_show(next);
+        elm_gengrid_item_show(next, ELM_GENGRID_ITEM_SCROLLTO_IN);
      }
 
    return EINA_TRUE;
@@ -441,7 +441,7 @@ _item_single_select_up(Widget_Data *wd)
         while ((prev) && (prev->generation < wd->generation))
           prev = ELM_GEN_ITEM_FROM_INLIST(EINA_INLIST_GET(prev)->prev);
         elm_gengrid_item_selected_set((Elm_Object_Item *) prev, EINA_TRUE);
-        elm_gengrid_item_show((Elm_Object_Item *) prev);
+        elm_gengrid_item_show((Elm_Object_Item *) prev, ELM_GENGRID_ITEM_SCROLLTO_IN);
         return EINA_TRUE;
      }
    else
@@ -460,7 +460,7 @@ _item_single_select_up(Widget_Data *wd)
    _deselect_all_items(wd);
 
    elm_gengrid_item_selected_set((Elm_Object_Item *) prev, EINA_TRUE);
-   elm_gengrid_item_show((Elm_Object_Item *) prev);
+   elm_gengrid_item_show((Elm_Object_Item *) prev, ELM_GENGRID_ITEM_SCROLLTO_IN);
    return EINA_TRUE;
 }
 
@@ -477,7 +477,7 @@ _item_single_select_down(Widget_Data *wd)
         while ((next) && (next->generation < wd->generation))
           next = ELM_GEN_ITEM_FROM_INLIST(EINA_INLIST_GET(next)->next);
         elm_gengrid_item_selected_set((Elm_Object_Item *) next, EINA_TRUE);
-        elm_gengrid_item_show((Elm_Object_Item *) next);
+        elm_gengrid_item_show((Elm_Object_Item *) next, ELM_GENGRID_ITEM_SCROLLTO_IN);
         return EINA_TRUE;
      }
    else
@@ -496,7 +496,7 @@ _item_single_select_down(Widget_Data *wd)
    _deselect_all_items(wd);
 
    elm_gengrid_item_selected_set((Elm_Object_Item *) next, EINA_TRUE);
-   elm_gengrid_item_show((Elm_Object_Item *) next);
+   elm_gengrid_item_show((Elm_Object_Item *) next, ELM_GENGRID_ITEM_SCROLLTO_IN);
    return EINA_TRUE;
 }
 
@@ -518,7 +518,7 @@ _item_single_select_left(Widget_Data *wd)
    _deselect_all_items(wd);
 
    elm_gengrid_item_selected_set((Elm_Object_Item *) prev, EINA_TRUE);
-   elm_gengrid_item_show((Elm_Object_Item *) prev);
+   elm_gengrid_item_show((Elm_Object_Item *) prev, ELM_GENGRID_ITEM_SCROLLTO_IN);
    return EINA_TRUE;
 }
 
@@ -540,7 +540,7 @@ _item_single_select_right(Widget_Data *wd)
    _deselect_all_items(wd);
 
    elm_gengrid_item_selected_set((Elm_Object_Item *) next, EINA_TRUE);
-   elm_gengrid_item_show((Elm_Object_Item *) next);
+   elm_gengrid_item_show((Elm_Object_Item *) next, ELM_GENGRID_ITEM_SCROLLTO_IN);
    return EINA_TRUE;
 }
 
@@ -2715,7 +2715,7 @@ elm_gengrid_item_gengrid_get(const Elm_Object_Item *it)
 }
 
 EAPI void
-elm_gengrid_item_show(Elm_Object_Item *it)
+elm_gengrid_item_show(Elm_Object_Item *it, Elm_Gengrid_Item_Scrollto_Type type)
 {
    ELM_OBJ_ITEM_CHECK_OR_RETURN(it);
    Elm_Gen_Item *_it = (Elm_Gen_Item *)it;
@@ -2724,6 +2724,11 @@ elm_gengrid_item_show(Elm_Object_Item *it)
 
    if ((_it->generation < _it->wd->generation)) return;
    _pan_min_get(wd->pan_smart, &minx, &miny);
+
+   if (type==ELM_GENGRID_ITEM_SCROLLTO_IN)
+     {
+        //TODO : type based handling like genlist
+     }
 
    if (wd->horizontal)
      elm_smart_scroller_region_bring_in(_it->wd->scr,
@@ -2740,7 +2745,7 @@ elm_gengrid_item_show(Elm_Object_Item *it)
 }
 
 EAPI void
-elm_gengrid_item_bring_in(Elm_Object_Item *it)
+elm_gengrid_item_bring_in(Elm_Object_Item *it, Elm_Gengrid_Item_Scrollto_Type type)
 {
    ELM_OBJ_ITEM_CHECK_OR_RETURN(it);
    Elm_Gen_Item *_it = (Elm_Gen_Item *)it;
@@ -2750,6 +2755,11 @@ elm_gengrid_item_bring_in(Elm_Object_Item *it)
    Evas_Coord minx = 0, miny = 0;
    Widget_Data *wd = _it->wd;
    _pan_min_get(wd->pan_smart, &minx, &miny);
+
+   if (type==ELM_GENGRID_ITEM_SCROLLTO_IN)
+     {
+        //TODO : type based handling like genlist
+     }
 
    if (wd->horizontal)
      elm_smart_scroller_region_bring_in(_it->wd->scr,
