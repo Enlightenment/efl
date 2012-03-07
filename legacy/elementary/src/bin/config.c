@@ -2965,6 +2965,7 @@ _status_config_full(Evas_Object *win,
    Elm_Object_Item *tb_sizing, *tb_it;
 
    tb = elm_toolbar_add(win);
+   elm_toolbar_select_mode_set(tb, ELM_OBJECT_SELECT_MODE_ALWAYS);
    elm_toolbar_menu_parent_set(tb, win);
    elm_toolbar_homogeneous_set(tb, EINA_FALSE);
    evas_object_size_hint_weight_set(tb, 1.0, 0.0);
