@@ -2391,7 +2391,7 @@ static void
 gl15_sel(void *data, Evas_Object *obj, void *event_info __UNUSED__)
 {
    Testitem *tit = data;
-   if (elm_genlist_edit_mode_get(obj))
+   if (elm_genlist_decorate_mode_get(obj))
      {
         if (!tit->checked) tit->checked = EINA_TRUE;
         else tit->checked = EINA_FALSE;
@@ -2402,14 +2402,14 @@ gl15_sel(void *data, Evas_Object *obj, void *event_info __UNUSED__)
 static void
 gl15_edit_mode(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
-   elm_genlist_edit_mode_set(data, EINA_TRUE);
+   elm_genlist_decorate_mode_set(data, EINA_TRUE);
    elm_genlist_select_mode_set(data, ELM_OBJECT_SELECT_MODE_ALWAYS);
 }
 
 static void
 gl15_normal_mode(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
-   elm_genlist_edit_mode_set(data, EINA_FALSE);
+   elm_genlist_decorate_mode_set(data, EINA_FALSE);
    elm_genlist_select_mode_set(data, ELM_OBJECT_SELECT_MODE_DEFAULT);
 }
 
@@ -2565,7 +2565,7 @@ test_genlist16(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_i
    evas_object_show(gl);
 
    /* note: flip mode can be used with/without edit mode */
-   elm_genlist_edit_mode_set(gl, EINA_TRUE);
+   elm_genlist_decorate_mode_set(gl, EINA_TRUE);
    elm_genlist_select_mode_set(gl, ELM_OBJECT_SELECT_MODE_ALWAYS);
 
    itc15 = elm_genlist_item_class_new();

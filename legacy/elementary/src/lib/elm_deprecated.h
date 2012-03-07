@@ -6288,7 +6288,7 @@ EINA_DEPRECATED EAPI void                          elm_genlist_item_mode_set(Elm
  * This function just returns the name of the last used genlist mode. It will
  * be the current mode if it's still active.
  *
- * @deprecated elm_genlist_decorate_mode_get()
+ * @deprecated elm_genlist_item_decorate_mode_get()
  */
 EINA_DEPRECATED EAPI const char                   *elm_genlist_mode_type_get(const Evas_Object *obj);
 
@@ -6305,6 +6305,30 @@ EINA_DEPRECATED EAPI const char                   *elm_genlist_mode_type_get(con
  * @deprecated elm_genlist_decorated_item_get()
  */
 EINA_DEPRECATED EAPI const Elm_Object_Item       *elm_genlist_mode_item_get(const Evas_Object *obj);
+
+/**
+ * Set Genlist edit mode
+ *
+ * This sets Genlist edit mode.
+ *
+ * @param obj The Genlist object
+ * @param The edit mode status
+ * (EINA_TRUE = edit mode, EINA_FALSE = normal mode
+ *
+ * @deprecated elm_genlist_decorate_mode_set
+ */
+EINA_DEPRECATED EAPI void               elm_genlist_edit_mode_set(Evas_Object *obj, Eina_Bool edit_mode);
+
+/**
+ * Get Genlist edit mode
+ *
+ * @param obj The genlist object
+ * @return The edit mode status
+ * (EINA_TRUE = edit mode, EINA_FALSE = normal mode
+ *
+ * @deprecated elm_genlist_decorate_mode_get()
+ */
+EINA_DEPRECATED EAPI Eina_Bool          elm_genlist_edit_mode_get(const Evas_Object *obj);
 
 /**
  * @}

@@ -1614,7 +1614,7 @@ EAPI void                          elm_genlist_item_decorate_mode_set(Elm_Object
  *
  * @ingroup Genlist
  */
-EAPI const char                   *elm_genlist_decorate_mode_get(const Evas_Object *obj);
+EAPI const char                   *elm_genlist_item_decorate_mode_get(const Evas_Object *obj);
 
 /**
  * Get active genlist mode item
@@ -1669,30 +1669,28 @@ EAPI Eina_Bool                     elm_genlist_reorder_mode_get(const Evas_Objec
 EAPI Elm_Genlist_Item_Type        elm_genlist_item_type_get(const Elm_Object_Item *it);
 
 /**
- * Set Genlist edit mode
+ * Set Genlist decorate mode
  *
- * This sets Genlist edit mode.
+ * This sets Genlist decorate mode to all items.
  *
  * @param obj The Genlist object
- * @param The edit mode status
- * (EINA_TRUE = edit mode, EINA_FALSE = normal mode
+ * @param The decorate mode status
+ * (EINA_TRUE = decorate mode, EINA_FALSE = normal mode
  *
  * @ingroup Genlist
  */
-//XXX: elm_genlist_effect_mode_set();
-EAPI void               elm_genlist_edit_mode_set(Evas_Object *obj, Eina_Bool edit_mode);
+EAPI void               elm_genlist_decorate_mode_set(Evas_Object *obj, Eina_Bool decorated);
 
 /**
- * Get Genlist edit mode
+ * Get Genlist decorate mode
  *
  * @param obj The genlist object
- * @return The edit mode status
- * (EINA_TRUE = edit mode, EINA_FALSE = normal mode
+ * @return The decorate mode status
+ * (EINA_TRUE = decorate mode, EINA_FALSE = normal mode
  *
  * @ingroup Genlist
  */
-//XXX: elm_genlist_all_items_effect_mode_get();
-EAPI Eina_Bool          elm_genlist_edit_mode_get(const Evas_Object *obj);
+EAPI Eina_Bool          elm_genlist_decorate_mode_get(const Evas_Object *obj);
 
 /**
  * Set the flip state of a given genlist item.

@@ -131,7 +131,7 @@ struct _Widget_Data
    Eina_Bool                      height_for_width : 1;
    Eina_Bool                      homogeneous : 1;
    Eina_Bool                      swipe : 1;
-   Eina_Bool                      edit_mode : 1;
+   Eina_Bool                      decorate_mode : 1;
    Eina_Bool                      reorder_pan_move : 1;
    Eina_Bool                      auto_scroll_enabled : 1;
    Eina_Bool                      pan_changed : 1;
