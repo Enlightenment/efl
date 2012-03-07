@@ -1306,7 +1306,7 @@ elm_popup_content_text_wrap_type_set(Evas_Object *obj, Elm_Wrap_Type wrap)
 }
 
 EAPI Elm_Wrap_Type
-elm_popup_content_text_wrap_type_get(Evas_Object *obj)
+elm_popup_content_text_wrap_type_get(const Evas_Object *obj)
 {
    ELM_CHECK_WIDTYPE(obj, widtype) ELM_WRAP_LAST;
    Widget_Data *wd = elm_widget_data_get(obj);

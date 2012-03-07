@@ -745,7 +745,7 @@ EAPI Eina_Bool         elm_web_back(Evas_Object *obj);
  * @return EINA_TRUE on success, EINA_FALSE otherwise
  *
  * @see elm_web_history_enabled_set()
- * @see elm_web_forward_possible()
+ * @see elm_web_forward_possible_get()
  * @see elm_web_back()
  * @see elm_web_navigate()
  */
@@ -764,7 +764,7 @@ EAPI Eina_Bool         elm_web_forward(Evas_Object *obj);
  * history exists to jump the given number of steps
  *
  * @see elm_web_history_enabled_set()
- * @see elm_web_navigate_possible()
+ * @see elm_web_navigate_possible_get()
  * @see elm_web_back()
  * @see elm_web_forward()
  */
