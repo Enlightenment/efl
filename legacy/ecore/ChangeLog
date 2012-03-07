@@ -554,11 +554,15 @@
 2012-03-07  ChunEon Park (Hermet)
 
         * Add ecore_x_illume_clipboard_state_set()
-	           ecore_x_illume_clipboard_state_get()
-				  ecore_x_illume_clipboard_geometry_set()
-				  ecore_x_illume_clipboard_geometry_get()
+              ecore_x_illume_clipboard_state_get()
+              ecore_x_illume_clipboard_geometry_set()
+              ecore_x_illume_clipboard_geometry_get()
 
-2012-03-07 Carsten Haitzler (The Rasterman)
+2012-03-07  Carsten Haitzler (The Rasterman)
 
         * Add atoms and api for rotation and indicator transparency in
           ecore_x/ecore_evas
+
+2012-03-07  Mike Blumenkrantz (discomfitor/zmike)
+
+        * Add ecore_con_url_status_code_get() to check return code at any time

@@ -48,6 +48,7 @@ static void      _ecore_con_event_url_free(Ecore_Con_Url *url_con, void *ev);
 static Eina_Bool _ecore_con_url_timer(void *data);
 static Eina_Bool _ecore_con_url_fd_handler(void *data, Ecore_Fd_Handler *fd_handler);
 static Eina_Bool _ecore_con_url_timeout_cb(void *data);
+static void      _ecore_con_url_status_get(Ecore_Con_Url *url_con);
 
 static Eina_List *_url_con_list = NULL;
 static Eina_List *_fd_hd_list = NULL;
@@ -360,6 +361,24 @@ ecore_con_url_url_get(Ecore_Con_Url *url_con)
 #endif
 }
 
+EAPI int
+ecore_con_url_status_code_get(Ecore_Con_Url *url_con)
+{
+#ifdef HAVE_CURL
+   if (!ECORE_MAGIC_CHECK(url_con, ECORE_MAGIC_CON_URL))
+     {
+        ECORE_MAGIC_FAIL(url_con, ECORE_MAGIC_CON_URL, __func__);
+        return -1;
+     }
+
+   _ecore_con_url_status_get(url_con);
+   return url_con->status ?: -1;
+#else
+   return -1;
+   (void)url_con;
+#endif
+}
+
 EAPI Eina_Bool
 ecore_con_url_url_set(Ecore_Con_Url *url_con, const char *url)
 {
@@ -620,6 +639,7 @@ _ecore_con_url_send(Ecore_Con_Url *url_con, int mode, const void *data, long len
    EINA_LIST_FREE(url_con->response_headers, s)
      free((char *)s);
    url_con->response_headers = NULL;
+   url_con->status = 0;
 
    curl_slist_free_all(url_con->headers);
    url_con->headers = NULL;
@@ -1270,8 +1290,12 @@ static void
 _ecore_con_url_status_get(Ecore_Con_Url *url_con)
 {
    long status = 0;
+
+   if (!url_con->curl_easy) return;
    if (curl_easy_getinfo(url_con->curl_easy, CURLINFO_RESPONSE_CODE, &status))
      url_con->status = status;
+   else
+     url_con->status = 0;
 }
 
 static void
