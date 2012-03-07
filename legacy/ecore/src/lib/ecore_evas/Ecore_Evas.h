@@ -1769,7 +1769,7 @@ EAPI Eina_Bool ecore_evas_ews_setup(int x, int y, int w, int h);
 /**
  * Return the internal backing store in use.
  *
- * @note this will foced it to be created, making future calls to
+ * @note this will forced it to be created, making future calls to
  * ecore_evas_ews_engine_set() void.
  *
  * @see ecore_evas_ews_evas_get()
@@ -1780,7 +1780,7 @@ EAPI Ecore_Evas *ecore_evas_ews_ecore_evas_get(void);
 /**
  * Return the internal backing store in use.
  *
- * @note this will foced it to be created, making future calls to
+ * @note this will forced it to be created, making future calls to
  * ecore_evas_ews_engine_set() void.
  *
  * @see ecore_evas_ews_ecore_evas_get()
