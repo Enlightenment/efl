@@ -119,8 +119,8 @@
  * data). The parent parameter is the parent genlist item this belongs to if
  * it is a tree or an indexed group, and NULL if there is no parent. The
  * flags can be a bitmask of #ELM_GENLIST_ITEM_NONE,
- * #ELM_GENLIST_ITEM_SUBITEMS and #ELM_GENLIST_ITEM_GROUP. If
- * #ELM_GENLIST_ITEM_SUBITEMS is set then this item is displayed as an item
+ * #ELM_GENLIST_ITEM_TREE and #ELM_GENLIST_ITEM_GROUP. If
+ * #ELM_GENLIST_ITEM_TREE is set then this item is displayed as an item
  * that is able to expand and have child items.  If ELM_GENLIST_ITEM_GROUP
  * is set then this item is group index item that is displayed at the top
  * until the next group comes. The func parameter is a convenience callback
@@ -1529,7 +1529,7 @@ EAPI void                          elm_genlist_item_subitems_clear(Elm_Object_It
  * @param it The item
  * @param expanded The expanded state (@c EINA_TRUE expanded, @c EINA_FALSE not expanded).
  *
- * This function flags the item of type #ELM_GENLIST_ITEM_SUBITEMS as
+ * This function flags the item of type #ELM_GENLIST_ITEM_TREE as
  * expanded or not.
  *
  * The theme will respond to this change visually, and a signal "expanded" or

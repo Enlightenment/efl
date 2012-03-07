@@ -185,11 +185,11 @@ _add_child_cb(void *data, Evas_Object *o __UNUSED__, void *event_info __UNUSED__
         if (glit_prev != glit_parent)
           glit = elm_genlist_item_insert_after(list, _itp, d, glit_parent,
                                                glit_prev,
-                                               ELM_GENLIST_ITEM_SUBITEMS,
+                                               ELM_GENLIST_ITEM_TREE,
                                                _item_sel_cb, NULL);
         else
           glit = elm_genlist_item_prepend(list, _itp, d, glit_parent,
-                                          ELM_GENLIST_ITEM_SUBITEMS,
+                                          ELM_GENLIST_ITEM_TREE,
                                           _item_sel_cb, NULL);
         elm_genlist_item_expanded_set(glit, EINA_FALSE);
         elm_genlist_item_selected_set(glit, EINA_TRUE);
@@ -273,7 +273,7 @@ _expanded_cb(void *data __UNUSED__, Evas_Object *o __UNUSED__, void *event_info)
         else if (it_data->children)
           {
              ic = _itp;
-             type = ELM_GENLIST_ITEM_SUBITEMS;
+             type = ELM_GENLIST_ITEM_TREE;
           }
         else
           ic = _itc;
@@ -396,7 +396,7 @@ elm_main(int argc __UNUSED__, char **argv __UNUSED__)
         if (i % 3 == 0)
           {
              glg = gli = elm_genlist_item_append(list, _itp, data, NULL,
-                                                 ELM_GENLIST_ITEM_SUBITEMS,
+                                                 ELM_GENLIST_ITEM_TREE,
                                                  _item_sel_cb, NULL);
              elm_genlist_item_expanded_set(glg, EINA_TRUE);
              pdata = data;

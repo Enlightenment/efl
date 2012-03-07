@@ -4977,7 +4977,7 @@
  * However, if the @c item1 didn't have any child previously, we have to change
  * it to a parent item now. It would be easy to just change its item class to
  * the parent type, but there's no way to change the item flags and make it be
- * of the type #ELM_GENLIST_ITEM_SUBITEMS. Thus, we have to delete it and create
+ * of the type #ELM_GENLIST_ITEM_TREE. Thus, we have to delete it and create
  * a new item, and add this new item to the same position that the deleted one
  * was. That's the reason of the checks inside the bigger @c if.
  *

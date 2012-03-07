@@ -121,7 +121,7 @@ _fill_list(Evas_Object *obj)
                                   NULL, ELM_GENLIST_ITEM_NONE, NULL, NULL);
         else
           elm_genlist_item_append(obj, &itc, eina_stringshare_add(real),
-                                  NULL, ELM_GENLIST_ITEM_SUBITEMS,
+                                  NULL, ELM_GENLIST_ITEM_TREE,
                                   NULL, NULL);
      }
 }

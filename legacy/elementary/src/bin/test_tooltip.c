@@ -62,7 +62,7 @@ gltt_exp(void *data       __UNUSED__,
    glit2 = elm_genlist_item_append(gl, &itct, (void *)(long) (val + 2), glit,
                                    ELM_GENLIST_ITEM_NONE, NULL, NULL);
    glit3 = elm_genlist_item_append(gl, &itct, (void *)(long) (val + 3), glit,
-                                   ELM_GENLIST_ITEM_SUBITEMS, NULL, NULL);
+                                   ELM_GENLIST_ITEM_TREE, NULL, NULL);
 
    elm_genlist_item_tooltip_text_set(glit1, "Testing A");
    elm_genlist_item_tooltip_text_set(glit2, "Testing B");
@@ -592,9 +592,9 @@ test_tooltip2(void *data       __UNUSED__,
    itct.func.text_get = gltt_text_get;
 
    glit1 = elm_genlist_item_append(gl, &itct, (void *)1, NULL,
-                                   ELM_GENLIST_ITEM_SUBITEMS, NULL, NULL);
+                                   ELM_GENLIST_ITEM_TREE, NULL, NULL);
    glit2 = elm_genlist_item_append(gl, &itct, (void *)2, NULL,
-                                   ELM_GENLIST_ITEM_SUBITEMS, NULL, NULL);
+                                   ELM_GENLIST_ITEM_TREE, NULL, NULL);
    glit3 = elm_genlist_item_append(gl, &itct, (void *)3, NULL,
                                    ELM_GENLIST_ITEM_NONE, NULL, NULL);
 

@@ -58,7 +58,7 @@ glt_exp(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info)
    glit2 = elm_genlist_item_append(gl, &itct, (void *)(long) (val + 2), glit,
                                    ELM_GENLIST_ITEM_NONE, NULL, NULL);
    glit3 = elm_genlist_item_append(gl, &itct, (void *)(long) (val + 3), glit,
-                                   ELM_GENLIST_ITEM_SUBITEMS, NULL, NULL);
+                                   ELM_GENLIST_ITEM_TREE, NULL, NULL);
 
    elm_genlist_item_cursor_set(glit1, ELM_CURSOR_HAND2);
    elm_genlist_item_cursor_set(glit2, ELM_CURSOR_HAND2);
@@ -236,9 +236,9 @@ test_cursor2(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_inf
    itct.func.text_get = glt_text_get;
 
    glit1 = elm_genlist_item_append(gl, &itct, (void *) 1, NULL,
-                                   ELM_GENLIST_ITEM_SUBITEMS, NULL, NULL);
+                                   ELM_GENLIST_ITEM_TREE, NULL, NULL);
    glit2 = elm_genlist_item_append(gl, &itct, (void *) 2, NULL,
-                                   ELM_GENLIST_ITEM_SUBITEMS, NULL, NULL);
+                                   ELM_GENLIST_ITEM_TREE, NULL, NULL);
    glit3 = elm_genlist_item_append(gl, &itct, (void *) 3, NULL,
                                    ELM_GENLIST_ITEM_NONE, NULL, NULL);
 

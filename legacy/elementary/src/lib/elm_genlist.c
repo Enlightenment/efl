@@ -1598,7 +1598,7 @@ _item_cache_add(Elm_Gen_Item *it)
    evas_object_hide(itc->base_view);
    evas_object_move(itc->base_view, -9999, -9999);
    itc->item_style = eina_stringshare_add(it->itc->item_style);
-   if (it->item->type & ELM_GENLIST_ITEM_SUBITEMS) itc->tree = 1;
+   if (it->item->type & ELM_GENLIST_ITEM_TREE) itc->tree = 1;
    itc->compress = (it->wd->compress);
    itc->selected = it->selected;
    itc->disabled = elm_widget_item_disabled_get(it);
@@ -1645,7 +1645,7 @@ _item_cache_find(Elm_Gen_Item *it)
    Item_Cache *itc;
    Eina_Bool tree = 0;
 
-   if (it->item->type & ELM_GENLIST_ITEM_SUBITEMS) tree = 1;
+   if (it->item->type & ELM_GENLIST_ITEM_TREE) tree = 1;
    EINA_INLIST_FOREACH(it->wd->item_cache, itc)
      {
         if ((itc->selected) || (itc->disabled) || (itc->expanded))
@@ -2004,7 +2004,7 @@ _item_realize(Elm_Gen_Item *it,
         evas_object_smart_member_add(VIEW(it), it->wd->pan_smart);
         elm_widget_sub_object_add(WIDGET(it), VIEW(it));
 
-        if (it->item->type & ELM_GENLIST_ITEM_SUBITEMS)
+        if (it->item->type & ELM_GENLIST_ITEM_TREE)
           snprintf(buf, sizeof(buf), "tree%s/%s", it->wd->compress ? "_compress" : "", it->itc->item_style ?: "default");
         else
           snprintf(buf, sizeof(buf), "item%s/%s", it->wd->compress ? "_compress" : "", it->itc->item_style ?: "default");
@@ -3293,7 +3293,7 @@ _edit_mode_item_realize(Elm_Gen_Item *it, Eina_Bool effect_on)
    evas_object_smart_member_add(it->edit_obj, it->wd->pan_smart);
    elm_widget_sub_object_add(WIDGET(it), it->edit_obj);
 
-   if (it->item->type & ELM_GENLIST_ITEM_SUBITEMS)
+   if (it->item->type & ELM_GENLIST_ITEM_TREE)
       strncpy(buf, "tree", sizeof(buf));
    else strncpy(buf, "item", sizeof(buf));
    if (it->wd->compress)
