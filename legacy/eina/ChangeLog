@@ -229,3 +229,7 @@
 2012-02-27  Alexandre Becoulet
 
 	* Add faster implementation of Eina_Rbtree.
+
+2012-03-07  Cedric Bail
+
+	* Fix leak of Eina_File.
