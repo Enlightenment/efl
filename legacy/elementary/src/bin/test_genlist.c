@@ -168,7 +168,7 @@ _bt50_cb(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 static void
 _bt1500_cb(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
-   elm_genlist_item_middle_bring_in(data);
+   elm_genlist_item_bring_in(data, ELM_GENLIST_ITEM_SCROLLTO_MIDDLE);
 }
 
 static void
@@ -1439,7 +1439,7 @@ char *gl8_text_get(void *data, Evas_Object *obj __UNUSED__, const char *part __U
 static void
 _bt_show_cb(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
-   elm_genlist_item_top_show(data);
+   elm_genlist_item_show(data, ELM_GENLIST_ITEM_SCROLLTO_TOP);
    //elm_genlist_item_show(data);
    //elm_genlist_item_middle_show(data);
 }
@@ -1447,7 +1447,7 @@ _bt_show_cb(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__
 static void
 _bt_bring_cb(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
-   elm_genlist_item_top_bring_in(data);
+   elm_genlist_item_bring_in(data, ELM_GENLIST_ITEM_SCROLLTO_TOP);
    //elm_genlist_item_bring_in(data);
    //elm_genlist_item_middle_bring_in(data);
 }

@@ -52,6 +52,6 @@ elm_genlist_item_append(genlist, &gic, NULL, glit, ELM_GENLIST_ITEM_NONE, NULL, 
 elm_genlist_item_append(genlist, &gic, NULL, NULL, ELM_GENLIST_ITEM_NONE, NULL, NULL);
 elm_genlist_item_append(genlist, &gic, NULL, NULL, ELM_GENLIST_ITEM_NONE, NULL, NULL);
 
-elm_genlist_item_top_show(glit_top);
+elm_genlist_item_show(glit_top, ELM_GENLIST_ITEM_SCROLLTO_TOP);
 
 #include "widget_preview_tmpl_foot.c"
