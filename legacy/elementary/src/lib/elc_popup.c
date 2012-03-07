@@ -1327,7 +1327,7 @@ elm_popup_orient_set(Evas_Object *obj, Elm_Popup_Orient orient)
 }
 
 EAPI Elm_Popup_Orient
-elm_popup_orient_get(Evas_Object *obj)
+elm_popup_orient_get(const Evas_Object *obj)
 {
    ELM_CHECK_WIDTYPE(obj, widtype) -1;
    Widget_Data *wd = elm_widget_data_get(obj);
@@ -1347,7 +1347,7 @@ elm_popup_timeout_set(Evas_Object *obj, double timeout)
 }
 
 EAPI double
-elm_popup_timeout_get(Evas_Object *obj)
+elm_popup_timeout_get(const Evas_Object *obj)
 {
    ELM_CHECK_WIDTYPE(obj, widtype) 0.0;
    Widget_Data *wd = elm_widget_data_get(obj);
@@ -1368,7 +1368,7 @@ elm_popup_allow_events_set(Evas_Object *obj, Eina_Bool allow)
 }
 
 EAPI Eina_Bool
-elm_popup_allow_events_get(Evas_Object *obj)
+elm_popup_allow_events_get(const Evas_Object *obj)
 {
    ELM_CHECK_WIDTYPE(obj, widtype) EINA_FALSE;
    Widget_Data *wd = elm_widget_data_get(obj);

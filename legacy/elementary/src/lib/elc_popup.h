@@ -182,7 +182,7 @@ EAPI void elm_popup_content_text_wrap_type_set(Evas_Object *obj, Elm_Wrap_Type w
  * @ingroup Popup
  * @see elm_popup_content_text_wrap_type_set
  */
-EAPI Elm_Wrap_Type elm_popup_content_text_wrap_type_get(Evas_Object *obj) EINA_ARG_NONNULL(1);
+EAPI Elm_Wrap_Type elm_popup_content_text_wrap_type_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
 
 /**
  * @brief Sets the orientation of the popup in the parent region
@@ -207,7 +207,7 @@ EAPI void elm_popup_orient_set(Evas_Object *obj, Elm_Popup_Orient orient) EINA_A
  * @see elm_popup_orient_set()
  * @see Elm_Popup_Orient
  */
-EAPI Elm_Popup_Orient elm_popup_orient_get(Evas_Object *obj) EINA_ARG_NONNULL(1);
+EAPI Elm_Popup_Orient elm_popup_orient_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
 
 /**
  * @brief Sets a timeout to hide popup automatically
@@ -239,7 +239,7 @@ EAPI void elm_popup_timeout_set(Evas_Object *obj, double timeout) EINA_ARG_NONNU
  * @ingroup Popup
  * @see elm_popup_timeout_set()
  */
-EAPI double elm_popup_timeout_get(Evas_Object *obj) EINA_ARG_NONNULL(1);
+EAPI double elm_popup_timeout_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
 
 /**
  * @brief Sets whether events should be passed to by a click outside.
@@ -266,4 +266,4 @@ EAPI void elm_popup_allow_events_set(Evas_Object *obj, Eina_Bool allow);
  * @see elm_popup_allow_events_set()
  * @note By default the Blocked event area is present
  */
-EAPI Eina_Bool elm_popup_allow_events_get(Evas_Object *obj);
+EAPI Eina_Bool elm_popup_allow_events_get(const Evas_Object *obj);
