@@ -721,6 +721,99 @@ ecore_x_e_illume_quickpanel_state_toggle(Ecore_X_Window win)
                                  0, 0, 0, 0, 0);
 }
 
+static Ecore_X_Atom
+_ecore_xcb_e_clipboard_atom_get(Ecore_X_Illume_Clipboard_State state)
+{
+   switch (state)
+     {
+      case ECORE_X_ILLUME_CLIPBOARD_STATE_ON:
+        return ECORE_X_ATOM_E_ILLUME_CLIPBOARD_ON;
+      case ECORE_X_ILLUME_CLIPBOARD_STATE_OFF:
+        return ECORE_X_ATOM_E_ILLUME_CLIPBOARD_OFF;
+      default:
+        break;
+     }
+   return 0;
+}
+
+static Ecore_X_Illume_Clipboard_State
+_ecore_xcb_e_clipboard_state_get(Ecore_X_Atom atom)
+{
+   if (atom == ECORE_X_ATOM_E_ILLUME_CLIPBOARD_ON)
+     return ECORE_X_ILLUME_CLIPBOARD_STATE_ON;
+
+   if (atom == ECORE_X_ATOM_E_ILLUME_CLIPBOARD_OFF)
+     return ECORE_X_ILLUME_CLIPBOARD_STATE_OFF;
+
+   return ECORE_X_ILLUME_INDICATOR_STATE_UNKNOWN;
+}
+
+EAPI void
+ecore_x_e_illume_clipboard_state_set(Ecore_X_Window win,
+                                     Ecore_X_Illume_Clipboard_State state)
+{
+   Ecore_X_Atom atom = 0;
+
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   atom = _ecore_xcb_e_clipboard_atom_get(state);
+
+   ecore_x_window_prop_atom_set(win,
+                                ECORE_X_ATOM_E_ILLUME_CLIPBOARD_STATE,
+                                &atom, 1);
+}
+
+EAPI Ecore_X_Illume_Clipboard_State
+ecore_x_e_illume_clipboard_state_get(Ecore_X_Window win)
+{
+   Ecore_X_Atom atom = 0;
+
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+
+   if (!ecore_x_window_prop_atom_get(win,
+                                     ECORE_X_ATOM_E_ILLUME_CLIPBOARD_STATE,
+                                     &atom, 1))
+     return ECORE_X_ILLUME_CLIPBOARD_STATE_UNKNOWN;
+   return _ecore_xcb_clipboard_state_get(atom);
+}
+
+EAPI void
+ecore_x_e_illume_clipboard_geometry_set(Ecore_X_Window win,
+                                        int x, int y, int w, int h)
+{
+   unsigned int geom[4];
+
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   geom[0] = x;
+   geom[1] = y;
+   geom[2] = w;
+   geom[3] = h;
+   ecore_x_window_prop_card32_set(win,
+                                  ECORE_X_ATOM_E_ILLUME_CLIPBOARD_GEOMETRY,
+                                  geom, 4);
+}
+
+EAPI Eina_Bool
+ecore_x_e_illume_clipboard_geometry_get(Ecore_X_Window win,
+                                        int *x, int *y, int *w, int *h)
+{
+   int ret = 0;
+   unsigned int geom[4];
+
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   ret =
+      ecore_x_window_prop_card32_get(win,
+                                     ECORE_X_ATOM_E_ILLUME_CLIPBOARD_GEOMETRY,
+                                     geom, 4);
+   if (ret != 4) return EINA_FALSE;
+
+   if (x) *x = geom[0];
+   if (y) *y = geom[1];
+   if (w) *w = geom[2];
+   if (h) *h = geom[3];
+
+   return EINA_TRUE;
+}
+
 EAPI void
 ecore_x_e_illume_mode_set(Ecore_X_Window      win,
                           Ecore_X_Illume_Mode mode)

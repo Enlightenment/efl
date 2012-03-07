@@ -1111,6 +1111,13 @@ typedef enum _Ecore_X_Illume_Indicator_State
    ECORE_X_ILLUME_INDICATOR_STATE_ON
 } Ecore_X_Illume_Indicator_State;
 
+typedef enum _Ecore_X_Illume_Clipboard_State
+{
+   ECORE_X_ILLUME_CLIPBOARD_STATE_UNKNOWN = 0,
+   ECORE_X_ILLUME_CLIPBOARD_STATE_OFF,
+   ECORE_X_ILLUME_CLIPBOARD_STATE_ON
+} Ecore_X_Illume_Clipboard_State;
+
 /* Window layer constants */
 #define ECORE_X_WINDOW_LAYER_BELOW  2
 #define ECORE_X_WINDOW_LAYER_NORMAL 4
@@ -2410,6 +2417,25 @@ EAPI void
 EAPI void
  ecore_x_e_illume_quickpanel_position_update_send(Ecore_X_Window win);
 
+EAPI void
+ecore_x_e_illume_clipboard_state_set(Ecore_X_Window win,
+                                     Ecore_X_Illume_Clipboard_State state);
+
+EAPI Ecore_X_Illume_Clipboard_State
+ecore_x_e_illume_clipboard_state_get(Ecore_X_Window win);
+
+EAPI void
+ecore_x_e_illume_clipboard_geometry_set(Ecore_X_Window win,
+                                        int x,
+                                        int y,
+                                        int w,
+                                        int h);
+EAPI Eina_Bool
+ecore_x_e_illume_clipboard_geometry_get(Ecore_X_Window win,
+                                        int *x,
+                                        int *y,
+                                        int *w,
+                                        int *h);
 EAPI void
 ecore_x_e_comp_sync_counter_set(Ecore_X_Window win,
                                 Ecore_X_Sync_Counter counter);
