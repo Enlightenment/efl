@@ -1118,6 +1118,14 @@ typedef enum _Ecore_X_Illume_Clipboard_State
    ECORE_X_ILLUME_CLIPBOARD_STATE_ON
 } Ecore_X_Illume_Clipboard_State;
 
+typedef enum _Ecore_X_Illume_Indicator_Opacity_Mode
+{
+   ECORE_X_ILLUME_INDICATOR_OPACITY_UNKNOWN = 0,
+   ECORE_X_ILLUME_INDICATOR_OPAQUE,
+   ECORE_X_ILLUME_INDICATOR_TRANSLUCENT,
+   ECORE_X_ILLUME_INDICATOR_TRANSPARENT
+} Ecore_X_Illume_Indicator_Opacity_Mode;
+
 /* Window layer constants */
 #define ECORE_X_WINDOW_LAYER_BELOW  2
 #define ECORE_X_WINDOW_LAYER_NORMAL 4
@@ -3684,6 +3692,18 @@ ecore_x_e_illume_indicator_state_get(Ecore_X_Window win);
 EAPI void
 ecore_x_e_illume_indicator_state_send(Ecore_X_Window win,
                                       Ecore_X_Illume_Indicator_State state);
+
+EAPI void
+ecore_x_e_illume_indicator_opacity_set(Ecore_X_Window win,
+                                     Ecore_X_Illume_Indicator_Opacity_Mode mode);
+
+EAPI Ecore_X_Illume_Indicator_Opacity_Mode
+ecore_x_e_illume_indicator_opacity_get(Ecore_X_Window win);
+
+EAPI void
+ecore_x_e_illume_indicator_opacity_send(Ecore_X_Window win,
+                                      Ecore_X_Illume_Indicator_Opacity_Mode mode);
+
 #ifdef __cplusplus
 }
 #endif // ifdef __cplusplus

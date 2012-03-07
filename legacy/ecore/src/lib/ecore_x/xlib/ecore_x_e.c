@@ -1217,3 +1217,77 @@ ecore_x_e_illume_indicator_state_send(Ecore_X_Window win,
                                  0, 0, 0, 0);
 }
 
+static Ecore_X_Atom
+_ecore_x_e_indicator_opacity_atom_get(Ecore_X_Illume_Indicator_Opacity_Mode mode)
+{
+   switch (mode)
+     {
+      case ECORE_X_ILLUME_INDICATOR_OPAQUE:
+        return ECORE_X_ATOM_E_ILLUME_INDICATOR_OPAQUE;
+
+      case ECORE_X_ILLUME_INDICATOR_TRANSLUCENT:
+        return ECORE_X_ATOM_E_ILLUME_INDICATOR_TRANSLUCENT;
+
+      case ECORE_X_ILLUME_INDICATOR_TRANSPARENT:
+        return ECORE_X_ATOM_E_ILLUME_INDICATOR_TRANSPARENT;
+
+      default:
+        break;
+     }
+   return 0;
+}
+
+static Ecore_X_Illume_Indicator_Opacity_Mode
+_ecore_x_e_indicator_opacity_get(Ecore_X_Atom atom)
+{
+   if (atom == ECORE_X_ATOM_E_ILLUME_INDICATOR_OPAQUE)
+     return ECORE_X_ILLUME_INDICATOR_OPAQUE;
+
+   if (atom == ECORE_X_ATOM_E_ILLUME_INDICATOR_TRANSLUCENT)
+     return ECORE_X_ILLUME_INDICATOR_TRANSLUCENT;
+
+   if (atom == ECORE_X_ATOM_E_ILLUME_INDICATOR_TRANSPARENT)
+     return ECORE_X_ILLUME_INDICATOR_TRANSPARENT;
+
+   return ECORE_X_ILLUME_INDICATOR_OPACITY_UNKNOWN;
+}
+
+EAPI void
+ecore_x_e_illume_indicator_opacity_set(Ecore_X_Window win,
+                                     Ecore_X_Illume_Indicator_Opacity_Mode mode)
+{
+   Ecore_X_Atom atom = 0;
+
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   atom = _ecore_x_e_indicator_opacity_atom_get(mode);
+   ecore_x_window_prop_atom_set(win,
+                                ECORE_X_ATOM_E_ILLUME_INDICATOR_OPACITY_MODE,
+                                &atom, 1);
+}
+
+EAPI Ecore_X_Illume_Indicator_Opacity_Mode
+ecore_x_e_illume_indicator_opacity_get(Ecore_X_Window win)
+{
+   Ecore_X_Atom atom;
+
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   if (!ecore_x_window_prop_atom_get(win,
+                                     ECORE_X_ATOM_E_ILLUME_INDICATOR_OPACITY_MODE,
+                                     &atom, 1))
+     return ECORE_X_ILLUME_INDICATOR_OPACITY_UNKNOWN;
+
+   return _ecore_x_e_indicator_opacity_get(atom);
+}
+
+EAPI void
+ecore_x_e_illume_indicator_opacity_send(Ecore_X_Window win,
+                                      Ecore_X_Illume_Indicator_Opacity_Mode mode)
+{
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   ecore_x_client_message32_send(win,
+                                 ECORE_X_ATOM_E_ILLUME_INDICATOR_OPACITY_MODE,
+                                 ECORE_X_EVENT_MASK_WINDOW_CONFIGURE,
+                                 _ecore_x_e_indicator_opacity_atom_get(mode),
+                                 0, 0, 0, 0);
+}
+
