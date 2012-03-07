@@ -5276,8 +5276,7 @@ elm_genlist_always_select_mode_get(const Evas_Object *obj)
    Elm_Object_Select_Mode_Type oldmode = elm_genlist_select_mode_get(obj);
    if (oldmode == ELM_OBJECT_ALWAYS_SELECT)
      return EINA_TRUE;
-   else
-     return EINA_FALSE;
+   return EINA_FALSE;
 }
 
 EINA_DEPRECATED EAPI void
@@ -5306,8 +5305,7 @@ elm_genlist_no_select_mode_get(const Evas_Object *obj)
    Elm_Object_Select_Mode_Type oldmode = elm_genlist_select_mode_get(obj);
    if (oldmode == ELM_OBJECT_NO_SELECT)
      return EINA_TRUE;
-   else
-     return EINA_FALSE;
+   return EINA_FALSE;
 }
 
 EAPI void
