@@ -1908,6 +1908,14 @@ elm_web_window_features_property_get(const Elm_Web_Window_Features *wf, Elm_Web_
             break;
      }
 #else
+
+   if (!wf) return EINA_FALSE;
+   if (flag==ELM_WEB_WINDOW_FEATURE_TOOLBAR)
+     {
+        //TODO Handle unused variable warnings when
+        //ewk is not installed.
+     }
+
    /* What to do with these ?
     
    (void)wf;
@@ -1921,6 +1929,7 @@ elm_web_window_features_property_get(const Elm_Web_Window_Features *wf, Elm_Web_
    */
 
 #endif
+   return EINA_FALSE;
 }
 
 EAPI void
@@ -1931,6 +1940,7 @@ elm_web_window_features_region_get(const Elm_Web_Window_Features *wf, Evas_Coord
                                         x, y, w, h);
 #else
 
+   if (!wf || !x || !y || !w || !h) return;
    /* What to do with these ?
     
    (void)wf;
