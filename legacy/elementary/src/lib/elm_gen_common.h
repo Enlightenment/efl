@@ -55,7 +55,6 @@ struct Elm_Gen_Item
 
    Eina_Bool                 position_update : 1;
    Eina_Bool                 want_unrealize : 1;
-   Eina_Bool                 display_only : 1;
    Eina_Bool                 realized : 1;
    Eina_Bool                 selected : 1;
    Eina_Bool                 highlighted : 1;

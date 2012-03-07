@@ -708,7 +708,7 @@ _mouse_move(void        *data,
           }
         return;
      }
-   if (!it->display_only)
+   if (it->select_mode != ELM_OBJECT_SELECT_MODE_DISPLAY_ONLY)
      elm_coords_finger_size_adjust(1, &minw, 1, &minh);
    evas_object_geometry_get(obj, &x, &y, NULL, NULL);
    x = ev->cur.canvas.x - x;

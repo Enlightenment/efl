@@ -282,7 +282,6 @@ elm_main(int argc __UNUSED__, char **argv __UNUSED__)
         _itc_group->func.state_get = NULL;
         _itc_group->func.del = NULL;
      }
-   
    list = elm_genlist_add(win);
 
    evas_object_size_hint_weight_set(list, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
