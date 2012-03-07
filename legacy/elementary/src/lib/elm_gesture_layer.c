@@ -586,19 +586,19 @@ _clear_if_finished(Evas_Object *obj)
 }
 
 static Eina_Bool
-_inside(Evas_Coord x1, Evas_Coord y1, Evas_Coord x2, Evas_Coord y2)
+_inside(Evas_Coord xx1, Evas_Coord yy1, Evas_Coord xx2, Evas_Coord yy2)
 {
    int w = _elm_config->finger_size >> 1; /* Finger size devided by 2 */
-   if (x1 < (x2 - w))
+   if (xx1 < (xx2 - w))
      return EINA_FALSE;
 
-   if (x1 > (x2 + w))
+   if (xx1 > (xx2 + w))
      return EINA_FALSE;
 
-   if (y1 < (y2 - w))
+   if (yy1 < (yy2 - w))
      return EINA_FALSE;
 
-   if (y1 > (y2 + w))
+   if (yy1 > (yy2 + w))
      return EINA_FALSE;
 
    return EINA_TRUE;
