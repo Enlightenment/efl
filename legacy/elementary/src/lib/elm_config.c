@@ -563,7 +563,7 @@ _elm_config_text_classes_free(Eina_List *l)
 Eina_List *
 _elm_config_profiles_list(void)
 {
-   const Eina_File_Direct_Info *info;
+   Eina_File_Direct_Info *info;
    Eina_List *flist = NULL;
    Eina_Iterator *file_it;
    char buf[PATH_MAX];
@@ -583,6 +583,13 @@ _elm_config_profiles_list(void)
 
    EINA_ITERATOR_FOREACH(file_it, info)
      {
+        Eina_Stat st;
+
+        if (eina_file_statat(eina_iterator_container_get(file_it), info, &st))
+          {
+             ERR("this is bad.");
+             continue;
+          }
         if (info->name_length >= len)
           continue;
 
