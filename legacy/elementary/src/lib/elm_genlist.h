@@ -358,8 +358,8 @@
 typedef enum
 {
    ELM_GENLIST_ITEM_NONE = 0, /**< simple item */
-   ELM_GENLIST_ITEM_TREE = (1 << 0), /**< may expand and have child items */
-   ELM_GENLIST_ITEM_GROUP = (1 << 1), /**< index of a group of items */
+   ELM_GENLIST_ITEM_TREE = (1 << 0), /**< this may be expanded and have child items. */
+   ELM_GENLIST_ITEM_GROUP = (1 << 1), /**< an index item of a group of items. this item can have child items. */
 
    ELM_GENLIST_ITEM_MAX = (1 << 2)
 } Elm_Genlist_Item_Type;
