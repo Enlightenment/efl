@@ -273,7 +273,7 @@ elm_image_preload_disabled_set(Evas_Object *obj, Eina_Bool disabled)
    Widget_Data *wd = elm_widget_data_get(obj);
 
    if (!wd) return;
-   _els_smart_icon_preload_set(wd->img, !!disable);
+   _els_smart_icon_preload_set(wd->img, !!disabled);
 }
 
 EAPI void
