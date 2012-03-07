@@ -1382,7 +1382,7 @@ struct _Elm_Entry_Filter_Limit_Size
  * by character count or bytes (any of them is disabled if 0), and both can
  * be set at the same time. In that case, it first checks for characters,
  * then bytes. The #Elm_Entry_Filter_Limit_Size structure must be alive and
- * valid for as long as the entyr is alive AND the elm_entry_filter_limit_size
+ * valid for as long as the entry is alive AND the elm_entry_filter_limit_size
  * filter is set.
  *
  * The function will cut the inserted text in order to allow only the first
