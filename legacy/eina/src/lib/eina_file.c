@@ -1290,6 +1290,7 @@ eina_file_statat(void *container, Eina_File_Direct_Info *info, Eina_Stat *st)
    fd = dirfd(container);
    if (fstatat(fd, info->path + info->name_start, &buf, 0))
 #else
+   (void)container;
    if (stat(info->path, &buf))
 #endif
      {
