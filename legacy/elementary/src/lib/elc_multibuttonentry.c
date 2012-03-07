@@ -118,7 +118,11 @@ static void _item_text_set_hook(Elm_Object_Item *it,
 static const char *_item_text_get_hook(const Elm_Object_Item *it,
                                        const char *part);
 
-// XXX: use evas_object_smart_callback_descriptions_set for smart callbacks.
+ /*  TODO
+  *  Change Shrink to Expand.
+  *  Code refactoring
+  *  use evas_object_smart_callback_descriptions_set for smart callbacks.
+ */
 
 static void
 _del_hook(Evas_Object *obj)

@@ -25,9 +25,8 @@
  * - @c "unfocused" - when multibuttonentry is unfocused.
  * - @c "expanded" - when multibuttonentry is expanded.
  * - @c "contracted" - when multibuttonentry is contracted.
- * - @c "shrink,state,changed" - when shrink mode state of multibuttonentry is
- *                               changed.
- * 
+ * - @c "shrink,state,changed" - when shrink mode state of multibuttonentry is changed.
+ *
  * Default text parts of the multibuttonentry widget that you can use for are:
  * @li "default" - A label of the multibuttonentry
  *
