@@ -155,7 +155,7 @@ gtt_item_icon(void *data   __UNUSED__,
    char buf[PATH_MAX];
    snprintf(buf, sizeof(buf), "%s/images/logo.png", elm_app_data_dir_get());
    elm_icon_file_set(ic, buf, NULL);
-   elm_icon_scale_set(ic, 0, 0);
+   elm_icon_resizable_set(ic, 0, 0);
    return ic;
 }
 
