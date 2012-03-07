@@ -1160,18 +1160,20 @@ elm_naviframe_item_push(Evas_Object *obj,
 }
 
 EAPI Elm_Object_Item *
-elm_naviframe_item_insert_before(Elm_Object_Item *before,
+elm_naviframe_item_insert_before(Evas_Object *obj,
+                                 Elm_Object_Item *before,
                                  const char *title_label,
                                  Evas_Object *prev_btn,
                                  Evas_Object *next_btn,
                                  Evas_Object *content,
                                  const char *item_style)
 {
+   ELM_CHECK_WIDTYPE(obj, widtype) NULL;
    ELM_OBJ_ITEM_CHECK_OR_RETURN(before, NULL);
    Elm_Naviframe_Item *it;
    Widget_Data *wd;
 
-   wd = elm_widget_data_get(WIDGET(before));
+   wd = elm_widget_data_get(obj);
    if (!wd) return NULL;
 
    it = _item_new(WIDGET(before), title_label, prev_btn, next_btn, content,
@@ -1187,18 +1189,20 @@ elm_naviframe_item_insert_before(Elm_Object_Item *before,
 }
 
 EAPI Elm_Object_Item *
-elm_naviframe_item_insert_after(Elm_Object_Item *after,
+elm_naviframe_item_insert_after(Evas_Object *obj,
+                                Elm_Object_Item *after,
                                 const char *title_label,
                                 Evas_Object *prev_btn,
                                 Evas_Object *next_btn,
                                 Evas_Object *content,
                                 const char *item_style)
 {
+   ELM_CHECK_WIDTYPE(obj, widtype) NULL;
    ELM_OBJ_ITEM_CHECK_OR_RETURN(after, NULL);
    Elm_Naviframe_Item *it;
    Widget_Data *wd;
 
-   wd = elm_widget_data_get(WIDGET(after));
+   wd = elm_widget_data_get(obj);
    if (!wd) return NULL;
 
    it = _item_new(WIDGET(after), title_label, prev_btn, next_btn, content,

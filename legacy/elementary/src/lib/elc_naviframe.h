@@ -113,6 +113,7 @@ EAPI Elm_Object_Item *elm_naviframe_item_push(Evas_Object *obj, const char *titl
 /**
  * @brief Insert a new item into the naviframe before item @p before.
  *
+ * @param obj The naviframe object
  * @param before The naviframe item to insert before.
  * @param title_label The label in the title area. The name of the title
  *        label part is "elm.text.title"
@@ -139,11 +140,12 @@ EAPI Elm_Object_Item *elm_naviframe_item_push(Evas_Object *obj, const char *titl
  *
  * @ingroup Naviframe
  */
-EAPI Elm_Object_Item *elm_naviframe_item_insert_before(Elm_Object_Item *before, const char *title_label, Evas_Object *prev_btn, Evas_Object *next_btn, Evas_Object *content, const char *item_style);
+EAPI Elm_Object_Item *elm_naviframe_item_insert_before(Evas_Object *obj, Elm_Object_Item *before, const char *title_label, Evas_Object *prev_btn, Evas_Object *next_btn, Evas_Object *content, const char *item_style);
 
 /**
  * @brief Insert a new item into the naviframe after item @p after.
  *
+ * @param obj The naviframe object
  * @param after The naviframe item to insert after.
  * @param title_label The label in the title area. The name of the title
  *        label part is "elm.text.title"
@@ -170,7 +172,7 @@ EAPI Elm_Object_Item *elm_naviframe_item_insert_before(Elm_Object_Item *before, 
  *
  * @ingroup Naviframe
  */
-EAPI Elm_Object_Item *elm_naviframe_item_insert_after(Elm_Object_Item *after, const char *title_label, Evas_Object *prev_btn, Evas_Object *next_btn, Evas_Object *content, const char *item_style);
+EAPI Elm_Object_Item *elm_naviframe_item_insert_after(Evas_Object *obj, Elm_Object_Item *after, const char *title_label, Evas_Object *prev_btn, Evas_Object *next_btn, Evas_Object *content, const char *item_style);
 
 /**
  * @brief Pop an item that is on top of the stack
