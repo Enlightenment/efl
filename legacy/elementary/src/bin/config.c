@@ -51,10 +51,10 @@ struct _Fonts_Data
 #define ELM_LIST_DISABLE(list)                         \
   do                                                   \
     {                                                  \
-       const Eina_List *l = elm_list_items_get(list);  \
-       if (l)                                          \
+       const Eina_List *_l = elm_list_items_get(list); \
+       if (_l)                                         \
          {                                             \
-            elm_list_item_show(eina_list_data_get(l)); \
+            elm_list_item_show(eina_list_data_get(_l));\
             elm_object_disabled_set(list, EINA_TRUE);  \
          }                                             \
     }                                                  \
@@ -81,7 +81,7 @@ struct _Fonts_Data
        evas_object_size_hint_weight_set(lb, EVAS_HINT_EXPAND, 0.0); \
        evas_object_size_hint_align_set(lb, EVAS_HINT_FILL, 0.5);    \
        elm_object_text_set(lb, label);                              \
-       elm_object_content_set(pd, lb);                               \
+       elm_object_content_set(pd, lb);                              \
        evas_object_show(lb);                                        \
     }                                                               \
   while (0)
@@ -94,7 +94,7 @@ static int interactive = 1;
 static const char *theme_set = NULL;
 static const char *finger_size_set = NULL;
 static const char *scale_set = NULL;
-static Fonts_Data fdata = {NULL, NULL, NULL, NULL, NULL, NULL, 0.0};
+static Fonts_Data fndata = {NULL, NULL, NULL, NULL, NULL, NULL, 0.0};
 
 static void
 _font_styles_list_sel(void *data   __UNUSED__,
@@ -109,7 +109,7 @@ config_exit(void *data       __UNUSED__,
    Elm_Text_Class_Data *tc_data;
    Elm_Font_Size_Data *sd;
 
-   EINA_LIST_FREE(fdata.text_classes, tc_data)
+   EINA_LIST_FREE(fndata.text_classes, tc_data)
      {
         eina_stringshare_del(tc_data->name);
         eina_stringshare_del(tc_data->desc);
@@ -118,26 +118,26 @@ config_exit(void *data       __UNUSED__,
         free(tc_data);
      }
 
-   elm_font_available_hash_del(fdata.font_hash);
-   fdata.font_hash = NULL;
+   elm_font_available_hash_del(fndata.font_hash);
+   fndata.font_hash = NULL;
 
-   EINA_LIST_FREE(fdata.font_px_list, sd)
+   EINA_LIST_FREE(fndata.font_px_list, sd)
      {
         eina_stringshare_del(sd->size_str);
         free(sd);
      }
 
-   EINA_LIST_FREE(fdata.font_scale_list, sd)
+   EINA_LIST_FREE(fndata.font_scale_list, sd)
      {
         eina_stringshare_del(sd->size_str);
         free(sd);
      }
 
-   if (fdata.cur_font) eina_stringshare_del(fdata.cur_font);
-   fdata.cur_font = NULL;
+   if (fndata.cur_font) eina_stringshare_del(fndata.cur_font);
+   fndata.cur_font = NULL;
 
-   if (fdata.cur_style) eina_stringshare_del(fdata.cur_style);
-   fdata.cur_style = NULL;
+   if (fndata.cur_style) eina_stringshare_del(fndata.cur_style);
+   fndata.cur_style = NULL;
 
    elm_config_save();
    elm_exit(); /* exit the program's main loop that runs in elm_run() */
@@ -784,7 +784,7 @@ _font_overlay_set_all(void            *data,
    if (!list_it) return;
    tc_data = elm_object_item_data_get(list_it);
 
-   EINA_LIST_FOREACH(fdata.text_classes, l, tc)
+   EINA_LIST_FOREACH(fndata.text_classes, l, tc)
      {
         eina_stringshare_replace(&tc->font, tc_data->font);
         eina_stringshare_replace(&tc->style, tc_data->style);
@@ -816,11 +816,11 @@ _font_overlay_reset(void            *data,
 
    elm_config_font_overlay_unset(tc_data->name);
 
-   eina_stringshare_replace(&fdata.cur_font, NULL);
+   eina_stringshare_replace(&fndata.cur_font, NULL);
    eina_stringshare_replace(&tc_data->font, NULL);
-   eina_stringshare_replace(&fdata.cur_style, NULL);
+   eina_stringshare_replace(&fndata.cur_style, NULL);
    eina_stringshare_replace(&tc_data->style, NULL);
-   fdata.cur_size = 0.0;
+   fndata.cur_size = 0.0;
    tc_data->size = 0.0;
 
    ELM_LIST_DISABLE(fnames);
@@ -841,11 +841,11 @@ _font_overlay_reset_all(void            *data,
    Eina_List *l;
 
    win = data;
-   eina_stringshare_replace(&fdata.cur_font, NULL);
-   eina_stringshare_replace(&fdata.cur_style, NULL);
-   fdata.cur_size = 0.0;
+   eina_stringshare_replace(&fndata.cur_font, NULL);
+   eina_stringshare_replace(&fndata.cur_style, NULL);
+   fndata.cur_size = 0.0;
 
-   EINA_LIST_FOREACH(fdata.text_classes, l, tc_data)
+   EINA_LIST_FOREACH(fndata.text_classes, l, tc_data)
      {
         elm_config_font_overlay_unset(tc_data->name);
 
@@ -877,7 +877,7 @@ _font_overlay_change(void *data       __UNUSED__,
    Elm_Text_Class_Data *tc_data;
    Eina_List *l;
 
-   EINA_LIST_FOREACH(fdata.text_classes, l, tc_data)
+   EINA_LIST_FOREACH(fndata.text_classes, l, tc_data)
      {
         if (tc_data->font)
           {
@@ -1486,11 +1486,11 @@ _font_preview_update(Evas_Object *win)
    Evas_Font_Size sz;
    char *name;
 
-   if (!fdata.cur_font)
+   if (!fndata.cur_font)
      return;
 
-   name = elm_font_fontconfig_name_get(fdata.cur_font, fdata.cur_style);
-   sz = fdata.cur_size;
+   name = elm_font_fontconfig_name_get(fndata.cur_font, fndata.cur_style);
+   sz = fndata.cur_size;
 
    if (sz < 0)
      sz = (-sz * 10) / 100;
@@ -1523,11 +1523,11 @@ _font_classes_list_sel(void *data   __UNUSED__,
 
    EINA_LIST_FOREACH(f_names_items, l, list_it)
      {
-        const char *l;
+        const char *s;
 
-        l = elm_object_item_text_get(list_it);
+        s = elm_object_item_text_get(list_it);
 
-        if (tc_data->font && !strcmp(l, tc_data->font))
+        if (tc_data->font && !strcmp(s, tc_data->font))
           {
              elm_list_item_selected_set(list_it, EINA_TRUE);
              elm_list_item_show(list_it);
@@ -1559,14 +1559,14 @@ _font_names_list_sel(void *data   __UNUSED__,
    if (!fc_list_it) return;  /* should not happen, fonts list disabled in
                          * this case */
 
-   eina_stringshare_replace(&fdata.cur_font, sel_font);
+   eina_stringshare_replace(&fndata.cur_font, sel_font);
 
    tc_data = elm_object_item_data_get(fc_list_it);
    if (tc_data->font) eina_stringshare_del(tc_data->font);
-   if (fdata.cur_font) tc_data->font = eina_stringshare_ref(fdata.cur_font);
+   if (fndata.cur_font) tc_data->font = eina_stringshare_ref(fndata.cur_font);
 
    /* load styles list */
-   efp = eina_hash_find(fdata.font_hash, sel_font);
+   efp = eina_hash_find(fndata.font_hash, sel_font);
 
    ELM_LIST_ENABLE(style_list);
    elm_list_clear(style_list);
@@ -1615,13 +1615,13 @@ _font_styles_list_sel(void *data   __UNUSED__,
    list_it = elm_list_selected_item_get(fc_list);
    if (!list_it) return;  /* should not happen */
 
-   eina_stringshare_replace(&fdata.cur_style,
+   eina_stringshare_replace(&fndata.cur_style,
                             elm_object_item_text_get(event_info));
    ELM_LIST_ENABLE(fs_list);
 
    tc_data = elm_object_item_data_get(list_it);
    eina_stringshare_del(tc_data->style);
-   tc_data->style = eina_stringshare_ref(fdata.cur_style);
+   tc_data->style = eina_stringshare_ref(fndata.cur_style);
 
    evas_event_freeze(evas_object_evas_get(fs_list));
    edje_freeze();
@@ -1664,10 +1664,10 @@ _font_sizes_list_sel(void *data       __UNUSED__,
    if (!list_it) return;  /* should not happen */
 
    sd = elm_object_item_data_get(event_info);
-   fdata.cur_size = sd->size;
+   fndata.cur_size = sd->size;
 
    tc_data = elm_object_item_data_get(list_it);
-   tc_data->size = fdata.cur_size;
+   tc_data->size = fndata.cur_size;
 
    _font_preview_update(win);
 }
@@ -1719,7 +1719,7 @@ _font_classes_list_load(Evas_Object *li)
    evas_event_freeze(evas);
    edje_freeze();
 
-   EINA_LIST_FOREACH(fdata.text_classes, l, tc_data)
+   EINA_LIST_FOREACH(fndata.text_classes, l, tc_data)
      elm_list_item_append(li, tc_data->desc, NULL, NULL,
                           _font_classes_list_sel, tc_data);
 
@@ -1744,7 +1744,7 @@ _fonts_data_fill(Evas *evas)
    int i;
 
    evas_fonts = evas_font_available_list(evas);
-   fdata.font_hash = elm_font_available_hash_add(evas_fonts);
+   fndata.font_hash = elm_font_available_hash_add(evas_fonts);
    evas_font_available_list_free(evas, evas_fonts);
 
    text_classes = elm_config_text_classes_list_get();
@@ -1779,43 +1779,43 @@ _fonts_data_fill(Evas *evas)
              tc_data->size = efo->size;
           }
 
-        fdata.text_classes = eina_list_append(fdata.text_classes, tc_data);
+        fndata.text_classes = eina_list_append(fndata.text_classes, tc_data);
      }
 
    elm_config_text_classes_list_free(text_classes);
 
    /* FIXME: hinting later */
-   /* fdata.hinting = e_config->font_hinting; */
+   /* fndata.hinting = e_config->font_hinting; */
 
    sd = calloc(1, sizeof(Elm_Font_Size_Data));
    sd->size_str = eina_stringshare_add("Tiny");
    sd->size = -50;
-   fdata.font_scale_list = eina_list_append(fdata.font_scale_list, sd);
+   fndata.font_scale_list = eina_list_append(fndata.font_scale_list, sd);
 
    sd = calloc(1, sizeof(Elm_Font_Size_Data));
    sd->size_str = eina_stringshare_add("Small");
    sd->size = -80;
-   fdata.font_scale_list = eina_list_append(fdata.font_scale_list, sd);
+   fndata.font_scale_list = eina_list_append(fndata.font_scale_list, sd);
 
    sd = calloc(1, sizeof(Elm_Font_Size_Data));
    sd->size_str = eina_stringshare_add("Normal");
    sd->size = -100;
-   fdata.font_scale_list = eina_list_append(fdata.font_scale_list, sd);
+   fndata.font_scale_list = eina_list_append(fndata.font_scale_list, sd);
 
    sd = calloc(1, sizeof(Elm_Font_Size_Data));
    sd->size_str = eina_stringshare_add("Big");
    sd->size = -150;
-   fdata.font_scale_list = eina_list_append(fdata.font_scale_list, sd);
+   fndata.font_scale_list = eina_list_append(fndata.font_scale_list, sd);
 
    sd = calloc(1, sizeof(Elm_Font_Size_Data));
    sd->size_str = eina_stringshare_add("Really Big");
    sd->size = -190;
-   fdata.font_scale_list = eina_list_append(fdata.font_scale_list, sd);
+   fndata.font_scale_list = eina_list_append(fndata.font_scale_list, sd);
 
    sd = calloc(1, sizeof(Elm_Font_Size_Data));
    sd->size_str = eina_stringshare_add("Huge");
    sd->size = -250;
-   fdata.font_scale_list = eina_list_append(fdata.font_scale_list, sd);
+   fndata.font_scale_list = eina_list_append(fndata.font_scale_list, sd);
 
    for (i = 5; i < 51; i++)
      {
@@ -1827,7 +1827,7 @@ _fonts_data_fill(Evas *evas)
         sd = calloc(1, sizeof(Elm_Font_Size_Data));
         sd->size_str = eina_stringshare_add(str);
         sd->size = i;
-        fdata.font_px_list = eina_list_append(fdata.font_px_list, sd);
+        fndata.font_px_list = eina_list_append(fndata.font_px_list, sd);
      }
 }
 
@@ -1851,11 +1851,11 @@ _font_sizes_list_load(Evas_Object *size_list)
    evas_event_freeze(evas);
    edje_freeze();
 
-   EINA_LIST_FOREACH(fdata.font_scale_list, l, size_data)
+   EINA_LIST_FOREACH(fndata.font_scale_list, l, size_data)
      elm_list_item_append(size_list, size_data->size_str, NULL, NULL,
                           _font_sizes_list_sel, size_data);
 
-   EINA_LIST_FOREACH(fdata.font_px_list, l, size_data)
+   EINA_LIST_FOREACH(fndata.font_px_list, l, size_data)
      elm_list_item_append(size_list, size_data->size_str, NULL, NULL,
                           _font_sizes_list_sel, size_data);
 
@@ -1910,7 +1910,7 @@ _font_names_list_load(Evas_Object *flist)
    evas_event_freeze(evas);
    edje_freeze();
 
-   eina_hash_foreach(fdata.font_hash, _font_list_fill, &names_list);
+   eina_hash_foreach(fndata.font_hash, _font_list_fill, &names_list);
    names_list = eina_list_sort(names_list, eina_list_count(names_list),
                                _font_sort_cb);
 
