@@ -119,7 +119,7 @@ struct _Widget_Data
    Ecore_Timer                   *multi_timer, *scr_hold_timer;
    Ecore_Animator                *reorder_move_animator;
    const char                    *mode_type;
-   unsigned int                   start_time;
+   double                         start_time;
    Evas_Coord                     prev_x, prev_y, prev_mx, prev_my;
    Evas_Coord                     cur_x, cur_y, cur_mx, cur_my;
    Eina_Bool                      mouse_down : 1;
@@ -138,6 +138,7 @@ struct _Widget_Data
    Eina_Bool                      pan_changed : 1;
    Eina_Bool                      requeued : 1; /**< this is set to EINA_TRUE when the item is re-queued. this happens when the item is un-queued but the rel item is still in the queue. this item will be processed later. */
    Eina_Bool                      check_scroll : 1; /**< this flag means genlist is supposed to be scrolled. if this flag is set to EINA_TRUE, genlist checks whether it's ok to scroll genlist now or not. */
+   Eina_Bool                      tree_effect_enabled : 1; /**< tree effect */
    struct
      {
         Evas_Coord x, y;
@@ -152,6 +153,11 @@ struct _Widget_Data
    Eina_Compare_Cb                item_compare_cb;
    Eina_Compare_Cb                item_compare_data_cb;
    Elm_Genlist_Item_Scrollto_Type scrollto_type; /**< a scrollto type which remembers where to scroll ex) in, top, middle */
+   Evas_Object                   *alpha_bg; /**< not to receive event when tree effect is not finished */
+   Eina_List                     *move_items; /**< items move for tree effect */
+   Elm_Gen_Item                  *expanded_next_item;
+   Ecore_Animator                *item_moving_effect_timer; /**< tree effect */
+   Elm_Genlist_Item_Move_Effect_Mode move_effect_mode;
 
    /* The stuff below directly come from gengrid without any thinking */
    unsigned int                   nmax;

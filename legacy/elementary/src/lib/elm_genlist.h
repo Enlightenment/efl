@@ -316,6 +316,7 @@
  * - @c "moved" - This is called when a genlist item is moved.
  * - @c "language,changed" - This is called when the program's language is
  *   changed.
+ * - @c "tree,effect,finished" - This is called when a genlist tree effect is finished.
  *
  * Supported elm_object common APIs
  * @li elm_object_signal_emit()
@@ -379,6 +380,13 @@ typedef enum
    ELM_GENLIST_ITEM_SCROLLTO_TOP = (1 << 1),   /**< top show, top bring in */
    ELM_GENLIST_ITEM_SCROLLTO_MIDDLE = (1 << 2)   /**< middle show, middle bring in */
 } Elm_Genlist_Item_Scrollto_Type;
+
+typedef enum
+{
+   ELM_GENLIST_ITEM_MOVE_EFFECT_NONE         = 0,
+   ELM_GENLIST_ITEM_MOVE_EFFECT_EXPAND       = 1,
+   ELM_GENLIST_ITEM_MOVE_EFFECT_CONTRACT     = 2
+} Elm_Genlist_Item_Move_Effect_Mode;
 
 /**
  * @see Elm_Gen_Item_Class
@@ -1876,6 +1884,28 @@ EAPI void elm_genlist_item_flip_set(Elm_Object_Item *it, Eina_Bool flip);
  */
 
 EAPI Eina_Bool elm_genlist_item_flip_get(const Elm_Object_Item *it);
+
+/**
+ * Set Genlist tree effect
+ *
+ * @param obj The genlist object
+ * @param The tree effect status
+ * (EINA_TRUE = enabled, EINA_FALSE = disabled
+ *
+ * @ingroup Genlist
+ */
+EAPI void               elm_genlist_tree_effect_enabled_set(Evas_Object *obj, Eina_Bool enabled);
+
+/**
+ * Get Genlist tree effect
+ *
+ * @param obj The genlist object
+ * @return The tree effect status
+ * (EINA_TRUE = enabled, EINA_FALSE = disabled
+ *
+ * @ingroup Genlist
+ */
+EAPI Eina_Bool          elm_genlist_tree_effect_enabled_get(const Evas_Object *obj);
 
 /**
  * @}
