@@ -780,8 +780,7 @@ elm_colorselector_color_set(Evas_Object *obj, int r, int g, int b, int a)
 }
 
 EAPI void
-elm_colorselector_color_get(const Evas_Object *obj,int *r, int *g, int *b,
-                            int *a)
+elm_colorselector_color_get(const Evas_Object *obj, int *r, int *g, int *b, int *a)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
    ELM_CHECK_WIDTYPE(obj, widtype);
@@ -790,4 +789,63 @@ elm_colorselector_color_get(const Evas_Object *obj,int *r, int *g, int *b,
    if (g) *g = wd->g;
    if (b) *b = wd->b;
    if (a) *a = wd->a;
+}
+
+EAPI void
+elm_colorselector_mode_set(Evas_Object *obj, Elm_Colorselector_Mode mode __UNUSED__)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype);
+   //TODO: Implement!
+}
+
+EAPI Elm_Colorselector_Mode
+elm_colorselector_mode_get(const Evas_Object *obj)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype) ELM_COLORSELECTOR_PALETTE;
+   //TODO: Implement!
+   return ELM_COLORSELECTOR_PALETTE;
+}
+
+EAPI void
+elm_colorselector_palette_item_color_get(const Elm_Object_Item *it, int *r __UNUSED__, int *g __UNUSED__, int *b __UNUSED__, int*a __UNUSED__)
+{
+   ELM_OBJ_ITEM_CHECK_OR_RETURN(it);
+   //TODO: Implement!
+}
+
+EAPI void
+elm_colorselector_palette_item_color_set(Elm_Object_Item *it, int r __UNUSED__, int g __UNUSED__, int b __UNUSED__, int a __UNUSED__)
+{
+   ELM_OBJ_ITEM_CHECK_OR_RETURN(it);
+   //TODO: Implement!
+}
+
+EAPI Elm_Object_Item *
+elm_colorselector_palette_color_add(Evas_Object *obj, int r __UNUSED__, int g __UNUSED__, int b __UNUSED__, int a __UNUSED__)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype) NULL;
+   //TODO: Implement!
+   return NULL;
+}
+
+EAPI void
+elm_colorselector_palette_clear(Evas_Object *obj)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype);
+   //TODO: Implement!
+}
+
+EAPI void
+elm_colorselector_palette_name_set(Evas_Object *obj, const char *palette_name __UNUSED__)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype);
+   //TODO: Implement!
+}
+
+EAPI const char*
+elm_colorselector_palette_name_get(const Evas_Object *obj)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype) NULL;
+   //TODO: Implement!
+   return NULL;
 }
