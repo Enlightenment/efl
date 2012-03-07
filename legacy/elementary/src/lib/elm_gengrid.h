@@ -1480,7 +1480,6 @@ EAPI void                          elm_gengrid_item_pos_get(const Elm_Object_Ite
  * @ingroup Gengrid
  *
  */
-//XXX: Does this API working well?
 EAPI void                          elm_gengrid_filled_set(Evas_Object *obj, Eina_Bool fill);
 
 /**
@@ -1497,7 +1496,6 @@ EAPI void                          elm_gengrid_filled_set(Evas_Object *obj, Eina
  *
  * @ingroup Gengrid
  */
-//XXX: Does this API working well?
 EAPI Eina_Bool                     elm_gengrid_filled_get(const Evas_Object *obj);
 
 /**
