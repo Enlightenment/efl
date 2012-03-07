@@ -119,10 +119,9 @@ static const char *_item_text_get_hook(const Elm_Object_Item *it,
                                        const char *part);
 
  /*  TODO
-  *  Change Shrink to Expand.
   *  Code refactoring
   *  use evas_object_smart_callback_descriptions_set for smart callbacks.
- */
+  */
 
 static void
 _del_hook(Evas_Object *obj)
@@ -441,7 +440,7 @@ _shrink_mode_set(Evas_Object *obj, Eina_Bool shrink)
                             evas_object_show(wd->end);
 
                             wd->view_state = MULTIBUTTONENTRY_VIEW_SHRINK;
-                            evas_object_smart_callback_call(obj, "shrink,state,changed", (void *)1);
+                            evas_object_smart_callback_call(obj, "expand,state,changed", (void *)1);
                             break;
                          }
                     }
@@ -474,7 +473,7 @@ _shrink_mode_set(Evas_Object *obj, Eina_Bool shrink)
                             evas_object_show(wd->end);
 
                             wd->view_state = MULTIBUTTONENTRY_VIEW_SHRINK;
-                            evas_object_smart_callback_call(obj, "shrink,state,changed", (void *)0);
+                            evas_object_smart_callback_call(obj, "expand,state,changed", (void *)0);
                             break;
                          }
                     }
@@ -514,7 +513,7 @@ _shrink_mode_set(Evas_Object *obj, Eina_Bool shrink)
           }
 
         wd->view_state = MULTIBUTTONENTRY_VIEW_NONE;
-        evas_object_smart_callback_call(obj, "shrink,state,changed", (void *)(long)wd->shrink);
+        evas_object_smart_callback_call(obj, "expand,state,changed", (void *)(long)wd->shrink);
      }
    if (wd->view_state != MULTIBUTTONENTRY_VIEW_SHRINK)
      {
