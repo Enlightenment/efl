@@ -79,7 +79,7 @@
  * specify a different prefix with configure:
  *
  * @verbatim
- * ./confiugre --prefix=$HOME/mysoftware
+ * ./configure --prefix=$HOME/mysoftware
  * @endverbatim
  *
  * Also remember that autotools buys you some useful commands like:
