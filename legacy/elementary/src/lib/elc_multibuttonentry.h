@@ -13,18 +13,15 @@
  * of addresses, each of which is an item that can be clicked for further actions.
  *
  * Smart callbacks one can register:
- * XXX: remove "item,selected". use callback from item_append/prepend instead. (discussed with MBE contributor)
  * - @c "item,selected" - when item is selected. May be called on backspace key.
  * - @c "item,added" - when a new multibuttonentry item is added.
  * - @c "item,deleted" - when a multibuttonentry item is deleted.
- * XXX: remove "item,clicked". use callback from item_append/prepend instead. (discussed with MBE contributor)
  * - @c "item,clicked" - selected item of multibuttonentry is clicked.
  * - @c "clicked" - when multibuttonentry is clicked.
  * - @c "focused" - when multibuttonentry is focused.
  * - @c "unfocused" - when multibuttonentry is unfocused.
  * - @c "expanded" - when multibuttonentry is expanded.
  * - @c "contracted" - when multibuttonentry is contracted.
- * XXX: change "shrink,state,changed" to "expand,state,changed"
  * - @c "shrink,state,changed" - when shrink mode state of multibuttonentry is
  *                               changed.
  * 
@@ -124,7 +121,7 @@ EAPI void                       elm_multibuttonentry_expanded_set(Evas_Object *o
  *
  * @ingroup Multibuttonentry
  */
-EAPI Elm_Object_Item *elm_multibuttonentry_item_prepend(Evas_Object *obj, const char *label, void *data);
+EAPI Elm_Object_Item *elm_multibuttonentry_item_prepend(Evas_Object *obj, const char *label, Evas_Smart_Cb func, void *data);
 
 /**
  * Append a new item to the multibuttonentry
@@ -137,7 +134,7 @@ EAPI Elm_Object_Item *elm_multibuttonentry_item_prepend(Evas_Object *obj, const 
  *
  * @ingroup Multibuttonentry
  */
-EAPI Elm_Object_Item *elm_multibuttonentry_item_append(Evas_Object *obj, const char *label, void *data);
+EAPI Elm_Object_Item *elm_multibuttonentry_item_append(Evas_Object *obj, const char *label, Evas_Smart_Cb func, void *data);
 
 /**
  * Add a new item to the multibuttonentry before the indicated object
@@ -152,7 +149,7 @@ EAPI Elm_Object_Item *elm_multibuttonentry_item_append(Evas_Object *obj, const c
  *
  * @ingroup Multibuttonentry
  */
-EAPI Elm_Object_Item *elm_multibuttonentry_item_insert_before(Evas_Object *obj, Elm_Object_Item *before, const char *label, void *data);
+EAPI Elm_Object_Item *elm_multibuttonentry_item_insert_before(Evas_Object *obj, Elm_Object_Item *before, const char *label, Evas_Smart_Cb func, void *data);
 
 /**
  * Add a new item to the multibuttonentry after the indicated object
@@ -166,7 +163,7 @@ EAPI Elm_Object_Item *elm_multibuttonentry_item_insert_before(Evas_Object *obj, 
  *
  * @ingroup Multibuttonentry
  */
-EAPI Elm_Object_Item *elm_multibuttonentry_item_insert_after(Evas_Object *obj, Elm_Object_Item *after, const char *label, void *data);
+EAPI Elm_Object_Item *elm_multibuttonentry_item_insert_after(Evas_Object *obj, Elm_Object_Item *after, const char *label, Evas_Smart_Cb func, void *data);
 
 /**
  * Get a list of items in the multibuttonentry
