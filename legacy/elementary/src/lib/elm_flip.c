@@ -425,7 +425,7 @@ _slice_obj_vert_color_merge(Slice *s1, int p1, Slice *s2, int p2,
 static int
 _state_update(Widget_Data *st)
 {
-   Evas_Coord x1, y1, x2, y2, mx, my;
+   Evas_Coord xx1, yy1, xx2, yy2, mx, my;
    Evas_Coord x, y, w, h, ox, oy, ow, oh;
    int i, j, num, nn, jump, num2;
    Slice *sl;
@@ -449,10 +449,10 @@ _state_update(Widget_Data *st)
 
    evas_object_geometry_get(st->obj, &x, &y, &w, &h);
    ox = x; oy = y; ow = w; oh = h;
-   x1 = st->down_x;
-   y1 = st->down_y;
-   x2 = st->x;
-   y2 = st->y;
+   xx1 = st->down_x;
+   yy1 = st->down_y;
+   xx2 = st->x;
+   yy2 = st->y;
 
    if (st->dir == 0)
      {
@@ -460,38 +460,38 @@ _state_update(Widget_Data *st)
      }
    else if (st->dir == 1)
      {
-        x1 = (w - 1) - x1;
-        x2 = (w - 1) - x2;
+        xx1 = (w - 1) - xx1;
+        xx2 = (w - 1) - xx2;
      }
    else if (st->dir == 2)
      {
         Evas_Coord tmp;
 
-        tmp = x1; x1 = y1; y1 = tmp;
-        tmp = x2; x2 = y2; y2 = tmp;
+        tmp = xx1; xx1 = yy1; yy1 = tmp;
+        tmp = xx2; xx2 = yy2; yy2 = tmp;
         tmp = w; w = h; h = tmp;
      }
    else/* if (st->dir == 3) will be this anyway */
      {
         Evas_Coord tmp;
 
-        tmp = x1; x1 = y1; y1 = tmp;
-        tmp = x2; x2 = y2; y2 = tmp;
+        tmp = xx1; xx1 = yy1; yy1 = tmp;
+        tmp = xx2; xx2 = yy2; yy2 = tmp;
         tmp = w; w = h; h = tmp;
-        x1 = (w - 1) - x1;
-        x2 = (w - 1) - x2;
+        xx1 = (w - 1) - xx1;
+        xx2 = (w - 1) - xx2;
      }
 
-   if (x2 >= x1) x2 = x1 - 1;
-   mx = (x1 + x2) / 2;
-   my = (y1 + y2) / 2;
+   if (xx2 >= xx1) xx2 = xx1 - 1;
+   mx = (xx1 + xx2) / 2;
+   my = (yy1 + yy2) / 2;
 
    if (mx < 0) mx = 0;
    else if (mx >= w) mx = w - 1;
    if (my < 0) my = 0;
    else if (my >= h) my = h - 1;
 
-   mgrad = (double)(y1 - y2) / (double)(x1 - x2);
+   mgrad = (double)(yy1 - yy2) / (double)(xx1 - xx2);
 
    if (mx < 1) mx = 1; // quick hack to keep curl line visible
 
@@ -517,8 +517,8 @@ _state_update(Widget_Data *st)
           }
      }
 
-   perc = (double)x2 / (double)x1;
-   percm = (double)mx / (double)x1;
+   perc = (double)xx2 / (double)xx1;
+   percm = (double)mx / (double)xx1;
    if (perc < 0.0) perc = 0.0;
    else if (perc > 1.0) perc = 1.0;
    if (percm < 0.0) percm = 0.0;
