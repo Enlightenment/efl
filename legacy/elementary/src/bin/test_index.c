@@ -38,6 +38,8 @@ enum _api_state
    INDEX_PREPEND,
    INDEX_ITEM_DEL,
    INDEX_ITEM_FIND,
+   INDEX_HORIZONTAL,
+   INDEX_INDICATOR_DISABLED,
    INDEX_CLEAR,
    API_STATE_LAST
 };
@@ -49,28 +51,33 @@ set_api_state(api_data *api)
    Idx_Data_Type *d = &api->dt;
    switch(api->state)
      { /* Put all api-changes under switch */
-      case INDEX_LEVEL_SET: /* 0 */
+      case INDEX_LEVEL_SET:
          elm_index_autohide_disabled_set(d->id, EINA_TRUE);
          elm_index_item_level_set(d->id, (elm_index_item_level_get(d->id) ? 0 : 1));
          break;
 
-      case INDEX_ACTIVE_SET: /* 1 */
+      case INDEX_ACTIVE_SET:
          elm_index_autohide_disabled_set(d->id, EINA_FALSE);
          break;
 
-      case INDEX_APPEND_RELATIVE: /* 2 */
-             elm_index_item_insert_after(d->id, elm_index_item_find(d->id, d->item), "W", NULL, d->item);
+      case INDEX_APPEND_RELATIVE:
+         elm_index_item_insert_after(d->id,
+                                     elm_index_item_find(d->id, d->item),
+                                     "W", NULL, d->item);
+         elm_index_item_insert_before(d->id,
+                                      elm_index_item_find(d->id, d->item),
+                                      "V", NULL, d->item);
          break;
 
-      case INDEX_PREPEND: /* 3 */
+      case INDEX_PREPEND:
          elm_index_item_prepend(d->id, "D", NULL, d->item);
          break;
 
-      case INDEX_ITEM_DEL: /* 4 */
+      case INDEX_ITEM_DEL:
          elm_object_item_del(elm_index_item_find(d->id, d->item));
          break;
 
-      case INDEX_ITEM_FIND: /* 5 */
+      case INDEX_ITEM_FIND:
            {
               Elm_Object_Item *i = elm_index_item_find(d->id, d->item);
               if(i)
@@ -81,7 +88,15 @@ set_api_state(api_data *api)
            }
          break;
 
-      case INDEX_CLEAR: /* 6 */
+      case INDEX_HORIZONTAL:
+         elm_index_horizontal_set(d->id, EINA_TRUE);
+         break;
+
+      case INDEX_INDICATOR_DISABLED:
+         elm_index_indicator_disabled_set(d->id, EINA_TRUE);
+         break;
+
+      case INDEX_CLEAR:
          elm_index_item_clear(d->id);
          break;
 
