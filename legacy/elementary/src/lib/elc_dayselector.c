@@ -607,7 +607,6 @@ elm_dayselector_week_start_set(Evas_Object *obj, Elm_Dayselector_Day day)
    EINA_LIST_FOREACH(wd->items, l, it)
      {
         loc = (ELM_DAYSELECTOR_MAX - wd->week_start + it->day) % ELM_DAYSELECTOR_MAX;
-        printf("%d\n", loc);
         snprintf(buf, sizeof(buf), "day%d", loc);
         edje_object_part_swallow(wd->base, buf, VIEW(it));
      }
