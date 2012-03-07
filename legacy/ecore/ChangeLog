@@ -551,3 +551,9 @@
 
         * Add ecore_imf_context_input_panel_caps_lock_mode_set/get to set the caps lock mode on the input panel
 
+2012-03-07  ChunEon Park (Hermet)
+
+        * Add ecore_x_illume_clipboard_state_set()
+	           ecore_x_illume_clipboard_state_get()
+				  ecore_x_illume_clipboard_geometry_set()
+				  ecore_x_illume_clipboard_geometry_get()
