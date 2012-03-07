@@ -2481,7 +2481,7 @@ EAPI const char  *edje_object_part_text_get           (const Evas_Object *obj, c
  *
  * @since 1.2.0
  */
-EAPI void edje_object_part_text_style_user_set(Evas_Object *obj, const char *part, const char *style);
+EAPI void edje_object_part_text_style_user_push(Evas_Object *obj, const char *part, const char *style);
 
 /**
  * @brief Return the text of the object part.
@@ -2495,7 +2495,17 @@ EAPI void edje_object_part_text_style_user_set(Evas_Object *obj, const char *par
  *
  * @since 1.2.0
  */
-EAPI const char *edje_object_part_text_style_user_get(Evas_Object *obj, const char *part);
+EAPI const char *edje_object_part_text_style_user_peek(const Evas_Object *obj, const char *part);
+
+/**
+ * @brief Delete the top style form the user style stack.
+ *
+ * @param obj A valid Evas_Object handle
+ * @param part The part name
+ *
+ * @since 1.2.0
+ */
+EAPI void edje_object_part_text_style_user_pop(Evas_Object *obj, const char *part);
 
 /**
  * @brief Sets the raw (non escaped) text for an object part.
