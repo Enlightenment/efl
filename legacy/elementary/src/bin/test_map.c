@@ -108,8 +108,6 @@ _map_clicked_double(void *data __UNUSED__, Evas_Object *obj, void *event_info)
      {
         elm_map_overlay_del(route_start);
         elm_map_overlay_del(route_end);
-// FIXME: deprecated        
-//        elm_map_route_remove(route);
         route_start = NULL;
         route_end = NULL;
         route = NULL;
@@ -148,8 +146,7 @@ _map_longpressed(void *data __UNUSED__, Evas_Object *obj, void *event_info)
    printf("longpressed, x:%d, y:%d, lon:%lf, lat:%lf\n", down->canvas.x, down->canvas.y, lon, lat);
 
    if (elm_map_zoom_get(obj) < 8) return;
-// FIXME: deprecated        
-//   if (name) elm_map_name_remove(name);
+   if (name) elm_map_name_del(name);
    name = elm_map_name_add(obj, NULL, lon, lat, NULL, NULL);
 }
 
@@ -282,13 +279,13 @@ _map_name_loaded(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNU
              Eina_Bool b = elm_map_paused_get(data);
              elm_map_paused_set(data, EINA_TRUE);
              elm_map_zoom_mode_set(data, ELM_MAP_ZOOM_MODE_MANUAL);
-             elm_map_region_show(data, lon, lat);
              elm_map_zoom_set(data, elm_map_zoom_max_get(data));
+             elm_map_region_show(data, lon, lat);
              elm_map_paused_set(data, b);
           }
      }
-// FIXME: deprecated        
-//   elm_map_name_remove(name);
+
+   elm_map_name_del(name);
    name = NULL;
 }
 
@@ -718,11 +715,14 @@ _overlay_cb(void *data __UNUSED__, Evas_Object *map, void *ev)
 static void
 _parking_cb(void *data __UNUSED__, Evas_Object *map, const Elm_Map_Overlay *ovl)
 {
-   printf("Parking clicked\n");
    if (elm_map_overlay_type_get(ovl) != ELM_MAP_OVERLAY_TYPE_DEFAULT) return;
 
    double lon, lat;
+   Evas_Coord x, y;
    elm_map_overlay_region_get(ovl, &lon, &lat);
+   elm_map_region_to_canvas_convert(map, lon, lat, &x, &y);
+   printf("Parking clicked: %lf %lf %d %d\n", lon, lat, x, y);
+
    if (!bubble_parking)
      {
         Evas_Object *bubble, *label;
@@ -761,10 +761,8 @@ _del_map(void *data __UNUSED__, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__,
    bubble_parking = NULL;
    route_ovl = NULL;
 
-// FIXME: deprecated        
-//   if (route) elm_map_route_remove(route);
-// FIXME: deprecated        
-//   if (name) elm_map_name_remove(name);
+   if (route) elm_map_route_del(route);
+   if (name) elm_map_name_del(name);
    route = NULL;
    name = NULL;
 }

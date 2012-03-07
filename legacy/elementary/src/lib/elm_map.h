@@ -185,15 +185,6 @@ typedef void                       (*Elm_Map_Overlay_Get_Cb)(void *data, Evas_Ob
 typedef void                       (*Elm_Map_Name_Cb)(void *data, Evas_Object *map, const Elm_Map_Name *name);                /**< Async-callback function for the name request. */
 typedef void                       (*Elm_Map_Route_Cb)(void *data, Evas_Object *map, const Elm_Map_Route *route);             /**< Async-callback function for the route request. */
 
-typedef char                      *(*Elm_Map_Module_Source_Name_Func)(void);
-typedef int                        (*Elm_Map_Module_Tile_Zoom_Min_Func)(void);
-typedef int                        (*Elm_Map_Module_Tile_Zoom_Max_Func)(void);
-typedef char                      *(*Elm_Map_Module_Tile_Url_Func)(Evas_Object *obj, int x, int y, int zoom);
-typedef Eina_Bool                  (*Elm_Map_Module_Tile_Geo_to_Coord_Func)(const Evas_Object *obj, int zoom, double lon, double lat, int size, int *x, int *y);
-typedef Eina_Bool                  (*Elm_Map_Module_Tile_Coord_to_Geo_Func)(const Evas_Object *obj, int zoom, int x, int y, int size, double *lon, double *lat);
-typedef char                      *(*Elm_Map_Module_Route_Url_Func)(Evas_Object *obj, const char *type_name, int method, double flon, double flat, double tlon, double tlat);
-typedef char                      *(*Elm_Map_Module_Name_Url_Func)(Evas_Object *obj, int method, const char *name, double lon, double lat);
-
 /**
  * Add a new map widget to the given parent Elementary (container) object.
  *
@@ -394,7 +385,7 @@ EAPI void                  elm_map_region_bring_in(Evas_Object *obj, double lon,
 EAPI void                  elm_map_region_show(Evas_Object *obj, double lon, double lat);
 
 /**
- * Convert canvas coordinates into a geographic coordinate
+ * Convert canvas coordinates into geographic coordinates
  * (longitude, latitude).
  *
  * @param obj The map object.
@@ -406,11 +397,30 @@ EAPI void                  elm_map_region_show(Evas_Object *obj, double lon, dou
  * This gets longitude and latitude from canvas x, y coordinates. The canvas
  * coordinates mean x, y coordinate from current viewport.
  *
- * see elm_map_rotate_get()
+ * see elm_map_region_to_canvas_convert()
  *
  * @ingroup Map
  */
 EAPI void                  elm_map_canvas_to_region_convert(const Evas_Object *obj, const Evas_Coord x, const Evas_Coord y, double *lon, double *lat);
+
+/**
+ * Convert geographic coordinates (longitude, latitude)
+ * into canvas coordinates.
+ *
+ * @param obj The map object.
+ * @param lon The longitude to convert.
+ * @param lat The latitude to convert.
+ * @param x   A pointer to horizontal coordinate.
+ * @param y   A pointer to vertical coordinatet.
+ *
+ * This gets canvas x, y coordinates from longitude and latitude. The canvas
+ * coordinates mean x, y coordinate from current viewport.
+ *
+ * see elm_map_canvas_to_region_convert()
+ *
+ * @ingroup Map
+ */
+EAPI void                  elm_map_region_to_canvas_convert(const Evas_Object *obj, double lon, double lat, Evas_Coord *x, Evas_Coord *y);
 
 /**
  * Pause or unpause the map.
@@ -1365,3 +1375,4 @@ EAPI Evas_Object          *elm_map_track_add(Evas_Object *obj, void *emap);
  * @ingroup Map
  */
 EAPI void                  elm_map_track_remove(Evas_Object *obj, Evas_Object *route);
+
