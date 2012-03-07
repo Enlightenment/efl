@@ -44,7 +44,7 @@ bt_clicked(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info 
    evas_object_size_hint_align_set(ic, EVAS_HINT_FILL, EVAS_HINT_FILL);
    elm_icon_resizable_set(ic, EINA_TRUE, EINA_TRUE);
    elm_icon_aspect_fixed_set(ic, EINA_FALSE);
-   elm_icon_preload_set(ic, EINA_TRUE);
+   elm_icon_preload_disabled_set(ic, EINA_TRUE);
    elm_icon_prescale_set(ic, EINA_TRUE);
    evas_object_show(ic);
 
