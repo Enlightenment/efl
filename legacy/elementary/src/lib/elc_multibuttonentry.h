@@ -302,7 +302,7 @@ EAPI void                       elm_multibuttonentry_item_filter_prepend(Evas_Ob
  *
  * @ingroup Multibuttonentry
  */
-EAPI void                       elm_multibuttonentry_item_filter_del(Evas_Object *obj, Elm_Multibuttonentry_Item_Filter_Cb func, void *data);
+EAPI void                       elm_multibuttonentry_item_filter_remove(Evas_Object *obj, Elm_Multibuttonentry_Item_Filter_Cb func, void *data);
 
 /**
  * @}
