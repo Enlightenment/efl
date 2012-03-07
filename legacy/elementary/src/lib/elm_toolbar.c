@@ -74,8 +74,8 @@ static void _resize(void *data, Evas *e, Evas_Object *obj, void *event_info);
 static void _menu_move_resize(void *data, Evas *e, Evas_Object *obj, void *event_info);
 static void _menu_hide(void *data, Evas *e, Evas_Object *obj, void *event_info);
 static void _layout(Evas_Object *o, Evas_Object_Box_Data *priv, void *data);
-static void _elm_toolbar_item_icon_obj_set(Evas_Object *obj, Elm_Toolbar_Item *item, Evas_Object *icon_obj, const char *icon_str, double icon_size, const char *signal);
-static void _item_label_set(Elm_Toolbar_Item *item, const char *label, const char *signal);
+static void _elm_toolbar_item_icon_obj_set(Evas_Object *obj, Elm_Toolbar_Item *item, Evas_Object *icon_obj, const char *icon_str, double icon_size, const char *sig);
+static void _item_label_set(Elm_Toolbar_Item *item, const char *label, const char *sig);
 
 static const char SIG_CLICKED[] = "clicked";
 static const char SIG_LONGPRESSED[] = "longpressed";
@@ -1069,7 +1069,7 @@ _elm_toolbar_item_label_set_cb (void *data, Evas_Object *obj, const char *emissi
 }
 
 static void
-_item_label_set(Elm_Toolbar_Item *item, const char *label, const char *signal)
+_item_label_set(Elm_Toolbar_Item *item, const char *label, const char *sig)
 {
    const char *s;
 
@@ -1080,7 +1080,7 @@ _item_label_set(Elm_Toolbar_Item *item, const char *label, const char *signal)
    if ((s) && (atoi(s)))
      {
         edje_object_part_text_set(VIEW(item), "elm.text_new", item->label);
-        edje_object_signal_emit (VIEW(item), signal, "elm");
+        edje_object_signal_emit (VIEW(item), sig, "elm");
         edje_object_signal_callback_add(VIEW(item),
                                         "elm,state,label_set,done", "elm",
                                         _elm_toolbar_item_label_set_cb, item);
@@ -1144,7 +1144,7 @@ _elm_toolbar_item_icon_set_cb (void *data, Evas_Object *obj, const char *emissio
 }
 
 static void
-_elm_toolbar_item_icon_obj_set(Evas_Object *obj, Elm_Toolbar_Item *item, Evas_Object *icon_obj, const char *icon_str, double icon_size, const char *signal)
+_elm_toolbar_item_icon_obj_set(Evas_Object *obj, Elm_Toolbar_Item *item, Evas_Object *icon_obj, const char *icon_str, double icon_size, const char *sig)
 {
    Evas_Object *old_icon;
    int ms = 0;
@@ -1178,7 +1178,7 @@ _elm_toolbar_item_icon_obj_set(Evas_Object *obj, Elm_Toolbar_Item *item, Evas_Ob
           }
         edje_object_part_swallow(VIEW(item), "elm.swallow.icon_new",
                                  item->icon);
-        edje_object_signal_emit (VIEW(item), signal, "elm");
+        edje_object_signal_emit (VIEW(item), sig, "elm");
         edje_object_signal_callback_add(VIEW(item),
                                         "elm,state,icon_set,done", "elm",
                                         _elm_toolbar_item_icon_set_cb, item);

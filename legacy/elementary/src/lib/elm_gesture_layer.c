@@ -1618,62 +1618,38 @@ _set_momentum(Elm_Gesture_Momentum_Info *momentum,
  * @ingroup Elm_Gesture_Layer
  */
 static double
-get_angle(Evas_Coord x1, Evas_Coord y1, Evas_Coord x2, Evas_Coord y2)
+get_angle(Evas_Coord xx1, Evas_Coord yy1, Evas_Coord xx2, Evas_Coord yy2)
 {
    double a, xx, yy, rt = (-1);
-   xx = fabs(x2 - x1);
-   yy = fabs(y2 - y1);
+   xx = fabs(xx2 - xx1);
+   yy = fabs(yy2 - yy1);
 
-   if (((int) xx) && ((int) yy))
+   if (((int)xx) && ((int)yy))
      {
         rt = a = RAD2DEG(atan(yy / xx));
-        if (x1 < x2)
+        if (xx1 < xx2)
           {
-             if (y1 < y2)
-               {
-                  rt = 360 - a;
-               }
-             else
-               {
-                  rt = (a);
-               }
+             if (yy1 < yy2) rt = 360 - a;
+             else rt = a;
           }
         else
           {
-             if (y1 < y2)
-               {
-                  rt = 180 + a;
-               }
-             else
-               {
-                  rt = 180 - a;
-               }
+             if (yy1 < yy2) rt = 180 + a;
+             else rt = 180 - a;
           }
      }
 
    if (rt < 0)
      {  /* Do this only if rt is not set */
-        if (((int) xx))
+        if (((int)xx))
           {  /* Horizontal line */
-             if (x2 < x1)
-               {
-                  rt = 180;
-               }
-             else
-               {
-                  rt = 0.0;
-               }
+             if (xx2 < xx1) rt = 180;
+             else rt = 0.0;
           }
         else
           {  /* Vertical line */
-             if (y2 < y1)
-               {
-                  rt = 90;
-               }
-             else
-               {
-                  rt = 270;
-               }
+             if (yy2 < yy1) rt = 90;
+             else rt = 270;
           }
      }
 
@@ -1682,10 +1658,8 @@ get_angle(Evas_Coord x1, Evas_Coord y1, Evas_Coord x2, Evas_Coord y2)
     * original circle   180   0   We want:  270   90
     *                     270                 180
     */
-
    rt = 450 - rt;
-   if (rt >= 360)
-     rt -= 360;
+   if (rt >= 360) rt -= 360;
 
    return rt;
 }
@@ -1706,25 +1680,21 @@ get_angle(Evas_Coord x1, Evas_Coord y1, Evas_Coord x2, Evas_Coord y2)
  * @ingroup Elm_Gesture_Layer
  */
 static void
-get_vector(Evas_Coord x1, Evas_Coord y1, Evas_Coord x2, Evas_Coord y2,
-      Evas_Coord *l, double *a)
+get_vector(Evas_Coord xx1, Evas_Coord yy1, Evas_Coord xx2, Evas_Coord yy2,
+           Evas_Coord *l, double *a)
 {
    Evas_Coord xx, yy;
-   xx = x2 - x1;
-   yy = y2 - y1;
-   *l = (Evas_Coord) sqrt(xx*xx + yy*yy);
-   *a = get_angle(x1, y1, x2, y2);
+   xx = xx2 - xx1;
+   yy = yy2 - yy1;
+   *l = (Evas_Coord) sqrt((xx * xx) + (yy * yy));
+   *a = get_angle(xx1, yy1, xx2, yy2);
 }
 
 static int
-_get_direction(Evas_Coord x1, Evas_Coord x2)
+_get_direction(Evas_Coord xx1, Evas_Coord xx2)
 {
-   if (x2 < x1)
-     return -1;
-
-   if (x2 > x1)
-     return 1;
-
+   if (xx2 < xx1) return -1;
+   if (xx2 > xx1) return 1;
    return 0;
 }
 /**
@@ -1741,8 +1711,8 @@ _get_direction(Evas_Coord x1, Evas_Coord x2)
  */
 static void
 _momentum_test(Evas_Object *obj, Pointer_Event *pe,
-      void *event_info, Evas_Callback_Type event_type,
-      Elm_Gesture_Type g_type)
+               void *event_info, Evas_Callback_Type event_type,
+               Elm_Gesture_Type g_type)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return;
@@ -2341,13 +2311,14 @@ rotation_broke_tolerance(Rotate_Type *st)
  * @ingroup Elm_Gesture_Layer
  */
 static Evas_Coord
-get_finger_gap_length(Evas_Coord x1, Evas_Coord y1, Evas_Coord x2,
-      Evas_Coord y2, Evas_Coord *x, Evas_Coord *y)
+get_finger_gap_length(Evas_Coord xx1, Evas_Coord yy1,
+                      Evas_Coord xx2, Evas_Coord yy2,
+                      Evas_Coord *x, Evas_Coord *y)
 {
    double a, b, xx, yy, gap;
-   xx = fabs(x2 - x1);
-   yy = fabs(y2 - y1);
-   gap = sqrt(xx*xx + yy*yy);
+   xx = fabs(xx2 - xx1);
+   yy = fabs(yy2 - yy1);
+   gap = sqrt((xx * xx) + (yy * yy));
 
    /* START - Compute zoom center point */
    /* The triangle defined as follows:
@@ -2360,7 +2331,7 @@ get_finger_gap_length(Evas_Coord x1, Evas_Coord y1, Evas_Coord x2,
     *          b
     * http://en.wikipedia.org/wiki/Trigonometric_functions
     *************************************/
-   if (((int) xx) && ((int) yy))
+   if (((int)xx) && ((int)yy))
      {
         double A = atan((yy / xx));
 #if defined(DEBUG_GESTURE_LAYER)
@@ -2368,27 +2339,27 @@ get_finger_gap_length(Evas_Coord x1, Evas_Coord y1, Evas_Coord x2,
 #endif
         a = (Evas_Coord) ((gap / 2) * sin(A));
         b = (Evas_Coord) ((gap / 2) * cos(A));
-        *x = (Evas_Coord) ((x2 > x1) ? (x1 + b) : (x2 + b));
-        *y = (Evas_Coord) ((y2 > y1) ? (y1 + a) : (y2 + a));
+        *x = (Evas_Coord) ((xx2 > xx1) ? (xx1 + b) : (xx2 + b));
+        *y = (Evas_Coord) ((yy2 > yy1) ? (yy1 + a) : (yy2 + a));
      }
    else
      {
-        if ((int) xx)
+        if ((int)xx)
           {  /* horiz line, take half width */
 #if defined(DEBUG_GESTURE_LAYER)
              printf("==== HORIZ ====\n");
 #endif
-             *x = (Evas_Coord) ((x1 + x2) / 2);
-             *y = (Evas_Coord) (y1);
+             *x = (Evas_Coord) ((xx1 + xx2) / 2);
+             *y = (Evas_Coord) (yy1);
           }
 
-        if ((int) yy)
+        if ((int)yy)
           {  /* vert line, take half width */
 #if defined(DEBUG_GESTURE_LAYER)
              printf("==== VERT ====\n");
 #endif
-             *x = (Evas_Coord) (x1);
-             *y = (Evas_Coord) ((y1 + y2) / 2);
+             *x = (Evas_Coord) (xx1);
+             *y = (Evas_Coord) ((yy1 + yy2) / 2);
           }
      }
    /* END   - Compute zoom center point */

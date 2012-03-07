@@ -660,21 +660,21 @@ elm_theme_name_available_list_new(void)
              s = strchr(file, '.');
              if ((s) && (!strcasecmp(s, ".edj")))
                {
-                  int dup;
+                  int dupp;
 
                   th = strdup(file);
                   s = strchr(th, '.');
                   *s = 0;
-                  dup = 0;
+                  dupp = 0;
                   EINA_LIST_FOREACH(list, l, s)
                     {
                        if (!strcmp(s, th))
                          {
-                            dup = 1;
+                            dupp = 1;
                             break;
                          }
                     }
-                  if (dup) free(th);
+                  if (dupp) free(th);
                   else list = eina_list_append(list, th);
                }
           }
