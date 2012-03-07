@@ -42,7 +42,7 @@ set_api_state(api_data *api)
          break;
 
       case GRID_NO_SELECT_MODE: /* 2 */
-         elm_gengrid_no_select_mode_set(grid, EINA_TRUE);
+         elm_gengrid_select_mode_set(grid, ELM_OBJECT_NO_SELECT);
          break;
 
       case GRID_NO_BOUNCE: /* 3 */

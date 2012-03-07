@@ -6019,17 +6019,135 @@ EINA_DEPRECATED EAPI void                          elm_genlist_item_middle_show(
 EINA_DEPRECATED EAPI void                   elm_diskselector_round_set(Evas_Object *obj, Eina_Bool round);
 
 /**
- * Get a value whether round mode is enabled or not.
+ * Set the always select mode.
  *
- * @see elm_diskselector_round_enabled_set() for details.
+ * @param obj The genlist object
+ * @param always_select The always select mode (@c EINA_TRUE = on, @c
+ * EINA_FALSE = off). Default is @c EINA_FALSE.
  *
- * @param obj The diskselector object.
- * @return @c EINA_TRUE means round mode is enabled. @c EINA_FALSE indicates
- * it's disabled. If @p obj is @c NULL, @c EINA_FALSE is returned.
+ * Items will only call their selection func and callback when first
+ * becoming selected. Any further clicks will do nothing, unless you
+ * enable always select with elm_genlist_always_select_mode_set().
+ * This means that, even if selected, every click will make the selected
+ * callbacks be called.
  *
- * @deprecated elm_diskselector_round_enabled_get()
+ * @see elm_genlist_always_select_mode_get()
+ *
+ * @ingroup Genlist
  */
-EINA_DEPRECATED EAPI Eina_Bool              elm_diskselector_round_get(const Evas_Object *obj);
+EINA_DEPRECATED EAPI void                          elm_genlist_always_select_mode_set(Evas_Object *obj, Eina_Bool always_select);
+
+
+/**
+ * Get the always select mode.
+ *
+ * @param obj The genlist object
+ * @return The always select mode
+ * (@c EINA_TRUE = on, @c EINA_FALSE = off)
+ *
+ * @see elm_genlist_always_select_mode_set()
+ *
+ * @ingroup Genlist
+ */
+EINA_DEPRECATED EAPI Eina_Bool                     elm_genlist_always_select_mode_get(const Evas_Object *obj);
+
+/**
+ * Enable/disable the no select mode.
+ *
+ * @param obj The genlist object
+ * @param no_select The no select mode
+ * (EINA_TRUE = on, EINA_FALSE = off)
+ *
+ * This will turn off the ability to select items entirely and they
+ * will neither appear selected nor call selected callback functions.
+ *
+ * @see elm_genlist_no_select_mode_get()
+ *
+ * @ingroup Genlist
+ */
+EINA_DEPRECATED EAPI void                          elm_genlist_no_select_mode_set(Evas_Object *obj, Eina_Bool no_select);
+
+/**
+ * Gets whether the no select mode is enabled.
+ *
+ * @param obj The genlist object
+ * @return The no select mode
+ * (@c EINA_TRUE = on, @c EINA_FALSE = off)
+ *
+ * @see elm_genlist_no_select_mode_set()
+ *
+ * @ingroup Genlist
+ */
+EINA_DEPRECATED EAPI Eina_Bool                     elm_genlist_no_select_mode_get(const Evas_Object *obj);
+
+/**
+ * Set whether items on a given gengrid widget are to get their
+ * selection callbacks issued for @b every subsequent selection
+ * click on them or just for the first click.
+ *
+ * @param obj The gengrid object
+ * @param always_select @c EINA_TRUE to make items "always
+ * selected", @c EINA_FALSE, otherwise
+ *
+ * By default, grid items will only call their selection callback
+ * function when firstly getting selected, any subsequent further
+ * clicks will do nothing. With this call, you make those
+ * subsequent clicks also to issue the selection callbacks.
+ *
+ * @note <b>Double clicks</b> will @b always be reported on items.
+ *
+ * @see elm_gengrid_always_select_mode_get()
+ *
+ * @ingroup Gengrid
+ */
+EINA_DEPRECATED EAPI void                          elm_gengrid_always_select_mode_set(Evas_Object *obj, Eina_Bool always_select);
+
+/**
+ * Get whether items on a given gengrid widget have their selection
+ * callbacks issued for @b every subsequent selection click on them
+ * or just for the first click.
+ *
+ * @param obj The gengrid object.
+ * @return @c EINA_TRUE if the gengrid items are "always selected",
+ * @c EINA_FALSE, otherwise
+ *
+ * @see elm_gengrid_always_select_mode_set() for more details
+ *
+ * @ingroup Gengrid
+ */
+EINA_DEPRECATED EAPI Eina_Bool                     elm_gengrid_always_select_mode_get(const Evas_Object *obj);
+
+/**
+ * Set whether items on a given gengrid widget can be selected or not.
+ *
+ * @param obj The gengrid object
+ * @param no_select @c EINA_TRUE to make items selectable,
+ * @c EINA_FALSE otherwise
+ *
+ * This will make items in @p obj selectable or not. In the latter
+ * case, any user interaction on the gengrid items will neither make
+ * them appear selected nor them call their selection callback
+ * functions.
+ *
+ * @see elm_gengrid_no_select_mode_get()
+ *
+ * @ingroup Gengrid
+ */
+EINA_DEPRECATED EAPI void                          elm_gengrid_no_select_mode_set(Evas_Object *obj, Eina_Bool no_select);
+
+/**
+ * Get whether items on a given gengrid widget can be selected or
+ * not.
+ *
+ * @param obj The gengrid object
+ * @return @c EINA_TRUE, if items are selectable, @c EINA_FALSE
+ * otherwise
+ *
+ * @see elm_gengrid_no_select_mode_set() for more details
+ *
+ * @ingroup Gengrid
+ */
+EINA_DEPRECATED EAPI Eina_Bool                     elm_gengrid_no_select_mode_get(const Evas_Object *obj);
 
 /**
  * Get the side labels max length.

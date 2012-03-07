@@ -59,9 +59,7 @@ struct _Widget_Data
    Eina_Bool         reorder_mode : 1;
    Eina_Bool         on_hold : 1;
    Eina_Bool         multi : 1;
-   Eina_Bool         no_select : 1;
    Eina_Bool         wasselected : 1;
-   Eina_Bool         always_select : 1;
    Eina_Bool         clear_me : 1;
    Eina_Bool         h_bounce : 1;
    Eina_Bool         v_bounce : 1;
@@ -918,7 +916,7 @@ _mouse_up(void            *data,
 static void
 _item_highlight(Elm_Gen_Item *it)
 {
-   if ((it->wd->no_select) || (it->generation < it->wd->generation) || (it->highlighted)) return;
+   if ((it->wd->select_mode == ELM_OBJECT_NO_SELECT) || (it->generation < it->wd->generation) || (it->highlighted)) return;
    edje_object_signal_emit(VIEW(it), "elm,state,selected", "elm");
    it->highlighted = EINA_TRUE;
 }
@@ -2576,30 +2574,52 @@ elm_gengrid_reorder_mode_get(const Evas_Object *obj)
    return wd->reorder_mode;
 }
 
-EAPI void
+EINA_DEPRECATED EAPI void
 elm_gengrid_always_select_mode_set(Evas_Object *obj,
                                    Eina_Bool    always_select)
 {
-   elm_genlist_always_select_mode_set(obj, always_select);
+   if (always_select)
+     elm_genlist_select_mode_set(obj, ELM_OBJECT_ALWAYS_SELECT);
+   else
+     {
+        Elm_Object_Select_Mode_Type oldmode = elm_genlist_select_mode_get(obj);
+        if (oldmode == ELM_OBJECT_ALWAYS_SELECT)
+          elm_genlist_select_mode_set(obj, ELM_OBJECT_NORMAL_SELECT);
+     }
 }
 
-EAPI Eina_Bool
+EINA_DEPRECATED EAPI Eina_Bool
 elm_gengrid_always_select_mode_get(const Evas_Object *obj)
 {
-   return elm_genlist_always_select_mode_get(obj);
+   Elm_Object_Select_Mode_Type oldmode = elm_genlist_select_mode_get(obj);
+   if (oldmode == ELM_OBJECT_ALWAYS_SELECT)
+     return EINA_TRUE;
+   else
+     return EINA_FALSE;
 }
 
-EAPI void
+EINA_DEPRECATED EAPI void
 elm_gengrid_no_select_mode_set(Evas_Object *obj,
                                Eina_Bool    no_select)
 {
-   elm_genlist_no_select_mode_set(obj, no_select);
+   if (no_select)
+     elm_genlist_select_mode_set(obj, ELM_OBJECT_NO_SELECT);
+   else
+     {
+        Elm_Object_Select_Mode_Type oldmode = elm_genlist_select_mode_get(obj);
+        if (oldmode == ELM_OBJECT_NO_SELECT)
+          elm_genlist_select_mode_set(obj, ELM_OBJECT_NORMAL_SELECT);
+     }
 }
 
-EAPI Eina_Bool
+EINA_DEPRECATED EAPI Eina_Bool
 elm_gengrid_no_select_mode_get(const Evas_Object *obj)
 {
-   return elm_genlist_no_select_mode_get(obj);
+   Elm_Object_Select_Mode_Type oldmode = elm_genlist_select_mode_get(obj);
+   if (oldmode == ELM_OBJECT_NO_SELECT)
+     return EINA_TRUE;
+   else
+     return EINA_FALSE;
 }
 
 EAPI void
@@ -2816,3 +2836,14 @@ elm_gengrid_item_class_unref(Elm_Gengrid_Item_Class *itc)
      }
 }
 
+EAPI void
+elm_gengrid_select_mode_set(Evas_Object *obj, Elm_Object_Select_Mode_Type mode)
+{
+   elm_genlist_select_mode_set(obj, mode);
+}
+
+EAPI Elm_Object_Select_Mode_Type
+elm_gengrid_select_mode_get(const Evas_Object *obj)
+{
+   return elm_genlist_select_mode_get(obj);
+}

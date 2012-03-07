@@ -357,79 +357,6 @@ EAPI void                          elm_gengrid_horizontal_set(Evas_Object *obj, 
 EAPI Eina_Bool                     elm_gengrid_horizontal_get(const Evas_Object *obj);
 
 /**
- * Set whether items on a given gengrid widget are to get their
- * selection callbacks issued for @b every subsequent selection
- * click on them or just for the first click.
- *
- * @param obj The gengrid object
- * @param always_select @c EINA_TRUE to make items "always
- * selected", @c EINA_FALSE, otherwise
- *
- * By default, grid items will only call their selection callback
- * function when firstly getting selected, any subsequent further
- * clicks will do nothing. With this call, you make those
- * subsequent clicks also to issue the selection callbacks.
- *
- * @note <b>Double clicks</b> will @b always be reported on items.
- *
- * @see elm_gengrid_always_select_mode_get()
- *
- * @ingroup Gengrid
- */
-//XXX: How about elm_gengrid_select_mode_set() ? 
-EAPI void                          elm_gengrid_always_select_mode_set(Evas_Object *obj, Eina_Bool always_select);
-
-/**
- * Get whether items on a given gengrid widget have their selection
- * callbacks issued for @b every subsequent selection click on them
- * or just for the first click.
- *
- * @param obj The gengrid object.
- * @return @c EINA_TRUE if the gengrid items are "always selected",
- * @c EINA_FALSE, otherwise
- *
- * @see elm_gengrid_always_select_mode_set() for more details
- *
- * @ingroup Gengrid
- */
-//XXX: How about elm_gengrid_select_mode_get() ? 
-EAPI Eina_Bool                     elm_gengrid_always_select_mode_get(const Evas_Object *obj);
-
-/**
- * Set whether items on a given gengrid widget can be selected or not.
- *
- * @param obj The gengrid object
- * @param no_select @c EINA_TRUE to make items selectable,
- * @c EINA_FALSE otherwise
- *
- * This will make items in @p obj selectable or not. In the latter
- * case, any user interaction on the gengrid items will neither make
- * them appear selected nor them call their selection callback
- * functions.
- *
- * @see elm_gengrid_no_select_mode_get()
- *
- * @ingroup Gengrid
- */
-//XXX: elm_gengrid_always_select_mode_set and elm_gengrid_no_select_mode_set API could be merged to elm_genlist_select_mode_set() 
-EAPI void                          elm_gengrid_no_select_mode_set(Evas_Object *obj, Eina_Bool no_select);
-
-/**
- * Get whether items on a given gengrid widget can be selected or
- * not.
- *
- * @param obj The gengrid object
- * @return @c EINA_TRUE, if items are selectable, @c EINA_FALSE
- * otherwise
- *
- * @see elm_gengrid_no_select_mode_set() for more details
- *
- * @ingroup Gengrid
- */
-//XXX: elm_gengrid_always_select_mode_get and elm_gengrid_no_select_mode_get API could be merged to elm_genlist_select_mode_get() 
-EAPI Eina_Bool                     elm_gengrid_no_select_mode_get(const Evas_Object *obj);
-
-/**
  * Enable or disable bouncing effect for a given gengrid widget
  *
  * @param obj The gengrid object
@@ -1488,6 +1415,43 @@ EAPI void                          elm_gengrid_filled_set(Evas_Object *obj, Eina
  */
 //XXX: Does this API working well?
 EAPI Eina_Bool                     elm_gengrid_filled_get(const Evas_Object *obj);
+
+/**
+ * Set the gengrid select mode.
+ *
+ * @param obj The gengrid object
+ * @param mode The select mode
+ *
+ * elm_gengrid_select_mode_set() changes item select mode in the gengrid widget.
+ * - ELM_OBJECT_NORMAL_SELECT : Items will only call their selection func and
+ *      callback when first becoming selected. Any further clicks will
+ *      do nothing, unless you set always select mode.
+ * - ELM_OBJECT_ALWAYS_SELECT :  This means that, even if selected,
+ *      every click will make the selected callbacks be called.
+ * - ELM_OBJECT_NO_SELECT : This will turn off the ability to select items
+ *      entirely and they will neither appear selected nor call selected
+ *      callback functions.
+ *
+ * @see elm_gengrid_select_mode_get()
+ *
+ * @ingroup Gengrid
+ */
+EAPI void
+elm_gengrid_select_mode_set(Evas_Object *obj, Elm_Object_Select_Mode_Type mode);
+
+/**
+ * Get the gengrid select mode.
+ *
+ * @param obj The gengrid object
+ * @return The select mode
+ * (If getting mode is failed, it returns ELM_OBJECT_SELECT_MODE_MAX)
+ *
+ * @see elm_gengrid_select_mode_set()
+ *
+ * @ingroup Gengrid
+ */
+EAPI Elm_Object_Select_Mode_Type
+elm_gengrid_select_mode_get(const Evas_Object *obj);
 
 /**
  * @}

@@ -391,7 +391,7 @@ typedef enum
 /**
  * @see Elm_Gen_Item_Class
  */
-typedef Elm_Gen_Item_Class Elm_Genlist_Item_Class; 
+typedef Elm_Gen_Item_Class Elm_Genlist_Item_Class;
 
 /**
  * @see Elm_Gen_Item_Text_Get_Cb
@@ -505,71 +505,6 @@ EAPI void                          elm_genlist_mode_set(Evas_Object *obj, Elm_Li
  * @ingroup Genlist
  */
 EAPI Elm_List_Mode                 elm_genlist_mode_get(const Evas_Object *obj);
-
-/**
- * Set the always select mode.
- *
- * @param obj The genlist object
- * @param always_select The always select mode (@c EINA_TRUE = on, @c
- * EINA_FALSE = off). Default is @c EINA_FALSE.
- *
- * Items will only call their selection func and callback when first
- * becoming selected. Any further clicks will do nothing, unless you
- * enable always select with elm_genlist_always_select_mode_set().
- * This means that, even if selected, every click will make the selected
- * callbacks be called.
- *
- * @see elm_genlist_always_select_mode_get()
- *
- * @ingroup Genlist
- */
-//XXX: How about elm_genlist_select_mode_set() ? 
-EAPI void                          elm_genlist_always_select_mode_set(Evas_Object *obj, Eina_Bool always_select);
-
-/**
- * Get the always select mode.
- *
- * @param obj The genlist object
- * @return The always select mode
- * (@c EINA_TRUE = on, @c EINA_FALSE = off)
- *
- * @see elm_genlist_always_select_mode_set()
- *
- * @ingroup Genlist
- */
-//XXX: How about elm_genlist_select_mode_get() ? 
-EAPI Eina_Bool                     elm_genlist_always_select_mode_get(const Evas_Object *obj);
-
-/**
- * Enable/disable the no select mode.
- *
- * @param obj The genlist object
- * @param no_select The no select mode
- * (EINA_TRUE = on, EINA_FALSE = off)
- *
- * This will turn off the ability to select items entirely and they
- * will neither appear selected nor call selected callback functions.
- *
- * @see elm_genlist_no_select_mode_get()
- *
- * @ingroup Genlist
- */
-//XXX: elm_genlist_always_select_mode_set and elm_genlist_no_select_mode_set API could be merged to elm_genlist_select_mode_set() 
-EAPI void                          elm_genlist_no_select_mode_set(Evas_Object *obj, Eina_Bool no_select);
-
-/**
- * Gets whether the no select mode is enabled.
- *
- * @param obj The genlist object
- * @return The no select mode
- * (@c EINA_TRUE = on, @c EINA_FALSE = off)
- *
- * @see elm_genlist_no_select_mode_set()
- *
- * @ingroup Genlist
- */
-//XXX: elm_genlist_always_select_mode_get and elm_genlist_no_select_mode_get API could be merged to elm_genlist_select_mode_get() 
-EAPI Eina_Bool                     elm_genlist_no_select_mode_get(const Evas_Object *obj);
 
 /**
  * Enable/disable horizontal and vertical bouncing effect.
@@ -1906,6 +1841,43 @@ EAPI void               elm_genlist_tree_effect_enabled_set(Evas_Object *obj, Ei
  * @ingroup Genlist
  */
 EAPI Eina_Bool          elm_genlist_tree_effect_enabled_get(const Evas_Object *obj);
+
+/**
+ * Set the genlist select mode.
+ *
+ * @param obj The genlist object
+ * @param mode The select mode
+ *
+ * elm_genlist_select_mode_set() changes item select mode in the genlist widget.
+ * - ELM_OBJECT_NORMAL_SELECT : Items will only call their selection func and
+ *      callback when first becoming selected. Any further clicks will
+ *      do nothing, unless you set always select mode.
+ * - ELM_OBJECT_ALWAYS_SELECT :  This means that, even if selected,
+ *      every click will make the selected callbacks be called.
+ * - ELM_OBJECT_NO_SELECT : This will turn off the ability to select items
+ *      entirely and they will neither appear selected nor call selected
+ *      callback functions.
+ *
+ * @see elm_genlist_select_mode_get()
+ *
+ * @ingroup Genlist
+ */
+EAPI void
+elm_genlist_select_mode_set(Evas_Object *obj, Elm_Object_Select_Mode_Type mode);
+
+/**
+ * Get the genlist select mode.
+ *
+ * @param obj The genlist object
+ * @return The select mode
+ * (If getting mode is failed, it returns ELM_OBJECT_SELECT_MODE_MAX)
+ *
+ * @see elm_genlist_select_mode_set()
+ *
+ * @ingroup Genlist
+ */
+EAPI Elm_Object_Select_Mode_Type
+elm_genlist_select_mode_get(const Evas_Object *obj);
 
 /**
  * @}

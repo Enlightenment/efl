@@ -93,12 +93,11 @@ struct _Widget_Data
    int                            minw, minh;
    unsigned int                   item_count;
    Evas_Coord                     pan_x, pan_y;
+   Elm_Object_Select_Mode_Type    select_mode;
    Eina_Bool                      reorder_mode : 1; /**< a flag for reorder mode enable/disable */
    Eina_Bool                      on_hold : 1;
    Eina_Bool                      multi : 1; /**< a flag for item multi selection */
-   Eina_Bool                      no_select : 1;
    Eina_Bool                      wasselected : 1;
-   Eina_Bool                      always_select : 1;
    Eina_Bool                      clear_me : 1; /**< a flag whether genlist is marked as to be cleared or not. if this flag is true, genlist clear was already deferred.  */
    Eina_Bool                      h_bounce : 1;
    Eina_Bool                      v_bounce : 1;

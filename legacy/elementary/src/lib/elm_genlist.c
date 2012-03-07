@@ -688,7 +688,8 @@ static void
 _item_highlight(Elm_Gen_Item *it)
 {
    const char *selectraise;
-   if ((it->wd->no_select) || (it->generation < it->wd->generation) ||
+   if ((it->wd->select_mode == ELM_OBJECT_NO_SELECT) ||
+       (it->generation < it->wd->generation) ||
        (it->highlighted) || elm_widget_item_disabled_get(it) ||
        (it->display_only) || (it->item->mode_view))
      return;
@@ -3503,13 +3504,15 @@ elm_genlist_add(Evas_Object *parent)
 void
 _item_select(Elm_Gen_Item *it)
 {
-   if ((it->wd->no_select) || (it->generation < it->wd->generation) || (it->mode_set)) return;
+   if ((it->generation < it->wd->generation) || (it->mode_set) ||
+       (it->wd->select_mode == ELM_OBJECT_NO_SELECT))
+     return;
    if (!it->selected)
      {
         it->selected = EINA_TRUE;
         it->wd->selected = eina_list_append(it->wd->selected, it);
      }
-   else if (!it->wd->always_select) return;
+   else if (it->wd->select_mode == ELM_OBJECT_ALWAYS_SELECT) return;
 
    evas_object_ref(WIDGET(it));
    it->walking++;
@@ -5247,42 +5250,64 @@ elm_genlist_mode_get(const Evas_Object *obj)
    return wd->mode;
 }
 
-EAPI void
+EINA_DEPRECATED EAPI void
 elm_genlist_always_select_mode_set(Evas_Object *obj,
                                    Eina_Bool    always_select)
 {
    ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return;
-   wd->always_select = !!always_select;
+   if (always_select)
+     elm_genlist_select_mode_set(obj, ELM_OBJECT_ALWAYS_SELECT);
+   else
+     {
+        Elm_Object_Select_Mode_Type oldmode = elm_genlist_select_mode_get(obj);
+        if (oldmode == ELM_OBJECT_ALWAYS_SELECT)
+          elm_genlist_select_mode_set(obj, ELM_OBJECT_NORMAL_SELECT);
+     }
 }
 
-EAPI Eina_Bool
+EINA_DEPRECATED EAPI Eina_Bool
 elm_genlist_always_select_mode_get(const Evas_Object *obj)
 {
    ELM_CHECK_WIDTYPE(obj, widtype) EINA_FALSE;
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return EINA_FALSE;
-   return wd->always_select;
+   Elm_Object_Select_Mode_Type oldmode = elm_genlist_select_mode_get(obj);
+   if (oldmode == ELM_OBJECT_ALWAYS_SELECT)
+     return EINA_TRUE;
+   else
+     return EINA_FALSE;
 }
 
-EAPI void
+EINA_DEPRECATED EAPI void
 elm_genlist_no_select_mode_set(Evas_Object *obj,
                                Eina_Bool    no_select)
 {
    ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return;
-   wd->no_select = !!no_select;
+   if (no_select)
+     elm_genlist_select_mode_set(obj, ELM_OBJECT_NO_SELECT);
+   else
+     {
+        Elm_Object_Select_Mode_Type oldmode = elm_genlist_select_mode_get(obj);
+        if (oldmode == ELM_OBJECT_NO_SELECT)
+          elm_genlist_select_mode_set(obj, ELM_OBJECT_NORMAL_SELECT);
+     }
 }
 
-EAPI Eina_Bool
+EINA_DEPRECATED EAPI Eina_Bool
 elm_genlist_no_select_mode_get(const Evas_Object *obj)
 {
    ELM_CHECK_WIDTYPE(obj, widtype) EINA_FALSE;
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return EINA_FALSE;
-   return wd->no_select;
+   Elm_Object_Select_Mode_Type oldmode = elm_genlist_select_mode_get(obj);
+   if (oldmode == ELM_OBJECT_NO_SELECT)
+     return EINA_TRUE;
+   else
+     return EINA_FALSE;
 }
 
 EAPI void
@@ -5693,6 +5718,27 @@ elm_genlist_item_flip_get(const Elm_Object_Item *it)
    ELM_OBJ_ITEM_CHECK_OR_RETURN(it, EINA_FALSE);
    Elm_Gen_Item *_it = (Elm_Gen_Item *)it;
    return _it->flipped;
+}
+
+EAPI void
+elm_genlist_select_mode_set(Evas_Object *obj, Elm_Object_Select_Mode_Type mode)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype);
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return;
+   if (mode >= ELM_OBJECT_SELECT_MODE_MAX)
+     return;
+   if (wd->select_mode != mode)
+     wd->select_mode = mode;
+}
+
+EAPI Elm_Object_Select_Mode_Type
+elm_genlist_select_mode_get(const Evas_Object *obj)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype) ELM_OBJECT_SELECT_MODE_MAX;
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return ELM_OBJECT_SELECT_MODE_MAX;
+   return wd->select_mode;
 }
 
 /* for gengrid as of now */
