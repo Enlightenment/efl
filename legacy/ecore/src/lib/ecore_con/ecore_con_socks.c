@@ -10,6 +10,10 @@
 #include <unistd.h>
 #include <fcntl.h>
 
+#ifdef HAVE_SYS_SOCKET_H
+# include <sys/socket.h>
+#endif
+
 #ifdef HAVE_NETINET_TCP_H
 # include <netinet/tcp.h>
 #endif
@@ -34,10 +38,6 @@
 
 #ifdef HAVE_ARPA_INET_H
 # include <arpa/inet.h>
-#endif
-
-#ifdef HAVE_SYS_SOCKET_H
-# include <sys/socket.h>
 #endif
 
 #ifdef HAVE_SYS_UN_H
