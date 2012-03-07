@@ -39,6 +39,9 @@
  * @li elm_object_part_content_set
  * @li elm_object_part_content_get
  * @li elm_object_part_content_unset
+ * @li elm_object_signal_emit
+ * @li elm_object_signal_callback_add
+ * @li elm_object_signal_callback_del
  *
  * @ref tutorial_check should give you a firm grasp of how to use this widget.
  * 
