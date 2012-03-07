@@ -52,10 +52,20 @@ external_toolbar_state_set(void *data __UNUSED__, Evas_Object *obj, const void *
      elm_toolbar_icon_size_set(obj, p->icon_size);
    if (p->align_exists)
      elm_toolbar_align_set(obj, p->align);
-   if (p->always_select_exists)
-     elm_toolbar_always_select_mode_set(obj, p->always_select);
    if (p->no_select_exists)
-     elm_toolbar_no_select_mode_set(obj, p->no_select);
+     {
+        if (p->no_select)
+          elm_toolbar_select_mode_set (obj, ELM_OBJECT_NO_SELECT);
+        else
+          elm_toolbar_select_mode_set (obj, ELM_OBJECT_NORMAL_SELECT);
+     }
+   if (p->always_select_exists)
+     {
+        if (p->always_select)
+          elm_toolbar_select_mode_set (obj, ELM_OBJECT_ALWAYS_SELECT);
+        else
+          elm_toolbar_select_mode_set (obj, ELM_OBJECT_NORMAL_SELECT);
+     }
    if (p->horizontal_exists)
      elm_toolbar_horizontal_set(obj, p->horizontal);
    if (p->homogeneous_exists)
@@ -92,7 +102,10 @@ external_toolbar_param_set(void *data __UNUSED__, Evas_Object *obj, const Edje_E
      {
         if (param->type == EDJE_EXTERNAL_PARAM_TYPE_BOOL)
           {
-             elm_toolbar_always_select_mode_set(obj, param->i);
+             if (param->i)
+               elm_toolbar_select_mode_set (obj, ELM_OBJECT_ALWAYS_SELECT);
+             else
+               elm_toolbar_select_mode_set (obj, ELM_OBJECT_NORMAL_SELECT);
              return EINA_TRUE;
           }
      }
@@ -100,7 +113,10 @@ external_toolbar_param_set(void *data __UNUSED__, Evas_Object *obj, const Edje_E
      {
         if (param->type == EDJE_EXTERNAL_PARAM_TYPE_BOOL)
           {
-             elm_toolbar_no_select_mode_set(obj, param->i);
+             if (param->i)
+               elm_toolbar_select_mode_set (obj, ELM_OBJECT_NO_SELECT);
+             else
+               elm_toolbar_select_mode_set (obj, ELM_OBJECT_NORMAL_SELECT);
              return EINA_TRUE;
           }
      }
@@ -159,7 +175,11 @@ external_toolbar_param_get(void *data __UNUSED__, const Evas_Object *obj, Edje_E
      {
         if (param->type == EDJE_EXTERNAL_PARAM_TYPE_BOOL)
           {
-             param->d = elm_toolbar_always_select_mode_get(obj);
+             if (elm_toolbar_select_mode_get (obj) ==
+                 ELM_OBJECT_ALWAYS_SELECT)
+               param->d = EINA_TRUE;
+             else
+               param->d = EINA_FALSE;
              return EINA_TRUE;
           }
      }
@@ -167,7 +187,11 @@ external_toolbar_param_get(void *data __UNUSED__, const Evas_Object *obj, Edje_E
      {
         if (param->type == EDJE_EXTERNAL_PARAM_TYPE_BOOL)
           {
-             param->i = elm_toolbar_no_select_mode_get(obj);
+             if (elm_toolbar_select_mode_get (obj) ==
+                 ELM_OBJECT_NO_SELECT)
+               param->i = EINA_TRUE;
+             else
+               param->i = EINA_FALSE;
              return EINA_TRUE;
           }
      }

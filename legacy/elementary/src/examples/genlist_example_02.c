@@ -124,11 +124,19 @@ elm_main(int argc __UNUSED__, char **argv __UNUSED__)
         _itc->func.del = NULL;
      }
 
-   Eina_Bool hbounce, vbounce;
+   Eina_Bool hbounce, vbounce, always, no_sel;
    Elm_Scroller_Policy hp, vp;
+   Elm_Object_Select_Mode_Type sel_mode;
+
+   always = no_sel = EINA_FALSE;
+   sel_mode = elm_genlist_select_mode_get(list);
+   if (sel_mode = ELM_OBJECT_ALWAYS_SELECT)
+     always = EINA_TRUE;
+   else if (sel_mode = ELM_OBJECT_NO_SELECT)
+     no_sel = EINA_TRUE;
 
    printf("default values:\n");
-   printf("always select: %d\n", elm_genlist_always_select_mode_get(list));
+   printf("always select: %d\n", always);
    elm_genlist_bounce_get(list, &hbounce, &vbounce);
    printf("bounce - horizontal: %d, vertical: %d\n", hbounce, vbounce);
    printf("compress mode: %d\n", elm_genlist_compress_mode_get(list));
@@ -137,7 +145,7 @@ elm_main(int argc __UNUSED__, char **argv __UNUSED__)
    printf("longpress timeout: %0.3f\n",
 	  elm_genlist_longpress_timeout_get(list));
    printf("multi selection: %d\n", elm_genlist_multi_select_get(list));
-   printf("no selection mode: %d\n", elm_genlist_no_select_mode_get(list));
+   printf("no selection mode: %d\n", no_sel);
    printf("height for width enabled: %d\n",
 	  elm_genlist_height_for_width_mode_get(list));
    elm_genlist_scroller_policy_get(list, &hp, &vp);
@@ -145,13 +153,12 @@ elm_main(int argc __UNUSED__, char **argv __UNUSED__)
    printf("block count: %d\n", elm_genlist_block_count_get(list));
    printf("\n");
 
-   elm_genlist_always_select_mode_set(list, EINA_FALSE);
    elm_genlist_bounce_set(list, EINA_FALSE, EINA_FALSE);
    elm_genlist_compress_mode_set(list, EINA_TRUE);
    elm_genlist_homogeneous_set(list, EINA_FALSE);
    elm_genlist_mode_set(list, ELM_LIST_LIMIT);
    elm_genlist_multi_select_set(list, EINA_TRUE);
-   elm_genlist_no_select_mode_set(list, EINA_FALSE);
+   elm_genlist_select_mode_set(list, ELM_OBJECT_NORMAL_SELECT);
    elm_genlist_height_for_width_mode_set(list, EINA_FALSE);
    elm_genlist_scroller_policy_set(list, ELM_SCROLLER_POLICY_OFF, ELM_SCROLLER_POLICY_ON);
    elm_genlist_longpress_timeout_set(list, 0.5);

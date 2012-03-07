@@ -88,7 +88,12 @@ external_list_state_set(void *data __UNUSED__, Evas_Object *obj, const void *fro
    if (p->multi_exists)
      elm_list_multi_select_set(obj, p->multi);
    if (p->always_select_exists)
-     elm_list_always_select_mode_set(obj, p->always_select);
+     {
+        if (p->always_select)
+          elm_list_select_mode_set (obj, ELM_OBJECT_ALWAYS_SELECT);
+        else
+          elm_list_select_mode_set (obj, ELM_OBJECT_NORMAL_SELECT);
+     }
 }
 
 static Eina_Bool
@@ -148,7 +153,10 @@ external_list_param_set(void *data __UNUSED__, Evas_Object *obj, const Edje_Exte
      {
         if (param->type == EDJE_EXTERNAL_PARAM_TYPE_BOOL)
           {
-             elm_list_always_select_mode_set(obj, param->i);
+             if (param->i)
+               elm_list_select_mode_set (obj, ELM_OBJECT_ALWAYS_SELECT);
+             else
+               elm_list_select_mode_set (obj, ELM_OBJECT_NORMAL_SELECT);
              return EINA_TRUE;
           }
      }
@@ -182,7 +190,11 @@ external_list_param_get(void *data __UNUSED__, const Evas_Object *obj, Edje_Exte
      {
         if (param->type == EDJE_EXTERNAL_PARAM_TYPE_BOOL)
           {
-             param->i = elm_list_always_select_mode_get(obj);
+             if (elm_list_select_mode_get (obj) ==
+                 ELM_OBJECT_ALWAYS_SELECT)
+               param->i = EINA_TRUE;
+             else
+               param->i = EINA_FALSE;
              return EINA_TRUE;
           }
      }

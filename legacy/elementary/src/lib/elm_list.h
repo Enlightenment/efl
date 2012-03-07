@@ -221,44 +221,41 @@ EAPI void                         elm_list_horizontal_set(Evas_Object *obj, Eina
 EAPI Eina_Bool                    elm_list_horizontal_get(const Evas_Object *obj);
 
 /**
- * Enable or disable always select mode on the list object.
+ * Set the list select mode.
  *
  * @param obj The list object
- * @param always_select @c EINA_TRUE to enable always select mode or
- * @c EINA_FALSE to disable it.
+ * @param mode The select mode
  *
- * @note Always select mode is disabled by default.
+ * elm_list_select_mode_set() changes item select mode in the list widget.
+ * - ELM_OBJECT_NORMAL_SELECT : Items will only call their selection func and
+ *      callback when first becoming selected. Any further clicks will
+ *      do nothing, unless you set always select mode.
+ * - ELM_OBJECT_ALWAYS_SELECT :  This means that, even if selected,
+ *      every click will make the selected callbacks be called.
+ * - ELM_OBJECT_NO_SELECT : This will turn off the ability to select items
+ *      entirely and they will neither appear selected nor call selected
+ *      callback functions.
  *
- * Default behavior of list items is to only call its callback function
- * the first time it's pressed, i.e., when it is selected. If a selected
- * item is pressed again, and multi-select is disabled, it won't call
- * this function (if multi-select is enabled it will unselect the item).
- *
- * If always select is enabled, it will call the callback function
- * every time a item is pressed, so it will call when the item is selected,
- * and again when a selected item is pressed.
- *
- * @see elm_list_always_select_mode_get()
- * @see elm_list_multi_select_set()
+ * @see elm_list_select_mode_get()
  *
  * @ingroup List
  */
-EAPI void                         elm_list_always_select_mode_set(Evas_Object *obj, Eina_Bool always_select);
+EAPI void
+elm_list_select_mode_set(Evas_Object *obj, Elm_Object_Select_Mode_Type mode);
 
 /**
- * Get a value whether always select mode is enabled or not, meaning that
- * an item will always call its callback function, even if already selected.
+ * Get the list select mode.
  *
  * @param obj The list object
- * @return @c EINA_TRUE means horizontal mode selection is enabled.
- * @c EINA_FALSE indicates it's disabled. If @p obj is @c NULL,
- * @c EINA_FALSE is returned.
+ * @return The select mode
+ * (If getting mode is failed, it returns ELM_OBJECT_SELECT_MODE_MAX)
  *
- * @see elm_list_always_select_mode_set() for details.
+ * @see elm_list_select_mode_set()
  *
  * @ingroup List
  */
-EAPI Eina_Bool                    elm_list_always_select_mode_get(const Evas_Object *obj);
+EAPI Elm_Object_Select_Mode_Type
+elm_list_select_mode_get(const Evas_Object *obj);
 
 /**
  * Set bouncing behaviour when the scrolled content reaches an edge.

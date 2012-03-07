@@ -57,10 +57,20 @@ external_genlist_state_set(void *data __UNUSED__, Evas_Object *obj, const void *
      }
    if (p->multi_exists)
      elm_genlist_multi_select_set(obj, p->multi);
-   if (p->always_select_exists)
-     elm_genlist_always_select_mode_set(obj, p->always_select);
    if (p->no_select_exists)
-     elm_genlist_no_select_mode_set(obj, p->no_select);
+     {
+        if (p->no_select)
+          elm_genlist_select_mode_set (obj, ELM_OBJECT_NO_SELECT);
+        else
+          elm_genlist_select_mode_set (obj, ELM_OBJECT_NORMAL_SELECT);
+     }
+   if (p->always_select_exists)
+     {
+        if (p->always_select)
+          elm_genlist_select_mode_set (obj, ELM_OBJECT_ALWAYS_SELECT);
+        else
+          elm_genlist_select_mode_set (obj, ELM_OBJECT_NORMAL_SELECT);
+     }
    if (p->compress_exists)
      elm_genlist_compress_mode_set(obj, p->compress);
    if (p->homogeneous_exists)
@@ -105,7 +115,10 @@ external_genlist_param_set(void *data __UNUSED__, Evas_Object *obj, const Edje_E
      {
 	if (param->type == EDJE_EXTERNAL_PARAM_TYPE_BOOL)
 	  {
-	     elm_genlist_always_select_mode_set(obj, param->i);
+             if (param->i)
+               elm_genlist_select_mode_set (obj, ELM_OBJECT_ALWAYS_SELECT);
+             else
+               elm_genlist_select_mode_set (obj, ELM_OBJECT_NORMAL_SELECT);
 	     return EINA_TRUE;
 	  }
      }
@@ -113,7 +126,10 @@ external_genlist_param_set(void *data __UNUSED__, Evas_Object *obj, const Edje_E
      {
 	if (param->type == EDJE_EXTERNAL_PARAM_TYPE_BOOL)
 	  {
-	     elm_genlist_no_select_mode_set(obj, param->i);
+             if (param->i)
+               elm_genlist_select_mode_set (obj, ELM_OBJECT_NO_SELECT);
+             else
+               elm_genlist_select_mode_set (obj, ELM_OBJECT_NORMAL_SELECT);
 	     return EINA_TRUE;
 	  }
      }
@@ -188,7 +204,11 @@ external_genlist_param_get(void *data __UNUSED__, const Evas_Object *obj, Edje_E
      {
 	if (param->type == EDJE_EXTERNAL_PARAM_TYPE_BOOL)
 	  {
-	     param->i = elm_genlist_always_select_mode_get(obj);
+             if (elm_genlist_select_mode_get (obj) ==
+                 ELM_OBJECT_ALWAYS_SELECT)
+               param->i = EINA_TRUE;
+             else
+               param->i = EINA_FALSE;
 	     return EINA_TRUE;
 	  }
      }
@@ -196,7 +216,11 @@ external_genlist_param_get(void *data __UNUSED__, const Evas_Object *obj, Edje_E
      {
 	if (param->type == EDJE_EXTERNAL_PARAM_TYPE_BOOL)
 	  {
-	     param->i = elm_genlist_no_select_mode_get(obj);
+             if (elm_genlist_select_mode_get (obj) ==
+                 ELM_OBJECT_NO_SELECT)
+               param->i = EINA_TRUE;
+             else
+               param->i = EINA_FALSE;
 	     return EINA_TRUE;
 	  }
      }

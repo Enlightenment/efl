@@ -570,7 +570,7 @@ elm_main(int argc __UNUSED__, char *argv[] __UNUSED__)
 
    tabs = elm_toolbar_add(win);
    elm_toolbar_align_set(tabs, 0.0);
-   elm_toolbar_always_select_mode_set(tabs, EINA_TRUE);
+   elm_toolbar_select_mode_set(tabs, ELM_OBJECT_ALWAYS_SELECT);
    elm_toolbar_homogeneous_set(tabs, EINA_FALSE);
    elm_toolbar_shrink_mode_set(tabs, ELM_TOOLBAR_SHRINK_MENU);
    evas_object_size_hint_weight_set(tabs, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);

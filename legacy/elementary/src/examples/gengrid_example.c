@@ -66,7 +66,10 @@ _always_select_change(void        *data,
    Evas_Object *grid = data;
    Eina_Bool always = elm_check_state_get(obj);
 
-   elm_gengrid_always_select_mode_set(grid, always);
+   if (always)
+     elm_gengrid_select_mode_set(grid, ELM_OBJECT_ALWAYS_SELECT);
+   else
+     elm_gengrid_select_mode_set(grid, ELM_OBJECT_NORMAL_SELECT);
 
    fprintf(stdout, "\"Always select\" mode for gengrid items is now %s\n",
            always ? "on" : "off");
@@ -122,7 +125,10 @@ _no_sel_change(void        *data,
    Evas_Object *grid = data;
    Eina_Bool no_sel = elm_check_state_get(obj);
 
-   elm_gengrid_no_select_mode_set(grid, no_sel);
+   if (no_sel)
+     elm_gengrid_select_mode_set(grid, ELM_OBJECT_NO_SELECT);
+   else
+     elm_gengrid_select_mode_set(grid, ELM_OBJECT_NORMAL_SELECT);
 
    fprintf(stdout, "Selection for gengrid items is now %s\n",
            no_sel ? "disabled" : "enabled");

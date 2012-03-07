@@ -6079,5 +6079,42 @@ EINA_DEPRECATED EAPI void              elm_clock_digit_edit_set(Evas_Object *obj
 EINA_DEPRECATED EAPI Elm_Clock_Edit_Mode elm_clock_digit_edit_get(const Evas_Object *obj);
 
 /**
+ * Enable or disable always select mode on the list object.
+ *
+ * @param obj The list object
+ * @param always_select @c EINA_TRUE to enable always select mode or
+ * @c EINA_FALSE to disable it.
+ *
+ * @note Always select mode is disabled by default.
+ *
+ * Default behavior of list items is to only call its callback function
+ * the first time it's pressed, i.e., when it is selected. If a selected
+ * item is pressed again, and multi-select is disabled, it won't call
+ * this function (if multi-select is enabled it will unselect the item).
+ *
+ * If always select is enabled, it will call the callback function
+ * every time a item is pressed, so it will call when the item is selected,
+ * and again when a selected item is pressed.
+ *
+ * @deprecated elm_list_always_select_mode_set()
+ */
+EINA_DEPRECATED EAPI void                         elm_list_always_select_mode_set(Evas_Object *obj, Eina_Bool always_select);
+
+/**
+ * Get a value whether always select mode is enabled or not, meaning that
+ * an item will always call its callback function, even if already selected.
+ *
+ * @param obj The list object
+ * @return @c EINA_TRUE means horizontal mode selection is enabled.
+ * @c EINA_FALSE indicates it's disabled. If @p obj is @c NULL,
+ * @c EINA_FALSE is returned.
+ *
+ * @see elm_list_always_select_mode_set() for details.
+ *
+ * @deprecated elm_list_always_select_mode_get()
+ */
+EINA_DEPRECATED EAPI Eina_Bool                    elm_list_always_select_mode_get(const Evas_Object *obj);
+
+/**
  * @}
  */

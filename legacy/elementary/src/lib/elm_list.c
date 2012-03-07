@@ -15,18 +15,18 @@ struct _Widget_Data
    Elm_List_Mode mode;
    Elm_List_Mode h_mode;
    Evas_Coord minw[2], minh[2];
-   Eina_Bool scr_minw : 1;
-   Eina_Bool scr_minh : 1;
+   Elm_Object_Select_Mode_Type select_mode;
    int walking;
    int movements;
    struct {
         Evas_Coord x, y;
    } history[SWIPE_MOVES];
+   Eina_Bool scr_minw : 1;
+   Eina_Bool scr_minh : 1;
    Eina_Bool swipe : 1;
    Eina_Bool fix_pending : 1;
    Eina_Bool on_hold : 1;
    Eina_Bool multi : 1;
-   Eina_Bool always_select : 1;
    Eina_Bool longpressed : 1;
    Eina_Bool wasselected : 1;
 };
@@ -702,7 +702,8 @@ _item_highlight(Elm_List_Item *it)
 
    if (!wd) return;
    ELM_LIST_ITEM_CHECK_DELETED_RETURN(it);
-   if ((it->highlighted) || (it->base.disabled)) return;
+   if ((it->highlighted) || (it->base.disabled) ||
+       (wd->select_mode == ELM_OBJECT_NO_SELECT)) return;
 
    evas_object_ref(obj);
    _elm_list_walk(wd);
@@ -725,10 +726,10 @@ _item_select(Elm_List_Item *it)
 
    if (!wd) return;
    ELM_LIST_ITEM_CHECK_DELETED_RETURN(it);
-   if (it->base.disabled) return;
+   if (it->base.disabled || (wd->select_mode == ELM_OBJECT_NO_SELECT)) return;
    if (it->selected)
      {
-        if (wd->always_select) goto call;
+        if (wd->select_mode == ELM_OBJECT_ALWAYS_SELECT) goto call;
         return;
      }
    it->selected = EINA_TRUE;
@@ -1622,21 +1623,53 @@ elm_list_horizontal_get(const Evas_Object *obj)
 }
 
 EAPI void
-elm_list_always_select_mode_set(Evas_Object *obj, Eina_Bool always_select)
+elm_list_select_mode_set(Evas_Object *obj, Elm_Object_Select_Mode_Type mode)
 {
    ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return;
-   wd->always_select = always_select;
+   if (mode >= ELM_OBJECT_SELECT_MODE_MAX)
+     return;
+   if (wd->select_mode != mode)
+     wd->select_mode = mode;
 }
 
-EAPI Eina_Bool
+EAPI Elm_Object_Select_Mode_Type
+elm_list_select_mode_get(const Evas_Object *obj)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype) ELM_OBJECT_SELECT_MODE_MAX;
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return ELM_OBJECT_SELECT_MODE_MAX;
+   return wd->select_mode;
+}
+
+EINA_DEPRECATED EAPI void
+elm_list_always_select_mode_set(Evas_Object *obj,
+                                Eina_Bool    always_select)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype);
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return;
+   if (always_select)
+     elm_list_select_mode_set(obj, ELM_OBJECT_ALWAYS_SELECT);
+   else
+     {
+        Elm_Object_Select_Mode_Type oldmode = elm_list_select_mode_get(obj);
+        if (oldmode == ELM_OBJECT_ALWAYS_SELECT)
+          elm_list_select_mode_set(obj, ELM_OBJECT_NORMAL_SELECT);
+     }
+}
+
+EINA_DEPRECATED EAPI Eina_Bool
 elm_list_always_select_mode_get(const Evas_Object *obj)
 {
    ELM_CHECK_WIDTYPE(obj, widtype) EINA_FALSE;
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return EINA_FALSE;
-   return wd->always_select;
+   Elm_Object_Select_Mode_Type oldmode = elm_list_select_mode_get(obj);
+   if (oldmode == ELM_OBJECT_ALWAYS_SELECT)
+     return EINA_TRUE;
+   return EINA_FALSE;
 }
 
 EAPI void
