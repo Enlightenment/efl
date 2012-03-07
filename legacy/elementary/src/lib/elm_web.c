@@ -918,7 +918,7 @@ _ewk_view_popup_create_cb(void *data, Evas_Object *obj, void *event_info)
      return;
 
    notify = elm_notify_add(obj);
-   elm_notify_repeat_events_set(notify, EINA_FALSE);
+   elm_notify_allow_events_set(notify, EINA_FALSE);
    elm_notify_orient_set(notify, ELM_NOTIFY_ORIENT_BOTTOM);
 
    list = elm_list_add(obj);
