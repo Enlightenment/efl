@@ -1292,7 +1292,7 @@ _ecore_con_url_status_get(Ecore_Con_Url *url_con)
    long status = 0;
 
    if (!url_con->curl_easy) return;
-   if (curl_easy_getinfo(url_con->curl_easy, CURLINFO_RESPONSE_CODE, &status))
+   if (!curl_easy_getinfo(url_con->curl_easy, CURLINFO_RESPONSE_CODE, &status))
      url_con->status = status;
    else
      url_con->status = 0;
