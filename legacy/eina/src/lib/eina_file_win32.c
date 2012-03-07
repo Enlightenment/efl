@@ -1079,7 +1079,11 @@ eina_file_map_new(Eina_File *file, Eina_File_Populate rule,
         void  *data;
 
         map = malloc(sizeof (Eina_File_Map));
-        if (!map) return NULL;
+        if (!map)
+          {
+             eina_lock_release(&file->lock);
+             return NULL;
+          }
 
         data = MapViewOfFile(file->fm, FILE_MAP_READ,
                              offset & 0xffff0000,
@@ -1097,6 +1101,7 @@ eina_file_map_new(Eina_File *file, Eina_File_Populate rule,
         if (map->map == MAP_FAILED)
           {
              free(map);
+             eina_lock_release(&file->lock);
              return NULL;
           }
 
@@ -1133,7 +1138,7 @@ eina_file_map_free(Eina_File *file, void *map)
         unsigned long int key[2];
 
         em = eina_hash_find(file->rmap, &map);
-        if (!em) return ;
+        if (!em) goto on_exit;
 
         em->refcount--;
 
