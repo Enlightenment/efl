@@ -26,7 +26,7 @@ struct _Widget_Data
    int year_min, year_max, spin_speed;
    int today_it, selected_it, first_day_it;
    Ecore_Timer *spin, *update_timer;
-   char * (*format_func) (struct tm *selected_time);
+   Elm_Calendar_Format_Cb format_func;
    const char *weekdays[7];
    struct tm current_time, selected_time;
    Day_Color day_color[42]; // EINA_DEPRECATED
@@ -917,7 +917,7 @@ elm_calendar_selected_time_get(const Evas_Object *obj, struct tm *selected_time)
 }
 
 EAPI void
-elm_calendar_format_function_set(Evas_Object *obj, char * (*format_function) (struct tm *selected_time))
+elm_calendar_format_function_set(Evas_Object *obj, Elm_Calendar_Format_Cb format_function)
 {
    ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);

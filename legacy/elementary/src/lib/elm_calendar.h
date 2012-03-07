@@ -57,6 +57,19 @@ typedef _Elm_Calendar_Mark_Repeat_Type Elm_Calendar_Mark_Repeat_Type;
 typedef struct _Elm_Calendar_Mark Elm_Calendar_Mark;    /**< Item handle for a calendar mark. Created with elm_calendar_mark_add() and deleted with elm_calendar_mark_del(). */
 
 /**
+ * @typedef Elm_Calendar_Format_Cb
+ *
+ * This callback type is used to format the string that will be used
+ * to display month and year.
+ *
+ * @param stime Struct representing time.
+ * @return String represeting time that will be set to calendar's text.
+ *
+ * @see elm_calendar_format_function_set()
+ */
+typedef char * (*Elm_Calendar_Format_Cb)(struct tm *stime);
+
+/**
  * Add a new calendar widget to the given parent Elementary
  * (container) object.
  *
@@ -265,7 +278,7 @@ EAPI Eina_Bool            elm_calendar_selected_time_get(const Evas_Object *obj,
  *
  * @ingroup Calendar
  */
-EAPI void                 elm_calendar_format_function_set(Evas_Object *obj, char *(*format_function)(struct tm *stime));
+EAPI void                 elm_calendar_format_function_set(Evas_Object *obj, Elm_Calendar_Format_Cb format_func);
 
 /**
  * Add a new mark to the calendar
