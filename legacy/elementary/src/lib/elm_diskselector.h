@@ -57,23 +57,23 @@ EAPI Evas_Object           *elm_diskselector_add(Evas_Object *parent);
  * Enable or disable round mode.
  *
  * @param obj The diskselector object.
- * @param rnd @c EINA_TRUE to enable round mode or @c EINA_FALSE to
+ * @param enabled @c EINA_TRUE to enable round mode or @c EINA_FALSE to
  * disable it.
  *
  * Disabled by default. If round mode is enabled the items list will
- * work like a circle list, so when the user reaches the last item,
+ * work like a circular list, so when the user reaches the last item,
  * the first one will popup.
  *
- * @see elm_diskselector_round_get()
+ * @see elm_diskselector_round_enabled_get()
  *
  * @ingroup Diskselector
  */
-EAPI void                   elm_diskselector_round_set(Evas_Object *obj, Eina_Bool rnd);
+EAPI void                   elm_diskselector_round_enabled_set(Evas_Object *obj, Eina_Bool enabled);
 
 /**
  * Get a value whether round mode is enabled or not.
  *
- * @see elm_diskselector_round_set() for details.
+ * @see elm_diskselector_round_enabled_set() for details.
  *
  * @param obj The diskselector object.
  * @return @c EINA_TRUE means round mode is enabled. @c EINA_FALSE indicates
@@ -81,12 +81,12 @@ EAPI void                   elm_diskselector_round_set(Evas_Object *obj, Eina_Bo
  *
  * @ingroup Diskselector
  */
-EAPI Eina_Bool              elm_diskselector_round_get(const Evas_Object *obj);
+EAPI Eina_Bool              elm_diskselector_round_enabled_get(const Evas_Object *obj);
 
 /**
  * Get the side labels max length.
  *
- * @see elm_diskselector_side_label_length_set() for details.
+ * @see elm_diskselector_side_text_max_length_set() for details.
  *
  * @param obj The diskselector object.
  * @return The max length defined for side labels, or 0 if not a valid
@@ -94,7 +94,7 @@ EAPI Eina_Bool              elm_diskselector_round_get(const Evas_Object *obj);
  *
  * @ingroup Diskselector
  */
-EAPI int                    elm_diskselector_side_label_length_get(const Evas_Object *obj);
+EAPI int                    elm_diskselector_side_text_max_length_get(const Evas_Object *obj);
 
 /**
  * Set the side labels max length.
@@ -121,7 +121,7 @@ EAPI int                    elm_diskselector_side_label_length_get(const Evas_Ob
  *
  * @ingroup Diskselector
  */
-EAPI void                   elm_diskselector_side_label_length_set(Evas_Object *obj, int len);
+EAPI void                   elm_diskselector_side_text_max_length_set(Evas_Object *obj, int len);
 
 /**
  * Set the number of items to be displayed.
@@ -311,7 +311,7 @@ EAPI Elm_Object_Item *elm_diskselector_item_append(Evas_Object *obj, const char 
  * The selected item always will be centered on diskselector, with
  * full label displayed, i.e., max length set to side labels won't
  * apply on the selected item. More details on
- * elm_diskselector_side_label_length_set().
+ * elm_diskselector_side_text_max_length_set().
  *
  * @ingroup Diskselector
  */

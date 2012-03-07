@@ -1061,7 +1061,7 @@ elm_diskselector_add(Evas_Object *parent)
 }
 
 EAPI Eina_Bool
-elm_diskselector_round_get(const Evas_Object *obj)
+elm_diskselector_round_enabled_get(const Evas_Object *obj)
 {
    ELM_CHECK_WIDTYPE(obj, widtype) EINA_FALSE;
    Widget_Data *wd = elm_widget_data_get(obj);
@@ -1070,7 +1070,7 @@ elm_diskselector_round_get(const Evas_Object *obj)
 }
 
 EAPI void
-elm_diskselector_round_set(Evas_Object * obj, Eina_Bool rnd)
+elm_diskselector_round_enabled_set(Evas_Object * obj, Eina_Bool enabled)
 {
    Eina_List *elist;
    Elm_Diskselector_Item *it;
@@ -1079,11 +1079,11 @@ elm_diskselector_round_set(Evas_Object * obj, Eina_Bool rnd)
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return;
 
-   if (wd->round == rnd)
+   if (wd->round == enabled)
      return;
 
-   wd->round = rnd;
-   if (rnd)
+   wd->round = !!enabled;
+   if (enabled)
      {
         wd->r_items = eina_list_clone(wd->items);
         elm_box_unpack(wd->main_box, wd->left_blank);
@@ -1127,7 +1127,7 @@ elm_diskselector_round_set(Evas_Object * obj, Eina_Bool rnd)
 }
 
 EAPI int
-elm_diskselector_side_label_length_get(const Evas_Object *obj)
+elm_diskselector_side_text_max_length_get(const Evas_Object *obj)
 {
    ELM_CHECK_WIDTYPE(obj, widtype) 0;
    Widget_Data *wd = elm_widget_data_get(obj);
@@ -1136,7 +1136,7 @@ elm_diskselector_side_label_length_get(const Evas_Object *obj)
 }
 
 EAPI void
-elm_diskselector_side_label_length_set(Evas_Object *obj, int len)
+elm_diskselector_side_text_max_length_set(Evas_Object *obj, int len)
 {
    ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);

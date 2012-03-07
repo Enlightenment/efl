@@ -191,7 +191,7 @@ _field_clicked_cb(void *data, Evas_Object *obj, void *event_info __UNUSED__)
              elm_object_item_del_cb_set(item, _diskselector_item_free_cb);
           }
      }
-   elm_diskselector_side_label_length_set(diskselector, text_len);
+   elm_diskselector_side_text_max_length_set(diskselector, text_len);
 
    evas_object_geometry_get(obj, &x, &y, &w, &h);
    evas_object_geometry_get(elm_widget_top_get(ctx_mod->mod_data.base), NULL, NULL, &width, NULL);
@@ -202,7 +202,7 @@ _field_clicked_cb(void *data, Evas_Object *obj, void *event_info __UNUSED__)
    if (display_item_num < DISKSELECTOR_MIN_ITEMS)
      display_item_num = DISKSELECTOR_MIN_ITEMS;
    elm_diskselector_display_item_num_set(diskselector, display_item_num);
-   elm_diskselector_round_set(diskselector, EINA_TRUE);
+   elm_diskselector_round_enabled_set(diskselector, EINA_TRUE);
 
    elm_ctxpopup_direction_priority_set(ctx_mod->ctxpopup, ELM_CTXPOPUP_DIRECTION_DOWN,
                                        ELM_CTXPOPUP_DIRECTION_UP, -1, -1);

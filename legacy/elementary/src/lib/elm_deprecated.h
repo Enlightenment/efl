@@ -949,7 +949,7 @@ EINA_DEPRECATED EAPI Evas_Object *elm_conformant_content_unset(Evas_Object *obj)
 /**
  * Get the side labels max length.
  *
- * @deprecated use elm_diskselector_side_label_length_get() instead:
+ * @deprecated use elm_diskselector_side_text_max_length_get() instead:
  *
  * @param obj The diskselector object.
  * @return The max length defined for side labels, or 0 if not a valid
@@ -962,7 +962,7 @@ EINA_DEPRECATED EAPI int    elm_diskselector_side_label_lenght_get(const Evas_Ob
 /**
  * Set the side labels max length.
  *
- * @deprecated use elm_diskselector_side_label_length_set() instead:
+ * @deprecated use elm_diskselector_side_text_max_length_set() instead:
  *
  * @param obj The diskselector object.
  * @param len The max length defined for side labels.
@@ -1047,7 +1047,7 @@ EAPI Evas_Object           *elm_diskselector_item_icon_get(const Elm_Object_Item
  *
  * An item with label "January" would be displayed on side position as
  * "Jan" if max length is set to 3 with function
- * elm_diskselector_side_label_length_set(), or "Janu", if this property
+ * elm_diskselector_side_text_max_length_set(), or "Janu", if this property
  * is set to 4.
  *
  * When this @p item is selected, the entire label will be displayed,
@@ -1060,7 +1060,7 @@ EAPI Evas_Object           *elm_diskselector_item_icon_get(const Elm_Object_Item
  * elm_diskselector_item_append(), it will be already
  * displayed by the item.
  *
- * @see elm_diskselector_side_label_length_set()
+ * @see elm_diskselector_side_text_max_length_set()
  * @see elm_diskselector_item_label_get()
  * @see elm_diskselector_item_append()
  *
@@ -6001,6 +6001,75 @@ EINA_DEPRECATED EAPI void                          elm_genlist_item_top_show(Elm
  */
 EINA_DEPRECATED EAPI void                          elm_genlist_item_middle_show(Elm_Object_Item *it);
 
+/**
+ * Enable or disable round mode.
+ *
+ * @param obj The diskselector object.
+ * @param round @c EINA_TRUE to enable round mode or @c EINA_FALSE to
+ * disable it.
+ *
+ * Disabled by default. If round mode is enabled the items list will
+ * work like a circle list, so when the user reaches the last item,
+ * the first one will popup.
+ *
+ * @see elm_diskselector_round_enabled_get()
+ *
+ * @deprecated elm_diskselector_round_enabled_set()
+ */
+EINA_DEPRECATED EAPI void                   elm_diskselector_round_set(Evas_Object *obj, Eina_Bool round);
+
+/**
+ * Get a value whether round mode is enabled or not.
+ *
+ * @see elm_diskselector_round_enabled_set() for details.
+ *
+ * @param obj The diskselector object.
+ * @return @c EINA_TRUE means round mode is enabled. @c EINA_FALSE indicates
+ * it's disabled. If @p obj is @c NULL, @c EINA_FALSE is returned.
+ *
+ * @deprecated elm_diskselector_round_enabled_get()
+ */
+EINA_DEPRECATED EAPI Eina_Bool              elm_diskselector_round_get(const Evas_Object *obj);
+
+/**
+ * Get the side labels max length.
+ *
+ * @see elm_diskselector_side_text_max_length_set() for details.
+ *
+ * @param obj The diskselector object.
+ * @return The max length defined for side labels, or 0 if not a valid
+ * diskselector.
+ *
+ * @deprecated elm_diskselector_side_text_max_length_get()
+ */
+EINA_DEPRECATED EAPI int                    elm_diskselector_side_label_length_get(const Evas_Object *obj);
+
+/**
+ * Set the side labels max length.
+ *
+ * @param obj The diskselector object.
+ * @param len The max length defined for side labels.
+ *
+ * Length is the number of characters of items' label that will be
+ * visible when it's set on side positions. It will just crop
+ * the string after defined size. E.g.:
+ *
+ * An item with label "January" would be displayed on side position as
+ * "Jan" if max length is set to 3, or "Janu", if this property
+ * is set to 4.
+ *
+ * When it's selected, the entire label will be displayed, except for
+ * width restrictions. In this case label will be cropped and "..."
+ * will be concatenated.
+ *
+ * Default side label max length is 3.
+ *
+ * This property will be applied over all items, included before or
+ * later this function call.
+ *
+ * @deprecated elm_diskselector_side_text_max_length_set()
+ */
+EINA_DEPRECATED EAPI void                   elm_diskselector_side_label_length_set(Evas_Object *obj, int len);
 
 /**
  * @}

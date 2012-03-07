@@ -188,7 +188,7 @@ _disk_create(Evas_Object *win, Eina_Bool rnd)
    elm_diskselector_item_append(di, "December", NULL, NULL, NULL);
 
    elm_diskselector_item_selected_set(ds_it, EINA_TRUE);
-   elm_diskselector_round_set(di, rnd);
+   elm_diskselector_round_enabled_set(di, rnd);
 
    return di;
 }
@@ -273,7 +273,7 @@ test_diskselector(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *even
    elm_box_pack_end(bx, disk);
    evas_object_show(disk);
    evas_object_smart_callback_add(disk, "selected", _print_disk_info_cb, NULL);
-   elm_diskselector_side_label_length_set(disk, 4);
+   elm_diskselector_side_text_max_length_set(disk, 4);
 
    disk = elm_diskselector_add(win);
    ic = elm_icon_add(win);
@@ -287,7 +287,7 @@ test_diskselector(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *even
    elm_diskselector_item_append(disk, "Thursday", NULL, NULL, NULL);
    elm_diskselector_item_append(disk, "Friday", NULL, NULL, NULL);
    elm_diskselector_item_append(disk, "Saturday", NULL, NULL, NULL);
-   elm_diskselector_round_set(disk, EINA_TRUE);
+   elm_diskselector_round_enabled_set(disk, EINA_TRUE);
    evas_object_size_hint_weight_set(disk, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(disk, EVAS_HINT_FILL, 0.5);
    elm_box_pack_end(bx, disk);
@@ -306,7 +306,7 @@ test_diskselector(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *even
    elm_diskselector_item_append(disk, "والشريعة", NULL, NULL, NULL);
    elm_diskselector_item_append(disk, "עִבְרִית", NULL, NULL, NULL);
    elm_diskselector_item_append(disk, "Grüßen", NULL, NULL, NULL);
-   elm_diskselector_round_set(disk, EINA_TRUE);
+   elm_diskselector_round_enabled_set(disk, EINA_TRUE);
    evas_object_size_hint_weight_set(disk, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(disk, EVAS_HINT_FILL, 0.5);
    elm_box_pack_end(bx, disk);
@@ -326,7 +326,7 @@ test_diskselector(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *even
      }
 
    elm_diskselector_item_selected_set(ds_it, EINA_TRUE);
-   elm_diskselector_round_set(disk, EINA_TRUE);
+   elm_diskselector_round_enabled_set(disk, EINA_TRUE);
    evas_object_size_hint_weight_set(disk, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(disk, EVAS_HINT_FILL, 0.5);
    elm_box_pack_end(bx, disk);
@@ -346,7 +346,7 @@ test_diskselector(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *even
      }
 
    elm_diskselector_item_selected_set(ds_it, EINA_TRUE);
-   elm_diskselector_round_set(disk, EINA_TRUE);
+   elm_diskselector_round_enabled_set(disk, EINA_TRUE);
    evas_object_size_hint_weight_set(disk, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(disk, EVAS_HINT_FILL, 0.5);
    elm_box_pack_end(bx, disk);

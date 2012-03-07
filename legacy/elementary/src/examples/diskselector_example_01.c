@@ -71,8 +71,8 @@ elm_main(int argc __UNUSED__, char **argv __UNUSED__)
    elm_box_pack_end(bx, ds);
    for (i = 0; i < sizeof(lbl) / sizeof(lbl[0]); i++)
      elm_diskselector_item_append(ds, lbl[i], NULL, NULL, NULL);
-   elm_diskselector_round_set(ds, EINA_TRUE);
-   elm_diskselector_side_label_length_set(ds, 2);
+   elm_diskselector_round_enabled_set(ds, EINA_TRUE);
+   elm_diskselector_side_text_max_length_set(ds, 2);
    evas_object_show(ds);
 
    /* display more than 3 items */

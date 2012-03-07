@@ -2159,10 +2159,10 @@
  * diskselector will display first item after last, and last previous to
  * the first one. So, as you can see, @b Sa will appears on left side
  * of selected @b Sunday. This property is set with
- * elm_diskselector_round_set().
+ * elm_diskselector_round_enabled_set().
  *
  * Also, we decide to display only 2 character for side labels, instead of 3.
- * For this we call elm_diskselector_side_label_length_set(). As result,
+ * For this we call elm_diskselector_side_text_max_length_set(). As result,
  * we'll see @b Mo displayed instead of @b Mon, when @b Monday is on a
  * side position.
  *

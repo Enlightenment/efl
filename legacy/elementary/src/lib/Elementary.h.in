@@ -188,7 +188,7 @@ EAPI extern Elm_Version *elm_version;
 #include <elm_cursor.h> // OK
 #include <elm_datetime.h> // OK
 #include <elm_debug.h> // OK
-#include <elm_diskselector.h>
+#include <elm_diskselector.h> // OK
 
 // Chuneon Park
 //#include <elm_factory.h>  // OK
