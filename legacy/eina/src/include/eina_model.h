@@ -1189,7 +1189,7 @@ EAPI Eina_Iterator *eina_model_child_sorted_iterator_get(Eina_Model *model,
 EAPI Eina_Iterator *eina_model_child_slice_sorted_iterator_get(Eina_Model *model,
                                                                unsigned int start,
                                                                unsigned int count,
-                                                               Eina_Compare_Cb compare) EINA_ARG_NONNULL(1, 2) EINA_WARN_UNUSED_RESULT;
+                                                               Eina_Compare_Cb compare) EINA_ARG_NONNULL(1, 4) EINA_WARN_UNUSED_RESULT;
 
 /**
  * @brief create an iterator that indexes of children that matches.
@@ -1258,7 +1258,7 @@ EAPI Eina_Iterator *eina_model_child_slice_filtered_iterator_get(Eina_Model *mod
                                                                  unsigned int start,
                                                                  unsigned int count,
                                                                  Eina_Each_Cb match,
-                                                                 const void *data) EINA_ARG_NONNULL(1, 2) EINA_WARN_UNUSED_RESULT;
+                                                                 const void *data) EINA_ARG_NONNULL(1, 4) EINA_WARN_UNUSED_RESULT;
 
 
 /**
