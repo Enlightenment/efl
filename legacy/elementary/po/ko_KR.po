@@ -2,12 +2,12 @@
 # This file is distributed under the same license as the Elementary package.
 # Daniel Juyung Seo <seojuyung2@gmail.com>, 2011.
 #
-#: src/lib/elm_config.c:1428
+#: src/lib/elm_config.c:1943
 msgid ""
 msgstr ""
 "Project-Id-Version: elementary\n"
 "Report-Msgid-Bugs-To: enlightenment-devel@lists.sourceforge.net\n"
-"POT-Creation-Date: 2012-03-02 15:39+0900\n"
+"POT-Creation-Date: 2012-03-07 14:19+0900\n"
 "PO-Revision-Date: 2011-02-22 09:09-0800\n"
 "Last-Translator: Daniel Juyung Seo <seojuyung@gmail.com>\n"
 "Language-Team: General\n"
@@ -25,11 +25,11 @@ msgstr "위로"
 msgid "Home"
 msgstr "홈"
 
-#: src/lib/elc_fileselector.c:1008 src/lib/elm_entry.c:1286
+#: src/lib/elc_fileselector.c:1009 src/lib/elm_entry.c:1357
 msgid "Cancel"
 msgstr "취소"
 
-#: src/lib/elc_fileselector.c:1018
+#: src/lib/elc_fileselector.c:1019
 msgid "OK"
 msgstr "확인"
 
@@ -37,8 +37,8 @@ msgstr "확인"
 msgid "Clicked"
 msgstr ""
 
-#: src/lib/elm_button.c:408 src/lib/elm_check.c:369 src/lib/elm_radio.c:295
-#: src/lib/elm_toolbar.c:803
+#: src/lib/elm_button.c:408 src/lib/elm_check.c:394 src/lib/elm_radio.c:295
+#: src/lib/elm_toolbar.c:887
 msgid "State: Disabled"
 msgstr ""
 
@@ -50,41 +50,41 @@ msgstr ""
 msgid "%B %Y"
 msgstr "%Y년 %B"
 
-#: src/lib/elm_check.c:286 src/lib/elm_check.c:289 src/lib/elm_check.c:380
+#: src/lib/elm_check.c:311 src/lib/elm_check.c:314 src/lib/elm_check.c:405
 #: src/lib/elm_radio.c:231 src/lib/elm_radio.c:297
 msgid "State: On"
 msgstr ""
 
-#: src/lib/elm_check.c:299 src/lib/elm_check.c:302 src/lib/elm_check.c:389
+#: src/lib/elm_check.c:324 src/lib/elm_check.c:327 src/lib/elm_check.c:414
 #: src/lib/elm_radio.c:298
 msgid "State: Off"
 msgstr ""
 
-#: src/lib/elm_check.c:376 src/lib/elm_check.c:386
+#: src/lib/elm_check.c:401 src/lib/elm_check.c:411
 msgid "State"
 msgstr ""
 
-#: src/lib/elm_check.c:439
+#: src/lib/elm_check.c:467
 msgid "Check"
 msgstr ""
 
-#: src/lib/elm_config.c:1352
+#: src/lib/elm_config.c:1358
 msgid "default:LTR"
 msgstr "default:LTR"
 
-#: src/lib/elm_entry.c:1280
+#: src/lib/elm_entry.c:1351
 msgid "Copy"
 msgstr "복사"
 
-#: src/lib/elm_entry.c:1283
+#: src/lib/elm_entry.c:1354
 msgid "Cut"
 msgstr "잘라내기"
 
-#: src/lib/elm_entry.c:1297
+#: src/lib/elm_entry.c:1368
 msgid "Select"
 msgstr "선택"
 
-#: src/lib/elm_entry.c:1303
+#: src/lib/elm_entry.c:1374
 msgid "Paste"
 msgstr "붙여넣기"
 
@@ -100,23 +100,23 @@ msgstr ""
 msgid "OFF"
 msgstr ""
 
-#: src/lib/elm_toolbar.c:719
+#: src/lib/elm_toolbar.c:803
 #, fuzzy
 msgid "Selected"
 msgstr "선택"
 
-#: src/lib/elm_toolbar.c:801
+#: src/lib/elm_toolbar.c:885
 msgid "Separator"
 msgstr ""
 
-#: src/lib/elm_toolbar.c:805
+#: src/lib/elm_toolbar.c:889
 msgid "State: Selected"
 msgstr ""
 
-#: src/lib/elm_toolbar.c:807
+#: src/lib/elm_toolbar.c:891
 msgid "Has menu"
 msgstr ""
 
-#: src/lib/elm_toolbar.c:866
+#: src/lib/elm_toolbar.c:954
 msgid "Tool Item"
 msgstr ""
