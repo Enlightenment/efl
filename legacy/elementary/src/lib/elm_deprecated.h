@@ -5052,5 +5052,28 @@ EINA_DEPRECATED EAPI void elm_genlist_item_top_bring_in(Elm_Object_Item *it);
 EINA_DEPRECATED EAPI void elm_genlist_item_middle_bring_in(Elm_Object_Item *it);
 
 /**
+ * Show the portion of a genlist's internal list containing a given
+ * item, immediately.
+ *
+ * @param it The item to display
+ *
+ * @deprecated elm_genlist_item_show()
+ *
+ */
+EINA_DEPRECATED EAPI void                          elm_genlist_item_top_show(Elm_Object_Item *it);
+
+/**
+ * Show the portion of a genlist's internal list containing a given
+ * item, immediately.
+ *
+ * @param it The item to display
+ *
+ * @deprecated elm_genlist_item_show()
+ *
+ */
+EINA_DEPRECATED EAPI void                          elm_genlist_item_middle_show(Elm_Object_Item *it);
+
+
+/**
  * @}
  */
