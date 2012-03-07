@@ -283,12 +283,12 @@ EAPI Eina_Iterator *eina_file_stat_ls(const char *dir) EINA_WARN_UNUSED_RESULT E
  * @brief Use information provided by Eina_Iterator of eina_file_stat_ls or eina_file_direct_ls
  * to call stat in the most efficient way on your system.
  *
- * @param container The container returned by the Eina_Iterator.
- * @param info The content of the curently Eina_File_Direct_Info provided by the Eina_Iterator
+ * @param container The container returned by the Eina_Iterator using eina_iterator_container_get().
+ * @param info The content of the current Eina_File_Direct_Info provided by the Eina_Iterator
  * @param buf Where to put the result of the stat
- * @return On success 0 is returned, On error -1 is returned and errno is set appropriatly.
+ * @return On success 0 is returned, On error -1 is returned and errno is set appropriately.
  *
- * This function call fstatat or stat depending on what your system support. This make it efficient and simple
+ * This function calls fstatat or stat depending on what your system supports. This makes it efficient and simple
  * to use on your side without complex detection already done inside Eina on what the system can do.
  *
  * @see eina_file_direct_ls()
