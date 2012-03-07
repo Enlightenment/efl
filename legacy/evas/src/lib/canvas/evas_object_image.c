@@ -224,10 +224,8 @@ _create_tmpf(Evas_Object *obj, void *data, int size, char *format __UNUSED__)
    char buf[4096];
    void *dst;
    int fd = -1;
-   mode_t pmode;
    
    o = (Evas_Object_Image *)(obj->object_data);
-   pmode = umask(S_IRGRP | S_IWGRP | S_IXGRP | S_IROTH | S_IWOTH | S_IXOTH);
 #ifdef __linux__
    snprintf(buf, sizeof(buf), "/dev/shm/.evas-tmpf-%i-%p-%i-XXXXXX", 
             (int)getpid(), data, (int)size);
@@ -239,7 +237,6 @@ _create_tmpf(Evas_Object *obj, void *data, int size, char *format __UNUSED__)
                  (int)getpid(), data, (int)size);
         fd = mkstemp(buf);
      }
-   umask(pmode);
    if (fd < 0) return;
    if (ftruncate(fd, size) < 0)
      {
