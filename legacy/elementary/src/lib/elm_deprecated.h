@@ -6162,6 +6162,39 @@ EINA_DEPRECATED EAPI Eina_Bool         elm_web_navigate_possible(Evas_Object *ob
 EINA_DEPRECATED EAPI void                          elm_genlist_compress_mode_set(Evas_Object *obj, Eina_Bool compress);
 
 /**
+ * Sets the display only state of an item.
+ *
+ * @param it The item
+ * @param display_only @c EINA_TRUE if the item is display only, @c
+ * EINA_FALSE otherwise.
+ *
+ * A display only item cannot be selected or unselected. It is for
+ * display only and not selecting or otherwise clicking, dragging
+ * etc. by the user, thus finger size rules will not be applied to
+ * this item.
+ *
+ * It's good to set group index items to display only state.
+ *
+ * @see elm_genlist_item_display_only_get()
+ *
+ * @deprecated elm_genlist_item_display_only_set()
+ */
+EINA_DEPRECATED EAPI void                          elm_genlist_item_display_only_set(Elm_Object_Item *it, Eina_Bool display_only);
+
+/**
+ * Get the display only state of an item
+ *
+ * @param it The item
+ * @return @c EINA_TRUE if the item is display only, @c
+ * EINA_FALSE otherwise.
+ *
+ * @see elm_genlist_item_display_only_set()
+ *
+ * @deprecated elm_genlist_item_display_only_get()
+ */
+EINA_DEPRECATED EAPI Eina_Bool                     elm_genlist_item_display_only_get(const Elm_Object_Item *it);
+
+/**
  * Get whether the compress mode is enabled.
  *
  * @param obj The genlist object

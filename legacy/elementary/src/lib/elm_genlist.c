@@ -691,7 +691,8 @@ _item_highlight(Elm_Gen_Item *it)
        (it->wd->no_highlight) ||
        (it->generation < it->wd->generation) ||
        (it->highlighted) || elm_widget_item_disabled_get(it) ||
-       (it->display_only) || (it->item->mode_view))
+       (it->select_mode == ELM_OBJECT_SELECT_MODE_NONE) || (it->item->mode_view) ||
+       (it->select_mode == ELM_OBJECT_SELECT_MODE_DISPLAY_ONLY))
      return;
    edje_object_signal_emit(VIEW(it), "elm,state,selected", "elm");
    if (it->edit_obj) edje_object_signal_emit(it->edit_obj, "elm,state,selected", "elm");
@@ -990,7 +991,7 @@ _mouse_move(void        *data,
           }
         return;
      }
-   if (!it->display_only)
+   if (it->select_mode != ELM_OBJECT_SELECT_MODE_DISPLAY_ONLY)
      elm_coords_finger_size_adjust(1, &minw, 1, &minh);
    evas_object_geometry_get(obj, &x, &y, NULL, NULL);
    x = ev->cur.canvas.x - x;
@@ -1056,7 +1057,8 @@ _long_press(void *data)
    Eina_List *list, *l;
 
    it->long_timer = NULL;
-   if (elm_widget_item_disabled_get(it) || (it->dragging) || (it->display_only))
+   if (elm_widget_item_disabled_get(it) || (it->dragging) ||
+       (it->select_mode == ELM_OBJECT_SELECT_MODE_DISPLAY_ONLY))
      return ECORE_CALLBACK_CANCEL;
    it->wd->longpressed = EINA_TRUE;
    evas_object_smart_callback_call(WIDGET(it), SIG_LONGPRESSED, it);
@@ -1095,7 +1097,8 @@ _swipe(Elm_Gen_Item *it)
    int i, sum = 0;
 
    if (!it) return;
-   if ((it->display_only) || elm_widget_item_disabled_get(it)) return;
+   if ((it->select_mode == ELM_OBJECT_SELECT_MODE_DISPLAY_ONLY) ||
+       elm_widget_item_disabled_get(it)) return;
    it->wd->swipe = EINA_FALSE;
    for (i = 0; i < it->wd->movements; i++)
      {
@@ -1303,7 +1306,8 @@ _mouse_down(void        *data,
    it->wd->wasselected = it->selected;
    _item_highlight(it);
    if (ev->flags & EVAS_BUTTON_DOUBLE_CLICK)
-     if ((!elm_widget_item_disabled_get(it)) && (!it->display_only))
+     if ((!elm_widget_item_disabled_get(it)) &&
+         (it->select_mode != ELM_OBJECT_SELECT_MODE_DISPLAY_ONLY))
        {
           evas_object_smart_callback_call(WIDGET(it), SIG_CLICKED_DOUBLE, it);
           evas_object_smart_callback_call(WIDGET(it), SIG_ACTIVATED, it);
@@ -1412,7 +1416,8 @@ _mouse_up(void        *data,
                _item_block_unrealize(it->item->block);
           }
      }
-   if (elm_widget_item_disabled_get(it) || (dragged) || (it->display_only))
+   if (elm_widget_item_disabled_get(it) || (dragged) ||
+       (it->select_mode == ELM_OBJECT_SELECT_MODE_DISPLAY_ONLY))
      return;
    if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD) return;
    if (it->wd->multi)
@@ -2102,12 +2107,12 @@ _item_realize(Elm_Gen_Item *it,
           {
              Evas_Coord mw = -1, mh = -1;
 
-             if (!it->display_only)
+             if (it->select_mode != ELM_OBJECT_SELECT_MODE_DISPLAY_ONLY)
                elm_coords_finger_size_adjust(1, &mw, 1, &mh);
              if (it->wd->mode == ELM_LIST_COMPRESS) mw = it->wd->prev_viewport_w;
              edje_object_size_min_restricted_calc(VIEW(it), &mw, &mh, mw,
                                                   mh);
-             if (!it->display_only)
+             if (it->select_mode != ELM_OBJECT_SELECT_MODE_DISPLAY_ONLY)
                elm_coords_finger_size_adjust(1, &mw, 1, &mh);
              it->item->w = it->item->minw = mw;
              it->item->h = it->item->minh = mh;
@@ -4801,30 +4806,33 @@ elm_genlist_item_expanded_depth_get(const Elm_Object_Item *it)
    return ((Elm_Gen_Item *)it)->item->expanded_depth;
 }
 
-EAPI void
+EINA_DEPRECATED EAPI void
 elm_genlist_item_display_only_set(Elm_Object_Item  *it,
                                   Eina_Bool         display_only)
 {
    ELM_OBJ_ITEM_CHECK_OR_RETURN(it);
-   Elm_Gen_Item *_it = (Elm_Gen_Item *)it;
    display_only = !!display_only;
-   if (_it->display_only == display_only) return;
-   if (_it->generation < _it->wd->generation) return;
-   _it->display_only = display_only;
-   _it->item->mincalcd = EINA_FALSE;
-   _it->item->updateme = EINA_TRUE;
-   if (_it->item->block) _it->item->block->updateme = EINA_TRUE;
-   if (_it->wd->update_job) ecore_job_del(_it->wd->update_job);
-   _it->wd->update_job = ecore_job_add(_update_job, _it->wd);
+
+   if (display_only)
+     elm_genlist_item_select_mode_set(it, ELM_OBJECT_SELECT_MODE_DISPLAY_ONLY);
+   else
+     {
+        Elm_Object_Select_Mode oldmode = elm_genlist_item_select_mode_get(it);
+        if (oldmode == ELM_OBJECT_SELECT_MODE_DISPLAY_ONLY)
+          elm_genlist_item_select_mode_set(it, ELM_OBJECT_SELECT_MODE_DEFAULT);
+     }
 }
 
-EAPI Eina_Bool
+EINA_DEPRECATED EAPI Eina_Bool
 elm_genlist_item_display_only_get(const Elm_Object_Item *it)
 {
    ELM_OBJ_ITEM_CHECK_OR_RETURN(it, EINA_FALSE);
    Elm_Gen_Item *_it = (Elm_Gen_Item *)it;
    if (_it->generation < _it->wd->generation) return EINA_FALSE;
-   return _it->display_only;
+   Elm_Object_Select_Mode oldmode = elm_genlist_item_select_mode_get(it);
+   if (oldmode == ELM_OBJECT_SELECT_MODE_DISPLAY_ONLY)
+     return EINA_TRUE;
+   return EINA_FALSE;
 }
 
 static Eina_Bool _elm_genlist_item_compute_coordinates(
@@ -5712,6 +5720,38 @@ elm_genlist_highlight_mode_get(const Evas_Object *obj)
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return EINA_FALSE;
    return !wd->no_highlight;
+}
+
+EAPI void
+elm_genlist_item_select_mode_set(Elm_Object_Item *it,
+                                 Elm_Object_Select_Mode mode)
+{
+   ELM_OBJ_ITEM_CHECK_OR_RETURN(it);
+   Elm_Gen_Item *_it = (Elm_Gen_Item *)it;
+   if (!_it) return;
+   if (_it->generation < _it->wd->generation) return;
+   if (mode >= ELM_OBJECT_SELECT_MODE_MAX)
+     return;
+   if (_it->select_mode != mode)
+     _it->select_mode = mode;
+
+   if (_it->select_mode == ELM_OBJECT_SELECT_MODE_DISPLAY_ONLY)
+     {
+        _it->item->mincalcd = EINA_FALSE;
+        _it->item->updateme = EINA_TRUE;
+        if (_it->item->block) _it->item->block->updateme = EINA_TRUE;
+        if (_it->wd->update_job) ecore_job_del(_it->wd->update_job);
+        _it->wd->update_job = ecore_job_add(_update_job, _it->wd);
+     }
+}
+
+EAPI Elm_Object_Select_Mode
+elm_genlist_item_select_mode_get(const Elm_Object_Item *it)
+{
+   ELM_OBJ_ITEM_CHECK_OR_RETURN(it, ELM_OBJECT_SELECT_MODE_MAX);
+   Elm_Gen_Item *_it = (Elm_Gen_Item *)it;
+   if (!_it) return ELM_OBJECT_SELECT_MODE_MAX;
+   return _it->select_mode;
 }
 
 /* for gengrid as of now */

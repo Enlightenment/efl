@@ -193,11 +193,11 @@
  *
  * Items will only call their selection func and callback when first becoming
  * selected. Any further clicks will do nothing, unless you enable always
- * select with elm_genlist_always_select_mode_set(). This means even if
- * selected, every click will make the selected callbacks be called.
- * elm_genlist_no_select_mode_set() will turn off the ability to select
- * items entirely and they will neither appear selected nor call selected
- * callback functions.
+ * select with elm_genlist_select_mode_set() as ELM_OBJECT_ALWAYS_SELECT.
+ * This means even if selected, every click will make the selected callbacks
+ * be called. elm_genlist_select_mode_set() as ELM_OBJECT_NO_SELECT will
+ * turn off the ability to select items entirely and they will neither
+ * appear selected nor call selected callback functions.
  *
  * Remember that you can create new styles and add your own theme augmentation
  * per application with elm_theme_extension_add(). If you absolutely must
@@ -1505,41 +1505,6 @@ EAPI Eina_Bool                     elm_genlist_item_expanded_get(const Elm_Objec
 EAPI int                           elm_genlist_item_expanded_depth_get(const Elm_Object_Item *it);
 
 /**
- * Sets the display only state of an item.
- *
- * @param it The item
- * @param display_only @c EINA_TRUE if the item is display only, @c
- * EINA_FALSE otherwise.
- *
- * A display only item cannot be selected or unselected. It is for
- * display only and not selecting or otherwise clicking, dragging
- * etc. by the user, thus finger size rules will not be applied to
- * this item.
- *
- * It's good to set group index items to display only state.
- *
- * @see elm_genlist_item_display_only_get()
- *
- * @ingroup Genlist
- */
-//XXX: elm_genlist_item_no_select_mode_set()?
-EAPI void                          elm_genlist_item_display_only_set(Elm_Object_Item *it, Eina_Bool display_only);
-
-/**
- * Get the display only state of an item
- *
- * @param it The item
- * @return @c EINA_TRUE if the item is display only, @c
- * EINA_FALSE otherwise.
- *
- * @see elm_genlist_item_display_only_set()
- *
- * @ingroup Genlist
- */
-//XXX: elm_genlist_item_no_select_mode_get()?
-EAPI Eina_Bool                     elm_genlist_item_display_only_get(const Elm_Object_Item *it);
-
-/**
  * Unset all contents fetched by the item class
  *
  * @param it The item
@@ -1851,6 +1816,50 @@ EAPI void               elm_genlist_highlight_mode_set(Evas_Object *obj, Eina_Bo
  * @ingroup Genlist
  */
 EAPI Eina_Bool          elm_genlist_highlight_mode_get(const Evas_Object *obj);
+
+/**
+ * Set the genlist item's select mode.
+ *
+ * @param it The genlist item object
+ * @param mode The select mode
+ *
+ * elm_genlist_select_mode_set() changes item's select mode.
+ * - ELM_OBJECT_NORMAL_SELECT : The item will only call their selection func and
+ *      callback when first becoming selected. Any further clicks will
+ *      do nothing, unless you set always select mode.
+ * - ELM_OBJECT_ALWAYS_SELECT : This means that, even if selected,
+ *      every click will make the selected callbacks be called.
+ * - ELM_OBJECT_NO_SELECT : This will turn off the ability to select the item
+ *      entirely and they will neither appear selected nor call selected
+ *      callback functions.
+ * - ELM_OBJECT_DISPLAY_ONLY_SELECT : This will apply no-finger-size rule with
+ *      with ELM_OBJECT_NO_SELECT. No-finger-size rule makes an item can be
+ *      smaller than lower limit. In some touch or small screen devices,
+ *      clickable objects should be bigger than human touch point device
+ *      (your finger). So it is enabled, the item can be smaller than
+ *      predefined finger-size value. And the item will be updated.
+ *
+ * @see elm_genlist_item_select_mode_get()
+ *
+ * @ingroup Genlist
+ */
+EAPI void
+elm_genlist_item_select_mode_set(Elm_Object_Item *it,
+                                 Elm_Object_Select_Mode mode);
+
+/**
+ * Get the genlist item's select mode.
+ *
+ * @param it The genlist item object
+ * @return The select mode
+ * (If getting mode is failed, it returns ELM_OBJECT_SELECT_MODE_MAX)
+ *
+ * @see elm_genlist_item_select_mode_set()
+ *
+ * @ingroup Genlist
+ */
+EAPI Elm_Object_Select_Mode
+elm_genlist_item_select_mode_get(const Elm_Object_Item *it);
 
 /**
  * @}

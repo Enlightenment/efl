@@ -51,6 +51,7 @@ struct Elm_Gen_Item
    Ecore_Cb                  unsel_cb, unhighlight_cb, unrealize_cb;
 
    int                       position;
+   Elm_Object_Select_Mode    select_mode;
 
    Eina_Bool                 position_update : 1;
    Eina_Bool                 want_unrealize : 1;
