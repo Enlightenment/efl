@@ -8392,7 +8392,9 @@ EAPI void                         evas_object_textblock_style_set(Evas_Object *o
 EAPI const Evas_Textblock_Style  *evas_object_textblock_style_get(const Evas_Object *obj) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1);
 
 /**
- * Set the objects user style to ts.
+ * Push ts to the top of the user style stack.
+ *
+ * FIXME: API is solid but currently only supports 1 style in the stack.
  *
  * The user style overrides the corresponding elements of the regular style.
  * This is the proper way to do theme overrides in code.
@@ -8402,16 +8404,26 @@ EAPI const Evas_Textblock_Style  *evas_object_textblock_style_get(const Evas_Obj
  * @see evas_object_textblock_style_set
  * @since 1.2.0
  */
-EAPI void                         evas_object_textblock_style_user_set(Evas_Object *obj, Evas_Textblock_Style *ts) EINA_ARG_NONNULL(1);
+EAPI void                         evas_object_textblock_style_user_push(Evas_Object *obj, Evas_Textblock_Style *ts) EINA_ARG_NONNULL(1);
 
 /**
- * Return the user style of an object.
+ * Del the from the top of the user style stack.
+ *
+ * @param obj  the object to get the style from.
+ * @see evas_object_textblock_style_get
+ * @since 1.2.0
+ */
+EAPI void                        evas_object_textblock_style_user_pop(Evas_Object *obj) EINA_ARG_NONNULL(1);
+
+/**
+ * Get (don't remove) the style at the top of the user style stack.
+ *
  * @param obj  the object to get the style from.
  * @return the style of the object.
  * @see evas_object_textblock_style_get
  * @since 1.2.0
  */
-EAPI const Evas_Textblock_Style  *evas_object_textblock_style_user_get(const Evas_Object *obj) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1);
+EAPI const Evas_Textblock_Style  *evas_object_textblock_style_user_peek(const Evas_Object *obj) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1);
 
 /**
  * @brief Set the "replacement character" to use for the given textblock object.

@@ -2113,7 +2113,7 @@ START_TEST(evas_textblock_size)
         fail_if(!newst);
         evas_textblock_style_set(newst,
               "DEFAULT='left_margin=4 right_margin=4'");
-        evas_object_textblock_style_user_set(tb, newst);
+        evas_object_textblock_style_user_push(tb, newst);
 
         evas_object_textblock_size_formatted_get(tb, &w, &h);
         evas_object_textblock_size_native_get(tb, &nw, &nh);

@@ -4669,17 +4669,24 @@ evas_object_textblock_style_get(const Evas_Object *obj)
 }
 
 EAPI void
-evas_object_textblock_style_user_set(Evas_Object *obj, Evas_Textblock_Style *ts)
+evas_object_textblock_style_user_push(Evas_Object *obj, Evas_Textblock_Style *ts)
 {
    TB_HEAD();
    _textblock_style_generic_set(obj, ts, &(o->style_user));
 }
 
 EAPI const Evas_Textblock_Style *
-evas_object_textblock_style_user_get(const Evas_Object *obj)
+evas_object_textblock_style_user_peek(const Evas_Object *obj)
 {
    TB_HEAD_RETURN(NULL);
    return o->style_user;
+}
+
+EAPI void
+evas_object_textblock_style_user_pop(Evas_Object *obj)
+{
+   TB_HEAD();
+   _textblock_style_generic_set(obj, NULL,  &(o->style_user));
 }
 
 EAPI void
@@ -9311,7 +9318,10 @@ evas_object_textblock_free(Evas_Object *obj)
 
    evas_object_textblock_clear(obj);
    evas_object_textblock_style_set(obj, NULL);
-   evas_object_textblock_style_user_set(obj, NULL);
+   while (evas_object_textblock_style_user_peek(obj))
+     {
+        evas_object_textblock_style_user_pop(obj);
+     }
    o = (Evas_Object_Textblock *)(obj->object_data);
    free(o->cursor);
    while (o->cursors)
