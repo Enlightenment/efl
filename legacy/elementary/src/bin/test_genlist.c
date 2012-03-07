@@ -1773,7 +1773,7 @@ _gl_sel10(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
    if (!data) return;
    int v = elm_radio_value_get(data);
    if (v == 1)
-     elm_genlist_item_mode_set(event_info, mode_type[v], EINA_TRUE);
+     elm_genlist_item_decorate_mode_set(event_info, mode_type[v], EINA_TRUE);
 }
 
 static void
@@ -1782,7 +1782,7 @@ _my_gl_mode_right(void *data, Evas_Object *obj __UNUSED__, void *event_info)
    if (!data) return;
    int v = elm_radio_value_get(data);
    if (v == 0)
-     elm_genlist_item_mode_set(event_info, mode_type[v], EINA_TRUE);
+     elm_genlist_item_decorate_mode_set(event_info, mode_type[v], EINA_TRUE);
 }
 
 static void
@@ -1791,7 +1791,7 @@ _my_gl_mode_left(void *data, Evas_Object *obj __UNUSED__, void *event_info)
    if (!data) return;
    int v = elm_radio_value_get(data);
    if (v == 0)
-     elm_genlist_item_mode_set(event_info, mode_type[v], EINA_FALSE);
+     elm_genlist_item_decorate_mode_set(event_info, mode_type[v], EINA_FALSE);
 }
 
 static void
@@ -1800,8 +1800,8 @@ _my_gl_mode_cancel(void *data, Evas_Object *obj, void *event_info __UNUSED__)
    fprintf(stderr, "drag\n");
    if (!data) return;
    int v = elm_radio_value_get(data);
-   Elm_Object_Item *glit = (Elm_Object_Item *) elm_genlist_mode_item_get(obj);
-   if (glit) elm_genlist_item_mode_set(glit, mode_type[v], EINA_FALSE);
+   Elm_Object_Item *glit = (Elm_Object_Item *) elm_genlist_decorated_item_get(obj);
+   if (glit) elm_genlist_item_decorate_mode_set(glit, mode_type[v], EINA_FALSE);
 }
 
 void

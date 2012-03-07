@@ -71,8 +71,8 @@ _show_status_cb(void *data, Evas_Object *o __UNUSED__, void *event_info __UNUSED
    EINA_LIST_FOREACH(realized, l, glit)
      printf("%p  ", glit);
    printf("\n");
-   printf("genlist mode: %s\n", elm_genlist_mode_type_get(list));
-   printf("mode item: %p\n", elm_genlist_mode_item_get(list));
+   printf("genlist mode: %s\n", elm_genlist_decorate_type_get(list));
+   printf("mode item: %p\n", elm_genlist_decorated_item_get(list));
 
    evas_object_geometry_get(list, &x, &y, &w, &h);
    mx = w / 2 + x;
