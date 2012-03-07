@@ -547,13 +547,6 @@ isf_imf_context_new(void)
    SCIM_DEBUG_FRONTEND(1) << __FUNCTION__ << "...\n";
    char *env;
 
-   Ecore_X_Display  *display = ecore_x_display_get();
-   if (!display)
-     {
-        std::cerr << "ecore_x_display_get() failed !!!";
-        return NULL;
-     }
-
    EcoreIMFContextISF *context_scim = new EcoreIMFContextISF;
    if (context_scim == NULL)
      {
