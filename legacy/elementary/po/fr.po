@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Elementary\n"
 "Report-Msgid-Bugs-To: enlightenment-devel@lists.sourceforge.net\n"
-"POT-Creation-Date: 2012-03-07 14:19+0900\n"
+"POT-Creation-Date: 2012-03-07 23:02+0900\n"
 "PO-Revision-Date: 2011-11-08 07:57+0100\n"
 "Last-Translator: dazibao <dazibao@sfr.fr>\n"
 "Language-Team: French <sansgourou@gmail.com>\n"
@@ -42,7 +42,7 @@ msgid "Clicked"
 msgstr "Cliqué"
 
 #: src/lib/elm_button.c:408 src/lib/elm_check.c:394 src/lib/elm_radio.c:295
-#: src/lib/elm_toolbar.c:887
+#: src/lib/elm_toolbar.c:886
 msgid "State: Disabled"
 msgstr "État : désactivé"
 
@@ -104,19 +104,19 @@ msgstr "OUI"
 msgid "OFF"
 msgstr "NON"
 
-#: src/lib/elm_toolbar.c:803
+#: src/lib/elm_toolbar.c:802
 msgid "Selected"
 msgstr "Sélectionné"
 
-#: src/lib/elm_toolbar.c:885
+#: src/lib/elm_toolbar.c:884
 msgid "Separator"
 msgstr "Séparateur"
 
-#: src/lib/elm_toolbar.c:889
+#: src/lib/elm_toolbar.c:888
 msgid "State: Selected"
 msgstr "État : sélectionné"
 
-#: src/lib/elm_toolbar.c:891
+#: src/lib/elm_toolbar.c:890
 msgid "Has menu"
 msgstr "Possède un menu"
 

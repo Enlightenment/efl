@@ -62,6 +62,9 @@ widgets/entry.edc \
 widgets/map.edc \
 widgets/scroller.edc \
 widgets/pointer.edc \
+widgets/datetime.edc \
+widgets/dayselector.edc \
+widgets/popup.edc \
 ews.edc \
 arrow_down.png \
 arrow_up.png \

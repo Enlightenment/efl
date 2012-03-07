@@ -19,6 +19,7 @@ struct _Elm_Win
    Elm_Win_Type type;
    Elm_Win_Keyboard_Mode kbdmode;
    Elm_Win_Indicator_Mode indmode;
+   Elm_Win_Indicator_Opacity_Mode ind_o_mode;
    struct {
       const char *info;
       Ecore_Timer *timer;
@@ -2827,6 +2828,43 @@ elm_win_indicator_mode_get(const Evas_Object *obj)
    win = elm_widget_data_get(obj);
    if (!win) return ELM_WIN_INDICATOR_UNKNOWN;
    return win->indmode;
+}
+
+EAPI void
+elm_win_indicator_opacity_set(Evas_Object *obj, Elm_Win_Indicator_Opacity_Mode mode)
+{
+   Elm_Win *win;
+   ELM_CHECK_WIDTYPE(obj, widtype);
+   win = elm_widget_data_get(obj);
+   if (!win) return;
+   if (mode == win->ind_o_mode) return;
+   win->ind_o_mode = mode;
+#ifdef HAVE_ELEMENTARY_X
+   _elm_win_xwindow_get(win);
+   if (win->xwin)
+     {
+        if (win->ind_o_mode == ELM_WIN_INDICATOR_OPAQUE)
+          ecore_x_e_illume_indicator_opacity_set
+          (win->xwin, ECORE_X_ILLUME_INDICATOR_OPAQUE);
+        else if (win->ind_o_mode == ELM_WIN_INDICATOR_TRANSLUCENT)
+          ecore_x_e_illume_indicator_opacity_set
+          (win->xwin, ECORE_X_ILLUME_INDICATOR_TRANSLUCENT);
+        else if (win->ind_o_mode == ELM_WIN_INDICATOR_TRANSPARENT)
+          ecore_x_e_illume_indicator_opacity_set
+          (win->xwin, ECORE_X_ILLUME_INDICATOR_TRANSPARENT);
+
+     }
+#endif
+}
+
+EAPI Elm_Win_Indicator_Opacity_Mode
+elm_win_indicator_opacity_get(const Evas_Object *obj)
+{
+   Elm_Win *win;
+   ELM_CHECK_WIDTYPE(obj, widtype) ELM_WIN_INDICATOR_OPACITY_UNKNOWN;
+   win = elm_widget_data_get(obj);
+   if (!win) return ELM_WIN_INDICATOR_OPACITY_UNKNOWN;
+   return win->ind_o_mode;
 }
 
 EAPI void

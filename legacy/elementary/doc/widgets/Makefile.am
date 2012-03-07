@@ -102,8 +102,6 @@ endif
 
 EXTRA_DIST = \
 	widget_preview_actionslider.c \
-	widget_preview_anchorblock.c \
-	widget_preview_anchorview.c \
 	widget_preview_bg.c \
 	widget_preview_bubble1.c \
 	widget_preview_bubble2.c \

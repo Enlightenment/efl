@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: enlightenment-devel@lists.sourceforge.net\n"
-"POT-Creation-Date: 2012-03-07 14:19+0900\n"
+"POT-Creation-Date: 2012-03-07 23:02+0900\n"
 "PO-Revision-Date: 2011-10-23 01:31+0100\n"
 "Last-Translator: Daniel Kolesa <quaker66@gmail.com>\n"
 "Language-Team: Czech <kde-i18n-doc@kde.org>\n"
@@ -38,7 +38,7 @@ msgid "Clicked"
 msgstr "Kliknuto"
 
 #: src/lib/elm_button.c:408 src/lib/elm_check.c:394 src/lib/elm_radio.c:295
-#: src/lib/elm_toolbar.c:887
+#: src/lib/elm_toolbar.c:886
 msgid "State: Disabled"
 msgstr "Stav: Zakázáno"
 
@@ -100,19 +100,19 @@ msgstr "ZAPNUTO"
 msgid "OFF"
 msgstr "VYPNUTO"
 
-#: src/lib/elm_toolbar.c:803
+#: src/lib/elm_toolbar.c:802
 msgid "Selected"
 msgstr "Vybrané"
 
-#: src/lib/elm_toolbar.c:885
+#: src/lib/elm_toolbar.c:884
 msgid "Separator"
 msgstr "Oddělovač"
 
-#: src/lib/elm_toolbar.c:889
+#: src/lib/elm_toolbar.c:888
 msgid "State: Selected"
 msgstr "Stav: Vybráno"
 
-#: src/lib/elm_toolbar.c:891
+#: src/lib/elm_toolbar.c:890
 msgid "Has menu"
 msgstr "Má nabídku"
 
