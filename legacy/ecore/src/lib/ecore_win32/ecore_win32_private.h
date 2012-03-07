@@ -71,8 +71,8 @@ struct _Ecore_Win32_Window
    unsigned int           min_height;
    unsigned int           max_width;
    unsigned int           max_height;
-   unsigned int           base_width;
-   unsigned int           base_height;
+   int                    base_width;
+   int                    base_height;
    unsigned int           step_width;
    unsigned int           step_height;
 
