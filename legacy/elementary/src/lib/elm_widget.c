@@ -1882,10 +1882,13 @@ elm_widget_signal_callback_del(Evas_Object   *obj,
              eina_stringshare_del(esd->source);
              data = esd->data;
              free(esd);
-             break;
+
+             sd->callback_del_func
+               (obj, emission, source, _edje_signal_callback, esd);
+             return data;
           }
      }
-   sd->callback_del_func(obj, emission, source, _edje_signal_callback, esd);
+
    return data;
 }
 
