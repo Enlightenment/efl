@@ -1,5 +1,3 @@
-// XXX: elm_gengrid - make sure api's match 1:1 with genlist api's
-// for eventual move to back-end of gengrid == genlist (in grid mode)
 /**
  * @defgroup Gengrid Gengrid (Generic grid)
  *
