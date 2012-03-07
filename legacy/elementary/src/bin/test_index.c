@@ -128,7 +128,8 @@ _index_delay_changed_cb(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void
 {
    // called on a change but delayed in case multiple changes happen in a
    // short timespan
-   elm_genlist_item_top_bring_in(elm_object_item_data_get(event_info));
+   elm_genlist_item_bring_in(elm_object_item_data_get(event_info),
+                              ELM_GENLIST_ITEM_SCROLLTO_TOP);
 }
 
 void
@@ -142,7 +143,8 @@ void
 _index_selected_cb(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info)
 {
    // called on final select
-   elm_genlist_item_top_bring_in(elm_object_item_data_get(event_info));
+   elm_genlist_item_bring_in(elm_object_item_data_get(event_info),
+                              ELM_GENLIST_ITEM_SCROLLTO_TOP);
 }
 
 static void

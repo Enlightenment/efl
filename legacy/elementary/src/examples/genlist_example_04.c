@@ -140,7 +140,7 @@ _next_cb(void *data, Evas_Object *o __UNUSED__, void *event_info __UNUSED__)
    if (!glit) glit = elm_genlist_first_item_get(list);
 
    elm_genlist_item_selected_set(glit, EINA_TRUE);
-   elm_genlist_item_show(glit);
+   elm_genlist_item_show(glit, ELM_GENLIST_ITEM_SCROLLTO_IN);
 }
 
 static void
@@ -180,7 +180,7 @@ _middle_in_cb(void *data, Evas_Object *o __UNUSED__, void *event_info __UNUSED__
    Elm_Object_Item *glit = data;
    if (!glit) return;
 
-   elm_genlist_item_middle_bring_in(glit);
+   elm_genlist_item_bring_in(glit, ELM_GENLIST_ITEM_SCROLLTO_MIDDLE);
 }
 
 static void
@@ -189,7 +189,7 @@ _middle_show_cb(void *data, Evas_Object *o __UNUSED__, void *event_info __UNUSED
    Elm_Object_Item *glit = data;
    if (!glit) return;
 
-   elm_genlist_item_middle_show(glit);
+   elm_genlist_item_show(glit, ELM_GENLIST_ITEM_SCROLLTO_MIDDLE);
 }
 
 static void
@@ -198,7 +198,7 @@ _top_in_cb(void *data, Evas_Object *o __UNUSED__, void *event_info __UNUSED__)
    Elm_Object_Item *glit = data;
    if (!glit) return;
 
-   elm_genlist_item_top_bring_in(glit);
+   elm_genlist_item_bring_in(glit, ELM_GENLIST_ITEM_SCROLLTO_TOP);
 }
 
 static void
@@ -207,7 +207,7 @@ _top_show_cb(void *data, Evas_Object *o __UNUSED__, void *event_info __UNUSED__)
    Elm_Object_Item *glit = data;
    if (!glit) return;
 
-   elm_genlist_item_top_show(glit);
+   elm_genlist_item_show(glit, ELM_GENLIST_ITEM_SCROLLTO_TOP);
 }
 
 static void
