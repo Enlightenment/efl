@@ -416,23 +416,23 @@ _apply_field_limits(Evas_Object *obj)
 }
 
 static void
-_apply_range_restrictions(Evas_Object *obj, struct tm *time)
+_apply_range_restrictions(Evas_Object *obj, struct tm *tim)
 {
    Widget_Data *wd;
    unsigned int idx;
    int val, min, max;
 
    wd = elm_widget_data_get(obj);
-   if (!wd || !time) return;
+   if (!wd || !tim) return;
 
-   DATETIME_TM_ARRAY(timearr, time);
+   DATETIME_TM_ARRAY(timearr, tim);
    for (idx = ELM_DATETIME_MONTH; idx < DATETIME_TYPE_COUNT - 1; idx++)
      {
         val = *timearr[idx];
         min = mapping[idx].def_min;
         max = mapping[idx].def_max;
         if (idx == ELM_DATETIME_DATE)
-          max = _max_days_get(time->tm_year, time->tm_mon);
+          max = _max_days_get(tim->tm_year, tim->tm_mon);
         if (val < min)
           *timearr[idx] = min;
         else if (val > max)

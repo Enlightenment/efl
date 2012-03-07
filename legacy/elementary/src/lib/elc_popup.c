@@ -801,13 +801,13 @@ _action_button_set(Evas_Object *obj, Evas_Object *btn, unsigned int idx)
 {
    Action_Area_Data *adata;
    char buf[128];
-   unsigned int index = idx - 1, i = 0, position = 0;
+   unsigned int num = idx - 1, i = 0, position = 0;
    Widget_Data *wd = elm_widget_data_get(obj);
 
    if (!wd) return;
-   if (index >= ELM_POPUP_ACTION_BUTTON_MAX) return;
-   if (wd->buttons[index])
-     _button_remove(obj, wd->buttons[index]->btn, EINA_TRUE);
+   if (num >= ELM_POPUP_ACTION_BUTTON_MAX) return;
+   if (wd->buttons[num])
+     _button_remove(obj, wd->buttons[num]->btn, EINA_TRUE);
    if (btn)
      {
         wd->button_count++;
@@ -817,7 +817,7 @@ _action_button_set(Evas_Object *obj, Evas_Object *btn, unsigned int idx)
         adata = ELM_NEW(Action_Area_Data);
         adata->obj = obj;
         adata->btn = btn;
-        wd->buttons[index] = adata;
+        wd->buttons[num] = adata;
         /* Adding delete_me state inside action data as unset calls _sub_del
            too and before setting a new content, the previous one needs to
            be unset in order to avoid unwanted deletion. This way rearrangement
@@ -905,13 +905,13 @@ _content_get(Evas_Object *obj)
 static Evas_Object *
 _action_button_get(Evas_Object *obj, unsigned int idx)
 {
-   unsigned int index = idx - 1;
+   unsigned int num = idx - 1;
    Evas_Object *button = NULL;
    Widget_Data *wd = elm_widget_data_get(obj);
 
    if (!wd || !wd->button_count) return NULL;
-   if (wd->buttons[index])
-     button = wd->buttons[index]->btn;
+   if (wd->buttons[num])
+     button = wd->buttons[num]->btn;
    return button;
 }
 
@@ -978,17 +978,17 @@ _title_icon_unset(Evas_Object *obj)
 static Evas_Object *
 _action_button_unset(Evas_Object *obj, unsigned int idx)
 {
-   unsigned int index = idx -1;
+   unsigned int num = idx -1;
    Evas_Object *button = NULL;
    Widget_Data *wd = elm_widget_data_get(obj);
 
    if (!wd) return NULL;
-   if ((!wd->button_count) || (index >= ELM_POPUP_ACTION_BUTTON_MAX))
+   if ((!wd->button_count) || (num >= ELM_POPUP_ACTION_BUTTON_MAX))
      return NULL;
 
-   if (wd->buttons[index])
+   if (wd->buttons[num])
      {
-        button = wd->buttons[index]->btn;
+        button = wd->buttons[num]->btn;
         _button_remove(obj, button, EINA_FALSE);
       }
    return button;

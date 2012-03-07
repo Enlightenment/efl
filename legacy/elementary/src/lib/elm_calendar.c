@@ -216,7 +216,7 @@ _set_month_year(Widget_Data *wd)
 static void
 _populate(Evas_Object *obj)
 {
-   int maxdays, day, mon, year, i;
+   int maxdays, day, mon, yr, i;
    Elm_Calendar_Mark *mark;
    char part[12], day_s[3];
    struct tm first_day;
@@ -230,7 +230,7 @@ _populate(Evas_Object *obj)
 
    maxdays = _maxdays_get(&wd->selected_time);
    mon = wd->selected_time.tm_mon;
-   year = wd->selected_time.tm_year;
+   yr = wd->selected_time.tm_year;
 
    _set_month_year(wd);
 
@@ -290,7 +290,7 @@ _populate(Evas_Object *obj)
 
         if ((day == wd->current_time.tm_mday)
             && (mon == wd->current_time.tm_mon)
-            && (year == wd->current_time.tm_year))
+            && (yr == wd->current_time.tm_year))
           _today(wd, i);
 
         if (day == wd->selected_time.tm_mday)
