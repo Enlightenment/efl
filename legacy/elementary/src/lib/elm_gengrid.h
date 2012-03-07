@@ -1542,41 +1542,41 @@ EAPI Elm_Object_Select_Mode_Type
 elm_gengrid_select_mode_get(const Evas_Object *obj);
 
 /**
- * Set whether the gengrid items' should be hilighted when item selected.
+ * Set whether the gengrid items' should be highlighted when item selected.
  *
  * @param obj The gengrid object.
- * @param hilight @c EINA_TRUE to enable hilight or @c EINA_FALSE to
+ * @param highlight @c EINA_TRUE to enable highlight or @c EINA_FALSE to
  * disable it.
  *
- * This will turn on/off the hilight effect when items are selected and
- * they will or will not be hilighted. The selected and clicked
+ * This will turn on/off the highlight effect when items are selected and
+ * they will or will not be highlighted. The selected and clicked
  * callback functions will still be called.
  *
- * hilight is enabled by default.
+ * highlight is enabled by default.
  *
- * @see elm_gengrid_hilight_mode_get().
+ * @see elm_gengrid_highlight_mode_get().
  *
  * @ingroup Gengrid
  */
 
 EAPI void
-elm_gengrid_hilight_mode_set(Evas_Object *obj,
-                             Eina_Bool    hilight);
+elm_gengrid_highlight_mode_set(Evas_Object *obj,
+                             Eina_Bool    highlight);
 
 /**
- * Get whether the gengrid items' should be hilighted when item selected.
+ * Get whether the gengrid items' should be highlighted when item selected.
  *
  * @param obj The gengrid object.
- * @return @c EINA_TRUE means items can be hilighted. @c EINA_FALSE indicates
+ * @return @c EINA_TRUE means items can be highlighted. @c EINA_FALSE indicates
  * they can't. If @p obj is @c NULL, @c EINA_FALSE is returned.
  *
- * @see elm_gengrid_hilight_mode_set() for details.
+ * @see elm_gengrid_highlight_mode_set() for details.
  *
  * @ingroup Gengrid
  */
 
 EAPI Eina_Bool
-elm_gengrid_hilight_mode_get(const Evas_Object *obj);
+elm_gengrid_highlight_mode_get(const Evas_Object *obj);
 
 /**
  * @}

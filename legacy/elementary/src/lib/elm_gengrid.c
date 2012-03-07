@@ -2963,16 +2963,16 @@ elm_gengrid_select_mode_get(const Evas_Object *obj)
 }
 
 EAPI void
-elm_gengrid_hilight_mode_set(Evas_Object *obj,
-                             Eina_Bool    hilight)
+elm_gengrid_highlight_mode_set(Evas_Object *obj,
+                             Eina_Bool    highlight)
 {
-   elm_genlist_hilight_mode_set(obj, hilight);
+   elm_genlist_highlight_mode_set(obj, highlight);
 }
 
 EAPI Eina_Bool
-elm_gengrid_hilight_mode_get(const Evas_Object *obj)
+elm_gengrid_highlight_mode_get(const Evas_Object *obj)
 {
-   return elm_genlist_hilight_mode_get(obj);
+   return elm_genlist_highlight_mode_get(obj);
 }
 
 EAPI int

@@ -5741,18 +5741,18 @@ elm_genlist_select_mode_get(const Evas_Object *obj)
 }
 
 EAPI void
-elm_genlist_hilight_mode_set(Evas_Object *obj,
-                             Eina_Bool    hilight)
+elm_genlist_highlight_mode_set(Evas_Object *obj,
+                             Eina_Bool    highlight)
 {
    ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return;
-   hilight = !!hilight;
-   wd->no_highlight = !hilight;
+   highlight = !!highlight;
+   wd->no_highlight = !highlight;
 }
 
 EAPI Eina_Bool
-elm_genlist_hilight_mode_get(const Evas_Object *obj)
+elm_genlist_highlight_mode_get(const Evas_Object *obj)
 {
    ELM_CHECK_WIDTYPE(obj, widtype) EINA_FALSE;
    Widget_Data *wd = elm_widget_data_get(obj);
