@@ -688,7 +688,7 @@ static void
 _item_highlight(Elm_Gen_Item *it)
 {
    const char *selectraise;
-   if ((it->wd->select_mode == ELM_OBJECT_NO_SELECT) ||
+   if ((it->wd->select_mode == ELM_OBJECT_SELECT_MODE_NONE) ||
        (it->wd->no_highlight) ||
        (it->generation < it->wd->generation) ||
        (it->highlighted) || elm_widget_item_disabled_get(it) ||
@@ -3506,14 +3506,14 @@ void
 _item_select(Elm_Gen_Item *it)
 {
    if ((it->generation < it->wd->generation) || (it->mode_set) ||
-       (it->wd->select_mode == ELM_OBJECT_NO_SELECT))
+       (it->wd->select_mode == ELM_OBJECT_SELECT_MODE_NONE))
      return;
    if (!it->selected)
      {
         it->selected = EINA_TRUE;
         it->wd->selected = eina_list_append(it->wd->selected, it);
      }
-   else if (it->wd->select_mode == ELM_OBJECT_ALWAYS_SELECT) return;
+   else if (it->wd->select_mode == ELM_OBJECT_SELECT_MODE_ALWAYS) return;
 
    evas_object_ref(WIDGET(it));
    it->walking++;
@@ -5259,12 +5259,12 @@ elm_genlist_always_select_mode_set(Evas_Object *obj,
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return;
    if (always_select)
-     elm_genlist_select_mode_set(obj, ELM_OBJECT_ALWAYS_SELECT);
+     elm_genlist_select_mode_set(obj, ELM_OBJECT_SELECT_MODE_ALWAYS);
    else
      {
-        Elm_Object_Select_Mode_Type oldmode = elm_genlist_select_mode_get(obj);
-        if (oldmode == ELM_OBJECT_ALWAYS_SELECT)
-          elm_genlist_select_mode_set(obj, ELM_OBJECT_NORMAL_SELECT);
+        Elm_Object_Select_Mode oldmode = elm_genlist_select_mode_get(obj);
+        if (oldmode == ELM_OBJECT_SELECT_MODE_ALWAYS)
+          elm_genlist_select_mode_set(obj, ELM_OBJECT_SELECT_MODE_DEFAULT);
      }
 }
 
@@ -5274,8 +5274,8 @@ elm_genlist_always_select_mode_get(const Evas_Object *obj)
    ELM_CHECK_WIDTYPE(obj, widtype) EINA_FALSE;
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return EINA_FALSE;
-   Elm_Object_Select_Mode_Type oldmode = elm_genlist_select_mode_get(obj);
-   if (oldmode == ELM_OBJECT_ALWAYS_SELECT)
+   Elm_Object_Select_Mode oldmode = elm_genlist_select_mode_get(obj);
+   if (oldmode == ELM_OBJECT_SELECT_MODE_ALWAYS)
      return EINA_TRUE;
    return EINA_FALSE;
 }
@@ -5288,12 +5288,12 @@ elm_genlist_no_select_mode_set(Evas_Object *obj,
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return;
    if (no_select)
-     elm_genlist_select_mode_set(obj, ELM_OBJECT_NO_SELECT);
+     elm_genlist_select_mode_set(obj, ELM_OBJECT_SELECT_MODE_NONE);
    else
      {
-        Elm_Object_Select_Mode_Type oldmode = elm_genlist_select_mode_get(obj);
-        if (oldmode == ELM_OBJECT_NO_SELECT)
-          elm_genlist_select_mode_set(obj, ELM_OBJECT_NORMAL_SELECT);
+        Elm_Object_Select_Mode oldmode = elm_genlist_select_mode_get(obj);
+        if (oldmode == ELM_OBJECT_SELECT_MODE_NONE)
+          elm_genlist_select_mode_set(obj, ELM_OBJECT_SELECT_MODE_DEFAULT);
      }
 }
 
@@ -5303,8 +5303,8 @@ elm_genlist_no_select_mode_get(const Evas_Object *obj)
    ELM_CHECK_WIDTYPE(obj, widtype) EINA_FALSE;
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return EINA_FALSE;
-   Elm_Object_Select_Mode_Type oldmode = elm_genlist_select_mode_get(obj);
-   if (oldmode == ELM_OBJECT_NO_SELECT)
+   Elm_Object_Select_Mode oldmode = elm_genlist_select_mode_get(obj);
+   if (oldmode == ELM_OBJECT_SELECT_MODE_NONE)
      return EINA_TRUE;
    return EINA_FALSE;
 }
@@ -5720,7 +5720,7 @@ elm_genlist_item_flip_get(const Elm_Object_Item *it)
 }
 
 EAPI void
-elm_genlist_select_mode_set(Evas_Object *obj, Elm_Object_Select_Mode_Type mode)
+elm_genlist_select_mode_set(Evas_Object *obj, Elm_Object_Select_Mode mode)
 {
    ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
@@ -5731,7 +5731,7 @@ elm_genlist_select_mode_set(Evas_Object *obj, Elm_Object_Select_Mode_Type mode)
      wd->select_mode = mode;
 }
 
-EAPI Elm_Object_Select_Mode_Type
+EAPI Elm_Object_Select_Mode
 elm_genlist_select_mode_get(const Evas_Object *obj)
 {
    ELM_CHECK_WIDTYPE(obj, widtype) ELM_OBJECT_SELECT_MODE_MAX;

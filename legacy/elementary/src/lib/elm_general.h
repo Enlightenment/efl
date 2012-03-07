@@ -96,12 +96,12 @@ typedef enum
 
 typedef enum
 {
-   ELM_OBJECT_NORMAL_SELECT = 0, /**< default select mode */
-   ELM_OBJECT_ALWAYS_SELECT, /**< always select mode */
-   ELM_OBJECT_NO_SELECT, /**< no select mode */
+   ELM_OBJECT_SELECT_MODE_DEFAULT = 0, /**< default select mode */
+   ELM_OBJECT_SELECT_MODE_ALWAYS, /**< always select mode */
+   ELM_OBJECT_SELECT_MODE_NONE, /**< no select mode */
 
    ELM_OBJECT_SELECT_MODE_MAX
-} Elm_Object_Select_Mode_Type;
+} Elm_Object_Select_Mode;
 
 /**
  * @typedef Elm_Object_Item

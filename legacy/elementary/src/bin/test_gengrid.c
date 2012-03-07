@@ -71,7 +71,7 @@ set_api_state(api_data *api)
          break;
 
       case GRID_NO_SELECT_MODE: /* 2 */
-         elm_gengrid_select_mode_set(grid, ELM_OBJECT_NO_SELECT);
+         elm_gengrid_select_mode_set(grid, ELM_OBJECT_SELECT_MODE_NONE);
          break;
 
       case GRID_NO_BOUNCE: /* 3 */

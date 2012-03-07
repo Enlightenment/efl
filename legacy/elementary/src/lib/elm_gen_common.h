@@ -93,7 +93,7 @@ struct _Widget_Data
    int                            minw, minh;
    unsigned int                   item_count;
    Evas_Coord                     pan_x, pan_y;
-   Elm_Object_Select_Mode_Type    select_mode;
+   Elm_Object_Select_Mode    select_mode;
    Eina_Bool                      reorder_mode : 1; /**< a flag for reorder mode enable/disable */
    Eina_Bool                      on_hold : 1;
    Eina_Bool                      multi : 1; /**< a flag for item multi selection */

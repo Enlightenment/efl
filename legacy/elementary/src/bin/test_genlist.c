@@ -42,12 +42,12 @@ set_api_state(api_data *api)
          break;
 
       case NO_SELECT_MODE_SET: /* 1 */
-         elm_genlist_select_mode_set(gl, ELM_OBJECT_NO_SELECT);
+         elm_genlist_select_mode_set(gl, ELM_OBJECT_SELECT_MODE_NONE);
          elm_genlist_mode_set(gl, ELM_LIST_SCROLL); /* Back to default */
          break;
 
       case COMPRESS_MODE_SET: /* 2 */
-         elm_genlist_select_mode_set(gl, ELM_OBJECT_NORMAL_SELECT);
+         elm_genlist_select_mode_set(gl, ELM_OBJECT_SELECT_MODE_DEFAULT);
          elm_genlist_compress_mode_set(gl, EINA_TRUE);
          break;
 
@@ -1055,7 +1055,7 @@ test_genlist5(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_in
    evas_object_show(bx);
 
    gl = elm_genlist_add(win);
-   elm_genlist_select_mode_set(gl, ELM_OBJECT_ALWAYS_SELECT);
+   elm_genlist_select_mode_set(gl, ELM_OBJECT_SELECT_MODE_ALWAYS);
    evas_object_size_hint_align_set(gl, EVAS_HINT_FILL, EVAS_HINT_FILL);
    evas_object_size_hint_weight_set(gl, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_show(gl);
@@ -2401,14 +2401,14 @@ static void
 gl15_edit_mode(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    elm_genlist_edit_mode_set(data, EINA_TRUE);
-   elm_genlist_select_mode_set(data, ELM_OBJECT_ALWAYS_SELECT);
+   elm_genlist_select_mode_set(data, ELM_OBJECT_SELECT_MODE_ALWAYS);
 }
 
 static void
 gl15_normal_mode(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    elm_genlist_edit_mode_set(data, EINA_FALSE);
-   elm_genlist_select_mode_set(data, ELM_OBJECT_NORMAL_SELECT);
+   elm_genlist_select_mode_set(data, ELM_OBJECT_SELECT_MODE_DEFAULT);
 }
 
 void gl15_del(void *data __UNUSED__, Evas_Object *obj __UNUSED__)
@@ -2564,7 +2564,7 @@ test_genlist16(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_i
 
    /* note: flip mode can be used with/without edit mode */
    elm_genlist_edit_mode_set(gl, EINA_TRUE);
-   elm_genlist_select_mode_set(gl, ELM_OBJECT_ALWAYS_SELECT);
+   elm_genlist_select_mode_set(gl, ELM_OBJECT_SELECT_MODE_ALWAYS);
 
    itc15 = elm_genlist_item_class_new();
    itc15->item_style     = "default";

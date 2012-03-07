@@ -1507,12 +1507,12 @@ EAPI Eina_Bool                     elm_gengrid_filled_get(const Evas_Object *obj
  * @param mode The select mode
  *
  * elm_gengrid_select_mode_set() changes item select mode in the gengrid widget.
- * - ELM_OBJECT_NORMAL_SELECT : Items will only call their selection func and
+ * - ELM_OBJECT_SELECT_MODE_DEFAULT : Items will only call their selection func and
  *      callback when first becoming selected. Any further clicks will
  *      do nothing, unless you set always select mode.
- * - ELM_OBJECT_ALWAYS_SELECT :  This means that, even if selected,
+ * - ELM_OBJECT_SELECT_MODE_ALWAYS :  This means that, even if selected,
  *      every click will make the selected callbacks be called.
- * - ELM_OBJECT_NO_SELECT : This will turn off the ability to select items
+ * - ELM_OBJECT_SELECT_MODE_NONE : This will turn off the ability to select items
  *      entirely and they will neither appear selected nor call selected
  *      callback functions.
  *
@@ -1520,7 +1520,7 @@ EAPI Eina_Bool                     elm_gengrid_filled_get(const Evas_Object *obj
  *
  * @ingroup Gengrid
  */
-EAPI void                          elm_gengrid_select_mode_set(Evas_Object *obj, Elm_Object_Select_Mode_Type mode);
+EAPI void elm_gengrid_select_mode_set(Evas_Object *obj, Elm_Object_Select_Mode mode);
 
 /**
  * Get the gengrid select mode.
@@ -1533,7 +1533,7 @@ EAPI void                          elm_gengrid_select_mode_set(Evas_Object *obj,
  *
  * @ingroup Gengrid
  */
-EAPI Elm_Object_Select_Mode_Type   elm_gengrid_select_mode_get(const Evas_Object *obj);
+EAPI Elm_Object_Select_Mode elm_gengrid_select_mode_get(const Evas_Object *obj);
 
 /**
  * Set whether the gengrid items' should be highlighted when item selected.

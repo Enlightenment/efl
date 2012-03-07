@@ -18,7 +18,7 @@ struct _Widget_Data
    int icon_size;
    unsigned int item_count;
    double align;
-   Elm_Object_Select_Mode_Type select_mode;
+   Elm_Object_Select_Mode select_mode;
    Eina_Bool homogeneous : 1;
    Eina_Bool vertical : 1;
    Eina_Bool long_press : 1;
@@ -173,11 +173,11 @@ _item_select(Elm_Toolbar_Item *it)
    if (elm_widget_item_disabled_get(it) || (it->separator) || (it->object)) return;
    sel = it->selected;
 
-   if (wd->select_mode != ELM_OBJECT_NO_SELECT)
+   if (wd->select_mode != ELM_OBJECT_SELECT_MODE_NONE)
      {
         if (sel)
           {
-             if (wd->select_mode == ELM_OBJECT_ALWAYS_SELECT) return;
+             if (wd->select_mode == ELM_OBJECT_SELECT_MODE_ALWAYS) return;
              _item_unselect(it);
           }
         else
@@ -907,7 +907,7 @@ _item_del_pre_hook(Elm_Object_Item *it)
    wd->items = eina_inlist_remove(wd->items, EINA_INLIST_GET(item));
    wd->item_count--;
    if (!next) next = ELM_TOOLBAR_ITEM_FROM_INLIST(wd->items);
-   if ((wd->select_mode == ELM_OBJECT_ALWAYS_SELECT) &&
+   if ((wd->select_mode == ELM_OBJECT_SELECT_MODE_ALWAYS) &&
        item->selected && next) _item_select(next);
    _item_del(item);
    _theme_hook(obj2);
@@ -1022,7 +1022,7 @@ _item_new(Evas_Object *obj, const char *icon, const char *label, Evas_Smart_Cb f
    evas_object_size_hint_max_set(VIEW(it), -1, -1);
    evas_object_event_callback_add(VIEW(it), EVAS_CALLBACK_RESIZE,
                                   _resize_item, obj);
-   if ((!wd->items) && (wd->select_mode == ELM_OBJECT_ALWAYS_SELECT))
+   if ((!wd->items) && (wd->select_mode == ELM_OBJECT_SELECT_MODE_ALWAYS))
      _item_select(it);
    wd->item_count++;
    return it;
@@ -2107,12 +2107,12 @@ elm_toolbar_always_select_mode_set(Evas_Object *obj, Eina_Bool always_select)
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return;
    if (always_select)
-     elm_toolbar_select_mode_set(obj, ELM_OBJECT_ALWAYS_SELECT);
+     elm_toolbar_select_mode_set(obj, ELM_OBJECT_SELECT_MODE_ALWAYS);
    else
      {
-        Elm_Object_Select_Mode_Type oldmode = elm_toolbar_select_mode_get(obj);
-        if (oldmode == ELM_OBJECT_ALWAYS_SELECT)
-          elm_toolbar_select_mode_set(obj, ELM_OBJECT_NORMAL_SELECT);
+        Elm_Object_Select_Mode oldmode = elm_toolbar_select_mode_get(obj);
+        if (oldmode == ELM_OBJECT_SELECT_MODE_ALWAYS)
+          elm_toolbar_select_mode_set(obj, ELM_OBJECT_SELECT_MODE_DEFAULT);
      }
 }
 
@@ -2122,8 +2122,8 @@ elm_toolbar_always_select_mode_get(const Evas_Object *obj)
    ELM_CHECK_WIDTYPE(obj, widtype) EINA_FALSE;
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return EINA_FALSE;
-   Elm_Object_Select_Mode_Type oldmode = elm_toolbar_select_mode_get(obj);
-   if (oldmode == ELM_OBJECT_ALWAYS_SELECT)
+   Elm_Object_Select_Mode oldmode = elm_toolbar_select_mode_get(obj);
+   if (oldmode == ELM_OBJECT_SELECT_MODE_ALWAYS)
      return EINA_TRUE;
    else
      return EINA_FALSE;
@@ -2136,12 +2136,12 @@ elm_toolbar_no_select_mode_set(Evas_Object *obj, Eina_Bool no_select)
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return;
    if (no_select)
-     elm_toolbar_select_mode_set(obj, ELM_OBJECT_NO_SELECT);
+     elm_toolbar_select_mode_set(obj, ELM_OBJECT_SELECT_MODE_NONE);
    else
      {
-        Elm_Object_Select_Mode_Type oldmode = elm_toolbar_select_mode_get(obj);
-        if (oldmode == ELM_OBJECT_NO_SELECT)
-          elm_toolbar_select_mode_set(obj, ELM_OBJECT_NORMAL_SELECT);
+        Elm_Object_Select_Mode oldmode = elm_toolbar_select_mode_get(obj);
+        if (oldmode == ELM_OBJECT_SELECT_MODE_NONE)
+          elm_toolbar_select_mode_set(obj, ELM_OBJECT_SELECT_MODE_DEFAULT);
      }
 }
 
@@ -2151,8 +2151,8 @@ elm_toolbar_no_select_mode_get(const Evas_Object *obj)
    ELM_CHECK_WIDTYPE(obj, widtype) EINA_FALSE;
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return EINA_FALSE;
-   Elm_Object_Select_Mode_Type oldmode = elm_toolbar_select_mode_get(obj);
-   if (oldmode == ELM_OBJECT_NO_SELECT)
+   Elm_Object_Select_Mode oldmode = elm_toolbar_select_mode_get(obj);
+   if (oldmode == ELM_OBJECT_SELECT_MODE_NONE)
      return EINA_TRUE;
    else
      return EINA_FALSE;
@@ -2239,22 +2239,22 @@ elm_toolbar_mode_shrink_get(const Evas_Object *obj)
 }
 
 EAPI void
-elm_toolbar_select_mode_set(Evas_Object *obj, Elm_Object_Select_Mode_Type mode)
+elm_toolbar_select_mode_set(Evas_Object *obj, Elm_Object_Select_Mode mode)
 {
    ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return;
    if (mode >= ELM_OBJECT_SELECT_MODE_MAX)
      return;
-   if ((mode == ELM_OBJECT_ALWAYS_SELECT) &&
-       (wd->select_mode != ELM_OBJECT_ALWAYS_SELECT) &&
+   if ((mode == ELM_OBJECT_SELECT_MODE_ALWAYS) &&
+       (wd->select_mode != ELM_OBJECT_SELECT_MODE_ALWAYS) &&
        wd->items)
      _item_select(ELM_TOOLBAR_ITEM_FROM_INLIST(wd->items));
    if (wd->select_mode != mode)
      wd->select_mode = mode;
 }
 
-EAPI Elm_Object_Select_Mode_Type
+EAPI Elm_Object_Select_Mode
 elm_toolbar_select_mode_get(const Evas_Object *obj)
 {
    ELM_CHECK_WIDTYPE(obj, widtype) ELM_OBJECT_SELECT_MODE_MAX;
