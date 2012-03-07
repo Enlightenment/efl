@@ -1685,6 +1685,10 @@ _ecore_evas_x_rotation_set_internal(Ecore_Evas *ee, int rotation, int resize,
 static void
 _ecore_evas_x_rotation_set(Ecore_Evas *ee, int rotation, int resize)
 {
+   int angles[2];
+   angles[0] = rotation;
+   angles[1] = ee->rotation;
+
    if (ee->rotation == rotation) return;
    if (!strcmp(ee->driver, "opengl_x11"))
      {
@@ -1696,6 +1700,9 @@ _ecore_evas_x_rotation_set(Ecore_Evas *ee, int rotation, int resize)
         einfo->info.rotation = rotation;
         _ecore_evas_x_rotation_set_internal(ee, rotation, resize,
                                             (Evas_Engine_Info *)einfo);
+        ecore_x_window_prop_property_set(ee->prop.window,
+                                         ECORE_X_ATOM_E_ILLUME_ROTATE_WINDOW_ANGLE,
+                                         ECORE_X_ATOM_CARDINAL, 32, &angles, 2);
 #endif /* BUILD_ECORE_EVAS_OPENGL_X11 */
      }
    else if (!strcmp(ee->driver, "software_x11"))
@@ -1708,6 +1715,9 @@ _ecore_evas_x_rotation_set(Ecore_Evas *ee, int rotation, int resize)
         einfo->info.rotation = rotation;
         _ecore_evas_x_rotation_set_internal(ee, rotation, resize,
                                             (Evas_Engine_Info *)einfo);
+        ecore_x_window_prop_property_set(ee->prop.window,
+                                         ECORE_X_ATOM_E_ILLUME_ROTATE_WINDOW_ANGLE,
+                                         ECORE_X_ATOM_CARDINAL, 32, &angles, 2);
 #endif /* BUILD_ECORE_EVAS_SOFTWARE_X11 */
      }
    else if (!strcmp(ee->driver,  "software_16_x11"))
@@ -1720,6 +1730,9 @@ _ecore_evas_x_rotation_set(Ecore_Evas *ee, int rotation, int resize)
         einfo->info.rotation = rotation;
         _ecore_evas_x_rotation_set_internal(ee, rotation, resize,
                                             (Evas_Engine_Info *)einfo);
+        ecore_x_window_prop_property_set(ee->prop.window,
+                                         ECORE_X_ATOM_E_ILLUME_ROTATE_WINDOW_ANGLE,
+                                         ECORE_X_ATOM_CARDINAL, 32, &angles, 2);
 #endif /* BUILD_ECORE_EVAS_SOFTWARE_16_X11 */
      }
    else if (!strcmp(ee->driver,  "software_8_x11"))
@@ -1732,6 +1745,9 @@ _ecore_evas_x_rotation_set(Ecore_Evas *ee, int rotation, int resize)
         einfo->info.rotation = rotation;
         _ecore_evas_x_rotation_set_internal(ee, rotation, resize,
                                             (Evas_Engine_Info *)einfo);
+        ecore_x_window_prop_property_set(ee->prop.window,
+                                         ECORE_X_ATOM_E_ILLUME_ROTATE_WINDOW_ANGLE,
+                                         ECORE_X_ATOM_CARDINAL, 32, &angles, 2);
 #endif /* BUILD_ECORE_EVAS_SOFTWARE_8_X11 */
      }
 }
