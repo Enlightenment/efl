@@ -97,6 +97,7 @@ _store_cache_trim(Elm_Store *st)
              eina_lock_take(&sti->lock);
           }
         sti->fetched = EINA_FALSE;
+//// let fetch/unfetch do the locking   
 //        eina_lock_release(&sti->lock);
         if (st->cb.unfetch.func)
           st->cb.unfetch.func(st->cb.unfetch.data, sti);
@@ -158,6 +159,7 @@ _store_filesystem_fetch_do(void *data, Ecore_Thread *th __UNUSED__)
      }
    if (!sti->fetched)
      {
+//// let fetch/unfetch do the locking   
 //        eina_lock_release(&sti->lock);
         if (sti->store->cb.fetch.func)
           sti->store->cb.fetch.func(sti->store->cb.fetch.data, sti);
@@ -695,6 +697,7 @@ EAPI void
 elm_store_item_data_set(Elm_Store_Item *sti, void *data)
 {
    if (!EINA_MAGIC_CHECK(sti, ELM_STORE_ITEM_MAGIC)) return;
+//// let fetch/unfetch do the locking   
 //   eina_lock_take(&sti->lock);
    sti->data = data;
 //   eina_lock_release(&sti->lock);
@@ -705,6 +708,7 @@ elm_store_item_data_get(Elm_Store_Item *sti)
 {
    if (!EINA_MAGIC_CHECK(sti, ELM_STORE_ITEM_MAGIC)) return NULL;
    void *d;
+//// let fetch/unfetch do the locking   
 //   eina_lock_take(&sti->lock);
    d = sti->data;
 //   eina_lock_release(&sti->lock);
