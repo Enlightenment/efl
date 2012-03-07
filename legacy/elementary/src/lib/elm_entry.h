@@ -412,14 +412,31 @@ struct _Elm_Entry_Anchor_Hover_Info
 };
 
 /**
+ * @typedef Elm_Entry_Item_Provider_Cb
+ * This callback type is used to provide items.
+ * If it returns an object handle other than NULL (it should create an
+ * object to do this), then this object is used to replace the current item.
+ * If not the next provider is called until one provides an item object, or the
+ * default provider in entry does.
+ * @param data The data specified as the last param when adding the provider
+ * @param entry The entry object
+ * @param text A pointer to the item href string in the text
+ * @return The object to be placed in the entry like an icon, or other element
+ * @see elm_entry_item_provider_append
+ * @see elm_entry_item_provider_prepend
+ * @see elm_entry_item_provider_remove
+ */
+typedef Evas_Object * (*Elm_Entry_Item_Provider_Cb)(void *data, Evas_Object * entry, const char *item);
+
+/**
  * @typedef Elm_Entry_Filter_Cb
  * This callback type is used by entry filters to modify text.
  * @param data The data specified as the last param when adding the filter
  * @param entry The entry object
- * @param text A pointer to the location of the text being filtered. The type of text is always markup. This data can be modified,
- * but any additional allocations must be managed by the user.
+ * @param text A pointer to the location of the text being filtered. The type of text is always markup. This data can be modified, but any additional allocations must be managed by the user.
  * @see elm_entry_markup_filter_append
  * @see elm_entry_markup_filter_prepend
+ * @see elm_entry_markup_filter_remove
  */
 typedef void (*Elm_Entry_Filter_Cb)(void *data, Evas_Object *entry, char **text);
 
@@ -923,7 +940,7 @@ EAPI Eina_Bool          elm_entry_context_menu_disabled_get(const Evas_Object *o
  *
  * @see @ref entry-items
  */
-EAPI void               elm_entry_item_provider_append(Evas_Object *obj, Evas_Object * (*func)(void *data, Evas_Object * entry, const char *item), void *data);
+EAPI void               elm_entry_item_provider_append(Evas_Object *obj, Elm_Entry_Item_Provider_Cb func, void *data);
 
 /**
  * This prepends a custom item provider to the list for that entry
@@ -935,7 +952,7 @@ EAPI void               elm_entry_item_provider_append(Evas_Object *obj, Evas_Ob
  * @param func The function called to provide the item object
  * @param data The data passed to @p func
  */
-EAPI void               elm_entry_item_provider_prepend(Evas_Object *obj, Evas_Object * (*func)(void *data, Evas_Object * entry, const char *item), void *data);
+EAPI void               elm_entry_item_provider_prepend(Evas_Object *obj, Elm_Entry_Item_Provider_Cb func, void *data);
 
 /**
  * This removes a custom item provider to the list for that entry
@@ -947,7 +964,7 @@ EAPI void               elm_entry_item_provider_prepend(Evas_Object *obj, Evas_O
  * @param func The function called to provide the item object
  * @param data The data passed to @p func
  */
-EAPI void               elm_entry_item_provider_remove(Evas_Object *obj, Evas_Object * (*func)(void *data, Evas_Object * entry, const char *item), void *data);
+EAPI void               elm_entry_item_provider_remove(Evas_Object *obj, Elm_Entry_Item_Provider_Cb func, void *data);
 
 /**
  * Append a markup filter function for text inserted in the entry
