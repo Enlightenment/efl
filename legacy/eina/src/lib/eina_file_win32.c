@@ -37,6 +37,9 @@ extern "C"
 void *alloca (size_t);
 #endif
 
+#include <sys/types.h>
+#include <sys/stat.h>
+
 #define WIN32_LEAN_AND_MEAN
 #include <windows.h>
 #undef WIN32_LEAN_AND_MEAN
@@ -998,7 +1001,7 @@ eina_file_close(Eina_File *file)
 
    eina_hash_del(_eina_file_cache, file->filename, file);
    _eina_file_real_close(file);
-   
+
    eina_lock_release(&_eina_file_lock_cache);
 }
 
@@ -1021,6 +1024,16 @@ eina_file_filename_get(Eina_File *file)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(file, NULL);
    return file->filename;
+}
+
+EAPI Eina_Iterator *eina_file_xattr_get(Eina_File *file __UNUSED__)
+{
+   return NULL;
+}
+
+EAPI Eina_Iterator *eina_file_xattr_value_get(Eina_File *file __UNUSED__)
+{
+   return NULL;
 }
 
 EAPI void *
@@ -1156,32 +1169,46 @@ eina_file_map_free(Eina_File *file, void *map)
 }
 
 EAPI int
-eina_file_statat(void *container, Eina_File_Direct_Info *info, Eina_Stat *st)
+eina_file_statat(void *container __UNUSED__, Eina_File_Direct_Info *info, Eina_Stat *st)
 {
-   WIN32_FILE_ATTRIBUTE_DATA fad;
-   ULARGE_INTEGER length;
-   ULARGE_INTEGER mtime;
-   ULARGE_INTEGER atime;
+   struct __stat64 buf;
 
    EINA_SAFETY_ON_NULL_RETURN_VAL(info, -1);
    EINA_SAFETY_ON_NULL_RETURN_VAL(st, -1);
 
-   if (!GetFileAttributesEx(info->path, GetFileExInfoStandard, &fad))
+   if (stat64(info->path, &buf))
      {
         if (info->type != EINA_FILE_LNK)
           info->type = EINA_FILE_UNKNOWN;
         return -1;
      }
 
-   length.u.LowPart = fad.nFileSizeLow;
-   length.u.HighPart = fad.nFileSizeHigh;
-   atime.u.LowPart = fad.ftLastAccessTime.dwLowDateTime;
-   atime.u.HighPart = fad.ftLastAccessTime.dwHighDateTime;
-   mtime.u.LowPart = fad.ftLastWriteTime.dwLowDateTime;
-   mtime.u.HighPart = fad.ftLastWriteTime.dwHighDateTime;
+   if (info->type == EINA_FILE_UNKNOWN)
+     {
+        if (S_ISREG(buf.st_mode))
+          info->type = EINA_FILE_REG;
+        else if (S_ISDIR(buf.st_mode))
+          info->type = EINA_FILE_DIR;
+        else
+          info->type = EINA_FILE_UNKNOWN;
+     }
 
-   st->size = length.QuadPart;
-   st->atime = atime.QuadPart;
-   st->mtime = mtime.QuadPart;
+   st->dev = buf.st_dev;
+   st->ino = buf.st_ino;
+   st->mode = buf.st_mode;
+   st->nlink = buf.st_nlink;
+   st->uid = buf.st_uid;
+   st->gid = buf.st_gid;
+   st->rdev = buf.st_rdev;
+   st->size = buf.st_size;
+   st->blksize = 0;
+   st->blocks = 0;
+   st->atime = buf.st_atime;
+   st->mtime = buf.st_mtime;
+   st->ctime = buf.st_ctime;
+   st->atimensec = 0;
+   st->mtimensec = 0;
+   st->ctimensec = 0;
+
    return 0;
 }
