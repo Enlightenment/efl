@@ -935,7 +935,8 @@ _ecore_evas_x_event_window_focus_in(void *data __UNUSED__, int type __UNUSED__, 
    ee = ecore_event_window_match(e->win);
    if ((!ee) || (ee->ignore_events)) return ECORE_CALLBACK_PASS_ON; /* pass on event */
    if (e->win != ee->prop.window) return ECORE_CALLBACK_PASS_ON;
-   if (e->mode == ECORE_X_EVENT_MODE_UNGRAB) return ECORE_CALLBACK_PASS_ON;
+//xx// filtering with these doesnt help   
+//xx//   if (e->mode == ECORE_X_EVENT_MODE_UNGRAB) return ECORE_CALLBACK_PASS_ON;
    ee->prop.focused = 1;
    evas_focus_in(ee->evas);
    if (ee->func.fn_focus_in) ee->func.fn_focus_in(ee);
@@ -952,7 +953,9 @@ _ecore_evas_x_event_window_focus_out(void *data __UNUSED__, int type __UNUSED__,
    ee = ecore_event_window_match(e->win);
    if ((!ee) || (ee->ignore_events)) return ECORE_CALLBACK_PASS_ON; /* pass on event */
    if (e->win != ee->prop.window) return ECORE_CALLBACK_PASS_ON;
-   if (e->mode == ECORE_X_EVENT_MODE_GRAB) return ECORE_CALLBACK_PASS_ON;
+//xx// filtering with these doesnt help   
+//xx//   if (e->mode == ECORE_X_EVENT_MODE_GRAB) return ECORE_CALLBACK_PASS_ON;
+
 //   if (ee->prop.fullscreen)
 //     ecore_x_window_focus(ee->prop.window);
    evas_focus_out(ee->evas);
