@@ -722,7 +722,9 @@ elm_quicklaunch_fork(int    argc,
 # endif
           }
         ecore_evas_init(); // FIXME: check errors
+# ifdef HAVE_ELEMENTARY_ECORE_IMF
         ecore_imf_init();
+# endif
         _elm_module_init();
 #endif
      }
