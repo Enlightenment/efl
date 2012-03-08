@@ -33,7 +33,6 @@ static Eina_Bool _ecore_wl_egl_init(Ecore_Wl_Display *ewd);
 static Eina_Bool _ecore_wl_egl_shutdown(Ecore_Wl_Display *ewd);
 static Eina_Bool _ecore_wl_xkb_init(Ecore_Wl_Display *ewd);
 static Eina_Bool _ecore_wl_xkb_shutdown(Ecore_Wl_Display *ewd);
-static void _ecore_wl_cb_interfaces_bound_free(void *data __UNUSED__, void *event);
 
 /* local variables */
 static int _ecore_wl_init_count = 0;
@@ -437,8 +436,7 @@ _ecore_wl_cb_handle_global(struct wl_display *disp, unsigned int id, const char 
         ev->shm = (ewd->wl.shm != NULL);
         ev->shell = (ewd->wl.shell != NULL);
 
-        ecore_event_add(ECORE_WL_EVENT_INTERFACES_BOUND, ev, 
-                        _ecore_wl_cb_interfaces_bound_free, NULL);
+        ecore_event_add(ECORE_WL_EVENT_INTERFACES_BOUND, ev, NULL, NULL);
      }
 }
 
@@ -550,14 +548,4 @@ _ecore_wl_xkb_shutdown(Ecore_Wl_Display *ewd)
 
    if (ewd->xkb) xkb_free_keymap(ewd->xkb);
    return EINA_TRUE;
-}
-
-static void 
-_ecore_wl_cb_interfaces_bound_free(void *data __UNUSED__, void *event)
-{
-   Ecore_Wl_Event_Interfaces_Bound *ev;
-
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
-
-   if ((ev = event)) free(ev);
 }
