@@ -1002,7 +1002,6 @@ EAPI void                  elm_map_overlay_class_remove(Elm_Map_Overlay *clas, E
  *
  * @ingroup Map
  */
-EAPI
 EAPI void                  elm_map_overlay_class_zoom_max_set(Elm_Map_Overlay *clas, int zoom);
 
 /**
