@@ -6,6 +6,8 @@
 #include "elm_priv.h"
 #include "els_scroller.h"
 
+#define OVERLAY_CLASS_ZOOM_MAX 255
+
 #ifdef HAVE_ELEMENTARY_ECORE_CON
 
 typedef struct _Widget_Data Widget_Data;
@@ -43,7 +45,6 @@ typedef char                      *(*Elm_Map_Module_Name_Url_Func)(Evas_Object *
 #define DEFAULT_TILE_SIZE       256
 #define MAX_CONCURRENT_DOWNLOAD 10
 #define MARER_MAX_NUMBER        30
-#define OVERLAY_CLASS_ZOOM_MAX 255
 #define OVERLAY_GROUPING_SCALE 2
 
 #define CACHE_ROOT          "/tmp/elm_map"
@@ -4984,7 +4985,7 @@ elm_map_overlay_type_get(const Elm_Map_Overlay *overlay)
    return overlay->type;
 #else
    (void) overlay;
-   return OVERLAY_TYPE_NONE;
+   return ELM_MAP_OVERLAY_TYPE_NONE;
 #endif
 }
 
