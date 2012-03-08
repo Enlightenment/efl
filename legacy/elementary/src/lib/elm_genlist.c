@@ -688,7 +688,7 @@ _item_highlight(Elm_Gen_Item *it)
 {
    const char *selectraise;
    if ((it->wd->select_mode == ELM_OBJECT_SELECT_MODE_NONE) ||
-       (it->wd->no_highlight) ||
+       (!it->wd->highlight) ||
        (it->generation < it->wd->generation) ||
        (it->highlighted) || elm_widget_item_disabled_get(it) ||
        (it->select_mode == ELM_OBJECT_SELECT_MODE_NONE) || (it->item->mode_view) ||
@@ -3479,6 +3479,7 @@ elm_genlist_add(Evas_Object *parent)
    wd->max_items_per_block = MAX_ITEMS_PER_BLOCK;
    wd->item_cache_max = wd->max_items_per_block * 2;
    wd->longpress_timeout = _elm_config->longpress_timeout;
+   wd->highlight = EINA_TRUE;
 
    evas_object_smart_callback_add(obj, "scroll-hold-on", _hold_on, obj);
    evas_object_smart_callback_add(obj, "scroll-hold-off", _hold_off, obj);
@@ -5708,8 +5709,7 @@ elm_genlist_highlight_mode_set(Evas_Object *obj,
    ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return;
-   highlight = !!highlight;
-   wd->no_highlight = !highlight;
+   wd->highlight = !!highlight;
 }
 
 EAPI Eina_Bool
@@ -5718,7 +5718,7 @@ elm_genlist_highlight_mode_get(const Evas_Object *obj)
    ELM_CHECK_WIDTYPE(obj, widtype) EINA_FALSE;
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return EINA_FALSE;
-   return !wd->no_highlight;
+   return wd->highlight;
 }
 
 EAPI void

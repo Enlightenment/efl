@@ -872,7 +872,7 @@ static void
 _item_highlight(Elm_Gen_Item *it)
 {
    if ((it->wd->select_mode == ELM_OBJECT_SELECT_MODE_NONE) ||
-       (it->wd->no_highlight) || (it->highlighted) ||
+       (!it->wd->highlight) || (it->highlighted) ||
        (it->generation < it->wd->generation)) return;
    edje_object_signal_emit(VIEW(it), "elm,state,selected", "elm");
    it->highlighted = EINA_TRUE;
@@ -1946,6 +1946,7 @@ elm_gengrid_add(Evas_Object *parent)
    wd->align_y = 0.5;
    wd->h_bounce = bounce;
    wd->v_bounce = bounce;
+   wd->highlight = EINA_TRUE;
 
    evas_object_smart_callback_add(obj, "scroll-hold-on", _hold_on, obj);
    evas_object_smart_callback_add(obj, "scroll-hold-off", _hold_off, obj);
