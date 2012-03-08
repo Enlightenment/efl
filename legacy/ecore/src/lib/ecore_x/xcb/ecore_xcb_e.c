@@ -773,7 +773,7 @@ ecore_x_e_illume_clipboard_state_get(Ecore_X_Window win)
                                      ECORE_X_ATOM_E_ILLUME_CLIPBOARD_STATE,
                                      &atom, 1))
      return ECORE_X_ILLUME_CLIPBOARD_STATE_UNKNOWN;
-   return _ecore_xcb_clipboard_state_get(atom);
+   return _ecore_xcb_e_clipboard_state_get(atom);
 }
 
 EAPI void
