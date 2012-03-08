@@ -238,7 +238,7 @@ static void
 _ecore_event_generic_free(void *data __UNUSED__,
                           void *event)
 { /* DO NOT MEMPOOL FREE THIS */
-   free (event);
+   free(event);
 }
 
 /**
