@@ -1922,7 +1922,7 @@ EAPI void ecore_con_url_timeout_set(Ecore_Con_Url *url_con, double timeout);
  *
  * This is used to, at any time, try to return the status code for a transmission.
  * @param url_con Connection object
- * @return A valid HTTP STATUS code, or -1 on failure
+ * @return A valid HTTP STATUS code, or 0 on failure
  *
  * @since 1.2
  */

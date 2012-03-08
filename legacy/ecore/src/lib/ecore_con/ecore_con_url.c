@@ -368,11 +368,12 @@ ecore_con_url_status_code_get(Ecore_Con_Url *url_con)
    if (!ECORE_MAGIC_CHECK(url_con, ECORE_MAGIC_CON_URL))
      {
         ECORE_MAGIC_FAIL(url_con, ECORE_MAGIC_CON_URL, __func__);
-        return -1;
+        return 0;
      }
 
+   if (url_con->status) return url_con->status;
    _ecore_con_url_status_get(url_con);
-   return url_con->status ?: -1;
+   return url_con->status;
 #else
    return -1;
    (void)url_con;
