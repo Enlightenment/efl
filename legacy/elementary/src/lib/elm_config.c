@@ -1963,13 +1963,13 @@ _elm_config_init(void)
    _desc_init();
    _profile_fetch_from_conf();
    _config_load();
+   _env_get();
    if (_elm_preferred_engine) eina_stringshare_del(_elm_preferred_engine);
    if (_elm_config->engine)
      _elm_preferred_engine = eina_stringshare_add(_elm_config->engine);
    else
      _elm_preferred_engine = NULL;
    _translation_init();
-   _env_get();
    _config_apply();
    _elm_config_font_overlay_apply();
    _elm_recache();
