@@ -118,15 +118,15 @@ test_entry(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info 
             "<item size=16x16 vsize=full href=emoticon/happy-panting></item>"
             " (before this)<br/>"
 
-            "And as well (absize + ascent): "
-            "<item absize=64x64 vsize=ascent href=emoticon/knowing-grin></item>"
-            " (full) "
-            "<item absize=64x64 vsize=full href=emoticon/not-impressed></item>"
-            " or even paths to image files on disk too like: "
-            "<item absize=96x128 vsize=full href=file://%s/images/sky_01.jpg></item>"
-            " ... end."
-            , elm_app_data_dir_get()
-            );
+              "And as well (absize + ascent): "
+                 "<item absize=64x64 vsize=ascent href=emoticon/knowing-grin></item>"
+                   " (full) "
+                   "<item absize=64x64 vsize=full href=emoticon/not-impressed></item>"
+                   " or even paths to image files on disk too like: "
+                   "<item absize=96x128 vsize=full href=file://%s/images/sky_01.jpg></item>"
+                   " ... end."
+                   , elm_app_data_dir_get()
+                   );
    elm_object_text_set(en, buf);
    evas_object_size_hint_weight_set(en, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(en, EVAS_HINT_FILL, EVAS_HINT_FILL);
@@ -328,11 +328,11 @@ test_entry_scrolled(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *ev
    elm_entry_context_menu_item_add(en, "Hello", NULL, ELM_ICON_NONE, NULL, NULL);
    elm_entry_context_menu_item_add(en, "World", NULL, ELM_ICON_NONE, NULL, NULL);
    elm_object_text_set(en,
-				"Multi-line disabled entry widget :)<br/>"
-				"We can use markup <b>like this</> for styling and<br/>"
-				"formatting <em>like this</>, as well as<br/>"
-				"<a href=X><link>links in the text</></a>,"
-				"but it won't be editable or clickable.");
+                       "Multi-line disabled entry widget :)<br/>"
+                       "We can use markup <b>like this</> for styling and<br/>"
+                       "formatting <em>like this</>, as well as<br/>"
+                       "<a href=X><link>links in the text</></a>,"
+                       "but it won't be editable or clickable.");
    evas_object_show(en);
    elm_box_pack_end(bx, en);
 
@@ -455,17 +455,17 @@ test_entry_scrolled(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *ev
    evas_object_size_hint_align_set(en, EVAS_HINT_FILL, EVAS_HINT_FILL);
    elm_entry_scrollbar_policy_set(en, ELM_SCROLLER_POLICY_ON, ELM_SCROLLER_POLICY_ON);
    elm_object_text_set(en,
-				"This is an entry widget in this window that<br/>"
-				"uses markup <b>like this</> for styling and<br/>"
-				"formatting <em>like this</>, as well as<br/>"
-				"<a href=X><link>links in the text</></a>, so enter text<br/>"
-				"in here to edit it. By them way, links are<br/>"
-				"called <a href=anc-02>Anchors</a> so you will need<br/>"
-				"to refer to them this way. At the end here is a really long "
-				"line to test line wrapping to see if it works. But just in "
-				"case this line is not long enough I will add more here to "
-				"really test it out, as Elementary really needs some "
-				"good testing to see if entry widgets work as advertised.");
+                       "This is an entry widget in this window that<br/>"
+                       "uses markup <b>like this</> for styling and<br/>"
+                       "formatting <em>like this</>, as well as<br/>"
+                       "<a href=X><link>links in the text</></a>, so enter text<br/>"
+                       "in here to edit it. By them way, links are<br/>"
+                       "called <a href=anc-02>Anchors</a> so you will need<br/>"
+                       "to refer to them this way. At the end here is a really long "
+                       "line to test line wrapping to see if it works. But just in "
+                       "case this line is not long enough I will add more here to "
+                       "really test it out, as Elementary really needs some "
+                       "good testing to see if entry widgets work as advertised.");
    evas_object_smart_callback_add(en, "anchor,clicked", scrolled_anchor_test, en);
    evas_object_show(en);
    elm_box_pack_end(bx, en);
@@ -1002,18 +1002,18 @@ test_entry3(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info
    evas_object_size_hint_weight_set(en, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(en, EVAS_HINT_FILL, EVAS_HINT_FILL);
    elm_object_text_set(en,
-				"This is an entry widget in this window that<br/>"
-				"uses markup <b>like this</> for styling and<br/>"
-				"formatting <em>like this</>, as well as<br/>"
-				"<a href=X><link>links in the text</></a>, so enter text<br/>"
-				"in here to edit it. By them way, links are<br/>"
-				"called <a href=anc-02>Anchors</a> so you will need<br/>"
-				"to refer to them this way. At the end here is a really long "
-				"line to test line wrapping to see if it works. But just in "
-				"case this line is not long enough I will add more here to "
-				"really test it out, as Elementary really needs some "
-				"good testing to see if entry widgets work as advertised."
-                                );
+                       "This is an entry widget in this window that<br/>"
+                       "uses markup <b>like this</> for styling and<br/>"
+                       "formatting <em>like this</>, as well as<br/>"
+                       "<a href=X><link>links in the text</></a>, so enter text<br/>"
+                       "in here to edit it. By them way, links are<br/>"
+                       "called <a href=anc-02>Anchors</a> so you will need<br/>"
+                       "to refer to them this way. At the end here is a really long "
+                       "line to test line wrapping to see if it works. But just in "
+                       "case this line is not long enough I will add more here to "
+                       "really test it out, as Elementary really needs some "
+                       "good testing to see if entry widgets work as advertised."
+                      );
    evas_object_smart_callback_add(en, "anchor,clicked", scrolled_anchor_test, en);
    elm_box_pack_end(bx, en);
    evas_object_show(en);
@@ -1311,11 +1311,11 @@ test_entry4(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info
    en = elm_entry_add(win);
    elm_entry_line_wrap_set(en, ELM_WRAP_NONE);
    elm_object_text_set(en,
-		       "This is an entry widget<br/>"
-		       "that uses markup<br/>"
+                       "This is an entry widget<br/>"
+                       "that uses markup<br/>"
                        "<b>like this</> and has<br/>"
-		       "no scroller, so you can<br/>"
-		       "use it more flexibly.");
+                       "no scroller, so you can<br/>"
+                       "use it more flexibly.");
    evas_object_size_hint_weight_set(en, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(en, EVAS_HINT_FILL, EVAS_HINT_FILL);
    elm_object_part_content_set(ly, "element2", en);
@@ -1326,18 +1326,18 @@ test_entry4(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info
    evas_object_size_hint_weight_set(en, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(en, EVAS_HINT_FILL, EVAS_HINT_FILL);
    elm_object_text_set(en,
-				"This is an entry widget in this window that<br/>"
-				"uses markup <b>like this</> for styling and<br/>"
-				"formatting <em>like this</>, as well as<br/>"
-				"<a href=X><link>links in the text</></a>, so enter text<br/>"
-				"in here to edit it. By them way, links are<br/>"
-				"called <a href=anc-02>Anchors</a> so you will need<br/>"
-				"to refer to them this way. At the end here is a really long "
-				"line to test line wrapping to see if it works. But just in "
-				"case this line is not long enough I will add more here to "
-				"really test it out, as Elementary really needs some "
-				"good testing to see if entry widgets work as advertised."
-                                );
+                       "This is an entry widget in this window that<br/>"
+                       "uses markup <b>like this</> for styling and<br/>"
+                       "formatting <em>like this</>, as well as<br/>"
+                       "<a href=X><link>links in the text</></a>, so enter text<br/>"
+                       "in here to edit it. By them way, links are<br/>"
+                       "called <a href=anc-02>Anchors</a> so you will need<br/>"
+                       "to refer to them this way. At the end here is a really long "
+                       "line to test line wrapping to see if it works. But just in "
+                       "case this line is not long enough I will add more here to "
+                       "really test it out, as Elementary really needs some "
+                       "good testing to see if entry widgets work as advertised."
+                      );
    evas_object_smart_callback_add(en, "anchor,clicked", scrolled_anchor_test, en);
    elm_object_part_content_set(ly, "element3", en);
    evas_object_show(en);
@@ -1370,15 +1370,15 @@ test_entry5(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info
    evas_object_size_hint_weight_set(en, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(en, EVAS_HINT_FILL, EVAS_HINT_FILL);
    elm_object_text_set(en,
-				"This is an entry widget in this window that "
-				"uses markup like this for styling and "
-				"formatting like this, as well as "
-				"to refer to them this way. At the end here is a really long "
-				"line to test line wrapping to see if it works. But just in "
-				"case this line is not long enough I will add more here to "
-				"really test it out, as Elementary really needs some "
-				"good testing to see if entry widgets work as advertised."
-                                );
+                       "This is an entry widget in this window that "
+                       "uses markup like this for styling and "
+                       "formatting like this, as well as "
+                       "to refer to them this way. At the end here is a really long "
+                       "line to test line wrapping to see if it works. But just in "
+                       "case this line is not long enough I will add more here to "
+                       "really test it out, as Elementary really needs some "
+                       "good testing to see if entry widgets work as advertised."
+                      );
    evas_object_smart_callback_add(en, "anchor,clicked", scrolled_anchor_test, en);
    elm_box_pack_end(bx, en);
    evas_object_show(en);
@@ -1666,9 +1666,9 @@ test_entry6(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info
    evas_object_size_hint_weight_set(en, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(en, EVAS_HINT_FILL, EVAS_HINT_FILL);
    elm_object_text_set(en,
-				"input_panel_enabled: TRUE.<br>"
-                "When this entry gets a focus, virtual keyboard will be shown "
-				"in illume environment.");
+                       "input_panel_enabled: TRUE.<br>"
+                       "When this entry gets a focus, virtual keyboard will be shown "
+                       "in illume environment.");
    elm_box_pack_end(bx, en);
    evas_object_show(en);
 
@@ -1678,9 +1678,9 @@ test_entry6(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info
    evas_object_size_hint_weight_set(en, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(en, EVAS_HINT_FILL, EVAS_HINT_FILL);
    elm_object_text_set(en,
-				"input_panel_enabled: FALSE.<br>"
-                "This entry doesn't allow to show virtual keyboard automatically.<br>"
-                "it is used in case that wants its own keypad such as calculator.");
+                       "input_panel_enabled: FALSE.<br>"
+                       "This entry doesn't allow to show virtual keyboard automatically.<br>"
+                       "it is used in case that wants its own keypad such as calculator.");
    elm_entry_input_panel_enabled_set(en, EINA_FALSE);
    elm_box_pack_end(bx, en);
    evas_object_show(en);
@@ -1694,10 +1694,10 @@ test_entry6(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info
 static void
 changed_cb(void *data, Evas_Object *obj, void *event_info __UNUSED__)
 {
-	Evas_Object *en;
-	en = (Evas_Object*)data;
+   Evas_Object *en;
+   en = (Evas_Object*)data;
 
-	elm_entry_editable_set(en, elm_check_state_get(obj));
+   elm_entry_editable_set(en, elm_check_state_get(obj));
 }
 
 static void
@@ -1979,13 +1979,13 @@ horizontal_bounce_changed_cb(void *data, Evas_Object *obj, void *event_info __UN
 static void
 vertical_bounce_changed_cb(void *data, Evas_Object *obj, void *event_info __UNUSED__)
 {
-	Evas_Object *en;
-	Eina_Bool hb;
-	Eina_Bool bounce = elm_check_state_get(obj);
-	en = (Evas_Object*)data;
+   Evas_Object *en;
+   Eina_Bool hb;
+   Eina_Bool bounce = elm_check_state_get(obj);
+   en = (Evas_Object*)data;
 
-	elm_entry_bounce_get(en, &hb, NULL);
-	elm_entry_bounce_set(en, hb, bounce);
+   elm_entry_bounce_get(en, &hb, NULL);
+   elm_entry_bounce_set(en, hb, bounce);
 }
 
 void
@@ -2157,10 +2157,10 @@ _scrolled_entry_save(void *data, Evas_Object *obj __UNUSED__, void *event_info _
 static void
 auto_save_changed_cb(void *data, Evas_Object *obj, void *event_info __UNUSED__)
 {
-	Evas_Object *en;
-	en = (Evas_Object*)data;
+   Evas_Object *en;
+   en = (Evas_Object*)data;
 
-	elm_entry_autosave_set(en, elm_check_state_get(obj));
+   elm_entry_autosave_set(en, elm_check_state_get(obj));
 }
 
 void
