@@ -1782,9 +1782,9 @@ _item_cache_free(Item_Cache *itc)
 
 static void
 _item_text_realize(Elm_Gen_Item *it,
-                    Evas_Object *target,
-                    Eina_List **source,
-                    const char *parts)
+                   Evas_Object *target,
+                   Eina_List **source,
+                   const char *parts)
 {
    if (it->itc->func.text_get)
      {
@@ -1815,9 +1815,9 @@ _item_text_realize(Elm_Gen_Item *it,
 
 static Eina_List *
 _item_content_unrealize(Elm_Gen_Item *it,
-                   Evas_Object *target,
-                   Eina_List **source,
-                   const char *parts)
+                        Evas_Object *target,
+                        Eina_List **source,
+                        const char *parts)
 {
    Eina_List *res = it->content_objs;
 
@@ -1847,9 +1847,9 @@ _item_content_unrealize(Elm_Gen_Item *it,
 
 static Eina_List *
 _item_content_realize(Elm_Gen_Item *it,
-                   Evas_Object *target,
-                   Eina_List **source,
-                   const char *parts)
+                      Evas_Object *target,
+                      Eina_List **source,
+                      const char *parts)
 {
    Eina_List *res = NULL;
 
@@ -4835,13 +4835,13 @@ elm_genlist_item_display_only_get(const Elm_Object_Item *it)
    return EINA_FALSE;
 }
 
-static Eina_Bool _elm_genlist_item_compute_coordinates(
-                  Elm_Object_Item *it,
-                  Elm_Genlist_Item_Scrollto_Type type,
-                  Evas_Coord *x,
-                  Evas_Coord *y,
-                  Evas_Coord *w,
-                  Evas_Coord *h)
+static Eina_Bool
+_elm_genlist_item_compute_coordinates(Elm_Object_Item *it,
+                                      Elm_Genlist_Item_Scrollto_Type type,
+                                      Evas_Coord *x,
+                                      Evas_Coord *y,
+                                      Evas_Coord *w,
+                                      Evas_Coord *h)
 {
    Elm_Gen_Item *_it = (Elm_Gen_Item *)it;
    Evas_Coord gith = 0;
@@ -5703,7 +5703,7 @@ elm_genlist_select_mode_get(const Evas_Object *obj)
 
 EAPI void
 elm_genlist_highlight_mode_set(Evas_Object *obj,
-                             Eina_Bool    highlight)
+                               Eina_Bool    highlight)
 {
    ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);

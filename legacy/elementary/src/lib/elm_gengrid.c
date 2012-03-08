@@ -36,52 +36,6 @@ struct Elm_Gen_Item_Type
    Eina_Bool   moving : 1;
 };
 
-#if 0
-struct _Widget_Data
-{
-   Eina_Inlist_Sorted_State *state;
-   Evas_Object      *obj; /* the gengrid object */
-   Evas_Object      *scr; /* a smart scroller object which is used internally in genlist */
-   Evas_Object      *pan_smart; /* "elm_genlist_pan" evas smart object. this is an extern pan of smart scroller(scr). */
-   Eina_List        *selected;
-   Eina_List        *group_items; /* list of groups index items */
-   Eina_Inlist      *items; /* inlist of all items */
-   Elm_Gen_Item     *reorder_it; /* item currently being repositioned */
-   Elm_Gen_Item     *last_selected_item;
-   Pan              *pan; /* pan_smart object's smart data */
-   Ecore_Job        *calc_job;
-   int               walking;
-   int               item_width, item_height;
-   int               group_item_width, group_item_height;
-   int               minw, minh;
-   long              count;
-   Evas_Coord        pan_x, pan_y;
-   Eina_Bool         reorder_mode : 1;
-   Eina_Bool         on_hold : 1;
-   Eina_Bool         multi : 1;
-   Eina_Bool         wasselected : 1;
-   Eina_Bool         clear_me : 1;
-   Eina_Bool         h_bounce : 1;
-   Eina_Bool         v_bounce : 1;
-   Ecore_Cb          del_cb, calc_cb, sizing_cb;
-   Ecore_Cb          clear_cb;
-   ////////////////////////////////////
-   double            align_x, align_y;
-
-   Evas_Coord        old_pan_x, old_pan_y;
-   Evas_Coord        reorder_item_x, reorder_item_y;
-   unsigned int      nmax;
-   long              items_lost;
-
-   int               generation;
-
-   Eina_Bool         horizontal : 1;
-   Eina_Bool         longpressed : 1;
-   Eina_Bool         reorder_item_changed : 1;
-   Eina_Bool         move_effect_enabled : 1;
-};
-#endif
-
 static const char *widtype = NULL;
 static void      _item_highlight(Elm_Gen_Item *it);
 static void      _item_unrealize_cb(Elm_Gen_Item *it);
@@ -1184,8 +1138,8 @@ _group_item_place(Pan *sd)
 
 static void
 _item_place(Elm_Gen_Item *it,
-            Evas_Coord        cx,
-            Evas_Coord        cy)
+            Evas_Coord    cx,
+            Evas_Coord    cy)
 {
    Evas_Coord x, y, ox, oy, cvx, cvy, cvw, cvh, iw, ih, ww;
    Evas_Coord tch, tcw, alignw = 0, alignh = 0, vw, vh;
@@ -1754,9 +1708,9 @@ _pan_move(Evas_Object *obj,
 }
 
 static void
-_hold_on(void *data       __UNUSED__,
-         Evas_Object     *obj,
-         void *event_info __UNUSED__)
+_hold_on(void        *data  __UNUSED__,
+         Evas_Object *obj,
+         void        *event_info __UNUSED__)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return;
@@ -1764,9 +1718,9 @@ _hold_on(void *data       __UNUSED__,
 }
 
 static void
-_hold_off(void *data       __UNUSED__,
-          Evas_Object     *obj,
-          void *event_info __UNUSED__)
+_hold_off(void        *data __UNUSED__,
+          Evas_Object *obj,
+          void        *event_info __UNUSED__)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return;
@@ -1774,9 +1728,9 @@ _hold_off(void *data       __UNUSED__,
 }
 
 static void
-_freeze_on(void *data       __UNUSED__,
-           Evas_Object     *obj,
-           void *event_info __UNUSED__)
+_freeze_on(void        *data __UNUSED__,
+           Evas_Object *obj,
+           void        *event_info __UNUSED__)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return;
@@ -1803,8 +1757,8 @@ _scr_anim_start(void        *data,
 
 static void
 _scr_anim_stop(void        *data,
-                Evas_Object *obj __UNUSED__,
-                void        *event_info __UNUSED__)
+               Evas_Object *obj __UNUSED__,
+               void        *event_info __UNUSED__)
 {
    evas_object_smart_callback_call(data, SIG_SCROLL_ANIM_STOP, NULL);
 }
@@ -2041,8 +1995,8 @@ elm_gengrid_item_size_get(const Evas_Object *obj,
 
 EAPI void
 elm_gengrid_group_item_size_set(Evas_Object *obj,
-                          Evas_Coord   w,
-                          Evas_Coord   h)
+                                Evas_Coord   w,
+                                Evas_Coord   h)
 {
    ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
@@ -2056,8 +2010,8 @@ elm_gengrid_group_item_size_set(Evas_Object *obj,
 
 EAPI void
 elm_gengrid_group_item_size_get(const Evas_Object *obj,
-                          Evas_Coord        *w,
-                          Evas_Coord        *h)
+                                Evas_Coord        *w,
+                                Evas_Coord        *h)
 {
    ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
@@ -2329,7 +2283,7 @@ elm_gengrid_item_data_set(Elm_Object_Item  *it,
 EAPI const Elm_Gengrid_Item_Class *
 elm_gengrid_item_item_class_get(const Elm_Object_Item *it)
 {
-   return (Elm_Gengrid_Item_Class *) elm_genlist_item_item_class_get(it);
+   return (Elm_Gengrid_Item_Class *)elm_genlist_item_item_class_get(it);
 }
 
 EINA_DEPRECATED EAPI void
@@ -2964,7 +2918,7 @@ elm_gengrid_select_mode_get(const Evas_Object *obj)
 
 EAPI void
 elm_gengrid_highlight_mode_set(Evas_Object *obj,
-                             Eina_Bool    highlight)
+                               Eina_Bool    highlight)
 {
    elm_genlist_highlight_mode_set(obj, highlight);
 }
