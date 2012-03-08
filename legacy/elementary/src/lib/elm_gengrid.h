@@ -1569,5 +1569,46 @@ EAPI void                          elm_gengrid_highlight_mode_set(Evas_Object *o
 EAPI Eina_Bool                     elm_gengrid_highlight_mode_get(const Evas_Object *obj);
 
 /**
+ * Set the gengrid item's select mode.
+ *
+ * @param it The gengrid item object
+ * @param mode The select mode
+ *
+ * elm_gengrid_select_mode_set() changes item's select mode.
+ * - ELM_OBJECT_SELECT_MODE_DEFAULT : The item will only call their selection func and
+ *      callback when first becoming selected. Any further clicks will
+ *      do nothing, unless you set always select mode.
+ * - ELM_OBJECT_SELECT_MODE_ALWAYS : This means that, even if selected,
+ *      every click will make the selected callbacks be called.
+ * - ELM_OBJECT_SELECT_MODE_NONE : This will turn off the ability to select the item
+ *      entirely and they will neither appear selected nor call selected
+ *      callback functions.
+ * - ELM_OBJECT_SELECT_MODE_DISPLAY_ONLY : This will apply no-finger-size rule
+ *      with ELM_OBJECT_SELECT_MODE_NONE. No-finger-size rule makes an item can be
+ *      smaller than lower limit. Clickable objects should be bigger than
+ *      human touch point device (your finger) for some touch or
+ *      small screen devices. So it is enabled, the item can be shrink than
+ *      predefined finger-size value. And the item will be updated.
+ *
+ * @see elm_gengrid_item_select_mode_get()
+ *
+ * @ingroup Gengrid
+ */
+EAPI void                          elm_gengrid_item_select_mode_set(Elm_Object_Item *it, Elm_Object_Select_Mode mode);
+
+/**
+ * Get the gengrid item's select mode.
+ *
+ * @param it The gengrid item object
+ * @return The select mode
+ * (If getting mode is failed, it returns ELM_OBJECT_SELECT_MODE_MAX)
+ *
+ * @see elm_gengrid_item_select_mode_set()
+ *
+ * @ingroup Gengrid
+ */
+EAPI Elm_Object_Select_Mode        elm_gengrid_item_select_mode_get(const Elm_Object_Item *it);
+
+/**
  * @}
  */

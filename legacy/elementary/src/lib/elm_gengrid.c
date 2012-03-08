@@ -2938,3 +2938,29 @@ elm_gengrid_item_index_get(const Elm_Object_Item *it)
 
    return _it->position;
 }
+
+EAPI void
+elm_gengrid_item_select_mode_set(Elm_Object_Item *it,
+                                 Elm_Object_Select_Mode mode)
+{
+   ELM_OBJ_ITEM_CHECK_OR_RETURN(it);
+   Elm_Gen_Item *_it = (Elm_Gen_Item *)it;
+   if (!_it) return;
+   if (_it->generation < _it->wd->generation) return;
+   if (mode >= ELM_OBJECT_SELECT_MODE_MAX)
+     return;
+   if (_it->select_mode != mode)
+     _it->select_mode = mode;
+
+   if (_it->select_mode == ELM_OBJECT_SELECT_MODE_DISPLAY_ONLY)
+     elm_gengrid_item_update(it);
+}
+
+EAPI Elm_Object_Select_Mode
+elm_gengrid_item_select_mode_get(const Elm_Object_Item *it)
+{
+   ELM_OBJ_ITEM_CHECK_OR_RETURN(it, ELM_OBJECT_SELECT_MODE_MAX);
+   Elm_Gen_Item *_it = (Elm_Gen_Item *)it;
+   if (!_it) return ELM_OBJECT_SELECT_MODE_MAX;
+   return _it->select_mode;
+}
