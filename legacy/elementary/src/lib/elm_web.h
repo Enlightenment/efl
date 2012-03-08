@@ -790,6 +790,20 @@ EAPI Eina_Bool         elm_web_back_possible_get(Evas_Object *obj);
 EAPI Eina_Bool         elm_web_forward_possible_get(Evas_Object *obj);
 
 /**
+ * Queries whether it's possible to jump the given number of steps
+ *
+ * The @p steps value can be a negative integer to back in history, or a
+ * positive to move forward.
+ *
+ * @param obj The web object
+ * @param steps The number of steps to check for
+ *
+ * @return EINA_TRUE if enough history exists to perform the given jump,
+ * EINA_FALSE otherwise
+ */
+EAPI Eina_Bool         elm_web_navigate_possible_get(Evas_Object *obj, int steps);
+
+/**
  * Gets whether browsing history is enabled for the given object
  *
  * @param obj The web object

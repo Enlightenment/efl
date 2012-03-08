@@ -1589,7 +1589,7 @@ elm_web_forward_possible_get(Evas_Object *obj)
 }
 
 EAPI Eina_Bool
-elm_web_navigate_possible(Evas_Object *obj, int steps)
+elm_web_navigate_possible_get(Evas_Object *obj, int steps)
 {
    ELM_CHECK_WIDTYPE(obj, widtype) EINA_FALSE;
 #ifdef HAVE_ELEMENTARY_WEB
