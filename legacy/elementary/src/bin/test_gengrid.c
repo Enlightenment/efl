@@ -276,9 +276,9 @@ always_select_mode_cb(void *data, Evas_Object *obj, void *event_info __UNUSED__)
 {
    api_data *api = data;
    if (elm_check_state_get(obj))
-     elm_gengrid_highlight_mode_set(api->grid, ELM_OBJECT_SELECT_MODE_ALWAYS);
+     elm_gengrid_select_mode_set(api->grid, ELM_OBJECT_SELECT_MODE_ALWAYS);
    else
-     elm_gengrid_highlight_mode_set(api->grid, ELM_OBJECT_SELECT_MODE_DEFAULT);
+     elm_gengrid_select_mode_set(api->grid, ELM_OBJECT_SELECT_MODE_DEFAULT);
 }
 
 static void
