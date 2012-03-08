@@ -1602,19 +1602,18 @@ EAPI void                          elm_genlist_item_fields_update(Elm_Object_Ite
 EAPI void                          elm_genlist_item_decorate_mode_set(Elm_Object_Item *it, const char *mode_type, Eina_Bool mode_set);
 
 /**
- * Get the last (or current) genlist mode used.
+ * Get the item's decorate mode.
  *
  * @param obj The genlist object
  *
- * This function just returns the name of the last used genlist mode. It will
- * be the current mode if it's still active.
+ * This function just returns the name of the item's decorate mode.
  *
  * @see elm_genlist_item_decorate_mode_set()
  * @see elm_genlist_decorated_item_get()
  *
  * @ingroup Genlist
  */
-EAPI const char                   *elm_genlist_item_decorate_mode_get(const Evas_Object *obj);
+EAPI const char                   *elm_genlist_item_decorate_mode_get(const Elm_Object_Item *it);
 
 /**
  * Get active genlist mode item
