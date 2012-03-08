@@ -425,7 +425,7 @@ test_entry_scrolled(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *ev
    evas_object_show(en_p);
    elm_box_pack_end(bx, en_p);
 
-   /* scrolled entry with icon/end widgets*/
+   /* entry with icon/end widgets*/
    en = elm_entry_add(win);
    elm_entry_scrollable_set(en, EINA_TRUE);
    elm_entry_scrollbar_policy_set(en, ELM_SCROLLER_POLICY_OFF, ELM_SCROLLER_POLICY_OFF);
@@ -444,11 +444,11 @@ test_entry_scrolled(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *ev
    evas_object_size_hint_min_set(bt, 48, 48);
    evas_object_show(bt);
    elm_object_part_content_set(en, "end", bt);
-   elm_object_text_set(en, "scrolled entry with icon and end objects");
+   elm_object_text_set(en, "entry with icon and end objects");
    evas_object_show(en);
    elm_box_pack_end(bx, en);
 
-   /* markup scrolled entry */
+   /* markup entry */
    en = elm_entry_add(win);
    elm_entry_scrollable_set(en, EINA_TRUE);
    evas_object_size_hint_weight_set(en, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
@@ -996,7 +996,7 @@ test_entry3(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info
    elm_box_pack_end(bx, bx2);
    evas_object_show(bx2);
 
-   /* markup scrolled entry */
+   /* markup entry */
    en = elm_entry_add(win);
    elm_entry_scrollable_set(en, EINA_TRUE);
    evas_object_size_hint_weight_set(en, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);

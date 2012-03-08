@@ -81,13 +81,13 @@ test_focus2(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info
    evas_object_size_hint_weight_set(en, EVAS_HINT_EXPAND, 0.0);
    evas_object_size_hint_align_set(en, EVAS_HINT_FILL, 0.5);
    elm_entry_scrollbar_policy_set(en, ELM_SCROLLER_POLICY_OFF, ELM_SCROLLER_POLICY_OFF);
-   elm_object_text_set(en, "Scrolled Entry that should get focus");
+   elm_object_text_set(en, "Entry that should get focus");
    elm_entry_single_line_set(en, EINA_TRUE);
    evas_object_show(en);
    elm_box_pack_end(bx, en);
 
    bt = elm_button_add(PARENT);
-   elm_object_text_set(bt, "Give focus to scrolled entry");
+   elm_object_text_set(bt, "Give focus to entry");
    evas_object_smart_callback_add(bt, "clicked", _focus_obj, en);
    elm_box_pack_end(bx, bt);
    evas_object_show(bt);
