@@ -1719,6 +1719,7 @@ _signal_entry_paste_request(void *data, Evas_Object *obj __UNUSED__, const char 
    Elm_Sel_Type type = (emission[sizeof("ntry,paste,request,")] == '1') ?
      ELM_SEL_TYPE_PRIMARY : ELM_SEL_TYPE_CLIPBOARD;
    if (!wd) return;
+   if (!wd->editable) return;
    evas_object_smart_callback_call(data, SIG_SELECTION_PASTE, NULL);
    if (wd->sel_notify_handler)
      {
