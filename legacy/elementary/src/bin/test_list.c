@@ -286,20 +286,14 @@ test_list(void        *data __UNUSED__,
           Evas_Object *obj __UNUSED__,
           void        *event_info __UNUSED__)
 {
-   Evas_Object *win, *bg, *li, *ic, *ic2, *bx, *tb2, *bt, *bxx;
+   Evas_Object *win, *li, *ic, *ic2, *bx, *tb2, *bt, *bxx;
    char buf[PATH_MAX];
    Elm_Object_Item *list_it1, *list_it2, *list_it3, *list_it4, *list_it5;
    api_data *api = calloc(1, sizeof(api_data));
 
-   win = elm_win_add(NULL, "list", ELM_WIN_BASIC);
-   elm_win_title_set(win, "List");
+   win = elm_win_util_standard_add("list", "List");
    elm_win_autodel_set(win, EINA_TRUE);
    evas_object_event_callback_add(win, EVAS_CALLBACK_FREE, _cleanup_cb, api);
-
-   bg = elm_bg_add(win);
-   elm_win_resize_object_add(win, bg);
-   evas_object_size_hint_weight_set(bg, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-   evas_object_show(bg);
 
    bxx = elm_box_add(win);
    elm_win_resize_object_add(win, bxx);
@@ -450,18 +444,12 @@ test_list_horizontal(void        *data __UNUSED__,
                      Evas_Object *obj __UNUSED__,
                      void        *event_info __UNUSED__)
 {
-   Evas_Object *win, *bg, *li, *ic, *ic2, *bx, *tb2, *bt;
+   Evas_Object *win, *li, *ic, *ic2, *bx, *tb2, *bt;
    char buf[PATH_MAX];
    Elm_Object_Item *list_it1, *list_it2, *list_it3, *list_it4;
 
-   win = elm_win_add(NULL, "list-horizontal", ELM_WIN_BASIC);
-   elm_win_title_set(win, "List Horizontal");
+   win = elm_win_util_standard_add("list-horizontal", "List Horizontal");
    elm_win_autodel_set(win, EINA_TRUE);
-
-   bg = elm_bg_add(win);
-   elm_win_resize_object_add(win, bg);
-   evas_object_size_hint_weight_set(bg, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-   evas_object_show(bg);
 
    li = elm_list_add(win);
    elm_list_horizontal_set(li, EINA_TRUE);
@@ -728,17 +716,11 @@ test_list3(void        *data __UNUSED__,
            Evas_Object *obj __UNUSED__,
            void        *event_info __UNUSED__)
 {
-   Evas_Object *win, *bg, *li, *ic, *ic2, *bx;
+   Evas_Object *win, *li, *ic, *ic2, *bx;
    char buf[PATH_MAX];
 
-   win = elm_win_add(NULL, "list3", ELM_WIN_BASIC);
-   elm_win_title_set(win, "List 3");
+   win = elm_win_util_standard_add("list3", "List 3");
    elm_win_autodel_set(win, EINA_TRUE);
-
-   bg = elm_bg_add(win);
-   elm_win_resize_object_add(win, bg);
-   evas_object_size_hint_weight_set(bg, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-   evas_object_show(bg);
 
    li = elm_list_add(win);
    elm_win_resize_object_add(win, li);
@@ -890,19 +872,13 @@ test_list4(void        *data __UNUSED__,
            Evas_Object *obj __UNUSED__,
            void        *event_info __UNUSED__)
 {
-   Evas_Object *win, *bg, *li, *ic, *ic2, *naviframe;
+   Evas_Object *win, *li, *ic, *ic2, *naviframe;
    static struct Pginfo info = {NULL, NULL};
    char buf[PATH_MAX];
 
-   win = elm_win_add(NULL, "list4", ELM_WIN_BASIC);
-   elm_win_title_set(win, "List 4");
+   win = elm_win_util_standard_add("list4", "List 4");
    elm_win_autodel_set(win, EINA_TRUE);
    info.win = win;
-
-   bg = elm_bg_add(win);
-   elm_win_resize_object_add(win, bg);
-   evas_object_size_hint_weight_set(bg, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-   evas_object_show(bg);
 
    naviframe = elm_naviframe_add(win);
    elm_win_resize_object_add(win, naviframe);
@@ -1021,18 +997,12 @@ test_list5(void        *data __UNUSED__,
            Evas_Object *obj __UNUSED__,
            void        *event_info __UNUSED__)
 {
-   Evas_Object *win, *bg, *li;
+   Evas_Object *win, *li;
    static struct list5_data_cb info;
 
-   win = elm_win_add(NULL, "list5", ELM_WIN_BASIC);
-   elm_win_title_set(win, "List 5");
+   win = elm_win_util_standard_add("list5", "List 5");
    elm_win_autodel_set(win, EINA_TRUE);
    info.win = win;
-
-   bg = elm_bg_add(win);
-   elm_win_resize_object_add(win, bg);
-   evas_object_size_hint_weight_set(bg, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-   evas_object_show(bg);
 
    li = elm_list_add(win);
    evas_object_size_hint_weight_set(li, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
