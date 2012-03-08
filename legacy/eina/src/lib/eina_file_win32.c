@@ -1154,3 +1154,34 @@ eina_file_map_free(Eina_File *file, void *map)
  on_exit:
    eina_lock_release(&file->lock);
 }
+
+EAPI int
+eina_file_statat(void *container, Eina_File_Direct_Info *info, Eina_Stat *st)
+{
+   WIN32_FILE_ATTRIBUTE_DATA fad;
+   ULARGE_INTEGER length;
+   ULARGE_INTEGER mtime;
+   ULARGE_INTEGER atime;
+
+   EINA_SAFETY_ON_NULL_RETURN_VAL(info, -1);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(st, -1);
+
+   if (!GetFileAttributesEx(info->path, GetFileExInfoStandard, &fad))
+     {
+        if (info->type != EINA_FILE_LNK)
+          info->type = EINA_FILE_UNKNOWN;
+        return -1;
+     }
+
+   length.u.LowPart = fad.nFileSizeLow;
+   length.u.HighPart = fad.nFileSizeHigh;
+   atime.u.LowPart = fad.ftLastAccessTime.dwLowDateTime;
+   atime.u.HighPart = fad.ftLastAccessTime.dwHighDateTime;
+   mtime.u.LowPart = fad.ftLastWriteTime.dwLowDateTime;
+   mtime.u.HighPart = fad.ftLastWriteTime.dwHighDateTime;
+
+   st->size = length.QuadPart;
+   st->atime = atime.QuadPart;
+   st->mtime = mtime.QuadPart;
+   return 0;
+}
