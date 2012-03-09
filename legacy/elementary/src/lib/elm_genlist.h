@@ -31,7 +31,7 @@
  * - @c item_style - This is a constant string and simply defines the name
  *   of the item style. It @b must be specified and the default should be @c
  *   "default".
- * - @c mode_item_style - This is a constant string and simply defines the name
+ * - @c decorate_item_style - This is a constant string and simply defines the name
  *   of the mode item style. It is used to specify mode item style. It can be
  *   used to set sweep mode.
  * - @c edit_item_style - This is a constant string and simply defines the name

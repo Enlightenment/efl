@@ -48,7 +48,7 @@ struct _Elm_Gen_Item_Class
    unsigned int  refcount; /**< Set it to 0 if you use your own const class, or its managed for you by class ref/unref calls */
    Eina_Bool     delete_me : 1; /**< Leave this alone - set it to 0 if you have a const class of your own */
    const char   *item_style; /**< Name of the visual style to use for this item. If you don't know use "default" */
-   const char   *mode_item_style; /**< Style used if item is set to a specific mode. @see elm_genlist_item_mode_set() or NULL if you don't care. currently it's used only in genlist. */
+   const char   *decorate_item_style; /**< Style used if item is set to a decorate mode. @see elm_genlist_item_decorate_mode_set() or NULL if you don't care. currently it's used only in genlist. */
    const char   *edit_item_style; /**< Style to use when in edit mode, or NULL if you don't care. currently it's used only in genlist. */
    struct
      {
