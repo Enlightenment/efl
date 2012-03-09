@@ -5,7 +5,7 @@
  * one). See stdout/stderr for output.
  *
  * @verbatim
- * gcc -o evas-box evas-box.c `pkg-config --libs --cflags evas ecore ecore-evas`
+ * gcc -o evas-box evas-box.c `pkg-config --libs --cflags evas ecore ecore-evas eina`
  * @endverbatim
  */
 

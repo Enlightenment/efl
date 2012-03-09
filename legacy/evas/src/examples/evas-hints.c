@@ -16,6 +16,8 @@
 
 #ifdef HAVE_CONFIG_H
 #include "config.h"
+#else
+#define __UNUSED__
 #endif
 
 #include <Ecore.h>
@@ -27,6 +29,7 @@
 
 #define WIDTH  320
 #define HEIGHT 480
+#define PACKAGE_EXAMPLES_DIR "."
 
 static const char commands[] = \
   "commands are:\n"
