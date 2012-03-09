@@ -15,6 +15,8 @@ Elm_Config *_elm_config = NULL;
 char *_elm_profile = NULL;
 static Eet_Data_Descriptor *_config_edd = NULL;
 static Eet_Data_Descriptor *_config_font_overlay_edd = NULL;
+static Eet_Data_Descriptor *_config_color_edd = NULL;
+static Eet_Data_Descriptor *_config_color_palette_edd = NULL;
 const char *_elm_preferred_engine = NULL;
 
 static Ecore_Poller *_elm_cache_flush_poller = NULL;
@@ -259,6 +261,33 @@ _desc_init(void)
         eet_data_descriptor_free(_config_edd);
         return;
      }
+
+   memset(&eddc, 0, sizeof(eddc)); /* just in case... */
+   EET_EINA_STREAM_DATA_DESCRIPTOR_CLASS_SET(&eddc, Elm_Color_RGBA);
+   eddc.func.str_direct_alloc = NULL;
+   eddc.func.str_direct_free = NULL;
+
+   _config_color_edd = eet_data_descriptor_stream_new(&eddc);
+   if (!_config_color_edd)
+     {
+        printf("EEEK! eet_data_descriptor_stream_new() failed\n");
+        eet_data_descriptor_free(_config_edd);
+        return;
+     }
+
+   memset(&eddc, 0, sizeof(eddc)); /* just in case... */
+   EET_EINA_STREAM_DATA_DESCRIPTOR_CLASS_SET(&eddc, Elm_Custom_Palette);
+   eddc.func.str_direct_alloc = NULL;
+   eddc.func.str_direct_free = NULL;
+
+   _config_color_palette_edd = eet_data_descriptor_stream_new(&eddc);
+   if (!_config_color_palette_edd)
+     {
+        printf("EEEK! eet_data_descriptor_stream_new() failed\n");
+        eet_data_descriptor_free(_config_edd);
+        return;
+     }
+
 #define T_INT    EET_T_INT
 #define T_DOUBLE EET_T_DOUBLE
 #define T_STRING EET_T_STRING
@@ -269,6 +298,22 @@ _desc_init(void)
    ELM_CONFIG_VAL(D, T, text_class, EET_T_STRING);
    ELM_CONFIG_VAL(D, T, font, EET_T_STRING);
    ELM_CONFIG_VAL(D, T, size, EET_T_INT);
+#undef T
+#undef D
+
+#define T Elm_Color_RGBA
+#define D _config_color_edd
+   ELM_CONFIG_VAL(D, T, r, EET_T_UINT);
+   ELM_CONFIG_VAL(D, T, g, EET_T_UINT);
+   ELM_CONFIG_VAL(D, T, b, EET_T_UINT);
+   ELM_CONFIG_VAL(D, T, a, EET_T_UINT);
+#undef T
+#undef D
+
+#define T Elm_Custom_Palette
+#define D _config_color_palette_edd
+   ELM_CONFIG_VAL(D, T, palette_name, EET_T_STRING);
+   ELM_CONFIG_LIST(D, T, color_list, _config_color_edd);
 #undef T
 #undef D
 
@@ -337,6 +382,7 @@ _desc_init(void)
    ELM_CONFIG_VAL(D, T, week_start, T_INT);
    ELM_CONFIG_VAL(D, T, weekend_start, T_INT);
    ELM_CONFIG_VAL(D, T, weekend_len, T_INT);
+   ELM_CONFIG_LIST(D, T, color_palette, _config_color_palette_edd);
 #undef T
 #undef D
 #undef T_INT
@@ -358,6 +404,18 @@ _desc_shutdown(void)
      {
         eet_data_descriptor_free(_config_font_overlay_edd);
         _config_font_overlay_edd = NULL;
+     }
+
+   if (_config_color_edd)
+     {
+        eet_data_descriptor_free(_config_color_edd);
+        _config_color_edd = NULL;
+     }
+
+   if (_config_color_palette_edd)
+     {
+        eet_data_descriptor_free(_config_color_palette_edd);
+        _config_color_palette_edd = NULL;
      }
 }
 
@@ -561,6 +619,63 @@ _elm_config_text_classes_free(Eina_List *l)
 }
 
 Eina_List *
+_elm_config_color_list_get(const char *palette_name)
+{
+    Eina_List *plist;
+    Elm_Custom_Palette *cpalette;
+    EINA_LIST_FOREACH(_elm_config->color_palette, plist, cpalette)
+      {
+         if (strcmp(cpalette->palette_name, palette_name))
+           continue;
+         return cpalette->color_list;
+      }
+    return NULL;
+}
+
+void
+_elm_config_color_set(const char *palette_name,
+                      int r,
+                      int g,
+                      int b,
+                      int a)
+{
+   Eina_List *plist;
+   Elm_Custom_Palette *cpalette;
+   Elm_Color_RGBA *color;
+   EINA_LIST_FOREACH(_elm_config->color_palette, plist, cpalette)
+     {
+        if (strcmp(cpalette->palette_name, palette_name))
+          continue;
+
+        color = calloc(1, sizeof(Elm_Color_RGBA));
+        color->r = r;
+        color->g = g;
+        color->b = b;
+        color->a = a;
+        cpalette->color_list = eina_list_prepend(cpalette->color_list,
+                                                       color);
+     }
+}
+
+void
+_elm_config_colors_free(const char *palette_name)
+{
+   Eina_List *plist;
+   Elm_Custom_Palette *cpalette;
+   Elm_Color_RGBA *color;
+   EINA_LIST_FOREACH(_elm_config->color_palette, plist, cpalette)
+     {
+        if (strcmp(cpalette->palette_name, palette_name))
+          continue;
+
+        EINA_LIST_FREE(cpalette->color_list, color)
+          {
+             free(color);
+          }
+     }
+}
+
+Eina_List *
 _elm_config_profiles_list(void)
 {
    Eina_File_Direct_Info *info;
@@ -708,6 +823,8 @@ _config_free(void)
 {
    Elm_Font_Overlay *fo;
    const char *fontdir;
+   Elm_Custom_Palette *palette;
+   Elm_Color_RGBA *color;
 
    if (!_elm_config) return;
    EINA_LIST_FREE(_elm_config->font_dirs, fontdir)
@@ -720,6 +837,12 @@ _config_free(void)
         if (fo->text_class) eina_stringshare_del(fo->text_class);
         if (fo->font) eina_stringshare_del(fo->font);
         free(fo);
+     }
+   EINA_LIST_FREE(_elm_config->color_palette, palette)
+     {
+        if (palette->palette_name) eina_stringshare_del(palette->palette_name);
+        EINA_LIST_FREE(palette->color_list, color) free(color);
+        free(palette);
      }
    if (_elm_config->theme) eina_stringshare_del(_elm_config->theme);
    if (_elm_config->modules) eina_stringshare_del(_elm_config->modules);
@@ -911,6 +1034,7 @@ _config_load(void)
    _elm_config->week_start = 1; /* monday */
    _elm_config->weekend_start = 6; /* saturday */
    _elm_config->weekend_len = 2;
+   _elm_config->color_palette = NULL;
 }
 
 static const char *

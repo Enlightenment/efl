@@ -5485,16 +5485,29 @@
  * @until show(rect)
  *
  * Now that we have a window with background and a rectangle we can create
- * our color_selector and set it's initial color to fully opaque blue:
- * @until show
+ * our color_selector
+ * @until elm_colorselector_add
  *
- * Next we tell ask to be notified whenever the color changes:
+ * Now colors can be loaded to color selector's palette by setting the palette name
+ * @until show(cs)
+ *
+ * Next we ask to be notified whenever the color changes on selector:
  * @until changed
  *
- * We follow that we some more run of the mill setup code:
+ * Next we ask to be notified whenever the color item is selected and longpressed:
+ * @until color,item,longpressed
+ *
+ * We add some more code to the usual setup code:
  * @until ELM_MAIN()
  *
- * And now get to the callback that sets the color of the rectangle:
+ * now get to the "changed" callback that sets the color of the rectangle:
+ * @until }
+ *
+ * And now get to the "color,item,selected" callback that sets the color of the rectangle:
+ * @until }
+ *
+ * And now get to the "color,item,longpressed" callback that gets and displays 
+ * the color of the rectangle:
  * @until }
  *
  * This example will look like this:

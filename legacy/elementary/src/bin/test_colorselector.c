@@ -21,10 +21,28 @@ _colorselector_clicked_cb(void *data, Evas_Object *obj, void *event_info __UNUSE
    evas_object_color_set(re, r, g, b, a);
 }
 
+static void
+_colorpalette_clicked_cb(void *data, Evas_Object *obj __UNUSED__, void *event_info)
+{
+   int r = 0, g = 0, b = 0 ,a = 0;
+   Elm_Object_Item *color_it = (Elm_Object_Item *) event_info;
+   elm_colorselector_palette_item_color_get(color_it, &r, &g, &b, &a);
+   evas_object_color_set((Evas_Object *) data, r, g, b , a);
+}
+
+static void
+_colorpalette_longpressed_cb(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info)
+{
+   int r = 0,g = 0,b = 0 ,a = 0;
+   Elm_Object_Item *color_it = (Elm_Object_Item *) event_info;
+   elm_colorselector_palette_item_color_get(color_it, &r, &g, &b, &a);
+   printf("\ncolor = %d-%d-%d-%d\n", r, g, b, a);
+}
+
 void
 test_colorselector(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
-   Evas_Object *win, *bg, *bx, *cp, *fr, *ly, *re;
+   Evas_Object *win, *bg, *bx, *cs, *fr, *ly, *re;
    char buf[PATH_MAX];
    int r, g, b, a;
 
@@ -69,21 +87,35 @@ test_colorselector(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *eve
    elm_box_pack_end(bx, fr);
    evas_object_show(fr);
 
-   cp = elm_colorselector_add(win);
+   cs = elm_colorselector_add(win);
+   elm_colorselector_palette_color_add(cs, 255, 90, 18, 255);
+   elm_colorselector_palette_color_add(cs, 255, 213, 0, 255);
+   elm_colorselector_palette_color_add(cs, 146, 255, 11, 255);
+   elm_colorselector_palette_color_add(cs, 9, 186, 10, 255);
+   elm_colorselector_palette_color_add(cs, 86, 201, 242, 255);
+   elm_colorselector_palette_color_add(cs, 18, 83, 128, 255);
+   elm_colorselector_palette_color_add(cs, 140, 53, 238, 255);
+   elm_colorselector_palette_color_add(cs, 255, 145, 145, 255);
+   elm_colorselector_palette_color_add(cs, 255, 59, 119, 255);
+   elm_colorselector_palette_color_add(cs, 133, 100, 69, 255);
+   elm_colorselector_palette_color_add(cs, 255, 255, 119, 255);
+   elm_colorselector_palette_color_add(cs, 133, 100, 255, 255);
 
    a = 180;
    r = 255;
    g = 160;
    b = 132;
 
-   elm_colorselector_color_set(cp, r, g, b, a);
-   evas_object_size_hint_weight_set(cp, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-   evas_object_size_hint_align_set(cp, EVAS_HINT_FILL, EVAS_HINT_FILL);
-   elm_object_content_set(fr, cp);
-   evas_object_show(cp);
-   evas_object_smart_callback_add(cp, "changed", _colorselector_clicked_cb, re);
+   elm_colorselector_color_set(cs, r, g, b, a);
+   evas_object_size_hint_weight_set(cs, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_size_hint_align_set(cs, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   elm_object_content_set(fr, cs);
+   evas_object_show(cs);
+   evas_object_smart_callback_add(cs, "changed", _colorselector_clicked_cb, re);
+   evas_object_smart_callback_add(cs, "color,item,selected", _colorpalette_clicked_cb, re);
+   evas_object_smart_callback_add(cs, "color,item,longpressed", _colorpalette_longpressed_cb, re);
 
-   elm_colorselector_color_get(cp, &r, &g, &b, &a);
+   elm_colorselector_color_get(cs, &r, &g, &b, &a);
    /* Fix Alpha pre multiplication by edje */
    r = (r * a) / 255;
    g = (g * a) / 255;

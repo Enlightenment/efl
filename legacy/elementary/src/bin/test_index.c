@@ -18,6 +18,18 @@ struct _api_data
 };
 typedef struct _api_data api_data;
 
+struct _pagectrl_data
+{
+   Evas_Object *index;
+   Evas_Object *sc;
+   Evas_Coord recent_x;
+   Evas_Coord page_width;
+   int page_cnt;
+   Eina_Bool drag_started : 1;
+   Eina_Bool changed : 1;
+};
+typedef struct _pagectrl_data pagectrl_data;
+
 enum _api_state
 {
    INDEX_LEVEL_SET,
@@ -393,5 +405,168 @@ test_index2(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info
    evas_object_resize(win, 320, 480);
    evas_object_show(win);
 }
+
+static void
+_drag_start(void *data , Evas_Object *obj, void *event_info __UNUSED__)
+{
+   pagectrl_data *page_data = data;
+   Evas_Coord x, y, w, h;
+   elm_scroller_region_get(obj, &x, &y, &w, &h);
+
+   page_data->recent_x = x;
+   page_data->drag_started = EINA_TRUE;
+}
+
+static void
+_drag_stop(void *data , Evas_Object *obj, void *event_info __UNUSED__)
+{
+   pagectrl_data *page_data = data;
+   Evas_Coord x, y, w, h;
+   elm_scroller_region_get(obj, &x, &y, &w, &h);
+
+   if ((page_data->recent_x == x) && (x != 0))
+     elm_object_scroll_hold_push(obj);
+}
+
+static void
+_anim_start(void *data , Evas_Object *obj, void *event_info __UNUSED__)
+{
+   pagectrl_data *page_data = data;
+   Evas_Coord x, y, w, h;
+   Elm_Object_Item *it;
+   int idx;
+   int threshold;
+   Evas_Coord max_page_x;
+
+   if (page_data->changed)
+     {
+        page_data->changed = EINA_FALSE;
+        return;
+     }
+
+   if (!page_data->drag_started) return;
+   max_page_x = (page_data->page_cnt - 1) * page_data->page_width;
+   elm_scroller_region_get(obj, &x, &y, &w, &h);
+   it = elm_index_selected_item_get(page_data->index, 0);
+   if (!it) return;
+   idx = (int) elm_object_item_data_get(it);
+   if (x < 0) x = 0;
+   if (x > max_page_x) x = max_page_x;
+
+   threshold = page_data->page_width * 0.2;
+   if (abs(page_data->recent_x - x) > threshold)
+     {
+        if (x > page_data->recent_x) idx++;
+        else if ((x < page_data->recent_x) && (idx > 0)) idx--;
+     }
+
+   if (idx > page_data->page_cnt) idx = page_data->page_cnt;
+
+   page_data->drag_started = EINA_FALSE;
+
+   elm_scroller_region_bring_in(obj, page_data->page_width * idx, 0, w, h);
+
+   it = elm_index_item_find(page_data->index, (void *) idx);
+   elm_index_item_selected_set(it, EINA_TRUE);
+}
+
+static void
+_anim_stop(void *data __UNUSED__, Evas_Object *obj, void *event_info __UNUSED__)
+{
+   elm_object_scroll_hold_pop(obj);
+}
+
+static void
+_index3_selected_cb(void *data, Evas_Object *obj __UNUSED__, void *event_info)
+{
+   Evas_Coord x, y, w, h;
+   Elm_Object_Item *it = event_info;
+   int idx = (int) elm_object_item_data_get(it);
+   pagectrl_data *page_data = data;
+
+   evas_object_geometry_get(page_data->sc, &x, &y, &w, &h);
+   page_data->changed = EINA_TRUE;
+
+   elm_scroller_region_bring_in(page_data->sc, page_data->page_width * idx, 0,
+                                w, h);
+}
+
+void
+test_index3(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+{
+   Evas_Object *win, *bg, *sc, *img, *id;
+   char buf[PATH_MAX];
+   api_data *api = calloc(1, sizeof(api_data));
+   pagectrl_data *page_data = calloc(1, sizeof(pagectrl_data));
+   Evas_Coord page_h;
+   int i;
+   Elm_Object_Item *it;
+   page_data->page_width = 480;
+   page_data->page_cnt = 3;
+
+   win = elm_win_add(NULL, "index", ELM_WIN_BASIC);
+   elm_win_title_set(win, "index - pagecontrol style");
+   elm_win_autodel_set(win, EINA_TRUE);
+   evas_object_event_callback_add(win, EVAS_CALLBACK_FREE, _cleanup_cb, api);
+
+   bg = elm_bg_add(win);
+   elm_win_resize_object_add(win, bg);
+   evas_object_size_hint_weight_set(bg, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_show(bg);
+
+   img = elm_image_add(win);
+   snprintf(buf, sizeof(buf), "%s/images/horz_scrollbar.jpg", elm_app_data_dir_get());
+   elm_image_file_set(img, buf, NULL);
+   elm_image_resizable_set(img, EINA_TRUE, EINA_FALSE);
+   elm_image_object_size_get(img, NULL, &page_h);
+   evas_object_show(img);
+
+   page_data->sc = sc = elm_scroller_add(win);
+   evas_object_smart_callback_add(sc, "scroll,drag,start", _drag_start,
+                                  page_data);
+   evas_object_smart_callback_add(sc, "scroll,drag,stop", _drag_stop,
+                                  page_data);
+   evas_object_smart_callback_add(sc, "scroll,anim,start", _anim_start,
+                                  page_data);
+   evas_object_smart_callback_add(sc, "scroll,anim,stop", _anim_stop,
+                                  page_data);
+
+   elm_scroller_bounce_set(sc, EINA_FALSE, EINA_FALSE);
+   elm_scroller_policy_set(sc, ELM_SCROLLER_POLICY_OFF,
+                           ELM_SCROLLER_POLICY_OFF);
+   elm_scroller_page_size_set(sc, page_data->page_width, page_h);
+   elm_object_content_set(sc, img);
+   elm_object_scroll_lock_y_set(sc, EINA_TRUE);
+   elm_win_resize_object_add(win, sc);
+   evas_object_show(sc);
+
+   page_data->index = api->dt.id = id = elm_index_add(win);
+   elm_index_horizontal_set(id, EINA_TRUE);
+   elm_index_autohide_disabled_set(id, EINA_TRUE);
+   elm_object_style_set(id, "pagecontrol");
+
+   evas_object_smart_callback_add(id, "selected", _index3_selected_cb,
+                                  page_data);
+   evas_object_size_hint_weight_set(id, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_size_hint_align_set(id, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   evas_object_show(id);
+
+   for(i = 0; i < page_data->page_cnt; i++)
+     {
+        snprintf(buf, sizeof(buf), "%c", '1' + i);
+        if (i == 0)
+          it = elm_index_item_append(id, buf, NULL, (void *) i);
+        else
+          elm_index_item_append(id, buf, NULL, (void *) i);
+     }
+
+   elm_index_level_go(id, 0);
+   elm_index_item_selected_set(it, EINA_TRUE);
+
+   elm_win_resize_object_add(win, id);
+   evas_object_resize(win, page_data->page_width, 585);
+   evas_object_show(win);
+}
+
 
 #endif

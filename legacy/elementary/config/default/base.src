@@ -59,4 +59,160 @@ group "Elm_Config" struct {
   value "week_start" int: 1;
   value "weekend_start" int: 6;
   value "weekend_len" int: 2;
+  group "color_palette" list {
+     group "Elm_Custom_Palette" struct {
+        value "palette_name" string: "default";
+        group "color_list" list {
+           group "Elm_Color_RGBA" struct {
+              value "r" uint: 255;
+              value "g" uint: 0;
+              value "b" uint: 0;
+              value "a" uint: 255;
+           }
+           group "Elm_Color_RGBA" struct {
+              value "r" uint: 0;
+              value "g" uint: 255;
+              value "b" uint: 0;
+              value "a" uint: 255;
+           }
+           group "Elm_Color_RGBA" struct {
+              value "r" uint: 0;
+              value "g" uint: 0;
+              value "b" uint: 255;
+              value "a" uint: 255;
+           }
+           group "Elm_Color_RGBA" struct {
+              value "r" uint: 255;
+              value "g" uint: 255;
+              value "b" uint: 0;
+              value "a" uint: 255;
+           }
+           group "Elm_Color_RGBA" struct {
+              value "r" uint: 0;
+              value "g" uint: 255;
+              value "b" uint: 255;
+              value "a" uint: 255;
+           }
+           group "Elm_Color_RGBA" struct {
+              value "r" uint: 255;
+              value "g" uint: 0;
+              value "b" uint: 255;
+              value "a" uint: 255;
+           }
+           group "Elm_Color_RGBA" struct {
+              value "r" uint: 255;
+              value "g" uint: 90;
+              value "b" uint: 0;
+              value "a" uint: 255;
+           }
+           group "Elm_Color_RGBA" struct {
+              value "r" uint: 255;
+              value "g" uint: 180;
+              value "b" uint: 0;
+              value "a" uint: 255;
+           }
+           group "Elm_Color_RGBA" struct {
+              value "r" uint: 92;
+              value "g" uint: 142;
+              value "b" uint: 151;
+              value "a" uint: 255;
+           }
+           group "Elm_Color_RGBA" struct {
+              value "r" uint: 41;
+              value "g" uint: 68;
+              value "b" uint: 59;
+              value "a" uint: 255;
+           }
+           group "Elm_Color_RGBA" struct {
+              value "r" uint: 41;
+              value "g" uint: 46;
+              value "b" uint: 68;
+              value "a" uint: 255;
+           }
+           group "Elm_Color_RGBA" struct {
+              value "r" uint: 68;
+              value "g" uint: 40;
+              value "b" uint: 55;
+              value "a" uint: 255;
+           }
+        }
+     }
+     group "Elm_Custom_Palette" struct {
+        value "palette_name" string: "painting";
+        group "color_list" list {
+           group "Elm_Color_RGBA" struct {
+              value "r" uint: 255;
+              value "g" uint: 90;
+              value "b" uint: 18;
+              value "a" uint: 255;
+           }
+           group "Elm_Color_RGBA" struct {
+              value "r" uint: 255;
+              value "g" uint: 213;
+              value "b" uint: 0;
+              value "a" uint: 255;
+           }
+           group "Elm_Color_RGBA" struct {
+              value "r" uint: 146;
+              value "g" uint: 255;
+              value "b" uint: 11;
+              value "a" uint: 255;
+           }
+           group "Elm_Color_RGBA" struct {
+              value "r" uint: 9;
+              value "g" uint: 186;
+              value "b" uint: 10;
+              value "a" uint: 255;
+           }
+           group "Elm_Color_RGBA" struct {
+              value "r" uint: 86;
+              value "g" uint: 201;
+              value "b" uint: 242;
+              value "a" uint: 255;
+           }
+           group "Elm_Color_RGBA" struct {
+              value "r" uint: 18;
+              value "g" uint: 83;
+              value "b" uint: 128;
+              value "a" uint: 255;
+           }
+           group "Elm_Color_RGBA" struct {
+              value "r" uint: 140;
+              value "g" uint: 53;
+              value "b" uint: 238;
+              value "a" uint: 255;
+           }
+           group "Elm_Color_RGBA" struct {
+              value "r" uint: 255;
+              value "g" uint: 145;
+              value "b" uint: 145;
+              value "a" uint: 255;
+           }
+           group "Elm_Color_RGBA" struct {
+              value "r" uint: 255;
+              value "g" uint: 59;
+              value "b" uint: 119;
+              value "a" uint: 255;
+           }
+           group "Elm_Color_RGBA" struct {
+              value "r" uint: 133;
+              value "g" uint: 100;
+              value "b" uint: 69;
+              value "a" uint: 255;
+           }
+           group "Elm_Color_RGBA" struct {
+              value "r" uint: 255;
+              value "g" uint: 255;
+              value "b" uint: 119;
+              value "a" uint: 255;
+           }
+           group "Elm_Color_RGBA" struct {
+              value "r" uint: 133;
+              value "g" uint: 100;
+              value "b" uint: 255;
+              value "a" uint: 255;
+           }
+        }
+     }
+  }
 }

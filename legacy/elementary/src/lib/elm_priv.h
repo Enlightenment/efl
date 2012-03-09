@@ -168,6 +168,7 @@ struct _Elm_Config
    int           week_start;
    int           weekend_start;
    int           weekend_len;
+   Eina_List    *color_palette;
 
    /* Not part of the EET file */
    Eina_Bool     is_mirrored : 1;
@@ -276,6 +277,10 @@ char                *_elm_util_mkup_to_text(const char *mkup);
 char                *_elm_util_text_to_mkup(const char *text);
 
 Eina_Bool            _elm_video_check(Evas_Object *video);
+
+Eina_List           *_elm_config_color_list_get(const char *palette_name);
+void                 _elm_config_color_set(const char *palette_name, int r, int g, int b, int a);
+void                 _elm_config_colors_free(const char *palette_name);
 
 extern char *_elm_appname;
 extern Elm_Config *_elm_config;

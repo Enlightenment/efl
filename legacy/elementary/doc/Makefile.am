@@ -24,7 +24,7 @@ WGT_PREVIEW = \
 	bubble:preview-00.png:widget_preview_bubble1:160:50 \
 	bubble:preview-01.png:widget_preview_bubble2:160:50 \
 	bubble:preview-02.png:widget_preview_bubble3:160:50 \
-	colorselector:preview-00.png:widget_preview_colorselector:160:200 \
+	colorselector:preview-00.png:widget_preview_colorselector:320:300 \
 	layout:preview-00.png:widget_preview_layout:200:160 \
 	conformant:preview-00.png:widget_preview_conformant:200:400 \
 	list:preview-00.png:widget_preview_list:200:200 \

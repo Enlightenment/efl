@@ -1,24 +1,56 @@
 /**
  * @defgroup Colorselector Colorselector
- *
- * @{
+ * @ingroup Elementary
  *
  * @image html img/widget/colorselector/preview-00.png
  * @image latex img/widget/colorselector/preview-00.eps
  *
- * @brief Widget for user to select a color.
+ * A ColorSelector is a color selection widget. It allows application to set a
+ * series of colors.It also allows to load/save colors from/to config with a
+ * unique identifier, by default, the colors are loaded/saved from/to config
+ * using "default" identifier.
+ * The colors can be picked by user from the color set by clicking on individual color
+ * item on the palette or by selecting it from selector.
  *
  * Signals that you can add callbacks for are:
- * "changed" - When the color value changes(event_info is NULL).
+ * - "changed" - When the color value changes on selector(event_info is NULL).
+ * - "color,item,selected" - When user clicks on color item. The event_info parameter
+ * of the callback will be the selected color item.
+ * - "color,item,longpressed" - When user long presses on color item. The event info
+ * parameter of the callback contains selected color item.
  *
  * See @ref tutorial_colorselector.
+ * @{
  */
 
+typedef struct _Elm_Color_RGBA
+{
+   unsigned int r;
+   unsigned int g;
+   unsigned int b;
+   unsigned int a;
+} Elm_Color_RGBA;
+
+typedef struct _Elm_Custom_Palette
+{
+   const char *palette_name;
+   Eina_List  *color_list;
+} Elm_Custom_Palette;
+
+/**
+ * @enum _Elm_Colorselector_Mode
+ * @typedef Elm_Colorselector_Mode
+ *
+ * Different modes supported by Colorselector
+ *
+ * @see elm_colorselector_mode_set()
+ * @see elm_colorselector_mode_get()
+ */
 typedef enum
 {
-   ELM_COLORSELECTOR_PALETTE = 0,
-   ELM_COLORSELECTOR_COMPONENTS,
-   ELM_COLORSELECTOR_BOTH
+   ELM_COLORSELECTOR_PALETTE = 0, /**< only color palette is displayed */
+   ELM_COLORSELECTOR_COMPONENTS, /**< only color selector is displayed */
+   ELM_COLORSELECTOR_BOTH /**< Both Palette and selector is displayed, default */
 } Elm_Colorselector_Mode;
 
 /**
@@ -32,60 +64,55 @@ typedef enum
 EAPI Evas_Object *elm_colorselector_add(Evas_Object *parent);
 
 /**
- * Set a color for the colorselector
+ * Set color to colorselector
  *
- * @param obj   Colorselector object
- * @param r     r-value of color
- * @param g     g-value of color
- * @param b     b-value of color
- * @param a     a-value of color
+ * @param obj Colorselector object
+ * @param r r-value of color
+ * @param g g-value of color
+ * @param b b-value of color
+ * @param a a-value of color
  *
  * @ingroup Colorselector
  */
 EAPI void elm_colorselector_color_set(Evas_Object *obj, int r, int g, int b, int a);
 
 /**
- * Get a color from the colorselector
+ * Get current color from colorselector
  *
- * @param obj   Colorselector object
- * @param r     integer pointer for r-value of color
- * @param g     integer pointer for g-value of color
- * @param b     integer pointer for b-value of color
- * @param a     integer pointer for a-value of color
+ * @param obj Colorselector object
+ * @param r integer pointer for r-value of color
+ * @param g integer pointer for g-value of color
+ * @param b integer pointer for b-value of color
+ * @param a integer pointer for a-value of color
  *
  * @ingroup Colorselector
  */
 EAPI void elm_colorselector_color_get(const Evas_Object *obj, int *r, int *g, int *b, int *a);
 
 /**
- * Set a Colorselector mode.
- * Colorselector 
+ * Set Colorselector's mode.
  *
  * @param obj Colorselector object
- * @param mode 
- * @param g G color value to be returned
- * @param b B color value to be returned
- * @param a A color value to be returned
+ * @param mode Elm_Colorselector_Mode
  * 
+ * Colorselector supports three modes palette only, selector only and both.
+ *
  * @ingroup Colorselector
  */
 EAPI void elm_colorselector_mode_set(Evas_Object *obj, Elm_Colorselector_Mode mode);
 
 /**
- * Get a Colorselector mode.
+ * Get Colorselector's mode.
  *
- * @param item The color palette item.
- * @param r R color value to be returned
- * @param g G color value to be returned
- * @param b B color value to be returned
- * @param a A color value to be returned
+ * @param obj Colorselector object
+ * @return mode The current mode of colorselector
  * 
  * @ingroup Colorselector
  */
 EAPI Elm_Colorselector_Mode elm_colorselector_mode_get(const Evas_Object *obj);
 
 /**
- * Get a palette item's color.
+ * Get Palette item's color.
  *
  * @param item The color palette item.
  * @param r integer pointer for r-value of color
@@ -98,7 +125,7 @@ EAPI Elm_Colorselector_Mode elm_colorselector_mode_get(const Evas_Object *obj);
 EAPI void elm_colorselector_palette_item_color_get(const Elm_Object_Item *it, int *r, int *g, int *b, int *a);
 
 /**
- * Set the palette item's color.
+ * Set palette item's color.
  *
  * @param item The color palette item.
  * @param r r-value of color
@@ -129,9 +156,6 @@ EAPI Elm_Object_Item *elm_colorselector_palette_color_add(Evas_Object *obj, int 
  *
  * @param obj The Colorselector object
  *
- * @note This API will be available when ELM_COLORSELECTOR_PALETTE or
- * ELM_COLORSELECTOR_BOTH mode is set.
- *
  * @ingroup Colorselector
  */
 EAPI void elm_colorselector_palette_clear(Evas_Object *obj);
@@ -148,7 +172,7 @@ EAPI void elm_colorselector_palette_clear(Evas_Object *obj);
  *
  * @ingroup Colorselector
  */
-EAPI void                    elm_colorselector_palette_name_set(Evas_Object *obj, const char *palette_name);
+EAPI void elm_colorselector_palette_name_set(Evas_Object *obj, const char *palette_name);
 
 /**
  * Get current palette's name
@@ -161,7 +185,7 @@ EAPI void                    elm_colorselector_palette_name_set(Evas_Object *obj
  *
  * @ingroup Colorselector
  */
-EAPI const char             *elm_colorselector_palette_name_get(const Evas_Object *obj);
+EAPI const char *elm_colorselector_palette_name_get(const Evas_Object *obj);
 
 /**
  * @}
