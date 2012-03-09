@@ -1354,12 +1354,6 @@ elm_naviframe_item_simple_promote(Evas_Object *obj, Evas_Object *content)
 
 
 EAPI void
-elm_naviframe_item_del(Elm_Object_Item *it)
-{
-   elm_object_item_del(it);
-}
-
-EAPI void
 elm_naviframe_content_preserve_on_pop_set(Evas_Object *obj, Eina_Bool preserve)
 {
    ELM_CHECK_WIDTYPE(obj, widtype);
