@@ -514,39 +514,6 @@ elm_layout_theme_set(Evas_Object *obj, const char *clas, const char *group, cons
 }
 
 EAPI Eina_Bool
-elm_layout_content_set(Evas_Object *obj, const char *swallow, Evas_Object *content)
-{
-   _content_set_hook(obj, swallow, content);
-   return EINA_TRUE;
-}
-
-
-EAPI Evas_Object *
-elm_layout_content_get(const Evas_Object *obj, const char *swallow)
-{
-   return _content_get_hook(obj, swallow);
-}
-
-EAPI Evas_Object *
-elm_layout_content_unset(Evas_Object *obj, const char *swallow)
-{
-   return _content_unset_hook(obj, swallow);
-}
-
-EAPI Eina_Bool
-elm_layout_text_set(Evas_Object *obj, const char *part, const char *text)
-{
-   _elm_layout_label_set(obj, part, text);
-   return EINA_TRUE;
-}
-
-EAPI const char *
-elm_layout_text_get(const Evas_Object *obj, const char *part)
-{
-   return _elm_layout_label_get(obj, part);
-}
-
-EAPI Eina_Bool
 elm_layout_box_append(Evas_Object *obj, const char *part, Evas_Object *child)
 {
    ELM_CHECK_WIDTYPE(obj, widtype) EINA_FALSE;
