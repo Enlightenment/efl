@@ -83,7 +83,7 @@ EAPI Evas_Object      *elm_segment_control_add(Evas_Object *parent);
  * elm_segment_control_item_insert_at() should be used instead.
  *
  * Items created with this function can be deleted with function
- * elm_object_item_del() or elm_segment_control_item_del_at().
+ * elm_object_item_del() or elm_object_item_del_at().
  *
  * @note @p label set to @c NULL is different from empty string "".
  * If an item
@@ -192,10 +192,10 @@ EAPI Elm_Object_Item *elm_segment_control_item_get(const Evas_Object *obj, int i
  *
  * The return value is a pointer to the label associated to the item when
  * it was created, with function elm_segment_control_item_add(), or later
- * with function elm_segment_control_item_label_set. If no label
+ * with function elm_object_item_text_set. If no label
  * was passed as argument, it will return @c NULL.
  *
- * @see elm_segment_control_item_label_set() for more details.
+ * @see elm_object_item_text_set() for more details.
  * @see elm_segment_control_item_add()
  *
  * @ingroup SegmentControl
@@ -211,11 +211,11 @@ EAPI const char       *elm_segment_control_item_label_get(const Evas_Object *obj
  *
  * The return value is a pointer to the icon associated to the item when
  * it was created, with function elm_segment_control_item_add(), or later
- * with function elm_segment_control_item_icon_set(). If no icon
+ * with function elm_object_item_part_content_set(). If no icon
  * was passed as argument, it will return @c NULL.
  *
  * @see elm_segment_control_item_add()
- * @see elm_segment_control_item_icon_set()
+ * @see elm_object_item_part_content_set()
  *
  * @ingroup SegmentControl
  */

@@ -650,12 +650,6 @@ elm_segment_control_item_insert_at(Evas_Object *obj, Evas_Object *icon,
 }
 
 EAPI void
-elm_segment_control_item_del(Elm_Object_Item *it)
-{
-   elm_object_item_del(it);
-}
-
-EAPI void
 elm_segment_control_item_del_at(Evas_Object *obj, int idx)
 {
    ELM_CHECK_WIDTYPE(obj, widtype);
@@ -679,12 +673,6 @@ elm_segment_control_item_label_get(const Evas_Object *obj, int idx)
    return NULL;
 }
 
-EAPI void
-elm_segment_control_item_label_set(Elm_Object_Item* it, const char* label)
-{
-   _item_text_set_hook(it, NULL, label);
-}
-
 EAPI Evas_Object *
 elm_segment_control_item_icon_get(const Evas_Object *obj, int idx)
 {
@@ -692,12 +680,6 @@ elm_segment_control_item_icon_get(const Evas_Object *obj, int idx)
    Elm_Segment_Item *it = _item_find(obj, idx);
    if (it) return it->icon;
    return NULL;
-}
-
-EAPI void
-elm_segment_control_item_icon_set(Elm_Object_Item *it, Evas_Object *icon)
-{
-   _item_content_set_hook(it, NULL, icon);
 }
 
 EAPI int
