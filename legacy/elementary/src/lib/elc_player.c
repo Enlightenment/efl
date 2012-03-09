@@ -581,9 +581,3 @@ elm_player_add(Evas_Object *parent)
    return NULL;
 #endif
 }
-
-EAPI void
-elm_player_video_set(Evas_Object *player, Evas_Object *video)
-{
-   _content_set_hook(player, "video", video);
-}
