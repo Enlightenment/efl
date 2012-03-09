@@ -853,12 +853,6 @@ elm_index_item_sorted_insert(Evas_Object *obj, const char *letter, Evas_Smart_Cb
    return (Elm_Object_Item *)it;
 }
 
-EAPI void
-elm_index_item_del(Evas_Object *obj __UNUSED__, Elm_Object_Item *it)
-{
-   elm_object_item_del(it);
-}
-
 EAPI Elm_Object_Item *
 elm_index_item_find(Evas_Object *obj, const void *data)
 {
@@ -905,18 +899,6 @@ elm_index_level_go(Evas_Object *obj, int level __UNUSED__)
    if (wd->level == 1) _index_box_auto_fill(obj, wd->bx[1], 1);
 }
 
-EAPI void *
-elm_index_item_data_get(const Elm_Object_Item *it)
-{
-   return elm_object_item_data_get(it);
-}
-
-EAPI void
-elm_index_item_data_set(Elm_Object_Item *it, const void *data)
-{
-   elm_object_item_data_set(it, (void *) data);
-}
-
 EAPI void
 elm_index_indicator_disabled_set(Evas_Object *obj, Eina_Bool disabled)
 {
@@ -942,12 +924,6 @@ elm_index_indicator_disabled_get(const Evas_Object *obj)
    if (!wd) return EINA_FALSE;
 
    return wd->indicator_disabled;
-}
-
-EAPI void
-elm_index_item_del_cb_set(Elm_Object_Item *it, Evas_Smart_Cb func)
-{
-   elm_object_item_del_cb_set(it, func);
 }
 
 EAPI const char *

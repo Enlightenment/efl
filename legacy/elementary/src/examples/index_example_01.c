@@ -37,7 +37,7 @@ _index_item_del(void        *data,
                    "item data reported via callback with the one returned by "
                    "index's API on items: %s.\n",
            elm_object_item_text_get(data),
-           data == elm_index_item_data_get(event_info) ? "OK" :
+           data == elm_object_item_dataget(event_info) ? "OK" :
            "FAIL, something went wrong");
 
    elm_object_item_del(data);
