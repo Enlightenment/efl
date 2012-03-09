@@ -934,20 +934,6 @@ elm_object_scale_get(const Evas_Object *obj)
 }
 
 EAPI void
-elm_object_text_part_set(Evas_Object *obj, const char *part, const char *label)
-{
-   EINA_SAFETY_ON_NULL_RETURN(obj);
-   elm_widget_text_part_set(obj, part, label);
-}
-
-EAPI const char *
-elm_object_text_part_get(const Evas_Object *obj, const char *part)
-{
-   EINA_SAFETY_ON_NULL_RETURN_VAL(obj, NULL);
-   return elm_widget_text_part_get(obj, part);
-}
-
-EAPI void
 elm_object_part_text_set(Evas_Object *obj, const char *part, const char *label)
 {
    EINA_SAFETY_ON_NULL_RETURN(obj);
