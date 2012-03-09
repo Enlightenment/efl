@@ -114,6 +114,13 @@ struct _Item_Cache
    Eina_Bool    expanded : 1; // it->item->expanded
 };
 
+typedef enum
+{
+   ELM_GENLIST_TREE_EFFECT_NONE         = 0,
+   ELM_GENLIST_TREE_EFFECT_EXPAND       = 1,
+   ELM_GENLIST_TREE_EFFECT_CONTRACT     = 2
+} Elm_Genlist_Item_Move_Effect_Mode;
+
 static const char *widtype = NULL;
 static void      _item_cache_zero(Widget_Data *wd);
 static void      _del_hook(Evas_Object *obj);

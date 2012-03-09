@@ -392,13 +392,6 @@ typedef enum
    ELM_GENLIST_ITEM_SCROLLTO_MIDDLE = (1 << 2)   /**< to the middle of viewport */
 } Elm_Genlist_Item_Scrollto_Type;
 
-typedef enum
-{
-   ELM_GENLIST_TREE_EFFECT_NONE         = 0,
-   ELM_GENLIST_TREE_EFFECT_EXPAND       = 1,
-   ELM_GENLIST_TREE_EFFECT_CONTRACT     = 2
-} Elm_Genlist_Item_Move_Effect_Mode;
-
 /**
  * @see Elm_Gen_Item_Class
  */
