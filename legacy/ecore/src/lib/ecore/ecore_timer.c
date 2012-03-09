@@ -73,12 +73,15 @@ ecore_timer_precision_get(void)
 }
 
 /**
- * Sets the precision to be used by timer infrastructure.
+ * @brief Sets the precision to be used by timer infrastructure.
  *
- * When system calculates time to expire the next timer we'll be able
- * to delay the timer by the given amount so more timers will fit in
- * the same dispatch, waking up the system less often and thus being
- * able to save power.
+ * @param value allowed introduced timeout delay, in seconds.
+ *
+ * This sets the precision for @b all timers. The precision determines how much
+ * of an difference from the requested interval is acceptable. One common reason
+ * to use this function is to @b increase the allowed timeout and thus @b
+ * decrease precision of the timers, this is because less precise the timers
+ * result in the system waking up less often and thus consuming less resources.
  *
  * Be aware that kernel may delay delivery even further, these delays
  * are always possible due other tasks having higher priorities or
@@ -93,8 +96,6 @@ ecore_timer_precision_get(void)
  * @note Ecore is smart enough to see if there are timers in the
  * precision range, if it does not, in our example if no second timer
  * in (T + precision) existed, then it would use the minimum timeout.
- *
- * @param value allowed introduced timeout delay, in seconds.
  */
 EAPI void
 ecore_timer_precision_set(double value)

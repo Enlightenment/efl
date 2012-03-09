@@ -1246,9 +1246,20 @@ EAPI double ecore_loop_time_get(void);
 /**
  * @defgroup Ecore_Timer_Group Ecore Timer functions
  *
- * Functions to create events based on timers.
+ * Ecore provides very flexible timer functionality. The basic usage of timers,
+ * to call a certain function at a certain interval can be achieved with a
+ * single line:
+ * @code
+ * Eina_Bool my_func(void *data) {
+ *    do_funky_stuff_with_data(data);
+ *    return EINA_TRUE;
+ * }
+ * ecore_timer_add(interval_in_seconds, my_func, data_given_to_function);
+ * @endcode
+ * @note If the function was to be executed only once simply return EINA_FALSE
+ * instead.
  *
- * Examples:
+ * An example that shows the usage of a lot of these:
  * @li @ref ecore_timer_example_c
  *
  * @ingroup Ecore_Main_Loop_Group
