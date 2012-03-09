@@ -989,7 +989,6 @@ EINA_DEPRECATED EAPI void                  *elm_diskselector_item_data_get(const
  * associated to the item.
  *
  * @see elm_diskselector_item_append()
- * @see elm_diskselector_item_icon_get()
  *
  * @deprecated Use elm_object_item_part_content_set() instead
  */
@@ -1011,7 +1010,7 @@ EINA_DEPRECATED EAPI void                   elm_diskselector_item_icon_set(Elm_O
  *
  * @deprecated Use elm_object_item_part_content_set() instead
  */
-EAPI Evas_Object           *elm_diskselector_item_icon_get(const Elm_Object_Item *it);
+EINA_DEPRECATED EAPI Evas_Object           *elm_diskselector_item_icon_get(const Elm_Object_Item *it);
 
 /**
  * Set the label of item.
@@ -1645,7 +1644,7 @@ EINA_DEPRECATED EAPI void                          elm_genlist_mode_item_style_s
  * this object under any circumstances.
  *
  * @see elm_object_item_data_get()
- * @deprecated No more support
+ * @deprecated No more support. If you need to emit signal to item's edje object, use elm_object_item_signal_emit().
  *
  */
 EINA_DEPRECATED EAPI const Evas_Object            *elm_genlist_item_object_get(const Elm_Object_Item *it);
@@ -3768,7 +3767,7 @@ EINA_DEPRECATED EAPI void               elm_entry_end_set(Evas_Object *obj, Evas
  *
  * @deprecated Use elm_object_part_content_get(entry, "end") instead
  */
-EAPI Evas_Object       *elm_entry_end_get(const Evas_Object *obj);
+EINA_DEPRECATED EAPI Evas_Object       *elm_entry_end_get(const Evas_Object *obj);
 
 /**
  * Unset the endmost widget of the scrolled entry, unparenting and
@@ -5307,7 +5306,7 @@ EINA_DEPRECATED EAPI void      elm_font_cache_set(int size);
  * @return The image cache size
  */
 EINA_DEPRECATED EAPI int       elm_image_cache_get(void);
-EAPI int       elm_cache_image_cache_size_get(void);
+EINA_DEPRECATED EAPI int       elm_cache_image_cache_size_get(void);
 
 /**
  * Set the configured image cache size
