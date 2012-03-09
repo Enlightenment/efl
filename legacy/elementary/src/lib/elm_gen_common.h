@@ -74,6 +74,13 @@ struct _Pan
    Ecore_Job                     *resize_job;
 };
 
+typedef enum
+{
+   ELM_GENLIST_TREE_EFFECT_NONE         = 0,
+   ELM_GENLIST_TREE_EFFECT_EXPAND       = 1,
+   ELM_GENLIST_TREE_EFFECT_CONTRACT     = 2
+} Elm_Genlist_Item_Move_Effect_Mode;
+
 struct _Widget_Data
 {
    Eina_Inlist_Sorted_State      *state;
