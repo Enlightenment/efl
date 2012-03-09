@@ -330,6 +330,7 @@
  * @li elm_object_item_part_text_get()
  * @li elm_object_item_disabled_set()
  * @li elm_object_item_disabled_get()
+ * @li elm_object_item_signal_emit()
  *
  * @section Genlist_Examples Examples
  *

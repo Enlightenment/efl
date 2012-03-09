@@ -3638,6 +3638,14 @@ _item_del_pre_hook(Elm_Object_Item *it)
    return EINA_TRUE;
 }
 
+static void
+_item_signal_emit_hook(Elm_Object_Item *it,
+                       const char *emission,
+                       const char *source)
+{
+   elm_object_signal_emit(VIEW(it), emission, source);
+}
+
 Elm_Gen_Item *
 _elm_genlist_item_new(Widget_Data              *wd,
                       const Elm_Gen_Item_Class *itc,
@@ -3664,6 +3672,8 @@ _elm_genlist_item_new(Widget_Data              *wd,
    elm_widget_item_text_get_hook_set(it, _item_text_hook);
    elm_widget_item_disable_hook_set(it, _item_disable_hook);
    elm_widget_item_del_pre_hook_set(it, _item_del_pre_hook);
+   elm_widget_item_signal_emit_hook_set(it, _item_signal_emit_hook);
+
    /* TEMPORARY */
    it->sel_cb = (Ecore_Cb)_item_select;
 
