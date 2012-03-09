@@ -88,31 +88,5 @@ EAPI Eina_Bool                    elm_panel_hidden_get(const Evas_Object *obj);
 EAPI void                         elm_panel_toggle(Evas_Object *obj);
 
 /**
- * @brief Set the content of the panel.
- *
- * @param obj The panel object
- * @param content The content object
- */
-EAPI void elm_panel_content_set(Evas_Object *obj, Evas_Object *content);
-
-/**
- * @brief Get the content of the panel.
- *
- * @param obj The panel object
- * @return The content object of the panel or NULL if none is set.
- *
- * @see elm_panel_content_set()
- */
-EAPI Evas_Object * elm_panel_content_get(const Evas_Object *obj);
-
-/**
- * @brief Remove and return the content from the panel.
- *
- * @param obj The panel object
- * @return The content object of the panel or NULL if none is set.
- */
-EAPI Evas_Object * elm_panel_content_unset(Evas_Object *obj);
-
-/**
  * @}
  */
