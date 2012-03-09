@@ -1457,18 +1457,6 @@ elm_multibuttonentry_entry_get(const Evas_Object *obj)
 }
 
 EINA_DEPRECATED EAPI const char *
-elm_multibuttonentry_label_get(const Evas_Object *obj)
-{
-   return _text_get_hook(obj, NULL);
-}
-
-EINA_DEPRECATED EAPI void
-elm_multibuttonentry_label_set(Evas_Object *obj, const char *label)
-{
-   _text_set_hook(obj, NULL, label);
-}
-
-EINA_DEPRECATED EAPI const char *
 elm_multibuttonentry_guide_text_get(const Evas_Object *obj)
 {
    ELM_CHECK_WIDTYPE(obj, widtype) NULL;
@@ -1633,24 +1621,6 @@ elm_multibuttonentry_clear(Evas_Object *obj)
      }
    wd->current = NULL;
    _view_update(obj);
-}
-
-EAPI void
-elm_multibuttonentry_item_del(Elm_Object_Item *it)
-{
-   elm_object_item_del(it);
-}
-
-EAPI const char *
-elm_multibuttonentry_item_label_get(const Elm_Object_Item *it)
-{
-   return _item_text_get_hook(it, NULL);
-}
-
-EAPI void
-elm_multibuttonentry_item_label_set(Elm_Object_Item *it, const char *str)
-{
-   _item_text_set_hook(it, NULL, str);
 }
 
 EAPI Elm_Object_Item *
