@@ -1996,12 +1996,6 @@ elm_list_item_del(Elm_Object_Item *it)
    elm_object_item_del(it);
 }
 
-EINA_DEPRECATED EAPI Evas_Object *
-elm_list_item_base_get(const Elm_Object_Item *it)
-{
-   return elm_list_item_object_get(it);
-}
-
 EINA_DEPRECATED EAPI void
 elm_list_item_disabled_set(Elm_Object_Item *it, Eina_Bool disabled)
 {

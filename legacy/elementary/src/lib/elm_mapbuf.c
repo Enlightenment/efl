@@ -251,24 +251,6 @@ elm_mapbuf_add(Evas_Object *parent)
 }
 
 EAPI void
-elm_mapbuf_content_set(Evas_Object *obj, Evas_Object *content)
-{
-   _content_set_hook(obj, NULL, content);
-}
-
-EAPI Evas_Object *
-elm_mapbuf_content_get(const Evas_Object *obj)
-{
-   return _content_get_hook(obj, NULL);
-}
-
-EAPI Evas_Object *
-elm_mapbuf_content_unset(Evas_Object *obj)
-{
-   return _content_unset_hook(obj, NULL);
-}
-
-EAPI void
 elm_mapbuf_enabled_set(Evas_Object *obj, Eina_Bool enabled)
 {
    ELM_CHECK_WIDTYPE(obj, widtype);
