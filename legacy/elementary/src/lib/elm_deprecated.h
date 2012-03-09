@@ -3926,7 +3926,7 @@ EINA_DEPRECATED EAPI Elm_Map_Name         *elm_map_utils_convert_name_into_coord
  * @deprecatedUse Use elm_map_canvas_to_region_convert() instead
  *
  */
-EAPI void                  elm_map_canvas_to_geo_convert(const Evas_Object *obj, const Evas_Coord x, const Evas_Coord y, double *lon, double *lat);
+EINA_DEPRECATED EAPI void                  elm_map_canvas_to_geo_convert(const Evas_Object *obj, const Evas_Coord x, const Evas_Coord y, double *lon, double *lat);
 
 /**
  * Get the current geographic coordinates of the map.
@@ -4113,7 +4113,7 @@ EINA_DEPRECATED EAPI const char           *elm_map_source_name_get(const Evas_Ob
  * @deprecated Use elm_map_source_set() instead
  *
  */
-EAPI void                  elm_map_route_source_set(Evas_Object *obj, Elm_Map_Route_Sources source);
+EINA_DEPRECATED EAPI void                  elm_map_route_source_set(Evas_Object *obj, Elm_Map_Route_Sources source);
 
 /**
  * Get the current route source.
@@ -4125,7 +4125,7 @@ EAPI void                  elm_map_route_source_set(Evas_Object *obj, Elm_Map_Ro
  * @deprecated Use elm_map_source_get() instead
  *
  */
-EAPI Elm_Map_Route_Sources elm_map_route_source_get(const Evas_Object *obj);
+EINA_DEPRECATED EAPI Elm_Map_Route_Sources elm_map_route_source_get(const Evas_Object *obj);
 
 /**
  * Add a new marker to the map object.
@@ -5121,7 +5121,7 @@ EINA_DEPRECATED EAPI void                        elm_label_background_color_set(
  * @warning This is only relevant if the label is inside a container.
  * @deprecated This function should not be used because of wrong concept.
  */
-EAPI void                        elm_label_wrap_height_set(Evas_Object *obj, Evas_Coord h);
+EINA_DEPRECATED EAPI void                        elm_label_wrap_height_set(Evas_Object *obj, Evas_Coord h);
 
 /**
  * @brief get wrap width of the label
@@ -5130,7 +5130,7 @@ EAPI void                        elm_label_wrap_height_set(Evas_Object *obj, Eva
  * @return The wrap height in pixels at a minimum where words need to wrap
  * @deprecated This function should not be used because of wrong concept.
  */
-EAPI Evas_Coord                  elm_label_wrap_height_get(const Evas_Object *obj);
+EINA_DEPRECATED EAPI Evas_Coord                  elm_label_wrap_height_get(const Evas_Object *obj);
 
 /**
  * @brief Flush all caches.
@@ -5507,7 +5507,7 @@ EINA_DEPRECATED EAPI Eina_Bool             elm_index_active_get(const Evas_Objec
  *
  * @deprecated please use "elm_index_item_insert_after" instead.
  */
-EAPI Elm_Object_Item      *elm_index_item_append_relative(Evas_Object *obj, const char *letter, const void *item, const Elm_Object_Item *relative);
+EINA_DEPRECATED EAPI Elm_Object_Item      *elm_index_item_append_relative(Evas_Object *obj, const char *letter, const void *item, const Elm_Object_Item *relative);
 
 /**
  * Prepend a new item, on a given index widget, <b>after the item
@@ -5531,7 +5531,7 @@ EAPI Elm_Object_Item      *elm_index_item_append_relative(Evas_Object *obj, cons
  *
  * @deprecated please use "elm_index_item_insert_before" instead.
  */
-EAPI Elm_Object_Item      *elm_index_item_prepend_relative(Evas_Object *obj, const char *letter, const void *item, const Elm_Object_Item *relative);
+EINA_DEPRECATED EAPI Elm_Object_Item      *elm_index_item_prepend_relative(Evas_Object *obj, const char *letter, const void *item, const Elm_Object_Item *relative);
 
 /**
  * Set the transparency state of a window.
