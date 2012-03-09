@@ -56,7 +56,7 @@ static double last_check = 0.0;
 static double precision = 10.0 / 1000000.0;
 
 /**
- * @addtogroup Ecore_Time_Group
+ * @addtogroup Ecore_Timer_Group
  *
  * @{
  */
@@ -322,7 +322,7 @@ ecore_timer_reset(Ecore_Timer *timer)
  * Get the pending time regarding a timer.
  *
  * @param        timer The timer to learn from.
- * @ingroup        Ecore_Time_Group
+ * @ingroup        Ecore_Timer_Group
  */
 EAPI double
 ecore_timer_pending_get(Ecore_Timer *timer)

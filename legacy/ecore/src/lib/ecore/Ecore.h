@@ -137,7 +137,7 @@ sudo make install
  *
  * Timers serve two main purposes: doing something at a specified time and
  * repeatedly doing something with a set interval.
- * @see Ecore_Time_Group
+ * @see Ecore_Timer_Group
  *
  * @subsection poolers Poolers
  *
@@ -1227,16 +1227,28 @@ EAPI void ecore_animator_custom_tick(void);
  */
 
 /**
- * @defgroup Ecore_Time_Group Ecore Time functions
+ * @defgroup Ecore_Time_Group Ecore time functions
  *
- * Functions that deal with time. These functions include those
- * that simply retrieve it in a given format, and those that create
- * events based on it.
+ * These are function to retrieve time in a given format.
  *
- * The timer allows callbacks to be called at specific intervals.
- *
- * Examples with functions that deal with time:
+ * Examples:
  * @li @ref ecore_time_functions_example_c
+ * @{
+ */
+EAPI double ecore_time_get(void);
+EAPI double ecore_time_unix_get(void);
+EAPI double ecore_loop_time_get(void);
+
+/**
+ * @}
+ */
+
+/**
+ * @defgroup Ecore_Timer_Group Ecore Timer functions
+ *
+ * Functions to create events based on timers.
+ *
+ * Examples:
  * @li @ref ecore_timer_example_c
  *
  * @ingroup Ecore_Main_Loop_Group
@@ -1245,10 +1257,6 @@ EAPI void ecore_animator_custom_tick(void);
  */
 
 typedef struct _Ecore_Timer Ecore_Timer; /**< A handle for timers */
-
-EAPI double ecore_time_get(void);
-EAPI double ecore_time_unix_get(void);
-EAPI double ecore_loop_time_get(void);
 
 EAPI Ecore_Timer *ecore_timer_add(double in, Ecore_Task_Cb func, const void *data);
 EAPI Ecore_Timer *ecore_timer_loop_add(double in, Ecore_Task_Cb func, const void *data);
@@ -1272,14 +1280,14 @@ EAPI char *ecore_timer_dump(void);
  * @defgroup Ecore_Idle_Group Ecore Idle functions
  *
  * The idler functionality in Ecore allows for callbacks to be called when the
- * program isn't handling @ref Ecore_Event_Group "events", @ref Ecore_Time_Group
+ * program isn't handling @ref Ecore_Event_Group "events", @ref Ecore_Timer_Group
  * "timers" or @ref Ecore_FD_Handler_Group "fd handlers".
  *
  * There are three types of idlers: Enterers, Idlers(proper) and Exiters. They
  * are called, respectively, when the program is about to enter an idle state,
  * when the program is in an idle state and when the program has just left an
  * idle state and will begin processing @ref Ecore_Event_Group "events", @ref
- * Ecore_Time_Group "timers" or @ref Ecore_FD_Handler_Group "fd handlers".
+ * Ecore_Timer_Group "timers" or @ref Ecore_FD_Handler_Group "fd handlers".
  *
  * Enterer callbacks are good for updating your program's state, if
  * it has a state engine.  Once all of the enterer handlers are
