@@ -573,7 +573,8 @@ _ecore_direct_worker(Ecore_Pthread_Worker *work)
    LKI(work->mutex);
    CDI(work->cond, work->mutex);
 
-   ecore_main_loop_thread_safe_call_async(_ecore_thread_handler, work);
+// don't queue this - this is deleted by _ecore_thread_kill() already deleting work->u.feedback_run.direct_worker
+//   ecore_main_loop_thread_safe_call_async(_ecore_thread_handler, work);
 
    return NULL;
 }
@@ -987,7 +988,7 @@ ecore_thread_feedback_run(Ecore_Thread_Cb        func_heavy,
 
    worker->u.feedback_run.direct_worker = NULL;
 
-   if (!try_no_queue)
+   if (try_no_queue)
      {
         PH(t);
 
