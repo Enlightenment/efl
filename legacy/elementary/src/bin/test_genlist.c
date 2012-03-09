@@ -1865,7 +1865,7 @@ test_genlist10(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_i
    evas_object_show(gl);
 
    itc10.item_style     = "default";
-   itc10.mode_item_style = "mode";
+   itc10.decorate_item_style = "mode";
    itc10.func.text_get = gl10_text_get;
    itc10.func.content_get  = gl10_content_get;
    itc10.func.state_get = gl_state_get;
@@ -2444,7 +2444,7 @@ test_genlist15(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_i
    itc15->func.content_get  = gl15_content_get;
    itc15->func.state_get = gl_state_get;
    itc15->func.del       = gl15_del;
-   itc15->edit_item_style = "edit";
+   itc15->decorate_all_item_style = "edit";
 
    for (i = 0; i < 100; i++)
      {
@@ -2574,7 +2574,7 @@ test_genlist16(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_i
    itc15->func.content_get = gl16_content_get;
    itc15->func.state_get = gl_state_get;
    itc15->func.del       = NULL;
-   itc15->edit_item_style = "edit";
+   itc15->decorate_all_item_style = "edit";
 
    for (i = 0; i < 100; i++)
      {

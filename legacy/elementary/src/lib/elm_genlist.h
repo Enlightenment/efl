@@ -32,11 +32,12 @@
  *   of the item style. It @b must be specified and the default should be @c
  *   "default".
  * - @c decorate_item_style - This is a constant string and simply defines the name
- *   of the mode item style. It is used to specify mode item style. It can be
- *   used to set sweep mode.
- * - @c edit_item_style - This is a constant string and simply defines the name
- *   of the edit item style. It is used to specify edit item style. It can be
- *   used to set selection, checking and deletion mode.
+ *   of the decorate mode item style. It is used to specify decorate mode item style. It can be
+ *   used when you call elm_genlist_item_decorate_mode_set().
+ * - @c decorate_all_item_style - This is a constant string and simply defines the name
+ *   of the decorate all item style. It is used to specify decorate all item style. It can be
+ *   used to set selection, checking and deletion mode. This is used when you
+ *   call elm_genlist_decorate_mode_set().
  * - @c func - A struct with pointers to functions that will be called when
  *   an item is going to be actually created. All of them receive a @c data
  *   parameter that will point to the same data passed to

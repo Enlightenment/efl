@@ -2061,7 +2061,7 @@ _item_realize(Elm_Gen_Item *it,
                                        _multi_move, it);
 
         if ((it->wd->decorate_mode) && (!it->edit_obj) &&
-            (it->item->type != ELM_GENLIST_ITEM_GROUP) && (it->itc->edit_item_style))
+            (it->item->type != ELM_GENLIST_ITEM_GROUP) && (it->itc->decorate_all_item_style))
           _decorate_mode_item_realize(it, EINA_FALSE);
 
         _elm_genlist_item_state_update(it, itc);
@@ -2155,7 +2155,7 @@ _item_realize(Elm_Gen_Item *it,
 
    if ((!calc) && (it->wd->decorate_mode) && (it->item->type != ELM_GENLIST_ITEM_GROUP))
      {
-        if (it->itc->edit_item_style)
+        if (it->itc->decorate_all_item_style)
           {
              if (!it->edit_obj) _decorate_mode_item_realize(it, EINA_FALSE);
              edje_object_message_signal_process(it->edit_obj);
@@ -2445,7 +2445,7 @@ _item_block_position(Item_Block *itb,
                          }
                        if (!it->item->move_effect_enabled)
                          {
-                            if ((it->wd->decorate_mode) && (it->itc->edit_item_style))
+                            if ((it->wd->decorate_mode) && (it->itc->decorate_all_item_style))
                               _decorate_mode_item_position(it, it->item->scrl_x,
                                                        it->item->scrl_y);
                             else
@@ -3303,7 +3303,7 @@ _decorate_mode_item_realize(Elm_Gen_Item *it, Eina_Bool effect_on)
       strncat(buf, "_compress", sizeof(buf) - strlen(buf));
 
    strncat(buf, "/", sizeof(buf) - strlen(buf));
-   strncat(buf, it->itc->edit_item_style, sizeof(buf) - strlen(buf));
+   strncat(buf, it->itc->decorate_all_item_style, sizeof(buf) - strlen(buf));
 
    _elm_theme_object_set(WIDGET(it),  it->edit_obj, "genlist", buf,
                          elm_widget_style_get(WIDGET(it)));
@@ -5546,7 +5546,7 @@ elm_genlist_decorate_mode_set(Evas_Object *obj, Eina_Bool decorated)
              if (it->item->type != ELM_GENLIST_ITEM_GROUP)
                {
                   if (it->selected) _item_unselect(it);
-                  if (it->itc->edit_item_style)
+                  if (it->itc->decorate_all_item_style)
                      _decorate_mode_item_realize(it, EINA_TRUE);
                }
           }
