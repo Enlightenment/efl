@@ -26,8 +26,10 @@
 static void _ecore_wl_input_cb_motion(void *data, struct wl_input_device *input_device __UNUSED__, unsigned int timestamp, int sx, int sy);
 static void _ecore_wl_input_cb_button(void *data, struct wl_input_device *input_device __UNUSED__, unsigned int timestamp, unsigned int button, unsigned int state);
 static void _ecore_wl_input_cb_key(void *data, struct wl_input_device *input_device __UNUSED__, unsigned int timestamp __UNUSED__, unsigned int key, unsigned int state);
-static void _ecore_wl_input_cb_pointer_focus(void *data, struct wl_input_device *input_device __UNUSED__, unsigned int timestamp, struct wl_surface *surface, int sx, int sy);
-static void _ecore_wl_input_cb_keyboard_focus(void *data, struct wl_input_device *input_device __UNUSED__, unsigned int timestamp, struct wl_surface *surface, struct wl_array *keys);
+static void _ecore_wl_input_cb_pointer_enter(void *data, struct wl_input_device *input_device __UNUSED__, unsigned int timestamp, struct wl_surface *surface, int sx, int sy);
+static void _ecore_wl_input_cb_pointer_leave(void *data, struct wl_input_device *input_device __UNUSED__, unsigned int timestamp, struct wl_surface *surface __UNUSED__);
+static void _ecore_wl_input_cb_keyboard_enter(void *data, struct wl_input_device *input_device __UNUSED__, unsigned int timestamp, struct wl_surface *surface, struct wl_array *keys);
+static void _ecore_wl_input_cb_keyboard_leave(void *data, struct wl_input_device *input_device __UNUSED__, unsigned int timestamp, struct wl_surface *surface __UNUSED__);
 static void _ecore_wl_input_cb_touch_down(void *data, struct wl_input_device *input_device __UNUSED__, unsigned int timestamp, struct wl_surface *surface __UNUSED__, int id __UNUSED__, int x, int y);
 static void _ecore_wl_input_cb_touch_up(void *data, struct wl_input_device *input_device __UNUSED__, unsigned int timestamp, int id __UNUSED__);
 static void _ecore_wl_input_cb_touch_motion(void *data, struct wl_input_device *input_device __UNUSED__, unsigned int timestamp, int id __UNUSED__, int x, int y);
@@ -57,8 +59,10 @@ static const struct wl_input_device_listener _ecore_wl_input_listener =
    _ecore_wl_input_cb_motion,
    _ecore_wl_input_cb_button,
    _ecore_wl_input_cb_key,
-   _ecore_wl_input_cb_pointer_focus,
-   _ecore_wl_input_cb_keyboard_focus,
+   _ecore_wl_input_cb_pointer_enter,
+   _ecore_wl_input_cb_pointer_leave,
+   _ecore_wl_input_cb_keyboard_enter,
+   _ecore_wl_input_cb_keyboard_leave,
    _ecore_wl_input_cb_touch_down,
    _ecore_wl_input_cb_touch_up,
    _ecore_wl_input_cb_touch_motion,
@@ -218,7 +222,7 @@ _ecore_wl_input_cb_key(void *data, struct wl_input_device *input_device __UNUSED
 }
 
 static void 
-_ecore_wl_input_cb_pointer_focus(void *data, struct wl_input_device *input_device __UNUSED__, unsigned int timestamp, struct wl_surface *surface, int sx, int sy)
+_ecore_wl_input_cb_pointer_enter(void *data, struct wl_input_device *input_device __UNUSED__, unsigned int timestamp, struct wl_surface *surface, int sx, int sy)
 {
    Ecore_Wl_Input *input;
    Ecore_Wl_Window *win = NULL;
@@ -257,7 +261,18 @@ _ecore_wl_input_cb_pointer_focus(void *data, struct wl_input_device *input_devic
 }
 
 static void 
-_ecore_wl_input_cb_keyboard_focus(void *data, struct wl_input_device *input_device __UNUSED__, unsigned int timestamp, struct wl_surface *surface, struct wl_array *keys)
+_ecore_wl_input_cb_pointer_leave(void *data, struct wl_input_device *input_device __UNUSED__, unsigned int timestamp, struct wl_surface *surface __UNUSED__)
+{
+   Ecore_Wl_Input *input;
+
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+
+   if (!(input = data)) return;
+   _ecore_wl_input_pointer_focus_remove(input, timestamp);
+}
+
+static void 
+_ecore_wl_input_cb_keyboard_enter(void *data, struct wl_input_device *input_device __UNUSED__, unsigned int timestamp, struct wl_surface *surface, struct wl_array *keys)
 {
    Ecore_Wl_Input *input;
    Ecore_Wl_Window *win = NULL;
@@ -266,10 +281,6 @@ _ecore_wl_input_cb_keyboard_focus(void *data, struct wl_input_device *input_devi
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
    if (!(input = data)) return;
-
-   win = input->keyboard_focus;
-   if ((win) && (win->surface != surface))
-     _ecore_wl_input_keyboard_focus_remove(input, timestamp);
 
    end = keys->data + keys->size;
    input->modifiers = 0;
@@ -287,6 +298,17 @@ _ecore_wl_input_cb_keyboard_focus(void *data, struct wl_input_device *input_devi
           input->keyboard_focus = NULL;
         _ecore_wl_input_focus_in_send(input, timestamp);
      }
+}
+
+static void 
+_ecore_wl_input_cb_keyboard_leave(void *data, struct wl_input_device *input_device __UNUSED__, unsigned int timestamp, struct wl_surface *surface __UNUSED__)
+{
+   Ecore_Wl_Input *input;
+
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+
+   if (!(input = data)) return;
+   _ecore_wl_input_keyboard_focus_remove(input, timestamp);
 }
 
 static void 
@@ -587,7 +609,6 @@ _ecore_wl_input_mouse_down_send(Ecore_Wl_Input *input, unsigned int timestamp)
         ev->event_window = input->pointer_focus->id;
      }
 
-   /* NB: Hmmmm, smells like this could be a leak. No free function */
    ecore_event_add(ECORE_EVENT_MOUSE_BUTTON_DOWN, ev, NULL, NULL);
 }
 
@@ -633,6 +654,5 @@ _ecore_wl_input_mouse_up_send(Ecore_Wl_Input *input, unsigned int timestamp)
         ev->event_window = input->pointer_focus->id;
      }
 
-   /* NB: Hmmmm, smells like this could be a leak. No free function */
    ecore_event_add(ECORE_EVENT_MOUSE_BUTTON_UP, ev, NULL, NULL);
 }

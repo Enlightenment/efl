@@ -159,7 +159,7 @@ ecore_wl_init(const char *name)
                                   _ecore_wl_cb_handle_global, _ecore_wl_disp);
 
    /* FIXME: Process connection events ?? */
-   /* wl_display_iterate(_ecore_wl_disp->wl.display, WL_DISPLAY_READABLE); */
+   wl_display_iterate(_ecore_wl_disp->wl.display, WL_DISPLAY_READABLE);
 
    /* if (!_ecore_wl_egl_init(_ecore_wl_disp)) */
    /*   { */
@@ -356,7 +356,7 @@ _ecore_wl_shutdown(Eina_Bool close)
         if (_ecore_wl_disp->wl.display)
           {
              wl_display_flush(_ecore_wl_disp->wl.display);
-             wl_display_destroy(_ecore_wl_disp->wl.display);
+             wl_display_disconnect(_ecore_wl_disp->wl.display);
           }
         free(_ecore_wl_disp);
      }
