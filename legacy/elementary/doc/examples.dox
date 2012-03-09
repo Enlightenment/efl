@@ -2520,7 +2520,7 @@
  *
  * If you want to free this data, or handle that the way you need when the
  * item is deleted, set a callback function for that, with
- * elm_list_item_del_cb_set().
+ * elm_object_item_del_cb_set().
  *
  * As you can see we check if @c it is not @c NULL after appending it.
  * If an error happens, we won't try to set a function for it.

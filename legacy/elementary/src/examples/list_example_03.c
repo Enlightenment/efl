@@ -242,7 +242,7 @@ _disable_cb(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__
 
    selected_item = elm_list_selected_item_get(li);
    if (!selected_item) return;
-   elm_list_item_disabled_set(selected_item, EINA_TRUE);
+   elm_object_item_disabled_set(selected_item, EINA_TRUE);
 }
 
 EAPI_MAIN int
