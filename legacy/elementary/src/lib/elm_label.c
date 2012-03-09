@@ -380,18 +380,6 @@ elm_label_add(Evas_Object *parent)
 }
 
 EAPI void
-elm_label_label_set(Evas_Object *obj, const char *label)
-{
-  _elm_label_label_set(obj, NULL, label);
-}
-
-EAPI const char *
-elm_label_label_get(const Evas_Object *obj)
-{
-  return _elm_label_label_get(obj, NULL);
-}
-
-EAPI void
 elm_label_line_wrap_set(Evas_Object *obj, Elm_Wrap_Type wrap)
 {
    ELM_CHECK_WIDTYPE(obj, widtype);
