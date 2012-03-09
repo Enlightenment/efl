@@ -504,12 +504,6 @@ elm_slideshow_item_show(Elm_Object_Item *it)
    evas_object_smart_callback_call(WIDGET(item), SIG_CHANGED, wd->current);
 }
 
-EINA_DEPRECATED EAPI void
-elm_slideshow_show(Elm_Object_Item *it)
-{
-   elm_slideshow_item_show(it);
-}
-
 EAPI void
 elm_slideshow_next(Evas_Object *obj)
 {
@@ -693,12 +687,6 @@ elm_slideshow_clear(Evas_Object *obj)
      elm_widget_item_free(item);
 }
 
-EAPI void
-elm_slideshow_item_del(Elm_Object_Item *it)
-{
-   elm_object_item_del(it);
-}
-
 EAPI const Eina_List *
 elm_slideshow_items_get(const Evas_Object *obj)
 {
@@ -722,12 +710,6 @@ elm_slideshow_item_object_get(const Elm_Object_Item * it)
 {
    ELM_OBJ_ITEM_CHECK_OR_RETURN(it, NULL);
    return VIEW(it);
-}
-
-EAPI void *
-elm_slideshow_item_data_get(const Elm_Object_Item * it)
-{
-   return elm_object_item_data_get(it);
 }
 
 EAPI int

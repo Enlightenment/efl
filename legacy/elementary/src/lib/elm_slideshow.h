@@ -351,7 +351,7 @@ EAPI void                  elm_slideshow_clear(Evas_Object *obj);
  *
  * This list is @b not to be modified in any way and must not be
  * freed. Use the list members with functions like
- * elm_object_item_del(), elm_slideshow_item_data_get().
+ * elm_object_item_del(), elm_object_item_data_get().
  *
  * @warning This list is only valid until @p obj object's internal
  * items list is changed. It should be fetched again with another
@@ -388,7 +388,7 @@ EAPI Elm_Object_Item      *elm_slideshow_item_current_get(const Evas_Object *obj
  * lower level callbacks for events on that object. Do not delete
  * this object under any circumstances.
  *
- * @see elm_slideshow_item_data_get()
+ * @see elm_object_item_data_get()
  *
  * @ingroup Slideshow
  */
