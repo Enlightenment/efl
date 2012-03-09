@@ -1109,7 +1109,7 @@ EAPI Eina_Bool          elm_entry_scrollable_get(const Evas_Object *obj);
 
 /**
  * Sets the visibility of the left-side widget of the entry,
- * set by elm_entry_icon_set().
+ * set by elm_object_part_content_set().
  *
  * @param obj The entry object
  * @param setting EINA_TRUE if the object should be displayed,

@@ -3504,28 +3504,6 @@ elm_entry_scrollable_get(const Evas_Object *obj)
 }
 
 EAPI void
-elm_entry_icon_set(Evas_Object *obj, Evas_Object *icon)
-{
-   ELM_CHECK_WIDTYPE(obj, widtype);
-   EINA_SAFETY_ON_NULL_RETURN(icon);
-   _content_set_hook(obj, NULL, icon);
-}
-
-EAPI Evas_Object *
-elm_entry_icon_get(const Evas_Object *obj)
-{
-   ELM_CHECK_WIDTYPE(obj, widtype) NULL;
-   return _content_get_hook(obj, NULL);
-}
-
-EAPI Evas_Object *
-elm_entry_icon_unset(Evas_Object *obj)
-{
-   ELM_CHECK_WIDTYPE(obj, widtype) NULL;
-   return _content_unset_hook(obj, NULL);
-}
-
-EAPI void
 elm_entry_icon_visible_set(Evas_Object *obj, Eina_Bool setting)
 {
    ELM_CHECK_WIDTYPE(obj, widtype);
@@ -3543,28 +3521,6 @@ elm_entry_icon_visible_set(Evas_Object *obj, Eina_Bool setting)
    else
      edje_object_signal_emit(edje, "elm,action,hide,icon", "elm");
    _sizing_eval(obj);
-}
-
-EAPI void
-elm_entry_end_set(Evas_Object *obj, Evas_Object *end)
-{
-   ELM_CHECK_WIDTYPE(obj, widtype);
-   EINA_SAFETY_ON_NULL_RETURN(end);
-   _content_set_hook(obj, "end", end);
-}
-
-EAPI Evas_Object *
-elm_entry_end_get(const Evas_Object *obj)
-{
-   ELM_CHECK_WIDTYPE(obj, widtype) NULL;
-   return _content_get_hook(obj, "end");
-}
-
-EAPI Evas_Object *
-elm_entry_end_unset(Evas_Object *obj)
-{
-   ELM_CHECK_WIDTYPE(obj, widtype) NULL;
-   return _content_unset_hook(obj, "end");
 }
 
 EAPI void
