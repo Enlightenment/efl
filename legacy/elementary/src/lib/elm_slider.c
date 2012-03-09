@@ -807,36 +807,6 @@ elm_slider_add(Evas_Object *parent)
 }
 
 EAPI void
-elm_slider_label_set(Evas_Object *obj, const char *label)
-{
-   _elm_slider_label_set(obj, NULL, label);
-}
-
-EAPI const char *
-elm_slider_label_get(const Evas_Object *obj)
-{
-   return _elm_slider_label_get(obj, NULL);
-}
-
-EAPI void
-elm_slider_icon_set(Evas_Object *obj, Evas_Object *icon)
-{
-   _content_set_hook(obj, "icon", icon);
-}
-
-EAPI Evas_Object *
-elm_slider_icon_unset(Evas_Object *obj)
-{
-   return _content_unset_hook(obj, "icon");
-}
-
-EAPI Evas_Object *
-elm_slider_icon_get(const Evas_Object *obj)
-{
-   return _content_get_hook(obj, "icon");
-}
-
-EAPI void
 elm_slider_span_size_set(Evas_Object *obj, Evas_Coord size)
 {
    ELM_CHECK_WIDTYPE(obj, widtype);
@@ -1035,24 +1005,6 @@ elm_slider_units_format_function_set(Evas_Object *obj, const char *(*func)(doubl
    wd->units_format_func = func;
    wd->units_format_free = free_func;
    _indicator_set(obj);
-}
-
-EAPI void
-elm_slider_end_set(Evas_Object *obj, Evas_Object *end)
-{
-   _content_set_hook(obj, "end", end);
-}
-
-EAPI Evas_Object *
-elm_slider_end_unset(Evas_Object *obj)
-{
-   return _content_unset_hook(obj, "end");
-}
-
-EAPI Evas_Object *
-elm_slider_end_get(const Evas_Object *obj)
-{
-   return _content_get_hook(obj, "end");
 }
 
 EAPI void
