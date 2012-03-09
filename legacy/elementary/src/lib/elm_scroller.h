@@ -263,7 +263,7 @@ EAPI void                         elm_scroller_last_page_get(const Evas_Object *
  *
  * @code
  * sc = elm_scroller_add(win);
- * elm_scroller_content_set(sc, content);
+ * elm_object_content_set(sc, content);
  * elm_scroller_page_relative_set(sc, 1, 0);
  * elm_scroller_current_page_get(sc, &h_page, &v_page);
  * elm_scroller_page_show(sc, h_page + 1, v_page);
@@ -287,7 +287,7 @@ EAPI void                         elm_scroller_page_show(Evas_Object *obj, int h
  *
  * @code
  * sc = elm_scroller_add(win);
- * elm_scroller_content_set(sc, content);
+ * elm_object_content_set(sc, content);
  * elm_scroller_page_relative_set(sc, 1, 0);
  * elm_scroller_last_page_get(sc, &h_page, &v_page);
  * elm_scroller_page_bring_in(sc, h_page, v_page);
