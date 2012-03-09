@@ -794,24 +794,6 @@ elm_menu_item_index_get(const Elm_Object_Item *it)
 }
 
 EAPI void
-elm_menu_item_label_set(Elm_Object_Item *it, const char *label)
-{
-   _item_text_set_hook(it, NULL, label);
-}
-
-EAPI const char *
-elm_menu_item_label_get(const Elm_Object_Item *it)
-{
-   return _item_text_get_hook(it, NULL);
-}
-
-EINA_DEPRECATED EAPI void
-elm_menu_item_object_icon_name_set(Elm_Object_Item *it, const char *icon)
-{
-   elm_menu_item_icon_name_set(it, icon);
-}
-
-EAPI void
 elm_menu_item_icon_name_set(Elm_Object_Item *it, const char *icon)
 {
    ELM_OBJ_ITEM_CHECK_OR_RETURN(it);
@@ -832,18 +814,6 @@ elm_menu_item_icon_name_set(Elm_Object_Item *it, const char *icon)
      edje_object_signal_emit(VIEW(item), "elm,state,icon,hidden", "elm");
    edje_object_message_signal_process(VIEW(item));
    _sizing_eval(WIDGET(item));
-}
-
-EAPI void
-elm_menu_item_disabled_set(Elm_Object_Item *it, Eina_Bool disabled)
-{
-   elm_object_item_disabled_set(it, disabled);
-}
-
-EAPI Eina_Bool
-elm_menu_item_disabled_get(const Elm_Object_Item *it)
-{
-   return elm_object_item_disabled_get(it);
 }
 
 EAPI Elm_Object_Item *
@@ -889,25 +859,6 @@ elm_menu_item_separator_add(Evas_Object *obj, Elm_Object_Item *parent)
    return (Elm_Object_Item *) subitem;
 }
 
-EAPI Eina_Bool
-elm_menu_item_object_content_set(Elm_Object_Item *it, Evas_Object *obj)
-{
-   _item_content_set_hook(it, NULL, obj);
-   return EINA_TRUE;
-}
-
-EAPI Evas_Object *
-elm_menu_item_object_content_get(const Elm_Object_Item *it)
-{
-   return _item_content_get_hook(it, NULL);
-}
-
-EINA_DEPRECATED EAPI const char *
-elm_menu_item_object_icon_name_get(const Elm_Object_Item *it)
-{
-   return elm_menu_item_icon_name_get(it);
-}
-
 EAPI const char *
 elm_menu_item_icon_name_get(const Elm_Object_Item *it)
 {
@@ -920,18 +871,6 @@ elm_menu_item_is_separator(Elm_Object_Item *it)
 {
    ELM_OBJ_ITEM_CHECK_OR_RETURN(it, EINA_FALSE);
    return ((Elm_Menu_Item *)it)->separator;
-}
-
-EAPI void
-elm_menu_item_del(Elm_Object_Item *it)
-{
-   elm_object_item_del(it);
-}
-
-EAPI void
-elm_menu_item_del_cb_set(Elm_Object_Item *it, Evas_Smart_Cb func)
-{
-   elm_object_item_del_cb_set(it, func);
 }
 
 EAPI void *
@@ -1039,12 +978,6 @@ elm_menu_item_next_get(const Elm_Object_Item *it)
         return l->data;
      }
    return NULL;
-}
-
-EINA_DEPRECATED EAPI Evas_Object *
-elm_menu_item_menu_get(const Elm_Object_Item *it)
-{
-   return elm_object_item_widget_get(it);
 }
 
 EAPI Elm_Object_Item *
