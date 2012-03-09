@@ -47,12 +47,13 @@ struct _Outbuf
      {
         void *dest;
         RGBA_Image *buffer;
+        Eina_Bool destination_alpha : 1;
      } priv;
 };
 
 void evas_outbuf_free(Outbuf *ob);
 void evas_outbuf_resize(Outbuf *ob, int w, int h);
-Outbuf *evas_outbuf_setup(int w, int h, int rot, void *dest);
+Outbuf *evas_outbuf_setup(int w, int h, int rot, Eina_Bool alpha, void *dest);
 RGBA_Image *evas_outbuf_new_region_for_update(Outbuf *ob, int x, int y, int w, int h, int *cx, int *cy, int *cw, int *ch);
 void evas_outbuf_push_updated_region(Outbuf *ob, RGBA_Image *update, int x __UNUSED__, int y, int w, int h);
 void evas_outbuf_free_region_for_update(Outbuf *ob, RGBA_Image *update);

@@ -28,7 +28,7 @@ static Evas_Func func, pfunc;
 int _evas_engine_way_shm_log_dom = -1;
 
 /* local function prototypes */
-static void *_output_setup(int w, int h, int rotation, void *dest);
+static void *_output_setup(int w, int h, int rotation, Eina_Bool alpha, void *dest);
 
 /* engine function prototypes */
 static void *eng_info(Evas *evas __UNUSED__);
@@ -48,7 +48,7 @@ static Eina_Bool eng_canvas_alpha_get(void *data, void *context __UNUSED__);
 
 /* local functions */
 static void *
-_output_setup(int w, int h, int rotation, void *dest) 
+_output_setup(int w, int h, int rotation, Eina_Bool alpha, void *dest) 
 {
    Render_Engine *re = NULL;
 
@@ -56,7 +56,7 @@ _output_setup(int w, int h, int rotation, void *dest)
 
    if (!(re = calloc(1, sizeof(Render_Engine)))) return NULL;
 
-   if (!(re->ob = evas_outbuf_setup(w, h, rotation, dest))) 
+   if (!(re->ob = evas_outbuf_setup(w, h, rotation, alpha, dest))) 
      {
         free(re);
         return NULL;
@@ -127,7 +127,8 @@ eng_setup(Evas *evas, void *info)
         evas_common_tilebuf_init();
 
         re = _output_setup(evas->output.w, evas->output.h, 
-                           in->info.rotation, in->info.dest);
+                           in->info.rotation, in->info.destination_alpha, 
+                           in->info.dest);
         if (!re) return 0;
 
         re->outbuf_free = evas_outbuf_free;
@@ -141,7 +142,8 @@ eng_setup(Evas *evas, void *info)
         if (!(re = evas->engine.data.output)) return 0;
         if (re->ob) re->outbuf_free(re->ob);
         re->ob = evas_outbuf_setup(evas->output.w, evas->output.h, 
-                                   in->info.rotation, in->info.dest);
+                                   in->info.rotation, 
+                                   in->info.destination_alpha, in->info.dest);
         if (re->tb) evas_common_tilebuf_free(re->tb);
         if ((re->tb = evas_common_tilebuf_new(evas->output.w, evas->output.h)))
           evas_common_tilebuf_set_tile_size(re->tb, TILESIZE, TILESIZE);

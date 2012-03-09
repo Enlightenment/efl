@@ -11,7 +11,8 @@ struct _Evas_Engine_Info_Wayland_Shm
         void *dest;
         int rotation;
 
-        unsigned char debug : 1;
+        Eina_Bool destination_alpha : 1;
+        Eina_Bool debug : 1;
      } info;
 
    Evas_Engine_Render_Mode render_mode;

@@ -21,7 +21,7 @@ evas_outbuf_resize(Outbuf *ob, int w, int h)
 }
 
 Outbuf *
-evas_outbuf_setup(int w, int h, int rot, void *dest) 
+evas_outbuf_setup(int w, int h, int rot, Eina_Bool alpha, void *dest) 
 {
    Outbuf *ob = NULL;
 
@@ -31,6 +31,7 @@ evas_outbuf_setup(int w, int h, int rot, void *dest)
    ob->h = h;
    ob->rotation = rot;
    ob->priv.dest = dest;
+   ob->priv.destination_alpha = alpha;
 
    ob->priv.buffer = 
      (RGBA_Image *)evas_cache_image_data(evas_common_image_cache_get(), 
@@ -56,7 +57,7 @@ evas_outbuf_new_region_for_update(Outbuf *ob, int x, int y, int w, int h, int *c
 	im = (RGBA_Image *)evas_cache_image_empty(evas_common_image_cache_get());
         if (im) 
           {
-             im->cache_entry.flags.alpha = 1;
+             im->cache_entry.flags.alpha = ob->priv.destination_alpha;
              im = (RGBA_Image *)evas_cache_image_size_set(&im->cache_entry, w, h);
           }
 
