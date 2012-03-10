@@ -2096,7 +2096,7 @@
  * conversion
  * util functions, so we could get coordinates for this address. These
  * functions return an #Elm_Map_Name handle for us.
- * Function elm_map_utils_convert_name_into_coord() will do this job for us,
+ * Function elm_map_name_geo_request() will do this job for us,
  * but it's an assyncronous function, since it requires this
  * information from the server.
  *

@@ -5709,127 +5709,6 @@ elm_map_track_remove(Evas_Object *obj __UNUSED__, Evas_Object *route __UNUSED__)
 #endif
 
 /************************* Belows are deprecated APIs *************************/
-EAPI void
-elm_map_source_zoom_max_set(Evas_Object *obj, int zoom)
-{
-   elm_map_zoom_max_set(obj, zoom);
-}
-
-EAPI int
-elm_map_source_zoom_max_get(const Evas_Object *obj)
-{
-   return elm_map_zoom_max_get(obj);
-}
-
-EAPI void
-elm_map_source_zoom_min_set(Evas_Object *obj, int zoom)
-{
-   elm_map_zoom_min_set(obj, zoom);
-}
-
-EAPI int
-elm_map_source_zoom_min_get(const Evas_Object *obj)
-{
-   return elm_map_zoom_min_get(obj);
-}
-
-EAPI void
-elm_map_utils_convert_coord_into_geo(const Evas_Object *obj, int x, int y, int size, double *lon, double *lat)
-{
-#ifdef HAVE_ELEMENTARY_ECORE_CON
-   ELM_CHECK_WIDTYPE(obj, widtype);
-   Widget_Data *wd = elm_widget_data_get(obj);
-   EINA_SAFETY_ON_NULL_RETURN(wd);
-
-   _coord_to_region_convert(wd, x, y, size, lon, lat);
-#else
-   (void) obj;
-   (void) x;
-   (void) y;
-   (void) size;
-   (void) lon;
-   (void) lat;
-#endif
-}
-
-EAPI void
-elm_map_utils_convert_geo_into_coord(const Evas_Object *obj, double lon, double lat, int size, int *x, int *y)
-{
-#ifdef HAVE_ELEMENTARY_ECORE_CON
-   ELM_CHECK_WIDTYPE(obj, widtype);
-   Widget_Data *wd = elm_widget_data_get(obj);
-   EINA_SAFETY_ON_NULL_RETURN(wd);
-
-   _region_to_coord_convert(wd, lon, lat, size, x, y);
-#else
-   (void) obj;
-   (void) lon;
-   (void) lat;
-   (void) size;
-   (void) x;
-   (void) y;
-#endif
-}
-
-EAPI void
-elm_map_utils_rotate_coord(const Evas_Object *obj, Evas_Coord x, Evas_Coord y, Evas_Coord cx, const Evas_Coord cy, double degree, Evas_Coord *xx, Evas_Coord *yy)
-{
-#ifdef HAVE_ELEMENTARY_ECORE_CON
-   ELM_CHECK_WIDTYPE(obj, widtype);
-   _coord_rotate(x, y, cx, cy, degree, xx, yy);
-#else
-   (void) x;
-   (void) y;
-   (void) cx;
-   (void) cy;
-   (void) degree;
-   (void) xx;
-   (void) yy;
-#endif
-}
-
-EAPI void
-elm_map_utils_downloading_status_get(const Evas_Object *obj, int *try_num, int *finish_num)
-{
-   elm_map_tile_load_status_get(obj, try_num, finish_num);
-}
-
-EAPI void
-elm_map_geo_region_bring_in(Evas_Object *obj, double lon, double lat)
-{
-   elm_map_region_bring_in(obj, lon, lat);
-}
-
-EAPI void
-elm_map_geo_region_show(Evas_Object *obj, double lon, double lat)
-{
-   elm_map_region_show(obj, lon, lat);
-}
-
-EAPI void
-elm_map_geo_region_get(const Evas_Object *obj, double *lon, double *lat)
-{
-   elm_map_region_get(obj, lon, lat);
-}
-
-EAPI Elm_Map_Name *
-elm_map_utils_convert_coord_into_name(const Evas_Object *obj, double lon, double lat)
-{
-   return elm_map_name_add(obj, NULL, lon, lat, NULL, NULL);
-}
-
-EAPI Elm_Map_Name *
-elm_map_utils_convert_name_into_coord(const Evas_Object *obj, char *address)
-{
-   return elm_map_name_add(obj, address, 0, 0, NULL, NULL);
-}
-
-EAPI void
-elm_map_canvas_to_geo_convert(const Evas_Object *obj, Evas_Coord x, Evas_Coord y, double *lon, double *lat)
-{
-   elm_map_canvas_to_region_convert(obj, x, y, lon, lat);
-}
-
 EAPI Elm_Map_Marker *
 elm_map_marker_add(Evas_Object *obj, double lon, double lat, Elm_Map_Marker_Class *clas, Elm_Map_Group_Class *group_clas, void *data)
 {
@@ -5941,52 +5820,6 @@ elm_map_markers_list_show(Eina_List *markers)
 #endif
 }
 
-EAPI void
-elm_map_paused_markers_set(Evas_Object *obj, Eina_Bool paused)
-{
-#ifdef HAVE_ELEMENTARY_ECORE_CON
-   ELM_CHECK_WIDTYPE(obj, widtype);
-   Widget_Data *wd = elm_widget_data_get(obj);
-   EINA_SAFETY_ON_NULL_RETURN(wd);
-
-   if (wd->paused_markers == !!paused) return;
-   wd->paused_markers = paused;
-#else
-   (void) obj;
-   (void) paused;
-#endif
-}
-
-EAPI Eina_Bool
-elm_map_paused_markers_get(const Evas_Object *obj)
-{
-#ifdef HAVE_ELEMENTARY_ECORE_CON
-   ELM_CHECK_WIDTYPE(obj, widtype) EINA_FALSE;
-   Widget_Data *wd = elm_widget_data_get(obj);
-   EINA_SAFETY_ON_NULL_RETURN_VAL(wd, EINA_FALSE);
-
-   return wd->paused_markers;
-#else
-   (void) obj;
-   return EINA_FALSE;
-#endif
-}
-
-EAPI void
-elm_map_max_marker_per_group_set(Evas_Object *obj, int max)
-{
-#ifdef HAVE_ELEMENTARY_ECORE_CON
-   ELM_CHECK_WIDTYPE(obj, widtype);
-   Widget_Data *wd = elm_widget_data_get(obj);
-   EINA_SAFETY_ON_NULL_RETURN(wd);
-
-   wd->markers_max_num = max;
-#else
-   (void) obj;
-   (void) max;
-#endif
-}
-
 EAPI Evas_Object *
 elm_map_marker_object_get(const Elm_Map_Marker *marker)
 {
@@ -6010,32 +5843,6 @@ elm_map_marker_update(Elm_Map_Marker *marker)
    _marker_update(marker);
 #else
    (void) marker;
-#endif
-}
-
-EAPI void
-elm_map_bubbles_close(Evas_Object *obj)
-{
-#ifdef HAVE_ELEMENTARY_ECORE_CON
-   ELM_CHECK_WIDTYPE(obj, widtype);
-   Widget_Data *wd = elm_widget_data_get(obj);
-   EINA_SAFETY_ON_NULL_RETURN(wd);
-
-   Eina_List *l;
-   Elm_Map_Marker *marker;
-   EINA_LIST_FOREACH(wd->markers, l, marker)
-     {
-        if (marker->bubble) _bubble_free(marker->bubble);
-        marker->bubble = NULL;
-
-        if (marker->group)
-          {
-             if (marker->group->bubble) _bubble_free(marker->group->bubble);
-             marker->group->bubble = NULL;
-          }
-     }
-#else
-   (void) obj;
 #endif
 }
 
@@ -6224,10 +6031,3 @@ elm_map_route_remove(Elm_Map_Route *route)
 {
    elm_map_route_del(route);
 }
-
-EAPI void
-elm_map_name_remove(Elm_Map_Name *name)
-{
-   elm_map_name_del(name);
-}
-

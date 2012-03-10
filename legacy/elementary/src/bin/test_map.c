@@ -543,7 +543,7 @@ my_map_entry_activated(void *data, Evas_Object *obj, void *event_info __UNUSED__
 {
    const char *s = elm_scrolled_entry_entry_get(obj);
    char *addr = strdup(s);
-   name = elm_map_utils_convert_name_into_coord(data, addr);
+   name = elm_map_name_geo_request(data, addr);
    if (addr) free (addr);
 }
 */

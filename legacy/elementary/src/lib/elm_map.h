@@ -1213,7 +1213,7 @@ EAPI const char           *elm_map_source_get(const Evas_Object *obj, Elm_Map_So
  *
  * A route will be traced by point on coordinates (@p flat, @p flon)
  * to point on coordinates (@p tlat, @p tlon), using the route service
- * set with elm_map_route_source_set().
+ * set with elm_map_source_set().
  *
  * It will take @p type on consideration to define the route,
  * depending if the user will be walking or driving, the route may vary.
@@ -1231,7 +1231,7 @@ EAPI const char           *elm_map_source_get(const Evas_Object *obj, Elm_Map_So
  * @see elm_map_route_remove()
  * @see elm_map_route_color_set()
  * @see elm_map_route_distance_get()
- * @see elm_map_route_source_set()
+ * @see elm_map_source_set()
  *
  * @ingroup Map
  */
@@ -1313,8 +1313,8 @@ EAPI Elm_Map_Name         *elm_map_name_add(const Evas_Object *obj, const char *
  * This gets the coordinates of the @p name, created with one of the
  * conversion functions.
  *
- * @see elm_map_utils_convert_name_into_coord()
- * @see elm_map_utils_convert_coord_into_name()
+ * @see elm_map_name_geo_request()
+ * @see elm_map_name_add()
  *
  * @ingroup Map
  */
@@ -1330,8 +1330,8 @@ EAPI const char           *elm_map_name_address_get(const Elm_Map_Name *name);
  * This gets the coordinates of the @p name, created with one of the
  * conversion functions.
  *
- * @see elm_map_utils_convert_name_into_coord()
- * @see elm_map_utils_convert_coord_into_name()
+ * @see elm_map_name_geo_request()
+ * @see elm_map_name_add()
  *
  * @ingroup Map
  */
@@ -1345,8 +1345,8 @@ EAPI void                  elm_map_name_region_get(const Elm_Map_Name *name, dou
  * Basically the struct handled by @p name will be freed, so conversions
  * between address and coordinates will be lost.
  *
- * @see elm_map_utils_convert_name_into_coord()
- * @see elm_map_utils_convert_coord_into_name()
+ * @see elm_map_name_geo_request()
+ * @see elm_map_name_add()
  *
  * @ingroup Map
  */
