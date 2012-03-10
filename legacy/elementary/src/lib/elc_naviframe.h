@@ -31,11 +31,6 @@
  * item
  * @li "title,clicked" - User clicked title area
  *
- * Item Signals that you can add callbacks for are:
- * @li "show,begin" - When the item is started to be top item.
- * @li "hide,finished" - When a new top item is finished to push onto the
- * item.
- *
  * Default content parts of the naviframe items that you can use content hooks
  * for are:
  * @li "default" - The main content of the page

@@ -51,15 +51,9 @@ static const char *widtype = NULL;
 static const char SIG_TRANSITION_FINISHED[] = "transition,finished";
 static const char SIG_TITLE_CLICKED[] = "title,clicked";
 
-//widget item signals
-static const char SIG_ITEM_SHOW_BEGIN[] = "show,begin";
-static const char SIG_ITEM_HIDE_FINISHED[] = "hide,finished";
-
 static const Evas_Smart_Cb_Description _signals[] = {
        {SIG_TRANSITION_FINISHED, ""},
        {SIG_TITLE_CLICKED, ""},
-       {SIG_ITEM_SHOW_BEGIN, ""},
-       {SIG_ITEM_HIDE_FINISHED, ""},
        {NULL, NULL}
 };
 
@@ -870,10 +864,6 @@ _pushed_finished(void *data,
    evas_object_hide(VIEW(it));
    if (wd->freeze_events)
      evas_object_freeze_events_set(VIEW(it), EINA_FALSE);
-
-   elm_widget_item_smart_callback_call(it,
-                                       SIG_ITEM_HIDE_FINISHED,
-                                       NULL);
 }
 
 static void
@@ -1257,9 +1247,6 @@ elm_naviframe_item_pop(Evas_Object *obj)
                                "elm");
         edje_object_message_signal_process(elm_layout_edje_get(VIEW(it)));
         edje_object_message_signal_process(elm_layout_edje_get(VIEW(prev_it)));
-        elm_widget_item_smart_callback_call(prev_it,
-                                            SIG_ITEM_SHOW_BEGIN,
-                                            NULL);
      }
    else
      {
