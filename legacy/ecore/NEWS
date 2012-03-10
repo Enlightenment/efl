@@ -38,6 +38,11 @@ Additions:
      - ecore_imf_context_input_panel_caps_lock_mode_set()
      - ecore_imf_context_input_panel_caps_lock_mode_get()
 
+Fixes:
+    * ecore_thread:
+     - ecore_thread_feedback_run now handle try_no_queue the way it logically should.
+     - prevent double free that could cause crash when an Ecore_Thread stop.
+
 Improvements:
     * ecore:
      - most allocations moved to mempools

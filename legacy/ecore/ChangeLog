@@ -566,3 +566,11 @@
 2012-03-07  Mike Blumenkrantz (discomfitor/zmike)
 
         * Add ecore_con_url_status_code_get() to check return code at any time
+
+2012-03-09  Carsten Haitzler (The Rasterman)
+
+	* Fix ecore_thread_feedback_run to work as the documentation and logic tell us.
+
+2012-03-10  Cedric Bail
+
+	* Fix double free at end of execution of Ecore_Thread with feedback.

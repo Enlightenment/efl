@@ -528,6 +528,7 @@ _ecore_feedback_job(PH(thread))
 static void *
 _ecore_direct_worker(Ecore_Pthread_Worker *work)
 {
+   Ecore_Pthread_Worker *end;
    Ecore_Pthread_Data *pth;
 
 #ifdef EFL_POSIX_THREADS
@@ -548,33 +549,39 @@ _ecore_direct_worker(Ecore_Pthread_Worker *work)
    else
      work->u.feedback_run.func_heavy((void *) work->data, (Ecore_Thread *) work);
 
+   if (work->message_run)
+     {
+        end = work->u.message_run.direct_worker;
+        work->u.message_run.direct_worker = NULL;
+     }
+   else
+     {
+        end = work->u.feedback_run.direct_worker;
+        work->u.feedback_run.direct_worker = NULL;
+     }
+
    ecore_main_loop_thread_safe_call_async(_ecore_thread_handler, work);
 
-   if (work->message_run)
-     work = work->u.message_run.direct_worker;
-   else
-     work = work->u.feedback_run.direct_worker;
-   if (!work)
+   if (!end)
      {
         free(pth);
         return NULL;
      }
 
-   work->data = pth;
-   work->u.short_run.func_blocking = NULL;
-   work->func_end = (void *)_ecore_thread_end;
-   work->func_cancel = NULL;
-   work->cancel = EINA_FALSE;
-   work->feedback_run = EINA_FALSE;
-   work->message_run = EINA_FALSE;
-   work->no_queue = EINA_FALSE;
-   work->kill = EINA_FALSE;
-   work->hash = NULL;
-   LKI(work->mutex);
-   CDI(work->cond, work->mutex);
+   end->data = pth;
+   end->u.short_run.func_blocking = NULL;
+   end->func_end = (void *)_ecore_thread_end;
+   end->func_cancel = NULL;
+   end->cancel = EINA_FALSE;
+   end->feedback_run = EINA_FALSE;
+   end->message_run = EINA_FALSE;
+   end->no_queue = EINA_FALSE;
+   end->kill = EINA_FALSE;
+   end->hash = NULL;
+   LKI(end->mutex);
+   CDI(end->cond, end->mutex);
 
-// don't queue this - this is deleted by _ecore_thread_kill() already deleting work->u.feedback_run.direct_worker
-//   ecore_main_loop_thread_safe_call_async(_ecore_thread_handler, work);
+   ecore_main_loop_thread_safe_call_async(_ecore_thread_handler, end);
 
    return NULL;
 }
