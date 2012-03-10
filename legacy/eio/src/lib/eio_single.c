@@ -337,7 +337,7 @@ eio_long_file_set(Eio_File *common,
                                       end_cb,
                                       cancel_cb,
                                       common,
-                                      EINA_TRUE);
+                                      EINA_FALSE);
    if (thread) common->thread = thread;
    return !!thread;
 }
