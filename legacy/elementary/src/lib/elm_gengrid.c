@@ -2201,23 +2201,6 @@ elm_gengrid_item_sorted_insert(Evas_Object                  *obj,
    return (Elm_Object_Item *)it;
 }
 
-EINA_DEPRECATED Elm_Object_Item *
-elm_gengrid_item_direct_sorted_insert(Evas_Object                  *obj,
-                                      const Elm_Gengrid_Item_Class *itc,
-                                      const void                   *data,
-                                      Eina_Compare_Cb               comp,
-                                      Evas_Smart_Cb                 func,
-                                      const void                   *func_data)
-{
-   return elm_gengrid_item_sorted_insert(obj, itc, data, comp, func, func_data);
-}
-
-EAPI void
-elm_gengrid_item_del(Elm_Object_Item *it)
-{
-   elm_object_item_del(it);
-}
-
 EAPI void
 elm_gengrid_horizontal_set(Evas_Object *obj,
                            Eina_Bool    horizontal)
@@ -2268,30 +2251,10 @@ elm_gengrid_item_update(Elm_Object_Item *it)
    _item_place(_it, _it->x, _it->y);
 }
 
-EAPI void *
-elm_gengrid_item_data_get(const Elm_Object_Item *it)
-{
-   return elm_object_item_data_get(it);
-}
-
-EAPI void
-elm_gengrid_item_data_set(Elm_Object_Item  *it,
-                          const void       *data)
-{
-   elm_object_item_data_set(it, (void *) data);
-}
-
 EAPI const Elm_Gengrid_Item_Class *
 elm_gengrid_item_item_class_get(const Elm_Object_Item *it)
 {
    return (Elm_Gengrid_Item_Class *)elm_genlist_item_item_class_get(it);
-}
-
-EINA_DEPRECATED EAPI void
-elm_gengrid_item_item_class_set(Elm_Object_Item *it,
-                                const Elm_Gengrid_Item_Class *itc)
-{
-   elm_gengrid_item_item_class_update(it, itc);
 }
 
 EAPI void
@@ -2390,19 +2353,6 @@ elm_gengrid_realized_items_update(Evas_Object *obj)
    list = elm_gengrid_realized_items_get(obj);
    EINA_LIST_FOREACH(list, l, it)
      elm_gengrid_item_update(it);
-}
-
-EAPI void
-elm_gengrid_item_disabled_set(Elm_Object_Item  *it,
-                              Eina_Bool         disabled)
-{
-   elm_object_item_disabled_set(it, disabled);
-}
-
-EAPI Eina_Bool
-elm_gengrid_item_disabled_get(const Elm_Object_Item *it)
-{
-   return elm_object_item_disabled_get(it);
 }
 
 static Evas_Object *
@@ -2756,12 +2706,6 @@ EAPI Elm_Object_Item *
 elm_gengrid_item_prev_get(const Elm_Object_Item *it)
 {
    return elm_genlist_item_prev_get(it);
-}
-
-EAPI Evas_Object *
-elm_gengrid_item_gengrid_get(const Elm_Object_Item *it)
-{
-   return elm_object_item_widget_get(it);
 }
 
 EAPI void
