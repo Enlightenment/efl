@@ -163,6 +163,7 @@ _elm_tooltip_content_del(Elm_Tooltip *tt)
 {
    if (!tt->content) return;
 
+   TTDBG("CONTENT DEL\n");
    evas_object_event_callback_del_full
      (tt->content, EVAS_CALLBACK_CHANGED_SIZE_HINTS,
       _elm_tooltip_content_changed_hints_cb, tt);
@@ -241,6 +242,7 @@ _elm_tooltip_hide_anim_start(Elm_Tooltip *tt)
 {
    double extra = 0;
    if (tt->hide_timer) return;
+   TTDBG("HIDE START\n");
    /* hide slightly faster when in window mode to look less stupid */
    if ((tt->hide_timeout > 0) && tt->tt_win) extra = 0.1;
    edje_object_signal_emit(tt->tooltip, "elm,action,hide", "elm");
@@ -471,6 +473,7 @@ _elm_tooltip_reconfigure(Elm_Tooltip *tt)
      }
    evas_object_move(tt->tt_win ? : tt->tooltip, tx, ty);
    evas_object_resize(tt->tt_win ? : tt->tooltip, tw, th);
+   TTDBG("FINAL: tx=%d,ty=%d,tw=%d,th=%d\n", tx, ty, tw, th);
    evas_object_show(tt->tooltip);
 
    if (inside_eventarea)
