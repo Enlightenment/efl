@@ -448,6 +448,7 @@ _elm_tooltip_reconfigure(Elm_Tooltip *tt)
    if ((tx < 0) || (ty < 0))
      {
         TTDBG("POSITIONING FAILED! THIS IS A BUG SOMEWHERE!\n");
+        abort();
         return;
      }
    evas_object_move(tt->tt_win ? : tt->tooltip, tx, ty);
