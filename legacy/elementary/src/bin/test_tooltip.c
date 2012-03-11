@@ -149,6 +149,7 @@ _tt_item_icon3(void *data   __UNUSED__,
    snprintf(buf, sizeof(buf), "%s/images/insanely_huge_test_image.jpg", elm_app_data_dir_get());
    elm_icon_file_set(ic, buf, NULL);
    elm_icon_size_get(ic, &w, &h);
+   elm_icon_resizable_set(ic, 0, 0);
    elm_win_screen_size_get(tt, NULL, NULL, &sw, &sh);
    if ((w > sw) || (h > sh))
      {
