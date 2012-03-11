@@ -4409,9 +4409,11 @@ _edje_real_part_swallow_hints_update(Edje_Real_Part *rp)
      {
 	Evas_Coord w, h;
 
+#if 0
 	edje_object_size_min_get(rp->swallowed_object, &w, &h);
 	rp->swallow_params.min.w = w;
 	rp->swallow_params.min.h = h;
+#endif
 	edje_object_size_max_get(rp->swallowed_object, &w, &h);
 	rp->swallow_params.max.w = w;
 	rp->swallow_params.max.h = h;
@@ -4422,8 +4424,10 @@ _edje_real_part_swallow_hints_update(Edje_Real_Part *rp)
 	Evas_Coord w, h;
 
 	evas_object_geometry_get(rp->swallowed_object, NULL, NULL, &w, &h);
+#if 0
 	rp->swallow_params.min.w = w;
 	rp->swallow_params.min.h = h;
+#endif
 	rp->swallow_params.max.w = w;
 	rp->swallow_params.max.h = h;
      }
