@@ -5795,7 +5795,7 @@ EINA_DEPRECATED EAPI void                   elm_diskselector_round_set(Evas_Obje
  * This means that, even if selected, every click will make the selected
  * callbacks be called.
  *
- * @see elm_genlist_always_select_mode_get()
+ * @deprecated use elm_genlist_select_mode_set(obj, ELM_OBJECT_SELECT_MODE_ALWAYS); instead. use elm_genlist_select_mode_set(obj, ELM_OBJECT_SELECT_MODE_DEFAULT); for normal mode.
  *
  */
 EINA_DEPRECATED EAPI void                          elm_genlist_always_select_mode_set(Evas_Object *obj, Eina_Bool always_select);
@@ -5808,7 +5808,7 @@ EINA_DEPRECATED EAPI void                          elm_genlist_always_select_mod
  * @return The always select mode
  * (@c EINA_TRUE = on, @c EINA_FALSE = off)
  *
- * @see elm_genlist_always_select_mode_set()
+ * @deprecated use elm_genlist_select_mode_get instead.
  *
  */
 EINA_DEPRECATED EAPI Eina_Bool                     elm_genlist_always_select_mode_get(const Evas_Object *obj);
@@ -5823,7 +5823,7 @@ EINA_DEPRECATED EAPI Eina_Bool                     elm_genlist_always_select_mod
  * This will turn off the ability to select items entirely and they
  * will neither appear selected nor call selected callback functions.
  *
- * @see elm_genlist_no_select_mode_get()
+ * @deprecated use elm_genlist_select_mode_set(obj, ELM_OBJECT_SELECT_MODE_NONE); instead. use elm_genlist_select_mode_set(obj, ELM_OBJECT_SELECT_MODE_DEFAULT); for normal mode.
  *
  */
 EINA_DEPRECATED EAPI void                          elm_genlist_no_select_mode_set(Evas_Object *obj, Eina_Bool no_select);
@@ -5835,7 +5835,7 @@ EINA_DEPRECATED EAPI void                          elm_genlist_no_select_mode_se
  * @return The no select mode
  * (@c EINA_TRUE = on, @c EINA_FALSE = off)
  *
- * @see elm_genlist_no_select_mode_set()
+ * @deprecated use elm_genlist_select_mode_get instead.
  *
  */
 EINA_DEPRECATED EAPI Eina_Bool                     elm_genlist_no_select_mode_get(const Evas_Object *obj);
