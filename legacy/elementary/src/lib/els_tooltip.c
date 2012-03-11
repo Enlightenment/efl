@@ -67,6 +67,7 @@ static void
 _elm_tooltip_content_changed_hints_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    _elm_tooltip_reconfigure_job_start(data);
+   TTDBG("HINTS CHANGED\n");
 }
 
 static void
@@ -83,6 +84,7 @@ _elm_tooltip_obj_move_cb(void *data, Evas *e  __UNUSED__, Evas_Object *obj __UNU
 {
    Elm_Tooltip *tt = data;
    _elm_tooltip_reconfigure_job_start(tt);
+   TTDBG("TT MOVED\n");
 }
 
 static void
@@ -90,6 +92,7 @@ _elm_tooltip_obj_resize_cb(void *data, Evas *e  __UNUSED__, Evas_Object *obj __U
 {
    Elm_Tooltip *tt = data;
    _elm_tooltip_reconfigure_job_start(tt);
+   TTDBG("TT RESIZE\n");
 }
 
 static void
@@ -97,6 +100,7 @@ _elm_tooltip_obj_mouse_move_cb(void *data, Evas *e  __UNUSED__, Evas_Object *obj
 {
    Elm_Tooltip *tt = data;
    _elm_tooltip_reconfigure_job_start(tt);
+   TTDBG("MOUSE MOVED\n");
 }
 
 static void
@@ -105,9 +109,11 @@ _elm_tooltip_show(Elm_Tooltip *tt)
    _elm_tooltip_show_timer_stop(tt);
    _elm_tooltip_hide_anim_stop(tt);
 
+   TTDBG("TT SHOW\n");
    if (tt->tooltip)
      {
         _elm_tooltip_reconfigure_job_start(tt);
+        TTDBG("RECURSIVE JOB\n");
         return;
      }
    if (tt->free_size)
@@ -162,6 +168,7 @@ static void
 _elm_tooltip_hide(Elm_Tooltip *tt)
 {
    Evas_Object *del;
+   TTDBG("TT HIDE\n");
    _elm_tooltip_show_timer_stop(tt);
    _elm_tooltip_hide_anim_stop(tt);
    _elm_tooltip_reconfigure_job_stop(tt);
@@ -509,8 +516,8 @@ _elm_tooltip_obj_mouse_in_cb(void *data, Evas *e  __UNUSED__, Evas_Object *obj _
 
    if ((tt->show_timer) || (tt->tooltip)) return;
 
-   tt->show_timer = ecore_timer_add
-     (_elm_config->tooltip_delay, _elm_tooltip_timer_show_cb, tt);
+   tt->show_timer = ecore_timer_add(_elm_config->tooltip_delay, _elm_tooltip_timer_show_cb, tt);
+   TTDBG("MOUSE IN\n");
 }
 
 static void
@@ -524,6 +531,7 @@ _elm_tooltip_obj_mouse_out_cb(Elm_Tooltip *tt, Evas *e  __UNUSED__, Evas_Object 
         return;
      }
    _elm_tooltip_hide_anim_start(tt);
+   TTDBG("MOUSE OUT\n");
 }
 
 static void _elm_tooltip_obj_free_cb(void *data, Evas *e  __UNUSED__, Evas_Object *obj, void *event_info  __UNUSED__);
