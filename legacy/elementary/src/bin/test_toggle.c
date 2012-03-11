@@ -61,7 +61,7 @@ test_toggle(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info
 
    tg = elm_check_add(win);
    elm_object_style_set(tg, "toggle");
-   elm_object_text_set(tg, "Icon no scale");
+   elm_object_text_set(tg, "Disabled check");
    elm_object_part_content_set(tg, "icon", ic);
    elm_object_disabled_set(tg, EINA_TRUE);
    elm_box_pack_end(bx, tg);
