@@ -42,6 +42,7 @@ struct _Elm_Tooltip
    Ecore_Timer             *show_timer;
    Ecore_Timer             *hide_timer;
    Ecore_Job               *reconfigure_job;
+   Evas_Coord               mouse_x, mouse_y;
    struct {
       Evas_Coord            x, y, bx, by;
    } pad;
@@ -96,11 +97,21 @@ _elm_tooltip_obj_resize_cb(void *data, Evas *e  __UNUSED__, Evas_Object *obj __U
 }
 
 static void
-_elm_tooltip_obj_mouse_move_cb(void *data, Evas *e  __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info  __UNUSED__)
+_elm_tooltip_obj_mouse_move_cb(Elm_Tooltip *tt, Evas *e  __UNUSED__, Evas_Object *obj __UNUSED__, Evas_Event_Mouse_Move *ev)
 {
-   Elm_Tooltip *tt = data;
-   _elm_tooltip_reconfigure_job_start(tt);
+   if (tt->mouse_x || tt->mouse_y)
+     {
+        if ((abs(ev->cur.output.x - tt->mouse_x) < 3) &&
+            (abs(ev->cur.output.y - tt->mouse_y) < 3))
+          {
+             TTDBG("MOUSE MOVE REJECTED!\n");
+             return;
+          }
+     }
+   tt->mouse_x = ev->cur.output.x;
+   tt->mouse_y = ev->cur.output.y;
    TTDBG("MOUSE MOVED\n");
+   _elm_tooltip_reconfigure_job_start(tt);
 }
 
 static void
@@ -141,7 +152,7 @@ _elm_tooltip_show(Elm_Tooltip *tt)
    evas_object_event_callback_add
      (tt->eventarea, EVAS_CALLBACK_RESIZE, _elm_tooltip_obj_resize_cb, tt);
    evas_object_event_callback_add
-     (tt->eventarea, EVAS_CALLBACK_MOUSE_MOVE, _elm_tooltip_obj_mouse_move_cb, tt);
+     (tt->eventarea, EVAS_CALLBACK_MOUSE_MOVE, (Evas_Object_Event_Cb)_elm_tooltip_obj_mouse_move_cb, tt);
 
    tt->changed_style = EINA_TRUE;
    _elm_tooltip_reconfigure_job_start(tt);
@@ -183,7 +194,7 @@ _elm_tooltip_hide(Elm_Tooltip *tt)
    evas_object_event_callback_del_full
      (tt->eventarea, EVAS_CALLBACK_RESIZE, _elm_tooltip_obj_resize_cb, tt);
    evas_object_event_callback_del_full
-     (tt->eventarea, EVAS_CALLBACK_MOUSE_MOVE, _elm_tooltip_obj_mouse_move_cb, tt);
+     (tt->eventarea, EVAS_CALLBACK_MOUSE_MOVE, (Evas_Object_Event_Cb)_elm_tooltip_obj_mouse_move_cb, tt);
 
    del = tt->tt_win ?: tt->tooltip;
 
