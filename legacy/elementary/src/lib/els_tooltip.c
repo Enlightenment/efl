@@ -445,7 +445,7 @@ _elm_tooltip_reconfigure(Elm_Tooltip *tt)
    else if (ty < 0) ty -= tt->pad.by;
    else if (ty > ch) ty += tt->pad.by;
    TTDBG("PAD (BORDER):  tx=%d,ty=%d\n", tx, ty);
-   if ((tx < 0) || (ty < 0))
+   if (((tx < 0) && (tw < cw)) || ((ty < 0) && (th < ch)))
      {
         TTDBG("POSITIONING FAILED! THIS IS A BUG SOMEWHERE!\n");
         abort();
