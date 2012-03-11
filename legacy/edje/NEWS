@@ -25,6 +25,7 @@ Improvements:
 Fixes:
     * Correctly count and propagate preload signal with GROUP.
     * Fix rotation with fixed point.
+    * Correctly propagate scale factor to GROUP.
 
 Changes since Edje 1.0.0:
 -------------------------

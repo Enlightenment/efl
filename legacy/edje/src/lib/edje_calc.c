@@ -1906,7 +1906,7 @@ _edje_part_recalc_single(Edje *ed,
    sc = ed->scale;
    if (sc == ZERO) sc = _edje_scale;
    _edje_part_recalc_single_min_max(sc, ep, desc, &minw, &minh, &maxw, &maxh);
-   
+
    /* relative coords of top left & bottom right */
    _edje_part_recalc_single_rel(ed, ep, desc, rel1_to_x, rel1_to_y, rel2_to_x, rel2_to_y, params);
 
@@ -2282,6 +2282,12 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep, int flags, Edje_Calc_Params *sta
 #endif
 	return;
      }
+
+   if (ep->part->scale &&
+       ep->part->type == EDJE_PART_TYPE_GROUP &&
+       ep->swallowed_object)
+     edje_object_scale_set(ep->swallowed_object, TO_DOUBLE(ed->scale));
+
 #ifdef EDJE_CALC_CACHE
    if (ep->state == ed->state && !state)
      return ;

@@ -388,3 +388,6 @@
 	* Correctly count and propagate preload signal with GROUP.
 	* Fix rotation with fixed point.
 
+2012-03-11  Cedric Bail
+
+	* Propagate scale factor to GROUP's part.
