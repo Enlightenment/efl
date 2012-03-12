@@ -254,6 +254,7 @@ _item_del(Elm_Toolbar_Item *it)
    eina_stringshare_del(it->label);
    eina_stringshare_del(it->icon_str);
    if (it->icon) evas_object_del(it->icon);
+   if (it->object) evas_object_del(it->object);
    //TODO: See if checking for wd->menu_parent is necessary before deleting menu
    if (it->o_menu) evas_object_del(it->o_menu);
 }
