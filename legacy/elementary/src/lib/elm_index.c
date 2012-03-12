@@ -436,23 +436,26 @@ _sel_eval(Evas_Object *obj, Evas_Coord evx, Evas_Coord evy)
         if (it_closest)
           {
              it = it_closest;
-             if (!last)
+             if (!last && it->letter)
                last = strdup(it->letter);
              else
                {
-                  if (!label) label = strdup(last);
+                  if (!label && last) label = strdup(last);
                   else
                     {
-                       label = realloc(label, strlen(label) + strlen(last) + 1);
-                       if (!label) return;
-                       strcat(label, last);
+                       if (label && last)
+                         {
+                            label = realloc(label, strlen(label) +
+                                            strlen(last) + 1);
+                            if (!label) return;
+                            strcat(label, last);
+                         }
                     }
                   free(last);
-                  last = strdup(it->letter);
+                  if (it->letter) last = strdup(it->letter);
                }
           }
      }
-
    if (!label) label = strdup("");
    if (!last) last = strdup("");
    edje_object_part_text_set(wd->base, "elm.text.body", label);
