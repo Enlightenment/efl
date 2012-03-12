@@ -1773,42 +1773,6 @@ elm_flip_add(Evas_Object *parent)
    return obj;
 }
 
-EAPI void
-elm_flip_content_front_set(Evas_Object *obj, Evas_Object *content)
-{
-   elm_object_part_content_set(obj, NULL, content);
-}
-
-EAPI void
-elm_flip_content_back_set(Evas_Object *obj, Evas_Object *content)
-{
-   elm_object_part_content_set(obj, "back", content);
-}
-
-EAPI Evas_Object *
-elm_flip_content_front_get(const Evas_Object *obj)
-{
-   return elm_object_part_content_get(obj, NULL);
-}
-
-EAPI Evas_Object *
-elm_flip_content_back_get(const Evas_Object *obj)
-{
-   return elm_object_part_content_get(obj, "back");
-}
-
-EAPI Evas_Object *
-elm_flip_content_front_unset(Evas_Object *obj)
-{
-   return elm_object_part_content_unset(obj, NULL);
-}
-
-EAPI Evas_Object *
-elm_flip_content_back_unset(Evas_Object *obj)
-{
-   return elm_object_part_content_unset(obj, "back");
-}
-
 EAPI Eina_Bool
 elm_flip_front_visible_get(const Evas_Object *obj)
 {
@@ -1816,12 +1780,6 @@ elm_flip_front_visible_get(const Evas_Object *obj)
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return EINA_FALSE;
    return wd->state;
-}
-
-EAPI Eina_Bool
-elm_flip_front_get(const Evas_Object *obj)
-{
-   return elm_flip_front_visible_get(obj);
 }
 
 EAPI void
