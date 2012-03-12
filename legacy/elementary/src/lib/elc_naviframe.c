@@ -1141,7 +1141,7 @@ elm_naviframe_item_push(Evas_Object *obj,
         elm_object_signal_emit(VIEW(prev_it), "elm,state,cur,pushed", "elm");
         elm_object_signal_emit(VIEW(it), "elm,state,new,pushed", "elm");
         edje_object_message_signal_process(elm_layout_edje_get(VIEW(prev_it)));
-        elm_widget_tree_unfocusable_set(it->content, EINA_TRUE);
+        elm_widget_tree_unfocusable_set(prev_it->content, EINA_TRUE);
         edje_object_message_signal_process(elm_layout_edje_get(VIEW(it)));
      }
    wd->stack = eina_inlist_append(wd->stack, EINA_INLIST_GET(it));
@@ -1227,6 +1227,8 @@ elm_naviframe_item_pop(Evas_Object *obj)
    if (!it) return NULL;
    if (wd->preserve)
      content = it->content;
+   else
+     elm_widget_tree_unfocusable_set(it->content, EINA_TRUE);
 
    if (wd->stack->last->prev)
      prev_it = EINA_INLIST_CONTAINER_GET(wd->stack->last->prev,
