@@ -666,7 +666,8 @@ elm_widget_theme(Evas_Object *obj)
 
    API_ENTRY return EINA_FALSE;
    EINA_LIST_FOREACH(sd->subobjs, l, child) ret &= elm_widget_theme(child);
-   if (sd->resize_obj) ret &= elm_widget_theme(sd->resize_obj);
+   if (sd->resize_obj && _elm_widget_is(sd->resize_obj))
+     ret &= elm_widget_theme(sd->resize_obj);
    if (sd->hover_obj) ret &= elm_widget_theme(sd->hover_obj);
    EINA_LIST_FOREACH(sd->tooltips, l, tt) elm_tooltip_theme(tt);
    EINA_LIST_FOREACH(sd->cursors, l, cur) elm_cursor_theme(cur);
