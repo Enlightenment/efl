@@ -454,53 +454,6 @@ elm_label_wrap_width_get(const Evas_Object *obj)
    return wd->wrap_w;
 }
 
-EINA_DEPRECATED EAPI void
-elm_label_wrap_height_set(Evas_Object *obj __UNUSED__,
-                          Evas_Coord   h __UNUSED__)
-{
-   return;
-}
-
-EINA_DEPRECATED EAPI Evas_Coord
-elm_label_wrap_height_get(const Evas_Object *obj __UNUSED__)
-{
-   return 0;
-}
-
-EINA_DEPRECATED EAPI void
-elm_label_fontsize_set(Evas_Object *obj __UNUSED__,
-                       int fontsize __UNUSED__)
-{
-   return;
-}
-
-EINA_DEPRECATED EAPI void
-elm_label_text_align_set(Evas_Object *obj __UNUSED__,
-                         const char *alignmode __UNUSED__)
-{
-   return;
-}
-
-EINA_DEPRECATED EAPI void
-elm_label_text_color_set(Evas_Object *obj __UNUSED__,
-                         unsigned int r __UNUSED__,
-                         unsigned int g __UNUSED__,
-                         unsigned int b __UNUSED__,
-                         unsigned int a __UNUSED__)
-{
-   return;
-}
-
-EINA_DEPRECATED EAPI void
-elm_label_background_color_set(Evas_Object *obj __UNUSED__,
-                               unsigned int r __UNUSED__,
-                               unsigned int g __UNUSED__,
-                               unsigned int b __UNUSED__,
-                               unsigned int a __UNUSED__)
-{
-   return;
-}
-
 EAPI void
 elm_label_ellipsis_set(Evas_Object *obj, Eina_Bool ellipsis)
 {
