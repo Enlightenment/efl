@@ -908,12 +908,41 @@ elm_slider_horizontal_get(const Evas_Object *obj)
 EAPI void
 elm_slider_min_max_set(Evas_Object *obj, double min, double max)
 {
+   const char *buf_min = NULL;
+   const char *buf_max = NULL;
+
    ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return;
    if ((wd->val_min == min) && (wd->val_max == max)) return;
    wd->val_min = min;
    wd->val_max = max;
+
+   if (wd->units_format_func)
+     {
+        buf_min = wd->units_format_func(wd->val_min);
+        buf_max = wd->units_format_func(wd->val_max);
+     }
+   else if (wd->units)
+     {
+        int length = strlen(wd->units);
+
+        buf_min = alloca(length + 128);
+        buf_max = alloca(length + 128);
+
+        snprintf((char*) buf_min, length + 128, wd->units, wd->val_min);
+        snprintf((char*) buf_max, length + 128, wd->units, wd->val_max);
+     }
+
+   edje_object_part_text_set(wd->slider, "elm.units.min", buf_min);
+   edje_object_part_text_set(wd->slider, "elm.units.max", buf_max);
+
+   if (wd->units_format_func && wd->units_format_free)
+     {
+        wd->units_format_free(buf_min);
+        wd->units_format_free(buf_max);
+     }
+
    if (wd->val < wd->val_min) wd->val = wd->val_min;
    if (wd->val > wd->val_max) wd->val = wd->val_max;
    _val_set(obj);
