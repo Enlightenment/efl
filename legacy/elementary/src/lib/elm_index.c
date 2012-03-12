@@ -884,12 +884,6 @@ elm_index_item_clear(Evas_Object *obj)
      }
 }
 
-EINA_DEPRECATED EAPI void
-elm_index_item_go(Evas_Object *obj, int level __UNUSED__)
-{
-   elm_index_level_go(obj, level);
-}
-
 EAPI void
 elm_index_level_go(Evas_Object *obj, int level __UNUSED__)
 {
