@@ -602,18 +602,6 @@ elm_notify_timeout_get(const Evas_Object *obj)
    return wd->timeout;
 }
 
-EINA_DEPRECATED EAPI void
-elm_notify_repeat_events_set(Evas_Object *obj, Eina_Bool repeat)
-{
-   elm_notify_allow_events_set(obj, repeat);
-}
-
-EINA_DEPRECATED EAPI Eina_Bool
-elm_notify_repeat_events_get(const Evas_Object *obj)
-{
-   return elm_notify_allow_events_get(obj);
-}
-
 EAPI void
 elm_notify_allow_events_set(Evas_Object *obj, Eina_Bool allow)
 {

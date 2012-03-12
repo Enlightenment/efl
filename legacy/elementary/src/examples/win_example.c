@@ -112,7 +112,7 @@ _main_win_del_cb(void *data __UNUSED__, Evas_Object *obj, void *event __UNUSED__
 
    msg = elm_notify_add(obj);
    elm_notify_orient_set(msg, ELM_NOTIFY_ORIENT_CENTER);
-   elm_notify_repeat_events_set(msg, EINA_FALSE);
+   elm_notify_allow_events_set(msg, EINA_FALSE);
    evas_object_show(msg);
 
    box = elm_box_add(obj);

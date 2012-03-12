@@ -34,7 +34,7 @@ elm_main(int argc, char **argv)
    evas_object_show(content);
 
    notify = elm_notify_add(win);
-   elm_notify_repeat_events_set(notify, EINA_FALSE);
+   elm_notify_allow_events_set(notify, EINA_FALSE);
    elm_notify_timeout_set(notify, 5);
    elm_object_content_set(notify, content);
    evas_object_size_hint_weight_set(notify, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
