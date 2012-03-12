@@ -1757,22 +1757,10 @@ elm_config_cache_flush_enabled_set(Eina_Bool enabled)
    _elm_recache();
 }
 
-EINA_DEPRECATED EAPI int
-elm_font_cache_get(void)
-{
-   return elm_config_cache_font_cache_size_get();
-}
-
 EAPI int
 elm_config_cache_font_cache_size_get(void)
 {
    return _elm_config->font_cache;
-}
-
-EINA_DEPRECATED EAPI void
-elm_font_cache_set(int size)
-{
-   elm_config_cache_font_cache_size_set(size);
 }
 
 EAPI void 
@@ -1784,22 +1772,10 @@ elm_config_cache_font_cache_size_set(int size)
    _elm_recache();
 }
 
-EINA_DEPRECATED EAPI int
-elm_image_cache_get(void)
-{
-   return elm_config_cache_image_cache_size_get();
-}
-
 EAPI int
 elm_config_cache_image_cache_size_get(void)
 {
    return _elm_config->image_cache;
-}
-
-EINA_DEPRECATED EAPI void
-elm_image_cache_set(int size)
-{
-   elm_config_cache_image_cache_size_set(size);
 }
 
 EAPI void
