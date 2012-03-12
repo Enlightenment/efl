@@ -76,7 +76,7 @@ _active_set(void        *data __UNUSED__,
             Evas_Object *obj __UNUSED__,
             void        *event_info __UNUSED__)
 {
-   elm_index_active_set(d.index, !elm_index_active_get(d.index));
+   elm_index_autohide_disabled_set(d.index, !elm_index_autohide_disabled_get(d.index));
 
    fprintf(stdout, "Toggling index programmatically.\n");
 }

@@ -640,18 +640,6 @@ elm_index_add(Evas_Object *parent)
    return obj;
 }
 
-EINA_DEPRECATED EAPI void
-elm_index_active_set(Evas_Object *obj, Eina_Bool active)
-{
-   elm_index_autohide_disabled_set(obj, !active);
-}
-
-EINA_DEPRECATED EAPI Eina_Bool
-elm_index_active_get(const Evas_Object *obj)
-{
-   return !elm_index_autohide_disabled_get(obj);
-}
-
 EAPI void
 elm_index_autohide_disabled_set(Evas_Object *obj, Eina_Bool disabled)
 {
@@ -771,12 +759,6 @@ elm_index_item_prepend(Evas_Object *obj, const char *letter, Evas_Smart_Cb func,
    wd->items = eina_list_prepend(wd->items, it);
    _index_box_clear(obj, wd->bx[wd->level], wd->level);
    return (Elm_Object_Item *)it;
-}
-
-EINA_DEPRECATED EAPI Elm_Object_Item *
-elm_index_item_append_relative(Evas_Object *obj, const char *letter, const void *item, const Elm_Object_Item *relative)
-{
-   return elm_index_item_insert_after(obj, (Elm_Object_Item *) relative, letter, NULL, item);
 }
 
 EINA_DEPRECATED EAPI Elm_Object_Item *

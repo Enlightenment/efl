@@ -146,7 +146,7 @@ elm_main(int    argc __UNUSED__,
    evas_object_resize(win, 320, 300);
    evas_object_show(win);
 
-   elm_index_active_set(index, EINA_TRUE);
+   elm_index_autohide_disabled_set(index, EINA_FALSE);
 
    elm_run();
    return 0;

@@ -3830,9 +3830,9 @@
  * data on the index widget.
  *
  * The first of the three buttons that follow will call
- * elm_index_active_set(), thus showing the index automatically for
+ * elm_index_autohide_disabled_set(), thus showing the index automatically for
  * you, if it's not already visible, what is checked with
- * elm_index_active_get(). The second button will exercise @b deletion
+ * elm_index_autohide_disabled_get(). The second button will exercise @b deletion
  * of index item objects, by the following code:
  * @dontinclude index_example_01.c
  * @skip delete an index item
