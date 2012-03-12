@@ -1123,19 +1123,6 @@ elm_object_focus_next(Evas_Object        *obj,
    elm_widget_focus_cycle(obj, dir);
 }
 
-EINA_DEPRECATED EAPI void
-elm_object_tree_unfocusable_set(Evas_Object *obj,
-                                Eina_Bool    unfocusable)
-{
-   elm_object_tree_focus_allow_set(obj, unfocusable);
-}
-
-EINA_DEPRECATED EAPI Eina_Bool
-elm_object_tree_unfocusable_get(const Evas_Object *obj)
-{
-   return elm_object_tree_focus_allow_get(obj);
-}
-
 EAPI void
 elm_object_tree_focus_allow_set(Evas_Object *obj,
                                 Eina_Bool    tree_focusable)
