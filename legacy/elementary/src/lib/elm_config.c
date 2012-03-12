@@ -1787,22 +1787,10 @@ elm_config_cache_image_cache_size_set(int size)
    _elm_recache();
 }
 
-EINA_DEPRECATED EAPI int
-elm_edje_file_cache_get(void)
-{
-   return elm_config_cache_edje_file_cache_size_get();
-}
-
 EAPI int
 elm_config_cache_edje_file_cache_size_get()
 {
    return _elm_config->edje_cache;
-}
-
-EINA_DEPRECATED EAPI void
-elm_edje_file_cache_set(int size)
-{
-   elm_config_cache_edje_file_cache_size_set(size);
 }
 
 EAPI void
@@ -1814,22 +1802,10 @@ elm_config_cache_edje_file_cache_size_set(int size)
    _elm_recache();
 }
 
-EINA_DEPRECATED EAPI int
-elm_edje_collection_cache_get(void)
-{
-   return elm_config_cache_edje_collection_cache_size_get();
-}
-
 EAPI int
 elm_config_cache_edje_collection_cache_size_get(void)
 {
    return _elm_config->edje_collection_cache;
-}
-
-EINA_DEPRECATED EAPI void
-elm_edje_collection_cache_set(int size)
-{
-   elm_config_cache_edje_collection_cache_size_set(size);
 }
 
 EAPI void
