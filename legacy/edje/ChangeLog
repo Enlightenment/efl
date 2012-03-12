@@ -391,3 +391,8 @@
 2012-03-11  Cedric Bail
 
 	* Propagate scale factor to GROUP's part.
+
+2012-03-12  Cedric Bail
+
+	* Make it possible for edje to update size hint automatically.
+	* Add min: SOURCE to GROUP's part.

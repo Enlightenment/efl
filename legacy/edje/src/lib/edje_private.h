@@ -232,6 +232,7 @@ struct _Edje_Position
 struct _Edje_Size
 {
    int w, h;
+   Eina_Bool limit; /* should we limit ourself to the size of the source */
 };
 
 struct _Edje_Rectangle
@@ -932,9 +933,6 @@ struct _Edje_Part_Description_Spec_Image
    int            id; /* the image id to use */
    int            scale_hint; /* evas scale hint */
    Eina_Bool      set; /* if image condition it's content */
-   struct {
-      Eina_Bool   limit; /* should we limit ourself to the size of the image */
-   } min, max;
 
    Edje_Part_Description_Spec_Border border;
 };
@@ -1168,6 +1166,8 @@ struct _Edje
 #endif
    unsigned int          have_mapped_part : 1;
    unsigned int          recalc_call : 1;
+   unsigned int          update_hints : 1;
+   unsigned int          recalc_hints : 1;
 };
 
 struct _Edje_Calc_Params

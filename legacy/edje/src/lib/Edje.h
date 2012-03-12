@@ -2237,6 +2237,27 @@ EAPI Eina_Bool    edje_object_text_class_set          (Evas_Object *obj, const c
 EAPI void         edje_object_size_min_get            (const Evas_Object *obj, Evas_Coord *minw, Evas_Coord *minh);
 
 /**
+ * @brief Edje will automatically update the size hints on itself.
+ *
+ * @param obj A handle to an Edje object.
+ * @param update Wether or not update the size hints.
+ *
+ * By default edje doesn't set size hints on itself. With this function
+ * call, it will do so if update is true. Be carefull, it cost a lot to
+ * trigger this feature as it will recalc the object every time it make
+ * sense to be sure that's its minimal size hint is always accurate.
+ */
+EAPI void edje_object_update_hints_set(Evas_Object *obj, Eina_Bool update);
+
+/**
+ * @brief Wether or not Edje will update size hints on itself.
+ *
+ * @param obj A handle to an Edje object.
+ * @return @c true if does, @c false if it doesn't.
+ */
+EAPI Eina_Bool edje_object_update_hints_get(Evas_Object *obj);
+
+/**
  * @brief Get the maximum size specified -- as an EDC property -- for a
  * given Edje object
  *

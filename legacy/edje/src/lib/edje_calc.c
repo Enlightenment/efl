@@ -110,7 +110,7 @@ _edje_part_pos_set(Edje *ed, Edje_Real_Part *ep, int mode, FLOAT_T pos, FLOAT_T 
         npos = fp_pos;
         break;
      }
-#endif   
+#endif
    if (npos == ep->description_pos) return;
 
    ep->description_pos = npos;
@@ -572,6 +572,7 @@ _edje_part_description_apply(Edje *ed, Edje_Real_Part *ep, const char *d1, doubl
        ep->part->type == EDJE_PART_TYPE_EXTERNAL)
      _edje_external_recalc_apply(ed, ep, NULL, chosen_desc);
 
+   ed->recalc_hints = 1;
    ed->dirty = 1;
    ed->recalc_call = 1;
 #ifdef EDJE_CALC_CACHE
@@ -650,6 +651,16 @@ _edje_recalc_do(Edje *ed)
    else
      evas_object_smart_need_recalculate_set(ed->obj, need_calc);
    ed->recalc_call = 0;
+
+   if (ed->update_hints && ed->recalc_hints && !ed->calc_only)
+     {
+        Evas_Coord w, h;
+
+        ed->recalc_hints = 0;
+
+        edje_object_size_min_calc(ed->obj, &w, &h);
+        evas_object_size_hint_min_set(ed->obj, w, h);
+     }
 }
 
 void
@@ -1959,8 +1970,7 @@ _edje_part_recalc_single(Edje *ed,
           }
      }
    else if ((ep->part->type == EDJE_PART_TYPE_IMAGE) &&
-	    ((((Edje_Part_Description_Image *)chosen_desc)->image.min.limit) ||
-             (((Edje_Part_Description_Image *)chosen_desc)->image.max.limit)))
+	    (chosen_desc->min.limit || chosen_desc->max.limit))
      {
         Evas_Coord w, h;
 
@@ -1971,12 +1981,12 @@ _edje_part_recalc_single(Edje *ed,
         _edje_real_part_image_set(ed, ep, pos);
         evas_object_image_size_get(ep->object, &w, &h);
 
-        if (((Edje_Part_Description_Image *)chosen_desc)->image.min.limit)
+        if (chosen_desc->min.limit)
           {
              if (w > minw) minw = w;
              if (h > minh) minh = h;
           }
-        if (((Edje_Part_Description_Image *)chosen_desc)->image.max.limit)
+        if (chosen_desc->max.limit)
           {
              if ((maxw <= 0) || (w < maxw)) maxw = w;
              if ((maxh <= 0) || (h < maxh)) maxh = h;
@@ -2286,7 +2296,18 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep, int flags, Edje_Calc_Params *sta
    if (ep->part->scale &&
        ep->part->type == EDJE_PART_TYPE_GROUP &&
        ep->swallowed_object)
-     edje_object_scale_set(ep->swallowed_object, TO_DOUBLE(ed->scale));
+     {
+        edje_object_scale_set(ep->swallowed_object, TO_DOUBLE(ed->scale));
+
+        if (ep->description_pos > FROM_DOUBLE(0.5) && ep->param2)
+          {
+             edje_object_update_hints_set(ep->swallowed_object, ep->param2->description->min.limit);
+          }
+        else
+          {
+             edje_object_update_hints_set(ep->swallowed_object, ep->param1.description->min.limit);
+          }
+     }
 
 #ifdef EDJE_CALC_CACHE
    if (ep->state == ed->state && !state)

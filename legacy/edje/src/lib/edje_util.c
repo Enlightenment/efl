@@ -1014,6 +1014,7 @@ _edje_object_part_text_raw_set(Evas_Object *obj, Edje_Real_Part *rp, const char 
      if (text) rp->text.text = eina_stringshare_add(text);
    rp->edje->dirty = 1;
    rp->edje->recalc_call = 1;
+   rp->edje->recalc_hints = 1;
 #ifdef EDJE_CALC_CACHE
    rp->invalidate = 1;
 #endif
@@ -1076,6 +1077,7 @@ edje_object_part_text_style_user_push(Evas_Object *obj, const char *part,
    evas_textblock_style_set(ts, style);
    evas_object_textblock_style_user_push(rp->object, ts);
    evas_textblock_style_free(ts);
+   ed->recalc_hints = 1;
 }
 
 EAPI void
@@ -1091,6 +1093,7 @@ edje_object_part_text_style_user_pop(Evas_Object *obj, const char *part)
    if (rp->part->type != EDJE_PART_TYPE_TEXTBLOCK) return;
 
    evas_object_textblock_style_user_pop(rp->object);
+   ed->recalc_hints = 1;
 }
 
 EAPI const char *
@@ -1373,6 +1376,7 @@ edje_object_part_text_insert(Evas_Object *obj, const char *part, const char *tex
    _edje_entry_text_markup_insert(rp, text);
    rp->edje->dirty = 1;
    rp->edje->recalc_call = 1;
+   rp->edje->recalc_hints = 1;
 #ifdef EDJE_CALC_CACHE
    rp->invalidate = 1;
 #endif
@@ -1395,6 +1399,7 @@ edje_object_part_text_append(Evas_Object *obj, const char *part, const char *tex
    _edje_object_part_text_raw_append(obj, rp, part, text);
    rp->edje->dirty = 1;
    rp->edje->recalc_call = 1;
+   rp->edje->recalc_hints = 1;
 #ifdef EDJE_CALC_CACHE
    rp->invalidate = 1;
 #endif
@@ -2808,6 +2813,7 @@ edje_object_size_min_restricted_calc(Evas_Object *obj, Evas_Coord *minw, Evas_Co
 	     maxh = 0;
 	  }
 	pep = NULL;
+	has_non_fixed_tb = EINA_FALSE;
 	for (i = 0; i < ed->table_parts_size; i++)
 	  {
 	     Edje_Real_Part *ep;
@@ -3946,6 +3952,30 @@ edje_object_preload(Evas_Object *obj, Eina_Bool cancel)
    return EINA_TRUE;
 }
 
+EAPI void
+edje_object_update_hints_set(Evas_Object *obj, Eina_Bool update)
+{
+   Edje *ed;
+
+   ed = _edje_fetch(obj);
+   if (!ed) return ;
+   if (ed->update_hints == !!update) return ;
+
+   ed->update_hints = !!update;
+   if (update) ed->recalc_hints = 1;
+}
+
+EAPI Eina_Bool
+edje_object_update_hints_get(Evas_Object *obj)
+{
+   Edje *ed;
+
+   ed = _edje_fetch(obj);
+   if (!ed) return EINA_FALSE;
+
+   return ed->update_hints;
+}
+
 Eina_Bool
 _edje_real_part_table_pack(Edje_Real_Part *rp, Evas_Object *child_obj, unsigned short col, unsigned short row, unsigned short colspan, unsigned short rowspan)
 {
@@ -4503,6 +4533,7 @@ _edje_real_part_swallow(Edje_Real_Part *rp,
                _edje_real_part_swallow_hints_update(rp);
              rp->edje->dirty = 1;
              rp->edje->recalc_call = 1;
+             rp->edje->recalc_hints = 1;
              _edje_recalc(rp->edje);
              return;
           }
@@ -4547,6 +4578,7 @@ _edje_real_part_swallow(Edje_Real_Part *rp,
 
    rp->edje->dirty = 1;
    rp->edje->recalc_call = 1;
+   rp->edje->recalc_hints = 1;
    _edje_recalc(rp->edje);
 }
 

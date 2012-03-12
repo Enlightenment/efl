@@ -9,10 +9,11 @@ Additions:
     * EDJE_ASPECT_PREFER_SOURCE.
     * edje.version() Lua function.
     * minmul edc property.
-    * add min: SOURCE and max: SOURCE.
+    * add min: SOURCE and max: SOURCE to IMAGE and GROUP parts.
     * add edje_object_markup_filter_callback_add/del/delfull().
     * add broadcast_signal: bool.
     * add edje_object_part_text_imf_context_get()
+    * add edje_object_update_hints_set() and edje_object_update_hints_get()
 
 Improvements:
     * speedup load time of Edje file.
