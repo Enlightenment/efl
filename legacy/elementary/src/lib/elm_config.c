@@ -1550,19 +1550,6 @@ elm_config_cursor_engine_only_set(Eina_Bool engine_only)
    _elm_config->cursor_engine_only = engine_only;
 }
 
-EINA_DEPRECATED EAPI double
-elm_tooltip_delay_get(void)
-{
-   return elm_config_tooltip_delay_get();
-}
-
-EINA_DEPRECATED EAPI Eina_Bool
-elm_tooltip_delay_set(double delay)
-{
-   elm_config_tooltip_delay_set(delay);
-   return EINA_TRUE;
-}
-
 EAPI double
 elm_config_tooltip_delay_get(void)
 {
