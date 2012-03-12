@@ -3086,63 +3086,6 @@ elm_entry_item_provider_remove(Evas_Object *obj, Elm_Entry_Item_Provider_Cb func
 }
 
 EAPI void
-elm_entry_text_filter_append(Evas_Object *obj, Elm_Entry_Filter_Cb func, void *data)
-{
-   Widget_Data *wd;
-   Elm_Entry_Markup_Filter *tf;
-   ELM_CHECK_WIDTYPE(obj, widtype);
-
-   wd = elm_widget_data_get(obj);
-
-   EINA_SAFETY_ON_NULL_RETURN(func);
-
-   tf = _filter_new(func, data);
-   if (!tf) return;
-
-   wd->text_filters = eina_list_append(wd->text_filters, tf);
-}
-
-EAPI void
-elm_entry_text_filter_prepend(Evas_Object *obj, Elm_Entry_Filter_Cb func, void *data)
-{
-   Widget_Data *wd;
-   Elm_Entry_Markup_Filter *tf;
-   ELM_CHECK_WIDTYPE(obj, widtype);
-
-   wd = elm_widget_data_get(obj);
-
-   EINA_SAFETY_ON_NULL_RETURN(func);
-
-   tf = _filter_new(func, data);
-   if (!tf) return;
-
-   wd->text_filters = eina_list_prepend(wd->text_filters, tf);
-}
-
-EAPI void
-elm_entry_text_filter_remove(Evas_Object *obj, Elm_Entry_Filter_Cb func, void *data)
-{
-   Widget_Data *wd;
-   Eina_List *l;
-   Elm_Entry_Markup_Filter *tf;
-   ELM_CHECK_WIDTYPE(obj, widtype);
-
-   wd = elm_widget_data_get(obj);
-
-   EINA_SAFETY_ON_NULL_RETURN(func);
-
-   EINA_LIST_FOREACH(wd->text_filters, l, tf)
-     {
-        if ((tf->func == func) && ((!data) || (tf->data == data)))
-          {
-             wd->text_filters = eina_list_remove_list(wd->text_filters, l);
-             _filter_free(tf);
-             return;
-          }
-     }
-}
-
-EAPI void
 elm_entry_markup_filter_append(Evas_Object *obj, Elm_Entry_Filter_Cb func, void *data)
 {
    Widget_Data *wd;
