@@ -2363,46 +2363,6 @@ elm_win_alpha_get(const Evas_Object *obj)
    return ecore_evas_alpha_get(win->ee);
 }
 
-EINA_DEPRECATED EAPI void
-elm_win_transparent_set(Evas_Object *obj, Eina_Bool transparent)
-{
-   Elm_Win *win;
-   ELM_CHECK_WIDTYPE(obj, widtype);
-   win = elm_widget_data_get(obj);
-   if (!win) return;
-
-   if (win->frame_obj)
-     {
-     }
-   else if (win->img_obj)
-     {
-        evas_object_image_alpha_set(win->img_obj, transparent);
-     }
-   else
-     {
-#ifdef HAVE_ELEMENTARY_X
-        if (win->xwin)
-          {
-             ecore_evas_transparent_set(win->ee, transparent);
-             _elm_win_xwin_update(win);
-          }
-        else
-#endif
-           ecore_evas_transparent_set(win->ee, transparent);
-     }
-}
-
-EINA_DEPRECATED EAPI Eina_Bool
-elm_win_transparent_get(const Evas_Object *obj)
-{
-   Elm_Win *win;
-   ELM_CHECK_WIDTYPE(obj, widtype) EINA_FALSE;
-   win = elm_widget_data_get(obj);
-   if (!win) return EINA_FALSE;
-
-   return ecore_evas_transparent_get(win->ee);
-}
-
 EAPI void
 elm_win_override_set(Evas_Object *obj, Eina_Bool override)
 {
