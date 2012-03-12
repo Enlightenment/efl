@@ -751,41 +751,6 @@ elm_menu_item_add(Evas_Object *obj, Elm_Object_Item *parent, const char *icon, c
    return (Elm_Object_Item *) subitem;
 }
 
-EINA_DEPRECATED EAPI Elm_Object_Item *
-elm_menu_item_add_object(Evas_Object *obj, Elm_Object_Item *parent, Evas_Object *subobj, Evas_Smart_Cb func, const void *data)
-{
-   Elm_Menu_Item *subitem;
-   ELM_CHECK_WIDTYPE(obj, widtype) NULL;
-   Widget_Data *wd = elm_widget_data_get(obj);
-
-   if (!wd) return NULL;
-   subitem = elm_widget_item_new(obj, Elm_Menu_Item);
-   if (!subitem) return NULL;
-
-   elm_widget_item_del_pre_hook_set(subitem, _item_del_pre_hook);
-   elm_widget_item_disable_hook_set(subitem, _item_disable_hook);
-   elm_widget_item_text_set_hook_set(subitem, _item_text_set_hook);
-   elm_widget_item_text_get_hook_set(subitem, _item_text_get_hook);
-   elm_widget_item_content_set_hook_set(subitem, _item_content_set_hook);
-   elm_widget_item_content_get_hook_set(subitem, _item_content_get_hook);
-
-   subitem->base.data = data;
-   subitem->func = func;
-   subitem->parent = (Elm_Menu_Item *) parent;
-   subitem->object_item = EINA_TRUE;
-   subitem->content = subobj;
-
-   _item_obj_create(subitem);
-
-   elm_widget_sub_object_add(WIDGET(subitem), subitem->content);
-   edje_object_part_swallow(VIEW(subitem), "elm.swallow.content", subobj);
-   _sizing_eval(WIDGET(subitem));
-
-   _elm_menu_item_add_helper(obj, (Elm_Menu_Item *) parent, subitem, wd);
-
-   return (Elm_Object_Item *) subitem;
-}
-
 EAPI unsigned int
 elm_menu_item_index_get(const Elm_Object_Item *it)
 {
