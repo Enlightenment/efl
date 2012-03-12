@@ -1456,37 +1456,6 @@ elm_multibuttonentry_entry_get(const Evas_Object *obj)
    return wd->entry;
 }
 
-EINA_DEPRECATED EAPI const char *
-elm_multibuttonentry_guide_text_get(const Evas_Object *obj)
-{
-   ELM_CHECK_WIDTYPE(obj, widtype) NULL;
-   Widget_Data *wd = elm_widget_data_get(obj);
-
-   if (!wd) return NULL;
-   if (wd->guidetext) return edje_object_part_text_get(wd->guidetext, "elm.text");
-   return NULL;
-}
-
-EINA_DEPRECATED EAPI void
-elm_multibuttonentry_guide_text_set(Evas_Object *obj, const char *guidetext)
-{
-   ELM_CHECK_WIDTYPE(obj, widtype);
-   Widget_Data *wd = elm_widget_data_get(obj);
-
-   if (!wd) return;
-
-   _set_guidetext(obj, guidetext);
-}
-
-EINA_DEPRECATED EAPI int
-elm_multibuttonentry_shrink_mode_get(const Evas_Object *obj)
-{
-   if (elm_multibuttonentry_expanded_get(obj))
-     return 0;
-   else
-     return 1;
-}
-
 EAPI Eina_Bool
 elm_multibuttonentry_expanded_get(const Evas_Object *obj)
 {
@@ -1496,16 +1465,6 @@ elm_multibuttonentry_expanded_get(const Evas_Object *obj)
    if (!wd) return -1;
      return (wd->view_state == MULTIBUTTONENTRY_VIEW_SHRINK ? EINA_FALSE : EINA_TRUE);
 
-}
-
-EINA_DEPRECATED EAPI void
-elm_multibuttonentry_shrink_mode_set(Evas_Object *obj, int shrink)
-{
-   if (shrink == 0)
-     elm_multibuttonentry_expanded_set(obj, EINA_TRUE);
-
-   if (shrink == 1)
-     elm_multibuttonentry_expanded_set(obj, EINA_FALSE);
 }
 
 EAPI void
