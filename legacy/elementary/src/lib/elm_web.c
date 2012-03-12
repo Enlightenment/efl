@@ -1602,12 +1602,6 @@ elm_web_navigate_possible_get(Evas_Object *obj, int steps)
 #endif
 }
 
-EINA_DEPRECATED EAPI Eina_Bool
-elm_web_history_enable_get(const Evas_Object *obj)
-{
-   return elm_web_history_enabled_get(obj);
-}
-
 EAPI Eina_Bool
 elm_web_history_enabled_get(const Evas_Object *obj)
 {
@@ -1619,12 +1613,6 @@ elm_web_history_enabled_get(const Evas_Object *obj)
 #else
    return EINA_FALSE;
 #endif
-}
-
-EINA_DEPRECATED EAPI void
-elm_web_history_enable_set(Evas_Object *obj, Eina_Bool enable)
-{
-   elm_web_history_enabled_set(obj, enable);
 }
 
 EAPI void
