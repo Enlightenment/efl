@@ -1429,7 +1429,6 @@ _item_del(Elm_Gen_Item *it)
    evas_event_freeze(evas_object_evas_get(obj));
    it->wd->selected = eina_list_remove(it->wd->selected, it);
    if (it->realized) _elm_genlist_item_unrealize(it, EINA_FALSE);
-   it->wd->item_count--;
    _elm_genlist_item_del_serious(it);
    elm_gengrid_item_class_unref((Elm_Gengrid_Item_Class *)it->itc);
    evas_event_thaw(evas_object_evas_get(obj));
