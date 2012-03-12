@@ -9,11 +9,17 @@
 static const char *corners[] = {"top_left", "top_right",
                                 "bottom_right", "bottom_left"};
 
+
 void
 _bla(void *data, Evas_Object *obj, void *event_info)
 {
    static unsigned char corner = 0;
-   elm_bubble_corner_set(obj, corners[++corner > 3 ? corner = 0 : corner]);
+   ++corner;
+   if (corner > 3)
+     elm_bubble_pos_set(obj, ELM_BUBBLE_POS_TOP_LEFT);
+   else
+     elm_bubble_pos_set(obj, corner);
+
 }
 
 EAPI_MAIN int

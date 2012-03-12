@@ -347,17 +347,6 @@ elm_bubble_add(Evas_Object *parent)
    return obj;
 }
 
-EINA_DEPRECATED EAPI void
-elm_bubble_corner_set(Evas_Object *obj, const char *corner)
-{
-   int i = 0;
-   for (i=ELM_BUBBLE_POS_TOP_LEFT; i<=ELM_BUBBLE_POS_BOTTOM_RIGHT; i++)
-      {
-         if (!strcmp(corner,corner_string[i]))
-           elm_bubble_pos_set(obj, i);
-      }
-}
-
 EAPI void
 elm_bubble_pos_set(Evas_Object *obj, Elm_Bubble_Pos pos)
 {
@@ -367,12 +356,6 @@ elm_bubble_pos_set(Evas_Object *obj, Elm_Bubble_Pos pos)
    if(pos<ELM_BUBBLE_POS_TOP_LEFT || pos>ELM_BUBBLE_POS_BOTTOM_RIGHT) return;
    wd->pos = pos;
    _theme_hook(obj);
-}
-
-EINA_DEPRECATED EAPI const char*
-elm_bubble_corner_get(const Evas_Object *obj)
-{
-   return corner_string[elm_bubble_pos_get(obj)];
 }
 
 EAPI Elm_Bubble_Pos
