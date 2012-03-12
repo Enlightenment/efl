@@ -1312,7 +1312,10 @@ _ecore_con_url_event_url_complete(Ecore_Con_Url *url_con, CURLMsg *curlmsg)
         if (!url_con->status)
           _ecore_con_url_status_get(url_con);
      }
-   else ERR("Curl message have errors: %d", curlmsg->data.result);
+   else if (curlmsg)
+     ERR("Curl message have errors: %d", curlmsg->data.result);
+   else
+     CRIT("THIS IS BAD.");
 
    e->status = url_con->status;
    e->url_con = url_con;
