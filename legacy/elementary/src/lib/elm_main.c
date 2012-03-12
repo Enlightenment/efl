@@ -1030,12 +1030,6 @@ elm_cache_all_flush(void)
      }
 }
 
-EINA_DEPRECATED EAPI void
-elm_all_flush(void)
-{
-   elm_cache_all_flush();
-}
-
 EAPI Eina_Bool
 elm_object_focus_get(const Evas_Object *obj)
 {
