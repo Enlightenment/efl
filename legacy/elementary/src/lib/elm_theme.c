@@ -610,13 +610,6 @@ elm_theme_full_flush(void)
    elm_theme_flush(&(theme_default));
 }
 
-EINA_DEPRECATED EAPI void
-elm_theme_all_set(const char *theme)
-{
-   elm_theme_set(NULL, theme);
-   elm_config_all_flush();
-}
-
 EAPI Eina_List *
 elm_theme_name_available_list_new(void)
 {
