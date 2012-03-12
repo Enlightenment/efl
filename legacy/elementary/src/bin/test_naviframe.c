@@ -73,7 +73,7 @@ _page5(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
                                   evas_object_data_get(nf, "page1"));
 
    content = _content_new(nf, img5);
-   it = elm_naviframe_item_insert_after(obj,
+   it = elm_naviframe_item_insert_after(nf,
                                         elm_naviframe_top_item_get(nf),
                                         "Page 5",
                                         bt,
