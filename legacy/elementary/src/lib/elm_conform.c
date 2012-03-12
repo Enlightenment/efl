@@ -630,15 +630,3 @@ elm_conformant_add(Evas_Object *parent)
    _sizing_eval(obj);
    return obj;
 }
-
-EINA_DEPRECATED EAPI Evas_Object *
-elm_conformant_content_area_get(const Evas_Object *obj)
-{
-   ELM_CHECK_WIDTYPE(obj, widtype) NULL;
-   Widget_Data *wd = elm_widget_data_get(obj);
-
-   if (!wd) return NULL;
-   /*Finger waggle warning*/
-   _elm_dangerous_call_check(__FUNCTION__);
-   return (Evas_Object *)edje_object_part_object_get(wd->base, "elm.swallow.content");
-}
