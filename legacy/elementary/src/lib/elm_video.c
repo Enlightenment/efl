@@ -335,23 +335,6 @@ elm_video_file_set(Evas_Object *video, const char *filename)
 #endif
 }
 
-EINA_DEPRECATED EAPI void
-elm_video_uri_set(Evas_Object *video, const char *uri)
-{
-#ifdef HAVE_EMOTION
-   ELM_CHECK_WIDTYPE(video, widtype);
-   Widget_Data *wd = elm_widget_data_get(video);
-
-   if (wd->remember) emotion_object_last_position_save(wd->emotion);
-   wd->stop = EINA_FALSE;
-   emotion_object_file_set(wd->emotion, uri);
-   edje_object_signal_emit(wd->layout, "elm,video,load", "elm");
-#else
-   (void) video;
-   (void) uri;
-#endif
-}
-
 EAPI Evas_Object *
 elm_video_emotion_get(const Evas_Object *video)
 {
