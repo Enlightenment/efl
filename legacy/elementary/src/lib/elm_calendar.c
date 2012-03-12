@@ -858,12 +858,6 @@ elm_calendar_min_max_year_get(const Evas_Object *obj, int *min, int *max)
    if (max) *max = wd->year_max + 1900;
 }
 
-EINA_DEPRECATED EAPI void
-elm_calendar_day_selection_enabled_set(Evas_Object *obj, Eina_Bool enabled)
-{
-   elm_calendar_day_selection_disabled_set(obj, !enabled);
-}
-
 EAPI void
 elm_calendar_day_selection_disabled_set(Evas_Object *obj, Eina_Bool disabled)
 {
@@ -875,12 +869,6 @@ elm_calendar_day_selection_disabled_set(Evas_Object *obj, Eina_Bool disabled)
      _select(wd, wd->selected_it);
    else
      _unselect(wd, wd->selected_it);
-}
-
-EINA_DEPRECATED EAPI Eina_Bool
-elm_calendar_day_selection_enabled_get(const Evas_Object *obj)
-{
-   return (!elm_calendar_day_selection_disabled_get(obj));
 }
 
 EAPI Eina_Bool

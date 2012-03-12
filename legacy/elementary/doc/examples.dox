@@ -1228,7 +1228,7 @@
  * If isn't required that users could select a day on calendar,
  * only interacting going through months, disabling days selection
  * could be a good idea to avoid confusion. For that:
- * @skipline elm_calendar_day_selection_enabled_set
+ * @skipline elm_calendar_day_selection_disabled_set
  *
  * Also, regarding days selection, you could be interested to set a
  * date to be highlighted on calendar from your code, maybe when
@@ -1329,7 +1329,7 @@
  * Periodicity is how frequently the mark will be displayed over the
  * calendar.  Can be a unique mark (that don't repeat), or it can repeat
  * daily, weekly, monthly or annually. It's enumerated by
- * @c Elm_Calendar_Mark_Repeat.
+ * @c Elm_Calendar_Mark_Repeat_Type.
  *
  * So let's add some marks to our calendar. We will add christmas holiday,
  * set Sundays as holidays, and check current day and day after that.
