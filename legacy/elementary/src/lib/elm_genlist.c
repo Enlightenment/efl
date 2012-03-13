@@ -4941,12 +4941,6 @@ elm_genlist_item_bring_in(Elm_Object_Item *it, Elm_Genlist_Item_Scrollto_Type ty
      elm_smart_scroller_region_bring_in(_it->wd->scr,x, y, w, h);
 }
 
-EINA_DEPRECATED EAPI void
-elm_genlist_item_contents_orphan(Elm_Object_Item *it)
-{
-   elm_genlist_item_all_contents_unset(it, NULL);
-}
-
 EAPI void
 elm_genlist_item_all_contents_unset(Elm_Object_Item *it, Eina_List **l)
 {
@@ -5566,12 +5560,6 @@ elm_genlist_item_type_get(const Elm_Object_Item *it)
    ELM_OBJ_ITEM_CHECK_OR_RETURN(it, ELM_GENLIST_ITEM_MAX);
    Elm_Gen_Item *_it = (Elm_Gen_Item *)it;
    return _it->item->type;
-}
-
-EINA_DEPRECATED EAPI Elm_Genlist_Item_Type
-elm_genlist_item_flags_get(const Elm_Object_Item *it)
-{
-   return elm_genlist_item_type_get(it);
 }
 
 EAPI Elm_Genlist_Item_Class *
