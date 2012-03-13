@@ -574,3 +574,8 @@
 2012-03-10  Cedric Bail
 
 	* Fix double free at end of execution of Ecore_Thread with feedback.
+
+2012-03-13  Leif Middelschulte (T_UNIX)
+
+        * Fix ecore_x_randr_modes_info_get to not cut off the trailing '\0'
+		anymore
