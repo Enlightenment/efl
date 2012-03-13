@@ -80,7 +80,6 @@ struct _Widget_Data
      void *add_callback_data;
   };
 
-static const char *widtype = NULL;
 static void _del_hook(Evas_Object *obj);
 static void _theme_hook(Evas_Object *obj);
 static void _on_focus_hook(void *data __UNUSED__, Evas_Object *obj);
@@ -118,10 +117,33 @@ static void _item_text_set_hook(Elm_Object_Item *it,
 static const char *_item_text_get_hook(const Elm_Object_Item *it,
                                        const char *part);
 
- /*  TODO
-  *  Code refactoring
-  *  use evas_object_smart_callback_descriptions_set for smart callbacks.
-  */
+static const char *widtype = NULL;
+
+//widget signals
+static const char SIG_ITEM_SELECTED[] = "item,selected";
+static const char SIG_ITEM_ADDED[] = "item,added";
+static const char SIG_ITEM_DELETED[] = "item,deleted";
+static const char SIG_ITEM_CLICKED[] = "item,clicked";
+static const char SIG_CLICKED[] = "clicked";
+static const char SIG_FOCUSED[] = "focused";
+static const char SIG_UNFOCUSED[] = "unfocused";
+static const char SIG_EXPANDED[] = "expanded";
+static const char SIG_CONTRACTED[] = "contracted";
+static const char SIG_EXPAND_STATE_CHANGED[] = "expand,state,changed";
+
+static const Evas_Smart_Cb_Description _signals[] = {
+       {SIG_ITEM_SELECTED, ""},
+       {SIG_ITEM_ADDED, ""},
+       {SIG_ITEM_DELETED, ""},
+       {SIG_ITEM_CLICKED, ""},
+       {SIG_CLICKED, ""},
+       {SIG_FOCUSED, ""},
+       {SIG_UNFOCUSED, ""},
+       {SIG_EXPANDED, ""},
+       {SIG_CONTRACTED, ""},
+       {SIG_EXPAND_STATE_CHANGED, ""},
+       {NULL, NULL}
+};
 
 static void
 _del_hook(Evas_Object *obj)
@@ -193,7 +215,7 @@ _on_focus_hook(void *data __UNUSED__, Evas_Object *obj)
              elm_entry_input_panel_show(wd->entry);
           }
         wd->focused = EINA_TRUE;
-        evas_object_smart_callback_call(obj, "focused", NULL);
+        evas_object_smart_callback_call(obj, SIG_FOCUSED, NULL);
      }
    else
      {
@@ -201,7 +223,7 @@ _on_focus_hook(void *data __UNUSED__, Evas_Object *obj)
         _view_update(obj);
 
         elm_entry_input_panel_hide(wd->entry);
-        evas_object_smart_callback_call(obj, "unfocused", NULL);
+        evas_object_smart_callback_call(obj, SIG_UNFOCUSED, NULL);
      }
 }
 
@@ -249,7 +271,7 @@ _signal_mouse_clicked(void *data, Evas_Object *obj __UNUSED__, const char *emiss
 
    elm_entry_input_panel_show(wd->entry);
 
-   evas_object_smart_callback_call(data, "clicked", NULL);
+   evas_object_smart_callback_call(data, SIG_CLICKED, NULL);
 }
 
 static void
@@ -271,8 +293,9 @@ _resize_cb(void *data, Evas *evas __UNUSED__, Evas_Object *obj __UNUSED__, void 
    if (!wd) return;
    evas_object_geometry_get(wd->box, NULL, NULL, &w, &h);
 
-   if (wd->h_box < h) evas_object_smart_callback_call(data, "expanded", NULL);
-   else if (wd->h_box > h) evas_object_smart_callback_call(data, "contracted", NULL);
+   if (wd->h_box < h) evas_object_smart_callback_call(data, SIG_EXPANDED, NULL);
+   else if (wd->h_box > h)
+     evas_object_smart_callback_call(data, SIG_CONTRACTED, NULL);
 
    wd->w_box = w;
    wd->h_box = h;
@@ -440,7 +463,7 @@ _shrink_mode_set(Evas_Object *obj, Eina_Bool shrink)
                             evas_object_show(wd->end);
 
                             wd->view_state = MULTIBUTTONENTRY_VIEW_SHRINK;
-                            evas_object_smart_callback_call(obj, "expand,state,changed", (void *)1);
+                            evas_object_smart_callback_call(obj, SIG_EXPAND_STATE_CHANGED, (void *)1);
                             break;
                          }
                     }
@@ -473,7 +496,7 @@ _shrink_mode_set(Evas_Object *obj, Eina_Bool shrink)
                             evas_object_show(wd->end);
 
                             wd->view_state = MULTIBUTTONENTRY_VIEW_SHRINK;
-                            evas_object_smart_callback_call(obj, "expand,state,changed", (void *)0);
+                            evas_object_smart_callback_call(obj, SIG_EXPAND_STATE_CHANGED, (void *)0);
                             break;
                          }
                     }
@@ -513,7 +536,8 @@ _shrink_mode_set(Evas_Object *obj, Eina_Bool shrink)
           }
 
         wd->view_state = MULTIBUTTONENTRY_VIEW_NONE;
-        evas_object_smart_callback_call(obj, "expand,state,changed", (void *)(long)wd->shrink);
+        evas_object_smart_callback_call(obj, SIG_EXPAND_STATE_CHANGED,
+                                        (void *)(long)wd->shrink);
      }
    if (wd->view_state != MULTIBUTTONENTRY_VIEW_SHRINK)
      {
@@ -634,7 +658,7 @@ _change_current_button_state(Evas_Object *obj, Multibuttonentry_Button_State sta
                 break;
              case MULTIBUTTONENTRY_BUTTON_STATE_SELECTED:
                 edje_object_signal_emit(item->button, "focused", "");
-                evas_object_smart_callback_call(obj, "item,selected", item);
+                evas_object_smart_callback_call(obj, SIG_ITEM_SELECTED, item);
                 break;
              default:
                 edje_object_signal_emit(item->button, "default", "");
@@ -682,7 +706,7 @@ _button_clicked(void *data, Evas_Object *obj, const char *emission __UNUSED__, c
    if (wd->current)
      if ((item = eina_list_data_get(wd->current)) != NULL)
        {
-          evas_object_smart_callback_call(data, "item,clicked", item);
+          evas_object_smart_callback_call(data, SIG_ITEM_CLICKED, item);
           _select_button(data, item->button);
        }
 }
@@ -715,7 +739,7 @@ _del_button_item(Elm_Multibuttonentry_Item *item)
              wd->items = eina_list_remove(wd->items, _item);
              elm_box_unpack(wd->box, _item->button);
 
-             evas_object_smart_callback_call(obj, "item,deleted", _item);
+             evas_object_smart_callback_call(obj, SIG_ITEM_DELETED, _item);
 
              _del_button_obj(obj, _item->button);
 
@@ -942,7 +966,7 @@ _add_button_item(Evas_Object *obj, const char *str, Multibuttonentry_Pos pos, co
                 break;
           }
      }
-   evas_object_smart_callback_call(obj, "item,added", item);
+   evas_object_smart_callback_call(obj, SIG_ITEM_ADDED, item);
 
    free(str_utf8);
 
@@ -1438,6 +1462,8 @@ elm_multibuttonentry_add(Evas_Object *parent)
    wd->rect_for_end = NULL;
    wd->add_callback = NULL;
    wd->add_callback_data = NULL;
+
+   evas_object_smart_callbacks_descriptions_set(obj, _signals);
 
    _view_init(obj);
    _event_init(obj);
