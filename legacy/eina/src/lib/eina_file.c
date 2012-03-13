@@ -1287,7 +1287,7 @@ eina_file_statat(void *container, Eina_File_Direct_Info *info, Eina_Stat *st)
    EINA_SAFETY_ON_NULL_RETURN_VAL(st, -1);
 
 #ifdef HAVE_FSTATAT
-   fd = dirfd(container);
+   fd = dirfd((DIR*) container);
    if (fstatat(fd, info->path + info->name_start, &buf, 0))
 #else
    (void)container;
