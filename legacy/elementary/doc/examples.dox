@@ -3826,7 +3826,7 @@
  * item pointed to by that index item. When one releases the mouse
  * button, the second callback takes place. There, we check that the
  * reported item data, on @c event_info, is the same reported by
- * elm_index_item_selected_get(), which gives the last selection's
+ * elm_index_selected_item_get(), which gives the last selection's
  * data on the index widget.
  *
  * The first of the three buttons that follow will call

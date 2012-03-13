@@ -50,7 +50,7 @@ _item_del(void        *data __UNUSED__,
           void        *event_info __UNUSED__)
 {
    Elm_Object_Item *iit;
-   Elm_Object_Item *lit = elm_index_item_selected_get(d.index, 0);
+   Elm_Object_Item *lit = elm_index_selected_item_get(d.index, 0);
 
    iit = elm_index_item_find(d.index, lit);
 
@@ -99,7 +99,7 @@ _index_selected(void        *data __UNUSED__,
 
    fprintf(stdout, "New index item selected. Comparing item reported"
                    " via callback with the selection returned by the API: "
-                   "%s.\n", lit == elm_index_item_selected_get(obj, 0) ? "OK" :
+                   "%s.\n", lit == elm_index_selected_item_get(obj, 0) ? "OK" :
            "FAIL, something went wrong");
 }
 

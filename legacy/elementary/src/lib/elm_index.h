@@ -125,7 +125,6 @@ EAPI int                   elm_index_item_level_get(const Evas_Object *obj);
  *
  * Selected items will be highlighted.
  *
- * @see elm_index_item_selected_get()
  * @see elm_index_selected_item_get()
  *
  * @ingroup Index

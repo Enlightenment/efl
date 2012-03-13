@@ -713,12 +713,6 @@ elm_index_item_selected_set(Elm_Object_Item *it, Eina_Bool selected)
 
 }
 
-EINA_DEPRECATED EAPI Elm_Object_Item *
-elm_index_item_selected_get(const Evas_Object *obj, int level)
-{
-   return elm_index_selected_item_get(obj, level);
-}
-
 EAPI Elm_Object_Item *
 elm_index_selected_item_get(const Evas_Object *obj, int level)
 {
