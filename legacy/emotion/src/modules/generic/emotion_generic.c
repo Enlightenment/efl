@@ -849,8 +849,8 @@ _player_add_cb(void *data, int type __UNUSED__, void *event)
 
    if (ev->player.exe != player)
      {
-	ERR("ev->player != player.");
-	return ECORE_CALLBACK_DONE;
+	INF("ev->player != player.");
+	return ECORE_CALLBACK_PASS_ON;
      }
 
    _player_send_cmd(ev, EM_CMD_INIT);
