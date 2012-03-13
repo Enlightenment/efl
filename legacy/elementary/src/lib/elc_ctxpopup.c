@@ -110,7 +110,6 @@ static void _hide_finished(void *data,
                            Evas_Object *obj,
                            const char *emission,
                            const char *source __UNUSED__);
-static void _hide(Evas_Object *obj);
 static void _ctxpopup_hide(void *data,
                            Evas *e,
                            Evas_Object *obj,
@@ -266,7 +265,7 @@ _parent_resize(void *data,
 
    wd->dir = ELM_CTXPOPUP_DIRECTION_UNKNOWN;
 
-   _hide(data);
+   evas_object_hide(data);
 }
 
 static void
@@ -1057,14 +1056,8 @@ static void
 _hide_finished(void *data, Evas_Object *obj __UNUSED__,
                const char *emission __UNUSED__, const char *source __UNUSED__)
 {
-   _hide(data);
-}
-
-static void
-_hide(Evas_Object *obj)
-{
-   _ctxpopup_hide(NULL, NULL, obj, NULL);
-   evas_object_smart_callback_call(obj, SIG_DISMISSED, NULL);
+   evas_object_hide(data);
+   evas_object_smart_callback_call(data, SIG_DISMISSED, NULL);
 }
 
 static void
