@@ -3509,6 +3509,7 @@ void
 _item_select(Elm_Gen_Item *it)
 {
    if ((it->generation < it->wd->generation) || (it->mode_set) ||
+       (it->select_mode == ELM_OBJECT_SELECT_MODE_NONE) ||
        (it->wd->select_mode == ELM_OBJECT_SELECT_MODE_NONE))
      return;
    if (!it->selected)
@@ -3516,7 +3517,7 @@ _item_select(Elm_Gen_Item *it)
         it->selected = EINA_TRUE;
         it->wd->selected = eina_list_append(it->wd->selected, it);
      }
-   else if (it->wd->select_mode == ELM_OBJECT_SELECT_MODE_ALWAYS) return;
+   else if (it->wd->select_mode != ELM_OBJECT_SELECT_MODE_ALWAYS) return;
 
    evas_object_ref(WIDGET(it));
    it->walking++;
