@@ -522,34 +522,51 @@ EAPI int ecore_thread_main_loop_end(void);
 /**
  * @defgroup Ecore_Event_Group Ecore Event functions
  *
- * Ecore events are used to wake up the Ecore main loop to warn
- * about state changes, tasks completed, data available for reading
- * or writing, etc. They are the base of the event oriented
- * programming.
+ * Ecore events provide two main features that are of use to those using ecore:
+ * creating events and being notified of events. Those two will usually be used
+ * in different contexts, creating events is mainly done by libraries wrapping
+ * some system functionality while being notified of events is mainly a
+ * necessity of applications.
  *
- * The idea is to write many functions (callbacks) that will be
- * registered to specific events, and called when these events
- * happen. This way, when the system state changes (a mouse click is
- * detected, a key is pressed, or the content of a file changes, for
- * example), the respective callbacks will be called with some
- * information about that event. Usually the function/callback will
- * have a data pointer to the event info (the position in the screen
- * where the mouse was clicked, the name of the key that was
- * pressed, or the name of the file that has changed).
+ * For a program to be notified of events it's interested in it needs to have a
+ * function to process the event and to register that function as the callback
+ * to the event, that's all:
+ * @code
+ * ecore_event_handler_add(EVENT_TYPE, _my_event_handler, some_data);
+ * ...
+ * static Eina_Bool
+ * _my_event_handler(void *data, int type, void *event)
+ * {
+ *    //data is some_data
+ *    //event is provided by whoever created the event
+ *    //Do really cool stuff with event
+ * }
+ * @endcode
  *
- * The basic usage, when one needs to watch for an existing event,
- * is to register a callback to it using ecore_event_add(). Of
- * course it's necessary to know beforehand what are the types of
- * events that the system/library will emmit.  This should be
- * available with the documentation from that system/library.
+ * One very important thing to note here is the @c EVENT_TYPE, to register a
+ * handler for an event you must know it's type before hand. This information
+ * can be found on the documentation of the library emitting the signal, so,
+ * for example, for events related to windowing one would look in @ref
+ * Ecore_Evas_Group.
  *
- * When writing a library or group of functions that need to inform
- * about something, and you already are running on top of a main
- * loop, it is usually a good approach to use events. This way you
- * allow others to register as many callbacks as necessary to this
- * event, and don't have to care about who is registering to it. The
- * functions ecore_event_type_new() and ecore_event_add() are
- * available for this purpose.
+ * Examples of libraries that integrate into ecore's main loop by providing
+ * events are @ref Ecore_Con_Group, @ref Ecore_Evas_Group and @ref
+ * Ecore_Exe_Group amongst others. This usage can be divided into two parts,
+ * setup and adding events. The setup is very simple, all that needs doing is
+ * getting a type id for the event:
+ * @code
+ * int MY_EV_TYPE = ecore_event_type_new();
+ * @endcode
+ * @note This variable should be declared in the header since it'll be needed by
+ * anyone wishing to register a handler to your event.
+ *
+ * The complexity of adding of an event to the queue depends on whether that
+ * event sends uses @c event, if it doesn't it a one-liner:
+ * @code
+ * ecore_event_add(MY_EV_TYPE, NULL, NULL, NULL);
+ * @endcode
+ * The usage when an @c event is needed is not that much more complex and can be
+ * seen in @ref ecore_event_add.
  *
  * Example that deals with events:
  *

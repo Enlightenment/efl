@@ -242,22 +242,19 @@ _ecore_event_generic_free(void *data __UNUSED__,
 }
 
 /**
- * Add an event to the event queue.
+ * @brief Add an event to the event queue.
  * @param type The event type to add to the end of the event queue
- * @param ev The private data structure for this event type
- * @param func_free The function to be called to free this private structure
+ * @param ev The data structure passed as @c event to event handlers
+ * @param func_free The function to be called to free @a ev
  * @param data The data pointer to be passed to the free function
- * @return A Handle for that event
+ * @return A Handle for that event on success, otherwise NULL
  *
- * On success this function returns a handle to an event on the event queue, or
- * NULL if it fails. If it succeeds, an event of type @p type will be added
- * to the queue for processing by event handlers added by
- * ecore_event_handler_add(). The @p ev parameter will be a pointer to the event
- * private data that is specific to that event type. When the event is no
- * longer needed, @p func_free will be called and passed the private structure
- * pointer for cleaning up. If @p func_free is NULL, free() will be called
- * with the private structure pointer.
- * func_free is passed @p data as its data parameter.
+ * If it succeeds, an event of type @a type will be added to the queue for
+ * processing by event handlers added by ecore_event_handler_add(). The @a ev
+ * parameter will be passed as the @c event parameter of the handler. When the
+ * event is no longer needed, @a func_free will be called and passed @a ev for
+ * cleaning up. If @p func_free is NULL, free() will be called with the private
+ * structure pointer.
  */
 EAPI Ecore_Event *
 ecore_event_add(int          type,
