@@ -633,12 +633,12 @@ EAPI Elm_Object_Item             *elm_gengrid_last_item_get(const Evas_Object *o
  * @param policy_v Vertical scrollbar policy.
  *
  * This sets the scrollbar visibility policy for the given gengrid
- * scroller. #ELM_SMART_SCROLLER_POLICY_AUTO means the scrollbar is
+ * scroller. #ELM_SCROLLER_POLICY_AUTO means the scrollbar is
  * made visible if it is needed, and otherwise kept hidden.
- * #ELM_SMART_SCROLLER_POLICY_ON turns it on all the time, and
- * #ELM_SMART_SCROLLER_POLICY_OFF always keeps it off. This applies
+ * #ELM_SCROLLER_POLICY_ON turns it on all the time, and
+ * #ELM_SCROLLER_POLICY_OFF always keeps it off. This applies
  * respectively for the horizontal and vertical scrollbars. Default is
- * #ELM_SMART_SCROLLER_POLICY_AUTO
+ * #ELM_SCROLLER_POLICY_AUTO
  *
  * @see elm_gengrid_scroller_policy_get()
  *
