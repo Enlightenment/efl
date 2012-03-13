@@ -1,3 +1,64 @@
+group { name: "elm/slider/hidden/limit";
+   parts {
+      part { name: "elm.units.min";
+         type: TEXT;
+         mouse_events: 0;
+         scale: 1;
+         description { state: "default" 0.0;
+            visible: 0;
+            align: 1.0 0.5;
+            color: 0 0 0 255;
+            text {
+               font: "Sans,Edje-Vera";
+               size: 10;
+               min: 0 0;
+               align: 0.0 0.5;
+            }
+         }
+         description { state: "visible" 0.0;
+            inherit: "default" 0.0;
+            text.min: 1 1;
+         }
+      }
+      part { name: "elm.units.max";
+         type: TEXT;
+         mouse_events: 0;
+         scale: 1;
+         description { state: "default" 0.0;
+            visible: 0;
+            align: 1.0 0.5;
+            color: 0 0 0 255;
+            text {
+               font: "Sans,Edje-Vera";
+               size: 10;
+               min: 0 0;
+               align: 0.0 0.5;
+            }
+         }
+         description { state: "visible" 0.0;
+            inherit: "default" 0.0;
+            text.min: 1 1;
+         }
+      }
+   }
+   programs {
+      program { name: "visisble";
+         signal: "limits,visible";
+         source: "elm";
+         action: STATE_SET "visible" 0.0;
+         target: "elm.units.min";
+         target: "elm.units.max";
+      }
+      program { name: "hide";
+         signal: "limits,hide";
+         source: "elm";
+         action: STATE_SET "default" 0.0;
+         target: "elm.units.min";
+         target: "elm.units.max";
+      }
+   }
+}
+
 group { name: "elm/slider/horizontal/default";
    alias: "elm/slider/horizontal/disabled";
    images {
@@ -115,7 +176,7 @@ group { name: "elm/slider/horizontal/default";
                offset: 8 0;
             }
             rel2 {
-               to_x: "elm.units";
+               to_x: "limits";
                relative: 0.0 1.0;
                offset: -10 -1;
             }
@@ -216,11 +277,11 @@ group { name: "elm/slider/horizontal/default";
          description { state: "default" 0.0;
             visible: 0;
             rel1 {
-               to_x: "elm.units";
+               to_x: "limits";
                offset: 0 5;
             }
             rel2 {
-               to_x: "elm.units";
+               to_x: "limits";
                offset: 5 -3;
             }
             image {
@@ -234,6 +295,32 @@ group { name: "elm/slider/horizontal/default";
             visible: 1;
          }
       }
+      alias: "elm.units.min" "limits:elm.units.min";
+      alias: "elm.units.max" "limits:elm.units.max";
+      part { name: "limits";
+         type: GROUP;
+         source: "elm/slider/hidden/limit";
+         mouse_events: 0;
+         scale: 1;
+         description { state: "default" 0.0;
+            visible: 0;
+            align: 1.0 0.5;
+            min: SOURCE;
+            fixed: 1 1;
+            rel1.to_x: "elm.swallow.end";
+            rel1.relative: 0.0 0.0;
+            rel1.offset: 0 8;
+            rel2.to_x: "elm.swallow.end";
+            rel2.relative: 0.0 1.0;
+            rel2.offset: 0 -9;
+         }
+         description { state: "visible" 0.0;
+            inherit: "default" 0.0;
+            visible: 1;
+            rel1.offset: -5 0;
+            rel2.offset: -5 -1;
+         }
+      }
       part { name: "elm.units";
          type: TEXT;
          mouse_events: 0;
@@ -241,28 +328,20 @@ group { name: "elm/slider/horizontal/default";
          description { state: "default" 0.0;
             visible: 0;
             fixed: 1 1;
-            align: 1.0 0.5;
-            rel1.to_x: "elm.swallow.end";
-            rel1.relative: 0.0 0.0;
-            rel1.offset: 0 8;
-            rel2.to_x: "elm.swallow.end";
-            rel2.relative: 0.0 1.0;
-            rel2.offset: 0 -9;
+            rel1.to_x: "limits";
+            rel2.to_x: "limits";
             color: 0 0 0 255;
             text {
                font: "Sans,Edje-Vera";
                size: 10;
                min: 0 0;
-               align: 0.0 0.5;
+               align: 1.0 0.5;
             }
          }
          description { state: "visible" 0.0;
             inherit: "default" 0.0;
-            fixed: 1 1;
             visible: 1;
             text.min: 1 1;
-            rel1.offset: -5 0;
-            rel2.offset: -5 -1;
          }
          description { state: "disabled" 0.0;
             inherit: "default" 0.0;
@@ -357,14 +436,24 @@ group { name: "elm/slider/horizontal/default";
          source: "elm";
          action:  STATE_SET "visible" 0.0;
          target: "elm.units";
+         target: "limits";
          target: "units";
+         after: "limits,children,visible";
+      }
+      program { name: "limits,children,visible";
+         action: SIGNAL_EMIT "limits:limits,visible" "elm";
       }
       program { name: "units_hide";
          signal: "elm,state,units,hidden";
          source: "elm";
          action:  STATE_SET "default" 0.0;
          target: "elm.units";
+         target: "limits";
          target: "units";
+         after: "limits,children,hide";
+      }
+      program { name: "limits,children,hide";
+         action: SIGNAL_EMIT "limits:limits,hide" "elm";
       }
       program { name: "invert_on";
          signal: "elm,state,inverted,on";
@@ -586,7 +675,7 @@ group { name: "elm/slider/vertical/default";
                offset: 0 10;
             }
             rel2 {
-               to_y: "elm.units";
+               to_y: "limits";
                relative: 1.0 0.0;
                offset: -1 -8;
             }
@@ -687,11 +776,11 @@ group { name: "elm/slider/vertical/default";
          description { state: "default" 0.0;
             visible: 0;
             rel1 {
-               to: "elm.units";
+               to: "limits";
                offset: -8 0;
             }
             rel2 {
-               to: "elm.units";
+               to: "limits";
                offset: 7 8;
             }
             image {
@@ -705,6 +794,30 @@ group { name: "elm/slider/vertical/default";
             visible: 1;
          }
       }
+      part { name: "limits";
+         type: GROUP;
+         source: "elm/slider/hidden/limit";
+         mouse_events: 0;
+         scale: 1;
+         description { state: "default" 0.0;
+            visible: 0;
+            fixed: 1 1;
+            min: SOURCE;
+            align: 0.5 1.0;
+            rel1.to_y: "elm.swallow.end";
+            rel1.relative: 0.0 0.0;
+            rel1.offset: 8 0;
+            rel2.to_y: "elm.swallow.end";
+            rel2.relative: 1.0 0.0;
+            rel2.offset: -9 0;
+         }
+         description { state: "visible" 0.0;
+            inherit: "default" 0.0;
+            visible: 1;
+            rel1.offset: 8 -9;
+            rel2.offset: -9 -9;
+         }
+      }
       part { name: "elm.units";
          type: TEXT;
          mouse_events: 0;
@@ -712,13 +825,8 @@ group { name: "elm/slider/vertical/default";
          description { state: "default" 0.0;
             visible: 0;
             fixed: 1 1;
-            align: 0.5 1.0;
-            rel1.relative: 0.0 0.0;
-            rel1.to_y: "elm.swallow.end";
-            rel1.offset: 8 0;
-            rel2.relative: 1.0 0.0;
-            rel2.to_y: "elm.swallow.end";
-            rel2.offset: -9 0;
+            rel1.to: "limits";
+            rel2.to: "limits";
             color: 0 0 0 255;
             text {
                font: "Sans,Edje-Vera";
@@ -729,11 +837,8 @@ group { name: "elm/slider/vertical/default";
          }
          description { state: "visible" 0.0;
             inherit: "default" 0.0;
-            fixed: 1 1;
             visible: 1;
             text.min: 1 1;
-            rel1.offset: 8 -9;
-            rel2.offset: -9 -9;
          }
          description { state: "disabled" 0.0;
             inherit: "default" 0.0;
@@ -743,11 +848,8 @@ group { name: "elm/slider/vertical/default";
          }
          description { state: "disabled_visible" 0.0;
             inherit: "default" 0.0;
-            fixed: 1 1;
             visible: 1;
             text.min: 1 1;
-            rel1.offset: 8 -9;
-            rel2.offset: -9 -9;
             color: 0 0 0 128;
             color3: 0 0 0 0;
          }
@@ -833,14 +935,24 @@ group { name: "elm/slider/vertical/default";
          source: "elm";
          action:  STATE_SET "visible" 0.0;
          target: "elm.units";
+         target: "limits";
          target: "units";
+         after: "limits,children,visible";
+      }
+      program { name: "limits,children,visible";
+         action: SIGNAL_EMIT "limits:limits,visible" "elm";
       }
       program { name: "units_hide";
          signal: "elm,state,units,hidden";
          source: "elm";
          action:  STATE_SET "default" 0.0;
          target: "elm.units";
+         target: "limits";
          target: "units";
+         after: "limits,children,hide";
+      }
+      program { name: "limits,children,hide";
+         action: SIGNAL_EMIT "limits:limits,hide" "elm";
       }
       program { name: "invert_on";
          signal: "elm,state,inverted,on";
