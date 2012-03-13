@@ -211,18 +211,6 @@ elm_image_no_scale_get(const Evas_Object *obj)
    return wd->no_scale;
 }
 
-EINA_DEPRECATED EAPI void
-elm_image_scale_set(Evas_Object *obj, Eina_Bool scale_up, Eina_Bool scale_down)
-{
-   elm_image_resizable_set(obj, scale_up, scale_down);
-}
-
-EINA_DEPRECATED EAPI void
-elm_image_scale_get(const Evas_Object *obj, Eina_Bool *scale_up, Eina_Bool *scale_down)
-{
-   elm_image_resizable_get(obj, scale_up, scale_down);
-}
-
 EAPI void
 elm_image_resizable_set(Evas_Object *obj, Eina_Bool size_up, Eina_Bool size_down)
 {
