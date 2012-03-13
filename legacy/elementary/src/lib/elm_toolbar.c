@@ -1974,64 +1974,6 @@ elm_toolbar_item_state_prev(Elm_Object_Item *it)
    return eina_list_data_get(prev_state);
 }
 
-EINA_DEPRECATED EAPI void
-elm_toolbar_always_select_mode_set(Evas_Object *obj, Eina_Bool always_select)
-{
-   ELM_CHECK_WIDTYPE(obj, widtype);
-   Widget_Data *wd = elm_widget_data_get(obj);
-   if (!wd) return;
-   if (always_select)
-     elm_toolbar_select_mode_set(obj, ELM_OBJECT_SELECT_MODE_ALWAYS);
-   else
-     {
-        Elm_Object_Select_Mode oldmode = elm_toolbar_select_mode_get(obj);
-        if (oldmode == ELM_OBJECT_SELECT_MODE_ALWAYS)
-          elm_toolbar_select_mode_set(obj, ELM_OBJECT_SELECT_MODE_DEFAULT);
-     }
-}
-
-EINA_DEPRECATED EAPI Eina_Bool
-elm_toolbar_always_select_mode_get(const Evas_Object *obj)
-{
-   ELM_CHECK_WIDTYPE(obj, widtype) EINA_FALSE;
-   Widget_Data *wd = elm_widget_data_get(obj);
-   if (!wd) return EINA_FALSE;
-   Elm_Object_Select_Mode oldmode = elm_toolbar_select_mode_get(obj);
-   if (oldmode == ELM_OBJECT_SELECT_MODE_ALWAYS)
-     return EINA_TRUE;
-   else
-     return EINA_FALSE;
-}
-
-EINA_DEPRECATED EAPI void
-elm_toolbar_no_select_mode_set(Evas_Object *obj, Eina_Bool no_select)
-{
-   ELM_CHECK_WIDTYPE(obj, widtype);
-   Widget_Data *wd = elm_widget_data_get(obj);
-   if (!wd) return;
-   if (no_select)
-     elm_toolbar_select_mode_set(obj, ELM_OBJECT_SELECT_MODE_NONE);
-   else
-     {
-        Elm_Object_Select_Mode oldmode = elm_toolbar_select_mode_get(obj);
-        if (oldmode == ELM_OBJECT_SELECT_MODE_NONE)
-          elm_toolbar_select_mode_set(obj, ELM_OBJECT_SELECT_MODE_DEFAULT);
-     }
-}
-
-EINA_DEPRECATED EAPI Eina_Bool
-elm_toolbar_no_select_mode_get(const Evas_Object *obj)
-{
-   ELM_CHECK_WIDTYPE(obj, widtype) EINA_FALSE;
-   Widget_Data *wd = elm_widget_data_get(obj);
-   if (!wd) return EINA_FALSE;
-   Elm_Object_Select_Mode oldmode = elm_toolbar_select_mode_get(obj);
-   if (oldmode == ELM_OBJECT_SELECT_MODE_NONE)
-     return EINA_TRUE;
-   else
-     return EINA_FALSE;
-}
-
 EAPI void
 elm_toolbar_icon_order_lookup_set(Evas_Object *obj, Elm_Icon_Lookup_Order order)
 {
