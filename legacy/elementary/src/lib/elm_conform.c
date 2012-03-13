@@ -13,7 +13,7 @@ typedef struct _Widget_Data Widget_Data;
 struct _Widget_Data
 {
    Evas_Object *base;
-   Evas_Object *shelf, *panel, *virtualkeypad;
+   Evas_Object *shelf, *panel, *virtualkeypad, *clipboard;
    Evas_Object *content;
    Evas_Object *scroller;
 #ifdef HAVE_ELEMENTARY_X
@@ -36,7 +36,8 @@ enum _Conformant_Part_Type
 {
    ELM_CONFORM_INDICATOR_PART      = 1,
    ELM_CONFORM_SOFTKEY_PART        = 2,
-   ELM_CONFORM_VIRTUAL_KEYPAD_PART = 4
+   ELM_CONFORM_VIRTUAL_KEYPAD_PART = 4,
+   ELM_CONFORM_CLIPBOARD_PART    = 8
 };
 
 #define SUB_TYPE_COUNT 2
@@ -296,7 +297,7 @@ _conformant_part_sizing_eval(Evas_Object *obj, Conformant_Part_Type part_type)
              ;
 #endif
           }
-        _conformant_part_size_set(obj,wd->virtualkeypad, sx, sy, sw, sh);
+        _conformant_part_size_set(obj, wd->virtualkeypad, sx, sy, sw, sh);
      }
    if (part_type & ELM_CONFORM_SOFTKEY_PART)
      {
@@ -312,6 +313,21 @@ _conformant_part_sizing_eval(Evas_Object *obj, Conformant_Part_Type part_type)
 #endif
           }
         _conformant_part_size_set(obj, wd->panel, sx, sy, sw, sh);
+     }
+   if (part_type & ELM_CONFORM_CLIPBOARD_PART)
+     {
+        if ((!_conformant_part_geometry_env_get("ILLUME_CB",
+                                                &sx, &sy, &sw, &sh)) && (xwin))
+          {
+#ifdef HAVE_ELEMENTARY_X
+           //No information of the clipboard geometry, reset the geometry.
+           if (!ecore_x_e_illume_clipboard_geometry_get(zone, &sx, &sy, &sw, &sh))
+             sx = sy = sw = sh = 0;
+#else
+             ;
+#endif
+          }
+        _conformant_part_size_set(obj, wd->clipboard, sx, sy, sw, sh);
      }
 }
 
@@ -345,6 +361,16 @@ _swallow_conformant_parts(Evas_Object *obj)
    evas_object_color_set(wd->virtualkeypad, 0, 0, 0, 0);
    edje_object_part_swallow(wd->base, "elm.swallow.virtualkeypad",
                             wd->virtualkeypad);
+
+   if (!wd->clipboard)
+     {
+        wd->clipboard = evas_object_rectangle_add(evas_object_evas_get(obj));
+        elm_widget_sub_object_add(obj, wd->clipboard);
+        evas_object_size_hint_min_set(wd->clipboard, -1, 0);
+        evas_object_size_hint_max_set(wd->clipboard, -1, 0);
+     }
+   else
+     _conformant_part_sizing_eval(obj, ELM_CONFORM_CLIPBOARD_PART);
 
    if (!wd->panel)
      {
@@ -448,7 +474,8 @@ _conformant_move_resize_event_cb(void *data __UNUSED__, Evas *e __UNUSED__,
    if (!wd) return;
    part_type =  (ELM_CONFORM_INDICATOR_PART |
                  ELM_CONFORM_SOFTKEY_PART |
-                 ELM_CONFORM_VIRTUAL_KEYPAD_PART);
+                 ELM_CONFORM_VIRTUAL_KEYPAD_PART |
+                 ELM_CONFORM_CLIPBOARD_PART);
    _conformant_part_sizing_eval(obj, part_type);
 }
 
@@ -550,7 +577,8 @@ _prop_change(void *data, int type __UNUSED__, void *event)
 
         part_type =  (ELM_CONFORM_INDICATOR_PART |
                       ELM_CONFORM_SOFTKEY_PART |
-                      ELM_CONFORM_VIRTUAL_KEYPAD_PART);
+                      ELM_CONFORM_VIRTUAL_KEYPAD_PART |
+                      ELM_CONFORM_CLIPBOARD_PART);
         _conformant_part_sizing_eval(data, part_type);
      }
    else if (ev->atom == ECORE_X_ATOM_E_ILLUME_INDICATOR_GEOMETRY)
@@ -559,6 +587,8 @@ _prop_change(void *data, int type __UNUSED__, void *event)
      _conformant_part_sizing_eval(data, ELM_CONFORM_SOFTKEY_PART);
    else if (ev->atom == ECORE_X_ATOM_E_ILLUME_KEYBOARD_GEOMETRY)
      _conformant_part_sizing_eval(data, ELM_CONFORM_VIRTUAL_KEYPAD_PART);
+   else if (ev->atom == ECORE_X_ATOM_E_ILLUME_CLIPBOARD_GEOMETRY)
+     _conformant_part_sizing_eval(data, ELM_CONFORM_CLIPBOARD_PART);
    else if (ev->atom == ECORE_X_ATOM_E_VIRTUAL_KEYBOARD_STATE)
      {
         Ecore_X_Window zone;
@@ -570,6 +600,22 @@ _prop_change(void *data, int type __UNUSED__, void *event)
           {
              evas_object_size_hint_min_set(wd->virtualkeypad, -1, 0);
              evas_object_size_hint_max_set(wd->virtualkeypad, -1, 0);
+          }
+        else
+          _update_autoscroll_objs(data);
+     }
+   else if (ev->atom == ECORE_X_ATOM_E_ILLUME_CLIPBOARD_STATE)
+     {
+        Ecore_X_Window zone;
+        Ecore_X_Illume_Clipboard_State state;
+
+        zone = ecore_x_e_illume_zone_get(ev->win);
+        state = ecore_x_e_illume_clipboard_state_get(zone);
+
+        if (state != ECORE_X_ILLUME_CLIPBOARD_STATE_ON)
+          {
+             evas_object_size_hint_min_set(wd->clipboard, -1, 0);
+             evas_object_size_hint_max_set(wd->clipboard, -1, 0);
           }
         else
           _update_autoscroll_objs(data);
