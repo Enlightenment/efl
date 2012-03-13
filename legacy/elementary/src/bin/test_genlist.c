@@ -1440,16 +1440,12 @@ static void
 _bt_show_cb(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    elm_genlist_item_show(data, ELM_GENLIST_ITEM_SCROLLTO_TOP);
-   //elm_genlist_item_show(data);
-   //elm_genlist_item_middle_show(data);
 }
 
 static void
 _bt_bring_cb(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    elm_genlist_item_bring_in(data, ELM_GENLIST_ITEM_SCROLLTO_TOP);
-   //elm_genlist_item_bring_in(data);
-   //elm_genlist_item_middle_bring_in(data);
 }
 
 void

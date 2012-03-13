@@ -4942,30 +4942,6 @@ elm_genlist_item_bring_in(Elm_Object_Item *it, Elm_Genlist_Item_Scrollto_Type ty
 }
 
 EINA_DEPRECATED EAPI void
-elm_genlist_item_top_show(Elm_Object_Item *it)
-{
-   elm_genlist_item_show(it, ELM_GENLIST_ITEM_SCROLLTO_TOP);
-}
-
-EINA_DEPRECATED EAPI void
-elm_genlist_item_top_bring_in(Elm_Object_Item *it)
-{
-   elm_genlist_item_bring_in(it, ELM_GENLIST_ITEM_SCROLLTO_TOP);
-}
-
-EINA_DEPRECATED EAPI void
-elm_genlist_item_middle_show(Elm_Object_Item *it)
-{
-   elm_genlist_item_show(it, ELM_GENLIST_ITEM_SCROLLTO_MIDDLE);
-}
-
-EINA_DEPRECATED EAPI void
-elm_genlist_item_middle_bring_in(Elm_Object_Item *it)
-{
-   elm_genlist_item_bring_in(it, ELM_GENLIST_ITEM_SCROLLTO_MIDDLE);
-}
-
-EINA_DEPRECATED EAPI void
 elm_genlist_item_contents_orphan(Elm_Object_Item *it)
 {
    elm_genlist_item_all_contents_unset(it, NULL);
