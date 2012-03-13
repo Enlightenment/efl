@@ -199,7 +199,7 @@ elm_test_sort(const void *pa, const void *pb)
 }
 
 static void
-elm_test_add(Eina_List **p_list, const char *icon, const char *category, const char *name, void (*cb)(void *, Evas_Object *, void *))
+_elm_test_add(Eina_List **p_list, const char *icon, const char *category, const char *name, void (*cb)(void *, Evas_Object *, void *))
 {
    struct elm_test *t = malloc(sizeof(struct elm_test));
    t->icon = icon;
@@ -299,9 +299,8 @@ my_win_main(char *autorun, Eina_Bool test_win_only)
 
    lb = elm_label_add(win);
    elm_object_text_set(lb,
-                       "Please select a test from the list below<br/>"
-                       "by clicking the test button to show the<br/>"
-                       "test window.");
+                       "Please select a test from the list below by clicking<br/>"
+                       "the test button to show the test window.");
    elm_object_content_set(fr, lb);
    evas_object_show(lb);
 
@@ -328,7 +327,7 @@ my_win_main(char *autorun, Eina_Bool test_win_only)
 
 add_tests:
    tests = NULL;
-#define ADD_TEST(icon_, cat_, name_, cb_) elm_test_add(&tests, icon_, cat_, name_, cb_)
+#define ADD_TEST(icon_, cat_, name_, cb_) _elm_test_add(&tests, icon_, cat_, name_, cb_)
 
    //------------------------------//
    ADD_TEST(NULL, "Window / Background", "Bg Plain", test_bg_plain);
