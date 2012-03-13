@@ -2274,7 +2274,7 @@ _ecore_con_server_flush(Ecore_Con_Server *svr)
 static void
 _ecore_con_client_flush(Ecore_Con_Client *cl)
 {
-   int num, count = 0;
+   int num = 0, count = 0;
 
 #ifdef _WIN32
    if (ecore_con_local_win32_client_flush(cl))
@@ -2317,7 +2317,7 @@ _ecore_con_client_flush(Ecore_Con_Client *cl)
      }
 
    if (count) ecore_con_event_client_write(cl, count);
-   cl->buf_offset += count;
+   cl->buf_offset += count, num -= count;
    if (cl->buf_offset >= eina_binbuf_length_get(cl->buf))
      {
         cl->buf_offset = 0;
@@ -2335,7 +2335,7 @@ _ecore_con_client_flush(Ecore_Con_Client *cl)
         if (cl->fd_handler)
           ecore_main_fd_handler_active_set(cl->fd_handler, ECORE_FD_READ);
      }
-   else if ((count < num) && cl->fd_handler)
+   else if (cl->fd_handler && (num >= 0))
      ecore_main_fd_handler_active_set(cl->fd_handler, ECORE_FD_WRITE);
 }
 
