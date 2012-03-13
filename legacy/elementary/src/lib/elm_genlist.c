@@ -3643,7 +3643,7 @@ _item_signal_emit_hook(Elm_Object_Item *it,
                        const char *emission,
                        const char *source)
 {
-   elm_object_signal_emit(VIEW(it), emission, source);
+   edje_object_signal_emit(VIEW(it), emission, source);
 }
 
 Elm_Gen_Item *
