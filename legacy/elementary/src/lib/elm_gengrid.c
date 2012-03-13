@@ -2545,54 +2545,6 @@ elm_gengrid_reorder_mode_get(const Evas_Object *obj)
    return wd->reorder_mode;
 }
 
-EINA_DEPRECATED EAPI void
-elm_gengrid_always_select_mode_set(Evas_Object *obj,
-                                   Eina_Bool    always_select)
-{
-   if (always_select)
-     elm_genlist_select_mode_set(obj, ELM_OBJECT_SELECT_MODE_ALWAYS);
-   else
-     {
-        Elm_Object_Select_Mode oldmode = elm_genlist_select_mode_get(obj);
-        if (oldmode == ELM_OBJECT_SELECT_MODE_ALWAYS)
-          elm_genlist_select_mode_set(obj, ELM_OBJECT_SELECT_MODE_DEFAULT);
-     }
-}
-
-EINA_DEPRECATED EAPI Eina_Bool
-elm_gengrid_always_select_mode_get(const Evas_Object *obj)
-{
-   Elm_Object_Select_Mode oldmode = elm_genlist_select_mode_get(obj);
-   if (oldmode == ELM_OBJECT_SELECT_MODE_ALWAYS)
-     return EINA_TRUE;
-   else
-     return EINA_FALSE;
-}
-
-EINA_DEPRECATED EAPI void
-elm_gengrid_no_select_mode_set(Evas_Object *obj,
-                               Eina_Bool    no_select)
-{
-   if (no_select)
-     elm_genlist_select_mode_set(obj, ELM_OBJECT_SELECT_MODE_NONE);
-   else
-     {
-        Elm_Object_Select_Mode oldmode = elm_genlist_select_mode_get(obj);
-        if (oldmode == ELM_OBJECT_SELECT_MODE_NONE)
-          elm_genlist_select_mode_set(obj, ELM_OBJECT_SELECT_MODE_DEFAULT);
-     }
-}
-
-EINA_DEPRECATED EAPI Eina_Bool
-elm_gengrid_no_select_mode_get(const Evas_Object *obj)
-{
-   Elm_Object_Select_Mode oldmode = elm_genlist_select_mode_get(obj);
-   if (oldmode == ELM_OBJECT_SELECT_MODE_NONE)
-     return EINA_TRUE;
-   else
-     return EINA_FALSE;
-}
-
 EAPI void
 elm_gengrid_bounce_set(Evas_Object *obj,
                        Eina_Bool    h_bounce,

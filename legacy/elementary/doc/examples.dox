@@ -4350,7 +4350,7 @@
  * you'll notice all subsequent clicks on the @b same grid item will
  * still issue the selection callback on it, what is different from
  * when it's not checked. This is the
- * elm_gengrid_always_select_mode_set() behavior:
+ * elm_gengrid_select_mode_set() behavior:
  * @dontinclude gengrid_example.c
  * @skip "always select" callback
  * @until }
