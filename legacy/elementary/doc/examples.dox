@@ -1685,7 +1685,7 @@
  *
  * The fifth, besides editable, has only the time @b units editable,
  * for hours, minutes and seconds. This exemplifies
- * elm_clock_digit_edit_set():
+ * elm_clock_edit_mode_set():
  * @dontinclude clock_example.c
  * @skip but only
  * @until evas_object_show
