@@ -815,6 +815,14 @@ _item_del(Elm_Naviframe_Item *it)
      }
 
    eina_stringshare_del(it->style);
+
+   if (wd->preserve && it->content)
+     {
+        elm_object_part_content_unset(VIEW(it), "elm.swallow.content");
+        evas_object_event_callback_del(it->content,
+                                       EVAS_CALLBACK_DEL,
+                                       _item_content_del);
+     }
 }
 
 static Eina_Bool
