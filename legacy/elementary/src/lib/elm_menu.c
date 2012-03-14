@@ -838,18 +838,6 @@ elm_menu_item_is_separator(Elm_Object_Item *it)
    return ((Elm_Menu_Item *)it)->separator;
 }
 
-EAPI void *
-elm_menu_item_data_get(const Elm_Object_Item *it)
-{
-   return elm_object_item_data_get(it);
-}
-
-EAPI void
-elm_menu_item_data_set(Elm_Object_Item *it, const void *data)
-{
-   elm_object_item_data_set(it, (void *) data);
-}
-
 EAPI const Eina_List *
 elm_menu_item_subitems_get(const Elm_Object_Item *it)
 {
