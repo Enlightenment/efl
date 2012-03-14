@@ -2295,7 +2295,7 @@ edje_object_part_swallow(Evas_Object *obj, const char *part, Evas_Object *obj_sw
    rp = _edje_real_part_recursive_get(ed, part);
    if (!rp)
      {
-        ERR("cannot swallow part %s: part not exist!", part);
+        DBG("cannot swallow part %s: part not exist!", part);
         return EINA_FALSE;
      }
    if (rp->part->type != EDJE_PART_TYPE_SWALLOW)

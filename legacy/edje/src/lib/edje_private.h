@@ -76,7 +76,7 @@ void *alloca (size_t);
 
 #include "Edje.h"
 
-EAPI extern int _edje_default_log_dom ; 
+EAPI extern int _edje_default_log_dom ;
 
 #ifdef EDJE_DEFAULT_LOG_COLOR
 # undef EDJE_DEFAULT_LOG_COLOR
@@ -98,6 +98,10 @@ EAPI extern int _edje_default_log_dom ;
 # undef CRIT
 #endif
 #define CRIT(...) EINA_LOG_DOM_CRIT(_edje_default_log_dom, __VA_ARGS__)
+#ifdef DBG
+# undef DBG
+#endif
+#define DBG(...) EINA_LOG_DOM_DBG(_edje_default_log_dom, __VA_ARGS__)
 #ifdef __GNUC__
 # if __GNUC__ >= 4
 // BROKEN in gcc 4 on amd64
