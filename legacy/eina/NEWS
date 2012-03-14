@@ -21,6 +21,7 @@ Fixes:
 
     * compilation errors in Eina_RWLock code when building code on Windows > XP
     * stop leaking Eina_File.
+    * remove dead lock in Eina_File.
 
 Improvements:
 

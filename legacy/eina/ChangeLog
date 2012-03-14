@@ -233,3 +233,7 @@
 2012-03-07  Cedric Bail
 
 	* Fix leak of Eina_File.
+
+2012-03-14  Cedric Bail
+
+	* Fix a dead lock in Eina_File.
