@@ -2416,7 +2416,7 @@
  * since we'll explain it better on  @ref list_example_03. But if the callback
  * need to be called everytime user clicks an item, even if already selected,
  * it's required to enable this behavior:
- * @skipline elm_list_always_select_mode_set
+ * @skipline elm_list_select_mode_set
  *
  * Finally, if a bounce effect is required, or you would like to see
  * scrollbars, it is possible. But, for default theme, list

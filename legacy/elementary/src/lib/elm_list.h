@@ -366,7 +366,7 @@ EAPI void                         elm_list_scroller_policy_get(const Evas_Object
  * evas_object_show(li);
  * @endcode
  *
- * @see elm_list_always_select_mode_set()
+ * @see elm_list_select_mode_set()
  * @see elm_object_item_del()
  * @see elm_widget_item_del_cb_set()
  * @see elm_list_clear()
@@ -407,7 +407,7 @@ EAPI Elm_Object_Item               *elm_list_item_append(Evas_Object *obj, const
  * @c NULL as @p func is enough. The same should be done for @p data.
  *
  * @see elm_list_item_append() for a simple code example.
- * @see elm_list_always_select_mode_set()
+ * @see elm_list_select_mode_set()
  * @see elm_object_item_del()
  * @see elm_widget_item_del_cb_set()
  * @see elm_list_clear()
@@ -449,7 +449,7 @@ EAPI Elm_Object_Item               *elm_list_item_prepend(Evas_Object *obj, cons
  * @c NULL as @p func is enough. The same should be done for @p data.
  *
  * @see elm_list_item_append() for a simple code example.
- * @see elm_list_always_select_mode_set()
+ * @see elm_list_select_mode_set()
  * @see elm_object_item_del()
  * @see elm_widget_item_del_cb_set()
  * @see elm_list_clear()
@@ -491,7 +491,7 @@ EAPI Elm_Object_Item               *elm_list_item_insert_before(Evas_Object *obj
  * @c NULL as @p func is enough. The same should be done for @p data.
  *
  * @see elm_list_item_append() for a simple code example.
- * @see elm_list_always_select_mode_set()
+ * @see elm_list_select_mode_set()
  * @see elm_object_item_del()
  * @see elm_widget_item_del_cb_set()
  * @see elm_list_clear()
@@ -541,7 +541,7 @@ EAPI Elm_Object_Item               *elm_list_item_insert_after(Evas_Object *obj,
  * @c NULL as @p func is enough. The same should be done for @p data.
  *
  * @see elm_list_item_append() for a simple code example.
- * @see elm_list_always_select_mode_set()
+ * @see elm_list_select_mode_set()
  * @see elm_object_item_del()
  * @see elm_widget_item_del_cb_set()
  * @see elm_list_clear()

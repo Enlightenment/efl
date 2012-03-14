@@ -1643,35 +1643,6 @@ elm_list_select_mode_get(const Evas_Object *obj)
    return wd->select_mode;
 }
 
-EINA_DEPRECATED EAPI void
-elm_list_always_select_mode_set(Evas_Object *obj,
-                                Eina_Bool    always_select)
-{
-   ELM_CHECK_WIDTYPE(obj, widtype);
-   Widget_Data *wd = elm_widget_data_get(obj);
-   if (!wd) return;
-   if (always_select)
-     elm_list_select_mode_set(obj, ELM_OBJECT_SELECT_MODE_ALWAYS);
-   else
-     {
-        Elm_Object_Select_Mode oldmode = elm_list_select_mode_get(obj);
-        if (oldmode == ELM_OBJECT_SELECT_MODE_ALWAYS)
-          elm_list_select_mode_set(obj, ELM_OBJECT_SELECT_MODE_DEFAULT);
-     }
-}
-
-EINA_DEPRECATED EAPI Eina_Bool
-elm_list_always_select_mode_get(const Evas_Object *obj)
-{
-   ELM_CHECK_WIDTYPE(obj, widtype) EINA_FALSE;
-   Widget_Data *wd = elm_widget_data_get(obj);
-   if (!wd) return EINA_FALSE;
-   Elm_Object_Select_Mode oldmode = elm_list_select_mode_get(obj);
-   if (oldmode == ELM_OBJECT_SELECT_MODE_ALWAYS)
-     return EINA_TRUE;
-   return EINA_FALSE;
-}
-
 EAPI void
 elm_list_bounce_set(Evas_Object *obj, Eina_Bool h_bounce, Eina_Bool v_bounce)
 {
