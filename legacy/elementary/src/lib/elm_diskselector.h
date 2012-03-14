@@ -13,7 +13,13 @@
  * reduced for a defined length for side items.
  *
  * Smart callbacks one can listen to:
- * - "selected" - when item is selected, i.e. scroller stops.
+ * @li "selected" - when item is selected, i.e. scroller stops.
+ * @li "scroll,anim,start" - scrolling animation has started
+ * @li "scroll,anim,stop" - scrolling animation has stopped
+ * @li "scroll,drag,start" - dragging the diskselector has started
+ * @li "scroll,drag,stop" - dragging the diskselector has stopped
+ * @note The "scroll,anim,*" and "scroll,drag,*" signals are only emitted by
+ * user intervention.
  *
  * Available styles for it:
  * - @c "default"

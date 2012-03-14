@@ -77,8 +77,17 @@ static Evas_Object * _item_content_get_hook(const Elm_Object_Item *it,
                                             const char *part);
 
 static const char SIG_SELECTED[] = "selected";
+static const char SIG_SCROLL_ANIM_START[] = "scroll,anim,start";
+static const char SIG_SCROLL_ANIM_STOP[] = "scroll,anim,stop";
+static const char SIG_SCROLL_DRAG_START[] = "scroll,drag,start";
+static const char SIG_SCROLL_DRAG_STOP[] = "scroll,drag,stop";
+
 static const Evas_Smart_Cb_Description _signals[] = {
        {SIG_SELECTED, ""},
+       {SIG_SCROLL_ANIM_START, ""},
+       {SIG_SCROLL_ANIM_STOP, ""},
+       {SIG_SCROLL_DRAG_START, ""},
+       {SIG_SCROLL_DRAG_STOP, ""},
        {NULL, NULL}
 };
 
@@ -688,7 +697,7 @@ static void
 _scroller_stop_cb(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    Elm_Diskselector_Item *it;
-   Widget_Data *wd = data;
+   Widget_Data *wd = elm_widget_data_get(data);
    Evas_Coord x, w, ow;
    Eina_List *l, *list;
 
@@ -708,6 +717,28 @@ _scroller_stop_cb(void *data, Evas_Object *obj __UNUSED__, void *event_info __UN
 
    if (!it) return;
    _select_item(it);
+   evas_object_smart_callback_call(data, SIG_SCROLL_ANIM_STOP, it);
+}
+
+static void
+_scroller_start_cb(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+{
+   evas_object_smart_callback_call(data, SIG_SCROLL_ANIM_START,
+                                   elm_diskselector_selected_item_get(data));
+}
+
+static void
+_drag_start_cb(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+{
+   evas_object_smart_callback_call(data, SIG_SCROLL_DRAG_START,
+                                   elm_diskselector_selected_item_get(data));
+}
+
+static void
+_drag_stop_cb(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+{
+   evas_object_smart_callback_call(data, SIG_SCROLL_DRAG_STOP,
+                                   elm_diskselector_selected_item_get(data));
 }
 
 static Eina_Bool
@@ -1013,7 +1044,14 @@ elm_diskselector_add(Evas_Object *parent)
    evas_object_smart_callback_add(wd->scroller, "scroll", _scroller_move_cb,
                                   wd);
    evas_object_smart_callback_add(wd->scroller, "animate,stop",
-                                  _scroller_stop_cb, wd);
+                                  _scroller_stop_cb, obj);
+   evas_object_smart_callback_add(wd->scroller, "animate,start",
+                                  _scroller_start_cb, obj);
+   evas_object_smart_callback_add(wd->scroller, "drag,stop",
+                                  _drag_stop_cb, obj);
+   evas_object_smart_callback_add(wd->scroller, "drag,start",
+                                  _drag_start_cb, obj);
+
    _elm_theme_object_set(obj, wd->scroller, "diskselector", "base",
                          "default");
    evas_object_event_callback_add(wd->scroller, EVAS_CALLBACK_RESIZE,
