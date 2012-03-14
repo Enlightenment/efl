@@ -29,9 +29,14 @@
  * @li "default" - Title label in the title area
  *
  * Supported elm_object common APIs.
+ * @li elm_object_disabled_set
+ * @li elm_object_disabled_get
  * @li elm_object_part_content_set
  * @li elm_object_part_content_get
  * @li elm_object_part_content_unset
+ * @li elm_object_signal_emit
+ * @li elm_object_signal_callback_add
+ * @li elm_object_signal_callback_del
  *
  * Supported elm_object_item common APIs.
  * @li elm_object_item_disabled_set

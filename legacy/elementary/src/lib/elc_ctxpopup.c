@@ -140,6 +140,10 @@ static void _content_del(void *data,
 static void _list_del(Widget_Data *wd);
 static void _list_new(Evas_Object *obj);
 static void _remove_items(Widget_Data * wd);
+static void _disable_hook(Evas_Object *obj);
+static void _signal_emit_hook(Evas_Object *obj, const char *emission, const char *source);
+static void _signal_callback_add_hook(Evas_Object *obj, const char *emission, const char *source, Edje_Signal_Cb func_cb, void *data);
+static void _signal_callback_del_hook(Evas_Object *obj, const char *emission, const char *source, Edje_Signal_Cb func_cb, void *data);
 
 static const char SIG_DISMISSED[] = "dismissed";
 
@@ -1295,6 +1299,43 @@ _item_del_pre_hook(Elm_Object_Item *it)
    return EINA_TRUE;
 }
 
+static void
+_disable_hook(Evas_Object *obj)
+{
+   Eina_List *l;
+   Elm_Object_Item *it;
+
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return;
+
+   EINA_LIST_FOREACH(wd->items, l, it)
+     elm_object_item_disabled_set(it, elm_widget_disabled_get(obj));
+}
+
+static void
+_signal_emit_hook(Evas_Object *obj, const char *emission, const char *source)
+{
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return;
+   edje_object_signal_emit(wd->base, emission, source);
+}
+
+static void
+_signal_callback_add_hook(Evas_Object *obj, const char *emission, const char *source, Edje_Signal_Cb func_cb, void *data)
+{
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return;
+   edje_object_signal_callback_add(wd->base, emission, source, func_cb, data);
+}
+
+static void
+_signal_callback_del_hook(Evas_Object *obj, const char *emission, const char *source, Edje_Signal_Cb func_cb, void *data)
+{
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return;
+   edje_object_signal_callback_del_full(wd->base, emission, source, func_cb, data);
+}
+
 EAPI Evas_Object *
 elm_ctxpopup_add(Evas_Object *parent)
 {
@@ -1316,6 +1357,10 @@ elm_ctxpopup_add(Evas_Object *parent)
    elm_widget_content_set_hook_set(obj, _content_set_hook);
    elm_widget_content_unset_hook_set(obj, _content_unset_hook);
    elm_widget_content_get_hook_set(obj, _content_get_hook);
+   elm_widget_disable_hook_set(obj, _disable_hook);
+   elm_widget_signal_emit_hook_set(obj, _signal_emit_hook);
+   elm_widget_signal_callback_add_hook_set(obj, _signal_callback_add_hook);
+   elm_widget_signal_callback_del_hook_set(obj, _signal_callback_del_hook);
 
    //Background
    wd->bg = edje_object_add(e);
