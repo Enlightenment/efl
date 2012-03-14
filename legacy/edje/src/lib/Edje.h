@@ -3294,7 +3294,7 @@ EAPI void *edje_object_text_markup_filter_callback_del_full(Evas_Object *obj, co
  * If an object has already been swallowed into this part, then it
  * will first be unswallowed before the new object is swallowed.
  */
-EAPI Eina_Bool        edje_object_part_swallow        (Evas_Object *obj, const char *part, Evas_Object *obj_swallow) EINA_WARN_UNUSED_RESULT;
+EAPI Eina_Bool        edje_object_part_swallow        (Evas_Object *obj, const char *part, Evas_Object *obj_swallow);
 
 /**
  * @brief Unswallow an object.
