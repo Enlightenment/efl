@@ -1569,12 +1569,6 @@ elm_web_back_possible_get(Evas_Object *obj)
 #endif
 }
 
-EINA_DEPRECATED EAPI Eina_Bool
-elm_web_forward_possible(Evas_Object *obj)
-{
-   return elm_web_forward_possible_get(obj);
-}
-
 EAPI Eina_Bool
 elm_web_forward_possible_get(Evas_Object *obj)
 {

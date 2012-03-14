@@ -51,7 +51,7 @@ nav_button_update(App_Data *ad)
    Eina_Bool back, fwd;
 
    back = !elm_web_back_possible(ad->current_tab->web);
-   fwd = !elm_web_forward_possible(ad->current_tab->web);
+   fwd = !elm_web_forward_possible_get(ad->current_tab->web);
 
    elm_object_disabled_set(ad->nav.back, back);
    elm_object_disabled_set(ad->nav.fwd, fwd);
