@@ -1058,7 +1058,7 @@ eina_file_close(Eina_File *file)
 
    eina_hash_del(_eina_file_cache, file->filename, file);
    _eina_file_real_close(file);
-   
+
    eina_lock_release(&_eina_file_lock_cache);
 }
 
@@ -1225,7 +1225,7 @@ eina_file_map_free(Eina_File *file, void *map)
         unsigned long int key[2];
 
         em = eina_hash_find(file->rmap, &map);
-        if (!em) return ;
+        if (!em) goto on_exit;
 
         em->refcount--;
 
@@ -1246,17 +1246,25 @@ EAPI Eina_Bool
 eina_file_map_faulted(Eina_File *file, void *map)
 {
    Eina_File_Map *em;
+   Eina_Bool r = EINA_FALSE;
 
    EINA_SAFETY_ON_NULL_RETURN_VAL(file, EINA_FALSE);
 
    eina_lock_take(&file->lock);
 
-   if (file->global_map == map) return file->global_faulty;
+   if (file->global_map == map)
+     {
+        r = file->global_faulty;
+     }
+   else
+     {
+        em = eina_hash_find(file->rmap, &map);
+        if (em) r = em->faulty;
+     }
 
-   em = eina_hash_find(file->rmap, &map);
-   if (!em) return EINA_FALSE;
+   eina_lock_release(&file->lock);
 
-   return em->faulty;
+   return r;
 }
 
 EAPI Eina_Iterator *
