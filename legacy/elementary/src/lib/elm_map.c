@@ -6015,18 +6015,6 @@ elm_map_marker_class_del_cb_set(Elm_Map_Marker_Class *clas, Elm_Map_Marker_Del_F
 }
 
 EAPI void
-elm_map_route_color_set(Elm_Map_Route *route __UNUSED__, int r  __UNUSED__, int g  __UNUSED__, int b  __UNUSED__, int a  __UNUSED__)
-{
-   return;
-}
-
-EAPI void
-elm_map_route_color_get(const Elm_Map_Route *route __UNUSED__, int *r  __UNUSED__, int *g  __UNUSED__, int *b  __UNUSED__, int *a  __UNUSED__)
-{
-   return;
-}
-
-EAPI void
 elm_map_route_remove(Elm_Map_Route *route)
 {
    elm_map_route_del(route);
