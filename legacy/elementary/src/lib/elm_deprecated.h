@@ -241,60 +241,6 @@ EINA_DEPRECATED EAPI Eina_Bool    elm_scrolled_entry_cnp_textonly_get(Evas_Objec
  */
 EINA_DEPRECATED EAPI const Evas_Object            *elm_genlist_item_object_get(const Elm_Object_Item *it);
 
-/**
- * @brief Set the content of the scroller widget (the object to be scrolled around).
- *
- * @param obj The scroller object
- * @param content The new content object
- *
- * Once the content object is set, a previously set one will be deleted.
- * If you want to keep that old content object, use the
- * elm_scroller_content_unset() function.
- * @deprecated use elm_object_content_set() instead
- */
-EINA_DEPRECATED EAPI void         elm_scroller_content_set(Evas_Object *obj, Evas_Object *child);
-
-/**
- * @brief Get the content of the scroller widget
- *
- * @param obj The slider object
- * @return The content that is being used
- *
- * Return the content object which is set for this widget
- *
- * @see elm_scroller_content_set()
- * @deprecated use elm_object_content_get() instead.
- */
-EINA_DEPRECATED EAPI Evas_Object *elm_scroller_content_get(const Evas_Object *obj);
-
-/**
- * @brief Unset the content of the scroller widget
- *
- * @param obj The slider object
- * @return The content that was being used
- *
- * Unparent and return the content object which was set for this widget
- *
- * @see elm_scroller_content_set()
- * @deprecated use elm_object_content_unset() instead.
- */
-EINA_DEPRECATED EAPI Evas_Object *elm_scroller_content_unset(Evas_Object *obj);
-
-/**
- * Set the text to be shown in a given toolbar item's tooltips.
- *
- * @param it toolbar item.
- * @param text The text to set in the content.
- *
- * Setup the text as tooltip to object. The item can have only one tooltip,
- * so any previous tooltip data - set with this function or
- * elm_toolbar_item_tooltip_content_cb_set() - is removed.
- *
- * @deprecated Use elm_object_item_tooltip_text_set() instead
- * @see elm_object_tooltip_text_set() for more details.
- *
- */
-EINA_DEPRECATED EAPI void                         elm_toolbar_item_tooltip_text_set(Elm_Object_Item *it, const char *text);
 
 /**
  * Set the function called when a list item is freed.
@@ -675,33 +621,6 @@ EINA_DEPRECATED EAPI Eina_Bool                    elm_list_item_cursor_engine_on
  */
 EINA_DEPRECATED EAPI void                         elm_list_item_del(Elm_Object_Item *it);
 
-/**
- * Set the shrink state of toolbar @p obj.
- *
- * @param obj The toolbar object.
- * @param shrink_mode Toolbar's items display behavior.
- *
- * The toolbar won't scroll if #ELM_TOOLBAR_SHRINK_NONE,
- * but will enforce a minimum size so all the items will fit, won't scroll
- * and won't show the items that don't fit if #ELM_TOOLBAR_SHRINK_HIDE,
- * will scroll if #ELM_TOOLBAR_SHRINK_SCROLL, and will create a button to
- * pop up excess elements with #ELM_TOOLBAR_SHRINK_MENU.
- *
- * @deprecated Please use elm_toolbar_shrink_mode_set(obj, shrink_mode);
- */
-EINA_DEPRECATED EAPI void                         elm_toolbar_mode_shrink_set(Evas_Object *obj, Elm_Toolbar_Shrink_Mode shrink_mode);
-
-/**
- * Get the shrink mode of toolbar @p obj.
- *
- * @param obj The toolbar object.
- * @return Toolbar's items display behavior.
- *
- * @see elm_toolbar_shrink_mode_set() for details.
- *
- * @deprecated Please use elm_toolbar_shrink_mode_get(obj);
- */
-EINA_DEPRECATED EAPI Elm_Toolbar_Shrink_Mode      elm_toolbar_mode_shrink_get(const Evas_Object *obj);
 
 /**
  * Convert a pixel coordinate (x,y) into a geographic coordinate
@@ -1195,43 +1114,6 @@ EINA_DEPRECATED EAPI void                          elm_genlist_no_select_mode_se
  *
  */
 EINA_DEPRECATED EAPI Eina_Bool                     elm_genlist_no_select_mode_get(const Evas_Object *obj);
-
-/**
- * Enable or disable always select mode on the list object.
- *
- * @param obj The list object
- * @param always_select @c EINA_TRUE to enable always select mode or
- * @c EINA_FALSE to disable it.
- *
- * @note Always select mode is disabled by default.
- *
- * Default behavior of list items is to only call its callback function
- * the first time it's pressed, i.e., when it is selected. If a selected
- * item is pressed again, and multi-select is disabled, it won't call
- * this function (if multi-select is enabled it will unselect the item).
- *
- * If always select is enabled, it will call the callback function
- * every time a item is pressed, so it will call when the item is selected,
- * and again when a selected item is pressed.
- *
- * @deprecated elm_list_always_select_mode_set()
- */
-EINA_DEPRECATED EAPI void                         elm_list_always_select_mode_set(Evas_Object *obj, Eina_Bool always_select);
-
-/**
- * Get a value whether always select mode is enabled or not, meaning that
- * an item will always call its callback function, even if already selected.
- *
- * @param obj The list object
- * @return @c EINA_TRUE means horizontal mode selection is enabled.
- * @c EINA_FALSE indicates it's disabled. If @p obj is @c NULL,
- * @c EINA_FALSE is returned.
- *
- * @see elm_list_always_select_mode_set() for details.
- *
- * @deprecated elm_list_always_select_mode_get()
- */
-EINA_DEPRECATED EAPI Eina_Bool                    elm_list_always_select_mode_get(const Evas_Object *obj);
 
 /*
  * Enable/disable compress mode.
