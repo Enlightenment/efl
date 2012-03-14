@@ -5967,54 +5967,6 @@ elm_map_marker_class_new(Evas_Object *obj)
 }
 
 EAPI void
-elm_map_marker_class_style_set(Elm_Map_Marker_Class *clas, const char *style)
-{
-#ifdef HAVE_ELEMENTARY_ECORE_CON
-   EINA_SAFETY_ON_NULL_RETURN(clas);
-   eina_stringshare_replace(&clas->style, style);
-#else
-   (void) clas;
-   (void) style;
-#endif
-}
-
-EAPI void
-elm_map_marker_class_icon_cb_set(Elm_Map_Marker_Class *clas, Elm_Map_Marker_Icon_Get_Func icon_get)
-{
-#ifdef HAVE_ELEMENTARY_ECORE_CON
-   EINA_SAFETY_ON_NULL_RETURN(clas);
-   clas->func.icon_get = icon_get;
-#else
-   (void) clas;
-   (void) icon_get;
-#endif
-}
-
-EAPI void
-elm_map_marker_class_get_cb_set(Elm_Map_Marker_Class *clas, Elm_Map_Marker_Get_Func get)
-{
-#ifdef HAVE_ELEMENTARY_ECORE_CON
-   EINA_SAFETY_ON_NULL_RETURN(clas);
-   clas->func.get = get;
-#else
-   (void) clas;
-   (void) get;
-#endif
-}
-
-EAPI void
-elm_map_marker_class_del_cb_set(Elm_Map_Marker_Class *clas, Elm_Map_Marker_Del_Func del)
-{
-#ifdef HAVE_ELEMENTARY_ECORE_CON
-   EINA_SAFETY_ON_NULL_RETURN(clas);
-   clas->func.del = del;
-#else
-   (void) clas;
-   (void) del;
-#endif
-}
-
-EAPI void
 elm_map_route_remove(Elm_Map_Route *route)
 {
    elm_map_route_del(route);
