@@ -1225,11 +1225,10 @@ EAPI const char           *elm_map_source_get(const Evas_Object *obj, Elm_Map_So
  * of #ELM_MAP_ROUTE_METHOD_SHORTEST or #ELM_MAP_ROUTE_METHOD_FASTEST.
  *
  * Routes created with this method can be deleted with
- * elm_map_route_remove(), colored with elm_map_route_color_set(),
+ * elm_map_route_remove(), 
  * and distance can be get with elm_map_route_distance_get().
  *
  * @see elm_map_route_remove()
- * @see elm_map_route_color_set()
  * @see elm_map_route_distance_get()
  * @see elm_map_source_set()
  *
