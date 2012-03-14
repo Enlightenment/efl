@@ -38,6 +38,7 @@ _btn_cursors_move_cb(void *data, Evas_Object *btn, void *ev __UNUSED__)
      {
         Evas_Object *icon;
         app->icon_still = elm_object_content_unset(app->mid);
+        evas_object_hide(app->icon_still);
         icon = elm_icon_add(app->mid);
         elm_icon_standard_set(icon, "chat");
         elm_object_part_content_set(app->mid, "icon", icon);
