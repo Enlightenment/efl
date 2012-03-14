@@ -22,8 +22,11 @@ elm_main(int argc, char **argv)
    elm_win_title_set(win, "Hoversel");
    elm_win_autodel_set(win, EINA_TRUE);
    elm_policy_set(ELM_POLICY_QUIT, ELM_POLICY_QUIT_LAST_WINDOW_CLOSED);
+   evas_object_resize(win, 200, 300);
+   evas_object_show(win);
 
    bg = elm_bg_add(win);
+   evas_object_size_hint_weight_set(bg, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    elm_win_resize_object_add(win, bg);
    evas_object_show(bg);
 
@@ -49,8 +52,6 @@ elm_main(int argc, char **argv)
    evas_object_move(hoversel, 10, 10);
    evas_object_show(hoversel);
 
-   evas_object_resize(win, 200, 300);
-   evas_object_show(win);
 
    elm_run();
 

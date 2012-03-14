@@ -3652,7 +3652,7 @@
  * And now we create our hoversel and set some of it's properties. We set @p win
  * as its parent, ask it to not be horizontal(be vertical) and give it a label
  * and icon:
- * @until icon_set
+ * @until "icon", rect)
  *
  * Next we will add our three items, setting a callback to be called for the
  * first and third:
