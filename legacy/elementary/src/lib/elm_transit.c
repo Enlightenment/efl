@@ -394,6 +394,23 @@ _transit_animate_cb(void *data)
    return ECORE_CALLBACK_RENEW;
 }
 
+static Eina_Bool
+_recover_image_uv(Evas_Object *obj, Evas_Map *map)
+{
+   //Since the map is not proper for all types of objects,
+   //Need to handle uvs only for image objects
+   const char *type = evas_object_type_get(obj);
+   if ((!type) || (strcmp(type, "image"))) return EINA_FALSE;
+
+   int iw, ih;
+   evas_object_image_size_get(obj, &iw, &ih);
+   evas_map_point_image_uv_set(map, 0, 0, 0);
+   evas_map_point_image_uv_set(map, 1, iw, 0);
+   evas_map_point_image_uv_set(map, 2, iw, ih);
+   evas_map_point_image_uv_set(map, 3, 0, ih);
+   return EINA_TRUE;
+}
+
 EAPI Elm_Transit *
 elm_transit_add(void)
 {
@@ -983,7 +1000,9 @@ _transit_effect_zoom_op(Elm_Transit_Effect *effect, Elm_Transit *transit , doubl
         evas_object_geometry_get(obj, &x, &y, &w, &h);
         evas_map_util_points_populate_from_object_full(map, obj, zoom->from +
                                                        (progress * zoom->to));
-        evas_map_util_3d_perspective(map, x + (w / 2), y + (h / 2), 0, _TRANSIT_FOCAL);
+        _recover_image_uv(obj, map);
+        evas_map_util_3d_perspective(map, x + (w / 2), y + (h / 2), 0,
+                                     _TRANSIT_FOCAL);
         evas_object_map_set(obj, map);
         evas_object_map_enable_set(obj, EINA_TRUE);
      }
@@ -1128,6 +1147,7 @@ _transit_effect_flip_op(Elm_Transit_Effect *effect, Elm_Transit *transit, double
                                      0, 0, x + half_w, y + half_h, 0);
           }
         evas_map_util_3d_perspective(map, x + half_w, y + half_h, 0, _TRANSIT_FOCAL);
+        _recover_image_uv(obj, map);
         evas_object_map_enable_set(front, EINA_TRUE);
         evas_object_map_enable_set(back, EINA_TRUE);
         evas_object_map_set(obj, map);
@@ -1399,18 +1419,21 @@ _transit_effect_resizable_flip_op(Elm_Transit_Effect *effect, Elm_Transit *trans
 
         if (resizable_flip->axis == ELM_TRANSIT_EFFECT_FLIP_AXIS_Y)
           {
-             _set_image_uv_by_axis_y(map, resizable_flip_node, degree);
+             if (!_recover_image_uv(obj, map))
+               _set_image_uv_by_axis_y(map, resizable_flip_node, degree);
              evas_map_util_3d_rotate(map, 0, degree,
                                      0, x + half_w, y + half_h, 0);
           }
         else
           {
-             _set_image_uv_by_axis_x(map, resizable_flip_node, degree);
+             if (!_recover_image_uv(obj, map))
+               _set_image_uv_by_axis_x(map, resizable_flip_node, degree);
              evas_map_util_3d_rotate(map, degree, 0,
                                      0, x + half_w, y + half_h, 0);
           }
 
-        evas_map_util_3d_perspective(map, x + half_w, y + half_h, 0, _TRANSIT_FOCAL);
+        evas_map_util_3d_perspective(map, x + half_w, y + half_h, 0,
+                                     _TRANSIT_FOCAL);
         evas_object_map_enable_set(resizable_flip_node->front, EINA_TRUE);
         evas_object_map_enable_set(resizable_flip_node->back, EINA_TRUE);
         evas_object_map_set(obj, map);
@@ -1627,6 +1650,7 @@ _transit_effect_wipe_op(Elm_Transit_Effect *effect, Elm_Transit *transit, double
         else
           _elm_fx_wipe_hide(map, wipe->dir, _x, _y, _w, _h, (float)progress);
 
+        _recover_image_uv(obj, map);
         evas_object_map_enable_set(obj, EINA_TRUE);
         evas_object_map_set(obj, map);
      }
