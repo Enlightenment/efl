@@ -4408,8 +4408,6 @@ static void
 _elm_genlist_clear(Evas_Object *obj, Eina_Bool standby)
 {
    Eina_Inlist *next, *l;
-
-   ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return;
 
@@ -4475,6 +4473,7 @@ _elm_genlist_clear(Evas_Object *obj, Eina_Bool standby)
 EAPI void
 elm_genlist_clear(Evas_Object *obj)
 {
+   ELM_CHECK_WIDTYPE(obj, widtype);
    _elm_genlist_clear(obj, EINA_FALSE);
 }
 
