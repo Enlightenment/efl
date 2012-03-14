@@ -944,7 +944,6 @@ group { name: "elm/clock/base-all/default";
          }
       }
       part { name: "c0";
-         type: SWALLOW;
          type: TEXT;
          mouse_events:  0;
          scale: 1;
@@ -977,7 +976,6 @@ group { name: "elm/clock/base-all/default";
       }
       // (if seconds)
       part { name: "c1";
-         type: SWALLOW;
          type: TEXT;
          mouse_events:  0;
          scale: 1;
@@ -1039,7 +1037,6 @@ group { name: "elm/clock/base-seconds/default";
          }
       }
       part { name: "c0";
-         type: SWALLOW;
          type: TEXT;
          mouse_events:  0;
          scale: 1;
@@ -1072,7 +1069,6 @@ group { name: "elm/clock/base-seconds/default";
       }
       // (if seconds)
       part { name: "c1";
-         type: SWALLOW;
          type: TEXT;
          mouse_events:  0;
          scale: 1;
@@ -1126,7 +1122,6 @@ group { name: "elm/clock/base-am_pm/default";
          }
       }
       part { name: "c0";
-         type: SWALLOW;
          type: TEXT;
          mouse_events:  0;
          scale: 1;
@@ -1186,7 +1181,6 @@ group { name: "elm/clock/base/default";
          }
       }
       part { name: "c0";
-         type: SWALLOW;
          type: TEXT;
          mouse_events:  0;
          scale: 1;
