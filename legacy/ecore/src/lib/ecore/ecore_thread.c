@@ -389,6 +389,8 @@ _ecore_notify_handler(void *data)
      {
         _ecore_thread_kill(work);
      }
+
+   free(notify);
 }
 
 static void
@@ -433,6 +435,7 @@ _ecore_message_notify_handler(void *data)
      {
         _ecore_thread_kill(work);
      }
+   free(notify);
 }
 
 static void
