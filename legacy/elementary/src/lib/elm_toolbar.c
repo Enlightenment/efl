@@ -2030,18 +2030,6 @@ elm_toolbar_items_count(const Evas_Object *obj)
    return wd->item_count;
 }
 
-EINA_DEPRECATED EAPI void
-elm_toolbar_mode_shrink_set(Evas_Object *obj, Elm_Toolbar_Shrink_Mode shrink_mode)
-{
-   elm_toolbar_shrink_mode_set(obj, shrink_mode);
-}
-
-EINA_DEPRECATED EAPI Elm_Toolbar_Shrink_Mode
-elm_toolbar_mode_shrink_get(const Evas_Object *obj)
-{
-   return elm_toolbar_shrink_mode_get(obj);
-}
-
 EAPI void
 elm_toolbar_select_mode_set(Evas_Object *obj, Elm_Object_Select_Mode mode)
 {
