@@ -1,6 +1,6 @@
 group { name: "elm/conformant/base/default";
    parts {
-      part { name: "elm.swallow.shelf";
+      part { name: "elm.swallow.indicator";
          type: SWALLOW;
          description { state: "default" 0.0;
             fixed: 0 1;
@@ -14,9 +14,18 @@ group { name: "elm/conformant/base/default";
             fixed: 0 1;
             align: 0.5 0.5;
             rel1.relative: 0.0 1.0;
-            rel1.to_y: "elm.swallow.shelf";
+            rel1.to_y: "elm.swallow.indicator";
             rel2.relative: 1.0 0.0;
             rel2.to_y: "elm.swallow.virtualkeypad";
+         }
+      }
+      part { name: "elm.swallow.clipboard";
+         type: SWALLOW;
+         description { state: "default" 0.0;
+            fixed: 0 1;
+            align: 0.0 1.0;
+            rel2.relative: 1.0 0.0;
+            rel2.to_y: "elm.swallow.softkey";
          }
       }
       part { name: "elm.swallow.virtualkeypad";
@@ -25,10 +34,10 @@ group { name: "elm/conformant/base/default";
             fixed: 0 1;
             align: 0.0 1.0;
             rel2.relative: 1.0 0.0;
-            rel2.to_y: "elm.swallow.panel";
+            rel2.to_y: "elm.swallow.softkey";
          }
       }
-      part { name: "elm.swallow.panel";
+      part { name: "elm.swallow.softkey";
          type: SWALLOW;
          description { state: "default" 0.0;
             fixed: 0 1;

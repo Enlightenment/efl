@@ -13,7 +13,10 @@ typedef struct _Widget_Data Widget_Data;
 struct _Widget_Data
 {
    Evas_Object *base;
-   Evas_Object *shelf, *panel, *virtualkeypad, *clipboard;
+   Evas_Object *indicator;
+   Evas_Object *softkey;
+   Evas_Object *virtualkeypad;
+   Evas_Object *clipboard;
    Evas_Object *content;
    Evas_Object *scroller;
 #ifdef HAVE_ELEMENTARY_X
@@ -119,8 +122,6 @@ _theme_hook(Evas_Object *obj)
 
    if (wd->content)
      edje_object_part_swallow(wd->base, "elm.swallow.content", wd->content);
-   edje_object_scale_set(wd->base, elm_widget_scale_get(obj)
-                         * _elm_config->scale);
    _sizing_eval(obj);
 }
 
@@ -282,7 +283,7 @@ _conformant_part_sizing_eval(Evas_Object *obj, Conformant_Part_Type part_type)
              ;
 #endif
           }
-        _conformant_part_size_set(obj, wd->shelf, sx, sy, sw, sh);
+        _conformant_part_size_set(obj, wd->indicator, sx, sy, sw, sh);
      }
    if (part_type & ELM_CONFORM_VIRTUAL_KEYPAD_PART)
      {
@@ -312,7 +313,7 @@ _conformant_part_sizing_eval(Evas_Object *obj, Conformant_Part_Type part_type)
              ;
 #endif
           }
-        _conformant_part_size_set(obj, wd->panel, sx, sy, sw, sh);
+        _conformant_part_size_set(obj, wd->softkey, sx, sy, sw, sh);
      }
    if (part_type & ELM_CONFORM_CLIPBOARD_PART)
      {
@@ -335,23 +336,26 @@ static void
 _swallow_conformant_parts(Evas_Object *obj)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
-
+   Evas *e = evas_object_evas_get(obj);
    wd->scroller = NULL;
-   if (!wd->shelf)
+
+   //Indicator
+   if (!wd->indicator)
      {
-        wd->shelf = evas_object_rectangle_add(evas_object_evas_get(obj));
-        elm_widget_sub_object_add(obj, wd->shelf);
-        evas_object_size_hint_min_set(wd->shelf, -1, 0);
-        evas_object_size_hint_max_set(wd->shelf, -1, 0);
+        wd->indicator = evas_object_rectangle_add(e);
+        elm_widget_sub_object_add(obj, wd->indicator);
+        evas_object_size_hint_min_set(wd->indicator, -1, 0);
+        evas_object_size_hint_max_set(wd->indicator, -1, 0);
      }
    else
      _conformant_part_sizing_eval(obj, ELM_CONFORM_INDICATOR_PART);
-   evas_object_color_set(wd->shelf, 0, 0, 0, 0);
-   edje_object_part_swallow(wd->base, "elm.swallow.shelf", wd->shelf);
+   evas_object_color_set(wd->indicator, 0, 0, 0, 0);
+   edje_object_part_swallow(wd->base, "elm.swallow.indicator", wd->indicator);
 
+   //Virtual Keyboard
    if (!wd->virtualkeypad)
      {
-        wd->virtualkeypad = evas_object_rectangle_add(evas_object_evas_get(obj));
+        wd->virtualkeypad = evas_object_rectangle_add(e);
         elm_widget_sub_object_add(obj, wd->virtualkeypad);
         evas_object_size_hint_min_set(wd->virtualkeypad, -1, 0);
         evas_object_size_hint_max_set(wd->virtualkeypad, -1, 0);
@@ -361,28 +365,32 @@ _swallow_conformant_parts(Evas_Object *obj)
    evas_object_color_set(wd->virtualkeypad, 0, 0, 0, 0);
    edje_object_part_swallow(wd->base, "elm.swallow.virtualkeypad",
                             wd->virtualkeypad);
-
+   //Clipboard
    if (!wd->clipboard)
      {
-        wd->clipboard = evas_object_rectangle_add(evas_object_evas_get(obj));
+        wd->clipboard = evas_object_rectangle_add(e);
         elm_widget_sub_object_add(obj, wd->clipboard);
         evas_object_size_hint_min_set(wd->clipboard, -1, 0);
         evas_object_size_hint_max_set(wd->clipboard, -1, 0);
      }
    else
      _conformant_part_sizing_eval(obj, ELM_CONFORM_CLIPBOARD_PART);
+   evas_object_color_set(wd->clipboard, 0, 0, 0, 0);
+   edje_object_part_swallow(wd->base, "elm.swallow.clipboard",
+                            wd->clipboard);
 
-   if (!wd->panel)
+   //Softkey
+   if (!wd->softkey)
      {
-        wd->panel = evas_object_rectangle_add(evas_object_evas_get(obj));
-        elm_widget_sub_object_add(obj, wd->panel);
-        evas_object_size_hint_min_set(wd->panel, -1, 0);
-        evas_object_size_hint_max_set(wd->panel, -1, 0);
+        wd->softkey = evas_object_rectangle_add(e);
+        elm_widget_sub_object_add(obj, wd->softkey);
+        evas_object_size_hint_min_set(wd->softkey, -1, 0);
+        evas_object_size_hint_max_set(wd->softkey, -1, 0);
      }
    else
      _conformant_part_sizing_eval(obj, ELM_CONFORM_SOFTKEY_PART);
-   evas_object_color_set(wd->panel, 0, 0, 0, 0);
-   edje_object_part_swallow(wd->base, "elm.swallow.panel", wd->panel);
+   evas_object_color_set(wd->softkey, 0, 0, 0, 0);
+   edje_object_part_swallow(wd->base, "elm.swallow.softkey", wd->softkey);
 }
 
 static void
