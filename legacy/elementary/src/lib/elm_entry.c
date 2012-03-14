@@ -3868,7 +3868,22 @@ _entry_hover_anchor_clicked(void *data, Evas_Object *obj, void *event_info)
 
    evas_object_smart_callback_call(data, SIG_ANCHOR_HOVER_OPENED, &ei);
    evas_object_smart_callback_add(wd->anchor_hover.hover, "clicked", _anchor_hover_clicked, data);
-   evas_object_show(wd->anchor_hover.hover);
+
+   /* FIXME: Should just check if there's any callback registered to the smart
+    * events instead.
+    * This is used to determine if anyone cares about the hover or not. */
+   if (!elm_object_part_content_get(wd->anchor_hover.hover, "middle") &&
+         !elm_object_part_content_get(wd->anchor_hover.hover, "left") &&
+         !elm_object_part_content_get(wd->anchor_hover.hover, "right") &&
+         !elm_object_part_content_get(wd->anchor_hover.hover, "top") &&
+         !elm_object_part_content_get(wd->anchor_hover.hover, "bottom"))
+     {
+        evas_object_del(wd->anchor_hover.hover);
+     }
+   else
+     {
+        evas_object_show(wd->anchor_hover.hover);
+     }
 }
 /* END - ANCHOR HOVER */
 
