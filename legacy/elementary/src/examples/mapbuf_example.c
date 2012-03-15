@@ -27,7 +27,7 @@ static void
 _enabled_cb(void *data, Evas_Object *obj, void *event_info __UNUSED__)
 {
    Evas_Object *mb = data;
-   elm_mapbuf_enabled_set(mb, elm_toggle_state_get(obj));
+   elm_mapbuf_enabled_set(mb, elm_check_state_get(obj));
 }
 
 static void
@@ -97,9 +97,11 @@ elm_main(int argc __UNUSED__, char **argv __UNUSED__)
    elm_box_pack_end(bx, hbx);
    evas_object_show(hbx);
 
-   tg = elm_toggle_add(win);
+   tg = elm_check_add(win);
+   elm_object_style_set(tg, "toggle");
+   elm_object_part_text_set(tg, "on", "Enabled");
+   elm_object_part_text_set(tg, "off", "Disabled");
    elm_object_text_set(tg, "Map");
-   elm_toggle_states_labels_set(tg, "Enabled", "Disabled");
    evas_object_smart_callback_add(tg, "changed", _enabled_cb, mb);
    elm_box_pack_end(hbx, tg);
    evas_object_show(tg);
