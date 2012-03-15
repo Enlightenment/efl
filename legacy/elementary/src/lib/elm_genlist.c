@@ -2524,6 +2524,7 @@ _scroll_item(Widget_Data *wd)
    Elm_Gen_Item *it = NULL;
    Evas_Coord gith = 0;
    Evas_Coord ow, oh, dx = 0, dy = 0, dw = 0, dh = 0;
+   if (!wd->show_item) return;
 
    evas_object_geometry_get(wd->pan_smart, NULL, NULL, &ow, &oh);
    it = wd->show_item;
@@ -2698,10 +2699,13 @@ _calc_job(void *data)
               dy = 0;
               break;
           }
-        if ((pan_w > (wd->show_item->x + wd->show_item->item->block->x)) &&
-            (pan_h > (wd->show_item->y + wd->show_item->item->block->y + dy)))
+        if (wd->show_item)
           {
-             _scroll_item(wd);
+             if ((pan_w > (wd->show_item->x + wd->show_item->item->block->x)) &&
+                 (pan_h > (wd->show_item->y + wd->show_item->item->block->y + dy)))
+               {
+                  _scroll_item(wd);
+               }
           }
      }
    wd->calc_job = NULL;
