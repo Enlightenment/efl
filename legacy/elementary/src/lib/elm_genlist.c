@@ -633,7 +633,7 @@ _sizing_eval(Evas_Object *obj)
    minh = -1;
    if (wd->mode == ELM_LIST_COMPRESS)
      {
-        Evas_Coord vw, vh;
+        Evas_Coord vw, vh, vmw, vmh;
 
         elm_smart_scroller_child_viewport_size_get(wd->scr, &vw, &vh);
         if ((vw != 0) && (vw != wd->prev_viewport_w))
@@ -648,6 +648,10 @@ _sizing_eval(Evas_Object *obj)
              if (wd->calc_job) ecore_job_del(wd->calc_job);
              wd->calc_job = ecore_job_add(_calc_job, wd);
           }
+        edje_object_size_min_calc
+          (elm_smart_scroller_edje_object_get(wd->scr), &vmw, &vmh);
+        minw = vmw;
+        minh = vmh;
      }
    else if (wd->mode == ELM_LIST_LIMIT)
      {
