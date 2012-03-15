@@ -900,6 +900,11 @@ _show_finished(void *data,
    wd =  elm_widget_data_get(WIDGET(it));
    if (!wd) return;
 
+   // FIXME : If current top's content is unfocusable, it should be restored as focusable.
+   // Similar cases are should be checked and should call following function.
+   if (elm_widget_tree_unfocusable_get(it->content))
+     elm_widget_tree_unfocusable_set(it->content, EINA_FALSE);
+
    evas_object_smart_callback_call(WIDGET(it),
                                    SIG_TRANSITION_FINISHED,
                                    data);
