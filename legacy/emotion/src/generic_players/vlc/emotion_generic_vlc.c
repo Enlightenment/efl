@@ -214,7 +214,6 @@ _send_length_changed(struct _App *app, const struct libvlc_event_t *ev)
    float length = ev->u.media_player_length_changed.new_length;
    length /= 1000;
 
-   fprintf(stderr, "length changed: %0.3f\n", length);
    _send_cmd_start(app, EM_RESULT_LENGTH_CHANGED);
    SEND_CMD_PARAM(app, length);
    _send_cmd_finish(app);
@@ -685,7 +684,10 @@ _position_changed(struct _App *app)
    unsigned int w, h;
    r = libvlc_video_get_size(app->mp, 0, &w, &h);
    if (r < 0)
-     return;
+     {
+	w = 1;
+	h = 1;
+     }
    _send_resize(app, w, h);
 
    /* sending audio track info */
@@ -749,8 +751,6 @@ main(int argc, const char *argv[])
 
    app.em_read = atoi(argv[1]);
    app.em_write = atoi(argv[2]);
-
-   fprintf(stderr, "reading commands from fd: %d, writing on fd: %d\n", app.em_read, app.em_write);
 
    int vlc_argc = sizeof(vlc_argv) / sizeof(*vlc_argv);
    snprintf(cwidth, sizeof(cwidth), "%d", DEFAULTWIDTH);
