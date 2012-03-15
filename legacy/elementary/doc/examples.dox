@@ -4710,7 +4710,7 @@
  * This list will support multiple selection, so we call
  * elm_genlist_multi_select_set() on it.
  *
- * The option elm_genlist_height_for_width_mode_set() would allow text block to
+ * The option elm_genlist_mode_set() would allow text block to
  * wrap lines if the Edje part is configured with "text.min: 0 1", for example.
  * But since we are compressing the elements to the width of the list, this
  * option wouldn't take any effect.
