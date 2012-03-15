@@ -3699,6 +3699,386 @@ EINA_DEPRECATED EAPI Eina_Bool                    elm_list_item_tooltip_window_m
 EINA_DEPRECATED EAPI Eina_Bool                    elm_list_item_tooltip_window_mode_get(const Elm_Object_Item *it);
 
 /**
+ * Set the function called when a list item is freed.
+ *
+ * @param it The item to set the callback on
+ * @param func The function called
+ *
+ * If there is a @p func, then it will be called prior item's memory release.
+ * That will be called with the following arguments:
+ * @li item's data;
+ * @li item's Evas object;
+ * @li item itself;
+ *
+ * This way, a data associated to a list item could be properly freed.
+ *
+ * @deprecated Please use elm_object_item_del_cb_set() instead.
+ *
+ */
+EINA_DEPRECATED EAPI void                         elm_list_item_del_cb_set(Elm_Object_Item *it, Evas_Smart_Cb func);
+
+/**
+ * Get the data associated to the item.
+ *
+ * @param it The list item
+ * @return The data associated to @p item
+ *
+ * The return value is a pointer to data associated to @p item when it was
+ * created, with function elm_list_item_append() or similar. If no data
+ * was passed as argument, it will return @c NULL.
+ *
+ * @see elm_list_item_append()
+ *
+ * @deprecated Please use elm_object_item_data_get() instead.
+ *
+ */
+EINA_DEPRECATED EAPI void                        *elm_list_item_data_get(const Elm_Object_Item *it);
+
+/**
+ * Get the left side icon associated to the item.
+ *
+ * @param it The list item
+ * @return The left side icon associated to @p item
+ *
+ * The return value is a pointer to the icon associated to @p item when
+ * it was
+ * created, with function elm_list_item_append() or similar, or later
+ * with function elm_list_item_icon_set(). If no icon
+ * was passed as argument, it will return @c NULL.
+ *
+ * @see elm_list_item_append()
+ * @see elm_list_item_icon_set()
+ *
+ * @deprecated Please use elm_object_item_part_content_get(item, NULL);
+ */
+EINA_DEPRECATED EAPI Evas_Object                 *elm_list_item_icon_get(const Elm_Object_Item *it);
+
+/**
+ * Set the left side icon associated to the item.
+ *
+ * @param it The list item
+ * @param icon The left side icon object to associate with @p item
+ *
+ * The icon object to use at left side of the item. An
+ * icon can be any Evas object, but usually it is an icon created
+ * with elm_icon_add().
+ *
+ * Once the icon object is set, a previously set one will be deleted.
+ * @warning Setting the same icon for two items will cause the icon to
+ * disappear from the first item.
+ *
+ * If an icon was passed as argument on item creation, with function
+ * elm_list_item_append() or similar, it will be already
+ * associated to the item.
+ *
+ * @see elm_list_item_append()
+ * @see elm_list_item_icon_get()
+ *
+ * @deprecated Please use elm_object_item_part_content_set(item, NULL, icon);
+ */
+EINA_DEPRECATED EAPI void                         elm_list_item_icon_set(Elm_Object_Item *it, Evas_Object *icon);
+
+/**
+ * Get the right side icon associated to the item.
+ *
+ * @param it The list item
+ * @return The right side icon associated to @p item
+ *
+ * The return value is a pointer to the icon associated to @p item when
+ * it was
+ * created, with function elm_list_item_append() or similar, or later
+ * with function elm_list_item_icon_set(). If no icon
+ * was passed as argument, it will return @c NULL.
+ *
+ * @see elm_list_item_append()
+ * @see elm_list_item_icon_set()
+ *
+ * @deprecated Please use elm_object_item_part_content_get(item, "end");
+ */
+EINA_DEPRECATED EAPI Evas_Object                 *elm_list_item_end_get(const Elm_Object_Item *it);
+
+/**
+ * Set the right side icon associated to the item.
+ *
+ * @param it The list item
+ * @param end The right side icon object to associate with @p item
+ *
+ * The icon object to use at right side of the item. An
+ * icon can be any Evas object, but usually it is an icon created
+ * with elm_icon_add().
+ *
+ * Once the icon object is set, a previously set one will be deleted.
+ * @warning Setting the same icon for two items will cause the icon to
+ * disappear from the first item.
+ *
+ * If an icon was passed as argument on item creation, with function
+ * elm_list_item_append() or similar, it will be already
+ * associated to the item.
+ *
+ * @see elm_list_item_append()
+ * @see elm_list_item_end_get()
+ *
+ * @deprecated Please use elm_object_item_part_content_set(item, "end", end);
+ */
+EINA_DEPRECATED EAPI void                         elm_list_item_end_set(Elm_Object_Item *it, Evas_Object *end);
+
+/**
+ * Get the label of item.
+ *
+ * @param it The item of list.
+ * @return The label of item.
+ *
+ * The return value is a pointer to the label associated to @p item when
+ * it was created, with function elm_list_item_append(), or later
+ * with function elm_list_item_label_set. If no label
+ * was passed as argument, it will return @c NULL.
+ *
+ * @see elm_list_item_label_set() for more details.
+ * @see elm_list_item_append()
+ *
+ * @deprecated Please use elm_object_item_text_get(item);
+ */
+EINA_DEPRECATED EAPI const char                  *elm_list_item_label_get(const Elm_Object_Item *it);
+
+/**
+ * Set the label of item.
+ *
+ * @param it The item of list.
+ * @param text The label of item.
+ *
+ * The label to be displayed by the item.
+ * Label will be placed between left and right side icons (if set).
+ *
+ * If a label was passed as argument on item creation, with function
+ * elm_list_item_append() or similar, it will be already
+ * displayed by the item.
+ *
+ * @see elm_list_item_label_get()
+ * @see elm_list_item_append()
+ *
+ * @deprecated Please use elm_object_item_text_set(item, text);
+ */
+EINA_DEPRECATED EAPI void                         elm_list_item_label_set(Elm_Object_Item *it, const char *text);
+
+/**
+ * Set the text to be shown in a given list item's tooltips.
+ *
+ * @param it Target item.
+ * @param text The text to set in the content.
+ *
+ * Setup the text as tooltip to object. The item can have only one tooltip,
+ * so any previous tooltip data - set with this function or
+ * elm_list_item_tooltip_content_cb_set() - is removed.
+ *
+ * @deprecated Use elm_object_item_tooltip_text_set() instead
+ * @see elm_object_tooltip_text_set() for more details.
+ *
+ */
+EINA_DEPRECATED EAPI void                         elm_list_item_tooltip_text_set(Elm_Object_Item *it, const char *text);
+
+/**
+ * Set the content to be shown in the tooltip item.
+ *
+ * Setup the tooltip to item. The item can have only one tooltip,
+ * so any previous tooltip data is removed. @p func(with @p data) will
+ * be called every time that need show the tooltip and it should
+ * return a valid Evas_Object. This object is then managed fully by
+ * tooltip system and is deleted when the tooltip is gone.
+ *
+ * @param it the list item being attached a tooltip.
+ * @param func the function used to create the tooltip contents.
+ * @param data what to provide to @a func as callback data/context.
+ * @param del_cb called when data is not needed anymore, either when
+ *        another callback replaces @a func, the tooltip is unset with
+ *        elm_list_item_tooltip_unset() or the owner @a item
+ *        dies. This callback receives as the first parameter the
+ *        given @a data, and @c event_info is the item.
+ *
+ * @deprecated Use elm_object_item_tooltip_content_cb_set() instead
+ *
+ * @see elm_object_tooltip_content_cb_set() for more details.
+ *
+ */
+EINA_DEPRECATED EAPI void                         elm_list_item_tooltip_content_cb_set(Elm_Object_Item *it, Elm_Tooltip_Item_Content_Cb func, const void *data, Evas_Smart_Cb del_cb);
+
+/**
+ * Unset tooltip from item.
+ *
+ * @param it list item to remove previously set tooltip.
+ *
+ * Remove tooltip from item. The callback provided as del_cb to
+ * elm_list_item_tooltip_content_cb_set() will be called to notify
+ * it is not used anymore.
+ *
+ * @deprecated Use elm_object_item_tooltip_unset() instead
+ * @see elm_object_tooltip_unset() for more details.
+ * @see elm_list_item_tooltip_content_cb_set()
+ *
+ */
+EINA_DEPRECATED EAPI void                         elm_list_item_tooltip_unset(Elm_Object_Item *it);
+
+/**
+ * Sets a different style for this item tooltip.
+ *
+ * @note before you set a style you should define a tooltip with
+ *       elm_list_item_tooltip_content_cb_set() or
+ *       elm_list_item_tooltip_text_set()
+ *
+ * @param it list item with tooltip already set.
+ * @param style the theme style to use (default, transparent, ...)
+ *
+ *
+ * @deprecated Use elm_object_item_tooltip_style_set() instead
+ * @see elm_object_tooltip_style_set() for more details.
+ *
+ */
+EINA_DEPRECATED EAPI void                         elm_list_item_tooltip_style_set(Elm_Object_Item *it, const char *style);
+
+/**
+ * Get the style for this item tooltip.
+ *
+ * @param it list item with tooltip already set.
+ * @return style the theme style in use, defaults to "default". If the
+ *         object does not have a tooltip set, then NULL is returned.
+ *
+ * @deprecated Use elm_object_item_tooltip_style_get() instead
+ *
+ * @see elm_object_tooltip_style_get() for more details.
+ * @see elm_list_item_tooltip_style_set()
+ *
+ */
+EINA_DEPRECATED EAPI const char                  *elm_list_item_tooltip_style_get(const Elm_Object_Item *it);
+
+/**
+ * Set the type of mouse pointer/cursor decoration to be shown,
+ * when the mouse pointer is over the given list widget item
+ *
+ * @param it list item to customize cursor on
+ * @param cursor the cursor type's name
+ *
+ * This function works analogously as elm_object_cursor_set(), but
+ * here the cursor's changing area is restricted to the item's
+ * area, and not the whole widget's. Note that that item cursors
+ * have precedence over widget cursors, so that a mouse over an
+ * item with custom cursor set will always show @b that cursor.
+ *
+ * If this function is called twice for an object, a previously set
+ * cursor will be unset on the second call.
+ *
+ * @see elm_object_cursor_set()
+ * @see elm_list_item_cursor_get()
+ * @see elm_list_item_cursor_unset()
+ *
+ * @deprecated Please use elm_object_item_cursor_set() instead
+ */
+EINA_DEPRECATED EAPI void                         elm_list_item_cursor_set(Elm_Object_Item *it, const char *cursor);
+
+/*
+ * Get the type of mouse pointer/cursor decoration set to be shown,
+ * when the mouse pointer is over the given list widget item
+ *
+ * @param it list item with custom cursor set
+ * @return the cursor type's name or @c NULL, if no custom cursors
+ * were set to @p item (and on errors)
+ *
+ * @see elm_object_cursor_get()
+ * @see elm_list_item_cursor_set()
+ * @see elm_list_item_cursor_unset()
+ *
+ * @deprecated Please use elm_object_item_cursor_get() instead
+ */
+EINA_DEPRECATED EAPI const char                  *elm_list_item_cursor_get(const Elm_Object_Item *it);
+
+/**
+ * Unset any custom mouse pointer/cursor decoration set to be
+ * shown, when the mouse pointer is over the given list widget
+ * item, thus making it show the @b default cursor again.
+ *
+ * @param it a list item
+ *
+ * Use this call to undo any custom settings on this item's cursor
+ * decoration, bringing it back to defaults (no custom style set).
+ *
+ * @see elm_object_cursor_unset()
+ * @see elm_list_item_cursor_set()
+ *
+ * @deprecated Please use elm_list_item_cursor_unset() instead
+ */
+EINA_DEPRECATED EAPI void                         elm_list_item_cursor_unset(Elm_Object_Item *it);
+
+/**
+ * Set a different @b style for a given custom cursor set for a
+ * list item.
+ *
+ * @param it list item with custom cursor set
+ * @param style the <b>theme style</b> to use (e.g. @c "default",
+ * @c "transparent", etc)
+ *
+ * This function only makes sense when one is using custom mouse
+ * cursor decorations <b>defined in a theme file</b>, which can have,
+ * given a cursor name/type, <b>alternate styles</b> on it. It
+ * works analogously as elm_object_cursor_style_set(), but here
+ * applies only to list item objects.
+ *
+ * @warning Before you set a cursor style you should have defined a
+ *       custom cursor previously on the item, with
+ *       elm_list_item_cursor_set()
+ *
+ * @see elm_list_item_cursor_engine_only_set()
+ * @see elm_list_item_cursor_style_get()
+ *
+ * @deprecated Please use elm_list_item_cursor_style_set() instead
+ */
+EINA_DEPRECATED EAPI void                         elm_list_item_cursor_style_set(Elm_Object_Item *it, const char *style);
+
+/**
+ * Get the current @b style set for a given list item's custom
+ * cursor
+ *
+ * @param it list item with custom cursor set.
+ * @return style the cursor style in use. If the object does not
+ *         have a cursor set, then @c NULL is returned.
+ *
+ * @see elm_list_item_cursor_style_set() for more details
+ *
+ * @deprecated Please use elm_list_item_cursor_style_get() instead
+ */
+EINA_DEPRECATED EAPI const char                  *elm_list_item_cursor_style_get(const Elm_Object_Item *it);
+
+/**
+ * Get if the (custom) cursor for a given list item is being
+ * searched in its theme, also, or is only relying on the rendering
+ * engine.
+ *
+ * @param it a list item
+ * @return @c EINA_TRUE, if cursors are being looked for only on
+ * those provided by the rendering engine, @c EINA_FALSE if they
+ * are being searched on the widget's theme, as well.
+ *
+ * @see elm_list_item_cursor_engine_only_set(), for more details
+ *
+ * @deprecated Please use elm_list_item_cursor_engine_only_get() instead
+ */
+EINA_DEPRECATED EAPI Eina_Bool                    elm_list_item_cursor_engine_only_get(const Elm_Object_Item *it);
+
+/**
+ * Delete the item from the list.
+ *
+ * @param it The item of list to be deleted.
+ *
+ * If deleting all list items is required, elm_list_clear()
+ * should be used instead of getting items list and deleting each one.
+ *
+ * @see elm_list_clear()
+ * @see elm_list_item_append()
+ * @see elm_widget_item_del_cb_set()
+ * @deprecated Use elm_object_item_del() instead
+ *
+ */
+EINA_DEPRECATED EAPI void                         elm_list_item_del(Elm_Object_Item *it);
+
+
+/**
  * This sets a widget to be displayed to the left of a scrolled entry.
  *
  * @param obj The scrolled entry object
