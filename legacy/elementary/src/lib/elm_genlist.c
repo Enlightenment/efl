@@ -4961,13 +4961,6 @@ elm_genlist_item_all_contents_unset(Elm_Object_Item *it, Eina_List **l)
      }
 }
 
-EINA_DEPRECATED EAPI const Evas_Object *
-elm_genlist_item_object_get(const Elm_Object_Item *it)
-{
-   ELM_OBJ_ITEM_CHECK_OR_RETURN(it, NULL);
-   return VIEW(it);
-}
-
 EAPI void
 elm_genlist_item_update(Elm_Object_Item *it)
 {
