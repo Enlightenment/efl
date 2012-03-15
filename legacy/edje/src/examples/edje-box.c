@@ -10,10 +10,9 @@
  */
 
 #ifdef HAVE_CONFIG_H
-#include "config.h"
+# include "config.h"
 #else
-#define PACKAGE_EXAMPLES_DIR "."
-#define __UNUSED__
+# define __UNUSED__
 #endif
 
 #include <Ecore.h>
@@ -28,13 +27,13 @@
 
 #define NRECTS 20
 
-static const char *edje_file_path = PACKAGE_EXAMPLES_DIR "/box.edj";
-
-struct _App {
-    Ecore_Evas *ee;
-    Evas_Object *edje;
-    Evas_Object *bg;
-};
+static const char commands[] = \
+  "commands are:\n"
+  "\ti - prepend rectangle\n"
+  "\ta - append rectangle\n"
+  "\tc - remove\n"
+  "\tEsc - exit\n"
+  "\th - print help\n";
 
 static void
 _on_destroy(Ecore_Evas *ee __UNUSED__)
@@ -45,32 +44,41 @@ _on_destroy(Ecore_Evas *ee __UNUSED__)
 /* here just to keep our example's window size and background image's
  * size in synchrony */
 static void
-_canvas_resize_cb(Ecore_Evas *ee)
+_on_canvas_resize(Ecore_Evas *ee)
 {
-   int w, h;
-   struct _App *app = ecore_evas_data_get(ee, "app");
+   Evas_Object *bg;
+   Evas_Object *edje_obj;
+   int          w;
+   int          h;
 
+   bg = ecore_evas_data_get(ee, "background");
+   edje_obj = ecore_evas_data_get(ee, "edje_obj");
    ecore_evas_geometry_get(ee, NULL, NULL, &w, &h);
-   evas_object_resize(app->bg, w, h);
-   evas_object_resize(app->edje, w, h);
+   evas_object_resize(bg, w, h);
+   evas_object_resize(edje_obj, w, h);
 }
 
 static void
-_rect_mouse_down(void *data, Evas *e, Evas_Object *o, void *event_info)
+_on_rect_mouse_down(void *data, Evas *e, Evas_Object *o, void *event_info)
 {
-   struct _App *app = data;
-   Evas_Event_Mouse_Down *ev = event_info;
+   Ecore_Evas            *ee;
+   Evas_Event_Mouse_Down *ev;
+   Evas_Object           *edje_obj;
+
+   ee = (Ecore_Evas *)data;
+   ev = (Evas_Event_Mouse_Down *)event_info;
+   edje_obj = ecore_evas_data_get(ee, "edje_obj");
 
    if (ev->button == 1)
      {
 	printf("Removing rect %p under the mouse pointer.\n", o);
-	edje_object_part_box_remove(app->edje, "example/box", o);
+	edje_object_part_box_remove(edje_obj, "example/box", o);
 	evas_object_del(o);
      }
    else if (ev->button == 3)
      {
 	Evas_Object *rect;
-	Eina_Bool r;
+	Eina_Bool    r;
 
 	rect = evas_object_rectangle_add(e);
 	evas_object_color_set(rect, 0, 0, 255, 255);
@@ -78,23 +86,32 @@ _rect_mouse_down(void *data, Evas *e, Evas_Object *o, void *event_info)
 	evas_object_show(rect);
 
 	printf("Inserting rect %p before the rectangle under the mouse pointer.\n", rect);
-	r = edje_object_part_box_insert_before(app->edje, "example/box", rect, o);
+	r = edje_object_part_box_insert_before(edje_obj, "example/box", rect, o);
 	if (!r)
 	  printf("An error ocurred when appending rect %p to the box.\n", rect);
 
-	evas_object_event_callback_add(rect, EVAS_CALLBACK_MOUSE_DOWN, _rect_mouse_down, app);
+	evas_object_event_callback_add(rect, EVAS_CALLBACK_MOUSE_DOWN, _on_rect_mouse_down, NULL);
      }
 }
 
 static void
-_bg_key_down(void *data, Evas *e, Evas_Object *o __UNUSED__, void *event_info)
+_on_bg_key_down(void *data, Evas *e, Evas_Object *o __UNUSED__, void *event_info)
 {
-   struct _App *app = data;
-   Evas_Event_Key_Down *ev = event_info;
-   Evas_Object *rect;
-   Eina_Bool r;
+   Ecore_Evas          *ee;
+   Evas_Event_Key_Down *ev;
+   Evas_Object         *edje_obj;
+   Evas_Object         *rect;
+   Eina_Bool            r;
 
+   ee = (Ecore_Evas *)data;
+   ev = (Evas_Event_Key_Down *)event_info;
+   edje_obj = ecore_evas_data_get(ee, "edje_obj");
 
+   if (!strcmp(ev->keyname, "h"))
+     {
+        fprintf(stdout, commands);
+        return;
+     }
    if (!strcmp(ev->keyname, "i"))
      {
 	rect = evas_object_rectangle_add(e);
@@ -103,11 +120,11 @@ _bg_key_down(void *data, Evas *e, Evas_Object *o __UNUSED__, void *event_info)
 	evas_object_show(rect);
 
 	printf("Inserting rect %p before the rectangle under the mouse pointer.\n", rect);
-	r = edje_object_part_box_insert_at(app->edje, "example/box", rect, 0);
+	r = edje_object_part_box_insert_at(edje_obj, "example/box", rect, 0);
 	if (!r)
 	  printf("An error ocurred when appending rect %p to the box.\n", rect);
 
-	evas_object_event_callback_add(rect, EVAS_CALLBACK_MOUSE_DOWN, _rect_mouse_down, app);
+	evas_object_event_callback_add(rect, EVAS_CALLBACK_MOUSE_DOWN, _on_rect_mouse_down, NULL);
      }
    else if (!strcmp(ev->keyname, "a"))
      {
@@ -117,53 +134,82 @@ _bg_key_down(void *data, Evas *e, Evas_Object *o __UNUSED__, void *event_info)
 	evas_object_show(rect);
 
 	printf("Inserting rect %p before the rectangle under the mouse pointer.\n", rect);
-	r = edje_object_part_box_append(app->edje, "example/box", rect);
+	r = edje_object_part_box_append(edje_obj, "example/box", rect);
 	if (!r)
 	  printf("An error ocurred when appending rect %p to the box.\n", rect);
 
-	evas_object_event_callback_add(rect, EVAS_CALLBACK_MOUSE_DOWN, _rect_mouse_down, app);
+	evas_object_event_callback_add(rect, EVAS_CALLBACK_MOUSE_DOWN, _on_rect_mouse_down, NULL);
      }
    else if (!strcmp(ev->keyname, "c"))
-     edje_object_part_box_remove_all(app->edje, "example/box", EINA_TRUE);
+     edje_object_part_box_remove_all(edje_obj, "example/box", EINA_TRUE);
+   else if (!strcmp(ev->keyname, "Escape"))
+     ecore_main_loop_quit();
+   else
+     {
+        printf("unhandled key: %s\n", ev->keyname);
+        fprintf(stdout, commands);
+     }
 }
 
 int
-main(void)
+main(int argc __UNUSED__, char *argv[])
 {
-   Evas *evas;
-   struct _App app;
-   int i;
+   char         edje_file_path[PATH_MAX];
+   const char  *edje_file = "box.edj";
+   Ecore_Evas  *ee;
+   Evas        *evas;
+   Evas_Object *bg;
+   Evas_Object *edje_obj;
+   Eina_Prefix *pfx;
+   int          i;
 
-   ecore_evas_init();
-   edje_init();
+   if (!ecore_evas_init())
+     return EXIT_FAILURE;
+
+   if (!edje_init())
+     goto shutdown_ecore_evas;
+
+   pfx = eina_prefix_new(argv[0], main,
+                         "EDJE_EXAMPLES",
+                         "edje/examples",
+                         edje_file,
+                         PACKAGE_BIN_DIR,
+                         PACKAGE_LIB_DIR,
+                         PACKAGE_DATA_DIR,
+                         PACKAGE_DATA_DIR);
+   if (!pfx)
+     goto shutdown_edje;
 
    /* this will give you a window with an Evas canvas under the first
     * engine available */
-   app.ee = ecore_evas_new(NULL, 0, 0, WIDTH, HEIGHT, NULL);
+   ee = ecore_evas_new(NULL, 0, 0, WIDTH, HEIGHT, NULL);
+   if (!ee)
+     goto free_prefix;
 
-   ecore_evas_callback_destroy_set(app.ee, _on_destroy);
-   ecore_evas_callback_resize_set(app.ee, _canvas_resize_cb);
-   ecore_evas_title_set(app.ee, "Edje Box Example");
-   ecore_evas_show(app.ee);
+   ecore_evas_callback_destroy_set(ee, _on_destroy);
+   ecore_evas_callback_resize_set(ee, _on_canvas_resize);
+   ecore_evas_title_set(ee, "Edje Box Example");
 
-   ecore_evas_data_set(app.ee, "app", &app);
+   evas = ecore_evas_get(ee);
 
-   evas = ecore_evas_get(app.ee);
+   bg = evas_object_rectangle_add(evas);
+   evas_object_color_set(bg, 255, 255, 255, 255);
+   evas_object_resize(bg, WIDTH, HEIGHT);
+   evas_object_focus_set(bg, EINA_TRUE);
+   evas_object_show(bg);
+   ecore_evas_data_set(ee, "background", bg);
 
-   app.bg = evas_object_rectangle_add(evas);
-   evas_object_color_set(app.bg, 255, 255, 255, 255);
-   evas_object_resize(app.bg, WIDTH, HEIGHT);
-   evas_object_focus_set(app.bg, EINA_TRUE);
-   evas_object_show(app.bg);
+   evas_object_event_callback_add(bg, EVAS_CALLBACK_KEY_DOWN, _on_bg_key_down, ee);
 
-   evas_object_event_callback_add(app.bg, EVAS_CALLBACK_KEY_DOWN, _bg_key_down, &app);
+   edje_obj = edje_object_add(evas);
 
-   app.edje = edje_object_add(evas);
-
-   edje_object_file_set(app.edje, edje_file_path, "example/group");
-   evas_object_move(app.edje, 0, 0);
-   evas_object_resize(app.edje, WIDTH, HEIGHT);
-   evas_object_show(app.edje);
+   snprintf(edje_file_path, sizeof(edje_file_path),
+            "%s/examples/%s", eina_prefix_data_get(pfx), edje_file);
+   edje_object_file_set(edje_obj, edje_file_path, "example/group");
+   evas_object_move(edje_obj, 0, 0);
+   evas_object_resize(edje_obj, WIDTH, HEIGHT);
+   evas_object_show(edje_obj);
+   ecore_evas_data_set(ee, "edje_obj", edje_obj);
 
    for (i = 0; i < NRECTS; i++)
      {
@@ -173,19 +219,34 @@ main(void)
 	rect = evas_object_rectangle_add(evas);
 	evas_object_color_set(rect, red, 0, 0, 255);
 	evas_object_resize(rect, RECTW, RECTH);
-	r = edje_object_part_box_append(app.edje, "example/box", rect);
+	r = edje_object_part_box_append(edje_obj, "example/box", rect);
 	if (!r)
 	  printf("An error ocurred when appending rect #%d to the box.\n", i);
 	evas_object_show(rect);
 
 	evas_object_event_callback_add(
-	   rect, EVAS_CALLBACK_MOUSE_DOWN, _rect_mouse_down, &app);
+	   rect, EVAS_CALLBACK_MOUSE_DOWN, _on_rect_mouse_down, ee);
      }
+
+   fprintf(stdout, commands);
+
+   ecore_evas_show(ee);
 
    ecore_main_loop_begin();
 
-   ecore_evas_free(app.ee);
+   eina_prefix_free(pfx);
+   ecore_evas_free(ee);
    ecore_evas_shutdown();
    edje_shutdown();
-   return 0;
+
+   return EXIT_SUCCESS;
+
+ free_prefix:
+   eina_prefix_free(pfx);
+ shutdown_edje:
+   edje_shutdown();
+ shutdown_ecore_evas:
+   ecore_evas_shutdown();
+
+   return EXIT_FAILURE;
 }

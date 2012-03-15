@@ -10,10 +10,9 @@
  */
 
 #ifdef HAVE_CONFIG_H
-#include "config.h"
+# include "config.h"
 #else
-#define PACKAGE_EXAMPLES_DIR "."
-#define __UNUSED__
+# define __UNUSED__
 #endif
 
 #include <Ecore.h>
@@ -22,12 +21,6 @@
 
 #define WIDTH  (400)
 #define HEIGHT (400)
-
-static const char *edje_file_path = PACKAGE_EXAMPLES_DIR "/table.edj";
-
-static Ecore_Evas *ee;
-static Evas *evas;
-static Evas_Object *bg, *edje_obj, *rects[4];
 
 static void
 _on_delete(Ecore_Evas *ee __UNUSED__)
@@ -38,7 +31,7 @@ _on_delete(Ecore_Evas *ee __UNUSED__)
 /* Try to get the number of columns and rows of the table
  * and print them. */
 static void
-_columns_rows_print(void)
+_columns_rows_print(Evas_Object *edje_obj)
 {
    int cols, rows;
 
@@ -52,10 +45,18 @@ _columns_rows_print(void)
 /* here just to keep our example's window size and table items
  * size in synchrony. */
 static void
-_canvas_resize_cb(Ecore_Evas *ee)
+_on_canvas_resize(Ecore_Evas *ee)
 {
-   int i, w, h;
+   Evas_Object *bg;
+   Evas_Object *edje_obj;
+   Evas_Object **rects;
+   int          i;
+   int          w;
+   int          h;
 
+   bg = ecore_evas_data_get(ee, "background");
+   edje_obj = ecore_evas_data_get(ee, "edje_obj");
+   rects = ecore_evas_data_get(ee, "rects");
    ecore_evas_geometry_get(ee, NULL, NULL, &w, &h);
 
    evas_object_resize(bg, w, h);
@@ -68,9 +69,13 @@ _canvas_resize_cb(Ecore_Evas *ee)
 /* Mouse button 1 = remove the clicked item
  * any other button = remove all items. */
 static void
-_on_mouse_down(void *data, Evas *evas, Evas_Object *obj, void *event_info)
+_on_mouse_down(void *data, Evas *evas __UNUSED__, Evas_Object *obj, void *event_info)
 {
-   Evas_Event_Mouse_Down *ev = event_info;
+   Evas_Event_Mouse_Down *ev;
+   Evas_Object *edje_obj;
+
+   ev = (Evas_Event_Mouse_Down *)event_info;
+   edje_obj = (Evas_Object *)data;
 
    if (ev->button != 1)
      edje_object_part_table_clear(edje_obj, "table_part", EINA_TRUE);
@@ -78,11 +83,11 @@ _on_mouse_down(void *data, Evas *evas, Evas_Object *obj, void *event_info)
      fprintf(stderr, "Cannot remove the selected rectangle\n");
 
    evas_object_del(obj);
-   _columns_rows_print();
+   _columns_rows_print(edje_obj);
 }
 
 static void
-_rects_create(void)
+_rects_create(Evas *evas, Evas_Object **rects, Evas_Object *edje_obj)
 {
    int i;
 
@@ -93,26 +98,48 @@ _rects_create(void)
         evas_object_size_hint_weight_set(rects[i], 1.0, 1.0);
         evas_object_show(rects[i]);
         evas_object_event_callback_add(rects[i], EVAS_CALLBACK_MOUSE_DOWN,
-                                       _on_mouse_down, NULL);
+                                       _on_mouse_down, edje_obj);
      }
 }
 
 int
-main(void)
+main(int argc __UNUSED__, char *argv[])
 {
-   int i;
+   char         edje_file_path[PATH_MAX];
+   const char  *edje_file = "table.edj";
+   Ecore_Evas  *ee;
+   Evas        *evas;
+   Evas_Object *bg;
+   Evas_Object *edje_obj;
+   Evas_Object *rects[4];
+   Eina_Prefix *pfx;
 
-   ecore_evas_init();
-   edje_init();
+   if (!ecore_evas_init())
+     return EXIT_FAILURE;
+
+   if (!edje_init())
+     goto shutdown_ecore_evas;
+
+   pfx = eina_prefix_new(argv[0], main,
+                         "EDJE_EXAMPLES",
+                         "edje/examples",
+                         edje_file,
+                         PACKAGE_BIN_DIR,
+                         PACKAGE_LIB_DIR,
+                         PACKAGE_DATA_DIR,
+                         PACKAGE_DATA_DIR);
+   if (!pfx)
+     goto shutdown_edje;
 
    /* this will give you a window with an Evas canvas under the first
     * engine available */
    ee = ecore_evas_new(NULL, 0, 0, WIDTH, HEIGHT, NULL);
+   if (!ee)
+     goto free_prefix;
 
    ecore_evas_callback_delete_request_set(ee, _on_delete);
-   ecore_evas_callback_resize_set(ee, _canvas_resize_cb);
+   ecore_evas_callback_resize_set(ee, _on_canvas_resize);
    ecore_evas_title_set(ee, "Edje Table Example");
-   ecore_evas_show(ee);
 
    evas = ecore_evas_get(ee);
 
@@ -121,15 +148,20 @@ main(void)
    evas_object_move(bg, 0, 0); /* at canvas' origin */
    evas_object_resize(bg, WIDTH, HEIGHT); /* covers full canvas */
    evas_object_show(bg);
+   ecore_evas_data_set(ee, "background", bg);
 
    edje_obj = edje_object_add(evas);
 
+   snprintf(edje_file_path, sizeof(edje_file_path),
+            "%s/examples/%s", eina_prefix_data_get(pfx), edje_file);
    edje_object_file_set(edje_obj, edje_file_path, "example_table");
    evas_object_move(edje_obj, 0, 0); /* at canvas' origin */
    evas_object_resize(edje_obj, WIDTH, HEIGHT);
    evas_object_show(edje_obj);
+   ecore_evas_data_set(ee, "edje_obj", edje_obj);
 
-   _rects_create();
+   _rects_create(evas, rects, edje_obj);
+   ecore_evas_data_set(ee, "rects", rects);
 
    /* Colouring the rectangles */
    evas_object_color_set(rects[0], 255, 0, 0, 255);
@@ -154,12 +186,25 @@ main(void)
                                     1, 1, 1, 1))
      fprintf(stderr, "Cannot add the rectangle 4 to table\n");
 
-   _columns_rows_print();
+   _columns_rows_print(edje_obj);
+
+   ecore_evas_show(ee);
 
    ecore_main_loop_begin();
 
+   eina_prefix_free(pfx);
    ecore_evas_free(ee);
    ecore_evas_shutdown();
    edje_shutdown();
-   return 0;
+
+   return EXIT_SUCCESS;
+
+ free_prefix:
+   eina_prefix_free(pfx);
+ shutdown_edje:
+   edje_shutdown();
+ shutdown_ecore_evas:
+   ecore_evas_shutdown();
+
+   return EXIT_FAILURE;
 }

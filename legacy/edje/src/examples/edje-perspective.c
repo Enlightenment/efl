@@ -10,10 +10,9 @@
  */
 
 #ifdef HAVE_CONFIG_H
-#include "config.h"
+# include "config.h"
 #else
-#define PACKAGE_EXAMPLES_DIR "."
-#define __UNUSED__
+# define __UNUSED__
 #endif
 
 #include <Ecore.h>
@@ -23,11 +22,21 @@
 #define WIDTH  480
 #define HEIGHT 320
 
-static const char *edje_file_path = PACKAGE_EXAMPLES_DIR "/perspective.edj";
+static const char commands[] = \
+  "commands are:\n"
+  "\tDown - move part down\n"
+  "\tUp -  move part up\n"
+  "\tLeft - move part left\n"
+  "\tRight - move part right\n"
+  "\tPrior - move part up-left\n"
+  "\tNext - move part down-right\n"
+  "\tInsert - increase focal\n"
+  "\tSuppr - decrease focal\n"
+  "\tEsc - exit\n"
+  "\th - print help\n";
 
 struct _App {
-    Ecore_Evas *ee;
-    Evas_Object *edje;
+    Evas_Object *edje_obj;
     Evas_Object *bg;
     Edje_Perspective *ps;
     Eina_Bool animating;
@@ -44,14 +53,14 @@ _on_destroy(Ecore_Evas *ee __UNUSED__)
 /* here just to keep our example's window size and background image's
  * size in synchrony */
 static void
-_canvas_resize_cb(Ecore_Evas *ee)
+_on_canvas_resize(Ecore_Evas *ee)
 {
    int w, h;
    struct _App *app = ecore_evas_data_get(ee, "app");
 
    ecore_evas_geometry_get(ee, NULL, NULL, &w, &h);
    evas_object_resize(app->bg, w, h);
-   evas_object_resize(app->edje, w, h);
+   evas_object_resize(app->edje_obj, w, h);
 }
 
 static void
@@ -74,20 +83,24 @@ _part_move(struct _App *app, int dx, int dy)
      app->y = 0;
 
    snprintf(emission, sizeof(emission), "move,%d,%d", app->x, app->y);
-   edje_object_signal_emit(app->edje, emission, "");
+   edje_object_signal_emit(app->edje_obj, emission, "");
    app->animating = EINA_TRUE;
 }
 
 
 static void
-_bg_key_down(void *data, Evas *e, Evas_Object *o __UNUSED__, void *event_info)
+_on_bg_key_down(void *data, Evas *e __UNUSED__, Evas_Object *o __UNUSED__, void *event_info)
 {
    struct _App *app = data;
    Evas_Event_Key_Down *ev = event_info;
 
-
+   if (!strcmp(ev->keyname, "h"))
+     {
+        fprintf(stdout, commands);
+        return;
+     }
    // just moving the part and text
-   if (!strcmp(ev->keyname, "Down"))
+   else if (!strcmp(ev->keyname, "Down"))
      {
 	_part_move(app, 0, 1);
      }
@@ -116,7 +129,7 @@ _bg_key_down(void *data, Evas *e, Evas_Object *o __UNUSED__, void *event_info)
      {
 	app->focal += 5;
 	edje_perspective_set(app->ps, 240, 160, 0, app->focal);
-	edje_object_calc_force(app->edje);
+	edje_object_calc_force(app->edje_obj);
      }
    else if (!strcmp(ev->keyname, "KP_Subtract"))
      {
@@ -125,13 +138,16 @@ _bg_key_down(void *data, Evas *e, Evas_Object *o __UNUSED__, void *event_info)
 	  app->focal = 5;
 
 	edje_perspective_set(app->ps, 240, 160, 0, app->focal);
-	edje_object_calc_force(app->edje);
+	edje_object_calc_force(app->edje_obj);
      }
    // exiting
    else if (!strcmp(ev->keyname, "Escape"))
      ecore_main_loop_quit();
    else
-     printf("unhandled key: %s\n", ev->keyname);
+     {
+        printf("unhandled key: %s\n", ev->keyname);
+        fprintf(stdout, commands);
+     }
 }
 
 static void
@@ -143,16 +159,33 @@ _animation_end_cb(void *data, Evas_Object *o __UNUSED__, const char *emission __
 }
 
 int
-main(void)
+main(int argc __UNUSED__, char *argv[])
 {
-   Evas *evas;
-   struct _App app;
-   int i;
+   char         edje_file_path[PATH_MAX];
+   const char  *edje_file = "perspective.edj";
+   struct _App  app;
+   Ecore_Evas  *ee;
+   Evas        *evas;
+   Eina_Prefix *pfx;
 
-   ecore_evas_init();
-   edje_init();
+   if (!ecore_evas_init())
+     return EXIT_FAILURE;
 
-   edje_frametime_set(((double)1) / 60);
+   if (!edje_init())
+     goto shutdown_ecore_evas;
+
+   pfx = eina_prefix_new(argv[0], main,
+                         "EDJE_EXAMPLES",
+                         "edje/examples",
+                         edje_file,
+                         PACKAGE_BIN_DIR,
+                         PACKAGE_LIB_DIR,
+                         PACKAGE_DATA_DIR,
+                         PACKAGE_DATA_DIR);
+   if (!pfx)
+     goto shutdown_edje;
+
+   edje_frametime_set(1.0 / 60.0);
 
    /* this will give you a window with an Evas canvas under the first
     * engine available */
@@ -160,16 +193,18 @@ main(void)
    app.x = 0;
    app.y = 0;
    app.focal = 50;
-   app.ee = ecore_evas_new(NULL, 0, 0, WIDTH, HEIGHT, NULL);
 
-   ecore_evas_callback_destroy_set(app.ee, _on_destroy);
-   ecore_evas_callback_resize_set(app.ee, _canvas_resize_cb);
-   ecore_evas_title_set(app.ee, "Edje Box Example");
-   ecore_evas_show(app.ee);
+   ee = ecore_evas_new(NULL, 0, 0, WIDTH, HEIGHT, NULL);
+   if (!ee)
+     goto free_prefix;
 
-   ecore_evas_data_set(app.ee, "app", &app);
+   ecore_evas_callback_destroy_set(ee, _on_destroy);
+   ecore_evas_callback_resize_set(ee, _on_canvas_resize);
+   ecore_evas_title_set(ee, "Edje Box Example");
 
-   evas = ecore_evas_get(app.ee);
+   ecore_evas_data_set(ee, "app", &app);
+
+   evas = ecore_evas_get(ee);
 
    app.bg = evas_object_rectangle_add(evas);
    evas_object_color_set(app.bg, 255, 255, 255, 255);
@@ -177,25 +212,42 @@ main(void)
    evas_object_focus_set(app.bg, EINA_TRUE);
    evas_object_show(app.bg);
 
-   evas_object_event_callback_add(app.bg, EVAS_CALLBACK_KEY_DOWN, _bg_key_down, &app);
+   evas_object_event_callback_add(app.bg, EVAS_CALLBACK_KEY_DOWN, _on_bg_key_down, &app);
 
-   app.edje = edje_object_add(evas);
+   app.edje_obj = edje_object_add(evas);
 
-   edje_object_file_set(app.edje, edje_file_path, "example/group");
-   evas_object_move(app.edje, 0, 0);
-   evas_object_resize(app.edje, WIDTH, HEIGHT);
-   evas_object_show(app.edje);
+   snprintf(edje_file_path, sizeof(edje_file_path),
+            "%s/examples/%s", eina_prefix_data_get(pfx), edje_file);
+   edje_object_file_set(app.edje_obj, edje_file_path, "example/group");
+   evas_object_move(app.edje_obj, 0, 0);
+   evas_object_resize(app.edje_obj, WIDTH, HEIGHT);
+   evas_object_show(app.edje_obj);
 
-   edje_object_signal_callback_add(app.edje, "animation,end", "", _animation_end_cb, &app);
+   edje_object_signal_callback_add(app.edje_obj, "animation,end", "", _animation_end_cb, &app);
 
    app.ps = edje_perspective_new(evas);
    edje_perspective_set(app.ps, 240, 160, 0, app.focal);
    edje_perspective_global_set(app.ps, EINA_TRUE);
 
+   fprintf(stdout, commands);
+
+   ecore_evas_show(ee);
+
    ecore_main_loop_begin();
 
-   ecore_evas_free(app.ee);
+   eina_prefix_free(pfx);
+   ecore_evas_free(ee);
    ecore_evas_shutdown();
    edje_shutdown();
-   return 0;
+
+   return EXIT_SUCCESS;
+
+ free_prefix:
+   eina_prefix_free(pfx);
+ shutdown_edje:
+   edje_shutdown();
+ shutdown_ecore_evas:
+   ecore_evas_shutdown();
+
+   return EXIT_FAILURE;
 }

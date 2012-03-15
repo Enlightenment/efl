@@ -10,10 +10,9 @@
  */
 
 #ifdef HAVE_CONFIG_H
-#include "config.h"
+# include "config.h"
 #else
-#define PACKAGE_EXAMPLES_DIR "."
-#define __UNUSED__
+# define __UNUSED__
 #endif
 
 #include <Ecore.h>
@@ -23,13 +22,11 @@
 #define WIDTH  (400)
 #define HEIGHT (400)
 
-static const char *edje_file_path = PACKAGE_EXAMPLES_DIR "/color-class.edj";
-
 typedef int color[4];           /* rgba */
 
-static Ecore_Evas *ee, *ee2;
-static Evas *evas, *evas2;
-static Evas_Object *bg, *edje_obj, *bg2, *edje_obj2;
+static Ecore_Evas *ee1, *ee2;
+static Evas *evas1, *evas2;
+static Evas_Object *bg1, *edje_obj1, *bg2, *edje_obj2;
 static const char *selected_class;
 
 static color colors_init_data[] =
@@ -96,21 +93,23 @@ _color_classes_print(void)
 }
 
 static void
-_on_destroy(Ecore_Evas *ee)
+_on_destroy(Ecore_Evas *ee __UNUSED__)
 {
    ecore_main_loop_quit();
 }
 
 static void
-_on_mouse_down(void *data, Evas *evas, Evas_Object *obj, void *event_info)
+_on_mouse_down(void *data __UNUSED__, Evas *e __UNUSED__, Evas_Object *obj, void *event_info)
 {
    Evas_Event_Mouse_Down *ev = event_info;
 
    if (ev->button == 1)
-     if (obj == edje_obj)
-       edje_color_class_del(selected_class);
-     else
-       edje_object_color_class_del(edje_obj2, selected_class);
+     {
+        if (obj == edje_obj1)
+          edje_color_class_del(selected_class);
+        else
+          edje_object_color_class_del(edje_obj2, selected_class);
+     }
 }
 
 /* here just to keep our example's window size
@@ -122,10 +121,10 @@ _canvas_resize_cb(Ecore_Evas *_ee)
 
    ecore_evas_geometry_get(_ee, NULL, NULL, &w, &h);
 
-   if (_ee == ee)
+   if (_ee == ee1)
      {
-        evas_object_resize(bg, w, h);
-        evas_object_resize(edje_obj, w, h);
+        evas_object_resize(bg1, w, h);
+        evas_object_resize(edje_obj1, w, h);
      }
    else
      {
@@ -135,8 +134,8 @@ _canvas_resize_cb(Ecore_Evas *_ee)
 }
 
 static void
-_color_class_callback_delete(void *data, Evas *evas, Evas_Object *obj,
-                             const char *emission, void *source)
+_color_class_callback_delete(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__,
+                             const char *emission, void *source __UNUSED__)
 {
    if (!strcmp(data, "process"))
      fprintf(stdout, "Color class: %s deleted on process level\n", emission);
@@ -144,32 +143,34 @@ _color_class_callback_delete(void *data, Evas *evas, Evas_Object *obj,
      fprintf(stdout, "Color class: %s deleted on object level\n", emission);
 }
 
-static void
-_create_windows(void)
+static int
+_create_windows(const char *edje_file_path)
 {
   /* this will give you a window with an Evas canvas under the first
     * engine available */
-   ee = ecore_evas_new(NULL, 0, 0, WIDTH, HEIGHT, NULL);
+   ee1 = ecore_evas_new(NULL, 0, 0, WIDTH, HEIGHT, NULL);
+   if (!ee1)
+     return 0;
    ee2 = ecore_evas_new(NULL, 0, 0, WIDTH, HEIGHT, NULL);
+   if (!ee2)
+     return 0;
 
-   ecore_evas_callback_destroy_set(ee, _on_destroy);
-   ecore_evas_callback_resize_set(ee, _canvas_resize_cb);
-   ecore_evas_title_set(ee, "Edje Color Class Example");
-   ecore_evas_show(ee);
+   ecore_evas_callback_destroy_set(ee1, _on_destroy);
+   ecore_evas_callback_resize_set(ee1, _canvas_resize_cb);
+   ecore_evas_title_set(ee1, "Edje Color Class Example");
 
    ecore_evas_callback_destroy_set(ee2, _on_destroy);
    ecore_evas_callback_resize_set(ee2, _canvas_resize_cb);
    ecore_evas_title_set(ee2, "Edje Object Color Class Example");
-   ecore_evas_show(ee2);
 
-   evas = ecore_evas_get(ee);
+   evas1 = ecore_evas_get(ee1);
    evas2 = ecore_evas_get(ee2);
 
-   bg = evas_object_rectangle_add(evas);
-   evas_object_color_set(bg, 255, 255, 255, 255); /* white bg */
-   evas_object_move(bg, 0, 0);                    /* at canvas' origin */
-   evas_object_resize(bg, WIDTH, HEIGHT);         /* covers full canvas */
-   evas_object_show(bg);
+   bg1 = evas_object_rectangle_add(evas1);
+   evas_object_color_set(bg1, 255, 255, 255, 255); /* white bg */
+   evas_object_move(bg1, 0, 0);                    /* at canvas' origin */
+   evas_object_resize(bg1, WIDTH, HEIGHT);         /* covers full canvas */
+   evas_object_show(bg1);
 
    bg2 = evas_object_rectangle_add(evas2);
    evas_object_color_set(bg2, 255, 255, 255, 255); /* white bg */
@@ -177,18 +178,18 @@ _create_windows(void)
    evas_object_resize(bg2, WIDTH, HEIGHT);         /* covers full canvas */
    evas_object_show(bg2);
 
-   edje_obj = edje_object_add(evas);
-   evas_object_event_callback_add(edje_obj, EVAS_CALLBACK_MOUSE_DOWN,
+   edje_obj1 = edje_object_add(evas1);
+   evas_object_event_callback_add(edje_obj1, EVAS_CALLBACK_MOUSE_DOWN,
                                   _on_mouse_down, NULL);
 
-   edje_object_file_set(edje_obj, edje_file_path, "example_color_class");
-   evas_object_move(edje_obj, 0, 0); /* at canvas' origin */
-   evas_object_resize(edje_obj, WIDTH, HEIGHT);
-   edje_object_part_text_set(edje_obj, "part_four", "EDJE EXAMPLE");
-   edje_object_signal_callback_add(edje_obj, "color_class,del", "*",
+   edje_object_file_set(edje_obj1, edje_file_path, "example_color_class");
+   evas_object_move(edje_obj1, 0, 0); /* at canvas' origin */
+   evas_object_resize(edje_obj1, WIDTH, HEIGHT);
+   edje_object_part_text_set(edje_obj1, "part_four", "EDJE EXAMPLE");
+   edje_object_signal_callback_add(edje_obj1, "color_class,del", "*",
                                    (Edje_Signal_Cb) _color_class_callback_delete,
                                    "process");
-   evas_object_show(edje_obj);
+   evas_object_show(edje_obj1);
 
    edje_obj2 = edje_object_add(evas2);
    evas_object_event_callback_add(edje_obj2, EVAS_CALLBACK_MOUSE_DOWN,
@@ -202,13 +203,18 @@ _create_windows(void)
                                    (Edje_Signal_Cb) _color_class_callback_delete,
                                    "object");
    evas_object_show(edje_obj2);
+
+   return 1;
 }
 
 int
 main(int argc, char *argv[])
 {
-   color c1, c2, c3;
-   int i;
+   char         edje_file_path[PATH_MAX];
+   const char  *edje_file = "color-class.edj";
+   Eina_Prefix *pfx;
+   color        c1, c2, c3;
+   int          i;
 
    if (argc != 5)
      {
@@ -218,7 +224,7 @@ main(int argc, char *argv[])
         for (i = 0; i < 8; i++)
           fprintf(stderr, "%s\n", color_names[i]);
 
-        return 1;
+        return EXIT_FAILURE;
      }
 
    selected_class = argv[1];
@@ -227,13 +233,30 @@ main(int argc, char *argv[])
          _get_color_from_name(argv[4], &c3)))
      {
         fprintf(stderr, "Color not available!\n");
-        return 2;
+        return EXIT_FAILURE;
      }
 
-   ecore_evas_init();
-   edje_init();
+   if (!ecore_evas_init())
+     return EXIT_FAILURE;
 
-   _create_windows();
+   if (!edje_init())
+     goto shutdown_ecore_evas;
+
+   pfx = eina_prefix_new(argv[0], main,
+                         "EDJE_EXAMPLES",
+                         "edje/examples",
+                         edje_file,
+                         PACKAGE_BIN_DIR,
+                         PACKAGE_LIB_DIR,
+                         PACKAGE_DATA_DIR,
+                         PACKAGE_DATA_DIR);
+   if (!pfx)
+     goto shutdown_edje;
+
+   snprintf(edje_file_path, sizeof(edje_file_path),
+            "%s/examples/%s", eina_prefix_data_get(pfx), edje_file);
+   if (!_create_windows(edje_file_path))
+     goto free_prefix;
 
    edje_color_class_set(argv[1],                     /* class name   */
                         c1[0], c1[1], c1[2], c1[3],  /* Object color */
@@ -248,10 +271,25 @@ main(int argc, char *argv[])
                                39, 90, 187, 255);  /* Text shadow  */
 
    _color_classes_print();
+
+   ecore_evas_show(ee1);
+   ecore_evas_show(ee2);
+
    ecore_main_loop_begin();
-   ecore_evas_free(ee);
-   ecore_evas_free(ee2);
+
+   eina_prefix_free(pfx);
+   ecore_evas_free(ee1);
    ecore_evas_shutdown();
    edje_shutdown();
-   return 0;
+
+   return EXIT_SUCCESS;
+
+ free_prefix:
+   eina_prefix_free(pfx);
+ shutdown_edje:
+   edje_shutdown();
+ shutdown_ecore_evas:
+   ecore_evas_shutdown();
+
+   return EXIT_FAILURE;
 }

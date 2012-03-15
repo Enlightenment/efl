@@ -11,47 +11,46 @@
  */
 
 #ifdef HAVE_CONFIG_H
-#include "config.h"
+# include "config.h"
 #else
-#define PACKAGE_EXAMPLES_DIR "."
-#define __UNUSED__
+# define __UNUSED__
 #endif
 
+#include <stdio.h>
+
+#include <Eina.h>
 #include <Ecore.h>
 #include <Ecore_Evas.h>
 #include <Edje.h>
-#include <stdio.h>
 
 #define WIDTH  (300)
 #define HEIGHT (300)
-
-static const char *border_img_path = PACKAGE_EXAMPLES_DIR "/red.png";
-static const char *edje_file_path = PACKAGE_EXAMPLES_DIR "/basic.edj";
-
-static Ecore_Evas *ee;
-static Evas_Object *edje_obj;
 
 static const char commands[] = \
   "commands are:\n"
   "\ts - change Edje's global scaling factor\n"
   "\tr - change center rectangle's scaling factor\n"
+  "\tEsc - exit\n"
   "\th - print help\n";
 
 static void
-_on_keydown(void        *data __UNUSED__,
+_on_keydown(void        *data,
             Evas        *evas __UNUSED__,
             Evas_Object *o __UNUSED__,
             void        *einfo)
 {
-   Evas_Event_Key_Down *ev = einfo;
+   Evas_Event_Key_Down *ev;
+   Evas_Object         *edje_obj;
+
+   ev = (Evas_Event_Key_Down *)einfo;
+   edje_obj = (Evas_Object *)data;
 
    if (strcmp(ev->keyname, "h") == 0) /* print help */
      {
         fprintf(stdout, commands);
         return;
      }
-
-   if (strcmp(ev->keyname, "s") == 0) /* global scaling factor */
+   else if (strcmp(ev->keyname, "s") == 0) /* global scaling factor */
      {
         double scale = edje_scale_get();
 
@@ -66,8 +65,7 @@ _on_keydown(void        *data __UNUSED__,
 
         return;
      }
-
-   if (strcmp(ev->keyname, "r") == 0) /* individual scaling factor */
+   else if (strcmp(ev->keyname, "r") == 0) /* individual scaling factor */
      {
         double scale = edje_object_scale_get(edje_obj);
 
@@ -84,6 +82,13 @@ _on_keydown(void        *data __UNUSED__,
 
         return;
      }
+   else if (!strcmp(ev->keyname, "Escape"))
+     ecore_main_loop_quit();
+   else
+     {
+        printf("unhandled key: %s\n", ev->keyname);
+        fprintf(stdout, commands);
+     }
 }
 
 static void
@@ -93,27 +98,47 @@ _on_delete(Ecore_Evas *ee __UNUSED__)
 }
 
 int
-main(void)
+main(int argc __UNUSED__, char *argv[])
 {
-   Evas_Object *border, *bg;
-   int x, y, w, h;
-   Evas *evas;
+   char         border_img_path[PATH_MAX];
+   char         edje_file_path[PATH_MAX];
+   const char  *edje_file = "basic.edj";
+   Ecore_Evas  *ee;
+   Evas        *evas;
+   Evas_Object *bg;
+   Evas_Object *border;
+   Evas_Object *edje_obj;
+   Eina_Prefix *pfx;
+   int          x;
+   int          y;
+   int          w;
+   int          h;
 
    if (!ecore_evas_init())
      return EXIT_FAILURE;
 
    if (!edje_init())
-     return EXIT_FAILURE;
+     goto shutdown_ecore_evas;
+
+   pfx = eina_prefix_new(argv[0], main,
+                         "EDJE_EXAMPLES",
+                         "edje/examples",
+                         edje_file,
+                         PACKAGE_BIN_DIR,
+                         PACKAGE_LIB_DIR,
+                         PACKAGE_DATA_DIR,
+                         PACKAGE_DATA_DIR);
+   if (!pfx)
+     goto shutdown_edje;
 
    /* this will give you a window with an Evas canvas under the first
     * engine available */
    ee = ecore_evas_new(NULL, 0, 0, WIDTH, HEIGHT, NULL);
    if (!ee)
-     goto error;
+     goto free_prefix;
 
    ecore_evas_callback_delete_request_set(ee, _on_delete);
    ecore_evas_title_set(ee, "Edje Basics Example");
-   ecore_evas_show(ee);
 
    evas = ecore_evas_get(ee);
 
@@ -125,11 +150,12 @@ main(void)
    ecore_evas_object_associate(ee, bg, ECORE_EVAS_OBJECT_ASSOCIATE_BASE);
 
    evas_object_focus_set(bg, EINA_TRUE);
-   evas_object_event_callback_add(
-       bg, EVAS_CALLBACK_KEY_DOWN, _on_keydown, NULL);
 
    edje_obj = edje_object_add(evas);
 
+   snprintf(edje_file_path, sizeof(edje_file_path),
+            "%s/examples/%s", eina_prefix_data_get(pfx), edje_file);
+   printf("%s\n", edje_file_path);
    /* exercising Edje loading error, on purpose */
    if (!edje_object_file_set(edje_obj, edje_file_path, "unexistant_group"))
      {
@@ -147,7 +173,7 @@ main(void)
                 errmsg);
 
         evas_object_del(edje_obj);
-        goto error_edj;
+        goto free_prefix;
      }
 
    fprintf(stdout, "Loaded Edje object bound to group 'example_group' from"
@@ -156,6 +182,11 @@ main(void)
    evas_object_move(edje_obj, 20, 20);
    evas_object_resize(edje_obj, WIDTH - 40, HEIGHT - 40);
    evas_object_show(edje_obj);
+
+   evas_object_event_callback_add(bg, EVAS_CALLBACK_KEY_DOWN, _on_keydown, edje_obj);
+
+   snprintf(border_img_path, sizeof(border_img_path),
+            "%s/edje/examples/red.png", eina_prefix_data_get(pfx));
 
    /* this is a border around the Edje object above, here just to
     * emphasize its geometry */
@@ -203,24 +234,24 @@ main(void)
                    "y = %d, w = %d, h = %d\n", x, y, w, h);
 
    fprintf(stdout, commands);
+
+   ecore_evas_show(ee);
+
    ecore_main_loop_begin();
 
+   eina_prefix_free(pfx);
    ecore_evas_free(ee);
    ecore_evas_shutdown();
    edje_shutdown();
-   return 0;
 
-error:
-   fprintf(stderr, "You got to have at least one evas engine built"
-                   " and linked up to ecore-evas for this example to run"
-                   " properly.\n");
+   return EXIT_SUCCESS;
+
+ free_prefix:
+   eina_prefix_free(pfx);
+ shutdown_edje:
+   edje_shutdown();
+ shutdown_ecore_evas:
    ecore_evas_shutdown();
-   return -1;
 
-error_edj:
-   fprintf(stderr, "Failed to load basic.edj!\n");
-
-   ecore_evas_shutdown();
-   return -2;
+   return EXIT_FAILURE;
 }
-

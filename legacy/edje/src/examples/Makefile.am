@@ -59,14 +59,13 @@ EXTRA_DIST = $(files_DATA)
 if BUILD_EXAMPLES
 
 AM_CPPFLAGS = \
-        -I. \
-        -I$(top_srcdir)/src/lib \
-        -I$(top_srcdir)/src/lib/include \
-        -DPACKAGE_BIN_DIR=\"$(bindir)\" \
-        -DPACKAGE_LIB_DIR=\"$(libdir)\" \
-        -DPACKAGE_DATA_DIR=\"$(datadir)/$(PACKAGE)\" \
-        -DPACKAGE_EXAMPLES_DIR=\"$(datadir)/$(PACKAGE)/examples\" \
-        @EDJE_CFLAGS@
+-I. \
+-I$(top_srcdir)/src/lib \
+-I$(top_srcdir)/src/lib/include \
+-DPACKAGE_BIN_DIR=\"$(bindir)\" \
+-DPACKAGE_LIB_DIR=\"$(libdir)\" \
+-DPACKAGE_DATA_DIR=\"$(pkgdatadir)\" \
+@EDJE_CFLAGS@
 
 files_DATA += $(EDJS)
 
