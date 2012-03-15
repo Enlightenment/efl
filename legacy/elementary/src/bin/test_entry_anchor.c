@@ -32,48 +32,48 @@ my_entry_anchor(void *data, Evas_Object *obj, void *event_info)
    // hints as to where we probably should put hover contents (buttons etc.).
    if (ei->hover_top)
      {
-	bx = elm_box_add(obj);
-	bt = elm_button_add(obj);
-	elm_object_text_set(bt, "Top 1");
-	elm_box_pack_end(bx, bt);
-	evas_object_smart_callback_add(bt, "clicked", my_entry_anchor_bt, av);
-	evas_object_show(bt);
-	bt = elm_button_add(obj);
-	elm_object_text_set(bt, "Top 2");
-	elm_box_pack_end(bx, bt);
-	evas_object_smart_callback_add(bt, "clicked", my_entry_anchor_bt, av);
-	evas_object_show(bt);
-	bt = elm_button_add(obj);
-	elm_object_text_set(bt, "Top 3");
-	elm_box_pack_end(bx, bt);
-	evas_object_smart_callback_add(bt, "clicked", my_entry_anchor_bt, av);
-	evas_object_show(bt);
-	elm_object_part_content_set(ei->hover, "top", bx);
-	evas_object_show(bx);
+        bx = elm_box_add(obj);
+        bt = elm_button_add(obj);
+        elm_object_text_set(bt, "Top 1");
+        elm_box_pack_end(bx, bt);
+        evas_object_smart_callback_add(bt, "clicked", my_entry_anchor_bt, av);
+        evas_object_show(bt);
+        bt = elm_button_add(obj);
+        elm_object_text_set(bt, "Top 2");
+        elm_box_pack_end(bx, bt);
+        evas_object_smart_callback_add(bt, "clicked", my_entry_anchor_bt, av);
+        evas_object_show(bt);
+        bt = elm_button_add(obj);
+        elm_object_text_set(bt, "Top 3");
+        elm_box_pack_end(bx, bt);
+        evas_object_smart_callback_add(bt, "clicked", my_entry_anchor_bt, av);
+        evas_object_show(bt);
+        elm_object_part_content_set(ei->hover, "top", bx);
+        evas_object_show(bx);
      }
    if (ei->hover_bottom)
      {
-	bt = elm_button_add(obj);
-	elm_object_text_set(bt, "Bot");
-	elm_object_part_content_set(ei->hover, "bottom", bt);
-	evas_object_smart_callback_add(bt, "clicked", my_entry_anchor_bt, av);
-	evas_object_show(bt);
+        bt = elm_button_add(obj);
+        elm_object_text_set(bt, "Bot");
+        elm_object_part_content_set(ei->hover, "bottom", bt);
+        evas_object_smart_callback_add(bt, "clicked", my_entry_anchor_bt, av);
+        evas_object_show(bt);
      }
    if (ei->hover_left)
      {
-	bt = elm_button_add(obj);
-	elm_object_text_set(bt, "Left");
-	elm_object_part_content_set(ei->hover, "left", bt);
-	evas_object_smart_callback_add(bt, "clicked", my_entry_anchor_bt, av);
-	evas_object_show(bt);
+        bt = elm_button_add(obj);
+        elm_object_text_set(bt, "Left");
+        elm_object_part_content_set(ei->hover, "left", bt);
+        evas_object_smart_callback_add(bt, "clicked", my_entry_anchor_bt, av);
+        evas_object_show(bt);
      }
    if (ei->hover_right)
      {
-	bt = elm_button_add(obj);
-	elm_object_text_set(bt, "Right");
-	elm_object_part_content_set(ei->hover, "right", bt);
-	evas_object_smart_callback_add(bt, "clicked", my_entry_anchor_bt, av);
-	evas_object_show(bt);
+        bt = elm_button_add(obj);
+        elm_object_text_set(bt, "Right");
+        elm_object_part_content_set(ei->hover, "right", bt);
+        evas_object_smart_callback_add(bt, "clicked", my_entry_anchor_bt, av);
+        evas_object_show(bt);
      }
 }
 
@@ -114,17 +114,11 @@ my_entry_anchor_scroll(void *data __UNUSED__, Evas_Object *obj, void *event_info
 void
 test_entry_anchor(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
-   Evas_Object *win, *bg, *av, *sc, *bx, *bb, *ic;
+   Evas_Object *win, *av, *sc, *bx, *bb, *ic;
    char buf[PATH_MAX];
 
-   win = elm_win_add(NULL, "entry_anchor", ELM_WIN_BASIC);
-   elm_win_title_set(win, "Anchorblock");
+   win = elm_win_util_standard_add("entry_anchor", "Anchorblock");
    elm_win_autodel_set(win, EINA_TRUE);
-
-   bg = elm_bg_add(win);
-   elm_win_resize_object_add(win, bg);
-   evas_object_size_hint_weight_set(bg, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-   evas_object_show(bg);
 
    sc = elm_scroller_add(win);
    evas_object_size_hint_weight_set(sc, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
@@ -158,9 +152,9 @@ test_entry_anchor(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *even
    elm_entry_anchor_hover_style_set(av, "popout");
    elm_entry_anchor_hover_parent_set(av, win);
    elm_object_text_set(av,
-			   "Hi there. This is the most recent message in the "
-			   "list of messages. It has one <a href=tel:+614321234>+61 432 1234</a> "
-			   "(phone number) to click on.");
+                       "Hi there. This is the most recent message in the "
+                       "list of messages. It has one <a href=tel:+614321234>+61 432 1234</a> "
+                       "(phone number) to click on.");
    evas_object_smart_callback_add(av, "anchor,hover,opened",
                                   my_entry_anchor, av);
    elm_object_content_set(bb, av);
@@ -185,19 +179,19 @@ test_entry_anchor(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *even
    elm_entry_anchor_hover_style_set(av, "popout");
    elm_entry_anchor_hover_parent_set(av, win);
    elm_object_text_set(av,
-			   "Hey what are you doing? This is the second last message "
-			   "Hi there. This is the most recent message in the "
-			   "list. It's a longer one so it can wrap more and "
-			   "contains a <a href=contact:john>John</a> contact "
-			   "link in it to test popups on links. The idea is that "
-			   "all SMS's are scanned for things that look like phone "
-			   "numbers or names that are in your contacts list, and "
-			   "if they are, they become clickable links that pop up "
-			   "a menus of obvious actions to perform on this piece "
-			   "of information. This of course can be later explicitly "
-			   "done by links maybe running local apps or even being "
-			   "web URL's too that launch the web browser and point it "
-			   "to that URL. <item relsize=16x16 vsize=full href=emoticon/omg></item>");
+                       "Hey what are you doing? This is the second last message "
+                       "Hi there. This is the most recent message in the "
+                       "list. It's a longer one so it can wrap more and "
+                       "contains a <a href=contact:john>John</a> contact "
+                       "link in it to test popups on links. The idea is that "
+                       "all SMS's are scanned for things that look like phone "
+                       "numbers or names that are in your contacts list, and "
+                       "if they are, they become clickable links that pop up "
+                       "a menus of obvious actions to perform on this piece "
+                       "of information. This of course can be later explicitly "
+                       "done by links maybe running local apps or even being "
+                       "web URL's too that launch the web browser and point it "
+                       "to that URL. <item relsize=16x16 vsize=full href=emoticon/omg></item>");
    evas_object_smart_callback_add(av, "anchor,hover,opened", my_entry_anchor, av);
    elm_object_content_set(bb, av);
    evas_object_show(av);
