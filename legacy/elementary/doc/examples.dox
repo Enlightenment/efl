@@ -4690,8 +4690,8 @@
  * We are going to change some of the properties of our list.
  *
  * There's no need to call the selected callback at every click, just when the
- * selected item changes, thus we call elm_genlist_always_select_mode_set() with
- * false.
+ * selected item changes, thus we call elm_genlist_select_mode_set() with
+ * ELM_OBJECT_SELECT_MODE_ALWAYS.
  *
  * For this list we don't want bounce animations at all, so we set both the
  * horizontal bounce and the vertical bounce to false with
