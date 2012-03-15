@@ -3529,7 +3529,6 @@ _item_select(Elm_Gen_Item *it)
      evas_object_smart_callback_call(WIDGET(it), SIG_SELECTED, it);
    it->walking--;
    it->wd->walking--;
-   evas_object_unref(WIDGET(it));
    if ((it->wd->clear_me) && (!it->wd->walking))
      _elm_genlist_clear(WIDGET(it), EINA_TRUE);
    else
@@ -3545,6 +3544,7 @@ _item_select(Elm_Gen_Item *it)
         else
           it->wd->last_selected_item = (Elm_Object_Item *)it;
      }
+   evas_object_unref(WIDGET(it));
 }
 
 static Evas_Object *
