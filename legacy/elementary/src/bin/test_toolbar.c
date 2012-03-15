@@ -71,7 +71,7 @@ test_toolbar(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_inf
    char buf[PATH_MAX];
 
    win = elm_win_add(NULL, "toolbar", ELM_WIN_BASIC);
-   elm_win_title_set(win, "Toolbar");
+   elm_win_title_set(win, "Toolbar 7");
    elm_win_autodel_set(win, EINA_TRUE);
 
    bg = elm_bg_add(win);
