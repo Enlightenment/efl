@@ -1019,13 +1019,30 @@ EAPI void *ecore_main_win32_handler_del(Ecore_Win32_Handler *win32_handler);
 /**
  * @defgroup Ecore_Poller_Group Ecore Poll functions
  *
- * These functions are for the need to poll information, but provide
- * a shared abstracted API to pool such polling to minimise wakeup
- * and ensure all the polling happens in as few spots as possible
- * around a core poll interval.  For now only 1 core poller type is
- * supprted: ECORE_POLLER_CORE
+ * Ecore poller provides infrastructure for the creation of pollers. Pollers
+ * are, in essence, callbacks that share a single timer per type. Because not
+ * all pollers need to be called at the same frequency the user may specify the
+ * frequency in ticks(each expiration of the shared timer is called a tick, in
+ * ecore poller parlance) for each added poller. Ecore pollers should only be
+ * used when the poller doesn't have specific requirements on the exact times
+ * to poll.
  *
- * Example of @ref Ecore_Poller :
+ * This architecture means that the main loop is only woken up once to handle
+ * all pollers of that type, this will save power as the CPU has more of a
+ * chance to go into a low power state the longer it is asleep for, so this
+ * should be used in situations where power usage is a concern.
+ *
+ * For now only 1 core poller type is supported: ECORE_POLLER_CORE, the default
+ * interval for ECORE_POLLER_CORE is 0.125(or 1/8th) second.
+ *
+ * The creation of a poller is extremely simple and only required one line:
+ * @code
+ * ecore_poller_add(ECORE_POLLER_CORE, 1, my_poller_function, NULL);
+ * @endcode
+ * This sample creates a poller to call @c my_poller_function at every tick with
+ * @c NULL as data.
+ *
+ * Example:
  * @li @ref ecore_poller_example_c
  *
  * @ingroup Ecore_Main_Loop_Group
@@ -1041,11 +1058,76 @@ typedef enum _Ecore_Poller_Type Ecore_Poller_Type;
 
 typedef struct _Ecore_Poller    Ecore_Poller; /**< A handle for pollers */
 
+/**
+ * @brief Sets the time(in seconds) between ticks for the given poller type.
+ * @param type The poller type to adjust.
+ * @param poll_time The time(in seconds) between ticks of the timer.
+ *
+ * This will adjust the time between ticks of the given timer type defined by
+ * @p type to the time period defined by @p poll_time.
+ */
 EAPI void ecore_poller_poll_interval_set(Ecore_Poller_Type type, double poll_time);
+/**
+ * @brief Gets the time(in seconds) between ticks for the given poller type.
+ * @param type The poller type to query.
+ * @return The time in seconds between ticks of the poller timer.
+ *
+ * This will get the time between ticks of the specified poller timer.
+ */
 EAPI double ecore_poller_poll_interval_get(Ecore_Poller_Type type);
+/**
+ * @brief Changes the polling interval rate of @p poller.
+ * @param poller The Ecore_Poller to change the interval of.
+ * @param interval The tick interval to set; must be a power of 2 and <= 32768.
+ * @return Returns true on success, false on failure.
+ *
+ * This allows the changing of a poller's polling interval. It is useful when
+ * you want to alter a poll rate without deleting and re-creating a poller.
+ */
 EAPI Eina_Bool ecore_poller_poller_interval_set(Ecore_Poller *poller, int interval);
+/**
+ * @brief Gets the polling interval rate of @p poller.
+ * @param poller The Ecore_Poller to change the interval of.
+ * @return Returns the interval, in ticks, that @p poller polls at.
+ *
+ * This returns a poller's polling interval, or 0 on error.
+ */
 EAPI int ecore_poller_poller_interval_get(Ecore_Poller *poller);
+/**
+ * @brief Creates a poller to call the given function at a particular tick interval.
+ * @param type The ticker type to attach the poller to. Must be ECORE_POLLER_CORE.
+ * @param interval The poll interval.
+ * @param func The poller function.
+ * @param data Data to pass to @a func when it is called.
+ * @return A poller object on success, @c NULL otherwise.
+ *
+ * This function adds @a func as a poller callback that will be called every @a
+ * interval ticks together with other pollers of type @a type. @a func will be
+ * passed the @p data pointer as a parameter.
+ *
+ * The @p interval must be between 1 and 32768 inclusive, and must be a power of
+ * 2 (i.e. 1, 2, 4, 8, 16, ... 16384, 32768). The exact tick in which @a func
+ * will be called is undefined, as only the interval between calls can be
+ * defined. Ecore will endeavor to keep pollers synchronized and to call as
+ * many in 1 wakeup event as possible. If @a interval is not a power of two, the
+ * closest power of 2 greater than @a interval will be used.
+ *
+ * When the poller @p func is called, it must return a value of either
+ * ECORE_CALLBACK_RENEW(or 1) or ECORE_CALLBACK_CANCEL(or 0). If it
+ * returns 1, it will be called again at the next tick, or if it returns
+ * 0 it will be deleted automatically making any references/handles for it
+ * invalid.
+ */
 EAPI Ecore_Poller *ecore_poller_add(Ecore_Poller_Type type, int interval, Ecore_Task_Cb func, const void *data);
+/**
+ * @brief Delete the specified poller from the timer list.
+ * @param poller The poller to delete.
+ * @return The data pointer set for the timer when @ref ecore_poller_add was
+ * called on success, @c NULL otherwise.
+ *
+ * @note @a poller must be a valid handle. If the poller function has already
+ * returned 0, the handle is no longer valid (and does not need to be deleted).
+ */
 EAPI void *ecore_poller_del(Ecore_Poller *poller);
 
 /**
