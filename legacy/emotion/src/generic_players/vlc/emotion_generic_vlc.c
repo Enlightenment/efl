@@ -522,6 +522,8 @@ _file_set_done(struct _App *app)
 		       _event_cb, app);
    libvlc_event_attach(app->event_mgr, libvlc_MediaPlayerSeekableChanged,
 		       _event_cb, app);
+   libvlc_event_attach(app->event_mgr, libvlc_MediaPlayerEndReached,
+                       _event_cb, app);
 
    libvlc_audio_set_mute(app->mp, 0);
 
