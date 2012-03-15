@@ -1135,7 +1135,7 @@ EAPI Eina_Bool
 elm_object_tree_focus_allow_get(const Evas_Object *obj)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(obj, EINA_FALSE);
-   return elm_widget_tree_unfocusable_get(obj);
+   return !elm_widget_tree_unfocusable_get(obj);
 }
 
 EAPI void
