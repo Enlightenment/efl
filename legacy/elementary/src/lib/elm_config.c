@@ -1960,7 +1960,7 @@ elm_config_scroll_thumbscroll_border_friction_set(double friction)
 {
    if (friction < 0.0) friction = 0.0;
    if (friction > 1.0) friction = 1.0;
-   _elm_config->thumbscroll_friction = friction;
+   _elm_config->thumbscroll_border_friction = friction;
 }
 
 EAPI double
@@ -1974,7 +1974,7 @@ elm_config_scroll_thumbscroll_sensitivity_friction_set(double friction)
 {
    if (friction < 0.1) friction = 0.1;
    if (friction > 1.0) friction = 1.0;
-   _elm_config->thumbscroll_friction = friction;
+   _elm_config->thumbscroll_sensitivity_friction = friction;
 }
 
 EAPI void
