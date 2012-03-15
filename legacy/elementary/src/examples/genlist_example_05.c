@@ -1,5 +1,5 @@
 //Compile with:
-//gcc -g `pkg-config --cflags --libs elementary` genlist_example_04.c -o genlist_example_04
+//gcc -g `pkg-config --cflags --libs elementary` genlist_example_05.c -o genlist_example_05
 
 #include <Elementary.h>
 #ifdef HAVE_CONFIG_H
