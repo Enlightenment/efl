@@ -113,7 +113,6 @@ typedef struct _Testitem
 } Testitem;
 
 static Elm_Genlist_Item_Class *itc1;
-static Elm_Genlist_Item_Class *itc15;
 char *gl_text_get(void *data, Evas_Object *obj __UNUSED__, const char *part __UNUSED__)
 {
    char buf[256];
@@ -1132,7 +1131,7 @@ test_genlist5(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_in
 
 /*************/
 
-static Elm_Genlist_Item_Class itc4;
+static Elm_Genlist_Item_Class *itc4;
 
 static void
 gl4_sel(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info)
@@ -1149,17 +1148,17 @@ gl4_exp(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info)
    Evas_Object *gl = elm_object_item_widget_get(glit);
    int val = (int)(long) elm_object_item_data_get(glit);
    val *= 10;
-   elm_genlist_item_append(gl, &itc4,
+   elm_genlist_item_append(gl, itc4,
                            (void *)(long) (val + 1)/* item data */,
                            glit/* parent */, ELM_GENLIST_ITEM_NONE,
                            gl4_sel/* func */,
                            NULL/* func data */);
-   elm_genlist_item_append(gl, &itc4,
+   elm_genlist_item_append(gl, itc4,
                            (void *)(long) (val + 2)/* item data */,
                            glit/* parent */, ELM_GENLIST_ITEM_NONE,
                            gl4_sel/* func */,
                            NULL/* func data */);
-   elm_genlist_item_append(gl, &itc4,
+   elm_genlist_item_append(gl, itc4,
                            (void *)(long) (val + 3)/* item data */,
                            glit/* parent */,
                            ELM_GENLIST_ITEM_TREE, gl4_sel/* func */,
@@ -1244,22 +1243,23 @@ test_genlist6(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_in
    evas_object_size_hint_weight_set(gl, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_show(gl);
 
-   itc4.item_style     = "default";
-   itc4.func.text_get = gl4_text_get;
-   itc4.func.content_get  = gl4_content_get;
-   itc4.func.state_get = gl4_state_get;
-   itc4.func.del       = gl4_del;
+   itc4 = elm_genlist_item_class_new();
+   itc4->item_style     = "default";
+   itc4->func.text_get = gl4_text_get;
+   itc4->func.content_get  = gl4_content_get;
+   itc4->func.state_get = gl4_state_get;
+   itc4->func.del       = gl4_del;
 
-   elm_genlist_item_append(gl, &itc4,
+   elm_genlist_item_append(gl, itc4,
                            (void *)1/* item data */, NULL/* parent */, ELM_GENLIST_ITEM_TREE, gl4_sel/* func */,
                            NULL/* func data */);
-   elm_genlist_item_append(gl, &itc4,
+   elm_genlist_item_append(gl, itc4,
                            (void *)2/* item data */, NULL/* parent */, ELM_GENLIST_ITEM_TREE, gl4_sel/* func */,
                            NULL/* func data */);
-   elm_genlist_item_append(gl, &itc4,
+   elm_genlist_item_append(gl, itc4,
                            (void *)3/* item data */, NULL/* parent */, ELM_GENLIST_ITEM_NONE, gl4_sel/* func */,
                            NULL/* func data */);
-
+   elm_genlist_item_class_free(itc4);
    evas_object_smart_callback_add(gl, "expand,request", gl4_exp_req, gl);
    evas_object_smart_callback_add(gl, "contract,request", gl4_con_req, gl);
    evas_object_smart_callback_add(gl, "expanded", gl4_exp, gl);
@@ -2000,6 +2000,7 @@ test_genlist12(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_i
    elm_box_pack_end(bx, gl);
    evas_object_show(gl);
 
+   itc1 = elm_genlist_item_class_new();
    itc1->item_style     = "message";
    itc1->func.text_get = gl12_text_get;
    itc1->func.content_get  = gl_content_get;
@@ -2049,18 +2050,19 @@ test_genlist13(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_i
    evas_object_size_hint_weight_set(gl, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_show(gl);
 
-   itc4.item_style = "default";
-   itc4.func.text_get = gl4_text_get;
-   itc4.func.content_get = NULL;
-   itc4.func.state_get = NULL;
-   itc4.func.del = NULL;
+   itc4 = elm_genlist_item_class_new();
+   itc4->item_style = "default";
+   itc4->func.text_get = gl4_text_get;
+   itc4->func.content_get = NULL;
+   itc4->func.state_get = NULL;
+   itc4->func.del = NULL;
 
    /* mixed order to test insert sorted */
 
    for (i = 0; i < 3; i++)
      {
         pi[i] = elm_genlist_item_sorted_insert
-          (gl, &itc4, (void *)(long)idx[i]/* item data */, NULL/* parent */,
+          (gl, itc4, (void *)(long)idx[i]/* item data */, NULL/* parent */,
            ELM_GENLIST_ITEM_TREE, gl13_cmp/* cmp */,
            NULL/* func */, NULL/* func data */);
      }
@@ -2071,7 +2073,7 @@ test_genlist13(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_i
         for (j = 0; j < 3; j++)
           {
              elm_genlist_item_sorted_insert
-               (gl, &itc4, (void *)(long)(idx[j] + base)/* item data */,
+               (gl, itc4, (void *)(long)(idx[j] + base)/* item data */,
                 pi[i]/* parent */, ELM_GENLIST_ITEM_NONE,
                 gl13_cmp/* cmp */, NULL/* func */, NULL/* func data */);
           }
@@ -2080,7 +2082,7 @@ test_genlist13(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_i
    for (i = 0; i < 3; i++)
      {
         pi[i + 3] = elm_genlist_item_sorted_insert
-          (gl, &itc4, (void *)(long)(idx[i] * 2)/* item data */, NULL/* parent */,
+          (gl, itc4, (void *)(long)(idx[i] * 2)/* item data */, NULL/* parent */,
            ELM_GENLIST_ITEM_TREE, gl13_cmp/* cmp */, NULL/* func */,
            NULL/* func data */);
      }
@@ -2092,12 +2094,12 @@ test_genlist13(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_i
         for (j = 0; j < 3; j++)
           {
              elm_genlist_item_sorted_insert
-               (gl, &itc4, (void *)(long)(idx[j] + base)/* item data */,
+               (gl, itc4, (void *)(long)(idx[j] + base)/* item data */,
                 pi[i + 3]/* parent */, ELM_GENLIST_ITEM_NONE,
                 gl13_cmp/* cmp */, NULL/* func */, NULL/* func data */);
           }
      }
-
+   elm_genlist_item_class_free(itc4);
    elm_box_pack_end(bx, gl);
    evas_object_show(bx);
 
@@ -2196,13 +2198,12 @@ test_genlist14(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_i
    evas_object_size_hint_weight_set(gl, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_show(gl);
 
-   itc1 = elm_genlist_item_class_new();
-
-   itc4.item_style = "default";
-   itc4.func.text_get = gl4_text_get;
-   itc4.func.content_get = NULL;
-   itc4.func.state_get = NULL;
-   itc4.func.del = NULL;
+   itc4 = elm_genlist_item_class_new();
+   itc4->item_style = "default";
+   itc4->func.text_get = gl4_text_get;
+   itc4->func.content_get = NULL;
+   itc4->func.state_get = NULL;
+   itc4->func.del = NULL;
 
    /* mixed order to test insert sorted */
 
@@ -2210,7 +2211,7 @@ test_genlist14(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_i
    // BUG2: should be able to insert after=NULL, append
 
    pi[0] = elm_genlist_item_append
-     (gl, &itc4, (void *)(long)idx[0]/* item data */,
+     (gl, itc4, (void *)(long)idx[0]/* item data */,
       NULL/* parent */,
       ELM_GENLIST_ITEM_TREE, NULL/* func */, NULL/* func data */);
 
@@ -2218,12 +2219,12 @@ test_genlist14(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_i
      {
         if (relative[i] < 0)
           pi[i] = elm_genlist_item_insert_before
-            (gl, &itc4, (void *)(long)idx[i]/* item data */,
+            (gl, itc4, (void *)(long)idx[i]/* item data */,
              NULL/* parent */, pi[-relative[i]],
              ELM_GENLIST_ITEM_TREE, NULL/* func */, NULL/* func data */);
         else
           pi[i] = elm_genlist_item_insert_after
-            (gl, &itc4, (void *)(long)idx[i]/* item data */,
+            (gl, itc4, (void *)(long)idx[i]/* item data */,
              NULL/* parent */, pi[relative[i]],
              ELM_GENLIST_ITEM_TREE, NULL/* func */, NULL/* func data */);
      }
@@ -2236,18 +2237,18 @@ test_genlist14(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_i
         base = 1000 * (int)(long) elm_object_item_data_get(pi[i]);
 
         sub_glit[0] = elm_genlist_item_append
-          (gl, &itc4, (void *)(long) (idx[0] + base)/* item data */, pi[i]/* parent */,
+          (gl, itc4, (void *)(long) (idx[0] + base)/* item data */, pi[i]/* parent */,
            ELM_GENLIST_ITEM_TREE, NULL/* func */, NULL/* func data */);
 
         for (j = 1; j < 6; j++) {
            if (relative[j] < 0)
              sub_glit[j] = elm_genlist_item_insert_before
-               (gl, &itc4, (void *)(long) (idx[j] + base)/* item data */,
+               (gl, itc4, (void *)(long) (idx[j] + base)/* item data */,
                 pi[i]/* parent */, sub_glit[-relative[j]],
                 ELM_GENLIST_ITEM_TREE, NULL/* func */, NULL/* func data */);
            else
              sub_glit[j] = elm_genlist_item_insert_after
-               (gl, &itc4, (void *)(long) (idx[j] + base)/* item data */,
+               (gl, itc4, (void *)(long) (idx[j] + base)/* item data */,
                 pi[i]/* parent */, sub_glit[relative[j]],
                 ELM_GENLIST_ITEM_TREE, NULL/* func */, NULL/* func data */);
         }
@@ -2257,12 +2258,12 @@ test_genlist14(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_i
      {
         if (relative[i] < 0)
           pi[i] = elm_genlist_item_insert_before
-            (gl, &itc4, (void *)(long) idx[i]/* item data */,
+            (gl, itc4, (void *)(long) idx[i]/* item data */,
              NULL/* parent */, pi[-relative[i]],
              ELM_GENLIST_ITEM_TREE, NULL/* func */, NULL/* func data */);
         else
           pi[i] = elm_genlist_item_insert_after
-            (gl, &itc4, (void *)(long) idx[i]/* item data */,
+            (gl, itc4, (void *)(long) idx[i]/* item data */,
              NULL/* parent */, pi[relative[i]],
              ELM_GENLIST_ITEM_TREE, NULL/* func */, NULL/* func data */);
      }
@@ -2275,18 +2276,18 @@ test_genlist14(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_i
         base = 1000 * (int)(long) elm_object_item_data_get(pi[i]);
 
         sub_glit[0] = elm_genlist_item_append
-          (gl, &itc4, (void *)(long) (idx[0] + base)/* item data */, pi[i]/* parent */,
+          (gl, itc4, (void *)(long) (idx[0] + base)/* item data */, pi[i]/* parent */,
            ELM_GENLIST_ITEM_TREE, NULL/* func */, NULL/* func data */);
 
         for (j = 1; j < 6; j++) {
            if (relative[j] < 0)
              sub_glit[j] = elm_genlist_item_insert_before
-               (gl, &itc4, (void *)(long) (idx[j] + base)/* item data */,
+               (gl, itc4, (void *)(long) (idx[j] + base)/* item data */,
                 pi[i]/* parent */, sub_glit[-relative[j]],
                 ELM_GENLIST_ITEM_TREE, NULL/* func */, NULL/* func data */);
            else
              sub_glit[j] = elm_genlist_item_insert_after
-               (gl, &itc4, (void *)(long) (idx[j] + base)/* item data */,
+               (gl, itc4, (void *)(long) (idx[j] + base)/* item data */,
                 pi[i]/* parent */, sub_glit[relative[j]],
                 ELM_GENLIST_ITEM_TREE, NULL/* func */, NULL/* func data */);
         }
@@ -2320,9 +2321,9 @@ test_genlist14(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_i
    elm_box_pack_end(bx, bx2);
    evas_object_show(bx2);
 
-   /* item_class_ref is needed for itc1. some items can be added in callbacks */
-   elm_genlist_item_class_ref(itc1);
-   elm_genlist_item_class_free(itc1);
+   /* item_class_ref is needed for itc4. some items can be added in callbacks */
+   elm_genlist_item_class_ref(itc4);
+   elm_genlist_item_class_free(itc4);
 
    evas_object_resize(win, 320, 320);
    evas_object_show(win);
@@ -2414,6 +2415,7 @@ void gl15_del(void *data __UNUSED__, Evas_Object *obj __UNUSED__)
    printf("item deleted.\n");
 }
 
+static Elm_Genlist_Item_Class *itc15;
 void
 test_genlist15(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
