@@ -3830,19 +3830,24 @@ _entry_hover_anchor_clicked(void *data, Evas_Object *obj, void *event_info)
    Elm_Entry_Anchor_Hover_Info ei;
    Evas_Coord x, w, y, h, px, py;
    if (!wd) return;
+
    ei.anchor_info = event_info;
+
    wd->anchor_hover.pop = elm_icon_add(obj);
    evas_object_move(wd->anchor_hover.pop, info->x, info->y);
    evas_object_resize(wd->anchor_hover.pop, info->w, info->h);
+
    wd->anchor_hover.hover = elm_hover_add(obj);
    elm_widget_mirrored_set(wd->anchor_hover.hover, elm_widget_mirrored_get(obj));
    if (wd->anchor_hover.hover_style)
      elm_object_style_set(wd->anchor_hover.hover, wd->anchor_hover.hover_style);
+
    hover_parent = wd->anchor_hover.hover_parent;
    if (!hover_parent) hover_parent = obj;
    elm_hover_parent_set(wd->anchor_hover.hover, hover_parent);
    elm_hover_target_set(wd->anchor_hover.hover, wd->anchor_hover.pop);
    ei.hover = wd->anchor_hover.hover;
+
    evas_object_geometry_get(hover_parent, &x, &y, &w, &h);
    ei.hover_parent.x = x;
    ei.hover_parent.y = y;
@@ -3886,4 +3891,3 @@ _entry_hover_anchor_clicked(void *data, Evas_Object *obj, void *event_info)
      }
 }
 /* END - ANCHOR HOVER */
-
