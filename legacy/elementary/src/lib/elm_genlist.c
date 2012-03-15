@@ -5183,7 +5183,7 @@ elm_genlist_item_index_get(const Elm_Object_Item *it)
    Elm_Gen_Item *_it = (Elm_Gen_Item *)it;
 
    if (_it->item->block)
-     return _it->position + _it->item->block->position;
+     return _it->position + (_it->item->block->position * _it->wd->max_items_per_block);
    return -1;
 }
 
