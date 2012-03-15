@@ -18,7 +18,8 @@
  *
  * Smart callbacks one can listen to:
  * - "clicked" - when the user clicks on a toolbar item and becomes selected.
- * - "language,changed" - when the program language changes
+ * - "longpressed" - when the toolbar is pressed for a certain amount of time.
+ * - "language,changed" - when the program language changes.
  *
  * Available styles for it:
  * - @c "default"
