@@ -500,7 +500,7 @@ EAPI Eina_Bool                     elm_genlist_multi_select_get(const Evas_Objec
  *       recalculate every item height again whenever the list width
  *       changes!
  * @note When ELM_LIST_COMPRESS mode is enabled, it also enables
- *       compress mode (see elm_genlist_compress_mode_set()) and
+ *       compress mode (see elm_genlist_mode_set()) and
  *       disables homogeneous (see elm_genlist_homogeneous_set()).
  *
  * @see elm_genlist_mode_get()
@@ -1312,7 +1312,7 @@ EAPI Eina_Bool                     elm_genlist_item_cursor_engine_only_get(const
  * maximum (which increases the performance for scrolling the list). This
  * implies 'compressed' mode.
  *
- * @see elm_genlist_compress_mode_set()
+ * @see elm_genlist_mode_set()
  * @see elm_genlist_homogeneous_get()
  *
  * @ingroup Genlist
