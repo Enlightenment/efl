@@ -862,7 +862,16 @@ _player_add_cb(void *data, int type __UNUSED__, void *event)
 static Eina_Bool
 _player_del_cb(void *data, int type __UNUSED__, void *event __UNUSED__)
 {
+   Ecore_Exe_Event_Del *event_del = event;
+   Ecore_Exe *player = event_del->exe;
    Emotion_Generic_Video *ev = data;
+
+   if (ev->player.exe != player)
+     {
+	INF("ev->player != player.");
+	return ECORE_CALLBACK_PASS_ON;
+     }
+
    ERR("player died.");
 
    ev->player.exe = NULL;
