@@ -4821,35 +4821,6 @@ elm_genlist_item_expanded_depth_get(const Elm_Object_Item *it)
    return ((Elm_Gen_Item *)it)->item->expanded_depth;
 }
 
-EINA_DEPRECATED EAPI void
-elm_genlist_item_display_only_set(Elm_Object_Item  *it,
-                                  Eina_Bool         display_only)
-{
-   ELM_OBJ_ITEM_CHECK_OR_RETURN(it);
-   display_only = !!display_only;
-
-   if (display_only)
-     elm_genlist_item_select_mode_set(it, ELM_OBJECT_SELECT_MODE_DISPLAY_ONLY);
-   else
-     {
-        Elm_Object_Select_Mode oldmode = elm_genlist_item_select_mode_get(it);
-        if (oldmode == ELM_OBJECT_SELECT_MODE_DISPLAY_ONLY)
-          elm_genlist_item_select_mode_set(it, ELM_OBJECT_SELECT_MODE_DEFAULT);
-     }
-}
-
-EINA_DEPRECATED EAPI Eina_Bool
-elm_genlist_item_display_only_get(const Elm_Object_Item *it)
-{
-   ELM_OBJ_ITEM_CHECK_OR_RETURN(it, EINA_FALSE);
-   Elm_Gen_Item *_it = (Elm_Gen_Item *)it;
-   if (_it->generation < _it->wd->generation) return EINA_FALSE;
-   Elm_Object_Select_Mode oldmode = elm_genlist_item_select_mode_get(it);
-   if (oldmode == ELM_OBJECT_SELECT_MODE_DISPLAY_ONLY)
-     return EINA_TRUE;
-   return EINA_FALSE;
-}
-
 static Eina_Bool
 _elm_genlist_item_compute_coordinates(Elm_Object_Item *it,
                                       Elm_Genlist_Item_Scrollto_Type type,
