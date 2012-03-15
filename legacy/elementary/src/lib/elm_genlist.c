@@ -627,13 +627,18 @@ _sizing_eval(Evas_Object *obj)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
    Evas_Coord minw = -1, minh = -1, maxw = -1, maxh = -1;
+   Evas_Coord vmw = 0, vmh = 0;
    if (!wd) return;
-   evas_object_size_hint_min_get(wd->scr, &minw, &minh);
+
+   evas_object_size_hint_min_get(wd->scr, &minw, NULL);
    evas_object_size_hint_max_get(wd->scr, &maxw, &maxh);
-   minh = -1;
+
+   edje_object_size_min_calc
+      (elm_smart_scroller_edje_object_get(wd->scr), &vmw, &vmh);
+
    if (wd->mode == ELM_LIST_COMPRESS)
      {
-        Evas_Coord vw, vh, vmw, vmh;
+        Evas_Coord vw, vh;
 
         elm_smart_scroller_child_viewport_size_get(wd->scr, &vw, &vh);
         if ((vw != 0) && (vw != wd->prev_viewport_w))
@@ -648,31 +653,20 @@ _sizing_eval(Evas_Object *obj)
              if (wd->calc_job) ecore_job_del(wd->calc_job);
              wd->calc_job = ecore_job_add(_calc_job, wd);
           }
-        edje_object_size_min_calc
-          (elm_smart_scroller_edje_object_get(wd->scr), &vmw, &vmh);
         minw = vmw;
         minh = vmh;
      }
    else if (wd->mode == ELM_LIST_LIMIT)
      {
-        Evas_Coord vmw, vmh;
-
-        minw = wd->realminw;
         maxw = -1;
-        elm_smart_scroller_child_viewport_size_get(wd->scr, &vmw, &vmh);
-        edje_object_size_min_calc
-          (elm_smart_scroller_edje_object_get(wd->scr), &vmw, &vmh);
         minw = vmw + minw;
      }
    else
      {
-        Evas_Coord vmw, vmh;
-
-        edje_object_size_min_calc
-          (elm_smart_scroller_edje_object_get(wd->scr), &vmw, &vmh);
         minw = vmw;
         minh = vmh;
      }
+
    evas_object_size_hint_min_set(obj, minw, minh);
    evas_object_size_hint_max_set(obj, maxw, maxh);
 }
