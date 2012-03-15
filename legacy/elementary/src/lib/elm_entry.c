@@ -2382,7 +2382,6 @@ elm_entry_add(Evas_Object *parent)
    elm_widget_signal_callback_del_hook_set(obj, _signal_callback_del_hook);
    elm_object_cursor_set(obj, ELM_CURSOR_XTERM);
    elm_widget_can_focus_set(obj, EINA_TRUE);
-   elm_widget_highlight_ignore_set(obj, EINA_TRUE);
    elm_widget_text_set_hook_set(obj, _elm_entry_text_set);
    elm_widget_text_get_hook_set(obj, _elm_entry_text_get);
    elm_widget_content_set_hook_set(obj, _content_set_hook);
