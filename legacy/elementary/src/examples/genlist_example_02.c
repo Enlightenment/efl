@@ -130,9 +130,9 @@ elm_main(int argc __UNUSED__, char **argv __UNUSED__)
 
    always = no_sel = EINA_FALSE;
    sel_mode = elm_genlist_select_mode_get(list);
-   if (sel_mode = ELM_OBJECT_SELECT_MODE_ALWAYS)
+   if (sel_mode == ELM_OBJECT_SELECT_MODE_ALWAYS)
      always = EINA_TRUE;
-   else if (sel_mode = ELM_OBJECT_SELECT_MODE_NONE)
+   else if (sel_mode == ELM_OBJECT_SELECT_MODE_NONE)
      no_sel = EINA_TRUE;
 
    printf("default values:\n");
