@@ -114,7 +114,7 @@ EAPI Elm_Colorselector_Mode elm_colorselector_mode_get(const Evas_Object *obj);
 /**
  * Get Palette item's color.
  *
- * @param item The color palette item.
+ * @param it The color palette item.
  * @param r integer pointer for r-value of color
  * @param g integer pointer for g-value of color
  * @param b integer pointer for b-value of color
@@ -127,7 +127,7 @@ EAPI void elm_colorselector_palette_item_color_get(const Elm_Object_Item *it, in
 /**
  * Set palette item's color.
  *
- * @param item The color palette item.
+ * @param it The color palette item.
  * @param r r-value of color
  * @param g g-value of color
  * @param b b-value of color

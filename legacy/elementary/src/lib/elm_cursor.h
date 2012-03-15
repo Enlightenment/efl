@@ -96,7 +96,7 @@ EAPI const char *elm_object_cursor_style_get(const Evas_Object *obj);
  * provided by the engine.
  *
  * @param obj an object with cursor already set.
- * @param engine_only boolean to define if cursors should be looked only
+ * @param theme_search boolean to define if cursors should be looked only
  * between the provided by the engine or searched on widget's theme as well.
  *
  * @ingroup Cursors

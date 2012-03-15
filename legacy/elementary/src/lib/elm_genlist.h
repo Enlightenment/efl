@@ -1599,7 +1599,7 @@ EAPI void                          elm_genlist_item_decorate_mode_set(Elm_Object
 /**
  * Get the item's decorate mode.
  *
- * @param obj The genlist object
+ * @param it The genlist item
  *
  * This function just returns the name of the item's decorate mode.
  *
@@ -1668,7 +1668,7 @@ EAPI Elm_Genlist_Item_Type        elm_genlist_item_type_get(const Elm_Object_Ite
  * This sets Genlist decorate mode to all items.
  *
  * @param obj The Genlist object
- * @param The decorate mode status
+ * @param decorated The decorate mode status
  * (EINA_TRUE = decorate mode, EINA_FALSE = normal mode
  *
  * @ingroup Genlist
@@ -1724,7 +1724,7 @@ EAPI Eina_Bool elm_genlist_item_flip_get(const Elm_Object_Item *it);
  * Set Genlist tree effect
  *
  * @param obj The genlist object
- * @param The tree effect status
+ * @param enabled The tree effect status
  * (EINA_TRUE = enabled, EINA_FALSE = disabled
  *
  * @ingroup Genlist

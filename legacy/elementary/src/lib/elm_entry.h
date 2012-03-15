@@ -1373,7 +1373,7 @@ struct _Elm_Entry_Filter_Limit_Size
  * Filter inserted text based on user defined character and byte limits
  *
  * Add this filter to an entry to limit the characters that it will accept
- * based the the contents of the provided #Elm_Entry_Filter_Limit_Size.
+ * based the contents of the provided #Elm_Entry_Filter_Limit_Size.
  * The function works on the UTF-8 representation of the string, converting
  * it from the set markup, thus not accounting for any format in it.
  *
@@ -1471,7 +1471,7 @@ typedef enum _Elm_Cnp_Mode {
  * @note this only changes the behaviour of text.
  *
  * @param obj The entry object
- * @param mode One of #Elm_Cnp_Mode: #ELM_CNP_MODE_MARKUP,
+ * @param cnp_mode One of #Elm_Cnp_Mode: #ELM_CNP_MODE_MARKUP,
  * #ELM_CNP_MODE_NO_IMAGE, #ELM_CNP_MODE_PLAINTEXT.
  */
 EAPI void         elm_entry_cnp_mode_set(Evas_Object *obj, Elm_Cnp_Mode cnp_mode);

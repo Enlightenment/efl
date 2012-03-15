@@ -253,7 +253,7 @@ EAPI Eina_Bool            elm_calendar_selected_time_get(const Evas_Object *obj,
  * month and year;
  *
  * @param obj The calendar object
- * @param format_function Function to set the month-year string given
+ * @param format_func Function to set the month-year string given
  * the selected date
  *
  * By default it uses strftime with "%B %Y" format string.
