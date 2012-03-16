@@ -61,7 +61,6 @@ elm_slider.c \
 elm_slideshow.c \
 elm_spinner.c \
 elm_thumb.c \
-elm_toggle.c \
 elm_toolbar.c \
 elm_video.c \
 elm_web.c
