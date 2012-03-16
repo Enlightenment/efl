@@ -42,7 +42,7 @@
 #include "eina_lock.h"
 
 #ifndef NVALGRIND
-# include <valgrind/memcheck.h>
+# include <memcheck.h>
 #endif
 
 #include "eina_private.h"

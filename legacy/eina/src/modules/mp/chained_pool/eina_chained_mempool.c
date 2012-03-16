@@ -52,7 +52,7 @@
 #include "eina_private.h"
 
 #ifndef NVALGRIND
-# include <valgrind/memcheck.h>
+# include <memcheck.h>
 #endif
 
 #if defined DEBUG || defined EINA_DEBUG_MALLOC

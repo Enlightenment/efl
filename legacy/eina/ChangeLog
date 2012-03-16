@@ -237,3 +237,7 @@
 2012-03-14  Cedric Bail
 
 	* Fix a dead lock in Eina_File.
+
+2012-03-16  Raphael Kubo da Costa
+
+	* Adjust Valgrind's CFLAGS to fix the build when it is in a non-default location.
