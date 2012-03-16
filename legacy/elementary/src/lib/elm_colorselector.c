@@ -128,6 +128,9 @@ _theme_hook(Evas_Object *obj)
    Eina_List *elist;
    Elm_Color_Item *item;
    int i;
+   const char *hpadstr, *vpadstr;
+   unsigned int h_pad = DEFAULT_HOR_PAD;
+   unsigned int v_pad = DEFAULT_VER_PAD;
 
    if ((!wd) || (!wd->sel)) return;
 
@@ -135,6 +138,11 @@ _theme_hook(Evas_Object *obj)
                          elm_widget_style_get(obj));
    _elm_theme_object_set(obj, wd->sel, "colorselector", "bg",
                          elm_widget_style_get(obj));
+   hpadstr = edje_object_data_get(wd->base, "horizontal_pad");
+   if (hpadstr) h_pad = atoi(hpadstr);
+   vpadstr = edje_object_data_get(wd->base, "vertical_pad");
+   if (vpadstr) v_pad = atoi(vpadstr);
+   elm_box_padding_set(wd->box, h_pad, v_pad);
    EINA_LIST_FOREACH(wd->items, elist, item)
      {
         elm_layout_theme_set(VIEW(item), "colorselector", "item", elm_widget_style_get(obj));
@@ -1057,9 +1065,9 @@ elm_colorselector_add(Evas_Object *parent)
                                     0);
    evas_object_size_hint_align_set(wd->box, EVAS_HINT_FILL, 0);
    elm_box_homogeneous_set(wd->box, EINA_TRUE);
-   hpadstr = edje_object_data_get(wd->sel, "horizontal_pad");
+   hpadstr = edje_object_data_get(wd->base, "horizontal_pad");
    if (hpadstr) h_pad = atoi(hpadstr);
-   vpadstr = edje_object_data_get(wd->sel, "vertical_pad");
+   vpadstr = edje_object_data_get(wd->base, "vertical_pad");
    if (vpadstr) v_pad = atoi(vpadstr);
    elm_box_padding_set(wd->box, h_pad, v_pad);
    elm_box_align_set(wd->box, 0.5, 0.5);
@@ -1070,11 +1078,12 @@ elm_colorselector_add(Evas_Object *parent)
    _colors_load_apply(obj);
 
    /* load background edj */
-    wd->sel = edje_object_add(e);
-    _elm_theme_object_set(obj, wd->sel, "colorselector", "bg", "default");
-    edje_object_part_swallow(wd->base, "selector", wd->sel);
-    wd->mode = ELM_COLORSELECTOR_BOTH;
+   wd->sel = edje_object_add(e);
+   _elm_theme_object_set(obj, wd->sel, "colorselector", "bg", "default");
+   edje_object_part_swallow(wd->base, "selector", wd->sel);
+   elm_widget_sub_object_add(obj, wd->sel);
 
+   wd->mode = ELM_COLORSELECTOR_BOTH;
    wd->er = 255;
    wd->eg = 0;
    wd->eb = 0;
