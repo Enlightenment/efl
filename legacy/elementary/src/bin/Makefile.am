@@ -104,7 +104,6 @@ test_spinner.c \
 test_store.c \
 test_table.c \
 test_thumb.c \
-test_toggle.c \
 test_toolbar.c \
 test_tooltip.c \
 test_transit.c \

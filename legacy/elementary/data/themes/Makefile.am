@@ -41,7 +41,6 @@ widgets/thumb.edc \
 widgets/clock.edc \
 widgets/icon.edc \
 widgets/photocam.edc \
-widgets/toggle.edc \
 widgets/colorselector.edc \
 widgets/index.edc \
 widgets/photo.edc \

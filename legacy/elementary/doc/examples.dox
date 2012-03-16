@@ -1821,14 +1821,14 @@
  *
  * By default map is disabled. So just setting content isn't enough.
  * Alpha and smooth settings will be applied when map is enabled.
- * So we'll add a toggle for that. Everytime the map properties
+ * So we'll add a check for that. Everytime the map properties
  * are changed, map will need to be enabled again. So if you
  * want to play a bit with our example, remember to always enable
  * map again after concluding your changes.
- * @skipline toggle_add
+ * @skipline check_add
  * @until show
  *
- * We have added a callback function to this toggle, so it will enable
+ * We have added a callback function to this check, so it will enable
  * or disable map:
  * @dontinclude mapbuf_example.c
  * @skip static
@@ -1844,7 +1844,7 @@
  * By default, mapbuf would enable alpha blending and smooth rendering,
  * so we need to check boxes to be consistent with its behavior.
  *
- * Callback functions look like the one added to the toggle. This way we
+ * Callback functions look like the one added to the check. This way we
  * could enable or disable the both properties:
  * @dontinclude mapbuf_example.c
  * @skip static
@@ -4107,7 +4107,7 @@
  * whose value it should change:
  * @until show
  *
- * We also set the callback that will be called when the toggles value changes:
+ * We also set the callback that will be called when the check value changes:
  * @until smart_callback
  *
  * For our second toggle it important to note that we set the states labels,

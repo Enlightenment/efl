@@ -30,11 +30,11 @@ void test_transit8(void *data, Evas_Object *obj, void *event_info);
 void test_transit9(void *data, Evas_Object *obj, void *event_info);
 void test_fileselector_button(void *data, Evas_Object *obj, void *event_info);
 void test_fileselector_entry(void *data, Evas_Object *obj, void *event_info);
-void test_toggle(void *data, Evas_Object *obj, void *event_info);
 void test_clock(void *data, Evas_Object *obj, void *event_info);
 void test_clock2(void *data, Evas_Object *obj, void *event_info);
 void test_clock3(void *data, Evas_Object *obj, void *event_info);
 void test_check(void *data, Evas_Object *obj, void *event_info);
+void test_check2(void *data, Evas_Object *obj, void *event_info);
 void test_radio(void *data, Evas_Object *obj, void *event_info);
 void test_layout(void *data, Evas_Object *obj, void *event_info);
 void test_hover(void *data, Evas_Object *obj, void *event_info);
@@ -504,7 +504,7 @@ add_tests:
 
    //------------------------------//
    ADD_TEST(NULL, "Booleans", "Checks", test_check);
-   ADD_TEST(NULL, "Booleans", "Toggles", test_toggle);
+   ADD_TEST(NULL, "Booleans", "Checks 2", test_check2);
 
    //------------------------------//
    ADD_TEST(NULL, "Popups", "Ctxpopup", test_ctxpopup);

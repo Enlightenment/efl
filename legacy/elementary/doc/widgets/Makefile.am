@@ -72,7 +72,6 @@ widget_preview_hover \
 widget_preview_flip \
 widget_preview_separator \
 widget_preview_radio \
-widget_preview_toggle \
 widget_preview_panel \
 widget_preview_gengrid \
 widget_preview_genlist1 \
@@ -152,7 +151,6 @@ EXTRA_DIST = \
 	widget_preview_popup.c \
 	widget_preview_separator.c \
 	widget_preview_radio.c \
-	widget_preview_toggle.c \
 	widget_preview_panel.c \
 	widget_preview_gengrid.c \
 	widget_preview_genlist1.c \

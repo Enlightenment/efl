@@ -56,7 +56,6 @@
 ./src/bin/test_store.c
 ./src/bin/test_table.c
 ./src/bin/test_thumb.c
-./src/bin/test_toggle.c
 ./src/bin/test_toolbar.c
 ./src/bin/test_tooltip.c
 ./src/bin/test_transit.c
@@ -87,7 +86,6 @@
 ./src/edje_externals/elm_slideshow.c
 ./src/edje_externals/elm_spinner.c
 ./src/edje_externals/elm_thumb.c
-./src/edje_externals/elm_toggle.c
 ./src/edje_externals/elm_toolbar.c
 ./src/lib/elc_ctxpopup.c
 ./src/lib/elc_fileselector_button.c
@@ -142,7 +140,6 @@
 ./src/lib/elm_table.c
 ./src/lib/elm_theme.c
 ./src/lib/elm_thumb.c
-./src/lib/elm_toggle.c
 ./src/lib/elm_toolbar.c
 ./src/lib/elm_transit.c
 ./src/lib/elm_util.c

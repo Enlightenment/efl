@@ -322,7 +322,6 @@ collections {
 #include "widgets/scroller.edc"
 #include "widgets/label.edc"
 #include "widgets/button.edc"
-#include "widgets/toggle.edc"
 #include "widgets/clock.edc"
 #include "widgets/datetime.edc"
 #include "widgets/dayselector.edc"

@@ -63,7 +63,6 @@ WGT_PREVIEW = \
 	pager:preview-00.png:widget_preview_pager:100:100 \
 	separator:preview-00.png:widget_preview_separator:10:80 \
 	radio:preview-00.png:widget_preview_radio:60:20 \
-	toggle:preview-00.png:widget_preview_toggle:150:30 \
 	panel:preview-00.png:widget_preview_panel:150:50 \
 	gengrid:preview-00.png:widget_preview_gengrid:200:160 \
 	genlist:preview-00.png:widget_preview_genlist1:200:200 \

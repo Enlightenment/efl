@@ -208,7 +208,6 @@ examples_PROGRAMS += \
 	index_example_02 \
 	separator_example_01 \
 	radio_example_01 \
-	toggle_example_01 \
 	panel_example_01 \
 	gengrid_example \
 	genlist_example_01 \
@@ -297,7 +296,6 @@ SCREENSHOTS = \
 	ctxpopup_example_01:ctxpopup_example_01.png:0.0 \
 	separator_example_01:separator_example_01.png:0.0 \
 	radio_example_01:radio_example_01.png:0.0 \
-	toggle_example_01:toggle_example_01.png:0.0 \
 	panel_example_01:panel_example_01.png:0.0 \
 	gengrid_example:gengrid_example.png:0.0 \
 	genlist_example_01:genlist_example_01.png:0.1 \
