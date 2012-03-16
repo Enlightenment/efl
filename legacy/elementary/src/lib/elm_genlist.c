@@ -174,7 +174,7 @@ static void         _item_contract_emit(Elm_Gen_Item *it);
 static int          _item_tree_effect_before(Elm_Gen_Item *it);
 static void         _item_tree_effect(Widget_Data *wd, int y);
 static void         _item_tree_effect_finish(Widget_Data *wd);
-static Eina_Bool    _item_moving_effect_timer_cb(void *data);
+static Eina_Bool    _tree_effect_animator_cb(void *data);
 
 static Evas_Smart_Class _pan_sc = EVAS_SMART_CLASS_INIT_VERSION;
 
@@ -2461,7 +2461,7 @@ _item_block_position(Item_Block *itb,
                     }
                   else
                     {
-                       if (!it->wd->item_moving_effect_timer)
+                       if (!it->wd->tree_effect_animator)
                          _elm_genlist_item_unrealize(it, EINA_FALSE);
                     }
                }
@@ -2999,13 +2999,13 @@ _pan_calculate(Evas_Object *obj)
 
    if (sd->wd->tree_effect_enabled && (sd->wd->move_effect_mode != ELM_GENLIST_TREE_EFFECT_NONE))
      {
-        if (!sd->wd->item_moving_effect_timer)
+        if (!sd->wd->tree_effect_animator)
           {
              _item_tree_effect_before(sd->wd->expanded_item);
              evas_object_raise(sd->wd->alpha_bg);
              evas_object_show(sd->wd->alpha_bg);
              sd->wd->start_time = ecore_time_get();
-             sd->wd->item_moving_effect_timer = ecore_animator_add(_item_moving_effect_timer_cb, sd->wd);
+             sd->wd->tree_effect_animator = ecore_animator_add(_tree_effect_animator_cb, sd->wd);
           }
      }
    else
@@ -4669,14 +4669,14 @@ elm_genlist_item_subitems_clear(Elm_Object_Item *it)
      _item_subitems_clear(_it);
    else
      {
-        if (!wd->item_moving_effect_timer)
+        if (!wd->tree_effect_animator)
           {
              wd->expanded_item = _it;
              _item_tree_effect_before(_it);
              evas_object_raise(wd->alpha_bg);
              evas_object_show(wd->alpha_bg);
              wd->start_time = ecore_time_get();
-             wd->item_moving_effect_timer = ecore_animator_add(_item_moving_effect_timer_cb, wd);
+             wd->tree_effect_animator = ecore_animator_add(_tree_effect_animator_cb, wd);
           }
         else
            _item_subitems_clear(_it);
@@ -5927,7 +5927,7 @@ _item_tree_effect_finish(Widget_Data *wd)
    Elm_Gen_Item *it = NULL;
    const Eina_List *l;
 
-   if (wd->item_moving_effect_timer)
+   if (wd->tree_effect_animator)
      {
         if (wd->move_effect_mode == ELM_GENLIST_TREE_EFFECT_CONTRACT)
            _item_subitems_clear(wd->expanded_item);
@@ -5950,11 +5950,11 @@ _item_tree_effect_finish(Widget_Data *wd)
    evas_object_smart_callback_call(wd->obj, SIG_TREE_EFFECT_FINISHED, NULL);
    evas_object_smart_changed(wd->pan_smart);
 
-   wd->item_moving_effect_timer = NULL;
+   wd->tree_effect_animator = NULL;
 }
 
 static Eina_Bool
-_item_moving_effect_timer_cb(void *data)
+_tree_effect_animator_cb(void *data)
 {
    Widget_Data *wd = data;
    if (!wd) return EINA_FALSE;

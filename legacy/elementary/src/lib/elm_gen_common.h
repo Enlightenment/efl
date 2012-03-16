@@ -162,7 +162,7 @@ struct _Widget_Data
    Evas_Object                   *alpha_bg; /**< not to receive event when tree effect is not finished */
    Eina_List                     *move_items; /**< items move for tree effect */
    Elm_Gen_Item                  *expanded_next_item;
-   Ecore_Animator                *item_moving_effect_timer; /**< tree effect */
+   Ecore_Animator                *tree_effect_animator; /**< tree effect animator */
    Elm_Genlist_Item_Move_Effect_Mode move_effect_mode;
 
    /* The stuff below directly come from gengrid without any thinking */
