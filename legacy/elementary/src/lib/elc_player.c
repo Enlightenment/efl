@@ -451,11 +451,11 @@ _double_to_time(double value)
 }
 #endif
 
+#ifdef HAVE_EMOTION
 static void
 _content_set_hook(Evas_Object *obj, const char *part, Evas_Object *content)
 {
    if (part && strcmp(part, "video")) return;
-#ifdef HAVE_EMOTION
    ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
 
@@ -514,12 +514,8 @@ _content_set_hook(Evas_Object *obj, const char *part, Evas_Object *content)
                                   _play_finished, obj);
 
    /* FIXME: track info from video */
-#else
-   (void) obj;
-   (void) content;
-#endif
-
 }
+#endif
 
 EAPI Evas_Object *
 elm_player_add(Evas_Object *parent)
