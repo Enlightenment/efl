@@ -221,6 +221,28 @@ ecore_imf_evas_event_mouse_wheel_wrap(Evas_Event_Mouse_Wheel *evas_event,
  * @param evas_event The received Evas event.
  * @param imf_event The location to store the converted Ecore_IMF event.
  * @ingroup Ecore_IMF_Evas_Group
+ *
+ * Example
+ * @code
+ * static void
+ * _key_down_cb(void *data, Evas *e, Evas_Object *obj, void *event_info)
+ * {
+ *    Evas_Event_Key_Down *ev = event_info;
+ *    if (!ev->keyname) return;
+ *
+ *    if (imf_context)
+ *      {
+ *         Ecore_IMF_Event_Key_Down ecore_ev;
+ *         ecore_imf_evas_event_key_down_wrap(ev, &ecore_ev);
+ *         if (ecore_imf_context_filter_event(imf_context,
+ *                                            ECORE_IMF_EVENT_KEY_DOWN,
+ *                                            (Ecore_IMF_Event *)&ecore_ev))
+ *           return;
+ *      }
+ * }
+ *
+ * evas_object_event_callback_add(obj, EVAS_CALLBACK_KEY_DOWN, _key_down_cb, data);
+ * @endcode
  */
 EAPI void
 ecore_imf_evas_event_key_down_wrap(Evas_Event_Key_Down *evas_event,
@@ -244,6 +266,28 @@ ecore_imf_evas_event_key_down_wrap(Evas_Event_Key_Down *evas_event,
  * @param evas_event The received Evas event.
  * @param imf_event The location to store the converted Ecore_IMF event.
  * @ingroup Ecore_IMF_Evas_Group
+ *
+ * Example
+ * @code
+ * static void
+ * _key_up_cb(void *data, Evas *e, Evas_Object *obj, void *event_info)
+ * {
+ *    Evas_Event_Key_Up *ev = event_info;
+ *    if (!ev->keyname) return;
+ *
+ *    if (imf_context)
+ *      {
+ *         Ecore_IMF_Event_Key_Up ecore_ev;
+ *         ecore_imf_evas_event_key_up_wrap(ev, &ecore_ev);
+ *         if (ecore_imf_context_filter_event(imf_context,
+ *                                            ECORE_IMF_EVENT_KEY_UP,
+ *                                            (Ecore_IMF_Event *)&ecore_ev))
+ *           return;
+ *      }
+ * }
+ *
+ * evas_object_event_callback_add(obj, EVAS_CALLBACK_KEY_UP, _key_up_cb, data);
+ * @endcode
  */
 EAPI void
 ecore_imf_evas_event_key_up_wrap(Evas_Event_Key_Up *evas_event,
