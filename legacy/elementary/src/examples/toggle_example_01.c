@@ -34,8 +34,8 @@ elm_main(int argc, char **argv)
 
    toggle = elm_check_add(win);
    elm_object_style_set(toggle, "toggle");
-   elm_object_part_text_set(toggle, "on", E_("ON"));
-   elm_object_part_text_set(toggle, "off", E_("OFF"));
+   elm_object_part_text_set(toggle, "on", "ON");
+   elm_object_part_text_set(toggle, "off", "OFF");
    elm_object_text_set(toggle, "Toggle 1");
    ic = elm_icon_add(win);
    elm_icon_standard_set(ic, "home");

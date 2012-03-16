@@ -43,7 +43,7 @@ _name_loaded(void *data, Evas_Object *obj, void *ev __UNUSED__)
    Evas_Object *map = obj;
 
    if (example_data->route)
-     elm_map_route_remove(example_data->route);
+     elm_map_route_del(example_data->route);
 
    elm_map_name_region_get(example_data->name, &(example_data->dest_lon),
                            &(example_data->dest_lat));
