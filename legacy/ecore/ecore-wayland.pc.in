@@ -5,6 +5,8 @@ includedir=@includedir@
 
 Name: ecore-wayland
 Description: E core library, Wayland module
+@pkgconfig_requires_private@: @requirements_ecore_wayland@
 Version: @VERSION@
 Libs: -L${libdir} -lecore_wayland
+Libs.private: -lwayland-client
 Cflags: -I${includedir}/ecore-@VMAJ@
