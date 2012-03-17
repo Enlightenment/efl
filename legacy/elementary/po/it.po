@@ -1,12 +1,12 @@
 # Italian translation for Elementary.
 # This file is put in the public domain.
 # Massimo Maiurana <maiurana@gmail.com>, 2011.
-#: src/lib/elm_config.c:1943
+#: src/lib/elm_config.c:2006
 msgid ""
 msgstr ""
 "Project-Id-Version: Elementary\n"
 "Report-Msgid-Bugs-To: enlightenment-devel@lists.sourceforge.net\n"
-"POT-Creation-Date: 2012-03-08 01:42+0900\n"
+"POT-Creation-Date: 2012-03-17 12:40+0900\n"
 "PO-Revision-Date: 2011-11-08 14:19+0100\n"
 "Last-Translator: Massimo Maiurana <maiurana@gmail.com>\n"
 "Language-Team: none\n"
@@ -36,7 +36,7 @@ msgid "Clicked"
 msgstr "Cliccato"
 
 #: src/lib/elm_button.c:408 src/lib/elm_check.c:394 src/lib/elm_radio.c:295
-#: src/lib/elm_toolbar.c:886
+#: src/lib/elm_toolbar.c:887
 msgid "State: Disabled"
 msgstr "Stato: disabilitato"
 
@@ -66,7 +66,7 @@ msgstr "Stato"
 msgid "Check"
 msgstr "Controllo"
 
-#: src/lib/elm_config.c:1358
+#: src/lib/elm_config.c:1482
 msgid "default:LTR"
 msgstr "predefintito: LTR"
 
@@ -90,30 +90,28 @@ msgstr "Incolla"
 msgid "Radio"
 msgstr "Opzione"
 
-#: src/lib/elm_toggle.c:11
-msgid "ON"
-msgstr "Attivo"
-
-#: src/lib/elm_toggle.c:12
-msgid "OFF"
-msgstr "Non attivo"
-
-#: src/lib/elm_toolbar.c:802
+#: src/lib/elm_toolbar.c:803
 msgid "Selected"
 msgstr "Selezionato"
 
-#: src/lib/elm_toolbar.c:884
+#: src/lib/elm_toolbar.c:885
 msgid "Separator"
 msgstr "Separatore"
 
-#: src/lib/elm_toolbar.c:888
+#: src/lib/elm_toolbar.c:889
 msgid "State: Selected"
 msgstr "Stato: selezionato"
 
-#: src/lib/elm_toolbar.c:890
+#: src/lib/elm_toolbar.c:891
 msgid "Has menu"
 msgstr "Include menù"
 
-#: src/lib/elm_toolbar.c:954
+#: src/lib/elm_toolbar.c:955
 msgid "Tool Item"
 msgstr "Oggetto strumento"
+
+#~ msgid "ON"
+#~ msgstr "Attivo"
+
+#~ msgid "OFF"
+#~ msgstr "Non attivo"

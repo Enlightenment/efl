@@ -1,7 +1,28 @@
-Elementary - a basic widget set library that is easy to use and is based on EFL.
-It provides the basic building blocks for creating applications and user interfaces.
+Elementary 0.9.0
 
-For more details about elementary widgets and how to use them kindly refer to the
-following link.
+******************************************************************************
+
+ FOR ANY ISSUES PLEASE EMAIL:
+ enlightenment-devel@lists.sourceforge.net
+
+******************************************************************************
+  
+Elementary
+
+A basic widget set library that is easy to use and is based on EFL.
+It provides the basic building blocks for creating applications and user
+interfaces.
+
+For more details about elementary widgets and how to use them kindly refer to
+the following link.
 
 http://docs.enlightenment.org/auto/elementary/
+
+------------------------------------------------------------------------------
+COMPILING AND INSTALLING:
+
+  ./configure
+  make
+(do this as root unless you are installing in your users directories):
+  make install
+  
