@@ -121,16 +121,16 @@ AC_SUBST(EFL_ETHUMB_BUILD)
 AC_SUBST(EFL_ETHUMB_CLIENT_BUILD)
 AC_SUBST(lt_enable_auto_import)
 
-PKG_CHECK_MODULES(EINA, [eina >= 1.0.0])
-PKG_CHECK_MODULES(EVAS, [evas >= 1.0.0])
-PKG_CHECK_MODULES(ECORE, [ecore >= 1.0.0])
-PKG_CHECK_MODULES(ECORE_EVAS, [ecore-evas >= 1.0.0])
-PKG_CHECK_MODULES(ECORE_FILE, [ecore-file >= 1.0.0 ])
-PKG_CHECK_MODULES(EDJE, [edje >= 1.0.0])
-PKG_CHECK_MODULES(EET, [eet >= 1.4.0])
+PKG_CHECK_MODULES(EINA, [eina >= 1.2.0])
+PKG_CHECK_MODULES(EVAS, [evas >= 1.2.0])
+PKG_CHECK_MODULES(ECORE, [ecore >= 1.2.0])
+PKG_CHECK_MODULES(ECORE_EVAS, [ecore-evas >= 1.2.0])
+PKG_CHECK_MODULES(ECORE_FILE, [ecore-file >= 1.2.0 ])
+PKG_CHECK_MODULES(EDJE, [edje >= 1.2.0])
+PKG_CHECK_MODULES(EET, [eet >= 1.6.0])
 EFL_WITH_BIN([edje], [edje-cc], [edje_cc])
 
-requirement_ethumb="eina >= 1.0.0 evas >= 1.0.0 ecore >= 1.0.0 ecore-evas >= 1.0.0 ecore-file >= 1.0.0 edje >= 1.0.0"
+requirement_ethumb="eina >= 1.2.0 evas >= 1.2.0 ecore >= 1.2.0 ecore-evas >= 1.2.0 ecore-file >= 1.2.0 edje >= 1.2.0"
 requirement_ethumb_client=""
 
 AM_CONDITIONAL(HAVE_EMOTION, false)

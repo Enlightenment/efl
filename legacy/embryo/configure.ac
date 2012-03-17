@@ -107,7 +107,7 @@ esac
 AC_SUBST(EFL_EMBRYO_BUILD)
 
 # For embryo_cc_prefix.c
-PKG_CHECK_MODULES([EINA], [eina >= 1.1.0])
+PKG_CHECK_MODULES([EINA], [eina >= 1.2.0])
 
 ### Checks for portability layer
 

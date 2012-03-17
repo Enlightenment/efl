@@ -108,16 +108,16 @@ EFL_CHECK_DOXYGEN([build_doc="yes"], [build_doc="no"])
 
 ### Checks for libraries
 
-PKG_CHECK_MODULES(EMOTION, [eina >= 1.0.0 evas >= 1.0.0 ecore >= 1.0.0 eet >= 1.4.0])
-requirement_emotion="ecore >= 1.0.0 evas >= 1.0.0 eina >= 1.0.0 eet >= 1.4.0"
+PKG_CHECK_MODULES(EMOTION, [eina >= 1.2.0 evas >= 1.2.0 ecore >= 1.2.0 eet >= 1.6.0])
+requirement_emotion="ecore >= 1.2.0 evas >= 1.2.0 eina >= 1.2.0 eet >= 1.6.0"
 
 if test "x${have_emotion_test}" = "xyes" ; then
-   PKG_CHECK_MODULES(EMOTION_BIN, [eina >= 1.0.0 evas >= 1.0.0 ecore >= 1.0.0 ecore-evas >= 1.0.0 edje >= 1.0.0])
+   PKG_CHECK_MODULES(EMOTION_BIN, [eina >= 1.2.0 evas >= 1.2.0 ecore >= 1.2.0 ecore-evas >= 1.2.0 edje >= 1.2.0])
 fi
 
-PKG_CHECK_MODULES(ECORE_X, [ecore-x >= 1.0.0 ecore-evas >= 1.0.0], [have_ecore_x="yes"], [have_ecore_x="no"])
+PKG_CHECK_MODULES(ECORE_X, [ecore-x >= 1.2.0 ecore-evas >= 1.2.0], [have_ecore_x="yes"], [have_ecore_x="no"])
 
-PKG_CHECK_MODULES(ECORE_FB, [ecore-fb >= 1.0.0], [have_ecore_fb="yes"], [have_ecore_fb="no"])
+PKG_CHECK_MODULES(ECORE_FB, [ecore-fb >= 1.2.0], [have_ecore_fb="yes"], [have_ecore_fb="no"])
 
 if test "x${have_ecore_x}" = "xyes" ; then
    AC_DEFINE(EMOTION_HAVE_ECORE_X, 1, [Define to 1 if Ecore_X is enabled])
@@ -127,13 +127,13 @@ if test "x${have_ecore_fb}" = "xyes" ; then
    AC_DEFINE(EMOTION_HAVE_ECORE_FB, 1, [Define to 1 if Ecore_Fb is enabled])
 fi
 
-PKG_CHECK_EXISTS([evas-software-x11 >= 1.0.0], [AC_DEFINE(HAVE_EVAS_SOFWARE_X11, 1, [Evas Software Xlib Engine Support])])
+PKG_CHECK_EXISTS([evas-software-x11 >= 1.2.0], [AC_DEFINE(HAVE_EVAS_SOFWARE_X11, 1, [Evas Software Xlib Engine Support])])
 
-PKG_CHECK_EXISTS([evas-xrender-x11 >= 1.0.0], [AC_DEFINE(HAVE_EVAS_XRENDER_X11, 1, [Evas Software Xlib Engine Support])])
+PKG_CHECK_EXISTS([evas-xrender-x11 >= 1.2.0], [AC_DEFINE(HAVE_EVAS_XRENDER_X11, 1, [Evas Software Xlib Engine Support])])
 
-PKG_CHECK_EXISTS([evas-opengl-x11 >= 1.0.0], [AC_DEFINE(HAVE_EVAS_OPENGL_X11, 1, [Evas OpenGL Xlib Engine Support])])
+PKG_CHECK_EXISTS([evas-opengl-x11 >= 1.2.0], [AC_DEFINE(HAVE_EVAS_OPENGL_X11, 1, [Evas OpenGL Xlib Engine Support])])
 
-PKG_CHECK_EXISTS([evas-fb >= 1.0.0], [AC_DEFINE(HAVE_EVAS_FB, 1, [Evas Framebuffer Engine Support])])
+PKG_CHECK_EXISTS([evas-fb >= 1.2.0], [AC_DEFINE(HAVE_EVAS_FB, 1, [Evas Framebuffer Engine Support])])
 
 EFL_EDJE_EXTERNAL([have_edje_external="yes"], [have_edje_external="no"])
 
@@ -241,11 +241,11 @@ AC_ARG_ENABLE([ecore-x],
 
 if test "x$want_ecore_x" != "xno"; then
    PKG_CHECK_MODULES([ECORE_X],
-      [ecore-x >= 1.0.0],
+      [ecore-x >= 1.2.0],
       [
        AC_DEFINE(HAVE_ECORE_X, 1, [X11 support for Ecore])
        have_ecore_x="yes"
-       requirement_elm="ecore-x >= 1.0.0 ${requirement_elm}"
+       requirement_elm="ecore-x >= 1.2.0 ${requirement_elm}"
       ],
       [have_ecore_x="no"]
    )

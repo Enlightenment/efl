@@ -231,8 +231,8 @@ AC_SUBST(EET_LIBS)
 
 # Eina library
 
-PKG_CHECK_MODULES(EINA, [eina >= 1.1.0])
-requirement_eet="eina >= 1.1.0 ${requirement_eet}"
+PKG_CHECK_MODULES(EINA, [eina >= 1.2.0])
+requirement_eet="eina >= 1.2.0 ${requirement_eet}"
 
 ### Checks for portability layer
 

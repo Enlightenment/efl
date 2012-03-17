@@ -58,7 +58,7 @@ AC_SUBST(VMAJ)
 AC_CANONICAL_BUILD
 AC_CANONICAL_HOST
 
-requirement_eeze="ecore >= 1.1.0 eina >= 1.1.0 libudev"
+requirement_eeze="ecore >= 1.2.0 eina >= 1.2.0 libudev"
 
 
 ### Checks for programs
@@ -111,9 +111,9 @@ if test "x$eeze_mount" = "xyes";then
   AC_ARG_WITH([eject], [AS_HELP_STRING([--with-eject], [specify eject bin @<:@default=detect@:>@])], [with_eject=$withval], [with_eject="detect"])
   PKG_CHECK_MODULES([LIBMOUNT], [mount >= 2.18.0])
   mount_v=$(pkg-config --modversion mount)
-  PKG_CHECK_MODULES([ECORE_FILE], [ecore-file >= 1.1.0])
-  PKG_CHECK_MODULES([EET], [eet >= 1.5.0])
-  PKG_CHECK_MODULES([ECORE_CON], [ecore-con >= 1.1.0])
+  PKG_CHECK_MODULES([ECORE_FILE], [ecore-file >= 1.2.0])
+  PKG_CHECK_MODULES([EET], [eet >= 1.6.0])
+  PKG_CHECK_MODULES([ECORE_CON], [ecore-con >= 1.2.0])
 
   if test "x$with_mount" = "xdetect";then
     AC_PATH_PROG([with_mount], [mount], [])

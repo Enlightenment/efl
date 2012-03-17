@@ -260,7 +260,7 @@ AM_CONDITIONAL([EVAS_HAVE_EXOTIC], [test "x${enable_exotic}" = "xyes"])
 ## strong dependencies
 
 # Eina
-PKG_CHECK_MODULES([EINA], [eina >= 1.1.0])
+PKG_CHECK_MODULES([EINA], [eina >= 1.2.0])
 CPPFLAGS_SAVE="$CPPFLAGS"
 CPPFLAGS="$CPPFLAGS $EINA_CFLAGS"
 AC_CHECK_SIZEOF(Eina_Unicode,, [#include <Eina.h>])
@@ -269,7 +269,7 @@ CPPFLAGS="$CPPFLAGS_SAVE"
 # Freetype
 PKG_CHECK_MODULES([FREETYPE], [freetype2 >= 9.3.0])
 
-requirement_evas="freetype2 eina >= 1.1.0 ${requirement_evas}"
+requirement_evas="freetype2 eina >= 1.2.0 ${requirement_evas}"
 
 ## optional dependencies
 

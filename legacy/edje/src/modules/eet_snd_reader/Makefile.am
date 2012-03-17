@@ -1,6 +1,6 @@
 MAINTAINERCLEANFILES = Makefile.in
 
-pkglibdir = $(REMIX_PLUGIN_DIR)
+pkglibdir = $(DESTDIR)$(REMIX_PLUGIN_DIR)
 
 AM_CPPFLAGS = \
 -I. \
@@ -9,7 +9,7 @@ AM_CPPFLAGS = \
 @EDJE_CFLAGS@ \
 @REMIX_CFLAGS@
 
-pkgdir = $(REMIX_PLUGIN_DIR)
+pkgdir = $(DESTDIR)$(REMIX_PLUGIN_DIR)
 pkg_LTLIBRARIES =  libeet_sndfile_reader.la
 
 libeet_sndfile_reader_la_SOURCES = eet_snd_reader.c

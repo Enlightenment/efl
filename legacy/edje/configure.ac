@@ -258,37 +258,37 @@ fi
 
 PKG_CHECK_MODULES([MINIMAL],
    [
-    eina >= 1.1.0
-    eet >= 1.5.0
+    eina >= 1.2.0
+    eet >= 1.6.0
    ])
 
 PKG_CHECK_MODULES([EDJE],
    [
-    eina >= 1.1.0
-    eet >= 1.5.0
-    evas >= 1.1.0
-    ecore >= 1.1.0
-    ecore-evas >= 1.1.0
-    ecore-file >= 1.1.0
-    embryo >= 1.1.0
+    eina >= 1.2.0
+    eet >= 1.6.0
+    evas >= 1.2.0
+    ecore >= 1.2.0
+    ecore-evas >= 1.2.0
+    ecore-file >= 1.2.0
+    embryo >= 1.2.0
    ])
 
 EDJE_LIBS="${EDJE_LIBS} ${LUA_LIBS} ${lua_libs}"
 EDJE_CFLAGS="${EDJE_CFLAGS} ${LUA_CFLAGS}"
 
-requirement_edje="embryo >= 1.1.0 ecore-evas >= 1.1.0 ecore >= 1.1.0 evas >= 1.1.0 eet >= 1.5.0 eina >= 1.1.0 ${requirement_edje}"
+requirement_edje="embryo >= 1.2.0 ecore-evas >= 1.2.0 ecore >= 1.2.0 evas >= 1.2.0 eet >= 1.6.0 eina >= 1.2.0 ${requirement_edje}"
 requirement_edje="${requirement_lua} ${requirement_edje}"
 
 have_ecore_imf="no"
 PKG_CHECK_MODULES([ECORE_IMF],
    [
-    ecore-imf >= 1.1.0
-    ecore-imf-evas >= 1.1.0
+    ecore-imf >= 1.2.0
+    ecore-imf-evas >= 1.2.0
    ],
    [
     AC_DEFINE([HAVE_ECORE_IMF], [1], [Input Method Support for Edje Entry])
     have_ecore_imf="yes"
-    requirement_edje="ecore-imf-evas >= 1.1.0 ecore-imf >= 1.1.0 ${requirement_edje}"
+    requirement_edje="ecore-imf-evas >= 1.2.0 ecore-imf >= 1.2.0 ${requirement_edje}"
    ],
    [have_ecore_imf="no"])
 
@@ -445,26 +445,26 @@ fi
 # Dependencies for the binaries
 
 if test "x$have_edje_cc" = "xyes"; then
-   PKG_CHECK_MODULES([EDJE_CC], [ecore-file >= 1.1.0 ecore-evas >= 1.1.0 ecore >= 1.1.0 evas >= 1.1.0 eet >= 1.5.0 eina >= 1.1.0])
+   PKG_CHECK_MODULES([EDJE_CC], [ecore-file >= 1.2.0 ecore-evas >= 1.2.0 ecore >= 1.2.0 evas >= 1.2.0 eet >= 1.6.0 eina >= 1.2.0])
    EDJE_CC_LIBS="${EDJE_CC_LIBS} ${LUA_LIBS} ${lua_libs}"
 fi
 
 AM_CONDITIONAL([BUILD_EPP], [test "x$have_edje_cc" = "xyes"])
 
 if test "x$have_edje_decc" = "xyes"; then
-   PKG_CHECK_MODULES([EDJE_DECC], [ecore-file >= 1.1.0 ecore-evas >= 1.1.0 ecore >= 1.1.0 evas >= 1.1.0 eet >= 1.5.0 eina >= 1.1.0])
+   PKG_CHECK_MODULES([EDJE_DECC], [ecore-file >= 1.2.0 ecore-evas >= 1.2.0 ecore >= 1.2.0 evas >= 1.2.0 eet >= 1.6.0 eina >= 1.2.0])
 fi
 
 if test "x$have_edje_player" = "xyes"; then
-   PKG_CHECK_MODULES([EDJE_PLAYER], [ecore-evas >= 1.1.0 ecore >= 1.1.0 evas >= 1.1.0 eina >= 1.1.0])
+   PKG_CHECK_MODULES([EDJE_PLAYER], [ecore-evas >= 1.2.0 ecore >= 1.2.0 evas >= 1.2.0 eina >= 1.2.0])
 fi
 
 if test "x$have_edje_inspector" = "xyes"; then
-   PKG_CHECK_MODULES([EDJE_INSPECTOR], [ecore-evas >= 1.1.0 ecore >= 1.1.0 evas >= 1.1.0 eina >= 1.1.0])
+   PKG_CHECK_MODULES([EDJE_INSPECTOR], [ecore-evas >= 1.2.0 ecore >= 1.2.0 evas >= 1.2.0 eina >= 1.2.0])
 fi
 
 if test "x$have_edje_external_inspector" = "xyes"; then
-   PKG_CHECK_MODULES([EDJE_EXTERNAL_INSPECTOR], [ecore >= 1.1.0 evas >= 1.1.0 eina >= 1.1.0])
+   PKG_CHECK_MODULES([EDJE_EXTERNAL_INSPECTOR], [ecore >= 1.2.0 evas >= 1.2.0 eina >= 1.2.0])
 fi
 
 

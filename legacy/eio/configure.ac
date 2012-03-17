@@ -92,7 +92,7 @@ EFL_CHECK_DOXYGEN([build_doc="yes"], [build_doc="no"])
 
 ### Checks for libraries
 
-requirements_eio="eet >= 1.5.0 eina >= 1.0.0 ecore >= 1.0.0"
+requirements_eio="eet >= 1.6.0 eina >= 1.2.0 ecore >= 1.2.0"
 
 PKG_CHECK_MODULES([EIO], [${requirements_eio}])
 

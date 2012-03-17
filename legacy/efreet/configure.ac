@@ -147,9 +147,9 @@ AC_SUBST(EFL_EFREET_BUILD)
 AC_SUBST(EFL_EFREET_MIME_BUILD)
 AC_SUBST(EFL_EFREET_TRASH_BUILD)
 
-requirement_efreet="ecore-file >= 1.1.0 ecore >= 1.1.0 eet >= 1.5.0 eina >= 1.1.0 ${requirement_efreet}"
+requirement_efreet="ecore-file >= 1.2.0 ecore >= 1.2.0 eet >= 1.6.0 eina >= 1.2.0 ${requirement_efreet}"
 PKG_CHECK_MODULES(EFREET, [${requirement_efreet}])
-PKG_CHECK_MODULES(EINA, [eina >= 1.1.0])
+PKG_CHECK_MODULES(EINA, [eina >= 1.2.0])
 
 
 ### Checks for header files
