@@ -477,6 +477,14 @@ ecore_imf_context_preedit_string_get(Ecore_IMF_Context *ctx, char **str, int *cu
  *              }
  *         }
  *    }
+ * 
+ * // delete attribute list
+ * if (attrs)
+ *   {
+ *      EINA_LIST_FREE(attrs, attr) free(attr);
+ *   }
+ *
+ * free(preedit_string);
  * @endcode
  * @since 1.1.0
  */
