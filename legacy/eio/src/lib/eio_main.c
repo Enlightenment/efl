@@ -23,6 +23,9 @@
  *                                  Local                                     *
  *============================================================================*/
 
+static Eio_Version _version = { VMAJ, VMIN, VMIC, VREV };
+EAPI Eio_Version *eio_version = &_version;
+
 /**
  * @cond LOCAL
  */

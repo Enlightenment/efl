@@ -64,6 +64,19 @@
 extern "C" {
 #endif
 
+#define EIO_VERSION_MAJOR 1
+#define EIO_VERSION_MINOR 0
+   
+   typedef struct _Eio_Version
+     {
+        int major;
+        int minor;
+        int micro;
+        int revision;
+     } Eio_Version;
+   
+   EAPI extern Eio_Version *eio_version;
+   
 /**
  * @defgroup Eio_Group Eio Reference API
  *

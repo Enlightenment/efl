@@ -77,6 +77,9 @@ void *alloca (size_t);
   #include <libexif/exif-data.h>
 #endif
 
+static Ethumb_Version _version = { VMAJ, VMIN, VMIC, VREV };
+EAPI Ethumb_Version *ethumb_version = &_version;
+
 static int _log_dom = -1;
 #define DBG(...) EINA_LOG_DOM_DBG(_log_dom, __VA_ARGS__)
 #define INF(...) EINA_LOG_DOM_INFO(_log_dom, __VA_ARGS__)

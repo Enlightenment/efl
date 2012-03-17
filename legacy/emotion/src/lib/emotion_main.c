@@ -22,6 +22,9 @@
 #include "Emotion.h"
 #include "emotion_private.h"
 
+static Emotion_Version _version = { VMAJ, VMIN, VMIC, VREV };
+EAPI Emotion_Version *emotion_version = &_version;
+
 EAPI int EMOTION_WEBCAM_UPDATE = 0;
 
 struct ext_match_s

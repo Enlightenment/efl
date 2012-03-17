@@ -243,6 +243,19 @@ typedef enum _Emotion_Aspect    Emotion_Aspect; /**< Aspect ratio option. */
 extern "C" {
 #endif
 
+#define EMOTION_VERSION_MAJOR 1
+#define EMOTION_VERSION_MINOR 0
+   
+   typedef struct _Emotion_Version
+     {
+        int major;
+        int minor;
+        int micro;
+        int revision;
+     } Emotion_Version;
+   
+   EAPI extern Emotion_Version *emotion_version;
+   
 /* api calls available */
 
 /**

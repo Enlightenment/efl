@@ -5,8 +5,6 @@ includedir=@includedir@
 
 Name: ecore
 Description: Ecore event abstraction library
-@pkgconfig_requires_private@: @requirements_ecore@
 Version: @VERSION@
-Libs: -L${libdir} -lecore
-Libs.private: -lm
-Cflags: -I${includedir}/ecore-@VMAJ@
+Libs: -L${libdir} -lecore @EINA_LIBS@
+Cflags: -I${includedir}/ecore-@VMAJ@ @EINA_CFLAGS@

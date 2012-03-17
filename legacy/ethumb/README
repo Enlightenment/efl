@@ -1,4 +1,13 @@
-                Ethumb - Thumbnail generation library
+Ethumb 1.0.0
+
+******************************************************************************
+
+ FOR ANY ISSUES PLEASE EMAIL:
+ enlightenment-devel@lists.sourceforge.net
+
+******************************************************************************
+  
+Ethumb - Thumbnail generation library
 
 
 FEATURES
@@ -49,3 +58,12 @@ Client server provides the following:
    sockets
  * interface of client library is independent of the communication
    method selected
+
+------------------------------------------------------------------------------
+COMPILING AND INSTALLING:
+
+  ./configure
+  make
+(do this as root unless you are installing in your users directories):
+  make install
+  

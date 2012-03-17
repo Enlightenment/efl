@@ -33,6 +33,19 @@
 extern "C" {
 #endif
 
+#define ETHUMB_VERSION_MAJOR 1
+#define ETHUMB_VERSION_MINOR 0
+   
+   typedef struct _Ethumb_Version
+     {
+        int major;
+        int minor;
+        int micro;
+        int revision;
+     } Ethumb_Version;
+   
+   EAPI extern Ethumb_Version *ethumb_version;
+   
 /**
  * @defgroup Ethumb Ethumb
  *

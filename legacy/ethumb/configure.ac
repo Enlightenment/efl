@@ -1,15 +1,15 @@
 ##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##
 ##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##
-m4_define([v_maj], [0])
-m4_define([v_min], [1])
-m4_define([v_mic], [1])
+m4_define([v_maj], [1])
+m4_define([v_min], [0])
+m4_define([v_mic], [0])
 m4_define([v_rev], m4_esyscmd([(svnversion "${SVN_REPO_PATH:-.}" | grep -v export || echo 0) | awk -F : '{printf("%s\n", $1);}' | tr -d ' :MSP\n']))
 m4_if(v_rev, [0], [m4_define([v_rev], m4_esyscmd([git log 2> /dev/null | (grep -m1 git-svn-id || echo 0) | sed -e 's/.*@\([0-9]*\).*/\1/' | tr -d '\n']))])
 ##--   When released, remove the dnl on the below line
-dnl m4_undefine([v_rev])
+m4_undefine([v_rev])
 ##--   When doing snapshots - change soname. remove dnl on below line
-m4_define([relname], [ver-pre-svn-09])
-m4_define([v_rel], [-release relname])
+dnl m4_define([relname], [ver-pre-svn-09])
+dnl m4_define([v_rel], [-release relname])
 ##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##
 m4_ifdef([v_rev], [m4_define([v_ver], [v_maj.v_min.v_mic.v_rev])],
 [m4_define([v_ver], [v_maj.v_min.v_mic])])
@@ -19,7 +19,7 @@ m4_define([lt_age], v_min)
 ##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##
 ##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##
 
-AC_INIT([ethumb], [v_ver], [enlightenment-devel@lists.sourceforge.net])
+AC_INIT([ethumb], [v_ver]-alpha, [enlightenment-devel@lists.sourceforge.net])
 AC_PREREQ([2.52])
 AC_CONFIG_SRCDIR([configure.ac])
 AC_CONFIG_MACRO_DIR([m4])
@@ -44,10 +44,10 @@ _XTERM_COLORS
 ##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##
 m4_ifdef([v_rev], , [m4_define([v_rev], [0])])
 m4_ifdef([v_rel], , [m4_define([v_rel], [])])
-AC_DEFINE_UNQUOTED(VERS_MAJ, [v_maj], [Major version])
-AC_DEFINE_UNQUOTED(VERS_MIN, [v_min], [Minor version])
-AC_DEFINE_UNQUOTED(VERS_MIC, [v_mic], [Micro version])
-AC_DEFINE_UNQUOTED(VERS_REV, [v_rev], [Revison])
+AC_DEFINE_UNQUOTED(VMAJ, [v_maj], [Major version])
+AC_DEFINE_UNQUOTED(VMIN, [v_min], [Minor version])
+AC_DEFINE_UNQUOTED(VMIC, [v_mic], [Micro version])
+AC_DEFINE_UNQUOTED(VREV, [v_rev], [Revison])
 version_info="lt_rev:lt_cur:lt_age"
 release_info="v_rel"
 AC_SUBST(version_info)
@@ -131,7 +131,7 @@ PKG_CHECK_MODULES(EET, [eet >= 1.4.0])
 EFL_WITH_BIN([edje], [edje-cc], [edje_cc])
 
 requirement_ethumb="eina >= 1.0.0 evas >= 1.0.0 ecore >= 1.0.0 ecore-evas >= 1.0.0 ecore-file >= 1.0.0 edje >= 1.0.0"
-requirement_ethumb_client="ethumb edbus >= 1.0.0"
+requirement_ethumb_client=""
 
 AM_CONDITIONAL(HAVE_EMOTION, false)
 define([CHECK_MODULE_EMOTION],
