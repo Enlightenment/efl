@@ -215,10 +215,6 @@
 
  * @image html img/widget/thumb/preview-00.png
  * @image latex img/widget/thumb/preview-00.eps
- * @li @ref Toggle
- *
- * @image html img/widget/toggle/preview-00.png
- * @image latex img/widget/toggle/preview-00.eps
  * @li @ref Toolbar
  *
  * @image html img/widget/toolbar/preview-00.png
