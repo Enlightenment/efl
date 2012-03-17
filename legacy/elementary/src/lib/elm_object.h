@@ -185,7 +185,7 @@ EAPI void         elm_object_disabled_set(Evas_Object *obj, Eina_Bool disabled);
 EAPI Eina_Bool    elm_object_disabled_get(const Evas_Object *obj);
 
 /**
- * @defgroup WidgetNavigation Widget Tree Navigation.
+ * @defgroup WidgetNavigation Widget Tree Navigation
  *
  * These functions provide checks for if a Evas_Object is an Elementary widget,
  * the possibility of getting a widget's parent, top level parent and getting a
