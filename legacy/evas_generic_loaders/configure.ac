@@ -58,7 +58,7 @@ PKG_PROG_PKG_CONFIG
 ### Checks for libraries
 
 # Eina library
-PKG_CHECK_MODULES(EINA, [eina >= 1.1.0])
+PKG_CHECK_MODULES(EINA, [eina >= 1.2.0])
 
 PKG_CHECK_MODULES([POPPLER], [poppler >= 0.12], [have_poppler="yes"], [have_poppler="no"])
 
