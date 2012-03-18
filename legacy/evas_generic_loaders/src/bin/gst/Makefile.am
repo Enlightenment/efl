@@ -25,7 +25,7 @@ evas_image_loader_gst_LDFLAGS =
 ## good list of extensions:
 ## http://www.fileinfo.com/filetypes/video
 ## should check which ones gst does support and make sure they are here
-install-data-hook:
+install-exec-hook:
 	ln -sf evas_image_loader.gst $(DESTDIR)$(libdir)/evas/utils/evas_image_loader.264
 	ln -sf evas_image_loader.gst $(DESTDIR)$(libdir)/evas/utils/evas_image_loader.3g2
 	ln -sf evas_image_loader.gst $(DESTDIR)$(libdir)/evas/utils/evas_image_loader.3gp

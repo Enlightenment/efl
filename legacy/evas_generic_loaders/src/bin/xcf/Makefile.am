@@ -21,5 +21,5 @@ evas_image_loader_xcf_CFLAGS = @EINA_CFLAGS@
 evas_image_loader_xcf_LDADD = @EINA_LIBS@ -lz -lm @SHM_OPEN_LIBS@
 evas_image_loader_xcf_LDFLAGS =
 
-install-data-hook:
+install-exec-hook:
 	ln -sf evas_image_loader.xcf $(DESTDIR)$(libdir)/evas/utils/evas_image_loader.xcf.gz

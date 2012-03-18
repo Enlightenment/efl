@@ -6,3 +6,7 @@
 
         * Add symlinks for *.dv, *.qt and *.rv video file formats
 
+2012-03-18 Carsten Haitzler (The Rasterman)
+
+        * Fix distcheck with highly parallel builds
+

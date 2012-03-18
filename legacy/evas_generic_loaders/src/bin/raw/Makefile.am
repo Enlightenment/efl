@@ -19,7 +19,7 @@ evas_image_loader_raw_CFLAGS = @LIBRAW_CFLAGS@
 evas_image_loader_raw_LDADD = @SHM_OPEN_LIBS@ @LIBRAW_LIBS@ -lm
 evas_image_loader_raw_LDFLAGS =
 
-install-data-hook:
+install-exec-hook:
 	ln -sf evas_image_loader.raw $(DESTDIR)$(libdir)/evas/utils/evas_image_loader.arw
 	ln -sf evas_image_loader.raw $(DESTDIR)$(libdir)/evas/utils/evas_image_loader.cr2
 	ln -sf evas_image_loader.raw $(DESTDIR)$(libdir)/evas/utils/evas_image_loader.crw
