@@ -18,3 +18,12 @@
 2011-12-02 Carsten Haitzler (The Rasterman)
 
         1.1.0 release
+
+2012-02-24  Cedric Bail
+
+        * Add exotic support
+
+2012-03-07  Vincent Torri
+
+	* Fix windows compilation issues
+
