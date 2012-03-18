@@ -173,8 +173,6 @@ _theme_hook(Evas_Object *obj)
 
    if (!wd) return;
    elm_layout_theme_set(wd->base, "popup", "base", elm_widget_style_get(obj));
-   elm_widget_scale_set(wd->base, elm_widget_scale_get(obj) *
-                        _elm_config->scale);
    _elm_widget_mirrored_reload(obj);
    _mirrored_set(obj, elm_widget_mirrored_get(obj));
    if (wd->button_count)
