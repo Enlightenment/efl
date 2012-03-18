@@ -56,7 +56,7 @@ typedef enum _api_state api_state;
 static void
 set_api_state(api_data *api)
 {
-   Evas_Object *grid = api->box;
+   Evas_Object *grid = api->grid;
 
    /* use elm_box_children_get() to get list of children */
    switch(api->state)
