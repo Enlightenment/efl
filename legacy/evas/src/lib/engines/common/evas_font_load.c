@@ -71,9 +71,7 @@ _evas_common_font_int_free(RGBA_Font_Int *fi)
    _evas_common_font_int_clear(fi);
    eina_hash_free(fi->kerning);
 
-#ifdef HAVE_PTHREAD
-   pthread_mutex_destroy(&fi->ft_mutex);
-#endif
+   LKD(fi->ft_mutex);
 #ifdef USE_HARFBUZZ
    hb_font_destroy(fi->ft.hb_font);
 #endif
@@ -301,9 +299,7 @@ _evas_common_font_int_cache_init(RGBA_Font_Int *fi)
 			       EINA_KEY_CMP(_evas_common_font_double_int_cmp),
 			       EINA_KEY_HASH(_evas_common_font_double_int_hash),
 			       free, 3);
-#ifdef HAVE_PTHREAD
-   pthread_mutex_init(&fi->ft_mutex, NULL);
-#endif
+   LKI(fi->ft_mutex);
 }
 
 EAPI RGBA_Font_Int *
