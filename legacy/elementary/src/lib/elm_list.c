@@ -1960,3 +1960,23 @@ elm_list_item_next(const Elm_Object_Item *it)
    if (item->node->next) return item->node->next->data;
    else return NULL;
 }
+
+EAPI Elm_Object_Item *
+elm_list_first_item_get(const Evas_Object *obj)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype) NULL;
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return NULL;
+   if (!wd->items) return NULL;
+   return eina_list_data_get(wd->items);
+}
+
+EAPI Elm_Object_Item *
+elm_list_last_item_get(const Evas_Object *obj)
+{
+   ELM_CHECK_WIDTYPE(obj, widtype) NULL;
+   Widget_Data *wd = elm_widget_data_get(obj);
+   if (!wd) return NULL;
+   if (!wd->items) return NULL;
+   return eina_list_data_get(eina_list_last(wd->items));
+}

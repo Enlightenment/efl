@@ -752,5 +752,28 @@ EAPI Elm_Object_Item               *elm_list_item_prev(const Elm_Object_Item *it
 EAPI Elm_Object_Item               *elm_list_item_next(const Elm_Object_Item *it);
 
 /**
+ * Get the first item in the list
+ *
+ * This returns the first item in the list.
+ *
+ * @param obj The list object
+ * @return The first item, or NULL if none
+ *
+ * @ingroup List
+ */
+EAPI Elm_Object_Item             *elm_list_first_item_get(const Evas_Object *obj);
+
+/**
+ * Get the last item in the list
+ *
+ * This returns the last item in the list.
+ *
+ * @return The last item, or NULL if none
+ *
+ * @ingroup List
+ */
+EAPI Elm_Object_Item             *elm_list_last_item_get(const Evas_Object *obj);
+
+/**
  * @}
  */
