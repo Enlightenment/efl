@@ -1185,9 +1185,9 @@ eina_file_statat(void *container __UNUSED__, Eina_File_Direct_Info *info, Eina_S
 
    if (info->type == EINA_FILE_UNKNOWN)
      {
-        if (_S_IFREG(buf.st_mode))
+        if (S_ISREG(buf.st_mode))
           info->type = EINA_FILE_REG;
-        else if (_S_IFDIR(buf.st_mode))
+        else if (S_ISDIR(buf.st_mode))
           info->type = EINA_FILE_DIR;
         else
           info->type = EINA_FILE_UNKNOWN;
