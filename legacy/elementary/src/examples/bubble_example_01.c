@@ -1,5 +1,5 @@
 //Compile with:
-//gcc -g `pkg-config --cflags --libs elementary` -DPACKAGE_DATA_DIR="\"<directory>\"" bubble_example_01.c -o bubble_example_01
+//gcc -o bubble_example_01 bubble_example_01.c -g `pkg-config --cflags --libs elementary`
 
 #include <Elementary.h>
 #ifdef HAVE_CONFIG_H
@@ -32,8 +32,11 @@ elm_main(int argc, char **argv)
    elm_win_title_set(win, "Bubble");
    elm_win_autodel_set(win, EINA_TRUE);
    elm_policy_set(ELM_POLICY_QUIT, ELM_POLICY_QUIT_LAST_WINDOW_CLOSED);
+   evas_object_resize(win, 300, 200);
+   evas_object_show(win);
 
    bg = elm_bg_add(win);
+   evas_object_size_hint_weight_set(bg, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    elm_win_resize_object_add(win, bg);
    evas_object_show(bg);
 
@@ -64,9 +67,6 @@ elm_main(int argc, char **argv)
    evas_object_resize(bubble, 200, 50);
    evas_object_move(bubble, 0, 110);
    evas_object_show(bubble);
-
-   evas_object_resize(win, 300, 200);
-   evas_object_show(win);
 
    elm_run();
 

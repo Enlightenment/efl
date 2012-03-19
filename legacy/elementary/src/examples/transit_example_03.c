@@ -1,6 +1,6 @@
 //Compile with:
-//gcc -g -DPACKAGE_DATA_DIR="\"<directory>\"" `pkg-config --cflags --libs elementary` transit_example_03.c -o transit_example_03
-// where directory is the a path where images/plant_01.jpg can be found.
+//gcc -o transit_example_03 transit_example_03.c `pkg-config --cflags --libs elementary` -DPACKAGE_DATA_DIR="\"<directory>\""
+//where directory is the a path where images/icon_07.png can be found.
 
 #include <Elementary.h>
 #ifdef HAVE_CONFIG_H

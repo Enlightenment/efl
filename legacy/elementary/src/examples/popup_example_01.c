@@ -1,5 +1,5 @@
 //Compile with:
-//gcc -g `pkg-config --cflags --libs elementary` popup_example_01.c -o popup_example_01
+//gcc -o popup_example_01 popup_example_01.c -g `pkg-config --cflags --libs elementary`
 
 #include <Elementary.h>
 #ifdef HAVE_CONFIG_H
@@ -24,6 +24,7 @@ elm_main(int argc __UNUSED__, char **argv __UNUSED__)
 
    bg = elm_bg_add(win);
    elm_bg_color_set(bg, 128, 128, 128);
+   evas_object_size_hint_weight_set(bg, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    elm_win_resize_object_add(win, bg);
    evas_object_show(bg);
 

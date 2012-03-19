@@ -1,5 +1,5 @@
 //Compile with:
-//gcc -g `pkg-config --cflags --libs elementary` bg_example_01.c -o bg_example_01
+//gcc -o bg_example_01 bg_example_01.c -g `pkg-config --cflags --libs elementary`
 
 #include <Elementary.h>
 #ifdef HAVE_CONFIG_H

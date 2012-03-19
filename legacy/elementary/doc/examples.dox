@@ -1459,8 +1459,8 @@
  * If some decoration is required, a label can be set, and icon before and
  * after the bar as well. On the second slider will add a @c home icon
  * and a @c folder icon at @c end.
- * @skipline text_set
- * @until end_set
+ * @skip elm_object_text_set
+ * @until elm_object_part_content_set(sl, "end", ic)
  *
  * If the bar size need to be changed, it can be done with span set function,
  * that doesn't accounts other widget's parts size. Also the bar can starts

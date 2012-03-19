@@ -1,9 +1,11 @@
 //Compile with:
-//gcc -g `pkg-config --cflags --libs elementary` ctxpopup_example_01.c -o ctxpopup_example_01
+//gcc -o ctxpopup_example_01 ctxpopup_example_01.c -g `pkg-config --cflags --libs elementary`
 
 #include <Elementary.h>
 #ifdef HAVE_CONFIG_H
 # include "elementary_config.h"
+#else
+# define __UNUSED__
 #endif
 
 static void
@@ -81,6 +83,8 @@ elm_main(int argc, char **argv)
    elm_win_title_set(win, "Contextual Popup");
    elm_win_autodel_set(win, EINA_TRUE);
    elm_policy_set(ELM_POLICY_QUIT, ELM_POLICY_QUIT_LAST_WINDOW_CLOSED);
+   evas_object_resize(win, 400, 400);
+   evas_object_show(win);
 
    bg = elm_bg_add(win);
    evas_object_size_hint_weight_set(bg, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
@@ -88,6 +92,7 @@ elm_main(int argc, char **argv)
    evas_object_show(bg);
 
    list = elm_list_add(win);
+   evas_object_size_hint_weight_set(list, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    elm_win_resize_object_add(win, list);
    elm_list_mode_set(list, ELM_LIST_COMPRESS);
 
@@ -97,9 +102,6 @@ elm_main(int argc, char **argv)
                         _list_item_cb2, NULL);
    evas_object_show(list);
    elm_list_go(list);
-
-   evas_object_resize(win, 400, 400);
-   evas_object_show(win);
 
    elm_run();
 }

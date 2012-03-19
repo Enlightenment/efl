@@ -5,7 +5,7 @@
  * See stdout/stderr for output. Compile with:
  *
  * @verbatim
- * gcc -g `pkg-config --cflags --libs elementary` slideshow_example.c -o slideshow_example
+ * gcc -o slideshow_example slideshow_example.c -g `pkg-config --cflags --libs elementary`
  * @endverbatim
  */
 
@@ -191,17 +191,21 @@ elm_main(int    argc __UNUSED__,
    win = elm_win_add(NULL, "slideshow", ELM_WIN_BASIC);
    elm_win_title_set(win, "Slideshow example");
    evas_object_smart_callback_add(win, "delete,request", _on_done, NULL);
+   elm_win_autodel_set(win, EINA_TRUE);
+   elm_policy_set(ELM_POLICY_QUIT, ELM_POLICY_QUIT_LAST_WINDOW_CLOSED);
+   evas_object_resize(win, 600, 400);
+   evas_object_show(win);
 
    bg = elm_bg_add(win);
-   elm_win_resize_object_add(win, bg);
    evas_object_size_hint_weight_set(bg, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   elm_win_resize_object_add(win, bg);
    evas_object_show(bg);
 
    slideshow = elm_slideshow_add(win);
    elm_slideshow_loop_set(slideshow, EINA_TRUE);
-   elm_win_resize_object_add(win, slideshow);
    evas_object_size_hint_weight_set(slideshow,
                                     EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   elm_win_resize_object_add(win, slideshow);
    evas_object_show(slideshow);
 
    itc.func.get = _get;
@@ -225,6 +229,7 @@ elm_main(int    argc __UNUSED__,
 
    notify = elm_notify_add(win);
    elm_notify_orient_set(notify, ELM_NOTIFY_ORIENT_BOTTOM);
+   evas_object_size_hint_weight_set(notify, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    elm_win_resize_object_add(win, notify);
    elm_notify_timeout_set(notify, 3.0);
 
@@ -310,9 +315,6 @@ elm_main(int    argc __UNUSED__,
                                   _notify_show, notify);
 
    _notify_show(notify, NULL, NULL, NULL);
-
-   evas_object_resize(win, 600, 400);
-   evas_object_show(win);
 
    elm_run();
    return 0;

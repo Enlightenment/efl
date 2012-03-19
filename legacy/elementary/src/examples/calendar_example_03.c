@@ -6,7 +6,7 @@
  * See stdout/stderr for output. Compile with:
  *
  * @verbatim
- * gcc -g `pkg-config --cflags --libs elementary` calendar_example_03.c -o calendar_example_03
+ * gcc -o calendar_example_03 calendar_example_03.c -g `pkg-config --cflags --libs elementary`
  * @endverbatim
  */
 
@@ -25,6 +25,7 @@ elm_main(int argc __UNUSED__, char **argv __UNUSED__)
    win = elm_win_add(NULL, "calendar", ELM_WIN_BASIC);
    elm_win_title_set(win, "Calendar Min/Max Year Example");
    elm_win_autodel_set(win, EINA_TRUE);
+   elm_policy_set(ELM_POLICY_QUIT, ELM_POLICY_QUIT_LAST_WINDOW_CLOSED);
 
    bg = elm_bg_add(win);
    elm_win_resize_object_add(win, bg);

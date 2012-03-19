@@ -1,5 +1,5 @@
 //Compile with:
-//gcc -g `pkg-config --cflags --libs elementary` hoversel_example_01.c -o hoversel_example_01
+//gcc -o hoversel_example_01 hoversel_example_01.c -g `pkg-config --cflags --libs elementary`
 
 #include <Elementary.h>
 #ifdef HAVE_CONFIG_H
