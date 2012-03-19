@@ -810,6 +810,63 @@
  */
 
  /**
+  * @page button_example_00 Button - Hello, Button!
+  *
+  * @dontinclude button_example_00.c
+  *
+  * Keeping the tradition, this is a simple "Hello, World" button example. We
+  * will show how to create a button and associate and action to be performed
+  * when you click on it.
+  *
+  * In the end, we'll be presented with something that looks like this:
+  *
+  * @image html screenshots/button_00.png
+  * @image latex screenshots/button_00.eps width=\textwidth
+  *
+  * The full code of the example is @ref button_example_00.c "here" and we
+  * will follow here with a rundown of it.
+  *
+  *
+  * There is only one button on the interface which performs a basic action:
+  * close the application. This behavior is described by on_click() function,
+  * that interrupt the program invoking elm_exit().
+  * @skip static void
+  * @until }
+  *
+  *
+  * On the main() function, we set the basic characteristics of the user
+  * interface. First we use the Elementary library to create a window and
+  * set its policies (such as close when the user click on the window close
+  * icon).
+  *
+  * @skip elm_win_add
+  * @until elm_policy_set
+  *
+  * In order to turn it visible on the WM (Window Manager), we also have to
+  * associate it to a canvas through Evas library, and set its dimensions.
+  *
+  * @skip evas_object_resize
+  * @until evas_object_show(win)
+  *
+  * Then we create a background associated to the window, define its dimensions,
+  * and turn it visible on the canvas.
+  * @skip  elm_bg_add
+  * @until evas_object_show(bg)
+  *
+  *
+  * Finally we use Elementary to create a button and Evas to set its
+  * proprieties. Here we have not only to give the button dimensions, but also
+  * its coordinates and the action to be performed on the click event.
+  * @skip elm_button_add
+  * @until evas_object_show(btn)
+  *
+  *
+  * And we are done.
+  *
+  * @example button_example_00.c
+  */
+
+/**
   * @page button_example_01 Button - Complete example
   *
   * @dontinclude button_example_01.c
