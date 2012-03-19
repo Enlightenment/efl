@@ -37,6 +37,7 @@ void test_check(void *data, Evas_Object *obj, void *event_info);
 void test_check2(void *data, Evas_Object *obj, void *event_info);
 void test_radio(void *data, Evas_Object *obj, void *event_info);
 void test_layout(void *data, Evas_Object *obj, void *event_info);
+void test_layout2(void *data, Evas_Object *obj, void *event_info);
 void test_hover(void *data, Evas_Object *obj, void *event_info);
 void test_hover2(void *data, Evas_Object *obj, void *event_info);
 void test_entry(void *data, Evas_Object *obj, void *event_info);
@@ -368,6 +369,7 @@ add_tests:
    ADD_TEST(NULL, "Containers", "Table 6", test_table6);
    ADD_TEST(NULL, "Containers", "Table 7", test_table7);
    ADD_TEST(NULL, "Containers", "Layout", test_layout);
+   ADD_TEST(NULL, "Containers", "Layout 2", test_layout2);
    ADD_TEST(NULL, "Containers", "Grid", test_grid);
 
    //------------------------------//
