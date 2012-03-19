@@ -1400,7 +1400,8 @@ _long_press(void *data)
 {
    Widget_Data *wd = elm_widget_data_get(data);
    if (!wd) return ECORE_CALLBACK_CANCEL;
-   _menu_press(data);
+   if (!_elm_config->desktop_entry)
+     _menu_press(data);
    wd->longpress_timer = NULL;
    evas_object_smart_callback_call(data, SIG_LONGPRESSED, NULL);
    return ECORE_CALLBACK_CANCEL;
@@ -1438,7 +1439,7 @@ _mouse_up(void *data, Evas *evas __UNUSED__, Evas_Object *obj __UNUSED__, void *
              wd->longpress_timer = NULL;
           }
      }
-   else if (ev->button == 3)
+   else if ((ev->button == 3) && (!_elm_config->desktop_entry))
      {
         wd->usedown = 1;
         _menu_press(data);
