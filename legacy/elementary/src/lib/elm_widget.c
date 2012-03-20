@@ -951,7 +951,7 @@ elm_widget_sub_object_add(Evas_Object *obj,
              if (sd2->parent_obj)
                elm_widget_sub_object_del(sd2->parent_obj, sobj);
              sd2->parent_obj = obj;
-             sd2->top_win_focused = sd->top_win_focused;
+             _elm_widget_top_win_focused_set(sobj, sd->top_win_focused);
              if (!sd->child_can_focus && (_is_focusable(sobj)))
                sd->child_can_focus = EINA_TRUE;
           }
