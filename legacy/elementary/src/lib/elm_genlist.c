@@ -4845,26 +4845,26 @@ _elm_genlist_item_compute_coordinates(Elm_Object_Item *it,
      }
 
    evas_object_geometry_get(_it->wd->pan_smart, NULL, NULL, w, h);
-   if (type==ELM_GENLIST_ITEM_SCROLLTO_IN)
+   switch(type)
      {
-        if ((_it->item->group_item) &&
-           (_it->wd->pan_y > (_it->y + _it->item->block->y)))
-            gith = _it->item->group_item->item->h;
+      case ELM_GENLIST_ITEM_SCROLLTO_IN:
+         if ((_it->item->group_item) &&
+            (_it->wd->pan_y > (_it->y + _it->item->block->y)))
+             gith = _it->item->group_item->item->h;
 
-        *h = _it->item->h;
-        *y = _it->y + _it->item->block->y - gith;
+         *h = _it->item->h;
+         *y = _it->y + _it->item->block->y - gith;
+         break;
+      case ELM_GENLIST_ITEM_SCROLLTO_TOP:
+         if (_it->item->group_item) gith = _it->item->group_item->item->h;
+         *y = _it->y + _it->item->block->y - gith;
+         break;
+      case ELM_GENLIST_ITEM_SCROLLTO_MIDDLE:
+         *y = _it->y + _it->item->block->y - *h / 2 + _it->item->h / 2;
+         break;
+      default:
+         return EINA_FALSE;
      }
-   else if (type==ELM_GENLIST_ITEM_SCROLLTO_TOP)
-     {
-        if (_it->item->group_item) gith = _it->item->group_item->item->h;
-        *y = _it->y + _it->item->block->y - gith;
-     }
-   else if (type==ELM_GENLIST_ITEM_SCROLLTO_MIDDLE)
-     {
-        *y = _it->y + _it->item->block->y - *h / 2 + _it->item->h / 2;
-     }
-   else
-     return EINA_FALSE;
 
    *x = _it->x + _it->item->block->x;
    *w = _it->item->block->w;
