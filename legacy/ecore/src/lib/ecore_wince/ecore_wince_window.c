@@ -447,6 +447,27 @@ ecore_wince_window_title_set(Ecore_WinCE_Window *window,
 }
 
 /**
+ * @brief Set the focus to the given window.
+ *
+ * @param window The window to give focus to.
+ *
+ * This function gives the focus to @p window. If @p window is
+ * @c NULL, this function does nothing.
+ */
+EAPI void
+ecore_wince_window_focus(Ecore_WinCE_Window *window)
+{
+   if (!window) return;
+
+   INF("focusing window");
+
+   if (!SetFocus(window->window))
+     {
+        ERR("SetFocus() failed");
+     }
+}
+
+/**
  * @brief Set the graphic backend used for the given window.
  *
  * @param window The window.

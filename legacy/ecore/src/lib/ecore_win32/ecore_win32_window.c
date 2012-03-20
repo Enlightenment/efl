@@ -877,7 +877,7 @@ ecore_win32_window_title_set(Ecore_Win32_Window *window,
  * @c NULL, this function does nothing.
  */
 EAPI void
-ecore_win32_window_focus_set(Ecore_Win32_Window *window)
+ecore_win32_window_focus(Ecore_Win32_Window *window)
 {
    if (!window) return;
 

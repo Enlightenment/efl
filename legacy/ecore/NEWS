@@ -37,6 +37,10 @@ Additions:
      - ecore_imf_context_input_panel_return_key_disabled_get()
      - ecore_imf_context_input_panel_caps_lock_mode_set()
      - ecore_imf_context_input_panel_caps_lock_mode_get()
+    * ecore_win32:
+     - ecore_win32_focus()
+    * ecore_wince:
+     - ecore_wince_focus()
 
 Fixes:
     * ecore_thread:
@@ -61,6 +65,10 @@ Improvements:
 Deprecations:
     * ecore_x:
      - ecore_x_randr_crtc_current_get()
+
+Removal:
+    * ecore_win32:
+     - ecore_win32_focus_set()
 
 Ecore 1.1.0
 

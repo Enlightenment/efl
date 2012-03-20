@@ -579,3 +579,9 @@
 
         * Fix ecore_x_randr_modes_info_get to not cut off the trailing '\0'
 		anymore
+
+2012-03-20  Vincent Torri
+
+        * Change ecore_win32_window_focus_set() to ecore_win32_window_focus()
+	to match ecore_x API.
+	* Add ecore_wince_window_focus_set()
