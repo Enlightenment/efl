@@ -641,11 +641,11 @@ _ecore_evas_wince_cursor_set(Ecore_Evas *ee, Evas_Object *obj, int layer, int ho
 #endif
 }
 
-/* static void */
-/* _ecore_evas_wince_focus_set(Ecore_Evas *ee, int on __UNUSED__) */
-/* { */
-/*    ecore_wince_window_focus_set(ee->prop.window); */
-/* } */
+static void
+_ecore_evas_wince_focus_set(Ecore_Evas *ee, int on __UNUSED__)
+{
+   ecore_wince_window_focus(ee->prop.window);
+}
 
 /* static void */
 /* _ecore_evas_wince_iconified_set(Ecore_Evas *ee, int on) */
@@ -760,7 +760,7 @@ static Ecore_Evas_Engine_Func _ecore_wince_engine_func =
    NULL, //_ecore_evas_wince_size_step_set,
    _ecore_evas_wince_cursor_set,
    NULL, /* _ecore_evas_x_layer_set */
-   NULL, //_ecore_evas_wince_focus_set,
+   _ecore_evas_wince_focus_set,
    NULL, //_ecore_evas_wince_iconified_set,
    NULL, //_ecore_evas_wince_borderless_set,
    NULL, /* _ecore_evas_x_override_set */

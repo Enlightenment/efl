@@ -717,7 +717,7 @@ _ecore_evas_win32_activate(Ecore_Evas *ee)
 {
    INF("ecore evas activate");
 
-   ecore_win32_window_focus_set((struct _Ecore_Win32_Window *)ee->prop.window);
+   ecore_win32_window_focus((struct _Ecore_Win32_Window *)ee->prop.window);
 }
 
 static void
@@ -819,7 +819,7 @@ _ecore_evas_win32_cursor_set(Ecore_Evas *ee, Evas_Object *obj, int layer, int ho
 static void
 _ecore_evas_win32_focus_set(Ecore_Evas *ee, int on __UNUSED__)
 {
-   ecore_win32_window_focus_set((struct _Ecore_Win32_Window *)ee->prop.window);
+   ecore_win32_window_focus((struct _Ecore_Win32_Window *)ee->prop.window);
 }
 
 static void
