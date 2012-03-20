@@ -249,6 +249,8 @@ ecore_win32_window_free(Ecore_Win32_Window *window)
  *
  * This function returns the window HANDLE associated to @p window. If
  * @p window is @c NULL, this function returns @c NULL.
+ *
+ * @note The returned value is of type HWND.
  */
 EAPI void *
 ecore_win32_window_hwnd_get(Ecore_Win32_Window *window)
@@ -887,6 +889,37 @@ ecore_win32_window_focus(Ecore_Win32_Window *window)
      {
         ERR("SetFocus() failed");
      }
+}
+
+/**
+ * @brief Get the current focused window.
+ *
+ * @return The window that has focus.
+ *
+ * This function returns the window that has focus. If the calling
+ * thread's message queue does not have an associated window with the
+ * keyboard focus, the return value is @c NULL.
+ *
+ * @note Even if the returned value is @c NULL, another thread's queue
+ * may be associated with a window that has the keyboard focus.
+ *
+ * @note The returned value is of type HWND.
+ */
+EAPI void *
+ecore_win32_window_focus_get(void)
+{
+   HWND focused;
+
+   INF("getting focused window");
+
+   focused = GetFocus(window->window);
+   if (!focused)
+     {
+        ERR("GetFocus() failed");
+        return NULL;
+     }
+
+   return focused;
 }
 
 /**

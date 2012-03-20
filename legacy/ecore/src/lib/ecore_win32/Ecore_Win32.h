@@ -462,6 +462,8 @@ EAPI void ecore_win32_window_title_set(Ecore_Win32_Window *window,
 
 EAPI void ecore_win32_window_focus(Ecore_Win32_Window *window);
 
+EAPI void *ecore_win32_window_focus_get(void);
+
 EAPI void ecore_win32_window_iconified_set(Ecore_Win32_Window *window,
                                            Eina_Bool           on);
 

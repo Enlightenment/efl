@@ -468,6 +468,37 @@ ecore_wince_window_focus(Ecore_WinCE_Window *window)
 }
 
 /**
+ * @brief Get the current focused window.
+ *
+ * @return The window that has focus.
+ *
+ * This function returns the window that has focus. If the calling
+ * thread's message queue does not have an associated window with the
+ * keyboard focus, the return value is @c NULL.
+ *
+ * @note Even if the returned value is @c NULL, another thread's queue
+ * may be associated with a window that has the keyboard focus.
+ *
+ * @note The returned value is of type HWND.
+ */
+EAPI void *
+ecore_wince_window_focus_get(void)
+{
+   HWND focused;
+
+   INF("getting focused window");
+
+   focused = GetFocus(window->window);
+   if (!focused)
+     {
+        ERR("GetFocus() failed");
+        return NULL;
+     }
+
+   return focused;
+}
+
+/**
  * @brief Set the graphic backend used for the given window.
  *
  * @param window The window.

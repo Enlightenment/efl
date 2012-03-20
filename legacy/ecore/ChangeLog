@@ -582,6 +582,7 @@
 
 2012-03-20  Vincent Torri
 
-        * Change ecore_win32_window_focus_set() to ecore_win32_window_focus()
+        * Rename ecore_win32_window_focus_set() to ecore_win32_window_focus()
 	to match ecore_x API.
-	* Add ecore_wince_window_focus_set()
+	* Add ecore_wince_window_focus(), ecore_wince_window_focus_get()
+	and ecore_win32_window_focus_get().

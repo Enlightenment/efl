@@ -39,8 +39,10 @@ Additions:
      - ecore_imf_context_input_panel_caps_lock_mode_get()
     * ecore_win32:
      - ecore_win32_focus()
+     - ecore_win32_focus_get()
     * ecore_wince:
      - ecore_wince_focus()
+     - ecore_wince_focus_get()
 
 Fixes:
     * ecore_thread:
