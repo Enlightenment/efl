@@ -1687,6 +1687,7 @@ evas_render_updates_internal(Evas *e,
    e->framespace.changed = 0;
    e->invalidate = 0;
 
+   // always clean... lots of mem waste!
    /* If their are some object to restack or some object to delete,
     * it's useless to keep the render object list around. */
    if (clean_them)
@@ -1696,6 +1697,17 @@ evas_render_updates_internal(Evas *e,
         eina_array_clean(&e->restack_objects);
         eina_array_clean(&e->delete_objects);
         eina_array_clean(&e->obscuring_objects);
+        eina_array_clean(&e->temporary_objects);
+        eina_array_clean(&e->clip_changes);
+/* we should flush here and have a mempool system for this        
+        eina_array_flush(&e->active_objects);
+        eina_array_flush(&e->render_objects);
+        eina_array_flush(&e->restack_objects);
+        eina_array_flush(&e->delete_objects);
+        eina_array_flush(&e->obscuring_objects);
+        eina_array_flush(&e->temporary_objects);
+        eina_array_flush(&e->clip_changes);
+ */
         e->invalidate = 1;
      }
 
@@ -1771,11 +1783,14 @@ evas_render_idle_flush(Evas *e)
        (e->engine.data.output))
      e->engine.func->output_idle_flush(e->engine.data.output);
 
-   eina_array_flush(&e->delete_objects);
    eina_array_flush(&e->active_objects);
-   eina_array_flush(&e->restack_objects);
    eina_array_flush(&e->render_objects);
+   eina_array_flush(&e->restack_objects);
+   eina_array_flush(&e->delete_objects);
+   eina_array_flush(&e->obscuring_objects);
+   eina_array_flush(&e->temporary_objects);
    eina_array_flush(&e->clip_changes);
+   eina_array_flush(&e->temporary_objects);
 
    e->invalidate = 1;
 }
