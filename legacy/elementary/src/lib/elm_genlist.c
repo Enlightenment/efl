@@ -1576,8 +1576,11 @@ _item_cache_add(Elm_Gen_Item *it)
      {
         evas_object_del(VIEW(it));
         VIEW(it) = NULL;
-        evas_object_del(it->spacer);
-        it->spacer = NULL;
+        if (it->spacer)
+          {
+             evas_object_del(it->spacer);
+             it->spacer = NULL;
+          }
         evas_event_thaw(evas_object_evas_get(it->wd->obj));
         evas_event_thaw_eval(evas_object_evas_get(it->wd->obj));
         return;
@@ -2023,19 +2026,25 @@ _item_realize(Elm_Gen_Item *it,
 
         edje_object_mirrored_set(VIEW(it),
                                  elm_widget_mirrored_get(WIDGET(it)));
-        it->spacer =
-          evas_object_rectangle_add(evas_object_evas_get(WIDGET(it)));
-        evas_object_color_set(it->spacer, 0, 0, 0, 0);
-        elm_widget_sub_object_add(WIDGET(it), it->spacer);
      }
 
    _elm_genlist_item_odd_even_update(it);
 
    treesize = edje_object_data_get(VIEW(it), "treesize");
    if (treesize) tsize = atoi(treesize);
-   evas_object_size_hint_min_set(it->spacer,
-                                 (it->item->expanded_depth * tsize) * _elm_config->scale, 1);
-   edje_object_part_swallow(VIEW(it), "elm.swallow.pad", it->spacer);
+   if (!it->spacer && treesize)
+     {
+        it->spacer =
+          evas_object_rectangle_add(evas_object_evas_get(WIDGET(it)));
+        evas_object_color_set(it->spacer, 0, 0, 0, 0);
+        elm_widget_sub_object_add(WIDGET(it), it->spacer);
+     }
+   if (it->spacer)
+     {
+        evas_object_size_hint_min_set(it->spacer,
+                                      (it->item->expanded_depth * tsize) * _elm_config->scale, 1);
+        edje_object_part_swallow(VIEW(it), "elm.swallow.pad", it->spacer);
+     }
    if (!calc)
      {
         edje_object_signal_callback_add(VIEW(it),
@@ -2169,8 +2178,11 @@ _item_unrealize_cb(Elm_Gen_Item *it)
      {
         evas_object_del(VIEW(it));
         VIEW(it) = NULL;
-        evas_object_del(it->spacer);
-        it->spacer = NULL;
+        if (it->spacer)
+          {
+             evas_object_del(it->spacer);
+             it->spacer = NULL;
+          }
      }
    else
      {
