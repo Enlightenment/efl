@@ -488,7 +488,7 @@ ecore_wince_window_focus_get(void)
 
    INF("getting focused window");
 
-   focused = GetFocus(window->window);
+   focused = GetFocus();
    if (!focused)
      {
         ERR("GetFocus() failed");
