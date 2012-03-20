@@ -3373,7 +3373,7 @@ elm_win_socket_listen(Evas_Object *obj, const char *svcname, int svcnum, Eina_Bo
    return EINA_TRUE;
 }
 
-/* windowing spcific calls - shall we do this differently? */
+/* windowing specific calls - shall we do this differently? */
 
 static Ecore_X_Window
 _elm_ee_win_get(const Evas_Object *obj)
