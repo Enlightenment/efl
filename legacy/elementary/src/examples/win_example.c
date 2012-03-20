@@ -1,14 +1,18 @@
 /*
  * gcc -o win_example win_example.c `pkg-config --cflags --libs elementary ecore-x`
  */
-#include <Elementary.h>
-#include <Ecore_X.h>
 #ifdef HAVE_CONFIG_H
 # include "elementary_config.h"
 #else
 # define __UNUSED__ __attribute__((unused))
 # define PACKAGE_DATA_DIR "../../data"
 #endif
+
+#ifdef HAVE_ELEMENTARY_X
+# include <Ecore_X.h>
+#endif
+
+#include <Elementary.h>
 
 static void
 _btn_activate_cb(void *data, Evas_Object *obj __UNUSED__, void *event __UNUSED__)
@@ -158,8 +162,10 @@ _main_win_del_cb(void *data __UNUSED__, Evas_Object *obj, void *event __UNUSED__
 static void
 _force_focus_cb(void *data, Evas_Object *obj __UNUSED__, void *event __UNUSED__)
 {
+#ifdef HAVE_ELEMENTARY_X
    Ecore_X_Window xwin = elm_win_xwindow_get(data);
    ecore_x_window_focus(xwin);
+#endif
 }
 
 static void
