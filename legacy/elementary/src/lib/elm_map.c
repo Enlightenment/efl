@@ -599,13 +599,9 @@ _edj_marker_size_get(Widget_Data *wd, Evas_Coord *w, Evas_Coord *h)
 }
 
 static void
-_coord_rotate(Evas_Coord x, Evas_Coord y, Evas_Coord cx, Evas_Coord cy, double degree, Evas_Coord *xx, Evas_Coord *yy)
+_rotate(Evas_Coord x, Evas_Coord y, Evas_Coord cx, Evas_Coord cy, double degree, Evas_Coord *xx, Evas_Coord *yy)
 {
-   EINA_SAFETY_ON_NULL_RETURN(xx);
-   EINA_SAFETY_ON_NULL_RETURN(yy);
-
    double r = (degree * M_PI) / 180.0;
-
    if (xx) *xx = ((x - cx) * cos(r)) + ((y - cy) * cos(r + M_PI_2)) + cx;
    if (yy) *yy = ((x - cx) * sin(r)) + ((y - cy) * sin(r + M_PI_2)) + cy;
 }
@@ -645,7 +641,6 @@ static void
 _coord_to_region_convert(Widget_Data *wd, Evas_Coord x, Evas_Coord y, Evas_Coord size, double *lon, double *lat)
 {
    EINA_SAFETY_ON_NULL_RETURN(wd);
-
    int zoom = floor(log(size / wd->size.tile) / log(2));
    if ((wd->src_tile) && (wd->src_tile->coord_to_geo))
      {
@@ -679,33 +674,54 @@ _region_to_coord_convert(Widget_Data *wd, double lon, double lat, Evas_Coord siz
 }
 
 static void
-_viewport_size_get(Widget_Data *wd, Evas_Coord *vw, Evas_Coord *vh)
+_viewport_coord_get(Widget_Data *wd, Evas_Coord *vx, Evas_Coord *vy, Evas_Coord *vw, Evas_Coord *vh)
 {
    EINA_SAFETY_ON_NULL_RETURN(wd);
 
    Evas_Coord x, y, w, h;
-   evas_object_geometry_get(wd->pan_smart, &x, &y, &w, &h);
-   if (vw) *vw = (x * 2) + w;
-   if (vh) *vh = (y * 2) + h;
+   elm_smart_scroller_child_pos_get(wd->scr, &x, &y);
+   elm_smart_scroller_child_viewport_size_get(wd->scr, &w, &h);
+   if (w > wd->size.w) x -= ((w - wd->size.w) / 2);
+   if (h > wd->size.h) y -= ((h - wd->size.h) / 2);
+   if (vx) *vx = x;
+   if (vy) *vy = y;
+   if (vw) *vw = w;
+   if (vh) *vh = h;
 }
 
+// Map coordinates to canvas geometry without rotate
 static void
-_pan_geometry_get(Widget_Data *wd, Evas_Coord *px, Evas_Coord *py)
+_coord_to_canvas_no_rotate(Widget_Data *wd, Evas_Coord x, Evas_Coord y, Evas_Coord *xx, Evas_Coord *yy)
 {
-   EINA_SAFETY_ON_NULL_RETURN(wd);
+   Evas_Coord vx, vy, sx, sy;
+   _viewport_coord_get(wd, &vx, &vy, NULL, NULL);
+   evas_object_geometry_get(wd->pan_smart, &sx, &sy, NULL, NULL);
+   if (xx) *xx = x - vx + sx;
+   if (yy) *yy = y - vy + sy;
+}
 
-   Evas_Coord x, y, vx, vy, vw, vh;
-   elm_smart_scroller_child_pos_get(wd->scr, &x, &y);
-   evas_object_geometry_get(wd->pan_smart, &vx, &vy, &vw, &vh);
-   x = -x;
-   y = -y;
-   if (vw > wd->size.w) x += (((vw - wd->size.w) / 2) + vx);
-   else x -= vx;
-   if (vh > wd->size.h) y += (((vh - wd->size.h) / 2) + vy);
-   else y -= vy;
-   if (px) *px = x;
-   if (py) *py = y;
- }
+// Map coordinates to canvas geometry
+static void
+_coord_to_canvas(Widget_Data *wd, Evas_Coord x, Evas_Coord y, Evas_Coord *xx, Evas_Coord *yy)
+{
+   _coord_to_canvas_no_rotate(wd, x, y, &x, &y);
+   _rotate(x, y, wd->rotate.cx, wd->rotate.cy, wd->rotate.d, &x, &y);
+   if (xx) *xx = x;
+   if (yy) *yy = y;
+}
+
+// Canvas geometry to map coordinates
+static void
+_canvas_to_coord(Widget_Data *wd, Evas_Coord x, Evas_Coord y, Evas_Coord *xx, Evas_Coord *yy)
+{
+   Evas_Coord vx, vy, sx, sy;
+   _viewport_coord_get(wd, &vx, &vy, NULL, NULL);
+   evas_object_geometry_get(wd->pan_smart, &sx, &sy, NULL, NULL);
+   _rotate(x - sx + vx, y - sy + vy,  wd->rotate.cx - sx + vx,
+                 wd->rotate.cy - sy + vy,  -wd->rotate.d, &x, &y);
+   if (xx) *xx = x;
+   if (yy) *yy = y;
+}
 
 static void
 _region_show(void *data)
@@ -715,7 +731,7 @@ _region_show(void *data)
    int x, y, w, h;
 
    _region_to_coord_convert(dd->wd, dd->lon, dd->lat, dd->wd->size.w, &x, &y);
-   _viewport_size_get(dd->wd, &w, &h);
+   _viewport_coord_get(dd->wd, NULL, NULL, &w, &h);
    x = x - (w / 2);
    y = y - (h / 2);
    elm_smart_scroller_child_region_show(dd->wd->scr, x, y, w, h);
@@ -993,24 +1009,6 @@ _marker_group_create(Widget_Data *wd)
 }
 
 static void
-_marker_bringin_cb(void *data, Evas_Object *obj __UNUSED__, const char *emission __UNUSED__, const char *soure __UNUSED__)
-{
-   Elm_Map_Marker *marker = data;
-   EINA_SAFETY_ON_NULL_RETURN(marker);
-   elm_map_region_bring_in(marker->wd->obj, marker->longitude, marker->latitude);
-}
-
-static void
-_marker_bubble_open_cb(void *data, Evas_Object *obj __UNUSED__, const char *emission __UNUSED__, const char *soure __UNUSED__)
-{
-   EINA_SAFETY_ON_NULL_RETURN(data);
-   Elm_Map_Marker *marker = data;
-
-   if (!marker->bubble) marker->bubble = _bubble_create(marker->obj, marker->wd);
-   evas_object_smart_changed(marker->wd->pan_smart);
-}
-
-static void
 _marker_update(Elm_Map_Marker *marker)
 {
    EINA_SAFETY_ON_NULL_RETURN(marker);
@@ -1063,11 +1061,8 @@ _marker_place(Widget_Data *wd)
    Elm_Map_Group_Class *group_clas;
 
    Evas_Coord gw, gh;
-   Evas_Coord px, py;
 
    if (wd->paused_markers || (!eina_list_count(wd->markers))) return;
-
-   _pan_geometry_get(wd, &px, &py);
 
    _edj_marker_size_get(wd, &gw, &gh);
    gw *= 2;
@@ -1132,8 +1127,7 @@ _marker_place(Widget_Data *wd)
         else
           {
              Evas_Coord x, y;
-             _coord_rotate(marker->x + px, marker->y + py, wd->rotate.cx,
-                           wd->rotate.cy, wd->rotate.d, &x, &y);
+             _coord_to_canvas(wd, marker->x, marker->y, &x, &y);
              _obj_place(marker->obj, x - (marker->w / 2), y - (marker->h / 2),
                          marker->w, marker->h);
           }
@@ -1150,8 +1144,7 @@ _marker_place(Widget_Data *wd)
         else
           {
              Evas_Coord x, y;
-             _coord_rotate(group->x + px, group->y + py, wd->rotate.cx,
-                           wd->rotate.cy, wd->rotate.d, &x, &y);
+             _coord_to_canvas(wd, group->x, group->y, &x, &y);
              _obj_place(group->obj, x - (group->w / 2), y - (group->h / 2),
                          group->w, group->h);
           }
@@ -1170,18 +1163,16 @@ _grid_item_coord_get(Grid_Item *gi, int *x, int *y, int *w, int *h)
 }
 
 static Eina_Bool
-_grid_item_intersect(Grid_Item *gi)
+_grid_item_in_viewport(Grid_Item *gi)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(gi, EINA_FALSE);
 
-   Evas_Coord px, py;
-   Evas_Coord vw, vh;
+   Evas_Coord vx, vy, vw, vh;
    Evas_Coord x, y, w, h;
 
-   _pan_geometry_get(gi->wd, &px, &py);
-   _viewport_size_get(gi->wd, &vw, &vh);
+   _viewport_coord_get(gi->wd, &vx, &vy, &vw, &vh);
    _grid_item_coord_get(gi, &x, &y, &w, &h);
-   return ELM_RECTS_INTERSECT(x + px, y + py, w, h, 0, 0, vw, vh);
+   return ELM_RECTS_INTERSECT(x, y, w, h, vx, vy, vw, vh);
 }
 
 static void
@@ -1201,13 +1192,10 @@ _grid_item_update(Grid_Item *gi)
      }
    else
      {
-        Evas_Coord px, py;
         Evas_Coord x, y, w, h;
-
-        _pan_geometry_get(gi->wd, &px, &py);
         _grid_item_coord_get(gi, &x, &y, &w, &h);
-
-        _obj_place(gi->img, x + px, y + py, w, h);
+        _coord_to_canvas_no_rotate(gi->wd, x, y, &x, &y);
+        _obj_place(gi->img, x, y, w, h);
         _obj_rotate(gi->wd, gi->img);
         gi->file_have = EINA_TRUE;
      }
@@ -1346,7 +1334,7 @@ _download_job(void *data)
 
    EINA_LIST_REVERSE_FOREACH_SAFE(wd->download_list, l, ll, gi)
      {
-        if (gi->g->zoom != wd->zoom || !_grid_item_intersect(gi))
+        if ((gi->g->zoom != wd->zoom) || !(_grid_item_in_viewport(gi)))
           {
              wd->download_list = eina_list_remove(wd->download_list, gi);
              continue;
@@ -1380,17 +1368,16 @@ _grid_viewport_get(Grid *g, int *x, int *y, int *w, int *h)
 {
    EINA_SAFETY_ON_NULL_RETURN(g);
    int xx, yy, ww, hh;
-   Evas_Coord px, py, vw, vh;
+   Evas_Coord vx, vy, vw, vh;
 
-   _pan_geometry_get(g->wd, &px, &py);
-   _viewport_size_get(g->wd, &vw, &vh);
-   if (px > 0) px = 0;
-   if (py > 0) py = 0;
+   _viewport_coord_get(g->wd, &vx, &vy, &vw, &vh);
+   if (vx < 0) vx = 0;
+   if (vy < 0) vy = 0;
 
-   xx = (-px / g->wd->size.tile) - 1;
+   xx = (vx / g->wd->size.tile) - 1;
    if (xx < 0) xx = 0;
 
-   yy = (-py / g->wd->size.tile) - 1;
+   yy = (vy / g->wd->size.tile) - 1;
    if (yy < 0) yy = 0;
 
    ww = (vw / g->wd->size.tile) + 3;
@@ -1435,7 +1422,7 @@ _grid_load(Grid *g)
    EINA_ITERATOR_FOREACH(it, cell)
      {
         gi = eina_matrixsparse_cell_data_get(cell);
-        if (!_grid_item_intersect(gi)) _grid_item_unload(gi);
+        if (!_grid_item_in_viewport(gi)) _grid_item_unload(gi);
      }
    eina_iterator_free(it);
 
@@ -1523,7 +1510,7 @@ _track_place(Widget_Data *wd)
    Evas_Coord px, py, ow, oh;
    px = wd->pan_x;
    py = wd->pan_y;
-   _viewport_size_get(wd, &ow, &oh);
+   _viewport_coord_get(wd, NULL, NULL, &ow, &oh);
 
    Evas_Coord size = wd->size.w;
 
@@ -1587,7 +1574,7 @@ _smooth_update(Widget_Data *wd)
         EINA_ITERATOR_FOREACH(it, cell)
           {
              Grid_Item *gi = eina_matrixsparse_cell_data_get(cell);
-             if (_grid_item_intersect(gi))
+             if (_grid_item_in_viewport(gi))
                 evas_object_image_smooth_scale_set(gi->img, EINA_TRUE);
           }
         eina_iterator_free(it);
@@ -1612,7 +1599,7 @@ zoom_do(Widget_Data *wd, double zoom)
    if (zoom > wd->zoom_max) zoom = wd->zoom_max;
    else if (zoom < wd->zoom_min) zoom = wd->zoom_min;
 
-   Evas_Coord px, py, vw, vh;
+   Evas_Coord vx, vy, vw, vh;
    Evas_Coord ow, oh;
 
    wd->zoom = ROUND(zoom);
@@ -1623,29 +1610,28 @@ zoom_do(Widget_Data *wd, double zoom)
    wd->size.w = pow(2.0, wd->zoom) * wd->size.tile;
    wd->size.h = wd->size.w;;
 
-   // Fix to zooming with (viewport center px, py) as the center to prevent
+   // Fix to zooming with (viewport center vx, vy) as the center to prevent
    // from zooming with (0,0) as the cetner. (scroller default behavior)
-   _pan_geometry_get(wd, &px, &py);
-   _viewport_size_get(wd, &vw, &vh);
+   _viewport_coord_get(wd, &vx, &vy, &vw, &vh);
    if ((vw > 0) && (vh > 0) && (ow > 0) && (oh > 0))
      {
-        Evas_Coord xx, yy;
+        Evas_Coord x, y;
         double sx, sy;
         if (vw > ow) sx = 0.5;
-        else         sx = (double)(-px + (vw / 2)) / ow;
+        else         sx = (double)(vx + (double)(vw / 2)) / ow;
         if (vh > oh) sy = 0.5;
-        else         sy = (double)(-py + (vh / 2)) / oh;
+        else         sy = (double)(vy + (double)(vh / 2)) / oh;
 
         if (sx > 1.0) sx = 1.0;
         if (sy > 1.0) sy = 1.0;
 
-        xx = (sx * wd->size.w) - (vw / 2);
-        yy = (sy * wd->size.h) - (vh / 2);
-        if (xx < 0) xx = 0;
-        else if (xx > (wd->size.w - vw)) xx = wd->size.w - vw;
-        if (yy < 0) yy = 0;
-        else if (yy > (wd->size.h - vh)) yy = wd->size.h - vh;
-        elm_smart_scroller_child_region_show(wd->scr, xx, yy, vw, vh);
+        x = ceil((sx * wd->size.w) - (vw / 2));
+        y = ceil((sy * wd->size.h) - (vh / 2));
+        if (x < 0) x = 0;
+        else if (x > (wd->size.w - vw)) x = wd->size.w - vw;
+        if (y < 0) y = 0;
+        else if (y > (wd->size.h - vh)) y = wd->size.h - vh;
+        elm_smart_scroller_child_region_show(wd->scr, x, y, vw, vh);
      }
    if (wd->zoom_timer) ecore_timer_del(wd->zoom_timer);
    else evas_object_smart_callback_call(wd->obj, SIG_ZOOM_START, NULL);
@@ -1960,7 +1946,6 @@ static void
 _overlay_default_show(Widget_Data *wd, Overlay_Default *ovl)
 {
    Evas_Object *disp;
-   Evas_Coord px, py;
    Evas_Coord x, y, w, h;
 
    if (ovl->obj)
@@ -1976,9 +1961,7 @@ _overlay_default_show(Widget_Data *wd, Overlay_Default *ovl)
         h = ovl->h;
      }
 
-   _pan_geometry_get(wd, &px, &py);
-   _coord_rotate(ovl->x + px, ovl->y + py, wd->rotate.cx,  wd->rotate.cy,
-                 wd->rotate.d, &x, &y);
+   _coord_to_canvas(wd, ovl->x, ovl->y, &x, &y);
    _obj_place(disp, x - (w / 2), y - (h / 2), w, h);
 }
 
@@ -2225,16 +2208,11 @@ _overlay_bubble_show(Overlay_Bubble *bubble)
 {
    EINA_SAFETY_ON_NULL_RETURN(bubble);
    Evas_Coord x, y;
-
    if ((bubble->x < 0) || (bubble->y < 0)) return;
-   Evas_Coord px, py;
-   _pan_geometry_get(bubble->wd, &px, &py);
-   _coord_rotate(bubble->x + px, bubble->y + py, bubble->wd->rotate.cx,
-                 bubble->wd->rotate.cy, bubble->wd->rotate.d, &x, &y);
-   x = x - (bubble->w / 2);
-   y = y - (bubble->h / 2);
-   _obj_place(bubble->obj, x, y, bubble->w, bubble->h);
-   //evas_object_raise(bubble->obj);
+
+   _coord_to_canvas(bubble->wd, bubble->x, bubble->y, &x, &y);
+   _obj_place(bubble->obj, x - (bubble->w /2), y - (bubble->h /2),
+              bubble->w, bubble->h);
 }
 
 static void
@@ -2359,7 +2337,7 @@ _overlay_route_show(Overlay_Route *r)
    Evas_Coord ow, oh, px, py, size;
 
    wd = r->wd;
-   _viewport_size_get(wd, &ow, &oh);
+   _viewport_coord_get(wd, NULL, NULL, &ow, &oh);
    px = wd->pan_x;
    py = wd->pan_y;
    size = wd->size.w;
@@ -2645,7 +2623,7 @@ _overlays_show(void *data)
    dd->lat = (max_lat + min_lat) / 2;
 
    zoom = dd->wd->src_tile->zoom_min;
-   _viewport_size_get(dd->wd, &vw, &vh);
+   _viewport_coord_get(dd->wd, NULL, NULL, &vw, &vh);
    while (zoom <= dd->wd->src_tile->zoom_max)
      {
         Evas_Coord size, max_x, max_y, min_x, min_y;
@@ -2746,7 +2724,7 @@ _pan_calculate(Evas_Object *obj)
    EINA_SAFETY_ON_NULL_RETURN(sd);
 
    Evas_Coord w, h;
-   evas_object_geometry_get(sd->wd->pan_smart, NULL, NULL, &w, &h);
+   evas_object_geometry_get(obj, NULL, NULL, &w, &h);
    if (w <= 0 || h <= 0) return;
 
    _grid_place(sd->wd);
@@ -3634,7 +3612,7 @@ _zoom_mode_set(void *data)
         w = dd->wd->size.w;
         h = dd->wd->size.h;
         zoom = dd->wd->zoom_detail;
-        _viewport_size_get(dd->wd, &vw, &vh);
+        _viewport_coord_get(dd->wd, NULL, NULL, &vw, &vh);
 
         if (dd->mode == ELM_MAP_ZOOM_MODE_AUTO_FIT)
           {
@@ -3706,49 +3684,10 @@ _region_bring_in(void *data)
    int x, y, w, h;
 
    _region_to_coord_convert(dd->wd, dd->lon, dd->lat, dd->wd->size.w, &x, &y);
-   _viewport_size_get(dd->wd, &w, &h);
+   _viewport_coord_get(dd->wd, NULL, NULL, &w, &h);
    x = x - (w / 2);
    y = y - (h / 2);
    elm_smart_scroller_region_bring_in(dd->wd->scr, x, y, w, h);
-   evas_object_smart_changed(dd->wd->pan_smart);
-}
-
-static void
-_marker_list_show(void *data)
-{
-   EINA_SAFETY_ON_NULL_RETURN(data);
-   Delayed_Data *dd = data;
-   int zoom;
-   double max_lon = -180, min_lon = 180;
-   double max_lat = -90, min_lat = 90;
-   Evas_Coord vw, vh;
-   Elm_Map_Marker *marker;
-
-   EINA_LIST_FREE(dd->markers, marker)
-     {
-        if (marker->longitude > max_lon) max_lon = marker->longitude;
-        if (marker->longitude < min_lon) min_lon = marker->longitude;
-        if (marker->latitude > max_lat) max_lat = marker->latitude;
-        if (marker->latitude < min_lat) min_lat = marker->latitude;
-     }
-   dd->lon = (max_lon + min_lon) / 2;
-   dd->lat = (max_lat + min_lat) / 2;
-
-   zoom = dd->wd->src_tile->zoom_min;
-   _viewport_size_get(dd->wd, &vw, &vh);
-   while (zoom <= dd->wd->src_tile->zoom_max)
-     {
-        Evas_Coord size, max_x, max_y, min_x, min_y;
-        size = pow(2.0, zoom) * dd->wd->tsize;
-        _region_to_coord_convert(dd->wd, min_lon, max_lat, size, &min_x, &max_y);
-        _region_to_coord_convert(dd->wd, max_lon, min_lat, size, &max_x, &min_y);
-        if ((max_x - min_x) > vw || (max_y - min_y) > vh) break;
-        zoom++;
-     }
-   zoom--;
-
-   zoom_do(dd->wd, zoom);
-   _region_show(dd);
    evas_object_smart_changed(dd->wd->pan_smart);
 }
 
@@ -4004,7 +3943,7 @@ _event_hook(Evas_Object *obj, Evas_Object *src __UNUSED__, Evas_Callback_Type ty
    elm_smart_scroller_child_pos_get(wd->scr, &x, &y);
    elm_smart_scroller_step_size_get(wd->scr, &step_x, &step_y);
    elm_smart_scroller_page_size_get(wd->scr, &page_x, &page_y);
-   _viewport_size_get(wd, NULL, &vh);
+   elm_smart_scroller_child_viewport_size_get(wd->scr, NULL, &vh);
 
    if ((!strcmp(ev->keyname, "Left")) || (!strcmp(ev->keyname, "KP_Left")))
      {
@@ -4381,11 +4320,10 @@ elm_map_region_get(const Evas_Object *obj, double *lon, double *lat)
    EINA_SAFETY_ON_NULL_RETURN(wd);
 
    double tlon, tlat;
-   Evas_Coord px, py, vw, vh;
+   Evas_Coord vx, vy, vw, vh;
 
-   _pan_geometry_get(wd, &px, &py);
-   _viewport_size_get(wd, &vw, &vh);
-   _coord_to_region_convert(wd, vw/2 - px, vh/2 -py, wd->size.w, &tlon, &tlat);
+   _viewport_coord_get(wd, &vx, &vy, &vw, &vh);
+   _coord_to_region_convert(wd, vx + vw/2, vy + vh/2, wd->size.w, &tlon, &tlat);
    if (lon) *lon = tlon;
    if (lat) *lat = tlat;
 #else
@@ -4544,11 +4482,7 @@ elm_map_canvas_to_region_convert(const Evas_Object *obj, Evas_Coord x, Evas_Coor
    EINA_SAFETY_ON_NULL_RETURN(lon);
    EINA_SAFETY_ON_NULL_RETURN(lat);
 
-   Evas_Coord px, py, vw, vh;
-   _pan_geometry_get(wd, &px, &py);
-   _viewport_size_get(wd, &vw, &vh);
-   _coord_rotate(x - px, y - py, (vw / 2) - px, (vh / 2) - py, -wd->rotate.d,
-                 &x, &y);
+   _canvas_to_coord(wd, x, y, &x, &y);
    _coord_to_region_convert(wd, x, y, wd->size.w, lon, lat);
 #else
    (void) obj;
@@ -4569,14 +4503,8 @@ elm_map_region_to_canvas_convert(const Evas_Object *obj, double lon, double lat,
    EINA_SAFETY_ON_NULL_RETURN(x);
    EINA_SAFETY_ON_NULL_RETURN(y);
 
-   Evas_Coord px, py, vw, vh;
-   _pan_geometry_get(wd, &px, &py);
-   _viewport_size_get(wd, &vw, &vh);
    _region_to_coord_convert(wd, lon, lat, wd->size.w, x, y);
-   _coord_rotate(*x, *y, (vw / 2) - px, (vh / 2) - py, wd->rotate.d,
-                 x, y);
-   *x += px;
-   *y += py;
+   _coord_to_canvas(wd, *x, *y, x, y);
 #else
    (void) obj;
    (void) lon;

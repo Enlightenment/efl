@@ -1312,7 +1312,6 @@ EAPI Elm_Map_Name         *elm_map_name_add(const Evas_Object *obj, const char *
  * This gets the coordinates of the @p name, created with one of the
  * conversion functions.
  *
- * @see elm_map_name_geo_request()
  * @see elm_map_name_add()
  *
  * @ingroup Map
@@ -1329,7 +1328,6 @@ EAPI const char           *elm_map_name_address_get(const Elm_Map_Name *name);
  * This gets the coordinates of the @p name, created with one of the
  * conversion functions.
  *
- * @see elm_map_name_geo_request()
  * @see elm_map_name_add()
  *
  * @ingroup Map
@@ -1344,7 +1342,6 @@ EAPI void                  elm_map_name_region_get(const Elm_Map_Name *name, dou
  * Basically the struct handled by @p name will be freed, so conversions
  * between address and coordinates will be lost.
  *
- * @see elm_map_name_geo_request()
  * @see elm_map_name_add()
  *
  * @ingroup Map

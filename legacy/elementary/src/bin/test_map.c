@@ -90,7 +90,7 @@ _map_clicked_double(void *data __UNUSED__, Evas_Object *obj, void *event_info)
 {
    printf("clicked,double\n");
    double lon, lat;
-   Evas_Event_Mouse_Down *down = (Evas_Event_Mouse_Down *)event_info;
+   Evas_Event_Mouse_Down *down = event_info;
    if (!down) return;
    if (elm_map_zoom_get(obj) < 5) return;
 
@@ -108,6 +108,7 @@ _map_clicked_double(void *data __UNUSED__, Evas_Object *obj, void *event_info)
      {
         elm_map_overlay_del(route_start);
         elm_map_overlay_del(route_end);
+        elm_map_route_del(route);
         route_start = NULL;
         route_end = NULL;
         route = NULL;
@@ -298,17 +299,16 @@ _map_name_loaded_fail(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *
 static void
 map_show_urmatt(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
-   Eina_Bool b = elm_map_paused_get(data);
-   elm_map_paused_set(data, EINA_TRUE);
    elm_map_zoom_mode_set(data, ELM_MAP_ZOOM_MODE_MANUAL);
+   if (elm_map_zoom_get(data) < 12) elm_map_zoom_set(data, 12);
    elm_map_region_show(data,7.325201, 48.526813);
-   elm_map_zoom_set(data, 12);
-   elm_map_paused_set(data, b);
 }
 
 static void
 map_bring_seoul(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
+   elm_map_zoom_mode_set(data, ELM_MAP_ZOOM_MODE_MANUAL);
+   if (elm_map_zoom_get(data) < 12) elm_map_zoom_set(data, 12);
    elm_map_region_bring_in(data, 126.977969, 37.566535);
 }
 
@@ -543,7 +543,7 @@ my_map_entry_activated(void *data, Evas_Object *obj, void *event_info __UNUSED__
 {
    const char *s = elm_scrolled_entry_entry_get(obj);
    char *addr = strdup(s);
-   name = elm_map_name_geo_request(data, addr);
+   name = elm_map_name_add(data, addr, 0, 0, NULL, NULL);
    if (addr) free (addr);
 }
 */
