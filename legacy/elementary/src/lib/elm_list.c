@@ -1042,15 +1042,15 @@ _item_content_set(Elm_Object_Item *it, const char *part, Evas_Object *content)
      {
         icon_p = &(item->icon);
         dummy = item->dummy_icon;
-        if (!content) item->dummy_icon = EINA_FALSE;
-        else item->dummy_icon = EINA_TRUE;
+        if (!content) item->dummy_icon = EINA_TRUE;
+        else item->dummy_icon = EINA_FALSE;
      }
    else if (!strcmp(part, "end"))
      {
         icon_p = &(item->end);
         dummy = item->dummy_end;
-        if (!content) item->dummy_end = EINA_FALSE;
-        else item->dummy_end = EINA_TRUE;
+        if (!content) item->dummy_end = EINA_TRUE;
+        else item->dummy_end = EINA_FALSE;
      }
    else
      return;
