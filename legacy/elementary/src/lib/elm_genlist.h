@@ -315,6 +315,8 @@
  *   multi-touch pinched in.
  * - @c "swipe" - This is called when the genlist is swiped.
  * - @c "moved" - This is called when a genlist item is moved.
+ * - @c "moved,after" - This is called when a genlist item is moved after.
+ * - @c "moved,before" - This is called when a genlist item is moved before.
  * - @c "language,changed" - This is called when the program's language is
  *   changed.
  * - @c "tree,effect,finished" - This is called when a genlist tree effect is finished.

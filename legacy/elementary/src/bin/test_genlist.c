@@ -1898,15 +1898,50 @@ _reorder_tg_changed_cb(void *data, Evas_Object *obj, void *event_info __UNUSED__
  * @param obj          :  the genlist object.
  * @param item         :  the moved item.
  *
- * If the move_after is true,
- *  the item(*item) had been moved after the given relative item(*rel_item) in list.
- * If the move_after is false,
- *  the item(*item) had been moved before the given relative item(*rel_item) in list.
+ *  the item(*item) had been moved
  *
  */
 static void gl_moved(Evas_Object *data __UNUSED__, Evas_Object *obj __UNUSED__, Elm_Object_Item *item __UNUSED__)
 {
    // if needed, add application logic.
+}
+
+/**
+ * gl_moved_after is called after an item was reordered.
+ * This is only called when reorder mode is enabled.
+ *
+ * @param data         :  the genlist object passed as data.
+ * @param obj          :  the genlist object.
+ * @param item         :  the moved item.
+ *
+ *  the item(*item) had been moved after the given relative item(*rel_item) in list.
+ *
+ */
+static void gl_moved_after(Evas_Object *data __UNUSED__, Evas_Object *obj __UNUSED__, Elm_Object_Item *item __UNUSED__)
+{
+   // if needed, add application logic.
+   Elm_Object_Item *it;
+   it = elm_genlist_item_prev_get(item);
+   printf("it=%p, prev_it=%p\n",item,it);
+}
+
+/**
+ * gl_moved_before is called after an item was reordered.
+ * This is only called when reorder mode is enabled.
+ *
+ * @param data         :  the genlist object passed as data.
+ * @param obj          :  the genlist object.
+ * @param item         :  the moved item.
+ *
+ *  the item(*item) had been moved before the given relative item(*rel_item) in list.
+ *
+ */
+static void gl_moved_before(Evas_Object *data __UNUSED__, Evas_Object *obj __UNUSED__, Elm_Object_Item *item __UNUSED__)
+{
+   // if needed, add application logic.
+   Elm_Object_Item *it;
+   it = elm_genlist_item_next_get(item);
+   printf("it=%p, next_it=%p\n",item,it);
 }
 
 void
@@ -1956,6 +1991,8 @@ test_genlist11(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_i
    itc1->func.state_get = gl_state_get;
    itc1->func.del       = NULL;
    evas_object_smart_callback_add(gl, "moved", (Evas_Smart_Cb)gl_moved, gl);
+   evas_object_smart_callback_add(gl, "moved,after", (Evas_Smart_Cb)gl_moved_after, gl);
+   evas_object_smart_callback_add(gl, "moved,before", (Evas_Smart_Cb)gl_moved_before, gl);
 
    for (i = 0; i < 50; i++)
      elm_genlist_item_append(gl,

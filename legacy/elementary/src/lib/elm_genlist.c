@@ -211,6 +211,8 @@ static const char SIG_MULTI_PINCH_OUT[] = "multi,pinch,out";
 static const char SIG_MULTI_PINCH_IN[] = "multi,pinch,in";
 static const char SIG_SWIPE[] = "swipe";
 static const char SIG_MOVED[] = "moved";
+static const char SIG_MOVED_AFTER[] = "moved,after";
+static const char SIG_MOVED_BEFORE[] = "moved,before";
 static const char SIG_INDEX_UPDATE[] = "index,update";
 static const char SIG_TREE_EFFECT_FINISHED [] = "tree,effect,finished";
 
@@ -248,6 +250,8 @@ static const Evas_Smart_Cb_Description _signals[] = {
    {SIG_MULTI_PINCH_IN, ""},
    {SIG_SWIPE, ""},
    {SIG_MOVED, ""},
+   {SIG_MOVED_AFTER, ""},
+   {SIG_MOVED_BEFORE, ""},
    {SIG_TREE_EFFECT_FINISHED, ""},
    {NULL, NULL}
 };
@@ -1383,6 +1387,7 @@ _mouse_up(void        *data,
                _item_move_before(it->wd->reorder_it, it->wd->reorder_rel);
              else
                _item_move_after(it->wd->reorder_it, it->wd->reorder_rel);
+             evas_object_smart_callback_call(WIDGET(it), SIG_MOVED, it);
           }
         else
           {
@@ -4119,6 +4124,7 @@ _elm_genlist_item_list_compare(const void *data, const void *data1)
    return it->wd->item_compare_cb(it, item1);
 }
 
+/*If application want to know the relative item, use elm_genlist_item_prev_get(it)*/
 static void
 _item_move_after(Elm_Gen_Item *it, Elm_Gen_Item *after)
 {
@@ -4135,9 +4141,10 @@ _item_move_after(Elm_Gen_Item *it, Elm_Gen_Item *after)
    if (after->item->group_item) it->item->group_item = after->item->group_item;
    _item_queue(it->wd, it, NULL);
 
-   evas_object_smart_callback_call(WIDGET(it), SIG_MOVED, it);
+   evas_object_smart_callback_call(WIDGET(it), SIG_MOVED_AFTER, it);
 }
 
+/*If application want to know the relative item, use elm_genlist_item_next_get(it)*/
 static void
 _item_move_before(Elm_Gen_Item *it, Elm_Gen_Item *before)
 {
@@ -4153,7 +4160,7 @@ _item_move_before(Elm_Gen_Item *it, Elm_Gen_Item *before)
    if (before->item->group_item) it->item->group_item = before->item->group_item;
    _item_queue(it->wd, it, NULL);
 
-   evas_object_smart_callback_call(WIDGET(it), SIG_MOVED, it);
+   evas_object_smart_callback_call(WIDGET(it), SIG_MOVED_BEFORE, it);
 }
 
 EAPI unsigned int
