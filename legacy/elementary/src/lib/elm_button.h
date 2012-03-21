@@ -46,9 +46,10 @@
  * @li elm_object_signal_emit
  * @li elm_object_signal_callback_add
  * @li elm_object_signal_callback_del
- * 
- * Follow through a complete example @ref button_example_01 "here".
- * @{
+ *
+ * Here is some sample code using it:
+ * @li @ref button_example_00
+ * @li @ref button_example_01
  */
 
 /**

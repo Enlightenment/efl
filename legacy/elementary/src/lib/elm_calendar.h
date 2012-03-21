@@ -19,6 +19,13 @@
  * @li elm_object_signal_callback_add
  * @li elm_object_signal_callback_del
  *
+ * Here is some sample code using it:
+ * @li @ref calendar_example_01
+ * @li @ref calendar_example_02
+ * @li @ref calendar_example_03
+ * @li @ref calendar_example_04
+ * @li @ref calendar_example_05
+ * @li @ref calendar_example_06
  */
 
 /**

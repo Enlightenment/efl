@@ -1233,11 +1233,11 @@
  *
  * To set weekday names, we should declare them as an array of strings:
  * @dontinclude calendar_example_02.c
- * @skipline weekdays
+ * @skipline weekdays[]
  * @until }
  *
  * And finally set them to calendar:
- * skipline weekdays_names_set
+ * @skipline weekdays_names_set
  *
  * Our example will look like this:
  *
@@ -1289,11 +1289,14 @@
  *
  * Also, regarding days selection, you could be interested to set a
  * date to be highlighted on calendar from your code, maybe when
- * a specific event happens, or after calendar creation. Let's select
- * two days from current day:
+ * a specific event happens, or after calendar creation. As @c time output is
+ * in seconds, we define the number of seconds contained within a day as a
+ * constant:
  * @dontinclude calendar_example_04.c
  * @skipline SECS_DAY
- * @skipline current_time
+ *
+ * Now let's select two days from current day:
+ * @skipline time(NULL)
  * @until elm_calendar_selected_time_set
  *
  * Our example will look like this:
@@ -1375,7 +1378,7 @@
  * be read on @c ctime manpage.
  * If a date relative from current is required, this struct can be set
  * as:
- * @skipline current_time
+ * @skipline time(NULL)
  * @until localtime_r
  *
  * Or if it's an absolute date, you can just declare the struct like:
