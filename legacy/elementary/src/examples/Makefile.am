@@ -35,6 +35,7 @@ EDJE_FLAGS = $(EDJE_FLAGS_$(V))
 SRCS = \
 	actionslider_example_01.c \
 	bubble_example_01.c \
+	button_example_00.c \
 	button_example_01.c \
 	check_example_01.c \
 	colorselector_example_01.c \
@@ -148,6 +149,7 @@ clean-local:
 examples_PROGRAMS += \
 	actionslider_example_01 \
 	bubble_example_01 \
+	button_example_00 \
 	button_example_01 \
 	check_example_01 \
 	colorselector_example_01 \
@@ -246,6 +248,7 @@ SCREENSHOTS = \
 	bg_example_02:bg_01.png:0.0 \
 	box_example_02:box_example_02.png:1.3 \
 	bubble_example_01:bubble_example_01.png:0.0 \
+	button_example_00:button_00.png:0.0 \
 	button_example_01:button_01.png:0.0 \
 	check_example_01:check_example_01.png:0.0 \
 	colorselector_example_01:colorselector_example_01.png:0.0 \
