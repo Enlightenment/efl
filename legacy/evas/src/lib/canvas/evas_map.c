@@ -374,9 +374,11 @@ evas_object_map_enable_set(Evas_Object *obj, Eina_Bool enabled)
    MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
    return;
    MAGIC_CHECK_END();
+   Eina_Bool pchange = EINA_FALSE;
 
    enabled = !!enabled;
    if (obj->cur.usemap == enabled) return;
+   pchange = obj->changed;
    obj->cur.usemap = enabled;
    if (enabled)
      {
@@ -405,6 +407,8 @@ evas_object_map_enable_set(Evas_Object *obj, Eina_Bool enabled)
    /* This is a bit heavy handed, but it fixes the case of same geometry, but
     * changed colour or UV settings. */
    evas_object_change(obj);
+   if (!obj->changed_pchange) obj->changed_pchange = pchange;
+   obj->changed_map = EINA_TRUE;
 }
 
 EAPI Eina_Bool
