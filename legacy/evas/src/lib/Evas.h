@@ -2424,7 +2424,7 @@ EAPI Evas_Event_Flags  evas_event_default_flags_get      (const Evas *e) EINA_AR
  * of this kind during the freeze will get @b discarded. Every freeze
  * call must be matched by a thaw call in order to completely thaw out
  * a canvas (i.e. these calls may be nested). The most common use is
- * when you don't want the user to interect with your user interface
+ * when you don't want the user to interact with your user interface
  * when you're populating a view or changing the layout.
  *
  * Example:
@@ -9716,7 +9716,7 @@ EAPI int                              evas_smart_usage_get(const Evas_Smart *s);
  * used on the icon object.
  *
  * Besides that, generally smart objects implement a <b>specific
- * API</b>, so that users interect with its own custom features. The
+ * API</b>, so that users interact with its own custom features. The
  * API takes form of explicit exported functions one may call and
  * <b>smart callbacks</b>.
  *
@@ -9730,7 +9730,7 @@ EAPI int                              evas_smart_usage_get(const Evas_Smart *s);
  * definition for the callback functions: #Evas_Smart_Cb.
  *
  * When defining an #Evas_Smart_Class, smart object implementors are
- * strongly encorauged to properly set the Evas_Smart_Class::callbacks
+ * strongly encouraged to properly set the Evas_Smart_Class::callbacks
  * callbacks description array, so that the users of the smart object
  * can have introspection on its events API <b>at run time</b>.
  *
