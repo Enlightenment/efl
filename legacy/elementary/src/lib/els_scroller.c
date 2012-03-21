@@ -2861,6 +2861,8 @@ _smart_add(Evas_Object *obj)
    sd->pan_func.max_get = _elm_smart_pan_max_get;
    sd->pan_func.min_get = _elm_smart_pan_min_get;
    sd->pan_func.child_size_get = _elm_smart_pan_child_size_get;
+   sd->pan_func.gravity_set = _elm_smart_pan_gravity_set;
+   sd->pan_func.gravity_get = _elm_smart_pan_gravity_get;
 
    _smart_scrollbar_reset(sd);
 }
