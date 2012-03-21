@@ -1744,12 +1744,14 @@ _elm_genlist_item_state_update(Elm_Gen_Item *it, Item_Cache *itc)
         if (it->selected != itc->selected)
           {
              if (it->selected)
-               edje_object_signal_emit(VIEW(it),
-                                       "elm,state,selected", "elm");
+               {
+                  edje_object_signal_emit(VIEW(it),
+                                          "elm,state,selected", "elm");
 
-             if (it->edit_obj)
-               edje_object_signal_emit(it->edit_obj,
-                                       "elm,state,selected", "elm");
+                  if (it->edit_obj)
+                    edje_object_signal_emit(it->edit_obj,
+                                            "elm,state,selected", "elm");
+               }
           }
         if (elm_widget_item_disabled_get(it) != itc->disabled)
           {
