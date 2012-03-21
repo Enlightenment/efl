@@ -947,24 +947,30 @@ EAPI void ecore_exe_hup(Ecore_Exe *exe);
 /**
  * @defgroup Ecore_FD_Handler_Group File Event Handling Functions
  *
- * Functions that deal with file descriptor handlers.
+ * @brief Functions that deal with file descriptor handlers.
  *
- * The @ref Ecore_Fd_Handler can be used to watch a file descriptor
- * for data available for reading, for the availability to write
- * without blocking, and for errors on the file descriptor.
+ * File descriptor handlers facilitate reading, writing and checking for errors
+ * without blocking the program or doing expensive pooling. This can be used to
+ * monitor a socket, pipe, or other stream for which an FD can be had.
  *
- *ecore_main_fd_handler_add() is used to setup a handler for a
- * given file descriptor. This file descriptor can be the standard
- * input, a network socket, a stream received through some driver
- * of a hardware decoder, etc. Thus it can contain errors, like a
- * disconnection, a broken pipe, and so, and that's why it's
- * possible to check for these errors with the @ref ECORE_FD_ERROR
- * flag.
+ * @warning This function @b can't be used for monitoring to regular files!
  *
- * An @ref Ecore_Fd_Handler can be used to watch on a file
- * descriptor without blocking, still being able to receive events,
- * expire timers, and watch for other things that happen in
- * the Ecore main loop.
+ * One common FD to be monitored is the standard input(stdin), monitoring it for
+ * reading requires a single call:
+ * @code
+ * static Eina_Bool
+ * _my_cb_func(void *data, Ecore_Fd_Handler *handler)
+ * {
+ *    char c;
+ *    scanf("%c", &c); //Guaranteed not to block
+ *    ... do stuff with c ...
+ * }
+ * ecore_main_fd_handler_add(STDIN_FILENO, ECORE_FD_READ, _my_cb_func, NULL, NULL, NULL);
+ * @endcode
+ *
+ * When using a socket, pipe or other stream it's important to remember that
+ * errors may occur and as such to monitor not only for reading/writing but also
+ * for errors using the @ref ECORE_FD_ERROR flag.
  *
  * Example of use of a file descriptor handler:
  * @li @ref ecore_fd_handler_example_c
@@ -1002,11 +1008,93 @@ typedef void (*Ecore_Fd_Prep_Cb)(void *data, Ecore_Fd_Handler *fd_handler);
  */
 typedef Eina_Bool (*Ecore_Win32_Handle_Cb)(void *data, Ecore_Win32_Handler *wh);
 
+/**
+ * @brief Adds a callback for activity on the given file descriptor.
+ *
+ * @param fd The file descriptor to watch.
+ * @param flags To monitor it for reading use @c ECORE_FD_READ, for writing @c
+ * ECORE_FD_WRITE, and for error @c ECORE_FD_ERROR. Values bay |(ored).
+ * @param func The callback function.
+ * @param data The data to pass to the callback.
+ * @param buf_func The function to call to check if any data has been buffered
+ * and already read from the fd. May be @c NULL.
+ * @param buf_data The data to pass to the @p buf_func function.
+ * @return A fd handler handle on success, @c NULL otherwise.
+ *
+ * @a func will be called during the execution of @ref Ecore_Main_Loop_Page
+ * when the file descriptor is available for reading, writing, or there has been
+ * an error(depending on the given @a flags).
+ *
+ * When @a func returns ECORE_CALLBACK_CANCEL, it indicates that the
+ * handler should be marked for deletion (identical to calling @ref
+ * ecore_main_fd_handler_del).
+ *
+ * @warning @a buf_func is meant for @b internal use only and should be @b
+ * avoided.
+ *
+ * The return value of @a buf_func has a different meaning, when it returns
+ * ECORE_CALLBACK_CANCEL, it indicates that @a func @b shouldn't be called, and
+ * when it returns ECORE_CALLBACK_RENEW it indicates @a func should be called.
+ * The return value of @a buf_func will not cause the FD handler to be deleted.
+ *
+ * @a buf_func is called during event loop handling to check if data that has
+ * been read from the file descriptor is in a buffer and is available to read.
+ * Some systems, notably xlib, handle their own buffering, and would otherwise
+ * not work with select(). These systems should use a @a buf_func. This is a
+ * most annoying hack, only ecore_x uses it, so refer to that for an example.
+ */
 EAPI Ecore_Fd_Handler *ecore_main_fd_handler_add(int fd, Ecore_Fd_Handler_Flags flags, Ecore_Fd_Cb func, const void *data, Ecore_Fd_Cb buf_func, const void *buf_data);
+/**
+ * @brief Set the prepare callback with data for a given #Ecore_Fd_Handler
+ *
+ * @param fd_handler The fd handler
+ * @param func The prep function
+ * @param data The data to pass to the prep function
+ *
+ * This function will be called prior to any fd handler's callback function
+ * (even the other fd handlers), before entering the main loop select function.
+ *
+ * @note Once a prepare callback is set for a fd handler, it cannot be changed.
+ * You need to delete the fd handler and create a new one, to set another
+ * callback.
+ * @note You probably don't need this function. It is only necessary for very
+ * uncommon cases that need special behavior.
+ */
 EAPI void ecore_main_fd_handler_prepare_callback_set(Ecore_Fd_Handler *fd_handler, Ecore_Fd_Prep_Cb func, const void *data);
+/**
+ * @brief Marks an FD handler for deletion.
+ * @param fd_handler The FD handler.
+ * @return The data pointer set using @ref ecore_main_fd_handler_add, for @a
+ * fd_handler on success, @c NULL otherwise.
+ * This function marks an fd handler to be deleted during an iteration of the
+ * main loop. It does NOT close the associated fd!
+ *
+ * @warning If the underlying fd is already closed ecore may complain if the
+ * main loop is using epoll internally, and also in some rare cases this may
+ * cause crashes and instability. Remember to delete your fd handlers before the
+ * fds they listen to are closed.
+ */
 EAPI void *ecore_main_fd_handler_del(Ecore_Fd_Handler *fd_handler);
+/**
+ * @brief Retrieves the file descriptor that the given handler is handling.
+ * @param fd_handler The given FD handler.
+ * @return The file descriptor the handler is watching.
+ */
 EAPI int ecore_main_fd_handler_fd_get(Ecore_Fd_Handler *fd_handler);
+/**
+ * @brief Gets which flags are active on an FD handler.
+ * @param fd_handler The given FD handler.
+ * @param flags The flags, @c ECORE_FD_READ, @c ECORE_FD_WRITE or @c
+ * ECORE_FD_ERROR to query.
+ * @return  #EINA_TRUE if any of the given flags are active, #EINA_FALSE
+ * otherwise.
+ */
 EAPI Eina_Bool ecore_main_fd_handler_active_get(Ecore_Fd_Handler *fd_handler, Ecore_Fd_Handler_Flags flags);
+/**
+ * @brief Set what active streams the given FD handler should be monitoring.
+ * @param fd_handler The given FD handler.
+ * @param flags The flags to be watching.
+ */
 EAPI void ecore_main_fd_handler_active_set(Ecore_Fd_Handler *fd_handler, Ecore_Fd_Handler_Flags flags);
 
 EAPI Ecore_Win32_Handler *ecore_main_win32_handler_add(void *h, Ecore_Win32_Handle_Cb func, const void *data);
