@@ -1958,10 +1958,10 @@ _item_flips_realize(Elm_Gen_Item *it,
         const Eina_List *l;
         const char *key;
         Evas_Object *ic = NULL;
+        Eina_List *cons = NULL;
+        cons = elm_widget_stringlist_get(edje_object_data_get(target, "flips"));
 
-        *source = elm_widget_stringlist_get(edje_object_data_get(target, "flips"));
-
-        EINA_LIST_FOREACH(*source, l, key)
+        EINA_LIST_FOREACH(cons, l, key)
           {
              if (it->itc->func.content_get)
                ic = it->itc->func.content_get
@@ -1976,6 +1976,8 @@ _item_flips_realize(Elm_Gen_Item *it,
                     elm_widget_disabled_set(ic, EINA_TRUE);
                }
           }
+        *source = eina_list_merge(*source, cons);
+        elm_widget_stringlist_free(cons);
      }
 
    return res;
