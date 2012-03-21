@@ -81,6 +81,8 @@
  *
  * @ref gengrid_example
  *
+ * @ref glview_example_01_page
+ *
  * @ref genlist_example_01
  *
  * @ref genlist_example_02
@@ -3462,6 +3464,11 @@
  *
  * @example hover_example_01.c
  */
+
+/**
+  * @page glview_01_example_page - GLView Example
+  * @include glview_example_01.c
+  */
 
 /**
   * @page tutorial_flip Flip example
