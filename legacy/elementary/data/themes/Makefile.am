@@ -329,7 +329,9 @@ pointer_glint_10.png \
 pointer_glint_11.png \
 pointer_glint_12.png \
 pointer_glow.png \
-pointer.png
+pointer.png \
+map_circle.png \
+map_scale.png
 
 default.edj: Makefile $(EXTRA_DIST)
 	$(EDJE_CC) $(EDJE_FLAGS) \
