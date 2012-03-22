@@ -92,21 +92,18 @@ _ecore_fb_size_get(int *w, int *h)
 
    fb = open("/dev/fb0", O_RDWR);
    if (fb < 0)
-     {
-        if (w) *w = 0;
-        if (h) *h = 0;
-        return;
-     }
+      goto exit;
+
    if (ioctl(fb, FBIOGET_VSCREENINFO, &fb_var) == -1)
-     {
-        if (w) *w = 0;
-        if (h) *h = 0;
-        close(fb);
-        return;
-     }
+      goto err_ioctl;
+
+   *w = fb_var.xres;
+   *h = fb_var.yres;
+
+err_ioctl:
    close(fb);
-   if (w) *w = fb_var.xres;
-   if (h) *h = fb_var.yres;
+exit:
+   return;
 }
 
 /**
