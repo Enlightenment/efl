@@ -166,7 +166,8 @@ typedef enum _Elm_Map_Overlay_Type
    ELM_MAP_OVERLAY_TYPE_DEFAULT,
    ELM_MAP_OVERLAY_TYPE_CLASS,
    ELM_MAP_OVERLAY_TYPE_BUBBLE,
-   ELM_MAP_OVERLAY_TYPE_ROUTE
+   ELM_MAP_OVERLAY_TYPE_ROUTE,
+   ELM_MAP_OVERLAY_TYPE_GROUP
 } Elm_Map_Overlay_Type;
 
 typedef struct _Elm_Map_Marker       Elm_Map_Marker;       /**< A marker to be shown in a specific point of the map. Can be created with elm_map_marker_add() and deleted with elm_map_marker_remove(). */
@@ -181,9 +182,9 @@ typedef void                       (*Elm_Map_Marker_Del_Func)(Evas_Object *obj, 
 typedef Evas_Object               *(*Elm_Map_Marker_Icon_Get_Func)(Evas_Object *obj, Elm_Map_Marker *marker, void *data); /**< Icon fetching class function for marker classes. */
 typedef Evas_Object               *(*Elm_Map_Group_Icon_Get_Func)(Evas_Object *obj, void *data); /**< Icon fetching class function for markers group classes. */
 
-typedef void                       (*Elm_Map_Overlay_Get_Cb)(void *data, Evas_Object *map, const Elm_Map_Overlay *overlay);   /**< Get callback function for the overlay. */
-typedef void                       (*Elm_Map_Name_Cb)(void *data, Evas_Object *map, const Elm_Map_Name *name);                /**< Async-callback function for the name request. */
-typedef void                       (*Elm_Map_Route_Cb)(void *data, Evas_Object *map, const Elm_Map_Route *route);             /**< Async-callback function for the route request. */
+typedef void                       (*Elm_Map_Overlay_Get_Cb)(void *data, Evas_Object *map, Elm_Map_Overlay *overlay);   /**< Get callback function for the overlay. */
+typedef void                       (*Elm_Map_Name_Cb)(void *data, Evas_Object *map, Elm_Map_Name *name);                /**< Async-callback function for the name request. */
+typedef void                       (*Elm_Map_Route_Cb)(void *data, Evas_Object *map, Elm_Map_Route *route);             /**< Async-callback function for the route request. */
 
 /**
  * Add a new map widget to the given parent Elementary (container) object.
@@ -288,7 +289,7 @@ EAPI Elm_Map_Zoom_Mode     elm_map_zoom_mode_get(const Evas_Object *obj);
  * @param obj The map object.
  * @param zoom New minimum zoom value to be used.
  *
- * By default, it's 0.
+ * @see elm_map_zoom_min_get() for details.
  *
  * @ingroup Map
  */
@@ -312,7 +313,7 @@ EAPI int                   elm_map_zoom_min_get(const Evas_Object *obj);
  * @param obj The map object.
  * @param zoom New maximum zoom value to be used.
  *
- * By default, it's 18.
+ * @see elm_map_zoom_max_get() for details.
  *
  * @ingroup Map
  */
@@ -324,7 +325,7 @@ EAPI void                  elm_map_zoom_max_set(Evas_Object *obj, int zoom);
  * @param obj The map object.
  * @return Returns the maximum zoom of the source.
  *
- * @see elm_map_zoom_min_set() for details.
+ * @see elm_map_zoom_max_set() for details.
  *
  * @ingroup Map
  */
@@ -932,6 +933,8 @@ EAPI void                  elm_map_overlays_show(Eina_List *overlays);
  * @param get_cb The callback function.
  * @param data The user callback data.
  *
+ * If the overlay is clicked, the callback wll be called.
+ * The clicked overlay is returned by callback.
  * You can delete this callback function by setting @c NULL.
  *
  * @ingroup Map
@@ -951,8 +954,10 @@ EAPI void elm_map_overlay_get_cb_set(Elm_Map_Overlay *overlay, Elm_Map_Overlay_G
  * are created. If they are far away, group overlays are hidden.
  * When group overlays are shown, they have default style layouts at first.
  *
- * You can changed the state (hidden, paused, etc.) or set the content
- * or icon of the group overlays.
+ * You can change the state (hidden, paused, etc.) or set the content
+ * or icon of the group overlays by chaning the state of the class overlay.
+ * Do not control the group overlay itself.
+ *
  * Also these changes have a influence on the overlays in the same class
  * even if each overlay is alone and is not grouped.
  *
@@ -1005,7 +1010,8 @@ EAPI void                  elm_map_overlay_class_remove(Elm_Map_Overlay *clas, E
 EAPI void                  elm_map_overlay_class_zoom_max_set(Elm_Map_Overlay *clas, int zoom);
 
 /**
- * Get the zoom from where the overlay members in the class are no more grouped.
+ * Get the maximum zoom from where the overlay members in the class can be
+ * grouped.
  *
  * @param clas The overlay class has overlay members.
  *
@@ -1054,7 +1060,7 @@ EAPI Elm_Map_Overlay *     elm_map_overlay_bubble_add(Evas_Object *obj);
  *
  * @ingroup Map
  */
-EAPI void                  elm_map_overlay_bubble_follow(Elm_Map_Overlay *bubble, Elm_Map_Overlay *parent);
+EAPI void                  elm_map_overlay_bubble_follow(Elm_Map_Overlay *bubble, const Elm_Map_Overlay *parent);
 
 /**
  * Add a content object to the bubble overlay.
@@ -1081,7 +1087,6 @@ EAPI void                  elm_map_overlay_bubble_content_append(Elm_Map_Overlay
  *
  * @ingroup Map
  */
-
 EAPI void                  elm_map_overlay_bubble_content_clear(Elm_Map_Overlay *bubble);
 
 /**
@@ -1225,7 +1230,7 @@ EAPI const char           *elm_map_source_get(const Evas_Object *obj, Elm_Map_So
  * of #ELM_MAP_ROUTE_METHOD_SHORTEST or #ELM_MAP_ROUTE_METHOD_FASTEST.
  *
  * Routes created with this method can be deleted with
- * elm_map_route_remove(), 
+ * elm_map_route_remove(),
  * and distance can be get with elm_map_route_distance_get().
  *
  * @see elm_map_route_remove()

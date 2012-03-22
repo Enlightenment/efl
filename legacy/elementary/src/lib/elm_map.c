@@ -11,19 +11,20 @@
 #ifdef HAVE_ELEMENTARY_ECORE_CON
 
 typedef struct _Widget_Data Widget_Data;
+typedef struct _Path Path;
+typedef struct _Color Color;
 typedef struct _Pan Pan;
 typedef struct _Grid Grid;
 typedef struct _Grid_Item Grid_Item;
 typedef struct _Overlay_Default Overlay_Default;
-typedef struct _Overlay_Group Overlay_Group;
 typedef struct _Overlay_Class Overlay_Class;
+typedef struct _Overlay_Group Overlay_Group;
 typedef struct _Overlay_Bubble Overlay_Bubble;
 typedef struct _Overlay_Route Overlay_Route;
 typedef struct _Marker_Group Marker_Group;
 typedef struct _Marker_Bubble Marker_Bubble;
 typedef struct _Path_Node Path_Node;
 typedef struct _Path_Waypoint Path_Waypoint;
-typedef struct _Url_Data Url_Data;
 typedef struct _Route_Dump Route_Dump;
 typedef struct _Name_Dump Name_Dump;
 typedef struct _Delayed_Data Delayed_Data;
@@ -34,11 +35,11 @@ typedef struct _Source_Name Source_Name;
 typedef char                      *(*Elm_Map_Module_Source_Name_Func)(void);
 typedef int                        (*Elm_Map_Module_Tile_Zoom_Min_Func)(void);
 typedef int                        (*Elm_Map_Module_Tile_Zoom_Max_Func)(void);
-typedef char                      *(*Elm_Map_Module_Tile_Url_Func)(Evas_Object *obj, int x, int y, int zoom);
+typedef char                      *(*Elm_Map_Module_Tile_Url_Func)(const Evas_Object *obj, int x, int y, int zoom);
 typedef Eina_Bool                  (*Elm_Map_Module_Tile_Geo_to_Coord_Func)(const Evas_Object *obj, int zoom, double lon, double lat, int size, int *x, int *y);
 typedef Eina_Bool                  (*Elm_Map_Module_Tile_Coord_to_Geo_Func)(const Evas_Object *obj, int zoom, int x, int y, int size, double *lon, double *lat);
-typedef char                      *(*Elm_Map_Module_Route_Url_Func)(Evas_Object *obj, const char *type_name, int method, double flon, double flat, double tlon, double tlat);
-typedef char                      *(*Elm_Map_Module_Name_Url_Func)(Evas_Object *obj, int method, const char *name, double lon, double lat);
+typedef char                      *(*Elm_Map_Module_Route_Url_Func)(const Evas_Object *obj, const char *type_name, int method, double flon, double flat, double tlon, double tlat);
+typedef char                      *(*Elm_Map_Module_Name_Url_Func)(const Evas_Object *obj, int method, const char *name, double lon, double lat);
 
 #define ROUND(z)                (((z) < 0) ? (int)ceil((z) - 0.005) : (int)floor((z) + 0.005))
 #define EVAS_MAP_POINT          4
@@ -92,6 +93,11 @@ enum _Track_Xml_Attribute
    TRACK_XML_LAST
 } Track_Xml_Attibute;
 
+struct _Path
+{
+   Evas_Coord x, y;
+};
+
 struct _Delayed_Data
 {
    void (*func)(void *data);
@@ -130,50 +136,48 @@ struct _Source_Name
    Elm_Map_Module_Name_Url_Func url_cb;
 };
 
-struct _Url_Data
+struct _Color
 {
-   Ecore_Con_Url *con_url;
-
-   FILE *fd;
-   char *fname;
-};
-
-struct _Overlay_Default
-{
-   Evas_Coord w, h;
-
-   // Display priority is obj > icon > clas_obj > clas_icon > layout
-   Evas_Object *obj;
-   Evas_Object *icon;
-
-   // if obj or icon exists, do not inherit from class
-   Evas_Object *clas_obj;      // Duplicated from class icon
-   Evas_Object *clas_obj_ref;  // Checking fro class icon is changed
-   Evas_Object *clas_icon;     // Duplicated from class icon
-   Evas_Object *clas_icon_ref; // Checking for class icon is changed
-
-   char *style;
-   Evas_Object *layout;
-   double lon, lat;
-   Evas_Coord x, y;
+  int r, g, b, a;
 };
 
 struct _Overlay_Group
 {
-   Overlay_Default *ovl;
-   Evas_Object *clas_icon;
-   Elm_Map_Overlay *clas;
+   Widget_Data *wd;
+   Elm_Map_Overlay *overlay; // virtual group type overlay
+   Elm_Map_Overlay *clas;    // class overlay for this virtual group
+   Overlay_Default *ovl;     // rendered overlay
    Eina_List *members;
+   Eina_Bool in : 1;
+   Eina_Bool boss : 1;
+};
+
+struct _Overlay_Default
+{
+   Widget_Data *wd;
+   Evas_Coord w, h;
+
+   double lon, lat;
+   Evas_Coord x, y;
+
+   // Display priority is content > icon > clas_obj > clas_icon > layout
+   Evas_Object *content;
+   Evas_Object *icon;
+
+   Color c;
+   // if clas_content or icon exists, do not inherit from class
+   Evas_Object *clas_content;      // Duplicated from class content
+   Evas_Object *clas_icon;         // Duplicated from class icon
+   Evas_Object *layout;
 };
 
 struct _Overlay_Class
 {
-   Elm_Map_Overlay *clas;
-   Evas_Object *obj;
-   char *style;
-   Evas_Object *icon;
+   Widget_Data *wd;
    Eina_List *members;
    int zoom_max;
+   Evas_Object *content;
+   Evas_Object *icon;
 };
 
 struct _Overlay_Bubble
@@ -189,18 +193,9 @@ struct _Overlay_Route
 {
    Widget_Data *wd;
 
-   Eina_Bool inbound : 1;
-   struct
-     {
-        int r;
-        int g;
-        int b;
-        int a;
-     } color;
-
+   Evas_Object *obj;
    Eina_List *paths;
    Eina_List *nodes;
-   int x, y;
 };
 
 struct _Elm_Map_Overlay
@@ -210,19 +205,17 @@ struct _Elm_Map_Overlay
    Eina_Bool paused : 1;
    Eina_Bool hide : 1;
    Evas_Coord zoom_min;
-
-    void *data;               // user set data
+   Color c;
+   void *data;               // user set data
 
    Elm_Map_Overlay_Type type;
    void *ovl;                 // Overlay Data for each type
 
-   // These are not used if overlay type is class
-   Eina_Bool grp_in : 1;
-   Eina_Bool grp_boss : 1;
-   Overlay_Group *grp;
-
    Elm_Map_Overlay_Get_Cb cb;
    void *cb_data;
+
+   // These are not used if overlay type is class or group
+   Overlay_Group *grp;
 };
 
 struct _Elm_Map_Marker_Class
@@ -318,7 +311,6 @@ struct _Elm_Map_Route
 
    Path_Node *n;
    Path_Waypoint *w;
-
 };
 
 struct _Path_Node
@@ -487,13 +479,13 @@ struct _Widget_Data
    Eina_List *overlays;
 };
 
-static char *_mapnik_url_cb(Evas_Object *obj __UNUSED__, int x, int y, int zoom);
-static char *_osmarender_url_cb(Evas_Object *obj __UNUSED__, int x, int y, int zoom);
-static char *_cyclemap_url_cb(Evas_Object *obj __UNUSED__, int x, int y, int zoom);
-static char *_mapquest_url_cb(Evas_Object *obj __UNUSED__, int x, int y, int zoom);
-static char *_mapquest_aerial_url_cb(Evas_Object *obj __UNUSED__, int x, int y, int zoom);
-static char *_yours_url_cb(Evas_Object *obj __UNUSED__, const char *type_name, int method, double flon, double flat, double tlon, double tlat);
-static char *_nominatim_url_cb(Evas_Object *obj, int method, const char *name, double lon, double lat);
+static char *_mapnik_url_cb(const Evas_Object *obj __UNUSED__, int x, int y, int zoom);
+static char *_osmarender_url_cb(const Evas_Object *obj __UNUSED__, int x, int y, int zoom);
+static char *_cyclemap_url_cb(const Evas_Object *obj __UNUSED__, int x, int y, int zoom);
+static char *_mapquest_url_cb(const Evas_Object *obj __UNUSED__, int x, int y, int zoom);
+static char *_mapquest_aerial_url_cb(const Evas_Object *obj __UNUSED__, int x, int y, int zoom);
+static char *_yours_url_cb(const Evas_Object *obj __UNUSED__, const char *type_name, int method, double flon, double flat, double tlon, double tlat);
+static char *_nominatim_url_cb(const Evas_Object *obj, int method, const char *name, double lon, double lat);
 /*
 static char *_monav_url_cb(Evas_Object *obj __UNUSED__, char *type_name, int method, double flon, double flat, double tlon, double tlat)
 static char *_ors_url_cb(Evas_Object *obj __UNUSED__, char *type_name, int method, double flon, double flat, double tlon, double tlat);
@@ -1254,7 +1246,7 @@ _grid_item_create(Grid *g, Evas_Coord x, Evas_Coord y)
    gi->img = evas_object_image_add(evas_object_evas_get(g->wd->obj));
    evas_object_image_smooth_scale_set(gi->img, EINA_FALSE);
    evas_object_image_scale_hint_set(gi->img, EVAS_IMAGE_SCALE_HINT_DYNAMIC);
-   evas_object_image_filled_set(gi->img, 1);
+   evas_object_image_filled_set(gi->img, EINA_TRUE);
    evas_object_smart_member_add(gi->img, g->wd->pan_smart);
    evas_object_pass_events_set(gi->img, EINA_TRUE);
    evas_object_stack_below(gi->img, g->wd->sep_maps_markers);
@@ -1357,7 +1349,6 @@ _download_job(void *data)
              if (wd->download_num == 1)
                 edje_object_signal_emit(elm_smart_scroller_edje_object_get(wd->scr),
                                         "elm,state,busy,start", "elm");
-
           }
      }
    return ECORE_CALLBACK_RENEW;
@@ -1846,7 +1837,7 @@ _region_max_min_get(Eina_List *overlays, double *max_longitude, double *min_long
 }
 
 static Evas_Object *
-_icon_dup(Evas_Object *icon, Evas_Object *parent)
+_icon_dup(const Evas_Object *icon, Evas_Object *parent)
 {
    if (!icon || !parent) return NULL;
    // Evas_Object do not support object duplication??
@@ -1870,39 +1861,6 @@ _icon_dup(Evas_Object *icon, Evas_Object *parent)
    return dupp;
 }
 
-static Evas_Object *
-_overlay_layout_new(Widget_Data *wd, const char *group)
-{
-   EINA_SAFETY_ON_NULL_RETURN_VAL(wd, NULL);
-   EINA_SAFETY_ON_NULL_RETURN_VAL(group, NULL);
-   Evas_Object *obj = elm_layout_add(wd->obj);
-   evas_object_smart_member_add(obj, wd->pan_smart);
-   evas_object_stack_above(obj, wd->sep_maps_markers);
-   elm_layout_theme_set(obj, "map/marker", group,  elm_widget_style_get(wd->obj));
-   return obj;
-}
-
-static void
-_overlay_layout_update(Widget_Data *wd, Evas_Object *layout, Evas_Object *icon, const char *text, const char *group)
-{
-   EINA_SAFETY_ON_NULL_RETURN(wd);
-   EINA_SAFETY_ON_NULL_RETURN(layout);
-
-   Evas_Object *prev_icon = elm_object_part_content_get(layout, "elm.icon");
-   if (icon && (prev_icon != icon))
-     {
-        elm_layout_theme_set(layout, "map/marker", "empty",
-                             elm_widget_style_get(wd->obj));
-        elm_object_part_content_set(layout, "elm.icon", icon);
-     }
-   else if (text)
-     {
-        if (group) elm_layout_theme_set(layout, "map/marker", group,
-                                        elm_widget_style_get(wd->obj));
-        edje_object_part_text_set(elm_layout_edje_get(layout), "elm.text", text);
-     }
-}
-
 static void
 _overlay_clicked_cb(void *data, Evas *e __UNUSED__,  Evas_Object *obj __UNUSED__, void *ev __UNUSED__)
 {
@@ -1916,203 +1874,269 @@ _overlay_clicked_cb(void *data, Evas *e __UNUSED__,  Evas_Object *obj __UNUSED__
 }
 
 static void
-_overlay_default_cb_add(Overlay_Default *ovl, Evas_Object_Event_Cb cb, void *data)
-{
-   EINA_SAFETY_ON_NULL_RETURN(ovl);
-   EINA_SAFETY_ON_NULL_RETURN(data);
-
-   // FIXME: Add icon or object event callback
-   evas_object_event_callback_add(ovl->layout, EVAS_CALLBACK_MOUSE_DOWN, cb,
-                                  data);
-}
-
-static void
-_overlay_default_cb_del(Overlay_Default *ovl, Evas_Object_Event_Cb cb)
-{
-   EINA_SAFETY_ON_NULL_RETURN(ovl);
-   // FIXME: Add icon or object event callback
-   evas_object_event_callback_del(ovl->layout, EVAS_CALLBACK_MOUSE_DOWN, cb);
-}
-
-static void
 _overlay_default_hide(Overlay_Default *ovl)
 {
    EINA_SAFETY_ON_NULL_RETURN(ovl);
-   if (ovl->obj) evas_object_hide(ovl->obj);
+   if (ovl->content) evas_object_hide(ovl->content);
+   if (ovl->icon) evas_object_hide(ovl->icon);
+   if (ovl->clas_content) evas_object_hide(ovl->clas_content);
+   if (ovl->clas_icon) evas_object_hide(ovl->clas_icon);
    if (ovl->layout) evas_object_hide(ovl->layout);
 }
 
 static void
-_overlay_default_show(Widget_Data *wd, Overlay_Default *ovl)
+_overlay_default_show(Overlay_Default *ovl)
 {
+   EINA_SAFETY_ON_NULL_RETURN(ovl);
    Evas_Object *disp;
    Evas_Coord x, y, w, h;
 
-   if (ovl->obj)
+   evas_object_hide(ovl->layout);
+   if (ovl->content)
      {
-        disp = ovl->obj;
+        disp = ovl->content;
+        evas_object_geometry_get(disp, NULL, NULL, &w, &h);
+        if (w <= 0 || h <= 0) evas_object_size_hint_min_get(disp, &w, &h);
+     }
+   else if (!(ovl->icon) && ovl->clas_content)
+     {
+        disp = ovl->clas_content;
+
         evas_object_geometry_get(disp, NULL, NULL, &w, &h);
         if (w <= 0 || h <= 0) evas_object_size_hint_min_get(disp, &w, &h);
      }
    else
      {
+        if (ovl->icon) evas_object_show(ovl->icon);
+        else if (ovl->clas_icon) evas_object_show(ovl->clas_icon);
         disp = ovl->layout;
         w = ovl->w;
         h = ovl->h;
      }
-
-   _coord_to_canvas(wd, ovl->x, ovl->y, &x, &y);
+   _coord_to_canvas(ovl->wd, ovl->x, ovl->y, &x, &y);
    _obj_place(disp, x - (w / 2), y - (h / 2), w, h);
 }
 
 static void
-_overlay_default_update(Widget_Data *wd, Overlay_Default *ovl, Evas_Object *obj, Evas_Object *icon, Overlay_Class *ovl_clas, const char *text, const char *group)
+_overlay_default_coord_get(Overlay_Default *ovl, Evas_Coord *x, Evas_Coord *y, Evas_Coord *w, Evas_Coord *h)
 {
-   EINA_SAFETY_ON_NULL_RETURN(wd);
    EINA_SAFETY_ON_NULL_RETURN(ovl);
+   if (x) *x = ovl->x;
+   if (y) *y = ovl->y;
+   if (w) *w = ovl->w;
+   if (h) *h = ovl->h;
+}
 
-   _region_to_coord_convert(wd, ovl->lon, ovl->lat, wd->size.w, &ovl->x, &ovl->y);
+static void
+_overlay_default_coord_set(Overlay_Default *ovl, Evas_Coord x, Evas_Coord y)
+{
+   EINA_SAFETY_ON_NULL_RETURN(ovl);
+   ovl->x = x;
+   ovl->y = y;
+}
 
-   if (obj)
-     {
-        if (ovl->obj == obj) return;
-        if (ovl->obj) evas_object_del(ovl->obj);
-        ovl->obj = obj;
-     }
-   else if (!(ovl->obj) && icon)
-     {
-        if (ovl->icon == icon) return;
-        if (ovl->icon) evas_object_del(ovl->icon);
-        ovl->icon = icon;
-       _overlay_layout_update(wd, ovl->layout, ovl->icon, NULL, NULL);
+static void
+_overlay_default_coord_update(Overlay_Default *ovl)
+{
+   EINA_SAFETY_ON_NULL_RETURN(ovl);
+   _region_to_coord_convert(ovl->wd, ovl->lon, ovl->lat, ovl->wd->size.w,
+                            &ovl->x, &ovl->y);
+}
 
-     }
-   else if (!(ovl->obj) && !(ovl->icon) && (ovl_clas) &&
-            ((ovl_clas->obj) || (ovl_clas->icon)))
-     {
-        // Inherit icon from group overlay's ojbect or icon
+static void
+_overlay_default_layout_text_update(Overlay_Default *ovl, const char *text)
+{
+   if (!ovl->content && !ovl->icon && !ovl->clas_content && !ovl->clas_icon)
+      edje_object_part_text_set(elm_layout_edje_get(ovl->layout), "elm.text",
+                                text);
+}
 
-        // FIXME: It is hard to duplicate evas object :-)
-        /*
-        if (ovl_clas->obj && (ovl_clas->obj != ovl->clas_obj_ref))
-          {
-             if (ovl->clas_obj) evas_object_del(ovl->clas_obj);
-             ovl->clas_obj_ref = ovl_clas->obj;
-             ovl->clas_obj = _obj_dup(ovl->clas_obj_ref, ovl->layout);
-             _overlay_layout_update(wd, ovl->layout, ovl->clas_obj, NULL, NULL);
-          }
-        */
-        if (ovl_clas->icon && (ovl_clas->icon != ovl->clas_icon_ref))
-          {
-             if (ovl->clas_icon) evas_object_del(ovl->clas_icon);
-             ovl->clas_icon_ref = ovl_clas->icon;
-             ovl->clas_icon = _icon_dup(ovl->clas_icon_ref, ovl->layout);
-             _overlay_layout_update(wd, ovl->layout, ovl->clas_icon, NULL, NULL);
-        }
-     }
-   else if (!(ovl->obj) && !(ovl->icon) && !(ovl->clas_icon) && text)
+static void
+_overlay_default_content_update(Overlay_Default *ovl, Evas_Object *content, Elm_Map_Overlay *overlay)
+{
+   EINA_SAFETY_ON_NULL_RETURN(ovl);
+   if (ovl->content == content) return;
+   if (ovl->content) evas_object_del(ovl->content);
+   ovl->content = content;
+
+   if (ovl->content)
+     evas_object_event_callback_add(ovl->content, EVAS_CALLBACK_MOUSE_DOWN,
+                                       _overlay_clicked_cb, overlay);
+}
+
+static void
+_overlay_default_clas_content_update(Overlay_Default *ovl, const Evas_Object *content __UNUSED__)
+{
+   EINA_SAFETY_ON_NULL_RETURN(ovl);
+   if (ovl->clas_content) evas_object_del(ovl->clas_content);
+   // Evas_Object can not be duplicated.
+   //ovl->clas_content = _content_dup(content);
+}
+
+static void
+_overlay_default_layout_update(Overlay_Default *ovl)
+{
+   EINA_SAFETY_ON_NULL_RETURN(ovl);
+   if (ovl->icon)
      {
-        _overlay_layout_update(wd, ovl->layout, NULL, text, group);
+        evas_object_color_set(ovl->layout, 255, 255, 255, 255);
+        elm_layout_theme_set(ovl->layout, "map/marker", "empty",
+                             elm_widget_style_get(ovl->wd->obj));
+        elm_object_part_content_set(ovl->layout, "elm.icon", ovl->icon);
      }
+   else if (!ovl->icon && ovl->clas_icon)
+     {
+        evas_object_color_set(ovl->layout, 255, 255, 255, 255);
+        elm_layout_theme_set(ovl->layout, "map/marker", "empty",
+                             elm_widget_style_get(ovl->wd->obj));
+        elm_object_part_content_set(ovl->layout, "elm.icon", ovl->clas_icon);
+     }
+   else
+     {
+        evas_object_color_set(ovl->layout, ovl->c.r, ovl->c.g, ovl->c.b, ovl->c.a);
+        elm_layout_theme_set(ovl->layout, "map/marker", "radio",
+                             elm_widget_style_get(ovl->wd->obj));
+     }
+}
+
+static void
+_overlay_default_icon_update(Overlay_Default *ovl, Evas_Object *icon)
+{
+   EINA_SAFETY_ON_NULL_RETURN(ovl);
+   if (ovl->icon == icon) return;
+   if (ovl->icon) evas_object_del(ovl->icon);
+   ovl->icon = icon;
+   _overlay_default_layout_update(ovl);
+}
+
+static void
+_overlay_default_clas_icon_update(Overlay_Default *ovl, const Evas_Object *icon)
+{
+   EINA_SAFETY_ON_NULL_RETURN(ovl);
+   if (ovl->clas_icon) evas_object_del(ovl->clas_icon);
+   ovl->clas_icon = _icon_dup(icon, ovl->layout);
+   _overlay_default_layout_update(ovl);
+}
+
+static void
+_overlay_default_color_update(Overlay_Default *ovl, Color c)
+{
+   EINA_SAFETY_ON_NULL_RETURN(ovl);
+   ovl->c = c;
+   _overlay_default_layout_update(ovl);
 }
 
 static void
 _overlay_default_free(Overlay_Default *ovl)
 {
    EINA_SAFETY_ON_NULL_RETURN(ovl);
-   if (ovl->obj) evas_object_del(ovl->obj);
+   if (ovl->content) evas_object_del(ovl->content);
    if (ovl->icon) evas_object_del(ovl->icon);
+   if (ovl->clas_content) evas_object_del(ovl->clas_content);
    if (ovl->clas_icon) evas_object_del(ovl->clas_icon);
-   evas_object_event_callback_del(ovl->layout, EVAS_CALLBACK_MOUSE_DOWN,
-                                  _overlay_clicked_cb);
    if (ovl->layout) evas_object_del(ovl->layout);
    free(ovl);
 }
 
 static Overlay_Default *
-_overlay_default_new(Widget_Data *wd, double lon, double lat, const char *group)
+_overlay_default_new(Elm_Map_Overlay *overlay, double lon, double lat, Color c, double scale)
 {
-   EINA_SAFETY_ON_NULL_RETURN_VAL(wd, NULL);
-   EINA_SAFETY_ON_NULL_RETURN_VAL(group, NULL);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(overlay, NULL);
 
    Overlay_Default *ovl = ELM_NEW(Overlay_Default);
-   _edj_marker_size_get(wd, &(ovl->w), &(ovl->h));
-   ovl->layout = _overlay_layout_new(wd, group);
+   ovl->wd = overlay->wd;
+   _edj_marker_size_get(ovl->wd, &(ovl->w), &(ovl->h));
+   ovl->w *= scale;
+   ovl->h *= scale;
+   ovl->layout = elm_layout_add(ovl->wd->obj);
+   evas_object_smart_member_add(ovl->layout, ovl->wd->pan_smart);
+   evas_object_stack_above(ovl->layout, ovl->wd->sep_maps_markers);
+   elm_layout_theme_set(ovl->layout, "map/marker", "radio",
+                        elm_widget_style_get(ovl->wd->obj));
+   evas_object_event_callback_add(ovl->layout, EVAS_CALLBACK_MOUSE_DOWN,
+                                  _overlay_clicked_cb, overlay);
    ovl->lon = lon;
    ovl->lat = lat;
+   _overlay_default_color_update(ovl, c);
    return ovl;
 }
 
 static void
-_overlay_group_clicked_cb(void *data, Evas *e __UNUSED__,  Evas_Object *obj __UNUSED__, void *ev __UNUSED__)
+_overlay_group_hide(Overlay_Group *grp)
 {
-   EINA_SAFETY_ON_NULL_RETURN(data);
-   Overlay_Group *ovl = data;
-
-   evas_object_smart_callback_call(ovl->clas->wd->obj, SIG_OVERLAY_CLICKED,
-                                   ovl->clas);
-   if (ovl->clas->cb) ovl->clas->cb(ovl->clas->cb_data, ovl->clas->wd->obj,
-                                    ovl->clas);
-}
-
-static void
-_overlay_group_cb_add(Overlay_Group *ovl)
-{
-   EINA_SAFETY_ON_NULL_RETURN(ovl);
-   _overlay_default_cb_add(ovl->ovl, _overlay_group_clicked_cb, ovl);
-}
-
-static void
-_overlay_group_cb_del(Overlay_Group *ovl)
-{
-   EINA_SAFETY_ON_NULL_RETURN(ovl);
-   _overlay_default_cb_del(ovl->ovl, _overlay_group_clicked_cb);
-}
-
-static void
-_overlay_group_update(Widget_Data *wd, Overlay_Group *grp, Eina_List *members)
-{
-   EINA_SAFETY_ON_NULL_RETURN(wd);
    EINA_SAFETY_ON_NULL_RETURN(grp);
+   if (grp->ovl) _overlay_default_hide(grp->ovl);
+}
 
-   Eina_List *l;
-   Elm_Map_Overlay *overlay;
-   Evas_Coord sum_x = 0, sum_y = 0, cnt = 0;
+static void
+_overlay_group_show(Overlay_Group *grp)
+{
+   EINA_SAFETY_ON_NULL_RETURN(grp);
+   if (grp->ovl) _overlay_default_show(grp->ovl);
+}
 
+static void
+_overlay_group_coord_member_update(Overlay_Group *grp, Evas_Coord x, Evas_Coord y, Eina_List *members)
+{
+   EINA_SAFETY_ON_NULL_RETURN(grp);
+   if (!grp->ovl) return;
+   char text[32];
+
+   _overlay_default_coord_set(grp->ovl, x, y);
    if (grp->members) eina_list_free(grp->members);
    grp->members = members;
-
-   if (!grp->members || eina_list_count(grp->members) <= 0)
-     {
-        _overlay_default_hide(grp->ovl);
-        return;
-     }
-   EINA_LIST_FOREACH(grp->members, l, overlay)
-     {
-        Overlay_Default *df = overlay->ovl;
-        sum_x += df->x;
-        sum_y += df->y;
-        cnt++;
-     }
-
-   Overlay_Class *ovl_clas = grp->clas->ovl;
-
-   char text[128];
-   snprintf(text, sizeof(text), "%d", cnt);
-   _overlay_default_update(wd, grp->ovl, NULL, NULL, ovl_clas, text, "radio2");
-
-   grp->ovl->x = sum_x / cnt;
-   grp->ovl->y = sum_y / cnt;
+   snprintf(text, sizeof(text), "%d", eina_list_count(members));
+   _overlay_default_layout_text_update(grp->ovl, text);
 }
 
 static void
-_overlay_group_free(Overlay_Group *grp, Elm_Map_Overlay *club_owner)
+_overlay_group_region_get(Overlay_Group *grp, double *lon, double *lat)
 {
    EINA_SAFETY_ON_NULL_RETURN(grp);
+   Evas_Coord xx, yy;
+   _overlay_default_coord_get(grp->ovl, &xx, &yy, NULL, NULL);
+   _coord_to_canvas(grp->wd, xx, yy, &xx, &yy);
+   elm_map_canvas_to_region_convert(grp->wd->obj, xx, yy, lon, lat);
+}
 
-   _overlay_default_cb_del(grp->ovl, _overlay_group_clicked_cb);
-   _overlay_default_free(grp->ovl);
-   if (grp->clas) elm_map_overlay_class_remove(grp->clas, club_owner);
+static void
+_overlay_group_icon_update(Overlay_Group *grp, const Evas_Object *icon)
+{
+   EINA_SAFETY_ON_NULL_RETURN(grp);
+   if (grp->ovl) _overlay_default_icon_update(grp->ovl,
+                                             _icon_dup(icon, grp->wd->obj));
+}
+
+static void
+_overlay_group_content_update(Overlay_Group *grp __UNUSED__, const Evas_Object *content __UNUSED__)
+{
+   EINA_SAFETY_ON_NULL_RETURN(grp);
+   // Evas_Object can not be duplicated.
+   //_overlay_default_content_update(grp->ovl, _content_dup(content));
+   return;
+}
+
+static void
+_overlay_group_color_update(Overlay_Group *grp, Color c)
+{
+   EINA_SAFETY_ON_NULL_RETURN(grp);
+   _overlay_default_color_update(grp->ovl, c);
+}
+
+static void
+_overlay_group_cb_set(Overlay_Group *grp, Elm_Map_Overlay_Get_Cb cb, void *data)
+{
+   EINA_SAFETY_ON_NULL_RETURN(grp);
+   grp->overlay->cb = cb;
+   grp->overlay->data = data;
+}
+
+static void
+_overlay_group_free(Overlay_Group *grp)
+{
+   EINA_SAFETY_ON_NULL_RETURN(grp);
+   if (grp->overlay) free(grp->overlay);
+   if (grp->ovl) _overlay_default_free(grp->ovl);
    if (grp->members) eina_list_free(grp->members);
    free(grp);
 }
@@ -2123,66 +2147,120 @@ _overlay_group_new(Widget_Data *wd)
    EINA_SAFETY_ON_NULL_RETURN_VAL(wd, NULL);
 
    Overlay_Group *grp = ELM_NEW(Overlay_Group);
-   grp->ovl = ELM_NEW(Overlay_Default);
-   grp->ovl = _overlay_default_new(wd, -1, -1, "radio2");
-   grp->ovl->w *= 2;
-   grp->ovl->h *= 2;
+   grp->wd = wd;
+   grp->overlay = ELM_NEW(Elm_Map_Overlay);  // this is a virtual overlay
+   grp->overlay->wd = wd;
+   grp->overlay->type = ELM_MAP_OVERLAY_TYPE_GROUP;
+   grp->overlay->ovl = grp;
+   Color c = {0x90, 0xee, 0x90, 0xff};
+   grp->ovl = _overlay_default_new(grp->overlay, -1, -1, c, 2);
    return grp;
 }
 
 static void
-_overlay_class_update(Widget_Data *wd, Overlay_Class *clas, Evas_Object *obj, Evas_Object *icon)
+_overlay_class_cb_set(Overlay_Class *ovl, Elm_Map_Overlay_Get_Cb cb, void *data)
 {
-   EINA_SAFETY_ON_NULL_RETURN(wd);
-   EINA_SAFETY_ON_NULL_RETURN(clas);
+   EINA_SAFETY_ON_NULL_RETURN(ovl);
 
-   if (obj && (clas->obj != obj))
+   Eina_List *l;
+   Elm_Map_Overlay *overlay;
+
+   // Update class members' callbacks
+   EINA_LIST_FOREACH(ovl->members, l, overlay)
+      _overlay_group_cb_set(overlay->grp, cb, data);
+}
+
+static void
+_overlay_class_icon_update(Overlay_Class *ovl, Evas_Object *icon)
+{
+   EINA_SAFETY_ON_NULL_RETURN(ovl);
+
+   Eina_List *l;
+   Elm_Map_Overlay *overlay;
+   if (ovl->icon == icon) return;
+   if (ovl->icon) evas_object_del(ovl->icon);
+   ovl->icon = icon;
+
+   // Update class members' class icons
+   EINA_LIST_FOREACH(ovl->members, l, overlay)
      {
-        if (clas->obj) evas_object_del(clas->obj);
-        clas->obj = icon;
+         _overlay_group_icon_update(overlay->grp, icon);
+
+        if (overlay->type == ELM_MAP_OVERLAY_TYPE_DEFAULT)
+           _overlay_default_clas_icon_update(overlay->ovl, icon);
+
      }
-   else if (icon && (clas->icon != icon))
+}
+
+static void
+_overlay_class_content_update(Overlay_Class *ovl, Evas_Object *content)
+{
+   EINA_SAFETY_ON_NULL_RETURN(ovl);
+
+   Eina_List *l;
+   Elm_Map_Overlay *overlay;
+   if (ovl->content == content) return;
+   if (ovl->content) evas_object_del(ovl->content);
+   ovl->content = content;
+
+   // Update class members' class contents
+   EINA_LIST_FOREACH(ovl->members, l, overlay)
      {
-        if (clas->icon) evas_object_del(clas->icon);
-        clas->icon = icon;
+        _overlay_group_content_update(overlay->grp, content);
+
+        if (overlay->type == ELM_MAP_OVERLAY_TYPE_DEFAULT)
+           _overlay_default_clas_content_update(overlay->ovl, content);
      }
+}
+
+static void
+_overlay_class_color_update(Overlay_Class *ovl, Color c)
+{
+   EINA_SAFETY_ON_NULL_RETURN(ovl);
+
+   Eina_List *l;
+   Elm_Map_Overlay *overlay;
+
+   // Update class members' class contents
+   EINA_LIST_FOREACH(ovl->members, l, overlay)
+      _overlay_group_color_update(overlay->grp, c);
 }
 
 static void
 _overlay_class_free(Overlay_Class *clas)
 {
    EINA_SAFETY_ON_NULL_RETURN(clas);
+
+   Eina_List *l;
+   Elm_Map_Overlay *overlay;
+
+   // Update class members' class contents
+   EINA_LIST_FOREACH(clas->members, l, overlay)
+     {
+        overlay->grp->clas = NULL;
+        _overlay_group_content_update(overlay->grp, NULL);
+        _overlay_group_icon_update(overlay->grp, NULL);
+
+        if (overlay->type == ELM_MAP_OVERLAY_TYPE_DEFAULT)
+          {
+             _overlay_default_clas_content_update(overlay->ovl, NULL);
+             _overlay_default_clas_icon_update(overlay->ovl, NULL);
+          }
+     }
    if (clas->icon) evas_object_del(clas->icon);
    if (clas->members) eina_list_free(clas->members);
    free(clas);
 }
 
 static Overlay_Class *
-_overlay_class_new(Widget_Data *wd, Elm_Map_Overlay *clas)
+_overlay_class_new(Widget_Data *wd)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(wd, NULL);
    Overlay_Class *ovl = ELM_NEW(Overlay_Class);
-   ovl->clas = clas;
+   ovl->wd = wd;
    ovl->icon = NULL;
    ovl->zoom_max = OVERLAY_CLASS_ZOOM_MAX;
    return ovl;
-}
-
-static void
-_overlay_bubble_cb_add(Overlay_Bubble *ovl, Elm_Map_Overlay *overlay)
-{
-   EINA_SAFETY_ON_NULL_RETURN(ovl);
-   EINA_SAFETY_ON_NULL_RETURN(overlay);
-   evas_object_event_callback_add(ovl->obj, EVAS_CALLBACK_MOUSE_DOWN,
-                                  _overlay_clicked_cb, overlay);
-}
-
-static void
-_overlay_bubble_cb_del(Overlay_Bubble *ovl)
-{
-   EINA_SAFETY_ON_NULL_RETURN(ovl);
-   evas_object_event_callback_del(ovl->obj, EVAS_CALLBACK_MOUSE_DOWN,
-                                  _overlay_clicked_cb);
 }
 
 static void
@@ -2193,10 +2271,10 @@ _overlay_bubble_hide(Overlay_Bubble *bubble)
 }
 
 static void
-_overlay_bubble_update(Overlay_Bubble *bubble)
+_overlay_bubble_coord_update(Overlay_Bubble *bubble)
 {
    EINA_SAFETY_ON_NULL_RETURN(bubble);
-   if ((!bubble->pobj) && (bubble->lon >= 0) && (bubble->lat >= 0))
+   if (!(bubble->pobj))
      {
         _region_to_coord_convert(bubble->wd, bubble->lon, bubble->lat,
                               bubble->wd->size.w, &bubble->x, &bubble->y);
@@ -2204,15 +2282,36 @@ _overlay_bubble_update(Overlay_Bubble *bubble)
 }
 
 static void
+_overlay_bubble_coord_get(Overlay_Bubble *bubble, Evas_Coord *x, Evas_Coord *y, Evas_Coord *w, Evas_Coord *h)
+{
+   EINA_SAFETY_ON_NULL_RETURN(bubble);
+   if (!(bubble->pobj))
+     {
+        if (x) *x = bubble->x;
+        if (y) *y = bubble->y;
+        if (w) *w = bubble->w;
+        if (h) *h = bubble->h;
+     }
+   else
+     {
+        if (x) *x = 0;
+        if (y) *y = 0;
+        if (w) *w = 0;
+        if (h) *h = 0;
+     }
+}
+
+static void
 _overlay_bubble_show(Overlay_Bubble *bubble)
 {
    EINA_SAFETY_ON_NULL_RETURN(bubble);
-   Evas_Coord x, y;
-   if ((bubble->x < 0) || (bubble->y < 0)) return;
-
-   _coord_to_canvas(bubble->wd, bubble->x, bubble->y, &x, &y);
-   _obj_place(bubble->obj, x - (bubble->w /2), y - (bubble->h /2),
-              bubble->w, bubble->h);
+   if (!(bubble->pobj))
+     {
+        _coord_to_canvas(bubble->wd, bubble->x, bubble->y,
+                           &(bubble->x), &(bubble->y));
+        _obj_place(bubble->obj, bubble->x - (bubble->w /2),
+                   bubble->y - (bubble->h /2), bubble->w, bubble->h);
+     }
 }
 
 static void
@@ -2264,20 +2363,22 @@ _overlay_bubble_free(Overlay_Bubble* bubble)
 }
 
 static Overlay_Bubble*
-_overlay_bubble_new(Widget_Data *wd)
+_overlay_bubble_new(Elm_Map_Overlay *overlay)
 {
-   EINA_SAFETY_ON_NULL_RETURN_VAL(wd, NULL);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(overlay, NULL);
 
    Evas_Coord h;
    const char *s;
    Overlay_Bubble *bubble = ELM_NEW(Overlay_Bubble);
-   bubble->wd = wd;
+   bubble->wd = overlay->wd;
 
-   bubble->obj = edje_object_add(evas_object_evas_get(wd->obj));
-   _elm_theme_object_set(wd->obj, bubble->obj , "map", "marker_bubble",
-                         elm_widget_style_get(wd->obj));
+   bubble->obj = edje_object_add(evas_object_evas_get(overlay->wd->obj));
+   _elm_theme_object_set(overlay->wd->obj, bubble->obj , "map", "marker_bubble",
+                         elm_widget_style_get(overlay->wd->obj));
    evas_object_event_callback_add(bubble->obj, EVAS_CALLBACK_MOUSE_UP,
-                                  _overlay_bubble_chase_cb, bubble);
+                                      _overlay_bubble_chase_cb, bubble);
+   evas_object_event_callback_add(bubble->obj, EVAS_CALLBACK_MOUSE_DOWN,
+                                     _overlay_clicked_cb, overlay);
 
    bubble->sc = elm_scroller_add(bubble->obj);
    elm_widget_style_set(bubble->sc, "map_bubble");
@@ -2313,12 +2414,17 @@ _overlay_bubble_new(Widget_Data *wd)
 }
 
 static void
-_overlay_route_hide(Overlay_Route *r)
+_overlay_route_color_update(Overlay_Route *ovl, Color c)
 {
-   EINA_SAFETY_ON_NULL_RETURN(r);
-   Eina_List *l;
-   Evas_Object *p;
-   EINA_LIST_FOREACH(r->paths, l, p) evas_object_hide(p);
+   EINA_SAFETY_ON_NULL_RETURN(ovl);
+   evas_object_color_set(ovl->obj, c.r, c.g, c.b, c.a);
+}
+
+static void
+_overlay_route_hide(Overlay_Route *ovl)
+{
+   EINA_SAFETY_ON_NULL_RETURN(ovl);
+   evas_object_hide(ovl->obj);
 }
 
 static void
@@ -2327,91 +2433,36 @@ _overlay_route_show(Overlay_Route *r)
    EINA_SAFETY_ON_NULL_RETURN(r);
    EINA_SAFETY_ON_NULL_RETURN(r->wd);
 
-   Widget_Data *wd;
    Eina_List *l;
-   Evas_Object *p;
+   Path *p;
    Path_Node *n;
-   int cnt;
-   int x, y;
-   double a;
-   Evas_Coord ow, oh, px, py, size;
 
-   wd = r->wd;
-   _viewport_coord_get(wd, NULL, NULL, &ow, &oh);
-   px = wd->pan_x;
-   py = wd->pan_y;
-   size = wd->size.w;
-
-   EINA_LIST_FOREACH(r->paths, l, p) evas_object_polygon_points_clear(p);
-
-   cnt = eina_list_count(r->nodes);
+   evas_object_polygon_points_clear(r->obj);
    EINA_LIST_FOREACH(r->nodes, l, n)
      {
-        if ((!wd->zoom) || ((n->idx) &&
-            ((n->idx % (int)ceil((double)cnt/(double)size*100.0))))) continue;
-        if (r->inbound)
-          {
-             _region_to_coord_convert(wd, n->pos.lon, n->pos.lat, size,
-                                   &x, &y);
-             if ((x >= px - ow) && (x <= (px + ow*2)) &&
-                 (y >= py - oh) && (y <= (py + oh*2)))
-               {
-                  x = x - px;
-                  y = y - py;
-
-                  p = eina_list_nth(r->paths, n->idx);
-                  a = (double)(y - r->y) / (double)(x - r->x);
-                  if ((abs(a) >= 1) || (r->x == x))
-                    {
-                       evas_object_polygon_point_add(p, r->x - 3, r->y);
-                       evas_object_polygon_point_add(p, r->x + 3, r->y);
-                       evas_object_polygon_point_add(p, x + 3, y);
-                       evas_object_polygon_point_add(p, x - 3, y);
-                    }
-                  else
-                    {
-                       evas_object_polygon_point_add(p, r->x, r->y - 3);
-                       evas_object_polygon_point_add(p, r->x, r->y + 3);
-                       evas_object_polygon_point_add(p, x, y + 3);
-                       evas_object_polygon_point_add(p, x, y - 3);
-                    }
-
-                  evas_object_color_set(p, r->color.r, r->color.g, r->color.b,
-                                        r->color.a);
-                  evas_object_raise(p);
-                  _obj_rotate(wd, p);
-                  evas_object_show(p);
-                  r->x = x;
-                  r->y = y;
-               }
-
-             else r->inbound = EINA_FALSE;
-          }
-        else
-          {
-             _region_to_coord_convert(wd, n->pos.lon, n->pos.lat, size,
-                                   &x, &y);
-             if ((x >= px - ow) && (x <= (px + ow*2)) &&
-                 (y >= py - oh) && (y <= (py + oh*2)))
-               {
-                  r->x = x - px;
-                  r->y = y - py;
-                  r->inbound = EINA_TRUE;
-               }
-             else r->inbound = EINA_FALSE;
-          }
+        p = eina_list_nth(r->paths, n->idx);
+        if (!p) continue;
+        _region_to_coord_convert(r->wd, n->pos.lon, n->pos.lat, r->wd->size.w,
+                                 &p->x, &p->y);
+        _coord_to_canvas(r->wd, p->x, p->y, &p->x, &p->y);
      }
-   r->inbound = EINA_FALSE;
+   EINA_LIST_FOREACH(r->paths, l, p)
+      evas_object_polygon_point_add(r->obj, p->x - 3, p->y - 3);
+
+   EINA_LIST_REVERSE_FOREACH(r->paths, l, p)
+      evas_object_polygon_point_add(r->obj, p->x + 3, p->y + 3);
+   evas_object_show(r->obj);
 }
 
 static void
 _overlay_route_free(Overlay_Route* route)
 {
    EINA_SAFETY_ON_NULL_RETURN(route);
-   Evas_Object *p;
+   Path *p;
    Path_Node *n;
 
-   EINA_LIST_FREE(route->paths, p) evas_object_del(p);
+   evas_object_del(route->obj);
+   EINA_LIST_FREE(route->paths, p)  free(p);
    EINA_LIST_FREE(route->nodes, n)
      {
         if (n->pos.address) eina_stringshare_del(n->pos.address);
@@ -2421,7 +2472,7 @@ _overlay_route_free(Overlay_Route* route)
 }
 
 static Overlay_Route *
-_overlay_route_new(Widget_Data *wd, const Elm_Map_Route *route)
+_overlay_route_new(Widget_Data *wd, const Elm_Map_Route *route, Color c)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(wd, NULL);
    EINA_SAFETY_ON_NULL_RETURN_VAL(route, NULL);
@@ -2431,15 +2482,13 @@ _overlay_route_new(Widget_Data *wd, const Elm_Map_Route *route)
 
    Overlay_Route *ovl = ELM_NEW(Overlay_Route);
    ovl->wd = wd;
-   ovl->inbound = EINA_FALSE;
-   ovl->color.r = 255;
-   ovl->color.g = 0;
-   ovl->color.b = 0;
-   ovl->color.a = 255;
+   ovl->obj = evas_object_polygon_add(evas_object_evas_get(wd->obj));
+   evas_object_smart_member_add(ovl->obj, wd->pan_smart);
+   _overlay_route_color_update(ovl, c);
 
-    EINA_LIST_FOREACH(route->nodes, l, n)
+   EINA_LIST_FOREACH(route->nodes, l, n)
      {
-        Evas_Object *path;
+        Path *path;
         Path_Node *node;
 
         node = ELM_NEW(Path_Node);
@@ -2449,74 +2498,91 @@ _overlay_route_new(Widget_Data *wd, const Elm_Map_Route *route)
         if (n->pos.address) node->pos.address = strdup(n->pos.address);
         ovl->nodes = eina_list_append(ovl->nodes, node);
 
-        path = evas_object_polygon_add(evas_object_evas_get(wd->obj));
-        evas_object_smart_member_add(path, wd->pan_smart);
+        path = ELM_NEW(Path);
         ovl->paths = eina_list_append(ovl->paths, path);
      }
    return ovl;
 }
 
 static void
-_overlay_grouping(Eina_List *members, Elm_Map_Overlay *overlay)
+_overlay_grouping(Eina_List *clas_membs, Elm_Map_Overlay *boss)
 {
-   EINA_SAFETY_ON_NULL_RETURN(members);
-   EINA_SAFETY_ON_NULL_RETURN(overlay);
-   // Currently support only basic overlay type
-   EINA_SAFETY_ON_FALSE_RETURN(overlay->type == ELM_MAP_OVERLAY_TYPE_DEFAULT);
+   EINA_SAFETY_ON_NULL_RETURN(clas_membs);
+   EINA_SAFETY_ON_NULL_RETURN(boss);
 
    Eina_List *l;
-   Elm_Map_Overlay *overlay_memb;
-   Eina_List *club_members = NULL;
+   Eina_List *grp_membs = NULL;
+   Elm_Map_Overlay *memb;
 
-   // Grouping only supports overlay default
-   Overlay_Default *ovl = (Overlay_Default *)overlay->ovl;
-   EINA_LIST_FOREACH(members, l, overlay_memb)
+   int sum_x = 0, sum_y = 0, cnt = 0;
+   Evas_Coord bx = 0, by = 0, bw = 0, bh = 0;
+
+   if (boss->type == ELM_MAP_OVERLAY_TYPE_DEFAULT)
+      _overlay_default_coord_get(boss->ovl, &bx, &by, &bw, &bh);
+   else if (boss->type == ELM_MAP_OVERLAY_TYPE_BUBBLE)
+      _overlay_bubble_coord_get(boss->ovl, &bx, &by, &bw, &bh);
+
+   EINA_LIST_FOREACH(clas_membs, l, memb)
      {
-        Overlay_Default *ovl_memb = overlay_memb->ovl;
-        if ((overlay_memb->hide) ||
-            (overlay_memb->zoom_min > overlay_memb->wd->zoom)) continue;
-        if (overlay == overlay_memb || overlay_memb->grp_in) continue;
-        if (ELM_RECTS_INTERSECT(ovl_memb->x, ovl_memb->y, ovl_memb->w,
-                                ovl_memb->h, ovl->x, ovl->y,
-                                ovl->w * OVERLAY_GROUPING_SCALE,
-                                ovl->h * OVERLAY_GROUPING_SCALE))
+        Evas_Coord x = 0, y = 0, w = 0, h = 0;
+
+        if (boss == memb || memb->grp->in) continue;
+        if ((memb->hide) || (memb->zoom_min > memb->wd->zoom)) continue;
+
+        if (memb->type == ELM_MAP_OVERLAY_TYPE_DEFAULT)
+           _overlay_default_coord_get(memb->ovl, &x, &y, &w, &h);
+        else if (memb->type == ELM_MAP_OVERLAY_TYPE_BUBBLE)
+           _overlay_bubble_coord_get(memb->ovl, &x, &y, &w, &h);
+
+        if (bw <= 0 || bh <= 0 || w <= 0 || h <= 0) continue;
+        if (ELM_RECTS_INTERSECT(x, y, w, h, bx, by,
+                                bw * OVERLAY_GROUPING_SCALE,
+                                bh * OVERLAY_GROUPING_SCALE))
           {
              // Join group.
-             overlay_memb->grp_boss = EINA_FALSE;
-             overlay_memb->grp_in = EINA_TRUE;
-             club_members = eina_list_append(club_members, overlay_memb);
-             _overlay_group_update(overlay_memb->wd, overlay_memb->grp, NULL);
-             _overlay_group_cb_del(overlay_memb->grp);
+             memb->grp->boss = EINA_FALSE;
+             memb->grp->in = EINA_TRUE;
+             sum_x += x;
+             sum_y += y;
+             cnt++;
+             grp_membs = eina_list_append(grp_membs, memb);
           }
      }
 
-   if (eina_list_count(club_members) >= 1)
+   if (cnt >= 1)
      {
         // Mark as boss
-        overlay->grp_boss = EINA_TRUE;
-        overlay->grp_in = EINA_TRUE;
-        club_members = eina_list_append(club_members, overlay);
-        _overlay_group_update(overlay->wd, overlay->grp, club_members);
-        _overlay_group_cb_del(overlay->grp);
-        _overlay_group_cb_add(overlay->grp);
+        boss->grp->boss = EINA_TRUE;
+        boss->grp->in = EINA_TRUE;
+        sum_x = (sum_x + bx) / (cnt + 1);
+        sum_y = (sum_y + by) / (cnt + 1);
+        grp_membs = eina_list_append(grp_membs, boss);
+        _overlay_group_coord_member_update(boss->grp, sum_x, sum_y, grp_membs);
      }
 }
 
 static void
-_overlay_display(Widget_Data *wd, Elm_Map_Overlay *overlay)
+_overlay_show(Elm_Map_Overlay *overlay)
 {
+   Widget_Data *wd = overlay->wd;
    Eina_Bool hide = EINA_FALSE;
 
-   if ((overlay->grp_in) || (overlay->hide) || (overlay->zoom_min > wd->zoom))
+   if (overlay->type == ELM_MAP_OVERLAY_TYPE_CLASS) return;
+
+   if (overlay->paused) return;
+   if ((overlay->grp->clas) &&  (overlay->grp->clas->paused)) return;
+
+   if (((overlay->grp->in) || (overlay->hide) ||
+       (overlay->zoom_min > wd->zoom)))
       hide = EINA_TRUE;
    if ((overlay->grp->clas) && ((overlay->grp->clas->hide) ||
-                                (overlay->grp->clas->zoom_min > wd->zoom)))
+       (overlay->grp->clas->zoom_min > wd->zoom)))
       hide = EINA_TRUE;
 
    if (overlay->type == ELM_MAP_OVERLAY_TYPE_DEFAULT)
      {
         if (hide) _overlay_default_hide(overlay->ovl);
-        else _overlay_default_show(wd, overlay->ovl);
+        else _overlay_default_show(overlay->ovl);
      }
    else if (overlay->type == ELM_MAP_OVERLAY_TYPE_BUBBLE)
      {
@@ -2536,67 +2602,64 @@ _overlay_place(Widget_Data *wd)
    EINA_SAFETY_ON_NULL_RETURN(wd);
 
    Eina_List *l, *ll;
-   Elm_Map_Overlay *overlay, *grp;
+   Elm_Map_Overlay *overlay;
 
-   if (eina_list_count(wd->overlays) == 0) return;
-
-   // Reset overlays coord & grp except class type
+   // Reset group & Update overlays coord
    EINA_LIST_FOREACH(wd->overlays, l, overlay)
      {
-
         if (overlay->type == ELM_MAP_OVERLAY_TYPE_CLASS) continue;
-        if (overlay->paused) continue;
-        if ((overlay->grp) && (overlay->grp->clas) &&
-            (overlay->grp->clas->paused)) continue;
+        overlay->grp->in = EINA_FALSE;
+        overlay->grp->boss = EINA_FALSE;
+
         if (overlay->type == ELM_MAP_OVERLAY_TYPE_DEFAULT)
-          {
-             Overlay_Class *ovl_grp = NULL;
-             if (overlay->grp->clas) ovl_grp = overlay->grp->clas->ovl;
-             _overlay_default_update(wd, overlay->ovl, NULL, NULL, ovl_grp,
-                                     NULL, NULL);
-           }
+           _overlay_default_coord_update(overlay->ovl);
         else if (overlay->type == ELM_MAP_OVERLAY_TYPE_BUBBLE)
-           _overlay_bubble_update(overlay->ovl);
-        // Reset grp flags
-        overlay->grp_in = EINA_FALSE;
-        overlay->grp_boss = EINA_FALSE;
-        _overlay_group_update(wd, overlay->grp, NULL);
+           _overlay_bubble_coord_update(overlay->ovl);
      }
 
-   // Classify into group idol or follwer
-   EINA_LIST_FOREACH(wd->overlays, l, grp)
+   // Classify into group boss or follwer
+   EINA_LIST_FOREACH(wd->overlays, l, overlay)
      {
-        Elm_Map_Overlay *idol;
-        Overlay_Class *ovl;
+        Elm_Map_Overlay *boss;
+        Overlay_Class *clas;
 
-        if (grp->type != ELM_MAP_OVERLAY_TYPE_CLASS) continue;
-        if ((grp->hide) || (grp->zoom_min > wd->zoom)) continue;
+        if (overlay->type != ELM_MAP_OVERLAY_TYPE_CLASS) continue;
+        if (overlay->hide || (overlay->zoom_min > wd->zoom)) continue;
 
-        ovl = grp->ovl;
-        if (ovl->zoom_max < wd->zoom) continue;
-        EINA_LIST_FOREACH(ovl->members, ll, idol)
+        clas = overlay->ovl;
+        if (clas->zoom_max < wd->zoom) continue;
+        EINA_LIST_FOREACH(clas->members, ll, boss)
           {
-             if (!idol->grp_in) _overlay_grouping(ovl->members, idol);
+             if (boss->type == ELM_MAP_OVERLAY_TYPE_CLASS) continue;
+             if (boss->hide || (boss->zoom_min > wd->zoom)) continue;
+             if (boss->grp->in) continue;
+             _overlay_grouping(clas->members, boss);
           }
      }
 
    // Place overlays
-   EINA_LIST_FOREACH(wd->overlays, l, overlay)
-      if (overlay->type != ELM_MAP_OVERLAY_TYPE_CLASS)
-         _overlay_display(wd, overlay);
+   EINA_LIST_FOREACH(wd->overlays, l, overlay)  _overlay_show(overlay);
 
-   // Place group overlays
+   // Place group overlays on top of overlays
    EINA_LIST_FOREACH(wd->overlays, l, overlay)
      {
-        if (overlay->grp_boss) _overlay_default_show(wd, overlay->grp->ovl);
+        if (overlay->type == ELM_MAP_OVERLAY_TYPE_CLASS) continue;
+        if (overlay->grp->boss) _overlay_group_show(overlay->grp);
+        else _overlay_group_hide(overlay->grp);
      }
 }
 
 static Evas_Object *
-_overlay_obj_get(Elm_Map_Overlay *overlay)
+_overlay_obj_get(const Elm_Map_Overlay *overlay)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(overlay, NULL);
-   if (overlay->type == ELM_MAP_OVERLAY_TYPE_DEFAULT)
+   if (overlay->type == ELM_MAP_OVERLAY_TYPE_GROUP)
+     {
+        Overlay_Group *ovl = overlay->ovl;
+        Overlay_Default *df = ovl->ovl;
+        return df->layout;
+     }
+   else if (overlay->type == ELM_MAP_OVERLAY_TYPE_DEFAULT)
      {
         Overlay_Default *ovl = overlay->ovl;
         return ovl->layout;
@@ -3692,7 +3755,7 @@ _region_bring_in(void *data)
 }
 
 static char *
-_mapnik_url_cb(Evas_Object *obj __UNUSED__, int x, int y, int zoom)
+_mapnik_url_cb(const Evas_Object *obj __UNUSED__, int x, int y, int zoom)
 {
    char buf[PATH_MAX];
    // ((x+y+zoom)%3)+'a' is requesting map images from distributed tile servers (eg., a, b, c)
@@ -3702,7 +3765,7 @@ _mapnik_url_cb(Evas_Object *obj __UNUSED__, int x, int y, int zoom)
 }
 
 static char *
-_osmarender_url_cb(Evas_Object *obj __UNUSED__, int x, int y, int zoom)
+_osmarender_url_cb(const Evas_Object *obj __UNUSED__, int x, int y, int zoom)
 {
    char buf[PATH_MAX];
    snprintf(buf, sizeof(buf),
@@ -3712,7 +3775,7 @@ _osmarender_url_cb(Evas_Object *obj __UNUSED__, int x, int y, int zoom)
 }
 
 static char *
-_cyclemap_url_cb(Evas_Object *obj __UNUSED__, int x, int y, int zoom)
+_cyclemap_url_cb(const Evas_Object *obj __UNUSED__, int x, int y, int zoom)
 {
    char buf[PATH_MAX];
    snprintf(buf, sizeof(buf),
@@ -3722,7 +3785,7 @@ _cyclemap_url_cb(Evas_Object *obj __UNUSED__, int x, int y, int zoom)
 }
 
 static char *
-_mapquest_url_cb(Evas_Object *obj __UNUSED__, int x, int y, int zoom)
+_mapquest_url_cb(const Evas_Object *obj __UNUSED__, int x, int y, int zoom)
 {
    char buf[PATH_MAX];
    snprintf(buf, sizeof(buf),
@@ -3732,7 +3795,7 @@ _mapquest_url_cb(Evas_Object *obj __UNUSED__, int x, int y, int zoom)
 }
 
 static char *
-_mapquest_aerial_url_cb(Evas_Object *obj __UNUSED__, int x, int y, int zoom)
+_mapquest_aerial_url_cb(const Evas_Object *obj __UNUSED__, int x, int y, int zoom)
 {
    char buf[PATH_MAX];
    snprintf(buf, sizeof(buf), "http://oatile%d.mqcdn.com/naip/%d/%d/%d.png",
@@ -3740,7 +3803,7 @@ _mapquest_aerial_url_cb(Evas_Object *obj __UNUSED__, int x, int y, int zoom)
    return strdup(buf);
 }
 
-static char *_yours_url_cb(Evas_Object *obj __UNUSED__, const char *type_name, int method, double flon, double flat, double tlon, double tlat)
+static char *_yours_url_cb(const Evas_Object *obj __UNUSED__, const char *type_name, int method, double flon, double flat, double tlon, double tlat)
 {
    char buf[PATH_MAX];
    snprintf(buf, sizeof(buf),
@@ -3752,7 +3815,7 @@ static char *_yours_url_cb(Evas_Object *obj __UNUSED__, const char *type_name, i
 
 // TODO: fix monav api
 /*
-static char *_monav_url_cb(Evas_Object *obj __UNUSED__, char *type_name, int method, double flon, double flat, double tlon, double tlat)
+static char *_monav_url_cb(const Evas_Object *obj __UNUSED__, char *type_name, int method, double flon, double flat, double tlon, double tlat)
 {
    char buf[PATH_MAX];
    snprintf(buf, sizeof(buf),
@@ -3765,7 +3828,7 @@ static char *_monav_url_cb(Evas_Object *obj __UNUSED__, char *type_name, int met
 
 // TODO: fix ors api
 /*
-static char *_ors_url_cb(Evas_Object *obj __UNUSED__, char *type_name, int method, double flon, double flat, double tlon, double tlat)
+static char *_ors_url_cb(const Evas_Object *obj __UNUSED__, char *type_name, int method, double flon, double flat, double tlon, double tlat)
 {
    char buf[PATH_MAX];
    snprintf(buf, sizeof(buf),
@@ -3777,7 +3840,7 @@ static char *_ors_url_cb(Evas_Object *obj __UNUSED__, char *type_name, int metho
 */
 
 static char *
-_nominatim_url_cb(Evas_Object *obj, int method, const char *name, double lon, double lat)
+_nominatim_url_cb(const Evas_Object *obj, int method, const char *name, double lon, double lat)
 {
    ELM_CHECK_WIDTYPE(obj, widtype) strdup("");
    Widget_Data *wd = elm_widget_data_get(obj);
@@ -4599,7 +4662,7 @@ elm_map_sources_get(const Evas_Object *obj, Elm_Map_Source_Type type)
 
    if (type == ELM_MAP_SOURCE_TYPE_TILE) return wd->src_tile_names;
    else if (type == ELM_MAP_SOURCE_TYPE_ROUTE) return wd->src_route_names;
-   else if (type == ELM_MAP_SOURCE_TYPE_NAME) return wd->src_tile_names;
+   else if (type == ELM_MAP_SOURCE_TYPE_NAME) return wd->src_name_names;
    else ERR("Not supported map source type: %d", type);
    return NULL;
 #else
@@ -4848,8 +4911,11 @@ elm_map_overlay_add(Evas_Object *obj, double lon, double lat)
    Elm_Map_Overlay *overlay = ELM_NEW(Elm_Map_Overlay);
    overlay->wd = wd;
    overlay->type = ELM_MAP_OVERLAY_TYPE_DEFAULT;
-   overlay->ovl = _overlay_default_new(wd, lon, lat, "radio");
-   _overlay_default_cb_add(overlay->ovl, _overlay_clicked_cb, overlay);
+   overlay->c.r = 0x87;
+   overlay->c.g = 0xce;
+   overlay->c.b = 0xeb;
+   overlay->c.a = 255;
+   overlay->ovl = _overlay_default_new(overlay, lon, lat, overlay->c, 1);
    overlay->grp = _overlay_group_new(wd);
    wd->overlays = eina_list_append(wd->overlays, overlay);
 
@@ -4871,27 +4937,22 @@ elm_map_overlay_del(Elm_Map_Overlay *overlay)
    EINA_SAFETY_ON_NULL_RETURN(overlay->wd);
    ELM_CHECK_WIDTYPE(overlay->wd->obj, widtype);
 
-   if (overlay->type == ELM_MAP_OVERLAY_TYPE_DEFAULT)
-     {
-        _overlay_default_cb_del(overlay->ovl, _overlay_clicked_cb);
-        _overlay_default_free(overlay->ovl);
-     }
-   else if (overlay->type == ELM_MAP_OVERLAY_TYPE_BUBBLE)
-     {
-        _overlay_bubble_cb_del(overlay->ovl);
-        _overlay_bubble_free(overlay->ovl);
-     }
-   else if (overlay->type == ELM_MAP_OVERLAY_TYPE_CLASS)
-      _overlay_class_free(overlay->ovl);
-
-   else if (overlay->type == ELM_MAP_OVERLAY_TYPE_ROUTE)
-      _overlay_route_free(overlay->ovl);
-
    if (overlay->grp)
      {
-        _overlay_group_cb_del(overlay->grp);
-        _overlay_group_free(overlay->grp, overlay);
+        if (overlay->grp->clas)
+           elm_map_overlay_class_remove(overlay->grp->clas, overlay);
+        _overlay_group_free(overlay->grp);
      }
+
+   if (overlay->type == ELM_MAP_OVERLAY_TYPE_DEFAULT)
+      _overlay_default_free(overlay->ovl);
+   else if (overlay->type == ELM_MAP_OVERLAY_TYPE_BUBBLE)
+      _overlay_bubble_free(overlay->ovl);
+   else if (overlay->type == ELM_MAP_OVERLAY_TYPE_CLASS)
+      _overlay_class_free(overlay->ovl);
+   else if (overlay->type == ELM_MAP_OVERLAY_TYPE_ROUTE)
+      _overlay_route_free(overlay->ovl);
+   else ERR("Invalid overlay type: %d", overlay->type);
 
    overlay->wd->overlays = eina_list_remove(overlay->wd->overlays, overlay);
    evas_object_smart_changed(overlay->wd->pan_smart);
@@ -5138,7 +5199,12 @@ elm_map_overlay_region_get(const Elm_Map_Overlay *overlay, double *lon, double *
    EINA_SAFETY_ON_NULL_RETURN(overlay->wd);
    ELM_CHECK_WIDTYPE(overlay->wd->obj, widtype);
 
-   if (overlay->type == ELM_MAP_OVERLAY_TYPE_DEFAULT)
+   if (overlay->type == ELM_MAP_OVERLAY_TYPE_GROUP)
+     {
+        Overlay_Group *ovl = overlay->ovl;
+        _overlay_group_region_get(ovl, lon, lat);
+     }
+   else if (overlay->type == ELM_MAP_OVERLAY_TYPE_DEFAULT)
      {
         const Overlay_Default *ovl = overlay->ovl;
         if (lon) *lon = ovl->lon;
@@ -5168,10 +5234,9 @@ elm_map_overlay_icon_set(Elm_Map_Overlay *overlay, Evas_Object *icon)
    ELM_CHECK_WIDTYPE(overlay->wd->obj, widtype);
 
    if (overlay->type == ELM_MAP_OVERLAY_TYPE_DEFAULT)
-      _overlay_default_update(overlay->wd, overlay->ovl, NULL, icon,
-                              NULL, NULL, NULL);
+      _overlay_default_icon_update(overlay->ovl, icon);
    else if (overlay->type == ELM_MAP_OVERLAY_TYPE_CLASS)
-      _overlay_class_update(overlay->wd, overlay->ovl, NULL, icon);
+      _overlay_class_icon_update(overlay->ovl, icon);
    else ERR("Not supported overlay type: %d", overlay->type);
 
    evas_object_smart_changed(overlay->wd->pan_smart);
@@ -5192,7 +5257,7 @@ elm_map_overlay_icon_get(const Elm_Map_Overlay *overlay)
    if (overlay->type == ELM_MAP_OVERLAY_TYPE_DEFAULT)
      {
         const Overlay_Default *ovl = overlay->ovl;
-        return elm_object_part_content_get(ovl->layout, "elm.icon");
+        return ovl->icon;
      }
    else if (overlay->type == ELM_MAP_OVERLAY_TYPE_CLASS)
      {
@@ -5211,19 +5276,18 @@ elm_map_overlay_icon_get(const Elm_Map_Overlay *overlay)
 }
 
 EAPI void
-elm_map_overlay_content_set(Elm_Map_Overlay *overlay, Evas_Object *obj)
+elm_map_overlay_content_set(Elm_Map_Overlay *overlay, Evas_Object *content)
 {
 #ifdef HAVE_ELEMENTARY_ECORE_CON
    EINA_SAFETY_ON_NULL_RETURN(overlay);
-   EINA_SAFETY_ON_NULL_RETURN(obj);
+   EINA_SAFETY_ON_NULL_RETURN(content);
    EINA_SAFETY_ON_NULL_RETURN(overlay->wd);
    ELM_CHECK_WIDTYPE(overlay->wd->obj, widtype);
 
    if (overlay->type == ELM_MAP_OVERLAY_TYPE_DEFAULT)
-      _overlay_default_update(overlay->wd, overlay->ovl, obj, NULL, NULL,
-                                 NULL, NULL);
+      _overlay_default_content_update(overlay->ovl, content, overlay);
    else if (overlay->type == ELM_MAP_OVERLAY_TYPE_CLASS)
-      _overlay_class_update(overlay->wd, overlay->ovl, obj, NULL);
+      _overlay_class_content_update(overlay->ovl, content);
    else ERR("Not supported overlay type: %d", overlay->type);
 
    evas_object_smart_changed(overlay->wd->pan_smart);
@@ -5270,15 +5334,22 @@ elm_map_overlay_color_set(Elm_Map_Overlay *overlay, int r, int g , int b, int a)
    EINA_SAFETY_ON_NULL_RETURN(overlay->wd);
    ELM_CHECK_WIDTYPE(overlay->wd->obj, widtype);
 
-   if (overlay->type == ELM_MAP_OVERLAY_TYPE_ROUTE)
+   overlay->c.r = r;
+   overlay->c.g = g;
+   overlay->c.b = b;
+   overlay->c.a = a;
+
+   if (overlay->type == ELM_MAP_OVERLAY_TYPE_CLASS)
+      _overlay_class_color_update(overlay->ovl, overlay->c);
+   else if (overlay->type == ELM_MAP_OVERLAY_TYPE_DEFAULT)
+      _overlay_default_color_update(overlay->ovl, overlay->c);
+   else if (overlay->type == ELM_MAP_OVERLAY_TYPE_ROUTE)
+      _overlay_route_color_update(overlay->ovl, overlay->c);
+   else
      {
-        Overlay_Route *route = overlay->ovl;
-        route->color.r = r;
-        route->color.g = g;
-        route->color.b = b;
-        route->color.a = a;
+        ERR("Not supported overlay type: %d", overlay->type);
      }
-   else ERR("Not supported overlay type: %d", overlay->type);
+
 #else
    (void) overlay;
    (void) r;
@@ -5296,25 +5367,14 @@ elm_map_overlay_color_get(const Elm_Map_Overlay *overlay, int *r, int *g , int *
    EINA_SAFETY_ON_NULL_RETURN(overlay->wd);
    ELM_CHECK_WIDTYPE(overlay->wd->obj, widtype);
 
-   int rr, gg, bb, aa;
-
    if (overlay->type == ELM_MAP_OVERLAY_TYPE_ROUTE)
      {
-        Overlay_Route *route = overlay->ovl;
-        rr = route->color.r;
-        gg = route->color.g;
-        bb = route->color.b;
-        aa = route->color.a;
-     }
-   else
-     {
-        ERR("Not supported overlay type: %d", overlay->type);
-        return;
-     }
-   if (r) *r = rr;
-   if (g) *g = gg;
-   if (b) *b = bb;
-   if (a) *a = aa;
+         if (r) *r = overlay->c.r;
+         if (g) *g = overlay->c.g;
+         if (b) *b = overlay->c.b;
+         if (a) *a = overlay->c.a;
+      }
+   else ERR("Not supported overlay type: %d", overlay->type);
 #else
    (void) overlay;
    (void) r;
@@ -5334,6 +5394,9 @@ elm_map_overlay_get_cb_set(Elm_Map_Overlay *overlay, Elm_Map_Overlay_Get_Cb get_
 
    overlay->cb = get_cb;
    overlay->cb_data = data;
+
+   if (overlay->type == ELM_MAP_OVERLAY_TYPE_CLASS)
+      _overlay_class_cb_set(overlay->ovl, get_cb, data);
 #else
    (void) overlay;
    (void) get_cb;
@@ -5352,8 +5415,11 @@ elm_map_overlay_class_add(Evas_Object *obj)
    Elm_Map_Overlay *overlay = ELM_NEW(Elm_Map_Overlay);
    overlay->wd = wd;
    overlay->type = ELM_MAP_OVERLAY_TYPE_CLASS;
-   overlay->ovl = _overlay_class_new(wd, overlay);
-   overlay->grp = NULL;
+   overlay->ovl = _overlay_class_new(wd);
+   overlay->c.r = 0x90;
+   overlay->c.g = 0xee;
+   overlay->c.b = 0x90;
+   overlay->c.a = 0xff;
    wd->overlays = eina_list_append(wd->overlays, overlay);
 
    evas_object_smart_changed(wd->pan_smart);
@@ -5365,97 +5431,104 @@ elm_map_overlay_class_add(Evas_Object *obj)
 }
 
 EAPI void
-elm_map_overlay_class_append(Elm_Map_Overlay *group, Elm_Map_Overlay *overlay)
+elm_map_overlay_class_append(Elm_Map_Overlay *clas, Elm_Map_Overlay *overlay)
 {
 #ifdef HAVE_ELEMENTARY_ECORE_CON
-   EINA_SAFETY_ON_NULL_RETURN(group);
+   EINA_SAFETY_ON_NULL_RETURN(clas);
    EINA_SAFETY_ON_NULL_RETURN(overlay);
-   EINA_SAFETY_ON_NULL_RETURN(group->wd);
-   ELM_CHECK_WIDTYPE(group->wd->obj, widtype);
-   EINA_SAFETY_ON_FALSE_RETURN(group->type == ELM_MAP_OVERLAY_TYPE_CLASS);
+   EINA_SAFETY_ON_NULL_RETURN(clas->wd);
+   ELM_CHECK_WIDTYPE(clas->wd->obj, widtype);
+   EINA_SAFETY_ON_FALSE_RETURN(clas->type == ELM_MAP_OVERLAY_TYPE_CLASS);
 
-   if (overlay->type != ELM_MAP_OVERLAY_TYPE_DEFAULT)
+   Overlay_Class *clas_ovl = clas->ovl;
+   if (eina_list_data_find(clas_ovl->members, overlay))
      {
-        ERR("Currently group supports only default overlays");
+        ERR("Already added overlay into clas");
         return;
      }
+   clas_ovl->members = eina_list_append(clas_ovl->members, overlay);
 
-   Overlay_Class *ovl = group->ovl;
-   if (eina_list_data_find(ovl->members, overlay))
+   // Update group by class
+   overlay->grp->clas = clas;
+   _overlay_group_icon_update(overlay->grp, clas_ovl->icon);
+   _overlay_group_content_update(overlay->grp, clas_ovl->content);
+   _overlay_group_color_update(overlay->grp, clas->c);
+   _overlay_group_cb_set(overlay->grp, clas->cb, clas->data);
+   if (overlay->type == ELM_MAP_OVERLAY_TYPE_DEFAULT)
      {
-        ERR("Already added overlay into group");
-        return;
+        _overlay_default_clas_icon_update(overlay->ovl, clas_ovl->icon);
+        _overlay_default_clas_content_update(overlay->ovl, clas_ovl->content);
      }
-   ovl->members = eina_list_append(ovl->members, overlay);
-   overlay->grp->clas = group;
 
-  evas_object_smart_changed(group->wd->pan_smart);
+  evas_object_smart_changed(clas->wd->pan_smart);
 #else
-   (void) group;
+   (void) clas;
    (void) overlay;
 #endif
 }
 
 EAPI void
-elm_map_overlay_class_remove(Elm_Map_Overlay *group, Elm_Map_Overlay *overlay)
+elm_map_overlay_class_remove(Elm_Map_Overlay *clas, Elm_Map_Overlay *overlay)
 {
 #ifdef HAVE_ELEMENTARY_ECORE_CON
-   EINA_SAFETY_ON_NULL_RETURN(group);
+   EINA_SAFETY_ON_NULL_RETURN(clas);
    EINA_SAFETY_ON_NULL_RETURN(overlay);
-   EINA_SAFETY_ON_NULL_RETURN(group->wd);
-   ELM_CHECK_WIDTYPE(group->wd->obj, widtype);
-   EINA_SAFETY_ON_FALSE_RETURN(group->type == ELM_MAP_OVERLAY_TYPE_CLASS);
+   EINA_SAFETY_ON_NULL_RETURN(clas->wd);
+   ELM_CHECK_WIDTYPE(clas->wd->obj, widtype);
+   EINA_SAFETY_ON_FALSE_RETURN(clas->type == ELM_MAP_OVERLAY_TYPE_CLASS);
 
-    if (overlay->type != ELM_MAP_OVERLAY_TYPE_DEFAULT)
-     {
-        ERR("Currently group supports only default overlays");
-        return;
-     }
-   Overlay_Class *ovl = group->ovl;
+   Overlay_Class *ovl = clas->ovl;
    ovl->members = eina_list_remove(ovl->members, overlay);
-   overlay->grp->clas = NULL;
-   _overlay_group_update(group->wd, overlay->grp, NULL);
 
-  evas_object_smart_changed(group->wd->pan_smart);
+   overlay->grp->clas = NULL;
+   _overlay_group_icon_update(overlay->grp, NULL);
+   _overlay_group_content_update(overlay->grp, NULL);
+   if (overlay->type == ELM_MAP_OVERLAY_TYPE_DEFAULT)
+     {
+        _overlay_default_clas_icon_update(overlay->ovl, NULL);
+        _overlay_default_clas_content_update(overlay->ovl, NULL);
+     }
+
+  evas_object_smart_changed(clas->wd->pan_smart);
 #else
-   (void) group;
+   (void) clas;
    (void) overlay;
 #endif
 }
 
 EAPI void
-elm_map_overlay_class_zoom_max_set(Elm_Map_Overlay *group, int zoom)
+elm_map_overlay_class_zoom_max_set(Elm_Map_Overlay *clas, int zoom)
 {
 #ifdef HAVE_ELEMENTARY_ECORE_CON
-   EINA_SAFETY_ON_NULL_RETURN(group);
-   EINA_SAFETY_ON_NULL_RETURN(group->wd);
-   ELM_CHECK_WIDTYPE(group->wd->obj, widtype);
-   EINA_SAFETY_ON_FALSE_RETURN(group->type == ELM_MAP_OVERLAY_TYPE_CLASS);
+   EINA_SAFETY_ON_NULL_RETURN(clas);
+   EINA_SAFETY_ON_NULL_RETURN(clas->wd);
+   ELM_CHECK_WIDTYPE(clas->wd->obj, widtype);
+   EINA_SAFETY_ON_FALSE_RETURN(clas->type == ELM_MAP_OVERLAY_TYPE_CLASS);
 
-   Overlay_Class *ovl = group->ovl;
+   Overlay_Class *ovl = clas->ovl;
    if (ovl->zoom_max == !!zoom) return;
    ovl->zoom_max = zoom;
 
-   evas_object_smart_changed(group->wd->pan_smart);
+   evas_object_smart_changed(clas->wd->pan_smart);
 #else
-   (void) group;
+   (void) clas;
    (void) zoom;
 #endif
 }
 
 EAPI int
-elm_map_overlay_class_zoom_max_get(const Elm_Map_Overlay *group)
+elm_map_overlay_class_zoom_max_get(const Elm_Map_Overlay *clas)
 {
 #ifdef HAVE_ELEMENTARY_ECORE_CON
-   EINA_SAFETY_ON_NULL_RETURN_VAL(group, OVERLAY_CLASS_ZOOM_MAX);
-   EINA_SAFETY_ON_NULL_RETURN_VAL(group->wd, OVERLAY_CLASS_ZOOM_MAX);
-   ELM_CHECK_WIDTYPE(group->wd->obj, widtype) OVERLAY_CLASS_ZOOM_MAX;
-   EINA_SAFETY_ON_FALSE_RETURN_VAL(group->type == ELM_MAP_OVERLAY_TYPE_CLASS, OVERLAY_CLASS_ZOOM_MAX);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(clas, OVERLAY_CLASS_ZOOM_MAX);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(clas->wd, OVERLAY_CLASS_ZOOM_MAX);
+   ELM_CHECK_WIDTYPE(clas->wd->obj, widtype) OVERLAY_CLASS_ZOOM_MAX;
+   EINA_SAFETY_ON_FALSE_RETURN_VAL(clas->type == ELM_MAP_OVERLAY_TYPE_CLASS, OVERLAY_CLASS_ZOOM_MAX);
 
-   const Overlay_Class *ovl = group->ovl;
+   const Overlay_Class *ovl = clas->ovl;
    return ovl->zoom_max;
 #else
-   (void) group;
+   (void) clas;
    return OVERLAY_CLASS_ZOOM_MAX;
 #endif
 }
@@ -5471,8 +5544,11 @@ elm_map_overlay_bubble_add(Evas_Object *obj)
    Elm_Map_Overlay *overlay = ELM_NEW(Elm_Map_Overlay);
    overlay->wd = wd;
    overlay->type = ELM_MAP_OVERLAY_TYPE_BUBBLE;
-   overlay->ovl =  _overlay_bubble_new(wd);
-   _overlay_bubble_cb_add(overlay->ovl, overlay);
+   overlay->c.r = 255;
+   overlay->c.g = 255;
+   overlay->c.b = 255;
+   overlay->c.a = 255;
+   overlay->ovl =  _overlay_bubble_new(overlay);
    overlay->grp = _overlay_group_new(wd);
    wd->overlays = eina_list_append(wd->overlays, overlay);
 
@@ -5485,7 +5561,7 @@ elm_map_overlay_bubble_add(Evas_Object *obj)
 }
 
 EAPI void
-elm_map_overlay_bubble_follow(Elm_Map_Overlay *bubble, Elm_Map_Overlay *parent)
+elm_map_overlay_bubble_follow(Elm_Map_Overlay *bubble, const Elm_Map_Overlay *parent)
 {
 #ifdef HAVE_ELEMENTARY_ECORE_CON
    EINA_SAFETY_ON_NULL_RETURN(bubble);
@@ -5573,7 +5649,11 @@ elm_map_overlay_route_add(Evas_Object *obj, const Elm_Map_Route *route)
    Elm_Map_Overlay *overlay = ELM_NEW(Elm_Map_Overlay);
    overlay->wd = wd;
    overlay->type = ELM_MAP_OVERLAY_TYPE_ROUTE;
-   overlay->ovl =  _overlay_route_new(wd, route);
+   overlay->c.r = 0xff;
+   overlay->c.g = 0x00;
+   overlay->c.b = 0x00;
+   overlay->c.a = 0xff;
+   overlay->ovl =  _overlay_route_new(wd, route, overlay->c);
    overlay->grp = _overlay_group_new(wd);
    wd->overlays = eina_list_append(wd->overlays, overlay);
 

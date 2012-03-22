@@ -497,7 +497,7 @@ group { name: "elm/map/marker/radio/default";
       item: size_max_h 58;
    }
    images {
-      image: "map_item.png" COMP;
+      image: "radio2.png" COMP;
    }
    parts {
       part { name: "whole";
@@ -508,7 +508,7 @@ group { name: "elm/map/marker/radio/default";
       part { name: "base";
          ignore_flags: ON_HOLD;
          description { state: "default" 0.0;
-            image.normal: "map_item.png";
+            image.normal: "radio2.png";
          }
       }
       part { name: "elm.icon";
