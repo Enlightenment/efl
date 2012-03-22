@@ -1930,6 +1930,7 @@ elm_list_item_show(Elm_Object_Item *it)
    Evas_Coord bx, by, bw, bh;
    Evas_Coord x, y, w, h;
 
+   evas_smart_objects_calculate(evas_object_evas_get(wd->box));
    evas_object_geometry_get(wd->box, &bx, &by, &bw, &bh);
    evas_object_geometry_get(VIEW(it), &x, &y, &w, &h);
    x -= bx;
@@ -1946,6 +1947,7 @@ elm_list_item_bring_in(Elm_Object_Item *it)
    Evas_Coord bx, by, bw, bh;
    Evas_Coord x, y, w, h;
 
+   evas_smart_objects_calculate(evas_object_evas_get(wd->box));
    evas_object_geometry_get(wd->box, &bx, &by, &bw, &bh);
    evas_object_geometry_get(VIEW(it), &x, &y, &w, &h);
    x -= bx;
