@@ -2571,7 +2571,7 @@ _scroll_item(Widget_Data *wd)
          dy -= gith;
          break;
       case ELM_GENLIST_ITEM_SCROLLTO_MIDDLE:
-         dy += (it->item->h / 2 - oh / 2);
+         dy += ((it->item->h / 2) - (oh / 2));
          break;
       case ELM_GENLIST_ITEM_SCROLLTO_IN:
       default:
@@ -2824,16 +2824,6 @@ _pan_set(Evas_Object *obj,
    Item_Block *itb;
 
    if (!sd) return;
-   //   Evas_Coord ow, oh;
-   //   evas_object_geometry_get(obj, NULL, NULL, &ow, &oh);
-   //   ow = sd->wd->minw - ow;
-   //   if (ow < 0) ow = 0;
-   //   oh = sd->wd->minh - oh;
-   //   if (oh < 0) oh = 0;
-   //   if (x < 0) x = 0;
-   //   if (y < 0) y = 0;
-   //   if (x > ow) x = ow;
-   //   if (y > oh) y = oh;
    if ((x == sd->wd->pan_x) && (y == sd->wd->pan_y)) return;
    sd->wd->pan_x = x;
    sd->wd->pan_y = y;
@@ -4862,13 +4852,12 @@ _elm_genlist_item_compute_coordinates(Elm_Object_Item *it,
      }
 
    evas_object_geometry_get(_it->wd->pan_smart, NULL, NULL, w, h);
-   switch(type)
+   switch (type)
      {
       case ELM_GENLIST_ITEM_SCROLLTO_IN:
          if ((_it->item->group_item) &&
-            (_it->wd->pan_y > (_it->y + _it->item->block->y)))
-             gith = _it->item->group_item->item->h;
-
+             (_it->wd->pan_y > (_it->y + _it->item->block->y)))
+          gith = _it->item->group_item->item->h;
          *h = _it->item->h;
          *y = _it->y + _it->item->block->y - gith;
          break;
@@ -4877,7 +4866,7 @@ _elm_genlist_item_compute_coordinates(Elm_Object_Item *it,
          *y = _it->y + _it->item->block->y - gith;
          break;
       case ELM_GENLIST_ITEM_SCROLLTO_MIDDLE:
-         *y = _it->y + _it->item->block->y - *h / 2 + _it->item->h / 2;
+         *y = _it->y + _it->item->block->y - (*h / 2) + (_it->item->h / 2);
          break;
       default:
          return EINA_FALSE;
@@ -4942,8 +4931,7 @@ elm_genlist_item_all_contents_unset(Elm_Object_Item *it, Eina_List **l)
         elm_widget_sub_object_del(WIDGET(it), content);
         evas_object_smart_member_del(content);
         evas_object_hide(content);
-        if (l)
-          *l = eina_list_append(*l, content);
+        if (l) *l = eina_list_append(*l, content);
      }
 }
 
