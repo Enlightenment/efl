@@ -11118,7 +11118,7 @@ EAPI Evas_Object_Box_Option    *evas_object_box_insert_at                       
  * On removal, you'll get an unparented object again, just as it was
  * before you inserted it in the box. The
  * _Evas_Object_Box_Api::option_free box smart callback will be called
- * automatilly for you and, also, the @c "child,removed" smart event
+ * automatically for you and, also, the @c "child,removed" smart event
  * will take place.
  *
  * @note This call will trigger the box's _Evas_Object_Box_Api::remove
@@ -11137,7 +11137,7 @@ EAPI Eina_Bool                  evas_object_box_remove                          
  *
  * On removal, you'll get an unparented object again, just as it was
  * before you inserted it in the box. The @c option_free() box smart
- * callback will be called automatilly for you and, also, the
+ * callback will be called automatically for you and, also, the
  * @c "child,removed" smart event will take place.
  *
  * @note This function will fail if the given position is invalid,
@@ -11729,8 +11729,8 @@ EAPI Eina_List                          *evas_object_grid_children_get    (const
      {
         int    saved_memory; /**< current amount of saved memory, in bytes */
         int    wasted_memory; /**< current amount of wasted memory, in bytes */
-        int    saved_memory_peak; /**< peak ammount of saved memory, in bytes */
-        int    wasted_memory_peak; /**< peak ammount of wasted memory, in bytes */
+        int    saved_memory_peak; /**< peak amount of saved memory, in bytes */
+        int    wasted_memory_peak; /**< peak amount of wasted memory, in bytes */
         double saved_time_image_header_load; /**< time, in seconds, saved in header loads by sharing cached loads instead */
         double saved_time_image_data_load; /**< time, in seconds, saved in data loads by sharing cached loads instead */
      };
@@ -11943,7 +11943,7 @@ EAPI void              evas_color_rgb_to_hsv             (int r, int g, int b, f
  * @param g The Green component of the color.
  * @param b The Blue component of the color.
  *
- * This function pre-multiplies a given rbg triplet by an alpha
+ * This function pre-multiplies a given rgb triplet by an alpha
  * factor. Alpha factor is used to define transparency.
  *
  * @ingroup Evas_Utils
@@ -12373,7 +12373,7 @@ EAPI Evas_Modifier_Mask   evas_key_modifier_mask_get     (const Evas *e, const c
  * modifiers that must and mustn't, respectively, be pressed along
  * with @p keyname key in order to trigger this new key
  * grab. Modifiers can be things such as Shift and Ctrl as well as
- * user defigned types via evas_key_modifier_add(). Retrieve them with
+ * user defined types via evas_key_modifier_add(). Retrieve them with
  * evas_key_modifier_mask_get() or use @c 0 for empty masks.
  *
  * @p exclusive will make the given object the only one permitted to
