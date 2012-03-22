@@ -742,4 +742,59 @@ group { name: "elm/map/marker_bubble/default";
       }
    }
 }
-
+group { name: "elm/map/circle/base/default";
+   images {
+      image: "map_circle.png" COMP;
+   }
+   parts {
+      part { name: "base";
+         ignore_flags: ON_HOLD;
+         description {  state: "default" 0.0;
+	 image.normal: "map_circle.png";
+         }
+      }
+   }
+}
+group { name: "elm/map/scale/base/default";
+   data {
+      item: size_w 100;
+      item: size_h 25;
+   }
+   images {
+      image: "map_scale.png" COMP;
+   }
+   parts {
+      part { name: "base";
+         ignore_flags: ON_HOLD;
+         description { state: "default" 0.0;
+            image.normal: "map_scale.png";
+	    image.border: 10 10 10 10;
+         }
+      }
+      part { name: "elm.text";
+         type:          TEXT;
+         ignore_flags:  ON_HOLD;
+         effect:        SOFT_SHADOW;
+         mouse_events:  0;
+         scale: 1;
+         description { state: "default" 0.0;
+            color: 224 224 224 255;
+            color3: 0 0 0 64;
+	    rel1 {
+		    relative: 0 0;
+		    offset: 1 1;
+	    }
+	    rel2 {
+		    relative: 1 1;
+		    offset: -1 -1;
+	    }
+            text {
+               font:     "Sans,Edje-Vera";
+               size:     10;
+               min:      0 0;
+               align:    0.1 0.5;
+            }
+         }
+      }
+   }
+}

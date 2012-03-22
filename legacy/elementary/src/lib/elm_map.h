@@ -165,9 +165,14 @@ typedef enum _Elm_Map_Overlay_Type
    ELM_MAP_OVERLAY_TYPE_NONE = 0,
    ELM_MAP_OVERLAY_TYPE_DEFAULT,
    ELM_MAP_OVERLAY_TYPE_CLASS,
+   ELM_MAP_OVERLAY_TYPE_GROUP,
    ELM_MAP_OVERLAY_TYPE_BUBBLE,
    ELM_MAP_OVERLAY_TYPE_ROUTE,
-   ELM_MAP_OVERLAY_TYPE_GROUP
+   ELM_MAP_OVERLAY_TYPE_LINE,
+   ELM_MAP_OVERLAY_TYPE_POLYGON,
+   ELM_MAP_OVERLAY_TYPE_CIRCLE,
+   ELM_MAP_OVERLAY_TYPE_SCALE
+
 } Elm_Map_Overlay_Type;
 
 typedef struct _Elm_Map_Marker       Elm_Map_Marker;       /**< A marker to be shown in a specific point of the map. Can be created with elm_map_marker_add() and deleted with elm_map_marker_remove(). */
@@ -935,6 +940,10 @@ EAPI void                  elm_map_overlays_show(Eina_List *overlays);
  *
  * If the overlay is clicked, the callback wll be called.
  * The clicked overlay is returned by callback.
+ *
+ * You can add callback to the class overlay. If one of the group overlays in this class
+ * is clicked, callback will be called and return a virtual group overlays.
+ *
  * You can delete this callback function by setting @c NULL.
  *
  * @ingroup Map
@@ -956,7 +965,7 @@ EAPI void elm_map_overlay_get_cb_set(Elm_Map_Overlay *overlay, Elm_Map_Overlay_G
  *
  * You can change the state (hidden, paused, etc.) or set the content
  * or icon of the group overlays by chaning the state of the class overlay.
- * Do not control the group overlay itself.
+ * Do not modifty the group overlay itself.
  *
  * Also these changes have a influence on the overlays in the same class
  * even if each overlay is alone and is not grouped.
@@ -1022,6 +1031,27 @@ EAPI void                  elm_map_overlay_class_zoom_max_set(Elm_Map_Overlay *c
  * @ingroup Map
  */
 EAPI int                   elm_map_overlay_class_zoom_max_get(const Elm_Map_Overlay *clas);
+
+/**
+ * Get the overlay members of the group overlay.
+ *
+ * @param clas The group overlay has overlay members.
+ *
+ * @return The list of group overlay memebers.
+ *
+ * The group overlays are virtualy overlays. Those are shown and hidden dynamically.
+ * You can add callback to the class overlay. If one of the group overlays in this class
+ * is clicked, callback will be called and return a virtual group overlays.
+ *
+ * You can change the state (hidden, paused, etc.) or set the content
+ * or icon of the group overlays by chaning the state of the class overlay.
+ * Do not modifty the group overlay itself.
+ *
+ * @see elm_map_overlay_class_add()
+ *
+ * @ingroup Map
+ */
+EAPI Eina_List *      elm_map_overlay_group_members_get(const Elm_Map_Overlay *grp);
 
 /**
  * Add a new bubble overlay to the map object.
@@ -1112,6 +1142,98 @@ EAPI void                  elm_map_overlay_bubble_content_clear(Elm_Map_Overlay 
  * @ingroup Map
  */
 EAPI Elm_Map_Overlay *     elm_map_overlay_route_add(Evas_Object *obj, const Elm_Map_Route *route);
+
+/**
+ * Add a new line overlay to the map object.
+ * This overlay has a line type.
+ *
+ * @param obj The map object to add a new overlay.
+ * @param flon The start longitude.
+ * @param flat The start latitude.
+ * @param tlon The destination longitude.
+ * @param tlat The destination latitude.
+ * @return The created overlay or @c NULL upon failure.
+  *
+ * Overlay created with this method can be deleted with elm_map_overlay_del().
+ *
+ * @see elm_map_overlay_del()
+ *
+ * @ingroup Map
+ */
+EAPI Elm_Map_Overlay *     elm_map_overlay_line_add(Evas_Object *obj, double flon, double flat, double tlon, double tlat);
+
+/**
+ * Add a new polygon overlay to the map object.
+ * This overlay has a polygon type.
+ *
+ * @param obj The map object to add a new overlay.
+ * @return The created overlay or @c NULL upon failure.
+ *
+ * At least 3 regions should be added to show the polygon overlay.
+ *
+ * Overlay created with this method can be deleted with elm_map_overlay_del().
+ *
+ * @see elm_map_overlay_polygon_region_add()
+ * @see elm_map_overlay_del()
+ *
+ * @ingroup Map
+ */
+EAPI Elm_Map_Overlay *     elm_map_overlay_polygon_add(Evas_Object *obj);
+
+/**
+ * Add a  geographic coordinates  to the polygon overlay.
+ *
+ * @param overlay The polygon overlay to get a region.
+ * @param lon The longitude.
+ * @param lat The latitude.
+ *
+ * At least 3 regions should be added to show the polygon overlay.
+ *
+ * Overlay created with this method can be deleted with elm_map_overlay_del().
+ *
+ * @see elm_map_overlay_polygon_add()
+ * @see elm_map_overlay_del()
+ *
+ * @ingroup Map
+ */
+EAPI void                             elm_map_overlay_polygon_region_add(Elm_Map_Overlay *overlay, double lon, double lat);
+
+/**
+ * Add a new circle overlay to the map object.
+ * This overlay has a circle type.
+ *
+ * @param obj The map object to add a new overlay.
+ * @param lon The center longitude.
+ * @param lat The center latitude.
+ * @param radius The pixel length of radius.
+ * @return The created overlay or @c NULL upon failure.
+ *
+ * Overlay created with this method can be deleted with elm_map_overlay_del().
+ *
+ * @see elm_map_overlay_del()
+ *
+ * @ingroup Map
+ */
+EAPI Elm_Map_Overlay *     elm_map_overlay_circle_add(Evas_Object *obj, double lon, double lat, double radius);
+
+/**
+ * Add a new scale overlay to the map object.
+ * This overlay has a scale type.
+ *
+ * @param obj The map object to add a new overlay.
+ * @param x  horizontal pixel coordinate.
+ * @param y  vertical pixel coordinate
+ * @return The created overlay or @c NULL upon failure.
+ *
+ * The scale overlay shows the ratio of a distance on the map to the corresponding distance.
+ *
+ * Overlay created with this method can be deleted with elm_map_overlay_del().
+ *
+ * @see elm_map_overlay_del()
+ *
+ * @ingroup Map
+ */
+EAPI Elm_Map_Overlay *     elm_map_overlay_scale_add(Evas_Object *obj, Evas_Coord x, Evas_Coord y);
 
 /**
  * Get the information of tile load status.
