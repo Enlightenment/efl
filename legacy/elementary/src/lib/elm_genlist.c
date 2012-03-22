@@ -2265,6 +2265,7 @@ _item_block_recalc(Item_Block *itb,
         it->y = y;
         y += it->item->h;
      }
+   if (changed) itb->wd->pan_changed = changed;
    itb->minw = minw;
    itb->minh = minh;
    itb->changed = EINA_FALSE;
