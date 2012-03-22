@@ -4838,6 +4838,7 @@ elm_genlist_item_expanded_depth_get(const Elm_Object_Item *it)
 static Eina_Bool
 _elm_genlist_item_compute_coordinates(Elm_Object_Item *it,
                                       Elm_Genlist_Item_Scrollto_Type type,
+                                      Eina_Bool bring_in,
                                       Evas_Coord *x,
                                       Evas_Coord *y,
                                       Evas_Coord *w,
@@ -4849,7 +4850,7 @@ _elm_genlist_item_compute_coordinates(Elm_Object_Item *it,
    if ((_it->item->queued) || (!_it->item->mincalcd))
      {
         _it->wd->show_item = _it;
-        _it->wd->bring_in = EINA_FALSE;
+        _it->wd->bring_in = bring_in;
         _it->wd->scrollto_type = type;
         _it->item->showme = EINA_TRUE;
         return EINA_FALSE;
@@ -4914,7 +4915,7 @@ elm_genlist_item_show(Elm_Object_Item *it, Elm_Genlist_Item_Scrollto_Type type)
    Evas_Coord x, y, w, h;
    Elm_Gen_Item *_it = (Elm_Gen_Item *)it;
 
-   if (_elm_genlist_item_compute_coordinates(it, type, &x, &y, &w, &h))
+   if (_elm_genlist_item_compute_coordinates(it, type, EINA_FALSE, &x, &y, &w, &h))
      elm_smart_scroller_child_region_show(_it->wd->scr, x, y, w, h);
 }
 
@@ -4926,8 +4927,8 @@ elm_genlist_item_bring_in(Elm_Object_Item *it, Elm_Genlist_Item_Scrollto_Type ty
    Evas_Coord x, y, w, h;
    Elm_Gen_Item *_it = (Elm_Gen_Item *)it;
 
-   if (_elm_genlist_item_compute_coordinates(it, type, &x, &y, &w, &h))
-     elm_smart_scroller_region_bring_in(_it->wd->scr,x, y, w, h);
+   if (_elm_genlist_item_compute_coordinates(it, type, EINA_TRUE, &x, &y, &w, &h))
+     elm_smart_scroller_region_bring_in(_it->wd->scr, x, y, w, h);
 }
 
 EAPI void
