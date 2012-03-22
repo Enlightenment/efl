@@ -830,8 +830,8 @@ _player_data_cb(void *data, int type __UNUSED__, void *event)
 
    if (ev->exe != evideo->player.exe)
      {
-        ERR("slave != ev->exe");
-	return ECORE_CALLBACK_DONE;
+	INF("slave != ev->exe");
+	return ECORE_CALLBACK_PASS_ON;
      }
 
    for (i = 0; ev->lines[i].line; i++)
