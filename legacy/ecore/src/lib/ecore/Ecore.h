@@ -290,7 +290,7 @@ sudo make install
 /*
    @page Ecore_Config_Page The Enlightened Property Library
 
-   The Enlightened Property Library (Ecore_Config) is an adbstraction
+   The Enlightened Property Library (Ecore_Config) is an abstraction
    from the complexities of writing your own configuration. It provides
    many features using the Enlightenment 17 development libraries.
 
@@ -490,7 +490,7 @@ EAPI void *ecore_main_loop_thread_safe_call_sync(Ecore_Data_Cb callback, void *d
  * in this thread, if the main loop was suspended correctly. If not, it return @c -1.
  *
  * This function suspend the main loop in a know state, this let you
- * use any EFL call you want after it return. Be carefull, the main loop
+ * use any EFL call you want after it return. Be carefully, the main loop
  * is blocked until you call ecore_thread_main_loop_end(). This is
  * the only sane way to achieve pseudo thread safety.
  *
@@ -510,7 +510,7 @@ EAPI int ecore_thread_main_loop_begin(void);
  * the main loop is unlocked again. @c -1 will be returned if you are trying to unlock
  * when there wasn't enough call to ecore_thread_main_loop_begin().
  *
- * After a call to ecore_thread_main_loop_begin(), you need to absolutly
+ * After a call to ecore_thread_main_loop_begin(), you need to absolutely
  * call ecore_thread_main_loop_end(), or you application will stay frozen.
  */
 EAPI int ecore_thread_main_loop_end(void);
@@ -638,7 +638,7 @@ struct _Ecore_Event_Signal_Exit    /** Exit request event */
 {
    Eina_Bool interrupt : 1; /**< Set if the exit request was an interrupt  signal*/
    Eina_Bool quit      : 1; /**< set if the exit request was a quit signal */
-   Eina_Bool terminate : 1; /**< Set if the exit request was a terminate singal */
+   Eina_Bool terminate : 1; /**< Set if the exit request was a terminate signal */
    void     *ext_data; /**< Extension data - not used */
 
 #if !defined (_WIN32) && !defined (__lv2ppu__) && !defined (EXOTIC_NO_SIGNAL)
@@ -1290,7 +1290,7 @@ typedef enum _Ecore_Animator_Source Ecore_Animator_Source;
 typedef Eina_Bool (*Ecore_Timeline_Cb)(void *data, double pos);
 
 /**
- * @brief Add an animator to call @p func at every animaton tick during main
+ * @brief Add an animator to call @p func at every animation tick during main
  * loop execution.
  *
  * @param func The function to call when it ticks off
@@ -1360,7 +1360,7 @@ EAPI void *ecore_animator_del(Ecore_Animator *animator);
  *
  * @param animator The animator to delete
  *
- * The specified @p animator will be temporarly removed from the set of
+ * The specified @p animator will be temporarily removed from the set of
  * animators that are executed during main loop.
  *
  * @warning Freezing an animator doesn't freeze accounting of how long that
@@ -1418,7 +1418,7 @@ EAPI double ecore_animator_frametime_get(void);
  * has "overshot" the mark) using some interpolation (mapping) algorithm.
  *
  * This function useful to create non-linear animations. It offers a variety
- * of possible animaton curves to be used:
+ * of possible animation curves to be used:
  * @li ECORE_POS_MAP_LINEAR - Linear, returns @p pos
  * @li ECORE_POS_MAP_ACCELERATE - Start slow then speed up
  * @li ECORE_POS_MAP_DECELERATE - Start fast then slow down
@@ -1456,7 +1456,7 @@ EAPI double ecore_animator_frametime_get(void);
  * y = (y1 * out) + (y2 * (1.0 - out));
  * move_my_object_to(myobject, x, y);
  * @endcode
- * This will make an animaton that bounces 7 each times diminishing by a
+ * This will make an animation that bounces 7 each times diminishing by a
  * factor of 1.8.
  *
  * @see _Ecore_Pos_Map
@@ -1711,7 +1711,7 @@ EAPI void *ecore_idle_exiter_del(Ecore_Idle_Exiter *idle_exiter);
  * thread, the one running the main loop. This problem can be solved
  * by running a thread that sends messages to the main one using an
  * @ref Ecore_Pipe_Group "Ecore_Pipe", but when you need to handle other
- * things like cancelling the thread, your code grows in coplexity and gets
+ * things like cancelling the thread, your code grows in complexity and gets
  * much harder to maintain.
  *
  * Ecore Thread is here to solve that problem. It is @b not a simple wrapper
@@ -1882,7 +1882,7 @@ EAPI Ecore_Thread *ecore_thread_run(Ecore_Thread_Cb func_blocking, Ecore_Thread_
  * with ecore_thread_feedback().
  *
  * Like with ecore_thread_run(), a new thread will be launched to run
- * @p func_heavy unless the maximum number of simultaneous threadas has been
+ * @p func_heavy unless the maximum number of simultaneous threads has been
  * reached, in which case the function will be scheduled to run whenever a
  * running task ends and a thread becomes free. But if @p try_no_queue is
  * set, Ecore will first try to launch a thread outside of the pool to run
@@ -2444,7 +2444,7 @@ EAPI int ecore_pipe_wait(Ecore_Pipe *p, int message_count, double wait);
  * also will be executed in the order in which they were added.
  *
  * A good use for them is when you don't want to execute an action
- * immeditately, but want to give the control back to the main loop
+ * immediately, but want to give the control back to the main loop
  * so that it will call your job callback when jobs start being
  * processed (and if there are other jobs added before yours, they
  * will be processed first). This also gives the chance to other
