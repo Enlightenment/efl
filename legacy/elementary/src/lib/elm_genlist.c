@@ -77,6 +77,7 @@ struct Elm_Gen_Item_Type
    Eina_Bool                     move_effect_enabled : 1;
    Eina_Bool                     decorate_mode_item_realized : 1;
    Eina_Bool                     tree_effect_finished : 1; /* tree effect */
+   Eina_Bool                     tree_effect_hideme : 1; /* item hide for tree effect */
 };
 
 struct _Item_Block
@@ -2179,7 +2180,15 @@ _item_realize(Elm_Gen_Item *it,
    //evas_event_thaw(evas_object_evas_get(it->wd->obj));
    //evas_event_thaw_eval(evas_object_evas_get(it->wd->obj));
    if (!calc)
-     evas_object_smart_callback_call(WIDGET(it), SIG_REALIZED, it);
+     {
+        if (it->item->tree_effect_hideme)
+          {
+             if (it->wd->move_effect_mode != ELM_GENLIST_TREE_EFFECT_NONE)
+               edje_object_signal_emit(VIEW(it), "elm,state,hide", "");
+             it->item->tree_effect_hideme = EINA_FALSE;
+          }
+        evas_object_smart_callback_call(WIDGET(it), SIG_REALIZED, it);
+     }
 
    if ((!calc) && (it->wd->decorate_mode) && (it->item->type != ELM_GENLIST_ITEM_GROUP))
      {
@@ -2485,13 +2494,19 @@ _item_block_position(Item_Block *itb,
                                                        it->item->scrl_y);
                             else
                               {
-                                 if (it->item->mode_view)
-                                   _item_position(it, it->item->mode_view,
-                                                  it->item->scrl_x,
-                                                  it->item->scrl_y);
-                                 else
-                                   _item_position(it, VIEW(it), it->item->scrl_x,
-                                                  it->item->scrl_y);
+                                 if (!it->wd->tree_effect_enabled ||
+                                     (it->wd->move_effect_mode == ELM_GENLIST_TREE_EFFECT_NONE) ||
+                                     ((it->wd->move_effect_mode != ELM_GENLIST_TREE_EFFECT_NONE) &&
+                                     (it->item->old_scrl_y == it->item->scrl_y)))
+                                   {
+                                      if (it->item->mode_view)
+                                        _item_position(it, it->item->mode_view,
+                                                       it->item->scrl_x,
+                                                       it->item->scrl_y);
+                                      else
+                                        _item_position(it, VIEW(it), it->item->scrl_x,
+                                                       it->item->scrl_y);
+                                   }
                               }
                             it->item->old_scrl_y = it->item->scrl_y;
                          }
@@ -2994,6 +3009,19 @@ _pan_calculate(Evas_Object *obj)
      {
         git->item->want_realize = EINA_FALSE;
      }
+
+   if (sd->wd->tree_effect_enabled && (sd->wd->move_effect_mode != ELM_GENLIST_TREE_EFFECT_NONE))
+     {
+        if (!sd->wd->tree_effect_animator)
+          {
+             _item_tree_effect_before(sd->wd->expanded_item);
+             evas_object_raise(sd->wd->alpha_bg);
+             evas_object_show(sd->wd->alpha_bg);
+             sd->wd->start_time = ecore_time_get();
+             sd->wd->tree_effect_animator = ecore_animator_add(_tree_effect_animator_cb, sd->wd);
+          }
+     }
+
    EINA_INLIST_FOREACH(sd->wd->blocks, itb)
      {
         itb->w = sd->wd->minw;
@@ -3024,18 +3052,7 @@ _pan_calculate(Evas_Object *obj)
         sd->wd->start_time = ecore_loop_time_get();
      }
 
-   if (sd->wd->tree_effect_enabled && (sd->wd->move_effect_mode != ELM_GENLIST_TREE_EFFECT_NONE))
-     {
-        if (!sd->wd->tree_effect_animator)
-          {
-             _item_tree_effect_before(sd->wd->expanded_item);
-             evas_object_raise(sd->wd->alpha_bg);
-             evas_object_show(sd->wd->alpha_bg);
-             sd->wd->start_time = ecore_time_get();
-             sd->wd->tree_effect_animator = ecore_animator_add(_tree_effect_animator_cb, sd->wd);
-          }
-     }
-   else
+   if (!sd->wd->tree_effect_enabled || (sd->wd->move_effect_mode == ELM_GENLIST_TREE_EFFECT_NONE))
      _item_auto_scroll(sd->wd);
 
    evas_event_thaw(evas_object_evas_get(obj));
@@ -5872,6 +5889,8 @@ _item_tree_effect_before(Elm_Gen_Item *it)
      {
         if (it2->parent && (it == it2->parent))
           {
+             if (!it2->realized)
+               it2->item->tree_effect_hideme = EINA_TRUE;
              if (it->wd->move_effect_mode == ELM_GENLIST_TREE_EFFECT_EXPAND)
                edje_object_signal_emit(VIEW(it2), "elm,state,hide", "");
              else if (it->wd->move_effect_mode == ELM_GENLIST_TREE_EFFECT_CONTRACT)
@@ -5894,13 +5913,13 @@ _item_tree_effect(Widget_Data *wd, int y)
         while (it)
           {
              if (it->item->expanded_depth <= expanded_next_it->item->expanded_depth) break;
-             if (it->item->scrl_y && (it->item->scrl_y < expanded_next_it->item->old_scrl_y + y) &&
+             if (it->item->scrl_y && (it->item->scrl_y <= expanded_next_it->item->old_scrl_y + y) &&
                  (it->item->expanded_depth > expanded_next_it->item->expanded_depth))
                {
                   if (!it->item->tree_effect_finished)
                     {
                        edje_object_signal_emit(VIEW(it), "flip_item", "");
-                       evas_object_show(VIEW(it));
+                       _item_position(it, VIEW(it), it->item->scrl_x, it->item->scrl_y);
                        it->item->tree_effect_finished = EINA_TRUE;
                     }
                }
@@ -5931,7 +5950,6 @@ _item_tree_effect(Widget_Data *wd, int y)
 static void
 _item_tree_effect_finish(Widget_Data *wd)
 {
-   Item_Block *itb;
    Elm_Gen_Item *it = NULL;
    const Eina_List *l;
 
@@ -5939,13 +5957,12 @@ _item_tree_effect_finish(Widget_Data *wd)
      {
         if (wd->move_effect_mode == ELM_GENLIST_TREE_EFFECT_CONTRACT)
            _item_subitems_clear(wd->expanded_item);
-        EINA_INLIST_FOREACH(wd->blocks, itb)
+        EINA_LIST_FOREACH(wd->expanded_item->item->items, l, it)
           {
-             EINA_LIST_FOREACH(itb->items, l, it)
-               {
-                  it->item->tree_effect_finished = EINA_TRUE;
-                  it->item->old_scrl_y = it->item->scrl_y;
-               }
+             it->item->tree_effect_finished = EINA_TRUE;
+             it->item->old_scrl_y = it->item->scrl_y;
+             if (it->wd->move_effect_mode == ELM_GENLIST_TREE_EFFECT_EXPAND)
+               edje_object_signal_emit(VIEW(it), "elm,state,show", "");
           }
      }
    _item_auto_scroll(wd);
@@ -5969,7 +5986,7 @@ _tree_effect_animator_cb(void *data)
    Evas_Coord ox, oy, ow, oh, cvx, cvy, cvw, cvh;
    Elm_Gen_Item *it = NULL, *it2, *expanded_next_it;
    const Eina_List *l;
-   double effect_duration = 0.5, t;
+   double effect_duration = 0.3, t;
    int y = 0, dy = 0, dh = 0;
    Eina_Bool end = EINA_FALSE, vis = EINA_TRUE;
    int in = 0;
@@ -5999,7 +6016,7 @@ _tree_effect_animator_cb(void *data)
              if (wd->move_effect_mode == ELM_GENLIST_TREE_EFFECT_EXPAND)
                {
                   expanded_next_it->item->old_scrl_y = wd->expanded_item->item->old_scrl_y + wd->expanded_item->item->h;
-                  if (expanded_next_it->item->scrl_y < expanded_next_it->item->old_scrl_y) //did not calculate next item position
+                  if (expanded_next_it->item->scrl_y <= expanded_next_it->item->old_scrl_y) //did not calculate next item position
                     expanded_next_it->item->scrl_y = cvy + cvh;
 
                   dy = ((expanded_next_it->item->scrl_y >= (cvy + cvh)) ?
@@ -6008,7 +6025,7 @@ _tree_effect_animator_cb(void *data)
                }
              else if (wd->move_effect_mode == ELM_GENLIST_TREE_EFFECT_CONTRACT)
                {
-                  if (expanded_next_it->item->scrl_y > expanded_next_it->item->old_scrl_y) //did not calculate next item position
+                  if (expanded_next_it->item->scrl_y >= expanded_next_it->item->old_scrl_y) //did not calculate next item position
                      expanded_next_it->item->old_scrl_y = cvy + cvh;
 
                   if (expanded_next_it->item->old_scrl_y > (cvy + cvh))
@@ -6078,7 +6095,7 @@ _tree_effect_animator_cb(void *data)
                        if (t >= (((num - 1) * effect_duration) / expanded_item_num))
                          {
                             edje_object_signal_emit(VIEW(it), "flip_item", "");
-                            evas_object_show(VIEW(it));
+                            _item_position(it, VIEW(it), it->item->scrl_x, it->item->scrl_y);
                             it->item->tree_effect_finished = EINA_TRUE;
                          }
                     }
