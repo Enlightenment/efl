@@ -2257,7 +2257,10 @@ _item_block_recalc(Item_Block *itb,
                }
           }
         else
-          _item_realize(it, in, EINA_FALSE);
+          {
+             if (!it->item->mincalcd) changed = EINA_TRUE;
+             _item_realize(it, in, EINA_FALSE);
+          }
         minh += it->item->minh;
         if (minw < it->item->minw) minw = it->item->minw;
         in++;
