@@ -21,6 +21,7 @@ _playback_started_cb(void *data, Evas_Object *o, void *event_info)
 static void
 _playback_stopped_cb(void *data, Evas_Object *o, void *event_info)
 {
+   printf("Emotion playback stopped.\n");
    emotion_object_play_set(o, EINA_FALSE);
    emotion_object_position_set(o, 0);
 }
@@ -35,7 +36,7 @@ _create_emotion_object(Evas *e)
    evas_object_smart_callback_add(
        em, "playback_started", _playback_started_cb, NULL);
    evas_object_smart_callback_add(
-       em, "playback_stopped", _playback_stopped_cb, NULL);
+       em, "playback_finished", _playback_stopped_cb, NULL);
 
    return em;
 }

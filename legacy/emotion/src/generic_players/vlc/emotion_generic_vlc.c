@@ -310,8 +310,8 @@ _play(struct _App *app)
    else
      {
 	libvlc_time_t new_time = pos * 1000;
-	libvlc_media_player_play(app->mp);
 	libvlc_media_player_set_time(app->mp, new_time);
+	libvlc_media_player_play(app->mp);
 	app->playing = 1;
      }
 }
