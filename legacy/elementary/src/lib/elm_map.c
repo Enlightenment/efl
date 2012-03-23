@@ -4284,9 +4284,9 @@ elm_map_wheel_disabled_set(Evas_Object *obj, Eina_Bool disabled)
    EINA_SAFETY_ON_NULL_RETURN(wd);
 
    if ((!wd->wheel_disabled) && (disabled))
-     evas_object_event_callback_del_full(obj, EVAS_CALLBACK_MOUSE_WHEEL, _mouse_wheel_cb, obj);
+     evas_object_event_callback_del_full(obj, EVAS_CALLBACK_MOUSE_WHEEL, _mouse_wheel_cb, wd);
    else if ((wd->wheel_disabled) && (!disabled))
-     evas_object_event_callback_add(obj, EVAS_CALLBACK_MOUSE_WHEEL, _mouse_wheel_cb, obj);
+     evas_object_event_callback_add(obj, EVAS_CALLBACK_MOUSE_WHEEL, _mouse_wheel_cb, wd);
    wd->wheel_disabled = !!disabled;
 #else
    (void) obj;
