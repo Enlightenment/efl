@@ -11,7 +11,7 @@ struct info
    int *pix;
 };
 
-// BEGIN - code running in my custom pthread instance
+// BEGIN - code running in my custom thread instance
 //
 static void
 mandel(int *pix, int w, int h)
@@ -48,12 +48,12 @@ mandel(int *pix, int w, int h)
                }
              val = (((x * x) + (y * y)) * 2.55) / 100.0;
              if (val > 255) val = 255;
-             if (iteration >= 99999) 
+             if (iteration >= 99999)
                {
                   rr = (r * val) / 255;
                   gg = (g * val) / 255;
                   bb = (b * val) / 255;
-                  pix[(hy * w) + hx] = 
+                  pix[(hy * w) + hx] =
                      (val  << 24) | (rr << 16) | (gg << 8) | (bb);
                }
              else
@@ -71,7 +71,7 @@ th_do(void *data, Ecore_Thread *th)
    mandel(inf->pix, 256, 256);
 }
 //
-// END - code running in my custom pthread instance
+// END - code running in my custom thread instance
 
 static void // thread job finished - collect results and put in img obj
 th_end(void *data, Ecore_Thread *th)
@@ -165,4 +165,3 @@ elm_main(int argc, char **argv)
 }
 
 ELM_MAIN()
-

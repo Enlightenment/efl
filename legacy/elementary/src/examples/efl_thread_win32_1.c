@@ -1,17 +1,18 @@
 //Compile with:
-//gcc -o efl_thread_1 efl_thread_1.c -g `pkg-config --cflags --libs elementary`
+//gcc -o efl_thread_1 efl_thread_win32_1.c -g `pkg-config --cflags --libs elementary`
 #include <Elementary.h>
-#include <pthread.h>
+#define WIN32_LEAN_AND_MEAN
+#include <windows.h>
 
 static Evas_Object *win = NULL;
 static Evas_Object *rect = NULL;
 
-static pthread_t thread_id;
+static HANDLE thread;
 
-// BEGIN - code running in my custom pthread instance
+// BEGIN - code running in my custom win32 thread instance
 //
-static void *
-my_thread_run(void *arg)
+static DWORD WINAPI
+my_thread_run(LPVOID arg)
 {
    double t = 0.0;
 
@@ -29,20 +30,24 @@ my_thread_run(void *arg)
         usleep(1000);
         t += 0.02;
      }
-   return NULL;
+   return 0;
 }
 //
-// END - code running in my custom pthread instance
+// END - code running in my custom win32 thread instance
 
 static void
 my_thread_new(void)
 {
-   pthread_attr_t attr;
-
-   if (pthread_attr_init(&attr) != 0)
-      perror("pthread_attr_init");
-   if (pthread_create(&thread_id, &attr, my_thread_run, NULL) != 0)
-      perror("pthread_create");
+  thread = CreateThread(NULL, 0, my_thread_run, NULL, 0, NULL);
+  if (!thread)
+    {
+       char *str = evil_last_error_get();
+       if (str)
+         {
+            fprintf("thread creation failed: %s\n", str);
+            free(str);
+         }
+    }
 }
 
 int
