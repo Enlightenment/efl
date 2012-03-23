@@ -596,7 +596,7 @@ typedef enum _Edje_External_Param_Type
 {
    EDJE_EXTERNAL_PARAM_TYPE_INT, /**< Parameter value is an integer. */
    EDJE_EXTERNAL_PARAM_TYPE_DOUBLE, /**< Parameter value is a double. */
-   EDJE_EXTERNAL_PARAM_TYPE_STRING, /**< Paramater value is a string. */
+   EDJE_EXTERNAL_PARAM_TYPE_STRING, /**< Parameter value is a string. */
    EDJE_EXTERNAL_PARAM_TYPE_BOOL, /**< Parameter value is boolean. */
    EDJE_EXTERNAL_PARAM_TYPE_CHOICE, /**< Parameter value is one of a set of
                                       predefined string choices. */
@@ -609,10 +609,10 @@ typedef enum _Edje_External_Param_Type
  */
 typedef enum _Edje_External_Param_Flags
 {
-   EDJE_EXTERNAL_PARAM_FLAGS_NONE        = 0, /**< Propery is incapable of operations, this is used to catch bogus flags. */
+   EDJE_EXTERNAL_PARAM_FLAGS_NONE        = 0, /**< Property is incapable of operations, this is used to catch bogus flags. */
    EDJE_EXTERNAL_PARAM_FLAGS_GET         = (1 << 0), /**< Property can be read/get. */
    EDJE_EXTERNAL_PARAM_FLAGS_SET         = (1 << 1), /**< Property can be written/set. This only enables edje_object_part_external_param_set() and Embryo scripts. To enable the parameter being set from state description whenever it changes state, use #EDJE_EXTERNAL_PARAM_FLAGS_STATE. */
-   EDJE_EXTERNAL_PARAM_FLAGS_STATE       = (1 << 2), /**< Property can be set from state dsecription. */
+   EDJE_EXTERNAL_PARAM_FLAGS_STATE       = (1 << 2), /**< Property can be set from state description. */
    EDJE_EXTERNAL_PARAM_FLAGS_CONSTRUCTOR = (1 << 3), /**< This property is only set once when the object is constructed using its value from "default" 0.0 state description. Setting this overrides #EDJE_EXTERNAL_PARAM_FLAGS_STATE. */
    EDJE_EXTERNAL_PARAM_FLAGS_REGULAR     = (EDJE_EXTERNAL_PARAM_FLAGS_GET |
                                             EDJE_EXTERNAL_PARAM_FLAGS_SET |
@@ -722,18 +722,18 @@ struct _Edje_External_Param_Info
                                       used. */
    union {
       struct {
-         int                 def, /**< Default value for the paramter. */
+         int                 def, /**< Default value for the parameter. */
                              min, /**< Minimum value it can have. */
                              max, /**< Maximum value it can have. */
                              step; /**< Values will be a multiple of this. */
-      } i; /**< Info about integer type parametrs. Use #EDJE_EXTERNAL_INT_UNSET
+      } i; /**< Info about integer type parameters. Use #EDJE_EXTERNAL_INT_UNSET
              on any of them to indicate they are not defined.*/
       struct {
-         double              def, /**< Default value for the paramter. */
+         double              def, /**< Default value for the parameter. */
                              min, /**< Minimum value it can have. */
                              max, /**< Maximum value it can have. */
                              step; /**< Values will be a multiple of this. */
-      } d; /**< Info about double type parametrs. Use
+      } d; /**< Info about double type parameters. Use
 #EDJE_EXTERNAL_DOUBLE_UNSET on any of them to indicate they are not defined.*/
       struct {
          const char         *def; /**< Default value. */
@@ -1024,7 +1024,7 @@ EAPI const char  *edje_fontset_append_get         (void);
  * edje_object_scale_set(), that factor will @b override the global
  * one.
  *
- * Scaling affects the values of mininum/maximum @b part sizes, which
+ * Scaling affects the values of minimum/maximum @b part sizes, which
  * are @b multiplied by it. Font sizes are scaled, too.
  *
  * @warning Only parts which, at EDC level, had the @c "scale"
@@ -1081,7 +1081,7 @@ EAPI void edje_password_show_last_timeout_set(double password_show_last_timeout)
  *
  * @param obj A handle to an Edje object
  * @param scale The scaling factor (the default value is @c 0.0,
- * meaning indivinual scaling @b not set)
+ * meaning individual scaling @b not set)
  *
  * This function sets an @b individual scaling factor on the @a obj
  * Edje object. This property (or Edje's global scaling factor, when
@@ -1500,9 +1500,9 @@ EAPI void         edje_box_layout_register        (const char *name, Evas_Object
  * 
  * @note You can get a callback every time edje re-calculates the object
  * (either due to animation or some kind of signal or input). This is called
- * in-line just after the recalculation has occured. It is a good idea not
+ * in-line just after the recalculation has occurred. It is a good idea not
  * to go and delete or alter the object inside this callbacks, simply make
- * a note that the recalculation has taken place and then do somethnig about
+ * a note that the recalculation has taken place and then do something about
  * it outside the callback. to register a callback use code like:
  * 
  * @code
@@ -1720,7 +1720,7 @@ EAPI Eina_Bool        edje_object_preload         (Evas_Object *obj, Eina_Bool c
  * buttons on an interface, you'd be registering for notifications on
  * events of mouse buttons being pressed down on either of those parts
  * (those events all have the @c "mouse,down," common prefix on their
- * names, with a suffix giving the button number). The actual emisson
+ * names, with a suffix giving the button number). The actual emission
  * and source strings of an event will be passed in as the @a emission
  * and @a source parameters of the callback function (e.g. @c
  * "mouse,down,2" and @c "button.close"), for each of those events.
@@ -2057,7 +2057,7 @@ EAPI void         edje_object_size_min_get            (const Evas_Object *obj, E
  * @param update Wether or not update the size hints.
  *
  * By default edje doesn't set size hints on itself. With this function
- * call, it will do so if update is true. Be carefull, it cost a lot to
+ * call, it will do so if update is true. Be carefully, it cost a lot to
  * trigger this feature as it will recalc the object every time it make
  * sense to be sure that's its minimal size hint is always accurate.
  */
@@ -2834,7 +2834,7 @@ EAPI Eina_Bool        edje_object_part_text_input_panel_enabled_get (const Evas_
  * @brief Show the input panel (virtual keyboard) based on the input panel property such as layout, autocapital types, and so on.
  *
  * Note that input panel is shown or hidden automatically according to the focus state.
- * This API can be used in the case of manually controling by using edje_object_part_text_input_panel_enabled_set.
+ * This API can be used in the case of manually controlling by using edje_object_part_text_input_panel_enabled_set.
  *
  * @param obj A valid Evas_Object handle
  * @param part The part name
@@ -2847,7 +2847,7 @@ EAPI void             edje_object_part_text_input_panel_show(const Evas_Object *
  * @see edje_object_part_text_input_panel_show
  *
  * Note that input panel is shown or hidden automatically according to the focus state.
- * This API can be used in the case of manually controling by using edje_object_part_text_input_panel_enabled_set.
+ * This API can be used in the case of manually controlling by using edje_object_part_text_input_panel_enabled_set.
  *
  * @param obj A valid Evas_Object handle
  * @param part The part name
@@ -2966,13 +2966,13 @@ EAPI Eina_Bool        edje_object_part_text_input_panel_return_key_disabled_get(
  * text.
  *
  * @warning This function will be deprecated because of difficulty in use.
- *          The type(format, text, or makrup) of text should be always
+ *          The type(format, text, or markup) of text should be always
  *          checked in the filter function for correct filtering.
  *          Please use edje_object_text_markup_filter_callback_add() instead. There
  *          is no need to check the type of text in the filter function
  *          because the text is always markup.
  * @warning If you use this function with
- *          edje_object_text_markup_filter_callback_add() togehter, all
+ *          edje_object_text_markup_filter_callback_add() together, all
  *          Edje_Text_Filter_Cb functions and Edje_Markup_Filter_Cb functions
  *          will be executed, and then filtered text will be inserted.
  *
@@ -3000,7 +3000,7 @@ EAPI void             edje_object_text_insert_filter_callback_add       (Evas_Ob
  * @param part The part name
  * @param func The function callback to remove
  *
- * @return The user data pointer if succesful, or NULL otherwise
+ * @return The user data pointer if successful, or NULL otherwise
  */
 EAPI void            *edje_object_text_insert_filter_callback_del       (Evas_Object *obj, const char *part, Edje_Text_Filter_Cb func);
 
@@ -3019,7 +3019,7 @@ EAPI void            *edje_object_text_insert_filter_callback_del       (Evas_Ob
  * @param func The function callback to remove
  * @param data The data passed to the callback function
  *
- * @return The same data pointer if succesful, or NULL otherwise
+ * @return The same data pointer if successful, or NULL otherwise
  */
 EAPI void            *edje_object_text_insert_filter_callback_del_full  (Evas_Object *obj, const char *part, Edje_Text_Filter_Cb func, void *data);
 
@@ -3069,7 +3069,7 @@ EAPI void edje_object_text_markup_filter_callback_add(Evas_Object *obj, const ch
  * @param part The part name
  * @param func The function callback to remove
  *
- * @return The user data pointer if succesful, or NULL otherwise
+ * @return The user data pointer if successful, or NULL otherwise
  * @since 1.2.0
  */
 EAPI void *edje_object_text_markup_filter_callback_del(Evas_Object *obj, const char *part, Edje_Markup_Filter_Cb func);
@@ -3089,7 +3089,7 @@ EAPI void *edje_object_text_markup_filter_callback_del(Evas_Object *obj, const c
  * @param func The function callback to remove
  * @param data The data passed to the callback function
  *
- * @return The same data pointer if succesful, or NULL otherwise
+ * @return The same data pointer if successful, or NULL otherwise
  * @since 1.2.0
  */
 EAPI void *edje_object_text_markup_filter_callback_del_full(Evas_Object *obj, const char *part, Edje_Markup_Filter_Cb func, void *data);
@@ -3395,7 +3395,7 @@ EAPI Eina_Bool                 edje_object_part_external_param_set      (Evas_Ob
  *
  * Parts of type external may carry extra properties that have
  * meanings defined by the external plugin. For instance, it may be a
- * string that defines a button label. This property can be modifed by
+ * string that defines a button label. This property can be modified by
  * state parameters, by explicit calls to
  * edje_object_part_external_param_set() or getting the actual object
  * with edje_object_part_external_object_get() and calling native
@@ -4001,8 +4001,8 @@ EAPI const Edje_External_Param_Info *edje_external_param_info_get   (const char 
     * This sets the parameters of the perspective transformation. X, Y and Z
     * values are used. The px and py points specify the "infinite distance" point
     * in the 3D conversion (where all lines converge to like when artists draw
-    * 3D by hand). The @p z0 value specifis the z value at which there is a 1:1
-    * mapping between spatial coorinates and screen coordinates. Any points
+    * 3D by hand). The @p z0 value specifies the z value at which there is a 1:1
+    * mapping between spatial coordinates and screen coordinates. Any points
     * on this z value will not have their X and Y values modified in the transform.
     * Those further away (Z value higher) will shrink into the distance, and
     * those less than this value will expand and become bigger. The @p foc value
@@ -4012,8 +4012,8 @@ EAPI const Edje_External_Param_Info *edje_external_param_info_get   (const char 
     * control and @p foc must be greater than 0.
     *
     * @param m map to change.
-    * @param px The pespective distance X coordinate
-    * @param py The pespective distance Y coordinate
+    * @param px The perspective distance X coordinate
+    * @param py The perspective distance Y coordinate
     * @param z0 The "0" z plane value
     * @param foc The focal distance
     */
