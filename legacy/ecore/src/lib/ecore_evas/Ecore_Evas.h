@@ -247,7 +247,7 @@ EAPI Ecore_Evas *ecore_evas_new(const char *engine_name, int x, int y, int w, in
  * This function allows you to make an Ecore_Evas translucent using an
  * alpha channel. See ecore_evas_shaped_set() for details. The difference
  * between a shaped window and a window with an alpha channel is that an
- * alpha channel supports multiple levels of transpararency, as opposed to
+ * alpha channel supports multiple levels of transparency, as opposed to
  * the 1 bit transparency of a shaped window (a pixel is either opaque, or
  * it's transparent).
  *
@@ -325,7 +325,7 @@ EAPI void        ecore_evas_geometry_get(const Ecore_Evas *ee, int *x, int *y, i
  * This function takes four pointers to (already allocated) ints, and places
  * the geometry which @p ee was latest recently requested . If any of the parameters is not desired you
  * may pass NULL on them. 
- * This function can represent recently requested geomety. 
+ * This function can represent recently requested geometry. 
  * ecore_evas_geometry_get function returns the value is updated after engine finished request.
  * By comparison, ecore_evas_request_geometry_get returns recently requested value.
  *
@@ -367,7 +367,7 @@ EAPI Eina_Bool   ecore_evas_focus_get(const Ecore_Evas *ee);
  * This function iconifies @p ee if @p on is EINA_TRUE, or uniconifies @p ee if
  * @p on is EINA_FALSE.
  *
- * @note Iconify and minize are synonims.
+ * @note Iconify and minimize are synonyms.
  *
  * @warning Support for this depends on the underlying windowing system.
  */
@@ -378,7 +378,7 @@ EAPI void        ecore_evas_iconified_set(Ecore_Evas *ee, Eina_Bool on);
  * @param ee The Ecore_Evas to set
  * @return EINA_TRUE if @p ee is iconified, EINA_FALSE if not.
  *
- * @note Iconify and minize are synonims.
+ * @note Iconify and minimize are synonyms.
  *
  * @see ecore_evas_iconified_set()
  */
@@ -446,7 +446,7 @@ EAPI void        ecore_evas_window_group_set(Ecore_Evas *ee, const Ecore_Evas *e
  * This returns the handle set by ecore_evas_window_group_set().
  * 
  * @param ee The Ecore_Evas to set
- * @return The Canavs group handle
+ * @return The Canvas group handle
  *
  * @see ecore_evas_window_group_set()
  * @since 1.2
@@ -1989,7 +1989,7 @@ EAPI Eina_Bool ecore_evas_extn_socket_listen(Ecore_Evas *ee, const char *svcname
  * image data so the external plug process will not render to it or alter it.
  * 
  * You should only hold the lock for just as long as you need to read out the
- * image data or otherwise deal with it, and then unlokc it with
+ * image data or otherwise deal with it, and then unlock it with
  * ecore_evas_extn_plug_object_data_unlock(). Keeping a lock over more than
  * 1 iteration of the main ecore loop will be problematic, so avoid it. Also
  * forgetting to unlock may cause the socket process to freeze and thus create
@@ -2029,7 +2029,7 @@ EAPI void ecore_evas_extn_plug_object_data_unlock(Evas_Object *obj);
  * in the canvas of the plug process in place of the image object. The image
  * object by default is created to be filled (equivalent of
  * evas_object_image_filled_add() on creation) so image content will scale
- * toi fill the image unless otherwise reconfigured. The Ecore_Evas size
+ * to fill the image unless otherwise reconfigured. The Ecore_Evas size
  * of the plug is the master size and determines size in pixels of the
  * plug canvas. You can change the size with something like:
  * 
