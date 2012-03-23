@@ -18,6 +18,13 @@ _playback_started_cb(void *data, Evas_Object *o, void *event_info)
     printf("Emotion object started playback.\n");
 }
 
+static void
+_playback_stopped_cb(void *data, Evas_Object *o, void *event_info)
+{
+   emotion_object_play_set(o, EINA_FALSE);
+   emotion_object_position_set(o, 0);
+}
+
 static Evas_Object *
 _create_emotion_object(Evas *e)
 {
@@ -27,6 +34,8 @@ _create_emotion_object(Evas *e)
 
    evas_object_smart_callback_add(
        em, "playback_started", _playback_started_cb, NULL);
+   evas_object_smart_callback_add(
+       em, "playback_stopped", _playback_stopped_cb, NULL);
 
    return em;
 }
@@ -57,8 +66,11 @@ _on_key_down(void *data, Evas *e, Evas_Object *o, void *event_info)
      }
    else if (!strcmp(ev->keyname, "s"))
      {
-	fprintf(stderr, "skipping to position 60\n");
-	emotion_object_position_set(em, 60);
+        float len, pos;
+        len = emotion_object_play_length_get(em);
+        pos = 0.98 * len;
+	fprintf(stderr, "skipping to position %0.3f\n", pos);
+	emotion_object_position_set(em, pos);
      }
    else if (!strcmp(ev->keyname, "1"))
      {
