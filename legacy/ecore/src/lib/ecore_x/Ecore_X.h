@@ -2703,7 +2703,7 @@ ecore_x_xregion_rect_contain(Ecore_X_XRegion *region,
 /* The usage of 'Ecore_X_Randr_None' or 'Ecore_X_Randr_Unset'
  * depends on the context. In most cases 'Ecore_X_Randr_Unset'
  * can be used, but in some cases -1 is a special value to
- * functions, thus 'Ecore_X_Randr_None' (=0) musst be used.
+ * functions, thus 'Ecore_X_Randr_None' (=0) must be used.
  */
 
 typedef short Ecore_X_Randr_Refresh_Rate;
