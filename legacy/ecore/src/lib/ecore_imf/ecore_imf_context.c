@@ -433,7 +433,7 @@ ecore_imf_context_preedit_string_get(Ecore_IMF_Context *ctx, char **str, int *cu
 }
 
 /**
- * Retrieve the current preedit string, atrributes and
+ * Retrieve the current preedit string, attributes and
  * cursor position for the Input Method Context.
  *
  * @param ctx An #Ecore_IMF_Context.
@@ -1237,7 +1237,7 @@ ecore_imf_context_event_callback_add(Ecore_IMF_Context *ctx, Ecore_IMF_Callback_
  * @see ecore_imf_context_event_callback_add() for more details
  *
  * @param ctx Ecore_IMF_Context to remove a callback from.
- * @param type The type of event that was trigerring the callback
+ * @param type The type of event that was triggering the callback
  * @param func The (callback) function that was to be called when the event was triggered
  * @return the data pointer
  * @ingroup Ecore_IMF_Context_Group
@@ -1530,8 +1530,8 @@ ecore_imf_context_input_panel_enabled_get(Ecore_IMF_Context *ctx)
 
 /**
  * Set the input panel-specific data to deliver to the input panel.
- * this API is used by applications to deliver specific data to the input panel.
- * the data format MUST be negotiated by both application and the input panel.
+ * This API is used by applications to deliver specific data to the input panel.
+ * The data format MUST be negotiated by both application and the input panel.
  * The size and format of data are defined by the input panel.
  *
  * @param ctx An #Ecore_IMF_Context.
