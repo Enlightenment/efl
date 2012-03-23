@@ -1151,6 +1151,8 @@ static void
 zoom_do(Widget_Data *wd, double zoom)
 {
    EINA_SAFETY_ON_NULL_RETURN(wd);
+   if (zoom > wd->src_tile->zoom_max) zoom = wd->src_tile->zoom_max;
+   else if (zoom < wd->src_tile->zoom_min) zoom = wd->src_tile->zoom_min;
    if (zoom > wd->zoom_max) zoom = wd->zoom_max;
    else if (zoom < wd->zoom_min) zoom = wd->zoom_min;
 
@@ -2506,7 +2508,7 @@ _overlays_show(void *data)
    EINA_SAFETY_ON_NULL_RETURN(data);
    Delayed_Data *dd = data;
 
-   int zoom;
+   int zoom, zoom_max;
    double max_lon, min_lon, max_lat, min_lat;
    Evas_Coord vw, vh;
 
@@ -2516,7 +2518,10 @@ _overlays_show(void *data)
 
    zoom = dd->wd->src_tile->zoom_min;
    _viewport_coord_get(dd->wd, NULL, NULL, &vw, &vh);
-   while (zoom <= dd->wd->src_tile->zoom_max)
+   if (dd->wd->src_tile->zoom_max < dd->wd->zoom_max)
+      zoom_max = dd->wd->src_tile->zoom_max;
+   else zoom_max = dd->wd->zoom_max;
+   while (zoom <= zoom_max)
      {
         Evas_Coord size, max_x, max_y, min_x, min_y;
         size = pow(2.0, zoom) * dd->wd->tsize;
@@ -3528,7 +3533,7 @@ _zoom_mode_set(void *data)
                   }
                }
           }
-       zoom_with_animation(dd->wd, zoom, 10);
+        zoom_do(dd->wd, zoom);
      }
 }
 
@@ -3987,9 +3992,6 @@ elm_map_zoom_set(Evas_Object *obj, int zoom)
    if (wd->mode != ELM_MAP_ZOOM_MODE_MANUAL) return;
    if (zoom < 0) zoom = 0;
    if (wd->zoom == zoom) return;
-   if (zoom > wd->src_tile->zoom_max) zoom = wd->src_tile->zoom_max;
-   if (zoom < wd->src_tile->zoom_min) zoom = wd->src_tile->zoom_min;
-
    Delayed_Data *data = ELM_NEW(Delayed_Data);
    data->func = _zoom_set;
    data->wd = wd;
@@ -4063,8 +4065,6 @@ elm_map_zoom_max_set(Evas_Object *obj, int zoom)
    EINA_SAFETY_ON_NULL_RETURN(wd);
    EINA_SAFETY_ON_NULL_RETURN(wd->src_tile);
 
-   if ((zoom > wd->src_tile->zoom_max) || (zoom < wd->src_tile->zoom_min))
-      return;
    wd->zoom_max = zoom;
 #else
    (void) obj;
@@ -4076,7 +4076,7 @@ EAPI int
 elm_map_zoom_max_get(const Evas_Object *obj)
 {
 #ifdef HAVE_ELEMENTARY_ECORE_CON
-   ELM_CHECK_WIDTYPE(obj, widtype) 18;
+   ELM_CHECK_WIDTYPE(obj, widtype) -1;
    Widget_Data *wd = elm_widget_data_get(obj);
    EINA_SAFETY_ON_NULL_RETURN_VAL(wd, -1);
    EINA_SAFETY_ON_NULL_RETURN_VAL(wd->src_tile, -1);
@@ -4084,7 +4084,7 @@ elm_map_zoom_max_get(const Evas_Object *obj)
    return wd->zoom_max;
 #else
    (void) obj;
-   return 18;
+   return -1;
 #endif
 }
 
@@ -4097,8 +4097,6 @@ elm_map_zoom_min_set(Evas_Object *obj, int zoom)
    EINA_SAFETY_ON_NULL_RETURN(wd);
    EINA_SAFETY_ON_NULL_RETURN(wd->src_tile);
 
-   if ((zoom > wd->src_tile->zoom_max) || (zoom < wd->src_tile->zoom_min))
-      return;
    wd->zoom_min = zoom;
 #else
    (void) obj;
@@ -4110,7 +4108,7 @@ EAPI int
 elm_map_zoom_min_get(const Evas_Object *obj)
 {
 #ifdef HAVE_ELEMENTARY_ECORE_CON
-   ELM_CHECK_WIDTYPE(obj, widtype) 0;
+   ELM_CHECK_WIDTYPE(obj, widtype) -1;
    Widget_Data *wd = elm_widget_data_get(obj);
    EINA_SAFETY_ON_NULL_RETURN_VAL(wd, -1);
    EINA_SAFETY_ON_NULL_RETURN_VAL(wd->src_tile, -1);
@@ -4118,10 +4116,9 @@ elm_map_zoom_min_get(const Evas_Object *obj)
    return wd->zoom_min;
 #else
    (void) obj;
-   return 0;
+   return -1;
 #endif
 }
-
 
 EAPI void
 elm_map_region_bring_in(Evas_Object *obj, double lon, double lat)
