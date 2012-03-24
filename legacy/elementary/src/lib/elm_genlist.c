@@ -1890,13 +1890,14 @@ _item_content_realize(Elm_Gen_Item *it,
         const Eina_List *l;
         const char *key;
         Evas_Object *ic = NULL;
+        Eina_List *cons = NULL;
 
-        *source = elm_widget_stringlist_get(edje_object_data_get(target, "contents"));
+        cons = elm_widget_stringlist_get(edje_object_data_get(target, "contents"));
 
         if (parts && (eina_list_count(*source) != eina_list_count(it->content_objs)))
           res = it->content_objs;
 
-        EINA_LIST_FOREACH(*source, l, key)
+        EINA_LIST_FOREACH(cons, l, key)
           {
              if (parts && fnmatch(parts, key, FNM_PERIOD))
                continue;
@@ -1914,6 +1915,7 @@ _item_content_realize(Elm_Gen_Item *it,
                     elm_widget_disabled_set(ic, EINA_TRUE);
                }
           }
+        *source = eina_list_merge(*source, cons);
      }
 
    return res;
@@ -1967,6 +1969,7 @@ _item_flips_realize(Elm_Gen_Item *it,
         const char *key;
         Evas_Object *ic = NULL;
         Eina_List *cons = NULL;
+
         cons = elm_widget_stringlist_get(edje_object_data_get(target, "flips"));
 
         EINA_LIST_FOREACH(cons, l, key)
@@ -1985,7 +1988,6 @@ _item_flips_realize(Elm_Gen_Item *it,
                }
           }
         *source = eina_list_merge(*source, cons);
-        elm_widget_stringlist_free(cons);
      }
 
    return res;
