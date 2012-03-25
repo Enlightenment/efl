@@ -31,7 +31,7 @@ fd = shm_open("/dev/null", O_RDONLY, S_IRWXU | S_IRWXG | S_IRWXO);
 
 AC_MSG_RESULT([${_efl_have_shm_open}])
 
-if test "x$_efl_have_shm_open" = "xno" ; then
+if test "x${_efl_have_shm_open}" = "xno" ; then
    AC_MSG_CHECKING([for shm_open in librt])
 
    LIBS_save="${LIBS}"
@@ -50,7 +50,8 @@ fd = shm_open("/dev/null", O_RDONLY, S_IRWXU | S_IRWXG | S_IRWXO);
           ]])],
       [
        EFL_SHM_OPEN_LIBS="-lrt"
-       _efl_have_shm_open="yes"],
+       _efl_have_shm_open="yes"
+      ],
       [_efl_have_shm_open="no"])
 
    LIBS="${LIBS_save}"
@@ -60,10 +61,10 @@ fi
 
 AC_SUBST([EFL_SHM_OPEN_LIBS])
 
-if test "x$_efl_have_shm_open" = "xyes" ; then
+if test "x${_efl_have_shm_open}" = "xyes" ; then
    AC_DEFINE([HAVE_SHM_OPEN], [1], [Define to 1 if you have the `shm_open' function.])
 fi
 
-AS_IF([test "x$_efl_have_shm_open" = "xyes"], [$1], [$2])
+AS_IF([test "x${_efl_have_shm_open}" = "xyes"], [$1], [$2])
 
 ])
