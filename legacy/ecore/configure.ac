@@ -1434,59 +1434,8 @@ if ! test "x${have_atfile_source}" = "xno" ; then
       ])
 fi
 
-SHM_OPEN_LIBS=""
-
-AC_MSG_CHECKING([whether shm_open is in libc])
-AC_LINK_IFELSE(
-   [AC_LANG_PROGRAM(
-       [[
-#include <sys/mman.h>
-#include <sys/stat.h>
-#include <fcntl.h>
-       ]],
-       [[
-int fd;
-fd = shm_open("/", O_RDWR | O_CREAT, S_IRUSR | S_IWUSR);
-shm_unlink("/");
-       ]])],
-   [
-    have_shm_open="yes"
-    AC_DEFINE(HAVE_SHM_OPEN, 1, [Have shm_open() call])
-   ],
-   [have_shm_open="no"])
-LIBS="${LIBS_save}"
-AC_MSG_RESULT([${have_shm_open}])
-
-if ! test "x${have_shm_open}" = "xyes" ; then
-   AC_MSG_CHECKING([whether shm_open is in librt])
-   LIBS_save="${LIBS}"
-   LIBS="${LIBS} -lrt"
-   AC_LINK_IFELSE(
-      [AC_LANG_PROGRAM(
-          [[
-#include <sys/mman.h>
-#include <sys/stat.h>
-#include <fcntl.h>
-          ]],
-          [[
-int fd;
-fd = shm_open("/", O_RDWR | O_CREAT, S_IRUSR | S_IWUSR);
-shm_unlink("/");
-          ]])],
-      [
-       have_shm_open="yes"
-       AC_DEFINE(HAVE_SHM_OPEN, 1, [Have shm_open() call])
-       SHM_OPEN_LIBS="-lrt"
-      ],
-      [have_shm_open="no"])
-   LIBS="${LIBS_save}"
-   AC_MSG_RESULT([${have_shm_open}])
-fi
-
-AC_SUBST([SHM_OPEN_LIBS])
-
-AC_MSG_CHECKING([whether shm_open is available])
-AC_MSG_RESULT([${have_shm_open}])
+# shm_open
+EFL_CHECK_SHM_OPEN([have_shm_open="yes"], [have_shm_open="no"])
 
 ### Checks for optionnal feature
 AC_CHECK_FUNC([mallinfo],

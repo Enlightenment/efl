@@ -151,7 +151,7 @@ $(top_builddir)/src/lib/ecore/libecore.la \
 @EVAS_LIBS@ \
 @EINA_LIBS@ \
 @EVIL_LIBS@ \
-@SHM_OPEN_LIBS@ \
+@EFL_SHM_OPEN_LIBS@ \
 @WAYLAND_EGL_LIBS@
 
 libecore_evas_la_LDFLAGS = -no-undefined @lt_enable_auto_import@ -version-info @version_info@ @release_info@

@@ -116,6 +116,7 @@ m4/ecore_check_module.m4 \
 m4/ecore_check_options.m4 \
 m4/efl_doxygen.m4 \
 m4/efl_path_max.m4 \
+m4/efl_shm_open.m4 \
 m4/efl_tests.m4 \
 m4/efl_threads.m4
 
