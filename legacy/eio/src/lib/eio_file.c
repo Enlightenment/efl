@@ -369,7 +369,7 @@ _eio_file_copy_mmap(Ecore_Thread *thread, Eio_File_Progress *op, Eina_File *f, i
    return EINA_FALSE;
 }
 
-#ifdef EFL_HAVE_SPLICE
+#ifdef HAVE_SPLICE
 static int
 _eio_file_copy_splice(Ecore_Thread *thread, Eio_File_Progress *op, int in, int out, long long size)
 {
@@ -602,7 +602,7 @@ Eina_Bool
 eio_file_copy_do(Ecore_Thread *thread, Eio_File_Progress *copy)
 {
    Eina_File *f;
-#ifdef EFL_HAVE_SPLICE
+#ifdef HAVE_SPLICE
    struct stat buf;
    int in = -1;
 #endif
@@ -610,7 +610,7 @@ eio_file_copy_do(Ecore_Thread *thread, Eio_File_Progress *copy)
    int result = -1;
    int out = -1;
 
-#ifdef EFL_HAVE_SPLICE
+#ifdef HAVE_SPLICE
    in = open(copy->source, O_RDONLY);
    if (in < 0)
      {
@@ -633,7 +633,7 @@ eio_file_copy_do(Ecore_Thread *thread, Eio_File_Progress *copy)
    if (out < 0)
      goto on_error;
 
-#ifdef EFL_HAVE_SPLICE
+#ifdef HAVE_SPLICE
    /* fast file copy code using Linux splice API */
    result = _eio_file_copy_splice(thread, copy, in, out, buf.st_size);
    if (result == 0)
@@ -643,7 +643,7 @@ eio_file_copy_do(Ecore_Thread *thread, Eio_File_Progress *copy)
    /* classic copy method using mmap and write */
    if (result == -1)
      {
-#ifndef EFL_HAVE_SPLICE
+#ifndef HAVE_SPLICE
         struct stat buf;
 
         if (stat(copy->source, &buf) < 0)
@@ -684,7 +684,7 @@ eio_file_copy_do(Ecore_Thread *thread, Eio_File_Progress *copy)
 #endif
 
    close(out);
-#ifdef EFL_HAVE_SPLICE
+#ifdef HAVE_SPLICE
    close(in);
 #endif
 
@@ -693,7 +693,7 @@ eio_file_copy_do(Ecore_Thread *thread, Eio_File_Progress *copy)
  on_error:
    eio_file_thread_error(&copy->common, thread);
 
-#ifdef EFL_HAVE_SPLICE
+#ifdef HAVE_SPLICE
    if (in >= 0) close(in);
 #endif
    if (out >= 0) close(out);

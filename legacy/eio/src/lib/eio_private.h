@@ -5,26 +5,48 @@
 # include "config.h"
 #endif
 
-#ifdef HAVE_FEATURES_H
-# include <features.h>
+#include <sys/types.h>
+#ifdef HAVE_DIRENT_H
+# include <dirent.h>
+# define NAMLEN(dirent) strlen ((dirent)->d_name)
+#else
+# define dirent direct
+# define NAMLEN(dirent) ((dirent)->d_namlen)
+# ifdef HAVE_SYS_NDIR_H
+#  include <sys/ndir.h>
+# endif
+# ifdef HAVE_SYS_DIR_H
+#  include <sys/dir.h>
+# endif
+# ifdef HAVE_NDIR_H
+#  include <ndir.h>
+# endif
 #endif
 
 #include <stdio.h>
 #include <string.h>
-
-#ifndef _MSC_VER
-# include <unistd.h>
-# include <libgen.h>
-#endif
-
 #include <ctype.h>
 #include <errno.h>
 #include <sys/types.h>
 #include <sys/stat.h>
-#include <dirent.h>
 #include <sys/mman.h>
 #include <fcntl.h>
-#include <pwd.h>
+
+#ifdef HAVE_PWD_H
+# include <pwd.h>
+#endif
+
+#ifdef HAVE_FEATURES_H
+# include <features.h>
+#endif
+
+#ifdef HAVE_UNISTD_H
+# include <unistd.h>
+#endif
+
+#ifdef HAVE_LIBGEN_H
+# include <libgen.h>
+#endif
 
 #ifdef HAVE_GRP_H
 # include <grp.h>
@@ -35,7 +57,11 @@
 #endif
 
 #ifdef EFL_HAVE_WIN32_THREADS
+# ifndef WIN32_LEAN_AND_MEAN
+#  define WIN32_LEAN_AND_MEAN
+# endif
 # include <windows.h>
+# undef WIN32_LEAN_AND_MEAN
 #endif
 
 #include <Ecore.h>

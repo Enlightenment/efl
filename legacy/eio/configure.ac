@@ -23,12 +23,17 @@ AC_INIT([eio], [v_ver]-alpha, [enlightenment-devel@lists.sourceforge.net])
 AC_PREREQ([2.52])
 AC_CONFIG_SRCDIR([configure.ac])
 AC_CONFIG_MACRO_DIR([m4])
-AC_CANONICAL_BUILD
-AC_CANONICAL_HOST
-AC_ISC_POSIX
+
+AC_CONFIG_HEADERS([config.h])
+AH_TOP([
+#ifndef EFL_CONFIG_H__
+#define EFL_CONFIG_H__
+])
+AH_BOTTOM([
+#endif /* EFL_CONFIG_H__ */
+])
 
 AM_INIT_AUTOMAKE([1.6 dist-bzip2])
-AM_CONFIG_HEADER([config.h])
 m4_ifdef([AM_SILENT_RULES], [AM_SILENT_RULES([yes])])
 
 AC_GNU_SOURCE
@@ -49,19 +54,27 @@ AC_DEFINE_UNQUOTED(VMIC, [v_mic], [Micro version])
 AC_DEFINE_UNQUOTED(VREV, [v_rev], [Revison])
 version_info="lt_rev:lt_cur:lt_age"
 release_info="v_rel"
-AC_SUBST(version_info)
-AC_SUBST(release_info)
+AC_SUBST([version_info])
+AC_SUBST([release_info])
 ##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##
 ##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##--##
 VMAJ=v_maj
-AC_SUBST(VMAJ)
+AC_SUBST([VMAJ])
 
-# options
+
+### Needed information
+
+AC_CANONICAL_BUILD
+AC_CANONICAL_HOST
+
+
+### Default options with respect to host
+
 want_inotify="no"
 want_notify_win32="no"
 
 case "$host_os" in
-   mingw* | cegcc*)
+   mingw*)
       want_notify_win32="yes"
       ;;
    *)
@@ -69,10 +82,11 @@ case "$host_os" in
       ;;
 esac
 
-dnl we just have set the version info, then:
-AC_SUBST(version_info)
+
+### Checks for programs
 
 AC_PROG_CC
+
 # pkg-config
 PKG_PROG_PKG_CONFIG
 
@@ -82,24 +96,27 @@ if $PKG_CONFIG --atleast-pkgconfig-version 0.22; then
 else
    pkgconfig_requires_private="Requires"
 fi
-AC_SUBST(pkgconfig_requires_private)
-
-AC_SUBST(requirements_eio)
+AC_SUBST([pkgconfig_requires_private])
 
 # doxygen program for documentation building
 
 EFL_CHECK_DOXYGEN([build_doc="yes"], [build_doc="no"])
 
+
 ### Checks for libraries
 
 requirements_eio="eet >= 1.6.0 eina >= 1.2.0 ecore >= 1.2.0"
+AC_SUBST([requirements_eio])
 
 PKG_CHECK_MODULES([EIO], [${requirements_eio}])
 
+
 ### Checks for header files
+
 AC_HEADER_DIRENT
 AC_HEADER_TIME
-AC_CHECK_HEADERS([grp.h])
+AC_CHECK_HEADERS([unistd.h libgen.h grp.h features.h pwd.h])
+
 EFL_CHECK_THREADS(
    [
     if test "x${_efl_have_posix_threads}" = "xyes" ; then
@@ -124,6 +141,20 @@ EFL_CHECK_PATH_MAX
 
 ### Checks for structures
 
+### Checks for compiler characteristics
+AC_C_BIGENDIAN
+AC_C_INLINE
+AC_C___ATTRIBUTE__
+AM_PROG_CC_C_O
+
+EFL_EIO_BUILD=""
+case "$host_os" in
+   mingw*)
+      EFL_EIO_BUILD="-DEFL_EIO_BUILD"
+   ;;
+esac
+AC_SUBST(EFL_EIO_BUILD)
+
 ### Checks for linker characteristics
 
 # use --enable-auto-import on Windows
@@ -136,28 +167,12 @@ case "$host_os" in
 esac
 AC_SUBST(lt_enable_auto_import)
 
-### Checks for compiler characteristics
-AC_C_CONST
-AC_C_BIGENDIAN
-AC_C_INLINE
-AC_C___ATTRIBUTE__
-AC_PROG_CC_STDC
-AM_PROG_CC_C_O
-
-EFL_EIO_BUILD=""
-case "$host_os" in
-   mingw*)
-      EFL_EIO_BUILD="-DEFL_EIO_BUILD"
-   ;;
-esac
-AC_SUBST(EFL_EIO_BUILD)
-
 ### Checks for library functions
 AC_CHECK_FUNCS([fchmod chown getpwnam getgrnam])
 
 ### Check for splice system call
 
-have_splice="no"
+AC_MSG_CHECKING([whether to use splice for file copy])
 AC_TRY_LINK(
    [
 #if defined(HAVE_UNISTD_H)
@@ -165,19 +180,20 @@ AC_TRY_LINK(
 #endif
 #include <fcntl.h>
    ],
-   [long ret = splice(0,0,1,0,400,0);],
+   [
+long ret = splice(0,0,1,0,400,0);
+   ],
    [have_splice="yes"],
    [have_splice="no"])
-AC_MSG_CHECKING([whether to use splice for file copy])
 AC_MSG_RESULT([${have_splice}])
 
 if test "x${have_splice}" = "xyes" ; then
-   AC_DEFINE([EFL_HAVE_SPLICE], [1], [Define to mention that splice syscall is supported])
+   AC_DEFINE([HAVE_SPLICE], [1], [Define to mention that splice syscall is supported])
 fi
 
-### Check for lstat
+# Check for lstat
 
-have_lstat="no"
+AC_MSG_CHECKING([whether lstat is available])
 AC_TRY_LINK(
    [
 #include <sys/types.h>
@@ -187,21 +203,18 @@ AC_TRY_LINK(
 #endif
    ],
    [
-   struct stat st;
-   lstat("/tmp", &st);
+struct stat st;
+lstat("/tmp", &st);
    ],
    [have_lstat="yes"],
    [have_lstat="no"])
-AC_MSG_CHECKING([whether lstat is available])
 AC_MSG_RESULT([${have_lstat}])
 
 if test "x${have_lstat}" = "xyes" ; then
-   AC_DEFINE([EFL_HAVE_LSTAT], [1], [Define to mention that lstat syscall is supported])
+   AC_DEFINE([HAVE_LSTAT], [1], [Define to mention that lstat syscall is supported])
 fi
 
-
-
-### Check for inotify specificity
+# Check for inotify specificity
 have_inotify="no"
 have_notify_win32="no"
 EIO_CHECK_INOTIFY([${want_inotify}], [have_inotify="yes"], [have_inotify="no"])
@@ -210,7 +223,6 @@ EIO_CHECK_NOTIFY_WIN32([${want_notify_win32}], [have_notify_win32="yes"], [have_
 AM_CONDITIONAL([EIO_HAVE_INOTIFY], [test "x$have_inotify" = "xyes"])
 AM_CONDITIONAL([EIO_HAVE_WINCHANGE], [test "x$have_notify_win32" = "xyes"])
 
-## Report
 
 AC_OUTPUT([
 eio.pc

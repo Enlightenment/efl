@@ -6,7 +6,7 @@ EIO 1.0.0
  enlightenment-devel@lists.sourceforge.net
 
 ******************************************************************************
-  
+
 Enlightenment Input Output Library
 ==================================
 
@@ -24,4 +24,4 @@ COMPILING AND INSTALLING:
   make
 (do this as root unless you are installing in your users directories):
   make install
-  
+

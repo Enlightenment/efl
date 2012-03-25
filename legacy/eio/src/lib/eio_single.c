@@ -146,7 +146,7 @@ _eio_file_stat(void *data, Ecore_Thread *thread)
    _eio_file_struct_2_eina(&s->buffer, &buf);
 }
 
-#ifdef EFL_HAVE_LSTAT
+#ifdef HAVE_LSTAT
 static void
 _eio_file_lstat(void *data, Ecore_Thread *thread)
 {
@@ -419,7 +419,7 @@ eio_file_direct_lstat(const char *path,
 		      Eio_Error_Cb error_cb,
 		      const void *data)
 {
-#ifdef EFL_HAVE_LSTAT
+#ifdef HAVE_LSTAT
    Eio_File_Stat *s = NULL;
 
    if (!path || !done_cb || !error_cb)
