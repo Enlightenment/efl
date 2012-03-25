@@ -930,9 +930,9 @@ EAPI Eina_List            *eina_list_sort(Eina_List *list, unsigned int limit, E
  * @param right Tail list to merge.
  * @return A new merged list.
  *
- * This function puts right at the end of left and return the head.
+ * This function puts right at the end of left and returns the head.
  *
- * Both left and right does not exist anymore after the merge.
+ * Both left and right do not exist anymore after the merge.
  *
  * @note merge cost is O(n), being @b n the size of the smallest
  * list. This is due the need to fix accounting of that segment,
@@ -956,7 +956,7 @@ EAPI Eina_List            *eina_list_merge(Eina_List *left, Eina_List *right) EI
  * smallest one to be head of the returned list. It will continue this process
  * for all entry of both list.
  *
- * Both left and right does not exist anymore after the merge.
+ * Both left and right do not exist anymore after the merge.
  * If @p func is NULL, it will return NULL.
  *
  * Example:
