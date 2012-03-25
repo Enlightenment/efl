@@ -605,9 +605,16 @@ AC_ARG_ENABLE([evas-cserve],
 AC_MSG_CHECKING(whether to build shared cache server and support)
 AC_MSG_RESULT(${want_evas_cserve})
 
+shm_open_libs=""
 if test "x${want_evas_cserve}" = "xyes" ; then
-   EFL_CHECK_SHM_OPEN([want_evas_cserve="yes"], [want_evas_cserve="no"])
+   EFL_CHECK_SHM_OPEN(
+      [
+       want_evas_cserve="yes"
+       shm_open_libs=${EFL_SHM_OPEN_LIBS}
+      ],
+      [want_evas_cserve="no"])
 fi
+AC_SUBST([shm_open_libs])
 
 if test "x${want_evas_cserve}" = "xyes" ; then
   AC_DEFINE(EVAS_CSERVE, 1, [Shared cache server.])
