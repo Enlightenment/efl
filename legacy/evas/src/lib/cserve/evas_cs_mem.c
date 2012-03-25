@@ -12,7 +12,7 @@ evas_cserve_mem_new(int size, const char *name)
    Mem *m;
    static int id = 0;
    char buf[PATH_MAX];
-   
+
    m = calloc(1, sizeof(Mem));
    if (!m) return NULL;
    if (name)
@@ -48,7 +48,7 @@ evas_cserve_mem_new(int size, const char *name)
      }
 
    eina_mmap_safety_enabled_set(EINA_TRUE);
-   
+
    m->data = mmap(NULL, m->size, PROT_READ | PROT_WRITE, MAP_SHARED, m->fd, 0);
    if (m->data == MAP_FAILED)
      {
@@ -78,7 +78,7 @@ evas_cserve_mem_open(int pid, int id, const char *name, int size, int do_write)
 {
    Mem *m;
    char buf[PATH_MAX];
-   
+
    m = calloc(1, sizeof(Mem));
    if (!m) return NULL;
    if (name)
@@ -103,9 +103,9 @@ evas_cserve_mem_open(int pid, int id, const char *name, int size, int do_write)
         return NULL;
      }
    m->write = do_write;
-   
+
    eina_mmap_safety_enabled_set(EINA_TRUE);
-   
+
    if (do_write)
      m->data = mmap(NULL, m->size, PROT_READ | PROT_WRITE, MAP_SHARED, m->fd, 0);
    else
@@ -160,7 +160,7 @@ EAPI void
 evas_cserve_mem_del(int pid, int id)
 {
    char buf[PATH_MAX];
-   
+
    snprintf(buf, sizeof(buf), "/evas-shm-%x.%x.%x", getuid(), pid, id);
    shm_unlink(buf);
 }
