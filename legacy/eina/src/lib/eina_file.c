@@ -953,7 +953,7 @@ eina_file_open(const char *path, Eina_Bool shared)
    if (!filename) return NULL;
 
    if (shared)
-#ifdef HAVE_SHMOPEN
+#ifdef HAVE_SHM_OPEN
      fd = shm_open(filename, O_RDONLY, S_IRWXU | S_IRWXG | S_IRWXO);
 #else
      goto on_error;

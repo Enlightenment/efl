@@ -260,6 +260,7 @@ AM_CONDITIONAL(EINA_ENABLE_BENCHMARK_E17, test "x${enable_benchmark_e17}" = "xye
 
 ### Checks for programs
 AC_PROG_CC
+#for src/tests...
 AC_PROG_CXX
 
 # pkg-config
@@ -309,18 +310,47 @@ else
 fi
 
 
-# Evil library for compilation on Windows CE
+# Evil library for compilation on Windows
 
 EFL_EINA_BUILD=""
 case "$host_os" in
    mingw*)
-      PKG_CHECK_MODULES([EVIL], [evil >= 1.0.0])
+      PKG_CHECK_EXISTS([EVIL], [evil >= 1.0.0])
       AC_DEFINE([HAVE_EVIL], [1], [Set to 1 if evil package is installed])
       requirement_eina="${requirement_eina} evil"
       EFL_EINA_BUILD="-DEFL_EINA_BUILD"
    ;;
 esac
 AC_SUBST([EFL_EINA_BUILD])
+
+# Checks for portability layer
+
+PKG_CHECK_MODULES([EXOTIC],
+   [exotic],
+   [enable_exotic="yes"],
+   [enable_exotic="no"])
+
+if test "x${enable_exotic}" = "xyes"; then
+    requirement_eina="exotic ${requirement_eina}"
+    EINA_CFLAGS="${EINA_CFLAGS} ${EXOTIC_CFLAGS}"
+    EINA_LIBS="${EXOTIC_LIBS}"
+
+    EINA_CONFIGURE_HAVE_EXOTIC="#define EINA_HAVE_EXOTIC"
+    AC_DEFINE([HAVE_EXOTIC_H], [1], [Define to 1 if you have Exotic.])
+fi
+AM_CONDITIONAL([EINA_HAVE_EXOTIC], [test "x${enable_exotic}" = "xyes"])
+AC_SUBST([EINA_CONFIGURE_HAVE_EXOTIC])
+
+case "$host_vendor" in
+  ps3*)
+      PKG_CHECK_MODULES([ESCAPE], [escape])
+      AC_DEFINE(HAVE_ESCAPE, 1, [Set to 1 if Escape package is installed])
+      requirement_eina="${requirement_eina} escape"
+      EINA_CFLAGS="${ESCAPE_CFLAGS} ${EINA_CFLAGS}"
+    ;;
+esac
+
+AC_SUBST([EINA_CFLAGS])
 
 # Check ememoa memory pool library
 
@@ -352,8 +382,56 @@ PKG_CHECK_MODULES([ECORE_EVAS],
 
 AM_CONDITIONAL([BUILD_TILER_EXAMPLE], [test "x${build_tiler_example}" = "xyes"])
 
+### Checks for header files
+AC_HEADER_ASSERT
+AC_HEADER_TIME
+AC_HEADER_DIRENT
+
+AC_CHECK_HEADERS([unistd.h libgen.h inttypes.h stdint.h sys/types.h siginfo.h strings.h sys/mman.h execinfo.h mcheck.h])
+
+if test "x${ac_cv_header_inttypes_h}" = "xyes" ; then
+   EINA_CONFIGURE_HAVE_INTTYPES_H="#define EINA_HAVE_INTTYPES_H"
+   AC_DEFINE([HAVE_INTTYPES_H], [1], [Define to 1 if you have the <inttypes.h> header file.])
+fi
+AC_SUBST([EINA_CONFIGURE_HAVE_INTTYPES_H])
+
+if test "x${ac_cv_header_inttypes_h}" = "xyes" ; then
+    EINA_CONFIGURE_HAVE_STDINT_H="#define EINA_HAVE_STDINT_H"
+    AC_DEFINE([HAVE_STDINT_H], [1], [Define to 1 if you have the <stdint.h> header file.])
+fi
+AC_SUBST([EINA_CONFIGURE_HAVE_STDINT_H])
+
+### Checks for types
+
+# wchar_t
+
+AC_CHECK_SIZEOF([wchar_t])
+EINA_SIZEOF_WCHAR_T=$ac_cv_sizeof_wchar_t
+AC_SUBST([EINA_SIZEOF_WCHAR_T])
+AC_CHECK_TYPES([siginfo_t], [], [],
+   [[
+#include <signal.h>
+#if HAVE_SIGINFO_H
+# include <siginfo.h>
+#endif
+   ]])
+
+# struct dirent
+
+AC_CHECK_TYPES([struct dirent], [have_dirent="yes"], [have_dirent="no"],
+   [[
+#include <dirent.h>
+   ]])
+
+if test "x${have_dirent}" = "xyes" ; then
+    EINA_CONFIGURE_HAVE_DIRENT_H="#define EINA_HAVE_DIRENT_H"
+    AC_DEFINE([HAVE_DIRENT_H], [1], [Define to 1 if you have a valid <dirent.h> header file.])
+fi
+AC_SUBST([EINA_CONFIGURE_HAVE_DIRENT_H])
+
+### Checks for structures
+
 ### Checks for compiler characteristics
-AC_C_CONST
 AC_C_BIGENDIAN
 AC_C_INLINE
 AC_PROG_CC_STDC
@@ -384,57 +462,15 @@ m4_ifdef([v_mic],
 
 EFL_COMPILER_FLAG([-Wshadow])
 
-### Checks for portability layer
-
-PKG_CHECK_MODULES([EXOTIC],
-   [exotic],
-   [enable_exotic="yes"],
-   [enable_exotic="no"])
-
-if test "x${enable_exotic}" = "xyes"; then
-    requirement_eina="exotic ${requirement_eina}"
-    EINA_CFLAGS="${EINA_CFLAGS} ${EXOTIC_CFLAGS}"
-    EINA_LIBS="${EXOTIC_LIBS}"
-
-    EINA_CONFIGURE_HAVE_EXOTIC="#define EINA_HAVE_EXOTIC"
-    AC_DEFINE([HAVE_EXOTIC_H], [1], [Define to 1 if you have Exotic.])
-fi
-AM_CONDITIONAL([EINA_HAVE_EXOTIC], [test "x${enable_exotic}" = "xyes"])
-AC_SUBST([EINA_CONFIGURE_HAVE_EXOTIC])
-
-case "$host_vendor" in
-  ps3*)
-      PKG_CHECK_MODULES([ESCAPE], [escape])
-      AC_DEFINE(HAVE_ESCAPE, 1, [Set to 1 if Escape package is installed])
-      requirement_eina="${requirement_eina} escape"
-      EINA_CFLAGS="${ESCAPE_CFLAGS} ${EINA_CFLAGS}"
-    ;;
-esac
-
-AC_SUBST([EINA_CFLAGS])
+EFL_CHECK_PATH_MAX
 
 ### Checks for linker characteristics
 EINA_LIBS=
 lt_enable_auto_import=""
 case "${host_os}" in
    mingw*)
-      EINA_LIBS="${EINA_LIBS} -ldl ${EVIL_LIBS} -lm"
+      EINA_LIBS="${EINA_LIBS} ${EVIL_LIBS}"
       lt_enable_auto_import="-Wl,--enable-auto-import"
-   ;;
-   dragonfly*|openbsd*)
-      EINA_LIBS="${EINA_LIBS} -lm"
-   ;;
-   freebsd*|netbsd*)
-      EINA_LIBS="${EINA_LIBS} -lrt -lm"
-   ;;
-   darwin*)
-      EINA_LIBS="${EINA_LIBS} -lm"
-   ;;
-   cygwin*)
-      EINA_LIBS="${EINA_LIBS} -ldl -lm"
-   ;;
-   *)
-      EINA_LIBS="${EINA_LIBS} -lrt -ldl -lm"
    ;;
 esac
 case "$host_vendor" in
@@ -448,63 +484,18 @@ AC_SUBST([lt_enable_auto_import])
 
 EFL_LINKER_FLAG([-fno-strict-aliasing])
 
-CFLAGS="${CFLAGS} ${EINA_CFLAGS}"
-LDFLAGS="${LDFLAGS} ${EINA_LDFLAGS}"
-LIBS="${LIBS} ${EINA_LIBS}"
-
-### Checks for header files
-AC_HEADER_ASSERT
-AC_HEADER_TIME
-EFL_CHECK_PATH_MAX
-AC_CHECK_HEADERS([unistd.h libgen.h inttypes.h stdint.h sys/types.h siginfo.h strings.h sys/mman.h execinfo.h])
-
-if test "x${ac_cv_header_inttypes_h}" = "xyes" ; then
-   EINA_CONFIGURE_HAVE_INTTYPES_H="#define EINA_HAVE_INTTYPES_H"
-   AC_DEFINE([HAVE_INTTYPES_H], [1], [Define to 1 if you have the <inttypes.h> header file.])
-fi
-AC_SUBST([EINA_CONFIGURE_HAVE_INTTYPES_H])
-
-if test "x${ac_cv_header_inttypes_h}" = "xyes" ; then
-    EINA_CONFIGURE_HAVE_STDINT_H="#define EINA_HAVE_STDINT_H"
-    AC_DEFINE([HAVE_STDINT_H], [1], [Define to 1 if you have the <stdint.h> header file.])
-fi
-AC_SUBST([EINA_CONFIGURE_HAVE_STDINT_H])
-
-### Checks for types
-
-AC_CHECK_SIZEOF([wchar_t])
-EINA_SIZEOF_WCHAR_T=$ac_cv_sizeof_wchar_t
-AC_SUBST([EINA_SIZEOF_WCHAR_T])
-AC_CHECK_TYPES([siginfo_t], [], [],
-   [[#include <signal.h>
-     #if HAVE_SIGINFO_H
-     # include <siginfo.h>
-     #endif
-   ]])
-
-### Check if dirent.h is usable
-
-AC_CHECK_TYPES([struct dirent], [have_dirent="yes"], [have_dirent="no"],
-   [[#include <dirent.h>
-   ]])
-
-if test "x${have_dirent}" = "xyes" ; then
-    EINA_CONFIGURE_HAVE_DIRENT_H="#define EINA_HAVE_DIRENT_H"
-    AC_DEFINE([HAVE_DIRENT_H], [1], [Define to 1 if you have a valid <dirent.h> header file.])
-fi
-AC_SUBST([EINA_CONFIGURE_HAVE_DIRENT_H])
-
 ### Checks for library functions
-AC_ISC_POSIX
 AC_FUNC_ALLOCA
-AC_CHECK_FUNCS([strlcpy openat fstatat fpathconf execvp backtrace backtrace_symbols])
+AC_CHECK_FUNCS([strlcpy openat fstatat fpathconf execvp backtrace backtrace_symbols malloc_usable_size mtrace])
 
 AC_MSG_CHECKING([for dirfd])
 AC_LINK_IFELSE(
    [
     AC_LANG_PROGRAM(
        [[
-#include <dirent.h>
+#ifdef HAVE_DIRENT_H
+# include <dirent.h>
+#endif
        ]],
        [[
 int main(void)
@@ -523,12 +514,6 @@ if test "x${have_dirfd}" = "xyes" ; then
    AC_DEFINE([HAVE_DIRFD], [1], [ Define to 1 if you have the `dirfd' function or macro.])
 fi
 
-# check debug information for malloc
-AC_CHECK_FUNCS([malloc_usable_size], [malloc_true_size="yes"], [malloc_true_size="no"])
-if test "x${malloc_true_size}" = "xyes" ; then
-   AC_DEFINE([HAVE_MALLOC_USABLE_SIZE], [1], [We will be able to know the exact amount of wasted memory])
-fi
-
 want_debug_malloc="no"
 AC_ARG_ENABLE([debug-malloc],
    [AC_HELP_STRING([--enable-debug-malloc], [enable debugging of malloc usage overhead in our allocator @<:@default=enabled@:>@])],
@@ -540,7 +525,7 @@ AC_ARG_ENABLE([debug-malloc],
      fi
    ], [want_debug_malloc="no"])
 
-if test "x${malloc_true_size}" = "xyes" -a "x${want_debug_malloc}" = "xyes"; then
+if test "x${ac_cv_func_malloc_usable_size}" = "xyes" && test "x${want_debug_malloc}" = "xyes"; then
    AC_DEFINE([EINA_DEBUG_MALLOC], [1], [Turn on debugging overhead in mempool])
 fi
 
@@ -551,6 +536,7 @@ case "$host_os" in
 # managed by evil
       AC_DEFINE([HAVE_DLADDR])
       AC_DEFINE([HAVE_DLOPEN])
+      dlopen_libs="-ldl"
       ;;
    *)
       AC_CHECK_FUNCS([dlopen], [res="yes"], [res="no"])
@@ -598,8 +584,6 @@ if test "x${enable_log}" = "xyes"; then
 fi
 AC_SUBST([EINA_CONFIGURE_ENABLE_LOG])
 
-AC_CHECK_HEADERS([mcheck.h], [AC_DEFINE([HAVE_MCHECK], [1], [Have mcheck.h])])
-AC_CHECK_FUNCS([mtrace], [AC_DEFINE([HAVE_MTRACE], [1], [Have mtrace])])
 
 # iconv library
 have_iconv="no"
@@ -702,37 +686,8 @@ if test "x${have_iconv}" = "xyes" ; then
    AC_DEFINE([HAVE_ICONV], [1], [Set to 1 if iconv library is installed])
 fi
 
-# shmopen
-have_shmopen=no
-AC_MSG_CHECKING([for shm_open availability])
-
-LIBS_save="${LIBS}"
-LIBS="${LIBS} -lrt"
-AC_LINK_IFELSE(
-   [AC_LANG_PROGRAM(
-       [[
-#include <sys/mman.h>
-#include <sys/stat.h>        /* For mode constants */
-#include <fcntl.h>           /* For O_* constants */
-       ]],
-       [[
-int fd;
-
-fd = shm_open("/dev/null", O_RDONLY, S_IRWXU | S_IRWXG | S_IRWXO);
-       ]])],
-   [have_shmopen="yes"],
-   [have_shmopen="no"])
-
-LIBS="${LIBS_save}"
-
-AC_MSG_RESULT([${have_shmopen}])
-
-if test "x${have_shmopen}" = "xyes"; then
-   AC_DEFINE([HAVE_SHMOPEN], [1], [Define to 1 if you have the `shm_open' function.])
-   rt_libs="-lrt"
-fi
-
-AC_SUBST([rt_libs])
+# shm_open
+EFL_CHECK_SHM_OPEN([have_shm_open="yes"], [have_shm_open="no"])
 
 # extended attribute
 
@@ -859,6 +814,7 @@ echo "  Amalgamation.........: ${do_amalgamation}"
 echo "  Iconv support........: ${have_iconv}"
 echo "  File dirfd...........: ${have_dirfd}"
 echo "  File xattr...........: ${have_xattr}"
+echo "  shm_open.............: ${have_shm_open}"
 echo
 echo "  Documentation........: ${build_doc}"
 echo "  Tests................: ${enable_tests}"

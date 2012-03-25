@@ -37,7 +37,7 @@
 # endif
 #endif
 
-#ifdef HAVE_MCHECK
+#ifdef HAVE_MCHECK_H
 # ifdef HAVE_MTRACE
 #  define MT 1
 # endif
