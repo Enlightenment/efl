@@ -315,7 +315,7 @@ fi
 EFL_EINA_BUILD=""
 case "$host_os" in
    mingw*)
-      PKG_CHECK_EXISTS([EVIL], [evil >= 1.0.0])
+      PKG_CHECK_MODULES([EVIL], [evil >= 1.0.0])
       AC_DEFINE([HAVE_EVIL], [1], [Set to 1 if evil package is installed])
       requirement_eina="${requirement_eina} evil"
       EFL_EINA_BUILD="-DEFL_EINA_BUILD"
