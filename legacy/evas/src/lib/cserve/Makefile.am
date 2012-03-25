@@ -29,4 +29,4 @@ evas_cs_server.c \
 evas_cs_client.c \
 evas_cs_mem.c
 
-libevas_cserve_la_LIBADD = @EINA_LIBS@ -lrt
+libevas_cserve_la_LIBADD = @EINA_LIBS@ @EFL_SHM_OPEN_LIBS@

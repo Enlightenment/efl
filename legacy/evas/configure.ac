@@ -587,31 +587,9 @@ if test "x$res" = "xyes"; then
   AC_DEFINE(HAVE_LROUND, 1, C99 lround function exists)
 fi
 
-SHM_OPEN_LINK=""
-AC_MSG_CHECKING([whether shm_open() is present])
-LIBS_save=${LIBS}
-LIBS="${LIBS} -lrt"
-AC_LINK_IFELSE(
-   [AC_LANG_PROGRAM(
-      [[
-#include <sys/stat.h>
-#include <sys/mman.h>
-#include <fcntl.h>
-      ]],
-      [[
-int fd;
-fd = shm_open("/", O_RDWR | O_CREAT, S_IRUSR | S_IWUSR);
-shm_unlink("/");
-      ]])],
-   [
-    have_shm_open="yes"
-    AC_DEFINE(HAVE_SHM_OPEN, 1, [Have shm_open() call])
-    SHM_OPEN_LINK="-lrt"
-   ],
-   [have_shm_open="no"])
-LIBS=${LIBS_save}
-AC_MSG_RESULT([${have_shm_open}])
-AC_SUBST(SHM_OPEN_LINK)
+if test "x${want_evas_image_loader_generic}" = "xyes" ; then
+   EFL_CHECK_SHM_OPEN
+fi
 
 # (shm_open (for cache server)
 AC_ARG_ENABLE([evas-cserve],
@@ -628,29 +606,11 @@ AC_MSG_CHECKING(whether to build shared cache server and support)
 AC_MSG_RESULT(${want_evas_cserve})
 
 if test "x${want_evas_cserve}" = "xyes" ; then
-   AC_MSG_CHECKING([whether shm_open() is present])
-   LIBS_save=${LIBS}
-   LIBS="${LIBS} -lrt"
-   AC_LINK_IFELSE(
-      [AC_LANG_PROGRAM(
-         [[
-#include <sys/types.h>
-#include <sys/mman.h>
-#include <fcntl.h>
-         ]],
-         [[
-int fd;
-fd = shm_open("/", O_RDWR | O_CREAT, S_IRUSR | S_IWUSR);
-shm_unlink("/");
-         ]])],
-      [want_evas_cserve="yes"],
-      [want_evas_cserve="no"])
-   LIBS=${LIBS_save}
-   AC_MSG_RESULT([${want_evas_cserve}])
+   EFL_CHECK_SHM_OPEN([want_evas_cserve="yes"], [want_evas_cserve="no"])
 fi
 
 if test "x${want_evas_cserve}" = "xyes" ; then
-  AC_DEFINE(EVAS_CSERVE, 1, [Shared caceh server.])
+  AC_DEFINE(EVAS_CSERVE, 1, [Shared cache server.])
 fi
 
 AM_CONDITIONAL([EVAS_CSERVE], [test "x${want_evas_cserve}" = "xyes"])
