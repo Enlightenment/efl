@@ -45,6 +45,7 @@ m4/common/efl_coverage.m4 \
 m4/common/efl_cpu.m4 \
 m4/common/efl_doxygen.m4 \
 m4/common/efl_fnmatch.m4 \
+m4/common/efl_shm_open.m4 \
 m4/common/efl_tests.m4 \
 m4/common/efl_threads.m4 \
 m4/common/efl_path_max.m4 \
