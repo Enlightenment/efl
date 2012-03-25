@@ -4,18 +4,41 @@ ACLOCAL_AMFLAGS = -I m4
 
 SUBDIRS = src data doc
 
-MAINTAINERCLEANFILES = Makefile.in aclocal.m4 config.guess emotion.spec \
-                       config.h.in config.sub configure install-sh \
-		       ltconfig ltmain.sh missing mkinstalldirs \
-		       stamp-h.in emotion_docs.tar \
-		       emotion.pc acconfig.h depcomp \
-			   $(PACKAGE_TARNAME)-$(PACKAGE_VERSION)-doc.tar.bz2
+MAINTAINERCLEANFILES = \
+Makefile.in \
+aclocal.m4 \
+config.guess \
+config.h.in \
+config.sub \
+configure \
+depcomp \
+install-sh \
+ltconfig \
+ltmain.sh \
+missing \
+mkinstalldirs \
+stamp-h.in \
+$(PACKAGE_TARNAME)-$(PACKAGE_VERSION).tar.gz \
+$(PACKAGE_TARNAME)-$(PACKAGE_VERSION).tar.bz2 \
+$(PACKAGE_TARNAME)-$(PACKAGE_VERSION)-doc.tar.bz2
 
-bin_SCRIPTS =
+EXTRA_DIST = \
+README \
+AUTHORS \
+COPYING \
+autogen.sh \
+emotion.spec \
+emotion.spec.in \
+emotion.pc.in \
+m4/ac_attribute.m4 \
+m4/efl_binary.m4 \
+m4/efl_doxygen.m4 \
+m4/efl_edje_external.m4 \
+m4/efl_examples.m4 \
+m4/efl_shm_open.m4 \
+m4/emotion_check.m4 \
+m4/gst-element-check.m4
 
-EXTRA_DIST = README AUTHORS COPYING \
-	emotion.spec emotion.spec.in emotion.pc.in  \
-	emotion.pc.in
 
 pkgconfigdir = $(libdir)/pkgconfig
 pkgconfig_DATA = emotion.pc

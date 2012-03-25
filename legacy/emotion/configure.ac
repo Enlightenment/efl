@@ -108,8 +108,9 @@ EFL_CHECK_DOXYGEN([build_doc="yes"], [build_doc="no"])
 
 ### Checks for libraries
 
-PKG_CHECK_MODULES(EMOTION, [eina >= 1.2.0 evas >= 1.2.0 ecore >= 1.2.0 eet >= 1.6.0])
-requirement_emotion="ecore >= 1.2.0 evas >= 1.2.0 eina >= 1.2.0 eet >= 1.6.0"
+requirement_emotion="ecore >= 1.2.0 evas >= 1.2.0 eet >= 1.6.0 eina >= 1.2.0"
+PKG_CHECK_MODULES(EMOTION, [${requirement_emotion}])
+
 
 if test "x${have_emotion_test}" = "xyes" ; then
    PKG_CHECK_MODULES(EMOTION_BIN, [eina >= 1.2.0 evas >= 1.2.0 ecore >= 1.2.0 ecore-evas >= 1.2.0 edje >= 1.2.0])
@@ -144,10 +145,95 @@ if test "x${have_eeze}" = "xyes"; then
    requirement_emotion="${requirement_emotion} eeze >= 1.0.99"
 fi
 
+PKG_CHECK_MODULES([EIO], [eio >= 1.0.0], [have_eio="yes"], [have_eio="no"])
+if test "x${have_eio}" = "xyes"; then
+   AC_DEFINE(HAVE_EIO, 1, [Use EIO for asynchronous file access])
+   requirement_emotion="eio >= 1.0.0 ${requirement_emotion}"
+fi
+
+AM_CONDITIONAL([HAVE_EIO], [test "x${have_eio}" = "xyes"])
+
+# ecore-x availability, used for XV, VAAPI, VDPAU output.
+
+have_ecore_x="no"
+AC_ARG_ENABLE([ecore-x],
+   [AC_HELP_STRING([--disable-ecore-x], [disable ecore-x support. @<:@default=detect@:>@])],
+   [
+    if test "x${enableval}" = "xyes" || test "x${enableval}" = "xauto" ; then
+       want_ecore_x=${enableval}
+    else
+       want_ecore_x="no"
+    fi
+   ],
+   [want_ecore_x="auto"])
+
+if ! test "x$want_ecore_x" = "xno" ; then
+   PKG_CHECK_MODULES([ECORE_X],
+      [ecore-x >= 1.2.0],
+      [
+       AC_DEFINE(HAVE_ECORE_X, 1, [X11 support for Ecore])
+       have_ecore_x="yes"
+       requirement_elm="ecore-x >= 1.2.0 ${requirement_elm}"
+      ],
+      [have_ecore_x="no"]
+   )
+else
+    have_ecore_x="no"
+fi
+
+if test "x$want_ecore_x" = "xyes" && test "x$have_ecore_x" = "xno" ; then
+    AC_MSG_ERROR([ecore-x support requested, but not found by pkg-config.])
+fi
+
+# Check if gstreamer X Overlay is available
+build_xoverlay="no"
+if test "x${enable_gstreamer}" = "xyes" ; then
+   PKG_CHECK_MODULES([GSTREAMER_INTERFACE],
+      [gstreamer-interfaces-0.10 >= 0.10.34],
+      [build_xoverlay="yes"],
+      [build_xoverlay="no"])
+   if test "x${build_xoverlay}" = "xyes" ; then
+      save_CPPFLAGS=$CPPFLAGS
+      CPPFLAGS="$CPPFLAGS ${GSTREAMER_CFLAGS} ${GSTREAMER_INTERFACE_CFLAGS}"
+      AC_CHECK_HEADER([gst/interfaces/xoverlay.h],
+         [
+          AC_DEFINE(HAVE_XOVERLAY_H, 1, [Build with Gstreamer Xoverlay support])
+          build_xoverlay="yes"
+         ],
+         [build_xoverlay="no"])
+      CPPFLAGS=$save_CPPFLAGS
+
+      save_LDFLAGS=${LDFLAGS}
+      LDFLAGS="${LDFLAGS} ${GSTREAMER_INTERFACES}"
+      AC_CHECK_LIB([gstinterfaces-0.10],
+         [gst_x_overlay_set_window_handle],
+         [AC_DEFINE([HAVE_X_OVERLAY_SET], [1], [Use gst_x_overlay_set_window_handle instead of old deprecated gst_x_overlay_set_xwindow_id])])
+      LDFLAGS=$sava_LDFLAGS
+   fi
+fi
+
 ### Checks for header files
-AC_HEADER_STDC
 
 AC_CHECK_HEADERS([unistd.h])
+
+# Check for video4linux
+
+AC_MSG_CHECKING([for V4L2])
+AC_COMPILE_IFELSE(
+   [AC_LANG_PROGRAM(
+       [[
+#include <stdio.h>
+#include <linux/videodev2.h>
+       ]],
+       [[
+fprintf(stdout, "%i\n", V4L2_CAP_VIDEO_CAPTURE);
+       ]])],
+   [
+    AC_DEFINE(HAVE_V4L2, 1, [Define to 1 if you have Video4Linux 2 available])
+    have_v4l2="yes"
+   ],
+   [have_v4l2="no"])
+AC_MSG_RESULT([${have_v4l2}])
 
 ### Checks for types
 
@@ -156,14 +242,12 @@ AC_CHECK_HEADERS([unistd.h])
 
 
 ### Checks for compiler characteristics
-AC_C_CONST
 AC_C_BIGENDIAN
-AC_PROG_CC_STDC
 AC_C___ATTRIBUTE__
 
 EFL_EMOTION_BUILD=""
 case "$host_os" in
-   mingw32ce* | cegcc*)
+   mingw32ce*)
       EMOTION_CPPFLAGS="-D_WIN32_WCE=0x0420"
       EFL_EMOTION_BUILD="-DEFL_EMOTION_BUILD"
       ;;
@@ -182,30 +266,16 @@ AC_SUBST(EMOTION_CPPFLAGS)
 
 lt_enable_auto_import=""
 case "$host_os" in
-   mingw* | cegcc*)
+   mingw*)
       lt_enable_auto_import="-Wl,--enable-auto-import"
       ;;
 esac
 AC_SUBST(lt_enable_auto_import)
 
-### Check for video4linux
 
-AC_COMPILE_IFELSE(
-   [AC_LANG_PROGRAM(
-       [[
-#include <stdio.h>
-#include <linux/videodev2.h>
-       ]],
-       [[
-fprintf(stdout, "%i\n", V4L2_CAP_VIDEO_CAPTURE);
-       ]])],
-   [
-     AC_DEFINE(HAVE_V4L2, 1, [Define to 1 if you have Video4Linux 2 available])
-     have_v4l2="yes"
-   ],
-   [have_v4l2="no"])
-AC_MSG_CHECKING([for V4L2])
-AC_MSG_RESULT([${have_v4l2}])
+### Checks for library functions
+AC_FUNC_ALLOCA
+
 
 ### Modules
 
@@ -219,70 +289,6 @@ if test "x${enable_xine}" = "xno" && test "x${enable_gstreamer}" = "xno" && test
    AC_MSG_ERROR([Xine, Gstreamer or Generic backends must be selected to build Emotion])
 fi
 
-
-PKG_CHECK_MODULES([EIO],
-	[eio],
-	[
-	 have_eio="yes"
-	 AC_DEFINE(HAVE_EIO, 1, [Use EIO for asynchronous file access])
-	 requirement_emotion="eio ${requirement_emotion}"
-	],
-	[have_eio="no"])
-
-AM_CONDITIONAL([HAVE_EIO], [test "x${have_eio}" = "xyes"])
-
-## Check Ecore-X availability, used for XV, VAAPI, VDPAU output.
-
-have_ecore_x="no"
-want_ecore_x="auto"
-AC_ARG_ENABLE([ecore-x],
-   [AC_HELP_STRING([--disable-ecore-x], [disable ecore-x support. @<:@default=detect@:>@])],
-   [want_ecore_x=$enableval], [])
-
-if test "x$want_ecore_x" != "xno"; then
-   PKG_CHECK_MODULES([ECORE_X],
-      [ecore-x >= 1.2.0],
-      [
-       AC_DEFINE(HAVE_ECORE_X, 1, [X11 support for Ecore])
-       have_ecore_x="yes"
-       requirement_elm="ecore-x >= 1.2.0 ${requirement_elm}"
-      ],
-      [have_ecore_x="no"]
-   )
-else
-    have_ecore_x="no"
-fi
-if test "x$want_ecore_x" = "xyes" -a "x$have_ecore_x" = "xno"; then
-    AC_MSG_ERROR([ecore-x support requested, but not found by pkg-config.])
-fi
-
-## Check if gstreamer X Overlay is available
-build_xoverlay="no"
-if test "x$enable_gstreamer" = "xyes"; then
-   PKG_CHECK_MODULES([GSTREAMER_INTERFACE],
-	[ gstreamer-interfaces-0.10 >= 0.10.34 ],
-	[ build_xoverlay="yes" ],
-	[ build_xoverlay="no" ]
-   )
-   if test "x${build_xoverlay}" = "xyes"; then
-      save_CPPFLAGS=$CPPFLAGS
-      CPPFLAGS="$CPPFLAGS ${GSTREAMER_CFLAGS} ${GSTREAMER_INTERFACE_CFLAGS}"
-      AC_CHECK_HEADER([gst/interfaces/xoverlay.h],
-	[
-	  AC_DEFINE(HAVE_XOVERLAY_H, 1, [Build with Gstreamer Xoverlay support])
-	  build_xoverlay="yes"
-	], [
-     	  build_xoverlay="no"
-     	]
-      )
-      CPPFLAGS=$save_CPPFLAGS
-
-      save_LDFLAGS=$LDFLAGS
-      LDFLAGS="$LDFLAGS ${GSTREAMER_INTERFACES}"
-      AC_CHECK_LIB(gstinterfaces-0.10, gst_x_overlay_set_window_handle, AC_DEFINE(HAVE_X_OVERLAY_SET, 1, [Use gst_x_overlay_set_window_handle instead of old deprecated gst_x_overlay_set_xwindow_id]))
-      LDFLAGS=$sava_LDFLAGS
-   fi
-fi
 
 ### install and build examples
 

@@ -172,28 +172,8 @@ AC_ARG_ENABLE(generic-[]DOWN,
    ],
    [enable_module="auto"])
 
-SHM_OPEN_LIBS=""
-AC_COMPILE_IFELSE(
-   [AC_LANG_PROGRAM(
-       [[
-#include <sys/mman.h>
-#include <sys/stat.h>
-#include <fcntl.h>
-       ]],
-       [[
-shm_open("/", O_RDWR | O_CREAT, S_IRUSR | S_IWUSR);
-shm_unlink("/");
-       ]])],
-   [
-    have_shm_open="yes"
-    AC_DEFINE(HAVE_SHM_OPEN, 1, [Have shm_open() call])
-    SHM_OPEN_LIBS="-lrt"
-   ],
-   [have_shm_open="no"])
-AC_SUBST(SHM_OPEN_LIBS)
-
-AC_MSG_CHECKING([shm_open])
-AC_MSG_RESULT([${have_shm_open}])
+# shm_open
+EFL_CHECK_SHM_OPEN([have_shm_open="yes"], [have_shm_open="no"])
 
 if test "x${have_shm_open}" != "xyes"; then
   enable_generic="no"
