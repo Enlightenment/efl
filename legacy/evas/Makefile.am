@@ -54,6 +54,7 @@ m4/efl_doxygen.m4 \
 m4/efl_fnmatch.m4 \
 m4/efl_path_max.m4 \
 m4/efl_pthread.m4 \
+m4/efl_shm_open.m4 \
 m4/efl_tests.m4 \
 m4/evas_check_engine.m4 \
 m4/evas_check_loader.m4 \
