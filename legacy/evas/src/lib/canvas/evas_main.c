@@ -509,7 +509,9 @@ evas_render_method_list(void)
 EAPI void
 evas_render_method_list_free(Eina_List *list)
 {
-   eina_list_free(list);
+   const char *s;
+   
+   EINA_LIST_FREE(list, s) eina_stringshare_del(s);
 }
 
 EAPI Eina_Bool

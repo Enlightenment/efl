@@ -293,12 +293,51 @@ Eina_List *
 evas_module_engine_list(void)
 {
    Evas_Module *em;
-   Eina_List *r = NULL;
+   Eina_List *r = NULL, *l, *ll;
    Eina_Array_Iterator iterator;
+   Eina_Iterator *it, *it2;
    unsigned int i;
+   const char *s, *s2;
+   char buf[4096];
 
+   EINA_LIST_FOREACH(evas_module_paths, l, s)
+     {
+        snprintf(buf, sizeof(buf), "%s/engines", s);
+        it = eina_file_direct_ls(buf);
+        if (it)
+          {
+             Eina_File_Direct_Info *fi;
+
+             EINA_ITERATOR_FOREACH(it, fi)
+               {
+                  const char *fname = fi->path + fi->name_start;
+                  snprintf(buf, sizeof(buf), "%s/engines/%s/%s", 
+                           s, fname, MODULE_ARCH);
+                  it2 = eina_file_ls(buf);
+                  if (it2)
+                    {
+                       EINA_LIST_FOREACH(r, ll, s2)
+                         {
+                            if (!strcmp(fname, s2)) break;
+                         }
+                       if (!ll)
+                         r = eina_list_append(r, eina_stringshare_add(fname));
+                       eina_iterator_free(it2);
+                    }
+               }
+             eina_iterator_free(it);
+          }
+     }
+   
    EINA_ARRAY_ITER_NEXT(evas_engines, i, em, iterator)
-     r = eina_list_append(r, em->definition->name);
+     {
+        EINA_LIST_FOREACH(r, ll, s2)
+          {
+             if (!strcmp(em->definition->name, s2)) break;
+          }
+        if (!ll)
+          r = eina_list_append(r, eina_stringshare_add(em->definition->name));
+     }
 
    return r;
 }
