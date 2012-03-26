@@ -673,9 +673,10 @@ edje_object_color_class_del(Evas_Object *obj, const char *color_class)
    Edje_Color_Class *cc = NULL;
    unsigned int i;
 
-   if (!color_class) return;
-
    ed = _edje_fetch(obj);
+
+   if ((!ed) || (!color_class)) return;
+
    EINA_LIST_FOREACH(ed->color_classes, l, cc)
      {
 	if (!strcmp(cc->name, color_class))
