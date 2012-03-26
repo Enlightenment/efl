@@ -5,27 +5,38 @@ Changes since Eina 1.1.0:
 
 Additions:
 
-    * eina_mempool_calloc
-    * Eina_Semaphore abstraction API
-    * eina_xattr_fd_ls
-    * Eina_Xattr iterator : eina_xattr_value_fd_ls and eina_xattr_value_ls API
-    * eina_file_map_faulted API
-    * Xattr iterator for Eina_File : eina_file_xattr_get and eina_file_xattr_value_get API
-    * Deprecated eina_array_count_get(), use eina_array_count() instead.
-    * Added eina_inarray data type
-    * Added eina_value data type (generic value storage)
-    * Added eina_model data type (generic hierarchy data access)
-    * Add eina_file_stat.
+    * eina_mempool_calloc.
+    * Eina_Semaphore abstraction API.
+    * eina_xattr_fd_ls.
+    * Eina_Xattr iterator : eina_xattr_value_fd_ls and eina_xattr_value_ls.
+    * eina_file_map_faulted.
+    * Xattr iterator for Eina_File : eina_file_xattr_get/value_get.
+    * deprecated eina_array_count_get(), use eina_array_count() instead.
+    * eina_inarray data type.
+    * eina_value data type (generic value storage).
+    * eina_model data type (generic hierarchy data access).
+    * eina_file_stat.
+    * eina_log*level_check.
+    * eina_*buf_manage_new_length.
+    * EINA_C_ARRAY_LENGTH macro.
+    * Eina_Stringshare typedef.
 
 Fixes:
 
-    * compilation errors in Eina_RWLock code when building code on Windows > XP
+    * compilation errors in Eina_RWLock when building on Windows newer than XP.
     * stop leaking Eina_File.
     * remove dead lock in Eina_File.
+    * bug on eina_shutdown when using eina_error.
+    * NONNULL argument for eina_hash_find.
+    * compilation of eina_semaphore_lock on Windows.
+    * forgotten initialization of eina list count during eina_list_split_list.
+    * leak in Eina_File.
+    * deadlock in Eina_File.
 
 Improvements:
 
     * faster implementation of Eina_Rbtree.
+    * let eina_hash_free behave like free.
 
 Eina 1.1.0 (2011-12-02)
 

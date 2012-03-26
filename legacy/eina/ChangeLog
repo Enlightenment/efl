@@ -108,7 +108,7 @@
 
 2011-06-15  Cedric Bail
 
-	* Add eina_hash_free_cb_set to change the free callback during the
+ 	* Add eina_hash_free_cb_set to change the free callback during the
 	life of an Eina_Hash.
 
 2011-06-23  Cedric Bail
@@ -185,8 +185,8 @@
 2012-01-03  Cedric Bail
 
 	* Add eina_xattr_fd_ls, eina_xattr_value_fd_ls and eina_xattr_value_ls.
-	* Detect fault during access to Eina_File mmap memory, use eina_file_map_faulted
-	to learn if it happens.
+	* Detect fault during access to Eina_File mmap memory, use
+        eina_file_map_faulted to learn if it happens.
 	* Add eina_file_xattr_get and eina_file_xattr_value_get.
 
 2012-01-09  Gustavo Barbieri
