@@ -971,6 +971,7 @@ _ecore_win32_event_keystroke_get(Ecore_Win32_Callback_Data *msg,
        {
           if (is_down)
             {
+               if (previous_key_state) return 0;
                kn = "Super_L";
                ks = "Super_L";
                kc = "";
@@ -989,6 +990,7 @@ _ecore_win32_event_keystroke_get(Ecore_Win32_Callback_Data *msg,
        {
           if (is_down)
             {
+               if (previous_key_state) return 0;
                kn = "Super_R";
                ks = "Super_R";
                kc = "";

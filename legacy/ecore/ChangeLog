@@ -589,5 +589,5 @@
 
 2012-03-26  Shinwoo Kim
 
-        * Do not autorepeat Ctrl, Shift and Alt keys on Windows
+        * Do not autorepeat Ctrl, Shift, Alt and Win keys on Windows
 

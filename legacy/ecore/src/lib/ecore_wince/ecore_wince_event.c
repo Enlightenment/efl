@@ -411,6 +411,44 @@ _ecore_wince_event_keystroke_get(int       key,
             }
           break;
        }
+     case VK_LWIN:
+       {
+          if (is_down)
+            {
+               if (previous_key_state) return 0;
+               kn = "Super_L";
+               ks = "Super_L";
+               kc = "";
+               *modifiers |= ECORE_EVENT_MODIFIER_WIN;
+            }
+          else /* is_up */
+            {
+               kn = "Super_L";
+               ks = "Super_L";
+               kc = "";
+               *modifiers &= ~ECORE_EVENT_MODIFIER_WIN;
+            }
+          break;
+       }
+     case VK_RWIN:
+       {
+          if (is_down)
+            {
+               if (previous_key_state) return 0;
+               kn = "Super_R";
+               ks = "Super_R";
+               kc = "";
+               *modifiers |= ECORE_EVENT_MODIFIER_WIN;
+            }
+          else /* is_up */
+            {
+               kn = "Super_R";
+               ks = "Super_R";
+               kc = "";
+               *modifiers &= ~ECORE_EVENT_MODIFIER_WIN;
+            }
+          break;
+       }
      default:
        /* other non keystroke characters */
        return 0;
