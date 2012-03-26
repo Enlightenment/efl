@@ -497,3 +497,13 @@ EINA_DEPRECATED EAPI void             elm_pager_item_style_default_set(Evas_Obje
  */
 EINA_DEPRECATED EAPI const char      *elm_pager_item_style_default_get(const Evas_Object *obj);
 
+
+/**
+ * @deprecated Use elm_object_item_data_get instead.
+ */
+EINA_DEPRECATED EAPI void * elm_multibuttonentry_item_data_get(const Elm_Object_Item *it);
+
+/**
+ * @deprecated Use elm_object_item_data_set instead.
+ */
+EINA_DEPRECATED EAPI void elm_multibuttonentry_item_data_set(Elm_Object_Item *it, void *data);
