@@ -586,3 +586,8 @@
 	to match ecore_x API.
 	* Add ecore_wince_window_focus(), ecore_wince_window_focus_get()
 	and ecore_win32_window_focus_get().
+
+2012-03-26  Shinwoo Kim
+
+        * Do not autorepeat Ctrl, Shift and Alt keys on Windows
+

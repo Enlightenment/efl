@@ -660,9 +660,11 @@ _ecore_win32_event_keystroke_get(Ecore_Win32_Callback_Data *msg,
   char *kc = NULL;
   int key;
   int is_extended;
+  int previous_key_state;
 
   key = msg->window_param;
   is_extended = msg->data_param & 0x01000000;
+  previous_key_state = msg->data_param & 0x40000000;
 
   *keyname = NULL;
   *keysymbol = NULL;
@@ -817,6 +819,7 @@ _ecore_win32_event_keystroke_get(Ecore_Win32_Callback_Data *msg,
 
           if (is_down)
             {
+               if (previous_key_state) return 0;
                res = GetKeyState(VK_LSHIFT);
                if (res & 0x8000)
                  {
@@ -868,6 +871,7 @@ _ecore_win32_event_keystroke_get(Ecore_Win32_Callback_Data *msg,
 
           if (is_down)
             {
+               if (previous_key_state) return 0;
                res = GetKeyState(VK_LCONTROL);
                if (res & 0x8000)
                  {
@@ -920,6 +924,7 @@ _ecore_win32_event_keystroke_get(Ecore_Win32_Callback_Data *msg,
 
           if (is_down)
             {
+               if (previous_key_state) return 0;
                res = GetKeyState(VK_LMENU);
                if (res & 0x8000)
                  {

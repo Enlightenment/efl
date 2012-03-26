@@ -50,6 +50,8 @@ Fixes:
      - prevent double free that could cause crash when an Ecore_Thread stop.
     * ecore_x:
      - ecore_x_randr_modes_info_get does not cut off the trailing '\0' anymore.
+    * ecore_win32/wince:
+     - do not autorepeat Ctrl, Shift and Alt keys
 
 Improvements:
     * ecore:
