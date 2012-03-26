@@ -795,7 +795,7 @@ _anchors_update(Evas_Textblock_Cursor *c __UNUSED__, Evas_Object *o, Entry *en)
                   if (en->rp->edje->item_provider.func)
                     {
                        ob = en->rp->edje->item_provider.func
-                         (en->rp->edje->item_provider.data, smart, 
+                         (en->rp->edje->item_provider.data, smart,
                              en->rp->part->name, an->name);
                        evas_object_smart_member_add(ob, smart);
                        evas_object_stack_above(ob, o);
@@ -809,7 +809,7 @@ _anchors_update(Evas_Textblock_Cursor *c __UNUSED__, Evas_Object *o, Entry *en)
         // for link anchors
         else
           {
-             range = 
+             range =
                evas_textblock_cursor_range_geometry_get(an->start, an->end);
              if (eina_list_count(range) != eina_list_count(an->sel))
                {
@@ -2175,7 +2175,7 @@ _edje_entry_real_part_init(Edje_Real_Part *rp)
         if (!en->imf_context) goto done;
 
         ecore_imf_context_client_window_set
-           (en->imf_context, 
+           (en->imf_context,
                (void *)ecore_evas_window_get
                (ecore_evas_ecore_evas_get(rp->edje->base.evas)));
         ecore_imf_context_client_canvas_set(en->imf_context, rp->edje->base.evas);
@@ -2764,7 +2764,7 @@ _edje_entry_input_panel_imdata_get(Edje_Real_Part *rp, void *data, int *len)
 #endif
 }
 
-void 
+void
 _edje_entry_input_panel_return_key_type_set(Edje_Real_Part *rp, Edje_Input_Panel_Return_Key_Type return_key_type)
 {
    Entry *en = rp->entry_data;
@@ -2775,7 +2775,7 @@ _edje_entry_input_panel_return_key_type_set(Edje_Real_Part *rp, Edje_Input_Panel
 #endif
 }
 
-Edje_Input_Panel_Return_Key_Type 
+Edje_Input_Panel_Return_Key_Type
 _edje_entry_input_panel_return_key_type_get(Edje_Real_Part *rp)
 {
    Entry *en = rp->entry_data;
@@ -2787,7 +2787,7 @@ _edje_entry_input_panel_return_key_type_get(Edje_Real_Part *rp)
    return EDJE_INPUT_PANEL_RETURN_KEY_TYPE_DEFAULT;
 }
 
-void 
+void
 _edje_entry_input_panel_return_key_disabled_set(Edje_Real_Part *rp, Eina_Bool disabled)
 {
    Entry *en = rp->entry_data;
@@ -2798,7 +2798,7 @@ _edje_entry_input_panel_return_key_disabled_set(Edje_Real_Part *rp, Eina_Bool di
 #endif
 }
 
-Eina_Bool 
+Eina_Bool
 _edje_entry_input_panel_return_key_disabled_get(Edje_Real_Part *rp)
 {
    Entry *en = rp->entry_data;
