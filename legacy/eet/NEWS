@@ -4,13 +4,18 @@ Changes since Eet 1.5.0:
 --------------------------
 
 Additions:
-    * eet_file_get to return filenames of Eet_Files
+    * eet_file_get to return filenames of Eet_Files.
+    * added support for GNUTLS 3.x.
+    * eet_dictionary_count.
 
 Improvements:
 
-    * most allocations moved to mempools
-    * support GNUTLS 3.x
-    * add "eet -t FILE.EET" to get some stat out of an eet file
+    * most allocations moved to mempools.
+    * support GNUTLS 3.x.
+    * add "eet -t FILE.EET" to get some stat out of an eet file.
+    * eet filenames are now stringshare'd.
+    * increased eet_connection packet size to 1Mb.
+    * make eet tool write to stdout if no output file is given.
 
 Eet 1.5.0
 
