@@ -1623,17 +1623,20 @@ _smart_event_wheel(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, 
    Evas_Event_Mouse_Wheel *ev;
    Smart_Data *sd;
    Evas_Coord x = 0, y = 0;
+   int direction = 0;
 
    sd = data;
    ev = event_info;
+   direction = ev->direction;
    if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD) return ;
    if ((evas_key_modifier_is_set(ev->modifiers, "Control")) ||
        (evas_key_modifier_is_set(ev->modifiers, "Alt")) ||
-       (evas_key_modifier_is_set(ev->modifiers, "Shift")) ||
        (evas_key_modifier_is_set(ev->modifiers, "Meta")) ||
        (evas_key_modifier_is_set(ev->modifiers, "Hyper")) ||
        (evas_key_modifier_is_set(ev->modifiers, "Super")))
      return;
+   else if (evas_key_modifier_is_set(ev->modifiers, "Shift"))
+     direction = 1;
    elm_smart_scroller_child_pos_get(sd->smart_obj, &x, &y);
    if ((sd->down.bounce_x_animator) || (sd->down.bounce_y_animator) ||
        (sd->scrollto.x.animator) || (sd->scrollto.y.animator))
@@ -1666,9 +1669,9 @@ _smart_event_wheel(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, 
         if (sd->child.resized)
           _elm_smart_scroller_wanted_region_set(sd->smart_obj);
      }
-   if (!ev->direction)
+   if (!direction)
      y += ev->z * sd->step.y;
-   else if (ev->direction == 1)
+   else if (direction == 1)
      x += ev->z * sd->step.x;
 
    if ((!sd->hold) && (!sd->freeze))
