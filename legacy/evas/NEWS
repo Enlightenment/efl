@@ -9,10 +9,38 @@ Additions:
    * Shm engine for drawing in Wayland.
    * evas_object_smart_callback_del_full API.
    * Add double buffer support to the buffer engine.
+   * evas_textblock_cursor_word_start/end.
+   * evas_textblock_text_utf8_to_markup.
+   * textblock b and i tags able to be overriden by style.
+   * new api to set and get event flags
+   * events just before/after canvas rendering
+   * frame object set/get API's
+   * evas_object_name_child_find.
+   * evas_gl_config_new/free.
+   * evas_object_smart_callback_del_full.
+   * EVAS_OBJECT_POINTER_MODE_NOGRAB_NO_REPEAT_UPDOWN.
+   * EVAS_GL_OPTIONS_DIRECT.
+   * evas_object_textblock_style_user_pop/push.
+
+Fixes:
+
+   * don't enable SSE3 if immintrin.h isn't there.
+   * clip bounds calculation rounding error.
+   * grab count negative values with weird multi-finger press/release usage.
+   * clip bug that shows up in buffer engine.
+   * disabled buggy SSE3 routines.
+   * repeat events passing between layers withing the same object.
+   * unitialized value when running generic loader.
+   * rounding of update regions in scaled image objects.
 
 Improvements:
 
-   * Use Eina_File mmap infrastructure for bmp, ico, pmaps, psd, wbmp and xpm file access.
+   * use Eina_File mmap for bmp, ico, pmaps, psd, wbmp and xpm file access.
+   * textblock br and tab tags now default for newline and tab.
+   * extended pixman routine support for most software rendering routines.
+   * added tiled rotator for 32bit displays (faster).
+   * work around nvidia driver spin-using-cpu and don't use glXWaitGL()
+   * evasgl back-end for software using OSMesa.
 
 Removal:
 

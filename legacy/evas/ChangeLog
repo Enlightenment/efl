@@ -662,7 +662,7 @@
 
 2012-01-23  Tom Hacohen (TAsn)
 
-	* Textblock: Added evas_object_textblock_style_user_set/get.
+	* Textblock: Added evas_object_textblock_style_user_push/pop.
 	This is used to override the default style set for an evas object.
 	For example, this can be used to nicely change the font and size
 	in a text editor.
@@ -676,10 +676,3 @@
 
 	* Remove Software SDL engine.
 
-2012-01-23  Tom Hacohen (TAsn)
-
-	* Textblock: Replaced evas_object_textblock_style_user_set/get
-	with evas_object_textblock_style_user_push/peek/pop.
-	This is used to override the default style set for an evas object.
-	For example, this can be used to nicely change the font and size
-	in a text editor.
