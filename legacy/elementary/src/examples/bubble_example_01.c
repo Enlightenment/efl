@@ -11,7 +11,7 @@ static const char *corners[] = {"top_left", "top_right",
 
 
 void
-_bla(void *data, Evas_Object *obj, void *event_info)
+_bla(void *data __UNUSED__, Evas_Object *obj, void *event_info __UNUSED__)
 {
    static unsigned char corner = 0;
    ++corner;
@@ -23,10 +23,9 @@ _bla(void *data, Evas_Object *obj, void *event_info)
 }
 
 EAPI_MAIN int
-elm_main(int argc, char **argv)
+elm_main(int argc __UNUSED__, char **argv __UNUSED__)
 {
    Evas_Object *win, *bg, *bubble, *label, *icon;
-   char buf[256];
 
    win = elm_win_add(NULL, "bubble", ELM_WIN_BASIC);
    elm_win_title_set(win, "Bubble");

@@ -78,15 +78,12 @@ _page_grid_add(Evas_Object *parent, App_Inwin_Data *aid)
    Evas_Object *grid;
    char *theme, *emo;
    Eina_List *emos, *it;
-   static Elm_Gengrid_Item_Class it_class = {
-        "default",
-        {
-           _emo_label_get,
-           _emo_content_get,
-           NULL,
-           _emo_del
-        }
-   };
+   static Elm_Gengrid_Item_Class *it_class;
+   it_class = elm_gengrid_item_class_new();
+   it_class->item_style = "default";
+   it_class->func.text_get = _emo_label_get;
+   it_class->func.content_get = _emo_content_get;
+   it_class->func.del = _emo_del;
 
    theme = elm_theme_list_item_path_get("default", NULL);
    if (!theme) return NULL;
@@ -106,9 +103,10 @@ _page_grid_add(Evas_Object *parent, App_Inwin_Data *aid)
         if (strncmp(emo, "elm/entry/emoticon/", 19))
           continue;
         sscanf(emo, "elm/entry/emoticon/%[^/]/default", name);
-        elm_gengrid_item_append(grid, &it_class, strdup(name), _it_sel_cb, aid);
+        elm_gengrid_item_append(grid, it_class, strdup(name), _it_sel_cb, aid);
      }
    edje_file_collection_list_free(emos);
+   elm_gengrid_item_class_free(it_class);
 
    return grid;
 }

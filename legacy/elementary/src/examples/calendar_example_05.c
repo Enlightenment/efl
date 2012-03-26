@@ -22,10 +22,10 @@ _print_cal_info_cb(void *data __UNUSED__, Evas_Object *obj, void *event_info __U
    int year_min, year_max;
    Eina_Bool sel_enabled;
    const char **wds;
-   struct tm stime;
+   struct tm sel_time;
    double interval;
 
-   if (!elm_calendar_selected_time_get(obj, &stime))
+   if (!elm_calendar_selected_time_get(obj, &sel_time))
      return;
 
    interval = elm_calendar_interval_get(obj);
@@ -36,7 +36,7 @@ _print_cal_info_cb(void *data __UNUSED__, Evas_Object *obj, void *event_info __U
    printf("Day: %i, Mon: %i, Year %i, WeekDay: %i<br>\n"
           "Interval: %0.2f, Year_Min: %i, Year_Max %i, Sel Enabled : %i<br>\n"
           "Weekdays: %s, %s, %s, %s, %s, %s, %s<br>\n\n",
-          stime.tm_mday, stime.tm_mon, stime.tm_year + 1900, stime.tm_wday,
+          sel_time.tm_mday, sel_time.tm_mon, sel_time.tm_year + 1900, sel_time.tm_wday,
           interval, year_min, year_max, sel_enabled,
           wds[0], wds[1], wds[2], wds[3], wds[4], wds[5], wds[6]);
 }

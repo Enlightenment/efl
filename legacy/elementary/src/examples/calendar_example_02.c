@@ -18,11 +18,11 @@
 #endif
 
 static char *
-_format_month_year(struct tm *stime)
+_format_month_year(struct tm *format_time)
 {
    char buf[32];
    /* abbreviates month and year */
-   if (!strftime(buf, sizeof(buf), "%b %y", stime)) return NULL;
+   if (!strftime(buf, sizeof(buf), "%b %y", format_time)) return NULL;
    return strdup(buf);
 }
 

@@ -9,7 +9,7 @@
 #endif
 
 static void
-on_click(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+on_click(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    elm_exit();
 }

@@ -9,11 +9,10 @@
 static void _print(void *data, Evas_Object *obj, void *event_info);
 
 EAPI_MAIN int
-elm_main(int argc, char **argv)
+elm_main(int argc __UNUSED__, char **argv __UNUSED__)
 {
    Evas_Object *win, *bg, *cb, *cb2, *icon;
    Eina_Bool value;
-   char buf[256];
 
    win = elm_win_add(NULL, "check", ELM_WIN_BASIC);
    elm_win_title_set(win, "Check");
@@ -57,7 +56,7 @@ elm_main(int argc, char **argv)
 ELM_MAIN()
 
 static void
-_print(void *data, Evas_Object *obj, void *event_info)
+_print(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    printf("check %smarked\n", *((Eina_Bool*)data) ? "" : "un");
 }
