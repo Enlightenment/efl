@@ -126,7 +126,7 @@ edje_file_group_exists(const char *file, const char *glob)
    Eina_Bool is_glob = EINA_FALSE;
    const char *p;
 
-   if ((!file) || (!*file))
+   if ((!file) || (!*file) || (!glob))
       return EINA_FALSE;
 
    edf = _edje_cache_file_coll_open(file, NULL, &error_ret, NULL);
