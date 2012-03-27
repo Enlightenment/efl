@@ -142,7 +142,8 @@ _theme_hook(Evas_Object *obj)
    if (hpadstr) h_pad = atoi(hpadstr);
    vpadstr = edje_object_data_get(wd->base, "vertical_pad");
    if (vpadstr) v_pad = atoi(vpadstr);
-   elm_box_padding_set(wd->box, h_pad, v_pad);
+   elm_box_padding_set(wd->box, (Evas_Coord)(h_pad * elm_widget_scale_get(obj) * _elm_config->scale),
+                       (Evas_Coord)(v_pad * elm_widget_scale_get(obj) *_elm_config->scale));
    EINA_LIST_FOREACH(wd->items, elist, item)
      {
         elm_layout_theme_set(VIEW(item), "colorselector", "item", elm_widget_style_get(obj));
@@ -1069,7 +1070,8 @@ elm_colorselector_add(Evas_Object *parent)
    if (hpadstr) h_pad = atoi(hpadstr);
    vpadstr = edje_object_data_get(wd->base, "vertical_pad");
    if (vpadstr) v_pad = atoi(vpadstr);
-   elm_box_padding_set(wd->box, h_pad, v_pad);
+   elm_box_padding_set(wd->box, (Evas_Coord)(h_pad * elm_widget_scale_get(obj) * _elm_config->scale),
+                       (Evas_Coord)(v_pad * elm_widget_scale_get(obj) *_elm_config->scale));
    elm_box_align_set(wd->box, 0.5, 0.5);
    elm_widget_sub_object_add(obj, wd->box);
    evas_object_show(wd->box);
