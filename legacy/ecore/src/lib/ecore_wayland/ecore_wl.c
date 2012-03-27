@@ -321,6 +321,17 @@ ecore_wl_pointer_xy_get(int *x, int *y)
    _ecore_wl_input_pointer_xy_get(x, y);
 }
 
+/**
+ * Return the screen DPI
+ *
+ * This is a simplistic call to get DPI. It does not account for differing
+ * DPI in the x amd y axes nor does it accoutn for multihead or xinerama and
+ * xrander where different parts of the screen may have differen DPI etc.
+ *
+ * @return the general screen DPI (dots/pixels per inch).
+ * 
+ * @since 1.2
+ */
 EAPI int 
 ecore_wl_dpi_get(void)
 {
