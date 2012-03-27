@@ -187,7 +187,6 @@ elm_map.c \
 elm_menu.c \
 elm_module.c \
 elm_notify.c \
-elm_pager.c \
 elm_panel.c \
 elm_panes.c \
 elm_photo.c \
