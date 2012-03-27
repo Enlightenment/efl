@@ -600,3 +600,8 @@
 	* Implement popup windows
 	* Implement ecore_wl_window_transparent_set function
 	* Implement function to allow setting Ecore_Wl_Window type.
+
+2012-03-26  Jihoon Kim (jihoon)
+
+        * scim-immodule: fix bug candidate window covers the preedit string when preedit string appears in 2 line.
+
