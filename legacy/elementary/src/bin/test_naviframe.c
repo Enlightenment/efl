@@ -14,6 +14,8 @@ static const char *img2 = PACKAGE_DATA_DIR "/images/plant_01.jpg";
 static const char *img3 = PACKAGE_DATA_DIR "/images/rock_01.jpg";
 static const char *img4 = PACKAGE_DATA_DIR "/images/rock_02.jpg";
 static const char *img5 = PACKAGE_DATA_DIR "/images/sky_01.jpg";
+static const char *img6 = PACKAGE_DATA_DIR "/images/sky_02.jpg";
+static const char *img7 = PACKAGE_DATA_DIR "/images/sky_03.jpg";
 
 Evas_Object *
 _content_new(Evas_Object *parent, const char *img)
@@ -57,6 +59,50 @@ _promote(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 }
 
 void
+_page7(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+{
+   Evas_Object *bt, *bt2, *content, *nf = data;
+   Elm_Object_Item *it;
+
+   bt = elm_button_add(nf);
+   evas_object_size_hint_align_set(bt, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   BUTTON_TEXT_SET(bt, "Page 6");
+
+   bt2 = elm_button_add(nf);
+   evas_object_size_hint_align_set(bt2, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   BUTTON_TEXT_SET(bt2, "Page 1");
+   evas_object_smart_callback_add(bt2, "clicked", _promote,
+                                  evas_object_data_get(nf, "page1"));
+   content = _content_new(nf, img6);
+   it = elm_naviframe_item_push(nf, "Page 7", bt, bt2, content, "overlap");
+   elm_object_item_part_text_set(it, "subtitle", "Overlap style!");
+
+   evas_object_smart_callback_add(bt, "clicked", _navi_pop, nf);
+}
+
+void
+_page6(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+{
+   Evas_Object *bt, *bt2, *content, *nf = data;
+   Elm_Object_Item *it;
+
+   bt = elm_button_add(nf);
+   evas_object_size_hint_align_set(bt, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   BUTTON_TEXT_SET(bt, "Page 5");
+
+   bt2 = elm_button_add(nf);
+   evas_object_size_hint_align_set(bt2, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   BUTTON_TEXT_SET(bt2, "Page 7");
+   evas_object_smart_callback_add(bt2, "clicked", _page7, nf);
+
+   content = _content_new(nf, img7);
+   it = elm_naviframe_item_push(nf, "Page 6", bt, bt2, content, "overlap");
+   elm_object_item_part_text_set(it, "subtitle", "Overlap style!");
+
+   evas_object_smart_callback_add(bt, "clicked", _navi_pop, nf);
+}
+
+void
 _page5(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    Evas_Object *bt, *bt2, *content, *nf = data;
@@ -64,13 +110,12 @@ _page5(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 
    bt = elm_button_add(nf);
    evas_object_size_hint_align_set(bt, EVAS_HINT_FILL, EVAS_HINT_FILL);
-   BUTTON_TEXT_SET(bt, "Prev");
+   BUTTON_TEXT_SET(bt, "Page 4");
 
    bt2 = elm_button_add(nf);
    evas_object_size_hint_align_set(bt2, EVAS_HINT_FILL, EVAS_HINT_FILL);
-   BUTTON_TEXT_SET(bt2, "Page 1");
-   evas_object_smart_callback_add(bt2, "clicked", _promote,
-                                  evas_object_data_get(nf, "page1"));
+   BUTTON_TEXT_SET(bt2, "Page 6");
+   evas_object_smart_callback_add(bt2, "clicked", _page6, nf);
 
    content = _content_new(nf, img5);
    it = elm_naviframe_item_insert_after(nf,
@@ -80,7 +125,7 @@ _page5(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
                                         bt2,
                                         content,
                                         NULL);
-
+   elm_object_item_part_text_set(it, "subtitle", "This page is inserted without transition");
    evas_object_smart_callback_add(bt, "clicked", _navi_it_del, it);
 }
 
@@ -110,6 +155,7 @@ _page4(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
                                 bt,
                                 content,
                                 NULL);
+   elm_object_item_part_text_set(it, "subtitle", "Title area visibility test");
 
    ic = elm_icon_add(nf);
    snprintf(buf, sizeof(buf), "%s/images/logo_small.png",

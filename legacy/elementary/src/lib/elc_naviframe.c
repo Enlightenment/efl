@@ -1295,7 +1295,6 @@ elm_naviframe_item_pop(Evas_Object *obj)
           }
         elm_object_signal_emit(VIEW(it), "elm,state,cur,popped", "elm");
         evas_object_show(VIEW(prev_it));
-        evas_object_raise(VIEW(prev_it));
         elm_object_signal_emit(VIEW(prev_it),
                                "elm,state,prev,popped",
                                "elm");
