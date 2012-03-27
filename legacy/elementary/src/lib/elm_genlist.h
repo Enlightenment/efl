@@ -311,8 +311,9 @@
  * - @c "multi,swipe,down" - This is called when the genlist is multi-touch
  *   swiped down.
  * - @c "multi,pinch,out" - This is called when the genlist is multi-touch
- *   pinched out.  "- @c multi,pinch,in" - This is called when the genlist is
- *   multi-touch pinched in.
+ *   pinched out.
+ * - @c multi,pinch,in" - This is called when the genlist is multi-touch
+ *   pinched in.
  * - @c "swipe" - This is called when the genlist is swiped.
  * - @c "moved" - This is called when a genlist item is moved.
  * - @c "moved,after" - This is called when a genlist item is moved after.
