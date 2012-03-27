@@ -1235,6 +1235,7 @@ elm_naviframe_item_insert_after(Evas_Object *obj,
    ELM_OBJ_ITEM_CHECK_OR_RETURN(after, NULL);
    Elm_Naviframe_Item *it;
    Widget_Data *wd;
+   Eina_Bool top_inserted;
 
    wd = elm_widget_data_get(obj);
    if (!wd) return NULL;
@@ -1242,16 +1243,20 @@ elm_naviframe_item_insert_after(Evas_Object *obj,
    it = _item_new(obj, title_label, prev_btn, next_btn, content, item_style);
    if (!it) return NULL;
 
-   if (elm_naviframe_top_item_get(obj) == after)
-     {
-        evas_object_show(VIEW(it));
-        evas_object_hide(VIEW(after));
-     }
+   if (elm_naviframe_top_item_get(obj) == after) top_inserted = EINA_TRUE;
+
    wd->stack =
       eina_inlist_append_relative(wd->stack,
                                   EINA_INLIST_GET(it),
                                   EINA_INLIST_GET(((Elm_Naviframe_Item *) after)));
+   if (top_inserted)
+     {
+        evas_object_show(VIEW(it));
+        evas_object_hide(VIEW(after));
+     }
+
    _sizing_eval(obj);
+
    return (Elm_Object_Item *)it;
 }
 
