@@ -25,6 +25,7 @@
 /* local function prototypes */
 static void _ecore_wl_input_cb_motion(void *data, struct wl_input_device *input_device __UNUSED__, unsigned int timestamp, int sx, int sy);
 static void _ecore_wl_input_cb_button(void *data, struct wl_input_device *input_device __UNUSED__, unsigned int timestamp, unsigned int button, unsigned int state);
+static void _ecore_wl_input_cb_axis(void *data, struct wl_input_device *input_device __UNUSED__, unsigned int timestamp, unsigned int axis, int value);
 static void _ecore_wl_input_cb_key(void *data, struct wl_input_device *input_device __UNUSED__, unsigned int timestamp __UNUSED__, unsigned int key, unsigned int state);
 static void _ecore_wl_input_cb_pointer_enter(void *data, struct wl_input_device *input_device __UNUSED__, unsigned int timestamp, struct wl_surface *surface, int sx, int sy);
 static void _ecore_wl_input_cb_pointer_leave(void *data, struct wl_input_device *input_device __UNUSED__, unsigned int timestamp, struct wl_surface *surface __UNUSED__);
@@ -51,12 +52,14 @@ static void _ecore_wl_input_focus_in_send(Ecore_Wl_Input *input, unsigned int ti
 static void _ecore_wl_input_focus_out_send(Ecore_Wl_Input *input, unsigned int timestamp);
 static void _ecore_wl_input_mouse_down_send(Ecore_Wl_Input *input, unsigned int timestamp);
 static void _ecore_wl_input_mouse_up_send(Ecore_Wl_Input *input, unsigned int timestamp);
+static void _ecore_wl_input_mouse_wheel_send(Ecore_Wl_Input *input, unsigned int axis, int value, unsigned int timestamp);
 
 /* wayland interfaces */
 static const struct wl_input_device_listener _ecore_wl_input_listener = 
 {
    _ecore_wl_input_cb_motion,
    _ecore_wl_input_cb_button,
+   _ecore_wl_input_cb_axis,
    _ecore_wl_input_cb_key,
    _ecore_wl_input_cb_pointer_enter,
    _ecore_wl_input_cb_pointer_leave,
@@ -217,6 +220,17 @@ _ecore_wl_input_cb_button(void *data, struct wl_input_device *input_device __UNU
                ecore_wl_input_ungrab(input, timestamp);
           }
      }
+}
+
+static void 
+_ecore_wl_input_cb_axis(void *data, struct wl_input_device *input_device __UNUSED__, unsigned int timestamp, unsigned int axis, int value)
+{
+   Ecore_Wl_Input *input;
+
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+
+   if (!(input = data)) return;
+   _ecore_wl_input_mouse_wheel_send(input, axis, value, timestamp);
 }
 
 static void 
@@ -691,4 +705,39 @@ _ecore_wl_input_mouse_up_send(Ecore_Wl_Input *input, unsigned int timestamp)
      }
 
    ecore_event_add(ECORE_EVENT_MOUSE_BUTTON_UP, ev, NULL, NULL);
+}
+
+static void 
+_ecore_wl_input_mouse_wheel_send(Ecore_Wl_Input *input, unsigned int axis, int value, unsigned int timestamp)
+{
+   Ecore_Event_Mouse_Wheel *ev;
+
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+
+   if (!(ev = malloc(sizeof(Ecore_Event_Mouse_Wheel)))) return;
+
+   ev->timestamp = timestamp;
+   ev->modifiers = input->modifiers;
+   ev->x = input->sx;
+   ev->y = input->sy;
+   ev->root.x = input->sx;
+   ev->root.y = input->sy;
+
+   if (axis == WL_INPUT_DEVICE_AXIS_VERTICAL_SCROLL)
+     {
+        ev->direction = value;
+        ev->z = 1;
+     }
+   else if (axis == WL_INPUT_DEVICE_AXIS_HORIZONTAL_SCROLL)
+     {
+        /* TODO: handle horizontal scroll */
+     }
+
+   if (input->pointer_focus)
+     {
+        ev->window = input->pointer_focus->id;
+        ev->event_window = input->pointer_focus->id;
+     }
+
+   ecore_event_add(ECORE_EVENT_MOUSE_WHEEL, ev, NULL, NULL);
 }

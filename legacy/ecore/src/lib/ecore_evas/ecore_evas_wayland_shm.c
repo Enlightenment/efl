@@ -811,9 +811,9 @@ _ecore_evas_wl_render(Ecore_Evas *ee)
 
              EINA_LIST_FOREACH(updates, l, r) 
                {
-                  if (ee->engine.wl.buffer)
-                    wl_buffer_damage(ee->engine.wl.buffer, 
-                                     r->x, r->y, r->w, r->h);
+                  /* if (ee->engine.wl.buffer) */
+                  /*   wl_buffer_damage(ee->engine.wl.buffer,  */
+                  /*                    r->x, r->y, r->w, r->h); */
 
                   ecore_wl_window_damage(ee->engine.wl.win, 
                                          r->x, r->y, r->w, r->h);

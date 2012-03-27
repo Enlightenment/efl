@@ -1,15 +1,8 @@
 #ifndef _ECORE_WAYLAND_H_
 # define _ECORE_WAYLAND_H_
 
-# define GL_GLEXT_PROTOTYPES
-
 # include <Eina.h>
 # include <wayland-client.h>
-# include <wayland-egl.h> // NB: already includes wayland-client.h
-# include <GLES2/gl2.h>
-# include <GLES2/gl2ext.h>
-# include <EGL/egl.h>
-# include <EGL/eglext.h>
 
 # ifdef EAPI
 #  undef EAPI
@@ -76,13 +69,6 @@ struct _Ecore_Wl_Display
         struct wl_data_device_manager *data_device_manager;
      } wl;
 
-   struct 
-     {
-        EGLDisplay display;
-        EGLConfig argb_config;
-        EGLContext argb_context;
-     } egl;
-
    int fd;
    unsigned int mask;
    Ecore_Fd_Handler *fd_hdl;
@@ -94,9 +80,6 @@ struct _Ecore_Wl_Display
 
    Ecore_Wl_Output *output;
    Ecore_Wl_Input *input;
-
-   PFNEGLCREATEIMAGEKHRPROC create_image;
-   PFNEGLDESTROYIMAGEKHRPROC destroy_image;
 
    void (*output_configure)(Ecore_Wl_Output *output, void *data);
    void *data;
