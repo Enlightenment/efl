@@ -192,12 +192,8 @@ _transit_obj_data_recover(Elm_Transit *transit, Evas_Object *obj)
              evas_object_color_set(obj, state->r, state->g, state->b, state->a);
              if (state->visible) evas_object_show(obj);
              else evas_object_hide(obj);
-             if (state->map_enabled)
-               evas_object_map_enable_set(obj, EINA_TRUE);
-             else
-               evas_object_map_enable_set(obj, EINA_FALSE);
-             if (state->map)
-               evas_object_map_set(obj, state->map);
+             evas_object_map_enable_set(obj, state->map_enabled);
+             evas_object_map_set(obj, state->map);
           }
         free(state);
      }
