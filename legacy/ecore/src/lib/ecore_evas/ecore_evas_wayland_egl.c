@@ -162,7 +162,7 @@ ecore_evas_wayland_egl_new(const char *disp_name, unsigned int parent, int x, in
    Ecore_Wl_Window *p = NULL;
    Evas_Engine_Info_Wayland_Egl *einfo;
    Ecore_Evas *ee;
-   int method = 0;
+   int method = 0, count = 0;
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
@@ -172,11 +172,14 @@ ecore_evas_wayland_egl_new(const char *disp_name, unsigned int parent, int x, in
         return NULL;
      }
 
-   if (!ecore_wl_init(disp_name))
+   count = ecore_wl_init(disp_name);
+   if (!count)
      {
         ERR("Failed to initialize Ecore_Wayland");
         return NULL;
      }
+   else if (count >= 1)
+     ecore_wl_sync();
 
    if (!(ee = calloc(1, sizeof(Ecore_Evas))))
      {

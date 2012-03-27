@@ -878,8 +878,9 @@ EAPI Ecore_Evas     *ecore_evas_wayland_shm_new(const char *disp_name, unsigned 
 EAPI Ecore_Evas     *ecore_evas_wayland_egl_new(const char *disp_name, unsigned int parent, int x, int y, int w, int h, Eina_Bool frame);
 EAPI void            ecore_evas_wayland_resize(Ecore_Evas *ee, int location);
 /* EAPI void            ecore_evas_wayland_drag_start(Ecore_Evas *ee, Ecore_Evas *drag_ee, void *source); */
-/* EAPI void            ecore_evas_wayland_pointer_set(Ecore_Evas *ee, int hot_x, int hot_y); */
-/* EAPI void            ecore_evas_wayland_type_set(Ecore_Evas *ee, int type); */
+EAPI void            ecore_evas_wayland_pointer_set(Ecore_Evas *ee, int hot_x, int hot_y);
+EAPI void            ecore_evas_wayland_type_set(Ecore_Evas *ee, int type);
+EAPI Ecore_Wl_Window *ecore_evas_wayland_window_get(const Ecore_Evas *ee);
 
 /**
  * @brief Create a new @c Ecore_Evas canvas bound to the Evas

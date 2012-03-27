@@ -2846,9 +2846,49 @@ ecore_evas_wayland_resize(Ecore_Evas *ee, int location)
      }
 }
 
+EAPI void 
+ecore_evas_wayland_type_set(Ecore_Evas *ee, int type)
+{
+   if (!ee) return;
+   ecore_wl_window_type_set(ee->engine.wl.win, type);
+}
+
+EAPI Ecore_Wl_Window *
+ecore_evas_wayland_window_get(const Ecore_Evas *ee)
+{
+   return ee->engine.wl.win;
+}
+
+EAPI void 
+ecore_evas_wayland_pointer_set(Ecore_Evas *ee, int hot_x, int hot_y)
+{
+   Ecore_Wl_Window *win;
+
+   win = ecore_evas_wayland_window_get(ee);
+   /* ecore_wl_window_pointer_set(win, ee->engine.wl.buffer, hot_x, hot_y); */
+}
+
 #else
 EAPI void 
 ecore_evas_wayland_resize(Ecore_Evas *ee __UNUSED__, int location __UNUSED__)
+{
+
+}
+
+EAPI void 
+ecore_evas_wayland_type_set(Ecore_Evas *ee __UNUSED__, int type __UNUSED__)
+{
+
+}
+
+EAPI Ecore_Wl_Window *
+ecore_evas_wayland_window_get(const Ecore_Evas *ee __UNUSED__)
+{
+   return NULL;
+}
+
+EAPI void 
+ecore_evas_wayland_pointer_set(Ecore_Evas *ee __UNUSED__, int hot_x __UNUSED__, int hot_y __UNUSED__)
 {
 
 }
