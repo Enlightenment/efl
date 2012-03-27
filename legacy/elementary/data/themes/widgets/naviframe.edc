@@ -293,6 +293,15 @@ group { name: "elm/naviframe/item/overlap/default";
          description { state: "default" 0.0;
             rel1.to_y: "title_clip";
             rel1.relative: 0 1;
+            color: 255 255 255 255;
+            visible: 1;
+         }
+         description { state: "left" 0.0;
+            inherit: "default" 0.0;
+         }
+         description { state: "right" 0.0;
+            inherit: "default" 0.0;
+            color: 0 0 0 0;
          }
       }
       part { name: "content_base";
@@ -301,7 +310,6 @@ group { name: "elm/naviframe/item/overlap/default";
          description { state: "default" 0.0;
             rel1 { to: "elm.swallow.content"; }
             rel2 { to: "elm.swallow.content"; }
-            color: 225 225 225 255;
          }
       }
       part { name: "elm.swallow.content";
@@ -313,17 +321,14 @@ group { name: "elm/naviframe/item/overlap/default";
             rel1.relative: 0.0 1.0;
             rel1.to_y: "title_clip";
             rel2.relative: 1.0 1.0;
-            color: 255 255 255 255;
          }
          description { state: "left" 0.0;
             inherit: "default" 0.0;
-            color: 0 0 0 0;
          }
          description { state: "right" 0.0;
             inherit: "default" 0.0;
             rel1.relative: 1.0 1.0;
             rel2.relative: 2.0 1.0;
-            color: 0 0 0 0;
          }
       }
       part { name: "title_base";
@@ -439,6 +444,7 @@ group { name: "elm/naviframe/item/overlap/default";
          action: STATE_SET "default" 0.0;
          transition: DECELERATE 0.5;
          target: "elm.swallow.content";
+         target: "content_clip";
          after: "show_finished";
       }
       program { name: "content_cur_pusehd";
@@ -446,6 +452,7 @@ group { name: "elm/naviframe/item/overlap/default";
          source: "";
          action: STATE_SET "left" 0.0;
          target: "elm.swallow.content";
+         target: "content_clip";
          transition: DECELERATE 0.5;
          after: "pushed_finished";
       }
@@ -454,6 +461,7 @@ group { name: "elm/naviframe/item/overlap/default";
          source: "";
          action: STATE_SET "default" 0.0;
          target: "elm.swallow.content";
+         target: "content_clip";
          transition: DECELERATE 0.5;
          after: "show_finished";
       }
@@ -462,6 +470,7 @@ group { name: "elm/naviframe/item/overlap/default";
          source: "";
          action: STATE_SET "right" 0.0;
          target: "elm.swallow.content";
+         target: "content_clip";
          transition: DECELERATE 0.5;
          after: "popped_finished";
       }
@@ -470,6 +479,7 @@ group { name: "elm/naviframe/item/overlap/default";
          source: "elm";
          script {
             set_state(PART:"elm.swallow.content", "default", 0.0);
+            set_state(PART:"content_clip", "default", 0.0);
             emit("elm,state,cur,pushed,internal", "");
          }
       }
@@ -478,6 +488,7 @@ group { name: "elm/naviframe/item/overlap/default";
          source: "elm";
          script {
             set_state(PART:"elm.swallow.content", "right", 0.0);
+            set_state(PART:"content_clip", "right", 0.0);
             emit("elm,state,new,pushed,internal", "");
          }
       }
@@ -486,6 +497,7 @@ group { name: "elm/naviframe/item/overlap/default";
          source: "elm";
          script {
             set_state(PART:"elm.swallow.content", "left", 0.0);
+            set_state(PART:"content_clip", "left", 0.0);
             emit("elm,state,prev,popped,internal", "");
          }
       }
@@ -494,6 +506,7 @@ group { name: "elm/naviframe/item/overlap/default";
          source: "elm";
          script {
             set_state(PART:"elm.swallow.content", "default", 0.0);
+            set_state(PART:"content_clip", "default", 0.0);
             emit("elm,state,cur,popped,internal", "");
          }
       }
@@ -502,6 +515,7 @@ group { name: "elm/naviframe/item/overlap/default";
          source: "elm";
          action: STATE_SET "default" 0.0;
          target: "elm.swallow.content";
+         target: "content_clip";
       }
       program { name: "title_show";
          signal: "elm,state,title,show";
