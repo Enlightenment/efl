@@ -526,9 +526,9 @@ window_to_screen_geometry_get(Ecore_X_Window client_win, int *x, int *y)
         win = ecore_x_window_parent_get(win);
      }
 
-   if (x) 
+   if (x)
      *x = sum_x;
-   if (y) 
+   if (y)
      *y = sum_y;
 }
 
@@ -1365,7 +1365,6 @@ isf_imf_context_autocapital_type_set(Ecore_IMF_Context* ctx, Ecore_IMF_Autocapit
  * the event was not handled), but there is no obligation of any events to be
  * submitted to this function.
  */
-
 EAPI Eina_Bool
 isf_imf_context_filter_event(Ecore_IMF_Context *ctx, Ecore_IMF_Event_Type type, Ecore_IMF_Event *event)
 {
