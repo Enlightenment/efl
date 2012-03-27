@@ -6,6 +6,8 @@
 # include <Eina.h>
 # include <wayland-client.h>
 # include <wayland-egl.h> // NB: already includes wayland-client.h
+# include <GLES2/gl2.h>
+# include <GLES2/gl2ext.h>
 # include <EGL/egl.h>
 # include <EGL/eglext.h>
 
@@ -77,9 +79,7 @@ struct _Ecore_Wl_Display
    struct 
      {
         EGLDisplay display;
-        EGLConfig rgb_config;
         EGLConfig argb_config;
-        EGLContext rgb_context;
         EGLContext argb_context;
      } egl;
 
@@ -93,6 +93,7 @@ struct _Ecore_Wl_Display
    struct xkb_desc *xkb;
 
    Ecore_Wl_Output *output;
+   Ecore_Wl_Input *input;
 
    PFNEGLCREATEIMAGEKHRPROC create_image;
    PFNEGLDESTROYIMAGEKHRPROC destroy_image;
@@ -106,6 +107,7 @@ struct _Ecore_Wl_Output
    Ecore_Wl_Display *display;
    struct wl_output *output;
    Eina_Rectangle allocation;
+   int mw, mh;
    struct wl_list link;
 
    void (*destroy) (Ecore_Wl_Output *output, void *data);
@@ -128,7 +130,7 @@ struct _Ecore_Wl_Input
 
    struct wl_list link;
 
-   /* TODO: grab */
+   Ecore_Wl_Window *grab;
    unsigned int grab_button;
 
    Ecore_Wl_Dnd_Source *drag_source;
@@ -142,6 +144,11 @@ struct _Ecore_Wl_Window
 
    struct wl_surface *surface;
    struct wl_shell_surface *shell_surface;
+
+   struct 
+     {
+        struct wl_region *input, *opaque;
+     } region;
 
    int id;
    int x, y;
@@ -285,6 +292,10 @@ EAPI struct wl_shm *ecore_wl_shm_get(void);
 EAPI struct wl_display *ecore_wl_display_get(void);
 EAPI void ecore_wl_screen_size_get(int *w, int *h);
 EAPI void ecore_wl_pointer_xy_get(int *x, int *y);
+EAPI int ecore_wl_dpi_get(void);
+
+EAPI void ecore_wl_input_grab(Ecore_Wl_Input *input, Ecore_Wl_Window *win, unsigned int button);
+EAPI void ecore_wl_input_ungrab(Ecore_Wl_Input *input, unsigned int timestamp);
 
 EAPI Ecore_Wl_Window *ecore_wl_window_new(Ecore_Wl_Window *parent, int x, int y, int w, int h, int buffer_type);
 EAPI void ecore_wl_window_free(Ecore_Wl_Window *win);
@@ -297,8 +308,11 @@ EAPI void ecore_wl_window_hide(Ecore_Wl_Window *win);
 EAPI void ecore_wl_window_raise(Ecore_Wl_Window *win);
 EAPI void ecore_wl_window_maximized_set(Ecore_Wl_Window *win, Eina_Bool maximized);
 EAPI void ecore_wl_window_fullscreen_set(Ecore_Wl_Window *win, Eina_Bool fullscreen);
+EAPI void ecore_wl_window_transparent_set(Ecore_Wl_Window *win, Eina_Bool transparent);
 EAPI void ecore_wl_window_update_size(Ecore_Wl_Window *win, int w, int h);
 EAPI struct wl_surface *ecore_wl_window_surface_get(Ecore_Wl_Window *win);
 EAPI Ecore_Wl_Window *ecore_wl_window_find(unsigned int id);
+EAPI void ecore_wl_window_type_set(Ecore_Wl_Window *win, Ecore_Wl_Window_Type type);
+EAPI void ecore_wl_window_pointer_set(Ecore_Wl_Window *win, struct wl_buffer *buffer, int hot_x, int hot_y, unsigned int timestamp);
 
 #endif

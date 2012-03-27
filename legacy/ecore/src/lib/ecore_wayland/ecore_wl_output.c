@@ -8,7 +8,7 @@
 #include "Ecore_Wayland.h"
 
 /* local function prototypes */
-static void _ecore_wl_output_cb_geometry(void *data, struct wl_output *wl_output __UNUSED__, int x, int y, int w __UNUSED__, int h __UNUSED__, int subpixel __UNUSED__, const char *make __UNUSED__, const char *model __UNUSED__);
+static void _ecore_wl_output_cb_geometry(void *data, struct wl_output *wl_output __UNUSED__, int x, int y, int w, int h, int subpixel __UNUSED__, const char *make __UNUSED__, const char *model __UNUSED__);
 static void _ecore_wl_output_cb_mode(void *data, struct wl_output *wl_output __UNUSED__, unsigned int flags, int w, int h, int refresh __UNUSED__);
 
 /* wayland listeners */
@@ -48,7 +48,7 @@ _ecore_wl_output_del(Ecore_Wl_Output *output)
 
 /* local functions */
 static void 
-_ecore_wl_output_cb_geometry(void *data, struct wl_output *wl_output __UNUSED__, int x, int y, int w __UNUSED__, int h __UNUSED__, int subpixel __UNUSED__, const char *make __UNUSED__, const char *model __UNUSED__)
+_ecore_wl_output_cb_geometry(void *data, struct wl_output *wl_output __UNUSED__, int x, int y, int w, int h, int subpixel __UNUSED__, const char *make __UNUSED__, const char *model __UNUSED__)
 {
    Ecore_Wl_Output *output;
 
@@ -57,6 +57,8 @@ _ecore_wl_output_cb_geometry(void *data, struct wl_output *wl_output __UNUSED__,
    output = data;
    output->allocation.x = x;
    output->allocation.y = y;
+   output->mw = w;
+   output->mh = h;
 }
 
 static void 

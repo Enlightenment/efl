@@ -159,7 +159,7 @@ ecore_wl_init(const char *name)
                                   _ecore_wl_cb_handle_global, _ecore_wl_disp);
 
    /* FIXME: Process connection events ?? */
-   wl_display_iterate(_ecore_wl_disp->wl.display, WL_DISPLAY_READABLE);
+   /* wl_display_iterate(_ecore_wl_disp->wl.display, WL_DISPLAY_READABLE); */
 
    /* if (!_ecore_wl_egl_init(_ecore_wl_disp)) */
    /*   { */
@@ -233,7 +233,7 @@ ecore_wl_shutdown(void)
 EAPI void 
 ecore_wl_flush(void)
 {
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+//   LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
    while (_ecore_wl_disp->mask & WL_DISPLAY_WRITABLE)
      wl_display_iterate(_ecore_wl_disp->wl.display, WL_DISPLAY_WRITABLE);
@@ -252,7 +252,10 @@ ecore_wl_sync(void)
 {
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
-   wl_display_roundtrip(_ecore_wl_disp->wl.display);
+   wl_display_sync(_ecore_wl_disp->wl.display);
+
+   //wl_display_roundtrip(_ecore_wl_disp->wl.display);
+
    // old sync code
 //   wl_display_iterate(_ecore_wl_disp->wl.display, WL_DISPLAY_READABLE);
 }
@@ -318,6 +321,20 @@ ecore_wl_pointer_xy_get(int *x, int *y)
    _ecore_wl_input_pointer_xy_get(x, y);
 }
 
+EAPI int 
+ecore_wl_dpi_get(void)
+{
+   int w, mw;
+
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+
+   mw = _ecore_wl_disp->output->mw;
+   if (mw <= 0) return 75;
+
+   w = _ecore_wl_disp->output->allocation.w;
+   return (((w * 254) / mw) + 5) / 10;
+}
+
 /* local functions */
 static Eina_Bool 
 _ecore_wl_shutdown(Eina_Bool close)
@@ -376,7 +393,7 @@ _ecore_wl_cb_event_mask_update(unsigned int mask, void *data)
 {
    Ecore_Wl_Display *ewd;
 
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+//   LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
    ewd = data;
    ewd->mask = mask;
@@ -400,12 +417,7 @@ _ecore_wl_cb_handle_global(struct wl_display *disp, unsigned int id, const char 
 {
    Ecore_Wl_Display *ewd;
 
-   LOGFN(__FILE__, __LINE__, __FUNCTION__);
-
-   if ((!strcmp(interface, "wl_display")) || 
-       (!strcmp(interface, "wl_drm")) || 
-       (!strcmp(interface, "desktop_shell")))
-     return;
+//   LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
    ewd = data;
 

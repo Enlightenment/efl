@@ -45,7 +45,6 @@ static void _ecore_wl_input_cb_data_selection(void *data, struct wl_data_device 
 static void _ecore_wl_input_keyboard_focus_remove(Ecore_Wl_Input *input, unsigned int timestamp);
 static void _ecore_wl_input_pointer_focus_remove(Ecore_Wl_Input *input, unsigned int timestamp);
 static void _ecore_wl_input_mouse_move_send(Ecore_Wl_Input *input, unsigned int timestamp);
-static void _ecore_wl_input_cb_mouse_move_free(void *data __UNUSED__, void *event);
 static void _ecore_wl_input_mouse_in_send(Ecore_Wl_Input *input, unsigned int timestamp);
 static void _ecore_wl_input_mouse_out_send(Ecore_Wl_Input *input, unsigned int timestamp);
 static void _ecore_wl_input_focus_in_send(Ecore_Wl_Input *input, unsigned int timestamp);
@@ -83,6 +82,27 @@ static const struct wl_data_device_listener _ecore_wl_data_listener =
 /* local variables */
 static int _pointer_x, _pointer_y;
 
+EAPI void 
+ecore_wl_input_grab(Ecore_Wl_Input *input, Ecore_Wl_Window *win, unsigned int button)
+{
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+
+   input->grab = win;
+   input->grab_button = button;
+}
+
+EAPI void 
+ecore_wl_input_ungrab(Ecore_Wl_Input *input, unsigned int timestamp)
+{
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+
+   input->grab = NULL;
+   if (input->pointer_focus)
+     {
+        printf("Ungrab: %d\n", timestamp);
+     }
+}
+
 void 
 _ecore_wl_input_add(Ecore_Wl_Display *ewd, unsigned int id)
 {
@@ -110,6 +130,7 @@ _ecore_wl_input_add(Ecore_Wl_Display *ewd, unsigned int id)
                                             input->input_device);
    wl_data_device_add_listener(input->data_device, 
                                &_ecore_wl_data_listener, input);
+   ewd->input = input;
 }
 
 void 
@@ -170,7 +191,10 @@ _ecore_wl_input_cb_button(void *data, struct wl_input_device *input_device __UNU
 
    input->timestamp = timestamp;
 
-   _ecore_wl_input_mouse_move_send(input, timestamp);
+   if ((input->pointer_focus) && (!input->grab) && (state))
+     ecore_wl_input_grab(input, input->pointer_focus, button);
+
+//   _ecore_wl_input_mouse_move_send(input, timestamp);
 
    if ((button >= BTN_SIDE) && (button <= BTN_BACK))
      {
@@ -188,6 +212,9 @@ _ecore_wl_input_cb_button(void *data, struct wl_input_device *input_device __UNU
           {
              _ecore_wl_input_mouse_up_send(input, timestamp);
              input->button = 0;
+
+             if ((input->grab) && (input->grab_button == button))
+               ecore_wl_input_ungrab(input, timestamp);
           }
      }
 }
@@ -231,10 +258,13 @@ _ecore_wl_input_cb_pointer_enter(void *data, struct wl_input_device *input_devic
 
    if (!(input = data)) return;
 
-   input->sx = sx;
-   input->sy = sy;
+   /* _pointer_x = sx; */
+   /* _pointer_y = sy; */
 
-   _ecore_wl_input_mouse_move_send(input, timestamp);
+   /* input->sx = sx; */
+   /* input->sy = sy; */
+
+//   _ecore_wl_input_mouse_move_send(input, timestamp);
 
    win = input->pointer_focus;
    if ((win) && (win->surface != surface))
@@ -250,12 +280,12 @@ _ecore_wl_input_cb_pointer_enter(void *data, struct wl_input_device *input_devic
              input->pointer_focus = win;
              win->pointer_device = input;
           }
-        if (input->button)
-          {
-             _ecore_wl_input_mouse_up_send(input, timestamp);
-             input->button = 0;
-          }
-        else
+        /* if (input->button) */
+        /*   { */
+        /*      _ecore_wl_input_mouse_up_send(input, timestamp); */
+        /*      input->button = 0; */
+        /*   } */
+        /* else */
           _ecore_wl_input_mouse_in_send(input, timestamp);
      }
 }
@@ -448,6 +478,7 @@ _ecore_wl_input_pointer_focus_remove(Ecore_Wl_Input *input, unsigned int timesta
 
    if ((win = input->pointer_focus))
      win->pointer_device = NULL;
+
    input->pointer_focus = NULL;
 }
 
@@ -455,7 +486,7 @@ static void
 _ecore_wl_input_mouse_move_send(Ecore_Wl_Input *input, unsigned int timestamp)
 {
    Ecore_Event_Mouse_Move *ev;
-   Ecore_Event *event;
+//   Ecore_Event *event;
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
@@ -464,6 +495,8 @@ _ecore_wl_input_mouse_move_send(Ecore_Wl_Input *input, unsigned int timestamp)
    ev->timestamp = timestamp;
    ev->x = input->sx;
    ev->y = input->sy;
+   ev->root.x = input->sx;
+   ev->root.y = input->sy;
    ev->modifiers = input->modifiers;
    ev->multi.device = 0;
    ev->multi.radius = 1;
@@ -474,29 +507,24 @@ _ecore_wl_input_mouse_move_send(Ecore_Wl_Input *input, unsigned int timestamp)
    ev->multi.x = input->sx;
    ev->multi.y = input->sy;
 
-   if (input->pointer_focus) 
+   if (input->grab)
+     {
+        ev->window = input->grab->id;
+        ev->event_window = input->grab->id;
+     }
+   else if (input->pointer_focus) 
      {
         ev->window = input->pointer_focus->id;
         ev->event_window = input->pointer_focus->id;
      }
 
-   event = ecore_event_add(ECORE_EVENT_MOUSE_MOVE, ev, 
-                           _ecore_wl_input_cb_mouse_move_free, NULL);
-}
-
-static void 
-_ecore_wl_input_cb_mouse_move_free(void *data __UNUSED__, void *event)
-{
-   Ecore_Event_Mouse_Move *ev;
-
-   if ((ev = event)) free(ev);
+   ecore_event_add(ECORE_EVENT_MOUSE_MOVE, ev, NULL, NULL);
 }
 
 static void 
 _ecore_wl_input_mouse_in_send(Ecore_Wl_Input *input, unsigned int timestamp)
 {
    Ecore_Wl_Event_Mouse_In *ev;
-   Ecore_Event *event;
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
@@ -504,6 +532,8 @@ _ecore_wl_input_mouse_in_send(Ecore_Wl_Input *input, unsigned int timestamp)
 
    ev->x = input->sx;
    ev->y = input->sy;
+   ev->root.x = input->sx;
+   ev->root.y = input->sy;
    ev->modifiers = input->modifiers;
    ev->timestamp = timestamp;
 
@@ -513,7 +543,7 @@ _ecore_wl_input_mouse_in_send(Ecore_Wl_Input *input, unsigned int timestamp)
         ev->event_win = input->pointer_focus->id;
      }
 
-   event = ecore_event_add(ECORE_WL_EVENT_MOUSE_IN, ev, NULL, NULL);
+   ecore_event_add(ECORE_WL_EVENT_MOUSE_IN, ev, NULL, NULL);
 }
 
 static void 
@@ -527,6 +557,8 @@ _ecore_wl_input_mouse_out_send(Ecore_Wl_Input *input, unsigned int timestamp)
 
    ev->x = input->sx;
    ev->y = input->sy;
+   ev->root.x = input->sx;
+   ev->root.y = input->sy;
    ev->modifiers = input->modifiers;
    ev->timestamp = timestamp;
 
@@ -588,6 +620,8 @@ _ecore_wl_input_mouse_down_send(Ecore_Wl_Input *input, unsigned int timestamp)
    ev->timestamp = timestamp;
    ev->x = input->sx;
    ev->y = input->sy;
+   ev->root.x = input->sx;
+   ev->root.y = input->sy;
    ev->modifiers = input->modifiers;
 
    /* FIXME: Need to get these from wayland somehow */
@@ -633,6 +667,8 @@ _ecore_wl_input_mouse_up_send(Ecore_Wl_Input *input, unsigned int timestamp)
    ev->timestamp = timestamp;
    ev->x = input->sx;
    ev->y = input->sy;
+   ev->root.x = input->sx;
+   ev->root.y = input->sy;
    ev->modifiers = input->modifiers;
 
    /* FIXME: Need to get these from wayland somehow */
