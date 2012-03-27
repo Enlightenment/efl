@@ -315,9 +315,15 @@
  * - @c multi,pinch,in" - This is called when the genlist is multi-touch
  *   pinched in.
  * - @c "swipe" - This is called when the genlist is swiped.
- * - @c "moved" - This is called when a genlist item is moved.
- * - @c "moved,after" - This is called when a genlist item is moved after.
- * - @c "moved,before" - This is called when a genlist item is moved before.
+ * - @c "moved" - This is called when a genlist item is moved in reorder mode.
+ * - @c "moved,after" - This is called when a genlist item is moved after
+ *   another item in reorder mode. The event_info parameter is the reordered
+ *   item. To get the relative previous item, use elm_genlist_item_prev_get().
+ *   This signal is called along with "moved" signal.
+ * - @c "moved,before" - This is called when a genlist item is moved before
+ *   another item in reorder mode. The event_info parameter is the reordered
+ *   item. To get the relative previous item, use elm_genlist_item_next_get().
+ *   This signal is called along with "moved" signal.
  * - @c "language,changed" - This is called when the program's language is
  *   changed.
  * - @c "tree,effect,finished" - This is called when a genlist tree effect is finished.
