@@ -1039,7 +1039,7 @@ _item_new(Evas_Object *obj,
 
    //item base layout
    VIEW(it) = elm_layout_add(obj);
-   evas_object_smart_member_add(VIEW(it), wd->base);
+   evas_object_smart_member_add(VIEW(it), obj);
 
    evas_object_event_callback_add(VIEW(it),
                                   EVAS_CALLBACK_CHANGED_SIZE_HINTS,
@@ -1133,7 +1133,7 @@ elm_naviframe_add(Evas_Object *parent)
 
    //base
    //FIXME: Is this base layout really needed?
-   wd->base = elm_layout_add(parent);
+   wd->base = elm_layout_add(obj);
    evas_object_event_callback_add(wd->base,
                                   EVAS_CALLBACK_CHANGED_SIZE_HINTS,
                                   _changed_size_hints,
