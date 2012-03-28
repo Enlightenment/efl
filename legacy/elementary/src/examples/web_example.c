@@ -440,6 +440,7 @@ _win_search_trigger_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED
 static void
 default_content_set(Evas_Object *web)
 {
+#ifdef HAVE_ELEMENTARY_WEB
    Evas_Object *view, *frame;
    const char contents[] = ""
       "<html>\n"
@@ -454,11 +455,12 @@ default_content_set(Evas_Object *web)
       "  </body>\n"
       "</html>\n";
 
-#ifdef HAVE_ELEMENTARY_WEB
    view = elm_web_webkit_view_get(web);
    frame = ewk_view_frame_main_get(view);
    ewk_frame_contents_set(frame, contents, sizeof(contents) - 1, "text/html",
                           "UTF-8", NULL);
+#else
+	(void) web;
 #endif
 }
 

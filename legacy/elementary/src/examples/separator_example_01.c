@@ -9,10 +9,9 @@
 #endif
 
 EAPI_MAIN int
-elm_main(int argc, char **argv)
+elm_main(int argc __UNUSED__, char **argv __UNUSED__)
 {
    Evas_Object *win, *bg, *bx, *rect, *separator;
-   char buf[256];
 
    win = elm_win_add(NULL, "separator", ELM_WIN_BASIC);
    elm_win_title_set(win, "Separator");

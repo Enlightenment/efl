@@ -60,7 +60,7 @@ int
 elm_main(int argc __UNUSED__, char **argv __UNUSED__)
 {
    Evas_Object *win, *bg, *icon, *icon2, *bt, *bt2, *layout;
-   Evas_Object *clock;
+   Evas_Object *clk;
    Evas_Object *item;
 
    win = elm_win_add(NULL, "layout", ELM_WIN_BASIC);
@@ -105,11 +105,11 @@ elm_main(int argc __UNUSED__, char **argv __UNUSED__)
    elm_layout_table_pack(layout, TABLE, icon2, 1, 0, 1, 1);
    evas_object_show(icon2);
 
-   clock = elm_clock_add(win);
-   evas_object_size_hint_weight_set(clock, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-   evas_object_size_hint_align_set(clock, EVAS_HINT_FILL, EVAS_HINT_FILL);
-   elm_layout_table_pack(layout, TABLE, clock, 2, 0, 1, 1);
-   evas_object_show(clock);
+   clk = elm_clock_add(win);
+   evas_object_size_hint_weight_set(clk, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_size_hint_align_set(clk, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   elm_layout_table_pack(layout, TABLE, clk, 2, 0, 1, 1);
+   evas_object_show(clk);
 
    bt = elm_button_add(win);
    elm_object_text_set(bt, "Click me!");

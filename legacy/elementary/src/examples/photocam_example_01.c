@@ -15,9 +15,9 @@ static void _zoom(void *data, Evas_Object *obj, void *event_info);
 static void _bring_in(void *data, Evas_Object *obj, void *event_info);
 
 EAPI_MAIN int
-elm_main(int argc, char **argv)
+elm_main(int argc __UNUSED__, char **argv __UNUSED__)
 {
-   Evas_Object *win, *bg, *bx, *obj, *photocam;
+   Evas_Object *win, *bg, *obj, *photocam;
 
    win = elm_win_add(NULL, "photocam", ELM_WIN_BASIC);
    elm_win_title_set(win, "Photocam");
@@ -67,7 +67,7 @@ elm_main(int argc, char **argv)
 ELM_MAIN()
 
 static void
-_bring_in(void *data, Evas_Object *obj, void *event_info)
+_bring_in(void *data __UNUSED__, Evas_Object *obj, void *event_info __UNUSED__)
 {
    int w, h;
    elm_photocam_image_size_get(obj, &w, &h);
@@ -75,7 +75,7 @@ _bring_in(void *data, Evas_Object *obj, void *event_info)
 }
 
 static void
-_fit(void *data, Evas_Object *obj, void *event_info)
+_fit(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    int x, y, w, h;
    elm_photocam_image_region_get(data, &x, &y, &w, &h);
@@ -84,13 +84,13 @@ _fit(void *data, Evas_Object *obj, void *event_info)
 }
 
 static void
-_unfit(void *data, Evas_Object *obj, void *event_info)
+_unfit(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    elm_photocam_zoom_mode_set(data, ELM_PHOTOCAM_ZOOM_MODE_MANUAL);
 }
 
 static void
-_zoom(void *data, Evas_Object *obj, void *event_info)
+_zoom(void *data, Evas_Object *obj, void *event_info __UNUSED__)
 {
    double z = elm_slider_value_get(obj) * 8;
    elm_photocam_zoom_set(data, z);

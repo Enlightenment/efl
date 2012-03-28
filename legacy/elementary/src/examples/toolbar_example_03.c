@@ -24,14 +24,6 @@ _on_done(void *data __UNUSED__,
    elm_exit();
 }
 
-static void
-_item_pressed(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
-{
-   Elm_Object_Item *tb_it = event_info;
-   elm_toolbar_item_state_set(tb_it, elm_toolbar_item_state_next(tb_it));
-   elm_toolbar_item_selected_set(tb_it, EINA_FALSE);
-}
-
 EAPI_MAIN int
 elm_main(int argc __UNUSED__, char **argv __UNUSED__)
 {

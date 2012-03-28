@@ -8,7 +8,6 @@
 #endif
 
 static Evas_Object *win = NULL;
-static Evas_Object *rect = NULL;
 
 struct info
 {
@@ -68,7 +67,7 @@ mandel(int *pix, int w, int h)
 }
 
 static void
-th_do(void *data, Ecore_Thread *th)
+th_do(void *data, Ecore_Thread *th __UNUSED__)
 {
    struct info *inf = data;
    // CANNOT TOUCH inf->obj here! just inf->pix which is 256x256 @ 32bpp
@@ -79,7 +78,7 @@ th_do(void *data, Ecore_Thread *th)
 // END - code running in my custom thread instance
 
 static void // thread job finished - collect results and put in img obj
-th_end(void *data, Ecore_Thread *th)
+th_end(void *data, Ecore_Thread *th __UNUSED__)
 {
    struct info *inf = data;
 
@@ -91,7 +90,7 @@ th_end(void *data, Ecore_Thread *th)
 }
 
 static void // if the thread is cancelled - free pix, keep obj tho
-th_cancel(void *data, Ecore_Thread *th)
+th_cancel(void *data, Ecore_Thread *th __UNUSED__)
 {
    struct info *inf = data;
 
@@ -124,7 +123,7 @@ anim(void *data)
 }
 
 int
-elm_main(int argc, char **argv)
+elm_main(int argc __UNUSED__, char **argv __UNUSED__)
 {
    Evas_Object *o, *bg;
    int i;
@@ -150,8 +149,6 @@ elm_main(int argc, char **argv)
         inf = malloc(sizeof(struct info));
         if (inf)
           {
-             Evas_Object *o;
-
              o = evas_object_image_filled_add(evas_object_evas_get(win));
              evas_object_image_size_set(o, 256, 256);
              evas_object_image_alpha_set(o, EINA_TRUE);

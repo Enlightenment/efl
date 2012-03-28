@@ -30,42 +30,42 @@ static Example_Data example_data;
 static void
 _route_loaded(void *data, Evas_Object *obj, void *ev __UNUSED__)
 {
-   Example_Data *example_data = data;
+   Example_Data *exam_data = data;
 
-   example_data->route_ovl = elm_map_overlay_route_add(obj, example_data->route);
-   elm_map_overlay_color_set(example_data->route_ovl, 0, 255, 0, 255);
+   exam_data->route_ovl = elm_map_overlay_route_add(obj, exam_data->route);
+   elm_map_overlay_color_set(exam_data->route_ovl, 0, 255, 0, 255);
 }
 
 static void
 _name_loaded(void *data, Evas_Object *obj, void *ev __UNUSED__)
 {
-   Example_Data *example_data = data;
+   Example_Data *exam_data = data;
    Evas_Object *map = obj;
 
-   if (example_data->route)
-     elm_map_route_del(example_data->route);
+   if (exam_data->route)
+     elm_map_route_del(exam_data->route);
 
-   elm_map_name_region_get(example_data->name, &(example_data->dest_lon),
-                           &(example_data->dest_lat));
+   elm_map_name_region_get(exam_data->name, &(exam_data->dest_lon),
+                           &(exam_data->dest_lat));
 
-   example_data->route = elm_map_route_add(map, ELM_MAP_ROUTE_TYPE_FOOT,
+   exam_data->route = elm_map_route_add(map, ELM_MAP_ROUTE_TYPE_FOOT,
                      ELM_MAP_ROUTE_METHOD_SHORTEST,
-                     example_data->start_lon, example_data->start_lat,
-                     example_data->dest_lon, example_data->dest_lat,
+                     exam_data->start_lon, exam_data->start_lat,
+                     exam_data->dest_lon, exam_data->dest_lat,
                      NULL, NULL);
 }
 
 static void
 _bt_route(void *data, Evas_Object *obj __UNUSED__, void *ev __UNUSED__)
 {
-   Example_Data *example_data = data;
+   Example_Data *exam_data = data;
    Evas_Object *map;
    char *address;
 
-   map = example_data->map;
-   address = (char *)elm_object_text_get(example_data->entry);
+   map = exam_data->map;
+   address = (char *)elm_object_text_get(exam_data->entry);
 
-   example_data->name = elm_map_name_add(map, address, 0, 0, NULL, NULL);
+   exam_data->name = elm_map_name_add(map, address, 0, 0, NULL, NULL);
 
    evas_object_smart_callback_add(map, "name,loaded", _name_loaded, data);
    evas_object_smart_callback_add(map, "route,loaded", _route_loaded, data);

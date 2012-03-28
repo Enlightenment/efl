@@ -16,7 +16,7 @@ static pthread_t thread_id;
 // BEGIN - code running in my custom pthread instance
 //
 static void *
-my_thread_run(void *arg)
+my_thread_run(void *arg __UNUSED__)
 {
    double t = 0.0;
 
@@ -51,7 +51,7 @@ my_thread_new(void)
 }
 
 int
-elm_main(int argc, char **argv)
+elm_main(int argc __UNUSED__, char **argv __UNUSED__)
 {
    Evas_Object *o, *bg;
 

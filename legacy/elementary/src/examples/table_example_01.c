@@ -9,7 +9,7 @@
 #endif
 
 EAPI_MAIN int
-elm_main(int argc, char **argv)
+elm_main(int argc __UNUSED__, char **argv __UNUSED__)
 {
    Evas_Object *win, *bg, *label, *table;
 

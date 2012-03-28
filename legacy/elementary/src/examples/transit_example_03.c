@@ -104,7 +104,7 @@ _checkbox_transition_add(Evas_Object *box, const char *label, Eina_Bool *checked
 }
 
 static void
-_transit_start(void *data, Evas_Object *o, void *event_info __UNUSED__)
+_transit_start(void *data, Evas_Object *o __UNUSED__, void *event_info __UNUSED__)
 {
    Elm_Transit *trans = NULL;
    int i;
@@ -177,9 +177,8 @@ _cb_tween_changed(void *data, Evas_Object *obj, void *event __UNUSED__)
 int
 elm_main(int argc __UNUSED__, char **argv __UNUSED__)
 {
-   Evas_Object *win, *bg, *obj, *icon, *box, *vbox, *vbox2, *hbox, *btn, *fr;
+   Evas_Object *win, *bg, *obj, *icon, *box, *vbox, *vbox2, *hbox, *btn;
    Evas_Object *cbox, *dummy, *spinner;
-   Elm_Transit *trans;
    char buf[PATH_MAX];
    int i;
    struct Context context;

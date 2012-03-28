@@ -15,7 +15,7 @@ static void _free(void *data, Evas_Object *obj, void *event_info);
 static void _add_item(void *data, Evas_Object *obj, void *event_info);
 
 EAPI_MAIN int
-elm_main(int argc, char **argv)
+elm_main(int argc __UNUSED__, char **argv __UNUSED__)
 {
    Evas_Object *win, *bg, *rect, *hoversel;
    Elm_Object_Item *hoversel_it;
@@ -62,7 +62,7 @@ elm_main(int argc, char **argv)
 ELM_MAIN()
 
 static void
-_print_items(void *data, Evas_Object *obj, void *event_info)
+_print_items(void *data __UNUSED__, Evas_Object *obj, void *event_info __UNUSED__)
 {
    const Eina_List *items = elm_hoversel_items_get(obj);
    const Eina_List *l;
@@ -73,7 +73,7 @@ _print_items(void *data, Evas_Object *obj, void *event_info)
 }
 
 static void
-_rm_items(void *data, Evas_Object *obj, void *event_info)
+_rm_items(void *data __UNUSED__, Evas_Object *obj, void *event_info __UNUSED__)
 {
    if(!elm_hoversel_expanded_get(obj))
      elm_hoversel_clear(obj);
@@ -87,7 +87,7 @@ _sel(void *data, Evas_Object *obj, void *event_info)
 }
 
 static void
-_add_item(void *data, Evas_Object *obj, void *event_info)
+_add_item(void *data __UNUSED__, Evas_Object *obj, void *event_info __UNUSED__)
 {
    static int num = 0;
    char *str = malloc(sizeof(char) * 10);
@@ -101,7 +101,7 @@ _add_item(void *data, Evas_Object *obj, void *event_info)
 }
 
 static void
-_free(void *data, Evas_Object *obj, void *event_info)
+_free(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    free(data);
 }

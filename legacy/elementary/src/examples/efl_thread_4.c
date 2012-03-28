@@ -25,7 +25,7 @@ static int th_exit = 0;
 // BEGIN - code running in my custom pthread instance
 //
 static void *
-my_thread_run(void *arg)
+my_thread_run(void *arg __UNUSED__)
 {
    double t = 0.0;
 
@@ -81,7 +81,7 @@ my_thread_mainloop_code(void *data)
 
 // just test cancelling the thread
 static void
-down(void *data, Evas *e, Evas_Object *obj, void *event_info)
+down(void *data __UNUSED__, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    pthread_mutex_lock(&th_lock);
    th_exit = 1;
@@ -89,7 +89,7 @@ down(void *data, Evas *e, Evas_Object *obj, void *event_info)
 }
 
 int
-elm_main(int argc, char **argv)
+elm_main(int argc __UNUSED__, char **argv __UNUSED__)
 {
    Evas_Object *o, *bg;
 

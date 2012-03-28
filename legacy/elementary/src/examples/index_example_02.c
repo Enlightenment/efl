@@ -96,7 +96,7 @@ int
 elm_main(int    argc __UNUSED__,
          char **argv __UNUSED__)
 {
-   Evas_Object *win, *bg, *grid, *index;
+   Evas_Object *win, *bg, *grid, *idx;
    Elm_Object_Item *gg_it;
    unsigned int i;
 
@@ -124,11 +124,11 @@ elm_main(int    argc __UNUSED__,
    elm_win_resize_object_add(win, grid);
    evas_object_show(grid);
 
-   index = elm_index_add(win);
-   evas_object_size_hint_weight_set(index, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-   elm_win_resize_object_add(win, index);
+   idx = elm_index_add(win);
+   evas_object_size_hint_weight_set(idx, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   elm_win_resize_object_add(win, idx);
 
-   evas_object_show(index);
+   evas_object_show(idx);
 
    for (i = 0; i < (sizeof(items) / sizeof(items[0])); i++)
      {
@@ -138,15 +138,15 @@ elm_main(int    argc __UNUSED__,
 
         /* indexing by first letters */
         snprintf(buf, sizeof(buf), "%c", items[i][0]);
-        elm_index_item_sorted_insert(index, buf, NULL, gg_it, _index_icmp, NULL);
+        elm_index_item_sorted_insert(idx, buf, NULL, gg_it, _index_icmp, NULL);
      }
 
-   evas_object_smart_callback_add(index, "delay,changed", _index_changed, NULL);
+   evas_object_smart_callback_add(idx, "delay,changed", _index_changed, NULL);
 
    evas_object_resize(win, 320, 300);
    evas_object_show(win);
 
-   elm_index_autohide_disabled_set(index, EINA_FALSE);
+   elm_index_autohide_disabled_set(idx, EINA_FALSE);
 
    elm_run();
    return 0;
