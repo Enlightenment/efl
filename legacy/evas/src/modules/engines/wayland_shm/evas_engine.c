@@ -312,7 +312,7 @@ eng_canvas_alpha_get(void *data, void *context __UNUSED__)
    Render_Engine *re = NULL;
 
    if (!(re = (Render_Engine *)data)) return EINA_FALSE;
-   return EINA_TRUE;
+   return (re->ob->priv.destination_alpha);
 }
 
 /* module functions */
