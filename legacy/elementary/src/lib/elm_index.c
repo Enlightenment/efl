@@ -662,7 +662,7 @@ elm_index_autohide_disabled_set(Evas_Object *obj, Eina_Bool disabled)
    else
      edje_object_signal_emit(wd->base, "elm,state,inactive", "elm");
 
-   //FIXME: Should be update indicator based on the indicator visiblility 
+   //FIXME: Should be update indicator based on the indicator visiblility
 }
 
 EAPI Eina_Bool
@@ -701,7 +701,7 @@ elm_index_item_selected_set(Elm_Object_Item *it, Eina_Bool selected)
    Widget_Data *wd = elm_widget_data_get(WIDGET(it));
    if (!wd) return;
 
-   //FIXME: Should be update indicator based on the autohidden status & indicator visiblility 
+   //FIXME: Should be update indicator based on the autohidden status & indicator visiblility
 
    if (selected)
      {

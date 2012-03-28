@@ -29,7 +29,7 @@ typedef Evas_Object *(*Elm_Tooltip_Item_Content_Cb)(void *data, Evas_Object *obj
 EAPI void        elm_object_tooltip_show(Evas_Object *obj);
 EAPI void        elm_object_tooltip_hide(Evas_Object *obj);
 
-/** 
+/**
  * Set the text to be displayed inside the tooltip.
  *
  * @param obj The tooltip object.

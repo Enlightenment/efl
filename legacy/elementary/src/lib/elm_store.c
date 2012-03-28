@@ -13,29 +13,34 @@ struct _Elm_Store
 {
    EINA_MAGIC;
    void           (*free)(Elm_Store *store);
-   struct {
-      void        (*free)(Elm_Store_Item *item);
-   } item;
+   struct
+     {
+        void        (*free)(Elm_Store_Item *item);
+     } item;
    Evas_Object   *genlist;
    Ecore_Thread  *list_th;
    Eina_Inlist   *items;
    Eina_List     *realized;
    int            realized_count;
    int            cache_max;
-   struct {
-      struct {
-         Elm_Store_Item_List_Cb     func;
-         void                      *data;
-      } list;
-      struct {
-         Elm_Store_Item_Fetch_Cb    func;
-         void                      *data;
-      } fetch;
-      struct {
-         Elm_Store_Item_Unfetch_Cb  func;
-         void                      *data;
-      } unfetch;
-   } cb;
+   struct
+     {
+        struct
+          {
+             Elm_Store_Item_List_Cb     func;
+             void                      *data;
+          } list;
+        struct
+          {
+             Elm_Store_Item_Fetch_Cb    func;
+             void                      *data;
+          } fetch;
+        struct
+          {
+             Elm_Store_Item_Unfetch_Cb  func;
+             void                      *data;
+          } unfetch;
+     } cb;
    Eina_Bool sorted : 1;
    Eina_Bool fetch_thread : 1;
 };
@@ -97,7 +102,7 @@ _store_cache_trim(Elm_Store *st)
              eina_lock_take(&sti->lock);
           }
         sti->fetched = EINA_FALSE;
-//// let fetch/unfetch do the locking   
+//// let fetch/unfetch do the locking
 //        eina_lock_release(&sti->lock);
         if (st->cb.unfetch.func)
           st->cb.unfetch.func(st->cb.unfetch.data, sti);
@@ -159,7 +164,7 @@ _store_filesystem_fetch_do(void *data, Ecore_Thread *th __UNUSED__)
      }
    if (!sti->fetched)
      {
-//// let fetch/unfetch do the locking   
+//// let fetch/unfetch do the locking
 //        eina_lock_release(&sti->lock);
         if (sti->store->cb.fetch.func)
           sti->store->cb.fetch.func(sti->store->cb.fetch.data, sti);
@@ -697,7 +702,7 @@ EAPI void
 elm_store_item_data_set(Elm_Store_Item *sti, void *data)
 {
    if (!EINA_MAGIC_CHECK(sti, ELM_STORE_ITEM_MAGIC)) return;
-//// let fetch/unfetch do the locking   
+//// let fetch/unfetch do the locking
 //   eina_lock_take(&sti->lock);
    sti->data = data;
 //   eina_lock_release(&sti->lock);
@@ -708,7 +713,7 @@ elm_store_item_data_get(Elm_Store_Item *sti)
 {
    if (!EINA_MAGIC_CHECK(sti, ELM_STORE_ITEM_MAGIC)) return NULL;
    void *d;
-//// let fetch/unfetch do the locking   
+//// let fetch/unfetch do the locking
 //   eina_lock_take(&sti->lock);
    d = sti->data;
 //   eina_lock_release(&sti->lock);

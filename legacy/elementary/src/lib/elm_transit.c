@@ -31,22 +31,25 @@ struct _Elm_Transit
    Elm_Transit *prev_chain_transit;
    Eina_List *next_chain_transits;
    Elm_Transit_Tween_Mode tween_mode;
-   struct {
-      Elm_Transit_Del_Cb func;
-      void *arg;
-   } del_data;
-   struct {
-      double delayed;
-      double paused;
-      double duration;
-      double begin;
-      double current;
-   } time;
-   struct {
-      int count;
-      int current;
-      Eina_Bool reverse;
-   } repeat;
+   struct
+     {
+        Elm_Transit_Del_Cb func;
+        void *arg;
+     } del_data;
+   struct
+     {
+        double delayed;
+        double paused;
+        double duration;
+        double begin;
+        double current;
+     } time;
+   struct
+     {
+        int count;
+        int current;
+        Eina_Bool reverse;
+     } repeat;
    double progress;
    unsigned int effects_pending_del;
    int walking;

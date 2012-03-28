@@ -14,11 +14,12 @@ struct _Elm_Menu_Item
    Evas_Smart_Cb func;
    unsigned int idx;
 
-   struct {
-      Evas_Object *hv, *bx, *location;
-      Eina_List *items;
-      Eina_Bool open : 1;
-   } submenu;
+   struct
+     {
+        Evas_Object *hv, *bx, *location;
+        Eina_List *items;
+        Eina_Bool open : 1;
+     } submenu;
 
    Eina_Bool separator : 1;
    Eina_Bool selected : 1;

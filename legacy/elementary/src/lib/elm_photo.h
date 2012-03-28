@@ -8,7 +8,7 @@
  *
  * "clicked" - This is called when a user has clicked the photo
  * "drag,start" - dragging the image out of the photo object
- * "drag,end" - Drop the dragged item  
+ * "drag,end" - Drop the dragged item
  *
  * @{
  */

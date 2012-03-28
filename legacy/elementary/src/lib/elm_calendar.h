@@ -4,7 +4,7 @@
  * This is a Calendar widget. Calender widget helps applications to flexibly
  * display a calender with day of the week, day, year and month. Applications will be
  * able to choose a specific date that will be reported in the smart_callbacks for
- * the calendar widget. The APIs of calendar widget let the applications perform 
+ * the calendar widget. The APIs of calendar widget let the applications perform
  * other functions like,
  * placing marks on specific dates
  * Setting the bounds for the calendar (minimum and maximum years)

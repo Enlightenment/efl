@@ -244,7 +244,7 @@
  * @typedef Elm_Text_Format
  *
  * Text Format types.
- * 
+ *
  * @see elm_entry_file_set()
  */
 typedef enum
@@ -258,7 +258,7 @@ typedef enum
  * @typedef Elm_Wrap_Type
  *
  * Line wrapping types.
- * 
+ *
  * @see elm_entry_line_wrap_set()
  */
 typedef enum
@@ -275,7 +275,7 @@ typedef enum
  * @typedef Elm_Input_Panel_Layout
  *
  * Input panel (virtual keyboard) layout types.
- * 
+ *
  * @see elm_entry_input_panel_layout_set()
  */
 typedef enum
@@ -299,7 +299,7 @@ typedef enum
  * @typedef Elm_Input_Panel_Lang
  *
  * Input panel (virtual keyboard) language modes.
- * 
+ *
  * @see elm_entry_input_panel_language_set()
  */
 typedef enum
@@ -313,7 +313,7 @@ typedef enum
  * @typedef Elm_Autocapital_Type
  *
  * Autocapitalization Types.
- * 
+ *
  * @see elm_entry_autocapital_type_set()
  */
 typedef enum
@@ -329,7 +329,7 @@ typedef enum
  * @typedef Elm_Input_Panel_Return_Key_Type
  *
  * "Return" Key types on the input panel (virtual keyboard).
- * 
+ *
  * @see elm_entry_input_panel_return_key_type_set()
  */
 typedef enum
@@ -972,7 +972,7 @@ EAPI void               elm_entry_item_provider_remove(Evas_Object *obj, Elm_Ent
  * Append the given callback to the list. This functions will be called
  * whenever any text is inserted into the entry, with the text to be inserted
  * as a parameter. The type of given text is always markup.
- * The callback function is free to alter the text in any way it wants, but 
+ * The callback function is free to alter the text in any way it wants, but
  * it must remember to free the given pointer and update it.
  * If the new text is to be discarded, the function can free it and set its
  * text parameter to NULL. This will also prevent any following filters from
@@ -1235,7 +1235,7 @@ EAPI void                   elm_entry_input_panel_hide(Evas_Object *obj);
 /**
  * Set the language mode of the input panel.
  *
- * This API can be used if you want to show the alphabet keyboard mode. 
+ * This API can be used if you want to show the alphabet keyboard mode.
  *
  * @param obj The entry object
  * @param lang language to be set to the input panel.
@@ -1268,7 +1268,7 @@ EAPI void                   elm_entry_input_panel_imdata_set(Evas_Object *obj, c
 /**
  * Get the specific data of the current input panel.
  *
- * See @ref elm_entry_input_panel_imdata_set for more details. 
+ * See @ref elm_entry_input_panel_imdata_set for more details.
  *
  * @param obj The entry object
  * @param data The specific data to be got from the input panel
@@ -1301,7 +1301,7 @@ EAPI Elm_Input_Panel_Return_Key_Type elm_entry_input_panel_return_key_type_get(c
  *
  * @param obj The entry object
  * @param disabled The state to put in in: @c EINA_TRUE for
- *        disabled, @c EINA_FALSE for enabled 
+ *        disabled, @c EINA_FALSE for enabled
  */
 EAPI void                   elm_entry_input_panel_return_key_disabled_set(Evas_Object *obj, Eina_Bool disabled);
 
@@ -1326,7 +1326,7 @@ EAPI Eina_Bool              elm_entry_input_panel_return_key_disabled_get(const 
 EAPI void                   elm_entry_input_panel_return_key_autoenabled_set(Evas_Object *obj, Eina_Bool enabled);
 
 /**
- * Reset the input method context of the entry if needed. 
+ * Reset the input method context of the entry if needed.
  *
  * This can be necessary in the case where modifying the buffer would confuse on-going input method behavior
  * @param obj The entry object

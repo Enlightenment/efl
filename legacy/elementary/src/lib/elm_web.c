@@ -18,13 +18,14 @@ typedef struct _View_Smart_Data View_Smart_Data;
 struct _View_Smart_Data
 {
    Ewk_View_Smart_Data base;
-   struct {
-      Evas_Event_Mouse_Down event;
-      Evas_Coord x, y;
-      unsigned int move_count;
-      Ecore_Timer *longpress_timer;
-      Ecore_Animator *pan_anim;
-   } mouse;
+   struct
+     {
+        Evas_Event_Mouse_Down event;
+        Evas_Coord x, y;
+        unsigned int move_count;
+        Ecore_Timer *longpress_timer;
+        Ecore_Animator *pan_anim;
+     } mouse;
 };
 #endif
 
@@ -34,34 +35,38 @@ struct _Widget_Data
    Evas_Object *self;
 #ifdef HAVE_ELEMENTARY_WEB
    Evas_Object *ewk_view;
-   struct {
-      Elm_Web_Window_Open window_create;
-      void *window_create_data;
-      Elm_Web_Dialog_Alert alert;
-      void *alert_data;
-      Elm_Web_Dialog_Confirm confirm;
-      void *confirm_data;
-      Elm_Web_Dialog_Prompt prompt;
-      void *prompt_data;
-      Elm_Web_Dialog_File_Selector file_selector;
-      void *file_selector_data;
-      Elm_Web_Console_Message console_message;
-      void *console_message_data;
-   } hook;
+   struct
+     {
+        Elm_Web_Window_Open window_create;
+        void *window_create_data;
+        Elm_Web_Dialog_Alert alert;
+        void *alert_data;
+        Elm_Web_Dialog_Confirm confirm;
+        void *confirm_data;
+        Elm_Web_Dialog_Prompt prompt;
+        void *prompt_data;
+        Elm_Web_Dialog_File_Selector file_selector;
+        void *file_selector_data;
+        Elm_Web_Console_Message console_message;
+        void *console_message_data;
+     } hook;
    Elm_Win_Keyboard_Mode input_method;
-   struct {
+   struct
+     {
         Elm_Web_Zoom_Mode mode;
         float current;
         float min, max;
         Eina_Bool no_anim;
         Ecore_Timer *timer;
-   } zoom;
-   struct {
-        struct {
+     } zoom;
+   struct
+     {
+        struct
+          {
              int x, y;
-        } start, end;
+          } start, end;
         Ecore_Animator *animator;
-   } bring_in;
+     } bring_in;
    Eina_Bool tab_propagate : 1;
    Eina_Bool inwin_mode : 1;
 #else
@@ -1221,7 +1226,7 @@ elm_web_console_message_hook_set(Evas_Object *obj, Elm_Web_Console_Message func,
 #endif
 }
 
-EAPI void 
+EAPI void
 elm_web_useragent_set(Evas_Object *obj, const char *user_agent)
 {
    ELM_CHECK_WIDTYPE(obj, widtype);
@@ -1234,7 +1239,7 @@ elm_web_useragent_set(Evas_Object *obj, const char *user_agent)
 #endif
 }
 
-EAPI const char* 
+EAPI const char*
 elm_web_useragent_get(const Evas_Object *obj)
 {
    ELM_CHECK_WIDTYPE(obj, widtype) NULL;
@@ -1899,7 +1904,7 @@ elm_web_window_features_property_get(const Elm_Web_Window_Features *wf, Elm_Web_
      }
 
    /* What to do with these ?
-    
+
    (void)wf;
    (void)toolbar_visible;
    (void)statusbar_visible;
@@ -1924,7 +1929,7 @@ elm_web_window_features_region_get(const Elm_Web_Window_Features *wf, Evas_Coord
 
    if (!wf || !x || !y || !w || !h) return;
    /* What to do with these ?
-    
+
    (void)wf;
    (void)x;
    (void)y;

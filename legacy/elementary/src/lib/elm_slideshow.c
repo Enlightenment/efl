@@ -33,10 +33,11 @@ struct _Widget_Data
    double timeout;
    Eina_Bool loop:1;
 
-   struct {
+   struct
+     {
         const char *current;
         Eina_List *list; //list of const char *
-   } layout;
+     } layout;
 };
 
 static const char *widtype = NULL;

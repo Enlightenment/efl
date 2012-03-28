@@ -11,22 +11,22 @@
  *
  * The selection can be toggle by just clicking on the day.
  *
- * Dayselector also provides the functionality to check whether a day is 
+ * Dayselector also provides the functionality to check whether a day is
  * selected or not.
  *
- * First day of the week is taken from config settings by default. It can be 
+ * First day of the week is taken from config settings by default. It can be
  * altered by using the API elm_dayselector_week_start_set() API.
  *
- * APIs are provided for setting the duration of weekend  
+ * APIs are provided for setting the duration of weekend
  * elm_dayselector_weekend_start_set() and elm_dayselector_weekend_length_set()
  * does this job.
  *
  * Two styles of weekdays and weekends are supported in Dayselector.
- * Application can emit signals on individual check objects for setting the 
+ * Application can emit signals on individual check objects for setting the
  * weekday, weekend styles.
  *
- * Once the weekend start day or weekend length changes, all the weekday & 
- * weekend styles will be reset to default style. It's the application's 
+ * Once the weekend start day or weekend length changes, all the weekday &
+ * weekend styles will be reset to default style. It's the application's
  * responsibility to set the styles again by sending corresponding signals.
  *
  * Supported elm_object_item common APIs.

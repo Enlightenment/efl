@@ -43,12 +43,14 @@ struct _Elm_Tooltip
    Ecore_Timer             *hide_timer;
    Ecore_Job               *reconfigure_job;
    Evas_Coord               mouse_x, mouse_y;
-   struct {
-      Evas_Coord            x, y, bx, by;
-   } pad;
-   struct {
-      double                x, y;
-   } rel_pos;
+   struct
+     {
+        Evas_Coord            x, y, bx, by;
+     } pad;
+   struct
+     {
+        double                x, y;
+     } rel_pos;
    double                   hide_timeout; /* from theme */
    Eina_Bool                visible_lock:1;
    Eina_Bool                changed_style:1;

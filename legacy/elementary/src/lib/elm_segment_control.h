@@ -41,7 +41,7 @@
  * @li elm_object_item_part_text_get
  * @li elm_object_item_part_content_set
  * @li elm_object_item_part_content_get
- * 
+ *
  * Here is an example on its usage:
  * @li @ref segment_control_example
  *

@@ -1763,7 +1763,7 @@ elm_config_cache_font_cache_size_get(void)
    return _elm_config->font_cache;
 }
 
-EAPI void 
+EAPI void
 elm_config_cache_font_cache_size_set(int size)
 {
    if (_elm_config->font_cache == size) return;

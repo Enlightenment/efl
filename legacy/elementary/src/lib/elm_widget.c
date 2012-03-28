@@ -2129,10 +2129,10 @@ elm_widget_show_region_set(Evas_Object *obj,
    Evas_Coord px, py, cx, cy;
 
    API_ENTRY return;
-   
+
    evas_smart_objects_calculate(evas_object_evas_get(obj));
-   
-   if (!forceshow && (x == sd->rx) && (y == sd->ry) && 
+
+   if (!forceshow && (x == sd->rx) && (y == sd->ry) &&
        (w == sd->rw) && (h == sd->rh)) return;
    sd->rx = x;
    sd->ry = y;
@@ -2677,13 +2677,13 @@ _widget_name_find(const Evas_Object *obj, const char *name, int recurse)
    Evas_Object *child;
    const char *s;
    INTERNAL_ENTRY NULL;
-   
+
    if (!_elm_widget_is(obj)) return NULL;
    if (sd->resize_obj)
      {
         s = evas_object_name_get(sd->resize_obj);
         if ((s) && (!strcmp(s, name))) return sd->resize_obj;
-        if ((recurse != 0) && 
+        if ((recurse != 0) &&
             ((child = _widget_name_find(sd->resize_obj, name, recurse - 1))))
           return child;
      }
@@ -2691,7 +2691,7 @@ _widget_name_find(const Evas_Object *obj, const char *name, int recurse)
      {
         s = evas_object_name_get(child);
         if ((s) && (!strcmp(s, name))) return child;
-        if ((recurse != 0) && 
+        if ((recurse != 0) &&
             ((child = _widget_name_find(child, name, recurse - 1))))
           return child;
      }
@@ -2699,7 +2699,7 @@ _widget_name_find(const Evas_Object *obj, const char *name, int recurse)
      {
         s = evas_object_name_get(sd->hover_obj);
         if ((s) && (!strcmp(s, name))) return sd->hover_obj;
-        if ((recurse != 0) && 
+        if ((recurse != 0) &&
             ((child = _widget_name_find(sd->hover_obj, name, recurse - 1))))
           return child;
      }

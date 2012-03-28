@@ -494,7 +494,7 @@ _spacer_move_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, voi
    if  (wd->spacer_down)
      {
         Evas_Coord d = 0;
-        
+
         evas_object_geometry_get(wd->spacer, &x, &y, &w, &h);
         if (wd->horizontal) d = abs(ev->cur.canvas.x - x - wd->downx);
         else d = abs(ev->cur.canvas.y - y - wd->downy);
@@ -507,7 +507,7 @@ _spacer_move_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, voi
                }
              ev->event_flags &= ~EVAS_EVENT_FLAG_ON_HOLD;
           }
-             
+
         if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD)
           {
              if (wd->spacer_down) wd->spacer_down = EINA_FALSE;
@@ -615,7 +615,7 @@ _elm_slider_label_get(const Evas_Object *obj, const char *part)
    if (!wd) return NULL;
    if (!wd->labels) return NULL;
 
-   if (!part) 
+   if (!part)
      return eina_hash_find(wd->labels, "elm.text");
    return eina_hash_find(wd->labels, part);
 }

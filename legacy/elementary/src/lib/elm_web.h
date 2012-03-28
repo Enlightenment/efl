@@ -367,7 +367,7 @@ EAPI Evas_Object      *elm_web_add(Evas_Object *parent);
 
 /**
  * Change useragent of a elm_web object
- * 
+ *
  * @param obj The object
  * @param user_agent String for useragent
  *

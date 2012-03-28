@@ -8,9 +8,10 @@ struct _Widget_Data
    Evas_Object *base, *rect, *img, *overlay;
    const char  *file, *group;
    Elm_Bg_Option option;
-   struct {
-      Evas_Coord w, h;
-   } load_opts;
+   struct
+     {
+        Evas_Coord w, h;
+     } load_opts;
 };
 
 static const char *widtype = NULL;

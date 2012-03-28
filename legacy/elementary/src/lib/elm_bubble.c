@@ -30,7 +30,7 @@ static const Evas_Smart_Cb_Description _signals[] =
      {NULL, NULL}
 };
 
-static const char *corner_string[] = 
+static const char *corner_string[] =
 {
     "top_left",
     "top_right",

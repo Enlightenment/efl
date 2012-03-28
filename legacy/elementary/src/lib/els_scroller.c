@@ -26,7 +26,8 @@ struct _Smart_Data
 
    Elm_Smart_Scroller_Policy hbar_flags, vbar_flags;
 
-   struct {
+   struct
+     {
         Evas_Coord x, y;
         Evas_Coord sx, sy;
         Evas_Coord dx, dy;
@@ -36,68 +37,75 @@ struct _Smart_Data
         Evas_Coord bx0, by0;
         Evas_Coord b0x, b0y;
         Evas_Coord b2x, b2y;
-        struct {
+        struct
+          {
              Evas_Coord    x, y;
              double        timestamp, localtimestamp;
-        } history[60];
-        struct {
-           double tadd, dxsum, dysum;
-           double est_timestamp_diff;
-        } hist;
-      double anim_start;
-      double anim_start2;
-      double anim_start3;
-      double onhold_vx, onhold_vy, onhold_tlast, onhold_vxe, onhold_vye;
-      double extra_time;
-      Evas_Coord hold_x, hold_y;
-      Ecore_Animator *hold_animator;
-      Ecore_Animator *onhold_animator;
-      Ecore_Animator *momentum_animator;
-      Ecore_Animator *bounce_x_animator;
-      Ecore_Animator *bounce_y_animator;
-      Evas_Coord locked_x, locked_y;
-      int hdir, vdir;
-      Eina_Bool now : 1;
-      Eina_Bool cancelled : 1;
-      Eina_Bool hold : 1;
-      Eina_Bool hold_parent : 1;
-      Eina_Bool want_dragged : 1;
-      Eina_Bool dragged : 1;
-      Eina_Bool dragged_began : 1;
-      Eina_Bool dir_x : 1;
-      Eina_Bool dir_y : 1;
-      Eina_Bool locked : 1;
-      Eina_Bool bounce_x_hold : 1;
-      Eina_Bool bounce_y_hold : 1;
-      Eina_Bool scroll : 1;
-      Eina_Bool want_reset : 1;
-   } down;
+          } history[60];
+        struct
+          {
+             double tadd, dxsum, dysum;
+             double est_timestamp_diff;
+          } hist;
+        double anim_start;
+        double anim_start2;
+        double anim_start3;
+        double onhold_vx, onhold_vy, onhold_tlast, onhold_vxe, onhold_vye;
+        double extra_time;
+        Evas_Coord hold_x, hold_y;
+        Ecore_Animator *hold_animator;
+        Ecore_Animator *onhold_animator;
+        Ecore_Animator *momentum_animator;
+        Ecore_Animator *bounce_x_animator;
+        Ecore_Animator *bounce_y_animator;
+        Evas_Coord locked_x, locked_y;
+        int hdir, vdir;
+        Eina_Bool now : 1;
+        Eina_Bool cancelled : 1;
+        Eina_Bool hold : 1;
+        Eina_Bool hold_parent : 1;
+        Eina_Bool want_dragged : 1;
+        Eina_Bool dragged : 1;
+        Eina_Bool dragged_began : 1;
+        Eina_Bool dir_x : 1;
+        Eina_Bool dir_y : 1;
+        Eina_Bool locked : 1;
+        Eina_Bool bounce_x_hold : 1;
+        Eina_Bool bounce_y_hold : 1;
+        Eina_Bool scroll : 1;
+        Eina_Bool want_reset : 1;
+     } down;
 
-   struct {
-      Evas_Coord w, h;
-      Eina_Bool resized : 1;
-   } child;
-   struct {
-      Evas_Coord x, y;
-   } step, page;
+   struct
+     {
+        Evas_Coord w, h;
+        Eina_Bool resized : 1;
+     } child;
+   struct
+     {
+        Evas_Coord x, y;
+     } step, page;
 
-   struct {
-      void (*set) (Evas_Object *obj, Evas_Coord x, Evas_Coord y);
-      void (*get) (Evas_Object *obj, Evas_Coord *x, Evas_Coord *y);
-      void (*max_get) (Evas_Object *obj, Evas_Coord *x, Evas_Coord *y);
-      void (*min_get) (Evas_Object *obj, Evas_Coord *x, Evas_Coord *y);
-      void (*child_size_get) (Evas_Object *obj, Evas_Coord *x, Evas_Coord *y);
-      void (*gravity_set) (Evas_Object *obj, double x, double y);
-      void (*gravity_get) (Evas_Object *obj, double *x, double *y);
-   } pan_func;
+   struct
+     {
+        void (*set) (Evas_Object *obj, Evas_Coord x, Evas_Coord y);
+        void (*get) (Evas_Object *obj, Evas_Coord *x, Evas_Coord *y);
+        void (*max_get) (Evas_Object *obj, Evas_Coord *x, Evas_Coord *y);
+        void (*min_get) (Evas_Object *obj, Evas_Coord *x, Evas_Coord *y);
+        void (*child_size_get) (Evas_Object *obj, Evas_Coord *x, Evas_Coord *y);
+        void (*gravity_set) (Evas_Object *obj, double x, double y);
+        void (*gravity_get) (Evas_Object *obj, double *x, double *y);
+     } pan_func;
 
-   struct {
-      struct {
-         Evas_Coord start, end;
-         double t_start, t_end;
-         Ecore_Animator *animator;
-      } x, y;
-   } scrollto;
+   struct
+     {
+        struct
+          {
+             Evas_Coord start, end;
+             double t_start, t_end;
+             Ecore_Animator *animator;
+          } x, y;
+     } scrollto;
 
    double pagerel_h, pagerel_v;
    Evas_Coord pagesize_h, pagesize_v;
@@ -1836,10 +1844,11 @@ _smart_hold_animator(void *data)
         int i, count = 0;
         Evas_Coord basex = 0, basey = 0, x, y;
         double dt, t, tdiff, tnow, twin;
-        struct {
+        struct
+          {
              Evas_Coord x, y, dx, dy;
              double t, dt;
-        } pos[60];
+          } pos[60];
 
         tdiff = sd->down.hist.est_timestamp_diff;
         tnow = ecore_time_get() - tdiff;

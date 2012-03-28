@@ -156,7 +156,7 @@ EAPI Elm_Transit           *elm_transit_add(void);
 /**
  * Stops the animation and delete the @p transit object.
  *
- * Call this function if you want to stop the animation before the 
+ * Call this function if you want to stop the animation before the
  * transit time. Make sure the @p transit object is still alive with
  * elm_transit_del_cb_set() function.
  * All added effects will be deleted, calling its respective data_free_cb
@@ -173,7 +173,7 @@ EAPI void                   elm_transit_del(Elm_Transit *transit);
 /**
  * Add a new effect to the transit.
  *
- * @note The cb function and the data are the key to the effect. 
+ * @note The cb function and the data are the key to the effect.
  * If you try to add an existing effect, nothing is done.
  * @note After the first addition of an effect to @p transit, if its
  * effect list become empty again, the @p transit will be killed by
@@ -199,8 +199,8 @@ EAPI void                   elm_transit_del(Elm_Transit *transit);
  * @p data.
  *
  * @ingroup Transit
- * @warning The transit will free the context data at the and of the 
- * transition with the data_free_cb function. 
+ * @warning The transit will free the context data at the and of the
+ * transition with the data_free_cb function.
  * Do not share the context data in between different transit objects.
  */
 EAPI void                   elm_transit_effect_add(Elm_Transit *transit, Elm_Transit_Effect_Transition_Cb transition_cb, Elm_Transit_Effect *effect, Elm_Transit_Effect_End_Cb end_cb);
@@ -232,7 +232,7 @@ EAPI void                   elm_transit_effect_del(Elm_Transit *transit, Elm_Tra
  * object list become empty again, the @p transit will be killed by
  * elm_transit_del(transit) function.
  * @note If the @p obj belongs to another transit, the @p obj will be
- * removed from it and it will only belong to the other @p transit. 
+ * removed from it and it will only belong to the other @p transit.
  * If the old transit stays without objects, it will die.
  * @note When you add an object into the @p transit, its state from
  * evas_object_pass_events_get(obj) is saved, and it is applied when the

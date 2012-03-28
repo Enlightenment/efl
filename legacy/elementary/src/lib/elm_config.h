@@ -43,7 +43,7 @@ EAPI void      elm_config_reload(void);
 /**
  * Flush all config settings then apply those settings to all applications
  * using elementary on the current display.
- *  
+ *
  * @ingroup Config
  */
 EAPI void      elm_config_all_flush(void);
@@ -428,7 +428,7 @@ EAPI double      elm_config_tooltip_delay_get(void);
 /**
  * Set the duration after which tooltip will be shown.
  *
- * @return EINA_TRUE if value is set.  
+ * @return EINA_TRUE if value is set.
  */
 EAPI void        elm_config_tooltip_delay_set(double delay);
 
@@ -494,7 +494,7 @@ EAPI void   elm_config_scale_set(double scale);
  * This gets the "show last" setting of password mode which might be
  * enabled or disabled.
  *
- * @return @c EINA_TRUE, if the "show last" setting is enabled, 
+ * @return @c EINA_TRUE, if the "show last" setting is enabled,
  * @c EINA_FALSE  if it's disabled.
  *
  * @ingroup Password_last_show
@@ -880,7 +880,7 @@ EAPI Eina_Bool            elm_config_focus_highlight_enabled_get(void);
  * Set the enable status of the focus highlight
  *
  * @param enable Enable highlight if EINA_TRUE, disable otherwise
- * 
+ *
  * Set whether to show or not the highlight on focused objects
  *
  * Note that it will take effect only to Elementary windows created after
@@ -896,10 +896,10 @@ EAPI void                 elm_config_focus_highlight_enabled_set(Eina_Bool enabl
  * Get the enable status of the highlight animation
  *
  * @return The focus highlight mode set
- * 
+ *
  * Get whether the focus highlight, if enabled, will animate its switch from
  * one object to the next
- * 
+ *
  * @ingroup Focus
  */
 EAPI Eina_Bool            elm_config_focus_highlight_animate_get(void);
@@ -908,10 +908,10 @@ EAPI Eina_Bool            elm_config_focus_highlight_animate_get(void);
  * Set the enable status of the highlight animation
  *
  * @param animate Enable animation if EINA_TRUE, disable otherwise
- * 
+ *
  * Set whether the focus highlight, if enabled, will animate its switch from
  * one object to the next
- * 
+ *
  * Note that it will take effect only to Elementary windows created after
  * this is called.
  *

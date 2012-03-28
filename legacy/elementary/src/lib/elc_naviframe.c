@@ -1000,7 +1000,7 @@ _item_style_set(Elm_Naviframe_Item *navi_it, const char *item_style)
    if (navi_it->title_next_btn)
      elm_object_signal_emit(VIEW(navi_it), "elm,state,next_btn,show", "elm");
 
-// why does this forcibly enable title? isnt that separate to style?   
+// why does this forcibly enable title? isnt that separate to style?
 //   navi_it->title_visible = EINA_TRUE;
    _sizing_eval(WIDGET(navi_it));
 

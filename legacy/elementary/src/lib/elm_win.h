@@ -144,9 +144,9 @@ typedef enum
                              Evas_Object. */
    ELM_WIN_SOCKET_IMAGE,/**< The window is rendered onto an image buffer
 			     and can be shown other process's plug image object.
-			     No actual window is created for this type, 
+			     No actual window is created for this type,
 			     instead the window and all of its contents will be
-			     rendered to an image buffer and can be shown 
+			     rendered to an image buffer and can be shown
 			     other process's plug image object*/
 } Elm_Win_Type;
 
@@ -179,7 +179,7 @@ typedef enum
 /**
  * In some environments, like phones, you may have an indicator that
  * shows battery status, reception, time etc. This is the indicator.
- * 
+ *
  * Sometimes you don't want it because you provide the same functionality
  * inside your app, so this will request that the indicator is hidden in
  * this circumstance if you use ELM_ILLUME_INDICATOR_HIDE. The default
@@ -355,14 +355,14 @@ EAPI const char           *elm_win_role_get(const Evas_Object *obj);
 
 /**
  * Set the object to represent the window icon
- * 
+ *
  * This sets an object that will be used as the icon for the window. The exact
  * pixel dimensions of the object (not object size) will be used, and the
  * image pixels will be used as-is when this function is called. If the
  * image object has been updated, then call this function again to source
  * the image pixels and put them on the window's icon. This has limitations
  * as only image objects allowed at this stage. This may be lifted in future.
- * 
+ *
  * @param obj The window object
  * @param icon The object to use for an icon
  */

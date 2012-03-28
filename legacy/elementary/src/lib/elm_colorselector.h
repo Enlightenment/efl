@@ -94,7 +94,7 @@ EAPI void elm_colorselector_color_get(const Evas_Object *obj, int *r, int *g, in
  *
  * @param obj Colorselector object
  * @param mode Elm_Colorselector_Mode
- * 
+ *
  * Colorselector supports three modes palette only, selector only and both.
  *
  * @ingroup Colorselector
@@ -106,7 +106,7 @@ EAPI void elm_colorselector_mode_set(Evas_Object *obj, Elm_Colorselector_Mode mo
  *
  * @param obj Colorselector object
  * @return mode The current mode of colorselector
- * 
+ *
  * @ingroup Colorselector
  */
 EAPI Elm_Colorselector_Mode elm_colorselector_mode_get(const Evas_Object *obj);
@@ -119,7 +119,7 @@ EAPI Elm_Colorselector_Mode elm_colorselector_mode_get(const Evas_Object *obj);
  * @param g integer pointer for g-value of color
  * @param b integer pointer for b-value of color
  * @param a integer pointer for a-value of color
- * 
+ *
  * @ingroup Colorselector
  */
 EAPI void elm_colorselector_palette_item_color_get(const Elm_Object_Item *it, int *r, int *g, int *b, int *a);
@@ -180,7 +180,7 @@ EAPI void elm_colorselector_palette_name_set(Evas_Object *obj, const char *palet
  * @param obj The Colorselector object
  * @return Name of palette
  *
- * Returns the currently set palette name using which colors will be 
+ * Returns the currently set palette name using which colors will be
  * saved/loaded in to config.
  *
  * @ingroup Colorselector

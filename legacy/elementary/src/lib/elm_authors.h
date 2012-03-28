@@ -55,7 +55,7 @@
  * @author Hyunsil Park <hyunsil.park@samsung.com>
  * @author Goun Lee <gouni.lee@samsung.com>
  * @author Mikael Sans <sans.mikael@gmail.com>
- * 
+ *
  * Please contact <enlightenment-devel@lists.sourceforge.net> to get in
  * contact with the developers and maintainers.
  */

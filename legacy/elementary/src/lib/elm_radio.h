@@ -9,13 +9,13 @@
  *
  * A radio object contains an indicator, an optional Label and an optional
  * icon object. While it's possible to have a group of only one radio they,
- * are normally used in groups of 2 or more. 
+ * are normally used in groups of 2 or more.
  *
  * elm_radio objects are grouped in a slightly different, compared to other
  * UI toolkits. There is no seperate group name/id to remember or manage.
  * The members represent the group, there are the group. To make a group,
- * use elm_radio_group_add() and pass existing radio object and the new radio 
- * object. 
+ * use elm_radio_group_add() and pass existing radio object and the new radio
+ * object.
  *
  * The radio object(s) will select from one of a set
  * of integer values, so any value they are configuring needs to be mapped to

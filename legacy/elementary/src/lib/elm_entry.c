@@ -53,11 +53,12 @@ struct _Widget_Data
    Elm_Input_Panel_Return_Key_Type input_panel_return_key_type;
    void *input_panel_imdata;
    int input_panel_imdata_len;
-   struct {
+   struct
+     {
         Evas_Object *hover_parent;
         Evas_Object *pop, *hover;
         const char *hover_style;
-   } anchor_hover;
+     } anchor_hover;
    Eina_Bool changed : 1;
    Eina_Bool single_line : 1;
    Eina_Bool password : 1;
@@ -1180,7 +1181,7 @@ _remove_item_tags(const char *str)
    while (EINA_TRUE)
      {
         const char *temp = eina_strbuf_string_get(buf);
-        
+
         char *startTag = NULL;
         char *endTag = NULL;
 
@@ -1209,7 +1210,7 @@ _elm_entry_entry_paste(Evas_Object *obj, const char *entry)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
    char *str = NULL;
-   
+
    if (wd->cnp_mode == ELM_CNP_MODE_NO_IMAGE)
      {
         str = _remove_item_tags(entry);

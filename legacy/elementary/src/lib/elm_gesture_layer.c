@@ -1570,9 +1570,9 @@ _n_long_tap_test(Evas_Object *obj, Pointer_Event *pe,
  * @ingroup Elm_Gesture_Layer
  */
 static void
-_set_momentum(Elm_Gesture_Momentum_Info *momentum, 
+_set_momentum(Elm_Gesture_Momentum_Info *momentum,
               Evas_Coord xx1, Evas_Coord yy1,
-              Evas_Coord xx2, Evas_Coord yy2, 
+              Evas_Coord xx2, Evas_Coord yy2,
               unsigned int t1x, unsigned int t1y, unsigned int t2)
 {
    Evas_Coord velx = 0, vely = 0, vel;
@@ -2791,7 +2791,7 @@ _get_rotate_properties(Rotate_Type *st,
                                            &st->info.x, &st->info.y) / 2;
 
    *angle = get_angle(xx1, yy1, xx2, yy2);
-   
+
    if (angle == &st->info.angle)
      {  /* Fingers are moving, compute momentum */
         unsigned int tm_start =

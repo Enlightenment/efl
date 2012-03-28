@@ -44,7 +44,7 @@
  * @li elm_object_signal_callback_del
  *
  * @ref tutorial_check should give you a firm grasp of how to use this widget.
- * 
+ *
  * @{
  */
 

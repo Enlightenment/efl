@@ -19,27 +19,32 @@ struct _Subinfo
 {
    const char *part;
    Evas_Object *obj;
-   enum {
-     SWALLOW,
-     BOX_APPEND,
-     BOX_PREPEND,
-     BOX_INSERT_BEFORE,
-     BOX_INSERT_AT,
-     TABLE_PACK,
-     TEXT
-   } type;
-   union {
-      union {
-         const Evas_Object *reference;
-         unsigned int pos;
-      } box;
-      struct {
-         unsigned short col, row, colspan, rowspan;
-      } table;
-      struct {
-         const char *text;
-      } text;
-   } p;
+   enum
+     {
+        SWALLOW,
+        BOX_APPEND,
+        BOX_PREPEND,
+        BOX_INSERT_BEFORE,
+        BOX_INSERT_AT,
+        TABLE_PACK,
+        TEXT
+     } type;
+   union
+     {
+        union
+          {
+             const Evas_Object *reference;
+             unsigned int pos;
+          } box;
+        struct
+          {
+             unsigned short col, row, colspan, rowspan;
+          } table;
+        struct
+          {
+             const char *text;
+          } text;
+     } p;
 };
 
 struct _Part_Cursor

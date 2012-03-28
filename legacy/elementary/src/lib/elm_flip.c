@@ -30,9 +30,10 @@ struct _Widget_Data
    Elm_Flip_Mode mode;
    Evas_Object *clip;
    Evas_Object *event[4];
-   struct {
-      Evas_Object *content, *clip;
-   } front, back;
+   struct
+     {
+        Evas_Object *content, *clip;
+     } front, back;
    Ecore_Job *job;
    Evas_Coord down_x, down_y, x, y, ox, oy, w, h;
    Elm_Flip_Interaction intmode;

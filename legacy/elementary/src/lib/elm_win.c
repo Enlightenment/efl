@@ -20,48 +20,52 @@ struct _Elm_Win
    Elm_Win_Keyboard_Mode kbdmode;
    Elm_Win_Indicator_Mode indmode;
    Elm_Win_Indicator_Opacity_Mode ind_o_mode;
-   struct {
-      const char *info;
-      Ecore_Timer *timer;
-      int repeat_count;
-      int shot_counter;
-   } shot;
+   struct
+     {
+        const char *info;
+        Ecore_Timer *timer;
+        int repeat_count;
+        int shot_counter;
+     } shot;
    int resize_location;
    int *autodel_clear, rot;
    int show_count;
-   struct {
-      int x, y;
-   } screen;
-   struct 
+   struct
+     {
+        int x, y;
+     } screen;
+   struct
      {
         Ecore_Evas *ee;
         Evas *evas;
         Evas_Object *obj, *hot_obj;
         int hot_x, hot_y;
      } pointer;
-   struct {
-      Evas_Object *top;
+   struct
+     {
+        Evas_Object *top;
 
-      struct {
-         Evas_Object *target;
-         Eina_Bool visible : 1;
-         Eina_Bool handled : 1;
-      } cur, prev;
+        struct
+          {
+             Evas_Object *target;
+             Eina_Bool visible : 1;
+             Eina_Bool handled : 1;
+          } cur, prev;
 
-      const char *style;
-      Ecore_Job *reconf_job;
+        const char *style;
+        Ecore_Job *reconf_job;
 
-      Eina_Bool enabled : 1;
-      Eina_Bool changed_theme : 1;
-      Eina_Bool top_animate : 1;
-      Eina_Bool geometry_changed : 1;
-   } focus_highlight;
+        Eina_Bool enabled : 1;
+        Eina_Bool changed_theme : 1;
+        Eina_Bool top_animate : 1;
+        Eina_Bool geometry_changed : 1;
+     } focus_highlight;
 
    Evas_Object *icon;
    const char *title;
    const char *icon_name;
    const char *role;
-   
+
    double aspect;
    Eina_Bool urgent : 1;
    Eina_Bool modal : 1;
@@ -352,7 +356,7 @@ _elm_win_resize(Ecore_Evas *ee)
    win->deferred_resize_job = ecore_job_add(_elm_win_resize_job, win);
 }
 
-static void 
+static void
 _elm_win_mouse_in(Ecore_Evas *ee)
 {
    Evas_Object *obj;
@@ -417,7 +421,7 @@ _elm_win_focus_out(Ecore_Evas *ee)
      }
 }
 
-static void 
+static void
 _elm_win_state_change(Ecore_Evas *ee)
 {
    Evas_Object *obj;
@@ -429,7 +433,7 @@ _elm_win_state_change(Ecore_Evas *ee)
    Eina_Bool ch_maximized = EINA_FALSE;
 
    if (!(obj = ecore_evas_object_associate_get(ee))) return;
-   
+
    if (!(win = elm_widget_data_get(obj))) return;
 
    if (win->withdrawn != ecore_evas_withdrawn_get(win->ee))
@@ -676,7 +680,7 @@ _elm_win_obj_callback_del(void *data, Evas *e, Evas_Object *obj, void *event_inf
    if (win->icon_name) eina_stringshare_del(win->icon_name);
    if (win->role) eina_stringshare_del(win->role);
    if (win->icon) evas_object_del(win->icon);
-   
+
    free(win);
 
    if ((!_elm_win_list) &&
@@ -913,7 +917,7 @@ static void
 _elm_win_xwin_update(Elm_Win *win)
 {
    const char *s;
-   
+
    _elm_win_xwindow_get(win);
    if (win->parent)
      {
@@ -938,7 +942,7 @@ _elm_win_xwin_update(Elm_Win *win)
 
    s = win->role;
    if (s) ecore_x_icccm_window_role_set(win->xwin, s);
-   
+
    // set window icon
    if (win->icon)
      {
@@ -951,16 +955,16 @@ _elm_win_xwin_update(Elm_Win *win)
              int w = 0, h = 0, stride, x, y;
              unsigned char *p;
              unsigned int *p2;
-             
+
              evas_object_image_size_get(win->icon, &w, &h);
              stride = evas_object_image_stride_get(win->icon);
-             if ((w > 0) && (h > 0) && 
+             if ((w > 0) && (h > 0) &&
                  (stride >= (int)(w * sizeof(unsigned int))))
                {
                   ic.width = w;
                   ic.height = h;
                   ic.data = malloc(w * h * sizeof(unsigned int));
-                  
+
                   if (ic.data)
                     {
                        p = (unsigned char *)data;
@@ -973,7 +977,7 @@ _elm_win_xwin_update(Elm_Win *win)
                                  p += sizeof(unsigned int);
                                  p2++;
                               }
-                            p += (stride - (w * sizeof(unsigned int))); 
+                            p += (stride - (w * sizeof(unsigned int)));
                          }
                        ecore_x_netwm_icons_set(win->xwin, &ic, 1);
                        free(ic.data);
@@ -982,7 +986,7 @@ _elm_win_xwin_update(Elm_Win *win)
              evas_object_image_data_set(win->icon, data);
           }
      }
-   
+
    switch (win->type)
      {
       case ELM_WIN_BASIC:
@@ -1509,7 +1513,7 @@ the_end:
    win->focus_highlight.prev = win->focus_highlight.cur;
 }
 
-static void 
+static void
 _elm_win_frame_add(Elm_Win *win, const char *style)
 {
    evas_output_framespace_set(win->evas, 0, 22, 0, 26);
@@ -1520,19 +1524,19 @@ _elm_win_frame_add(Elm_Win *win, const char *style)
    evas_object_move(win->frame_obj, 0, 0);
    evas_object_resize(win->frame_obj, 1, 1);
 
-   edje_object_signal_callback_add(win->frame_obj, "elm,action,move,start", 
+   edje_object_signal_callback_add(win->frame_obj, "elm,action,move,start",
                                    "elm", _elm_win_frame_cb_move_start, win);
-   edje_object_signal_callback_add(win->frame_obj, "elm,action,resize,start", 
+   edje_object_signal_callback_add(win->frame_obj, "elm,action,resize,start",
                                    "*", _elm_win_frame_cb_resize_start, win);
-   edje_object_signal_callback_add(win->frame_obj, "elm,action,minimize", 
+   edje_object_signal_callback_add(win->frame_obj, "elm,action,minimize",
                                    "elm", _elm_win_frame_cb_minimize, win);
-   edje_object_signal_callback_add(win->frame_obj, "elm,action,maximize", 
+   edje_object_signal_callback_add(win->frame_obj, "elm,action,maximize",
                                    "elm", _elm_win_frame_cb_maximize, win);
-   edje_object_signal_callback_add(win->frame_obj, "elm,action,close", 
+   edje_object_signal_callback_add(win->frame_obj, "elm,action,close",
                                    "elm", _elm_win_frame_cb_close, win);
 }
 
-static void 
+static void
 _elm_win_frame_cb_move_start(void *data, Evas_Object *obj __UNUSED__, const char *sig __UNUSED__, const char *source __UNUSED__)
 {
    Elm_Win *win;
@@ -1544,7 +1548,7 @@ _elm_win_frame_cb_move_start(void *data, Evas_Object *obj __UNUSED__, const char
    ecore_evas_move(win->ee, 0, 0);
 }
 
-static void 
+static void
 _elm_win_frame_cb_resize_start(void *data, Evas_Object *obj __UNUSED__, const char *sig __UNUSED__, const char *source)
 {
    Elm_Win *win;
@@ -1578,7 +1582,7 @@ _elm_win_frame_cb_resize_start(void *data, Evas_Object *obj __UNUSED__, const ch
      ecore_evas_wayland_resize(win->ee, win->resize_location);
 }
 
-static void 
+static void
 _elm_win_frame_cb_minimize(void *data, Evas_Object *obj __UNUSED__, const char *sig __UNUSED__, const char *source __UNUSED__)
 {
    Elm_Win *win;
@@ -1588,7 +1592,7 @@ _elm_win_frame_cb_minimize(void *data, Evas_Object *obj __UNUSED__, const char *
    ecore_evas_iconified_set(win->ee, EINA_TRUE);
 }
 
-static void 
+static void
 _elm_win_frame_cb_maximize(void *data, Evas_Object *obj __UNUSED__, const char *sig __UNUSED__, const char *source __UNUSED__)
 {
    Elm_Win *win;
@@ -1599,7 +1603,7 @@ _elm_win_frame_cb_maximize(void *data, Evas_Object *obj __UNUSED__, const char *
    ecore_evas_maximized_set(win->ee, win->maximized);
 }
 
-static void 
+static void
 _elm_win_frame_cb_close(void *data, Evas_Object *obj __UNUSED__, const char *sig __UNUSED__, const char *source __UNUSED__)
 {
    Elm_Win *win;
@@ -1609,7 +1613,7 @@ _elm_win_frame_cb_close(void *data, Evas_Object *obj __UNUSED__, const char *sig
 }
 
 /*
-static void 
+static void
 _elm_win_pointer_add(Elm_Win *win, const char *style)
 {
    int mw, mh;
@@ -1750,7 +1754,7 @@ elm_win_add(Evas_Object *parent, const char *name, Elm_Win_Type type)
 
    win->kbdmode = ELM_WIN_KEYBOARD_UNKNOWN;
    win->indmode = ELM_WIN_INDICATOR_UNKNOWN;
-   
+
    switch (type)
      {
       case ELM_WIN_INLINED_IMAGE:
@@ -1892,7 +1896,7 @@ elm_win_add(Evas_Object *parent, const char *name, Elm_Win_Type type)
           {
              win->ee = ecore_evas_ews_new(0, 0, 1, 1);
           }
-        else if (ENGINE_COMPARE(ELM_WAYLAND_SHM)) 
+        else if (ENGINE_COMPARE(ELM_WAYLAND_SHM))
           {
              win->ee = ecore_evas_wayland_shm_new(NULL, 0, 0, 0, 1, 1, 0);
 	     win->evas = ecore_evas_get(win->ee);
@@ -1900,7 +1904,7 @@ elm_win_add(Evas_Object *parent, const char *name, Elm_Win_Type type)
              _elm_win_frame_add(win, "default");
 //             _elm_win_pointer_add(win, "default");
           }
-        else if (ENGINE_COMPARE(ELM_WAYLAND_EGL)) 
+        else if (ENGINE_COMPARE(ELM_WAYLAND_EGL))
           {
              win->ee = ecore_evas_wayland_egl_new(NULL, 0, 0, 0, 1, 1, 0);
 	     win->evas = ecore_evas_get(win->ee);
@@ -1956,7 +1960,7 @@ elm_win_add(Evas_Object *parent, const char *name, Elm_Win_Type type)
    evas_object_layer_set(win->win_obj, 50);
    evas_object_pass_events_set(win->win_obj, EINA_TRUE);
 
-   if (win->frame_obj) 
+   if (win->frame_obj)
      {
         evas_object_clip_set(win->win_obj, win->frame_obj);
         evas_object_stack_below(win->frame_obj, win->win_obj);

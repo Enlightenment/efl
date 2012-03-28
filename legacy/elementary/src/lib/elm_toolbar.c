@@ -36,10 +36,11 @@ struct _Elm_Toolbar_Item
    Evas_Object *object;
    Evas_Object *o_menu;
    Evas_Smart_Cb func;
-   struct {
-      int priority;
-      Eina_Bool visible : 1;
-   } prio;
+   struct
+     {
+        int priority;
+        Eina_Bool visible : 1;
+     } prio;
    Eina_Bool selected : 1;
    Eina_Bool separator : 1;
    Eina_Bool menu : 1;

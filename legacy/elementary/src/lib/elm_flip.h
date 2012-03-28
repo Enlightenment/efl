@@ -19,14 +19,14 @@
  * "animate,done" - when a flip animation is finished
  *
  * Default content parts of the flip widget that you can use for are:
- * @li "front" - A front content of the flip 
- * @li "back" - A back content of the flip 
+ * @li "front" - A front content of the flip
+ * @li "back" - A back content of the flip
  *
  * Supported elm_object common APIs.
  * @li elm_object_part_content_set
  * @li elm_object_part_content_get
  * @li elm_object_part_content_unset
- * 
+ *
  * @ref tutorial_flip show how to use most of the API.
  *
  * @{

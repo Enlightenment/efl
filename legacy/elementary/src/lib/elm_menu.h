@@ -24,7 +24,7 @@
  * @li elm_object_item_part_content_set
  * @li elm_object_item_part_content_get
  * @li elm_object_item_disabled_set
- * @li elm_object_item_disabled_get 
+ * @li elm_object_item_disabled_get
  *
  * @see @ref tutorial_menu
  * @{

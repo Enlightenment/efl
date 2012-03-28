@@ -28,7 +28,7 @@
  * continuous look across its options.
  * @li hoversel_vertical_entry: Another internal for @ref Hoversel.
  * @li naviframe: Internally used by @ref Naviframe for its back button.
- * @li colorselector: Internally used by @ref Colorselector 
+ * @li colorselector: Internally used by @ref Colorselector
  * for its left and right buttons.
  *
  * Default content parts of the button widget that you can use for are:

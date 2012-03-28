@@ -54,7 +54,7 @@
 /**
  * Defines the corner values for a bubble.
  *
- * The corner will be used to determine where the arrow of the 
+ * The corner will be used to determine where the arrow of the
  * bubble points to.
  */
 typedef enum

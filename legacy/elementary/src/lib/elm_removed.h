@@ -340,7 +340,7 @@ EINA_DEPRECATED EAPI void         elm_scroll_bounce_friction_all_set(double fric
  * @param friction the page scroll friction
  *
  * @see elm_thumbscroll_page_scroll_friction_get()
- * @deprecated Use elm_scroll_page_scroll_friction_set() and 
+ * @deprecated Use elm_scroll_page_scroll_friction_set() and
  * elm_config_all_flush()
  * @ingroup Scrolling
  */
@@ -5591,7 +5591,7 @@ EINA_DEPRECATED EAPI Eina_Bool             elm_index_active_get(const Evas_Objec
  * @param letter Letter under which the item should be indexed
  * @param item The item data to set for the index's item
  * @param relative The index item to be the predecessor of this new one
- * @return A handle to the item added or @c NULL, on errors 
+ * @return A handle to the item added or @c NULL, on errors
  *
  * Despite the most common usage of the @p letter argument is for
  * single char strings, one could use arbitrary strings as index
@@ -5615,7 +5615,7 @@ EINA_DEPRECATED EAPI Elm_Object_Item      *elm_index_item_append_relative(Evas_O
  * @param letter Letter under which the item should be indexed
  * @param item The item data to set for the index's item
  * @param relative The index item to be the successor of this new one
- * @return A handle to the item added or @c NULL, on errors 
+ * @return A handle to the item added or @c NULL, on errors
  *
  * Despite the most common usage of the @p letter argument is for
  * single char strings, one could use arbitrary strings as index

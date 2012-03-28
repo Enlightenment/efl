@@ -148,7 +148,7 @@ EAPI Elm_Object_Item      *elm_index_selected_item_get(const Evas_Object *obj, i
  * @param letter Letter under which the item should be indexed
  * @param func The function to call when the item is selected.
  * @param data The item data to set for the index's item
- * @return A handle to the item added or @c NULL, on errors 
+ * @return A handle to the item added or @c NULL, on errors
  *
  * Despite the most common usage of the @p letter argument is for
  * single char strings, one could use arbitrary strings as index
@@ -168,7 +168,7 @@ EAPI Elm_Object_Item      *elm_index_item_append(Evas_Object *obj, const char *l
  * @param letter Letter under which the item should be indexed
  * @param func The function to call when the item is selected.
  * @param data The item data to set for the index's item
- * @return A handle to the item added or @c NULL, on errors 
+ * @return A handle to the item added or @c NULL, on errors
  *
  * Despite the most common usage of the @p letter argument is for
  * single char strings, one could use arbitrary strings as index
@@ -189,7 +189,7 @@ EAPI Elm_Object_Item      *elm_index_item_prepend(Evas_Object *obj, const char *
  * @param letter Letter under which the item should be indexed
  * @param func The function to call when the item is clicked.
  * @param data The item data to set for the index's item
- * @return A handle to the item added or @c NULL, on errors 
+ * @return A handle to the item added or @c NULL, on errors
  *
  * Despite the most common usage of the @p letter argument is for
  * single char strings, one could use arbitrary strings as index
@@ -213,7 +213,7 @@ EAPI Elm_Object_Item      *elm_index_item_insert_after(Evas_Object *obj, Elm_Obj
  * @param letter Letter under which the item should be indexed
  * @param func The function to call when the item is clicked.
  * @param data The item data to set for the index's item
- * @return A handle to the item added or @c NULL, on errors 
+ * @return A handle to the item added or @c NULL, on errors
  *
  * Despite the most common usage of the @p letter argument is for
  * single char strings, one could use arbitrary strings as index
@@ -251,7 +251,7 @@ EAPI Elm_Object_Item      *elm_index_item_insert_before(Evas_Object *obj, Elm_Ob
  * because all references to it will be lost. If this function is
  * not provided (@c NULL is given), index items will be @b
  * duplicated, if @p cmp_func returns @c 0.
- * @return A handle to the item added or @c NULL, on errors 
+ * @return A handle to the item added or @c NULL, on errors
  *
  * Despite the most common usage of the @p letter argument is for
  * single char strings, one could use arbitrary strings as index

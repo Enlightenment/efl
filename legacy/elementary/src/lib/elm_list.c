@@ -18,9 +18,10 @@ struct _Widget_Data
    Elm_Object_Select_Mode select_mode;
    int walking;
    int movements;
-   struct {
+   struct
+     {
         Evas_Coord x, y;
-   } history[SWIPE_MOVES];
+     } history[SWIPE_MOVES];
    Eina_Bool scr_minw : 1;
    Eina_Bool scr_minh : 1;
    Eina_Bool swipe : 1;

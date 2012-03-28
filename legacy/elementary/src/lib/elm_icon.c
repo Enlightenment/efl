@@ -17,27 +17,30 @@ struct _Widget_Data
    Elm_Icon_Lookup_Order lookup_order;
 
 #ifdef HAVE_ELEMENTARY_ETHUMB
-   struct {
-      struct {
-         const char *path;
-         const char *key;
-      } file, thumb;
+   struct
+     {
+        struct
+          {
+             const char *path;
+             const char *key;
+          } file, thumb;
 
-      Ecore_Event_Handler *eeh;
+        Ecore_Event_Handler *eeh;
 
-      Ethumb_Thumb_Format format;
+        Ethumb_Thumb_Format format;
 
-      Ethumb_Client_Async *request;
+        Ethumb_Client_Async *request;
 
-      Eina_Bool retry : 1;
-   } thumb;
+        Eina_Bool retry : 1;
+     } thumb;
 #endif
 
 #ifdef ELM_EFREET
-   struct {
+   struct
+     {
         int requested_size;
         Eina_Bool use : 1;
-   } freedesktop;
+     } freedesktop;
 #endif
    int in_eval;
    Eina_Bool scale_up : 1;

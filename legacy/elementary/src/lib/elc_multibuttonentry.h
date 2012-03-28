@@ -1,12 +1,12 @@
 /**
  * @defgroup Multibuttonentry Multibuttonentry
  *
- * A Multibuttonentry is a widget to allow a user enter text and manage it as a number 
- * of buttons. Each text button is inserted by pressing the "return" key. 
- * If there is no space in the current row, a new button is added to the next row. 
+ * A Multibuttonentry is a widget to allow a user enter text and manage it as a number
+ * of buttons. Each text button is inserted by pressing the "return" key.
+ * If there is no space in the current row, a new button is added to the next row.
  * When a text button is pressed, it will become focused.
  * Backspace removes the focus.
- * When the Multibuttonentry loses focus items longer than one line are shrunk 
+ * When the Multibuttonentry loses focus items longer than one line are shrunk
  * to one line.
  *
  * Typical use case of multibuttonentry is, composing emails/messages to a group
@@ -54,7 +54,7 @@
  *
  * @param obj The parent object
  * @param item_label The label corresponding to the added item.
- * @param item_data data specific to this item. 
+ * @param item_data data specific to this item.
  * @param data data specific to the multibuttonentry.
  *
  * @return EINA_TRUE
@@ -105,7 +105,7 @@ EAPI Eina_Bool                  elm_multibuttonentry_expanded_get(const Evas_Obj
  *
  * @param obj The multibuttonentry object
  * @param expanded the value of expanded state.
- *        Set this to EINA_TRUE for expanded state. 
+ *        Set this to EINA_TRUE for expanded state.
  *        Set this to EINA_FALSE for single line state.
  *
  * @ingroup Multibuttonentry

@@ -211,7 +211,7 @@ _write_label(Evas_Object *obj)
    Elm_Spinner_Special_Value *sv;
    Widget_Data *wd = elm_widget_data_get(obj);
    char buf[1024];
-   
+
    if (!wd) return;
    EINA_LIST_FOREACH(wd->special_values, l, sv)
      {
@@ -235,11 +235,11 @@ static Eina_Bool
 _value_set(Evas_Object *obj, double new_val)
 {
    Widget_Data *wd = elm_widget_data_get(obj);
-   
+
    if (!wd) return EINA_FALSE;
 
    if (wd->round > 0)
-     new_val = wd->base + 
+     new_val = wd->base +
      (double)((((int)(new_val - wd->base)) / wd->round) * wd->round);
 
    if (wd->wrap)

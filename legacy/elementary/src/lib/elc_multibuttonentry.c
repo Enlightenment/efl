@@ -1195,8 +1195,8 @@ _view_init(Evas_Object *obj)
              if (size_str) button_min_height = (Evas_Coord)atoi(size_str);
 
              wd->end_type = MULTIBUTTONENTRY_CLOSED_IMAGE;
-             evas_object_size_hint_min_set(wd->end, 
-                                           button_min_width * _elm_config->scale, 
+             evas_object_size_hint_min_set(wd->end,
+                                           button_min_width * _elm_config->scale,
                                            button_min_height * _elm_config->scale);
              elm_widget_sub_object_add(obj, wd->end);
           }

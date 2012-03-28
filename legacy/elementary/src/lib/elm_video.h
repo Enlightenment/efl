@@ -5,15 +5,15 @@
  * @{
  *
  * Elementary comes with two object that help design application that need
- * to display video. 
+ * to display video.
  *
  * The first one, Elm_Video, display a video by using Emotion.
  * It embeds the video inside an Edje object, so you can do some
  * animation depending on the video state change. It also implements a
  * resource management policy to remove this burden from the application.
  *
- * The second one, 
- * Elm_Player is a video player that need to be linked with an Elm_Video. 
+ * The second one,
+ * Elm_Player is a video player that need to be linked with an Elm_Video.
  * It take care of updating its content according to Emotion event and provide a
  * way to theme itself. It also automatically raises the priority of the
  * linked Elm_Video so it will use the video decoder, if available. It also
@@ -67,12 +67,12 @@ EAPI Evas_Object         *elm_video_add(Evas_Object *parent);
  * @brief Define the file or URI that will be the video source.
  *
  * @param video The video object to define the file or URI for the video
- * of the Elm_Video object. 
+ * of the Elm_Video object.
  *
  * @param filename The file or URI to target.
  * Local files can be specified using file:// or by using full file paths.
- * URI could be remote source of video, like http:// or local source like 
- * WebCam (v4l2://). (You can use Emotion API to request and list 
+ * URI could be remote source of video, like http:// or local source like
+ * WebCam (v4l2://). (You can use Emotion API to request and list
  * the available Webcam on your system).
  *
  * @return @c EINA_TRUE on success, @c EINA_FALSE otherwise
@@ -194,7 +194,7 @@ EAPI double               elm_video_audio_level_get(const Evas_Object *video);
 EAPI void                 elm_video_audio_level_set(Evas_Object *video, double volume);
 
 /**
- * @brief Get the current position (in seconds) being played in the 
+ * @brief Get the current position (in seconds) being played in the
  * Elm_Video object.
  *
  * @param video The video object.
@@ -205,7 +205,7 @@ EAPI void                 elm_video_audio_level_set(Evas_Object *video, double v
 EAPI double               elm_video_play_position_get(const Evas_Object *video);
 
 /**
- * @brief Set the current position (in seconds) to be played in the 
+ * @brief Set the current position (in seconds) to be played in the
  * Elm_Video object.
  *
  * @param video The video object.
@@ -240,7 +240,7 @@ EAPI void                 elm_video_remember_position_set(Evas_Object *video, Ei
  * @brief Set whether the object can remember the last played position.
  *
  * @param video The video object.
- * @return whether the object remembers the last played position (EINA_TRUE) 
+ * @return whether the object remembers the last played position (EINA_TRUE)
  * or not.
  *
  * @note This API only serves as indication. System support is required.

@@ -36,7 +36,7 @@
  * Supported elm_object common APIs.
  * @li elm_object_part_text_set
  * @li elm_object_part_text_get
- * 
+ *
  * See an example of actionslider usage @ref actionslider_example_page "here"
  * @{
  */

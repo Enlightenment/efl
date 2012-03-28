@@ -14,19 +14,21 @@ struct _Widget_Data
    Ecore_Timer *longtimer;
 
 #ifdef HAVE_ELEMENTARY_ETHUMB
-   struct {
-      int id;
+   struct
+     {
+        int id;
 
-      struct {
-         const char *path;
-         const char *key;
-      } file, thumb;
+        struct
+          {
+             const char *path;
+             const char *key;
+          } file, thumb;
 
-      Ethumb_Exists *exists;
+        Ethumb_Exists *exists;
 
-      Ecore_Event_Handler *eeh;
+        Ecore_Event_Handler *eeh;
 
-      Ethumb_Thumb_Format format;
+        Ethumb_Thumb_Format format;
 
       Eina_Bool retry : 1;
    } thumb;
