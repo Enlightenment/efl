@@ -16,11 +16,11 @@ struct _Widget_Data
    const char *units;
    const char *indicator;
 
-   const char *(*indicator_format_func)(double val);
-   void (*indicator_format_free)(const char *str);
+   char *(*indicator_format_func)(double val);
+   void (*indicator_format_free)(char *str);
 
-   const char *(*units_format_func)(double val);
-   void (*units_format_free)(const char *str);
+   char *(*units_format_func)(double val);
+   void (*units_format_free)(char *str);
 
    double val, val_min, val_max, val2;
    Evas_Coord size;
@@ -348,7 +348,7 @@ _units_set(Evas_Object *obj)
    if (!wd) return;
    if (wd->units_format_func)
      {
-        const char *buf;
+        char *buf;
         buf = wd->units_format_func(wd->val);
         edje_object_part_text_set(wd->slider, "elm.units", buf);
         if (wd->units_format_free) wd->units_format_free(buf);
@@ -371,7 +371,7 @@ _indicator_set(Evas_Object *obj)
    if (!wd) return;
    if (wd->indicator_format_func)
      {
-        const char *buf;
+        char *buf;
         buf = wd->indicator_format_func(wd->val);
         edje_object_part_text_set(wd->slider, "elm.dragable.slider:elm.indicator", buf);
         if (wd->indicator_format_free) wd->indicator_format_free(buf);
@@ -747,8 +747,8 @@ _hash_labels_free_cb(void* label)
 static void
 _min_max_set(Evas_Object *obj)
 {
-   const char *buf_min = NULL;
-   const char *buf_max = NULL;
+   char *buf_min = NULL;
+   char *buf_max = NULL;
 
    Widget_Data *wd = elm_widget_data_get(obj);
    if (!wd) return;
@@ -1023,7 +1023,7 @@ elm_slider_inverted_get(const Evas_Object *obj)
 }
 
 EAPI void
-elm_slider_indicator_format_function_set(Evas_Object *obj, const char *(*func)(double val), void (*free_func)(const char *str))
+elm_slider_indicator_format_function_set(Evas_Object *obj, char *(*func)(double val), void (*free_func)(char *str))
 {
    ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);
@@ -1034,7 +1034,7 @@ elm_slider_indicator_format_function_set(Evas_Object *obj, const char *(*func)(d
 }
 
 EAPI void
-elm_slider_units_format_function_set(Evas_Object *obj, const char *(*func)(double val), void (*free_func)(const char *str))
+elm_slider_units_format_function_set(Evas_Object *obj, char *(*func)(double val), void (*free_func)(char *str))
 {
    ELM_CHECK_WIDTYPE(obj, widtype);
    Widget_Data *wd = elm_widget_data_get(obj);

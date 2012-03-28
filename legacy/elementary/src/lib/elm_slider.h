@@ -211,7 +211,7 @@ EAPI const char                  *elm_slider_indicator_format_get(const Evas_Obj
  *
  * @ingroup Slider
  */
-EAPI void                         elm_slider_indicator_format_function_set(Evas_Object *obj, const char *(*func)(double val), void (*free_func)(const char *str));
+EAPI void                         elm_slider_indicator_format_function_set(Evas_Object *obj, char *(*func)(double val), void (*free_func)(char *str));
 
 /**
  * Set the format function pointer for the units label
@@ -226,7 +226,7 @@ EAPI void                         elm_slider_indicator_format_function_set(Evas_
  *
  * @ingroup Slider
  */
-EAPI void                         elm_slider_units_format_function_set(Evas_Object *obj, const char *(*func)(double val), void (*free_func)(const char *str));
+EAPI void                         elm_slider_units_format_function_set(Evas_Object *obj, char *(*func)(double val), void (*free_func)(char *str));
 
 /**
  * Set the orientation of a given slider widget.
