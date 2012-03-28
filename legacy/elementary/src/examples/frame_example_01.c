@@ -4,14 +4,15 @@
 #include <Elementary.h>
 #ifdef HAVE_CONFIG_H
 # include "elementary_config.h"
+#else
+# define __UNUSED__
 #endif
 
 EAPI_MAIN int
-elm_main(int argc, char **argv)
+elm_main(int argc __UNUSED__, char **argv __UNUSED__)
 {
    Evas_Object *win, *bg;
    Evas_Object *f1, *r1, *f2, *r2, *f3, *r3, *f4, *r4;
-   char buf[256];
 
    win = elm_win_add(NULL, "frame", ELM_WIN_BASIC);
    elm_win_title_set(win, "Frame");

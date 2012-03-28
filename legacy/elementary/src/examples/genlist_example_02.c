@@ -71,7 +71,7 @@ _show_status_cb(void *data, Evas_Object *o __UNUSED__, void *event_info __UNUSED
    EINA_LIST_FOREACH(realized, l, glit)
      printf("%p  ", glit);
    printf("\n");
-   printf("genlist mode: %s\n", elm_genlist_decorate_mode_get(list));
+   printf("genlist mode: %d\n", elm_genlist_decorate_mode_get(list));
    printf("mode item: %p\n", elm_genlist_decorated_item_get(list));
 
    evas_object_geometry_get(list, &x, &y, &w, &h);

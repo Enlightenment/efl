@@ -75,7 +75,7 @@ _list_item_cb2(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_i
 }
 
 EAPI_MAIN int
-elm_main(int argc, char **argv)
+elm_main(int argc __UNUSED__, char **argv __UNUSED__)
 {
    Evas_Object *win, *bg, *list;
 
@@ -104,5 +104,7 @@ elm_main(int argc, char **argv)
    elm_list_go(list);
 
    elm_run();
+
+   return 0;
 }
 ELM_MAIN()

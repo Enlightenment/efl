@@ -9,7 +9,7 @@
 static void _change_interaction(void *data, Evas_Object *obj, void *event_info);
 
 EAPI_MAIN int
-elm_main(int argc, char **argv)
+elm_main(int argc __UNUSED__, char **argv __UNUSED__)
 {
    Evas_Object *win, *bg, *rect, *rect2, *flip, *radio, *radio2, *radio3;
 
@@ -86,7 +86,7 @@ elm_main(int argc, char **argv)
 ELM_MAIN()
 
 static void
-_change_interaction(void *data, Evas_Object *obj, void *event_info)
+_change_interaction(void *data, Evas_Object *obj, void *event_info __UNUSED__)
 {
    elm_flip_interaction_set(data, elm_radio_state_value_get(obj));
    elm_flip_go(data, ELM_FLIP_ROTATE_XZ_CENTER_AXIS);

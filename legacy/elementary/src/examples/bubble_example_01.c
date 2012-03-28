@@ -6,10 +6,6 @@
 # include "elementary_config.h"
 #endif
 
-static const char *corners[] = {"top_left", "top_right",
-                                "bottom_right", "bottom_left"};
-
-
 void
 _bla(void *data __UNUSED__, Evas_Object *obj, void *event_info __UNUSED__)
 {
