@@ -3,6 +3,11 @@
 #include <Elementary.h>
 #define WIN32_LEAN_AND_MEAN
 #include <windows.h>
+#ifdef HAVE_CONFIG_H
+# include "elementary_config.h"
+#else
+# define __UNUSED__
+#endif
 
 static Evas_Object *win = NULL;
 static Evas_Object *rect = NULL;

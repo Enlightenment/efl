@@ -1,6 +1,11 @@
 //Compile with:
 //gcc -o efl_thread_5 efl_thread_5.c -g `pkg-config --cflags --libs elementary`
 #include <Elementary.h>
+#ifdef HAVE_CONFIG_H
+# include "elementary_config.h"
+#else
+# define __UNUSED__
+#endif
 
 static Ecore_Thread *th = NULL;
 

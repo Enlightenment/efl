@@ -4,10 +4,12 @@
 #include <Elementary.h>
 #ifdef HAVE_CONFIG_H
 # include "elementary_config.h"
+#else
+# define __UNUSED__
 #endif
 
 static void
-_show_hover(void *data, Evas_Object *obj, void *event_info)
+_show_hover(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    evas_object_show(data);
 }

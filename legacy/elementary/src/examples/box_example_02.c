@@ -1,3 +1,6 @@
+//Compile with:
+//gcc -g `pkg-config --cflags --libs elementary` box_example_02.c -o box_example_02
+
 #include <Elementary.h>
 #ifdef HAVE_CONFIG_H
 # include "elementary_config.h"

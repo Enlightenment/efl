@@ -11,6 +11,11 @@
 #include <Elementary.h>
 #include <Evas_GL.h>
 #include <stdio.h>
+#ifdef HAVE_CONFIG_H
+# include "elementary_config.h"
+#else
+# define __UNUSED__
+#endif
 
 typedef struct _GLData GLData;
 

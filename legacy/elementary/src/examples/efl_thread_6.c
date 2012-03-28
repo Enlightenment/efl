@@ -1,6 +1,11 @@
 //Compile with:
 //gcc -o efl_thread_6 efl_thread_6.c -g `pkg-config --cflags --libs elementary`
 #include <Elementary.h>
+#ifdef HAVE_CONFIG_H
+# include "elementary_config.h"
+#else
+# define __UNUSED__
+#endif
 
 static Evas_Object *win = NULL;
 static Evas_Object *rect = NULL;
