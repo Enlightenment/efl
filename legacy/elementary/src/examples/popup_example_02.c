@@ -2,7 +2,7 @@
 //gcc -o popup_example_02 popup_example_02.c -g `pkg-config --cflags --libs elementary`
 
 #include <Elementary.h>
-#define PACKAGE_DATA_DIR "../../data"
+#define DATA_DIR "../../data"
 
 static void _response_cb(void *data, Evas_Object *obj, void *event_info);
 
@@ -34,7 +34,7 @@ elm_main(int argc, char **argv)
    elm_object_part_text_set(popup, "title,text", "Title");
 
    icon1 = elm_icon_add(popup);
-   snprintf(buf, sizeof(buf), "%s/images/logo_small.png", PACKAGE_DATA_DIR);
+   snprintf(buf, sizeof(buf), "%s/images/logo_small.png", DATA_DIR);
    elm_icon_file_set(icon1, buf, NULL);
    //Setting popup title-icon
    elm_object_part_content_set(popup, "title,icon", icon1);

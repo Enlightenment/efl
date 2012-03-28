@@ -1,8 +1,11 @@
 //Compile with:
-//gcc -o transit_example_04 transit_example_04.c `pkg-config --cflags --libs elementary` -DPACKAGE_DATA_DIR="\"<directory>\""
+//gcc -o transit_example_04 transit_example_04.c `pkg-config --cflags --libs elementary` -DDATA_DIR="\"<directory>\""
 //where directory is the a path where images/icon_07.png can be found.
 
 #include <Elementary.h>
+#ifndef DATA_DIR
+# define DATA_DIR "/usr/share/elementary"
+#endif
 
 static void
 _transit_flip(Elm_Transit *trans)
@@ -123,7 +126,7 @@ elm_main(int argc, char **argv)
    obj = elm_button_add(win);
    elm_object_text_set(obj, "Transformed object!");
    icon = elm_icon_add(win);
-   snprintf(buf, sizeof(buf), "%s/images/icon_07.png", PACKAGE_DATA_DIR);
+   snprintf(buf, sizeof(buf), "%s/images/icon_07.png", DATA_DIR);
    elm_icon_file_set(icon, buf, NULL);
    elm_object_part_content_set(obj, "icon", icon);
    evas_object_move(obj, 160, 60);
@@ -136,7 +139,7 @@ elm_main(int argc, char **argv)
    obj = elm_button_add(win);
    elm_object_text_set(obj, "Another object!");
    icon = elm_icon_add(win);
-   snprintf(buf, sizeof(buf), "%s/images/icon_08.png", PACKAGE_DATA_DIR);
+   snprintf(buf, sizeof(buf), "%s/images/icon_08.png", DATA_DIR);
    elm_icon_file_set(icon, buf, NULL);
    elm_object_part_content_set(obj, "icon", icon);
    evas_object_move(obj, 160, 60);

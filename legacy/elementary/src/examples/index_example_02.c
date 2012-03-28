@@ -10,7 +10,7 @@
  */
 
 #include <Elementary.h>
-#define PACKAGE_DATA_DIR "../../data"
+#define DATA_DIR "../../data"
 
 static const char *items[] = \
 {
@@ -57,7 +57,7 @@ _grid_content_get(void        *data,
    if (!strcmp(part, "elm.swallow.icon"))
      {
         char buf[PATH_MAX];
-        snprintf(buf, sizeof(buf), "%s/images/%s", PACKAGE_DATA_DIR,
+        snprintf(buf, sizeof(buf), "%s/images/%s", DATA_DIR,
                  "sky_01.jpg");
 
         Evas_Object *icon = elm_bg_add(obj);

@@ -10,6 +10,9 @@
  */
 
 #include <Elementary.h>
+#ifndef DATA_DIR
+# define DATA_DIR "/usr/share/elementary"
+#endif
 
 typedef struct _Overlay_Data
 {
@@ -18,15 +21,15 @@ typedef struct _Overlay_Data
 } Overlay_Data;
 
 Overlay_Data data_argentina = {"Argentina",
-     PACKAGE_DATA_DIR"/images/rock_01.jpg"};
+     DATA_DIR"/images/rock_01.jpg"};
 Overlay_Data data_chile = {"Chile",
-     PACKAGE_DATA_DIR"/images/rock_02.jpg"};
+     DATA_DIR"/images/rock_02.jpg"};
 Overlay_Data data_sampa = {"São Paulo",
-     PACKAGE_DATA_DIR"/images/sky_01.jpg"};
+     DATA_DIR"/images/sky_01.jpg"};
 Overlay_Data data_rio = {"Rio de Janeiro",
-     PACKAGE_DATA_DIR"/images/sky_02.jpg"};
+     DATA_DIR"/images/sky_02.jpg"};
 Overlay_Data data_brasilia = {"Brasília",
-     PACKAGE_DATA_DIR"/images/sky_03.jpg"};
+     DATA_DIR"/images/sky_03.jpg"};
 
 static Elm_Map_Overlay *bubble;
 
@@ -42,25 +45,25 @@ _icon_get(Evas_Object *obj, const char *file)
 static Evas_Object *
 _city_icon_get(Evas_Object *obj)
 {
-   return _icon_get(obj, PACKAGE_DATA_DIR"/images/icon_07.png");
+   return _icon_get(obj, DATA_DIR"/images/icon_07.png");
 }
 
 static Evas_Object *
 _clas_city_icon_get(Evas_Object *obj)
 {
-   return _icon_get(obj, PACKAGE_DATA_DIR"/images/icon_05.png");
+   return _icon_get(obj, DATA_DIR"/images/icon_05.png");
 }
 
 static Evas_Object *
 _country_icon_get(Evas_Object *obj)
 {
-   return _icon_get(obj, PACKAGE_DATA_DIR"/images/icon_06.png");
+   return _icon_get(obj, DATA_DIR"/images/icon_06.png");
 }
 
 static Evas_Object *
 _clas_country_icon_get(Evas_Object *obj)
 {
-   return _icon_get(obj, PACKAGE_DATA_DIR"/images/icon_04.png");
+   return _icon_get(obj, DATA_DIR"/images/icon_04.png");
 }
 
 static Evas_Object *

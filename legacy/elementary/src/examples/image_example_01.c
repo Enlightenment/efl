@@ -2,7 +2,7 @@
 //gcc -g `pkg-config --cflags --libs elementary` image_example_01.c -o image_example_01
 
 #include <Elementary.h>
-#define PACKAGE_DATA_DIR "."
+#define DATA_DIR "."
 
 int
 elm_main(int argc, char **argv)
@@ -21,7 +21,7 @@ elm_main(int argc, char **argv)
    elm_win_resize_object_add(win, bg);
    evas_object_show(bg);
 
-   snprintf(buf, sizeof(buf), "%s/images/plant_01.jpg", PACKAGE_DATA_DIR);
+   snprintf(buf, sizeof(buf), "%s/images/plant_01.jpg", DATA_DIR);
 
    image = elm_image_add(win);
    if (!elm_image_file_set(image, buf, NULL))

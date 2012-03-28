@@ -6,7 +6,7 @@
 #endif
 
 #include <Elementary.h>
-#define PACKAGE_DATA_DIR "../../data"
+#define DATA_DIR "../../data"
 
 static void
 _btn_activate_cb(void *data, Evas_Object *obj, void *event)
@@ -210,7 +210,7 @@ elm_main(int argc, char *argv[])
    evas_object_smart_callback_add(win2, "focus,in", _win_focused_cb, "managed");
 
    o = elm_icon_add(win2);
-   elm_icon_file_set(o, PACKAGE_DATA_DIR "/images/logo.png", NULL);
+   elm_icon_file_set(o, DATA_DIR "/images/logo.png", NULL);
    elm_icon_resizable_set(o, 0, 0);
    elm_icon_no_scale_set(o, EINA_TRUE);
    elm_win_resize_object_add(win2, o);

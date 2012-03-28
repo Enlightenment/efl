@@ -2,7 +2,7 @@
 //gcc -g `pkg-config --cflags --libs elementary` layout_example_01.c -o layout_example_01
 
 #include <Elementary.h>
-#define PACKAGE_DATA_DIR "."
+#define DATA_DIR "."
 
 #define TABLE "example/table"
 #define BOX "example/box"
@@ -73,7 +73,7 @@ elm_main(int argc, char **argv)
    evas_object_size_hint_weight_set(layout, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    elm_win_resize_object_add(win, layout);
    elm_layout_file_set(
-       layout, PACKAGE_DATA_DIR "/examples/layout_example.edj",
+       layout, DATA_DIR "/examples/layout_example.edj",
        "example/mylayout");
    evas_object_show(layout);
 

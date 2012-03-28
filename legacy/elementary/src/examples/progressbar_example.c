@@ -5,11 +5,14 @@
  * See stdout/stderr for output. Compile with:
  *
  * @verbatim
- * gcc -g `pkg-config --cflags --libs elementary` progressbar_example.c -o progressbar_example
+ * gcc -g `pkg-config --cflags --libs elementary` progressbar_example.c -o progressbar_example -DDATA_DIR="\"<directory>\'""
  * @endverbatim
  */
 
 #include <Elementary.h>
+#ifndef DATA_DIR
+# define DATA_DIR "/usr/share/elementary"
+#endif
 
 typedef struct Progressbar_Example
 {
@@ -131,7 +134,7 @@ elm_main(int    argc,
    example_data.pb2 = pb;
 
    ic1 = elm_icon_add(win);
-   snprintf(buf, sizeof(buf), "%s/images/logo_small.png", PACKAGE_DATA_DIR);
+   snprintf(buf, sizeof(buf), "%s/images/logo_small.png", DATA_DIR);
    elm_icon_file_set(ic1, buf, NULL);
    evas_object_size_hint_aspect_set(ic1, EVAS_ASPECT_CONTROL_VERTICAL, 1, 1);
 

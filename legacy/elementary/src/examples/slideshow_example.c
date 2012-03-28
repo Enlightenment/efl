@@ -10,7 +10,7 @@
  */
 
 #include <Elementary.h>
-#define PACKAGE_DATA_DIR "../../data"
+#define DATA_DIR "../../data"
 
 static void
 _on_done(void        *data,
@@ -23,15 +23,15 @@ _on_done(void        *data,
 static Evas_Object *slideshow, *bt_start, *bt_stop;
 static Elm_Slideshow_Item_Class itc;
 
-static const char *img1 = PACKAGE_DATA_DIR "/images/logo.png";
-static const char *img2 = PACKAGE_DATA_DIR "/images/plant_01.jpg";
-static const char *img3 = PACKAGE_DATA_DIR "/images/rock_01.jpg";
-static const char *img4 = PACKAGE_DATA_DIR "/images/rock_02.jpg";
-static const char *img5 = PACKAGE_DATA_DIR "/images/sky_01.jpg";
-static const char *img6 = PACKAGE_DATA_DIR "/images/sky_04.jpg";
-static const char *img7 = PACKAGE_DATA_DIR "/images/wood_01.jpg";
-static const char *img8 = PACKAGE_DATA_DIR "/images/mystrale.jpg";
-static const char *img9 = PACKAGE_DATA_DIR "/images/mystrale_2.jpg";
+static const char *img1 = DATA_DIR "/images/logo.png";
+static const char *img2 = DATA_DIR "/images/plant_01.jpg";
+static const char *img3 = DATA_DIR "/images/rock_01.jpg";
+static const char *img4 = DATA_DIR "/images/rock_02.jpg";
+static const char *img5 = DATA_DIR "/images/sky_01.jpg";
+static const char *img6 = DATA_DIR "/images/sky_04.jpg";
+static const char *img7 = DATA_DIR "/images/wood_01.jpg";
+static const char *img8 = DATA_DIR "/images/mystrale.jpg";
+static const char *img9 = DATA_DIR "/images/mystrale_2.jpg";
 
 static void
 _notify_show(void        *data,

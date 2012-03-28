@@ -10,7 +10,7 @@
  */
 
 #include <Elementary.h>
-#define PACKAGE_DATA_DIR "../../data"
+#define DATA_DIR "../../data"
 
 typedef struct _Example_Item
 {
@@ -325,7 +325,7 @@ _grid_content_get(void        *data,
         Evas_Object *icon = elm_bg_add(obj);
         char buf[PATH_MAX];
 
-        snprintf(buf, sizeof(buf), "%s/images/%s", PACKAGE_DATA_DIR,
+        snprintf(buf, sizeof(buf), "%s/images/%s", DATA_DIR,
                  it->path);
 
         elm_bg_file_set(icon, buf, NULL);

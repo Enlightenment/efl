@@ -4,9 +4,9 @@
 
 #include <Elementary.h>
 
-#define PACKAGE_BIN_DIR  "/usr/bin"
-#define PACKAGE_LIB_DIR  "/usr/lib"
-#define PACKAGE_DATA_DIR "/usr/share/elementary"
+#define BIN_DIR  "/usr/bin"
+#define LIB_DIR  "/usr/lib"
+#define DATA_DIR "/usr/share/elementary"
 
 #define WIDTH             300
 #define HEIGHT            300
@@ -71,9 +71,9 @@ elm_main(int    argc,
    Evas_Object *win, *bg, *box, *frame, *check, *b, *slider;
 
    /* tell elm about our app so it can figure out where to get files */
-   elm_app_compile_bin_dir_set(PACKAGE_BIN_DIR);
-   elm_app_compile_data_dir_set(PACKAGE_DATA_DIR);
-   elm_app_compile_lib_dir_set(PACKAGE_LIB_DIR);
+   elm_app_compile_bin_dir_set(BIN_DIR);
+   elm_app_compile_data_dir_set(DATA_DIR);
+   elm_app_compile_lib_dir_set(LIB_DIR);
    elm_app_info_set(elm_main, "elementary", "images/logo.png");
 
    fprintf(stdout, "prefix was set to: %s\n", elm_app_prefix_dir_get());

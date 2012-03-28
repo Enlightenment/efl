@@ -2,7 +2,7 @@
 //gcc -g `pkg-config --cflags --libs elementary` image_example_01.c -o image_example_01
 
 #include <Elementary.h>
-#define PACKAGE_DATA_DIR "."
+#define DATA_DIR "."
 
 EAPI_MAIN int
 elm_main(int argc, char **argv)
