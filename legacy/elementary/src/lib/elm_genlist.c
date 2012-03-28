@@ -862,6 +862,7 @@ _item_del(Elm_Gen_Item *it)
           it->wd->anchor_item = ELM_GEN_ITEM_FROM_INLIST(EINA_INLIST_GET(it)->prev);
      }
    if (it->wd->expanded_item == it) it->wd->expanded_item = NULL;
+   if (it->wd->expanded_next_item == it) it->wd->expanded_next_item = NULL;
    if (it->parent)
      it->parent->item->items = eina_list_remove(it->parent->item->items, it);
    if (it->item->swipe_timer) ecore_timer_del(it->item->swipe_timer);
