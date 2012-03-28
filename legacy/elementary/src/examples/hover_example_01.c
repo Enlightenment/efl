@@ -2,26 +2,21 @@
 //gcc -o hover_example_01 hover_example_01.c -g `pkg-config --cflags --libs elementary`
 
 #include <Elementary.h>
-#ifdef HAVE_CONFIG_H
-# include "elementary_config.h"
-#else
-# define __UNUSED__
-#endif
 
 static void
-_show_hover(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+_show_hover(void *data, Evas_Object *obj, void *event_info)
 {
    evas_object_show(data);
 }
 
 static void
-_hide_hover(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+_hide_hover(void *data, Evas_Object *obj, void *event_info)
 {
    evas_object_hide(data);
 }
 
 EAPI_MAIN int
-elm_main(int argc __UNUSED__, char **argv __UNUSED__)
+elm_main(int argc, char **argv)
 {
    Evas_Object *win, *bg, *bt, *bt2, *rect, *rect2, *rect3, *hover;
 

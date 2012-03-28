@@ -2,12 +2,7 @@
 //gcc -g `pkg-config --cflags --libs elementary` layout_example_01.c -o layout_example_01
 
 #include <Elementary.h>
-#ifdef HAVE_CONFIG_H
-# include "elementary_config.h"
-#else
-# define __UNUSED__
-# define PACKAGE_DATA_DIR "."
-#endif
+#define PACKAGE_DATA_DIR "."
 
 #define TABLE "example/table"
 #define BOX "example/box"
@@ -17,7 +12,7 @@
 static int _box_buttons = 0;
 
 static void
-_tbl_btn_cb(void *data, Evas_Object *btn, void *event_info __UNUSED__)
+_tbl_btn_cb(void *data, Evas_Object *btn, void *event_info)
 {
    Evas_Object *layout = data;
 
@@ -26,7 +21,7 @@ _tbl_btn_cb(void *data, Evas_Object *btn, void *event_info __UNUSED__)
 }
 
 static void
-_box_btn_cb(void *data, Evas_Object *btn, void *event_info __UNUSED__)
+_box_btn_cb(void *data, Evas_Object *btn, void *event_info)
 {
    Evas_Object *layout = data;
    Evas_Object *item;
@@ -45,7 +40,7 @@ _box_btn_cb(void *data, Evas_Object *btn, void *event_info __UNUSED__)
 }
 
 static void
-_swallow_btn_cb(void *data, Evas_Object *btn __UNUSED__, void *event_info __UNUSED__)
+_swallow_btn_cb(void *data, Evas_Object *btn, void *event_info)
 {
    Evas_Object *layout = data;
    Evas_Object *item;
@@ -57,7 +52,7 @@ _swallow_btn_cb(void *data, Evas_Object *btn __UNUSED__, void *event_info __UNUS
 }
 
 EAPI_MAIN int
-elm_main(int argc __UNUSED__, char **argv __UNUSED__)
+elm_main(int argc, char **argv)
 {
    Evas_Object *win, *bg, *icon, *icon2, *bt, *bt2, *layout;
    Evas_Object *clk;

@@ -2,11 +2,6 @@
 //gcc -g `pkg-config --cflags --libs elementary` genlist_example_04.c -o genlist_example_04
 
 #include <Elementary.h>
-#ifdef HAVE_CONFIG_H
-# include "elementary_config.h"
-#else
-# define __UNUSED__
-#endif
 
 #define N_ITEMS 300
 
@@ -15,7 +10,7 @@ static Elm_Genlist_Item_Class *_itc_group = NULL;
 static int nitems = 0;
 
 static char *
-_item_label_get(void *data, Evas_Object *obj __UNUSED__, const char *part)
+_item_label_get(void *data, Evas_Object *obj, const char *part)
 {
    time_t t = (time_t)ecore_time_unix_get();
    char buf[256];
@@ -35,7 +30,7 @@ _item_label_get(void *data, Evas_Object *obj __UNUSED__, const char *part)
 }
 
 static Evas_Object *
-_item_content_get(void *data __UNUSED__, Evas_Object *obj, const char *part)
+_item_content_get(void *data, Evas_Object *obj, const char *part)
 {
    Evas_Object *ic = elm_icon_add(obj);
 
@@ -54,7 +49,7 @@ _item_sel_cb(void *data, Evas_Object *obj, void *event_info)
 }
 
 static char *
-_group_label_get(void *data, Evas_Object *obj __UNUSED__, const char *part __UNUSED__)
+_group_label_get(void *data, Evas_Object *obj, const char *part)
 {
    char buf[256];
    int i = (int)(long)data;
@@ -65,7 +60,7 @@ _group_label_get(void *data, Evas_Object *obj __UNUSED__, const char *part __UNU
 }
 
 static Evas_Object *
-_group_content_get(void *data __UNUSED__, Evas_Object *obj, const char *part __UNUSED__)
+_group_content_get(void *data, Evas_Object *obj, const char *part)
 {
    Evas_Object *ic = elm_icon_add(obj);
 
@@ -77,7 +72,7 @@ _group_content_get(void *data __UNUSED__, Evas_Object *obj, const char *part __U
 }
 
 static void
-_append_cb(void *data, Evas_Object *o __UNUSED__, void *event_info __UNUSED__)
+_append_cb(void *data, Evas_Object *o, void *event_info)
 {
    Evas_Object *list = data;
 
@@ -89,7 +84,7 @@ _append_cb(void *data, Evas_Object *o __UNUSED__, void *event_info __UNUSED__)
 }
 
 static void
-_prepend_cb(void *data, Evas_Object *o __UNUSED__, void *event_info __UNUSED__)
+_prepend_cb(void *data, Evas_Object *o, void *event_info)
 {
    Evas_Object *list = data;
 
@@ -101,7 +96,7 @@ _prepend_cb(void *data, Evas_Object *o __UNUSED__, void *event_info __UNUSED__)
 }
 
 static void
-_insert_before_cb(void *data, Evas_Object *o __UNUSED__, void *event_info __UNUSED__)
+_insert_before_cb(void *data, Evas_Object *o, void *event_info)
 {
    Evas_Object *list = data;
    Elm_Object_Item *glit = elm_genlist_selected_item_get(list);
@@ -116,7 +111,7 @@ _insert_before_cb(void *data, Evas_Object *o __UNUSED__, void *event_info __UNUS
 }
 
 static void
-_insert_after_cb(void *data, Evas_Object *o __UNUSED__, void *event_info __UNUSED__)
+_insert_after_cb(void *data, Evas_Object *o, void *event_info)
 {
    Evas_Object *list = data;
    Elm_Object_Item *glit = elm_genlist_selected_item_get(list);
@@ -131,7 +126,7 @@ _insert_after_cb(void *data, Evas_Object *o __UNUSED__, void *event_info __UNUSE
 }
 
 static void
-_next_cb(void *data, Evas_Object *o __UNUSED__, void *event_info __UNUSED__)
+_next_cb(void *data, Evas_Object *o, void *event_info)
 {
    Evas_Object *list = data;
    Elm_Object_Item *glit = elm_genlist_selected_item_get(list);
@@ -144,7 +139,7 @@ _next_cb(void *data, Evas_Object *o __UNUSED__, void *event_info __UNUSED__)
 }
 
 static void
-_prev_cb(void *data, Evas_Object *o __UNUSED__, void *event_info __UNUSED__)
+_prev_cb(void *data, Evas_Object *o, void *event_info)
 {
    Evas_Object *list = data;
    Elm_Object_Item *glit = elm_genlist_selected_item_get(list);
@@ -157,7 +152,7 @@ _prev_cb(void *data, Evas_Object *o __UNUSED__, void *event_info __UNUSED__)
 }
 
 static void
-_bring_in_cb(void *data, Evas_Object *o __UNUSED__, void *event_info __UNUSED__)
+_bring_in_cb(void *data, Evas_Object *o, void *event_info)
 {
    Elm_Object_Item *glit = data;
    if (!glit) return;
@@ -166,7 +161,7 @@ _bring_in_cb(void *data, Evas_Object *o __UNUSED__, void *event_info __UNUSED__)
 }
 
 static void
-_show_cb(void *data, Evas_Object *o __UNUSED__, void *event_info __UNUSED__)
+_show_cb(void *data, Evas_Object *o, void *event_info)
 {
    Elm_Object_Item *glit = data;
    if (!glit) return;
@@ -175,7 +170,7 @@ _show_cb(void *data, Evas_Object *o __UNUSED__, void *event_info __UNUSED__)
 }
 
 static void
-_middle_in_cb(void *data, Evas_Object *o __UNUSED__, void *event_info __UNUSED__)
+_middle_in_cb(void *data, Evas_Object *o, void *event_info)
 {
    Elm_Object_Item *glit = data;
    if (!glit) return;
@@ -184,7 +179,7 @@ _middle_in_cb(void *data, Evas_Object *o __UNUSED__, void *event_info __UNUSED__
 }
 
 static void
-_middle_show_cb(void *data, Evas_Object *o __UNUSED__, void *event_info __UNUSED__)
+_middle_show_cb(void *data, Evas_Object *o, void *event_info)
 {
    Elm_Object_Item *glit = data;
    if (!glit) return;
@@ -193,7 +188,7 @@ _middle_show_cb(void *data, Evas_Object *o __UNUSED__, void *event_info __UNUSED
 }
 
 static void
-_top_in_cb(void *data, Evas_Object *o __UNUSED__, void *event_info __UNUSED__)
+_top_in_cb(void *data, Evas_Object *o, void *event_info)
 {
    Elm_Object_Item *glit = data;
    if (!glit) return;
@@ -202,7 +197,7 @@ _top_in_cb(void *data, Evas_Object *o __UNUSED__, void *event_info __UNUSED__)
 }
 
 static void
-_top_show_cb(void *data, Evas_Object *o __UNUSED__, void *event_info __UNUSED__)
+_top_show_cb(void *data, Evas_Object *o, void *event_info)
 {
    Elm_Object_Item *glit = data;
    if (!glit) return;
@@ -211,7 +206,7 @@ _top_show_cb(void *data, Evas_Object *o __UNUSED__, void *event_info __UNUSED__)
 }
 
 static void
-_realize_cb(void *data, Evas_Object *o __UNUSED__, void *event_info __UNUSED__)
+_realize_cb(void *data, Evas_Object *o, void *event_info)
 {
    Evas_Object *list = data;
    Elm_Object_Item *glit = elm_genlist_selected_item_get(list);
@@ -237,7 +232,7 @@ _button_add(Evas_Object *list, Evas_Object *box, const char *label, Evas_Smart_C
 }
 
 EAPI_MAIN int
-elm_main(int argc __UNUSED__, char **argv __UNUSED__)
+elm_main(int argc, char **argv)
 {
    Evas_Object *win, *bg, *box, *fbox;
    Evas_Object *list;

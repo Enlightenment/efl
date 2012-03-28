@@ -2,18 +2,13 @@
 //gcc -g `pkg-config --cflags --libs elementary` colorselector_example_01.c -o colorselector_example_01
 
 #include <Elementary.h>
-#ifdef HAVE_CONFIG_H
-# include "elementary_config.h"
-#else
-# define __UNUSED__
-#endif
 
 static void _change_color(void *data, Evas_Object *obj, void *event_info);
 static void _colorpalette_clicked_cb(void *data, Evas_Object *obj, void *event_info);
 static void _colorpalette_longpressed_cb(void *data, Evas_Object *obj, void *event_info);
 
 EAPI_MAIN int
-elm_main(int argc __UNUSED__, char **argv __UNUSED__)
+elm_main(int argc, char **argv)
 {
    Evas_Object *win, *bg, *cs, *rect, *bx, *fr;
 
@@ -74,7 +69,7 @@ elm_main(int argc __UNUSED__, char **argv __UNUSED__)
 ELM_MAIN()
 
 static void
-_change_color(void *data, Evas_Object *obj, void *event_info __UNUSED__)
+_change_color(void *data, Evas_Object *obj, void *event_info)
 {
    int r, g, b, a;
    elm_colorselector_color_get(obj, &r, &g, &b, &a);
@@ -82,7 +77,7 @@ _change_color(void *data, Evas_Object *obj, void *event_info __UNUSED__)
 }
 
 static void
-_colorpalette_clicked_cb(void *data, Evas_Object *obj __UNUSED__, void *event_info)
+_colorpalette_clicked_cb(void *data, Evas_Object *obj, void *event_info)
 {
    int r = 0, g = 0, b = 0 ,a = 0;
    Elm_Object_Item *color_it = (Elm_Object_Item *) event_info;
@@ -91,7 +86,7 @@ _colorpalette_clicked_cb(void *data, Evas_Object *obj __UNUSED__, void *event_in
 }
 
 static void
-_colorpalette_longpressed_cb(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info)
+_colorpalette_longpressed_cb(void *data, Evas_Object *obj, void *event_info)
 {
    int r = 0,g = 0,b = 0 ,a = 0;
    Elm_Object_Item *color_it = (Elm_Object_Item *) event_info;

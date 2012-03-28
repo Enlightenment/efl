@@ -2,18 +2,13 @@
 //gcc -g `pkg-config --cflags --libs elementary` genlist_example_01.c -o genlist_example_01
 
 #include <Elementary.h>
-#ifdef HAVE_CONFIG_H
-# include "elementary_config.h"
-#else
-# define __UNUSED__
-#endif
 
 #define N_ITEMS 30
 
 static Elm_Genlist_Item_Class *_itc = NULL;
 
 static char *
-_item_label_get(void *data, Evas_Object *obj __UNUSED__, const char *part __UNUSED__)
+_item_label_get(void *data, Evas_Object *obj, const char *part)
 {
    char buf[256];
    snprintf(buf, sizeof(buf), "Item # %i", (int)(long)data);
@@ -21,7 +16,7 @@ _item_label_get(void *data, Evas_Object *obj __UNUSED__, const char *part __UNUS
 }
 
 static Evas_Object *
-_item_content_get(void *data __UNUSED__, Evas_Object *obj, const char *part)
+_item_content_get(void *data, Evas_Object *obj, const char *part)
 {
    Evas_Object *ic = elm_icon_add(obj);
 
@@ -40,7 +35,7 @@ _item_sel_cb(void *data, Evas_Object *obj, void *event_info)
 }
 
 EAPI_MAIN int
-elm_main(int argc __UNUSED__, char **argv __UNUSED__)
+elm_main(int argc, char **argv)
 {
    Evas_Object *win, *bg;
    Evas_Object *list;

@@ -2,11 +2,6 @@
 //gcc -g `pkg-config --cflags --libs elementary` box_example_02.c -o box_example_02
 
 #include <Elementary.h>
-#ifdef HAVE_CONFIG_H
-# include "elementary_config.h"
-#else
-# define __UNUSED__
-#endif
 
 typedef struct
 {
@@ -16,7 +11,7 @@ typedef struct
 } Transitions_Data;
 
 static void
-_add_cb(void *data, Evas_Object *obj __UNUSED__, void *ev __UNUSED__)
+_add_cb(void *data, Evas_Object *obj, void *ev)
 {
    Evas_Object *btn;
    Eina_List *children;
@@ -36,14 +31,14 @@ _add_cb(void *data, Evas_Object *obj __UNUSED__, void *ev __UNUSED__)
 }
 
 static void
-_clear_cb(void *data, Evas_Object *obj __UNUSED__, void *ev __UNUSED__)
+_clear_cb(void *data, Evas_Object *obj, void *ev)
 {
    Transitions_Data *tdata = data;
    elm_box_clear(tdata->box);
 }
 
 static void
-_unpack_cb(void *data, Evas_Object *obj, void *ev __UNUSED__)
+_unpack_cb(void *data, Evas_Object *obj, void *ev)
 {
    Transitions_Data *tdata = data;
    elm_box_unpack(tdata->box, obj);
@@ -72,7 +67,7 @@ _test_box_transition_change(void *data)
 }
 
 EAPI_MAIN int
-elm_main(int argc __UNUSED__, char *argv[] __UNUSED__)
+elm_main(int argc, char *argv[])
 {
    Evas_Object *win, *bg, *bigbox, *bx, *bt;
    static Transitions_Data tdata = {

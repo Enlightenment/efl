@@ -1,11 +1,6 @@
 //Compile with:
 //gcc -o efl_thread_5 efl_thread_5.c -g `pkg-config --cflags --libs elementary`
 #include <Elementary.h>
-#ifdef HAVE_CONFIG_H
-# include "elementary_config.h"
-#else
-# define __UNUSED__
-#endif
 
 static Ecore_Thread *thr = NULL;
 
@@ -20,7 +15,7 @@ struct info
 // BEGIN - code running in my custom thread instance
 //
 static void
-th_do(void *data __UNUSED__, Ecore_Thread *th)
+th_do(void *data, Ecore_Thread *th)
 {
    double t = 0.0;
 
@@ -49,7 +44,7 @@ th_do(void *data __UNUSED__, Ecore_Thread *th)
 // END - code running in my custom thread instance
 
 static void // when mainloop gets feedback from worker
-th_feedback(void *data __UNUSED__, Ecore_Thread *th __UNUSED__, void *msg)
+th_feedback(void *data, Ecore_Thread *th, void *msg)
 {
    struct info *inf = msg;
    evas_object_move(rect, inf->x - 50, inf->y - 50);
@@ -57,19 +52,19 @@ th_feedback(void *data __UNUSED__, Ecore_Thread *th __UNUSED__, void *msg)
 }
 
 // BONUS (optional): called after th_do returns and has NOT been cancelled
-static void th_end(void *data __UNUSED__, Ecore_Thread *th __UNUSED__) { printf("thread ended\n"); }
+static void th_end(void *data, Ecore_Thread *th) { printf("thread ended\n"); }
 // BONUS (optional): called in mainloop AFTER thread has finished cancelling
-static void th_cancel(void *data __UNUSED__, Ecore_Thread *th __UNUSED__) { printf("thread cancelled\n"); }
+static void th_cancel(void *data, Ecore_Thread *th) { printf("thread cancelled\n"); }
 
 // just test cancelling the thread worker
 static void
-down(void *data __UNUSED__, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+down(void *data, Evas *e, Evas_Object *obj, void *event_info)
 {
    ecore_thread_cancel(thr);
 }
 
 EAPI_MAIN int
-elm_main(int argc __UNUSED__, char **argv __UNUSED__)
+elm_main(int argc, char **argv)
 {
    Evas_Object *o, *bg;
 

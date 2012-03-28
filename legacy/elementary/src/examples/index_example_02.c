@@ -10,12 +10,7 @@
  */
 
 #include <Elementary.h>
-#ifdef HAVE_CONFIG_H
-# include "elementary_config.h"
-#else
-# define __UNUSED__
-# define PACKAGE_DATA_DIR "../../data"
-#endif
+#define PACKAGE_DATA_DIR "../../data"
 
 static const char *items[] = \
 {
@@ -30,32 +25,32 @@ static const char *items[] = \
 };
 
 static void
-_index_changed(void        *data __UNUSED__,
-               Evas_Object *obj __UNUSED__,
+_index_changed(void        *data,
+               Evas_Object *obj,
                void        *event_info)
 {
    elm_gengrid_item_bring_in(event_info, ELM_GENGRID_ITEM_SCROLLTO_IN);
 }
 
 static void
-_on_done(void        *data __UNUSED__,
-         Evas_Object *obj __UNUSED__,
-         void        *event_info __UNUSED__)
+_on_done(void        *data,
+         Evas_Object *obj,
+         void        *event_info)
 {
    elm_exit();
 }
 
 static char *
 _grid_label_get(void        *data,
-                Evas_Object *obj __UNUSED__,
-                const char  *part __UNUSED__)
+                Evas_Object *obj,
+                const char  *part)
 {
    int idx = (int)data;
    return strdup(items[idx]);
 }
 
 Evas_Object *
-_grid_content_get(void        *data __UNUSED__,
+_grid_content_get(void        *data,
                Evas_Object *obj,
                const char  *part)
 {
@@ -93,8 +88,8 @@ _index_icmp(const void *data1,
 }
 
 EAPI_MAIN int
-elm_main(int    argc __UNUSED__,
-         char **argv __UNUSED__)
+elm_main(int    argc,
+         char **argv)
 {
    Evas_Object *win, *bg, *grid, *idx;
    Elm_Object_Item *gg_it;

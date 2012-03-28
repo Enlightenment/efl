@@ -2,18 +2,13 @@
 //gcc -o popup_example_01 popup_example_01.c -g `pkg-config --cflags --libs elementary`
 
 #include <Elementary.h>
-#ifdef HAVE_CONFIG_H
-# include "elementary_config.h"
-#else
-# define __UNUSED__ __attribute__((unused))
-# define PACKAGE_DATA_DIR "../../data"
-#endif
+#define PACKAGE_DATA_DIR "../../data"
 
 static void _block_clicked(void *data, Evas_Object *obj, void *event_info);
 static void _timeout(void *data, Evas_Object *obj, void *event_info);
 
 EAPI_MAIN int
-elm_main(int argc __UNUSED__, char **argv __UNUSED__)
+elm_main(int argc, char **argv)
 {
    Evas_Object *win, *bg, *popup, *content;
 
@@ -53,14 +48,14 @@ elm_main(int argc __UNUSED__, char **argv __UNUSED__)
 ELM_MAIN()
 
 static void
-_block_clicked(void *data __UNUSED__, Evas_Object *obj,
-               void *event_info __UNUSED__)
+_block_clicked(void *data, Evas_Object *obj,
+               void *event_info)
 {
    evas_object_hide(obj);
 }
 
 static void
-_timeout(void *data __UNUSED__, Evas_Object *obj, void *event_info __UNUSED__)
+_timeout(void *data, Evas_Object *obj, void *event_info)
 {
    evas_object_hide(obj);
 }

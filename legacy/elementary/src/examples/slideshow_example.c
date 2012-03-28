@@ -10,17 +10,12 @@
  */
 
 #include <Elementary.h>
-#ifdef HAVE_CONFIG_H
-# include "elementary_config.h"
-#else
-# define __UNUSED__
-# define PACKAGE_DATA_DIR "../../data"
-#endif
+#define PACKAGE_DATA_DIR "../../data"
 
 static void
-_on_done(void        *data __UNUSED__,
-         Evas_Object *obj __UNUSED__,
-         void        *event_info __UNUSED__)
+_on_done(void        *data,
+         Evas_Object *obj,
+         void        *event_info)
 {
    elm_exit();
 }
@@ -40,9 +35,9 @@ static const char *img9 = PACKAGE_DATA_DIR "/images/mystrale_2.jpg";
 
 static void
 _notify_show(void        *data,
-             Evas        *e __UNUSED__,
-             Evas_Object *obj __UNUSED__,
-             void        *event_info __UNUSED__)
+             Evas        *e,
+             Evas_Object *obj,
+             void        *event_info)
 {
    evas_object_show(data);
 }
@@ -50,41 +45,41 @@ _notify_show(void        *data,
 /* jump to next item, cyclically */
 static void
 _next(void        *data,
-      Evas_Object *obj __UNUSED__,
-      void        *event_info __UNUSED__)
+      Evas_Object *obj,
+      void        *event_info)
 {
    elm_slideshow_next(data);
 }
 
 static void
 _previous(void        *data,
-          Evas_Object *obj __UNUSED__,
-          void        *event_info __UNUSED__)
+          Evas_Object *obj,
+          void        *event_info)
 {
    elm_slideshow_previous(data);
 }
 
 static void
 _first(void        *data,
-       Evas_Object *obj __UNUSED__,
-       void        *event_info __UNUSED__)
+       Evas_Object *obj,
+       void        *event_info)
 {
    elm_slideshow_item_show(data);
 }
 
 static void
 _last(void        *data,
-      Evas_Object *obj __UNUSED__,
-      void        *event_info __UNUSED__)
+      Evas_Object *obj,
+      void        *event_info)
 {
    elm_slideshow_item_show(data);
 }
 
 static void
 _mouse_in(void        *data,
-          Evas        *e __UNUSED__,
-          Evas_Object *obj __UNUSED__,
-          void        *event_info __UNUSED__)
+          Evas        *e,
+          Evas_Object *obj,
+          void        *event_info)
 {
    elm_notify_timeout_set(data, 0.0);
    evas_object_show(data);
@@ -92,9 +87,9 @@ _mouse_in(void        *data,
 
 static void
 _mouse_out(void        *data,
-           Evas        *e __UNUSED__,
-           Evas_Object *obj __UNUSED__,
-           void        *event_info __UNUSED__)
+           Evas        *e,
+           Evas_Object *obj,
+           void        *event_info)
 {
    elm_notify_timeout_set(data, 3.0);
 }
@@ -103,7 +98,7 @@ _mouse_out(void        *data,
 static void
 _transition_select(void        *data,
            Evas_Object *obj,
-           void        *event_info __UNUSED__)
+           void        *event_info)
 {
    elm_slideshow_transition_set(slideshow, data);
    elm_object_text_set(obj, data);
@@ -112,7 +107,7 @@ _transition_select(void        *data,
 static void
 _layout_select(void        *data,
                Evas_Object *obj,
-               void        *event_info __UNUSED__)
+               void        *event_info)
 {
    elm_slideshow_layout_set(slideshow, data);
    elm_object_text_set(obj, data);
@@ -121,8 +116,8 @@ _layout_select(void        *data,
 /* start the show! */
 static void
 _start(void        *data,
-       Evas_Object *obj __UNUSED__,
-       void        *event_info __UNUSED__)
+       Evas_Object *obj,
+       void        *event_info)
 {
    elm_slideshow_timeout_set(slideshow, elm_spinner_value_get(data));
 
@@ -131,9 +126,9 @@ _start(void        *data,
 }
 
 static void
-_stop(void        *data __UNUSED__,
-      Evas_Object *obj __UNUSED__,
-      void        *event_info __UNUSED__)
+_stop(void        *data,
+      Evas_Object *obj,
+      void        *event_info)
 {
    elm_slideshow_timeout_set(slideshow, 0.0);
    elm_object_disabled_set(bt_start, EINA_FALSE);
@@ -143,8 +138,8 @@ _stop(void        *data __UNUSED__,
 /* slideshow transition time has changed */
 static void
 _spin(void        *data,
-      Evas_Object *obj __UNUSED__,
-      void        *event_info __UNUSED__)
+      Evas_Object *obj,
+      void        *event_info)
 {
    if (elm_slideshow_timeout_get(slideshow) > 0)
      elm_slideshow_timeout_set(slideshow, elm_spinner_value_get(data));
@@ -180,8 +175,8 @@ _cmp_func(const void *data1,
 }
 
 EAPI_MAIN int
-elm_main(int    argc __UNUSED__,
-         char **argv __UNUSED__)
+elm_main(int    argc,
+         char **argv)
 {
    Evas_Object *win, *bg, *notify, *bx, *bt, *hv, *spin;
    Elm_Object_Item *slide_first, *slide_last, *slide_it;

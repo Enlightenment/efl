@@ -10,11 +10,6 @@
  */
 
 #include <Elementary.h>
-#ifdef HAVE_CONFIG_H
-# include "elementary_config.h"
-#else
-# define __UNUSED__
-#endif
 
 struct example_data
 {
@@ -30,7 +25,7 @@ static const char *dict[] = \
 
 static void
 _index_item_del(void        *data,
-                Evas_Object *obj __UNUSED__,
+                Evas_Object *obj,
                 void        *event_info)
 {
    fprintf(stdout, "Deleting associated list node (%s). Comparing index "
@@ -45,9 +40,9 @@ _index_item_del(void        *data,
 
 /* delete an index item */
 static void
-_item_del(void        *data __UNUSED__,
-          Evas_Object *obj __UNUSED__,
-          void        *event_info __UNUSED__)
+_item_del(void        *data,
+          Evas_Object *obj,
+          void        *event_info)
 {
    Elm_Object_Item *iit;
    Elm_Object_Item *lit = elm_index_selected_item_get(d.index, 0);
@@ -64,17 +59,17 @@ _item_del(void        *data __UNUSED__,
 }
 
 static void
-_item_del_all(void        *data __UNUSED__,
-              Evas_Object *obj __UNUSED__,
-              void        *event_info __UNUSED__)
+_item_del_all(void        *data,
+              Evas_Object *obj,
+              void        *event_info)
 {
    elm_index_item_clear(d.index);
 }
 
 static void
-_active_set(void        *data __UNUSED__,
-            Evas_Object *obj __UNUSED__,
-            void        *event_info __UNUSED__)
+_active_set(void        *data,
+            Evas_Object *obj,
+            void        *event_info)
 {
    elm_index_autohide_disabled_set(d.index, !elm_index_autohide_disabled_get(d.index));
 
@@ -83,15 +78,15 @@ _active_set(void        *data __UNUSED__,
 
 /* "delay,changed" hook */
 static void
-_index_changed(void        *data __UNUSED__,
-               Evas_Object *obj __UNUSED__,
+_index_changed(void        *data,
+               Evas_Object *obj,
                void        *event_info)
 {
    elm_list_item_bring_in(event_info);
 }
 
 static void
-_index_selected(void        *data __UNUSED__,
+_index_selected(void        *data,
                 Evas_Object *obj,
                 void        *event_info)
 {
@@ -104,16 +99,16 @@ _index_selected(void        *data __UNUSED__,
 }
 
 static void
-_on_done(void        *data __UNUSED__,
-         Evas_Object *obj __UNUSED__,
-         void        *event_info __UNUSED__)
+_on_done(void        *data,
+         Evas_Object *obj,
+         void        *event_info)
 {
    elm_exit();
 }
 
 EAPI_MAIN int
-elm_main(int    argc __UNUSED__,
-         char **argv __UNUSED__)
+elm_main(int    argc,
+         char **argv)
 {
    Evas_Object *win, *bg, *hbox, *vbox, *bt, *sep;
    Elm_Object_Item *lit;

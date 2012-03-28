@@ -2,14 +2,9 @@
 //gcc -o transit_example_02 transit_example_02.c `pkg-config --cflags --libs elementary`
 
 #include <Elementary.h>
-#ifdef HAVE_CONFIG_H
-# include "elementary_config.h"
-#else
-# define __UNUSED__
-#endif
 
 EAPI_MAIN int
-elm_main(int argc __UNUSED__, char **argv __UNUSED__)
+elm_main(int argc, char **argv)
 {
    Evas_Object *win, *bg, *bt, *bt2, *bt3, *bt4;
    Elm_Transit *trans, *trans2, *trans3, *trans4;

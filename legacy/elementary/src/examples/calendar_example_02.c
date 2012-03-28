@@ -11,11 +11,6 @@
  */
 
 #include <Elementary.h>
-#ifdef HAVE_CONFIG_H
-# include "elementary_config.h"
-#else
-# define __UNUSED__
-#endif
 
 static char *
 _format_month_year(struct tm *format_time)
@@ -27,7 +22,7 @@ _format_month_year(struct tm *format_time)
 }
 
 EAPI_MAIN int
-elm_main(int argc __UNUSED__, char **argv __UNUSED__)
+elm_main(int argc, char **argv)
 {
    Evas_Object *win, *bg, *cal;
    const char *weekdays[] =

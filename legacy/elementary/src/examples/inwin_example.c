@@ -2,11 +2,6 @@
  * gcc -o inwin_example inwin_example.c `pkg-config --cflags --libs elementary`
  */
 #include <Elementary.h>
-#ifdef HAVE_CONFIG_H
-# include "elementary_config.h"
-#else
-# define __UNUSED__
-#endif
 
 static Evas_Object *inwin = NULL;
 static const char *styles[] = {
@@ -17,7 +12,7 @@ static const char *styles[] = {
 static int current_style = 0;
 
 static void
-_inwin_hide(void *data __UNUSED__, Evas_Object *obj, void *event __UNUSED__)
+_inwin_hide(void *data, Evas_Object *obj, void *event)
 {
    if (inwin)
      {
@@ -29,7 +24,7 @@ _inwin_hide(void *data __UNUSED__, Evas_Object *obj, void *event __UNUSED__)
 }
 
 static void
-_inwin_destroy(void *data __UNUSED__, Evas_Object *obj, void *event __UNUSED__)
+_inwin_destroy(void *data, Evas_Object *obj, void *event)
 {
    if (inwin)
      {
@@ -42,7 +37,7 @@ _inwin_destroy(void *data __UNUSED__, Evas_Object *obj, void *event __UNUSED__)
 }
 
 static void
-_btn_click_cb(void *data __UNUSED__, Evas_Object *obj, void *event __UNUSED__)
+_btn_click_cb(void *data, Evas_Object *obj, void *event)
 {
    Evas_Object *o, *parent;
 
@@ -90,7 +85,7 @@ _btn_click_cb(void *data __UNUSED__, Evas_Object *obj, void *event __UNUSED__)
 }
 
 static void
-_win_del_cb(void *data __UNUSED__, Evas_Object *obj, void *event __UNUSED__)
+_win_del_cb(void *data, Evas_Object *obj, void *event)
 {
    if (inwin)
      {
@@ -114,7 +109,7 @@ _screenshot_hack_cb(void *data)
 }
 
 EAPI_MAIN int
-elm_main(int argc __UNUSED__, char *argv[] __UNUSED__)
+elm_main(int argc, char *argv[])
 {
    Evas_Object *win, *bg, *box, *o;
 

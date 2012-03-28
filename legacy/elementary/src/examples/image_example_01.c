@@ -2,15 +2,10 @@
 //gcc -g `pkg-config --cflags --libs elementary` image_example_01.c -o image_example_01
 
 #include <Elementary.h>
-#ifdef HAVE_CONFIG_H
-# include "elementary_config.h"
-#else
-# define __UNUSED__
-# define PACKAGE_DATA_DIR "."
-#endif
+#define PACKAGE_DATA_DIR "."
 
 int
-elm_main(int argc __UNUSED__, char **argv __UNUSED__)
+elm_main(int argc, char **argv)
 {
    Evas_Object *win, *bg, *image;
    char buf[PATH_MAX];

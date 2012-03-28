@@ -7,11 +7,6 @@
 #ifdef HAVE_ELEMENTARY_WEB
 #include <EWebKit.h>
 #endif
-#ifdef HAVE_CONFIG_H
-# include "elementary_config.h"
-#else
-# define __UNUSED__ __attribute__((unused))
-#endif
 
 typedef struct _Tab_Data Tab_Data;
 
@@ -79,7 +74,7 @@ tab_current_set(Tab_Data *td)
 }
 
 static void
-_tab_clicked_cb(void *data, Evas_Object *obj __UNUSED__, void *event_info)
+_tab_clicked_cb(void *data, Evas_Object *obj, void *event_info)
 {
    Tab_Data *td = data;
    /* the first toolbar_item_append() calls the select callback before the item
@@ -90,7 +85,7 @@ _tab_clicked_cb(void *data, Evas_Object *obj __UNUSED__, void *event_info)
 }
 
 static void
-_title_changed_cb(void *data, Evas_Object *obj __UNUSED__, void *event_info)
+_title_changed_cb(void *data, Evas_Object *obj, void *event_info)
 {
    Tab_Data *td = data;
    const char *title = event_info;
@@ -102,7 +97,7 @@ _title_changed_cb(void *data, Evas_Object *obj __UNUSED__, void *event_info)
 }
 
 static void
-_uri_changed_cb(void *data, Evas_Object *obj __UNUSED__, void *event_info)
+_uri_changed_cb(void *data, Evas_Object *obj, void *event_info)
 {
    Tab_Data *td = data;
    const char *uri = event_info;
@@ -115,7 +110,7 @@ _uri_changed_cb(void *data, Evas_Object *obj __UNUSED__, void *event_info)
 }
 
 static void
-_web_free_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+_web_free_cb(void *data, Evas *e, Evas_Object *obj, void *event_info)
 {
    Tab_Data *td = data;
 
@@ -126,7 +121,7 @@ _web_free_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *
 }
 
 static void
-_tb_item_del_cb(void *data, Evas_Object *obj, void *event_info __UNUSED__)
+_tb_item_del_cb(void *data, Evas_Object *obj, void *event_info)
 {
    Tab_Data *td = data;
    if (!td->app->exiting && !elm_toolbar_selected_item_get(obj))
@@ -216,7 +211,7 @@ tab_uri_set(Tab_Data *td, const char *uri)
 }
 
 static void
-_url_activated_cb(void *data, Evas_Object *obj, void *event_info __UNUSED__)
+_url_activated_cb(void *data, Evas_Object *obj, void *event_info)
 {
    App_Data *ad = data;
    Tab_Data *td;
@@ -231,7 +226,7 @@ _url_activated_cb(void *data, Evas_Object *obj, void *event_info __UNUSED__)
 }
 
 static void
-_nav_back_cb(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+_nav_back_cb(void *data, Evas_Object *obj, void *event_info)
 {
    App_Data *ad = data;
 
@@ -239,7 +234,7 @@ _nav_back_cb(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED_
 }
 
 static void
-_nav_refresh_cb(void *data, Evas_Object *obj, void *event_info __UNUSED__)
+_nav_refresh_cb(void *data, Evas_Object *obj, void *event_info)
 {
    App_Data *ad = data;
    const Evas_Modifier *mods = evas_key_modifier_get(evas_object_evas_get(obj));
@@ -251,7 +246,7 @@ _nav_refresh_cb(void *data, Evas_Object *obj, void *event_info __UNUSED__)
 }
 
 static void
-_nav_fwd_cb(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+_nav_fwd_cb(void *data, Evas_Object *obj, void *event_info)
 {
    App_Data *ad = data;
 
@@ -259,7 +254,7 @@ _nav_fwd_cb(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__
 }
 
 static void
-_close_tab_cb(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+_close_tab_cb(void *data, Evas_Object *obj, void *event_info)
 {
    App_Data *ad = data;
 
@@ -269,7 +264,7 @@ _close_tab_cb(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED
 }
 
 static void
-_add_tab_cb(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+_add_tab_cb(void *data, Evas_Object *obj, void *event_info)
 {
    App_Data *ad = data;
    tab_add(ad);
@@ -277,7 +272,7 @@ _add_tab_cb(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__
 }
 
 static Evas_Object *
-_web_create_window_cb(void *data, Evas_Object *obj __UNUSED__, Eina_Bool js __UNUSED__, const Elm_Web_Window_Features *wf __UNUSED__)
+_web_create_window_cb(void *data, Evas_Object *obj, Eina_Bool js, const Elm_Web_Window_Features *wf)
 {
    App_Data *ad = data;
    Tab_Data *td;
@@ -287,20 +282,20 @@ _web_create_window_cb(void *data, Evas_Object *obj __UNUSED__, Eina_Bool js __UN
 }
 
 static void
-_win_del_request_cb(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+_win_del_request_cb(void *data, Evas_Object *obj, void *event_info)
 {
    App_Data *ad = data;
    ad->exiting = EINA_TRUE;
 }
 
 static void
-_win_free_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+_win_free_cb(void *data, Evas *e, Evas_Object *obj, void *event_info)
 {
    free(data);
 }
 
 static void
-_search_entry_changed_cb(void *data, Evas_Object *obj, void *event_info __UNUSED__)
+_search_entry_changed_cb(void *data, Evas_Object *obj, void *event_info)
 {
    App_Data *ad = data;
    const char *text;
@@ -314,7 +309,7 @@ _search_entry_changed_cb(void *data, Evas_Object *obj, void *event_info __UNUSED
 }
 
 static void
-_search_entry_activate_cb(void *data, Evas_Object *obj, void *event_info __UNUSED__)
+_search_entry_activate_cb(void *data, Evas_Object *obj, void *event_info)
 {
    App_Data *ad = data;
    const char *text;
@@ -325,7 +320,7 @@ _search_entry_activate_cb(void *data, Evas_Object *obj, void *event_info __UNUSE
 }
 
 static void
-_search_next_cb(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+_search_next_cb(void *data, Evas_Object *obj, void *event_info)
 {
    App_Data *ad = data;
    const char *text;
@@ -336,7 +331,7 @@ _search_next_cb(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUS
 }
 
 static void
-_search_prev_cb(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+_search_prev_cb(void *data, Evas_Object *obj, void *event_info)
 {
    App_Data *ad = data;
    const char *text;
@@ -347,14 +342,14 @@ _search_prev_cb(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUS
 }
 
 static void
-_search_close_cb(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+_search_close_cb(void *data, Evas_Object *obj, void *event_info)
 {
    App_Data *ad = data;
    evas_object_del(ad->search_box);
 }
 
 static void
-_search_box_del_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+_search_box_del_cb(void *data, Evas *e, Evas_Object *obj, void *event_info)
 {
    App_Data *ad = data;
    ad->search_box = NULL;
@@ -362,7 +357,7 @@ _search_box_del_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, 
 }
 
 static void
-_win_search_trigger_cb(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info)
+_win_search_trigger_cb(void *data, Evas *e, Evas_Object *obj, void *event_info)
 {
    Evas_Event_Key_Down *ev = event_info;
    App_Data *ad = data;
@@ -465,7 +460,7 @@ default_content_set(Evas_Object *web)
 }
 
 EAPI_MAIN int
-elm_main(int argc __UNUSED__, char *argv[] __UNUSED__)
+elm_main(int argc, char *argv[])
 {
    Evas_Object *win, *bg, *box, *box2, *btn, *ic, *url, *naviframe, *tabs, *web;
    Evas *e;

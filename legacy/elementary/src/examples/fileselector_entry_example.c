@@ -10,24 +10,19 @@
  */
 
 #include <Elementary.h>
-#ifdef HAVE_CONFIG_H
-# include "elementary_config.h"
-#else
-# define __UNUSED__
-#endif
 
 static void
-_on_done(void        *data __UNUSED__,
-         Evas_Object *obj __UNUSED__,
-         void        *event_info __UNUSED__)
+_on_done(void        *data,
+         Evas_Object *obj,
+         void        *event_info)
 {
    elm_exit();
 }
 
 /* hook on the file,chosen smart callback */
 static void
-_file_chosen(void        *data __UNUSED__,
-             Evas_Object *obj __UNUSED__,
+_file_chosen(void        *data,
+             Evas_Object *obj,
              void        *event_info)
 {
    const char *file = event_info;
@@ -41,8 +36,8 @@ _file_chosen(void        *data __UNUSED__,
 /* toggle inwin mode */
 static void
 _inwin_mode_toggle(void        *data,
-                   Evas_Object *obj __UNUSED__,
-                   void        *event_info __UNUSED__)
+                   Evas_Object *obj,
+                   void        *event_info)
 {
    Evas_Object *fs_entry = data;
    Eina_Bool old_val = elm_fileselector_entry_inwin_mode_get(fs_entry);
@@ -53,8 +48,8 @@ _inwin_mode_toggle(void        *data,
 
 static void
 _current_sel_toggle(void        *data,
-                    Evas_Object *obj __UNUSED__,
-                    void        *event_info __UNUSED__)
+                    Evas_Object *obj,
+                    void        *event_info)
 {
    Evas_Object *fs_entry = data;
    Eina_Bool old_val = elm_fileselector_entry_is_save_get(fs_entry);
@@ -66,8 +61,8 @@ _current_sel_toggle(void        *data,
 
 static void
 _folder_only_toggle(void        *data,
-                    Evas_Object *obj __UNUSED__,
-                    void        *event_info __UNUSED__)
+                    Evas_Object *obj,
+                    void        *event_info)
 {
    Evas_Object *fs_entry = data;
    Eina_Bool old_val = elm_fileselector_entry_folder_only_get(fs_entry);
@@ -78,8 +73,8 @@ _folder_only_toggle(void        *data,
 
 static void
 _expandable_toggle(void        *data,
-                   Evas_Object *obj __UNUSED__,
-                   void        *event_info __UNUSED__)
+                   Evas_Object *obj,
+                   void        *event_info)
 {
    Evas_Object *fs_entry = data;
    Eina_Bool old_val = elm_fileselector_entry_expandable_get(fs_entry);
@@ -89,8 +84,8 @@ _expandable_toggle(void        *data,
 }
 
 EAPI_MAIN int
-elm_main(int    argc __UNUSED__,
-         char **argv __UNUSED__)
+elm_main(int    argc,
+         char **argv)
 {
    Evas_Object *win, *bg, *vbox, *hbox, *ic, *ck, *fs_entry, *sep;
 

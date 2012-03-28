@@ -10,22 +10,17 @@
  */
 
 #include <Elementary.h>
-#ifdef HAVE_CONFIG_H
-# include "elementary_config.h"
-#else
-# define __UNUSED__
-#endif
 
 static void
-_on_done(void *data __UNUSED__,
-        Evas_Object *obj __UNUSED__,
-        void *event_info __UNUSED__)
+_on_done(void *data,
+        Evas_Object *obj,
+        void *event_info)
 {
    elm_exit();
 }
 
 EAPI_MAIN int
-elm_main(int argc __UNUSED__, char **argv __UNUSED__)
+elm_main(int argc, char **argv)
 {
    Evas_Object *win, *bg, *sc, *ic;
    Elm_Object_Item *seg_it;

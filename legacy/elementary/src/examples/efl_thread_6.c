@@ -1,11 +1,6 @@
 //Compile with:
 //gcc -o efl_thread_6 efl_thread_6.c -g `pkg-config --cflags --libs elementary`
 #include <Elementary.h>
-#ifdef HAVE_CONFIG_H
-# include "elementary_config.h"
-#else
-# define __UNUSED__
-#endif
 
 static Evas_Object *win = NULL;
 
@@ -67,7 +62,7 @@ mandel(int *pix, int w, int h)
 }
 
 static void
-th_do(void *data, Ecore_Thread *th __UNUSED__)
+th_do(void *data, Ecore_Thread *th)
 {
    struct info *inf = data;
    // CANNOT TOUCH inf->obj here! just inf->pix which is 256x256 @ 32bpp
@@ -78,7 +73,7 @@ th_do(void *data, Ecore_Thread *th __UNUSED__)
 // END - code running in my custom thread instance
 
 static void // thread job finished - collect results and put in img obj
-th_end(void *data, Ecore_Thread *th __UNUSED__)
+th_end(void *data, Ecore_Thread *th)
 {
    struct info *inf = data;
 
@@ -90,7 +85,7 @@ th_end(void *data, Ecore_Thread *th __UNUSED__)
 }
 
 static void // if the thread is cancelled - free pix, keep obj tho
-th_cancel(void *data, Ecore_Thread *th __UNUSED__)
+th_cancel(void *data, Ecore_Thread *th)
 {
    struct info *inf = data;
 
@@ -123,7 +118,7 @@ anim(void *data)
 }
 
 EAPI_MAIN int
-elm_main(int argc __UNUSED__, char **argv __UNUSED__)
+elm_main(int argc, char **argv)
 {
    Evas_Object *o, *bg;
    int i;

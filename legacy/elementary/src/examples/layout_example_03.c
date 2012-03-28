@@ -2,12 +2,7 @@
 //gcc -g `pkg-config --cflags --libs elementary` layout_example_03.c -o layout_example_03
 
 #include <Elementary.h>
-#ifdef HAVE_CONFIG_H
-# include "elementary_config.h"
-#else
-# define __UNUSED__
-# define PACKAGE_DATA_DIR "."
-#endif
+#define PACKAGE_DATA_DIR "."
 
 #define TITLE "example/title"
 #define SWALLOW "example/custom"
@@ -15,7 +10,7 @@
 static Eina_Bool _btn_large = EINA_FALSE;
 
 static void
-_swallow_btn_cb(void *data, Evas_Object *btn, void *event_info __UNUSED__)
+_swallow_btn_cb(void *data, Evas_Object *btn, void *event_info)
 {
    Evas_Object *layout = data;
 
@@ -34,7 +29,7 @@ _swallow_btn_cb(void *data, Evas_Object *btn, void *event_info __UNUSED__)
 }
 
 static void
-_size_changed_cb(void *data __UNUSED__, Evas_Object *layout, const char *emission __UNUSED__, const char *source __UNUSED__)
+_size_changed_cb(void *data, Evas_Object *layout, const char *emission, const char *source)
 {
    Evas_Object *edje;
    Evas_Coord w, h;
@@ -46,7 +41,7 @@ _size_changed_cb(void *data __UNUSED__, Evas_Object *layout, const char *emissio
 }
 
 EAPI_MAIN int
-elm_main(int argc __UNUSED__, char **argv __UNUSED__)
+elm_main(int argc, char **argv)
 {
    Evas_Object *win, *bg, *btn, *layout;
 

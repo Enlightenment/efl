@@ -10,11 +10,6 @@
  */
 
 #include <Elementary.h>
-#ifdef HAVE_CONFIG_H
-# include "elementary_config.h"
-#else
-# define __UNUSED__
-#endif
 
 typedef struct Progressbar_Example
 {
@@ -33,7 +28,7 @@ typedef struct Progressbar_Example
 static Progressbar_Example example_data;
 
 static Eina_Bool
-_progressbar_example_value_set(void *data __UNUSED__)
+_progressbar_example_value_set(void *data)
 {
    double progress;
 
@@ -54,9 +49,9 @@ _progressbar_example_value_set(void *data __UNUSED__)
 }
 
 static void
-_progressbar_example_start(void        *data __UNUSED__,
-                           Evas_Object *obj __UNUSED__,
-                           void        *event_info __UNUSED__)
+_progressbar_example_start(void        *data,
+                           Evas_Object *obj,
+                           void        *event_info)
 {
    elm_progressbar_pulse(example_data.pb2, EINA_TRUE);
    elm_progressbar_pulse(example_data.pb5, EINA_TRUE);
@@ -72,9 +67,9 @@ _progressbar_example_start(void        *data __UNUSED__,
 
 /* end of show */
 static void
-_progressbar_example_stop(void        *data __UNUSED__,
-                          Evas_Object *obj __UNUSED__,
-                          void        *event_info __UNUSED__)
+_progressbar_example_stop(void        *data,
+                          Evas_Object *obj,
+                          void        *event_info)
 {
    elm_progressbar_pulse(example_data.pb2, EINA_FALSE);
    elm_progressbar_pulse(example_data.pb5, EINA_FALSE);
@@ -88,17 +83,17 @@ _progressbar_example_stop(void        *data __UNUSED__,
 }
 
 static void
-_on_done(void        *data __UNUSED__,
-         Evas_Object *obj __UNUSED__,
-         void        *event_info __UNUSED__)
+_on_done(void        *data,
+         Evas_Object *obj,
+         void        *event_info)
 {
    _progressbar_example_stop(NULL, NULL, NULL);
    elm_exit();
 }
 
 EAPI_MAIN int
-elm_main(int    argc __UNUSED__,
-         char **argv __UNUSED__)
+elm_main(int    argc,
+         char **argv)
 {
    Evas_Object *win, *bg, *pb, *bx, *hbx, *bt, *bt_bx, *ic1, *ic2;
    char buf[PATH_MAX];

@@ -10,11 +10,6 @@
  */
 
 #include <Elementary.h>
-#ifdef HAVE_CONFIG_H
-# include "elementary_config.h"
-#else
-# define __UNUSED__
-#endif
 
 typedef struct _Overlay_Data
 {
@@ -90,7 +85,7 @@ _box_get(Evas_Object *obj, Overlay_Data *data)
 }
 
 static void
-_overlay_cb(void *data __UNUSED__, Evas_Object *map, void *ev)
+_overlay_cb(void *data, Evas_Object *map, void *ev)
 {
    printf("Overlay clicked\n");
    Elm_Map_Overlay *overlay = ev;
@@ -106,7 +101,7 @@ _overlay_cb(void *data __UNUSED__, Evas_Object *map, void *ev)
 }
 
 static void
-_bt_zoom_in(void *data, Evas_Object *obj __UNUSED__, void *ev __UNUSED__)
+_bt_zoom_in(void *data, Evas_Object *obj, void *ev)
 {
    Evas_Object *map = data;
    int zoom;
@@ -117,7 +112,7 @@ _bt_zoom_in(void *data, Evas_Object *obj __UNUSED__, void *ev __UNUSED__)
 }
 
 static void
-_bt_zoom_out(void *data, Evas_Object *obj __UNUSED__, void *ev __UNUSED__)
+_bt_zoom_out(void *data, Evas_Object *obj, void *ev)
 {
    Evas_Object *map = data;
    int zoom;
@@ -128,21 +123,21 @@ _bt_zoom_out(void *data, Evas_Object *obj __UNUSED__, void *ev __UNUSED__)
 }
 
 static void
-_bt_zoom_fit(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+_bt_zoom_fit(void *data, Evas_Object *obj, void *event_info)
 {
    Evas_Object *map = data;
    elm_map_zoom_mode_set(map, ELM_MAP_ZOOM_MODE_AUTO_FIT);
 }
 
 static void
-_bt_zoom_fill(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+_bt_zoom_fill(void *data, Evas_Object *obj, void *event_info)
 {
    Evas_Object *map = data;
    elm_map_zoom_mode_set(map, ELM_MAP_ZOOM_MODE_AUTO_FILL);
 }
 
 static void
-_on_done(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+_on_done(void *data, Evas_Object *obj, void *event_info)
 {
    elm_exit();
 }
@@ -161,7 +156,7 @@ _nasty_hack(void *data)
 }
 
 EAPI_MAIN int
-elm_main(int argc __UNUSED__, char **argv __UNUSED__)
+elm_main(int argc, char **argv)
 {
    Evas_Object *win, *bg, *map, *box, *bt;
    Eina_List *ovls = NULL;

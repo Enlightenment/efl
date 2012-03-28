@@ -2,11 +2,6 @@
 //gcc -o hoversel_example_01 hoversel_example_01.c -g `pkg-config --cflags --libs elementary`
 
 #include <Elementary.h>
-#ifdef HAVE_CONFIG_H
-# include "elementary_config.h"
-#else
-# define __UNUSED__
-#endif
 
 static void _print_items(void *data, Evas_Object *obj, void *event_info);
 static void _rm_items(void *data, Evas_Object *obj, void *event_info);
@@ -15,7 +10,7 @@ static void _free(void *data, Evas_Object *obj, void *event_info);
 static void _add_item(void *data, Evas_Object *obj, void *event_info);
 
 EAPI_MAIN int
-elm_main(int argc __UNUSED__, char **argv __UNUSED__)
+elm_main(int argc, char **argv)
 {
    Evas_Object *win, *bg, *rect, *hoversel;
    Elm_Object_Item *hoversel_it;
@@ -63,7 +58,7 @@ elm_main(int argc __UNUSED__, char **argv __UNUSED__)
 ELM_MAIN()
 
 static void
-_print_items(void *data __UNUSED__, Evas_Object *obj, void *event_info __UNUSED__)
+_print_items(void *data, Evas_Object *obj, void *event_info)
 {
    const Eina_List *items = elm_hoversel_items_get(obj);
    const Eina_List *l;
@@ -74,7 +69,7 @@ _print_items(void *data __UNUSED__, Evas_Object *obj, void *event_info __UNUSED_
 }
 
 static void
-_rm_items(void *data __UNUSED__, Evas_Object *obj, void *event_info __UNUSED__)
+_rm_items(void *data, Evas_Object *obj, void *event_info)
 {
    if(!elm_hoversel_expanded_get(obj))
      elm_hoversel_clear(obj);
@@ -88,7 +83,7 @@ _sel(void *data, Evas_Object *obj, void *event_info)
 }
 
 static void
-_add_item(void *data __UNUSED__, Evas_Object *obj, void *event_info __UNUSED__)
+_add_item(void *data, Evas_Object *obj, void *event_info)
 {
    static int num = 0;
    char *str = malloc(sizeof(char) * 10);
@@ -102,7 +97,7 @@ _add_item(void *data __UNUSED__, Evas_Object *obj, void *event_info __UNUSED__)
 }
 
 static void
-_free(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+_free(void *data, Evas_Object *obj, void *event_info)
 {
    free(data);
 }

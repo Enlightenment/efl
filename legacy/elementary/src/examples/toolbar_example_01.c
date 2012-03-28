@@ -10,36 +10,31 @@
  */
 
 #include <Elementary.h>
-#ifdef HAVE_CONFIG_H
-# include "elementary_config.h"
-#else
-# define __UNUSED__
-#endif
 
 static void
-_on_done(void *data __UNUSED__,
-         Evas_Object *obj __UNUSED__,
-         void *event_info __UNUSED__)
+_on_done(void *data,
+         Evas_Object *obj,
+         void *event_info)
 {
    elm_exit();
 }
 
 static void
-_item_1_pressed(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+_item_1_pressed(void *data, Evas_Object *obj, void *event_info)
 {
    Evas_Object *bt = data;
    elm_object_text_set(bt, "Print Document");
 }
 
 static void
-_item_2_pressed(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+_item_2_pressed(void *data, Evas_Object *obj, void *event_info)
 {
    Evas_Object *bt = data;
    elm_object_text_set(bt, "Create new folder");
 }
 
 static void
-_item_3_pressed(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+_item_3_pressed(void *data, Evas_Object *obj, void *event_info)
 {
    /* This function won't be called because we disabled item that call it */
    Evas_Object *bt = data;
@@ -47,7 +42,7 @@ _item_3_pressed(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUS
 }
 
 EAPI_MAIN int
-elm_main(int argc __UNUSED__, char **argv __UNUSED__)
+elm_main(int argc, char **argv)
 {
    Evas_Object *win, *bg, *bx, *tb, *bt;
    Elm_Object_Item *tb_it;

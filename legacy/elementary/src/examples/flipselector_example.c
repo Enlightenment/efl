@@ -10,11 +10,6 @@
  */
 
 #include <Elementary.h>
-#ifdef HAVE_CONFIG_H
-# include "elementary_config.h"
-#else
-# define __UNUSED__
-#endif
 
 static const char *commands = \
   "commands are:\n"
@@ -26,17 +21,17 @@ static const char *commands = \
   "\th - print help\n";
 
 static void
-_on_done(void        *data __UNUSED__,
-         Evas_Object *obj __UNUSED__,
-         void        *event_info __UNUSED__)
+_on_done(void        *data,
+         Evas_Object *obj,
+         void        *event_info)
 {
    elm_exit();
 }
 
 void /* unselect the item shown in the flip selector */
 _unsel_cb(void        *data,
-          Evas_Object *obj __UNUSED__,
-          void        *event_info __UNUSED__)
+          Evas_Object *obj,
+          void        *event_info)
 {
    Elm_Object_Item *it;
    Evas_Object *fp = data;
@@ -47,8 +42,8 @@ _unsel_cb(void        *data,
 
 void /* delete the item shown in the flip selector */
 _del_cb(void        *data,
-          Evas_Object *obj __UNUSED__,
-          void        *event_info __UNUSED__)
+          Evas_Object *obj,
+          void        *event_info)
 {
    Elm_Object_Item *it;
    Evas_Object *fp = data;
@@ -58,25 +53,25 @@ _del_cb(void        *data,
 }
 
 void /* underflow callback */
-_underflow_cb(void        *data __UNUSED__,
-              Evas_Object *obj __UNUSED__,
-              void        *event_info __UNUSED__)
+_underflow_cb(void        *data,
+              Evas_Object *obj,
+              void        *event_info)
 {
    fprintf(stdout, "Underflow!\n");
 }
 
 void /* overflow callback */
-_overflow_cb(void        *data __UNUSED__,
-             Evas_Object *obj __UNUSED__,
-             void        *event_info __UNUSED__)
+_overflow_cb(void        *data,
+             Evas_Object *obj,
+             void        *event_info)
 {
    fprintf(stdout, "Overflow!\n");
 }
 
 static void
 _on_keydown(void              *data,
-            Evas_Object       *object __UNUSED__,
-            Evas_Object       *src __UNUSED__,
+            Evas_Object       *object,
+            Evas_Object       *src,
             Evas_Callback_Type type,
             void              *event_info)
 {
@@ -147,7 +142,7 @@ _on_keydown(void              *data,
 }
 
 EAPI_MAIN int
-elm_main(int argc __UNUSED__, char **argv __UNUSED__)
+elm_main(int argc, char **argv)
 {
    unsigned int i;
    Evas_Object *win, *bg, *bx, *fp, *bt;

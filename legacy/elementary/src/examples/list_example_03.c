@@ -10,24 +10,19 @@
  */
 
 #include <Elementary.h>
-#ifdef HAVE_CONFIG_H
-# include "elementary_config.h"
-#else
-# define __UNUSED__
-#endif
 
 static int counter = 3;
 
 static void
-_on_done(void        *data __UNUSED__,
-         Evas_Object *obj __UNUSED__,
-         void        *event_info __UNUSED__)
+_on_done(void        *data,
+         Evas_Object *obj,
+         void        *event_info)
 {
    elm_exit();
 }
 
 static void
-_prepend_cb(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+_prepend_cb(void *data, Evas_Object *obj, void *event_info)
 {
    Elm_Object_Item *list_it;
    Evas_Object *li = data;
@@ -40,7 +35,7 @@ _prepend_cb(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__
 }
 
 static void
-_add_cb(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+_add_cb(void *data, Evas_Object *obj, void *event_info)
 {
    Elm_Object_Item *list_it;
    Evas_Object *li = data;
@@ -53,7 +48,7 @@ _add_cb(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 }
 
 static void
-_add_ic_cb(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+_add_ic_cb(void *data, Evas_Object *obj, void *event_info)
 {
    Elm_Object_Item *list_it;
    Evas_Object *ic, *li = data;
@@ -70,14 +65,14 @@ _add_ic_cb(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 }
 
 static void
-_sel_cb(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info)
+_sel_cb(void *data, Evas_Object *obj, void *event_info)
 {
    Elm_Object_Item *list_it = event_info;
    printf("Selected label: %s\n", elm_object_item_text_get(list_it));
 }
 
 static void
-_add_func_cb(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+_add_func_cb(void *data, Evas_Object *obj, void *event_info)
 {
    Elm_Object_Item *list_it;
    Evas_Object *li = data;
@@ -90,7 +85,7 @@ _add_func_cb(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED_
 }
 
 static void
-_sel_data_cb(void *data, Evas_Object *obj __UNUSED__, void *event_info)
+_sel_data_cb(void *data, Evas_Object *obj, void *event_info)
 {
    char *content = data;
    Elm_Object_Item *list_it = event_info;
@@ -99,13 +94,13 @@ _sel_data_cb(void *data, Evas_Object *obj __UNUSED__, void *event_info)
 }
 
 static void
-_free_data(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+_free_data(void *data, Evas_Object *obj, void *event_info)
 {
    free(data);
 }
 
 static void
-_add_data_cb(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+_add_data_cb(void *data, Evas_Object *obj, void *event_info)
 {
    Elm_Object_Item *list_it;
    Evas_Object *li = data;
@@ -123,7 +118,7 @@ _add_data_cb(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED_
 }
 
 static void
-_del_cb(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+_del_cb(void *data, Evas_Object *obj, void *event_info)
 {
    Elm_Object_Item *selected_item;
    Evas_Object *li = data;
@@ -133,7 +128,7 @@ _del_cb(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 }
 
 static void
-_unselect_cb(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+_unselect_cb(void *data, Evas_Object *obj, void *event_info)
 {
    Elm_Object_Item *selected_item;
    Evas_Object *li = data;
@@ -143,7 +138,7 @@ _unselect_cb(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED_
 }
 
 static void
-_print_cb(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+_print_cb(void *data, Evas_Object *obj, void *event_info)
 {
    const Eina_List *l, *items;
    Elm_Object_Item *list_it;
@@ -155,14 +150,14 @@ _print_cb(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 }
 
 static void
-_clear_cb(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+_clear_cb(void *data, Evas_Object *obj, void *event_info)
 {
    Evas_Object *li = data;
    elm_list_clear(li);
 }
 
 static void
-_select_next_cb(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+_select_next_cb(void *data, Evas_Object *obj, void *event_info)
 {
    Elm_Object_Item *selected_item, *next_item;
    Evas_Object *li = data;
@@ -176,7 +171,7 @@ _select_next_cb(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUS
 }
 
 static void
-_insert_after_cb(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+_insert_after_cb(void *data, Evas_Object *obj, void *event_info)
 {
    Elm_Object_Item *selected_item, *list_it;
    Evas_Object *li = data;
@@ -193,7 +188,7 @@ _insert_after_cb(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNU
 }
 
 static void
-_select_prev_cb(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+_select_prev_cb(void *data, Evas_Object *obj, void *event_info)
 {
    Elm_Object_Item *selected_item, *prev_item;
    Evas_Object *li = data;
@@ -207,7 +202,7 @@ _select_prev_cb(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUS
 }
 
 static void
-_insert_before_cb(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+_insert_before_cb(void *data, Evas_Object *obj, void *event_info)
 {
    Elm_Object_Item *selected_item, *list_it;
    Evas_Object *li = data;
@@ -224,7 +219,7 @@ _insert_before_cb(void *data, Evas_Object *obj __UNUSED__, void *event_info __UN
 }
 
 static void
-_set_separator_cb(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+_set_separator_cb(void *data, Evas_Object *obj, void *event_info)
 {
    Elm_Object_Item *selected_item;
    Evas_Object *li = data;
@@ -235,7 +230,7 @@ _set_separator_cb(void *data, Evas_Object *obj __UNUSED__, void *event_info __UN
 }
 
 static void
-_disable_cb(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+_disable_cb(void *data, Evas_Object *obj, void *event_info)
 {
    Elm_Object_Item *selected_item;
    Evas_Object *li = data;
@@ -246,7 +241,7 @@ _disable_cb(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__
 }
 
 EAPI_MAIN int
-elm_main(int argc __UNUSED__, char **argv __UNUSED__)
+elm_main(int argc, char **argv)
 {
    Evas_Object *win, *bg, *bx, *hbx, *li, *bt;
 

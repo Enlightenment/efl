@@ -2,16 +2,11 @@
 //gcc -o check_example_01  check_example_01.c -g `pkg-config --cflags --libs elementary`
 
 #include <Elementary.h>
-#ifdef HAVE_CONFIG_H
-# include "elementary_config.h"
-#else
-# define __UNUSED__
-#endif
 
 static void _print(void *data, Evas_Object *obj, void *event_info);
 
 EAPI_MAIN int
-elm_main(int argc __UNUSED__, char **argv __UNUSED__)
+elm_main(int argc, char **argv)
 {
    Evas_Object *win, *bg, *cb, *cb2, *icon;
    Eina_Bool value;
@@ -58,7 +53,7 @@ elm_main(int argc __UNUSED__, char **argv __UNUSED__)
 ELM_MAIN()
 
 static void
-_print(void *data, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+_print(void *data, Evas_Object *obj, void *event_info)
 {
    printf("check %smarked\n", *((Eina_Bool*)data) ? "" : "un");
 }

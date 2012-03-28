@@ -1,20 +1,15 @@
 //Compile with:
 //gcc -g `pkg-config --cflags --libs elementary` genlist_example_02.c -o genlist_example_02
 
-#include <time.h>
 #include <Elementary.h>
-#ifdef HAVE_CONFIG_H
-# include "elementary_config.h"
-#else
-# define __UNUSED__
-#endif
+#include <time.h>
 
 #define N_ITEMS 300
 
 static Elm_Genlist_Item_Class *_itc = NULL;
 
 static char *
-_item_label_get(void *data, Evas_Object *obj __UNUSED__, const char *part __UNUSED__)
+_item_label_get(void *data, Evas_Object *obj, const char *part)
 {
    time_t t = (time_t)ecore_time_unix_get();
    char buf[256];
@@ -32,7 +27,7 @@ _item_label_get(void *data, Evas_Object *obj __UNUSED__, const char *part __UNUS
 }
 
 static Evas_Object *
-_item_content_get(void *data __UNUSED__, Evas_Object *obj, const char *part)
+_item_content_get(void *data, Evas_Object *obj, const char *part)
 {
    Evas_Object *ic = elm_icon_add(obj);
 
@@ -51,7 +46,7 @@ _item_sel_cb(void *data, Evas_Object *obj, void *event_info)
 }
 
 static void
-_show_status_cb(void *data, Evas_Object *o __UNUSED__, void *event_info __UNUSED__)
+_show_status_cb(void *data, Evas_Object *o, void *event_info)
 {
    Evas_Object *list = data;
    Evas_Coord x, y, w, h, mx, my;
@@ -82,14 +77,14 @@ _show_status_cb(void *data, Evas_Object *o __UNUSED__, void *event_info __UNUSED
 }
 
 static void
-_realize_cb(void *data, Evas_Object *o __UNUSED__, void *event_info __UNUSED__)
+_realize_cb(void *data, Evas_Object *o, void *event_info)
 {
    Evas_Object *list = data;
    elm_genlist_realized_items_update(list);
 }
 
 EAPI_MAIN int
-elm_main(int argc __UNUSED__, char **argv __UNUSED__)
+elm_main(int argc, char **argv)
 {
    Evas_Object *win, *bg, *box, *hbox;
    Evas_Object *list, *btn;

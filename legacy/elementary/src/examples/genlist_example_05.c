@@ -2,11 +2,6 @@
 //gcc -g `pkg-config --cflags --libs elementary` genlist_example_05.c -o genlist_example_05
 
 #include <Elementary.h>
-#ifdef HAVE_CONFIG_H
-# include "elementary_config.h"
-#else
-# define __UNUSED__
-#endif
 
 #define N_ITEMS 6
 
@@ -23,7 +18,7 @@ static Elm_Genlist_Item_Class *_itfav = NULL;
 static int nitems = 0;
 
 static char *
-_item_label_get(void *data, Evas_Object *obj __UNUSED__, const char *part)
+_item_label_get(void *data, Evas_Object *obj, const char *part)
 {
    char buf[256];
    Node_Data *d = data;
@@ -35,7 +30,7 @@ _item_label_get(void *data, Evas_Object *obj __UNUSED__, const char *part)
 }
 
 static Evas_Object *
-_item_content_get(void *data __UNUSED__, Evas_Object *obj, const char *part)
+_item_content_get(void *data, Evas_Object *obj, const char *part)
 {
    Evas_Object *ic = elm_icon_add(obj);
 
@@ -54,7 +49,7 @@ _item_sel_cb(void *data, Evas_Object *obj, void *event_info)
 }
 
 static char *
-_parent_label_get(void *data, Evas_Object *obj __UNUSED__, const char *part __UNUSED__)
+_parent_label_get(void *data, Evas_Object *obj, const char *part)
 {
    char buf[256];
    Node_Data *d = data;
@@ -66,7 +61,7 @@ _parent_label_get(void *data, Evas_Object *obj __UNUSED__, const char *part __UN
 }
 
 static Evas_Object *
-_parent_content_get(void *data __UNUSED__, Evas_Object *obj, const char *part __UNUSED__)
+_parent_content_get(void *data, Evas_Object *obj, const char *part)
 {
    Evas_Object *ic = elm_icon_add(obj);
 
@@ -78,7 +73,7 @@ _parent_content_get(void *data __UNUSED__, Evas_Object *obj, const char *part __
 }
 
 static char *
-_favorite_label_get(void *data, Evas_Object *obj __UNUSED__, const char *part)
+_favorite_label_get(void *data, Evas_Object *obj, const char *part)
 {
    char buf[256];
    Node_Data *d = data;
@@ -90,7 +85,7 @@ _favorite_label_get(void *data, Evas_Object *obj __UNUSED__, const char *part)
 }
 
 static Evas_Object *
-_favorite_content_get(void *data __UNUSED__, Evas_Object *obj, const char *part)
+_favorite_content_get(void *data, Evas_Object *obj, const char *part)
 {
    Evas_Object *ic = elm_icon_add(obj);
 
@@ -102,7 +97,7 @@ _favorite_content_get(void *data __UNUSED__, Evas_Object *obj, const char *part)
 }
 
 static void
-_append_cb(void *data, Evas_Object *o __UNUSED__, void *event_info __UNUSED__)
+_append_cb(void *data, Evas_Object *o, void *event_info)
 {
    Evas_Object *list = data;
    Elm_Object_Item *glit, *parent = NULL;
@@ -132,7 +127,7 @@ _append_cb(void *data, Evas_Object *o __UNUSED__, void *event_info __UNUSED__)
 }
 
 static void
-_favorite_cb(void *data, Evas_Object *o __UNUSED__, void *event_info __UNUSED__)
+_favorite_cb(void *data, Evas_Object *o, void *event_info)
 {
    Evas_Object *list = data;
    Elm_Object_Item *glit = elm_genlist_selected_item_get(list);
@@ -155,7 +150,7 @@ _favorite_cb(void *data, Evas_Object *o __UNUSED__, void *event_info __UNUSED__)
 }
 
 static void
-_add_child_cb(void *data, Evas_Object *o __UNUSED__, void *event_info __UNUSED__)
+_add_child_cb(void *data, Evas_Object *o, void *event_info)
 {
    Evas_Object *list = data;
    Elm_Object_Item *glit = elm_genlist_selected_item_get(list);
@@ -215,7 +210,7 @@ _clear_list(Node_Data *d)
 }
 
 static void
-_del_item_cb(void *data, Evas_Object *o __UNUSED__, void *event_info __UNUSED__)
+_del_item_cb(void *data, Evas_Object *o, void *event_info)
 {
    Evas_Object *list = data;
    Elm_Object_Item *glit = elm_genlist_selected_item_get(list);
@@ -238,7 +233,7 @@ _del_item_cb(void *data, Evas_Object *o __UNUSED__, void *event_info __UNUSED__)
 }
 
 static void
-_expand_request_cb(void *data __UNUSED__, Evas_Object *o __UNUSED__, void *event_info)
+_expand_request_cb(void *data, Evas_Object *o, void *event_info)
 {
    Elm_Object_Item *glit = event_info;
    printf("expand request on item: %p\n", event_info);
@@ -246,7 +241,7 @@ _expand_request_cb(void *data __UNUSED__, Evas_Object *o __UNUSED__, void *event
 }
 
 static void
-_contract_request_cb(void *data __UNUSED__, Evas_Object *o __UNUSED__, void *event_info)
+_contract_request_cb(void *data, Evas_Object *o, void *event_info)
 {
    Elm_Object_Item *glit = event_info;
    printf("contract request on item: %p\n", event_info);
@@ -254,7 +249,7 @@ _contract_request_cb(void *data __UNUSED__, Evas_Object *o __UNUSED__, void *eve
 }
 
 static void
-_expanded_cb(void *data __UNUSED__, Evas_Object *o __UNUSED__, void *event_info)
+_expanded_cb(void *data, Evas_Object *o, void *event_info)
 {
    Eina_List *l;
    Elm_Object_Item *glit = event_info;
@@ -285,7 +280,7 @@ _expanded_cb(void *data __UNUSED__, Evas_Object *o __UNUSED__, void *event_info)
 }
 
 static void
-_contracted_cb(void *data __UNUSED__, Evas_Object *o __UNUSED__, void *event_info)
+_contracted_cb(void *data, Evas_Object *o, void *event_info)
 {
    Elm_Object_Item *glit = event_info;
    elm_genlist_item_subitems_clear(glit);
@@ -308,7 +303,7 @@ _button_add(Evas_Object *list, Evas_Object *box, const char *label, Evas_Smart_C
 }
 
 EAPI_MAIN int
-elm_main(int argc __UNUSED__, char **argv __UNUSED__)
+elm_main(int argc, char **argv)
 {
    Evas_Object *win, *bg, *box, *fbox;
    Evas_Object *list;

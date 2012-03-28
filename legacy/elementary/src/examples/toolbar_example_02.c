@@ -10,22 +10,17 @@
  */
 
 #include <Elementary.h>
-#ifdef HAVE_CONFIG_H
-# include "elementary_config.h"
-#else
-# define __UNUSED__
-#endif
 
 static void
-_on_done(void *data __UNUSED__,
-         Evas_Object *obj __UNUSED__,
-         void *event_info __UNUSED__)
+_on_done(void *data,
+         Evas_Object *obj,
+         void *event_info)
 {
    elm_exit();
 }
 
 static void
-_item_pressed(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+_item_pressed(void *data, Evas_Object *obj, void *event_info)
 {
    Elm_Object_Item *tb_it = event_info;
    elm_toolbar_item_state_set(tb_it, elm_toolbar_item_state_next(tb_it));
@@ -33,7 +28,7 @@ _item_pressed(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_in
 }
 
 EAPI_MAIN int
-elm_main(int argc __UNUSED__, char **argv __UNUSED__)
+elm_main(int argc, char **argv)
 {
    Evas_Object *win, *bg, *bx, *tb, *bt;
    Elm_Object_Item *tb_it;

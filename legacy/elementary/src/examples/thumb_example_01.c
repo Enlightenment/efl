@@ -2,33 +2,28 @@
 //gcc -g `pkg-config --cflags --libs elementary` thumb_example_01.c -o thumb_example_01
 
 #include <Elementary.h>
-#ifdef HAVE_CONFIG_H
-# include "elementary_config.h"
-#else
-# define __UNUSED__
-# define PACKAGE_DATA_DIR "."
-#endif
+#define PACKAGE_DATA_DIR "."
 
 static void
-_generation_started_cb(void *data __UNUSED__, Evas_Object *o __UNUSED__, void *event_info __UNUSED__)
+_generation_started_cb(void *data, Evas_Object *o, void *event_info)
 {
    printf("thumbnail generation started.\n");
 }
 
 static void
-_generation_finished_cb(void *data __UNUSED__, Evas_Object *o __UNUSED__, void *event_info __UNUSED__)
+_generation_finished_cb(void *data, Evas_Object *o, void *event_info)
 {
    printf("thumbnail generation finished.\n");
 }
 
 static void
-_generation_error_cb(void *data __UNUSED__, Evas_Object *o __UNUSED__, void *event_info __UNUSED__)
+_generation_error_cb(void *data, Evas_Object *o, void *event_info)
 {
    printf("thumbnail generation error.\n");
 }
 
 EAPI_MAIN int
-elm_main(int argc __UNUSED__, char **argv __UNUSED__)
+elm_main(int argc, char **argv)
 {
    Evas_Object *win, *bg;
    Evas_Object *thumb;

@@ -9,16 +9,11 @@
  */
 
 #include <Elementary.h>
-#ifdef HAVE_CONFIG_H
-# include "elementary_config.h"
-#else
-# define __UNUSED__
-#endif
 
 #define SECS_DAY 86400
 
 static void
-_btn_clear_cb(void *data, Evas_Object *btn __UNUSED__, void *ev __UNUSED__)
+_btn_clear_cb(void *data, Evas_Object *btn, void *ev)
 {
    Evas_Object *cal = data;
    elm_calendar_marks_clear(cal);
@@ -26,7 +21,7 @@ _btn_clear_cb(void *data, Evas_Object *btn __UNUSED__, void *ev __UNUSED__)
 }
 
 EAPI_MAIN int
-elm_main(int argc __UNUSED__, char **argv __UNUSED__)
+elm_main(int argc, char **argv)
 {
    Evas_Object *win, *bg, *bt, *bx, *cal;
    Elm_Calendar_Mark *mark;

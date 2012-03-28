@@ -10,34 +10,29 @@
  */
 
 #include <Elementary.h>
-#ifdef HAVE_CONFIG_H
-# include "elementary_config.h"
-#else
-# define __UNUSED__
-#endif
 
 static void
-_on_done(void *data __UNUSED__,
-        Evas_Object *obj __UNUSED__,
-        void *event_info __UNUSED__)
+_on_done(void *data,
+        Evas_Object *obj,
+        void *event_info)
 {
    elm_exit();
 }
 
 static void
-_changed_cb(void *data __UNUSED__, Evas_Object *obj, void *event_info __UNUSED__)
+_changed_cb(void *data, Evas_Object *obj, void *event_info)
 {
    printf("Value changed to %0.f\n", elm_spinner_value_get(obj));
 }
 
 static void
-_delay_changed_cb(void *data __UNUSED__, Evas_Object *obj, void *event_info __UNUSED__)
+_delay_changed_cb(void *data, Evas_Object *obj, void *event_info)
 {
    printf("Value delay changed to %0.f\n", elm_spinner_value_get(obj));
 }
 
 EAPI_MAIN int
-elm_main(int argc __UNUSED__, char **argv __UNUSED__)
+elm_main(int argc, char **argv)
 {
    Evas_Object *win, *bg, *bx, *sp;
 

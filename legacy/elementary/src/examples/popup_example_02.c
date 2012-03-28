@@ -2,17 +2,12 @@
 //gcc -o popup_example_02 popup_example_02.c -g `pkg-config --cflags --libs elementary`
 
 #include <Elementary.h>
-#ifdef HAVE_CONFIG_H
-# include "elementary_config.h"
-#else
-# define __UNUSED__ __attribute__((unused))
-# define PACKAGE_DATA_DIR "../../data"
-#endif
+#define PACKAGE_DATA_DIR "../../data"
 
 static void _response_cb(void *data, Evas_Object *obj, void *event_info);
 
 EAPI_MAIN int
-elm_main(int argc __UNUSED__, char **argv __UNUSED__)
+elm_main(int argc, char **argv)
 {
    Evas_Object *win, *bg, *popup, *btn1, *btn2, *btn3, *icon1;
    char buf[256];
@@ -80,8 +75,8 @@ elm_main(int argc __UNUSED__, char **argv __UNUSED__)
 ELM_MAIN()
 
 static void
-_response_cb(void *data, Evas_Object *obj __UNUSED__,
-             void *event_info __UNUSED__)
+_response_cb(void *data, Evas_Object *obj,
+             void *event_info)
 {
    evas_object_del(data);
 }

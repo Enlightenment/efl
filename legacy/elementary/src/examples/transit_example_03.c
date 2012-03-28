@@ -3,11 +3,6 @@
 //where directory is the a path where images/icon_07.png can be found.
 
 #include <Elementary.h>
-#ifdef HAVE_CONFIG_H
-# include "elementary_config.h"
-#else
-# define __UNUSED__
-#endif
 
 /* structure to hold context for many callbacks */
 struct Context {
@@ -83,7 +78,7 @@ static struct {
 };
 
 static void
-on_done(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+on_done(void *data, Evas_Object *obj, void *event_info)
 {
    /* quit the mainloop (elm_run) */
    elm_exit();
@@ -104,7 +99,7 @@ _checkbox_transition_add(Evas_Object *box, const char *label, Eina_Bool *checked
 }
 
 static void
-_transit_start(void *data, Evas_Object *o __UNUSED__, void *event_info __UNUSED__)
+_transit_start(void *data, Evas_Object *o, void *event_info)
 {
    Elm_Transit *trans = NULL;
    int i;
@@ -142,14 +137,14 @@ _transit_start(void *data, Evas_Object *o __UNUSED__, void *event_info __UNUSED_
 /* callback useful just to know whether we can receive events from the
  * object or not */
 static void
-_object_clicked(void *data __UNUSED__, Evas_Object *o __UNUSED__, void *event_info __UNUSED__)
+_object_clicked(void *data, Evas_Object *o, void *event_info)
 {
    printf("object clicked!\n");
 }
 
 /* update our context with the given value for repeat count */
 static void
-_cb_repeat_changed(void *data, Evas_Object *obj, void *event __UNUSED__)
+_cb_repeat_changed(void *data, Evas_Object *obj, void *event)
 {
    int *repeat_cnt = data;
 
@@ -158,7 +153,7 @@ _cb_repeat_changed(void *data, Evas_Object *obj, void *event __UNUSED__)
 
 /* update our context with the given tween mode for the transition */
 static void
-_cb_tween_changed(void *data, Evas_Object *obj, void *event __UNUSED__)
+_cb_tween_changed(void *data, Evas_Object *obj, void *event)
 {
    Elm_Transit_Tween_Mode *mode = data;
    double val = 0.0;
@@ -175,7 +170,7 @@ _cb_tween_changed(void *data, Evas_Object *obj, void *event __UNUSED__)
 }
 
 EAPI_MAIN int
-elm_main(int argc __UNUSED__, char **argv __UNUSED__)
+elm_main(int argc, char **argv)
 {
    Evas_Object *win, *bg, *obj, *icon, *box, *vbox, *vbox2, *hbox, *btn;
    Evas_Object *cbox, *dummy, *spinner;

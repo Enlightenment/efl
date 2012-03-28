@@ -2,16 +2,11 @@
 //gcc -o notify_example_01 notify_example_01.c -g `pkg-config --cflags --libs elementary`
 
 #include <Elementary.h>
-#ifdef HAVE_CONFIG_H
-# include "elementary_config.h"
-#else
-# define __UNUSED__
-#endif
 
 static void _hide(void *data, Evas_Object *obj, void *event_info);
 
 EAPI_MAIN int
-elm_main(int argc __UNUSED__, char **argv __UNUSED__)
+elm_main(int argc, char **argv)
 {
    Evas_Object *win, *bg, *bx, *notify, *content;
 
@@ -78,7 +73,7 @@ elm_main(int argc __UNUSED__, char **argv __UNUSED__)
 ELM_MAIN()
 
 static void
-_hide(void *data __UNUSED__, Evas_Object *obj, void *event_info __UNUSED__)
+_hide(void *data, Evas_Object *obj, void *event_info)
 {
    evas_object_hide(obj);
 }

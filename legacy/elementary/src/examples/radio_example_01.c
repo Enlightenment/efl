@@ -2,18 +2,13 @@
 //gcc -g `pkg-config --cflags --libs elementary` radio_example_01.c -o radio_example_01
 
 #include <Elementary.h>
-#ifdef HAVE_CONFIG_H
-# include "elementary_config.h"
-#else
-# define __UNUSED__
-#endif
 
 static int val = 1;
 
 static void _cb(void *data, Evas_Object *obj, void *event_info);
 
 EAPI_MAIN int
-elm_main(int argc __UNUSED__, char **argv __UNUSED__)
+elm_main(int argc, char **argv)
 {
    Evas_Object *win, *bg, *bx, *radio, *group, *ic;
 
@@ -89,7 +84,7 @@ elm_main(int argc __UNUSED__, char **argv __UNUSED__)
 ELM_MAIN()
 
 static void
-_cb(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+_cb(void *data, Evas_Object *obj, void *event_info)
 {
    printf("val is now: %d\n", val);
 }

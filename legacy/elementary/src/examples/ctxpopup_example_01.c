@@ -2,14 +2,9 @@
 //gcc -o ctxpopup_example_01 ctxpopup_example_01.c -g `pkg-config --cflags --libs elementary`
 
 #include <Elementary.h>
-#ifdef HAVE_CONFIG_H
-# include "elementary_config.h"
-#else
-# define __UNUSED__
-#endif
 
 static void
-_ctxpopup_item_cb(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info)
+_ctxpopup_item_cb(void *data, Evas_Object *obj, void *event_info)
 {
    printf("ctxpopup item selected: %s\n", elm_object_item_text_get(event_info));
 }
@@ -23,7 +18,7 @@ Elm_Object_Item *item_new(Evas_Object *ctxpopup, const char * label, const char 
 }
 
 static void
-_list_item_cb(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+_list_item_cb(void *data, Evas_Object *obj, void *event_info)
 {
    Evas_Object *ctxpopup;
    Elm_Object_Item *it;
@@ -49,7 +44,7 @@ _list_item_cb(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_in
 }
 
 static void
-_list_item_cb2(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+_list_item_cb2(void *data, Evas_Object *obj, void *event_info)
 {
    Evas_Object *ctxpopup;
    Elm_Object_Item *it;
@@ -75,7 +70,7 @@ _list_item_cb2(void *data __UNUSED__, Evas_Object *obj __UNUSED__, void *event_i
 }
 
 EAPI_MAIN int
-elm_main(int argc __UNUSED__, char **argv __UNUSED__)
+elm_main(int argc, char **argv)
 {
    Evas_Object *win, *bg, *list;
 

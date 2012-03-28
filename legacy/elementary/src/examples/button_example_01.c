@@ -2,11 +2,6 @@
  * gcc -o button_example_01 button_example_01.c `pkg-config --cflags --libs elementary`
  */
 #include <Elementary.h>
-#ifdef HAVE_CONFIG_H
-# include "elementary_config.h"
-#else
-# define __UNUSED__
-#endif
 
 typedef struct
 {
@@ -21,7 +16,7 @@ typedef struct
 } App_Data;
 
 static void
-_btn_cursors_release_cb(void *data, Evas_Object *btn __UNUSED__, void *ev __UNUSED__)
+_btn_cursors_release_cb(void *data, Evas_Object *btn, void *ev)
 {
    App_Data *app = data;
    elm_object_part_content_set(app->mid, "icon", app->icon_still);
@@ -29,7 +24,7 @@ _btn_cursors_release_cb(void *data, Evas_Object *btn __UNUSED__, void *ev __UNUS
 }
 
 static void
-_btn_cursors_move_cb(void *data, Evas_Object *btn, void *ev __UNUSED__)
+_btn_cursors_move_cb(void *data, Evas_Object *btn, void *ev)
 {
    App_Data *app = data;
    double ax, ay;
@@ -73,7 +68,7 @@ _btn_cursors_move_cb(void *data, Evas_Object *btn, void *ev __UNUSED__)
 }
 
 static void
-_btn_options_cb(void *data, Evas_Object *btn, void *ev __UNUSED__)
+_btn_options_cb(void *data, Evas_Object *btn, void *ev)
 {
    char *ptr;
    double t;
@@ -101,7 +96,7 @@ _btn_options_cb(void *data, Evas_Object *btn, void *ev __UNUSED__)
 }
 
 EAPI_MAIN int
-elm_main(int argc __UNUSED__, char *argv[] __UNUSED__)
+elm_main(int argc, char *argv[])
 {
    Evas_Object *win, *bg, *box, *box2, *btn, *icon;
    static App_Data data;

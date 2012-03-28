@@ -2,18 +2,13 @@
 //gcc -o popup_example_03 popup_example_03.c -g `pkg-config --cflags --libs elementary`
 
 #include <Elementary.h>
-#ifdef HAVE_CONFIG_H
-# include "elementary_config.h"
-#else
-# define __UNUSED__ __attribute__((unused))
-# define PACKAGE_DATA_DIR "../../data"
-#endif
+#define PACKAGE_DATA_DIR "../../data"
 
 static void _item_selected_cb(void *data, Evas_Object *obj, void *event_info);
 static void _response_cb(void *data, Evas_Object *obj, void *event_info);
 
 EAPI_MAIN int
-elm_main(int argc __UNUSED__, char **argv __UNUSED__)
+elm_main(int argc, char **argv)
 {
    Evas_Object *win, *bg, *popup, *btn1, *btn2, *icon1;
    Elm_Object_Item *popup_it1;
@@ -90,15 +85,15 @@ elm_main(int argc __UNUSED__, char **argv __UNUSED__)
 ELM_MAIN()
 
 static void
-_item_selected_cb(void *data __UNUSED__, Evas_Object *obj __UNUSED__,
+_item_selected_cb(void *data, Evas_Object *obj,
                   void *event_info)
 {
    printf("popup item selected: %s\n", elm_object_item_text_get(event_info));
 }
 
 static void
-_response_cb(void *data, Evas_Object *obj __UNUSED__,
-             void *event_info __UNUSED__)
+_response_cb(void *data, Evas_Object *obj,
+             void *event_info)
 {
    evas_object_hide(data);
 }

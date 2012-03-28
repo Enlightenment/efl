@@ -2,18 +2,13 @@
 //gcc -g `pkg-config --cflags --libs elementary` genlist_example_03.c -o genlist_example_03
 
 #include <Elementary.h>
-#ifdef HAVE_CONFIG_H
-# include "elementary_config.h"
-#else
-# define __UNUSED__
-#endif
 
 #define N_ITEMS 30
 
 static Elm_Genlist_Item_Class *_itc = NULL;
 
 static char *
-_item_label_get(void *data, Evas_Object *obj __UNUSED__, const char *part)
+_item_label_get(void *data, Evas_Object *obj, const char *part)
 {
    time_t t = (time_t)ecore_time_unix_get();
    char buf[256];
@@ -33,7 +28,7 @@ _item_label_get(void *data, Evas_Object *obj __UNUSED__, const char *part)
 }
 
 static Evas_Object *
-_item_content_get(void *data __UNUSED__, Evas_Object *obj, const char *part)
+_item_content_get(void *data, Evas_Object *obj, const char *part)
 {
    Evas_Object *ic = elm_icon_add(obj);
 
@@ -79,7 +74,7 @@ _genlist_fill(Evas_Object *list)
 }
 
 EAPI_MAIN int
-elm_main(int argc __UNUSED__, char **argv __UNUSED__)
+elm_main(int argc, char **argv)
 {
    Evas_Object *win, *bg, *box;
    Evas_Object *list;

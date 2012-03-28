@@ -2,11 +2,6 @@
 //gcc -o efl_thread_4 efl_thread_4.c -g `pkg-config --cflags --libs elementary`
 #include <Elementary.h>
 #include <pthread.h>
-#ifdef HAVE_CONFIG_H
-# include "elementary_config.h"
-#else
-# define __UNUSED__
-#endif
 
 static Evas_Object *win = NULL;
 static Evas_Object *rect = NULL;
@@ -25,7 +20,7 @@ static int th_exit = 0;
 // BEGIN - code running in my custom pthread instance
 //
 static void *
-my_thread_run(void *arg __UNUSED__)
+my_thread_run(void *arg)
 {
    double t = 0.0;
 
@@ -81,7 +76,7 @@ my_thread_mainloop_code(void *data)
 
 // just test cancelling the thread
 static void
-down(void *data __UNUSED__, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
+down(void *data, Evas *e, Evas_Object *obj, void *event_info)
 {
    pthread_mutex_lock(&th_lock);
    th_exit = 1;
@@ -89,7 +84,7 @@ down(void *data __UNUSED__, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, voi
 }
 
 EAPI_MAIN int
-elm_main(int argc __UNUSED__, char **argv __UNUSED__)
+elm_main(int argc, char **argv)
 {
    Evas_Object *o, *bg;
 

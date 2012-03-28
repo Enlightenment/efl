@@ -2,11 +2,6 @@
 //gcc -o efl_thread_3 efl_thread_3.c -g `pkg-config --cflags --libs elementary`
 #include <Elementary.h>
 #include <pthread.h>
-#ifdef HAVE_CONFIG_H
-# include "elementary_config.h"
-#else
-# define __UNUSED__
-#endif
 
 static Evas_Object *win = NULL;
 static Evas_Object *rect = NULL;
@@ -23,7 +18,7 @@ static pthread_t thread_id;
 // BEGIN - code running in my custom pthread instance
 //
 static void *
-my_thread_run(void *arg __UNUSED__)
+my_thread_run(void *arg)
 {
    double t = 0.0;
 
@@ -69,7 +64,7 @@ my_thread_mainloop_code(void *data)
 }
 
 EAPI_MAIN int
-elm_main(int argc __UNUSED__, char **argv __UNUSED__)
+elm_main(int argc, char **argv)
 {
    Evas_Object *o, *bg;
 
