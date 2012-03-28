@@ -87,7 +87,7 @@ _on_keydown(void              *data,
 
    if (strcmp(ev->keyname, "h") == 0) /* print help */
      {
-        fprintf(stdout, commands);
+        fprintf(stdout, "%s", commands);
         return;
      }
 
@@ -202,7 +202,7 @@ elm_main(int argc __UNUSED__, char **argv __UNUSED__)
 
    evas_object_show(win);
 
-   fprintf(stdout, commands);
+   fprintf(stdout, "%s", commands);
    elm_run();
    return 0;
 }

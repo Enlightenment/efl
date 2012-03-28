@@ -11,7 +11,7 @@
 static void
 _del_it(void *data, Evas_Object *obj, void *event_info)
 {
-   Eina_List *l;
+   const Eina_List *l;
    Elm_Object_Item *menu_it = elm_menu_first_item_get(data);
    menu_it = elm_menu_item_next_get(menu_it);
    l = elm_menu_item_subitems_get(menu_it);

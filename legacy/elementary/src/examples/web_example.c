@@ -1,6 +1,8 @@
 /*
  * gcc -o web_example web_example.c `pkg-config --cflags --libs elementary ewebkit` -D_GNU_SOURCE
  */
+
+#define _GNU_SOURCE
 #include <Elementary.h>
 #ifdef HAVE_ELEMENTARY_WEB
 #include <EWebKit.h>
@@ -50,7 +52,7 @@ nav_button_update(App_Data *ad)
 {
    Eina_Bool back, fwd;
 
-   back = !elm_web_back_possible(ad->current_tab->web);
+   back = !elm_web_back_possible_get(ad->current_tab->web);
    fwd = !elm_web_forward_possible_get(ad->current_tab->web);
 
    elm_object_disabled_set(ad->nav.back, back);
