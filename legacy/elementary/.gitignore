@@ -101,14 +101,15 @@ tags
 /po/remove-potcdate.sin
 /po/stamp-po
 /doc/Doxyfile
-/src/examples/actionslider_example_01
 /doc/widget_preview_*
 /doc/widgets/widget_preview_*
+src/examples/actionslider_example_01
 src/examples/bg_example_01
 src/examples/bg_example_02
 src/examples/bg_example_03
 src/examples/box_example_02
 src/examples/bubble_example_01
+src/examples/button_example_00
 src/examples/button_example_01
 src/examples/calendar_example_01
 src/examples/calendar_example_02
