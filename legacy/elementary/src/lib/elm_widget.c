@@ -174,6 +174,7 @@ static void _smart_clip_set(Evas_Object *obj,
                             Evas_Object *clip);
 static void _smart_clip_unset(Evas_Object *obj);
 static void _smart_calculate(Evas_Object *obj);
+static void _smart_member_add(Evas_Object *obj, Evas_Object *child);
 static void _smart_init(void);
 
 static void _if_focused_revert(Evas_Object *obj,
@@ -1120,7 +1121,6 @@ elm_widget_resize_object_set(Evas_Object *obj,
         evas_object_event_callback_add(sobj, EVAS_CALLBACK_HIDE,
                                        _sub_obj_hide, sd);
      }
-   evas_object_clip_set(sobj, evas_object_clip_get(obj));
    evas_object_smart_member_add(sobj, obj);
    evas_object_event_callback_add(sobj, EVAS_CALLBACK_DEL,
                                   _sub_obj_del, sd);
@@ -3848,6 +3848,24 @@ _smart_calculate(Evas_Object *obj)
    if (sd->changed_func) sd->changed_func(obj);
 }
 
+static void
+_smart_member_add(Evas_Object *obj, Evas_Object *child)
+{
+   int r, g, b, a;
+
+   if (evas_object_data_get(child, "_elm_leaveme")) return;
+
+   evas_object_color_get(obj, &r, &g, &b, &a);
+   evas_object_color_set(child, r, g, b, a);
+
+   evas_object_clip_set(child, evas_object_clip_get(obj));
+
+   if (evas_object_visible_get(obj))
+     evas_object_show(child);
+   else
+     evas_object_hide(child);
+}
+
 /* never need to touch this */
 static void
 _smart_init(void)
@@ -3868,7 +3886,7 @@ _smart_init(void)
              _smart_clip_set,
              _smart_clip_unset,
              _smart_calculate,
-             NULL,
+             _smart_member_add,
              NULL,
              NULL,
              NULL,
