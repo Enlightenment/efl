@@ -276,9 +276,9 @@ elm_main(int argc __UNUSED__, char **argv __UNUSED__)
    if (!_itc_group)
      {
         _itc_group = elm_genlist_item_class_new();
-        _itc_group->item_style = "default";
-        _itc_group->func.text_get = _item_label_get;
-        _itc_group->func.content_get = _item_content_get;
+        _itc_group->item_style = "group_index";
+        _itc_group->func.text_get = _group_label_get;
+        _itc_group->func.content_get = _group_content_get;
         _itc_group->func.state_get = NULL;
         _itc_group->func.del = NULL;
      }
