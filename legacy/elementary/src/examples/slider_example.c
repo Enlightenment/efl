@@ -38,7 +38,7 @@ _delay_changed_cb(void *data __UNUSED__, Evas_Object *obj, void *event_info __UN
     printf("Delay changed to %1.2f\n", val);
 }
 
-static const char*
+static char*
 _indicator_format(double val)
 {
    char *indicator = malloc(sizeof(char) * 32);
